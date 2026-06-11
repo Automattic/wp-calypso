@@ -4,6 +4,7 @@ import {
 	type SiteSubscriptionItem,
 } from '@automattic/api-core';
 import { AutoSizer, List } from '@automattic/react-virtualized';
+import { useFuzzySearch } from '@automattic/search';
 import {
 	Button,
 	Modal,
@@ -12,11 +13,10 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import Skeleton from 'calypso/reader/components/skeleton';
 import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
-import { useAddSpaceSource, useDeleteSpaceSource, useSpaces } from 'calypso/reader/data/spaces';
-import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
+import { useAddSpaceSource, useDeleteSpaceSource, useSpace } from 'calypso/reader/data/spaces';
 import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import { SourceSubscription } from './subscription';
@@ -32,8 +32,13 @@ interface Props {
 
 type Filter = 'all' | 'selected';
 
+type SourcesContentState = 'loading' | 'error' | 'empty' | 'list';
+
 const SOURCE_ROW_HEIGHT = 64;
 const SOURCE_ROW_GAP = 8;
+
+// Stable identity so `useFuzzySearch` can reuse its Fuse instance across renders.
+const SEARCH_KEYS: ( keyof SiteSubscriptionItem )[] = [ 'name', 'URL', 'feed_URL' ];
 
 type SourceRowRendererProps = {
 	index: number;
@@ -41,89 +46,93 @@ type SourceRowRendererProps = {
 	style: CSSProperties;
 };
 
-const getSubscriptionSearchText = ( subscription: SiteSubscriptionItem ): string =>
-	[
-		subscription.name,
-		subscription.URL,
-		subscription.feed_URL,
-		formatUrlForDisplay( subscription.URL || subscription.feed_URL ),
-	]
-		.filter( Boolean )
-		.join( ' ' )
-		.toLowerCase();
+const getSourcesContentState = ( {
+	isLoading,
+	isError,
+	isEmpty,
+}: {
+	isLoading: boolean;
+	isError: boolean;
+	isEmpty: boolean;
+} ): SourcesContentState => {
+	if ( isLoading ) {
+		return 'loading';
+	}
+	if ( isError ) {
+		return 'error';
+	}
+	if ( isEmpty ) {
+		return 'empty';
+	}
+	return 'list';
+};
 
 export function SourcesModal( { isOpen, spaceId, onClose }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const spaces = useSpaces();
-	const space = spaces.find( ( item ) => item.id === spaceId );
-	const activeSpaceId = space?.id;
+	const { data: space, isLoading: isSpaceLoading, isError: isSpaceError } = useSpace( spaceId );
 	const siteSubscriptions = useSiteSubscriptions( { fetchAllPages: true } );
 	const { mutate: addSpaceSource } = useAddSpaceSource();
 	const { mutate: deleteSpaceSource } = useDeleteSpaceSource();
 
 	const [ filter, setFilter ] = useState< Filter >( 'all' );
 	const [ search, setSearch ] = useState( '' );
-	const [ hasChangedSources, setHasChangedSources ] = useState( false );
-
-	useEffect( () => {
-		if ( isOpen ) {
-			setHasChangedSources( false );
-		}
-	}, [ isOpen, spaceId ] );
 
 	const selectedKeys = useMemo(
 		() => new Set( ( space?.sources ?? [] ).map( ( source ) => getReadSpaceSourceKey( source ) ) ),
 		[ space?.sources ]
 	);
 
-	const filteredSubscriptions = useMemo( () => {
-		const normalizedSearch = search.trim().toLowerCase();
-
-		return siteSubscriptions.subscriptions.filter( ( subscription ) => {
-			const isSelected = selectedKeys.has( getSiteSubscriptionSourceKey( subscription ) );
-
-			if ( filter === 'selected' && ! isSelected ) {
-				return false;
-			}
-
-			if (
-				normalizedSearch &&
-				! getSubscriptionSearchText( subscription ).includes( normalizedSearch )
-			) {
-				return false;
-			}
-
-			return true;
-		} );
-	}, [ filter, search, selectedKeys, siteSubscriptions.subscriptions ] );
-	const handleDone = useCallback( () => {
-		if ( hasChangedSources ) {
-			dispatch( successNotice( translate( 'Sources saved.' ), { duration: 5000 } ) );
+	const subscriptionsForFilter = useMemo( () => {
+		if ( filter !== 'selected' ) {
+			return siteSubscriptions.subscriptions;
 		}
-		onClose();
-	}, [ dispatch, hasChangedSources, onClose, translate ] );
+		return siteSubscriptions.subscriptions.filter( ( subscription ) =>
+			selectedKeys.has( getSiteSubscriptionSourceKey( subscription ) )
+		);
+	}, [ filter, selectedKeys, siteSubscriptions.subscriptions ] );
+
+	const filteredSubscriptions = useFuzzySearch( {
+		data: subscriptionsForFilter,
+		keys: SEARCH_KEYS,
+		query: search.trim(),
+	} );
+
 	const handleAddSource = useCallback(
 		( subscription: SiteSubscriptionItem ) => {
-			if ( ! activeSpaceId ) {
+			if ( ! spaceId ) {
 				return;
 			}
 
-			setHasChangedSources( true );
-			addSpaceSource( { spaceId: activeSpaceId, subscription } );
+			addSpaceSource(
+				{ spaceId, subscription },
+				{
+					onSuccess: () =>
+						dispatch(
+							successNotice( translate( 'Source added to this space.' ), { duration: 5000 } )
+						),
+				}
+			);
 		},
-		[ activeSpaceId, addSpaceSource ]
+		[ spaceId, addSpaceSource, dispatch, translate ]
 	);
 	const handleRemoveSource = useCallback(
 		( subscription: SiteSubscriptionItem ) => {
-			if ( ! activeSpaceId ) {
+			if ( ! spaceId ) {
 				return;
 			}
 
-			setHasChangedSources( true );
-			deleteSpaceSource( { spaceId: activeSpaceId, subscription } );
+			deleteSpaceSource(
+				{ spaceId, subscription },
+				{
+					onSuccess: () =>
+						dispatch(
+							successNotice( translate( 'Source removed from this space.' ), { duration: 5000 } )
+						),
+				}
+			);
 		},
-		[ activeSpaceId, deleteSpaceSource ]
+		[ spaceId, deleteSpaceSource, dispatch, translate ]
 	);
 	const renderSourceRow = useCallback(
 		( { index, key, style }: SourceRowRendererProps ) => {
@@ -157,53 +166,23 @@ export function SourcesModal( { isOpen, spaceId, onClose }: Props ) {
 		[ filteredSubscriptions, handleAddSource, handleRemoveSource, selectedKeys ]
 	);
 
-	if ( ! isOpen || ! space ) {
+	if ( ! isOpen ) {
 		return null;
 	}
 
-	const selectedCount = space.sources.length;
-	let sourcesContent;
-
-	if ( siteSubscriptions.isLoading ) {
-		sourcesContent = (
-			<SourcesModalSkeleton label={ translate( 'Loading subscriptions' ) as string } />
-		);
-	} else if ( filteredSubscriptions.length > 0 ) {
-		sourcesContent = (
-			<div className="sources-modal__list" role="list">
-				<AutoSizer>
-					{ ( { width, height }: { width: number; height: number } ) => (
-						<List
-							className="sources-modal__virtualized-list"
-							containerRole="presentation"
-							height={ height }
-							overscanRowCount={ 4 }
-							role="presentation"
-							rowCount={ filteredSubscriptions.length }
-							rowHeight={ SOURCE_ROW_HEIGHT }
-							rowRenderer={ renderSourceRow }
-							width={ width }
-						/>
-					) }
-				</AutoSizer>
-			</div>
-		);
-	} else {
-		sourcesContent = (
-			<p className="sources-modal__empty">
-				{ filter === 'selected'
-					? translate( 'No subscriptions added to this space yet.' )
-					: translate( 'No subscriptions found.' ) }
-			</p>
-		);
-	}
+	const selectedCount = space?.sources.length ?? 0;
+	const sourcesState = getSourcesContentState( {
+		isLoading: isSpaceLoading || siteSubscriptions.isLoading,
+		isError: isSpaceError || siteSubscriptions.isError,
+		isEmpty: filteredSubscriptions.length === 0,
+	} );
 
 	return (
 		<Modal
 			title={
-				translate( 'Sources for “%(spaceName)s”', {
-					args: { spaceName: space.name },
-				} ) as string
+				( space
+					? translate( 'Sources for “%(spaceName)s”', { args: { spaceName: space.name } } )
+					: translate( 'Sources' ) ) as string
 			}
 			size="large"
 			onRequestClose={ onClose }
@@ -238,7 +217,13 @@ export function SourcesModal( { isOpen, spaceId, onClose }: Props ) {
 					</Button>
 				</HStack>
 
-				{ sourcesContent }
+				<SourcesModalContent
+					state={ sourcesState }
+					filter={ filter }
+					filteredSubscriptions={ filteredSubscriptions }
+					renderSourceRow={ renderSourceRow }
+					translate={ translate }
+				/>
 			</VStack>
 
 			<HStack justify="space-between" className="sources-modal__footer">
@@ -247,12 +232,68 @@ export function SourcesModal( { isOpen, spaceId, onClose }: Props ) {
 						args: { count: selectedCount },
 					} ) }
 				</div>
-				<Button __next40pxDefaultSize variant="primary" onClick={ handleDone }>
+				<Button __next40pxDefaultSize variant="primary" onClick={ onClose }>
 					{ translate( 'Done' ) }
 				</Button>
 			</HStack>
 		</Modal>
 	);
+}
+
+type SourcesModalContentProps = {
+	state: SourcesContentState;
+	filter: Filter;
+	filteredSubscriptions: SiteSubscriptionItem[];
+	renderSourceRow: ( props: SourceRowRendererProps ) => React.ReactNode;
+	translate: ReturnType< typeof useTranslate >;
+};
+
+function SourcesModalContent( {
+	state,
+	filter,
+	filteredSubscriptions,
+	renderSourceRow,
+	translate,
+}: SourcesModalContentProps ) {
+	switch ( state ) {
+		case 'loading':
+			return <SourcesModalSkeleton label={ translate( 'Loading subscriptions' ) as string } />;
+		case 'error':
+			return (
+				<p className="sources-modal__empty" role="alert">
+					{ translate( 'We couldn’t load your subscriptions. Please try again.' ) }
+				</p>
+			);
+		case 'empty':
+			return (
+				<p className="sources-modal__empty">
+					{ filter === 'selected'
+						? translate( 'No subscriptions added to this space yet.' )
+						: translate( 'No subscriptions found.' ) }
+				</p>
+			);
+		case 'list':
+		default:
+			return (
+				<div className="sources-modal__list" role="list">
+					<AutoSizer>
+						{ ( { width, height }: { width: number; height: number } ) => (
+							<List
+								className="sources-modal__virtualized-list"
+								containerRole="presentation"
+								height={ height }
+								overscanRowCount={ 4 }
+								role="presentation"
+								rowCount={ filteredSubscriptions.length }
+								rowHeight={ SOURCE_ROW_HEIGHT }
+								rowRenderer={ renderSourceRow }
+								width={ width }
+							/>
+						) }
+					</AutoSizer>
+				</div>
+			);
+	}
 }
 
 function SourcesModalSkeleton( { label }: { label: string } ) {

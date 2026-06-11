@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { readSpacesQuery } from '@automattic/api-queries';
+import { readSpaceQuery, readSpacesQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
@@ -57,6 +57,7 @@ const WORK: ReadSpace = {
 function render( ui: React.ReactElement ) {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 	queryClient.setQueryData( readSpacesQuery().queryKey, [ WORK ] );
+	queryClient.setQueryData( readSpaceQuery( WORK.id ).queryKey, WORK );
 
 	return renderWithProvider( ui, {
 		queryClient,

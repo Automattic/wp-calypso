@@ -3,7 +3,9 @@
  */
 import {
 	getSiteSubscriptionsQueryKey,
+	readSpaceQuery,
 	readSpacesQuery,
+	siteSubscriptionsQuery,
 	type SiteSubscriptionsInfiniteData,
 } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
@@ -108,6 +110,7 @@ function setup( {
 } = {} ) {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 	queryClient.setQueryData( readSpacesQuery().queryKey, [ space ] );
+	queryClient.setQueryData( readSpaceQuery( space.id ).queryKey, space );
 	queryClient.setQueryData(
 		getSiteSubscriptionsQueryKey(),
 		makeSiteSubscriptionsData( subscriptions )
@@ -134,6 +137,7 @@ describe( 'SourcesModal', () => {
 	it( 'renders a skeleton while subscriptions are loading', () => {
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 		queryClient.setQueryData( readSpacesQuery().queryKey, [ WORK ] );
+		queryClient.setQueryData( readSpaceQuery( WORK.id ).queryKey, WORK );
 
 		renderWithProvider( <SourcesModal isOpen spaceId={ WORK.id } onClose={ jest.fn() } />, {
 			queryClient,
@@ -141,6 +145,51 @@ describe( 'SourcesModal', () => {
 		} );
 
 		expect( screen.getByRole( 'status', { name: 'Loading subscriptions' } ) ).toBeVisible();
+	} );
+
+	it( 'renders a skeleton while the space details are loading', () => {
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		// Subscriptions are ready, but the space detail query is held pending with
+		// a never-resolving fetch (not awaited) so the modal stays in loading.
+		queryClient.setQueryData(
+			getSiteSubscriptionsQueryKey(),
+			makeSiteSubscriptionsData( [ STRATECHERY ] )
+		);
+		queryClient.prefetchQuery( {
+			...readSpaceQuery( WORK.id ),
+			queryFn: () => new Promise< never >( () => undefined ),
+		} );
+
+		renderWithProvider( <SourcesModal isOpen spaceId={ WORK.id } onClose={ jest.fn() } />, {
+			queryClient,
+			initialState: { currentUser: { id: 1 } },
+		} );
+
+		expect( screen.getByRole( 'status', { name: 'Loading subscriptions' } ) ).toBeVisible();
+		// Title falls back to the generic label while the space name is unknown.
+		expect( screen.getByRole( 'heading', { name: 'Sources' } ) ).toBeVisible();
+	} );
+
+	it( 'shows an error message when subscriptions fail to load', async () => {
+		const queryClient = new QueryClient( {
+			defaultOptions: { queries: { retry: false, retryOnMount: false } },
+		} );
+		queryClient.setQueryData( readSpacesQuery().queryKey, [ WORK ] );
+		queryClient.setQueryData( readSpaceQuery( WORK.id ).queryKey, WORK );
+		await queryClient.prefetchInfiniteQuery( {
+			...siteSubscriptionsQuery(),
+			queryFn: () => Promise.reject( new Error( 'Failed to load subscriptions' ) ),
+		} );
+
+		renderWithProvider( <SourcesModal isOpen spaceId={ WORK.id } onClose={ jest.fn() } />, {
+			queryClient,
+			initialState: { currentUser: { id: 1 } },
+		} );
+
+		expect( screen.getByRole( 'alert' ) ).toHaveTextContent(
+			'We couldn’t load your subscriptions. Please try again.'
+		);
+		expect( screen.queryByText( 'No subscriptions found.' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'adds and removes a subscription in the space cache immediately', async () => {
@@ -215,13 +264,38 @@ describe( 'SourcesModal', () => {
 		expect( onClose ).toHaveBeenCalled();
 	} );
 
-	it( 'shows a success notice when changed sources are saved', async () => {
+	it( 'shows a success notice when a source is added', async () => {
 		const { user } = setup();
 
 		await user.click( screen.getByRole( 'button', { name: 'Add Stratechery' } ) );
-		await user.click( screen.getByRole( 'button', { name: 'Done' } ) );
 
-		expect( successNotice ).toHaveBeenCalledWith( 'Sources saved.', { duration: 5000 } );
+		expect( successNotice ).toHaveBeenCalledWith( 'Source added to this space.', {
+			duration: 5000,
+		} );
+	} );
+
+	it( 'shows a success notice when a source is removed', async () => {
+		const { user } = setup( {
+			space: {
+				...WORK,
+				sources: [
+					{
+						feedId: 456,
+						blogId: 123,
+						feedUrl: 'https://stratechery.com/feed',
+						siteUrl: 'https://stratechery.com',
+						name: 'Stratechery',
+						siteIcon: 'https://stratechery.com/icon.png',
+					},
+				],
+			},
+		} );
+
+		await user.click( screen.getByRole( 'button', { name: 'Remove Stratechery' } ) );
+
+		expect( successNotice ).toHaveBeenCalledWith( 'Source removed from this space.', {
+			duration: 5000,
+		} );
 	} );
 
 	it( 'uses SiteIcon for each subscription row', () => {
