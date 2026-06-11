@@ -794,13 +794,11 @@ const getPlanBloggerDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_BLOGGER,
 	getTitle: () => i18n.translate( 'Blogger' ),
-	// @TODO not updating copy for now, we need to update it after the first round of design {{{
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for bloggers:{{/strong}} Brand your blog with a custom .blog domain name, and remove all WordPress.com advertising. Receive additional storage space and customer support via email.',
 			plansDescriptionHeadingComponent
 		),
-	// }}}
 	getPlanCompareFeatures: () => [
 		// pay attention to ordering, shared features should align on /plan page
 		FEATURE_BLOG_DOMAIN,
@@ -3771,8 +3769,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			FEATURE_JETPACK_SEARCH_MONTHLY,
 		],
 		getInferiorFeatures: () => [],
-
-		// TODO: Calypso requires this prop but we probably don't need it. Refactor Calypso?
 
 		...getMonthlyTimeframe(),
 		getProductId: () => 1040,
