@@ -16,24 +16,11 @@
 	}
 }
 
-// Placeholder hero artwork until Brand delivers the final illustration (plan §8 #3).
+// Full-bleed hero illustration, spanning the modal width at the top.
 .account-recovery-interstitial__hero {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	min-height: 200px;
-	background-color: var( --wp-admin-theme-color, #3858e9 );
-}
-
-.account-recovery-interstitial__hero-icon {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 96px;
-	height: 96px;
-	color: var( --wp-admin-theme-color, #3858e9 );
-	background: var( --color-surface, #fff );
-	border-radius: 24px;
+	display: block;
+	width: 100%;
+	height: auto;
 }
 
 .account-recovery-interstitial__body {

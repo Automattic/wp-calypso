@@ -8,7 +8,6 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Modal, Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { _n, sprintf } from '@wordpress/i18n';
-import { Icon, lock } from '@wordpress/icons';
 import { useEffect, useId, useRef, useState } from 'react';
 import { Text } from '../../components/text';
 import { useAnalytics } from '../analytics';
@@ -20,6 +19,7 @@ import {
 	RECOVERY_INTERSTITIAL_TRACKS,
 } from './constants';
 import { getInterstitialCopy, getInterstitialVariant } from './copy';
+import heroIllustration from './hero-illustration.png';
 import type { InterstitialCta } from './copy';
 import './style.scss';
 
@@ -149,11 +149,7 @@ export default function AccountRecoveryInterstitial() {
 			onRequestClose={ handleSnooze }
 			className="account-recovery-interstitial"
 		>
-			<div className="account-recovery-interstitial__hero" aria-hidden="true">
-				<div className="account-recovery-interstitial__hero-icon">
-					<Icon icon={ lock } size={ 48 } />
-				</div>
-			</div>
+			<img className="account-recovery-interstitial__hero" src={ heroIllustration } alt="" />
 			<VStack className="account-recovery-interstitial__body" spacing={ 6 }>
 				<VStack spacing={ 2 }>
 					<Text id={ titleId } as="h1" className="account-recovery-interstitial__title">
