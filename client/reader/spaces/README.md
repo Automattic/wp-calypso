@@ -111,6 +111,11 @@ would clobber created spaces). `persist: false` keeps the in-memory data out of
 the persisted cache, so **a full page reload already refetches a fresh list** —
 session-only writes don't leak across reloads.
 
+The sources modal stays mounted with `isOpen` toggling, so its queries — the
+space detail (`useSpace`) and site subscriptions (`useSiteSubscriptions`, which
+paginates all pages) — are gated on `isOpen` (`enabled: isOpen`) and only fetch
+while the modal is shown.
+
 When the real endpoints land:
 
 - Replace the manual `setQueryData` in the create / source mutations with
