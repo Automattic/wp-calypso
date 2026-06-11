@@ -201,13 +201,14 @@ export default function AccountRecoveryInterstitial() {
 			recovery_status: variant,
 			cta_id: cta.id,
 		} );
-		if ( cta.route ) {
-			setIsDismissed( true );
-			router.navigate( { to: cta.route } );
-			return;
-		}
-		// No route → a positive confirmation ("Yes, all good"); snooze for this level's window.
+		// Snooze for this level's window in all cases, so the user isn't re-prompted on their
+		// next page load — whether they head off to set up a method (route CTA) or positively
+		// confirm ("Yes, all good"). Eligibility gates only on the snooze, so completing setup
+		// alone wouldn't suppress the modal.
 		snooze();
+		if ( cta.route ) {
+			router.navigate( { to: cta.route } );
+		}
 	};
 
 	const remindLabel = sprintf(
