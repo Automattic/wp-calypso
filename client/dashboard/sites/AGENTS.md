@@ -14,7 +14,7 @@
 			{ isRelevant && <RelevantNotice /> }
 		</SitesNoticeArbiter>
 	}
->
+/>
 ```
 
 - Pages pass their page-specific notices ("page candidates") as children of the arbiter, **ordered by priority** (most urgent first). Eligibility is decided at the call site, not inside the notice.
