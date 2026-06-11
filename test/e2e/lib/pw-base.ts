@@ -635,59 +635,77 @@ export const test = base.extend<
 			{ username: testUser.username, password: testUser.password },
 			newUserDetails.body.bearer_token
 		);
-		// The bearer token minted by the signup flow is not always accepted by the API
-		// immediately (observed as `invalid_token` on the first authenticated call in CI).
-		// Poll a read-only endpoint until the token is honoured so the mutating
-		// `createSite` call below stays single-shot and cannot leak a site.
-		await expect
-			.poll(
-				async () => {
-					try {
-						await restAPIClient.getMyAccountInformation();
-						return true;
-					} catch {
-						return false;
+		// The account exists from this point on: any throw in the remaining setup
+		// would skip a teardown placed after `use()` and leak the test user (and
+		// the site, once created). The try/finally guarantees cleanup either way.
+		let site: NewSiteResponse | undefined;
+		try {
+			// The bearer token minted by the signup flow is not always accepted by the API
+			// immediately (observed as `invalid_token` on the first authenticated call in CI).
+			// Poll a read-only endpoint until the token is honoured so the mutating
+			// `createSite` call below stays single-shot and cannot leak a site.
+			await expect
+				.poll(
+					async () => {
+						try {
+							await restAPIClient.getMyAccountInformation();
+							return true;
+						} catch {
+							return false;
+						}
+					},
+					{
+						message: `Bearer token for ${ testUser.email } was not accepted by the API after signup.`,
+						timeout: 30 * 1000,
 					}
-				},
-				{
-					message: `Bearer token for ${ testUser.email } was not accepted by the API after signup.`,
+				)
+				.toBe( true );
+			site = await restAPIClient.createSite( {
+				name: siteName,
+				title: siteName,
+			} );
+			const message = await clientEmail.getLastMatchingMessage( {
+				inboxId: testUser.inboxId,
+				sentTo: testUser.email,
+				subject: 'Activate',
+			} );
+			const links = await clientEmail.getLinksFromMessage( message );
+			const activationLink = links.find( ( link: string ) =>
+				link.includes( 'activate' )
+			) as string;
+			await page.goto( activationLink );
+			// Activation is processed asynchronously on the backend: the redirect can land
+			// before `email_verified` is readable by later page loads, and specs using this
+			// fixture depend on a verified email (e.g. My Home hides the domain-upsell card
+			// for unverified users). Wait for the flag instead of failing further down.
+			await expect
+				.poll( async () => ( await restAPIClient.getMyAccountInformation() ).email_verified, {
+					message: `Email verification for ${ testUser.email } did not propagate after visiting the activation link.`,
 					timeout: 30 * 1000,
+				} )
+				.toBe( true );
+			await use( site );
+		} finally {
+			if ( site ) {
+				try {
+					await restAPIClient.deleteSite( {
+						id: site.blog_details.blogid,
+						domain: site.blog_details.url,
+					} );
+				} catch ( error ) {
+					// Do not throw from the finally: it would mask the error that
+					// brought us here. `apiCloseAccount` below also deletes any
+					// remaining sites of the user.
+					console.warn( `Failed to delete site ${ site.blog_details.url }: ${ error }` );
 				}
-			)
-			.toBe( true );
-		const site = await restAPIClient.createSite( {
-			name: siteName,
-			title: siteName,
-		} );
-		const message = await clientEmail.getLastMatchingMessage( {
-			inboxId: testUser.inboxId,
-			sentTo: testUser.email,
-			subject: 'Activate',
-		} );
-		const links = await clientEmail.getLinksFromMessage( message );
-		const activationLink = links.find( ( link: string ) => link.includes( 'activate' ) ) as string;
-		await page.goto( activationLink );
-		// Activation is processed asynchronously on the backend: the redirect can land
-		// before `email_verified` is readable by later page loads, and specs using this
-		// fixture depend on a verified email (e.g. My Home hides the domain-upsell card
-		// for unverified users). Wait for the flag instead of failing further down.
-		await expect
-			.poll( async () => ( await restAPIClient.getMyAccountInformation() ).email_verified, {
-				message: `Email verification for ${ testUser.email } did not propagate after visiting the activation link.`,
-				timeout: 30 * 1000,
-			} )
-			.toBe( true );
-		await use( site );
-		await restAPIClient.deleteSite( {
-			id: site.blog_details.blogid,
-			domain: site.blog_details.url,
-		} );
-
-		await apiCloseAccount( restAPIClient, {
-			userID: newUserDetails.body.user_id,
-			username: newUserDetails.body.username,
-			email: testUser.email,
-		} );
+			}
+			// Never throws: errors are caught and logged internally.
+			await apiCloseAccount( restAPIClient, {
+				userID: newUserDetails.body.user_id,
+				username: newUserDetails.body.username,
+				email: testUser.email,
+			} );
+		}
 	},
 } );
 
