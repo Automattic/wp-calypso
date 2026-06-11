@@ -1,6 +1,3 @@
-@import "@automattic/typography/styles/variables";
-@import "calypso/assets/stylesheets/shared/mixins/tooltip";
-
 .reader-save-button {
 	&.tooltip {
 		@include tooltip-base;

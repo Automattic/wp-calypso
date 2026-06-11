@@ -1,8 +1,6 @@
 @use "sass:math";
 @import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/breakpoints";
-@import "@automattic/typography/styles/variables";
-@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 @import "calypso/components/jetpack-page-layout/admin-ui-page";
 @import "calypso/my-sites/stats/modernized-tooltip-styles";
 @import "calypso/my-sites/stats/modernized-chart-tabs-styles";

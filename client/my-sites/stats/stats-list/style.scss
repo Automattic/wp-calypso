@@ -1,12 +1,4 @@
 @use 'sass:math';
-
-@import "calypso/assets/stylesheets/shared/functions/z-index";
-
-@import "@automattic/typography/styles/variables";
-@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
-@import "calypso/assets/stylesheets/shared/mixins/dropdown-menu";
-@import "calypso/assets/stylesheets/shared/mixins/stats-fade-text";
-@import "calypso/assets/stylesheets/shared/extends";
 @import '@automattic/components/src/horizontal-bar-list/stats-variables';
 
 // Module Content List

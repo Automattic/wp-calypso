@@ -1,5 +1,4 @@
 @import "@wordpress/base-styles/mixins";
-@import "calypso/assets/stylesheets/shared/mixins/placeholder";
 
 .partner-portal-text-placeholder {
 	@include placeholder( --color-neutral-10 );

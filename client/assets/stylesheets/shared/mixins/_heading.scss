@@ -2,8 +2,6 @@
 // Heading mixin
 // ==========================================================================
 
-@import "@automattic/typography/styles/variables";
-
 @mixin heading {
 	color: var(--color-neutral-50);
 	font-size: rem(20px);

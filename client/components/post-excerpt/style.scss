@@ -1,7 +1,3 @@
-@import "@automattic/typography/styles/variables";
-@import "calypso/assets/stylesheets/shared/typography";
-@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
-
 .post-excerpt {
 	@extend %content-font;
 	margin: 0;

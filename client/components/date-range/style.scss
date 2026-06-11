@@ -1,7 +1,4 @@
 @import "@wordpress/base-styles/breakpoints";
-@import "@automattic/typography/styles/variables";
-@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
-@import "calypso/assets/stylesheets/shared/mixins/hide-content-accessibly";
 
 $date-range-shortcut-min-width: 140px;
 $date-range-mobile-layout-switch: $break-small;

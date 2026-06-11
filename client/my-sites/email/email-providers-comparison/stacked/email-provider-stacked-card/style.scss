@@ -1,8 +1,6 @@
+@import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "@automattic/typography/styles/variables";
-@import "@automattic/typography/styles/fonts";
-@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 
 $width-right-panel-card:  calc(45% - 110px);
 $width-right-panel-card-expanded:  45%;

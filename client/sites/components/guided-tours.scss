@@ -1,7 +1,3 @@
-@import "calypso/assets/stylesheets/shared/functions/z-index";
-
-@import "@automattic/typography/styles/variables";
-
 body:has(.wpcom-site .main.hosting-dashboard-layout.sites-dashboard) .guided-tour__popover {
 	z-index: z-index("root", ".layout__secondary") - 1;
 

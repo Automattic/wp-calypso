@@ -1,8 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
 @import "@automattic/typography/styles/variables";
-@import "calypso/assets/stylesheets/shared/mixins/placeholder";
 @import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/mixins";
 
 .navigation-header.developer__header {
 	@include break-small {

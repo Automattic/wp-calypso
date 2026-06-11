@@ -1,13 +1,11 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@automattic/typography/styles/fonts";
-@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
-
 /*
 	Global styles for the subscription manager app
 */
 @import "@wordpress/components/build-style/style.css";
 @import "@automattic/calypso-color-schemes";
+@import "@automattic/typography/styles/fonts";
 @import "@automattic/color-studio/dist/color-variables";
+@import "@wordpress/base-styles/breakpoints";
 @import "calypso/assets/stylesheets/shared/loading";
 @import "./search-component";
 @import "calypso/assets/stylesheets/style";

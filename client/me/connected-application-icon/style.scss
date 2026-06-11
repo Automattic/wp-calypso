@@ -1,5 +1,3 @@
-@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
-
 .connected-application-icon.plugin-icon.is-placeholder::before,
 .connected-application-icon.plugin-icon[style*="undefined"]::before {
 	content: "";

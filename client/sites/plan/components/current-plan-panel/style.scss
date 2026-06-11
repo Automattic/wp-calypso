@@ -1,9 +1,8 @@
-@import "@wordpress/base-styles/variables";
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@automattic/typography/styles/variables";
 @import '@wordpress/base-styles/colors';
 @import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .current-plan-panel {
 	.current-plan-heading {

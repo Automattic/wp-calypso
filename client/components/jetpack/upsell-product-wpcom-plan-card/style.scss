@@ -1,7 +1,6 @@
-@import "@wordpress/base-styles/breakpoints";
 @import "@automattic/typography/styles/variables";
-@import "calypso/assets/stylesheets/shared/mixins/placeholder";
 @import "@automattic/onboarding/styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
 
 .upsell-product-wpcom-plan-card .upsell-product-card {
 	&__included {

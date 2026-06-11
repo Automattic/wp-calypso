@@ -101,6 +101,9 @@ module.exports = {
 					config: false,
 					plugins: [ autoprefixerPlugin() ],
 				},
+				prelude: `@use '${ require.resolve(
+					'calypso/assets/stylesheets/shared/_utils.scss'
+				) }' as *;`,
 			} ),
 			FileConfig.loader(),
 			{

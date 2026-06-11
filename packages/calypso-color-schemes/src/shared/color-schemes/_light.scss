@@ -128,14 +128,14 @@ Primary+Accent is studio blue.
 	/* Collapse Menu Button */
 	--color-collapse-menu-text: #777;
 
-	/* Gutenberg components */
-	--wp-admin-theme-color: var(--color-accent);
-	--wp-admin-theme-color-darker-20: var(--color-accent-60);
-
 	/* Fix for notification bell */
 	.masterbar__item-notifications {
 		.gridicon {
 			fill: #000;
 		}
 	}
+
+	/* Gutenberg components */
+	--wp-admin-theme-color: var(--color-accent);
+	--wp-admin-theme-color-darker-20: var(--color-accent-60);
 }

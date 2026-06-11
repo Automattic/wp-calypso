@@ -1,6 +1,3 @@
-@import "@automattic/typography/styles/variables";
-@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
-
 $card_width: $font-body * 3.75; // roughly 60px wide
 @mixin payment-details-col-start( $reset: false ) {
 	// Handles the logo column spacing

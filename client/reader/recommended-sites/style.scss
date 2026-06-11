@@ -1,7 +1,6 @@
-@import "@wordpress/base-styles/breakpoints";
 @import "@automattic/typography/styles/variables";
-@import "calypso/assets/stylesheets/shared/mixins/placeholder";
 @import "@automattic/color-studio/dist/color-variables";
+@import "@wordpress/base-styles/breakpoints";
 
 %ellipsis {
 	overflow: hidden;

@@ -1,11 +1,7 @@
-@import "calypso/assets/stylesheets/shared/functions/z-index";
-
-@import "@wordpress/base-styles/variables";
-@import "@wordpress/base-styles/mixins";
-@import "@automattic/typography/styles/variables";
-@import "calypso/assets/stylesheets/shared/mixins/tooltip";
 @import '@wordpress/base-styles/colors';
-
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+@import "@automattic/typography/styles/variables";
 $brand-text: "SF Pro Text", $sans;
 .global-sidebar {
 	bottom: 0;

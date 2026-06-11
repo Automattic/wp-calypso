@@ -1,7 +1,4 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
-@import "@automattic/typography/styles/variables";
-@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
-@import "calypso/assets/stylesheets/shared/mixins/long-content-fade";
 
 .comments__comment {
 	list-style-type: none;
