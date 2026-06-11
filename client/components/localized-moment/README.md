@@ -58,13 +58,12 @@ locale slug.
 ### Usage
 
 ```jsx
-import ReactDom from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import MomentProvider from 'calypso/components/localized-moment/provider';
 
-ReactDom.render(
+createRoot( document.getElementById( 'root' ) ).render(
 	<MomentProvider currentLocale="cs">
 		<Label date="2019-02-26T16:20:00" />
-	</MomentProvider>,
-	document.getElementById( 'root' )
+	</MomentProvider>
 );
 ```

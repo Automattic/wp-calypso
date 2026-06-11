@@ -1,5 +1,6 @@
 import { Button as CoreButton, CompactCard } from '@automattic/components';
 import styled from '@emotion/styled';
+import type { ComponentProps } from 'react';
 
 export const Root = styled( CompactCard )( {
 	display: 'flex',
@@ -33,11 +34,13 @@ export const Date = styled.span( {
 	color: 'var( --color-text-subtle )',
 } );
 
-export const Button = styled( CoreButton )( {
+const StyledButton = styled( CoreButton )( {
 	marginInlineStart: 'auto',
 	flexShrink: 0,
 } );
 
-Button.defaultProps = {
-	scary: true,
-};
+// `scary` defaults to true; callers can still override it via props. This used to rely on
+// `defaultProps`, which React 19 ignores on function components (styled components included).
+export const Button = ( props: ComponentProps< typeof StyledButton > ) => (
+	<StyledButton scary { ...props } />
+);
