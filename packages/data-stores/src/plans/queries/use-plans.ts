@@ -47,7 +47,9 @@ function usePlans( {
 	const queryKeys = useQueryKeysFactory();
 	const locale = useLocale();
 	const params = new URLSearchParams();
-	coupon && params.append( 'coupon_code', coupon );
+	if ( coupon ) {
+		params.append( 'coupon_code', coupon );
+	}
 	params.append( 'locale', locale );
 
 	// Auto-detect Jetpack context and use appropriate request function
@@ -77,6 +79,7 @@ function usePlans( {
 							productId: plan.product_id,
 							pathSlug: plan.path_slug,
 							productNameShort: plan.product_name_short,
+							tagline: plan.tagline,
 							pricing: {
 								billPeriod: plan.bill_period,
 								currencyCode: plan.currency_code,

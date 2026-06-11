@@ -430,10 +430,10 @@ const useGridPlans: UseGridPlansType = ( {
 					'For serious stores. Priority support, advanced extensions, and premium store themes.'
 				);
 			} else {
-				tagline = planConstantObj.getPlanTagline?.() ?? '';
+				tagline = planObject?.tagline ?? planConstantObj.getPlanTagline?.() ?? '';
 			}
 		} else {
-			tagline = planConstantObj.getPlanTagline?.() ?? '';
+			tagline = planObject?.tagline ?? planConstantObj.getPlanTagline?.() ?? '';
 		}
 
 		if ( useFocusedNewCopyTaglines ) {
