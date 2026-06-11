@@ -209,20 +209,19 @@ function SiteLogsContent( {
 					{ autoRefreshDisabledReason && (
 						<Notice variant="warning">{ autoRefreshDisabledReason }</Notice>
 					) }
-					{ site.__inaccessible_jetpack_error ? (
+					{ site.__inaccessible_jetpack_error && (
 						<Notice variant="warning">
 							{ __(
 								'Your site’s time zone setting is currently unavailable. Dates and times on this page are displayed in UTC instead.'
 							) }
 						</Notice>
-					) : (
-						showTimeMismatchNotice && (
-							<TimeMismatchNotice
-								settingsUrl={ settingsUrl }
-								siteTime={ gmtOffset }
-								siteId={ siteId }
-							/>
-						)
+					) }
+					{ ! site.__inaccessible_jetpack_error && showTimeMismatchNotice && (
+						<TimeMismatchNotice
+							settingsUrl={ settingsUrl }
+							siteTime={ gmtOffset }
+							siteId={ siteId }
+						/>
 					) }
 				</SitesNoticeArbiter>
 			}
