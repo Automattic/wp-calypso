@@ -1,6 +1,13 @@
-import { addReadSpaceSource, createReadSpace, deleteReadSpaceSource } from '../mutators';
+import nock from 'nock';
+import {
+	addReadSpaceSource,
+	createReadSpace,
+	deleteReadSpace,
+	deleteReadSpaceSource,
+} from '../mutators';
 import type { SiteSubscriptionItem } from '../../read-follows';
 
+const BASE = 'https://public-api.wordpress.com';
 const SPACE_ID = '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21';
 
 const makeSubscription = (
@@ -17,38 +24,119 @@ const makeSubscription = (
 	...overrides,
 } );
 
-// NOTE: these mutators are placeholders that resolve locally without any
-// network call, so there's nothing to intercept yet. Once the real endpoints
-// land (create: RSM-4139; add/remove source) and these issue `wpcom.req`
-// requests, mock the HTTP layer with `nock` — replying 200 for the success
-// cases and a 4xx/5xx for the error cases — instead of asserting on the
-// resolved value. See the sibling `read-site-recommendations` / `read-feeds`
-// fetcher tests for the `nock( BASE ).post( … ).reply( … )` pattern.
 describe( 'read spaces mutators', () => {
-	it( 'creates a local read space until the create endpoint exists', async () => {
-		const space = await createReadSpace( {
-			name: 'Work',
-			tags: [ 'business', 'design' ],
+	afterEach( () => nock.cleanAll() );
+
+	describe( 'createReadSpace', () => {
+		it( 'posts { title, tags } to the wpcom/v2 create endpoint', async () => {
+			let requestBody: unknown;
+			const scope = nock( BASE )
+				.post( '/wpcom/v2/reader/spaces/new', ( body ) => {
+					requestBody = body;
+					return true;
+				} )
+				.reply( 201, {
+					id: 42,
+					title: 'Work',
+					sites: [],
+					tags: [ 'business', 'design' ],
+					layout_color: 'celadon',
+					layout_icon: 'star',
+				} );
+
+			await createReadSpace( { name: 'Work', tags: [ 'business', 'design' ] } );
+
+			expect( scope.isDone() ).toBe( true );
+			// The form's `name` is sent as the wire field `title`.
+			expect( requestBody ).toEqual( { title: 'Work', tags: [ 'business', 'design' ] } );
 		} );
 
-		expect( space ).toMatchObject( {
-			name: 'Work',
-			tags: [ 'business', 'design' ],
-			layout: { color: 'blue', icon: 'category' },
-			sources: [],
+		it( 'adapts the 201 response to the client ReadSpaceDetails shape', async () => {
+			nock( BASE )
+				.post( '/wpcom/v2/reader/spaces/new' )
+				.reply( 201, {
+					id: 42,
+					title: 'Work',
+					sites: [],
+					tags: [ 'business' ],
+					layout_color: 'celadon',
+					layout_icon: 'star',
+				} );
+
+			const space = await createReadSpace( { name: 'Work', tags: [ 'business' ] } );
+
+			expect( space ).toEqual( {
+				id: '42',
+				name: 'Work',
+				tags: [ 'business' ],
+				layout: { color: 'celadon', icon: 'star' },
+				sources: [],
+			} );
 		} );
-		expect( space.id ).toEqual( expect.any( String ) );
+
+		it( 'rejects when the endpoint returns an error', async () => {
+			nock( BASE )
+				.post( '/wpcom/v2/reader/spaces/new' )
+				.reply( 409, {
+					code: 'reader_spaces_duplicate_slug',
+					message: 'You already have a space with this title.',
+					data: { status: 409 },
+				} );
+
+			await expect( createReadSpace( { name: 'Work', tags: [] } ) ).rejects.toMatchObject( {
+				code: 'reader_spaces_duplicate_slug',
+			} );
+		} );
 	} );
 
-	it( 'resolves when adding a source until the source endpoint exists', async () => {
-		await expect(
-			addReadSpaceSource( { spaceId: SPACE_ID, subscription: makeSubscription() } )
-		).resolves.toBeUndefined();
+	describe( 'deleteReadSpace', () => {
+		it( 'posts to the wpcom/v2 delete endpoint and resolves the result', async () => {
+			const scope = nock( BASE )
+				.post( '/wpcom/v2/reader/spaces/42/delete' )
+				.reply( 200, { deleted: true, id: 42 } );
+
+			await expect( deleteReadSpace( '42' ) ).resolves.toEqual( { deleted: true, id: 42 } );
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'encodes the space id into the path', async () => {
+			const scope = nock( BASE )
+				.post( '/wpcom/v2/reader/spaces/a%2Fb/delete' )
+				.reply( 200, { deleted: true, id: 7 } );
+
+			await deleteReadSpace( 'a/b' );
+
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'rejects on a not-found error', async () => {
+			nock( BASE )
+				.post( '/wpcom/v2/reader/spaces/999/delete' )
+				.reply( 404, {
+					code: 'reader_spaces_not_found',
+					message: 'Space not found.',
+					data: { status: 404 },
+				} );
+
+			await expect( deleteReadSpace( '999' ) ).rejects.toMatchObject( {
+				code: 'reader_spaces_not_found',
+			} );
+		} );
 	} );
 
-	it( 'resolves when deleting a source until the source endpoint exists', async () => {
-		await expect(
-			deleteReadSpaceSource( { spaceId: SPACE_ID, subscription: makeSubscription() } )
-		).resolves.toBeUndefined();
+	// The source mutators are still placeholders (no-op, no network) until their
+	// endpoints land. Update to nock once wired.
+	describe( 'source mutators (placeholder)', () => {
+		it( 'resolves when adding a source', async () => {
+			await expect(
+				addReadSpaceSource( { spaceId: SPACE_ID, subscription: makeSubscription() } )
+			).resolves.toBeUndefined();
+		} );
+
+		it( 'resolves when deleting a source', async () => {
+			await expect(
+				deleteReadSpaceSource( { spaceId: SPACE_ID, subscription: makeSubscription() } )
+			).resolves.toBeUndefined();
+		} );
 	} );
 } );
