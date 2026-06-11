@@ -136,6 +136,7 @@ export default function AgentDock( {
 			if ( isMinimized ) {
 				setIsMinimized( false );
 			}
+			// Skip a redundant save when the chat is already open.
 			if ( ! isPersistedOpen ) {
 				if ( isDocked ) {
 					openSidebar();
@@ -195,7 +196,11 @@ export default function AgentDock( {
 		if ( isMinimized ) {
 			setIsMinimized( false );
 		}
-		setOpenState( true );
+		// Skip a redundant save when the chat is already open (e.g. expanding
+		// from the minimized bar).
+		if ( ! isPersistedOpen ) {
+			setOpenState( true );
+		}
 
 		// Return to the active chat, resuming its session — unless already
 		// on a live chat/Zendesk view.

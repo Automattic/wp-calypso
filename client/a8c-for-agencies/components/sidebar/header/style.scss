@@ -4,8 +4,6 @@
 // Rules in this file inspired by:
 // client/components/jetpack/profile-dropdown/style.scss
 
-$profile-dropdown-menu-height: 250px;
-
 .a4a-sidebar__header {
 	display: flex;
 	justify-content: space-between;
@@ -83,7 +81,35 @@ html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
 }
 
 .a4a-sidebar__profile-dropdown.is-align-menu-up .a4a-sidebar__profile-dropdown-menu {
-	inset-block-start: -$profile-dropdown-menu-height;
+	// Anchor the upward menu by its bottom edge so it always sits above the
+	// button regardless of its height (the menu grows with the greeting).
+	inset-block-start: auto;
+	inset-block-end: calc(100% + 4px);
+}
+
+.a4a-sidebar__profile-dropdown-greeting {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 4px 8px 12px;
+	margin-block-end: 8px;
+	border-block-end: 1px solid var(--color-border-subtle);
+}
+
+// Qualified with the parent class so these rules out-specify the Text
+// component's own (emotion) styles; otherwise white-space: nowrap loses the
+// cascade and the lines wrap. display: block lets text-overflow engage.
+.a4a-sidebar__profile-dropdown-greeting .a4a-sidebar__profile-dropdown-greeting-name,
+.a4a-sidebar__profile-dropdown-greeting .a4a-sidebar__profile-dropdown-greeting-agency {
+	display: block;
+	max-width: 100%;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.a4a-sidebar__profile-dropdown-greeting .a4a-sidebar__profile-dropdown-greeting-name {
+	color: var(--color-text);
 }
 
 .a4a-sidebar__profile-dropdown-menu-item {

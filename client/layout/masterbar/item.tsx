@@ -41,6 +41,7 @@ type MasterbarItemOwnProps = {
 	hasGlobalBorderStyle?: boolean;
 	ariaLabel?: string;
 	openSubMenuOnClick?: boolean;
+	closeSubMenuOnItemClick?: boolean;
 };
 
 /** Props accepted by the default `<button>` / `<a>` implementation (no custom `as`). */
@@ -73,6 +74,7 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 		as: PropTypes.elementType,
 		ariaLabel: PropTypes.string,
 		openSubMenuOnClick: PropTypes.bool,
+		closeSubMenuOnItemClick: PropTypes.bool,
 		asProps: PropTypes.object,
 	};
 
@@ -145,7 +147,7 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 						{ item.onClick && (
 							<Button
 								className="is-link"
-								onClick={ item.onClick }
+								onClick={ () => this.submenuButtonClick( item.onClick ) }
 								onTouchEnd={ ( ev: React.TouchEvent ) =>
 									this.submenuButtonTouch( ev, item.onClick )
 								}
@@ -216,13 +218,21 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 		}
 	};
 
+	submenuButtonClick = ( onClick: ( () => void ) | undefined ) => {
+		// Opt-in: close the menu after a mouse click, matching the touch/keyboard flows.
+		if ( this.props.closeSubMenuOnItemClick ) {
+			this.setState( { isOpenForNonMouseFlow: false } );
+		}
+		onClick?.();
+	};
+
 	submenuButtonTouch = (
 		event: React.TouchEvent | React.KeyboardEvent,
 		onClick: ( () => void ) | undefined
 	) => {
 		event.preventDefault();
 		this.setState( { isOpenForNonMouseFlow: false } );
-		onClick && onClick();
+		onClick?.();
 	};
 
 	submenuButtonByKey = ( event: React.KeyboardEvent, onClick: ( () => void ) | undefined ) => {

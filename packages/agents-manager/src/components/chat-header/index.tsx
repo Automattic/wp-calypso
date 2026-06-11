@@ -26,7 +26,8 @@ export default function ChatHeader( { onClose, options, title, onBack }: Props )
 		( select ) => ( select( AGENTS_MANAGER_STORE ) as AgentsManagerSelect ).getIsDocked(),
 		[]
 	);
-	// Minimize only applies to the floating chat reachable from the WP admin bar.
+	// Minimize only applies to the floating chat reachable from an entry button
+	// (the WP admin bar or the Calypso masterbar).
 	const showMinimize = hasAdminBarTrigger() && ! isDocked;
 
 	return (

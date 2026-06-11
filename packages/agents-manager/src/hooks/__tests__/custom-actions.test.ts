@@ -7,11 +7,18 @@ import { useRegisterCustomActions, useSetupCustomActions } from '../custom-actio
 
 const mockSetIsOpen = jest.fn();
 const mockSetIsDocked = jest.fn();
+const mockSetIsMinimized = jest.fn();
 let mockContext = {
 	getActiveSessionId: jest.fn( () => 'session-123' ),
 	agentConfig: { agentId: 'reader-chat' },
 };
-let mockSelectState = {
+let mockSelectState: {
+	hasLoaded: boolean;
+	isOpen: boolean;
+	isDocked: boolean;
+	isMinimized?: boolean;
+	floatingPosition: string;
+} = {
 	hasLoaded: true,
 	isOpen: false,
 	isDocked: false,
@@ -23,6 +30,7 @@ jest.mock( '@wordpress/data', () => ( {
 	useDispatch: jest.fn( () => ( {
 		setIsOpen: mockSetIsOpen,
 		setIsDocked: mockSetIsDocked,
+		setIsMinimized: mockSetIsMinimized,
 	} ) ),
 } ) );
 
@@ -122,6 +130,42 @@ describe( 'useSetupCustomActions', () => {
 		window.__agentsManagerActions?.setChatOpen?.( true );
 
 		expect( mockSetIsOpen ).toHaveBeenCalledWith( true, true );
+	} );
+
+	it( 'expands a minimized chat with a single save: un-minimize, no redundant open', () => {
+		mockSelectState = {
+			hasLoaded: true,
+			isOpen: true,
+			isDocked: false,
+			isMinimized: true,
+			floatingPosition: '',
+		};
+		renderHook( () => useSetupCustomActions( { ...baseProps, canDock: false } ) );
+
+		window.__agentsManagerActions?.setChatOpen?.( true );
+
+		expect( mockSetIsMinimized ).toHaveBeenCalledWith( false );
+		// Open is unchanged, so no second (racing) save.
+		expect( mockSetIsOpen ).not.toHaveBeenCalled();
+	} );
+
+	it( 'opens a closed chat without a redundant minimized save', () => {
+		mockSelectState = { hasLoaded: true, isOpen: false, isDocked: false, floatingPosition: '' };
+		renderHook( () => useSetupCustomActions( { ...baseProps, canDock: false } ) );
+
+		window.__agentsManagerActions?.setChatOpen?.( true );
+
+		expect( mockSetIsMinimized ).not.toHaveBeenCalled();
+		expect( mockSetIsOpen ).toHaveBeenCalled();
+	} );
+
+	it( 'leaves the minimized state untouched when closing', () => {
+		mockSelectState = { hasLoaded: true, isOpen: true, isDocked: false, floatingPosition: '' };
+		renderHook( () => useSetupCustomActions( { ...baseProps, canDock: false } ) );
+
+		window.__agentsManagerActions?.setChatOpen?.( false );
+
+		expect( mockSetIsMinimized ).not.toHaveBeenCalled();
 	} );
 
 	it( 'removes its actions from the global on unmount', () => {

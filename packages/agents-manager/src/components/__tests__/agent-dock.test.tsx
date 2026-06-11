@@ -294,6 +294,7 @@ describe( 'AgentDock', () => {
 	} );
 
 	it( 'opens Reader Chat without saving shared Agents Manager state', () => {
+		mockAgentsManagerState = { isOpen: false, isDocked: false };
 		renderAgentDock();
 
 		fireEvent.click( screen.getByText( 'Expand chat' ) );
@@ -311,6 +312,7 @@ describe( 'AgentDock', () => {
 
 	it( 'opens regular agents and saves shared Agents Manager state', () => {
 		useWpAdminAgent();
+		mockAgentsManagerState = { isOpen: false, isDocked: false };
 
 		renderAgentDock();
 
