@@ -1,6 +1,7 @@
 import { Button as CoreButton, CompactCard } from '@automattic/components';
 import styled from '@emotion/styled';
-import type { ComponentProps } from 'react';
+import { forwardRef } from 'react';
+import type { ComponentProps, ComponentRef } from 'react';
 
 export const Root = styled( CompactCard )( {
 	display: 'flex',
@@ -41,6 +42,12 @@ const StyledButton = styled( CoreButton )( {
 
 // `scary` defaults to true; callers can still override it via props. This used to rely on
 // `defaultProps`, which React 19 ignores on function components (styled components included).
-export const Button = ( props: ComponentProps< typeof StyledButton > ) => (
-	<StyledButton scary { ...props } />
-);
+// Wrapped in forwardRef so a ref passed to SSHKeyCard.Button still reaches CoreButton.
+export const Button = forwardRef<
+	ComponentRef< typeof StyledButton >,
+	ComponentProps< typeof StyledButton >
+>( ( { scary = true, ...props }, ref ) => (
+	<StyledButton ref={ ref } scary={ scary } { ...props } />
+) );
+
+Button.displayName = 'Button';
