@@ -8,10 +8,6 @@
 
 - `Stepper`, `VerticalStepper`, `HorizontalStepper`: Add Stepper component suite with vertical and horizontal orientations, step indicators, linear flow support, and accessible ARIA semantics ([#111036](https://github.com/Automattic/wp-calypso/pull/111036)).
 
-### Bug Fixes
-
-- `Stepper`: Warn about duplicate step values at registration time (the previous check was unreachable), and keep the original step registered when a rejected duplicate unmounts ([#111567](https://github.com/Automattic/wp-calypso/pull/111567)).
-
 ## 1.0.2
 
 ### Enhancements
