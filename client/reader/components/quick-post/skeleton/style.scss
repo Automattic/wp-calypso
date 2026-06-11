@@ -1,3 +1,5 @@
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+
 .quick-post-skeleton {
 	span {
 		@include placeholder( --color-neutral-0 );

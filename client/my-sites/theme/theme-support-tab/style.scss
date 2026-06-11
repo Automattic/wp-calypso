@@ -1,5 +1,6 @@
-@import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .card.theme__sheet-card-support {
 	align-items: center;

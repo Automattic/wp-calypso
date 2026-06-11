@@ -1,3 +1,6 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 .memberships__subscription-meta {
 	padding: 0;
 	font-size: $font-body-small;
