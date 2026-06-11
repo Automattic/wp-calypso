@@ -14,6 +14,7 @@ import {
 import { LoadingLine } from '../../components/loading-line';
 import { PageViewTracker } from '../../components/page-view-tracker';
 import NotFound from '../404';
+import AccountRecoveryInterstitial from '../account-recovery-interstitial';
 import { bumpStat } from '../analytics';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
@@ -203,6 +204,7 @@ function Root() {
 			{ isOmnibarEnabled && supports.help && <OmnibarAgentsManager /> }
 			{ isOmnibarEnabled && <OmnibarSiteSwitcher /> }
 			<Snackbars />
+			<AccountRecoveryInterstitial />
 			<PageViewTracker />
 			<NavigationBlockerRegistry />
 			{ 'development' === process.env.NODE_ENV && (
