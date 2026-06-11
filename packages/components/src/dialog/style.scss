@@ -13,7 +13,7 @@
 	justify-content: center;
 	position: fixed;
 	right: 0;
-	top: var(--masterbar-height);
+	top: var(--masterbar-height, 0);
 	transition: background-color 0.2s ease-in;
 	z-index: z-index("root", ".dialog__backdrop"); // try to ensure that dialogs are on top of everything else
 

@@ -113,7 +113,7 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) 
 		border: 1px solid $admin-border-color;
 		border-bottom: none;
 		box-sizing: border-box;
-		height: calc( var( --masterbar-height ) + 1px );
+		height: calc( var( --masterbar-height, #{$admin-bar-height} ) + 1px );
 	}
 
 	#adminmenuback,
@@ -202,7 +202,7 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 			border: 1px solid $admin-border-color;
 			border-bottom: none;
 			box-sizing: border-box;
-			height: calc( var( --masterbar-height ) + 1px );
+			height: calc( var( --masterbar-height, #{$admin-bar-height} ) + 1px );
 
 			.masterbar__item-wrapper .masterbar__item-my-sites {
 				border-top-left-radius: $main-border-radius;
@@ -340,17 +340,22 @@ body.is-section-stepper.agents-manager-sidebar-container {
 	.plugins-browser--site-view .search-categories.fixed-top {
 		top: calc( $admin-bar-height + $layout-spacing + 1px );
 		right: calc( $sidebar-width + 1px );
-		left: calc( var( --sidebar-width-max ) + 17px );
+		left: calc( var( --sidebar-width-max, #{$admin-menu-width-unified} ) + 17px );
 
 		&::after {
-			width: calc( 100vw - var( --sidebar-width-max ) - $sidebar-width - 18px );
+			width: calc(
+				100vw - var( --sidebar-width-max, #{$admin-menu-width-unified} ) - $sidebar-width -
+					18px
+			);
 		}
 	}
 
 	.themes__content .themes__controls.is-sticky:not( .is-global-sidebar-visible ) {
 		top: calc( $admin-bar-height + $layout-spacing + 1px );
-		left: calc( var( --sidebar-width-max ) + 17px );
-		width: calc( 100vw - var( --sidebar-width-max ) - $sidebar-width - 18px );
+		left: calc( var( --sidebar-width-max, #{$admin-menu-width-unified} ) + 17px );
+		width: calc(
+			100vw - var( --sidebar-width-max, #{$admin-menu-width-unified} ) - $sidebar-width - 18px
+		);
 	}
 }
 

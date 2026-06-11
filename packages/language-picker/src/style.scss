@@ -2,6 +2,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
+@import "@automattic/typography/styles/fonts";
 
 .language-picker-component {
 	flex-direction: column;
