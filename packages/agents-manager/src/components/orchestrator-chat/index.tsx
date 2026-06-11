@@ -245,6 +245,10 @@ export default function OrchestratorChat( {
 					// Upload files to WordPress media library
 					const mediaObjects = await uploadImagesToWordPress();
 
+					recordBigSkyTracksEvent( 'file_upload_success', {
+						count: mediaObjects.length,
+					} );
+
 					// Create image data objects with full metadata including attachment ID
 					const imageData = mediaObjects.map( ( media ) => ( {
 						url: media.url,

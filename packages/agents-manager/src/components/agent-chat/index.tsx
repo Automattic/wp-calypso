@@ -229,17 +229,14 @@ export default function AgentChat( {
 	// `useImageUpload`); reader-chat has no provider, but gate defensively so
 	// `jetpack_big_sky_*` never fires from that surface.
 	const trackImageUpload = ! isReaderChatHost() && !! imageUpload;
+
 	const handleFilesSelected = useCallback(
 		async ( files: File[] ) => {
-			if ( trackImageUpload ) {
-				recordBigSkyTracksEvent( 'file_upload_success', {
-					count: files.length,
-				} );
-			}
 			await imageUpload?.handleFilesSelected( files );
 		},
-		[ imageUpload, trackImageUpload ]
+		[ imageUpload ]
 	);
+
 	const handleBrowse = useCallback(
 		( files: File[] ) => {
 			if ( trackImageUpload ) {
@@ -250,6 +247,7 @@ export default function AgentChat( {
 		},
 		[ trackImageUpload ]
 	);
+
 	const handleDrop = useCallback(
 		( files: File[] ) => {
 			if ( trackImageUpload ) {
@@ -260,6 +258,7 @@ export default function AgentChat( {
 		},
 		[ trackImageUpload ]
 	);
+
 	const handleRemoveImage = useCallback(
 		( image: UploadedImage ) => {
 			if ( trackImageUpload ) {
@@ -271,11 +270,13 @@ export default function AgentChat( {
 		},
 		[ imageUpload, trackImageUpload ]
 	);
+
 	const handleImageDragStart = useCallback( () => {
 		if ( trackImageUpload ) {
 			recordBigSkyTracksEvent( 'file_upload_drag_start' );
 		}
 	}, [ trackImageUpload ] );
+
 	const handleUploadError = useCallback( () => {
 		if ( trackImageUpload ) {
 			recordBigSkyTracksEvent( 'file_upload_invalid' );

@@ -50,15 +50,9 @@ export function getBigSkyTracksData(): BigSkyTracksData {
 		return { bigSkyVersion: '0', sessionType: 'unknown', screen: 'site-editor', isDevMode: false };
 	}
 
-	// `isFreeTrial` missing/non-boolean → `unknown`
-	let sessionType = 'unknown';
-	if ( typeof state.isFreeTrial === 'boolean' ) {
-		sessionType = state.isFreeTrial ? 'free-trial-session' : 'paid-user-session';
-	}
-
 	return {
 		bigSkyVersion: state.bigSkyVersion ?? '0',
-		sessionType,
+		sessionType: state.isFreeTrial ? 'free-trial-session' : 'paid-user-session',
 		screen: state.currentScreen?.screen ?? 'site-editor',
 		isDevMode: !! state.isDevMode,
 	};

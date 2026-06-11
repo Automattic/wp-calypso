@@ -70,7 +70,7 @@ describe( 'tracks wrappers', () => {
 		it( 'sources session_type, screen, and big_sky_version from bigSkyInitialState', () => {
 			( window as Window ).bigSkyInitialState = {
 				bigSkyVersion: '7',
-				isFreeTrial: false,
+				isFreeTrial: '',
 				currentScreen: { screen: 'dashboard' },
 			};
 
@@ -160,8 +160,8 @@ describe( 'getBigSkyTracksData', () => {
 	it( 'maps the present blob to resolved values', () => {
 		setState( {
 			bigSkyVersion: '7',
-			isFreeTrial: true,
-			isDevMode: true,
+			isFreeTrial: '1',
+			isDevMode: '1',
 			currentScreen: { screen: 'dashboard' },
 		} );
 
@@ -173,23 +173,18 @@ describe( 'getBigSkyTracksData', () => {
 		} );
 	} );
 
-	it( 'reports a paid session when isFreeTrial is false', () => {
-		setState( { isFreeTrial: false } );
+	it( 'reports a paid session when isFreeTrial is the empty string', () => {
+		setState( { isFreeTrial: '' } );
 		expect( getBigSkyTracksData().sessionType ).toBe( 'paid-user-session' );
 	} );
 
-	it( 'reports unknown when isFreeTrial is missing', () => {
+	it( 'reports a paid session when isFreeTrial is missing from a present blob', () => {
 		setState( { bigSkyVersion: '7' } );
-		expect( getBigSkyTracksData().sessionType ).toBe( 'unknown' );
-	} );
-
-	it( 'reports unknown when isFreeTrial is non-boolean', () => {
-		setState( { isFreeTrial: 'yes' as unknown as boolean } );
-		expect( getBigSkyTracksData().sessionType ).toBe( 'unknown' );
+		expect( getBigSkyTracksData().sessionType ).toBe( 'paid-user-session' );
 	} );
 
 	it( 'falls back to per-field defaults for a partial blob', () => {
-		setState( { isFreeTrial: true } );
+		setState( { isFreeTrial: '1' } );
 		expect( getBigSkyTracksData() ).toEqual( {
 			bigSkyVersion: '0',
 			sessionType: 'free-trial-session',

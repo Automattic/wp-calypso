@@ -128,8 +128,8 @@ interface Window {
 	/** Big Sky injects this on editor surfaces. Narrowed to the fields AM consumes. */
 	bigSkyInitialState?: {
 		bigSkyVersion?: string;
-		isFreeTrial?: boolean;
-		isDevMode?: boolean;
+		isFreeTrial?: string;
+		isDevMode?: string;
 		currentScreen?: { screen?: string };
 	};
 }
