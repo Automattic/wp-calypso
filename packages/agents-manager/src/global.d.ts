@@ -12,6 +12,7 @@
 declare const agentsManagerData:
 	| {
 			agentProviders?: ( string | import('./utils/load-external-providers').LoadedProviders )[];
+			providerCompositionPolicy?: import('./utils/provider-composition').ProviderCompositionDebugSummary;
 			useUnifiedExperience?: boolean;
 			agentId?: string;
 			helpCenterUrl?: string;
