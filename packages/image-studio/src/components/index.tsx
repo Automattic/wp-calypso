@@ -75,6 +75,8 @@ function ImageStudioAgentChat( {
 	const { addNotice } = useDispatch( imageStudioStore );
 	// Storing the input value for detecting when it is cleared
 	const [ inputValue, setInputValue ] = useState( '' );
+	// Tracks the most recently submitted prompt so it can be restored on failure.
+	const lastSubmittedPromptRef = useRef< string >( '' );
 
 	const isAnnotationSaving = useSelect( ( select ) => {
 		return select( imageStudioStore ).getIsAnnotationSaving();
@@ -146,6 +148,9 @@ function ImageStudioAgentChat( {
 				abortSuggestionsLoading();
 			}
 
+			// Preserve the prompt before submission so it can be restored on failure.
+			lastSubmittedPromptRef.current = message;
+
 			try {
 				await onChatSubmit?.();
 			} catch ( error ) {
@@ -185,7 +190,27 @@ function ImageStudioAgentChat( {
 
 	const { error: agentError, ...agentUiProps } = agentChatProps;
 
-	useErrorNotice( agentError, addNotice );
+	// In video mode, restore the last prompt to the input on failure so the
+	// user does not lose their work and can adjust or retry immediately.
+	useEffect( () => {
+		if ( isVideoMode && agentError && lastSubmittedPromptRef.current ) {
+			setInputValue( lastSubmittedPromptRef.current );
+		}
+	}, [ agentError, isVideoMode ] );
+
+	// Retry callback: re-submits the last prompt. Passed to useErrorNotice so
+	// the error snackbar can include a "Try again" button in video mode.
+	const handleRetry = useCallback( () => {
+		const lastPrompt = lastSubmittedPromptRef.current;
+		if ( lastPrompt ) {
+			handleSubmit( lastPrompt );
+		}
+	}, [ handleSubmit ] );
+
+	useErrorNotice( agentError, addNotice, {
+		isVideoMode,
+		onRetry: isVideoMode ? handleRetry : undefined,
+	} );
 
 	const isProcessing = agentChatProps.isProcessing || isAnnotationSaving;
 

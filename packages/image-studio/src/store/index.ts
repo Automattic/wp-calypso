@@ -30,8 +30,11 @@ export interface CanvasMetadata {
 export type NoticeType = 'error' | 'success' | 'warning' | 'info';
 export interface NoticeAction {
 	label: string;
-	url: string;
+	/** URL to open when the action is clicked. Either url or onClick must be provided. */
+	url?: string;
 	openInNewTab?: boolean;
+	/** Direct click handler. Takes precedence over url when both are provided. */
+	onClick?: () => void;
 }
 export interface Notice {
 	id: string;
