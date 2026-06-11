@@ -8,7 +8,7 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import { isWithinIntroductoryOfferPeriod } from 'calypso/lib/purchases';
 import type { Purchase } from 'calypso/lib/purchases/types';
-import type { ReactNode } from 'react';
+import type { ReactNode, JSX } from 'react';
 
 function PurchaseMetaIntroductoryOfferDetail( {
 	purchase,

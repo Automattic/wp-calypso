@@ -72,7 +72,7 @@ export function useSetupCustomActions( {
 		return store.getAgentsManagerState();
 	}, [] );
 	const { setIsOpen, setIsDocked, setIsMinimized } = useDispatch( AGENTS_MANAGER_STORE );
-	const { agentConfig, getActiveSessionId } = useAgentsManagerContext();
+	const { agentConfig, getActiveSessionId, resumeActiveChat } = useAgentsManagerContext();
 	const navigate = useNavigate();
 	const resolveRef = useRef< ( ( state: AgentsManagerChatState ) => void ) | null >( null );
 	const shouldPersistOpenState = ! isReaderChatAgent( agentConfig?.agentId );
@@ -207,6 +207,7 @@ export function useSetupCustomActions( {
 		removeContextCard: removeExternalContextCard,
 		setSiteEditorAction,
 		chatNavigate: navigate,
+		resumeChat: resumeActiveChat,
 		isReady: true,
 	} );
 

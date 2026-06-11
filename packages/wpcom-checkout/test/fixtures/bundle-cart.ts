@@ -48,15 +48,30 @@ export function buildBundleResponseCart(): ResponseCart {
 		...getEmptyResponseCart(),
 		products: [
 			buildDomainProduct(
-				{ uuid: 'primary', meta: 'example.com', item_subtotal_integer: 2200 },
+				{
+					uuid: 'primary',
+					meta: 'example.com',
+					item_subtotal_integer: 2200,
+					item_original_subtotal_integer: 2200,
+				},
 				{ groupId: 'bundle-abc', role: 'primary', expectedBundleSize: 3 }
 			),
 			buildDomainProduct(
-				{ uuid: 'companion-net', meta: 'example.net', item_subtotal_integer: 1800 },
+				{
+					uuid: 'companion-net',
+					meta: 'example.net',
+					item_subtotal_integer: 1800,
+					item_original_subtotal_integer: 1800,
+				},
 				{ groupId: 'bundle-abc', role: 'companion', expectedBundleSize: 3 }
 			),
 			buildDomainProduct(
-				{ uuid: 'companion-org', meta: 'example.org', item_subtotal_integer: 2000 },
+				{
+					uuid: 'companion-org',
+					meta: 'example.org',
+					item_subtotal_integer: 2000,
+					item_original_subtotal_integer: 2000,
+				},
 				{ groupId: 'bundle-abc', role: 'companion', expectedBundleSize: 3 }
 			),
 			{

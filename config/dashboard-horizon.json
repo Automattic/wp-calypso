@@ -32,6 +32,7 @@
 		"dev/preferences-helper": true,
 		"dev/store-sandbox-helper": true,
 		"domain-transfer-redesign": true,
+		"emails/titan-tiers": false,
 		"marketplace-redesign": true,
 		"mcp-settings": true,
 		"onboarding/interval-dropdown": true,

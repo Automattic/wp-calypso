@@ -85,6 +85,7 @@
 		"domain-bundling": true,
 		"domain-transfer-redesign": true,
 		"email-accounts/enabled": true,
+		"emails/titan-tiers": true,
 		"entrepreneur/skip-trial-for-migration": true,
 		"google-drive": true,
 		"google-my-business": true,

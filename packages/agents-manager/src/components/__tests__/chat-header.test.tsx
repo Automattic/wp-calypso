@@ -43,9 +43,9 @@ jest.mock( '@wordpress/data', () => ( {
 } ) );
 jest.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'agents-manager' } ) );
 jest.mock( '../../hooks/use-admin-bar-integration', () => ( {
-	hasAdminBarTrigger: () =>
-		!! globalThis.document.getElementById( 'wp-admin-bar-agents-manager' ) ||
-		!! globalThis.document.querySelector( '.masterbar__item-agents-manager' ),
+	hasAiChatEntryButton: () =>
+		!! globalThis.document.getElementById( 'wp-admin-bar-agents-manager-ai-chat' ) ||
+		!! globalThis.document.querySelector( '.masterbar__item-agents-manager-ai-chat' ),
 } ) );
 jest.mock( '../chat-header/style.scss', () => ( {} ) );
 
@@ -53,7 +53,7 @@ import ChatHeader from '../chat-header';
 
 function installAdminBarTrigger() {
 	const el = document.createElement( 'div' );
-	el.id = 'wp-admin-bar-agents-manager';
+	el.id = 'wp-admin-bar-agents-manager-ai-chat';
 	document.body.appendChild( el );
 }
 
@@ -66,7 +66,7 @@ function installReaderChatHost() {
 
 function installMasterbarTrigger() {
 	const el = document.createElement( 'div' );
-	el.className = 'masterbar__item-agents-manager';
+	el.className = 'masterbar__item-agents-manager-ai-chat';
 	document.body.appendChild( el );
 }
 
@@ -82,9 +82,9 @@ describe( 'ChatHeader', () => {
 	afterEach( () => {
 		mockIsDocked = false;
 		mockSetIsMinimized.mockClear();
-		document.getElementById( 'wp-admin-bar-agents-manager' )?.remove();
+		document.getElementById( 'wp-admin-bar-agents-manager-ai-chat' )?.remove();
 		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
-		document.querySelector( '.masterbar__item-agents-manager' )?.remove();
+		document.querySelector( '.masterbar__item-agents-manager-ai-chat' )?.remove();
 	} );
 
 	it( 'renders the title with a matching title attribute so the full text shows on hover when truncated', () => {

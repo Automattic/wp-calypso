@@ -1201,6 +1201,14 @@ export default function pages() {
 	 * SSR middleware if the request wasn't going to be resolved with SSR anyways.
 	 */
 	function handleSectionPath( section, sectionPath, entrypoint, reqFilter, extraMiddleware ) {
+		// Some callers resolve a section via `sections.find( … )`, which returns
+		// undefined when that section is disabled for the current env and thus
+		// stripped from the (development) server bundle — e.g. `a8c-for-agencies-signup`,
+		// disabled in config/_shared.json, is absent under a plain `yarn start`.
+		// Skip registration in that case instead of crashing on boot.
+		if ( ! section ) {
+			return;
+		}
 		const pathRegex = pathToRegExp( sectionPath );
 
 		app.get(

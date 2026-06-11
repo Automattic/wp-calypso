@@ -11,24 +11,9 @@ import { useSelector } from 'react-redux';
 import getIsNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import Item from '../item';
-import AgentsManagerIcon from './agents-manager-icon';
+import { closeAgentsManagerChat, openAgentsManagerChat } from './chat-actions';
+import HelpIcon from './help-icon';
 import './style.scss';
-
-/**
- * Run a callback with the Agents Manager actions API. The dock is async-loaded,
- * so if it isn't ready yet, defer until the `agents-manager-ready` event fires
- * (it won't fire again once ready, so check `isReady` first).
- */
-const withAgentsManagerActions = ( run ) => {
-	if ( window.__agentsManagerActions?.isReady ) {
-		run( window.__agentsManagerActions );
-		return;
-	}
-
-	window.addEventListener( 'agents-manager-ready', () => run( window.__agentsManagerActions ), {
-		once: true,
-	} );
-};
 
 const MasterbarAgentsManager = ( { tooltip } ) => {
 	const translate = useTranslate();
@@ -60,12 +45,9 @@ const MasterbarAgentsManager = ( { tooltip } ) => {
 			return window.open( destination, '_blank', 'noopener,noreferrer' );
 		}
 
-		// Drive the chat through its own actions so navigation and opening work for
-		// docked and floating chats alike (expanding it from the minimized bar).
-		withAgentsManagerActions( ( actions ) => {
-			actions?.chatNavigate( destination );
-			actions?.setChatOpen( true );
-		} );
+		// `/chat` resumes the active conversation (no path), matching the AI
+		// button; other items open the chat at their own route.
+		openAgentsManagerChat( destination === '/chat' ? undefined : destination );
 
 		recordTracksEvent( 'calypso_inlinehelp_show', {
 			force_site_id: true,
@@ -85,7 +67,7 @@ const MasterbarAgentsManager = ( { tooltip } ) => {
 						<span>{ translate( 'Chat support' ) }</span>
 					</div>
 				),
-				onClick: () => handleMenuClick( '/' ),
+				onClick: () => handleMenuClick( '/chat' ),
 			},
 			{
 				label: (
@@ -142,7 +124,7 @@ const MasterbarAgentsManager = ( { tooltip } ) => {
 	// Close the agents manager when notifications are opened
 	useEffect( () => {
 		if ( ! prevIsNotificationsOpen && isNotificationsOpen && agentsManagerVisible ) {
-			window.__agentsManagerActions?.setChatOpen( false );
+			closeAgentsManagerChat();
 		}
 	}, [ agentsManagerVisible, isNotificationsOpen, prevIsNotificationsOpen ] );
 
@@ -155,7 +137,7 @@ const MasterbarAgentsManager = ( { tooltip } ) => {
 			} ) }
 			wrapperClassName="is-menu-panel"
 			tooltip={ tooltip }
-			icon={ <AgentsManagerIcon hasUnread={ false } /> }
+			icon={ <HelpIcon /> }
 			subItems={ menuItems }
 			openSubMenuOnClick
 			closeSubMenuOnItemClick

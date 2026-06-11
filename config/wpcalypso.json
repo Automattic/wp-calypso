@@ -51,6 +51,7 @@
 		"domain-bundling": true,
 		"domain-transfer-redesign": true,
 		"email-accounts/enabled": true,
+		"emails/titan-tiers": false,
 		"google-my-business": true,
 		"help": true,
 		"help-center/logged-out": true,

@@ -22,6 +22,8 @@ export const membershipProductFromApi = ( product ) => ( {
 	formatted_price: product.price,
 	price: parseFloat( product.price ),
 	title: product.title,
+	description: product.description,
+	description_rendered: product.description_rendered,
 	renewal_schedule: product.interval,
 	buyer_can_change_amount: product.buyer_can_change_amount,
 	multiple_per_user: product.multiple_per_user,

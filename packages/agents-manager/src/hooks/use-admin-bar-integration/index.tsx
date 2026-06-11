@@ -1,5 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useEffect, useRef } from '@wordpress/element';
+import { useEffect, useRef, useState } from '@wordpress/element';
+import { useNavigate } from 'react-router-dom';
+import { useAgentsManagerContext } from '../../contexts';
 import './style.scss';
 
 // Admin bar element selectors
@@ -8,11 +10,23 @@ const ADMIN_BAR_CHAT_ITEM_ID = 'wp-admin-bar-agents-manager-chat-support';
 const ADMIN_BAR_HISTORY_ITEM_ID = 'wp-admin-bar-agents-manager-chat-history';
 const ADMIN_BAR_GUIDES_ITEM_ID = 'wp-admin-bar-agents-manager-support-guides';
 
-// Calypso uses its own masterbar trigger instead of the wp-admin bar.
-const MASTERBAR_BUTTON_SELECTOR = '.masterbar__item-agents-manager';
+// The standalone AI chat button — the chat's entry point, separate from the Help
+// menu. The wp-admin bar exposes it by ID; Calypso's masterbar by class.
+const ADMIN_BAR_AI_CHAT_BUTTON_ID = 'wp-admin-bar-agents-manager-ai-chat';
+const MASTERBAR_AI_CHAT_BUTTON_SELECTOR = '.masterbar__item-agents-manager-ai-chat';
 
-// CSS class names
-const ACTIVE_CLASS = 'active';
+/**
+ * Whether the AI chat button (wp-admin bar or Calypso masterbar) is present.
+ * If so, the chat hides on close and reopens from it instead of a floating bubble.
+ */
+export function hasAiChatEntryButton(): boolean {
+	return (
+		!! document.getElementById( ADMIN_BAR_AI_CHAT_BUTTON_ID ) ||
+		!! document.querySelector( MASTERBAR_AI_CHAT_BUTTON_SELECTOR )
+	);
+}
+
+// CSS class name
 const OPEN_CLICK_CLASS = 'open-click';
 
 // Tracking event destinations
@@ -24,58 +38,36 @@ interface UseAdminBarIntegrationOptions {
 	isOpen: boolean;
 	sectionName: string;
 	maybeOpenChat: () => void;
-	navigate: ( route: string, options?: { state?: object } ) => void;
-}
-
-/**
- * Whether a trigger button (the WP admin bar or the Calypso masterbar) can open
- * the chat. If so, the chat hides on close and reopens from it instead of
- * leaving a floating bubble.
- */
-export function hasAdminBarTrigger(): boolean {
-	return (
-		!! document.getElementById( ADMIN_BAR_BUTTON_ID ) ||
-		!! document.querySelector( MASTERBAR_BUTTON_SELECTOR )
-	);
 }
 
 /**
  * Custom hook to handle WordPress admin bar integration for agents-manager
  *
  * Manages:
- * - Active state styling on the main button
- * - Menu panel toggle visibility
- * - Click outside to close menu
- * - Menu item click handlers with tracking
+ * - Help menu panel toggle visibility
+ * - Click outside to close the menu
+ * - Menu item and AI chat button click handlers with tracking
  *
- * Returns whether the WP admin bar trigger button is present on the page.
+ * Returns whether the AI chat entry button is present on the page.
  */
 export default function useAdminBarIntegration( {
 	isOpen,
 	sectionName,
 	maybeOpenChat,
-	navigate,
 }: UseAdminBarIntegrationOptions ): boolean {
-	// Ref to avoid re-attaching DOM event listeners when the caller passes a new `maybeOpenChat` reference.
+	const navigate = useNavigate();
+	const { resumeActiveChat } = useAgentsManagerContext();
+
+	// Refs keep the latest callbacks without re-attaching DOM listeners each render.
 	const maybeOpenChatRef = useRef( maybeOpenChat );
 	maybeOpenChatRef.current = maybeOpenChat;
+	const resumeActiveChatRef = useRef( resumeActiveChat );
+	resumeActiveChatRef.current = resumeActiveChat;
 
-	// Whether an entry-point button (the WP admin bar or the Calypso masterbar) is present.
-	const hasButton = hasAdminBarTrigger();
+	// Whether the AI chat entry button is present (captured once on mount).
+	const [ hasAiChatEntry ] = useState( hasAiChatEntryButton );
 
-	// Update admin bar button active state based on isOpen
-	useEffect( () => {
-		const button = document.getElementById( ADMIN_BAR_BUTTON_ID );
-		if ( button ) {
-			if ( isOpen ) {
-				button.classList.add( ACTIVE_CLASS );
-			} else {
-				button.classList.remove( ACTIVE_CLASS );
-			}
-		}
-	}, [ isOpen ] );
-
-	// Monitor clicks on wp-admin bar button to toggle menu visibility
+	// Toggle the Help button's dropdown menu when it is clicked.
 	useEffect( () => {
 		const button = document.getElementById( ADMIN_BAR_BUTTON_ID );
 
@@ -109,11 +101,7 @@ export default function useAdminBarIntegration( {
 		const button = document.getElementById( ADMIN_BAR_BUTTON_ID );
 
 		const handleClickOutside = ( event: MouseEvent ) => {
-			if (
-				button &&
-				! button.contains( event.target as Node ) &&
-				button.classList.contains( OPEN_CLICK_CLASS )
-			) {
+			if ( button && ! button.contains( event.target as Node ) ) {
 				button.classList.remove( OPEN_CLICK_CLASS );
 			}
 		};
@@ -124,37 +112,68 @@ export default function useAdminBarIntegration( {
 		};
 	}, [] );
 
-	// Monitor clicks on wp-admin bar menu items to switch routes and open agents manager
+	// The standalone AI button reopens the chat, resuming the active conversation.
 	useEffect( () => {
-		const chatItem = document.getElementById( ADMIN_BAR_CHAT_ITEM_ID );
-		const historyItem = document.getElementById( ADMIN_BAR_HISTORY_ITEM_ID );
-		const guidesItem = document.getElementById( ADMIN_BAR_GUIDES_ITEM_ID );
+		const aiChatButton = document.getElementById( ADMIN_BAR_AI_CHAT_BUTTON_ID );
+		if ( ! aiChatButton ) {
+			return;
+		}
 
-		const createMenuItemHandler = ( destination: string, route: string ) => {
-			return () => {
+		const handleClick = () => {
+			recordTracksEvent( 'calypso_admin_bar_agents_manager_ai_chat_clicked', {
+				section: sectionName || 'wp-admin',
+			} );
+			resumeActiveChatRef.current();
+			maybeOpenChatRef.current();
+		};
+
+		aiChatButton.addEventListener( 'click', handleClick );
+		return () => aiChatButton.removeEventListener( 'click', handleClick );
+	}, [ sectionName ] );
+
+	// Wire each Help menu item's click: track it, go to its view, then open the chat.
+	useEffect( () => {
+		const menuItems = [
+			// Chat Support resumes the active conversation, matching the AI button.
+			{
+				id: ADMIN_BAR_CHAT_ITEM_ID,
+				destination: DESTINATION_CHAT,
+				action: () => resumeActiveChatRef.current(),
+			},
+			{
+				id: ADMIN_BAR_HISTORY_ITEM_ID,
+				destination: DESTINATION_HISTORY,
+				action: () => navigate( '/history' ),
+			},
+			{
+				id: ADMIN_BAR_GUIDES_ITEM_ID,
+				destination: DESTINATION_GUIDES,
+				action: () => navigate( '/support-guides' ),
+			},
+		];
+
+		const listeners = menuItems.map( ( { id, destination, action } ) => {
+			const element = document.getElementById( id );
+
+			const handleClick = () => {
 				recordTracksEvent( 'calypso_dashboard_help_center_menu_panel_click', {
 					section: sectionName || 'wp-admin',
 					destination,
 				} );
-				navigate( route );
+				action();
 				maybeOpenChatRef.current();
 			};
-		};
 
-		const handleChatClick = createMenuItemHandler( DESTINATION_CHAT, '/' ); // This starts a new chat
-		const handleHistoryClick = createMenuItemHandler( DESTINATION_HISTORY, '/history' );
-		const handleGuidesClick = createMenuItemHandler( DESTINATION_GUIDES, '/support-guides' );
-
-		chatItem?.addEventListener( 'click', handleChatClick );
-		historyItem?.addEventListener( 'click', handleHistoryClick );
-		guidesItem?.addEventListener( 'click', handleGuidesClick );
+			element?.addEventListener( 'click', handleClick );
+			return { element, handleClick };
+		} );
 
 		return () => {
-			chatItem?.removeEventListener( 'click', handleChatClick );
-			historyItem?.removeEventListener( 'click', handleHistoryClick );
-			guidesItem?.removeEventListener( 'click', handleGuidesClick );
+			listeners.forEach(
+				( { element, handleClick } ) => element?.removeEventListener( 'click', handleClick )
+			);
 		};
 	}, [ navigate, sectionName ] );
 
-	return hasButton;
+	return hasAiChatEntry;
 }

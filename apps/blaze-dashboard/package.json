@@ -35,6 +35,7 @@
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/number-formatters": "^1.2.0",
 		"@tanstack/react-query": "^5.83.0",
+		"@wordpress/admin-ui": "^2.3.0",
 		"@wordpress/components": "^35.0.0",
 		"@wordpress/data": "^10.48.0",
 		"@wordpress/element": "^8.0.0",

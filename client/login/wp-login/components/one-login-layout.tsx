@@ -143,7 +143,7 @@ const OneLoginLayout = ( {
 		);
 	};
 
-	const topBar = (): JSX.Element => {
+	const topBar = (): React.JSX.Element => {
 		const rightElement = (
 			<nav className="wp-login__one-login-layout-top-right">
 				{ isSectionSignup ? <LoginLink /> : <SignUpLink /> }

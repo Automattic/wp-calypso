@@ -70,6 +70,7 @@ export default function LicenseActions( {
 						<PopoverMenuItem
 							key={ action.name }
 							isExternalLink={ action?.isExternalLink }
+							localizeUrl={ false }
 							onClick={ () => handleActionClick( action ) }
 							href={ action?.href }
 							className={ action?.className }
