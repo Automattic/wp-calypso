@@ -11,6 +11,11 @@ export default function ComponentViewTracker( {
 	const { recordTracksEvent } = useAnalytics();
 
 	useEffect( () => {
+		const key = `component_view_tracker_${ eventName }_${ JSON.stringify( properties ) }`;
+		if ( sessionStorage.getItem( key ) ) {
+			return;
+		}
+		sessionStorage.setItem( key, '1' );
 		recordTracksEvent( eventName, properties );
 	}, [ recordTracksEvent, eventName, JSON.stringify( properties ) ] ); // eslint-disable-line react-hooks/exhaustive-deps
 

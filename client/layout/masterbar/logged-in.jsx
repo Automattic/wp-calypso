@@ -516,7 +516,18 @@ class MasterbarLoggedIn extends Component {
 			return null;
 		}
 
-		const menuItems = [ { label: translate( 'Visit Site' ), url: siteUrl } ];
+		const menuItems = [
+			{
+				label: translate( 'Visit Site' ),
+				onClick: () => {
+					this.props.recordTracksEvent( 'calypso_masterbar_visit_site_clicked', {
+						site_id: this.props.siteId,
+						site_slug: siteSlug,
+					} );
+					window.location.href = siteUrl;
+				},
+			},
+		];
 
 		if ( isClassicView ) {
 			menuItems.push( { label: translate( 'Dashboard' ), url: siteAdminUrl } );
@@ -592,45 +603,78 @@ class MasterbarLoggedIn extends Component {
 			siteActions = [
 				{
 					label: translate( 'Post' ),
-					url: newPostUrl,
+					onClick: () => {
+						this.props.recordTracksEvent( 'calypso_masterbar_new_post_clicked' );
+						page( newPostUrl );
+					},
 				},
 				{
 					label: translate( 'Media' ),
-					url: isClassicView ? `${ siteAdminUrl }media-new.php` : `/media/${ siteSlug }`,
+					onClick: () => {
+						this.props.recordTracksEvent( 'calypso_masterbar_new_media_clicked' );
+						const mediaUrl = isClassicView
+							? `${ siteAdminUrl }media-new.php`
+							: `/media/${ siteSlug }`;
+						isClassicView
+							? ( window.location.href = mediaUrl )
+							: page( mediaUrl );
+					},
 				},
 				{
 					label: translate( 'Page' ),
-					url: newPageUrl,
+					onClick: () => {
+						this.props.recordTracksEvent( 'calypso_masterbar_new_page_clicked' );
+						page( newPageUrl );
+					},
 				},
 				{
 					label: translate( 'User' ),
-					url: isClassicView ? `${ siteAdminUrl }user-new.php` : `/people/new/${ siteSlug }`,
+					onClick: () => {
+						this.props.recordTracksEvent( 'calypso_masterbar_new_user_clicked' );
+						const userUrl = isClassicView
+							? `${ siteAdminUrl }user-new.php`
+							: `/people/new/${ siteSlug }`;
+						isClassicView
+							? ( window.location.href = userUrl )
+							: page( userUrl );
+					},
 				},
 			];
 		} else {
 			siteActions = [
 				{
 					label: translate( 'Post' ),
-					url: '/post',
+					onClick: () => {
+						this.props.recordTracksEvent( 'calypso_masterbar_new_post_clicked' );
+						page( '/post' );
+					},
 				},
 				{
 					label: translate( 'Media' ),
-					url: '/media',
+					onClick: () => {
+						this.props.recordTracksEvent( 'calypso_masterbar_new_media_clicked' );
+						page( '/media' );
+					},
 				},
 				{
 					label: translate( 'Page' ),
-					url: '/page',
+					onClick: () => {
+						this.props.recordTracksEvent( 'calypso_masterbar_new_page_clicked' );
+						page( '/page' );
+					},
 				},
 				{
 					label: translate( 'User' ),
-					url: '/people/new',
+					onClick: () => {
+						this.props.recordTracksEvent( 'calypso_masterbar_new_user_clicked' );
+						page( '/people/new' );
+					},
 				},
 			];
 		}
 		return (
 			<Item
 				className="masterbar__item-my-site-actions"
-				url={ siteActions[ 0 ].url }
 				subItems={ [ siteActions ] }
 				icon={ <span className="dashicons-before dashicons-plus" /> }
 				tooltip={ translate( 'New', { context: 'admin bar menu group label' } ) }
@@ -658,6 +702,7 @@ class MasterbarLoggedIn extends Component {
 
 	renderProfileMenu() {
 		const { translate, user, isGlobalSidebarVisible, siteAdminUrl } = this.props;
+		const editProfileUrl = isGlobalSidebarVisible ? '/me' : `${ siteAdminUrl }profile.php`;
 		const profileActions = [
 			{
 				label: (
@@ -681,11 +726,19 @@ class MasterbarLoggedIn extends Component {
 						</div>
 					</div>
 				),
-				url: isGlobalSidebarVisible ? '/me' : `${ siteAdminUrl }profile.php`,
+				onClick: () => {
+					this.props.recordTracksEvent( 'calypso_masterbar_edit_profile_clicked' );
+					isGlobalSidebarVisible
+						? page( editProfileUrl )
+						: ( window.location.href = editProfileUrl );
+				},
 			},
 			{
 				label: translate( 'Log Out' ),
-				onClick: () => this.props.redirectToLogout(),
+				onClick: () => {
+					this.props.recordTracksEvent( 'calypso_masterbar_log_out_clicked' );
+					this.props.redirectToLogout();
+				},
 				tooltip: translate( 'Log out of WordPress.com' ),
 				className: 'logout-link',
 			},

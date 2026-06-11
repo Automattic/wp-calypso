@@ -59,6 +59,8 @@ export function SitesDataViews( {
 							expanded={ view.type === 'grid' }
 							onClick={ () =>
 								recordTracksEvent( 'calypso_dashboard_sites_item_click', {
+									site_id: item.ID,
+									site_slug: item.slug,
 									is_staging_site: item.is_wpcom_staging_site,
 								} )
 							}
