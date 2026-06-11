@@ -99,6 +99,22 @@ describe( 'read space source mutations', () => {
 		expect( detailSources( client ) ).toEqual( [ STRATECHERY_SOURCE ] );
 	} );
 
+	it( 'cancels an in-flight detail fetch before patching, so it cannot clobber the patch', async () => {
+		const client = newClient();
+		client.setQueryData( readSpaceQuery( SPACE_ID ).queryKey, makeSpace() );
+		const cancelQueries = jest.spyOn( client, 'cancelQueries' );
+
+		await runMutation( client, addReadSpaceSourceMutation( client ), {
+			spaceId: SPACE_ID,
+			subscription: makeSubscription(),
+		} );
+
+		expect( cancelQueries ).toHaveBeenCalledWith( {
+			queryKey: readSpaceQuery( SPACE_ID ).queryKey,
+		} );
+		expect( detailSources( client ) ).toEqual( [ STRATECHERY_SOURCE ] );
+	} );
+
 	it( 'does not add the same subscription twice', async () => {
 		const client = newClient();
 		const subscription = makeSubscription();

@@ -92,12 +92,22 @@ type ReadSpaceSourceMutationContext = {
 // so `onError` can roll back. We deliberately don't invalidate on settle: spaces
 // have no real endpoint yet (RSM-4145) — the detail lives in-memory with
 // `staleTime: Infinity`, so a refetch would clobber the optimistic state.
-const patchSpaceSources = (
+const patchSpaceSources = async (
 	queryClient: QueryClient,
 	spaceId: string,
 	updateSources: ( sources: SpaceSource[] ) => SpaceSource[]
-): ReadSpaceSourceMutationContext => {
+): Promise< ReadSpaceSourceMutationContext > => {
 	const detailKey = readSpaceQuery( spaceId ).queryKey;
+
+	// Cancel an in-flight detail fetch (e.g. the modal just opened) so it can't
+	// resolve after our optimistic write and clobber it. Best-effort per TanStack
+	// docs; if cancel fails the optimistic patch below must still run.
+	try {
+		await queryClient.cancelQueries( { queryKey: detailKey } );
+	} catch {
+		// ignore — the optimistic patch must still run
+	}
+
 	const previousSpace = queryClient.getQueryData< ReadSpaceDetails >( detailKey );
 
 	queryClient.setQueryData< ReadSpaceDetails >( detailKey, ( previous ) =>
