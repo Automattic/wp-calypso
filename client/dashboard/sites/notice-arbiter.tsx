@@ -6,29 +6,15 @@ import { isDashboardBackport } from '../utils/is-dashboard-backport';
 import type { ReactNode } from 'react';
 
 /**
- * Derive a Tracks `context` string from the deepest matched route, e.g.
- * `/sites` → 'sites', `/sites/$siteSlug/` → 'site-overview',
- * `/sites/$siteSlug/logs/php` → 'site-logs-php'.
- */
-function useTracksContext(): string {
-	const routeId = useRouterState( {
-		select: ( state ) => String( state.matches.at( -1 )?.routeId ?? '' ),
-	} );
-	const sitePrefix = '/sites/$siteSlug';
-	if ( routeId.startsWith( sitePrefix ) ) {
-		const rest = routeId.slice( sitePrefix.length ).split( '/' ).filter( Boolean ).join( '-' );
-		return rest ? `site-${ rest }` : 'site-overview';
-	}
-	return routeId.split( '/' ).filter( Boolean ).join( '-' ) || 'sites';
-}
-
-/**
  * Shared candidates compete on every page that renders the arbiter. The pick
  * is latched on mount so that a preference change mid-session (e.g. dismissing
  * the welcome notice) empties the slot instead of promoting the next notice.
  */
 function useSharedCandidate(): ReactNode {
-	const tracksContext = useTracksContext();
+	// The deepest matched route id, e.g. '/sites/$siteSlug/logs/php'.
+	const tracksContext = useRouterState( {
+		select: ( state ) => String( state.matches.at( -1 )?.routeId ?? '' ),
+	} );
 	const shouldShowOptInWelcome = useShouldShowOptInWelcome();
 	const shouldShowOptInSurvey = useShouldShowOptInSurvey();
 
