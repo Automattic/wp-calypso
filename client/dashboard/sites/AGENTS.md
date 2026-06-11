@@ -1,4 +1,4 @@
-# Sites Dashboard — Agent Instructions
+# Dashboard's Site Pages — Agent Instructions
 
 ## Single-notice invariant
 
@@ -19,7 +19,7 @@
 
 - Pages pass their page-specific notices ("page candidates") as children of the arbiter, **ordered by priority** (most urgent first). Eligibility is decided at the call site, not inside the notice.
 - The arbiter renders the **first non-null child**.
-- The arbiter owns the "shared candidates" (engagement prompts: `OptInWelcome`, `OptInSurvey`). They compete on every page that renders the arbiter, and they always lose to page candidates.
+- The arbiter owns "shared candidates" we would want to appear on any sites page (e.g.: `SomeSurvey`). They compete on every page that renders the arbiter, but they always lose to page candidates.
 
 ### Rules for notice candidates
 
