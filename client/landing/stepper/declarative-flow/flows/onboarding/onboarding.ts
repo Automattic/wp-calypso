@@ -402,8 +402,10 @@ const onboarding: FlowV2< typeof initialize > = {
 
 		// Preload the onboarding progress bar experiment
 		useEffect( () => {
-			loadExperimentAssignment( ONBOARDING_PROGRESS_EXPERIMENT_NAME );
-		}, [] );
+			if ( isLoggedIn ) {
+				loadExperimentAssignment( ONBOARDING_PROGRESS_EXPERIMENT_NAME );
+			}
+		}, [ isLoggedIn ] );
 	},
 };
 
