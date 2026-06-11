@@ -66,8 +66,6 @@ export default function DomainRemovalFlow( { purchase, onCancel }: DomainRemoval
 		} );
 	}, [ purchase, removePurchase, createSuccessNotice, createErrorNotice, navigate ] );
 
-	const isLoading = isRemovingPurchase;
-
 	return (
 		<div>
 			{ currentStep === 'warning' && (
@@ -75,7 +73,7 @@ export default function DomainRemovalFlow( { purchase, onCancel }: DomainRemoval
 					purchase={ purchase }
 					onContinue={ handleContinue }
 					onCancel={ onCancel }
-					isLoading={ isLoading }
+					isLoading={ isRemovingPurchase }
 				/>
 			) }
 			{ currentStep === 'confirmation' && (
@@ -83,7 +81,7 @@ export default function DomainRemovalFlow( { purchase, onCancel }: DomainRemoval
 					purchase={ purchase }
 					onConfirm={ handleConfirm }
 					onCancel={ onCancel }
-					isLoading={ isLoading }
+					isLoading={ isRemovingPurchase }
 				/>
 			) }
 		</div>
