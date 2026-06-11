@@ -20,6 +20,7 @@ const mockTrackOpened = jest.fn();
 const mockTrackAddedToPost = jest.fn();
 const mockTrackPanelViewed = jest.fn();
 const mockFill = jest.fn();
+const mockNotice = jest.fn();
 const mockSetCurrentVideoUrl = jest.fn().mockResolvedValue( undefined );
 const mockSetCurrentAttachmentId = jest.fn().mockResolvedValue( undefined );
 const mockSetCurrentDurationSeconds = jest.fn().mockResolvedValue( undefined );
@@ -74,6 +75,20 @@ jest.mock( '@wordpress/components', () => ( {
 	},
 	PanelBody: ( { children }: { children: React.ReactNode } ) => <>{ children }</>,
 	VisuallyHidden: ( { children }: { children: React.ReactNode } ) => <span>{ children }</span>,
+	// Like the real Notice: no ARIA role on the wrapper (announcement happens
+	// via wp.a11y speak()), so tests assert on text + recorded status.
+	Notice: ( {
+		children,
+		status,
+		className,
+	}: {
+		children: React.ReactNode;
+		status?: string;
+		className?: string;
+	} ) => {
+		mockNotice( status );
+		return <div className={ className }>{ children }</div>;
+	},
 } ) );
 
 jest.mock( '@wordpress/core-data', () => ( {
@@ -213,6 +228,7 @@ describe( 'feature-clip-sidebar-extension', () => {
 		mockTrackAddedToPost.mockClear();
 		mockTrackPanelViewed.mockClear();
 		mockFill.mockClear();
+		mockNotice.mockClear();
 		mockSetCurrentVideoUrl.mockClear();
 		mockSetCurrentAttachmentId.mockClear();
 		mockSetCurrentDurationSeconds.mockClear();
@@ -388,12 +404,11 @@ describe( 'feature-clip-sidebar-extension', () => {
 			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
 			render( <FeatureClipPanel /> );
 			expect( screen.getByRole( 'button', { name: 'Generate clip' } ) ).toBeInTheDocument();
-			// Error notice is an assertive live region so screen readers
-			// interrupt to announce it.
-			const notice = screen.getByRole( 'alert' );
-			expect( notice ).toHaveTextContent(
-				"Couldn't load your saved clip. Try again or generate a new one."
-			);
+			expect(
+				screen.getByText( "Couldn't load your saved clip. Try again or generate a new one." )
+			).toBeInTheDocument();
+			// status=error makes core Notice announce assertively via speak().
+			expect( mockNotice ).toHaveBeenCalledWith( 'error' );
 		} );
 
 		it( 'does not show the error notice on a normal empty post', () => {

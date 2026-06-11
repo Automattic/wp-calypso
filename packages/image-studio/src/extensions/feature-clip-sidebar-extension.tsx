@@ -14,7 +14,7 @@
  * preview, a share row mirroring the modal, and a Regenerate button.
  */
 import { createBlock } from '@wordpress/blocks';
-import { Button, Fill, PanelBody, VisuallyHidden } from '@wordpress/components';
+import { Button, Fill, Notice, PanelBody, VisuallyHidden } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import { dispatch, useSelect } from '@wordpress/data';
 import { PluginDocumentSettingPanel } from '@wordpress/editor';
@@ -185,12 +185,16 @@ function FeatureClipEmptyState( {
 	return (
 		<>
 			{ hasLoadError && (
-				<p className="image-studio-feature-clip-panel__error-notice" role="alert">
+				<Notice
+					status="error"
+					isDismissible={ false }
+					className="image-studio-feature-clip-panel__error-notice"
+				>
 					{ __(
 						"Couldn't load your saved clip. Try again or generate a new one.",
 						__i18n_text_domain__
 					) }
-				</p>
+				</Notice>
 			) }
 			<p className="image-studio-feature-clip-panel__description">
 				{ __( 'Turn this post into a short vertical video.', __i18n_text_domain__ ) }

@@ -55,15 +55,9 @@
 		}
 	}
 
+	// Core Notice has no outer margin; keep the panel's 12px rhythm below it.
 	&__error-notice {
-		margin: 0 0 12px;
-		padding: 8px 12px;
-		font-size: 12px;
-		line-height: 1.4;
-		color: #8a1f11;
-		background: #fcf0f1;
-		border-left: 3px solid #d63638;
-		border-radius: 2px;
+		margin-bottom: 12px;
 	}
 
 	&__preview-video {
