@@ -647,6 +647,40 @@ describe( 'Stepper dev warnings', () => {
 		expect( screen.getByText( 'Step 1 of 2' ) ).toBeInTheDocument();
 		spy.mockRestore();
 	} );
+
+	it( 'keeps the step registered when the original unmounts but a duplicate is still mounted', async () => {
+		const spy = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		function Dynamic() {
+			const [ showOriginal, setShowOriginal ] = useState( true );
+			return (
+				<>
+					<button onClick={ () => setShowOriginal( false ) }>Remove original</button>
+					<Stepper.Root orientation="vertical" value="dup-orig" aria-label="Test">
+						{ showOriginal && (
+							<Stepper.Step value="dup-orig">
+								<Stepper.Indicator />
+							</Stepper.Step>
+						) }
+						<Stepper.Step value="dup-orig">
+							<Stepper.Indicator />
+						</Stepper.Step>
+						<Stepper.Step value="last">
+							<Stepper.Indicator />
+						</Stepper.Step>
+					</Stepper.Root>
+				</>
+			);
+		}
+		const user = userEvent.setup();
+		render( <Dynamic /> );
+		// The duplicate is rejected at registration time, so only two steps count.
+		await waitFor( () => expect( screen.getByText( 'Step 2 of 2' ) ).toBeInTheDocument() );
+		await user.click( screen.getByRole( 'button', { name: /remove original/i } ) );
+		// The duplicate instance is still mounted, so the value must stay registered.
+		await waitFor( () => expect( screen.getByText( 'Step 2 of 2' ) ).toBeInTheDocument() );
+		expect( screen.getByText( 'Step 1 of 2' ) ).toBeInTheDocument();
+		spy.mockRestore();
+	} );
 } );
 
 describe( 'Stepper.Panel dev warnings', () => {

@@ -15,23 +15,33 @@ import { warning } from '../utils/warning';
 export function useStepRegistration< T extends { value: string } >() {
 	const [ steps, setSteps ] = useState< T[] >( [] );
 
-	// Tracks accepted registrations so duplicates can be rejected (with a dev
-	// warning) without putting side effects inside the state updater.
-	const registeredValues = useRef( new Set< string >() );
+	// Per-value mount count. Only the first registration adds a state entry
+	// (duplicates get a dev warning), and the entry is removed only when the
+	// last mounted instance deregisters — so transient duplicates (e.g.
+	// overlapping conditional renders) never drop a still-mounted step. The
+	// ref also keeps the duplicate check and warning outside the state
+	// updater, which must stay pure.
+	const mountCounts = useRef( new Map< string, number >() );
 
 	const registerStep = useCallback( ( meta: T ) => {
-		if ( registeredValues.current.has( meta.value ) ) {
+		const counts = mountCounts.current;
+		const count = counts.get( meta.value ) ?? 0;
+		counts.set( meta.value, count + 1 );
+		if ( count > 0 ) {
 			warning(
 				`[Stepper] Two steps share value '${ meta.value }'. Each step must have a unique value.`
 			);
-			// Rejected duplicate: deregistering it must not affect the original.
-			return () => {};
+		} else {
+			setSteps( ( prev ) => [ ...prev, meta ] );
 		}
-		registeredValues.current.add( meta.value );
-		setSteps( ( prev ) => [ ...prev, meta ] );
 
 		return () => {
-			registeredValues.current.delete( meta.value );
+			const remaining = ( counts.get( meta.value ) ?? 1 ) - 1;
+			if ( remaining > 0 ) {
+				counts.set( meta.value, remaining );
+				return;
+			}
+			counts.delete( meta.value );
 			setSteps( ( prev ) => prev.filter( ( s ) => s.value !== meta.value ) );
 		};
 	}, [] );
