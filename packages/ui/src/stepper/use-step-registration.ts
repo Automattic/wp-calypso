@@ -1,4 +1,5 @@
-import { useCallback, useState } from '@wordpress/element';
+import { useCallback, useRef, useState } from '@wordpress/element';
+import { warning } from '../utils/warning';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -14,16 +15,23 @@ import { useCallback, useState } from '@wordpress/element';
 export function useStepRegistration< T extends { value: string } >() {
 	const [ steps, setSteps ] = useState< T[] >( [] );
 
+	// Tracks accepted registrations so duplicates can be rejected (with a dev
+	// warning) without putting side effects inside the state updater.
+	const registeredValues = useRef( new Set< string >() );
+
 	const registerStep = useCallback( ( meta: T ) => {
-		setSteps( ( prev ) => {
-			// Avoid duplicate registration (e.g. from concurrent remounts or late renders)
-			if ( prev.some( ( s ) => s.value === meta.value ) ) {
-				return prev;
-			}
-			return [ ...prev, meta ];
-		} );
+		if ( registeredValues.current.has( meta.value ) ) {
+			warning(
+				`[Stepper] Two steps share value '${ meta.value }'. Each step must have a unique value.`
+			);
+			// Rejected duplicate: deregistering it must not affect the original.
+			return () => {};
+		}
+		registeredValues.current.add( meta.value );
+		setSteps( ( prev ) => [ ...prev, meta ] );
 
 		return () => {
+			registeredValues.current.delete( meta.value );
 			setSteps( ( prev ) => prev.filter( ( s ) => s.value !== meta.value ) );
 		};
 	}, [] );
