@@ -14,6 +14,7 @@ jest.mock( '../is-reader-chat-agent', () => {
 	return { ...actual, isReaderChatHost: jest.fn( () => false ) };
 } );
 
+import { select } from '@wordpress/data';
 import { isReaderChatHost } from '../is-reader-chat-agent';
 import { setResolvedAgentId } from '../resolved-agent-id';
 import {
@@ -24,6 +25,7 @@ import {
 
 const mockRecordTracksEvent = recordTracksEvent as jest.MockedFunction< typeof recordTracksEvent >;
 const mockIsReaderChatHost = isReaderChatHost as jest.MockedFunction< typeof isReaderChatHost >;
+const mockSelect = select as jest.MockedFunction< typeof select >;
 
 function lastEventProps(): Record< string, unknown > {
 	const call = mockRecordTracksEvent.mock.calls.at( -1 );
@@ -135,6 +137,41 @@ describe( 'tracks wrappers', () => {
 			setResolvedAgentId( 'reader-chat' );
 			recordAgentsManagerTracksEvent( 'chat_minimize' );
 			expect( mockRecordTracksEvent ).toHaveBeenCalledTimes( 1 );
+		} );
+	} );
+
+	describe( 'is_test (getIsTest)', () => {
+		it( 'is true when agentsManagerData asserts dev mode', () => {
+			( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = { isDevMode: true };
+			recordAgentsManagerTracksEvent( 'x' );
+			expect( lastEventProps().is_test ).toBe( true );
+		} );
+
+		it( 'falls through to bigSkyInitialState when agentsManagerData omits isDevMode', () => {
+			( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {};
+			( window as Window ).bigSkyInitialState = { isDevMode: '1' };
+			recordAgentsManagerTracksEvent( 'x' );
+			expect( lastEventProps().is_test ).toBe( true );
+		} );
+
+		it( 'is false when neither source asserts dev mode', () => {
+			( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {};
+			recordAgentsManagerTracksEvent( 'x' );
+			expect( lastEventProps().is_test ).toBe( false );
+		} );
+	} );
+
+	describe( 'getBigSkyPageProps resilience', () => {
+		it( 'does not throw and emits neutral page props when select throws', () => {
+			mockSelect.mockImplementation( () => {
+				throw new Error( 'store not registered' );
+			} );
+
+			expect( () => recordBigSkyTracksEvent( 'chat_input_send_message' ) ).not.toThrow();
+			expect( mockRecordTracksEvent ).toHaveBeenCalledTimes( 1 );
+			expect( lastEventProps() ).toMatchObject( { post_type: '', is_home_page: false } );
+
+			mockSelect.mockImplementation( () => ( {} ) as ReturnType< typeof select > );
 		} );
 	} );
 } );

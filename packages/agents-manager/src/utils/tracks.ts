@@ -59,28 +59,30 @@ export function getBigSkyTracksData(): BigSkyTracksData {
 }
 
 function getIsTest(): boolean {
-	if ( typeof agentsManagerData !== 'undefined' && agentsManagerData ) {
-		return !! agentsManagerData.isDevMode;
-	}
-	return getBigSkyTracksData().isDevMode;
+	const amDevMode = typeof agentsManagerData !== 'undefined' && !! agentsManagerData?.isDevMode;
+	return amDevMode || getBigSkyTracksData().isDevMode;
 }
 
 /**
  * Editor-surface page props, mirroring Big Sky's `getCurrentPageProperties`.
  */
 function getBigSkyPageProps(): TracksProps {
-	const editor = select( 'core/editor' ) as EditorSelectStore;
-	const core = select( 'core' ) as CoreSelectStore;
+	try {
+		const editor = select( 'core/editor' ) as EditorSelectStore;
+		const core = select( 'core' ) as CoreSelectStore;
 
-	const postId = editor?.getCurrentPostId?.();
-	const siteRecord = core?.getEntityRecord?.( 'root', 'site' ) as
-		| { page_on_front?: number }
-		| undefined;
+		const postId = editor?.getCurrentPostId?.();
+		const siteRecord = core?.getEntityRecord?.( 'root', 'site' ) as
+			| { page_on_front?: number }
+			| undefined;
 
-	return {
-		post_type: editor?.getCurrentPostType?.() ?? '',
-		is_home_page: postId !== undefined && postId === siteRecord?.page_on_front,
-	};
+		return {
+			post_type: editor?.getCurrentPostType?.() ?? '',
+			is_home_page: postId !== undefined && postId === siteRecord?.page_on_front,
+		};
+	} catch {
+		return { post_type: '', is_home_page: false };
+	}
 }
 
 /**
