@@ -359,17 +359,26 @@ function FeatureClipPanelBody( { postType, postId }: FeatureClipPanelBodyProps )
 		return <FeatureClipEmptyState hasLoadError={ hasLoadError } />;
 	} )();
 
+	// Self-hosted sites get the Jetpack-sidebar copy only. Off-WPCOM the
+	// `canGenerateVideoClips` flag can't see the paid AI entitlement (it's
+	// true on any connected site), so the always-visible document-sidebar
+	// copy would invite generate attempts the server then rejects with
+	// `ai_assistant_required` for unentitled sites.
+	const showDocumentPanel = window.imageStudioData?.siteType !== 'jetpack';
+
 	return (
 		<>
-			<PluginDocumentSettingPanel
-				name={ PANEL_NAME }
-				// PluginDocumentSettingPanel.title is typed as string but renders any ReactNode at runtime;
-				// the badge must live in the title row so it stays visible when the panel is collapsed.
-				title={ titleNode as unknown as string }
-				className="image-studio-feature-clip-panel"
-			>
-				{ body }
-			</PluginDocumentSettingPanel>
+			{ showDocumentPanel && (
+				<PluginDocumentSettingPanel
+					name={ PANEL_NAME }
+					// PluginDocumentSettingPanel.title is typed as string but renders any ReactNode at runtime;
+					// the badge must live in the title row so it stays visible when the panel is collapsed.
+					title={ titleNode as unknown as string }
+					className="image-studio-feature-clip-panel"
+				>
+					{ body }
+				</PluginDocumentSettingPanel>
+			) }
 			<Fill name="JetpackPluginSidebar">
 				<PanelBody
 					// PanelBody.title is typed as string but renders any ReactNode

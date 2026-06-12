@@ -317,6 +317,47 @@ describe( 'feature-clip-sidebar-extension', () => {
 		} );
 	} );
 
+	describe( 'self-hosted gating (siteType: jetpack)', () => {
+		it( 'suppresses the document-sidebar panel but keeps the Jetpack sidebar', () => {
+			( window as Record< string, unknown > ).imageStudioData = {
+				canGenerateVideoClips: true,
+				siteType: 'jetpack',
+			};
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			const { container } = render( <FeatureClipPanel /> );
+			// All visible DOM comes from the document panel's <section>; the
+			// Fill mock renders nothing — so an empty container proves the
+			// document copy is gone while the Fill call proves the Jetpack
+			// sidebar copy survives.
+			expect( container.querySelector( 'section' ) ).toBeNull();
+			expect( mockFill ).toHaveBeenCalledWith( 'JetpackPluginSidebar' );
+		} );
+
+		it( 'still registers the plugin so the Jetpack sidebar copy mounts', () => {
+			( window as Record< string, unknown > ).imageStudioData = {
+				canGenerateVideoClips: true,
+				siteType: 'jetpack',
+			};
+			const { registerFeatureClipSidebar } = require( './feature-clip-sidebar-extension' );
+			registerFeatureClipSidebar();
+			expect( mockRegisterPlugin ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it.each( [ 'simple', 'atomic', 'wpcom', 'woa', undefined ] )(
+			'renders the document-sidebar panel when siteType is %s',
+			( siteType ) => {
+				( window as Record< string, unknown > ).imageStudioData = {
+					canGenerateVideoClips: true,
+					...( siteType ? { siteType } : {} ),
+				};
+				const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+				const { container } = render( <FeatureClipPanel /> );
+				expect( container.querySelector( 'section' ) ).not.toBeNull();
+				expect( mockFill ).toHaveBeenCalledWith( 'JetpackPluginSidebar' );
+			}
+		);
+	} );
+
 	describe( 'post-type gating', () => {
 		it( 'renders nothing on an unsupported post type (jetpack_form)', () => {
 			mockPostType = 'jetpack_form';
