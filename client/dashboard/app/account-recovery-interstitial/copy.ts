@@ -30,17 +30,11 @@ export interface InterstitialCta {
 	route?: string;
 }
 
-export interface InterstitialCopy {
+interface InterstitialCopy {
 	title: string;
 	description: string;
 	primaryCta: InterstitialCta;
 	secondaryCta?: InterstitialCta;
-}
-
-/** The user's validated recovery details, used to personalize the `strong` copy. */
-export interface InterstitialCopyContext {
-	recoveryEmail?: string;
-	recoveryPhoneNumber?: string;
 }
 
 /** Picks the copy variant from what the user already has set up. */
@@ -82,7 +76,13 @@ function maskPhone( number: string ): string {
 	return `••${ digits.slice( -2 ) }`;
 }
 
-function getStrongDescription( { recoveryEmail, recoveryPhoneNumber }: InterstitialCopyContext ) {
+function getStrongDescription( {
+	recoveryEmail,
+	recoveryPhoneNumber,
+}: {
+	recoveryEmail?: string;
+	recoveryPhoneNumber?: string;
+} ) {
 	const maskedEmail = recoveryEmail ? maskEmail( recoveryEmail ) : undefined;
 	const maskedPhone = recoveryPhoneNumber ? maskPhone( recoveryPhoneNumber ) : undefined;
 
@@ -117,8 +117,9 @@ function getStrongDescription( { recoveryEmail, recoveryPhoneNumber }: Interstit
 	return __( 'Make sure your recovery options are up to date so you’re never locked out.' );
 }
 
+/** `recoveryMethods` carries the user's validated recovery details, to personalize the `strong` copy. */
 export function getInterstitialCopy(
-	context: InterstitialCopyContext = {}
+	recoveryMethods: { recoveryEmail?: string; recoveryPhoneNumber?: string } = {}
 ): Record< InterstitialVariant, InterstitialCopy > {
 	return {
 		// Nothing set up: lead with a recovery method, offer 2FA as the secondary.
@@ -193,7 +194,7 @@ export function getInterstitialCopy(
 		// Fully covered: yearly re-check of the recovery details already on file.
 		strong: {
 			title: __( 'Still have access to these?' ),
-			description: getStrongDescription( context ),
+			description: getStrongDescription( recoveryMethods ),
 			// No route: a positive confirmation that snoozes for the yearly window.
 			primaryCta: {
 				id: 'confirm_recovery',
