@@ -1,30 +1,21 @@
 // packages/ui/src/stepper/indicator.tsx
 import { forwardRef } from '@wordpress/element';
-import { check } from '@wordpress/icons';
-import { Path, SVG } from '@wordpress/primitives';
+import { border, caution, drafts, published } from '@wordpress/icons';
 import { Icon, VisuallyHidden } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useStepContext, useStepperContext } from './context';
 import styles from './style.module.scss';
 import type { ComponentProps, ReactNode } from 'react';
 
-// Half-circle (dome) icon for the bullet-variant current step.
-// 10×10 viewBox, dome in the bottom half: flat edge at vertical midpoint (y=5),
-// arc curving down to y=10. When centred inside the 18px indicator the flat
-// edge sits exactly on the horizontal centre line of the circle.
-const halfCircleIcon = (
-	<SVG
-		width="10"
-		height="10"
-		viewBox="0 0 10 10"
-		fill="none"
-		xmlns="http://www.w3.org/2000/svg"
-		aria-hidden="true"
-		style={ { transform: 'rotate(180deg)' } }
-	>
-		<Path d="M0 5a5 5 0 0 1 10 0H0z" fill="currentColor" />
-	</SVG>
-);
+// State → icon mapping, all standard @wordpress/icons:
+// border = dashed circle, drafts = half-filled circle,
+// published = circled check, caution = circled exclamation mark.
+const STATE_ICONS = {
+	upcoming: border,
+	current: drafts,
+	completed: published,
+	error: caution,
+} as const;
 
 type StepperIndicatorProps = ComponentProps< 'span' > & {
 	children?: ReactNode;
@@ -41,15 +32,15 @@ export const StepperIndicator = forwardRef< HTMLSpanElement, StepperIndicatorPro
 		const accessibleLabel =
 			totalSteps > 0 ? formatStepLabel( stepNumber, totalSteps, status ) : null;
 
-		let indicator: ReactNode =
-			indicatorVariant === 'number' ? <span aria-hidden="true">{ stepNumber }</span> : null;
-		if ( status === 'completed' ) {
-			indicator = <Icon icon={ check } size={ 14 } />;
-		} else if ( status === 'error' ) {
-			indicator = <span aria-hidden="true">!</span>;
-		} else if ( isCurrent && indicatorVariant === 'bullet' ) {
-			indicator = halfCircleIcon;
-		}
+		const state = status ?? ( isCurrent ? 'current' : 'upcoming' );
+		// Bullet variant: every state is an icon. Number variant: icons only for
+		// completed/error; upcoming/current keep the numbered circle.
+		const indicator: ReactNode =
+			indicatorVariant === 'bullet' || status ? (
+				<Icon icon={ STATE_ICONS[ state ] } />
+			) : (
+				<span aria-hidden="true">{ stepNumber }</span>
+			);
 
 		return (
 			<span
