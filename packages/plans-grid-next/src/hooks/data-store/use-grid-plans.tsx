@@ -326,6 +326,7 @@ const useGridPlans: UseGridPlansType = ( {
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
 	useFocusedNewCopyTaglines,
+	showBillingDescriptionForIncreasedRenewalPrice,
 } ) => {
 	const translate = useTranslate();
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs?.( {
@@ -388,6 +389,7 @@ const useGridPlans: UseGridPlansType = ( {
 		siteId,
 		useCheckPlanAvailabilityForPurchase,
 		reflectStorageSelectionInPlanPrices,
+		showBillingDescriptionForIncreasedRenewalPrice,
 	} );
 
 	// Null return would indicate that we are still loading the data. No grid without grid plans.
