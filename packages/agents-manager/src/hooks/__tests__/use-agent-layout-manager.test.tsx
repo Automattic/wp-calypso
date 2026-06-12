@@ -222,6 +222,113 @@ describe( 'useAgentLayoutManager — fullscreen gate', () => {
 		} );
 		expect( result.current.canDock ).toBe( false );
 	} );
+
+	it( 'scrubs pre-rendered sidebar classes on mount when the viewport cannot dock', () => {
+		// Gate closed, and the server pre-rendered the docked-open shell.
+		document.body.classList.add( 'post-php' );
+		container.classList.add(
+			'agents-manager-sidebar-container',
+			'agents-manager-sidebar-container--sidebar-open'
+		);
+
+		renderHook( () =>
+			useAgentLayoutManager( {
+				sidebarContainer: container,
+				defaultDocked: true,
+				defaultOpen: true,
+			} )
+		);
+
+		expect( container.classList.contains( 'agents-manager-sidebar-container' ) ).toBe( false );
+		expect( container.classList.contains( OPEN_CLASS ) ).toBe( false );
+	} );
+
+	it( 'removes a pre-rendered open class on mount when docked but closed', () => {
+		container.classList.add(
+			'agents-manager-sidebar-container',
+			'agents-manager-sidebar-container--sidebar-open'
+		);
+
+		renderHook( () =>
+			useAgentLayoutManager( {
+				sidebarContainer: container,
+				defaultDocked: true,
+				defaultOpen: false,
+			} )
+		);
+
+		expect( container.classList.contains( OPEN_CLASS ) ).toBe( false );
+		// Still docked, so the container class stays.
+		expect( container.classList.contains( 'agents-manager-sidebar-container' ) ).toBe( true );
+	} );
+
+	it( 'fires onUndock on mount when the viewport cannot dock', () => {
+		// Gate closed (e.g. loaded below the breakpoint) before the hook mounts.
+		document.body.classList.add( 'post-php' );
+		const onUndock = jest.fn();
+
+		renderHook( () =>
+			useAgentLayoutManager( {
+				sidebarContainer: container,
+				defaultDocked: true,
+				defaultOpen: true,
+				onUndock,
+			} )
+		);
+
+		expect( onUndock ).toHaveBeenCalled();
+	} );
+
+	it( 'fires onDock on mount when the sidebar starts docked', () => {
+		const onDock = jest.fn();
+
+		renderHook( () =>
+			useAgentLayoutManager( {
+				sidebarContainer: container,
+				defaultDocked: true,
+				defaultOpen: true,
+				onDock,
+			} )
+		);
+
+		expect( onDock ).toHaveBeenCalled();
+	} );
+
+	it( 'fires onUndock when the viewport can no longer dock and onDock when it can again', async () => {
+		const onDock = jest.fn();
+		const onUndock = jest.fn();
+		const { result } = renderHook( () =>
+			useAgentLayoutManager( {
+				sidebarContainer: container,
+				defaultDocked: true,
+				defaultOpen: true,
+				onDock,
+				onUndock,
+			} )
+		);
+
+		// Initial docked mount doesn't fire the transition callbacks.
+		expect( result.current.canDock ).toBe( true );
+		onDock.mockClear();
+		onUndock.mockClear();
+
+		// Gate closes (e.g. window shrinks below the breakpoint): falls back to floating.
+		await act( async () => {
+			document.body.classList.add( 'post-php' );
+			await Promise.resolve();
+		} );
+		expect( result.current.canDock ).toBe( false );
+		expect( onUndock ).toHaveBeenCalled();
+
+		// Gate reopens: re-docks.
+		onDock.mockClear();
+		await act( async () => {
+			document.body.classList.add( FULLSCREEN_BODY_CLASS );
+			await Promise.resolve();
+		} );
+		expect( result.current.canDock ).toBe( true );
+		expect( onDock ).toHaveBeenCalled();
+	} );
 } );
 
 describe( 'useAgentLayoutManager — split-screen class', () => {

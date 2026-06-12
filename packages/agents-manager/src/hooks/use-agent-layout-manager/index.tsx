@@ -118,12 +118,17 @@ export default function useAgentLayoutManager( {
 			return;
 		}
 
-		// Calculate admin menu height
+		// Calculate the height needed to fit the full admin menu below the admin
+		// bar. Offset by the admin bar's *height* rather than the menu's
+		// `getBoundingClientRect().top`: when the docked classes are applied the
+		// menu is `position: fixed` and its top is distorted, which would skew the
+		// gate. The bar's height is class-independent. Keep this identical to the
+		// reconciler in class-sidebar-open-preservation.php (Jetpack).
 		const adminMenu = document.getElementById( 'adminmenu' );
 		if ( adminMenu ) {
-			const menuHeight = adminMenu.offsetHeight;
-			const menuTopOffset = adminMenu.getBoundingClientRect().top + window.scrollY;
-			setAdminMenuHeight( menuHeight + menuTopOffset + 20 );
+			const adminBar = document.getElementById( 'wpadminbar' );
+			const adminBarHeight = adminBar ? adminBar.offsetHeight : 32;
+			setAdminMenuHeight( adminMenu.offsetHeight + adminBarHeight + 20 );
 		}
 
 		// Set initial docked state
