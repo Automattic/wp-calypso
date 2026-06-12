@@ -98,9 +98,14 @@
 		}
 	}
 
+	// Exclude the fullscreen-gated editor screens: on those the chat only docks in
+	// fullscreen mode, handled by the dedicated editor blocks below (which require
+	// .is-fullscreen-mode). Without this exclusion, this general wp-admin reshape
+	// would paint a docked shell behind a floating chat on a non-fullscreen editor
+	// — e.g. the classic post/product editor, which has no fullscreen mode at all.
 	body.wp-admin.agents-manager-sidebar-container--sidebar-open:not(
 			.agents-manager-dock-too-short
-		):not( .modal-open ) {
+		):not( .modal-open ):not( .post-php ):not( .post-new-php ):not( .site-editor-php ) {
 		@include wp-admin-sidebar-open-specific( $admin-menu-width-classic );
 		@include notice-panel-open( '#wpnt-notes-panel2' );
 
