@@ -10,31 +10,8 @@ import { ORCHESTRATOR_AGENT_ID } from '../constants';
 /**
  * Provider composition policy.
  *
- * Agents Manager can load several AI providers at once (Big Sky / Dolly,
- * Jetpack AI Sidebar, future peers). Every provider resolves to a manifest:
- * providers that export `compositionManifest` declare what they own; providers
- * that do not are given a synthesised host manifest, which keeps the legacy
- * merge behaviour without a second code path.
- *
- * Roles:
- * - `host` — serves everything no guest claims. Multiple hosts keep the
- *   legacy first-registered-wins merge among themselves, and host context is
- *   the base the merged client context starts from.
- * - `guest` — contributes ONLY what its claims cover: ability name
- *   namespaces, chat-component types, and client-context keys. Hosts cannot
- *   serve names a guest has claimed, and a guest's unclaimed exports through
- *   those three channels are ignored.
- *
- * The policy is resolved once, before any abilities are fetched, from
- * declarations alone — so ownership of claimed work never depends on
- * registration order, render timing, or which spelling of a tool name a
- * caller uses. Conflicts (two guests claiming the same name) are configuration
- * errors: the later-registered guest is dropped, loudly.
- *
- * Hosts may additionally export `resolveOutgoingArgs( toolName, args )` (see
- * load-external-providers.ts): it runs over the args of every call that
- * crosses to a guest, letting a host translate its own vocabulary — such as
- * shortened block ids — into what guests expect.
+ * Hosts serve unclaimed work. Guests contribute only their claimed ability
+ * namespaces, chat-component types, and client-context keys.
  */
 
 export interface ProviderCompositionClaims {
@@ -54,11 +31,7 @@ export interface ProviderCompositionManifest {
 	claims?: ProviderCompositionClaims;
 }
 
-/**
- * A manifest after parsing: the authored shape with `claims` guaranteed
- * present (empty arrays when omitted), so consumers never null-check them.
- * Providers that export no manifest resolve to a synthesised host manifest.
- */
+/** A manifest after parsing, with `claims` always present. */
 export type ResolvedProviderManifest = Omit< ProviderCompositionManifest, 'claims' > & {
 	claims: Required< ProviderCompositionClaims >;
 };
@@ -78,15 +51,6 @@ export interface ProviderCompositionPolicy< Module = unknown > {
 	notices: string[];
 }
 
-/** Serializable snapshot written to `agentsManagerData` for debugging. */
-export interface ProviderCompositionDebugSummary {
-	guests: Array< {
-		providerIndex: number;
-		providerId: string;
-		claims: ResolvedProviderManifest[ 'claims' ];
-	} >;
-}
-
 type ProviderCompositionModule = {
 	compositionManifest?: unknown;
 };
@@ -95,18 +59,7 @@ export function normalizeAbilityName( name: string ): string {
 	return name.replace( /\//g, '__' ).replace( /-/g, '_' );
 }
 
-/**
- * Whether an ability name belongs to a claimed namespace.
- *
- * Matching happens on normalized names. `/` normalizes to `__`, so the
- * namespace boundary is a double underscore: claim `jetpack_ai` matches
- * `jetpack_ai__show_component` but not the sibling namespace
- * `jetpack-ai-extras/tool` (which normalizes to `jetpack_ai_extras__tool`).
- * Agenttic tool ids flatten `/` to `-` (e.g. `big-sky-show-component`),
- * leaving no double underscore; those spellings fall back to a
- * single-underscore boundary, which is ambiguous across sibling namespaces
- * sharing a prefix — `findAbilityClaimant` mitigates with longest-match.
- */
+/** Whether an ability name belongs to a claimed namespace. */
 export function abilityMatchesClaim( claimedNamespace: string, abilityName: string ): boolean {
 	const namespace = normalizeAbilityName( claimedNamespace );
 	const name = normalizeAbilityName( abilityName );
@@ -119,11 +72,7 @@ export function abilityMatchesClaim( claimedNamespace: string, abilityName: stri
 	return name.startsWith( `${ namespace }_` );
 }
 
-/**
- * The guest whose ability claims cover the given name, if any. When several
- * guests match a hyphen-flattened spelling, the longest claimed namespace
- * wins, so `jetpack_ai_extras` beats `jetpack_ai` for `jetpack-ai-extras-tool`.
- */
+/** The guest whose ability claims cover the given name, if any. */
 export function findAbilityClaimant< Module >(
 	guests: Array< ComposedProviderEntry< Module > >,
 	abilityName: string
@@ -143,14 +92,6 @@ export function findAbilityClaimant< Module >(
 		}
 	}
 	return bestGuest;
-}
-
-/** The guest that claims the given chat-component type, if any. */
-export function findComponentClaimant< Module >(
-	guests: Array< ComposedProviderEntry< Module > >,
-	componentType: string
-): ComposedProviderEntry< Module > | undefined {
-	return guests.find( ( guest ) => guest.manifest.claims.components.includes( componentType ) );
 }
 
 function stringArrayOrEmpty( value: unknown ): string[] {
@@ -199,12 +140,6 @@ function synthesizeHostManifest( providerIndex: number ): ResolvedProviderManife
 	};
 }
 
-/**
- * Whether two claimed namespaces overlap: equal after normalization, or one
- * is a `/`-boundary (double-underscore) prefix of the other. Sibling
- * namespaces that merely share a hyphenated prefix (`wpcom` vs
- * `wpcom-workflow`) do not overlap.
- */
 function namespacesOverlap( firstNamespace: string, secondNamespace: string ): boolean {
 	const first = normalizeAbilityName( firstNamespace );
 	const second = normalizeAbilityName( secondNamespace );
@@ -213,10 +148,6 @@ function namespacesOverlap( firstNamespace: string, secondNamespace: string ): b
 	);
 }
 
-/**
- * The first claim two guests disagree about, as a human-readable string, or
- * undefined when their claims are disjoint.
- */
 function findClaimConflict(
 	first: ResolvedProviderManifest,
 	second: ResolvedProviderManifest
@@ -241,13 +172,7 @@ function findClaimConflict(
 	return undefined;
 }
 
-/**
- * The synchronous agent-id overrides: the `?agent=` URL param (testing
- * override), then inline `agentsManagerData.agentId` (host-level override).
- * Shared with `useAgentConfig`, which layers the host prop above and the
- * async unified-experience toggle below — keep the priority order in sync
- * with that hook's chain.
- */
+/** Synchronous agent-id overrides shared with `useAgentConfig`. */
 export function getAgentIdOverride(): string | undefined {
 	const agentIdParam =
 		typeof window !== 'undefined'
@@ -262,55 +187,17 @@ export function getAgentIdOverride(): string | undefined {
 	return typeof agentsManagerData?.agentId === 'string' ? agentsManagerData.agentId : undefined;
 }
 
-/**
- * The agent id guest gating should compare against. Callers that already know
- * the effective agent (resolved by `useAgentConfig`'s full priority chain,
- * including the unified-experience toggle) pass it in; otherwise the
- * synchronous overrides apply, then the orchestrator default — never
- * undefined, so a guest is not dropped just because no override was set.
- */
+/** The agent id guest gating should compare against. */
 export function resolveEffectiveAgentId( knownAgentId?: string ): string {
 	return knownAgentId || getAgentIdOverride() || ORCHESTRATOR_AGENT_ID;
 }
 
-/**
- * Every spelling a tool call may use for one ability name:
- * raw (`big-sky/show-component`), normalized (`big_sky__show_component`),
- * and the orchestrator's flattened tool id (`big-sky-show-component`).
- */
+/** Raw, normalized, and flattened spellings for an ability name. */
 export function abilityNameAliases( name: string ): string[] {
 	return [ ...new Set( [ name, normalizeAbilityName( name ), name.replace( /\//g, '-' ) ] ) ];
 }
 
-/**
- * Expose the active composition for debugging. Cleared (set to undefined)
- * when no guest is active, so a stale summary from an earlier resolution
- * cannot outlive the providers it described.
- */
-export function writeProviderCompositionDebugSummary< Module >(
-	policy: ProviderCompositionPolicy< Module >
-): void {
-	if ( typeof agentsManagerData === 'undefined' || ! agentsManagerData ) {
-		return;
-	}
-	agentsManagerData.providerCompositionPolicy = policy.guests.length
-		? {
-				guests: policy.guests.map( ( guest ) => ( {
-					providerIndex: guest.providerIndex,
-					providerId: guest.manifest.providerId,
-					claims: guest.manifest.claims,
-				} ) ),
-		  }
-		: undefined;
-}
-
-/**
- * Resolve the composition policy from provider declarations alone.
- *
- * Pure with respect to its inputs: no provider code runs, no abilities are
- * fetched, and the result does not change after load. Dropped providers and
- * coercions are reported in `notices` for the caller to log.
- */
+/** Resolve the composition policy from provider declarations alone. */
 export function resolveProviderComposition< Module extends ProviderCompositionModule >(
 	loadedModules: Array< Module | null >,
 	agentId: string | undefined
@@ -352,8 +239,7 @@ export function resolveProviderComposition< Module extends ProviderCompositionMo
 		return supported;
 	} );
 
-	// Overlapping guest claims are a configuration error: the later-registered
-	// guest is dropped so ownership of every claimed name stays unambiguous.
+	// Drop later guests with overlapping claims so ownership stays unambiguous.
 	const guests: Array< ComposedProviderEntry< Module > > = [];
 	const droppedIndexes = new Set< number >();
 	for ( const entry of active ) {
@@ -378,11 +264,7 @@ export function resolveProviderComposition< Module extends ProviderCompositionMo
 
 	let providers = active.filter( ( entry ) => ! droppedIndexes.has( entry.providerIndex ) );
 
-	// With no host left to serve unclaimed work, claims have nothing to compose
-	// against. Treat the remaining guests as a host pool so guest-only surfaces
-	// (e.g. the Jetpack-only editor) keep working with the legacy merge. A lone
-	// guest is the routine shape of those surfaces, so only multi-provider
-	// coercion is noted.
+	// With no host, treat guests as a host pool so guest-only surfaces still work.
 	if ( guests.length > 0 && ! providers.some( ( entry ) => entry.manifest.role === 'host' ) ) {
 		if ( providers.length > 1 ) {
 			notices.push(

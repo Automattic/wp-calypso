@@ -20,10 +20,6 @@ const jetpackCompositionManifest = {
 	},
 };
 
-function getProviderCompositionPolicy( data: unknown ) {
-	return ( data as { providerCompositionPolicy?: unknown } ).providerCompositionPolicy;
-}
-
 type AbilityFixture = string | { name: string; [ key: string ]: unknown };
 
 const toAbility = ( ability: AbilityFixture ) =>
@@ -66,60 +62,20 @@ const setAgentsManagerData = (
 	return data;
 };
 
-const expectJetpackGuestPolicy = ( data: unknown, providerIndex = 1 ) =>
-	expect( getProviderCompositionPolicy( data ) ).toEqual( {
-		guests: [
-			{
-				providerIndex,
-				providerId: 'jetpack-ai-sidebar',
-				claims: jetpackCompositionManifest.claims,
-			},
-		],
-	} );
-
 describe( 'mergeCapabilitiesInto', () => {
-	it( 'is a no-op when capabilities is undefined', () => {
+	it( 'only enables split screen for an explicit true flag', () => {
 		const merged: ProviderCapabilities = {};
 		mergeCapabilitiesInto( merged, undefined );
-		expect( merged ).toEqual( {} );
-	} );
-
-	it( 'is a no-op when capabilities is null or not an object', () => {
-		const merged: ProviderCapabilities = {};
 		mergeCapabilitiesInto( merged, null );
 		mergeCapabilitiesInto( merged, 'oops' );
 		mergeCapabilitiesInto( merged, 42 );
-		expect( merged ).toEqual( {} );
-	} );
-
-	it( 'sets supportsSplitScreen when the provider declares it', () => {
-		const merged: ProviderCapabilities = {};
-		mergeCapabilitiesInto( merged, { supportsSplitScreen: true } );
-		expect( merged.supportsSplitScreen ).toBe( true );
-	} );
-
-	it( 'leaves supportsSplitScreen unset when the provider declares false', () => {
-		const merged: ProviderCapabilities = {};
 		mergeCapabilitiesInto( merged, { supportsSplitScreen: false } );
-		expect( merged.supportsSplitScreen ).toBeUndefined();
-	} );
-
-	it( 'rejects truthy non-boolean values (untyped runtime modules)', () => {
-		const merged: ProviderCapabilities = {};
-		// A misconfigured external module exporting a stringified flag must not
-		// silently opt in via JavaScript truthiness.
 		mergeCapabilitiesInto( merged, { supportsSplitScreen: 'false' } );
 		mergeCapabilitiesInto( merged, { supportsSplitScreen: 'true' } );
 		mergeCapabilitiesInto( merged, { supportsSplitScreen: 1 } );
 		expect( merged.supportsSplitScreen ).toBeUndefined();
-	} );
 
-	it( 'OR-merges across providers — any true wins', () => {
-		const merged: ProviderCapabilities = {};
-		mergeCapabilitiesInto( merged, { supportsSplitScreen: false } );
-		mergeCapabilitiesInto( merged, {} );
 		mergeCapabilitiesInto( merged, { supportsSplitScreen: true } );
-		mergeCapabilitiesInto( merged, { supportsSplitScreen: false } );
 		expect( merged.supportsSplitScreen ).toBe( true );
 	} );
 
@@ -203,43 +159,6 @@ describe( 'mergeContextProviders', () => {
 						data: { content: 'Selected text' },
 					},
 				],
-			} )
-		);
-	} );
-
-	it( 'keeps earlier provider selected block id when later selected-block context is present', () => {
-		const provider = mergeContextProviders( [
-			{
-				getClientContext: () => ( {
-					environment: 'wp-admin',
-					url: 'https://example.com/wp-admin/post.php?post=1&action=edit',
-					pathname: '/wp-admin/post.php',
-					search: '?post=1&action=edit',
-					selectedBlockClientId: 'short-selected-id',
-				} ),
-			},
-			{
-				getClientContext: () => ( {
-					environment: 'gutenberg',
-					url: 'https://example.com/wp-admin/post.php?post=1&action=edit',
-					pathname: '/wp-admin/post.php',
-					search: '?post=1&action=edit',
-					selectedBlockClientId: 'raw-selected-id',
-					contextEntries: [
-						{
-							id: 'selected-block-content',
-							type: 'selected-block-content',
-							data: { content: 'Selected text' },
-						},
-					],
-				} ),
-			},
-		] );
-
-		expect( provider?.getClientContext() ).toEqual(
-			expect.objectContaining( {
-				environment: 'wp-admin',
-				selectedBlockClientId: 'short-selected-id',
 			} )
 		);
 	} );
@@ -350,40 +269,6 @@ describe( 'loadExternalProviders', () => {
 		expect( secondExecuteAbility ).toHaveBeenCalledWith( 'second-only', {} );
 	} );
 
-	it( 'keeps the first provider for equivalent raw and normalized non-show-component ability names', async () => {
-		const firstExecuteAbility = jest.fn().mockResolvedValue( { result: { provider: 'first' } } );
-		const secondExecuteAbility = jest.fn().mockResolvedValue( { result: { provider: 'second' } } );
-		const firstProvider = {
-			toolProvider: {
-				getAbilities: jest.fn().mockResolvedValue( [ { name: 'wpcom__update_block_content' } ] ),
-				executeAbility: firstExecuteAbility,
-			},
-		};
-		const secondProvider = {
-			toolProvider: {
-				getAbilities: jest.fn().mockResolvedValue( [ { name: 'wpcom/update-block-content' } ] ),
-				executeAbility: secondExecuteAbility,
-			},
-		};
-		const agentsManagerData = {
-			agentId: 'wp-orchestrator',
-			agentProviders: [ firstProvider, secondProvider ],
-		};
-		( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData =
-			agentsManagerData;
-
-		const providers = await loadExternalProviders();
-
-		expect( await providers.toolProvider?.getAbilities() ).toEqual( [
-			{ name: 'wpcom__update_block_content' },
-		] );
-
-		await providers.toolProvider?.executeAbility( 'wpcom/update-block-content', {} );
-
-		expect( firstExecuteAbility ).toHaveBeenCalledWith( 'wpcom__update_block_content', {} );
-		expect( secondExecuteAbility ).not.toHaveBeenCalled();
-	} );
-
 	it( 'keeps host ownership of show-component because the guest claims exclude its legacy alias', async () => {
 		const bigSkyResult = {
 			result: { provider: 'big-sky' },
@@ -463,15 +348,8 @@ describe( 'loadExternalProviders', () => {
 			'big_sky__show_component',
 			expect.anything()
 		);
-		expect(
-			providers.getChatComponent?.( 'color-picker', { toolId: 'big_sky__show_component' } )
-		).toBe( BigSkyColorPicker );
-		expect(
-			providers.getChatComponent?.( 'color-picker', { toolId: 'big-sky-show-component' } )
-		).toBe( BigSkyColorPicker );
-		expect(
-			providers.getChatComponent?.( 'title-picker', { toolId: 'jetpack_ai__show_component' } )
-		).toBe( JetpackTitlePicker );
+		expect( providers.getChatComponent?.( 'color-picker' ) ).toBe( BigSkyColorPicker );
+		expect( providers.getChatComponent?.( 'title-picker' ) ).toBe( JetpackTitlePicker );
 	} );
 
 	it( 'continues loading later providers when one provider import fails', async () => {
@@ -585,52 +463,6 @@ describe( 'loadExternalProviders', () => {
 		warnSpy.mockRestore();
 	} );
 
-	it( 'adds callbacks for a single provider so UI agent messages are promoted', async () => {
-		const bigSkyResult = {
-			result: { success: true, message: 'Pick a palette.' },
-			returnToAgent: true,
-			agentMessage: JSON.stringify( {
-				tool_id: 'big_sky__show_component',
-				data: { type: 'color-picker' },
-			} ),
-		};
-		const bigSkyExecuteAbility = jest.fn().mockResolvedValue( bigSkyResult );
-		const BigSkyColorPicker = () => null;
-		const bigSkyProvider = {
-			toolProvider: {
-				getAbilities: jest.fn().mockResolvedValue( [ { name: 'big-sky/show-component' } ] ),
-				executeAbility: bigSkyExecuteAbility,
-			},
-			getChatComponent: jest.fn( ( type: string ) =>
-				type === 'color-picker' ? BigSkyColorPicker : null
-			),
-		};
-		const agentsManagerData = {
-			agentId: 'dolly',
-			agentProviders: [ bigSkyProvider ],
-		};
-		( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData =
-			agentsManagerData;
-
-		const providers = await loadExternalProviders();
-		const abilities = await providers.toolProvider?.getAbilities();
-		const showComponentAbility = abilities?.find(
-			( ability ) => ability.name === 'big-sky/show-component'
-		);
-
-		expect( abilities ).toEqual( [ { name: 'big-sky/show-component' } ] );
-		expect( showComponentAbility?.callback ).toEqual( expect.any( Function ) );
-		await expect( showComponentAbility?.callback?.( { type: 'color-picker' } ) ).resolves.toBe(
-			bigSkyResult
-		);
-		expect( bigSkyExecuteAbility ).toHaveBeenCalledWith( 'big-sky/show-component', {
-			type: 'color-picker',
-		} );
-		expect(
-			providers.getChatComponent?.( 'color-picker', { toolId: 'big_sky__show_component' } )
-		).toBe( BigSkyColorPicker );
-	} );
-
 	it( 'loads Jetpack AI by itself when no host provider is present', async () => {
 		const JetpackTitlePicker = () => null;
 		const jetpackToolProvider = {
@@ -644,12 +476,7 @@ describe( 'loadExternalProviders', () => {
 				type === 'title-picker' ? JetpackTitlePicker : null
 			),
 		};
-		const agentsManagerData = {
-			agentId: 'wp-orchestrator',
-			agentProviders: [ jetpackProvider ],
-		};
-		( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData =
-			agentsManagerData;
+		setAgentsManagerData( [ jetpackProvider ] );
 
 		const providers = await loadExternalProviders();
 		const abilities = await providers.toolProvider?.getAbilities();
@@ -661,10 +488,7 @@ describe( 'loadExternalProviders', () => {
 			'jetpack_ai__show_component',
 			{}
 		);
-		expect(
-			providers.getChatComponent?.( 'title-picker', { toolId: 'jetpack_ai__show_component' } )
-		).toBe( JetpackTitlePicker );
-		expect( getProviderCompositionPolicy( agentsManagerData ) ).toBeUndefined();
+		expect( providers.getChatComponent?.( 'title-picker' ) ).toBe( JetpackTitlePicker );
 	} );
 
 	it( 'routes claimed abilities, components, and context keys to the guest provider', async () => {
@@ -709,7 +533,7 @@ describe( 'loadExternalProviders', () => {
 				),
 			}
 		);
-		const agentsManagerData = setAgentsManagerData( [ bigSkyProvider, jetpackProvider ] );
+		setAgentsManagerData( [ bigSkyProvider, jetpackProvider ] );
 
 		const providers = await loadExternalProviders();
 
@@ -730,63 +554,11 @@ describe( 'loadExternalProviders', () => {
 				titleSuggestionCount: 3,
 			} )
 		);
-		expect(
-			providers.getChatComponent?.( 'title-picker', { toolId: 'jetpack_ai__show_component' } )
-		).toBe( JetpackTitlePicker );
-		expect(
-			providers.getChatComponent?.( 'title-picker', { toolId: 'big_sky__show_component' } )
-		).toBe( JetpackTitlePicker );
-		expect(
-			providers.getChatComponent?.( 'color-picker', { toolId: 'big_sky__show_component' } )
-		).toBe( BigSkyColorPicker );
-		expectJetpackGuestPolicy( agentsManagerData );
+		expect( providers.getChatComponent?.( 'title-picker' ) ).toBe( JetpackTitlePicker );
+		expect( providers.getChatComponent?.( 'color-picker' ) ).toBe( BigSkyColorPicker );
 	} );
 
-	it( 'runs host resolveOutgoingArgs over guest-bound calls but not host-bound calls', async () => {
-		const hostExecuteAbility = jest.fn().mockResolvedValue( { result: { provider: 'big-sky' } } );
-		const jetpackExecuteAbility = jest
-			.fn()
-			.mockResolvedValue( { result: { provider: 'jetpack' } } );
-		const hostProvider = hostProviderWithAbilities( undefined, hostExecuteAbility, {
-			resolveOutgoingArgs: jest.fn( ( toolName: string, args: unknown ) => {
-				const record = args as Record< string, unknown >;
-				return typeof record?.clientId === 'string' && record.clientId === 'B7'
-					? { ...record, clientId: 'real-client-id-1234' }
-					: args;
-			} ),
-		} );
-		const jetpackProvider = jetpackProviderWithAbilities( undefined, jetpackExecuteAbility );
-		setAgentsManagerData( [ hostProvider, jetpackProvider ] );
-
-		const providers = await loadExternalProviders();
-
-		await providers.toolProvider?.executeAbility( 'jetpack_ai__show_component', {
-			clientId: 'B7',
-			tone: 'friendly',
-		} );
-		expect( jetpackExecuteAbility ).toHaveBeenCalledWith( 'jetpack_ai__show_component', {
-			clientId: 'real-client-id-1234',
-			tone: 'friendly',
-		} );
-
-		const abilities = await providers.toolProvider?.getAbilities();
-		const guestAbility = abilities?.find(
-			( ability ) => ability.name === 'jetpack_ai__show_component'
-		);
-		await guestAbility?.callback?.( { clientId: 'B7' } );
-		expect( jetpackExecuteAbility ).toHaveBeenCalledWith( 'jetpack_ai__show_component', {
-			clientId: 'real-client-id-1234',
-		} );
-
-		await providers.toolProvider?.executeAbility( 'big_sky__show_component', {
-			clientId: 'B7',
-		} );
-		expect( hostExecuteAbility ).toHaveBeenCalledWith( 'big-sky/show-component', {
-			clientId: 'B7',
-		} );
-	} );
-
-	it( 'parses a lazy-proxy compositionManifest like the widgets.wp.com wrapper produces', async () => {
+	it( 'parses a lazy-proxy compositionManifest when a provider exposes one', async () => {
 		expect.hasAssertions();
 		const proxiedManifest = new Proxy(
 			{},
@@ -795,16 +567,19 @@ describe( 'loadExternalProviders', () => {
 					( jetpackCompositionManifest as Record< string, unknown > )[ prop ],
 			}
 		);
-		const agentsManagerData = setAgentsManagerData( [
+		setAgentsManagerData( [
 			hostProviderWithAbilities(),
 			jetpackProviderWithAbilities( undefined, undefined, {
 				compositionManifest: proxiedManifest,
 			} ),
 		] );
 
-		await loadExternalProviders();
+		const providers = await loadExternalProviders();
 
-		expectJetpackGuestPolicy( agentsManagerData );
+		expect( await providers.toolProvider?.getAbilities() ).toEqual( [
+			{ name: 'big-sky/show-component' },
+			{ name: 'jetpack_ai__show_component' },
+		] );
 	} );
 
 	it.each( [ undefined, 'wpcom-workflow-unified_chat' ] )(
@@ -905,143 +680,6 @@ describe( 'loadExternalProviders', () => {
 		} );
 	} );
 
-	it( 'routes claimed component types to the claiming guest regardless of the source tool', async () => {
-		const BigSkyTitlePicker = () => null;
-		const JetpackTitlePicker = () => null;
-		const bigSkyProvider = {
-			toolProvider: {
-				getAbilities: jest.fn().mockResolvedValue( [ { name: 'big-sky/show-component' } ] ),
-				executeAbility: jest.fn(),
-			},
-			getChatComponent: jest.fn( ( type: string ) =>
-				type === 'title-picker' ? BigSkyTitlePicker : null
-			),
-		};
-		const jetpackProvider = {
-			compositionManifest: jetpackCompositionManifest,
-			toolProvider: {
-				getAbilities: jest.fn().mockResolvedValue( [ { name: 'jetpack_ai__show_component' } ] ),
-				executeAbility: jest.fn(),
-			},
-			getChatComponent: jest.fn( ( type: string ) =>
-				type === 'title-picker' ? JetpackTitlePicker : null
-			),
-		};
-		const agentsManagerData = {
-			agentId: 'wp-orchestrator',
-			agentProviders: [ bigSkyProvider, jetpackProvider ],
-		};
-		( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData =
-			agentsManagerData;
-
-		const providers = await loadExternalProviders();
-		await providers.toolProvider?.getAbilities();
-
-		expect(
-			providers.getChatComponent?.( 'title-picker', { toolId: 'jetpack_ai__show_component' } )
-		).toBe( JetpackTitlePicker );
-		expect(
-			providers.getChatComponent?.( 'title-picker', { toolId: 'big_sky__show_component' } )
-		).toBe( JetpackTitlePicker );
-		expect( providers.getChatComponent?.( 'title-picker' ) ).toBe( JetpackTitlePicker );
-	} );
-
-	it( 'composes Big Sky and Jetpack context providers without replacing Big Sky editor context', async () => {
-		const bigSkyProvider = {
-			contextProvider: {
-				getClientContext: () => ( {
-					url: 'https://example.com/wp-admin/post.php?post=1&action=edit',
-					pathname: '/wp-admin/post.php',
-					search: '?post=1&action=edit',
-					environment: 'wp-admin',
-					currentPageContent: [ { id: 'big-sky-block' } ],
-					selectedBlockClientId: 'short-selected-id',
-				} ),
-			},
-		};
-		const jetpackProvider = {
-			contextProvider: {
-				getClientContext: () => ( {
-					url: 'https://example.com/wp-admin/post.php?post=1&action=edit',
-					pathname: '/wp-admin/post.php',
-					search: '?post=1&action=edit',
-					environment: 'gutenberg',
-					titleSuggestionCount: 3,
-					selectedBlockClientId: 'raw-selected-id',
-					contextEntries: [
-						{
-							id: 'selected-block-content',
-							type: 'selected-block-content',
-							data: { content: 'Selected text' },
-						},
-					],
-				} ),
-			},
-		};
-		const agentsManagerData = {
-			agentId: 'wp-orchestrator',
-			agentProviders: [ bigSkyProvider, jetpackProvider ],
-		};
-		( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData =
-			agentsManagerData;
-
-		const providers = await loadExternalProviders();
-
-		expect( providers.contextProvider?.getClientContext() ).toEqual(
-			expect.objectContaining( {
-				environment: 'wp-admin',
-				titleSuggestionCount: 3,
-				currentPageContent: [ { id: 'big-sky-block' } ],
-				selectedBlockClientId: 'short-selected-id',
-				contextEntries: [
-					{
-						id: 'selected-block-content',
-						type: 'selected-block-content',
-						data: { content: 'Selected text' },
-					},
-				],
-			} )
-		);
-	} );
-
-	it( 'falls through to Jetpack for legacy show-component messages with Jetpack-only component types', async () => {
-		const BigSkyFontPicker = () => null;
-		const JetpackTitlePicker = () => null;
-		const bigSkyProvider = {
-			toolProvider: {
-				getAbilities: jest.fn().mockResolvedValue( [ { name: 'big-sky/show-component' } ] ),
-				executeAbility: jest.fn(),
-			},
-			getChatComponent: jest.fn( ( type: string ) =>
-				type === 'font-picker' ? BigSkyFontPicker : null
-			),
-		};
-		const jetpackProvider = {
-			toolProvider: {
-				getAbilities: jest.fn().mockResolvedValue( [ { name: 'jetpack_ai__show_component' } ] ),
-				executeAbility: jest.fn(),
-			},
-			getChatComponent: jest.fn( ( type: string ) =>
-				type === 'title-picker' ? JetpackTitlePicker : null
-			),
-		};
-		const agentsManagerData = {
-			agentId: 'wp-orchestrator',
-			agentProviders: [ bigSkyProvider, jetpackProvider ],
-		};
-		( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData =
-			agentsManagerData;
-
-		const providers = await loadExternalProviders();
-
-		expect(
-			providers.getChatComponent?.( 'title-picker', { toolId: 'big_sky__show_component' } )
-		).toBe( JetpackTitlePicker );
-		expect(
-			providers.getChatComponent?.( 'font-picker', { toolId: 'big_sky__show_component' } )
-		).toBe( BigSkyFontPicker );
-	} );
-
 	it( 'routes claimed component types to the guest when a component-only host is registered first', async () => {
 		const HostNextStepButton = () => null;
 		const JetpackTitlePicker = () => null;
@@ -1071,9 +709,7 @@ describe( 'loadExternalProviders', () => {
 		const providers = await loadExternalProviders();
 		await providers.toolProvider?.getAbilities();
 
-		expect(
-			providers.getChatComponent?.( 'title-picker', { toolId: 'jetpack_ai__show_component' } )
-		).toBe( JetpackTitlePicker );
+		expect( providers.getChatComponent?.( 'title-picker' ) ).toBe( JetpackTitlePicker );
 		expect( providers.getChatComponent?.( 'next-step-button' ) ).toBe( HostNextStepButton );
 	} );
 

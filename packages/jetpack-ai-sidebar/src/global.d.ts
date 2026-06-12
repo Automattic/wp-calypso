@@ -6,7 +6,7 @@ declare const agentsManagerData:
 			aiEditorialReviewEnabled?: boolean;
 			reviewMediatorEnabled?: boolean;
 			jetpackAiSidebarPreview?: {
-				enabled?: boolean;
+				enabled: boolean;
 				features?: {
 					aiEditorialReview?: boolean;
 					blockTransformations?: boolean;

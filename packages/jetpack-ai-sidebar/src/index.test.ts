@@ -396,7 +396,7 @@ describe( 'useSuggestions', () => {
 		] );
 	} );
 
-	it( 'omits Jetpack selected-block text suggestions on Big Sky Page Editor surfaces', () => {
+	it( 'keeps Jetpack selected-block text suggestions when another provider is present', () => {
 		installBigSkyProviderData( { optimizeTitleSuggestion: true } );
 		mockCurrentPostType = 'page';
 		mockSelectedBlock = { clientId: 'b-selected', name: 'core/paragraph' };
@@ -406,8 +406,12 @@ describe( 'useSuggestions', () => {
 
 		const latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
-		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [] );
-		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [] );
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'Translate content',
+			'Change tone',
+			'Check grammar',
+			'Simplify text',
+		] );
 	} );
 
 	it( 'keeps Jetpack selected-block text suggestions on Jetpack-only Page Editor surfaces', () => {
@@ -1385,7 +1389,7 @@ describe( 'applyReviewEdit', () => {
 		warn.mockRestore();
 	} );
 
-	it( 'falls back to the selected block when the clientId is compressed', async () => {
+	it( 'does not fall back to the selected block when currentText is unavailable', async () => {
 		const { blockUpdates } = installWpDataMockWithBlockEditor(
 			{
 				'live-client-id': {
@@ -1396,29 +1400,16 @@ describe( 'applyReviewEdit', () => {
 			'live-client-id'
 		);
 		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
-		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 
 		const promise = applyReviewEdit( 'short-id', 'hola mundo' );
 		jest.advanceTimersByTime( 1000 );
 		const result = await promise;
 
 		expect( result ).toMatchObject( {
-			success: true,
-			clientId: 'live-client-id',
-			contentBefore: 'hello world',
-			contentAfter: 'hola mundo',
+			success: false,
+			error: 'block not found',
 		} );
-		expect( blockUpdates ).toEqual( [
-			{
-				clientId: 'live-client-id',
-				attrs: { content: 'hola mundo' },
-			},
-		] );
-		expect( warn ).toHaveBeenCalledWith(
-			'[ReviewMediation] stale clientId matched selected block',
-			expect.any( Object )
-		);
-		warn.mockRestore();
+		expect( blockUpdates ).toEqual( [] );
 	} );
 
 	it( 'revalidates currentText against the latest block content before writing', async () => {

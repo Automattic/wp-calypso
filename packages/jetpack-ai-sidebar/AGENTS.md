@@ -27,7 +27,7 @@ All exports live in `src/index.ts`. This is intentionally a single-file provider
 
 ## Critical Patterns (Don't Break These)
 
-- **Module-level state**: `addMessageFn`, `clearSuggestionsFn`, and `moduleCheckpointApi` are captured once via their respective hooks. These are module singletons — do NOT move them into React state or a store.
+- **Module-level state**: `clearSuggestionsFn`, checkpoint state, and block-selection memory are module singletons captured by provider hooks/utilities. Do NOT move them into React state or a store.
 - **`returnToAgent: false`**: The `handleUpdateBlockContent` and `handleShowComponent` handlers return `{ returnToAgent: false }`. This prevents the AM orchestrator from continuing automatically after the tool executes. Removing this breaks the UX flow.
 - **Tool ID normalization**: AM normalizes tool IDs (`jetpack-ai/update-block-content` → `jetpack_ai__update_block_content`). The `isUpdateBlockContentTool` / `isShowComponentTool` helpers handle both forms. Any new tool must follow this pattern.
 - **Show-component via `agentMessage` escape hatch**: `handleShowComponent` returns `{ agentMessage: JSON }` — it does NOT call `addMessageFn` directly. agenttic-client wraps the JSON in an `{ role: 'agent', parts: [text] }` message, AM's `convert-tool-messages-to-components` resolves the component via `getChatComponent`, and AgentChat's action bar (thumbs/Undo) attaches because the original message had a text content part. See "Show-component pattern" below.
@@ -36,11 +36,10 @@ All exports live in `src/index.ts`. This is intentionally a single-file provider
 
 ## Tools
 
-| Tool ID                           | Handler                     | UI Component           | Description                                              |
-| --------------------------------- | --------------------------- | ---------------------- | -------------------------------------------------------- |
-| `jetpack_ai__show_component`      | `handleShowComponent`       | via `getChatComponent` | Renders Jetpack AI chat components                       |
-| `big_sky__show_component`         | `handleLegacyShowComponent` | Jetpack or Big Sky     | Temporary migration support; delegates non-Jetpack types |
-| `jetpack-ai/update-block-content` | `handleUpdateBlockContent`  | _(chat text)_          | Updates block content with shimmer effect                |
+| Tool ID                           | Handler                    | UI Component           | Description                               |
+| --------------------------------- | -------------------------- | ---------------------- | ----------------------------------------- |
+| `jetpack_ai__show_component`      | `handleShowComponent`      | via `getChatComponent` | Renders Jetpack AI chat components        |
+| `jetpack-ai/update-block-content` | `handleUpdateBlockContent` | _(chat text)_          | Updates block content with shimmer effect |
 
 ### Show-component pattern
 
@@ -65,7 +64,7 @@ On the client, `handleShowComponent`:
 
 Jetpack show-component messages currently set `hideZoomAction: true` so AM's zoom action button stays hidden for these chat components.
 
-The provider temporarily accepts legacy `big_sky__show_component` executions for Jetpack-owned component types during the migration, but new Jetpack AI component responses should use `jetpack_ai__show_component`. Unknown legacy component types should remain owned by the provider that registered them.
+Jetpack AI component responses should use `jetpack_ai__show_component`. Legacy Big Sky show-component messages remain owned by the host provider through Agents Manager provider composition.
 
 ### Adding a new component type
 

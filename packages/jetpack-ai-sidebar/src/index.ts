@@ -120,7 +120,7 @@ function isJetpackAiSidebarPreviewFeatureEnabled(
 	if ( ! preview ) {
 		return defaultValue;
 	}
-	if ( preview.enabled === false ) {
+	if ( ! preview.enabled ) {
 		return false;
 	}
 	return preview.features?.[ feature ] === true;
@@ -146,50 +146,6 @@ function isOptimizeTitleSuggestionEnabled(): boolean {
 
 function isBlockTransformationsEnabled(): boolean {
 	return isJetpackAiSidebarPreviewFeatureEnabled( 'blockTransformations', true );
-}
-
-function providerEntryLooksLikeDesignProvider( providerEntry: unknown ): boolean {
-	const providerSource =
-		typeof providerEntry === 'string'
-			? providerEntry
-			: [
-					( providerEntry as any )?.id,
-					( providerEntry as any )?.name,
-					( providerEntry as any )?.url,
-					( providerEntry as any )?.src,
-			  ]
-					.filter( ( value ) => typeof value === 'string' )
-					.join( ' ' );
-
-	return /big[-_]?sky|dolly/i.test( providerSource );
-}
-
-function hasDesignProviderActive(): boolean {
-	const data = getAgentsManagerData() as any;
-	const providers = Array.isArray( data?.agentProviders ) ? data.agentProviders : [];
-
-	return (
-		providers.some( providerEntryLooksLikeDesignProvider ) ||
-		typeof ( window as any ).bigSkyInitialState !== 'undefined' ||
-		!! data?.bigSkyVersion ||
-		!! data?.siteMetadata?.big_sky_version
-	);
-}
-
-function isDesignEditorSurface(
-	currentPostType: string | undefined = getCurrentEditorPostType()
-): boolean {
-	const pathname = window.location.pathname;
-
-	return currentPostType === 'page' || pathname.includes( 'site-editor.php' );
-}
-
-function shouldProvideBlockTransformations( currentPostType?: string ): boolean {
-	if ( ! isBlockTransformationsEnabled() ) {
-		return false;
-	}
-
-	return ! ( isDesignEditorSurface( currentPostType ) && hasDesignProviderActive() );
 }
 
 function getCurrentEditorPostType(): string | undefined {
@@ -783,7 +739,7 @@ function trackRenderedBlockTransformationSuggestions(
 }
 
 function trackBlockTransformationSuggestionClickForValue( value: string ): void {
-	if ( ! shouldProvideBlockTransformations() ) {
+	if ( ! isBlockTransformationsEnabled() ) {
 		return;
 	}
 
@@ -912,7 +868,7 @@ export function useSuggestions(
 
 	const selectedBlock = editorContext.selectedBlock;
 	const aiEditorialReviewSuggestions = getAiEditorialReviewSuggestions( editorContext.postType );
-	const blockTransformationsEnabled = shouldProvideBlockTransformations( editorContext.postType );
+	const blockTransformationsEnabled = isBlockTransformationsEnabled();
 	const applicable = useMemo(
 		() =>
 			selectedBlock && blockTransformationsEnabled

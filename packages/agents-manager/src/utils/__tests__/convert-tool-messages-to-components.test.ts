@@ -4,8 +4,6 @@ import UnavailableToolMessage from '../../components/unavailable-tool-message';
 import convertToolMessagesToComponents from '../convert-tool-messages-to-components';
 import { isEditorPage } from '../is-editor-page';
 import {
-	BIG_SKY_SHOW_COMPONENT_ABILITY,
-	BIG_SKY_SHOW_COMPONENT_AGENTTIC_TOOL_ID,
 	BIG_SKY_SHOW_COMPONENT_TOOL_ID,
 	JETPACK_AI_SHOW_COMPONENT_TOOL_ID,
 } from '../show-component-tools';
@@ -24,9 +22,6 @@ jest.mock( '../is-editor-page' );
 const MockComponent = jest.fn();
 const mockOnSubmit = jest.fn();
 const SHOW_COMPONENT_TOOL_ID = JETPACK_AI_SHOW_COMPONENT_TOOL_ID;
-const LEGACY_SHOW_COMPONENT_TOOL_ID = BIG_SKY_SHOW_COMPONENT_TOOL_ID;
-const RAW_BIG_SKY_SHOW_COMPONENT_TOOL_ID = BIG_SKY_SHOW_COMPONENT_ABILITY;
-const AGENTTIC_BIG_SKY_SHOW_COMPONENT_TOOL_ID = BIG_SKY_SHOW_COMPONENT_AGENTTIC_TOOL_ID;
 
 const convertWithDefaults = (
 	options: Omit< Parameters< typeof convertToolMessagesToComponents >[ 0 ], 'onSubmit' >
@@ -105,13 +100,11 @@ describe( 'convertToolMessagesToComponents', () => {
 				contentType: 'my-component',
 			},
 		} );
-		expect( getChatComponent ).toHaveBeenCalledWith( 'my-component', {
-			toolId: SHOW_COMPONENT_TOOL_ID,
-		} );
+		expect( getChatComponent ).toHaveBeenCalledWith( 'my-component' );
 	} );
 
 	it( 'renders legacy Big Sky show-component messages during migration', () => {
-		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+		const message = createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'my-component',
 			props: { name: 'test' },
 			isCurrent: true,
@@ -129,340 +122,11 @@ describe( 'convertToolMessagesToComponents', () => {
 			component: MockComponent,
 			componentProps: { name: 'test', contentType: 'my-component' },
 		} );
-		expect( getChatComponent ).toHaveBeenCalledWith( 'my-component', {
-			toolId: LEGACY_SHOW_COMPONENT_TOOL_ID,
-		} );
-	} );
-
-	it( 'renders a Big Sky picker from a streamed tool call when Agenttic omits agentMessage', () => {
-		const toolCall = createMessage( {
-			id: 'tool-call-1',
-			content: [
-				{
-					type: 'data',
-					data: {
-						toolCallId: 'toolu_1',
-						toolId: LEGACY_SHOW_COMPONENT_TOOL_ID,
-						arguments: {
-							type: 'font-picker',
-							props: { fontPairings: [ { heading: 'Inter', body: 'Lora' } ] },
-							summary: 'Here are some fonts.',
-							followUpTasks: false,
-						},
-					},
-				},
-			],
-		} );
-		const emptyToolResult = createMessage( {
-			id: 'tool-result-1',
-			content: [
-				{
-					type: 'data',
-					data: {
-						toolCallId: 'toolu_1',
-						result: undefined,
-					},
-				},
-			],
-		} );
-		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
-
-		const result = convertWithDefaults( {
-			messages: [ toolCall, emptyToolResult ],
-			getChatComponent,
-		} );
-
-		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ].id ).toBe( 'tool-result-1' );
-		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
-			type: 'text',
-			text: 'Here are some fonts.',
-		} );
-		expect( result[ 0 ].content[ 1 ] ).toMatchObject( {
-			type: 'component',
-			component: MockComponent,
-			componentProps: {
-				fontPairings: [ { heading: 'Inter', body: 'Lora' } ],
-				summary: 'Here are some fonts.',
-				contentType: 'font-picker',
-			},
-		} );
-		expect( result[ 0 ] ).toMatchObject( { disabled: false } );
-		expect( getChatComponent ).toHaveBeenCalledWith( 'font-picker', {
-			toolId: LEGACY_SHOW_COMPONENT_TOOL_ID,
-		} );
-	} );
-
-	it( 'renders raw Big Sky show-component tool calls emitted by WordPress abilities', () => {
-		const toolCall = createMessage( {
-			id: 'tool-call-1',
-			content: [
-				{
-					type: 'data',
-					data: {
-						toolCallId: 'toolu_1',
-						toolId: RAW_BIG_SKY_SHOW_COMPONENT_TOOL_ID,
-						arguments: {
-							type: 'color-picker',
-							props: { palettes: [ { name: 'Ocean' } ] },
-							summary: 'Here are some colors.',
-							followUpTasks: false,
-						},
-					},
-				},
-			],
-		} );
-		const emptyToolResult = createMessage( {
-			id: 'tool-result-1',
-			content: [
-				{
-					type: 'data',
-					data: {
-						toolCallId: 'toolu_1',
-						result: undefined,
-					},
-				},
-			],
-		} );
-		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
-
-		const result = convertWithDefaults( {
-			messages: [ toolCall, emptyToolResult ],
-			getChatComponent,
-		} );
-
-		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ].id ).toBe( 'tool-result-1' );
-		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
-			type: 'text',
-			text: 'Here are some colors.',
-		} );
-		expect( result[ 0 ].content[ 1 ] ).toMatchObject( {
-			type: 'component',
-			component: MockComponent,
-			componentProps: {
-				palettes: [ { name: 'Ocean' } ],
-				summary: 'Here are some colors.',
-				contentType: 'color-picker',
-			},
-		} );
-		expect( result[ 0 ] ).toMatchObject( { disabled: false } );
-		expect( getChatComponent ).toHaveBeenCalledWith( 'color-picker', {
-			toolId: RAW_BIG_SKY_SHOW_COMPONENT_TOOL_ID,
-		} );
-	} );
-
-	it( 'renders hyphenated Big Sky show-component tool calls emitted by Agenttic', () => {
-		const toolCall = createMessage( {
-			id: 'tool-call-1',
-			content: [
-				{
-					type: 'data',
-					data: {
-						toolCallId: 'toolu_1',
-						toolId: AGENTTIC_BIG_SKY_SHOW_COMPONENT_TOOL_ID,
-						arguments: {
-							type: 'color-picker',
-							props: { palettes: [ { name: 'Sunset' } ] },
-							summary: 'Here are some colors.',
-							followUpTasks: false,
-						},
-					},
-				},
-			],
-		} );
-		const emptyToolResult = createMessage( {
-			id: 'tool-result-1',
-			content: [
-				{
-					type: 'data',
-					data: {
-						toolCallId: 'toolu_1',
-						result: undefined,
-					},
-				},
-			],
-		} );
-		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
-
-		const result = convertWithDefaults( {
-			messages: [ toolCall, emptyToolResult ],
-			getChatComponent,
-		} );
-
-		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ].id ).toBe( 'tool-result-1' );
-		expect( result[ 0 ].content[ 1 ] ).toMatchObject( {
-			type: 'component',
-			component: MockComponent,
-			componentProps: {
-				palettes: [ { name: 'Sunset' } ],
-				summary: 'Here are some colors.',
-				contentType: 'color-picker',
-			},
-		} );
-		expect( getChatComponent ).toHaveBeenCalledWith( 'color-picker', {
-			toolId: AGENTTIC_BIG_SKY_SHOW_COMPONENT_TOOL_ID,
-		} );
-	} );
-
-	it( 'renders an orphaned show-component tool call emitted by an input-required result', () => {
-		const toolCall = createMessage( {
-			id: 'tool-call-1',
-			content: [
-				{
-					type: 'data',
-					data: {
-						toolCallId: 'toolu_1',
-						toolId: SHOW_COMPONENT_TOOL_ID,
-						arguments: {
-							type: 'title-picker',
-							props: {
-								titles: [ { title: 'Better WordPress Blogging Tips', explanation: 'Clear.' } ],
-							},
-							isCurrent: true,
-							hideZoomAction: true,
-						},
-					},
-				},
-			],
-		} );
-		const assistantText = createMessage( {
-			id: 'agent-text-1',
-			content: [ { type: 'text', text: 'I suggested a few optimized titles.' } ],
-		} );
-		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
-
-		const result = convertWithDefaults( {
-			messages: [ toolCall, assistantText ],
-			getChatComponent,
-		} );
-
-		expect( result ).toHaveLength( 2 );
-		expect( result[ 0 ].id ).toBe( 'tool-call-1' );
-		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
-			type: 'component',
-			component: MockComponent,
-			componentProps: {
-				titles: [ { title: 'Better WordPress Blogging Tips', explanation: 'Clear.' } ],
-				contentType: 'title-picker',
-			},
-		} );
-		expect( result[ 0 ] ).toMatchObject( { disabled: false } );
-		expect( result[ 1 ] ).toBe( assistantText );
-		expect( getChatComponent ).toHaveBeenCalledWith( 'title-picker', {
-			toolId: SHOW_COMPONENT_TOOL_ID,
-		} );
-	} );
-
-	it( 'dedupes provider agentMessage UI when the matching tool result renders the same component', () => {
-		const toolCall = createMessage( {
-			id: 'tool-call-1',
-			content: [
-				{
-					type: 'data',
-					data: {
-						toolCallId: 'toolu_1',
-						toolId: SHOW_COMPONENT_TOOL_ID,
-						arguments: {
-							type: 'title-picker',
-							props: {
-								titles: [ { title: 'Better WordPress Blogging Tips', explanation: 'Clear.' } ],
-							},
-							isCurrent: true,
-							hideZoomAction: true,
-						},
-					},
-				},
-			],
-		} );
-		const providerAgentMessage = createToolMessage(
-			SHOW_COMPONENT_TOOL_ID,
-			{
-				type: 'title-picker',
-				props: {
-					titles: [ { title: 'Better WordPress Blogging Tips', explanation: 'Clear.' } ],
-				},
-				isCurrent: true,
-				hideZoomAction: true,
-				calypsoCheckpointId: 'toolu_1',
-			},
-			{ id: 'provider-agent-message-1' }
-		);
-		const toolResult = createMessage( {
-			id: 'tool-result-1',
-			content: [
-				{
-					type: 'data',
-					data: {
-						toolCallId: 'toolu_1',
-						result: 'Component displayed successfully',
-					},
-				},
-			],
-		} );
-		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
-
-		const result = convertWithDefaults( {
-			messages: [ toolCall, providerAgentMessage, toolResult ],
-			getChatComponent,
-		} );
-
-		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ].id ).toBe( 'tool-result-1' );
-		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
-			type: 'component',
-			component: MockComponent,
-			componentProps: {
-				titles: [ { title: 'Better WordPress Blogging Tips', explanation: 'Clear.' } ],
-				contentType: 'title-picker',
-			},
-		} );
-		expect( result[ 0 ] ).toMatchObject( { disabled: false } );
-	} );
-
-	it( 'dedupes matching live and persisted show-component agent messages', () => {
-		const liveMessage = createToolMessage(
-			LEGACY_SHOW_COMPONENT_TOOL_ID,
-			{
-				type: 'color-picker',
-				props: { palettes: [ { name: 'Rose' } ] },
-				isCurrent: true,
-				calypsoCheckpointId: 'toolu_1',
-			},
-			{ id: 'live-message-1' }
-		);
-		const persistedMessage = createToolMessage(
-			LEGACY_SHOW_COMPONENT_TOOL_ID,
-			{
-				type: 'color-picker',
-				props: { palettes: [ { name: 'Rose' } ] },
-				isCurrent: true,
-				calypsoCheckpointId: 'toolu_1',
-			},
-			{ id: 'persisted-message-1' }
-		);
-		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
-
-		const result = convertWithDefaults( {
-			messages: [ liveMessage, persistedMessage ],
-			getChatComponent,
-		} );
-
-		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ].id ).toBe( 'persisted-message-1' );
-		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
-			type: 'component',
-			component: MockComponent,
-			componentProps: {
-				palettes: [ { name: 'Rose' } ],
-				contentType: 'color-picker',
-			},
-		} );
+		expect( getChatComponent ).toHaveBeenCalledWith( 'my-component' );
 	} );
 
 	it( 'filters out unregistered components', () => {
-		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+		const message = createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'unknown-component',
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( null );
@@ -484,8 +148,8 @@ describe( 'convertToolMessagesToComponents', () => {
 
 		const result = convertWithDefaults( {
 			messages: [
-				createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, data, { id: 'msg-1', actions } ),
-				createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, data, { id: 'msg-2', actions } ),
+				createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, data, { id: 'msg-1', actions } ),
+				createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, data, { id: 'msg-2', actions } ),
 			],
 			getChatComponent,
 		} );
@@ -504,7 +168,9 @@ describe( 'convertToolMessagesToComponents', () => {
 
 	it( 'renders `UnavailableToolMessage` when not on an editor page', () => {
 		( isEditorPage as jest.Mock ).mockReturnValue( false );
-		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, { type: 'my-component' } );
+		const message = createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, {
+			type: 'my-component',
+		} );
 
 		const result = convertWithDefaults( {
 			messages: [ message ],
@@ -520,7 +186,7 @@ describe( 'convertToolMessagesToComponents', () => {
 
 	it( 'renders tool messages when editor context is active outside wp-admin URLs', () => {
 		( isEditorPage as jest.Mock ).mockReturnValue( false );
-		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+		const message = createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'my-component',
 			props: { name: 'test' },
 			isCurrent: true,
@@ -724,7 +390,7 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'disables component when `isCurrent` is false', () => {
-		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+		const message = createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'my-component',
 			isCurrent: false,
 		} );
@@ -740,7 +406,7 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'does not append `NextStepButton` when `isCurrent` is false', () => {
-		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+		const message = createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'my-component',
 			followUpTasks: true,
 			isCurrent: false,
@@ -759,7 +425,7 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'disables component when `postId` differs from `currentPostId`', () => {
-		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+		const message = createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'my-component',
 			isCurrent: true,
 			postId: 10,
@@ -777,7 +443,7 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'does not append `NextStepButton` when `postId` differs from `currentPostId`', () => {
-		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+		const message = createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'my-component',
 			followUpTasks: true,
 			isCurrent: true,
@@ -798,7 +464,7 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'does not disable component when `postId` matches `currentPostId`', () => {
-		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+		const message = createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'my-component',
 			isCurrent: true,
 			postId: 10,
@@ -816,7 +482,7 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'does not disable component when `postId` is missing from the tool message', () => {
-		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+		const message = createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'my-component',
 			isCurrent: true,
 		} );
@@ -833,7 +499,7 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'does not disable component when `currentPostId` is undefined', () => {
-		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+		const message = createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'my-component',
 			isCurrent: true,
 			postId: 10,

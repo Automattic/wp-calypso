@@ -97,20 +97,7 @@ function getWindowPathname(): string {
 	return typeof window !== 'undefined' ? window.location.pathname : '';
 }
 
-function isSiteEditorRoute( currentRoute?: string ): boolean {
-	const pathname = getWindowPathname();
-	return (
-		!! currentRoute?.includes( 'site-editor.php' ) ||
-		pathname.includes( 'site-editor.php' ) ||
-		( typeof document !== 'undefined' && document.body?.classList.contains( 'site-editor-php' ) )
-	);
-}
-
 function isPostEditorSurface( sectionName: string, currentRoute?: string ): boolean {
-	if ( isSiteEditorRoute( currentRoute ) ) {
-		return false;
-	}
-
 	const pathname = getWindowPathname();
 	return (
 		sectionName === 'gutenberg' ||
@@ -126,31 +113,10 @@ function isSiteEditorSurface( sectionName: string, currentRoute?: string ): bool
 		return false;
 	}
 
-	return sectionName === 'site-editor' || isSiteEditorRoute( currentRoute );
-}
-
-function getRuntimeCurrentPostType(): string | undefined {
-	if ( typeof window === 'undefined' ) {
-		return undefined;
-	}
-
-	const runtime = window as unknown as {
-		agentsManagerData?: { currentScreen?: { postType?: unknown } };
-		bigSkyInitialState?: { currentScreen?: { postType?: unknown } };
-	};
-	const postType =
-		runtime.agentsManagerData?.currentScreen?.postType ??
-		runtime.bigSkyInitialState?.currentScreen?.postType;
-
-	return typeof postType === 'string' ? postType : undefined;
-}
-
-function isPageEditorSurface( currentPostType?: string, currentRoute?: string ): boolean {
 	return (
-		currentPostType === 'page' ||
-		getRuntimeCurrentPostType() === 'page' ||
-		!! currentRoute?.includes( 'post_type=page' ) ||
-		( typeof document !== 'undefined' && document.body?.classList.contains( 'post-type-page' ) )
+		sectionName === 'site-editor' ||
+		!! currentRoute?.includes( 'site-editor.php' ) ||
+		getWindowPathname().includes( 'site-editor.php' )
 	);
 }
 
@@ -171,6 +137,7 @@ export function useEmptyViewSuggestions( {
 }: UseEmptyViewSuggestionsOptions ): Suggestion[] | null {
 	const isReaderChat = isReaderChatHost();
 	const { sectionName, currentRoute } = useAgentsManagerContext();
+	const shouldShowSiteEditorSuggestions = isSiteEditorSurface( sectionName, currentRoute );
 
 	// Default suggestions - used when Big Sky doesn't provide custom ones
 	const defaultSuggestions = useMemo(
@@ -198,34 +165,24 @@ export function useEmptyViewSuggestions( {
 
 	// Wait for WordPress core store to be ready (specifically theme data)
 	// This is needed because Big Sky's getEmptyViewSuggestions filters by theme
-	const editorState = useSelect(
+	const isCoreStoreReady = useSelect(
 		( select ) => {
 			if ( ! hasBigSkySuggestions ) {
-				return { isCoreStoreReady: true, currentPostType: undefined }; // No need to wait if not using Big Sky suggestions
+				return true; // No need to wait if not using Big Sky suggestions
 			}
 			try {
 				const coreStore = select( 'core' ) as {
 					getCurrentTheme?: () => unknown;
 				};
-				const editorStore = select( 'core/editor' ) as {
-					getCurrentPostType?: () => string | undefined;
-				};
 				// Check if getCurrentTheme returns a value (meaning store is ready)
 				const theme = coreStore?.getCurrentTheme?.();
-				return {
-					isCoreStoreReady: !! theme,
-					currentPostType: editorStore?.getCurrentPostType?.(),
-				};
+				return !! theme;
 			} catch {
-				return { isCoreStoreReady: false, currentPostType: undefined };
+				return false;
 			}
 		},
 		[ hasBigSkySuggestions ]
 	);
-	const isCoreStoreReady = editorState.isCoreStoreReady;
-	const shouldShowSiteEditorSuggestions =
-		isSiteEditorSurface( sectionName, currentRoute ) ||
-		isPageEditorSurface( editorState.currentPostType, currentRoute );
 
 	// Compute empty view suggestions once when store is ready
 	const [ emptyViewSuggestions, setEmptyViewSuggestions ] = useState< Suggestion[] | null >( null );

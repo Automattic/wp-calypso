@@ -354,31 +354,6 @@ function findBlockSnapshotByCurrentText( currentText: string ): {
 	return {};
 }
 
-function getSelectedOrRememberedBlockSnapshot(
-	currentText?: string
-): { clientId: string; name: string; content: string } | null {
-	const block = getSelectedOrRememberedBlock();
-	if ( ! block?.clientId ) {
-		return null;
-	}
-
-	const snapshot = {
-		clientId: block.clientId,
-		name: block.name,
-		content: getEditableBlockContent( block ),
-	};
-
-	if ( ! isSupportedEditBlockType( snapshot.name ) ) {
-		return null;
-	}
-
-	if ( currentText && ! snapshot.content.includes( currentText ) ) {
-		return null;
-	}
-
-	return snapshot;
-}
-
 /**
  * Handle the update-block-content tool call: apply text changes to a block.
  * @param {any} input - Tool input with clientId, content, optional summary / currentText,
@@ -430,21 +405,6 @@ export function handleUpdateBlockContent( input: any ): any {
 				snapshot = fallback.snapshot;
 				// eslint-disable-next-line no-console
 				console.warn( '[ReviewMediation] stale clientId matched by currentText', {
-					clientId,
-					targetClientId,
-				} );
-			}
-		}
-
-		if ( ! snapshot ) {
-			const selectedSnapshot = getSelectedOrRememberedBlockSnapshot(
-				hasCurrentText ? currentText : undefined
-			);
-			if ( selectedSnapshot ) {
-				targetClientId = selectedSnapshot.clientId;
-				snapshot = selectedSnapshot;
-				// eslint-disable-next-line no-console
-				console.warn( '[ReviewMediation] stale clientId matched selected block', {
 					clientId,
 					targetClientId,
 				} );

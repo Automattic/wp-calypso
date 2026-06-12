@@ -19,7 +19,6 @@ import {
 	normalizeAbilityName,
 	resolveEffectiveAgentId,
 	resolveProviderComposition,
-	writeProviderCompositionDebugSummary,
 	type ProviderCompositionManifest,
 	type ProviderCompositionPolicy,
 	type ResolvedProviderManifest,
@@ -95,9 +94,9 @@ export type SiteBuildUtils = {
 };
 
 /**
- * Supported chat component types for agent messages.
+ * Supported built-in chat component types for agent messages.
  */
-type ChatComponentType =
+export type BuiltInChatComponentType =
 	| 'button-picker'
 	| 'font-picker'
 	| 'color-picker'
@@ -105,19 +104,14 @@ type ChatComponentType =
 	| 'chat-suggestions'
 	| 'next-step-button';
 
+export type ChatComponentType = BuiltInChatComponentType | ( string & {} );
+
 /**
  * Get a chat component by type for rendering in agent messages.
  * @param type - The type of chat component to get
- * @param context - Optional source tool metadata for source-aware component lookup
  * @returns The React component for the specified type, or `null` if unknown
  */
-export type GetChatComponentContext = {
-	toolId?: string;
-};
-export type GetChatComponent = (
-	type: ChatComponentType | string,
-	context?: GetChatComponentContext
-) => React.ComponentType< unknown > | null;
+export type GetChatComponent = ( type: ChatComponentType ) => React.ComponentType< unknown > | null;
 
 /**
  * Checkpoint return type - for saving and restoring editor state so that AI actions can be undone.
@@ -143,16 +137,6 @@ export type UseCheckpointReturn = {
 export type UseCheckpointHook = () => UseCheckpointReturn;
 
 export type { ImageUploadHook };
-
-/**
- * Host-declared argument translator. When a tool call routes to a guest
- * provider, every host's `resolveOutgoingArgs` runs over the call's args
- * first (in registration order). This is how a host converts its own
- * vocabulary — e.g. the shortened block ids Big Sky sends the model — into
- * what a guest's handlers expect, without the guest ever learning the
- * host's id scheme.
- */
-export type ResolveOutgoingArgs = ( toolName: string, args: unknown ) => unknown;
 
 /** Optional flags providers can declare to opt into AM chat-dock features. */
 export interface ProviderCapabilities {
@@ -192,7 +176,6 @@ export interface LoadedProviders {
 	useCheckpoint?: UseCheckpointHook;
 	capabilities?: ProviderCapabilities;
 	compositionManifest?: ProviderCompositionManifest;
-	resolveOutgoingArgs?: ResolveOutgoingArgs;
 }
 
 type AbilityProviderEntry = {
@@ -369,11 +352,7 @@ function normalizeProviderResult( result: unknown ): unknown {
 	};
 }
 
-function addProviderCallbackToAbility(
-	ability: unknown,
-	entry: AbilityProviderEntry,
-	translateArgs?: ( args: unknown ) => unknown
-): unknown {
+function addProviderCallbackToAbility( ability: unknown, entry: AbilityProviderEntry ): unknown {
 	if ( ! ability || typeof ability !== 'object' ) {
 		return ability;
 	}
@@ -383,10 +362,9 @@ function addProviderCallbackToAbility(
 		typeof abilityWithCallback.callback === 'function' ? abilityWithCallback.callback : undefined;
 	Object.defineProperty( abilityWithCallback, 'callback', {
 		value: async ( args: unknown ) => {
-			const finalArgs = translateArgs ? translateArgs( args ) : args;
 			const result = existingCallback
-				? await existingCallback( finalArgs )
-				: await entry.provider.executeAbility( entry.abilityName, finalArgs );
+				? await existingCallback( args )
+				: await entry.provider.executeAbility( entry.abilityName, args );
 			return normalizeProviderResult( result );
 		},
 		enumerable: false,
@@ -517,8 +495,6 @@ export async function loadExternalProviders(
 		} )
 	);
 
-	// The dynamically imported modules are LoadedProviders-shaped; one cast
-	// here types the whole policy for the merge below.
 	const policy = resolveProviderComposition(
 		loadedModules,
 		resolveEffectiveAgentId( effectiveAgentId )
@@ -527,12 +503,9 @@ export async function loadExternalProviders(
 		// eslint-disable-next-line no-console
 		console.warn( notice );
 	}
-	writeProviderCompositionDebugSummary( policy );
 	const guests = policy.guests;
 
-	// Ability names and claims are immutable after load; memoize name → claimant
-	// so the per-call abilities refresh and executeAbility don't re-run the
-	// namespace matching for the same names.
+	// Claims are immutable after load, so memoize name -> claimant.
 	const abilityClaimantCache = new Map< string, ( typeof guests )[ number ] | undefined >();
 	const getAbilityClaimant = ( abilityName: string ) => {
 		if ( ! abilityClaimantCache.has( abilityName ) ) {
@@ -549,31 +522,10 @@ export async function loadExternalProviders(
 		console.warn( message );
 	};
 
-	// Hosts may translate the args of any call that crosses to a guest (see
-	// ResolveOutgoingArgs). A failing translator is logged and skipped so a
-	// host bug cannot break a guest's tools.
-	const hostArgTranslators = policy.providers
-		.filter(
-			( entry ) =>
-				entry.manifest.role === 'host' && typeof entry.module.resolveOutgoingArgs === 'function'
-		)
-		.map( ( entry ) => entry.module.resolveOutgoingArgs as ResolveOutgoingArgs );
-	const translateGuestArgs = ( toolName: string, args: unknown ): unknown =>
-		hostArgTranslators.reduce( ( current, resolveArgs ) => {
-			try {
-				return resolveArgs( toolName, current );
-			} catch ( error ) {
-				// eslint-disable-next-line no-console
-				console.warn( '[AgentsManager] A host resolveOutgoingArgs translator failed:', error );
-				return current;
-			}
-		}, args );
-
 	for ( const providerEntry of policy.providers ) {
 		const module = providerEntry.module;
 		const manifest = providerEntry.manifest;
 
-		// These exports are merged across all providers.
 		if ( module.toolProvider ) {
 			allToolProviders.push( {
 				toolProvider: module.toolProvider,
@@ -609,9 +561,7 @@ export async function loadExternalProviders(
 		mergeCapabilitiesInto( mergedCapabilities, module.capabilities );
 	}
 
-	// Singleton exports: the host's copy wins regardless of registration order;
-	// among same-role providers the first registered wins, matching the
-	// unclaimed-ability rule.
+	// For singleton exports, host wins before guest; registration order breaks ties.
 	const singletonProviderOrder = [
 		...policy.providers.filter( ( entry ) => entry.manifest.role === 'host' ),
 		...policy.providers.filter( ( entry ) => entry.manifest.role === 'guest' ),
@@ -624,10 +574,7 @@ export async function loadExternalProviders(
 		mergedImageUpload ??= module.useImageUpload;
 	}
 
-	// Checkpoints: every provider's hook runs, so module-level side effects
-	// register regardless of composition (e.g. Jetpack AI captures its
-	// checkpoint API for title-picker Undo) — but the host's checkpoint API is
-	// the one AM consumes for the chat's Undo action.
+	// Run all checkpoint hooks, but expose the host's API to Agents Manager.
 	if ( allUseCheckpoints.length === 1 ) {
 		mergedUseCheckpoint = allUseCheckpoints[ 0 ].hook;
 	} else if ( allUseCheckpoints.length > 1 ) {
@@ -646,10 +593,7 @@ export async function loadExternalProviders(
 		};
 	}
 
-	// Merge toolProviders. One rule: an ability claimed by a guest manifest
-	// always routes to that guest; unclaimed abilities go to the
-	// first-registered host that lists them. See provider-composition.ts for
-	// how claims are declared and validated.
+	// Guest claims own matching abilities; hosts keep first-provider-wins for the rest.
 	const refreshProviderAbilities = async () => {
 		const allAbilityResults = await Promise.all(
 			allToolProviders.map( async ( entry ) => {
@@ -679,16 +623,11 @@ export async function loadExternalProviders(
 					continue;
 				}
 
-				// Claims decide ownership: a guest contributes only abilities its
-				// manifest claims, and hosts cannot serve guest-claimed names.
-				// Either kind of drop is logged so a missing tool is debuggable.
 				const claimant = getAbilityClaimant( ability.name );
 				if ( providerEntry.manifest.role === 'guest' ) {
 					if ( claimant?.manifest !== providerEntry.manifest ) {
-						warnRoutingDropOnce(
-							`guest:${ providerEntry.manifest.providerId }:${ ability.name }`,
-							`[AgentsManager] Guest provider "${ providerEntry.manifest.providerId }" ability "${ ability.name }" ignored: not covered by its claims.`
-						);
+						// Guest providers can expose broad runtime abilities, but only
+						// manifest-claimed names participate in composition.
 						continue;
 					}
 				} else if ( claimant ) {
@@ -699,10 +638,7 @@ export async function loadExternalProviders(
 					continue;
 				}
 
-				// Unclaimed names keep the legacy rule: the first-registered
-				// provider wins, and later duplicates only fill in alias
-				// spellings (see abilityNameAliases) the winner has not already
-				// indexed.
+				// Unclaimed names keep the legacy first-provider-wins rule.
 				const normalized = normalizeAbilityName( ability.name );
 				const aliases = abilityNameAliases( ability.name );
 				let existingEntry: AbilityProviderEntry | undefined;
@@ -722,14 +658,7 @@ export async function loadExternalProviders(
 					}
 				}
 				if ( ! existingEntry ) {
-					const translateArgs =
-						providerEntry.manifest.role === 'guest'
-							? ( args: unknown ) => translateGuestArgs( ability.name, args )
-							: undefined;
-					seenAbilities.set(
-						normalized,
-						addProviderCallbackToAbility( ability, entry, translateArgs )
-					);
+					seenAbilities.set( normalized, addProviderCallbackToAbility( ability, entry ) );
 				}
 			}
 		}
@@ -746,31 +675,25 @@ export async function loadExternalProviders(
 		mergedToolProvider = {
 			getAbilities: refreshProviderAbilities,
 			executeAbility: async ( name: string, args: unknown ) => {
-				// Rebuild at execution time because some provider abilities are
-				// registered by setup hooks after the provider module is imported.
+				// Setup hooks can register provider abilities after module import.
 				await refreshProviderAbilities();
 				const entry = abilityProviderMap.get( name );
-				// Claim ownership is checked on the canonical registered name when
-				// the map knows it, so a flattened caller spelling cannot dodge or
-				// misattribute a claim.
+				// Check claims on the canonical name when the map knows it.
 				const claimant = getAbilityClaimant( entry?.abilityName ?? name );
-				const outgoingArgs = claimant ? translateGuestArgs( name, args ) : args;
 				if ( entry ) {
-					return entry.provider.executeAbility( entry.abilityName, outgoingArgs );
+					return entry.provider.executeAbility( entry.abilityName, args );
 				}
-				// A guest claim covers tool names the guest has not listed (yet),
-				// so late-registered guest tools still execute.
+				// Late-registered guest tools can execute before they appear in getAbilities().
 				const claimantToolProvider = claimant?.module.toolProvider;
 				if ( claimantToolProvider ) {
-					return claimantToolProvider.executeAbility( name, outgoingArgs );
+					return claimantToolProvider.executeAbility( name, args );
 				}
 				throw new Error( `No provider handled ability: ${ name }` );
 			},
 		};
 	}
 
-	// Context: hosts merge with the legacy rules and form the base; each guest
-	// then contributes only its claimed keys plus id-deduped contextEntries.
+	// Hosts form the base context; guests add claimed keys and contextEntries.
 	const hostMergedContextProvider = mergeContextProviders(
 		allContextProviders
 			.filter( ( entry ) => entry.manifest.role === 'host' )
@@ -796,10 +719,7 @@ export async function loadExternalProviders(
 		  }
 		: hostMergedContextProvider;
 
-	// Components: a type claimed by a guest renders with that guest; everything
-	// else renders with the first host that returns a component. Claims are
-	// validated non-overlapping, so a type-keyed map is unambiguous and saves
-	// a per-render scan.
+	// Guest-claimed component types override host components.
 	const componentClaimants = new Map< string, GetChatComponent >();
 	for ( const guest of guests ) {
 		const guestGetChatComponent = guest.module.getChatComponent;
@@ -813,8 +733,8 @@ export async function loadExternalProviders(
 	if ( allGetChatComponents.length === 1 ) {
 		mergedGetChatComponent = allGetChatComponents[ 0 ].getChatComponent;
 	} else if ( allGetChatComponents.length > 1 ) {
-		mergedGetChatComponent = ( ( type: string, context?: GetChatComponentContext ) => {
-			const claimed = componentClaimants.get( type )?.( type, context );
+		mergedGetChatComponent = ( ( type: string ) => {
+			const claimed = componentClaimants.get( type )?.( type );
 			if ( claimed ) {
 				return claimed;
 			}
@@ -822,7 +742,7 @@ export async function loadExternalProviders(
 				if ( entry.manifest.role !== 'host' ) {
 					continue;
 				}
-				const result = entry.getChatComponent( type, context );
+				const result = entry.getChatComponent( type );
 				if ( result ) {
 					return result;
 				}
@@ -831,7 +751,7 @@ export async function loadExternalProviders(
 		} ) as GetChatComponent;
 	}
 
-	// Merge useAbilitiesSetup: call ALL providers' hooks.
+	// Every provider's setup hook runs.
 	if ( allAbilitiesSetups.length === 1 ) {
 		mergedAbilitiesSetup = allAbilitiesSetups[ 0 ];
 	} else if ( allAbilitiesSetups.length > 1 ) {
@@ -842,10 +762,8 @@ export async function loadExternalProviders(
 		} ) as AbilitiesSetupHook;
 	}
 
-	// Merge useSuggestions: combine from all providers, dedupe by id.
 	const mergedUseSuggestions = mergeUseSuggestionsHooks( allUseSuggestions );
 
-	// Merge getEmptyViewSuggestions: combine from all providers, dedupe by id.
 	if ( allGetEmptyViewSuggestions.length === 1 ) {
 		mergedGetEmptyViewSuggestions = allGetEmptyViewSuggestions[ 0 ];
 	} else if ( allGetEmptyViewSuggestions.length > 1 ) {

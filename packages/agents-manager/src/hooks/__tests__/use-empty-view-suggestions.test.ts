@@ -45,21 +45,11 @@ const siteEditorSuggestion = {
 	prompt: 'Show me color palettes for my site that are:',
 };
 
-function mockCoreStoreReady( isReady: boolean, postType?: string ) {
+function mockCoreStoreReady( isReady: boolean ) {
 	mockUseSelect.mockImplementation( ( mapSelect ) =>
-		mapSelect( ( storeName: string ) => {
-			if ( storeName === 'core' ) {
-				return {
-					getCurrentTheme: () => ( isReady ? { stylesheet: 'pub/theme' } : null ),
-				};
-			}
-			if ( storeName === 'core/editor' ) {
-				return {
-					getCurrentPostType: () => postType,
-				};
-			}
-			return {};
-		} )
+		mapSelect( () => ( {
+			getCurrentTheme: () => ( isReady ? { stylesheet: 'pub/theme' } : null ),
+		} ) )
 	);
 }
 
@@ -83,8 +73,6 @@ describe( 'useEmptyViewSuggestions', () => {
 
 	afterEach( () => {
 		delete ( window as unknown as { agentsManagerData?: unknown } ).agentsManagerData;
-		delete ( window as unknown as { bigSkyInitialState?: unknown } ).bigSkyInitialState;
-		document.body.classList.remove( 'post-type-page' );
 		window.history.pushState( {}, '', '/' );
 	} );
 
@@ -147,7 +135,6 @@ describe( 'useEmptyViewSuggestions', () => {
 	} );
 
 	it( 'filters site-editor-only provider suggestions in the post editor even if section is misreported', async () => {
-		mockCoreStoreReady( true, 'post' );
 		mockContext = {
 			sectionName: 'site-editor',
 			currentRoute: '/wp-admin/post.php?post=1&action=edit',
@@ -160,64 +147,10 @@ describe( 'useEmptyViewSuggestions', () => {
 		await waitFor( () => expect( result.current ).toEqual( [] ) );
 	} );
 
-	it( 'keeps site-editor provider suggestions in the page editor', async () => {
-		mockCoreStoreReady( true, 'page' );
-		mockContext = {
-			sectionName: 'gutenberg',
-			currentRoute: '/wp-admin/post.php?post=1&action=edit',
-		};
-		const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
-		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
-
-		const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
-
-		await waitFor( () =>
-			expect( result.current ).toEqual( [ siteEditorSuggestion, bigSkySuggestion ] )
-		);
-	} );
-
-	it( 'keeps site-editor provider suggestions in the page editor from Big Sky runtime screen data', async () => {
-		mockCoreStoreReady( true, undefined );
-		mockContext = {
-			sectionName: 'gutenberg',
-			currentRoute: '/wp-admin/post.php?post=1&action=edit',
-		};
-		( window as unknown as { bigSkyInitialState?: Record< string, unknown > } ).bigSkyInitialState =
-			{
-				currentScreen: {
-					screen: 'post',
-					postType: 'page',
-				},
-			};
-		const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
-		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
-
-		const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
-
-		await waitFor( () =>
-			expect( result.current ).toEqual( [ siteEditorSuggestion, bigSkySuggestion ] )
-		);
-	} );
-
 	it( 'keeps site-editor-only provider suggestions in Site Editor', async () => {
 		mockContext = {
 			sectionName: 'site-editor',
 			currentRoute: undefined,
-		};
-		const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
-		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
-
-		const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
-
-		await waitFor( () =>
-			expect( result.current ).toEqual( [ siteEditorSuggestion, bigSkySuggestion ] )
-		);
-	} );
-
-	it( 'keeps site-editor-only provider suggestions when Site Editor is reported as Gutenberg', async () => {
-		mockContext = {
-			sectionName: 'gutenberg',
-			currentRoute: '/wp-admin/site-editor.php?canvas=edit',
 		};
 		const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
 		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
