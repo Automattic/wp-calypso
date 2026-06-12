@@ -7,10 +7,10 @@
 .root {
 	--a8c-ui-stepper-indicator-size: 24px;
 
-	// Matches the @wordpress/icons glyph geometry: the state icons draw a 16px
-	// circle inside the 24px viewBox, so the number-variant circle uses the
-	// same visual size within the same layout box.
-	--a8c-ui-stepper-indicator-circle-size: 16px;
+	// The @wordpress/icons state glyphs draw a 16px circle inside the 24px
+	// viewBox; they are scaled up to the 18px circle from Figma, and the
+	// number-variant circle uses the same 18px size within the same layout box.
+	--a8c-ui-stepper-indicator-circle-size: 18px;
 }
 
 // ---------------------------------------------------------------------------
@@ -28,6 +28,12 @@
 	height: var( --a8c-ui-stepper-indicator-size );
 	flex-shrink: 0;
 	color: var( --wpds-color-fg-interactive-neutral );
+
+	// Render the glyph circle at the Figma size (16 -> 18) without affecting
+	// the 24px layout box.
+	svg {
+		transform: scale( calc( 18 / 16 ) );
+	}
 }
 
 // The number span only renders for number-variant steps without a status
