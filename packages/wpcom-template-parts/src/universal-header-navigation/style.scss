@@ -1188,6 +1188,12 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	opacity: 1;
 	visibility: visible;
 	pointer-events: auto;
+	// Clip pinned off with `clip-path 0s` so opening never wipes; only the close does.
+	clip-path: inset( 0 0 0 0 );
+	transition:
+		opacity $x-nav-2026-transition,
+		visibility $x-nav-2026-transition,
+		clip-path 0s;
 
 	// Items slide in from the left, staggered by `--stagger-index`. Switch: short delay, no wait.
 	.x-dropdown-subcategory-title,
@@ -1280,6 +1286,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	--x-dropdown-2026-link-duration: 0.26s; // per-item fade + slide duration
 	--x-dropdown-2026-stagger-step: 0.02s; // added per --stagger-index (reading order)
 	--x-dropdown-2026-items-slide-overlap: 0.12s; // first-open: items start before unroll ends
+	--x-dropdown-2026-close-duration: 0.14s; // surface roll-up on close (half the open unroll)
+	--x-dropdown-2026-close-delay: 0.08s; // 0.22s close fade − roll, so the roll lands with the fades
 
 	position: fixed;
 	// Prefer host-provided `--nav-2026-height` (Calypso's single source of truth); fall back to the package constant standalone.
@@ -1337,6 +1345,26 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	z-index: 100002;
 	// Raise instantly; only the drop back is delayed.
 	transition-delay: 0s;
+}
+
+// Close: the white surface rolls back up (reverse of the open unroll, quicker), landing with the 0.22s close fades.
+.x-dropdown.x-dropdown--2026:not( .is-dropdown-open )::after {
+	opacity: 0;
+	transform: scaleY( 0 );
+	transition:
+		opacity 0s linear 0.22s,
+		transform var( --x-dropdown-2026-close-duration ) var( --x-dropdown-2026-easing )
+			var( --x-dropdown-2026-close-delay );
+}
+
+// Close: wipe the content at the rising edge so nothing trails below the roll. `:not()` keeps menu-to-menu switches (wrapper stays open) on the plain cross-fade.
+.x-dropdown.x-dropdown--2026:not( .is-dropdown-open ) .x-dropdown-content {
+	clip-path: inset( 0 0 100% 0 );
+	transition:
+		opacity $x-nav-2026-transition,
+		visibility $x-nav-2026-transition,
+		clip-path var( --x-dropdown-2026-close-duration ) var( --x-dropdown-2026-easing )
+			var( --x-dropdown-2026-close-delay );
 }
 
 .x-dropdown--2026.x-dropdown-content {
@@ -2139,6 +2167,11 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	// No unroll: the white surface is simply present when open, gone when not.
 	.x-dropdown.x-dropdown--2026::after {
 		transform: none !important;
+	}
+
+	// No close wipe: the close stays a plain fade.
+	.x-dropdown--2026.x-dropdown-content {
+		clip-path: none !important;
 	}
 }
 
