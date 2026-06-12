@@ -684,5 +684,14 @@ describe( 'feature-clip-sidebar-extension', () => {
 
 			expect( mockFetchAiFeature ).not.toHaveBeenCalled();
 		} );
+
+		it( 'does not dispatch the fetch when the feature is already confirmed absent', () => {
+			setJetpackSite();
+			mockAiFeature = { hasFeature: false };
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+
+			expect( mockFetchAiFeature ).not.toHaveBeenCalled();
+		} );
 	} );
 } );

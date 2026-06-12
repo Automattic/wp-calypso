@@ -42,15 +42,23 @@ export function useHasAiAssistantFeature(): boolean {
 	}, [] );
 
 	useEffect( () => {
+		// A false hasFeature is necessarily real data (the store's default is
+		// true), so there's nothing left to fetch.
+		if ( hasFeature === false ) {
+			return;
+		}
 		if ( ! storeAvailable || fetchDispatched || isRequesting ) {
 			return;
 		}
-		fetchDispatched = true;
 		const plansDispatch = dispatch( PLANS_STORE ) as
 			| { fetchAiAssistantFeature?: () => void }
 			| undefined;
-		plansDispatch?.fetchAiAssistantFeature?.();
-	}, [ storeAvailable, isRequesting ] );
+		if ( typeof plansDispatch?.fetchAiAssistantFeature !== 'function' ) {
+			return;
+		}
+		fetchDispatched = true;
+		plansDispatch.fetchAiAssistantFeature();
+	}, [ storeAvailable, isRequesting, hasFeature ] );
 
 	return hasFeature !== false;
 }
