@@ -36,8 +36,12 @@ export default function JetpackOverview() {
 	const businessTierIndex = PLAN_KEY_ORDER.indexOf( 'business' );
 	const defaultPreviewKey: PlanKey = planTier >= businessTierIndex ? 'business' : planKey;
 	const [ previewPlanKey, setPreviewPlanKey ] = useState< PlanKey >( defaultPreviewKey );
-	const isMaxPlan = planTier >= 4;
 
+	useEffect( () => {
+		setPreviewPlanKey( defaultPreviewKey );
+	}, [ defaultPreviewKey ] );
+
+	const isMaxPlan = planTier >= 4;
 	useEffect( () => {
 		recordTracksEvent( 'calypso_jetpack_interstitial_viewed', {
 			site_id: site?.ID,
