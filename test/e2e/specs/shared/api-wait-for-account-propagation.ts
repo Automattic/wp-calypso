@@ -1,8 +1,6 @@
 import type { MyAccountInformationResponse, RestAPIClient } from '@automattic/calypso-e2e';
 
 const POLL_INTERVAL = 1000;
-// CI evidence (TESTOPS-152): email verification can take >10s to propagate
-// after visiting the activation link, so 10s is not enough headroom.
 const POLL_TIMEOUT = 30 * 1000;
 
 // `RestAPIClient` surfaces API failures as `Error( '<code>: <message>' )`
