@@ -30,12 +30,18 @@ export function useThemeCollection( query: ThemesQuery ) {
 	const themes = query.number ? allThemes.slice( 0, query.number ) : allThemes;
 
 	const siteId = useSelector( getSelectedSiteId );
+	// getSelectedSiteId can return null/undefined (logged-out showcase). Normalize once so the
+	// site-contexted theme selectors get a `number | undefined` rather than a `null` smuggled
+	// through `as number`, which would key store lookups under `null`.
+	const siteIdForThemeSelectors = siteId ?? undefined;
 
 	// Per-theme state that changes on user actions (activate / install / live preview) is
 	// selected reactively, so the cards re-render when it flips. These were previously
 	// `useSelector( state => themeId => … )`, which returned a fresh function on every render —
 	// react-redux flagged the unstable result and re-rendered every section on each dispatch.
-	const activeThemeId = useSelector( ( state ) => getActiveTheme( state, siteId as number ) );
+	const activeThemeId = useSelector( ( state ) =>
+		getActiveTheme( state, siteIdForThemeSelectors )
+	);
 	const isActive = useCallback(
 		( themeId: string ) => themeId === activeThemeId,
 		[ activeThemeId ]
@@ -46,12 +52,14 @@ export function useThemeCollection( query: ThemesQuery ) {
 	// and a re-render only when one of those states actually changes.
 	const isInstallingMap = useSelector(
 		( state ) =>
-			Object.fromEntries(
-				themes.map( ( theme ) => [
-					theme.id,
-					isInstallingTheme( state, theme.id, siteId as number ),
-				] )
-			),
+			siteIdForThemeSelectors === undefined
+				? {}
+				: Object.fromEntries(
+						themes.map( ( theme ) => [
+							theme.id,
+							isInstallingTheme( state, theme.id, siteIdForThemeSelectors ),
+						] )
+				  ),
 		shallowEqual
 	);
 	const isInstalling = useCallback(
@@ -77,8 +85,9 @@ export function useThemeCollection( query: ThemesQuery ) {
 	const store = useStore();
 
 	const getPrice = useCallback(
-		( themeId: string ) => getPremiumThemePrice( store.getState(), themeId, siteId as number ),
-		[ store, siteId ]
+		( themeId: string ) =>
+			getPremiumThemePrice( store.getState(), themeId, siteIdForThemeSelectors ),
+		[ store, siteIdForThemeSelectors ]
 	);
 
 	const getThemeType = useCallback(
@@ -93,8 +102,8 @@ export function useThemeCollection( query: ThemesQuery ) {
 
 	const getThemeDetailsUrl = useCallback(
 		( themeId: string ) =>
-			getThemeDetailsUrlSelector( store.getState(), themeId, siteId as number ),
-		[ store, siteId ]
+			getThemeDetailsUrlSelector( store.getState(), themeId, siteIdForThemeSelectors ),
+		[ store, siteIdForThemeSelectors ]
 	);
 
 	const filterString = useSelector( ( state ) => prependThemeFilterKeys( state, query.filter ) );
