@@ -36,9 +36,7 @@ export default function FeatureCard( {
 
 	return (
 		<div className="jetpack-feature-card">
-			<div className="jetpack-feature-card__header">
-				<div className="jetpack-feature-card__icon">
-					{ group.gridicon ? (
+			<div className={ `jetpack-feature-card__icon is-${ group.colorClass }` }>
 						<Gridicon icon={ group.gridicon } size={ 24 } />
 					) : (
 						<img src={ group.iconSrc } alt="" width={ 28 } height={ 28 } />
