@@ -1,6 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { Tooltip } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+import { Fragment, useState } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { FEATURE_GROUPS, PLAN_DISPLAY_NAMES, PLAN_KEY_ORDER } from './feature-data';
@@ -122,7 +122,7 @@ export default function ComparisonTable( {
 								/>
 
 								{ FEATURE_GROUPS.map( ( group ) => (
-									<>
+									<Fragment key={ group.id }>
 										<tr key={ `cat-${ group.id }` } className="jetpack-comparison-table__category">
 											<td colSpan={ TABLE_PLAN_KEYS.length + 1 }>
 												<div className="jetpack-comparison-table__category-inner">
@@ -198,7 +198,7 @@ export default function ComparisonTable( {
 													} ) }
 												</tr>
 											) ) }
-									</>
+									</Fragment>
 								) ) }
 
 								<UpgradeRow
