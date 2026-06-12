@@ -71,7 +71,7 @@ export const DomainsFullCartBundleItem = ( {
 								className="domains-full-cart-items__remove"
 								onClick={ onRemove }
 							>
-								{ __( 'Remove' ) }
+								{ __( 'Remove bundle' ) }
 							</Button>
 						</VStack>
 						<VStack className="domains-full-cart-items__price">
