@@ -59,12 +59,8 @@
 
 /**
  * Overflow styles
- *
- * The edge fade indicates that there is more content to scroll to, so it only applies to navs that
- * are actually horizontally scrollable (`has-horizontal-scroll`). Non-scrollable tabs views (e.g.
- * `enforceTabsView` navs like the Reader user profile) must not fade their edges.
  */
-.has-horizontal-scroll .section-nav-tabs:not(.is-dropdown) {
+.section-nav-tabs:not(.is-dropdown) {
 	.section-nav-tabs__list {
 		--direction-start: left;
 		--direction-end: right;

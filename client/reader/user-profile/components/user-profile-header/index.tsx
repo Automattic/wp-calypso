@@ -11,7 +11,6 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { AuthorAchievementBadges } from 'calypso/reader/components/achievements/author-achievement-badges';
 import useAchievementsVisibility from 'calypso/reader/components/achievements/use-achievements-visibility';
-import { useProfileTabVisibility } from 'calypso/reader/data/user-profile';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
 import UserTopSites from '../top-sites';
 import type { ReaderUser } from '@automattic/api-core';
@@ -24,7 +23,6 @@ interface UserProfileHeaderProps {
 const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Element => {
 	const translate = useTranslate();
 	const { isVisible: showAchievements } = useAchievementsVisibility( user.user_login );
-	const { isOwnProfile, showPosts, showSites } = useProfileTabVisibility( user.user_login );
 	const [ isExpanded, setIsExpanded ] = useState( false );
 	const [ showMoreToggle, setShowMoreToggle ] = useState( false );
 	const bioRef = useRef< HTMLParagraphElement >( null );
@@ -43,24 +41,16 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 
 	const userProfileUrl = getUserProfileUrl( user.user_login ?? String( user.ID ) );
 	const navigationItems = [
-		...( showPosts
-			? [
-					{
-						label: translate( 'Posts' ),
-						path: userProfileUrl,
-						selected: view === 'posts',
-					},
-			  ]
-			: [] ),
-		...( showSites
-			? [
-					{
-						label: translate( 'Sites' ),
-						path: `${ userProfileUrl }/sites`,
-						selected: view === 'sites',
-					},
-			  ]
-			: [] ),
+		{
+			label: translate( 'Posts' ),
+			path: userProfileUrl,
+			selected: view === 'posts',
+		},
+		{
+			label: translate( 'Sites' ),
+			path: `${ userProfileUrl }/sites`,
+			selected: view === 'sites',
+		},
 		{
 			label: translate( 'Lists' ),
 			path: `${ userProfileUrl }/lists`,
@@ -77,15 +67,6 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 						label: translate( 'Achievements' ),
 						path: `${ userProfileUrl }/achievements`,
 						selected: view === 'achievements',
-					},
-			  ]
-			: [] ),
-		...( isOwnProfile
-			? [
-					{
-						label: translate( 'Settings' ),
-						path: `${ userProfileUrl }/settings`,
-						selected: view === 'settings',
 					},
 			  ]
 			: [] ),
@@ -148,12 +129,8 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 					</AutoDirection>
 				) }
 
-				{ showSites && user.ID && user.user_login && (
-					<UserTopSites
-						userId={ user.ID }
-						userLogin={ user.user_login }
-						isOwnProfile={ isOwnProfile }
-					/>
+				{ user.ID && user.user_login && (
+					<UserTopSites userId={ user.ID } userLogin={ user.user_login } />
 				) }
 			</header>
 			<SectionNav enforceTabsView variation="minimal">

@@ -31,19 +31,6 @@ jest.mock( 'calypso/reader/user-profile/views/recommended-blogs', () => () => (
 	<div data-testid="user-recommended-blogs">User Recommended Blogs</div>
 ) );
 
-jest.mock( 'calypso/reader/user-profile/views/sites', () => () => (
-	<div data-testid="user-sites">User Sites</div>
-) );
-
-jest.mock( 'calypso/reader/user-profile/views/settings', () => () => (
-	<div data-testid="user-settings">User Settings</div>
-) );
-
-const mockUseProfileTabVisibility = jest.fn();
-jest.mock( 'calypso/reader/data/user-profile/use-profile-tab-visibility', () => ( {
-	useProfileTabVisibility: () => mockUseProfileTabVisibility(),
-} ) );
-
 jest.mock( 'calypso/reader/components/back-button', () => () => (
 	<button data-testid="back-button">Back</button>
 ) );
@@ -80,12 +67,6 @@ describe( 'UserProfile', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockUseProfileTabVisibility.mockReturnValue( {
-			isOwnProfile: false,
-			showPosts: true,
-			showSites: true,
-			isLoading: false,
-		} );
 		nock.disableNetConnect();
 		queryClient = new QueryClient( {
 			defaultOptions: {
@@ -172,60 +153,5 @@ describe( 'UserProfile', () => {
 		await waitFor( () => {
 			expect( page.replace ).toHaveBeenCalledWith( '/reader/users/testuser' );
 		} );
-	} );
-
-	test( 'should render settings view for the profile owner', async () => {
-		mockUseProfileTabVisibility.mockReturnValue( {
-			isOwnProfile: true,
-			showPosts: true,
-			showSites: true,
-			isLoading: false,
-		} );
-		nockGetUser( 'testuser', defaultUserResponse );
-
-		renderWithClient(
-			<UserProfile { ...defaultProps } view="settings" path="/reader/users/testuser/settings" />
-		);
-
-		expect( await screen.findByTestId( 'user-settings' ) ).toBeVisible();
-		expect( page.replace ).not.toHaveBeenCalled();
-	} );
-
-	test( 'should redirect a non-owner away from the settings view', async () => {
-		mockUseProfileTabVisibility.mockReturnValue( {
-			isOwnProfile: false,
-			showPosts: true,
-			showSites: true,
-			isLoading: false,
-		} );
-		nockGetUser( 'testuser', defaultUserResponse );
-
-		renderWithClient(
-			<UserProfile { ...defaultProps } view="settings" path="/reader/users/testuser/settings" />
-		);
-
-		await waitFor( () => {
-			expect( page.replace ).toHaveBeenCalledWith( '/reader/users/testuser' );
-		} );
-		expect( screen.queryByTestId( 'user-settings' ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'should redirect a public viewer away from a hidden Sites view', async () => {
-		mockUseProfileTabVisibility.mockReturnValue( {
-			isOwnProfile: false,
-			showPosts: true,
-			showSites: false,
-			isLoading: false,
-		} );
-		nockGetUser( 'testuser', defaultUserResponse );
-
-		renderWithClient(
-			<UserProfile { ...defaultProps } view="sites" path="/reader/users/testuser/sites" />
-		);
-
-		await waitFor( () => {
-			expect( page.replace ).toHaveBeenCalledWith( '/reader/users/testuser' );
-		} );
-		expect( screen.queryByTestId( 'user-sites' ) ).not.toBeInTheDocument();
 	} );
 } );

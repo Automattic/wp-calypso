@@ -1,5 +1,5 @@
 import './style.scss';
-import { userSitesQuery, userPreferenceQuery } from '@automattic/api-queries';
+import { userSitesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { decodeEntities } from 'calypso/lib/formatting';
@@ -9,22 +9,13 @@ import type { JSX } from 'react';
 interface UserTopSitesProps {
 	userId: number;
 	userLogin: string;
-	isOwnProfile?: boolean;
 }
 
 export default function UserTopSites( {
 	userId,
 	userLogin,
-	isOwnProfile = false,
 }: UserTopSitesProps ): JSX.Element | null {
-	// The owner reads their full site list (shared with the settings card) and filters it by their
-	// hidden-sites preference, which updates in real time as they toggle sites in settings. Public
-	// viewers read the public list and rely on the server-set `is_hidden` flag.
-	const { isFetching, data, error } = useQuery( userSitesQuery( userId, { owner: isOwnProfile } ) );
-	const { data: hiddenSites = [] } = useQuery( {
-		...userPreferenceQuery( 'reader-profile-hidden-sites' ),
-		enabled: isOwnProfile,
-	} );
+	const { isFetching, data, error } = useQuery( userSitesQuery( userId ) );
 
 	if ( isFetching ) {
 		return (
@@ -34,17 +25,13 @@ export default function UserTopSites( {
 		);
 	}
 
-	const visibleSites = ( data?.sites ?? [] ).filter( ( site ) =>
-		isOwnProfile ? ! hiddenSites.includes( site.ID ) : ! site.is_hidden
-	);
-
-	if ( error?.message || ! visibleSites.length ) {
+	if ( error?.message || ! data?.sites?.length ) {
 		return null; // Toast notification appears in case of error.
 	}
 
-	const sitesCount = visibleSites.length;
-	const primarySite = visibleSites[ 0 ]; // First site is primary site.
-	const top2SubscribedSites = visibleSites
+	const sitesCount = data.sites.length;
+	const primarySite = data.sites[ 0 ]; // First site is primary site.
+	const top2SubscribedSites = data.sites
 		.slice( 1 ) // Exclude primary site from the list.
 		.sort( ( a, b ) => b.subscribers_count - a.subscribers_count )
 		.slice( 0, 2 );
