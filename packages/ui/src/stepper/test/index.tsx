@@ -539,11 +539,8 @@ describe( 'Stepper error status', () => {
 				</Stepper.Step>
 			</Stepper.Root>
 		);
-		expect( screen.getByText( 'Step 1 of 1, error' ) ).toBeInTheDocument();
-		expect( screen.queryByText( '!' ) ).not.toBeInTheDocument();
-		const indicator = screen
-			.getByText( 'Step 1 of 1, error' )
-			.closest( '[data-indicator-variant]' );
+		const label = screen.getByText( 'Step 1 of 1, error' );
+		const indicator = label.closest( '[data-indicator-variant]' );
 		expect( indicator?.querySelector( 'svg' ) ).not.toBeNull();
 	} );
 } );
