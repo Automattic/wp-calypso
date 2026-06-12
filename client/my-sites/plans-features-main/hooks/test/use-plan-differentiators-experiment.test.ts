@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import { renderHook } from '@testing-library/react';
 import { useSelector } from 'calypso/state';
 import usePlanDifferentiatorsExperiment from '../use-plan-differentiators-experiment';
