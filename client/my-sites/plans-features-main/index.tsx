@@ -2,6 +2,7 @@ import {
 	cancelAndRefundPurchaseMutation,
 	purchaseCancelFeaturesQuery,
 	purchaseQuery,
+	setDelayedDowngradeMutation,
 	userPurchasesQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
@@ -291,6 +292,10 @@ const PlansFeaturesMain = ( {
 	const reduxDispatch = useReduxDispatch();
 	const queryClient = useQueryClient();
 	const cancelAndRefundMutation = useMutation( cancelAndRefundPurchaseMutation() );
+	const delayedDowngradeMutation = useMutation( setDelayedDowngradeMutation() );
+	// Fire-and-forget: cancel any pending delayed downgrade without blocking
+	// the main action. Used when the user takes any other plan action.
+	const cancelDelayedDowngradeMutation = useMutation( setDelayedDowngradeMutation() );
 	// Stays true from the moment the instant downgrade is confirmed until the page
 	// navigates away, so the dialog can keep showing a loader across the mutation
 	// AND the subsequent purchases refetch (the mutation's own isPending clears
@@ -306,7 +311,18 @@ const PlansFeaturesMain = ( {
 		!! currentPurchase &&
 		currentPurchase.is_within_initial_refund_window &&
 		! currentPurchase.is_past_expiry_date;
-	const downgradeMode: 'instant' | 'checkout' = isWithinRefundWindow ? 'instant' : 'checkout';
+	// Three downgrade modes:
+	//   'instant'  — within refund window: cancel+refund via the cancel endpoint
+	//   'checkout' — expired plan: route to checkout to purchase the new plan
+	//   'delayed'  — active plan, not in refund window: schedule downgrade at renewal
+	let downgradeMode: 'instant' | 'checkout' | 'delayed';
+	if ( isWithinRefundWindow ) {
+		downgradeMode = 'instant';
+	} else if ( isPlanExpired ) {
+		downgradeMode = 'checkout';
+	} else {
+		downgradeMode = 'delayed';
+	}
 
 	// The product the user is downgrading to, and the refund specific to that
 	// downgrade target. `refund_options` carries the per-target refund amount,
@@ -332,6 +348,19 @@ const PlansFeaturesMain = ( {
 		setPendingDowngradePlanSlug( null );
 	};
 
+	// Cancel any pending delayed downgrade before performing a different plan
+	// action. Fire-and-forget: the subscription is changing anyway so we don't
+	// need to wait for confirmation. Only called when a delayed downgrade is
+	// actually pending to avoid unnecessary API calls.
+	const cancelPendingDelayedDowngrade = () => {
+		if ( currentPlanPurchaseId && currentPurchase?.is_delayed_downgrade_pending ) {
+			cancelDelayedDowngradeMutation.mutate( {
+				purchaseId: currentPlanPurchaseId,
+				enabled: false,
+			} );
+		}
+	};
+
 	// Refund-window mode: perform the downgrade instantly via the cancel endpoint.
 	const confirmInstantDowngrade = () => {
 		const toProductId = downgradeTargetProductId;
@@ -344,6 +373,7 @@ const PlansFeaturesMain = ( {
 			mode: 'instant',
 		} );
 		recordTracksEvent( 'calypso_purchases_downgrade_form_submit' );
+		cancelPendingDelayedDowngrade();
 		const blogId = currentPurchase?.blog_id;
 		// Keep the dialog open with its loader until the redirect; only reset on error.
 		setIsDowngrading( true );
@@ -409,6 +439,7 @@ const PlansFeaturesMain = ( {
 			return;
 		}
 		closeDowngradeModal();
+		cancelPendingDelayedDowngrade();
 		recordTracksEvent( 'calypso_plan_features_downgrade_click', {
 			current_plan: sitePlanSlug,
 			downgrading_to: pendingDowngradePlanSlug,
@@ -435,8 +466,55 @@ const PlansFeaturesMain = ( {
 		window.location.href = addQueryArgs( checkoutQuery, `/checkout/${ siteSlug }/${ planPath }` );
 	};
 
-	const confirmDowngrade = () =>
-		downgradeMode === 'instant' ? confirmInstantDowngrade() : confirmCheckoutDowngrade();
+	// Delayed mode: schedule the downgrade for end-of-term via the API.
+	const confirmDelayedDowngrade = () => {
+		const toProductId = downgradeTargetProductId;
+		if ( ! currentPlanPurchaseId || ! toProductId ) {
+			return;
+		}
+		recordTracksEvent( 'calypso_plan_features_downgrade_click', {
+			current_plan: sitePlanSlug,
+			downgrading_to: pendingDowngradePlanSlug,
+			mode: 'delayed',
+		} );
+		setIsDowngrading( true );
+		delayedDowngradeMutation.mutate(
+			{ purchaseId: currentPlanPurchaseId, enabled: true, toProductId },
+			{
+				onSuccess: () => {
+					// Redirect back to the purchase settings page (or the caller's
+					// redirect_to) with a param so the notice layer can show a
+					// confirmation message.
+					const redirectTarget = redirectTo ?? getQueryArg( window.location.href, 'redirect_to' );
+					if ( typeof redirectTarget === 'string' ) {
+						const sep = redirectTarget.includes( '?' ) ? '&' : '?';
+						window.location.href = `${ redirectTarget }${ sep }delayed_downgrade_scheduled=true`;
+						return;
+					}
+					window.location.href = siteSlug
+						? `${ managePurchase(
+								siteSlug,
+								currentPlanPurchaseId
+						  ) }?delayed_downgrade_scheduled=true`
+						: `/plans/${ siteSlug }?delayed_downgrade_scheduled=true`;
+				},
+				onError: ( error: Error ) => {
+					setIsDowngrading( false );
+					reduxDispatch( errorNotice( error.message ) );
+				},
+			}
+		);
+	};
+
+	const confirmDowngrade = () => {
+		if ( downgradeMode === 'instant' ) {
+			return confirmInstantDowngrade();
+		}
+		if ( downgradeMode === 'delayed' ) {
+			return confirmDelayedDowngrade();
+		}
+		return confirmCheckoutDowngrade();
+	};
 
 	const userCanUpgradeToPersonalPlan = useSelector(
 		( state: IAppState ) => siteId && canUpgradeToPlan( state, siteId, PLAN_PERSONAL )
@@ -637,6 +715,24 @@ const PlansFeaturesMain = ( {
 			await openDowngradeModal( planSlug );
 			return true;
 		}
+
+		// For active paid plans (not expired, not in refund window), intercept
+		// paid-plan downgrades to schedule the downgrade at end-of-term instead.
+		if (
+			config.isEnabled( 'plans/expired-downgrade' ) &&
+			! isPlanExpired &&
+			! isWithinRefundWindow &&
+			currentPurchase?.is_plan_type_downgradable &&
+			! isFreePlan( planSlug ) &&
+			sitePlansData?.find( ( p ) => p.productSlug === planSlug )?.availableForDowngrade
+		) {
+			setPendingDowngradePlanSlug( planSlug );
+			return true;
+		}
+
+		// The user is selecting an upgrade (or a lateral plan change). Cancel any
+		// pending delayed downgrade since they've expressed intent to change plans.
+		cancelPendingDelayedDowngrade();
 
 		setLastClickedPlan( planSlug );
 
@@ -1125,6 +1221,7 @@ const PlansFeaturesMain = ( {
 					targetPlanSlug={ pendingDowngradePlanSlug }
 					purchaseId={ currentPlan?.purchaseId }
 					isInstantDowngrade={ downgradeMode === 'instant' }
+					isDelayedDowngrade={ downgradeMode === 'delayed' }
 					refundText={ downgradeRefundText }
 					isConfirming={ cancelAndRefundMutation.isPending || isDowngrading }
 					onClose={ closeDowngradeModal }

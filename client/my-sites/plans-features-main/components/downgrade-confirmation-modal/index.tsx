@@ -18,6 +18,11 @@ interface DowngradeConfirmationModalProps {
 	 * confirm button reflects the refund.
 	 */
 	isInstantDowngrade?: boolean;
+	/**
+	 * When true, the downgrade is scheduled for end-of-term rather than
+	 * performed immediately. The confirm button reflects the scheduled nature.
+	 */
+	isDelayedDowngrade?: boolean;
 	/** Pre-formatted, localized refund amount (e.g. "$48.00"). */
 	refundText?: string;
 	/** When true, the confirm action is in flight; disable buttons and show a spinner. */
@@ -32,6 +37,7 @@ function ModalBody( {
 	targetPlanName,
 	lostFeatures,
 	isInstantDowngrade,
+	isDelayedDowngrade,
 	refundText,
 }: {
 	isLoading: boolean;
@@ -39,6 +45,7 @@ function ModalBody( {
 	targetPlanName: string;
 	lostFeatures: { feature_id: string; title: string }[];
 	isInstantDowngrade?: boolean;
+	isDelayedDowngrade?: boolean;
 	refundText?: string;
 } ) {
 	const translate = useTranslate();
@@ -48,6 +55,50 @@ function ModalBody( {
 			<div className="downgrade-confirmation-modal__loading">
 				<Spinner />
 			</div>
+		);
+	}
+
+	if ( isDelayedDowngrade ) {
+		return (
+			<>
+				<p className="downgrade-confirmation-modal__description">
+					{ translate(
+						'Your plan will change from %(currentPlan)s to %(targetPlan)s at your next renewal. Until then you’ll continue using %(currentPlan)s.',
+						{
+							args: { currentPlan: currentPlanName, targetPlan: targetPlanName },
+							comment:
+								'Message shown when scheduling a plan downgrade for end of the current billing term',
+						}
+					) }
+				</p>
+				{ lostFeatures.length > 0 && (
+					<>
+						<p className="downgrade-confirmation-modal__description">
+							{ translate( 'When the change takes effect, here’s what you’ll lose:', {
+								comment:
+									'Intro line before the list of features that will be lost at the delayed downgrade',
+							} ) }
+						</p>
+						<ul className="downgrade-confirmation-modal__feature-list">
+							{ lostFeatures.map( ( feature ) => (
+								<li
+									key={ feature.feature_id }
+									className="downgrade-confirmation-modal__feature-item"
+								>
+									<Gridicon
+										icon="cross-small"
+										size={ 24 }
+										className="downgrade-confirmation-modal__feature-icon"
+									/>
+									<span className="downgrade-confirmation-modal__feature-text">
+										{ feature.title }
+									</span>
+								</li>
+							) ) }
+						</ul>
+					</>
+				) }
+			</>
 		);
 	}
 
@@ -113,6 +164,7 @@ const DowngradeConfirmationModal = ( {
 	targetPlanSlug,
 	purchaseId,
 	isInstantDowngrade,
+	isDelayedDowngrade,
 	refundText,
 	isConfirming,
 	onClose,
@@ -137,9 +189,33 @@ const DowngradeConfirmationModal = ( {
 
 	const lostFeatures = cancelFeaturesData?.features ?? [];
 
+	const title = isDelayedDowngrade
+		? String( translate( 'Schedule downgrade' ) )
+		: String( translate( 'Confirm downgrade' ) );
+
+	const confirmButtonLabel = ( () => {
+		if ( isDelayedDowngrade ) {
+			return translate( 'Schedule downgrade to %(planName)s', {
+				args: { planName: targetPlanName },
+				comment: 'Button label to confirm scheduling a plan downgrade for end of billing term',
+			} );
+		}
+		if ( isInstantDowngrade && refundText ) {
+			return translate( 'Downgrade and refund %(refundText)s', {
+				args: { refundText },
+				comment:
+					'Button label to confirm an instant downgrade that issues a refund of the given amount',
+			} );
+		}
+		return translate( 'Downgrade to %(planName)s', {
+			args: { planName: targetPlanName },
+			comment: 'Button label to confirm downgrading to a lower-tier plan',
+		} );
+	} )();
+
 	return (
 		<Modal
-			title={ String( translate( 'Confirm downgrade' ) ) }
+			title={ title }
 			onRequestClose={ onClose }
 			className="downgrade-confirmation-modal"
 			size="medium"
@@ -150,6 +226,7 @@ const DowngradeConfirmationModal = ( {
 				targetPlanName={ targetPlanName }
 				lostFeatures={ lostFeatures }
 				isInstantDowngrade={ isInstantDowngrade }
+				isDelayedDowngrade={ isDelayedDowngrade }
 				refundText={ refundText }
 			/>
 			<div className="downgrade-confirmation-modal__buttons">
@@ -171,16 +248,7 @@ const DowngradeConfirmationModal = ( {
 					isBusy={ isConfirming }
 					disabled={ isConfirming }
 				>
-					{ isInstantDowngrade && refundText
-						? translate( 'Downgrade and refund %(refundText)s', {
-								args: { refundText },
-								comment:
-									'Button label to confirm an instant downgrade that issues a refund of the given amount',
-						  } )
-						: translate( 'Downgrade to %(planName)s', {
-								args: { planName: targetPlanName },
-								comment: 'Button label to confirm downgrading to a lower-tier plan',
-						  } ) }
+					{ confirmButtonLabel }
 				</Button>
 			</div>
 		</Modal>
