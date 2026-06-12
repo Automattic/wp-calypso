@@ -1,7 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import SectionNav from '../';
 import NavItem from '../item';
 import NavTabs from '../tabs';
@@ -123,7 +124,7 @@ describe( 'section-nav', () => {
 	} );
 
 	describe( 'interaction', () => {
-		test( 'should toggle the panel and call onMobileNavPanelOpen twice when tapped three times', () => {
+		test( 'should toggle the panel and call onMobileNavPanelOpen twice when tapped three times', async () => {
 			const onMobileNavPanelOpen = jest.fn();
 			const { container } = render(
 				<SectionNav selectedText="placeholder" onMobileNavPanelOpen={ onMobileNavPanelOpen }>
@@ -131,14 +132,14 @@ describe( 'section-nav', () => {
 				</SectionNav>
 			);
 			const nav = container.querySelector( '.section-nav' );
-			const header = container.querySelector( '.section-nav__mobile-header' );
+			const header = screen.getByRole( 'button' );
 
 			expect( nav ).not.toHaveClass( 'is-open' );
-			fireEvent.click( header );
+			await userEvent.click( header );
 			expect( nav ).toHaveClass( 'is-open' );
-			fireEvent.click( header );
+			await userEvent.click( header );
 			expect( nav ).not.toHaveClass( 'is-open' );
-			fireEvent.click( header );
+			await userEvent.click( header );
 			expect( nav ).toHaveClass( 'is-open' );
 
 			expect( onMobileNavPanelOpen ).toHaveBeenCalledTimes( 2 );

@@ -2,7 +2,8 @@
  * @jest-environment jsdom
  */
 
-import { fireEvent, render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import MultiCheckbox from '../';
 
 describe( 'index', () => {
@@ -13,67 +14,60 @@ describe( 'index', () => {
 
 	describe( 'rendering', () => {
 		test( 'should render a set of checkboxes', () => {
-			const { container } = render( <MultiCheckbox name="favorite_colors" options={ options } /> );
+			render( <MultiCheckbox name="favorite_colors" options={ options } /> );
 
-			const labels = container.querySelectorAll( 'label' );
-			expect( labels ).toHaveLength( options.length );
+			const checkboxes = screen.getAllByRole( 'checkbox' );
+			expect( checkboxes ).toHaveLength( options.length );
 
-			labels.forEach( ( label, i ) => {
-				const inputNode = label.querySelector( 'input' );
-				expect( inputNode.name ).toEqual( 'favorite_colors[]' );
-				expect( inputNode.value ).toEqual( options[ i ].value.toString() );
-				expect( label.textContent ).toEqual( options[ i ].label );
+			checkboxes.forEach( ( checkbox, i ) => {
+				expect( checkbox ).toHaveAttribute( 'name', 'favorite_colors[]' );
+				expect( checkbox ).toHaveAttribute( 'value', options[ i ].value.toString() );
+				expect( checkbox ).toHaveAccessibleName( options[ i ].label );
 			} );
 		} );
 
 		test( 'should accept an array of checked values', () => {
-			const { container } = render(
+			render(
 				<MultiCheckbox
 					name="favorite_colors"
 					options={ options }
 					checked={ [ options[ 0 ].value ] }
 				/>
 			);
-			const labels = container.querySelectorAll( 'label' );
 
-			expect( labels[ 0 ].querySelector( 'input' ).checked ).toBe( true );
-			expect( labels[ 1 ].querySelector( 'input' ).checked ).toBe( false );
+			expect( screen.getByRole( 'checkbox', { name: 'One' } ) ).toBeChecked();
+			expect( screen.getByRole( 'checkbox', { name: 'Two' } ) ).not.toBeChecked();
 		} );
 
 		test( 'should accept an array of defaultChecked', () => {
-			const { container } = render(
+			render(
 				<MultiCheckbox
 					name="favorite_colors"
 					options={ options }
 					defaultChecked={ [ options[ 0 ].value ] }
 				/>
 			);
-			const labels = container.querySelectorAll( 'label' );
 
-			expect( labels[ 0 ].querySelector( 'input' ).checked ).toBe( true );
-			expect( labels[ 1 ].querySelector( 'input' ).checked ).toBe( false );
+			expect( screen.getByRole( 'checkbox', { name: 'One' } ) ).toBeChecked();
+			expect( screen.getByRole( 'checkbox', { name: 'Two' } ) ).not.toBeChecked();
 		} );
 
-		test( 'should accept an onChange event handler', () => {
+		test( 'should accept an onChange event handler', async () => {
 			const onChange = jest.fn();
-			const { container } = render(
-				<MultiCheckbox name="favorite_colors" options={ options } onChange={ onChange } />
-			);
+			render( <MultiCheckbox name="favorite_colors" options={ options } onChange={ onChange } /> );
+
+			await userEvent.click( screen.getByRole( 'checkbox', { name: 'One' } ) );
 
 			// Checkbox values come back from the DOM as strings.
-			fireEvent.click( container.querySelector( 'label input' ) );
-
 			expect( onChange ).toHaveBeenCalledWith( { value: [ options[ 0 ].value.toString() ] } );
 		} );
 
 		test( 'should accept a disabled boolean', () => {
-			const { container } = render(
-				<MultiCheckbox name="favorite_colors" options={ options } disabled />
-			);
-			const labels = container.querySelectorAll( 'label' );
+			render( <MultiCheckbox name="favorite_colors" options={ options } disabled /> );
 
-			expect( labels[ 0 ].querySelector( 'input' ).disabled ).toBe( true );
-			expect( labels[ 1 ].querySelector( 'input' ).disabled ).toBe( true );
+			screen.getAllByRole( 'checkbox' ).forEach( ( checkbox ) => {
+				expect( checkbox ).toBeDisabled();
+			} );
 		} );
 
 		test( 'should transfer props to the rendered element', () => {

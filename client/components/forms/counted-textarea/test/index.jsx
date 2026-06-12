@@ -1,11 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { CountedTextarea } from '../';
 
 const getWrapper = ( container ) => container.querySelector( '.counted-textarea' );
-const getTextarea = ( container ) => container.querySelector( 'textarea' );
 const getCountPanel = ( container ) => container.querySelector( '.counted-textarea__count-panel' );
 
 describe( 'index', () => {
@@ -36,10 +35,10 @@ describe( 'index', () => {
 		const value = 'Hello World!';
 		const placeholder = 'placeholder test';
 
-		const { container } = render(
+		render(
 			<CountedTextarea value={ value } className="custom-class" placeholder={ placeholder } />
 		);
-		const textarea = getTextarea( container );
+		const textarea = screen.getByRole( 'textbox' );
 
 		expect( textarea ).toHaveValue( value );
 		expect( textarea ).toHaveAttribute( 'placeholder', placeholder );
@@ -82,10 +81,8 @@ describe( 'index', () => {
 	test( 'should not pass acceptableLength prop to the child textarea', () => {
 		const value = 'Hello World!';
 
-		const { container } = render(
-			<CountedTextarea value={ value } className="custom-class" acceptableLength={ 140 } />
-		);
-		const textarea = getTextarea( container );
+		render( <CountedTextarea value={ value } className="custom-class" acceptableLength={ 140 } /> );
+		const textarea = screen.getByRole( 'textbox' );
 
 		expect( textarea ).toHaveValue( value );
 		expect( textarea ).not.toHaveAttribute( 'acceptablelength' );
