@@ -26,11 +26,7 @@ export function Client() {
 	this.isShowing = false;
 	this.lastSeenTime = 0;
 	this.noteRequestLimit = settings.initial_limit;
-	// Load-more pages backwards in time from the oldest loaded note (see
-	// getOlderNotes), so a separate in-flight guard keeps it from overlapping
-	// the polling path. `allNotesLoaded` latches once the server reports no
-	// older notes remain, stopping further paging.
-	this.gettingOlderNotes = false;
+	// Latches once the server has no older notes left, so load-more stops paging.
 	this.allNotesLoaded = false;
 	this.retries = 0;
 	this.subscribeTry = 0;
@@ -169,7 +165,15 @@ function getNote( note_id ) {
 	} );
 }
 
-function getNotes() {
+/**
+ * Fetch notes from the server.
+ *
+ * Without `before` this refreshes the top window and treats the response as
+ * authoritative, pruning notes the server no longer returns. With `before`
+ * (UNIX epoch seconds) it pages older notes in additively for load-more and
+ * never prunes, since an older slice isn't a superset of what's loaded.
+ */
+function getNotes( before ) {
 	if ( this.gettingNotes ) {
 		return;
 	}
@@ -177,9 +181,12 @@ function getNotes() {
 
 	const parameters = {
 		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash,variant',
-		number: this.noteRequestLimit,
+		number: before ? settings.increment_limit : this.noteRequestLimit,
 		locale: this.locale,
 	};
+	if ( before ) {
+		parameters.before = before;
+	}
 
 	const notes = getAllNotes( store.getState() );
 	if ( ! notes.length || this.noteRequestLimit > notes.length ) {
@@ -188,15 +195,18 @@ function getNotes() {
 
 	listNotes( parameters, ( error, data ) => {
 		this.gettingNotes = false;
+
 		if ( error ) {
+			// Load-more: clear the spinner, leave state untouched; scrolling retries.
+			if ( before ) {
+				store.dispatch( actions.ui.loadedNotes() );
+				return;
+			}
 			/*
-			 * Something failed, so try again and
-			 * reset the local noteList copy. We
-			 * might have optimistically modified
-			 * it when we last compared it to the
-			 * server, but there's been a failure
-			 * here so resetting it will force a
-			 * full refresh.
+			 * Something failed, so try again and reset the local noteList copy.
+			 * We might have optimistically modified it when we last compared it
+			 * to the server, but there's been a failure here so resetting it
+			 * will force a full refresh.
 			 */
 			this.retries = this.retries + 1;
 			const backoff_ms = Math.min(
@@ -211,38 +221,37 @@ function getNotes() {
 
 		store.dispatch( actions.ui.loadedNotes() );
 
-		const oldNotes = getAllNotes( store.getState() ).map( ( { id } ) => id );
-		const newNotes = data.notes.map( ( n ) => n.id );
-		const notesToRemove = oldNotes.filter( ( old ) => ! newNotes.includes( old ) );
-
-		// A short window means the server has nothing older than what we hold, so
-		// stop load-more from paging further. Only ever latch it true here: a full
-		// window can't prove more exist, and unlatching is the pruning case below.
+		// Short page means the server has nothing older — stop load-more paging.
 		if ( data.notes.length < parameters.number ) {
 			this.allNotesLoaded = true;
 		}
 
-		// Pruning means new notes pushed older ones out of this top window, so
-		// notes we'd paged in may sit below it again — let load-more re-page them.
-		if ( notesToRemove.length ) {
-			this.allNotesLoaded = false;
-			store.dispatch( actions.notes.removeNotes( notesToRemove ) );
+		// Authoritative top window: prune notes the server dropped. A prune means
+		// newer notes pushed older ones below the window, so let load-more
+		// re-fetch them. The additive `before` path never prunes.
+		if ( ! before ) {
+			const oldIds = getAllNotes( store.getState() ).map( ( { id } ) => id );
+			const newIds = data.notes.map( ( n ) => n.id );
+			const notesToRemove = oldIds.filter( ( id ) => ! newIds.includes( id ) );
+			if ( notesToRemove.length ) {
+				this.allNotesLoaded = false;
+				store.dispatch( actions.notes.removeNotes( notesToRemove ) );
+			}
 		}
+
+		// The lightweight id/hash list the polling diff compares against: a fresh
+		// top window replaces it; an older page appends to it.
+		const pageList = data.notes.map( ( { id, note_hash } ) => ( { id, note_hash } ) );
+		this.noteList = before ? this.noteList.concat( pageList ) : pageList;
+
 		store.dispatch( actions.notes.addNotes( data.notes ) );
-
-		// Store id/hash pairs for now until properly reduxified
-		// this is used as a network optimization to quickly determine
-		// changes without downloading all the data
-		this.noteList = data.notes.map( ( { id, note_hash } ) => ( { id, note_hash } ) );
-
 		this.updateLastSeenTime( Number( data.last_seen_time ) );
+
 		if ( parameters.number === settings.max_limit ) {
 			/*
-			 * Since we store note data in a local cache,
-			 * we want to purge the data if the notes
-			 * no longer exist, but we only want to do it
-			 * if we have loaded all the notes, otherwise
-			 * we might expunge legitimate entries that
+			 * Since we store note data in a local cache, we want to purge the
+			 * data if the notes no longer exist, but only once we've loaded all
+			 * the notes, otherwise we might expunge legitimate entries that
 			 * simply haven't been loaded yet.
 			 */
 			cleanupLocalCache.call( this );
@@ -316,76 +325,6 @@ function getNotesList() {
 
 		/* Grab updates/changes from server if they exist */
 		return serverHasChanges ? this.getNotes() : ready.call( this );
-	} );
-}
-
-/**
- * Page backwards in time to load notes older than those already cached.
- *
- * Unlike the polling path (getNotes/getNotesList), which re-fetches the top
- * window and treats its response as the authoritative set, this walks a fixed
- * `before` cursor down the list and is purely additive: it never prunes, since
- * an older slice is not a superset of what's loaded. It anchors on the oldest
- * cached note's timestamp, converted to the UNIX epoch seconds the endpoint's
- * `before` cursor expects, and stops once a short page proves the server has
- * nothing older.
- */
-function getOlderNotes() {
-	if ( this.gettingOlderNotes ) {
-		return;
-	}
-
-	// getAllNotes is sorted newest-first, so the last entry is the oldest loaded
-	// note and the cursor for the next page. Without one there's nothing to page
-	// from; the initial getNotes seeds the list.
-	const notes = getAllNotes( store.getState() );
-	const oldest = notes[ notes.length - 1 ];
-	if ( ! oldest ) {
-		return;
-	}
-	this.gettingOlderNotes = true;
-
-	const parameters = {
-		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash,variant',
-		number: settings.increment_limit,
-		// The endpoint keys `before`/`since` on UNIX epoch seconds, not the ISO
-		// timestamp the note carries; an unparsed string is ignored and the server
-		// just returns the top window again, stalling load-more after one page.
-		before: Math.floor( Date.parse( oldest.timestamp ) / 1000 ),
-		locale: this.locale,
-	};
-
-	store.dispatch( actions.ui.loadNotes() );
-
-	listNotes( parameters, ( error, data ) => {
-		this.gettingOlderNotes = false;
-		store.dispatch( actions.ui.loadedNotes() );
-
-		if ( error ) {
-			// Leave pagination state untouched; scrolling again retries the page.
-			return;
-		}
-
-		// Additive only — never prune here (see the function comment).
-		store.dispatch( actions.notes.addNotes( data.notes ) );
-
-		// Mirror the new ids into the lightweight note-hash list the polling diff
-		// compares against, so the next getNotesList() doesn't see this page as a
-		// server-side change and trigger a redundant full getNotes(). The next
-		// poll overwrites this list wholesale, so any drift self-heals.
-		this.noteList = this.noteList.concat(
-			data.notes.map( ( { id, note_hash } ) => ( { id, note_hash } ) )
-		);
-
-		// A short page (fewer than requested) means the server is exhausted. This
-		// compares the raw response count to the request, so it holds whether the
-		// `before` boundary is inclusive (the anchor note returns again, deduped
-		// by id on add) or exclusive.
-		if ( data.notes.length < parameters.number ) {
-			this.allNotesLoaded = true;
-		}
-
-		ready.call( this );
 	} );
 }
 
@@ -549,26 +488,36 @@ function handleStorageEvent( event ) {
 }
 
 function loadMore() {
-	if ( this.gettingOlderNotes || ! this.hasMoreNotes() ) {
+	if ( this.gettingNotes || ! this.hasMoreNotes() ) {
+		return;
+	}
+
+	// getAllNotes is newest-first, so the last entry is the oldest loaded note —
+	// the cursor for the next, older page.
+	const notes = getAllNotes( store.getState() );
+	const oldest = notes[ notes.length - 1 ];
+	if ( ! oldest ) {
 		return;
 	}
 
 	// Grow the polling window so getNotes()/getNotesList() keep covering every
-	// note we've paged in — their diff treats the response as the full set, so a
-	// window shorter than the loaded list would prune the older notes back out.
+	// note we've paged in; their diff treats the response as the full set, so a
+	// shorter window would prune the older notes back out.
 	this.noteRequestLimit = Math.min(
 		this.noteRequestLimit + settings.increment_limit,
 		settings.max_limit
 	);
 
-	this.getOlderNotes();
+	// The endpoint's `before` cursor is UNIX epoch seconds, not the note's ISO
+	// timestamp; a raw string is ignored and load-more would refetch page one.
+	this.getNotes( Math.floor( Date.parse( oldest.timestamp ) / 1000 ) );
 }
 
 // Whether the server may still have notes older than those already loaded.
-// `allNotesLoaded` latches once a short page (or short polling window) proves
-// the server is exhausted; until then there may be more, capped at max_limit.
-// The window-driven note list uses this to keep its optimistic `totalItems`
-// ahead of the scroll window so DataViews keeps advancing it.
+// `allNotesLoaded` latches once a short page proves the server is exhausted;
+// until then there may be more, capped at max_limit. The note list uses this to
+// keep its optimistic `totalItems` ahead of the scroll window so DataViews
+// keeps advancing it.
 function hasMoreNotes() {
 	const notes = getAllNotes( store.getState() );
 	return ! this.allNotesLoaded && notes.length < settings.max_limit;
@@ -599,7 +548,6 @@ Client.prototype.reschedule = reschedule;
 Client.prototype.getNote = getNote;
 Client.prototype.getNotes = getNotes;
 Client.prototype.getNotesList = getNotesList;
-Client.prototype.getOlderNotes = getOlderNotes;
 Client.prototype.updateLastSeenTime = updateLastSeenTime;
 Client.prototype.loadMore = loadMore;
 Client.prototype.hasMoreNotes = hasMoreNotes;
