@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
@@ -20,8 +21,10 @@ import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import RecurringPaymentsPlanAddEditModal from '../components/add-edit-plan-modal';
+import FreePlanModal from '../components/free-plan-modal';
 import { Product } from '../types';
 import {
 	ADD_NEW_PAYMENT_PLAN_HASH,
@@ -40,6 +43,7 @@ function ProductsList() {
 	const dispatch = useDispatch();
 	const [ showAddEditDialog, setShowAddEditDialog ] = useState( false );
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
+	const [ showFreePlanDialog, setShowFreePlanDialog ] = useState( false );
 	const [ product, setProduct ] = useState< Product | null >( null );
 	const [ annualProduct, setAnnualProduct ] = useState< Product | null >( null );
 	const site = useSelector( getSelectedSite );
@@ -47,6 +51,18 @@ function ProductsList() {
 	const hasLoadedFeatures = features?.active.length > 0;
 	const products: Product[] = useSelector( ( state ) => getProductsForSiteId( state, site?.ID ) );
 	const hasProducts = products.length > 0;
+
+	// The "Free" newsletter tier is not a product; it's the absence of a paid
+	// subscription. We only surface it (and its editable description / hide
+	// setting) when at least one paid newsletter tier exists, mirroring the
+	// subscriber-facing selector where Free only appears alongside paid tiers.
+	const hasNewsletterTier = products.some(
+		( currentProduct: Product ) => currentProduct.type === TYPE_TIER && ! currentProduct.tier
+	);
+	const siteSettings = useSelector( ( state ) => getSiteSettings( state, site?.ID ?? null ) );
+	const freeTierDescription: string =
+		siteSettings?.subscription_options?.free_tier_description ?? '';
+	const isFreeTierHidden = Boolean( siteSettings?.subscription_options?.hide_free_tier );
 
 	const hasDonationsFeature = useSelector( ( state ) =>
 		siteHasFeature( state, site?.ID ?? null, FEATURE_DONATIONS )
@@ -115,9 +131,15 @@ function ProductsList() {
 		}
 	}
 
+	function openFreePlanDialog() {
+		dispatch( recordTracksEvent( 'calypso_earn_page_free_plan_edit_click' ) );
+		setShowFreePlanDialog( true );
+	}
+
 	function closeDialog() {
 		setShowAddEditDialog( false );
 		setShowDeleteDialog( false );
+		setShowFreePlanDialog( false );
 	}
 
 	function getPriceFromProduct( product: Product, price: string ) {
@@ -147,6 +169,7 @@ function ProductsList() {
 		<div className="memberships__products-list">
 			<QueryMembershipsSettings siteId={ site?.ID ?? 0 } />
 			<QueryMembershipProducts siteId={ site?.ID ?? 0 } />
+			<QuerySiteSettings siteId={ site?.ID ?? 0 } />
 			{ hasLoadedFeatures && ! hasStripeFeature && (
 				// Purposefully isn't a dismissible nudge as without this nudge, the page would appear to be
 				// broken as it only does listing and deleting of plans and it wouldn't be clear how to change that.
@@ -251,6 +274,36 @@ function ProductsList() {
 							</CompactCard>
 						);
 					} ) }
+			{ hasLoadedFeatures && hasStripeFeature && hasNewsletterTier && (
+				<CompactCard className="memberships__products-product-card">
+					<div className="memberships__products-product-details">
+						<div className="memberships__products-product-title">{ translate( 'Free' ) }</div>
+						{ freeTierDescription && (
+							<div className="memberships__products-product-description">
+								{ freeTierDescription }
+							</div>
+						) }
+						<sub className="memberships__products-product-price">{ translate( 'Free' ) }</sub>
+						<div className="memberships__products-product-badge">
+							<Badge type="info">{ translate( 'Newsletter tier' ) }</Badge>
+							{ isFreeTierHidden && (
+								<Badge type="warning">{ translate( 'Hidden from subscribers' ) }</Badge>
+							) }
+						</div>
+					</div>
+					<EllipsisMenu position="bottom left">
+						{ hasStripeFeature && (
+							<PopoverMenuItem onClick={ openFreePlanDialog }>
+								<Gridicon size={ 18 } icon="pencil" />
+								{ translate( 'Edit' ) }
+							</PopoverMenuItem>
+						) }
+					</EllipsisMenu>
+				</CompactCard>
+			) }
+			{ hasLoadedFeatures && showFreePlanDialog && hasStripeFeature && (
+				<FreePlanModal closeDialog={ closeDialog } siteId={ site?.ID } />
+			) }
 			{ hasLoadedFeatures && showAddEditDialog && hasStripeFeature && (
 				<RecurringPaymentsPlanAddEditModal
 					closeDialog={ closeDialog }

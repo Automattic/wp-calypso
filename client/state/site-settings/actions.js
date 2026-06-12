@@ -56,7 +56,13 @@ function formatSubscriptionOptions( settings, siteId, state ) {
 		return settings;
 	}
 
-	const allowedKeys = [ 'invitation', 'comment_follow', 'welcome' ];
+	const allowedKeys = [
+		'invitation',
+		'comment_follow',
+		'welcome',
+		'free_tier_description',
+		'hide_free_tier',
+	];
 	const formattedOptions = [];
 	Object.entries( settings.subscription_options ).forEach( ( [ key, value ] ) => {
 		if ( allowedKeys.includes( key ) ) {

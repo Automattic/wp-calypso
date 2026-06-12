@@ -63,7 +63,7 @@ const initialState = {
 	},
 };
 
-const renderProductsList = ( products ) =>
+const renderProductsList = ( products, subscriptionOptions = null ) =>
 	renderWithProvider( <ProductsList />, {
 		initialState: {
 			...initialState,
@@ -75,6 +75,13 @@ const renderProductsList = ( products ) =>
 					},
 				},
 			},
+			...( subscriptionOptions
+				? {
+						siteSettings: {
+							items: { 1: { subscription_options: subscriptionOptions } },
+						},
+				  }
+				: {} ),
 		},
 		reducers: {
 			ui: uiReducer,
@@ -152,5 +159,33 @@ describe( 'ProductsList', () => {
 		expect( description.querySelector( 'img' ) ).toBeNull();
 		expect( description.querySelector( 'strong' ) ).toBeNull();
 		expect( description ).toHaveTextContent( '**not parsed** <img src="x"> plain text' );
+	} );
+
+	test( 'shows the Free row when at least one newsletter tier exists', () => {
+		renderProductsList( [ tierWithoutDescription ] );
+
+		// The Free row contributes both a title and a price reading "Free".
+		expect( screen.getAllByText( 'Free' ).length ).toBeGreaterThan( 0 );
+	} );
+
+	test( 'does not show the Free row when no newsletter tier exists', () => {
+		renderProductsList( [ donationPlan ] );
+
+		expect( screen.getByText( 'One-time Donation' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Free' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'renders the custom free tier description preview', () => {
+		renderProductsList( [ tierWithoutDescription ], {
+			free_tier_description: 'A free taste of the newsletter',
+		} );
+
+		expect( screen.getByText( 'A free taste of the newsletter' ) ).toBeInTheDocument();
+	} );
+
+	test( 'marks the Free row as hidden when hide_free_tier is set', () => {
+		renderProductsList( [ tierWithoutDescription ], { hide_free_tier: true } );
+
+		expect( screen.getByText( 'Hidden from subscribers' ) ).toBeInTheDocument();
 	} );
 } );

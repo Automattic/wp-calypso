@@ -1,0 +1,15 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.memberships__dialog-sections {
+	display: grid;
+	grid-template: "item" 1fr / 1fr;
+
+	* {
+		font-size: $font-body-small;
+	}
+
+	@include break-medium {
+		min-width: 580px;
+	}
+}

@@ -1,0 +1,166 @@
+import { Dialog, FormInputValidation, FormLabel } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { ToggleControl } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
+import { ChangeEvent, useEffect, useState } from 'react';
+import CountedTextArea from 'calypso/components/forms/counted-textarea';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { saveSiteSettings } from 'calypso/state/site-settings/actions';
+import { getSiteSettings } from 'calypso/state/site-settings/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import './style.scss';
+
+const MAX_LENGTH_FREE_TIER_DESCRIPTION = 500;
+
+type FreePlanModalProps = {
+	closeDialog: () => void;
+	siteId?: number;
+};
+
+type SubscriptionOptions = {
+	free_tier_description?: string;
+	hide_free_tier?: boolean;
+};
+
+const FreePlanModal = ( { closeDialog, siteId }: FreePlanModalProps ) => {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const targetSiteId = siteId ?? selectedSiteId;
+	const settings = useSelector( ( state ) => getSiteSettings( state, targetSiteId ) );
+	const subscriptionOptions: SubscriptionOptions = settings?.subscription_options ?? {};
+
+	const [ editedDescription, setEditedDescription ] = useState(
+		subscriptionOptions.free_tier_description ?? ''
+	);
+	const [ hideFreeTier, setHideFreeTier ] = useState(
+		Boolean( subscriptionOptions.hide_free_tier )
+	);
+
+	const isFormValid = () => editedDescription.trim().length <= MAX_LENGTH_FREE_TIER_DESCRIPTION;
+
+	const onClose = ( reason: string | undefined ) => {
+		if ( reason === 'submit' && targetSiteId ) {
+			dispatch(
+				saveSiteSettings( targetSiteId, {
+					subscription_options: {
+						...subscriptionOptions,
+						free_tier_description: editedDescription.trim(),
+						// Sent as 1/0 (not a boolean) so the value survives form-encoding
+						// without PHP treating a "false" string as truthy server-side.
+						hide_free_tier: hideFreeTier ? 1 : 0,
+					},
+				} )
+			);
+			dispatch(
+				recordTracksEvent( 'calypso_earn_page_free_plan_updated', {
+					hide_free_tier: hideFreeTier,
+				} )
+			);
+		}
+		closeDialog();
+	};
+
+	useEffect( () => {
+		dispatch( recordTracksEvent( 'calypso_earn_page_free_plan_modal_show' ) );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+
+	return (
+		<Dialog
+			isVisible
+			onClose={ onClose }
+			buttons={ [
+				{
+					label: translate( 'Cancel' ),
+					action: 'cancel',
+				},
+				{
+					label: translate( 'Save' ),
+					action: 'submit',
+					disabled: ! isFormValid(),
+					isPrimary: true,
+				},
+			] }
+		>
+			<FormSectionHeading>{ translate( 'Edit Free plan options' ) }</FormSectionHeading>
+			<div className="memberships__dialog-sections">
+				<FormFieldset>
+					<FormLabel htmlFor="free-plan-title">{ translate( 'Plan name' ) }</FormLabel>
+					<FormTextInput id="free-plan-title" value={ translate( 'Free' ) } disabled />
+				</FormFieldset>
+				<FormFieldset>
+					<FormLabel htmlFor="free-plan-price">{ translate( 'Price' ) }</FormLabel>
+					<FormTextInput id="free-plan-price" value={ translate( 'Free' ) } disabled />
+					<FormSettingExplanation>
+						{ translate(
+							"The free plan can't be renamed or priced. You can customize its description and choose whether to show it to subscribers."
+						) }
+					</FormSettingExplanation>
+				</FormFieldset>
+				<FormFieldset>
+					<FormLabel htmlFor="free-tier-description">
+						{ translate( 'Describe what subscribers get at this tier' ) }
+					</FormLabel>
+					<CountedTextArea
+						id="free-tier-description"
+						value={ editedDescription }
+						onChange={ ( event: ChangeEvent< HTMLTextAreaElement > ) =>
+							setEditedDescription( event.target.value )
+						}
+						acceptableLength={ MAX_LENGTH_FREE_TIER_DESCRIPTION }
+						showRemainingCharacters
+						placeholder={ translate(
+							'e.g. A free taste of the newsletter with the occasional public post'
+						) }
+					/>
+					<FormSettingExplanation>
+						{ translate(
+							'Optional. Shown to readers when they choose the free option on your site. Basic {{a}}Markdown{{/a}} — bold, italics, lists, and links — is supported.',
+							{
+								components: {
+									a: (
+										<a
+											href={ localizeUrl(
+												'https://wordpress.com/support/markdown-quick-reference/'
+											) }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						) }
+					</FormSettingExplanation>
+					{ ! isFormValid() && (
+						<FormInputValidation
+							isError
+							text={ translate( 'Description must be %(max)d characters or fewer.', {
+								args: { max: MAX_LENGTH_FREE_TIER_DESCRIPTION },
+							} ) }
+						/>
+					) }
+				</FormFieldset>
+				<FormFieldset>
+					<ToggleControl
+						checked={ hideFreeTier }
+						onChange={ ( newValue: boolean ) => setHideFreeTier( newValue ) }
+						label={ translate( 'Hide the free plan from the options shown to new subscribers' ) }
+					/>
+					<FormSettingExplanation>
+						{ translate(
+							'When hidden, new subscribers must choose a paid tier. People who are already subscribed are not affected.'
+						) }
+					</FormSettingExplanation>
+				</FormFieldset>
+			</div>
+		</Dialog>
+	);
+};
+
+export default FreePlanModal;
