@@ -30,6 +30,12 @@ export interface DomainSearchCart {
 	items: SelectedDomain[];
 	total: string;
 	onAddItem: ( item: DomainSuggestion ) => Promise< unknown >;
+	/**
+	 * Add every member of a bundle suggestion to the cart in a single,
+	 * all-or-nothing operation. Implemented at the app layer; when absent the
+	 * bundle CTA is a no-op.
+	 */
+	onAddBundle?: ( bundle: BundleSuggestion ) => Promise< unknown >;
 	onRemoveItem: ( uuid: string ) => Promise< unknown >;
 	hasItem: ( domainName: string ) => boolean;
 }

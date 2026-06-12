@@ -110,4 +110,19 @@ export interface Receipt {
 	items: ReceiptItem[];
 	tax_vendor_info?: TaxVendorInfo;
 	checkout_type?: string;
+	/**
+	 * Line items that failed to provision during checkout, keyed by site (blog) ID.
+	 * Only populated when the receipt is fetched with `include_failed_purchases=true`;
+	 * omitted otherwise. Used to surface partial-failure orders on the failed-purchases page.
+	 */
+	failed_purchases?: Record<
+		string,
+		Array< {
+			product_meta: string;
+			product_id: string | number;
+			product_slug: string;
+			product_cost: string | number;
+			product_name: string;
+		} >
+	>;
 }

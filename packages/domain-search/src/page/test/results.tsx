@@ -884,6 +884,114 @@ describe( 'ResultsPage', () => {
 		} );
 	} );
 
+	describe( 'bundle suggestion', () => {
+		it( 'calls cart.onAddBundle once with the bundle suggestion when "Get bundle" is clicked', async () => {
+			const user = userEvent.setup();
+			const onAddBundle = jest.fn().mockResolvedValue( undefined );
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test' },
+				suggestions: [ buildSuggestion( { domain_name: 'test.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'test' },
+				bundleSuggestion: buildBundleSuggestion( 'test' ),
+			} );
+
+			render(
+				<TestDomainSearch
+					cart={ buildCart( { onAddBundle } ) }
+					config={ { showBundleSuggestions: true } }
+					query="test"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Get bundle' } ) );
+
+			await waitFor( () => {
+				expect( onAddBundle ).toHaveBeenCalledTimes( 1 );
+			} );
+
+			// The mock fetcher issues the bundle for the searched SLD; the whole
+			// suggestion (including the server-issued group id) is handed to the
+			// app layer untouched.
+			expect( onAddBundle ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					sld: 'test',
+					bundle_group_id: 'mock-test-group',
+					domains: expect.arrayContaining( [
+						expect.objectContaining( { domain: 'test.com' } ),
+						expect.objectContaining( { domain: 'test.net' } ),
+						expect.objectContaining( { domain: 'test.org' } ),
+					] ),
+				} )
+			);
+		} );
+	} );
+
+	describe( 'bundle continue state', () => {
+		it( 'shows Continue instead of Get bundle when every bundle member is in the cart', async () => {
+			const user = userEvent.setup();
+			const onContinue = jest.fn();
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'bundle-added' },
+				suggestions: [ buildSuggestion( { domain_name: 'bundle-added.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'bundle-added' },
+				bundleSuggestion: buildBundleSuggestion( 'bundle-added' ),
+			} );
+
+			const { container } = render(
+				<TestDomainSearch
+					cart={ buildCart( { hasItem: ( domain ) => domain.startsWith( 'bundle-added.' ) } ) }
+					config={ { showBundleSuggestions: true } }
+					events={ { onContinue } }
+					query="bundle-added"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await waitFor( () => {
+				expect( container.querySelector( '.bundle-card__cta' ) ).toBeInTheDocument();
+			} );
+			const bundleCta = container.querySelector( '.bundle-card__cta' ) as HTMLElement;
+
+			expect( bundleCta ).toHaveTextContent( 'Continue' );
+			expect( screen.queryByRole( 'button', { name: 'Get bundle' } ) ).not.toBeInTheDocument();
+
+			await user.click( bundleCta );
+			expect( onContinue ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'keeps Get bundle when only some members are in the cart', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'bundle-partial' },
+				suggestions: [ buildSuggestion( { domain_name: 'bundle-partial.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'bundle-partial' },
+				bundleSuggestion: buildBundleSuggestion( 'bundle-partial' ),
+			} );
+
+			render(
+				<TestDomainSearch
+					cart={ buildCart( { hasItem: ( domain ) => domain === 'bundle-partial.com' } ) }
+					config={ { showBundleSuggestions: true } }
+					query="bundle-partial"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByRole( 'button', { name: 'Get bundle' } ) ).toBeInTheDocument();
+		} );
+	} );
+
 	describe( 'tracking', () => {
 		it( 'fires the onSuggestionsReceive event when the suggestions are received', async () => {
 			const onSuggestionsReceive = jest.fn();
