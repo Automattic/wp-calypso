@@ -13,7 +13,7 @@ import {
 	addNavigationIfLoggedIn,
 } from 'calypso/my-sites/controller';
 import { getTheme } from 'calypso/state/themes/selectors';
-import { details, fetchThemeDetailsData } from './controller';
+import { details, fetchThemeDetailsData, redirectToLowerCaseThemeSlug } from './controller';
 
 function setTitleIfThemeExisted( context, next ) {
 	const theme = getTheme( context.store.getState(), 'wpcom', context.params.slug );
@@ -36,6 +36,7 @@ export default function ( router ) {
 	router( '/theme', () => page.redirect( '/themes' ) );
 	router(
 		`/${ langParam }/theme/:slug/:section(setup|support)?/:site_id?`,
+		redirectToLowerCaseThemeSlug,
 		redirectWithoutLocaleParamIfLoggedIn,
 		redirectToLoginIfSiteRequested,
 		setTitleIfThemeExisted,

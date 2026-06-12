@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
 import { logServerEvent } from 'calypso/lib/analytics/statsd-utils';
 import wpcom from 'calypso/lib/wp';
@@ -9,6 +10,35 @@ import ThemeSheetComponent from './main';
 import ThemeNotFoundError from './theme-not-found-error';
 
 const debug = debugFactory( 'calypso:themes' );
+
+// Lowercases only the theme slug segment of a `/theme/<slug>/…` path, leaving any
+// locale prefix, section, site segment, query string, and hash untouched.
+export function getCanonicalThemeSlugPath( path ) {
+	return path.replace(
+		/(\/theme\/)([^/?#]+)/,
+		( _match, prefix, slug ) => prefix + slug.toLowerCase()
+	);
+}
+
+// Theme IDs are canonically lowercase, while store lookups and the themes API are
+// case-sensitive. Redirect a request like `/theme/Russell` to its canonical lowercase
+// URL so the slug is consistent across SSR, the client, and any URL-derived links —
+// otherwise the theme is never found and the page 404s.
+export function redirectToLowerCaseThemeSlug( context, next ) {
+	const canonicalPath = getCanonicalThemeSlugPath( context.path );
+
+	if ( canonicalPath === context.path ) {
+		next();
+		return;
+	}
+
+	if ( context.isServerSide ) {
+		context.res.redirect( canonicalPath );
+		return;
+	}
+
+	page.redirect( canonicalPath );
+}
 
 export function fetchThemeDetailsData( context, next ) {
 	if ( context.cachedMarkup ) {
