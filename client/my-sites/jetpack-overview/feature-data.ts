@@ -5,6 +5,7 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
+import { translate } from 'i18n-calypso';
 import iconCreator from 'calypso/assets/images/jetpack/jetpack-product-icon-creator.svg';
 import iconScan from 'calypso/assets/images/jetpack/jetpack-product-icon-scan.svg';
 import iconStats from 'calypso/assets/images/jetpack/jetpack-product-icon-stats.svg';
@@ -34,11 +35,11 @@ export interface FeatureGroup {
 export const PLAN_KEY_ORDER: PlanKey[] = [ 'free', 'personal', 'premium', 'business', 'commerce' ];
 
 export const PLAN_DISPLAY_NAMES: Record< PlanKey, string > = {
-	free: 'Free',
-	personal: 'Personal',
-	premium: 'Premium',
-	business: 'Business',
-	commerce: 'Commerce',
+	free: translate( 'Free' ),
+	personal: translate( 'Personal' ),
+	premium: translate( 'Premium' ),
+	business: translate( 'Business' ),
+	commerce: translate( 'Commerce' ),
 };
 
 export const PLAN_SLUGS: Record< PlanKey, string > = {
