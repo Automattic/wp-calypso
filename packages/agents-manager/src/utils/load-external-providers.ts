@@ -23,6 +23,18 @@ import {
 	type ProviderCompositionPolicy,
 	type ResolvedProviderManifest,
 } from './provider-composition';
+import {
+	addProviderCallbackToAbility,
+	applyGuestClaimedContext,
+	dedupeById,
+	mergeCapabilitiesInto,
+	mergeCheckpointApis,
+	mergeContextProviders,
+	mergeMany,
+	mergeUseSuggestionsHooks,
+	type AbilityProviderEntry,
+	type ProviderClientContext,
+} from './provider-merging';
 import { useReaderFollowupSuggestions } from './reader-followup-hook';
 import type { ImageUploadHook } from '../hooks/use-image-upload';
 import type { ToolProvider, ContextProvider, Suggestion, BigSkyMessage } from '../types';
@@ -138,52 +150,10 @@ export type UseCheckpointHook = () => UseCheckpointReturn;
 
 export type { ImageUploadHook };
 
-function findCheckpointOwner(
-	checkpoints: UseCheckpointReturn[],
-	checkpointId: string
-): UseCheckpointReturn | undefined {
-	return checkpoints.find( ( checkpoint ) => checkpoint.hasCheckpoint( checkpointId ) );
-}
-
-function mergeCheckpointApis(
-	primary: UseCheckpointReturn,
-	checkpoints: UseCheckpointReturn[]
-): UseCheckpointReturn {
-	return {
-		...primary,
-		hasCheckpoint: ( checkpointId ) => !! findCheckpointOwner( checkpoints, checkpointId ),
-		restoreCheckpoint: async ( checkpointId ) => {
-			const owner = findCheckpointOwner( checkpoints, checkpointId );
-			await ( owner ?? primary ).restoreCheckpoint( checkpointId );
-		},
-		clearCheckpoint: ( checkpointId ) => {
-			for ( const checkpoint of checkpoints ) {
-				checkpoint.clearCheckpoint( checkpointId );
-			}
-		},
-	};
-}
-
 /** Optional flags providers can declare to opt into AM chat-dock features. */
 export interface ProviderCapabilities {
 	/** Adds the "Split screen sidebar" chat-header menu item when true. */
 	supportsSplitScreen?: boolean;
-}
-
-/**
- * OR-merge a provider's `capabilities` into the running map. Works on both
- * plain objects and lazy Proxies (probed by direct key access, not iteration).
- */
-export function mergeCapabilitiesInto( merged: ProviderCapabilities, capabilities: unknown ): void {
-	if ( ! capabilities || typeof capabilities !== 'object' ) {
-		return;
-	}
-	const caps = capabilities as ProviderCapabilities;
-	// Strict `=== true` because `capabilities` arrives as `unknown` from
-	// runtime-imported modules; a stray `'false'` string would otherwise opt in.
-	if ( caps.supportsSplitScreen === true ) {
-		merged.supportsSplitScreen = true;
-	}
 }
 
 export interface LoadedProviders {
@@ -204,13 +174,8 @@ export interface LoadedProviders {
 	compositionManifest?: ProviderCompositionManifest;
 }
 
-type AbilityProviderEntry = {
-	provider: ToolProvider;
-	abilityName: string;
-};
 type ProviderAbilities = Awaited< ReturnType< ToolProvider[ 'getAbilities' ] > >;
 
-type ProviderClientContext = ReturnType< ContextProvider[ 'getClientContext' ] >;
 type ToolProviderEntry = {
 	toolProvider: ToolProvider;
 	manifest: ResolvedProviderManifest;
@@ -223,207 +188,6 @@ type ChatComponentProviderEntry = {
 	getChatComponent: GetChatComponent;
 	manifest: ResolvedProviderManifest;
 };
-
-function mergeContextEntries(
-	firstEntries?: ProviderClientContext[ 'contextEntries' ],
-	secondEntries?: ProviderClientContext[ 'contextEntries' ]
-): ProviderClientContext[ 'contextEntries' ] | undefined {
-	const entries = [ ...( firstEntries || [] ), ...( secondEntries || [] ) ];
-	if ( entries.length === 0 ) {
-		return undefined;
-	}
-
-	const merged = [];
-	const seenIds = new Set< string >();
-	for ( const entry of entries ) {
-		if ( entry?.id && seenIds.has( entry.id ) ) {
-			continue;
-		}
-		if ( entry?.id ) {
-			seenIds.add( entry.id );
-		}
-		merged.push( entry );
-	}
-	return merged;
-}
-
-function isEmptyContextValue( value: unknown ): boolean {
-	return value === undefined || value === null || value === '';
-}
-
-function isPlainRecord( value: unknown ): value is Record< string, unknown > {
-	return !! value && typeof value === 'object' && ! Array.isArray( value );
-}
-
-function mergeClientContexts(
-	firstContext: ProviderClientContext,
-	secondContext: ProviderClientContext
-): ProviderClientContext {
-	const merged = { ...firstContext };
-
-	for ( const [ key, value ] of Object.entries( secondContext ) ) {
-		if ( key === 'contextEntries' ) {
-			continue;
-		}
-
-		const existing = merged[ key ];
-		if (
-			[ 'constructorArguments', 'currentScreen', 'siteEditorActions' ].includes( key ) &&
-			isPlainRecord( existing ) &&
-			isPlainRecord( value )
-		) {
-			merged[ key ] = { ...value, ...existing };
-			continue;
-		}
-
-		if ( isEmptyContextValue( existing ) && ! isEmptyContextValue( value ) ) {
-			merged[ key ] = value;
-		}
-	}
-
-	const contextEntries = mergeContextEntries(
-		firstContext.contextEntries,
-		secondContext.contextEntries
-	);
-	if ( contextEntries ) {
-		merged.contextEntries = contextEntries;
-	}
-
-	return merged;
-}
-
-export function mergeContextProviders(
-	contextProviders: ContextProvider[]
-): ContextProvider | undefined {
-	if ( contextProviders.length === 0 ) {
-		return undefined;
-	}
-
-	if ( contextProviders.length === 1 ) {
-		return contextProviders[ 0 ];
-	}
-
-	return {
-		getClientContext: () =>
-			contextProviders
-				.map( ( contextProvider ) => contextProvider.getClientContext() )
-				.reduce( mergeClientContexts ),
-	};
-}
-
-/**
- * Apply a guest's contribution to the merged client context: claimed keys
- * override the host outright, `contextEntries` are id-deduped additions, and
- * everything else the guest returns is ignored. Hosts own the rest of the
- * context; a guest that needs a key considered must claim it.
- */
-function applyGuestClaimedContext(
-	merged: ProviderClientContext,
-	guestContext: ProviderClientContext,
-	claimedContextKeys: string[]
-): ProviderClientContext {
-	const next = { ...merged };
-	for ( const key of claimedContextKeys ) {
-		if ( key === 'contextEntries' ) {
-			continue;
-		}
-
-		const value = guestContext[ key ];
-		if ( ! isEmptyContextValue( value ) ) {
-			next[ key ] = value;
-		}
-	}
-
-	const contextEntries = mergeContextEntries( next.contextEntries, guestContext.contextEntries );
-	if ( contextEntries ) {
-		next.contextEntries = contextEntries;
-	}
-	return next;
-}
-
-function getProviderAgentMessage( result: unknown ): string | undefined {
-	if ( ! result || typeof result !== 'object' ) {
-		return undefined;
-	}
-
-	const agentMessage = ( result as { agentMessage?: unknown } ).agentMessage;
-	if ( typeof agentMessage === 'string' && agentMessage.trim() ) {
-		return agentMessage;
-	}
-
-	const nestedResult = ( result as { result?: unknown } ).result;
-	if ( ! nestedResult || typeof nestedResult !== 'object' ) {
-		return undefined;
-	}
-
-	const nestedAgentMessage = ( nestedResult as { agentMessage?: unknown } ).agentMessage;
-	return typeof nestedAgentMessage === 'string' && nestedAgentMessage.trim()
-		? nestedAgentMessage
-		: undefined;
-}
-
-function normalizeProviderResult( result: unknown ): unknown {
-	const message = getProviderAgentMessage( result );
-	if ( ! message || ! result || typeof result !== 'object' ) {
-		return result;
-	}
-
-	if ( ( result as { agentMessage?: unknown } ).agentMessage === message ) {
-		return result;
-	}
-
-	return {
-		...( result as Record< string, unknown > ),
-		agentMessage: message,
-	};
-}
-
-function addProviderCallbackToAbility( ability: unknown, entry: AbilityProviderEntry ): unknown {
-	if ( ! ability || typeof ability !== 'object' ) {
-		return ability;
-	}
-
-	const abilityWithCallback = { ...( ability as Record< string, unknown > ) };
-	const existingCallback =
-		typeof abilityWithCallback.callback === 'function' ? abilityWithCallback.callback : undefined;
-	Object.defineProperty( abilityWithCallback, 'callback', {
-		value: async ( args: unknown ) => {
-			const result = existingCallback
-				? await existingCallback( args )
-				: await entry.provider.executeAbility( entry.abilityName, args );
-			return normalizeProviderResult( result );
-		},
-		enumerable: false,
-	} );
-	return abilityWithCallback;
-}
-
-export function mergeUseSuggestionsHooks(
-	hooks: UseSuggestionsHook[]
-): UseSuggestionsHook | undefined {
-	if ( hooks.length === 0 ) {
-		return undefined;
-	}
-
-	if ( hooks.length === 1 ) {
-		return hooks[ 0 ];
-	}
-
-	return ( maxSuggestions?: number, options?: { suggestionsVisible?: boolean } ) => {
-		const combined: Suggestion[] = [];
-		const seenIds = new Set< string >();
-		for ( const hook of hooks ) {
-			const suggestions = hook( maxSuggestions, options )?.suggestions ?? [];
-			for ( const s of suggestions ) {
-				if ( ! seenIds.has( s.id ) ) {
-					seenIds.add( s.id );
-					combined.push( s );
-				}
-			}
-		}
-		return { suggestions: combined };
-	};
-}
 
 /**
  * Load external agent providers from agentsManagerData.agentProviders.
@@ -469,11 +233,9 @@ export async function loadExternalProviders(
 	}
 
 	let mergedToolProvider: ToolProvider | undefined;
-	let mergedGetEmptyViewSuggestions: ( () => Suggestion[] ) | undefined;
 	let mergedMarkdownComponents: MarkdownComponents | undefined;
 	let mergedMarkdownExtensions: MarkdownExtensions | undefined;
 	let mergedNavigationContinuation: NavigationContinuationHook | undefined;
-	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
 	let mergedGetChatComponent: GetChatComponent | undefined;
 	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
 	let mergedImageUpload: ImageUploadHook | undefined;
@@ -781,35 +543,22 @@ export async function loadExternalProviders(
 	}
 
 	// Every provider's setup hook runs.
-	if ( allAbilitiesSetups.length === 1 ) {
-		mergedAbilitiesSetup = allAbilitiesSetups[ 0 ];
-	} else if ( allAbilitiesSetups.length > 1 ) {
-		mergedAbilitiesSetup = ( ( actions ) => {
-			for ( const fn of allAbilitiesSetups ) {
-				fn( actions );
+	const mergedAbilitiesSetup = mergeMany(
+		allAbilitiesSetups,
+		( setups ): AbilitiesSetupHook =>
+			( actions ) => {
+				for ( const fn of setups ) {
+					fn( actions );
+				}
 			}
-		} ) as AbilitiesSetupHook;
-	}
+	);
 
 	const mergedUseSuggestions = mergeUseSuggestionsHooks( allUseSuggestions );
 
-	if ( allGetEmptyViewSuggestions.length === 1 ) {
-		mergedGetEmptyViewSuggestions = allGetEmptyViewSuggestions[ 0 ];
-	} else if ( allGetEmptyViewSuggestions.length > 1 ) {
-		mergedGetEmptyViewSuggestions = () => {
-			const combined: Suggestion[] = [];
-			const seenIds = new Set< string >();
-			for ( const fn of allGetEmptyViewSuggestions ) {
-				for ( const s of fn() ) {
-					if ( ! seenIds.has( s.id ) ) {
-						seenIds.add( s.id );
-						combined.push( s );
-					}
-				}
-			}
-			return combined;
-		};
-	}
+	const mergedGetEmptyViewSuggestions = mergeMany(
+		allGetEmptyViewSuggestions,
+		( fns ) => () => dedupeById( fns.flatMap( ( fn ) => fn() ) )
+	);
 
 	return {
 		toolProvider: mergedToolProvider,
