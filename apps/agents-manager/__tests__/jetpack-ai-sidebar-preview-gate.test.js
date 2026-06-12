@@ -33,7 +33,7 @@ describe( 'shouldSuppressJetpackAiSidebarPreview', () => {
 		expect( globalThis.agentsManagerData.agentProviders ).toEqual( [ BLOCK_NOTES_PROVIDER ] );
 	} );
 
-	it( 'does not suppress or filter on Simple sites', () => {
+	it( 'suppresses on Simple sites where the preview registered the only provider', () => {
 		window._currentSiteType = 'simple';
 		setAgentsManagerData( {
 			sectionName: 'gutenberg',
@@ -41,8 +41,20 @@ describe( 'shouldSuppressJetpackAiSidebarPreview', () => {
 			jetpackAiSidebarPreview: { enabled: true },
 		} );
 
+		expect( shouldSuppressJetpackAiSidebarPreview() ).toBe( true );
+		expect( globalThis.agentsManagerData.agentProviders ).toEqual( [] );
+	} );
+
+	it( 'keeps Simple sites mounted when Big Sky remains after filtering', () => {
+		window._currentSiteType = 'simple';
+		setAgentsManagerData( {
+			sectionName: 'gutenberg',
+			agentProviders: [ BIG_SKY_PROVIDER, JETPACK_PROVIDER ],
+			jetpackAiSidebarPreview: { enabled: true },
+		} );
+
 		expect( shouldSuppressJetpackAiSidebarPreview() ).toBe( false );
-		expect( globalThis.agentsManagerData.agentProviders ).toEqual( [ JETPACK_PROVIDER ] );
+		expect( globalThis.agentsManagerData.agentProviders ).toEqual( [ BIG_SKY_PROVIDER ] );
 	} );
 
 	it( 'suppresses on self-hosted sites where the preview registered the only provider', () => {

@@ -3,12 +3,9 @@
 /**
  * Temporary kill switch for the Jetpack AI Sidebar preview.
  *
- * Jetpack can mount this post-editor surface on Atomic/self-hosted sites
- * before the server-side AI Assistant setting gate is available everywhere.
- * This widgets.wp.com entrypoint ships faster, so it filters the preview
- * provider client-side.
- *
- * Simple sites keep using wpcom's server-side gate and pass through untouched.
+ * Jetpack can mount this post-editor surface before the server-side AI
+ * Assistant setting gate is available everywhere. This widgets.wp.com
+ * entrypoint ships faster, so it filters the preview provider client-side.
  *
  * Remove once released Jetpack versions honor the AI Assistant setting.
  */
@@ -16,7 +13,7 @@
 const JETPACK_AI_SIDEBAR_PROVIDER_FILE = 'jetpack-ai-sidebar.provider.mjs';
 
 /**
- * Gate the Jetpack AI Sidebar preview on non-Simple sites.
+ * Gate the Jetpack AI Sidebar preview on all site types.
  *
  * Removes the Jetpack AI Sidebar provider from
  * `agentsManagerData.agentProviders`, which Agents Manager's
@@ -32,11 +29,6 @@ export function shouldSuppressJetpackAiSidebarPreview() {
 		return false;
 	}
 
-	// wpcom owns the Simple-site gating server-side.
-	if ( window._currentSiteType === 'simple' ) {
-		return false;
-	}
-
 	const providers = Array.isArray( data.agentProviders ) ? data.agentProviders : [];
 	const remaining = providers.filter(
 		( provider ) =>
@@ -44,6 +36,6 @@ export function shouldSuppressJetpackAiSidebarPreview() {
 	);
 	data.agentProviders = remaining;
 
-	// Mount only when another provider (Block Notes, Big Sky, …) still needs AM.
+	// Mount only when another provider (Block Notes, Big Sky, etc.) still needs AM.
 	return remaining.length === 0;
 }
