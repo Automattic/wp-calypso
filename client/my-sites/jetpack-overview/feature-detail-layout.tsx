@@ -62,8 +62,7 @@ export default function FeatureDetailLayout( {
 			plan_slug: planSlug,
 			site_id: site?.ID,
 		} );
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ featureId ] );
+	}, [ availability, featureId, planSlug, site?.ID ] );
 
 	function handleCtaClick() {
 		recordTracksEvent( 'calypso_jetpack_feature_page_cta_clicked', {
