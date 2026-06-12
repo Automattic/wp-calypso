@@ -4,7 +4,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useMemo, useState, type ComponentType, type ReactElement } from 'react';
-import { useExperiment } from 'calypso/lib/explat';
+import { useSiteLaunchGatingVariant } from 'calypso/lib/explat/site-launch-gating';
 import { getCurrentDashboard } from '../../app/routing';
 import { dashboardLinkWithBackport, redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import {
@@ -44,8 +44,6 @@ export interface UseSiteLaunchResult {
 	modal: ReactElement | null;
 }
 
-const EXPERIMENT_NAME = 'calypso_standardized_site_launch_gating_202603_v1';
-
 export function useSiteLaunch(
 	site: Site,
 	{
@@ -75,8 +73,7 @@ export function useSiteLaunch(
 	} );
 
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
-	const [ isExperimentLoading, experiment ] = useExperiment( EXPERIMENT_NAME );
-	const variant = experiment?.variationName;
+	const [ isExperimentLoading, variant ] = useSiteLaunchGatingVariant();
 
 	const isSitePlanHostingTrial = site.plan?.product_slug === DotcomPlans.HOSTING_TRIAL_MONTHLY;
 	const isSitePlanPaidWithDomains = isSitePlanPaid( site ) && domains.length > 1;
@@ -179,6 +176,9 @@ export function useSiteLaunch(
 		return { ...baseResult, isHidden: true, onClick: () => {} };
 	}
 
+	// Site launch gating: 'semi_gated_site_launch' is the shipped default.
+	// The other branches are scaffolding for future experiments; see
+	// useSiteLaunchGatingVariant().
 	if ( variant === 'semi_gated_site_launch' ) {
 		return {
 			...baseResult,

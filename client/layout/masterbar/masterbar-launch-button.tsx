@@ -4,7 +4,7 @@ import { Button } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useExperiment } from 'calypso/lib/explat';
+import { useSiteLaunchGatingVariant } from 'calypso/lib/explat/site-launch-gating';
 import { useCelebrateLaunchModalSideEffects } from 'calypso/my-sites/customer-home/celebrate-site-launch-modal/use-side-effects';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -22,12 +22,15 @@ export const MasterbarLaunchButton = ( { siteId }: { siteId: number } ) => {
 
 	const { onSiteLaunched } = useCelebrateLaunchModalSideEffects( siteId );
 
-	const [ isLoading, data ] = useExperiment( 'calypso_standardized_site_launch_gating_202603_v1' );
+	const [ isLoading, variant ] = useSiteLaunchGatingVariant();
 
 	const onLaunchSiteClick = () => {
 		dispatch( recordTracksEvent( 'calypso_masterbar_launch_site', { source: sectionName } ) );
 
-		if ( data?.variationName === 'semi_gated_site_launch' ) {
+		// Site launch gating: 'semi_gated_site_launch' is the shipped default.
+		// The other branches are scaffolding for future experiments; see
+		// useSiteLaunchGatingVariant().
+		if ( variant === 'semi_gated_site_launch' ) {
 			window.location.assign(
 				addQueryArgs( '/start/launch-site', {
 					siteSlug: site?.slug,
@@ -37,7 +40,7 @@ export const MasterbarLaunchButton = ( { siteId }: { siteId: number } ) => {
 			return;
 		}
 
-		if ( data?.variationName === 'ungated_site_launch' ) {
+		if ( variant === 'ungated_site_launch' ) {
 			launchSiteMutation.mutate( undefined, {
 				onSuccess: () => onSiteLaunched( !! site?.is_wpcom_atomic ),
 			} );

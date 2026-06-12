@@ -1,4 +1,4 @@
-import { useExperiment } from 'calypso/lib/explat';
+import { useSiteLaunchGatingVariant } from 'calypso/lib/explat/site-launch-gating';
 import { useCelebrateLaunchModalSideEffects } from 'calypso/my-sites/customer-home/celebrate-site-launch-modal/use-side-effects';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -18,26 +18,26 @@ const LaunchpadPreLaunch = ( props: LaunchpadPreLaunchProps ): JSX.Element => {
 
 	const { onSiteLaunched } = useCelebrateLaunchModalSideEffects( siteId );
 
-	const [ , experimentData ] = useExperiment( 'calypso_standardized_site_launch_gating_202603_v1' );
-	const experimentAssignment = experimentData?.variationName;
+	const [ , variant ] = useSiteLaunchGatingVariant();
 
 	const handleTaskClick = ( task: Task ) => {
-		// No experiment assignment (i.e., control) or not the site launch task
-		if ( task.id !== 'site_launched' || ! experimentAssignment ) {
+		// No variant (i.e., control) or not the site launch task
+		if ( task.id !== 'site_launched' || ! variant ) {
 			return;
 		}
 
-		// Ungated site launch. When the action is completed, handleSiteLaunched will be called.
-		if ( experimentAssignment === 'ungated_site_launch' ) {
-			return;
-		}
-
-		if ( experimentAssignment === 'semi_gated_site_launch' ) {
+		// Site launch gating: 'semi_gated_site_launch' is the shipped default.
+		// The other branches are scaffolding for future experiments; see
+		// useSiteLaunchGatingVariant().
+		if ( variant === 'semi_gated_site_launch' ) {
 			window.location.assign( `/start/launch-site?siteSlug=${ site?.slug }` );
 			return false;
 		}
 
-		throw new Error( 'Invalid experiment assignment' );
+		// Ungated site launch. When the action is completed, handleSiteLaunched will be called.
+		if ( variant === 'ungated_site_launch' ) {
+			return;
+		}
 	};
 
 	return (

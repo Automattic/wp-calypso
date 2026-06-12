@@ -10,8 +10,12 @@ import Snackbars from '../../snackbars';
 import { InterimOmnibar } from '../interim-omnibar';
 import type { Site, User } from '@automattic/api-core';
 
-jest.mock( 'calypso/lib/explat', () => ( {
-	useExperiment: () => [ false, { variationName: 'ungated_site_launch' } ],
+// Site launch gating: the ungated variant is unreachable in production while
+// useSiteLaunchGatingVariant() hardcodes the semi-gated default, but its code
+// path is kept as scaffolding for future experiments, so we mock the hook to
+// keep it tested.
+jest.mock( 'calypso/lib/explat/site-launch-gating', () => ( {
+	useSiteLaunchGatingVariant: () => [ false, 'ungated_site_launch' ],
 } ) );
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
