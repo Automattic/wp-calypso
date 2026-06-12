@@ -99,6 +99,7 @@ export default function LicenseActions( {
 			{ showLaunchPermissionModal && (
 				<Modal
 					title={ translate( 'Launching requires site admin access' ) }
+					size="medium"
 					onRequestClose={ () => setShowLaunchPermissionModal( false ) }
 				>
 					<LaunchPermissionModal
