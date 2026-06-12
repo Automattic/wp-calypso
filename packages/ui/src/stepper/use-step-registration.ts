@@ -53,12 +53,13 @@ export function useStepRegistration< T extends { value: string } >() {
 				return prev;
 			}
 			const existing = prev[ idx ];
-			// Union keys from both objects so fields present in existing but
-			// absent from meta are not silently ignored.
-			const keys = [
-				...new Set( [ ...Object.keys( existing ), ...Object.keys( meta ) ] ),
-			] as ( keyof T )[];
-			if ( keys.every( ( k ) => existing[ k ] === meta[ k ] ) ) {
+			// Plain shallow compare. The key-count check catches fields present
+			// in existing but absent from meta (e.g. a removed `status`).
+			const metaKeys = Object.keys( meta ) as ( keyof T )[];
+			const isUnchanged =
+				Object.keys( existing ).length === metaKeys.length &&
+				metaKeys.every( ( k ) => existing[ k ] === meta[ k ] );
+			if ( isUnchanged ) {
 				return prev;
 			}
 			return prev.map( ( s ) => ( s.value === meta.value ? meta : s ) );

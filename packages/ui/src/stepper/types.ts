@@ -154,6 +154,4 @@ export type StepperPanelProps = ComponentProps< 'div' > & {
 	value?: string;
 	/** Keep panel mounted when inactive (works in both orientations) */
 	keepMounted?: boolean;
-	children: ReactNode;
-	className?: string;
 };
