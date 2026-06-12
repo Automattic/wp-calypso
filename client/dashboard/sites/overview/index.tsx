@@ -223,7 +223,6 @@ function SiteOverview( {
 					onClick={ () =>
 						recordTracksEvent( 'calypso_dashboard_site_overview_wp_admin_clicked', {
 							site_id: site.ID,
-							site_slug: site.slug,
 						} )
 					}
 				>
@@ -244,7 +243,6 @@ function SiteOverview( {
 					onClick={ () =>
 						recordTracksEvent( 'calypso_dashboard_site_overview_wp_admin_clicked', {
 							site_id: site.ID,
-							site_slug: site.slug,
 						} )
 					}
 				>

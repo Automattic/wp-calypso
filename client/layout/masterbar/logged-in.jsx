@@ -523,7 +523,6 @@ class MasterbarLoggedIn extends Component {
 				onClick: () => {
 					this.props.recordTracksEvent( 'calypso_masterbar_visit_site_clicked', {
 						site_id: this.props.siteId,
-						site_slug: siteSlug,
 					} );
 				},
 			},
