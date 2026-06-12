@@ -381,7 +381,12 @@
 			transition-delay: 0.1s;
 		}
 
-		&.agents-manager-sidebar-container--sidebar-open:not( .agents-manager-dock-too-short ) {
+		// Editor screens only dock in fullscreen mode. `is-fullscreen-mode` is the
+		// live signal Gutenberg maintains (the hook reads it too); requiring it here
+		// keeps the reshape off when the chat floats, with no hook dependency.
+		&.is-fullscreen-mode.agents-manager-sidebar-container--sidebar-open:not(
+				.agents-manager-dock-too-short
+			) {
 			@include sidebar-open-base( '.edit-site-layout__canvas' );
 			@include editor-save-panel-open();
 
@@ -402,7 +407,10 @@
 			width: 100%;
 		}
 
-		&.agents-manager-sidebar-container--sidebar-open:not( .agents-manager-dock-too-short ) {
+		// Editor screens only dock in fullscreen mode (see the site editor note).
+		&.is-fullscreen-mode.agents-manager-sidebar-container--sidebar-open:not(
+				.agents-manager-dock-too-short
+			) {
 			@include sidebar-open-base( '.edit-post-layout' );
 			@include editor-save-panel-open();
 
