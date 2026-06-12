@@ -59,7 +59,6 @@ const ManageSite = () => {
 
 	return (
 		<>
-			<JetpackPromo />
 			{ cards.map(
 				( card, index ) =>
 					cardComponents[ card ] &&
