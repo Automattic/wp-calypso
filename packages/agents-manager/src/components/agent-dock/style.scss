@@ -371,8 +371,14 @@
 		}
 	}
 
+	// Editor screens only dock in fullscreen mode, so gate the ENTIRE docked
+	// treatment — the container-level background/transitions AND the reshape — on
+	// `is-fullscreen-mode`. That's the live signal Gutenberg maintains (the hook
+	// reads it too). Gating only the reshape isn't enough: the container-level
+	// `sidebar-base` background would still paint a dark shell behind a floating
+	// chat. No hook dependency — when Gutenberg clears the class, all of this stops.
 	/* Site editor */
-	body.site-editor-php.agents-manager-sidebar-container {
+	body.site-editor-php.is-fullscreen-mode.agents-manager-sidebar-container {
 		@include sidebar-base( '.edit-site-layout__canvas' );
 
 		// Delay to prevent flickering when closing the left navigation sidebar
@@ -381,12 +387,7 @@
 			transition-delay: 0.1s;
 		}
 
-		// Editor screens only dock in fullscreen mode. `is-fullscreen-mode` is the
-		// live signal Gutenberg maintains (the hook reads it too); requiring it here
-		// keeps the reshape off when the chat floats, with no hook dependency.
-		&.is-fullscreen-mode.agents-manager-sidebar-container--sidebar-open:not(
-				.agents-manager-dock-too-short
-			) {
+		&.agents-manager-sidebar-container--sidebar-open:not( .agents-manager-dock-too-short ) {
 			@include sidebar-open-base( '.edit-site-layout__canvas' );
 			@include editor-save-panel-open();
 
@@ -399,18 +400,16 @@
 	}
 
 	/* Page editor */
-	body.post-php.agents-manager-sidebar-container,
-	body.post-new-php.agents-manager-sidebar-container {
+	// Fullscreen-gated at the container level, like the site editor above.
+	body.post-php.is-fullscreen-mode.agents-manager-sidebar-container,
+	body.post-new-php.is-fullscreen-mode.agents-manager-sidebar-container {
 		@include sidebar-base( '.edit-post-layout' );
 
 		.edit-post-layout {
 			width: 100%;
 		}
 
-		// Editor screens only dock in fullscreen mode (see the site editor note).
-		&.is-fullscreen-mode.agents-manager-sidebar-container--sidebar-open:not(
-				.agents-manager-dock-too-short
-			) {
+		&.agents-manager-sidebar-container--sidebar-open:not( .agents-manager-dock-too-short ) {
 			@include sidebar-open-base( '.edit-post-layout' );
 			@include editor-save-panel-open();
 
