@@ -693,5 +693,15 @@ describe( 'feature-clip-sidebar-extension', () => {
 
 			expect( mockFetchAiFeature ).not.toHaveBeenCalled();
 		} );
+
+		it( 'does not fetch plans data on unsupported post types', () => {
+			setJetpackSite();
+			mockPostType = 'jetpack_form';
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			const { container } = render( <FeatureClipPanel /> );
+
+			expect( container ).toBeEmptyDOMElement();
+			expect( mockFetchAiFeature ).not.toHaveBeenCalled();
+		} );
 	} );
 } );
