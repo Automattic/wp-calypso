@@ -191,6 +191,8 @@ describe( 'actions', () => {
 					invitation: 'test-invitation',
 					comment_follow: 'test-comment-follow',
 					welcome: 'test-welcome',
+					free_tier_description: 'test-free-description',
+					hide_free_tier: 1,
 					other: 'test-other',
 				},
 			};
@@ -198,9 +200,15 @@ describe( 'actions', () => {
 				const formattedOptions = savedSettings.subscription_options;
 				expect( Array.isArray( formattedOptions ) ).toBe( true );
 				expect( formattedOptions ).toEqual(
-					expect.arrayContaining( [ 'test-invitation', 'test-comment-follow', 'test-welcome' ] )
+					expect.arrayContaining( [
+						'test-invitation',
+						'test-comment-follow',
+						'test-welcome',
+						'test-free-description',
+						1,
+					] )
 				);
-				expect( formattedOptions.length ).toBe( 3 );
+				expect( formattedOptions.length ).toBe( 5 );
 				expect( formattedOptions ).not.toContain( 'test-other' );
 			} );
 		} );

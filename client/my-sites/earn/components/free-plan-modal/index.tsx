@@ -70,18 +70,24 @@ const FreePlanModal = ( { closeDialog, siteId }: FreePlanModalProps ) => {
 						hide_free_tier: hideFreeTier ? 1 : 0,
 					},
 				} )
-			).then( () => {
+			).then( ( response: { updated?: unknown } | undefined ) => {
+				// `saveSiteSettings` resolves for both success and failure (it returns
+				// the error object from its own `.catch`), so only proceed when the
+				// response carries `updated`, which a successful save always does.
+				if ( ! response?.updated ) {
+					return;
+				}
 				// The Free row preview renders `freeTierDescriptionRendered` from the
 				// memberships settings store, which `saveSiteSettings` doesn't touch.
 				// Refetch it so the server-rendered markdown reflects the new
 				// description immediately instead of staying stale until reload.
 				dispatch( requestSettings( targetSiteId ) );
+				dispatch(
+					recordTracksEvent( 'calypso_earn_page_free_plan_updated', {
+						hide_free_tier: hideFreeTier,
+					} )
+				);
 			} );
-			dispatch(
-				recordTracksEvent( 'calypso_earn_page_free_plan_updated', {
-					hide_free_tier: hideFreeTier,
-				} )
-			);
 		}
 		closeDialog();
 	};

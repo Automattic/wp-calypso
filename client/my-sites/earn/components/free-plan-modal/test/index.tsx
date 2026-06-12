@@ -6,9 +6,11 @@
 jest.mock( 'calypso/state/ui/selectors' );
 jest.mock( 'calypso/state/site-settings/selectors' );
 jest.mock( 'calypso/state/site-settings/actions', () => ( {
-	// Return a promise-returning thunk so the component can chain `.then()` on
-	// the dispatched save (it refetches memberships settings afterwards).
-	saveSiteSettings: jest.fn( () => () => Promise.resolve() ),
+	// Return a promise-returning thunk that resolves with a success-shaped
+	// response (`{ updated }`, mirroring the real save), so the component can
+	// chain `.then()` and treat the save as successful (it then refetches
+	// memberships settings).
+	saveSiteSettings: jest.fn( () => () => Promise.resolve( { updated: {} } ) ),
 } ) );
 jest.mock( 'calypso/state/memberships/settings/actions', () => ( {
 	requestSettings: jest.fn( () => ( { type: 'TEST_REQUEST_SETTINGS' } ) ),
@@ -78,6 +80,25 @@ describe( 'FreePlanModal', () => {
 		// After the save resolves, memberships settings are refetched so the
 		// server-rendered description preview updates without a reload.
 		await waitFor( () => expect( requestSettings ).toHaveBeenCalledWith( 1 ) );
+	} );
+
+	test( 'does not refetch settings when the save fails', async () => {
+		// `saveSiteSettings` resolves with an error object (no `updated`) on
+		// failure, so the success-only follow-up work must not run.
+		saveSiteSettings.mockReturnValueOnce( () => Promise.resolve( { error: 'nope' } ) );
+		const user = userEvent.setup();
+		renderWithProvider( <FreePlanModal closeDialog={ closeDialog } siteId={ 1 } /> );
+
+		await user.type(
+			screen.getByRole( 'textbox', { name: 'Describe what subscribers get at this tier' } ),
+			'A free taste'
+		);
+		await user.click( screen.getByRole( 'button', { name: 'Save' } ) );
+
+		expect( saveSiteSettings ).toHaveBeenCalled();
+		// Flush the save promise and its `.then` before asserting the negative.
+		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+		expect( requestSettings ).not.toHaveBeenCalled();
 	} );
 
 	test( 'pre-fills existing values and does not save on cancel', async () => {
