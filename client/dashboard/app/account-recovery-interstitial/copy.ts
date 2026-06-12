@@ -120,12 +120,6 @@ function getStrongDescription( { recoveryEmail, recoveryPhoneNumber }: Interstit
 export function getInterstitialCopy(
 	context: InterstitialCopyContext = {}
 ): Record< InterstitialVariant, InterstitialCopy > {
-	const setUpRecoveryCta: InterstitialCta = {
-		id: 'set_up_recovery',
-		label: __( 'Set up recovery email or phone' ),
-		route: RECOVERY_INTERSTITIAL_ROUTES.accountRecovery,
-	};
-
 	return {
 		// Nothing set up: lead with a recovery method, offer 2FA as the secondary.
 		none: {
@@ -133,7 +127,11 @@ export function getInterstitialCopy(
 			description: __(
 				'Set a recovery email or phone number so you don’t lose access to your account. It takes less than 2 minutes to set up.'
 			),
-			primaryCta: setUpRecoveryCta,
+			primaryCta: {
+				id: 'set_up_recovery',
+				label: __( 'Set up recovery email or phone' ),
+				route: RECOVERY_INTERSTITIAL_ROUTES.accountRecovery,
+			},
 			secondaryCta: {
 				id: 'add_two_factor',
 				label: __( 'Add 2FA and backup codes' ),
@@ -163,7 +161,11 @@ export function getInterstitialCopy(
 			description: __(
 				'Two-factor authentication is great—but if you lose access to your authenticator, you’ll need another way in. Add a recovery email or phone as a safety net.'
 			),
-			primaryCta: setUpRecoveryCta,
+			primaryCta: {
+				id: 'set_up_recovery',
+				label: __( 'Set up recovery email or phone' ),
+				route: RECOVERY_INTERSTITIAL_ROUTES.accountRecovery,
+			},
 			secondaryCta: {
 				id: 'review_two_factor',
 				label: __( 'Review 2FA and add backup codes' ),
