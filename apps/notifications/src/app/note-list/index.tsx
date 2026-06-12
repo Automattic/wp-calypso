@@ -31,7 +31,7 @@ const DEFAULT_LAYOUTS = {
 // window (`perPage` rows) must be tall enough to overflow the panel and
 // produce a scrollbar. It must also match the REST client's `increment_limit`
 // so the window never advances past the notes already fetched.
-const NOTES_PER_PAGE = 20;
+const NOTES_PER_PAGE = 10;
 
 type NoteListProps = {
 	filterName: FilterName;

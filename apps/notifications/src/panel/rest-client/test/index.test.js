@@ -68,10 +68,11 @@ describe( 'RestClient load-more pagination', () => {
 		client.loadMore();
 
 		expect( getCalls ).toHaveLength( 1 );
-		// Fixed page size, anchored on the oldest loaded note's server timestamp.
+		// Fixed page size, anchored on the oldest loaded note's timestamp expressed
+		// as the UNIX epoch seconds the endpoint's `before` cursor expects.
 		expect( getCalls[ 0 ].query ).toMatchObject( {
-			number: 20,
-			before: oldest.timestamp,
+			number: 10,
+			before: Math.floor( Date.parse( oldest.timestamp ) / 1000 ),
 		} );
 
 		// A full older page merges in without dropping the first window.
@@ -99,8 +100,8 @@ describe( 'RestClient load-more pagination', () => {
 
 		expect( getCalls ).toHaveLength( 1 );
 		const secondBefore = getCalls[ 0 ].query.before;
-		// Cursor walked further back in time as older notes loaded.
-		expect( Date.parse( secondBefore ) ).toBeLessThan( Date.parse( firstBefore ) );
+		// Cursor (epoch seconds) walked further back in time as older notes loaded.
+		expect( secondBefore ).toBeLessThan( firstBefore );
 	} );
 
 	it( 'stops paging once the server returns a short page', () => {

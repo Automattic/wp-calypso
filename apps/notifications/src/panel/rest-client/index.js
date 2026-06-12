@@ -14,7 +14,7 @@ const settings = {
 	// Matches NOTES_PER_PAGE in the DataViews note list: DataViews advances its
 	// infinite-scroll window by `perPage` rows per scroll, so each loadMore()
 	// must fetch at least that many or the window outruns the loaded notes.
-	increment_limit: 20,
+	increment_limit: 10,
 	max_limit: 100,
 };
 
@@ -326,8 +326,9 @@ function getNotesList() {
  * window and treats its response as the authoritative set, this walks a fixed
  * `before` cursor down the list and is purely additive: it never prunes, since
  * an older slice is not a superset of what's loaded. It anchors on the oldest
- * cached note's server timestamp (echoed back verbatim, no reformatting) and
- * stops once a short page proves the server has nothing older.
+ * cached note's timestamp, converted to the UNIX epoch seconds the endpoint's
+ * `before` cursor expects, and stops once a short page proves the server has
+ * nothing older.
  */
 function getOlderNotes() {
 	if ( this.gettingOlderNotes ) {
@@ -347,7 +348,10 @@ function getOlderNotes() {
 	const parameters = {
 		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash,variant',
 		number: settings.increment_limit,
-		before: oldest.timestamp,
+		// The endpoint keys `before`/`since` on UNIX epoch seconds, not the ISO
+		// timestamp the note carries; an unparsed string is ignored and the server
+		// just returns the top window again, stalling load-more after one page.
+		before: Math.floor( Date.parse( oldest.timestamp ) / 1000 ),
 		locale: this.locale,
 	};
 
