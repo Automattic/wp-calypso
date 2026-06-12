@@ -14,6 +14,7 @@ export default ( state = {}, action ) => {
 						get( action, 'data.connected_account_id', null ) > 0
 					),
 					connectedAccountDescription: get( action, 'data.connected_account_description', null ),
+					freeTierDescriptionRendered: get( action, 'data.free_tier_description_rendered', null ),
 					connectedAccountDefaultCurrency: get(
 						action,
 						'data.connected_account_default_currency',

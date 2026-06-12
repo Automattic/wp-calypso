@@ -19,6 +19,7 @@ import SectionHeader from 'calypso/components/section-header';
 import { useDispatch, useSelector } from 'calypso/state';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
+import { getFreeTierDescriptionRenderedForSiteId } from 'calypso/state/memberships/settings/selectors';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';
@@ -62,6 +63,12 @@ function ProductsList() {
 	const siteSettings = useSelector( ( state ) => getSiteSettings( state, site?.ID ?? null ) );
 	const freeTierDescription: string =
 		siteSettings?.subscription_options?.free_tier_description ?? '';
+	// Server-rendered markdown for the Free tier, parsed by the same backend
+	// parser the subscribe modal uses, so the preview is 1:1 with what
+	// subscribers see (the raw value above is still used for editing).
+	const freeTierDescriptionRendered = useSelector( ( state ) =>
+		getFreeTierDescriptionRenderedForSiteId( state, site?.ID ?? null )
+	);
 	const isFreeTierHidden = Boolean( siteSettings?.subscription_options?.hide_free_tier );
 
 	const hasDonationsFeature = useSelector( ( state ) =>
@@ -281,10 +288,28 @@ function ProductsList() {
 				<CompactCard className="memberships__products-product-card">
 					<div className="memberships__products-product-details">
 						<div className="memberships__products-product-title">{ translate( 'Free' ) }</div>
-						{ freeTierDescription && (
-							<div className="memberships__products-product-description">
-								{ freeTierDescription }
-							</div>
+						{ freeTierDescriptionRendered ? (
+							// Server-rendered (and kses-sanitized) markdown — the same HTML
+							// the subscribe modal shows, for a 1:1 preview. DOMPurify is
+							// defense-in-depth in case the API's sanitization guarantee ever
+							// changes. ADD_ATTR keeps the target="_blank" the server adds to
+							// links (DOMPurify strips `target` by default); `rel` is kept by
+							// default.
+							<div
+								className="memberships__products-product-description"
+								// eslint-disable-next-line react/no-danger
+								dangerouslySetInnerHTML={ {
+									__html: DOMPurify.sanitize( freeTierDescriptionRendered, {
+										ADD_ATTR: [ 'target' ],
+									} ),
+								} }
+							/>
+						) : (
+							freeTierDescription && (
+								<div className="memberships__products-product-description">
+									{ freeTierDescription }
+								</div>
+							)
 						) }
 						<sub className="memberships__products-product-price">{ translate( 'Free' ) }</sub>
 						<div className="memberships__products-product-badge">

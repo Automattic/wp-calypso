@@ -10,6 +10,10 @@ export function getConnectedAccountDescriptionForSiteId( state, siteId ) {
 	return get( state, [ 'memberships', 'settings', siteId, 'connectedAccountDescription' ], null );
 }
 
+export function getFreeTierDescriptionRenderedForSiteId( state, siteId ) {
+	return get( state, [ 'memberships', 'settings', siteId, 'freeTierDescriptionRendered' ], null );
+}
+
 export function getconnectedAccountDefaultCurrencyForSiteId( state, siteId ) {
 	return get(
 		state,

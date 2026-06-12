@@ -63,7 +63,7 @@ const initialState = {
 	},
 };
 
-const renderProductsList = ( products, subscriptionOptions = null ) =>
+const renderProductsList = ( products, subscriptionOptions = null, settings = null ) =>
 	renderWithProvider( <ProductsList />, {
 		initialState: {
 			...initialState,
@@ -74,6 +74,7 @@ const renderProductsList = ( products, subscriptionOptions = null ) =>
 						1: products,
 					},
 				},
+				settings: settings ? { 1: settings } : {},
 			},
 			// Provide a complete site-settings slice (items + requesting + saveRequests).
 			// `requesting: { 1: true }` makes QuerySiteSettings treat the fetch as
@@ -182,6 +183,21 @@ describe( 'ProductsList', () => {
 		} );
 
 		expect( screen.getByText( 'A free taste of the newsletter' ) ).toBeInTheDocument();
+	} );
+
+	test( 'renders the server-rendered free tier description HTML when provided', () => {
+		const { container } = renderProductsList(
+			[ tierWithoutDescription ],
+			{ free_tier_description: 'Includes:\n\n- Weekly posts' },
+			{
+				freeTierDescriptionRendered: '<p>Includes:</p>\n<ul>\n<li>Weekly posts</li>\n</ul>',
+			}
+		);
+
+		const description = container.querySelector( '.memberships__products-product-description' );
+		expect( description.querySelector( 'ul li' ) ).toHaveTextContent( 'Weekly posts' );
+		// The raw markdown source must not leak through when rendered HTML exists.
+		expect( description ).not.toHaveTextContent( '- Weekly posts' );
 	} );
 
 	test( 'marks the Free row as hidden when hide_free_tier is set', () => {
