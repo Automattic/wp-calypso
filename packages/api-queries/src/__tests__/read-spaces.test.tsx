@@ -1,8 +1,10 @@
 import { QueryClient, QueryClientProvider, useMutation } from '@tanstack/react-query';
 import { act, renderHook } from '@testing-library/react';
+import nock from 'nock';
 import {
 	addReadSpaceSourceMutation,
 	createReadSpaceMutation,
+	deleteReadSpaceMutation,
 	deleteReadSpaceSourceMutation,
 	readSpaceQuery,
 	readSpacesQuery,
@@ -31,9 +33,9 @@ function newClient() {
 // still local no-ops with no network call. Once the real endpoints land, drop
 // that override and drive success/error with a `nock` interceptor (200 vs
 // 4xx/5xx), asserting `scope.isDone()` — see `read-site-recommendations.test.tsx`.
-async function runMutation< TData, TVars, TContext >(
+async function runMutation< TData, TError, TVars, TContext >(
 	client: QueryClient,
-	mutation: UseMutationOptions< TData, Error, TVars, TContext >,
+	mutation: UseMutationOptions< TData, TError, TVars, TContext >,
 	variables: TVars
 ) {
 	const { result } = renderHook( () => useMutation( mutation ), {
@@ -234,8 +236,18 @@ describe( 'read space source mutations', () => {
 } );
 
 describe( 'create space cache seeding', () => {
+	afterEach( () => nock.cleanAll() );
+
 	it( 'appends a list item without sources and seeds the detail cache with sources', async () => {
 		const client = newClient();
+		nock( 'https://public-api.wordpress.com' ).post( '/wpcom/v2/reader/spaces/new' ).reply( 201, {
+			id: 99,
+			title: 'New',
+			sites: [],
+			tags: [],
+			layout_color: 'blue',
+			layout_icon: 'inbox',
+		} );
 
 		await runMutation( client, createReadSpaceMutation( client ), { name: 'New', tags: [] } );
 
@@ -248,5 +260,40 @@ describe( 'create space cache seeding', () => {
 		expect(
 			client.getQueryData< ReadSpaceDetails >( readSpaceQuery( listItem.id ).queryKey )
 		).toEqual( { ...listItem, sources: [] } );
+	} );
+} );
+
+describe( 'delete space cache removal', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'removes the deleted space from the list and discards its detail cache', async () => {
+		const client = newClient();
+		const other: ReadSpace = {
+			id: 'keep-id',
+			name: 'Keep',
+			tags: [],
+			layout: { color: 'red', icon: 'box' },
+		};
+		const target: ReadSpace = {
+			id: SPACE_ID,
+			name: 'Work',
+			tags: [],
+			layout: { color: 'blue', icon: 'inbox' },
+		};
+		client.setQueryData( readSpacesQuery().queryKey, [ other, target ] );
+		client.setQueryData( readSpaceQuery( SPACE_ID ).queryKey, makeSpace() );
+
+		nock( 'https://public-api.wordpress.com' )
+			.post( `/wpcom/v2/reader/spaces/${ SPACE_ID }/delete` )
+			.reply( 200, { deleted: true, id: SPACE_ID } );
+
+		await runMutation( client, deleteReadSpaceMutation( client ), SPACE_ID );
+
+		// Only the deleted space is dropped from the list...
+		expect( client.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey ) ).toEqual( [ other ] );
+		// ...and its detail cache is gone.
+		expect(
+			client.getQueryData< ReadSpaceDetails >( readSpaceQuery( SPACE_ID ).queryKey )
+		).toBeUndefined();
 	} );
 } );
