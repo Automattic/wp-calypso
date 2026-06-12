@@ -151,6 +151,36 @@ describe( 'BundleProductAndCostOverridesList', () => {
 		expect( screen.getByText( 'Auto-renews at $129/year.' ) ).toBeVisible();
 	} );
 
+	it( 'discloses the list-price aggregate even when a coupon also discounts a member', () => {
+		// Coupon and bundle discount together: the row total strips the coupon
+		// (shown on its dedicated line) while the disclosure uses the list
+		// price, which is pre-coupon by definition.
+		renderBundleRow( {
+			type: 'bundle',
+			groupId: 'bundle-coupon-and-discount',
+			products: [
+				buildDomainProduct( {
+					uuid: 'primary',
+					meta: 'example.com',
+					subtotal: 2200,
+					originalSubtotal: 6500,
+				} ),
+				buildDomainProduct( {
+					uuid: 'companion',
+					meta: 'example.net',
+					subtotal: 700,
+					originalSubtotal: 6400,
+					costOverrides: [ buildCouponOverride( 900, 700 ) ],
+				} ),
+			],
+		} );
+
+		// Row total: 2200 + pre-coupon 900 = 3100 smallest-unit => $31.
+		expect( screen.getByText( /\$31\b/ ) ).toBeVisible();
+		// Disclosure: list price 6500 + 6400 = 12900 => $129, unaffected by the coupon.
+		expect( screen.getByText( 'Auto-renews at $129/year.' ) ).toBeVisible();
+	} );
+
 	it( 'shows no renewal disclosure when the bundle is not discounted', () => {
 		renderBundleRow();
 

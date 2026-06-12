@@ -107,5 +107,11 @@ describe( 'MiniCartLineItems bundle grouping', () => {
 
 		// Only the discounted bundle shows a strikethrough.
 		expect( container.querySelectorAll( 's' ) ).toHaveLength( 1 );
+
+		// The mini-cart shares BundleLineItem with the order review, so the
+		// discounted bundle also discloses its renewal aggregate here — and
+		// only the discounted one (DOMAINS-2184).
+		expect( screen.getByText( 'Auto-renews at $129/year.' ) ).toBeVisible();
+		expect( screen.getAllByText( /Auto-renews at/ ) ).toHaveLength( 1 );
 	} );
 } );
