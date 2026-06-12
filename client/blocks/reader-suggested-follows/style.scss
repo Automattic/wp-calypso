@@ -25,7 +25,7 @@
 	scrollbar-gutter: stable;
 	padding: 0 32px;
 	overflow-y: auto;
-	max-height: calc(var(--feed-height) * 5 + 16px);
+	max-height: calc( var( --feed-height ) * 5 + 16px );
 }
 
 .reader-recommended-follows-dialog__content {
@@ -38,10 +38,10 @@
 		.reader-recommended-follows-dialog__header {
 			position: sticky;
 			top: 0;
-			border-bottom-color:var(--color-neutral-5);
+			border-bottom-color: var( --color-neutral-5 );
 		}
 	}
-	&:not(.has-scrolled-content) {
+	&:not( .has-scrolled-content ) {
 		.reader-recommended-follows-dialog__header {
 			position: relative;
 			border-bottom-color: transparent;
@@ -51,16 +51,25 @@
 	.reader-recommended-follows-dialog__header {
 		border-bottom: 1px solid transparent;
 		transition: border-bottom-color 0.3s ease-in-out;
-		h2 {
-			color: var(--color-neutral-70);
+		text-align: center;
+
+		.reader-recommended-follows-dialog__subscribed-confirmation {
+			color: var( --color-neutral-70 );
 			font-size: $font-title-large;
+			font-weight: 600;
+			margin-bottom: 9px;
+		}
+
+		.reader-recommended-follows-dialog__title {
+			color: var( --color-neutral-70 );
+			font-size: $font-title-small;
 			font-weight: 600;
 			margin-bottom: 9px;
 		}
 	}
 
 	.reader-recommended-follows-dialog__description {
-		color: var(--color-neutral-50);
+		color: var( --color-neutral-50 );
 		font-size: $font-body;
 		font-weight: 400;
 	}
@@ -83,23 +92,22 @@
 			flex-wrap: nowrap;
 			gap: 11px;
 			justify-content: flex-start;
-
 		}
 
 		.reader-suggested-follow-item_sitename {
-			color: var(--color-neutral-100);
+			color: var( --color-neutral-100 );
 			font-weight: 600;
 			font-size: $font-body;
 			display: flex;
 			flex-direction: column;
 
 			&:hover {
-				color: var(--color-text-subtle);
+				color: var( --color-text-subtle );
 			}
 		}
 
 		.reader-suggested-follow-item_description {
-			color: var(--color-text-subtle);
+			color: var( --color-text-subtle );
 			font-weight: 400;
 			font-size: $font-body-small;
 			line-height: 18px;
@@ -114,8 +122,8 @@
 			margin-bottom: 3px;
 		}
 		.reader-suggested-follow-item_nameurl::after {
-			content: "";
-			background-image: url("data:image/svg+xml,%3Csvg fill='none' height='20' viewBox='0 0 20 20' width='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg stroke='%23101517' stroke-linecap='square' stroke-width='1.5'%3E%3Cpath d='m5.8335 14.1666 7.3333-7.33335' stroke-linejoin='round'/%3E%3Cpath d='m6.8335 5.83325h7.3333v7.33335'/%3E%3C/g%3E%3C/svg%3E"); /* stylelint-disable function-url-quotes */
+			content: '';
+			background-image: url( "data:image/svg+xml,%3Csvg fill='none' height='20' viewBox='0 0 20 20' width='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg stroke='%23101517' stroke-linecap='square' stroke-width='1.5'%3E%3Cpath d='m5.8335 14.1666 7.3333-7.33335' stroke-linejoin='round'/%3E%3Cpath d='m6.8335 5.83325h7.3333v7.33335'/%3E%3C/g%3E%3C/svg%3E" ); /* stylelint-disable function-url-quotes */
 			background-repeat: no-repeat;
 			background-size: 20px 20px;
 			display: inline-block;
@@ -129,7 +137,7 @@
 
 	.reader-recommended-follows-dialog__follow-item {
 		padding: 20px 0;
-		border-bottom: 1px solid var(--color-neutral-5);
+		border-bottom: 1px solid var( --color-neutral-5 );
 
 		.reader-related-card__meta {
 			display: flex;
@@ -159,7 +167,7 @@
 
 		.is-placeholder {
 			@include placeholder();
-			background-color: var(--color-neutral-0);
+			background-color: var( --color-neutral-0 );
 			height: 60px;
 			border-radius: 6px;
 		}
@@ -174,7 +182,7 @@
 		}
 	}
 }
-@media only screen and (max-width: 600px) {
+@media only screen and ( max-width: 600px ) {
 	.reader-recommended-follows-dialog__content {
 		width: 100%;
 	}
@@ -182,5 +190,5 @@
 
 .dialog__backdrop,
 .dialog__backdrop.card {
-	background-color: color-mix(in srgb, var(--color-neutral-70) 80%, transparent) !important;
+	background-color: color-mix( in srgb, var( --color-neutral-70 ) 80%, transparent ) !important;
 }

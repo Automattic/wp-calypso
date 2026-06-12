@@ -117,6 +117,7 @@ describe( 'ReaderSuggestedFollowsDialog', () => {
 			/>
 		);
 
+		expect( screen.getByText( 'You’re now subscribed!' ) ).toBeVisible();
 		expect( screen.getByText( 'Recommended blogs' ) ).toBeVisible();
 		expect( screen.getByText( /Test Author/ ) ).toBeVisible();
 		expect( screen.getByText( 'Nice Recommended Blog' ) ).toBeVisible();
@@ -134,6 +135,7 @@ describe( 'ReaderSuggestedFollowsDialog', () => {
 			<ReaderSuggestedFollowsDialog onClose={ jest.fn() } siteId={ 1 } postId={ 2 } isVisible />
 		);
 
+		expect( screen.getByText( 'You’re now subscribed!' ) ).toBeVisible();
 		expect( screen.getByText( 'Suggested blogs' ) ).toBeVisible();
 		expect( screen.getByText( 'Related blog' ) ).toBeVisible();
 	} );
