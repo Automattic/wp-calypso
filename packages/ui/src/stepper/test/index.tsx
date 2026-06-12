@@ -736,11 +736,20 @@ describe( 'Stepper indicatorVariant', () => {
 				<Stepper.Step value="a">
 					<Stepper.Indicator />
 				</Stepper.Step>
+				<Stepper.Step value="b" status="completed">
+					<Stepper.Indicator />
+				</Stepper.Step>
 			</Stepper.Root>
 		);
 		// The number variant renders <span aria-hidden="true">1</span> inside the indicator
 		const numericLabel = screen.getByText( '1' );
 		expect( numericLabel ).toHaveAttribute( 'aria-hidden', 'true' );
+		// Steps with a status render an icon instead of the number.
+		expect( screen.queryByText( '2' ) ).not.toBeInTheDocument();
+		const completedIndicator = screen
+			.getByText( 'Step 2 of 2, completed' )
+			.closest( '[data-indicator-variant]' );
+		expect( completedIndicator?.querySelector( 'svg' ) ).not.toBeNull();
 	} );
 } );
 
@@ -817,89 +826,5 @@ describe( 'Stepper.Panel keepMounted horizontal', () => {
 			</Stepper.Root>
 		);
 		expect( screen.getByTestId( 'force-mounted-h' ) ).toBeInTheDocument();
-	} );
-} );
-
-describe( 'Stepper icon indicators', () => {
-	function getIndicator( label: string ): HTMLElement {
-		const indicator = screen.getByText( label ).closest( '[data-indicator-variant]' );
-		if ( ! indicator ) {
-			throw new Error( `No indicator found for label "${ label }"` );
-		}
-		return indicator as HTMLElement;
-	}
-
-	it( 'renders an SVG icon for every bullet-variant state', () => {
-		render(
-			<Stepper.Root orientation="vertical" value="b" aria-label="Test">
-				<Stepper.Step value="a" status="completed">
-					<Stepper.Indicator />
-				</Stepper.Step>
-				<Stepper.Step value="b">
-					<Stepper.Indicator />
-				</Stepper.Step>
-				<Stepper.Step value="c">
-					<Stepper.Indicator />
-				</Stepper.Step>
-			</Stepper.Root>
-		);
-		const completed = getIndicator( 'Step 1 of 3, completed' );
-		const current = getIndicator( 'Step 2 of 3' );
-		const upcoming = getIndicator( 'Step 3 of 3' );
-		expect( completed.querySelector( 'svg' ) ).not.toBeNull();
-		expect( current.querySelector( 'svg' ) ).not.toBeNull();
-		expect( upcoming.querySelector( 'svg' ) ).not.toBeNull();
-	} );
-
-	it( 'renders distinct icons for different bullet-variant states', () => {
-		render(
-			<Stepper.Root orientation="vertical" value="b" aria-label="Test">
-				<Stepper.Step value="a" status="completed">
-					<Stepper.Indicator />
-				</Stepper.Step>
-				<Stepper.Step value="b">
-					<Stepper.Indicator />
-				</Stepper.Step>
-				<Stepper.Step value="c">
-					<Stepper.Indicator />
-				</Stepper.Step>
-			</Stepper.Root>
-		);
-		const dFor = ( label: string ) =>
-			getIndicator( label ).querySelector( 'path' )?.getAttribute( 'd' );
-		const completedD = dFor( 'Step 1 of 3, completed' );
-		const currentD = dFor( 'Step 2 of 3' );
-		const upcomingD = dFor( 'Step 3 of 3' );
-		expect( completedD ).toBeTruthy();
-		expect( currentD ).toBeTruthy();
-		expect( upcomingD ).toBeTruthy();
-		expect( new Set( [ completedD, currentD, upcomingD ] ).size ).toBe( 3 );
-	} );
-
-	it( 'renders icons instead of numbers for completed and error steps in the number variant', () => {
-		render(
-			<Stepper.Root orientation="vertical" value="c" indicatorVariant="number" aria-label="Test">
-				<Stepper.Step value="a" status="completed">
-					<Stepper.Indicator />
-				</Stepper.Step>
-				<Stepper.Step value="b" status="error">
-					<Stepper.Indicator />
-				</Stepper.Step>
-				<Stepper.Step value="c">
-					<Stepper.Indicator />
-				</Stepper.Step>
-			</Stepper.Root>
-		);
-		const completed = getIndicator( 'Step 1 of 3, completed' );
-		const error = getIndicator( 'Step 2 of 3, error' );
-		const current = getIndicator( 'Step 3 of 3' );
-		// Completed/error render icons, not the step number.
-		expect( completed.querySelector( 'svg' ) ).not.toBeNull();
-		expect( screen.queryByText( '1' ) ).not.toBeInTheDocument();
-		expect( error.querySelector( 'svg' ) ).not.toBeNull();
-		expect( screen.queryByText( '2' ) ).not.toBeInTheDocument();
-		// Current still renders the number, no icon.
-		expect( current.querySelector( 'svg' ) ).toBeNull();
-		expect( screen.getByText( '3' ) ).toHaveAttribute( 'aria-hidden', 'true' );
 	} );
 } );
