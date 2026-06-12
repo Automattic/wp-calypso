@@ -342,7 +342,9 @@ function FeatureClipPanelBody( { postType, postId }: FeatureClipPanelBodyProps )
 	);
 
 	// Fire one impression per panel mount — the denominator for sidebar
-	// engagement rates. Empty deps: the panel mounts once per editor load.
+	// engagement rates. Empty deps: fires per PanelBody mount, which is once
+	// per editor load except when the plan gate flips mid-session (the
+	// fail-open window on unentitled Jetpack sites can mount-then-hide).
 	useEffect( () => {
 		trackImageStudioFeatureClipPanelViewed();
 	}, [] );

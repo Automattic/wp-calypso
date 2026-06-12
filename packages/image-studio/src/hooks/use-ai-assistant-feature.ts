@@ -47,7 +47,14 @@ export function useHasAiAssistantFeature(): boolean {
 		if ( hasFeature === false ) {
 			return;
 		}
-		if ( ! storeAvailable || fetchDispatched || isRequesting ) {
+		if ( ! storeAvailable || fetchDispatched ) {
+			return;
+		}
+		// An in-flight request means someone else (Jetpack's own AI surfaces)
+		// owns the fetch — claim the session flag so we don't dispatch a
+		// redundant one when it resolves.
+		if ( isRequesting ) {
+			fetchDispatched = true;
 			return;
 		}
 		const plansDispatch = dispatch( PLANS_STORE ) as

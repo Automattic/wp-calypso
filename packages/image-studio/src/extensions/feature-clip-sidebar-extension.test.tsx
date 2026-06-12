@@ -116,8 +116,9 @@ jest.mock( '@wordpress/data', () => ( {
 		if ( store === 'core/block-editor' ) {
 			return mockHasBlockEditor ? { insertBlocks: mockInsertBlocks } : {};
 		}
+		// Like real wp.data: dispatch() for an unregistered store is undefined.
 		if ( store === 'wordpress-com/plans' ) {
-			return { fetchAiAssistantFeature: mockFetchAiFeature };
+			return mockHasPlansStore ? { fetchAiAssistantFeature: mockFetchAiFeature } : undefined;
 		}
 		return { openImageStudio: mockOpenImageStudio };
 	} ),
@@ -654,6 +655,20 @@ describe( 'feature-clip-sidebar-extension', () => {
 			render( <FeatureClipPanel /> );
 
 			expect( screen.getByRole( 'button', { name: 'Generate clip' } ) ).toBeInTheDocument();
+			// No store, no fetch — and no crash from the undefined dispatch.
+			expect( mockFetchAiFeature ).not.toHaveBeenCalled();
+		} );
+
+		it( 'does not hide on Atomic sites even when the feature is absent', () => {
+			( window as Record< string, unknown > ).imageStudioData = {
+				canGenerateVideoClips: true,
+				siteType: 'atomic',
+			};
+			mockAiFeature = { hasFeature: false };
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+
+			expect( screen.getByRole( 'button', { name: 'Generate clip' } ) ).toBeInTheDocument();
 		} );
 
 		it( 'does not hide on Simple sites even when the feature is absent', () => {
@@ -668,11 +683,14 @@ describe( 'feature-clip-sidebar-extension', () => {
 			expect( screen.getByRole( 'button', { name: 'Generate clip' } ) ).toBeInTheDocument();
 		} );
 
-		it( 'dispatches the store fetch once when data is not already loading', () => {
+		it( 'dispatches the store fetch once per session, even across remounts', () => {
 			setJetpackSite();
 			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			const { unmount } = render( <FeatureClipPanel /> );
+			unmount();
 			render( <FeatureClipPanel /> );
 
+			// Two mounts, two effect runs — the module-level dedupe holds it to one.
 			expect( mockFetchAiFeature ).toHaveBeenCalledTimes( 1 );
 		} );
 
