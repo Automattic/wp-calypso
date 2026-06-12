@@ -13,7 +13,7 @@ export interface EligibilityInput {
 	hasRecoveryEmail: boolean;
 	/** A recovery phone is set and validated. */
 	hasRecoveryPhone: boolean;
-	/** Two-step authentication is enabled. */
+	/** Two-factor authentication is enabled. */
 	hasTwoFactor: boolean;
 	/** Unix seconds the interstitial is snoozed until (from user meta); undefined = never. */
 	snoozeUntil: number | undefined;

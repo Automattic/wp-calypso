@@ -9,15 +9,14 @@
 export const RECOVERY_INTERSTITIAL_FLAG = 'dashboard/account-recovery-interstitial';
 
 /**
- * User-meta key surfaced through /me/settings. Must match the backend allowlist and the
- * `saveableKeys` allowlist in `@automattic/api-core` (me-settings/mutators.ts). Holds a
- * unix timestamp (seconds) until which the interstitial is snoozed; 0/unset = not snoozed.
+ * User-meta key surfaced through /me/settings. Holds a unix timestamp (seconds)
+ * until which the interstitial is snoozed; 0/unset = not snoozed.
  */
 export const RECOVERY_INTERSTITIAL_SNOOZE_META = 'account_recovery_interstitial_snoozed_until';
 
 /**
  * QA override: append `?account-recovery-interstitial=force` to force the modal to show
- * regardless of eligibility (dev/QA only — the feature flag must still be on).
+ * regardless of eligibility. This will be removed before merging the code.
  */
 export const RECOVERY_INTERSTITIAL_QA_PARAM = 'account-recovery-interstitial';
 
@@ -32,7 +31,7 @@ export type SecurityLevel = 'none' | 'partial' | 'strong';
  */
 export const SNOOZE_DAYS: Record< SecurityLevel, number > = {
 	none: 14, // nothing set up
-	partial: 30, // a recovery method but no 2FA
+	partial: 30, // a recovery method but no 2FA or vice-versa
 	strong: 365, // fully set up -> yearly periodic check
 };
 

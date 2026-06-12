@@ -34,7 +34,6 @@ export interface InterstitialCopy {
 	title: string;
 	description: string;
 	primaryCta: InterstitialCta;
-	/** Optional second CTA, shown as an outline button under the primary one. */
 	secondaryCta?: InterstitialCta;
 }
 
