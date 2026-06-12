@@ -180,18 +180,19 @@ export default function ComparisonTable( {
 																	note ? ` — ${ note }` : ''
 																}` }
 															>
-																<span
-																	className="jetpack-comparison-table__cell-content"
-																	aria-hidden="true"
-																>
-																	{ symbol }
-												<span
-													className="jetpack-comparison-table__note-trigger"
-													tabIndex={ 0 }
-													aria-label={ note }
-												>
-																	) }
+													<span
+														className="jetpack-comparison-table__cell-content"
+														aria-hidden="true"
+													>
+														{ symbol }
+														{ note && (
+															<Tooltip text={ note }>
+																<span className="jetpack-comparison-table__note-trigger" tabIndex={ 0 }>
+																	<Gridicon icon="info-outline" size={ 14 } />
 																</span>
+															</Tooltip>
+														) }
+													</span>
 															</td>
 														);
 													} ) }
