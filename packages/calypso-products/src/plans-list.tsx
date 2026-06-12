@@ -619,10 +619,6 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_FREE,
 	getTitle: () => i18n.translate( 'Free' ),
-	getAudience: () => i18n.translate( 'Best for students' ),
-	getBlogAudience: () => i18n.translate( 'Best for students' ),
-	getPortfolioAudience: () => i18n.translate( 'Best for students' ),
-	getStoreAudience: () => i18n.translate( 'Best for students' ),
 	getPlanTagline: () => i18n.translate( 'Get started with all the basics.' ),
 	getNewsletterTagLine: () =>
 		i18n.translate( 'Start fresh or make the switch, bringing your first 100 readers with you.' ),
@@ -798,21 +794,11 @@ const getPlanBloggerDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_BLOGGER,
 	getTitle: () => i18n.translate( 'Blogger' ),
-	// @TODO not updating copy for now, we need to update it after the first round of design {{{
-	getAudience: () => i18n.translate( 'Best for bloggers' ),
-	getBlogAudience: () => i18n.translate( 'Best for bloggers' ),
-	getPortfolioAudience: () => i18n.translate( 'Best for bloggers' ),
-	getStoreAudience: () => i18n.translate( 'Best for bloggers' ),
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for bloggers:{{/strong}} Brand your blog with a custom .blog domain name, and remove all WordPress.com advertising. Receive additional storage space and customer support via email.',
 			plansDescriptionHeadingComponent
 		),
-	getShortDescription: () =>
-		i18n.translate(
-			'Brand your blog with a custom .blog domain name, and remove all WordPress.com advertising. Receive additional storage space and customer support via email.'
-		),
-	// }}}
 	getPlanCompareFeatures: () => [
 		// pay attention to ordering, shared features should align on /plan page
 		FEATURE_BLOG_DOMAIN,
@@ -855,10 +841,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_PERSONAL,
 	getTitle: getPlanPersonalTitle,
-	getAudience: () => i18n.translate( 'Best for personal projects' ),
-	getBlogAudience: () => i18n.translate( 'Best for personal projects' ),
-	getPortfolioAudience: () => i18n.translate( 'Best for personal projects' ),
-	getStoreAudience: () => i18n.translate( 'Best for personal projects' ),
 	getPlanTagline: () => i18n.translate( 'Make your mark with a custom domain.' ),
 	getNewsletterTagLine: () =>
 		i18n.translate( 'Monetize your writing, go ad-free, and expand your media content.' ),
@@ -871,8 +853,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			'{{strong}}Best for personal projects:{{/strong}} Show credibility with your own domain name and an ad-free experience.',
 			plansDescriptionHeadingComponent
 		),
-	getShortDescription: () =>
-		i18n.translate( 'Show credibility with your own domain name and an ad-free experience.' ),
 	getPlanCompareFeatures: () =>
 		compact(
 			[
@@ -1052,10 +1032,6 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_ECOMMERCE,
 	getTitle: getPlanEcommerceTitle,
-	getAudience: () => i18n.translate( 'Best for online stores' ),
-	getBlogAudience: () => i18n.translate( 'Best for online stores' ),
-	getPortfolioAudience: () => i18n.translate( 'Best for online stores' ),
-	getStoreAudience: () => i18n.translate( 'Best for online stores' ),
 	getPlanTagline: () =>
 		i18n.translate( 'Grow your online store with commerce-optimized extensions.' ),
 	getDescription: () => {
@@ -1064,8 +1040,6 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			plansDescriptionHeadingComponent
 		);
 	},
-	getShortDescription: () =>
-		i18n.translate( 'Sell confidently with zero transaction fees and full flexibility.' ),
 	getTagline: function () {
 		return i18n.translate(
 			'Learn more about everything included with %(planName)s and take advantage of its powerful marketplace features.',
@@ -1620,10 +1594,6 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_PREMIUM,
 	getTitle: getPlanPremiumTitle,
-	getAudience: () => i18n.translate( 'Best for professionals and creators' ),
-	getBlogAudience: () => i18n.translate( 'Best for professionals and creators' ),
-	getPortfolioAudience: () => i18n.translate( 'Best for professionals and creators' ),
-	getStoreAudience: () => i18n.translate( 'Best for professionals and creators' ),
 	getPlanTagline: () =>
 		i18n.translate( 'Step up site customization with premium design features.' ),
 	getNewsletterTagLine: () =>
@@ -1636,10 +1606,6 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate(
 			'{{strong}}Best for professionals and creators:{{/strong}} Grow your online presence and generate income with a professional-looking website — no developer required.',
 			plansDescriptionHeadingComponent
-		),
-	getShortDescription: () =>
-		i18n.translate(
-			'Grow your online presence and generate income with a professional-looking website — no developer required.'
 		),
 	getPlanCompareFeatures: ( _, { isLoggedInMonthlyPricing } = {} ) =>
 		compact( [
@@ -1893,10 +1859,6 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_BUSINESS,
 	getTitle: getPlanBusinessTitle,
-	getAudience: () => i18n.translate( 'Best for developers and business owners' ),
-	getBlogAudience: () => i18n.translate( 'Best for developers and business owners' ),
-	getPortfolioAudience: () => i18n.translate( 'Best for developers and business owners' ),
-	getStoreAudience: () => i18n.translate( 'The plan for small businesses' ),
 	getPlanTagline: () => {
 		if (
 			i18n.getLocaleSlug()?.startsWith( 'en' ) ||
@@ -1917,8 +1879,6 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			'{{strong}}Best for developers and business owners:{{/strong}} Use powerful developer and business tools, without the overhead.',
 			plansDescriptionHeadingComponent
 		),
-	getShortDescription: () =>
-		i18n.translate( 'Use powerful developer and business tools, without the overhead.' ),
 	getTagline: function () {
 		return i18n.translate(
 			'Learn more about everything included with %(planName)s and take advantage of its powerful marketplace features.',
@@ -2281,10 +2241,6 @@ const getPlanStudentDetails = (): IncompleteWPcomPlan => ( {
 	...getPlanBusinessDetails(),
 	type: TYPE_STUDENT,
 	getTitle: () => i18n.translate( 'Student' ),
-	getAudience: () => i18n.translate( 'Best for students' ),
-	getBlogAudience: () => i18n.translate( 'Best for students' ),
-	getPortfolioAudience: () => i18n.translate( 'Best for students' ),
-	getStoreAudience: () => i18n.translate( 'Best for students' ),
 	getPlanTagline: () => i18n.translate( 'Build your site with student-friendly tools.' ),
 	getNewsletterTagLine: () =>
 		i18n.translate( 'Create, share, and grow your work with a custom domain.' ),
@@ -2295,8 +2251,6 @@ const getPlanStudentDetails = (): IncompleteWPcomPlan => ( {
 			'{{strong}}Best for students:{{/strong}} Build your online presence with a custom domain and an ad-free experience.',
 			plansDescriptionHeadingComponent
 		),
-	getShortDescription: () =>
-		i18n.translate( 'Build your online presence with a custom domain and an ad-free experience.' ),
 	getTagline: () => i18n.translate( 'Learn more about everything included with the Student plan.' ),
 	getPlanCompareFeatures: ( _, { isLoggedInMonthlyPricing } = {} ) =>
 		compact( [
@@ -2353,7 +2307,6 @@ const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 				'Your Pro plan includes access to all the most popular features WordPress.com has to offer, including premium themes and access to over 50,000 plugins. ' +
 				'As an existing customer, you can keep your site on this plan as long as your subscription remains active.'
 		),
-	getSubTitle: () => i18n.translate( 'Unlimited features. Unbeatable value.' ),
 	getPlanCompareFeatures: () => [
 		FEATURE_UNLIMITED_TRAFFIC,
 		FEATURE_MANAGED_HOSTING,
@@ -2437,7 +2390,6 @@ const get2023EnterprisGrideDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_ENTERPRISE_GRID_WPCOM,
 	getTitle: () => i18n.translate( 'Enterprise' ),
-	getAudience: () => i18n.translate( 'Best for enterprises' ),
 	getPlanTagline: () =>
 		i18n.translate( 'Level up to bespoke Enterprise-grade performance and security.' ),
 	getDescription: () => '',
@@ -3190,13 +3142,8 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		type: TYPE_100_YEAR,
 		// Todo: ¯\_(ツ)_/¯ on the copy.
 		getTitle: () => i18n.translate( '100-Year Plan' ),
-		getAudience: () => i18n.translate( 'Best for long-term thinkers' ),
-		getBlogAudience: () => i18n.translate( 'Best for long-term thinkers' ),
-		getPortfolioAudience: () => i18n.translate( 'Best for long-term thinkers' ),
-		getStoreAudience: () => i18n.translate( 'Best for long-term thinkers' ),
 		getPlanTagline: () => i18n.translate( 'A plan to leave a lasting mark on the web.' ),
 		getDescription: () => i18n.translate( 'A plan to leave a lasting mark on the web.' ),
-		getShortDescription: () => i18n.translate( 'A plan to leave a lasting mark on the web.' ),
 		getTagline: () => i18n.translate( 'A plan to leave a lasting mark on the web.' ),
 		getBlogOnboardingTagLine: () => i18n.translate( 'A plan to leave a lasting mark on the web.' ),
 		getBillingTimeFrame: WPComGetBillingTimeframe,
@@ -3791,7 +3738,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				'{{strong}}Best for professionals:{{/strong}} Enhance your P2 with more space for audio and video, advanced search, an activity overview panel, and priority customer support.',
 				plansDescriptionHeadingComponent
 			),
-		getShortDescription: () => i18n.translate( 'Some short description' ),
 		get2023PricingGridSignupWpcomFeatures: () => [
 			FEATURE_P2_13GB_STORAGE,
 			FEATURE_P2_ADVANCED_SEARCH,
@@ -3823,9 +3769,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			FEATURE_JETPACK_SEARCH_MONTHLY,
 		],
 		getInferiorFeatures: () => [],
-
-		// TODO: Calypso requires this prop but we probably don't need it. Refactor Calypso?
-		getAudience: () => i18n.translate( 'Best for bloggers' ),
 
 		...getMonthlyTimeframe(),
 		getProductId: () => 1040,
@@ -3871,7 +3814,6 @@ PLANS_LIST[ PLAN_WPCOM_STARTER ] = {
 	getStoreSlug: () => PLAN_WPCOM_STARTER,
 	getDescription: () =>
 		i18n.translate( 'Start with a custom domain name, simple payments, and extra storage.' ),
-	getSubTitle: () => i18n.translate( 'Essential features. Freedom to grow.' ),
 	getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
 	getPlanCompareFeatures: () => [
 		FEATURE_UNLIMITED_TRAFFIC,

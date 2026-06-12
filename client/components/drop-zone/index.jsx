@@ -4,7 +4,6 @@ import { localize } from 'i18n-calypso';
 import { includes, without } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
-import ReactDom from 'react-dom';
 import TranslatableString from 'calypso/components/translatable/proptype';
 
 import './style.scss';
@@ -172,10 +171,7 @@ export class DropZone extends Component {
 		// prevent the browser default action, which navigates to the file.
 		event.preventDefault();
 
-		if (
-			! this.props.fullScreen &&
-			! ReactDom.findDOMNode( this.zoneRef.current ).contains( event.target )
-		) {
+		if ( ! this.props.fullScreen && ! this.zoneRef.current.contains( event.target ) ) {
 			return;
 		}
 

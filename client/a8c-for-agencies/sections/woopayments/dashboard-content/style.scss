@@ -119,7 +119,8 @@
 	.woopayments-status-popover__link {
 		@include body-medium;
 		display: inline-flex;
-		justify-content: left;
+		align-self: flex-start;
+		justify-content: flex-start;
 		gap: 4px;
 		color: var( --color-primary );
 

@@ -229,7 +229,10 @@ export default function Sites() {
 							userHasSites && (
 								<Button
 									variant="primary"
-									onClick={ () => setIsModalOpen( true ) }
+									onClick={ () => {
+										recordTracksEvent( 'calypso_dashboard_sites_add_new_site_clicked' );
+										setIsModalOpen( true );
+									} }
 									__next40pxDefaultSize
 								>
 									{ __( 'Add new site' ) }

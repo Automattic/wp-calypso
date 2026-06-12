@@ -372,11 +372,16 @@ body.is-section-earn.theme-default.color-scheme {
 	margin-bottom: 30px;
 }
 
-.memberships__products-product-card {
+.card.memberships__products-product-card {
 	display: flex;
+	align-items: flex-start;
 }
 .memberships__products-product-details {
-	flex-grow: 1;
+	flex: 1;
+	min-width: 0;
+}
+.memberships__products-product-card > .ellipsis-menu {
+	flex-shrink: 0;
 }
 .memberships__products-product-price {
 	color: var(--color-text-subtle);
@@ -387,6 +392,45 @@ body.is-section-earn.theme-default.color-scheme {
 	color: var(--color-text);
 	font-size: $font-body;
 	font-weight: bold;
+}
+.memberships__products-product-description {
+	color: var(--color-text-subtle);
+	font-size: $font-body-small;
+	line-height: 1.4;
+	margin-top: 4px;
+	overflow-wrap: break-word;
+
+	p,
+	ul,
+	ol {
+		margin: 0 0 4px;
+
+		&:last-child {
+			margin-block-end: 0;
+		}
+	}
+
+	ul,
+	ol {
+		padding-inline-start: 18px;
+	}
+
+	ul {
+		list-style: disc;
+	}
+
+	ol {
+		list-style: decimal;
+	}
+
+	li {
+		margin: 0;
+	}
+
+	a {
+		color: inherit;
+		text-decoration: underline;
+	}
 }
 .memberships__products-product-badge {
 	margin-top: 10px;

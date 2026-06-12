@@ -10,6 +10,7 @@ const mockAbortCurrentRequest = jest.fn();
 const mockSetIsOpen = jest.fn();
 const mockSetIsDocked = jest.fn();
 const mockUseAgentLayoutManager = jest.fn();
+const mockResumeActiveChat = jest.fn();
 let mockContext: Partial< AgentsManagerContextType > = {};
 let mockAgentsManagerState: {
 	isOpen?: boolean;
@@ -127,13 +128,8 @@ jest.mock( '../support-guides', () => ( {
 import AgentDock from '../agent-dock';
 
 function LocationProbe() {
-	const { pathname, state } = useLocation();
-	const sessionId = ( state as { sessionId?: string } | null )?.sessionId ?? '';
-	return (
-		<div data-testid="location" data-session-id={ sessionId }>
-			{ pathname }
-		</div>
-	);
+	const { pathname } = useLocation();
+	return <div data-testid="location">{ pathname }</div>;
 }
 
 function renderAgentDock( initialEntry = '/chat' ) {
@@ -154,7 +150,8 @@ function useWpAdminAgent() {
 			agentId: 'wp-orchestrator',
 		},
 		getActiveSessionId: () => 'session-123',
-	} as Partial< AgentsManagerContextType >;
+		resumeActiveChat: mockResumeActiveChat,
+	} as unknown as Partial< AgentsManagerContextType >;
 }
 
 describe( 'AgentDock', () => {
@@ -170,7 +167,8 @@ describe( 'AgentDock', () => {
 				agentId: 'reader-chat',
 			},
 			getActiveSessionId: () => 'session-123',
-		} as Partial< AgentsManagerContextType >;
+			resumeActiveChat: mockResumeActiveChat,
+		} as unknown as Partial< AgentsManagerContextType >;
 	} );
 
 	it( 'hides the chat when closed if the WP admin bar trigger is present', () => {
@@ -229,9 +227,7 @@ describe( 'AgentDock', () => {
 		renderAgentDock( '/history' );
 		fireEvent.click( screen.getByText( 'Expand history' ) );
 
-		const location = screen.getByTestId( 'location' );
-		expect( location.textContent ).toBe( '/chat' );
-		expect( location.dataset.sessionId ).toBe( 'session-123' );
+		expect( mockResumeActiveChat ).toHaveBeenCalled();
 	} );
 
 	it( 'keeps the current route when opening the docked sidebar', () => {
@@ -255,9 +251,7 @@ describe( 'AgentDock', () => {
 		renderAgentDock( '/support-guides' );
 		fireEvent.click( screen.getByText( 'Expand guides' ) );
 
-		const location = screen.getByTestId( 'location' );
-		expect( location.textContent ).toBe( '/chat' );
-		expect( location.dataset.sessionId ).toBe( 'session-123' );
+		expect( mockResumeActiveChat ).toHaveBeenCalled();
 	} );
 
 	it( 'hides the support guides list without the WP admin bar trigger', () => {
@@ -294,6 +288,7 @@ describe( 'AgentDock', () => {
 	} );
 
 	it( 'opens Reader Chat without saving shared Agents Manager state', () => {
+		mockAgentsManagerState = { isOpen: false, isDocked: false };
 		renderAgentDock();
 
 		fireEvent.click( screen.getByText( 'Expand chat' ) );
@@ -311,6 +306,7 @@ describe( 'AgentDock', () => {
 
 	it( 'opens regular agents and saves shared Agents Manager state', () => {
 		useWpAdminAgent();
+		mockAgentsManagerState = { isOpen: false, isDocked: false };
 
 		renderAgentDock();
 

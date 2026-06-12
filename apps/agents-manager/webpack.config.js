@@ -87,6 +87,14 @@ function getIndividualConfig( options = {} ) {
 					) {
 						return null;
 					}
+					// Bundle @wordpress/ui: neither WordPress core nor the Gutenberg
+					// plugin registers a wp-ui script handle yet, and WP_Scripts
+					// silently skips scripts with unregistered dependencies, so
+					// externalizing it prevents the bundle from loading on
+					// self-hosted sites.
+					if ( request === '@wordpress/ui' ) {
+						return null;
+					}
 				},
 			} ),
 			new ReadableJsAssetsWebpackPlugin(),

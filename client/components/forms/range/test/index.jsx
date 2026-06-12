@@ -2,56 +2,42 @@
  * @jest-environment jsdom
  */
 
-/* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["TestUtils.*"] }] */
-
 import { Gridicon } from '@automattic/components';
-import ReactDom from 'react-dom';
-import TestUtils from 'react-dom/test-utils';
+import { render } from '@testing-library/react';
 import FormRange from '../';
 
 describe( 'index', () => {
-	afterEach( () => {
-		ReactDom.unmountComponentAtNode( document.body );
-	} );
-
 	test( 'should render beginning content if passed a `minContent` prop', () => {
-		const range = TestUtils.renderIntoDocument(
-			<FormRange minContent={ <Gridicon icon="minus-small" /> } />
-		);
-		TestUtils.findRenderedDOMComponentWithClass( range, 'gridicons-minus-small' );
+		const { container } = render( <FormRange minContent={ <Gridicon icon="minus-small" /> } /> );
+
+		expect( container.querySelector( '.gridicons-minus-small' ) ).toBeVisible();
 	} );
 
 	test( 'should not render ending content if not passed a `maxContent` prop', () => {
-		const range = TestUtils.renderIntoDocument(
-			<FormRange minContent={ <Gridicon icon="minus-small" /> } />
-		);
-		const content = TestUtils.scryRenderedDOMComponentsWithClass( range, 'range__content' );
+		const { container } = render( <FormRange minContent={ <Gridicon icon="minus-small" /> } /> );
+		const content = container.querySelectorAll( '.range__content' );
 
 		expect( content ).toHaveLength( 1 );
-		expect( content[ 0 ].getAttribute( 'class' ) ).toEqual( expect.stringContaining( 'is-min' ) );
+		expect( content[ 0 ] ).toHaveClass( 'is-min' );
 	} );
 
 	test( 'should render ending content if passed a `maxContent` prop', () => {
-		const range = TestUtils.renderIntoDocument(
-			<FormRange maxContent={ <Gridicon icon="plus-small" /> } />
-		);
-		TestUtils.findRenderedDOMComponentWithClass( range, 'gridicons-plus-small' );
+		const { container } = render( <FormRange maxContent={ <Gridicon icon="plus-small" /> } /> );
+
+		expect( container.querySelector( '.gridicons-plus-small' ) ).toBeVisible();
 	} );
 
 	test( 'should not render beginning content if not passed a `minContent` prop', () => {
-		const range = TestUtils.renderIntoDocument(
-			<FormRange maxContent={ <Gridicon icon="plus-small" /> } />
-		);
-		const content = TestUtils.scryRenderedDOMComponentsWithClass( range, 'range__content' );
+		const { container } = render( <FormRange maxContent={ <Gridicon icon="plus-small" /> } /> );
+		const content = container.querySelectorAll( '.range__content' );
 
 		expect( content ).toHaveLength( 1 );
-		expect( content[ 0 ].getAttribute( 'class' ) ).toEqual( expect.stringContaining( 'is-max' ) );
+		expect( content[ 0 ] ).toHaveClass( 'is-max' );
 	} );
 
 	test( 'should render a value label if passed a truthy `showValueLabel` prop', () => {
-		const range = TestUtils.renderIntoDocument( <FormRange value={ 8 } showValueLabel readOnly /> );
-		const label = TestUtils.findRenderedDOMComponentWithClass( range, 'range__label' );
+		const { container } = render( <FormRange value={ 8 } showValueLabel readOnly /> );
 
-		expect( label.textContent ).toEqual( '8' );
+		expect( container.querySelector( '.range__label' ) ).toHaveTextContent( '8' );
 	} );
 } );

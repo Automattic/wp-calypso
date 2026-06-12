@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	isBiennially,
 	isDIFMProduct,
@@ -19,6 +20,7 @@ import {
 	doesIntroductoryOfferHavePriceIncrease,
 	filterCostOverridesForLineItem,
 	getLabel,
+	groupBundleLineItems,
 	isOverrideCodeIntroductoryOffer,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
@@ -36,7 +38,10 @@ import useCartKey from '../../use-cart-key';
 import { getAffiliateCouponLabel } from '../../utils';
 import { CheckIcon } from './check-icon';
 import type { Theme } from '@automattic/composite-checkout';
-import type { LineItemCostOverrideForDisplay } from '@automattic/wpcom-checkout';
+import type {
+	CartBundleLineItem,
+	LineItemCostOverrideForDisplay,
+} from '@automattic/wpcom-checkout';
 
 const PALETTE = colorStudio.colors;
 const COLOR_GRAY_40 = PALETTE[ 'Gray 40' ];
@@ -600,16 +605,98 @@ export function CouponCostOverride( {
 	);
 }
 
+const BundleMemberList = styled.div`
+	display: flex;
+	flex-direction: column;
+	font-size: 12px;
+	font-weight: 400;
+	gap: 2px;
+
+	& .cost-overrides-list-bundle-member {
+		display: flex;
+		justify-content: space-between;
+		gap: 0 16px;
+	}
+`;
+
+/**
+ * Render a domain bundle as a single compact row in the order summary, mirroring
+ * the order-review surface's `BundleLineItem`: a "Domain bundle" title with the
+ * summed bundle total, and each member domain listed beneath with its own price.
+ * The presentation matches the summary's other product rows (green check icon,
+ * label-and-price header) rather than reusing the heavier review component.
+ */
+export function BundleProductAndCostOverridesList( { bundle }: { bundle: CartBundleLineItem } ) {
+	const translate = useTranslate();
+	const { products } = bundle;
+	// All members of a bundle share a currency, so the total can safely be summed
+	// in the smallest unit and rendered under the first member's currency.
+	const currency = products[ 0 ]?.currency ?? 'USD';
+	// Strip per-member coupon discounts before summing. The order summary shows
+	// coupon savings on a dedicated CouponCostOverride line, so the per-line prices
+	// here must reflect the pre-coupon subtotal or the discount is counted twice
+	// (this mirrors how getLineItemPriceDisplay renders single products on this
+	// surface).
+	const bundleTotalInteger = products.reduce(
+		( total, product ) => total + getItemSubtotalExcludingCoupon( product ),
+		0
+	);
+	const bundleTotalDisplay = formatCurrency( bundleTotalInteger, currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
+
+	return (
+		<SimplifiedSingleProductAndCostOverridesListWrapper className="cost-overrides-list-product-wrapper">
+			<WPCheckoutCheckIcon />
+			<ProductTitleAreaForCostOverridesList>
+				<span className="cost-overrides-list-product__title">{ translate( 'Domain bundle' ) }</span>
+				<SimplifiedLineItemPrice actualAmount={ bundleTotalDisplay } />
+			</ProductTitleAreaForCostOverridesList>
+			<BundleMemberList>
+				{ products.map( ( product ) => (
+					<div className="cost-overrides-list-bundle-member" key={ product.uuid }>
+						<span>{ product.meta }</span>
+						<span>
+							{ formatCurrency( getItemSubtotalExcludingCoupon( product ), product.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ) }
+						</span>
+					</div>
+				) ) }
+			</BundleMemberList>
+		</SimplifiedSingleProductAndCostOverridesListWrapper>
+	);
+}
+
 export function ProductsAndCostOverridesList( { responseCart }: { responseCart: ResponseCart } ) {
+	// Bundle grouping is gated behind the `domain-bundling` feature flag. When off,
+	// every product renders on its own line exactly as before.
+	const groupedLineItems = config.isEnabled( 'domain-bundling' )
+		? groupBundleLineItems( responseCart.products )
+		: responseCart.products.map( ( product ) => ( { type: 'product' as const, product } ) );
+
 	return (
 		<ProductsAndCostOverridesListWrapper className="wp-checkout-order-summary__products-list">
-			{ responseCart.products.map( ( product ) => (
-				<SingleProductAndCostOverridesList
-					product={ product }
-					responseCart={ responseCart }
-					key={ product.uuid }
-				/>
-			) ) }
+			{ groupedLineItems.map( ( entry ) => {
+				if ( entry.type === 'bundle' ) {
+					return (
+						<BundleProductAndCostOverridesList
+							bundle={ entry }
+							key={ `bundle-${ entry.groupId }` }
+						/>
+					);
+				}
+
+				return (
+					<SingleProductAndCostOverridesList
+						product={ entry.product }
+						responseCart={ responseCart }
+						key={ entry.product.uuid }
+					/>
+				);
+			} ) }
 			<CouponCostOverride responseCart={ responseCart } />
 		</ProductsAndCostOverridesListWrapper>
 	);

@@ -1,6 +1,7 @@
 import { stepSlug, useMyDomainInputMode } from '../constants';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { DashboardType } from 'calypso/dashboard/app/types';
+import type { JSX } from 'react';
 
 type ValueOf< T > = T[ keyof T ];
 export type Maybe< T > = T | null | undefined;

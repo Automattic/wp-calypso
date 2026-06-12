@@ -6,10 +6,11 @@ import { GoogleSocialButton } from '../google';
 import { MagicLoginButton } from '../magic-login';
 import QrCodeLoginButton from '../qr-code';
 import { UsernameOrEmailButton } from '../username-or-email';
-import type { StoryFn, StoryObj } from '@storybook/react';
+import type { StoryObj } from '@storybook/react';
+import type { ComponentType } from 'react';
 import './style.scss';
 
-export const AuthFormSocial = ( Story: StoryFn ) => (
+export const AuthFormSocial = ( Story: ComponentType ) => (
 	<div className="auth-form__social" style={ { maxWidth: '300px', padding: '30px' } }>
 		<div className="auth-form__social-buttons">
 			<div className="auth-form__social-buttons-container">
@@ -19,37 +20,37 @@ export const AuthFormSocial = ( Story: StoryFn ) => (
 	</div>
 );
 
-export const A4AWrapper = ( Story: StoryFn ) => (
+export const A4AWrapper = ( Story: ComponentType ) => (
 	<div className="a8c-for-agencies">
 		<Story />
 	</div>
 );
 
-export const AkismetWrapper = ( Story: StoryFn ) => (
+export const AkismetWrapper = ( Story: ComponentType ) => (
 	<div className="is-akismet">
 		<Story />
 	</div>
 );
 
-export const BlazeWrapper = ( Story: StoryFn ) => (
+export const BlazeWrapper = ( Story: ComponentType ) => (
 	<div className="blaze-pro">
 		<Story />
 	</div>
 );
 
-export const WooWrapper = ( Story: StoryFn ) => (
+export const WooWrapper = ( Story: ComponentType ) => (
 	<div className="woo is-woo-passwordless">
 		<Story />
 	</div>
 );
 
-export const JetpackCloudWrapper = ( Story: StoryFn ) => (
+export const JetpackCloudWrapper = ( Story: ComponentType ) => (
 	<div className="jetpack-cloud">
 		<Story />
 	</div>
 );
 
-export const JetpackLoginWrapper = ( Story: StoryFn ) => (
+export const JetpackLoginWrapper = ( Story: ComponentType ) => (
 	<div className="layout is-jetpack-login">
 		<div className="login is-jetpack" style={ { maxWidth: '360px', padding: '30px' } }>
 			<div className="login__form">
@@ -59,7 +60,7 @@ export const JetpackLoginWrapper = ( Story: StoryFn ) => (
 	</div>
 );
 
-export const GravatarWrapper = ( Story: StoryFn ) => (
+export const GravatarWrapper = ( Story: ComponentType ) => (
 	<div className="layout is-section-login is-grav-powered-client">
 		<div className="login">
 			<Story />
@@ -67,7 +68,7 @@ export const GravatarWrapper = ( Story: StoryFn ) => (
 	</div>
 );
 
-export const WPJobManagerWrapper = ( Story: StoryFn ) => (
+export const WPJobManagerWrapper = ( Story: ComponentType ) => (
 	<div className="layout is-section-login is-grav-powered-client is-wp-job-manager">
 		<div className="login">
 			<Story />
@@ -116,7 +117,7 @@ export const gitHubStory: StoryObj< typeof GitHubLoginButton > = {
 		isLogin: true,
 	},
 	decorators: [
-		( Story: StoryFn ) => (
+		( Story: ComponentType ) => (
 			<Provider store={ gitHubStore }>
 				<Story />
 			</Provider>
@@ -175,7 +176,7 @@ export const qrCodeStory: StoryObj< typeof QrCodeLoginButton > = {
 		loginUrl: 'https://example.com/login',
 	},
 	decorators: [
-		( Story: StoryFn ) => (
+		( Story: ComponentType ) => (
 			<Provider store={ qrCodeStore }>
 				<Story />
 			</Provider>
@@ -197,7 +198,7 @@ export const usernameOrEmailStory: StoryObj< typeof UsernameOrEmailButton > = {
 		onClick: () => {},
 	},
 	decorators: [
-		( Story: StoryFn ) => (
+		( Story: ComponentType ) => (
 			<Provider store={ usernameOrEmailStore }>
 				<Story />
 			</Provider>

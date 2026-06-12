@@ -552,6 +552,13 @@ const siteSetupFlow: Flow = {
 						return window.location.assign( `${ adminUrl }import.php` );
 					}
 
+					// Importers launched from the wp-admin Newsletter UI (e.g. the Substack
+					// importer in the Subscribers screen) should return there, not to the
+					// importer list.
+					if ( entryPoint === 'wp-admin-newsletter-ui' ) {
+						return window.location.assign( `${ adminUrl }admin.php?page=jetpack-newsletter` );
+					}
+
 					return navigate( addQueryArgs( { origin, siteSlug }, 'importList' ) );
 
 				case 'importerWordpress':

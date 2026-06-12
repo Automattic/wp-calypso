@@ -1,0 +1,99 @@
+.sources-modal {
+	&.components-modal__frame {
+		height: min( 860px, calc( 100% - 96px ) );
+	}
+
+	.components-modal__content {
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		padding-bottom: 0;
+	}
+
+	.components-modal__children-container {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		min-height: 0;
+	}
+}
+
+.sources-modal__body {
+	flex: 1;
+	min-height: 0;
+	overflow: hidden;
+	padding-bottom: 16px;
+}
+
+.sources-modal__description {
+	margin: -8px 0 0;
+	color: var( --color-text-subtle );
+	font-size: 0.875rem;
+}
+
+.sources-modal__filters {
+	button {
+		border-radius: 16px;
+	}
+}
+
+.sources-modal__list {
+	box-sizing: border-box;
+	flex: 1;
+	min-height: 0;
+	margin: 0;
+	padding: 0;
+}
+
+.sources-modal__virtualized-list {
+	outline: none;
+}
+
+.sources-modal-subscription__main {
+	flex: 1;
+	min-width: 0;
+}
+
+.sources-modal-subscription__content {
+	min-width: 0;
+}
+
+.sources-modal-subscription__name,
+.sources-modal-subscription__url {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.sources-modal-subscription__name {
+	color: var( --color-text );
+	font-weight: 600;
+}
+
+.sources-modal-subscription__url {
+	color: var( --color-text-subtle );
+	font-size: 0.875rem;
+}
+
+.sources-modal__empty {
+	margin: 24px 0;
+	color: var( --color-text-subtle );
+	text-align: center;
+}
+
+.sources-modal__footer {
+	flex-shrink: 0;
+	padding: 16px 0;
+	border-top: 1px solid var( --color-border-subtle );
+	background: var( --color-surface );
+}
+
+.sources-modal__count {
+	color: var( --color-text-subtle );
+	font-size: 0.875rem;
+}
+
+.sources-modal__skeleton-text {
+	flex: 1;
+	min-width: 0;
+}

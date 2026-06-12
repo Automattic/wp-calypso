@@ -52,7 +52,7 @@ function createMonitorUrls( siteUrl: string ): JetpackMonitorSettings[ 'urls' ] 
 export function useCreateSchedules( siteIds: number[] ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: eligibleSites = [] } = useEligibleSites();
-	const createBatch = useMutation( updateSchedulesBatchCreateMutation( siteIds ) );
+	const { mutate: createBatch } = useMutation( updateSchedulesBatchCreateMutation( siteIds ) );
 	const { mutateAsync: createMonitorForSite } = useMutation(
 		siteJetpackMonitorSettingsCreateMutation()
 	);
@@ -72,7 +72,7 @@ export function useCreateSchedules( siteIds: number[] ) {
 			};
 
 			return await new Promise< void >( ( resolve, reject ) => {
-				createBatch.mutate( body, {
+				createBatch( body, {
 					onSuccess: async ( results ) => {
 						const successfulSiteIds = ( results || [] )
 							.filter( ( result ) => ! result.error )
