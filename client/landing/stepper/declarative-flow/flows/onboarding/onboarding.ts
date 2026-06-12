@@ -32,6 +32,7 @@ import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboardi
 import { withLocale } from '../../helpers/with-locale';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
+import { ONBOARDING_PROGRESS_EXPERIMENT_NAME } from '../../internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
 import { getOnboardingStepperPosition } from './step-counter-config';
@@ -92,9 +93,9 @@ const onboarding: FlowV2< typeof initialize > = {
 		const getPostCheckoutDestination = async (
 			providedDependencies: ProvidedDependencies,
 			planCartItem: MinimalRequestCartProduct | null
-		): Promise< [ string, string | null ] > => {
+		): Promise< [ string, string | null, string | null ] > => {
 			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
-				return [ `/home/${ providedDependencies.siteSlug }`, null ];
+				return [ `/home/${ providedDependencies.siteSlug }`, null, null ];
 			}
 
 			if ( playgroundId || blueprint ) {
@@ -104,7 +105,7 @@ const onboarding: FlowV2< typeof initialize > = {
 
 				if ( isFree && ! blueprint ) {
 					// Redirect free plan users to a home page
-					return [ `/home/${ providedDependencies.siteSlug }`, null ];
+					return [ `/home/${ providedDependencies.siteSlug }`, null, null ];
 				}
 
 				const params: Record< string, string | number > = {
@@ -121,6 +122,7 @@ const onboarding: FlowV2< typeof initialize > = {
 				return [
 					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), params ),
 					null,
+					null,
 				];
 			}
 
@@ -128,7 +130,7 @@ const onboarding: FlowV2< typeof initialize > = {
 				const siteSlug = providedDependencies.siteSlug as string;
 				const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
 				const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
-				return [ `${ adminUrl }admin.php?page=wc-admin`, null ];
+				return [ `${ adminUrl }admin.php?page=wc-admin`, null, null ];
 			}
 
 			return getOnboardingPostCheckoutDestination( {
@@ -269,10 +271,8 @@ const onboarding: FlowV2< typeof initialize > = {
 						return;
 					}
 
-					const [ destination, backDestination ] = await getPostCheckoutDestination(
-						providedDependencies,
-						planCartItem
-					);
+					const [ destination, backDestination, backDestinationDomains ] =
+						await getPostCheckoutDestination( providedDependencies, planCartItem );
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
 						persistSignupDestination( destination );
 						setSignupCompleteFlowName( flowName );
@@ -309,7 +309,11 @@ const onboarding: FlowV2< typeof initialize > = {
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 									redirect_to: redirectTo,
 									signup: 1,
+									flow: ONBOARDING_FLOW,
 									checkoutBackUrl: pathToUrl( backDestination ?? '' ),
+									...( backDestinationDomains
+										? { checkoutBackUrlDomains: pathToUrl( backDestinationDomains ) }
+										: {} ),
 									coupon,
 									steps_current: checkoutStepperPosition.current,
 									steps_total: checkoutStepperPosition.total,
@@ -395,6 +399,13 @@ const onboarding: FlowV2< typeof initialize > = {
 		useEffect( () => {
 			loadExperimentAssignment( 'calypso_plans_page_visual_separation_2025_09_v2' );
 		}, [] );
+
+		// Preload the onboarding progress bar experiment
+		useEffect( () => {
+			if ( isLoggedIn ) {
+				loadExperimentAssignment( ONBOARDING_PROGRESS_EXPERIMENT_NAME );
+			}
+		}, [ isLoggedIn ] );
 	},
 };
 

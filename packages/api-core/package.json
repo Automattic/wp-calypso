@@ -36,8 +36,8 @@
 	},
 	"dependencies": {
 		"@automattic/shopping-cart": "workspace:^",
-		"@wordpress/dataviews": "^14.3.0",
-		"@wordpress/i18n": "^6.19.0",
+		"@wordpress/dataviews": "^16.0.0",
+		"@wordpress/i18n": "^6.21.0",
 		"he": "^1.2.0",
 		"tslib": "^2.8.1"
 	},

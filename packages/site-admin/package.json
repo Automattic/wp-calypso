@@ -48,7 +48,7 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/site-admin#readme",
 	"peerDependencies": {
-		"@wordpress/data": "^10.46.0",
+		"@wordpress/data": "^10.48.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
 	},
@@ -63,16 +63,16 @@
 		"webpack": "^5.99.8"
 	},
 	"dependencies": {
-		"@wordpress/base-styles": "^8.0.0",
-		"@wordpress/commands": "^1.46.0",
-		"@wordpress/components": "^33.1.0",
-		"@wordpress/compose": "patch:@wordpress/compose@npm%3A8.0.0#~/.yarn/patches/@wordpress-compose-npm-8.0.0-14fd3b56ad.patch",
-		"@wordpress/core-data": "^7.46.0",
-		"@wordpress/dom": "^4.46.0",
-		"@wordpress/element": "^6.46.0",
-		"@wordpress/i18n": "^6.19.0",
-		"@wordpress/icons": "^13.2.0",
-		"@wordpress/url": "^4.46.0",
+		"@wordpress/base-styles": "^9.1.0",
+		"@wordpress/commands": "^1.48.0",
+		"@wordpress/components": "^35.0.0",
+		"@wordpress/compose": "patch:@wordpress/compose@npm%3A8.1.0#~/.yarn/patches/@wordpress-compose-npm-8.1.0-ea108e3129.patch",
+		"@wordpress/core-data": "^7.48.0",
+		"@wordpress/dom": "^4.48.0",
+		"@wordpress/element": "^8.0.0",
+		"@wordpress/i18n": "^6.21.0",
+		"@wordpress/icons": "^13.3.0",
+		"@wordpress/url": "^4.48.0",
 		"clsx": "^2.1.1",
 		"history": "^5.3.0",
 		"route-recognizer": "^0.3.4"

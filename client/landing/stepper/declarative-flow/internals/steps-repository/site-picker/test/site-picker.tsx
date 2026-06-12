@@ -11,6 +11,7 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import SitePicker from '../site-picker';
+import type { JSX } from 'react';
 
 const renderComponent = ( component: JSX.Element, initialState = {} ) => {
 	const mockStore = configureStore();

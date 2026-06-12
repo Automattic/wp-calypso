@@ -145,7 +145,7 @@ export default function DomainsContactInfo() {
 	};
 
 	const editingMessage =
-		/* translators: %(domainCount) is the number of domains */
+		/* translators: %(domainCount)d: the number of domains */
 		_n(
 			'Editing contact details for %(domainCount)d domain:',
 			'Editing contact details for %(domainCount)d domains:',

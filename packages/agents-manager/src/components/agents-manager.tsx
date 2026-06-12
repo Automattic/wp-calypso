@@ -67,15 +67,15 @@ export default function AgentsManager( {
 	const siteKey = currentSiteId ? String( currentSiteId ) : 'no-site';
 
 	return (
-		<AgentsManagerContextProvider
-			value={ { sectionName, currentUser, site, siteKey, currentRoute } }
-		>
-			<QueryClientProvider client={ queryClient }>
-				<PersistentRouter siteKey={ siteKey }>
+		<QueryClientProvider client={ queryClient }>
+			<PersistentRouter siteKey={ siteKey }>
+				<AgentsManagerContextProvider
+					value={ { sectionName, currentUser, site, siteKey, currentRoute } }
+				>
 					<AgentSetup agentId={ agentId } useImageUpload={ useImageUpload } />
-				</PersistentRouter>
-			</QueryClientProvider>
-		</AgentsManagerContextProvider>
+				</AgentsManagerContextProvider>
+			</PersistentRouter>
+		</QueryClientProvider>
 	);
 }
 
@@ -87,7 +87,8 @@ function AgentSetup( {
 	agentId?: string;
 	useImageUpload?: ImageUploadHook;
 } ): JSX.Element | null {
-	const { site, currentRoute, agentConfig, setAgentConfig } = useAgentsManagerContext();
+	const { site, sectionName, currentRoute, agentConfig, setAgentConfig } =
+		useAgentsManagerContext();
 	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
 	const navigate = useNavigate();
 	const { pathname, state } = useLocation();
@@ -151,7 +152,7 @@ function AgentSetup( {
 				currentRoute,
 				toolProvider: providers.toolProvider,
 				contextProvider: providers.contextProvider,
-				environment: 'calypso',
+				environment: sectionName || 'calypso',
 				agentId,
 				version,
 			} );
@@ -167,6 +168,7 @@ function AgentSetup( {
 		isNewChat,
 		navigate,
 		sessionId,
+		sectionName,
 		setAgentConfig,
 		site?.ID,
 		hostAgentId,

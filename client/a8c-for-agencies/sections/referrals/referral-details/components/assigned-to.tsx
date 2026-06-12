@@ -1,6 +1,7 @@
 import { BadgeType, Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useEffect } from 'react';
 import InfoModal from 'calypso/a8c-for-agencies/components/a4a-info-modal';
@@ -115,18 +116,15 @@ const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props )
 					) }
 				</p>
 				<p>
-					{ translate( '{{link}}Learn more about cancelations ↗{{/link}}', {
+					{ translate( '{{link}}Learn more about cancelations{{/link}}', {
 						components: {
 							link: (
-								<a
+								<ExternalLink
 									href={ localizeUrl(
 										'https://wordpress.com/support/manage-purchases/cancel-a-purchase/'
 									) }
-									target="_blank"
-									rel="noreferrer noopener"
-								>
-									{  }
-								</a>
+									children={ null }
+								/>
 							),
 						},
 					} ) }

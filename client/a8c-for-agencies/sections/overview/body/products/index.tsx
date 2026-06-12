@@ -1,3 +1,4 @@
+import { ExternalLink } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -76,14 +77,13 @@ const OverviewBodyProducts = () => {
 			),
 			translate( 'Subscriptions: Enable weekly, monthly, or annual subscriptions.' ),
 			translate(
-				'WooPayments: Earn a recurring 5bps commission on Total Payment Volume (TPV) for any new clients referred. {{a}}Learn{{nbsp/}}more ↗{{/a}}',
+				'WooPayments: Earn a recurring 5bps commission on Total Payment Volume (TPV) for any new clients referred. {{a}}Learn{{nbsp/}}more{{/a}}',
 				{
 					components: {
 						a: (
-							<a
+							<ExternalLink
 								href="https://automattic.com/for-agencies/program-incentives/"
-								target="_blank"
-								rel="noreferrer noopener"
+								children={ null }
 							/>
 						),
 						nbsp: <>&nbsp;</>,

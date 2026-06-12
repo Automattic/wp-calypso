@@ -5,8 +5,7 @@ import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 import { forEach, uniqBy } from 'lodash';
 import PropTypes from 'prop-types';
-import { PureComponent } from 'react';
-import ReactDom from 'react-dom';
+import { createRef, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import { useFeedQuery } from 'calypso/reader/data/feed';
@@ -33,8 +32,22 @@ class CrossPost extends PureComponent {
 		hasOrganization: PropTypes.bool,
 	};
 
+	cardRef = createRef();
+
+	// Merge the internal card ref with an optional `itemRef` from InfiniteList so the
+	// parent list can measure this item's DOM node without `findDOMNode`.
+	setCardRef = ( node ) => {
+		this.cardRef.current = node;
+		const { itemRef } = this.props;
+		if ( typeof itemRef === 'function' ) {
+			itemRef( node );
+		} else if ( itemRef ) {
+			itemRef.current = node;
+		}
+	};
+
 	handleCardClick = ( event ) => {
-		const rootNode = ReactDom.findDOMNode( this );
+		const rootNode = this.cardRef.current;
 
 		if ( closest( event.target, '.should-scroll', rootNode ) ) {
 			setTimeout( function () {
@@ -172,7 +185,12 @@ class CrossPost extends PureComponent {
 		}
 
 		return (
-			<Card tagName="article" onClick={ this.handleCardClick } className={ articleClasses }>
+			<Card
+				ref={ this.setCardRef }
+				tagName="article"
+				onClick={ this.handleCardClick }
+				className={ articleClasses }
+			>
 				<UserAvatar user={ post.author } size={ 40 } />
 
 				<div className="reader__x-post">

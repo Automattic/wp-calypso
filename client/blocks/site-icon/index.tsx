@@ -12,6 +12,7 @@ import getSiteIconId from 'calypso/state/selectors/get-site-icon-id';
 import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
 import isTransientMedia from 'calypso/state/selectors/is-transient-media';
 import { getSite } from 'calypso/state/sites/selectors';
+import type { JSX } from 'react';
 
 export type Site = {
 	ID?: number;

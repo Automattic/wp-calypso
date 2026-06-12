@@ -73,12 +73,15 @@
 		}
 	}
 
-	// Closed state: transparent nav over the dark hero, so text/logo/chevron go white.
+	// Closed over the dark hero: white nav ink, inverted CTA hover swap.
 	.lpc-header-nav-container:not(
 			:has( .x-dropdown--2026.x-dropdown-content[aria-hidden='false'] )
 		):not( .is-scrolled )
 		.x-nav--2026-redesign
 		.x-nav-item {
+		--x-nav-2026-cta-hover-fill: var( --studio-white );
+		--x-nav-2026-cta-hover-ink: var( --studio-gray-100 );
+
 		color: var( --studio-white ) !important;
 
 		.x-nav-link-chevron::before {

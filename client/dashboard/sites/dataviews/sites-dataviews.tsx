@@ -57,7 +57,12 @@ export function SitesDataViews( {
 							{ ...props }
 							site={ item }
 							expanded={ view.type === 'grid' }
-							onClick={ () => recordTracksEvent( 'calypso_dashboard_sites_item_click' ) }
+							onClick={ () =>
+								recordTracksEvent( 'calypso_dashboard_sites_item_click', {
+									site_id: item.ID,
+									is_staging_site: item.is_wpcom_staging_site,
+								} )
+							}
 						/>
 					) }
 				/>

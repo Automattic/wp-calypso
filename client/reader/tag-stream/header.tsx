@@ -11,6 +11,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordAction } from 'calypso/reader/stats';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
+import type { JSX } from 'react';
 
 interface TagStreamHeaderProps {
 	encodedTagSlug: string;

@@ -1,7 +1,6 @@
 import { AgentsManagerSelect } from '@automattic/data-stores';
 import { select } from '@wordpress/data';
-import { AGENTS_MANAGER_STORE } from '../stores';
-import { persistAgentsManagerState } from './persist-agents-manager-state';
+import { AGENTS_MANAGER_STORE, persistAgentsManagerState } from '../stores';
 
 /**
  * Persist the current timestamp as the last activity for the given site key.

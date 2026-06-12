@@ -20,6 +20,16 @@ $hero-modern-navbar-height: 57px; // UniversalHeaderNavigation
 		padding-top: var(--nav-2026-sticky-offset);
 	}
 
+	.layout:has(.x-nav--2026-redesign) main.is-logged-out & {
+		.full-width-section__content {
+			padding-top: 96px;
+
+			@media (min-width: $break-small) {
+				padding-top: 108px;
+			}
+		}
+	}
+
 	.full-width-section__content {
 		max-width: 1220px;
 		padding: 48px 0;

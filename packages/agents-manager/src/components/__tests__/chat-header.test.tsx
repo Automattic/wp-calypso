@@ -5,15 +5,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
-type AgentsManagerTestGlobal = typeof globalThis & {
-	agentsManagerData?: {
-		jetpackAiSidebarPreview?: {
-			enabled: boolean;
-			features?: Record< string, boolean >;
-		};
-	};
-};
-
 let mockIsDocked = false;
 const mockSetIsMinimized = jest.fn();
 
@@ -52,24 +43,30 @@ jest.mock( '@wordpress/data', () => ( {
 } ) );
 jest.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'agents-manager' } ) );
 jest.mock( '../../hooks/use-admin-bar-integration', () => ( {
-	ADMIN_BAR_BUTTON_ID: 'wp-admin-bar-agents-manager',
+	hasAiChatEntryButton: () =>
+		!! globalThis.document.getElementById( 'wp-admin-bar-agents-manager-ai-chat' ) ||
+		!! globalThis.document.querySelector( '.masterbar__item-agents-manager-ai-chat' ),
 } ) );
 jest.mock( '../chat-header/style.scss', () => ( {} ) );
 
 import ChatHeader from '../chat-header';
 
-function installJetpackAiSidebarPreviewData( features: Record< string, boolean > ) {
-	( globalThis as AgentsManagerTestGlobal ).agentsManagerData = {
-		jetpackAiSidebarPreview: {
-			enabled: true,
-			features,
-		},
+function installAdminBarTrigger() {
+	const el = document.createElement( 'div' );
+	el.id = 'wp-admin-bar-agents-manager-ai-chat';
+	document.body.appendChild( el );
+}
+
+// `isReaderChatHost()` reads the agent ID from this global.
+function installReaderChatHost() {
+	( globalThis as { agentsManagerData?: { agentId?: string } } ).agentsManagerData = {
+		agentId: 'reader-chat',
 	};
 }
 
-function installAdminBarTrigger() {
+function installMasterbarTrigger() {
 	const el = document.createElement( 'div' );
-	el.id = 'wp-admin-bar-agents-manager';
+	el.className = 'masterbar__item-agents-manager-ai-chat';
 	document.body.appendChild( el );
 }
 
@@ -83,10 +80,11 @@ function renderChatHeader( title?: string ) {
 
 describe( 'ChatHeader', () => {
 	afterEach( () => {
-		delete ( globalThis as AgentsManagerTestGlobal ).agentsManagerData;
 		mockIsDocked = false;
 		mockSetIsMinimized.mockClear();
-		document.getElementById( 'wp-admin-bar-agents-manager' )?.remove();
+		document.getElementById( 'wp-admin-bar-agents-manager-ai-chat' )?.remove();
+		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
+		document.querySelector( '.masterbar__item-agents-manager-ai-chat' )?.remove();
 	} );
 
 	it( 'renders the title with a matching title attribute so the full text shows on hover when truncated', () => {
@@ -108,16 +106,8 @@ describe( 'ChatHeader', () => {
 		expect( screen.getByText( 'View history' ) ).toBeInTheDocument();
 	} );
 
-	it( 'hides the history button when Jetpack AI Sidebar Preview disables chat history', () => {
-		installJetpackAiSidebarPreviewData( { chatHistory: false } );
-
-		renderChatHeader();
-
-		expect( screen.queryByText( 'View history' ) ).toBeNull();
-	} );
-
-	it( 'hides the history button when Jetpack AI Sidebar Preview omits chat history', () => {
-		installJetpackAiSidebarPreviewData( {} );
+	it( 'hides the history button on reader-chat hosts', () => {
+		installReaderChatHost();
 
 		renderChatHeader();
 
@@ -133,7 +123,15 @@ describe( 'ChatHeader', () => {
 		expect( mockSetIsMinimized ).toHaveBeenCalledWith( true );
 	} );
 
-	it( 'hides the Minimize button without the WP admin bar trigger', () => {
+	it( 'shows the Minimize button with the Calypso masterbar trigger', () => {
+		installMasterbarTrigger();
+
+		renderChatHeader();
+
+		expect( screen.getByText( 'Minimize' ) ).toBeInTheDocument();
+	} );
+
+	it( 'hides the Minimize button without an entry-point trigger', () => {
 		renderChatHeader();
 
 		expect( screen.queryByText( 'Minimize' ) ).toBeNull();

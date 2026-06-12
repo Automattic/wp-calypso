@@ -48,7 +48,8 @@ import type { Purchase } from '@automattic/api-core';
 export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
-	const { refunded, upgraded, cancelled, downgraded, intent } = purchaseSettingsRoute.useSearch();
+	const { refunded, upgraded, cancelled, downgraded, plan_changed, intent } =
+		purchaseSettingsRoute.useSearch();
 	const navigate = purchaseSettingsRoute.useNavigate();
 	// Show the transient cancelled success notice once after a cancel redirects
 	// here. The URL search param is cleared immediately so that a refresh / back
@@ -78,6 +79,21 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 			} );
 		}
 	}, [ downgraded, navigate ] );
+	// Transient success notice shown after a change-plan checkout (upgrade or
+	// downgrade) redirects back here with `?plan_changed=true`. The param is
+	// stripped immediately so it doesn't survive a refresh or back navigation.
+	const [ showPlanChangedNotice, setShowPlanChangedNotice ] = useState( Boolean( plan_changed ) );
+	useEffect( () => {
+		if ( plan_changed ) {
+			navigate( {
+				search: ( prev: Record< string, unknown > ) => {
+					const { plan_changed: _plan_changed, ...rest } = prev;
+					return rest;
+				},
+				replace: true,
+			} );
+		}
+	}, [ plan_changed, navigate ] );
 	const { data: purchaseAttachedTo } = useQuery( {
 		...purchaseQuery( purchase.attached_to_purchase_id ?? 0 ),
 		enabled: Boolean( purchase.attached_to_purchase_id ),
@@ -138,6 +154,18 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		return (
 			<Notice variant="success" onClose={ () => setShowDowngradedNotice( false ) }>
 				{ __( 'You\u2019ve switched to monthly billing.' ) }
+			</Notice>
+		);
+	}
+
+	if ( showPlanChangedNotice ) {
+		return (
+			<Notice variant="success" onClose={ () => setShowPlanChangedNotice( false ) }>
+				{ sprintf(
+					// translators: %s is the name of the plan, e.g. "WordPress.com Personal"
+					__( 'Your plan has been updated to %s.' ),
+					purchase.product_name
+				) }
 			</Notice>
 		);
 	}

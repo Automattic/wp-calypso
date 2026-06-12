@@ -4,7 +4,6 @@ import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { download } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { siteBackupDownloadRoute } from '../../app/router/sites';
@@ -120,7 +119,6 @@ function SiteBackupDownloadForm( {
 				<ButtonStack justify="flex-start">
 					<Button
 						variant="primary"
-						icon={ download }
 						type="submit"
 						isBusy={ isDownloadMutationPending }
 						disabled={ ! isFormValid || isDownloadMutationPending }

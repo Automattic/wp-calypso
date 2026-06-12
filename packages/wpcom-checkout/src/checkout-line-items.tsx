@@ -424,12 +424,20 @@ export function BundleLineItem( {
 	isSummary,
 	hasDeleteButton,
 	removeProductFromCart,
+	onRemoveBundle,
 }: {
 	bundle: CartBundleLineItem;
 	className?: string | null;
 	isSummary?: boolean;
 	hasDeleteButton?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
+	/**
+	 * Fired once when a bundle group is removed from the cart (after the user
+	 * confirms the removal modal). Threaded from the app layer so this package
+	 * stays free of a direct analytics dependency. Receives the bundle's group id
+	 * and its member count.
+	 */
+	onRemoveBundle?: ( groupId: string, memberCount: number ) => void;
 } ) {
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
@@ -440,6 +448,11 @@ export function BundleLineItem( {
 	// All members of a bundle are guaranteed to share a currency, so the total can
 	// safely be summed in the smallest unit and rendered under the first member's currency.
 	const currency = products[ 0 ]?.currency ?? 'USD';
+	// Raw subtotals (coupon included) are correct on this surface: the order review
+	// shows post-coupon prices on every line item. The order summary's bundle row
+	// (BundleProductAndCostOverridesList in cost-overrides-list.tsx) intentionally
+	// differs — it excludes coupon discounts because that surface lists coupon
+	// savings on a dedicated line. Don't "harmonize" the two.
 	const bundleTotalInteger = products.reduce(
 		( total, product ) => total + product.item_subtotal_integer,
 		0
@@ -448,12 +461,24 @@ export function BundleLineItem( {
 		isSmallestUnit: true,
 		stripZeros: true,
 	} );
+	// The backend applies the bundle discount as a cost override on each member, so
+	// the pre-discount group price is the sum of the members' original subtotals.
+	const bundleOriginalInteger = products.reduce(
+		( total, product ) => total + product.item_original_subtotal_integer,
+		0
+	);
+	const bundleOriginalDisplay = formatCurrency( bundleOriginalInteger, currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
+	const isBundleDiscounted = bundleTotalInteger < bundleOriginalInteger;
 	const bundleLabel = String( translate( 'Domain bundle' ) );
 
 	const removeBundleFromCart = () => {
 		products.forEach( ( product ) => {
 			removeProductFromCart?.( product.uuid );
 		} );
+		onRemoveBundle?.( bundle.groupId, products.length );
 	};
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -466,8 +491,30 @@ export function BundleLineItem( {
 			<LineItemTitle isSummary={ isSummary }>{ bundleLabel }</LineItemTitle>
 
 			<span className="checkout-line-item__price">
-				<LineItemPrice actualAmount={ bundleTotalDisplay } />
+				<LineItemPrice
+					actualAmount={ bundleTotalDisplay }
+					crossedOutAmount={ isBundleDiscounted ? bundleOriginalDisplay : undefined }
+				/>
 			</span>
+
+			{ isBundleDiscounted && (
+				<LineItemMeta>
+					<DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>
+				</LineItemMeta>
+			) }
+
+			{ /* Bundle members renew at full price (no plan credit at renewal —
+			     DOMAINS-2173), so the renewal aggregate is the pre-discount group
+			     total already computed for the strikethrough (DOMAINS-2184). */ }
+			{ isBundleDiscounted && (
+				<LineItemMeta>
+					<span>
+						{ translate( 'Auto-renews at %(price)s/year.', {
+							args: { price: bundleOriginalDisplay },
+						} ) }
+					</span>
+				</LineItemMeta>
+			) }
 
 			{ products.map( ( product ) => (
 				<LineItemMeta key={ product.uuid }>

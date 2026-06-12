@@ -147,7 +147,7 @@ export default function TransferDomainToAnyUser() {
 					{ hasEmailWithUs && (
 						<Text as="p">
 							{ sprintf(
-								/* Translators: %s: domainName is the domain name */
+								/* translators: %(domainName)s: the domain name */
 								__(
 									'The email subscription for %(domainName)s will be transferred along with the domain.'
 								),

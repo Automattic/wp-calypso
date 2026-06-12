@@ -43,7 +43,7 @@ export const AutoRenewModal = ( { items, onSuccess }: AutoRenewModalProps ) => {
 		);
 	};
 
-	/* translators: domainCount will be the number of domains to update */
+	/* translators: %(domainCount)d: the number of domains to update */
 	const helperText = sprintf( __( 'Managing auto-renewal settings for %(domainCount)d domains:' ), {
 		domainCount: items.length,
 	} );

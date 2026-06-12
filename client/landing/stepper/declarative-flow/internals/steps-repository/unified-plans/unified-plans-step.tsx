@@ -50,6 +50,8 @@ import {
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboarding-step-counter';
+import { OnboardingProgress } from '../components/onboarding-progress';
+import { useShowOnboardingProgress } from '../components/onboarding-progress/use-show-onboarding-progress';
 import { getIntervalType } from './util';
 import type { OnboardSelect, SiteDetails } from '@automattic/data-stores';
 import type { StepState } from 'calypso/state/signup/progress/schema';
@@ -270,6 +272,7 @@ function UnifiedPlansStep( {
 	);
 	const toggleHelpCenter = () => setShowHelpCenter( ! isHelpCenterShown );
 	const stepCounter = useOnboardingStepCounter( flowName, 'plans' );
+	const showProgress = useShowOnboardingProgress( isOnboardingFlow( flowName ) );
 	const initializedSitesBackUrl = useSelector( ( state ) => {
 		if ( getCurrentUserSiteCount( state ) ) {
 			return null;
@@ -447,6 +450,10 @@ function UnifiedPlansStep( {
 			return translate( 'Pick a plan for your store' );
 		}
 
+		if ( intent === 'plans-upgrade-or-downgrade' ) {
+			return translate( 'Find your best fit' );
+		}
+
 		return translate( 'There’s a plan for you' );
 	};
 
@@ -566,6 +573,12 @@ function UnifiedPlansStep( {
 			return null;
 		}
 
+		if ( intent === 'plans-upgrade-or-downgrade' ) {
+			return translate(
+				'Compare plans and pick the one that works for where your site is headed.'
+			);
+		}
+
 		if ( isOnboardingFlow( flowName ) || intent === 'plans-upgrade' ) {
 			return translate( 'Whatever site you’re building, there’s a plan to make it happen sooner.' );
 		}
@@ -678,7 +691,7 @@ function UnifiedPlansStep( {
 	);
 
 	if ( useStepContainerV2 && wrapperProps ) {
-		const goBack = wrapperProps.hideBack ? undefined : wrapperProps.goBack;
+		const goBack = wrapperProps.hideBack || showProgress ? undefined : wrapperProps.goBack;
 
 		return (
 			<>
@@ -726,6 +739,12 @@ function UnifiedPlansStep( {
 						}
 						heading={
 							<>
+								{ showProgress && (
+									<OnboardingProgress
+										currentStep="plans"
+										onStepSelect={ () => wrapperProps.goBack?.() }
+									/>
+								) }
 								{ ( intent === 'plans-website-builder' ||
 									intent === 'plans-wordpress-hosting' ) && (
 									<IntentToggle

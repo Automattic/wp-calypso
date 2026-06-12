@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Spinner } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, type JSX } from 'react';
 import UserAvatarDefaultIcon from 'calypso/reader/components/icons/user-avatar-default-icon';
 import { UserAvatarInfo } from '..';
 import PrimaryBlogCard from './primary-blog-card';

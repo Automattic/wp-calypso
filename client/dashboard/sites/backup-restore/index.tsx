@@ -128,7 +128,7 @@ function SiteBackupRestore() {
 							title={ __( 'Restore point' ) }
 							level={ 3 }
 							description={ createInterpolateElement(
-								/* translators: %s is the date of the restore point */
+								/* translators: %(restorePointDate)s: the date of the restore point */
 								sprintf( __( '%(restorePointDate)s. <LearnMore />' ), {
 									restorePointDate,
 								} ),

@@ -1,4 +1,5 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
+import type { JSX } from 'react';
 import './style.scss';
 
 export function QuickPostSkeleton(): JSX.Element {

@@ -59,6 +59,12 @@ would create a request waterfall.
 Queries that produce Reader posts should go through `usePostQuery()` /
 `usePostsQuery()` so normalization and canonical cache syncing stay centralized.
 
+### Adding a new data integration
+
+New Reader data fetching follows a three-layer pattern — `api-core` fetchers/mutators → `api-queries` `queryOptions()`/`mutationOptions()` → a consumer hook under `client/reader/data/<domain>/`. Use a query directly (`useQuery( readXxxQuery() )`) for simple reads; add a consumer hook only for shared or non-trivial logic, especially mutations. **Never** add Redux data-layer handlers, reducers, or `QueryReader*` components.
+
+See [`client/reader/data/README.md`](./data/README.md) for the full recipe — naming conventions, `queryKey`/`staleTime` rules, the consumer-`QueryClient` requirement, testing, and reference implementations (`read-sites`, `read-lists`, `read-follows`).
+
 ### Mutation factories must accept the consumer's `QueryClient`
 
 Calypso boots its own `QueryClient` (see `client/state/query-client.ts`, with a per-user persistence key) and injects it via `<QueryClientProvider>` in `client/controller/index.web.js`. The Dashboard, in contrast, uses the singleton exported by `@automattic/api-queries` (`packages/api-queries/src/query-client.ts`).

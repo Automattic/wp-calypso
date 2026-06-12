@@ -40,7 +40,7 @@
 		"@automattic/global-styles": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.20.0#~/.yarn/patches/@wordpress-block-editor-npm-15.20.0-2d52fc5cc4.patch",
-		"@wordpress/compose": "patch:@wordpress/compose@npm%3A8.0.0#~/.yarn/patches/@wordpress-compose-npm-8.0.0-14fd3b56ad.patch",
+		"@wordpress/compose": "patch:@wordpress/compose@npm%3A8.1.0#~/.yarn/patches/@wordpress-compose-npm-8.1.0-ea108e3129.patch",
 		"clsx": "^2.1.1",
 		"tslib": "^2.8.1",
 		"utility-types": "^3.10.0",
@@ -53,9 +53,9 @@
 		"typescript": "^6.0.3"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.46.0",
-		"@wordpress/element": "^6.46.0",
-		"@wordpress/i18n": "^6.19.0",
+		"@wordpress/data": "^10.48.0",
+		"@wordpress/element": "^8.0.0",
+		"@wordpress/i18n": "^6.21.0",
 		"debug": "^4.4.1",
 		"redux": "^5.0.1"
 	},

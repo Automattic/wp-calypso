@@ -9,6 +9,7 @@ import { PriceRulesConfig, useSuggestion } from '../hooks/use-suggestion';
 import type { FilterState } from '../components/search-bar/types';
 import type { FeaturedSuggestionReason } from '../helpers/partition-suggestions';
 import type {
+	BundleSuggestion,
 	DomainAvailability,
 	DomainAvailabilityStatus,
 	DomainSuggestion,
@@ -23,13 +24,43 @@ export interface SelectedDomain {
 	tld: string;
 	salePrice?: string;
 	price: string;
+	/**
+	 * Bundle membership, present only when the item was added to the cart as
+	 * part of a domain bundle. `groupId` is the server-issued bundle group id,
+	 * passed through verbatim by the app layer; items sharing a `groupId` are
+	 * rendered as a single grouped cart row. `price` is the formatted sum of
+	 * the bundle members' current prices, computed and formatted at the app
+	 * layer (the same value for every member of the group). `isPrimary` marks
+	 * the bundle's anchor domain so the grouped row can list it first,
+	 * matching the masterbar mini-cart and checkout member ordering.
+	 */
+	bundle?: {
+		groupId: string;
+		price: string;
+		isPrimary?: boolean;
+	};
 }
 
 export interface DomainSearchCart {
 	items: SelectedDomain[];
 	total: string;
 	onAddItem: ( item: DomainSuggestion ) => Promise< unknown >;
+	/**
+	 * Add every member of a bundle suggestion to the cart in a single,
+	 * all-or-nothing operation. Implemented at the app layer; when absent the
+	 * bundle CTA is a no-op.
+	 */
+	onAddBundle?: ( bundle: BundleSuggestion ) => Promise< unknown >;
 	onRemoveItem: ( uuid: string ) => Promise< unknown >;
+	/**
+	 * Remove every member of a bundle group from the cart in a single,
+	 * all-or-nothing operation. Implemented at the app layer; when absent the
+	 * grouped cart row falls back to removing each member individually. That
+	 * fallback is not all-or-nothing — a failed member removal can leave the
+	 * rest of the group orphaned in the cart — so consumers should provide
+	 * this callback whenever their cart backend can batch the removal.
+	 */
+	onRemoveBundle?: ( bundleGroupId: string ) => Promise< unknown >;
 	hasItem: ( domainName: string ) => boolean;
 }
 
@@ -75,6 +106,8 @@ export interface DomainSearchEvents {
 	onTrademarkClaimsNoticeAccepted: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
 	onTrademarkClaimsNoticeClosed: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
 	onPageView: () => void;
+	onBundleShown: ( bundle: BundleSuggestion ) => void;
+	onBundleAddToCart: ( bundle: BundleSuggestion ) => void;
 }
 
 export interface DomainSearchConfig {

@@ -64,7 +64,14 @@ export default function OmnibarSiteSwitcher() {
 	} );
 	useOmnibarEvent( 'siteSwitcherAnchor', setAnchor );
 
-	const { data: sites } = useQuery( { ...queries.sitesQuery(), enabled: isOpen } );
+	const { data: sites } = useQuery( {
+		...queries.sitesQuery( {
+			site_visibility: 'visible',
+			include_a8c_owned: false,
+			include_staging: false,
+		} ),
+		enabled: isOpen,
+	} );
 
 	return (
 		<>

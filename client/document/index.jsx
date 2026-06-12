@@ -14,6 +14,7 @@ import EnvironmentBadge, {
 	PreferencesHelper,
 	FeaturesHelper,
 	ReactQueryDevtoolsHelper,
+	RtlCssDisabledHelper,
 	StoreSandboxHelper,
 } from 'calypso/components/environment-badge';
 import Head from 'calypso/components/head';
@@ -76,6 +77,13 @@ class Document extends Component {
 			showStepContainerV2Loader,
 		} = this.props;
 
+		const theme = config( 'theme' );
+		const isRTL = isLocaleRtl( lang );
+		const isDevelopmentEnv = app?.isDevelopmentEnv || env === 'development';
+		const shouldBuildRtlCss = ! isDevelopmentEnv || process.env.BUILD_RTL_CSS === 'true';
+		const isRtlCssDisabled = isDevelopmentEnv && ! shouldBuildRtlCss;
+		const shouldUseRtlCss = isRTL && shouldBuildRtlCss;
+
 		const installedChunks = entrypoint.js
 			.concat( chunkFiles.js )
 			.map( ( chunk ) => parse( chunk ).name );
@@ -98,15 +106,12 @@ class Document extends Component {
 			( languageRevisions
 				? `var languageRevisions = ${ jsonStringifyForHtml( languageRevisions ) };\n`
 				: '' ) +
+			`var RTL_CSS_ENABLED = ${ jsonStringifyForHtml( shouldBuildRtlCss ) };\n` +
 			`var installedChunks = ${ jsonStringifyForHtml( installedChunks ) };\n` +
 			// Inject the locale if we can get it from the route via `getLanguageRouteParam`
 			( params && params.hasOwnProperty( 'lang' )
 				? `var localeFromRoute = ${ jsonStringifyForHtml( params.lang ?? '' ) };\n`
 				: '' );
-
-		const theme = config( 'theme' );
-
-		const isRTL = isLocaleRtl( lang );
 
 		const isDashboardOmnibarPage =
 			( isDashboardEnv() || env === 'development' ) &&
@@ -155,8 +160,8 @@ class Document extends Component {
 					{ head.links.map( ( props, index ) => (
 						<link { ...props } key={ index } />
 					) ) }
-					{ chunkCssLinks( entrypoint, isRTL ) }
-					{ chunkCssLinks( chunkFiles, isRTL ) }
+					{ chunkCssLinks( entrypoint, shouldUseRtlCss ) }
+					{ chunkCssLinks( chunkFiles, shouldUseRtlCss ) }
 					{ chunkFiles.js.map( ( chunk ) => (
 						<link key={ chunk } rel="preload" as="script" href={ chunk } />
 					) ) }
@@ -231,6 +236,7 @@ class Document extends Component {
 							{ featuresHelper && <FeaturesHelper /> }
 							{ authHelper && <AuthHelper /> }
 							{ storeSandboxHelper && <StoreSandboxHelper /> }
+							{ isRtlCssDisabled && <RtlCssDisabledHelper /> }
 							{ branchName && (
 								<Branch branchName={ branchName } commitChecksum={ commitChecksum } />
 							) }

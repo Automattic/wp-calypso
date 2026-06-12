@@ -112,12 +112,14 @@ const AddProfessionalEmail = () => {
 			return;
 		}
 
-		isAddMailboxRoute
-			? addToCart( { mailboxOperations, onFinally: () => setIsSubmitting( false ) } )
-			: setUpMailbox( {
-					mailboxOperations,
-					onFinally: () => setIsSubmitting( false ),
-			  } );
+		if ( isAddMailboxRoute ) {
+			addToCart( { mailboxOperations, onFinally: () => setIsSubmitting( false ) } );
+		} else {
+			setUpMailbox( {
+				mailboxOperations,
+				onFinally: () => setIsSubmitting( false ),
+			} );
+		}
 	};
 
 	const removeForm = ( index: number ) => {
@@ -142,7 +144,7 @@ const AddProfessionalEmail = () => {
 	let mailboxCost;
 	const totalItems = mailboxEntities.length;
 	let totalPrice = '0';
-	if ( isAddMailboxRoute ) {
+	if ( isAddMailboxRoute && product ) {
 		mailboxCost = getMailboxCost( {
 			domain,
 			product,

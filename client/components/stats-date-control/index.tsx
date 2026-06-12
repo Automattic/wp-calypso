@@ -10,6 +10,7 @@ import { useSelector } from 'calypso/state';
 import getSiteId from 'calypso/state/sites/selectors/get-site-id';
 import DateControl from '../date-control';
 import { DateRangePickerShortcut } from '../date-range/shortcuts';
+import type { JSX } from 'react';
 
 type DateRange = {
 	chartStart: string;
@@ -204,12 +205,13 @@ const StatsDateControl = ( {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 
 		if ( shortcut.isGated ) {
-			onGatedHandler &&
+			if ( onGatedHandler ) {
 				onGatedHandler(
 					[ { name: eventNames[ event_from ][ shortcut.id as EventNameKey ] } ],
 					event_from,
 					shortcut.statType ?? shortcut.id
 				);
+			}
 		} else {
 			recordTracksEvent( eventNames[ event_from ][ shortcut.id as EventNameKey ] );
 			if ( shortcut.id !== 'custom_date_range' ) {

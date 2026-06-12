@@ -1,6 +1,6 @@
 import { useSelect } from '@wordpress/data';
 import clsx from 'clsx';
-import { useEffect } from 'react';
+import { useEffect, type JSX } from 'react';
 import { useLoginUrlForFlow } from 'calypso/landing/stepper/hooks/use-login-url-for-flow';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import kebabCase from 'calypso/landing/stepper/utils/kebabCase';

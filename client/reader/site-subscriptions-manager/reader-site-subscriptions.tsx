@@ -1,6 +1,6 @@
 import { SubscriptionManager } from '@automattic/data-stores';
 import { __experimentalVStack as VStack } from '@wordpress/components';
-import { useEffect } from 'react';
+import { useEffect, type JSX } from 'react';
 import {
 	SiteSubscriptionsList,
 	SiteSubscriptionsListActionsBar,

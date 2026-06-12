@@ -1,6 +1,6 @@
 import type { PlanSlug } from '@automattic/calypso-products';
 import type { PricingMetaForGridPlan, SiteDetails } from '@automattic/data-stores';
-import type { ReactNode } from 'react';
+import type { ReactNode, JSX } from 'react';
 
 export type HostingDetailsItem = {
 	title: string;
