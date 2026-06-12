@@ -62,7 +62,7 @@ import { check, column, Icon, payment, reusableBlock, tool, trash, upload } from
 import clsx from 'clsx';
 import { localize, LocalizeProps, useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import { Component, ComponentProps, Fragment, ReactElement } from 'react';
+import { Component, ComponentProps, Fragment, ReactElement, type JSX } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
@@ -100,6 +100,7 @@ import {
 	canAutoRenewBeTurnedOff,
 	isExpired,
 	isInExpirationGracePeriod,
+	isWithinRefundWindowDowngradeEligible,
 	isOneTimePurchase,
 	isPartnerPurchase,
 	isRenewable,
@@ -597,7 +598,10 @@ class ManagePurchase extends Component<
 		if ( ! purchase || ! isPlan( purchase ) ) {
 			return false;
 		}
-		if ( ! isInExpirationGracePeriod( purchase ) ) {
+		if (
+			! isInExpirationGracePeriod( purchase ) &&
+			! isWithinRefundWindowDowngradeEligible( purchase )
+		) {
 			return false;
 		}
 		return true;

@@ -11,7 +11,9 @@ body.is-section-promote-post-i2 {
 	.layout__content {
 		position: relative;
 		margin: 0;
-		padding: calc(32px + 24px) 0 32px var(--sidebar-width-max);
+		// No bottom padding: the sticky Jetpack footer at the end of the page
+		// should rest flush against the bottom.
+		padding: calc(32px + 24px) 0 0 var(--sidebar-width-max);
 
 		.main {
 			margin: 0;
@@ -28,28 +30,6 @@ body.is-section-promote-post-i2 {
 				.campaigns-list__table .campaign-item__status .badge {
 					height: 20px;
 					padding: 0 10px;
-				}
-			}
-
-			.advertising__page-header {
-				// Without a banner
-				.formatted-header__title {
-					color: $studio-gray-100;
-					font-family: $font-sf-pro-display;
-					font-style: normal;
-					font-weight: 500;
-					font-size: 1.5rem;
-					letter-spacing: 0.36px;
-					line-height: 1.33;
-					text-decoration: none;
-				}
-
-				// With a banner
-				&_has-banner .formatted-header__title {
-					font-family: $font-sf-pro-text;
-					font-size: 0.875rem;
-					letter-spacing: -0.15px;
-					line-height: 1.43;
 				}
 			}
 		}
@@ -146,7 +126,8 @@ body.is-section-promote-post-i2 {
 }
 
 .is-mobile-app-view {
-	.advertising__page-header,
+	.promote-post-i2__page > :first-child,
+	.promote-post-i2__page .jetpack-footer,
 	.promote-post-i2 .posts-list-banner__container,
 	.promote-post-i2 .tsp-banner__container,
 	.promote-post-i2 .section-nav,

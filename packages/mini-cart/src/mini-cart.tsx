@@ -132,6 +132,7 @@ export function MiniCart( {
 	goToCheckout,
 	closeCart,
 	onRemoveProduct,
+	onRemoveBundle,
 	onRemoveCoupon,
 	checkoutLabel,
 	emptyCart,
@@ -142,6 +143,7 @@ export function MiniCart( {
 	goToCheckout: ( siteSlug: string ) => void;
 	closeCart: () => void;
 	onRemoveProduct?: ( uuid: string ) => void;
+	onRemoveBundle?: ( groupId: string, memberCount: number ) => void;
 	onRemoveCoupon?: () => void;
 	checkoutLabel?: string;
 	emptyCart?: React.ReactNode;
@@ -201,6 +203,7 @@ export function MiniCart( {
 						addProductsToCart={ addProductsToCart }
 						responseCart={ responseCart }
 						showBundleGrouping={ showBundleGrouping }
+						onRemoveBundle={ onRemoveBundle }
 					/>
 					{ shouldRenderEmptyCart && emptyCart }
 					{ ! shouldRenderEmptyCart && <MiniCartTotal responseCart={ responseCart } /> }

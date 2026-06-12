@@ -5,7 +5,7 @@ import {
 	Spinner,
 } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
@@ -81,7 +81,8 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 
 	const view = { ...initialView, perPage: NOTES_PER_PAGE };
 
-	const fields = getFields();
+	// Field identities must stay stable or DataViews remounts every cell per re-render.
+	const fields = useMemo( () => getFields(), [] );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
 		visibleNotes,

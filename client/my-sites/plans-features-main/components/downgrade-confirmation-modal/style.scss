@@ -33,6 +33,13 @@
 	margin-block-start: 2px;
 }
 
+.downgrade-confirmation-modal__refund {
+	font-size: $font-body-small;
+	font-weight: 600;
+	margin-block-start: 16px;
+	margin-block-end: 0;
+}
+
 .downgrade-confirmation-modal__buttons {
 	display: flex;
 	justify-content: flex-end;

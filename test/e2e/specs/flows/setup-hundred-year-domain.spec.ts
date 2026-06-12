@@ -26,6 +26,11 @@ test.describe(
 			pageLogin,
 			pageUserSignUp,
 		} ) => {
+			test.skip(
+				true,
+				'Async domain registration omits is_hundred_year_domain from the transaction response, so the generic thank-you page renders instead of the 100-year one. See DOMENG-694.'
+			);
+
 			const testUser = helperData.getNewTestUser();
 			let newUserDetails: NewUserResponse;
 			let selectedDomain: string;

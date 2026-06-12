@@ -130,14 +130,9 @@ export type WPComSpaceUpgradeProductSlug = ( typeof WPCOM_SPACE_UPGRADE_PRODUCTS
 export type WPComOtherProductSlug = ( typeof WPCOM_OTHER_PRODUCTS )[ number ];
 
 export interface WPComPlan extends Plan {
-	getAudience?: () => TranslateResult;
-	getBlogAudience?: () => TranslateResult;
-	getPortfolioAudience?: () => TranslateResult;
-	getStoreAudience?: () => TranslateResult;
 	getPlanTagline?: () => TranslateResult;
 	getNewsletterTagLine?: () => TranslateResult;
 	getBlogOnboardingTagLine?: () => TranslateResult;
-	getSubTitle?: () => TranslateResult;
 	getPlanCompareFeatures?: (
 		experiment?: string,
 		options?: Record< string, string | boolean[] >
@@ -153,7 +148,6 @@ export interface WPComPlan extends Plan {
 	getSenseiFeatures?: ( term?: Product[ 'term' ] ) => () => Feature[];
 	getSenseiHighlightedFeatures?: () => Feature[];
 	getPromotedFeatures?: () => Feature[];
-	getPathSlug: () => string;
 	getAnnualPlansOnlyFeatures?: () => string[];
 	get2023PricingGridSignupWpcomFeatures?: () => Feature[];
 	getHostingSignupFeatures?: ( term?: Product[ 'term' ] ) => () => Feature[];
@@ -221,7 +215,6 @@ export interface JetpackPlan extends Plan {
 	getAnnualSlug?: () => JetpackPlanSlug;
 	getMonthlySlug?: () => JetpackPlanSlug;
 	getPlanCardFeatures?: () => Feature[];
-	getPathSlug: () => string;
 	getWhatIsIncluded: () => Array< TranslateResult >;
 	getBenefits: () => Array< TranslateResult >;
 	getRecommendedFor: () => Array< JetpackTag >;
@@ -390,11 +383,9 @@ export type Plan = BillingTerm & {
 		isCurrentPlan?: boolean
 	) => WPComPlanStorageFeatureSlug;
 	getProductId: () => number;
-	getPathSlug?: () => string;
 	getStoreSlug: () => PlanSlug;
 	getTitle: () => TranslateResult;
 	getDescription: () => TranslateResult;
-	getShortDescription?: () => TranslateResult;
 	getFeaturedDescription?: () => TranslateResult;
 	getLightboxDescription?: () => TranslateResult;
 	getPlanCancellationDescription?: () => TranslateResult;

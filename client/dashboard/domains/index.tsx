@@ -2,6 +2,7 @@ import { DomainSubtype } from '@automattic/api-core';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
@@ -18,6 +19,7 @@ import {
 	useFields,
 	DEFAULT_VIEW,
 	DEFAULT_LAYOUTS,
+	recordDomainViewChanges,
 } from './dataviews';
 import EmptyDomainsStateActions from './empty-domains-state/actions';
 import { EmptyDomainsStateUpsell } from './empty-domains-state/upsell';
@@ -41,6 +43,7 @@ const defaultView = {
 function Domains() {
 	const { user } = useAuth();
 	const { queries } = useAppContext();
+	const { recordTracksEvent } = useAnalytics();
 	const fields = useFields( { showPrimaryDomainBadge: false } );
 	const { data: sites } = useSuspenseQuery( queries.sitesQuery() );
 	const actions = useActions( { user, sites } );
@@ -96,7 +99,10 @@ function Domains() {
 						<DataViews< DomainSummary >
 							data={ filteredData || [] }
 							fields={ fields }
-							onChangeView={ updateView }
+							onChangeView={ ( nextView ) => {
+								recordDomainViewChanges( view, nextView, recordTracksEvent );
+								updateView( nextView );
+							} }
 							onReset={ resetView }
 							view={ view }
 							actions={ actions }

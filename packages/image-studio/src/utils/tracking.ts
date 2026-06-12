@@ -813,3 +813,28 @@ export function trackImageStudioFeatureClipAddedToPost( {
 export function trackImageStudioFeatureClipPanelViewed(): void {
 	recordImageStudioEvent( 'image_studio_feature_clip_panel_viewed' );
 }
+
+/**
+ * Tracks when the "generation in progress" close warning is shown — i.e. the
+ * user tried to close the modal while a clip was still rendering. The
+ * impression denominator for how often closing mid-generation happens.
+ */
+export function trackImageStudioFeatureClipCloseWarningShown(): void {
+	recordImageStudioEvent( 'image_studio_feature_clip_close_warning_shown' );
+}
+
+/**
+ * Tracks when the user dismisses the close warning to let the clip keep
+ * generating ("Cancel").
+ */
+export function trackImageStudioFeatureClipCloseWarningKeptGenerating(): void {
+	recordImageStudioEvent( 'image_studio_feature_clip_close_warning_kept_generating' );
+}
+
+/**
+ * Tracks when the user confirms the close warning, stopping the in-progress
+ * generation and closing the modal ("Stop and close").
+ */
+export function trackImageStudioFeatureClipCloseWarningStopped(): void {
+	recordImageStudioEvent( 'image_studio_feature_clip_close_warning_stopped' );
+}

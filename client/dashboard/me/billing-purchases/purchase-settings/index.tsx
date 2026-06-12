@@ -96,6 +96,7 @@ import {
 	isWpcomFlexSubscription,
 	isAkismetFreeProduct,
 	isInExpirationGracePeriod,
+	isWithinRefundWindowDowngradeEligible,
 	isA4ABillingDragonPurchase,
 	isCentennialPurchase,
 	hasAmountAvailableToRefund,
@@ -440,9 +441,29 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 	return null;
 }
 
+/**
+ * Whether the "Change plan" action should be offered for this purchase: either
+ * the plan is past expiry (downgrade-to-checkout) or still within its refund
+ * window (instant downgrade). Gated by the `plans/expired-downgrade` flag.
+ */
+function shouldShowChangePlan( purchase: Purchase ): boolean {
+	if ( ! config.isEnabled( 'plans/expired-downgrade' ) ) {
+		return false;
+	}
+	return (
+		( purchase.is_past_expiry_date && purchase.is_plan ) ||
+		isWithinRefundWindowDowngradeEligible( purchase )
+	);
+}
+
 function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 	const { recordTracksEvent } = useAnalytics();
 	if ( ! purchase.is_upgradable ) {
+		return null;
+	}
+	// When "Change plan" is offered (downgrade-eligible), it supersedes the
+	// upgrade action — matching the classic purchases page.
+	if ( shouldShowChangePlan( purchase ) ) {
 		return null;
 	}
 	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() );
@@ -607,13 +628,11 @@ function ReinstallButton( { purchase }: { purchase: Purchase } ) {
 function ChangePlanActionItem( { purchase }: { purchase: Purchase } ) {
 	const { recordTracksEvent } = useAnalytics();
 
-	if ( ! config.isEnabled( 'plans/expired-downgrade' ) ) {
+	if ( ! shouldShowChangePlan( purchase ) ) {
 		return null;
 	}
 
-	if ( ! purchase.is_past_expiry_date || ! purchase.is_plan ) {
-		return null;
-	}
+	const isPastExpiryDowngrade = purchase.is_past_expiry_date && purchase.is_plan;
 
 	return (
 		<ActionList.ActionItem
@@ -626,6 +645,7 @@ function ChangePlanActionItem( { purchase }: { purchase: Purchase } ) {
 					onClick={ () => {
 						recordTracksEvent( 'calypso_purchases_change_plan_click', {
 							product_slug: purchase.product_slug,
+							mode: isPastExpiryDowngrade ? 'expired' : 'refund-window',
 						} );
 						window.location.href = getExpiredNewPlanUrl( purchase );
 					} }

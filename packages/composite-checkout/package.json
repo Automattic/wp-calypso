@@ -47,8 +47,8 @@
 		"@automattic/color-studio": "^4.1.0",
 		"@emotion/react": "^11.11.1",
 		"@emotion/styled": "^11.11.0",
-		"@wordpress/i18n": "^6.19.0",
-		"@wordpress/react-i18n": "^4.46.0",
+		"@wordpress/i18n": "^6.21.0",
+		"@wordpress/react-i18n": "^4.48.0",
 		"debug": "^4.4.1",
 		"prop-types": "^15.8.1"
 	},

@@ -714,6 +714,27 @@ export function hasAmountAvailableToRefund( purchase: Purchase ) {
 }
 
 /**
+ * Returns true if the plan is eligible for an instant, self-serve downgrade: the
+ * plan is still within its initial refund window (not a renewal) and has neither
+ * expired nor entered its post-expiry grace period.
+ *
+ * Note: this intentionally does NOT require a refundable amount. Instant
+ * downgrades are also offered for plans that were paid with credits or are
+ * otherwise free, where no money would be refunded.
+ *
+ * This is distinct from {@link isInExpirationGracePeriod}, which gates the
+ * downgrade-to-checkout flow for plans whose expiry date has already passed.
+ */
+export function isWithinRefundWindowDowngradeEligible( purchase: Purchase ): boolean {
+	return (
+		purchase.is_plan &&
+		purchase.is_within_initial_refund_window &&
+		! isExpired( purchase ) &&
+		! isInExpirationGracePeriod( purchase )
+	);
+}
+
+/**
  * Returns the purchase cancellation flow.
  */
 export function getPurchaseCancellationFlowType( purchase: Purchase ): CancelFlowType {

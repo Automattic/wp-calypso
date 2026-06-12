@@ -18,6 +18,7 @@ jest.mock( '@wordpress/data', () => ( {
 
 jest.mock( '../../stores', () => ( {
 	AGENTS_MANAGER_STORE: 'agents-manager-store',
+	persistAgentsManagerState: jest.fn(),
 } ) );
 
 const HOUR_MS = 60 * 60 * 1000;

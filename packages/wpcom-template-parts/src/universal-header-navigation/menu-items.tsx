@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { ClickableItemProps, MenuItemProps } from '../types';
+import { recordNavLinkClick } from './nav-2026/tracks';
 
 export const NonClickableItem = ( {
 	content,
@@ -74,6 +75,7 @@ export const ClickableItem = ( {
 	target,
 	tabIndex,
 	index,
+	onItemMouseEnter,
 }: ClickableItemProps ) => {
 	let liClassName = '';
 	if ( type === 'menu' ) {
@@ -83,14 +85,18 @@ export const ClickableItem = ( {
 		liClassName = liClassName + ' ' + className;
 	}
 
-	const onClick = ( event: React.MouseEvent< HTMLElement > ) => {
+	const onClick = ( event: React.MouseEvent< HTMLAnchorElement > ) => {
 		const target = event.currentTarget;
 		clickNavLinkEvent( target );
+		// Also emit the global-nav usage event; it resolves its props from the DOM
+		// so it reports correctly on either nav.
+		recordNavLinkClick( target );
 	};
 	return (
 		<li
 			className={ liClassName }
 			role="none"
+			onMouseEnter={ onItemMouseEnter }
 			style={
 				index !== undefined ? ( { '--stagger-index': index } as React.CSSProperties ) : undefined
 			}

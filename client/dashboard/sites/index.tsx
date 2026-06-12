@@ -69,6 +69,9 @@ const getFetchPaginatedSitesOptions = (
 		// See: https://github.com/Automattic/wp-calypso/pull/104220.
 		site_visibility: view.search || shouldIncludeA8COwned || isRestoringAccount ? 'all' : 'visible',
 		include_a8c_owned: shouldIncludeA8COwned,
+		// Exclude staging sites from the standalone dashboard list; the classic
+		// Calypso backport keeps them (the API includes them by default).
+		...( ! isDashboardBackport() && { include_staging: false } ),
 		search: view.search,
 		sort_field: view.sort?.field,
 		sort_direction: view.sort?.direction,
@@ -226,7 +229,10 @@ export default function Sites() {
 							userHasSites && (
 								<Button
 									variant="primary"
-									onClick={ () => setIsModalOpen( true ) }
+									onClick={ () => {
+										recordTracksEvent( 'calypso_dashboard_sites_add_new_site_clicked' );
+										setIsModalOpen( true );
+									} }
 									__next40pxDefaultSize
 								>
 									{ __( 'Add new site' ) }

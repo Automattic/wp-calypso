@@ -9,6 +9,9 @@ import { isCardDismissed } from './selectors';
 
 import './style.scss';
 
+/**
+ * @param {{ className?: string; highlight?: 'error' | 'info' | 'success' | 'warning'; temporary?: boolean; onClick?: ( event: import('react').MouseEvent ) => void; preferenceName: string; href?: string; children?: import('react').ReactNode; }} props
+ */
 function DismissibleCard( {
 	className,
 	highlight,
