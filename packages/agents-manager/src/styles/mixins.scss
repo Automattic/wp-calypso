@@ -4,3 +4,14 @@
 		@content;
 	}
 }
+
+// Gate the docked-shell reshape to desktop width. Pairs with the
+// `:not( .agents-manager-dock-too-short )` selector guard (height): together
+// they keep the server-pre-rendered shell visually inert until the React hook
+// boots, so a context that can't dock never flashes a docked layout. The hook
+// is the authority once mounted; this only covers the pre-paint window.
+@mixin dockable-viewport {
+	@media ( min-width: $dock-min-width ) {
+		@content;
+	}
+}

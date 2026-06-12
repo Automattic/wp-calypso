@@ -11,6 +11,13 @@ $transition-duration: 0.2s;
 $transition-timing: $transition-duration cubic-bezier( 0.4, 0, 0.2, 1 );
 $agents-manager-z-index-docked: 999999;
 
+// Desktop-width dock gate, matching the hook's `isDesktop` media query. This
+// plus the `agents-manager-dock-too-short` body class are the pre-paint stand-in
+// for the hook's `canDock`: they suppress the server-pre-rendered docked reshape
+// until the React hook boots and takes over. Width is a static breakpoint here;
+// height is the dynamic class set by the Jetpack reconciler.
+$dock-min-width: 1200px;
+
 /* WP Admin */
 $admin-menu-width-unified: 272px;
 $admin-menu-width-classic: $admin-sidebar-width;

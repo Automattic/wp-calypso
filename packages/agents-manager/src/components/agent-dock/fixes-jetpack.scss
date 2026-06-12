@@ -1,46 +1,58 @@
-body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) {
-	&:is(
-			[class*='jetpack_page_'],
-			[class*='plugins_page_wpcom-'],
-			.toplevel_page_jetpack,
-			.tools_page_advertising
-		) {
-		#wpwrap {
-			background-color: inherit;
-			position: inherit;
+@include dockable-viewport {
+	body.wp-admin.agents-manager-sidebar-container--sidebar-open:not(
+			.agents-manager-dock-too-short
+		):not( .modal-open ) {
+		&:is(
+				[class*='jetpack_page_'],
+				[class*='plugins_page_wpcom-'],
+				.toplevel_page_jetpack,
+				.tools_page_advertising
+			) {
+			#wpwrap {
+				background-color: inherit;
+				position: inherit;
+			}
+
+			#wpbody {
+				padding-left: 0;
+			}
 		}
 
-		#wpbody {
-			padding-left: 0;
+		&.plugins_page_wpcom-install-plugin {
+			#wpwrap #wpcontent {
+				min-height: inherit;
+			}
+		}
+
+		#jetpack-social-root > div:first-of-type {
+			margin-left: 0;
+		}
+
+		// Lovely
+		#jetpack-social-root
+			> div
+			> div:nth-child( 2 )
+			> div
+			> div:nth-child( 2 )
+			> div:nth-child( 2 )
+			> div {
+			grid-column-end: span 7;
+		}
+
+		&.jetpack_page_jetpack-social #wpbody {
+			z-index: 9990;
 		}
 	}
 
-	&.plugins_page_wpcom-install-plugin {
-		#wpwrap #wpcontent {
-			min-height: inherit;
+	body.agents-manager-sidebar-container--sidebar-open:not(
+			.agents-manager-dock-too-short
+		).modal-open:not( .wp-admin ) {
+		overflow: hidden;
+
+		.is-section-subscribers #secondary {
+			position: fixed !important;
+			bottom: 16px !important;
+			top: 48px !important;
 		}
-	}
-
-	#jetpack-social-root > div:first-of-type {
-		margin-left: 0;
-	}
-
-	// Lovely
-	#jetpack-social-root > div > div:nth-child(2) > div > div:nth-child(2) > div:nth-child(2) > div {
-		grid-column-end: span 7;
-	}
-
-	&.jetpack_page_jetpack-social #wpbody {
-		z-index: 9990;
-	}
-}
-
-body.agents-manager-sidebar-container--sidebar-open.modal-open:not( .wp-admin ) {
-	overflow: hidden;
-
-	.is-section-subscribers #secondary {
-		position: fixed !important;
-		bottom: 16px !important;
-		top: 48px !important;
 	}
 }

@@ -88,89 +88,93 @@
 	}
 }
 
-// Disable pointer events on the admin bar profile menu during sidebar close
-// transition to prevent its hover effect from triggering when the cursor
-// lands on it after the sidebar disappears.
-body.wp-admin.agents-manager-sidebar-container--closing {
-	#wp-admin-bar-my-account {
-		pointer-events: none;
-	}
-}
-
-body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) {
-	@include wp-admin-sidebar-open-specific( $admin-menu-width-classic );
-	@include notice-panel-open( '#wpnt-notes-panel2' );
-
-	background-color: $gray-900;
-
-	#wpadminbar {
-		position: fixed !important;
-		top: $layout-spacing;
-		left: $layout-spacing;
-		right: $sidebar-width;
-		width: auto !important;
-		border-radius: $main-border-radius $main-border-radius 0 0;
-		border: 1px solid $admin-border-color;
-		border-bottom: none;
-		box-sizing: border-box;
-		height: calc( var( --masterbar-height ) + 1px );
+@include dockable-viewport {
+	// Disable pointer events on the admin bar profile menu during sidebar close
+	// transition to prevent its hover effect from triggering when the cursor
+	// lands on it after the sidebar disappears.
+	body.wp-admin.agents-manager-sidebar-container--closing {
+		#wp-admin-bar-my-account {
+			pointer-events: none;
+		}
 	}
 
-	#adminmenuback,
-	#adminmenuwrap {
-		position: fixed !important;
-		top: $admin-content-top;
-		left: $layout-spacing;
-		height: calc( 100vh - $admin-bar-height - ( $layout-spacing * 2 ) ) !important;
-		border-left: 1px solid $admin-border-color;
-		border-bottom: 1px solid $admin-border-color;
-		border-bottom-left-radius: $main-border-radius;
-	}
+	body.wp-admin.agents-manager-sidebar-container--sidebar-open:not(
+			.agents-manager-dock-too-short
+		):not( .modal-open ) {
+		@include wp-admin-sidebar-open-specific( $admin-menu-width-classic );
+		@include notice-panel-open( '#wpnt-notes-panel2' );
 
-	#wpcontent {
-		margin-right: $sidebar-width !important;
-	}
+		background-color: $gray-900;
 
-	#wpbody {
-		position: fixed !important;
-		top: $admin-content-top;
-		right: $sidebar-width;
-		padding-left: $layout-spacing;
-		bottom: $layout-spacing - 1px;
-		border-bottom-right-radius: $main-border-radius;
-		border-right: 1px solid $admin-border-color;
-		border-bottom: 1px solid $admin-border-color;
-		overflow-y: auto;
-		overflow-x: hidden;
-		background-color: $admin-background-color;
-		box-sizing: border-box;
-	}
+		#wpadminbar {
+			position: fixed !important;
+			top: $layout-spacing;
+			left: $layout-spacing;
+			right: $sidebar-width;
+			width: auto !important;
+			border-radius: $main-border-radius $main-border-radius 0 0;
+			border: 1px solid $admin-border-color;
+			border-bottom: none;
+			box-sizing: border-box;
+			height: calc( var( --masterbar-height ) + 1px );
+		}
 
-	#wpfooter {
-		margin-right: calc( $sidebar-width + 1px ) !important;
-		left: $layout-spacing - 2px;
-		bottom: $layout-spacing;
-		border-bottom-right-radius: $main-border-radius;
-		background-color: $admin-background-color;
-	}
+		#adminmenuback,
+		#adminmenuwrap {
+			position: fixed !important;
+			top: $admin-content-top;
+			left: $layout-spacing;
+			height: calc( 100vh - $admin-bar-height - ( $layout-spacing * 2 ) ) !important;
+			border-left: 1px solid $admin-border-color;
+			border-bottom: 1px solid $admin-border-color;
+			border-bottom-left-radius: $main-border-radius;
+		}
 
-	.agents-manager-chat--docked {
-		visibility: visible;
-		// Prevent the embedded chat from overlapping the main container during transition
-		animation: agents-manager-delay-visibility $transition-duration;
-		z-index: unset;
-	}
+		#wpcontent {
+			margin-right: $sidebar-width !important;
+		}
 
-	.agents-manager-sidebar-fab {
-		display: none;
-	}
+		#wpbody {
+			position: fixed !important;
+			top: $admin-content-top;
+			right: $sidebar-width;
+			padding-left: $layout-spacing;
+			bottom: $layout-spacing - 1px;
+			border-bottom-right-radius: $main-border-radius;
+			border-right: 1px solid $admin-border-color;
+			border-bottom: 1px solid $admin-border-color;
+			overflow-y: auto;
+			overflow-x: hidden;
+			background-color: $admin-background-color;
+			box-sizing: border-box;
+		}
 
-	&.is-nav-unification {
-		@include wp-admin-sidebar-open-specific( $admin-menu-width-unified );
-	}
+		#wpfooter {
+			margin-right: calc( $sidebar-width + 1px ) !important;
+			left: $layout-spacing - 2px;
+			bottom: $layout-spacing;
+			border-bottom-right-radius: $main-border-radius;
+			background-color: $admin-background-color;
+		}
 
-	&.folded {
-		@include wp-admin-sidebar-open-specific( $admin-menu-width-folded );
+		.agents-manager-chat--docked {
+			visibility: visible;
+			// Prevent the embedded chat from overlapping the main container during transition
+			animation: agents-manager-delay-visibility $transition-duration;
+			z-index: unset;
+		}
+
+		.agents-manager-sidebar-fab {
+			display: none;
+		}
+
+		&.is-nav-unification {
+			@include wp-admin-sidebar-open-specific( $admin-menu-width-unified );
+		}
+
+		&.folded {
+			@include wp-admin-sidebar-open-specific( $admin-menu-width-folded );
+		}
 	}
 }
 
@@ -178,241 +182,246 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) 
 @import './fixes-woocommerce.scss';
 @import './fixes-jetpack.scss';
 
-/* Calypso */
-body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-container:not(
-		.wp-admin
-	) {
-	@include sidebar-base( '#wpcom #content' );
-
-	#content {
-		min-height: 100vh;
-		background-color: var( --color-main-background, #fcfcfc ) !important;
-	}
-
-	&.agents-manager-sidebar-container--sidebar-open {
-		@include sidebar-open-base( '#wpcom #content' );
-		@include notice-panel-open( '#wpnc-panel' );
-
-		#header {
-			top: $layout-spacing;
-			left: $layout-spacing;
-			right: $sidebar-width;
-			width: auto;
-			border-radius: $main-border-radius $main-border-radius 0 0;
-			border: 1px solid $admin-border-color;
-			border-bottom: none;
-			box-sizing: border-box;
-			height: calc( var( --masterbar-height ) + 1px );
-
-			.masterbar__item-wrapper .masterbar__item-my-sites {
-				border-top-left-radius: $main-border-radius;
-			}
-
-			.masterbar__section.masterbar__section--left {
-				overflow: hidden;
-			}
-
-			.masterbar__item.masterbar__item-my-sites.is-active.has-global-border {
-				border-top-left-radius: $main-border-radius;
-			}
-
-			.masterbar__item.masterbar__item-howdy {
-				border-top-right-radius: $main-border-radius;
-			}
-
-			.masterbar__item:hover,
-			.masterbar__item.is-active {
-				cursor: pointer;
-			}
-		}
-
-		// Hide the outward border that protrudes into the agents manager sidebar
-		.is-global-sidebar-visible .masterbar__item.has-global-border::after {
-			display: none;
-		}
+@include dockable-viewport {
+	/* Calypso */
+	body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-container:not(
+			.wp-admin
+		) {
+		@include sidebar-base( '#wpcom #content' );
 
 		#content {
-			top: $layout-spacing;
-			left: $layout-spacing;
-			height: calc( 100vh - ( $layout-spacing * 2 ) );
-			min-height: unset;
-			margin: 0 !important;
-			overflow: auto !important;
-			border: 1px solid $admin-border-color;
+			min-height: 100vh;
+			background-color: var( --color-main-background, #fcfcfc ) !important;
 		}
 
-		#secondary {
-			top: calc( $layout-spacing + $admin-bar-height );
-			left: $layout-spacing;
-			bottom: $layout-spacing;
-			overflow: hidden;
-			border-radius: 0 0 0 $main-border-radius;
-			border: 1px solid $admin-border-color;
-			border-top: none;
-			border-right: none;
-		}
+		&.agents-manager-sidebar-container--sidebar-open:not( .agents-manager-dock-too-short ) {
+			@include sidebar-open-base( '#wpcom #content' );
+			@include notice-panel-open( '#wpnc-panel' );
 
-		.domain-search--step-wrapper .domain-search--initial-state__already-own-domain-cta {
-			position: absolute;
-		}
+			#header {
+				top: $layout-spacing;
+				left: $layout-spacing;
+				right: $sidebar-width;
+				width: auto;
+				border-radius: $main-border-radius $main-border-radius 0 0;
+				border: 1px solid $admin-border-color;
+				border-bottom: none;
+				box-sizing: border-box;
+				height: calc( var( --masterbar-height ) + 1px );
 
-		.is-section-plans {
-			background-color: inherit;
-		}
-	}
-}
+				.masterbar__item-wrapper .masterbar__item-my-sites {
+					border-top-left-radius: $main-border-radius;
+				}
 
-/* Calypso MSD */
-body.is-section-dashboard-dotcom.agents-manager-sidebar-container {
-	@include sidebar-base( '#wpcom .dashboard-root__layout' );
+				.masterbar__section.masterbar__section--left {
+					overflow: hidden;
+				}
 
-	.dashboard-root__layout {
-		position: relative;
-		min-height: 100vh;
-		background-color: var( --dashboard__background-color, #fcfcfc ) !important;
-		margin: 0 !important;
-	}
+				.masterbar__item.masterbar__item-my-sites.is-active.has-global-border {
+					border-top-left-radius: $main-border-radius;
+				}
 
-	&.agents-manager-sidebar-container--sidebar-open {
-		@include sidebar-open-base( '#wpcom .dashboard-root__layout' );
+				.masterbar__item.masterbar__item-howdy {
+					border-top-right-radius: $main-border-radius;
+				}
 
-		// Reposition the omnibar to fit inside the framed layout, mirroring
-		// the wp-admin masterbar / Calypso #header pattern above. Without this
-		// the omnibar (top: 0, full-width) overlaps with the docked chat strip
-		// in the top-right corner.
-		#wpcom-omnibar {
-			top: $layout-spacing;
-			inset-inline: $layout-spacing calc( $sidebar-width + $layout-spacing );
-		}
+				.masterbar__item:hover,
+				.masterbar__item.is-active {
+					cursor: pointer;
+				}
+			}
 
-		// Tuck the desktop nav sidebar inside the frame as well.
-		// Mirrors the wp-admin `#adminmenuback` / `#adminmenuwrap` treatment above.
-		.dashboard-responsive-sidebar__sidebar {
-			inset-inline-start: $layout-spacing;
-		}
+			// Hide the outward border that protrudes into the agents manager sidebar
+			.is-global-sidebar-visible .masterbar__item.has-global-border::after {
+				display: none;
+			}
 
-		.dashboard-root__layout {
-			height: calc( 100vh - ( $layout-spacing * 2 ) );
-			min-height: unset;
-			top: $layout-spacing;
-			left: $layout-spacing;
-			overflow: auto !important;
-		}
-	}
-}
-
-/* Calypso Stepper flows */
-body.is-section-stepper.agents-manager-sidebar-container {
-	@include sidebar-base( '#wpcom .step-route' );
-
-	.step-route {
-		min-height: 100vh;
-		background-color: var( --color-main-background ) !important;
-		overflow: hidden;
-	}
-
-	.domain-transfer {
-		max-width: unset;
-	}
-
-	&.agents-manager-sidebar-container--sidebar-open {
-		@include sidebar-open-base( '#wpcom .step-route' );
-
-		.step-route {
-			position: relative;
-			height: calc( 100vh - ( $layout-spacing * 2 ) );
-			min-height: unset;
-			top: $layout-spacing;
-			left: $layout-spacing;
-			overflow: auto !important;
-			margin: 0 !important;
-
-			.step-container-v2 {
-				height: 100%;
+			#content {
+				top: $layout-spacing;
+				left: $layout-spacing;
+				height: calc( 100vh - ( $layout-spacing * 2 ) );
 				min-height: unset;
+				margin: 0 !important;
+				overflow: auto !important;
+				border: 1px solid $admin-border-color;
+			}
+
+			#secondary {
+				top: calc( $layout-spacing + $admin-bar-height );
+				left: $layout-spacing;
+				bottom: $layout-spacing;
+				overflow: hidden;
+				border-radius: 0 0 0 $main-border-radius;
+				border: 1px solid $admin-border-color;
+				border-top: none;
+				border-right: none;
+			}
+
+			.domain-search--step-wrapper .domain-search--initial-state__already-own-domain-cta {
+				position: absolute;
+			}
+
+			.is-section-plans {
+				background-color: inherit;
 			}
 		}
 	}
-}
 
-/* Calypso: Fix sticky headers on marketplace pages when the sidebar is open */
-.agents-manager-sidebar-container--sidebar-open .layout__secondary ~ .layout__primary {
-	.plugins-browser--site-view .search-categories.fixed-top {
-		top: calc( $admin-bar-height + $layout-spacing + 1px );
-		right: calc( $sidebar-width + 1px );
-		left: calc( var( --sidebar-width-max ) + 17px );
+	/* Calypso MSD */
+	body.is-section-dashboard-dotcom.agents-manager-sidebar-container {
+		@include sidebar-base( '#wpcom .dashboard-root__layout' );
 
-		&::after {
+		.dashboard-root__layout {
+			position: relative;
+			min-height: 100vh;
+			background-color: var( --dashboard__background-color, #fcfcfc ) !important;
+			margin: 0 !important;
+		}
+
+		&.agents-manager-sidebar-container--sidebar-open:not( .agents-manager-dock-too-short ) {
+			@include sidebar-open-base( '#wpcom .dashboard-root__layout' );
+
+			// Reposition the omnibar to fit inside the framed layout, mirroring
+			// the wp-admin masterbar / Calypso #header pattern above. Without this
+			// the omnibar (top: 0, full-width) overlaps with the docked chat strip
+			// in the top-right corner.
+			#wpcom-omnibar {
+				top: $layout-spacing;
+				inset-inline: $layout-spacing calc( $sidebar-width + $layout-spacing );
+			}
+
+			// Tuck the desktop nav sidebar inside the frame as well.
+			// Mirrors the wp-admin `#adminmenuback` / `#adminmenuwrap` treatment above.
+			.dashboard-responsive-sidebar__sidebar {
+				inset-inline-start: $layout-spacing;
+			}
+
+			.dashboard-root__layout {
+				height: calc( 100vh - ( $layout-spacing * 2 ) );
+				min-height: unset;
+				top: $layout-spacing;
+				left: $layout-spacing;
+				overflow: auto !important;
+			}
+		}
+	}
+
+	/* Calypso Stepper flows */
+	body.is-section-stepper.agents-manager-sidebar-container {
+		@include sidebar-base( '#wpcom .step-route' );
+
+		.step-route {
+			min-height: 100vh;
+			background-color: var( --color-main-background ) !important;
+			overflow: hidden;
+		}
+
+		.domain-transfer {
+			max-width: unset;
+		}
+
+		&.agents-manager-sidebar-container--sidebar-open:not( .agents-manager-dock-too-short ) {
+			@include sidebar-open-base( '#wpcom .step-route' );
+
+			.step-route {
+				position: relative;
+				height: calc( 100vh - ( $layout-spacing * 2 ) );
+				min-height: unset;
+				top: $layout-spacing;
+				left: $layout-spacing;
+				overflow: auto !important;
+				margin: 0 !important;
+
+				.step-container-v2 {
+					height: 100%;
+					min-height: unset;
+				}
+			}
+		}
+	}
+
+	/* Calypso: Fix sticky headers on marketplace pages when the sidebar is open */
+	.agents-manager-sidebar-container--sidebar-open:not( .agents-manager-dock-too-short )
+		.layout__secondary
+		~ .layout__primary {
+		.plugins-browser--site-view .search-categories.fixed-top {
+			top: calc( $admin-bar-height + $layout-spacing + 1px );
+			right: calc( $sidebar-width + 1px );
+			left: calc( var( --sidebar-width-max ) + 17px );
+
+			&::after {
+				width: calc( 100vw - var( --sidebar-width-max ) - $sidebar-width - 18px );
+			}
+		}
+
+		.themes__content .themes__controls.is-sticky:not( .is-global-sidebar-visible ) {
+			top: calc( $admin-bar-height + $layout-spacing + 1px );
+			left: calc( var( --sidebar-width-max ) + 17px );
 			width: calc( 100vw - var( --sidebar-width-max ) - $sidebar-width - 18px );
 		}
 	}
 
-	.themes__content .themes__controls.is-sticky:not( .is-global-sidebar-visible ) {
-		top: calc( $admin-bar-height + $layout-spacing + 1px );
-		left: calc( var( --sidebar-width-max ) + 17px );
-		width: calc( 100vw - var( --sidebar-width-max ) - $sidebar-width - 18px );
-	}
-}
+	/* Next Admin editor */
+	body.next-admin.agents-manager-sidebar-container {
+		@include sidebar-base( '.next-admin-layout__canvas.is-full-canvas' );
 
-/* Next Admin editor */
-body.next-admin.agents-manager-sidebar-container {
-	@include sidebar-base( '.next-admin-layout__canvas.is-full-canvas' );
-
-	&.agents-manager-sidebar-container--sidebar-open {
-		@include sidebar-open-base( '.next-admin-layout__canvas.is-full-canvas' );
-		@include editor-save-panel-open();
-	}
-}
-
-/* Site editor */
-body.site-editor-php.agents-manager-sidebar-container {
-	@include sidebar-base( '.edit-site-layout__canvas' );
-
-	// Delay to prevent flickering when closing the left navigation sidebar
-	&:not( .agents-manager-sidebar-container--sidebar-open ) .edit-site-layout__canvas {
-		transition-delay: 0.1s;
-	}
-
-	&.agents-manager-sidebar-container--sidebar-open {
-		@include sidebar-open-base( '.edit-site-layout__canvas' );
-		@include editor-save-panel-open();
-
-		// Override canvas styles when the site editor navigation menu is open
-		.edit-site-layout:not( .is-full-canvas ) .edit-site-layout__canvas {
-			width: calc( 100% - $sidebar-width ) !important;
-			margin: 0 !important;
+		&.agents-manager-sidebar-container--sidebar-open:not( .agents-manager-dock-too-short ) {
+			@include sidebar-open-base( '.next-admin-layout__canvas.is-full-canvas' );
+			@include editor-save-panel-open();
 		}
 	}
-}
 
-/* Page editor */
-body.post-php.agents-manager-sidebar-container,
-body.post-new-php.agents-manager-sidebar-container {
-	@include sidebar-base( '.edit-post-layout' );
+	/* Site editor */
+	body.site-editor-php.agents-manager-sidebar-container {
+		@include sidebar-base( '.edit-site-layout__canvas' );
 
-	.edit-post-layout {
-		width: 100%;
-	}
-
-	&.agents-manager-sidebar-container--sidebar-open {
-		@include sidebar-open-base( '.edit-post-layout' );
-		@include editor-save-panel-open();
-
-		// Split-screen clips the editor shell for rounded corners. Gutenberg's
-		// desktop header grid can otherwise push the settings group past that
-		// clipped shell, cutting off the Publish button at the chat boundary.
-		&.is-split-screen .editor-header:has( > .editor-header__center ) {
-			grid-template:
-				auto / 60px minmax( 0, max-content ) minmax( 0, 1fr ) minmax( 0, max-content )
-				60px;
+		// Delay to prevent flickering when closing the left navigation sidebar
+		&:not( .agents-manager-sidebar-container--sidebar-open:not( .agents-manager-dock-too-short ) )
+			.edit-site-layout__canvas {
+			transition-delay: 0.1s;
 		}
 
-		.editor-post-publish-panel {
-			top: $layout-spacing;
-			bottom: $layout-spacing;
-			right: calc( $sidebar-width + $layout-spacing );
-			animation: none;
-			transform: translateX( 0 );
+		&.agents-manager-sidebar-container--sidebar-open:not( .agents-manager-dock-too-short ) {
+			@include sidebar-open-base( '.edit-site-layout__canvas' );
+			@include editor-save-panel-open();
+
+			// Override canvas styles when the site editor navigation menu is open
+			.edit-site-layout:not( .is-full-canvas ) .edit-site-layout__canvas {
+				width: calc( 100% - $sidebar-width ) !important;
+				margin: 0 !important;
+			}
+		}
+	}
+
+	/* Page editor */
+	body.post-php.agents-manager-sidebar-container,
+	body.post-new-php.agents-manager-sidebar-container {
+		@include sidebar-base( '.edit-post-layout' );
+
+		.edit-post-layout {
+			width: 100%;
+		}
+
+		&.agents-manager-sidebar-container--sidebar-open:not( .agents-manager-dock-too-short ) {
+			@include sidebar-open-base( '.edit-post-layout' );
+			@include editor-save-panel-open();
+
+			// Split-screen clips the editor shell for rounded corners. Gutenberg's
+			// desktop header grid can otherwise push the settings group past that
+			// clipped shell, cutting off the Publish button at the chat boundary.
+			&.is-split-screen .editor-header:has( > .editor-header__center ) {
+				grid-template:
+					auto / 60px minmax( 0, max-content ) minmax( 0, 1fr ) minmax( 0, max-content )
+					60px;
+			}
+
+			.editor-post-publish-panel {
+				top: $layout-spacing;
+				bottom: $layout-spacing;
+				right: calc( $sidebar-width + $layout-spacing );
+				animation: none;
+				transform: translateX( 0 );
+			}
 		}
 	}
 }
