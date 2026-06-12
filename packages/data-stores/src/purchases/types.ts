@@ -196,6 +196,18 @@ export interface Purchase {
 
 	isJetpackPlanOrProduct: boolean;
 	isAttachedToHoldingSite: boolean;
+
+	/**
+	 * True when a delayed downgrade has been scheduled for this subscription.
+	 * See `delayedDowngradeToProductSlug` for the target plan.
+	 */
+	isDelayedDowngradePending: boolean;
+
+	/**
+	 * The product slug of the plan this subscription will downgrade to at
+	 * renewal, or null when no delayed downgrade is scheduled.
+	 */
+	delayedDowngradeToProductSlug: string | null;
 }
 
 export interface PurchasePriceTier {

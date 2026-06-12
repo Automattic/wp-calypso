@@ -97,6 +97,17 @@ export async function cancelAndRefundPurchase(
 	} );
 }
 
+export async function setDelayedDowngrade(
+	purchaseId: number,
+	params: { enabled: true; to_product_id: number } | { enabled: false }
+): Promise< { success: boolean } > {
+	return wpcom.req.post( {
+		path: `/upgrades/${ purchaseId }/delayed-downgrade`,
+		apiVersion: '1.1',
+		body: params,
+	} );
+}
+
 export async function extendPurchaseWithFreeMonth(
 	purchaseId: number
 ): Promise< { status: string; message: string } > {

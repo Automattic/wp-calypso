@@ -485,6 +485,19 @@ export interface Purchase {
 	 * number.
 	 */
 	cancellation_offer_notice_discount_percentage: number | null;
+
+	/**
+	 * True when a delayed downgrade has been scheduled for this subscription.
+	 * The plan will be downgraded at the next renewal rather than immediately.
+	 * See `delayed_downgrade_to_product_slug` for the target plan.
+	 */
+	is_delayed_downgrade_pending: boolean;
+
+	/**
+	 * The product slug of the plan this subscription will downgrade to at
+	 * renewal, or null when no delayed downgrade is scheduled.
+	 */
+	delayed_downgrade_to_product_slug: string | null;
 }
 
 export type RawPurchase = Purchase & {
