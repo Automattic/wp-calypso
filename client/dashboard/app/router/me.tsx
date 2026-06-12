@@ -42,6 +42,7 @@ import {
 	isSiteAction,
 	type SiteAction,
 } from '../../me/billing-purchases/site-level-actions/constants';
+import { isOptInToggleVisible } from '../../utils/hosting-dashboard-enrollment';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { reauthRequiredLink } from '../../utils/link';
 import {
@@ -53,10 +54,11 @@ import {
 	CANCEL_FLOW_TYPE,
 	type CancelIntent,
 } from '../../utils/purchase';
+import { AUTH_QUERY_KEY } from '../auth';
 import { dashboardRedirect } from './redirect';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
-import type { Purchase } from '@automattic/api-core';
+import type { Purchase, User } from '@automattic/api-core';
 import type { AnyRoute } from '@tanstack/react-router';
 
 export const meRoute = createRoute( {
@@ -991,6 +993,13 @@ export const hostingDashboardRoute = createRoute( {
 	} ),
 	getParentRoute: () => preferencesRoute,
 	path: 'hosting-dashboard',
+	beforeLoad: async () => {
+		const user = queryClient.getQueryData< User >( AUTH_QUERY_KEY );
+		const preferences = await queryClient.ensureQueryData( rawUserPreferencesQuery() );
+		if ( ! isOptInToggleVisible( preferences[ 'hosting-dashboard-opt-in' ], user?.ID ) ) {
+			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
+		}
+	},
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),

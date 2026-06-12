@@ -38,6 +38,7 @@
 		"current-site/domain-warning": false,
 		"current-site/notice": true,
 		"dark-mode": false,
+		"dashboard/enable-percentage-rollout": false,
 		"dashboard/force-opt-in-visibility": true,
 		"dashboard/omnibar": true,
 		"dashboard/opt-in-banners": false,

@@ -26,6 +26,7 @@
 		"ciab/custom-branding": true,
 		"cookie-banner": true,
 		"dark-mode": true,
+		"dashboard/enable-percentage-rollout": false,
 		"dashboard/omnibar": true,
 		"dashboard/wp-beta-program": true,
 		"domain-transfer-redesign": true,
