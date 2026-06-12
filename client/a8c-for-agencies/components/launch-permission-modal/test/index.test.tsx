@@ -9,10 +9,6 @@ import LaunchPermissionModal from '..';
 const mockDispatch = jest.fn();
 const mockShowSupportGuide = jest.fn();
 
-jest.mock( 'i18n-calypso', () => ( {
-	useTranslate: () => ( text: string ) => text,
-} ) );
-
 jest.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockDispatch,
 } ) );

@@ -4,7 +4,7 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import { useDispatch } from 'calypso/state';
@@ -25,7 +25,6 @@ interface Props {
  * area. The modal chrome (and title) is supplied by the surface that mounts it.
  */
 export default function LaunchPermissionModal( { onClose, source }: Props ) {
-	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { showSupportGuide } = useHelpCenter();
 
@@ -43,16 +42,16 @@ export default function LaunchPermissionModal( { onClose, source }: Props ) {
 	return (
 		<VStack spacing={ 6 }>
 			<Text as="p">
-				{ translate(
+				{ __(
 					'To launch this site, sign in with the agency owner account, or ask the owner to add you as an administrator. The account must also be connected to WordPress.com to manage the site there.'
 				) }
 			</Text>
 			<HStack justify="space-between">
 				<Button variant="link" onClick={ onLearnMoreClick }>
-					{ translate( 'Learn more about team member permissions' ) }
+					{ __( 'Learn more about team member permissions' ) }
 				</Button>
 				<Button __next40pxDefaultSize variant="primary" onClick={ onClose }>
-					{ translate( 'Got it' ) }
+					{ __( 'Got it' ) }
 				</Button>
 			</HStack>
 		</VStack>
