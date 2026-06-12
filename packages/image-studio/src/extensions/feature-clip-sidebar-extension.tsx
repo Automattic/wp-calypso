@@ -25,6 +25,7 @@ import { registerPlugin } from '@wordpress/plugins';
 import { SocialLogo } from 'social-logos';
 import { ExperimentalBadge } from '../components/experimental-badge';
 import { ReelShareConfirmationDialog } from '../components/reel-share-confirmation-dialog';
+import { useHasAiAssistantFeature } from '../hooks/use-ai-assistant-feature';
 import { useGenericShare } from '../hooks/use-generic-share';
 import { useReelShare } from '../hooks/use-reel-share';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
@@ -253,11 +254,24 @@ function FeatureClipPanel(): JSX.Element | null {
 		};
 	}, [] );
 
+	const hasAiFeature = useHasAiAssistantFeature();
+	// Site-type scoping lives here, not in the hook: hiding only applies to
+	// self-hosted Jetpack, where generation is server-gated on the paid AI
+	// feature. The wpcom plans that surface this panel already include it.
+	const isSelfHostedJetpack =
+		typeof window !== 'undefined' && window.imageStudioData?.siteType === 'jetpack';
+
 	// Bail until the post type is both known and supported, before any of the
 	// body's hooks run — so the panel never mounts (and never fires a phantom
 	// panel-viewed impression) on editors like the Jetpack Form editor, nor in
 	// the transient window before the current post type is available.
 	if ( ! postType || ! SUPPORTED_POST_TYPES.includes( postType ) ) {
+		return null;
+	}
+
+	// Hide the panel entirely rather than offer an entry point to a dead end.
+	// Fails open while the plan data loads.
+	if ( isSelfHostedJetpack && ! hasAiFeature ) {
 		return null;
 	}
 

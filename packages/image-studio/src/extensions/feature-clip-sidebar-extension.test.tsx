@@ -21,6 +21,7 @@ const mockTrackAddedToPost = jest.fn();
 const mockTrackPanelViewed = jest.fn();
 const mockFill = jest.fn();
 const mockNotice = jest.fn();
+const mockFetchAiFeature = jest.fn();
 const mockSetCurrentVideoUrl = jest.fn().mockResolvedValue( undefined );
 const mockSetCurrentAttachmentId = jest.fn().mockResolvedValue( undefined );
 const mockSetCurrentDurationSeconds = jest.fn().mockResolvedValue( undefined );
@@ -36,6 +37,9 @@ let mockMedia: Record< string, unknown > | null = null;
 let mockHasResolvedMedia = true;
 let mockResolutionError: unknown = null;
 let mockHasBlockEditor = true;
+let mockHasPlansStore = true;
+let mockAiFeature: Record< string, unknown > | undefined = { hasFeature: true };
+let mockAiFeatureRequesting = false;
 let mockReelVisible = false;
 let mockGenericVisible = false;
 let mockReelIsConfirming = false;
@@ -112,6 +116,9 @@ jest.mock( '@wordpress/data', () => ( {
 		if ( store === 'core/block-editor' ) {
 			return mockHasBlockEditor ? { insertBlocks: mockInsertBlocks } : {};
 		}
+		if ( store === 'wordpress-com/plans' ) {
+			return { fetchAiAssistantFeature: mockFetchAiFeature };
+		}
 		return { openImageStudio: mockOpenImageStudio };
 	} ),
 	useSelect: ( selector: ( s: ( name: string ) => unknown ) => unknown ) => {
@@ -125,6 +132,14 @@ jest.mock( '@wordpress/data', () => ( {
 					hasFinishedResolution: () => mockHasResolvedMedia,
 					getResolutionError: () => mockResolutionError,
 				};
+			}
+			if ( name === 'wordpress-com/plans' ) {
+				return mockHasPlansStore
+					? {
+							getAiAssistantFeature: () => mockAiFeature,
+							getIsRequestingAiAssistantFeature: () => mockAiFeatureRequesting,
+					  }
+					: undefined;
 			}
 			return undefined;
 		} );
@@ -229,6 +244,10 @@ describe( 'feature-clip-sidebar-extension', () => {
 		mockTrackPanelViewed.mockClear();
 		mockFill.mockClear();
 		mockNotice.mockClear();
+		mockFetchAiFeature.mockClear();
+		mockHasPlansStore = true;
+		mockAiFeature = { hasFeature: true };
+		mockAiFeatureRequesting = false;
 		mockSetCurrentVideoUrl.mockClear();
 		mockSetCurrentAttachmentId.mockClear();
 		mockSetCurrentDurationSeconds.mockClear();
@@ -597,6 +616,73 @@ describe( 'feature-clip-sidebar-extension', () => {
 
 			expect( mockInsertBlocks ).not.toHaveBeenCalled();
 			expect( mockTrackAddedToPost ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'plan gating (self-hosted Jetpack)', () => {
+		const setJetpackSite = () => {
+			( window as Record< string, unknown > ).imageStudioData = {
+				canGenerateVideoClips: true,
+				siteType: 'jetpack',
+			};
+		};
+
+		it( 'hides the panel entirely when the site lacks a qualifying AI plan', () => {
+			setJetpackSite();
+			mockAiFeature = { hasFeature: false };
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			const { container } = render( <FeatureClipPanel /> );
+
+			expect( container ).toBeEmptyDOMElement();
+			expect( mockFill ).not.toHaveBeenCalled();
+			expect( mockTrackPanelViewed ).not.toHaveBeenCalled();
+		} );
+
+		it( 'renders the panel when the site has a qualifying AI plan', () => {
+			setJetpackSite();
+			mockAiFeature = { hasFeature: true };
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+
+			expect( screen.getByRole( 'button', { name: 'Generate clip' } ) ).toBeInTheDocument();
+		} );
+
+		it( 'fails open when the plans store is not registered', () => {
+			setJetpackSite();
+			mockHasPlansStore = false;
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+
+			expect( screen.getByRole( 'button', { name: 'Generate clip' } ) ).toBeInTheDocument();
+		} );
+
+		it( 'does not hide on Simple sites even when the feature is absent', () => {
+			( window as Record< string, unknown > ).imageStudioData = {
+				canGenerateVideoClips: true,
+				siteType: 'simple',
+			};
+			mockAiFeature = { hasFeature: false };
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+
+			expect( screen.getByRole( 'button', { name: 'Generate clip' } ) ).toBeInTheDocument();
+		} );
+
+		it( 'dispatches the store fetch once when data is not already loading', () => {
+			setJetpackSite();
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+
+			expect( mockFetchAiFeature ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'does not dispatch the fetch while a request is already in flight', () => {
+			setJetpackSite();
+			mockAiFeatureRequesting = true;
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+
+			expect( mockFetchAiFeature ).not.toHaveBeenCalled();
 		} );
 	} );
 } );
