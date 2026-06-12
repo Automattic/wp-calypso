@@ -4,7 +4,6 @@ import { useLaunchpad } from '@automattic/data-stores';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useInView } from 'react-intersection-observer';
-import { shouldShowLaunchpadFirst } from 'calypso/state/selectors/should-show-launchpad-first';
 import { getDashboardUrl } from '../utils';
 import type { SiteExcerptData } from '@automattic/sites';
 
@@ -96,18 +95,8 @@ export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 		return null;
 	}
 
-	let numberOfSteps = checklist.length || 0;
-	let completedSteps = ( checklist.filter( ( task ) => task.completed ) || [] ).length;
-
-	if ( shouldShowLaunchpadFirst( site ) ) {
-		// The focused launchpad on My Home doesn't include the launch site task in the count.
-		// In which case, we want this donut to match the one on the focused launchpad.
-		const launchSiteTask = checklist?.find( ( task ) => task.isLaunchTask );
-		const isLaunchSiteTaskComplete = launchSiteTask?.completed;
-
-		numberOfSteps = numberOfSteps - ( launchSiteTask ? 1 : 0 );
-		completedSteps = completedSteps - ( isLaunchSiteTaskComplete ? 1 : 0 );
-	}
+	const numberOfSteps = checklist.length || 0;
+	const completedSteps = ( checklist.filter( ( task ) => task.completed ) || [] ).length;
 
 	const link = getDashboardUrl( site.slug );
 	const text = __( 'Checklist' );

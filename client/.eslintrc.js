@@ -18,6 +18,11 @@ module.exports = {
 			{
 				patterns: [
 					{
+						group: [ '**/*.png', '**/*.jpg', '**/*.jpeg' ],
+						message:
+							"Please use 'webp' files instead. You can convert using `brew install webp && cwebp -q 90 -alpha_q 85 -m 6 <input>.png -o <output>.webp`",
+					},
+					{
 						group: [ '@testing-library/jest-dom*' ],
 						message:
 							'@testing-library/jest-dom is already globally provided by our test setup framework.',

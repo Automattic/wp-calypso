@@ -1,38 +1,32 @@
-import { useRouterState } from '@tanstack/react-router';
-import { __experimentalHStack as HStack, Navigator } from '@wordpress/components';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { brush, copy, envelope, globe, plugins } from '@wordpress/icons';
+import { brush, envelope, globe, layout, plugins } from '@wordpress/icons';
 import { useRef } from 'react';
-import { menuDot } from '../../components/icons';
 import RouterLinkButton from '../../components/router-link-button';
 import { SidebarExpandableMenuItem, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
+import SidebarNavigator from '../../components/sidebar-navigator';
 import DomainSidebar from '../../domains/domain-sidebar';
 import MeSidebar from '../../me/me-sidebar';
 import SiteSidebar from '../../sites/site-sidebar';
 import { wpcomLink } from '../../utils/link';
 import { useAnalytics } from '../analytics';
 import { useAppContext } from '../context';
-import RouteErrorBoundary from './error';
-import { getScreenPath, NavigatorRouteSync } from './navigator-route-sync';
+import AgencySidebar from './agency';
+import AgencyClientSidebar from './agency-client';
+import { useSidebarScrollSync } from './use-sidebar-scroll-sync';
 
 import './sidebar.scss';
 
-export default function Sidebar() {
+export default function Sidebar( { scrollSyncEnabled = false }: { scrollSyncEnabled?: boolean } ) {
 	const { Logo, name } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
-	const { resolvedPathname, hasError } = useRouterState( {
-		select: ( state ) => ( {
-			resolvedPathname: state.resolvedLocation?.pathname ?? state.location.pathname,
-			hasError: state.matches.some(
-				( match ) => match.status === 'error' || match.status === 'notFound'
-			),
-		} ),
-	} );
-	const screenPath = getScreenPath( resolvedPathname, hasError );
-	const initialPath = useRef( screenPath ).current;
+	const sidebarRef = useRef< HTMLDivElement >( null );
+	const navigatorRef = useRef< HTMLDivElement >( null );
+
+	useSidebarScrollSync( { enabled: scrollSyncEnabled, sidebarRef, navigatorRef } );
 
 	return (
-		<div className="dashboard-responsive-sidebar__sidebar">
+		<div ref={ sidebarRef } className="dashboard-responsive-sidebar__sidebar">
 			{ Logo && (
 				<div className="dashboard-responsive-sidebar__logo">
 					<RouterLinkButton
@@ -46,31 +40,20 @@ export default function Sidebar() {
 					/>
 				</div>
 			) }
-			<Navigator initialPath={ initialPath }>
-				<NavigatorRouteSync screenPath={ screenPath } />
-
-				<Navigator.Screen path="/">
+			<SidebarNavigator ref={ navigatorRef }>
+				<SidebarNavigator.Screen path="/">
 					<PrimaryMenuSidebar />
-				</Navigator.Screen>
-
-				<Navigator.Screen path="/sites/:siteSlug">
-					<RouteErrorBoundary>
-						<SiteSidebar />
-					</RouteErrorBoundary>
-				</Navigator.Screen>
-
-				<Navigator.Screen path="/domains/:domainName">
-					<RouteErrorBoundary>
-						<DomainSidebar />
-					</RouteErrorBoundary>
-				</Navigator.Screen>
-
-				<Navigator.Screen path="/me">
-					<RouteErrorBoundary>
-						<MeSidebar />
-					</RouteErrorBoundary>
-				</Navigator.Screen>
-			</Navigator>
+				</SidebarNavigator.Screen>
+				<SidebarNavigator.Screen path="/sites/$siteSlug">
+					<SiteSidebar />
+				</SidebarNavigator.Screen>
+				<SidebarNavigator.Screen path="/domains/$domainName">
+					<DomainSidebar />
+				</SidebarNavigator.Screen>
+				<SidebarNavigator.Screen path="/me">
+					<MeSidebar />
+				</SidebarNavigator.Screen>
+			</SidebarNavigator>
 		</div>
 	);
 }
@@ -80,8 +63,10 @@ function PrimaryMenuSidebar() {
 
 	return (
 		<SidebarMenu>
+			{ supports.agency && <AgencySidebar /> }
+			{ supports.agencyClient && <AgencyClientSidebar /> }
 			{ supports.sites && (
-				<SidebarMenuItem icon={ copy } to="/sites">
+				<SidebarMenuItem icon={ layout } to="/sites">
 					{ __( 'Sites' ) }
 				</SidebarMenuItem>
 			) }
@@ -97,14 +82,11 @@ function PrimaryMenuSidebar() {
 			) }
 			{ supports.plugins && (
 				<SidebarExpandableMenuItem label={ __( 'Plugins' ) } icon={ plugins } to="/plugins">
-					<SidebarMenuItem icon={ menuDot } to="/plugins/manage">
-						{ __( 'Manage plugins' ) }
-					</SidebarMenuItem>
-					<SidebarMenuItem icon={ menuDot } to="/plugins/scheduled-updates">
+					<SidebarMenuItem to="/plugins/manage">{ __( 'Manage plugins' ) }</SidebarMenuItem>
+					<SidebarMenuItem to="/plugins/scheduled-updates">
 						{ __( 'Scheduled updates' ) }
 					</SidebarMenuItem>
 					<SidebarMenuItem
-						icon={ menuDot }
 						href={ wpcomLink( '/plugins' ) }
 						target="_blank"
 						rel="noopener noreferrer"

@@ -10,7 +10,7 @@ import { registerBlockEditorFilters } from './extensions';
 import { useDraftCleanup } from './hooks/use-draft-cleanup';
 import { useImageFileNavigation } from './hooks/use-image-file-navigation';
 import { type ImageStudioActions, ImageStudioEntryPoint, store as imageStudioStore } from './store';
-import { IMAGE_STUDIO_SUPPORTED_MIME_TYPES, ImageStudioMode } from './types';
+import { ImageStudioMode } from './types';
 import { getImageData, type ImageData } from './utils/get-image-data';
 import {
 	trackImageStudioClosed,
@@ -24,15 +24,37 @@ import {
 
 interface ImageStudioData {
 	enabled?: boolean | string;
+	environment?: 'wp-admin' | 'ciab-admin';
+	isDevMode?: boolean;
+	canGenerateVideoClips?: boolean;
+	blogId?: number | string;
+	siteType?: 'simple' | 'atomic' | 'jetpack' | 'wpcom' | 'woa';
+	isA11n?: boolean;
 }
-
-declare const imageStudioData: ImageStudioData | undefined;
 
 declare global {
 	interface Window {
 		__bigSkyImageStudioInitialized?: boolean;
+		imageStudioData?: ImageStudioData;
 	}
 }
+
+/**
+ * Environment-derived feature capabilities. Centralises environment checks so
+ * components can ask "is this feature available?" without knowing which
+ * environment they're running in.
+ */
+function getCapabilities( environment?: ImageStudioData[ 'environment' ] ) {
+	const isWpAdmin = ! environment || environment === 'wp-admin';
+
+	return {
+		// Link to the classic WP Media Library image editor.
+		classicMediaEditor: isWpAdmin,
+	};
+}
+
+// Computed once at module load — environment is a static global that never changes.
+const capabilities = getCapabilities( window.imageStudioData?.environment );
 
 /**
  * Initialize the Image Studio integration for WordPress Media Library.
@@ -47,7 +69,7 @@ function initImageStudioIntegration(): void {
 	window.__bigSkyImageStudioInitialized = true;
 
 	// Validate required globals
-	if ( typeof imageStudioData === 'undefined' || ! imageStudioData?.enabled ) {
+	if ( ! window.imageStudioData?.enabled ) {
 		return;
 	}
 
@@ -137,51 +159,6 @@ function ImageStudioIntegration(): JSX.Element | null {
 					openImageStudio( undefined, undefined, ImageStudioEntryPoint.MediaLibrary );
 				}
 				return;
-			}
-
-			// Supported MIME types for Image Studio
-			const supportedMimeTypes: readonly string[] = IMAGE_STUDIO_SUPPORTED_MIME_TYPES;
-
-			// Only apply overrides on the Media Library page (upload.php), not in post editor
-			const isMediaLibraryPage = window.location.pathname.includes( 'upload.php' );
-
-			if ( ! isMediaLibraryPage ) {
-				return;
-			}
-
-			// Override thumbnail clicks in media library grid view to open Image Studio (images only)
-			// Skip if bulk select mode is active (user is selecting items, not opening them)
-			// WordPress adds 'media-toolbar-mode-select' class to the media toolbar in bulk select mode
-			const mediaToolbar = document.querySelector( '.media-toolbar' );
-			const isBulkSelectMode = mediaToolbar?.classList.contains( 'media-toolbar-mode-select' );
-			const attachment = target.closest( '.attachment' );
-			if ( attachment && attachment.classList.contains( 'save-ready' ) && ! isBulkSelectMode ) {
-				// Get attachment ID from the element
-				const id = attachment.getAttribute( 'data-id' );
-				if ( ! id ) {
-					return;
-				}
-
-				// Check if this is a supported image by querying WordPress media library
-				const wpMedia = window.wp?.media;
-				if ( wpMedia?.attachment ) {
-					const attachmentModel = wpMedia.attachment( parseInt( id, 10 ) );
-					const mimeType = attachmentModel?.get( 'mime' );
-
-					// Only override if this is a supported image type
-					if ( ! mimeType || ! supportedMimeTypes.includes( mimeType ) ) {
-						return; // Let legacy flow handle unsupported types
-					}
-				}
-
-				event.preventDefault();
-				event.stopPropagation();
-				trackImageStudioOpened( {
-					mode: ImageStudioMode.Edit,
-					attachmentId: parseInt( id, 10 ),
-					entryPoint: ImageStudioEntryPoint.MediaLibrary,
-				} );
-				openImageStudio( parseInt( id, 10 ), undefined, ImageStudioEntryPoint.MediaLibrary );
 			}
 		};
 
@@ -492,7 +469,9 @@ function ImageStudioIntegration(): JSX.Element | null {
 			onSave={ handleSave }
 			onDiscard={ handleDiscard }
 			onExit={ handleExit }
-			onClassicMediaEditorNavigation={ handleClassicMediaEditorNavigation }
+			onClassicMediaEditorNavigation={
+				capabilities.classicMediaEditor ? handleClassicMediaEditorNavigation : undefined
+			}
 			onNavigatePrevious={ isMediaLibraryContext ? handleNavigatePrevious : undefined }
 			onNavigateNext={ isMediaLibraryContext ? handleNavigateNext : undefined }
 			hasPreviousImage={ hasPreviousImage && ! hasUnsavedChanges }

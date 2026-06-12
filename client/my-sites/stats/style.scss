@@ -1,4 +1,7 @@
 @use "sass:math";
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "calypso/components/jetpack-page-layout/admin-ui-page";
 @import "calypso/my-sites/stats/modernized-tooltip-styles";
 @import "calypso/my-sites/stats/modernized-chart-tabs-styles";
 @import "calypso/my-sites/stats/modernized-layout-styles";
@@ -88,12 +91,72 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 
 // Stats section scoped styles
 .is-section-stats {
+	@include admin-ui-page-layout;
 	&.color-scheme.is-classic-dark {
 		@include apply-improved-classic-dark-colors();
 	}
 
 	.sticky-panel.is-sticky {
 		padding: 0;
+	}
+
+	// admin-ui 2.x moved the Page internals to CSS Modules, so the old
+	// `.admin-ui-page*` class hooks were lost. `.admin-ui-page` is restored on
+	// the Page root via its `className` prop; everything else hangs off it.
+	.admin-ui-page {
+		// The header has no stable class in 2.x, so anchor structurally:
+		// StatsMain always passes a `title`, so the header is the first child.
+		> :first-child {
+			// Merge the header into the navigation strip below it.
+			border-bottom: none;
+
+			// Let the title group shrink so long breadcrumb text can truncate.
+			// admin-ui's title-group flex item has no stable class, so anchor on
+			// the element wrapping the title heading rather than its DOM position.
+			// Replace with a stable hook if @wordpress/admin-ui exposes one.
+			*:has(> h1) {
+				min-width: 0;
+			}
+		}
+
+		// Breadcrumb trail rendered inside the unified header on detail pages.
+		.stats-breadcrumbs {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			min-width: 0;
+
+			.jetpack-logo {
+				flex-shrink: 0;
+			}
+		}
+
+		.stats-breadcrumbs__link {
+			color: inherit;
+			text-decoration: underline;
+			flex-shrink: 0;
+		}
+
+		.stats-breadcrumbs__separator {
+			flex-shrink: 0;
+		}
+
+		.stats-breadcrumbs__current {
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		> .stats-navigation {
+			// The unified-header treatment (background strip + inset) only
+			// applies on wider screens. On small screens the nav block insets
+			// the tabs itself (16px on the --improved variant), so applying the
+			// inset here too would stack. Mirrors the block's
+			// `@media (max-width: $break-small)` rule.
+			@media (min-width: ($break-small + 1px)) {
+				background: var(--wpds-color-bg-surface-neutral-strong);
+				padding-inline: var(--wpds-dimension-padding-2xl, 24px);
+			}
+		}
 	}
 
 	// TODO: Remove other independent segmented control styles by this mixin.

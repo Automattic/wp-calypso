@@ -7,11 +7,14 @@ import {
 } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { getSiteFragment } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { setDocumentHeadMeta } from 'calypso/state/document-head/actions';
+import { getDocumentHeadMeta } from 'calypso/state/document-head/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin as getWporgPluginSelector } from 'calypso/state/plugins/wporg/selectors';
 import { receiveProductsList } from 'calypso/state/products-list/actions';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
-import { getCategories } from './categories/use-categories';
+import { ALLOWED_CATEGORIES, getCategories } from './categories/use-categories';
 import { UNLISTED_PLUGINS } from './constants';
 import { getCategoryForPluginsBrowser } from './controller';
 
@@ -173,6 +176,40 @@ export async function fetchCategoryPlugins( context, next ) {
 		],
 		context
 	);
+
+	next();
+}
+
+/**
+ * Mark uncurated `/plugins/browse/<term>` pages as `noindex`.
+ *
+ * Only the curated `ALLOWED_CATEGORIES` are intentional landing pages meant to be
+ * indexed. Every other term is a tag fallthrough: each plugin links all of its
+ * WordPress.org tags as `/plugins/browse/<tag>` (see plugin-details-header), which
+ * generates a long tail of ~49k thin tag pages. Google crawls these and declines to
+ * index them, so they pile up in Search Console's "Crawled - currently not indexed"
+ * bucket. Emitting `noindex` reclassifies them into the intentional "Excluded by
+ * 'noindex' tag" bucket. We deliberately keep them crawlable (no robots.txt block)
+ * so Googlebot can recrawl and observe the directive.
+ */
+export function setBrowsePluginsNoindex( context, next ) {
+	if ( ! context.isServerSide || isUserLoggedIn( context.store.getState() ) ) {
+		return next();
+	}
+
+	const category = getCategoryForPluginsBrowser( context );
+	const isCurated =
+		!! category &&
+		ALLOWED_CATEGORIES.some( ( allowed ) => allowed.toLowerCase() === category.toLowerCase() );
+
+	if ( ! isCurated ) {
+		const meta = getDocumentHeadMeta( context.store.getState() )
+			// Drop any existing robots meta to avoid duplicate tags.
+			.filter( ( { name } ) => name !== 'robots' )
+			.concat( { name: 'robots', content: 'noindex' } );
+
+		context.store.dispatch( setDocumentHeadMeta( meta ) );
+	}
 
 	next();
 }

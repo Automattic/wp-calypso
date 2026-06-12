@@ -442,11 +442,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		expect( request.context.featuresHelper ).toEqual( false );
 	} );
 
-	it( 'sets devDocsUrl', async () => {
-		const { request } = await app.run();
-		expect( request.context.devDocsURL ).toEqual( '/devdocs' );
-	} );
-
 	it( 'sets redux store', async () => {
 		const theStore = {};
 		app.withReduxStore( theStore );
@@ -558,11 +553,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 			expect( request.context.badge ).toEqual( 'wpcalypso' );
 		} );
 
-		it( 'sets devDocs', async () => {
-			const { request } = await customApp.run();
-			expect( request.context.devDocs ).toEqual( true );
-		} );
-
 		it( 'sets the feedback url', async () => {
 			const { request } = await customApp.run();
 			expect( request.context.feedbackURL ).toEqual(
@@ -660,11 +650,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		it( 'sets the badge', async () => {
 			const { request } = await customApp.run();
 			expect( request.context.badge ).toEqual( 'dev' );
-		} );
-
-		it( 'sets devDocs', async () => {
-			const { request } = await customApp.run();
-			expect( request.context.devDocs ).toEqual( true );
 		} );
 
 		it( 'sets the feedback url', async () => {
@@ -979,6 +964,105 @@ describe( 'main app', () => {
 		it( 'detects if it is logged in based on a cookie', async () => {
 			const { request } = await app.run( { request: { cookies: { wordpress_logged_in: true } } } );
 			expect( request.context.isLoggedIn ).toBe( true );
+		} );
+	} );
+
+	describe( 'Route /me/security/qr-login', () => {
+		beforeEach( () => {
+			app.withConfigEnabled( {
+				'wpcom-user-bootstrap': true,
+				'use-translation-chunks': true,
+			} );
+		} );
+
+		afterEach(
+			() =>
+				new Promise( ( done ) => {
+					// Redirects can resolve the request before local language revisions finish reading.
+					// Give that setup promise time to settle before mockFs is restored by the outer afterEach.
+					setTimeout( done, 5 );
+				} )
+		);
+
+		it( 'redirects Woo-origin anonymous requests back to the Woo mobile login fallback', async () => {
+			app.withAnonymousUser();
+
+			const { response } = await app.run( {
+				request: {
+					url: '/me/security/qr-login',
+					query: {
+						origin: 'woocommerce',
+						return_to: 'https://woocommerce.com/mobilelogin/',
+					},
+				},
+			} );
+
+			expect( response.redirect ).toHaveBeenCalledWith(
+				'https://woocommerce.com/mobilelogin/?wpcom_auth=missing'
+			);
+		} );
+
+		it( 'ignores unsafe Woo-origin return_to values', async () => {
+			app.withAnonymousUser();
+
+			const { response } = await app.run( {
+				request: {
+					url: '/me/security/qr-login',
+					query: {
+						origin: 'woocommerce',
+						return_to: 'https://evil.example/mobilelogin/',
+					},
+				},
+			} );
+
+			expect( response.redirect ).toHaveBeenCalledWith(
+				'https://woocommerce.com/mobilelogin/?wpcom_auth=missing'
+			);
+		} );
+
+		it( 'redirects stale-auth Woo-origin requests back to the Woo mobile login fallback', async () => {
+			app.withAuthenticatedUser();
+			app.withFailedBootstrapUser( { error: 'authorization_required' } );
+
+			const { response } = await app.run( {
+				request: {
+					url: '/me/security/qr-login',
+					query: {
+						origin: 'woocommerce',
+						return_to: 'https://woocommerce.com/mobilelogin/',
+					},
+				},
+			} );
+
+			expect( response.clearCookie ).toHaveBeenCalledWith( 'wordpress_logged_in', {
+				path: '/',
+				httpOnly: true,
+				domain: '.wordpress.com',
+			} );
+			expect( response.redirect ).toHaveBeenCalledWith(
+				'https://woocommerce.com/mobilelogin/?wpcom_auth=missing'
+			);
+		} );
+
+		it( 'redirects authenticated Woo-origin requests to a URL without return_to', async () => {
+			app.withAuthenticatedUser();
+			app.withBootstrapUser( {} );
+			app.withReduxStore( { dispatch: jest.fn() } );
+			app.withSetCurrentAction( {} );
+
+			const { response } = await app.run( {
+				request: {
+					url: '/me/security/qr-login?origin=woocommerce&return_to=https%3A%2F%2Fwoocommerce.com%2Fmobilelogin%2F',
+					query: {
+						origin: 'woocommerce',
+						return_to: 'https://woocommerce.com/mobilelogin/',
+					},
+				},
+			} );
+
+			expect( response.redirect ).toHaveBeenCalledWith(
+				'/me/security/qr-login?origin=woocommerce'
+			);
 		} );
 	} );
 

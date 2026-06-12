@@ -17,6 +17,7 @@ import {
 } from './mutations';
 import {
 	siteSubscriptionsQueryKeyPrefix,
+	subscriptionsCountQueryKeyPrefix,
 	usePendingPostSubscriptionsQuery,
 	usePendingSiteSubscriptionsQuery,
 	usePostSubscriptionsQuery,
@@ -29,6 +30,7 @@ import {
 export const SubscriptionManager = {
 	SiteSubscriptionsQueryPropsProvider,
 	siteSubscriptionsQueryKeyPrefix,
+	subscriptionsCountQueryKeyPrefix,
 	useCacheKey,
 	useIsLoggedIn,
 	usePendingPostConfirmMutation,
@@ -63,6 +65,4 @@ export {
 	SiteSubscriptionsSortBy,
 } from './constants';
 export { callApi, isErrorResponse, isSiteSubscriptionDetails, isValidId } from './helpers';
-export { useReadFeedSiteQuery } from './queries';
-
 export * from './types';

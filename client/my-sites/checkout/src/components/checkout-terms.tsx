@@ -60,7 +60,13 @@ const TermsCollapsedContent = styled.div`
 	}
 `;
 
-export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
+export default function CheckoutTerms( {
+	cart,
+	expandReadMore = false,
+}: {
+	cart: ResponseCart;
+	expandReadMore?: boolean;
+} ) {
 	const isGiftPurchase = cart.is_gift_purchase;
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
@@ -114,7 +120,7 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 				{ ! isGiftPurchase && <TitanTermsOfService cart={ cart } /> }
 				{ shouldShowRefundPolicy && <RefundPolicies cart={ cart } /> }
 
-				<CheckoutTermsReadMore>
+				<CheckoutTermsReadMore expanded={ expandReadMore }>
 					{ shouldShowBundledDomainNotice && <BundledDomainNotice cart={ cart } /> }
 					{ shouldShowInternationalFeeNotice && <InternationalFeeNotice /> }
 					{ shouldShowJetpackSocialAdvancedPricingDisclaimer && (
@@ -129,7 +135,13 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 /**
  * Render a FoldableCard to contain TOS items or nothing if there are no items.
  */
-function CheckoutTermsReadMore( { children }: { children: ReactNode } ) {
+function CheckoutTermsReadMore( {
+	children,
+	expanded = false,
+}: {
+	children: ReactNode;
+	expanded?: boolean;
+} ) {
 	const translate = useTranslate();
 	// Note that this technique for finding children does not work for strings or
 	// empty fragments. Hopefully all children passed to this component are
@@ -142,6 +154,7 @@ function CheckoutTermsReadMore( { children }: { children: ReactNode } ) {
 			<FoldableCard
 				clickableHeader
 				compact
+				expanded={ expanded }
 				className="checkout__terms-foldable-card"
 				header={ translate( 'Read more' ) }
 				screenReaderText={ translate( 'Read more' ) }

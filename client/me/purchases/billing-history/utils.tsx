@@ -1,6 +1,7 @@
 import {
 	getPlanTermLabel,
 	isDIFMProduct,
+	isAkismetPro500,
 	isGoogleWorkspace,
 	isTitanMail,
 	isTieredVolumeSpaceAddon,
@@ -9,7 +10,7 @@ import {
 } from '@automattic/calypso-products';
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { LocalizeProps, useTranslate } from 'i18n-calypso';
-import { Fragment } from 'react';
+import { Fragment, type JSX } from 'react';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import {
 	BillingTransaction,
@@ -312,6 +313,32 @@ export function DomainTransactionVolumeSummary( { item }: { item: BillingTransac
 	);
 }
 
+function renderAkismetTransactionQuantitySummary(
+	licensed_quantity: number,
+	isRenewal: boolean,
+	translate: LocalizeProps[ 'translate' ]
+) {
+	if ( isRenewal ) {
+		return translate(
+			'Renewal for %(quantity)d 500 API call license',
+			'Renewal for %(quantity)d 500 API call licenses',
+			{
+				args: { quantity: licensed_quantity },
+				count: licensed_quantity,
+			}
+		);
+	}
+
+	return translate(
+		'Purchase of %(quantity)d 500 API call license',
+		'Purchase of %(quantity)d 500 API call licenses',
+		{
+			args: { quantity: licensed_quantity },
+			count: licensed_quantity,
+		}
+	);
+}
+
 export function renderTransactionQuantitySummary(
 	{ licensed_quantity, new_quantity, type, wpcom_product_slug }: BillingTransactionItem,
 	translate: LocalizeProps[ 'translate' ]
@@ -350,6 +377,10 @@ export function renderTransactionQuantitySummary(
 
 	if ( isTieredVolumeSpaceAddon( product ) ) {
 		return renderSpaceAddOnquantitySummary( licensed_quantity, isRenewal, translate );
+	}
+
+	if ( isAkismetPro500( product ) ) {
+		return renderAkismetTransactionQuantitySummary( licensed_quantity, isRenewal, translate );
 	}
 
 	if ( isRenewal ) {

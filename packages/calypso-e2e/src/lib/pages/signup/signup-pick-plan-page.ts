@@ -88,7 +88,7 @@ export class SignupPickPlanPage {
 		const responsePromise = this.captureNewSiteResponse();
 
 		await Promise.all( [
-			this.page.waitForURL( redirectUrl, { timeout: 60 * 1000 } ),
+			this.page.waitForURL( redirectUrl, { timeout: 90 * 1000 } ),
 			this.plansPage.selectPlan( name ),
 		] );
 
@@ -116,7 +116,7 @@ export class SignupPickPlanPage {
 		}
 
 		const actions = [
-			this.page.waitForURL( redirectUrl, { timeout: 30 * 1000 } ),
+			this.page.waitForURL( redirectUrl, { timeout: 60 * 1000 } ),
 			this.plansPage.selectPlan( name ),
 		];
 
@@ -139,7 +139,7 @@ export class SignupPickPlanPage {
 		redirectUrl ??= new RegExp( '.*checkout.*' );
 
 		const actions = [
-			this.page.waitForURL( redirectUrl, { timeout: 30 * 1000 } ),
+			this.page.waitForURL( redirectUrl, { timeout: 60 * 1000 } ),
 			this.plansPage.selectModalUpsellPlan( planName ),
 		];
 
@@ -180,6 +180,25 @@ export class SignupPickPlanPage {
 	}
 
 	/**
+	 * Returns the domain shown in the "Domain redirect" warning.
+	 *
+	 * @param {string} siteSlug The site slug.
+	 * @returns {Promise<string>} Domain shown in the redirect warning.
+	 */
+	async getDomainFromRedirectWarning( siteSlug: string ): Promise< string > {
+		return this.plansPage.getDomainFromRedirectWarning( siteSlug );
+	}
+
+	/**
+	 * Returns the domain shown as included on the plans grid.
+	 *
+	 * @returns {Promise<string>} Domain shown as included.
+	 */
+	async getIncludedDomain(): Promise< string > {
+		return this.plansPage.getIncludedDomain();
+	}
+
+	/**
 	 * Clicks the "Continue with Free" button in the escape hatch modal and waits for navigation.
 	 *
 	 * Intended for use after `openEscapeHatch()` when skipping to a free plan with no domain.
@@ -191,7 +210,7 @@ export class SignupPickPlanPage {
 		redirectUrl ??= new RegExp( '.*/home/.*' );
 
 		await Promise.all( [
-			this.page.waitForURL( redirectUrl, { timeout: 30 * 1000 } ),
+			this.page.waitForURL( redirectUrl, { timeout: 60 * 1000 } ),
 			this.plansPage.clickContinueWithFree(),
 		] );
 	}

@@ -1,4 +1,4 @@
-import { SubscriptionBillPeriod } from '../constants';
+import type { SubscriptionBillPeriodValue } from '../constants';
 
 export interface RefundOptions {
 	to_product_id: number;
@@ -87,6 +87,8 @@ export interface Purchase {
 	 */
 	attached_to_purchase_id: number | null;
 
+	advertised_total_upload_space_in_gb?: number | null;
+
 	auto_renew_coupon_code: string | null;
 	auto_renew_coupon_discount_percentage: number | null;
 
@@ -97,20 +99,7 @@ export interface Purchase {
 	 * `31` means "monthly" although the expiry date may be fewer than 31 days
 	 * from the last renewal. `-1` means that it does not expire.
 	 */
-	bill_period_days:
-		| typeof SubscriptionBillPeriod.PLAN_ONE_TIME_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_BIENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_TRIENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_QUADRENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_QUINQUENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_SEXENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_SEPTENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_OCTENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_NOVENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_DECENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD;
+	bill_period_days: SubscriptionBillPeriodValue;
 
 	bill_period_label: string;
 	most_recent_renew_date: string;
@@ -136,6 +125,13 @@ export interface Purchase {
 	 */
 	cost_to_unbundle_display: undefined | string;
 
+	/**
+	 * True if this subscription is within the refund window of its initial
+	 * purchase (i.e. not a renewal). Used to determine whether a bundled domain
+	 * can be cancelled together with its plan for a full refund.
+	 */
+	is_within_initial_refund_window: boolean;
+
 	price_text: string;
 	price_tier_list: Array< PriceTierEntry >;
 	currency_code: string;
@@ -145,6 +141,49 @@ export interface Purchase {
 	domain_registration_agreement_url: string | undefined;
 	blog_created_date: string;
 	expiry_date: string;
+
+	/**
+	 * A coarse, display-oriented summary of where this purchase is in its
+	 * lifecycle. Derived on the backend from
+	 * `Store_Subscription::get_expiry_status()`, which combines the subscription
+	 * status, the expiry date, whether it expires "soon", and whether it is
+	 * configured to auto-renew. One of:
+	 *
+	 * - 'active': Active, has a future expiry date, and set to auto-renew, but
+	 *   renewal is not imminent (more than ~3 months away; ~10 days for monthly
+	 *   plans). Renews automatically on the renewal date. No action needed.
+	 *
+	 * - 'auto-renewing': Same as 'active' but renewal IS imminent (within the
+	 *   "expiring soon" window). Will auto-renew on the renewal date.
+	 *
+	 * - 'manual-renew': Active, has a future expiry date, but NOT set to
+	 *   auto-renew and not yet expiring soon. The user must renew manually
+	 *   before the expiry date or it will lapse.
+	 *
+	 * - 'expiring': Active, expiring soon (or already PAST its expiry date, see
+	 *   below), and NOT going to auto-renew. This is the "needs attention"
+	 *   state: the purchase is still active but will lapse unless renewed.
+	 *
+	 * - 'expired': The underlying subscription is no longer active
+	 *   (`subscription_status !== 'active'`). Note this is NOT the same as being
+	 *   past the expiry date — see below.
+	 *
+	 * - 'included': This purchase is part of a bundle (e.g. a domain bundled
+	 *   with a plan) and its lifecycle is governed by the parent subscription.
+	 *   This overrides any of the above.
+	 *
+	 * - 'one-time-purchase': The purchase has no expiry time at all (a perpetual
+	 *   purchase or a one-time product). Never renews and never lapses.
+	 *
+	 * Determining an active subscription that is PAST its expiry date (grace
+	 * period): this status alone is NOT sufficient, and it is NOT 'expired'.
+	 * A subscription that is still `active` but whose expiry date has passed
+	 * surfaces here as 'expiring' (because past-expiry trivially satisfies
+	 * "expiring soon" and a lapsed purchase is not auto-renewing). However,
+	 * 'expiring' also covers subscriptions that are merely approaching expiry
+	 * and have NOT passed it yet. To distinguish "active but already past
+	 * expiry" precisely, use `is_past_expiry_date`.
+	 */
 	expiry_status:
 		| 'expiring'
 		| 'included'
@@ -153,6 +192,19 @@ export interface Purchase {
 		| 'manual-renew'
 		| 'expired'
 		| 'one-time-purchase';
+
+	/**
+	 * True if the subscription's expiry date has already passed, whether it is
+	 * still active (i.e. in its post-expiry grace period) or has since become
+	 * inactive ('expired'). This is a more precise signal than
+	 * `expiry_status === 'expiring'`, which also covers subscriptions that are
+	 * merely approaching expiry but have not passed it.
+	 *
+	 * Always false for purchases with no expiry time (one-time purchases and
+	 * perpetual purchases).
+	 */
+	is_past_expiry_date: boolean;
+
 	iap_purchase_management_link: string | null;
 
 	/**
@@ -171,6 +223,13 @@ export interface Purchase {
 	 * even if it cannot be cancelled.
 	 */
 	is_cancelable: boolean;
+
+	/**
+	 * True if the site associated with this subscription is a holding site.
+	 * That is, a site created only to hold the subscription for the user
+	 * rather than a regular wpcom site that a user can view and manage.
+	 */
+	is_attached_to_holding_site: boolean;
 
 	/**
 	 * True if the subscription can be removed by the user (directly removed,
@@ -378,6 +437,26 @@ export interface Purchase {
 	is_upgradable: boolean;
 
 	/**
+	 * True if this subscription's plan can be downgraded to a different, lower
+	 * plan type (eg: Business to Personal).
+	 *
+	 * Only ever true for plans. Like `is_upgradable`, this is false for A4A
+	 * plans, bundle-`included` subscriptions, and (for Jetpack plans) holding
+	 * sites. Unlike `is_upgradable`, an active subscription that is merely past
+	 * its expiry date (grace period) is still considered downgradable; only
+	 * inactive ('expired') subscriptions are excluded.
+	 */
+	is_plan_type_downgradable: boolean;
+
+	/**
+	 * True if this subscription's plan can be downgraded to a shorter billing
+	 * term of the same plan (eg: annual to monthly).
+	 *
+	 * Gated by the same eligibility rules as `is_plan_type_downgradable`.
+	 */
+	is_plan_term_downgradable: boolean;
+
+	/**
 	 * True if deactivating this subscription will cause the site to be reverted
 	 * from an Atomic site to a Simple site. This is only true if the site is
 	 * currently on the Atomic architecture and removing this subscription would
@@ -447,6 +526,12 @@ export interface PurchaseCancelOptions {
 	 * will also be cancelled.
 	 */
 	cancel_bundled_domain: boolean;
+
+	/**
+	 * The experiment variation name for the refund email A/B test.
+	 * When 'treatment', the backend sends the wpcom-2022 themed email.
+	 */
+	email_variant?: 'treatment' | 'control';
 }
 
 /**

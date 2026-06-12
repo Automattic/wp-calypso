@@ -83,14 +83,16 @@ const useSubscriberRemoveMutation = (
 			const subscriberPromises = subscribers.map( async ( subscriber ) => {
 				if ( subscriber.plans?.length ) {
 					// unsubscribe this user from all plans
-					const promises = subscriber.plans.map( ( plan ) =>
-						wpcom.req.post(
-							`/sites/${ siteId }/memberships/subscriptions/${ plan.paid_subscription_id }/cancel`,
-							{
-								user_id: subscriber.user_id,
-							}
-						)
-					);
+					const promises = subscriber.plans
+						.filter( ( plan ) => ! plan.is_comp )
+						.map( ( plan ) =>
+							wpcom.req.post(
+								`/sites/${ siteId }/memberships/subscriptions/${ plan.paid_subscription_id }/cancel`,
+								{
+									user_id: subscriber.user_id,
+								}
+							)
+						);
 
 					await Promise.all( promises );
 				}

@@ -16,7 +16,7 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import backgroundDotsIllustration from 'calypso/assets/images/customer-home/illustration--background-dots.svg';
 import editorPreviewIllustration from 'calypso/assets/images/customer-home/illustration--preview-editor.svg';
-import sitePreviewIllustration from 'calypso/assets/images/customer-home/illustration--preview-site.png';
+import sitePreviewIllustration from 'calypso/assets/images/customer-home/illustration--preview-site.webp';
 import { useQueryProductsList } from 'calypso/components/data/query-products-list';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { getDomainAndPlanUpsellUrl } from 'calypso/lib/domains';

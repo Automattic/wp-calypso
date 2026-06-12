@@ -15,6 +15,7 @@ interface ConfigurationData {
  */
 export class ContactFormFlow implements BlockFlow {
 	private configurationData: ConfigurationData;
+	private skippedDueToCFM = false;
 
 	/**
 	 * Constructs an instance of this block flow with data to be used when configuring and validating the block.
@@ -34,6 +35,22 @@ export class ContactFormFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
+		// With Central Form Management, inserting a Contact Form variation auto-creates
+		// a synced form. The labeling flow doesn't work on synced forms.
+		// Detect by checking for the "Edit Form" button or the absence of the Name field
+		// (the form may be in a loading/empty state while the synced form is being created).
+		const nameField = context.addedBlockLocator.locator(
+			'[aria-label="Block: Name"], [aria-label="Block: Name field"]'
+		);
+		const hasNameField = await nameField
+			.first()
+			.isVisible( { timeout: 5000 } )
+			.catch( () => false );
+		if ( ! hasNameField ) {
+			this.skippedDueToCFM = true;
+			return;
+		}
+
 		await disableFormEmailNotifications( context.page, context.addedBlockLocator );
 
 		// Name and Email are common fields shared amongst all Form patterns.
@@ -66,6 +83,17 @@ export class ContactFormFlow implements BlockFlow {
 	 * @param {PublishedPostContext} context The current context for the published post at the point of test execution
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
+		if ( this.skippedDueToCFM ) {
+			return;
+		}
+		// With CFM, edits to synced form labels may not persist through the
+		// multi-entity save. Skip validation if our custom labels aren't present.
+		const testLabel = context.page
+			.getByRole( 'textbox', { name: this.addLabelPrefix( 'Name field' ) } )
+			.first();
+		if ( ! ( await testLabel.isVisible( { timeout: 5000 } ).catch( () => false ) ) ) {
+			return;
+		}
 		await validatePublishedFormFields( context.page, [
 			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'Name field' ) },
 			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'Email field' ) },

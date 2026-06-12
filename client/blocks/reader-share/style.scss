@@ -145,8 +145,8 @@
 	// Since this is in popover context, it won't inherit variable overrides from the global sidebar
 	// or main reader frame. We set them here, otherwise they inherit the dark theme values used for
 	// the global masterbar.
-	--color-sidebar-submenu-background: var(--studio-gray-0);
-	--color-sidebar-text: var(--studio-gray-80);
+	--color-sidebar-submenu-background: var(--color-surface-backdrop);
+	--color-sidebar-text: var(--color-text);
 	min-width: 240px;
 
 	.site-selector {
@@ -162,11 +162,11 @@
 	&.is-top .popover__arrow::before,
 	&.is-top-left .popover__arrow::before,
 	&.is-top-right .popover__arrow::before {
-		border-top: 10px solid #fff;
+		border-top: 10px solid var(--color-surface);
 	}
 
 	&.is-bottom-right .popover__arrow::before {
-		border: 10px solid #fff;
+		border: 10px solid var(--color-surface);
 	}
 }
 

@@ -42,7 +42,7 @@ const APP_STORE_BADGE_URLS: AppStoreBadgeUrls = {
 		},
 	},
 	android: {
-		defaultSrc: '/calypso/images/me/get-apps-google-play.png',
+		defaultSrc: '/calypso/images/me/get-apps-google-play.webp',
 		src: 'https://play.google.com/intl/en_us/badges/images/generic/{localeSlug}_badge_web_generic.png',
 		tracksEvent: 'calypso_app_download_android_click',
 		getStoreLink: ( utm_campaign, utm_source = 'calypso', utm_medium = 'web' ) => {
@@ -90,9 +90,16 @@ export class AppsBadge extends PureComponent< AppsBadgeProps, AppsBadgeState > {
 				? APP_STORE_BADGE_URLS[ props.storeName ].src.replace( '{localeSlug}', localeSlug )
 				: APP_STORE_BADGE_URLS[ props.storeName ].defaultSrc,
 		};
+	}
 
+	componentDidMount(): void {
+		const localeSlug = APP_STORE_BADGE_URLS[ this.props.storeName ].getLocaleSlug().toLowerCase();
+		const shouldLoadExternalImage = ! startsWith( localeSlug, 'en' );
+
+		// Kick off the external image load in the commit phase rather than the
+		// constructor, which React can run multiple times (or discard) before a
+		// mount commits under concurrent rendering.
 		if ( shouldLoadExternalImage ) {
-			this.image = null;
 			this.loadImage();
 		}
 	}

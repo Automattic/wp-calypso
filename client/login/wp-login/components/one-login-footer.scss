@@ -11,6 +11,16 @@
 		text-decoration: underline;
 		padding: 0;
 		height: auto;
+
+		// For ExternalLink-rendered footer links, only underline the text content
+		// so the trailing "opens in new tab" arrow icon stays clean.
+		&.components-external-link {
+			text-decoration: none;
+
+			.components-external-link__contents {
+				text-decoration: underline;
+			}
+		}
 	}
 
 	.one-login__footer-links-wrapper {

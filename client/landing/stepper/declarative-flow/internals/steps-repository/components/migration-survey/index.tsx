@@ -1,7 +1,7 @@
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
-import surveyImage from 'calypso/assets/images/onboarding/migrations/survey/wordpress-half-logo.png';
+import surveyImage from 'calypso/assets/images/onboarding/migrations/survey/wordpress-half-logo.webp';
 import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import { Survey, SurveyTriggerAccept, SurveyTriggerSkip } from '../survey';
 import './style.scss';

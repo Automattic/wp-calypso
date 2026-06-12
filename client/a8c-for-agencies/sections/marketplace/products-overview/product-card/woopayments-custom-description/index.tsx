@@ -1,3 +1,4 @@
+import { ExternalLink } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -39,7 +40,7 @@ export default function WooPaymentsCustomDescription() {
 
 			<div className="woopayments-custom-description__section">
 				<h3 className="jetpack-product-info__section-title">
-					{ translate( 'Revenue Share Terms' ) }
+					{ translate( 'Revenue Share terms' ) }
 				</h3>
 				<p className="jetpack-product-info__description">
 					{ translate(
@@ -58,12 +59,11 @@ export default function WooPaymentsCustomDescription() {
 						{
 							components: {
 								a: (
-									<a
+									<ExternalLink
 										href="https://automattic.com/for-agencies/program-incentives/"
-										target="_blank"
-										rel="noopener noreferrer"
 										onClick={ onViewFullTermsClick }
-									></a>
+										children={ null }
+									/>
 								),
 							},
 						}

@@ -1,11 +1,15 @@
 /**
  * @jest-environment jsdom
  */
+import { Editor } from '@automattic/verbum-block-editor';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useMediaQuery } from '@wordpress/compose';
 import nock from 'nock';
+import { DEFAULT_SCHEME, PREFERENCE_KEY } from 'calypso/lib/color-scheme';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
@@ -31,25 +35,34 @@ jest.mock( 'calypso/state/notices/actions', () => ( {
 
 jest.mock( '@automattic/verbum-block-editor', () => {
 	return {
-		Editor: ( {
-			initialContent,
-			onChange,
-		}: {
-			initialContent: string;
-			onChange: ( v: string ) => void;
-		} ) => (
-			<input
-				type="text"
-				aria-label="Quick post editor"
-				defaultValue={ initialContent }
-				onChange={ ( e ) => onChange( e.target.value ) }
-			/>
+		Editor: jest.fn(
+			( {
+				initialContent,
+				onChange,
+			}: {
+				initialContent: string;
+				onChange: ( v: string ) => void;
+				isDarkMode?: boolean;
+				customStyles?: string;
+			} ) => (
+				<input
+					type="text"
+					aria-label="Quick post editor"
+					defaultValue={ initialContent }
+					onChange={ ( e ) => onChange( e.target.value ) }
+				/>
+			)
 		),
 		loadBlocksWithCustomizations: jest.fn(),
 		loadTextFormatting: jest.fn(),
 		addApiMiddleware: jest.fn(),
 	};
 } );
+
+jest.mock( '@wordpress/compose', () => ( {
+	...jest.requireActual( '@wordpress/compose' ),
+	useMediaQuery: jest.fn(),
+} ) );
 
 jest.mock( '@wordpress/blocks', () => ( {
 	parse: jest.fn().mockReturnValue( {
@@ -68,6 +81,9 @@ jest.mock( '@wordpress/block-library/build-module/heading', () => {
 
 jest.mock( 'calypso/state/current-user/selectors', () => ( {
 	getCurrentUser: jest.fn(),
+} ) );
+jest.mock( 'calypso/state/preferences/selectors', () => ( {
+	getPreference: jest.fn(),
 } ) );
 jest.mock( 'calypso/state/selectors/get-primary-site-id', () => ( {
 	__esModule: true,
@@ -101,6 +117,9 @@ const mockSavePostApi = ( type: 'publish' | 'draft' ) => {
 };
 
 describe( 'QuickPost', () => {
+	const mockEditor = Editor as jest.Mock;
+	const getLastEditorProps = () => mockEditor.mock.calls[ mockEditor.mock.calls.length - 1 ][ 0 ];
+
 	beforeEach( () => {
 		jest.clearAllMocks();
 		localStorage.clear();
@@ -119,11 +138,55 @@ describe( 'QuickPost', () => {
 		( getPrimarySiteId as jest.Mock ).mockReturnValue( null );
 		( hasLoadedSites as jest.Mock ).mockReturnValue( true );
 		( getSiteAdminUrl as jest.Mock ).mockReturnValue( 'https://example.com/wp-admin' );
+		( getPreference as jest.Mock ).mockReturnValue( DEFAULT_SCHEME );
+		( useMediaQuery as jest.Mock ).mockReturnValue( false );
 	} );
 
 	it( 'renders when selectors indicate sites are loaded and user has sites', () => {
 		const { getByRole } = renderWithProvider( <QuickPost /> );
 		expect( getByRole( 'button', { name: 'Post' } ) ).toBeVisible();
+	} );
+
+	it( 'passes dark mode props to the editor when the saved preference is dark', () => {
+		( getPreference as jest.Mock ).mockReturnValue( 'dark' );
+
+		renderWithProvider( <QuickPost /> );
+
+		expect( getPreference ).toHaveBeenCalledWith( expect.any( Object ), PREFERENCE_KEY );
+		expect( getLastEditorProps() ).toEqual(
+			expect.objectContaining( {
+				isDarkMode: true,
+				customStyles: expect.stringContaining( 'background-color: #2a2a2a' ),
+			} )
+		);
+	} );
+
+	it( 'passes dark mode props to the editor when the system preference resolves to dark', () => {
+		( getPreference as jest.Mock ).mockReturnValue( 'system' );
+		( useMediaQuery as jest.Mock ).mockReturnValue( true );
+
+		renderWithProvider( <QuickPost /> );
+
+		expect( getLastEditorProps() ).toEqual(
+			expect.objectContaining( {
+				isDarkMode: true,
+				customStyles: expect.stringContaining( 'background-color: #2a2a2a' ),
+			} )
+		);
+	} );
+
+	it( 'keeps light editor props when the system preference resolves to light', () => {
+		( getPreference as jest.Mock ).mockReturnValue( 'system' );
+		( useMediaQuery as jest.Mock ).mockReturnValue( false );
+
+		renderWithProvider( <QuickPost /> );
+
+		expect( getLastEditorProps() ).toEqual(
+			expect.objectContaining( {
+				isDarkMode: false,
+				customStyles: expect.not.stringContaining( 'background-color: #2a2a2a' ),
+			} )
+		);
 	} );
 
 	it( 'saves the post when clicks on the Post button', async () => {

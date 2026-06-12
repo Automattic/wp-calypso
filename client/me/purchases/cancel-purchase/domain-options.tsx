@@ -25,7 +25,8 @@ export const willShowDomainOptionsRadioButtons = (
 	return (
 		isDomainRegistration( includedDomainPurchase ) &&
 		isRefundable( purchase ) &&
-		!! includedDomainPurchase.costToUnbundleText
+		!! includedDomainPurchase.costToUnbundleText &&
+		includedDomainPurchase.isWithinInitialRefundWindow
 	);
 };
 
@@ -253,7 +254,8 @@ const CancelPurchaseDomainOptions = ( {
 	if (
 		isDomainTransfer( includedDomainPurchase ) ||
 		! isRefundable( purchase ) ||
-		! includedDomainPurchase.costToUnbundleText
+		! includedDomainPurchase.costToUnbundleText ||
+		! includedDomainPurchase.isWithinInitialRefundWindow
 	) {
 		return (
 			<CancelPlanWithoutCancellingDomainMessage

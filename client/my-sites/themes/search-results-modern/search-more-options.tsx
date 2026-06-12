@@ -4,9 +4,9 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
-import emptySearchAI from 'calypso/my-sites/themes/search-results-modern/empty-search-ai.png';
-import emptySearchDIFM from 'calypso/my-sites/themes/search-results-modern/empty-search-difm.png';
-import emptySearchUpload from 'calypso/my-sites/themes/search-results-modern/empty-search-upload.png';
+import emptySearchAI from 'calypso/my-sites/themes/search-results-modern/empty-search-ai.webp';
+import emptySearchDIFM from 'calypso/my-sites/themes/search-results-modern/empty-search-difm.webp';
+import emptySearchUpload from 'calypso/my-sites/themes/search-results-modern/empty-search-upload.webp';
 
 import './style.scss';
 

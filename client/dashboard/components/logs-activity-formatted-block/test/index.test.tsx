@@ -136,7 +136,7 @@ describe( 'Link blocks', () => {
 			const link = screen.getByRole( 'link' );
 			expect( link ).toHaveAttribute( 'href', 'https://example.com/path' );
 			expect( link ).toHaveAttribute( 'target', '_blank' );
-			expect( link ).toHaveAttribute( 'rel', 'external noreferrer noopener' );
+			expect( link ).toHaveAttribute( 'rel', 'external noopener' );
 		}
 	);
 } );
@@ -289,7 +289,7 @@ describe( 'Plugin blocks', () => {
 		const link = screen.getByRole( 'link' );
 		expect( link.getAttribute( 'href' ) ).toMatch( /\/plugins\/plugin-slug\/site-slug$/ );
 		expect( link ).toHaveAttribute( 'target', '_blank' );
-		expect( link ).toHaveAttribute( 'rel', 'external noreferrer noopener' );
+		expect( link ).toHaveAttribute( 'rel', 'external noopener' );
 	} );
 
 	test( 'renders a regular link when in the backport', () => {

@@ -1,0 +1,47 @@
+.a4a-range-plot {
+	inline-size: 100%;
+}
+
+.a4a-range-plot__track {
+	position: relative;
+	block-size: 28px;
+	background: var(--color-neutral-0);
+	border-radius: 4px;
+}
+
+.a4a-range-plot__range {
+	position: absolute;
+	inset-block: 0;
+	background: var(--color-primary-0);
+	border-radius: 4px;
+}
+
+.a4a-range-plot__marker {
+	position: absolute;
+	inset-block: -3px;
+	inline-size: 3px;
+	background: var(--color-neutral-80);
+	border-radius: 2px;
+	transform: translateX(-50%);
+}
+
+.a4a-range-plot__axis {
+	position: relative;
+	margin-block-start: 8px;
+	block-size: 18px;
+}
+
+.a4a-range-plot__axis-tick {
+	position: absolute;
+	font-size: 0.875rem;
+	color: var(--color-neutral-60);
+	white-space: nowrap;
+}
+
+.a4a-range-plot__axis-tick-center {
+	transform: translateX(-50%);
+}
+
+.a4a-range-plot__axis-tick-end {
+	transform: translateX(-100%);
+}

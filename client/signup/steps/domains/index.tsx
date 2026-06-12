@@ -19,6 +19,7 @@ import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { isMonthlyOrFreeFlow } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { useExperiment } from 'calypso/lib/explat';
 import {
 	domainMapping,
 	domainAddNew,
@@ -70,6 +71,12 @@ const DomainSearchUI = (
 
 	const isDomainOnlyFlow = flowName === 'domain';
 	const isOnboardingWithEmailFlow = flowName === 'onboarding-with-email';
+
+	const [ , experimentAssignment ] = useExperiment(
+		'calypso_signup_domain_only_checkout_simplification_v1',
+		{ isEligible: isDomainOnlyFlow }
+	);
+	const isTreatment = experimentAssignment?.variationName === 'treatment';
 
 	const site = useSelector( getSelectedSite );
 
@@ -198,6 +205,28 @@ const DomainSearchUI = (
 						{ stepName: 'site-picker', wasSkipped: true },
 						{ themeSlugWithRepo: 'pub/twentysixteen' }
 					);
+				} else if ( isTreatment && isDomainOnlyFlow ) {
+					// Experiment: skip the 'Choose how to use your domain' step for domain-only purchases.
+					submitSignupStep(
+						{
+							stepName: 'site-or-domain',
+							domainItem,
+							designType: 'domain',
+							siteSlug: domainItem.meta,
+							siteUrl: domainItem.meta,
+							isPurchasingItem: true,
+							domainCart,
+						},
+						{ designType: 'domain', domainItem, siteUrl: domainItem.meta, domainCart }
+					);
+					submitSignupStep(
+						{ stepName: 'site-picker', wasSkipped: true, domainCart },
+						{ themeSlugWithRepo: 'pub/twentysixteen' }
+					);
+					submitSignupStep(
+						{ stepName: 'plans-site-selected', wasSkipped: true },
+						{ cartItems: null }
+					);
 				}
 
 				goToNextStep();
@@ -237,6 +266,7 @@ const DomainSearchUI = (
 		goToNextStep,
 		locale,
 		isDomainOnlyFlow,
+		isTreatment,
 		baseSubmitStepProps,
 		baseSubmitProvidedDependencies,
 		dashboard,

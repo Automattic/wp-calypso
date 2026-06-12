@@ -67,6 +67,9 @@ import './dotcom-style.scss';
 
 import './guided-tours.scss';
 
+const loadSitesList = () =>
+	import( /* webpackChunkName: "async-load-calypso-sites-v2-sites-list" */ '../v2/sites-list' );
+
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
 	initialSiteFeature?: string;
@@ -382,6 +385,7 @@ const SitesDashboard = ( {
 				recordTracksEvent( 'calypso_sites_dashboard_open_site_preview_pane', {
 					site_id: site.ID,
 					source,
+					is_staging_site: site.is_wpcom_staging_site ?? null,
 				} );
 				showSitesPage( sitePreviewPane.getUrl( site ), openInNewTab );
 			},
@@ -451,7 +455,7 @@ const SitesDashboard = ( {
 			);
 		}
 
-		return <AsyncLoad require="../v2/sites-list" placeholder={ null } />;
+		return <AsyncLoad require={ loadSitesList } placeholder={ null } />;
 	};
 
 	return (

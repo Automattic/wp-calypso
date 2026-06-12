@@ -6,8 +6,9 @@ import {
 	domainsQuery,
 } from '@automattic/api-queries';
 /* eslint-enable no-restricted-imports */
-import config from '@automattic/calypso-config';
 import boot from '../app/boot';
+import { getPostHogConfig } from './posthog';
+import CiabDashboardStepperLogo from './stepper-logo';
 import './translations';
 import type {
 	FetchSitesOptions,
@@ -18,11 +19,14 @@ import './style.scss';
 
 boot( {
 	name: 'CIAB',
-	posthog: config.isEnabled( 'posthog-tracking' ) ? config( 'ciab_posthog_api_key' ) : undefined,
+	posthog: getPostHogConfig(),
 	basePath: '/',
 	mainRoute: '/sites',
 	Logo: null,
+	LoadingLogo: CiabDashboardStepperLogo,
 	supports: {
+		agency: false,
+		agencyClient: false,
 		sites: true,
 		domains: true,
 		emails: true,
@@ -37,7 +41,6 @@ boot( {
 			security: {
 				sshKey: false,
 			},
-			privacy: true,
 			apps: false,
 		},
 		plugins: false,
@@ -47,6 +50,8 @@ boot( {
 		siteOverview: {
 			preview: true,
 		},
+		colorScheme: false,
+		darkMode: false,
 	},
 	optIn: false,
 	components: {

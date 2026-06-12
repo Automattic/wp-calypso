@@ -4,6 +4,9 @@ import { queryClient } from './query-client';
 import type { UserPreferences } from '@automattic/api-core';
 
 const defaultValues: Required< UserPreferences > = {
+	recentSites: [],
+	'hosting-dashboard-color-scheme': 'light',
+	'hosting-dashboard-dark-mode-announcement-dismissed': '',
 	'hosting-dashboard-opt-in': { value: 'unset', updated_at: '' },
 	'hosting-dashboard-opt-in-welcome-modal-dismissed': '',
 	'hosting-dashboard-welcome-notice-dismissed': '',
@@ -15,6 +18,8 @@ const defaultValues: Required< UserPreferences > = {
 		useSitesAsLandingPage: false,
 		updatedAt: 0,
 	},
+	'achievements-visibility': 'private',
+	'achievements-global-notifications': 'enabled',
 };
 
 // Returns all user preferences, without applying any defaults.

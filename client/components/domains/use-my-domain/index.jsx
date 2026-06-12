@@ -373,7 +373,7 @@ function UseMyDomain( props ) {
 	const headerText = useMemo( () => {
 		switch ( mode ) {
 			case inputMode.domainInput:
-				return __( 'Use a domain I own' );
+				return __( 'Use a domain name I own' );
 			case inputMode.transferDomain:
 				return createInterpolateElement(
 					sprintf(
@@ -392,7 +392,7 @@ function UseMyDomain( props ) {
 				return createInterpolateElement(
 					sprintf(
 						/* translators: %(domainName)s - the name of the domain the user will add to their site */
-						__( 'Use a domain I own: <span>%(domainName)s</span>' ),
+						__( 'Use a domain name I own: <span>%(domainName)s</span>' ),
 						{
 							domainName,
 						}

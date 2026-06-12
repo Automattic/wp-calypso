@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import MigrationBannerImg from 'calypso/assets/images/performance-profiler/migration-banner-img.png';
+import MigrationBannerImg from 'calypso/assets/images/performance-profiler/migration-banner-img.webp';
 import { LogoBar } from '../logo-bar';
 
 import './style.scss';

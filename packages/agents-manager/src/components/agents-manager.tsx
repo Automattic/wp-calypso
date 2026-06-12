@@ -12,9 +12,14 @@ import { AgentsManagerContextProvider, useAgentsManagerContext } from '../contex
 import { useAgentConfig } from '../hooks/use-agent-config';
 import { useEmptyViewSuggestions } from '../hooks/use-empty-view-suggestions';
 import { AGENTS_MANAGER_STORE } from '../stores';
-import { clearSessionId } from '../utils/agent-session';
+import { clearSessionId, getOrCreateSessionId } from '../utils/agent-session';
 import { createAgentConfig } from '../utils/create-agent-config';
-import { loadExternalProviders, type LoadedProviders } from '../utils/load-external-providers';
+import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
+import {
+	loadExternalProviders,
+	type ImageUploadHook,
+	type LoadedProviders,
+} from '../utils/load-external-providers';
 import AgentDock from './agent-dock';
 import { PersistentRouter } from './persistent-router';
 
@@ -29,8 +34,12 @@ export interface AgentsManagerProps {
 	currentRoute?: string;
 	/** The ID of the currently selected site, or undefined for non-site contexts. */
 	currentSiteId?: number;
+	/** Explicit agent ID for hosts that must not fall back to Unified Chat. */
+	agentId?: string;
 	/** Called when the agent is closed. */
 	handleClose?: () => void;
+	/** The hook for handling image uploads. */
+	useImageUpload?: ImageUploadHook;
 }
 
 const queryClient = new QueryClient();
@@ -41,6 +50,8 @@ export default function AgentsManager( {
 	site,
 	currentRoute,
 	currentSiteId,
+	agentId,
+	useImageUpload,
 }: AgentsManagerProps ): JSX.Element | null {
 	// Wait for the store to load before rendering PersistentRouter
 	// This ensures router history is restored from persisted state
@@ -56,33 +67,51 @@ export default function AgentsManager( {
 	const siteKey = currentSiteId ? String( currentSiteId ) : 'no-site';
 
 	return (
-		<AgentsManagerContextProvider
-			value={ { sectionName, currentUser, site, siteKey, currentRoute } }
-		>
-			<QueryClientProvider client={ queryClient }>
-				<PersistentRouter siteKey={ siteKey }>
-					<AgentSetup />
-				</PersistentRouter>
-			</QueryClientProvider>
-		</AgentsManagerContextProvider>
+		<QueryClientProvider client={ queryClient }>
+			<PersistentRouter siteKey={ siteKey }>
+				<AgentsManagerContextProvider
+					value={ { sectionName, currentUser, site, siteKey, currentRoute } }
+				>
+					<AgentSetup agentId={ agentId } useImageUpload={ useImageUpload } />
+				</AgentsManagerContextProvider>
+			</PersistentRouter>
+		</QueryClientProvider>
 	);
 }
 
 // Separate component that uses hooks within `PersistentRouter` context
-function AgentSetup(): JSX.Element | null {
-	const { site, currentRoute, agentConfig, setAgentConfig } = useAgentsManagerContext();
+function AgentSetup( {
+	agentId: hostAgentId,
+	useImageUpload: fallbackUseImageUpload,
+}: {
+	agentId?: string;
+	useImageUpload?: ImageUploadHook;
+} ): JSX.Element | null {
+	const { site, sectionName, currentRoute, agentConfig, setAgentConfig } =
+		useAgentsManagerContext();
 	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
 	const navigate = useNavigate();
 	const { pathname, state } = useLocation();
 
 	// Detect new chat requests via `state.isNewChat` on the `/chat` route.
 	const isNewChat = pathname.startsWith( '/chat' ) && !! state?.isNewChat;
-	// Restore the session ID from route state for existing chats; empty for new chats.
-	const sessionId = ( ! isNewChat && state?.sessionId ) || '';
 
 	// Read agent/version overrides from browser URL (?agent=, ?version=).
 	// PersistentRouter (memory router) does not track window.location.search.
-	const { agentId, version, isLoading: isAgentConfigLoading } = useAgentConfig();
+	const { agentId, version, isLoading: isAgentConfigLoading } = useAgentConfig( hostAgentId );
+
+	// Restore the session ID. Priority:
+	//   1. Router state (calypso navigation carries sessionId on resume).
+	//   2. localStorage (reader-chat on blog frontends, where there's no
+	//      router state on fresh page loads). We persist client-side so
+	//      the same session_id flows with every request.
+	//   3. Generate a new client-side UUID, persist, and use it.
+	// This is more robust than relying on agenttic-client's own sessionIdStorageKey
+	// write — that fires after the server returns a sessionId, which can be
+	// skipped if the response shape doesn't match what the client parses.
+	const sessionId =
+		( ! isNewChat && state?.sessionId ) ||
+		( isReaderChatAgent( agentId ) ? getOrCreateSessionId( isNewChat, agentId ) : '' );
 
 	useEffect( () => {
 		// Wait for the agent config to stabilize before initializing.
@@ -123,7 +152,7 @@ function AgentSetup(): JSX.Element | null {
 				currentRoute,
 				toolProvider: providers.toolProvider,
 				contextProvider: providers.contextProvider,
-				environment: 'calypso',
+				environment: sectionName || 'calypso',
 				agentId,
 				version,
 			} );
@@ -139,8 +168,10 @@ function AgentSetup(): JSX.Element | null {
 		isNewChat,
 		navigate,
 		sessionId,
+		sectionName,
 		setAgentConfig,
 		site?.ID,
+		hostAgentId,
 		version,
 	] );
 
@@ -164,8 +195,9 @@ function AgentSetup(): JSX.Element | null {
 			useSuggestions={ loadedProviders.useSuggestions }
 			getChatComponent={ loadedProviders.getChatComponent }
 			siteBuildUtils={ loadedProviders.siteBuildUtils }
-			useImageUpload={ loadedProviders.useImageUpload }
+			useImageUpload={ loadedProviders.useImageUpload ?? fallbackUseImageUpload }
 			useCheckpoint={ loadedProviders.useCheckpoint }
+			capabilities={ loadedProviders.capabilities }
 		/>
 	);
 }

@@ -151,7 +151,21 @@ export async function validateContactDetails(
 				clearDomainContactErrorMessages,
 			} );
 		}
-		return isContactValidationResponseValid( validationResult );
+		const isValid = isContactValidationResponseValid( validationResult );
+		if (
+			! isValid &&
+			shouldDisplayErrors &&
+			isContactValidationResponse( validationResult ) &&
+			! validationResult.success
+		) {
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_contact_info_validation_failed', {
+					country: contactInfo.countryCode?.value,
+					messages: validationResult.messages_simple?.join( ', ' ),
+				} )
+			);
+		}
+		return isValid;
 	};
 
 	if ( isLoggedOutCart ) {
@@ -171,6 +185,13 @@ export async function validateContactDetails(
 		}
 
 		if ( ! isContactValidationResponseValid( loggedOutValidationResult ) ) {
+			if ( shouldDisplayErrors ) {
+				reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_contact_email_validation_failed', {
+						country: contactInfo.countryCode?.value,
+					} )
+				);
+			}
 			return false;
 		}
 	}

@@ -1,0 +1,399 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-placeholder {
+	padding: 14px 16px;
+
+	.reader__post-title {
+		margin-top: 0;
+	}
+
+	&::after,
+	.reader__post-footer {
+		display: none;
+	}
+}
+
+.subscribe-modal {
+	// Frame sizing, the WP modal content/children-container flex column, and
+	// the footer are shared with the other onboarding-rsm modals; see
+	// `client/reader/onboarding-rsm/style.scss`.
+
+	.email-verification-banner {
+		margin: 12px 16px 0;
+	}
+
+	&__container {
+		display: flex;
+		flex-direction: column;
+		flex: 1 1 auto;
+		min-height: 0;
+		// At very tight viewports the inner content's `min-height` exceeds the
+		// available space; this scroll container then absorbs the overflow.
+		// The scrollbar lives inside the container (above the footer sibling)
+		// so it never overlaps or peeks past the footer.
+		overflow-y: auto;
+	}
+
+	&__title {
+		font-family: Recoleta, sans-serif;
+		font-size: 2.25rem;
+		font-weight: 400;
+		line-height: 1.2;
+		margin: 0;
+		text-wrap: balance;
+		text-align: center;
+
+		@media ( max-width: $break-medium ) {
+			font-size: 1.5rem;
+		}
+	}
+
+	&__description {
+		margin: 0;
+		text-align: center;
+		color: var( --color-text-subtle );
+		text-wrap: balance;
+	}
+
+	&__content {
+		display: flex;
+		flex-direction: column;
+		// Fill the scroll container at normal viewports so the columns get a
+		// full-height region to flex into. `min-height` keeps the columns
+		// usable (~2 post-card heights) at small viewports — when the parent
+		// scroll container is shorter than this, it scrolls to absorb the
+		// overflow rather than squashing the columns.
+		flex: 1 1 auto;
+		min-height: 420px;
+		overflow: hidden;
+	}
+
+	&__intro {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 4px;
+		padding: 20px 24px 10px;
+	}
+
+	&__columns {
+		display: flex;
+		flex: 1;
+		min-height: 0;
+		padding: 20px 24px 0;
+		gap: 8px;
+
+		// Below ~700px viewport the modal itself starts clamping to 100vw
+		// and both columns no longer have usable room; collapse to list-only.
+		@media ( max-width: 699px ) {
+			padding-inline: 0;
+		}
+	}
+
+	&__site-list-column {
+		flex: 0 0 34%;
+		padding-top: 2px;
+		overflow-y: auto;
+		max-width: 300px;
+		padding-inline-end: 16px;
+
+		@media ( max-width: 699px ) {
+			flex: 1;
+			max-width: 700px;
+			padding-inline: 20px;
+		}
+
+		.reader-subscription-list-item {
+			position: relative;
+			padding: 12px;
+			border: 1px solid var( --color-neutral-5 );
+			border-radius: 6px; /* stylelint-disable-line scales/radii */
+			margin-bottom: 12px;
+			cursor: pointer;
+
+			// Without min-width: 0 the byline flex-item expands to its content
+			// width, pushing __options off the right edge of the card.
+			.reader-subscription-list-item__byline {
+				min-width: 0;
+			}
+
+			.site-icon.site-icon {
+				border-radius: 50%;
+				overflow: hidden;
+			}
+
+			&.is-selected {
+				background-color: color-mix( in srgb, var( --color-accent ) 8%, var( --color-surface ) );
+				border-color: color-mix( in srgb, var( --color-accent ) 25%, var( --color-surface ) );
+
+				@media ( min-width: 700px ) {
+					&::after {
+						content: '';
+						position: absolute;
+						top: 50%;
+						inset-inline-end: -1px;
+						width: 20px;
+						height: 20px;
+						background-color: color-mix(
+							in srgb,
+							var( --color-accent ) 8%,
+							var( --color-surface )
+						);
+						border-top: 1px solid color-mix(
+							in srgb,
+							var( --color-accent ) 25%,
+							var( --color-surface )
+						);
+						border-right: 1px solid color-mix(
+							in srgb,
+							var( --color-accent ) 25%,
+							var( --color-surface )
+						);
+						border-radius: 2px;
+						transform: translate( 50%, -50% ) rotate( 45deg );
+					}
+				}
+			}
+
+			.reader-subscription-list-item__options {
+				display: flex;
+				align-items: flex-start;
+				flex-shrink: 0;
+
+				.follow-button__label {
+					display: none;
+				}
+			}
+
+			.reader-subscription-list-item__site-url-timestamp {
+				&:not( .is-placeholder )::after {
+					background: none;
+				}
+
+				// ul and li must not block the width constraint from reaching the anchor.
+				ul,
+				li {
+					overflow: hidden;
+				}
+
+				// Force the URL to one line with ellipsis while keeping the
+				// external-link icon always visible at the end.
+				.reader-subscription-list-item__site-url.has-icon {
+					display: block;
+					position: relative;
+					overflow: hidden;
+					white-space: nowrap;
+					text-overflow: ellipsis;
+					// Reserve room for the 14px icon + a small gap.
+					padding-inline-end: 18px;
+
+					svg {
+						position: absolute;
+						inset-inline-end: 0;
+						top: 50%;
+						transform: translateY( -50% );
+					}
+				}
+			}
+		}
+	}
+
+	&__recommended-sites {
+		margin-bottom: 24px;
+	}
+
+	&__preview-column {
+		flex: 1 1 auto;
+		display: none;
+		flex-direction: column;
+		overflow: hidden;
+
+		// The modal is fixed at 980px wide (clamped to 100vw below that).
+		// Show the preview column whenever the viewport is wide enough to
+		// fit the modal at a reasonable size — roughly 700px+.
+		@media ( min-width: 700px ) {
+			display: flex;
+		}
+
+		.reader-post-actions,
+		.comments__comment-list,
+		.reader-post-options-menu__ellipsis-menu,
+		.reader-update-notice {
+			display: none;
+		}
+	}
+
+	&__preview-placeholder {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		min-height: 0;
+		border: 1px solid var( --color-border-subtle );
+		border-block-end: none;
+		border-radius: 6px 6px 0 0; /* stylelint-disable-line scales/radii */
+		background-color: var( --color-surface );
+		overflow: hidden;
+		position: relative;
+	}
+
+	&__preview-stream-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 10px 14px;
+		background-color: var( --color-surface );
+		border-bottom: 1px solid var( --color-border-subtle );
+
+		.follow-button.has-button-style {
+			box-sizing: border-box;
+			flex-shrink: 0;
+			min-width: 106px;
+			min-height: 36px;
+			padding: 8px 14px;
+			border-radius: 4px;
+			border: 1px solid var( --color-accent );
+			line-height: 18px;
+			transition: none;
+		}
+
+		// Omit `:focus` here — `box-shadow: none` removed the keyboard focus ring;
+		// global onboarding focus styles in `onboarding-rsm/style.scss` supply it.
+		.follow-button.has-button-style:hover,
+		.follow-button.has-button-style:active {
+			padding: 8px 14px;
+			border-width: 1px;
+			border-radius: 4px;
+			box-shadow: none;
+		}
+
+		.button.follow-button.has-button-style.is-following,
+		.button.follow-button.has-button-style.is-following:hover {
+			background-color: var( --studio-gray-90, #1e1e1e );
+			border-color: var( --studio-gray-90, #1e1e1e );
+
+			svg.reader-following-feed {
+				fill: var( --studio-white, #fff );
+
+				* {
+					fill: var( --studio-white, #fff );
+				}
+			}
+
+			.follow-button__label {
+				color: var( --studio-white, #fff );
+			}
+		}
+	}
+
+	&__preview-site {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		// Must be able to shrink so a long title doesn't push the follow button off screen.
+		min-width: 0;
+		overflow: hidden;
+
+		.site-icon.site-icon {
+			flex-shrink: 0;
+			border-radius: 50%;
+			overflow: hidden;
+		}
+	}
+
+	&__preview-site-title {
+		min-width: 0; // flex-item must opt in to shrinking for ellipsis to fire
+		font-size: rem( 14px );
+		font-weight: 600;
+		color: var( --color-neutral-80 );
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	&__preview-stream-container {
+		flex: 1;
+		min-height: 0;
+		overflow-y: auto;
+		padding: 0;
+		background: var( --color-surface );
+
+		.reader,
+		.reader__content,
+		.reader__content .stream__list,
+		.reader-stream__content {
+			max-width: none;
+			padding-inline: 0;
+			padding-top: 0;
+			margin: 0;
+		}
+
+		.reader-post-card.card.is-compact {
+			margin-bottom: 0;
+			border-radius: 0;
+			padding: 14px 16px;
+
+			// Vertically center the text column against the thumbnail when the
+			// compact layout is a row (`flex-direction: row`). Do not apply
+			// `align-items: center` on `.reader-post-card__no-excerpt`: that variant
+			// uses a column stack and centering prevents horizontal stretch, which
+			// collapses featured-media width and hides full-width images that only
+			// have a fixed height + `object-fit: contain`.
+			.reader-post-card__post-content {
+				margin-bottom: 0;
+
+				&:not(.reader-post-card__no-excerpt) {
+					align-items: center;
+				}
+			}
+
+			// Compact cards default to `min-height: 100px` on details so stream layouts
+			// align with thumbnails; here it adds empty space below short titles/excerpts
+			// causing the block to no longer be vertically centered.
+			.reader-post-card__post-details {
+				min-height: auto;
+			}
+
+			// 8px gap between the title/meta heading row and the excerpt
+			// body. Resetting the excerpt margin overrides the global
+			// `margin-bottom: 10px` it ships with.
+			.reader-post-card__post-heading {
+				margin-bottom: 8px;
+			}
+
+			.reader-excerpt,
+			.reader-excerpt__content {
+				margin: 0;
+				max-height: none;
+				font-size: 13px;
+				line-height: 20px;
+			}
+		}
+	}
+
+	&__preview-stream {
+		pointer-events: none;
+	}
+
+	// Per-card follow + ellipsis live in `.reader-post-card__post-options`. On `/discover`,
+	// compact cards use `display: flex` there with competing specificity; chaining the modal
+	// frame (both classes exist on the WP modal frame) keeps this scoped and wins in cascade.
+	&.components-modal__frame &__preview-column .reader-post-card.card .reader-post-card__post-options {
+		display: none;
+	}
+
+	&.is-disabled {
+		.subscribe-modal__container {
+			height: 100%;
+		}
+
+		.subscribe-modal__content {
+			opacity: 0.5;
+			pointer-events: none;
+		}
+		.subscribe-modal__preview-stream-container,
+		.subscribe-modal__site-list-column {
+			overflow-y: hidden;
+		}
+	}
+}

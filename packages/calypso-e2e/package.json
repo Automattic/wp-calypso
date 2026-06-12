@@ -35,11 +35,11 @@
 		"@automattic/languages": "workspace:^",
 		"@automattic/zendesk-client": "workspace:^",
 		"@jest/globals": "^29.7.0",
-		"@types/node": "^22.7.5",
-		"@wordpress/i18n": "^5.23.0",
+		"@types/node": "^24.12.2",
+		"@wordpress/i18n": "^6.21.0",
 		"asana-phrase": "^0.0.8",
-		"nock": "^14.0.10",
-		"typescript": "^5.8.3"
+		"nock": "^14.0.15",
+		"typescript": "^6.0.3"
 	},
 	"scripts": {
 		"clean": "yarn build --clean && rm -rf dist",

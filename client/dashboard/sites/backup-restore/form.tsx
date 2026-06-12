@@ -4,7 +4,6 @@ import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { rotateLeft } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { siteBackupRestoreRoute } from '../../app/router/sites';
@@ -133,7 +132,6 @@ function SiteBackupRestoreForm( {
 				<ButtonStack justify="flex-start">
 					<Button
 						variant="primary"
-						icon={ rotateLeft }
 						type="submit"
 						isBusy={ isRestoreMutationPending }
 						disabled={ ! isFormValid || isRestoreMutationPending }

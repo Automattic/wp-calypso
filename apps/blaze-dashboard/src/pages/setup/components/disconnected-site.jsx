@@ -4,7 +4,7 @@ import { formatCurrency } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import blazeFire from 'calypso/assets/images/blaze/blaze-fire.svg';
-import getStarted from 'calypso/assets/images/blaze/get-started.png';
+import getStarted from 'calypso/assets/images/blaze/get-started.webp';
 import wooGraphic from 'calypso/assets/images/blaze/more-followers.jpg';
 import ConnectIcon from './connect-icon';
 import FaqAccordion from './faq-accordion';

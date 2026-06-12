@@ -58,7 +58,6 @@ export function createReceiptObject(
 				isEmailVerified: Boolean( purchase.is_email_verified ),
 				isRootDomainWithUs: Boolean( purchase.is_root_domain_with_us ),
 				isRenewal: Boolean( purchase.is_renewal ),
-				willAutoRenew: Boolean( purchase.will_auto_renew ),
 				saasRedirectUrl: purchase.saas_redirect_url ?? '',
 				blogId: purchase.blog_id,
 				priceInteger: purchase.price_integer ?? 0,

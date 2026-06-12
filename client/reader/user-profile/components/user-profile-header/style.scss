@@ -11,14 +11,6 @@
 		gap: 12px;
 		margin-bottom: 12px;
 
-		.reader-avatar {
-			margin: 0;
-
-			img {
-				max-width: initial;
-			}
-		}
-
 		h1 {
 			align-items: center;
 			display: flex;
@@ -40,6 +32,7 @@
 
 	.user-profile-header__gravatar-badge {
 		display: flex;
+		flex-shrink: 0;
 	}
 
 	p.user-profile-header__bio-desc {
@@ -53,7 +46,7 @@
 		white-space: pre-line;
 
 		&.is-clamped {
-			max-height: 60px; // 3 lines × 20px line-height.
+			max-height: 40px; // 2 line × 20px line-height.
 		}
 
 		&.is-expanded {

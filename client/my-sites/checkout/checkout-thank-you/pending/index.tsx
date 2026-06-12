@@ -1,11 +1,11 @@
+import { receiptQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { invokeSurvicateEvent } from '@automattic/survicate';
-import { AUTO_RENEWAL } from '@automattic/urls';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
 import Loading from 'calypso/components/loading';
@@ -17,15 +17,14 @@ import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/src/lib/pe
 import { sendMessageToOpener } from 'calypso/my-sites/checkout/src/lib/popup';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { SUCCESS } from 'calypso/state/order-transactions/constants';
-import { fetchReceipt } from 'calypso/state/receipts/actions';
-import { getReceiptById } from 'calypso/state/receipts/selectors';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
+import { requestSite } from 'calypso/state/sites/actions';
 import usePurchaseOrder from '../../src/hooks/use-purchase-order';
 import { logStashLoadErrorEvent } from '../../src/lib/analytics';
 import type { RedirectInstructions } from 'calypso/my-sites/checkout/src/lib/pending-page';
-import type { ReceiptState } from 'calypso/state/receipts/types';
 import type {
 	OrderTransaction,
 	OrderTransactionSuccess,
@@ -149,18 +148,6 @@ function notifyAndPerformRedirect(
 	performRedirect( url );
 }
 
-function getSaaSProductRedirectUrl( receipt: ReceiptState ) {
-	let saasRedirectUrl;
-
-	( receipt?.data?.purchases || [] ).forEach( ( purchase ) => {
-		if ( purchase.saasRedirectUrl ) {
-			saasRedirectUrl = purchase.saasRedirectUrl;
-		}
-	} );
-
-	return saasRedirectUrl;
-}
-
 function useRedirectOnTransactionSuccess( {
 	orderId,
 	receiptId,
@@ -189,8 +176,16 @@ function useRedirectOnTransactionSuccess( {
 		? transaction.receiptId
 		: undefined;
 	const finalReceiptId = receiptId ?? transactionReceiptId;
-	const receipt = useSelector( ( state ) => getReceiptById( state, finalReceiptId ) );
-	const isReceiptLoaded = receipt.hasLoadedFromServer;
+	const {
+		data: receipt,
+		isSuccess: isReceiptSuccess,
+		isError: isReceiptError,
+	} = useQuery( {
+		...receiptQuery( finalReceiptId ?? 0 ),
+		enabled: !! finalReceiptId,
+	} );
+	const isReceiptLoaded = isReceiptSuccess || isReceiptError;
+
 	const error: Error | null = useSelector( ( state ) =>
 		orderId ? getOrderTransactionError( state, orderId ) : null
 	);
@@ -198,18 +193,46 @@ function useRedirectOnTransactionSuccess( {
 	const cartKey = useCartKey();
 	const { reloadFromServer: reloadCart } = useShoppingCart( cartKey );
 
-	const firstPurchase = receipt.data?.purchases[ 0 ];
-	const isRenewal = firstPurchase?.isRenewal ?? false;
-	const productName = firstPurchase?.productName ?? '';
-	const willAutoRenew = firstPurchase?.willAutoRenew ?? false;
-	const blogId = firstPurchase?.blogId;
-	const saasRedirectUrl = getSaaSProductRedirectUrl( receipt );
+	const firstItem = receipt?.items[ 0 ];
+	const isRenewal = receipt?.items.some( ( item ) => item.type === 'recurring' ) ?? false;
+	const productName = firstItem?.variation || firstItem?.product || '';
+	const blogId = firstItem?.site_id;
+	const saasRedirectUrl = receipt?.items.reduce< string | undefined >(
+		( url, item ) => url ?? ( item.saas_redirect_url || undefined ),
+		undefined
+	);
+	const resolvedPurchaseId =
+		receipt?.items.find( ( item ) => item.store_subscription_id )?.store_subscription_id ??
+		undefined;
 
 	const { searchParams } = getUrlParts( redirectTo || '/' );
 	const isConnectAfterCheckoutFlow =
 		searchParams.size &&
 		searchParams.get( 'from' ) === 'connect-after-checkout' &&
 		searchParams.get( 'connect_url_redirect' ) === 'true';
+	// Prefer checkout_type from the receipt (more reliable) and fall back to
+	// the query string for receipts fetched before the field was available.
+	const isUnifiedCheckout =
+		( receipt?.checkout_type ?? searchParams.get( 'checkout_type' ) ) === 'unified';
+
+	// For unified checkout (logged-out flow where a new account + site are
+	// created before the transaction), we re-fetch the current user once the
+	// receipt is available. By the time the pending page has finished polling
+	// for the transaction, enough time has passed for the server to propagate
+	// the new site, so a fresh fetch reliably returns site_count >= 1. Without
+	// this, siteSelection receives a stale site_count = 0 and renders "You
+	// don't have any sites yet" instead of the thank-you page.
+	const didRefreshUserForUnified = useRef( false );
+	const [ isUserRefreshedForUnified, setIsUserRefreshedForUnified ] = useState( false );
+	useEffect( () => {
+		if ( ! isUnifiedCheckout || ! blogId || didRefreshUserForUnified.current ) {
+			return;
+		}
+		didRefreshUserForUnified.current = true;
+		( reduxDispatch( fetchCurrentUser() ) as Promise< unknown > )
+			.catch( () => {} )
+			.finally( () => setIsUserRefreshedForUnified( true ) );
+	}, [ isUnifiedCheckout, blogId, reduxDispatch ] );
 
 	const defaultPendingText = translate( 'Almost there—we’re currently finalizing your order.' );
 	const connectingJetpackText = translate(
@@ -217,18 +240,6 @@ function useRedirectOnTransactionSuccess( {
 	);
 
 	const [ headingText, setHeadingText ] = useState( defaultPendingText );
-
-	// Fetch receipt data once we have a receipt Id.
-	const didFetchReceipt = useRef( false );
-	useEffect( () => {
-		if ( didFetchReceipt.current ) {
-			return;
-		}
-		if ( ! isReceiptLoaded && finalReceiptId ) {
-			didFetchReceipt.current = true;
-			reduxDispatch( fetchReceipt( finalReceiptId ) );
-		}
-	}, [ finalReceiptId, isReceiptLoaded, reduxDispatch ] );
 
 	// Redirect and display notices.
 	const didRedirect = useRef( false );
@@ -251,17 +262,27 @@ function useRedirectOnTransactionSuccess( {
 			return;
 		}
 
-		// For siteless purchases where the pre-transaction redirect URL defaults to '/'
-		// (because the new site's ID was unknown before the transaction), use the
-		// receipt's blogId to redirect to the new site's thank-you page instead.
-		// Preserve any query params from the original redirectTo (e.g., ?flow=unified).
+		// For siteless purchases where the new site's ID was unknown at the time the
+		// redirect URL was generated (e.g. redirect payment methods like PayPal that
+		// build the thank-you URL before the transaction begins), resolve the site using
+		// the blogId from the receipt. Two cases are handled:
+		//
+		// 1. redirectTo is '/' or empty: construct the full thank-you URL from blogId
+		//    and receiptId, preserving any query params (e.g. ?checkout_type=unified).
+		// 2. redirectTo contains a ':siteId' placeholder: replace it with the real blogId.
+		//    This covers the onboarding cookie URL and ecommerce plan thank-you URL paths.
 		const { pathname, search } = redirectTo
 			? getUrlParts( redirectTo )
 			: { pathname: undefined, search: '' };
-		const effectiveRedirectTo =
-			( ! redirectTo || pathname === '/' ) && blogId && finalReceiptId
-				? `/checkout/thank-you/${ blogId }/${ finalReceiptId }${ search }`
-				: redirectTo;
+		const effectiveRedirectTo = ( () => {
+			if ( ( ! redirectTo || pathname === '/' ) && blogId && finalReceiptId ) {
+				return `/checkout/thank-you/${ blogId }/${ finalReceiptId }${ search }`;
+			}
+			if ( blogId && redirectTo?.includes( ':siteId' ) ) {
+				return redirectTo.replaceAll( ':siteId', String( blogId ) );
+			}
+			return redirectTo;
+		} )();
 
 		const redirectInstructions = getRedirectFromPendingPage( {
 			isLoadingOrder,
@@ -273,9 +294,18 @@ function useRedirectOnTransactionSuccess( {
 			siteSlug,
 			saasRedirectUrl,
 			fromSiteSlug,
+			purchaseId: resolvedPurchaseId,
 		} );
 
 		if ( ! redirectInstructions ) {
+			return;
+		}
+
+		// For unified checkout, wait for the current user to be re-fetched
+		// (triggered by the useEffect above) before proceeding. This ensures
+		// site_count is up-to-date in Redux so siteSelection doesn't incorrectly
+		// bail with "You don't have any sites yet" on the thank-you page.
+		if ( isUnifiedCheckout && blogId && ! isUserRefreshedForUnified ) {
 			return;
 		}
 
@@ -290,16 +320,23 @@ function useRedirectOnTransactionSuccess( {
 			redirectInstructions,
 			isRenewal,
 			productName,
-			willAutoRenew,
 			translate,
 			reduxDispatch,
 		} );
+
+		// Pre-populate the Redux sites store with the newly-purchased site so
+		// that the thank-you page can use it immediately on arrival.
+		if ( blogId ) {
+			reduxDispatch( requestSite( blogId ) );
+		}
 
 		notifyAndPerformRedirect( siteSlug, redirectInstructions );
 	}, [
 		isLoadingOrder,
 		saasRedirectUrl,
 		isConnectAfterCheckoutFlow,
+		isUnifiedCheckout,
+		isUserRefreshedForUnified,
 		connectingJetpackText,
 		error,
 		finalReceiptId,
@@ -315,8 +352,8 @@ function useRedirectOnTransactionSuccess( {
 		siteSlug,
 		transaction,
 		translate,
-		willAutoRenew,
 		fromSiteSlug,
+		resolvedPurchaseId,
 	] );
 
 	return { headingText };
@@ -332,14 +369,12 @@ function triggerPostRedirectNotices( {
 	redirectInstructions,
 	isRenewal,
 	productName,
-	willAutoRenew,
 	translate,
 	reduxDispatch,
 }: {
 	redirectInstructions: RedirectInstructions;
 	isRenewal: boolean;
 	productName: string;
-	willAutoRenew: boolean;
 	translate: ReturnType< typeof useTranslate >;
 	reduxDispatch: CalypsoDispatch;
 } ): void {
@@ -368,7 +403,6 @@ function triggerPostRedirectNotices( {
 	if ( isRenewal ) {
 		displayRenewalSuccessNotice( {
 			productName,
-			willAutoRenew,
 			translate,
 			reduxDispatch,
 		} );
@@ -378,34 +412,14 @@ function triggerPostRedirectNotices( {
 
 function displayRenewalSuccessNotice( {
 	productName,
-	willAutoRenew,
 	translate,
 	reduxDispatch,
 }: {
 	productName: string;
-	willAutoRenew: boolean;
 	translate: ReturnType< typeof useTranslate >;
 	reduxDispatch: CalypsoDispatch;
 } ): void {
-	if ( willAutoRenew ) {
-		// showing notice for product that will auto-renew
-		reduxDispatch(
-			successNotice(
-				translate( 'Success! You renewed %(productName)s. {{a}}Learn more about renewals{{/a}}', {
-					args: {
-						productName,
-					},
-					components: {
-						a: <a href={ localizeUrl( AUTO_RENEWAL ) } target="_blank" rel="noopener noreferrer" />,
-					},
-				} ),
-				{ displayOnNextPage: true }
-			)
-		);
-		return;
-	}
-
-	// showing notice for product that will not auto-renew
+	// show renewal success notice
 	reduxDispatch(
 		successNotice(
 			translate( 'Success! You renewed %(productName)s.', {

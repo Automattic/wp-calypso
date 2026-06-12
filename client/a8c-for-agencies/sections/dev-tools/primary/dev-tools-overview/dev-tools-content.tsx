@@ -1,10 +1,10 @@
 import { __experimentalSpacer as Spacer, __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import githubImage from 'calypso/assets/images/a8c-for-agencies/dev-tools/github-deployments.png';
-import jurassicImage from 'calypso/assets/images/a8c-for-agencies/dev-tools/jurassic-ninja.png';
-import studioImage from 'calypso/assets/images/a8c-for-agencies/dev-tools/studio.png';
-import telexImage from 'calypso/assets/images/a8c-for-agencies/dev-tools/telex.png';
-import playgroundImage from 'calypso/assets/images/a8c-for-agencies/dev-tools/wordpress-playground.png';
+import githubImage from 'calypso/assets/images/a8c-for-agencies/dev-tools/github-deployments.webp';
+import jurassicImage from 'calypso/assets/images/a8c-for-agencies/dev-tools/jurassic-ninja.webp';
+import studioImage from 'calypso/assets/images/a8c-for-agencies/dev-tools/studio.webp';
+import telexImage from 'calypso/assets/images/a8c-for-agencies/dev-tools/telex.webp';
+import playgroundImage from 'calypso/assets/images/a8c-for-agencies/dev-tools/wordpress-playground.webp';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

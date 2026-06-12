@@ -3,7 +3,6 @@ import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
-import ReactDom from 'react-dom';
 import AsyncLoad from 'calypso/components/async-load';
 import InfiniteList from 'calypso/components/infinite-list';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
@@ -15,6 +14,9 @@ import 'calypso/components/popover-menu/style.scss';
  * Module variables
  */
 const debug = debugModule( 'calypso:author-selector' );
+
+const loadSearch = () =>
+	import( /* webpackChunkName: "async-load-automattic-search" */ '@automattic/search' );
 
 class AuthorSwitcherShell extends Component {
 	static propTypes = {
@@ -64,7 +66,7 @@ class AuthorSwitcherShell extends Component {
 				>
 					{ ( this.props.search || users.length > 10 ) && (
 						<AsyncLoad
-							require="@automattic/search"
+							require={ loadSearch }
 							compact
 							onSearch={ this.props.updateSearch }
 							placeholder={ this.props.translate( 'Find Author…', { context: 'search label' } ) }
@@ -98,7 +100,7 @@ class AuthorSwitcherShell extends Component {
 
 	setListContext = ( infiniteListInstance ) => {
 		this.setState( {
-			listContext: ReactDom.findDOMNode( infiniteListInstance ),
+			listContext: infiniteListInstance?.getDOMNode(),
 		} );
 	};
 
@@ -124,7 +126,7 @@ class AuthorSwitcherShell extends Component {
 	};
 
 	onClose = ( event ) => {
-		const toggleElement = ReactDom.findDOMNode( this.authorSelectorToggleRef.current );
+		const toggleElement = this.authorSelectorToggleRef.current;
 
 		if ( event && toggleElement.contains( event.target ) ) {
 			// let toggleShowAuthor() handle this case

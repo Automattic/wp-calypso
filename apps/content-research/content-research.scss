@@ -1,0 +1,215 @@
+@import "@automattic/content-research/src/styles";
+
+.content-research-window {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 100000;
+	display: flex;
+	flex-direction: column;
+	width: min( 380px, calc( 100vw - 32px ) );
+	height: min( 600px, calc( 100vh - 32px ) );
+	overflow: hidden;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+	box-shadow: 0 12px 32px rgba( 0, 0, 0, 0.18 );
+	transform: translate3d(
+		var( --content-research-window-x, 16px ),
+		var( --content-research-window-y, 88px ),
+		0
+	);
+
+	&.is-dragging {
+		user-select: none;
+
+		.content-research-window__drag-handle {
+			cursor: grabbing;
+		}
+	}
+
+	&.is-minimized {
+		width: min( 320px, calc( 100vw - 32px ) );
+		height: auto;
+
+		.content-research-window__header {
+			border-bottom: none;
+		}
+
+		.content-research-window__body {
+			display: none;
+		}
+	}
+
+	&__header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+		min-height: 48px;
+		padding: 0 8px 0 14px;
+		border-bottom: 1px solid #dcdcde;
+		background: #fff;
+	}
+
+	&__drag-handle {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		min-width: 0;
+		align-self: stretch;
+		flex: 1 1 auto;
+		color: #1e1e1e;
+		cursor: grab;
+		touch-action: none;
+
+		svg {
+			flex: 0 0 auto;
+		}
+	}
+
+	&__title {
+		overflow: hidden;
+		font-size: 14px;
+		font-weight: 500;
+		line-height: 1.4;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	&__controls {
+		display: flex;
+		flex: 0 0 auto;
+		align-items: center;
+		gap: 2px;
+	}
+
+	&__control.components-button {
+		width: 32px;
+		height: 32px;
+		min-width: 32px;
+		padding: 0;
+	}
+
+	&__body {
+		flex: 1 1 auto;
+		min-height: 0;
+		overflow: hidden;
+		background: #fff;
+	}
+
+	.content-research-sidebar {
+		min-height: 100%;
+	}
+}
+
+.content-research-inspiration-float {
+	position: fixed;
+	left: 20px;
+	bottom: 40px;
+	z-index: 99999;
+	display: inline-flex;
+	align-items: center;
+	justify-content: flex-start;
+	width: 40px;
+	height: 40px;
+	overflow: hidden;
+	padding: 0;
+	border: 1px solid rgba( 162, 169, 233, 0.35 );
+	border-radius: 24px;
+	background:
+		radial-gradient( circle at 30% 25%, rgba( 255, 255, 255, 0.82 ), rgba( 255, 255, 255, 0 ) 48% ),
+		linear-gradient( 135deg, rgba( 162, 169, 233, 0.22 ), rgba( 162, 169, 233, 0.08 ) );
+	backdrop-filter: blur( 4px );
+	color: #2f356d;
+	box-shadow: 0 6px 18px rgba( 85, 93, 160, 0.12 );
+	cursor: pointer;
+	opacity: 0;
+	transform: translateY( 8px ) scale( 0.96 );
+	animation: content-research-inspiration-float-in 420ms ease-out 120ms forwards;
+	transition:
+		width 180ms ease,
+		background 180ms ease,
+		box-shadow 180ms ease,
+		transform 180ms ease;
+
+	&:hover,
+	&:focus-visible {
+		width: 174px;
+		background:
+			radial-gradient(
+				circle at 24% 22%,
+				rgba( 255, 255, 255, 0.88 ),
+				rgba( 255, 255, 255, 0 ) 52%
+			),
+			linear-gradient( 135deg, rgba( 162, 169, 233, 0.28 ), rgba( 162, 169, 233, 0.12 ) );
+		box-shadow: 0 8px 22px rgba( 85, 93, 160, 0.16 );
+		transform: translateY( 0 ) scale( 1 );
+	}
+
+	&:focus-visible {
+		outline: 2px solid #3858e9;
+		outline-offset: 3px;
+	}
+
+	&__icon {
+		display: inline-flex;
+		flex: 0 0 40px;
+		align-items: center;
+		justify-content: center;
+		width: 40px;
+		height: 40px;
+		font-size: 18px;
+		line-height: 1;
+	}
+
+	&__text {
+		flex: 0 0 auto;
+		padding-right: 16px;
+		font-size: 14px;
+		font-weight: 500;
+		line-height: 1;
+		white-space: nowrap;
+		opacity: 0;
+		transform: translateX( -6px );
+		transition:
+			opacity 140ms ease 60ms,
+			transform 140ms ease 60ms;
+	}
+
+	&:hover &__text,
+	&:focus-visible &__text {
+		opacity: 1;
+		transform: translateX( 0 );
+	}
+}
+
+body:has(#wpcom-sandboxed-bar) {
+	.content-research-inspiration-float {
+		bottom: 60px;
+	}
+}
+
+@keyframes content-research-inspiration-float-in {
+	to {
+		opacity: 1;
+		transform: translateY( 0 ) scale( 1 );
+	}
+}
+
+@media ( max-width: 480px ) {
+	.content-research-window {
+		width: calc( 100vw - 16px );
+		height: min( 560px, calc( 100vh - 16px ) );
+		border-radius: 8px;
+
+		&.is-minimized {
+			width: calc( 100vw - 16px );
+		}
+	}
+
+	.content-research-inspiration-float {
+		left: 16px;
+		bottom: 66px;
+	}
+}

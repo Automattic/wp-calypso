@@ -25,7 +25,7 @@ const NOTE_STALE_THRESHOLD_MS = 60 * 1000;
 
 const DEFAULT_ERROR_MESSAGE = __(
 	'Unfortunately, there was an error processing your request. Please try again later.',
-	'big-sky'
+	__i18n_text_domain__
 );
 
 /**

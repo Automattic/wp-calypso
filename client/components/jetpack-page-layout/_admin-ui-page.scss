@@ -1,5 +1,4 @@
 @import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/admin-ui/build-style/style.css";
 
 // Shared layout overrides for pages using @wordpress/admin-ui Page component.
 // Usage: @include admin-ui-page-layout;
@@ -24,18 +23,84 @@
 	}
 }
 
-// Constrain admin-ui Page content to 660px centered.
+// Clamp the primary to the viewport so the Jetpack footer can pin to the
+// bottom and the page body scrolls internally — independent of the shell's
+// (sometimes tall) sidebar. `.main` is the generic scroll container, so pages
+// need no per-page scroll hacks; on migrated pages the admin-ui `<Page>` fills
+// `.main` exactly and scrolls itself, leaving this overflow inert.
+//
+// Gated off Jetpack Cloud / A8C-for-Agencies: those shells render no footer,
+// use a fixed sidebar, and clamp `.layout__content` to the viewport — there we
+// just release the overflow and let the page scroll naturally.
+// Usage: @include admin-ui-page-sticky-footer;
+// Must be called inside a `body.is-section-<name>` selector.
+@mixin admin-ui-page-sticky-footer {
+	&:not(.theme-jetpack-cloud):not(.theme-a8c-for-agencies) {
+		.layout__content {
+			display: flex;
+
+			.layout__primary {
+				flex: 1;
+				display: flex;
+				position: fixed;
+				top: var( --masterbar-height );
+				height: calc(100vh - var(--masterbar-height));
+				width: 100vw;
+
+				@include break-medium {
+					width: calc(100vw - var(--sidebar-width-max));
+				}
+
+				.main {
+					flex-grow: 1;
+					position: relative;
+					margin-block: 0;
+					overflow-y: auto;
+
+					// Reserve room for the fixed footer when one is rendered.
+					&:has(> .jetpack-footer) {
+						padding-bottom: 65px;
+					}
+
+					.jetpack-footer {
+						position: fixed;
+						z-index: 1;
+						bottom: 0;
+						background-color: var(--wpds-color-bg-surface-neutral);
+
+						@include break-medium {
+							max-width: calc(100% - var(--sidebar-width-max));
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Jetpack Cloud / A4A: scroll naturally; release the shell's overflow clamp.
+	&.theme-jetpack-cloud,
+	&.theme-a8c-for-agencies {
+		.layout__content {
+			overflow: visible;
+		}
+	}
+}
+
+// Constrain admin-ui Page content width, centered.
 // Pass a $scope selector to limit to specific page variants (e.g. upsell pages).
+// Pass $max-width to override the default 660px (e.g. 1040px for wider content).
 // Usage:
-//   @include admin-ui-page-layout-constrained-content;           // always constrained
-//   @include admin-ui-page-layout-constrained-content('.my-upsell'); // only within .my-upsell
-@mixin admin-ui-page-layout-constrained-content($scope: null) {
+//   @include admin-ui-page-layout-constrained-content;                        // 660px, always
+//   @include admin-ui-page-layout-constrained-content('.my-upsell');          // 660px, scoped
+//   @include admin-ui-page-layout-constrained-content($max-width: 1040px);   // 1040px, always
+//   @include admin-ui-page-layout-constrained-content('.my-upsell', 1040px); // 1040px, scoped
+@mixin admin-ui-page-layout-constrained-content($scope: null, $max-width: 660px) {
 	$parent: if($scope, "#{$scope} .admin-ui-page__content", ".admin-ui-page__content");
 
 	// Temporarily here until constrained content width is implemented in Admin-UI
 	#{$parent} {
 		> * {
-			max-width: 660px;
+			max-width: $max-width;
 			width: 100%;
 			margin-left: auto;
 			margin-right: auto;

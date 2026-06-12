@@ -1,3 +1,4 @@
+@import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
@@ -71,6 +72,18 @@ body.is-section-plugins {
 		.plugins-browser,
 		.is-plugin-details {
 			overflow-x: hidden;
+		}
+	}
+
+	// When the agents-manager (AI) sidebar is open, AM applies
+	// `#content { overflow: auto !important }` on plugins routes,
+	// which causes these ::before pseudo-elements to end up overflowing
+	// the container and causing unnecessary scrollbars.
+	&.agents-manager-sidebar-container--sidebar-open {
+		.plugins-browser :has(> .section-header-container)::before,
+		.is-plugin-details :has(> .section-header-container)::before {
+			width: auto;
+			height: auto;
 		}
 	}
 
@@ -818,7 +831,9 @@ body.is-section-plugins:has(.is-full-width-layout) {
 			height: 0;
 		}
 
-		.x-nav-item, .x-dropdown-link, .x-menu-link {
+		.x-nav-item,
+		.x-dropdown-link,
+		.x-menu-link:not(.cta-btn-nav) {
 			color: var(--studio-gray-100);
 		}
 		.x-dropdown-link {

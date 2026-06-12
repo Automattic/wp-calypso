@@ -1,51 +1,91 @@
+import { JetpackLogo } from '@automattic/components';
+import { __ } from '@wordpress/i18n';
+import { Stack } from '@wordpress/ui';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
-import React from 'react';
-import AutomatticBylineLogo from 'calypso/components/jetpack/automattic-byline-logo';
-import JetpackLogo from 'calypso/components/jetpack-logo';
-import type { JetpackFooterProps } from './types';
-
+import AutomatticBylineLogo from '../automattic-byline-logo';
 import './style.scss';
+import type { FC } from 'react';
+
+export interface JetpackFooterMenuItem {
+	label: string;
+	title?: string;
+	href?: string;
+	role?: string;
+	onClick?: () => void;
+	onKeyDown?: () => void;
+}
+
+interface JetpackFooterProps {
+	className?: string;
+	menu?: JetpackFooterMenuItem[];
+	/** Product name shown next to the logo. Defaults to 'Jetpack'. */
+	name?: string;
+	/** Whether to show the Jetpack logo next to the name. Defaults to true. */
+	showLogo?: boolean;
+}
 
 /**
  * JetpackFooter component displays a tiny Jetpack logo with the product name on the left and the Automattic Airline "by line" on the right.
- * @param {JetpackFooterProps} props - Component properties.
- * @returns {React.ReactNode} JetpackFooter component.
  */
-const JetpackFooter: React.FC< JetpackFooterProps > = ( {
-	a8cLogoHref = 'https://automattic.com',
-	moduleName,
-	className,
-	moduleNameHref = 'https://jetpack.com',
-	...otherProps
-} ) => {
-	const translate = useTranslate();
-	moduleName = moduleName ?? translate( 'Jetpack' );
+const JetpackFooter: FC< JetpackFooterProps > = ( { className, menu, name, showLogo = true } ) => {
 	return (
-		<div className={ clsx( 'jp-dashboard-footer', className ) } { ...otherProps }>
-			<div className="jp-dashboard-footer__footer-left">
-				<JetpackLogo
-					monochrome
-					size={ 16 }
-					className="jp-dashboard-footer__jetpack-symbol"
-					aria-label={ translate( 'Jetpack logo' ) }
-				/>
-				<span className="jp-dashboard-footer__module-name">
-					{ moduleNameHref ? (
-						<a href={ moduleNameHref } aria-label={ moduleName }>
-							{ moduleName }
-						</a>
-					) : (
-						moduleName
-					) }
-				</span>
-			</div>
-			<div className="jp-dashboard-footer__footer-right">
-				<a href={ a8cLogoHref } aria-label={ translate( 'An Automattic Airline' ) }>
-					<AutomatticBylineLogo height={ 7 } />
-				</a>
-			</div>
-		</div>
+		<Stack
+			render={ <footer /> }
+			className={ clsx( 'jetpack-footer', className ) }
+			aria-label={ name ?? __( 'Jetpack', 'jetpack-components' ) }
+			role="contentinfo"
+			direction="row"
+			justify="flex-start"
+			align="center"
+			wrap="wrap"
+			gap="xl"
+		>
+			<Stack className="jetpack-footer__logo" direction="row" gap="sm" align="center">
+				{ showLogo && <JetpackLogo size={ 16 } aria-hidden="true" /> }
+				<span className="jetpack-footer__logo-text">{ name ?? 'Jetpack' }</span>
+			</Stack>
+			{ menu && menu.length > 0 && (
+				<Stack render={ <ul /> } direction="row" gap="lg" wrap="wrap">
+					{ menu.map( ( item ) => {
+						const isButton = item.role === 'button';
+
+						return (
+							<li key={ item.label }>
+								{ isButton ? (
+									<span
+										className="jetpack-footer__menu-item"
+										role="button"
+										tabIndex={ 0 }
+										onClick={ item.onClick }
+										onKeyDown={ item.onKeyDown }
+									>
+										{ item.label }
+									</span>
+								) : (
+									<a
+										className="jetpack-footer__menu-item"
+										href={ item.href }
+										title={ item.title }
+										onClick={ item.onClick }
+										onKeyDown={ item.onKeyDown }
+									>
+										{ item.label }
+									</a>
+								) }
+							</li>
+						);
+					} ) }
+				</Stack>
+			) }
+			<a
+				className="jetpack-footer__a8c"
+				href="https://jetpack.com/redirect/?source=a8c-about"
+				rel="noopener noreferrer"
+				target="_blank"
+			>
+				<AutomatticBylineLogo height={ 8 } />
+			</a>
+		</Stack>
 	);
 };
 

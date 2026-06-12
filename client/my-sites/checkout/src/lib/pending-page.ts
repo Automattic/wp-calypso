@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { isAllowedRedirectUrl } from '@automattic/calypso-url';
 import {
 	SUCCESS,
 	ERROR,
@@ -52,6 +53,15 @@ export interface RedirectForTransactionStatusArgs {
 	 * logged in).
 	 */
 	fromSiteSlug?: string;
+	/**
+	 * Subscription ID of the purchase the user just made. Substituted into any
+	 * `:purchaseId` placeholder in `redirectTo` (analogous to `:receiptId`).
+	 *
+	 * If `redirectTo` contains `:purchaseId` and this is `undefined`, the
+	 * function returns `undefined` to keep the user on the pending page until
+	 * the caller resolves the ID.
+	 */
+	purchaseId?: number;
 }
 
 /**
@@ -258,8 +268,30 @@ function interpolateReceiptId( url: string, receiptId: number ): string {
  * which is absolute and on an unknown host.
  */
 function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean {
-	if ( url.startsWith( '/' ) ) {
+	// Allow relative paths (but not protocol-relative URLs like //evil.com).
+	if ( url.startsWith( '/' ) && ! url.startsWith( '//' ) ) {
 		return true;
+	}
+
+	// Handle subdirectory sites (e.g., siteSlug = 'example.com::blog') which need
+	// both hostname and path matching. If the URL matches the subdirectory site,
+	// allow it; otherwise fall through to the general allowlist check below.
+	if ( siteSlug?.includes( '::' ) && ! url.startsWith( '/' ) ) {
+		try {
+			const parsedUrl = new URL( url );
+			if ( parsedUrl.protocol === 'https:' || parsedUrl.protocol === 'http:' ) {
+				const [ hostnameFromSlug, ...subdirectoryParts ] = siteSlug.split( '::' );
+				const subdirectoryPathFromSlug = subdirectoryParts.join( '/' );
+				if (
+					parsedUrl.hostname === hostnameFromSlug &&
+					parsedUrl.pathname?.startsWith( `/${ subdirectoryPathFromSlug }` )
+				) {
+					return true;
+				}
+			}
+		} catch {
+			return false;
+		}
 	}
 
 	const allowedHostsForRedirect = [
@@ -271,52 +303,21 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 		'calypso.localhost',
 		'my.localhost',
 		'my.woo.localhost',
+		'my.a4a.localhost',
 		'jetpack.cloud.localhost',
 		'cloud.jetpack.com',
 		'jetpack.com',
 		'akismet.com',
+		'gravatar.com',
 		'difmrequest.com',
 		'agencies.automattic.com',
 		'agencies.localhost',
-		siteSlug,
+		...( siteSlug ? [ siteSlug.includes( '::' ) ? siteSlug.split( '::' )[ 0 ] : siteSlug ] : [] ),
 	];
 
-	try {
-		const parsedUrl = new URL( url );
-		const { hostname, pathname } = parsedUrl;
-		if ( ! hostname ) {
-			return false;
-		}
-
-		// For subdirectory site, check that both hostname and subdirectory matches
-		// the siteSlug (host.name::subdirectory).
-		if ( siteSlug?.includes( '::' ) ) {
-			const [ hostnameFromSlug, ...subdirectoryParts ] = siteSlug.split( '::' );
-			const subdirectoryPathFromSlug = subdirectoryParts.join( '/' );
-			if (
-				hostname !== hostnameFromSlug &&
-				! pathname?.startsWith( `/${ subdirectoryPathFromSlug }` )
-			) {
-				return false;
-			}
-			return true;
-		}
-
-		// Return true for *.calypso.live urls.
-		if ( /^([a-zA-Z0-9-]+\.)?calypso\.live$/.test( hostname ) ) {
-			return true;
-		}
-
-		if ( ! allowedHostsForRedirect.includes( hostname ) ) {
-			return false;
-		}
-
-		return true;
-	} catch ( err ) {
-		// eslint-disable-next-line no-console
-		console.error( `Redirecting to absolute url '${ url }' failed:`, err );
-	}
-	return false;
+	return isAllowedRedirectUrl( url, allowedHostsForRedirect, [
+		/^([a-zA-Z0-9-]+\.)?calypso\.live$/,
+	] );
 }
 
 /**
@@ -343,6 +344,30 @@ function getDefaultSuccessUrl(
 	receiptId: number | undefined
 ): string {
 	return `/checkout/thank-you/${ siteSlug ?? 'no-site' }/${ receiptId ?? 'unknown-receipt' }`;
+}
+
+function buildSuccessRedirect( {
+	effectiveReceiptId,
+	redirectTo,
+	siteSlug,
+	fromSiteSlug,
+	purchaseId,
+}: {
+	effectiveReceiptId: number;
+	redirectTo: string | undefined;
+	siteSlug: string | undefined;
+	fromSiteSlug: string | undefined;
+	purchaseId: number | undefined;
+} ): RedirectInstructions {
+	const fallbackUrl = getDefaultSuccessUrl( siteSlug, effectiveReceiptId );
+	let interpolated = interpolateReceiptId( redirectTo ?? fallbackUrl, effectiveReceiptId );
+	if ( interpolated.includes( ':purchaseId' ) ) {
+		if ( purchaseId === undefined ) {
+			return { url: fallbackUrl };
+		}
+		interpolated = interpolated.replaceAll( ':purchaseId', String( purchaseId ) );
+	}
+	return { url: filterAllowedRedirect( interpolated, siteSlug || fromSiteSlug, fallbackUrl ) };
 }
 
 /**
@@ -378,6 +403,7 @@ export function getRedirectFromPendingPage( {
 	siteSlug,
 	saasRedirectUrl,
 	fromSiteSlug,
+	purchaseId,
 }: RedirectForTransactionStatusArgs ): RedirectInstructions | undefined {
 	const checkoutUrl = siteSlug ? `/checkout/${ siteSlug }` : '/checkout/no-site';
 	const errorUrl = '/checkout/failed-purchases';
@@ -400,16 +426,13 @@ export function getRedirectFromPendingPage( {
 	// (eg: for free purchases which do not use Orders), then the order must
 	// already be complete. In that case, we can redirect immediately.
 	if ( receiptId && ! isLoadingOrder && ! transaction ) {
-		return {
-			url: filterAllowedRedirect(
-				interpolateReceiptId(
-					redirectTo ?? getDefaultSuccessUrl( siteSlug, receiptId ),
-					receiptId
-				),
-				siteSlug || fromSiteSlug,
-				getDefaultSuccessUrl( siteSlug, receiptId )
-			),
-		};
+		return buildSuccessRedirect( {
+			effectiveReceiptId: receiptId,
+			redirectTo,
+			siteSlug,
+			fromSiteSlug,
+			purchaseId,
+		} );
 	}
 
 	// If the order ID is missing and there is no receiptId, we don't know
@@ -425,19 +448,13 @@ export function getRedirectFromPendingPage( {
 	}
 
 	if ( transaction?.processingStatus === SUCCESS ) {
-		// If the order is complete, we can redirect to the final page.
-		const { receiptId: transactionReceiptId } = transaction;
-
-		return {
-			url: filterAllowedRedirect(
-				interpolateReceiptId(
-					redirectTo ?? getDefaultSuccessUrl( siteSlug, transactionReceiptId ),
-					transactionReceiptId
-				),
-				siteSlug || fromSiteSlug,
-				getDefaultSuccessUrl( siteSlug, transactionReceiptId )
-			),
-		};
+		return buildSuccessRedirect( {
+			effectiveReceiptId: transaction.receiptId,
+			redirectTo,
+			siteSlug,
+			fromSiteSlug,
+			purchaseId,
+		} );
 	}
 
 	// If the processing status indicates that there was something wrong,

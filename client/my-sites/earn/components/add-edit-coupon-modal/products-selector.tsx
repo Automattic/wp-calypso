@@ -18,6 +18,7 @@ type ProductsSelectorProps = {
 	initialSelectedList: number[];
 	allowMultiple: boolean;
 	showLabel?: boolean;
+	excludeProductIds?: number[];
 };
 
 const ProductsSelector = ( {
@@ -25,14 +26,19 @@ const ProductsSelector = ( {
 	initialSelectedList,
 	allowMultiple,
 	showLabel = true,
+	excludeProductIds,
 }: ProductsSelectorProps ) => {
 	const [ selectedPlanIds, setSelectedPlanIds ] = useState( initialSelectedList ?? [] );
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
 
-	const products: Product[] = useSelector( ( state ) =>
+	const allProducts: Product[] = useSelector( ( state ) =>
 		getProductsForSiteId( state, selectedSiteId )
 	);
+
+	const products = excludeProductIds?.length
+		? allProducts.filter( ( product ) => ! excludeProductIds.includes( product.ID ?? 0 ) )
+		: allProducts;
 
 	const onSelectProduct = ( event: ChangeEvent< HTMLInputElement > ) => {
 		const productId =
@@ -63,7 +69,7 @@ const ProductsSelector = ( {
 
 	/** Product functions */
 	const getProductDescription = ( product: Product ): string => {
-		const { title, currency, renewal_schedule, price } = product;
+		const { title = '', currency, renewal_schedule, price } = product;
 		const amount = formatCurrency( price ?? 0, currency ?? 'USD' );
 		switch ( renewal_schedule ) {
 			case '1 month':
@@ -93,7 +99,7 @@ const ProductsSelector = ( {
 					__( '%1$s : %2$s / %3$s', 'calypso' ),
 					title,
 					amount,
-					renewal_schedule
+					renewal_schedule ?? ''
 				);
 		}
 	};
@@ -102,7 +108,7 @@ const ProductsSelector = ( {
 		if ( allowMultiple ) {
 			if ( quantity > 1 ) {
 				// translators: the %s is a number representing the number of products which are currently selected
-				return sprintf( __( '%s products selected.' ), quantity );
+				return sprintf( __( '%s products selected.' ), String( quantity ) );
 			}
 			if ( quantity === 1 ) {
 				return __( '1 product selected' );

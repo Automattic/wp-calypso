@@ -1,10 +1,8 @@
 # syntax=docker/dockerfile:1.20
 
-ARG cache_mode=base
-ARG node_version=22.9.0
-ARG base_image=registry.a8c.com/calypso/base:latest
+ARG cache_mode=seed
+ARG node_version=24.15.0
 ARG cache_seed_image=registry.a8c.com/calypso/cache-seed:latest
-ARG cache_seed_key="(unknown)"
 
 ###################
 FROM node:${node_version}-bullseye-slim AS builder-cache-none
@@ -15,15 +13,6 @@ ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV PERSISTENT_CACHE=true
 
 RUN mkdir -p /calypso/.cache /calypso/.yarn
-
-
-###################
-# This image contains a directory /calypso/.cache which includes caches
-# for yarn, terser, css-loader and babel.
-FROM ${base_image} AS builder-cache-base
-
-ENV NPM_CONFIG_CACHE=/calypso/.cache
-ENV PERSISTENT_CACHE=true
 
 ###################
 FROM ${cache_seed_image} AS cache-seed-source
@@ -135,35 +124,13 @@ RUN yarn run build-packages:web
 # This contains built environments of Calypso. It will
 # change any time any of the Calypso source-code changes.
 ENV NODE_ENV production
-ARG generate_cache_image=false
 # Delete sourcemaps in the same layer as the build so trunk's hidden-source-map
 # artifacts do not have to be committed and then whiteouted in a later snapshot.
-RUN GENERATE_CACHE_IMAGE=$generate_cache_image yarn run build 2>&1 | tee /tmp/build_log.txt \
-	&& find /calypso/build /calypso/public -name "*.*.map" -delete
+RUN yarn run build 2>&1 | tee /tmp/build_log.txt \
+     && find /calypso/build /calypso/public -name "*.*.map" -delete
 
 # This will output a service message to TeamCity if the build cache was invalidated as seen in the build_log file.
 RUN ./bin/check-log-for-cache-invalidation.sh /tmp/build_log.txt
-
-###################
-# A cache-only update can be generated with "docker build --target update-base-cache"
-FROM ${base_image} AS update-base-cache
-
-# Update webpack cache in the base image so that it can be re-used in future builds.
-# We only copy this part of the cache to make --push faster, and because webpack
-# is the main thing which will impact build performance when the cache invalidates.
-COPY --from=builder /calypso/.cache/evergreen/webpack /calypso/.cache/evergreen/webpack
-
-###################
-# A cache-only update can be generated with "docker build --target update-cache-seed"
-FROM scratch AS update-cache-seed
-ARG commit_sha
-ARG cache_seed_key
-
-LABEL org.opencontainers.image.revision=$commit_sha \
-	io.calypso.cache-seed-key=$cache_seed_key
-
-COPY --from=builder /calypso/.cache /calypso/.cache
-COPY --from=builder /calypso/.yarn /calypso/.yarn
 
 ###################
 FROM node:${node_version}-alpine AS app

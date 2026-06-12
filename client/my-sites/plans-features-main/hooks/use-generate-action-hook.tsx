@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	type PlanSlug,
 	isFreePlan,
@@ -61,7 +60,6 @@ type UseActionHookProps = {
 	 */
 	planTitle?: TranslateResult;
 	pricing?: Plans.PricingMetaForGridPlan | null;
-	isMonthlyPlan?: boolean;
 };
 
 export default function useGenerateActionHook( {
@@ -73,10 +71,8 @@ export default function useGenerateActionHook( {
 	isLaunchPage,
 	showModalAndExit,
 	coupon,
-	useCheckPlanAvailabilityForPurchase,
 	showBillingDescriptionForIncreasedRenewalPrice,
 	enableCategorisedFeatures,
-	reflectStorageSelectionInPlanPrices,
 	isGatingBusinessQ1,
 	redirectTo,
 	pluginSlug,
@@ -89,13 +85,11 @@ export default function useGenerateActionHook( {
 	isLaunchPage: boolean | null;
 	showModalAndExit?: ( planSlug: PlanSlug ) => boolean;
 	coupon?: string;
-	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
 	showBillingDescriptionForIncreasedRenewalPrice?: string | null;
 	enableCategorisedFeatures?: boolean;
-	reflectStorageSelectionInPlanPrices?: boolean;
 	/**
-	 * When true, adds `is_gating_business_q1` to the plan cart item extra data.
-	 * Used for the pricing differentiation experiment (calypso_pricing_differentiation_202601_v1).
+	 * When true, adds `is_gating_business_q1` to the plan cart item extra data
+	 * for the rolled-out pricing differentiation cohort.
 	 */
 	isGatingBusinessQ1?: boolean;
 	redirectTo?: string;
@@ -148,19 +142,13 @@ export default function useGenerateActionHook( {
 		currentPlanBillingPeriod,
 		planTitle,
 		pricing,
-		isMonthlyPlan,
 	}: UseActionHookProps ): GridAction => {
 		// Get renewal pricing text - this will be used as postButtonText if available
 		const renewalPricingText = useRenewalPricingPostButtonText( {
 			planSlug,
 			pricing,
-			isMonthlyPlan,
-			coupon,
-			siteId,
-			useCheckPlanAvailabilityForPurchase,
 			showBillingDescriptionForIncreasedRenewalPrice,
 			enableCategorisedFeatures,
-			reflectStorageSelectionInPlanPrices,
 		} );
 		/**
 		 * 1. Enterprise Plan actions
@@ -455,7 +443,8 @@ function getLoggedInPlansAction( {
 	// Use plan type matching instead of exact slug matching for the 'plans-upgrade' intent.
 	// This allows monthly/yearly versions of the same plan to be considered "current"
 	const isUpgradeFlow =
-		plansIntent && [ 'plans-upgrade', 'plans-woo-hosted' ].includes( plansIntent );
+		plansIntent &&
+		[ 'plans-upgrade', 'plans-upgrade-or-downgrade', 'plans-woo-hosted' ].includes( plansIntent );
 	const current =
 		isUpgradeFlow && sitePlanSlug
 			? getPlanClass( sitePlanSlug ) === getPlanClass( planSlug )
@@ -529,15 +518,6 @@ function getLoggedInPlansAction( {
 
 	// Downgrade action if the plan is not available for purchase
 	if ( ! availableForPurchase ) {
-		if ( isEnabled( 'plans/self-service-downgrade' ) ) {
-			return {
-				primary: {
-					callback: () => {},
-					text: translate( 'Requires downgrade' ),
-					status: 'disabled',
-				},
-			};
-		}
 		return createLoggedInPlansAction(
 			translate( 'Downgrade', { context: 'verb' } ),
 			'secondary',

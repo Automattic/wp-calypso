@@ -41,5 +41,9 @@ export function getPersistedLastActionPriorToLogin( state ) {
  * @returns {boolean} Whether the user is enabled for the reader multi-site dashboard
  */
 export function isReaderMSDEnabled( state ) {
-	return isEnabled( 'reader/msd-enabled' ) && hasDashboardOptIn( state );
+	return (
+		isEnabled( 'reader/msd-enabled' ) &&
+		hasDashboardOptIn( state ) &&
+		! isEnabled( 'dashboard/omnibar' )
+	);
 }

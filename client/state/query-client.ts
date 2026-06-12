@@ -36,6 +36,12 @@ declare module '@tanstack/react-query' {
 	}
 }
 
+let calypsoQueryClient: QueryClient | null = null;
+
+export function getCalypsoQueryClient(): QueryClient | null {
+	return calypsoQueryClient;
+}
+
 export async function createQueryClient(
 	persistenceKey?: string | number
 ): Promise< CreateQueryClientReturn > {
@@ -43,6 +49,7 @@ export async function createQueryClient(
 	const queryClient = new QueryClient( {
 		defaultOptions: { queries: { gcTime: MAX_AGE } },
 	} );
+	calypsoQueryClient = queryClient;
 	const { persister, unsubscribePersister } = await hydrateBrowserState(
 		queryClient,
 		persistenceKey

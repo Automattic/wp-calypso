@@ -3,7 +3,6 @@ import { Icon, chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
-import { A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-pressable-ownership-type';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -12,11 +11,13 @@ import SimpleList from '../simple-list';
 
 import './style.scss';
 
-type Props = {
-	isReferMode?: boolean;
-};
+const PRESSABLE_Q2_2026_DEADLINE = new Date( '2026-06-30T23:59:59.999Z' );
+const CONTACT_SALES_MAILTO =
+	'mailto:partnerships@automattic.com?subject=Pressable%20Summer%202026%20Promo';
+const FULL_TERMS_URL =
+	'https://pressable.com/legal/summer-2026-migration-bonus-terms-and-conditions/';
 
-const PressableOffer = ( { isReferMode }: Props ) => {
+const PressableOffer = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -26,30 +27,39 @@ const PressableOffer = ( { isReferMode }: Props ) => {
 
 	const pressableOwnership = usePressableOwnershipType();
 
-	// Make sure we only show the offer if the agency is a Billing Dragon agency and does not have a Pressable license through A4A, unless we are in referral mode
 	const shouldShowOffer =
 		agency?.billing_system === 'billingdragon' &&
-		( isReferMode ||
-			( new Date() <= new Date( '2026-04-30T23:59:59.999Z' ) && pressableOwnership !== 'agency' ) );
+		pressableOwnership !== 'agency' &&
+		new Date() <= PRESSABLE_Q2_2026_DEADLINE;
 
 	const onToggleView = useCallback( () => {
 		dispatch(
-			recordTracksEvent( 'calypso_a4a_pressable_promo_offer_2026_toggle_view', {
-				event_type: ! isExpanded ? 'collapse' : 'expand',
+			recordTracksEvent( 'calypso_a4a_pressable_promo_offer_q2_2026_toggle_view', {
+				event_type: isExpanded ? 'collapse' : 'expand',
 			} )
 		);
 		setIsExpanded( ( isExpanded ) => ! isExpanded );
 	}, [ dispatch, isExpanded ] );
 
-	const onViewEligiblePlansClick = useCallback( () => {
-		dispatch(
-			recordTracksEvent( 'calypso_a4a_pressable_promo_offer_2026_view_eligible_plans_click' )
-		);
-	}, [ dispatch ] );
+	const onContactSalesClick = useCallback(
+		( e: React.MouseEvent< HTMLAnchorElement | HTMLButtonElement > ) => {
+			e.stopPropagation();
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_pressable_promo_offer_q2_2026_contact_sales_click' )
+			);
+		},
+		[ dispatch ]
+	);
 
-	const onSeeFullTermClick = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_a4a_pressable_promo_offer_2026_see_full_terms_click' ) );
-	}, [ dispatch ] );
+	const onSeeFullTermsClick = useCallback(
+		( e: React.MouseEvent< HTMLAnchorElement | HTMLButtonElement > ) => {
+			e.stopPropagation();
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_pressable_promo_offer_q2_2026_see_full_terms_click' )
+			);
+		},
+		[ dispatch ]
+	);
 
 	if ( ! shouldShowOffer ) {
 		return null;
@@ -62,23 +72,15 @@ const PressableOffer = ( { isReferMode }: Props ) => {
 			role="button"
 			tabIndex={ 0 }
 			onKeyDown={ ( event ) => {
-				if ( event.key === 'Enter' ) {
+				if ( event.key === 'Enter' || event.key === ' ' ) {
+					event.preventDefault();
 					onToggleView();
 				}
 			} }
 		>
 			<div className="a4a-pressable-offer__main">
 				<h3 className="a4a-pressable-offer__title">
-					<span>
-						{ translate(
-							'{{b}}Limited time offer:{{/b}} Get up to 6 months of free Pressable hosting on new plans!',
-							{
-								components: {
-									b: <b />,
-								},
-							}
-						) }
-					</span>
+					<span>{ translate( 'Earn up to 35% cash back on Pressable. Offer ends June 30!' ) }</span>
 
 					<Button className="a4a-pressable-offer__view-toggle-mobile">
 						<Icon icon={ chevronDown } size={ 24 } />
@@ -87,61 +89,69 @@ const PressableOffer = ( { isReferMode }: Props ) => {
 
 				{ isExpanded && (
 					<div className="a4a-pressable-offer__body">
+						<p className="a4a-pressable-offer__intro">
+							{ translate(
+								'Migrate your clients to Pressable and earn up to $50,000 back. Plans starting at 15% back for 12 months, up to 35% for 36 months. {{em}}All deals must be registered through the Automattic for Agencies team to qualify.{{/em}}',
+								{
+									components: {
+										em: <em />,
+									},
+								}
+							) }
+						</p>
+
 						<SimpleList
 							items={ [
 								translate(
-									'{{b}}6 Months Free on Annual Plans:{{/b}} Purchase a 12-month plan and receive a 50% discount on the upfront cost.',
+									'{{b}}Payout:{{/b}} 15% back (12-month plan), 25% back (24-month plan), 35% back (36-month plan)',
 									{
 										components: {
 											b: <b />,
 										},
 									}
 								),
+								translate( '{{b}}Max payout:{{/b}} $50,000 per agency', {
+									components: {
+										b: <b />,
+									},
+								} ),
+								translate( '{{b}}Payout date:{{/b}} July 15, 2027', {
+									components: {
+										b: <b />,
+									},
+								} ),
 								translate(
-									'{{b}}3 Months Free on Monthly Plans:{{/b}} Choose a monthly billing cycle and receive savings equal to 3 free months (applied as a discount evenly across the first 12 invoices).',
+									'{{b}}Not eligible:{{/b}} Migrations from WordPress VIP or WordPress.com to Pressable',
 									{
 										components: {
 											b: <b />,
 										},
 									}
-								),
-								translate(
-									'{{b}}Automattic for Agencies Exclusive:{{/b}} As a partner, you can unlock these savings on Pressable’s full Signature Plan suite in addition to Premium plans.',
-									{
-										components: {
-											b: <b />,
-										},
-									}
-								),
-								translate(
-									'You will continue to earn your standard revenue share and reseller incentives on these accounts.'
 								),
 							] }
 						/>
 
 						<div className="a4a-pressable-offer__body-actions">
-							{ ! window.location.pathname.startsWith( A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK ) && (
-								<Button
-									variant="primary"
-									href={ A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK }
-									onClick={ onViewEligiblePlansClick }
-								>
-									{ translate( 'View Eligible Plans' ) }
-								</Button>
-							) }
+							<Button
+								variant="primary"
+								href={ CONTACT_SALES_MAILTO }
+								onClick={ onContactSalesClick }
+							>
+								{ translate( 'Contact sales to claim this offer' ) }
+							</Button>
 
 							<Button
 								variant="secondary"
-								href="https://pressable.com/legal/hosting-promotion-terms/"
+								href={ FULL_TERMS_URL }
 								target="_blank"
 								rel="noopener noreferrer"
-								onClick={ onSeeFullTermClick }
+								onClick={ onSeeFullTermsClick }
 							>
 								{ translate( 'See full terms ↗' ) }
 							</Button>
 
 							<span className="a4a-pressable-offer__body-actions-footnote">
-								{ translate( '*Offer valid January 27 - April 30, 2026' ) }
+								{ translate( '*Offer valid May 21 – June 30, 2026' ) }
 							</span>
 						</div>
 					</div>

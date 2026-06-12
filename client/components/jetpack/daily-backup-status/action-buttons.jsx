@@ -5,13 +5,9 @@ import Button from 'calypso/components/forms/form-button';
 import { backupDownloadPath, backupRestorePath } from 'calypso/my-sites/backup/paths';
 import { rewindRequestBackup } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import {
-	areJetpackCredentialsInvalid,
-	hasJetpackCredentials,
-} from 'calypso/state/jetpack/credentials/selectors';
+import { hasJetpackCredentials } from 'calypso/state/jetpack/credentials/selectors';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
 import getIsRestoreInProgress from 'calypso/state/selectors/get-is-restore-in-progress';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -52,16 +48,9 @@ const RestoreButton = ( { disabled, rewindId, primary } ) => {
 		getDoesRewindNeedCredentials( state, siteId )
 	);
 
-	const areCredentialsInvalid = useSelector( ( state ) =>
-		areJetpackCredentialsInvalid( state, siteId, 'main' )
-	);
-
-	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
-
 	const isRestoreInProgress = useSelector( ( state ) => getIsRestoreInProgress( state, siteId ) );
 
-	const isRestoreDisabled =
-		disabled || needsCredentials || isRestoreInProgress || ( ! isAtomic && areCredentialsInvalid );
+	const isRestoreDisabled = disabled || needsCredentials || isRestoreInProgress;
 	const href = ! isRestoreDisabled ? backupRestorePath( siteSlug, rewindId ) : undefined;
 	const onRestore = () =>
 		dispatch(
@@ -105,11 +94,11 @@ const CloneButton = ( { disabled, rewindId, primary, onClickClone } ) => {
 
 const ActionButtons = ( {
 	rewindId,
-	disabled,
+	disabled = false,
 	isMultiSite,
-	hasWarnings,
-	availableActions,
-	onClickClone,
+	hasWarnings = false,
+	availableActions = [ 'rewind', 'download' ],
+	onClickClone = () => {},
 } ) => (
 	<>
 		{ availableActions && availableActions.includes( 'download' ) && (
@@ -144,15 +133,6 @@ ActionButtons.propTypes = {
 	hasWarnings: PropTypes.bool,
 	availableActions: PropTypes.arrayOf( PropTypes.string ),
 	onClickClone: PropTypes.func,
-};
-
-ActionButtons.defaultProps = {
-	rewindId: null,
-	disabled: false,
-	isMultiSite: false,
-	hasWarnings: false,
-	availableActions: [ 'rewind', 'download' ],
-	onClickClone: () => {},
 };
 
 export default ActionButtons;

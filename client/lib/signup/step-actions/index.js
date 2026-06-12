@@ -1036,8 +1036,10 @@ export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
 		return;
 	}
 
-	if ( siteDomains && siteDomains.length > 1 ) {
-		const tracksEventValue = siteDomains.map( ( siteDomain ) => siteDomain.domain ).join( ', ' );
+	const customDomains = siteDomains?.filter( ( siteDomain ) => ! siteDomain.isWPCOMDomain ) ?? [];
+
+	if ( customDomains.length > 0 ) {
+		const tracksEventValue = customDomains.map( ( siteDomain ) => siteDomain.domain ).join( ', ' );
 		excludeDomainStep( stepName, tracksEventValue, submitSignupStep );
 	}
 }

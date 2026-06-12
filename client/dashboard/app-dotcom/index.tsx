@@ -22,6 +22,8 @@ boot( {
 	mainRoute: '/sites',
 	Logo,
 	supports: {
+		agency: false,
+		agencyClient: false,
 		sites: true,
 		domains: true,
 		emails: true,
@@ -36,7 +38,6 @@ boot( {
 			security: {
 				sshKey: true,
 			},
-			privacy: true,
 			apps: true,
 		},
 		plugins: true,
@@ -45,6 +46,8 @@ boot( {
 		siteOverview: {
 			preview: ! isEnabled( 'dashboard/omnibar' ),
 		},
+		colorScheme: isEnabled( 'dark-mode' ),
+		darkMode: isEnabled( 'dark-mode' ),
 	},
 	optIn: true,
 	components: {

@@ -25,12 +25,15 @@
 - **Help Center** (`packages/help-center`) — shared component library for WordPress.com support. Also deployed via `apps/help-center/` to `widgets.wp.com`.
 - **Image Studio** (`packages/image-studio`) — AI-powered image editing and generation
 - **Block Notes** (`packages/block-notes`) — AI-powered block commenting system for WordPress
+- **Calypso Products** (`packages/calypso-products`) — ⚠️ **Avoid.** Deprecated/frozen: a bloated client-side duplicate of product data the backend already owns. Don't add to it; prefer backend-driven data (e.g. `@automattic/api-queries`). See `packages/calypso-products/AGENTS.md`.
 
 ## Apps
 
 - **Help Center** (`apps/help-center`) — build/deploy layer that bundles `packages/help-center` into webpack entry points served from `widgets.wp.com`.
 
 ## Development
+
+> **Note**: The Calypso dev server uses the `PORT` environment variable (check repo-root `.env`) and falls back to port `3000`. Do not create or modify `.env` unless explicitly asked.
 
 ```bash
 # Setup
@@ -65,11 +68,23 @@ yarn test-client --testNamePattern="<TestName>" # Run a specific client unit tes
 # E2E tests - refer to: test/e2e/AGENTS.md
 
 # Code Quality
-yarn lint           # Lint everything
-yarn lint:css       # Lint CSS
-yarn lint:js        # Lint JavaScript
-yarn reformat-files # Fix formatting with Prettier
+yarn lint             # Lint everything
+yarn lint:css         # Lint CSS
+yarn lint:js          # Lint JavaScript
+yarn reformat-files   # Fix formatting with Prettier
+yarn typecheck-client # Type-check client
 ```
+
+## Pre-PR checks
+
+Before pushing a branch or running `gh pr create`, run the type-check that CI will run. PRs touching `client/` may fail the `type_check_client` CI check after opening, so verify locally first:
+
+```bash
+yarn               # Install dependencies first if you haven't already
+yarn typecheck-client
+```
+
+If it fails, fix the type errors at the source — do not silence them with `// @ts-expect-error`, `// @ts-ignore`, or `as any` unless you can justify it in the PR description. Other CI type-checks worth running when relevant: `yarn typecheck-packages`, `yarn typecheck-apps`.
 
 ## Creating Pull Requests
 

@@ -34,6 +34,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 	let page: Page;
 	let testAccount: TestAccount;
+	let siteSlug: string;
 	let editorPage: EditorPage;
 	let publishedPostPage: PublishedPostPage;
 	let publishedURL: URL;
@@ -44,10 +45,11 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 		testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
+		siteSlug = testAccount.getSiteURL( { protocol: false } );
 	} );
 
 	it( 'Go to the new post page', async function () {
-		await editorPage.visit( 'post' );
+		await editorPage.visit( 'post', { siteSlug } );
 	} );
 
 	describe( 'Blocks', function () {
@@ -114,7 +116,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 			await editorPage.openEditorOptionsMenu();
 			const page = await editorPage.getEditorParent();
 
-			await page.getByRole( 'menuitemcheckbox', { name: 'Jetpack' } ).click();
+			await page.getByRole( 'menuitemcheckbox', { name: 'Jetpack', exact: true } ).click();
 		} );
 
 		skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )( 'Link preview', function () {

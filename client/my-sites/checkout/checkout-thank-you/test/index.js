@@ -44,6 +44,11 @@ jest.mock( '../redesign-v2/pages/plan-only', () => () => (
 jest.mock( '../redesign-v2/pages/generic', () => () => (
 	<div data-testid="component--generic-thank-you" />
 ) );
+// eslint-disable-next-line react/display-name
+jest.mock( '../redesign-v2/pages/domain-only', () => ( {
+	__esModule: true,
+	default: () => <div data-testid="component--domain-only-thank-you" />,
+} ) );
 
 const translate = ( x ) => x;
 
@@ -165,5 +170,52 @@ describe( 'CheckoutThankYou', () => {
 		);
 
 		expect( await screen.getByTestId( 'component--plan-only-thank-you' ) ).toBeInTheDocument();
+	} );
+
+	describe( 'domain-only page', () => {
+		const props = {
+			...defaultProps,
+			receiptId: 12,
+			receipt: {
+				hasLoadedFromServer: true,
+				data: {
+					purchases: [
+						{
+							isDomainRegistration: true,
+							productSlug: 'dotcom_domain',
+							productType: 'domain',
+							meta: 'example.com',
+							blogId: 123,
+							isHundredYearDomain: false,
+							delayedProvisioning: false,
+						},
+					],
+					failedPurchases: [],
+					currency: 'USD',
+				},
+			},
+			refreshSitePlans: () => {},
+		};
+
+		it( 'renders the DomainOnly page when purchasing a domain in a domain-only site flow', () => {
+			render(
+				<Provider store={ store }>
+					<CheckoutThankYou { ...props } domainOnlySiteFlow />
+				</Provider>
+			);
+
+			expect( screen.getByTestId( 'component--domain-only-thank-you' ) ).toBeVisible();
+		} );
+
+		it( 'does not render the DomainOnly page when purchasing a domain outside a domain-only site flow', () => {
+			render(
+				<Provider store={ store }>
+					<CheckoutThankYou { ...props } domainOnlySiteFlow={ false } />
+				</Provider>
+			);
+
+			expect( screen.queryByTestId( 'component--domain-only-thank-you' ) ).not.toBeInTheDocument();
+			expect( screen.getByTestId( 'component--generic-thank-you' ) ).toBeVisible();
+		} );
 	} );
 } );

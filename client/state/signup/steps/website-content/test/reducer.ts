@@ -1,8 +1,18 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
+let mockInstanceIdCounter = 0;
+jest.mock( 'calypso/signup/difm/page-instances', () => {
+	const actual = jest.requireActual( 'calypso/signup/difm/page-instances' );
+	return {
+		...actual,
+		newInstanceId: jest.fn( () => `instance-${ ++mockInstanceIdCounter }` ),
+	};
+} );
+
 import { SIGNUP_COMPLETE_RESET } from 'calypso/state/action-types';
 import {
 	ABOUT_PAGE,
 	CONTACT_PAGE,
+	CUSTOM_PAGE,
 	HOME_PAGE,
 	PORTFOLIO_PAGE,
 	VIDEO_GALLERY_PAGE,
@@ -98,6 +108,10 @@ const translatedPageTitles = {
 };
 
 describe( 'reducer', () => {
+	beforeEach( () => {
+		mockInstanceIdCounter = 0;
+	} );
+
 	test( 'should update the current index', () => {
 		expect(
 			websiteContentCollectionReducer(
@@ -133,7 +147,8 @@ describe( 'reducer', () => {
 				...initialTestState.websiteContent,
 				pages: [
 					{
-						id: CONTACT_PAGE,
+						id: 'instance-1',
+						type: CONTACT_PAGE,
 						title: 'Contact',
 						content: '',
 						useFillerContent: false,
@@ -145,7 +160,8 @@ describe( 'reducer', () => {
 						],
 					},
 					{
-						id: VIDEO_GALLERY_PAGE,
+						id: 'instance-2',
+						type: VIDEO_GALLERY_PAGE,
 						title: 'Video Gallery',
 						content: '',
 						useFillerContent: false,
@@ -157,7 +173,8 @@ describe( 'reducer', () => {
 						],
 					},
 					{
-						id: PORTFOLIO_PAGE,
+						id: 'instance-3',
+						type: PORTFOLIO_PAGE,
 						title: 'Portfolio',
 						content: '',
 						useFillerContent: false,
@@ -222,7 +239,8 @@ describe( 'reducer', () => {
 				...initialTestState.websiteContent,
 				pages: [
 					{
-						id: CONTACT_PAGE,
+						id: 'instance-1',
+						type: CONTACT_PAGE,
 						title: 'Contact',
 						content: 'test contact page content',
 						media: [
@@ -234,7 +252,8 @@ describe( 'reducer', () => {
 						useFillerContent: false,
 					},
 					{
-						id: VIDEO_GALLERY_PAGE,
+						id: 'instance-2',
+						type: VIDEO_GALLERY_PAGE,
 						title: 'Video Gallery',
 						content: 'test video gallery page content',
 						media: [
@@ -246,7 +265,8 @@ describe( 'reducer', () => {
 						useFillerContent: true,
 					},
 					{
-						id: PORTFOLIO_PAGE,
+						id: 'instance-3',
+						type: PORTFOLIO_PAGE,
 						title: 'Portfolio',
 						content: 'test portfolio page content',
 						media: [
@@ -264,6 +284,77 @@ describe( 'reducer', () => {
 				],
 			},
 		} );
+	} );
+
+	test( 'instances path: server-UUID-keyed pages with multiple CUSTOM_PAGE entries stay distinct on reload', () => {
+		// Reproduces HAPD-3969: the standard DIFM flow saves pages with UUID ids
+		// and reloads with the query hook pairing pages[i] to selected_page_titles[i].
+		// Each CUSTOM_PAGE instance must retain its own title/content/media.
+		const homeUuid = 'uuid-home-1';
+		const custom1Uuid = 'uuid-custom-1';
+		const custom2Uuid = 'uuid-custom-2';
+		expect(
+			websiteContentCollectionReducer(
+				{ ...initialState },
+				initializeWebsiteContentForm(
+					{
+						selectedPageTitles: [ HOME_PAGE, CUSTOM_PAGE, CUSTOM_PAGE ],
+						selectedPageInstances: [
+							{ id: homeUuid, type: HOME_PAGE },
+							{ id: custom1Uuid, type: CUSTOM_PAGE },
+							{ id: custom2Uuid, type: CUSTOM_PAGE },
+						],
+						isWebsiteContentSubmitted: false,
+						isStoreFlow: false,
+						pages: [
+							{
+								id: homeUuid,
+								title: 'Home',
+								content: 'home content',
+								media: [],
+								useFillerContent: false,
+							},
+							{
+								id: custom1Uuid,
+								title: 'Custom page 1 test 2',
+								content: 'Custom page 1 test 2',
+								media: [],
+								useFillerContent: false,
+							},
+							{
+								id: custom2Uuid,
+								title: '',
+								content: '',
+								media: [],
+								useFillerContent: false,
+							},
+						],
+						siteLogoUrl: '',
+						genericFeedback: '',
+						searchTerms: '',
+					},
+					translatedPageTitles
+				)
+			).websiteContent.pages
+		).toEqual( [
+			expect.objectContaining( {
+				id: homeUuid,
+				type: HOME_PAGE,
+				title: 'Home',
+				content: 'home content',
+			} ),
+			expect.objectContaining( {
+				id: custom1Uuid,
+				type: CUSTOM_PAGE,
+				title: 'Custom page 1 test 2',
+				content: 'Custom page 1 test 2',
+			} ),
+			expect.objectContaining( {
+				id: custom2Uuid,
+				type: CUSTOM_PAGE,
+				content: '',
+			} ),
+		] );
 	} );
 
 	test( 'image data should be accurately updated', () => {

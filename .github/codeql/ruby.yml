@@ -1,0 +1,4 @@
+name: CodeQL Ruby
+
+paths:
+  - desktop

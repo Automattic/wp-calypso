@@ -7,7 +7,6 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_PREMIUM,
 	getPlan,
-	getPlanPath,
 	getYearlyPlanByMonthly,
 	isMonthly,
 	planMatches,
@@ -408,7 +407,7 @@ const Home = () => {
 						trackUpgrade( 'plans', 'peer-referral' );
 						if ( isMonthlyPlan && site?.slug && sitePlanSlug ) {
 							const annualPlanSlug = getYearlyPlanByMonthly( sitePlanSlug );
-							const planPath = annualPlanSlug ? getPlanPath( annualPlanSlug ) : undefined;
+							const planPath = annualPlanSlug || undefined;
 							if ( planPath ) {
 								page( `/checkout/${ site.slug }/${ planPath }` );
 								return;

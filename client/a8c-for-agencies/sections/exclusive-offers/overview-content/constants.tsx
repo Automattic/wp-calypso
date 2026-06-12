@@ -17,6 +17,7 @@ import {
 	MARKETPLACE_TYPE_REFERRAL,
 	MARKETPLACE_TYPE_REGULAR,
 } from 'calypso/a8c-for-agencies/sections/marketplace/hoc/with-marketplace-type';
+import AvalaraLogo from './images/avalara.svg';
 import JetpackLogo from './images/jetpack.svg';
 import PressableLogo from './images/pressable.svg';
 import VIPLogo from './images/vip.svg';
@@ -156,6 +157,21 @@ export const partnerOffers: PartnerOffer[] = [
 				category: PRODUCT_BRAND_FILTER_JETPACK,
 			} ),
 			purchase_type: MARKETPLACE_TYPE_REFERRAL,
+		},
+	},
+	{
+		id: 'avalara-partner-program-refer',
+		offerType: 'refer',
+		logo: <img src={ AvalaraLogo } alt="Avalara" style={ { width: 'auto', height: '16px' } } />,
+		title: __( 'Join the Avalara Partner Program and unlock new revenue streams' ),
+		description: __(
+			'Help clients navigate tax complexity with a trusted partner—while unlocking new revenue opportunities for your business.'
+		),
+		termsUrl: 'https://legal.avalara.com/partner.legal.center#generalpartnerterms',
+		cta: {
+			label: __( 'Join the partner program' ),
+			url: 'https://www.avalara.com/us/en/partners/partner-programs.html',
+			external: true,
 		},
 	},
 	{

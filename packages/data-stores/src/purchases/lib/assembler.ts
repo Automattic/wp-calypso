@@ -5,6 +5,10 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 	const object: Purchase = {
 		id: Number( purchase.ID ),
 		amount: Number( purchase.amount ),
+		advertisedTotalUploadSpaceInGb:
+			purchase.advertised_total_upload_space_in_gb == null
+				? null
+				: Number( purchase.advertised_total_upload_space_in_gb ),
 		attachedToPurchaseId: Number( purchase.attached_to_purchase_id ),
 		autoRenewCouponCode: purchase.auto_renew_coupon_code,
 		autoRenewCouponDiscountPercentage: Number( purchase.auto_renew_coupon_discount_percentage ),
@@ -59,6 +63,7 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		isInAppPurchase: Boolean( purchase.is_iap_purchase ),
 		isRechargeable: Boolean( purchase.is_rechargeable ),
 		isRefundable: Boolean( purchase.is_refundable ),
+		isWithinInitialRefundWindow: Boolean( purchase.is_within_initial_refund_window ),
 		isRenewable: Boolean( purchase.is_renewable ),
 		isRenewal: Boolean( purchase.is_renewal ),
 		isWooExpressTrial: Boolean( purchase.is_woo_express_trial ),
@@ -116,6 +121,7 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		userId: Number( purchase.user_id ),
 		isAutoRenewEnabled: purchase.is_auto_renew_enabled,
 		isJetpackPlanOrProduct: purchase.is_jetpack_plan_or_product,
+		isAttachedToHoldingSite: Boolean( purchase.is_attached_to_holding_site ),
 	};
 
 	if ( isCreditCardPurchase( purchase ) ) {

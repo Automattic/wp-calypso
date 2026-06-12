@@ -3,6 +3,7 @@
  * Session IDs are written to `localStorage` by `agenttic-client` and expire after 24 hours.
  */
 import { ORCHESTRATOR_AGENT_ID } from '../constants';
+import { generateUUID } from './generate-uuid';
 
 export const SESSION_STORAGE_KEY = 'agents-manager-session-id';
 const SESSION_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
@@ -62,5 +63,70 @@ export function clearSessionId( agentId?: string ): void {
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
 		console.error( '[agent-session] Error clearing session ID:', error );
+	}
+}
+
+export const FRESH_SESSION_FLAG_PREFIX = 'agents-manager-session-fresh';
+
+function getFreshFlagKey( agentId?: string ): string {
+	return `${ FRESH_SESSION_FLAG_PREFIX }-${ agentId || 'default' }`;
+}
+
+/**
+ * Check whether the current session is "fresh" — generated client-side and
+ * never yet sent to the server. Callers can use this to skip an initial
+ * server-side conversation fetch (there's nothing to fetch).
+ * The flag clears automatically once a request is made with this session.
+ */
+export function isFreshSession( agentId?: string ): boolean {
+	try {
+		return localStorage.getItem( getFreshFlagKey( agentId ) ) === '1';
+	} catch {
+		return false;
+	}
+}
+
+/**
+ * Clear the fresh-session flag. Call after the first message round-trip
+ * completes so subsequent page loads re-enable the server fetch.
+ */
+export function markSessionUsed( agentId?: string ): void {
+	try {
+		localStorage.removeItem( getFreshFlagKey( agentId ) );
+	} catch {
+		// ignore
+	}
+}
+
+/**
+ * Get an existing session ID from localStorage, or create + persist a new
+ * client-side UUID. Use this when the caller wants a stable session ID
+ * across page loads WITHOUT depending on agenttic-client's own write path
+ * (which only fires after the server's first response).
+ *
+ * Pass isNewChat=true to force creation of a fresh session.
+ */
+export function getOrCreateSessionId( isNewChat: boolean, agentId?: string ): string {
+	if ( isNewChat ) {
+		clearSessionId( agentId );
+	}
+	const existing = getSessionId( agentId );
+	if ( existing ) {
+		return existing;
+	}
+	try {
+		const newId = generateUUID();
+		localStorage.setItem(
+			getSessionStorageKey( agentId ),
+			JSON.stringify( { sessionId: newId, timestamp: Date.now() } )
+		);
+		// Mark as fresh so useConversation can skip its initial server fetch.
+		// Cleared after the first real request round-trip completes.
+		localStorage.setItem( getFreshFlagKey( agentId ), '1' );
+		return newId;
+	} catch ( error ) {
+		// eslint-disable-next-line no-console
+		console.error( '[agent-session] Error creating session ID:', error );
+		return '';
 	}
 }

@@ -1,14 +1,22 @@
+@import '@wordpress/base-styles/colors';
 @import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 // The following changes should be merged in their respective files before nav unification goes to production
 @import url( //s0.wp.com/wp-includes/css/dashicons.min.css?v=20250127 );
 @import "@automattic/typography/styles/variables";
+@import "./sidebar-group";
+@import "./signal-badge";
+@import "./customize/customize-mode";
 
 $brand-text: "SF Pro Text", $sans;
 
 // Override Global Vars
 .theme-default {
+	&.is-sidebar-overflow:has(.wp-admin-sidebar-group) {
+		--color-sidebar-gridicon-fill: var(--color-sidebar-text);
+	}
+
 	// client/assets/stylesheets/shared/_variables.scss
 	--sidebar-width-max: 272px;
 	--sidebar-width-min: 272px;
@@ -157,6 +165,11 @@ $font-size: rem(14px);
 
 	// client/layout/sidebar/style.scss
 	.sidebar {
+		--wp-admin-sidebar-group-label-fg: var(--wp-admin-theme-color, var(--color-accent, #2271b1));
+		--wp-admin-sidebar-customizer-theme: var(--wp-admin-theme-color, var(--color-accent, #2271b1));
+		--wp-admin-sidebar-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+			Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+
 		position: relative;
 		background-color: var(--color-sidebar-background);
 		padding-bottom: 12px;
@@ -773,7 +786,7 @@ $font-size: rem(14px);
 		.sidebar .site__content {
 			padding: 10px 2px;
 
-			.count {
+			.a8c-count {
 				margin: 0;
 			}
 
@@ -1049,7 +1062,7 @@ $font-size: rem(14px);
 		}
 
 		.focus-content:not(.has-no-sidebar):not(.has-no-masterbar) .layout__content {
-			padding-top: 62px;
+			padding-top: var(--masterbar-height, 62px); // keep old value as fallback
 			padding-bottom: 0;
 		}
 

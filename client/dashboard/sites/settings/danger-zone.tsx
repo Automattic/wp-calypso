@@ -34,11 +34,15 @@ const SiteTransferAction = ( { site }: { site: Site } ) => {
 
 const SiteResetAction = ( { site }: { site: Site } ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
+	const description = site.is_wpcom_staging_site
+		? __( 'Reset this staging site to a clean WordPress state.' )
+		: __( 'Restore this site to its original state.' );
+
 	return (
 		<>
 			<ActionList.ActionItem
 				title={ __( 'Reset site' ) }
-				description={ __( 'Restore this site to its original state.' ) }
+				description={ description }
 				actions={
 					<Button variant="secondary" size="compact" onClick={ () => setIsOpen( true ) }>
 						{ __( 'Reset' ) }

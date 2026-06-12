@@ -21,31 +21,34 @@ import MenuItem from './menu-item';
 import type { AddNewSiteProps } from './types';
 import './style.scss';
 
-function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
+function AddNewSite( {
+	context = 'unknown',
+	aiSiteBuilderPath = '/setup/ai-site-builder',
+}: AddNewSiteProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const auth = useContext( AuthContext );
 	const user = auth?.user;
 	const isFlexEligible = user ? userHasFlag( user, 'wpcom-flex' ) : false;
 
 	const wordpressClick = () => {
-		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_add' );
-		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+		recordTracksEvent( 'calypso_dashboard_sites_new_site_action_click_add' );
+		recordTracksEvent( 'calypso_dashboard_sites_new_site_action_click_item', {
 			action: 'wordpress',
 		} );
 	};
 	const jetpackClick = () => {
-		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_jetpack' );
-		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+		recordTracksEvent( 'calypso_dashboard_sites_new_site_action_click_jetpack' );
+		recordTracksEvent( 'calypso_dashboard_sites_new_site_action_click_item', {
 			action: 'jetpack',
 		} );
 	};
 	const migrateClick = () => {
-		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+		recordTracksEvent( 'calypso_dashboard_sites_new_site_action_click_item', {
 			action: 'migrate',
 		} );
 	};
 	const offerClick = () => {
-		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+		recordTracksEvent( 'calypso_dashboard_sites_new_site_action_click_item', {
 			action: 'offer',
 		} );
 	};
@@ -64,7 +67,7 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 						title={ __( 'Create a Flex site' ) }
 						description={ __( 'Provision a flexible WordPress.com environment.' ) }
 						onClick={ () => {
-							recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+							recordTracksEvent( 'calypso_dashboard_sites_new_site_action_click_item', {
 								action: 'flex-site',
 							} );
 						} }
@@ -89,11 +92,11 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 					description={ __( 'Describe your idea and let AI help you refine your site.' ) }
 					onClick={ () => {
 						setShowHelpCenter( false );
-						recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+						recordTracksEvent( 'calypso_dashboard_sites_new_site_action_click_item', {
 							action: 'big-sky',
 						} );
 					} }
-					href={ addQueryArgs( wpcomLink( '/setup/ai-site-builder' ), {
+					href={ addQueryArgs( wpcomLink( aiSiteBuilderPath ), {
 						source: context,
 						ref: 'new-site-popover',
 					} ) }

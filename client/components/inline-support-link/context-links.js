@@ -20,8 +20,8 @@ const contextLinks = {
 		post_id: 213203,
 	},
 	'ai-tools': {
-		link: 'https://wordpress.com/support/ai-website-builder/',
-		post_id: 404989,
+		link: 'https://wordpress.com/support/ai/',
+		post_id: 437308,
 	},
 	autorenewal: {
 		link: 'https://wordpress.com/support/manage-purchases/automatic-renewal/',
@@ -142,6 +142,10 @@ const contextLinks = {
 	'hosting-staging-site': {
 		link: 'https://wordpress.com/support/how-to-create-a-staging-site/',
 		post_id: 239448,
+	},
+	'hosting-staging-site-sync': {
+		link: 'https://wordpress.com/support/how-to-create-a-staging-site/sync-staging-site/',
+		post_id: 386882,
 	},
 	'hosting-edge-cache': {
 		link: 'https://wordpress.com/support/clear-your-sites-cache/',

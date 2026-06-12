@@ -2,7 +2,7 @@
  * Unit tests for Block Notes tracking functions
  *
  * These tests validate that tracking functions call recordTracksEvent
- * with correct event names and essential properties.
+ * with the jetpack_ prefix and correct properties.
  */
 
 // Mock the tracks module
@@ -18,6 +18,10 @@ import {
 	trackBlockNoteAtMentionUsed,
 } from './tracking';
 
+const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
+	typeof recordTracksEvent
+>;
+
 describe( 'Block Notes Tracking', () => {
 	const TEST_POST_ID = 123;
 	const TEST_NOTE_ID = 456;
@@ -28,14 +32,14 @@ describe( 'Block Notes Tracking', () => {
 	} );
 
 	describe( 'trackBlockNoteAtMentionUsed', () => {
-		it( 'should call recordTracksEvent with correct event name and required properties', () => {
+		it( 'should call recordTracksEvent with jetpack_ prefix and required properties', () => {
 			trackBlockNoteAtMentionUsed( {
 				postId: TEST_POST_ID,
 				noteId: TEST_NOTE_ID,
 			} );
 
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'block_note_at_mention_used',
+			expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+				'jetpack_big_sky_block_note_at_mention_used',
 				expect.objectContaining( {
 					post_id: TEST_POST_ID,
 					note_id: TEST_NOTE_ID,
@@ -50,8 +54,8 @@ describe( 'Block Notes Tracking', () => {
 				parentNoteId: TEST_PARENT_NOTE_ID,
 			} );
 
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'block_note_at_mention_used',
+			expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+				'jetpack_big_sky_block_note_at_mention_used',
 				expect.objectContaining( {
 					post_id: TEST_POST_ID,
 					note_id: TEST_NOTE_ID,
@@ -62,14 +66,14 @@ describe( 'Block Notes Tracking', () => {
 	} );
 
 	describe( 'trackBlockNoteAiReplyCreated', () => {
-		it( 'should call recordTracksEvent with correct event name and required properties', () => {
+		it( 'should call recordTracksEvent with jetpack_ prefix and required properties', () => {
 			trackBlockNoteAiReplyCreated( {
 				noteId: TEST_NOTE_ID,
 				postId: TEST_POST_ID,
 			} );
 
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'block_note_ai_reply_created',
+			expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+				'jetpack_big_sky_block_note_ai_reply_created',
 				expect.objectContaining( {
 					note_id: TEST_NOTE_ID,
 					post_id: TEST_POST_ID,
@@ -84,8 +88,8 @@ describe( 'Block Notes Tracking', () => {
 				parentNoteId: TEST_PARENT_NOTE_ID,
 			} );
 
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'block_note_ai_reply_created',
+			expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+				'jetpack_big_sky_block_note_ai_reply_created',
 				expect.objectContaining( {
 					note_id: TEST_NOTE_ID,
 					post_id: TEST_POST_ID,
@@ -96,14 +100,14 @@ describe( 'Block Notes Tracking', () => {
 	} );
 
 	describe( 'trackBlockNoteAiResponseFailed', () => {
-		it( 'should call recordTracksEvent with correct event name and required properties', () => {
+		it( 'should call recordTracksEvent with jetpack_ prefix and required properties', () => {
 			trackBlockNoteAiResponseFailed( {
 				noteId: TEST_NOTE_ID,
 				errorType: 'agent_response_failed',
 			} );
 
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'block_note_ai_response_failed',
+			expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+				'jetpack_big_sky_block_note_ai_response_failed',
 				expect.objectContaining( {
 					note_id: TEST_NOTE_ID,
 					error_type: 'agent_response_failed',
@@ -118,8 +122,8 @@ describe( 'Block Notes Tracking', () => {
 				errorType: 'agent_response_failed',
 			} );
 
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'block_note_ai_response_failed',
+			expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+				'jetpack_big_sky_block_note_ai_response_failed',
 				expect.objectContaining( {
 					note_id: TEST_NOTE_ID,
 					post_id: TEST_POST_ID,
@@ -136,8 +140,8 @@ describe( 'Block Notes Tracking', () => {
 				errorType: 'unknown',
 			} );
 
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'block_note_ai_response_failed',
+			expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+				'jetpack_big_sky_block_note_ai_response_failed',
 				expect.objectContaining( {
 					note_id: TEST_NOTE_ID,
 					post_id: TEST_POST_ID,
@@ -149,14 +153,14 @@ describe( 'Block Notes Tracking', () => {
 	} );
 
 	describe( 'trackBlockNoteAiReplyFailed', () => {
-		it( 'should call recordTracksEvent with correct event name and required properties', () => {
+		it( 'should call recordTracksEvent with jetpack_ prefix and required properties', () => {
 			trackBlockNoteAiReplyFailed( {
 				noteId: TEST_NOTE_ID,
 				errorType: 'ability_failed',
 			} );
 
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'block_note_ai_reply_failed',
+			expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+				'jetpack_big_sky_block_note_ai_reply_failed',
 				expect.objectContaining( {
 					note_id: TEST_NOTE_ID,
 					error_type: 'ability_failed',
@@ -171,8 +175,8 @@ describe( 'Block Notes Tracking', () => {
 				errorType: 'unknown',
 			} );
 
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'block_note_ai_reply_failed',
+			expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+				'jetpack_big_sky_block_note_ai_reply_failed',
 				expect.objectContaining( {
 					note_id: TEST_NOTE_ID,
 					post_id: TEST_POST_ID,

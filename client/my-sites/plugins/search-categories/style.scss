@@ -103,6 +103,14 @@ $search-categories-height: 40px;
 		top: 0;
 		z-index: 20;
 
+		// Baton-pass: filter sticks at the fixed nav's top and rides above it,
+		// covering it as it pins (opaque bg via the parent's white background).
+		.is-section-plugins:has(.x-nav--2026-redesign) & {
+			top: var(--nav-2026-admin-offset);
+			z-index: 1000;
+			background-color: var(--studio-white);
+		}
+
 		&.fixed-top {
 			padding: $search-categories-padding-block 32px;
 			margin: 0 -32px;

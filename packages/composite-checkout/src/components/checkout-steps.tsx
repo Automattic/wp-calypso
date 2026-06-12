@@ -399,12 +399,14 @@ function CheckoutStepGroupWrapper( {
 	loadingContent,
 	loadingHeader,
 	onStepChanged,
+	scrollToStepOnForwardNavigation,
 	store,
 }: PropsWithChildren< {
 	className?: string;
 	loadingContent?: ReactNode;
 	loadingHeader?: ReactNode;
 	onStepChanged?: StepChangedCallback;
+	scrollToStepOnForwardNavigation?: boolean;
 	store: CheckoutStepGroupStore;
 } > ) {
 	const { isRTL } = useI18n();
@@ -425,7 +427,9 @@ function CheckoutStepGroupWrapper( {
 			// context consumers get the modified store because its identity has
 			// changed.
 			setTimeout( () => {
-				isMounted.current && setContextValue( { ...store } );
+				if ( isMounted.current ) {
+					setContextValue( { ...store } );
+				}
 			}, 0 );
 		} );
 	}, [ store ] );
@@ -435,12 +439,25 @@ function CheckoutStepGroupWrapper( {
 	// Call the `onStepChanged` callback when a step changes.
 	useEffect( () => {
 		if ( store.state.activeStepNumber !== previousStepNumber.current ) {
+			const prevStep = previousStepNumber.current;
+			const newStep = store.state.activeStepNumber;
 			onStepChanged?.( {
-				stepNumber: store.state.activeStepNumber,
-				previousStepNumber: previousStepNumber.current,
+				stepNumber: newStep,
+				previousStepNumber: prevStep,
 				paymentMethodId: activePaymentMethod?.id ?? '',
 			} );
-			previousStepNumber.current = store.state.activeStepNumber;
+			previousStepNumber.current = newStep;
+			// When moving forward through steps, scroll the newly active step into
+			// view. This corrects the viewport position on mobile after the previous
+			// step's content collapses and causes the layout to shift.
+			if ( scrollToStepOnForwardNavigation && newStep > prevStep ) {
+				const newStepId = Object.entries( store.state.stepIdMap ).find(
+					( [ , num ] ) => num === newStep
+				)?.[ 0 ];
+				if ( newStepId ) {
+					document.getElementById( newStepId )?.scrollIntoView?.( { block: 'start' } );
+				}
+			}
 		}
 		// We only want to run this when the step changes.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -667,6 +684,7 @@ export function CheckoutFormSubmit( {
 	disableSubmitButton,
 	submitButton,
 	onPageLoadError,
+	continueToNextIncompleteStep,
 }: {
 	validateForm?: () => Promise< boolean >;
 	submitButtonHeader?: ReactNode;
@@ -674,10 +692,18 @@ export function CheckoutFormSubmit( {
 	disableSubmitButton?: boolean;
 	submitButton?: ReactNode;
 	onPageLoadError?: CheckoutPageErrorCallback;
+	continueToNextIncompleteStep?: boolean;
 } ) {
+	const { __ } = useI18n();
 	const { state, actions } = useContext( CheckoutStepGroupContext );
-	const { activeStepNumber, totalSteps, stepCompleteStatus, stepSkipValidationOnSubmitMap } = state;
-	const { getStepCompleteCallback, setStepCompleteStatus } = actions;
+	const {
+		activeStepNumber,
+		totalSteps,
+		stepCompleteStatus,
+		stepIdMap,
+		stepSkipValidationOnSubmitMap,
+	} = state;
+	const { getStepCompleteCallback, setStepCompleteStatus, makeStepActive } = actions;
 	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
 	const areAllStepsComplete = Object.values( stepCompleteStatus ).every(
 		( isComplete ) => isComplete === true
@@ -749,15 +775,83 @@ export function CheckoutFormSubmit( {
 		}
 		return false;
 	} )();
+
+	const getStepIdFromNumber = ( stepNumber: number ): string | undefined =>
+		Object.entries( stepIdMap ).find( ( [ , num ] ) => num === stepNumber )?.[ 0 ];
+
+	// The next step the user needs to address: the first incomplete step at or
+	// after the active step, falling back to the lowest incomplete step overall.
+	const nextIncompleteStepId = ( () => {
+		for ( let step = Math.max( activeStepNumber, 1 ); step <= totalSteps; step++ ) {
+			if ( ! stepCompleteStatus[ step ] ) {
+				return getStepIdFromNumber( step );
+			}
+		}
+		for ( let step = 1; step <= totalSteps; step++ ) {
+			if ( ! stepCompleteStatus[ step ] ) {
+				return getStepIdFromNumber( step );
+			}
+		}
+		return undefined;
+	} )();
+
+	// Show "Continue" only when the submit button would otherwise be disabled
+	// because there is another numbered step after the active one AND there is
+	// actually an incomplete step to go to. The latter guard matters for returning
+	// purchasers whose steps are all auto-completed while the active step is still
+	// an earlier step: there is nothing to continue to, so show the Pay button.
+	const showContinueToNextIncompleteStep =
+		!! continueToNextIncompleteStep &&
+		! disableSubmitButton &&
+		isThereAnotherNumberedStep &&
+		!! nextIncompleteStepId;
+
+	const goToNextIncompleteStep = async () => {
+		// Prefer the next incomplete step; otherwise just advance one step so the
+		// user always moves forward (covers the rare all-complete-but-not-last case).
+		const targetStepId =
+			nextIncompleteStepId ?? getStepIdFromNumber( Math.min( activeStepNumber + 1, totalSteps ) );
+		if ( ! targetStepId ) {
+			return;
+		}
+		const didActivateTarget = await makeStepActive( targetStepId );
+		// If activation failed, makeStepActive stopped on an intervening step that
+		// did not validate and left it active. Scroll to whichever step actually
+		// ended up active (read from the live store) so the user lands on the step
+		// that needs attention rather than a step that stayed collapsed. Desktop
+		// does not auto-scroll on step changes, so we always scroll explicitly.
+		const stepIdToScrollTo = didActivateTarget
+			? targetStepId
+			: getStepIdFromNumber( state.activeStepNumber ) ?? targetStepId;
+		document
+			.getElementById( stepIdToScrollTo )
+			?.scrollIntoView?.( { behavior: 'smooth', block: 'start' } );
+	};
+
 	return (
 		<SubmitButtonWrapper className="checkout-steps__submit-button-wrapper" ref={ submitWrapperRef }>
 			{ submitButtonHeader || null }
-			{ submitButton || (
-				<CheckoutSubmitButton
-					validateForm={ wrappedValidateForm }
-					disabled={ isDisabled }
-					onLoadError={ onSubmitButtonLoadError }
-				/>
+			{ showContinueToNextIncompleteStep ? (
+				<Button
+					type="button"
+					buttonType="primary"
+					fullWidth
+					className="checkout-steps__continue-button"
+					// Distinguish this from the per-step inline "Continue" buttons for
+					// assistive technology, which would otherwise announce "Continue" twice.
+					aria-label={ __( 'Continue to the next step' ) }
+					onClick={ goToNextIncompleteStep }
+				>
+					{ __( 'Continue' ) }
+				</Button>
+			) : (
+				submitButton || (
+					<CheckoutSubmitButton
+						validateForm={ wrappedValidateForm }
+						disabled={ isDisabled }
+						onLoadError={ onSubmitButtonLoadError }
+					/>
+				)
 			) }
 			<div className="checkout-steps__submit-footer-wrapper">{ submitButtonFooter || null }</div>
 		</SubmitButtonWrapper>
@@ -851,7 +945,7 @@ export function CheckoutStepBody( {
 			errorMessage={ errorMessage || __( 'There was an error with this step.' ) }
 			onError={ onError }
 		>
-			<StepWrapper className={ className }>
+			<StepWrapper className={ className } id={ stepId }>
 				<CheckoutStepHeader
 					id={ stepId }
 					stepNumber={ stepNumber }
@@ -1221,6 +1315,7 @@ export function CheckoutStepGroup( {
 	stepAreaHeader,
 	store,
 	onStepChanged,
+	scrollToStepOnForwardNavigation,
 	loadingContent,
 	loadingHeader,
 }: PropsWithChildren< {
@@ -1228,6 +1323,7 @@ export function CheckoutStepGroup( {
 	stepAreaHeader?: ReactNode;
 	store?: CheckoutStepGroupStore;
 	onStepChanged?: StepChangedCallback;
+	scrollToStepOnForwardNavigation?: boolean;
 	loadingContent?: ReactNode;
 	loadingHeader?: ReactNode;
 } > ) {
@@ -1238,6 +1334,7 @@ export function CheckoutStepGroup( {
 			loadingContent={ loadingContent }
 			loadingHeader={ loadingHeader }
 			onStepChanged={ onStepChanged }
+			scrollToStepOnForwardNavigation={ scrollToStepOnForwardNavigation }
 		>
 			{ stepAreaHeader }
 			<CheckoutStepArea>

@@ -1,6 +1,13 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "calypso/components/jetpack-page-layout/admin-ui-page";
+
+body.is-section-activity {
+	@include admin-ui-page-layout;
+	@include admin-ui-page-layout-constrained-content($max-width: 1040px);
+	@include admin-ui-page-sticky-footer;
+}
 
 // Activity Log
 

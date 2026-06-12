@@ -301,6 +301,45 @@ describe( 'usePricingMetaForGridPlans', () => {
 		}
 	);
 
+	it.each( [
+		COST_OVERRIDE_REASONS.RECENT_PLAN_PRORATION,
+		COST_OVERRIDE_REASONS.RECENT_DOMAIN_PRORATION,
+	] )(
+		"should suppress discounted price when proration override '%s' is not the first cost override entry",
+		( overrideCode ) => {
+			Plans.useCurrentPlan.mockImplementation( () => ( {
+				productSlug: PLAN_PERSONAL,
+				planSlug: PLAN_PERSONAL,
+			} ) );
+
+			Plans.useSitePlans.mockImplementation( () => ( {
+				isLoading: false,
+				data: {
+					[ PLAN_BUSINESS ]: {
+						...SITE_PLANS[ PLAN_BUSINESS ],
+						pricing: {
+							...SITE_PLANS[ PLAN_BUSINESS ].pricing,
+							costOverrides: [ { overrideCode: 'multiterm-upgrade' }, { overrideCode } ],
+						},
+					},
+				},
+			} ) );
+
+			const pricingMeta = usePricingMetaForGridPlans( {
+				planSlugs: [ PLAN_BUSINESS ],
+				siteId,
+				coupon: undefined,
+				useCheckPlanAvailabilityForPurchase,
+				withProratedDiscounts: false,
+			} );
+
+			expect( pricingMeta?.[ PLAN_BUSINESS ]?.discountedPrice ).toEqual( {
+				full: null,
+				monthly: null,
+			} );
+		}
+	);
+
 	it( 'should return intro offer when available', () => {
 		Plans.useIntroOffers.mockImplementation( () => ( {
 			[ PLAN_BUSINESS ]: introOffer,

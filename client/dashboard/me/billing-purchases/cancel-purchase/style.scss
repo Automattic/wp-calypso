@@ -5,20 +5,6 @@
 	margin: 16px 0 8px;
 }
 
-.cancel-purchase__refund-string {
-	color: var(--color-success);
-	font-weight: 600;
-}
-
-.cancel-purchase__warning-string {
-	color: var(--color-error);
-	font-weight: 600;
-}
-
-.cancel-purchase__refund-information {
-	font-size: $font-body-small;
-}
-
 .jetpack-cancellation-offer__card strong {
 	font-weight: 500;
 }
@@ -28,8 +14,16 @@
 	font-size: 0.875rem;
 }
 
+// Suppress focus ring on mouse click; keyboard navigation still shows it via :focus-visible.
+// @wordpress/components Button uses :focus:not(:active) which doesn't distinguish mouse vs keyboard.
+.cancel-purchase__cancel-button.components-button.is-primary:focus:not(:focus-visible) {
+	box-shadow: none;
+}
+
 /* Vertically center the icon (decoration) in solutions cards */
 .cancel-purchase-form__solution-card.summary-button {
+	text-align: start;
+
 	> * {
 		align-items: center;
 	}

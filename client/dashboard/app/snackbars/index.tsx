@@ -53,16 +53,23 @@ export default function Snackbars() {
 
 	const snackbarNotices = notices
 		.filter( ( { type } ) => type === 'snackbar' )
-		.map( ( { status, ...notice } ) => ( {
-			icon: statusIcon[ status ] && (
-				<Icon icon={ statusIcon[ status ] } style={ { fill: 'currentcolor' } } />
-			),
-			...notice,
-		} ) );
+		.map( ( notice ) => {
+			const { status } = notice;
+			const icon = statusIcon[ status ];
+			const statusClassName = status ? `is-${ status }` : undefined;
+
+			return {
+				...notice,
+				className: statusClassName,
+				icon:
+					'icon' in notice
+						? notice.icon
+						: icon && <Icon icon={ icon } style={ { fill: 'currentcolor' } } />,
+			};
+		} );
 
 	return (
 		<SnackbarList
-			// @ts-expect-error Bypass typecheck as WPNoticeAction is structurally incompatible with NoticeAction
 			notices={ snackbarNotices }
 			className="dashboard-snackbars"
 			onRemove={ removeNotice }

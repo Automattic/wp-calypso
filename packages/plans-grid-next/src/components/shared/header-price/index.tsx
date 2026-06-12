@@ -13,6 +13,11 @@ import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../grid-context';
 import useIsLargeCurrency from '../../../hooks/use-is-large-currency';
 import { usePlanPricingInfoFromGridPlans } from '../../../hooks/use-plan-pricing-info-from-grid-plans';
+import {
+	calculateDiscountPercentage,
+	fromPricingMetaForGridPlan,
+	getPlanPriceForDuration,
+} from '../../../lib/plan-pricing-utils';
 import { useHeaderPriceContext } from './header-price-context';
 import type { GridPlan } from '../../../types';
 import './style.scss';
@@ -52,11 +57,17 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		coupon,
 		helpers,
 		showBillingDescriptionForIncreasedRenewalPrice,
+		isExperimentVariant,
 	} = usePlansGridContext();
+
+	const pricingBadgeClassName = clsx( 'plans-grid-next-header-price__badge', {
+		'is-plan-differentiators-experiment-badge': isExperimentVariant,
+	} );
 	const { isAnyPlanPriceDiscounted, setIsAnyPlanPriceDiscounted } = useHeaderPriceContext();
 	const {
 		current,
 		pricing: { currencyCode, originalPrice, discountedPrice, introOffer, billingPeriod },
+		isMonthlyPlan,
 	} = gridPlansIndex[ planSlug ];
 	const isPricedPlan = null !== originalPrice.monthly;
 
@@ -74,7 +85,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 			prices,
 			currencyCode: currencyCode || 'USD',
 			ignoreWhitespace: true,
-		} ) && ! showBillingDescriptionForIncreasedRenewalPrice?.includes( 'crossed_price' ); // a temporary fix to handle an issue with isLargeCurrency logic for intro offers
+		} ) && ! showBillingDescriptionForIncreasedRenewalPrice; // a temporary fix to handle an issue with isLargeCurrency logic for intro offers
 
 	const termVariantPlanSlug = useTermVariantPlanSlugForSavings( { planSlug, billingPeriod } );
 	const termVariantPricing = Plans.usePricingMetaForGridPlans( {
@@ -85,19 +96,24 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		useCheckPlanAvailabilityForPurchase: helpers?.useCheckPlanAvailabilityForPurchase,
 	} )?.[ termVariantPlanSlug ?? '' ];
 
-	const termVariantPrice =
-		termVariantPricing?.discountedPrice.monthly ?? termVariantPricing?.originalPrice.monthly ?? 0;
-	const planPrice = discountedPrice.monthly ?? originalPrice.monthly ?? 0;
+	const termVariantInfo = termVariantPricing
+		? fromPricingMetaForGridPlan( termVariantPricing )
+		: null;
+	const currentPlanInfo = fromPricingMetaForGridPlan( gridPlansIndex[ planSlug ].pricing );
 	let savings =
-		termVariantPrice > planPrice
-			? Math.floor( ( ( termVariantPrice - planPrice ) / termVariantPrice ) * 100 )
+		termVariantInfo && currentPlanInfo
+			? calculateDiscountPercentage(
+					getPlanPriceForDuration( termVariantInfo, currentPlanInfo.termMonths ),
+					getPlanPriceForDuration( currentPlanInfo, currentPlanInfo.termMonths )
+			  ) ?? 0
 			: 0;
 
 	useEffect( () => {
 		if (
 			isGridPlanOneTimeDiscounted ||
 			isGridPlanOnIntroOffer ||
-			( enableTermSavingsPriceDisplay && savings )
+			( enableTermSavingsPriceDisplay && savings ) ||
+			( showBillingDescriptionForIncreasedRenewalPrice && !! termVariantPricing )
 		) {
 			setIsAnyPlanPriceDiscounted( true );
 		}
@@ -107,6 +123,8 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		isGridPlanOneTimeDiscounted,
 		savings,
 		setIsAnyPlanPriceDiscounted,
+		showBillingDescriptionForIncreasedRenewalPrice,
+		termVariantPricing,
 	] );
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) || ! isPricedPlan ) {
@@ -123,17 +141,21 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 			typeof discountedPrice.monthly === 'number'
 				? discountedPrice.monthly
 				: introOffer.rawPrice.monthly;
-		if ( showBillingDescriptionForIncreasedRenewalPrice && compareToMonthlyPrice > monthlyPrice ) {
-			savings = Math.floor(
-				( ( compareToMonthlyPrice - monthlyPrice ) / compareToMonthlyPrice ) * 100
-			);
+		// Recalculate the savings for Monthly plans with introductory offers
+		// since we are comparing the introductory price with the same plan
+		// renewal price, instead of comparing yearly to monthly costs for
+		// the same period.
+		if (
+			showBillingDescriptionForIncreasedRenewalPrice &&
+			compareToMonthlyPrice > monthlyPrice &&
+			isMonthlyPlan
+		) {
+			savings = calculateDiscountPercentage( compareToMonthlyPrice, monthlyPrice ) ?? 0;
 		}
-		const hideCrossedPrice = showBillingDescriptionForIncreasedRenewalPrice === 'no_crossed_price';
-
 		return (
 			<div className="plans-grid-next-header-price">
 				{ ! current && (
-					<div className="plans-grid-next-header-price__badge">
+					<div className={ pricingBadgeClassName }>
 						{ showBillingDescriptionForIncreasedRenewalPrice
 							? translate( 'Save %(savings)d%%', {
 									args: { savings },
@@ -142,12 +164,64 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 							: translate( 'Special Offer' ) }
 					</div>
 				) }
+				{ current && visibleGridPlans.length > 1 && (
+					<div className={ clsx( pricingBadgeClassName, 'is-hidden' ) }>' '</div>
+				) }
 				<div
 					className={ clsx( 'plans-grid-next-header-price__pricing-group', {
 						'is-large-currency': isLargeCurrency,
 					} ) }
 				>
-					{ ! hideCrossedPrice && (
+					<PlanPrice
+						currencyCode={ currencyCode }
+						rawPrice={ compareToMonthlyPrice }
+						displayPerMonthNotation={ false }
+						isLargeCurrency={ isLargeCurrency }
+						isSmallestUnit
+						priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
+						original
+					/>
+					<PlanPrice
+						currencyCode={ currencyCode }
+						rawPrice={ monthlyPrice }
+						displayPerMonthNotation={ false }
+						isLargeCurrency={ isLargeCurrency }
+						isSmallestUnit
+						priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
+						discounted
+					/>
+				</div>
+			</div>
+		);
+	}
+
+	// Handle cases where a plan is ineligible for intro offer, but we still
+	// want to show the crossed-out monthly price.
+	if ( showBillingDescriptionForIncreasedRenewalPrice && termVariantPricing ) {
+		const compareToMonthlyPrice = termVariantPricing.originalPrice.monthly ?? 0;
+		const monthlyPrice =
+			typeof discountedPrice.monthly === 'number'
+				? discountedPrice.monthly
+				: originalPrice.monthly ?? 0;
+		return (
+			<div className="plans-grid-next-header-price">
+				{ ! current && savings > 0 && (
+					<div className={ pricingBadgeClassName }>
+						{ translate( 'Save %(savings)d%%', {
+							args: { savings },
+							comment: 'Example: Save 35%',
+						} ) }
+					</div>
+				) }
+				{ ( ( ! current && savings <= 0 ) || ( current && visibleGridPlans.length > 1 ) ) && (
+					<div className={ clsx( pricingBadgeClassName, 'is-hidden' ) }>' '</div>
+				) }
+				<div
+					className={ clsx( 'plans-grid-next-header-price__pricing-group', {
+						'is-large-currency': isLargeCurrency,
+					} ) }
+				>
+					{ compareToMonthlyPrice > monthlyPrice && (
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ compareToMonthlyPrice }
@@ -175,9 +249,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	if ( isGridPlanOneTimeDiscounted ) {
 		return (
 			<div className="plans-grid-next-header-price">
-				<div className="plans-grid-next-header-price__badge">
-					{ translate( 'One time discount' ) }
-				</div>
+				<div className={ pricingBadgeClassName }>{ translate( 'One time discount' ) }</div>
 				<div
 					className={ clsx( 'plans-grid-next-header-price__pricing-group', {
 						'is-large-currency': isLargeCurrency,
@@ -209,7 +281,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	if ( enableTermSavingsPriceDisplay && termVariantPricing && savings ) {
 		return (
 			<div className="plans-grid-next-header-price">
-				<div className="plans-grid-next-header-price__badge">
+				<div className={ pricingBadgeClassName }>
 					{ translate( 'Save %(savings)d%%', {
 						args: { savings },
 						comment: 'Example: Save 35%',
@@ -246,15 +318,15 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	if ( isAnyPlanPriceDiscounted ) {
 		return (
 			<div className="plans-grid-next-header-price">
-				{ showBillingDescriptionForIncreasedRenewalPrice === 'crossed_price' && savings ? (
-					<div className="plans-grid-next-header-price__badge">
+				{ showBillingDescriptionForIncreasedRenewalPrice && savings ? (
+					<div className={ pricingBadgeClassName }>
 						{ translate( 'Save %(savings)d%%', {
 							args: { savings },
 							comment: 'Example: Save 35%',
 						} ) }
 					</div>
 				) : (
-					<div className="plans-grid-next-header-price__badge is-hidden">' '</div>
+					<div className={ clsx( pricingBadgeClassName, 'is-hidden' ) }>' '</div>
 				) }
 				{ isLargeCurrency ? (
 					<div className="plans-grid-next-header-price__pricing-group is-large-currency">

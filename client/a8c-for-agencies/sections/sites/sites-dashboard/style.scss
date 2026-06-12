@@ -145,12 +145,6 @@
 
 		.hosting-dashboard-item-view__content {
 			padding: 10px 10px 88px; /* 88px matches the padding from PR #39201. */
-
-			.backup__page .main {
-				/* Prevents the backup page from overriding our padding and overflow settings. */
-				padding-bottom: 88px; /* 88px matches the padding from PR #39201. */
-				overflow: hidden;
-			}
 		}
 	}
 
@@ -314,6 +308,27 @@
 	&.sites-dashboard__layout {
 		.activity-card-list .activity-card .activity-card__time {
 			background: none;
+		}
+
+		.button.backup-date-picker__button--previous,
+		.button.backup-date-picker__button--next,
+		.button.toolbar__button {
+			background: transparent;
+			border-color: transparent;
+			color: var(--color-neutral-70);
+
+			&:hover {
+				background: transparent;
+				border-color: transparent;
+				color: var(--color-neutral-70);
+			}
+
+			&:focus {
+				background: transparent;
+				border-color: transparent;
+				color: var(--color-neutral-70);
+				box-shadow: none;
+			}
 		}
 
 		.sites-overview__add-site-issue-license-buttons {

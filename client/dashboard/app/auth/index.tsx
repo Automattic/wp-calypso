@@ -11,6 +11,7 @@ import {
 	type MutationCacheNotifyEvent,
 } from '@tanstack/react-query';
 import { createContext, useContext, useMemo, useEffect, useRef, useCallback } from 'react';
+import { useAppContext } from '../context';
 import { OAUTH_CALLBACK_PATH } from './oauth-callback';
 import type { WPError } from '@automattic/api-core';
 
@@ -20,10 +21,12 @@ function getOAuthAuthorizeUrl( {
 	state,
 	next = '',
 	isLogout = false,
+	isNewUser = false,
 }: {
 	state: string;
 	next?: string;
 	isLogout?: boolean;
+	isNewUser?: boolean;
 } ): string {
 	const redirectUri = new URL( OAUTH_CALLBACK_PATH, window.location.origin );
 
@@ -40,6 +43,7 @@ function getOAuthAuthorizeUrl( {
 		blog_id: '0',
 		state,
 		...( isLogout === true ? { implicit: 'false' } : {} ),
+		...( isNewUser === true ? { 'new-user': '1' } : {} ),
 	} ).toString();
 
 	return authUri.toString();
@@ -51,7 +55,7 @@ interface AuthContextType {
 }
 export const AuthContext = createContext< AuthContextType | undefined >( undefined );
 
-async function initializeCurrentUser(): Promise< User > {
+export async function initializeCurrentUser(): Promise< User > {
 	// In support user session the `currentUser` refers to the wrong person so we should request
 	// the user object. Note we do not check `isSupportNextSession()` because in "next" support
 	// sessions the server does bootstrap the correct `currentUser`.
@@ -76,6 +80,7 @@ async function initializeCurrentUser(): Promise< User > {
  */
 export function AuthProvider( { children }: { children: React.ReactNode } ) {
 	const authErrorHandled = useRef( false );
+	const { supports } = useAppContext();
 	const queryClient = useQueryClient();
 	const {
 		data: user,
@@ -114,9 +119,14 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 			const state = crypto.randomUUID();
 			sessionStorage.setItem( 'wpcom_oauth_state', state );
 
+			// Default to the signup screen rather than the login screen for certain routes.
+			const isNewUser =
+				supports.startStoreRoute === true && window.location.pathname === '/start-store';
+
 			window.location.replace(
 				getOAuthAuthorizeUrl( {
 					state,
+					isNewUser,
 					next: window.location.pathname + window.location.search,
 				} )
 			);
@@ -127,7 +137,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		const path = config( 'wpcom_login_url' ) || '/log-in';
 		const loginUrl = `${ path }?redirect_to=${ encodeURIComponent( currentPath ) }`;
 		window.location.href = loginUrl;
-	}, [] );
+	}, [ supports.startStoreRoute ] );
 
 	// Subscribe to network errors and when errors occur due to being logged
 	// out, redirect the user to the log in screen.

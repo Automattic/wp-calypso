@@ -66,7 +66,7 @@
 
 	background:
 		var(--ai-builder-banner-linear-gradient-overlay),
-		url( ./ai-builder-background-mobile.png ) no-repeat bottom center / 120%,
+		url( ./ai-builder-background-mobile.webp ) no-repeat bottom center / 120%,
 		var(--ai-builder-banner-linear-gradient-underlay);
 	display: flex;
 	flex-wrap: wrap;
@@ -76,27 +76,27 @@
 	@include break-mobile {
 		background:
 			var(--ai-builder-banner-linear-gradient-overlay),
-			url( ./ai-builder-background.png ) no-repeat bottom right -400px / cover,
+			url( ./ai-builder-background.webp ) no-repeat bottom right -400px / cover,
 			var(--ai-builder-banner-linear-gradient-underlay);
 		padding: 40px;
 	}
 	@include break-medium {
 		background:
 			var(--ai-builder-banner-linear-gradient-overlay),
-			url( ./ai-builder-background.png ) no-repeat bottom right -250px / contain,
+			url( ./ai-builder-background.webp ) no-repeat bottom right -250px / contain,
 			var(--ai-builder-banner-linear-gradient-underlay);
 		padding-top: 96px;
 	}
 	@include break-large {
 		background:
 			var(--ai-builder-banner-linear-gradient-overlay),
-			url( ./ai-builder-background.png ) no-repeat bottom right -100px / contain,
+			url( ./ai-builder-background.webp ) no-repeat bottom right -100px / contain,
 			var(--ai-builder-banner-linear-gradient-underlay);
 	}
 	@include break-xlarge {
 		background:
 			var(--ai-builder-banner-linear-gradient-overlay),
-			url( ./ai-builder-background.png ) no-repeat bottom right / contain,
+			url( ./ai-builder-background.webp ) no-repeat bottom right / contain,
 			var(--ai-builder-banner-linear-gradient-underlay);
 	}
 
@@ -168,13 +168,13 @@
 }
 
 .difm-banner {
-	background: url( ./difm-background-mobile.png ) no-repeat bottom 24px center / 90%;
+	background: url( ./difm-background-mobile.webp ) no-repeat bottom 24px center / 90%;
 	background-color: var( --studio-gray-0 );
 	grid-row-start: 2;
 	padding-bottom: 288px;
 
 	@include break-mobile {
-		background: url( ./difm-background.png ) no-repeat center right 40px / 35%;
+		background: url( ./difm-background.webp ) no-repeat center right 40px / 35%;
 		background-color: var( --studio-gray-0 );
 		padding: 40px;
 	}
@@ -183,11 +183,11 @@
 		padding-top: 72px;
 	}
 	@include break-large {
-		background: url( ./difm-background.png ) no-repeat center right 40px / 50%;
+		background: url( ./difm-background.webp ) no-repeat center right 40px / 50%;
 		background-color: var( --studio-gray-0 );
 	}
 	@include break-xlarge {
-		background: url( ./difm-background.png ) no-repeat center right 40px / 40%;
+		background: url( ./difm-background.webp ) no-repeat center right 40px / 40%;
 		background-color: var( --studio-gray-0 );
 	}
 }

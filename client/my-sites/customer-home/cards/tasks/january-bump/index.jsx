@@ -1,6 +1,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import januaryBumpIllustration from 'calypso/assets/images/customer-home/illustration--january-bump.png';
+import januaryBumpIllustration from 'calypso/assets/images/customer-home/illustration--january-bump.webp';
 import { TASK_JANUARY_BUMP } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 

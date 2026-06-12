@@ -1,6 +1,8 @@
-import { WordPressWordmark, GravatarTextLogo } from '@automattic/components';
+import { WordPressWordmark, GravatarTextLogo, WordPressLogo } from '@automattic/components';
 import { checkoutTheme } from '@automattic/composite-checkout';
 import { ThemeProvider } from '@emotion/react';
+import { Icon } from '@wordpress/components';
+import { chevronLeft } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
@@ -13,6 +15,8 @@ import {
 	LeaveCheckoutModal,
 	useCheckoutLeaveModal,
 } from 'calypso/my-sites/checkout/src/components/leave-checkout-modal';
+import { useCheckoutHelpCenter } from 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center';
+import { useCheckoutUiRedesignExperiment } from 'calypso/my-sites/checkout/src/hooks/use-checkout-ui-redesign-experiment';
 import Item from './item';
 import Masterbar from './masterbar';
 
@@ -37,6 +41,8 @@ const CheckoutMasterbar = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteSlug ?? '' } );
+	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
+	const { helpCenterButtonLink, toggleHelpCenter } = useCheckoutHelpCenter();
 
 	const getCheckoutType = () => {
 		// Woo Hosted sites are supposed to default to WPcom colors, but without
@@ -82,36 +88,65 @@ const CheckoutMasterbar = ( {
 				'masterbar--is-akismet': checkoutType === 'akismet',
 				'masterbar--is-a4a': checkoutType === 'a4a',
 				'masterbar--is-passport': checkoutType === 'passport',
+				'masterbar--is-checkout-redesign-v1': isCheckoutUiRedesignV1,
 			} ) }
 		>
-			<div className="masterbar__secure-checkout">
-				{ showCloseButton && (
-					<Item
-						icon="cross"
-						className="masterbar__close-button"
-						onClick={ leaveModalProps.clickClose }
-						tooltip={ String( translate( 'Close Checkout' ) ) }
-						tipTarget="close"
-					/>
-				) }
-				{ checkoutType === 'wpcom' && (
-					<WordPressWordmark
-						size={ { width: 122, height: 'auto' } }
-						className="masterbar__wpcom-wordmark"
-						color="#2c3338"
-					/>
-				) }
-				{ checkoutType === 'jetpack' && (
-					<JetpackLogo className="masterbar__jetpack-wordmark" full />
-				) }
-				{ checkoutType === 'akismet' && <AkismetLogo className="masterbar__akismet-wordmark" /> }
-				{ checkoutType === 'passport' && <PassportLogo className="masterbar__passport-wordmark" /> }
-				{ checkoutType === 'gravatar' && <GravatarTextLogo /> }
-				{ checkoutType === 'a4a' && <A4ALogo full size={ 14 } /> }
-				<span className="masterbar__secure-checkout-text">{ translate( 'Secure checkout' ) }</span>
-			</div>
-			{ title && <Item className="masterbar__item-title">{ title }</Item> }
-			{ loadHelpCenterIcon && <DefaultMasterbarContact /> }
+			{ isCheckoutUiRedesignV1 ? (
+				<>
+					<div className="masterbar__secure-checkout">
+						<WordPressLogo size={ 21 } className="masterbar__wp-circle-logo" />
+						<div className="masterbar__redesign-divider" />
+						{ showCloseButton && (
+							<button className="masterbar__back-button" onClick={ leaveModalProps.clickClose }>
+								<Icon icon={ chevronLeft } size={ 18 } />
+								{ translate( 'Back' ) }
+							</button>
+						) }
+					</div>
+					{ loadHelpCenterIcon && (
+						<button className="masterbar__need-help-button" onClick={ toggleHelpCenter }>
+							{ helpCenterButtonLink }
+						</button>
+					) }
+				</>
+			) : (
+				<>
+					<div className="masterbar__secure-checkout">
+						{ showCloseButton && (
+							<Item
+								icon="cross"
+								className="masterbar__close-button"
+								onClick={ leaveModalProps.clickClose }
+								tooltip={ String( translate( 'Close Checkout' ) ) }
+								tipTarget="close"
+							/>
+						) }
+						{ checkoutType === 'wpcom' && (
+							<WordPressWordmark
+								size={ { width: 122, height: 'auto' } }
+								className="masterbar__wpcom-wordmark"
+								color="#2c3338"
+							/>
+						) }
+						{ checkoutType === 'jetpack' && (
+							<JetpackLogo className="masterbar__jetpack-wordmark" full />
+						) }
+						{ checkoutType === 'akismet' && (
+							<AkismetLogo className="masterbar__akismet-wordmark" />
+						) }
+						{ checkoutType === 'passport' && (
+							<PassportLogo className="masterbar__passport-wordmark" />
+						) }
+						{ checkoutType === 'gravatar' && <GravatarTextLogo /> }
+						{ checkoutType === 'a4a' && <A4ALogo full size={ 14 } /> }
+						<span className="masterbar__secure-checkout-text">
+							{ translate( 'Secure checkout' ) }
+						</span>
+					</div>
+					{ title && <Item className="masterbar__item-title">{ title }</Item> }
+					{ loadHelpCenterIcon && <DefaultMasterbarContact /> }
+				</>
+			) }
 			<LeaveCheckoutModal { ...leaveModalProps } />
 		</Masterbar>
 	);

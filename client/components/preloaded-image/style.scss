@@ -1,0 +1,13 @@
+.preloaded-image-wrapper {
+	background-color: var( --studio-gray-0 );
+	display: flex;
+
+	img {
+		transition: opacity 0.15s ease-in-out;
+		opacity: 0;
+	}
+
+	img.is-loaded {
+		opacity: 1;
+	}
+}

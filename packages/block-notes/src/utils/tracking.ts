@@ -4,7 +4,19 @@
  * Centralized tracking functions for Block Notes events.
  */
 
-import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { recordTracksEvent as recordTracksEventBase } from '@automattic/calypso-analytics';
+
+const TRACKS_PREFIX = 'jetpack';
+
+/**
+ * Record a tracks event with the jetpack_ prefix.
+ */
+function recordTracksEvent(
+	eventName: string,
+	properties: Record< string, string | number | boolean > = {}
+): void {
+	recordTracksEventBase( `${ TRACKS_PREFIX }_${ eventName }`, properties );
+}
 
 interface TrackBlockNoteAtMentionUsedOptions {
 	postId: number;
@@ -59,7 +71,7 @@ export function trackBlockNoteAtMentionUsed( {
 	if ( sessionId !== undefined ) {
 		properties.sessionid = sessionId;
 	}
-	recordTracksEvent( 'block_note_at_mention_used', properties );
+	recordTracksEvent( 'big_sky_block_note_at_mention_used', properties );
 }
 
 /**
@@ -86,7 +98,7 @@ export function trackBlockNoteAiReplyCreated( {
 	if ( sessionId !== undefined ) {
 		properties.sessionid = sessionId;
 	}
-	recordTracksEvent( 'block_note_ai_reply_created', properties );
+	recordTracksEvent( 'big_sky_block_note_ai_reply_created', properties );
 }
 
 /**
@@ -119,7 +131,7 @@ export function trackBlockNoteAiResponseFailed( {
 		properties.sessionid = sessionId;
 	}
 
-	recordTracksEvent( 'block_note_ai_response_failed', properties );
+	recordTracksEvent( 'big_sky_block_note_ai_response_failed', properties );
 }
 
 /**
@@ -149,5 +161,5 @@ export function trackBlockNoteAiReplyFailed( {
 		properties.sessionid = sessionId;
 	}
 
-	recordTracksEvent( 'block_note_ai_reply_failed', properties );
+	recordTracksEvent( 'big_sky_block_note_ai_reply_failed', properties );
 }

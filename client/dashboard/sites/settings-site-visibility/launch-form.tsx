@@ -128,7 +128,13 @@ export function LaunchForm( { site }: { site: Site } ) {
 			<TrialUpsellNotice site={ site } />
 			<Notice
 				title={ __( 'Your site hasn’t been launched yet' ) }
-				actions={ <SiteLaunchButton site={ site } tracksContext="site_settings" /> }
+				actions={
+					<SiteLaunchButton
+						site={ site }
+						tracksContext="site_settings"
+						backTo={ `/sites/${ site.slug }` }
+					/>
+				}
 			>
 				{ __( 'It is hidden from visitors behind a “Coming Soon” notice until it is launched.' ) }
 			</Notice>

@@ -139,7 +139,12 @@ export class EditorToolbarComponent {
 			name: translatedButtonNameNew,
 			exact: true,
 		} );
-		if ( await this.targetIsOpen( blockInserterButton ) ) {
+		// count() returns immediately without waiting for the element to appear,
+		// so this guard avoids getAttribute() timing out when the button is absent.
+		if (
+			( await blockInserterButton.count() ) > 0 &&
+			( await this.targetIsOpen( blockInserterButton ) )
+		) {
 			await blockInserterButton.click();
 		}
 	}
@@ -317,7 +322,10 @@ export class EditorToolbarComponent {
 		if ( target !== 'Settings' ) {
 			await this.openMoreOptionsMenu();
 
-			button = editorParent.getByRole( 'menuitemcheckbox', { name: translatedTargetName } );
+			button = editorParent.getByRole( 'menuitemcheckbox', {
+				name: translatedTargetName,
+				exact: true,
+			} );
 		}
 
 		if ( await this.targetIsOpen( button ) ) {

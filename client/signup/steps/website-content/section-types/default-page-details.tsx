@@ -27,7 +27,7 @@ export function DefaultPageDetails( {
 	const translate = useTranslate();
 
 	const site = useSelector( getSelectedSite );
-	const description = useTranslatedPageDescriptions( page.id, context );
+	const description = useTranslatedPageDescriptions( page.type, context );
 	const { onCheckboxChanged, onFieldChanged } = useChangeHandlers( {
 		pageId: page.id,
 		onChangeField,

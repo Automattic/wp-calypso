@@ -1,4 +1,5 @@
 import { isAutomatticianQuery, siteBySlugQuery, siteByIdQuery } from '@automattic/api-queries';
+import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	useQuery,
 	useQueryClient,
@@ -6,6 +7,7 @@ import {
 	keepPreviousData,
 } from '@tanstack/react-query';
 import { Button, Modal } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { getISOWeek, getISOWeekYear } from 'date-fns';
 import deepmerge from 'deepmerge';
@@ -17,7 +19,8 @@ import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyStateLayout } from '../components/dataviews';
-import OptInSurvey from '../components/opt-in-survey';
+import InlineSupportLink from '../components/inline-support-link';
+import OptInSurvey, { useShouldShowOptInSurvey } from '../components/opt-in-survey';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { isDashboardBackport } from '../utils/is-dashboard-backport';
@@ -43,6 +46,10 @@ type SiteListQueryOptions = {
 	isAutomattician: boolean;
 };
 
+function isDeletedFilterActive( filters: Filter[] ): boolean {
+	return filters.some( ( filter ) => filter.field === 'is_deleted' && filter.value === true );
+}
+
 const getFetchPaginatedSitesOptions = (
 	view: View,
 	{ isDefaultView, isRestoringAccount, isAutomattician }: SiteListQueryOptions,
@@ -62,6 +69,9 @@ const getFetchPaginatedSitesOptions = (
 		// See: https://github.com/Automattic/wp-calypso/pull/104220.
 		site_visibility: view.search || shouldIncludeA8COwned || isRestoringAccount ? 'all' : 'visible',
 		include_a8c_owned: shouldIncludeA8COwned,
+		// Exclude staging sites from the standalone dashboard list; the classic
+		// Calypso backport keeps them (the API includes them by default).
+		...( ! isDashboardBackport() && { include_staging: false } ),
 		search: view.search,
 		sort_field: view.sort?.field,
 		sort_direction: view.sort?.direction,
@@ -69,7 +79,7 @@ const getFetchPaginatedSitesOptions = (
 		per_page: view.perPage,
 	};
 
-	if ( filters.find( ( item: Filter ) => item.field === 'is_deleted' && item.value === true ) ) {
+	if ( isDeletedFilterActive( filters ) ) {
 		options.site_visibility = 'deleted';
 	}
 
@@ -162,6 +172,7 @@ export default function Sites() {
 		slug: 'sites',
 		defaultView,
 		queryParams: currentSearchParams,
+		queryParamFilterFields: [ 'is_deleted' ],
 		sanitizeFields,
 	} );
 
@@ -185,6 +196,7 @@ export default function Sites() {
 	};
 
 	const userHasSites = user.site_count > 0;
+	const shouldShowOptInSurvey = useShouldShowOptInSurvey();
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginateSites(
 		sites ?? [],
@@ -192,13 +204,21 @@ export default function Sites() {
 		totalItems ?? 0
 	);
 
+	const filters = view.filters ?? [];
+	const hasActiveSearch = !! view.search;
+	const hasActiveQuery = hasActiveSearch || filters.length > 0;
+	const isFilteringOnlyDeletedSites =
+		isDeletedFilterActive( filters ) &&
+		! hasActiveSearch &&
+		filters.every( ( filter ) => filter.field === 'is_deleted' );
+
 	return (
 		<>
 			{ ! isDashboardBackport() && <OptInWelcomeModal /> }
 			<InviteAcceptedFlashMessage />
 			{ isModalOpen && (
 				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
-					<AddNewSite context="sites-dashboard" />
+					<AddNewSite context="sites-dashboard" aiSiteBuilderPath="/setup/ai-site-builder" />
 				</Modal>
 			) }
 			<PageLayout
@@ -209,7 +229,10 @@ export default function Sites() {
 							userHasSites && (
 								<Button
 									variant="primary"
-									onClick={ () => setIsModalOpen( true ) }
+									onClick={ () => {
+										recordTracksEvent( 'calypso_dashboard_sites_add_new_site_clicked' );
+										setIsModalOpen( true );
+									} }
 									__next40pxDefaultSize
 								>
 									{ __( 'Add new site' ) }
@@ -221,11 +244,11 @@ export default function Sites() {
 				notices={
 					<>
 						<SitesNotices />
-						{ ! isDashboardBackport() && <OptInSurvey /> }
+						{ ! isDashboardBackport() && shouldShowOptInSurvey && <OptInSurvey /> }
 					</>
 				}
 			>
-				{ userHasSites ? (
+				{ userHasSites || hasActiveQuery ? (
 					<SitesDataViews
 						view={ view }
 						sites={ filteredData }
@@ -234,17 +257,39 @@ export default function Sites() {
 						isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
 						isPlaceholderData={ isPlaceholderData }
 						empty={
-							<DataViewsEmptyStateLayout
-								title={ __( 'No sites match your search' ) }
-								description={ __( 'Try again, or start a new site with the options below.' ) }
-								isBorderless
-							>
-								<EmptySitesSearchStateContent />
-							</DataViewsEmptyStateLayout>
+							isFilteringOnlyDeletedSites ? (
+								<DataViewsEmptyStateLayout
+									title={ __( 'You have no deleted sites' ) }
+									description={ createInterpolateElement(
+										__(
+											'Sites that are deleted can be restored within the first 30 days of deletion. <learnLink>Learn how to restore a deleted site</learnLink>.'
+										),
+										{
+											learnLink: (
+												<InlineSupportLink
+													supportLink={ localizeUrl(
+														'https://wordpress.com/support/delete-site/#restore-a-deleted-site'
+													) }
+													supportPostId={ 14411 }
+												/>
+											),
+										}
+									) }
+									isBorderless
+								/>
+							) : (
+								<DataViewsEmptyStateLayout
+									title={ __( 'No sites match your search' ) }
+									description={ __( 'Try again, or start a new site with the options below.' ) }
+									isBorderless
+								>
+									<EmptySitesSearchStateContent />
+								</DataViewsEmptyStateLayout>
+							)
 						}
 						paginationInfo={ paginationInfo }
 						onChangeView={ handleViewChange }
-						onResetView={ resetView }
+						onReset={ resetView }
 					/>
 				) : (
 					<DataViewsEmptyStateLayout

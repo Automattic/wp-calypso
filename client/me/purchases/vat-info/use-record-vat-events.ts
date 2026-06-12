@@ -13,8 +13,8 @@ export default function useRecordVatEvents( {
 	isUpdateSuccessful?: boolean;
 } ) {
 	const reduxDispatch = useDispatch();
-	const lastFetchError = useRef< FetchError >();
-	const lastUpdateError = useRef< UpdateError >();
+	const lastFetchError = useRef< FetchError >( undefined );
+	const lastUpdateError = useRef< UpdateError >( undefined );
 
 	useEffect( () => {
 		if ( fetchError && lastFetchError.current !== fetchError ) {

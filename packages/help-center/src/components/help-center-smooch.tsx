@@ -34,12 +34,15 @@ const initSmooch = async (
 			async onInvalidAuth() {
 				recordTracksEvent( 'calypso_smooch_messenger_auth_error' );
 
-				await queryClient.invalidateQueries( {
-					queryKey: [ 'getMessagingAuth', 'zendesk', isTestMode ],
-				} );
+				// Refresh the exact query the component subscribes to via
+				// useAuthenticateZendeskMessaging( allowChat, 'messenger' ).
+				// The refreshed JWT then flows back into authData → authJwtRef, so the next
+				// Smooch re-init uses a valid token.
+				const queryKey = [ 'getMessagingAuth', 'messenger', isTestMode, true ];
+				await queryClient.invalidateQueries( { queryKey } );
 				const authData = await queryClient.fetchQuery( {
-					queryKey: [ 'getMessagingAuth', 'zendesk', isTestMode ],
-					queryFn: () => fetchMessagingAuth( 'zendesk' ),
+					queryKey,
+					queryFn: () => fetchMessagingAuth( 'messenger', true ),
 				} );
 
 				return authData.jwt;
@@ -109,6 +112,14 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 	const authExternalId = authData?.externalId;
 	const authIsLoggedIn = authData?.isLoggedIn;
 	const { isMessagingScriptLoaded } = useLoadZendeskMessaging( allowChat, allowChat );
+
+	// Keep a ref to the latest JWT so the init effect can always read a fresh value
+	// without listing the JWT string itself as a dependency. JWT rotation is handled
+	// by Smooch's onInvalidAuth delegate — we only need to (re-)initialize when a JWT
+	// transitions from absent → present, not on every value change.
+	const authJwtRef = useRef< string | undefined >( authJwt );
+	authJwtRef.current = authJwt;
+	const hasAuthJwt = !! authJwt;
 	const {
 		setIsChatLoaded,
 		setZendeskClientId,
@@ -177,7 +188,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 
 	// Initialize Smooch which communicates with Zendesk
 	useEffect( () => {
-		if ( ! isMessagingScriptLoaded || ! authIsLoggedIn || ! authJwt || ! authExternalId ) {
+		if ( ! isMessagingScriptLoaded || ! authIsLoggedIn || ! hasAuthJwt || ! authExternalId ) {
 			return;
 		}
 
@@ -200,7 +211,10 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			}
 
 			try {
-				await initSmooch( authJwt, authExternalId, queryClient );
+				// Read the JWT from the ref so we always use the freshest token without
+				// this effect needing to re-run (and destroy + reinit Smooch) on every
+				// JWT rotation. Rotations are handled by Smooch's onInvalidAuth delegate.
+				await initSmooch( authJwtRef.current!, authExternalId, queryClient );
 
 				if ( isCancelled ) {
 					return;
@@ -244,7 +258,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 	}, [
 		isMessagingScriptLoaded,
 		authIsLoggedIn,
-		authJwt,
+		hasAuthJwt,
 		authExternalId,
 		setIsChatLoaded,
 		queryClient,

@@ -15,6 +15,9 @@ import { PluginsBrowserListVariant } from './types';
 
 import './style.scss';
 
+const loadJitm = () =>
+	import( /* webpackChunkName: "async-load-calypso-blocks-jitm" */ 'calypso/blocks/jitm' );
+
 const DEFAULT_PLACEHOLDER_NUMBER = 6;
 const DEFAULT_CAROUSEL_PAGE_SIZE = 3;
 
@@ -52,6 +55,7 @@ const PluginsBrowserList = ( {
 	carouselPageSize = DEFAULT_CAROUSEL_PAGE_SIZE,
 	injectAfterIndex = null,
 	injectElement = null,
+	afterHeader = null,
 } ) => {
 	const extendedVariant = extended
 		? PluginsBrowserElementVariant.Extended
@@ -211,9 +215,10 @@ const PluginsBrowserList = ( {
 					isRootPage={ listType !== 'browse' }
 				/>
 			) }
+			{ afterHeader }
 			{ listName === 'paid' && (
 				<AsyncLoad
-					require="calypso/blocks/jitm"
+					require={ loadJitm }
 					template="spotlight"
 					placeholder={ null }
 					messagePath="calypso:plugins:spotlight"
@@ -221,7 +226,7 @@ const PluginsBrowserList = ( {
 			) }
 			{ listType === 'search' && (
 				<AsyncLoad
-					require="calypso/blocks/jitm"
+					require={ loadJitm }
 					template="spotlight"
 					jitmPlaceholder={ SpotlightPlaceholder }
 					messagePath="calypso:plugins:search"
@@ -230,7 +235,7 @@ const PluginsBrowserList = ( {
 			) }
 			{ listType === 'browse' && (
 				<AsyncLoad
-					require="calypso/blocks/jitm"
+					require={ loadJitm }
 					template="spotlight"
 					jitmPlaceholder={ SpotlightPlaceholder }
 					messagePath={ `calypso:${ sectionJitmPath }:spotlight` }
@@ -247,6 +252,7 @@ PluginsBrowserList.propTypes = {
 	extended: PropTypes.bool,
 	useCarousel: PropTypes.bool,
 	carouselPageSize: PropTypes.number,
+	afterHeader: PropTypes.node,
 };
 
 export default PluginsBrowserList;

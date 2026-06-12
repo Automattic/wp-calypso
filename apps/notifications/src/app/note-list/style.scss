@@ -1,17 +1,45 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 @import '@wordpress/base-styles/colors';
 
 .wpnc__note-list {
 	flex: 1;
+	min-height: 0;
 	margin-top: -1px; // Make border collapsed
 	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+
+	> .dataviews-wrapper {
+		flex: 1;
+		min-height: 0;
+	}
 
 	.wpnc__note-list-item {
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
-		white-space: pre-wrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
+		.wpnc__subject,
+		.wpnc__excerpt {
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+			white-space: pre-wrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.wpnc__excerpt {
+			font-weight: normal;
+			color: var(--color-text-subtle);
+			padding-top: 2px;
+
+			@include ui-mixins.when-dark-theme {
+				color: var(--dashboard__text-muted-color, var(--color-text-subtle));
+			}
+		}
+
+		&:hover .wpnc__excerpt,
+		&:focus-within .wpnc__excerpt {
+			color: inherit;
+		}
 	}
 
 	.wpnc__note-icon .wpnc__gridicon {

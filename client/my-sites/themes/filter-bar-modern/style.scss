@@ -31,6 +31,13 @@
 	}
 }
 
+// Baton-pass: filter sticks at the fixed nav's top and rides above it, covering
+// it as it pins.
+.is-section-themes:has(.x-nav--2026-redesign) .filter-bar-modern {
+	top: var(--nav-2026-admin-offset);
+	z-index: 1000;
+}
+
 .filter-bar-modern__content {
 	align-items: center;
 	display: flex;

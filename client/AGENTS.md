@@ -48,6 +48,8 @@ yarn test-client --findRelatedTests <file>  # Find + run related tests
 
 - Use CSS logical properties (`margin-inline-start`, not `margin-left`).
 - Do not use BEM shortcuts (`&--`, `&__`) in SCSS.
+- Do not use hardcoded color values (`#fff`, `rgb()`, `hsl()`, named colors) in CSS/SCSS.
+- Use predefined color variables instead, preferably semantic CSS custom properties like `var(--color-text)`, `var(--color-surface)`, `var(--color-border-subtle)`, or `var(--color-primary)`.
 - Dialog buttons on mobile: `.dialog__action-buttons` flips to `flex-direction: column-reverse` below `$break-mobile`. Flex labels inside buttons need `width: 100%` for `justify-content: center` to work.
 
 ### Internationalization

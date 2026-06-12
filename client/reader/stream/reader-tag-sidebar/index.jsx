@@ -80,20 +80,23 @@ const ReaderTagSidebar = ( {
 	) );
 	const tagsPageUrl = addLocaleToPathLocaleInFront( '/tags' );
 
+	const renderStatCount = ( value ) =>
+		value != null ? (
+			<span className="reader-tag-sidebar-stats__count">{ formatNumberCompact( value ) }</span>
+		) : (
+			<span className="reader-tag-sidebar-stats__count is-placeholder" aria-hidden="true" />
+		);
+
 	return (
 		<>
 			{ tagStats && (
 				<div className="reader-tag-sidebar-stats">
 					<div className="reader-tag-sidebar-stats__item">
-						<span className="reader-tag-sidebar-stats__count">
-							{ formatNumberCompact( tagStats?.data?.total_posts ) }
-						</span>
+						{ renderStatCount( tagStats?.data?.total_posts ) }
 						<span className="reader-tag-sidebar-stats__title">{ translate( 'Posts' ) }</span>
 					</div>
 					<div className="reader-tag-sidebar-stats__item">
-						<span className="reader-tag-sidebar-stats__count">
-							{ formatNumberCompact( tagStats?.data?.total_sites ) }
-						</span>
+						{ renderStatCount( tagStats?.data?.total_sites ) }
 						<span className="reader-tag-sidebar-stats__title">{ translate( 'Sites' ) }</span>
 					</div>
 				</div>

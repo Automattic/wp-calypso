@@ -9,13 +9,14 @@ import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { DataViews, type View, type ViewTable, type Action, Operator } from '@wordpress/dataviews';
 import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
 import { plus, trash } from '@wordpress/icons';
-import { translate } from 'i18n-calypso';
+import { fixMe, translate } from 'i18n-calypso';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import { useSubscribedNewsletterCategories } from 'calypso/data/newsletter-categories';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { Product } from 'calypso/my-sites/earn/types';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/settings/selectors';
+import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
@@ -62,22 +63,22 @@ const HELP_CENTER_STORE = HelpCenter.register();
 type SubscriberDataViewsProps = {
 	siteId: number | null;
 	isUnverified: boolean;
-	onGiftSubscription: ( subscriber: Subscriber ) => void;
-	onRemoveComp: ( giftId: number, planName: string, username: string ) => void;
+	onCompSubscription: ( subscriber: Subscriber ) => void;
+	onRemoveComp: ( params: { planName: string; username: string; compId?: number } ) => void;
 	subscriberId?: string;
 };
 
 const SubscriptionTypeCell = ( { subscriber }: { subscriber: Subscriber } ) => {
 	const plans = useSubscriptionPlans( subscriber );
 
-	// If there's a paid (non-gift, non-free) plan, show only that.
-	const paidPlans = plans.filter( ( p ) => ! p.is_gift && ! p.is_free );
+	// If there's a paid (non-comp, non-free) plan, show only that.
+	const paidPlans = plans.filter( ( p ) => ! p.is_complimentary && ! p.is_free );
 	if ( paidPlans.length > 0 ) {
 		return paidPlans.map( ( plan, index ) => <div key={ index }>{ plan.plan }</div> );
 	}
 
 	// If there are any comps, show just "Comp" (no title details).
-	const hasComp = plans.some( ( p ) => p.is_gift );
+	const hasComp = plans.some( ( p ) => p.is_complimentary );
 	if ( hasComp ) {
 		return (
 			<div>
@@ -122,6 +123,9 @@ const getSubscriptionIdString = ( subscriber: Subscriber ): string => {
 	return String( getSubscriptionIdFromSubscriber( subscriber ) );
 };
 
+const findRemovableComp = ( subscriber: Subscriber ) =>
+	( subscriber.plans ?? [] ).find( ( p ) => p.is_comp && p.comp_id );
+
 const defaultView: ViewTable = {
 	type: 'table',
 	titleField: 'name',
@@ -142,7 +146,7 @@ const defaultView: ViewTable = {
 
 export default function SubscriberDataViews( {
 	siteId,
-	onGiftSubscription,
+	onCompSubscription,
 	onRemoveComp,
 	isUnverified,
 	subscriberId,
@@ -162,8 +166,19 @@ export default function SubscriberDataViews( {
 	const [ filters, setFilters ] = useState< SubscribersFilterBy[] >( [ SubscribersFilterBy.All ] );
 	const [ selectedSubscriber, setSelectedSubscriber ] = useState< Subscriber | null >( null );
 
-	const couponsAndGiftsEnabled = useSelector( ( state ) =>
-		getCouponsAndGiftsEnabledForSiteId( state, siteId )
+	const products: Product[] = useSelector( ( state ) => getProductsForSiteId( state, siteId ) );
+
+	const hasUncompedPlans = useCallback(
+		( subscriber: Subscriber ) => {
+			if ( ! products?.length ) {
+				return false;
+			}
+			const compedIds = ( subscriber.plans ?? [] )
+				.filter( ( p ) => p.is_comp && p.subscription_id )
+				.map( ( p ) => p.subscription_id );
+			return products.some( ( product ) => ! compedIds.includes( product.ID ?? 0 ) );
+		},
+		[ products ]
 	);
 
 	const [ currentView, setCurrentView ] = useState< View >( {
@@ -301,12 +316,18 @@ export default function SubscriberDataViews( {
 		is_owner_subscribed: isOwnerSubscribed,
 		pages,
 		total,
+		total_unfiltered: totalUnfiltered,
 	} = subscribersQueryResult || {
 		subscribers: [],
 		is_owner_subscribed: false,
 		pages: 0,
 		total: 0,
+		total_unfiltered: undefined,
 	};
+	// Prefer the list endpoint's unfiltered population over /counts so the
+	// "X out of Y total" denominator can't lag behind the filtered numerator.
+	// See NL-274 / 222712-ghe-Automattic/wpcom.
+	const denominator = totalUnfiltered ?? grandTotal;
 
 	const EmptyComponent = isSimple || isAtomic ? SubscriberLaunchpad : JetpackEmptyListView;
 	const shouldShowLaunchpad =
@@ -417,11 +438,20 @@ export default function SubscriberDataViews( {
 			{
 				id: 'plan',
 				label: translate( 'Subscription type' ),
-				getValue: ( { item }: { item: Subscriber } ) =>
-					item.plans?.length ? SubscribersFilterBy.Paid : SubscribersFilterBy.Free,
+				getValue: ( { item }: { item: Subscriber } ) => {
+					const hasNonCompPlan = item.plans?.some( ( plan ) => ! plan.is_comp );
+					if ( hasNonCompPlan ) {
+						return SubscribersFilterBy.Paid;
+					}
+					if ( item.plans?.length ) {
+						return SubscribersFilterBy.Comp;
+					}
+					return SubscribersFilterBy.Free;
+				},
 				render: ( { item }: { item: Subscriber } ) => <SubscriptionTypeCell subscriber={ item } />,
 				elements: [
 					{ label: translate( 'Paid' ), value: SubscribersFilterBy.Paid },
+					{ label: translate( 'Comp' ), value: SubscribersFilterBy.Comp },
 					{ label: translate( 'Free' ), value: SubscribersFilterBy.Free },
 				],
 				filterBy: {
@@ -496,7 +526,11 @@ export default function SubscriberDataViews( {
 			},
 			{
 				id: 'remove',
-				label: translate( 'Remove' ),
+				label: fixMe( {
+					text: 'Remove subscriber',
+					newCopy: translate( 'Remove subscriber' ),
+					oldCopy: translate( 'Remove' ),
+				} ) as string,
 				callback: handleUnsubscribe,
 				isPrimary: false,
 				supportsBulk: true,
@@ -504,35 +538,60 @@ export default function SubscriberDataViews( {
 			},
 		];
 
-		if ( couponsAndGiftsEnabled ) {
-			baseActions.push( {
-				id: 'gift',
-				label: translate( 'Comp a subscription', {
-					textOnly: true,
-					comment:
-						'"Comp" is short for "complimentary" — granting a free subscription to a subscriber',
-				} ),
-				isEligible: ( subscriber: Subscriber ) =>
-					!! ( subscriber.user_id || subscriber.email_address ),
-				callback: ( items: Subscriber[] ) => {
-					const subscriber = items[ 0 ];
-					if ( ! subscriber ) {
-						return;
-					}
+		baseActions.push( {
+			id: 'comp',
+			label: translate( 'Comp a subscription', {
+				textOnly: true,
+				comment:
+					'"Comp" is short for "complimentary" — granting a free subscription to a subscriber',
+			} ),
+			isEligible: ( subscriber: Subscriber ) =>
+				!! ( subscriber.user_id || subscriber.email_address ) && hasUncompedPlans( subscriber ),
+			callback: ( items: Subscriber[] ) => {
+				const subscriber = items[ 0 ];
+				if ( ! subscriber ) {
+					return;
+				}
 
-					onGiftSubscription( subscriber );
-				},
-				isPrimary: false,
-			} );
-		}
+				onCompSubscription( subscriber );
+			},
+			isPrimary: false,
+		} );
+
+		baseActions.push( {
+			id: 'remove-comp',
+			label: translate( 'Remove comp', {
+				textOnly: true,
+				comment:
+					'"Comp" is short for "complimentary" — revoking a free subscription previously granted to a subscriber',
+			} ),
+			isEligible: ( subscriber: Subscriber ) => !! findRemovableComp( subscriber ),
+			callback: ( items: Subscriber[] ) => {
+				const subscriber = items[ 0 ];
+				if ( ! subscriber ) {
+					return;
+				}
+				const compPlan = findRemovableComp( subscriber );
+				if ( ! compPlan ) {
+					return;
+				}
+				onRemoveComp( {
+					planName: compPlan.title ?? '',
+					username: subscriber.display_name,
+					compId: compPlan.comp_id,
+				} );
+			},
+			isPrimary: false,
+		} );
 
 		return baseActions;
 	}, [
 		selectedSubscriber,
 		handleSubscriberSelection,
 		handleUnsubscribe,
-		onGiftSubscription,
-		couponsAndGiftsEnabled,
+		onCompSubscription,
+		onRemoveComp,
+		hasUncompedPlans,
 	] );
 
 	const handleViewChange = useCallback(
@@ -634,15 +693,19 @@ export default function SubscriberDataViews( {
 	}, [ currentView.search, currentView.filters ] );
 
 	// Memoize the data and pagination info.
+	// totalItems is the count of rows being paged through: the filtered total
+	// from the list response, which always matches `pages`. Using the /counts
+	// grand total here would mismatch the data when a filter is active (and
+	// could drift from the list count even without filters — see NL-274).
 	const { data, paginationInfo } = useMemo( () => {
 		return {
 			data: subscribers,
 			paginationInfo: {
-				totalItems: grandTotal,
+				totalItems: total,
 				totalPages: pages,
 			},
 		};
-	}, [ subscribers, grandTotal, pages ] );
+	}, [ subscribers, total, pages ] );
 
 	return (
 		<div
@@ -724,7 +787,7 @@ export default function SubscriberDataViews( {
 					) : (
 						<>
 							<SubscriberTotals
-								totalSubscribers={ grandTotal }
+								totalSubscribers={ denominator }
 								filteredCount={ total }
 								filters={ filters }
 								searchTerm={ searchTerm }
@@ -769,12 +832,15 @@ export default function SubscriberDataViews( {
 							subscriptionId={ getSubscriptionId( subscriberDetails ) }
 							onClose={ handleClose }
 							onUnsubscribe={ ( subscriber ) => handleUnsubscribe( [ subscriber ] ) }
-							onGiftSubscription={ couponsAndGiftsEnabled ? onGiftSubscription : undefined }
-							onRemoveComp={
-								couponsAndGiftsEnabled
-									? ( giftId, planName ) =>
-											onRemoveComp( giftId, planName, subscriberDetails.display_name )
-									: undefined
+							onCompSubscription={
+								hasUncompedPlans( subscriberDetails ) ? onCompSubscription : undefined
+							}
+							onRemoveComp={ ( { planName, compId } ) =>
+								onRemoveComp( {
+									planName,
+									username: subscriberDetails.display_name,
+									compId,
+								} )
 							}
 							newsletterCategoriesEnabled={ subscribedNewsletterCategoriesData?.enabled }
 							newsletterCategories={ subscribedNewsletterCategoriesData?.newsletterCategories }

@@ -17,8 +17,10 @@ import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { decodeEntities } from 'calypso/lib/formatting';
+import { getPartnerConfigFromSiteDetails, getPartnerSsoCopy } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -27,6 +29,13 @@ import { getSSO } from 'calypso/state/jetpack-connect/selectors';
 import HelpButton from './help-button';
 import MainWrapper from './main-wrapper';
 import { persistSsoApproved } from './persistence-utils';
+import {
+	fallbackToHistoryBackWhenAdminUrlMissing,
+	getAdminUrlFromBlogDetails,
+	navigateToAdminUrlWhenAvailable,
+	navigateToUrl,
+} from './sso-flow-primitives';
+import SsoPartnerBranded from './sso-partner-branded';
 
 /*
  * Module variables
@@ -60,6 +69,10 @@ class JetpackSsoForm extends Component {
 
 	onApproveSSO = ( event ) => {
 		event.preventDefault();
+		this.approveSSO();
+	};
+
+	approveSSO = () => {
 		recordTracksEvent( 'calypso_jetpack_sso_log_in_button_click' );
 
 		const { siteId, ssoNonce } = this.props;
@@ -71,20 +84,33 @@ class JetpackSsoForm extends Component {
 		this.props.authorizeSSO( siteId, ssoNonce, siteUrl );
 	};
 
-	onCancelClick = ( event ) => {
+	onClickReturnToSite = ( event, { navigateToAdminUrl = false } = {} ) => {
 		debug( 'Clicked return to site link' );
 		recordTracksEvent( 'calypso_jetpack_sso_return_to_site_link_click' );
+
+		if ( navigateToAdminUrl && navigateToAdminUrlWhenAvailable( this.props.blogDetails ) ) {
+			return;
+		}
+
 		this.returnToSiteFallback( event );
+	};
+
+	onClickSignInDifferentUser = ( event, { navigate = false } = {} ) => {
+		recordTracksEvent( 'calypso_jetpack_sso_sign_in_different_user_link_click' );
+
+		if ( navigate ) {
+			navigateToUrl( this.getSignInLink() );
+		}
+	};
+
+	onCancelClick = ( event ) => {
+		this.onClickReturnToSite( event );
 	};
 
 	onTryAgainClick = ( event ) => {
 		debug( 'Clicked try again link' );
 		recordTracksEvent( 'calypso_jetpack_sso_try_again_link_click' );
 		this.returnToSiteFallback( event );
-	};
-
-	onClickSignInDifferentUser = () => {
-		recordTracksEvent( 'calypso_jetpack_sso_sign_in_different_user_link_click' );
 	};
 
 	onClickSharedDetailsModal = ( event ) => {
@@ -102,13 +128,11 @@ class JetpackSsoForm extends Component {
 	};
 
 	returnToSiteFallback = ( event ) => {
-		// If, for some reason, the API request failed and we do not have the admin URL,
-		// then fallback to the user's last location.
-		if ( ! get( this.props, 'blogDetails.admin_url' ) ) {
+		if ( ! getAdminUrlFromBlogDetails( this.props.blogDetails ) ) {
 			recordTracksEvent( 'calypso_jetpack_sso_admin_url_fallback_redirect' );
-			event.preventDefault();
-			window.history.back();
 		}
+
+		return fallbackToHistoryBackWhenAdminUrlMissing( this.props.blogDetails, event );
 	};
 
 	isButtonDisabled() {
@@ -120,7 +144,7 @@ class JetpackSsoForm extends Component {
 			isValidating ||
 			ssoUrl ||
 			authorizationError ||
-			! currentUser.email_verified
+			! currentUser?.email_verified
 		);
 	}
 
@@ -156,7 +180,7 @@ class JetpackSsoForm extends Component {
 				showDismiss={ false }
 			>
 				<NoticeAction
-					href={ get( this.props, 'blogDetails.admin_url', '#' ) }
+					href={ getAdminUrlFromBlogDetails( this.props.blogDetails ) || '#' }
 					onClick={ this.onTryAgainClick }
 				>
 					{ translate( 'Try again' ) }
@@ -390,11 +414,58 @@ class JetpackSsoForm extends Component {
 	}
 
 	render() {
-		const { currentUser } = this.props;
-		const { ssoNonce, siteId, validationError, translate } = this.props;
+		const { currentUser, partnerConfig } = this.props;
+		const { ssoNonce, siteId, nonceValid, isValidating, validationError, translate } = this.props;
 
 		if ( ! ssoNonce || ! siteId || validationError ) {
 			return this.renderBadPathArgsError();
+		}
+
+		if ( typeof nonceValid === 'undefined' || isValidating ) {
+			return null;
+		}
+
+		if ( ! currentUser ) {
+			window.location.href = this.getSignInLink();
+			return null;
+		}
+
+		if ( partnerConfig ) {
+			const brandedCopy = getPartnerSsoCopy( partnerConfig, translate, {
+				defaultSubtitle: this.getSubHeaderText(),
+			} );
+
+			return (
+				<>
+					<BodySectionCssClass
+						bodyClass={ [
+							'is-jetpack-sso-partner-branded',
+							`is-jetpack-sso-partner-branded--${ partnerConfig.id }`,
+						] }
+					/>
+					<SsoPartnerBranded
+						partnerConfig={ partnerConfig }
+						title={ brandedCopy.title }
+						subtitle={ brandedCopy.subtitle }
+						currentUser={ currentUser }
+						errorNotice={ currentUser?.email_verified ? this.maybeRenderErrorNotice() : null }
+						isPrimaryDisabled={ this.isButtonDisabled() }
+						isPrimaryLoading={ this.props.isAuthorizing }
+						onApproveClick={ this.approveSSO }
+						onReturnToSiteClick={ ( event ) =>
+							this.onClickReturnToSite( event, { navigateToAdminUrl: true } )
+						}
+						onSignInDifferentUserClick={ ( event ) =>
+							this.onClickSignInDifferentUser( event, { navigate: true } )
+						}
+						approveLabel={ brandedCopy.primaryLabel }
+						signInDifferentUserLabel={ translate( 'Sign in as a different user' ) }
+						returnToSiteLabel={ brandedCopy.secondaryLabel }
+					/>
+
+					{ this.renderSharedDetailsDialog() }
+				</>
+			);
 		}
 
 		return (
@@ -448,7 +519,7 @@ class JetpackSsoForm extends Component {
 						</LoggedOutFormLinkItem>
 						<LoggedOutFormLinkItem
 							rel="external"
-							href={ get( this.props, 'blogDetails.admin_url', '#' ) }
+							href={ getAdminUrlFromBlogDetails( this.props.blogDetails ) || '#' }
 							onClick={ this.onCancelClick }
 						>
 							{ this.getReturnToSiteText() }
@@ -466,6 +537,9 @@ class JetpackSsoForm extends Component {
 const connectComponent = connect(
 	( state ) => {
 		const jetpackSSO = getSSO( state );
+		const sitePartnerConfig = getPartnerConfigFromSiteDetails( get( jetpackSSO, 'blogDetails' ), {
+			persistToSession: true,
+		} );
 		return {
 			ssoUrl: get( jetpackSSO, 'ssoUrl' ),
 			isAuthorizing: get( jetpackSSO, 'isAuthorizing' ),
@@ -476,6 +550,7 @@ const connectComponent = connect(
 			blogDetails: get( jetpackSSO, 'blogDetails' ),
 			sharedDetails: get( jetpackSSO, 'sharedDetails' ),
 			currentUser: getCurrentUser( state ),
+			partnerConfig: sitePartnerConfig,
 		};
 	},
 	{

@@ -33,12 +33,14 @@ export interface SubscribersStepContent {
 	connect_url?: string;
 	is_connected_stripe: boolean;
 	map_plans?: Record< string, string >;
+	comp_stripe_plan_id?: string;
 	account_display?: string;
 	plans?: Plan[];
 	meta?: {
 		email_count: string;
 		id: number;
 		paid_subscribers_count: string;
+		comp_count?: number;
 		platform: string;
 		scheduled_at: string;
 		status: string;
@@ -48,6 +50,9 @@ export interface SubscribersStepContent {
 		paid_subscribed_count: string | null;
 		paid_already_subscribed_count: string | null;
 		paid_failed_subscribed_count: string | null;
+		comp_subscribed_count: string | null;
+		comp_already_subscribed_count: string | null;
+		comp_failed_subscribed_count: string | null;
 		timestamp: string;
 	};
 }

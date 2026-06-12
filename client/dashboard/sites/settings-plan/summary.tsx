@@ -4,7 +4,8 @@ import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { payment } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { getSitePlanDisplayName, useSitePlanManageURL } from '../../utils/site-plan';
+import { getSitePlanDisplayName } from '../../utils/site-plan';
+import { getSitePlanUrl } from '../../utils/site-url';
 import { isRelativeUrl } from '../../utils/url';
 import type { Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
@@ -23,7 +24,7 @@ export default function SettingsPlanSummary( {
 		enabled: !! plan?.id,
 	} );
 
-	const url = useSitePlanManageURL( site, purchase );
+	const url = getSitePlanUrl( site, purchase );
 	if ( ! url || ! isRelativeUrl( url ) ) {
 		return null;
 	}

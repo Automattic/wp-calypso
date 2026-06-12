@@ -114,21 +114,42 @@ export default function useUpdateEmailForwardMutation(
 			queryClient.setQueryData( emailAccountsQueryKey, context.emailAccountsQueryData );
 		}
 
+		const err = error as { message?: string | { error_message?: string } };
+		let apiMessage: string | undefined;
+		if ( err?.message ) {
+			apiMessage = typeof err.message === 'object' ? err.message.error_message : err.message;
+		}
+
 		dispatch(
 			errorNotice(
-				translate(
-					'Failed to update email forward for {{strong}}%(mailbox)s@%(domain)s{{/strong}}. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
-					{
-						args: {
-							mailbox: params.mailbox,
-							domain: params.domain,
-						},
-						components: {
-							contactSupportLink: <a href={ CALYPSO_CONTACT } />,
-							strong: <strong />,
-						},
-					}
-				),
+				apiMessage
+					? translate(
+							'Failed to update email forward for {{strong}}%(mailbox)s@%(domain)s{{/strong}} with message "%(apiMessage)s". Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
+							{
+								args: {
+									mailbox: params.mailbox,
+									domain: params.domain,
+									apiMessage,
+								},
+								components: {
+									contactSupportLink: <a href={ CALYPSO_CONTACT } />,
+									strong: <strong />,
+								},
+							}
+					  )
+					: translate(
+							'Failed to update email forward for {{strong}}%(mailbox)s@%(domain)s{{/strong}}. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
+							{
+								args: {
+									mailbox: params.mailbox,
+									domain: params.domain,
+								},
+								components: {
+									contactSupportLink: <a href={ CALYPSO_CONTACT } />,
+									strong: <strong />,
+								},
+							}
+					  ),
 				{ duration: 7000 }
 			)
 		);

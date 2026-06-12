@@ -103,13 +103,14 @@ const SitePickerStep: Step< {
 		>
 			<p>
 				{ sprintf(
-					/* translators: the `sourceSite` and `targetSite` fields could be any site URL (eg: "yourname.com") */
+					/* translators: %(sourceSite)s and %(targetSite)s are site URLs (eg: "yourname.com") */
 					__(
 						'Your site %(sourceSite)s will be migrated to %(targetSite)s, overriding all the content in your destination site.'
 					),
 					{
 						sourceSite: sourceSiteSlug,
-						targetSite: destinationSite?.slug.replace( /\b\.wordpress\.com/, '.wpcomstaging.com' ),
+						targetSite:
+							destinationSite?.slug.replace( /\b\.wordpress\.com/, '.wpcomstaging.com' ) ?? '',
 					}
 				) }
 			</p>

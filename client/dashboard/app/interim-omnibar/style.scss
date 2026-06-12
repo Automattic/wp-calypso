@@ -1,17 +1,19 @@
 body:has(#wpcom-omnibar) #wpcom {
-	margin-block-start: var(--masterbar-height, 47px);
+	padding-block-start: var(--masterbar-height, 47px);
+	height: auto;
+	min-height: calc(100vh - var(--masterbar-height, 47px) );
 }
 
 #wpcom-omnibar {
-	--color-masterbar-background: #1d2327;
-	--color-masterbar-text: #f0f0f1;
-	--color-masterbar-icon: rgba(240, 246, 252, 0.6);
-	--color-masterbar-highlight: #72aee6;
-	--color-masterbar-border: #8c8f94;
-	--color-masterbar-item-hover-background: #2c3338;
-	--color-masterbar-item-active-background: #23282d;
-	--color-masterbar-unread-dot-background: var(--color-accent-20, #d54e21);
-	--color-masterbar-submenu-text: #c3c4c7;
+	--color-masterbar-background: #1e1e1e;
+	--color-masterbar-text: #fff;
+	--color-masterbar-icon: #f3f1f1;
+	--color-masterbar-highlight: #7b90ff;
+	--color-masterbar-border: #303030;
+	--color-masterbar-item-hover-background: #0c0c0c;
+	--color-masterbar-item-active-background: #0c0c0c;
+	--color-masterbar-unread-dot-background: var(--studio-wordpress-blue-20, #3858e9);
+	--color-masterbar-submenu-text: #bcbcbc;
 
 	button.masterbar__item {
 		background: transparent;
@@ -23,9 +25,41 @@ body:has(#wpcom-omnibar) #wpcom {
 		}
 	}
 
+	.masterbar__item.is-active {
+		background: var(--color-masterbar-item-active-background);
+	}
+
 	.masterbar__item:focus-visible {
 		box-shadow: inset 0 0 0 2px var(--color-masterbar-highlight);
 		outline: none;
+	}
+
+	// The Launch button is a primary @wordpress/components Button, but the
+	// generic `.masterbar__item:hover` rules recolor its background, text and
+	// icon to the masterbar highlight. Re-assert the primary treatment so it
+	// behaves like the classic masterbar: white text/icon on a darker-blue
+	// background on hover. The dashboard doesn't load Calypso's color-scheme
+	// variables, so the darker-blue is hard-coded (the classic masterbar's
+	// `--color-accent-60`).
+	// The button renders as <button> while loading and <a> once enabled. The
+	// transparent rule above only matches the <button>, so the primary background
+	// would otherwise appear only after loading. Reassert it for both elements.
+	.masterbar__item-launch-site,
+	button.masterbar__item-launch-site {
+		background: var(--wp-components-color-accent, #3858e9);
+
+		&:hover,
+		&.is-open {
+			background: #2a46ce;
+
+			.masterbar__item-content {
+				color: var(--color-masterbar-text);
+			}
+
+			svg path {
+				fill: var(--color-masterbar-text);
+			}
+		}
 	}
 
 	.masterbar__item-subitems a:focus-visible,

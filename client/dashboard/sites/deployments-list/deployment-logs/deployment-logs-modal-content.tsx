@@ -16,6 +16,7 @@ import { formatDate } from '../../../utils/datetime';
 import { BranchDisplay } from '../branch-display';
 import { DeploymentLogsEntry } from './deployment-logs-entry';
 import { DeploymentLogsStatus } from './deployment-logs-status';
+import './style.scss';
 import type { DeploymentRunWithDeploymentInfo } from '@automattic/api-core';
 
 interface DeploymentLogsModalContentProps {
@@ -51,7 +52,12 @@ export function DeploymentLogsModalContent( {
 	return (
 		<VStack spacing={ 4 }>
 			<VStack spacing={ 1 }>
-				<Heading upperCase size={ 11 } weight={ 500 } style={ { color: '#757575' } }>
+				<Heading
+					upperCase
+					size={ 11 }
+					weight={ 500 }
+					style={ { color: 'var(--dashboard__text-muted-color)' } }
+				>
 					{ repositoryName }
 				</Heading>
 
@@ -89,7 +95,7 @@ export function DeploymentLogsModalContent( {
 							height={ 16 }
 							style={ { borderRadius: '50%' } }
 						/>
-						<Text size="small" style={ { color: '#3b3b3b' } }>
+						<Text size="small" style={ { color: 'var(--dashboard__text-muted-color)' } }>
 							{ author.name }
 						</Text>
 					</HStack>
@@ -118,10 +124,10 @@ export function DeploymentLogsModalContent( {
 					( logEntries.length > 0 || ! isDeploymentInFinalState( deployment.status ) ) && (
 						<VStack spacing={ 2 }>
 							<div
+								className="deployment-logs-modal__log-output"
 								style={ {
 									maxHeight: '15lh',
 									overflowY: 'scroll',
-									backgroundColor: 'var(--dashboard__text-color)',
 									borderRadius: '4px',
 								} }
 							>

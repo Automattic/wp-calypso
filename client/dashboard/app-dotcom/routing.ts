@@ -13,7 +13,8 @@ export function isAllowedDotcomDashboardHostname( hostname?: string ): boolean {
 
 export function buildDotcomDashboardLink( path: string = '' ) {
 	if ( config( 'env' ) === 'development' ) {
-		return new URL( path, 'http://my.localhost:3000' ).href;
+		const port = config( 'port' ) ?? 3000;
+		return new URL( path, `http://my.localhost:${ port }` ).href;
 	}
 	return new URL( path, 'https://my.wordpress.com' ).href;
 }

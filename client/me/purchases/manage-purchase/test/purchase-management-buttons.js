@@ -12,8 +12,16 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import nock from 'nock';
 import { Provider as ReduxProvider } from 'react-redux';
+import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { createReduxStore } from 'calypso/state';
 import ManagePurchase from '../index';
+
+jest.mock(
+	'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled',
+	() => ( {
+		useIsSplitCancelRemoveEnabled: jest.fn( () => true ),
+	} )
+);
 
 const purchase = {
 	ID: '19823155',
@@ -125,6 +133,36 @@ function createMockReduxStoreForPurchase( purchaseForRedux, domains_items = {} )
 describe( 'Purchase Management Buttons', () => {
 	const queryClient = new QueryClient();
 
+	beforeEach( () => {
+		// Default to the split-cancel-remove flow being enabled (matches config/test.json);
+		// individual tests opt out to exercise the flag-off path.
+		useIsSplitCancelRemoveEnabled.mockReturnValue( true );
+	} );
+
+	it( 'cancel button links to the cancel flow with intent=cancel even when the split flag is off', async () => {
+		useIsSplitCancelRemoveEnabled.mockReturnValue( false );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		const store = createMockReduxStoreForPurchase( { ...purchase, is_auto_renew_enabled: true } );
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="onecooltestsite.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		const cancelLink = await screen.findByRole( 'link', { name: /Cancel plan/i } );
+		expect( cancelLink ).toHaveAttribute( 'href', expect.stringContaining( 'intent=cancel' ) );
+	} );
+
 	it( 'renders a cancel button when auto-renew is ON', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.2/me/payment-methods?expired=include' )
@@ -147,7 +185,7 @@ describe( 'Purchase Management Buttons', () => {
 		expect( screen.queryByText( /Remove/ ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'renders a cancel button with remove language when auto-renew is OFF', async () => {
+	it( 'renders a Remove button with remove language when auto-renew is OFF', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.2/me/payment-methods?expired=include' )
 			.reply( 200 );
@@ -165,11 +203,12 @@ describe( 'Purchase Management Buttons', () => {
 				</ReduxProvider>
 			</QueryClientProvider>
 		);
-		expect( await screen.findByText( /and be removed/ ) ).toBeInTheDocument();
-		expect( await screen.findByText( /Cancel/ ) ).toBeInTheDocument();
+		expect( await screen.findByText( /will be removed immediately/ ) ).toBeVisible();
+		expect( await screen.findByText( /Remove plan/ ) ).toBeVisible();
+		expect( screen.queryByText( /Cancel subscription/ ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'renders a cancel button with remove language when auto-renew is OFF and the purchase is an Akismet purchase attached to an akismet siteless holding site', async () => {
+	it( 'renders a Remove button with product-name language for an Akismet purchase attached to an akismet siteless holding site when auto-renew is OFF', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/me/payment-methods?expired=include' )
 			.reply( 200 );
@@ -179,6 +218,7 @@ describe( 'Purchase Management Buttons', () => {
 			domain: 'siteless.akismet.com',
 			product_id: 2311, // Akismet Plus Plan
 			product_slug: 'ak_plus_yearly_1',
+			product_name: 'Akismet Plus',
 			is_auto_renew_enabled: false,
 		} );
 
@@ -196,7 +236,8 @@ describe( 'Purchase Management Buttons', () => {
 
 		// Multiple elements may contain "remove" text (button + notice), so use findAllByText
 		expect( ( await screen.findAllByText( /remove/i ) ).length ).toBeGreaterThan( 0 );
-		expect( await screen.findByText( /Cancel/ ) ).toBeInTheDocument();
+		expect( await screen.findByText( /Akismet Plus will be removed immediately/ ) ).toBeVisible();
+		expect( await screen.findByText( /Remove Akismet Plus/ ) ).toBeVisible();
 	} );
 
 	it( "does't render renew buttons for domain with pending registration at registry", async () => {

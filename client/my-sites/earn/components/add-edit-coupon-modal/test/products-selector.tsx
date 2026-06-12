@@ -154,6 +154,36 @@ describe( 'ProductsSelector', () => {
 		expect( getDropdownButton( '2 products selected.' ) ).not.toBeNull();
 	} );
 
+	test( 'should not render products matching excludeProductIds', async () => {
+		const render = ( el, options ) =>
+			renderWithProvider( el, {
+				...options,
+				initialState,
+				reducers: {
+					ui: uiReducer,
+					memberships: membershipsReducer,
+					siteSettings: siteSettingsReducer,
+				},
+			} );
+		const user = userEvent.setup();
+		render(
+			<ProductsSelector
+				onSelectedPlanIdsChange={ () => {} }
+				initialSelectedList={ [] }
+				allowMultiple={ false }
+				excludeProductIds={ [ testProduct1.ID ] }
+			/>
+		);
+
+		await user.click( getDropdownButton( 'No product selected' ) );
+		expect( getYearlyProductCheckbox() ).toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'menuitemcheckbox', {
+				name: 'Monthly Subscription : $5.00 / month',
+			} )
+		).not.toBeInTheDocument();
+	} );
+
 	test( 'clicking the button should show a dropdown with selected items selected', async () => {
 		const render = ( el, options ) =>
 			renderWithProvider( el, {

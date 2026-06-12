@@ -10,8 +10,9 @@ import { sidebar } from 'calypso/me/controller';
 import {
 	accountRecovery,
 	connectedApplications,
-	aiAssistant,
+	dolly,
 	password,
+	qrCodeAppLogin,
 	securityAccountEmail,
 	securityCheckup,
 	socialLogin,
@@ -66,7 +67,7 @@ export default function () {
 		setupPreferences,
 		maybeRedirectToMultiSiteDashboard( '/me/security/ai-assistant' ),
 		sidebar,
-		aiAssistant,
+		dolly,
 		makeLayout,
 		clientRender
 	);
@@ -107,6 +108,15 @@ export default function () {
 		maybeRedirectToMultiSiteDashboard( '/me/security/ssh-key' ),
 		sidebar,
 		sshKey,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/me/security/qr-login',
+		setupPreferences,
+		sidebar,
+		qrCodeAppLogin,
 		makeLayout,
 		clientRender
 	);

@@ -15,7 +15,6 @@ export interface ReceiptPurchase {
 	isRootDomainWithUs: boolean;
 	isHundredYearDomain: boolean;
 	isRenewal: boolean;
-	willAutoRenew: boolean;
 	saasRedirectUrl: string;
 	newQuantity: number | undefined;
 	blogId: number;

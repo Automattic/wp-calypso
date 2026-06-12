@@ -7,6 +7,7 @@ import { navigate } from 'calypso/lib/navigate';
 import { JPC_PATH_PLANS, JPC_PATH_REMOTE_INSTALL, REMOTE_PATH_AUTH } from '../constants';
 import {
 	addCalypsoEnvQueryArg,
+	authQueryTransformer,
 	cleanUrl,
 	getRoleFromScope,
 	parseAuthorizationQuery,
@@ -138,6 +139,36 @@ describe( 'parseAuthorizationQuery', () => {
 
 	test( 'should return null data on valid input', () => {
 		expect( parseAuthorizationQuery( {} ) ).toBeNull();
+	} );
+} );
+
+describe( 'authQueryTransformer plugins param', () => {
+	const baseQuery = {
+		_wp_nonce: 'foobar',
+		blogname: 'Test Site',
+		client_id: '12345',
+		home_url: 'https://example.com',
+		redirect_uri: 'https://example.com/wp-admin/admin.php',
+		scope: 'administrator:abc123',
+		secret: '640fdbd69f96a8ca',
+		site: 'https://example.com',
+		site_url: 'https://example.com',
+		state: '1',
+	};
+
+	test( 'should parse comma-separated plugins into an array', () => {
+		const result = authQueryTransformer( { ...baseQuery, plugins: 'jetpack,jetpack-boost' } );
+		expect( result.plugins ).toEqual( [ 'jetpack', 'jetpack-boost' ] );
+	} );
+
+	test( 'should return a single-element array for a single plugin', () => {
+		const result = authQueryTransformer( { ...baseQuery, plugins: 'jetpack-social' } );
+		expect( result.plugins ).toEqual( [ 'jetpack-social' ] );
+	} );
+
+	test( 'should return an empty array when plugins is not provided', () => {
+		const result = authQueryTransformer( baseQuery );
+		expect( result.plugins ).toEqual( [] );
 	} );
 } );
 

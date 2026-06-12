@@ -1,0 +1,6 @@
+// Override the AM's bottomMessages CSS so messages start from the top
+// instead of being pinned to the bottom via margin-top: auto.
+// This makes the chat push content upward when new messages arrive.
+[data-slot="messages"] > *:first-child {
+	margin-top: 0 !important;
+}

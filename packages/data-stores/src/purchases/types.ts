@@ -2,6 +2,7 @@ import { PriceTierEntry } from '@automattic/calypso-products';
 
 export interface Purchase {
 	amount: number;
+	advertisedTotalUploadSpaceInGb?: number | null;
 	attachedToPurchaseId: number;
 	billPeriodDays: number;
 	billPeriodLabel: string;
@@ -66,6 +67,7 @@ export interface Purchase {
 	isLocked: boolean;
 	isRechargeable: boolean;
 	isRefundable: boolean;
+	isWithinInitialRefundWindow: boolean;
 	isRenewable: boolean;
 	isRenewal: boolean;
 	isWooExpressTrial: boolean;
@@ -193,6 +195,7 @@ export interface Purchase {
 	autoRenewCouponDiscountPercentage: number | null;
 
 	isJetpackPlanOrProduct: boolean;
+	isAttachedToHoldingSite: boolean;
 }
 
 export interface PurchasePriceTier {

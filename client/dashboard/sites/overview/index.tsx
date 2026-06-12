@@ -12,10 +12,11 @@ import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useRef } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { useAppContext } from '../../app/context';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
-import OptInSurvey from '../../components/opt-in-survey';
+import OptInSurvey, { useShouldShowOptInSurvey } from '../../components/opt-in-survey';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
@@ -192,7 +193,21 @@ function SiteOverview( {
 		isSmallViewport,
 	} );
 
+	const { recordTracksEvent } = useAnalytics();
 	const wpAdminButtonRef = useRef( null );
+	const shouldShowOptInSurvey = useShouldShowOptInSurvey();
+
+	const renderNotices = () => {
+		if ( site.__inaccessible_jetpack_error ) {
+			return <InaccessibleJetpackNotice error={ site.__inaccessible_jetpack_error } />;
+		}
+
+		if ( ! isDashboardBackport() && shouldShowOptInSurvey ) {
+			return <OptInSurvey />;
+		}
+
+		return null;
+	};
 
 	const renderActions = () => {
 		if ( ! site.options?.admin_url ) {
@@ -201,7 +216,16 @@ function SiteOverview( {
 
 		if ( isCommerceGardenSite ) {
 			return (
-				<Button __next40pxDefaultSize variant="primary" href={ site.options.admin_url }>
+				<Button
+					__next40pxDefaultSize
+					variant="primary"
+					href={ site.options.admin_url }
+					onClick={ () =>
+						recordTracksEvent( 'calypso_dashboard_site_overview_wp_admin_clicked', {
+							site_id: site.ID,
+						} )
+					}
+				>
 					{ __( 'Manage store' ) }
 				</Button>
 			);
@@ -216,6 +240,11 @@ function SiteOverview( {
 					variant="primary"
 					href={ site.options.admin_url }
 					icon={ wordpress }
+					onClick={ () =>
+						recordTracksEvent( 'calypso_dashboard_site_overview_wp_admin_clicked', {
+							site_id: site.ID,
+						} )
+					}
 				>
 					{ __( 'WP Admin' ) }
 				</Button>
@@ -236,14 +265,7 @@ function SiteOverview( {
 					actions={ renderActions() }
 				/>
 			}
-			notices={
-				<>
-					{ !! site.__inaccessible_jetpack_error && (
-						<InaccessibleJetpackNotice error={ site.__inaccessible_jetpack_error } />
-					) }
-					{ ! isDashboardBackport() && <OptInSurvey /> }
-				</>
-			}
+			notices={ renderNotices() }
 		>
 			<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
 				<StorageWarningBanner site={ site } />

@@ -3,11 +3,11 @@
 exports[`Marketplace SignupSuccess should render the page as expected 1`] = `
 <div>
   <header
-    class="masterbar css-10e139q-MasterbarStyledBlock etx5n0d1"
+    class="masterbar css-auvqj6-MasterbarStyledBlock etx5n0d1"
     id="header"
   >
     <svg
-      class="css-1tj4oyq-WordPressLogoStyled etx5n0d0"
+      class="css-mr3s8x-WordPressLogoStyled etx5n0d0"
       height="72"
       viewBox="0 0 72 72"
       width="72"
@@ -28,7 +28,7 @@ exports[`Marketplace SignupSuccess should render the page as expected 1`] = `
     >
       <img
         alt=""
-        src="submission-success.png"
+        src="submission-success.webp"
       />
       <h1
         class="signup-success__header-title wp-brand-font"

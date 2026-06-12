@@ -3,12 +3,13 @@ import config from '@automattic/calypso-config';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Icon, __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { seen, pencil, notAllowed, connection } from '@wordpress/icons';
+import { seen, pencil, notAllowed, connection, globe } from '@wordpress/icons';
 import {
 	getAccountMcpAbilities,
 	getDisabledSiteIds,
 	getEnabledSiteIds,
 } from '../../../me/mcp/utils';
+import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { Card, CardBody, CardDivider } from '../../components/card';
 import ComponentViewTracker from '../../components/component-view-tracker';
@@ -67,6 +68,7 @@ function getWriteBadge( tools: Array< [ string, McpAbility ] > ) {
 }
 
 function McpComponent() {
+	const { recordTracksEvent } = useAnalytics();
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
@@ -87,6 +89,11 @@ function McpComponent() {
 		exceptionCount > 0
 			? { text: `${ exceptionCount } exceptions`, intent: 'warning' as const }
 			: { text: __( 'No exceptions' ) };
+
+	const addSiteBadge =
+		enabledSiteIds.length > 0
+			? { text: `${ enabledSiteIds.length } sites`, intent: 'success' as const }
+			: { text: __( 'No sites added' ) };
 
 	const readBadge = getReadBadge( readTools );
 	const writeBadge = getWriteBadge( writeTools );
@@ -119,12 +126,19 @@ function McpComponent() {
 			...enabledSiteIds.map( ( id ) => ( { blog_id: id, site_level_enabled: false } ) ),
 		];
 
-		mutation.mutate( {
-			mcp_abilities: {
-				account: accountAbilities,
-				...( sitesToReset.length > 0 && { sites: sitesToReset } ),
-			},
-		} as any );
+		mutation.mutate(
+			{
+				mcp_abilities: {
+					account: accountAbilities,
+					...( sitesToReset.length > 0 && { sites: sitesToReset } ),
+				},
+			} as any,
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_mcp_account_toggled', { enabled } );
+				},
+			}
+		);
 	};
 
 	if ( ! config.isEnabled( 'mcp-settings' ) ) {
@@ -189,6 +203,18 @@ function McpComponent() {
 								title={ __( 'Site exceptions' ) }
 								decoration={ <Icon icon={ notAllowed } size={ 24 } /> }
 								badges={ [ exceptionBadge ] }
+							/>
+						</>
+					) }
+					{ ! mcpEnabled && (
+						<>
+							<CardDivider />
+							<RouterLinkSummaryButton
+								to="/me/preferences/mcp/mcp-sites"
+								density="medium"
+								title={ __( 'Add to specific sites' ) }
+								decoration={ <Icon icon={ globe } size={ 24 } /> }
+								badges={ [ addSiteBadge ] }
 							/>
 						</>
 					) }

@@ -1,6 +1,5 @@
 import { Button } from '@automattic/components';
-import { updateLaunchpadSettings } from '@automattic/data-stores';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
 import { SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN } from '@automattic/urls';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
@@ -16,14 +15,13 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-modal';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-domain-diagnostics-query';
-import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
-import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import { usePurchasePlanNotification } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-purchase-plan-notification';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getQueryArgs } from 'calypso/lib/query-args';
+import { FEATURE_SUPPORT } from 'calypso/my-sites/customer-home/cards/constants';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
@@ -44,6 +42,7 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
+import { getIsSiteLaunchCelebrationModalOpen } from 'calypso/state/sites/launch/selectors';
 import { isSiteOnWooExpressEcommerceTrial } from 'calypso/state/sites/plans/selectors';
 import {
 	canCurrentUserUseCustomerHome,
@@ -52,11 +51,14 @@ import {
 } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import CelebrateLaunchModal from '../celebrate-launch-modal';
-import { FullScreenLaunchpad } from '../full-screen-launchpad';
 import openSyncUrlInStudio from './studio-deeplink';
 
 import './style.scss';
+
+const loadTrackResurrections = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-lib-analytics-track-resurrections" */ 'calypso/lib/analytics/track-resurrections'
+	);
 
 const HomeContent = ( {
 	canUserUseCustomerHome,
@@ -76,24 +78,16 @@ const HomeContent = ( {
 	isAdmin,
 	dashboardOptIn,
 } ) => {
-	const [ celebrateLaunchModalIsOpen, setCelebrateLaunchModalIsOpen ] = useState( false );
+	const celebrateLaunchModalIsOpen = useSelector( ( state ) =>
+		getIsSiteLaunchCelebrationModalOpen( state, siteId )
+	);
 	const [ launchedSiteId, setLaunchedSiteId ] = useState( null );
 	const queryClient = useQueryClient();
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const isP2 = site?.options?.is_wpforteams_site;
 
 	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
-	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
-
-	const {
-		data: allDomains = [],
-		isSuccess,
-		isFetchedAfterMount,
-	} = useGetDomainsQuery( site?.ID ?? null, {
-		retry: false,
-	} );
-
-	const [ focusedLaunchpadDismissed, setFocusedLaunchpadDismissed ] = useState( false );
 
 	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
 	const customDomains = siteDomains?.filter( ( domain ) => ! domain.isWPCOMDomain );
@@ -113,12 +107,6 @@ const HomeContent = ( {
 	const [ dismissedEmailDnsDiagnostics, setDismissedEmailDnsDiagnostics ] = useState( false );
 
 	usePurchasePlanNotification( siteId, site?.plan?.product_slug );
-
-	useEffect( () => {
-		if ( getQueryArgs().celebrateLaunch === 'true' && isSuccess && isFetchedAfterMount ) {
-			setCelebrateLaunchModalIsOpen( true );
-		}
-	}, [ isSuccess, isFetchedAfterMount ] );
 
 	useEffect( () => {
 		if ( ! isSiteLaunching && launchedSiteId === siteId ) {
@@ -147,7 +135,11 @@ const HomeContent = ( {
 		if ( ! studioSiteId ) {
 			return;
 		}
-		trackStudioSyncConnectSite( false );
+		trackStudioSyncConnectSite( {
+			click: false,
+			blogId: siteId,
+			studioSiteId,
+		} );
 		openSyncUrlInStudio( studioSiteId, siteId, autoOpenPush );
 	}, [ siteId, trackStudioSyncConnectSite ] );
 
@@ -157,25 +149,28 @@ const HomeContent = ( {
 		Array.isArray( layout?.secondary ) &&
 		layout.secondary.length > 0;
 
+	const getHeaderSubtitle = () => {
+		if ( isLoading ) {
+			return undefined;
+		}
+		const defaultSubtitle = translate(
+			'Your hub for next steps, support center, and quick links.'
+		);
+		const hasSupportCard =
+			layout?.secondary?.includes( FEATURE_SUPPORT ) ||
+			layout?.[ 'tertiary.manage-site' ]?.includes( FEATURE_SUPPORT );
+		if ( hasSupportCard ) {
+			return defaultSubtitle;
+		}
+		if ( hasEnTranslation( 'Your hub for next steps and quick links to manage your site.' ) ) {
+			return translate( 'Your hub for next steps and quick links to manage your site.' );
+		}
+		return defaultSubtitle;
+	};
+
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
 		return <EmptyContent title={ preventWidows( title ) } />;
-	}
-
-	if ( layout?.view_name === 'VIEW_FOCUSED_LAUNCHPAD' && ! focusedLaunchpadDismissed ) {
-		return (
-			<FullScreenLaunchpad
-				onClose={ async () => {
-					setFocusedLaunchpadDismissed( true );
-					await updateLaunchpadSettings( siteId, { launchpad_screen: 'skipped' } );
-					skipCurrentView( null, true );
-				} }
-				onSiteLaunch={ () => {
-					setCelebrateLaunchModalIsOpen( true );
-					setFocusedLaunchpadDismissed( true );
-				} }
-			/>
-		);
 	}
 
 	// Ecommerce Plan's Home redirects to WooCommerce Home, so we show a placeholder
@@ -212,7 +207,7 @@ const HomeContent = ( {
 				navigationItems={ [] }
 				mobileItem={ null }
 				title={ translate( 'My Home' ) }
-				subtitle={ translate( 'Your hub for next steps, support center, and quick links.' ) }
+				subtitle={ getHeaderSubtitle() }
 			>
 				{ headerActions }
 			</NavigationHeader>
@@ -313,7 +308,11 @@ const HomeContent = ( {
 			>
 				<NoticeAction
 					onClick={ () => {
-						trackStudioSyncConnectSite( true );
+						trackStudioSyncConnectSite( {
+							click: true,
+							blogId: siteId,
+							studioSiteId,
+						} );
 						openSyncUrlInStudio( studioSiteId, siteId, autoOpenPush );
 					} }
 					external
@@ -362,15 +361,8 @@ const HomeContent = ( {
 					</div>
 				</>
 			) : null }
-			{ celebrateLaunchModalIsOpen && (
-				<CelebrateLaunchModal
-					setModalIsOpen={ setCelebrateLaunchModalIsOpen }
-					site={ site }
-					allDomains={ allDomains }
-				/>
-			) }
 			<ResurrectedWelcomeModalGate isSuppressed={ celebrateLaunchModalIsOpen } />
-			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
+			<AsyncLoad require={ loadTrackResurrections } placeholder={ null } />
 		</div>
 	);
 };
@@ -406,9 +398,11 @@ const trackViewSiteAction = ( isStaticHomePage ) =>
 		bumpStat( 'calypso_customer_home', 'my_site_view_site' )
 	);
 
-const trackStudioSyncConnectSite = ( click = false ) =>
+const trackStudioSyncConnectSite = ( { click = false, blogId, studioSiteId } ) =>
 	recordTracksEvent( 'calypso_studio_sync_connect_site', {
 		click,
+		blog_id: blogId,
+		studio_site_id: studioSiteId,
 	} );
 
 const mapDispatchToProps = {

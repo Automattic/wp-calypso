@@ -6,7 +6,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { fixMe, translate } from 'i18n-calypso';
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
-import pauseSubstackBillingImg from 'calypso/assets/images/importer/pause-substack-billing.png';
+import pauseSubstackBillingImg from 'calypso/assets/images/importer/pause-substack-billing.webp';
 import { Steps, StepStatus } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import { useSelector } from 'calypso/state';
 import { isJetpackSite, getSiteAdminUrl } from 'calypso/state/sites/selectors';
@@ -58,7 +58,7 @@ export default function Summary( {
 	const { __ } = useI18n();
 	const prefersReducedMotion = useReducedMotion();
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite.ID ) );
-	const siteAdmminUrl = useSelector( ( state ) => getSiteAdminUrl( state, selectedSite.ID ) );
+	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, selectedSite.ID ) );
 	const [ isImportCompleted, setIsImportCompleted ] = useState( false );
 	const [ importStepsResults, setImportStepsResults ] = useState< Steps | null >();
 	const importerStatus = getImporterStatus( steps );
@@ -161,7 +161,7 @@ export default function Summary( {
 					{ sprintf(
 						// translators: %s the site name
 						__( 'Here’s a summary of the imported data to %s:' ),
-						selectedSite.name
+						selectedSite.name ?? ''
 					) }
 				</p>
 				<div className="summary__content">
@@ -224,11 +224,7 @@ export default function Summary( {
 				<p>{ __( 'What would you like to do next?' ) }</p>
 				<ImporterActionButtonContainer noSpacing>
 					<ImporterActionButton
-						href={
-							isJetpack
-								? `${ siteAdmminUrl }admin.php?page=jetpack#/newsletter`
-								: `/settings/newsletter/${ selectedSite.slug }`
-						}
+						href={ `${ siteAdminUrl }admin.php?page=jetpack-newsletter` }
 						primary
 					>
 						{ __( 'Customize your newsletter' ) }

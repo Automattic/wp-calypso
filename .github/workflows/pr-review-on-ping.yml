@@ -1,0 +1,65 @@
+name: PR Review (on @claude /review)
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  pull_request_review:
+    types: [submitted]
+
+concurrency:
+  # Bot senders get a unique bucket per run so their inline-comment posts
+  # don't cancel an in-progress review. Human pings on the same PR share
+  # a bucket so a newer ping cancels an older one.
+  group: ${{ github.event.sender.type == 'Bot' && format('pr-review-on-ping-bot-{0}-{1}', github.event.sender.login, github.run_id) || format('pr-review-on-ping-{0}', github.event.issue.number || github.event.pull_request.number) }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+
+jobs:
+  detect:
+    if: |
+      (
+        github.event.comment.author_association == 'MEMBER' ||
+        github.event.comment.author_association == 'OWNER' ||
+        github.event.review.author_association == 'MEMBER' ||
+        github.event.review.author_association == 'OWNER'
+      ) && github.event.sender.login != 'matticbot' && (
+        (github.event_name == 'issue_comment' && github.event.issue.pull_request != null && contains(github.event.comment.body, '@claude /review')) ||
+        (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude /review')) ||
+        (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude /review'))
+      )
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      area: ${{ steps.area.outputs.area }}
+    steps:
+      - name: Detect review area
+        id: area
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.issue.number || github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          FILES=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json files --jq '.files[].path')
+          if echo "$FILES" | grep -q '^client/dashboard/'; then
+            echo "area=dashboard" >> "$GITHUB_OUTPUT"
+          elif echo "$FILES" | grep -q '^client/a8c-for-agencies/'; then
+            echo "area=a4a" >> "$GITHUB_OUTPUT"
+          else
+            echo "area=general" >> "$GITHUB_OUTPUT"
+          fi
+
+  review:
+    needs: detect
+    uses: Automattic/wp-calypso/.github/workflows/pr-review.yml@trunk
+    with:
+      area: ${{ needs.detect.outputs.area }}
+    secrets:
+      anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+      ai_review_telemetry_token: ${{ secrets.AI_REVIEW_TELEMETRY_TOKEN }}

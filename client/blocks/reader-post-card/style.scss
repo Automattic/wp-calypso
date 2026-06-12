@@ -1,9 +1,23 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 .reader-post-options-menu__ellipsis-menu {
 	margin-left: 16px;
 
 	.ellipsis-menu__toggle {
 		padding: 0;
 		height: 24px;
+	}
+
+	@include ui-mixins.when-dark-theme {
+		.ellipsis-menu__toggle {
+			color: var( --color-text-subtle );
+
+			&:hover,
+			&:focus,
+			&:active {
+				color: var( --color-link );
+			}
+		}
 	}
 }
 
@@ -409,6 +423,14 @@
 	}
 }
 
+.reader__content .reader-post-card__byline-secondary-item {
+	@include ui-mixins.when-dark-theme {
+		&:hover {
+			color: var( --color-link );
+		}
+	}
+}
+
 .reader-post-card__tag-link {
 	text-decoration: none;
 }
@@ -440,8 +462,6 @@
 .reader-post-card__byline-details {
 	color: var(--color-primary);
 	width: 100%;
-	position: relative;
-	top: 3px;
 }
 
 // Fix for IE11 unable to handle nested flexbox min-height.
@@ -494,36 +514,9 @@
 	align-self: center;
 }
 
-.reader-post-card__byline .reader-avatar {
+.reader-post-card__byline .site-icon {
 	flex-shrink: 0;
-
-	.gravatar,
-	.gridicon {
-		float: left;
-		height: 40px;
-		margin: 4px 12px 0 0;
-		vertical-align: text-top;
-		width: 40px;
-	}
-
-	&.has-site-icon {
-		margin: 0 12px 0 0;
-	}
-
-	.site-icon {
-		width: 40px !important;
-		height: 40px !important;
-		font-size: 40px !important;
-		line-height: 40px !important;
-	}
-
-	img {
-		border-radius: 100%;
-	}
-}
-
-.reader-post-card .has-site-and-author-icon .gravatar {
-	display: none;
+	margin: 0 12px 0 0;
 }
 
 .reader-post-card__link {
@@ -668,6 +661,35 @@
 		color: var(--color-primary);
 	}
 
+	@include ui-mixins.when-dark-theme {
+		color: var( --color-link );
+
+		.gridicon {
+			fill: var( --color-link );
+		}
+
+		svg,
+		svg path {
+			fill: currentColor;
+		}
+
+		.follow-button__label {
+			color: var( --color-link );
+		}
+
+		&:hover {
+			color: var( --color-link-dark );
+
+			.gridicon {
+				fill: var( --color-link-dark );
+			}
+
+			.follow-button__label {
+				color: var( --color-link-dark );
+			}
+		}
+	}
+
 	&:hover {
 		.follow-button__label {
 			color: var(--color-success);
@@ -723,11 +745,6 @@
 	&:hover {
 		color: var(--color-link-dark);
 	}
-}
-
-// For these borderless cards to look more presentable on Devdocs
-.is-section-devdocs .reader-post-card.card {
-	padding: 16px;
 }
 
 .reader-post-card__featured-images {

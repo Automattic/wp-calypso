@@ -72,6 +72,7 @@ export default function useCheckpointAction(
 								console.error( '[useCheckpointAction] Failed to restore checkpoint:', error );
 							}
 						},
+						order: 1,
 					},
 				];
 			},

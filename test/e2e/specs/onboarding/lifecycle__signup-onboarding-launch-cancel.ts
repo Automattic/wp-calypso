@@ -22,6 +22,7 @@ import {
 	NoticeComponent,
 	PurchasesPage,
 	DomainSearchComponent,
+	PostCheckoutSetupSitePage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
@@ -137,8 +138,11 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 			startSiteFlow = new StartSiteFlow( page );
 		} );
 
-		it( 'Land on goal selection step', async function () {
-			await page.waitForURL( /home\/.*ref=onboarding/, { timeout: 60 * 1000 } );
+		it( 'Land on the post-checkout "Set up your site" screen', async function () {
+			// Eligible paid plans now land on the post-checkout choice screen
+			// instead of the goal-selection step.
+			const postCheckoutSetupSitePage = new PostCheckoutSetupSitePage( page );
+			await postCheckoutSetupSitePage.waitUntilLoaded();
 		} );
 
 		it( 'Select "Sell services or digital goods" goal', async function () {
@@ -175,7 +179,7 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 			await startSiteFlow.clickButton( 'Continue' );
 		} );
 
-		it( 'Focused Launchpad is shown', async function () {
+		it( 'Launchpad is shown', async function () {
 			const title = await page.getByText( "Let's get started!" );
 			if ( ! ( await title.isVisible() ) ) {
 				return;
@@ -202,7 +206,7 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 		} );
 	} );
 
-	describe( 'Launch site without Focused Launchpad', function () {
+	describe( 'Launch site from settings', function () {
 		it( 'Start site launch', async function () {
 			const siteSettingsPage = new SiteSettingsPage( page );
 			await siteSettingsPage.visit( newSiteDetails.blog_details.site_slug, 'site-visibility' );
@@ -215,8 +219,8 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 			await domainSearchComponent.skipPurchase();
 		} );
 
-		it( 'Navigated to Home dashboard', async function () {
-			await page.waitForURL( /home/ );
+		it( 'Navigated back to site overview', async function () {
+			await page.waitForURL( /sites/ );
 			const myHomePage = new MyHomePage( page );
 			await new Promise( ( r ) => setTimeout( r, 2000 ) );
 			await page.reload();

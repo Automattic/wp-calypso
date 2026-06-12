@@ -4,16 +4,17 @@ import { WordPressLogo } from '@automattic/components';
 import { isLocaleRtl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
+import defaultCalypsoI18n, { I18NContext } from 'i18n-calypso';
 import { useMemo, Component } from 'react';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import EnvironmentBadge, {
 	Branch,
 	AccountSettingsHelper,
 	AuthHelper,
-	DevDocsLink,
 	PreferencesHelper,
 	FeaturesHelper,
 	ReactQueryDevtoolsHelper,
+	RtlCssDisabledHelper,
 	StoreSandboxHelper,
 } from 'calypso/components/environment-badge';
 import Head from 'calypso/components/head';
@@ -21,7 +22,11 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import Loading from 'calypso/components/loading';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import { InterimOmnibar } from 'calypso/dashboard/app/interim-omnibar/interim-omnibar';
+import { InitialOmnibar } from 'calypso/dashboard/app/omnibar/omnibar';
 import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
+import { CIAB_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-ciab/section';
+import { DOTCOM_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-dotcom/section';
+import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { isGravPoweredOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
@@ -42,8 +47,6 @@ class Document extends Component {
 			clientData,
 			commitChecksum,
 			commitSha,
-			devDocs,
-			devDocsURL,
 			entrypoint,
 			env,
 			featuresHelper,
@@ -60,6 +63,7 @@ class Document extends Component {
 			manifests,
 			params,
 			preferencesHelper,
+			path,
 			query,
 			reactQueryDevtoolsHelper,
 			renderedLayout,
@@ -72,6 +76,13 @@ class Document extends Component {
 			useTranslationChunks,
 			showStepContainerV2Loader,
 		} = this.props;
+
+		const theme = config( 'theme' );
+		const isRTL = isLocaleRtl( lang );
+		const isDevelopmentEnv = app?.isDevelopmentEnv || env === 'development';
+		const shouldBuildRtlCss = ! isDevelopmentEnv || process.env.BUILD_RTL_CSS === 'true';
+		const isRtlCssDisabled = isDevelopmentEnv && ! shouldBuildRtlCss;
+		const shouldUseRtlCss = isRTL && shouldBuildRtlCss;
 
 		const installedChunks = entrypoint.js
 			.concat( chunkFiles.js )
@@ -95,15 +106,17 @@ class Document extends Component {
 			( languageRevisions
 				? `var languageRevisions = ${ jsonStringifyForHtml( languageRevisions ) };\n`
 				: '' ) +
+			`var RTL_CSS_ENABLED = ${ jsonStringifyForHtml( shouldBuildRtlCss ) };\n` +
 			`var installedChunks = ${ jsonStringifyForHtml( installedChunks ) };\n` +
 			// Inject the locale if we can get it from the route via `getLanguageRouteParam`
 			( params && params.hasOwnProperty( 'lang' )
 				? `var localeFromRoute = ${ jsonStringifyForHtml( params.lang ?? '' ) };\n`
 				: '' );
 
-		const theme = config( 'theme' );
-
-		const isRTL = isLocaleRtl( lang );
+		const isDashboardOmnibarPage =
+			( isDashboardEnv() || env === 'development' ) &&
+			( sectionName === DOTCOM_DASHBOARD_SECTION_DEFINITION.name ||
+				sectionName === CIAB_DASHBOARD_SECTION_DEFINITION.name );
 
 		let headTitle = head.title;
 		let headFaviconUrl;
@@ -147,8 +160,8 @@ class Document extends Component {
 					{ head.links.map( ( props, index ) => (
 						<link { ...props } key={ index } />
 					) ) }
-					{ chunkCssLinks( entrypoint, isRTL ) }
-					{ chunkCssLinks( chunkFiles, isRTL ) }
+					{ chunkCssLinks( entrypoint, shouldUseRtlCss ) }
+					{ chunkCssLinks( chunkFiles, shouldUseRtlCss ) }
 					{ chunkFiles.js.map( ( chunk ) => (
 						<link key={ chunk } rel="preload" as="script" href={ chunk } />
 					) ) }
@@ -164,11 +177,24 @@ class Document extends Component {
 					} ) }
 				>
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
-					{ dashboard && config.isEnabled( 'dashboard/omnibar' ) && (
+					{ isDashboardOmnibarPage && config.isEnabled( 'dashboard/omnibar-radical' ) && (
 						<div id="wpcom-omnibar">
-							<InterimOmnibar user={ null } site={ null } currentRoute={ this.props.path ?? '/' } />
+							<InitialOmnibar user={ user } />
 						</div>
 					) }
+					{ isDashboardOmnibarPage &&
+						config.isEnabled( 'dashboard/omnibar' ) &&
+						! config.isEnabled( 'dashboard/omnibar-radical' ) && (
+							<div id="wpcom-omnibar">
+								<I18NContext.Provider value={ this.props.i18nCalypso || defaultCalypsoI18n }>
+									<InterimOmnibar
+										user={ user || null }
+										site={ null }
+										currentRoute={ this.props.path ?? '/' }
+									/>
+								</I18NContext.Provider>
+							</div>
+						) }
 					{ renderedLayout ? (
 						<div
 							id="wpcom"
@@ -193,6 +219,9 @@ class Document extends Component {
 										sectionName={ sectionName }
 										isWCCOM={ isWCCOM }
 										isOneTapAuth={ !! query?.oneTapAuth }
+										isWooCommerceQrLoginAuthCheck={
+											path === '/me/security/qr-login' && query?.origin === 'woocommerce'
+										}
 										showStepContainerV2Loader={ showStepContainerV2Loader }
 									/>
 								</div>
@@ -207,10 +236,10 @@ class Document extends Component {
 							{ featuresHelper && <FeaturesHelper /> }
 							{ authHelper && <AuthHelper /> }
 							{ storeSandboxHelper && <StoreSandboxHelper /> }
+							{ isRtlCssDisabled && <RtlCssDisabledHelper /> }
 							{ branchName && (
 								<Branch branchName={ branchName } commitChecksum={ commitChecksum } />
 							) }
-							{ devDocs && <DevDocsLink url={ devDocsURL } /> }
 						</EnvironmentBadge>
 					) }
 
@@ -233,8 +262,9 @@ class Document extends Component {
 						<script nonce={ inlineScriptNonce } src={ `/calypso/${ target }/runtime.js` } />
 					) }
 					{ env !== 'development' &&
-						manifests.map( ( manifest ) => (
+						manifests.map( ( manifest, index ) => (
 							<script
+								key={ `manifest-${ index }` }
 								nonce={ inlineScriptNonce }
 								dangerouslySetInnerHTML={ {
 									__html: manifest,
@@ -254,17 +284,6 @@ class Document extends Component {
 							data-site-tz="Etc/UTC"
 						/>
 					) }
-
-					{ sectionName === 'login' &&
-						config.isEnabled( 'blackbox-login' ) &&
-						config( 'blackbox_api_key' ) && (
-							<script
-								nonce={ inlineScriptNonce }
-								defer
-								src={ config( 'blackbox_url' ) }
-								data-apikey={ config( 'blackbox_api_key' ) }
-							/>
-						) }
 
 					{ entrypoint?.language?.manifest && (
 						<script nonce={ inlineScriptNonce } src={ entrypoint.language.manifest } />
@@ -327,13 +346,15 @@ function LoadingPlaceholder( {
 	sectionName,
 	isWCCOM,
 	isOneTapAuth,
+	isWooCommerceQrLoginAuthCheck,
 	showStepContainerV2Loader,
 } ) {
 	const shouldNotShowLoadingLogo =
 		sectionName === 'checkout' ||
 		sectionName === 'stepper' ||
 		sectionName === 'signup' ||
-		isOneTapAuth;
+		isOneTapAuth ||
+		isWooCommerceQrLoginAuthCheck;
 
 	const stepContainerV2Context = useMemo(
 		() => ( {
@@ -353,6 +374,13 @@ function LoadingPlaceholder( {
 		) : (
 			<Loading className="wpcom-loading__boot" />
 		);
+	}
+
+	// Dashboard apps render their own loading logo in the dashboard Root after
+	// hydration. Skipping the SSR logo avoids a double-render with positional
+	// jitter between the SSR and Root containers.
+	if ( dashboard ) {
+		return null;
 	}
 
 	const LoadingLogo = chooseLoadingLogo( {

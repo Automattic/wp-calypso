@@ -14,6 +14,7 @@ import type {
 	AllowedSocialService,
 	SignupAllowedService,
 } from 'calypso/components/social-buttons/utils';
+import type React from 'react';
 
 /**
  * Logo configuration
@@ -97,6 +98,35 @@ export function getPartnerFormattedWindowTitle(
 	const titlePrefix = title ? `${ title } — ` : '';
 
 	return titlePrefix + getPartnerWindowTitleSuffix( partnerConfig );
+}
+
+export interface PartnerSsoCopy {
+	title: React.ReactNode;
+	subtitle: React.ReactNode;
+	primaryLabel: React.ReactNode;
+	secondaryLabel: React.ReactNode;
+}
+
+export function getPartnerSsoCopy(
+	partnerConfig: PartnerConfig | null,
+	translate: ReturnType< typeof useTranslate >,
+	options: { defaultSubtitle: React.ReactNode }
+): PartnerSsoCopy {
+	if ( partnerConfig?.id === 'woo' ) {
+		return {
+			title: translate( 'Connect to Woo Shop' ),
+			subtitle: translate( 'Give Woo Shop access to your WordPress.com account.' ),
+			primaryLabel: translate( 'Connect' ),
+			secondaryLabel: translate( 'Cancel' ),
+		};
+	}
+
+	return {
+		title: translate( 'Connect with WordPress.com' ),
+		subtitle: options.defaultSubtitle,
+		primaryLabel: translate( 'Log in' ),
+		secondaryLabel: translate( 'Cancel' ),
+	};
 }
 
 function isPartnerEnabled( partnerConfig: PartnerConfig ): boolean {
@@ -204,6 +234,29 @@ export function getPartnerConfigFromGarden(
 
 	// Future: add mappings for other partners like "paypal"
 	return partnerConfig;
+}
+
+export function getPartnerConfigFromSiteDetails(
+	siteDetails?: {
+		isCommerceGarden?: boolean | null;
+		garden_name?: string | null;
+		garden_partner?: string | null;
+		garden?: { name?: string | null; partner?: string | null } | null;
+	} | null,
+	options: { persistToSession?: boolean } = {}
+): PartnerConfig | null {
+	if ( siteDetails?.isCommerceGarden ) {
+		return getPartnerConfigFromGarden( 'woo', 'commerce', options );
+	}
+
+	const gardenName = siteDetails?.garden_name ?? siteDetails?.garden?.name;
+	const gardenPartner = siteDetails?.garden_partner ?? siteDetails?.garden?.partner;
+
+	if ( ! gardenName || ! gardenPartner ) {
+		return null;
+	}
+
+	return getPartnerConfigFromGarden( gardenPartner, gardenName, options );
 }
 
 /**
@@ -379,7 +432,6 @@ export interface UsePartnerBrandingResult {
 /**
  * Hook to get current partner branding based on URL params and feature flags.
  * Internally calls detectPartnerConfig() — callers do not need to pass any values.
- *
  * @example
  * const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
  *

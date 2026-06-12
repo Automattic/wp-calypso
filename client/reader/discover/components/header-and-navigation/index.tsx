@@ -2,11 +2,11 @@ import page from '@automattic/calypso-router';
 import { addLocaleToPathLocaleInFront, useLocale } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate, fixMe } from 'i18n-calypso';
-import AsyncLoad from 'calypso/components/async-load';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { addQueryArgs } from 'calypso/lib/url';
 import DiscoverNavigation from 'calypso/reader/discover/components/navigation';
 import DiscoverTagsNavigation from 'calypso/reader/discover/components/tags-navigation';
+import ReaderOnboardingGate from 'calypso/reader/onboarding/gate';
 import { RECOMMENDED_TAB, FRESHLY_PRESSED_TAB, TAGS_TAB, LATEST_TAB } from '../../helper';
 
 export interface DiscoverHeaderAndNavigationProps {
@@ -59,7 +59,7 @@ export default function DiscoverHeaderAndNavigation(
 				subtitle={ subHeaderText }
 				className={ clsx( 'discover-stream-header' ) }
 			/>
-			<AsyncLoad require="calypso/reader/onboarding" />
+			<ReaderOnboardingGate />
 			<DiscoverNavigation selectedTab={ selectedTab } />
 
 			{ selectedTab === 'tags' && (

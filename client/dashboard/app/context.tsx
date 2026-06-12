@@ -12,6 +12,15 @@ import type {
 	FetchPaginatedSitesOptions,
 	FetchDashboardSiteFiltersParams,
 } from '@automattic/api-core';
+import type { PostHogOverrides } from '@automattic/posthog';
+
+export type AgencySupports = {
+	overview: boolean;
+};
+
+export type AgencyClientSupports = {
+	subscriptions: boolean;
+};
 
 export type MeBillingSupports = {
 	monetizeSubscriptions: boolean;
@@ -23,7 +32,6 @@ export type MeSecuritySupports = {
 
 export type MeSupports = {
 	billing: MeBillingSupports | false;
-	privacy: boolean;
 	security: MeSecuritySupports | false;
 	apps: boolean;
 };
@@ -39,6 +47,8 @@ export type AppConfig = {
 	Logo: React.FC | null;
 	LoadingLogo?: React.FC;
 	supports: {
+		agency: AgencySupports | false;
+		agencyClient: AgencyClientSupports | false;
 		sites: boolean;
 		plugins: boolean;
 		domains: boolean;
@@ -52,8 +62,13 @@ export type AppConfig = {
 		domainOnlySites: boolean;
 		startStoreRoute?: boolean;
 		siteOverview: SiteOverviewSupports;
+		colorScheme: boolean;
+		darkMode: boolean;
 	};
-	posthog?: string;
+	posthog?: {
+		apiKey: string;
+		overrides?: PostHogOverrides;
+	};
 	optIn: boolean;
 	components: {
 		sites: () => Promise< { default: React.FC } >;
@@ -79,6 +94,8 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 	Logo: null,
 	LoadingLogo: undefined,
 	supports: {
+		agency: false,
+		agencyClient: false,
 		sites: false,
 		plugins: false,
 		domains: false,
@@ -94,6 +111,8 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 		siteOverview: {
 			preview: false,
 		},
+		colorScheme: false,
+		darkMode: false,
 	},
 	optIn: false,
 	components: {

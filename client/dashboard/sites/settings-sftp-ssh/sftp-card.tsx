@@ -60,7 +60,7 @@ export default function SftpCard( {
 			sprintf(
 				/* translators: %s is the copied field */
 				__( 'Copied %s to clipboard.' ),
-				label
+				String( label )
 			),
 			{
 				type: 'snackbar',

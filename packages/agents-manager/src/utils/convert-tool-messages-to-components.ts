@@ -1,54 +1,23 @@
 import { EscalationButton } from '../components/escalation-button';
-import SourcesDisplay from '../components/sources-display';
+import NextStepButton from '../components/next-step-button';
 import UnavailableToolMessage from '../components/unavailable-tool-message';
 import { isEditorPage } from './is-editor-page';
+import { isShowComponentTool } from './show-component-tools';
+import { getDisplayMessageFromToolData, isDisplayableToolMessageTool } from './tool-message-utils';
 import type { GetChatComponent } from './load-external-providers';
-import type { UIMessage } from '@automattic/agenttic-client';
+import type { UIMessage, UseAgentChatReturn } from '@automattic/agenttic-client';
 
-// Tool IDs that are silently dropped without a console warning.
-const SILENT_TOOL_IDS = [ 'big_sky__set_processing_state' ];
-
-/**
- * Scans message content blocks for JSON-encoded sources data and replaces
- * those blocks with a SourcesDisplay component. Text blocks that don't parse
- * as JSON (i.e. the actual answer text) are left untouched.
- */
-function extractSourcesFromContent( messages: UIMessage[] ): UIMessage[] {
-	return messages.map( ( message ) => {
-		if ( message.role !== 'agent' ) {
-			return message;
-		}
-
-		let hasSourcesBlock = false;
-		const updatedContent = message.content.map( ( block ) => {
-			if (
-				block.type !== 'data' ||
-				! Array.isArray( block.data?.sources ) ||
-				block.data.sources.length === 0
-			) {
-				return block;
-			}
-
-			hasSourcesBlock = true;
-			return {
-				type: 'component' as const,
-				component: SourcesDisplay as React.ComponentType,
-				componentProps: { sources: block.data.sources },
-			};
-		} );
-
-		if ( ! hasSourcesBlock ) {
-			return message;
-		}
-
-		return { ...message, content: updatedContent };
-	} );
-}
+export type AgentsManagerUIMessage = UIMessage & {
+	disabled?: boolean;
+	/** Suppress Agenttic's transient thinking indicator while this message is the latest one. */
+	suppressThinking?: boolean;
+};
 
 interface Options {
 	messages: UIMessage[];
 	getChatComponent?: GetChatComponent;
 	currentPostId?: number;
+	onSubmit: UseAgentChatReturn[ 'onSubmit' ];
 }
 
 /**
@@ -58,11 +27,9 @@ export default function convertToolMessagesToComponents( {
 	messages,
 	getChatComponent,
 	currentPostId,
-}: Options ): UIMessage[] {
-	// First pass: extract sources data blocks into SourcesDisplay components.
-	const messagesWithSources = extractSourcesFromContent( messages );
-
-	return messagesWithSources.flatMap( ( message, index, array ) => {
+	onSubmit,
+}: Options ): AgentsManagerUIMessage[] {
+	return messages.flatMap( ( message, index, array ) => {
 		const firstContentText = message.content?.[ 0 ]?.text;
 
 		// @ts-expect-error -- `assistant` comes from Big Sky messages
@@ -100,7 +67,7 @@ export default function convertToolMessagesToComponents( {
 		}
 
 		// Handle `show-component` tool message
-		if ( textData.tool_id === 'big_sky__show_component' ) {
+		if ( isShowComponentTool( textData.tool_id ) ) {
 			// If not on an editor page, show an unavailable tool message instead of the component
 			if ( ! isEditorPage() ) {
 				return [
@@ -117,13 +84,17 @@ export default function convertToolMessagesToComponents( {
 				];
 			}
 
-			const { type: contentType, props, followUpTasks, isCurrent, postId } = textData.data ?? {};
+			const toolData = textData.data ?? {};
+			const { type: contentType, props, followUpTasks, isCurrent, postId, summary } = toolData;
 			const Component = getChatComponent?.( contentType );
 
 			// No matching component found for this content type — drop the message to avoid showing raw JSON.
 			if ( ! Component ) {
 				return [];
 			}
+
+			const summaryText =
+				typeof summary === 'string' && summary.trim() ? summary.trim() : undefined;
 
 			// Whether this is the last message in the array.
 			const isLastMessage = index === array.length - 1;
@@ -134,51 +105,70 @@ export default function convertToolMessagesToComponents( {
 			const isPageChanged = !! postId && !! currentPostId && postId !== currentPostId;
 			const isStale = ! isLastMessage || ! isCurrent || isPageChanged;
 
-			const componentMessage = {
+			const componentMessage: AgentsManagerUIMessage = {
 				...message,
 				content: [
+					...( summaryText
+						? [
+								{
+									type: 'text' as const,
+									text: summaryText,
+								},
+						  ]
+						: [] ),
 					{
 						type: 'component' as const,
 						component: Component,
-						componentProps: { ...props, contentType },
+						componentProps: {
+							...props,
+							...( summaryText && { summary: summaryText } ),
+							contentType,
+						},
 					},
 				],
 				disabled: isStale,
+				suppressThinking: true,
 			};
 
 			// Only show `next-step-button` when the component is active and has follow-up tasks.
-			const NextStepButton = getChatComponent?.( 'next-step-button' );
-			if ( isStale || ! followUpTasks || ! NextStepButton ) {
+			if ( isStale || ! followUpTasks ) {
 				return [ componentMessage ];
 			}
+
+			// Omit `actions` so the parent message's actions don't leak into the next-step message.
+			const { actions, content, ...baseMessage } = message;
 
 			return [
 				componentMessage,
 				{
-					...message,
+					...baseMessage,
 					id: `${ message.id }-next-step`,
 					content: [
 						{
 							type: 'component' as const,
-							component: NextStepButton,
+							component: NextStepButton as React.ComponentType,
+							componentProps: { onMoveToNextStep: onSubmit },
 						},
 					],
 				},
 			];
 		}
 
-		// Handle `apply-block-edits` tool message
-		if (
-			textData.tool_id === 'big_sky__apply_block_edits' &&
-			typeof textData.data?.summary === 'string'
-		) {
+		// Handle agent-facing Big Sky tool result summaries.
+		if ( isDisplayableToolMessageTool( textData.tool_id ) ) {
+			const summary = getDisplayMessageFromToolData( textData.data );
+			if ( ! summary ) {
+				return [];
+			}
+
 			return [
 				{
 					...message,
+					suppressThinking: true,
 					content: [
 						{
 							type: 'text' as const,
-							text: textData.data.summary.trim(),
+							text: summary,
 						},
 					],
 				},
@@ -223,10 +213,8 @@ export default function convertToolMessagesToComponents( {
 		}
 
 		// Remove unhandled tool messages to avoid displaying raw JSON to the user.
-		if ( ! SILENT_TOOL_IDS.includes( textData.tool_id ) ) {
-			// eslint-disable-next-line no-console
-			console.warn( `[AgentsManager] Unhandled tool message with tool_id: ${ textData.tool_id }` );
-		}
+		// eslint-disable-next-line no-console
+		console.warn( `[AgentsManager] Unhandled tool message with tool_id: ${ textData.tool_id }` );
 		return [];
 	} );
 }

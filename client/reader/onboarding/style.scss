@@ -23,7 +23,7 @@ $actions-height: 64px;
 	position: absolute;
 	bottom: 0;
 	width: 100%;
-	background-color: #fff;
+	background-color: var( --color-surface );
 	margin-left: -32px; // $grid-unit-40
 	margin-right: -32px;
 	padding-left: 32px;

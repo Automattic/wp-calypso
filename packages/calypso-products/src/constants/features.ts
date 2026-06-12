@@ -520,14 +520,20 @@ export const FEATURE_WOO_HOSTED_ANALYTICS_REPORTS = 'woo-hosted-analytics-report
 export const FEATURE_WOO_HOSTED_BASIC_STORAGE = 'woo-hosted-basic-storage';
 export const FEATURE_WOO_HOSTED_PRO_STORAGE = 'woo-hosted-pro-storage';
 export const FEATURE_WOO_HOSTED_SECURITY = 'woo-hosted-security';
-export const FEATURE_WOO_HOSTED_BASIC_EMAIL_SUBSCRIBERS = 'woo-hosted-basic-email-subscribers';
-export const FEATURE_WOO_HOSTED_PRO_EMAIL_SUBSCRIBERS = 'woo-hosted-pro-email-subscribers';
 export const FEATURE_WOO_HOSTED_AUTOMATED_EMAIL_FLOWS = 'woo-hosted-automated-email-flows';
 export const FEATURE_WOO_HOSTED_ABANDONED_CART_EMAILS = 'woo-hosted-abandoned-cart-emails';
 export const FEATURE_WOO_HOSTED_POST_PURCHASE_EMAILS = 'woo-hosted-post-purchase-emails';
 export const FEATURE_WOO_HOSTED_EMAIL_TEMPLATES = 'woo-hosted-email-templates';
 export const FEATURE_WOO_HOSTED_SEO_TOOLS = 'woo-hosted-seo-tools';
 export const FEATURE_WOO_HOSTED_COUPONS = 'woo-hosted-coupons';
+export const FEATURE_WOO_HOSTED_POS_SYSTEM = 'woo-hosted-pos-system';
+export const FEATURE_WOO_HOSTED_STAFF_ACCOUNTS = 'woo-hosted-staff-accounts';
+export const FEATURE_WOO_HOSTED_STORAGE_SPACE = 'woo-hosted-storage-space';
+export const FEATURE_WOO_HOSTED_EMAIL_CAMPAIGNS = 'woo-hosted-email-campaigns';
+export const FEATURE_WOO_HOSTED_EMAIL_SUBSCRIBER_MGMT = 'woo-hosted-email-subscriber-mgmt';
+export const FEATURE_WOO_HOSTED_SALES_TAX = 'woo-hosted-sales-tax';
+export const FEATURE_WOO_HOSTED_SHIPPING_LABELS = 'woo-hosted-shipping-labels';
+export const FEATURE_WOO_HOSTED_PRIORITY_SUPPORT = 'woo-hosted-priority-support';
 
 // Sensei Features
 export const FEATURE_SENSEI_SUPPORT = 'sensei-support';
@@ -568,17 +574,12 @@ export const FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT = 'feature-big-sky-website
 // AI features for plan differentiators experiment
 export const FEATURE_AI_WEBSITE_BUILDER = 'feature-ai-website-builder';
 export const FEATURE_AI_WEBSITE_BUILDER_LIMITED = 'feature-ai-website-builder-limited';
+export const FEATURE_GUIDED_WEBSITE_BUILDER = 'feature-guided-website-builder';
+export const FEATURE_GUIDED_WEBSITE_BUILDER_LIMITED = 'feature-guided-website-builder-limited';
 export const FEATURE_AI_WRITER_DESIGNER = 'feature-ai-writer-designer';
 export const FEATURE_AI_WRITER_DESIGNER_LIMITED = 'feature-ai-writer-designer-limited';
-
-// "Everything in X, plus:" features for stacked variants
-export const FEATURE_EVERYTHING_IN_FREE_PLUS = 'feature-everything-in-free-plus';
-export const FEATURE_EVERYTHING_IN_PERSONAL_PLUS = 'feature-everything-in-personal-plus';
-export const FEATURE_EVERYTHING_IN_PREMIUM_PLUS = 'feature-everything-in-premium-plus';
-export const FEATURE_EVERYTHING_IN_BUSINESS_PLUS = 'feature-everything-in-business-plus';
-
-// "Included in plan:" header for Free plan in stacked variants
-export const FEATURE_INCLUDED_IN_PLAN = 'feature-included-in-plan';
+export const FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS = 'feature-enhanced-ai-assistant-and-tools';
+export const FEATURE_BUILT_IN_SITE_ASSISTANT = 'feature-built-in-site-assistant';
 
 // Additional features for plan differentiators experiment
 export const FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR = 'feature-professional-email-free-year';

@@ -1,4 +1,5 @@
 import { LineChart } from '@automattic/charts';
+import '@automattic/charts/style.css';
 import { GlyphCircle, GlyphSquare, GlyphTriangle } from '@visx/glyph';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -16,7 +17,6 @@ import {
 } from '../../utils/site-performance';
 import { VIEWPORT_BREAKPOINTS } from './constants';
 import type { SitePerformanceReport, SitePerformanceHistory, Metrics } from '@automattic/api-core';
-import '@automattic/charts/line-chart/style.css';
 
 const WEEK_TO_SHOW = 8;
 
@@ -160,22 +160,22 @@ export default function CoreMetricsChart( {
 		const unit = getDisplayUnit( metric );
 		if ( valuation === 'good' ) {
 			return sprintf( '(0–%(to)s%(unit)s)', {
-				to: getFormattedValue( metric, good ),
+				to: String( getFormattedValue( metric, good ) ),
 				unit,
 			} );
 		}
 
 		if ( valuation === 'needsImprovement' ) {
 			return sprintf( '(%(from)s–%(to)s%(unit)s)', {
-				from: getFormattedValue( metric, good ),
-				to: getFormattedValue( metric, needsImprovement ),
+				from: String( getFormattedValue( metric, good ) ),
+				to: String( getFormattedValue( metric, needsImprovement ) ),
 				unit,
 			} );
 		}
 
 		if ( valuation === 'bad' ) {
 			return sprintf( '(Over %(from)s%(unit)s)', {
-				from: getFormattedValue( metric, needsImprovement ),
+				from: String( getFormattedValue( metric, needsImprovement ) ),
 				unit,
 			} );
 		}

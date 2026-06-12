@@ -1,9 +1,9 @@
+import config from '@automattic/calypso-config';
 import {
 	isBiennially,
 	isDIFMProduct,
 	isMonthlyProduct,
 	isTriennially,
-	isWpComPlan,
 	isYearly,
 } from '@automattic/calypso-products';
 import colorStudio from '@automattic/color-studio';
@@ -20,14 +20,14 @@ import {
 	doesIntroductoryOfferHavePriceIncrease,
 	filterCostOverridesForLineItem,
 	getLabel,
-	getSubtotalWithoutDiscountsForProduct,
+	groupBundleLineItems,
 	isOverrideCodeIntroductoryOffer,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import useEquivalentMonthlyTotals, {
-	getOriginalAmountIntegerForDisplay,
+	getSimulatedCostBeforeDiscounts,
 } from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
 import { useSelector } from 'calypso/state';
 import {
@@ -38,7 +38,10 @@ import useCartKey from '../../use-cart-key';
 import { getAffiliateCouponLabel } from '../../utils';
 import { CheckIcon } from './check-icon';
 import type { Theme } from '@automattic/composite-checkout';
-import type { LineItemCostOverrideForDisplay } from '@automattic/wpcom-checkout';
+import type {
+	CartBundleLineItem,
+	LineItemCostOverrideForDisplay,
+} from '@automattic/wpcom-checkout';
 
 const PALETTE = colorStudio.colors;
 const COLOR_GRAY_40 = PALETTE[ 'Gray 40' ];
@@ -99,6 +102,28 @@ const DeleteButton = styled( Button )< { theme?: Theme } >`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 `;
 
+function doesIntroOfferUseDetailDisplay( product: ResponseCartProduct ): boolean {
+	return (
+		doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
+			product.cost_overrides,
+			product.introductory_offer_terms,
+			product.months_per_bill_period
+		) || doesIntroductoryOfferHavePriceIncrease( product )
+	);
+}
+
+function getTosDataForProduct( product: ResponseCartProduct, responseCart: ResponseCart ) {
+	return responseCart.terms_of_service?.find( ( tos ) => {
+		if ( ! new RegExp( `product_id:${ product.product_id }` ).test( tos.key ) ) {
+			return false;
+		}
+		if ( product.meta && ! new RegExp( `meta:${ product.meta }` ).test( tos.key ) ) {
+			return false;
+		}
+		return true;
+	} )?.args;
+}
+
 /**
  * Introductory offers sometimes have complex pricing plans that are not easy
  * to display as a simple discount. This component displays more details about
@@ -119,20 +144,13 @@ function LineItemIntroOfferCostOverrideDetail( {
 	}
 
 	if ( ! isOverrideCodeIntroductoryOffer( costOverride.overrideCode ) ) {
-		return false;
+		return null;
 	}
 
 	// We only want to display this info for introductory offers which have
 	// pricing that is difficult to display as a simple discount. Currently
 	// that is offers with different term lengths or price increases.
-	if (
-		! doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
-			product.cost_overrides,
-			product.introductory_offer_terms,
-			product.months_per_bill_period
-		) &&
-		! doesIntroductoryOfferHavePriceIncrease( product )
-	) {
+	if ( ! doesIntroOfferUseDetailDisplay( product ) ) {
 		return null;
 	}
 
@@ -143,15 +161,7 @@ function LineItemIntroOfferCostOverrideDetail( {
 		return null;
 	}
 
-	const tosData = responseCart.terms_of_service?.find( ( tos ) => {
-		if ( ! new RegExp( `product_id:${ product.product_id }` ).test( tos.key ) ) {
-			return false;
-		}
-		if ( product.meta && ! new RegExp( `meta:${ product.meta }` ).test( tos.key ) ) {
-			return false;
-		}
-		return true;
-	} )?.args;
+	const tosData = getTosDataForProduct( product, responseCart );
 	const dueDate =
 		tosData && 'subscription_auto_renew_date' in tosData
 			? tosData.subscription_auto_renew_date
@@ -239,9 +249,11 @@ export function IntroOfferBillingInterval( { product }: { product: ResponseCartP
 function LineItemCostOverride( {
 	costOverride,
 	product,
+	shouldShowDiscount,
 }: {
 	costOverride: LineItemCostOverrideForDisplay;
 	product: ResponseCartProduct;
+	shouldShowDiscount: boolean;
 } ) {
 	const isPriceIncrease = doesIntroductoryOfferHavePriceIncrease( product );
 	if ( isPriceIncrease ) {
@@ -251,8 +263,6 @@ function LineItemCostOverride( {
 			</div>
 		);
 	}
-
-	const shouldShowDiscount = isWpComPlan( product.product_slug );
 
 	return (
 		<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
@@ -275,9 +285,11 @@ function LineItemCostOverride( {
 export function LineItemCostOverrides( {
 	costOverridesList,
 	product,
+	shouldShowDiscount,
 }: {
 	costOverridesList: LineItemCostOverrideForDisplay[];
 	product: ResponseCartProduct;
+	shouldShowDiscount: boolean;
 } ) {
 	return (
 		<CostOverridesListStyle>
@@ -285,6 +297,7 @@ export function LineItemCostOverrides( {
 				<LineItemCostOverride
 					product={ product }
 					costOverride={ costOverride }
+					shouldShowDiscount={ shouldShowDiscount }
 					key={ costOverride.humanReadableReason }
 				/>
 			) ) }
@@ -382,40 +395,117 @@ const WPCheckoutCheckIcon = styled( CheckIcon )`
 	}
 `;
 
+/**
+ * For intro offers whose pricing is simple enough not to need a detail
+ * breakdown, determine the crossed-out price to display. Returns the simulated
+ * pre-discount price if it's higher than the renewal price, otherwise
+ * undefined.
+ */
+function getIntroOfferCrossedOutPrice(
+	renewalPrice: number,
+	simulatedPriceBeforeDiscounts: number
+): number | undefined {
+	return renewalPrice < simulatedPriceBeforeDiscounts ? simulatedPriceBeforeDiscounts : undefined;
+}
+
+/**
+ * Return the item subtotal with the coupon discount added back. Since coupon
+ * discounts are displayed as a dedicated line item (via CouponCostOverride),
+ * we strip them from the per-product price to avoid showing the discount twice.
+ */
+function getItemSubtotalExcludingCoupon( product: ResponseCartProduct ): number {
+	const couponOverride = product.cost_overrides.find(
+		( override ) => override.override_code === 'coupon-discount'
+	);
+	const couponDiscountAmount = couponOverride
+		? couponOverride.old_subtotal_integer - couponOverride.new_subtotal_integer
+		: 0;
+	return product.item_subtotal_integer + couponDiscountAmount;
+}
+
+/**
+ * Return two formatted prices. `actualAmountDisplay` should be the final
+ * subtotal after all cost overrides are applied. `crossedOutAmountDisplay`
+ * should be the price before cost overrides, but only if it's higher (some
+ * cost overrides can _increase_ the price).
+ *
+ * There are also several cases where actualAmountDisplay will be the renewal
+ * price instead (see inline comments).
+ *
+ * `crossedOutAmountDisplay` (the amount before discounts) may also be
+ * _increased_ by an amount as if the original cost of the product was 12 times
+ * the product's monthly cost. This simulates a discount granted by purchasing
+ * an annual version of the product, but it's not a "real" discount in the
+ * sense that no price changes were applied to the annual product in that case;
+ * it's just the result of comparing the prices of the annual to the monthly
+ * product.
+ */
 function getLineItemPriceDisplay(
 	product: ResponseCartProduct,
+	responseCart: ResponseCart,
 	monthlyPrices: Record< string, number >
 ): { actualAmountDisplay: string; crossedOutAmountDisplay: string | undefined } {
 	const fmt = ( amount: number ) =>
 		formatCurrency( amount, product.currency, { isSmallestUnit: true, stripZeros: true } );
-	const originalAmountInteger = getOriginalAmountIntegerForDisplay( product, monthlyPrices );
-	const itemSubtotalInteger =
-		product.item_subtotal_integer + ( product.coupon_savings_integer ?? 0 );
-	const isDiscounted = itemSubtotalInteger < originalAmountInteger;
 
-	// For products with a price-increasing intro offer followed by a sale
-	// coupon (e.g. premium domains: $80 → $1,100 → $275), show the peak
-	// price crossed out with the final price.
-	const priceBeforeDiscountsInteger = getSubtotalWithoutDiscountsForProduct( product );
-	if (
-		priceBeforeDiscountsInteger > originalAmountInteger &&
-		product.item_subtotal_integer < priceBeforeDiscountsInteger
-	) {
+	// This is the simulated cost before cost overrides. It's similar to
+	// cost before cost overrides but it may include an increase based on the
+	// monthly cost of a related product in the same tier (eg: it will be 12
+	// times the cost of the monthly version of the same plan, if one exists).
+	const simulatedPriceBeforeDiscounts = getSimulatedCostBeforeDiscounts( product, monthlyPrices );
+
+	const isIntroOffer = product.cost_overrides.some( ( override ) =>
+		isOverrideCodeIntroductoryOffer( override.override_code )
+	);
+	// When LineItemIntroOfferCostOverrideDetail renders (different term length or
+	// price increase), it already displays the full pricing breakdown, so we fall
+	// through to the regular logic below.
+	if ( isIntroOffer && ! doesIntroOfferUseDetailDisplay( product ) ) {
+		// For an introductory offer, show the recurring amount as the amount the user will pay and include the
+		// simulated amount as the crossed-out number if it is greater.
+		const tosData = getTosDataForProduct( product, responseCart );
+		if ( tosData ) {
+			const renewalPrice = tosData.regular_renewal_price_integer;
+			const crossedOutPrice = getIntroOfferCrossedOutPrice(
+				renewalPrice,
+				simulatedPriceBeforeDiscounts
+			);
+			return {
+				actualAmountDisplay: fmt( renewalPrice ),
+				crossedOutAmountDisplay: crossedOutPrice ? fmt( crossedOutPrice ) : undefined,
+			};
+		}
+	}
+
+	// When the simulated price comes from the monthly equivalent, show the
+	// product's own original cost as the actual amount and the monthly-based
+	// simulated price as the crossed-out number (if greater).
+	if ( simulatedPriceBeforeDiscounts !== product.item_original_subtotal_integer ) {
+		const isDiscounted = product.item_original_subtotal_integer < simulatedPriceBeforeDiscounts;
 		return {
-			actualAmountDisplay: fmt( product.item_subtotal_integer ),
-			crossedOutAmountDisplay: fmt( priceBeforeDiscountsInteger ),
+			actualAmountDisplay: fmt( product.item_original_subtotal_integer ),
+			crossedOutAmountDisplay: isDiscounted ? fmt( simulatedPriceBeforeDiscounts ) : undefined,
 		};
 	}
 
-	// Default: show the pre-coupon subtotal, with the original crossed out
-	// when the product is discounted.
+	// Show the actual amount as the amount the user will pay (before coupon) and
+	// include the amount before cost overrides as the crossed-out number if it is
+	// greater.
+	const itemSubtotalWithoutCoupon = getItemSubtotalExcludingCoupon( product );
+	const isDiscounted = itemSubtotalWithoutCoupon < simulatedPriceBeforeDiscounts;
 	return {
-		actualAmountDisplay: fmt( itemSubtotalInteger ),
-		crossedOutAmountDisplay: isDiscounted ? fmt( originalAmountInteger ) : undefined,
+		actualAmountDisplay: fmt( itemSubtotalWithoutCoupon ),
+		crossedOutAmountDisplay: isDiscounted ? fmt( simulatedPriceBeforeDiscounts ) : undefined,
 	};
 }
 
-function SingleProductAndCostOverridesList( { product }: { product: ResponseCartProduct } ) {
+function SingleProductAndCostOverridesList( {
+	product,
+	responseCart,
+}: {
+	product: ResponseCartProduct;
+	responseCart: ResponseCart;
+} ) {
 	const translate = useTranslate();
 	const costOverridesList = filterCostOverridesForLineItem( product, translate );
 	const label = getLabel( product );
@@ -424,11 +514,21 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 
 	const { actualAmountDisplay, crossedOutAmountDisplay } = getLineItemPriceDisplay(
 		product,
+		responseCart,
 		monthlyPrices
 	);
 
+	// Show the discount amount when the crossed-out price is simulated from the
+	// monthly equivalent, or when there's an introductory offer.
+	const shouldShowDiscount =
+		getSimulatedCostBeforeDiscounts( product, monthlyPrices ) !==
+			product.item_original_subtotal_integer ||
+		product.cost_overrides.some( ( override ) =>
+			isOverrideCodeIntroductoryOffer( override.override_code )
+		);
+
 	return (
-		<SimplifiedSingleProductAndCostOverridesListWrapper>
+		<SimplifiedSingleProductAndCostOverridesListWrapper className="cost-overrides-list-product-wrapper">
 			<WPCheckoutCheckIcon />
 			<ProductTitleAreaForCostOverridesList>
 				<span className="cost-overrides-list-product__title">{ label }</span>
@@ -437,7 +537,11 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 					crossedOutAmount={ crossedOutAmountDisplay }
 				/>
 			</ProductTitleAreaForCostOverridesList>
-			<LineItemCostOverrides product={ product } costOverridesList={ costOverridesList } />
+			<LineItemCostOverrides
+				product={ product }
+				costOverridesList={ costOverridesList }
+				shouldShowDiscount={ shouldShowDiscount }
+			/>
 		</SimplifiedSingleProductAndCostOverridesListWrapper>
 	);
 }
@@ -501,12 +605,98 @@ export function CouponCostOverride( {
 	);
 }
 
-export function ProductsAndCostOverridesList( { responseCart }: { responseCart: ResponseCart } ) {
+const BundleMemberList = styled.div`
+	display: flex;
+	flex-direction: column;
+	font-size: 12px;
+	font-weight: 400;
+	gap: 2px;
+
+	& .cost-overrides-list-bundle-member {
+		display: flex;
+		justify-content: space-between;
+		gap: 0 16px;
+	}
+`;
+
+/**
+ * Render a domain bundle as a single compact row in the order summary, mirroring
+ * the order-review surface's `BundleLineItem`: a "Domain bundle" title with the
+ * summed bundle total, and each member domain listed beneath with its own price.
+ * The presentation matches the summary's other product rows (green check icon,
+ * label-and-price header) rather than reusing the heavier review component.
+ */
+export function BundleProductAndCostOverridesList( { bundle }: { bundle: CartBundleLineItem } ) {
+	const translate = useTranslate();
+	const { products } = bundle;
+	// All members of a bundle share a currency, so the total can safely be summed
+	// in the smallest unit and rendered under the first member's currency.
+	const currency = products[ 0 ]?.currency ?? 'USD';
+	// Strip per-member coupon discounts before summing. The order summary shows
+	// coupon savings on a dedicated CouponCostOverride line, so the per-line prices
+	// here must reflect the pre-coupon subtotal or the discount is counted twice
+	// (this mirrors how getLineItemPriceDisplay renders single products on this
+	// surface).
+	const bundleTotalInteger = products.reduce(
+		( total, product ) => total + getItemSubtotalExcludingCoupon( product ),
+		0
+	);
+	const bundleTotalDisplay = formatCurrency( bundleTotalInteger, currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
+
 	return (
-		<ProductsAndCostOverridesListWrapper>
-			{ responseCart.products.map( ( product ) => (
-				<SingleProductAndCostOverridesList product={ product } key={ product.uuid } />
-			) ) }
+		<SimplifiedSingleProductAndCostOverridesListWrapper className="cost-overrides-list-product-wrapper">
+			<WPCheckoutCheckIcon />
+			<ProductTitleAreaForCostOverridesList>
+				<span className="cost-overrides-list-product__title">{ translate( 'Domain bundle' ) }</span>
+				<SimplifiedLineItemPrice actualAmount={ bundleTotalDisplay } />
+			</ProductTitleAreaForCostOverridesList>
+			<BundleMemberList>
+				{ products.map( ( product ) => (
+					<div className="cost-overrides-list-bundle-member" key={ product.uuid }>
+						<span>{ product.meta }</span>
+						<span>
+							{ formatCurrency( getItemSubtotalExcludingCoupon( product ), product.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ) }
+						</span>
+					</div>
+				) ) }
+			</BundleMemberList>
+		</SimplifiedSingleProductAndCostOverridesListWrapper>
+	);
+}
+
+export function ProductsAndCostOverridesList( { responseCart }: { responseCart: ResponseCart } ) {
+	// Bundle grouping is gated behind the `domain-bundling` feature flag. When off,
+	// every product renders on its own line exactly as before.
+	const groupedLineItems = config.isEnabled( 'domain-bundling' )
+		? groupBundleLineItems( responseCart.products )
+		: responseCart.products.map( ( product ) => ( { type: 'product' as const, product } ) );
+
+	return (
+		<ProductsAndCostOverridesListWrapper className="wp-checkout-order-summary__products-list">
+			{ groupedLineItems.map( ( entry ) => {
+				if ( entry.type === 'bundle' ) {
+					return (
+						<BundleProductAndCostOverridesList
+							bundle={ entry }
+							key={ `bundle-${ entry.groupId }` }
+						/>
+					);
+				}
+
+				return (
+					<SingleProductAndCostOverridesList
+						product={ entry.product }
+						responseCart={ responseCart }
+						key={ entry.product.uuid }
+					/>
+				);
+			} ) }
 			<CouponCostOverride responseCart={ responseCart } />
 		</ProductsAndCostOverridesListWrapper>
 	);

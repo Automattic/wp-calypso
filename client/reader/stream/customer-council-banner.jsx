@@ -1,8 +1,9 @@
-import { Reader, SubscriptionManager } from '@automattic/data-stores';
+import { readSiteQuery, readTeamsQuery } from '@automattic/api-queries';
+import { SubscriptionManager } from '@automattic/data-stores';
+import { useQuery } from '@tanstack/react-query';
 import Banner from 'calypso/components/banner';
 import { navigate } from 'calypso/lib/navigate';
-import { useSelector } from 'calypso/state';
-import { isA8cTeamMember } from 'calypso/state/teams/selectors';
+import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 
 const CUSTOMER_COUNCIL_P2_URL = 'https://readercouncilgeneral.wordpress.com/';
 const CUSTOMER_COUNCIL_P2_ID = '237686330';
@@ -15,10 +16,11 @@ export const CustomerCouncilBanner = ( { translate } ) => {
 		data: p2,
 		isFetched: checkedAlreadySubscribed,
 		isFetching: checkingAlreadySubscribed,
-	} = Reader.useReadFeedSiteQuery( Number( CUSTOMER_COUNCIL_P2_ID ) );
+	} = useQuery( readSiteQuery( Number( CUSTOMER_COUNCIL_P2_ID ) ) );
 	const alreadySubscribed = p2?.is_following;
 
-	const isAutomattician = useSelector( isA8cTeamMember );
+	const { data: teamsData } = useQuery( readTeamsQuery() );
+	const isAutomattician = isAutomatticTeamMember( teamsData?.teams ?? [] );
 
 	const hideBanner =
 		isAutomattician ||

@@ -104,6 +104,23 @@ const Routes: RoutesMapping[] = [
 	{ route: exactMatch( '/reader/conversations' ), tracking: 'conversations' },
 	{ route: exactMatch( '/reader/conversations/a8c' ), tracking: 'conversations_a8c' },
 
+	// ATmosphere (Bluesky / ATProto)
+	{ route: exactMatch( '/reader/atmosphere/connect' ), tracking: 'atmosphere_connect' },
+	{ route: matches( /^\/reader\/atmosphere\/\d+\/timeline$/ ), tracking: 'atmosphere_timeline' },
+	{ route: matches( /^\/reader\/atmosphere\/\d+\/profile$/ ), tracking: 'atmosphere_profile' },
+	{ route: exactMatch( '/reader/atmosphere' ), tracking: 'atmosphere_landing' },
+
+	// Mastodon (ActivityPub)
+	{ route: exactMatch( '/reader/mastodon/connect' ), tracking: 'mastodon_connect' },
+	{
+		route: exactMatch( '/reader/mastodon/oauth-callback' ),
+		tracking: 'mastodon_oauth_callback',
+	},
+	{ route: matches( /^\/reader\/mastodon\/\d+\/timeline$/ ), tracking: 'mastodon_timeline' },
+	{ route: matches( /^\/reader\/mastodon\/\d+\/profile$/ ), tracking: 'mastodon_profile' },
+	{ route: matches( /^\/reader\/mastodon\/\d+\/tag\/[^/]+$/ ), tracking: 'mastodon_tag_feed' },
+	{ route: exactMatch( '/reader/mastodon' ), tracking: 'mastodon_landing' },
+
 	{ route: SinglePostRoute, tracking: 'single_post' },
 	{ route: BlogPageRoute, tracking: 'blog_page' },
 	{ route: SearchRoute, tracking: 'search' },
@@ -123,6 +140,10 @@ const Routes: RoutesMapping[] = [
 	{
 		route: matches( /^\/reader\/users\/[^/]+$/ ),
 		tracking: 'user_profile_posts',
+	},
+	{
+		route: matches( /^\/reader\/users\/[^/]+\/sites\/?$/ ),
+		tracking: 'user_profile_sites',
 	},
 ] as const;
 

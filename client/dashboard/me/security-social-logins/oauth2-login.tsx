@@ -37,6 +37,7 @@ export default function OAuth2Login( {
 	const { mutate: postLoginRequest } = useMutation( postLoginRequestMutation() );
 
 	const code = ( getQueryArg( window.location.search, 'code' ) || '' ) as string;
+	const state = ( getQueryArg( window.location.search, 'state' ) || '' ) as string;
 	const requestService = ( getQueryArg( window.location.search, 'service' ) || '' ) as string;
 	const error = ( getQueryArg( window.location.search, 'error' ) || '' ) as string;
 
@@ -58,13 +59,14 @@ export default function OAuth2Login( {
 	}, [ createErrorNotice, label ] );
 
 	const exchangeCodeForToken = useCallback(
-		async ( auth_code: string ) => {
+		async ( auth_code: string, auth_state: string ) => {
 			postLoginRequest(
 				{
 					action: 'exchange-social-auth-code',
 					bodyObj: {
 						service,
 						auth_code,
+						state: auth_state,
 						client_id: config( 'wpcom_signup_id' ),
 						client_secret: config( 'wpcom_signup_key' ),
 					},
@@ -89,9 +91,9 @@ export default function OAuth2Login( {
 	useEffect( () => {
 		if ( code && requestService === service && ! isConnected ) {
 			setShowLoading( true );
-			exchangeCodeForToken( code );
+			exchangeCodeForToken( code, state );
 		}
-	}, [ code, requestService, service, isConnected, exchangeCodeForToken ] );
+	}, [ code, state, requestService, service, isConnected, exchangeCodeForToken ] );
 
 	useEffect( () => {
 		if ( requestService === service && error ) {

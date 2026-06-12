@@ -187,6 +187,13 @@ textarea.billing-history__billing-details-editable {
 			}
 		}
 
+		.billing-history__transaction-tax-amount {
+			display: flex;
+			font-size: $font-body-small;
+			font-style: normal;
+			justify-content: space-between;
+		}
+
 		tbody tr {
 			td {
 				color: var(--color-neutral);

@@ -40,8 +40,8 @@ import { MarketPlaceSubscriptionsDialog } from '../marketplace-subscriptions-dia
 import { purchasesRoot } from '../paths';
 import {
 	isDataLoading,
-	isAkismetTemporarySitePurchase,
-	isJetpackTemporarySitePurchase,
+	isAkismetHoldingSitePurchase,
+	isJetpackHoldingSitePurchase,
 } from '../utils';
 import RemoveDomainDialog from './remove-domain-dialog';
 import './style.scss';
@@ -189,10 +189,7 @@ class RemovePurchase extends Component {
 				components: { siteName: <em>{ purchase.domain }</em> },
 			} );
 
-			if (
-				isAkismetTemporarySitePurchase( purchase ) ||
-				isJetpackTemporarySitePurchase( purchase )
-			) {
+			if ( isAkismetHoldingSitePurchase( purchase ) || isJetpackHoldingSitePurchase( purchase ) ) {
 				successMessage = translate( '%(productName)s was removed from your account.', {
 					args: { productName },
 				} );

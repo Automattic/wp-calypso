@@ -1,4 +1,4 @@
-import { DotcomPlans, JetpackPlans } from '@automattic/api-core';
+import { DotcomPlans, JetpackPlans, WooHostedPlans } from '@automattic/api-core';
 import { siteCurrentPlanQuery, siteByIdQuery, purchaseQuery } from '@automattic/api-queries';
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { useQuery } from '@tanstack/react-query';
@@ -17,10 +17,10 @@ import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
 import {
 	getJetpackProductsForSite,
 	getSitePlanDisplayName,
-	useSitePlanManageURL,
 	JETPACK_PRODUCTS,
 } from '../../utils/site-plan';
 import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site-types';
+import { getSitePlanUrl } from '../../utils/site-url';
 import SiteBandwidthStat from './site-bandwidth-stat';
 import SiteStorageStat from './site-storage-stat';
 import type { Purchase, Site } from '@automattic/api-core';
@@ -60,7 +60,6 @@ function JetpackPlanCard( {
 	purchase?: Purchase;
 	isLoading: boolean;
 } ) {
-	const url = useSitePlanManageURL( site );
 	const products = getJetpackProductsForSite( site );
 	const productsToDisplay = products.length > 0 ? products : JETPACK_PRODUCTS;
 
@@ -70,7 +69,7 @@ function JetpackPlanCard( {
 			icon={ <JetpackLogo /> }
 			heading={ getSitePlanDisplayName( site ) }
 			description={ getCardDescription( site, purchase ) }
-			link={ url }
+			link={ getSitePlanUrl( site ) }
 			tracksId="site-overview-plan"
 			isLoading={ isLoading }
 			bottom={
@@ -107,14 +106,13 @@ function WpcomPlanCard( {
 	purchase?: Purchase;
 	isLoading: boolean;
 } ) {
-	const url = useSitePlanManageURL( site, purchase );
 	return (
 		<OverviewCard
 			title={ __( 'Plan' ) }
 			icon={ wordpress }
 			heading={ getSitePlanDisplayName( site ) }
 			description={ getCardDescription( site, purchase ) }
-			link={ url }
+			link={ getSitePlanUrl( site, purchase ) }
 			tracksId="site-overview-plan"
 			isLoading={ isLoading }
 			bottom={ <SitePlanStats site={ site } /> }
@@ -130,7 +128,7 @@ function WpcomStagingSitePlanCard( { site }: { site: Site } ) {
 	const description = sprintf(
 		/* translators: %s: the site plan name */
 		__( 'Included with your %s plan.' ),
-		productionSite?.plan?.product_name_short
+		productionSite?.plan?.product_name_short ?? ''
 	);
 
 	return (
@@ -147,14 +145,13 @@ function WpcomStagingSitePlanCard( { site }: { site: Site } ) {
 }
 
 function AgencyPlanCard( { site, isLoading }: { site: Site; isLoading: boolean } ) {
-	const url = useSitePlanManageURL( site );
 	return (
 		<OverviewCard
 			title={ __( 'Development license' ) }
 			icon={ wordpress }
 			heading={ getSitePlanDisplayName( site ) }
 			description={ __( 'Managed by Automattic for Agencies.' ) }
-			link={ url }
+			link={ getSitePlanUrl( site ) }
 			tracksId="site-overview-plan"
 			isLoading={ isLoading }
 			bottom={ <SitePlanStats site={ site } /> }
@@ -171,14 +168,13 @@ function CommerceGardenPlanCard( {
 	purchase?: Purchase;
 	isLoading: boolean;
 } ) {
-	const url = useSitePlanManageURL( site, purchase );
 	return (
 		<OverviewCard
 			title={ __( 'Plan' ) }
 			icon={ commerceGardenPlan }
 			heading={ getSitePlanDisplayName( site ) }
 			description={ getCardDescription( site, purchase ) }
-			link={ url }
+			link={ getSitePlanUrl( site, purchase ) }
 			tracksId="plan"
 			isLoading={ isLoading }
 		/>
@@ -214,14 +210,15 @@ export default function PlanCard( { site }: { site: Site } ) {
 }
 
 function getCardDescription( site: Site, purchase?: Purchase ) {
-	if ( site.plan?.product_slug === DotcomPlans.FREE_PLAN ) {
-		return __( 'Upgrade to access all hosting features.' );
-	}
-
-	if ( site.plan?.product_slug === JetpackPlans.PLAN_JETPACK_FREE ) {
-		return getJetpackProductsForSite( site ).length > 0
-			? __( 'Manage subscriptions.' )
-			: __( 'Upgrade to access more Jetpack tools.' );
+	switch ( site.plan?.product_slug ) {
+		case DotcomPlans.FREE_PLAN:
+			return __( 'Upgrade to access all hosting features.' );
+		case JetpackPlans.PLAN_JETPACK_FREE:
+			return getJetpackProductsForSite( site ).length > 0
+				? __( 'Manage subscriptions.' )
+				: __( 'Upgrade to access more Jetpack tools.' );
+		case WooHostedPlans.WOO_HOSTED_FREE_PLAN:
+			return __( 'Upgrade to keep your online store.' );
 	}
 
 	if ( purchase ) {

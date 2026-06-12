@@ -43,21 +43,33 @@
 
 .wp-login__one-login-layout-heading-subtext {
 	text-wrap: balance;
-	color: var( --studio-gray-50, #646970 );
+	color: var( --color-text-subtle, var( --studio-gray-50 ) );
 	margin-block: 0.5rem 0;
 	font-size: $font-body;
 
 	a {
-		color: var( --studio-gray-50, #646970 );
+		color: var( --color-text-subtle, var( --studio-gray-50 ) );
 		text-decoration: underline;
+	}
+
+	// Dotcom-prominent variant for real subtitles (vs. the default ToS-style
+	// quiet treatment). Slightly darker (`--color-text` resolves to
+	// studio-gray-80) and a step up on the typography scale.
+	&.is-prominent {
+		color: var( --color-text, var( --studio-gray-80 ) );
+		font-size: $font-body-large;
+
+		a {
+			color: var( --color-text, var( --studio-gray-80 ) );
+		}
 	}
 
 	&.is-secondary {
 		font-size: $font-body-extra-small;
-		color: var( --studio-gray-30 );
+		color: var( --color-text-subtle, var( --studio-gray-50 ) );
 
 		a {
-			color: var( --studio-gray-30 );
+			color: var( --color-text-subtle, var( --studio-gray-50 ) );
 		}
 	}
 }

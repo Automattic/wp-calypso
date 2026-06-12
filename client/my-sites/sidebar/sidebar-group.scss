@@ -1,0 +1,267 @@
+/*
+ * MySitesSidebarUnifiedSidebarGroup styles.
+ *
+ * Mirrors `WordPress/wp-admin-sidebar` v0.1.4 `src/browse-rail/styles.css`
+ * 1:1 (visible/audible/interactive output) — only the selectors are
+ * Calypso-flavoured (no `body.wp-admin-sidebar-active` prefix is needed
+ * because the redesigned components only render when the schema is
+ * available). The `wp-admin-sidebar-group__*` class names are kept in lock-
+ * step with the public plugin so any visual override sheet shipped from
+ * wpcom-admin-sidebar-integration applies cleanly here too.
+ */
+
+.wp-admin-sidebar-group,
+.sidebar-group {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	margin-top: 16px;
+
+	&__header {
+		position: relative;
+		box-sizing: border-box;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 4px 4px 4px 8px;
+		min-height: 34px;
+	}
+
+	&__toggle {
+		flex: 1 1 auto;
+		min-width: 0;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		background: transparent;
+		border: 0;
+		padding: 0;
+		margin: 0;
+		cursor: pointer;
+		color: var(--wp-admin-sidebar-group-label-fg, #2271b1);
+		font-family: var(
+			--wp-admin-sidebar-font,
+			-apple-system,
+			BlinkMacSystemFont,
+			"Segoe UI",
+			Roboto,
+			Oxygen-Sans,
+			Ubuntu,
+			Cantarell,
+			"Helvetica Neue",
+			sans-serif
+		);
+		font-size: 11px;
+		font-weight: 600;
+		line-height: 20px;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		text-align: left;
+
+		&:focus-visible {
+			outline: 2px solid var(--wp-admin-sidebar-customizer-theme, #2271b1);
+			outline-offset: 2px;
+		}
+	}
+
+	&__label {
+		flex: 0 1 auto;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	/*
+	 * 8x8 attention dot. Visible when the group is collapsed and any child
+	 * has attention; hidden when expanded (children render their own
+	 * signals — see public plugin styles.css group-signal block).
+	 */
+	&__signal {
+		flex: 0 0 auto;
+		width: 8px;
+		height: 8px;
+		padding: 0;
+		margin-left: 0;
+		border-radius: 50%;
+		background: #d63638;
+		font-size: 0;
+		color: transparent;
+		display: none;
+
+		&[data-attention="true"] {
+			display: inline-block;
+		}
+	}
+
+	&[data-expanded="true"] &__signal {
+		display: none;
+	}
+
+	/*
+	 * Chevron — span (not button) with click delegate to the toggle. Sized
+	 * so it matches the customize button's footprint when both are present.
+	 * Uses the public plugin's outline-chevron SVG (icons/chevron-down.svg)
+	 * vendored inline as a data-URI so this file has no asset-pipeline deps.
+	 * `background: currentColor` + CSS mask keeps the icon tinted to the
+	 * label color.
+	 */
+	&__chevron {
+		flex: 0 0 auto;
+		margin-left: 4px;
+		width: 20px;
+			height: 20px;
+			color: var(--wp-admin-sidebar-group-label-fg, #2271b1);
+			background: currentColor;
+			/* stylelint-disable function-url-quotes */
+			mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M17.5 11.6004L12 16.0004L6.5 11.6004L7.4 10.4004L12 14.0004L16.5 10.4004L17.5 11.6004Z'/%3E%3C/svg%3E") no-repeat center / 150%;
+			-webkit-mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M17.5 11.6004L12 16.0004L6.5 11.6004L7.4 10.4004L12 14.0004L16.5 10.4004L17.5 11.6004Z'/%3E%3C/svg%3E") no-repeat center / 150%;
+			/* stylelint-enable function-url-quotes */
+			cursor: pointer;
+		opacity: 0.7;
+		transition: transform 150ms ease, opacity 150ms ease;
+
+		&:hover {
+			opacity: 1;
+		}
+	}
+
+	&[data-expanded="true"] &__chevron {
+		transform: rotate(-180deg);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		&__chevron {
+			transition: none;
+		}
+	}
+
+	/*
+	 * Customize button. Tooltip via ::after pseudo (250ms show-delay,
+	 * 100ms hide), driven by `data-tooltip`.
+	 */
+	&__customize {
+		position: relative;
+		flex: 0 0 auto;
+		width: 20px;
+		height: 20px;
+		margin-left: 4px;
+		background: transparent;
+		border: 0;
+		padding: 0;
+		cursor: pointer;
+		color: var(--wp-admin-sidebar-group-label-fg, #2271b1);
+		opacity: 0.7;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+
+		// Pencil icon from @wordpress/icons, matching public plugin issue #56.
+		// Vendored as an inline data-URI so this file has no asset-pipeline
+		// deps. `background: currentColor` + CSS mask keeps the icon tinted to
+		// the &__customize color above.
+		&::before {
+			content: "";
+			display: block;
+			width: 20px;
+			height: 20px;
+			background: currentColor;
+			/* stylelint-disable function-url-quotes */
+			mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m19 7-3-3-8.5 8.5-1 4 4-1L19 7Zm-7 11.5H5V20h7v-1.5Z'/%3E%3C/svg%3E") no-repeat center / contain;
+			-webkit-mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m19 7-3-3-8.5 8.5-1 4 4-1L19 7Zm-7 11.5H5V20h7v-1.5Z'/%3E%3C/svg%3E") no-repeat center / contain;
+			/* stylelint-enable function-url-quotes */
+		}
+
+		&:hover:not(:disabled) {
+			opacity: 1;
+		}
+
+		&:disabled {
+			cursor: default;
+			opacity: 0.4;
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--wp-admin-sidebar-customizer-theme, #2271b1);
+			outline-offset: 2px;
+		}
+
+		// Tooltip colors hardcoded to match the public plugin's
+		// `--wp-admin-sidebar-bg` / `--wp-admin-sidebar-item-fg` (the dark
+		// wp-admin sidebar scheme). Calypso's `--color-surface-backdrop` and
+		// `--color-text-inverted` resolve to light values in this context,
+		// which would produce an invisible white-text-on-white-bg tooltip.
+		&::after {
+			content: attr(data-tooltip);
+			position: absolute;
+			bottom: calc(100% + 6px);
+			left: 50%;
+			transform: translateX(-50%);
+			padding: 4px 8px;
+			background: #1d2327;
+			color: #f0f0f1;
+			border: 1px solid rgba(240, 240, 241, 0.15);
+			border-radius: 3px;
+			font-size: 12px;
+			font-weight: 400;
+			line-height: 1.4;
+			letter-spacing: normal;
+			text-transform: none;
+			white-space: nowrap;
+			opacity: 0;
+			pointer-events: none;
+			transition: opacity 100ms ease;
+			z-index: 100002;
+		}
+
+		&:hover:not(:disabled)::after,
+		&:focus-visible:not(:disabled)::after {
+			opacity: 1;
+			transition: opacity 150ms ease 250ms;
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			&::after,
+			&:hover:not(:disabled)::after,
+			&:focus-visible:not(:disabled)::after {
+				transition: none;
+			}
+		}
+	}
+
+	/*
+	 * Children list. Collapsed by default — `max-height: 0; overflow: hidden`
+	 * clips the rows; in expanded state we drop overflow back so any
+	 * submenu flyouts (Phase 2) are not clipped.
+	 */
+	&__children {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		overflow: hidden;
+		max-height: 0;
+
+		/*
+		 * Match wp-admin's right-edge breathing room for trailing badges.
+		 * Calypso's legacy `.a8c-count` (red notification bubble) and
+		 * `.sidebar__menu-link-badge` ("PREMIUM" / warning chip) render
+		 * inline at the right of `.sidebar__menu-link-text` (which is
+		 * `flex: auto`); without a trailing margin they sit flush against
+		 * the row's right edge, while wp-admin's equivalent badges have
+		 * ~8-12px of right inset. The new `.wp-admin-sidebar-item__badge`
+		 * (SignalBadge) is given the same treatment so it lines up with
+		 * the legacy badges. Scoped to grouped children so non-grouped
+		 * top-level items are untouched.
+		 */
+		.a8c-count,
+		.sidebar__menu-link-badge,
+		.wp-admin-sidebar-item__badge {
+			margin-right: 12px;
+		}
+	}
+
+	&[data-expanded="true"] &__children {
+		overflow: visible;
+		max-height: none;
+	}
+}

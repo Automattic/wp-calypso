@@ -10,7 +10,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from '@automattic/urls';
 import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type JSX } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -33,7 +33,7 @@ import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getAllDomains } from 'calypso/state/sites/domains/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
-import { isAkismetTemporarySitePurchase, isTemporarySitePurchase } from '../utils';
+import { isAkismetHoldingSitePurchase } from '../utils';
 import PurchaseMetaAutoRenewCouponDetail from './purchase-meta-auto-renew-coupon-detail';
 import PurchaseMetaExpiration from './purchase-meta-expiration';
 import PurchaseMetaIntroductoryOfferDetail from './purchase-meta-introductory-offer-detail';
@@ -84,7 +84,7 @@ export default function PurchaseMeta( {
 	}
 
 	const showJetpackUserLicense = isJetpackProduct( purchase ) || isJetpackPlan( purchase );
-	const isAkismetPurchase = isAkismetTemporarySitePurchase( purchase );
+	const isAkismetPurchase = isAkismetHoldingSitePurchase( purchase );
 
 	const domainDetails = allDomains?.[ purchase.siteId ]?.find(
 		( domain: ResponseDomain ) => domain.domain === purchase.meta
@@ -292,7 +292,7 @@ function RenewErrorMessage( {
 
 	const isJetpack = purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) );
 
-	if ( isTemporarySitePurchase( purchase ) ) {
+	if ( purchase.isAttachedToHoldingSite ) {
 		return null;
 	}
 

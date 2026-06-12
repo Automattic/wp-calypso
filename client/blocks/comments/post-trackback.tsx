@@ -1,6 +1,7 @@
 import { Gridicon, TimeSince } from '@automattic/components';
 import { get } from 'lodash';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
+import type { JSX } from 'react';
 
 import './post-comment.scss'; // yes, this is intentional. they share styles.
 
@@ -33,7 +34,6 @@ export default function PostTrackback( props: PostTrackbackProps ): JSX.Element 
 		return null;
 	}
 	const unescapedAuthorName = unescape( get( comment, 'author.name', '' ) );
-
 	const authorUrlLink = comment.author?.wpcom_login
 		? getUserProfileUrl( comment.author.wpcom_login )
 		: comment.author?.URL;

@@ -129,6 +129,7 @@ export function ReceiptView( { siteSlug, receiptId }: { siteSlug: string; receip
 				path="/purchases/billing-history/:site/:receipt"
 				title="Billing History > Receipt"
 			/>
+			<QueryBillingTransactions transactionType="past" />
 			<QueryBillingTransaction transactionId={ receiptId } />
 			<NavigationHeader title={ titles.sectionTitle } />
 

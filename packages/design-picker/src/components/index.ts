@@ -1,5 +1,5 @@
-export { default as themesIllustrationImage } from './assets/images/themes-illustration.png';
-export { default as hiBigSky } from './assets/images/hi-big-sky.png';
+export { default as themesIllustrationImage } from './assets/images/themes-illustration.webp';
+export { default as hiBigSky } from './assets/images/hi-big-sky.webp';
 export { default as BadgeContainer } from './badge-container';
 export { default as DesignPreviewImage } from './design-preview-image';
 export { default as FeaturedPicksButtons } from './featured-picks-buttons';

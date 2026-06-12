@@ -1,6 +1,8 @@
+@import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
+@import 'calypso/assets/stylesheets/shared/mixins/long-content-fade';
 
 body.is-reader-page,
 .is-reader-page .layout,
@@ -23,6 +25,19 @@ body.is-section-reader {
 			@media (max-width: $break-small ) {
 				padding: 24px 12px;
 			}
+		}
+	}
+
+	.wp-spinner-wrapper {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		margin-top: 70px;
+
+		p {
+			margin-top: 16px;
+			font-size: 0.875rem;
 		}
 	}
 }
@@ -481,7 +496,7 @@ body.is-section-reader {
 	.layout__header-section {
 		color: var( --studio-white );
 		background-color: #021827;
-		background-image: url( calypso/assets/images/reader/tags-bg.png );
+		background-image: url( calypso/assets/images/reader/tags-bg.webp );
 		background-repeat: none;
 		background-size: cover;
 	}

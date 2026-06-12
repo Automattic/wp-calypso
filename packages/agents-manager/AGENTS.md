@@ -13,7 +13,7 @@
 
 ```bash
 # Unit tests (from repo root)
-yarn jest packages/agents-manager
+yarn jest -c test/packages/jest.config.js --testPathPattern=agents-manager
 
 # Sandbox testing (Simple/Atomic/CIAB)
 cd apps/agents-manager && yarn dev --sync

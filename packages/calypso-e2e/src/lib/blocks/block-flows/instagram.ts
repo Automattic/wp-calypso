@@ -5,6 +5,13 @@ interface ConfigurationData {
 	expectedPostText: string;
 }
 
+const selectors = {
+	editorInstagramIframe: 'iframe[title="Embedded content from www.instagram.com"]',
+	publishedInstagramIframe: 'iframe.instagram-media-rendered',
+	publishedInstagramBlockquote:
+		'blockquote.instagram-media:has-text("View this post on Instagram")',
+};
+
 /**
  * Class representing the flow of using an Instagram block in the editor
  */
@@ -45,7 +52,7 @@ export class InstagramBlockFlow implements BlockFlow {
 			} )
 			.click();
 
-		await editorCanvas.getByTitle( 'Embedded content from www.instagram.com' ).waitFor();
+		await editorCanvas.locator( selectors.editorInstagramIframe ).waitFor();
 	}
 
 	/**
@@ -54,6 +61,13 @@ export class InstagramBlockFlow implements BlockFlow {
 	 * @param {PublishedPostContext} context The current context for the published post at the point of test execution
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
-		await context.page.getByRole( 'figure' ).getByText( 'View this post on Instagram' ).waitFor();
+		const renderedIframeLocator = context.page
+			.locator( selectors.publishedInstagramIframe )
+			.first();
+		const bareBlockquoteLocator = context.page
+			.locator( selectors.publishedInstagramBlockquote )
+			.first();
+
+		await Promise.any( [ renderedIframeLocator.waitFor(), bareBlockquoteLocator.waitFor() ] );
 	}
 }

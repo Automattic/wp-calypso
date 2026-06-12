@@ -67,11 +67,11 @@ export default function NoPlans( { cardData, selectedSite, engine, onStartImport
 			<div className="no-plans__info">
 				<p>
 					{ sprintf(
-						// translators: %d is the Stripe account name
+						// translators: %s is the Stripe account name
 						__(
 							'It looks like the Stripe Account (%s) does not have any active plans. Are you sure you connected the same Stripe account that you use on Substack?'
 						),
-						cardData?.account_display
+						cardData?.account_display ?? ''
 					) }
 				</p>
 			</div>

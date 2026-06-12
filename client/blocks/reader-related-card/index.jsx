@@ -1,22 +1,18 @@
+import './style.scss';
 import { CompactCard as Card } from '@automattic/components';
 import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
 import { useState } from 'react';
-import { connect } from 'react-redux';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video';
 import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
-import Gravatar from 'calypso/components/gravatar';
-import GravatarWithHovercards from 'calypso/components/gravatar-with-hovercards';
+import { SiteIcon } from 'calypso/blocks/site-icon';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
+import { useSite } from 'calypso/reader/data/site';
 import { getPostUrl, getStreamUrl } from 'calypso/reader/route';
-import { getPostById } from 'calypso/state/reader/posts/selectors';
-import { getSite } from 'calypso/state/reader/sites/selectors';
-
-import './style.scss';
 
 const noop = () => {};
 
@@ -28,9 +24,12 @@ function AuthorAndSiteFollow( { post, site, onSiteClick, followSource, onFollowT
 
 	return (
 		<div className="reader-related-card__meta">
-			<a href={ siteUrl } onClick={ onSiteClick } aria-hidden="true">
-				<GravatarWithHovercards user={ post.author } />
-			</a>
+			<SiteIcon
+				iconUrl={ post?.site_icon?.img || post?.site_icon?.ico }
+				href={ siteUrl }
+				size={ 40 }
+				onClick={ onSiteClick }
+			/>
 			<div className="reader-related-card__byline">
 				<span className="reader-related-card__byline-site">
 					<a href={ siteUrl } onClick={ onSiteClick } className="reader-related-card__link">
@@ -67,18 +66,20 @@ function AuthorAndSiteFollow( { post, site, onSiteClick, followSource, onFollowT
 }
 
 function AuthorAndSiteFollowPlaceholder() {
+	const translate = useTranslate();
 	return (
 		<div className="reader-related-card__meta is-placeholder">
-			<Gravatar user={ null } />
+			<span className="reader-related-card__site-icon">{ translate( 'Site icon' ) }</span>
 			<div className="reader-related-card__byline">
-				<span className="reader-related-card__byline-author">Author name</span>
-				<span className="reader-related-card__byline-site">Site title</span>
+				<span className="reader-related-card__byline-author">{ translate( 'Author name' ) }</span>
+				<span className="reader-related-card__byline-site">{ translate( 'Site title' ) }</span>
 			</div>
 		</div>
 	);
 }
 
 function RelatedPostCardPlaceholder() {
+	const translate = useTranslate();
 	return (
 		/* eslint-disable */
 		<Card className="reader-related-card is-placeholder">
@@ -86,8 +87,10 @@ function RelatedPostCardPlaceholder() {
 			<a className="reader-related-card__post reader-related-card__link-block">
 				<div className="reader-related-card__featured-image" />
 				<div className="reader-related-card__site-info">
-					<h1 className="reader-related-card__title">Title</h1>
-					<div className="reader-related-card__excerpt post-excerpt">Excerpt</div>
+					<h1 className="reader-related-card__title">{ translate( 'Title' ) }</h1>
+					<div className="reader-related-card__excerpt post-excerpt">
+						{ translate( 'Excerpt' ) }
+					</div>
 				</div>
 			</a>
 		</Card>
@@ -104,6 +107,9 @@ export function RelatedPostCard( {
 	followSource,
 } ) {
 	const [ isSuggestedFollowsModalOpen, setIsSuggestedFollowsModalOpen ] = useState( false );
+	const effectiveSiteId = siteId ?? post?.site_ID;
+	const { site: readerSite } = useSite( effectiveSiteId );
+	const resolvedSite = site ?? readerSite;
 	if ( ! post || post._state === 'minimal' || post._state === 'pending' ) {
 		return <RelatedPostCardPlaceholder />;
 	}
@@ -154,10 +160,9 @@ export function RelatedPostCard( {
 
 	return (
 		<Card className={ classes }>
-			{ siteId && ! site && <QueryReaderSite siteId={ siteId } /> }
 			<AuthorAndSiteFollow
 				post={ post }
-				site={ site }
+				site={ resolvedSite }
 				onSiteClick={ siteClickTracker }
 				followSource={ followSource }
 				onFollowToggle={ openSuggestedFollowsModal }
@@ -186,14 +191,4 @@ export function RelatedPostCard( {
 	);
 }
 
-export default connect( ( state, ownProps ) => {
-	const { post } = ownProps;
-	const actualPost = getPostById( state, post );
-	const siteId = post && post.site_ID;
-	const site = siteId && getSite( state, siteId );
-	return {
-		post: actualPost,
-		site,
-		siteId,
-	};
-} )( RelatedPostCard );
+export default RelatedPostCard;

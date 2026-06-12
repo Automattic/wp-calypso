@@ -19,44 +19,6 @@
 	}
 
 	.promote-post-i2 {
-		.jetpack-header {
-			padding: 0;
-
-			// Align with navigation.
-			@media (max-width: 660px) {
-				padding-left: 16px;
-			}
-		}
-
-		// Header
-		.promote-post-i2__top-bar {
-			height: 40px;
-			display: flex;
-			align-items: center;
-			margin-bottom: 0;
-
-			.promote-post-i2__top-bar-buttons {
-				height: 36px;
-
-				.inline-support-link {
-					padding: 6px 12px;
-					line-height: 22px;
-					color: var(--color-neutral-70);
-				}
-
-				button {
-					line-height: 1;
-
-					&.posts-list-banner__border-button {
-						color: var(--color-neutral-70);
-					}
-				}
-			}
-		}
-		.promote-post-i2__header-subtitle.promote-post-i2__header-subtitle_mobile {
-			display: none !important;
-		}
-
 		// Navigation bar
 		.section-nav {
 			.section-nav-tabs__list {
@@ -69,7 +31,7 @@
 					height: 36px !important;
 				}
 
-				.section-nav-tab__text .count {
+				.section-nav-tab__text .a8c-count {
 					line-height: 1.43;
 				}
 
@@ -138,10 +100,6 @@
 				}
 			}
 
-			.campaign-item-details-header-line {
-				margin: 0 0 48px 0;
-			}
-
 			.campaign-item-details__support-buttons-container {
 				.campaign-item-details__support-buttons a {
 					padding: 10px;
@@ -192,19 +150,6 @@ $break-medium-expanded-menu: $break-medium + 272px;
 
 		a:focus {
 			box-shadow: none;
-		}
-
-		// Header
-		.promote-post-i2__top-bar {
-			height: 40px;
-			display: flex;
-			align-items: center;
-
-			.promote-post-i2__top-bar-buttons {
-				button {
-					line-height: rem(22px);
-				}
-			}
 		}
 
 		.promote-post-i2 .post-item__post-promote-button :hover {

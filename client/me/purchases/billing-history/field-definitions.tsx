@@ -1,6 +1,9 @@
+import { isAkismetPro500, getAkismetPro500ProductDisplayName } from '@automattic/calypso-products';
+import { formatCurrency } from '@automattic/number-formatters';
 import { type Fields, type Operator } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { capitalPDangit } from 'calypso/lib/formatting';
+import { wideFields } from './constants';
 import {
 	getTransactionTermLabel,
 	groupDomainProducts,
@@ -14,12 +17,19 @@ import type {
 	BillingTransaction,
 	BillingTransactionItem,
 } from 'calypso/state/billing-transactions/types';
+import type { JSX } from 'react';
 
 function renderServiceNameDescription(
 	transaction: BillingTransactionItem,
 	translate: ReturnType< typeof useTranslate >
 ) {
-	const plan = capitalPDangit( transaction.variation );
+	const isAkismet = isAkismetPro500( { product_slug: transaction.wpcom_product_slug } );
+	const planName = isAkismet
+		? String(
+				getAkismetPro500ProductDisplayName( transaction.variation, transaction.licensed_quantity )
+		  )
+		: transaction.variation;
+	const plan = capitalPDangit( planName );
 	const termLabel = getTransactionTermLabel( transaction, translate );
 
 	return (
@@ -107,10 +117,61 @@ function getUniqueTransactionTypes(
 		} ) );
 }
 
+function renderInlineHiddenField( key: string, label: string, value: string ) {
+	return (
+		<span key={ key } className="billing-history__item-meta">
+			<span className="billing-history__item-meta-label">{ label }</span>
+			<span className="billing-history__item-meta-value">{ value }</span>
+		</span>
+	);
+}
+
+function renderInlineHiddenFields(
+	transaction: BillingTransaction,
+	translate: ReturnType< typeof useTranslate >,
+	visibleFields: string[]
+) {
+	const [ transactionItem ] = groupDomainProducts( transaction.items, translate );
+	const lines: JSX.Element[] = [];
+
+	if ( ! visibleFields.includes( 'date' ) ) {
+		lines.push(
+			renderInlineHiddenField(
+				'date',
+				translate( 'Date' ),
+				formatDisplayDate( new Date( transaction.date ) )
+			)
+		);
+	}
+	if ( ! visibleFields.includes( 'type' ) ) {
+		lines.push(
+			renderInlineHiddenField(
+				'type',
+				translate( 'Type' ),
+				transactionItem.type_localized || transactionItem.type
+			)
+		);
+	}
+	if ( ! visibleFields.includes( 'amount' ) ) {
+		lines.push(
+			renderInlineHiddenField(
+				'amount',
+				translate( 'Amount' ),
+				formatCurrency( transaction.amount_integer, transaction.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} )
+			)
+		);
+	}
+	return lines;
+}
+
 export function getFieldDefinitions(
 	transactions: BillingTransaction[] | null,
 	translate: ReturnType< typeof useTranslate >,
-	getReceiptUrlFor: ( receiptId: string ) => string
+	getReceiptUrlFor: ( receiptId: string ) => string,
+	visibleFields: string[] = wideFields
 ): Fields< BillingTransaction > {
 	return [
 		{
@@ -151,6 +212,7 @@ export function getFieldDefinitions(
 						>
 							{ renderServiceName( item, translate ) }
 						</a>
+						{ renderInlineHiddenFields( item, translate, visibleFields ) }
 					</div>
 				);
 			},
@@ -159,7 +221,16 @@ export function getFieldDefinitions(
 				if ( transactionItem.product === transactionItem.variation ) {
 					return String( transactionItem.product );
 				}
-				return capitalPDangit( transactionItem.variation );
+				const isAkismet = isAkismetPro500( { product_slug: transactionItem.wpcom_product_slug } );
+				const name = isAkismet
+					? String(
+							getAkismetPro500ProductDisplayName(
+								transactionItem.variation,
+								transactionItem.licensed_quantity
+							)
+					  )
+					: transactionItem.variation;
+				return capitalPDangit( name );
 			},
 		},
 		{

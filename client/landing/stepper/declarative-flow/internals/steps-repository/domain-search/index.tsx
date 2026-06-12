@@ -12,6 +12,8 @@ import {
 	StepContainer,
 } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
+import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
@@ -21,6 +23,8 @@ import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/
 import FormattedHeader from 'calypso/components/formatted-header';
 import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { isRelativeUrl } from 'calypso/dashboard/utils/url';
+import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
@@ -33,16 +37,20 @@ import {
 	domainMapping,
 } from 'calypso/my-sites/domains/paths';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
-import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
+import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboarding-step-counter';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
+import { OnboardingProgress } from '../components/onboarding-progress';
+import { useShowOnboardingProgress } from '../components/onboarding-progress/use-show-onboarding-progress';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import type { Step as StepType } from '../../types';
 import type { FreeDomainSuggestion } from '@automattic/api-core';
+import type { OnboardSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const HUNDRED_YEAR_DOMAIN_TLDS = [ 'com', 'net', 'org', 'blog' ];
@@ -73,7 +81,9 @@ const DomainSearchStep: StepType< {
 	submits: UseMyDomain | StepSubmission;
 } > = function DomainSearchStep( { navigation, flow } ) {
 	const userSiteCount = useSelector( getCurrentUserSiteCount );
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const dashboardOptIn = useSelector( hasDashboardOptIn );
+	const isMobileViewport = useViewportMatch( 'small', '<' );
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();
@@ -87,11 +97,19 @@ const DomainSearchStep: StepType< {
 	const { __ } = useI18n();
 
 	const isCiab = dashboard === 'ciab';
+	const isWooHostingSolutions = queryParams.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
+	const showProgress = useShowOnboardingProgress( isOnboardingFlow( flow ) );
+	const stepCounter = useOnboardingStepCounter( flow, 'domains' );
+
+	const storedSiteTitle = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
+		[]
+	);
 
 	// For CIAB sites, prefer the site title over the slug for domain suggestions
 	// since the slug is often randomly generated.
 	const siteTitle = isCiab && site?.name?.trim() ? site.name.trim() : '';
-	const initialQuery = queryParamNew || siteTitle;
+	const initialQuery = queryParamNew || siteTitle || storedSiteTitle;
 
 	// eslint-disable-next-line no-nested-ternary
 	const currentSiteUrl = site?.URL ? site.URL : siteSlug ? `https://${ siteSlug }` : undefined;
@@ -112,6 +130,7 @@ const DomainSearchStep: StepType< {
 					! isDomainAndPlanFlow( flow ) && ! isCopySiteFlow( flow ) && ! isDomainFlow( flow ),
 				isDomainOnly: isDomainFlow( flow ),
 				isCiab,
+				isWooHostingSolutions,
 				flowName: flow,
 			} ),
 			priceRules: {
@@ -139,7 +158,7 @@ const DomainSearchStep: StepType< {
 				! isHundredYearPlanFlow( flow ) &&
 				( isHundredYearDomainFlow( flow ) ? !! query : true ),
 		};
-	}, [ flow, isCiab, tldQuery, query ] );
+	}, [ flow, isCiab, isWooHostingSolutions, tldQuery, query ] );
 
 	const { submit } = navigation;
 
@@ -283,6 +302,10 @@ const DomainSearchStep: StepType< {
 	}, [ isFirstDomainFreeForFirstYear, isCiab ] );
 
 	const headerText = useMemo( () => {
+		if ( isWooHostingSolutions ) {
+			return __( 'Name your store' );
+		}
+
 		if ( isNewsletterFlow( flow ) ) {
 			return __( 'Your domain. Your identity.' );
 		}
@@ -296,9 +319,13 @@ const DomainSearchStep: StepType< {
 		}
 
 		return __( 'Claim your space on the web' );
-	}, [ flow, isCiab, __ ] );
+	}, [ flow, isCiab, isWooHostingSolutions, __ ] );
 
 	const subHeaderText = useMemo( () => {
+		if ( isWooHostingSolutions ) {
+			return __( 'Find a .com, .shop, or .store that customers will remember.' );
+		}
+
 		if ( isNewsletterFlow( flow ) ) {
 			return __( 'Make your newsletter stand out with a custom domain.' );
 		}
@@ -315,7 +342,7 @@ const DomainSearchStep: StepType< {
 		}
 
 		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
-	}, [ flow, isCiab, __ ] );
+	}, [ flow, isCiab, isWooHostingSolutions, __ ] );
 
 	const domainSearchElement = (
 		<WPCOMDomainSearch
@@ -367,6 +394,10 @@ const DomainSearchStep: StepType< {
 
 	if ( shouldUseStepContainerV2( flow ) ) {
 		const getTopBarLeftElement = () => {
+			if ( showProgress ) {
+				return;
+			}
+
 			if ( isNewHostedSiteCreationFlow( flow ) ) {
 				return;
 			}
@@ -395,8 +426,11 @@ const DomainSearchStep: StepType< {
 					backDestination = navigation.goBack;
 					backLabelText = __( 'Back' );
 				} else {
+					if ( ! isLoggedIn || ! userSiteCount ) {
+						return;
+					}
 					backDestination = defaultBackUrl;
-					backLabelText = sitesBackLabelText;
+					backLabelText = __( 'Back' );
 				}
 			}
 
@@ -411,15 +445,41 @@ const DomainSearchStep: StepType< {
 		};
 
 		const getTopBarRightElement = () => {
-			if ( ! query ) {
+			// Surface the "Use a domain I own" CTA whenever:
+			//   - the user has searched (query is non-empty), OR
+			//   - we're on a mobile viewport (where the in-body
+			//     empty-state card is hidden — see style.scss).
+			// On desktop empty state, the link stays hidden and the
+			// in-body card carries the same CTA.
+			const showUseMyDomain = ( !! query || isMobileViewport ) && config.allowsUsingOwnDomain;
+
+			if ( ! stepCounter && ! showUseMyDomain ) {
 				return;
 			}
 
 			return (
 				<>
-					{ config.allowsUsingOwnDomain && (
-						<Step.LinkButton onClick={ () => events.onExternalDomainClick( query ) }>
-							{ __( 'Use a domain I already own' ) }
+					{ stepCounter && (
+						<Step.StepCounter current={ stepCounter.current } total={ stepCounter.total } />
+					) }
+					{ showUseMyDomain && (
+						<Step.LinkButton
+							onClick={ () => {
+								// Mobile empty state replaced the in-body card,
+								// which fired this Tracks event. Fire it here so
+								// the mobile metric doesn't drop. Other top-bar
+								// paths stay silent — they always have been.
+								if ( isMobileViewport && ! query ) {
+									recordTracksEvent( 'calypso_domain_search_results_use_my_domain_button_click', {
+										section: 'signup',
+										source: 'top-bar-mobile',
+										flow_name: flow,
+									} );
+								}
+								events.onExternalDomainClick( query );
+							} }
+						>
+							{ __( 'Use a domain I own' ) }
 						</Step.LinkButton>
 					) }
 				</>
@@ -436,7 +496,19 @@ const DomainSearchStep: StepType< {
 				}
 				columnWidth={ 10 }
 				className="step-container-v2--domain-search"
-				heading={ <Step.Heading text={ headerText } subText={ subHeaderText } /> }
+				heading={
+					// On mobile, once the user has searched the persistent fixed
+					// search overlay (rendered by @automattic/domain-search) is the
+					// page's primary affordance — the H1/subText are dropped so
+					// high-quality results can fill the limited vertical space.
+					// The empty/initial state keeps the heading on mobile.
+					<>
+						{ showProgress && <OnboardingProgress currentStep="domains" /> }
+						{ ! ( isMobileViewport && query ) && (
+							<Step.Heading text={ headerText } subText={ subHeaderText } />
+						) }
+					</>
+				}
 			>
 				{ domainSearchElement }
 			</Step.CenteredColumnLayout>
@@ -478,7 +550,7 @@ const DomainSearchStep: StepType< {
 				onClick={ () => events.onExternalDomainClick( query ) }
 				variant="link"
 			>
-				<span>{ __( 'Use a domain I already own' ) }</span>
+				<span>{ __( 'Use a domain I own' ) }</span>
 			</Button>
 		);
 	};

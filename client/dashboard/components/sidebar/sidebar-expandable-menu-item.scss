@@ -17,4 +17,8 @@
 		overflow: clip;
 		overflow-clip-margin: 2px;
 	}
+
+	.dashboard-sidebar__menu-item {
+		padding-inline-start: calc( 12px + 20px + 8px );
+	}
 }

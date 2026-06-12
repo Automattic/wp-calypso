@@ -75,7 +75,7 @@ const useReferralsMenuItems = ( path: string ) => {
 			.map( ( item ) => ( {
 				...item,
 				isSelected: item.link === path,
-			} ) ); //FIXME: Fix this once we enable the automated referrals feature flag
+			} ) );
 	}, [ accountStatus, path, showIndicator, translate ] );
 	return menuItems;
 };
