@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { DomainSearch } from '@automattic/domain-search';
 import { ResponseCartProduct } from '@automattic/shopping-cart';
 import { useMemo, type ComponentProps, useCallback } from 'react';
@@ -75,6 +76,7 @@ export const useWPCOMDomainSearchProps = ( {
 	const config = useMemo( () => {
 		return {
 			...externalConfig,
+			showBundleSuggestions: isEnabled( 'domain-bundling' ),
 			priceRules: {
 				...externalConfig?.priceRules,
 				freeForFirstYear: isNextDomainFree,

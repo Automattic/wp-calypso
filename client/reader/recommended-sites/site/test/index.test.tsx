@@ -3,7 +3,8 @@
  */
 import { getReadSiteRecommendationsInfiniteQueryKey } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
@@ -81,13 +82,7 @@ jest.mock( 'calypso/lib/analytics/mc', () => ( {
 
 const makeStore = () => {
 	const actions: unknown[] = [];
-	const state = {
-		reader: {
-			follows: {
-				followFeedLoading: [],
-			},
-		},
-	};
+	const state = {};
 	const store = createStore( ( currentState = state, action ) => {
 		actions.push( action );
 		return currentState;
@@ -170,6 +165,7 @@ describe( 'RecommendedSite', () => {
 	afterEach( () => nock.cleanAll() );
 
 	it( 'dismisses the recommendation through React Query and removes it from the cache', async () => {
+		const user = userEvent.setup();
 		const scope = nock( BASE )
 			.post( '/rest/v1.1/me/dismiss/sites/123/new' )
 			.reply( 200, { success: true } );
@@ -185,7 +181,7 @@ describe( 'RecommendedSite', () => {
 			queryClient
 		);
 
-		fireEvent.click( screen.getByTitle( 'Dismiss this recommendation' ) );
+		await user.click( screen.getByTitle( 'Dismiss this recommendation' ) );
 
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 
@@ -200,6 +196,7 @@ describe( 'RecommendedSite', () => {
 	} );
 
 	it( 'keeps the recommendation in the cache when dismissing fails', async () => {
+		const user = userEvent.setup();
 		nock( BASE ).post( '/rest/v1.1/me/dismiss/sites/123/new' ).reply( 500, {
 			error: 'dismiss_failed',
 		} );
@@ -215,7 +212,7 @@ describe( 'RecommendedSite', () => {
 			queryClient
 		);
 
-		fireEvent.click( screen.getByTitle( 'Dismiss this recommendation' ) );
+		await user.click( screen.getByTitle( 'Dismiss this recommendation' ) );
 
 		await waitFor( () =>
 			expect( actions ).toContainEqual(
@@ -229,26 +226,40 @@ describe( 'RecommendedSite', () => {
 		expect( getCachedRecommendedSiteIds( queryClient ) ).toEqual( [ 123 ] );
 	} );
 
-	it( 'dispatches follow with recommended site info when Subscribe is clicked', () => {
+	it( 'subscribes through React Query and removes the recommendation from the cache', async () => {
+		const user = userEvent.setup();
+		const scope = nock( BASE )
+			.post( '/rest/v1.1/read/following/mine/new' )
+			.reply( 200, {
+				subscribed: true,
+				subscription: {
+					ID: '1',
+					URL: 'https://example.com',
+					feed_URL: 'https://example.com',
+					blog_ID: '123',
+					feed_ID: '456',
+				},
+			} );
 		const { store, actions } = makeStore();
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		appendRecommendedSitesToCache( queryClient, { seed: recommendedSitesSeed, number: 4 }, [
+			recommendedSite( 123, 456 ),
+		] );
 
 		renderWithProviders(
 			<RecommendedSite siteId={ 123 } feedId={ 456 } railcar={ railcar } />,
-			store
+			store,
+			queryClient
 		);
 
-		fireEvent.click( screen.getByRole( 'button', { name: 'Subscribe' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Subscribe' } ) );
 
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+		await waitFor( () => expect( getCachedRecommendedSiteIds( queryClient ) ).toEqual( [] ) );
 		expect( actions ).toContainEqual(
 			expect.objectContaining( {
-				type: 'READER_FOLLOW',
-				payload: expect.objectContaining( {
-					feedUrl: 'https://example.com',
-					recommendedSiteInfo: expect.objectContaining( {
-						siteId: 123,
-						seed: expect.any( Number ),
-						siteTitle: 'Example Site',
-					} ),
+				notice: expect.objectContaining( {
+					status: 'is-success',
 				} ),
 			} )
 		);

@@ -60,9 +60,10 @@ afterEach( () => {
 test( 'renders when dark mode is supported regardless of opt-in preference', async () => {
 	renderPreferencesAppearance();
 
-	expect(
-		await screen.findByRole( 'link', { name: /Appearance \(Experimental\)/i } )
-	).toHaveAttribute( 'href', '/me/preferences/appearance' );
+	expect( await screen.findByRole( 'link', { name: /Appearance/i } ) ).toHaveAttribute(
+		'href',
+		'/me/preferences/appearance'
+	);
 	expect( screen.getByText( 'Dark' ) ).toBeVisible();
 } );
 
@@ -72,9 +73,7 @@ test( 'does not render in the Dashboard backport', async () => {
 	renderPreferencesAppearance();
 
 	await waitFor( () => {
-		expect(
-			screen.queryByRole( 'link', { name: /Appearance \(Experimental\)/i } )
-		).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: /Appearance/i } ) ).not.toBeInTheDocument();
 	} );
 } );
 
@@ -88,9 +87,7 @@ test( 'does not render when dark mode is not supported', async () => {
 	} );
 
 	await waitFor( () => {
-		expect(
-			screen.queryByRole( 'link', { name: /Appearance \(Experimental\)/i } )
-		).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: /Appearance/i } ) ).not.toBeInTheDocument();
 	} );
 } );
 
@@ -105,8 +102,6 @@ test( 'does not render when color scheme is not supported', async () => {
 	} );
 
 	await waitFor( () => {
-		expect(
-			screen.queryByRole( 'link', { name: /Appearance \(Experimental\)/i } )
-		).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: /Appearance/i } ) ).not.toBeInTheDocument();
 	} );
 } );

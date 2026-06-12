@@ -1,5 +1,6 @@
 import {
 	availableTldsQuery,
+	bundleSuggestionQuery,
 	domainSuggestionsQuery,
 	freeSuggestionQuery,
 	domainAvailabilityQuery,
@@ -8,6 +9,7 @@ import { PriceRulesConfig, useSuggestion } from '../hooks/use-suggestion';
 import type { FilterState } from '../components/search-bar/types';
 import type { FeaturedSuggestionReason } from '../helpers/partition-suggestions';
 import type {
+	BundleSuggestion,
 	DomainAvailability,
 	DomainAvailabilityStatus,
 	DomainSuggestion,
@@ -74,6 +76,8 @@ export interface DomainSearchEvents {
 	onTrademarkClaimsNoticeAccepted: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
 	onTrademarkClaimsNoticeClosed: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
 	onPageView: () => void;
+	onBundleShown: ( bundle: BundleSuggestion ) => void;
+	onBundleAddToCart: ( bundle: BundleSuggestion ) => void;
 }
 
 export interface DomainSearchConfig {
@@ -86,6 +90,12 @@ export interface DomainSearchConfig {
 	allowedTlds: string[];
 	includeOwnedDomainInSuggestions: boolean;
 	numberOfDomainsResultsPerPage: number;
+	/**
+	 * Show domain bundle suggestions in the search flow. Frontend dev/Storybook
+	 * gate, set from the `domain-bundling` feature flag at the app layer. Default
+	 * false, so bundles stay hidden unless a consumer opts in.
+	 */
+	showBundleSuggestions: boolean;
 }
 
 export interface DomainSearchProps {
@@ -124,6 +134,7 @@ export interface DomainSearchContextType
 		) => ReturnType< typeof domainSuggestionsQuery >;
 		domainAvailability: ( domainName: string ) => ReturnType< typeof domainAvailabilityQuery >;
 		freeSuggestion: ( query: string ) => ReturnType< typeof freeSuggestionQuery >;
+		bundleSuggestion: ( query: string ) => ReturnType< typeof bundleSuggestionQuery >;
 	};
 	config: DomainSearchConfig;
 }

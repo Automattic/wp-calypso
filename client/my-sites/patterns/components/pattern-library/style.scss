@@ -55,6 +55,17 @@
 	}
 }
 
+// Baton-pass: filter sticks at the fixed nav's top and rides above it (z-index
+// beats the nav's 801), covering it as it pins.
+.is-section-patterns:has(.x-nav--2026-redesign) .pattern-library__filters {
+	top: var(--nav-2026-admin-offset);
+	z-index: 1000;
+
+	@media (max-width: $break-mobile) {
+		position: sticky;
+	}
+}
+
 .pattern-library__body-search {
 	display: flex;
 	margin-left: 16px;

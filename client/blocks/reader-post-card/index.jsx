@@ -4,8 +4,7 @@ import clsx from 'clsx';
 import closest from 'component-closest';
 import { flowRight as compose, truncate } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import ReactDom from 'react-dom';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import CompactPostCard from 'calypso/blocks/reader-post-card/compact';
@@ -13,9 +12,9 @@ import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follow
 import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import DisplayTypes from 'calypso/reader/data/post/display-types';
+import { useHasSiteSubscriptionOrganization } from 'calypso/reader/data/site-subscriptions';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import * as stats from 'calypso/reader/stats';
-import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
 import { expandCard as expandCardAction } from 'calypso/state/reader-ui/card-expansions/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isReaderCardExpanded from 'calypso/state/selectors/is-reader-card-expanded';
@@ -61,6 +60,19 @@ class ReaderPostCard extends Component {
 		showBylineSecondarySiteLink: true,
 	};
 
+	cardRef = createRef();
+
+	// Forward the node to an optional itemRef from InfiniteList so the list can measure it.
+	setCardRef = ( node ) => {
+		this.cardRef.current = node;
+		const { itemRef } = this.props;
+		if ( typeof itemRef === 'function' ) {
+			itemRef( node );
+		} else if ( itemRef ) {
+			itemRef.current = node;
+		}
+	};
+
 	state = {
 		isSuggestedFollowsModalOpen: false,
 	};
@@ -78,7 +90,7 @@ class ReaderPostCard extends Component {
 	};
 
 	handleCardClick = ( event ) => {
-		const rootNode = ReactDom.findDOMNode( this );
+		const rootNode = this.cardRef.current;
 		const selection = window.getSelection && window.getSelection();
 
 		// if the click has modifier or was not primary, ignore it
@@ -277,7 +289,7 @@ class ReaderPostCard extends Component {
 
 		const onClick = ! isPostPhoto ? this.handleCardClick : noop;
 		return (
-			<Card className={ classes } onClick={ onClick } tagName="article">
+			<Card ref={ this.setCardRef } className={ classes } onClick={ onClick } tagName="article">
 				{ ! compact && postByline }
 				{ readerPostCard }
 				{ this.props.children }
@@ -312,9 +324,6 @@ const ConnectedReaderPostCard = compose(
 				ownProps.postKey &&
 				( isSiteWPForTeams( state, ownProps.postKey.blogId ) ||
 					( ownProps.feed?.blog_ID ? isSiteWPForTeams( state, ownProps.feed.blog_ID ) : false ) ),
-			hasOrganization:
-				ownProps.postKey &&
-				hasReaderFollowOrganization( state, ownProps.postKey.feedId, ownProps.postKey.blogId ),
 			isExpanded: isReaderCardExpanded( state, ownProps.postKey ),
 		} ),
 		{ expandCard: expandCardAction }
@@ -323,7 +332,15 @@ const ConnectedReaderPostCard = compose(
 
 export default function ReaderPostCardContainer( props ) {
 	const feedId = props.postKey?.feedId ?? props.post?.feed_ID;
+	const blogId = props.postKey?.blogId ?? props.post?.site_ID;
 	const { data: fetchedFeed } = useFeedQuery( feedId );
+	const hasOrganization = useHasSiteSubscriptionOrganization( feedId, blogId );
 
-	return <ConnectedReaderPostCard { ...props } feed={ props.feed ?? fetchedFeed } />;
+	return (
+		<ConnectedReaderPostCard
+			{ ...props }
+			feed={ props.feed ?? fetchedFeed }
+			hasOrganization={ hasOrganization }
+		/>
+	);
 }

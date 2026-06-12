@@ -2,6 +2,12 @@
  * @jest-environment jsdom
  */
 
+/* eslint-disable @typescript-eslint/no-require-imports --
+   Every test re-`require()`s the module after `jest.resetModules()` (see
+   `beforeEach`) so module-level state — the `pluginRegistered` idempotency
+   flag, and the React instance `mockUseEffect` binds to — is fresh per test.
+   Static `import` would defeat that isolation, so `require()` is intentional. */
+
 // eslint-disable-next-line import/order
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
@@ -14,6 +20,7 @@ const mockTrackOpened = jest.fn();
 const mockTrackAddedToPost = jest.fn();
 const mockTrackPanelViewed = jest.fn();
 const mockFill = jest.fn();
+const mockNotice = jest.fn();
 const mockSetCurrentVideoUrl = jest.fn().mockResolvedValue( undefined );
 const mockSetCurrentAttachmentId = jest.fn().mockResolvedValue( undefined );
 const mockSetCurrentDurationSeconds = jest.fn().mockResolvedValue( undefined );
@@ -23,9 +30,11 @@ const mockCreateBlock = jest.fn( ( name: string, attributes: Record< string, unk
 	attributes,
 } ) );
 
+let mockPostType: string | null = 'post';
 let mockMeta: Record< string, unknown > = {};
 let mockMedia: Record< string, unknown > | null = null;
 let mockHasResolvedMedia = true;
+let mockResolutionError: unknown = null;
 let mockHasBlockEditor = true;
 let mockReelVisible = false;
 let mockGenericVisible = false;
@@ -65,6 +74,21 @@ jest.mock( '@wordpress/components', () => ( {
 		return null;
 	},
 	PanelBody: ( { children }: { children: React.ReactNode } ) => <>{ children }</>,
+	VisuallyHidden: ( { children }: { children: React.ReactNode } ) => <span>{ children }</span>,
+	// Like the real Notice: no ARIA role on the wrapper (announcement happens
+	// via wp.a11y speak()), so tests assert on text + recorded status.
+	Notice: ( {
+		children,
+		status,
+		className,
+	}: {
+		children: React.ReactNode;
+		status?: string;
+		className?: string;
+	} ) => {
+		mockNotice( status );
+		return <div className={ className }>{ children }</div>;
+	},
 } ) );
 
 jest.mock( '@wordpress/core-data', () => ( {
@@ -93,12 +117,13 @@ jest.mock( '@wordpress/data', () => ( {
 	useSelect: ( selector: ( s: ( name: string ) => unknown ) => unknown ) => {
 		return selector( ( name: string ) => {
 			if ( name === 'core/editor' ) {
-				return { getCurrentPostType: () => 'post', getCurrentPostId: () => 7 };
+				return { getCurrentPostType: () => mockPostType, getCurrentPostId: () => 7 };
 			}
 			if ( name === 'core' ) {
 				return {
 					getMedia: () => mockMedia,
 					hasFinishedResolution: () => mockHasResolvedMedia,
+					getResolutionError: () => mockResolutionError,
 				};
 			}
 			return undefined;
@@ -203,6 +228,7 @@ describe( 'feature-clip-sidebar-extension', () => {
 		mockTrackAddedToPost.mockClear();
 		mockTrackPanelViewed.mockClear();
 		mockFill.mockClear();
+		mockNotice.mockClear();
 		mockSetCurrentVideoUrl.mockClear();
 		mockSetCurrentAttachmentId.mockClear();
 		mockSetCurrentDurationSeconds.mockClear();
@@ -215,9 +241,11 @@ describe( 'feature-clip-sidebar-extension', () => {
 		mockDialogProps.mockClear();
 		mockInsertBlocks.mockClear();
 		mockCreateBlock.mockClear();
+		mockPostType = 'post';
 		mockMeta = {};
 		mockMedia = null;
 		mockHasResolvedMedia = true;
+		mockResolutionError = null;
 		mockHasBlockEditor = true;
 		mockReelVisible = false;
 		mockGenericVisible = false;
@@ -289,6 +317,51 @@ describe( 'feature-clip-sidebar-extension', () => {
 		} );
 	} );
 
+	describe( 'post-type gating', () => {
+		it( 'renders nothing on an unsupported post type (jetpack_form)', () => {
+			mockPostType = 'jetpack_form';
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			const { container } = render( <FeatureClipPanel /> );
+			expect( container ).toBeEmptyDOMElement();
+			// Neither sidebar surface is wired up on an unsupported editor.
+			expect( mockFill ).not.toHaveBeenCalled();
+		} );
+
+		it( 'does not fire the panel-viewed impression on an unsupported post type', () => {
+			mockPostType = 'jetpack_form';
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			expect( mockTrackPanelViewed ).not.toHaveBeenCalled();
+		} );
+
+		it( 'renders nothing while the post type is unknown (null) and does not fall back to post', () => {
+			// getCurrentPostType() returns null transiently before the post
+			// loads (and the editor store may be absent entirely). Treat that
+			// as unsupported — a 'post' fallback would flash the panel and fire
+			// a phantom impression until the real type resolves.
+			mockPostType = null;
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			const { container } = render( <FeatureClipPanel /> );
+			expect( container ).toBeEmptyDOMElement();
+			expect( mockFill ).not.toHaveBeenCalled();
+			expect( mockTrackPanelViewed ).not.toHaveBeenCalled();
+		} );
+
+		it( 'renders nothing on a page (pages are unsupported for now)', () => {
+			mockPostType = 'page';
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			const { container } = render( <FeatureClipPanel /> );
+			expect( container ).toBeEmptyDOMElement();
+		} );
+
+		it( 'renders the panel on the post post type', () => {
+			mockPostType = 'post';
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			expect( screen.getByRole( 'button', { name: 'Generate clip' } ) ).toBeInTheDocument();
+		} );
+	} );
+
 	describe( 'empty state (no clip linked)', () => {
 		it( 'renders the Generate clip CTA when meta is empty', () => {
 			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
@@ -306,14 +379,44 @@ describe( 'feature-clip-sidebar-extension', () => {
 			expect( screen.getByRole( 'button', { name: 'Generate clip' } ) ).toBeInTheDocument();
 		} );
 
-		it( 'holds the panel body blank while the attachment is still resolving', () => {
+		it( 'renders a loading skeleton while the attachment is still resolving', () => {
 			mockMeta = { _jetpack_feature_clip_id: 42 };
 			mockMedia = null;
 			mockHasResolvedMedia = false; // first render — getMedia hasn't completed
 			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
-			render( <FeatureClipPanel /> );
+			const { container } = render( <FeatureClipPanel /> );
 			expect( screen.queryByRole( 'button', { name: 'Generate clip' } ) ).not.toBeInTheDocument();
 			expect( screen.queryByRole( 'button', { name: 'Regenerate' } ) ).not.toBeInTheDocument();
+			// Skeleton is a status live region so screen readers announce the loading label.
+			const skeleton = screen.getByRole( 'status', { name: 'Loading saved clip preview' } );
+			expect( skeleton ).toBeInTheDocument();
+			expect( skeleton ).toHaveAttribute( 'aria-busy', 'true' );
+			expect(
+				container.querySelector( '.image-studio-feature-clip-panel__preview-frame--loading' )
+			).not.toBeNull();
+		} );
+
+		it( 'renders the empty state with an error notice when the resolver failed', () => {
+			mockMeta = { _jetpack_feature_clip_id: 42 };
+			mockMedia = null;
+			mockHasResolvedMedia = true;
+			mockResolutionError = new Error( 'REST failure' );
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			expect( screen.getByRole( 'button', { name: 'Generate clip' } ) ).toBeInTheDocument();
+			expect(
+				screen.getByText( "Couldn't load your saved clip. Generate a new one below." )
+			).toBeInTheDocument();
+			// status=error makes core Notice announce assertively via speak().
+			expect( mockNotice ).toHaveBeenCalledWith( 'error' );
+		} );
+
+		it( 'does not show the error notice on a normal empty post', () => {
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			expect(
+				screen.queryByText( "Couldn't load your saved clip. Generate a new one below." )
+			).not.toBeInTheDocument();
 		} );
 
 		it( 'opens Image Studio with the post-editor entry point on click', async () => {

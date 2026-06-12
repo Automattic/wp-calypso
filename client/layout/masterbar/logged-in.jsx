@@ -1,3 +1,4 @@
+import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
 import config from '@automattic/calypso-config';
 import { isEcommercePlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
@@ -23,7 +24,6 @@ import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
-import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -59,7 +59,9 @@ import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getSectionGroup } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
-import { AgentsManagerIcon } from './masterbar-agents-manager/agents-manager-icon';
+import BigSkyIcon from './masterbar-agents-manager/big-sky-icon';
+import { openAgentsManagerChat } from './masterbar-agents-manager/chat-actions';
+import HelpIcon from './masterbar-agents-manager/help-icon';
 import { HelpCenterIcon } from './masterbar-help-center/help-center-icon';
 import { MasterbarLaunchButton } from './masterbar-launch-button';
 import Notifications from './masterbar-notifications/notifications-button';
@@ -96,10 +98,12 @@ class MasterbarLoggedIn extends Component {
 		isCheckoutPending: PropTypes.bool,
 		isCheckoutFailed: PropTypes.bool,
 		loadHelpCenterIcon: PropTypes.bool,
+		loadAgentsManager: PropTypes.bool,
 		isGlobalSidebarVisible: PropTypes.bool,
 		isGravatarDomain: PropTypes.bool,
 		dashboardOptIn: PropTypes.bool,
 		useUnifiedAgent: PropTypes.bool,
+		launchButton: PropTypes.node,
 	};
 
 	state = { mounted: false };
@@ -280,10 +284,12 @@ class MasterbarLoggedIn extends Component {
 						{
 							label: translate( 'Sites' ),
 							url: dashboardOptIn ? dashboardLink( '/sites' ) : '/sites',
+							onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_sites_clicked' ),
 						},
 						{
 							label: translate( 'Domains' ),
 							url: dashboardOptIn ? dashboardLink( '/domains' ) : '/domains/manage',
+							onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_domains_clicked' ),
 						},
 					],
 					...( this.props.isSimpleSite
@@ -293,10 +299,14 @@ class MasterbarLoggedIn extends Component {
 									{
 										label: translate( 'About WordPress' ),
 										url: `${ siteAdminUrl }about.php`,
+										onClick: () =>
+											this.props.recordTracksEvent( 'calypso_masterbar_about_wordpress_clicked' ),
 									},
 									{
 										label: translate( 'Get Involved' ),
 										url: `${ siteAdminUrl }contribute.php`,
+										onClick: () =>
+											this.props.recordTracksEvent( 'calypso_masterbar_get_involved_clicked' ),
 									},
 								],
 						  ] ),
@@ -512,12 +522,30 @@ class MasterbarLoggedIn extends Component {
 			return null;
 		}
 
-		const menuItems = [ { label: translate( 'Visit Site' ), url: siteUrl } ];
+		const menuItems = [
+			{
+				label: translate( 'Visit Site' ),
+				url: siteUrl,
+				onClick: () => {
+					this.props.recordTracksEvent( 'calypso_masterbar_visit_site_clicked', {
+						site_id: this.props.siteId,
+					} );
+				},
+			},
+		];
 
 		if ( isClassicView ) {
-			menuItems.push( { label: translate( 'Dashboard' ), url: siteAdminUrl } );
+			menuItems.push( {
+				label: translate( 'Dashboard' ),
+				url: siteAdminUrl,
+				onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_dashboard_clicked' ),
+			} );
 		} else {
-			menuItems.push( { label: translate( 'My Home' ), url: siteHomeUrl } );
+			menuItems.push( {
+				label: translate( 'My Home' ),
+				url: siteHomeUrl,
+				onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_my_home_clicked' ),
+			} );
 		}
 
 		if ( ! site?.is_wpcom_staging_site ) {
@@ -589,18 +617,22 @@ class MasterbarLoggedIn extends Component {
 				{
 					label: translate( 'Post' ),
 					url: newPostUrl,
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_post_clicked' ),
 				},
 				{
 					label: translate( 'Media' ),
 					url: isClassicView ? `${ siteAdminUrl }media-new.php` : `/media/${ siteSlug }`,
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_media_clicked' ),
 				},
 				{
 					label: translate( 'Page' ),
 					url: newPageUrl,
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_page_clicked' ),
 				},
 				{
 					label: translate( 'User' ),
 					url: isClassicView ? `${ siteAdminUrl }user-new.php` : `/people/new/${ siteSlug }`,
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_user_clicked' ),
 				},
 			];
 		} else {
@@ -608,18 +640,22 @@ class MasterbarLoggedIn extends Component {
 				{
 					label: translate( 'Post' ),
 					url: '/post',
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_post_clicked' ),
 				},
 				{
 					label: translate( 'Media' ),
 					url: '/media',
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_media_clicked' ),
 				},
 				{
 					label: translate( 'Page' ),
 					url: '/page',
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_page_clicked' ),
 				},
 				{
 					label: translate( 'User' ),
 					url: '/people/new',
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_user_clicked' ),
 				},
 			];
 		}
@@ -638,10 +674,15 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderLaunchButton() {
-		const { isA4ADevSite, isUnlaunchedSite, siteId, isManageSiteOptionsEnabled } = this.props;
+		const { isA4ADevSite, isUnlaunchedSite, siteId, isManageSiteOptionsEnabled, launchButton } =
+			this.props;
 
 		if ( ! isUnlaunchedSite || ! isManageSiteOptionsEnabled || isA4ADevSite ) {
 			return null;
+		}
+
+		if ( launchButton ) {
+			return launchButton;
 		}
 
 		return <MasterbarLaunchButton siteId={ siteId } />;
@@ -649,6 +690,7 @@ class MasterbarLoggedIn extends Component {
 
 	renderProfileMenu() {
 		const { translate, user, isGlobalSidebarVisible, siteAdminUrl } = this.props;
+		const editProfileUrl = isGlobalSidebarVisible ? '/me' : `${ siteAdminUrl }profile.php`;
 		const profileActions = [
 			{
 				label: (
@@ -672,11 +714,15 @@ class MasterbarLoggedIn extends Component {
 						</div>
 					</div>
 				),
-				url: isGlobalSidebarVisible ? '/me' : `${ siteAdminUrl }profile.php`,
+				url: editProfileUrl,
+				onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_edit_profile_clicked' ),
 			},
 			{
 				label: translate( 'Log Out' ),
-				onClick: () => this.props.redirectToLogout(),
+				onClick: () => {
+					this.props.recordTracksEvent( 'calypso_masterbar_log_out_clicked' );
+					this.props.redirectToLogout();
+				},
 				tooltip: translate( 'Log out of WordPress.com' ),
 				className: 'logout-link',
 			},
@@ -699,6 +745,7 @@ class MasterbarLoggedIn extends Component {
 					</span>
 				),
 				url: '/me/account',
+				onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_wpcom_account_clicked' ),
 				className: 'wpcom-link',
 			},
 		];
@@ -805,7 +852,7 @@ class MasterbarLoggedIn extends Component {
 				<Item
 					className="masterbar__item-agents-manager"
 					tooltip={ translate( 'Help' ) }
-					icon={ <AgentsManagerIcon hasUnread={ false } /> }
+					icon={ <HelpIcon /> }
 				/>
 			);
 
@@ -845,8 +892,34 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
+	clickAgentsManagerAiChat = () => {
+		this.props.recordTracksEvent( 'calypso_masterbar_agents_manager_ai_chat_clicked' );
+		// Reopen and resume the active conversation rather than start a new one.
+		openAgentsManagerChat();
+	};
+
+	renderAgentsManagerAiChat() {
+		const { translate } = this.props;
+
+		return (
+			<Item
+				className="masterbar__item-agents-manager-ai-chat"
+				onClick={ this.clickAgentsManagerAiChat }
+				icon={ <BigSkyIcon /> }
+				tooltip={ translate( 'Ask AI' ) }
+			/>
+		);
+	}
+
 	render() {
-		const { isCheckout, isCheckoutPending, isCheckoutFailed, loadHelpCenterIcon } = this.props;
+		const {
+			isCheckout,
+			isCheckoutPending,
+			isCheckoutFailed,
+			loadHelpCenterIcon,
+			loadAgentsManager,
+			useUnifiedAgent,
+		} = this.props;
 
 		// Checkout flow uses it's own version of the masterbar
 		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
@@ -869,6 +942,9 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderCart() }
 					{ this.renderReader() }
 					{ loadHelpCenterIcon && this.renderHelpCenter() }
+					{ /* Show the AI button only where the chat dock is mounted (same two
+					     conditions the dock loads on), so clicking it always opens the chat. */ }
+					{ useUnifiedAgent && loadAgentsManager && this.renderAgentsManagerAiChat() }
 					{ this.renderNotifications() }
 					{ this.renderProfileMenu() }
 				</div>
@@ -879,7 +955,7 @@ class MasterbarLoggedIn extends Component {
 
 export { MasterbarLoggedIn };
 
-export default connect(
+const ConnectedMasterbarLoggedIn = connect(
 	( state, { siteId } ) => {
 		const sectionGroup = getSectionGroup( state );
 
@@ -930,7 +1006,6 @@ export default connect(
 				getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
 			isGravatarDomain: hasGravatarDomainQueryParam( state ),
 			dashboardOptIn: hasDashboardOptIn( state ),
-			useUnifiedAgent: getPreference( state, 'unified_ai_chat' ) ?? false,
 		};
 	},
 	{
@@ -943,3 +1018,11 @@ export default connect(
 		redirectToLogout,
 	}
 )( localize( MasterbarLoggedIn ) );
+
+// Source the unified-experience flag from `useShouldUseUnifiedAgent` so the masterbar
+// stays in sync with the rest of the agents-manager UI. A hook can't run in the
+// connected class, hence this thin wrapper.
+export default function MasterbarLoggedInWithUnifiedAgent( props ) {
+	const useUnifiedAgent = useShouldUseUnifiedAgent();
+	return <ConnectedMasterbarLoggedIn { ...props } useUnifiedAgent={ !! useUnifiedAgent } />;
+}

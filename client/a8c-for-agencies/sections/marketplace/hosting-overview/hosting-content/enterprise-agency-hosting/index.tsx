@@ -1,5 +1,5 @@
 import { VIPLogo } from '@automattic/components';
-import { Button } from '@wordpress/components';
+import { Button, ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { BackgroundType11 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
 import { A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
@@ -129,14 +129,13 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 				>
 					<div className="enterprise-agency-hosting__top-details-subheading">
 						{ translate(
-							'Earn up to a %(commission)s%% one-time commission on client referrals to WordPress VIP. {{a}}Full Terms{{/a}} ↗',
+							'Earn up to a %(commission)s%% one-time commission on client referrals to WordPress VIP. {{a}}Full Terms{{/a}}',
 							{
 								components: {
 									a: (
-										<a
+										<ExternalLink
 											href="https://automattic.com/for-agencies/program-incentives"
-											target="_blank"
-											rel="noopener noreferrer"
+											children={ null }
 										/>
 									),
 								},

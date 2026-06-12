@@ -1,3 +1,9 @@
+## Unreleased
+
+### Breaking Changes
+
+- `Icon`: Remove component. Use `Icon` from `@wordpress/ui` instead.
+
 ## 3.0.3
 
 - Fix `@wordpress/base-styles/colors` usage ([#107019](https://github.com/Automattic/wp-calypso/pull/107019)).

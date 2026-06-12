@@ -179,6 +179,59 @@ describe( 'readSiteRecommendationsInfiniteQuery', () => {
 		expect( result.current.data?.pageParams ).toEqual( [ 0, 2 ] );
 		expect( nock.isDone() ).toBe( true );
 	} );
+
+	it( 'uses meta.next_page as the next page offset when provided', async () => {
+		nock( BASE )
+			.get( '/rest/v1.2/read/recommendations/sites' )
+			.query( {
+				number: '2',
+				offset: '0',
+				seed: '42',
+				posts_per_site: '0',
+			} )
+			.reply( 200, {
+				algorithm: 'algo',
+				meta: { next_page: '8' },
+				sites: [
+					{
+						blog_id: 1,
+						description: 'One',
+						feed_id: 10,
+						feed_url: 'https://one.test/feed',
+						ID: 1,
+						name: 'One',
+						railcar: {},
+						URL: 'https://one.test',
+					},
+				],
+			} );
+
+		nock( BASE )
+			.get( '/rest/v1.2/read/recommendations/sites' )
+			.query( {
+				number: '2',
+				offset: '8',
+				seed: '42',
+				posts_per_site: '0',
+			} )
+			.reply( 200, { algorithm: 'algo', sites: [] } );
+
+		const client = newClient();
+		const { result } = renderHook(
+			() => useInfiniteQuery( readSiteRecommendationsInfiniteQuery( { seed: 42, number: 2 } ) ),
+			{ wrapper: makeWrapper( client ) }
+		);
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( result.current.hasNextPage ).toBe( true );
+
+		await act( async () => {
+			await result.current.fetchNextPage();
+		} );
+
+		await waitFor( () => expect( result.current.data?.pageParams ).toEqual( [ 0, 8 ] ) );
+		expect( nock.isDone() ).toBe( true );
+	} );
 } );
 
 describe( 'dismissReadSiteRecommendationMutation', () => {

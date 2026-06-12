@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { ReactNode } from 'react';
+import { ReactNode, type JSX } from 'react';
 import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
 import { getReferralStatus } from '../lib/get-referral-status';
 import type { Referral } from '../types';

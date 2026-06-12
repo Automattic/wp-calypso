@@ -1,6 +1,7 @@
 import { Dialog, FormInputValidation, FormLabel, FoldableCard } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
-import { ToggleControl } from '@wordpress/components';
+import { __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useState, useEffect, useMemo } from 'react';
 import CountedTextArea from 'calypso/components/forms/counted-textarea';
@@ -73,6 +74,7 @@ function minimumCurrencyTransactionAmount(
 }
 
 const MAX_LENGTH_CUSTOM_CONFIRMATION_EMAIL_MESSAGE = 2000;
+const MAX_LENGTH_TIER_DESCRIPTION = 500;
 
 const RecurringPaymentsPlanAddEditModal = ( {
 	closeDialog,
@@ -137,6 +139,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				)
 	);
 	const [ editedProductName, setEditedProductName ] = useState( product?.title ?? '' );
+	const [ editedDescription, setEditedDescription ] = useState( product?.description ?? '' );
 	const [ editedPostPaidNewsletter, setEditedPostPaidNewsletter ] = useState(
 		product?.subscribe_as_site_subscriber ?? isOnlyTier
 	);
@@ -183,6 +186,13 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		) {
 			return false;
 		}
+		if (
+			( field === 'description' || ! field ) &&
+			editedPostIsTier &&
+			editedDescription.trim().length > MAX_LENGTH_TIER_DESCRIPTION
+		) {
+			return false;
+		}
 		return true;
 	};
 
@@ -198,7 +208,11 @@ const RecurringPaymentsPlanAddEditModal = ( {
 			// Set the current price if the value is a valid number or an empty string.
 			if ( '' === event.currentTarget.value || ! isNaN( value ) ) {
 				const newPrice = Number( event.currentTarget.value );
-				isAnnualProduct ? setCurrentAnnualPrice( newPrice ) : setCurrentPrice( newPrice );
+				if ( isAnnualProduct ) {
+					setCurrentAnnualPrice( newPrice );
+				} else {
+					setCurrentPrice( newPrice );
+				}
 			}
 			setEditedPrice( true );
 		};
@@ -259,6 +273,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 
 		if ( editedPostIsTier ) {
 			product.type = TYPE_TIER;
+			product.description = editedDescription.trim();
 		}
 
 		return product;
@@ -278,8 +293,8 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						translate( 'Added "%s" tier payment plan.', { args: editedProductName } )
 					)
 				);
-				recordTracksEvent( 'calypso_earn_page_payment_added', productDetails );
-				recordTracksEvent( 'calypso_earn_page_payment_added', annualProductDetails );
+				dispatch( recordTracksEvent( 'calypso_earn_page_payment_added', productDetails ) );
+				dispatch( recordTracksEvent( 'calypso_earn_page_payment_added', annualProductDetails ) );
 			} else {
 				dispatch(
 					requestAddProduct(
@@ -288,7 +303,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						translate( 'Added "%s" payment plan.', { args: editedProductName } )
 					)
 				);
-				recordTracksEvent( 'calypso_earn_page_payment_added', productDetails );
+				dispatch( recordTracksEvent( 'calypso_earn_page_payment_added', productDetails ) );
 			}
 		} else if ( reason === 'submit' && product && product.ID ) {
 			productDetails.ID = product.ID;
@@ -326,7 +341,15 @@ const RecurringPaymentsPlanAddEditModal = ( {
 
 	const editing = product && product.ID;
 
-	recordTracksEvent( 'calypso_earn_page_payment_modal_show', { editing: editing } );
+	// Record the "modal shown" event once on mount rather than on every render.
+	useEffect( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_earn_page_payment_modal_show', {
+				editing: product && product.ID,
+			} )
+		);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	return (
 		<Dialog
@@ -366,6 +389,51 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						<FormInputValidation isError text={ translate( 'Please input a name.' ) } />
 					) }
 				</FormFieldset>
+				{ editedPostIsTier && (
+					<FormFieldset>
+						<FormLabel htmlFor="tier-description">
+							{ translate( 'Describe what subscribers get at this tier' ) }
+						</FormLabel>
+						<CountedTextArea
+							id="tier-description"
+							value={ editedDescription }
+							onChange={ ( event: ChangeEvent< HTMLTextAreaElement > ) =>
+								setEditedDescription( event.target.value )
+							}
+							acceptableLength={ MAX_LENGTH_TIER_DESCRIPTION }
+							showRemainingCharacters
+							placeholder={ translate(
+								'e.g. Full archive access, community Q&A, and bonus newsletters'
+							) }
+						/>
+						<FormSettingExplanation>
+							{ translate(
+								'Optional. Shown to readers when they choose a paid tier on your site. Basic {{a}}Markdown{{/a}} — bold, italics, lists, and links — is supported.',
+								{
+									components: {
+										a: (
+											<a
+												href={ localizeUrl(
+													'https://wordpress.com/support/markdown-quick-reference/'
+												) }
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+									},
+								}
+							) }
+						</FormSettingExplanation>
+						{ ! isFormValid( 'description' ) && (
+							<FormInputValidation
+								isError
+								text={ translate( 'Description must be %(max)d characters or fewer.', {
+									args: { max: MAX_LENGTH_TIER_DESCRIPTION },
+								} ) }
+							/>
+						) }
+					</FormFieldset>
+				) }
 				{ ! isOnlyTier && (
 					<FormFieldset className="memberships__dialog-sections-type">
 						<ToggleControl
@@ -515,31 +583,34 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						hideSummary
 						className="memberships__dialog-advanced-options"
 					>
-						{ ! editedPostIsTier && (
-							<FormFieldset className="memberships__dialog-sections-type">
-								<ToggleControl
-									onChange={ ( newValue ) => {
-										setEditedPostPaidNewsletter( newValue );
-									} }
-									checked={ editedPostPaidNewsletter }
-									disabled={ !! product.ID || editedPostIsTier }
-									label={ translate( 'Add customers to newsletter mailing list' ) }
-								/>
-							</FormFieldset>
-						) }
 						<FormFieldset>
-							<ToggleControl
-								onChange={ handlePayWhatYouWant }
-								checked={ editedPayWhatYouWant }
-								label={ translate(
-									'Enable customers to pick their own amount (“Pay what you want”)'
+							<VStack>
+								{ ! editedPostIsTier && (
+									<ToggleControl
+										__nextHasNoMarginBottom
+										onChange={ ( newValue ) => {
+											setEditedPostPaidNewsletter( newValue );
+										} }
+										checked={ editedPostPaidNewsletter }
+										disabled={ !! product.ID || editedPostIsTier }
+										label={ translate( 'Add customers to newsletter mailing list' ) }
+									/>
 								) }
-							/>
-							<ToggleControl
-								onChange={ handleMultiplePerUser }
-								checked={ editedMultiplePerUser }
-								label={ translate( 'Enable customers to make the same purchase multiple times' ) }
-							/>
+								<ToggleControl
+									__nextHasNoMarginBottom
+									onChange={ handlePayWhatYouWant }
+									checked={ editedPayWhatYouWant }
+									label={ translate(
+										'Enable customers to pick their own amount (“Pay what you want”)'
+									) }
+								/>
+								<ToggleControl
+									__nextHasNoMarginBottom
+									onChange={ handleMultiplePerUser }
+									checked={ editedMultiplePerUser }
+									label={ translate( 'Enable customers to make the same purchase multiple times' ) }
+								/>
+							</VStack>
 						</FormFieldset>
 					</FoldableCard>
 				) }

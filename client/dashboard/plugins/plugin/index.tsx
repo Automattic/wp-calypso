@@ -70,7 +70,7 @@ export function PluginTabs( {
 					<SectionHeader
 						level={ 3 }
 						title={ sprintf(
-							// translators: %(count) is the number of sites the plugin is installed on.
+							// translators: %(count)d: the number of sites the plugin is installed on.
 							_n(
 								'Installed on %(count)d site',
 								'Installed on %(count)d sites',

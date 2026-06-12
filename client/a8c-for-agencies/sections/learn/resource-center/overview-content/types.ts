@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 export type ResourceItem = {
 	id: number;
 	name: string;

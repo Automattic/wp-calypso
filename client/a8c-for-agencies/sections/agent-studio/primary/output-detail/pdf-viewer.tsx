@@ -27,13 +27,18 @@ interface Props {
 	pages: PdfViewerPage[];
 	/** Hover-revealed chevrons over the cover page. */
 	coverNavigation?: CoverNavigation;
+	/**
+	 * Extra layer rendered inside each page frame, on top of the page.
+	 * Receives the 1-based page number (cover included). Used by annotate mode.
+	 */
+	renderPageOverlay?: ( pageNumber: number ) => ReactNode;
 }
 
 // US Letter at 96dpi. The natural height only appears in CSS (see
 // `aspect-ratio: 816 / 1056` on the wrap).
 const PAGE_NATURAL_WIDTH = 816;
 
-export default function PdfViewer( { pages, coverNavigation }: Props ) {
+export default function PdfViewer( { pages, coverNavigation, renderPageOverlay }: Props ) {
 	if ( pages.length === 0 ) {
 		return null;
 	}
@@ -46,6 +51,8 @@ export default function PdfViewer( { pages, coverNavigation }: Props ) {
 					className={ clsx( 'a4a-one-pager-viewer__page', {
 						'is-cover': page.role === 'cover',
 					} ) }
+					data-a4a-page-number={ idx + 1 }
+					data-a4a-page-role={ page.role }
 				>
 					<div className="a4a-one-pager-viewer__frame">
 						<ShadowPage
@@ -77,6 +84,7 @@ export default function PdfViewer( { pages, coverNavigation }: Props ) {
 								</CircleButton>
 							</div>
 						) }
+						{ renderPageOverlay?.( idx + 1 ) }
 					</div>
 				</div>
 			) ) }

@@ -77,7 +77,9 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 		case ONBOARDING_UNIFIED_FLOW:
 			return 'plans-affiliate';
 		case PLAN_UPGRADE_FLOW:
-			return 'plans-upgrade';
+			return search.get( 'allow_downgrade' ) === 'true'
+				? 'plans-upgrade-or-downgrade'
+				: 'plans-upgrade';
 		case WOO_HOSTED_PLANS_FLOW:
 			return 'plans-woo-hosted';
 		default:

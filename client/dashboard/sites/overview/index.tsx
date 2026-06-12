@@ -12,9 +12,9 @@ import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useRef } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { useAppContext } from '../../app/context';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
-import { DarkModeAnnouncement } from '../../components/dark-mode-announcement';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
 import OptInSurvey, { useShouldShowOptInSurvey } from '../../components/opt-in-survey';
 import { PageHeader } from '../../components/page-header';
@@ -193,6 +193,7 @@ function SiteOverview( {
 		isSmallViewport,
 	} );
 
+	const { recordTracksEvent } = useAnalytics();
 	const wpAdminButtonRef = useRef( null );
 	const shouldShowOptInSurvey = useShouldShowOptInSurvey();
 
@@ -205,10 +206,6 @@ function SiteOverview( {
 			return <OptInSurvey />;
 		}
 
-		if ( ! isDashboardBackport() ) {
-			return <DarkModeAnnouncement tracksContext="site-overview" />;
-		}
-
 		return null;
 	};
 
@@ -219,7 +216,16 @@ function SiteOverview( {
 
 		if ( isCommerceGardenSite ) {
 			return (
-				<Button __next40pxDefaultSize variant="primary" href={ site.options.admin_url }>
+				<Button
+					__next40pxDefaultSize
+					variant="primary"
+					href={ site.options.admin_url }
+					onClick={ () =>
+						recordTracksEvent( 'calypso_dashboard_site_overview_wp_admin_clicked', {
+							site_id: site.ID,
+						} )
+					}
+				>
 					{ __( 'Manage store' ) }
 				</Button>
 			);
@@ -234,6 +240,11 @@ function SiteOverview( {
 					variant="primary"
 					href={ site.options.admin_url }
 					icon={ wordpress }
+					onClick={ () =>
+						recordTracksEvent( 'calypso_dashboard_site_overview_wp_admin_clicked', {
+							site_id: site.ID,
+						} )
+					}
 				>
 					{ __( 'WP Admin' ) }
 				</Button>

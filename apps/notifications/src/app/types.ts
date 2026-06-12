@@ -25,7 +25,7 @@ type Media = {
 	width?: string | number;
 };
 
-type Subject = {
+export type Subject = {
 	text: string;
 	ranges?: Range[];
 	media?: Media[];

@@ -1,4 +1,4 @@
-import { DomainAvailabilityStatus } from '@automattic/api-core';
+import { DomainAvailabilityStatus, type BundleSuggestion } from '@automattic/api-core';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { buildAvailability } from '../../test-helpers/factories/availability';
@@ -6,11 +6,30 @@ import { buildCart, buildCartItem } from '../../test-helpers/factories/cart';
 import { buildFreeSuggestion, buildSuggestion } from '../../test-helpers/factories/suggestions';
 import { mockGetAvailabilityQuery } from '../../test-helpers/queries/availability';
 import {
+	mockGetBundleSuggestionQuery,
 	mockGetFreeSuggestionQuery,
 	mockGetSuggestionsQuery,
 } from '../../test-helpers/queries/suggestions';
 import { TestDomainSearch } from '../../test-helpers/renderer';
 import { ResultsPage } from '../results';
+
+// Mirrors the retired mock fetcher's fixture shape (mock-<sld>-group ids) so
+// assertions written against it keep reading naturally.
+const buildBundleSuggestion = ( sld: string ): BundleSuggestion => ( {
+	sld,
+	domains: [
+		{ domain: `${ sld }.com`, cost: '$22.00', raw_price: 22, product_slug: 'domain_reg' },
+		{ domain: `${ sld }.net`, cost: '$18.00', raw_price: 18, product_slug: 'domain_reg' },
+		{ domain: `${ sld }.org`, cost: '$20.00', raw_price: 20, product_slug: 'domain_reg' },
+	],
+	bundle_price: 48,
+	original_price: 60,
+	discount_percent: 20,
+	category: 'business',
+	bundle_id: `mock-${ sld }`,
+	bundle_group_id: `mock-${ sld }-group`,
+	catalogue_version: 'mock',
+} );
 
 describe( 'ResultsPage', () => {
 	it( 'renders the search bar, filters and cart', () => {
@@ -925,6 +944,91 @@ describe( 'ResultsPage', () => {
 			await waitFor( () => {
 				expect( onShowMoreResults ).toHaveBeenCalledWith( 2 ); // show second page of results
 			} );
+		} );
+
+		it( 'fires the onBundleShown event once when a bundle suggestion renders', async () => {
+			const onBundleShown = jest.fn();
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'bundle-shown' },
+				suggestions: [ buildSuggestion( { domain_name: 'bundle-shown.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'bundle-shown' },
+				bundleSuggestion: buildBundleSuggestion( 'bundle-shown' ),
+			} );
+
+			render(
+				<TestDomainSearch
+					events={ { onBundleShown } }
+					config={ { showBundleSuggestions: true } }
+					query="bundle-shown"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await waitFor( () => {
+				expect( onBundleShown ).toHaveBeenCalledTimes( 1 );
+			} );
+
+			expect( onBundleShown ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					bundle_group_id: 'mock-bundle-shown-group',
+					domains: expect.arrayContaining( [
+						expect.objectContaining( { domain: 'bundle-shown.com' } ),
+					] ),
+				} )
+			);
+		} );
+
+		it( 'does not fire the onBundleShown event when bundles are disabled', async () => {
+			const onBundleShown = jest.fn();
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'bundle-off' },
+				suggestions: [ buildSuggestion( { domain_name: 'bundle-off.com' } ) ],
+			} );
+
+			render(
+				<TestDomainSearch events={ { onBundleShown } } query="bundle-off">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByTitle( 'bundle-off.com' ) ).toBeInTheDocument();
+			expect( onBundleShown ).not.toHaveBeenCalled();
+		} );
+
+		it( 'fires the onBundleAddToCart event when the bundle CTA is clicked', async () => {
+			const user = userEvent.setup();
+			const onBundleAddToCart = jest.fn();
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'bundle-accept' },
+				suggestions: [ buildSuggestion( { domain_name: 'bundle-accept.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'bundle-accept' },
+				bundleSuggestion: buildBundleSuggestion( 'bundle-accept' ),
+			} );
+
+			render(
+				<TestDomainSearch
+					events={ { onBundleAddToCart } }
+					config={ { showBundleSuggestions: true } }
+					query="bundle-accept"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Get bundle' } ) );
+
+			expect( onBundleAddToCart ).toHaveBeenCalledTimes( 1 );
+			expect( onBundleAddToCart ).toHaveBeenCalledWith(
+				expect.objectContaining( { bundle_group_id: 'mock-bundle-accept-group' } )
+			);
 		} );
 
 		it( 'fires the onQueryAvailabilityCheck event when the availability is checked', async () => {

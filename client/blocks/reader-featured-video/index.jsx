@@ -7,7 +7,6 @@ import { localize } from 'i18n-calypso';
 import { throttle } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import ReactDom from 'react-dom';
 import playIconImage from 'calypso/assets/images/reader/play-icon.webp';
 import readerPocketCastImage from 'calypso/assets/images/reader/reader-pocket-cast.svg';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
@@ -44,10 +43,13 @@ class ReaderFeaturedVideo extends Component {
 		className: '',
 	};
 
+	// Root element is the embed node's parent.
+	getRootNode = () => this.videoEmbedRef?.parentNode ?? null;
+
 	setVideoSizingStrategy = ( videoEmbed ) => {
 		let sizingFunction = defaultSizingFunction;
 		if ( videoEmbed ) {
-			const maxWidth = ReactDom.findDOMNode( this ).parentNode.offsetWidth;
+			const maxWidth = this.getRootNode()?.parentNode?.offsetWidth;
 			const embedSize = EmbedHelper.getEmbedSizingFunction( videoEmbed );
 
 			sizingFunction = ( available = maxWidth ) => embedSize( available );
@@ -57,8 +59,8 @@ class ReaderFeaturedVideo extends Component {
 
 	updateVideoSize = () => {
 		if ( this.videoEmbedRef ) {
-			const iframe = ReactDom.findDOMNode( this.videoEmbedRef ).querySelector( 'iframe' );
-			const availableWidth = ReactDom.findDOMNode( this ).parentNode.offsetWidth;
+			const iframe = this.videoEmbedRef.querySelector( 'iframe' );
+			const availableWidth = this.getRootNode()?.parentNode?.offsetWidth;
 			const style = {
 				...this.getEmbedSize( availableWidth ),
 				borderRadius: '6px',

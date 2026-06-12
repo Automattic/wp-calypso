@@ -3,8 +3,8 @@ import { AgentsManagerSelect } from '@automattic/data-stores';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
+import { hasAiChatEntryButton } from '../../hooks/use-admin-bar-integration';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
@@ -36,18 +36,18 @@ export default function AgentHistory( {
 	onExpand,
 	onSelectConversation,
 }: Props ) {
-	const { getActiveSessionId } = useAgentsManagerContext();
+	const { resumeActiveChat } = useAgentsManagerContext();
 
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const { floatingPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
-	const navigate = useNavigate();
 
-	const handleBack = () => {
-		navigate( '/chat', { state: { sessionId: getActiveSessionId() } } );
-	};
+	// Without the AI chat entry button, use `collapsed` (a FAB) instead of `minimized`.
+	const closedChatState = hasAiChatEntryButton() ? 'minimized' : 'collapsed';
+
+	const handleBack = () => resumeActiveChat();
 
 	return (
 		<AgentUI.Container
@@ -59,7 +59,7 @@ export default function AgentHistory( {
 			error={ null }
 			onSubmit={ () => {} }
 			variant={ isDocked ? 'embedded' : 'floating' }
-			floatingChatState={ isOpen ? 'expanded' : 'minimized' }
+			floatingChatState={ isOpen ? 'expanded' : closedChatState }
 			onClose={ onClose }
 			onExpand={ onExpand }
 			onStop={ onAbort }

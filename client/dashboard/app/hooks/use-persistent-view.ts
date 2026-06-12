@@ -92,21 +92,17 @@ export function useBasePersistentView( {
 		( field ) => queryParams && queryParams[ field ] !== undefined
 	);
 
-	const [ transientFilters, setTransientFilters ] = useState< Filter[] >( [] );
+	const [ transientFilters, setTransientFilters ] = useState< Filter[] >( () =>
+		queryParamFilterFields
+			.filter( ( field ) => queryParams && queryParams[ field ] !== undefined )
+			.map( ( field ) => getTransientFilter( field, queryParams[ field ] ) )
+	);
 
 	useEffect( () => {
 		setTransientFilters(
-			transientFilterFields.map(
-				( field ) =>
-					( {
-						field,
-						operator: 'isAny',
-						value: [ queryParams[ field ].toString() ],
-					} ) as Filter
-			)
+			transientFilterFields.map( ( field ) => getTransientFilter( field, queryParams[ field ] ) )
 		);
 
-		// Set transient filters once on initial page load.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ JSON.stringify( transientFilterFields ) ] );
 
@@ -158,7 +154,7 @@ export function useBasePersistentView( {
 					newView.filters?.some(
 						( filter ) =>
 							filter.field === field &&
-							fastDeepEqual( filter.value, [ String( queryParams[ field ] ) ] )
+							fastDeepEqual( filter.value, getTransientFilter( field, queryParams[ field ] ).value )
 					)
 			);
 
@@ -218,6 +214,14 @@ export function useBasePersistentView( {
 	}, [ persistView, navigate, queryParams ] );
 
 	return { view, updateView, resetView: isViewModified ? resetView : undefined };
+}
+
+function getTransientFilter( field: string, rawValue: unknown ): Filter {
+	const stringValue = String( rawValue );
+	if ( stringValue === 'true' || stringValue === 'false' ) {
+		return { field, operator: 'is', value: stringValue === 'true' } as Filter;
+	}
+	return { field, operator: 'isAny', value: [ stringValue ] } as Filter;
 }
 
 function removeTransientPropertiesFromView( view: View ): View {

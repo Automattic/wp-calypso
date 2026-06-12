@@ -37,10 +37,10 @@
 		"@automattic/jetpack-ai-sidebar": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/components": "^28.23.0",
-		"@wordpress/compose": "patch:@wordpress/compose@npm%3A8.0.0#~/.yarn/patches/@wordpress-compose-npm-8.0.0-14fd3b56ad.patch",
-		"@wordpress/data": "^10.46.0",
-		"@wordpress/i18n": "^6.13.0",
-		"@wordpress/plugins": "^7.46.0"
+		"@wordpress/compose": "patch:@wordpress/compose@npm%3A8.1.0#~/.yarn/patches/@wordpress-compose-npm-8.1.0-ea108e3129.patch",
+		"@wordpress/data": "^10.48.0",
+		"@wordpress/i18n": "^6.21.0",
+		"@wordpress/plugins": "^7.48.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
@@ -53,8 +53,8 @@
 	},
 	"peerDependencies": {
 		"@automattic/calypso-router": "workspace:^",
-		"@wordpress/data": "^10.46.0",
-		"@wordpress/element": "^6.46.0",
+		"@wordpress/data": "^10.48.0",
+		"@wordpress/element": "^8.0.0",
 		"postcss": "^8.5.3",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",

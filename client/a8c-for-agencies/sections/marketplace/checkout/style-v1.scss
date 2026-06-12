@@ -259,11 +259,6 @@
 
 	.product-info__label {
 		@include heading-medium;
-
-		a {
-			text-decoration: underline;
-			color: var( --color-text );
-		}
 	}
 
 	.product-info__count {
@@ -377,13 +372,6 @@
 		.checkout__button-popover-description {
 			@include body-medium;
 		}
-	}
-}
-
-.checkout__verify-account-tooltip {
-	a {
-		color: var( --color-text-inverted );
-		text-decoration: underline;
 	}
 }
 

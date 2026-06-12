@@ -131,7 +131,7 @@ export function useHandleResetNotification(
 const MAX_ACTIONBAR_HEIGHT = 30;
 const MIN_ACTIONBAR_WIDTH = 400;
 
-export function useHandleShowHideActionBar( node: RefObject< HTMLDivElement > ) {
+export function useHandleShowHideActionBar( node: RefObject< HTMLDivElement | null > ) {
 	const [ actionBarVisible, setActionBarVisible ] = useState( true );
 	const { isBulkManagementActive } = useContext( SitesOverviewContext );
 

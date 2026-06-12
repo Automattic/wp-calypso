@@ -1,3 +1,6 @@
+import './style.scss';
+
+import { Icon, plus } from '@wordpress/icons';
 import clsx from 'clsx';
 
 interface MenuItemProps extends React.HTMLAttributes< HTMLLIElement > {
@@ -41,5 +44,41 @@ export const MenuList = ( { children, className, ...props }: MenuListProps ) => 
 		<ul { ...props } className={ clsx( 'sidebar__menu-list', className ) }>
 			{ children }
 		</ul>
+	);
+};
+
+interface AddMenuItemProps {
+	label: string;
+	/** When omitted, the row renders as a button (e.g. to open a modal). */
+	href?: string;
+	icon?: React.ComponentProps< typeof Icon >[ 'icon' ];
+	onClick?: () => void;
+}
+
+/**
+ * A "+ Add …" footer row for a sidebar menu section. Renders a non-selected
+ * menu item with a leading icon (a plus by default) and a label. Renders a link
+ * when given an `href`, otherwise a button — use the button form to open a
+ * modal rather than navigate.
+ */
+export const AddMenuItem = ( { label, href, icon = plus, onClick }: AddMenuItemProps ) => {
+	const content = (
+		<>
+			<Icon icon={ icon } size={ 22 } />
+			<div className="sidebar__menu-item-title">{ label }</div>
+		</>
+	);
+	return (
+		<MenuItem selected={ false } className="sidebar__menu-add-item">
+			{ href ? (
+				<MenuItemLink className="sidebar__menu-link" href={ href } onClick={ onClick }>
+					{ content }
+				</MenuItemLink>
+			) : (
+				<button type="button" className="sidebar__menu-link" onClick={ onClick }>
+					{ content }
+				</button>
+			) }
+		</MenuItem>
 	);
 };

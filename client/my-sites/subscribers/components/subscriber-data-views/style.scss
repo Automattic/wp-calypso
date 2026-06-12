@@ -23,8 +23,7 @@ body.is-section-subscribers:not( .is-global ),
 	.has-no-masterbar {
 		.layout__content {
 			background: var( --studio-gray-0 );
-			padding: calc( var( --masterbar-height ) + #{$padding-standard} ) $padding-standard
-				$padding-standard calc( var( --sidebar-width-max ) + #{$padding-standard} );
+			padding: var( --masterbar-height ) 0 0 var( --sidebar-width-max );
 
 			// Full width rules when sidebar is collapsed
 			&:where( body.is-section-subscribers * ) {
@@ -58,8 +57,8 @@ body.is-section-subscribers:not( .is-global ),
 			flex-direction: row;
 			flex: 1 1 auto;
 			position: relative;
-			gap: 24px;
-			height: calc( 100vh - var( --masterbar-height ) - #{$padding-standard * 2} );
+			gap: $padding-standard;
+			height: calc( 100vh - var( --masterbar-height ) );
 
 			@media ( max-width: $break-small ) {
 				padding: 0;

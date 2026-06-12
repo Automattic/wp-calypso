@@ -5,7 +5,7 @@ type TranslateFn = (
 	text: string,
 	options?: {
 		args?: Record< string, unknown >;
-		components?: Record< string, JSX.Element >;
+		components?: Record< string, React.JSX.Element >;
 	}
 ) => TranslateResult;
 

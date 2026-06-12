@@ -41,11 +41,11 @@ export default function MeSidebar() {
 					</div>
 				</div>
 				<VStack spacing={ 0 } style={ { minWidth: 0 } }>
-					<Text weight={ 500 } size="13px" truncate>
+					<Text weight={ 500 } size="13px" truncate numberOfLines={ 1 }>
 						{ userSettings.display_name }
 					</Text>
-					<Text variant="muted" size="12px" truncate>
-						@{ userSettings.user_login }
+					<Text variant="muted" size="12px" truncate numberOfLines={ 1 }>
+						{ `@${ userSettings.user_login }` }
 					</Text>
 				</VStack>
 			</HStack>

@@ -1,5 +1,6 @@
 import {
 	availableTldsQuery,
+	bundleSuggestionQuery,
 	domainAvailabilityQuery,
 	domainSuggestionsQuery,
 	freeSuggestionQuery,
@@ -38,6 +39,8 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		onTrademarkClaimsNoticeAccepted: noop,
 		onTrademarkClaimsNoticeClosed: noop,
 		onPageView: noop,
+		onBundleShown: noop,
+		onBundleAddToCart: noop,
 	},
 	queries: {
 		availableTlds: ( search?: string, vendor?: string ) => availableTldsQuery( vendor, search ),
@@ -45,6 +48,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 			domainSuggestionsQuery( query, params ),
 		domainAvailability: ( domainName: string ) => domainAvailabilityQuery( domainName ),
 		freeSuggestion: ( query: string ) => freeSuggestionQuery( query ),
+		bundleSuggestion: ( query: string ) => bundleSuggestionQuery( query ),
 	},
 	cart: {
 		items: [],
@@ -67,6 +71,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		includeOwnedDomainInSuggestions: false,
 		allowedTlds: [],
 		numberOfDomainsResultsPerPage: 10,
+		showBundleSuggestions: false,
 		priceRules: {
 			hidePrice: false,
 			oneTimePrice: false,
@@ -159,6 +164,13 @@ export const useDomainSearchContextValue = ( {
 						include_dotblogsubdomain:
 							normalizedConfig.includeDotBlogSubdomain && isBlogSubdomainQuery( query ),
 					} ),
+					enabled: false,
+					staleTime: Infinity,
+					refetchOnMount: false,
+					refetchOnWindowFocus: false,
+				} ),
+				bundleSuggestion: ( query ) => ( {
+					...bundleSuggestionQuery( query ),
 					enabled: false,
 					staleTime: Infinity,
 					refetchOnMount: false,

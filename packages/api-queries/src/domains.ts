@@ -6,6 +6,7 @@ import {
 	DomainUpdateStatus,
 	fetchAvailableTlds,
 	fetchBulkDomainUpdateStatus,
+	fetchBundleSuggestion,
 	fetchDomains,
 	fetchDomainSuggestions,
 	fetchFreeDomainSuggestion,
@@ -39,6 +40,13 @@ export const freeSuggestionQuery = (
 	queryOptions( {
 		queryKey: [ 'free-suggestion', query, params ],
 		queryFn: () => fetchFreeDomainSuggestion( query, params ),
+		meta: { persist: false },
+	} );
+
+export const bundleSuggestionQuery = ( query: string ) =>
+	queryOptions( {
+		queryKey: [ 'bundle-suggestion', query ],
+		queryFn: () => fetchBundleSuggestion( query ),
 		meta: { persist: false },
 	} );
 

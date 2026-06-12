@@ -28,7 +28,11 @@ export default function useZoomAction( registerMessageActions: RegisterMessageAc
 					if ( ! isShowComponentTool( parsed.tool_id ) ) {
 						return [];
 					}
-					if ( parsed.data?.hideZoomAction ) {
+					if (
+						parsed.data?.hideZoomAction ||
+						parsed.data?.type === 'color-picker' ||
+						parsed.data?.type === 'font-picker'
+					) {
 						return [];
 					}
 				} catch {
