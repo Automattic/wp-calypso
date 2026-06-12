@@ -39,10 +39,10 @@ function usePlanDifferentiatorsExperiment( {
 
 	const hasGatingFlag = !! site?.options?.is_gating_business_q1;
 
-	const isEligibleSignupFlow = isInSignup;
-	const isEligibleAdminIntent = ! isInSignup && hasGatingFlag;
+	// New-site signups (no siteId yet) are always eligible.
+	// Flows operating on an existing site are eligible only when the gating flag is set.
 	const isEligible =
-		process.env.NODE_ENV !== 'test' && ( isEligibleSignupFlow || isEligibleAdminIntent );
+		process.env.NODE_ENV !== 'test' && ( ( isInSignup && ! siteId ) || hasGatingFlag );
 
 	return {
 		showDifferentiatorHeader: false,
