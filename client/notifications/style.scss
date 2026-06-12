@@ -166,6 +166,99 @@ html.touch #wpnc-panel {
 	-webkit-overflow-scrolling: touch;
 }
 
+// Redesign: on the dedicated /reader/notifications page the new app renders
+// inline (no popover host). Stack the cookie notice above the panel and let
+// the panel fill the remaining height.
+.reader-notifications__app-page {
+	display: flex;
+	flex-direction: column;
+	height: calc(
+		100vh - var( --masterbar-height ) - var( --content-padding-top ) - var(
+				--content-padding-bottom
+			)
+	);
+
+	// A normal-flow banner here, overriding the legacy flyout's absolutely
+	// positioned overlay. The compound class keeps this above the base
+	// `div.reader-notifications__panel .reader-notifications__3pc-notice` rule
+	// (0,2,1), which still wraps us on this route.
+	.reader-notifications__3pc-notice.reader-notifications__3pc-notice-page {
+		position: static;
+		flex: 0 0 auto;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		box-sizing: border-box;
+		padding: 12px 16px;
+		border-bottom: 1px solid var( --color-border-subtle );
+
+		p {
+			margin: 0;
+		}
+	}
+
+	.reader-notifications__app {
+		position: relative;
+		flex: 1 1 auto;
+		width: 100%;
+		min-height: 0;
+		// Clip the off-screen pane (the detail sits one column to the side until
+		// opened) so the single-column width doesn't reveal it.
+		overflow: hidden;
+
+		// The app's panes are fixed at 448px and pinned to the edges of their
+		// container, which only fits the MSD popover. On this full-width page,
+		// size them responsively instead. At xlarge keep a persistent 50/50
+		// two-pane regardless of selection — the detail pane just renders empty
+		// until a note is opened. (Below xlarge the app already uses a single
+		// full-width column with the detail sliding over the list.)
+		@media ( min-width: $break-xlarge ) {
+			.wpnc-app__list-pane,
+			.wpnc-app__detail-pane {
+				width: 50%;
+			}
+
+			// Hold both panes in place — no slide-in on large screens, so the
+			// empty detail pane stays visible beside the list. The compound
+			// `.wpnc-app` ancestor outranks the app's `.is-open` transform.
+			.wpnc-app .wpnc-app__detail-pane {
+				transform: none;
+			}
+		}
+
+		// The popover dresses the panes as a floating card (per-pane borders,
+		// radii and a shared shadow). On the page the panel is flush, so drop
+		// that chrome.
+		.wpnc-app__list-pane,
+		.wpnc-app__detail-pane {
+			border: 0;
+			border-radius: 0;
+			box-shadow: none;
+		}
+
+		// Keep a left edge on the list pane at all times: the panel's left
+		// border in single view, and the divider from the detail pane in
+		// side-by-side view.
+		.wpnc-app__list-pane {
+			border-inline-start: 1px solid var( --color-border-subtle );
+		}
+
+		.wpnc-app:has( .wpnc-app__detail-pane.is-open ) {
+			border-radius: 0;
+			box-shadow: none;
+		}
+	}
+}
+
+// Redesign: classic Calypso sets `body { font-size: 16px }`, which the app
+// inherits once its popover portals to `document.body`, inflating every
+// inheriting text node (and, in turn, row heights and avatar rings). The app
+// is designed against MSD's 13px base, so re-assert it here — scoped to the
+// classic host only (this stylesheet is loaded solely by classic Calypso).
+.wpnc-app {
+	font-size: 13px;
+}
+
 div.reader-notifications__panel {
 	position: relative;
 
