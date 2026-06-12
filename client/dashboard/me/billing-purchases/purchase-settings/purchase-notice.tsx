@@ -5,6 +5,7 @@ import {
 	siteBySlugQuery,
 	userPreferenceMutation,
 	userPreferenceQuery,
+	setDelayedDowngradeMutation,
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
@@ -48,8 +49,15 @@ import type { Purchase } from '@automattic/api-core';
 export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
-	const { refunded, upgraded, cancelled, downgraded, plan_changed, intent } =
-		purchaseSettingsRoute.useSearch();
+	const {
+		refunded,
+		upgraded,
+		cancelled,
+		downgraded,
+		plan_changed,
+		delayed_downgrade_scheduled,
+		intent,
+	} = purchaseSettingsRoute.useSearch();
 	const navigate = purchaseSettingsRoute.useNavigate();
 	// Show the transient cancelled success notice once after a cancel redirects
 	// here. The URL search param is cleared immediately so that a refresh / back
@@ -94,6 +102,24 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 			} );
 		}
 	}, [ plan_changed, navigate ] );
+	// Transient success notice shown after scheduling a delayed downgrade.
+	const [ showDelayedDowngradeScheduledNotice, setShowDelayedDowngradeScheduledNotice ] = useState(
+		Boolean( delayed_downgrade_scheduled )
+	);
+	useEffect( () => {
+		if ( delayed_downgrade_scheduled ) {
+			navigate( {
+				search: ( prev: Record< string, unknown > ) => {
+					const { delayed_downgrade_scheduled: _delayed_downgrade_scheduled, ...rest } = prev;
+					return rest;
+				},
+				replace: true,
+			} );
+		}
+	}, [ delayed_downgrade_scheduled, navigate ] );
+	const { mutate: cancelDelayedDowngrade, isPending: isCancellingDelayedDowngrade } = useMutation(
+		setDelayedDowngradeMutation()
+	);
 	const { data: purchaseAttachedTo } = useQuery( {
 		...purchaseQuery( purchase.attached_to_purchase_id ?? 0 ),
 		enabled: Boolean( purchase.attached_to_purchase_id ),
@@ -166,6 +192,55 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 					__( 'Your plan has been updated to %s.' ),
 					purchase.product_name
 				) }
+			</Notice>
+		);
+	}
+
+	// Transient success notice after scheduling a delayed downgrade.
+	if ( showDelayedDowngradeScheduledNotice ) {
+		const targetPlanName = purchase.delayed_downgrade_to_product_slug ?? null;
+		return (
+			<Notice variant="success" onClose={ () => setShowDelayedDowngradeScheduledNotice( false ) }>
+				{ targetPlanName
+					? sprintf(
+							// translators: %s is the name of the plan, e.g. "WordPress.com Personal"
+							__( 'Your plan is scheduled to downgrade to %s at your next renewal.' ),
+							String( targetPlanName )
+					  )
+					: __( 'Your plan downgrade has been scheduled for your next renewal.' ) }
+			</Notice>
+		);
+	}
+
+	// Persistent warning notice when a delayed downgrade is pending.
+	if ( purchase.is_delayed_downgrade_pending ) {
+		const targetPlanName = purchase.delayed_downgrade_to_product_slug ?? null;
+		return (
+			<Notice
+				variant="warning"
+				actions={
+					<Button
+						variant="tertiary"
+						onClick={ () =>
+							cancelDelayedDowngrade( {
+								purchaseId: purchase.ID,
+								enabled: false,
+							} )
+						}
+						disabled={ isCancellingDelayedDowngrade }
+						isBusy={ isCancellingDelayedDowngrade }
+					>
+						{ __( 'Cancel downgrade' ) }
+					</Button>
+				}
+			>
+				{ targetPlanName
+					? sprintf(
+							// translators: %s is the name of the plan, e.g. "WordPress.com Personal"
+							__( 'Your plan is scheduled to downgrade to %s at your next renewal.' ),
+							String( targetPlanName )
+					  )
+					: __( 'Your plan is scheduled to downgrade at your next renewal.' ) }
 			</Notice>
 		);
 	}
