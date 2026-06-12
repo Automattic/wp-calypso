@@ -11,9 +11,9 @@ const settings = {
 	max_refresh_ms: 180000,
 	refresh_ms: 30000,
 	initial_limit: 10,
-	// Matches NOTES_PER_PAGE in the DataViews note list: DataViews advances its
-	// infinite-scroll window by `perPage` rows per scroll, so each loadMore()
-	// must fetch at least that many or the window outruns the loaded notes.
+	// Network page size for load-more. May be smaller than the note list's render
+	// window (NOTES_PER_PAGE); the list fetches as many pages as needed to fill
+	// the window, so the window never outruns the loaded notes.
 	increment_limit: 10,
 	max_limit: 100,
 };
@@ -179,16 +179,21 @@ function getNotes( before ) {
 	}
 	this.gettingNotes = true;
 
+	const notes = getAllNotes( store.getState() );
+
 	const parameters = {
 		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash,variant',
-		number: before ? settings.increment_limit : this.noteRequestLimit,
+		// Older pages only request what's left under max_limit, so an additive
+		// page can't push the loaded count past the cap.
+		number: before
+			? Math.min( settings.increment_limit, settings.max_limit - notes.length )
+			: this.noteRequestLimit,
 		locale: this.locale,
 	};
 	if ( before ) {
 		parameters.before = before;
 	}
 
-	const notes = getAllNotes( store.getState() );
 	if ( ! notes.length || this.noteRequestLimit > notes.length ) {
 		store.dispatch( actions.ui.loadNotes() );
 	}
@@ -221,15 +226,24 @@ function getNotes( before ) {
 
 		store.dispatch( actions.ui.loadedNotes() );
 
-		// Short page means the server has nothing older — stop load-more paging.
+		// Short page (fewer than requested) means the server has nothing more.
 		if ( data.notes.length < parameters.number ) {
 			this.allNotesLoaded = true;
 		}
 
-		// Authoritative top window: prune notes the server dropped. A prune means
-		// newer notes pushed older ones below the window, so let load-more
-		// re-fetch them. The additive `before` path never prunes.
-		if ( ! before ) {
+		if ( before ) {
+			// Also stop when an older page adds no new ids — e.g. an inclusive
+			// `before` echoes back only the anchor note, or capping near max_limit
+			// left room for just that anchor. Such a page isn't "short", so without
+			// this the catch-up loop would refetch the same notes forever.
+			const knownIds = new Set( getAllNotes( store.getState() ).map( ( n ) => n.id ) );
+			if ( ! data.notes.some( ( n ) => ! knownIds.has( n.id ) ) ) {
+				this.allNotesLoaded = true;
+			}
+		} else {
+			// Authoritative top window: prune notes the server dropped. A prune
+			// means newer notes pushed older ones below the window, so let
+			// load-more re-fetch them. The additive `before` path never prunes.
 			const oldIds = getAllNotes( store.getState() ).map( ( { id } ) => id );
 			const newIds = data.notes.map( ( n ) => n.id );
 			const notesToRemove = oldIds.filter( ( id ) => ! newIds.includes( id ) );
