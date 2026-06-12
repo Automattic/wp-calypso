@@ -76,6 +76,7 @@ const {
 	parseSuggestionsResponse,
 	getSuggestionsFetchHeaders,
 	injectScopedReset,
+	watchFirstChatOpen,
 } = require( '../reader-chat' );
 
 // ---------------------------------------------------------------------------
@@ -484,5 +485,79 @@ describe( 'getFallbackSuggestions', () => {
 			expect( typeof s.prompt ).toBe( 'string' );
 			expect( s.label.length ).toBeLessThan( s.prompt.length );
 		}
+	} );
+} );
+
+// ---------------------------------------------------------------------------
+// watchFirstChatOpen
+// ---------------------------------------------------------------------------
+
+describe( 'watchFirstChatOpen', () => {
+	// Minimal fake of the @wordpress/data store accessors: tests control
+	// isOpen and trigger store-change notifications explicitly.
+	const makeStore = ( initialOpen = false ) => {
+		let isOpen = initialOpen;
+		const listeners = new Set();
+		return {
+			deps: {
+				select: () => ( {
+					getAgentsManagerState: () => ( { isOpen } ),
+				} ),
+				subscribe: ( fn ) => {
+					listeners.add( fn );
+					return () => listeners.delete( fn );
+				},
+			},
+			setOpen( value ) {
+				isOpen = value;
+				for ( const fn of [ ...listeners ] ) {
+					fn();
+				}
+			},
+			get listenerCount() {
+				return listeners.size;
+			},
+		};
+	};
+
+	it( 'fires immediately when the chat is already open', () => {
+		const store = makeStore( true );
+		const onFirstOpen = jest.fn();
+		watchFirstChatOpen( onFirstOpen, store.deps );
+		expect( onFirstOpen ).toHaveBeenCalledTimes( 1 );
+		expect( store.listenerCount ).toBe( 0 );
+	} );
+
+	it( 'does not fire while the chat stays closed', () => {
+		const store = makeStore( false );
+		const onFirstOpen = jest.fn();
+		watchFirstChatOpen( onFirstOpen, store.deps );
+		store.setOpen( false );
+		expect( onFirstOpen ).not.toHaveBeenCalled();
+	} );
+
+	it( 'fires once on the first open and unsubscribes', () => {
+		const store = makeStore( false );
+		const onFirstOpen = jest.fn();
+		watchFirstChatOpen( onFirstOpen, store.deps );
+
+		store.setOpen( true );
+		expect( onFirstOpen ).toHaveBeenCalledTimes( 1 );
+		expect( store.listenerCount ).toBe( 0 );
+
+		// Close + reopen must not re-fire.
+		store.setOpen( false );
+		store.setOpen( true );
+		expect( onFirstOpen ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'survives a store that is not registered yet', () => {
+		const onFirstOpen = jest.fn();
+		const deps = {
+			select: () => ( {} ), // no getAgentsManagerState selector
+			subscribe: () => () => {},
+		};
+		expect( () => watchFirstChatOpen( onFirstOpen, deps ) ).not.toThrow();
+		expect( onFirstOpen ).not.toHaveBeenCalled();
 	} );
 } );

@@ -859,6 +859,37 @@ function setupFollowupChips() {
 	tryObserve();
 }
 
+/**
+ * Invoke `onFirstOpen` the first time the chat panel opens.
+ *
+ * Checks current state first (covers a relaunch where the panel is
+ * already open), then watches the shared store for isOpen turning
+ * true. Fires at most once.
+ *
+ * @param {Function} onFirstOpen    Callback to run on the first open.
+ * @param {Object}   deps           Store accessors, injectable for tests.
+ * @param {Function} deps.select    @wordpress/data select.
+ * @param {Function} deps.subscribe @wordpress/data subscribe.
+ */
+function watchFirstChatOpen( onFirstOpen, deps = { select, subscribe } ) {
+	const isOpenNow = () => !! deps.select( AGENTS_MANAGER_STORE ).getAgentsManagerState?.()?.isOpen;
+
+	if ( isOpenNow() ) {
+		onFirstOpen();
+		return;
+	}
+
+	let fired = false;
+	const unsubscribe = deps.subscribe( () => {
+		if ( fired || ! isOpenNow() ) {
+			return;
+		}
+		fired = true;
+		unsubscribe();
+		onFirstOpen();
+	} );
+}
+
 function setupInitialSuggestions() {
 	const controller = createAbortController();
 	window.addEventListener(
@@ -960,15 +991,20 @@ function setupTracksEvents() {
 			trigger: 'enter',
 		} );
 	};
-	document.addEventListener( 'click', handleClick );
-	document.addEventListener( 'keydown', handleKeydown );
+	// Capture phase: agenttic-ui stops propagation on suggestion-chip
+	// clicks (Suggestions.tsx) and composer Enter keydowns (ChatInput.tsx),
+	// so bubble-phase listeners on document never see those events —
+	// suggestion_click recorded zero events in production. Capture runs
+	// top-down before any handler can stop propagation.
+	document.addEventListener( 'click', handleClick, true );
+	document.addEventListener( 'keydown', handleKeydown, true );
 
 	window.addEventListener(
 		'pagehide',
 		() => {
 			unsubscribe?.();
-			document.removeEventListener( 'click', handleClick );
-			document.removeEventListener( 'keydown', handleKeydown );
+			document.removeEventListener( 'click', handleClick, true );
+			document.removeEventListener( 'keydown', handleKeydown, true );
 		},
 		{ once: true }
 	);
@@ -1060,7 +1096,15 @@ if ( container ) {
 	const root = createRoot( container );
 	root.render( <ReaderChatApp /> );
 
-	setupInitialSuggestions();
+	// Defer the suggestions fetch until the reader actually opens the
+	// chat. The widget mounts on every public page view of an enabled
+	// site, and fetching at mount meant every page load hit the
+	// suggestions agent even though the vast majority of visitors never
+	// open the chat (production Tracks showed ~10 suggestion runs per
+	// open). On sites over their AI Search quota it also logged a failed
+	// run on every page view. First open → fetch once; the wpcom-side
+	// 24h cache keeps repeat opens fast.
+	watchFirstChatOpen( setupInitialSuggestions );
 }
 
 // Exported for unit tests only; injectScopedReset mutates document.head.
@@ -1077,4 +1121,5 @@ export {
 	parseSuggestionsResponse,
 	getSuggestionsFetchHeaders,
 	injectScopedReset,
+	watchFirstChatOpen,
 };
