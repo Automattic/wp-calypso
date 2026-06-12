@@ -25,7 +25,7 @@
 	color: var( --wpds-color-fg-interactive-neutral );
 }
 
-.indicator[data-indicator-variant='number']:not( .is-completed ):not( .is-error ) {
+.indicator[data-indicator-variant='number']:not( .is-completed, .is-error ) {
 	border-radius: 50%;
 	border: var( --wpds-border-width-xs ) solid var( --wpds-color-foreground-interactive-neutral );
 	font-size: var( --wpds-typography-font-size-sm );
@@ -104,16 +104,19 @@
 			color: var( --wpds-color-foreground-interactive-brand );
 		}
 
-		// Number-variant current step has a solid filled circle — skip border change
-		// to avoid an accent ring appearing against the dark background on hover.
-		.indicator:not( .is-current[data-indicator-variant='number'] ) {
+		// Only number-variant non-current steps still draw a CSS circle;
+		// the current step keeps its solid fill on hover.
+		.indicator[data-indicator-variant='number']:not( .is-current ) {
 			border-color: var( --wpds-color-foreground-interactive-brand );
 		}
 
-		// Pull icon color for completed and current steps (SVG/dome use currentColor).
-		// Number-variant current steps keep their original number color on hover.
+		// Pull icon color on hover. Icons use currentColor, so this covers every
+		// icon-rendered state (all bullet states, plus number-variant
+		// completed/error). Number-variant current steps keep their original
+		// number color on hover.
+		.indicator[data-indicator-variant='bullet'],
 		.indicator.is-completed,
-		.indicator.is-current:not( [data-indicator-variant='number'] ) {
+		.indicator.is-error {
 			color: var( --wpds-color-foreground-interactive-brand );
 		}
 	}
