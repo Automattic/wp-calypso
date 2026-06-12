@@ -53,28 +53,26 @@ const getIsVisible = () => {
 
 const isDesktop = config.isEnabled( 'desktop' );
 
-// When enabled, render the new `apps/notifications` app (NotificationApp)
-// in place of the legacy `NotificationsPanel`.
 const isRedesignEnabled = config.isEnabled( 'notifications/redesign' );
 
-// Both clients ship globally-scoped `.wpnc__*` styles, so they must never be
-// loaded at the same time or the inactive one's CSS leaks into the active UI.
-// Lazy-load each behind the flag so only the rendered path's chunk — and its
-// stylesheet — is ever fetched.
-const NotificationApp = lazy( () => import( '@automattic/notifications/src/app' ) );
-const NotificationsPanel = lazy( () =>
-	import( '@automattic/notifications/src/panel/Notifications' )
-);
+let notificationAppModule;
 
-// `refreshNotes` is invoked imperatively (force-refresh, service worker), so
-// reach into whichever module is active. The import is deduped by webpack —
-// it resolves the already-loaded chunk rather than fetching the other client.
-const refreshNotes = () => {
-	const load = isRedesignEnabled
-		? import( '@automattic/notifications/src/app' )
-		: import( '@automattic/notifications/src/panel/Notifications' );
-	load.then( ( module ) => module.refreshNotes() );
+const loadNotificationApp = () => {
+	if ( ! notificationAppModule ) {
+		notificationAppModule = isRedesignEnabled
+			? import( '@automattic/notifications/src/app' )
+			: import( '@automattic/notifications/src/panel/Notifications' );
+	}
+
+	return notificationAppModule;
 };
+
+const NotificationApp = lazy( loadNotificationApp );
+
+// Read the memoized module rather than calling the loader, so this stays a
+// no-op until the panel has actually mounted instead of fetching the chunk
+// just to refresh a client that isn't there yet.
+const refreshNotes = () => notificationAppModule?.then( ( module ) => module.refreshNotes() );
 
 const debug = debugFactory( 'notifications:panel' );
 
@@ -499,7 +497,7 @@ export class Notifications extends Component {
 						<Notifications3PCNotice className="reader-notifications__3pc-notice-internal" />
 					) }
 					<Suspense fallback={ null }>
-						<NotificationsPanel
+						<NotificationApp
 							actionHandlers={ this.actionHandlers }
 							isShowing={ this.props.isShowing }
 							isVisible={ this.state.isVisible }
