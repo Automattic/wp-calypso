@@ -7,7 +7,11 @@ import {
 	mergeContextProviders,
 	mergeUseSuggestionsHooks,
 } from '../load-external-providers';
-import type { ProviderCapabilities, UseSuggestionsHook } from '../load-external-providers';
+import type {
+	ProviderCapabilities,
+	UseCheckpointReturn,
+	UseSuggestionsHook,
+} from '../load-external-providers';
 
 const jetpackCompositionManifest = {
 	providerId: 'jetpack-ai-sidebar',
@@ -47,6 +51,19 @@ const jetpackProviderWithAbilities = (
 	compositionManifest: jetpackCompositionManifest,
 	toolProvider: createToolProvider( abilities, executeAbility ),
 	...extra,
+} );
+
+const createCheckpointApi = ( checkpointIds: string[] = [] ): UseCheckpointReturn => ( {
+	getLastEditorState: jest.fn(),
+	setCheckpoint: jest.fn(),
+	addCheckpointKeys: jest.fn(),
+	restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
+	addNewPageToCheckpoint: jest.fn(),
+	addPageRenameToCheckpoint: jest.fn(),
+	addPageRemovalToCheckpoint: jest.fn(),
+	getLatestUserMessageId: jest.fn(),
+	clearCheckpoint: jest.fn(),
+	hasCheckpoint: jest.fn( ( checkpointId: string ) => checkpointIds.includes( checkpointId ) ),
 } );
 
 const setAgentsManagerData = (
@@ -599,9 +616,9 @@ describe( 'loadExternalProviders', () => {
 		}
 	);
 
-	it( 'runs every provider checkpoint hook and returns the host checkpoint API', async () => {
-		const hostCheckpointApi = { setCheckpoint: jest.fn() };
-		const guestCheckpointApi = { setCheckpoint: jest.fn() };
+	it( 'runs every provider checkpoint hook and routes checkpoint restores by id', async () => {
+		const hostCheckpointApi = createCheckpointApi( [ 'host-checkpoint' ] );
+		const guestCheckpointApi = createCheckpointApi( [ 'guest-checkpoint' ] );
 		const hostUseCheckpoint = jest.fn().mockReturnValue( hostCheckpointApi );
 		const guestUseCheckpoint = jest.fn().mockReturnValue( guestCheckpointApi );
 		setAgentsManagerData( [
@@ -610,8 +627,14 @@ describe( 'loadExternalProviders', () => {
 		] );
 
 		const providers = await loadExternalProviders();
+		const checkpoint = providers.useCheckpoint?.();
 
-		expect( providers.useCheckpoint?.() ).toBe( hostCheckpointApi );
+		expect( checkpoint?.hasCheckpoint( 'host-checkpoint' ) ).toBe( true );
+		expect( checkpoint?.hasCheckpoint( 'guest-checkpoint' ) ).toBe( true );
+		expect( checkpoint?.hasCheckpoint( 'missing-checkpoint' ) ).toBe( false );
+		await checkpoint?.restoreCheckpoint( 'guest-checkpoint' );
+		expect( guestCheckpointApi.restoreCheckpoint ).toHaveBeenCalledWith( 'guest-checkpoint' );
+		expect( hostCheckpointApi.restoreCheckpoint ).not.toHaveBeenCalledWith( 'guest-checkpoint' );
 		expect( hostUseCheckpoint ).toHaveBeenCalledTimes( 1 );
 		expect( guestUseCheckpoint ).toHaveBeenCalledTimes( 1 );
 	} );

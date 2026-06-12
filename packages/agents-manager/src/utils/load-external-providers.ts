@@ -138,6 +138,32 @@ export type UseCheckpointHook = () => UseCheckpointReturn;
 
 export type { ImageUploadHook };
 
+function findCheckpointOwner(
+	checkpoints: UseCheckpointReturn[],
+	checkpointId: string
+): UseCheckpointReturn | undefined {
+	return checkpoints.find( ( checkpoint ) => checkpoint.hasCheckpoint( checkpointId ) );
+}
+
+function mergeCheckpointApis(
+	primary: UseCheckpointReturn,
+	checkpoints: UseCheckpointReturn[]
+): UseCheckpointReturn {
+	return {
+		...primary,
+		hasCheckpoint: ( checkpointId ) => !! findCheckpointOwner( checkpoints, checkpointId ),
+		restoreCheckpoint: async ( checkpointId ) => {
+			const owner = findCheckpointOwner( checkpoints, checkpointId );
+			await ( owner ?? primary ).restoreCheckpoint( checkpointId );
+		},
+		clearCheckpoint: ( checkpointId ) => {
+			for ( const checkpoint of checkpoints ) {
+				checkpoint.clearCheckpoint( checkpointId );
+			}
+		},
+	};
+}
+
 /** Optional flags providers can declare to opt into AM chat-dock features. */
 export interface ProviderCapabilities {
 	/** Adds the "Split screen sidebar" chat-header menu item when true. */
@@ -574,7 +600,8 @@ export async function loadExternalProviders(
 		mergedImageUpload ??= module.useImageUpload;
 	}
 
-	// Run all checkpoint hooks, but expose the host's API to Agents Manager.
+	// Run all checkpoint hooks so providers can register module-level snapshot
+	// APIs, then route Undo actions to whichever provider owns the checkpoint id.
 	if ( allUseCheckpoints.length === 1 ) {
 		mergedUseCheckpoint = allUseCheckpoints[ 0 ].hook;
 	} else if ( allUseCheckpoints.length > 1 ) {
@@ -583,13 +610,15 @@ export async function loadExternalProviders(
 			allUseCheckpoints[ 0 ];
 		mergedUseCheckpoint = () => {
 			let primaryReturn: UseCheckpointReturn | undefined;
+			const checkpointReturns: UseCheckpointReturn[] = [];
 			for ( const entry of allUseCheckpoints ) {
 				const hookReturn = entry.hook();
+				checkpointReturns.push( hookReturn );
 				if ( entry === primary ) {
 					primaryReturn = hookReturn;
 				}
 			}
-			return primaryReturn as UseCheckpointReturn;
+			return mergeCheckpointApis( primaryReturn as UseCheckpointReturn, checkpointReturns );
 		};
 	}
 
