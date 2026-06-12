@@ -124,6 +124,38 @@ describe( 'BundleCard', () => {
 		expect( onAddToCart ).toHaveBeenCalledWith( suggestion );
 	} );
 
+	it( 'renders a Continue CTA instead of Get bundle when the bundle is already in the cart', async () => {
+		const user = userEvent.setup();
+		const onContinue = jest.fn();
+		const onAddToCart = jest.fn();
+
+		render(
+			<BundleCard
+				suggestion={ buildSuggestion( twoDomains ) }
+				onAddToCart={ onAddToCart }
+				isAddedToCart
+				onContinue={ onContinue }
+			/>
+		);
+
+		expect( screen.queryByRole( 'button', { name: 'Get bundle' } ) ).not.toBeInTheDocument();
+
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+		expect( onContinue ).toHaveBeenCalledTimes( 1 );
+		expect( onAddToCart ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not throw when Continue is clicked without an onContinue callback', async () => {
+		const user = userEvent.setup();
+
+		render( <BundleCard suggestion={ buildSuggestion( twoDomains ) } isAddedToCart /> );
+
+		await expect(
+			user.click( screen.getByRole( 'button', { name: 'Continue' } ) )
+		).resolves.not.toThrow();
+	} );
+
 	it( 'does not throw when the CTA is clicked without an onAddToCart callback', async () => {
 		const user = userEvent.setup();
 
