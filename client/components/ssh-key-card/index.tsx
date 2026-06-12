@@ -40,9 +40,8 @@ const StyledButton = styled( CoreButton )( {
 	flexShrink: 0,
 } );
 
-// `scary` defaults to true; callers can still override it via props. This used to rely on
-// `defaultProps`, which React 19 ignores on function components (styled components included).
-// Wrapped in forwardRef so a ref passed to SSHKeyCard.Button still reaches CoreButton.
+// `scary` defaults to true while staying overridable; wrapped in forwardRef so a ref
+// passed to SSHKeyCard.Button still reaches CoreButton.
 export const Button = forwardRef<
 	ComponentRef< typeof StyledButton >,
 	ComponentProps< typeof StyledButton >
