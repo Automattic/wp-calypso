@@ -53,8 +53,6 @@ const entrepreneurFlow: Flow = {
 			return stepsWithRequiredLogin( [
 				STEPS.SITE_CREATION_STEP,
 				STEPS.PROCESSING,
-				STEPS.WAIT_FOR_ATOMIC,
-				STEPS.WAIT_FOR_PLUGIN_INSTALL,
 				STEPS.IMPORTER_PLAYGROUND,
 				STEPS.ERROR,
 			] );
@@ -166,19 +164,6 @@ const entrepreneurFlow: Flow = {
 					}
 
 					if ( providedDependencies?.pluginsInstalled ) {
-						const storedPlaygroundId = sessionStorage.getItem( SESSION_KEY_PLAYGROUND_ID );
-						if (
-							sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1' &&
-							storedPlaygroundId
-						) {
-							return navigateWithSiteId(
-								addQueryArgs( STEPS.IMPORTER_PLAYGROUND.slug, {
-									siteSlug: siteSlug || siteSlugDependency,
-									playground: storedPlaygroundId,
-								} )
-							);
-						}
-
 						if ( isMigrationFlow ) {
 							// If the user is migrating a site, send them to the DIFM credentials step in the site migration flow.
 							const migrationFlowUrl = addQueryArgs(
@@ -203,6 +188,19 @@ const entrepreneurFlow: Flow = {
 						// Default to /home if we don't have the site admin URL.
 						// We shouldn't get here, but better safe than sorry.
 						return window.location.assign( `/home/${ siteId }` );
+					}
+
+					const storedPlaygroundId = sessionStorage.getItem( SESSION_KEY_PLAYGROUND_ID );
+					if (
+						sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1' &&
+						storedPlaygroundId
+					) {
+						return navigateWithSiteId(
+							addQueryArgs( STEPS.IMPORTER_PLAYGROUND.slug, {
+								siteSlug: siteSlug || siteSlugDependency,
+								playground: storedPlaygroundId,
+							} )
+						);
 					}
 
 					return navigateWithSiteId( STEPS.WAIT_FOR_ATOMIC.slug, {
