@@ -89,7 +89,7 @@ import {
 	SelectItemsComponent,
 } from '@automattic/calypso-e2e';
 import { test as base, expect } from '@playwright/test';
-import { apiCloseAccount } from '../specs/shared';
+import { apiCloseAccount, apiWaitForBearerTokenAcceptance } from '../specs/shared';
 import { useBlackboxTestKeyForCollect } from './blackbox-test-key';
 import { getAccount } from './get-account';
 
@@ -640,26 +640,7 @@ export const test = base.extend<
 		// the site, once created). The try/finally guarantees cleanup either way.
 		let site: NewSiteResponse | undefined;
 		try {
-			// The bearer token minted by the signup flow is not always accepted by the API
-			// immediately (observed as `invalid_token` on the first authenticated call in CI).
-			// Poll a read-only endpoint until the token is honoured so the mutating
-			// `createSite` call below stays single-shot and cannot leak a site.
-			await expect
-				.poll(
-					async () => {
-						try {
-							await restAPIClient.getMyAccountInformation();
-							return true;
-						} catch {
-							return false;
-						}
-					},
-					{
-						message: `Bearer token for ${ testUser.email } was not accepted by the API after signup.`,
-						timeout: 30 * 1000,
-					}
-				)
-				.toBe( true );
+			await apiWaitForBearerTokenAcceptance( restAPIClient, testUser.email );
 			site = await restAPIClient.createSite( {
 				name: siteName,
 				title: siteName,
