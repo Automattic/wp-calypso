@@ -55,20 +55,23 @@ const PluginsSearchResultPage = ( {
 
 	const showCompassBanner = isLoggedIn && isEnabled( 'plugins/plugin-compass' );
 
+	const showSeoHint =
+		isEnabled( 'plugins/jetpack-seo-hint' ) && !! siteSlug && isSeoSearch( searchTerm );
+
+	// Only read Jetpack module / plan / admin-url state when the SEO hint is
+	// actually in play. Otherwise these selectors would run on every plugin
+	// search and touch state slices a plain plugins-browser render need not have.
 	const isSeoModuleActive = useSelector( ( state ) =>
-		siteId ? isJetpackModuleActive( state, siteId, 'seo-tools' ) : false
+		showSeoHint && siteId ? isJetpackModuleActive( state, siteId, 'seo-tools' ) : false
 	);
 
 	const hasAdvancedSeo = useSelector( ( state ) =>
-		siteId ? siteHasFeature( state, siteId, FEATURE_ADVANCED_SEO ) : false
+		showSeoHint && siteId ? siteHasFeature( state, siteId, FEATURE_ADVANCED_SEO ) : false
 	);
 
 	const seoAdminUrl = useSelector( ( state ) =>
-		getSiteAdminUrl( state, siteId, 'admin.php?page=jetpack-seo' )
+		showSeoHint ? getSiteAdminUrl( state, siteId, 'admin.php?page=jetpack-seo' ) : null
 	);
-
-	const showSeoHint =
-		isEnabled( 'plugins/jetpack-seo-hint' ) && !! siteSlug && isSeoSearch( searchTerm );
 
 	/*
 	 * Syncs the internal value of is fetching to share it with the search header
