@@ -115,7 +115,7 @@ const FreePlanModal = ( { closeDialog, siteId }: FreePlanModalProps ) => {
 			] }
 		>
 			<FormSectionHeading>{ translate( 'Edit Free plan options' ) }</FormSectionHeading>
-			<div className="memberships__dialog-sections">
+			<div className="free-plan-modal__sections">
 				<FormFieldset>
 					<FormLabel htmlFor="free-plan-title">{ translate( 'Plan name' ) }</FormLabel>
 					<FormTextInput id="free-plan-title" value={ translate( 'Free' ) } disabled />
