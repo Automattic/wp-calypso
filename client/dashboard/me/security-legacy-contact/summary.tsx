@@ -9,7 +9,7 @@ export default function SecurityLegacyContactSummary( { density }: { density?: D
 		<RouterLinkSummaryButton
 			density={ density }
 			to="/me/security/legacy-contact"
-			title={ __( 'Legacy Contact' ) }
+			title={ __( 'Legacy contact' ) }
 			description={ __( 'Choose someone you trust to manage your account after your death.' ) }
 			decoration={ <Icon icon={ people } /> }
 		/>

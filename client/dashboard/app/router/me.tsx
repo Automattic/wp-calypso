@@ -848,7 +848,7 @@ export const securityLegacyContactRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Legacy Contact' ),
+				title: __( 'Legacy contact' ),
 			},
 		],
 	} ),

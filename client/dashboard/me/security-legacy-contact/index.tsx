@@ -8,7 +8,7 @@ export default function SecurityLegacyContact() {
 			size="small"
 			header={
 				<PageHeader
-					title={ __( 'Legacy Contact' ) }
+					title={ __( 'Legacy contact' ) }
 					description={ __(
 						'A legacy contact is someone you trust to have access to your account after your death.'
 					) }
