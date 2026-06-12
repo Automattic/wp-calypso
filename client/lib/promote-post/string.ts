@@ -18,7 +18,9 @@ const BlazePressStrings = () => {
 		'Learn more about the {{linkAdvertisingPolicy}}Advertising Policy{{/linkAdvertisingPolicy}}.'
 	);
 	translate( 'Creating campaign…' );
-	translate( 'Make the most of your Blaze campaign' );
+	translate( 'Make the most of your %(productName)s campaign', {
+		args: { productName: 'Blaze Ads' },
+	} );
 	translate( 'Choose an eye-catching image for your ad' );
 	translate( 'Adjust your title to make it more engaging' );
 	translate( 'Pick the right audience, budget and duration' );
@@ -38,7 +40,8 @@ const BlazePressStrings = () => {
 	translate( 'No posts found.' );
 	translate( 'Select post to promote' );
 	translate(
-		'Blaze Ads is syncing your content as part of first-time setup. This may take anywhere from 15 minutes to a few hours'
+		'%(productName)s is syncing your content as part of first-time setup. This may take anywhere from 15 minutes to a few hours',
+		{ args: { productName: 'Blaze Ads' } }
 	);
 	translate( 'Post' );
 	translate( 'Type' );
