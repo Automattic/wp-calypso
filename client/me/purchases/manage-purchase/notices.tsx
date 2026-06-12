@@ -1,3 +1,4 @@
+import { setDelayedDowngradeMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import {
 	getPlan,
@@ -15,6 +16,7 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { minBy } from '@automattic/js-utils';
+import { useMutation } from '@tanstack/react-query';
 import { localize } from 'i18n-calypso';
 import { isEmpty, merge } from 'lodash';
 import moment from 'moment';
@@ -83,6 +85,10 @@ export interface PurchaseNoticeProps {
 	renewableSitePurchases: Purchase[];
 	selectedSite: SiteDetails | null | undefined;
 	willAtomicSiteRevert?: boolean;
+	/** Called when the user clicks the cancel button on the pending delayed-downgrade notice. */
+	onCancelDelayedDowngrade?: () => void;
+	/** True while the cancel-delayed-downgrade API call is in flight. */
+	isCancellingDelayedDowngrade?: boolean;
 }
 
 export interface PurchaseNoticeConnectedProps {
@@ -119,6 +125,11 @@ class PurchaseNotice extends Component<
 		showPlanChangedRedirectNotice:
 			typeof window !== 'undefined' &&
 			new URLSearchParams( window.location.search ).get( 'plan_changed' ) === 'true',
+		// Seeded from `?delayed_downgrade_scheduled=true` on first render.
+		// The URL param is cleared in componentDidMount.
+		showDelayedDowngradeScheduledNotice:
+			typeof window !== 'undefined' &&
+			new URLSearchParams( window.location.search ).get( 'delayed_downgrade_scheduled' ) === 'true',
 	};
 
 	componentDidMount() {
@@ -140,6 +151,10 @@ class PurchaseNotice extends Component<
 			params.delete( 'plan_changed' );
 			changed = true;
 		}
+		if ( params.get( 'delayed_downgrade_scheduled' ) === 'true' ) {
+			params.delete( 'delayed_downgrade_scheduled' );
+			changed = true;
+		}
 		if ( changed ) {
 			const newSearch = params.toString();
 			const newUrl =
@@ -159,6 +174,56 @@ class PurchaseNotice extends Component<
 	dismissPlanChangedRedirectNotice = () => {
 		this.setState( { showPlanChangedRedirectNotice: false } );
 	};
+
+	dismissDelayedDowngradeScheduledNotice = () => {
+		this.setState( { showDelayedDowngradeScheduledNotice: false } );
+	};
+
+	/**
+	 * Persistent notice shown when a delayed downgrade is pending on this
+	 * purchase. Includes a cancel button. Suppressed by transient notices.
+	 */
+	renderDelayedDowngradePendingNotice() {
+		const { purchase, translate, onCancelDelayedDowngrade, isCancellingDelayedDowngrade } =
+			this.props;
+
+		if ( ! purchase.isDelayedDowngradePending ) {
+			return null;
+		}
+
+		const targetPlanName = purchase.delayedDowngradeToProductSlug
+			? getPlan( purchase.delayedDowngradeToProductSlug )?.getTitle() ??
+			  purchase.delayedDowngradeToProductSlug
+			: null;
+
+		const noticeText = targetPlanName
+			? translate(
+					'Your plan is scheduled to downgrade to %(targetPlanName)s at your next renewal.',
+					{
+						args: { targetPlanName: String( targetPlanName ) },
+						comment:
+							'Warning notice shown when a plan downgrade is scheduled for the end of the billing term',
+					}
+			  )
+			: translate( 'Your plan is scheduled to downgrade at your next renewal.' );
+
+		return (
+			<Notice
+				className="manage-purchase__delayed-downgrade-pending-notice"
+				showDismiss={ false }
+				status="is-warning"
+				text={ noticeText }
+			>
+				{ onCancelDelayedDowngrade && (
+					<NoticeAction onClick={ onCancelDelayedDowngrade }>
+						{ isCancellingDelayedDowngrade
+							? translate( 'Cancelling…' )
+							: translate( 'Cancel downgrade' ) }
+					</NoticeAction>
+				) }
+			</Notice>
+		);
+	}
 
 	/**
 	 * Transient success notice shown after a cancel-flow redirect. Suppresses
@@ -271,6 +336,36 @@ class PurchaseNotice extends Component<
 				text={ translate( 'Your plan has been updated to %(planName)s.', {
 					args: { planName: getName( purchase ) },
 				} ) }
+			/>
+		);
+	}
+
+	renderDelayedDowngradeScheduledNotice() {
+		const { purchase, translate } = this.props;
+		if ( ! this.state.showDelayedDowngradeScheduledNotice || ! purchase ) {
+			return null;
+		}
+		const targetPlanName = purchase.delayedDowngradeToProductSlug
+			? getPlan( purchase.delayedDowngradeToProductSlug )?.getTitle() ??
+			  purchase.delayedDowngradeToProductSlug
+			: null;
+		const text = targetPlanName
+			? translate(
+					'Your plan is scheduled to downgrade to %(targetPlanName)s at your next renewal.',
+					{
+						args: { targetPlanName: String( targetPlanName ) },
+						comment:
+							'Success notice shown after scheduling a plan downgrade for end of billing term',
+					}
+			  )
+			: translate( 'Your plan downgrade has been scheduled for your next renewal.' );
+		return (
+			<Notice
+				className="manage-purchase__purchase-expiring-notice"
+				showDismiss
+				onDismissClick={ this.dismissDelayedDowngradeScheduledNotice }
+				status="is-success"
+				text={ text }
 			/>
 		);
 	}
@@ -1460,6 +1555,18 @@ class PurchaseNotice extends Component<
 			return planChangedRedirectNotice;
 		}
 
+		// Transient success notice after scheduling a delayed downgrade.
+		const delayedDowngradeScheduledNotice = this.renderDelayedDowngradeScheduledNotice();
+		if ( delayedDowngradeScheduledNotice ) {
+			return delayedDowngradeScheduledNotice;
+		}
+
+		// Persistent warning notice when a delayed downgrade is pending.
+		const delayedDowngradePendingNotice = this.renderDelayedDowngradePendingNotice();
+		if ( delayedDowngradePendingNotice ) {
+			return delayedDowngradePendingNotice;
+		}
+
 		if ( purchase.asyncPendingPaymentBlockIsSet ) {
 			return this.renderAsyncPendingPaymentNotice();
 		}
@@ -1523,10 +1630,18 @@ const ConnectedPurchaseNotice = connect( null, { recordTracksEvent } )(
 
 function PurchaseNoticeWithExperiment( props: PurchaseNoticeProps ) {
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
+	const { mutate: cancelDelayedDowngrade, isPending: isCancellingDelayedDowngrade } = useMutation(
+		setDelayedDowngradeMutation()
+	);
+	const onCancelDelayedDowngrade = () => {
+		cancelDelayedDowngrade( { purchaseId: props.purchase.id, enabled: false } );
+	};
 	return (
 		<ConnectedPurchaseNotice
 			{ ...props }
 			isSplitCancelRemoveEnabled={ isSplitCancelRemoveEnabled }
+			onCancelDelayedDowngrade={ onCancelDelayedDowngrade }
+			isCancellingDelayedDowngrade={ isCancellingDelayedDowngrade }
 		/>
 	);
 }
