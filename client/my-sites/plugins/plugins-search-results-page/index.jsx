@@ -19,6 +19,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import { UNLISTED_PLUGINS } from '../constants';
 import { useIsMarketplaceRedesignEnabled } from '../hooks/use-is-marketplace-redesign-enabled';
 import ClearSearchButton from '../plugins-browser/clear-search-button';
@@ -60,6 +61,10 @@ const PluginsSearchResultPage = ( {
 
 	const hasAdvancedSeo = useSelector( ( state ) =>
 		siteId ? siteHasFeature( state, siteId, FEATURE_ADVANCED_SEO ) : false
+	);
+
+	const seoAdminUrl = useSelector( ( state ) =>
+		getSiteAdminUrl( state, siteId, 'admin.php?page=jetpack-seo' )
 	);
 
 	const showSeoHint =
@@ -162,6 +167,7 @@ const PluginsSearchResultPage = ( {
 										searchTerm={ searchTerm }
 										isSeoModuleActive={ isSeoModuleActive }
 										hasAdvancedSeo={ hasAdvancedSeo }
+										seoAdminUrl={ seoAdminUrl }
 										onEnableSeo={ () => dispatch( activateModule( siteId, 'seo-tools' ) ) }
 									/>
 								) }

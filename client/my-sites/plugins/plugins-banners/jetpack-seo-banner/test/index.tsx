@@ -16,6 +16,7 @@ const baseProps = {
 	searchTerm: 'seo',
 	isSeoModuleActive: false,
 	hasAdvancedSeo: true,
+	seoAdminUrl: 'https://example.wordpress.com/wp-admin/admin.php?page=jetpack-seo',
 };
 
 describe( 'isSeoSearch', () => {
@@ -55,11 +56,11 @@ describe( 'JetpackSeoBanner', () => {
 		expect( screen.getByText( /Optimize titles, meta descriptions, sitemaps/ ) ).toBeVisible();
 	} );
 
-	it( 'links the CTA to the native Calypso SEO settings route', () => {
+	it( 'links the CTA to the Jetpack SEO admin page', () => {
 		render( <JetpackSeoBanner { ...baseProps } /> );
 		expect( screen.getByRole( 'link' ) ).toHaveAttribute(
 			'href',
-			'/marketing/traffic/example.wordpress.com'
+			'https://example.wordpress.com/wp-admin/admin.php?page=jetpack-seo'
 		);
 	} );
 

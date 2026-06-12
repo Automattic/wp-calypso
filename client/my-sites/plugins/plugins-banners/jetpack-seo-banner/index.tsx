@@ -2,7 +2,6 @@ import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { marketingTraffic } from 'calypso/my-sites/marketing/paths';
 
 import './style.scss';
 
@@ -53,6 +52,8 @@ interface JetpackSeoBannerProps {
 	isSeoModuleActive: boolean;
 	/** Whether the site's plan includes advanced SEO ( so the module can be enabled ). */
 	hasAdvancedSeo: boolean;
+	/** wp-admin URL of the Jetpack SEO page ( admin.php?page=jetpack-seo ), or null if unavailable. */
+	seoAdminUrl: string | null;
 	/** Activates the SEO Tools module. Owned by the parent so this component stays presentational. */
 	onEnableSeo?: () => void;
 }
@@ -60,7 +61,7 @@ interface JetpackSeoBannerProps {
 /**
  * A hint shown above SEO-related plugin search results, letting Dotcom users
  * know Jetpack already provides SEO tools. Depending on state it manages,
- * enables, or routes to the native Calypso SEO settings ( /marketing/traffic )
+ * enables, or routes to the Jetpack SEO admin page ( admin.php?page=jetpack-seo )
  * rather than sending them to install a third-party plugin.
  */
 const JetpackSeoBanner = ( {
@@ -69,6 +70,7 @@ const JetpackSeoBanner = ( {
 	searchTerm,
 	isSeoModuleActive,
 	hasAdvancedSeo,
+	seoAdminUrl,
 	onEnableSeo,
 }: JetpackSeoBannerProps ) => {
 	const { __ } = useI18n();
@@ -135,7 +137,7 @@ const JetpackSeoBanner = ( {
 			<Button
 				className="jetpack-seo-banner__cta"
 				variant="secondary"
-				href={ marketingTraffic( siteSlug ) }
+				href={ seoAdminUrl ?? undefined }
 				onClick={ handleClick }
 			>
 				{ ctaLabel }
