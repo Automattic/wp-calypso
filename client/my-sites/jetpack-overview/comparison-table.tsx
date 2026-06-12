@@ -1,4 +1,5 @@
-import { Button, Gridicon, Tooltip } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
+import { Tooltip } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';

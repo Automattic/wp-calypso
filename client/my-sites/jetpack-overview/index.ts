@@ -1,4 +1,4 @@
-import page from '@automattic/calypso-router';
+import page, { type Callback } from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection } from 'calypso/my-sites/controller';
 import renderJetpackOverview, {
@@ -32,7 +32,7 @@ import renderJetpackOverview, {
 const mw = [ siteSelection, navigation ] as const;
 const layout = [ makeLayout, clientRender ] as const;
 
-function feature( path: string, handler: PageJS.Callback ) {
+function feature( path: string, handler: Callback ) {
 	page( path, ...mw, handler, ...layout );
 }
 

@@ -1,7 +1,8 @@
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import UpgradeJetpack from './main';
+import type { Context } from '@automattic/calypso-router';
 
-export default async function renderUpgradeJetpack( context: PageJS.Context, next: () => void ) {
+export default async function renderUpgradeJetpack( context: Context, next: () => void ) {
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 

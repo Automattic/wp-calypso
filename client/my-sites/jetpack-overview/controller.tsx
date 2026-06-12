@@ -25,6 +25,7 @@ import VideoPressFeaturePage from './feature-page-videopress';
 import WafFeaturePage from './feature-page-waf';
 import WooAnalyticsFeaturePage from './feature-page-woo-analytics';
 import JetpackOverview from './main';
+import type { Context } from '@automattic/calypso-router';
 
 function scrollTop() {
 	if ( typeof window !== 'undefined' ) {
@@ -33,7 +34,7 @@ function scrollTop() {
 }
 
 function makeRenderer( Component: React.ComponentType< { key?: React.Key } > ) {
-	return async function ( context: PageJS.Context, next: () => void ) {
+	return async function ( context: Context, next: () => void ) {
 		const site = getSelectedSite( context.store.getState() );
 		scrollTop();
 		context.primary = <Component key={ site?.ID } />;
