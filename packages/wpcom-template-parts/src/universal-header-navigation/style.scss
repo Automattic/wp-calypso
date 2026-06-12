@@ -116,12 +116,8 @@ $studio-blue-15: #e5f4ff;
 }
 
 .x-icon__menu {
-	width: 26px;
-	padding-top: 10px;
-}
-
-.x-icon__menu span + span {
-	margin-top: 4px;
+	width: 18px;
+	padding: 11px 0;
 }
 
 .x-icon,
@@ -1790,6 +1786,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 
 	/* Footer overlays the scroller's bottom (translucent + blurred, like the header) so the nav list scrolls beneath; the scroller pads its bottom by the footer's measured height. */
 	.x-menu-mobile-footer {
+		--x-menu-2026-footer-gap: 16px;
 		position: absolute;
 		bottom: 0;
 		inset-inline: 0;
@@ -1806,7 +1803,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		&:has( .x-menu-mobile-app-banner ) {
 			flex-direction: column;
 			align-items: stretch;
-			gap: 16px;
+			gap: var( --x-menu-2026-footer-gap );
 		}
 
 		// Only the footer's CONTENTS fade in on open; the blurred bar stays put so nav items slide behind it. Base snaps out with the panel (0s / panel-delay).
@@ -1835,17 +1832,31 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		}
 	}
 
-	// Top-level screen only; fades in, snaps out on drill (is-hidden).
+	// Top-level screen only; collapses away on drill (is-hidden).
 	.x-menu-mobile-footer > .x-menu-mobile-app-banner {
 		opacity: 0;
 		pointer-events: none;
-		transition: opacity 0.27s var( --x-menu-2026-easing );
+		max-height: 120px;
+		overflow: hidden;
+		transition:
+			opacity 0.25s cubic-bezier( 0.16, 1, 0.3, 1 ),
+			max-height 0.25s cubic-bezier( 0.16, 1, 0.3, 1 ),
+			padding 0.25s cubic-bezier( 0.16, 1, 0.3, 1 ),
+			margin 0.25s cubic-bezier( 0.16, 1, 0.3, 1 );
 	}
 
+	// Hide direction only: fade first, then collapse the height after.
 	.x-menu-mobile-footer > .x-menu-mobile-app-banner.is-hidden {
 		opacity: 0;
 		pointer-events: none;
-		transition: none;
+		max-height: 0;
+		padding-block: 0;
+		margin-bottom: calc( -1 * var( --x-menu-2026-footer-gap, 16px ) );
+		transition:
+			opacity 0.2s ease,
+			max-height 0.25s cubic-bezier( 0.16, 1, 0.3, 1 ) 0.1s,
+			padding 0.25s cubic-bezier( 0.16, 1, 0.3, 1 ) 0.1s,
+			margin 0.25s cubic-bezier( 0.16, 1, 0.3, 1 ) 0.1s;
 	}
 
 	// Overlapping WordPress + Jetpack badge icons.
