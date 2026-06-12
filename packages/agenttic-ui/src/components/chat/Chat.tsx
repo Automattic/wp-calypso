@@ -42,6 +42,7 @@ export function Chat( {
 	messageRenderer,
 	className,
 	expandOnHover = true,
+	freeDrag = false,
 }: ChatProps ) {
 	// Local input state for controlled component pattern
 	const [ inputValue, setInputValue ] = useState( '' );
@@ -268,6 +269,12 @@ export function Chat( {
 	// Handle drag end with snap functionality
 	const handleDragEnd = useCallback(
 		( _event: any, info: PanInfo ) => {
+			// In free drag mode the panel stays where dropped. dragElastic={ 0 }
+			// hard-clamps the drag to the constraint box, so skip the corner-snap.
+			if ( freeDrag ) {
+				return;
+			}
+
 			// Determine which side based on drop position
 			// For true 50/50 split, account for the chat widget's width
 			const dropX = info.point.x;
@@ -294,8 +301,36 @@ export function Chat( {
 				velocity: info.velocity.y * DRAG_CONSTANTS.VELOCITY_MULTIPLIER,
 			} );
 		},
-		[ x, y, calculateSnapPosition ]
+		[ x, y, calculateSnapPosition, freeDrag ]
 	);
+
+	// Snap back to the nearest corner when freeDrag is turned off at runtime.
+	// Guard on the true→false transition only so a freeDrag=false mount never snaps.
+	const prevFreeDragRef = useRef( freeDrag );
+	useEffect( () => {
+		const wasFreeDrag = prevFreeDragRef.current;
+		prevFreeDragRef.current = freeDrag;
+
+		if ( freeDrag || ! wasFreeDrag ) {
+			return;
+		}
+
+		// Determine side from the current x using handleDragEnd's midpoint logic.
+		const dropX = x.get();
+		const chatWidth = STYLE_CONSTANTS.COMPACT_WIDTH;
+		const viewportMidpointX = ( window.innerWidth - chatWidth ) / 2;
+		const newSide = dropX < viewportMidpointX ? 'left' : 'right';
+		setCurrentSide( newSide );
+		setChatPosition( newSide );
+
+		const position = calculateSnapPosition( newSide );
+		if ( ! position ) {
+			return;
+		}
+
+		animate( x, position.x, DRAG_CONSTANTS.SPRING_CONFIG );
+		animate( y, position.y, DRAG_CONSTANTS.SPRING_CONFIG );
+	}, [ freeDrag, x, y, calculateSnapPosition ] );
 
 	// Track previous state for animation purposes
 	const prevStateRef = useRef( chat.state );
@@ -408,7 +443,7 @@ export function Chat( {
 				dragListener={ false }
 				dragConstraints={ constraintsRef }
 				dragMomentum={ false }
-				dragElastic={ 0.1 }
+				dragElastic={ freeDrag ? 0 : 0.1 }
 				dragTransition={ { power: 0.1, timeConstant: 100 } }
 				onDragEnd={ handleDragEnd }
 				onPointerDown={ handlePointerDown }

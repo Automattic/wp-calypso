@@ -30,6 +30,7 @@ const FloatingCompactDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { cu
 		getClientContext,
 	} ) );
 	const [ isZoomed, setIsZoomed ] = useState( false );
+	const [ freeDragEnabled, setFreeDragEnabled ] = useState( false );
 	const [ feedbackState, setFeedbackState ] = useState<
 		Record< string, 'up' | 'down' >
 	>( {} );
@@ -305,6 +306,20 @@ const FloatingCompactDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { cu
 				>
 					Pattern
 				</button>
+				<button
+					onClick={ () => setFreeDragEnabled( ( prev ) => ! prev ) }
+					style={ {
+						padding: '4px 8px',
+						background: freeDragEnabled ? '#0a0' : '#000',
+						color: '#fff',
+						cursor: 'pointer',
+						fontSize: '12px',
+						fontFamily: 'monospace',
+						textTransform: 'uppercase',
+					} }
+				>
+					Free Drag: { freeDragEnabled ? 'ON' : 'OFF' }
+				</button>
 				<MessageTester addMessage={ addMessage } onClear={ () => loadMessages( [] ) } />
 			</div>
 			<AgentUI
@@ -332,6 +347,7 @@ const FloatingCompactDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { cu
 					},
 				} }
 				emptyView={ <EmptyView suggestions={ suggestions } /> }
+				freeDrag={ freeDragEnabled }
 			/>
 		</div>
 	);
