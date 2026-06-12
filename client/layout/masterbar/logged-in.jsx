@@ -602,75 +602,53 @@ class MasterbarLoggedIn extends Component {
 			siteActions = [
 				{
 					label: translate( 'Post' ),
-					onClick: () => {
-						this.props.recordTracksEvent( 'calypso_masterbar_new_post_clicked' );
-						page( newPostUrl );
-					},
+					url: newPostUrl,
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_post_clicked' ),
 				},
 				{
 					label: translate( 'Media' ),
-					onClick: () => {
-						this.props.recordTracksEvent( 'calypso_masterbar_new_media_clicked' );
-						const mediaUrl = isClassicView
-							? `${ siteAdminUrl }media-new.php`
-							: `/media/${ siteSlug }`;
-						isClassicView ? ( window.location.href = mediaUrl ) : page( mediaUrl );
-					},
+					url: isClassicView ? `${ siteAdminUrl }media-new.php` : `/media/${ siteSlug }`,
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_media_clicked' ),
 				},
 				{
 					label: translate( 'Page' ),
-					onClick: () => {
-						this.props.recordTracksEvent( 'calypso_masterbar_new_page_clicked' );
-						page( newPageUrl );
-					},
+					url: newPageUrl,
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_page_clicked' ),
 				},
 				{
 					label: translate( 'User' ),
-					onClick: () => {
-						this.props.recordTracksEvent( 'calypso_masterbar_new_user_clicked' );
-						const userUrl = isClassicView
-							? `${ siteAdminUrl }user-new.php`
-							: `/people/new/${ siteSlug }`;
-						isClassicView ? ( window.location.href = userUrl ) : page( userUrl );
-					},
+					url: isClassicView ? `${ siteAdminUrl }user-new.php` : `/people/new/${ siteSlug }`,
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_user_clicked' ),
 				},
 			];
 		} else {
 			siteActions = [
 				{
 					label: translate( 'Post' ),
-					onClick: () => {
-						this.props.recordTracksEvent( 'calypso_masterbar_new_post_clicked' );
-						page( '/post' );
-					},
+					url: '/post',
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_post_clicked' ),
 				},
 				{
 					label: translate( 'Media' ),
-					onClick: () => {
-						this.props.recordTracksEvent( 'calypso_masterbar_new_media_clicked' );
-						page( '/media' );
-					},
+					url: '/media',
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_media_clicked' ),
 				},
 				{
 					label: translate( 'Page' ),
-					onClick: () => {
-						this.props.recordTracksEvent( 'calypso_masterbar_new_page_clicked' );
-						page( '/page' );
-					},
+					url: '/page',
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_page_clicked' ),
 				},
 				{
 					label: translate( 'User' ),
-					onClick: () => {
-						this.props.recordTracksEvent( 'calypso_masterbar_new_user_clicked' );
-						page( '/people/new' );
-					},
+					url: '/people/new',
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_user_clicked' ),
 				},
 			];
 		}
 		return (
 			<Item
 				className="masterbar__item-my-site-actions"
-				url={ siteSlug ? newPostUrl : '/post' }
+				url={ siteActions[ 0 ].url }
 				subItems={ [ siteActions ] }
 				icon={ <span className="dashicons-before dashicons-plus" /> }
 				tooltip={ translate( 'New', { context: 'admin bar menu group label' } ) }
@@ -722,12 +700,8 @@ class MasterbarLoggedIn extends Component {
 						</div>
 					</div>
 				),
-				onClick: () => {
-					this.props.recordTracksEvent( 'calypso_masterbar_edit_profile_clicked' );
-					isGlobalSidebarVisible
-						? page( editProfileUrl )
-						: ( window.location.href = editProfileUrl );
-				},
+				url: editProfileUrl,
+				onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_edit_profile_clicked' ),
 			},
 			{
 				label: translate( 'Log Out' ),
