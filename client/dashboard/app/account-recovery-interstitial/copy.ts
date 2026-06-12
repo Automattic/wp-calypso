@@ -1,11 +1,5 @@
 /**
- * Copy for the account-recovery interstitial.
- *
- * Copy is keyed by a finer-grained *variant* than the 3-tier `SecurityLevel` used for snooze
- * windows / Tracks: the `partial` tier splits into two messages depending on which half the
- * user is missing (push 2FA vs. push a recovery method). Returned from a function (not a
- * module-level constant) so `__()` runs with the active locale at render time, and so the
- * `strong` description can interpolate the user's (masked) recovery details.
+ * Copy for the account-recovery interstitial, keyed by `InterstitialVariant`.
  */
 import { __, sprintf } from '@wordpress/i18n';
 import { RECOVERY_INTERSTITIAL_ROUTES } from './constants';

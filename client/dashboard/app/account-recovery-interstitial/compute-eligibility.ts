@@ -1,8 +1,5 @@
 /**
  * Pure eligibility logic for the account-recovery interstitial.
- *
- * No React, no data fetching — the runtime fetches its own data and feeds booleans in.
- * This keeps the security-tier + snooze logic trivially unit-testable.
  */
 import { SNOOZE_DAYS, type SecurityLevel } from './constants';
 
