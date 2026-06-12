@@ -23,13 +23,6 @@
 	height: var( --a8c-ui-stepper-indicator-size );
 	flex-shrink: 0;
 	color: var( --wpds-color-fg-interactive-neutral );
-
-	// The icon glyphs draw a 16px circle inside the 24px viewBox; Figma specs
-	// an 18px circle. Scale the rendered SVG (16 -> 18) without affecting the
-	// 24px layout box.
-	svg {
-		transform: scale( calc( 18 / 16 ) );
-	}
 }
 
 .indicator[data-indicator-variant='number']:not( .is-completed, .is-error ) {
