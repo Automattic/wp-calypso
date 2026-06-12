@@ -1,13 +1,18 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { navigate } from 'calypso/lib/navigate';
 import JetpackSeoBanner, { isSeoSearch } from '..';
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/lib/navigate', () => ( {
+	navigate: jest.fn(),
 } ) );
 
 const baseProps = {
@@ -108,6 +113,7 @@ describe( 'JetpackSeoBanner', () => {
 		);
 		await user.click( screen.getByRole( 'link', { name: 'Enable Jetpack SEO' } ) );
 		expect( onEnableSeo ).toHaveBeenCalledTimes( 1 );
+		expect( navigate ).toHaveBeenCalledWith( baseProps.seoAdminUrl );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_plugins_jetpack_seo_hint_click',
 			expect.objectContaining( { cta: 'enable_seo' } )
@@ -120,13 +126,14 @@ describe( 'JetpackSeoBanner', () => {
 		render( <JetpackSeoBanner { ...baseProps } isSeoModuleActive onEnableSeo={ onEnableSeo } /> );
 		await user.click( screen.getByRole( 'link', { name: 'Manage SEO settings' } ) );
 		expect( onEnableSeo ).not.toHaveBeenCalled();
+		expect( navigate ).toHaveBeenCalledWith( baseProps.seoAdminUrl );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_plugins_jetpack_seo_hint_click',
 			expect.objectContaining( { cta: 'manage_seo' } )
 		);
 	} );
 
-	it( 'does not enable SEO in the upsell state', async () => {
+	it( 'enables SEO before navigating in the upsell state too', async () => {
 		const onEnableSeo = jest.fn();
 		const user = userEvent.setup();
 		render(
@@ -138,10 +145,34 @@ describe( 'JetpackSeoBanner', () => {
 			/>
 		);
 		await user.click( screen.getByRole( 'link', { name: 'Set up Jetpack SEO' } ) );
-		expect( onEnableSeo ).not.toHaveBeenCalled();
+		expect( onEnableSeo ).toHaveBeenCalledTimes( 1 );
+		expect( navigate ).toHaveBeenCalledWith( baseProps.seoAdminUrl );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_plugins_jetpack_seo_hint_click',
 			expect.objectContaining( { cta: 'upsell' } )
 		);
+	} );
+
+	it( 'waits for the module to finish activating before navigating', async () => {
+		let resolveEnable: () => void = () => {};
+		const onEnableSeo = jest.fn(
+			() => new Promise< void >( ( resolve ) => ( resolveEnable = resolve ) )
+		);
+		const user = userEvent.setup();
+		render(
+			<JetpackSeoBanner
+				{ ...baseProps }
+				isSeoModuleActive={ false }
+				hasAdvancedSeo
+				onEnableSeo={ onEnableSeo }
+			/>
+		);
+		await user.click( screen.getByRole( 'link', { name: 'Enable Jetpack SEO' } ) );
+		expect( onEnableSeo ).toHaveBeenCalledTimes( 1 );
+		// Navigation is held back until activation resolves, so the user never lands
+		// on the SEO page while the module is still off.
+		expect( navigate ).not.toHaveBeenCalled();
+		resolveEnable();
+		await waitFor( () => expect( navigate ).toHaveBeenCalledWith( baseProps.seoAdminUrl ) );
 	} );
 } );

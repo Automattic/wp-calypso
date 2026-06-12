@@ -1,7 +1,8 @@
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, type SyntheticEvent } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { navigate } from 'calypso/lib/navigate';
 
 import './style.scss';
 
@@ -54,8 +55,8 @@ interface JetpackSeoBannerProps {
 	hasAdvancedSeo: boolean;
 	/** wp-admin URL of the Jetpack SEO page ( admin.php?page=jetpack-seo ), or null if unavailable. */
 	seoAdminUrl: string | null;
-	/** Activates the SEO Tools module. Owned by the parent so this component stays presentational. */
-	onEnableSeo?: () => void;
+	/** Activates the SEO Tools module; resolves once the module is active. Owned by the parent so this component stays presentational. */
+	onEnableSeo?: () => Promise< void > | void;
 }
 
 /**
@@ -97,20 +98,36 @@ const JetpackSeoBanner = ( {
 		cta = 'enable_seo';
 	}
 
-	const handleClick = useCallback( () => {
-		recordTracksEvent( 'calypso_plugins_jetpack_seo_hint_click', {
-			blog_id: siteId,
-			search_term: searchTerm,
-			seo_active: isSeoModuleActive,
-			cta,
-		} );
+	const handleClick = useCallback(
+		async ( event: SyntheticEvent ) => {
+			recordTracksEvent( 'calypso_plugins_jetpack_seo_hint_click', {
+				blog_id: siteId,
+				search_term: searchTerm,
+				seo_active: isSeoModuleActive,
+				cta,
+			} );
 
-		// Enable the module before the link navigates to the settings page, so the
-		// user doesn't land on a page where SEO is unexpectedly still off.
-		if ( cta === 'enable_seo' ) {
-			onEnableSeo?.();
-		}
-	}, [ siteId, searchTerm, isSeoModuleActive, cta, onEnableSeo ] );
+			if ( ! seoAdminUrl ) {
+				return;
+			}
+
+			// Drive the navigation ourselves instead of letting the anchor's href do
+			// it, so we can activate the module first and route through `navigate`
+			// ( which wraps the destination with logmein for seamless wp-admin auth ).
+			event.preventDefault();
+
+			// The Jetpack SEO admin page only exists while the SEO Tools module is
+			// active, so whenever it's off — both the "enable" and "set up" states —
+			// activate it and await that before leaving, otherwise the user can land
+			// on a page that isn't registered yet.
+			if ( ! isSeoModuleActive ) {
+				await onEnableSeo?.();
+			}
+
+			navigate( seoAdminUrl );
+		},
+		[ siteId, searchTerm, isSeoModuleActive, cta, seoAdminUrl, onEnableSeo ]
+	);
 
 	if ( ! siteSlug ) {
 		return null;
