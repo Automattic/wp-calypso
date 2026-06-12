@@ -185,15 +185,11 @@ export default function ComparisonTable( {
 																	aria-hidden="true"
 																>
 																	{ symbol }
-																	{ note && (
-																		<Tooltip
-																			text={ note }
-																			className="jetpack-comparison-table__tooltip"
-																		>
-																			<span className="jetpack-comparison-table__note-trigger">
-																				<Gridicon icon="info-outline" size={ 12 } />
-																			</span>
-																		</Tooltip>
+												<span
+													className="jetpack-comparison-table__note-trigger"
+													tabIndex={ 0 }
+													aria-label={ note }
+												>
 																	) }
 																</span>
 															</td>
