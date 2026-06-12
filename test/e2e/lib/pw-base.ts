@@ -89,7 +89,11 @@ import {
 	SelectItemsComponent,
 } from '@automattic/calypso-e2e';
 import { test as base, expect } from '@playwright/test';
-import { apiCloseAccount, apiWaitForBearerTokenAcceptance } from '../specs/shared';
+import {
+	apiCloseAccount,
+	apiWaitForBearerTokenAcceptance,
+	apiWaitForEmailVerification,
+} from '../specs/shared';
 import { useBlackboxTestKeyForCollect } from './blackbox-test-key';
 import { getAccount } from './get-account';
 
@@ -637,7 +641,7 @@ export const test = base.extend<
 		);
 		// The account exists from this point on: any throw in the remaining setup
 		// would skip a teardown placed after `use()` and leak the test user (and
-		// the site, once created). The try/finally guarantees cleanup either way.
+		// the site, once created). The try/finally attempts cleanup either way.
 		let site: NewSiteResponse | undefined;
 		try {
 			await apiWaitForBearerTokenAcceptance( restAPIClient, testUser.email );
@@ -655,16 +659,7 @@ export const test = base.extend<
 				link.includes( 'activate' )
 			) as string;
 			await page.goto( activationLink );
-			// Activation is processed asynchronously on the backend: the redirect can land
-			// before `email_verified` is readable by later page loads, and specs using this
-			// fixture depend on a verified email (e.g. My Home hides the domain-upsell card
-			// for unverified users). Wait for the flag instead of failing further down.
-			await expect
-				.poll( async () => ( await restAPIClient.getMyAccountInformation() ).email_verified, {
-					message: `Email verification for ${ testUser.email } did not propagate after visiting the activation link.`,
-					timeout: 30 * 1000,
-				} )
-				.toBe( true );
+			await apiWaitForEmailVerification( restAPIClient, testUser.email );
 			await use( site );
 		} finally {
 			if ( site ) {

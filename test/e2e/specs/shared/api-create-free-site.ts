@@ -1,5 +1,5 @@
 import { RestAPIClient } from '@automattic/calypso-e2e';
-import { apiWaitForBearerTokenAcceptance } from './api-wait-for-bearer-token-acceptance';
+import { apiWaitForBearerTokenAcceptance } from './api-wait-for-account-propagation';
 import type {
 	NewSiteParams,
 	NewSiteResponse,
