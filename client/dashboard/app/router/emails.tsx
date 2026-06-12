@@ -6,6 +6,7 @@ import {
 	queryClient,
 	rawUserPreferencesQuery,
 	siteByIdQuery,
+	siteProductsQuery,
 	userMailboxesQuery,
 } from '@automattic/api-queries';
 import { createLazyRoute, createRoute, Outlet } from '@tanstack/react-router';
@@ -160,15 +161,20 @@ export const addMailboxRoute = createRoute( {
 		}
 	},
 	loader: async ( { params: { domain: domainName } } ) => {
-		const products = queryClient.ensureQueryData( productsQuery() );
-
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+
+		// useEmailProduct reads site-specific products when the domain has a
+		// blog_id and only falls back to the global products list otherwise, so
+		// warm the same query the component will read to avoid a cold-load crash.
+		const products = domain.blog_id
+			? queryClient.ensureQueryData( siteProductsQuery( domain.blog_id ) )
+			: queryClient.ensureQueryData( productsQuery() );
 		const site = queryClient.ensureQueryData( siteByIdQuery( domain.blog_id ) );
-		const mailboxAccounts = await queryClient.ensureQueryData(
+		const mailboxAccounts = queryClient.ensureQueryData(
 			mailboxAccountsQuery( domain.blog_id, domainName )
 		);
 
-		await Promise.all( [ products, site, domain, mailboxAccounts ] );
+		await Promise.all( [ products, site, mailboxAccounts ] );
 	},
 } ).lazy( () =>
 	import( '../../emails/add-mailbox' ).then( ( d ) =>
