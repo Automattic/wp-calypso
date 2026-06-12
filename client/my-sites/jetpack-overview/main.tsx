@@ -148,7 +148,7 @@ export default function JetpackOverview() {
 			) }
 
 			<ComparisonTable
-				currentPlanKey={ planKey }
+				currentPlanKey={ planKey === 'commerce' ? 'business' : planKey }
 				onUpgradeClick={ handleTableCheckoutClick }
 				hasWooCommerce={ hasWooCommerce }
 				siteSlug={ siteSlug ?? '' }
