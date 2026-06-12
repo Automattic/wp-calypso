@@ -111,12 +111,17 @@ export const chooseEmailSolutionRoute = createRoute( {
 		await redirectIfInvalidDomain( domainName );
 	},
 	loader: async ( { params: { domain: domainName } } ) => {
-		const products = queryClient.ensureQueryData( productsQuery() );
-
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+
+		// Warm the same products query useEmailProduct reads (site-specific when
+		// the domain has a site) so prices render on the first load instead of
+		// flashing a $0 fallback.
+		const products = domain.blog_id
+			? queryClient.ensureQueryData( siteProductsQuery( domain.blog_id ) )
+			: queryClient.ensureQueryData( productsQuery() );
 		const site = queryClient.ensureQueryData( siteByIdQuery( domain.blog_id ) );
 
-		await Promise.all( [ products, site, domain ] );
+		await Promise.all( [ products, site ] );
 	},
 } ).lazy( () =>
 	import( '../../emails/choose-email-solution' ).then( ( d ) =>
