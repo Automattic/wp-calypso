@@ -50,7 +50,8 @@ export function updateSiteSettings( siteId, settings ) {
  * non-empty string (including "false") as truthy. Coercing to 1/0 keeps the
  * value unambiguous on the wire regardless of what a caller passes in.
  * @param {*} value The raw flag value (boolean, number, or string).
- * @returns {number} 1 when truthy, 0 otherwise.
+ * @returns {number} 1 for truthy values; 0 for falsy values, including the
+ *                   stringy falsy forms '', '0', and 'false'.
  */
 function normalizeHideFreeTier( value ) {
 	if ( typeof value === 'string' ) {
