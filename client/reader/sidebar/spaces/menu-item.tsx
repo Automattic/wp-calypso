@@ -14,7 +14,7 @@ export function SpaceMenuItem( { space, isSelected, onClick }: Props ) {
 	return (
 		<MenuItem
 			selected={ isSelected }
-			className={ `sidebar-spaces__item sidebar-spaces__item--${ space.color }` }
+			className={ `sidebar-spaces__item sidebar-spaces__item--${ space.layout.color }` }
 		>
 			<MenuItemLink
 				className="sidebar__menu-link sidebar-spaces__link"
@@ -22,7 +22,7 @@ export function SpaceMenuItem( { space, isSelected, onClick }: Props ) {
 				onClick={ onClick }
 			>
 				<span className="sidebar-spaces__icon" aria-hidden="true">
-					<Icon icon={ SPACE_ICONS[ space.icon ] } size={ 18 } />
+					<Icon icon={ SPACE_ICONS[ space.layout.icon ] } size={ 18 } />
 				</span>
 				<span className="sidebar-spaces__text">
 					<span className="sidebar-spaces__name">{ space.name }</span>

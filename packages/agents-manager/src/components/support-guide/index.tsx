@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
-import { hasAdminBarTrigger } from '../../hooks/use-admin-bar-integration';
+import { hasAiChatEntryButton } from '../../hooks/use-admin-bar-integration';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import './style.scss';
@@ -44,8 +44,8 @@ export default function SupportGuide( {
 		return store.getAgentsManagerState();
 	}, [] );
 
-	// Without an admin bar trigger, use `collapsed` (a FAB) instead of `minimized`.
-	const closedChatState = hasAdminBarTrigger() ? 'minimized' : 'collapsed';
+	// Without the AI chat entry button, use `collapsed` (a FAB) instead of `minimized`.
+	const closedChatState = hasAiChatEntryButton() ? 'minimized' : 'collapsed';
 	const isFromChat = !! ( state?.sessionId || state?.conversationId );
 
 	// Navigate back to the source route, preserving relevant state.

@@ -110,6 +110,12 @@ const sections = [
 		module: 'calypso/me/site-blocks',
 		group: 'me',
 	},
+	{
+		name: 'legacy-contact',
+		paths: [ '/me/legacy-contact' ],
+		module: 'calypso/me/legacy-contact',
+		group: 'me',
+	},
 	// This should be the last section for `/me` paths as it would otherwise have precedence over
 	// the other sub `/me/*` sections when resolving the requested path
 	{

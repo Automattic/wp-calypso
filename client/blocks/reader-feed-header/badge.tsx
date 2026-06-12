@@ -1,5 +1,6 @@
 import { Site } from '@automattic/api-core';
 import { Gridicon } from '@automattic/components';
+import type { JSX } from 'react';
 
 interface ReaderFeedHeaderSiteBadgeProps {
 	site?: Site;

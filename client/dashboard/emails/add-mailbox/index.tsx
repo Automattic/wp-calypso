@@ -112,12 +112,14 @@ const AddProfessionalEmail = () => {
 			return;
 		}
 
-		isAddMailboxRoute
-			? addToCart( { mailboxOperations, onFinally: () => setIsSubmitting( false ) } )
-			: setUpMailbox( {
-					mailboxOperations,
-					onFinally: () => setIsSubmitting( false ),
-			  } );
+		if ( isAddMailboxRoute ) {
+			addToCart( { mailboxOperations, onFinally: () => setIsSubmitting( false ) } );
+		} else {
+			setUpMailbox( {
+				mailboxOperations,
+				onFinally: () => setIsSubmitting( false ),
+			} );
+		}
 	};
 
 	const removeForm = ( index: number ) => {

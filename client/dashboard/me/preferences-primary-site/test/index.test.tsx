@@ -3,6 +3,7 @@
  */
 
 import '@testing-library/jest-dom';
+import { userSettingsQuery } from '@automattic/api-queries';
 import { screen, waitFor } from '@testing-library/react';
 import { render } from '../../../test-utils';
 import PreferencesPrimarySite from '../index';
@@ -74,10 +75,8 @@ const mockSites: DeepPartial< Site >[] = [
 ];
 
 function renderPreferencesPrimarySite() {
-	const { userSettingsQuery } = require( '@automattic/api-queries' );
-
 	// Mock userSettingsQuery to return the API response
-	userSettingsQuery.mockReturnValue( {
+	( userSettingsQuery as jest.Mock ).mockReturnValue( {
 		queryKey: [ 'me', 'settings' ],
 		queryFn: () =>
 			Promise.resolve( {
@@ -108,9 +107,7 @@ test( 'save button is disabled when form is not dirty', async () => {
 } );
 
 test( 'hides primary site selector when user has no sites', async () => {
-	const { userSettingsQuery } = require( '@automattic/api-queries' );
-
-	userSettingsQuery.mockReturnValue( {
+	( userSettingsQuery as jest.Mock ).mockReturnValue( {
 		queryKey: [ 'me', 'settings' ],
 		queryFn: () =>
 			Promise.resolve( {

@@ -17,6 +17,7 @@ import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import PasswordlessSignupForm from './passwordless';
 import SocialSignupForm from './social';
 import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
+import type { JSX } from 'react';
 import './style.scss';
 
 interface QueryArgs {

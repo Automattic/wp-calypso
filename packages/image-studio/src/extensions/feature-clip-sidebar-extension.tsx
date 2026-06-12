@@ -14,7 +14,7 @@
  * preview, a share row mirroring the modal, and a Regenerate button.
  */
 import { createBlock } from '@wordpress/blocks';
-import { Button, Fill, PanelBody } from '@wordpress/components';
+import { Button, Fill, Notice, PanelBody, VisuallyHidden } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import { dispatch, useSelect } from '@wordpress/data';
 import { PluginDocumentSettingPanel } from '@wordpress/editor';
@@ -175,9 +175,24 @@ function FeatureClipPreview( {
 	);
 }
 
-function FeatureClipEmptyState(): JSX.Element {
+interface FeatureClipEmptyStateProps {
+	hasLoadError?: boolean;
+}
+
+function FeatureClipEmptyState( {
+	hasLoadError = false,
+}: FeatureClipEmptyStateProps ): JSX.Element {
 	return (
 		<>
+			{ hasLoadError && (
+				<Notice
+					status="error"
+					isDismissible={ false }
+					className="image-studio-feature-clip-panel__error-notice"
+				>
+					{ __( "Couldn't load your saved clip. Generate a new one below.", __i18n_text_domain__ ) }
+				</Notice>
+			) }
 			<p className="image-studio-feature-clip-panel__description">
 				{ __( 'Turn this post into a short vertical video.', __i18n_text_domain__ ) }
 			</p>
@@ -190,6 +205,20 @@ function FeatureClipEmptyState(): JSX.Element {
 				{ __( 'Generate clip', __i18n_text_domain__ ) }
 			</Button>
 		</>
+	);
+}
+
+function FeatureClipSkeleton(): JSX.Element {
+	const label = __( 'Loading saved clip preview', __i18n_text_domain__ );
+	return (
+		<div
+			className="image-studio-feature-clip-panel__preview-frame image-studio-feature-clip-panel__preview-frame--loading"
+			role="status"
+			aria-busy="true"
+			aria-label={ label }
+		>
+			<VisuallyHidden>{ label }</VisuallyHidden>
+		</div>
 	);
 }
 
@@ -260,26 +289,27 @@ function FeatureClipPanelBody( { postType, postId }: FeatureClipPanelBodyProps )
 		return Number.isFinite( n ) && n > 0 ? n : null;
 	} )();
 
-	const { attachment, hasResolvedAttachment } = useSelect(
+	const { attachment, hasResolvedAttachment, resolutionError } = useSelect(
 		( select ) => {
 			if ( ! featureClipId ) {
-				return { attachment: null, hasResolvedAttachment: true };
+				return {
+					attachment: null,
+					hasResolvedAttachment: true,
+					resolutionError: null,
+				};
 			}
 			const core = select( 'core' ) as
 				| {
 						getMedia: ( id: number ) => MediaRecord | undefined;
 						hasFinishedResolution: ( name: string, args: unknown[] ) => boolean;
+						getResolutionError?: ( name: string, args: unknown[] ) => unknown;
 				  }
 				| undefined;
 			return {
 				attachment: core?.getMedia?.( featureClipId ) ?? null,
-				// `getMedia` resolves async on first read. Until resolution
-				// finishes the result is `undefined`, which would otherwise
-				// flicker the panel into the empty CTA on reload before the
-				// preview appears. Defer the empty-state fallback until we
-				// know the lookup is genuinely done.
 				hasResolvedAttachment:
 					core?.hasFinishedResolution?.( 'getMedia', [ featureClipId ] ) ?? false,
+				resolutionError: core?.getResolutionError?.( 'getMedia', [ featureClipId ] ) ?? null,
 			};
 		},
 		[ featureClipId ]
@@ -304,9 +334,9 @@ function FeatureClipPanelBody( { postType, postId }: FeatureClipPanelBodyProps )
 	const durationSeconds =
 		typeof attachment?.media_details?.length === 'number' ? attachment.media_details.length : null;
 	const hasUsableClip = !! featureClipId && !! videoUrl;
-	// Hold the panel body blank while the clip's attachment is resolving, so
-	// reload doesn't briefly flash the empty CTA before the preview appears.
 	const isResolvingAttachment = !! featureClipId && ! hasResolvedAttachment;
+	const hasLoadError =
+		!! featureClipId && hasResolvedAttachment && ! attachment && !! resolutionError;
 
 	// Body is described once and rendered into both sidebars. Each SlotFill
 	// portal instantiates its own subtree, so FeatureClipPreview's share
@@ -324,9 +354,9 @@ function FeatureClipPanelBody( { postType, postId }: FeatureClipPanelBodyProps )
 			);
 		}
 		if ( isResolvingAttachment ) {
-			return null;
+			return <FeatureClipSkeleton />;
 		}
-		return <FeatureClipEmptyState />;
+		return <FeatureClipEmptyState hasLoadError={ hasLoadError } />;
 	} )();
 
 	return (
@@ -381,4 +411,11 @@ export function registerFeatureClipSidebar(): void {
 	pluginRegistered = true;
 }
 
-export { FeatureClipPanel, FeatureClipPreview, FeatureClipEmptyState, PLUGIN_NAME, PANEL_NAME };
+export {
+	FeatureClipPanel,
+	FeatureClipPreview,
+	FeatureClipEmptyState,
+	FeatureClipSkeleton,
+	PLUGIN_NAME,
+	PANEL_NAME,
+};

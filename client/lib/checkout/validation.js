@@ -1,7 +1,6 @@
 import {
 	isValidPostalCode,
-	isValidCPF,
-	isValidCNPJ,
+	isValidBrazilianTaxId,
 	countrySpecificFieldRules,
 } from '@automattic/wpcom-checkout';
 import creditcards from 'creditcards';
@@ -223,13 +222,15 @@ validators.validBrazilTaxId = {
 		if ( ! value ) {
 			return false;
 		}
-		return isValidCPF( value ) || isValidCNPJ( value );
+		return isValidBrazilianTaxId( value );
 	},
 	error: function ( description ) {
 		return i18n.translate(
 			'%(description)s is invalid. Must be in format: 111.444.777-XX or 11.444.777/0001-XX',
 			{
 				args: { description: description },
+				comment:
+					'Validation error for a Brazilian taxpayer ID field; the example formats are a CPF (individual) and a CNPJ (company)',
 			}
 		);
 	},

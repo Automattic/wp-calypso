@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { filterURLForDisplay } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useState, type JSX } from 'react';
 import { shallowEqual } from 'react-redux';
 import SiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';

@@ -144,15 +144,15 @@ describe( 'withFullPostNavigation', () => {
 			{ siteId: 100, postId: 2 },
 			{ enabled: true }
 		);
-		expect( WrappedComponent ).toHaveBeenCalledWith(
+		expect( WrappedComponent ).toHaveBeenCalled();
+		expect( WrappedComponent.mock.calls[ 0 ][ 0 ] ).toEqual(
 			expect.objectContaining( {
 				post: { ID: 2, site_ID: 100 },
 				referralPost: { ID: 9, site_ID: 100 },
 				commentsApiDisabled: false,
 				previousPost: { ID: 1, site_ID: 100 },
 				nextPost: { ID: 3, site_ID: 100 },
-			} ),
-			{}
+			} )
 		);
 	} );
 
@@ -171,11 +171,11 @@ describe( 'withFullPostNavigation', () => {
 			</Provider>
 		);
 
-		expect( WrappedComponent ).toHaveBeenCalledWith(
+		expect( WrappedComponent ).toHaveBeenCalled();
+		expect( WrappedComponent.mock.calls[ 0 ][ 0 ] ).toEqual(
 			expect.objectContaining( {
 				commentsApiDisabled: true,
-			} ),
-			{}
+			} )
 		);
 	} );
 } );

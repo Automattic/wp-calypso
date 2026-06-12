@@ -12,6 +12,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import { useResendEmailVerification } from '../../landing/stepper/hooks/use-resend-email-verification';
 import FollowButton from './button';
+import type { JSX } from 'react';
 
 interface FollowButtonContainerProps {
 	siteUrl: string;

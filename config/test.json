@@ -36,6 +36,7 @@
 		"current-site/notice": true,
 		"dashboard/force-opt-in-visibility": true,
 		"dashboard/opt-in-banners": false,
+		"emails/titan-tiers": false,
 		"google-my-business": false,
 		"help": true,
 		"hosting-server-settings-enhancements": true,

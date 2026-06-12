@@ -9,15 +9,22 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { CreateSpaceModal } from '../index';
 import type { ReadSpace } from '@automattic/api-core';
 
-const WORK: ReadSpace = { id: 'work', name: 'Work', tags: [], color: 'blue', icon: 'inbox' };
+const WORK: ReadSpace = {
+	id: '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21',
+	name: 'Work',
+	tags: [],
+	layout: { color: 'blue', icon: 'inbox' },
+};
 
-function setup( { existing = [] as ReadSpace[] } = {} ) {
+function setup( { existing = [] as ReadSpace[], onCreated = jest.fn() } = {} ) {
 	const queryClient = new QueryClient();
 	queryClient.setQueryData( readSpacesQuery().queryKey, existing );
 	const onClose = jest.fn();
 	const user = userEvent.setup();
-	renderWithProvider( <CreateSpaceModal isOpen onClose={ onClose } />, { queryClient } );
-	return { queryClient, onClose, user };
+	renderWithProvider( <CreateSpaceModal isOpen onClose={ onClose } onCreated={ onCreated } />, {
+		queryClient,
+	} );
+	return { queryClient, onClose, onCreated, user };
 }
 
 describe( 'CreateSpaceModal', () => {
@@ -76,6 +83,20 @@ describe( 'CreateSpaceModal', () => {
 
 		const spaces = queryClient.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey );
 		expect( spaces ).toEqual( [ expect.objectContaining( { name: 'Reading', tags: [] } ) ] );
+		// Sources live only on the single-space detail cache, not on list items.
+		expect( spaces?.[ 0 ] ).not.toHaveProperty( 'sources' );
+		expect( onClose ).toHaveBeenCalled();
+	} );
+
+	it( 'notifies the parent with the created space', async () => {
+		const { user, onCreated } = setup();
+
+		await user.type( screen.getByLabelText( 'Name' ), 'Reading' );
+		await user.click( screen.getByRole( 'button', { name: 'Create' } ) );
+
+		await waitFor( () =>
+			expect( onCreated ).toHaveBeenCalledWith( expect.objectContaining( { name: 'Reading' } ) )
+		);
 	} );
 
 	it( 'closes without creating when Cancel is clicked', async () => {
