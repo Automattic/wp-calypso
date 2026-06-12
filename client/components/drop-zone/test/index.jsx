@@ -96,8 +96,8 @@ describe( 'index', () => {
 			window.dispatchEvent( new window.MouseEvent( 'dragenter' ) );
 		} );
 
-		expect( tree.state.isDraggingOverDocument ).toBeTruthy();
-		expect( tree.state.isDraggingOverElement ).toBeFalsy();
+		expect( tree.zoneRef.current ).toHaveClass( 'is-dragging-over-document' );
+		expect( tree.zoneRef.current ).not.toHaveClass( 'is-dragging-over-element' );
 	} );
 
 	test( 'should start observing the body for mutations when dragging over', () => {
@@ -130,8 +130,8 @@ describe( 'index', () => {
 			window.dispatchEvent( new window.MouseEvent( 'dragenter' ) );
 		} );
 
-		expect( tree.state.isDraggingOverDocument ).toBeFalsy();
-		expect( tree.state.isDraggingOverElement ).toBeFalsy();
+		expect( tree.zoneRef.current ).not.toHaveClass( 'is-dragging-over-document' );
+		expect( tree.zoneRef.current ).not.toHaveClass( 'is-dragging-over-element' );
 	} );
 
 	test( 'should further highlight the drop zone when dragging over the element', () => {
@@ -142,8 +142,8 @@ describe( 'index', () => {
 			window.dispatchEvent( new window.MouseEvent( 'dragenter' ) );
 		} );
 
-		expect( tree.state.isDraggingOverDocument ).toBeTruthy();
-		expect( tree.state.isDraggingOverElement ).toBeTruthy();
+		expect( tree.zoneRef.current ).toHaveClass( 'is-dragging-over-document' );
+		expect( tree.zoneRef.current ).toHaveClass( 'is-dragging-over-element' );
 	} );
 
 	test( 'should further highlight the drop zone when dragging over the body if fullScreen', () => {
@@ -153,8 +153,8 @@ describe( 'index', () => {
 			window.dispatchEvent( new window.MouseEvent( 'dragenter' ) );
 		} );
 
-		expect( tree.state.isDraggingOverDocument ).toBeTruthy();
-		expect( tree.state.isDraggingOverElement ).toBeTruthy();
+		expect( tree.zoneRef.current ).toHaveClass( 'is-dragging-over-document' );
+		expect( tree.zoneRef.current ).toHaveClass( 'is-dragging-over-element' );
 	} );
 
 	test( 'should call onDrop with the raw event data when a drop occurs', () => {
@@ -207,11 +207,10 @@ describe( 'index', () => {
 	} );
 
 	test( 'should allow more than one rendered DropZone on a page', () => {
-		const refs = [ createRef(), createRef() ];
 		render(
 			<Wrapper>
-				<DropZone { ...requiredProps } ref={ refs[ 0 ] } />
-				<DropZone { ...requiredProps } ref={ refs[ 1 ] } />
+				<DropZone { ...requiredProps } />
+				<DropZone { ...requiredProps } />
 			</Wrapper>
 		);
 
@@ -219,10 +218,11 @@ describe( 'index', () => {
 			window.dispatchEvent( new window.MouseEvent( 'dragenter' ) );
 		} );
 
-		expect( refs ).toHaveLength( 2 );
-		refs.forEach( ( ref ) => {
-			expect( ref.current.state.isDraggingOverDocument ).toBeTruthy();
-			expect( ref.current.state.isDraggingOverElement ).toBeFalsy();
+		const zones = document.querySelectorAll( '.drop-zone' );
+		expect( zones ).toHaveLength( 2 );
+		zones.forEach( ( zone ) => {
+			expect( zone ).toHaveClass( 'is-dragging-over-document' );
+			expect( zone ).not.toHaveClass( 'is-dragging-over-element' );
 		} );
 	} );
 
