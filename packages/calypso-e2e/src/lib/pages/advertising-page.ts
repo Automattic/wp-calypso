@@ -42,7 +42,7 @@ export class AdvertisingPage {
 	 * @returns The heading element for the Blaze Ads page.
 	 */
 	get advertisingHeading(): Locator {
-		return this.page.getByRole( 'heading', { name: 'Dashboard' } );
+		return this.page.getByRole( 'heading', { name: 'Blaze' } );
 	}
 
 	/**
