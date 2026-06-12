@@ -24,7 +24,7 @@ type FreePlanModalProps = {
 
 type SubscriptionOptions = {
 	free_tier_description?: string;
-	hide_free_tier?: boolean;
+	hide_free_tier?: boolean | number;
 };
 
 const FreePlanModal = ( { closeDialog, siteId }: FreePlanModalProps ) => {
@@ -41,6 +41,19 @@ const FreePlanModal = ( { closeDialog, siteId }: FreePlanModalProps ) => {
 	const [ hideFreeTier, setHideFreeTier ] = useState(
 		Boolean( subscriptionOptions.hide_free_tier )
 	);
+	// Tracks whether the user has touched the form, so a late-arriving settings
+	// fetch can prefill the fields without clobbering in-progress edits.
+	const [ isDirty, setIsDirty ] = useState( false );
+
+	// If site settings load after the modal mounts (request still in-flight),
+	// hydrate the fields from the saved values — but only while pristine.
+	useEffect( () => {
+		if ( isDirty ) {
+			return;
+		}
+		setEditedDescription( subscriptionOptions.free_tier_description ?? '' );
+		setHideFreeTier( Boolean( subscriptionOptions.hide_free_tier ) );
+	}, [ subscriptionOptions.free_tier_description, subscriptionOptions.hide_free_tier, isDirty ] );
 
 	const isFormValid = () => editedDescription.trim().length <= MAX_LENGTH_FREE_TIER_DESCRIPTION;
 
@@ -110,9 +123,10 @@ const FreePlanModal = ( { closeDialog, siteId }: FreePlanModalProps ) => {
 					<CountedTextArea
 						id="free-tier-description"
 						value={ editedDescription }
-						onChange={ ( event: ChangeEvent< HTMLTextAreaElement > ) =>
-							setEditedDescription( event.target.value )
-						}
+						onChange={ ( event: ChangeEvent< HTMLTextAreaElement > ) => {
+							setIsDirty( true );
+							setEditedDescription( event.target.value );
+						} }
 						acceptableLength={ MAX_LENGTH_FREE_TIER_DESCRIPTION }
 						showRemainingCharacters
 						placeholder={ translate(
@@ -149,7 +163,10 @@ const FreePlanModal = ( { closeDialog, siteId }: FreePlanModalProps ) => {
 				<FormFieldset>
 					<ToggleControl
 						checked={ hideFreeTier }
-						onChange={ ( newValue: boolean ) => setHideFreeTier( newValue ) }
+						onChange={ ( newValue: boolean ) => {
+							setIsDirty( true );
+							setHideFreeTier( newValue );
+						} }
 						label={ translate( 'Hide the free plan from the options shown to new subscribers' ) }
 					/>
 					<FormSettingExplanation>

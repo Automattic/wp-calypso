@@ -75,13 +75,14 @@ const renderProductsList = ( products, subscriptionOptions = null ) =>
 					},
 				},
 			},
-			...( subscriptionOptions
-				? {
-						siteSettings: {
-							items: { 1: { subscription_options: subscriptionOptions } },
-						},
-				  }
-				: {} ),
+			// Provide a complete site-settings slice (items + requesting + saveRequests).
+			// `requesting: { 1: true }` makes QuerySiteSettings treat the fetch as
+			// already in-flight so it doesn't trigger a real network request in tests.
+			siteSettings: {
+				items: subscriptionOptions ? { 1: { subscription_options: subscriptionOptions } } : {},
+				requesting: { 1: true },
+				saveRequests: {},
+			},
 		},
 		reducers: {
 			ui: uiReducer,

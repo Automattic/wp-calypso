@@ -169,7 +169,10 @@ function ProductsList() {
 		<div className="memberships__products-list">
 			<QueryMembershipsSettings siteId={ site?.ID ?? 0 } />
 			<QueryMembershipProducts siteId={ site?.ID ?? 0 } />
-			<QuerySiteSettings siteId={ site?.ID ?? 0 } />
+			{ /* Site settings are only needed to render/edit the Free tier, which
+			     only appears when a newsletter tier exists — avoid the extra
+			     request on donation-only / non-newsletter sites. */ }
+			{ hasNewsletterTier && site?.ID && <QuerySiteSettings siteId={ site.ID } /> }
 			{ hasLoadedFeatures && ! hasStripeFeature && (
 				// Purposefully isn't a dismissible nudge as without this nudge, the page would appear to be
 				// broken as it only does listing and deleting of plans and it wouldn't be clear how to change that.
