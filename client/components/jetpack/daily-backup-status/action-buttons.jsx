@@ -93,12 +93,12 @@ const CloneButton = ( { disabled, rewindId, primary, onClickClone } ) => {
 };
 
 const ActionButtons = ( {
-	rewindId,
-	disabled,
-	isMultiSite,
-	hasWarnings,
-	availableActions,
-	onClickClone,
+	rewindId = null,
+	disabled = false,
+	isMultiSite = false,
+	hasWarnings = false,
+	availableActions = [ 'rewind', 'download' ],
+	onClickClone = () => {},
 } ) => (
 	<>
 		{ availableActions && availableActions.includes( 'download' ) && (
@@ -133,15 +133,6 @@ ActionButtons.propTypes = {
 	hasWarnings: PropTypes.bool,
 	availableActions: PropTypes.arrayOf( PropTypes.string ),
 	onClickClone: PropTypes.func,
-};
-
-ActionButtons.defaultProps = {
-	rewindId: null,
-	disabled: false,
-	isMultiSite: false,
-	hasWarnings: false,
-	availableActions: [ 'rewind', 'download' ],
-	onClickClone: () => {},
 };
 
 export default ActionButtons;
