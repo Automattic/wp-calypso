@@ -284,6 +284,18 @@ const sections = [
 		module: 'calypso/jetpack-app',
 	},
 	{
+		name: 'jetpack-overview',
+		paths: [ '/jetpack-features' ],
+		module: 'calypso/my-sites/jetpack-overview',
+		group: 'sites',
+	},
+	{
+		name: 'upgrade-jetpack',
+		paths: [ '/upgrade-jetpack' ],
+		module: 'calypso/my-sites/upgrade-jetpack',
+		group: 'sites',
+	},
+	{
 		name: 'stats',
 		paths: [ '/stats' ],
 		module: 'calypso/my-sites/stats',

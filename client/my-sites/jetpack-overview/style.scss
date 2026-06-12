@@ -1,0 +1,628 @@
+.jetpack-overview {
+	max-width: 900px;
+	margin: 0 auto;
+	padding: 8px 16px 48px;
+}
+
+// Back link
+
+.jetpack-overview__back {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	margin-block-end: 48px;
+	color: var( --color-text-subtle );
+	font-size: 0.875rem;
+
+	&:hover {
+		color: var( --color-text );
+	}
+
+	&.button .gridicon {
+		flex-shrink: 0;
+		top: 0;
+		margin-block-start: 0;
+	}
+}
+
+// Header
+
+.jetpack-overview__header {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	margin-block-end: 32px;
+	flex-wrap: wrap;
+}
+
+.jetpack-overview__header-text {
+	flex: 1;
+	min-width: 0;
+}
+
+.jetpack-overview__logo {
+	flex-shrink: 0;
+}
+
+.jetpack-overview__title {
+	margin: 0 0 4px;
+	font-size: 1.5rem;
+	font-weight: 600;
+	color: var( --color-text );
+}
+
+.jetpack-overview__subtitle {
+	margin: 0;
+	color: var( --color-text-subtle );
+}
+
+// Feature cards grid
+
+.jetpack-overview__grid {
+	display: grid;
+	grid-template-columns: repeat( 2, 1fr );
+	gap: 16px;
+	margin-block-end: 40px;
+
+	@media ( max-width: 600px ) {
+		grid-template-columns: 1fr;
+	}
+}
+
+// Individual feature card
+
+.jetpack-feature-card {
+	background: var( --color-surface );
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 4px;
+	padding: 16px;
+}
+
+.jetpack-feature-card__header {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	margin-block-end: 12px;
+}
+
+.jetpack-feature-card__icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border-radius: 4px;
+	flex-shrink: 0;
+
+	img {
+		display: block;
+		width: 28px;
+		height: 28px;
+		object-fit: contain;
+	}
+
+	&.is-blue {
+		background: color-mix( in srgb, var( --color-primary ) 12%, transparent );
+		color: var( --color-primary );
+	}
+
+	&.is-purple {
+		background: color-mix( in srgb, var( --color-accent ) 12%, transparent );
+		color: var( --color-accent );
+	}
+
+	&.is-green {
+		background: color-mix( in srgb, var( --color-success ) 12%, transparent );
+		color: var( --color-success );
+	}
+}
+
+.jetpack-feature-card__meta {
+	flex: 1;
+	min-width: 0;
+}
+
+.jetpack-feature-card__title {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-weight: 600;
+	font-size: 0.875rem;
+	color: var( --color-text );
+}
+
+.jetpack-feature-card__count {
+	font-size: 0.75rem;
+	color: var( --color-text-subtle );
+	margin-block-start: 2px;
+}
+
+// Status dot
+
+.jetpack-feature-card__status-dot {
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	flex-shrink: 0;
+
+	&.is-full {
+		background: var( --color-success );
+	}
+
+	&.is-partial {
+		background: var( --color-warning );
+	}
+
+	&.is-none {
+		background: var( --color-error );
+	}
+}
+
+// Feature list
+
+.jetpack-feature-card__list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.jetpack-feature-card__item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 4px 0;
+	font-size: 0.875rem;
+
+	&.jetpack-feature-card__item--active {
+		color: var( --color-text );
+
+		.gridicon {
+			color: var( --color-success );
+			flex-shrink: 0;
+		}
+	}
+
+	&.jetpack-feature-card__item--locked {
+		color: var( --color-text-subtle );
+
+		.gridicon {
+			color: var( --color-text-subtle );
+			opacity: 0.5;
+			flex-shrink: 0;
+		}
+	}
+}
+
+.jetpack-feature-card__item-label {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+}
+
+.jetpack-feature-card__item-note {
+	font-size: 0.75rem;
+	color: var( --color-text-subtle );
+	font-weight: 400;
+}
+
+.jetpack-feature-card__item-link {
+	color: inherit;
+	text-decoration: underline;
+	text-decoration-style: dotted;
+	text-decoration-color: var( --color-text-subtle );
+	text-underline-offset: 2px;
+
+	&:visited {
+		color: inherit;
+	}
+
+	&:hover {
+		text-decoration-style: solid;
+		text-decoration-color: currentcolor;
+	}
+}
+
+.jetpack-feature-card__separator {
+	height: 1px;
+	background: var( --color-border-subtle );
+	margin: 6px 0;
+}
+
+// Upgrade CTA section
+
+.jetpack-overview__upgrade-cta {
+	text-align: center;
+	padding: 32px 24px;
+	background: var( --color-surface );
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 4px;
+	margin-block-end: 32px;
+}
+
+.jetpack-overview__upgrade-heading {
+	margin: 0 0 8px;
+	font-size: 1.25rem;
+	font-weight: 600;
+	color: var( --color-text );
+}
+
+.jetpack-overview__upgrade-desc {
+	margin: 0 0 20px;
+	color: var( --color-text-subtle );
+	max-width: 480px;
+	margin-inline: auto;
+}
+
+// Comparison table
+
+.jetpack-comparison-table {
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.jetpack-comparison-table__trigger {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	padding: 14px 16px;
+	background: var( --color-surface );
+	border: none;
+	cursor: pointer;
+	font-size: 0.875rem;
+	font-weight: 600;
+	color: var( --color-text );
+	text-align: start;
+
+	&:hover {
+		background: var( --color-surface-variant );
+	}
+}
+
+.jetpack-comparison-table__chevron {
+	flex-shrink: 0;
+	color: var( --color-text-subtle );
+}
+
+.jetpack-comparison-table__body {
+	border-block-start: 1px solid var( --color-border-subtle );
+}
+
+.jetpack-comparison-table__scroll {
+	overflow-x: auto;
+}
+
+.jetpack-comparison-table__table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.875rem;
+
+	thead th {
+		padding: 10px 12px;
+		background: var( --color-surface );
+		font-weight: 600;
+		text-align: center;
+		color: var( --color-text-subtle );
+		white-space: nowrap;
+	}
+
+	thead .jetpack-comparison-table__feature-col {
+		text-align: start;
+	}
+
+	tbody td {
+		padding: 8px 12px;
+		background: var( --color-surface );
+		border-block-end: 1px solid var( --color-border-subtle );
+		text-align: center;
+		vertical-align: middle;
+	}
+}
+
+.jetpack-comparison-table__feature-col {
+	width: 42%;
+}
+
+.jetpack-comparison-table__plan-col {
+	// intentionally empty — column width is set by the table layout
+}
+
+.jetpack-comparison-table__current-badge {
+	display: block;
+	font-size: 0.75rem;
+	font-weight: 400;
+	color: var( --color-primary );
+	margin-block-start: 2px;
+}
+
+.jetpack-comparison-table__category {
+	td {
+		padding: 10px 12px 6px;
+		font-weight: 600;
+		background: var( --color-surface );
+		text-align: start;
+		color: var( --color-text-subtle );
+		font-size: 0.75rem;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+}
+
+.jetpack-comparison-table__category-inner {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.jetpack-comparison-table__category-icon {
+	display: block;
+	width: 16px;
+	height: 16px;
+	object-fit: contain;
+	flex-shrink: 0;
+	opacity: 0.7;
+}
+
+.jetpack-comparison-table__feature-name {
+	text-align: start !important;
+}
+
+.jetpack-comparison-table__feature-link {
+	color: inherit;
+	text-decoration: underline;
+	text-decoration-style: dotted;
+	text-decoration-color: var( --color-text-subtle );
+	text-underline-offset: 2px;
+
+	&:visited {
+		color: inherit;
+	}
+
+	&:hover {
+		text-decoration-style: solid;
+		text-decoration-color: currentcolor;
+	}
+}
+
+.jetpack-comparison-table__feature-desc {
+	display: block;
+	font-size: 0.75rem;
+	color: var( --color-text-subtle );
+	margin-block-start: 1px;
+}
+
+// Availability indicators
+
+.is-full {
+	color: var( --color-success );
+	font-weight: 600;
+}
+
+.is-limited {
+	color: var( --color-warning );
+	font-weight: 600;
+}
+
+.is-addon {
+	color: var( --color-primary );
+	font-weight: 600;
+}
+
+.is-none {
+	color: var( --color-text-subtle );
+	opacity: 0.5;
+}
+
+// Upgrade CTA row (top and bottom of table body)
+
+.jetpack-comparison-table__upgrade-row {
+	td {
+		padding: 10px 8px;
+		background: var( --color-surface );
+		border-block-end: 1px solid var( --color-border-subtle );
+		text-align: center;
+		vertical-align: middle;
+	}
+}
+
+.jetpack-comparison-table__upgrade-btn {
+	font-size: 0.75rem;
+}
+
+.jetpack-comparison-table__current-label {
+	font-size: 0.75rem;
+	color: var( --color-primary );
+	font-weight: 600;
+}
+
+// Cell content with optional info icon
+
+.jetpack-comparison-table__cell-content {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+}
+
+.jetpack-comparison-table__note-trigger {
+	display: inline-flex;
+	align-items: center;
+	color: var( --color-text-subtle );
+	cursor: help;
+
+	.gridicon {
+		vertical-align: middle;
+	}
+}
+
+.jetpack-comparison-table__legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	padding: 12px 16px;
+	background: var( --color-surface );
+	border-block-start: 1px solid var( --color-border-subtle );
+	font-size: 0.75rem;
+	color: var( --color-text-subtle );
+}
+
+.jetpack-comparison-table__legend-item {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+// Plan preview toggles
+
+.jetpack-overview__plan-toggles {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	flex-shrink: 0;
+
+	@media ( max-width: 600px ) {
+		width: 100%;
+		margin-block-start: 4px;
+	}
+}
+
+.jetpack-overview__plan-toggle {
+	padding: 6px 14px;
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 16px;
+	background: transparent;
+	cursor: pointer;
+	font-size: 0.875rem;
+	font-weight: 600;
+	color: var( --color-text );
+	transition:
+		background 0.1s,
+		border-color 0.1s;
+
+	&:hover {
+		background: var( --color-surface-variant );
+		border-color: var( --color-border );
+	}
+
+	&.is-current {
+		border-color: color-mix( in srgb, var( --color-primary ) 50%, transparent );
+	}
+
+	&.is-active {
+		background: color-mix( in srgb, var( --color-primary ) 10%, transparent );
+		border-color: var( --color-primary );
+	}
+}
+
+// Feature detail pages
+
+.jetpack-feature-page__hero {
+	display: flex;
+	align-items: flex-start;
+	gap: 20px;
+	margin-block-start: 24px;
+	margin-block-end: 40px;
+	flex-wrap: wrap;
+}
+
+.jetpack-feature-page__hero-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 72px;
+	height: 72px;
+	border-radius: 16px;
+	flex-shrink: 0;
+	background: var( --studio-jetpack-green-0 );
+	color: var( --studio-jetpack-green-50 );
+}
+
+.jetpack-feature-page__hero-text {
+	flex: 1;
+	min-width: 0;
+}
+
+.jetpack-feature-page__title {
+	margin: 0 0 8px;
+	font-size: 1.75rem;
+	font-weight: 700;
+	color: var( --color-text );
+	line-height: 1.2;
+}
+
+.jetpack-feature-page__subtitle {
+	margin: 0;
+	font-size: 1rem;
+	color: var( --color-text-subtle );
+	line-height: 1.5;
+	max-width: 560px;
+}
+
+.jetpack-feature-page__benefits {
+	display: grid;
+	grid-template-columns: repeat( 3, 1fr );
+	gap: 16px;
+	margin-block-end: 32px;
+
+	@media ( max-width: 640px ) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.jetpack-feature-page__benefit {
+	background: var( --color-surface );
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 4px;
+	padding: 20px;
+}
+
+.jetpack-feature-page__benefit-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	border-radius: 8px;
+	margin-block-end: 12px;
+	background: var( --studio-jetpack-green-0 );
+	color: var( --studio-jetpack-green-50 );
+}
+
+.jetpack-feature-page__benefit-title {
+	margin: 0 0 6px;
+	font-size: 1rem;
+	font-weight: 600;
+	color: var( --color-text );
+}
+
+.jetpack-feature-page__benefit-body {
+	margin: 0;
+	font-size: 0.875rem;
+	color: var( --color-text-subtle );
+	line-height: 1.5;
+}
+
+.jetpack-feature-page__plan-callout {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 12px 16px;
+	border-radius: 4px;
+	margin-block-end: 28px;
+	font-size: 0.875rem;
+	color: var( --color-text );
+	background: var( --studio-jetpack-green-0 );
+	border: 1px solid color-mix( in srgb, var( --studio-jetpack-green ) 25%, transparent );
+
+	.gridicon {
+		flex-shrink: 0;
+		color: var( --studio-jetpack-green-50 );
+	}
+}
+
+.jetpack-feature-page__cta {
+	display: flex;
+	gap: 12px;
+	flex-wrap: wrap;
+}

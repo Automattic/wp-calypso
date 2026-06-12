@@ -1,0 +1,39 @@
+.jetpack-promo-card {
+	padding: 16px;
+}
+
+.jetpack-promo-card__content {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	margin-block-end: 12px;
+}
+
+.jetpack-promo-card__icon {
+	flex-shrink: 0;
+	margin-block-start: 2px;
+}
+
+.jetpack-promo-card__text {
+	flex: 1;
+	min-width: 0;
+}
+
+.jetpack-promo-card__heading {
+	margin: 0 0 4px;
+	font-size: 1rem;
+	font-weight: 600;
+	color: var( --color-text );
+}
+
+.jetpack-promo-card__description {
+	margin: 0;
+	font-size: 0.875rem;
+	color: var( --color-text-subtle );
+	line-height: 1.5;
+}
+
+.jetpack-promo-card__button {
+	width: 100%;
+	justify-content: center;
+}

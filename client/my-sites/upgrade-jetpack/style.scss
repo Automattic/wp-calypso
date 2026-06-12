@@ -1,0 +1,187 @@
+.upgrade-jetpack {
+	max-width: 960px;
+	margin: 0 auto;
+	padding: 24px 16px 48px;
+}
+
+// Back link
+
+.upgrade-jetpack__back {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	margin-block-end: 16px;
+	color: var( --color-text-subtle );
+	font-size: 0.875rem;
+
+	&:hover {
+		color: var( --color-text );
+	}
+
+	&.button .gridicon {
+		flex-shrink: 0;
+		top: 0;
+		margin-block-start: 0;
+	}
+}
+
+// Page header
+
+.upgrade-jetpack__header {
+	text-align: center;
+	margin-block-end: 40px;
+}
+
+.upgrade-jetpack__title {
+	margin: 0 0 8px;
+	font-size: 1.75rem;
+	font-weight: 700;
+	color: var( --color-text );
+}
+
+.upgrade-jetpack__subtitle {
+	margin: 0 auto;
+	max-width: 520px;
+	color: var( --color-text-subtle );
+	font-size: 1rem;
+}
+
+// Plans grid — 3 equal columns
+
+.upgrade-jetpack__grid {
+	display: grid;
+	grid-template-columns: repeat( 3, 1fr );
+	gap: 0;
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 4px;
+	overflow: hidden;
+
+	@media ( max-width: 660px ) {
+		grid-template-columns: 1fr;
+	}
+}
+
+// Individual plan column
+
+.upgrade-jetpack__plan {
+	display: flex;
+	flex-direction: column;
+	padding: 24px 20px;
+	background: var( --color-surface );
+	border-inline-end: 1px solid var( --color-border-subtle );
+	position: relative;
+
+	&:last-child {
+		border-inline-end: none;
+	}
+}
+
+// Plan name & tagline
+
+.upgrade-jetpack__plan-name {
+	font-size: 1.25rem;
+	font-weight: 700;
+	color: var( --color-text );
+	margin-block-end: 4px;
+}
+
+.upgrade-jetpack__plan-tagline {
+	margin: 0 0 20px;
+	font-size: 0.875rem;
+	color: var( --color-text-subtle );
+}
+
+// Unlocked features section
+
+.upgrade-jetpack__unlocks {
+	flex: 1;
+	margin-block-end: 20px;
+}
+
+.upgrade-jetpack__unlocks-label {
+	margin: 0 0 12px;
+	font-size: 0.75rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var( --color-text-subtle );
+}
+
+.upgrade-jetpack__unlock-group {
+	margin-block-end: 14px;
+}
+
+.upgrade-jetpack__unlock-group-header {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin-block-end: 6px;
+}
+
+.upgrade-jetpack__unlock-icon {
+	display: block;
+	width: 20px;
+	height: 20px;
+	object-fit: contain;
+	flex-shrink: 0;
+}
+
+.upgrade-jetpack__unlock-group-name {
+	font-size: 0.875rem;
+	font-weight: 600;
+	color: var( --color-text );
+}
+
+.upgrade-jetpack__unlock-list {
+	margin: 0;
+	padding-inline-start: 26px;
+	list-style: none;
+
+	li {
+		position: relative;
+		padding: 2px 0;
+		font-size: 0.875rem;
+		color: var( --color-text-subtle );
+
+		&::before {
+			content: '+';
+			position: absolute;
+			inset-inline-start: -14px;
+			color: var( --color-primary );
+			font-weight: 700;
+		}
+	}
+}
+
+.upgrade-jetpack__unlock-note {
+	display: block;
+	font-size: 0.75rem;
+	color: var( --color-text-subtle );
+	opacity: 0.75;
+}
+
+// CTA button
+
+.upgrade-jetpack__cta {
+	width: 100%;
+	justify-content: center;
+}
+
+// Current plan label
+
+.upgrade-jetpack__current-label {
+	width: 100%;
+	text-align: center;
+	padding: 8px;
+	font-size: 0.875rem;
+	color: var( --color-text-subtle );
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 4px;
+}
+
+// All-active state
+
+.upgrade-jetpack--all-active {
+	text-align: center;
+	padding-block-start: 48px;
+}

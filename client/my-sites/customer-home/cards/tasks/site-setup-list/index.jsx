@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { getTaskList } from 'calypso/lib/checklist';
@@ -345,6 +346,24 @@ const SiteSetupList = ( {
 						);
 					} ) }
 				</ul>
+				<button
+					className="site-setup-list__jetpack-callout"
+					onClick={ () => {
+						dispatch(
+							recordTracksEvent( 'calypso_site_setup_jetpack_features_clicked', {
+								site_id: siteId,
+								site_slug: siteSlug,
+							} )
+						);
+						navigate( `/jetpack-features/${ siteSlug }` );
+					} }
+				>
+					<JetpackLogo size={ 16 } className="site-setup-list__jetpack-callout-logo" />
+					<span>{ translate( 'See your Jetpack features' ) }</span>
+					<span className="site-setup-list__jetpack-callout-arrow" aria-hidden="true">
+						→
+					</span>
+				</button>
 			</div>
 		</Card>
 	);
