@@ -25,9 +25,7 @@ export function getTitanTierFromSlug( productSlug?: string ): TitanPlanTier | un
 		return undefined;
 	}
 
-	const tiers = Object.keys( TITAN_TIER_SLUGS ) as TitanPlanTier[];
-
-	return tiers.find( ( tier ) =>
+	return Object.values( TitanPlanTier ).find( ( tier ) =>
 		Object.values( TITAN_TIER_SLUGS[ tier ] ).includes( productSlug )
 	);
 }
