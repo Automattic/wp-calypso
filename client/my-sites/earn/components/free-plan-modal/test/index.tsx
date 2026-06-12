@@ -6,13 +6,19 @@
 jest.mock( 'calypso/state/ui/selectors' );
 jest.mock( 'calypso/state/site-settings/selectors' );
 jest.mock( 'calypso/state/site-settings/actions', () => ( {
-	saveSiteSettings: jest.fn( () => ( { type: 'TEST_SAVE_SITE_SETTINGS' } ) ),
+	// Return a promise-returning thunk so the component can chain `.then()` on
+	// the dispatched save (it refetches memberships settings afterwards).
+	saveSiteSettings: jest.fn( () => () => Promise.resolve() ),
+} ) );
+jest.mock( 'calypso/state/memberships/settings/actions', () => ( {
+	requestSettings: jest.fn( () => ( { type: 'TEST_REQUEST_SETTINGS' } ) ),
 } ) );
 
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { unmountComponentAtNode } from 'react-dom';
 import Modal from 'react-modal';
+import { requestSettings } from 'calypso/state/memberships/settings/actions';
 import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -69,6 +75,9 @@ describe( 'FreePlanModal', () => {
 			},
 		} );
 		expect( closeDialog ).toHaveBeenCalled();
+		// After the save resolves, memberships settings are refetched so the
+		// server-rendered description preview updates without a reload.
+		await waitFor( () => expect( requestSettings ).toHaveBeenCalledWith( 1 ) );
 	} );
 
 	test( 'pre-fills existing values and does not save on cancel', async () => {

@@ -200,6 +200,27 @@ describe( 'ProductsList', () => {
 		expect( description ).not.toHaveTextContent( '- Weekly posts' );
 	} );
 
+	test( 'sanitizes the free tier rendered HTML, keeping target="_blank" and stripping unsafe markup', () => {
+		const { container } = renderProductsList(
+			[ tierWithoutDescription ], // No paid description, so the only description container is the Free row's.
+			{ free_tier_description: '[Learn more](https://example.com)' },
+			{
+				freeTierDescriptionRendered:
+					'<p><a href="https://example.com" target="_blank" rel="noopener">Learn more</a></p>' +
+					'<script>alert(1)</script><p onclick="alert(1)">unsafe</p>',
+			}
+		);
+
+		const description = container.querySelector( '.memberships__products-product-description' );
+		const link = description.querySelector( 'a' );
+		// target="_blank" must survive sanitization — links escape the page context.
+		expect( link ).toHaveAttribute( 'target', '_blank' );
+		expect( link ).toHaveAttribute( 'rel', 'noopener' );
+		// ...while DOMPurify still strips unsafe markup.
+		expect( description.querySelector( 'script' ) ).toBeNull();
+		expect( description.innerHTML ).not.toContain( 'onclick' );
+	} );
+
 	test( 'marks the Free row as hidden when hide_free_tier is set', () => {
 		renderProductsList( [ tierWithoutDescription ], { hide_free_tier: true } );
 
