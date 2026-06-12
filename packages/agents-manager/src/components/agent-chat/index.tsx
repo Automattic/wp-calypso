@@ -261,7 +261,7 @@ export default function AgentChat( {
 			}
 		>
 			<AgentUI.ConversationView ref={ conversationViewRef }>
-				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } />
+				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } isDocked={ isDocked } />
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
 				{ ( onContextCardAction || onContextCardDismiss ) && (
 					<ContextCards onAction={ onContextCardAction } onDismiss={ onContextCardDismiss } />

@@ -11,7 +11,12 @@ import { useSelector } from 'react-redux';
 import getIsNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import Item from '../item';
-import { closeAgentsManagerChat, openAgentsManagerChat } from './chat-actions';
+import {
+	closeAgentsManagerChat,
+	getAgentsManagerChatRoute,
+	isAgentsManagerChatVisible,
+	openAgentsManagerChat,
+} from './chat-actions';
 import HelpIcon from './help-icon';
 import './style.scss';
 
@@ -43,6 +48,17 @@ const MasterbarAgentsManager = ( { tooltip } ) => {
 
 		if ( isExternal ) {
 			return window.open( destination, '_blank', 'noopener,noreferrer' );
+		}
+
+		// Re-clicking the item for the current route closes the chat; a different
+		// route switches view (and opens/expands) without closing.
+		if ( isAgentsManagerChatVisible() && getAgentsManagerChatRoute() === destination ) {
+			recordTracksEvent( 'calypso_inlinehelp_close', {
+				force_site_id: true,
+				location: 'help-center',
+				section: sectionName,
+			} );
+			return closeAgentsManagerChat();
 		}
 
 		// `/chat` resumes the active conversation (no path), matching the AI

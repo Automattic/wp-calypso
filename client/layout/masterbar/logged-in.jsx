@@ -60,7 +60,11 @@ import { getSectionGroup } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
 import BigSkyIcon from './masterbar-agents-manager/big-sky-icon';
-import { openAgentsManagerChat } from './masterbar-agents-manager/chat-actions';
+import {
+	closeAgentsManagerChat,
+	isAgentsManagerChatVisible,
+	openAgentsManagerChat,
+} from './masterbar-agents-manager/chat-actions';
 import HelpIcon from './masterbar-agents-manager/help-icon';
 import { HelpCenterIcon } from './masterbar-help-center/help-center-icon';
 import { MasterbarLaunchButton } from './masterbar-launch-button';
@@ -905,8 +909,13 @@ class MasterbarLoggedIn extends Component {
 
 	clickAgentsManagerAiChat = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_agents_manager_ai_chat_clicked' );
-		// Reopen and resume the active conversation rather than start a new one.
-		openAgentsManagerChat();
+		// Toggle: close the chat if it's already showing, otherwise resume the active
+		// conversation and open it.
+		if ( isAgentsManagerChatVisible() ) {
+			closeAgentsManagerChat();
+		} else {
+			openAgentsManagerChat();
+		}
 	};
 
 	renderAgentsManagerAiChat() {

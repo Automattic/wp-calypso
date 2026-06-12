@@ -5,7 +5,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
-let mockIsDocked = false;
 const mockSetIsMinimized = jest.fn();
 
 jest.mock( '@wordpress/components', () => ( {
@@ -38,8 +37,6 @@ jest.mock( '@wordpress/icons', () => ( {
 } ) );
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( { setIsMinimized: mockSetIsMinimized } ),
-	useSelect: ( mapSelect: ( select: () => unknown ) => unknown ) =>
-		mapSelect( () => ( { getIsDocked: () => mockIsDocked } ) ),
 } ) );
 jest.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'agents-manager' } ) );
 jest.mock( '../../hooks/use-admin-bar-integration', () => ( {
@@ -70,17 +67,16 @@ function installMasterbarTrigger() {
 	document.body.appendChild( el );
 }
 
-function renderChatHeader( title?: string ) {
+function renderChatHeader( title?: string, isDocked = false ) {
 	return render(
 		<MemoryRouter>
-			<ChatHeader onClose={ jest.fn() } options={ [] } title={ title } />
+			<ChatHeader onClose={ jest.fn() } options={ [] } title={ title } isDocked={ isDocked } />
 		</MemoryRouter>
 	);
 }
 
 describe( 'ChatHeader', () => {
 	afterEach( () => {
-		mockIsDocked = false;
 		mockSetIsMinimized.mockClear();
 		document.getElementById( 'wp-admin-bar-agents-manager-ai-chat' )?.remove();
 		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
@@ -139,10 +135,19 @@ describe( 'ChatHeader', () => {
 
 	it( 'hides the Minimize button when docked', () => {
 		installAdminBarTrigger();
-		mockIsDocked = true;
 
-		renderChatHeader();
+		renderChatHeader( undefined, true );
 
 		expect( screen.queryByText( 'Minimize' ) ).toBeNull();
+	} );
+
+	it( 'shows the Minimize button when floating even if the docked preference is set', () => {
+		// `isDocked` is the effective state: a docked preference that can't
+		// dock (e.g. a too-narrow viewport) arrives here as `false`, so minimize shows.
+		installAdminBarTrigger();
+
+		renderChatHeader( undefined, false );
+
+		expect( screen.getByText( 'Minimize' ) ).toBeInTheDocument();
 	} );
 } );

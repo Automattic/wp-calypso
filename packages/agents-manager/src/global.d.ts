@@ -105,6 +105,8 @@ interface AgentsManagerActions {
 	setSiteEditorAction: ( name: string, value: string | number | boolean | null ) => void;
 	chatNavigate: import('react-router-dom').NavigateFunction;
 	resumeChat: () => void;
+	isChatVisible: () => boolean;
+	getCurrentRoute: () => string;
 	isCompactMode?: boolean;
 	isChatEnabled?: boolean;
 	desktopMediaQuery?: string;
