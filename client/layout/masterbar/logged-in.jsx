@@ -284,10 +284,12 @@ class MasterbarLoggedIn extends Component {
 						{
 							label: translate( 'Sites' ),
 							url: dashboardOptIn ? dashboardLink( '/sites' ) : '/sites',
+							onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_sites_clicked' ),
 						},
 						{
 							label: translate( 'Domains' ),
 							url: dashboardOptIn ? dashboardLink( '/domains' ) : '/domains/manage',
+							onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_domains_clicked' ),
 						},
 					],
 					...( this.props.isSimpleSite
@@ -297,10 +299,14 @@ class MasterbarLoggedIn extends Component {
 									{
 										label: translate( 'About WordPress' ),
 										url: `${ siteAdminUrl }about.php`,
+										onClick: () =>
+											this.props.recordTracksEvent( 'calypso_masterbar_about_wordpress_clicked' ),
 									},
 									{
 										label: translate( 'Get Involved' ),
 										url: `${ siteAdminUrl }contribute.php`,
+										onClick: () =>
+											this.props.recordTracksEvent( 'calypso_masterbar_get_involved_clicked' ),
 									},
 								],
 						  ] ),
@@ -529,9 +535,17 @@ class MasterbarLoggedIn extends Component {
 		];
 
 		if ( isClassicView ) {
-			menuItems.push( { label: translate( 'Dashboard' ), url: siteAdminUrl } );
+			menuItems.push( {
+				label: translate( 'Dashboard' ),
+				url: siteAdminUrl,
+				onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_dashboard_clicked' ),
+			} );
 		} else {
-			menuItems.push( { label: translate( 'My Home' ), url: siteHomeUrl } );
+			menuItems.push( {
+				label: translate( 'My Home' ),
+				url: siteHomeUrl,
+				onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_my_home_clicked' ),
+			} );
 		}
 
 		if ( ! site?.is_wpcom_staging_site ) {
@@ -731,6 +745,7 @@ class MasterbarLoggedIn extends Component {
 					</span>
 				),
 				url: '/me/account',
+				onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_wpcom_account_clicked' ),
 				className: 'wpcom-link',
 			},
 		];
