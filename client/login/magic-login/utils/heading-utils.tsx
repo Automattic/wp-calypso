@@ -1,11 +1,12 @@
 import { createElement } from '@wordpress/element';
 import type { TranslateResult } from 'i18n-calypso';
+import type { JSX } from 'react';
 
 type TranslateFn = (
 	text: string,
 	options?: {
 		args?: Record< string, unknown >;
-		components?: Record< string, React.JSX.Element >;
+		components?: Record< string, JSX.Element >;
 	}
 ) => TranslateResult;
 

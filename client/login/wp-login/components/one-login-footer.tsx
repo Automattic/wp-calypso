@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { type JSX } from 'react';
 import { useSelector } from 'react-redux';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -8,11 +9,11 @@ interface OneLoginFooterProps {
 	/**
 	 * When `isLoginView` is true, this is the "lost password" link.
 	 */
-	lostPasswordLink?: React.JSX.Element;
+	lostPasswordLink?: JSX.Element;
 	/**
 	 * When `isLoginView` is false, this is the "back to login" link.
 	 */
-	loginLink?: React.JSX.Element;
+	loginLink?: JSX.Element;
 	/**
 	 * The content of the footer. If provided, it will be rendered instead of the default links.
 	 */
@@ -20,7 +21,7 @@ interface OneLoginFooterProps {
 	/**
 	 * When `isLoginView` is false, this is the "support" link.
 	 */
-	supportLink?: React.JSX.Element;
+	supportLink?: JSX.Element;
 	/**
 	 * When true, this is the footer for the main login screen.
 	 */
