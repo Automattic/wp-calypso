@@ -229,7 +229,9 @@ const hosting: FlowV2< typeof initialize > = {
 							setSignupCompleteSlug( providedDependencies?.siteSlug );
 							setSignupCompleteFlowName( flowName );
 
-							couponCode && resetCouponCode();
+							if ( couponCode ) {
+								resetCouponCode();
+							}
 							return window.location.assign(
 								addQueryArgs(
 									`/checkout/${ encodeURIComponent(
