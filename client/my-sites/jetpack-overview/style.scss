@@ -448,6 +448,9 @@
 .jetpack-comparison-table__note-trigger {
 	display: inline-flex;
 	align-items: center;
+	padding: 0;
+	border: none;
+	background: none;
 	color: var( --color-text-subtle );
 	cursor: help;
 
