@@ -41,11 +41,6 @@ export function recordDomainViewChanges(
 	newView: View,
 	recordTracksEvent: AnalyticsClient[ 'recordTracksEvent' ]
 ) {
-	if ( oldView.type !== newView.type ) {
-		recordTracksEvent( 'calypso_dashboard_domains_view_type_changed', { type: newView.type } );
-		return;
-	}
-
 	if (
 		oldView.sort?.field !== newView.sort?.field ||
 		oldView.sort?.direction !== newView.sort?.direction
@@ -67,6 +62,22 @@ export function recordDomainViewChanges(
 	}
 	for ( const removed of setDifference( oldFilterFields, newFilterFields ) ) {
 		recordTracksEvent( 'calypso_dashboard_domains_view_filter_changed', {
+			change: 'removed',
+			field: removed,
+		} );
+	}
+
+	const oldShownFields = new Set( oldView.fields || [] );
+	const newShownFields = new Set( newView.fields || [] );
+
+	for ( const added of setDifference( newShownFields, oldShownFields ) ) {
+		recordTracksEvent( 'calypso_dashboard_domains_view_field_visibility_changed', {
+			change: 'added',
+			field: added,
+		} );
+	}
+	for ( const removed of setDifference( oldShownFields, newShownFields ) ) {
+		recordTracksEvent( 'calypso_dashboard_domains_view_field_visibility_changed', {
 			change: 'removed',
 			field: removed,
 		} );
