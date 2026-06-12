@@ -39,7 +39,9 @@ export const StepperIndicator = forwardRef< HTMLSpanElement, StepperIndicatorPro
 			indicatorVariant === 'bullet' || status ? (
 				<Icon icon={ STATE_ICONS[ state ] } />
 			) : (
-				<span aria-hidden="true">{ stepNumber }</span>
+				<span aria-hidden="true" className={ styles.number }>
+					{ stepNumber }
+				</span>
 			);
 
 		return (
