@@ -1,6 +1,3 @@
-/* eslint-disable react/no-string-refs */
-// TODO: remove string ref usage.
-
 import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
@@ -46,9 +43,16 @@ export default class InfiniteList extends Component {
 	isScrolling = false;
 	_isMounted = false;
 	smartSetState = smartSetState;
-	containerRef = createRef();
 	topPlaceholderRef = createRef();
 	bottomPlaceholderRef = createRef();
+	containerRef = createRef();
+	// Maps an item key (from `getItemRef`) to its rendered DOM node. Populated via
+	// callback refs passed to `renderItem`, replacing the removed string refs.
+	itemRefs = new Map();
+	// Caches the callback ref per item key so its identity stays stable across
+	// renders. An unstable ref would re-run on every render and, when forwarded as
+	// a prop, would defeat consumers' own-props memoization (e.g. the Reader stream).
+	itemRefCallbacks = new Map();
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
@@ -334,15 +338,45 @@ export default class InfiniteList extends Component {
 		this.scrollRAFHandle = window.requestAnimationFrame( this.scrollChecks );
 	}
 
-	boundsForRef = ( ref ) => {
-		if ( ref in this.refs && ReactDom.findDOMNode( this.refs[ ref ] ) ) {
-			return ReactDom.findDOMNode( this.refs[ ref ] ).getBoundingClientRect();
+	// Returns the root DOM node of the list. Used by parent components that need
+	// to read layout/scroll information (replaces the removed `findDOMNode`).
+	getDOMNode = () => this.containerRef.current;
+
+	// Returns a stable callback ref (one per item key) that records the DOM node
+	// for that key. Passed to `renderItem` so consumers can attach it to their
+	// item's root element. The identity is cached so it doesn't change between
+	// renders (see `itemRefCallbacks`).
+	setItemRef = ( itemKey ) => {
+		let callback = this.itemRefCallbacks.get( itemKey );
+		if ( ! callback ) {
+			callback = ( node ) => {
+				if ( node ) {
+					this.itemRefs.set( itemKey, node );
+				} else {
+					this.itemRefs.delete( itemKey );
+					this.itemRefCallbacks.delete( itemKey );
+				}
+			};
+			this.itemRefCallbacks.set( itemKey, callback );
 		}
-		return null;
+		return callback;
 	};
 
-	// Instance method that is called externally (via a ref) by a parent component
-	getDOMNode = () => this.containerRef.current;
+	boundsForRef = ( ref ) => {
+		const node = this.itemRefs.get( ref );
+		if ( node ) {
+			return node.getBoundingClientRect();
+		}
+		// Transitional fallback for consumers whose `renderItem` still attaches string
+		// refs instead of the `registerItemRef` callback. Remove with DOTCOM-17551 once
+		// all consumers are migrated (string refs and `findDOMNode` are gone in React 19).
+		/* eslint-disable react/no-string-refs */
+		if ( ReactDom.findDOMNode && ref in this.refs && ReactDom.findDOMNode( this.refs[ ref ] ) ) {
+			return ReactDom.findDOMNode( this.refs[ ref ] ).getBoundingClientRect();
+		}
+		/* eslint-enable react/no-string-refs */
+		return null;
+	};
 
 	getTopPlaceholderBounds = () =>
 		this.topPlaceholderRef.current && this.topPlaceholderRef.current.getBoundingClientRect();
@@ -363,6 +397,11 @@ export default class InfiniteList extends Component {
 	getVisibleItemIndexes( options ) {
 		const container = this.containerRef.current;
 		const visibleItemIndexes = [];
+
+		if ( ! container ) {
+			return visibleItemIndexes;
+		}
+
 		const firstIndex = this.state.firstRenderedIndex;
 		const lastIndex = this.state.lastRenderedIndex;
 		const offsetTop = options && options.offsetTop ? options.offsetTop : 0;
@@ -419,7 +458,8 @@ export default class InfiniteList extends Component {
 		debug( 'rendering %d to %d', this.state.firstRenderedIndex, lastRenderedIndex );
 
 		for ( i = this.state.firstRenderedIndex; i <= lastRenderedIndex; i++ ) {
-			itemsToRender.push( renderItem( items[ i ], i ) );
+			const item = items[ i ];
+			itemsToRender.push( renderItem( item, i, this.setItemRef( this.props.getItemRef( item ) ) ) );
 		}
 
 		if ( fetchingNextPage ) {
