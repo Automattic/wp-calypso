@@ -166,6 +166,8 @@ $breakpoint-desktop: 1440px; //Desktop size.
 		.dropdown-menu {
 			position: absolute;
 			top: 100%;
+			// Anchor the full-width menu so it doesn't overflow the viewport.
+			inset-inline-start: 0;
 			width: 100%;
 			background: #fff;
 			list-style: none;
