@@ -95,14 +95,14 @@ export function getFeaturesUnlockedAt( planKey: PlanKey, allGroups: FeatureGroup
 export const FEATURE_GROUPS: FeatureGroup[] = [
 	{
 		id: 'protect',
-		name: 'Protect',
+		name: translate( 'Protect' ),
 		colorClass: 'blue',
 		iconSrc: iconScan,
 		features: [
 			{
 				id: 'brute-force',
-				name: 'Brute force protection',
-				description: 'Block login attacks automatically',
+				name: translate( 'Brute force protection' ),
+				description: translate( 'Block login attacks automatically' ),
 				plans: {
 					free: 'full',
 					personal: 'full',
@@ -114,8 +114,8 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
 			},
 			{
 				id: 'uptime-monitoring',
-				name: 'Uptime monitoring',
-				description: 'Alerts when your site goes down',
+				name: translate( 'Uptime monitoring' ),
+				description: translate( 'Alerts when your site goes down' ),
 				plans: {
 					free: 'full',
 					personal: 'full',
@@ -127,8 +127,8 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
 			},
 			{
 				id: 'activity-log',
-				name: 'Activity log',
-				description: 'Audit trail of site changes',
+				name: translate( 'Activity log' ),
+				description: translate( 'Audit trail of site changes' ),
 				plans: {
 					free: 'limited',
 					personal: 'limited',
@@ -136,13 +136,13 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
 					business: 'full',
 					commerce: 'full',
 				},
-				notes: { free: 'Last 20 events', personal: 'Last 20 events' },
+				notes: { free: translate( 'Last 20 events' ), personal: translate( 'Last 20 events' ) },
 				path: '/jetpack-features/:site/activity-log', // interstitial
 			},
 			{
 				id: 'malware-scanning',
-				name: 'Malware scanning',
-				description: 'Automated threat detection',
+				name: translate( 'Malware scanning' ),
+				description: translate( 'Automated threat detection' ),
 				plans: {
 					free: 'none',
 					personal: 'none',
@@ -150,13 +150,13 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
 					business: 'full',
 					commerce: 'full',
 				},
-				notes: { premium: 'Manual scan only' },
+				notes: { premium: translate( 'Manual scan only' ) },
 				path: '/jetpack-features/:site/malware-scanning',
 			},
 			{
 				id: 'automated-backups',
-				name: 'Automated backups',
-				description: 'Daily off-site backups',
+				name: translate( 'Automated backups' ),
+				description: translate( 'Daily off-site backups' ),
 				plans: {
 					free: 'none',
 					personal: 'none',
@@ -168,8 +168,8 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
 			},
 			{
 				id: 'waf',
-				name: 'Web application firewall',
-				description: 'Block malicious traffic',
+				name: translate( 'Web application firewall' ),
+				description: translate( 'Block malicious traffic' ),
 				plans: {
 					free: 'none',
 					personal: 'none',
@@ -183,14 +183,14 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
 	},
 	{
 		id: 'create',
-		name: 'Create',
+		name: translate( 'Create' ),
 		colorClass: 'blue',
 		iconSrc: iconCreator,
 		features: [
 			{
 				id: 'image-cdn',
-				name: 'Image CDN',
-				description: 'Serve optimised images globally',
+				name: translate( 'Image CDN' ),
+				description: translate( 'Serve optimised images globally' ),
 				plans: {
 					free: 'full',
 					personal: 'full',
@@ -202,8 +202,8 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
 			},
 			{
 				id: 'asset-cdn',
-				name: 'Static asset CDN',
-				description: 'Cache JS/CSS at the edge',
+				name: translate( 'Static asset CDN' ),
+				description: translate( 'Cache JS/CSS at the edge' ),
 				plans: {
 					free: 'full',
 					personal: 'full',
@@ -215,8 +215,8 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
 			},
 			{
 				id: 'contact-form',
-				name: 'Contact form',
-				description: 'Simple drag-and-drop forms',
+				name: translate( 'Contact form' ),
+				description: translate( 'Simple drag-and-drop forms' ),
 				plans: {
 					free: 'full',
 					personal: 'full',
@@ -228,8 +228,8 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
 			},
 			{
 				id: 'videopress',
-				name: 'VideoPress',
-				description: 'Ad-free video hosting',
+				name: translate( 'VideoPress' ),
+				description: translate( 'Ad-free video hosting' ),
 				plans: {
 					free: 'none',
 					personal: 'limited',
@@ -237,21 +237,21 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
 					business: 'full',
 					commerce: 'full',
 				},
-				notes: { personal: '1 video, 1 GB storage' },
+				notes: { personal: translate( '1 video, 1 GB storage' ) },
 				path: '/jetpack-features/:site/videopress',
 			},
 		],
 	},
 	{
 		id: 'grow',
-		name: 'Grow',
+		name: translate( 'Grow' ),
 		colorClass: 'purple',
 		iconSrc: iconStats,
 		features: [
 			{
 				id: 'site-stats',
-				name: 'Site stats',
-				description: 'Traffic, views and visitors',
+				name: translate( 'Site stats' ),
+				description: translate( 'Traffic, views and visitors' ),
 				path: '/jetpack-features/:site/site-stats',
 				plans: {
 					free: 'limited',
@@ -261,15 +261,15 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
 					commerce: 'full',
 				},
 				notes: {
-					free: 'Last 7 days only',
-					personal: 'Last 30 days',
-					premium: 'Last 30 days',
+					free: translate( 'Last 7 days only' ),
+					personal: translate( 'Last 30 days' ),
+					premium: translate( 'Last 30 days' ),
 				},
 			},
 			{
 				id: 'top-posts',
-				name: 'Top posts widget',
-				description: 'Surface your most popular content',
+				name: translate( 'Top posts widget' ),
+				description: translate( 'Surface your most popular content' ),
 				plans: {
 					free: 'full',
 					personal: 'full',
@@ -281,8 +281,8 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
 			},
 			{
 				id: 'email-subscriptions',
-				name: 'Email subscriptions',
-				description: 'Readers subscribe to new posts',
+				name: translate( 'Email subscriptions' ),
+				description: translate( 'Readers subscribe to new posts' ),
 				plans: {
 					free: 'full',
 					personal: 'full',
@@ -294,8 +294,8 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
 			},
 			{
 				id: 'social-sharing',
-				name: 'Social sharing buttons',
-				description: 'Share on any network',
+				name: translate( 'Social sharing buttons' ),
+				description: translate( 'Share on any network' ),
 				plans: {
 					free: 'full',
 					personal: 'full',
@@ -307,8 +307,8 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
 			},
 			{
 				id: 'related-posts',
-				name: 'Related posts',
-				description: 'Keep readers on your site',
+				name: translate( 'Related posts' ),
+				description: translate( 'Keep readers on your site' ),
 				plans: {
 					free: 'full',
 					personal: 'full',
@@ -320,8 +320,8 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
 			},
 			{
 				id: 'social-auto-posting',
-				name: 'Social auto-posting',
-				description: 'Publish to social on post',
+				name: translate( 'Social auto-posting' ),
+				description: translate( 'Publish to social on post' ),
 				plans: {
 					free: 'none',
 					personal: 'limited',
@@ -329,13 +329,13 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
 					business: 'full',
 					commerce: 'full',
 				},
-				notes: { personal: '1 social connection' },
+				notes: { personal: translate( '1 social connection' ) },
 				path: '/jetpack-features/:site/social',
 			},
 			{
 				id: 'jetpack-search',
-				name: 'Jetpack Search',
-				description: 'Fast, relevant site search',
+				name: translate( 'Jetpack Search' ),
+				description: translate( 'Fast, relevant site search' ),
 				plans: {
 					free: 'none',
 					personal: 'none',
@@ -347,8 +347,8 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
 			},
 			{
 				id: 'seo-tools',
-				name: 'SEO tools',
-				description: 'Sitemaps, meta and structured data',
+				name: translate( 'SEO tools' ),
+				description: translate( 'Sitemaps, meta and structured data' ),
 				plans: {
 					free: 'none',
 					personal: 'none',
@@ -360,8 +360,8 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
 			},
 			{
 				id: 'utm-tracking',
-				name: 'Advanced referrers & UTM tracking',
-				description: 'Detailed traffic source analysis',
+				name: translate( 'Advanced referrers & UTM tracking' ),
+				description: translate( 'Detailed traffic source analysis' ),
 				plans: {
 					free: 'none',
 					personal: 'none',
@@ -373,8 +373,8 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
 			},
 			{
 				id: 'crm',
-				name: 'Jetpack CRM',
-				description: 'Entrepreneur plan',
+				name: translate( 'Jetpack CRM' ),
+				description: translate( 'Entrepreneur plan' ),
 				plans: {
 					free: 'none',
 					personal: 'none',
@@ -388,14 +388,14 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
 	},
 	{
 		id: 'earn',
-		name: 'Earn',
+		name: translate( 'Earn' ),
 		colorClass: 'green',
 		gridicon: 'money',
 		features: [
 			{
 				id: 'donations',
-				name: 'Donation buttons',
-				description: 'Accept one-time donations',
+				name: translate( 'Donation buttons' ),
+				description: translate( 'Accept one-time donations' ),
 				plans: {
 					free: 'full',
 					personal: 'full',
@@ -407,8 +407,8 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
 			},
 			{
 				id: 'recurring-payments',
-				name: 'Recurring payments',
-				description: 'Sell subscriptions and memberships',
+				name: translate( 'Recurring payments' ),
+				description: translate( 'Sell subscriptions and memberships' ),
 				plans: {
 					free: 'full',
 					personal: 'full',
@@ -420,8 +420,8 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
 			},
 			{
 				id: 'paid-content',
-				name: 'Paid content gating',
-				description: 'Members-only posts and pages',
+				name: translate( 'Paid content gating' ),
+				description: translate( 'Members-only posts and pages' ),
 				plans: {
 					free: 'full',
 					personal: 'full',
@@ -433,8 +433,8 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
 			},
 			{
 				id: 'woo-analytics',
-				name: 'WooCommerce analytics',
-				description: 'Revenue, orders and customer insights',
+				name: translate( 'WooCommerce analytics' ),
+				description: translate( 'Revenue, orders and customer insights' ),
 				plans: {
 					free: 'none',
 					personal: 'none',
