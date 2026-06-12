@@ -14,7 +14,7 @@ export default async function runTask( { name = 'yarn', args, env = {}, testId }
 	return new Promise( ( resolve, reject ) => {
 		const startTime = Date.now();
 		console.log( `Spawning task: ${ name } ${ args }` );
-		const task = spawn( name, args.split( ' ' ), {
+		const task = spawn( `${ name } ${ args }`, {
 			shell: true,
 			env: {
 				...process.env,
