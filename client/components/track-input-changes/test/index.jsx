@@ -86,6 +86,10 @@ describe( 'TrackInputChanges#onNewValue', () => {
 	} );
 
 	test( 'should throw if multiple child elements', () => {
+		// React logs the expected render error to console.error; suppress it so real
+		// warnings stay visible.
+		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+
 		expect( () =>
 			render(
 				<TrackInputChanges onNewValue={ spies.onNewValue }>
@@ -94,5 +98,7 @@ describe( 'TrackInputChanges#onNewValue', () => {
 				</TrackInputChanges>
 			)
 		).toThrow();
+
+		consoleError.mockRestore();
 	} );
 } );

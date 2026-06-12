@@ -21,12 +21,17 @@ window.IntersectionObserver = jest.fn( () => ( {
 	unobserve: jest.fn(),
 } ) );
 
+// SectionNav clones its children with internal props (hasSiblingControls,
+// closeSectionNavMobilePanel). A component child consumes them instead of forwarding
+// unknown attributes onto a DOM element and triggering React warnings.
+const Panel = ( { children } ) => <div>{ children }</div>;
+
 describe( 'section-nav', () => {
 	describe( 'rendering', () => {
 		test( 'should render a header and a panel', () => {
 			const { container } = render(
 				<SectionNav selectedText="test">
-					<p>mmyellow</p>
+					<Panel>mmyellow</Panel>
 				</SectionNav>
 			);
 
@@ -38,7 +43,7 @@ describe( 'section-nav', () => {
 		test( 'should render selectedText within mobile header', () => {
 			const { container } = render(
 				<SectionNav selectedText="test">
-					<p>mmyellow</p>
+					<Panel>mmyellow</Panel>
 				</SectionNav>
 			);
 
@@ -50,7 +55,7 @@ describe( 'section-nav', () => {
 		test( 'should render children', () => {
 			render(
 				<SectionNav selectedText="test">
-					<p>mmyellow</p>
+					<Panel>mmyellow</Panel>
 				</SectionNav>
 			);
 
@@ -60,7 +65,7 @@ describe( 'section-nav', () => {
 		test( 'should not render a header if dropdown disabled', () => {
 			const { container } = render(
 				<SectionNav selectedText="test" allowDropdown={ false }>
-					<p>mmyellow</p>
+					<Panel>mmyellow</Panel>
 				</SectionNav>
 			);
 
@@ -128,7 +133,7 @@ describe( 'section-nav', () => {
 			const onMobileNavPanelOpen = jest.fn();
 			const { container } = render(
 				<SectionNav selectedText="placeholder" onMobileNavPanelOpen={ onMobileNavPanelOpen }>
-					<p>placeholder</p>
+					<Panel>placeholder</Panel>
 				</SectionNav>
 			);
 			const nav = container.querySelector( '.section-nav' );
