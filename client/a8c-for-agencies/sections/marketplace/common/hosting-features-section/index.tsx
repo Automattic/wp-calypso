@@ -1,5 +1,6 @@
 import PageSection, { PageSectionProps } from 'calypso/a8c-for-agencies/components/page-section';
 import HostingOverviewFeatures from '../hosting-overview-features';
+import type { JSX } from 'react';
 
 type Props = Omit< PageSectionProps, 'children' > & {
 	items: {

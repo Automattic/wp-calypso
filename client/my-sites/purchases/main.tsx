@@ -26,7 +26,6 @@ import { logStashLoadErrorEvent } from '../checkout/src/lib/analytics';
 import {
 	getPurchaseListUrlFor,
 	getCancelPurchaseUrlFor,
-	getDowngradeUrlFor,
 	getConfirmCancelDomainUrlFor,
 	getManagePurchaseUrlFor,
 	getAddNewPaymentMethodUrlFor,
@@ -129,7 +128,6 @@ export function PurchaseDetails( {
 					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
 					redirectTo={ isJetpackCloud() ? `https://cloud.jetpack.com${ redirectTo }` : redirectTo }
 					getCancelPurchaseUrlFor={ getCancelPurchaseUrlFor }
-					getDowngradeUrlFor={ getDowngradeUrlFor }
 					getAddNewPaymentMethodUrlFor={ getAddNewPaymentMethodUrlFor }
 					getChangePaymentMethodUrlFor={ getChangeOrAddPaymentMethodUrlFor }
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }

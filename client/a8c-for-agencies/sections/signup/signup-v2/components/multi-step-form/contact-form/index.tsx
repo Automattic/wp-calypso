@@ -1,5 +1,6 @@
 import {
 	Button,
+	ExternalLink,
 	Modal,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -262,17 +263,16 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 			<div className="signup-contact-form__tos">
 				<p>
 					{ translate(
-						"By clicking 'Continue', you agree to the{{break}}{{/break}}{{link}}Terms of the Automattic for Agencies Platform Agreement{{/link}} ↗",
+						"By clicking 'Continue', you agree to the{{break}}{{/break}}{{link}}Terms of the Automattic for Agencies Platform Agreement{{/link}}",
 						{
 							components: {
 								break: <br />,
 								link: (
-									<a
+									<ExternalLink
 										href="https://automattic.com/for-agencies/platform-agreement/"
 										className="signup-contact-form__tos-link"
-										target="_blank"
-										rel="noopener noreferrer"
-									></a>
+										children={ null }
+									/>
 								),
 							},
 						}

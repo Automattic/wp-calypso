@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { startsWith } from 'lodash';
 import {
 	getLanguageFilePathUrl,
@@ -5,6 +9,7 @@ import {
 	getLanguageManifestFileUrl,
 	getLanguagesInternalBasePath,
 	getTranslationChunkFileUrl,
+	switchWebpackCSS,
 } from 'calypso/lib/i18n-utils/switch-locale';
 
 describe( 'getLanguageFileUrl()', () => {
@@ -121,5 +126,25 @@ describe( 'getTranslationChunkFileUrl()', () => {
 		expect(
 			getTranslationChunkFileUrl( { chunkId, localeSlug, languageRevisions: { xd: 222 } } )
 		).toEqual( expected );
+	} );
+} );
+
+describe( 'switchWebpackCSS()', () => {
+	afterEach( () => {
+		document.head.innerHTML = '';
+		delete window.RTL_CSS_ENABLED;
+	} );
+
+	test( 'does not switch to RTL stylesheets when RTL CSS is disabled', () => {
+		document.head.innerHTML =
+			'<link rel="stylesheet" type="text/css" href="/calypso/evergreen/entry-main.css" data-webpack>';
+		window.RTL_CSS_ENABLED = false;
+
+		switchWebpackCSS( true );
+
+		const stylesheets = document.querySelectorAll( 'link[rel="stylesheet"][data-webpack]' );
+
+		expect( stylesheets ).toHaveLength( 1 );
+		expect( stylesheets[ 0 ].getAttribute( 'href' ) ).toBe( '/calypso/evergreen/entry-main.css' );
 	} );
 } );

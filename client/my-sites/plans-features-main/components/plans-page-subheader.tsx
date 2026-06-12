@@ -366,6 +366,16 @@ const PlansPageSubheader = ( {
 			return <PlanBenefitHeader />;
 		}
 
+		if ( ! isUsingStepContainerV2 && intent === 'plans-upgrade-or-downgrade' ) {
+			return (
+				<Subheader { ...subheaderCommonProps }>
+					{ translate(
+						'Compare plans and pick the one that works for where your site is headed.'
+					) }
+				</Subheader>
+			);
+		}
+
 		if ( ! isUsingStepContainerV2 && ( isOnboarding || intent === 'plans-upgrade' ) ) {
 			return (
 				<Subheader { ...subheaderCommonProps }>
@@ -380,9 +390,11 @@ const PlansPageSubheader = ( {
 	return (
 		<>
 			{ renderSubheader() }
-			{ isDisplayingPlansNeededForFeature && intent !== 'plans-upgrade' && (
-				<SecondaryFormattedHeader siteSlug={ siteSlug } selectedFeature={ selectedFeature } />
-			) }
+			{ isDisplayingPlansNeededForFeature &&
+				intent !== 'plans-upgrade' &&
+				intent !== 'plans-upgrade-or-downgrade' && (
+					<SecondaryFormattedHeader siteSlug={ siteSlug } selectedFeature={ selectedFeature } />
+				) }
 		</>
 	);
 };

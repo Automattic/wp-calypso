@@ -18,11 +18,8 @@ import {
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import {
-	isPaymentRiskNoticeBannerEnabled,
-	PAYMENT_RISK_NOTICE_SEVERITY,
-} from 'calypso/a8c-for-agencies/components/payment-risk-notice-banner/constants';
 import PaymentRiskNoticeMenuIndicator from 'calypso/a8c-for-agencies/components/payment-risk-notice-banner/menu-indicator';
+import usePaymentRiskNotice from 'calypso/a8c-for-agencies/components/payment-risk-notice-banner/use-payment-risk-notice';
 import { isPathAllowed } from 'calypso/a8c-for-agencies/lib/permission';
 import { A4A_REPORTS_LINK } from 'calypso/a8c-for-agencies/sections/reports/constants';
 import wooPaymentsIcon from 'calypso/assets/images/a8c-for-agencies/woopayments/woo-sidebar-icon.svg';
@@ -44,7 +41,6 @@ import {
 	A4A_REFERRALS_DASHBOARD,
 	A4A_TEAM_LINK,
 	A4A_AGENCY_TIER_LINK,
-	A4A_MIGRATIONS_OVERVIEW_LINK,
 	A4A_WOOPAYMENTS_LINK,
 	A4A_LEARN_LINK,
 	A4A_RESOURCES_LINK,
@@ -57,7 +53,8 @@ const useMainMenuItems = ( path: string ) => {
 	const translate = useTranslate();
 
 	const agency = useSelector( getActiveAgency );
-	const showPaymentRiskIndicator = isPaymentRiskNoticeBannerEnabled();
+	const paymentNotice = usePaymentRiskNotice();
+	const paymentNoticeSeverity = paymentNotice?.severity;
 
 	const menuItems = useMemo( () => {
 		let referralItems = [] as any[];
@@ -81,7 +78,7 @@ const useMainMenuItems = ( path: string ) => {
 			? {
 					icon: moveTo,
 					path: A4A_MIGRATIONS_LINK,
-					link: A4A_MIGRATIONS_OVERVIEW_LINK,
+					link: A4A_MIGRATIONS_LINK,
 					title: translate( 'Migrations' ),
 					trackEventProps: {
 						menu_item: 'Automattic for Agencies / Migrations',
@@ -142,45 +139,6 @@ const useMainMenuItems = ( path: string ) => {
 				},
 				withChevron: true,
 			},
-			{
-				icon: tag,
-				path: A4A_MARKETPLACE_LINK,
-				link: A4A_MARKETPLACE_HOSTING_LINK,
-				title: translate( 'Marketplace' ),
-				trackEventProps: {
-					menu_item: 'Automattic for Agencies / Marketplace',
-				},
-				withChevron: true,
-			},
-			{
-				icon: currencyDollar,
-				path: A4A_PURCHASES_LINK,
-				link: A4A_LICENSES_LINK,
-				title: showPaymentRiskIndicator ? (
-					<span className="a4a-payment-risk-notice-menu-title">
-						<span>{ translate( 'Purchases' ) }</span>
-						<PaymentRiskNoticeMenuIndicator severity={ PAYMENT_RISK_NOTICE_SEVERITY } />
-					</span>
-				) : (
-					translate( 'Purchases' )
-				),
-				trackEventProps: {
-					menu_item: 'Automattic for Agencies / Purchases',
-				},
-				withChevron: true,
-			},
-			...referralItems,
-			migrationMenuItem,
-			{
-				icon: <img src={ wooPaymentsIcon } alt="WooPayments" />,
-				path: A4A_WOOPAYMENTS_LINK,
-				link: A4A_WOOPAYMENTS_LINK,
-				title: translate( 'WooPayments' ),
-				trackEventProps: {
-					menu_item: 'Automattic for Agencies / WooPayments',
-				},
-				withChevron: true,
-			},
 			...( isSectionNameEnabled( 'a8c-for-agencies-plugins' )
 				? [
 						{
@@ -206,6 +164,45 @@ const useMainMenuItems = ( path: string ) => {
 				),
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / Reports',
+				},
+				withChevron: true,
+			},
+			{
+				icon: tag,
+				path: A4A_MARKETPLACE_LINK,
+				link: A4A_MARKETPLACE_HOSTING_LINK,
+				title: translate( 'Marketplace' ),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Marketplace',
+				},
+				withChevron: true,
+			},
+			{
+				icon: currencyDollar,
+				path: A4A_PURCHASES_LINK,
+				link: A4A_LICENSES_LINK,
+				title: paymentNoticeSeverity ? (
+					<span className="a4a-payment-risk-notice-menu-title">
+						<span>{ translate( 'Purchases' ) }</span>
+						<PaymentRiskNoticeMenuIndicator severity={ paymentNoticeSeverity } />
+					</span>
+				) : (
+					translate( 'Purchases' )
+				),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Purchases',
+				},
+				withChevron: true,
+			},
+			...referralItems,
+			migrationMenuItem,
+			{
+				icon: <img src={ wooPaymentsIcon } alt="WooPayments" />,
+				path: A4A_WOOPAYMENTS_LINK,
+				link: A4A_WOOPAYMENTS_LINK,
+				title: translate( 'WooPayments' ),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / WooPayments',
 				},
 				withChevron: true,
 			},
@@ -248,7 +245,7 @@ const useMainMenuItems = ( path: string ) => {
 		]
 			.map( ( item ) => createItem( item, path ) )
 			.filter( ( item ) => isPathAllowed( item.link, agency ) );
-	}, [ agency, path, showPaymentRiskIndicator, translate ] );
+	}, [ agency, path, paymentNoticeSeverity, translate ] );
 	return menuItems;
 };
 

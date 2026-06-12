@@ -23,67 +23,65 @@
 	}
 }
 
-// Stick the Jetpack footer to the viewport bottom while letting the page
-// body absorb remaining vertical space. Flex chain runs
-// .layout__content → .layout__primary → .main, with the footer pinned via
-// `position: fixed` and width-matched to the content column on desktop.
+// Clamp the primary to the viewport so the Jetpack footer can pin to the
+// bottom and the page body scrolls internally — independent of the shell's
+// (sometimes tall) sidebar. `.main` is the generic scroll container, so pages
+// need no per-page scroll hacks; on migrated pages the admin-ui `<Page>` fills
+// `.main` exactly and scrolls itself, leaving this overflow inert.
+//
+// Gated off Jetpack Cloud / A8C-for-Agencies: those shells render no footer,
+// use a fixed sidebar, and clamp `.layout__content` to the viewport — there we
+// just release the overflow and let the page scroll naturally.
 // Usage: @include admin-ui-page-sticky-footer;
 // Must be called inside a `body.is-section-<name>` selector.
 @mixin admin-ui-page-sticky-footer {
-	.layout__content {
-		display: flex;
-
-		.layout__primary {
-			flex: 1;
+	&:not(.theme-jetpack-cloud):not(.theme-a8c-for-agencies) {
+		.layout__content {
 			display: flex;
-			position: fixed;
-			top: var( --masterbar-height );
-			height: calc(100vh - var(--masterbar-height));
-			width: 100vw;
 
-			// Jetpack Cloud uses 100vh except on mobile where it shows a sidebar navigation on top (73px)
-			&:has(header.current-section) {
-				height: calc(100vh - 73px);
+			.layout__primary {
+				flex: 1;
+				display: flex;
+				position: fixed;
+				top: var( --masterbar-height );
+				height: calc(100vh - var(--masterbar-height));
+				width: 100vw;
+
 				@include break-medium {
-					height: 100vh;
+					width: calc(100vw - var(--sidebar-width-max));
 				}
-			}
 
-			@include break-medium {
-				width: calc(100vw - var(--sidebar-width-max));
-			}
+				.main {
+					flex-grow: 1;
+					position: relative;
+					margin-block: 0;
+					overflow-y: auto;
 
-			.main {
-				flex-grow: 1;
-				position: relative;
-				margin-block: 0;
-
-				@include break-medium {
-					body.theme-jetpack-cloud &,
-					body.theme-a8c-for-agencies & {
-						margin-block: var(--wpds-dimension-padding-2xl);
+					// Reserve room for the fixed footer when one is rendered.
+					&:has(> .jetpack-footer) {
+						padding-bottom: 65px;
 					}
-				}
 
-				// Only reserve bottom space when a Jetpack footer is actually
-				// rendered. Pages without a footer (e.g. Jetpack Cloud views)
-				// get the fixed-primary structural hack without the wasted
-				// padding.
-				&:has(> .jetpack-footer) {
-					padding-bottom: 65px;
-				}
+					.jetpack-footer {
+						position: fixed;
+						z-index: 1;
+						bottom: 0;
+						background-color: var(--wpds-color-bg-surface-neutral);
 
-				.jetpack-footer {
-					position: fixed;
-					z-index: 1;
-					bottom: 0;
-					background-color: var(--wpds-color-bg-surface-neutral);
-
-					@include break-medium {
-						max-width: calc(100% - var(--sidebar-width-max));
+						@include break-medium {
+							max-width: calc(100% - var(--sidebar-width-max));
+						}
 					}
 				}
 			}
+		}
+	}
+
+	// Jetpack Cloud / A4A: scroll naturally; release the shell's overflow clamp.
+	&.theme-jetpack-cloud,
+	&.theme-a8c-for-agencies {
+		.layout__content {
+			overflow: visible;
 		}
 	}
 }

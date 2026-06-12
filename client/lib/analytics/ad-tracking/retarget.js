@@ -93,16 +93,25 @@ export async function retarget( urlPath ) {
 	// OpenAI
 	if ( mayWeTrackByTracker( 'openai' ) ) {
 		// see https://developers.openai.com/ads/measurement-pixel
-		const eventProps = {
+		let eventProps = {
 			type: 'contents',
-			contents: [
-				{
-					id: urlPath,
-					name: document.title,
-					content_type: 'page',
-				},
-			],
 		};
+		if (
+			typeof urlPath === 'string' &&
+			urlPath.trim().length > 0 &&
+			document.title.trim().length > 0
+		) {
+			eventProps = {
+				type: 'contents',
+				contents: [
+					{
+						id: urlPath,
+						name: document.title,
+						content_type: 'page',
+					},
+				],
+			};
+		}
 		window.oaiq( 'measure', 'page_viewed', eventProps );
 		debug( 'retarget: [OpenAI]', eventProps );
 	}

@@ -2,7 +2,7 @@ import './styles.scss';
 import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { shuffle } from 'lodash';
-import { useMemo } from 'react';
+import { useMemo, type JSX } from 'react';
 import { useFeedRecommendationsQuery } from 'calypso/data/reader/use-feed-recommendations-query';
 import { ReaderSitesList } from 'calypso/reader/sites-list';
 

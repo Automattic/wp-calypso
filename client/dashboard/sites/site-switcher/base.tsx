@@ -31,7 +31,14 @@ export const SiteSwitcherBase = (
 	const { recordTracksEvent } = useAnalytics();
 	const { queries } = useAppContext();
 	const [ isSwitcherOpen, setIsSwitcherOpen ] = useState( false );
-	const { data: sites } = useQuery( { ...queries.sitesQuery(), enabled: isSwitcherOpen } );
+	const { data: sites } = useQuery( {
+		...queries.sitesQuery( {
+			site_visibility: 'visible',
+			include_a8c_owned: false,
+			include_staging: false,
+		} ),
+		enabled: isSwitcherOpen,
+	} );
 	const buildCurrentRouteLink = useBuildCurrentRouteLink();
 
 	return (

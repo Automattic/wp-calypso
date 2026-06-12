@@ -130,7 +130,7 @@ export function UpcomingRenewalsDialog( {
 					<Heading>{ __( 'Upcoming renewals' ) }</Heading>
 					<Text variant="muted" className="upcoming-renewals-dialog__site-label">
 						{
-							// translators: siteName is the URL of the site
+							// translators: %(siteName)s: the URL of the site
 							sprintf( __( 'Site: %(siteName)s' ), { siteName: siteDomain } )
 						}
 					</Text>

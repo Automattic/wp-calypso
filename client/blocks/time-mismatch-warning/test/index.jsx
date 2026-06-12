@@ -68,7 +68,8 @@ describe( 'TimeMismatchWarning', () => {
 		getSiteGmtOffset.mockReturnValueOnce( 10 );
 		useTranslate.mockImplementationOnce( () => translate );
 		render( <TimeMismatchWarning siteId={ 1 } settingsUrl="https://example.com" /> );
-		expect( translate ).toMatchSnapshot();
+		const [ , options ] = translate.mock.calls[ 0 ];
+		expect( options.components.SiteSettings.props.href ).toBe( 'https://example.com' );
 	} );
 
 	test( 'to render the status if set', () => {

@@ -10,7 +10,6 @@ import {
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { rotateLeft, download } from '@wordpress/icons';
 import { useCallback } from 'react';
 import FileBrowser from '../../../my-sites/backup/backup-contents-page/file-browser';
 import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
@@ -51,7 +50,7 @@ export function BackupDetails( { backup, site, timezoneString, gmtOffset }: Back
 	);
 
 	// Granular backup download mutation
-	const granularDownloadRequest = useMutation(
+	const { mutate: granularDownloadMutate, isPending: isGranularDownloadPending } = useMutation(
 		siteGranularBackupDownloadInitiateMutation( site.ID )
 	);
 
@@ -79,7 +78,7 @@ export function BackupDetails( { backup, site, timezoneString, gmtOffset }: Back
 
 		recordTracksEvent( 'calypso_dashboard_backup_granular_download_request' );
 
-		granularDownloadRequest.mutate(
+		granularDownloadMutate(
 			{
 				rewindId: backup.rewind_id,
 				includePaths,
@@ -99,7 +98,7 @@ export function BackupDetails( { backup, site, timezoneString, gmtOffset }: Back
 	}, [
 		fileBrowserState,
 		recordTracksEvent,
-		granularDownloadRequest,
+		granularDownloadMutate,
 		backup.rewind_id,
 		router,
 		site.slug,
@@ -111,11 +110,10 @@ export function BackupDetails( { backup, site, timezoneString, gmtOffset }: Back
 			<Button
 				variant="tertiary"
 				size={ isSmallViewport ? 'default' : 'compact' }
-				icon={ download }
 				onClick={ hasSelectedFiles ? handleGranularDownloadClick : handleDownloadClick }
 				style={ { justifyContent: 'center' } }
-				disabled={ granularDownloadRequest.isPending }
-				isBusy={ granularDownloadRequest.isPending }
+				disabled={ isGranularDownloadPending }
+				isBusy={ isGranularDownloadPending }
 			>
 				{ hasSelectedFiles
 					? _n( 'Download selected file', 'Download selected files', selectedFilesCount )
@@ -124,7 +122,6 @@ export function BackupDetails( { backup, site, timezoneString, gmtOffset }: Back
 			<Button
 				variant="primary"
 				size={ isSmallViewport ? 'default' : 'compact' }
-				icon={ rotateLeft }
 				onClick={ handleRestoreClick }
 				style={ { justifyContent: 'center' } }
 			>

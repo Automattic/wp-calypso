@@ -44,13 +44,26 @@ export const purchaseQuery = ( purchaseId: number ) =>
 		queryFn: () => fetchPurchase( purchaseId ),
 	} );
 
+/**
+ * TanStack Query options for fetching features lost when cancelling or
+ * downgrading a purchase.
+ *
+ * Pass `targetProductSlug` to scope the result to the feature delta between
+ * the current plan and a specific target plan (e.g. when showing a downgrade
+ * confirmation). Without it, all cancellation features for the current plan
+ * are returned.
+ *
+ * `variant` is an A/B experiment parameter; leave it as the default
+ * `'control'` unless you are explicitly running an experiment.
+ */
 export const purchaseCancelFeaturesQuery = (
 	purchaseId: number,
-	variant: 'control' | 'treatment' = 'control'
+	variant: 'control' | 'treatment' = 'control',
+	targetProductSlug?: string
 ) =>
 	queryOptions( {
-		queryKey: [ 'upgrades', purchaseId, 'cancel-features', variant ],
-		queryFn: () => fetchCancellationFeatures( purchaseId, variant ),
+		queryKey: [ 'upgrades', purchaseId, 'cancel-features', variant, targetProductSlug ],
+		queryFn: () => fetchCancellationFeatures( purchaseId, variant, targetProductSlug ),
 	} );
 
 export const hasPurchaseBeenExtendedQuery = ( purchaseId: number ) =>

@@ -1,5 +1,6 @@
 import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
 import { A4A_SITES_LINK } from './constants';
+import type { JSX } from 'react';
 
 type MenuItemProps = {
 	id?: string;

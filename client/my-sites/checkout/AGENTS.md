@@ -87,6 +87,31 @@ Seven touchpoints required (follow an existing implementation like PIX or BLIK):
 
 Steps 6-7 are the ones agents miss — without slug mapping the method never appears.
 
+### Retiring a Payment Method
+
+The inverse of the above — used when the backend retires a processor (or a single
+method on a still-active processor). Reference template: PR #110710 (SHILL-1968,
+Razorpay). The backend instructions are in the wpcom retired-processors readme; this section covers
+only the Calypso checkout side.
+
+Two surfaces with opposite fates:
+
+**Remove — the checkout offering** (undo the seven touchpoints above):
+
+1. Payment method component (`src/payment-methods/{name}.tsx`) and its test.
+2. Processor function (`src/lib/{name}-processor.ts`) and its registration in `checkout-main.tsx`.
+3. Create hook (`use-create-{name}.ts`) and its registration(s) in `use-create-payment-methods/index.tsx`.
+4. **Both directions** of the class↔slug mapping in `packages/wpcom-checkout/src/translate-payment-method-names.ts` AND the dashboard copy at `client/dashboard/me/billing-purchases/payment-methods/translate-payment-method-names.ts`.
+5. Checkout-time UI: the `client/lib/checkout/validation.js` branch, `client/lib/cart-values` label, `payment-logo` name/style/svg, any `country-specific-payment-fields` reference.
+6. Feature flag in `config/*.json` and any dedicated client package (Razorpay had `@automattic/calypso-razorpay`; most methods have none).
+
+**Keep — historic display.** Saved and past payment methods must still render:
+
+- The `payment_type` union member in `packages/api-core/src/upgrades/types.ts` (e.g. `'netbanking'`, `'razorpay'`) — historic purchase rows still carry it.
+- For processors that stored partner-specific method meta (e.g. Razorpay's UPI: `razorpay_vpa`): the partner constant + identifier types in `api-core` and `packages/wpcom-checkout/src/stored-payment-method-util.tsx`, plus the stored-method logo. This is the JSON-contract surface documented in the backend readme. A processor that was never recurring and carried no partner-specific stored meta (e.g. dLocal/netbanking) has nothing here to keep beyond the `payment_type` union member.
+
+**Why removing the class↔slug mapping is safe.** `translateWpcomPaymentMethodToCheckoutPaymentMethod` `throw`s on an unknown class, but it only ever runs over the cart's `allowed_payment_methods` (`src/lib/translate-cart.ts`) — i.e. methods currently on offer. Once the backend drops the retired class from `allowed_payment_methods`, the `default: throw` is unreachable. Historic purchase display reads the `payment_type` string, never the class translator — which is why the union member above must stay.
+
 ## Common Pitfalls
 
 1. **Checkout links MUST include `redirect_to` and `cancel_to` params** — Missing

@@ -1,7 +1,7 @@
 # Linking from and to the Dashboard
 
 - Every relative URL from the dashboard linking to the Classic WordPress.com/Calypso MUST use `wpcomLink()` function
-    - **Purpose**: Ensures proper environment configuration (dev vs production hostnames)
+  - **Purpose**: Ensures proper environment configuration (dev vs production hostnames)
 
 ```typescript
 // ✅ Correct - wrapped with wpcomLink()
@@ -15,8 +15,8 @@
 ```
 
 - Every relative URL from the Classic WordPress.com/Calypso to the dashboard MUST use `dashboardLink()` function
-    - **Purpose**: Ensures proper environment configuration (dev vs production hostnames)
+  - **Purpose**: Ensures proper environment configuration (dev vs production hostnames)
 - Every link to `/checkout` must have `redirect_to` and `cancel_to` query param
-    - **Purpose**: Ensures correct behaviour when exiting the checkout screen
+  - **Purpose**: Ensures correct behaviour when exiting the checkout screen
 - Every link to `/setup/plan-upgrade` must have a `cancel_to` query param
-    - **Purpose**: Ensures correct behaviour when exiting the upgrade screen
+  - **Purpose**: Ensures correct behaviour when exiting the upgrade screen

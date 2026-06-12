@@ -1,4 +1,4 @@
-import { Button } from '@wordpress/components';
+import { Button, ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import StepSection from 'calypso/a8c-for-agencies/components/step-section';
@@ -48,12 +48,11 @@ export default function MigrationsCommissionsEmptyState( {
 							<ul>
 								<li>
 									{ translate(
-										'Ensure the {{a}}Automattic for Agencies plugin{{/a}} ↗ is installed and connected to each site.',
+										'Ensure the {{a}}Automattic for Agencies plugin{{/a}} is installed and connected to each site.',
 										{
 											components: {
 												a: (
-													<a
-														target="_blank"
+													<ExternalLink
 														href={ a4aPluginUrl }
 														onClick={ () => {
 															dispatch(
@@ -62,7 +61,7 @@ export default function MigrationsCommissionsEmptyState( {
 																)
 															);
 														} }
-														rel="noopener noreferrer"
+														children={ null }
 													/>
 												),
 											},
