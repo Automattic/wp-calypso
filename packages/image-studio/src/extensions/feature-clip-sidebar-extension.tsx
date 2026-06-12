@@ -274,12 +274,14 @@ function FeatureClipPlanGate( {
 	postType,
 	postId,
 }: FeatureClipPanelBodyProps ): JSX.Element | null {
-	const hasAiFeature = useHasAiAssistantFeature();
 	// Site-type scoping lives here, not in the hook: hiding only applies to
 	// self-hosted Jetpack, where generation is server-gated on the paid AI
-	// feature. The wpcom plans that surface this panel already include it.
+	// feature. The wpcom plans that surface this panel already include it,
+	// so the hook (and its one plans request per editor load) stays disabled
+	// everywhere else.
 	const isSelfHostedJetpack =
 		typeof window !== 'undefined' && window.imageStudioData?.siteType === 'jetpack';
+	const hasAiFeature = useHasAiAssistantFeature( { enabled: isSelfHostedJetpack } );
 
 	// Hide the panel entirely rather than offer an entry point to a dead end.
 	// Fails open while the plan data loads.

@@ -669,6 +669,7 @@ describe( 'feature-clip-sidebar-extension', () => {
 			render( <FeatureClipPanel /> );
 
 			expect( screen.getByRole( 'button', { name: 'Generate clip' } ) ).toBeInTheDocument();
+			expect( mockFetchAiFeature ).not.toHaveBeenCalled();
 		} );
 
 		it( 'does not hide on Simple sites even when the feature is absent', () => {
@@ -681,6 +682,8 @@ describe( 'feature-clip-sidebar-extension', () => {
 			render( <FeatureClipPanel /> );
 
 			expect( screen.getByRole( 'button', { name: 'Generate clip' } ) ).toBeInTheDocument();
+			// The hook is disabled outside self-hosted Jetpack — no plans request.
+			expect( mockFetchAiFeature ).not.toHaveBeenCalled();
 		} );
 
 		it( 'dispatches the store fetch once per session, even across remounts', () => {
