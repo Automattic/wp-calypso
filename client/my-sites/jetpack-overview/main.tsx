@@ -13,7 +13,6 @@ import FeatureCard from './feature-card';
 import {
 	FEATURE_GROUPS,
 	PLAN_DISPLAY_NAMES,
-	PLAN_KEY_ORDER,
 	PLAN_SLUGS,
 	getPlanKey,
 	getPlanTier,
@@ -33,15 +32,12 @@ export default function JetpackOverview() {
 	const planTier = getPlanTier( currentPlan?.productSlug );
 	const planKey = getPlanKey( planTier );
 	const hasWooCommerce = Boolean( site?.options?.woocommerce_is_active );
-	const businessTierIndex = PLAN_KEY_ORDER.indexOf( 'business' );
-	const defaultPreviewKey: PlanKey = planTier >= businessTierIndex ? 'business' : planKey;
-	const [ previewPlanKey, setPreviewPlanKey ] = useState< PlanKey >( defaultPreviewKey );
+	const isMaxPlan = planTier >= 3;
+	const [ previewPlanKey, setPreviewPlanKey ] = useState< PlanKey >( planKey );
 
 	useEffect( () => {
-		setPreviewPlanKey( defaultPreviewKey );
-	}, [ defaultPreviewKey ] );
-
-	const isMaxPlan = planTier >= 4;
+		setPreviewPlanKey( planKey );
+	}, [ planKey ] );
 	useEffect( () => {
 		recordTracksEvent( 'calypso_jetpack_interstitial_viewed', {
 			site_id: site?.ID,
@@ -103,20 +99,22 @@ export default function JetpackOverview() {
 							  } ) }
 					</p>
 				</div>
-				<div className="jetpack-overview__plan-toggles">
-					{ TOGGLE_PLANS.map( ( key ) => (
-						<button
-							key={ key }
-							className={ clsx( 'jetpack-overview__plan-toggle', {
-								'is-active': previewPlanKey === key,
-								'is-current': key === planKey,
-							} ) }
-							onClick={ () => handlePlanToggle( key ) }
-						>
-							{ PLAN_DISPLAY_NAMES[ key ] }
-						</button>
-					) ) }
-				</div>
+				{ ! isMaxPlan && (
+					<div className="jetpack-overview__plan-toggles">
+						{ TOGGLE_PLANS.map( ( key ) => (
+							<button
+								key={ key }
+								className={ clsx( 'jetpack-overview__plan-toggle', {
+									'is-active': previewPlanKey === key,
+									'is-current': key === planKey,
+								} ) }
+								onClick={ () => handlePlanToggle( key ) }
+							>
+								{ PLAN_DISPLAY_NAMES[ key ] }
+							</button>
+						) ) }
+					</div>
+				) }
 			</div>
 
 			<div className="jetpack-overview__grid">
@@ -147,12 +145,14 @@ export default function JetpackOverview() {
 				</div>
 			) }
 
-			<ComparisonTable
-				currentPlanKey={ planKey === 'commerce' ? 'business' : planKey }
-				onUpgradeClick={ handleTableCheckoutClick }
-				hasWooCommerce={ hasWooCommerce }
-				siteSlug={ siteSlug ?? '' }
-			/>
+			{ ! isMaxPlan && (
+				<ComparisonTable
+					currentPlanKey={ planKey }
+					onUpgradeClick={ handleTableCheckoutClick }
+					hasWooCommerce={ hasWooCommerce }
+					siteSlug={ siteSlug ?? '' }
+				/>
+			) }
 		</div>
 	);
 }
