@@ -24,7 +24,7 @@ const MultipleChoiceQuestion = ( {
 	name,
 	onAnswerChange,
 	question,
-	selectedAnswerId = null,
+	selectedAnswerId,
 	selectedAnswerText = '',
 	shouldShuffleAnswers = true,
 } ) => {
