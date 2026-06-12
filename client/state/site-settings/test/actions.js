@@ -213,6 +213,21 @@ describe( 'actions', () => {
 			} );
 		} );
 
+		test( 'should normalize hide_free_tier to 1/0 for Jetpack sites', () => {
+			const settings = {
+				subscription_options: {
+					// A boolean would otherwise form-encode to the string "false",
+					// which PHP treats as truthy — it must be coerced to 0.
+					hide_free_tier: false,
+				},
+			};
+			return saveSiteSettings( 2916284, settings )( spy, getState ).then( () => {
+				const formattedOptions = savedSettings.subscription_options;
+				expect( formattedOptions ).toContain( 0 );
+				expect( formattedOptions ).not.toContain( false );
+			} );
+		} );
+
 		test( 'should not format subscription options for non-Jetpack sites', () => {
 			const nonJetpackState = () => ( {
 				sites: {
