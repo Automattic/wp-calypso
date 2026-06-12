@@ -11,7 +11,6 @@
  * External dependencies
  */
 import {
-	compositionManifest,
 	useAbilitiesSetup,
 	toolProvider,
 	contextProvider,
@@ -24,7 +23,6 @@ import {
 
 // Expose on window for the ESM wrapper to re-export
 window.__JetpackAIProvider = {
-	compositionManifest,
 	useAbilitiesSetup,
 	toolProvider,
 	contextProvider,
