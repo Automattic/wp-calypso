@@ -20,12 +20,6 @@ import './style.scss';
 
 const TARGET_PLANS: PlanKey[] = [ 'personal', 'premium', 'business' ];
 
-const PLAN_TAGLINES: Record< string, string > = {
-	personal: 'Essential tools for creators',
-	premium: 'Advanced security and media',
-	business: 'Full professional protection',
-};
-
 function getUnlockedByGroup(
 	planKey: PlanKey,
 	hasWooCommerce: boolean
@@ -48,6 +42,11 @@ function getUnlockedByGroup(
 
 export default function UpgradeJetpack() {
 	const translate = useTranslate();
+	const planTaglines: Record< string, string > = {
+		personal: translate( 'Essential tools for creators' ),
+		premium: translate( 'Advanced security and media' ),
+		business: translate( 'Full professional protection' ),
+	};
 	const site = useSelector( getSelectedSite );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const currentPlan = useSelector( ( state ) => getCurrentPlan( state, site?.ID ) );
@@ -124,7 +123,7 @@ export default function UpgradeJetpack() {
 							className={ `upgrade-jetpack__plan${ isCurrent ? ' is-current' : '' }` }
 						>
 							<div className="upgrade-jetpack__plan-name">{ PLAN_DISPLAY_NAMES[ planKey ] }</div>
-							<p className="upgrade-jetpack__plan-tagline">{ PLAN_TAGLINES[ planKey ] }</p>
+							<p className="upgrade-jetpack__plan-tagline">{ planTaglines[ planKey ] }</p>
 
 							{ unlockedGroups.length > 0 ? (
 								<div className="upgrade-jetpack__unlocks">
