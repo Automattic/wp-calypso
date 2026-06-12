@@ -89,8 +89,14 @@ export const useWPCOMDomainSearchCart = ( {
 			return b.item_subtotal_integer - a.item_subtotal_integer;
 		} );
 
+		// Bundle members never receive the free-domain promo: the server excludes
+		// them from plan free-domain credit (the bundle discount doesn't stack),
+		// so displaying one as free here would promise a price checkout won't honor.
 		const firstNonPremiumDomain = domainItems.find(
-			( item ) => ! isDomainMoveInternal( item ) && ! item.extra?.premium
+			( item ) =>
+				! isDomainMoveInternal( item ) &&
+				! item.extra?.premium &&
+				! item.extra?.domain_bundle_group_id
 		);
 		const freeDomainName = forceFirstNonPremiumDomainToBeFree
 			? firstNonPremiumDomain?.meta
@@ -139,6 +145,65 @@ export const useWPCOMDomainSearchCart = ( {
 
 				if ( ! flowAllowsMultipleDomainsInCart ) {
 					return onContinue( cartItems.products.filter( ( item ) => item.meta === domain_name ) );
+				}
+
+				return cartItems;
+			},
+			onAddBundle: async ( bundle ) => {
+				// One product per bundle member, added in a single cart call so the
+				// add is all-or-nothing. The bundle metadata is server-issued and
+				// passed through verbatim — the backend cart validator verifies the
+				// group id and applies the discount; no price math happens here.
+				// Members arrive primary-first from the backend (the searched
+				// SLD+TLD anchors the bundle), so the first member is the primary.
+				const bundleProducts: MinimalRequestCartProduct[] = bundle.domains.map(
+					( member, index ) => ( {
+						product_slug: member.product_slug,
+						meta: member.domain,
+						extra: {
+							...( member.supports_privacy && {
+								privacy_available: member.supports_privacy,
+								privacy: member.supports_privacy,
+							} ),
+							...( flowName && { flow_name: flowName } ),
+							domain_bundle_group_id: bundle.bundle_group_id,
+							domain_bundle_role: index === 0 ? ( 'primary' as const ) : ( 'companion' as const ),
+							expected_bundle_size: String( bundle.domains.length ),
+						},
+					} )
+				);
+
+				// A bundle member may already sit in the cart as a standalone
+				// product. The backend dedupes by product+meta keeping the last
+				// occurrence, which would strip the bundle extras from the member —
+				// so drop the standalone copy and let the bundle-tagged one win.
+				const isBundleMember = ( product: ResponseCartProduct ) =>
+					bundle.domains.some(
+						( member ) =>
+							member.product_slug === product.product_slug && member.domain === product.meta
+					);
+
+				const cartItems = await replaceProductsInCart( [
+					...bundleProducts,
+					...responseCart.products.filter( ( product ) => ! isBundleMember( product ) ),
+				] );
+
+				// The backend enforces bundle integrity by silently stripping an
+				// incomplete group from the cart (e.g. a member became unavailable
+				// between suggestion and add) rather than returning a cart error, so
+				// the promise resolves even when the bundle didn't make it in. Turn
+				// that absence into an error so the mutation captures the failure
+				// instead of reporting success or continuing with a partial bundle.
+				const bundleItemsInCart = cartItems.products.filter(
+					( item ) => item.extra?.domain_bundle_group_id === bundle.bundle_group_id
+				);
+
+				if ( bundleItemsInCart.length < bundle.domains.length ) {
+					throw new Error( 'The domain bundle could not be added to the cart.' );
+				}
+
+				if ( ! flowAllowsMultipleDomainsInCart ) {
+					return onContinue( bundleItemsInCart );
 				}
 
 				return cartItems;

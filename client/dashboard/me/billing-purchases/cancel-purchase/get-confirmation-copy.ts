@@ -42,10 +42,7 @@ export type ProductCategory =
 	| 'other';
 
 function isTitanMailSlug( productSlug: string ): boolean {
-	return (
-		productSlug === TitanMailSlugs.TITAN_MAIL_MONTHLY_SLUG ||
-		productSlug === TitanMailSlugs.TITAN_MAIL_YEARLY_SLUG
-	);
+	return ( Object.values( TitanMailSlugs ) as readonly string[] ).includes( productSlug );
 }
 
 function isAkismetProductSlug( productSlug: string ): boolean {

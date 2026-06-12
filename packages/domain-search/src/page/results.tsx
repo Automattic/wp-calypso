@@ -1,3 +1,4 @@
+import { useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { chevronDown, chevronUp, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -13,6 +14,7 @@ import { UnavailableSearchResult } from '../components/unavailable-search-result
 import { useRequestTracking } from '../hooks/use-request-tracking';
 import { useSuggestionsList } from '../hooks/use-suggestions-list';
 import { useDomainSearch } from './context';
+import type { BundleSuggestion } from '@automattic/api-core';
 
 const StickyCompactBanner = () => {
 	const { __ } = useI18n();
@@ -45,7 +47,19 @@ const StickyCompactBanner = () => {
 };
 
 export const ResultsPage = () => {
-	const { slots, config, events } = useDomainSearch();
+	const { slots, config, events, cart } = useDomainSearch();
+
+	// Accepting a bundle adds every member domain to the cart in one
+	// all-or-nothing operation. The cart mutation itself lives at the app layer
+	// (cart.onAddBundle); the mutation wrapper mirrors the single-domain
+	// add-to-cart path so failures are captured the same way.
+	const { mutate: addBundleToCart } = useMutation( {
+		mutationFn: async ( bundle: BundleSuggestion ) => {
+			await cart.onAddBundle?.( bundle );
+		},
+		networkMode: 'always',
+		retry: false,
+	} );
 
 	const {
 		isLoading: isLoadingSuggestions,
@@ -118,7 +132,14 @@ export const ResultsPage = () => {
 				{ ! isLoadingSuggestions && bundleSuggestion && (
 					<BundleCard
 						suggestion={ bundleSuggestion }
-						onAddToCart={ ( bundle ) => events.onBundleAddToCart( bundle ) }
+						onAddToCart={ ( bundle ) => {
+							events.onBundleAddToCart( bundle );
+							addBundleToCart( bundle );
+						} }
+						isAddedToCart={ bundleSuggestion.domains.every( ( { domain } ) =>
+							cart.hasItem( domain )
+						) }
+						onContinue={ events.onContinue }
 					/>
 				) }
 				{ isLoadingSuggestions ? (
