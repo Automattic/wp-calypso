@@ -615,9 +615,7 @@ class MasterbarLoggedIn extends Component {
 						const mediaUrl = isClassicView
 							? `${ siteAdminUrl }media-new.php`
 							: `/media/${ siteSlug }`;
-						isClassicView
-							? ( window.location.href = mediaUrl )
-							: page( mediaUrl );
+						isClassicView ? ( window.location.href = mediaUrl ) : page( mediaUrl );
 					},
 				},
 				{
@@ -634,9 +632,7 @@ class MasterbarLoggedIn extends Component {
 						const userUrl = isClassicView
 							? `${ siteAdminUrl }user-new.php`
 							: `/people/new/${ siteSlug }`;
-						isClassicView
-							? ( window.location.href = userUrl )
-							: page( userUrl );
+						isClassicView ? ( window.location.href = userUrl ) : page( userUrl );
 					},
 				},
 			];
