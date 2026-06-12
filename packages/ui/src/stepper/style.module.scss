@@ -5,51 +5,46 @@
 // ---------------------------------------------------------------------------
 
 .root {
-	--a8c-ui-stepper-indicator-size: 18px;
-	--a8c-ui-stepper-indicator-size-sm: 16px;
-	// Centers the smaller current/completed bullets against upcoming ones.
-	--a8c-ui-stepper-indicator-offset: calc(
-		( var( --a8c-ui-stepper-indicator-size ) - var( --a8c-ui-stepper-indicator-size-sm ) ) * 0.5
-	);
+	--a8c-ui-stepper-indicator-size: 24px;
 }
 
 // ---------------------------------------------------------------------------
 // Indicator
 // ---------------------------------------------------------------------------
 
+// Icons draw their own circles and use currentColor, so state rules below
+// only set `color`. The CSS-drawn circle remains solely for number-variant
+// steps that display a number (completed/error render full icons).
 .indicator {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	width: var( --a8c-ui-stepper-indicator-size );
 	height: var( --a8c-ui-stepper-indicator-size );
+	flex-shrink: 0;
+	color: var( --wpds-color-fg-interactive-neutral );
+}
+
+.indicator[data-indicator-variant='number']:not( .is-completed ):not( .is-error ) {
 	border-radius: 50%;
 	border: var( --wpds-border-width-xs ) solid var( --wpds-color-foreground-interactive-neutral );
-	flex-shrink: 0;
 	font-size: var( --wpds-typography-font-size-sm );
 	font-weight: 400;
 	color: var( --wpds-color-foreground-interactive-neutral );
 	background: var( --wpds-color-background-surface-neutral-strong );
 }
 
-// Current step
-.indicator.is-current {
+// Current step (number variant): solid filled circle
+.indicator.is-current[data-indicator-variant='number'] {
 	border-color: var( --wpds-color-foreground-content-neutral );
 	background: var( --wpds-color-foreground-content-neutral );
 	color: var( --wpds-color-background-surface-neutral-strong );
 	font-weight: 600;
 }
 
-// Completed step
+// Completed step (both variants)
 .indicator.is-completed {
-	border-color: var( --wpds-color-foreground-content-neutral-weak );
-	background: transparent;
 	color: var( --wpds-color-foreground-content-neutral-weak );
-
-	svg {
-		stroke: currentColor;
-		stroke-width: 1.5px;
-	}
 }
 
 // Disabled step
@@ -58,37 +53,16 @@
 }
 
 // ---------------------------------------------------------------------------
-// Bullet indicator variant
+// Bullet indicator variant (icon colors only)
 // ---------------------------------------------------------------------------
 
-// Upcoming: dashed gray-700 circle, no icon
 .indicator[data-indicator-variant='bullet'] {
-	border-style: dashed;
-	border-color: var( --wpds-color-foreground-content-neutral-weak );
 	color: var( --wpds-color-foreground-content-neutral-weak );
 }
 
-// Current: 16px solid gray-900 ring, transparent background + half-circle dome
-// The margin compensates for the size reduction vs upcoming (size → size-sm)
-// so the indicator centres stay aligned vertically across states.
 .indicator.is-current[data-indicator-variant='bullet'] {
-	width: var( --a8c-ui-stepper-indicator-size-sm );
-	height: var( --a8c-ui-stepper-indicator-size-sm );
-	margin: var( --a8c-ui-stepper-indicator-offset );
-	border-style: solid;
-	border-color: var( --wpds-color-foreground-content-neutral );
-	background: transparent;
 	color: var( --wpds-color-foreground-content-neutral );
 }
-
-// Completed: 16px, solid border (color inherited from .indicator.is-completed)
-.indicator.is-completed[data-indicator-variant='bullet'] {
-	width: var( --a8c-ui-stepper-indicator-size-sm );
-	height: var( --a8c-ui-stepper-indicator-size-sm );
-	margin: var( --a8c-ui-stepper-indicator-offset );
-	border-style: solid;
-}
-
 // Upcoming step titles
 [data-indicator-variant] .title {
 	color: var( --wpds-color-foreground-interactive-neutral );
