@@ -41,8 +41,7 @@ function usePlanDifferentiatorsExperiment( {
 
 	// New-site signups (no siteId yet) are always eligible.
 	// Flows operating on an existing site are eligible only when the gating flag is set.
-	const isEligible =
-		process.env.NODE_ENV !== 'test' && ( ( isInSignup && ! siteId ) || hasGatingFlag );
+	const isEligible = ( isInSignup && ! siteId ) || hasGatingFlag;
 
 	return {
 		showDifferentiatorHeader: false,
