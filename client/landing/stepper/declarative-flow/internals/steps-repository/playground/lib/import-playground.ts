@@ -6,7 +6,23 @@ import { PLAYGROUND_HOST } from './constants';
 import type { PlaygroundClient } from './types';
 
 const POLL_INTERVAL_MS = 5000;
-const MAX_POLL_ATTEMPTS = 120; // 10 min
+// 120 attempts × 5 s = 10 min. Atomic restores typically finish in 2–4 min;
+// 10 min covers worst-case load spikes without leaving users stuck indefinitely.
+const MAX_POLL_ATTEMPTS = 120;
+
+export class ImportTimeoutError extends Error {
+	constructor() {
+		super( 'Import timed out.' );
+		this.name = 'ImportTimeoutError';
+	}
+}
+
+export class ImportFailureError extends Error {
+	constructor() {
+		super( 'Import failed on WordPress.com.' );
+		this.name = 'ImportFailureError';
+	}
+}
 
 export async function getSiteZip( playground: PlaygroundClient ) {
 	const { zipWpContent } = await import(
@@ -27,6 +43,19 @@ export async function removeSandboxPlugins( playground: PlaygroundClient ): Prom
 		code: `<?php
 require_once '/wordpress/wp-load.php';
 $plugins = [ 'haydi', 'wccom-ai-connector' ];
+
+// Remove from active_plugins so the exported DB doesn't reference missing files.
+$active = get_option( 'active_plugins', [] );
+$active = array_values( array_filter( $active, function( $path ) use ( $plugins ) {
+	foreach ( $plugins as $slug ) {
+		if ( str_starts_with( $path, $slug . '/' ) ) {
+			return false;
+		}
+	}
+	return true;
+} ) );
+update_option( 'active_plugins', $active );
+
 foreach ( $plugins as $slug ) {
 	$dir = WP_PLUGIN_DIR . '/' . $slug;
 	if ( ! is_dir( $dir ) ) { continue; }
@@ -86,7 +115,7 @@ export async function importPlaygroundSite(
 		const status = fromApi( raw );
 
 		if ( status.importerState === appStates.IMPORT_FAILURE ) {
-			throw new Error( 'Import failed on WordPress.com.' );
+			throw new ImportFailureError();
 		}
 
 		if ( status.importerState === appStates.IMPORT_SUCCESS ) {
@@ -100,5 +129,5 @@ export async function importPlaygroundSite(
 		}
 	}
 
-	throw new Error( 'Import timed out.' );
+	throw new ImportTimeoutError();
 }

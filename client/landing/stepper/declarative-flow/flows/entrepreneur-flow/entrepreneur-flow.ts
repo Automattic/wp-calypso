@@ -15,6 +15,10 @@ import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
+import {
+	SESSION_KEY_FROM_PLAYGROUND_PUBLISH,
+	SESSION_KEY_PLAYGROUND_ID,
+} from '../../internals/steps-repository/playground/lib/constants';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { ENTREPRENEUR_TRIAL_SURVEY_KEY } from '../../internals/steps-repository/segmentation-survey';
 import type { Flow, ProvidedDependencies, StepperStep } from '../../internals/types';
@@ -28,16 +32,20 @@ const entrepreneurFlow: Flow = {
 
 	useSteps() {
 		const [ searchParams ] = useSearchParams();
-		const SESSION_KEY = 'entrepreneur_from_playground_publish';
-		const SESSION_PG_KEY = 'entrepreneur_playground_id';
-		if ( searchParams.get( 'from' ) === 'playground-publish' ) {
-			sessionStorage.setItem( SESSION_KEY, '1' );
-		}
-		const playgroundId = searchParams.get( 'playground' );
-		if ( playgroundId ) {
-			sessionStorage.setItem( SESSION_PG_KEY, playgroundId );
-		}
-		const isPlaygroundPublish = sessionStorage.getItem( SESSION_KEY ) === '1';
+
+		useEffect( () => {
+			if ( searchParams.get( 'from' ) === 'playground-publish' ) {
+				sessionStorage.setItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH, '1' );
+			}
+			const playgroundId = searchParams.get( 'playground' );
+			if ( playgroundId ) {
+				sessionStorage.setItem( SESSION_KEY_PLAYGROUND_ID, playgroundId );
+			}
+		}, [ searchParams ] );
+
+		const isPlaygroundPublish =
+			searchParams.get( 'from' ) === 'playground-publish' ||
+			sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1';
 
 		// When launched from the Playground publish flow skip straight to site
 		// creation — the WC trial is provisioned in SITE_CREATION_STEP regardless.
@@ -158,9 +166,9 @@ const entrepreneurFlow: Flow = {
 					}
 
 					if ( providedDependencies?.pluginsInstalled ) {
-						const storedPlaygroundId = sessionStorage.getItem( 'entrepreneur_playground_id' );
+						const storedPlaygroundId = sessionStorage.getItem( SESSION_KEY_PLAYGROUND_ID );
 						if (
-							sessionStorage.getItem( 'entrepreneur_from_playground_publish' ) === '1' &&
+							sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1' &&
 							storedPlaygroundId
 						) {
 							return navigateWithSiteId(
@@ -220,7 +228,9 @@ const entrepreneurFlow: Flow = {
 				}
 
 				case STEPS.IMPORTER_PLAYGROUND.slug: {
-					// Import complete — go to the new site's wp-admin.
+					// Import complete — clear Playground session flags before leaving.
+					sessionStorage.removeItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH );
+					sessionStorage.removeItem( SESSION_KEY_PLAYGROUND_ID );
 					if ( siteAdminUrl ) {
 						return window.location.assign( siteAdminUrl );
 					}

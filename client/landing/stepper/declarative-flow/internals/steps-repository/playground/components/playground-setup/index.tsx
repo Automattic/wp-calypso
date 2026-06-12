@@ -6,8 +6,13 @@ import Loading from 'calypso/components/loading';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../../lib/constants';
 import { useImportBlueprint } from '../../lib/import-blueprint';
-import { importPlaygroundSite, removeSandboxPlugins } from '../../lib/import-playground';
+import {
+	importPlaygroundSite,
+	removeSandboxPlugins,
+	ImportTimeoutError,
+} from '../../lib/import-playground';
 import { PlaygroundIframe } from '../playground-iframe';
 import type { Step } from '../../../../types';
 import type { PlaygroundClient } from '../../lib/types';
@@ -82,8 +87,7 @@ export const PlaygroundSetupStep: Step< {
 		// When launched from the Playground publish flow (entrepreneur) there is no
 		// surrounding Redux importer machinery to handle the start trigger and
 		// polling — so importPlaygroundSite must block until the import completes.
-		const waitForCompletion =
-			sessionStorage.getItem( 'entrepreneur_from_playground_publish' ) === '1';
+		const waitForCompletion = sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1';
 
 		if ( waitForCompletion ) {
 			await removeSandboxPlugins( client );
@@ -98,7 +102,7 @@ export const PlaygroundSetupStep: Step< {
 			} catch ( error ) {
 				recordTracksEvent( 'calypso_playground_woo_import_failed', {
 					site_id: siteId,
-					reason: ( error as Error ).message === 'Import timed out.' ? 'timeout' : 'import_failure',
+					reason: error instanceof ImportTimeoutError ? 'timeout' : 'import_failure',
 					duration_seconds: Math.round( ( Date.now() - importStartedAt ) / 1000 ),
 				} );
 				throw error;

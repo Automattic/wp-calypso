@@ -337,8 +337,9 @@ const onboarding: FlowV2< typeof initialize > = {
 				}
 				case 'playground':
 				case 'blueprint': {
-					if ( new URLSearchParams( window.location.search ).get( 'intent' ) === 'woocommerce' ) {
-						const playgroundId = new URLSearchParams( window.location.search ).get( 'playground' );
+					const locationParams = new URLSearchParams( window.location.search );
+					if ( locationParams.get( 'intent' ) === 'woocommerce' ) {
+						const playgroundId = locationParams.get( 'playground' );
 						return window.location.assign(
 							addQueryArgs( '/setup/entrepreneur', {
 								from: 'playground-publish',
