@@ -18,12 +18,9 @@ describe( 'index', () => {
 		translate: ( string ) => string,
 	};
 
-	// Render a DropZone into a container with a known id so the tests can assert on the
-	// node's placement in the tree, and return the component instance via a ref.
+	// Renders into a container with a known id so tests can assert on the node's placement,
+	// and returns the instance via a ref. Testing Library removes the container on cleanup.
 	function renderDropZone( props = {} ) {
-		// Render into a container with a known id so the tests can assert on the node's
-		// placement in the tree. Testing Library removes this container on cleanup since it
-		// is a direct child of document.body.
 		const container = document.body.appendChild( document.createElement( 'div' ) );
 		container.id = 'container';
 

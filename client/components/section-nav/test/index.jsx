@@ -21,9 +21,8 @@ window.IntersectionObserver = jest.fn( () => ( {
 	unobserve: jest.fn(),
 } ) );
 
-// SectionNav clones its children with internal props (hasSiblingControls,
-// closeSectionNavMobilePanel). A component child consumes them instead of forwarding
-// unknown attributes onto a DOM element and triggering React warnings.
+// SectionNav clones children with internal props; a component child consumes them instead
+// of leaking unknown attributes onto a DOM element (which React warns about).
 const Panel = ( { children } ) => <div>{ children }</div>;
 
 describe( 'section-nav', () => {
