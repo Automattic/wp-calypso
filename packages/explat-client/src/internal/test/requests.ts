@@ -78,6 +78,42 @@ describe( 'fetchExperimentAssignment', () => {
 		] );
 	} );
 
+	it.each( [
+		[ 'an object value', { color: 'blue', count: 3 } ],
+		[ 'a scalar value', 'hello' ],
+		// A valueless variation, a stored JSON `null`, all collapse to `null`.
+		[ 'a null value when the variation has no payload', null ],
+	] )( 'should surface %s from the additive assignments key', async ( _label, value ) => {
+		mockedGetAnonId.mockImplementationOnce( () => delayedValue( null, ONE_DELAY ) );
+		spiedMonotonicNow.mockImplementationOnce( () => validExperimentAssignment.retrievedTimestamp );
+		mockedFetchExperimentAssignment.mockImplementationOnce( () =>
+			delayedValue(
+				{
+					ttl: validExperimentAssignment.ttl,
+					variations: {
+						[ validExperimentAssignment.experimentName ]: validExperimentAssignment.variationName,
+					},
+					assignments: { [ validExperimentAssignment.experimentName ]: { value } },
+				},
+				ONE_DELAY
+			)
+		);
+		await expect(
+			Requests.fetchExperimentAssignment( mockedConfig, validExperimentAssignment.experimentName )
+		).resolves.toEqual( { ...validExperimentAssignment, variationValue: value } );
+	} );
+
+	it( 'should omit variationValue for an older server response without the assignments key (backwards compatible)', async () => {
+		mockedGetAnonId.mockImplementationOnce( () => delayedValue( null, ONE_DELAY ) );
+		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
+		const result = await Requests.fetchExperimentAssignment(
+			mockedConfig,
+			validExperimentAssignment.experimentName
+		);
+		expect( result ).toEqual( validExperimentAssignment );
+		expect( 'variationValue' in result ).toBe( false );
+	} );
+
 	it( 'should return an experiment assignment with a ttl as the maximum of the ttl provided from the server and the set minimum ttl', async () => {
 		const outputTtl = async ( inputTtl: number ) => {
 			mockedFetchExperimentAssignment.mockReset();
@@ -212,6 +248,40 @@ describe( 'isFetchExperimentAssignmentResponse', () => {
 				},
 			} )
 		).toBe( true );
+	} );
+
+	it( 'should return true when the additive assignments key is present and an object', () => {
+		expect(
+			Requests.isFetchExperimentAssignmentResponse( {
+				ttl: 60,
+				variations: { experiment_a: 'variation_name_a' },
+				assignments: { experiment_a: { value: 'blue' } },
+			} )
+		).toBe( true );
+		expect(
+			Requests.isFetchExperimentAssignmentResponse( {
+				ttl: 60,
+				variations: {},
+				assignments: {},
+			} )
+		).toBe( true );
+	} );
+
+	it( 'should return false when assignments is present but not an object', () => {
+		expect(
+			Requests.isFetchExperimentAssignmentResponse( {
+				ttl: 60,
+				variations: {},
+				assignments: 'string',
+			} )
+		).toBe( false );
+		expect(
+			Requests.isFetchExperimentAssignmentResponse( {
+				ttl: 60,
+				variations: {},
+				assignments: null,
+			} )
+		).toBe( false );
 	} );
 
 	it( 'should return false for responses with 0 ttl', () => {

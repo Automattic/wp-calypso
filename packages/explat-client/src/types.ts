@@ -10,6 +10,19 @@ export interface ExperimentAssignment {
 	 */
 	variationName: string | null;
 	/**
+	 * The decoded custom value attached to the assigned variation, when the
+	 * server provides one.
+	 *
+	 * Sourced from the additive `assignments[ experimentName ].value` key on the
+	 * `GET /assignments` wire. It can be any JSON type, or `null` when the
+	 * variation has no payload. It is `undefined` when the value is unavailable —
+	 * e.g. an older server that predates the `assignments` key, a fallback
+	 * assignment, or an assignment cached before this field existed. Consumers
+	 * should treat both `null` and `undefined` as "no usable value, use your
+	 * default".
+	 */
+	variationValue?: unknown;
+	/**
 	 * The timestamp of when this assignment was retrieved.
 	 */
 	retrievedTimestamp: number;

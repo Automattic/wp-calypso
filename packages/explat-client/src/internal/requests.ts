@@ -6,6 +6,13 @@ import type { Config, ExperimentAssignment } from '../types';
 
 interface FetchExperimentAssignmentResponse {
 	variations: Record< string, unknown >;
+	/**
+	 * Additive structured sibling to `variations`, keyed by the same experiment
+	 * names. Each entry carries the assigned variation's decoded custom `value`
+	 * (any JSON type, or `null` for no payload). Optional: older servers omit it
+	 * entirely, in which case consumers fall back to `variations` alone.
+	 */
+	assignments?: Record< string, { value?: unknown } >;
 	ttl: number;
 }
 
@@ -19,6 +26,9 @@ export function isFetchExperimentAssignmentResponse(
 	return (
 		isObject( response ) &&
 		isObject( response.variations ) &&
+		// `assignments` is additive and optional — accept its absence, but if it
+		// is present it must be an object so we can safely index it.
+		( response.assignments === undefined || isObject( response.assignments ) ) &&
 		typeof response.ttl === 'number' &&
 		0 < response.ttl
 	);
@@ -83,7 +93,11 @@ export async function fetchExperimentAssignment(
 ): Promise< ExperimentAssignment > {
 	const retrievedTimestamp = monotonicNow();
 
-	const { variations, ttl: responseTtl } = validateFetchExperimentAssignmentResponse(
+	const {
+		variations,
+		assignments,
+		ttl: responseTtl,
+	} = validateFetchExperimentAssignmentResponse(
 		await config.fetchExperimentAssignment( {
 			anonId: await localStorageCachedGetAnonId( config.getAnonId ),
 			experimentName,
@@ -93,12 +107,21 @@ export async function fetchExperimentAssignment(
 	const ttl = Math.max( ExperimentAssignments.minimumTtl, responseTtl );
 
 	const fetchedExperimentAssignments = Object.entries( variations )
-		.map( ( [ experimentName, variationName ] ) => ( {
-			experimentName,
-			variationName,
-			retrievedTimestamp,
-			ttl,
-		} ) )
+		.map( ( [ experimentName, variationName ] ) => {
+			// Surface the decoded custom value from the additive `assignments` key
+			// when the server provides it. When the key is absent (older server)
+			// we leave `variationValue` off entirely so existing consumers and
+			// cached assignments are unaffected. A present entry whose `value` is
+			// missing collapses to `null` ("no usable value").
+			const assignmentEntry = assignments?.[ experimentName ];
+			return {
+				experimentName,
+				variationName,
+				retrievedTimestamp,
+				ttl,
+				...( assignmentEntry ? { variationValue: assignmentEntry.value ?? null } : {} ),
+			};
+		} )
 		.map( validateExperimentAssignment );
 
 	if ( fetchedExperimentAssignments.length > 1 ) {
