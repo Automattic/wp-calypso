@@ -53,6 +53,8 @@ export default class InfiniteList extends Component {
 	// renders. An unstable ref would re-run on every render and, when forwarded as
 	// a prop, would defeat consumers' own-props memoization (e.g. the Reader stream).
 	itemRefCallbacks = new Map();
+	// Item keys rendered in the latest render, used to prune the maps above.
+	renderedItemKeys = new Set();
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
@@ -160,6 +162,15 @@ export default class InfiniteList extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
+		// Prune cached refs for items no longer rendered; consumers that ignore the ref arg
+		// never fire the callback's own cleanup.
+		for ( const key of this.itemRefCallbacks.keys() ) {
+			if ( ! this.renderedItemKeys.has( key ) ) {
+				this.itemRefCallbacks.delete( key );
+				this.itemRefs.delete( key );
+			}
+		}
+
 		if ( ! this._contextLoaded() ) {
 			return;
 		}
@@ -457,9 +468,12 @@ export default class InfiniteList extends Component {
 
 		debug( 'rendering %d to %d', this.state.firstRenderedIndex, lastRenderedIndex );
 
+		this.renderedItemKeys.clear();
 		for ( i = this.state.firstRenderedIndex; i <= lastRenderedIndex; i++ ) {
 			const item = items[ i ];
-			itemsToRender.push( renderItem( item, i, this.setItemRef( this.props.getItemRef( item ) ) ) );
+			const itemKey = this.props.getItemRef( item );
+			this.renderedItemKeys.add( itemKey );
+			itemsToRender.push( renderItem( item, i, this.setItemRef( itemKey ) ) );
 		}
 
 		if ( fetchingNextPage ) {
