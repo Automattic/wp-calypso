@@ -2,6 +2,7 @@ import { getTrackingPrefs, setTrackingPrefs } from '@automattic/calypso-analytic
 import { CookieBanner } from '@automattic/privacy-toolset';
 import cookie from 'cookie';
 import { useCallback, useEffect, useState } from 'react';
+import { updateGoogleConsentMode } from 'calypso/lib/analytics/ad-tracking/consent-mode';
 import { loadTrackingScripts } from 'calypso/lib/analytics/ad-tracking/load-tracking-scripts';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
@@ -35,6 +36,8 @@ const CookieBannerInner = ( { onClose }: { onClose: () => void } ) => {
 			} );
 
 			setTrackingPrefs( { ok: true, buckets } );
+			updateGoogleConsentMode();
+
 			// If the user is logged in, update their advertising opt-out setting
 			if ( isLoggedIn ) {
 				setUserAdvertisingOptOut( ! buckets.advertising );

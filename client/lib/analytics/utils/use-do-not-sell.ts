@@ -7,6 +7,7 @@ import {
 import cookie from 'cookie';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { updateGoogleConsentMode } from 'calypso/lib/analytics/ad-tracking/consent-mode';
 import { saveUserSettings } from 'calypso/state/user-settings/actions';
 import { refreshCountryCodeCookieGdpr } from '.';
 
@@ -49,6 +50,7 @@ export default () => {
 			// Update the preferences in the cookie
 			// isActive = true means user has opted out of "advertising" tracking
 			const prefs = setTrackingPrefs( { ok: true, buckets: { advertising: ! isActive } } );
+			updateGoogleConsentMode();
 
 			if ( isActive ) {
 				recordTracksEvent( 'a8c_ccpa_optout', {

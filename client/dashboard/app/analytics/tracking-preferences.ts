@@ -1,5 +1,10 @@
 // eslint-disable-next-line no-restricted-imports -- Helper functions for tracking preferences
-import { isCountryInGdprZone, isRegionInCcpaZone } from '@automattic/calypso-analytics';
+import {
+	DEFAULT_GOOGLE_CONSENT_MODE_SIGNALS,
+	getGoogleConsentModeSignals,
+	isCountryInGdprZone,
+	isRegionInCcpaZone,
+} from '@automattic/calypso-analytics';
 import cookie from 'cookie';
 
 type TrackingPrefs = {
@@ -14,6 +19,15 @@ type TrackingPrefs = {
 type TrackingPrefsData = Partial<
 	Omit< TrackingPrefs, 'buckets' > & { buckets: Partial< TrackingPrefs[ 'buckets' ] > }
 >;
+
+type GoogleTagWindow = typeof window & {
+	gtag?: (
+		command: 'consent',
+		consentArg: 'default' | 'update',
+		consentParams: Gtag.ConsentParams
+	) => void;
+	__calypsoGoogleConsentModeDefaultSet?: boolean;
+};
 
 const COOKIE_MAX_AGE = 60 * 60 * 24 * ( 365.25 / 2 ); // 365.25 is the average number of days in a year.
 const TRACKING_PREFS_COOKIE_V1 = 'sensitive_pixel_option';
@@ -88,6 +102,25 @@ export function setTrackingPrefs( newPrefs: TrackingPrefsData ): TrackingPrefs {
 	} );
 
 	return newOptions;
+}
+
+export function updateGoogleConsentModeIfInitialized(): void {
+	if ( typeof window === 'undefined' ) {
+		return;
+	}
+
+	const googleWindow = window as GoogleTagWindow;
+
+	if ( ! googleWindow.gtag ) {
+		return;
+	}
+
+	if ( ! googleWindow.__calypsoGoogleConsentModeDefaultSet ) {
+		googleWindow.gtag( 'consent', 'default', DEFAULT_GOOGLE_CONSENT_MODE_SIGNALS );
+		googleWindow.__calypsoGoogleConsentModeDefaultSet = true;
+	}
+
+	googleWindow.gtag( 'consent', 'update', getGoogleConsentModeSignals() );
 }
 
 /**

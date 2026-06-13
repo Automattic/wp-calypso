@@ -1,5 +1,6 @@
 import { loadScript } from '@automattic/load-script';
 import { mayWeInitTracker } from '../tracker-buckets';
+import { updateGoogleConsentMode } from './consent-mode';
 import { GOOGLE_GTM_SCRIPT_URL } from './constants';
 
 /**
@@ -25,6 +26,8 @@ export const loadGTMContainer = async ( gtmTag: string ): Promise< void > => {
 		throw new Error( 'Tracking is not allowed' );
 	}
 
+	updateGoogleConsentMode();
+
 	// Load the Google Tag Manager script
 	await loadScript( GOOGLE_GTM_SCRIPT_URL + gtmTag );
 };
@@ -34,6 +37,8 @@ export const loadGTMContainer = async ( gtmTag: string ): Promise< void > => {
  * @returns Promise<void>
  */
 export const initGTMContainer = async (): Promise< void > => {
+	updateGoogleConsentMode();
+
 	// Note: window.dataLayer is prop required by Google. Not to be confused with Calypso Data Layer (see: /client/state/data-layer/README.md)
 	window.dataLayer = window.dataLayer || [];
 	window.dataLayer.push( { 'gtm.start': new Date().getTime(), event: 'gtm.js' } );

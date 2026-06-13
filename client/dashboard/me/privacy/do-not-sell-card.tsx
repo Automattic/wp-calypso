@@ -6,7 +6,11 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
 import { useIsRegionInCcpaZone } from '../../app/analytics/country-code-cookie-gdpr';
-import { getTrackingPrefs, setTrackingPrefs } from '../../app/analytics/tracking-preferences';
+import {
+	getTrackingPrefs,
+	setTrackingPrefs,
+	updateGoogleConsentModeIfInitialized,
+} from '../../app/analytics/tracking-preferences';
 import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
@@ -27,6 +31,7 @@ export default function DoNotSellCard() {
 	} ) => {
 		// Update the preferences in the cookie.
 		setTrackingPrefs( { ok: true, buckets: { advertising: ! advertising_targeting_opt_out } } );
+		updateGoogleConsentModeIfInitialized();
 
 		// Should fail quietly in the event they have an expired 2FA token
 		// and a success notification is not standard when accepting or denying cookies.
