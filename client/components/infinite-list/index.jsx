@@ -2,7 +2,6 @@ import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
-import ReactDom from 'react-dom';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import smartSetState from 'calypso/lib/react-smart-set-state';
 import scrollTo from 'calypso/lib/scroll-to';
@@ -378,14 +377,6 @@ export default class InfiniteList extends Component {
 		if ( node ) {
 			return node.getBoundingClientRect();
 		}
-		// Transitional fallback for consumers whose `renderItem` still attaches string
-		// refs instead of the `registerItemRef` callback. Remove with DOTCOM-17551 once
-		// all consumers are migrated (string refs and `findDOMNode` are gone in React 19).
-		/* eslint-disable react/no-string-refs */
-		if ( ReactDom.findDOMNode && ref in this.refs && ReactDom.findDOMNode( this.refs[ ref ] ) ) {
-			return ReactDom.findDOMNode( this.refs[ ref ] ).getBoundingClientRect();
-		}
-		/* eslint-enable react/no-string-refs */
 		return null;
 	};
 
