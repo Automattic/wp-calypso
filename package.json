@@ -266,7 +266,7 @@
 		"@types/gtag.js": "^0.0.20",
 		"@types/jest-when": "^3.5.5",
 		"@types/superagent": "^4.1.24",
-		"@types/wordpress__blocks": "^12.5.17",
+		"@types/wordpress__blocks": "^12.5.18",
 		"@typescript-eslint/eslint-plugin": "^8.0.0",
 		"@typescript-eslint/parser": "^8.0.0",
 		"@wordpress/eslint-plugin": "^25.4.0",
