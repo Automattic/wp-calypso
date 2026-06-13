@@ -69,9 +69,12 @@ export function getGoogleConsentModeSignals(
 	trackingPrefs?: TrackingPrefs
 ): GoogleConsentModeSignals {
 	try {
+		if ( ! trackingPrefs && typeof document === 'undefined' ) {
+			return { ...DEFAULT_GOOGLE_CONSENT_MODE_SIGNALS };
+		}
+
 		const prefs = trackingPrefs ?? getTrackingPrefs();
 		const geoCookies = getGeoCookies();
-
 		if ( isGdprPreConsent( prefs, geoCookies ) ) {
 			return { ...DEFAULT_GOOGLE_CONSENT_MODE_SIGNALS };
 		}
