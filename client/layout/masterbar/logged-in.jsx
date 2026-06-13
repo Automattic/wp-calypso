@@ -56,7 +56,7 @@ import isSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
-import { getSectionGroup } from 'calypso/state/ui/selectors';
+import { getSectionGroup, getSectionName } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
 import BigSkyIcon from './masterbar-agents-manager/big-sky-icon';
@@ -94,6 +94,7 @@ class MasterbarLoggedIn extends Component {
 		user: PropTypes.object.isRequired,
 		domainOnlySite: PropTypes.bool,
 		section: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
+		sectionName: PropTypes.string,
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		currentLayoutFocus: PropTypes.string,
 		siteSlug: PropTypes.string,
@@ -908,10 +909,14 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	clickAgentsManagerAiChat = () => {
-		this.props.recordTracksEvent( 'calypso_masterbar_agents_manager_ai_chat_clicked' );
 		// Toggle: close the chat if it's already showing, otherwise resume the active
 		// conversation and open it.
-		if ( isAgentsManagerChatVisible() ) {
+		const isVisible = isAgentsManagerChatVisible();
+		this.props.recordTracksEvent( 'calypso_masterbar_agents_manager_ai_chat_clicked', {
+			section: this.props.sectionName,
+			action: isVisible ? 'close' : 'open',
+		} );
+		if ( isVisible ) {
 			closeAgentsManagerChat();
 		} else {
 			openAgentsManagerChat();
@@ -1002,6 +1007,7 @@ const ConnectedMasterbarLoggedIn = connect(
 			siteHomeUrl: getSiteHomeUrl( state, siteId ),
 			adminMenu: getAdminMenu( state, siteId ),
 			sectionGroup,
+			sectionName: getSectionName( state ),
 			domainOnlySite: isDomainOnlySite( state, siteId ),
 			hasNoSites: siteCount === 0,
 			user: getCurrentUser( state ),

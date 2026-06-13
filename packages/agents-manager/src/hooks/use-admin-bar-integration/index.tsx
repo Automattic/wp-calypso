@@ -141,6 +141,7 @@ export default function useAdminBarIntegration( {
 		const handleClick = () => {
 			recordTracksEvent( 'calypso_admin_bar_agents_manager_ai_chat_clicked', {
 				section: sectionName || 'wp-admin',
+				action: isChatVisibleRef.current ? 'close' : 'open',
 			} );
 			if ( isChatVisibleRef.current ) {
 				closeChatRef.current();
@@ -178,21 +179,23 @@ export default function useAdminBarIntegration( {
 			},
 		];
 
-		const listeners = menuItems.map( ( { id, destination, route, action } ) => {
+		const listeners = menuItems.map( ( { id, destination, route, action: onSelect } ) => {
 			const element = document.getElementById( id );
 
 			const handleClick = () => {
+				// Re-clicking the item for the current route closes the chat; a
+				// different route switches view (and opens/expands) without closing.
+				const isClosing = isChatVisibleRef.current && currentRouteRef.current === route;
 				recordTracksEvent( 'calypso_dashboard_help_center_menu_panel_click', {
 					section: sectionName || 'wp-admin',
 					destination,
+					action: isClosing ? 'close' : 'open',
 				} );
-				// Re-clicking the item for the current route closes the chat; a
-				// different route switches view (and opens/expands) without closing.
-				if ( isChatVisibleRef.current && currentRouteRef.current === route ) {
+				if ( isClosing ) {
 					closeChatRef.current();
 					return;
 				}
-				action();
+				onSelect();
 				maybeOpenChatRef.current();
 			};
 
