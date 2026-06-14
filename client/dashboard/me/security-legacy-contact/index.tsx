@@ -1,8 +1,8 @@
 import { legacyContactsQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
@@ -11,7 +11,7 @@ import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
 
 export default function SecurityLegacyContact() {
-	const { data: [ contact ] = [], isLoading } = useQuery( legacyContactsQuery() );
+	const { data: [ contact ] = [] } = useSuspenseQuery( legacyContactsQuery() );
 
 	return (
 		<PageLayout
@@ -26,37 +26,30 @@ export default function SecurityLegacyContact() {
 				/>
 			}
 		>
-			{ ! isLoading && (
-				<Card>
-					<CardBody>
-						<VStack spacing={ 4 }>
-							{ contact ? (
-								<Text>
-									{ createInterpolateElement(
-										sprintf(
-											/* translators: %s is the email address of the legacy contact. */
-											__( 'Your legacy contact is <strong>%s</strong>.' ),
-											contact.email
-										),
-										{ strong: <strong /> }
-									) }
-								</Text>
-							) : (
-								<ButtonStack justify="flex-start">
-									<Button
-										variant="primary"
-										onClick={ () => {
-											// TODO: open the legacy contact setup flow.
-										} }
-									>
-										{ __( 'Set up legacy contact' ) }
-									</Button>
-								</ButtonStack>
-							) }
-						</VStack>
-					</CardBody>
-				</Card>
-			) }
+			<Card>
+				<CardBody>
+					<VStack spacing={ 4 }>
+						{ contact ? (
+							<Text>
+								{ createInterpolateElement( __( 'Your legacy contact is <contactEmail />.' ), {
+									contactEmail: <strong>{ contact.email }</strong>,
+								} ) }
+							</Text>
+						) : (
+							<ButtonStack justify="flex-start">
+								<Button
+									variant="primary"
+									onClick={ () => {
+										// TODO: open the legacy contact setup flow.
+									} }
+								>
+									{ __( 'Set up legacy contact' ) }
+								</Button>
+							</ButtonStack>
+						) }
+					</VStack>
+				</CardBody>
+			</Card>
 		</PageLayout>
 	);
 }
