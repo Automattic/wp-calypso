@@ -30,6 +30,16 @@ const BillingFormFields = styled.div< BillingFormFieldsProps >`
 		color: ${ ( props ) => props.theme.colors.textColorDark };
 	}
 
+	/* Align focus indicator with the VAT field — single solid outline,
+	   instead of the default form-field border-color change + halo. */
+	& input:focus:not( .is-valid ):not( .is-error ),
+	& .form-select:focus,
+	& select:focus {
+		border-color: var( --color-neutral-10 );
+		box-shadow: none;
+		outline: 2px solid var( --studio-wordpress-blue-30 );
+	}
+
 	& .form-input-validation {
 		padding: 6px 6px 11px 0;
 	}
