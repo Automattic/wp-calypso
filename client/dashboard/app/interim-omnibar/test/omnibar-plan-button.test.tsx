@@ -96,7 +96,6 @@ describe( '<InterimOmnibar /> plan button', () => {
 
 	afterEach( () => {
 		( window as unknown as { location: Location } ).location = originalLocation;
-		nock.cleanAll();
 	} );
 
 	test( 'navigates the Plan menu item to the dashboard purchase page', async () => {
