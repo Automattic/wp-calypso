@@ -51,11 +51,6 @@ export function InterimOmnibar( {
 	const siteAdminUrl = site?.options?.admin_url ?? null;
 	const isUnlaunchedSite = !! site && site.launch_status === 'unlaunched' && ! site.is_a4a_dev_site;
 
-	// Resolve the URL the "Plan" menu item should point at. The legacy masterbar
-	// would otherwise call the page.js router, which isn't available here. We mirror
-	// how the Dashboard's plan cards resolve the current plan's purchase.
-	// Pass the shared `queryClient` explicitly: `InterimOmnibarContainer` renders
-	// this component outside any `QueryClientProvider`, mirroring its other queries.
 	const { data: currentPlan } = useQuery(
 		{
 			...siteCurrentPlanQuery( site?.ID ?? 0 ),

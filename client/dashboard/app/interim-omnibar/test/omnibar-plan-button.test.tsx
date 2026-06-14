@@ -2,9 +2,8 @@
  * @jest-environment jsdom
  */
 
-import { render as renderWithoutProviders, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import { render } from '../../../test-utils';
 import { InterimOmnibar } from '../interim-omnibar';
 import type { Site, User } from '@automattic/api-core';
 
@@ -100,26 +99,16 @@ describe( '<InterimOmnibar /> plan button', () => {
 		nock.cleanAll();
 	} );
 
-	test( 'renders the Plan menu item as a link to the dashboard purchase page', async () => {
+	test( 'navigates the Plan menu item to the dashboard purchase page', async () => {
+		// `InterimOmnibarContainer` renders this component outside any
+		// `QueryClientProvider`, so its queries must use the shared client directly.
+		// Rendering with bare RTL (no providers) reproduces that environment.
 		render( <InterimOmnibar user={ user } site={ site } currentRoute="/sites" /> );
 
 		const planLink = await screen.findByRole( 'link', { name: /plan/i } );
 
 		// The link is rendered immediately with the upgrade URL, then settles on the
 		// purchase URL once the current plan's purchase resolves.
-		await waitFor( () =>
-			expect( planLink ).toHaveAttribute( 'href', `/me/billing/purchases/${ PURCHASE_ID }` )
-		);
-	} );
-
-	test( 'resolves the plan URL without an ambient QueryClientProvider', async () => {
-		// `InterimOmnibarContainer` renders this component outside any
-		// `QueryClientProvider`, so its queries must use the shared client directly.
-		// Rendering with bare RTL (no providers) reproduces that environment.
-		renderWithoutProviders( <InterimOmnibar user={ user } site={ site } currentRoute="/sites" /> );
-
-		const planLink = await screen.findByRole( 'link', { name: /plan/i } );
-
 		await waitFor( () =>
 			expect( planLink ).toHaveAttribute( 'href', `/me/billing/purchases/${ PURCHASE_ID }` )
 		);
