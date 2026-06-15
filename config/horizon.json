@@ -22,6 +22,7 @@
 		"catch-js-errors": true,
 		"checkout/checkout-version": false,
 		"checkout/google-pay": true,
+		"checkout/stripe-link": true,
 		"checkout/stripe-upi": true,
 		"ciab/allow-domain-features": true,
 		"ciab/custom-branding": true,
