@@ -43,7 +43,10 @@ steps:
       - automattic/nvm#0.6.0
     command: .buildkite/commands/build-desktop-mac.sh
     artifact_paths:
-      - desktop/release/*
+      - desktop/release/*.zip
+      - desktop/release/*.dmg
+      - desktop/release/*.blockmap
+      - desktop/release/*.yml
 
   - label: ":desktop_computer: Build desktop (linux, unsigned)"
     branches: ainfra-*

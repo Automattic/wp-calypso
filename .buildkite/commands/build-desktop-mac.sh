@@ -35,3 +35,9 @@ bundle exec fastlane configure_code_signing
 yarn run ci:build-mac
 
 bundle exec fastlane notarize_app
+
+# Drop the unpacked app trees electron-builder leaves behind so the artifact
+# upload ferries only the distributables (zip, dmg, blockmaps, update yml),
+# not thousands of individual app-bundle files.
+rm -rf release/mac release/mac-arm64
+rm -f release/builder-debug.yml
