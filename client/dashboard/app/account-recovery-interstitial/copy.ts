@@ -2,7 +2,7 @@
  * Copy for the account-recovery interstitial, keyed by `InterstitialVariant`.
  */
 import { __, sprintf } from '@wordpress/i18n';
-import { RECOVERY_INTERSTITIAL_ROUTES } from './constants';
+import { securityAccountRecoveryRoute, securityTwoStepAuthRoute } from '../router/me';
 
 /**
  * Which message to show. Maps to `SecurityLevel` as: `none` → none; `add-two-factor` /
@@ -125,12 +125,12 @@ export function getInterstitialCopy(
 			primaryCta: {
 				id: 'set_up_recovery',
 				label: __( 'Set up recovery email or phone' ),
-				route: RECOVERY_INTERSTITIAL_ROUTES.accountRecovery,
+				route: securityAccountRecoveryRoute.fullPath,
 			},
 			secondaryCta: {
 				id: 'add_two_factor',
 				label: __( 'Add two-step authentication and backup codes' ),
-				route: RECOVERY_INTERSTITIAL_ROUTES.twoStepAuth,
+				route: securityTwoStepAuthRoute.fullPath,
 			},
 		},
 		// Has a recovery method, missing 2FA: push two-factor.
@@ -142,12 +142,12 @@ export function getInterstitialCopy(
 			primaryCta: {
 				id: 'set_up_two_factor',
 				label: __( 'Set up two-step authentication' ),
-				route: RECOVERY_INTERSTITIAL_ROUTES.twoStepAuth,
+				route: securityTwoStepAuthRoute.fullPath,
 			},
 			secondaryCta: {
 				id: 'review_recovery',
 				label: __( 'Review recovery email or phone' ),
-				route: RECOVERY_INTERSTITIAL_ROUTES.accountRecovery,
+				route: securityAccountRecoveryRoute.fullPath,
 			},
 		},
 		// Has 2FA, missing a recovery method: push a recovery email/phone safety net.
@@ -159,12 +159,12 @@ export function getInterstitialCopy(
 			primaryCta: {
 				id: 'set_up_recovery',
 				label: __( 'Set up recovery email or phone' ),
-				route: RECOVERY_INTERSTITIAL_ROUTES.accountRecovery,
+				route: securityAccountRecoveryRoute.fullPath,
 			},
 			secondaryCta: {
 				id: 'review_two_factor',
 				label: __( 'Review two-step authentication and add backup codes' ),
-				route: RECOVERY_INTERSTITIAL_ROUTES.twoStepAuth,
+				route: securityTwoStepAuthRoute.fullPath,
 			},
 		},
 		// Has a recovery method and 2FA but hasn't downloaded backup codes: nudge that last step.
@@ -177,12 +177,12 @@ export function getInterstitialCopy(
 			primaryCta: {
 				id: 'download_backup_codes',
 				label: __( 'Review two-step authentication and download backup codes' ),
-				route: RECOVERY_INTERSTITIAL_ROUTES.twoStepAuth,
+				route: securityTwoStepAuthRoute.fullPath,
 			},
 			secondaryCta: {
 				id: 'review_recovery',
 				label: __( 'Review recovery email or phone' ),
-				route: RECOVERY_INTERSTITIAL_ROUTES.accountRecovery,
+				route: securityAccountRecoveryRoute.fullPath,
 			},
 		},
 		// Fully covered: yearly re-check of the recovery details already on file.
@@ -197,7 +197,7 @@ export function getInterstitialCopy(
 			secondaryCta: {
 				id: 'update_recovery',
 				label: __( 'Update recovery information' ),
-				route: RECOVERY_INTERSTITIAL_ROUTES.accountRecovery,
+				route: securityAccountRecoveryRoute.fullPath,
 			},
 		},
 	};

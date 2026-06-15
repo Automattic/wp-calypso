@@ -28,9 +28,3 @@ export const SNOOZE_DAYS: Record< SecurityLevel, number > = {
 	partial: 30, // a recovery method but no 2FA or vice-versa
 	strong: 365, // fully set up -> yearly periodic check
 };
-
-/** Where the CTAs send the user (MSD `/me/security` routes). */
-export const RECOVERY_INTERSTITIAL_ROUTES = {
-	accountRecovery: '/me/security/account-recovery',
-	twoStepAuth: '/me/security/two-step-auth',
-} as const;
