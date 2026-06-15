@@ -31,7 +31,15 @@ export class NotificationsComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async openNotification( text: string ): Promise< void > {
-		await this.anchor.locator( '.wpnc-app__list-pane' ).getByText( text ).click();
+		// In the DataViews list each row is an absolutely-positioned
+		// `.dataviews-view-list__item` button overlaying its content, so clicking
+		// the matched text node is intercepted. Click the row button of the
+		// article that contains the text instead.
+		await this.anchor
+			.locator( '.wpnc-app__list-pane' )
+			.locator( '[role="article"]', { hasText: text } )
+			.locator( '.dataviews-view-list__item' )
+			.click();
 	}
 
 	/**
