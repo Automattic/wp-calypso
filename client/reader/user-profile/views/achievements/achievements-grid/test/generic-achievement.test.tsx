@@ -99,6 +99,19 @@ describe( 'GenericAchievement context link', () => {
 		expect( screen.queryByRole( 'link', { name: 'View comment' } ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'neutralizes an unsafe javascript: url so it never reaches the href', () => {
+		const a = achievement( {
+			// eslint-disable-next-line no-script-url
+			context: { blog_id: 123, post_id: 45, url: 'javascript:alert(1)' },
+		} );
+
+		renderCard( { achievement: a, achievements: [ a ], isOwnProfile: true } );
+
+		const link = screen.queryByRole( 'link', { name: 'View post' } );
+		// The link may still render, but the dangerous protocol must be stripped.
+		expect( link?.getAttribute( 'href' ) ?? '' ).not.toMatch( /^javascript:/i );
+	} );
+
 	test( 'renders no context link when the url is missing', () => {
 		const a = achievement( {
 			// @ts-expect-error - exercising a malformed payload missing the url.

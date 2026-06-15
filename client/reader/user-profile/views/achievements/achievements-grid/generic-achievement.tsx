@@ -2,6 +2,7 @@ import { siteByIdQuery } from '@automattic/api-queries';
 import { TimeSince } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
+import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
 import { getOldestAchievement } from '../utils';
 import AchievementCard from './achievement-card';
 import type { Achievement } from '@automattic/api-core';
@@ -64,13 +65,19 @@ export default function GenericAchievement( {
 		if ( ! ( blog_id > 0 ) || ! ( post_id > 0 ) ) {
 			return undefined;
 		}
+		// `url` comes from an API payload — restrict it to http(s) so an unsafe
+		// protocol (e.g. `javascript:`) can't be used as the anchor href.
+		const safeUrl = safeProtocolUrl( url );
+		if ( ! safeUrl ) {
+			return undefined;
+		}
 		const isComment = !! comment_id && comment_id > 0;
 		return isComment
 			? translate( '{{a}}View comment{{/a}}', {
-					components: { a: <a href={ url } target="_blank" rel="noopener noreferrer" /> },
+					components: { a: <a href={ safeUrl } target="_blank" rel="noopener noreferrer" /> },
 			  } )
 			: translate( '{{a}}View post{{/a}}', {
-					components: { a: <a href={ url } target="_blank" rel="noopener noreferrer" /> },
+					components: { a: <a href={ safeUrl } target="_blank" rel="noopener noreferrer" /> },
 			  } );
 	};
 
