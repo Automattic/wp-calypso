@@ -3,27 +3,23 @@ import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
 
-/**
- * Block A4A agency users from client-only routes. `agencyQuery` is primed by the
- * root route's `beforeLoad`, so this resolves from cache.
- */
-async function requireClientUser( { cause }: { cause: string } ) {
-	// Preloads (hover/intent) shouldn't trigger redirects.
-	if ( cause === 'preload' ) {
-		return;
-	}
-
-	const agency = await queryClient.ensureQueryData( agencyQuery() );
-	if ( ! agency.isClientUser ) {
-		throw redirectAsNotAllowed( { to: '/overview' } );
-	}
-}
-
 // `/client` – parent route for agency-client surfaces
 const agencyClientParentRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'client',
-	beforeLoad: requireClientUser,
+	// Block A4A agency users from client-only routes. `agencyQuery` is primed by
+	// the root route's `beforeLoad`, so this resolves from cache.
+	beforeLoad: async ( { cause } ) => {
+		// Preloads (hover/intent) shouldn't trigger redirects.
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		const agency = await queryClient.ensureQueryData( agencyQuery() );
+		if ( ! agency.isClientUser ) {
+			throw redirectAsNotAllowed( { to: '/overview' } );
+		}
+	},
 } );
 
 // `/client/subscriptions` – agency client subscriptions overview
