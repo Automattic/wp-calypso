@@ -7,7 +7,8 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Modal, Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { _n, sprintf } from '@wordpress/i18n';
-import { useEffect, useId, useRef, useState } from 'react';
+import { useId, useState } from 'react';
+import ComponentViewTracker from '../../components/component-view-tracker';
 import { Text } from '../../components/text';
 import { useAnalytics } from '../analytics';
 import {
@@ -110,7 +111,6 @@ export default function AccountRecoveryInterstitial() {
 	const snoozeMutation = useMutation( userSettingsMutation() );
 
 	const [ isDismissed, setIsDismissed ] = useState( false );
-	const hasRecordedImpression = useRef( false );
 
 	const now = Math.floor( Date.now() / 1000 );
 
@@ -145,16 +145,6 @@ export default function AccountRecoveryInterstitial() {
 	const variant = getInterstitialVariant( hasRecoveryMethod, hasTwoFactor, hasBackupCodes );
 
 	const shouldDisplay = ! isDismissed && ( isQaForced() || isEligible );
-
-	useEffect( () => {
-		if ( shouldDisplay && ! hasRecordedImpression.current ) {
-			hasRecordedImpression.current = true;
-			recordTracksEvent( 'calypso_account_recovery_interstitial_impression', {
-				security_level: securityLevel,
-				recovery_status: variant,
-			} );
-		}
-	}, [ shouldDisplay, securityLevel, variant, recordTracksEvent ] );
 
 	if ( ! shouldDisplay ) {
 		return null;
@@ -225,6 +215,10 @@ export default function AccountRecoveryInterstitial() {
 			onRequestClose={ handleSnooze }
 			className="account-recovery-interstitial"
 		>
+			<ComponentViewTracker
+				eventName="calypso_account_recovery_interstitial_impression"
+				properties={ { security_level: securityLevel, recovery_status: variant } }
+			/>
 			<img className="account-recovery-interstitial__hero" src={ heroIllustration } alt="" />
 			<VStack className="account-recovery-interstitial__body" spacing={ 6 }>
 				<VStack spacing={ 2 }>
