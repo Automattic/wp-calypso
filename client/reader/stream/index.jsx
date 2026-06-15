@@ -6,7 +6,6 @@ import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component, Fragment } from 'react';
 import * as React from 'react';
-import ReactDom from 'react-dom';
 import { connect, useDispatch } from 'react-redux';
 import AppPromo from 'calypso/blocks/app-promo';
 import { usePostLikes } from 'calypso/components/data/post-likes';
@@ -203,9 +202,14 @@ class ReaderStream extends Component {
 	};
 
 	focusSelectedPost = ( selectedPostKey ) => {
-		const postRefKey = this.getPostRef( selectedPostKey );
-		const ref = this.listRef.current && this.listRef.current.refs[ postRefKey ];
-		const node = ReactDom.findDOMNode( ref );
+		if ( ! selectedPostKey ) {
+			return;
+		}
+
+		// The selected post is the only card rendered with the `is-selected` class,
+		// so query it from the list's DOM rather than holding a per-item ref.
+		const listNode = this.listRef.current?.getDOMNode();
+		const node = listNode?.querySelector( '.card.is-selected' );
 
 		if ( node ) {
 			// Skip anchors inside .user-avatar to avoid triggering hovercard.
@@ -239,7 +243,7 @@ class ReaderStream extends Component {
 		const containerOffset = scrollContainer.getBoundingClientRect?.().top || 0;
 		const headerOffset = -1 * this.props.fixedHeaderHeight || 0; // a fixed position header means we can't just scroll the element into view.
 		const totalOffset = headerOffset - containerOffset - 20; // 20px of constant offset to ensure the post isnt cramped against the top container or header border.
-		const selectedNode = ReactDom.findDOMNode( this ).querySelector( '.card.is-selected' );
+		const selectedNode = this.listRef.current?.getDOMNode()?.querySelector( '.card.is-selected' );
 		if ( selectedNode ) {
 			selectedNode.focus();
 			const scrollContainerPosition = scrollContainer.scrollTop;
@@ -299,9 +303,7 @@ class ReaderStream extends Component {
 				return;
 			}
 
-			const scrollContainer = this.getScrollContainer(
-				ReactDom.findDOMNode( this.listRef.current )
-			);
+			const scrollContainer = this.getScrollContainer( this.listRef.current.getDOMNode() );
 			if ( scrollContainer !== this.state.listContext ) {
 				this.setState( {
 					listContext: scrollContainer,
@@ -438,7 +440,9 @@ class ReaderStream extends Component {
 
 		// If the currently selected item is too far away in scroll position to be rendered by the
 		// infinite list, lets fall back to the magic selection functionality noted below.
-		const selectedItem = this.state.listContext?.querySelector( '.card.is-selected' );
+		// Query the list's own DOM node: `listContext` is `false` when the stream scrolls
+		// with the window, and `false?.querySelector` throws instead of short-circuiting.
+		const selectedItem = this.listRef.current?.getDOMNode()?.querySelector( '.card.is-selected' );
 		// do we have a selected item? if so, just move to the next one
 		if ( this.props.selectedPostKey && selectedItem ) {
 			this.props.selectNextPost();
@@ -586,7 +590,7 @@ class ReaderStream extends Component {
 		return keyToString( postKey );
 	};
 
-	renderPost = ( postKey, index ) => {
+	renderPost = ( postKey, index, registerItemRef ) => {
 		const { selectedPostKey, streamKey, primarySiteId } = this.props;
 		const isSelected = !! ( selectedPostKey && keysAreEqual( selectedPostKey, postKey ) );
 
@@ -612,7 +616,7 @@ class ReaderStream extends Component {
 			<Fragment key={ itemKey }>
 				{ this.renderAppPromo( index ) }
 				<PostLifecycle
-					ref={ itemKey /* The ref is stored into `InfiniteList`'s `this.ref` map */ }
+					itemRef={ registerItemRef }
 					isSelected={ isSelected }
 					handleClick={ showPost }
 					postKey={ postKey }
@@ -644,7 +648,7 @@ class ReaderStream extends Component {
 
 		this.listRef.current = component;
 		this.setState( {
-			listContext: this.getScrollContainer( ReactDom.findDOMNode( component ) ),
+			listContext: this.getScrollContainer( component.getDOMNode() ),
 		} );
 	};
 

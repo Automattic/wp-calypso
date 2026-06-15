@@ -844,6 +844,24 @@ export const securitySocialLoginsRoute = createRoute( {
 	)
 );
 
+export const securityLegacyContactRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Legacy contact' ),
+			},
+		],
+	} ),
+	getParentRoute: () => securityRoute,
+	path: '/legacy-contact',
+} ).lazy( () =>
+	import( '../../me/security-legacy-contact' ).then( ( d ) =>
+		createLazyRoute( 'security-legacy-contact' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const privacyRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1319,6 +1337,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 				: [] ),
 			securityConnectedAppsRoute,
 			securitySocialLoginsRoute,
+			...( isEnabled( 'me/legacy-contact' ) ? [ securityLegacyContactRoute ] : [] ),
 		] )
 	);
 

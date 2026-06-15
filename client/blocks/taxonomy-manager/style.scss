@@ -1,3 +1,6 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/long-content-fade";
+
 .taxonomy-manager {
 	box-shadow:
 		0 0 0 1px color-mix(in srgb, var(--color-neutral-10) 50%, transparent),

@@ -1,12 +1,14 @@
 /* eslint-disable no-restricted-imports */
+import { purchaseQuery, queryClient, siteCurrentPlanQuery } from '@automattic/api-queries';
 import { isEcommercePlan } from '@automattic/calypso-products';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { localize } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { MasterbarLoggedIn } from 'calypso/layout/masterbar/logged-in';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSiteDisplayName } from '../../utils/site-name';
+import { getSitePlanUrl } from '../../utils/site-url';
 import { logout } from '../auth';
 import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
 import { OmnibarLaunchButton } from './omnibar-launch-button';
@@ -48,6 +50,22 @@ export function InterimOmnibar( {
 	const siteSlug = site?.slug ?? null;
 	const siteAdminUrl = site?.options?.admin_url ?? null;
 	const isUnlaunchedSite = !! site && site.launch_status === 'unlaunched' && ! site.is_a4a_dev_site;
+
+	const { data: currentPlan } = useQuery(
+		{
+			...siteCurrentPlanQuery( site?.ID ?? 0 ),
+			enabled: !! site,
+		},
+		queryClient
+	);
+	const { data: planPurchase } = useQuery(
+		{
+			...purchaseQuery( currentPlan?.id ?? 0 ),
+			enabled: !! currentPlan?.id,
+		},
+		queryClient
+	);
+	const sitePlanUrl = site ? getSitePlanUrl( site, planPurchase ) : undefined;
 
 	const store = useMemo(
 		() => createOmnibarStore( onToggleNotifications ),
@@ -97,6 +115,7 @@ export function InterimOmnibar( {
 					siteAdminUrl={ siteAdminUrl }
 					siteHomeUrl={ site?.URL ?? '' }
 					sitePlanName={ site?.plan?.product_name_short ?? '' }
+					sitePlanUrl={ sitePlanUrl }
 					currentSelectedSiteSlug={ siteSlug }
 					// TODO: Audit site-specific flags to see which we need to handle in the interim omnibar, and which can be hardcoded to false.
 					// Site flags

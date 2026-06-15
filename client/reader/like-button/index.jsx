@@ -100,16 +100,20 @@ class ReaderLikeButton extends Component {
 
 		return (
 			<Fragment>
-				<LikeButtonContainer
-					{ ...this.props }
-					ref={ this.likeButtonRef }
-					onLikeToggle={ this.onLikeToggle }
-					likeSource="reader"
-					icon={ likeIcon }
-					onMouseEnter={ this.showLikesPopover }
-					onMouseLeave={ this.hideLikesPopover }
-					showTooltip={ likeCount === 0 }
-				/>
+				{ /* Wrap in a DOM element so we can pass a real DOM node as the popover `context`.
+				     React 19 removed `findDOMNode`, so a ref on the connected class component
+				     `LikeButtonContainer` would no longer resolve to its DOM node. */ }
+				<span className="reader-like-button__ref-wrapper" ref={ this.likeButtonRef }>
+					<LikeButtonContainer
+						{ ...this.props }
+						onLikeToggle={ this.onLikeToggle }
+						likeSource="reader"
+						icon={ likeIcon }
+						onMouseEnter={ this.showLikesPopover }
+						onMouseLeave={ this.hideLikesPopover }
+						showTooltip={ likeCount === 0 }
+					/>
+				</span>
 				{ showLikesPopover && siteId && postId && hasEnoughLikes && (
 					<PostLikesPopover
 						className="reader-likes-popover ignore-click" // eslint-disable-line wpcalypso/jsx-classname-namespace

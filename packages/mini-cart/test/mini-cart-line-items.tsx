@@ -96,13 +96,22 @@ describe( 'MiniCartLineItems bundle grouping', () => {
 
 		const { container } = renderLineItems( true, cart );
 
-		const crossedOut = screen.getByText( /\$129\b/ );
+		// The $129 amount also appears in the renewal disclosure line
+		// (DOMAINS-2184), so match the crossed-out price on the tag.
+		const crossedOut = screen
+			.getAllByText( /\$129\b/ )
+			.find( ( element ) => element.tagName === 'S' );
 		expect( crossedOut ).toBeVisible();
-		expect( crossedOut.tagName ).toBe( 'S' );
 		expect( screen.getByText( /\$29\b/ ) ).toBeVisible();
 		expect( screen.getByText( /\$40\b/ ) ).toBeVisible();
 
 		// Only the discounted bundle shows a strikethrough.
 		expect( container.querySelectorAll( 's' ) ).toHaveLength( 1 );
+
+		// The mini-cart shares BundleLineItem with the order review, so the
+		// discounted bundle also discloses its renewal aggregate here — and
+		// only the discounted one (DOMAINS-2184).
+		expect( screen.getByText( 'Auto-renews at $129/year.' ) ).toBeVisible();
+		expect( screen.getAllByText( /Auto-renews at/ ) ).toHaveLength( 1 );
 	} );
 } );

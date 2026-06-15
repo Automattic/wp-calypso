@@ -1,3 +1,6 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 .name-servers__dns {
 	.name-servers__toggle {
 		.components-base-control__field {

@@ -1,5 +1,7 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
 .list-stream__header-title-privacy {
 	margin-inline-start: 2px;
 	margin-top: 1px;

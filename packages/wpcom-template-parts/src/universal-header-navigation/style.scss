@@ -992,8 +992,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		// page content slides back under the bar.
 		transition: opacity $x-nav-2026-transition 0.22s;
 	}
-	// Exit (blur → none) eases out after a short delay so the surface lingers.
-	transition: backdrop-filter $x-nav-2026-transition 0.12s;
+	// Exit (blur → none) eases out after a short delay so the surface lingers; the z-index drop waits for the close fade.
+	transition: backdrop-filter $x-nav-2026-transition 0.12s, z-index 0s 0.22s;
 }
 
 // Scrolled (no dropdown): frosted tint + hairline shadow on the ::before.
@@ -1188,6 +1188,12 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	opacity: 1;
 	visibility: visible;
 	pointer-events: auto;
+	// Clip pinned off with `clip-path 0s` so opening never wipes; only the close does.
+	clip-path: inset( 0 0 0 0 );
+	transition:
+		opacity $x-nav-2026-transition,
+		visibility $x-nav-2026-transition,
+		clip-path 0s;
 
 	// Items slide in from the left, staggered by `--stagger-index`. Switch: short delay, no wait.
 	.x-dropdown-subcategory-title,
@@ -1249,13 +1255,26 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	backdrop-filter: blur( 4px );
 	opacity: 0;
 	pointer-events: none;
-	transition: opacity $x-nav-2026-transition;
+	// The z-index drop on close waits for the fade-out.
+	transition: opacity $x-nav-2026-transition, z-index 0s 0.22s;
 }
 
 // Show the backdrop whenever a dropdown content block is active.
 .lpc-header-nav-container:has( .x-dropdown--2026.x-dropdown-content[aria-hidden='false'] )
 	.x-nav-backdrop {
 	opacity: 1;
+	// Above secondary navs (z-index up to 100000); the nav sits one higher.
+	z-index: 100001;
+	// Raise instantly; only the drop back is delayed.
+	transition-delay: 0s;
+}
+
+// Nav bar above secondary navs and the raised backdrop while the dropdown is open.
+.lpc-header-nav-container:has( .x-dropdown--2026.x-dropdown-content[aria-hidden='false'] )
+	.masterbar:has( .x-nav--2026-redesign ) {
+	z-index: 100002;
+	// Raise instantly, keeping the blur exit's own delay intact.
+	transition: backdrop-filter $x-nav-2026-transition 0.12s, z-index 0s;
 }
 
 // Desktop dropdown — one persistent panel easing its height between menus; active block (aria-hidden="false") sits in flow so the wrapper auto-sizes. `position: fixed` + high z escapes section stacking contexts; hidden at rest so it neither intercepts clicks nor paints until JS opens it.
@@ -1267,6 +1286,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	--x-dropdown-2026-link-duration: 0.26s; // per-item fade + slide duration
 	--x-dropdown-2026-stagger-step: 0.02s; // added per --stagger-index (reading order)
 	--x-dropdown-2026-items-slide-overlap: 0.12s; // first-open: items start before unroll ends
+	--x-dropdown-2026-close-duration: 0.14s; // surface roll-up on close (half the open unroll)
+	--x-dropdown-2026-close-delay: 0.08s; // 0.22s close fade − roll, so the roll lands with the fades
 
 	position: fixed;
 	// Prefer host-provided `--nav-2026-height` (Calypso's single source of truth); fall back to the package constant standalone.
@@ -1285,7 +1306,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	opacity: 1;
 	visibility: hidden;
 	pointer-events: none;
-	transition: visibility $x-nav-2026-transition;
+	// The z-index drop on close waits for the fade-out.
+	transition: visibility $x-nav-2026-transition, z-index 0s 0.22s;
 
 	// White surface that unrolls (scaleY) from the nav edge on first open, mirroring the reference's `.x-nav-dropdown-wrapper--2026::after`. `--x-dropdown-2026-unroll` is driven from `useDropdownFlip` so the open commit has a rendered `scaleY(0)` frame to ease from (a CSS-only version can't, since the panel is `visibility: hidden` at rest).
 	&::after {
@@ -1304,7 +1326,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	@media ( min-width: 1025px ) {
 		transition:
 			visibility $x-nav-2026-transition,
-			height var( --x-dropdown-2026-panel-duration ) var( --x-dropdown-2026-easing );
+			height var( --x-dropdown-2026-panel-duration ) var( --x-dropdown-2026-easing ),
+			z-index 0s 0.22s;
 
 		// JS sets the unroll duration only for the first-open ease; switches keep the surface up (no reroll).
 		&::after {
@@ -1318,6 +1341,30 @@ $x-menu-2026-admin-bar-mobile: 46px;
 .x-dropdown.x-dropdown--2026.is-dropdown-open {
 	visibility: visible;
 	pointer-events: auto;
+	// Above secondary navs (z-index up to 100000), level with the open nav bar.
+	z-index: 100002;
+	// Raise instantly; only the drop back is delayed.
+	transition-delay: 0s;
+}
+
+// Close: the white surface rolls back up (reverse of the open unroll, quicker), landing with the 0.22s close fades.
+.x-dropdown.x-dropdown--2026:not( .is-dropdown-open )::after {
+	opacity: 0;
+	transform: scaleY( 0 );
+	transition:
+		opacity 0s linear 0.22s,
+		transform var( --x-dropdown-2026-close-duration ) var( --x-dropdown-2026-easing )
+			var( --x-dropdown-2026-close-delay );
+}
+
+// Close: wipe the content at the rising edge so nothing trails below the roll. `:not()` keeps menu-to-menu switches (wrapper stays open) on the plain cross-fade.
+.x-dropdown.x-dropdown--2026:not( .is-dropdown-open ) .x-dropdown-content {
+	clip-path: inset( 0 0 100% 0 );
+	transition:
+		opacity $x-nav-2026-transition,
+		visibility $x-nav-2026-transition,
+		clip-path var( --x-dropdown-2026-close-duration ) var( --x-dropdown-2026-easing )
+			var( --x-dropdown-2026-close-delay );
 }
 
 .x-dropdown--2026.x-dropdown-content {
@@ -1447,12 +1494,20 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	--x-menu-2026-title-pad-top: 16px; // drilled-in title's top padding
 	--x-menu-2026-navlink-pad-block: 4px; // each nav link's vertical padding
 
+	// Own stacking root, so the legacy billion z-indexes (overridden below) aren't load-bearing here.
+	position: relative;
+	z-index: $x-content-min-z-index;
+	// The z-index drop on close waits for the panel slide-out.
+	transition: z-index 0s var( --x-menu-2026-panel-duration, 0.34s );
+
 	/* Blurred overlay behind the menu (reference: blur(8px) over rgba(0,0,0,0.2)). */
 	.x-menu-overlay {
 		position: fixed;
 		inset: 0;
 		// Sit below the admin bar (real height logged-in, 0 logged-out); `body.admin-bar` consumers overridden further down.
 		top: var( --nav-2026-admin-offset, 0 );
+		// Stacks inside the menu root; replaces the legacy billion.
+		z-index: 1;
 		background: rgba( $studio-gray-100, 0.2 );
 		backdrop-filter: blur( 8px );
 		opacity: 0;
@@ -1473,6 +1528,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		inset: 0;
 		// Sit below the admin bar (real height logged-in, 0 logged-out); `body.admin-bar` consumers overridden further down.
 		top: var( --nav-2026-admin-offset, 0 );
+		// Above the overlay, inside the menu root; replaces the legacy billion.
+		z-index: 2;
 		display: flex;
 		flex-direction: column;
 		width: 100%;
@@ -2039,6 +2096,10 @@ $x-menu-2026-admin-bar-mobile: 46px;
 
 	/* Open: logo / close / footer-contents reveal immediately except during initial open, where they wait for the panel slide. */
 	&.x-menu__open {
+		// Sit above secondary navs (z-index up to 100000) while open; raise instantly.
+		z-index: 100001;
+		transition-delay: 0s;
+
 		.x-menu-mobile-logo:not( .is-hidden ),
 		.x-menu-button.x-menu-mobile-close,
 		.x-menu-mobile-footer > *:not( .x-menu-mobile-app-banner ) {
@@ -2106,6 +2167,11 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	// No unroll: the white surface is simply present when open, gone when not.
 	.x-dropdown.x-dropdown--2026::after {
 		transform: none !important;
+	}
+
+	// No close wipe: the close stays a plain fade.
+	.x-dropdown--2026.x-dropdown-content {
+		clip-path: none !important;
 	}
 }
 

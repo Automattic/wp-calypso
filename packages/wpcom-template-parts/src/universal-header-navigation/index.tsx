@@ -310,8 +310,16 @@ const UniversalNavbarHeader = ( {
 										className="x-nav-item"
 										role="none"
 										onMouseEnter={
-											nav2026 ? () => recordNavItemHover( isScrolled, 'logo', false ) : undefined
+											nav2026
+												? () => {
+														recordNavItemHover( isScrolled, 'logo', false );
+														// Hovering a non-dropdown item closes the open dropdown.
+														setActiveDropdown( null );
+												  }
+												: undefined
 										}
+										// Keyboard parity: focusing into the logo also closes the open dropdown.
+										onFocusCapture={ nav2026 ? () => setActiveDropdown( null ) : undefined }
 									>
 										<a
 											role="menuitem"
@@ -364,9 +372,13 @@ const UniversalNavbarHeader = ( {
 														urlValue={ menu.href }
 														type="nav"
 														target="_self"
-														onItemMouseEnter={ () =>
-															recordNavItemHover( isScrolled, menu.name, false )
-														}
+														onItemMouseEnter={ () => {
+															recordNavItemHover( isScrolled, menu.name, false );
+															// Hovering a non-dropdown item closes the open dropdown.
+															setActiveDropdown( null );
+														} }
+														// Keyboard parity: focusing the item also closes the open dropdown.
+														onItemFocus={ () => setActiveDropdown( null ) }
 													/>
 												)
 											) }
@@ -650,6 +662,8 @@ const UniversalNavbarHeader = ( {
 												localizeUrl( '//wordpress.com/log-in', locale, isLoggedIn, true )
 											}
 											type="nav"
+											onItemMouseEnter={ nav2026 ? () => setActiveDropdown( null ) : undefined }
+											onItemFocus={ nav2026 ? () => setActiveDropdown( null ) : undefined }
 										/>
 									) }
 									{ ! hideGetStartedCta && (
@@ -664,6 +678,8 @@ const UniversalNavbarHeader = ( {
 											urlValue={ startUrl }
 											type="nav"
 											typeClassName="x-nav-link x-nav-link__primary x-link cta-btn-nav"
+											onItemMouseEnter={ nav2026 ? () => setActiveDropdown( null ) : undefined }
+											onItemFocus={ nav2026 ? () => setActiveDropdown( null ) : undefined }
 										/>
 									) }
 									<li className="x-nav-item x-nav-item__narrow" role="none">

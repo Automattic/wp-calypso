@@ -1,4 +1,5 @@
 import { RestAPIClient } from '@automattic/calypso-e2e';
+import { apiWaitForBearerTokenAcceptance } from './api-wait-for-account-propagation';
 import type {
 	NewSiteParams,
 	NewSiteResponse,
@@ -24,6 +25,8 @@ export async function apiCreateFreeSiteForUser(
 		},
 		newUserDetails.body.bearer_token
 	);
+
+	await apiWaitForBearerTokenAcceptance( restAPIClient, testUser.email );
 
 	return restAPIClient.createSite( {
 		name: siteName,

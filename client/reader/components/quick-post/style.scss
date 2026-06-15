@@ -1,4 +1,5 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+@import "@wordpress/base-styles/mixins";
 
 .quick-post {
 	@include ui-mixins.when-dark-theme {
