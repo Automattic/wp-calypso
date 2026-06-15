@@ -7,6 +7,10 @@
 .root {
 	--a8c-ui-stepper-indicator-size: 18px;
 	--a8c-ui-stepper-indicator-size-sm: 16px;
+	// Centers the smaller current/completed bullets against upcoming ones.
+	--a8c-ui-stepper-indicator-offset: calc(
+		( var( --a8c-ui-stepper-indicator-size ) - var( --a8c-ui-stepper-indicator-size-sm ) ) * 0.5
+	);
 }
 
 // ---------------------------------------------------------------------------
@@ -70,7 +74,7 @@
 .indicator.is-current[data-indicator-variant='bullet'] {
 	width: var( --a8c-ui-stepper-indicator-size-sm );
 	height: var( --a8c-ui-stepper-indicator-size-sm );
-	margin: calc( ( var( --a8c-ui-stepper-indicator-size ) - var( --a8c-ui-stepper-indicator-size-sm ) ) * 0.5 );
+	margin: var( --a8c-ui-stepper-indicator-offset );
 	border-style: solid;
 	border-color: var( --wpds-color-fg-content-neutral );
 	background: transparent;
@@ -81,7 +85,7 @@
 .indicator.is-completed[data-indicator-variant='bullet'] {
 	width: var( --a8c-ui-stepper-indicator-size-sm );
 	height: var( --a8c-ui-stepper-indicator-size-sm );
-	margin: calc( ( var( --a8c-ui-stepper-indicator-size ) - var( --a8c-ui-stepper-indicator-size-sm ) ) * 0.5 );
+	margin: var( --a8c-ui-stepper-indicator-offset );
 	border-style: solid;
 }
 
