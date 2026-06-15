@@ -30,11 +30,11 @@ steps:
   # builds; we don't want to pay for it on every commit, especially
   # while the CircleCI -> Buildkite port is still in development.
   # Gate it on `ainfra-*` branches until the port is stabilized.
-  - label: ":desktop_computer: Build desktop (mac, unsigned)"
+  - label: ":desktop_computer: Build desktop (mac, signed)"
     branches: ainfra-*
     notify:
       - github_commit_status:
-          context: Desktop / Build (mac, unsigned)
+          context: Desktop / Build (mac, signed)
     agents:
       queue: mac
     env:
@@ -43,7 +43,10 @@ steps:
       - automattic/nvm#0.6.0
     command: .buildkite/commands/build-desktop-mac.sh
     artifact_paths:
-      - desktop/release/*
+      - desktop/release/*.zip
+      - desktop/release/*.dmg
+      - desktop/release/*.blockmap
+      - desktop/release/*.yml
 
   - label: ":desktop_computer: Build desktop (linux, unsigned)"
     branches: ainfra-*
