@@ -31,7 +31,8 @@ export default function SecurityLegacyContact() {
 					<VStack spacing={ 4 }>
 						{ contact ? (
 							<Text>
-								{ createInterpolateElement( __( 'Your legacy contact is <contactEmail />.' ), {
+								{ /* TODO: translate this string once the legacy contact UI is finalized. */ }
+								{ createInterpolateElement( 'Your legacy contact is <contactEmail />.', {
 									contactEmail: <strong>{ contact.email }</strong>,
 								} ) }
 							</Text>
