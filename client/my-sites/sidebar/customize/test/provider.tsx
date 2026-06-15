@@ -8,11 +8,12 @@ import configureStore from 'redux-mock-store';
 import { BODY_CUSTOMIZE_CLASS, CustomizeProvider, useCustomizeContext } from '../index';
 import type { LayoutDelta } from 'calypso/state/admin-sidebar/layout/types';
 
-function renderInProvider( ui: JSX.Element ) {
+function renderInProvider( ui: JSX.Element, state: object = {} ) {
 	const store = configureStore()( {
 		ui: { selectedSiteId: 12345 },
 		adminSidebarLayout: { bySite: {} },
 		adminSidebarExpandState: { bySite: {} },
+		...state,
 	} );
 	return render( <Provider store={ store }>{ ui }</Provider> );
 }
@@ -84,5 +85,52 @@ describe( '<CustomizeProvider>', () => {
 		expect( exposedCtx?.draft.isSaving ).toBe( true );
 		expect( exposedCtx?.canUndo ).toBe( true );
 		expect( saveLayoutImpl ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'resetAll drops every override and Undo restores the previous delta', () => {
+		const savedDelta: LayoutDelta = {
+			version: 1,
+			updated_at: 100,
+			overrides: [
+				{
+					itemId: 'plugin:stats:-:stats.php',
+					position: { kind: 'top_level', index: 2 },
+				},
+				{
+					itemId: 'plugin:forms:-:forms.php',
+					position: { kind: 'in_group', group_id: 'plugins', index: 1 },
+				},
+			],
+		};
+		const saveLayoutImpl = jest.fn( () => new Promise< LayoutDelta >( () => {} ) );
+		renderInProvider(
+			<CustomizeProvider saveLayoutImpl={ saveLayoutImpl }>
+				<ExposeContext />
+			</CustomizeProvider>,
+			{
+				adminSidebarLayout: { bySite: { 12345: savedDelta } },
+			}
+		);
+		act( () => {
+			exposedCtx?.enter();
+		} );
+		expect( exposedCtx?.canResetAll ).toBe( true );
+
+		act( () => {
+			expect( exposedCtx?.resetAll() ).toBe( true );
+		} );
+		expect( exposedCtx?.draft.workingDelta.overrides ).toEqual( [] );
+		expect( exposedCtx?.canUndo ).toBe( true );
+		expect( saveLayoutImpl ).toHaveBeenCalledTimes( 1 );
+		const savedDeltaArg = (
+			saveLayoutImpl.mock.calls[ 0 ] as unknown as [ unknown, { delta: LayoutDelta } ]
+		 )[ 1 ].delta;
+		expect( savedDeltaArg.overrides ).toEqual( [] );
+
+		act( () => {
+			exposedCtx?.undo();
+		} );
+		expect( exposedCtx?.draft.workingDelta.overrides ).toEqual( savedDelta.overrides );
+		expect( exposedCtx?.canUndo ).toBe( false );
 	} );
 } );

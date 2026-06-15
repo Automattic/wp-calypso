@@ -172,6 +172,16 @@ export function resetItem( state: CustomizerDraftState, itemId: string ): Custom
 }
 
 /**
+ * Drop every override and revert the full sidebar to the default layout.
+ */
+export function resetAll( state: CustomizerDraftState ): CustomizerDraftState {
+	return recomputeDirty( {
+		...state,
+		workingDelta: { ...state.workingDelta, overrides: [] },
+	} );
+}
+
+/**
  * Replace the saved delta and reset working to match. Called after a
  * successful POST so subsequent edits compute isDirty against the new server
  * truth.

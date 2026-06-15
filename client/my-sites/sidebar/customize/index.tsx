@@ -51,6 +51,7 @@ import {
 	deltasEqual,
 	endDrag as endDragState,
 	moveItem,
+	resetAll,
 	resetItem,
 	restoreWorking,
 	type CustomizerDraftState,
@@ -77,16 +78,16 @@ export interface CommitMoveDetails {
 }
 
 interface UndoFrame {
-	itemId: string;
-	previousPosition: LayoutPosition;
 	previousDelta: LayoutDelta;
 	label: string;
+	isResetAll?: boolean;
 }
 
 type Action =
 	| { type: 'set'; state: CustomizerDraftState }
 	| { type: 'move'; itemId: string; position: LayoutPosition }
 	| { type: 'reset_item'; itemId: string }
+	| { type: 'reset_all' }
 	| { type: 'cancel' }
 	| { type: 'apply_saved'; saved: LayoutDelta }
 	| { type: 'begin_drag'; itemId: string; sourcePosition: LayoutPosition }
@@ -102,6 +103,8 @@ function reducer( state: CustomizerDraftState, action: Action ): CustomizerDraft
 			return moveItem( state, action.itemId, action.position );
 		case 'reset_item':
 			return resetItem( state, action.itemId );
+		case 'reset_all':
+			return resetAll( state );
 		case 'cancel':
 			return cancel( state );
 		case 'apply_saved':
@@ -126,11 +129,13 @@ export interface CustomizeController {
 	exit: ( options?: { confirmIfDirty?: boolean } ) => void;
 	commitMove: ( itemId: string, position: LayoutPosition, details?: CommitMoveDetails ) => boolean;
 	resetItem: ( itemId: string, details?: CommitMoveDetails ) => boolean;
+	resetAll: () => boolean;
 	beginDrag: ( itemId: string, sourcePosition: LayoutPosition ) => void;
 	endDrag: () => void;
 	undo: () => void;
 	retry: () => void;
 	canUndo: boolean;
+	canResetAll: boolean;
 	hasPendingSave: boolean;
 	lastSavedAt: number;
 	announce: ( msg: string ) => void;
@@ -180,10 +185,6 @@ function positionsEqual( a?: LayoutPosition, b?: LayoutPosition ): boolean {
 		return b.kind === 'in_group' && a.group_id === b.group_id;
 	}
 	return true;
-}
-
-function clonePosition( position: LayoutPosition ): LayoutPosition {
-	return { ...position };
 }
 
 function errorMessage( err: unknown ): string {
@@ -397,8 +398,6 @@ export function CustomizeProvider( {
 				const nextStack = [
 					...undoStackRef.current,
 					{
-						itemId,
-						previousPosition: clonePosition( details.previousPosition ),
 						previousDelta,
 						label: details.label || itemId,
 					},
@@ -425,6 +424,32 @@ export function CustomizeProvider( {
 		[ commitWorkingChange ]
 	);
 
+	const resetAllHandler = useCallback( () => {
+		if ( draftRef.current.activeDrag || draftRef.current.workingDelta.overrides.length === 0 ) {
+			return false;
+		}
+		const previousDelta = cloneDelta( draftRef.current.workingDelta );
+		const nextState = resetAll( draftRef.current );
+		if ( deltasEqual( previousDelta, nextState.workingDelta ) ) {
+			setDraftState( nextState );
+			return false;
+		}
+
+		setDraftState( nextState );
+		const nextStack = [
+			...undoStackRef.current,
+			{
+				previousDelta,
+				label: translate( 'all items' ) as string,
+				isResetAll: true,
+			},
+		].slice( -MAX_UNDO_STACK );
+		setUndoFrames( nextStack );
+		scheduleAutosave( nextState.workingDelta );
+		announce( translate( 'Reset all items to their default positions.' ) as string );
+		return true;
+	}, [ announce, scheduleAutosave, setDraftState, setUndoFrames ] );
+
 	const beginDrag = useCallback(
 		( itemId: string, sourcePosition: LayoutPosition ) => {
 			setDraftState( beginDragState( draftRef.current, itemId, sourcePosition ) );
@@ -445,11 +470,15 @@ export function CustomizeProvider( {
 		const nextState = restoreWorking( draftRef.current, frame.previousDelta );
 		setDraftState( nextState );
 		scheduleAutosave( nextState.workingDelta );
-		announce(
-			translate( 'Undid last change for %(label)s.', {
-				args: { label: frame.label },
-			} ) as string
-		);
+		if ( frame.isResetAll ) {
+			announce( translate( 'Undid reset of all items.' ) as string );
+		} else {
+			announce(
+				translate( 'Undid last change for %(label)s.', {
+					args: { label: frame.label },
+				} ) as string
+			);
+		}
 	}, [ announce, scheduleAutosave, setDraftState, setUndoFrames ] );
 
 	const retry = useCallback( () => {
@@ -525,6 +554,9 @@ export function CustomizeProvider( {
 			if ( document.querySelector( '.admin-sidebar-move-menu' ) ) {
 				return;
 			}
+			if ( document.querySelector( '.admin-sidebar-reset-all-modal' ) ) {
+				return;
+			}
 			if (
 				draftRef.current.activeDrag ||
 				draftRef.current.isSaving ||
@@ -547,11 +579,17 @@ export function CustomizeProvider( {
 			exit,
 			commitMove,
 			resetItem: resetItemHandler,
+			resetAll: resetAllHandler,
 			beginDrag,
 			endDrag,
 			undo,
 			retry,
 			canUndo: undoStack.length > 0 && ! draft.activeDrag,
+			canResetAll:
+				draft.workingDelta.overrides.length > 0 &&
+				! draft.activeDrag &&
+				! draft.isSaving &&
+				! hasPendingSave,
 			hasPendingSave,
 			lastSavedAt,
 			announce,
@@ -563,6 +601,7 @@ export function CustomizeProvider( {
 			exit,
 			commitMove,
 			resetItemHandler,
+			resetAllHandler,
 			beginDrag,
 			endDrag,
 			undo,
