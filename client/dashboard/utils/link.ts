@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { getCurrentDashboard, getDashboardFromQuery, buildDashboardLink } from '../app/routing';
+import { A4A_SIGNUP_PATHS } from '../section';
 import { isDashboardBackport } from './is-dashboard-backport';
 
 /**
@@ -12,6 +13,7 @@ export function dashboardOrigins(): string[] {
 		'https://my.wordpress.com',
 		`http://my.woo.localhost:${ port }`,
 		'https://my.woo.ai',
+		`http://my.a4a.localhost:${ port }`,
 	];
 }
 
@@ -35,6 +37,12 @@ export function wpcomLink( path: string ) {
 	) {
 		const dashboard = getCurrentDashboard();
 		if ( dashboard === 'ciab' ) {
+			return path;
+		}
+	}
+	if ( A4A_SIGNUP_PATHS.some( ( prefix ) => path === prefix || path.startsWith( prefix + '/' ) ) ) {
+		const dashboard = getCurrentDashboard();
+		if ( dashboard === 'a4a' ) {
 			return path;
 		}
 	}

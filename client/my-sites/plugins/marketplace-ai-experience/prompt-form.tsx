@@ -7,6 +7,7 @@ import '@automattic/agenttic-ui/index.css';
 import { AgentUIProvider, ChatInput, Suggestions, type Suggestion } from '@automattic/agenttic-ui';
 import { useMemo, useRef, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
+import type { JSX } from 'react';
 
 import './prompt-form.scss';
 

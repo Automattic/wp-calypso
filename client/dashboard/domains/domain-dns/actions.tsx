@@ -11,7 +11,7 @@ import type { Action } from '@wordpress/dataviews';
 
 export function useDnsActions(): Action< DnsRecord >[] {
 	const { domainName } = domainRoute.useParams();
-	const deleteMutation = useMutation( {
+	const { mutate: deleteDnsRecord, isPending: isDeletingDnsRecord } = useMutation( {
 		...domainDnsMutation( domainName ),
 		meta: {
 			snackbar: {
@@ -29,7 +29,7 @@ export function useDnsActions(): Action< DnsRecord >[] {
 				return;
 			}
 
-			deleteMutation.mutate( {
+			deleteDnsRecord( {
 				recordsToAdd: [],
 				recordsToRemove: [ itemToDelete ],
 				restoreDefaultARecords: false,
@@ -59,11 +59,11 @@ export function useDnsActions(): Action< DnsRecord >[] {
 					return ! ( item.protected_field && 'MX' !== item.type ) || item.type === 'A';
 				},
 				id: 'delete',
-				isBusy: deleteMutation.isPending,
+				isBusy: isDeletingDnsRecord,
 				label: __( 'Delete' ),
 				icon: <Icon icon={ trash } />,
 				callback: handleDelete,
 			},
 		];
-	}, [ deleteMutation, router, domainName ] );
+	}, [ deleteDnsRecord, isDeletingDnsRecord, router, domainName ] );
 }

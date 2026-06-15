@@ -6,6 +6,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CustomerHomeLaunchpad from '.';
 import type { Task } from '@automattic/launchpad';
 import type { AppState } from 'calypso/types';
+import type { JSX } from 'react';
 
 type LaunchpadPreLaunchProps = {
 	checklistSlug?: string;

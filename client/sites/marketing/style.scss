@@ -1,3 +1,9 @@
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/clear-fix";
+
 .foldable-card.sharing-service {
 	.foldable-card__main > div {
 		display: flex;

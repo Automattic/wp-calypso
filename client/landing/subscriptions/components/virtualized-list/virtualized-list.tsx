@@ -4,8 +4,7 @@ import {
 	List,
 	WindowScroller,
 } from '@automattic/react-virtualized';
-import React, { useEffect, useCallback, useRef } from 'react';
-import ReactDOM from 'react-dom';
+import React, { useEffect, useCallback, useRef, type JSX } from 'react';
 import withDimensions from 'calypso/lib/with-dimensions';
 
 type VirtualizedListFunctionProps< T > = {
@@ -58,13 +57,27 @@ const getScrollContainer = ( node: HTMLElement | null ): HTMLElement | Window =>
 };
 
 const VirtualizedList = < T, >( { width, items, children }: VirtualizedListProps< T > ) => {
-	const windowScrollerRef = useRef();
+	const contentRef = useRef< HTMLDivElement | null >( null );
 	const scrollContainerRef = useRef< HTMLElement | Window >( window );
 
 	useEffect( () => {
-		if ( windowScrollerRef.current ) {
-			const domNode = ReactDOM.findDOMNode( windowScrollerRef.current ) as HTMLElement;
-			scrollContainerRef.current = getScrollContainer( domNode );
+		if ( contentRef.current ) {
+			scrollContainerRef.current = getScrollContainer( contentRef.current );
+		}
+	}, [] );
+
+	// WindowScroller hands us a `registerChild` ref through its render prop. We merge it with
+	// our own `contentRef` via a stable callback ref: this keeps WindowScroller tracking its
+	// DOM node through `registerChild` (so its internal, React 19-removed `findDOMNode`
+	// fallback is never hit) while giving us the node to resolve the scroll container.
+	const registerChildRef = useRef< React.Ref< HTMLDivElement > >( null );
+	const setContentNode = useCallback( ( node: HTMLDivElement | null ) => {
+		contentRef.current = node;
+		const registerChild = registerChildRef.current;
+		if ( typeof registerChild === 'function' ) {
+			registerChild( node );
+		} else if ( registerChild ) {
+			( registerChild as React.MutableRefObject< HTMLDivElement | null > ).current = node;
 		}
 	}, [] );
 
@@ -89,7 +102,7 @@ const VirtualizedList = < T, >( { width, items, children }: VirtualizedListProps
 	);
 
 	return (
-		<WindowScroller ref={ windowScrollerRef } scrollElement={ scrollContainerRef.current }>
+		<WindowScroller scrollElement={ scrollContainerRef.current }>
 			{ ( {
 				height,
 				scrollTop,
@@ -99,8 +112,9 @@ const VirtualizedList = < T, >( { width, items, children }: VirtualizedListProps
 				scrollTop: number;
 				registerChild: React.Ref< HTMLDivElement >;
 			} ) => {
+				registerChildRef.current = registerChild;
 				return (
-					<div ref={ registerChild }>
+					<div ref={ setContentNode }>
 						<List
 							autoHeight
 							rowCount={ items?.length }

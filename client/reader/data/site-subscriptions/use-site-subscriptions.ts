@@ -10,23 +10,26 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 interface UseSiteSubscriptionsOptions {
 	fetchAllPages?: boolean;
+	enabled?: boolean;
 }
 
 export const useSiteSubscriptions = ( {
 	fetchAllPages = false,
+	enabled = true,
 }: UseSiteSubscriptionsOptions = {} ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const isEnabled = enabled && isLoggedIn;
 	const query = useInfiniteQuery( {
 		...siteSubscriptionsQuery(),
-		enabled: isLoggedIn,
+		enabled: isEnabled,
 	} );
 	const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = query;
 
 	useEffect( () => {
-		if ( fetchAllPages && isLoggedIn && hasNextPage && ! isFetchingNextPage ) {
+		if ( fetchAllPages && isEnabled && hasNextPage && ! isFetchingNextPage ) {
 			fetchNextPage( { cancelRefetch: false } );
 		}
-	}, [ fetchAllPages, isLoggedIn, hasNextPage, isFetchingNextPage, fetchNextPage ] );
+	}, [ fetchAllPages, isEnabled, hasNextPage, isFetchingNextPage, fetchNextPage ] );
 
 	return Object.assign( {}, query, {
 		subscriptions: getSiteSubscriptionsFromData( data ),

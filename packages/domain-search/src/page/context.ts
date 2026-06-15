@@ -39,6 +39,8 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		onTrademarkClaimsNoticeAccepted: noop,
 		onTrademarkClaimsNoticeClosed: noop,
 		onPageView: noop,
+		onBundleShown: noop,
+		onBundleAddToCart: noop,
 	},
 	queries: {
 		availableTlds: ( search?: string, vendor?: string ) => availableTldsQuery( vendor, search ),

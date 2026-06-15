@@ -1,3 +1,5 @@
+import type { SiteSubscriptionItem } from '../read-follows';
+
 /**
  * Reader Spaces — a Space groups subscriptions under a name plus optional tags.
  * v0 has a name and tags only, no description (see RSM-4110).
@@ -19,15 +21,46 @@ export type SpaceIcon =
 	| 'pages'
 	| 'category';
 
+/**
+ * Presentation settings for a space, grouped so they can grow beyond color and
+ * icon (e.g. cover image, sort order) without widening `ReadSpace` itself.
+ */
+export interface SpaceLayout {
+	color: SpaceColor;
+	icon: SpaceIcon;
+}
+
 export interface ReadSpace {
 	id: string;
 	name: string;
 	tags: string[];
-	color: SpaceColor;
-	icon: SpaceIcon;
+	layout: SpaceLayout;
+}
+
+/**
+ * A space plus its sources. Sources are only returned by the single-space
+ * endpoint (`GET /read/spaces/{id}`), not by the list endpoint — so the list
+ * deals in `ReadSpace` and the detail view deals in `ReadSpaceDetails`.
+ */
+export interface ReadSpaceDetails extends ReadSpace {
+	sources: SpaceSource[];
 }
 
 export interface CreateReadSpaceParams {
 	name: string;
 	tags: string[];
+}
+
+export interface SpaceSource {
+	feedId?: number | string | null;
+	blogId?: number | string | null;
+	feedUrl: string;
+	siteUrl: string;
+	name: string;
+	siteIcon?: string | null;
+}
+
+export interface ReadSpaceSourceMutationParams {
+	spaceId: string;
+	subscription: SiteSubscriptionItem;
 }

@@ -252,7 +252,7 @@ class Layout extends Component {
 		return null;
 	}
 
-	renderMasterbar( loadHelpCenterIcon ) {
+	renderMasterbar( loadHelpCenterIcon, loadAgentsManager ) {
 		if ( this.props.masterbarIsHidden ) {
 			return <EmptyMasterbar />;
 		}
@@ -294,6 +294,7 @@ class Layout extends Component {
 					isCheckoutPending={ this.props.sectionName === 'checkout-pending' }
 					isCheckoutFailed={ isCheckoutFailed }
 					loadHelpCenterIcon={ loadHelpCenterIcon }
+					loadAgentsManager={ loadAgentsManager }
 					isGlobalSidebarVisible={ this.props.isGlobalSidebarVisible }
 				/>
 			</>
@@ -408,7 +409,9 @@ class Layout extends Component {
 				{ config.isEnabled( 'layout/guided-tours' ) && (
 					<AsyncLoad require={ loadGuidedTours } placeholder={ null } />
 				) }
-				<div className="layout__header-section">{ this.renderMasterbar( loadHelpCenter ) }</div>
+				<div className="layout__header-section">
+					{ this.renderMasterbar( loadHelpCenter, loadAgentsManager ) }
+				</div>
 				<LayoutLoader />
 				{ isJetpackCloud() && <AsyncLoad require={ loadJetpackCloudStyle } placeholder={ null } /> }
 				{ isA8CForAgencies() && (

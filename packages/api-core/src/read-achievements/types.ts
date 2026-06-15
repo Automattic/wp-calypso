@@ -1,4 +1,18 @@
 /**
+ * The post or comment an achievement was unlocked on. Only present when viewing
+ * your own achievements, and only on achievements the backend can attribute to a
+ * specific post or comment.
+ */
+export interface AchievementContext {
+	blog_id: number;
+	post_id: number;
+	/** Present (and `> 0`) when the achievement was unlocked on a comment. */
+	comment_id?: number;
+	/** Permalink to the post or comment. */
+	url: string;
+}
+
+/**
  * Earned, fully-visible achievement. The shape returned for own-profile reads
  * and for non-secret entries on cross-user reads. A self-read of an earned
  * secret achievement also uses this shape — `is_secret` then reflects the
@@ -34,6 +48,11 @@ export interface Achievement {
 	site_ID?: number;
 	/** Only present when viewing your own achievements. */
 	url?: string;
+	/**
+	 * The post or comment that unlocked the achievement. Only present when viewing
+	 * your own achievements, and only on achievements the backend can attribute.
+	 */
+	context?: AchievementContext;
 }
 
 /**

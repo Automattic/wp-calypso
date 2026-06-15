@@ -34,22 +34,21 @@ export default function DomainTransferToOtherSite() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const onConfirmTransfer = () => {
-		!! selectedSite &&
-			transferDomainToSite( selectedSite.ID, {
-				onSuccess: () => {
-					createSuccessNotice( __( 'Domain transferred successfully.' ), { type: 'snackbar' } );
-					setIsConfirmDialogOpen( false );
-					navigate( { to: domainRoute.fullPath, params: { domainName } } );
-				},
-				onError: ( e ) => {
-					createErrorNotice(
-						e.message || __( 'An error occurred while transferring the domain.' ),
-						{
-							type: 'snackbar',
-						}
-					);
-				},
-			} );
+		if ( ! selectedSite ) {
+			return;
+		}
+		transferDomainToSite( selectedSite.ID, {
+			onSuccess: () => {
+				createSuccessNotice( __( 'Domain transferred successfully.' ), { type: 'snackbar' } );
+				setIsConfirmDialogOpen( false );
+				navigate( { to: domainRoute.fullPath, params: { domainName } } );
+			},
+			onError: ( e ) => {
+				createErrorNotice( e.message || __( 'An error occurred while transferring the domain.' ), {
+					type: 'snackbar',
+				} );
+			},
+		} );
 	};
 
 	return (

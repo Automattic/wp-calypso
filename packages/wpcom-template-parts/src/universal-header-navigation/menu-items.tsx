@@ -76,6 +76,7 @@ export const ClickableItem = ( {
 	tabIndex,
 	index,
 	onItemMouseEnter,
+	onItemFocus,
 }: ClickableItemProps ) => {
 	let liClassName = '';
 	if ( type === 'menu' ) {
@@ -108,6 +109,7 @@ export const ClickableItem = ( {
 				title={ titleValue }
 				target={ target }
 				onClick={ onClick }
+				onFocus={ onItemFocus }
 				tabIndex={ tabIndex }
 			>
 				{ content }

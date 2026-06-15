@@ -3,7 +3,6 @@ import { useMutation } from '@tanstack/react-query';
 import { Button, __experimentalVStack as VStack, Panel } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __, _n } from '@wordpress/i18n';
-import { rotateLeft } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { siteBackupRestoreRoute } from '../../app/router/sites';
@@ -99,7 +98,6 @@ function SiteBackupGranularRestoreForm( {
 				<ButtonStack justify="flex-start">
 					<Button
 						variant="primary"
-						icon={ rotateLeft }
 						type="submit"
 						isBusy={ isRestoreMutationPending }
 						disabled={ isRestoreMutationPending }

@@ -4,10 +4,11 @@
 import { Domain, DomainSubtype } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
 import { render } from '../../../test-utils';
+import { DomainForwardingNotice } from '../notice';
 
 const domainName = 'example.com';
 
-const getMockedDomainData = ( customProps: Partial< Domain > = {} ) => {
+const getMockedDomainData = ( customProps: Partial< Domain > = {} ): Domain => {
 	return {
 		domain: domainName,
 		aftermarket_auction: false,
@@ -47,7 +48,7 @@ const getMockedDomainData = ( customProps: Partial< Domain > = {} ) => {
 		type: 'wpcom',
 		wpcom_domain: true,
 		...customProps,
-	};
+	} as Domain;
 };
 
 test( 'shows warning notice when domain registration uses external name servers', () => {
@@ -59,7 +60,6 @@ test( 'shows warning notice when domain registration uses external name servers'
 	} );
 
 	const TestWrapper = () => {
-		const { DomainForwardingNotice } = require( '../notice' );
 		return <DomainForwardingNotice domainName={ domainName } domainData={ domainData } />;
 	};
 
@@ -85,7 +85,6 @@ test( 'shows warning notice when domain connection uses external name servers', 
 	} );
 
 	const TestWrapper = () => {
-		const { DomainForwardingNotice } = require( '../notice' );
 		return <DomainForwardingNotice domainName={ domainName } domainData={ domainData } />;
 	};
 
@@ -109,7 +108,6 @@ test( 'shows info notice when domain is primary domain on non-domain-only site',
 	} );
 
 	const TestWrapper = () => {
-		const { DomainForwardingNotice } = require( '../notice' );
 		return <DomainForwardingNotice domainName={ domainName } domainData={ domainData } />;
 	};
 
@@ -133,7 +131,6 @@ test( 'shows no notice when domain uses WordPress.com nameservers and is not pri
 	} );
 
 	const TestWrapper = () => {
-		const { DomainForwardingNotice } = require( '../notice' );
 		return <DomainForwardingNotice domainName={ domainName } domainData={ domainData } />;
 	};
 

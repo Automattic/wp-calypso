@@ -67,12 +67,12 @@ export function useSetupCustomActions( {
 	setShouldRenderChat,
 	setDesktopMediaQuery,
 }: SetupProps ): void {
-	const { hasLoaded, isOpen, isDocked, floatingPosition } = useSelect( ( select ) => {
+	const { hasLoaded, isOpen, isDocked, isMinimized, floatingPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
-	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
-	const { agentConfig, getActiveSessionId } = useAgentsManagerContext();
+	const { setIsOpen, setIsDocked, setIsMinimized } = useDispatch( AGENTS_MANAGER_STORE );
+	const { agentConfig, getActiveSessionId, resumeActiveChat } = useAgentsManagerContext();
 	const navigate = useNavigate();
 	const resolveRef = useRef< ( ( state: AgentsManagerChatState ) => void ) | null >( null );
 	const shouldPersistOpenState = ! isReaderChatAgent( agentConfig?.agentId );
@@ -83,19 +83,38 @@ export function useSetupCustomActions( {
 				return;
 			}
 
+			// Persist only what changes — a redundant save can race with a
+			// concurrent one and clobber it.
+			if ( shouldOpen && isMinimized ) {
+				setIsMinimized( false );
+			}
+
+			// Open state is unchanged; nothing more to persist.
+			if ( shouldOpen === isOpen ) {
+				return;
+			}
+
 			if ( ! isDocked || ! canDock ) {
 				return setIsOpen( shouldOpen, shouldPersistOpenState );
 			}
 
 			if ( shouldOpen ) {
 				openSidebar();
-			}
-
-			if ( ! shouldOpen ) {
+			} else {
 				closeSidebar();
 			}
 		},
-		[ canDock, closeSidebar, isDocked, openSidebar, setIsOpen, shouldPersistOpenState ]
+		[
+			canDock,
+			closeSidebar,
+			isDocked,
+			isMinimized,
+			isOpen,
+			openSidebar,
+			setIsMinimized,
+			setIsOpen,
+			shouldPersistOpenState,
+		]
 	);
 
 	const setChatDocked = useCallback(
@@ -188,6 +207,7 @@ export function useSetupCustomActions( {
 		removeContextCard: removeExternalContextCard,
 		setSiteEditorAction,
 		chatNavigate: navigate,
+		resumeChat: resumeActiveChat,
 		isReady: true,
 	} );
 

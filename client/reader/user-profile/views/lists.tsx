@@ -8,6 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
 import { List } from 'calypso/reader/list-manage/types';
 import type { ReaderUser } from '@automattic/api-core';
+import type { JSX } from 'react';
 
 interface UserListsProps {
 	user: ReaderUser;

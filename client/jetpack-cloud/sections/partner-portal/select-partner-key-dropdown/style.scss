@@ -1,3 +1,5 @@
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 .select-partner-key-dropdown {
 	@include breakpoint-deprecated( "<960px" ) {
 		width: 100%;

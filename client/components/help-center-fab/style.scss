@@ -1,4 +1,7 @@
 // 44px matches Apple HIG's minimum tap target.
+
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
 $help-center-fab-size: 44px;
 $help-center-fab-offset: 24px;
 $help-center-fab-bottom-bar-gap: 16px;

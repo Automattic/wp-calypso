@@ -1,3 +1,8 @@
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/elevation";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
 @import '@wordpress/base-styles/breakpoints';
 @import '@automattic/components/src/styles/typography';
 @import '@automattic/typography/styles/fonts';

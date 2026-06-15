@@ -78,7 +78,7 @@ export default function PluginsList() {
 		return batches;
 	}, [ plugins ] );
 
-	const marketplaceSearchResults = useQueries( {
+	const { marketplaceSearchData, allSearchQueriesLoaded } = useQueries( {
 		queries:
 			slugBatches.length > 0
 				? slugBatches.map( ( slugs ) =>
@@ -89,23 +89,24 @@ export default function PluginsList() {
 						} )
 				  )
 				: [],
+		combine: ( results ) => ( {
+			marketplaceSearchData: results.flatMap( ( result ) => result.data?.data.results || [] ),
+			allSearchQueriesLoaded: results.every( ( result ) => result.isSuccess ),
+		} ),
 	} );
 
 	const iconBySlug = useMemo( () => {
 		// Only recalculate once all queries have data
-		const allQueriesLoaded = marketplaceSearchResults.every( ( result ) => result.isSuccess );
-		if ( ! allQueriesLoaded ) {
+		if ( ! allSearchQueriesLoaded ) {
 			return new Map< string, PluginListRow[ 'icon' ] >();
 		}
 
 		const marketplacePluginsBySlug = new Map( Object.entries( marketplacePlugins?.results || {} ) );
 
-		const marketplaceSearchBySlug = marketplaceSearchResults
-			.flatMap( ( result ) => result.data?.data.results || [] )
-			.reduce( ( acc, { fields } ) => {
-				acc.set( fields.slug, fields );
-				return acc;
-			}, new Map< string, MarketplaceSearchResult[ 'fields' ] >() );
+		const marketplaceSearchBySlug = marketplaceSearchData.reduce( ( acc, { fields } ) => {
+			acc.set( fields.slug, fields );
+			return acc;
+		}, new Map< string, MarketplaceSearchResult[ 'fields' ] >() );
 
 		return plugins.reduce( ( acc, { slug } ) => {
 			let icon;
@@ -119,7 +120,7 @@ export default function PluginsList() {
 
 			return acc;
 		}, new Map< string, PluginListRow[ 'icon' ] >() );
-	}, [ plugins, marketplacePlugins, marketplaceSearchResults ] );
+	}, [ plugins, marketplacePlugins, marketplaceSearchData, allSearchQueriesLoaded ] );
 
 	const pluginsWithIcon = useMemo( () => {
 		return plugins.map( ( plugin ) => {

@@ -1,6 +1,7 @@
 @use "sass:math";
-@import "@automattic/typography/styles/fonts";
 @import "@automattic/typography/styles/variables";
+@import "@automattic/typography/styles/fonts";
+@import "calypso/assets/stylesheets/shared/typography";
 @import "./mixins/breakpoints";
 
 %rendered-block-content {
