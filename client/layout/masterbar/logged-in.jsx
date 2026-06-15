@@ -104,6 +104,10 @@ class MasterbarLoggedIn extends Component {
 		dashboardOptIn: PropTypes.bool,
 		useUnifiedAgent: PropTypes.bool,
 		launchButton: PropTypes.node,
+		// When provided, the "Plan" menu item navigates to this URL via a regular
+		// anchor instead of calling the page.js router. The interim omnibar (which
+		// runs outside the page.js routing context) passes this so the link works.
+		sitePlanUrl: PropTypes.string,
 	};
 
 	state = { mounted: false };
@@ -284,10 +288,12 @@ class MasterbarLoggedIn extends Component {
 						{
 							label: translate( 'Sites' ),
 							url: dashboardOptIn ? dashboardLink( '/sites' ) : '/sites',
+							onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_sites_clicked' ),
 						},
 						{
 							label: translate( 'Domains' ),
 							url: dashboardOptIn ? dashboardLink( '/domains' ) : '/domains/manage',
+							onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_domains_clicked' ),
 						},
 					],
 					...( this.props.isSimpleSite
@@ -297,10 +303,14 @@ class MasterbarLoggedIn extends Component {
 									{
 										label: translate( 'About WordPress' ),
 										url: `${ siteAdminUrl }about.php`,
+										onClick: () =>
+											this.props.recordTracksEvent( 'calypso_masterbar_about_wordpress_clicked' ),
 									},
 									{
 										label: translate( 'Get Involved' ),
 										url: `${ siteAdminUrl }contribute.php`,
+										onClick: () =>
+											this.props.recordTracksEvent( 'calypso_masterbar_get_involved_clicked' ),
 									},
 								],
 						  ] ),
@@ -509,6 +519,7 @@ class MasterbarLoggedIn extends Component {
 			domainOnlySite,
 			sitePlanName,
 			site,
+			sitePlanUrl,
 		} = this.props;
 
 		// Only display when a site is selected and is not domain-only site.
@@ -516,12 +527,30 @@ class MasterbarLoggedIn extends Component {
 			return null;
 		}
 
-		const menuItems = [ { label: translate( 'Visit Site' ), url: siteUrl } ];
+		const menuItems = [
+			{
+				label: translate( 'Visit Site' ),
+				url: siteUrl,
+				onClick: () => {
+					this.props.recordTracksEvent( 'calypso_masterbar_visit_site_clicked', {
+						site_id: this.props.siteId,
+					} );
+				},
+			},
+		];
 
 		if ( isClassicView ) {
-			menuItems.push( { label: translate( 'Dashboard' ), url: siteAdminUrl } );
+			menuItems.push( {
+				label: translate( 'Dashboard' ),
+				url: siteAdminUrl,
+				onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_dashboard_clicked' ),
+			} );
 		} else {
-			menuItems.push( { label: translate( 'My Home' ), url: siteHomeUrl } );
+			menuItems.push( {
+				label: translate( 'My Home' ),
+				url: siteHomeUrl,
+				onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_my_home_clicked' ),
+			} );
 		}
 
 		if ( ! site?.is_wpcom_staging_site ) {
@@ -534,9 +563,15 @@ class MasterbarLoggedIn extends Component {
 						</div>
 					</div>
 				),
+				// In the interim omnibar `page.js` routing is unavailable, so navigate
+				// via a regular anchor using the provided `sitePlanUrl`. Elsewhere, fall
+				// back to client-side routing.
+				...( sitePlanUrl && { url: sitePlanUrl } ),
 				onClick: () => {
 					this.props.recordTracksEvent( 'calypso_masterbar_plan_clicked' );
-					page( `/plans/${ siteSlug }` );
+					if ( ! sitePlanUrl ) {
+						page( `/plans/${ siteSlug }` );
+					}
 				},
 			} );
 		}
@@ -593,18 +628,22 @@ class MasterbarLoggedIn extends Component {
 				{
 					label: translate( 'Post' ),
 					url: newPostUrl,
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_post_clicked' ),
 				},
 				{
 					label: translate( 'Media' ),
 					url: isClassicView ? `${ siteAdminUrl }media-new.php` : `/media/${ siteSlug }`,
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_media_clicked' ),
 				},
 				{
 					label: translate( 'Page' ),
 					url: newPageUrl,
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_page_clicked' ),
 				},
 				{
 					label: translate( 'User' ),
 					url: isClassicView ? `${ siteAdminUrl }user-new.php` : `/people/new/${ siteSlug }`,
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_user_clicked' ),
 				},
 			];
 		} else {
@@ -612,18 +651,22 @@ class MasterbarLoggedIn extends Component {
 				{
 					label: translate( 'Post' ),
 					url: '/post',
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_post_clicked' ),
 				},
 				{
 					label: translate( 'Media' ),
 					url: '/media',
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_media_clicked' ),
 				},
 				{
 					label: translate( 'Page' ),
 					url: '/page',
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_page_clicked' ),
 				},
 				{
 					label: translate( 'User' ),
 					url: '/people/new',
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_user_clicked' ),
 				},
 			];
 		}
@@ -658,6 +701,7 @@ class MasterbarLoggedIn extends Component {
 
 	renderProfileMenu() {
 		const { translate, user, isGlobalSidebarVisible, siteAdminUrl } = this.props;
+		const editProfileUrl = isGlobalSidebarVisible ? '/me' : `${ siteAdminUrl }profile.php`;
 		const profileActions = [
 			{
 				label: (
@@ -681,11 +725,15 @@ class MasterbarLoggedIn extends Component {
 						</div>
 					</div>
 				),
-				url: isGlobalSidebarVisible ? '/me' : `${ siteAdminUrl }profile.php`,
+				url: editProfileUrl,
+				onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_edit_profile_clicked' ),
 			},
 			{
 				label: translate( 'Log Out' ),
-				onClick: () => this.props.redirectToLogout(),
+				onClick: () => {
+					this.props.recordTracksEvent( 'calypso_masterbar_log_out_clicked' );
+					this.props.redirectToLogout();
+				},
 				tooltip: translate( 'Log out of WordPress.com' ),
 				className: 'logout-link',
 			},
@@ -708,6 +756,7 @@ class MasterbarLoggedIn extends Component {
 					</span>
 				),
 				url: '/me/account',
+				onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_wpcom_account_clicked' ),
 				className: 'wpcom-link',
 			},
 		];

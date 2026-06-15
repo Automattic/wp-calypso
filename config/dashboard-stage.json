@@ -32,6 +32,7 @@
 		"emails/titan-tiers": false,
 		"marketplace-redesign": true,
 		"mcp-settings": true,
+		"me/legacy-contact": false,
 		"onboarding/interval-dropdown": true,
 		"performance/apm": true,
 		"plans/expired-downgrade": true,

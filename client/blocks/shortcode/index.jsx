@@ -53,8 +53,4 @@ Shortcode.propTypes = {
 	allowSameOrigin: PropTypes.bool,
 };
 
-Shortcode.defaultProps = {
-	allowSameOrigin: false,
-};
-
 export default Shortcode;

@@ -4,7 +4,7 @@ import { home, Icon, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, type JSX } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useCurrentRoute } from 'calypso/components/route';
 import { resolveDomainStatus } from 'calypso/lib/domains';

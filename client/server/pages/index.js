@@ -1201,14 +1201,6 @@ export default function pages() {
 	 * SSR middleware if the request wasn't going to be resolved with SSR anyways.
 	 */
 	function handleSectionPath( section, sectionPath, entrypoint, reqFilter, extraMiddleware ) {
-		// Some callers resolve a section via `sections.find( … )`, which returns
-		// undefined when that section is disabled for the current env and thus
-		// stripped from the (development) server bundle — e.g. `a8c-for-agencies-signup`,
-		// disabled in config/_shared.json, is absent under a plain `yarn start`.
-		// Skip registration in that case instead of crashing on boot.
-		if ( ! section ) {
-			return;
-		}
 		const pathRegex = pathToRegExp( sectionPath );
 
 		app.get(
@@ -1246,14 +1238,6 @@ export default function pages() {
 		handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper', ( req ) =>
 			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
 		);
-		const a4aSignupSectionDefinition = sections.find(
-			( s ) => s.name === 'a8c-for-agencies-signup'
-		);
-		A4A_SIGNUP_PATHS.forEach( ( a4aSignupPath ) => {
-			handleSectionPath( a4aSignupSectionDefinition, a4aSignupPath, undefined, ( req ) =>
-				isAllowedA4ADashboardHostname( req.hostname )
-			);
-		} );
 		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
 			handleSectionPath(
 				DOTCOM_DASHBOARD_SECTION_DEFINITION,
@@ -1279,6 +1263,18 @@ export default function pages() {
 			( req ) => isAllowedCiabDashboardHostname( req.hostname ),
 			loadDashboardLocaleData
 		);
+	}
+
+	// Multi-site Dashboard (A4A) routing.
+	if ( isDashboardEnv() || calypsoEnv === 'a8c-for-agencies-development' ) {
+		const a4aSignupSectionDefinition = sections.find(
+			( s ) => s.name === 'a8c-for-agencies-signup'
+		);
+		A4A_SIGNUP_PATHS.forEach( ( a4aSignupPath ) => {
+			handleSectionPath( a4aSignupSectionDefinition, a4aSignupPath, undefined, ( req ) =>
+				isAllowedA4ADashboardHostname( req.hostname )
+			);
+		} );
 		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
 			handleSectionPath( A4A_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-a4a', ( req ) =>
 				isAllowedA4ADashboardHostname( req.hostname )

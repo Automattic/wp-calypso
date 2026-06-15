@@ -144,7 +144,17 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 							'masterbar__item-subitems-item--odd': groupIndex % 2 === 1,
 						} ) }
 					>
-						{ item.onClick && (
+						{ item.url && (
+							<a
+								href={ item.url }
+								onClick={ item.onClick }
+								onTouchEnd={ ( ev ) => this.navigateSubAnchorTouch( ev, item.onClick ) }
+								onKeyDown={ ( ev ) => this.navigateSubAnchorByKey( ev, item.onClick ) }
+							>
+								{ item.label }
+							</a>
+						) }
+						{ ! item.url && item.onClick && (
 							<Button
 								className="is-link"
 								onClick={ () => this.submenuButtonClick( item.onClick ) }
@@ -158,16 +168,7 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 								{ item.label }
 							</Button>
 						) }
-						{ ! item.onClick && item.url && (
-							<a
-								href={ item.url }
-								onTouchEnd={ this.navigateSubAnchorTouch }
-								onKeyDown={ this.navigateSubAnchorByKey }
-							>
-								{ item.label }
-							</a>
-						) }
-						{ ! item.onClick && ! item.url && <div>{ item.label }</div> }
+						{ ! item.url && ! item.onClick && <div>{ item.label }</div> }
 					</li>
 				) )
 			)
@@ -200,21 +201,26 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 		}
 	};
 
-	navigateSubAnchorTouch = ( event: React.TouchEvent | React.KeyboardEvent ) => {
+	navigateSubAnchorTouch = (
+		event: React.TouchEvent | React.KeyboardEvent,
+		onClick?: () => void
+	) => {
 		// We must prevent the default anchor behavior and navigate manually. Otherwise there is a
 		// race condition between the click on the anchor firing and the menu closing before that
-		// can happen.
+		// can happen. Because we preventDefault here, the anchor's `onClick` won't fire on the
+		// touch/keyboard paths. Invoke it explicitly to keep side effects (e.g. tracking).
 		event.preventDefault();
 		const url = event.currentTarget.getAttribute( 'href' );
+		onClick?.();
 		if ( url ) {
 			navigate( url );
 		}
 		this.setState( { isOpenForNonMouseFlow: false } );
 	};
 
-	navigateSubAnchorByKey = ( event: React.KeyboardEvent ) => {
+	navigateSubAnchorByKey = ( event: React.KeyboardEvent, onClick?: () => void ) => {
 		if ( event.key === 'Enter' || event.key === ' ' ) {
-			this.navigateSubAnchorTouch( event );
+			this.navigateSubAnchorTouch( event, onClick );
 		}
 	};
 

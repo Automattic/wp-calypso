@@ -619,6 +619,11 @@ const BundleMemberList = styled.div`
 	}
 `;
 
+const BundleRenewalNote = styled.div`
+	font-size: 12px;
+	font-weight: 400;
+`;
+
 /**
  * Render a domain bundle as a single compact row in the order summary, mirroring
  * the order-review surface's `BundleLineItem`: a "Domain bundle" title with the
@@ -645,6 +650,15 @@ export function BundleProductAndCostOverridesList( { bundle }: { bundle: CartBun
 		isSmallestUnit: true,
 		stripZeros: true,
 	} );
+	// Bundle members renew at full price (no plan credit at renewal —
+	// DOMAINS-2173), so the renewal aggregate is the pre-discount group total.
+	// item_original_subtotal_integer is the list price, so it needs no coupon
+	// exclusion (DOMAINS-2184).
+	const bundleOriginalInteger = products.reduce(
+		( total, product ) => total + product.item_original_subtotal_integer,
+		0
+	);
+	const isBundleDiscounted = bundleTotalInteger < bundleOriginalInteger;
 
 	return (
 		<SimplifiedSingleProductAndCostOverridesListWrapper className="cost-overrides-list-product-wrapper">
@@ -666,6 +680,18 @@ export function BundleProductAndCostOverridesList( { bundle }: { bundle: CartBun
 					</div>
 				) ) }
 			</BundleMemberList>
+			{ isBundleDiscounted && (
+				<BundleRenewalNote>
+					{ translate( 'Auto-renews at %(price)s/year.', {
+						args: {
+							price: formatCurrency( bundleOriginalInteger, currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ),
+						},
+					} ) }
+				</BundleRenewalNote>
+			) }
 		</SimplifiedSingleProductAndCostOverridesListWrapper>
 	);
 }

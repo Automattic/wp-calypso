@@ -1,7 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import ReactDom from 'react-dom';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -16,11 +15,12 @@ export class ReaderSidebarTagsListItem extends Component {
 		translate: PropTypes.func,
 	};
 
+	itemRef = createRef();
+
 	componentDidMount() {
 		// Scroll to the current tag
 		if ( this.props.currentTag && this.props.tag.slug === this.props.currentTag ) {
-			const node = ReactDom.findDOMNode( this );
-			node.scrollIntoView();
+			this.itemRef.current?.scrollIntoView();
 		}
 	}
 
@@ -39,7 +39,7 @@ export class ReaderSidebarTagsListItem extends Component {
 		const selected = computedClassName.includes( 'selected' );
 
 		return (
-			<MenuItem key={ tag.id } selected={ selected }>
+			<MenuItem ref={ this.itemRef } key={ tag.id } selected={ selected }>
 				<MenuItemLink
 					href={ tag.url }
 					onClick={ this.handleTagSidebarClick }

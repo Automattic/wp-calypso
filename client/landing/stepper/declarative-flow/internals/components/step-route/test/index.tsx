@@ -5,7 +5,7 @@
 
 import { waitFor } from '@testing-library/react';
 import { addQueryArgs } from '@wordpress/url';
-import React, { FC, Suspense } from 'react';
+import React, { FC, Suspense, type JSX } from 'react';
 import { MemoryRouter } from 'react-router';
 import recordStepComplete from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-complete';
 import recordStepStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-start';

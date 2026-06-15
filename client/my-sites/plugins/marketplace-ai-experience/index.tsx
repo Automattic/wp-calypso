@@ -17,6 +17,7 @@ import HydratedPick from './hydrated-pick';
 import { useIsLooking, usePicks } from './picks-store';
 import PromptForm from './prompt-form';
 import { sparkleFilled } from './sparkle-icon';
+import type { JSX } from 'react';
 
 import 'calypso/my-sites/plugins/plugins-browser-list/style.scss';
 import './style.scss';

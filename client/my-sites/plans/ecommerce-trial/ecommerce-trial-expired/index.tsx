@@ -4,7 +4,7 @@ import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
 import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState, type JSX } from 'react';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Main from 'calypso/components/main';

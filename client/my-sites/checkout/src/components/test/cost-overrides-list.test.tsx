@@ -44,6 +44,7 @@ function buildDomainProduct( overrides: {
 	uuid: string;
 	meta: string;
 	subtotal: number;
+	originalSubtotal?: number;
 	costOverrides?: ResponseCartCostOverride[];
 	extra?: ResponseCartProduct[ 'extra' ];
 } ) {
@@ -54,6 +55,7 @@ function buildDomainProduct( overrides: {
 		uuid: overrides.uuid,
 		meta: overrides.meta,
 		item_subtotal_integer: overrides.subtotal,
+		item_original_subtotal_integer: overrides.originalSubtotal ?? overrides.subtotal,
 		cost_overrides: overrides.costOverrides ?? [],
 		extra: overrides.extra ?? {},
 	};
@@ -122,6 +124,67 @@ describe( 'BundleProductAndCostOverridesList', () => {
 		expect( screen.queryByText( /\$18\b/ ) ).not.toBeInTheDocument();
 		// 2200 + 2000 = 4200 smallest-unit => $42.
 		expect( screen.getByText( /\$42\b/ ) ).toBeVisible();
+	} );
+
+	it( 'discloses the full-price renewal aggregate when the bundle is discounted', () => {
+		// Bundle members renew at full (pre-discount) price, so the disclosure
+		// shows the summed item_original_subtotal_integer: 6500 + 6400 => $129.
+		renderBundleRow( {
+			type: 'bundle',
+			groupId: 'bundle-discounted',
+			products: [
+				buildDomainProduct( {
+					uuid: 'primary',
+					meta: 'example.com',
+					subtotal: 2200,
+					originalSubtotal: 6500,
+				} ),
+				buildDomainProduct( {
+					uuid: 'companion',
+					meta: 'example.net',
+					subtotal: 700,
+					originalSubtotal: 6400,
+				} ),
+			],
+		} );
+
+		expect( screen.getByText( 'Auto-renews at $129/year.' ) ).toBeVisible();
+	} );
+
+	it( 'discloses the list-price aggregate even when a coupon also discounts a member', () => {
+		// Coupon and bundle discount together: the row total strips the coupon
+		// (shown on its dedicated line) while the disclosure uses the list
+		// price, which is pre-coupon by definition.
+		renderBundleRow( {
+			type: 'bundle',
+			groupId: 'bundle-coupon-and-discount',
+			products: [
+				buildDomainProduct( {
+					uuid: 'primary',
+					meta: 'example.com',
+					subtotal: 2200,
+					originalSubtotal: 6500,
+				} ),
+				buildDomainProduct( {
+					uuid: 'companion',
+					meta: 'example.net',
+					subtotal: 700,
+					originalSubtotal: 6400,
+					costOverrides: [ buildCouponOverride( 900, 700 ) ],
+				} ),
+			],
+		} );
+
+		// Row total: 2200 + pre-coupon 900 = 3100 smallest-unit => $31.
+		expect( screen.getByText( /\$31\b/ ) ).toBeVisible();
+		// Disclosure: list price 6500 + 6400 = 12900 => $129, unaffected by the coupon.
+		expect( screen.getByText( 'Auto-renews at $129/year.' ) ).toBeVisible();
+	} );
+
+	it( 'shows no renewal disclosure when the bundle is not discounted', () => {
+		renderBundleRow();
+
+		expect( screen.queryByText( /Auto-renews at/ ) ).not.toBeInTheDocument();
 	} );
 } );
 
