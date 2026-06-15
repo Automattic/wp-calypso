@@ -1,3 +1,10 @@
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
+@import "@wordpress/base-styles/mixins";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/clear-fix";
+@import "calypso/assets/stylesheets/shared/mixins/long-content-fade";
+
 // Disable scroll when Site Picker is active. In future,
 // the Site Picker's Site List could be made compatible
 // SidebarScrollSynchronizer. Currently, it is not and
@@ -64,6 +71,13 @@ body.is-focus-sites {
 		margin: 0;
 		// Allow descendant `position: sticky` (order summary sidebar) to pin
 		// against the viewport. Global `overflow: hidden` above breaks sticky.
+		overflow: visible;
+	}
+
+	// `overflow: hidden` above breaks the subnav baton-pass sticky; let it pin.
+	.is-section-themes:has( .x-nav--2026-redesign ) &,
+	.is-section-patterns:has( .x-nav--2026-redesign ) &,
+	.is-section-plugins:has( .x-nav--2026-redesign ) & {
 		overflow: visible;
 	}
 	// Note that we have to use a 0,0,3,1 specificity selector to override the
@@ -589,3 +603,4 @@ body.is-mobile-app-view {
 .layout.is-section-plugins:not( .is-logged-in ):has( .x-nav--2026-redesign ) .layout__header-section {
 	min-height: 0;
 }
+

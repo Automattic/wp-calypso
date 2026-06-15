@@ -5,8 +5,13 @@
 	"client_slug": "browser",
 	"survicate_enabled": true,
 	"hostname": "my.localhost",
-	"hostname_allowlist": [ "my.localhost", "my.woo.localhost" ],
+	"hostname_allowlist": [ "my.localhost", "my.woo.localhost", "my.a4a.localhost" ],
 	"hostname_overrides": {
+		"my.a4a.localhost": {
+			"oauth_client_id": 95928,
+			"wpcom_login_url": false,
+			"features": { "oauth": true, "always_use_logout_url": true }
+		},
 		"my.woo.localhost": {
 			"oauth_client_id": 134404,
 			"wpcom_login_url": false,
@@ -32,8 +37,10 @@
 		"dev/preferences-helper": true,
 		"dev/store-sandbox-helper": true,
 		"domain-transfer-redesign": true,
+		"emails/titan-tiers": true,
 		"marketplace-redesign": true,
 		"mcp-settings": true,
+		"me/legacy-contact": true,
 		"onboarding/interval-dropdown": true,
 		"performance/apm": true,
 		"plans/expired-downgrade": true,
@@ -52,7 +59,8 @@
 	"enable_all_sections": false,
 	"sections": {
 		"signup": true,
-		"checkout": true
+		"checkout": true,
+		"a8c-for-agencies-signup": true
 	},
 	"site_filter": [],
 	"theme": "dashboard",

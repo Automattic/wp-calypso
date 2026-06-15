@@ -1,7 +1,3 @@
-// The src/app note list renders with @wordpress/dataviews, whose styles the
-// app expects its host to provide (e.g. client/dashboard/app/style.scss). The
-// standalone iframe is that host, so load them here.
-@import '@wordpress/dataviews/build-style/style.css';
 @import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/colors";
 @import "@wordpress/base-styles/breakpoints";
@@ -28,16 +24,23 @@ body {
 .wpnc__main {
 	position: fixed;
 	inset: 0;
+
+	@include break-small {
+		inset: 8px;
+	}
 }
 
 .wpnc-app {
-	max-width: 448px;
 	margin-inline-start: auto;
 	box-sizing: border-box;
 	border: 1px solid #dcdcde;
 	border-radius: 4px;
 	box-shadow: 0 0 16px rgba(0, 0, 0, 0.12);
 	overflow: hidden;
+
+	@include break-small {
+		max-width: 448px;
+	}
 
 	@include break-large {
 		max-width: 896px;

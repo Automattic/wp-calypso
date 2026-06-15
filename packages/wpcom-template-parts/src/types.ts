@@ -55,6 +55,8 @@ export interface ClickableItemProps extends MenuItemProps {
 	index?: number;
 	/** Fires when the pointer enters the item's `<li>` (2026 nav hover tracking). */
 	onItemMouseEnter?: () => void;
+	/** Fires when the item's link gains keyboard focus (2026 nav dropdown dismissal parity). */
+	onItemFocus?: () => void;
 }
 
 export type LanguageOptions = Record< string, string >;

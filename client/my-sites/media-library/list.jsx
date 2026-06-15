@@ -2,7 +2,6 @@ import { withRtl } from 'i18n-calypso';
 import { clone, filter, findIndex } from 'lodash';
 import PropTypes from 'prop-types';
 import { createElement, Component } from 'react';
-import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import SortedGrid from 'calypso/components/sorted-grid';
@@ -55,7 +54,7 @@ export class MediaLibraryList extends Component {
 		}
 
 		this.setState( {
-			listContext: ReactDom.findDOMNode( component ),
+			listContext: component.getDOMNode(),
 		} );
 	};
 
@@ -147,7 +146,7 @@ export class MediaLibraryList extends Component {
 		return this.props.moment( minDate ).format( 'YYYY-MM-DD' );
 	};
 
-	renderItem = ( item ) => {
+	renderItem = ( item, listIndex, itemRef ) => {
 		const index = findIndex( this.props.media, { ID: item.ID } );
 		const selectedItems = this.props.selectedItems;
 		const selectedIndex = findIndex( selectedItems, { ID: item.ID } );
@@ -155,7 +154,7 @@ export class MediaLibraryList extends Component {
 
 		return (
 			<ListItem
-				ref={ ref }
+				forwardedRef={ itemRef }
 				key={ ref }
 				style={ this.getMediaItemStyle( index ) }
 				media={ item }

@@ -135,6 +135,7 @@ const UniversalNavbarHeader = ( {
 	const openMobileMenu = useCallback( () => {
 		if ( nav2026 ) {
 			recordMobileMenuOpen( isScrolledRef.current );
+			setIsMenuOpening( true );
 		}
 		setMobileMenuOpen( true );
 	}, [ nav2026 ] );
@@ -309,8 +310,16 @@ const UniversalNavbarHeader = ( {
 										className="x-nav-item"
 										role="none"
 										onMouseEnter={
-											nav2026 ? () => recordNavItemHover( isScrolled, 'logo', false ) : undefined
+											nav2026
+												? () => {
+														recordNavItemHover( isScrolled, 'logo', false );
+														// Hovering a non-dropdown item closes the open dropdown.
+														setActiveDropdown( null );
+												  }
+												: undefined
 										}
+										// Keyboard parity: focusing into the logo also closes the open dropdown.
+										onFocusCapture={ nav2026 ? () => setActiveDropdown( null ) : undefined }
 									>
 										<a
 											role="menuitem"
@@ -363,9 +372,13 @@ const UniversalNavbarHeader = ( {
 														urlValue={ menu.href }
 														type="nav"
 														target="_self"
-														onItemMouseEnter={ () =>
-															recordNavItemHover( isScrolled, menu.name, false )
-														}
+														onItemMouseEnter={ () => {
+															recordNavItemHover( isScrolled, menu.name, false );
+															// Hovering a non-dropdown item closes the open dropdown.
+															setActiveDropdown( null );
+														} }
+														// Keyboard parity: focusing the item also closes the open dropdown.
+														onItemFocus={ () => setActiveDropdown( null ) }
 													/>
 												)
 											) }
@@ -649,6 +662,8 @@ const UniversalNavbarHeader = ( {
 												localizeUrl( '//wordpress.com/log-in', locale, isLoggedIn, true )
 											}
 											type="nav"
+											onItemMouseEnter={ nav2026 ? () => setActiveDropdown( null ) : undefined }
+											onItemFocus={ nav2026 ? () => setActiveDropdown( null ) : undefined }
 										/>
 									) }
 									{ ! hideGetStartedCta && (
@@ -663,6 +678,8 @@ const UniversalNavbarHeader = ( {
 											urlValue={ startUrl }
 											type="nav"
 											typeClassName="x-nav-link x-nav-link__primary x-link cta-btn-nav"
+											onItemMouseEnter={ nav2026 ? () => setActiveDropdown( null ) : undefined }
+											onItemFocus={ nav2026 ? () => setActiveDropdown( null ) : undefined }
 										/>
 									) }
 									<li className="x-nav-item x-nav-item__narrow" role="none">
@@ -678,11 +695,21 @@ const UniversalNavbarHeader = ( {
 											onClick={ nav2026 ? openMobileMenu : openLegacyMobileMenu }
 										>
 											<span className="x-hidden">{ __( 'Menu', __i18n_text_domain__ ) }</span>
-											<span className="x-icon x-icon__menu">
-												<span></span>
-												<span></span>
-												<span></span>
-											</span>
+											<svg
+												className="x-icon x-icon__menu"
+												xmlns="http://www.w3.org/2000/svg"
+												width="18"
+												height="14"
+												viewBox="0 0 18 14"
+												role="presentation"
+												aria-hidden="true"
+												focusable="false"
+											>
+												<path
+													d="M18 13.5H0V12H18V13.5ZM18 7.5H0V6H18V7.5ZM18 1.5H0V0H18V1.5Z"
+													fill="currentColor"
+												/>
+											</svg>
 										</button>
 									</li>
 								</ul>

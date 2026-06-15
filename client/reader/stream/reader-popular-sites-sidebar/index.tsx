@@ -1,5 +1,6 @@
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import { useInfiniteStream } from 'calypso/reader/data/stream';
+import type { JSX } from 'react';
 import '../style.scss';
 
 interface PopularSitesSidebarProps {

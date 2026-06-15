@@ -10,15 +10,18 @@ function domainProduct(
 	uuid: string,
 	meta: string,
 	groupId?: string,
-	role?: 'primary' | 'companion'
+	role?: 'primary' | 'companion',
+	prices: { subtotal?: number; original?: number } = {}
 ): ResponseCartProduct {
+	const subtotal = prices.subtotal ?? 2000;
 	return {
 		...getEmptyResponseCartProduct(),
 		uuid,
 		meta,
 		product_slug: 'domain_reg',
 		is_domain_registration: true,
-		item_subtotal_integer: 2000,
+		item_subtotal_integer: subtotal,
+		item_original_subtotal_integer: prices.original ?? subtotal,
 		extra: groupId
 			? { domain_bundle_group_id: groupId, domain_bundle_role: role, expected_bundle_size: '2' }
 			: {},
@@ -36,12 +39,12 @@ function bundleCart(): ResponseCart {
 	};
 }
 
-function renderLineItems( showBundleGrouping: boolean ) {
+function renderLineItems( showBundleGrouping: boolean, responseCart: ResponseCart = bundleCart() ) {
 	return render(
 		<CheckoutProvider paymentMethods={ [] } paymentProcessors={ {} }>
 			<RestorableProductsProvider>
 				<MiniCartLineItems
-					responseCart={ bundleCart() }
+					responseCart={ responseCart }
 					removeProductFromCart={ jest.fn() }
 					addProductsToCart={ jest.fn() }
 					removeCoupon={ jest.fn() }
@@ -70,5 +73,45 @@ describe( 'MiniCartLineItems bundle grouping', () => {
 		expect( screen.getByText( 'example.com' ) ).toBeVisible();
 		expect( screen.getByText( 'example.net' ) ).toBeVisible();
 		expect( screen.getByText( 'standalone.com' ) ).toBeVisible();
+	} );
+
+	test( 'crosses out only the discounted bundle in a multi-bundle cart', () => {
+		const cart: ResponseCart = {
+			...getEmptyResponseCart(),
+			products: [
+				// Discounted bundle: original 6500 + 6400 = 12900 ($129), discounted 2200 + 700 = 2900 ($29).
+				domainProduct( 'a-primary', 'first.com', 'bundle-a', 'primary', {
+					subtotal: 2200,
+					original: 6500,
+				} ),
+				domainProduct( 'a-companion', 'first.net', 'bundle-a', 'companion', {
+					subtotal: 700,
+					original: 6400,
+				} ),
+				// Undiscounted bundle: 2000 + 2000 = 4000 ($40), no crossed-out price.
+				domainProduct( 'b-primary', 'second.com', 'bundle-b', 'primary' ),
+				domainProduct( 'b-companion', 'second.net', 'bundle-b', 'companion' ),
+			],
+		};
+
+		const { container } = renderLineItems( true, cart );
+
+		// The $129 amount also appears in the renewal disclosure line
+		// (DOMAINS-2184), so match the crossed-out price on the tag.
+		const crossedOut = screen
+			.getAllByText( /\$129\b/ )
+			.find( ( element ) => element.tagName === 'S' );
+		expect( crossedOut ).toBeVisible();
+		expect( screen.getByText( /\$29\b/ ) ).toBeVisible();
+		expect( screen.getByText( /\$40\b/ ) ).toBeVisible();
+
+		// Only the discounted bundle shows a strikethrough.
+		expect( container.querySelectorAll( 's' ) ).toHaveLength( 1 );
+
+		// The mini-cart shares BundleLineItem with the order review, so the
+		// discounted bundle also discloses its renewal aggregate here — and
+		// only the discounted one (DOMAINS-2184).
+		expect( screen.getByText( 'Auto-renews at $129/year.' ) ).toBeVisible();
+		expect( screen.getAllByText( /Auto-renews at/ ) ).toHaveLength( 1 );
 	} );
 } );

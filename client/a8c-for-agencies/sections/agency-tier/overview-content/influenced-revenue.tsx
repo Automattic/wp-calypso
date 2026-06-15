@@ -17,7 +17,7 @@ import type { AgencyTierType } from './types';
 import './influenced-revenue.scss';
 
 const LEARN_MORE_URL =
-	'https://agencieshelp.automattic.com/knowledge-base/automattic-for-agencies-earnings/';
+	'https://agencieshelp.automattic.com/knowledge-base/agency-tiers-and-benefits/';
 
 function InfluencedRevenueStrapline() {
 	const translate = useTranslate();
@@ -41,9 +41,9 @@ function InfluencedRevenueStrapline() {
 	const content = (
 		<div className="influenced-revenue__popover-content">
 			{ translate(
-				'Influenced revenue is revenue connected to your agency’s direct influence through referrals, client purchases, and managed sites using Automattic products.' +
+				'Automattic for Agencies tiers reward and support agencies based on their engagement with Automattic products. As you use our products, you generate Influenced Automattic Revenue (IAR). As you generate more IAR, you progress through tiers and unlock additional benefits.' +
 					'{{br/}}{{br/}}' +
-					'Earn commissions by referring Automattic products to your clients, receive revenue share from WooPayments transactions, and unlock savings through volume discounts on bulk purchases.' +
+					'Our tiering system is designed to be inclusive, recognizing contributions regardless of which Automattic products you specialize in.' +
 					'{{br/}}{{br/}}' +
 					'{{a}}Learn more{{/a}}',
 				{

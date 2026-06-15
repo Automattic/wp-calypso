@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
 import Stream from 'calypso/reader/stream';
 import type { ReaderUser } from '@automattic/api-core';
+import type { JSX } from 'react';
 
 interface UserPostsProps {
 	user: ReaderUser;

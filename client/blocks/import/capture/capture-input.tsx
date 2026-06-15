@@ -46,7 +46,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	const [ isValid, setIsValid ] = useState( false );
 	const [ submitted, setSubmitted ] = useState( false );
 	const [ validationMessage, setValidationMessage ] = useState( '' );
-	const lastInvalidValue = useRef< string | undefined >();
+	const lastInvalidValue = useRef< string | undefined >( undefined );
 	const showValidationMsg = hasError || ( submitted && ! isValid );
 	const { search } = useLocation();
 
@@ -88,7 +88,9 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 
 	function onFormSubmit( e: FormEvent< HTMLFormElement > ) {
 		e.preventDefault();
-		isValid && onInputEnter( urlValue );
+		if ( isValid ) {
+			onInputEnter( urlValue );
+		}
 		setSubmitted( true );
 
 		if ( ! isValid && urlValue?.length > 4 && urlValue !== lastInvalidValue.current ) {

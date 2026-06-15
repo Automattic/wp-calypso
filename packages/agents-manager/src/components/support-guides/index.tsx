@@ -13,7 +13,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { Link, useLocation } from 'react-router-dom';
-import { hasAdminBarTrigger } from '../../hooks/use-admin-bar-integration';
+import { hasAiChatEntryButton } from '../../hooks/use-admin-bar-integration';
 import useHelpSearchQuery from '../../hooks/use-help-search-query';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
@@ -126,8 +126,8 @@ export default function SupportGuides( {
 		return store.getAgentsManagerState();
 	}, [] );
 
-	// Without an admin bar trigger, use `collapsed` (a FAB) instead of `minimized`.
-	const closedChatState = hasAdminBarTrigger() ? 'minimized' : 'collapsed';
+	// Without the AI chat entry button, use `collapsed` (a FAB) instead of `minimized`.
+	const closedChatState = hasAiChatEntryButton() ? 'minimized' : 'collapsed';
 
 	return (
 		<AgentUI.Container

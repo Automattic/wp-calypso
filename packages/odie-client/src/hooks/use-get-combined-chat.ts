@@ -3,7 +3,7 @@ import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useIsMutating } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
-import { useState, useEffect, useRef } from '@wordpress/element';
+import { useState, useEffect, useRef, useCallback } from '@wordpress/element';
 import { getMessageUniqueIdentifier } from '../components/message/utils/get-message-unique-identifier';
 import { getOdieTransferMessages, getZendeskChatStartedMetaMessage } from '../constants';
 import { emptyChat } from '../context';
@@ -62,6 +62,7 @@ export const useGetCombinedChat = (
 	}, [] );
 	const previousUuidRef = useRef< string | undefined >();
 	const previousOdieIdRef = useRef< string | null | undefined >();
+	const wasChatLoadedRef = useRef( isChatLoaded );
 	const [ mainChatState, setMainChatState ] = useState< Chat >( emptyChat );
 	const conversationId = getConversationIdFromInteraction( currentSupportInteraction );
 	const [ refreshingAfterReconnect, setRefreshingAfterReconnect ] = useState( false );
@@ -79,15 +80,41 @@ export const useGetCombinedChat = (
 		mutationKey: [ 'send-zendesk-messages' ],
 	} );
 
+	// Re-download the active Zendesk conversation and merge it into the chat.
+	// The merge in the main effect dedupes and preserves the user's queued
+	// messages, so it is safe to call whenever we may have missed live messages.
+	const refreshConversation = useCallback( () => {
+		setRefreshingAfterReconnect( true );
+		setMainChatState( ( chat ) => ( {
+			...chat,
+			status: 'loading',
+		} ) );
+	}, [ setRefreshingAfterReconnect ] );
+
+	// Recover messages missed while the connection was dropped: once Smooch
+	// reports it has reconnected, re-fetch the conversation.
 	useEffect( () => {
 		if ( connectionStatus === 'connected' ) {
-			setRefreshingAfterReconnect( true );
-			setMainChatState( ( chat ) => ( {
-				...chat,
-				status: 'loading',
-			} ) );
+			refreshConversation();
 		}
-	}, [ connectionStatus, setRefreshingAfterReconnect ] );
+	}, [ connectionStatus, refreshConversation ] );
+
+	// Recover messages missed during a Smooch re-initialization. When Smooch is
+	// re-initialized, `isChatLoaded` flips false → true (it is set false right
+	// before `Smooch.destroy()` and true once `Smooch.init()` resolves). The
+	// WebSocket is down for that whole window, so any agent messages that arrive
+	// are never delivered through `message:received`. The connection-recovery
+	// effect only calls `refreshConversation` after a prior disconnect
+	// (`connectionStatus === 'connected'`), so a React-driven re-init would
+	// otherwise silently drop them — refresh here to recover the gap.
+	useEffect( () => {
+		const isReinitialized = ! wasChatLoadedRef.current && isChatLoaded;
+		wasChatLoadedRef.current = isChatLoaded;
+
+		if ( isReinitialized && conversationId ) {
+			refreshConversation();
+		}
+	}, [ isChatLoaded, conversationId, refreshConversation ] );
 
 	useEffect( () => {
 		// Logged out chats don't have interactions. Only direct odie IDs.

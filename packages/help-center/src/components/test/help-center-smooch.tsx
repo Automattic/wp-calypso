@@ -79,13 +79,21 @@ jest.mock( '../../components/utils', () => ( {
 	getZendeskConversations: jest.fn().mockReturnValue( [] ),
 } ) );
 
-jest.mock( '@tanstack/react-query', () => ( {
-	useQueryClient: () => ( {
-		invalidateQueries: jest.fn(),
-		fetchQuery: jest.fn(),
-	} ),
-	QueryClient: jest.fn(),
-} ) );
+// eslint-disable-next-line no-var
+var mockInvalidateQueries: jest.Mock;
+// eslint-disable-next-line no-var
+var mockFetchQuery: jest.Mock;
+jest.mock( '@tanstack/react-query', () => {
+	mockInvalidateQueries = jest.fn().mockResolvedValue( undefined );
+	mockFetchQuery = jest.fn();
+	return {
+		useQueryClient: () => ( {
+			invalidateQueries: mockInvalidateQueries,
+			fetchQuery: mockFetchQuery,
+		} ),
+		QueryClient: jest.fn(),
+	};
+} );
 
 const mockSetIsChatLoaded = jest.fn();
 jest.mock( '@wordpress/data', () => ( {
@@ -111,6 +119,7 @@ jest.mock( '@wordpress/element', () => ( {
 } ) );
 
 import '@testing-library/jest-dom';
+import { fetchMessagingAuth } from '@automattic/zendesk-client';
 import { act, render } from '@testing-library/react';
 import HelpCenterSmooch from '../help-center-smooch';
 
@@ -180,5 +189,51 @@ describe( 'HelpCenterSmooch – Smooch.destroy() error handling (regression)', (
 		}
 
 		expect( unhandledErrors ).toHaveLength( 0 );
+	} );
+} );
+
+describe( 'HelpCenterSmooch – onInvalidAuth refreshes the messenger auth (regression)', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockSmooch.render.mockImplementation( () => {} );
+		mockSmooch.destroy.mockResolvedValue( undefined );
+		mockSmooch.init.mockResolvedValue( undefined );
+	} );
+
+	it( 'refreshes the same messenger query the component subscribes to and returns the fresh JWT', async () => {
+		await act( async () => {
+			render( <HelpCenterSmooch enableAuth /> );
+			await new Promise( ( r ) => setTimeout( r, 0 ) );
+		} );
+
+		// Grab the delegate Smooch was initialized with.
+		const initOptions = mockSmooch.init.mock.calls[ 0 ][ 0 ];
+		const { onInvalidAuth } = initOptions.delegate;
+
+		mockFetchQuery.mockResolvedValueOnce( {
+			jwt: 'fresh-jwt',
+			externalId: 'test-ext-id',
+			isLoggedIn: true,
+		} );
+
+		let returnedJwt: string | undefined;
+		await act( async () => {
+			returnedJwt = await onInvalidAuth();
+		} );
+
+		// Smooch receives the refreshed token.
+		expect( returnedJwt ).toBe( 'fresh-jwt' );
+
+		// It must refresh the exact key the component reads (type 'messenger',
+		// initializeWidget true) — NOT the old orphan 'zendesk' key — so authJwtRef
+		// picks up the new token. isTestModeEnvironment() is mocked to false.
+		const expectedKey = [ 'getMessagingAuth', 'messenger', false, true ];
+		expect( mockInvalidateQueries ).toHaveBeenCalledWith( { queryKey: expectedKey } );
+		const fetchArgs = mockFetchQuery.mock.calls[ 0 ][ 0 ];
+		expect( fetchArgs.queryKey ).toEqual( expectedKey );
+
+		// The query function fetches the messenger auth with the widget login flow.
+		fetchArgs.queryFn();
+		expect( fetchMessagingAuth ).toHaveBeenCalledWith( 'messenger', true );
 	} );
 } );

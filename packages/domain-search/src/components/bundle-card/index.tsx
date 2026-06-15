@@ -5,8 +5,9 @@ import {
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
+import { arrowRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { DomainSuggestionBadge } from '../../ui';
+import { DomainSearchNotice, DomainSuggestionBadge } from '../../ui';
 import type { BundleSuggestion } from '@automattic/api-core';
 
 import './style.scss';
@@ -14,9 +15,22 @@ import './style.scss';
 interface BundleCardProps {
 	suggestion: BundleSuggestion | null;
 	onAddToCart?: ( bundle: BundleSuggestion ) => void;
+	isAddedToCart?: boolean;
+	onContinue?: () => void;
+	isBusy?: boolean;
+	disabled?: boolean;
+	errorMessage?: string;
 }
 
-export const BundleCard = ( { suggestion, onAddToCart }: BundleCardProps ) => {
+export const BundleCard = ( {
+	suggestion,
+	onAddToCart,
+	isAddedToCart,
+	onContinue,
+	isBusy,
+	disabled,
+	errorMessage,
+}: BundleCardProps ) => {
 	const { __ } = useI18n();
 
 	if ( ! suggestion || suggestion.domains.length === 0 ) {
@@ -80,14 +94,33 @@ export const BundleCard = ( { suggestion, onAddToCart }: BundleCardProps ) => {
 					</Text>
 				) }
 
-				<Button
-					className="bundle-card__cta"
-					variant="primary"
-					__next40pxDefaultSize
-					onClick={ () => onAddToCart?.( suggestion ) }
-				>
-					{ __( 'Get bundle' ) }
-				</Button>
+				{ errorMessage && <DomainSearchNotice status="error">{ errorMessage }</DomainSearchNotice> }
+
+				{ isAddedToCart ? (
+					<Button
+						className="bundle-card__cta bundle-card__cta--continue"
+						isPressed
+						aria-pressed="mixed"
+						__next40pxDefaultSize
+						icon={ arrowRight }
+						label={ __( 'Continue' ) }
+						disabled={ disabled }
+						onClick={ () => onContinue?.() }
+					>
+						{ __( 'Continue' ) }
+					</Button>
+				) : (
+					<Button
+						className="bundle-card__cta"
+						variant="primary"
+						__next40pxDefaultSize
+						isBusy={ isBusy }
+						disabled={ disabled }
+						onClick={ () => onAddToCart?.( suggestion ) }
+					>
+						{ __( 'Get bundle' ) }
+					</Button>
+				) }
 			</VStack>
 		</div>
 	);

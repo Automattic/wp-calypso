@@ -104,6 +104,7 @@ interface AgentsManagerActions {
 	removeContextCard: ( id: string ) => void;
 	setSiteEditorAction: ( name: string, value: string | number | boolean | null ) => void;
 	chatNavigate: import('react-router-dom').NavigateFunction;
+	resumeChat: () => void;
 	isCompactMode?: boolean;
 	isChatEnabled?: boolean;
 	desktopMediaQuery?: string;

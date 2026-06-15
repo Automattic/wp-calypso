@@ -4,7 +4,7 @@ import page from '@automattic/calypso-router';
 import { useQuery } from '@tanstack/react-query';
 import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, type JSX } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import ReaderBackButton from 'calypso/reader/components/back-button';
 import UserProfileHeader from 'calypso/reader/user-profile/components/user-profile-header';

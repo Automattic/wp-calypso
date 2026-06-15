@@ -1,3 +1,7 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/tooltip";
+
 .like-button {
 	align-items: center;
 	display: flex;
