@@ -47,8 +47,8 @@ export type StepperContextValue = {
 	activationMode: 'auto' | 'manual';
 	steps: StepMeta[];
 	totalSteps: number;
-	registerStep: ( meta: StepMeta ) => () => void;
-	updateStep: ( meta: StepMeta ) => void;
+	registerStep: ( id: string, meta: StepMeta ) => () => void;
+	updateStep: ( id: string, meta: StepMeta ) => void;
 	registerTriggerRef: ( value: string, el: HTMLElement | null ) => void;
 	formatStepLabel: ( step: number, total: number, status?: StepStatus ) => string;
 	indicatorVariant: IndicatorVariant;
