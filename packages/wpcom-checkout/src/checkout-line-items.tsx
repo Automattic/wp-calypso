@@ -503,6 +503,19 @@ export function BundleLineItem( {
 				</LineItemMeta>
 			) }
 
+			{ /* Bundle members renew at full price (no plan credit at renewal —
+			     DOMAINS-2173), so the renewal aggregate is the pre-discount group
+			     total already computed for the strikethrough (DOMAINS-2184). */ }
+			{ isBundleDiscounted && (
+				<LineItemMeta>
+					<span>
+						{ translate( 'Auto-renews at %(price)s/year.', {
+							args: { price: bundleOriginalDisplay },
+						} ) }
+					</span>
+				</LineItemMeta>
+			) }
+
 			{ products.map( ( product ) => (
 				<LineItemMeta key={ product.uuid }>
 					<span>{ product.meta }</span>

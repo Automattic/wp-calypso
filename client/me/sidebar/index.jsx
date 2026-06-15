@@ -11,7 +11,6 @@ import {
 	lockOutline,
 	notAllowed,
 	payment,
-	people,
 	seen,
 } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
@@ -227,17 +226,6 @@ class MeSidebar extends Component {
 						onNavigate={ this.onNavigate }
 						preloadSectionName="site-blocks"
 					/>
-
-					{ config.isEnabled( 'me/legacy-contact' ) && (
-						<SidebarItem
-							selected={ itemLinkMatches( '/legacy-contact', path ) }
-							link="/me/legacy-contact"
-							label={ translate( 'Legacy Contact' ) }
-							icon={ people }
-							onNavigate={ this.onNavigate }
-							preloadSectionName="legacy-contact"
-						/>
-					) }
 
 					<SidebarItem
 						selected={ itemLinkMatches( '/get-apps', path ) }

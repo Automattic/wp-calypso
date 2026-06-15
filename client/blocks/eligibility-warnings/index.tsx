@@ -69,7 +69,7 @@ export const EligibilityWarnings = ( {
 	isMarketplace,
 	isPlaceholder,
 	onDismiss,
-	onProceed,
+	onProceed = noop,
 	standaloneProceed,
 	recordUpgradeClick,
 	showDataCenterPicker,
@@ -306,10 +306,6 @@ function siteRequiresLaunch( holds: string[] ) {
 function siteRequiresGoingPublic( holds: string[] ) {
 	return holds.includes( 'SITE_NOT_PUBLIC' );
 }
-
-EligibilityWarnings.defaultProps = {
-	onProceed: noop,
-};
 
 /**
  * processMarketplaceExceptions: Remove 'NO_BUSINESS_PLAN' holds if the

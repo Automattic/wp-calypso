@@ -14,7 +14,7 @@ const ICON_SIZE = 24;
 
 interface Props {
 	id?: string;
-	icon: JSX.Element;
+	icon: React.JSX.Element;
 	path: string;
 	link: string;
 	title: TranslateResult;
@@ -23,7 +23,7 @@ interface Props {
 	isExternalLink?: boolean;
 	isSelected?: boolean;
 	openInSameTab?: boolean;
-	extraContent?: JSX.Element;
+	extraContent?: React.JSX.Element;
 }
 
 export const SidebarNavigatorMenuItem = ( {
@@ -39,7 +39,7 @@ export const SidebarNavigatorMenuItem = ( {
 	openInSameTab = false,
 	extraContent,
 }: Props ) => {
-	const SidebarItem = ( { children }: { children?: JSX.Element } ) => {
+	const SidebarItem = ( { children }: { children?: React.JSX.Element } ) => {
 		return (
 			<Item
 				className={ clsx( 'sidebar-v2__menu-item', {
