@@ -149,7 +149,7 @@ export default function MigrationsTagSitesModal( {
 						: translate( 'Add sites' ) }
 				</Button>
 			}
-			title={ translate( 'Tag your transferred sites for commission.' ) }
+			title={ translate( 'Tag the sites you moved to Automattic for commission.' ) }
 			subtile={ translate( 'Select the sites you moved on your own.' ) }
 		>
 			<div className="migrations-tag-sites-modal__instruction">

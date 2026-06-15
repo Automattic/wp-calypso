@@ -38,11 +38,13 @@ export default function MigrationsCommissionsEmptyState( {
 			/>
 			{ canTagSitesForCommission && (
 				<StepSectionItem
-					heading={ translate( 'Tag your transferred sites so we can pay you for them.' ) }
+					heading={ translate(
+						'This list shows every site connected to your account. Tag the ones you moved to Automattic so we can pay you for them.'
+					) }
 					description={
 						<>
 							{ translate(
-								'If you transferred sites by yourself, follow these two steps to indicate which ones we should pay you for.'
+								'If you moved sites to Automattic yourself, follow these two steps to indicate which ones we should pay you for.'
 							) }
 
 							<ul>
