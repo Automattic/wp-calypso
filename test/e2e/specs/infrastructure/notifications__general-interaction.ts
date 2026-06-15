@@ -85,13 +85,8 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 			await notificationsComponent.clickNotificationAction( 'Like' );
 		} );
 
-		it( 'Mark comment as spam', async function () {
-			await notificationsComponent.clickNotificationAction( 'Spam' );
-			await notificationsComponent.clickUndo();
-		} );
-
 		it( 'Trash comment', async function () {
-			await notificationsComponent.clickNotificationAction( 'Trash' );
+			await notificationsComponent.trashNotification();
 		} );
 
 		afterAll( async function () {
