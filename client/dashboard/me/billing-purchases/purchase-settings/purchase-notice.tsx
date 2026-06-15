@@ -90,7 +90,12 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	// Transient success notice shown after a change-plan checkout (upgrade or
 	// downgrade) redirects back here with `?plan_changed=true`. The param is
 	// stripped immediately so it doesn't survive a refresh or back navigation.
-	const [ showPlanChangedNotice, setShowPlanChangedNotice ] = useState( Boolean( plan_changed ) );
+	// Suppress the plan-changed notice when a delayed-downgrade notice is also
+	// present: plan_changed=true comes from the redirect_to template and is a
+	// red herring in that flow — the delayed-downgrade notice is the right one.
+	const [ showPlanChangedNotice, setShowPlanChangedNotice ] = useState(
+		Boolean( plan_changed ) && ! delayed_downgrade_scheduled
+	);
 	useEffect( () => {
 		if ( plan_changed ) {
 			navigate( {

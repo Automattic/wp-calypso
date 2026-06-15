@@ -122,9 +122,12 @@ class PurchaseNotice extends Component<
 		showDowngradedRedirectNotice:
 			typeof window !== 'undefined' &&
 			new URLSearchParams( window.location.search ).get( 'downgraded' ) === 'true',
+		// Suppressed when delayed_downgrade_scheduled is also present: plan_changed=true
+		// comes from the redirect_to template and is a red herring in that flow.
 		showPlanChangedRedirectNotice:
 			typeof window !== 'undefined' &&
-			new URLSearchParams( window.location.search ).get( 'plan_changed' ) === 'true',
+			new URLSearchParams( window.location.search ).get( 'plan_changed' ) === 'true' &&
+			new URLSearchParams( window.location.search ).get( 'delayed_downgrade_scheduled' ) !== 'true',
 		// Seeded from `?delayed_downgrade_scheduled=true` on first render.
 		// The URL param is cleared in componentDidMount.
 		showDelayedDowngradeScheduledNotice:
