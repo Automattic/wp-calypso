@@ -34,6 +34,37 @@ function subscribeToBodyClasses( notify: () => void ): () => void {
 	return () => observer.disconnect();
 }
 
+/**
+ * Prevents docking the assistant when the user is browsing with certain conditions.
+ *
+ * IMPORTANT: Keep this logic in sync with
+ * `jetpack/projects/packages/agents-manager/src/js/sidebar-docking-viewport-height-gate.ts`.
+ */
+const useCanDock = ( { desktopMediaQuery }: { desktopMediaQuery: string } ) => {
+	const isDesktop = useMediaQuery( desktopMediaQuery );
+	const { height } = useWindowDimensions();
+	const [ adminMenuHeight, setAdminMenuHeight ] = useState( 0 );
+	const hasEnoughHeight = height >= adminMenuHeight;
+	const isFullscreenGateOpen = useSyncExternalStore(
+		subscribeToBodyClasses,
+		getIsFullscreenGateOpen
+	);
+
+	const calculateAdminMenuHeight = useCallback( () => {
+		const adminMenu = document.getElementById( 'adminmenu' );
+		if ( adminMenu ) {
+			const adminBar = document.getElementById( 'wpadminbar' );
+			const adminBarHeight = adminBar ? adminBar.offsetHeight : 32;
+			setAdminMenuHeight( adminMenu.offsetHeight + adminBarHeight + 20 );
+		}
+	}, [] );
+
+	return {
+		canDock: isDesktop && hasEnoughHeight && isFullscreenGateOpen,
+		calculateAdminMenuHeight,
+	};
+};
+
 interface Options {
 	sidebarContainer?: string | HTMLElement;
 	isReady?: boolean;
@@ -73,16 +104,8 @@ export default function useAgentLayoutManager( {
 	const portalRef = useRef< HTMLDivElement >();
 	const wasOpenRef = useRef( defaultOpen );
 	const [ isPortalReady, setIsPortalReady ] = useState( false );
-	const isDesktop = useMediaQuery( desktopMediaQuery );
-	const { height } = useWindowDimensions();
 	const [ isDocked, setIsDocked ] = useState< boolean | null >( null );
-	const [ adminMenuHeight, setAdminMenuHeight ] = useState( 0 );
-	const hasEnoughHeight = height >= adminMenuHeight;
-	const isFullscreenGateOpen = useSyncExternalStore(
-		subscribeToBodyClasses,
-		getIsFullscreenGateOpen
-	);
-	const canDock = isDesktop && hasEnoughHeight && isFullscreenGateOpen;
+	const { canDock, calculateAdminMenuHeight } = useCanDock( { desktopMediaQuery } );
 	const shouldRenderSidebar = canDock && isDocked;
 	const openSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > >();
 	const closeSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > >();
@@ -118,13 +141,7 @@ export default function useAgentLayoutManager( {
 			return;
 		}
 
-		// Calculate admin menu height
-		const adminMenu = document.getElementById( 'adminmenu' );
-		if ( adminMenu ) {
-			const menuHeight = adminMenu.offsetHeight;
-			const menuTopOffset = adminMenu.getBoundingClientRect().top + window.scrollY;
-			setAdminMenuHeight( menuHeight + menuTopOffset + 20 );
-		}
+		calculateAdminMenuHeight();
 
 		// Set initial docked state
 		if ( isDocked === null ) {
