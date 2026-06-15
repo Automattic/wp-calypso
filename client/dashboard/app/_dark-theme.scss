@@ -521,6 +521,12 @@
 	}
 
 	.components-popover__content {
+		// Dividers inside the popover (e.g. the DataViews view-options
+		// ItemGroup) read --dashboard-surface__border-color (gray-300), which
+		// is near-invisible on the gray-200 overlay. Lift to gray-400, the same
+		// border-vs-surface gap used on the surface and in the Help Center.
+		--dashboard-surface__border-color: var( --wp-components-color-gray-400 );
+
 		box-shadow:
 			0 0 0 1px var( --dashboard-surface__border-color ),
 			0 12px 32px rgba( 0, 0, 0, 0.55 );
@@ -534,6 +540,7 @@
 	// wp-components background token; lift to overlay.
 	[role='menu'] {
 		--wp-components-color-background: var( --wp-components-color-gray-200 );
+		--dashboard-surface__border-color: var( --wp-components-color-gray-400 );
 
 		background-color: var( --wp-components-color-gray-200 );
 	}
