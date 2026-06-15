@@ -1,7 +1,6 @@
 import { formatNumber } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useLayoutEffect } from 'react';
-import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import {
@@ -176,7 +175,6 @@ const StatsEmailSummaryInner = ( { period, query, context, breadcrumbTrail } ) =
 						} }
 						listItemClassName="stats__summary--narrow-mobile"
 					/>
-					<JetpackColophon />
 				</div>
 			</div>
 		</Main>

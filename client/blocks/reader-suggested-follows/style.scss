@@ -1,3 +1,6 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+
 .reader-recommended-follows-dialog {
 	--feed-height: 90px;
 	border-radius: 6px; /* stylelint-disable scales/radii */
@@ -20,7 +23,6 @@
 	padding: 0 32px 10px 32px;
 }
 
-;
 .reader-recommended-follows-dialog__body {
 	scrollbar-width: thin;
 	scrollbar-gutter: stable;
@@ -167,8 +169,9 @@
 
 		.is-placeholder.placeholder-title {
 			width: 50%;
-			height: 48
+			height: 48px;
 		}
+
 		.is-placeholder.placeholder-description {
 			height: 24px;
 		}

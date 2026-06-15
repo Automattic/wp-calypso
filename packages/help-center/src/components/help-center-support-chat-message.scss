@@ -1,11 +1,23 @@
 @import 'variables';
 
 .help-center-support-chat__conversation-sub-information {
-	color: var( --studio-gray-50, #646970 );
+	color: var( --studio-gray-50 );
 	display: flex;
 	font-size: $font-body-extra-small;
 	align-items: center;
 	gap: 4px;
+
+	@media screen {
+		:root[data-theme='dark'] & {
+			color: var( --dashboard__text-muted-color, var( --studio-gray-50 ) );
+		}
+	}
+
+	@media screen and ( prefers-color-scheme: dark ) {
+		:root[data-theme='system'] & {
+			color: var( --dashboard__text-muted-color, var( --studio-gray-50 ) );
+		}
+	}
 
 	.help-center-support-chat__conversation-information-name {
 		text-overflow: ellipsis;
@@ -61,7 +73,7 @@
 		.wordpress-logo {
 			border-radius: 50%;
 			padding: 10px;
-			background-color: #3858e9;
+			background-color: var(--wp-admin-theme-color, $help-center-blue);
 			margin:0;
 		}
 
@@ -100,7 +112,7 @@
 
 		.help-center-support-chat__conversation-information-message {
 			display: -webkit-box;
-			color: #000;
+			color: var( --color-text );
 			font-weight: 500;
 			font-size: $font-body-small;
 			line-height: 20px;
@@ -114,8 +126,13 @@
 	}
 
 	.help-center-support-chat__open-conversation {
+		color: var( --color-text );
 		display: flex;
 		align-items: center;
+
+		svg {
+			fill: currentColor;
+		}
 	}
 
 	&:last-child {

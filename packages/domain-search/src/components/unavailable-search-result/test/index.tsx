@@ -279,6 +279,11 @@ describe( 'UnavailableSearchResult', () => {
 
 				await waitFor( () => expect( availabilityQuery.isDone() ).toBe( true ) );
 
+				const loadingElement = screen.queryByText( 'LOADING_TEST_CONTENT' );
+				if ( loadingElement ) {
+					await waitForElementToBeRemoved( loadingElement );
+				}
+
 				expect( container ).toBeEmptyDOMElement();
 			}
 		);

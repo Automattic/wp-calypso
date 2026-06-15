@@ -4,11 +4,26 @@
 .is-section-reader {
 	.user-profile {
 		position: relative;
+	}
 
-		&__404.empty-content {
-			max-width: initial;
-			margin: initial;
-			padding-top: 150px;
-		}
+	.user-profile__404.empty-content {
+		max-width: initial;
+		margin: initial;
+		padding-top: 150px;
+	}
+
+	.user-profile__loader {
+		display: flex;
+		justify-content: center;
+		margin-top: 50px;
+	}
+
+	.main:not(.is-wide-layout).user-profile__achievements-view {
+		max-width: 1280px;
+	}
+
+	.user-profile__narrow {
+		max-width: 720px;
+		margin-inline: auto;
 	}
 }

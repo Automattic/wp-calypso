@@ -9,6 +9,7 @@ import {
 	getDisabledSiteIds,
 	getEnabledSiteIds,
 } from '../../../me/mcp/utils';
+import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { Card, CardBody, CardDivider } from '../../components/card';
 import ComponentViewTracker from '../../components/component-view-tracker';
@@ -67,6 +68,7 @@ function getWriteBadge( tools: Array< [ string, McpAbility ] > ) {
 }
 
 function McpComponent() {
+	const { recordTracksEvent } = useAnalytics();
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
@@ -124,12 +126,19 @@ function McpComponent() {
 			...enabledSiteIds.map( ( id ) => ( { blog_id: id, site_level_enabled: false } ) ),
 		];
 
-		mutation.mutate( {
-			mcp_abilities: {
-				account: accountAbilities,
-				...( sitesToReset.length > 0 && { sites: sitesToReset } ),
-			},
-		} as any );
+		mutation.mutate(
+			{
+				mcp_abilities: {
+					account: accountAbilities,
+					...( sitesToReset.length > 0 && { sites: sitesToReset } ),
+				},
+			} as any,
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_mcp_account_toggled', { enabled } );
+				},
+			}
+		);
 	};
 
 	if ( ! config.isEnabled( 'mcp-settings' ) ) {

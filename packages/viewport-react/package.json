@@ -4,11 +4,11 @@
 	"description": "React helpers for tracking viewport changes.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
-	"calypso:src": "src/index.js",
+	"calypso:src": "src/index.jsx",
 	"types": "./types.d.ts",
 	"exports": {
 		".": {
-			"calypso:src": "./src/index.js",
+			"calypso:src": "./src/index.jsx",
 			"types": "./types.d.ts",
 			"import": "./dist/esm/index.js",
 			"require": "./dist/cjs/index.js"
@@ -26,7 +26,7 @@
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/viewport-react#readme",
 	"dependencies": {
 		"@automattic/viewport": "workspace:^",
-		"@wordpress/compose": "^7.23.0"
+		"@wordpress/compose": "patch:@wordpress/compose@npm%3A8.1.0#~/.yarn/patches/@wordpress-compose-npm-8.1.0-ea108e3129.patch"
 	},
 	"peerDependencies": {
 		"react": "^18.3.1",

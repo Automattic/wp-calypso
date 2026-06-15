@@ -8,6 +8,7 @@ import {
 /* eslint-enable no-restricted-imports */
 import boot from '../app/boot';
 import { getPostHogConfig } from './posthog';
+import CiabDashboardStepperLogo from './stepper-logo';
 import './translations';
 import type {
 	FetchSitesOptions,
@@ -22,7 +23,10 @@ boot( {
 	basePath: '/',
 	mainRoute: '/sites',
 	Logo: null,
+	LoadingLogo: CiabDashboardStepperLogo,
 	supports: {
+		agency: false,
+		agencyClient: false,
 		sites: true,
 		domains: true,
 		emails: true,
@@ -46,6 +50,8 @@ boot( {
 		siteOverview: {
 			preview: true,
 		},
+		colorScheme: false,
+		darkMode: false,
 	},
 	optIn: false,
 	components: {

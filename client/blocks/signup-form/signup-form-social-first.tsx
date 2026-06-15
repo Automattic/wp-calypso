@@ -1,10 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Step } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useState, createInterpolateElement } from '@wordpress/element';
 import { chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
+import { FormDivider } from 'calypso/blocks/authentication';
 import { isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
@@ -15,6 +17,7 @@ import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import PasswordlessSignupForm from './passwordless';
 import SocialSignupForm from './social';
 import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
+import type { JSX } from 'react';
 import './style.scss';
 
 interface QueryArgs {
@@ -46,6 +49,10 @@ interface SignupFormSocialFirst {
 	backButtonInFooter?: boolean;
 	passDataToNextStep?: boolean;
 	emailLabelText?: string;
+	isEmailFirstVariant?: boolean;
+	isEmailAtBottom?: boolean;
+	isMobileCompactVariant?: boolean;
+	hideTosElement?: boolean;
 	allowedSocialServices?: SignupAllowedService[];
 	customTosElement?: JSX.Element;
 }
@@ -71,6 +78,29 @@ const options = {
 
 type Screen = 'initial' | 'email';
 
+// ToS copy for the mobile-layout experiment. Same component is rendered in two
+// places depending on the variant — inside the form (`position='above'`) or in
+// the parent's heading slot (`position='below'`) — so the legal links and the
+// translation string live in one location.
+export const MobileCompactTosNotice = ( { position }: { position: 'above' | 'below' } ) => {
+	const { __ } = useI18n();
+	const tosText =
+		position === 'above'
+			? createInterpolateElement(
+					__(
+						'By continuing with any of the options above, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+					),
+					options
+			  )
+			: createInterpolateElement(
+					__(
+						'By continuing with any of the options below, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+					),
+					options
+			  );
+	return <p className="signup-form-social-first__tos-link">{ tosText }</p>;
+};
+
 const SignupFormSocialFirst = ( {
 	goToNextStep,
 	stepName,
@@ -87,6 +117,10 @@ const SignupFormSocialFirst = ( {
 	passDataToNextStep,
 	backButtonInFooter = true,
 	emailLabelText,
+	isEmailFirstVariant,
+	isEmailAtBottom,
+	isMobileCompactVariant,
+	hideTosElement,
 	allowedSocialServices,
 	customTosElement,
 }: SignupFormSocialFirst ) => {
@@ -125,7 +159,15 @@ const SignupFormSocialFirst = ( {
 			);
 		}
 
-		return <p className="signup-form-social-first__tos-link">{ tosText }</p>;
+		return (
+			<p
+				className={ clsx( 'signup-form-social-first__tos-link', {
+					'is-left-aligned': isEmailFirstVariant,
+				} ) }
+			>
+				{ tosText }
+			</p>
+		);
 	};
 
 	const renderEmailStepTermsOfService = () => {
@@ -149,11 +191,69 @@ const SignupFormSocialFirst = ( {
 		} );
 	};
 
-	return (
-		<div className="signup-form signup-form-social-first">
-			<div className={ getVisibilityClassName( 'initial' ) }>
+	// Shared by the email-first (Woo or experiment) branch and the mobile-compact
+	// branch so the conversion-critical existing-account redirect lives in one place.
+	const passwordlessFormProps = {
+		stepName,
+		flowName,
+		goToNextStep,
+		logInUrl,
+		queryArgs,
+		labelText: emailLabelText ?? __( 'Your email' ),
+		submitButtonLabel: __( 'Continue' ),
+		userEmail,
+		passDataToNextStep,
+		onCreateAccountError: ( error: { error: string }, email: string ) => {
+			if ( isExistingAccountError( error.error ) ) {
+				window.location.assign(
+					addQueryArgs(
+						{
+							email_address: email,
+							is_signup_existing_account: true,
+							redirect_to: queryArgs?.redirect_to,
+						},
+						logInUrl
+					)
+				);
+			}
+		},
+		onCreateAccountSuccess,
+		inputPlaceholder: isGravatar ? __( 'Enter your email address' ) : undefined,
+		submitButtonLoadingLabel: isGravatar ? __( 'Continue' ) : undefined,
+	};
+
+	const emailLoginBlock = isEmailFirstVariant ? (
+		<div className="signup-form-social-first-email">
+			<PasswordlessSignupForm { ...passwordlessFormProps } />
+		</div>
+	) : null;
+
+	const loginLinkParagraph = (
+		<p className="signup-form-social-first__login-link">
+			{ createInterpolateElement( __( 'Have an account? <link>Log in</link>' ), {
+				link: <Step.LinkButton href={ logInUrl } />,
+			} ) }
+		</p>
+	);
+
+	if ( isMobileCompactVariant ) {
+		// In-form ToS:
+		//   - hideTosElement → parent renders the ToS elsewhere (top-position arm).
+		//   - customTosElement → partner branding wins (rendered by renderTermsOfService).
+		//   - otherwise → bottom-position "above" copy.
+		let inFormTosElement = null;
+		if ( ! hideTosElement ) {
+			inFormTosElement = customTosElement ? (
+				renderTermsOfService()
+			) : (
+				<MobileCompactTosNotice position="above" />
+			);
+		}
+		// Mobile compact: no "Have an account? Log in" link inside the form —
+		// the Log in link in the top bar covers that affordance per the Figma.
+		return (
+			<div className="signup-form signup-form-social-first signup-form-social-first--mobile-compact">
 				{ notice }
-				{ renderTermsOfService() }
 				<SocialSignupForm
 					handleResponse={ handleSocialResponse }
 					setCurrentStep={ setCurrentStep }
@@ -162,9 +262,47 @@ const SignupFormSocialFirst = ( {
 					disableTosText
 					compact
 					isSocialFirst={ isSocialFirst }
-					shouldShowEmailButton
+					shouldShowEmailButton={ false }
 					allowedSocialServices={ allowedSocialServices }
 				/>
+				<FormDivider isHorizontal />
+				<div className="signup-form-social-first-email">
+					<PasswordlessSignupForm { ...passwordlessFormProps } />
+				</div>
+				{ inFormTosElement }
+			</div>
+		);
+	}
+
+	return (
+		<div className="signup-form signup-form-social-first">
+			<div className={ getVisibilityClassName( 'initial' ) }>
+				{ notice }
+				{ renderTermsOfService() }
+				{ emailLoginBlock && ! isEmailAtBottom && (
+					<>
+						{ emailLoginBlock }
+						<FormDivider isHorizontal />
+					</>
+				) }
+				<SocialSignupForm
+					handleResponse={ handleSocialResponse }
+					setCurrentStep={ setCurrentStep }
+					socialServiceResponse={ socialServiceResponse }
+					redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
+					disableTosText
+					compact
+					isSocialFirst={ isSocialFirst }
+					shouldShowEmailButton={ ! isEmailFirstVariant }
+					allowedSocialServices={ allowedSocialServices }
+				/>
+				{ emailLoginBlock && isEmailAtBottom && (
+					<>
+						<FormDivider isHorizontal />
+						{ emailLoginBlock }
+					</>
+				) }
+				{ isEmailFirstVariant && loginLinkParagraph }
 			</div>
 			<div className={ getVisibilityClassName( 'email' ) }>
 				<div className="signup-form-social-first-email">

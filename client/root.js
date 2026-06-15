@@ -35,9 +35,7 @@ export default function ( clientRouter, page = globalPageInstance ) {
 }
 
 function handleLoggedOut( page ) {
-	if ( config.isEnabled( 'devdocs/redirect-loggedout-homepage' ) ) {
-		page.redirect( '/devdocs/start' );
-	} else if ( config.isEnabled( 'jetpack-cloud' ) ) {
+	if ( config.isEnabled( 'jetpack-cloud' ) ) {
 		if ( config.isEnabled( 'oauth' ) ) {
 			page.redirect( '/connect' );
 		}

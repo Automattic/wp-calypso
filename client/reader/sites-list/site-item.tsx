@@ -2,19 +2,19 @@ import { filterURLForDisplay } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import { useSite } from 'calypso/reader/data/site';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getStreamUrl } from 'calypso/reader/route';
-import { useSelector, useDispatch } from 'calypso/state';
+import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
-import { getSite } from 'calypso/state/reader/sites/selectors';
-import type { SiteDetails } from '@automattic/data-stores';
+import type { JSX } from 'react';
 
 interface ReaderSiteItemProps {
 	site: ReaderSite;
 	variant: 'card' | 'compact' | 'default';
 	followSource: string;
-	iconSize?: number;
+	followIconSize?: number;
+	siteIconSize?: number;
 }
 
 export interface ReaderSite {
@@ -28,13 +28,14 @@ export interface ReaderSite {
 export function ReaderSiteItem( {
 	site,
 	variant,
-	iconSize = 42,
 	followSource,
+	followIconSize = 24,
+	siteIconSize = 42,
 }: ReaderSiteItemProps ): JSX.Element {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { image, name, feedUrl = '', siteId, feedId } = site;
-	const siteDetails = useSelector( ( state ) => getSite( state, Number( siteId ) ) ) as SiteDetails;
+	const { site: siteDetails } = useSite( siteId );
 	const siteIcon = siteDetails?.icon?.img || siteDetails?.icon?.ico || image;
 	const isCompactView = variant === 'compact';
 	const linkUrl = getStreamUrl( feedId, siteId ) ?? feedUrl;
@@ -54,16 +55,12 @@ export function ReaderSiteItem( {
 
 	return (
 		<li className="reader-site-item">
-			{ /* Query the site not just for the icon, but to ensure it is properly loaded in follows state.
-				One example being mapped domains: initial follows state may list by wpcom subdomain, and
-				the url here might be of a mapped domain. The site request success also updates follows
-				state, and can bridge the gap to appropriately determine if a site from this list is
-				followed.
-			*/ }
-			<QueryReaderSite siteId={ siteId } />
-
-			<a className="reader-site-item__link" href={ linkUrl }>
-				<SiteIcon iconUrl={ siteIcon } size={ iconSize } />
+			<a
+				className="reader-site-item__link"
+				href={ linkUrl }
+				style={ { width: `calc(100% - ${ followIconSize + 4 }px)` } }
+			>
+				<SiteIcon iconUrl={ siteIcon } size={ siteIconSize } />
 
 				<AutoDirection>
 					<div className="reader-site-info">
@@ -81,6 +78,7 @@ export function ReaderSiteItem( {
 					feedId={ feedId ? Number( feedId ) : undefined }
 					siteId={ siteId ? Number( siteId ) : undefined }
 					siteUrl={ feedUrl }
+					iconSize={ followIconSize }
 					followSource={ followSource }
 					isButtonOnly={ isCompactView }
 					onFollowToggle={ onFollowToggle }

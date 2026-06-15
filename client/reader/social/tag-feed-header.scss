@@ -1,0 +1,18 @@
+.social-tag-feed-header {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.social-tag-feed-header__heading {
+	margin: 0;
+	font-size: 24px;
+	font-weight: 600;
+	line-height: 1.2;
+}
+
+.social-tag-feed-header__count {
+	margin: 0;
+	color: var(--color-text-subtle);
+	font-size: 14px;
+}

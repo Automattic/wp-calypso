@@ -5,7 +5,6 @@ import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import QueryMedia from 'calypso/components/data/query-media';
-import JetpackColophon from 'calypso/components/jetpack-colophon';
 import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import StatsModuleAuthors from 'calypso/my-sites/stats/features/modules/stats-authors';
@@ -496,7 +495,6 @@ class StatsSummary extends Component {
 						) : (
 							summaryViews
 						) }
-						<JetpackColophon />
 					</div>
 				</div>
 			</Main>

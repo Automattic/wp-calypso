@@ -128,7 +128,10 @@ export default function RegisterApplicationPassword( { onClose }: { onClose: () 
 						<DataForm< ApplicationPasswordFormData >
 							data={ formData }
 							fields={ fields }
-							form={ { layout: { type: 'regular' as const }, fields } }
+							form={ {
+								layout: { type: 'regular' as const },
+								fields: fields.map( ( field ) => field.id ),
+							} }
 							onChange={ ( edits: Partial< ApplicationPasswordFormData > ) => {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
 							} }

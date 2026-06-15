@@ -5,6 +5,7 @@ import { Icon, upload, caution } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useState, useEffect, useRef, CSSProperties, KeyboardEvent } from 'react';
 import { ButtonStack } from '../../components/button-stack';
+import Notice from '../../components/notice';
 
 interface EditGravatarProps {
 	/** URL to the user's avatar image */
@@ -163,11 +164,11 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 						<div className="overlay-hover" style={ overlayStyle }>
 							<div style={ { color: '#fff' } }>
 								{ ! isEmailVerified && (
-									<Icon icon={ caution } size={ 24 } style={ { fill: '#fff' } } />
+									<Icon icon={ caution } size={ 24 } style={ { fill: 'currentColor' } } />
 								) }
 
 								{ isEmailVerified && (
-									<Icon icon={ upload } size={ 24 } style={ { fill: '#fff' } } />
+									<Icon icon={ upload } size={ 24 } style={ { fill: 'currentColor' } } />
 								) }
 							</div>
 						</div>
@@ -179,21 +180,9 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 			</ButtonStack>
 
 			{ showEmailVerificationNotice && (
-				<div
-					style={ {
-						backgroundColor: '#fff8e5',
-						padding: 12,
-						margin: '8px 0',
-						borderLeft: '3px solid #f0b849',
-					} }
-				>
-					<p style={ { marginBottom: 8 } }>
-						{ __( 'Please verify your email address to change your profile photo.' ) }
-					</p>
-					<Button onClick={ closeVerifyEmailDialog } variant="secondary">
-						{ __( 'Close' ) }
-					</Button>
-				</div>
+				<Notice variant="warning" onClose={ closeVerifyEmailDialog }>
+					{ __( 'Please verify your email address to change your profile photo.' ) }
+				</Notice>
 			) }
 		</VStack>
 	);

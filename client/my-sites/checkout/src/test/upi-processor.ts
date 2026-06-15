@@ -338,7 +338,7 @@ describe( 'upiProcessor', () => {
 		} );
 	} );
 
-	it( 'redirects to the pending page when payment is confirmed', async () => {
+	it( 'returns a success response when the order is payment-confirmed', async () => {
 		render( createElement( 'div', { className: 'upi-modal-target' } ) );
 
 		const orderId = 54321;
@@ -351,11 +351,9 @@ describe( 'upiProcessor', () => {
 		mockOrderEndpoint( orderId, () => [ 200, mockOrderStatus ] );
 		mockTransactionsEndpoint( () => mockTransactionsRedirectResponse( orderId ) );
 
-		const expectedPendingUrl =
-			'https://example.com/checkout/thank-you/no-site/pending/54321?redirect_to=%2Fthank-you&receiptId=%3AreceiptId';
 		const expected = {
-			payload: expectedPendingUrl,
-			type: 'REDIRECT',
+			payload: { success: true, order_id: orderId },
+			type: 'SUCCESS',
 		};
 
 		await act( async () => {

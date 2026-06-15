@@ -97,4 +97,27 @@ describe( 'login', () => {
 		expect( url ).toContain( 'plugin_name=explicit-plugin' );
 		expect( url ).not.toContain( 'plugin_name=woocommerce-payments' );
 	} );
+
+	test( 'should return the login url with explicit "plugins" parameter', () => {
+		const url = login( { isJetpack: true, plugins: 'jetpack,woocommerce' } );
+		expect( url ).toBe( '/log-in/jetpack?plugins=jetpack%2Cwoocommerce' );
+	} );
+
+	test( 'should extract "plugins" from redirectTo when not explicitly provided', () => {
+		const url = login( {
+			isJetpack: true,
+			redirectTo: 'https://site.com/wp-admin/admin.php?page=jetpack&plugins=jetpack%2Cwoocommerce',
+		} );
+		expect( url ).toContain( 'plugins=jetpack%2Cwoocommerce' );
+	} );
+
+	test( 'should not override explicit "plugins" with value from redirectTo', () => {
+		const url = login( {
+			isJetpack: true,
+			plugins: 'jetpack',
+			redirectTo: 'https://site.com/wp-admin/admin.php?page=jetpack&plugins=jetpack%2Cwoocommerce',
+		} );
+		expect( url ).toContain( 'plugins=jetpack' );
+		expect( url ).not.toContain( 'plugins=jetpack%2Cwoocommerce' );
+	} );
 } );

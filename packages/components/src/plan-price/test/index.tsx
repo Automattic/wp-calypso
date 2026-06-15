@@ -143,37 +143,37 @@ describe( 'PlanPrice', () => {
 	} );
 
 	it( 'renders no decimal section when price is integer', () => {
-		render( <PlanPrice rawPrice={ 44700 } currencyCode="IDR" /> );
-		expect( document.body ).toHaveTextContent( 'Rp44,700' );
-		expect( document.body ).not.toHaveTextContent( 'Rp44,700.00' );
-		expect( screen.queryByText( 'Rp44,700' ) ).not.toBeInTheDocument();
+		render( <PlanPrice rawPrice={ 44700 } currencyCode="DKK" /> );
+		expect( document.body ).toHaveTextContent( 'kr.44,700' );
+		expect( document.body ).not.toHaveTextContent( 'kr.44,700.00' );
+		expect( screen.queryByText( 'kr.44,700' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( '44,700' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders a decimal section when price is not integer', () => {
-		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" /> );
-		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
-		expect( screen.queryByText( 'Rp 44,700' ) ).not.toBeInTheDocument();
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="DKK" /> );
+		expect( document.body ).toHaveTextContent( 'kr.44,700.50' );
+		expect( screen.queryByText( 'kr.44,700.50' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( '44,700' ) ).toBeInTheDocument();
 		expect( screen.getByText( '.50' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders a price without html when displayFlatPrice is set', () => {
-		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" displayFlatPrice /> );
-		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
-		expect( screen.getByText( 'Rp44,700.50' ) ).toBeInTheDocument();
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="DKK" displayFlatPrice /> );
+		expect( document.body ).toHaveTextContent( 'kr.44,700.50' );
+		expect( screen.getByText( 'kr.44,700.50' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders a price without html when displayFlatPrice and isSmallestUnit are set', () => {
-		render( <PlanPrice rawPrice={ 4470050 } currencyCode="IDR" isSmallestUnit displayFlatPrice /> );
-		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
-		expect( screen.getByText( 'Rp44,700.50' ) ).toBeInTheDocument();
+		render( <PlanPrice rawPrice={ 4470050 } currencyCode="DKK" isSmallestUnit displayFlatPrice /> );
+		expect( document.body ).toHaveTextContent( 'kr.44,700.50' );
+		expect( screen.getByText( 'kr.44,700.50' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders a price without sale text when displayFlatPrice is set', () => {
-		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" displayFlatPrice isOnSale /> );
-		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
-		expect( screen.getByText( 'Rp44,700.50' ) ).toBeInTheDocument();
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="DKK" displayFlatPrice isOnSale /> );
+		expect( document.body ).toHaveTextContent( 'kr.44,700.50' );
+		expect( screen.getByText( 'kr.44,700.50' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'Sale' ) ).not.toBeInTheDocument();
 	} );
 
@@ -186,14 +186,14 @@ describe( 'PlanPrice', () => {
 	} );
 
 	it( 'renders a price with sale text when using rawPrice and isOnSale', () => {
-		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" isOnSale /> );
-		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="DKK" isOnSale /> );
+		expect( document.body ).toHaveTextContent( 'kr.44,700.50' );
 		expect( screen.getByText( 'Sale' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders a price with monthly text when using rawPrice and displayPerMonthNotation', () => {
-		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" displayPerMonthNotation /> );
-		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="DKK" displayPerMonthNotation /> );
+		expect( document.body ).toHaveTextContent( 'kr.44,700.50' );
 		// Note: there is a newline between "per" and "month" but testing-library cannot detect those.
 		expect( screen.getByText( 'permonth' ) ).toBeInTheDocument();
 	} );
@@ -226,8 +226,8 @@ describe( 'PlanPrice', () => {
 	} );
 
 	it( 'renders a price with tax text when using rawPrice and taxText', () => {
-		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" taxText="25" /> );
-		expect( document.body ).toHaveTextContent( 'Rp44,700.50(+25 tax)' );
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="DKK" taxText="25" /> );
+		expect( document.body ).toHaveTextContent( 'kr.44,700.50(+25 tax)' );
 		expect( screen.getByText( '(+25 tax)' ) ).toBeInTheDocument();
 	} );
 
@@ -238,20 +238,20 @@ describe( 'PlanPrice', () => {
 	} );
 
 	it( 'renders a price without tax text when using displayFlatPrice and taxText', () => {
-		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" displayFlatPrice taxText="25" /> );
-		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="DKK" displayFlatPrice taxText="25" /> );
+		expect( document.body ).toHaveTextContent( 'kr.44,700.50' );
 		expect( screen.queryByText( '(+25 tax)' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders a price with a heading tag if omitHeading is false', () => {
-		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" /> );
-		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="DKK" /> );
+		expect( document.body ).toHaveTextContent( 'kr.44,700.50' );
 		expect( document.querySelector( 'h4' ) ).toBeTruthy();
 	} );
 
 	it( 'renders a price with a non-heading tag if omitHeading is true', () => {
-		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" omitHeading /> );
-		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="DKK" omitHeading /> );
+		expect( document.body ).toHaveTextContent( 'kr.44,700.50' );
 		expect( document.querySelector( 'h4' ) ).toBeFalsy();
 	} );
 
@@ -268,8 +268,8 @@ describe( 'PlanPrice', () => {
 	} );
 
 	it( 'renders a price without an outer div if priceDisplayWrapperClassName is not set', () => {
-		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" /> );
-		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="DKK" /> );
+		expect( document.body ).toHaveTextContent( 'kr.44,700.50' );
 		expect( document.querySelector( 'div.foo-price-display-wrapper-class' ) ).toBeFalsy();
 	} );
 
@@ -277,11 +277,11 @@ describe( 'PlanPrice', () => {
 		render(
 			<PlanPrice
 				rawPrice={ 44700.5 }
-				currencyCode="IDR"
+				currencyCode="DKK"
 				priceDisplayWrapperClassName="foo-price-display-wrapper-class"
 			/>
 		);
-		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		expect( document.body ).toHaveTextContent( 'kr.44,700.50' );
 		expect( document.querySelector( 'div.foo-price-display-wrapper-class' ) ).toBeTruthy();
 	} );
 
@@ -300,24 +300,24 @@ describe( 'PlanPrice', () => {
 		render(
 			<PlanPrice
 				rawPrice={ 44700.5 }
-				currencyCode="IDR"
+				currencyCode="DKK"
 				displayFlatPrice
 				priceDisplayWrapperClassName="foo-price-display-wrapper-class"
 			/>
 		);
-		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		expect( document.body ).toHaveTextContent( 'kr.44,700.50' );
 		expect( document.querySelector( 'div.foo-price-display-wrapper-class' ) ).toBeFalsy();
 	} );
 
 	it( 'renders a price without the "is-discounted" class if discounted is not set', () => {
-		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" /> );
-		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="DKK" /> );
+		expect( document.body ).toHaveTextContent( 'kr.44,700.50' );
 		expect( document.querySelector( '.is-discounted' ) ).toBeFalsy();
 	} );
 
 	it( 'renders a price with the "is-discounted" class if discounted is set', () => {
-		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" discounted /> );
-		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="DKK" discounted /> );
+		expect( document.body ).toHaveTextContent( 'kr.44,700.50' );
 		expect( document.querySelector( '.is-discounted' ) ).toBeTruthy();
 	} );
 
@@ -328,14 +328,14 @@ describe( 'PlanPrice', () => {
 	} );
 
 	it( 'renders a price without the "is-original" class if original is not set', () => {
-		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" /> );
-		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="DKK" /> );
+		expect( document.body ).toHaveTextContent( 'kr.44,700.50' );
 		expect( document.querySelector( '.is-discounted' ) ).toBeFalsy();
 	} );
 
 	it( 'renders a price with the "is-original" class if original is set', () => {
-		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" original /> );
-		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="DKK" original /> );
+		expect( document.body ).toHaveTextContent( 'kr.44,700.50' );
 		expect( document.querySelector( '.is-original' ) ).toBeTruthy();
 	} );
 
@@ -346,8 +346,8 @@ describe( 'PlanPrice', () => {
 	} );
 
 	it( 'renders a price with the "is-large-currency" class if isLargeCurrency is set', () => {
-		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" isLargeCurrency /> );
-		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="DKK" isLargeCurrency /> );
+		expect( document.body ).toHaveTextContent( 'kr.44,700.50' );
 		expect( document.querySelector( '.is-large-currency' ) ).toBeTruthy();
 	} );
 

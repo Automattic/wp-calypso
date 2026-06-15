@@ -1,22 +1,22 @@
+import './form.scss';
 import { Button, FormInputValidation } from '@automattic/components';
 import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
+import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import UserAvatar from 'calypso/blocks/user-avatar';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import GravatarWithHovercards from 'calypso/components/gravatar-with-hovercards';
 import { ProtectFormGuard } from 'calypso/lib/protect-form';
+import { usePostCommentActions } from 'calypso/reader/data/comments';
 import { isCommentsOpen, isLoginRequiredToComment } from 'calypso/reader/post/capabilities';
 import { recordAction, recordGaEvent, recordTrackForPost, getLocation } from 'calypso/reader/stats';
-import { writeComment, deleteComment, replyComment } from 'calypso/state/comments/actions';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import { getPreviousPath } from 'calypso/state/selectors/get-previous-path';
 import AutoresizingFormTextarea from './autoresizing-form-textarea';
-
-import './form.scss';
 
 const noop = () => {};
 
@@ -150,7 +150,7 @@ class PostCommentForm extends Component {
 	}
 
 	render() {
-		const { post, error, errorType, translate } = this.props;
+		const { post, error, errorType, translate, currentUser } = this.props;
 
 		// Don't display the form if comments are closed
 		if ( post && ! isCommentsOpen( post ) ) {
@@ -191,7 +191,13 @@ class PostCommentForm extends Component {
 			<form className="comments__form">
 				<ProtectFormGuard isChanged={ this.hasCommentText() } />
 				<FormFieldset>
-					<GravatarWithHovercards user={ this.props.currentUser } />
+					<UserAvatar
+						user={ {
+							avatar_URL: currentUser?.avatar_URL,
+							wpcom_login: currentUser?.username,
+						} }
+						hideHovercard
+					/>
 					<AutoresizingFormTextarea
 						value={ this.getCommentText() }
 						placeholder={ translate( 'Add a comment…' ) }
@@ -239,12 +245,30 @@ PostCommentForm.defaultProps = {
 	onCommentSubmit: noop,
 };
 
-export default connect(
-	( state ) => ( {
-		currentUser: getCurrentUser( state ),
-		isLoggedIn: isUserLoggedIn( state ),
-		previousPath: getPreviousPath( state ),
-		currentPath: getCurrentRoute( state ),
-	} ),
-	{ writeComment, deleteComment, replyComment, registerLastActionRequiresLogin }
-)( localize( PostCommentForm ) );
+const withPostCommentActions = ( WrappedComponent ) => {
+	const WithPostCommentActions = ( props ) => {
+		const actions = usePostCommentActions();
+
+		return <WrappedComponent { ...props } { ...actions } />;
+	};
+
+	WithPostCommentActions.displayName = `withPostCommentActions(${
+		WrappedComponent.displayName || WrappedComponent.name || 'Component'
+	})`;
+
+	return WithPostCommentActions;
+};
+
+export default flowRight(
+	connect(
+		( state ) => ( {
+			currentUser: getCurrentUser( state ),
+			isLoggedIn: isUserLoggedIn( state ),
+			previousPath: getPreviousPath( state ),
+			currentPath: getCurrentRoute( state ),
+		} ),
+		{ registerLastActionRequiresLogin }
+	),
+	withPostCommentActions,
+	localize
+)( PostCommentForm );

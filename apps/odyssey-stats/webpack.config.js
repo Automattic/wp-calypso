@@ -69,6 +69,14 @@ module.exports = {
 	module: {
 		strictExportPresence: true,
 		rules: [
+			// Disable `resolve.fullySpecified` for .mjs and .js files. Some
+			// dependencies ship .mjs that imports bare paths like
+			// `fast-deep-equal/es6`, which webpack would otherwise reject as
+			// not fully specified.
+			{
+				test: /\.m?js$/,
+				resolve: { fullySpecified: false },
+			},
 			TranspileConfig.loader( {
 				workerCount: 2,
 				configFile: path.resolve( '../../babel.config.js' ),
@@ -86,7 +94,6 @@ module.exports = {
 				include: shouldTranspileDependency,
 			} ),
 			SassConfig.loader( {
-				includePaths: [ __dirname ],
 				postCssOptions: {
 					// Do not use postcss.config.js. This ensure we have the final say on how PostCSS is used in calypso.
 					// This is required because Calypso imports `@automattic/notifications` and that package defines its
@@ -94,9 +101,6 @@ module.exports = {
 					config: false,
 					plugins: [ autoprefixerPlugin() ],
 				},
-				prelude: `@use '${ require.resolve(
-					'calypso/assets/stylesheets/shared/_utils.scss'
-				) }' as *;`,
 			} ),
 			FileConfig.loader(),
 			{
@@ -106,7 +110,7 @@ module.exports = {
 		],
 	},
 	resolve: {
-		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
+		extensions: [ '.json', '.js', '.mjs', '.jsx', '.ts', '.tsx' ],
 		mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
 		conditionNames: [ 'calypso:src', 'import', 'module', 'require' ],
 		alias: {
@@ -136,6 +140,12 @@ module.exports = {
 						'lodash-es',
 						'react',
 						'react-dom',
+						// Externalize the JSX runtime alongside react/react-dom so it matches the
+						// React that WordPress provides. Bundling it (the default here, since it is
+						// absent from this allow list) ships an older React's runtime, whose elements
+						// React 19 rejects ("A React Element from an older version of React was rendered").
+						'react/jsx-runtime',
+						'react/jsx-dev-runtime',
 						'@wordpress/api-fetch',
 						'@wordpress/components',
 						'@wordpress/compose',
@@ -184,10 +194,6 @@ module.exports = {
 		new webpack.NormalModuleReplacementPlugin(
 			/^@automattic\/calypso-config$/,
 			path.resolve( __dirname, 'src/lib/config-api' )
-		),
-		new webpack.NormalModuleReplacementPlugin(
-			/^calypso\/components\/jetpack-colophon$/,
-			'calypso/components/jetpack/jetpack-footer'
 		),
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/formatted-header$/,

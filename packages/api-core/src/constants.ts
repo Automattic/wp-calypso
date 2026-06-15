@@ -14,6 +14,11 @@ export const DotcomPlans = {
 	FREE_PLAN: 'free_plan',
 	HOSTING_TRIAL_MONTHLY: 'wp_bundle_hosting_trial_monthly',
 	MIGRATION_TRIAL_MONTHLY: 'wp_bundle_migration_trial_monthly',
+	PERSONAL: 'personal-bundle',
+	PERSONAL_MONTHLY: 'personal-bundle-monthly',
+	PERSONAL_2_YEARS: 'personal-bundle-2y',
+	PERSONAL_3_YEARS: 'personal-bundle-3y',
+	PERSONAL_TRIAL_MONTHLY: 'wp-personal-bundle-free-trial-monthly',
 	PREMIUM: 'value_bundle',
 	PREMIUM_MONTHLY: 'value_bundle_monthly',
 	PREMIUM_2_YEARS: 'value_bundle-2y',
@@ -119,6 +124,14 @@ export const EcommercePlans = [
 	DotcomPlans.ECOMMERCE_3_YEARS,
 ];
 
+export const PersonalPlans = [
+	DotcomPlans.PERSONAL_TRIAL_MONTHLY,
+	DotcomPlans.PERSONAL_MONTHLY,
+	DotcomPlans.PERSONAL,
+	DotcomPlans.PERSONAL_2_YEARS,
+	DotcomPlans.PERSONAL_3_YEARS,
+];
+
 export const TrialPlans = [
 	DotcomPlans.ECOMMERCE_TRIAL_MONTHLY,
 	DotcomPlans.HOSTING_TRIAL_MONTHLY,
@@ -127,6 +140,7 @@ export const TrialPlans = [
 ];
 
 export const DotcomFeatures = {
+	APM: 'apm',
 	ATOMIC: 'atomic',
 	BACKUPS: 'backups',
 	BACKUPS_SELF_SERVE: 'backups-self-serve',
@@ -183,6 +197,7 @@ export type JetpackModuleSlug = ( typeof JetpackModules )[ keyof typeof JetpackM
 // Features that needs Atomic or self-hosted infrastructure,
 // mapped to the required WordPress.com plan feature.
 export const HostingFeatures = {
+	APM: DotcomFeatures.APM,
 	BACKUPS: DotcomFeatures.BACKUPS,
 	BACKUPS_SELF_SERVE: DotcomFeatures.BACKUPS_SELF_SERVE,
 	BIG_SKY: DotcomFeatures.BIG_SKY,
@@ -222,6 +237,8 @@ export const SubscriptionBillPeriod = {
 	PLAN_DECENNIAL_PERIOD: 3650,
 	PLAN_CENTENNIAL_PERIOD: 36500,
 } as const;
+export type SubscriptionBillPeriodValue =
+	( typeof SubscriptionBillPeriod )[ keyof typeof SubscriptionBillPeriod ];
 
 export const WPCOM_DIFM_LITE = 'wp_difm_lite';
 
@@ -265,6 +282,10 @@ export const DomainProductSlugs = {
 export const TitanMailSlugs = {
 	TITAN_MAIL_MONTHLY_SLUG: 'wp_titan_mail_monthly',
 	TITAN_MAIL_YEARLY_SLUG: 'wp_titan_mail_yearly',
+	TITAN_MAIL_PREMIUM_MONTHLY_SLUG: 'wp_titan_mail_premium_monthly',
+	TITAN_MAIL_PREMIUM_YEARLY_SLUG: 'wp_titan_mail_premium_yearly',
+	TITAN_MAIL_ULTRA_MONTHLY_SLUG: 'wp_titan_mail_ultra_monthly',
+	TITAN_MAIL_ULTRA_YEARLY_SLUG: 'wp_titan_mail_ultra_yearly',
 } as const;
 
 export const GoogleWorkspaceSlugs = {

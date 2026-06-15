@@ -4,7 +4,6 @@ import clsx from 'clsx';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Children, cloneElement, Component } from 'react';
-import ReactDom from 'react-dom';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import afterLayoutFlush from 'calypso/lib/after-layout-flush';
 import './tabs.scss';
@@ -97,7 +96,7 @@ class NavTabs extends Component {
 	render() {
 		const { isFirstOverflow, isLastOverflow } = this.state;
 		const tabs = Children.map( this.props.children, ( child, index ) => {
-			return child && cloneElement( child, { ref: this.storeTabRefs( index ) } );
+			return child && cloneElement( child, { forwardedRef: this.storeTabRefs( index ) } );
 		} );
 
 		const isDropdownEnabled = this.isDropdownEnabled();
@@ -146,7 +145,7 @@ class NavTabs extends Component {
 		let totalWidth = 0;
 
 		this.tabRefMap.forEach( ( tabElement ) => {
-			const tabWidth = ReactDom.findDOMNode( tabElement ).offsetWidth;
+			const tabWidth = tabElement.offsetWidth;
 			totalWidth += tabWidth;
 		} );
 

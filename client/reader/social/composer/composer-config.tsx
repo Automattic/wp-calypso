@@ -1,0 +1,347 @@
+import { createContext, useContext } from 'react';
+import type { ActiveMode, ComposerMode } from './composer-provider';
+import type { QueryClient, UseMutationOptions } from '@tanstack/react-query';
+import type { useTranslate } from 'i18n-calypso';
+import type { ReactElement, ReactNode } from 'react';
+
+/**
+ * Optional media-attachment slot exposed by per-protocol configs. The shared
+ * provider calls `useMedia` (when defined) at provider mount so the underlying
+ * upload state survives modal mount/unmount — the same lifetime that owns the
+ * deferred preview-URL revocation. The modal reads the returned slot to render
+ * the media UI, gate submission, extend the wire params, and patch the cache
+ * with a local-preview embed on publish success.
+ *
+ * The returned slot is opaque to the modal: per-protocol implementations cast
+ * `params` and `result` to their concrete shapes inside `extendBuildParams` /
+ * `onPublishSuccess`. Atmosphere wires it via `useAtmosphereComposerMedia`;
+ * Mastodon wires it via `useMastodonComposerMedia` (CM-676). The shared
+ * `<MediaGrid>` / `<AltTextPopover>` primitives live in
+ * `client/reader/social/composer-media/`; per-protocol shells supply upload
+ * state and predicates at the call site.
+ */
+export interface ComposerMediaSlot {
+	/** True when at least one image entry exists (any kind). Used by the modal's discard guard. */
+	hasAny: boolean;
+	/** True when at least one image is in the `'uploaded'` state. Lets image-only posts submit. */
+	hasUploaded: boolean;
+	/** True when every image entry is `'uploaded'`. Submit is gated on this. */
+	isAllUploaded: boolean;
+	/** True when at least one image is still compressing or uploading. Submit is gated against this. */
+	isAnyPending: boolean;
+	/**
+	 * Renders the grid of attached items (e.g. atmosphere's `<ImageGrid>`).
+	 * Slotted under the textarea, above the error region. Returns `null`
+	 * when nothing should appear.
+	 */
+	renderGrid: () => ReactNode;
+	/**
+	 * Renders the media trigger button on the left side of the footer
+	 * (e.g. atmosphere's "Add image" picker). The slot owns the hidden
+	 * `<input type="file">` so the shared footer doesn't have to know
+	 * accepted file types or per-protocol upload limits. Returns `null`
+	 * when no trigger should appear.
+	 */
+	renderFooterTrigger: () => ReactNode;
+	/**
+	 * Merge wire-level media fields into the protocol's params before the
+	 * mutation runs. The modal calls `config.buildParams(mode, text)` first,
+	 * then passes the result through this hook for the media-aware variant.
+	 * `unknown` keeps the slot opaque — per-protocol implementations cast.
+	 *
+	 * Returning a Promise lets a per-protocol slot defer wire work (e.g.
+	 * uploading staged media) until publish time. The modal awaits the
+	 * result before invoking the mutation. Atmosphere returns synchronously;
+	 * Mastodon returns a Promise that resolves with `media_ids` populated.
+	 */
+	extendBuildParams: ( params: unknown ) => unknown | Promise< unknown >;
+	/**
+	 * Called from the modal's `onSuccess` after the wire write succeeds.
+	 * Atmosphere uses this to patch the just-published item's cache embed
+	 * with local preview URLs so the UI shows the user's images during the
+	 * brief window before the next refetch. `result` is opaque — the
+	 * implementation casts to its protocol's result shape.
+	 */
+	onPublishSuccess: ( queryClient: QueryClient, result: unknown ) => void;
+	/**
+	 * Drop all media state. Called by the provider when `mode` transitions
+	 * to `null`. `keepPreviewUrlsAlive` is true on the publish-success path
+	 * (atmosphere defers revocation by ~60s so cache entries that reference
+	 * local preview URLs outlast the timeline staleTime) and false on the
+	 * cancel/discard path (URLs reclaimed immediately).
+	 */
+	clear: ( options: { keepPreviewUrlsAlive: boolean } ) => void;
+}
+
+/**
+ * The translate function from `useTranslate()` — has overloads for 1/2/3
+ * args. Re-export so per-protocol configs can refer to the same shape
+ * without each redeclaring it. Capturing it via `useTranslate` (a hook)
+ * is intentional: `i18n-calypso`'s `I18N['translate']` type drops the
+ * overload set down to just the most-args signature, which would force
+ * `t( 'string' )` calls to fail typechecking.
+ */
+export type Translate = ReturnType< typeof useTranslate >;
+
+/**
+ * Per-protocol configuration injected into `<ComposerProvider>` to drive the
+ * generic `<ComposerModal>`. Each protocol (atmosphere, mastodon, …) supplies
+ * its own config: which mode kinds it supports, the wire mutation, the error
+ * map, the Tracks event names, the title/placeholder copy, and the success
+ * notice.
+ */
+export interface ComposerConfig< TError, TParams, TResult > {
+	/**
+	 * Maximum graphemes the composer will accept, as a hook so per-protocol
+	 * configs can read it from a query when the limit varies per connection.
+	 * Mastodon reads `max_characters` from the home instance's config and
+	 * falls back to 500; ATmosphere returns its static 300.
+	 *
+	 * Called unconditionally on every render of `<ComposerModal>` (rules of
+	 * hooks). `connectionId` is `null` when no mode is active, and may also
+	 * be `null` if a future mode lacks one — implementations must handle
+	 * both. The returned value is unused while the modal is closed, so a
+	 * static fallback there is fine. Keep the hook cheap: cached query
+	 * reads, not expensive computations.
+	 */
+	useLimit: ( connectionId: number | null ) => number;
+	/**
+	 * Counter unit. Atmosphere / Mastodon count graphemes (per-protocol
+	 * char caps). Fediverse counts words instead — AP posts are
+	 * blog-post-shaped, so a word threshold maps better onto when the
+	 * "publish on your own site" overflow handoff should appear.
+	 * Defaults to `'graphemes'` so existing configs need no change.
+	 */
+	counter?: 'graphemes' | 'words';
+	/**
+	 * When true, the `useLimit` value is a UX threshold (e.g. "this is
+	 * getting long, consider the blog editor instead") rather than a
+	 * wire-level cap. Submission stays enabled past the limit and the
+	 * footer label stays "Post" rather than switching to the overflow-
+	 * handoff cue — users see the "publish on your own site" section as
+	 * a suggestion, not a block. Defaults to `false` (atmosphere /
+	 * mastodon: hard protocol caps where overflow really fails).
+	 */
+	softLimit?: boolean;
+	/**
+	 * Short display label for the protocol (e.g. "Bluesky", "Mastodon").
+	 * Surfaced in user-visible copy that mentions the social network by
+	 * name. Not localized — brand names don't translate.
+	 */
+	protocolLabel: string;
+	/**
+	 * Mode kinds this protocol supports. Atmosphere supports all three;
+	 * Mastodon supports `'reply' | 'standalone'` (no native quote concept).
+	 * The modal renders nothing when an unsupported mode is opened.
+	 */
+	supportedModes: ReadonlyArray< ComposerMode[ 'kind' ] >;
+	/**
+	 * Mutation factory accepting the consumer's QueryClient — Calypso boots
+	 * its own client separate from the api-queries singleton. See
+	 * `client/reader/AGENTS.md` for the rationale. The mutation context is
+	 * intentionally widened to `unknown` so per-protocol factories can carry
+	 * their own onMutate snapshot shapes (atmosphere's `CreatePostContext`,
+	 * mastodon's optimistic snapshots) without leaking that shape into the
+	 * generic config.
+	 */
+	mutationFactory: ( queryClient: QueryClient ) => Omit<
+		// `any` for TContext is intentional: per-protocol factories carry
+		// their own onMutate snapshot shape (atmosphere's CreatePostContext,
+		// mastodon's optimistic snapshots) and the modal never reads the
+		// context. `UseMutationOptions` is invariant in TContext, so a
+		// concrete shape can't be widened to `unknown`/`void` without
+		// triggering TS2322 — `any` is the right escape hatch here.
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		UseMutationOptions< TResult, TError, TParams, any >,
+		'mutationKey'
+	>;
+	/** Build the wire params from the active mode and the composed text. */
+	buildParams: ( mode: ActiveMode, text: string ) => TParams;
+	/**
+	 * Per-error-kind copy. Returns ReactNode so the reconnect URL can be
+	 * embedded as `<a>` via i18n's component interpolation.
+	 */
+	errorMessage: ( error: TError, translate: Translate ) => ReactNode;
+	/** Success-notice text + optional in-app thread URL for the "View" button. */
+	successNotice: (
+		mode: ActiveMode,
+		result: TResult,
+		translate: Translate
+	) => { text: ReactNode; threadUrl: string | null };
+	/**
+	 * Tracks event names + properties for the lifecycle hooks. The modal
+	 * dispatches via Redux (`recordReaderTracksEvent`) — the config supplies
+	 * names and per-mode property bags so the prefix and shape stay
+	 * protocol-specific.
+	 */
+	tracks: {
+		opened: ( mode: ActiveMode ) => { event: string; props: Record< string, unknown > };
+		published: (
+			mode: ActiveMode,
+			result: TResult
+		) => { event: string; props: Record< string, unknown > };
+		errorShown: (
+			mode: ActiveMode,
+			error: TError
+		) => { event: string; props: Record< string, unknown > };
+	};
+	/**
+	 * Optional Tracks events for the overflow-handoff section (the in-modal
+	 * "Publish on your own site" escape hatch). `shown` fires once per modal
+	 * session when the handoff section first renders (i.e. after the user
+	 * crosses the limit AND the sites query resolves with ≥1 site).
+	 * `editorOpened` fires when the draft save succeeds and the editor tab
+	 * navigates (or the popup-blocker fallback success notice renders) —
+	 * analogous to Reader's Quick Post
+	 * `calypso_reader_quick_post_full_editor_opened`.
+	 * Configs that omit this field don't emit overflow-handoff Tracks events.
+	 */
+	overflowHandoff?: {
+		shown: ( mode: ActiveMode ) => { event: string; props: Record< string, unknown > };
+		editorOpened: (
+			mode: ActiveMode,
+			meta: { siteId: number }
+		) => { event: string; props: Record< string, unknown > };
+	};
+	/**
+	 * Optional icon forwarded to the WP `<Modal>` `icon` prop (typed as
+	 * `React.JSX.Element` — pass a single element, not a fragment or array).
+	 */
+	headerIcon?: ReactElement;
+	/**
+	 * Optional hook returning the handle of the account the user is posting
+	 * from, given the active connection id (or `null` when no mode is
+	 * active). The shared modal appends "@%(handle)s" to the mode-specific
+	 * title via `copy.title` so the destination account is unambiguous —
+	 * the "New post" header otherwise reads like a generic WordPress post.
+	 *
+	 * Called unconditionally inside `<ComposerModal>` (rules of hooks).
+	 * Implementations must accept `null` for the connection id and return
+	 * `null` when the handle isn't resolvable yet (query pending, missing
+	 * connection). Keep it cheap: cached query reads only.
+	 */
+	useAuthorHandle?: ( connectionId: number | null ) => string | null;
+	/** Per-mode title and placeholder copy. */
+	copy: {
+		/**
+		 * `handle` is the value returned by `useAuthorHandle` (`null` if the
+		 * config doesn't supply that hook or the handle isn't resolvable
+		 * yet, omitted entirely by tests that don't care). Per-protocol
+		 * configs are free to compose it into the title — atmosphere /
+		 * mastodon render "New post · @handle"; fediverse ignores it
+		 * because the destination is a blog, not a social account.
+		 */
+		title: ( mode: ActiveMode, translate: Translate, handle?: string | null ) => string;
+		placeholder: ( mode: ActiveMode, translate: Translate, handle?: string ) => string;
+	};
+	/**
+	 * Optional hook for a `bad_request` body-logging path. Atmosphere logs the
+	 * raw response code so the error-copy classifier can be tuned with real
+	 * production data; Mastodon may want the same. Returns nothing — fire and
+	 * forget. Keep this out of the type if a protocol doesn't need it.
+	 */
+	logBadRequest?: ( mode: ActiveMode, error: TError ) => void;
+	/**
+	 * Optional media-slot hook. Called once at provider mount with the live
+	 * mode + connection id (the slot reads `mode.kind` for analytics labels,
+	 * and `connectionId` for the upload endpoint). The hook MUST be a stable
+	 * reference across renders — it's invoked unconditionally inside the
+	 * provider so React's hook-ordering rules apply. Atmosphere supplies
+	 * `useAtmosphereComposerMedia`; Mastodon supplies
+	 * `useMastodonComposerMedia` (CM-676).
+	 */
+	useMedia?: ( ctx: { mode: ActiveMode | null; connectionId: number } ) => ComposerMediaSlot;
+	/**
+	 * Optional protocol-specific extras slot — for modal-level controls
+	 * that aren't media (e.g. Fediverse's visibility selector, content-warning
+	 * toggle, sensitive flag — CM-704). Same lifetime contract as `useMedia`:
+	 * called once at provider mount so the underlying form state survives
+	 * modal mount/unmount and the `extendBuildParams` merge runs on submit.
+	 * Distinct from `useMedia` so a protocol that needs *both* (future
+	 * Fediverse media) can wire each independently. Atmosphere and Mastodon
+	 * don't need this today — they leave it undefined.
+	 */
+	useProtocolExtras?: ( ctx: {
+		mode: ActiveMode | null;
+		connectionId: number;
+	} ) => ComposerProtocolExtrasSlot;
+	/**
+	 * Optional hook returning the user's preferred site id for the overflow
+	 * handoff. When provided and non-null, the handoff filters its site list
+	 * to that single entry — `SiteHandoff` renders the "Publish on
+	 * %(siteName)s" button directly instead of the multi-site chooser.
+	 *
+	 * Fediverse uses this: the composer is already scoped to a specific blog
+	 * connection, so the chooser would be redundant. Atmosphere / Mastodon
+	 * don't (no blog scope; the chooser is meaningful).
+	 *
+	 * Called unconditionally inside `ComposerOverflowHandoff` — must be a
+	 * stable reference across renders. Returns `null` when no preference
+	 * applies (mode is null, connection is missing, etc.) and the handoff
+	 * falls back to the full chooser.
+	 */
+	usePreferredHandoffSiteId?: ( mode: ActiveMode | null ) => number | null;
+}
+
+/**
+ * Per-protocol modal-level controls (visibility selectors, toggles, etc.)
+ * that aren't media uploads. The slot is rendered between the textarea
+ * (and any media grid) and the error region. Mirrors the `useMedia`
+ * surface where it makes sense; omits the upload-specific flags.
+ */
+export interface ComposerProtocolExtrasSlot {
+	/**
+	 * @deprecated Use `renderTrigger` instead. Removed after Mastodon migrates.
+	 */
+	renderControls: () => ReactNode;
+	/**
+	 * Render a footer pill (e.g. "Anyone can reply" with a globe icon). Composed
+	 * into the modal's footer alongside the media trigger. Return `null` to
+	 * render nothing — e.g. when the current mode doesn't expose this protocol's
+	 * extras. Protocols typically pick exactly one of `renderControls` or
+	 * `renderTrigger`, not both.
+	 */
+	renderTrigger?: () => ReactNode;
+	/**
+	 * Merge wire-level extras into the protocol's params before the mutation
+	 * runs. The modal calls `config.buildParams(mode, text)` first, then passes
+	 * the result through this hook AND through `useMedia`'s `extendBuildParams`
+	 * (in that order) for the merged payload.
+	 */
+	extendBuildParams: ( params: unknown ) => unknown | Promise< unknown >;
+	/**
+	 * Drop all extras state. Called by the provider when `mode` transitions
+	 * to `null` (modal closed / discarded / published).
+	 */
+	clear?: () => void;
+	/**
+	 * Optional Tracks-prop projection merged into `tracks.published` props at
+	 * submit time. Used by atmosphere to send reply_allow_kind / allow_quotes;
+	 * Mastodon can similarly expose visibility / CW summary length. Return an
+	 * empty object to add nothing.
+	 */
+	getTracksProps?: () => Record< string, unknown >;
+}
+
+/**
+ * The config is supplied at provider mount and read by the modal. Holding
+ * it in its own context (rather than a prop drilled through every helper)
+ * keeps `<ComposerModal>` props lean and lets per-protocol shells inject
+ * the config once at the panel boundary.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const ComposerConfigContext = createContext< ComposerConfig< any, any, any > | null >( null );
+
+export const ComposerConfigProvider = ComposerConfigContext.Provider;
+
+export function useComposerConfig< TError, TParams, TResult >(): ComposerConfig<
+	TError,
+	TParams,
+	TResult
+> {
+	const config = useContext( ComposerConfigContext );
+	if ( ! config ) {
+		throw new Error( 'useComposerConfig must be called inside <ComposerProvider>' );
+	}
+	return config as ComposerConfig< TError, TParams, TResult >;
+}

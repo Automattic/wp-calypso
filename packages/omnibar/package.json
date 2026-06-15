@@ -1,0 +1,53 @@
+{
+	"name": "@automattic/omnibar",
+	"version": "1.0.0",
+	"description": "React renderer for WordPress admin bar.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.ts",
+	"types": "dist/types/index.d.ts",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.ts",
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		},
+		"./style.scss": "./src/style.scss"
+	},
+	"sideEffects": [
+		"*.scss",
+		"*.css"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/omnibar"
+	},
+	"scripts": {
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"clean": "rm -rf dist",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
+	},
+	"private": true,
+	"dependencies": {
+		"@wordpress/components": "^35.0.0",
+		"@wordpress/compose": "patch:@wordpress/compose@npm%3A8.1.0#~/.yarn/patches/@wordpress-compose-npm-8.1.0-ea108e3129.patch",
+		"@wordpress/icons": "^13.3.0",
+		"@wordpress/private-apis": "^1.48.0",
+		"@wordpress/ui": "^0.15.0"
+	},
+	"peerDependencies": {
+		"@wordpress/data": "^10.48.0",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1"
+	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"typescript": "^6.0.3"
+	}
+}

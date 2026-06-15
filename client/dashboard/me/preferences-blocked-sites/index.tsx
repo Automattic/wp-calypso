@@ -7,7 +7,7 @@ import RouterLinkSummaryButton from '../../components/router-link-summary-button
 import type { Density } from '@automattic/components/src/summary-button/types';
 
 export default function PreferencesBlockedSites( { density }: { density?: Density } ) {
-	const { data } = useInfiniteQuery( blockedSitesInfiniteQuery( 1 ) );
+	const { data } = useInfiniteQuery( blockedSitesInfiniteQuery( 20 ) );
 	const sites = ( data?.pages || [] ).flat();
 	const count = sites.length;
 
@@ -30,7 +30,7 @@ export default function PreferencesBlockedSites( { density }: { density?: Densit
 			density={ density }
 			to="/me/preferences/blocked-sites"
 			title={ __( 'Blocked sites' ) }
-			description={ __( "Sites that won't appear in your Reader or recommendations." ) }
+			description={ __( 'Sites that won’t appear in your Reader or recommendations.' ) }
 			decoration={ <Icon icon={ notAllowed } size={ 24 } /> }
 			badges={ badges }
 		/>

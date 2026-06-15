@@ -1,4 +1,3 @@
-import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import page from '@automattic/calypso-router';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
@@ -8,7 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { getStripeConfiguration, getRazorpayConfiguration } from 'calypso/lib/store-transactions';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
 import usePrepareProductsForCart from 'calypso/my-sites/checkout/src/hooks/use-prepare-products-for-cart';
@@ -277,14 +276,12 @@ export default function BillingDragonCheckout( {
 		>
 			<CalypsoShoppingCartProvider shouldShowPersistentErrors>
 				<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
-					<RazorpayHookProvider fetchRazorpayConfiguration={ getRazorpayConfiguration }>
-						<BillingDragonCheckoutContent
-							cartItems={ cartItems }
-							withA8cLogo={ withA8cLogo }
-							siteSlug={ siteSlug }
-							planSlug={ planSlug }
-						/>
-					</RazorpayHookProvider>
+					<BillingDragonCheckoutContent
+						cartItems={ cartItems }
+						withA8cLogo={ withA8cLogo }
+						siteSlug={ siteSlug }
+						planSlug={ planSlug }
+					/>
 				</StripeHookProvider>
 			</CalypsoShoppingCartProvider>
 		</CheckoutErrorBoundary>

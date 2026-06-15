@@ -188,8 +188,9 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			await page.getByRole( 'button', { name: /Back|Go back/ } ).click();
 			// Verify the form is visible again and the success message is hidden
 			await publishedFormLocator.getByRole( 'button', { name: 'Send' } ).waitFor();
-			// Wait for the success message to be hidden
-			await page.waitForTimeout( 500 );
+			await page
+				.getByText( /Thank you for your response\.|Your message has been sent/ )
+				.waitFor( { state: 'hidden', timeout: 5000 } );
 		} );
 	} );
 

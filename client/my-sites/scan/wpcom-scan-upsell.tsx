@@ -11,6 +11,7 @@ import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg
 import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackDisconnectedWPCOM from 'calypso/components/jetpack/jetpack-disconnected-wpcom';
+import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
@@ -205,6 +206,7 @@ export default function WPCOMScanUpsellPage( { reason }: { reason?: string } ) {
 			>
 				{ body }
 			</Page>
+			<JetpackFooter />
 		</Main>
 	);
 }

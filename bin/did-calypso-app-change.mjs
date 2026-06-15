@@ -16,7 +16,10 @@ const exec = async ( cmd, opts ) => {
 };
 
 export default async function didCalypsoAppChange( { slug, dir, artifactDir } ) {
-	await downloadPrevBuild( slug, dir );
+	const hasPreviousBuild = await downloadPrevBuild( slug, dir );
+	if ( ! hasPreviousBuild ) {
+		return true;
+	}
 	const prevReleaseDir = path.join( dir, 'prev-release' );
 
 	const normalizer = path.join( dir, 'bin/normalize-artifact.sh' );
@@ -49,19 +52,27 @@ export default async function didCalypsoAppChange( { slug, dir, artifactDir } ) 
 
 async function downloadPrevBuild( appSlug, dir ) {
 	const prevBuildZip = `${ dir }/prev-archive-download.zip`;
-	const stream = createWriteStream( prevBuildZip );
 
 	const prevBuildUrl = `${ process.env.tc_sever_url }/repository/download/calypso_calypso_WPComPlugins_Build_Plugins/${ appSlug }-release-build.tcbuildtag/${ appSlug }.zip?guest=1&branch=trunk`;
 	console.info( `Fetching previous release build for ${ appSlug } from ${ prevBuildUrl }` );
 
 	const { body, status } = await fetch( prevBuildUrl );
+	if ( status === 404 ) {
+		console.info(
+			`No previous release build found for ${ appSlug }; treating current build as changed.`
+		);
+		return false;
+	}
+
 	if ( status !== 200 ) {
 		throw new Error(
-			`Could not fetch previous build for ${ appSlug } (response code ${ status })! You can ignore this error when first adding a new app — just add a \`teamcity:build-app\` package script so it's ready for subsequent PRs, and add your app to the \`keepReleaseBuilds\` and \`artifactRules\` lists in \`.teamcity/_self/projects/WPComPlugins.kt\`.`
+			`Could not fetch previous build for ${ appSlug } (response code ${ status })!`
 		);
 	}
 
 	console.info( `Extracting downloaded archive for ${ appSlug }...` );
+	const stream = createWriteStream( prevBuildZip );
 	await finished( Readable.fromWeb( body ).pipe( stream ) );
 	await exec( `unzip -q ${ prevBuildZip } -d ${ dir }/prev-release` );
+	return true;
 }

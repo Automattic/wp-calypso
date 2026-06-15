@@ -1,16 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from '@testing-library/react';
-import useUserSitesQuery, {
-	UserSitesResponse,
-} from 'calypso/reader/user-profile/queries/use-user-sites-query';
+import { UserSitesResponse } from '@automattic/api-core';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render, screen, waitFor } from '@testing-library/react';
+import nock from 'nock';
 import UserTopSites from '..';
-
-jest.mock( 'calypso/reader/user-profile/queries/use-user-sites-query', () => ( {
-	__esModule: true,
-	default: jest.fn(),
-} ) );
 
 jest.mock( 'calypso/blocks/site-icon', () => ( {
 	SiteIcon: ( { siteId }: { siteId: number } ) => <span data-testid={ `site-icon-${ siteId }` } />,
@@ -22,47 +17,69 @@ describe( 'UserTopSites', () => {
 		userLogin: 'test_user',
 	};
 
+	let queryClient: QueryClient;
+
 	beforeEach( () => {
-		jest.clearAllMocks();
+		nock.disableNetConnect();
+		queryClient = new QueryClient( {
+			defaultOptions: {
+				queries: { retry: false },
+			},
+		} );
 	} );
 
-	test( 'should render skeleton when fetching', () => {
-		jest.mocked( useUserSitesQuery ).mockReturnValue( {
-			isFetching: true,
-			data: undefined,
-			error: null,
-		} as ReturnType< typeof useUserSitesQuery > );
+	afterEach( () => {
+		nock.cleanAll();
+	} );
 
-		const { container } = render( <UserTopSites { ...defaultProps } /> );
+	function renderWithClient( ui: React.ReactNode ) {
+		return render( <QueryClientProvider client={ queryClient }>{ ui }</QueryClientProvider> );
+	}
+
+	function nockGetUserSites( userId: number, response: UserSitesResponse | number ) {
+		const scope = nock( 'https://public-api.wordpress.com' ).get(
+			`/wpcom/v2/users/${ userId }/sites`
+		);
+
+		if ( typeof response === 'number' ) {
+			return scope.query( true ).reply( response, { error: 'error', message: 'Error' } );
+		}
+
+		return scope.query( true ).reply( 200, response );
+	}
+
+	test( 'should render skeleton when fetching', () => {
+		// Set up a nock that won't reply immediately (no async await), keeping the query in loading state.
+		nockGetUserSites( defaultProps.userId, { sites: [], total: 0, primary_site_id: 0 } );
+
+		const { container } = renderWithClient( <UserTopSites { ...defaultProps } /> );
 
 		expect( container.querySelectorAll( '.skeleton' ) ).toHaveLength( 2 );
 	} );
 
-	test( 'should return null when there is an error', () => {
-		jest.mocked( useUserSitesQuery ).mockReturnValue( {
-			isFetching: false,
-			data: undefined,
-			error: { message: 'Network error' },
-		} as ReturnType< typeof useUserSitesQuery > );
+	test( 'should return null when there is an error', async () => {
+		nockGetUserSites( defaultProps.userId, 500 );
 
-		const { container } = render( <UserTopSites { ...defaultProps } /> );
+		const { container } = renderWithClient( <UserTopSites { ...defaultProps } /> );
 
+		await waitFor( () => {
+			expect( container.querySelector( '.skeleton' ) ).not.toBeInTheDocument();
+		} );
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
-	test( 'should return null when there are no sites', () => {
-		jest.mocked( useUserSitesQuery ).mockReturnValue( {
-			isFetching: false,
-			data: { sites: [], total: 0, primary_site_id: 0 } as UserSitesResponse,
-			error: null,
-		} as ReturnType< typeof useUserSitesQuery > );
+	test( 'should return null when there are no sites', async () => {
+		nockGetUserSites( defaultProps.userId, { sites: [], total: 0, primary_site_id: 0 } );
 
-		const { container } = render( <UserTopSites { ...defaultProps } /> );
+		const { container } = renderWithClient( <UserTopSites { ...defaultProps } /> );
 
+		await waitFor( () => {
+			expect( container.querySelector( '.skeleton' ) ).not.toBeInTheDocument();
+		} );
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
-	test( 'should render primary site and top 2 subscribed sites', () => {
+	test( 'should render primary site and top 2 subscribed sites', async () => {
 		const mockSites: UserSitesResponse[ 'sites' ] = [
 			{
 				ID: 1,
@@ -114,16 +131,12 @@ describe( 'UserTopSites', () => {
 			},
 		];
 
-		jest.mocked( useUserSitesQuery ).mockReturnValue( {
-			isFetching: false,
-			data: { sites: mockSites, total: 4, primary_site_id: 1 } as UserSitesResponse,
-			error: null,
-		} as ReturnType< typeof useUserSitesQuery > );
+		nockGetUserSites( defaultProps.userId, { sites: mockSites, total: 4, primary_site_id: 1 } );
 
-		render( <UserTopSites { ...defaultProps } /> );
+		renderWithClient( <UserTopSites { ...defaultProps } /> );
 
 		// Primary site should always be shown
-		expect( screen.getByText( 'Primary Site' ) ).toBeVisible();
+		expect( await screen.findByText( 'Primary Site' ) ).toBeVisible();
 
 		// Top 2 subscribed sites (excluding primary) should be shown
 		expect( screen.getByText( 'Site With Most Subscribers' ) ).toBeVisible();
@@ -133,7 +146,7 @@ describe( 'UserTopSites', () => {
 		expect( screen.queryByText( 'Site With Least Subscribers' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'should show "+N" link when more than 3 sites exist', () => {
+	test( 'should show "+N" link when more than 3 sites exist', async () => {
 		const mockSites: UserSitesResponse[ 'sites' ] = [
 			{
 				ID: 1,
@@ -197,20 +210,16 @@ describe( 'UserTopSites', () => {
 			},
 		];
 
-		jest.mocked( useUserSitesQuery ).mockReturnValue( {
-			isFetching: false,
-			data: { sites: mockSites, total: 5, primary_site_id: 1 } as UserSitesResponse,
-			error: null,
-		} as ReturnType< typeof useUserSitesQuery > );
+		nockGetUserSites( defaultProps.userId, { sites: mockSites, total: 5, primary_site_id: 1 } );
 
-		render( <UserTopSites { ...defaultProps } /> );
+		renderWithClient( <UserTopSites { ...defaultProps } /> );
 
-		const moreLink = screen.getByRole( 'link', { name: '+2' } );
+		const moreLink = await screen.findByRole( 'link', { name: '+2' } );
 		expect( moreLink ).toBeVisible();
 		expect( moreLink ).toHaveAttribute( 'href', '/reader/users/test_user/sites' );
 	} );
 
-	test( 'should not show "+N" link when 3 or fewer sites exist', () => {
+	test( 'should not show "+N" link when 3 or fewer sites exist', async () => {
 		const mockSites: UserSitesResponse[ 'sites' ] = [
 			{
 				ID: 1,
@@ -238,18 +247,15 @@ describe( 'UserTopSites', () => {
 			},
 		];
 
-		jest.mocked( useUserSitesQuery ).mockReturnValue( {
-			isFetching: false,
-			data: { sites: mockSites, total: 2, primary_site_id: 1 } as UserSitesResponse,
-			error: null,
-		} as ReturnType< typeof useUserSitesQuery > );
+		nockGetUserSites( defaultProps.userId, { sites: mockSites, total: 2, primary_site_id: 1 } );
 
-		render( <UserTopSites { ...defaultProps } /> );
+		renderWithClient( <UserTopSites { ...defaultProps } /> );
 
+		await screen.findByText( 'Site 1' );
 		expect( screen.queryByText( /^\+\d+$/ ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'should link to feed when feedId is available', () => {
+	test( 'should link to feed when feedId is available', async () => {
 		const mockSites: UserSitesResponse[ 'sites' ] = [
 			{
 				ID: 1,
@@ -265,19 +271,15 @@ describe( 'UserTopSites', () => {
 			},
 		];
 
-		jest.mocked( useUserSitesQuery ).mockReturnValue( {
-			isFetching: false,
-			data: { sites: mockSites, total: 1, primary_site_id: 1 } as UserSitesResponse,
-			error: null,
-		} as ReturnType< typeof useUserSitesQuery > );
+		nockGetUserSites( defaultProps.userId, { sites: mockSites, total: 1, primary_site_id: 1 } );
 
-		render( <UserTopSites { ...defaultProps } /> );
+		renderWithClient( <UserTopSites { ...defaultProps } /> );
 
-		const siteLink = screen.getByRole( 'link', { name: /Site With Feed/ } );
+		const siteLink = await screen.findByRole( 'link', { name: /Site With Feed/ } );
 		expect( siteLink ).toHaveAttribute( 'href', '/reader/feeds/101' );
 	} );
 
-	test( 'should link to blog when feedId is not available but siteId is', () => {
+	test( 'should link to blog when feedId is not available but siteId is', async () => {
 		const mockSites: UserSitesResponse[ 'sites' ] = [
 			{
 				ID: 1,
@@ -293,19 +295,15 @@ describe( 'UserTopSites', () => {
 			},
 		];
 
-		jest.mocked( useUserSitesQuery ).mockReturnValue( {
-			isFetching: false,
-			data: { sites: mockSites, total: 1, primary_site_id: 1 } as UserSitesResponse,
-			error: null,
-		} as ReturnType< typeof useUserSitesQuery > );
+		nockGetUserSites( defaultProps.userId, { sites: mockSites, total: 1, primary_site_id: 1 } );
 
-		render( <UserTopSites { ...defaultProps } /> );
+		renderWithClient( <UserTopSites { ...defaultProps } /> );
 
-		const siteLink = screen.getByRole( 'link', { name: /Site Without Feed/ } );
+		const siteLink = await screen.findByRole( 'link', { name: /Site Without Feed/ } );
 		expect( siteLink ).toHaveAttribute( 'href', '/reader/blogs/1' );
 	} );
 
-	test( 'should link to feed URL when both feedId and siteId are not available but URL is', () => {
+	test( 'should link to feed URL when both feedId and siteId are not available but URL is', async () => {
 		const mockSites: UserSitesResponse[ 'sites' ] = [
 			{
 				ID: 0,
@@ -321,15 +319,11 @@ describe( 'UserTopSites', () => {
 			},
 		];
 
-		jest.mocked( useUserSitesQuery ).mockReturnValue( {
-			isFetching: false,
-			data: { sites: mockSites, total: 1, primary_site_id: 1 } as UserSitesResponse,
-			error: null,
-		} as ReturnType< typeof useUserSitesQuery > );
+		nockGetUserSites( defaultProps.userId, { sites: mockSites, total: 1, primary_site_id: 1 } );
 
-		render( <UserTopSites { ...defaultProps } /> );
+		renderWithClient( <UserTopSites { ...defaultProps } /> );
 
-		const siteLink = screen.getByRole( 'link', { name: /URL Only Site/ } );
+		const siteLink = await screen.findByRole( 'link', { name: /URL Only Site/ } );
 		expect( siteLink ).toHaveAttribute( 'href', 'https://site.wordpress.com' );
 	} );
 } );

@@ -1,4 +1,4 @@
-import { DotcomPlans, JetpackPlans } from '@automattic/api-core';
+import { DotcomPlans, JetpackPlans, WooHostedPlans } from '@automattic/api-core';
 import { siteCurrentPlanQuery, siteByIdQuery, purchaseQuery } from '@automattic/api-queries';
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { useQuery } from '@tanstack/react-query';
@@ -128,7 +128,7 @@ function WpcomStagingSitePlanCard( { site }: { site: Site } ) {
 	const description = sprintf(
 		/* translators: %s: the site plan name */
 		__( 'Included with your %s plan.' ),
-		productionSite?.plan?.product_name_short
+		productionSite?.plan?.product_name_short ?? ''
 	);
 
 	return (
@@ -210,14 +210,15 @@ export default function PlanCard( { site }: { site: Site } ) {
 }
 
 function getCardDescription( site: Site, purchase?: Purchase ) {
-	if ( site.plan?.product_slug === DotcomPlans.FREE_PLAN ) {
-		return __( 'Upgrade to access all hosting features.' );
-	}
-
-	if ( site.plan?.product_slug === JetpackPlans.PLAN_JETPACK_FREE ) {
-		return getJetpackProductsForSite( site ).length > 0
-			? __( 'Manage subscriptions.' )
-			: __( 'Upgrade to access more Jetpack tools.' );
+	switch ( site.plan?.product_slug ) {
+		case DotcomPlans.FREE_PLAN:
+			return __( 'Upgrade to access all hosting features.' );
+		case JetpackPlans.PLAN_JETPACK_FREE:
+			return getJetpackProductsForSite( site ).length > 0
+				? __( 'Manage subscriptions.' )
+				: __( 'Upgrade to access more Jetpack tools.' );
+		case WooHostedPlans.WOO_HOSTED_FREE_PLAN:
+			return __( 'Upgrade to keep your online store.' );
 	}
 
 	if ( purchase ) {

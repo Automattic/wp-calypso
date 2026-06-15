@@ -28,8 +28,6 @@ const useGridPlansForComparisonGrid = ( {
 	useFreeTrialPlanSlugs,
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
-	useFocusedComparisonFeatures,
-	useVar41MorePremiumFeatures,
 	useVar42NoAiFeatures,
 	showPricingDifferentiationFeaturePills,
 	useFocusedNewCopyTaglines,
@@ -53,7 +51,6 @@ const useGridPlansForComparisonGrid = ( {
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices,
 		useFocusedNewCopyTaglines,
-		isExperimentVariant,
 	} );
 
 	const planFeaturesForComparisonGrid = useRestructuredPlanFeaturesForComparisonGrid( {
@@ -63,8 +60,6 @@ const useGridPlansForComparisonGrid = ( {
 		intent,
 		selectedFeature,
 		showLegacyStorageFeature,
-		useFocusedComparisonFeatures,
-		useVar41MorePremiumFeatures,
 		useVar42NoAiFeatures,
 		showPricingDifferentiationFeaturePills,
 		isExperimentVariant,

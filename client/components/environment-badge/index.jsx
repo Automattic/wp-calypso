@@ -36,16 +36,6 @@ export function Branch( { branchName, commitChecksum } ) {
 	);
 }
 
-export function DevDocsLink( { url } ) {
-	return (
-		<span className="environment is-docs">
-			<a href={ url } title="DevDocs">
-				docs
-			</a>
-		</span>
-	);
-}
-
 function EnvironmentBadge( { badge, feedbackURL, children } ) {
 	// Static HTML only is produced here. Event listeners get added in
 	// load-dev-helpers/index.js
@@ -71,5 +61,16 @@ EnvironmentBadge.propTypes = {
 	feedbackURL: string.isRequired,
 	children: node,
 };
+
+export function RtlCssDisabledHelper() {
+	return (
+		<span
+			className="environment is-rtl-css-disabled"
+			title="RTL CSS is disabled. Set BUILD_RTL_CSS=true before starting Calypso to build RTL CSS."
+		>
+			RTLCSS off: set BUILD_RTL_CSS=true
+		</span>
+	);
+}
 
 export default EnvironmentBadge;

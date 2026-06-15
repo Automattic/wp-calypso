@@ -173,7 +173,7 @@ export default function useSiteActions( {
 				href: `${ urlWithScheme }/wp-admin`,
 				onClick: () => handleClickMenuItem( 'visit_wp_admin' ),
 				isExternalLink: true,
-				isEnabled: true && ! isUrlOnly,
+				isEnabled: ! isUrlOnly,
 			},
 			{
 				name: translate( 'Remove site' ),
@@ -335,7 +335,7 @@ export function useSiteActionsDataViews( {
 			{
 				id: 'view_activity_not_wpcom',
 				label: translate( 'View activity' ),
-				isEligible( item: SiteData ) {
+				isEligible( item: SiteData ): boolean {
 					return canHaveActions( item ) && ! isAtomicSite( item ) && ! isUrlOnly( item );
 				},
 				callback( items: SiteData[] ) {
@@ -451,7 +451,7 @@ export function useSiteActionsDataViews( {
 			{
 				id: 'delete_site',
 				label: translate( 'Delete site' ),
-				isEligible( item: SiteData ) {
+				isEligible( item: SiteData ): boolean {
 					return canHaveActions( item ) && false; // Feature is always disabled, see canDelete above.
 				},
 				RenderModal: createDeleteSiteActionModal( {

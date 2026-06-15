@@ -50,23 +50,8 @@ export class PublishedPostPage {
 		await waitForWPWidgetsIfNecessary( this.page );
 
 		const iframe = this.page.frameLocator( 'iframe[title="Like or Reblog"]' );
-
-		// Check if the post is already liked (e.g. from a previous retry attempt).
-		const likedLocator = iframe.getByRole( 'link', { name: 'Liked', exact: true } );
 		const likeLocator = iframe.getByRole( 'link', { name: 'Like', exact: true } );
-
-		// Wait for either "Like" or "Liked" button to be visible.
-		await likedLocator.or( likeLocator ).waitFor();
-
-		// If already liked, unlike it first to ensure we test the like action.
-		if ( await likedLocator.isVisible() ) {
-			await iframeLocator.scrollIntoViewIfNeeded();
-			await likedLocator.evaluate( ( element ) => element.scrollIntoView() );
-			await likedLocator.click();
-
-			// Wait for the button to change to "Like".
-			await likeLocator.waitFor();
-		}
+		await likeLocator.waitFor();
 
 		// On AT sites Playwright is not able to scroll directly to the iframe
 		// containing the Like/Unlike button (similar to Post Comments).
@@ -77,7 +62,7 @@ export class PublishedPostPage {
 		await likeLocator.click();
 
 		// The button should now read "Liked".
-		await likedLocator.waitFor();
+		await iframe.getByRole( 'link', { name: 'Liked', exact: true } ).waitFor();
 	}
 
 	/**

@@ -8,7 +8,6 @@ import {
 } from '@automattic/calypso-products';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { getName, getSubscriptionEndDate, isRefundable } from 'calypso/lib/purchases';
-import { isTemporarySitePurchase } from '../utils';
 import type { Purchases } from '@automattic/data-stores';
 import type { LocalizeProps } from 'i18n-calypso';
 
@@ -19,7 +18,7 @@ export function cancellationEffectHeadline(
 	const { domain } = purchase;
 	const purchaseName = getName( purchase );
 
-	if ( isTemporarySitePurchase( purchase ) ) {
+	if ( purchase.isAttachedToHoldingSite ) {
 		return translate( 'Are you sure you want to cancel and remove %(purchaseName)s? ', {
 			args: {
 				purchaseName,

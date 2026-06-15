@@ -1,9 +1,30 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/hide-content-accessibly";
+@import "calypso/assets/stylesheets/shared/mixins/long-content-fade";
+
 .reader-post-options-menu__ellipsis-menu {
 	margin-left: 16px;
 
 	.ellipsis-menu__toggle {
 		padding: 0;
 		height: 24px;
+	}
+
+	@include ui-mixins.when-dark-theme {
+		.ellipsis-menu__toggle {
+			color: var( --color-text-subtle );
+
+			&:hover,
+			&:focus,
+			&:active {
+				color: var( --color-link );
+			}
+		}
 	}
 }
 
@@ -409,6 +430,14 @@
 	}
 }
 
+.reader__content .reader-post-card__byline-secondary-item {
+	@include ui-mixins.when-dark-theme {
+		&:hover {
+			color: var( --color-link );
+		}
+	}
+}
+
 .reader-post-card__tag-link {
 	text-decoration: none;
 }
@@ -639,6 +668,35 @@
 		color: var(--color-primary);
 	}
 
+	@include ui-mixins.when-dark-theme {
+		color: var( --color-link );
+
+		.gridicon {
+			fill: var( --color-link );
+		}
+
+		svg,
+		svg path {
+			fill: currentColor;
+		}
+
+		.follow-button__label {
+			color: var( --color-link );
+		}
+
+		&:hover {
+			color: var( --color-link-dark );
+
+			.gridicon {
+				fill: var( --color-link-dark );
+			}
+
+			.follow-button__label {
+				color: var( --color-link-dark );
+			}
+		}
+	}
+
 	&:hover {
 		.follow-button__label {
 			color: var(--color-success);
@@ -694,11 +752,6 @@
 	&:hover {
 		color: var(--color-link-dark);
 	}
-}
-
-// For these borderless cards to look more presentable on Devdocs
-.is-section-devdocs .reader-post-card.card {
-	padding: 16px;
 }
 
 .reader-post-card__featured-images {

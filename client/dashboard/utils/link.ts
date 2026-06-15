@@ -1,16 +1,19 @@
 import config from '@automattic/calypso-config';
 import { getCurrentDashboard, getDashboardFromQuery, buildDashboardLink } from '../app/routing';
+import { A4A_SIGNUP_PATHS } from '../section';
 import { isDashboardBackport } from './is-dashboard-backport';
 
 /**
  * This function returns all the origins for the dashboard.
  */
 export function dashboardOrigins(): string[] {
+	const port = config( 'port' ) ?? 3000;
 	return [
-		'http://my.localhost:3000',
+		`http://my.localhost:${ port }`,
 		'https://my.wordpress.com',
-		'http://my.woo.localhost:3000',
+		`http://my.woo.localhost:${ port }`,
 		'https://my.woo.ai',
+		`http://my.a4a.localhost:${ port }`,
 	];
 }
 
@@ -37,6 +40,12 @@ export function wpcomLink( path: string ) {
 			return path;
 		}
 	}
+	if ( A4A_SIGNUP_PATHS.some( ( prefix ) => path === prefix || path.startsWith( prefix + '/' ) ) ) {
+		const dashboard = getCurrentDashboard();
+		if ( dashboard === 'a4a' ) {
+			return path;
+		}
+	}
 	return new URL( path, config( 'wpcom_url' ) ).href;
 }
 
@@ -45,7 +54,8 @@ export function wpcomLink( path: string ) {
  */
 export function a4aLink( path: string ) {
 	if ( config( 'env' ) === 'development' ) {
-		return new URL( path, 'http://agencies.localhost:3000' ).href;
+		const port = config( 'port' ) ?? 3000;
+		return new URL( path, `http://agencies.localhost:${ port }` ).href;
 	}
 
 	return new URL( path, 'https://agencies.automattic.com' ).href;

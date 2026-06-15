@@ -1,10 +1,10 @@
 import { __ } from '@wordpress/i18n';
-import { canViewWordPressSettings } from '../sites/features';
+import { canSwitchWordPressVersion } from '../sites/features';
 import type { Site } from '@automattic/api-core';
 
 function getWordPressVersionTagName( versionTag: string ) {
 	if ( versionTag === 'latest' ) {
-		return __( 'Latest' );
+		return __( 'Stable' );
 	}
 	if ( versionTag === 'beta' ) {
 		return __( 'Beta' );
@@ -19,7 +19,7 @@ export function getFormattedWordPressVersion(
 	return formatWordPressVersion(
 		site.options?.software_version ?? '',
 		versionTag,
-		canViewWordPressSettings( site )
+		canSwitchWordPressVersion( site )
 	);
 }
 
@@ -42,7 +42,7 @@ export function formatWordPressVersion(
 	}
 
 	if ( versionTag ) {
-		wpVersion = `${ wpVersion } (${ getWordPressVersionTagName( versionTag ) })`;
+		wpVersion = `${ getWordPressVersionTagName( versionTag ) } (${ wpVersion })`;
 	}
 
 	return wpVersion;

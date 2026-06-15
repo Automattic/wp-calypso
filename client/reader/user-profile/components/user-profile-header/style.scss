@@ -1,3 +1,4 @@
+@import "@automattic/typography/styles/variables";
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/breakpoints';
 
@@ -10,14 +11,6 @@
 		display: flex;
 		gap: 12px;
 		margin-bottom: 12px;
-
-		.user-avatar {
-			margin: 0;
-
-			img {
-				max-width: initial;
-			}
-		}
 
 		h1 {
 			align-items: center;
@@ -40,6 +33,7 @@
 
 	.user-profile-header__gravatar-badge {
 		display: flex;
+		flex-shrink: 0;
 	}
 
 	p.user-profile-header__bio-desc {

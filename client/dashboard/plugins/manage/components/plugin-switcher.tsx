@@ -135,7 +135,7 @@ export const PluginSwitcher = ( {
 	);
 
 	return (
-		<Card>
+		<Card className="plugin-switcher-card">
 			<CardBody className="plugin-switcher-card-body" ref={ scrollRef }>
 				<SwitcherContent
 					itemClassName={ itemClassName }

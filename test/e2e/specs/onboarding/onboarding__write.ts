@@ -80,7 +80,7 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 		it( 'Select "Publish a blog" goal', async function () {
 			const goalCards = page.locator( '.select-card-checkbox__container' );
 			if ( ( await goalCards.count() ) === 0 ) {
-				// Focused Launchpad skips the goal selection step.
+				// Some experiences skip the goal selection step.
 				return;
 			}
 
@@ -171,7 +171,7 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 	} );
 
 	describe( 'Launchpad', function () {
-		it( 'Focused Launchpad is shown', async function () {
+		it( 'Launchpad is shown', async function () {
 			const title = await page.getByText( "Let's get started!" );
 			if ( ! ( await title.isVisible() ) ) {
 				return;

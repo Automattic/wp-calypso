@@ -1,5 +1,5 @@
 .add-new-domain__itemlist {
-	background: #fff;
+	background: var( --dashboard-surface__background-color, #fff );
 	border-radius: 8px;
 }
 
@@ -11,5 +11,5 @@
 }
 
 .add-new-domain__icon {
-	color: #757575;
+	color: var( --dashboard-subtle__color, #757575 );
 }

@@ -151,14 +151,17 @@ function McpSetupComponent() {
 			<>
 				<Card>
 					<CardBody>
-						<SelectControl
-							__next40pxDefaultSize
-							__nextHasNoMarginBottom
-							label={ __( 'Choose your AI agent' ) }
-							value={ selectedMcpClient }
-							options={ mcpClientOptions }
-							onChange={ setSelectedMcpClient }
-						/>
+						<VStack spacing={ 4 }>
+							<SectionHeader level={ 3 } title={ __( 'Choose your AI agent' ) } />
+							<SelectControl
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom
+								label={ __( 'AI agent' ) }
+								value={ selectedMcpClient }
+								options={ mcpClientOptions }
+								onChange={ setSelectedMcpClient }
+							/>
+						</VStack>
 					</CardBody>
 				</Card>
 

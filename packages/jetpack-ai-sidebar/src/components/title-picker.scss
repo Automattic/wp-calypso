@@ -1,0 +1,47 @@
+.jetpack-ai-title-picker {
+	padding: 8px 0;
+
+	&__intro {
+		margin: 0 0 12px;
+		font-size: 14px;
+	}
+
+	&__options {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	&__card {
+		display: flex;
+		flex-direction: column;
+		padding: 12px;
+		border: 1px solid rgba( 255, 255, 255, 0.12 );
+		border-radius: 8px;
+		background: transparent;
+		cursor: pointer;
+		text-align: left;
+		transition:
+			border-color 0.15s ease,
+			background 0.15s ease;
+		width: 100%;
+		color: inherit;
+		font-family: inherit;
+
+		&:hover {
+			border-color: rgba( 255, 255, 255, 0.3 );
+			background: rgba( 255, 255, 255, 0.04 );
+		}
+
+		&.is-applied {
+			border-color: var( --wp-admin-theme-color, #3858e9 );
+			background: rgba( 56, 88, 233, 0.12 );
+		}
+
+		&-title {
+			font-size: 14px;
+			font-weight: 600;
+			line-height: 20px;
+		}
+	}
+}

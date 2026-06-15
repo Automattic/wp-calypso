@@ -5,7 +5,7 @@ class PostPlaceholder extends PureComponent {
 	render() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<Card tagName="article" className="reader__card is-placeholder">
+			<Card ref={ this.props.itemRef } tagName="article" className="reader__card is-placeholder">
 				<div className="reader__post-header">
 					<h1 className="reader__post-title">
 						<div className="reader__post-title-link">

@@ -6,11 +6,13 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useAgentsManagerContext } from '../../contexts';
+import { hasAiChatEntryButton } from '../../hooks/use-admin-bar-integration';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import './style.scss';
 
-interface Props {
+interface SupportGuideProps {
 	/** Chat header menu options. */
 	chatHeaderOptions: ChatHeaderOptions;
 	/** Indicates if the chat is docked in the sidebar. */
@@ -21,12 +23,8 @@ interface Props {
 	onAbort: () => void;
 	/** Called when the chat is closed. */
 	onClose: () => void;
-	/** The current site domain for contextual support. */
-	currentSiteDomain?: string;
-	/** The current Calypso section name. */
-	sectionName: string;
-	/** Indicates if the user is eligible for live chat support. */
-	isEligibleForChat: boolean;
+	/** Called when the chat is expanded (floating mode). */
+	onExpand: () => void;
 }
 
 export default function SupportGuide( {
@@ -35,10 +33,9 @@ export default function SupportGuide( {
 	isDocked,
 	onAbort,
 	onClose,
-	currentSiteDomain,
-	sectionName,
-	isEligibleForChat,
-}: Props ) {
+	onExpand,
+}: SupportGuideProps ) {
+	const { site, sectionName, isEligibleForChat } = useAgentsManagerContext();
 	const navigate = useNavigate();
 	const { state } = useLocation();
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
@@ -47,7 +44,20 @@ export default function SupportGuide( {
 		return store.getAgentsManagerState();
 	}, [] );
 
+	// Without the AI chat entry button, use `collapsed` (a FAB) instead of `minimized`.
+	const closedChatState = hasAiChatEntryButton() ? 'minimized' : 'collapsed';
 	const isFromChat = !! ( state?.sessionId || state?.conversationId );
+
+	// Navigate back to the source route, preserving relevant state.
+	const handleBack = () => {
+		if ( state?.sessionId ) {
+			navigate( '/chat', { state } );
+		} else if ( state?.conversationId ) {
+			navigate( '/zendesk', { state } );
+		} else {
+			navigate( '/support-guides', { state } );
+		}
+	};
 
 	return (
 		<AgentUI.Container
@@ -59,22 +69,16 @@ export default function SupportGuide( {
 			error={ null }
 			onSubmit={ () => {} }
 			variant={ isDocked ? 'embedded' : 'floating' }
-			floatingChatState={ isOpen ? 'expanded' : 'collapsed' }
+			floatingChatState={ isOpen ? 'expanded' : closedChatState }
 			onClose={ onClose }
+			onExpand={ onExpand }
 			onStop={ onAbort }
 			expandOnHover={ false }
 		>
 			<AgentUI.ConversationView>
 				<ChatHeader
 					onClose={ onClose }
-					onBack={ () => {
-						// Navigate back to the source route, preserving `state` (`sessionId`/`conversationId`).
-						if ( state?.sessionId ) {
-							navigate( '/chat', { state } );
-						} else {
-							navigate( '/zendesk', { state } );
-						}
-					} }
+					onBack={ handleBack }
 					options={ chatHeaderOptions }
 					title={ __( 'Support Guides', '__i18n_text_domain__' ) }
 				/>
@@ -82,7 +86,7 @@ export default function SupportGuide( {
 					<div className="agent-manager-support-guide-content help-center__container-content">
 						<HelpCenterArticle
 							sectionName={ sectionName }
-							currentSiteDomain={ currentSiteDomain }
+							currentSiteDomain={ site?.domain }
 							isEligibleForChat={ isEligibleForChat }
 							forceEmailSupport={ false }
 						/>

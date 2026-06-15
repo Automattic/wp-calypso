@@ -1,27 +1,32 @@
+import { HostingFeatures } from '@automattic/api-core';
 import {
 	siteBySlugQuery,
 	siteWordPressVersionQuery,
 	wpOrgCoreVersionQuery,
 } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
-import { canViewWordPressSettings } from '../features';
+import { canOptOutOfWordPressBeta, canSwitchWordPressVersion } from '../features';
+import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
+import { BetaOptOutButton } from './beta-opt-out-button';
 import { BetaProgramNotice } from './beta-program-notice';
 import { LatestVersionNotice } from './latest-version-notice';
 import { useVersionSwitch } from './use-version-switch';
 import { VersionForm } from './version-form';
 import { VersionSwitchNotice } from './version-switch-notice';
+import type { Site } from '@automattic/api-core';
 
-function WordPressSettingsForm( { siteSlug }: { siteSlug: string } ) {
-	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+function VersionManagement( { site }: { site: Site } ) {
 	const { data: currentVersion } = useQuery( siteWordPressVersionQuery( site.ID ) );
 	const versionSwitch = useVersionSwitch( site );
 	const { isSwitching, switchedToBeta, switchedToLatest, backupState, targetVersion } =
@@ -30,10 +35,12 @@ function WordPressSettingsForm( { siteSlug }: { siteSlug: string } ) {
 	// Resolve the target version tag (e.g. "beta") to a display string (e.g. "7.0-RC2").
 	const { data: latestVersion = '' } = useQuery( wpOrgCoreVersionQuery() );
 	const { data: betaVersion = '' } = useQuery( wpOrgCoreVersionQuery( 'beta' ) );
+	const versionsMatch = !! latestVersion && latestVersion === betaVersion;
 
 	let notice;
-	if ( isSwitching ) {
-		// Switching in progress — show backup/progress notices.
+	if ( versionsMatch ) {
+		notice = null;
+	} else if ( isSwitching ) {
 		notice = (
 			<VersionSwitchNotice
 				backupState={ backupState }
@@ -41,52 +48,79 @@ function WordPressSettingsForm( { siteSlug }: { siteSlug: string } ) {
 			/>
 		);
 	} else if ( switchedToLatest ) {
-		// Just switched back to stable.
 		notice = <LatestVersionNotice wpVersion={ latestVersion } />;
 	} else if ( switchedToBeta || currentVersion === 'beta' ) {
-		// Enrolled in beta — show program notice.
 		notice = <BetaProgramNotice site={ site } wpVersion={ betaVersion } />;
 	}
 
 	return (
-		<PageLayout
-			size="small"
-			header={
-				<PageHeader
-					prefix={ <Breadcrumbs length={ 2 } /> }
-					title="WordPress"
-					description={ __( 'Manage your WordPress version.' ) }
-				/>
-			}
-			notices={ notice }
-		>
+		<VStack spacing={ 6 }>
+			{ notice }
 			<VersionForm
 				site={ site }
 				currentVersion={ currentVersion }
 				versionSwitch={ versionSwitch }
 			/>
-		</PageLayout>
+		</VStack>
+	);
+}
+
+function BetaProgramContent( { site }: { site: Site } ) {
+	const [ justOptedOut, setJustOptedOut ] = useState( false );
+	const isEligible = canSwitchWordPressVersion( site ) || canOptOutOfWordPressBeta( site, 'beta' );
+	const { data: currentVersion } = useQuery( {
+		...siteWordPressVersionQuery( site.ID ),
+		enabled: isEligible,
+	} );
+	const { data: betaVersion = '' } = useQuery( {
+		...wpOrgCoreVersionQuery( 'beta' ),
+		enabled: isEligible,
+	} );
+	const { data: latestVersion = '' } = useQuery( {
+		...wpOrgCoreVersionQuery(),
+		enabled: isEligible,
+	} );
+
+	const versionsMatch = !! latestVersion && latestVersion === betaVersion;
+
+	if ( justOptedOut && ! versionsMatch ) {
+		return <LatestVersionNotice wpVersion={ latestVersion } />;
+	}
+
+	if ( canOptOutOfWordPressBeta( site, currentVersion ) && ! versionsMatch ) {
+		return (
+			<BetaProgramNotice
+				site={ site }
+				wpVersion={ betaVersion }
+				actions={ <BetaOptOutButton site={ site } onSuccess={ () => setJustOptedOut( true ) } /> }
+			/>
+		);
+	}
+
+	return (
+		<HostingFeatureGatedWithCallout
+			site={ site }
+			feature={ HostingFeatures.BACKUPS_SELF_SERVE }
+			upsellId="site-settings-wordpress"
+		>
+			<VersionManagement site={ site } />
+		</HostingFeatureGatedWithCallout>
 	);
 }
 
 export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
-	if ( canViewWordPressSettings( site ) ) {
-		return <WordPressSettingsForm siteSlug={ siteSlug } />;
-	}
+	const renderContent = () => {
+		if ( isEnabled( 'dashboard/wp-beta-program' ) ) {
+			return <BetaProgramContent site={ site } />;
+		}
 
-	return (
-		<PageLayout
-			size="small"
-			header={
-				<PageHeader
-					prefix={ <Breadcrumbs length={ 2 } /> }
-					title="WordPress"
-					description={ __( 'Manage your WordPress version.' ) }
-				/>
-			}
-		>
+		if ( site.is_wpcom_staging_site ) {
+			return <VersionManagement site={ site } />;
+		}
+
+		return (
 			<Notice>
 				<VStack>
 					<Text as="p">
@@ -110,6 +144,21 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 					) }
 				</VStack>
 			</Notice>
+		);
+	};
+
+	return (
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title="WordPress"
+					description={ __( 'Manage your WordPress version.' ) }
+				/>
+			}
+		>
+			{ renderContent() }
 		</PageLayout>
 	);
 }

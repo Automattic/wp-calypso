@@ -36,16 +36,19 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 		let editorPage: EditorPage;
 		let editorContext: EditorContext;
 		let publishedPostContext: PublishedPostContext;
+		let testAccount: TestAccount;
+		let siteSlug: string;
 
 		beforeAll( async () => {
 			page = await browser.newPage();
 			editorPage = new EditorPage( page );
-			const testAccount = new TestAccount( accountName );
+			testAccount = new TestAccount( accountName );
 			await testAccount.authenticate( page );
+			siteSlug = testAccount.getSiteURL( { protocol: false } );
 		} );
 
 		it( 'Go to the new post page', async () => {
-			await editorPage.visit( 'post' );
+			await editorPage.visit( 'post', { siteSlug } );
 		} );
 
 		it( 'Enter post title', async () => {

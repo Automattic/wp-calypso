@@ -122,7 +122,7 @@ export function LaunchAgencyDevelopmentSiteForm( { site }: { site: Site } ) {
 	);
 }
 
-export function LaunchForm( { site, onSiteLaunch }: { site: Site; onSiteLaunch?: () => void } ) {
+export function LaunchForm( { site }: { site: Site } ) {
 	return (
 		<>
 			<TrialUpsellNotice site={ site } />
@@ -132,7 +132,6 @@ export function LaunchForm( { site, onSiteLaunch }: { site: Site; onSiteLaunch?:
 					<SiteLaunchButton
 						site={ site }
 						tracksContext="site_settings"
-						onSiteLaunch={ onSiteLaunch }
 						backTo={ `/sites/${ site.slug }` }
 					/>
 				}

@@ -133,7 +133,7 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 				if ( viewportName === 'mobile' ) {
 					await page.getByTitle( 'Menu', { exact: true } ).click();
 				}
-				await page.getByRole( 'link', { name: 'Domains' } ).click();
+				await page.locator( '#wpcom' ).getByRole( 'link', { name: 'Domains' } ).click();
 			} else if ( viewportName === 'mobile' ) {
 				await page.getByRole( 'button', { name: 'Menu' } ).click();
 				await page

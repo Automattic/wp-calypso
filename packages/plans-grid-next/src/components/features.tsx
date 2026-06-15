@@ -102,8 +102,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	setActiveTooltipId,
 } ) => {
 	const translate = useTranslate();
-	const { enableFeatureTooltips, gridPlans, isExperimentVariant, useFocusedComparisonFeatures } =
-		usePlansGridContext();
+	const { enableFeatureTooltips, gridPlans, isExperimentVariant } = usePlansGridContext();
 
 	return (
 		<>
@@ -136,15 +135,13 @@ const PlanFeatures2023GridFeatures: React.FC< {
 					'upload-video',
 				];
 
-				// Apply green styling for domain feature in experiment variants (not focused long-list or control)
+				// Apply green styling for domain feature in the rolled-out cohort.
 				const isCustomDomainFeatureWithPaidDomain =
 					currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN &&
 					paidDomainName &&
 					! isFreePlan( planSlug );
 				const shouldHighlightDomainFeature =
-					isCustomDomainFeatureWithPaidDomain &&
-					isExperimentVariant &&
-					! useFocusedComparisonFeatures;
+					isCustomDomainFeatureWithPaidDomain && isExperimentVariant;
 
 				const divClasses = clsx( '', getPlanClass( planSlug ), {
 					'is-last-feature': featureIndex + 1 === features.length,

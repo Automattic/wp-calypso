@@ -1,6 +1,7 @@
 import { useEffect } from '@wordpress/element';
 import ZoomActionButton from '../components/zoom-action-button';
 import { isEditorPage } from '../utils/is-editor-page';
+import { isShowComponentTool } from '../utils/show-component-tools';
 import type { UseAgentChatReturn, UIMessage } from '@automattic/agenttic-client';
 
 type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
@@ -17,11 +18,21 @@ export default function useZoomAction( registerMessageActions: RegisterMessageAc
 					return [];
 				}
 
-				// Only show zoom on `show_component` tool messages.
+				// Only show zoom on `show_component` tool messages, and let
+				// individual component types opt out via `data.hideZoomAction`
+				// (e.g. title-picker doesn't need canvas zoom — it edits the
+				// post title, not block content).
 				const firstPartText = message.content?.[ 0 ]?.text ?? '';
 				try {
 					const parsed = JSON.parse( firstPartText );
-					if ( parsed.tool_id !== 'big_sky__show_component' ) {
+					if ( ! isShowComponentTool( parsed.tool_id ) ) {
+						return [];
+					}
+					if (
+						parsed.data?.hideZoomAction ||
+						parsed.data?.type === 'color-picker' ||
+						parsed.data?.type === 'font-picker'
+					) {
 						return [];
 					}
 				} catch {

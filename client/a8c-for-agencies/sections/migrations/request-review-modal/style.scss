@@ -1,0 +1,23 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.request-review-modal {
+	max-width: 480px;
+
+	.a4a-modal__main {
+		height: auto;
+
+		@include break-large {
+			width: auto;
+		}
+	}
+
+	.a4a-modal__footer {
+		position: static;
+		width: auto;
+	}
+
+	.components-textarea-control__input {
+		resize: vertical;
+	}
+}

@@ -5,7 +5,7 @@
 	font-size: $font-size-2x-large;
 	font-weight: $font-weight-regular;
 	line-height: $font-line-height-2x-large;
-	color: $gray-900;
+	color: var(--dashboard__text-color);
 	margin: 0;
 }
 
@@ -15,7 +15,7 @@
 	}
 
 	.plan-price__currency-symbol {
-		color: $gray-700;
+		color: var(--dashboard__text-muted-color);
 		font-size: $font-size-medium;
 		font-weight: $font-weight-regular;
 		line-height: $font-line-height-small;

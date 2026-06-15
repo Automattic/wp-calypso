@@ -67,10 +67,11 @@ export const useInstallGithub = () => {
 
 	recordTracksEvent( 'calypso_hosting_github_app_open_auth_popup_requested' );
 
-	const authorizeApp = async ( { code }: { code: string } ) => {
+	const authorizeApp = async ( { code, state }: { code: string; state: string } ) => {
 		const response = await postLoginRequest( 'exchange-social-auth-code', {
 			service: 'github',
 			auth_code: code,
+			state,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 		} );
@@ -91,7 +92,7 @@ export const useInstallGithub = () => {
 					recordTracksEvent( 'calypso_hosting_github_app_authorised_success' );
 
 					try {
-						await authorizeApp( { code: data.code } );
+						await authorizeApp( { code: data.code, state: data.state } );
 						popup.location = INSTALLATION_URL;
 					} catch {
 						popup.close();
@@ -99,7 +100,7 @@ export const useInstallGithub = () => {
 						recordTracksEvent( 'calypso_hosting_github_app_install_failed' );
 
 						createErrorNotice( __( 'Failed to authorize GitHub. Please try again.' ), {
-							duration: 5000,
+							type: 'snackbar',
 						} );
 					}
 				}
@@ -120,7 +121,7 @@ export const useInstallGithub = () => {
 							),
 							{
 								id: NOTICE_ID,
-								showDismiss: true,
+								isDismissible: true,
 							}
 						);
 						return;
@@ -135,7 +136,7 @@ export const useInstallGithub = () => {
 			recordTracksEvent( 'calypso_hosting_github_app_install_failed' );
 
 			createErrorNotice( __( 'Failed to authorize GitHub. Please try again.' ), {
-				duration: 5000,
+				type: 'snackbar',
 			} );
 		}
 	};

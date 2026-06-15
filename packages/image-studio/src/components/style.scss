@@ -69,7 +69,7 @@ body.js.is-image-studio-open {
 	input,
 	select,
 	textarea {
-		color: inherit !important;
+		color: inherit;
 	}
 
 	// Restore agenttic-ui button backgrounds stripped by P2's
@@ -200,17 +200,18 @@ body.js.is-image-studio-open {
 	gap: 8px;
 }
 
-.image-studio-badge {
-	padding: 2px 8px;
-	min-height: 24px;
-	border-radius: 2px;
-	max-width: 100%;
-	display: inline-block;
-	background-color: #1f2c70;
-	color: #9fadfb;
-	font-size: $text-xs;
-	font-weight: 400;
-	line-height: 20px;
+.image-studio-modal__media-library-disclaimer {
+	margin: 6px 0 0;
+	font-size: 12px;
+	color: #a8a8a8;
+	text-align: center;
+}
+
+.image-studio-modal__experimental-tag {
+	position: absolute;
+	top: 14px;
+	left: 16px;
+	z-index: 5;
 }
 
 /* ==========================================================================
@@ -568,6 +569,37 @@ body.js.is-image-studio-open {
 
 	&.is-selected &__label {
 		color: #fff;
+	}
+
+	// One-line explainer below the label (video styles only).
+	&__description {
+		font-size: 11px;
+		font-style: italic;
+		line-height: 1.4;
+		text-align: center;
+		color: #b0b0b0;
+		max-width: 100%;
+		word-wrap: break-word;
+	}
+
+	&.is-selected &__description {
+		color: #d0d0d0;
+	}
+
+	// Disabled (teaser) card — visible but inert. The preview thumbnail
+	// carries the "Coming soon" treatment; we just dim + de-activate it.
+	&.is-disabled {
+		cursor: not-allowed;
+		opacity: 0.55;
+
+		&:hover {
+			background-color: transparent;
+		}
+	}
+
+	&.is-disabled &__label,
+	&.is-disabled &__description {
+		color: inherit;
 	}
 }
 

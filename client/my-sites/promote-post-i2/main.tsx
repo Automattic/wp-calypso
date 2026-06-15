@@ -4,12 +4,10 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import './style.scss';
 import { InfiniteData, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
 import {
@@ -46,6 +44,7 @@ import {
 import { useSelector } from 'calypso/state';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import BlazePage from './components/blaze-page';
 import BlazePageViewTracker from './components/blaze-page-view-tracker';
 import CampaignsTotalStats from './components/campaigns-total-stats';
 import MainWrapper from './components/main-wrapper';
@@ -268,19 +267,11 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 		<MainWrapper>
 			<DocumentHead title={ translate( 'Advertising' ) } />
 
-			<div className="promote-post-i2__top-bar-container">
-				<div className="promote-post-i2__top-bar">
-					<FormattedHeader
-						brandFont
-						className={ clsx( 'advertising__page-header' ) }
-						headerText={ translate( 'Dashboard' ) }
-						align="left"
-					/>
-
-					<div className="promote-post-i2__top-bar-buttons">
+			<BlazePage
+				actions={
+					<>
 						<InlineSupportLink
 							supportContext="advertising"
-							className="button posts-list-banner__border-button"
 							showIcon={ false }
 							showSupportModal={ ! isSelfHosted }
 						/>
@@ -291,152 +282,156 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 						>
 							{ translate( 'Promote' ) }
 						</Button>
+					</>
+				}
+			>
+				<div className="promote-post-i2__page-body">
+					{
+						// TODO: Uncomment when DebtNotifier is implemented
+						/* <DebtNotifier /> */
+					 }
+
+					<CampaignsTotalStats
+						totalImpressions={ campaignsStats?.total_impressions }
+						totalClicks={ campaignsStats?.total_clicks }
+					/>
+
+					<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
+
+					<div className="promote-post-i2__aux-wrapper promote-post-credits__notice-container">
+						<CreditsNotice />
 					</div>
+
+					{ ! isLoadingBillingSummary && paymentBlocked && (
+						<Notice
+							showDismiss={ false }
+							status="is-error"
+							icon="notice-outline"
+							className="promote-post-i2__payment-blocked-notice"
+							theme="light"
+						>
+							{ translate(
+								'Your account does not have the capabilities to promote. {{wpcomSupport}}Reach out to us{{/wpcomSupport}} for support.',
+								{
+									components: {
+										wpcomSupport: (
+											<a
+												href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+									},
+								}
+							) }
+						</Notice>
+					) }
+
+					{ shouldDisplayDebtAndPaymentLinks && (
+						<>
+							<Notice
+								theme="light"
+								showDismiss={ false }
+								status="is-error"
+								icon="notice-outline"
+								className="promote-post-i2__payment-blocked-notice wpcomsh-notice"
+							>
+								{ translate(
+									'Your account currently has an outstanding balance of $%(debtAmount)s. Please resolve this using the links below before creating new campaigns.',
+									{
+										args: {
+											debtAmount: data.debt || '',
+											// this is just a fallback. debt should never be undefined
+											// it is checked in shouldDisplayDebtAndPaymentLinks
+										},
+									}
+								) }
+							</Notice>
+							<PaymentLinks payment_links={ data?.paymentLinks } />
+						</>
+					) }
+
+					{ /* Render campaigns tab */ }
+					{ selectedTab === 'campaigns' && (
+						<>
+							<BlazePageViewTracker
+								path={ getAdvertisingDashboardPath( '/campaigns/:site' ) }
+								title="Advertising > Campaigns"
+							/>
+							<CampaignsList
+								isLoading={ campaignIsLoadingNewContent }
+								isFetching={ campaignIsFetching }
+								isError={ campaignError as DSPMessage }
+								fetchNextPage={ fetchCampaignsNextPage }
+								handleSearchOptions={ setCampaignsSearchOptions }
+								totalCampaigns={ totalCampaignsUnfiltered || 0 }
+								hasMorePages={ campaignsHasMorePages }
+								campaigns={ pagedCampaigns as Campaign[] }
+							/>
+						</>
+					) }
+
+					{ /* Render payments tab */ }
+					{ selectedTab === 'payments' && (
+						<>
+							<BlazePageViewTracker
+								path={ getAdvertisingDashboardPath(
+									receiptId ? '/payments/receipt/:receiptId/:site' : '/payments/:site'
+								) }
+								title={ receiptId ? 'Advertising > Payment Receipt' : 'Advertising > Payments' }
+							/>
+
+							{ receiptId ? (
+								<div className="payment-receipt-container">
+									<div className="payment-receipt-container__header">
+										<button
+											className="payment-receipt-container__back-button"
+											onClick={ () => page( getAdvertisingDashboardPath( '/payments' ) ) }
+										>
+											{ translate( '← Back to payments' ) }
+										</button>
+									</div>
+									<PaymentReceipt paymentId={ receiptId } />
+								</div>
+							) : (
+								<PaymentsList
+									isLoading={ isLoadingPayments }
+									isError={ paymentsError as DSPMessage }
+									isFetching={ isFetchingPayments }
+									payments={ payments?.payments }
+									selectedPaymentsFilter={ fetchPaymentsForCurrentSite }
+									setFetchPaymentsForCurrentSite={ setFetchPaymentsForCurrentSite }
+								/>
+							) }
+						</>
+					) }
+
+					{ /* Render posts tab */ }
+					{ selectedTab !== 'campaigns' &&
+						selectedTab !== 'credits' &&
+						selectedTab !== 'payments' && (
+							<>
+								{ renderWarningNotices( postsWarnings ) }
+
+								<BlazePageViewTracker
+									path={ getAdvertisingDashboardPath( '/posts/:site' ) }
+									title="Advertising > Ready to Promote"
+								/>
+								<PostsList
+									isLoading={ postsIsLoadingNewContent }
+									isFetching={ postIsFetching }
+									isError={ postError as DSPMessage }
+									fetchNextPage={ fetchPostsNextPage }
+									handleSearchOptions={ setPostsSearchOptions }
+									totalCampaigns={ totalPostsUnfiltered || 0 }
+									hasMorePages={ postsHasMorePages }
+									posts={ posts as BlazablePost[] }
+									hasPaymentsBlocked={ paymentBlocked }
+								/>
+							</>
+						) }
 				</div>
-			</div>
-
-			{
-				// TODO: Uncomment when DebtNotifier is implemented
-				/* <DebtNotifier /> */
-			 }
-
-			<CampaignsTotalStats
-				totalImpressions={ campaignsStats?.total_impressions }
-				totalClicks={ campaignsStats?.total_clicks }
-			/>
-
-			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
-
-			<div className="promote-post-i2__aux-wrapper promote-post-credits__notice-container">
-				<CreditsNotice />
-			</div>
-
-			{ ! isLoadingBillingSummary && paymentBlocked && (
-				<Notice
-					showDismiss={ false }
-					status="is-error"
-					icon="notice-outline"
-					className="promote-post-i2__payment-blocked-notice"
-					theme="light"
-				>
-					{ translate(
-						'Your account does not have the capabilities to promote. {{wpcomSupport}}Reach out to us{{/wpcomSupport}} for support.',
-						{
-							components: {
-								wpcomSupport: (
-									<a
-										href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						}
-					) }
-				</Notice>
-			) }
-
-			{ shouldDisplayDebtAndPaymentLinks && (
-				<>
-					<Notice
-						theme="light"
-						showDismiss={ false }
-						status="is-error"
-						icon="notice-outline"
-						className="promote-post-i2__payment-blocked-notice wpcomsh-notice"
-					>
-						{ translate(
-							'Your account currently has an outstanding balance of $%(debtAmount)s. Please resolve this using the links below before creating new campaigns.',
-							{
-								args: {
-									debtAmount: data.debt || '',
-									// this is just a fallback. debt should never be undefined
-									// it is checked in shouldDisplayDebtAndPaymentLinks
-								},
-							}
-						) }
-					</Notice>
-					<PaymentLinks payment_links={ data?.paymentLinks } />
-				</>
-			) }
-
-			{ /* Render campaigns tab */ }
-			{ selectedTab === 'campaigns' && (
-				<>
-					<BlazePageViewTracker
-						path={ getAdvertisingDashboardPath( '/campaigns/:site' ) }
-						title="Advertising > Campaigns"
-					/>
-					<CampaignsList
-						isLoading={ campaignIsLoadingNewContent }
-						isFetching={ campaignIsFetching }
-						isError={ campaignError as DSPMessage }
-						fetchNextPage={ fetchCampaignsNextPage }
-						handleSearchOptions={ setCampaignsSearchOptions }
-						totalCampaigns={ totalCampaignsUnfiltered || 0 }
-						hasMorePages={ campaignsHasMorePages }
-						campaigns={ pagedCampaigns as Campaign[] }
-					/>
-				</>
-			) }
-
-			{ /* Render payments tab */ }
-			{ selectedTab === 'payments' && (
-				<>
-					<BlazePageViewTracker
-						path={ getAdvertisingDashboardPath(
-							receiptId ? '/payments/receipt/:receiptId/:site' : '/payments/:site'
-						) }
-						title={ receiptId ? 'Advertising > Payment Receipt' : 'Advertising > Payments' }
-					/>
-
-					{ receiptId ? (
-						<div className="payment-receipt-container">
-							<div className="payment-receipt-container__header">
-								<button
-									className="payment-receipt-container__back-button"
-									onClick={ () => page( getAdvertisingDashboardPath( '/payments' ) ) }
-								>
-									{ translate( '← Back to payments' ) }
-								</button>
-							</div>
-							<PaymentReceipt paymentId={ receiptId } />
-						</div>
-					) : (
-						<PaymentsList
-							isLoading={ isLoadingPayments }
-							isError={ paymentsError as DSPMessage }
-							isFetching={ isFetchingPayments }
-							payments={ payments?.payments }
-							selectedPaymentsFilter={ fetchPaymentsForCurrentSite }
-							setFetchPaymentsForCurrentSite={ setFetchPaymentsForCurrentSite }
-						/>
-					) }
-				</>
-			) }
-
-			{ /* Render posts tab */ }
-			{ selectedTab !== 'campaigns' && selectedTab !== 'credits' && selectedTab !== 'payments' && (
-				<>
-					{ renderWarningNotices( postsWarnings ) }
-
-					<BlazePageViewTracker
-						path={ getAdvertisingDashboardPath( '/posts/:site' ) }
-						title="Advertising > Ready to Promote"
-					/>
-					<PostsList
-						isLoading={ postsIsLoadingNewContent }
-						isFetching={ postIsFetching }
-						isError={ postError as DSPMessage }
-						fetchNextPage={ fetchPostsNextPage }
-						handleSearchOptions={ setPostsSearchOptions }
-						totalCampaigns={ totalPostsUnfiltered || 0 }
-						hasMorePages={ postsHasMorePages }
-						posts={ posts as BlazablePost[] }
-						hasPaymentsBlocked={ paymentBlocked }
-					/>
-				</>
-			) }
+			</BlazePage>
 		</MainWrapper>
 	);
 }

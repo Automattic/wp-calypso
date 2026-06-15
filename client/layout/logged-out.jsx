@@ -10,12 +10,14 @@ import { connect, useSelector } from 'react-redux';
 import { CookieBannerContainerSSR } from 'calypso/blocks/cookie-banner';
 import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversation/dialog';
 import AsyncLoad from 'calypso/components/async-load';
+import AsyncHelpCenterFab from 'calypso/components/help-center-fab/async';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
 import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
+import { useNav2026Props } from 'calypso/layout/use-nav-2026-props';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -36,7 +38,7 @@ import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getOnboardingUrl as getPatternLibraryOnboardingUrl } from 'calypso/my-sites/patterns/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { isTwoFactorEnabled } from 'calypso/state/login/selectors';
+import { getRedirectToOriginal, isTwoFactorEnabled } from 'calypso/state/login/selectors';
 import {
 	getCurrentOAuth2Client,
 	showOAuth2Layout,
@@ -57,6 +59,43 @@ import { refreshColorScheme, getColorSchemeFromCurrentQuery } from './color-sche
 import HelpCenterLoader from './help-center-loader';
 
 import './style.scss';
+
+const loadWooCoreProfiler = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-layout-masterbar-woo-core-profiler" */ 'calypso/layout/masterbar/woo-core-profiler'
+	);
+const loadJetpackCloudStyle = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-jetpack-cloud-style" */ 'calypso/jetpack-cloud/style'
+	);
+const loadA8cForAgenciesStyle = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-a8c-for-agencies-style" */ 'calypso/a8c-for-agencies/style'
+	);
+const loadGlobalNotices = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
+	);
+const loadSupportArticleDialog = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-support-article-dialog" */ 'calypso/blocks/support-article-dialog'
+	);
+
+const HELP_CENTER_FAB_SECTIONS = [
+	'accept-invite',
+	'checkout',
+	'mailing-lists',
+	'patterns',
+	'performance-profiler',
+	'plugins',
+	'reader',
+	'site-profiler',
+	'theme',
+	'themes',
+];
+
+// Fallback when section name is unreliable — e.g. /me/account/closed activates as 'me'.
+const HELP_CENTER_FAB_ROUTES = [ '/me/account/closed' ];
 
 const LayoutLoggedOut = ( {
 	isAkismet,
@@ -88,10 +127,12 @@ const LayoutLoggedOut = ( {
 	userAllowedToHelpCenter,
 	colorScheme,
 	isJetpackCloud,
+	isJetpackConnectorLogin,
 } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
 	const loggedInAction = useSelector( getLastActionRequiresLogin );
+	const nav2026Props = useNav2026Props();
 	const { partnerConfig } = usePartnerBranding();
 
 	const dashboard =
@@ -132,16 +173,23 @@ const LayoutLoggedOut = ( {
 		! isJetpackCloud &&
 		! isWooOAuth2Client( oauth2Client );
 
+	const isEligibleSection = HELP_CENTER_FAB_SECTIONS.includes( sectionName );
+
+	// Logged-in users use the masterbar control instead.
+	// Reader tag embeds are widgets meant to be iframed by third parties — no FAB.
+	const showHelpCenterFab =
+		! isLoggedIn &&
+		isEnabled( 'help-center/logged-out-fab' ) &&
+		( isEligibleSection || HELP_CENTER_FAB_ROUTES.includes( currentRoute ) ) &&
+		! isReaderTagEmbed &&
+		userAllowedToHelpCenter;
+
 	const loadHelpCenter =
-		// Load for all logged out users only on the devdocs page.
-		( isLoggedIn === false &&
-			isEnabled( 'help-center/logged-out' ) &&
-			'devdocs' === sectionName ) ||
-		( isLoggedIn &&
-			// we want to show only the Help center in my home and the help section (but not the FAB)
-			( [ 'home', 'help' ].includes( sectionName ) ||
-				currentRoute?.startsWith( '/start/do-it-for-me/' ) ) &&
-			userAllowedToHelpCenter );
+		isLoggedIn &&
+		// we want to show only the Help center in my home and the help section (but not the FAB)
+		( [ 'home', 'help' ].includes( sectionName ) ||
+			currentRoute?.startsWith( '/start/do-it-for-me/' ) ) &&
+		userAllowedToHelpCenter;
 
 	const isThemeShowcaseModern =
 		[ 'themes', 'theme' ].includes( sectionName ) &&
@@ -175,6 +223,7 @@ const LayoutLoggedOut = ( {
 		woo: isWoo,
 		'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
 		'jetpack-cloud': isJetpackCloud,
+		'is-jetpack-connector-login': isJetpackConnectorLogin,
 		'is-theme-showcase-modern': isThemeShowcaseModern,
 	};
 
@@ -237,6 +286,7 @@ const LayoutLoggedOut = ( {
 				isLoggedIn={ isLoggedIn }
 				sectionName={ sectionName }
 				className={ className }
+				{ ...nav2026Props }
 				{ ...( isEnabled( 'site-profiler/metrics' ) &&
 					! nonMonochromeSections.includes( sectionName ) && {
 						logoColor: 'white',
@@ -251,9 +301,7 @@ const LayoutLoggedOut = ( {
 	} else if ( isWooJPC ) {
 		classes.woo = true;
 		classes[ 'has-no-masterbar' ] = false;
-		masterbar = (
-			<AsyncLoad require="calypso/layout/masterbar/woo-core-profiler" placeholder={ null } />
-		);
+		masterbar = <AsyncLoad require={ loadWooCoreProfiler } placeholder={ null } />;
 	} else {
 		masterbar = ! masterbarIsHidden && (
 			<MasterbarLoggedOut
@@ -292,17 +340,13 @@ const LayoutLoggedOut = ( {
 					) }
 				</div>
 				{ isJetpackCloudEnvironment() && (
-					<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
+					<AsyncLoad require={ loadJetpackCloudStyle } placeholder={ null } />
 				) }
 				{ isA8CForAgencies() && (
-					<AsyncLoad require="calypso/a8c-for-agencies/style" placeholder={ null } />
+					<AsyncLoad require={ loadA8cForAgenciesStyle } placeholder={ null } />
 				) }
 				<div id="content" className="layout__content">
-					<AsyncLoad
-						require="calypso/components/global-notices"
-						placeholder={ null }
-						id="notices"
-					/>
+					<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
 					<div id="primary" className="layout__primary">
 						{ primary }
 					</div>
@@ -319,7 +363,7 @@ const LayoutLoggedOut = ( {
 						<UniversalNavbarFooter currentRoute={ currentRoute } isLoggedIn={ isLoggedIn } />
 
 						{ config.isEnabled( 'layout/support-article-dialog' ) && (
-							<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
+							<AsyncLoad require={ loadSupportArticleDialog } placeholder={ null } />
 						) }
 					</>
 				) }
@@ -348,6 +392,8 @@ const LayoutLoggedOut = ( {
 							} }
 						/>
 					) }
+				{ /* Rendered last so the FAB tabs after the form, just before the dev badge. */ }
+				{ showHelpCenterFab && <AsyncHelpCenterFab sectionName={ sectionName } /> }
 			</div>
 		</Step.StepContainerV2Provider>
 	);
@@ -382,8 +428,10 @@ export default withCurrentRoute(
 			const isWooJPC = isWooJPCFlow( state );
 			const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
 			const isLogin = currentRoute.startsWith( '/log-in' );
+			const isWooCommerceQrLogin =
+				currentRoute === '/me/security/qr-login' && currentQuery?.origin === 'woocommerce';
 
-			const noMasterbarForRoute = isLogin || isInvitationURL;
+			const noMasterbarForRoute = isLogin || isInvitationURL || isWooCommerceQrLogin;
 			const isPopup = '1' === currentQuery?.is_popup;
 			const noMasterbarForSection =
 				! isWooOAuth2Client( oauth2Client ) &&
@@ -404,6 +452,14 @@ export default withCurrentRoute(
 			 * TODO: there is a possiblity this is not utilized. If that's the case, we can remove this call.
 			 */
 			const colorScheme = isWooJPC ? getColorSchemeFromCurrentQuery( currentQuery ) : null;
+
+			const redirectToOriginal = getRedirectToOriginal( state ) || currentQuery?.redirect_to;
+			const redirectFromParam = new URLSearchParams( redirectToOriginal?.split( '?' )[ 1 ] ).get(
+				'from'
+			);
+			const isJetpackConnectorLogin =
+				isJetpackLogin &&
+				( redirectFromParam === 'jetpack-connector' || currentQuery?.from === 'jetpack-connector' );
 
 			return {
 				isAkismet,
@@ -428,6 +484,7 @@ export default withCurrentRoute(
 				twoFactorEnabled,
 				colorScheme,
 				isJetpackCloud: isJetpackCloudOAuth2Client( oauth2Client ),
+				isJetpackConnectorLogin,
 			};
 		},
 		{ clearLastActionRequiresLogin }

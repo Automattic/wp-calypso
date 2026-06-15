@@ -12,14 +12,12 @@
  */
 
 import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
+import { isReaderChatAgent } from './is-reader-chat-agent';
+import { useReaderFollowupSuggestions } from './reader-followup-hook';
+import type { ImageUploadHook } from '../hooks/use-image-upload';
 import type { ToolProvider, ContextProvider, Suggestion, BigSkyMessage } from '../types';
 import type { UseAgentChatReturn } from '@automattic/agenttic-client';
-import type {
-	MarkdownComponents,
-	MarkdownExtensions,
-	UploadedImage,
-	UploadingImage,
-} from '@automattic/agenttic-ui';
+import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
 
 /**
  * Check if the unified experience flag is set via agentsManagerData.
@@ -61,6 +59,7 @@ export type AbilitiesSetupHook = ( actions: {
 	clearMessages: () => void;
 	clearSuggestions: UseAgentChatReturn[ 'clearSuggestions' ];
 	getAgentManager: typeof getAgentManager;
+	isProcessing?: boolean;
 	setIsThinking: ( isThinking: boolean ) => void;
 	deleteMarkedMessages: ( messages: Record< 'id', string >[] ) => void;
 	getSessionId: () => string | undefined;
@@ -72,9 +71,12 @@ export type AbilitiesSetupHook = ( actions: {
  * Suggestions hook type - for providing dynamic suggestions based on context
  * (e.g., selected block in editor). Returns an array of suggestions.
  */
-export type UseSuggestionsHook = ( maxSuggestions?: number ) => {
+export type UseSuggestionsHook = (
+	maxSuggestions?: number,
+	options?: { suggestionsVisible?: boolean }
+) => {
 	suggestions: Suggestion[];
-};
+} | void;
 
 export type SiteBuildUtils = {
 	hasSiteBuildMessages: ( messages: UIMessage[] ) => boolean;
@@ -99,43 +101,6 @@ type ChatComponentType =
  */
 export type GetChatComponent = ( type: ChatComponentType ) => React.ComponentType< unknown > | null;
 
-export type ImagePreview = {
-	id: string;
-	url: string;
-	name: string;
-	alt: string;
-	mime_type: string;
-	file: File;
-};
-
-export type MediaObject = {
-	id: number;
-	title: string;
-	fileName: string;
-	fileType: string;
-	fileSize: number;
-	dimensions: {
-		width: number;
-		height: number;
-	};
-	uploadDate: string;
-	uploadedBy: number;
-	url: string;
-	alt: string;
-	caption: string;
-};
-
-export type UseImageUploadResult = {
-	pendingImages: ImagePreview[];
-	uploadingImages: UploadingImage[];
-	isUploadingImages: boolean;
-	handleFilesSelected: ( files: File[] ) => Promise< void >;
-	handleRemoveImage: ( image: UploadedImage ) => void;
-	uploadImagesToWordPress: () => Promise< MediaObject[] >;
-};
-
-export type ImageUploadHook = () => UseImageUploadResult;
-
 /**
  * Checkpoint return type - for saving and restoring editor state so that AI actions can be undone.
  */
@@ -159,6 +124,30 @@ export type UseCheckpointReturn = {
 /** Hook that returns checkpoint utilities for the current editor session. */
 export type UseCheckpointHook = () => UseCheckpointReturn;
 
+export type { ImageUploadHook };
+
+/** Optional flags providers can declare to opt into AM chat-dock features. */
+export interface ProviderCapabilities {
+	/** Adds the "Split screen sidebar" chat-header menu item when true. */
+	supportsSplitScreen?: boolean;
+}
+
+/**
+ * OR-merge a provider's `capabilities` into the running map. Works on both
+ * plain objects and lazy Proxies (probed by direct key access, not iteration).
+ */
+export function mergeCapabilitiesInto( merged: ProviderCapabilities, capabilities: unknown ): void {
+	if ( ! capabilities || typeof capabilities !== 'object' ) {
+		return;
+	}
+	const caps = capabilities as ProviderCapabilities;
+	// Strict `=== true` because `capabilities` arrives as `unknown` from
+	// runtime-imported modules; a stray `'false'` string would otherwise opt in.
+	if ( caps.supportsSplitScreen === true ) {
+		merged.supportsSplitScreen = true;
+	}
+}
+
 export interface LoadedProviders {
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
@@ -173,18 +162,69 @@ export interface LoadedProviders {
 	siteBuildUtils?: SiteBuildUtils;
 	useImageUpload?: ImageUploadHook;
 	useCheckpoint?: UseCheckpointHook;
+	capabilities?: ProviderCapabilities;
+}
+
+export function mergeUseSuggestionsHooks(
+	hooks: UseSuggestionsHook[]
+): UseSuggestionsHook | undefined {
+	if ( hooks.length === 0 ) {
+		return undefined;
+	}
+
+	if ( hooks.length === 1 ) {
+		return hooks[ 0 ];
+	}
+
+	return ( maxSuggestions?: number, options?: { suggestionsVisible?: boolean } ) => {
+		const combined: Suggestion[] = [];
+		const seenIds = new Set< string >();
+		for ( const hook of hooks ) {
+			const suggestions = hook( maxSuggestions, options )?.suggestions ?? [];
+			for ( const s of suggestions ) {
+				if ( ! seenIds.has( s.id ) ) {
+					seenIds.add( s.id );
+					combined.push( s );
+				}
+			}
+		}
+		return { suggestions: combined };
+	};
 }
 
 /**
  * Load external agent providers from agentsManagerData.agentProviders.
  *
- * Each provider module ID is dynamically imported using WordPress's script module
+ * Providers can be dynamically imported using WordPress's script module
  * system. Modules should export { toolProvider, contextProvider }.
+ *
+ * Alternatively, an already-loaded provider object can be passed in.
+ *
+ * Both shapes feed the same downstream merge: any of `toolProvider`,
+ * `contextProvider`, `getChatComponent`, `useSuggestions`, etc. are picked
+ * up from each entry and merged across all entries.
  * @returns Promise resolving to merged providers or empty object if none found.
  */
 export async function loadExternalProviders(): Promise< LoadedProviders > {
 	const agentProviders =
 		typeof agentsManagerData !== 'undefined' ? agentsManagerData?.agentProviders || [] : [];
+
+	// Only the public reader-chat entry registers the follow-up chip globals
+	// (`window.__jetpackReaderFollowupChips` / `reader-chat-followups-updated`).
+	// Register the bridge for every reader-chat agent variant that uses the
+	// public reader-chat entry.
+	const registerReaderFollowups =
+		typeof window !== 'undefined' &&
+		isReaderChatAgent(
+			( window as unknown as { agentsManagerData?: { agentId?: string } } ).agentsManagerData
+				?.agentId
+		);
+
+	if ( registerReaderFollowups ) {
+		// Reader Chat runs on the public frontend and should not inherit editor providers
+		// such as the Jetpack AI sidebar.
+		return { useSuggestions: useReaderFollowupSuggestions };
+	}
 
 	if ( agentProviders.length === 0 ) {
 		return {};
@@ -198,60 +238,195 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedNavigationContinuation: NavigationContinuationHook | undefined;
 	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
 	let mergedGetChatComponent: GetChatComponent | undefined;
-	let mergedUseSuggestions: UseSuggestionsHook | undefined;
 	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
 	let mergedImageUpload: ImageUploadHook | undefined;
 	let mergedUseCheckpoint: UseCheckpointHook | undefined;
+	// OR-merged across all providers.
+	const mergedCapabilities: ProviderCapabilities = {};
 
-	for ( const moduleId of agentProviders ) {
-		try {
-			// Dynamic import of registered script module
-			// The webpackIgnore comment tells webpack not to bundle this - it's loaded at runtime
-			const module = await import( /* webpackIgnore: true */ moduleId );
+	// Collect exports that need to be merged across all providers.
+	const allToolProviders: ToolProvider[] = [];
+	const allGetChatComponents: GetChatComponent[] = [];
+	const allAbilitiesSetups: AbilitiesSetupHook[] = [];
+	const allUseSuggestions: UseSuggestionsHook[] = [];
+	const allGetEmptyViewSuggestions: ( () => Suggestion[] )[] = [];
 
-			if ( module.toolProvider ) {
-				mergedToolProvider = module.toolProvider;
-			}
-			if ( module.contextProvider ) {
-				mergedContextProvider = module.contextProvider;
-			}
-			if ( module.getEmptyViewSuggestions ) {
-				mergedGetEmptyViewSuggestions = module.getEmptyViewSuggestions;
-			}
-			if ( module.markdownComponents ) {
-				mergedMarkdownComponents = module.markdownComponents;
-			}
-			if ( module.markdownExtensions ) {
-				mergedMarkdownExtensions = module.markdownExtensions;
-			}
-			if ( module.useNavigationContinuation ) {
-				mergedNavigationContinuation = module.useNavigationContinuation;
-			}
-			if ( module.useAbilitiesSetup ) {
-				mergedAbilitiesSetup = module.useAbilitiesSetup;
-			}
-			if ( module.useSuggestions ) {
-				mergedUseSuggestions = module.useSuggestions;
-			}
-			if ( module.getChatComponent ) {
-				mergedGetChatComponent = module.getChatComponent;
-			}
-			if ( module.siteBuildUtils ) {
-				mergedSiteBuildUtils = module.siteBuildUtils;
-			}
-			if ( module.useImageUpload ) {
-				mergedImageUpload = module.useImageUpload;
-			}
-			if ( module.useCheckpoint ) {
-				mergedUseCheckpoint = module.useCheckpoint;
+	// Load all providers in parallel to avoid serializing network/module fetches.
+	// Results are processed in registration order to preserve first-write-wins semantics.
+	const loadedModules = await Promise.all(
+		agentProviders.map( async ( providerEntry ) => {
+			if ( typeof providerEntry === 'object' && providerEntry !== null ) {
+				return providerEntry;
 			}
 
-			// eslint-disable-next-line no-console
-			console.log( `[AgentsManager] Loaded provider "${ moduleId }"` );
-		} catch ( error ) {
-			// eslint-disable-next-line no-console
-			console.warn( `[AgentsManager] Failed to load provider "${ moduleId }":`, error );
+			try {
+				// Dynamic import of registered script module
+				// The webpackIgnore comment tells webpack not to bundle this - it's loaded at runtime
+				const module = await import( /* webpackIgnore: true */ providerEntry );
+				// eslint-disable-next-line no-console
+				console.log( `[AgentsManager] Loaded provider "${ providerEntry }"` );
+				return module;
+			} catch ( error ) {
+				// eslint-disable-next-line no-console
+				console.warn( `[AgentsManager] Failed to load provider "${ providerEntry }":`, error );
+				return null;
+			}
+		} )
+	);
+
+	for ( const module of loadedModules ) {
+		if ( ! module ) {
+			continue;
 		}
+
+		// These exports are merged across all providers.
+		if ( module.toolProvider ) {
+			allToolProviders.push( module.toolProvider );
+		}
+		if ( module.getChatComponent ) {
+			allGetChatComponents.push( module.getChatComponent );
+		}
+		if ( module.useAbilitiesSetup ) {
+			allAbilitiesSetups.push( module.useAbilitiesSetup );
+		}
+		if ( module.useSuggestions ) {
+			allUseSuggestions.push( module.useSuggestions );
+		}
+		if ( module.getEmptyViewSuggestions ) {
+			allGetEmptyViewSuggestions.push( module.getEmptyViewSuggestions );
+		}
+
+		// First-write-wins for singleton exports.
+		if ( module.contextProvider && ! mergedContextProvider ) {
+			mergedContextProvider = module.contextProvider;
+		}
+		if ( module.markdownComponents && ! mergedMarkdownComponents ) {
+			mergedMarkdownComponents = module.markdownComponents;
+		}
+		if ( module.markdownExtensions && ! mergedMarkdownExtensions ) {
+			mergedMarkdownExtensions = module.markdownExtensions;
+		}
+		if ( module.useNavigationContinuation && ! mergedNavigationContinuation ) {
+			mergedNavigationContinuation = module.useNavigationContinuation;
+		}
+		if ( module.siteBuildUtils && ! mergedSiteBuildUtils ) {
+			mergedSiteBuildUtils = module.siteBuildUtils;
+		}
+		if ( module.useImageUpload && ! mergedImageUpload ) {
+			mergedImageUpload = module.useImageUpload;
+		}
+		if ( module.useCheckpoint && ! mergedUseCheckpoint ) {
+			mergedUseCheckpoint = module.useCheckpoint;
+		}
+
+		mergeCapabilitiesInto( mergedCapabilities, module.capabilities );
+	}
+
+	// Merge toolProviders: first-write-wins by ability name, matching the
+	// resolution order of every other merged provider export (contextProvider,
+	// getChatComponent, useSuggestions, etc). Providers are processed in the
+	// order they were registered; earlier providers win on ability-name
+	// collisions.
+	if ( allToolProviders.length === 1 ) {
+		mergedToolProvider = allToolProviders[ 0 ];
+	} else if ( allToolProviders.length > 1 ) {
+		// Fetch all abilities once and build a name→provider map so that
+		// executeAbility can look up the owning provider in O(1) instead of
+		// re-querying getAbilities() on every call.
+		const allAbilityResults = await Promise.all(
+			allToolProviders.map( async ( tp ) => {
+				try {
+					return await tp.getAbilities();
+				} catch ( error ) {
+					// eslint-disable-next-line no-console
+					console.warn( '[AgentsManager] Failed to load abilities from provider:', error );
+					return [];
+				}
+			} )
+		);
+		const abilityProviderMap = new Map< string, ToolProvider >();
+		const seenAbilities = new Map< string, unknown >();
+		// Normalize ability names: AM converts `/` → `__` and `-` → `_`
+		// when routing tool calls. Index both raw and normalized forms
+		// so executeAbility matches regardless of which form the caller uses.
+		const normalize = ( name: string ) => name.replace( /\//g, '__' ).replace( /-/g, '_' );
+		for ( let i = 0; i < allToolProviders.length; i++ ) {
+			for ( const ability of allAbilityResults[ i ] ) {
+				if ( ! abilityProviderMap.has( ability.name ) ) {
+					abilityProviderMap.set( ability.name, allToolProviders[ i ] );
+					const normalized = normalize( ability.name );
+					if ( normalized !== ability.name ) {
+						abilityProviderMap.set( normalized, allToolProviders[ i ] );
+					}
+					seenAbilities.set( ability.name, ability );
+				}
+			}
+		}
+		const cachedAbilities = [ ...seenAbilities.values() ] as Awaited<
+			ReturnType< ToolProvider[ 'getAbilities' ] >
+		>;
+
+		mergedToolProvider = {
+			getAbilities: async () => cachedAbilities,
+			executeAbility: async ( name: string, args: unknown ) => {
+				// Use the pre-built map — avoids re-querying getAbilities() on
+				// every call and surfaces real errors from the owning provider
+				// instead of silently swallowing them.
+				const provider = abilityProviderMap.get( name );
+				if ( provider ) {
+					return provider.executeAbility( name, args );
+				}
+				throw new Error( `No provider handled ability: ${ name }` );
+			},
+		};
+	}
+
+	// Merge getChatComponent: try each provider, return first non-null.
+	if ( allGetChatComponents.length === 1 ) {
+		mergedGetChatComponent = allGetChatComponents[ 0 ];
+	} else if ( allGetChatComponents.length > 1 ) {
+		mergedGetChatComponent = ( ( type: string ) => {
+			for ( const fn of allGetChatComponents ) {
+				const result = fn( type as ChatComponentType );
+				if ( result ) {
+					return result;
+				}
+			}
+			return null;
+		} ) as GetChatComponent;
+	}
+
+	// Merge useAbilitiesSetup: call ALL providers' hooks.
+	if ( allAbilitiesSetups.length === 1 ) {
+		mergedAbilitiesSetup = allAbilitiesSetups[ 0 ];
+	} else if ( allAbilitiesSetups.length > 1 ) {
+		mergedAbilitiesSetup = ( ( actions ) => {
+			for ( const fn of allAbilitiesSetups ) {
+				fn( actions );
+			}
+		} ) as AbilitiesSetupHook;
+	}
+
+	// Merge useSuggestions: combine from all providers, dedupe by id.
+	const mergedUseSuggestions = mergeUseSuggestionsHooks( allUseSuggestions );
+
+	// Merge getEmptyViewSuggestions: combine from all providers, dedupe by id.
+	if ( allGetEmptyViewSuggestions.length === 1 ) {
+		mergedGetEmptyViewSuggestions = allGetEmptyViewSuggestions[ 0 ];
+	} else if ( allGetEmptyViewSuggestions.length > 1 ) {
+		mergedGetEmptyViewSuggestions = () => {
+			const combined: Suggestion[] = [];
+			const seenIds = new Set< string >();
+			for ( const fn of allGetEmptyViewSuggestions ) {
+				for ( const s of fn() ) {
+					if ( ! seenIds.has( s.id ) ) {
+						seenIds.add( s.id );
+						combined.push( s );
+					}
+				}
+			}
+			return combined;
+		};
 	}
 
 	return {
@@ -267,5 +442,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		siteBuildUtils: mergedSiteBuildUtils,
 		useImageUpload: mergedImageUpload,
 		useCheckpoint: mergedUseCheckpoint,
+		// Match peer fields: undefined when no provider opted in.
+		capabilities: Object.keys( mergedCapabilities ).length ? mergedCapabilities : undefined,
 	};
 }

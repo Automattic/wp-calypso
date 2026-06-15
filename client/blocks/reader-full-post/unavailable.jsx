@@ -10,7 +10,7 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 
 const noop = () => {};
 
-const ReaderFullPostUnavailable = ( { post, onBackClick, translate, layout } ) => {
+const ReaderFullPostUnavailable = ( { post, onBackClick = noop, translate, layout } ) => {
 	const statusCode = get( post, [ 'error', 'statusCode' ] );
 	const isRecentLayout = layout === 'recent';
 	let errorTitle = translate( 'Post unavailable' );
@@ -71,11 +71,7 @@ const ReaderFullPostUnavailable = ( { post, onBackClick, translate, layout } ) =
 
 ReaderFullPostUnavailable.propTypes = {
 	post: PropTypes.object.isRequired,
-	onBackClick: PropTypes.func.isRequired,
-};
-
-ReaderFullPostUnavailable.defaultProps = {
-	onBackClick: noop,
+	onBackClick: PropTypes.func,
 };
 
 export default localize( ReaderFullPostUnavailable );

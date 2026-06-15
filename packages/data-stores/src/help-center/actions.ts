@@ -8,6 +8,14 @@ import { STORE_KEY } from './constants';
 import { persistPreference } from './utils';
 import type { HelpCenterOptions, HelpCenterShowOptions } from './types';
 
+declare global {
+	interface Window {
+		_sva?: {
+			closeSurvey?: () => void;
+		};
+	}
+}
+
 export function setHelpCenterRouterHistory(
 	history: { entries: Location[]; index: number } | null
 ) {
@@ -195,6 +203,13 @@ export const setShowHelpCenter = function* (
 
 	if ( options ) {
 		yield setHelpCenterOptions( options );
+	}
+
+	// Close any Survicate survey that may already be visible.
+	// This covers the case where Survicate loads before the Help Center store
+	// is registered, so invokeSurvicateEvent's store-based guard can't catch it.
+	if ( typeof window !== 'undefined' ) {
+		window._sva?.closeSurvey?.();
 	}
 
 	return showHelpCenter( true );

@@ -391,6 +391,7 @@ export function isPendingPrimaryDomain( domain: DomainSummary ): boolean {
 	return (
 		domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION &&
 		domain.can_set_as_primary &&
-		! domain.primary_domain
+		! domain.primary_domain &&
+		! domain.expired
 	);
 }

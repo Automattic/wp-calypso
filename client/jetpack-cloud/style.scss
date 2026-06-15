@@ -1,3 +1,6 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 // custom properties for Jetpack
 :root {
 	// border-radius
@@ -14,8 +17,6 @@
 
 	.main:not(.is-wide-layout) {
 		box-sizing: border-box;
-		padding-left: 16px;
-		padding-right: 16px;
 	}
 
 	input::placeholder {

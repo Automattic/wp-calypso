@@ -72,6 +72,7 @@ export interface ReceiptItem {
 	variation_slug: string;
 	months_per_renewal_interval: number;
 	wpcom_product_slug: string;
+	store_subscription_id?: number | null;
 	cost_overrides: ReceiptItemCostOverride[];
 	volume: number;
 	credits_used: number | null;
@@ -89,6 +90,8 @@ export interface Receipt {
 	tax_integer: number;
 	amount_integer: number;
 	tax_country_code: string;
+	tax_state?: string;
+	tax_is_for_business?: boolean | null;
 	date: string;
 	desc: string;
 	org: string;
@@ -107,4 +110,19 @@ export interface Receipt {
 	items: ReceiptItem[];
 	tax_vendor_info?: TaxVendorInfo;
 	checkout_type?: string;
+	/**
+	 * Line items that failed to provision during checkout, keyed by site (blog) ID.
+	 * Only populated when the receipt is fetched with `include_failed_purchases=true`;
+	 * omitted otherwise. Used to surface partial-failure orders on the failed-purchases page.
+	 */
+	failed_purchases?: Record<
+		string,
+		Array< {
+			product_meta: string;
+			product_id: string | number;
+			product_slug: string;
+			product_cost: string | number;
+			product_name: string;
+		} >
+	>;
 }

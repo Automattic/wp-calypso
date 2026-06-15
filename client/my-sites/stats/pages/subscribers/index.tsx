@@ -5,7 +5,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
-import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import StatsModuleEmails from 'calypso/my-sites/stats/features/modules/stats-emails';
@@ -188,7 +187,6 @@ const StatsSubscribersPage = ( { period, context }: StatsSubscribersPageProps ) 
 							</StatsModuleListing>
 						</>
 					) ) }
-				<JetpackColophon />
 			</div>
 		</Main>
 	);

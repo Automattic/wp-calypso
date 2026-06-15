@@ -7,6 +7,7 @@ import {
 	PROCESSING,
 	ASYNC_PENDING,
 } from 'calypso/state/order-transactions/constants';
+import type { Receipt } from '@automattic/api-core';
 import type { OrderTransaction } from 'calypso/state/selectors/get-order-transaction';
 
 export interface PendingPageRedirectOptions {
@@ -53,6 +54,16 @@ export interface RedirectForTransactionStatusArgs {
 	 * logged in).
 	 */
 	fromSiteSlug?: string;
+	/**
+	 * Subscription ID of the purchase the user just made. Substituted into any
+	 * `:purchaseId` placeholder in `redirectTo` (analogous to `:receiptId`).
+	 *
+	 * If `redirectTo` contains `:purchaseId` and this is `undefined`, the
+	 * function returns `undefined` to keep the user on the pending page until
+	 * the caller resolves the ID.
+	 */
+	purchaseId?: number;
+	receipt?: Receipt;
 }
 
 /**
@@ -294,10 +305,12 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 		'calypso.localhost',
 		'my.localhost',
 		'my.woo.localhost',
+		'my.a4a.localhost',
 		'jetpack.cloud.localhost',
 		'cloud.jetpack.com',
 		'jetpack.com',
 		'akismet.com',
+		'gravatar.com',
 		'difmrequest.com',
 		'agencies.automattic.com',
 		'agencies.localhost',
@@ -335,6 +348,30 @@ function getDefaultSuccessUrl(
 	return `/checkout/thank-you/${ siteSlug ?? 'no-site' }/${ receiptId ?? 'unknown-receipt' }`;
 }
 
+function buildSuccessRedirect( {
+	effectiveReceiptId,
+	redirectTo,
+	siteSlug,
+	fromSiteSlug,
+	purchaseId,
+}: {
+	effectiveReceiptId: number;
+	redirectTo: string | undefined;
+	siteSlug: string | undefined;
+	fromSiteSlug: string | undefined;
+	purchaseId: number | undefined;
+} ): RedirectInstructions {
+	const fallbackUrl = getDefaultSuccessUrl( siteSlug, effectiveReceiptId );
+	let interpolated = interpolateReceiptId( redirectTo ?? fallbackUrl, effectiveReceiptId );
+	if ( interpolated.includes( ':purchaseId' ) ) {
+		if ( purchaseId === undefined ) {
+			return { url: fallbackUrl };
+		}
+		interpolated = interpolated.replaceAll( ':purchaseId', String( purchaseId ) );
+	}
+	return { url: filterAllowedRedirect( interpolated, siteSlug || fromSiteSlug, fallbackUrl ) };
+}
+
 /**
  * Calculate a URL to visit after the post-checkout pending page.
  *
@@ -368,9 +405,29 @@ export function getRedirectFromPendingPage( {
 	siteSlug,
 	saasRedirectUrl,
 	fromSiteSlug,
+	purchaseId,
+	receipt,
 }: RedirectForTransactionStatusArgs ): RedirectInstructions | undefined {
 	const checkoutUrl = siteSlug ? `/checkout/${ siteSlug }` : '/checkout/no-site';
 	const errorUrl = '/checkout/failed-purchases';
+
+	// If the receipt reports that some purchases failed, route to the
+	// failed-purchases page instead of the normal thank-you flow. Returns
+	// `undefined` when there are no partial failures so callers can fall through.
+	const getFailedPurchaseRedirect = (
+		effectiveReceiptId: number | undefined
+	): RedirectInstructions | undefined => {
+		if ( receipt?.failed_purchases && Object.keys( receipt.failed_purchases ).length > 0 ) {
+			return {
+				url: filterAllowedRedirect(
+					`${ errorUrl }?receipt_id=${ effectiveReceiptId }`,
+					siteSlug || fromSiteSlug,
+					errorUrl
+				),
+			};
+		}
+		return undefined;
+	};
 
 	// If SaaS Product Redirect URL was passed then just return as redirect instruction so that
 	// we can redirect user immediately to vendor application.
@@ -390,16 +447,16 @@ export function getRedirectFromPendingPage( {
 	// (eg: for free purchases which do not use Orders), then the order must
 	// already be complete. In that case, we can redirect immediately.
 	if ( receiptId && ! isLoadingOrder && ! transaction ) {
-		return {
-			url: filterAllowedRedirect(
-				interpolateReceiptId(
-					redirectTo ?? getDefaultSuccessUrl( siteSlug, receiptId ),
-					receiptId
-				),
-				siteSlug || fromSiteSlug,
-				getDefaultSuccessUrl( siteSlug, receiptId )
-			),
-		};
+		return (
+			getFailedPurchaseRedirect( receiptId ) ??
+			buildSuccessRedirect( {
+				effectiveReceiptId: receiptId,
+				redirectTo,
+				siteSlug,
+				fromSiteSlug,
+				purchaseId,
+			} )
+		);
 	}
 
 	// If the order ID is missing and there is no receiptId, we don't know
@@ -415,19 +472,16 @@ export function getRedirectFromPendingPage( {
 	}
 
 	if ( transaction?.processingStatus === SUCCESS ) {
-		// If the order is complete, we can redirect to the final page.
-		const { receiptId: transactionReceiptId } = transaction;
-
-		return {
-			url: filterAllowedRedirect(
-				interpolateReceiptId(
-					redirectTo ?? getDefaultSuccessUrl( siteSlug, transactionReceiptId ),
-					transactionReceiptId
-				),
-				siteSlug || fromSiteSlug,
-				getDefaultSuccessUrl( siteSlug, transactionReceiptId )
-			),
-		};
+		return (
+			getFailedPurchaseRedirect( transaction.receiptId ?? receiptId ) ??
+			buildSuccessRedirect( {
+				effectiveReceiptId: transaction.receiptId,
+				redirectTo,
+				siteSlug,
+				fromSiteSlug,
+				purchaseId,
+			} )
+		);
 	}
 
 	// If the processing status indicates that there was something wrong,

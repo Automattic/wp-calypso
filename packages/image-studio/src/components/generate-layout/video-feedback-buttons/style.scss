@@ -1,0 +1,50 @@
+@import "../../styles/variables";
+@import "../../styles/mixins";
+
+.image-studio-video-feedback-buttons {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex: 0 0 auto;
+
+	button[aria-pressed="true"] {
+		cursor: default;
+	}
+
+	&__popover {
+		// FeedbackInput inherits theme variables from Agenttic. The popover
+		// renders outside that context, so set them explicitly here.
+		@include image-studio-theme-variables();
+		background-color: $color-background;
+		border: 1px solid $color-border;
+		border-radius: 4px;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+		padding: 12px;
+
+		.agents-manager-feedback-input {
+			width: 300px;
+
+			.components-base-control__label {
+				color: var( --color-muted-foreground );
+			}
+
+			.components-button.is-tertiary {
+				color: var( --color-muted-foreground );
+
+				&:hover,
+				&:focus {
+					color: var( --color-foreground );
+				}
+			}
+
+			&,
+			&__inner {
+				margin: 0;
+				padding: 0;
+				border: none;
+				background-color: transparent;
+				border-radius: 0;
+			}
+		}
+	}
+}

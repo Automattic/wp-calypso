@@ -1,7 +1,8 @@
-import { Frame, Page } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
+import { waitForElementEnabled } from '../../element-helper';
 import envVariables from '../../env-variables';
 import type { PaymentDetails, RegistrarDetails } from '../../types/data-helper.types';
+import type { Frame, Page } from 'playwright';
 
 const selectors = {
 	// Modal
@@ -49,6 +50,7 @@ const selectors = {
 
 	// Payment field
 	cardholderName: 'input[id="cardholder-name"]',
+	cardPaymentRadio: 'input#card[type="radio"]',
 	cardNumberFrame: 'iframe[title="Secure card number input frame"]',
 	cardNumberInput: 'input[data-elements-stable-field-name="cardNumber"]',
 	cardExpiryFrame: 'iframe[title="Secure expiration date input frame"]',
@@ -245,6 +247,12 @@ export class CartCheckoutPage {
 	 * @param {RegistrarDetails} registrarDetails Domain registrar details.
 	 */
 	async enterDomainRegistrarDetails( registrarDetails: RegistrarDetails ): Promise< void > {
+		// The registrar form appears after a checkout page navigation. Wait for it
+		// to be visible with a generous timeout before filling to avoid timing out
+		// while the page is still loading.
+		await this.page
+			.locator( selectors.firstNameInput )
+			.waitFor( { state: 'visible', timeout: 30_000 } );
 		await this.page.fill( selectors.firstNameInput, registrarDetails.firstName );
 		await this.page.fill( selectors.lastNameInput, registrarDetails.lastName );
 		await this.page.selectOption( selectors.phoneSelect, registrarDetails.countryCode );
@@ -305,12 +313,21 @@ export class CartCheckoutPage {
 	 * @param {PaymentDetails} paymentDetails Object implementing the PaymentDetails interface.
 	 */
 	async enterPaymentDetails( paymentDetails: PaymentDetails ): Promise< void > {
-		// Click on the Credit or debit card input in order
-		// to expand the fields.
-		const cardInputLocator = await this.page.waitForSelector(
-			'span:has-text("Credit or debit card")'
+		// Select the Credit or debit card payment method to expand the fields.
+		// On mobile the sticky Pay CTA and the auto-selected Google Pay tile sit
+		// over the card label, so a real click can't reach it. Wait for the
+		// underlying radio input to become enabled, then dispatch the click and
+		// wait for the form fields that prove the payment method is ready.
+		const cardPaymentRadio = this.page.locator( selectors.cardPaymentRadio );
+		await cardPaymentRadio.waitFor( { state: 'attached', timeout: 15 * 1000 } );
+		await waitForElementEnabled( this.page, selectors.cardPaymentRadio, { timeout: 30 * 1000 } );
+		await cardPaymentRadio.dispatchEvent( 'click' );
+		await this.page.waitForFunction(
+			( selector ) => document.querySelector< HTMLInputElement >( selector )?.checked === true,
+			selectors.cardPaymentRadio,
+			{ timeout: 30 * 1000 }
 		);
-		await cardInputLocator.click();
+		await this.validatePaymentForm();
 
 		// Begin filling in the card details from
 		// top to bottom.

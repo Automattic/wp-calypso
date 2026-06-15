@@ -13,6 +13,8 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 			return 'free-purchase';
 		case 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix':
 			return 'pix';
+		case 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix_Automatico':
+			return 'pix_automatico';
 		case 'WPCOM_Billing_Ebanx':
 			return 'ebanx';
 		case 'WPCOM_Billing_PayPal_Direct':
@@ -36,14 +38,10 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 			return 'p24';
 		case 'WPCOM_Billing_Stripe_Wechat_Pay':
 			return 'wechat';
-		case 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking':
-			return 'netbanking';
 		case 'WPCOM_Billing_Web_Payment':
 			return 'web-pay';
 		case 'WPCOM_Billing_MoneyPress_Stored':
 			return 'existingCard';
-		case 'WPCOM_Billing_Razorpay':
-			return 'razorpay';
 		case 'WPCOM_Billing_Stripe_Upi':
 			return 'stripe-upi';
 		default:
@@ -68,10 +66,10 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 			return 'WPCOM_Billing_MoneyPress_Stored';
 		case 'pix':
 			return 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix';
+		case 'pix_automatico':
+			return 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix_Automatico';
 		case 'ebanx':
 			return 'WPCOM_Billing_Ebanx';
-		case 'netbanking':
-			return 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking';
 		case 'paypal-direct':
 			return 'WPCOM_Billing_PayPal_Direct';
 		case 'paypal-express':
@@ -96,8 +94,6 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 			return 'WPCOM_Billing_Web_Payment';
 		case 'free-purchase':
 			return 'WPCOM_Billing_WPCOM';
-		case 'razorpay':
-			return 'WPCOM_Billing_Razorpay';
 		case 'stripe-upi':
 			return 'WPCOM_Billing_Stripe_Upi';
 	}
@@ -110,7 +106,7 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 		case 'WPCOM_Billing_MoneyPress_Stored':
 		case 'WPCOM_Billing_Ebanx':
 		case 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix':
-		case 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking':
+		case 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix_Automatico':
 		case 'WPCOM_Billing_PayPal_Direct':
 		case 'WPCOM_Billing_PayPal_Express':
 		case 'WPCOM_Billing_PayPal_PPCP':
@@ -121,7 +117,6 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 		case 'WPCOM_Billing_Stripe_P24':
 		case 'WPCOM_Billing_Stripe_Wechat_Pay':
 		case 'WPCOM_Billing_Web_Payment':
-		case 'WPCOM_Billing_Razorpay':
 		case 'WPCOM_Billing_Stripe_Upi':
 			return slug;
 	}
@@ -141,7 +136,7 @@ export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMe
 	switch ( slug ) {
 		case 'ebanx':
 		case 'pix':
-		case 'netbanking':
+		case 'pix_automatico':
 		case 'paypal-direct':
 		case 'paypal-express':
 		case 'paypal-js':
@@ -156,7 +151,6 @@ export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMe
 		case 'wechat':
 		case 'web-pay':
 		case 'free-purchase':
-		case 'razorpay':
 		case 'stripe-upi':
 			return slug;
 		case 'apple-pay':
@@ -171,7 +165,6 @@ export function isRedirectPaymentMethod( slug: CheckoutPaymentMethodSlug ): bool
 		'alipay',
 		'bancontact',
 		'ideal',
-		'netbanking',
 		'paypal-express',
 		'paypal-js',
 		'p24',

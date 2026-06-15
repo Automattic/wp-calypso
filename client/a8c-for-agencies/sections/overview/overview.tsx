@@ -3,6 +3,7 @@ import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-age
 import ContentSidebar from 'calypso/a8c-for-agencies/components/content-sidebar';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
+import PaymentRiskNoticeBanner from 'calypso/a8c-for-agencies/components/payment-risk-notice-banner';
 import PressableUsageLimitNotice from 'calypso/a8c-for-agencies/components/pressable-usage-limit-notice';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
@@ -11,6 +12,7 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 } from 'calypso/layout/hosting-dashboard/header';
 import { MissingPaymentSettingsNotice } from '../referrals/common/missing-payment-settings-notice';
+import useHasCommissionActivity from '../referrals/common/missing-payment-settings-notice/use-has-commission-activity';
 import OverviewBody from './body';
 import OverviewHeaderActions from './header-actions';
 import PartnerDirectoryOnboardingCard from './partner-directory-onboarding-card';
@@ -22,12 +24,15 @@ export default function Overview() {
 	const translate = useTranslate();
 	const title = translate( 'Agency overview' );
 
+	const { hasActivity, isLoading: isLoadingActivity } = useHasCommissionActivity();
+
 	return (
 		<Layout title={ title } wide>
 			<LayoutTop>
-				<MissingPaymentSettingsNotice />
+				{ ! isLoadingActivity && hasActivity && <MissingPaymentSettingsNotice /> }
 				<A4AAgencyApprovalNotice />
 				<PressableUsageLimitNotice />
+				<PaymentRiskNoticeBanner source="overview" />
 
 				<LayoutHeader className="a4a-overview-header">
 					<Title>{ title }</Title>

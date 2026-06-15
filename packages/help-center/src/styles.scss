@@ -9,7 +9,7 @@
  * THIS FILE SHOULD NOT CONTAIN ANY COMPONENT SPECIFIC STYLES.
  */
 .help-center > div.help-center__container {
-	background-color: #fff;
+	background-color: var(--color-surface);
 	z-index: $help-center-z-index;
 	cursor: default;
 	transition: max-height 0.5s;
@@ -56,7 +56,6 @@
 	.help-center__section-title {
 		font-size: $font-body-small;
 		font-weight: 500;
-		color: var( --studio-gray-100 );
 		margin: 8px 0 8px 0;
 	}
 
@@ -180,6 +179,25 @@
 	::selection {
 		background: rgba( $help-center-blue, 0.7 );
 		color: var( --color-text );
+	}
+}
+
+/**
+ * Mobile scrim — fade in a translucent backdrop behind the sheet so the help
+ * center reads as modal, matching the @wordpress/components Modal scrim used
+ * elsewhere (e.g. "Save your cart for later?"). Visible only when the sheet is
+ * open in its mobile layout and not minimized.
+ */
+.help-center:has( > div.help-center__container.is-mobile:not( .is-minimized ) ) {
+	position: fixed;
+	inset: 0;
+	z-index: $help-center-z-index;
+	background-color: rgba( 0, 0, 0, 0.35 );
+	pointer-events: none;
+	animation: fadeIn 0.2s ease-out forwards;
+
+	> div.help-center__container {
+		pointer-events: auto;
 	}
 }
 

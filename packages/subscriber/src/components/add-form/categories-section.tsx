@@ -59,10 +59,10 @@ export const CategoriesSection: React.FC< Props > = ( {
 	};
 
 	const getCategoriesUrl = () => {
-		if ( ! isWPCOMSite ) {
-			return siteUrl ? `${ siteUrl }/wp-admin/admin.php?page=jetpack#/newsletter` : '#';
+		if ( ! siteUrl ) {
+			return '#';
 		}
-		return `https://wordpress.com/settings/newsletter/${ siteId }`;
+		return `${ siteUrl }/wp-admin/admin.php?page=jetpack-newsletter`;
 	};
 
 	return (

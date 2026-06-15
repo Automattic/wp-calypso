@@ -4,18 +4,15 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
 import { useState } from 'react';
-import { connect } from 'react-redux';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video';
 import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import { SiteIcon } from 'calypso/blocks/site-icon';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
+import { useSite } from 'calypso/reader/data/site';
 import { getPostUrl, getStreamUrl } from 'calypso/reader/route';
-import { getPostById } from 'calypso/state/reader/posts/selectors';
-import { getSite } from 'calypso/state/reader/sites/selectors';
 
 const noop = () => {};
 
@@ -110,6 +107,9 @@ export function RelatedPostCard( {
 	followSource,
 } ) {
 	const [ isSuggestedFollowsModalOpen, setIsSuggestedFollowsModalOpen ] = useState( false );
+	const effectiveSiteId = siteId ?? post?.site_ID;
+	const { site: readerSite } = useSite( effectiveSiteId );
+	const resolvedSite = site ?? readerSite;
 	if ( ! post || post._state === 'minimal' || post._state === 'pending' ) {
 		return <RelatedPostCardPlaceholder />;
 	}
@@ -160,10 +160,9 @@ export function RelatedPostCard( {
 
 	return (
 		<Card className={ classes }>
-			{ siteId && ! site && <QueryReaderSite siteId={ siteId } /> }
 			<AuthorAndSiteFollow
 				post={ post }
-				site={ site }
+				site={ resolvedSite }
 				onSiteClick={ siteClickTracker }
 				followSource={ followSource }
 				onFollowToggle={ openSuggestedFollowsModal }
@@ -192,14 +191,4 @@ export function RelatedPostCard( {
 	);
 }
 
-export default connect( ( state, ownProps ) => {
-	const { post } = ownProps;
-	const actualPost = getPostById( state, post );
-	const siteId = post && post.site_ID;
-	const site = siteId && getSite( state, siteId );
-	return {
-		post: actualPost,
-		site,
-		siteId,
-	};
-} )( RelatedPostCard );
+export default RelatedPostCard;

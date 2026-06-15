@@ -87,9 +87,11 @@ export type PlansIntent =
 	| 'plans-playground'
 	| 'plans-playground-premium' // This plan intent is currently not utilized but will be soon
 	| 'plans-upgrade'
+	| 'plans-upgrade-or-downgrade'
 	| 'plans-wordpress-hosting'
 	| 'plans-website-builder'
 	| 'plans-woo-hosted'
+	| 'plans-woo-hosting-solutions'
 	| 'plans-migration'
 	| 'default';
 
@@ -269,21 +271,15 @@ export type GridContextProps = {
 	 */
 	showSimplifiedBillingDescription?: boolean;
 	/**
-	 * If, and how to present increased renewal pricing (null, 'crossed_price', 'no_crossed_price')
+	 * If, and how to present increased renewal pricing (null or the assigned variant name)
 	 */
 	showBillingDescriptionForIncreasedRenewalPrice?: string | null;
 
 	/**
-	 * When true, indicates the user is in an experiment variant.
-	 * Used to display experiment-specific feature titles in the comparison grid.
+	 * When true, the user is in the rolled-out pricing differentiation cohort.
+	 * Used to display cohort-specific feature titles in the comparison grid.
 	 */
 	isExperimentVariant?: boolean;
-
-	/**
-	 * When true, the pricing differentiation experiment uses the focused_comparison feature set.
-	 * Used to exclude that arm from domain-line highlight styling.
-	 */
-	useFocusedComparisonFeatures?: boolean;
 };
 
 export type ComparisonGridExternalProps = Omit<

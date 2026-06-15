@@ -5,6 +5,8 @@ import { CircularProgressBar } from '@automattic/components';
 import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
 import { translate } from 'i18n-calypso';
 import React, { useState, useEffect } from 'react';
+import { useSiteSubscriptions as useCachedSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
+import { useFollowedTags } from 'calypso/reader/data/tags';
 import {
 	READER_ONBOARDING_SEEN_PREFERENCE_KEY,
 	READER_ONBOARDING_PREFERENCE_KEY,
@@ -18,18 +20,15 @@ import { requestGravatarDetails } from 'calypso/state/gravatar-status/actions';
 import { hasGravatar } from 'calypso/state/gravatar-status/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
-import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import hasCompletedReaderProfile from 'calypso/state/reader/onboarding/selectors/has-completed-reader-profile';
-import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
+import { useSiteSubscriptions } from '../following/use-site-subscriptions';
 import './style.scss';
 
 const ReaderOnboarding = ( {
 	onRender,
-	forceShow = false,
 	isSuppressed = false,
 }: {
 	onRender?: ( shown: boolean ) => void;
-	forceShow?: boolean;
 	isSuppressed?: boolean;
 } ) => {
 	const dispatch = useDispatch();
@@ -38,9 +37,10 @@ const ReaderOnboarding = ( {
 
 	const preferencesLoaded = useSelector( hasReceivedRemotePreferences );
 	const userRegistrationDate: string | null = useSelector( getCurrentUserDate );
+	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
 
-	const followedTags = useSelector( getReaderFollowedTags );
-	const follows = useSelector( getReaderFollows );
+	const { data: followedTags } = useFollowedTags();
+	const { subscriptions } = useCachedSiteSubscriptions();
 	const profileCompleted = useSelector( hasCompletedReaderProfile );
 	const hasUserGravatar = useSelector( hasGravatar );
 
@@ -51,20 +51,25 @@ const ReaderOnboarding = ( {
 		getPreference( state, READER_ONBOARDING_SEEN_PREFERENCE_KEY )
 	);
 
-	const hasFollowedTags = followedTags !== null && followedTags.length > 2;
-	const hasFollowedSites = follows?.filter( ( follow ) => ! follow.is_owner )?.length > 2;
+	const hasFollowedTags = ( followedTags?.length ?? 0 ) > 2;
+	const hasFollowedSites =
+		subscriptions?.filter( ( subscription ) => ! subscription.is_owner )?.length > 2;
 
 	// If the user has completed the onboarding, save the preference and track the event.
-	if ( ! hasCompletedOnboarding && hasFollowedTags && hasFollowedSites && profileCompleted ) {
-		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
-		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
-	}
+	useEffect( () => {
+		if ( ! hasCompletedOnboarding && hasFollowedTags && hasFollowedSites && profileCompleted ) {
+			dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
+		}
+	}, [ dispatch, hasCompletedOnboarding, hasFollowedTags, hasFollowedSites, profileCompleted ] );
 
 	const meetsEligibility =
 		preferencesLoaded &&
 		! hasCompletedOnboarding &&
 		userRegistrationDate !== null &&
 		new Date( userRegistrationDate ) >= new Date( '2024-10-01T00:00:00Z' );
+
+	const forceShow = ! isLoading && ! hasNonSelfSubscriptions;
 
 	const shouldShowOnboarding =
 		forceShow || isEnabled( 'reader/force-onboarding' ) || !! meetsEligibility;
@@ -122,10 +127,10 @@ const ReaderOnboarding = ( {
 
 	// Auto-open the interests modal if onboarding should render and it has never been opened before
 	useEffect( () => {
-		if ( shouldRenderOnboarding && ! hasSeenOnboarding ) {
+		if ( shouldRenderOnboarding && preferencesLoaded && ! hasSeenOnboarding ) {
 			openInterestsModal();
 		}
-	}, [ shouldRenderOnboarding, hasSeenOnboarding, dispatch ] );
+	}, [ shouldRenderOnboarding, preferencesLoaded, hasSeenOnboarding, dispatch ] );
 
 	// Reopen subscription onboarding page if prompted by query param.
 	useEffect( () => {

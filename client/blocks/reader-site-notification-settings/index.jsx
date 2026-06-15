@@ -3,10 +3,9 @@ import { Reader } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { Icon, settings } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
-import { find, get } from 'lodash';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import { createRef, Component } from 'react';
-import { connect } from 'react-redux';
+import { useRef, useState } from 'react';
 import Settings from 'calypso/assets/images/icons/settings.svg';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import FormSelect from 'calypso/components/forms/form-select';
@@ -15,268 +14,242 @@ import EmailMeNewCommentsToggle from 'calypso/landing/subscriptions/components/s
 import EmailMeNewPostsToggle from 'calypso/landing/subscriptions/components/settings/site-settings/email-me-new-posts-toggle';
 import NotifyMeOfNewPostsToggle from 'calypso/landing/subscriptions/components/settings/site-settings/notify-me-of-new-posts-toggle';
 import ReaderPopover from 'calypso/reader/components/reader-popover';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
-	subscribeToNewPostEmail,
-	updateNewPostEmailSubscription,
-	unsubscribeToNewPostEmail,
-	subscribeToNewCommentEmail,
-	unsubscribeToNewCommentEmail,
-	subscribeToNewPostNotifications,
-	unsubscribeToNewPostNotifications,
-} from 'calypso/state/reader/follows/actions';
-import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
+	useFollowDeliveryMutations,
+	useSiteSubscriptions,
+} from 'calypso/reader/data/site-subscriptions';
+import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 
-class ReaderSiteNotificationSettings extends Component {
-	static displayName = 'ReaderSiteNotificationSettings';
-	static propTypes = {
-		iconSize: PropTypes.number,
-		showLabel: PropTypes.bool,
-		siteId: PropTypes.number,
-		subscriptionId: PropTypes.number,
+function SiteNotificationSettings( {
+	iconSize = 20,
+	showLabel = true,
+	siteId,
+	subscriptionId,
+	translate,
+} ) {
+	const dispatch = useDispatch();
+	const [ showPopover, setShowPopover ] = useState( false );
+	const iconRef = useRef( null );
+	const spanRef = useRef( null );
+	const { subscriptions } = useSiteSubscriptions( { fetchAllPages: showPopover } );
+	const subscription = subscriptions.find( ( item ) => item.blog_ID === siteId );
+	const deliveryMethodsEmail = get( subscription, [ 'delivery_methods', 'email' ], {} );
+	const sendNewCommentsByEmail = !! deliveryMethodsEmail.send_comments;
+	const sendNewPostsByEmail = !! deliveryMethodsEmail.send_posts;
+	const emailDeliveryFrequency = deliveryMethodsEmail.post_delivery_frequency;
+	const sendNewPostsByNotification = get(
+		subscription,
+		[ 'delivery_methods', 'notification', 'send_posts' ],
+		false
+	);
+	const { updatePostEmail, updateCommentEmail, updateDeliveryFrequency, updatePostNotifications } =
+		useFollowDeliveryMutations();
+	const isEmailBlocked = useSelector( ( state ) =>
+		getUserSetting( state, 'subscription_delivery_email_blocked' )
+	);
+
+	const availableFrequencies = [
+		{
+			value: Reader.EmailDeliveryFrequency.Instantly,
+			label: translate( 'Instantly' ),
+		},
+		{
+			value: Reader.EmailDeliveryFrequency.Daily,
+			label: translate( 'Daily' ),
+		},
+		{
+			value: Reader.EmailDeliveryFrequency.Weekly,
+			label: translate( 'Weekly' ),
+		},
+	];
+	const selectedFrequency = availableFrequencies.find(
+		( option ) => option.value === emailDeliveryFrequency
+	);
+
+	const togglePopoverVisibility = () => {
+		setShowPopover( ! showPopover );
 	};
 
-	static defaultProps = {
-		iconSize: 20,
-		showLabel: true,
+	const closePopover = () => {
+		setShowPopover( false );
 	};
 
-	state = { showPopover: false };
+	const setSelected = ( deliveryFrequency ) => {
+		updateDeliveryFrequency.mutate( {
+			blogId: siteId,
+			deliveryFrequency,
+		} );
 
-	iconRef = createRef();
-	spanRef = createRef();
-
-	getAvailableFrequencies = () => {
-		const { translate } = this.props;
-		return [
-			{
-				value: Reader.EmailDeliveryFrequency.Instantly,
-				label: translate( 'Instantly' ),
-			},
-			{
-				value: Reader.EmailDeliveryFrequency.Daily,
-				label: translate( 'Daily' ),
-			},
-			{
-				value: Reader.EmailDeliveryFrequency.Weekly,
-				label: translate( 'Weekly' ),
-			},
-		];
+		const tracksProperties = { site_id: siteId, delivery_frequency: deliveryFrequency };
+		dispatch( recordTracksEvent( 'calypso_reader_post_emails_set_frequency', tracksProperties ) );
 	};
 
-	togglePopoverVisibility = () => {
-		this.setState( { showPopover: ! this.state.showPopover } );
-	};
-
-	closePopover = () => {
-		this.setState( { showPopover: false } );
-	};
-
-	setSelected = ( text ) => {
-		const { siteId } = this.props;
-		this.props.updateNewPostEmailSubscription( siteId, text );
-
-		const tracksProperties = { site_id: siteId, delivery_frequency: text };
-		this.props.recordTracksEvent( 'calypso_reader_post_emails_set_frequency', tracksProperties );
-	};
-
-	toggleNewPostEmail = () => {
-		const { siteId } = this.props;
+	const toggleNewPostEmail = () => {
 		const tracksProperties = { site_id: siteId };
 
-		if ( this.props.sendNewPostsByEmail ) {
-			this.props.unsubscribeToNewPostEmail( siteId );
-			this.props.recordTracksEvent( 'calypso_reader_post_emails_toggle_off', tracksProperties );
+		updatePostEmail.mutate( {
+			blogId: siteId,
+			sendPosts: ! sendNewPostsByEmail,
+			deliveryFrequency: emailDeliveryFrequency,
+		} );
+
+		if ( sendNewPostsByEmail ) {
+			dispatch( recordTracksEvent( 'calypso_reader_post_emails_toggle_off', tracksProperties ) );
 		} else {
-			this.props.subscribeToNewPostEmail( siteId );
-			this.props.recordTracksEvent( 'calypso_reader_post_emails_toggle_on', tracksProperties );
+			dispatch( recordTracksEvent( 'calypso_reader_post_emails_toggle_on', tracksProperties ) );
 		}
 	};
 
-	toggleNewCommentEmail = () => {
-		const { siteId } = this.props;
+	const toggleNewCommentEmail = () => {
 		const tracksProperties = { site_id: siteId };
 
-		if ( this.props.sendNewCommentsByEmail ) {
-			this.props.unsubscribeToNewCommentEmail( siteId );
-			this.props.recordTracksEvent( 'calypso_reader_comment_emails_toggle_off', tracksProperties );
+		updateCommentEmail.mutate( {
+			blogId: siteId,
+			sendComments: ! sendNewCommentsByEmail,
+		} );
+
+		if ( sendNewCommentsByEmail ) {
+			dispatch( recordTracksEvent( 'calypso_reader_comment_emails_toggle_off', tracksProperties ) );
 		} else {
-			this.props.subscribeToNewCommentEmail( siteId );
-			this.props.recordTracksEvent( 'calypso_reader_comment_emails_toggle_on', tracksProperties );
+			dispatch( recordTracksEvent( 'calypso_reader_comment_emails_toggle_on', tracksProperties ) );
 		}
 	};
 
-	toggleNewPostNotification = () => {
-		const { siteId } = this.props;
+	const toggleNewPostNotification = () => {
 		const tracksProperties = { site_id: siteId };
 
-		if ( this.props.sendNewPostsByNotification ) {
-			this.props.unsubscribeToNewPostNotifications( siteId );
-			this.props.recordTracksEvent(
-				'calypso_reader_post_notifications_toggle_off',
-				tracksProperties
+		updatePostNotifications.mutate( {
+			blogId: siteId,
+			sendPosts: ! sendNewPostsByNotification,
+		} );
+
+		if ( sendNewPostsByNotification ) {
+			dispatch(
+				recordTracksEvent( 'calypso_reader_post_notifications_toggle_off', tracksProperties )
 			);
 		} else {
-			this.props.subscribeToNewPostNotifications( siteId );
-			this.props.recordTracksEvent(
-				'calypso_reader_post_notifications_toggle_on',
-				tracksProperties
+			dispatch(
+				recordTracksEvent( 'calypso_reader_post_notifications_toggle_on', tracksProperties )
 			);
 		}
 	};
 
-	render() {
-		const {
-			translate,
-			emailDeliveryFrequency,
-			sendNewCommentsByEmail,
-			sendNewPostsByEmail,
-			sendNewPostsByNotification,
-			isEmailBlocked,
-			subscriptionId,
-		} = this.props;
-
-		const availableFrequencies = this.getAvailableFrequencies();
-		const selectedFrequency = availableFrequencies.find(
-			( option ) => option.value === emailDeliveryFrequency
-		);
-
-		if ( ! this.props.siteId ) {
-			return null;
-		}
-
-		return (
-			<div className="reader-site-notification-settings">
-				<QueryUserSettings />
-				<button
-					className="reader-site-notification-settings__button"
-					onClick={ this.togglePopoverVisibility }
-					ref={ this.spanRef }
-					aria-label={ translate( 'Notification settings' ) }
-				>
-					<SVGIcon
-						classes="reader-following-feed"
-						name="settings"
-						size={ this.props.iconSize }
-						icon={ Settings }
-						ref={ this.iconRef }
-					/>
-					{ this.props.showLabel && (
-						<span
-							className="reader-site-notification-settings__button-label"
-							title={ translate( 'Notification settings' ) }
-						>
-							{ translate( 'Settings' ) }
-						</span>
-					) }
-				</button>
-
-				<ReaderPopover
-					onClose={ this.closePopover }
-					isVisible={ this.state.showPopover }
-					context={ this.iconRef.current }
-					ignoreContext={ this.spanRef.current }
-					position="bottom left"
-					className="reader-site-notification-settings__popout"
-				>
-					<EmailMeNewPostsToggle
-						className={
-							isEmailBlocked
-								? 'reader-site-notification-settings__popout-instructions'
-								: 'reader-site-notification-settings__popout-toggle'
-						}
-						value={ sendNewPostsByEmail }
-						hintText={
-							isEmailBlocked
-								? translate(
-										'You currently have email delivery turned off. Visit your {{a}}Notification Settings{{/a}} to turn it back on.',
-										{ components: { a: <a href="/me/notifications/subscriptions" /> } }
-								  )
-								: null
-						}
-						isDisabled={ isEmailBlocked }
-						onChange={ this.toggleNewPostEmail }
-					/>
-
-					{ ! isEmailBlocked && sendNewPostsByEmail && (
-						<div className="reader-site-notification-settings__popout-select">
-							<FormSelect
-								value={ selectedFrequency?.value }
-								onChange={ ( event ) => this.setSelected( event.target.value ) }
-							>
-								{ availableFrequencies.map( ( option ) => (
-									<option key={ option.value } value={ option.value }>
-										{ option.label }
-									</option>
-								) ) }
-							</FormSelect>
-						</div>
-					) }
-
-					{ ! isEmailBlocked && (
-						<EmailMeNewCommentsToggle
-							className="reader-site-notification-settings__popout-toggle"
-							value={ sendNewCommentsByEmail }
-							onChange={ this.toggleNewCommentEmail }
-						/>
-					) }
-
-					<NotifyMeOfNewPostsToggle
-						className="reader-site-notification-settings__popout-toggle"
-						value={ sendNewPostsByNotification }
-						onChange={ this.toggleNewPostNotification }
-					/>
-
-					{ subscriptionId && (
-						<Button
-							className="reader-site-notification-settings__manage-subscription-button"
-							icon={
-								<Icon
-									className="subscriptions-ellipsis-menu__item-icon"
-									size={ 20 }
-									icon={ settings }
-								/>
-							}
-							href={ `/reader/subscriptions/${ subscriptionId }` }
-						>
-							{ translate( 'Manage subscription' ) }
-						</Button>
-					) }
-				</ReaderPopover>
-			</div>
-		);
+	if ( ! siteId ) {
+		return null;
 	}
+
+	return (
+		<div className="reader-site-notification-settings">
+			<QueryUserSettings />
+			<button
+				className="reader-site-notification-settings__button"
+				onClick={ togglePopoverVisibility }
+				ref={ spanRef }
+				aria-label={ translate( 'Notification settings' ) }
+			>
+				<SVGIcon
+					classes="reader-following-feed"
+					name="settings"
+					size={ iconSize }
+					icon={ Settings }
+					ref={ iconRef }
+				/>
+				{ showLabel && (
+					<span
+						className="reader-site-notification-settings__button-label"
+						title={ translate( 'Notification settings' ) }
+					>
+						{ translate( 'Settings' ) }
+					</span>
+				) }
+			</button>
+
+			<ReaderPopover
+				onClose={ closePopover }
+				isVisible={ showPopover }
+				context={ iconRef.current }
+				ignoreContext={ spanRef.current }
+				position="bottom left"
+				className="reader-site-notification-settings__popout"
+			>
+				<EmailMeNewPostsToggle
+					className={
+						isEmailBlocked
+							? 'reader-site-notification-settings__popout-instructions'
+							: 'reader-site-notification-settings__popout-toggle'
+					}
+					value={ sendNewPostsByEmail }
+					hintText={
+						isEmailBlocked
+							? translate(
+									'You currently have email delivery turned off. Visit your {{a}}Notification Settings{{/a}} to turn it back on.',
+									{ components: { a: <a href="/me/notifications/subscriptions" /> } }
+							  )
+							: null
+					}
+					isDisabled={ isEmailBlocked }
+					onChange={ toggleNewPostEmail }
+				/>
+
+				{ ! isEmailBlocked && sendNewPostsByEmail && (
+					<div className="reader-site-notification-settings__popout-select">
+						<FormSelect
+							value={ selectedFrequency?.value }
+							onChange={ ( event ) => setSelected( event.target.value ) }
+						>
+							{ availableFrequencies.map( ( option ) => (
+								<option key={ option.value } value={ option.value }>
+									{ option.label }
+								</option>
+							) ) }
+						</FormSelect>
+					</div>
+				) }
+
+				{ ! isEmailBlocked && (
+					<EmailMeNewCommentsToggle
+						className="reader-site-notification-settings__popout-toggle"
+						value={ sendNewCommentsByEmail }
+						onChange={ toggleNewCommentEmail }
+					/>
+				) }
+
+				<NotifyMeOfNewPostsToggle
+					className="reader-site-notification-settings__popout-toggle"
+					value={ sendNewPostsByNotification }
+					onChange={ toggleNewPostNotification }
+				/>
+
+				{ subscriptionId && (
+					<Button
+						className="reader-site-notification-settings__manage-subscription-button"
+						icon={
+							<Icon
+								className="subscriptions-ellipsis-menu__item-icon"
+								size={ 20 }
+								icon={ settings }
+							/>
+						}
+						href={ `/reader/subscriptions/${ subscriptionId }` }
+					>
+						{ translate( 'Manage subscription' ) }
+					</Button>
+				) }
+			</ReaderPopover>
+		</div>
+	);
 }
 
-const mapStateToProps = ( state, ownProps ) => {
-	if ( ! ownProps.siteId ) {
-		return {};
-	}
+SiteNotificationSettings.displayName = 'SiteNotificationSettings';
 
-	const follow = find( getReaderFollows( state ), { blog_ID: ownProps.siteId } );
-	const deliveryMethodsEmail = get( follow, [ 'delivery_methods', 'email' ], {} );
-
-	return {
-		sendNewCommentsByEmail: deliveryMethodsEmail && !! deliveryMethodsEmail.send_comments,
-		sendNewPostsByEmail: deliveryMethodsEmail && !! deliveryMethodsEmail.send_posts,
-		emailDeliveryFrequency: deliveryMethodsEmail && deliveryMethodsEmail.post_delivery_frequency,
-		sendNewPostsByNotification: get(
-			follow,
-			[ 'delivery_methods', 'notification', 'send_posts' ],
-			false
-		),
-		isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
-	};
+SiteNotificationSettings.propTypes = {
+	iconSize: PropTypes.number,
+	showLabel: PropTypes.bool,
+	siteId: PropTypes.number,
+	subscriptionId: PropTypes.number,
+	translate: PropTypes.func,
 };
 
-export default connect( mapStateToProps, {
-	subscribeToNewPostEmail,
-	unsubscribeToNewPostEmail,
-	updateNewPostEmailSubscription,
-	subscribeToNewCommentEmail,
-	unsubscribeToNewCommentEmail,
-	subscribeToNewPostNotifications,
-	unsubscribeToNewPostNotifications,
-	recordTracksEvent,
-} )( localize( ReaderSiteNotificationSettings ) );
+export default localize( SiteNotificationSettings );

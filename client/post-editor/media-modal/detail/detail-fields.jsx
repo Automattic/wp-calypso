@@ -4,16 +4,15 @@ import { localize } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import TrackInputChanges from 'calypso/components/track-input-changes';
 import { withUpdateMedia } from 'calypso/data/media/with-update-media';
-import { FormCheckbox } from 'calypso/devdocs/design/playground-scope';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import decodeEntities from 'calypso/lib/formatting/decode/browser';
@@ -147,14 +146,6 @@ class EditorMediaModalDetailFields extends Component {
 	getItemValue( attribute ) {
 		return this.state.modifiedChanges?.[ attribute ] ?? this.props.item?.[ attribute ];
 	}
-
-	scrollToShowVisibleDropdown = ( event ) => {
-		if ( ! event.open || ! ( 'scrollIntoView' in window.Element.prototype ) ) {
-			return;
-		}
-
-		ReactDom.findDOMNode( event.target ).scrollIntoView();
-	};
 
 	renderImageAltText() {
 		if ( ! this.isMimePrefix( 'image' ) ) {

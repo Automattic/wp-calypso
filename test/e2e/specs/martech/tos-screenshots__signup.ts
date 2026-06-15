@@ -1,7 +1,7 @@
 /**
  * @group legal
  */
-import { DataHelper, UserSignupPage } from '@automattic/calypso-e2e';
+import { DataHelper } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import uploadScreenshotsToBlog from '../../lib/martech-tos-helper';
 
@@ -37,11 +37,12 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 		];
 
 		it( 'Screenshot white background signup page in en and Mag-16 locales', async function () {
-			const userSignupPage = new UserSignupPage( page );
 			for ( const locale of [ ...magnificientNonEnLocales, 'en' ] ) {
 				page.setViewportSize( { width: 1280, height: 720 } );
-				await userSignupPage.visit( { path: locale } );
-				page.waitForSelector( selectors.isSignup );
+				await page.goto( DataHelper.getCalypsoURL( `start/${ locale }` ), {
+					waitUntil: 'domcontentloaded',
+				} );
+				await page.waitForSelector( selectors.isSignup );
 				await page.screenshot( {
 					path: `tos_white_signup_desktop_${ locale }.png`,
 					fullPage: true,

@@ -1,9 +1,13 @@
+import { readTeamsQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
+import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import CommentButton from 'calypso/blocks/comment-button';
+import ReaderSaveButton from 'calypso/blocks/reader-save-button';
 import ShareButton from 'calypso/blocks/reader-share';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
+import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import LikeButton from 'calypso/reader/like-button';
 import {
 	isCommentsOpen,
@@ -13,10 +17,12 @@ import {
 } from 'calypso/reader/post/capabilities';
 import { useSelector } from 'calypso/state';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import { ReaderFreshlyPressedButton } from '../reader-freshly-pressed-button';
 import './style.scss';
 
+/**
+ * @param {{ post: Object; site?: Object; onCommentClick?: Function; iconSize?: number; className?: string; fullPost?: boolean; commentsApiDisabled?: boolean; }} props
+ */
 const ReaderPostActions = ( {
 	post,
 	site,
@@ -26,14 +32,14 @@ const ReaderPostActions = ( {
 	fullPost,
 	commentsApiDisabled = false,
 } ) => {
-	const translate = useTranslate();
 	const hasSites = !! useSelector( getPrimarySiteId );
 	const showShare = isSharable( post );
 	const showReblog = isRebloggable( post, hasSites );
 	const showComments = isCommentsOpen( post ) || post.discussion?.comment_count > 0;
 	const showLikes = isLikeable( post );
 	const listClassnames = clsx( 'reader-post-actions', className );
-	const isAutomattician = useSelector( isA8cTeamMember );
+	const { data } = useQuery( readTeamsQuery() );
+	const isAutomattician = isAutomatticTeamMember( data?.teams ?? [] );
 	const shouldShowFreshlyPressed = fullPost && isAutomattician && showShare;
 
 	return (
@@ -55,19 +61,22 @@ const ReaderPostActions = ( {
 					/>
 				</li>
 			) }
+			{ isEnabled( 'reader/saved-posts' ) && (
+				<li className="reader-post-actions__item">
+					<ReaderSaveButton post={ post } iconSize={ iconSize } />
+				</li>
+			) }
 			{ showComments && ! commentsApiDisabled && (
 				<li className="reader-post-actions__item">
 					<CommentButton
 						key="comment-button"
 						commentCount={ post.discussion.comment_count }
-						post={ post }
 						onClick={ onCommentClick }
 						tagName="button"
 						icon={ ReaderCommentIcon( {
 							iconSize,
 							viewBox: '0 -1 20 20',
 						} ) }
-						defaultLabel={ translate( 'Comment' ) }
 						alwaysShowTooltip
 					/>
 				</li>
@@ -86,7 +95,6 @@ const ReaderPostActions = ( {
 						iconSize={ iconSize }
 						showZeroCount={ false }
 						likeSource="reader"
-						defaultLabel={ translate( 'Like' ) }
 					/>
 				</li>
 			) }

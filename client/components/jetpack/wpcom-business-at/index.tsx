@@ -17,6 +17,7 @@ import WarningList from 'calypso/blocks/eligibility-warnings/warning-list';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryAutomatedTransferEligibility from 'calypso/components/data/query-atat-eligibility';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
+import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
@@ -296,6 +297,7 @@ export default function WPCOMBusinessAT( {
 						<p>{ translate( 'Loading…' ) }</p>
 					</div>
 				</Page>
+				{ ! isJetpackCloud() && <JetpackFooter /> }
 			</Main>
 		);
 	}
@@ -359,6 +361,7 @@ export default function WPCOMBusinessAT( {
 
 				{ ! isJetpackCloud() && <WhatIsJetpack className="wpcom-business-at__footer" /> }
 			</Page>
+			{ ! isJetpackCloud() && <JetpackFooter /> }
 
 			<Dialog
 				isVisible={ showDialog }

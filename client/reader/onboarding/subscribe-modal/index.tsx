@@ -1,3 +1,4 @@
+import { getSiteSubscriptionsFromData } from '@automattic/api-queries';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { LoadingPlaceholder } from '@automattic/components';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -7,24 +8,19 @@ import clsx from 'clsx';
 import { getLocaleSlug } from 'i18n-calypso';
 import React, { useMemo, useState, ComponentType, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { AnyAction } from 'redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import wpcom from 'calypso/lib/wp';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
+import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
+import { fetchPaginatedStream, getStreamInfiniteQueryKeyPrefix } from 'calypso/reader/data/stream';
+import { useFollowedTags } from 'calypso/reader/data/tags';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding/constants';
 import { curatedBlogs } from 'calypso/reader/onboarding/curated-blogs';
 import Stream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
-import { requestFollows } from 'calypso/state/reader/follows/actions';
-import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
-import {
-	requestPage,
-	clearStream,
-	requestPaginatedStream,
-} from 'calypso/state/reader/streams/actions';
-import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import SubscribeVerificationNudge from './verificationNudge';
+import type { SiteSubscriptionItem } from '@automattic/api-core';
 
 import './style.scss';
 
@@ -63,11 +59,12 @@ interface StreamProps {
 const TypedStream: ComponentType< StreamProps > = Stream as ComponentType< StreamProps >;
 
 const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) => {
-	const followedTags = useSelector( getReaderFollowedTags );
+	const { data: followedTags } = useFollowedTags();
 
-	const followedTagSlugs = useMemo( () => {
-		return ( followedTags || [] ).map( ( tag ) => tag.slug );
-	}, [ followedTags ] );
+	const followedTagSlugs = useMemo(
+		() => followedTags?.map( ( tag ) => tag.slug ) ?? [],
+		[ followedTags ]
+	);
 
 	const promptVerification = ! useSelector( isCurrentUserEmailVerified );
 
@@ -178,26 +175,6 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		setCurrentPage( ( prevPage ) => ( prevPage < maxPages ? prevPage + 1 : prevPage ) );
 	}, [ maxPages, currentPage ] );
 
-	// Prefetch the first blog's feed. Only fetch one because it happens every time a tag changes.
-	useEffect( () => {
-		if ( combinedRecommendations.length > 0 ) {
-			dispatch(
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				requestPage( { streamKey: `feed:${ combinedRecommendations[ 0 ].feed_ID }` } as any )
-			);
-		}
-	}, [ combinedRecommendations, dispatch ] );
-
-	// Prefetch all feed streams when the modal is opened.
-	useEffect( () => {
-		if ( isOpen && combinedRecommendations.length > 0 ) {
-			combinedRecommendations.forEach( ( site ) => {
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				dispatch( requestPage( { streamKey: `feed:${ site.feed_ID }` } as any ) );
-			} );
-		}
-	}, [ isOpen, combinedRecommendations, dispatch ] );
-
 	// Reset the page and selected site when the followed tags change.
 	useEffect( () => {
 		setCurrentPage( 0 );
@@ -227,17 +204,17 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		[ selectedSite ]
 	);
 
-	const follows = useSelector( getReaderFollows );
+	const { subscriptions, refetch: refetchSiteSubscriptions } = useSiteSubscriptions();
 
 	const handleFollowToggle = useCallback(
 		async ( site: CardData, following: boolean ) => {
-			const isFollowingSite = ( site: CardData ) =>
-				follows.some(
+			const isFollowingSite = ( site: CardData, followItems: SiteSubscriptionItem[] ) =>
+				followItems.some(
 					( follow ) => follow.feed_ID === site.feed_ID || follow.blog_ID === site.site_ID
 				);
 
 			// Exit early if the follow state already matches what we want.
-			if ( following === isFollowingSite( site ) ) {
+			if ( following === isFollowingSite( site, subscriptions ) ) {
 				return;
 			}
 
@@ -246,17 +223,17 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 
 			for ( let attempt = 0; attempt < MAX_RETRIES; attempt++ ) {
 				// Update the subscriptions list behind the modal.
-				await dispatch( requestFollows() );
+				const result = await refetchSiteSubscriptions();
 
 				// Delay the next attempt.
 				await new Promise( ( resolve ) => setTimeout( resolve, 300 ) );
 
-				if ( following === isFollowingSite( site ) ) {
+				if ( following === isFollowingSite( site, getSiteSubscriptionsFromData( result.data ) ) ) {
 					return;
 				}
 			}
 		},
-		[ follows, dispatch ]
+		[ subscriptions, refetchSiteSubscriptions ]
 	);
 
 	const formatUrl = ( url: string ): string => {
@@ -266,12 +243,10 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 	};
 
 	const handleClose = useCallback( () => {
-		dispatch( clearStream( { streamKey: 'following' } ) );
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch( requestPage( { streamKey: 'following' } as any ) );
+		queryClient.invalidateQueries( { queryKey: getStreamInfiniteQueryKeyPrefix( 'following' ) } );
 
 		onClose();
-	}, [ dispatch, onClose ] );
+	}, [ onClose, queryClient ] );
 
 	const handleContinue = useCallback( () => {
 		// Invalidate the subscriptions count query to refresh the Recent stream.
@@ -279,14 +254,11 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 			queryKey: [ 'read', 'subscriptions-count' ],
 		} );
 
-		// Refresh the Recent stream data.
-		dispatch(
-			requestPaginatedStream( {
-				streamKey: 'recent',
-				page: 1,
-				perPage: 10,
-			} ) as AnyAction
-		);
+		void fetchPaginatedStream( queryClient, dispatch, {
+			streamKey: 'recent',
+			page: 1,
+			perPage: 10,
+		} );
 
 		handleClose();
 	}, [ dispatch, handleClose, queryClient ] );

@@ -1,9 +1,11 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { clearStepPersistedState, ONBOARDING_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
+import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
@@ -24,14 +26,16 @@ import { State } from '../../../../../../packages/data-stores/src/plans/reducer'
 import { isPlanProductFree } from '../../../../../../packages/data-stores/src/plans/selectors';
 import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
-import { ONBOARD_STORE } from '../../../stores';
+import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboarding-post-checkout-destination';
 import { withLocale } from '../../helpers/with-locale';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
+import { ONBOARDING_PROGRESS_EXPERIMENT_NAME } from '../../internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
+import { getOnboardingStepperPosition } from './step-counter-config';
 import type { DomainSuggestion } from '@automattic/api-core';
 
 function initialize() {
@@ -45,7 +49,7 @@ function initialize() {
 		STEPS.SETUP_YOUR_SITE_AI,
 	];
 
-	return [ ...stepsWithRequiredLogin( steps ), STEPS.PLAYGROUND, STEPS.BLUEPRINT ];
+	return [ ...stepsWithRequiredLogin( steps ), STEPS.PLAYGROUND, STEPS.BLUEPRINT, STEPS.ERROR ];
 }
 
 const onboarding: FlowV2< typeof initialize > = {
@@ -76,6 +80,8 @@ const onboarding: FlowV2< typeof initialize > = {
 			[]
 		);
 		const coupon = useQuery().get( 'coupon' );
+		const refParameter = useQuery().get( 'ref' );
+		const siteSlugParam = useQuery().get( 'siteSlug' );
 
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
@@ -87,9 +93,9 @@ const onboarding: FlowV2< typeof initialize > = {
 		const getPostCheckoutDestination = async (
 			providedDependencies: ProvidedDependencies,
 			planCartItem: MinimalRequestCartProduct | null
-		): Promise< [ string, string | null ] > => {
+		): Promise< [ string, string | null, string | null ] > => {
 			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
-				return [ `/home/${ providedDependencies.siteSlug }`, null ];
+				return [ `/home/${ providedDependencies.siteSlug }`, null, null ];
 			}
 
 			if ( playgroundId || blueprint ) {
@@ -99,7 +105,7 @@ const onboarding: FlowV2< typeof initialize > = {
 
 				if ( isFree && ! blueprint ) {
 					// Redirect free plan users to a home page
-					return [ `/home/${ providedDependencies.siteSlug }`, null ];
+					return [ `/home/${ providedDependencies.siteSlug }`, null, null ];
 				}
 
 				const params: Record< string, string | number > = {
@@ -116,7 +122,15 @@ const onboarding: FlowV2< typeof initialize > = {
 				return [
 					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), params ),
 					null,
+					null,
 				];
+			}
+
+			if ( refParameter === WOO_HOSTING_SOLUTIONS_REF && providedDependencies.siteSlug ) {
+				const siteSlug = providedDependencies.siteSlug as string;
+				const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
+				const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
+				return [ `${ adminUrl }admin.php?page=wc-admin`, null, null ];
 			}
 
 			return getOnboardingPostCheckoutDestination( {
@@ -209,29 +223,56 @@ const onboarding: FlowV2< typeof initialize > = {
 					const setupChoice = providedDependencies?.setupChoice;
 					const siteSlug = providedDependencies?.siteSlug as string;
 					const siteId = providedDependencies?.siteId as number | string | undefined;
+					const prompt = providedDependencies?.prompt as string | undefined;
 
 					switch ( setupChoice ) {
 						case 'build-with-ai':
 							window.location.assign(
 								addQueryArgs( `/setup/${ SITE_SETUP_FLOW }/${ STEPS.LAUNCH_BIG_SKY.slug }`, {
 									siteSlug,
-									siteId,
+									// Skip siteId when it's 0/falsy: useSiteData returns 0 before
+									// the site object hydrates, and "0" in the URL poisons the
+									// next page's site lookup.
+									...( siteId && siteId !== '0' ? { siteId } : {} ),
 									fromPostCheckoutSetupSite: '1',
+									...( refParameter ? { ref: refParameter } : {} ),
+									...( prompt ? { prompt } : {} ),
 								} )
 							);
 							return;
 						case 'blank-site':
-							window.location.assign( `/sites/${ siteSlug }` );
+							if ( refParameter === WOO_HOSTING_SOLUTIONS_REF ) {
+								const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
+								const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
+								window.location.assign( `${ adminUrl }admin.php?page=wc-admin` );
+							} else {
+								window.location.assign( `/sites/${ siteSlug }` );
+							}
 							return;
 						default:
 							return;
 					}
 				}
 				case 'processing': {
-					const [ destination, backDestination ] = await getPostCheckoutDestination(
-						providedDependencies,
-						planCartItem
-					);
+					if (
+						providedDependencies.processingResult === ProcessingResult.NO_ACTION &&
+						siteSlugParam
+					) {
+						// No pending action — the user landed on this page directly without
+						// completing the prior step (e.g. a direct URL load or page refresh).
+						// Redirect back to post-checkout-onboarding so it can set up the
+						// pending action and advance the flow normally.
+						window.location.replace(
+							addQueryArgs( withLocale( '/setup/onboarding/post-checkout-onboarding', locale ), {
+								siteSlug: siteSlugParam,
+								...( refParameter ? { ref: refParameter } : {} ),
+							} )
+						);
+						return;
+					}
+
+					const [ destination, backDestination, backDestinationDomains ] =
+						await getPostCheckoutDestination( providedDependencies, planCartItem );
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
 						persistSignupDestination( destination );
 						setSignupCompleteFlowName( flowName );
@@ -257,27 +298,40 @@ const onboarding: FlowV2< typeof initialize > = {
 											withLocale( '/setup/onboarding/post-checkout-onboarding', locale ),
 											{
 												siteSlug,
+												...( refParameter ? { ref: refParameter } : {} ),
 											}
 									  );
+
+							const checkoutStepperPosition = getOnboardingStepperPosition( 'checkout' );
 
 							// replace the location to delete processing step from history.
 							window.location.replace(
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 									redirect_to: redirectTo,
 									signup: 1,
+									flow: ONBOARDING_FLOW,
 									checkoutBackUrl: pathToUrl( backDestination ?? '' ),
+									...( backDestinationDomains
+										? { checkoutBackUrlDomains: pathToUrl( backDestinationDomains ) }
+										: {} ),
 									coupon,
+									steps_current: checkoutStepperPosition.current,
+									steps_total: checkoutStepperPosition.total,
 								} )
 							);
-						} else if ( providedDependencies?.postCheckoutBigSkyVariation === 'big_sky' ) {
+						} else if (
+							refParameter === WOO_HOSTING_SOLUTIONS_REF &&
+							isEnabled( 'onboarding/woo-hosting-post-purchase-setup-choice' )
+						) {
+							return navigate( 'setup-your-site-ai' );
+						} else if ( providedDependencies?.postCheckoutBigSky ) {
 							return navigate( 'setup-your-site-ai' );
 						} else {
 							// replace the location to delete processing step from history.
 							window.location.replace( destination );
 						}
 					} else {
-						// TODO: Handle errors
-						// navigate( 'error' );
+						return navigate( 'error' as typeof currentStepSlug );
 					}
 					return;
 				}
@@ -292,7 +346,17 @@ const onboarding: FlowV2< typeof initialize > = {
 					return;
 			}
 		};
-		return { submit };
+
+		const goBack = () => {
+			switch ( currentStepSlug ) {
+				case 'plans':
+					return navigate( 'domains' );
+				default:
+					return window.history.back();
+			}
+		};
+
+		return { submit, goBack };
 	},
 	useSideEffect( currentStepSlug ) {
 		const reduxDispatch = useReduxDispatch();
@@ -335,6 +399,13 @@ const onboarding: FlowV2< typeof initialize > = {
 		useEffect( () => {
 			loadExperimentAssignment( 'calypso_plans_page_visual_separation_2025_09_v2' );
 		}, [] );
+
+		// Preload the onboarding progress bar experiment
+		useEffect( () => {
+			if ( isLoggedIn ) {
+				loadExperimentAssignment( ONBOARDING_PROGRESS_EXPERIMENT_NAME );
+			}
+		}, [ isLoggedIn ] );
 	},
 };
 

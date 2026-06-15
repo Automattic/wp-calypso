@@ -22,8 +22,6 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	intent,
 	showLegacyStorageFeature,
 	selectedFeature,
-	useFocusedComparisonFeatures,
-	useVar41MorePremiumFeatures,
 	useVar42NoAiFeatures,
 	showPricingDifferentiationFeaturePills,
 	isExperimentVariant,
@@ -34,8 +32,6 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	intent?: PlansIntent;
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
-	useFocusedComparisonFeatures?: boolean;
-	useVar41MorePremiumFeatures?: boolean;
 	useVar42NoAiFeatures?: boolean;
 	showPricingDifferentiationFeaturePills?: boolean;
 	isExperimentVariant?: boolean;
@@ -49,8 +45,6 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 		intent,
 		selectedFeature,
 		showLegacyStorageFeature,
-		useFocusedComparisonFeatures,
-		useVar41MorePremiumFeatures,
 		useVar42NoAiFeatures,
 		showPricingDifferentiationFeaturePills,
 		isExperimentVariant,
@@ -61,8 +55,6 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			intent,
 			selectedFeature,
 			showLegacyStorageFeature,
-			useFocusedComparisonFeatures,
-			useVar41MorePremiumFeatures,
 			useVar42NoAiFeatures,
 			showPricingDifferentiationFeaturePills,
 			isExperimentVariant,

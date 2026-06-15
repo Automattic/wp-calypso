@@ -135,5 +135,28 @@ describe( 'isTestModeEnvironment', () => {
 
 			expect( isTestModeEnvironment() ).toBe( true );
 		} );
+
+		test( 'should default to production when config is unavailable (env undefined)', () => {
+			// Simulates contexts where window.configData is not set (e.g. Gutenberg editor
+			// before config.js executes), where config() returns undefined without throwing.
+			( config as unknown as jest.Mock ).mockReturnValue( undefined );
+
+			expect( isTestModeEnvironment() ).toBe( false );
+		} );
+
+		test( 'should treat proxied dev environment (staging env_id) as test mode', () => {
+			// apps/help-center/config.js sets env_id = env = 'staging' for proxied Automatticians.
+			( config as unknown as jest.Mock ).mockImplementation( ( key: string ) => {
+				if ( key === 'env_id' ) {
+					return 'staging';
+				}
+				if ( key === 'env' ) {
+					return 'staging';
+				}
+				return undefined;
+			} );
+
+			expect( isTestModeEnvironment() ).toBe( true );
+		} );
 	} );
 } );

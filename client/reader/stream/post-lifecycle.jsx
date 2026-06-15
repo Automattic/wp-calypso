@@ -1,16 +1,14 @@
 import { omit, includes } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component, Fragment, useCallback, useRef } from 'react';
+import { Component, forwardRef, useCallback, useRef } from 'react';
 import { connect } from 'react-redux';
 import PostBlocked from 'calypso/blocks/reader-post-card/blocked';
 import BloggingPromptCard from 'calypso/components/blogging-prompt-card';
-import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import compareProps from 'calypso/lib/compare-props';
+import { useCachedPost } from 'calypso/reader/data/post/cache';
 import { IN_STREAM_RECOMMENDATION } from 'calypso/reader/follow-sources';
-import ListGap from 'calypso/reader/list-gap';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import EmptySearchRecommendedPost from './empty-search-recommended-post';
 import Post from './post';
 import PostPlaceholder from './post-placeholder';
@@ -56,7 +54,7 @@ const useTrackPostView = ( postObj, recordTracksEvent ) => {
 
 			observerRef.current.observe( wrapperDiv );
 		},
-		[ postObj, observerRef ]
+		[ postObj, observerRef, recordTracksEvent ]
 	);
 };
 
@@ -82,8 +80,7 @@ class PostLifecycle extends Component {
 	};
 
 	render() {
-		const { post, postKey, isSelected, recsStreamKey, streamKey, siteId, isDiscoverStream } =
-			this.props;
+		const { post, postKey, recsStreamKey, streamKey, siteId, isDiscoverStream } = this.props;
 
 		if ( this.props.isSynthetic ) {
 			return <TrackedPost { ...this.props } />;
@@ -96,11 +93,13 @@ class PostLifecycle extends Component {
 					index={ postKey.index }
 					streamKey={ recsStreamKey }
 					followSource={ IN_STREAM_RECOMMENDATION }
+					itemRef={ this.props.itemRef }
 				/>
 			);
 		} else if ( postKey.isPromptBlock ) {
 			return (
 				<div
+					ref={ this.props.itemRef }
 					className="reader-stream__blogging-prompt"
 					key={ 'blogging-prompt-card-' + postKey.index }
 				>
@@ -119,31 +118,18 @@ class PostLifecycle extends Component {
 					postKey={ postKey }
 					streamKey={ streamKey }
 					fixedHeaderHeight={ this.props.fixedHeaderHeight }
-				/>
-			);
-		} else if ( postKey.isGap ) {
-			return (
-				<ListGap
-					gap={ postKey }
-					selected={ isSelected }
-					handleClick={ this.props.handleClick }
-					streamKey={ streamKey }
+					itemRef={ this.props.itemRef }
 				/>
 			);
 		} else if ( ! post ) {
-			return (
-				<Fragment>
-					<QueryReaderPost postKey={ postKey } />
-					<PostPlaceholder />
-				</Fragment>
-			);
+			return <PostPlaceholder itemRef={ this.props.itemRef } />;
 		} else if ( post.is_error ) {
-			return <PostUnavailable post={ post } />;
+			return <PostUnavailable post={ post } itemRef={ this.props.itemRef } />;
 		} else if (
 			( ! post.is_external || post.is_jetpack ) &&
 			includes( this.props.blockedSites, +post.site_ID )
 		) {
-			return <PostBlocked post={ post } />;
+			return <PostBlocked post={ post } itemRef={ this.props.itemRef } />;
 		} else if ( isXPost( post ) ) {
 			const xMetadata = XPostHelper.getXPostMetadata( post );
 			return (
@@ -160,12 +146,10 @@ class PostLifecycle extends Component {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => {
+const ConnectedPostLifecycle = connect(
+	( _state, ownProps ) => {
 		return {
-			post: ownProps.postKey.isSynthetic
-				? ownProps.postKey
-				: getPostByKey( state, ownProps.postKey ),
+			post: ownProps.postKey.isSynthetic ? ownProps.postKey : ownProps.post,
 		};
 	},
 	{
@@ -177,3 +161,10 @@ export default connect(
 		areOwnPropsEqual: compareProps( { ignore: [ 'handleClick' ] } ),
 	}
 )( PostLifecycle );
+
+const PostLifecycleWithPost = forwardRef( function PostLifecycleWithPost( props, ref ) {
+	const post = useCachedPost( props.postKey );
+	return <ConnectedPostLifecycle { ...props } post={ post } ref={ ref } />;
+} );
+
+export default PostLifecycleWithPost;

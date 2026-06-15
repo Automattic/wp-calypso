@@ -130,7 +130,11 @@ export class UserSignupPage {
 				( response ) =>
 					/\/users\/new\?/.test( response.url() ) &&
 					response.ok() &&
-					response.request().method() === 'POST'
+					response.request().method() === 'POST',
+				// Use an explicit timeout so the global actionTimeout (10s) does not
+				// apply here. The form load + fill + network round-trip can easily
+				// exceed 10s on a slow CI runner.
+				{ timeout: 60_000 }
 			)
 			.then( ( response ) => response.json() );
 	}
@@ -166,10 +170,12 @@ export class UserSignupPage {
 	 * @returns {NewUserResponse} Response from the REST API.
 	 */
 	async signupWithEmail( email: string ): Promise< NewUserResponse > {
+		// Register the response capture before any page interactions so it cannot
+		// miss the /users/new? POST if the form or network responds quickly.
+		const responsePromise = this.captureNewUserResponse();
+
 		await this.waitForSignupForm();
 		await this.emailInput.fill( email );
-
-		const responsePromise = this.captureNewUserResponse();
 
 		// Trigger the signup.
 		await this.submitButton.click();

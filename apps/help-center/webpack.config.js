@@ -17,7 +17,7 @@ function getIndividualConfig( options = {} ) {
 	return {
 		...webpackConfig,
 		mode: isDevelopment ? 'development' : 'production',
-		entry: { [ name ]: path.join( __dirname, `${ name }.js` ) },
+		entry: { [ name ]: path.join( __dirname, name ) },
 		output: {
 			...webpackConfig.output,
 			path: outputPath,

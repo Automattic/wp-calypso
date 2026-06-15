@@ -25,8 +25,6 @@ const useGridPlansForFeaturesGrid = ( {
 	highlightLabelOverrides,
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
-	useFocusedComparisonFeatures,
-	useVar41MorePremiumFeatures,
 	useVar42NoAiFeatures,
 	showPricingDifferentiationFeaturePills,
 	useFocusedNewCopyTaglines,
@@ -52,7 +50,6 @@ const useGridPlansForFeaturesGrid = ( {
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices,
 		useFocusedNewCopyTaglines,
-		isExperimentVariant,
 	} );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
@@ -63,8 +60,6 @@ const useGridPlansForFeaturesGrid = ( {
 		isInSignup,
 		selectedFeature,
 		showLegacyStorageFeature,
-		useFocusedComparisonFeatures,
-		useVar41MorePremiumFeatures,
 		useVar42NoAiFeatures,
 		showPricingDifferentiationFeaturePills,
 		isExperimentVariant,

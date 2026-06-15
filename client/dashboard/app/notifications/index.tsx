@@ -5,12 +5,12 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { bellUnread, bell } from '@wordpress/icons';
 import clsx from 'clsx';
-import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { useAuth } from '../auth';
 import { useHelpCenter } from '../help-center';
-import { omnibarEvents, useOmnibarEvent } from '../interim-omnibar/omnibar-events';
 import { useLocale } from '../locale';
+import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
 import './style.scss';
 
 const AsyncNotificationApp = lazy( () => import( '@automattic/notifications/src/app' ) );
@@ -32,6 +32,20 @@ export default function Notifications( {
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState( user.has_unseen_notes );
 	const [ anchorEl, setAnchorEl ] = useState< HTMLElement | null >( null );
 
+	// The masterbar remounts the bell when the unseen count changes, detaching any
+	// cached node. Resolve the live bell at measurement time so the popover stays
+	// anchored, falling back to the captured node while it is still connected.
+	const popoverAnchor = useMemo(
+		() => ( {
+			getBoundingClientRect: () =>
+				( anchorEl?.isConnected
+					? anchorEl
+					: document.querySelector< HTMLElement >( '#wpcom-omnibar .masterbar-notifications' )
+				)?.getBoundingClientRect() ?? new DOMRect(),
+		} ),
+		[ anchorEl ]
+	);
+
 	const handleToggle = ( willOpen: boolean ) => {
 		if ( willOpen ) {
 			setShowHelpCenter( false, undefined, true );
@@ -45,6 +59,11 @@ export default function Notifications( {
 			setIsOpen( false );
 		}
 	}, [ isHelpCenterShown ] );
+
+	// Keep the omnibar button in sync with the panel open state.
+	useEffect( () => {
+		omnibarEvents.notificationsOpen.emit( isOpen );
+	}, [ isOpen ] );
 
 	const handleClose = () => {
 		handleToggle( false );
@@ -112,11 +131,12 @@ export default function Notifications( {
 	return (
 		<Dropdown
 			popoverProps={ {
-				className: 'dashboard-notifications',
-				placement: 'bottom-end',
+				placement: 'bottom-start',
 				offset: 8,
 				focusOnMount: true,
-				...( anchorEl && { anchor: anchorEl } ),
+				flip: false,
+				shift: true,
+				...( anchor ? { anchor: popoverAnchor } : anchorEl && { anchor: anchorEl } ),
 				...( isEnabled( 'dashboard/omnibar' ) && {
 					onFocusOutside: () => {
 						// When focus moves to the omnibar (e.g. clicking the
@@ -149,24 +169,14 @@ export default function Notifications( {
 				)
 			}
 			renderContent={ () => (
-				<div
-					style={ {
-						width: '100vw',
-						height: '100vh',
-						maxWidth: ! isMobileViewport ? '448px' : undefined,
-						maxHeight: 'inherit',
-						margin: '-8px',
-					} }
-				>
-					<Suspense fallback={ null }>
-						<AsyncNotificationApp
-							locale={ locale }
-							isDismissible={ isMobileViewport }
-							actionHandlers={ actionHandlers }
-							wpcom={ wpcom }
-						/>
-					</Suspense>
-				</div>
+				<Suspense fallback={ null }>
+					<AsyncNotificationApp
+						locale={ locale }
+						isDismissible={ isMobileViewport }
+						actionHandlers={ actionHandlers }
+						wpcom={ wpcom }
+					/>
+				</Suspense>
 			) }
 		/>
 	);

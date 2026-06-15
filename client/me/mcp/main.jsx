@@ -1,4 +1,5 @@
 import { sitesQuery, userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import SummaryButton from '@automattic/components/src/summary-button';
@@ -89,11 +90,18 @@ function McpComponent( { path } ) {
 			accountAbilities[ toolId ] = enabled ? isReadTool( mcpAbilities[ toolId ] ) : false;
 		} );
 
-		mutation.mutate( {
-			mcp_abilities: {
-				account: accountAbilities,
+		mutation.mutate(
+			{
+				mcp_abilities: {
+					account: accountAbilities,
+				},
 			},
-		} );
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_mcp_account_toggled', { enabled } );
+				},
+			}
+		);
 	};
 
 	const disabledSiteCount = getDisabledSiteIds( userSettings || {} ).length;

@@ -1,5 +1,6 @@
 import {
 	AkismetPlans,
+	DomainProductSlugs,
 	JetpackPlans,
 	GoogleWorkspaceSlugs,
 	JetpackSearchProducts,
@@ -7,6 +8,7 @@ import {
 	SubscriptionBillPeriod,
 	TitanMailSlugs,
 	WPCOM_DIFM_LITE,
+	OFFSITE_REDIRECT,
 } from '@automattic/api-core';
 import { formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
@@ -29,16 +31,6 @@ export const CANCEL_FLOW_TYPE = {
 } as const;
 export type CancelFlowType = ( typeof CANCEL_FLOW_TYPE )[ keyof typeof CANCEL_FLOW_TYPE ];
 
-export function isTemporarySitePurchase( purchase: Purchase ): boolean {
-	const { domain } = purchase;
-	// Currently only Jetpack, Akismet, A4A, and some Marketplace products allow siteless/userless(license-based) purchases which require a temporary
-	// site(s) to work. This function may need to be updated in the future as additional products types
-	// incorporate siteless/userless(licensebased) product based purchases..
-	return /^siteless\.(jetpack|akismet|marketplace\.wp|agencies\.automattic|a4a)\.com$/.test(
-		domain
-	);
-}
-
 export function isRenewing( purchase: Purchase ): boolean {
 	return [ 'active', 'auto-renewing' ].includes( purchase.expiry_status );
 }
@@ -53,14 +45,45 @@ export function isFailedAutoRenewal( purchase: Purchase ): boolean {
 	);
 }
 
+/**
+ * Returns true if the purchase is still active but headed toward lapsing: it
+ * either requires a manual renewal or is expiring soon without auto-renew.
+ *
+ * Note this also covers purchases that are active but already PAST their expiry
+ * date (in the grace period), because the backend reports those as 'expiring'
+ * rather than 'expired'. It does NOT cover already-lapsed purchases — see
+ * {@link isExpired}. To test specifically for past-expiry, use the
+ * `is_past_expiry_date` flag on the purchase.
+ */
 export function isExpiring( purchase: Purchase ) {
 	return [ 'manual-renew', 'expiring' ].includes( purchase.expiry_status );
 }
 
+/**
+ * Returns true only if the underlying subscription is no longer active (the
+ * backend `expiry_status` is 'expired').
+ *
+ * Important: this is NOT the same as the purchase being past its expiry date. A
+ * subscription that is still active but past its expiry date (i.e. in its grace
+ * period) reports as 'expiring', not 'expired', so this returns false for it —
+ * see {@link isExpiring} and {@link isInExpirationGracePeriod}. To test whether
+ * the expiry date itself has passed (regardless of active/lapsed state), use the
+ * `is_past_expiry_date` flag on the purchase.
+ */
 export function isExpired( purchase: Purchase ) {
 	return 'expired' === purchase.expiry_status;
 }
 
+/**
+ * Returns true if the purchase is past its expiry date but the subscription is
+ * still active — the post-expiry grace period during which it can still be
+ * renewed before fully lapsing.
+ *
+ * This is the "active but already past expiry" case that {@link isExpired} does
+ * NOT cover: such purchases report an `expiry_status` of 'expiring' (or
+ * 'manual-renew'), not 'expired'. Equivalent to `is_past_expiry_date` being
+ * true while {@link isExpired} is false (excluding Akismet free products).
+ */
 export function isInExpirationGracePeriod( purchase: Purchase ): boolean {
 	if ( ! purchase.expiry_date ) {
 		return false;
@@ -212,12 +235,12 @@ export function isA4ABillingDragonPurchase( purchase: Purchase ): boolean {
 	return purchase.meta === 'is-a4a';
 }
 
-export function isA4ATemporarySitePurchase( purchase: Purchase ): boolean {
-	return isTemporarySitePurchase( purchase ) && isA4ABillingDragonPurchase( purchase );
+export function isA4AHoldingSitePurchase( purchase: Purchase ): boolean {
+	return purchase.is_attached_to_holding_site && isA4ABillingDragonPurchase( purchase );
 }
 
-export function isAkismetTemporarySitePurchase( purchase: Purchase ): boolean {
-	return isTemporarySitePurchase( purchase ) && purchase.product_type === 'akismet';
+export function isAkismetHoldingSitePurchase( purchase: Purchase ): boolean {
+	return purchase.is_attached_to_holding_site && purchase.product_type === 'akismet';
 }
 
 export function isMarketplacePlugin( purchase: Purchase ): boolean {
@@ -226,12 +249,12 @@ export function isMarketplacePlugin( purchase: Purchase ): boolean {
 	);
 }
 
-export function isMarketplaceTemporarySitePurchase( purchase: Purchase ): boolean {
-	return isTemporarySitePurchase( purchase ) && purchase.product_type === 'saas_plugin';
+export function isMarketplaceHoldingSitePurchase( purchase: Purchase ): boolean {
+	return purchase.is_attached_to_holding_site && purchase.product_type === 'saas_plugin';
 }
 
-export function isJetpackTemporarySitePurchase( purchase: Purchase ): boolean {
-	return isTemporarySitePurchase( purchase ) && purchase.product_type === 'jetpack';
+export function isJetpackHoldingSitePurchase( purchase: Purchase ): boolean {
+	return purchase.is_attached_to_holding_site && purchase.product_type === 'jetpack';
 }
 
 /**
@@ -311,10 +334,10 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 		'wordpress_com_1gb_space_addon_yearly' === purchase.product_slug &&
 		purchase.renewal_price_tier_usage_quantity
 	) {
-		// translators: productName is the name of the product and quantity is a number (GB stands for GigaBytes)
+		// translators: %(productName)s is the name of the product and %(quantity)s is a number (GB stands for GigaBytes)
 		return sprintf( __( '%(productName)s %(quantity)s GB' ), {
 			productName: purchase.product_name,
-			quantity: purchase.renewal_price_tier_usage_quantity,
+			quantity: String( purchase.renewal_price_tier_usage_quantity ),
 		} );
 	}
 
@@ -327,7 +350,7 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 		purchase.renewal_price_tier_usage_quantity &&
 		purchase.renewal_price_tier_usage_quantity > 1
 	) {
-		/* translators: %s is the product name "Akismet Pro", %d is a number of requests/month */
+		/* translators: %(productName)s is the product name "Akismet Pro", %(requests)d is a number of requests/month */
 		return sprintf( __( '%(productName)s (%(requests)d requests/month)' ), {
 			productName: purchase.product_name.replace( /\s*\(.*$/, '' ).trim(),
 			requests: 500 * purchase.renewal_price_tier_usage_quantity,
@@ -385,21 +408,21 @@ export function getSubtitleForDisplay( purchase: Purchase ): string | null {
 		return purchase.product_name;
 	}
 
-	if ( isTemporarySitePurchase( purchase ) && purchase.product_type === 'akismet' ) {
+	if ( purchase.is_attached_to_holding_site && purchase.product_type === 'akismet' ) {
 		return null;
 	}
 
-	if ( isTemporarySitePurchase( purchase ) && purchase.product_type === 'saas_plugin' ) {
+	if ( purchase.is_attached_to_holding_site && purchase.product_type === 'saas_plugin' ) {
 		return null;
 	}
 
-	if ( isTemporarySitePurchase( purchase ) && isA4ATemporarySitePurchase( purchase ) ) {
+	if ( purchase.is_attached_to_holding_site && isA4AHoldingSitePurchase( purchase ) ) {
 		return null;
 	}
 
 	if ( purchase.is_google_workspace_product && purchase.meta ) {
 		return sprintf(
-			// translators: The domain is the domain name of the site
+			// translators: %(domain)s is the domain name of the site
 			__( 'Mailboxes and Productivity Tools at %(domain)s' ),
 			{
 				domain: purchase.meta,
@@ -409,7 +432,7 @@ export function getSubtitleForDisplay( purchase: Purchase ): string | null {
 
 	if ( purchase.is_titan_mail_product && purchase.meta ) {
 		return sprintf(
-			// translators: The domain is the domain name of the site
+			// translators: %(domain)s is the domain name of the site
 			__( 'Mailboxes at %(domain)s' ),
 			{
 				domain: purchase.meta,
@@ -440,10 +463,11 @@ export function isJetpackCrmProduct( keyOrSlug: string ): boolean {
 type ObjectWithProductSlug = { product_slug?: string };
 
 export function isTitanMail( purchase: Purchase | ObjectWithProductSlug ): boolean {
-	return (
-		purchase.product_slug === TitanMailSlugs.TITAN_MAIL_MONTHLY_SLUG ||
-		purchase.product_slug === TitanMailSlugs.TITAN_MAIL_YEARLY_SLUG
-	);
+	if ( ! purchase.product_slug ) {
+		return false;
+	}
+
+	return ( Object.values( TitanMailSlugs ) as readonly string[] ).includes( purchase.product_slug );
 }
 
 export function isGoogleWorkspace( purchase: Purchase | ObjectWithProductSlug ): boolean {
@@ -453,8 +477,12 @@ export function isGoogleWorkspace( purchase: Purchase | ObjectWithProductSlug ):
 	);
 }
 
+export function isDomainTransfer( purchase: Purchase | ObjectWithProductSlug ): boolean {
+	return purchase.product_slug === DomainProductSlugs.TRANSFER_IN;
+}
+
 export function isSiteRedirect( purchase: Purchase ): boolean {
-	return purchase.product_slug === 'offsite_redirect';
+	return purchase.product_slug === OFFSITE_REDIRECT;
 }
 
 export function isWpcomFlexSubscription( purchase: Purchase ): boolean {
@@ -473,6 +501,20 @@ export function isDIFMProduct( product: ObjectWithProductSlug ): boolean {
  */
 export function isTieredVolumeSpaceAddon( product: ObjectWithProductSlug ): boolean {
 	return product.product_slug === PRODUCT_1GB_SPACE;
+}
+
+const SPACE_UPGRADE_SLUGS = [
+	'1gb_space_upgrade',
+	'5gb_space_upgrade',
+	'10gb_space_upgrade',
+	'50gb_space_upgrade',
+	'100gb_space_upgrade',
+];
+
+export function isStorageUpgrade( purchase: Purchase ): boolean {
+	return (
+		SPACE_UPGRADE_SLUGS.includes( purchase.product_slug ) || isTieredVolumeSpaceAddon( purchase )
+	);
 }
 
 /**
@@ -517,7 +559,7 @@ function getServicePathForCheckoutFromPurchase( purchase: Purchase ): string {
 	if ( isAkismetProduct( purchase ) ) {
 		return 'akismet/';
 	}
-	if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+	if ( isMarketplaceHoldingSitePurchase( purchase ) ) {
 		return 'marketplace/';
 	}
 	return '';
@@ -673,22 +715,24 @@ export function hasAmountAvailableToRefund( purchase: Purchase ) {
 }
 
 /**
- * Returns true if the refund eligibility notice should be shown for the given purchase.
+ * Returns true if the plan is eligible for an instant, self-serve downgrade: the
+ * plan is still within its initial refund window (not a renewal) and has neither
+ * expired nor entered its post-expiry grace period.
  *
- * The notice is shown for refundable WordPress.com plans when the experiment is enabled.
- * When shown, the notice replaces the standard refund flow with an auto-renew cancellation
- * flow, offering the refund as an explicit opt-in action instead.
+ * Note: this intentionally does NOT require a refundable amount. Instant
+ * downgrades are also offered for plans that were paid with credits or are
+ * otherwise free, where no money would be refunded.
  *
- * @param purchase  - the purchase to check
- * @param isEnabled - whether the user is assigned to the treatment variation of the
- *                    calypso_split_cancel_refund experiment. Use the
- *                    `useShowRefundEligibilityNotice` hook to determine this in React components.
+ * This is distinct from {@link isInExpirationGracePeriod}, which gates the
+ * downgrade-to-checkout flow for plans whose expiry date has already passed.
  */
-export function shouldShowRefundEligibilityNotice(
-	purchase: Purchase,
-	isEnabled: boolean
-): boolean {
-	return isEnabled && hasAmountAvailableToRefund( purchase ) && isDotcomPlan( purchase );
+export function isWithinRefundWindowDowngradeEligible( purchase: Purchase ): boolean {
+	return (
+		purchase.is_plan &&
+		purchase.is_within_initial_refund_window &&
+		! isExpired( purchase ) &&
+		! isInExpirationGracePeriod( purchase )
+	);
 }
 
 /**
@@ -716,8 +760,77 @@ export function getPurchaseCancellationFlowType( purchase: Purchase ): CancelFlo
 }
 
 /**
+ * Cancel intent sourced from the entry point the user came from.
+ * `cancel`      = clicked "Cancel subscription" on Purchase Settings.
+ * `remove`      = clicked "Remove subscription / Remove {product}" on Purchase Settings.
+ * `auto-renew`  = toggled off auto-renew on Purchase Settings.
+ * Absent means flag-off, old deep link, or flow-type heuristic fallback.
+ */
+export type CancelIntent = 'cancel' | 'remove' | 'auto-renew';
+
+export function getCancelIntentFromSearch( search: { intent?: unknown } ): CancelIntent | null {
+	return search.intent === 'cancel' || search.intent === 'remove' || search.intent === 'auto-renew'
+		? search.intent
+		: null;
+}
+
+/**
+ * The set of UI variants the cancel/confirmation screens can render. Currently
+ * 1:1 with CancelIntent — kept as a separate alias because callers often
+ * compute a display variant from intent plus a flow-type fallback.
+ */
+export type DisplayVariant = 'cancel' | 'remove' | 'auto-renew';
+
+/**
+ * Derives which screen variant to show from intent, with a flow-type fallback when intent is absent.
+ */
+export function getDisplayVariant(
+	intent: CancelIntent | null,
+	flowType: CancelFlowType
+): DisplayVariant {
+	if ( intent ) {
+		return intent;
+	}
+	return flowType === CANCEL_FLOW_TYPE.REMOVE ? 'remove' : 'cancel';
+}
+
+/**
+ * Derives which backend mutation to run from intent + purchase state.
+ * Falls back to getPurchaseCancellationFlowType when intent is absent or the intent/state combo is invalid.
+ */
+export function getMutationFlowType(
+	intent: CancelIntent | null,
+	purchase: Purchase
+): CancelFlowType {
+	if ( ! intent ) {
+		return getPurchaseCancellationFlowType( purchase );
+	}
+
+	// 'cancel' and 'auto-renew' both map to the disable-auto-renew flow when
+	// auto-renew is on; both fall back to flow-type otherwise.
+	if ( intent === 'cancel' || intent === 'auto-renew' ) {
+		if ( purchase.is_auto_renew_enabled ) {
+			return CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
+		}
+		return getPurchaseCancellationFlowType( purchase );
+	}
+
+	if ( purchase.is_auto_renew_enabled && hasAmountAvailableToRefund( purchase ) ) {
+		return CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
+	}
+	return CANCEL_FLOW_TYPE.REMOVE;
+}
+
+/**
  * Returns true if a list of products includes a product with a matching product or store product slug.
  */
+export function isCentennialPurchase( purchase: Purchase ): boolean {
+	return (
+		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ||
+		purchase.is_hundred_year_domain
+	);
+}
+
 export const hasMarketplaceProduct = ( productsList: Product[], searchSlug: string ): boolean =>
 	// storeProductSlug is from the legacy store_products system, billing_product_slug is from
 	// the non-legacy billing system and for marketplace plugins will match the slug of the plugin

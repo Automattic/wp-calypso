@@ -2,7 +2,7 @@ import { rawUserPreferencesQuery, userSettingsQuery } from '@automattic/api-quer
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { wordpress } from '@wordpress/icons';
+import { commentAuthorAvatar } from '@wordpress/icons';
 import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
@@ -59,9 +59,9 @@ export default function PreferencesDefaults( { density }: { density?: Density } 
 		<RouterLinkSummaryButton
 			density={ density }
 			to="/me/preferences/defaults"
-			title={ __( 'WordPress.com defaults' ) }
+			title={ __( 'Account defaults' ) }
 			description={ __( 'Set your starting point after you log in and primary site.' ) }
-			decoration={ <Icon icon={ wordpress } size={ 24 } /> }
+			decoration={ <Icon icon={ commentAuthorAvatar } size={ 24 } /> }
 			badges={ badges }
 		/>
 	);

@@ -1,22 +1,20 @@
 import { isWpComMonthlyPlan } from '@automattic/calypso-products';
-import { SitePlanData } from 'calypso/my-sites/checkout/src/hooks/product-variants';
-import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
-/**
- * Get the preferred product slug from the products list.
- * @param products list of products
- * @returns string
- */
+interface ProductWithBillingCycle {
+	product_slug: string;
+	product_term?: string;
+}
+
 export function getPreferredBillingCycleProductSlug(
-	products: Array< ProductListItem >,
-	currentPlan?: SitePlanData | any
+	products: Array< ProductWithBillingCycle >,
+	currentPlanSlug?: string
 ): string {
 	if ( products.length === 0 ) {
 		throw new Error( 'No products available' );
 	}
 	let preferredBillingCycle = 'month';
 
-	if ( currentPlan && ! isWpComMonthlyPlan( currentPlan.productSlug ) ) {
+	if ( currentPlanSlug && ! isWpComMonthlyPlan( currentPlanSlug ) ) {
 		preferredBillingCycle = 'year';
 	}
 

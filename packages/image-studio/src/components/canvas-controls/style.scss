@@ -27,6 +27,10 @@
 	align-items: center;
 }
 
+.canvas-controls__left button[aria-pressed="true"] {
+	cursor: default;
+}
+
 .canvas-controls__nav-button {
 	background: transparent;
 	border: none;

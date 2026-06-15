@@ -18,7 +18,8 @@ export default function useFetchTaggedSitesForMigration() {
 		refetchOnWindowFocus: false,
 	} );
 
-	// Filter sites to only include those with pending, verified, or paid incentive_status
+	// Filter sites to only include those with a known incentive_status:
+	// pending, verified, paid, rejected, reverification, or ineligible.
 	const filteredData = useMemo( () => {
 		if ( ! query.data ) {
 			return query.data;
@@ -27,7 +28,14 @@ export default function useFetchTaggedSitesForMigration() {
 		const sites = Array.isArray( query.data ) ? query.data : query.data.sites || [];
 		return sites.filter( ( site: TaggedSite ) => {
 			const status = site.incentive_status || '';
-			return status === 'pending' || status === 'verified' || status === 'paid';
+			return (
+				status === 'pending' ||
+				status === 'verified' ||
+				status === 'paid' ||
+				status === 'rejected' ||
+				status === 'reverification' ||
+				status === 'ineligible'
+			);
 		} );
 	}, [ query.data ] );
 

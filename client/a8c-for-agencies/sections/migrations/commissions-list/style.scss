@@ -1,5 +1,5 @@
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 .migrations-commissions-list-mobile-view {
 	padding: 16px;
@@ -7,4 +7,37 @@
 
 .migrations-commissions-list-mobile-view__column {
 	@include body-medium;
+}
+
+.commission-columns__rejected-status {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.commission-columns__rejection-reason-button.components-button {
+	min-width: 0;
+	padding: 0;
+	height: auto;
+	color: var( --color-neutral-50 );
+
+	&:hover {
+		color: var( --color-neutral-70 );
+	}
+}
+
+.commission-columns__rejection-reason-popover {
+	padding: 12px 16px;
+	max-width: 280px;
+}
+
+.commission-columns__rejection-reason-title {
+	font-weight: 600;
+	margin-block-end: 4px;
+}
+
+.commission-columns__rejection-reason-text {
+	color: var( --color-neutral-60 );
+	font-size: 13px;
+	line-height: 1.5;
 }

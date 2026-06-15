@@ -3,7 +3,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { getCurrentDashboard } from '../app/routing';
 import { isSitePlanTrial, isSitePlanWooHosted } from '../sites/plans';
 import { isDashboardBackport } from './is-dashboard-backport';
-import { redirectToDashboardLink, wpcomLink } from './link';
+import { dashboardLink, redirectToDashboardLink, wpcomLink } from './link';
 import { isAkismetProduct, isJetpackT1SecurityPlan } from './purchase';
 import { isSelfHostedJetpackConnected } from './site-types';
 import type { Purchase, Site } from '@automattic/api-core';
@@ -45,12 +45,12 @@ export function getSiteEditUrl( site: Site, isSiteUsingBlockTheme?: boolean ) {
 /**
  * Returns the URL for the site visibility settings page.
  */
-export function getSiteVisibilityURL( site: Site, queryArgs?: { back_to: 'site-overview' } ) {
+export function getSiteVisibilityURL( site: Site ) {
 	if ( isSelfHostedJetpackConnected( site ) ) {
 		return undefined;
 	}
 
-	return addQueryArgs( `/sites/${ site.slug }/settings/site-visibility`, queryArgs );
+	return `/sites/${ site.slug }/settings/site-visibility`;
 }
 
 /**
@@ -86,10 +86,33 @@ export function getSitePlanUpgradeUrl( site: Site ) {
 		siteSlug: site.slug,
 		isTrial: isSitePlanTrial( site ),
 		isWooHosted: isSitePlanWooHosted( site ),
+		redirectTo: redirectToDashboardLink(),
 	} );
 }
 
-export function getSitePurchaseUpgradeUrl( purchase: Purchase ) {
+/**
+ * `redirect_to` URL for plan upgrades that should land on the Dashboard
+ * purchase-settings page for the newly-provisioned plan. The `:purchaseId`
+ * placeholder is substituted by the checkout pending page once the new
+ * subscription appears in the user's purchases (or it falls back to the site
+ * overview after a timeout — see `pending-page.ts`).
+ */
+export function getUpgradedPurchaseRedirectUrl(): string {
+	return dashboardLink( '/me/billing/purchases/:purchaseId?upgraded=true' );
+}
+
+/**
+ * `redirect_to` URL for the change-plan flow, which can result in either an
+ * upgrade or a downgrade. Unlike `getUpgradedPurchaseRedirectUrl`, it lands on
+ * the purchase-settings page with a neutral "plan changed" notice rather than
+ * an upgrade-specific one. The `:purchaseId` placeholder resolves to the newly
+ * provisioned plan's purchase (see `getUpgradedPurchaseRedirectUrl`).
+ */
+export function getChangedPlanRedirectUrl(): string {
+	return dashboardLink( '/me/billing/purchases/:purchaseId?plan_changed=true' );
+}
+
+export function getSitePurchaseUpgradeUrl( purchase: Purchase, redirectTo?: string ) {
 	if ( isAkismetProduct( purchase ) ) {
 		// For the first Iteration of Calypso Akismet checkout we are only suggesting
 		// for immediate upgrades to the next plan. We will change this in the future
@@ -127,6 +150,7 @@ export function getSitePurchaseUpgradeUrl( purchase: Purchase ) {
 		siteSlug: purchase.site_slug,
 		isTrial: purchase.is_trial_plan,
 		isWooHosted: purchase.is_woo_hosted_product,
+		redirectTo: redirectTo ?? redirectToDashboardLink(),
 	} );
 }
 
@@ -134,10 +158,12 @@ function buildSitePlanUpgradeUrl( {
 	siteSlug,
 	isTrial,
 	isWooHosted,
+	redirectTo,
 }: {
 	siteSlug: string;
 	isTrial: boolean;
 	isWooHosted: boolean;
+	redirectTo: string;
 } ) {
 	if ( isTrial && ! isWooHosted ) {
 		return wpcomLink( `/plans/${ siteSlug }` );
@@ -152,5 +178,6 @@ function buildSitePlanUpgradeUrl( {
 		siteSlug: siteSlug,
 		cancel_to: backUrl,
 		dashboard: getCurrentDashboard(),
+		redirect_to: redirectTo,
 	} );
 }

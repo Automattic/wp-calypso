@@ -57,9 +57,10 @@ function normalizeProduct( product: Product ): Product {
 	};
 }
 
-export async function fetchProducts(): Promise< Record< string, Product > > {
+export async function fetchProducts( type?: string ): Promise< Record< string, Product > > {
 	const products: Record< string, Product > = await wpcom.req.get( {
 		path: '/products/',
+		...( type ? { qs: { type } } : {} ),
 	} );
 	return Object.fromEntries(
 		Object.entries( products ).map( ( [ key, product ] ) => [ key, normalizeProduct( product ) ] )

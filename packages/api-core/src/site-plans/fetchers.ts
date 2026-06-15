@@ -1,6 +1,7 @@
 import { toNumber } from '../normalize-utils';
 import { wpcom } from '../wpcom-fetcher';
-import type { SiteContextualPlan } from './types';
+import type { SubscriptionBillPeriodValue } from '../constants';
+import type { SiteContextualPlan, SitePlansPageContext } from './types';
 
 /**
  * Normalizes a product object to ensure all number fields are actual numbers.
@@ -18,7 +19,7 @@ function normalizeSitePlan( plan: SiteContextualPlan ): SiteContextualPlan {
 		raw_discount_integer: toNumber( plan.raw_discount_integer ),
 		product_id: toNumber( plan.product_id ),
 		...( plan.interval !== undefined && {
-			interval: toNumber( plan.interval ),
+			interval: toNumber( plan.interval ) as SubscriptionBillPeriodValue,
 		} ),
 		cost_overrides: plan.cost_overrides.map( ( override ) => ( {
 			...override,
@@ -38,19 +39,34 @@ function normalizeSitePlan( plan: SiteContextualPlan ): SiteContextualPlan {
 		...( plan.id !== undefined && {
 			id: toNumber( plan.id ),
 		} ),
+		...( Boolean( plan.plan_card_order ) === true && {
+			plan_card_order: toNumber( plan.plan_card_order ),
+		} ),
+		...( Boolean( plan.product_tier_id ) === true && {
+			product_tier_id: toNumber( plan.product_tier_id ),
+		} ),
+		...( plan.product_tier_product_ids !== undefined && {
+			product_tier_product_ids: plan.product_tier_product_ids.map( toNumber ),
+		} ),
 	};
 }
 
 export async function fetchSitePlans(
 	siteId: number,
 	coupon?: string
-): Promise< SiteContextualPlan[] > {
+): Promise< { plans: SiteContextualPlan[]; pageContext?: SitePlansPageContext } > {
 	const params = new URLSearchParams();
 	coupon && params.append( 'coupon_code', coupon );
-	const plansByProductId: Record< string, SiteContextualPlan > = await wpcom.req.get( {
+	const response: {
+		plans: Record< string, SiteContextualPlan >;
+		page_context?: SitePlansPageContext;
+	} = await wpcom.req.get( {
 		path: `/sites/${ siteId }/plans`,
-		apiVersion: '1.3',
+		apiVersion: '1.4',
 		query: params.toString(),
 	} );
-	return Object.values( plansByProductId ).map( normalizeSitePlan );
+	return {
+		plans: Object.values( response.plans ).map( normalizeSitePlan ),
+		pageContext: response.page_context,
+	};
 }

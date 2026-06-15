@@ -1,3 +1,4 @@
+@import "@wordpress/base-styles/mixins";
 @import '@wordpress/base-styles/colors';
 
 .site-preview {
@@ -6,7 +7,7 @@
 		min-width: 0;
 
 		> a {
-			color: $gray-800;
+			color: var(--dashboard__text-color);
 			font-weight: 500;
 			min-width: 0;
 			text-decoration: none;

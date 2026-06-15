@@ -238,16 +238,16 @@ describe( 'index', () => {
 			};
 			const normalized = withContentDOM( [ disableAutoPlayOnMedia ] )( post );
 			expect( normalized ).toEqual( {
-				content: '<video controls="" preload="metadata"></video>',
+				content: '<video preload="metadata" controls=""></video>',
 			} );
 		} );
 
-		test( 'should strip autoplay attributes from audio', () => {
+		test( 'should strip autoplay attributes from audio and add preload', () => {
 			const post = {
 				content: '<audio autoplay="1"></audio>',
 			};
 			const normalized = withContentDOM( [ disableAutoPlayOnMedia ] )( post );
-			expect( normalized ).toEqual( { content: '<audio></audio>' } );
+			expect( normalized ).toEqual( { content: '<audio preload="metadata"></audio>' } );
 		} );
 
 		test( 'should strip autoplay like attributes from iframes', () => {

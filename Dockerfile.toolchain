@@ -3,7 +3,7 @@
 #### This file intentionally mirrors the non-cache stages in Dockerfile.base so
 #### we can validate a toolchain-only path while keeping the existing base flow
 #### intact as a fallback during rollout.
-ARG node_version=22.9.0
+ARG node_version=24.15.0
 ARG commit_sha="(unknown)"
 ARG cache_seed_key="(unknown)"
 FROM node:${node_version}-bullseye-slim AS toolchain

@@ -268,8 +268,16 @@ export class MagicLogin extends Component {
 	};
 
 	render() {
-		const { oauth2Client, query, translate, isWooJPC, isJetpackLogin, isFromJetpackOnboarding } =
-			this.props;
+		const {
+			oauth2Client,
+			query,
+			translate,
+			isWooJPC,
+			isJetpackLogin,
+			isUnifiedConnectionFlow,
+			isFromJetpackConnector,
+			connectorPlugins,
+		} = this.props;
 		const { usernameOrEmail } = this.state;
 
 		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
@@ -284,7 +292,7 @@ export class MagicLogin extends Component {
 			...( this.props.isJetpackLogin ? { flow: 'jetpack' } : {} ),
 			isJetpackMagicLinkSignUpEnabled: this.props.isJetpackLogin,
 			createAccountForNewUser: true,
-			isFromJetpackOnboarding,
+			isUnifiedConnectionFlow,
 			tosComponent: this.renderTos(),
 			...( isStudio
 				? {
@@ -326,7 +334,16 @@ export class MagicLogin extends Component {
 			</Main>
 		);
 
-		return <OneLoginLayout isJetpack={ isJetpackLogin }>{ mainContent }</OneLoginLayout>;
+		return (
+			<OneLoginLayout
+				isJetpack={ isJetpackLogin }
+				isFromJetpackConnector={ isFromJetpackConnector }
+				isUnifiedConnectionFlow={ isUnifiedConnectionFlow }
+				connectorPlugins={ connectorPlugins }
+			>
+				{ mainContent }
+			</OneLoginLayout>
+		);
 	}
 }
 
@@ -373,11 +390,29 @@ const MagicLoginWithContext = ( props ) => {
 	);
 };
 
+export const getConnectionFlowFromRedirectTo = ( redirectToOriginal, currentQuery = {} ) => {
+	const redirectToParams = new URLSearchParams( redirectToOriginal?.split( '?' )[ 1 ] );
+	const from = redirectToParams.get( 'from' ) || currentQuery.from || null;
+	const isFromJetpackConnector = from === 'jetpack-connector';
+	const rawPlugins = isFromJetpackConnector
+		? redirectToParams.get( 'plugins' ) || currentQuery.plugins || ''
+		: '';
+	return {
+		isUnifiedConnectionFlow: [ 'jetpack-onboarding', 'jetpack-connector' ].includes( from ),
+		isFromJetpackConnector,
+		connectorPlugins: rawPlugins
+			.split( ',' )
+			.map( ( s ) => s.trim() )
+			.filter( Boolean ),
+	};
+};
+
 const mapState = ( state ) => {
 	const currentRoute = getCurrentRoute( state );
 	const currentQuery = getCurrentQueryArguments( state );
 	const initialQuery = getInitialQueryArguments( state );
 	const redirectToOriginal = getRedirectToOriginal( state );
+	const connectorParams = getConnectionFlowFromRedirectTo( redirectToOriginal, currentQuery );
 
 	return {
 		locale: getCurrentLocaleSlug( state ),
@@ -394,9 +429,7 @@ const mapState = ( state ) => {
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 		redirectToSanitized: getRedirectToSanitized( state ),
 		redirectToOriginal,
-		isFromJetpackOnboarding:
-			new URLSearchParams( redirectToOriginal?.split( '?' )[ 1 ] ).get( 'from' ) ===
-			'jetpack-onboarding',
+		...connectorParams,
 		isWooJPC: isWooJPCFlow( state ),
 		publicToken: getMagicLoginPublicToken( state ),
 		partnerConfig: detectPartnerConfig( getCurrentOAuth2Client( state ) ),

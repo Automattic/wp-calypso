@@ -2,7 +2,6 @@ import {
 	PLAN_FREE,
 	PLAN_WOOEXPRESS_MEDIUM,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
-	getPlanPath,
 	isWooExpressPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
@@ -87,11 +86,9 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 
 			triggerTracksEvent?.( upgradePlanSlug );
 
-			const planPath = getPlanPath( upgradePlanSlug ) ?? '';
-
 			const checkoutUrl = isWooExpressPlan( upgradePlanSlug )
-				? getTrialCheckoutUrl( { productSlug: planPath, siteSlug } )
-				: `/checkout/${ siteSlug }/${ planPath }`;
+				? getTrialCheckoutUrl( { productSlug: upgradePlanSlug, siteSlug } )
+				: `/checkout/${ siteSlug }/${ upgradePlanSlug }`;
 
 			page( checkoutUrl );
 		},

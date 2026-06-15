@@ -1,0 +1,41 @@
+.prompt-form {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	max-width: 600px;
+	margin: 0 auto;
+
+	// White pill around the textarea + send button, gently outlined to
+	// pop against the surrounding studio-gray-0 panel.
+	.ChatInput-module_container {
+		background: var(--color-surface, #fff);
+		border: 1px solid var(--studio-gray-10);
+		border-radius: 8px;
+		padding: 6px;
+		transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+		&:focus-within {
+			border-color: var(--color-accent);
+			box-shadow: 0 0 0 1px var(--color-accent);
+		}
+	}
+
+	// Give the textarea room to breathe — the agenttic hook auto-grows
+	// past this floor as content is typed.
+	.Textarea-module_textarea {
+		min-height: 96px;
+	}
+
+	// Suggestions default to an absolutely-positioned floating overlay
+	// (chat-dock pattern). For this inline panel we want them stacked
+	// directly below the input. Chip visuals (outline → darker outline
+	// on hover) come from agenttic-ui's button-module_outline default.
+	.Suggestions-module_container {
+		position: static;
+		transform: none;
+		margin-top: 12px;
+		padding: 0;
+		overflow: visible;
+		flex-wrap: wrap;
+	}
+}

@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
+import clsx from 'clsx';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
@@ -28,6 +29,8 @@ export const ensureHeadingProvided = (
 
 interface OneLoginLayoutProps {
 	isJetpack: boolean;
+	isFromJetpackConnector?: boolean;
+	connectorPlugins?: string[];
 	children: React.ReactNode;
 	/**
 	 * `signupUrl` prop should merge with `getSignupLinkComponent` logic in `/client/block/login/index.js`, so we have a single source for this logic.
@@ -45,10 +48,19 @@ interface OneLoginLayoutProps {
 	 * Optional flag to control whether the heading logo should be displayed. Defaults to true.
 	 */
 	showLogo?: boolean;
+	/**
+	 * When true, the primary subtext slot is rendered in the dotcom-prominent
+	 * variant (slightly darker text color and a step up on the typography
+	 * scale). Use it when the primary line is a real subtitle rather than the
+	 * default quiet ToS treatment.
+	 */
+	subHeadingProminent?: boolean;
 }
 
 const OneLoginLayout = ( {
 	isJetpack,
+	isFromJetpackConnector,
+	connectorPlugins,
 	children,
 	signupUrl: signupUrlProp,
 	isSectionSignup,
@@ -57,6 +69,7 @@ const OneLoginLayout = ( {
 	noThanksRedirectUrl,
 	columnWidth,
 	showLogo = true,
+	subHeadingProminent = false,
 }: OneLoginLayoutProps ) => {
 	const translate = useTranslate();
 	const urlLocale = useLocale();
@@ -130,7 +143,7 @@ const OneLoginLayout = ( {
 		);
 	};
 
-	const topBar = (): JSX.Element => {
+	const topBar = (): React.JSX.Element => {
 		const rightElement = (
 			<nav className="wp-login__one-login-layout-top-right">
 				{ isSectionSignup ? <LoginLink /> : <SignUpLink /> }
@@ -138,7 +151,7 @@ const OneLoginLayout = ( {
 			</nav>
 		);
 
-		return <Step.TopBar rightElement={ rightElement } compactLogo="always" logo={ topBarLogo } />;
+		return <Step.TopBar rightElement={ rightElement } logo={ topBarLogo } />;
 	};
 
 	const effectiveColumnWidth: 4 | 5 | 6 | 8 | 10 = ( columnWidth ?? 6 ) as 4 | 5 | 6 | 8 | 10;
@@ -151,7 +164,13 @@ const OneLoginLayout = ( {
 		>
 			<div className="wp-login__one-login-layout-content-wrapper">
 				<div className="wp-login__one-login-layout-heading">
-					{ showLogo && <HeadingLogo isJetpack={ isJetpack } /> }
+					{ showLogo && (
+						<HeadingLogo
+							isJetpack={ isJetpack }
+							isFromJetpackConnector={ isFromJetpackConnector }
+							connectorPlugins={ connectorPlugins }
+						/>
+					) }
 					<Step.Heading
 						text={
 							<div className="wp-login__one-login-layout-heading-text">
@@ -160,7 +179,13 @@ const OneLoginLayout = ( {
 						}
 					/>
 					<div className="wp-login__one-login-layout-heading-subtext-wrapper">
-						<h2 className="wp-login__one-login-layout-heading-subtext">{ subHeadingText }</h2>
+						<h2
+							className={ clsx( 'wp-login__one-login-layout-heading-subtext', {
+								'is-prominent': subHeadingProminent,
+							} ) }
+						>
+							{ subHeadingText }
+						</h2>
 						{ subHeadingTextSecondary && (
 							<h3 className="wp-login__one-login-layout-heading-subtext is-secondary">
 								{ subHeadingTextSecondary }

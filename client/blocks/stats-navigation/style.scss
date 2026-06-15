@@ -1,4 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 
 .stats-navigation {
 	box-shadow: inset 0 -1px 0 #0000000d;

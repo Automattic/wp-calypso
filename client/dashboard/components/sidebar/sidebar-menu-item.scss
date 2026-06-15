@@ -12,5 +12,9 @@
 	&.active {
 		background: color-mix( in srgb, var( --wp-admin-theme-color ) 8%, transparent );
 		color: var( --wp-admin-theme-color );
+
+		&:hover {
+			background: color-mix( in srgb, var( --wp-admin-theme-color ) 8%, transparent );
+		}
 	}
 }

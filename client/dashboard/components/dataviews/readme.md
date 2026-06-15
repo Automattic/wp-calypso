@@ -6,7 +6,7 @@ This component is a wrapper around WordPress's `@wordpress/dataviews` package. I
 
 The `index.tsx` file exports the following components:
 
-- **`DataViews`** - The main wrapper component that extends WordPress's DataViews with additional props like `onResetView` and view sanitization
+- **`DataViews`** - The main wrapper component that extends WordPress's DataViews with view sanitization
 - **`DataViewsCard`** - A card wrapper component for DataViews content
 - **`DataViewsEmptyState`** - A custom empty state component for use with DataViews
 

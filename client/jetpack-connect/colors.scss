@@ -41,6 +41,24 @@
 	}
 }
 
+@mixin jetpack-connector-wpcom-colors() {
+	// Override accent variables with WordPress.com blue
+	--color-accent: var(--studio-wordpress-blue-50);
+	--color-accent-light: var(--studio-wordpress-blue-30);
+	--color-accent-dark: var(--studio-wordpress-blue-70);
+	--color-accent-60: var(--studio-wordpress-blue-60);
+
+	// Override global colors with accent variables
+	--color-primary: var(--studio-wordpress-blue-50);
+	--color-primary-light: var(--studio-wordpress-blue-30);
+	--color-primary-dark: var(--studio-wordpress-blue-70);
+
+	::selection {
+		color: var(--color-text-inverted);
+		background: var(--color-accent);
+	}
+}
+
 @mixin automattic-for-agencies-colors() {
 	// Override accent variables with Jetpack colors
 	--color-accent: #{$studio-automattic-blue};

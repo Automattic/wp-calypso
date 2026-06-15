@@ -1,3 +1,13 @@
+export interface JetpackRecoverySessionError {
+	kind: string;
+	slug: string;
+	version?: string;
+	errno: number;
+	message: string;
+	file: string;
+	line: number;
+}
+
 interface SitePlan {
 	product_id: number;
 	product_slug: string;
@@ -20,12 +30,19 @@ export interface SiteCapabilities {
 
 export interface SiteOptions {
 	admin_url: string;
+	apm_enabled?: boolean;
 	created_at?: string;
 	is_domain_only?: boolean;
 	is_redirect?: boolean;
 	is_difm_lite_in_progress?: boolean;
 	is_gating_business_q1?: boolean;
 	is_wpforteams_site?: boolean;
+	jetpack_recovery_mode_status?: {
+		recovery_mode_email_last_sent?: number;
+		recovery_session_entered_at?: number;
+		recovery_session_exited_at?: number;
+		recovery_session_errors?: JetpackRecoverySessionError[];
+	} | null;
 	migration_source_site_domain?: string;
 	p2_hub_blog_id?: number;
 	site_creation_flow?: string;
@@ -51,6 +68,8 @@ export interface Site {
 	};
 	plan?: SitePlan;
 	capabilities?: SiteCapabilities;
+	feed_ID: number;
+	feed_URL: string;
 	subscribers_count: number;
 	options?: SiteOptions; // Can be undefined for deleted sites.
 	is_a4a_dev_site: boolean;
@@ -79,6 +98,7 @@ export interface Site {
 	was_hosting_trial: boolean;
 	was_upgraded_from_trial: boolean;
 	is_garden: boolean;
+	is_multisite?: boolean;
 	garden_name: string | null;
 	garden_partner: string | null;
 	garden_is_provisioned: boolean | null;

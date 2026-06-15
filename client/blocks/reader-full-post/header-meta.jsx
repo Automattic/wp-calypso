@@ -4,24 +4,23 @@ import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
+import { AuthorAchievementBadges } from 'calypso/reader/components/achievements/author-achievement-badges';
+import { useFeedQuery } from 'calypso/reader/data/feed';
 import { getStreamUrl } from 'calypso/reader/route';
 
 const ReaderFullPostHeaderMeta = ( { post, author, siteName, feedId, siteId } ) => {
 	const streamUrl = getStreamUrl( feedId, siteId );
-
+	const { data: feed } = useFeedQuery( feedId );
 	const hasAuthorName = author?.name;
 	const hasMatchingAuthorAndSiteNames =
 		hasAuthorName &&
 		areEqualIgnoringWhitespaceAndCase( String( siteName ), String( author?.name ) );
 	const showAuthorLink = hasAuthorName && ! hasMatchingAuthorAndSiteNames;
-
+	const avatarUrl =
+		! author?.avatar_URL && post.is_external ? feed?.site_icon || feed?.image : author?.avatar_URL;
 	return (
 		<div className="reader-full-post__header-meta-wrapper">
-			<UserAvatar
-				className="reader-full-post__header-meta-avatars"
-				user={ author }
-				iconSize={ 40 }
-			/>
+			<UserAvatar user={ { ...author, avatar_URL: avatarUrl } } size={ 40 } />
 			<div className="reader-full-post__header-meta-info">
 				<div className="reader-full-post__header-meta-line-1">
 					{ showAuthorLink && (
@@ -33,6 +32,9 @@ const ReaderFullPostHeaderMeta = ( { post, author, siteName, feedId, siteId } ) 
 						>
 							{ author.name }
 						</ReaderAuthorLink>
+					) }
+					{ showAuthorLink && (
+						<AuthorAchievementBadges authorLogin={ author?.wpcom_login } size="small" />
 					) }
 					{ showAuthorLink && post.date && (
 						<span className="reader-full-post__header-meta-separator"> • </span>

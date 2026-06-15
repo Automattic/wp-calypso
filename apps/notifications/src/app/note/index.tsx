@@ -3,12 +3,12 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalHeading as Heading,
+	Button,
 	CardHeader,
 	CardBody,
-	Navigator,
-	useNavigator,
 } from '@wordpress/components';
-import { isRTL } from '@wordpress/i18n';
+import { useViewportMatch } from '@wordpress/compose';
+import { __, isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useEffect } from 'react';
@@ -16,15 +16,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getActions } from '../../panel/helpers/notes';
 import actions from '../../panel/state/actions';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
-import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
-import { getFilters } from '../../panel/templates/filters';
 import ActionDropdown from '../templates/action-dropdown';
 import { NoteBody, ActionBlock } from '../templates/body';
 import CloseButton from '../templates/close-button';
 import NoteSummary from '../templates/note-summary';
-import { useNoteNavigationViaKeyboardShortcuts } from './hooks';
 import './style.scss';
 import type { Note as NoteObject, Block } from '../types';
 
@@ -70,23 +67,24 @@ const getClasses = ( {
 	} );
 };
 
-const Note = ( { isDismissible }: { isDismissible?: boolean } ) => {
-	const dispatch = useDispatch();
-	const { params, goBack } = useNavigator();
-	const { filterName, noteId } = params;
+type NoteProps = {
+	isDismissible?: boolean;
+	// The note id to render — equals the user's selection while open and
+	// the exiting id during the slide-out animation.
+	noteId: string | undefined;
+	setSelectedNoteId: ( noteId: string | undefined ) => void;
+};
 
-	const filter = getFilters()[ filterName as keyof ReturnType< typeof getFilters > ];
+const Note = ( { isDismissible, noteId, setSelectedNoteId }: NoteProps ) => {
+	const dispatch = useDispatch();
+	const isLargeScreen = useViewportMatch( 'large' );
+	const goBack = () => setSelectedNoteId( undefined );
+
 	const notes = useSelector( ( state ) => ( getAllNotes( state ) || [] ) as NoteObject[] );
 	const note = notes.find( ( note ) => String( note.id ) === noteId );
-	const hiddenNoteIds = useSelector( ( state ) => getHiddenNoteIds( state ) );
-	const visibleNotes = notes.filter(
-		( note ) => filter.filter( note ) && hiddenNoteIds[ note.id ] !== true
-	);
 
 	const isApproved = useSelector( ( state ) => note && getIsNoteApproved( state, note ) );
 	const isRead = useSelector( ( state ) => note && getIsNoteRead( state, note ) );
-
-	useNoteNavigationViaKeyboardShortcuts( { visibleNotes, note } );
 
 	useEffect( () => {
 		if ( note?.id ) {
@@ -102,11 +100,23 @@ const Note = ( { isDismissible }: { isDismissible?: boolean } ) => {
 		<>
 			<CardHeader
 				size="small"
-				style={ { position: 'sticky', top: 0, background: '#fff', zIndex: 1 } }
+				style={ {
+					position: 'sticky',
+					top: 0,
+					background: 'var( --color-surface, #fff )',
+					zIndex: 1,
+				} }
 			>
 				<HStack>
 					<HStack justify="flex-start">
-						<Navigator.BackButton size="small" icon={ isRTL() ? chevronRight : chevronLeft } />
+						{ ! isLargeScreen && (
+							<Button
+								size="small"
+								icon={ isRTL() ? chevronRight : chevronLeft }
+								label={ __( 'Back' ) }
+								onClick={ goBack }
+							/>
+						) }
 						<Heading level={ 3 } size={ 15 } weight={ 500 }>
 							{ note.title }
 						</Heading>
@@ -120,7 +130,7 @@ const Note = ( { isDismissible }: { isDismissible?: boolean } ) => {
 			<CardBody size="small" style={ { maxHeight: 'unset' } }>
 				<VStack justify="flex-start" spacing={ 4 }>
 					<NoteSummary note={ note } />
-					<Divider style={ { color: '#f0f0f0' } } />
+					<Divider style={ { color: 'var( --color-border-subtle, #f0f0f0 )' } } />
 					<div className={ getClasses( { note, isApproved, isRead } ) }>
 						<NoteBody note={ note } />
 					</div>

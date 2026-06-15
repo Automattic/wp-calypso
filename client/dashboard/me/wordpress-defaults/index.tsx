@@ -62,7 +62,7 @@ function LandingPageCard() {
 			label: __( 'Page' ),
 			Edit: 'radio',
 			elements: [
-				{ label: __( "Open your primary site's dashboard." ), value: 'primary-site-dashboard' },
+				{ label: __( 'Open your primary site’s dashboard.' ), value: 'primary-site-dashboard' },
 				{ label: __( 'See a list of all your sites.' ), value: 'sites' },
 				{ label: __( 'View posts from sites you follow.' ), value: 'reader' },
 			] satisfies { label: string; value: LandingPage }[],
@@ -250,7 +250,7 @@ export default function WordPressDefaults() {
 			header={
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
-					title={ __( 'WordPress.com defaults' ) }
+					title={ __( 'Account defaults' ) }
 					description={ __( 'Set your starting point after you log in and primary site.' ) }
 				/>
 			}

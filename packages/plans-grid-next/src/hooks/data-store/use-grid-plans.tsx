@@ -221,6 +221,15 @@ export const usePlanTypesWithIntent = ( {
 			}
 			break;
 		}
+		case 'plans-upgrade-or-downgrade': {
+			// Show all plans — used when the current plan is expired and the user
+			// may want to downgrade as well as upgrade.
+			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			if ( isEnterpriseAvailable ) {
+				planTypes.push( TYPE_ENTERPRISE_GRID_WPCOM );
+			}
+			break;
+		}
 		case 'plans-jetpack-app':
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
@@ -276,6 +285,11 @@ export const usePlanTypesWithIntent = ( {
 		case 'plans-woo-hosted':
 			planTypes = [ TYPE_WOO_HOSTED_BASIC, TYPE_WOO_HOSTED_PRO ];
 			break;
+		// Used by the woo-hosting-solutions-flow ref: only show plans that support
+		// post-checkout WooCommerce auto-install.
+		case 'plans-woo-hosting-solutions':
+			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			break;
 		case 'plans-migration':
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
@@ -312,7 +326,6 @@ const useGridPlans: UseGridPlansType = ( {
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
 	useFocusedNewCopyTaglines,
-	isExperimentVariant,
 } ) => {
 	const translate = useTranslate();
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs?.( {
@@ -360,7 +373,6 @@ const useGridPlans: UseGridPlansType = ( {
 		plansAvailabilityForPurchase,
 		highlightLabelOverrides,
 		isDomainOnlySite: isDomainOnlySite || false,
-		isExperimentVariant,
 	} );
 
 	const titleBadges = useTitleBadges( {
@@ -400,6 +412,26 @@ const useGridPlans: UseGridPlansType = ( {
 			tagline = planConstantObj.getNewsletterTagLine?.() ?? '';
 		} else if ( 'plans-blog-onboarding' === intent ) {
 			tagline = planConstantObj.getBlogOnboardingTagLine?.() ?? '';
+		} else if ( 'plans-woo-hosting-solutions' === intent ) {
+			if ( isPersonalPlan( planSlug ) ) {
+				tagline = translate(
+					'Try out a store idea with low commitment. Custom domain and basic tools.'
+				);
+			} else if ( isPremiumPlan( planSlug ) ) {
+				tagline = translate(
+					'A solid foundation for new stores. More design options and faster support when you need help.'
+				);
+			} else if ( isBusinessPlan( planSlug ) ) {
+				tagline = translate(
+					'Built for real stores. 24/7 priority support, advanced features, and the performance your customers expect.'
+				);
+			} else if ( isEcommercePlan( planSlug ) ) {
+				tagline = translate(
+					'For serious stores. Priority support, advanced extensions, and premium store themes.'
+				);
+			} else {
+				tagline = planConstantObj.getPlanTagline?.() ?? '';
+			}
 		} else {
 			tagline = planConstantObj.getPlanTagline?.() ?? '';
 		}
@@ -445,10 +477,11 @@ const useGridPlans: UseGridPlansType = ( {
 			}
 		}
 
-		const productNameShort =
-			isWpcomEnterpriseGridPlan( planSlug ) && planConstantObj.getPathSlug
-				? planConstantObj.getPathSlug()
-				: planObject?.productNameShort ?? null;
+		// The enterprise plan isn't returned by the plans endpoint, so it has no
+		// server-provided product name; fall back to its fixed path slug.
+		const productNameShort = isWpcomEnterpriseGridPlan( planSlug )
+			? 'enterprise'
+			: planObject?.productNameShort ?? null;
 
 		// cartItemForPlan done in line here as it's a small piece of logic to pass another selector for
 		const cartItemForPlan =

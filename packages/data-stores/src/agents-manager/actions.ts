@@ -1,8 +1,6 @@
-import { default as apiFetchPromise } from '@wordpress/api-fetch';
 import { GeneratorReturnType } from '../mapped-types';
-import { default as wpcomRequestPromise, canAccessWpcomApis } from '../wpcom-request';
+import { persistAgentsManagerState } from './persist-state';
 import { PerSiteLastActivity, PerSiteRouterHistory } from './types';
-import type { APIFetchOptions } from '../shared-types';
 
 /**
  * Partial state object for saving agents manager preferences
@@ -10,6 +8,7 @@ import type { APIFetchOptions } from '../shared-types';
 type AgentsManagerState = {
 	isOpen?: boolean;
 	isDocked?: boolean;
+	isMinimized?: boolean;
 	floatingPosition?: 'left' | 'right';
 	routerHistory?: null; // Only used to clear history
 };
@@ -37,6 +36,10 @@ export function* saveAgentsManagerState( state: AgentsManagerState ) {
 		saveState.agents_manager_docked = state.isDocked;
 	}
 
+	if ( typeof state.isMinimized === 'boolean' ) {
+		saveState.agents_manager_minimized = state.isMinimized;
+	}
+
 	if ( state.floatingPosition === 'left' || state.floatingPosition === 'right' ) {
 		saveState.agents_manager_floating_position = state.floatingPosition;
 	}
@@ -46,23 +49,7 @@ export function* saveAgentsManagerState( state: AgentsManagerState ) {
 		return;
 	}
 
-	if ( canAccessWpcomApis() ) {
-		// Use the promise version to do that action without waiting for the result.
-		wpcomRequestPromise( {
-			path: '/agents-manager/state',
-			apiNamespace: 'wpcom/v2',
-			method: 'POST',
-			body: { state: saveState },
-		} ).catch( () => {} );
-	} else {
-		// Use the promise version to do that action without waiting for the result.
-		apiFetchPromise( {
-			global: true,
-			path: '/agents-manager/open-state',
-			method: 'PUT',
-			data: saveState,
-		} as APIFetchOptions ).catch( () => {} );
-	}
+	persistAgentsManagerState( saveState );
 }
 
 export function setRouterHistory( history: PerSiteRouterHistory | undefined ) {
@@ -94,6 +81,17 @@ export function* setIsDocked( isDocked: boolean, shouldSave: boolean = true ) {
 	} as const;
 }
 
+export function* setIsMinimized( isMinimized: boolean, shouldSave: boolean = true ) {
+	if ( shouldSave ) {
+		yield saveAgentsManagerState( { isMinimized } );
+	}
+
+	return {
+		type: 'AGENTS_MANAGER_SET_MINIMIZED',
+		isMinimized,
+	} as const;
+}
+
 export function* setFloatingPosition(
 	floatingPosition: 'left' | 'right',
 	shouldSave: boolean = true
@@ -122,6 +120,18 @@ export function setIsLoading( isLoading: boolean ) {
 	} as const;
 }
 
+/**
+ * Toggle split-screen mode (docked sidebar grows to cover ~50% of the
+ * viewport). Session-scoped — intentionally not persisted to user prefs so
+ * the expanded layout doesn't follow the user into unrelated contexts.
+ */
+export function setIsSplitScreen( isSplitScreen: boolean ) {
+	return {
+		type: 'AGENTS_MANAGER_SET_SPLIT_SCREEN',
+		isSplitScreen,
+	} as const;
+}
+
 export function setHasLoaded( hasLoaded: boolean ) {
 	return {
 		type: 'AGENTS_MANAGER_SET_HAS_LOADED',
@@ -134,6 +144,8 @@ export type AgentsManagerAction =
 	| ReturnType< typeof setLastActivity >
 	| ReturnType< typeof setIsLoading >
 	| ReturnType< typeof setHasLoaded >
+	| ReturnType< typeof setIsSplitScreen >
 	| GeneratorReturnType< typeof setIsOpen >
 	| GeneratorReturnType< typeof setIsDocked >
+	| GeneratorReturnType< typeof setIsMinimized >
 	| GeneratorReturnType< typeof setFloatingPosition >;

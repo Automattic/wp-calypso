@@ -1,6 +1,7 @@
 import { Button, WordPressLogo } from '@automattic/components';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { formatNumber } from '@automattic/number-formatters';
+import { ExternalLink } from '@wordpress/components';
 import { reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState, useEffect } from 'react';
@@ -182,14 +183,13 @@ export default function LayoutBodyContent( {
 							<StepSectionItem
 								icon={ tipaltiLogo }
 								heading={ translate( 'Prepare to get paid' ) }
-								description={ translate( 'With {{a}}Tipalti{{/a}}↗, our secure platform.', {
+								description={ translate( 'With {{a}}Tipalti{{/a}}, our secure platform.', {
 									components: {
 										a: (
-											<a
+											<ExternalLink
 												className="referrals-overview__link"
 												href="https://tipalti.com/"
-												target="_blank"
-												rel="noopener noreferrer"
+												children={ null }
 											/>
 										),
 									},

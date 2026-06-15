@@ -1,3 +1,7 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/banner";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 .banner.card {
 	border-left: 3px solid;
 	cursor: default;

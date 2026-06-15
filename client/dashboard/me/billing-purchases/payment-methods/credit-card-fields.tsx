@@ -12,6 +12,7 @@ const stripeElementStyle: StripeElementStyle = {
 	base: {
 		fontSize: '16px',
 		color: '#32325d',
+		iconColor: '#aab7c4',
 		fontFamily:
 			'-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
 		'::placeholder': {

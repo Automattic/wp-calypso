@@ -12,7 +12,6 @@ import StatsNavigation from 'calypso/blocks/stats-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
@@ -245,7 +244,6 @@ const StatsPurchasePage = ( {
 						</>
 					)
 				}
-				<JetpackColophon />
 			</div>
 		</Main>
 	);

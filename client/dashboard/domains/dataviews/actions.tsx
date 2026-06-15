@@ -41,7 +41,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const { data: purchases } = useQuery( userPurchasesQuery() );
 
-	const setPrimaryDomainMutation = useMutation( {
+	const { mutate: setPrimaryDomain, isPending: isSettingPrimaryDomain } = useMutation( {
 		...siteSetPrimaryDomainMutation(),
 		meta: {
 			snackbar: {
@@ -169,7 +169,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 						origin: 'dataviews_actions',
 					} );
 
-					setPrimaryDomainMutation.mutate(
+					setPrimaryDomain(
 						{ siteId: site.ID, domain: domain.domain },
 						{
 							onSuccess: () => {
@@ -206,7 +206,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 					const hasRedirect = site?.options?.is_redirect ?? false;
 					return !! site && canSetAsPrimary( { domain: item, site, user } ) && ! hasRedirect;
 				},
-				disabled: setPrimaryDomainMutation.isPending,
+				disabled: isSettingPrimaryDomain,
 			},
 			{
 				id: 'transfer-domain',
@@ -331,7 +331,8 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 			user,
 			router,
 			purchases,
-			setPrimaryDomainMutation,
+			setPrimaryDomain,
+			isSettingPrimaryDomain,
 			createSuccessNotice,
 			sitesByBlogId,
 			recordTracksEvent,

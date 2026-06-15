@@ -44,7 +44,7 @@ export const Cart = ( {
 		// translators: %(mailboxes)s is the number of mailboxes selected.
 		_n( '%(mailboxes)s mailbox', '%(mailboxes)s mailboxes', totalItems ),
 		{
-			mailboxes: totalItems,
+			mailboxes: String( totalItems ),
 		}
 	);
 

@@ -1,6 +1,5 @@
 import { Button } from '@automattic/components';
-import { updateLaunchpadSettings } from '@automattic/data-stores';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
 import { SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN } from '@automattic/urls';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
@@ -17,13 +16,12 @@ import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-domain-diagnostics-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
-import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import { usePurchasePlanNotification } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-purchase-plan-notification';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getQueryArgs } from 'calypso/lib/query-args';
-import { useCelebrateLaunchModalSideEffects } from 'calypso/my-sites/customer-home/celebrate-site-launch-modal/use-side-effects';
+import { FEATURE_SUPPORT } from 'calypso/my-sites/customer-home/cards/constants';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
@@ -53,10 +51,14 @@ import {
 } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { FullScreenLaunchpad } from '../full-screen-launchpad';
 import openSyncUrlInStudio from './studio-deeplink';
 
 import './style.scss';
+
+const loadTrackResurrections = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-lib-analytics-track-resurrections" */ 'calypso/lib/analytics/track-resurrections'
+	);
 
 const HomeContent = ( {
 	canUserUseCustomerHome,
@@ -82,12 +84,10 @@ const HomeContent = ( {
 	const [ launchedSiteId, setLaunchedSiteId ] = useState( null );
 	const queryClient = useQueryClient();
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const isP2 = site?.options?.is_wpforteams_site;
 
 	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
-	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
-
-	const [ focusedLaunchpadDismissed, setFocusedLaunchpadDismissed ] = useState( false );
 
 	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
 	const customDomains = siteDomains?.filter( ( domain ) => ! domain.isWPCOMDomain );
@@ -135,7 +135,11 @@ const HomeContent = ( {
 		if ( ! studioSiteId ) {
 			return;
 		}
-		trackStudioSyncConnectSite( false );
+		trackStudioSyncConnectSite( {
+			click: false,
+			blogId: siteId,
+			studioSiteId,
+		} );
 		openSyncUrlInStudio( studioSiteId, siteId, autoOpenPush );
 	}, [ siteId, trackStudioSyncConnectSite ] );
 
@@ -145,27 +149,28 @@ const HomeContent = ( {
 		Array.isArray( layout?.secondary ) &&
 		layout.secondary.length > 0;
 
-	const { addCelebrateLaunchQueryParams } = useCelebrateLaunchModalSideEffects( siteId );
+	const getHeaderSubtitle = () => {
+		if ( isLoading ) {
+			return undefined;
+		}
+		const defaultSubtitle = translate(
+			'Your hub for next steps, support center, and quick links.'
+		);
+		const hasSupportCard =
+			layout?.secondary?.includes( FEATURE_SUPPORT ) ||
+			layout?.[ 'tertiary.manage-site' ]?.includes( FEATURE_SUPPORT );
+		if ( hasSupportCard ) {
+			return defaultSubtitle;
+		}
+		if ( hasEnTranslation( 'Your hub for next steps and quick links to manage your site.' ) ) {
+			return translate( 'Your hub for next steps and quick links to manage your site.' );
+		}
+		return defaultSubtitle;
+	};
 
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
 		return <EmptyContent title={ preventWidows( title ) } />;
-	}
-
-	if ( layout?.view_name === 'VIEW_FOCUSED_LAUNCHPAD' && ! focusedLaunchpadDismissed ) {
-		return (
-			<FullScreenLaunchpad
-				onClose={ async () => {
-					setFocusedLaunchpadDismissed( true );
-					await updateLaunchpadSettings( siteId, { launchpad_screen: 'skipped' } );
-					skipCurrentView( null, true );
-				} }
-				beforeSiteLaunchRefetch={ addCelebrateLaunchQueryParams }
-				onSiteLaunch={ () => {
-					setFocusedLaunchpadDismissed( true );
-				} }
-			/>
-		);
 	}
 
 	// Ecommerce Plan's Home redirects to WooCommerce Home, so we show a placeholder
@@ -202,7 +207,7 @@ const HomeContent = ( {
 				navigationItems={ [] }
 				mobileItem={ null }
 				title={ translate( 'My Home' ) }
-				subtitle={ translate( 'Your hub for next steps, support center, and quick links.' ) }
+				subtitle={ getHeaderSubtitle() }
 			>
 				{ headerActions }
 			</NavigationHeader>
@@ -303,7 +308,11 @@ const HomeContent = ( {
 			>
 				<NoticeAction
 					onClick={ () => {
-						trackStudioSyncConnectSite( true );
+						trackStudioSyncConnectSite( {
+							click: true,
+							blogId: siteId,
+							studioSiteId,
+						} );
 						openSyncUrlInStudio( studioSiteId, siteId, autoOpenPush );
 					} }
 					external
@@ -353,7 +362,7 @@ const HomeContent = ( {
 				</>
 			) : null }
 			<ResurrectedWelcomeModalGate isSuppressed={ celebrateLaunchModalIsOpen } />
-			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
+			<AsyncLoad require={ loadTrackResurrections } placeholder={ null } />
 		</div>
 	);
 };
@@ -389,9 +398,11 @@ const trackViewSiteAction = ( isStaticHomePage ) =>
 		bumpStat( 'calypso_customer_home', 'my_site_view_site' )
 	);
 
-const trackStudioSyncConnectSite = ( click = false ) =>
+const trackStudioSyncConnectSite = ( { click = false, blogId, studioSiteId } ) =>
 	recordTracksEvent( 'calypso_studio_sync_connect_site', {
 		click,
+		blog_id: blogId,
+		studio_site_id: studioSiteId,
 	} );
 
 const mapDispatchToProps = {

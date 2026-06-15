@@ -71,7 +71,11 @@ describe( 'Likes: Post', function () {
 		} );
 
 		it( 'Like post', async function () {
+			const siteID = postingUser.credentials.testSites?.primary.id as number;
 			await ElementHelper.reloadAndRetry( page, async () => {
+				// Reset like state via REST API before each attempt.
+				await restAPIClient.postLikeAction( 'unlike', siteID, newPost.ID );
+				await page.reload();
 				publishedPostPage = new PublishedPostPage( page );
 				await publishedPostPage.likePost();
 			} );

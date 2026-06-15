@@ -1,4 +1,5 @@
 import { updateLaunchpadSettings } from '@automattic/data-stores';
+import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import { useDispatch } from 'calypso/state';
 import { requestSite } from 'calypso/state/sites/actions';
 
@@ -11,11 +12,14 @@ export function useCelebrateLaunchModalSideEffects( siteId: number ) {
 		window.history.replaceState( {}, '', url.toString() );
 	};
 
+	const layout = useHomeLayoutQuery( siteId );
+
 	return {
 		addCelebrateLaunchQueryParams,
 		onSiteLaunched: ( isWpcomAtomic: boolean ) => {
 			addCelebrateLaunchQueryParams();
 			dispatch( requestSite( siteId ) );
+			layout?.refetch();
 
 			if ( isWpcomAtomic ) {
 				updateLaunchpadSettings( siteId, {

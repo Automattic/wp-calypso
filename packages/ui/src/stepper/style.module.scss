@@ -1,0 +1,197 @@
+// packages/ui/src/stepper/style.module.scss
+
+// ---------------------------------------------------------------------------
+// Design tokens — emitted once on the shared root, consumed by all children.
+// ---------------------------------------------------------------------------
+
+.root {
+	--a8c-ui-stepper-indicator-size: 18px;
+	--a8c-ui-stepper-indicator-size-sm: 16px;
+}
+
+// ---------------------------------------------------------------------------
+// Indicator
+// ---------------------------------------------------------------------------
+
+.indicator {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: var( --a8c-ui-stepper-indicator-size );
+	height: var( --a8c-ui-stepper-indicator-size );
+	border-radius: 50%;
+	border: var( --wpds-border-width-xs ) solid var( --wpds-color-fg-interactive-neutral );
+	flex-shrink: 0;
+	font-size: var( --wpds-typography-font-size-sm );
+	font-weight: 400;
+	color: var( --wpds-color-fg-interactive-neutral );
+	background: var( --wpds-color-bg-surface-neutral-strong );
+}
+
+// Current step
+.indicator.is-current {
+	border-color: var( --wpds-color-fg-content-neutral );
+	background: var( --wpds-color-fg-content-neutral );
+	color: var( --wpds-color-bg-surface-neutral-strong );
+	font-weight: 600;
+}
+
+// Completed step
+.indicator.is-completed {
+	border-color: var( --wpds-color-fg-content-neutral-weak );
+	background: transparent;
+	color: var( --wpds-color-fg-content-neutral-weak );
+
+	svg {
+		stroke: currentColor;
+		stroke-width: 1.5px;
+	}
+}
+
+// Disabled step
+.indicator.is-disabled {
+	opacity: 0.5;
+}
+
+// ---------------------------------------------------------------------------
+// Bullet indicator variant
+// ---------------------------------------------------------------------------
+
+// Upcoming: dashed gray-700 circle, no icon
+.indicator[data-indicator-variant='bullet'] {
+	border-style: dashed;
+	border-color: var( --wpds-color-fg-content-neutral-weak );
+	color: var( --wpds-color-fg-content-neutral-weak );
+}
+
+// Current: 16px solid gray-900 ring, transparent background + half-circle dome
+// margin: 1px compensates for the 2px size reduction vs upcoming (18px → 16px)
+// so the indicator centres stay aligned vertically across states.
+.indicator.is-current[data-indicator-variant='bullet'] {
+	width: var( --a8c-ui-stepper-indicator-size-sm );
+	height: var( --a8c-ui-stepper-indicator-size-sm );
+	margin: 1px;
+	border-style: solid;
+	border-color: var( --wpds-color-fg-content-neutral );
+	background: transparent;
+	color: var( --wpds-color-fg-content-neutral );
+}
+
+// Completed: 16px, solid border (color inherited from .indicator.is-completed)
+.indicator.is-completed[data-indicator-variant='bullet'] {
+	width: var( --a8c-ui-stepper-indicator-size-sm );
+	height: var( --a8c-ui-stepper-indicator-size-sm );
+	margin: 1px;
+	border-style: solid;
+}
+
+// Upcoming step titles
+[data-indicator-variant] .title {
+	color: var( --wpds-color-fg-interactive-neutral );
+}
+
+// Completed step titles — same weight as upcoming but full neutral (not weak)
+[data-indicator-variant] [data-status='completed'] .title {
+	color: var( --wpds-color-fg-interactive-neutral-active );
+}
+
+// Current/active step title — full neutral, bold (weight set on the trigger below)
+[data-indicator-variant] [data-current] .title {
+	color: var( --wpds-color-fg-interactive-neutral-active );
+}
+
+// ---------------------------------------------------------------------------
+// Trigger
+// ---------------------------------------------------------------------------
+
+.trigger-heading {
+	margin: 0;
+	padding: 0;
+}
+
+.trigger {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	gap: var( --wpds-dimension-gap-sm );
+	padding: 0;
+	background: none;
+	border: none;
+	height: auto;
+	text-align: start;
+	width: 100%;
+
+	&:hover:not( [aria-disabled='true'] ) {
+		.title {
+			color: var( --wpds-color-fg-interactive-brand );
+		}
+
+		// Number-variant current step has a solid filled circle — skip border change
+		// to avoid an accent ring appearing against the dark background on hover.
+		.indicator:not( .is-current[data-indicator-variant='number'] ) {
+			border-color: var( --wpds-color-fg-interactive-brand );
+		}
+
+		// Pull icon color for completed and current steps (SVG/dome use currentColor).
+		// Number-variant current steps keep their original number color on hover.
+		.indicator.is-completed,
+		.indicator.is-current:not( [data-indicator-variant='number'] ) {
+			color: var( --wpds-color-fg-interactive-brand );
+		}
+	}
+
+	&[aria-disabled='true'] {
+		cursor: default;
+
+		&,
+		.title {
+			color: var( --wpds-color-fg-interactive-neutral-disabled );
+		}
+	}
+
+	&[aria-expanded='true'],
+	&[aria-selected='true'] {
+		.title {
+			font-weight: 600;
+		}
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Panel
+// ---------------------------------------------------------------------------
+
+// overflow: hidden provides the clip foundation for panel open/close.
+// Height animation (via --accordion-panel-height) is the consumer's
+// responsibility — see vertical-stepper/style.module.scss for the reference
+// implementation. Direct Stepper.Panel consumers must supply their own
+// height transition; omitting it produces correct clipping but no animation.
+.panel {
+	overflow: hidden;
+}
+
+// ---------------------------------------------------------------------------
+// List (horizontal tablist container)
+// ---------------------------------------------------------------------------
+
+.list {
+	display: flex;
+	align-items: center;
+	gap: 0;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+// ---------------------------------------------------------------------------
+// Title and Description
+// ---------------------------------------------------------------------------
+
+.title {
+	font-weight: inherit;
+	color: var( --wpds-color-fg-content-neutral );
+}
+
+.description {
+	color: var( --wpds-color-fg-content-neutral-weak );
+}

@@ -27,6 +27,7 @@ import { TLDMaintenanceNotice } from '../maintenance-notice';
 import Actions from './actions';
 import FeaturedCards from './featured-cards';
 import IcannSuspensionNotice from './icann-suspension-notice';
+import PendingRegistrationNotice from './pending-registration-notice';
 import DomainOverviewSettings from './settings';
 import TransferredDomainDetails from './transferred-domain-details';
 
@@ -83,12 +84,12 @@ export default function DomainOverview() {
 									{ ( () => {
 										switch ( domain.subtype.id ) {
 											case DomainSubtype.DOMAIN_CONNECTION:
-												// translators: date is the date the domain was connected.
+												// translators: %(date)s: the date the domain was connected.
 												return sprintf( __( 'Connected on %(date)s' ), {
 													date: formattedRegistrationDate,
 												} );
 											case DomainSubtype.DOMAIN_REGISTRATION:
-												// translators: date is the date the domain was registered.
+												// translators: %(date)s: the date the domain was registered.
 												return sprintf( __( 'Registered on %(date)s' ), {
 													date: formattedRegistrationDate,
 												} );
@@ -126,6 +127,7 @@ export default function DomainOverview() {
 					isTldInMaintenance( domain ) && <TLDMaintenanceNotice showGoBackLink={ false } />
 				}
 			>
+				<PendingRegistrationNotice domain={ domain } />
 				{ domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER && (
 					<TransferredDomainDetails domain={ domain } />
 				) }

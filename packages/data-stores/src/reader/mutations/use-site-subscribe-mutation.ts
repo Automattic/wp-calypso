@@ -1,7 +1,10 @@
+import {
+	getSiteSubscriptionsQueryKey,
+	type SiteSubscriptionsInfiniteData,
+} from '@automattic/api-queries';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { buildQueryKey, callApi, getSubscriptionMutationParams, isValidId } from '../helpers';
 import { useIsLoggedIn } from '../hooks';
-import { SiteSubscriptionsPages } from '../types';
 import type { SiteSubscriptionDetails } from '../types';
 
 type SubscribeParams = {
@@ -39,11 +42,7 @@ const buildSubscriptionDetailsByBlogIdQueryKey = (
 const useSiteSubscribeMutation = () => {
 	const { isLoggedIn, id: userId } = useIsLoggedIn();
 	const queryClient = useQueryClient();
-	const siteSubscriptionsCacheKey = buildQueryKey(
-		[ 'read', 'site-subscriptions' ],
-		isLoggedIn,
-		userId
-	);
+	const siteSubscriptionsCacheKey = getSiteSubscriptionsQueryKey();
 	const subscriptionsCountCacheKey = buildQueryKey(
 		[ 'read', 'subscriptions-count' ],
 		isLoggedIn,
@@ -100,20 +99,30 @@ const useSiteSubscribeMutation = () => {
 			}
 
 			const previousSiteSubscriptions =
-				queryClient.getQueryData< SiteSubscriptionsPages >( siteSubscriptionsCacheKey );
+				queryClient.getQueryData< SiteSubscriptionsInfiniteData >( siteSubscriptionsCacheKey );
 
 			if ( previousSiteSubscriptions ) {
 				queryClient.setQueryData( siteSubscriptionsCacheKey, {
 					...previousSiteSubscriptions,
 					pages: previousSiteSubscriptions.pages.map( ( page ) => {
+						const shouldIncreaseTotalCount = page.subscriptions.some(
+							( siteSubscription ) =>
+								Number( siteSubscription.blog_ID ) === Number( params.blog_id ) &&
+								( siteSubscription.isDeleted || ! siteSubscription.is_following )
+						);
+
 						return {
 							...page,
-							total_subscriptions: page.total_subscriptions - 1,
+							totalCount:
+								typeof page.totalCount === 'number' && shouldIncreaseTotalCount
+									? page.totalCount + 1
+									: page.totalCount,
 							subscriptions: page.subscriptions.map( ( siteSubscription ) =>
-								siteSubscription.blog_ID === params.blog_id
+								Number( siteSubscription.blog_ID ) === Number( params.blog_id )
 									? {
 											...siteSubscription,
 											date_subscribed: new Date(),
+											is_following: true,
 											isDeleted: false,
 											resubscribed: params.resubscribed ?? false,
 									  }

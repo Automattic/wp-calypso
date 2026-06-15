@@ -1,10 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import {
-	FEATURE_STYLE_CUSTOMIZATION,
-	PLAN_PREMIUM,
-	getPlan,
-	PLAN_PERSONAL,
-} from '@automattic/calypso-products';
+import { FEATURE_STYLE_CUSTOMIZATION, getPlan, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -12,7 +7,6 @@ import { SOURCE_SETTINGS_ADMINISTRATION } from 'calypso/my-sites/site-settings/s
 import { useSelector } from 'calypso/state';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { ReactNode } from 'react';
 
@@ -46,10 +40,7 @@ export const SiteSettingPrivacyPremiumStylesNotice = ( {
 	siteSlug,
 }: SiteSettingPrivacyPremiumStylesNoticeProps ) => {
 	const translate = useTranslate();
-	// @TODO Cleanup once the test phase is over.
-	const upgradeToPlan = useSiteGlobalStylesOnPersonal( selectedSite?.ID )
-		? PLAN_PERSONAL
-		: PLAN_PREMIUM;
+	const upgradeToPlan = PLAN_PERSONAL;
 	const upgradeUrl = `/plans/${ siteSlug }?plan=${ upgradeToPlan }&feature=${ FEATURE_STYLE_CUSTOMIZATION }`;
 
 	return (

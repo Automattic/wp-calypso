@@ -53,8 +53,8 @@ export const checkShouldShowBreadcrumb = (): boolean => {
 
 const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) => {
 	const {
-		id,
-		className,
+		id = '',
+		className = '',
 		style,
 		children,
 		navigationItems = [],
@@ -113,10 +113,5 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 } );
 
 NavigationHeader.displayName = 'NavigationHeader';
-
-NavigationHeader.defaultProps = {
-	id: '',
-	className: '',
-};
 
 export default NavigationHeader;

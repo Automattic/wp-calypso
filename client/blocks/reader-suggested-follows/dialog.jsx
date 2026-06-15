@@ -165,7 +165,7 @@ const ReaderSuggestedFollowsDialog = ( {
 										<ReaderSitesList
 											sites={ data }
 											followSource="reader-recommended-follows-dialog__recommended-feeds-list"
-											iconSize={ 48 }
+											siteIconSize={ 48 }
 										/>
 									</li>
 								) }

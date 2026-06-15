@@ -2,6 +2,7 @@ import { PriceTierEntry } from '@automattic/calypso-products';
 
 export interface Purchase {
 	amount: number;
+	advertisedTotalUploadSpaceInGb?: number | null;
 	attachedToPurchaseId: number;
 	billPeriodDays: number;
 	billPeriodLabel: string;
@@ -194,6 +195,7 @@ export interface Purchase {
 	autoRenewCouponDiscountPercentage: number | null;
 
 	isJetpackPlanOrProduct: boolean;
+	isAttachedToHoldingSite: boolean;
 }
 
 export interface PurchasePriceTier {

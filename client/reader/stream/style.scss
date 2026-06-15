@@ -1,25 +1,15 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/typography";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/clear-fix";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/breakpoints';
-
-.is-reader-page .reader__card.card.is-placeholder {
-	border-bottom: 1px solid #e9e9ea;
-	box-shadow: none;
-	border-radius: 6px; /* stylelint-disable-line scales/radii */
-	margin-bottom: 16px;
-	padding: 6px 16px 30px;
-
-	@include breakpoint-deprecated( '<660px' ) {
-		margin: 0 15px 16px;
-	}
-
-	.reader__post-title {
-		margin-top: 0;
-	}
-
-	.reader__post-footer {
-		margin-left: 0;
-	}
-}
+@import 'calypso/assets/stylesheets/shared/mixins/long-content-fade';
 
 .following {
 
@@ -91,24 +81,36 @@
 		padding: 0;
 		font-size: $font-body-small;
 		color: var( --color-neutral-20 );
-
-		.gravatar {
-			height: 16px;
-			width: 16px;
-			top: 4px;
-		}
 	}
 
 	// Loading Placeholders
 	&.is-placeholder {
 		pointer-events: none;
 		user-select: none;
+		// `<Card>` from `@automattic/components` defaults to a
+		// `box-shadow: 0 0 0 1px var(--color-border-subtle)` that simulates
+		// a 1px border around the card. Reset it on the placeholder so the
+		// simulated border doesn't flash before the surrounding stream
+		// styles take over once data lands.
+		box-shadow: none;
+		border-bottom: 1px solid #e9e9ea;
+		border-radius: 6px; /* stylelint-disable-line scales/radii */
+		margin-bottom: 16px;
+		padding: 6px 16px 30px;
+
+		@include breakpoint-deprecated( '<660px' ) {
+			margin: 0 15px 16px;
+		}
 
 		.reader__placeholder-text,
 		.site-icon {
 			color: transparent;
 			background-color: var( --color-neutral-0 );
 			animation: loading-fade 1.6s ease-in-out infinite;
+
+			@include ui-mixins.when-dark-theme {
+				background-color: var( --color-border-subtle );
+			}
 		}
 
 		.site-icon {
@@ -125,6 +127,14 @@
 			@include breakpoint-deprecated( '<480px' ) {
 				font-size: $font-body-small;
 			}
+		}
+
+		.reader__post-title {
+			margin-top: 0;
+		}
+
+		.reader__post-footer {
+			margin-left: 0;
 		}
 	}
 
@@ -157,6 +167,7 @@
 		box-shadow: none;
 		padding: 16px 24px;
 		display: flex;
+		align-items: center;
 
 		.reader__post-title {
 			font-size: $font-body;
@@ -266,10 +277,6 @@
 		.site-icon {
 			margin: 1px;
 		}
-
-		.gravatar {
-			border: 1px solid var( --color-border-inverted );
-		}
 	}
 
 	.reader__card.card.is-x-post + .reader__card.card.is-x-post {
@@ -343,7 +350,7 @@
 			display: none;
 
 			&.stream__init-overlay-enabled {
-				background: var( --studio-white );
+				background: var( --color-surface );
 				position: absolute;
 				display: block;
 				left: 0;
@@ -556,7 +563,7 @@ body.is-section-reader div.layout.is-global-sidebar-visible .is-site-stream .bac
 	.card.reader-related-card {
 		margin: 0;
 
-		.reader-related-card__meta .gravatar {
+		.reader-related-card__meta .user-avatar__image {
 			margin: 3px 8px 0 0;
 		}
 
@@ -747,7 +754,7 @@ body.is-section-reader div.layout.is-global-sidebar-visible .is-site-stream .bac
 				width: 225px;
 			}
 			.stream__two-column &::after {
-				@include long-content-fade( $size: 5%, $color: var( --studio-white ) );
+				@include long-content-fade( $size: 5% );
 			}
 		}
 	}
@@ -843,6 +850,15 @@ body.is-section-reader div.layout.is-global-sidebar-visible .is-site-stream .bac
 			font-size: $font-title-small;
 			font-weight: bold;
 			width: 90px;
+
+			&.is-placeholder {
+				@include placeholder();
+				display: inline-block;
+				width: 48px;
+				height: 1em;
+				border-radius: 2px;
+				vertical-align: middle;
+			}
 		}
 
 		.reader-tag-sidebar-stats__title {
@@ -983,16 +999,16 @@ body.is-section-reader div.layout.is-global-sidebar-visible .is-site-stream .bac
 
 	.section-nav-tab__link {
 		background-color: transparent;
-		color: var( --color-primary );
+		color: var( --color-link );
 		padding: 16px;
 
 		&:hover {
-			color: var( --color-primary );
+			color: var( --color-link );
 		}
 	}
 
 	.section-nav-tab__text {
-		color: var( --color-primary );
+		color: var( --color-link );
 		font-weight: 600;
 		font-size: $font-body-small;
 		text-transform: uppercase;

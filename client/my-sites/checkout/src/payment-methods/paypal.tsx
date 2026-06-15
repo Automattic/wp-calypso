@@ -7,142 +7,102 @@ import {
 } from '@automattic/composite-checkout';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
-import { useSelect, useDispatch, registerStore } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { Fragment, useMemo } from 'react';
+import { useEffect, useState, Fragment } from 'react';
 import { PayPalLogo } from 'calypso/dashboard/components/paypal-logo';
 import TaxFields from 'calypso/my-sites/checkout/src/components/tax-fields';
 import useCountryList from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import { PaymentMethodLogos } from '../components/payment-method-logos';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
-import type {
-	PaymentMethodStore,
-	StoreSelectors,
-	StoreActions,
-	StoreSelectorsWithState,
-	StoreState,
-	ManagedContactDetails,
-} from '@automattic/wpcom-checkout';
-import type { AnyAction } from 'redux';
+import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:paypal-payment-method' );
 
-const storeKey = 'paypal-express';
-type NounsInStore = 'postalCode' | 'countryCode' | 'address1' | 'organization' | 'city' | 'state';
-type PaypalSelectors = StoreSelectors< NounsInStore >;
+interface PayPalPaymentMethodStateShape {
+	postalCode: string;
+	countryCode: string;
+	address1: string;
+	organization: string;
+	city: string;
+	state: string;
+}
 
-type PayPalStore = PaymentMethodStore< NounsInStore >;
+type PayPalPaymentMethodKey = keyof PayPalPaymentMethodStateShape;
 
-const actions: StoreActions< NounsInStore > = {
-	changePostalCode( payload ) {
-		return { type: 'POSTAL_CODE_SET', payload };
-	},
-	changeCountryCode( payload ) {
-		return { type: 'COUNTRY_CODE_SET', payload };
-	},
-	changeAddress1( payload ) {
-		return { type: 'ADDRESS_SET', payload };
-	},
-	changeOrganization( payload ) {
-		return { type: 'ORGANIZATION_SET', payload };
-	},
-	changeCity( payload ) {
-		return { type: 'CITY_SET', payload };
-	},
-	changeState( payload ) {
-		return { type: 'STATE_SET', payload };
-	},
-};
+type StateSubscriber = () => void;
 
-const selectors: StoreSelectorsWithState< NounsInStore > = {
-	getPostalCode( state ) {
-		return state.postalCode || '';
-	},
-	getCountryCode( state ) {
-		return state.countryCode || '';
-	},
-	getAddress1( state ) {
-		return state.address1 || '';
-	},
-	getOrganization( state ) {
-		return state.organization || '';
-	},
-	getCity( state ) {
-		return state.city || '';
-	},
-	getState( state ) {
-		return state.state || '';
-	},
-};
+class PayPalPaymentMethodState {
+	data: PayPalPaymentMethodStateShape = {
+		postalCode: '',
+		countryCode: '',
+		address1: '',
+		organization: '',
+		city: '',
+		state: '',
+	};
 
-export function createPayPalStore(): PayPalStore {
-	debug( 'creating a new paypal payment method store' );
-	const store = registerStore( storeKey, {
-		reducer(
-			state: StoreState< NounsInStore > = {
-				postalCode: { value: '', isTouched: false },
-				countryCode: { value: '', isTouched: false },
-				address1: { value: '', isTouched: false },
-				organization: { value: '', isTouched: false },
-				city: { value: '', isTouched: false },
-				state: { value: '', isTouched: false },
-			},
-			action: AnyAction
-		): StoreState< NounsInStore > {
-			switch ( action.type ) {
-				case 'POSTAL_CODE_SET':
-					return { ...state, postalCode: { value: action.payload, isTouched: true } };
-				case 'COUNTRY_CODE_SET':
-					return { ...state, countryCode: { value: action.payload, isTouched: true } };
-				case 'ADDRESS_SET':
-					return { ...state, address1: { value: action.payload, isTouched: true } };
-				case 'ORGANIZATION_SET':
-					return { ...state, organization: { value: action.payload, isTouched: true } };
-				case 'CITY_SET':
-					return { ...state, city: { value: action.payload, isTouched: true } };
-				case 'STATE_SET':
-					return { ...state, state: { value: action.payload, isTouched: true } };
-			}
-			return state;
-		},
-		actions,
-		selectors,
-	} );
+	isTouched: Record< PayPalPaymentMethodKey, boolean > = {
+		postalCode: false,
+		countryCode: false,
+		address1: false,
+		organization: false,
+		city: false,
+		state: false,
+	};
 
-	return store;
+	subscribers: StateSubscriber[] = [];
+
+	change = ( field: PayPalPaymentMethodKey, value: string ): void => {
+		this.data[ field ] = value;
+		this.isTouched[ field ] = true;
+		this.notifySubscribers();
+	};
+
+	subscribe = ( callback: () => void ): ( () => void ) => {
+		this.subscribers.push( callback );
+		return () => {
+			this.subscribers = this.subscribers.filter( ( subscriber ) => subscriber !== callback );
+		};
+	};
+
+	notifySubscribers = (): void => {
+		this.subscribers.forEach( ( subscriber ) => subscriber() );
+	};
 }
 
 type PayPalMethodArgs = {
 	labelText?: string | null;
-	store?: PayPalStore;
 	shouldShowTaxFields?: boolean;
 };
 
-type PayPalWithTaxesMethodArgs = PayPalMethodArgs & {
-	// The store is only required if we need to keep state (tax fields).
-	store: PayPalStore;
-	shouldShowTaxFields: true;
-};
-
-export function createPayPalMethod(
-	args: PayPalMethodArgs | PayPalWithTaxesMethodArgs
-): PaymentMethod {
+export function createPayPalMethod( args: PayPalMethodArgs ): PaymentMethod {
 	debug( 'creating new paypal payment method' );
+	const state = new PayPalPaymentMethodState();
+
 	return {
-		id: storeKey,
-		paymentProcessorId: storeKey,
+		id: 'paypal-express',
+		paymentProcessorId: 'paypal-express',
 		label: (
 			<PayPalLabel
 				labelText={ args.labelText }
-				store={ args.shouldShowTaxFields ? args.store : undefined }
+				state={ args.shouldShowTaxFields ? state : undefined }
 			/>
 		),
-		submitButton: <PayPalSubmitButton />,
-		activeContent: args.shouldShowTaxFields ? <PayPalTaxFields /> : undefined,
+		submitButton: <PayPalSubmitButton state={ state } />,
+		activeContent: args.shouldShowTaxFields ? <PayPalTaxFields state={ state } /> : undefined,
 		inactiveContent: <PayPalSummary />,
 		getAriaLabel: () => 'PayPal',
 	};
+}
+
+function useSubscribeToEventEmitter( state: PayPalPaymentMethodState ) {
+	const [ , forceReload ] = useState( 0 );
+	useEffect( () => {
+		return state.subscribe( () => {
+			forceReload( ( val: number ) => val + 1 );
+		} );
+	}, [ state ] );
 }
 
 const PayPalFieldsWrapper = styled.div`
@@ -168,55 +128,38 @@ const PayPalFieldsWrapper = styled.div`
 	}
 `;
 
-function PayPalTaxFields() {
+function PayPalTaxFields( { state }: { state: PayPalPaymentMethodState } ) {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 	const countriesList = useCountryList();
-	const postalCode = useSelect(
-		( select ) => ( select( storeKey ) as PaypalSelectors ).getPostalCode(),
-		[]
-	);
-	const countryCode = useSelect(
-		( select ) => ( select( storeKey ) as PaypalSelectors ).getCountryCode(),
-		[]
-	);
-	const address1 = useSelect(
-		( select ) => ( select( storeKey ) as PaypalSelectors ).getAddress1(),
-		[]
-	);
-	const organization = useSelect(
-		( select ) => ( select( storeKey ) as PaypalSelectors ).getOrganization(),
-		[]
-	);
-	const city = useSelect( ( select ) => ( select( storeKey ) as PaypalSelectors ).getCity(), [] );
-	const state = useSelect( ( select ) => ( select( storeKey ) as PaypalSelectors ).getState(), [] );
-	const fields = useMemo(
-		() => ( {
-			postalCode: { ...postalCode, errors: [] },
-			countryCode: { ...countryCode, errors: [] },
-			address1: { ...address1, errors: [] },
-			organization: { ...organization, errors: [] },
-			city: { ...city, errors: [] },
-			state: { ...state, errors: [] },
-		} ),
-		[ postalCode, countryCode, address1, organization, city, state ]
-	);
-	const {
-		changePostalCode,
-		changeCountryCode,
-		changeAddress1,
-		changeCity,
-		changeState,
-		changeOrganization,
-	} = useDispatch( storeKey );
-	const onChangeContactInfo = ( newInfo: ManagedContactDetails ) => {
-		changeCountryCode( newInfo.countryCode?.value ?? '' );
-		changePostalCode( newInfo.postalCode?.value ?? '' );
-		changeAddress1( newInfo.address1?.value ?? '' );
-		changeOrganization( newInfo.organization?.value ?? '' );
-		changeCity( newInfo.city?.value ?? '' );
-		changeState( newInfo.state?.value ?? '' );
+	useSubscribeToEventEmitter( state );
+
+	const fields = {
+		postalCode: { value: state.data.postalCode, isTouched: state.isTouched.postalCode, errors: [] },
+		countryCode: {
+			value: state.data.countryCode,
+			isTouched: state.isTouched.countryCode,
+			errors: [],
+		},
+		address1: { value: state.data.address1, isTouched: state.isTouched.address1, errors: [] },
+		organization: {
+			value: state.data.organization,
+			isTouched: state.isTouched.organization,
+			errors: [],
+		},
+		city: { value: state.data.city, isTouched: state.isTouched.city, errors: [] },
+		state: { value: state.data.state, isTouched: state.isTouched.state, errors: [] },
 	};
+
+	const onChangeContactInfo = ( newInfo: ManagedContactDetails ) => {
+		state.change( 'countryCode', newInfo.countryCode?.value ?? '' );
+		state.change( 'postalCode', newInfo.postalCode?.value ?? '' );
+		state.change( 'address1', newInfo.address1?.value ?? '' );
+		state.change( 'organization', newInfo.organization?.value ?? '' );
+		state.change( 'city', newInfo.city?.value ?? '' );
+		state.change( 'state', newInfo.state?.value ?? '' );
+	};
+
 	return (
 		<PayPalFieldsWrapper>
 			<TaxFields
@@ -232,16 +175,16 @@ function PayPalTaxFields() {
 
 function PayPalLabel( {
 	labelText = null,
-	store,
+	state,
 }: {
 	labelText?: string | null;
-	store?: PayPalStore;
+	state?: PayPalPaymentMethodState;
 } ) {
 	return (
 		<Fragment>
 			<div>
 				<span>{ labelText || 'PayPal' }</span>
-				{ store && <TaxLabel /> }
+				{ state && <TaxLabel state={ state } /> }
 			</div>
 			<PaymentMethodLogos className="paypal__logo payment-logos">
 				<PayPalLogo />
@@ -250,16 +193,11 @@ function PayPalLabel( {
 	);
 }
 
-function TaxLabel() {
-	const postalCode = useSelect(
-		( select ) => ( select( storeKey ) as PaypalSelectors ).getPostalCode(),
-		[]
-	);
-	const countryCode = useSelect(
-		( select ) => ( select( storeKey ) as PaypalSelectors ).getCountryCode(),
-		[]
-	);
-	const taxString = [ countryCode.value, postalCode.value ].filter( isValueTruthy ).join( ', ' );
+function TaxLabel( { state }: { state: PayPalPaymentMethodState } ) {
+	useSubscribeToEventEmitter( state );
+	const taxString = [ state.data.countryCode, state.data.postalCode ]
+		.filter( isValueTruthy )
+		.join( ', ' );
 	if ( taxString.length < 1 ) {
 		return null;
 	}
@@ -273,31 +211,16 @@ function TaxLabel() {
 function PayPalSubmitButton( {
 	disabled,
 	onClick,
+	state,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
+	state: PayPalPaymentMethodState;
 } ) {
 	const { __ } = useI18n();
 	const { formStatus } = useFormStatus();
 	const { transactionStatus } = useTransactionStatus();
-	const postalCode = useSelect(
-		( select ) => ( select( storeKey ) as PaypalSelectors ).getPostalCode(),
-		[]
-	);
-	const countryCode = useSelect(
-		( select ) => ( select( storeKey ) as PaypalSelectors ).getCountryCode(),
-		[]
-	);
-	const address1 = useSelect(
-		( select ) => ( select( storeKey ) as PaypalSelectors ).getAddress1(),
-		[]
-	);
-	const organization = useSelect(
-		( select ) => ( select( storeKey ) as PaypalSelectors ).getOrganization(),
-		[]
-	);
-	const city = useSelect( ( select ) => ( select( storeKey ) as PaypalSelectors ).getCity(), [] );
-	const state = useSelect( ( select ) => ( select( storeKey ) as PaypalSelectors ).getState(), [] );
+	useSubscribeToEventEmitter( state );
 
 	const handleButtonPress = () => {
 		if ( ! onClick ) {
@@ -306,12 +229,12 @@ function PayPalSubmitButton( {
 			);
 		}
 		onClick( {
-			postalCode: postalCode?.value,
-			countryCode: countryCode?.value,
-			address: address1?.value,
-			organization: organization?.value,
-			city: city?.value,
-			state: state?.value,
+			postalCode: state.data.postalCode,
+			countryCode: state.data.countryCode,
+			address: state.data.address1,
+			organization: state.data.organization,
+			city: state.data.city,
+			state: state.data.state,
 		} );
 	};
 	return (

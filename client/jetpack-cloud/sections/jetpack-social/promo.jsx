@@ -5,6 +5,7 @@ import {
 } from '@automattic/calypso-products';
 import { format as formatUrl, getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
+import { Page } from '@wordpress/admin-ui';
 import { localize } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { connect, useDispatch } from 'react-redux';
@@ -16,6 +17,7 @@ import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import JetpackRnaActionCard from 'calypso/components/jetpack/card/jetpack-rna-action-card';
 import UpsellProductCard from 'calypso/components/jetpack/upsell-product-card';
 import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import { preventWidows } from 'calypso/lib/formatting';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import { useSelector } from 'calypso/state';
@@ -58,43 +60,46 @@ export const Promo = ( { adminUrl, pluginInstallUrl, translate, siteId } ) => {
 		: translate( 'Get Started' );
 
 	return (
-		<Main wideLayout className="jetpack-social__promo">
+		<Main fullWidthLayout className="jetpack-social__promo">
 			<DocumentHead title={ titleHeader } />
+			<SidebarNavigation />
 			<QueryProductsList type="jetpack" />
 			{ siteId && <QueryIntroOffers siteId={ siteId } /> }
 			{ siteId && <QuerySiteProducts siteId={ siteId } /> }
-			<div className="jetpack-social__promo-content">
-				{
-					// If the site already has a paid plan active, show the publicize activation card.
-					hasPaidFeatures || isLoadingFeatures ? (
-						<JetpackRnaActionCard
-							headerText={ product.displayName }
-							subHeaderText={ product.description }
-							cardImage={ SocialImage }
-							cardImageAlt={ ctaButtonLabel }
-							// Disable the button while we're loading the features.
-							ctaButtonURL={ isLoadingFeatures ? '' : ctaButtonURL }
-							ctaButtonLabel={ ctaButtonLabel }
-							ctaButtonExternal
-						>
-							<ul className="jetpack-social__features">
-								{ product.features.items.map( ( feature ) => (
-									<li className="jetpack-social__feature" key={ feature.slug }>
-										<Gridicon size={ 18 } icon="checkmark" /> { preventWidows( feature.text ) }
-									</li>
-								) ) }
-							</ul>
-						</JetpackRnaActionCard>
-					) : (
-						<UpsellProductCard
-							featureType={ FEATURE_TYPE_JETPACK_SOCIAL }
-							nonManageProductSlug={ PRODUCT_JETPACK_SOCIAL_V1_YEARLY }
-							siteId={ siteId }
-							onCtaButtonClick={ onClick }
-						/>
-					)
-				}
-			</div>
+			<Page hasPadding showSidebarToggle={ false }>
+				<div className="jetpack-social__promo-content">
+					{
+						// If the site already has a paid plan active, show the publicize activation card.
+						hasPaidFeatures || isLoadingFeatures ? (
+							<JetpackRnaActionCard
+								headerText={ product.displayName }
+								subHeaderText={ product.description }
+								cardImage={ SocialImage }
+								cardImageAlt={ ctaButtonLabel }
+								// Disable the button while we're loading the features.
+								ctaButtonURL={ isLoadingFeatures ? '' : ctaButtonURL }
+								ctaButtonLabel={ ctaButtonLabel }
+								ctaButtonExternal
+							>
+								<ul className="jetpack-social__features">
+									{ product.features.items.map( ( feature ) => (
+										<li className="jetpack-social__feature" key={ feature.slug }>
+											<Gridicon size={ 18 } icon="checkmark" /> { preventWidows( feature.text ) }
+										</li>
+									) ) }
+								</ul>
+							</JetpackRnaActionCard>
+						) : (
+							<UpsellProductCard
+								featureType={ FEATURE_TYPE_JETPACK_SOCIAL }
+								nonManageProductSlug={ PRODUCT_JETPACK_SOCIAL_V1_YEARLY }
+								siteId={ siteId }
+								onCtaButtonClick={ onClick }
+							/>
+						)
+					}
+				</div>
+			</Page>
 		</Main>
 	);
 };

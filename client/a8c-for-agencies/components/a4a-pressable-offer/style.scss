@@ -57,12 +57,22 @@
 
 	.simple-list {
 		max-width: 850px;
-		margin-block-start: 24px;
 		margin-inline-start: 16px;
 
 		li {
 			@include body-medium;
 		}
+	}
+}
+
+.a4a-pressable-offer__intro {
+	@include body-medium;
+	max-width: 850px;
+	margin-block-start: 24px;
+	margin-block-end: 0;
+
+	em {
+		font-style: italic;
 	}
 }
 

@@ -7,9 +7,11 @@ describe( 'pressable addon capacity copy context', () => {
 			install: 1,
 			storage: 10,
 			visits: 10000,
+			phpMemory: 0,
 			formattedInstall: '1',
 			formattedStorage: '10 GB',
 			formattedVisits: '10,000',
+			formattedPhpMemory: '0 MB',
 		} );
 	} );
 
@@ -19,9 +21,11 @@ describe( 'pressable addon capacity copy context', () => {
 			install: 5,
 			storage: 20,
 			visits: 50000,
+			phpMemory: 0,
 			formattedInstall: '5',
 			formattedStorage: '20 GB',
 			formattedVisits: '50,000',
+			formattedPhpMemory: '0 MB',
 		} );
 	} );
 
@@ -31,9 +35,11 @@ describe( 'pressable addon capacity copy context', () => {
 			install: 10,
 			storage: 20,
 			visits: 100000,
+			phpMemory: 0,
 			formattedInstall: '10',
 			formattedStorage: '20 GB',
 			formattedVisits: '100,000',
+			formattedPhpMemory: '0 MB',
 		} );
 	} );
 
@@ -43,9 +49,11 @@ describe( 'pressable addon capacity copy context', () => {
 			install: 0,
 			storage: 1,
 			visits: 0,
+			phpMemory: 0,
 			formattedInstall: '0',
 			formattedStorage: '1 GB',
 			formattedVisits: '0',
+			formattedPhpMemory: '0 MB',
 		} );
 	} );
 
@@ -55,9 +63,25 @@ describe( 'pressable addon capacity copy context', () => {
 			install: 0,
 			storage: 0,
 			visits: 10000,
+			phpMemory: 0,
 			formattedInstall: '0',
 			formattedStorage: '0 GB',
 			formattedVisits: '10,000',
+			formattedPhpMemory: '0 MB',
+		} );
+	} );
+
+	it( 'maps pressable-addon-php-memory-512mb with exact memory format', () => {
+		expect( getPressableAddonCapacityCopyContext( 'pressable-addon-php-memory-512mb' ) ).toEqual( {
+			type: 'phpMemory',
+			install: 0,
+			storage: 0,
+			visits: 0,
+			phpMemory: 512,
+			formattedInstall: '0',
+			formattedStorage: '0 GB',
+			formattedVisits: '0',
+			formattedPhpMemory: '512 MB',
 		} );
 	} );
 

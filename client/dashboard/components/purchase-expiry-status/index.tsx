@@ -13,7 +13,6 @@ import {
 	getRelativeTimeString,
 } from '../../utils/datetime';
 import {
-	isTemporarySitePurchase,
 	isA4ABillingDragonPurchase,
 	isRecentMonthlyPurchase,
 	isRenewing,
@@ -25,6 +24,7 @@ import {
 	creditCardHasAlreadyExpired,
 	creditCardExpiresBeforeSubscription,
 	isInExpirationGracePeriod,
+	isCentennialPurchase,
 } from '../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
 
@@ -75,7 +75,7 @@ export function PurchaseExpiryStatus( {
 
 	if (
 		isSiteMissing &&
-		isTemporarySitePurchase( purchase ) &&
+		purchase.is_attached_to_holding_site &&
 		purchase.product_type === 'jetpack'
 	) {
 		return (
@@ -92,7 +92,7 @@ export function PurchaseExpiryStatus( {
 	const isA4ABDPurchase = isA4ABillingDragonPurchase( purchase );
 	const temporarySitePurchaseProductTypes = [ 'saas_plugin', 'jetpack', 'akismet' ];
 	const isKnownTemporarySiteProductType =
-		isTemporarySitePurchase( purchase ) &&
+		purchase.is_attached_to_holding_site &&
 		temporarySitePurchaseProductTypes.includes( purchase.product_type );
 	const isJetpack = purchase.is_jetpack_plan_or_product;
 
@@ -138,6 +138,21 @@ export function PurchaseExpiryStatus( {
 		);
 	}
 
+	const isCentennial = isCentennialPurchase( purchase );
+
+	if ( isCentennial ) {
+		if ( isIncludedWithPlan( purchase ) ) {
+			return __( 'Included with plan' );
+		}
+		return createInterpolateElement(
+			// translators: date is a formatted expiry date
+			__( 'Paid until <date />' ),
+			{
+				date: <FormattedExpiryDate locale={ locale } purchase={ purchase } />,
+			}
+		);
+	}
+
 	const isIntroductoryOfferFreeTrial = purchase.introductory_offer?.cost_per_interval === 0;
 	if (
 		purchase.introductory_offer?.is_within_period &&
@@ -147,7 +162,7 @@ export function PurchaseExpiryStatus( {
 	) {
 		return createInterpolateElement(
 			sprintf(
-				// translators: date is a formatted date, amount is a currency amount, and excludeTaxStringAbbreviation is something like "excludes VAT"
+				// translators: %(date)s: a formatted date, %(amount)s: a currency amount, excludeTaxStringAbbreviation: something like "excludes VAT"
 				__(
 					'Free trial ends on %(date)s, renews automatically at %(amount)s <excludeTaxStringAbbreviation />'
 				),
@@ -175,7 +190,7 @@ export function PurchaseExpiryStatus( {
 		return (
 			<span>
 				{
-					// translators: date is a formatted date
+					// translators: %(date)s: a formatted date
 					sprintf( __( 'Free trial ends on %(date)s' ), {
 						date: formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
 					} )
@@ -193,7 +208,7 @@ export function PurchaseExpiryStatus( {
 		return (
 			<span>
 				{ sprintf(
-					// translators: date is a formatted date
+					// translators: %(date)s: a formatted date
 					__( 'Credit card expires before your next renewal on %(date)s' ),
 					{
 						date: formatDate( new Date( purchase.renew_date ), locale, { dateStyle: 'long' } ),
@@ -241,7 +256,7 @@ export function PurchaseExpiryStatus( {
 			case SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD:
 				return createInterpolateElement(
 					sprintf(
-						// translators: date is a formatted date, amount is a currency amount, and excludeTaxStringAbbreviation is something like "excludes VAT"
+						// translators: %(date)s: a formatted date, %(amount)s: a currency amount, excludeTaxStringAbbreviation: something like "excludes VAT"
 						__( 'Renews monthly at %(amount)s <excludeTaxStringAbbreviation /> on %(date)s' ),
 						translateArgs
 					),
@@ -250,7 +265,7 @@ export function PurchaseExpiryStatus( {
 			case SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD:
 				return createInterpolateElement(
 					sprintf(
-						// translators: date is a formatted date, amount is a currency amount, and excludeTaxStringAbbreviation is something like "excludes VAT"
+						// translators: %(date)s: a formatted date, %(amount)s: a currency amount, excludeTaxStringAbbreviation: something like "excludes VAT"
 						__( 'Renews yearly at %(amount)s <excludeTaxStringAbbreviation /> on %(date)s' ),
 						translateArgs
 					),
@@ -259,7 +274,7 @@ export function PurchaseExpiryStatus( {
 			case SubscriptionBillPeriod.PLAN_BIENNIAL_PERIOD:
 				return createInterpolateElement(
 					sprintf(
-						// translators: date is a formatted date, amount is a currency amount, and excludeTaxStringAbbreviation is something like "excludes VAT"
+						// translators: %(date)s: a formatted date, %(amount)s: a currency amount, excludeTaxStringAbbreviation: something like "excludes VAT"
 						__(
 							'Renews every two years at %(amount)s <excludeTaxStringAbbreviation /> on %(date)s'
 						),
@@ -270,7 +285,7 @@ export function PurchaseExpiryStatus( {
 			case SubscriptionBillPeriod.PLAN_TRIENNIAL_PERIOD:
 				return createInterpolateElement(
 					sprintf(
-						// translators: date is a formatted date, amount is a currency amount, and excludeTaxStringAbbreviation is something like "excludes VAT"
+						// translators: %(date)s: a formatted date, %(amount)s: a currency amount, excludeTaxStringAbbreviation: something like "excludes VAT"
 						__(
 							'Renews every three years at %(amount)s <excludeTaxStringAbbreviation /> on %(date)s'
 						),
@@ -281,7 +296,7 @@ export function PurchaseExpiryStatus( {
 			default:
 				return createInterpolateElement(
 					sprintf(
-						// translators: date is a formatted date, amount is a currency amount, and excludeTaxStringAbbreviation is something like "excludes VAT"
+						// translators: %(date)s: a formatted date, %(amount)s: a currency amount, excludeTaxStringAbbreviation: something like "excludes VAT"
 						__( 'Renews at %(amount)s <excludeTaxStringAbbreviation /> on %(date)s' ),
 						translateArgs
 					),

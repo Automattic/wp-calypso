@@ -18,6 +18,7 @@ import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import BackupActionsToolbar from 'calypso/components/jetpack/backup-actions-toolbar';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
+import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
@@ -64,41 +65,34 @@ const BackupPage = ( { queryDate } ) => {
 		keepLocalTime: !! queryDate,
 	} );
 
-	const isWpcom = ! ( isJetpackCloud() || isA8CForAgencies() );
+	const isJetpackPlatform = isJetpackCloud() || isA8CForAgencies();
+	const showHeader = ! isJetpackPlatform;
 
 	return (
-		<div
+		<Main
+			fullWidthLayout
 			className={ clsx( 'backup__page', {
-				wordpressdotcom: isWpcom,
+				wordpressdotcom: showHeader,
+				is_jetpackcom: isJetpackCloud(),
 			} ) }
 		>
-			<Main
-				fullWidthLayout={ isWpcom }
-				wideLayout={ ! isWpcom }
-				className={ clsx( {
-					is_jetpackcom: isJetpackCloud(),
-				} ) }
+			{ isJetpackCloud() && <SidebarNavigation /> }
+			<Page
+				hasPadding
+				showSidebarToggle={ false }
+				title={ showHeader ? <JetpackTitle title={ translate( 'Backup' ) } /> : undefined }
+				subTitle={
+					showHeader
+						? translate( 'Save changes and restore quickly with one-click recovery.' )
+						: undefined
+				}
+				actions={ showHeader ? <BackupActionsToolbar siteId={ siteId } /> : undefined }
 			>
-				{ isJetpackCloud() && <SidebarNavigation /> }
-				{ isWpcom ? (
-					<Page
-						hasPadding
-						showSidebarToggle={ false }
-						title={ <JetpackTitle title={ translate( 'Backup' ) } /> }
-						subTitle={ translate( 'Save changes and restore quickly with one-click recovery.' ) }
-						actions={ <BackupActionsToolbar siteId={ siteId } /> }
-					>
-						<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
-						<AdminContent selectedDate={ selectedDate } />
-					</Page>
-				) : (
-					<>
-						<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
-						<AdminContent selectedDate={ selectedDate } />
-					</>
-				) }
-			</Main>
-		</div>
+				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
+				<AdminContent selectedDate={ selectedDate } />
+			</Page>
+			{ showHeader && <JetpackFooter /> }
+		</Main>
 	);
 };
 
@@ -183,32 +177,30 @@ function BackupStatus( { selectedDate, needCredentials, onDateChange } ) {
 
 	return (
 		<div className="backup__main-wrap">
-			<div className="backup__last-backup-status">
-				{ ( isJetpackCloud() || isA8CForAgencies() ) && (
-					<div className="backup__header">
-						<div className="backup__header-left">
-							<div className="backup__header-title">{ translate( 'Latest Backups' ) }</div>
-							<div className="backup__header-text">
-								{ translate( 'This is a list of your latest generated backups' ) }
-							</div>
-						</div>
-						<div className="backup__header-right">
-							<BackupActionsToolbar siteId={ siteId } />
+			{ ( isJetpackCloud() || isA8CForAgencies() ) && (
+				<div className="backup__header">
+					<div className="backup__header-left">
+						<div className="backup__header-title">{ translate( 'Latest Backups' ) }</div>
+						<div className="backup__header-text">
+							{ translate( 'This is a list of your latest generated backups' ) }
 						</div>
 					</div>
-				) }
+					<div className="backup__header-right">
+						<BackupActionsToolbar siteId={ siteId } />
+					</div>
+				</div>
+			) }
 
-				{ needCredentials && <EnableRestoresBanner /> }
-				{ ! needCredentials && hasRealtimeBackups && <BackupsMadeRealtimeBanner /> }
+			{ needCredentials && <EnableRestoresBanner /> }
+			{ ! needCredentials && hasRealtimeBackups && <BackupsMadeRealtimeBanner /> }
 
-				<BackupDatePicker onDateChange={ onDateChange } selectedDate={ selectedDate } />
-				<BackupStorageSpace />
-				{ hasRealtimeBackups ? (
-					<RealtimeStatus selectedDate={ selectedDate } />
-				) : (
-					<DailyStatus selectedDate={ selectedDate } />
-				) }
-			</div>
+			<BackupDatePicker onDateChange={ onDateChange } selectedDate={ selectedDate } />
+			<BackupStorageSpace />
+			{ hasRealtimeBackups ? (
+				<RealtimeStatus selectedDate={ selectedDate } />
+			) : (
+				<DailyStatus selectedDate={ selectedDate } />
+			) }
 		</div>
 	);
 }

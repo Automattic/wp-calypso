@@ -23,10 +23,10 @@ const DEFAULT_LARGE_FONT_STYLES: React.CSSProperties = {
 };
 
 const FontPairingVariationPreview = () => {
-	const [ defaultFontFamilies ] = useGlobalSetting( 'typography.fontFamilies.default' ) as [
-		FontFamily[],
-	];
-	const [ themeFontFamilies ] = useGlobalSetting( 'typography.fontFamilies.theme' ) as [
+	const [ defaultFontFamilies ] = useGlobalSetting(
+		'typography.fontFamilies.default'
+	) as unknown as [ FontFamily[] ];
+	const [ themeFontFamilies ] = useGlobalSetting( 'typography.fontFamilies.theme' ) as unknown as [
 		FontFamily[],
 	];
 	const [ textFontFamily = 'serif' ] = useGlobalStyle( 'typography.fontFamily' );

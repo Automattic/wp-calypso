@@ -636,7 +636,11 @@ export class CheckoutThankYou extends Component<
 						/>
 					</>
 				);
-			} else if ( this.props.receipt.data && isOnlyDomainPurchases( purchases ) ) {
+			} else if (
+				this.props.receipt.data &&
+				isOnlyDomainPurchases( purchases ) &&
+				this.props.domainOnlySiteFlow
+			) {
 				if ( domainPurchases.length > 1 ) {
 					const domainsUrl = this.props.hasDashboardOptIn
 						? dashboardLink( '/domains' )
@@ -781,7 +785,7 @@ const ConnectedCheckoutThankYou = connect(
 	( state: IAppState, props: CheckoutThankYouProps ) => {
 		let siteId = getSelectedSiteId( state );
 		const activeTheme = getActiveTheme( state, siteId ?? 0 );
-		const sitePlugins = getInstalledPlugins( state, [ siteId ] );
+		const sitePlugins = getInstalledPlugins( state, [ siteId ], undefined );
 		const receipt = getReceiptById( state, props.receiptId );
 
 		if ( props.domainOnlySiteFlow && receipt.hasLoadedFromServer ) {

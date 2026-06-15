@@ -36,6 +36,7 @@ export function telegramConnect( context, next ) {
 		telegramId: context.query.telegram_id,
 		token: context.query.token,
 		ts: context.query.ts,
+		bot: context.query.bot,
 	} );
 	next();
 }

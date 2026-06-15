@@ -24,7 +24,7 @@ import {
 	TransactionStatus,
 } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/number-formatters';
-import { Step } from '@automattic/onboarding';
+import { ONBOARDING_FLOW, Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	styled,
@@ -40,8 +40,11 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { pencil } from '@wordpress/icons';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useCallback } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Loading from 'calypso/components/loading';
+import { OnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress';
+import { useShowOnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import {
@@ -64,6 +67,10 @@ import { CheckoutOrderBanner } from 'calypso/my-sites/checkout/src/components/ch
 import { useCheckoutUiRedesignExperiment } from 'calypso/my-sites/checkout/src/hooks/use-checkout-ui-redesign-experiment';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/src/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
+import {
+	SubmitButtonSlotContext,
+	useSubmitButtonSlot,
+} from 'calypso/my-sites/checkout/src/lib/submit-button-slot';
 import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout/src/types/wpcom-store-state';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-preview';
@@ -89,8 +96,11 @@ import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
 import badgeSecurity from './assets/icons/security.svg';
 import CheckoutNextSteps from './checkout-next-steps';
+import CheckoutProcessorNotice from './checkout-processor-notice';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
+import CheckoutTrustCards from './checkout-trust-cards';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
+import { handleProgressStepSelect } from './handle-progress-step-select';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
 import { LeaveCheckoutModal, useCheckoutLeaveModal } from './leave-checkout-modal';
 import BeforeSubmitCheckoutHeader from './payment-method-step';
@@ -334,6 +344,25 @@ function CheckoutSidebarNudge( {
 	);
 }
 
+// Renders CheckoutFormSubmit inside CheckoutStepGroup (so it keeps full step-state
+// awareness) while portaling its output into the sidebar slot registered via
+// SubmitButtonSlotContext. The sidebar button IS the active payment-method submit
+// button — no hidden main-column button, no querySelector click proxy.
+function PortaledCheckoutFormSubmit( {
+	validateForm,
+}: {
+	validateForm?: () => Promise< boolean >;
+} ) {
+	const { slotEl } = useSubmitButtonSlot();
+	if ( ! slotEl ) {
+		return null;
+	}
+	return createPortal(
+		<CheckoutFormSubmit validateForm={ validateForm } continueToNextIncompleteStep />,
+		slotEl
+	);
+}
+
 export default function CheckoutMainContent( {
 	addItemToCart,
 	changeSelection,
@@ -394,9 +423,42 @@ export default function CheckoutMainContent( {
 
 	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteUrl ?? '' } );
 
+	// Shared sidebar slot for the active payment-method submit button. We render
+	// <CheckoutFormSubmit> inside <CheckoutStepGroup> so it keeps full step-state
+	// awareness, but createPortal its output into this slot in the sidebar — the
+	// sidebar Pay button IS the real submit button (including native Apple Pay /
+	// Google Pay buttons that require a genuine user click).
+	const [ submitButtonSlotEl, setSubmitButtonSlotEl ] = useState< HTMLElement | null >( null );
+	const submitButtonSlotValue = useMemo(
+		() => ( { slotEl: submitButtonSlotEl, setSlotEl: setSubmitButtonSlotEl } ),
+		[ submitButtonSlotEl ]
+	);
+
 	const searchParams = new URLSearchParams( window.location.search );
+	const isOnboardingFlowCheckout = searchParams.get( 'flow' ) === ONBOARDING_FLOW;
+	const showProgress = useShowOnboardingProgress( isOnboardingFlowCheckout );
+	const forceCheckoutBackUrlDomains = useValidCheckoutBackUrl(
+		siteUrl ?? '',
+		undefined,
+		'checkoutBackUrlDomains'
+	);
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
+	// The flow that redirected to checkout may pass a step indicator via the
+	// `steps_current` / `steps_total` query params. Checkout has no per-flow
+	// knowledge — any flow can opt in by including the params. Mobile-only.
+	const isMobileViewport = useViewportMatch( 'small', '<' );
+	const stepsCurrent = Number( searchParams.get( 'steps_current' ) );
+	const stepsTotal = Number( searchParams.get( 'steps_total' ) );
+	const stepCounter =
+		isMobileViewport &&
+		Number.isInteger( stepsCurrent ) &&
+		stepsCurrent > 0 &&
+		Number.isInteger( stepsTotal ) &&
+		stepsTotal > 0 &&
+		stepsCurrent <= stepsTotal
+			? { current: stepsCurrent, total: stepsTotal }
+			: null;
 	const selectedSiteData = useSelector( getSelectedSite );
 	const wpcomDomain = useSelector( ( state ) =>
 		getWpComDomainBySiteId( state, selectedSiteData?.ID )
@@ -681,20 +743,15 @@ export default function CheckoutMainContent( {
 								) }
 							</CheckoutSummaryBody>
 						</CheckoutErrorBoundary>
-					</CheckoutSummaryArea>
-					{
-						// This upsell should always be displayed in the
-						// sidebar at desktop width but only shown at mobile
-						// width if the checkout summary is toggled open.
-						isCheckoutUiRedesignV1 && ( isSummaryVisible || isLargeViewport ) && (
+						{ isCheckoutUiRedesignV1 && ( isSummaryVisible || isLargeViewport ) && (
 							<CheckoutSummaryNudgeArea>
 								<CheckoutSidebarNudge
 									addItemToCart={ addItemToCart }
 									areThereDomainProductsInCart={ areThereDomainProductsInCart }
 								/>
 							</CheckoutSummaryNudgeArea>
-						)
-					}
+						) }
+					</CheckoutSummaryArea>
 				</>
 			) }
 		</WPCheckoutSidebarContent>
@@ -718,7 +775,7 @@ export default function CheckoutMainContent( {
 				<CheckoutStepGroup
 					loadingHeader={ loadingHeader }
 					onStepChanged={ onStepChanged }
-					scrollToStepOnForwardNavigation
+					scrollToStepOnForwardNavigation={ ! isLargeViewport }
 				>
 					<PerformanceTrackerStop />
 					{ infoMessage }
@@ -754,7 +811,9 @@ export default function CheckoutMainContent( {
 							onPageLoadError={ onPageLoadError }
 							isCompleteCallback={ async () => {
 								// Touch the fields so they display validation errors
-								shouldShowContactDetailsValidationErrors && touchContactFields();
+								if ( shouldShowContactDetailsValidationErrors ) {
+									touchContactFields();
+								}
 								const validationResponse = await validateContactDetails(
 									contactInfo,
 									isLoggedOutCart,
@@ -906,18 +965,23 @@ export default function CheckoutMainContent( {
 						is100YearPlanTermsAccepted={ is100YearPlanTermsAccepted }
 						setIs100YearPlanTermsAccepted={ setIs100YearPlanTermsAccepted }
 						isSubmitted={ isSubmitted }
+						isLargeViewport={ isLargeViewport }
 					/>
-					<CheckoutFormSubmit
-						validateForm={ validateForm }
-						submitButtonHeader={ <SubmitButtonHeader /> }
-						submitButtonFooter={
-							hasCartJetpackProductsOnly ? (
-								<JetpackCheckoutSeals />
-							) : (
-								<CheckoutMoneyBackGuarantee cart={ responseCart } />
-							)
-						}
-					/>
+					{ isLargeViewport ? (
+						<PortaledCheckoutFormSubmit validateForm={ validateForm } />
+					) : (
+						<CheckoutFormSubmit
+							validateForm={ validateForm }
+							submitButtonHeader={ <SubmitButtonHeader /> }
+							submitButtonFooter={
+								hasCartJetpackProductsOnly ? (
+									<JetpackCheckoutSeals />
+								) : (
+									<CheckoutMoneyBackGuarantee cart={ responseCart } />
+								)
+							}
+						/>
+					) }
 				</CheckoutStepGroup>
 			</WPCheckoutMainContent>
 		</RestorableProductsProvider>
@@ -925,75 +989,116 @@ export default function CheckoutMainContent( {
 
 	if ( ! isStepContainerV2 ) {
 		return (
-			<WPCheckoutWrapper
-				className="checkout-wrapper"
-				isLargeViewport={ isLargeViewport }
-				isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
-			>
-				{ isCheckoutUiRedesignV1 && ! isLargeViewport && (
-					<WPCheckoutTitle className="checkout__main-title checkout__redesign-header">
-						{ translate( 'Checkout' ) }
-					</WPCheckoutTitle>
-				) }
-				{ checkoutSummary }
-				{ checkoutMainContent }
-			</WPCheckoutWrapper>
+			<SubmitButtonSlotContext.Provider value={ submitButtonSlotValue }>
+				<WPCheckoutWrapper
+					className="checkout-wrapper"
+					isLargeViewport={ isLargeViewport }
+					isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
+				>
+					{ isCheckoutUiRedesignV1 && ! isLargeViewport && (
+						<WPCheckoutTitle className="checkout__main-title checkout__redesign-header">
+							{ translate( 'Checkout' ) }
+						</WPCheckoutTitle>
+					) }
+					{ checkoutSummary }
+					{ checkoutMainContent }
+					{ isLargeViewport && (
+						<>
+							<CheckoutProcessorNotice />
+							<CheckoutTrustCards cart={ responseCart } />
+						</>
+					) }
+				</WPCheckoutWrapper>
+			</SubmitButtonSlotContext.Provider>
 		);
 	}
 
 	return (
-		<StepContainerV2CheckoutFixer
-			isLargeViewport={ isLargeViewport }
-			isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
-		>
-			<Step.TwoColumnLayout
-				firstColumnWidth={ 8 }
-				secondColumnWidth={ 4 }
-				topBar={ ( { isLargeViewport } ) => {
-					const topBar = (
-						<Step.TopBar
-							leftElement={ <Step.BackButton onClick={ leaveModalProps.clickClose } /> }
-							rightElement={
-								<span className="checkout-skip-button">
-									{ helpCenterButtonCopy && <label>{ helpCenterButtonCopy }</label> }
-									<Step.LinkButton onClick={ toggleHelpCenter }>
-										{ helpCenterButtonLink }
-									</Step.LinkButton>
-								</span>
-							}
-						/>
-					);
-
-					if ( isLargeViewport ) {
-						return <div className="checkout-top-bar-wrapper">{ topBar }</div>;
-					}
-
-					return (
-						<>
-							{ topBar }
-							{ isCheckoutUiRedesignV1 && (
-								<Step.Heading text={ translate( 'Checkout' ) } align="left" size="small" />
-							) }
-							{ checkoutSummary }
-						</>
-					);
-				} }
+		<SubmitButtonSlotContext.Provider value={ submitButtonSlotValue }>
+			<StepContainerV2CheckoutFixer
+				isLargeViewport={ isLargeViewport }
+				isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
 			>
-				{ ( { isLargeViewport } ) => {
-					if ( isLargeViewport ) {
+				<Step.TwoColumnLayout
+					firstColumnWidth={ 8 }
+					secondColumnWidth={ 4 }
+					heading={
+						showProgress ? (
+							<OnboardingProgress
+								currentStep="checkout"
+								onStepSelect={ ( step ) =>
+									handleProgressStepSelect( step, {
+										forceCheckoutBackUrlDomains,
+										forceCheckoutBackUrl,
+										clickStepBack: leaveModalProps.clickStepBack,
+										clickClose: leaveModalProps.clickClose,
+									} )
+								}
+							/>
+						) : undefined
+					}
+					topBar={ ( { isLargeViewport } ) => {
+						const topBar = (
+							<Step.TopBar
+								leftElement={
+									showProgress ? undefined : (
+										<Step.BackButton onClick={ leaveModalProps.clickClose } />
+									)
+								}
+								rightElement={
+									<>
+										{ stepCounter && (
+											<Step.StepCounter
+												current={ stepCounter.current }
+												total={ stepCounter.total }
+											/>
+										) }
+										<span className="checkout-skip-button">
+											{ helpCenterButtonCopy && <label>{ helpCenterButtonCopy }</label> }
+											<Step.LinkButton onClick={ toggleHelpCenter }>
+												{ helpCenterButtonLink }
+											</Step.LinkButton>
+										</span>
+									</>
+								}
+							/>
+						);
+
+						if ( isLargeViewport ) {
+							return <div className="checkout-top-bar-wrapper">{ topBar }</div>;
+						}
+
 						return (
 							<>
-								{ checkoutMainContent }
+								{ topBar }
+								{ isCheckoutUiRedesignV1 && (
+									<Step.Heading text={ translate( 'Checkout' ) } align="left" size="small" />
+								) }
 								{ checkoutSummary }
 							</>
 						);
-					}
+					} }
+				>
+					{ ( { isLargeViewport } ) => {
+						if ( isLargeViewport ) {
+							return (
+								<>
+									<div className="checkout-main-column">
+										{ checkoutMainContent }
+										<CheckoutProcessorNotice />
+										<CheckoutTrustCards cart={ responseCart } />
+									</div>
+									{ checkoutSummary }
+								</>
+							);
+						}
 
-					return checkoutMainContent;
-				} }
-			</Step.TwoColumnLayout>
-			<LeaveCheckoutModal { ...leaveModalProps } />
-		</StepContainerV2CheckoutFixer>
+						return checkoutMainContent;
+					} }
+				</Step.TwoColumnLayout>
+				<LeaveCheckoutModal { ...leaveModalProps } />
+			</StepContainerV2CheckoutFixer>
+		</SubmitButtonSlotContext.Provider>
 	);
 }
 
@@ -1102,17 +1207,6 @@ const StepContainerV2CheckoutFixer = styled.div< {
 				background: none;
 				position: relative;
 				height: 100%;
-
-				&:before {
-					content: '';
-					display: block;
-					background: var( --color-neutral-0 );
-					position: fixed;
-					top: calc( var( --step-container-v2-top-bar-height ) * -1 );
-					transform: translateX( calc( var( --left-padding ) * -1 ) );
-					width: 100vw;
-					bottom: 0;
-				}
 			}
 
 			.checkout__summary-area,
@@ -1136,13 +1230,86 @@ const StepContainerV2CheckoutFixer = styled.div< {
 	${ ( props ) =>
 		props.isLargeViewport &&
 		css`
-			div:has( .checkout-sidebar-content ) {
+			/*
+			 * Stick the inner summary area, not the sidebar wrapper.
+			 *
+			 * Earlier versions targeted div:has( .checkout-sidebar-content )
+			 * which matched multiple ancestors; making each sticky with no
+			 * positioned containing block let the upsell paint over the trust
+			 * cards row at scroll-bottom. Targeting .checkout-sidebar-content
+			 * directly didn't help either: when the sidebar is the sticky
+			 * element it equals its containing block's height (the column
+			 * stretches it), leaving no room to actually stick — so the
+			 * sticky degenerated to static and the Pay CTA scrolled away.
+			 *
+			 * .checkout__summary-area is shorter than the sidebar (just the
+			 * order card + upsell), so it has room to slide within the
+			 * stretched sidebar's bounds and pin to top: 32px.
+			 */
+			.checkout__summary-area {
 				position: sticky;
 				top: 32px;
 			}
 			.checkout__summary-area,
 			.checkout-loading-sidebar {
 				min-width: 384px;
+			}
+			/*
+			 * Give the sticky .checkout__summary-area room to slide.
+			 *
+			 * TwoColumnLayout's row uses align-items: flex-start at break-large
+			 * (packages/onboarding/.../TwoColumnLayout/style.scss), so its
+			 * column wrappers size to content instead of stretching to row
+			 * height. With the right column collapsed, .checkout-sidebar-content
+			 * inside it is just as short as the .checkout__summary-area it
+			 * contains — so the sticky rule above has zero distance to travel.
+			 *
+			 * Override the row's align-items to stretch (so both column wrappers
+			 * match row height), then promote the sidebar's column wrapper to a
+			 * flex column so .checkout-sidebar-content fills it. The legacy
+			 * WPCheckoutWrapper path gets this for free via grid-area stretching.
+			 */
+			.step-container-v2__content-row--two-column-layout {
+				align-items: stretch;
+			}
+			.step-container-v2__content-row--two-column-layout > div:has( > .checkout-sidebar-content ) {
+				display: flex;
+				flex-direction: column;
+			}
+			.checkout-sidebar-content {
+				flex: 1;
+			}
+			/*
+			 * Keep the totals + Pay CTA + terms always visible regardless of
+			 * cart length. Cap the summary card itself (not the whole area)
+			 * at viewport height, scroll the line items list inside, and
+			 * lock the bottom block (subtotal/total/CTA/terms) at full size.
+			 *
+			 * The Save 19% upsell below the card sits at its natural size;
+			 * if it doesn't fit alongside the card in a short viewport,
+			 * it scrolls past the bottom — the Pay CTA is the priority.
+			 */
+			.checkout__summary-card {
+				max-height: calc( 100vh - 64px );
+				display: flex;
+				flex-direction: column;
+			}
+			.checkout__summary-card > .wp-checkout-order-summary__products-list {
+				flex: 1 1 auto;
+				min-height: 0;
+				overflow-y: auto;
+			}
+			.checkout__summary-card > .wp-checkout-order-summary__section-title,
+			.checkout__summary-card > .wp-checkout-order-summary__amount-wrapper {
+				flex-shrink: 0;
+			}
+			/*
+			 * Lock intrinsic child sizing so the 24px gap between the sticky order
+			 * card and the two-year upsell isn't collapsed when the sticky area
+			 * reaches the bottom of its grid cell.
+			 */
+			.checkout__summary-area > * {
+				flex-shrink: 0;
 			}
 		` }
 	${ ( props ) =>
@@ -1612,12 +1779,14 @@ function CheckoutTermsAndCheckboxes( {
 	is100YearPlanTermsAccepted,
 	setIs100YearPlanTermsAccepted,
 	isSubmitted,
+	isLargeViewport,
 }: {
 	is3PDAccountConsentAccepted: boolean;
 	setIs3PDAccountConsentAccepted: ( isAccepted: boolean ) => void;
 	is100YearPlanTermsAccepted: boolean;
 	setIs100YearPlanTermsAccepted: ( isAccepted: boolean ) => void;
 	isSubmitted: boolean;
+	isLargeViewport: boolean;
 } ) {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -1627,9 +1796,18 @@ function CheckoutTermsAndCheckboxes( {
 
 	const translate = useTranslate();
 
+	const needsConsentCheckbox = hasMarketplaceProduct || has100YearPlan;
+
 	return (
 		<CheckoutTermsAndCheckboxesWrapper className="checkout-terms-and-checkboxes">
-			<BeforeSubmitCheckoutHeader />
+			{
+				// Keep the inline legal block above the consent checkbox so
+				// "I have read and agree to all of the above" still refers to
+				// something visible. On desktop without a consent checkbox the
+				// same text is reachable via the sidebar's Read more modal;
+				// mobile has no sidebar modal, so always render it inline.
+				( ! isLargeViewport || needsConsentCheckbox ) && <BeforeSubmitCheckoutHeader />
+			}
 
 			{ hasMarketplaceProduct && (
 				<AcceptTermsOfServiceCheckbox
@@ -1797,26 +1975,39 @@ const WPCheckoutWrapper = styled.div< {
 } >`
 	background: ${ colorStudio.colors[ 'White' ] };
 	display: grid;
-	grid-template-rows: auto;
 	grid-template-columns: 1fr;
-	grid-template-areas: 'sidebar-content' 'main-content';
+	grid-template-areas:
+		'sidebar-content'
+		'main-content'
+		'processor-notice'
+		'trust-cards';
+	align-content: start;
 	justify-content: center;
 	justify-items: center;
 	min-height: 100vh;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		grid-template-columns: 1fr minmax( 500px, 688px ) 475px 1fr;
-		grid-template-areas: 'main-content main-content sidebar-content sidebar-content';
+		grid-template-areas:
+			'main-content main-content sidebar-content sidebar-content'
+			'. processor-notice sidebar-content sidebar-content'
+			'. trust-cards sidebar-content sidebar-content';
 		justify-items: end;
 	}
 
 	& > * {
 		box-sizing: border-box;
 		width: 100%;
+	}
 
-		@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-			min-height: 100vh;
-		}
+	& > .checkout-trust-cards {
+		grid-area: trust-cards;
+		justify-self: center;
+	}
+
+	& > .checkout-processor-notice {
+		grid-area: processor-notice;
+		justify-self: center;
 	}
 
 	& *:focus {
@@ -1835,12 +2026,49 @@ const WPCheckoutWrapper = styled.div< {
 			.checkout-sidebar-plan-upsell {
 				min-width: 384px;
 			}
+			/*
+			 * Keep the totals + Pay CTA + terms always visible regardless of
+			 * cart length. Cap the summary card itself (not the whole area)
+			 * at viewport height, scroll the line items list inside, and
+			 * lock the bottom block (subtotal/total/CTA/terms) at full size.
+			 *
+			 * The Save 19% upsell below the card sits at its natural size;
+			 * if it doesn't fit alongside the card in a short viewport,
+			 * it scrolls past the bottom — the Pay CTA is the priority.
+			 */
+			.checkout__summary-card {
+				max-height: calc( 100vh - 64px );
+				display: flex;
+				flex-direction: column;
+			}
+			.checkout__summary-card > .wp-checkout-order-summary__products-list {
+				flex: 1 1 auto;
+				min-height: 0;
+				overflow-y: auto;
+			}
+			.checkout__summary-card > .wp-checkout-order-summary__section-title,
+			.checkout__summary-card > .wp-checkout-order-summary__amount-wrapper {
+				flex-shrink: 0;
+			}
+			/*
+			 * Lock intrinsic child sizing so the 24px gap between the sticky
+			 * order card and the two-year upsell isn't collapsed when the
+			 * sticky area reaches the bottom of its grid cell.
+			 */
+			.checkout__summary-area > * {
+				flex-shrink: 0;
+			}
 		` }
 	${ ( props ) =>
 		props.isCheckoutUiRedesignV1 &&
 		! props.isLargeViewport &&
 		css`
-			grid-template-areas: 'checkout-title-area' 'sidebar-content' 'main-content';
+			grid-template-areas:
+				'checkout-title-area'
+				'sidebar-content'
+				'main-content'
+				'processor-notice'
+				'trust-cards';
 			.checkout-sidebar-content {
 				background: ${ colorStudio.colors[ 'White' ] };
 			}
@@ -2191,7 +2419,6 @@ const WPCheckoutCompletedWrapper = styled.div`
 const WPCheckoutMainContent = styled.div`
 	grid-area: main-content;
 	margin-top: 50px;
-	min-height: 100vh;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding: 0 24px;
@@ -2201,11 +2428,18 @@ const WPCheckoutMainContent = styled.div`
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		margin-top: calc( var( --masterbar-checkout-height ) + 24px );
 		max-width: 688px;
-		padding: 0 64px 0 24px;
+		padding-block: 0;
+		padding-inline-start: 24px;
+		padding-inline-end: 64px;
+	}
 
-		.rtl & {
-			padding: 0 24px 0 64px;
-		}
+	/* On narrower desktops the 64px between form and sidebar is too tight
+	   when stacked with the sidebar's own 64px left padding. Drop the form's
+	   right padding so its content reaches col-2's right edge, matching the
+	   trust cards row beneath. Restored above 1024px where the layout has
+	   room to breathe. */
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) and ( max-width: 1024px ) {
+		padding-inline-end: 0;
 	}
 	${ ( props ) => css`
 		.checkout-line-item .checkout-line-item__remove-product {
@@ -2250,10 +2484,11 @@ const WPCheckoutSidebarContent = styled.div`
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		margin-top: 0;
-		padding: 144px 24px 144px 64px;
+		background: ${ colorStudio.colors[ 'White' ] };
+		padding: 144px 24px 24px 64px;
 
 		.rtl & {
-			padding: 144px 64px 0 24px;
+			padding: 144px 64px 24px 24px;
 		}
 	}
 `;
@@ -2352,6 +2587,7 @@ const CheckoutSummaryBagIconWrapper = styled.span`
 
 const CheckoutSummaryNudgeArea = styled.div`
 	margin: 8px 16px 12px;
+	flex-shrink: 0;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		margin-inline: 0;

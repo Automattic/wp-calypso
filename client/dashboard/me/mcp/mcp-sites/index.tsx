@@ -8,6 +8,7 @@ import {
 	getDisabledSiteIds,
 	getEnabledSiteIds,
 } from '../../../../me/mcp/utils';
+import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { useAppContext } from '../../../app/context';
 import { siteSettingsAIToolsRoute } from '../../../app/router/sites';
@@ -25,6 +26,7 @@ import PreferencesLoginSiteDropdown from '../../preferences-primary-site/site-dr
 import type { Site } from '@automattic/api-core';
 
 export default function McpMcpSites() {
+	const { recordTracksEvent } = useAnalytics();
 	const { queries } = useAppContext();
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 	const sitesQueryResult = useQuery(
@@ -71,24 +73,41 @@ export default function McpMcpSites() {
 	} );
 
 	const handleSiteAdd = ( siteId: number ) => {
-		mutation.mutate( {
-			mcp_abilities: {
-				sites: [
-					{
-						blog_id: siteId,
-						site_level_enabled: mcpEnabled ? false : true,
-					},
-				],
-			},
-		} as any );
+		const eventName = mcpEnabled
+			? 'calypso_dashboard_mcp_site_exception_added'
+			: 'calypso_dashboard_mcp_site_added';
+		mutation.mutate(
+			{
+				mcp_abilities: {
+					sites: [
+						{
+							blog_id: siteId,
+							site_level_enabled: mcpEnabled ? false : true,
+						},
+					],
+				},
+			} as any,
+			{
+				onSuccess: () => {
+					recordTracksEvent( eventName, { site_id: siteId } );
+				},
+			}
+		);
 	};
 
 	const handleSiteRemove = ( siteId: number ) => {
-		mutation.mutate( {
-			mcp_abilities: {
-				sites: [ { blog_id: siteId, site_level_enabled: null } ],
-			},
-		} as any );
+		mutation.mutate(
+			{
+				mcp_abilities: {
+					sites: [ { blog_id: siteId, site_level_enabled: null } ],
+				},
+			} as any,
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_mcp_site_removed', { site_id: siteId } );
+				},
+			}
+		);
 	};
 
 	const handleSitePickerSelect = ( siteIdStr: string | null | undefined ) => {

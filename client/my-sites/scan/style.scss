@@ -1,17 +1,27 @@
+@import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/variables";
+@import "@automattic/typography/styles/fonts";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
 @import "calypso/components/jetpack-page-layout/admin-ui-page";
 
 body.is-section-scan {
 	@include admin-ui-page-layout;
 	@include admin-ui-page-layout-constrained-content($max-width: 1040px);
+	@include admin-ui-page-sticky-footer;
 
 	.scan__wpcom-upsell .promo-card {
 		display: flex;
 		gap: 24px;
 	}
 
-	.scan__content > .card {
+}
 
-		justify-content: center;
+// Card on both Calypso and A4A needs flex
+body.is-section-scan,
+.hosting-dashboard-item-view__content {
+
+	.scan__content > .card {
 
 		.security-icon {
 			margin: 0 auto;
@@ -22,6 +32,7 @@ body.is-section-scan {
 			display: flex;
 			gap: 24px;
 			align-items: flex-start;
+			justify-content: center;
 
 			.scan__header {
 				flex-shrink: 0;

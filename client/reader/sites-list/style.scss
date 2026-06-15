@@ -1,5 +1,15 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 .is-reader-page {
-	.reader-sites-list {
+	@include ui-mixins.when-dark-theme {
+		.is-card-view .reader-site-item__link {
+			border-color: var( --color-neutral-20 );
+		}
+	}
+
+	ul.reader-sites-list {
 		margin: 0;
 	}
 
@@ -74,6 +84,13 @@
 		.reader-site-info h3 {
 			font-size: rem( 14px );
 			font-weight: normal;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		.reader-site-subscribe-button {
+			padding-top: 5px;
 		}
 	}
 

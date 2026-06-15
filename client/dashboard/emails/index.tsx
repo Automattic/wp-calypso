@@ -136,7 +136,7 @@ function Emails() {
 					fields={ emailFields }
 					view={ view }
 					onChangeView={ updateView }
-					onResetView={ resetView }
+					onReset={ resetView }
 					selection={ selection.map( ( item ) => item.id ) }
 					onChangeSelection={ ( ids ) =>
 						setSelection( emails.filter( ( email ) => ids.includes( email.id ) ) )

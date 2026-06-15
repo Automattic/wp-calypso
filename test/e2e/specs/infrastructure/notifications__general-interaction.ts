@@ -25,6 +25,10 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 	'Notifications: General Interactions',
 	function () {
 		const comment = DataHelper.getRandomPhrase() + ' notification-actions-spec';
+		// A second comment, exercised by the Trash step. Spam and Trash both
+		// return to the list view in the redesigned panel, so each terminal
+		// action needs its own notification.
+		const commentToTrash = DataHelper.getRandomPhrase() + ' notification-actions-spec';
 
 		// TestAccount and RestAPI instances.
 		let commentingUser: TestAccount;
@@ -35,6 +39,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 		// API responses.
 		let newPost: PostResponse;
 		let newComment: NewCommentResponse;
+		let newCommentToTrash: NewCommentResponse;
 
 		let notificationsComponent: NotificationsComponent;
 		let page: Page;
@@ -54,12 +59,17 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 				{ title: DataHelper.getRandomPhrase() }
 			);
 
-			// Create a new comment on the post as the commentingUser and
-			// store the response.
+			// Create the comments on the post as the commentingUser and store the
+			// responses. One drives the Approve/Like/Spam flow, the other Trash.
 			newComment = await commentingUserRestAPIClient.createComment(
 				notificationsUser.credentials.testSites?.primary.id as number,
 				newPost.ID,
 				comment
+			);
+			newCommentToTrash = await commentingUserRestAPIClient.createComment(
+				notificationsUser.credentials.testSites?.primary.id as number,
+				newPost.ID,
+				commentToTrash
 			);
 
 			// Log in as the user receiving the notification.
@@ -87,30 +97,30 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 
 		it( 'Mark comment as spam', async function () {
 			await notificationsComponent.clickNotificationAction( 'Spam' );
-			await notificationsComponent.clickUndo();
 		} );
 
 		it( 'Trash comment', async function () {
-			await notificationsComponent.clickNotificationAction( 'Trash' );
+			// Use the dedicated second notification: the first was spammed, which
+			// returned to the list view.
+			await notificationsComponent.openNotification( commentToTrash );
+			await notificationsComponent.trashNotification();
 		} );
 
 		afterAll( async function () {
-			if ( ! newComment ) {
-				return;
-			}
+			const siteId = notificationsUser.credentials.testSites?.primary.id as number;
 
-			// Clean up the comment.
-			try {
-				await notificationUserRestAPIClient.deleteComment(
-					notificationsUser.credentials.testSites?.primary.id as number,
-					newComment.ID
-				);
-			} catch ( e: unknown ) {
-				console.warn(
-					`Failed to clean up test comment in notification_action spec for site ${
-						notificationsUser.credentials.testSites?.primary.id as number
-					}, comment ${ newComment.ID }`
-				);
+			// Clean up the comments.
+			for ( const createdComment of [ newComment, newCommentToTrash ] ) {
+				if ( ! createdComment ) {
+					continue;
+				}
+				try {
+					await notificationUserRestAPIClient.deleteComment( siteId, createdComment.ID );
+				} catch ( e: unknown ) {
+					console.warn(
+						`Failed to clean up test comment in notification_action spec for site ${ siteId }, comment ${ createdComment.ID }`
+					);
+				}
 			}
 
 			if ( ! newPost ) {
@@ -119,15 +129,10 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 
 			// Clean up the post.
 			try {
-				await notificationUserRestAPIClient.deletePost(
-					notificationsUser.credentials.testSites?.primary.id as number,
-					newPost.ID
-				);
+				await notificationUserRestAPIClient.deletePost( siteId, newPost.ID );
 			} catch ( e: unknown ) {
 				console.warn(
-					`Failed to clean up test comment in notification_action spec for site ${
-						notificationsUser.credentials.testSites?.primary.id as number
-					}, comment ${ newComment.ID }`
+					`Failed to clean up test post in notification_action spec for site ${ siteId }, post ${ newPost.ID }`
 				);
 			}
 		} );

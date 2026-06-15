@@ -1,0 +1,55 @@
+/*
+ * `<SignalBadge>` styles for item-level signal rendering.
+ *
+ * Mirrors `WordPress/wp-admin-sidebar` v0.1.4 `src/browse-rail/styles.css`
+ * 1:1 (visible/audible/interactive output). Only the selectors are
+ * Calypso-flavoured (no `body.wp-admin-sidebar-active` prefix is needed
+ * because the redesigned components only render when the schema is
+ * available). The class names match the public plugin so any wpcom-side
+ * override sheet shipped from `wpcom-admin-sidebar-integration` applies
+ * cleanly here too.
+ *
+ * Visual anchor: 18×18 circular for single digits, pill for multi-digits,
+ * `#d63638` red on white text, the native wp-admin "Updates 3" badge style.
+ *
+ * Inline-text + inline-icon are decorative side-channels. They do NOT
+ * contribute to attention; they sit alongside the title to label plan tier
+ * (e.g. `Premium`, `BETA`) or carry an inline glyph (e.g. dashicons-warning).
+ */
+
+.wp-admin-sidebar-item__badge {
+	display: inline-block;
+	box-sizing: border-box;
+	margin-left: 6px;
+	padding: 0 6px;
+	min-width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	background: #d63638;
+	color: #fff;
+	font-size: 11px;
+	font-weight: 600;
+	line-height: 18px;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.wp-admin-sidebar-item__inline-text {
+	display: inline-block;
+	margin-left: 6px;
+	padding: 0 4px;
+	font-size: 10px;
+	font-weight: 600;
+	color: var(--color-accent, #3858e9);
+	border: 1px solid currentColor;
+	border-radius: 2px;
+	line-height: 14px;
+	text-transform: uppercase;
+}
+
+.wp-admin-sidebar-item__inline-icon {
+	margin-left: 6px;
+	font-size: 14px;
+	vertical-align: middle;
+	color: currentColor;
+}

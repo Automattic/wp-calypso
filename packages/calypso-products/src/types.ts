@@ -107,21 +107,18 @@ export type FeatureList = {
 /**
  * WPCOM
  */
-const WPCOM_PLAN_STORAGE_FEATURES = < const >[
-	FEATURE_1GB_STORAGE,
-	FEATURE_3GB_STORAGE,
-	FEATURE_6GB_STORAGE,
-	FEATURE_13GB_STORAGE,
-	FEATURE_50GB_STORAGE,
-	FEATURE_100GB_STORAGE,
-	FEATURE_200GB_STORAGE,
-	FEATURE_P2_13GB_STORAGE,
-	FEATURE_P2_3GB_STORAGE,
-];
-
 export type WPComProductSlug = ( typeof WPCOM_PRODUCTS )[ number ];
 export type WPComPlanSlug = ( typeof WPCOM_PLANS )[ number ];
-export type WPComPlanStorageFeatureSlug = ( typeof WPCOM_PLAN_STORAGE_FEATURES )[ number ];
+export type WPComPlanStorageFeatureSlug =
+	| typeof FEATURE_1GB_STORAGE
+	| typeof FEATURE_3GB_STORAGE
+	| typeof FEATURE_6GB_STORAGE
+	| typeof FEATURE_13GB_STORAGE
+	| typeof FEATURE_50GB_STORAGE
+	| typeof FEATURE_100GB_STORAGE
+	| typeof FEATURE_200GB_STORAGE
+	| typeof FEATURE_P2_13GB_STORAGE
+	| typeof FEATURE_P2_3GB_STORAGE;
 export type WPComPurchasableItemSlug = WPComProductSlug | WPComPlanSlug;
 
 // WPCOM Space Upgrade Products
@@ -133,14 +130,9 @@ export type WPComSpaceUpgradeProductSlug = ( typeof WPCOM_SPACE_UPGRADE_PRODUCTS
 export type WPComOtherProductSlug = ( typeof WPCOM_OTHER_PRODUCTS )[ number ];
 
 export interface WPComPlan extends Plan {
-	getAudience?: () => TranslateResult;
-	getBlogAudience?: () => TranslateResult;
-	getPortfolioAudience?: () => TranslateResult;
-	getStoreAudience?: () => TranslateResult;
 	getPlanTagline?: () => TranslateResult;
 	getNewsletterTagLine?: () => TranslateResult;
 	getBlogOnboardingTagLine?: () => TranslateResult;
-	getSubTitle?: () => TranslateResult;
 	getPlanCompareFeatures?: (
 		experiment?: string,
 		options?: Record< string, string | boolean[] >
@@ -156,7 +148,6 @@ export interface WPComPlan extends Plan {
 	getSenseiFeatures?: ( term?: Product[ 'term' ] ) => () => Feature[];
 	getSenseiHighlightedFeatures?: () => Feature[];
 	getPromotedFeatures?: () => Feature[];
-	getPathSlug: () => string;
 	getAnnualPlansOnlyFeatures?: () => string[];
 	get2023PricingGridSignupWpcomFeatures?: () => Feature[];
 	getHostingSignupFeatures?: ( term?: Product[ 'term' ] ) => () => Feature[];
@@ -224,7 +215,6 @@ export interface JetpackPlan extends Plan {
 	getAnnualSlug?: () => JetpackPlanSlug;
 	getMonthlySlug?: () => JetpackPlanSlug;
 	getPlanCardFeatures?: () => Feature[];
-	getPathSlug: () => string;
 	getWhatIsIncluded: () => Array< TranslateResult >;
 	getBenefits: () => Array< TranslateResult >;
 	getRecommendedFor: () => Array< JetpackTag >;
@@ -332,7 +322,6 @@ export type FeatureGroupMap = Record< FeatureGroupSlug, FeatureGroup >;
 export type Plan = BillingTerm & {
 	group: typeof GROUP_WPCOM | typeof GROUP_JETPACK | typeof GROUP_P2 | typeof GROUP_A4A;
 	type: PlanType;
-	availableFor?: ( plan: PlanSlug ) => boolean;
 	getSignupCompareAvailableFeatures?: () => string[];
 
 	/**
@@ -344,18 +333,8 @@ export type Plan = BillingTerm & {
 	get2023PricingGridSignupWpcomFeatures?: () => Feature[];
 
 	/**
-	 * Comprehensive feature list for the long_set variant of the plans differentiators experiment.
-	 * Shows all features for each plan including base infrastructure features.
-	 */
-	getLongSetSignupWpcomFeatures?: () => Feature[];
-	/**
-	 * Feature list for focused_more_premium and focused_new_copy (ExPlat) variants of the plans
-	 * differentiators experiment.
-	 */
-	getVar41MorePremiumSignupWpcomFeatures?: () => Feature[];
-	/**
-	 * Comprehensive feature list for the focused_no_ai variant of the plans differentiators experiment.
-	 * Plan-scoped pills match other pill variants except AI-labeled pills are not shown.
+	 * Feature list for the rolled-out pricing differentiation cohort.
+	 * Uses non-AI wording; plan-scoped pills suppress AI-labeled pills.
 	 */
 	getVar42NoAiSignupWpcomFeatures?: () => Feature[];
 
@@ -404,11 +383,9 @@ export type Plan = BillingTerm & {
 		isCurrentPlan?: boolean
 	) => WPComPlanStorageFeatureSlug;
 	getProductId: () => number;
-	getPathSlug?: () => string;
 	getStoreSlug: () => PlanSlug;
 	getTitle: () => TranslateResult;
 	getDescription: () => TranslateResult;
-	getShortDescription?: () => TranslateResult;
 	getFeaturedDescription?: () => TranslateResult;
 	getLightboxDescription?: () => TranslateResult;
 	getPlanCancellationDescription?: () => TranslateResult;

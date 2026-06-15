@@ -42,6 +42,11 @@
 	}
 }
 
+.masterbar__item-agents-manager,
+.masterbar__item-agents-manager-ai-chat {
+	cursor: pointer;
+}
+
 .masterbar__agents-manager-menu-item {
 	display: flex;
 	align-items: center;

@@ -118,7 +118,7 @@ export default function TeamInvite() {
 				>
 					<FormSection title={ translate( 'Team member information' ) }>
 						<FormField
-							label={ translate( 'Email or WordPress.com Username' ) }
+							label={ translate( 'Email or WordPress.com username' ) }
 							error={ error }
 							isRequired
 						>

@@ -8,7 +8,6 @@ import { localize } from 'i18n-calypso';
 import { flow } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import AllSites from 'calypso/blocks/all-sites';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
@@ -119,7 +118,7 @@ export class SiteSelector extends Component {
 			return;
 		}
 
-		const selectorElement = ReactDom.findDOMNode( this.siteSelectorRef );
+		const selectorElement = this.siteSelectorRef;
 
 		if ( ! selectorElement ) {
 			return;
@@ -230,7 +229,7 @@ export class SiteSelector extends Component {
 			return;
 		}
 
-		const node = ReactDom.findDOMNode( this.siteSelectorRef );
+		const node = this.siteSelectorRef;
 		if ( node ) {
 			node.scrollTop = 0;
 		}

@@ -1,4 +1,3 @@
-import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import page from '@automattic/calypso-router';
 import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
@@ -12,7 +11,7 @@ import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { getRazorpayConfiguration, getStripeConfiguration } from 'calypso/lib/store-transactions';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
 import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
 import PaymentMethodSelector from 'calypso/me/purchases/manage-purchase/payment-method-selector';
@@ -96,17 +95,13 @@ export default function AccountLevelAddNewPaymentMethodWrapper( {
 
 	return (
 		<StripeHookProvider locale={ locale } fetchStripeConfiguration={ getStripeConfiguration }>
-			<RazorpayHookProvider fetchRazorpayConfiguration={ getRazorpayConfiguration }>
-				{
-					// QueryProducts added to ensure currency-code state gets populated for usage of getCurrentUserCurrencyCode
-					// Returning a couple of standard products to speed up the render time and ensure redundancy
-					// We only need one to get the currency code into state
-				 }
-				<QueryProducts
-					productSlugList={ [ 'value_bundle', 'personal-bundle', 'business-bundle' ] }
-				/>
-				<AddNewPaymentMethod purchaseListUrl={ purchaseListUrl } />
-			</RazorpayHookProvider>
+			{
+				// QueryProducts added to ensure currency-code state gets populated for usage of getCurrentUserCurrencyCode
+				// Returning a couple of standard products to speed up the render time and ensure redundancy
+				// We only need one to get the currency code into state
+			 }
+			<QueryProducts productSlugList={ [ 'value_bundle', 'personal-bundle', 'business-bundle' ] } />
+			<AddNewPaymentMethod purchaseListUrl={ purchaseListUrl } />
 		</StripeHookProvider>
 	);
 }

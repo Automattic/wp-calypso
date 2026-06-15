@@ -4,6 +4,7 @@ import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import type { AppState } from 'calypso/types';
+import type { JSX } from 'react';
 
 export default function ReaderBackButton( {
 	handleBack,
@@ -27,7 +28,9 @@ export default function ReaderBackButton( {
 			{ ...props }
 			onClick={ ( event?: React.MouseEvent< HTMLButtonElement > ) => {
 				handleBack?.( event );
-				! preventRouteChange && page.back( previousRoute );
+				if ( ! preventRouteChange ) {
+					page.back( previousRoute );
+				}
 			} }
 		/>
 	);

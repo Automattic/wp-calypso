@@ -8,7 +8,8 @@ import { getHidePlanPropsBasedOnThemeType } from '../utils/utils';
 import { ButtonContainer, DialogContainer, Heading, Row } from './components';
 import { PlanName, PlanDescription } from './components/plan-item';
 import SuggestedPlanSection from './components/suggested-plan-section';
-import { DomainPlanDialogProps, MODAL_VIEW_EVENT_NAME } from '.';
+import { DomainPlanDialogProps, MODAL_CTA_CLICK_EVENT_NAME, MODAL_VIEW_EVENT_NAME } from '.';
+import type { PlanSlug } from '@automattic/calypso-products';
 
 export const PaidPlanIsRequiredDialog = ( {
 	paidDomainName,
@@ -34,7 +35,19 @@ export const PaidPlanIsRequiredDialog = ( {
 		return translate( 'Custom domains are only available with a paid plan' );
 	};
 
+	function handlePlanSelected( planSlug: PlanSlug ) {
+		recordTracksEvent( MODAL_CTA_CLICK_EVENT_NAME, {
+			dialog_type: 'paid_plan_is_required',
+			plan_slug: planSlug,
+		} );
+		onPlanSelected( planSlug );
+	}
+
 	const handleFreeDomainClick = () => {
+		recordTracksEvent( MODAL_CTA_CLICK_EVENT_NAME, {
+			dialog_type: 'paid_plan_is_required',
+			plan_slug: 'free',
+		} );
 		setIsBusy( true );
 		onFreePlanSelected();
 	};
@@ -54,7 +67,7 @@ export const PaidPlanIsRequiredDialog = ( {
 				<SuggestedPlanSection
 					{ ...hidePlanProps }
 					isBusy={ isBusy }
-					onPlanSelected={ onPlanSelected }
+					onPlanSelected={ handlePlanSelected }
 				/>
 				<Row>
 					<div>

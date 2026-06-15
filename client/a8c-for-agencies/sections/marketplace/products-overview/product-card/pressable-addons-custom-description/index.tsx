@@ -56,6 +56,17 @@ export default function PressableAddonsCustomDescription( { productName, product
 			);
 		}
 
+		if ( addOnType === 'phpMemory' ) {
+			return translate(
+				'PHP memory will be increased by %(phpMemory)s for each PHP worker/process on your Signature plan.',
+				{
+					args: {
+						phpMemory: context.formattedPhpMemory,
+					},
+				}
+			);
+		}
+
 		return translate(
 			'This add-on increases your Signature plan limits while your plan is active.'
 		);
@@ -98,6 +109,17 @@ export default function PressableAddonsCustomDescription( { productName, product
 				{
 					args: {
 						visits: context.formattedVisits,
+					},
+				}
+			);
+		}
+
+		if ( addOnType === 'phpMemory' ) {
+			return translate(
+				'This add-on increases PHP memory by %(phpMemory)s for each PHP worker/process while your Signature plan is active.',
+				{
+					args: {
+						phpMemory: context.formattedPhpMemory,
 					},
 				}
 			);

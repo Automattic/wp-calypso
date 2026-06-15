@@ -3,7 +3,15 @@ import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment, forwardRef } from 'react';
 import { navigate } from 'calypso/lib/navigate';
-import type { ReactNode, LegacyRef } from 'react';
+import type {
+	ComponentPropsWithoutRef,
+	ElementRef,
+	ElementType,
+	ForwardedRef,
+	LegacyRef,
+	ReactElement,
+	ReactNode,
+} from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
@@ -14,9 +22,9 @@ interface MasterbarSubItemProps {
 	onClick?: () => void;
 	className?: string;
 }
-interface MasterbarItemProps {
+
+type MasterbarItemOwnProps = {
 	url?: string;
-	innerRef?: LegacyRef< HTMLButtonElement | HTMLAnchorElement >;
 	tipTarget?: string;
 	onClick?: () => void;
 	tooltip?: string;
@@ -31,14 +39,25 @@ interface MasterbarItemProps {
 	disabled?: boolean;
 	subItems?: Array< Array< MasterbarSubItemProps > >;
 	hasGlobalBorderStyle?: boolean;
-	as?: React.ComponentType;
-	variant?: string;
 	ariaLabel?: string;
 	openSubMenuOnClick?: boolean;
-	isBusy?: boolean;
-}
+	closeSubMenuOnItemClick?: boolean;
+};
 
-class MasterbarItem extends Component< MasterbarItemProps > {
+/** Props accepted by the default `<button>` / `<a>` implementation (no custom `as`). */
+export type MasterbarItemProps< C extends ElementType | undefined = undefined > =
+	MasterbarItemOwnProps &
+		( C extends ElementType
+			? { as: C; asProps?: ComponentPropsWithoutRef< C > }
+			: { as?: undefined; asProps?: never } );
+
+type MasterbarItemWithInnerRef = MasterbarItemOwnProps & {
+	innerRef?: LegacyRef< HTMLButtonElement | HTMLAnchorElement >;
+	as?: ElementType;
+	asProps?: Record< string, unknown >;
+};
+
+class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 	static propTypes = {
 		url: PropTypes.string,
 		tipTarget: PropTypes.string,
@@ -53,9 +72,10 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		subItems: PropTypes.array,
 		hasGlobalBorderStyle: PropTypes.bool,
 		as: PropTypes.elementType,
-		variant: PropTypes.string,
 		ariaLabel: PropTypes.string,
 		openSubMenuOnClick: PropTypes.bool,
+		closeSubMenuOnItemClick: PropTypes.bool,
+		asProps: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -63,6 +83,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		onClick: noop,
 		hasUnseen: false,
 		url: '',
+		asProps: {},
 	};
 
 	state = {
@@ -123,10 +144,20 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 							'masterbar__item-subitems-item--odd': groupIndex % 2 === 1,
 						} ) }
 					>
-						{ item.onClick && (
+						{ item.url && (
+							<a
+								href={ item.url }
+								onClick={ item.onClick }
+								onTouchEnd={ ( ev ) => this.navigateSubAnchorTouch( ev, item.onClick ) }
+								onKeyDown={ ( ev ) => this.navigateSubAnchorByKey( ev, item.onClick ) }
+							>
+								{ item.label }
+							</a>
+						) }
+						{ ! item.url && item.onClick && (
 							<Button
 								className="is-link"
-								onClick={ item.onClick }
+								onClick={ () => this.submenuButtonClick( item.onClick ) }
 								onTouchEnd={ ( ev: React.TouchEvent ) =>
 									this.submenuButtonTouch( ev, item.onClick )
 								}
@@ -137,16 +168,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 								{ item.label }
 							</Button>
 						) }
-						{ ! item.onClick && item.url && (
-							<a
-								href={ item.url }
-								onTouchEnd={ this.navigateSubAnchorTouch }
-								onKeyDown={ this.navigateSubAnchorByKey }
-							>
-								{ item.label }
-							</a>
-						) }
-						{ ! item.onClick && ! item.url && <div>{ item.label }</div> }
+						{ ! item.url && ! item.onClick && <div>{ item.label }</div> }
 					</li>
 				) )
 			)
@@ -179,22 +201,35 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		}
 	};
 
-	navigateSubAnchorTouch = ( event: React.TouchEvent | React.KeyboardEvent ) => {
+	navigateSubAnchorTouch = (
+		event: React.TouchEvent | React.KeyboardEvent,
+		onClick?: () => void
+	) => {
 		// We must prevent the default anchor behavior and navigate manually. Otherwise there is a
 		// race condition between the click on the anchor firing and the menu closing before that
-		// can happen.
+		// can happen. Because we preventDefault here, the anchor's `onClick` won't fire on the
+		// touch/keyboard paths. Invoke it explicitly to keep side effects (e.g. tracking).
 		event.preventDefault();
 		const url = event.currentTarget.getAttribute( 'href' );
+		onClick?.();
 		if ( url ) {
 			navigate( url );
 		}
 		this.setState( { isOpenForNonMouseFlow: false } );
 	};
 
-	navigateSubAnchorByKey = ( event: React.KeyboardEvent ) => {
+	navigateSubAnchorByKey = ( event: React.KeyboardEvent, onClick?: () => void ) => {
 		if ( event.key === 'Enter' || event.key === ' ' ) {
-			this.navigateSubAnchorTouch( event );
+			this.navigateSubAnchorTouch( event, onClick );
 		}
+	};
+
+	submenuButtonClick = ( onClick: ( () => void ) | undefined ) => {
+		// Opt-in: close the menu after a mouse click, matching the touch/keyboard flows.
+		if ( this.props.closeSubMenuOnItemClick ) {
+			this.setState( { isOpenForNonMouseFlow: false } );
+		}
+		onClick?.();
 	};
 
 	submenuButtonTouch = (
@@ -203,7 +238,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 	) => {
 		event.preventDefault();
 		this.setState( { isOpenForNonMouseFlow: false } );
-		onClick && onClick();
+		onClick?.();
 	};
 
 	submenuButtonByKey = ( event: React.KeyboardEvent, onClick: ( () => void ) | undefined ) => {
@@ -245,8 +280,9 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 			onMouseEnter: this.preload,
 			disabled: this.props.disabled,
 			'aria-label': this.props.ariaLabel,
-			isBusy: this.props.isBusy,
 		};
+
+		const asProps = this.props.as ? this.props.asProps : {};
 
 		return (
 			<div
@@ -255,10 +291,10 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 			>
 				<MenuItem
 					as={ this.props.as }
-					variant={ this.props.variant }
 					url={ this.props.url }
 					innerRef={ this.props.innerRef }
 					{ ...attributes }
+					{ ...asProps }
 					onKeyDown={ this.props.subItems && this.toggleMenuByKey }
 					onTouchEnd={ this.props.subItems && this.toggleMenuByTouch }
 				>
@@ -270,19 +306,32 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 	}
 }
 
-// eslint-disable-next-line react/display-name
-export default forwardRef< HTMLButtonElement | HTMLAnchorElement, MasterbarItemProps >(
-	( props, ref ) => <MasterbarItem innerRef={ ref } { ...props } />
-);
+interface MasterbarItemComponent {
+	< C extends ElementType >(
+		props: MasterbarItemProps< C > & { ref?: ForwardedRef< ElementRef< C > > }
+	): ReactElement | null;
+	(
+		props: MasterbarItemProps< undefined > & {
+			ref?: ForwardedRef< HTMLButtonElement | HTMLAnchorElement >;
+		}
+	): ReactElement | null;
+}
 
-type MenuItemProps< R > = {
+// eslint-disable-next-line react/display-name
+const MasterbarItemWithForwardedRef = forwardRef<
+	HTMLButtonElement | HTMLAnchorElement,
+	MasterbarItemWithInnerRef
+>( ( props, ref ) => <MasterbarItem innerRef={ ref } { ...props } /> );
+
+export default MasterbarItemWithForwardedRef as unknown as MasterbarItemComponent;
+
+type MenuItemProps = {
 	url?: string;
-	innerRef?: R;
-	as?: React.ComponentType;
-	variant?: string;
+	innerRef?: LegacyRef< HTMLButtonElement | HTMLAnchorElement >;
+	as?: ElementType;
 } & React.HTMLAttributes< HTMLElement >;
 
-function MenuItem< R >( { url, innerRef, as: Component, ...props }: MenuItemProps< R > ) {
+function MenuItem( { url, innerRef, as: Component, ...props }: MenuItemProps ) {
 	if ( Component ) {
 		return (
 			<Component

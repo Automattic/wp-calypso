@@ -50,9 +50,11 @@ export const MasterbarLaunchButton = ( { siteId }: { siteId: number } ) => {
 	return (
 		<Item
 			as={ Button }
-			variant="primary"
+			asProps={ {
+				variant: 'primary',
+				isBusy: launchSiteMutation.isPending,
+			} }
 			disabled={ isLoading || launchSiteMutation.isPending }
-			isBusy={ launchSiteMutation.isPending }
 			// Keep the Launch button always in blueberry (default scheme: modern) like in wp-admin.
 			className={ clsx( 'masterbar__item-launch-site', 'color-scheme', 'is-global' ) }
 			icon={
