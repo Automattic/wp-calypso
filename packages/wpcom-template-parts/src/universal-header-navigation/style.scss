@@ -943,6 +943,8 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 $x-nav-2026-height: 64px;
 // Transition timing matches the shipped Landpack nav (hp-2024-jul?nav_2026=1).
 $x-nav-2026-transition: 0.22s ease-in-out;
+$x-dropdown-2026-panel-close-duration: 0.14s;
+$x-dropdown-2026-close-fade-duration: 0.12s;
 // Backdrop blur behind the nav once scrolled.
 $x-nav-2026-scrolled-blur: 8px;
 $x-nav-2026-content-max-width: 1200px;
@@ -1018,6 +1020,11 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	background-color: $studio-white;
 	opacity: 1;
 	transition: opacity 0.12s ease-out 0s;
+}
+
+.lpc-header-nav-container:has( .x-dropdown.x-dropdown--2026.is-dropdown-closing )
+	.masterbar:has( .x-nav--2026-redesign )::before {
+	transition: opacity $x-dropdown-2026-close-fade-duration ease-in-out 0s;
 }
 
 // Blur the page behind the bar — on the masterbar (above the page), since
@@ -1277,6 +1284,13 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	transition: backdrop-filter $x-nav-2026-transition 0.12s, z-index 0s;
 }
 
+.lpc-header-nav-container:has( .x-dropdown.x-dropdown--2026.is-dropdown-closing )
+	.masterbar:has( .x-nav--2026-redesign ) {
+	transition:
+		backdrop-filter $x-dropdown-2026-close-fade-duration 0s,
+		z-index 0s $x-dropdown-2026-close-fade-duration;
+}
+
 // Desktop dropdown — one persistent panel easing its height between menus; active block (aria-hidden="false") sits in flow so the wrapper auto-sizes. `position: fixed` + high z escapes section stacking contexts; hidden at rest so it neither intercepts clicks nor paints until JS opens it.
 .x-dropdown.x-dropdown--2026 {
 	// Height-morph + slide-in timing, exposed as custom props for host tuning + `calc()` (mirrors mobile `--x-menu-2026-*`).
@@ -1286,8 +1300,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	--x-dropdown-2026-link-duration: 0.26s; // per-item fade + slide duration
 	--x-dropdown-2026-stagger-step: 0.02s; // added per --stagger-index (reading order)
 	--x-dropdown-2026-items-slide-overlap: 0.12s; // first-open: items start before unroll ends
-	--x-dropdown-2026-close-duration: 0.14s; // surface roll-up on close (half the open unroll)
-	--x-dropdown-2026-close-delay: 0.08s; // 0.22s close fade − roll, so the roll lands with the fades
+	--x-dropdown-2026-close-duration: #{$x-dropdown-2026-panel-close-duration};
+	--x-dropdown-2026-close-fade-duration: #{$x-dropdown-2026-close-fade-duration};
 
 	position: fixed;
 	// Prefer host-provided `--nav-2026-height` (Calypso's single source of truth); fall back to the package constant standalone.
@@ -1334,6 +1348,13 @@ $x-menu-2026-admin-bar-mobile: 46px;
 			transition: transform var( --x-dropdown-2026-unroll-duration, 0s )
 				var( --x-dropdown-2026-easing );
 		}
+
+		&.is-dropdown-closing {
+			transition:
+				visibility $x-nav-2026-transition,
+				height var( --x-dropdown-2026-close-duration ) var( --x-dropdown-2026-easing ),
+				z-index 0s;
+		}
 	}
 }
 
@@ -1352,9 +1373,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	opacity: 0;
 	transform: scaleY( 0 );
 	transition:
-		opacity 0s linear 0.22s,
-		transform var( --x-dropdown-2026-close-duration ) var( --x-dropdown-2026-easing )
-			var( --x-dropdown-2026-close-delay );
+		opacity var( --x-dropdown-2026-close-fade-duration ) var( --x-dropdown-2026-easing ) 0s,
+		transform var( --x-dropdown-2026-close-duration ) var( --x-dropdown-2026-easing ) 0s;
 }
 
 // Close: wipe the content at the rising edge so nothing trails below the roll. `:not()` keeps menu-to-menu switches (wrapper stays open) on the plain cross-fade.
@@ -1363,8 +1383,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	transition:
 		opacity $x-nav-2026-transition,
 		visibility $x-nav-2026-transition,
-		clip-path var( --x-dropdown-2026-close-duration ) var( --x-dropdown-2026-easing )
-			var( --x-dropdown-2026-close-delay );
+		clip-path var( --x-dropdown-2026-close-duration ) var( --x-dropdown-2026-easing ) 0s;
 }
 
 .x-dropdown--2026.x-dropdown-content {

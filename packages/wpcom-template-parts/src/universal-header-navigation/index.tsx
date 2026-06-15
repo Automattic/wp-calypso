@@ -91,6 +91,21 @@ const UniversalNavbarHeader = ( {
 				: [],
 		[ nav2026, __, localizeUrl, locale, isLoggedIn, nav2026Variant ]
 	);
+	const dropdownLoopSpeed = useMemo( () => {
+		if ( typeof window === 'undefined' ) {
+			return null;
+		}
+
+		const params = new URLSearchParams( window.location.search );
+		if ( ! params.has( 'nav_2026_dropdown_loop' ) ) {
+			return null;
+		}
+
+		const raw = params.get( 'nav_2026_dropdown_loop' );
+		const parsed = Number( raw );
+		const speed = raw && Number.isFinite( parsed ) && parsed > 0 ? parsed : 1000;
+		return Math.min( Math.max( speed, 250 ), 10000 );
+	}, [] );
 	const activeCategory = nav2026Menus.find( ( menu ) => menu.name === currentDropdown );
 
 	const closeMobileMenu = useCallback(
@@ -131,6 +146,45 @@ const UniversalNavbarHeader = ( {
 			resetNavHoverDedupe();
 		}
 	}, [ nav2026, activeDropdown ] );
+
+	useEffect( () => {
+		if ( ! nav2026 || ! dropdownLoopSpeed ) {
+			return;
+		}
+
+		const testDropdown = nav2026Menus.find( ( menu ) => menu.groups )?.name;
+		if ( ! testDropdown ) {
+			return;
+		}
+		const loopDropdown = testDropdown;
+		const loopSpeed = dropdownLoopSpeed;
+
+		let timer: ReturnType< typeof window.setTimeout > | undefined;
+		let cancelled = false;
+		function open() {
+			if ( cancelled ) {
+				return;
+			}
+			setActiveDropdown( loopDropdown );
+			timer = window.setTimeout( close, loopSpeed );
+		}
+		function close() {
+			if ( cancelled ) {
+				return;
+			}
+			setActiveDropdown( null );
+			timer = window.setTimeout( open, loopSpeed );
+		}
+
+		timer = window.setTimeout( open, 0 );
+
+		return () => {
+			cancelled = true;
+			if ( timer !== undefined ) {
+				window.clearTimeout( timer );
+			}
+		};
+	}, [ nav2026, dropdownLoopSpeed, nav2026Menus ] );
 
 	const openMobileMenu = useCallback( () => {
 		if ( nav2026 ) {
