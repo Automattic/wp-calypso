@@ -57,6 +57,7 @@ import payPalProcessor from '../lib/paypal-express-processor';
 import { payPalJsProcessor } from '../lib/paypal-js-processor';
 import { pixAutomaticoProcessor } from '../lib/pix-automatico-processor';
 import { pixProcessor } from '../lib/pix-processor';
+import stripeLinkProcessor from '../lib/stripe-link-processor';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 import upiProcessor from '../lib/upi-processor';
 import weChatProcessor from '../lib/we-chat-processor';
@@ -590,6 +591,8 @@ export default function CheckoutMain( {
 				),
 			'stripe-blik': ( transactionData: unknown ) =>
 				blikProcessor( transactionData, dataForProcessor, translate ),
+			'stripe-link': ( transactionData: unknown ) =>
+				stripeLinkProcessor( transactionData, dataForProcessor ),
 			'existing-card': ( transactionData: unknown ) =>
 				existingCardProcessor( transactionData, dataForProcessor ),
 			'existing-card-ebanx': ( transactionData: unknown ) =>

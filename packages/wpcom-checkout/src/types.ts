@@ -343,7 +343,8 @@ export type CheckoutPaymentMethodSlug =
 	| 'apple-pay' // a synonym for 'web-pay'
 	| 'google-pay' // a synonym for 'web-pay'
 	| 'stripe-upi'
-	| 'stripe-blik';
+	| 'stripe-blik'
+	| 'stripe-link'; // synonym for 'web-pay' during spike; will get its own backend class
 
 /**
  * Payment method slugs as returned by the WPCOM backend.
