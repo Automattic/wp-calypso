@@ -102,7 +102,7 @@ export default function useSiteActions( {
 				href: `https://wordpress.com/domains/manage/${ blog_id }`,
 				onClick: () => handleClickMenuItem( 'change_domain' ),
 				isExternalLink: true,
-				isEnabled: isWPCOMSite && ! isUrlOnly,
+				isEnabled: isWPCOMSite && ! isUrlOnly && ! isDevSite,
 			},
 			{
 				name: translate( 'Hosting configuration' ),
@@ -300,7 +300,12 @@ export function useSiteActionsDataViews( {
 				label: translate( 'Change domain' ),
 				icon: external,
 				isEligible( item: SiteData ) {
-					return canHaveActions( item ) && isAtomicSite( item ) && ! isUrlOnly( item );
+					return (
+						canHaveActions( item ) &&
+						isAtomicSite( item ) &&
+						! isUrlOnly( item ) &&
+						! isDevSite( item )
+					);
 				},
 				callback( items: SiteData[] ) {
 					window.open( `https://wordpress.com/domains/manage/${ getBlogId( items[ 0 ] ) }` );
