@@ -10,9 +10,13 @@ import { _n, sprintf } from '@wordpress/i18n';
 import { useEffect, useId, useRef, useState } from 'react';
 import { Text } from '../../components/text';
 import { useAnalytics } from '../analytics';
-import { computeEligibility } from './compute-eligibility';
-import { RECOVERY_INTERSTITIAL_QA_PARAM, RECOVERY_INTERSTITIAL_SNOOZE_META } from './constants';
+import {
+	RECOVERY_INTERSTITIAL_QA_PARAM,
+	RECOVERY_INTERSTITIAL_SNOOZE_META,
+	SNOOZE_DAYS,
+} from './constants';
 import { getInterstitialCopy, getInterstitialVariant } from './copy';
+import { getSecurityLevel } from './get-security-level';
 import heroIllustration from './hero-illustration.png';
 import type { InterstitialCta, InterstitialVariant } from './copy';
 import './style.scss';
@@ -123,15 +127,17 @@ export default function AccountRecoveryInterstitial() {
 		? qaScenario.hasBackupCodes
 		: !! userSettings?.two_step_backup_codes_printed;
 
-	const { isEligible, securityLevel, snoozeDays } = computeEligibility( {
-		isLoaded: isAccountRecoveryLoaded && isUserSettingsLoaded,
-		hasRecoveryEmail,
-		hasRecoveryPhone,
-		hasTwoFactor,
-		// Ignore any real snooze when simulating a scenario, so the modal always shows.
-		snoozeUntil: qaScenario ? undefined : userSettings?.[ RECOVERY_INTERSTITIAL_SNOOZE_META ],
-		now,
-	} );
+	const securityLevel = getSecurityLevel( hasRecoveryEmail, hasRecoveryPhone, hasTwoFactor );
+	const snoozeDays = SNOOZE_DAYS[ securityLevel ];
+
+	// Ignore any real snooze when simulating a QA scenario, so the modal always shows.
+	const snoozeUntil = qaScenario ? undefined : userSettings?.[ RECOVERY_INTERSTITIAL_SNOOZE_META ];
+	const isSnoozed = !! snoozeUntil && now < snoozeUntil;
+
+	// Every user is nudged once their snooze (if any) has elapsed and the data has loaded:
+	// `none`/`partial` setups are prompted to add a method, while fully-covered (`strong`) users
+	// get a yearly periodic re-check via the 365-day snooze window (SNOOZE_DAYS.strong).
+	const isEligible = isAccountRecoveryLoaded && isUserSettingsLoaded && ! isSnoozed;
 
 	const hasRecoveryMethod = hasRecoveryEmail || hasRecoveryPhone;
 	// Fine-grained setup state (5-way), recorded on Tracks as `recovery_status` alongside the
