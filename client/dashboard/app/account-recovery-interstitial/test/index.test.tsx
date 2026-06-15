@@ -73,7 +73,9 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		expect(
 			screen.getByRole( 'button', { name: 'Set up recovery email or phone' } )
 		).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Add 2FA and backup codes' } ) ).toBeVisible();
+		expect(
+			screen.getByRole( 'button', { name: 'Add two-step authentication and backup codes' } )
+		).toBeVisible();
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_account_recovery_interstitial_impression',
@@ -91,7 +93,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 			await screen.findByRole( 'dialog', { name: 'Take your security further' } )
 		).toBeVisible();
 		expect(
-			screen.getByRole( 'button', { name: 'Set up two-factor authentication' } )
+			screen.getByRole( 'button', { name: 'Set up two-step authentication' } )
 		).toBeVisible();
 		expect(
 			screen.getByRole( 'button', { name: 'Review recovery email or phone' } )
@@ -115,7 +117,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 			screen.getByRole( 'button', { name: 'Set up recovery email or phone' } )
 		).toBeVisible();
 		expect(
-			screen.getByRole( 'button', { name: 'Review 2FA and add backup codes' } )
+			screen.getByRole( 'button', { name: 'Review two-step authentication and add backup codes' } )
 		).toBeVisible();
 	} );
 
@@ -129,7 +131,9 @@ describe( '<AccountRecoveryInterstitial>', () => {
 			await screen.findByRole( 'dialog', { name: 'Don’t get locked out of your account' } )
 		).toBeVisible();
 		expect(
-			screen.getByRole( 'button', { name: 'Review 2FA and download backup codes' } )
+			screen.getByRole( 'button', {
+				name: 'Review two-step authentication and download backup codes',
+			} )
 		).toBeVisible();
 		expect(
 			screen.getByRole( 'button', { name: 'Review recovery email or phone' } )

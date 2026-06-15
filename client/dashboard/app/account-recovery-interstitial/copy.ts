@@ -129,7 +129,7 @@ export function getInterstitialCopy(
 			},
 			secondaryCta: {
 				id: 'add_two_factor',
-				label: __( 'Add 2FA and backup codes' ),
+				label: __( 'Add two-step authentication and backup codes' ),
 				route: RECOVERY_INTERSTITIAL_ROUTES.twoStepAuth,
 			},
 		},
@@ -137,11 +137,11 @@ export function getInterstitialCopy(
 		'add-two-factor': {
 			title: __( 'Take your security further' ),
 			description: __(
-				'Add an extra layer of security. Enable two-factor authentication to go beyond email or phone recovery.'
+				'Add an extra layer of security. Enable two-step authentication to go beyond email or phone recovery.'
 			),
 			primaryCta: {
 				id: 'set_up_two_factor',
-				label: __( 'Set up two-factor authentication' ),
+				label: __( 'Set up two-step authentication' ),
 				route: RECOVERY_INTERSTITIAL_ROUTES.twoStepAuth,
 			},
 			secondaryCta: {
@@ -154,7 +154,7 @@ export function getInterstitialCopy(
 		'add-recovery-method': {
 			title: __( 'Don’t get locked out of your account' ),
 			description: __(
-				'Two-factor authentication is great—but if you lose access to your authenticator, you’ll need another way in. Add a recovery email or phone as a safety net.'
+				'Two-step authentication is great—but if you lose access to your authenticator, you’ll need another way in. Add a recovery email or phone as a safety net.'
 			),
 			primaryCta: {
 				id: 'set_up_recovery',
@@ -163,7 +163,7 @@ export function getInterstitialCopy(
 			},
 			secondaryCta: {
 				id: 'review_two_factor',
-				label: __( 'Review 2FA and add backup codes' ),
+				label: __( 'Review two-step authentication and add backup codes' ),
 				route: RECOVERY_INTERSTITIAL_ROUTES.twoStepAuth,
 			},
 		},
@@ -176,7 +176,7 @@ export function getInterstitialCopy(
 			),
 			primaryCta: {
 				id: 'download_backup_codes',
-				label: __( 'Review 2FA and download backup codes' ),
+				label: __( 'Review two-step authentication and download backup codes' ),
 				route: RECOVERY_INTERSTITIAL_ROUTES.twoStepAuth,
 			},
 			secondaryCta: {
