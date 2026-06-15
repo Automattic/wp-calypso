@@ -22,8 +22,10 @@
 	height: auto;
 }
 
+// The hero override above zeroes the modal content's default padding, so re-apply it on the body.
+// Use $grid-unit-30 to match the standard modal content padding.
 .account-recovery-interstitial__body {
-	padding: $grid-unit-40 $grid-unit-40 $grid-unit-30;
+	padding: $grid-unit-30;
 }
 
 .account-recovery-interstitial__actions {
