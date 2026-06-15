@@ -18,7 +18,7 @@
  * 3. Adjust the variant branches at the call sites of this hook as needed; `null`
  *    (control) should keep the default semi-gated behavior.
  */
-export type SiteLaunchGatingVariant = 'semi_gated_site_launch' | 'ungated_site_launch' | null;
+export type SiteLaunchGatingVariant = 'semi_gated_site_launch' | null;
 
 export function useSiteLaunchGatingVariant(): [ boolean, SiteLaunchGatingVariant ] {
 	// [ isLoading, variant ]
