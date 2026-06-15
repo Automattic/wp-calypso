@@ -20,6 +20,11 @@ const SIDEBAR_TRANSITION_DURATION_MS = 200;
 const FULLSCREEN_GATED_BODY_CLASSES = [ 'post-php', 'post-new-php', 'site-editor-php' ];
 const FULLSCREEN_BODY_CLASS = 'is-fullscreen-mode';
 
+// The Jetpack pre-paint gate watches for this element to know the app has mounted,
+// then hands off docking. Keep in sync with
+// `jetpack/projects/packages/agents-manager/src/js/sidebar-docking-gate.ts`.
+const CHAT_PORTAL_CLASS = 'agents-manager-chat';
+
 function getIsFullscreenGateOpen(): boolean {
 	const { classList } = document.body;
 	const isGated = FULLSCREEN_GATED_BODY_CLASSES.some( ( cls ) => classList.contains( cls ) );
@@ -151,7 +156,7 @@ export default function useAgentLayoutManager( {
 		// Create portal element if it doesn't exist
 		if ( ! portalRef.current ) {
 			portalRef.current = document.createElement( 'div' );
-			portalRef.current.className = 'agents-manager-chat';
+			portalRef.current.className = CHAT_PORTAL_CLASS;
 			container.appendChild( portalRef.current );
 
 			// Apply initial classes
