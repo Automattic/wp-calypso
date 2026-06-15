@@ -15,8 +15,10 @@ import {
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { differenceInCalendarDays } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
@@ -125,6 +127,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 			} );
 		}
 	}, [ delayed_downgrade_scheduled, navigate ] );
+	const { createSuccessNotice } = useDispatch( noticesStore );
 	const { mutate: cancelDelayedDowngrade, isPending: isCancellingDelayedDowngrade } = useMutation(
 		setDelayedDowngradeMutation()
 	);
@@ -217,10 +220,15 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 						variant="secondary"
 						size="compact"
 						onClick={ () =>
-							cancelDelayedDowngrade( {
-								purchaseId: purchase.ID,
-								enabled: false,
-							} )
+							cancelDelayedDowngrade(
+								{ purchaseId: purchase.ID, enabled: false },
+								{
+									onSuccess: () =>
+										createSuccessNotice( __( 'Your scheduled downgrade has been cancelled.' ), {
+											type: 'snackbar',
+										} ),
+								}
+							)
 						}
 						disabled={ isCancellingDelayedDowngrade }
 						isBusy={ isCancellingDelayedDowngrade }
