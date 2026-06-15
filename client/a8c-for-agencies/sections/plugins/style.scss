@@ -1,4 +1,4 @@
-@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
 
 .is-section-a8c-for-agencies-plugins {
 	.wpcom-site {
@@ -38,7 +38,7 @@
 	}
 
 	.plugins__confirmation-modal .components-modal__content p {
-		font-size: $font-size-medium;
+		@include body-medium;
 	}
 }
 
