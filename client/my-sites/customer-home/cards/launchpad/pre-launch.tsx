@@ -1,4 +1,4 @@
-import { useSiteLaunchGatingVariant } from 'calypso/lib/explat/site-launch-gating';
+import { useSiteLaunchGatingVariant } from 'calypso/lib/use-site-launch-gating-variant';
 import { useCelebrateLaunchModalSideEffects } from 'calypso/my-sites/customer-home/celebrate-site-launch-modal/use-side-effects';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';

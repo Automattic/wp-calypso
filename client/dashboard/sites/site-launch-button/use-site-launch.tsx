@@ -4,7 +4,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useMemo, useState, type ComponentType, type ReactElement } from 'react';
-import { useSiteLaunchGatingVariant } from 'calypso/lib/explat/site-launch-gating';
+import { useSiteLaunchGatingVariant } from 'calypso/lib/use-site-launch-gating-variant';
 import { getCurrentDashboard } from '../../app/routing';
 import { dashboardLinkWithBackport, redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import {
