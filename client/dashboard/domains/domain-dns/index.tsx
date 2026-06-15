@@ -220,7 +220,11 @@ export default function DomainDns() {
 	};
 
 	const renderDefaultARecordsNotice = () => {
-		if ( ! domain.has_wpcom_nameservers || hasDefaultARecordsValue ) {
+		// While the DNS query is still doing its initial load, `dnsData` is undefined
+		// and the "has default record" checks run against an empty array, which would
+		// momentarily render the warning even when the record actually exists. Wait
+		// until the records have loaded before deciding whether to show it.
+		if ( isLoading || ! domain.has_wpcom_nameservers || hasDefaultARecordsValue ) {
 			return null;
 		}
 
@@ -253,7 +257,7 @@ export default function DomainDns() {
 	};
 
 	const renderDefaultCnameRecordNotice = () => {
-		if ( ! domain.has_wpcom_nameservers || hasDefaultCnameRecordValue ) {
+		if ( isLoading || ! domain.has_wpcom_nameservers || hasDefaultCnameRecordValue ) {
 			return null;
 		}
 
