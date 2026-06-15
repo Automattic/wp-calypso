@@ -21,8 +21,7 @@ const LaunchpadPreLaunch = ( props: LaunchpadPreLaunchProps ): JSX.Element => {
 	const [ , variant ] = useSiteLaunchGatingVariant();
 
 	const handleTaskClick = ( task: Task ) => {
-		// No variant (i.e., control) or not the site launch task
-		if ( task.id !== 'site_launched' || ! variant ) {
+		if ( task.id !== 'site_launched' ) {
 			return;
 		}
 
