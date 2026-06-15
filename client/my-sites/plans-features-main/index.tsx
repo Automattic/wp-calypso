@@ -487,8 +487,14 @@ const PlansFeaturesMain = ( {
 					// confirmation message.
 					const redirectTarget = redirectTo ?? getQueryArg( window.location.href, 'redirect_to' );
 					if ( typeof redirectTarget === 'string' ) {
-						const sep = redirectTarget.includes( '?' ) ? '&' : '?';
-						window.location.href = `${ redirectTarget }${ sep }delayed_downgrade_scheduled=true`;
+						// :purchaseId is a placeholder normally filled by the checkout
+						// pending page; substitute it here since we skip checkout.
+						const resolved = redirectTarget.replace(
+							':purchaseId',
+							String( currentPlanPurchaseId )
+						);
+						const sep = resolved.includes( '?' ) ? '&' : '?';
+						window.location.href = `${ resolved }${ sep }delayed_downgrade_scheduled=true`;
 						return;
 					}
 					window.location.href = siteSlug
