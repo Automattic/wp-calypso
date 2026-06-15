@@ -29,13 +29,14 @@ export type UtmBuilderProps = {
 	};
 };
 
-const utmKeys = [ 'url', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term' ];
+type UtmKeyType = 'url' | 'utm_source' | 'utm_medium' | 'utm_campaign' | 'utm_content' | 'utm_term';
 
-type UtmKeyType = ( typeof utmKeys )[ number ];
+type InputValueKey = Extract< UtmKeyType, 'utm_campaign' | 'utm_source' | 'utm_medium' >;
+type FormLabelKey = Extract< UtmKeyType, 'url' | InputValueKey >;
 
-type inputValuesType = Record< UtmKeyType, string >;
+type inputValuesType = Record< InputValueKey, string >;
 type formLabelsType = Record<
-	UtmKeyType,
+	FormLabelKey,
 	{ label: string; placeholder: string; describedBy?: string }
 >;
 
@@ -205,7 +206,7 @@ const UtmBuilder: React.FC< UtmBuilderProps > = ( { initialData } ) => {
 						ariaDescribedBy={ fromLabels.url.describedBy }
 						labelReference={ initialFieldReference }
 					/>
-					{ Object.keys( inputValues ).map( ( key ) => (
+					{ ( Object.keys( inputValues ) as InputValueKey[] ).map( ( key ) => (
 						<InputField
 							key={ key }
 							id={ key }
