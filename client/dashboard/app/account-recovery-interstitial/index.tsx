@@ -15,9 +15,9 @@ import {
 	RECOVERY_INTERSTITIAL_QA_PARAM,
 	RECOVERY_INTERSTITIAL_SNOOZE_META,
 	SNOOZE_DAYS,
+	type SecurityLevel,
 } from './constants';
 import { getInterstitialCopy, getInterstitialVariant } from './copy';
-import { getSecurityLevel } from './get-security-level';
 import heroIllustration from './hero-illustration.png';
 import type { InterstitialCta, InterstitialVariant } from './copy';
 import './style.scss';
@@ -89,6 +89,25 @@ function getQaScenario(): QaScenario | null {
 /** Whether the modal should be force-shown for QA, bypassing eligibility. */
 function isQaForced(): boolean {
 	return getQaParam() === 'force' || getQaScenario() !== null;
+}
+
+/** Maps the user's account-recovery setup to a coarse security tier. */
+function getSecurityLevel(
+	hasRecoveryEmail: boolean,
+	hasRecoveryPhone: boolean,
+	hasTwoFactor: boolean
+): SecurityLevel {
+	const hasRecoveryMethod = hasRecoveryEmail || hasRecoveryPhone;
+
+	if ( ! hasRecoveryMethod && ! hasTwoFactor ) {
+		return 'none';
+	}
+
+	if ( hasRecoveryMethod && hasTwoFactor ) {
+		return 'strong';
+	}
+
+	return 'partial';
 }
 
 /**
