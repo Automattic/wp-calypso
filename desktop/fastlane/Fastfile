@@ -97,19 +97,15 @@ platform :mac do
     )
   end
 
-  desc 'Notarize the .app and .dmg artifacts produced by electron-builder.'
+  desc 'Notarize and staple the .dmg artifacts produced by electron-builder.'
+  # The `.app` is notarized and stapled earlier, in electron-builder's
+  # afterSign hook (`bin/after_sign_hook.js`), so that the `.zip` packaged from
+  # it carries a stapled app. This lane handles the `.dmg` wrapper, which only
+  # exists after the build completes.
   lane :notarize_app do
     EnvManager.require_env_vars!(*ASC_API_KEY_ENV_VARS)
 
     api_key = app_store_connect_api_key
-
-    Dir[File.join(PROJECT_ROOT_FOLDER, 'release', '*', '*.app')].each do |path|
-      notarize(
-        package: path,
-        api_key: api_key,
-        print_log: true
-      )
-    end
 
     Dir[File.join(PROJECT_ROOT_FOLDER, 'release', '**', '*.dmg')].each do |path|
       notarize(
