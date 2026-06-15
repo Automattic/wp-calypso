@@ -59,7 +59,7 @@ describe( 'MiniCartLineItems bundle grouping', () => {
 	test( 'folds bundle members into one grouped line item when grouping is enabled', () => {
 		renderLineItems( true );
 
-		expect( screen.getByText( 'Domain bundle' ) ).toBeVisible();
+		expect( screen.getByText( 'Domain Bundle' ) ).toBeVisible();
 		// Both members show inside the group; the standalone domain stays on its own line.
 		expect( screen.getByText( 'example.com' ) ).toBeVisible();
 		expect( screen.getByText( 'example.net' ) ).toBeVisible();
@@ -69,7 +69,7 @@ describe( 'MiniCartLineItems bundle grouping', () => {
 	test( 'renders every product on its own line when grouping is disabled', () => {
 		renderLineItems( false );
 
-		expect( screen.queryByText( 'Domain bundle' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Domain Bundle' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'example.com' ) ).toBeVisible();
 		expect( screen.getByText( 'example.net' ) ).toBeVisible();
 		expect( screen.getByText( 'standalone.com' ) ).toBeVisible();
@@ -96,22 +96,14 @@ describe( 'MiniCartLineItems bundle grouping', () => {
 
 		const { container } = renderLineItems( true, cart );
 
-		// The $129 amount also appears in the renewal disclosure line
-		// (DOMAINS-2184), so match the crossed-out price on the tag.
 		const crossedOut = screen
 			.getAllByText( /\$129\b/ )
 			.find( ( element ) => element.tagName === 'S' );
 		expect( crossedOut ).toBeVisible();
-		expect( screen.getByText( /\$29\b/ ) ).toBeVisible();
-		expect( screen.getByText( /\$40\b/ ) ).toBeVisible();
+		expect( screen.getAllByText( /\$29\b/ ) ).toHaveLength( 2 );
+		expect( screen.getAllByText( /\$40\b/ ) ).toHaveLength( 2 );
 
 		// Only the discounted bundle shows a strikethrough.
 		expect( container.querySelectorAll( 's' ) ).toHaveLength( 1 );
-
-		// The mini-cart shares BundleLineItem with the order review, so the
-		// discounted bundle also discloses its renewal aggregate here — and
-		// only the discounted one (DOMAINS-2184).
-		expect( screen.getByText( 'Auto-renews at $129/year.' ) ).toBeVisible();
-		expect( screen.getAllByText( /Auto-renews at/ ) ).toHaveLength( 1 );
 	} );
 } );

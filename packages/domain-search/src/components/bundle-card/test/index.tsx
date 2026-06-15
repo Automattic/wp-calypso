@@ -80,6 +80,26 @@ describe( 'BundleCard', () => {
 		expect( original.closest( 's' ) ).not.toBeNull();
 	} );
 
+	it( 'renders formatted bundle totals when provided', () => {
+		render(
+			<BundleCard
+				suggestion={ buildSuggestion( twoDomains, {
+					bundle_price: 29.9,
+					bundle_cost: '$29.90',
+					original_price: 39,
+					original_cost: '$39',
+				} ) }
+			/>
+		);
+
+		expect( screen.getByText( '$29.90' ) ).toBeInTheDocument();
+
+		const original = screen.getByText( '$39' );
+		expect( original.closest( 's' ) ).not.toBeNull();
+
+		expect( screen.queryByText( '29.9' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'renders the discount percent text', () => {
 		render( <BundleCard suggestion={ buildSuggestion( twoDomains, { discount_percent: 20 } ) } /> );
 

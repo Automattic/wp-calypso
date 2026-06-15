@@ -360,7 +360,10 @@ describe( 'FullCart', () => {
 				expect( screen.getByText( 'Cart' ) ).toBeVisible();
 			} );
 
-			const bundleRow = await screen.findByTitle( 'Domain bundle' );
+			const bundleRow = await screen.findByTitle( 'Domain Bundle' );
+
+			expect( getByText( bundleRow, 'Protect your brand' ) ).toBeInTheDocument();
+			expect( getByText( bundleRow, 'Includes' ) ).toBeInTheDocument();
 
 			expect( getByLabelText( bundleRow, 'example.com' ) ).toBeInTheDocument();
 			expect( getByLabelText( bundleRow, 'example.net' ) ).toBeInTheDocument();
@@ -395,7 +398,7 @@ describe( 'FullCart', () => {
 				expect( screen.getByText( 'Cart' ) ).toBeVisible();
 			} );
 
-			expect( await screen.findByTitle( 'Domain bundle' ) ).toBeInTheDocument();
+			expect( await screen.findByTitle( 'Domain Bundle' ) ).toBeInTheDocument();
 
 			const standaloneRow = await screen.findByTitle( 'standalone.org' );
 			expect( getByLabelText( standaloneRow, 'Price: $10' ) ).toBeInTheDocument();
@@ -437,7 +440,7 @@ describe( 'FullCart', () => {
 				expect( screen.getByText( 'Cart' ) ).toBeVisible();
 			} );
 
-			const bundleRows = await screen.findAllByTitle( 'Domain bundle' );
+			const bundleRows = await screen.findAllByTitle( 'Domain Bundle' );
 			expect( bundleRows ).toHaveLength( 2 );
 
 			const [ firstBundle, secondBundle ] = bundleRows;
@@ -473,12 +476,12 @@ describe( 'FullCart', () => {
 				expect( screen.getByText( 'Cart' ) ).toBeVisible();
 			} );
 
-			const bundleRow = await screen.findByTitle( 'Domain bundle' );
+			const bundleRow = await screen.findByTitle( 'Domain Bundle' );
 
 			await fireEvent.click( getByRole( bundleRow, 'button', { name: 'Remove bundle' } ) );
 
 			await waitFor( () => {
-				expect( screen.queryByTitle( 'Domain bundle' ) ).not.toBeInTheDocument();
+				expect( screen.queryByTitle( 'Domain Bundle' ) ).not.toBeInTheDocument();
 			} );
 
 			expect( screen.queryByLabelText( 'example.com' ) ).not.toBeInTheDocument();
@@ -507,7 +510,7 @@ describe( 'FullCart', () => {
 				expect( screen.getByText( 'Cart' ) ).toBeVisible();
 			} );
 
-			const bundleRow = await screen.findByTitle( 'Domain bundle' );
+			const bundleRow = await screen.findByTitle( 'Domain Bundle' );
 
 			await fireEvent.click( getByRole( bundleRow, 'button', { name: 'Remove bundle' } ) );
 
@@ -539,7 +542,7 @@ describe( 'FullCart', () => {
 			);
 
 			expect( await screen.findByTitle( 'example.com' ) ).toBeInTheDocument();
-			expect( screen.queryByTitle( 'Domain bundle' ) ).not.toBeInTheDocument();
+			expect( screen.queryByTitle( 'Domain Bundle' ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );

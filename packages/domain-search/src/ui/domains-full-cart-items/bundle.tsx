@@ -12,7 +12,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import type { DomainInCart } from './types';
 
 /**
- * Render a domain bundle as a single grouped cart row: a "Domain bundle"
+ * Render a domain bundle as a single grouped cart row: a "Domain Bundle"
  * label, the member domains listed beneath it, one summed price, and a single
  * remove action that clears every member from the cart at once (matching the
  * backend's all-or-nothing rule).
@@ -36,7 +36,7 @@ export const DomainsFullCartBundleItem = ( {
 } ) => {
 	const { __ } = useI18n();
 
-	const bundleLabel = __( 'Domain bundle' );
+	const bundleLabel = __( 'Domain Bundle' );
 
 	return (
 		<Card title={ bundleLabel }>
@@ -47,32 +47,9 @@ export const DomainsFullCartBundleItem = ( {
 							<Text size="medium" weight={ 500 }>
 								{ bundleLabel }
 							</Text>
-							{ members.map( ( member ) => {
-								const domainName = `${ member.domain }.${ member.tld }`;
-
-								return (
-									<Text
-										key={ member.uuid }
-										size="medium"
-										aria-label={ domainName }
-										style={ { wordBreak: 'break-all' } }
-									>
-										{ member.domain }
-										<Text size="inherit" weight={ 500 } style={ { whiteSpace: 'nowrap' } }>
-											.{ member.tld }
-										</Text>
-									</Text>
-								);
-							} ) }
-							<Button
-								disabled={ disabled }
-								isBusy={ isBusy }
-								variant="link"
-								className="domains-full-cart-items__remove"
-								onClick={ onRemove }
-							>
-								{ __( 'Remove bundle' ) }
-							</Button>
+							<Text size="small" variant="muted">
+								{ __( 'Protect your brand' ) }
+							</Text>
 						</VStack>
 						<VStack className="domains-full-cart-items__price">
 							<HStack alignment="right" spacing={ 2 }>
@@ -89,6 +66,41 @@ export const DomainsFullCartBundleItem = ( {
 							</HStack>
 						</VStack>
 					</HStack>
+					<VStack
+						spacing={ 2 }
+						alignment="left"
+						className="domains-full-cart-items__bundle-members"
+					>
+						<Text size="small" variant="muted" className="domains-full-cart-items__bundle-includes">
+							{ __( 'Includes' ) }
+						</Text>
+						{ members.map( ( member ) => {
+							const domainName = `${ member.domain }.${ member.tld }`;
+
+							return (
+								<Text
+									key={ member.uuid }
+									size="medium"
+									aria-label={ domainName }
+									style={ { wordBreak: 'break-all' } }
+								>
+									{ member.domain }
+									<Text size="inherit" weight={ 500 } style={ { whiteSpace: 'nowrap' } }>
+										.{ member.tld }
+									</Text>
+								</Text>
+							);
+						} ) }
+					</VStack>
+					<Button
+						disabled={ disabled }
+						isBusy={ isBusy }
+						variant="link"
+						className="domains-full-cart-items__remove"
+						onClick={ onRemove }
+					>
+						{ __( 'Remove bundle' ) }
+					</Button>
 					{ errorMessage && (
 						<Notice status="error" onRemove={ removeErrorMessage }>
 							{ errorMessage }
