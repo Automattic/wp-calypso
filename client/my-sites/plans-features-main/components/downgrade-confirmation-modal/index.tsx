@@ -195,8 +195,7 @@ const DowngradeConfirmationModal = ( {
 
 	const confirmButtonLabel = ( () => {
 		if ( isDelayedDowngrade ) {
-			return translate( 'Schedule downgrade to %(planName)s', {
-				args: { planName: targetPlanName },
+			return translate( 'Schedule downgrade', {
 				comment: 'Button label to confirm scheduling a plan downgrade for end of billing term',
 			} );
 		}
@@ -207,8 +206,7 @@ const DowngradeConfirmationModal = ( {
 					'Button label to confirm an instant downgrade that issues a refund of the given amount',
 			} );
 		}
-		return translate( 'Downgrade to %(planName)s', {
-			args: { planName: targetPlanName },
+		return translate( 'Downgrade', {
 			comment: 'Button label to confirm downgrading to a lower-tier plan',
 		} );
 	} )();
@@ -230,26 +228,33 @@ const DowngradeConfirmationModal = ( {
 				refundText={ refundText }
 			/>
 			<div className="downgrade-confirmation-modal__buttons">
-				<Button
-					__next40pxDefaultSize
-					variant="tertiary"
-					onClick={ onClose }
-					disabled={ isConfirming }
-				>
-					{ translate( 'Keep %(planName)s', {
-						args: { planName: currentPlanName },
-						comment: 'Button label to dismiss the downgrade modal and keep the current plan',
+				<span className="downgrade-confirmation-modal__plan-transition">
+					{ translate( '%(currentPlan)s → %(targetPlan)s', {
+						args: { currentPlan: currentPlanName, targetPlan: targetPlanName },
+						comment: 'Plan transition summary shown above the downgrade confirm/cancel buttons',
 					} ) }
-				</Button>
-				<Button
-					__next40pxDefaultSize
-					variant="primary"
-					onClick={ onConfirm }
-					isBusy={ isConfirming }
-					disabled={ isConfirming }
-				>
-					{ confirmButtonLabel }
-				</Button>
+				</span>
+				<div className="downgrade-confirmation-modal__button-row">
+					<Button
+						__next40pxDefaultSize
+						variant="tertiary"
+						onClick={ onClose }
+						disabled={ isConfirming }
+					>
+						{ translate( 'Keep plan', {
+							comment: 'Button label to dismiss the downgrade modal and keep the current plan',
+						} ) }
+					</Button>
+					<Button
+						__next40pxDefaultSize
+						variant="primary"
+						onClick={ onConfirm }
+						isBusy={ isConfirming }
+						disabled={ isConfirming }
+					>
+						{ confirmButtonLabel }
+					</Button>
+				</div>
 			</div>
 		</Modal>
 	);
