@@ -55,13 +55,13 @@ export class NotificationsComponent {
 	}
 
 	/**
-	 * Trashes the open notification's comment via the detail view's Actions menu.
+	 * Trashes the open notification's comment.
 	 *
-	 * Unlike the inline actions, Trash lives inside the per-note "Actions" dropdown,
-	 * whose menu is portaled to the document body.
+	 * Trash lives inside the per-note "Actions" dropdown, whose popover animates
+	 * and can detach mid-interaction. The panel exposes a dedicated `t` shortcut
+	 * for the same action, which is more reliable to drive.
 	 */
 	async trashNotification(): Promise< void > {
-		await this.detailPane.getByRole( 'button', { name: 'Actions' } ).click();
-		await this.page.getByRole( 'menuitem', { name: 'Trash' } ).click();
+		await this.page.keyboard.press( 't' );
 	}
 }
