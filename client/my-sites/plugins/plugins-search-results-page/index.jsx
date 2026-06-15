@@ -1,5 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,18 +7,11 @@ import InfiniteScroll from 'calypso/components/infinite-scroll';
 import NoResults from 'calypso/my-sites/no-results';
 import MarketplaceAIBanner from 'calypso/my-sites/plugins/marketplace-ai-experience/banner';
 import BusinessPlanBanner from 'calypso/my-sites/plugins/plugins-banners/business-plan-banner';
-import JetpackSeoBanner, {
-	isSeoSearch,
-} from 'calypso/my-sites/plugins/plugins-banners/jetpack-seo-banner';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import UpgradeNudge from 'calypso/my-sites/plugins/plugins-discovery-page/upgrade-nudge';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { activateModule } from 'calypso/state/jetpack/modules/actions';
-import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import { UNLISTED_PLUGINS } from '../constants';
 import { useIsMarketplaceRedesignEnabled } from '../hooks/use-is-marketplace-redesign-enabled';
 import ClearSearchButton from '../plugins-browser/clear-search-button';
@@ -54,30 +46,6 @@ const PluginsSearchResultPage = ( {
 	const translate = useTranslate();
 
 	const showCompassBanner = isLoggedIn && isEnabled( 'plugins/plugin-compass' );
-
-	// Require both siteId and siteSlug: the banner reads module/plan/admin-url
-	// state and activates the module by siteId, so without it those selectors and
-	// the activate dispatch would run with a null id.
-	const showSeoHint =
-		isEnabled( 'plugins/jetpack-seo-hint' ) &&
-		!! siteId &&
-		!! siteSlug &&
-		isSeoSearch( searchTerm );
-
-	// Only read Jetpack module / plan / admin-url state when the SEO hint is
-	// actually in play. Otherwise these selectors would run on every plugin
-	// search and touch state slices a plain plugins-browser render need not have.
-	const isSeoModuleActive = useSelector( ( state ) =>
-		showSeoHint && siteId ? isJetpackModuleActive( state, siteId, 'seo-tools' ) : false
-	);
-
-	const hasAdvancedSeo = useSelector( ( state ) =>
-		showSeoHint && siteId ? siteHasFeature( state, siteId, FEATURE_ADVANCED_SEO ) : false
-	);
-
-	const seoAdminUrl = useSelector( ( state ) =>
-		showSeoHint ? getSiteAdminUrl( state, siteId, 'admin.php?page=jetpack-seo' ) : null
-	);
 
 	/*
 	 * Syncs the internal value of is fetching to share it with the search header
@@ -166,24 +134,7 @@ const PluginsSearchResultPage = ( {
 							<ClearSearchButton />
 						</>
 					}
-					afterHeader={
-						showSeoHint || showCompassBanner ? (
-							<>
-								{ showSeoHint && (
-									<JetpackSeoBanner
-										siteId={ siteId }
-										siteSlug={ siteSlug }
-										searchTerm={ searchTerm }
-										isSeoModuleActive={ isSeoModuleActive }
-										hasAdvancedSeo={ hasAdvancedSeo }
-										seoAdminUrl={ seoAdminUrl }
-										onEnableSeo={ () => dispatch( activateModule( siteId, 'seo-tools' ) ) }
-									/>
-								) }
-								{ showCompassBanner && <MarketplaceAIBanner variant="slim" /> }
-							</>
-						) : null
-					}
+					afterHeader={ showCompassBanner ? <MarketplaceAIBanner variant="slim" /> : null }
 					showReset
 					site={ siteSlug }
 					showPlaceholders={ isFetchingPluginsBySearchTerm }
