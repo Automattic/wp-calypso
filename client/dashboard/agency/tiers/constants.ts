@@ -93,6 +93,8 @@ export const ALL_TIERS: TierItem[] = [
 					{
 						id: 'contact-support',
 						label: __( 'Contact support' ),
+						// TODO: '#contact-support' is a placeholder anchor — wire this up to the
+						// Help Center / support flow on both a8c and the dashboard.
 						href: '#contact-support',
 					},
 				],

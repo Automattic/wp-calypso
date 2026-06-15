@@ -48,6 +48,15 @@ export default function AgencyTiers() {
 				recordTracksEvent={ recordTracksEvent }
 			/>
 			<Divider style={ { color: 'var(--dashboard-header__divider-color)' } } />
+			{ /*
+			 * TODO: Two benefit actions are not yet wired up for the dashboard:
+			 *  - "Download your badges" is dropped because `renderDownloadBadges` is not
+			 *    passed here (a8c supplies its own; a dashboard equivalent is still TBD).
+			 *  - Benefit action links in `constants.ts` point to A4A app routes
+			 *    (e.g. /reports, /referrals/dashboard, /woopayments,
+			 *    /partner-directory/dashboard) and the "#contact-support" placeholder,
+			 *    none of which resolve inside the dashboard yet.
+			 */ }
 			<TierBenefits
 				currentAgencyTierId={ currentAgencyTierId }
 				recordTracksEvent={ recordTracksEvent }
