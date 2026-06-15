@@ -264,7 +264,8 @@ export const getOdieInitialMessage = (
 			/* translators: %(name)s: the user's display name */
 			__( 'Howdy %(name)s', __i18n_text_domain__ ),
 			{
-				name: displayName || 'there',
+				/* translators: fallback used when the user's display name isn't available */
+				name: displayName || __( 'there', __i18n_text_domain__ ),
 			}
 		).trim() } 👋** \n\n ${ introMessage }`,
 		role: 'bot',
