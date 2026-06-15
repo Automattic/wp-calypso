@@ -22,6 +22,7 @@ const baseProps = {
 	isSeoModuleActive: false,
 	hasAdvancedSeo: true,
 	seoAdminUrl: 'https://example.wordpress.com/wp-admin/admin.php?page=jetpack-seo',
+	onEnableSeo: jest.fn(),
 };
 
 describe( 'isSeoSearch', () => {

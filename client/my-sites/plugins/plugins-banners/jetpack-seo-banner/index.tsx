@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback, useEffect, type SyntheticEvent } from 'react';
+import { useCallback, useEffect, useRef, type SyntheticEvent } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
 
@@ -56,7 +56,7 @@ interface JetpackSeoBannerProps {
 	/** wp-admin URL of the Jetpack SEO page ( admin.php?page=jetpack-seo ), or null if unavailable. */
 	seoAdminUrl: string | null;
 	/** Activates the SEO Tools module; resolves once the module is active. Owned by the parent so this component stays presentational. */
-	onEnableSeo?: () => Promise< void > | void;
+	onEnableSeo: () => Promise< void > | void;
 }
 
 /**
@@ -76,6 +76,11 @@ const JetpackSeoBanner = ( {
 }: JetpackSeoBannerProps ) => {
 	const { __ } = useI18n();
 
+	// Track which ( site, search ) context we've already counted an impression for,
+	// so toggling `isSeoModuleActive` mid-view ( e.g. after the CTA enables the
+	// module ) doesn't re-fire — and double-count — the impression.
+	const recordedImpressionKey = useRef< string | null >( null );
+
 	useEffect( () => {
 		// Only count an impression when the banner actually renders ( see the
 		// siteSlug guard below ), otherwise we'd inflate impressions on surfaces
@@ -83,6 +88,12 @@ const JetpackSeoBanner = ( {
 		if ( ! siteSlug ) {
 			return;
 		}
+
+		const impressionKey = `${ siteId }:${ searchTerm }`;
+		if ( recordedImpressionKey.current === impressionKey ) {
+			return;
+		}
+		recordedImpressionKey.current = impressionKey;
 
 		recordTracksEvent( 'calypso_plugins_jetpack_seo_hint_impression', {
 			blog_id: siteId,
@@ -121,7 +132,7 @@ const JetpackSeoBanner = ( {
 			// activate it and await that before leaving, otherwise the user can land
 			// on a page that isn't registered yet.
 			if ( ! isSeoModuleActive ) {
-				await onEnableSeo?.();
+				await onEnableSeo();
 			}
 
 			navigate( seoAdminUrl );

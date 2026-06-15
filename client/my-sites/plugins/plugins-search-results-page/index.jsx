@@ -55,8 +55,14 @@ const PluginsSearchResultPage = ( {
 
 	const showCompassBanner = isLoggedIn && isEnabled( 'plugins/plugin-compass' );
 
+	// Require both siteId and siteSlug: the banner reads module/plan/admin-url
+	// state and activates the module by siteId, so without it those selectors and
+	// the activate dispatch would run with a null id.
 	const showSeoHint =
-		isEnabled( 'plugins/jetpack-seo-hint' ) && !! siteSlug && isSeoSearch( searchTerm );
+		isEnabled( 'plugins/jetpack-seo-hint' ) &&
+		!! siteId &&
+		!! siteSlug &&
+		isSeoSearch( searchTerm );
 
 	// Only read Jetpack module / plan / admin-url state when the SEO hint is
 	// actually in play. Otherwise these selectors would run on every plugin
