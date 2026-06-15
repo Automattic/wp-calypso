@@ -40,6 +40,7 @@ export function Chat( {
 	suggestions,
 	clearSuggestions,
 	messageRenderer,
+	showAgentIcon,
 	className,
 	expandOnHover = true,
 }: ChatProps ) {
@@ -373,6 +374,7 @@ export function Chat( {
 					error={ error }
 					emptyView={ emptyView }
 					messageRenderer={ messageRenderer }
+					showAgentIcon={ showAgentIcon }
 					onExpand={ handleExpand }
 					focusOnMount={ wasClickedToExpand.current }
 				/>
@@ -523,6 +525,7 @@ export function Chat( {
 								error={ error }
 								emptyView={ emptyView }
 								messageRenderer={ messageRenderer }
+								showAgentIcon={ showAgentIcon }
 								onExpand={ handleExpand }
 								focusOnMount={ wasClickedToExpand.current }
 							/>

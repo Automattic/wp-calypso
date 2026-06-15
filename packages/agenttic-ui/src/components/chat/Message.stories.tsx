@@ -14,6 +14,14 @@ const meta = {
 			control: 'object',
 			description: 'The message object to display',
 		},
+		showAgentIcon: {
+			control: 'boolean',
+			description:
+				'Master switch for rendering the agent avatar. Defaults to off. When on, the avatar shows only on agent messages that have a text response (not on user messages or component-only confirmations/pickers).',
+		},
+	},
+	args: {
+		showAgentIcon: false,
 	},
 } satisfies Meta< typeof Message >;
 
@@ -97,6 +105,35 @@ This function will sum up all your order totals.`,
 	showIcon: true,
 };
 
+// An agent message whose content is a rendered component (e.g. a confirmation
+// or picker) rather than a text response. The avatar is suppressed for these
+// even when `showAgentIcon` is enabled.
+const ConfirmationCard = () => (
+	<div
+		style={ {
+			border: '1px solid var(--color-muted, #e0e0e0)',
+			borderRadius: '8px',
+			padding: '12px 16px',
+		} }
+	>
+		Are you sure you want to delete this page?
+	</div>
+);
+
+const componentMessage: MessageType = {
+	id: '7',
+	content: [
+		{
+			type: 'component',
+			component: ConfirmationCard,
+		},
+	],
+	role: 'agent',
+	timestamp: Date.now(),
+	archived: false,
+	showIcon: true,
+};
+
 export const UserMessage: Story = {
 	args: {
 		message: userMessage,
@@ -121,6 +158,15 @@ export const CodeContent: Story = {
 	},
 };
 
+// Demonstrates the gating: even with the avatar enabled, a component-only
+// message (a confirmation/picker) renders without an icon.
+export const ComponentMessageNoIcon: Story = {
+	args: {
+		message: componentMessage,
+		showAgentIcon: true,
+	},
+};
+
 export const LongMessage: Story = {
 	args: {
 		message: {
@@ -140,13 +186,20 @@ export const LongMessage: Story = {
 };
 
 export const MessageThread: Story = {
-	render: () => (
+	render: ( { showAgentIcon } ) => (
 		<div
 			style={ { display: 'flex', flexDirection: 'column', gap: '1rem' } }
 		>
-			<Message message={ userMessage } />
-			<Message message={ agentMessage } />
-			<Message message={ markdownMessage } />
+			<Message message={ userMessage } showAgentIcon={ showAgentIcon } />
+			<Message message={ agentMessage } showAgentIcon={ showAgentIcon } />
+			<Message
+				message={ markdownMessage }
+				showAgentIcon={ showAgentIcon }
+			/>
+			<Message
+				message={ componentMessage }
+				showAgentIcon={ showAgentIcon }
+			/>
 			<Message
 				message={ {
 					...userMessage,
@@ -158,6 +211,7 @@ export const MessageThread: Story = {
 						},
 					],
 				} }
+				showAgentIcon={ showAgentIcon }
 			/>
 		</div>
 	),

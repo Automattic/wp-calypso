@@ -77,6 +77,7 @@ export function AgentUIContainer( {
 	onSuggestionClick,
 	messageRenderer,
 	messagesPosition,
+	showAgentIcon,
 	className,
 	inputValue: controlledInputValue,
 	onInputChange: controlledOnInputChange,
@@ -579,6 +580,7 @@ export function AgentUIContainer( {
 		emptyView: computedEmptyView,
 		messageRenderer,
 		messagesPosition,
+		showAgentIcon,
 
 		// Floating chat specific
 		floatingChatState: chat.state,

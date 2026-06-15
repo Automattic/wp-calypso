@@ -21,6 +21,16 @@
     color: var(--color-error);
 }
 
+.icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    margin-right: var(--spacing-2);
+}
+
 .content {
     flex: 1;
     text-align: start;
