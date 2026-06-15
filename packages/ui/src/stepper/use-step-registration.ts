@@ -38,6 +38,16 @@ export function useStepRegistration< T extends { value: string } >() {
 		return () => {
 			const remaining = ( counts.get( meta.value ) ?? 1 ) - 1;
 			if ( remaining > 0 ) {
+				// A duplicate instance is still mounted, so keep the value
+				// registered to protect index/totalSteps. Limitation: `steps`
+				// keeps this unmounted instance's metadata and the survivor
+				// never re-syncs (its updateStep effect only reacts to its own
+				// props), so `status`/`disabled` can render stale until the
+				// survivor's props next change. Acceptable since duplicate
+				// values are already a warned dev error.
+				// TODO: for correct metadata under duplicates, switch to
+				// instance-keyed registration (unique id per mount, derive
+				// `steps` from the first still-mounted instance per value).
 				counts.set( meta.value, remaining );
 				return;
 			}
