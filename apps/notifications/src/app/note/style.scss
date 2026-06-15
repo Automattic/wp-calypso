@@ -1,3 +1,4 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 @import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/mixins';
@@ -101,7 +102,7 @@
 		&:has(.wpnc__button) {
 			margin: 0 -#{$grid-unit-20};
 			padding: 16px;
-			border-top: 1px solid $gray-100;
+			border-top: 1px solid var( --wpnc-divider__color, #{$gray-100} );
 		}
 	}
 
@@ -134,7 +135,7 @@
 
 	.wpnc__hr-separator {
 		border: none;
-		border-top: 1px solid $gray-100;
+		border-top: 1px solid var( --wpnc-divider__color, #{$gray-100} );
 	}
 
 	// Links
@@ -166,10 +167,10 @@
 	blockquote {
 		padding: 0 $grid-unit-20;
 		margin: 0 0 $grid-unit-20 0;
-		box-shadow: inset 3px 0 0 #f0f0f0;
+		box-shadow: inset 3px 0 0 var( --wpnc-quote__border-color, #f0f0f0 );
 		font-weight: 400;
 		font-style: italic;
-		color: #646970;
+		color: var( --wpnc-quote__text-color, #646970 );
 		background: transparent;
 	}
 
@@ -260,7 +261,7 @@
  */
 .wpnc__note.wpnc__comment .wpnc__body .wpnc__body-content {
 	padding: 0 0 0 $grid-unit-20;
-	box-shadow: inset 3px 0 0 #f0f0f0;
+	box-shadow: inset 3px 0 0 var( --wpnc-quote__border-color, #f0f0f0 );
 
 	.wpnc__user {
 		padding: 0 0 $grid-unit-20 0;
@@ -275,7 +276,7 @@
 .wpnc__note.wpnc__follow .wpnc__body .wpnc__body-content {
 	.wpnc__user {
 		padding: 12px 0;
-		border-bottom: 1px solid $gray-100;
+		border-bottom: 1px solid var( --wpnc-divider__color, #{$gray-100} );
 
 		&:first-child {
 			padding-top: 0;
@@ -301,7 +302,7 @@
  * Reply
  */
 .wpnc__reply {
-	color: #646970;
+	color: var( --wpnc-quote__text-color, #646970 );
 
 	.wpnc__gridicon {
 		fill: currentColor;
@@ -310,5 +311,32 @@
 	a {
 		font-weight: 600;
 		color: inherit;
+	}
+}
+
+// Dark mode: the detail-pane literals above (quote bars/text, dividers) ship
+// light-mode values that don't adapt. Point their tokens at dashboard colors —
+// readable muted quote text (passes AA on the overlay panel), a neutral quote
+// bar, and the gray-400 divider used across the dark overlays (Help Center).
+.wpnc-app {
+	@include ui-mixins.when-dark-theme {
+		--wpnc-quote__border-color: var( --wp-components-color-gray-600, #758095 );
+		--wpnc-quote__text-color: var( --wp-components-color-gray-700, #9aa2b1 );
+		--wpnc-divider__color: var( --wp-components-color-gray-400, #424855 );
+
+		// Two frame-level dividers miss the dashboard's border handling:
+		//   - the action-block CardFooter (above Like/Reply) — the dark card
+		//     mixin themes card header/divider but not the footer, so its
+		//     border falls back to a near-invisible rgba(0,0,0,0.1).
+		//   - the list/detail pane separator — $wpnc-pane-border.
+		// Route both to the same gray-400 divider as the rest of the panel.
+		.components-card__footer {
+			border-top-color: var( --wpnc-divider__color );
+		}
+
+		.wpnc-app__list-pane,
+		.wpnc-app__detail-pane {
+			border-color: var( --wpnc-divider__color );
+		}
 	}
 }

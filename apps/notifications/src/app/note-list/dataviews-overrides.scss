@@ -13,7 +13,7 @@
 		}
 
 		.dataviews-view-list__item-wrapper {
-			background-color: color-mix(in srgb, var(--wp-admin-theme-color) 16%, var(--color-surface));
+			background-color: color-mix(in srgb, var(--wp-admin-theme-color) 10%, var(--color-surface));
 			box-shadow: inset 3px 0 0
 				color-mix(in srgb, var(--wp-admin-theme-color) 72%, transparent);
 		}
@@ -22,7 +22,7 @@
 	div[role="article"]:where(.is-hovered):has(.is-unread),
 	div[role="article"]:where(.is-hovered):has(.is-unread):focus-within {
 		.dataviews-view-list__item-wrapper {
-			background-color: color-mix(in srgb, var(--wp-admin-theme-color) 22%, var(--color-surface));
+			background-color: color-mix(in srgb, var(--wp-admin-theme-color) 16%, var(--color-surface));
 		}
 	}
 }
@@ -41,7 +41,7 @@
 		}
 
 		.dataviews-view-list__item-wrapper {
-			background-color: color-mix(in srgb, var(--wp-admin-theme-color) 20%, var(--color-surface));
+			background-color: color-mix(in srgb, var(--wp-admin-theme-color) 24%, var(--color-surface));
 			box-shadow: inset 3px 0 0 var(--wp-admin-theme-color);
 		}
 	}
@@ -96,6 +96,13 @@
 	@include ui-mixins.when-dark-theme {
 		@include dark-unread-note-list-item;
 		@include dark-selected-note-list-item;
+
+		// $gray-700 (#757575) is a light-mode literal — it fails WCAG AA on the
+		// dark surface and the accent tints (~1.8–2.7:1). Use a light muted that
+		// clears 4.5:1 on every row state, including the stronger selected tint.
+		div[role="article"] .dataviews-view-list__item-wrapper .dataviews-view-list__fields {
+			color: #c2c5cc;
+		}
 	}
 
 	// We override the media field
