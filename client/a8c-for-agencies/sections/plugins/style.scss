@@ -34,6 +34,15 @@
 			}
 		}
 	}
+
+	// Standardize the description text in the plugin action confirmation modal
+	// (e.g. "Update to version X") so it matches our normal body text size. The
+	// modal is shared Calypso code portaled to <body>, so we scope this override
+	// to the A4A plugins section to avoid affecting other clients.
+	.plugins__confirmation-modal .components-modal__content p {
+		font-size: 0.875rem;
+		line-height: 1.5;
+	}
 }
 
 .a4a-plugins-jetpack-banner-container {
