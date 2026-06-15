@@ -1,5 +1,5 @@
-@import "@wordpress/base-styles/mixins";
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+@import "@wordpress/base-styles/mixins";
 
 .connections-view {
 	max-width: 760px;
