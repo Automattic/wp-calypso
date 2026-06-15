@@ -204,6 +204,7 @@ export default function AccountRecoveryInterstitial() {
 
 	return (
 		<Modal
+			size="small"
 			__experimentalHideHeader
 			isDismissible={ false }
 			focusOnMount="firstContentElement"
