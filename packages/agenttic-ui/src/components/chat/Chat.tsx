@@ -315,11 +315,13 @@ export function Chat( {
 			return;
 		}
 
-		// Determine side from the current x using handleDragEnd's midpoint logic.
-		const dropX = x.get();
-		const chatWidth = STYLE_CONSTANTS.COMPACT_WIDTH;
-		const viewportMidpointX = ( window.innerWidth - chatWidth ) / 2;
-		const newSide = dropX < viewportMidpointX ? 'left' : 'right';
+		// Determine side from the panel's center in viewport coords. x.get() is
+		// the transform offset from the panel's CSS left: VIEWPORT_OFFSET origin.
+		const panelCenter =
+			STYLE_CONSTANTS.VIEWPORT_OFFSET +
+			x.get() +
+			STYLE_CONSTANTS.COMPACT_WIDTH / 2;
+		const newSide = panelCenter < window.innerWidth / 2 ? 'left' : 'right';
 		setCurrentSide( newSide );
 		setChatPosition( newSide );
 
