@@ -236,9 +236,9 @@ export default function AccountRecoveryInterstitial() {
 					<Text id={ titleId } as="h1" size={ 20 } weight={ 500 }>
 						{ copy.title }
 					</Text>
-					<Text variant="muted">{ copy.description }</Text>
+					<Text>{ copy.description }</Text>
 				</VStack>
-				<VStack className="account-recovery-interstitial__actions" spacing={ 3 }>
+				<VStack className="account-recovery-interstitial__actions" spacing={ 2 }>
 					<Button
 						__next40pxDefaultSize
 						variant="primary"
