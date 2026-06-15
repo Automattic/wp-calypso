@@ -614,8 +614,6 @@ const BundleMemberList = styled.div`
 
 	& .cost-overrides-list-bundle-member {
 		display: flex;
-		justify-content: space-between;
-		gap: 0 16px;
 	}
 `;
 

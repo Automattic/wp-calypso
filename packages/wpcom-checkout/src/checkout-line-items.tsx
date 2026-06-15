@@ -563,7 +563,7 @@ export function BundleLineItem( {
 				<span>{ translate( 'One year' ) }</span>
 				<BundleTermPrice>
 					<span>{ bundleTotalDisplay }</span>
-					<Gridicon icon="chevron-down" size={ 16 } />
+					<Gridicon icon="chevron-down" size={ 16 } aria-hidden="true" />
 				</BundleTermPrice>
 			</BundleTermRow>
 

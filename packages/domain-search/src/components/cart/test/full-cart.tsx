@@ -363,16 +363,19 @@ describe( 'FullCart', () => {
 			const bundleRow = await screen.findByTitle( 'Domain Bundle' );
 
 			expect( getByText( bundleRow, 'Protect your brand' ) ).toBeInTheDocument();
-			expect( getByText( bundleRow, 'Includes' ) ).toBeInTheDocument();
+			expect(
+				bundleRow.querySelector( '.domains-full-cart-items__bundle-protect-icon' )
+			).toBeInTheDocument();
+			expect( queryByText( bundleRow, 'Includes' ) ).not.toBeInTheDocument();
 
 			expect( getByLabelText( bundleRow, 'example.com' ) ).toBeInTheDocument();
 			expect( getByLabelText( bundleRow, 'example.net' ) ).toBeInTheDocument();
 
-			expect( getByLabelText( bundleRow, 'Price: $40' ) ).toBeInTheDocument();
+			expect( getByLabelText( bundleRow, 'Price: $40 /year' ) ).toBeInTheDocument();
 			expect( queryByText( bundleRow, '$22' ) ).not.toBeInTheDocument();
 			expect( queryByText( bundleRow, '$18' ) ).not.toBeInTheDocument();
 
-			expect( getAllByRole( bundleRow, 'button', { name: 'Remove bundle' } ) ).toHaveLength( 1 );
+			expect( getAllByRole( bundleRow, 'button', { name: 'Remove' } ) ).toHaveLength( 1 );
 		} );
 
 		it( 'renders standalone items on their own rows next to a bundle', async () => {
@@ -404,8 +407,7 @@ describe( 'FullCart', () => {
 			expect( getByLabelText( standaloneRow, 'Price: $10' ) ).toBeInTheDocument();
 
 			// One remove action for the bundle, one for the standalone item.
-			expect( await screen.findAllByRole( 'button', { name: 'Remove bundle' } ) ).toHaveLength( 1 );
-			expect( await screen.findAllByRole( 'button', { name: 'Remove' } ) ).toHaveLength( 1 );
+			expect( await screen.findAllByRole( 'button', { name: 'Remove' } ) ).toHaveLength( 2 );
 		} );
 
 		it( 'renders two bundles as two separate grouped rows', async () => {
@@ -447,14 +449,15 @@ describe( 'FullCart', () => {
 
 			expect( getByLabelText( firstBundle, 'example.com' ) ).toBeInTheDocument();
 			expect( getByLabelText( firstBundle, 'example.net' ) ).toBeInTheDocument();
-			expect( getByLabelText( firstBundle, 'Price: $40' ) ).toBeInTheDocument();
+			expect( getByLabelText( firstBundle, 'Price: $40 /year' ) ).toBeInTheDocument();
 
 			expect( getByLabelText( secondBundle, 'other.com' ) ).toBeInTheDocument();
 			expect( getByLabelText( secondBundle, 'other.net' ) ).toBeInTheDocument();
-			expect( getByLabelText( secondBundle, 'Price: $25' ) ).toBeInTheDocument();
+			expect( getByLabelText( secondBundle, 'Price: $25 /year' ) ).toBeInTheDocument();
 
 			// One remove action per bundle.
-			expect( await screen.findAllByRole( 'button', { name: 'Remove bundle' } ) ).toHaveLength( 2 );
+			expect( getAllByRole( firstBundle, 'button', { name: 'Remove' } ) ).toHaveLength( 1 );
+			expect( getAllByRole( secondBundle, 'button', { name: 'Remove' } ) ).toHaveLength( 1 );
 		} );
 
 		it( 'removes the whole bundle, and only the bundle, with a single remove action', async () => {
@@ -478,7 +481,7 @@ describe( 'FullCart', () => {
 
 			const bundleRow = await screen.findByTitle( 'Domain Bundle' );
 
-			await fireEvent.click( getByRole( bundleRow, 'button', { name: 'Remove bundle' } ) );
+			await fireEvent.click( getByRole( bundleRow, 'button', { name: 'Remove' } ) );
 
 			await waitFor( () => {
 				expect( screen.queryByTitle( 'Domain Bundle' ) ).not.toBeInTheDocument();
@@ -512,7 +515,7 @@ describe( 'FullCart', () => {
 
 			const bundleRow = await screen.findByTitle( 'Domain Bundle' );
 
-			await fireEvent.click( getByRole( bundleRow, 'button', { name: 'Remove bundle' } ) );
+			await fireEvent.click( getByRole( bundleRow, 'button', { name: 'Remove' } ) );
 
 			await waitFor( () => {
 				expect( onRemoveItem ).toHaveBeenCalledTimes( 2 );
