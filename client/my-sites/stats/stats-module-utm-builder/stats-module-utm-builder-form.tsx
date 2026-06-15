@@ -29,7 +29,9 @@ export type UtmBuilderProps = {
 	};
 };
 
-type UtmKeyType = string;
+const utmKeys = [ 'url', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term' ];
+
+type UtmKeyType = ( typeof utmKeys )[ number ];
 
 type inputValuesType = Record< UtmKeyType, string >;
 type formLabelsType = Record<
