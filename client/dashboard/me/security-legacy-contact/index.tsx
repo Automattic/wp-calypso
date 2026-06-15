@@ -1,6 +1,6 @@
 import { legacyContactsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, Button } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
@@ -10,6 +10,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
+import LegacyContactForm from './legacy-contact-form';
 
 export default function SecurityLegacyContact() {
 	const { data: [ contact ] = [] } = useSuspenseQuery( legacyContactsQuery() );
@@ -46,16 +47,7 @@ export default function SecurityLegacyContact() {
 								</ButtonStack>
 							</>
 						) : (
-							<ButtonStack justify="flex-start">
-								<Button
-									variant="primary"
-									onClick={ () => {
-										// TODO: open the legacy contact setup flow.
-									} }
-								>
-									{ __( 'Set up legacy contact' ) }
-								</Button>
-							</ButtonStack>
+							<LegacyContactForm />
 						) }
 					</VStack>
 				</CardBody>

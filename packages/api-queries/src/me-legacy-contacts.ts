@@ -1,5 +1,6 @@
-import { fetchLegacyContact, fetchLegacyContacts } from '@automattic/api-core';
-import { queryOptions } from '@tanstack/react-query';
+import { addLegacyContact, fetchLegacyContact, fetchLegacyContacts } from '@automattic/api-core';
+import { mutationOptions, queryOptions } from '@tanstack/react-query';
+import { queryClient } from './query-client';
 
 export const legacyContactsQuery = () =>
 	queryOptions( {
@@ -17,4 +18,12 @@ export const legacyContactQuery = ( legacyContactId: number ) =>
 		// The response carries a sensitive `access_key`, so keep it out of the
 		// persisted (localStorage) query cache to limit its exposure.
 		meta: { persist: false },
+	} );
+
+export const addLegacyContactMutation = () =>
+	mutationOptions( {
+		mutationFn: ( email: string ) => addLegacyContact( email ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( { queryKey: [ 'me', 'legacy-contacts' ] } );
+		},
 	} );
