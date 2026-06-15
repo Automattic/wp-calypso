@@ -201,6 +201,7 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 						back_to: window.location.pathname,
 					} )
 				);
+				return;
 			}
 		}
 	};
