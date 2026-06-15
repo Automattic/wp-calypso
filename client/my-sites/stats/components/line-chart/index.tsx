@@ -3,95 +3,12 @@ import '@automattic/charts/style.css';
 import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { useCallback, useLayoutEffect, useMemo, useRef, useState, type ReactNode, type JSX } from 'react';
+import { useCallback, useMemo, type JSX } from 'react';
 import ChartBarTooltip from 'calypso/components/chart/bar-tooltip';
 import { useMomentInSite } from '../../hooks/use-moment-site-zone';
 import StatsEmptyState from '../../stats-empty-state';
 
 import './styles.scss';
-
-const VIEWPORT_EDGE_PAD = 16;
-const FLIP_OFFSET = 24;
-
-function ViewportAwareTooltip( { children }: { children: ReactNode } ) {
-	const ref = useRef< HTMLDivElement >( null );
-	const [ shiftPx, setShiftPx ] = useState( 0 );
-
-	useLayoutEffect( () => {
-		const node = ref.current;
-		if ( ! node ) {
-			return;
-		}
-		// visx writes its inline `transform` to the `.visx-tooltip` ancestor.
-		// `AccessibleTooltip` from `@automattic/charts` wraps our render
-		// output in an extra `<div role="tooltip">`, so that ancestor is our
-		// grandparent — `parentElement` would land on the a11y wrapper,
-		// which never receives the transform. `closest` walks past it to
-		// the actually-transformed node.
-		const anchor = node.closest< HTMLElement >( '.visx-tooltip' ) ?? node.parentElement;
-		if ( ! anchor ) {
-			return;
-		}
-		const update = () => {
-			const anchorLeft = anchor.getBoundingClientRect().left;
-			const ownWidth = node.getBoundingClientRect().width;
-			const maxRight = window.innerWidth - VIEWPORT_EDGE_PAD;
-			const overflow = anchorLeft + ownWidth - maxRight;
-			if ( overflow <= 0 ) {
-				setShiftPx( 0 );
-				return;
-			}
-			// Prefer flipping to the left of the anchor — that mirrors what
-			// visx does against the chart container and leaves comfortable
-			// breathing room from the viewport edge.
-			const flipShift = -( ownWidth + FLIP_OFFSET );
-			if ( anchorLeft + flipShift >= VIEWPORT_EDGE_PAD ) {
-				setShiftPx( flipShift );
-				return;
-			}
-			// Not enough room on the left to flip cleanly. Shift just far
-			// enough to bring the right edge back inside the viewport,
-			// capped so we don't pull the left edge past the padding on
-			// the opposite side. When the tooltip is wider than the
-			// viewport, an unavoidable left overflow is preferable to
-			// clipping the right-aligned values.
-			const maxShift = Math.max( 0, anchorLeft - VIEWPORT_EDGE_PAD );
-			setShiftPx( -Math.min( overflow, maxShift ) );
-		};
-
-		update();
-
-		// visx updates the anchor's inline `transform` asynchronously via
-		// `withBoundingRects` setState and on every cursor reposition. Watch
-		// the actually-transformed ancestor so we react to the final
-		// placement, including the post-mount one that arrives without our
-		// children changing.
-		const styleObserver = new MutationObserver( update );
-		styleObserver.observe( anchor, { attributes: true, attributeFilter: [ 'style' ] } );
-
-		// Content width can change between datums (different number widths,
-		// font load, etc.) without moving the anchor — catch that here.
-		const sizeObserver = new ResizeObserver( update );
-		sizeObserver.observe( node );
-
-		window.addEventListener( 'resize', update );
-		return () => {
-			styleObserver.disconnect();
-			sizeObserver.disconnect();
-			window.removeEventListener( 'resize', update );
-		};
-	}, [] );
-
-	return (
-		<div
-			ref={ ref }
-			className="stats-line-chart-tooltip"
-			style={ shiftPx ? { transform: `translateX(${ shiftPx }px)` } : undefined }
-		>
-			{ children }
-		</div>
-	);
-}
 
 function StatsLineChart( {
 	chartData = [],
@@ -255,7 +172,7 @@ function StatsLineChart( {
 				nearestDatum.label || ( nearestDatum.date && moment( nearestDatum.date ).format( 'LL' ) );
 
 			return (
-				<ViewportAwareTooltip>
+				<div className="stats-line-chart-tooltip">
 					<div className="module-content-list-item is-date-label">{ tooltipLabel }</div>
 					<ul>
 						{ tooltipPoints.map( ( point ) => (
@@ -267,7 +184,7 @@ function StatsLineChart( {
 							/>
 						) ) }
 					</ul>
-				</ViewportAwareTooltip>
+				</div>
 			);
 		},
 		[ moment, seriesIcons ]

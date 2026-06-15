@@ -1,13 +1,41 @@
-@import "@automattic/typography/styles/variables";
+@import '@automattic/typography/styles/variables';
+
+// The visx tooltip renders inside a Portal that does `document.body.append(div)`
+// with no positioning, so the portal div is block-level and its measured width
+// equals the body content width. visx's TooltipWithBounds uses that width to
+// decide whether to flip the tooltip left at the right edge; measured against
+// body width (not the viewport) the flip never fires near a narrow viewport's
+// edge and the tooltip is clipped. Forcing the portal container to width:0 makes
+// visx fall back to its own `window.innerWidth` branch — the same path its
+// vertical flip already uses (the portal div is already height:0) — so the
+// tooltip flips against the actual viewport.
+//
+// The `.visx-tooltip` child is position:absolute, so width:0 does NOT clip it
+// (no overflow:hidden); it only changes the measured parentBounds.width. Scoped
+// via :has() to ONLY the portal containing our stats tooltip, so crosshair/glyph
+// portals and other charts' tooltips are untouched.
+body > div:has( > .visx-tooltip .stats-line-chart-tooltip ) {
+	width: 0;
+}
 
 .visx-tooltip {
 	background-color: transparent !important;
 	border: none !important;
 	box-shadow: none !important;
 
+	// visx's bare tooltip box shrink-collapses to ~150px (its floated/break-all
+	// inner content yields a tiny intrinsic width, and `max-content` resolves to
+	// 150px too), while the content below sets `min-width: 230px` and overflows
+	// ~128px to the right, off-screen. visx measures this collapsed box for its
+	// edge-flip, thinks it fits, and never flips. Forcing the box to its
+	// `min-content` width makes it wrap the real ~278px content, so visx measures
+	// the true width and its built-in flip fires correctly.
+	width: fit-content;
+	min-width: min-content;
+
 	.stats-line-chart-tooltip {
-		color: var(--color-text-inverted);
-		background: var(--color-neutral-100);
+		color: var( --color-text-inverted );
+		background: var( --color-neutral-100 );
 		border-radius: 4px;
 		font-size: $font-body-small;
 		padding: 16px 24px;
@@ -93,9 +121,7 @@
 				}
 			}
 		}
-
 	}
-
 }
 
 .stats-line-chart {
@@ -106,7 +132,7 @@
 		position: absolute;
 		top: 50%;
 		left: 50%;
-		transform: translate(-50%, -50%);
+		transform: translate( -50%, -50% );
 		max-width: 75%;
 		z-index: 1;
 		margin: 0;
