@@ -1,4 +1,9 @@
-import { DomainProductSlugs, DotcomPlans, WooHostedPlans } from '@automattic/api-core';
+import {
+	DomainProductSlugs,
+	DotcomPlans,
+	WooHostedPlans,
+	getPlanNames,
+} from '@automattic/api-core';
 import {
 	purchaseQuery,
 	sitePurchasesQuery,
@@ -203,14 +208,15 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 
 	// Transient success notice after scheduling a delayed downgrade.
 	if ( showDelayedDowngradeScheduledNotice ) {
-		const targetPlanName = purchase.delayed_downgrade_to_product_slug ?? null;
+		const slug = purchase.delayed_downgrade_to_product_slug;
+		const targetPlanName = slug ? getPlanNames()[ slug ] ?? null : null;
 		return (
 			<Notice variant="success" onClose={ () => setShowDelayedDowngradeScheduledNotice( false ) }>
 				{ targetPlanName
 					? sprintf(
-							// translators: %s is the name of the plan, e.g. "WordPress.com Personal"
+							// translators: %s is the name of the plan, e.g. "Personal"
 							__( 'Your plan is scheduled to downgrade to %s at your next renewal.' ),
-							String( targetPlanName )
+							targetPlanName
 					  )
 					: __( 'Your plan downgrade has been scheduled for your next renewal.' ) }
 			</Notice>
@@ -219,13 +225,15 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 
 	// Persistent warning notice when a delayed downgrade is pending.
 	if ( purchase.is_delayed_downgrade_pending ) {
-		const targetPlanName = purchase.delayed_downgrade_to_product_slug ?? null;
+		const slug = purchase.delayed_downgrade_to_product_slug;
+		const targetPlanName = slug ? getPlanNames()[ slug ] ?? null : null;
 		return (
 			<Notice
 				variant="warning"
 				actions={
 					<Button
-						variant="tertiary"
+						variant="secondary"
+						size="compact"
 						onClick={ () =>
 							cancelDelayedDowngrade( {
 								purchaseId: purchase.ID,
@@ -241,9 +249,9 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 			>
 				{ targetPlanName
 					? sprintf(
-							// translators: %s is the name of the plan, e.g. "WordPress.com Personal"
+							// translators: %s is the name of the plan, e.g. "Personal"
 							__( 'Your plan is scheduled to downgrade to %s at your next renewal.' ),
-							String( targetPlanName )
+							targetPlanName
 					  )
 					: __( 'Your plan is scheduled to downgrade at your next renewal.' ) }
 			</Notice>
