@@ -37,6 +37,11 @@ test.describe(
 		} );
 
 		test( 'As a new user, I can sign up via WooCommerce WPCC with email', async ( { page } ) => {
+			// The activation-email fetch alone blocks up to 120s (EmailClient),
+			// before the 25s activation step and signup; the 120s default would be
+			// spent on the email wait alone.
+			test.setTimeout( 240 * 1000 );
+
 			let activationLink: string;
 
 			await test.step( 'Navigate to WooCommerce WPCC endpoint', async () => {

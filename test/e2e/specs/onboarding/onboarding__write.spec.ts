@@ -38,6 +38,11 @@ test.describe(
 		} );
 
 		test( 'As a new user, I can complete the write onboarding flow', async ( { page } ) => {
+			// Full signup-to-first-publish flow: 60s home redirect + fixme_retry
+			// home wait + 30s launchpad on top of editor load and publish; the
+			// 120s default is not enough.
+			test.setTimeout( 240 * 1000 );
+
 			let editorOpened = false;
 			let selectedFreeDomain: string;
 

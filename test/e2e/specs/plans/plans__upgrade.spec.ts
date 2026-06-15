@@ -59,37 +59,48 @@ test.describe(
 			page,
 			browser,
 		} ) => {
-			await test.step( 'Setup: create test site and content via API', async () => {
-				const credentials = SecretsManager.secrets.testAccounts.simpleSiteFreePlanUser;
-				restAPIClient = new RestAPIClient( credentials );
+			// API site/content setup (createSite + 2 posts + media) plus a 75s
+			// purchase wait and the post-upgrade validations exceed the 120s
+			// default.
+			test.setTimeout( 240 * 1000 );
 
-				console.info( 'Creating a new test site.' );
-				newSiteDetails = await restAPIClient.createSite( {
-					name: blogName,
-					title: blogName,
-					// Let the API resolve a valid, available URL. Without this the raw
-					// generated blog name is rejected with "blog_name_invalid".
-					find_available_url: true,
-				} );
-				console.info( `New site created: ${ newSiteDetails.blog_details.url }` );
-				siteCreatedFlag = true;
+			await test.step(
+				'Setup: create test site and content via API',
+				async () => {
+					const credentials = SecretsManager.secrets.testAccounts.simpleSiteFreePlanUser;
+					restAPIClient = new RestAPIClient( credentials );
 
-				console.info( 'Adding test posts to the site.' );
-				for ( const title of postTitles ) {
-					publishedPosts.push(
-						await restAPIClient.createPost( newSiteDetails.blog_details.blogid, { title } )
-					);
-				}
+					console.info( 'Creating a new test site.' );
+					newSiteDetails = await restAPIClient.createSite( {
+						name: blogName,
+						title: blogName,
+						// Let the API resolve a valid, available URL. Without this the raw
+						// generated blog name is rejected with "blog_name_invalid".
+						find_available_url: true,
+					} );
+					console.info( `New site created: ${ newSiteDetails.blog_details.url }` );
+					siteCreatedFlag = true;
 
-				console.info( 'Adding test image to site.' );
-				testMediaFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
-				await restAPIClient.uploadMedia( newSiteDetails.blog_details.blogid, {
-					media: testMediaFile,
-				} );
+					console.info( 'Adding test posts to the site.' );
+					for ( const title of postTitles ) {
+						publishedPosts.push(
+							await restAPIClient.createPost( newSiteDetails.blog_details.blogid, { title } )
+						);
+					}
 
-				const testAccount = new TestAccount( 'simpleSiteFreePlanUser' );
-				await testAccount.authenticate( page );
-			} );
+					console.info( 'Adding test image to site.' );
+					testMediaFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
+					await restAPIClient.uploadMedia( newSiteDetails.blog_details.blogid, {
+						media: testMediaFile,
+					} );
+
+					const testAccount = new TestAccount( 'simpleSiteFreePlanUser' );
+					await testAccount.authenticate( page );
+				},
+				// Bound the API setup (createSite + posts + media) at 60s so a
+				// site-provisioning hang fails here, not as a generic test timeout.
+				{ timeout: 60 * 1000 }
+			);
 
 			await test.step( 'Set store cookie', async () => {
 				await BrowserManager.setStoreCookie( page );

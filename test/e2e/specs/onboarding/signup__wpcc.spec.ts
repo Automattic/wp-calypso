@@ -39,6 +39,11 @@ test.describe(
 		test( 'As a new user, I can sign up via WPCC and navigate to WordPress.com', async ( {
 			page,
 		} ) => {
+			// The activation-email fetch alone blocks up to 120s (EmailClient), on
+			// top of the CrowdSignal dashboard, activation and /sites navigation;
+			// the 120s default would be spent on the email wait alone.
+			test.setTimeout( 240 * 1000 );
+
 			let activationLink: string;
 
 			await test.step( 'Navigate to CrowdSignal WPCC endpoint', async () => {

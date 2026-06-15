@@ -121,7 +121,9 @@ test.describe(
 			} );
 
 			await test.step( 'Installs theme in Marketplace thank you page', async () => {
-				await page.getByText( 'Customize this design' ).waitFor();
+				// Marketplace theme install can lag after purchase; bound it at 30s
+				// so a stuck install fails here instead of consuming the whole test.
+				await page.getByText( 'Customize this design' ).waitFor( { timeout: 30 * 1000 } );
 			} );
 
 			await test.step( 'Checks the active theme', async () => {

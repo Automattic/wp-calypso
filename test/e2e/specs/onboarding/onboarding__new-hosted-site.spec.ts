@@ -41,7 +41,10 @@ test.describe(
 		} );
 
 		test( 'As a new user, I can purchase a hosted site and cancel it', async ( { page } ) => {
-			test.setTimeout( 240 * 1000 );
+			// ~360s of dominant waits (90s purchase + 180s Atomic transfer + 30s
+			// checkout + two 30s refund notices) plus signup, billing and two
+			// cancellation navigations; 420s covers the worst case.
+			test.setTimeout( 420 * 1000 );
 
 			let cartCheckoutPage: CartCheckoutPage;
 

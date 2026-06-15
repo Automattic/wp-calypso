@@ -61,9 +61,10 @@ test.describe(
 			page,
 			browser,
 		} ) => {
-			// Signup + purchase + launch + cancel stacks a 90s purchase timeout
-			// with several 30s waits; the 120s config default is not enough.
-			test.setTimeout( 240 * 1000 );
+			// ~245s of dominant waits (90s purchase + 30s launchpad + 30s notice +
+			// the domain-search settle) plus signup, onboarding and launch; 300s
+			// leaves margin the 120s default cannot give.
+			test.setTimeout( 300 * 1000 );
 
 			let cartCheckoutPage: CartCheckoutPage;
 			let originalAmount: number;
