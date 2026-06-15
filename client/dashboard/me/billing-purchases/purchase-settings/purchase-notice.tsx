@@ -112,10 +112,8 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 			} );
 		}
 	}, [ plan_changed, navigate ] );
-	// Transient success notice shown after scheduling a delayed downgrade.
-	const [ showDelayedDowngradeScheduledNotice, setShowDelayedDowngradeScheduledNotice ] = useState(
-		Boolean( delayed_downgrade_scheduled )
-	);
+	// Strip ?delayed_downgrade_scheduled from the URL on mount so refresh
+	// doesn't re-trigger anything; the persistent warning notice handles display.
 	useEffect( () => {
 		if ( delayed_downgrade_scheduled ) {
 			navigate( {
@@ -206,27 +204,11 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		);
 	}
 
-	// Transient success notice after scheduling a delayed downgrade.
-	if ( showDelayedDowngradeScheduledNotice ) {
-		const slug = purchase.delayed_downgrade_to_product_slug;
-		const targetPlanName = slug ? getPlanNames()[ slug ] ?? null : null;
-		return (
-			<Notice variant="success" onClose={ () => setShowDelayedDowngradeScheduledNotice( false ) }>
-				{ targetPlanName
-					? sprintf(
-							// translators: %s is the name of the plan, e.g. "Personal"
-							__( 'Your plan is scheduled to downgrade to %s at your next renewal.' ),
-							targetPlanName
-					  )
-					: __( 'Your plan downgrade has been scheduled for your next renewal.' ) }
-			</Notice>
-		);
-	}
-
 	// Persistent warning notice when a delayed downgrade is pending.
 	if ( purchase.is_delayed_downgrade_pending ) {
 		const slug = purchase.delayed_downgrade_to_product_slug;
-		const targetPlanName = slug ? getPlanNames()[ slug ] ?? null : null;
+		const planNames = getPlanNames() as Record< string, string | undefined >;
+		const targetPlanName = slug ? planNames[ slug ] ?? null : null;
 		return (
 			<Notice
 				variant="warning"

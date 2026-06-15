@@ -1558,10 +1558,13 @@ class PurchaseNotice extends Component<
 			return planChangedRedirectNotice;
 		}
 
-		// Transient success notice after scheduling a delayed downgrade.
-		const delayedDowngradeScheduledNotice = this.renderDelayedDowngradeScheduledNotice();
-		if ( delayedDowngradeScheduledNotice ) {
-			return delayedDowngradeScheduledNotice;
+		// Transient success notice after scheduling — only shown when the
+		// persistent warning isn't available yet (e.g. data still loading).
+		if ( ! purchase.isDelayedDowngradePending ) {
+			const delayedDowngradeScheduledNotice = this.renderDelayedDowngradeScheduledNotice();
+			if ( delayedDowngradeScheduledNotice ) {
+				return delayedDowngradeScheduledNotice;
+			}
 		}
 
 		// Persistent warning notice when a delayed downgrade is pending.
