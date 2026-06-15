@@ -433,7 +433,7 @@ export const usePromoteWidget = (): PromoteWidgetStatus => {
  * @param minBlazeAdsVersion Minimum Blaze Ads version to check.
  */
 export const useJetpackBlazeVersionCheck = (
-	siteId: number,
+	siteId: number | null | undefined,
 	minJetpackVersion: string,
 	minBlazeAdsVersion: string
 ): boolean => {
