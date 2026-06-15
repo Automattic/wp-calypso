@@ -4,7 +4,7 @@ import { Gridicon, EmbedContainer } from '@automattic/components';
 import { isDefaultLocale } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { get, startsWith, pickBy } from 'lodash';
+import { get, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component, useMemo } from 'react';
 import { connect } from 'react-redux';
@@ -502,7 +502,7 @@ export class FullPostView extends Component {
 	 * @returns {number} - the commentId in the url of the form #comment-${id}
 	 */
 	getCommentIdFromUrl = () =>
-		startsWith( window.location.hash, '#comment-' )
+		window.location.hash.startsWith( '#comment-' )
 			? +window.location.hash.split( '-' )[ 1 ]
 			: undefined;
 

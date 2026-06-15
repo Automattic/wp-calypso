@@ -1,5 +1,5 @@
 import { withStorageKey } from '@automattic/state-utils';
-import { get, isEmpty, pick, startsWith } from 'lodash';
+import { get, isEmpty, pick } from 'lodash';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import {
@@ -72,9 +72,9 @@ export const redirectTo = combineReducers( {
 		switch ( action.type ) {
 			case ROUTE_SET: {
 				const { path, query } = action;
-				if ( startsWith( path, '/log-in' ) ) {
+				if ( path.startsWith( '/log-in' ) ) {
 					return query.redirect_to || state;
-				} else if ( startsWith( path, '/start/account' ) ) {
+				} else if ( path.startsWith( '/start/account' ) ) {
 					return query.redirect_to || state;
 				} else if ( '/jetpack/connect/authorize' === path ) {
 					return addQueryArgs( query, path );

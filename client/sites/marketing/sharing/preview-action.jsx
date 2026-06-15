@@ -1,6 +1,5 @@
 import { Gridicon } from '@automattic/components';
 import clsx from 'clsx';
-import { startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 
 const SharingButtonsPreviewAction = ( {
@@ -13,9 +12,9 @@ const SharingButtonsPreviewAction = ( {
 } ) => {
 	const classes = clsx( 'sharing-buttons-preview-action', {
 		'is-active': active,
-		'is-top': startsWith( position, 'top' ),
+		'is-top': position.startsWith( 'top' ),
 		'is-right': position.endsWith( '-right' ),
-		'is-bottom': startsWith( position, 'bottom' ),
+		'is-bottom': position.startsWith( 'bottom' ),
 		'is-left': position.endsWith( '-left' ),
 	} );
 

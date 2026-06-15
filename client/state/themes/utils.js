@@ -1,4 +1,4 @@
-import { get, includes, map, omit, omitBy, some, startsWith } from 'lodash';
+import { get, includes, map, omit, omitBy, some } from 'lodash';
 import { DEFAULT_THEME_QUERY } from './constants';
 
 /**
@@ -32,7 +32,7 @@ const DELISTED_WPORG_THEMES = [ 'shopline', 'store-shopline' ];
  */
 export function isPremium( theme ) {
 	const themeStylesheet = get( theme, 'stylesheet', false );
-	return themeStylesheet && startsWith( themeStylesheet, 'premium/' );
+	return themeStylesheet && themeStylesheet.startsWith( 'premium/' );
 }
 
 /**

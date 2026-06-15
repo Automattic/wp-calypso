@@ -1,4 +1,3 @@
-import { startsWith } from 'lodash';
 import { makeImageURLSafe } from './utils';
 
 export default function safeImagePropertiesForWidth( maxWidth ) {
@@ -16,7 +15,7 @@ export default function safeImagePropertiesForWidth( maxWidth ) {
 		}
 		if ( post.attachments ) {
 			Object.values( post.attachments ).forEach( function ( attachment ) {
-				if ( startsWith( attachment.mime_type, 'image/' ) ) {
+				if ( ( attachment.mime_type ?? '' ).startsWith( 'image/' ) ) {
 					makeImageURLSafe( attachment, 'URL', maxWidth, post.URL );
 				}
 			} );

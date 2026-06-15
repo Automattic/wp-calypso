@@ -1,4 +1,4 @@
-import { get, keys, last, map, omit, reduce } from 'lodash';
+import { get, keys, map, omit, reduce } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, PureComponent } from 'react';
 import InfiniteList from 'calypso/components/infinite-list';
@@ -52,7 +52,7 @@ class SortedGrid extends PureComponent {
 								text={ this.props.getGroupLabel( group ) }
 								itemsCount={ count }
 								itemsPerRow={ this.props.itemsPerRow }
-								lastInRow={ last( keys( row.groups ) ) === group }
+								lastInRow={ keys( row.groups ).at( -1 ) === group }
 								scale={ this.props.scale }
 							/>
 						)

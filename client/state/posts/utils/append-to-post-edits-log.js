@@ -1,4 +1,4 @@
-import { isEmpty, last } from 'lodash';
+import { isEmpty } from 'lodash';
 import { mergePostEdits } from 'calypso/state/posts/utils/merge-post-edits';
 
 /**
@@ -15,7 +15,7 @@ export function appendToPostEditsLog( postEditsLog, newPostEdits ) {
 		return [ newPostEdits ];
 	}
 
-	const lastEdits = last( postEditsLog );
+	const lastEdits = postEditsLog.at( -1 );
 
 	if ( typeof lastEdits === 'string' ) {
 		return [ ...postEditsLog, newPostEdits ];

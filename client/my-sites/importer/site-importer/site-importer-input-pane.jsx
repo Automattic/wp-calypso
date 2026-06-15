@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { isEmpty, flowRight, trim, sortBy } from 'lodash';
+import { isEmpty, flowRight, sortBy } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -141,7 +141,7 @@ class SiteImporterInputPane extends Component {
 	};
 
 	validateSite = () => {
-		const siteURL = trim( this.state.siteURLInput );
+		const siteURL = this.state.siteURLInput.trim();
 
 		if ( ! siteURL ) {
 			return;

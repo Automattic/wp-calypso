@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import { get, omit, startsWith } from 'lodash';
+import { get, omit } from 'lodash';
 import { trailingslashit } from 'calypso/lib/route';
 import { JETPACK_SETTINGS_REQUEST, JETPACK_SETTINGS_SAVE } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
@@ -132,7 +132,7 @@ export const retryOrAnnounceSaveFailure = ( action, { message: errorMessage } ) 
 	// properly, in which case a subsequent request will return 'success'.
 	if (
 		get( settings, [ 'onboarding', 'installWooCommerce' ] ) !== true ||
-		! startsWith( errorMessage, 'cURL error 28' ) || // cURL timeout
+		! ( errorMessage ?? '' ).startsWith( 'cURL error 28' ) || // cURL timeout
 		retryCount > MAX_WOOCOMMERCE_INSTALL_RETRIES
 	) {
 		return handleSaveFailure( { siteId }, action );

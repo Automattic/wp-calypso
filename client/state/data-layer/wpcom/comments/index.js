@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
-import { get, startsWith, pickBy, map } from 'lodash';
+import { get, pickBy, map } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
 import {
 	COMMENTS_REQUEST,
@@ -148,7 +148,7 @@ export const announceFailure =
 export const deleteComment = ( action ) => ( dispatch, getState ) => {
 	const { siteId, commentId } = action;
 
-	if ( startsWith( commentId, 'placeholder' ) ) {
+	if ( String( commentId ).startsWith( 'placeholder' ) ) {
 		return;
 	}
 

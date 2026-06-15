@@ -7,7 +7,7 @@ import {
 } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { trim, flatMap } from 'lodash';
+import { flatMap } from 'lodash';
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -69,7 +69,7 @@ class SearchStream extends React.Component {
 	updateQuery = ( newValue ) => {
 		this.scrollToTop();
 		// Remove whitespace from newValue and limit to 1024 characters
-		const trimmedValue = trim( newValue ).substring( 0, 1024 );
+		const trimmedValue = ( newValue ?? '' ).trim().substring( 0, 1024 );
 		if (
 			( trimmedValue !== '' && trimmedValue.length > 1 && trimmedValue !== this.props.query ) ||
 			newValue === ''

@@ -2,7 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { get, startsWith } from 'lodash';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -55,11 +55,11 @@ class PeopleListSectionHeader extends Component {
 	getPopoverText() {
 		const { currentRoute, translate } = this.props;
 
-		if ( startsWith( currentRoute, '/people/followers' ) ) {
+		if ( ( currentRoute ?? '' ).startsWith( '/people/followers' ) ) {
 			return translate( 'A list of people currently following your site.' );
 		}
 
-		if ( startsWith( currentRoute, '/people/email-followers' ) ) {
+		if ( ( currentRoute ?? '' ).startsWith( '/people/email-followers' ) ) {
 			return translate( 'A list of people who are subscribed to your blog via email only.' );
 		}
 
@@ -69,13 +69,13 @@ class PeopleListSectionHeader extends Component {
 	isSubscribersTab() {
 		const { currentRoute } = this.props;
 
-		return startsWith( currentRoute, '/people/email-followers' );
+		return ( currentRoute ?? '' ).startsWith( '/people/email-followers' );
 	}
 
 	isFollowersTab() {
 		const { currentRoute } = this.props;
 
-		return startsWith( currentRoute, '/people/followers' );
+		return ( currentRoute ?? '' ).startsWith( '/people/followers' );
 	}
 
 	render() {

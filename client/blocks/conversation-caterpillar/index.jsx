@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import { map, get, last, uniqBy, size, filter, compact } from 'lodash';
+import { map, get, uniqBy, size, filter, compact } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { isAncestor } from 'calypso/blocks/comments/utils';
@@ -77,7 +77,7 @@ class ConversationCaterpillarComponent extends Component {
 		// Only display each author once
 		const uniqueAuthors = uniqBy( map( expandableComments, 'author' ), 'avatar_URL' );
 		const uniqueAuthorsCount = size( uniqueAuthors );
-		const lastAuthorName = get( last( uniqueAuthors ), 'name' );
+		const lastAuthorName = get( uniqueAuthors.at( -1 ), 'name' );
 
 		return (
 			<div className="conversation-caterpillar">

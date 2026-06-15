@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { addLocaleToPath, isDefaultLocale } from '@automattic/i18n-utils';
 import { getLocaleSlug } from 'i18n-calypso';
-import { get, includes, startsWith } from 'lodash';
+import { get, includes } from 'lodash';
 import {
 	isAkismetOAuth2Client,
 	isCrowdsignalOAuth2Client,
@@ -56,7 +56,7 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 
 	if (
 		// Match locales like `/log-in/jetpack/es`
-		startsWith( currentRoute, '/log-in/jetpack' )
+		( currentRoute ?? '' ).startsWith( '/log-in/jetpack' )
 	) {
 		// Basic validation that we're in a valid Jetpack Authorization flow
 		if (

@@ -1,4 +1,4 @@
-import { last, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { deleteP2KeyringConnection } from 'calypso/state/sharing/keyring/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -25,7 +25,7 @@ export class P2Slack extends SharingService {
 	removeConnection = () => {
 		this.setState( { isDisconnecting: true } );
 		this.props.deleteStoredKeyringConnection(
-			last( this.props.keyringConnections ),
+			this.props.keyringConnections?.at( -1 ),
 			this.props.siteId
 		);
 	};

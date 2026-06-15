@@ -1,6 +1,5 @@
 import page from '@automattic/calypso-router';
 import { getLanguageRouteParam, getAnyLanguageRouteParam } from '@automattic/i18n-utils';
-import { startsWith } from 'lodash';
 import {
 	makeLayout,
 	redirectInvalidLanguage,
@@ -13,7 +12,7 @@ import { sidebar, setBeforePrimary } from 'calypso/reader/controller';
 import { tagListing } from './controller';
 
 const redirectHashtaggedTags = ( context, next ) => {
-	if ( context.hashstring && startsWith( context.pathname, '/tag/#' ) ) {
+	if ( context.hashstring && ( context.pathname ?? '' ).startsWith( '/tag/#' ) ) {
 		page.redirect( `/tag/${ context.hashstring }` );
 	}
 	next();

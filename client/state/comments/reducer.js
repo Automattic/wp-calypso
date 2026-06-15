@@ -1,16 +1,5 @@
 import { withStorageKey } from '@automattic/state-utils';
-import {
-	filter,
-	orderBy,
-	has,
-	map,
-	reject,
-	isEqual,
-	get,
-	includes,
-	omit,
-	startsWith,
-} from 'lodash';
+import { filter, orderBy, has, map, reject, isEqual, get, includes, omit } from 'lodash';
 import {
 	COMMENT_COUNTS_UPDATE,
 	COMMENTS_CHANGE_STATUS,
@@ -482,7 +471,7 @@ export const counts = ( state = {}, action ) => {
 		}
 		case COMMENTS_DELETE: {
 			const { siteId, postId = -1, commentId } = action;
-			if ( commentId && startsWith( commentId, 'placeholder' ) ) {
+			if ( commentId && String( commentId ).startsWith( 'placeholder' ) ) {
 				return state;
 			}
 			const previousStatus = get( action, 'meta.comment.previousStatus' );

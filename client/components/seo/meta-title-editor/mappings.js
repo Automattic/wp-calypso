@@ -33,7 +33,6 @@ import {
 	camelCase,
 	flowRight as compose,
 	get,
-	last,
 	map,
 	mapKeys,
 	mapValues,
@@ -71,7 +70,7 @@ export const nativeToRaw = compose(
 		reduce(
 			list,
 			( format, piece ) => {
-				const lastPiece = last( format );
+				const lastPiece = format.at( -1 );
 
 				if ( lastPiece && 'string' === lastPiece.type && 'string' === piece.type ) {
 					return [ ...format.slice( 0, -1 ), mergeStringPieces( lastPiece, piece ) ];
