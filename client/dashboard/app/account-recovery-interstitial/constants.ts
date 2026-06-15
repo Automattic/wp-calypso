@@ -3,12 +3,6 @@
  */
 
 /**
- * Feature flag gating the whole interstitial. Off in production until launch;
- * enabled in development config so it can be exercised locally.
- */
-export const RECOVERY_INTERSTITIAL_FLAG = 'dashboard/account-recovery-interstitial';
-
-/**
  * User-meta key surfaced through /me/settings. Holds a unix timestamp (seconds)
  * until which the interstitial is snoozed; 0/unset = not snoozed.
  */

@@ -3,7 +3,6 @@ import {
 	userSettingsQuery,
 	userSettingsMutation,
 } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Modal, Button, __experimentalVStack as VStack } from '@wordpress/components';
@@ -13,7 +12,6 @@ import { Text } from '../../components/text';
 import { useAnalytics } from '../analytics';
 import { computeEligibility } from './compute-eligibility';
 import {
-	RECOVERY_INTERSTITIAL_FLAG,
 	RECOVERY_INTERSTITIAL_QA_PARAM,
 	RECOVERY_INTERSTITIAL_SNOOZE_META,
 	RECOVERY_INTERSTITIAL_TRACKS,
@@ -100,19 +98,14 @@ function isQaForced(): boolean {
  * nothing unless the feature flag is on and the user is eligible (or QA-forced).
  */
 export default function AccountRecoveryInterstitial() {
-	const isFeatureEnabled = isEnabled( RECOVERY_INTERSTITIAL_FLAG );
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
 	const titleId = useId();
 
-	const { data: accountRecovery, isSuccess: isAccountRecoveryLoaded } = useQuery( {
-		...accountRecoveryQuery(),
-		enabled: isFeatureEnabled,
-	} );
-	const { data: userSettings, isSuccess: isUserSettingsLoaded } = useQuery( {
-		...userSettingsQuery(),
-		enabled: isFeatureEnabled,
-	} );
+	const { data: accountRecovery, isSuccess: isAccountRecoveryLoaded } = useQuery(
+		accountRecoveryQuery()
+	);
+	const { data: userSettings, isSuccess: isUserSettingsLoaded } = useQuery( userSettingsQuery() );
 
 	const snoozeMutation = useMutation( userSettingsMutation() );
 
@@ -149,7 +142,7 @@ export default function AccountRecoveryInterstitial() {
 	// coarse 3-tier `security_level`. Also selects the copy variant.
 	const variant = getInterstitialVariant( hasRecoveryMethod, hasTwoFactor, hasBackupCodes );
 
-	const shouldDisplay = isFeatureEnabled && ! isDismissed && ( isQaForced() || isEligible );
+	const shouldDisplay = ! isDismissed && ( isQaForced() || isEligible );
 
 	useEffect( () => {
 		if ( shouldDisplay && ! hasRecordedImpression.current ) {

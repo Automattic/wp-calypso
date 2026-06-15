@@ -2,12 +2,11 @@
  * @jest-environment jsdom
  */
 
-import { disable, enable } from '@automattic/calypso-config';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
-import { RECOVERY_INTERSTITIAL_FLAG, RECOVERY_INTERSTITIAL_SNOOZE_META } from '../constants';
+import { RECOVERY_INTERSTITIAL_SNOOZE_META } from '../constants';
 import AccountRecoveryInterstitial from '../index';
 import type { AccountRecovery, UserSettings } from '@automattic/api-core';
 
@@ -46,14 +45,6 @@ function mockUserSettings( data: Partial< UserSettings > ) {
 		.query( true )
 		.reply( 200, data );
 }
-
-beforeAll( () => {
-	enable( RECOVERY_INTERSTITIAL_FLAG );
-} );
-
-afterAll( () => {
-	disable( RECOVERY_INTERSTITIAL_FLAG );
-} );
 
 afterEach( () => {
 	nock.cleanAll();

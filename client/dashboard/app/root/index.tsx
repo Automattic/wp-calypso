@@ -43,6 +43,9 @@ const VERY_SLOW_THRESHOLD_MS = 6000;
 function Root() {
 	const isOmnibarEnabled =
 		isEnabled( 'dashboard/omnibar' ) || isEnabled( 'dashboard/omnibar-radical' );
+	const isAccountRecoveryInterstitialEnabled = isEnabled(
+		'dashboard/account-recovery-interstitial'
+	);
 	const { name, supports, LoadingLogo = WordPressLogo } = useAppContext();
 	const isFetching = useIsFetching();
 	const router = useRouter();
@@ -204,7 +207,7 @@ function Root() {
 			{ isOmnibarEnabled && supports.help && <OmnibarAgentsManager /> }
 			{ isOmnibarEnabled && <OmnibarSiteSwitcher /> }
 			<Snackbars />
-			<AccountRecoveryInterstitial />
+			{ isAccountRecoveryInterstitialEnabled && <AccountRecoveryInterstitial /> }
 			<PageViewTracker />
 			<NavigationBlockerRegistry />
 			{ 'development' === process.env.NODE_ENV && (
