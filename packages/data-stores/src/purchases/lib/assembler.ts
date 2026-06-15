@@ -61,6 +61,7 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		isHundredYearDomain: Boolean( purchase.is_hundred_year_domain ),
 		isLocked: Boolean( purchase.is_locked ),
 		isInAppPurchase: Boolean( purchase.is_iap_purchase ),
+		isPlanTypeDowngradable: Boolean( purchase.is_plan_type_downgradable ),
 		isRechargeable: Boolean( purchase.is_rechargeable ),
 		isRefundable: Boolean( purchase.is_refundable ),
 		isWithinInitialRefundWindow: Boolean( purchase.is_within_initial_refund_window ),

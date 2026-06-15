@@ -620,13 +620,11 @@ class ManagePurchase extends Component<
 		if ( ! purchase || ! isPlan( purchase ) ) {
 			return false;
 		}
-		if (
-			! isInExpirationGracePeriod( purchase ) &&
-			! isWithinRefundWindowDowngradeEligible( purchase )
-		) {
-			return false;
-		}
-		return true;
+		return (
+			isInExpirationGracePeriod( purchase ) ||
+			isWithinRefundWindowDowngradeEligible( purchase ) ||
+			purchase.isPlanTypeDowngradable
+		);
 	}
 
 	renderChangePlanNavItem() {

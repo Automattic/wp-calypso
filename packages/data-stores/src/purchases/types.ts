@@ -65,6 +65,7 @@ export interface Purchase {
 	isHundredYearDomain?: boolean;
 	isInAppPurchase: boolean;
 	isLocked: boolean;
+	isPlanTypeDowngradable: boolean;
 	isRechargeable: boolean;
 	isRefundable: boolean;
 	isWithinInitialRefundWindow: boolean;

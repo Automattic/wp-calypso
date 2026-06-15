@@ -474,7 +474,8 @@ function shouldShowChangePlan( purchase: Purchase ): boolean {
 	}
 	return (
 		( purchase.is_past_expiry_date && purchase.is_plan ) ||
-		isWithinRefundWindowDowngradeEligible( purchase )
+		isWithinRefundWindowDowngradeEligible( purchase ) ||
+		( purchase.is_plan && purchase.is_plan_type_downgradable )
 	);
 }
 
