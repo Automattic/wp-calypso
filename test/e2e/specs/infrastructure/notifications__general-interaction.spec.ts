@@ -30,6 +30,12 @@ test.describe( 'Notifications: General Interactions', { tag: [ tags.CALYPSO_PR ]
 	let commentingUserRestAPIClient: RestAPIClient;
 
 	test.afterAll( async () => {
+		// The test is skipped on mobile, where no setup runs, so the hook has
+		// nothing to clean up and the account references are undefined.
+		if ( ! notificationsUser ) {
+			return;
+		}
+
 		const siteId = notificationsUser.credentials.testSites?.primary.id as number;
 
 		for ( const createdComment of [ newComment, newCommentToTrash ] ) {
