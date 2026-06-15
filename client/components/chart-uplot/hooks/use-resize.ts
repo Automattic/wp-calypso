@@ -4,8 +4,8 @@ import { useEffect } from 'react';
 const THROTTLE_DURATION = 400; // in ms
 
 export default function useResize(
-	uplotRef: React.RefObject< uPlot >,
-	containerRef: React.RefObject< HTMLDivElement >
+	uplotRef: React.RefObject< uPlot | null >,
+	containerRef: React.RefObject< HTMLDivElement | null >
 ) {
 	useEffect( () => {
 		if ( ! uplotRef.current || ! containerRef.current ) {
