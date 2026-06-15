@@ -38,7 +38,7 @@ function subscribeToBodyClasses( notify: () => void ): () => void {
  * Prevents docking the assistant when the user is browsing with certain conditions.
  *
  * IMPORTANT: Keep this logic in sync with
- * `jetpack/projects/packages/agents-manager/src/js/sidebar-docking-viewport-height-gate.ts`.
+ * `jetpack/projects/packages/agents-manager/src/js/sidebar-docking-gate.ts`.
  */
 const useCanDock = ( { desktopMediaQuery }: { desktopMediaQuery: string } ) => {
 	const isDesktop = useMediaQuery( desktopMediaQuery );
