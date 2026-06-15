@@ -85,7 +85,14 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 			await notificationsComponent.clickNotificationAction( 'Like' );
 		} );
 
+		it( 'Mark comment as spam', async function () {
+			await notificationsComponent.clickNotificationAction( 'Spam' );
+		} );
+
 		it( 'Trash comment', async function () {
+			// Spam returned to the list view; re-open the same notification to
+			// reach its detail view and the Trash action.
+			await notificationsComponent.openNotification( comment );
 			await notificationsComponent.trashNotification();
 		} );
 
