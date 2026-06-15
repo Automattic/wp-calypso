@@ -29,12 +29,6 @@ export const SNOOZE_DAYS: Record< SecurityLevel, number > = {
 	strong: 365, // fully set up -> yearly periodic check
 };
 
-export const RECOVERY_INTERSTITIAL_TRACKS = {
-	impression: 'calypso_account_recovery_interstitial_impression',
-	ctaClick: 'calypso_account_recovery_interstitial_cta_click',
-	dismiss: 'calypso_account_recovery_interstitial_dismiss',
-} as const;
-
 /** Where the CTAs send the user (MSD `/me/security` routes). */
 export const RECOVERY_INTERSTITIAL_ROUTES = {
 	accountRecovery: '/me/security/account-recovery',

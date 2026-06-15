@@ -11,11 +11,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { Text } from '../../components/text';
 import { useAnalytics } from '../analytics';
 import { computeEligibility } from './compute-eligibility';
-import {
-	RECOVERY_INTERSTITIAL_QA_PARAM,
-	RECOVERY_INTERSTITIAL_SNOOZE_META,
-	RECOVERY_INTERSTITIAL_TRACKS,
-} from './constants';
+import { RECOVERY_INTERSTITIAL_QA_PARAM, RECOVERY_INTERSTITIAL_SNOOZE_META } from './constants';
 import { getInterstitialCopy, getInterstitialVariant } from './copy';
 import heroIllustration from './hero-illustration.png';
 import type { InterstitialCta, InterstitialVariant } from './copy';
@@ -147,7 +143,7 @@ export default function AccountRecoveryInterstitial() {
 	useEffect( () => {
 		if ( shouldDisplay && ! hasRecordedImpression.current ) {
 			hasRecordedImpression.current = true;
-			recordTracksEvent( RECOVERY_INTERSTITIAL_TRACKS.impression, {
+			recordTracksEvent( 'calypso_account_recovery_interstitial_impression', {
 				security_level: securityLevel,
 				recovery_status: variant,
 			} );
@@ -181,7 +177,7 @@ export default function AccountRecoveryInterstitial() {
 	};
 
 	const handleSnooze = () => {
-		recordTracksEvent( RECOVERY_INTERSTITIAL_TRACKS.dismiss, {
+		recordTracksEvent( 'calypso_account_recovery_interstitial_dismiss', {
 			security_level: securityLevel,
 			recovery_status: variant,
 		} );
@@ -189,7 +185,7 @@ export default function AccountRecoveryInterstitial() {
 	};
 
 	const handleCtaClick = ( cta: InterstitialCta ) => {
-		recordTracksEvent( RECOVERY_INTERSTITIAL_TRACKS.ctaClick, {
+		recordTracksEvent( 'calypso_account_recovery_interstitial_cta_click', {
 			security_level: securityLevel,
 			recovery_status: variant,
 			cta_id: cta.id,
