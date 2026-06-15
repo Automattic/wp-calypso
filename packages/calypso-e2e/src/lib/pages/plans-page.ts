@@ -275,6 +275,14 @@ export class PlansPage {
 	 * @throws If the expected plan title is not found in the timeout period.
 	 */
 	async validateActivePlan( expectedPlan: Plans ): Promise< void > {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			// Mobile stacks the plans and surfaces the owned plan under a "Your
+			// plan" header with a "Manage plan" control, not the desktop spotlight
+			// card. Confirm both the plan name and that owned-plan control.
+			await this.page.getByRole( 'heading', { name: expectedPlan, exact: true } ).first().waitFor();
+			await this.page.getByRole( 'button', { name: 'Manage plan' } ).first().waitFor();
+			return;
+		}
 		await this.page.locator( selectors.spotlightPlan ).getByText( expectedPlan ).waitFor();
 	}
 

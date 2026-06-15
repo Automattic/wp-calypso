@@ -3,8 +3,6 @@ import {
 	CartCheckoutPage,
 	DataHelper,
 	MediaHelper,
-	MediaPage,
-	NavbarComponent,
 	NewSiteResponse,
 	PlansPage,
 	PostResponse,
@@ -15,7 +13,7 @@ import {
 	TestAccount,
 	TestFile,
 } from '@automattic/calypso-e2e';
-import { tags, test } from '../../lib/pw-base';
+import { tags, test, expect } from '../../lib/pw-base';
 import { TEST_IMAGE_PATH } from '../constants';
 import { apiDeleteSite } from '../shared';
 
@@ -42,6 +40,7 @@ test.describe(
 		let restAPIClient: RestAPIClient;
 		let siteCreatedFlag = false;
 		let testMediaFile: TestFile;
+		let uploadedMediaUrl: string;
 		const publishedPosts: PostResponse[] = [];
 
 		test.afterAll( async () => {
@@ -90,9 +89,11 @@ test.describe(
 
 					console.info( 'Adding test image to site.' );
 					testMediaFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
-					await restAPIClient.uploadMedia( newSiteDetails.blog_details.blogid, {
-						media: testMediaFile,
-					} );
+					const uploadedMedia = await restAPIClient.uploadMedia(
+						newSiteDetails.blog_details.blogid,
+						{ media: testMediaFile }
+					);
+					uploadedMediaUrl = uploadedMedia.URL;
 
 					const testAccount = new TestAccount( 'simpleSiteFreePlanUser' );
 					await testAccount.authenticate( page );
@@ -137,8 +138,10 @@ test.describe(
 			} );
 
 			await test.step( 'Return to My Home dashboard', async () => {
-				const navbarComponent = new NavbarComponent( page );
-				await navbarComponent.clickMySites();
+				// The checkout thank-you page shows a minimal masterbar without the
+				// "My Sites" button, so use the page's own "Back to dashboard" control
+				// to return to Calypso.
+				await page.getByRole( 'button', { name: 'Back to dashboard' } ).click();
 			} );
 
 			await test.step( 'Navigate to Upgrades > Plans', async () => {
@@ -170,9 +173,12 @@ test.describe(
 			await testContext.close();
 
 			await test.step( 'Uploaded media is preserved', async () => {
-				const mediaPage = new MediaPage( page );
-				await mediaPage.visit( newSiteDetails.blog_details.site_slug );
-				await mediaPage.selectItem( { name: testMediaFile.basename } );
+				// The site may render either the Calypso or wp-admin media library
+				// depending on its admin-interface setting, so validate preservation
+				// the same way the posts are: the uploaded file is still served
+				// publicly at its media URL.
+				const response = await page.request.get( uploadedMediaUrl );
+				expect( response.ok() ).toBeTruthy();
 			} );
 		} );
 	}
