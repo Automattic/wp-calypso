@@ -1,5 +1,5 @@
 import { DomainAvailabilityStatus, type BundleSuggestion } from '@automattic/api-core';
-import { render, screen, waitFor } from '@testing-library/react';
+import { getByText, queryByText, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { buildAvailability } from '../../test-helpers/factories/availability';
 import { buildCart, buildCartItem } from '../../test-helpers/factories/cart';
@@ -928,6 +928,271 @@ describe( 'ResultsPage', () => {
 					] ),
 				} )
 			);
+		} );
+
+		it( 'shows the server error message on the bundle card when adding the bundle fails', async () => {
+			const user = userEvent.setup();
+			const onAddBundle = jest
+				.fn()
+				.mockRejectedValue(
+					new Error(
+						'We can’t determine the availability of the domain you’re trying to register.'
+					)
+				);
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-bundle-error' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-error.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'test-bundle-error' },
+				bundleSuggestion: buildBundleSuggestion( 'test-bundle-error' ),
+			} );
+
+			// Scoped to the render container because the error Notice also announces
+			// the message through the a11y-speak live region on document.body.
+			const { container } = render(
+				<TestDomainSearch
+					cart={ buildCart( { onAddBundle } ) }
+					config={ { showBundleSuggestions: true } }
+					query="test-bundle-error"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Get bundle' } ) );
+
+			await waitFor( () => {
+				expect(
+					getByText(
+						container,
+						'We can’t determine the availability of the domain you’re trying to register.'
+					)
+				).toBeInTheDocument();
+			} );
+		} );
+
+		it( 'shows a generic error message when the rejection has no usable message', async () => {
+			const user = userEvent.setup();
+			const onAddBundle = jest.fn().mockRejectedValue( new Error( '' ) );
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-bundle-fallback' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-fallback.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'test-bundle-fallback' },
+				bundleSuggestion: buildBundleSuggestion( 'test-bundle-fallback' ),
+			} );
+
+			const { container } = render(
+				<TestDomainSearch
+					cart={ buildCart( { onAddBundle } ) }
+					config={ { showBundleSuggestions: true } }
+					query="test-bundle-fallback"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Get bundle' } ) );
+
+			await waitFor( () => {
+				expect(
+					getByText(
+						container,
+						'Sorry, we couldn’t add the bundle to your cart. Please try again.'
+					)
+				).toBeInTheDocument();
+			} );
+		} );
+
+		it( 'clears the error when retrying succeeds', async () => {
+			const user = userEvent.setup();
+			const onAddBundle = jest
+				.fn()
+				.mockRejectedValueOnce( new Error( 'Transient bundle error' ) )
+				.mockResolvedValueOnce( undefined );
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-bundle-retry' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-retry.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'test-bundle-retry' },
+				bundleSuggestion: buildBundleSuggestion( 'test-bundle-retry' ),
+			} );
+
+			const { container } = render(
+				<TestDomainSearch
+					cart={ buildCart( { onAddBundle } ) }
+					config={ { showBundleSuggestions: true } }
+					query="test-bundle-retry"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Get bundle' } ) );
+
+			await waitFor( () => {
+				expect( getByText( container, 'Transient bundle error' ) ).toBeInTheDocument();
+			} );
+
+			await user.click( screen.getByRole( 'button', { name: 'Get bundle' } ) );
+
+			await waitFor( () => {
+				expect( queryByText( container, 'Transient bundle error' ) ).not.toBeInTheDocument();
+			} );
+
+			expect( onAddBundle ).toHaveBeenCalledTimes( 2 );
+		} );
+
+		it( 'clears the error when the search query changes', async () => {
+			const user = userEvent.setup();
+			const onAddBundle = jest.fn().mockRejectedValue( new Error( 'Stale bundle error' ) );
+			const cart = buildCart( { onAddBundle } );
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-bundle-stale' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-stale.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'test-bundle-stale' },
+				bundleSuggestion: buildBundleSuggestion( 'test-bundle-stale' ),
+			} );
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-bundle-fresh' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-fresh.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'test-bundle-fresh' },
+				bundleSuggestion: buildBundleSuggestion( 'test-bundle-fresh' ),
+			} );
+
+			const { container, rerender } = render(
+				<TestDomainSearch
+					cart={ cart }
+					config={ { showBundleSuggestions: true } }
+					query="test-bundle-stale"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Get bundle' } ) );
+
+			await waitFor( () => {
+				expect( getByText( container, 'Stale bundle error' ) ).toBeInTheDocument();
+			} );
+
+			// A new search renders a new bundle suggestion; the old failure
+			// shouldn't be pinned to it.
+			rerender(
+				<TestDomainSearch
+					cart={ cart }
+					config={ { showBundleSuggestions: true } }
+					query="test-bundle-fresh"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await waitFor( () => {
+				expect( queryByText( container, 'Stale bundle error' ) ).not.toBeInTheDocument();
+			} );
+
+			expect( await screen.findByRole( 'button', { name: 'Get bundle' } ) ).toBeEnabled();
+		} );
+
+		it( 'disables the CTA while the bundle add is pending', async () => {
+			const user = userEvent.setup();
+			let resolveAdd = () => {};
+			const onAddBundle = jest.fn().mockImplementation(
+				() =>
+					new Promise< void >( ( resolve ) => {
+						resolveAdd = resolve;
+					} )
+			);
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-bundle-pending' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-pending.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'test-bundle-pending' },
+				bundleSuggestion: buildBundleSuggestion( 'test-bundle-pending' ),
+			} );
+
+			render(
+				<TestDomainSearch
+					cart={ buildCart( { onAddBundle } ) }
+					config={ { showBundleSuggestions: true } }
+					query="test-bundle-pending"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Get bundle' } ) );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'button', { name: 'Get bundle' } ) ).toBeDisabled();
+			} );
+
+			resolveAdd();
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'button', { name: 'Get bundle' } ) ).toBeEnabled();
+			} );
+
+			expect( onAddBundle ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'yields the bundle error when another add-to-cart mutation starts', async () => {
+			const user = userEvent.setup();
+			const onAddBundle = jest.fn().mockRejectedValue( new Error( 'Bundle add failed' ) );
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-bundle-supersede' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-supersede.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'test-bundle-supersede' },
+				bundleSuggestion: buildBundleSuggestion( 'test-bundle-supersede' ),
+			} );
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-bundle-supersede.com' },
+				availability: buildAvailability( {
+					domain_name: 'test-bundle-supersede.com',
+					status: DomainAvailabilityStatus.AVAILABLE,
+				} ),
+			} );
+
+			const { container } = render(
+				<TestDomainSearch
+					cart={ buildCart( { onAddBundle } ) }
+					config={ { showBundleSuggestions: true } }
+					query="test-bundle-supersede"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Get bundle' } ) );
+
+			await waitFor( () => {
+				expect( getByText( container, 'Bundle add failed' ) ).toBeInTheDocument();
+			} );
+
+			// The most recent mutation owns the error surface: starting a
+			// single-domain add supersedes the bundle failure.
+			await user.click( screen.getByRole( 'button', { name: 'Add to cart' } ) );
+
+			await waitFor( () => {
+				expect( queryByText( container, 'Bundle add failed' ) ).not.toBeInTheDocument();
+			} );
 		} );
 	} );
 

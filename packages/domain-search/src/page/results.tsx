@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useIsMutating, useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { chevronDown, chevronUp, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -11,6 +11,7 @@ import { SearchNotice } from '../components/search-notice';
 import { SearchResults } from '../components/search-results';
 import { SkipSuggestion } from '../components/skip-suggestion';
 import { UnavailableSearchResult } from '../components/unavailable-search-result';
+import { useIsCurrentMutation } from '../hooks/use-is-current-mutation';
 import { useRequestTracking } from '../hooks/use-request-tracking';
 import { useSuggestionsList } from '../hooks/use-suggestions-list';
 import { useDomainSearch } from './context';
@@ -47,19 +48,47 @@ const StickyCompactBanner = () => {
 };
 
 export const ResultsPage = () => {
-	const { slots, config, events, cart } = useDomainSearch();
+	const { __ } = useI18n();
+	const { slots, config, events, cart, query } = useDomainSearch();
+
+	const { mutationId, isCurrentMutation } = useIsCurrentMutation();
 
 	// Accepting a bundle adds every member domain to the cart in one
 	// all-or-nothing operation. The cart mutation itself lives at the app layer
 	// (cart.onAddBundle); the mutation wrapper mirrors the single-domain
 	// add-to-cart path so failures are captured the same way.
-	const { mutate: addBundleToCart } = useMutation( {
+	const {
+		mutate: addBundleToCart,
+		error: addBundleError,
+		isPending: isAddingBundle,
+		reset: resetAddBundle,
+	} = useMutation( {
+		meta: {
+			mutationId,
+		},
 		mutationFn: async ( bundle: BundleSuggestion ) => {
 			await cart.onAddBundle?.( bundle );
 		},
 		networkMode: 'always',
 		retry: false,
 	} );
+
+	const isMutating = !! useIsMutating();
+
+	// A failed add shouldn't follow the user to a different search: a new
+	// query produces a new bundle suggestion, so drop the stale error.
+	useEffect( () => {
+		resetAddBundle();
+	}, [ query, resetAddBundle ] );
+
+	// The cart rejects with the server's first cart message (a CartActionError),
+	// which is already user-facing copy. Fall back when it's missing. Clicking
+	// "Get bundle" again re-fires the mutation, which clears the error state.
+	const bundleErrorMessage =
+		isCurrentMutation && addBundleError
+			? addBundleError.message ||
+			  __( 'Sorry, we couldn’t add the bundle to your cart. Please try again.' )
+			: undefined;
 
 	const {
 		isLoading: isLoadingSuggestions,
@@ -140,6 +169,9 @@ export const ResultsPage = () => {
 							cart.hasItem( domain )
 						) }
 						onContinue={ events.onContinue }
+						isBusy={ isAddingBundle }
+						disabled={ isMutating }
+						errorMessage={ bundleErrorMessage }
 					/>
 				) }
 				{ isLoadingSuggestions ? (

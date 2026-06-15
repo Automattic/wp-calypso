@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from '@testing-library/react';
+import { getByText, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BundleCard } from '..';
 import type { BundleSuggestion, BundleSuggestionDomain } from '@automattic/api-core';
@@ -164,6 +164,33 @@ describe( 'BundleCard', () => {
 		await expect(
 			user.click( screen.getByRole( 'button', { name: 'Get bundle' } ) )
 		).resolves.not.toThrow();
+	} );
+
+	it( 'renders the error message when errorMessage is provided', () => {
+		// Scoped to the render container because the Notice also announces the
+		// message through the a11y-speak live region appended to document.body.
+		const { container } = render(
+			<BundleCard
+				suggestion={ buildSuggestion( twoDomains ) }
+				errorMessage="Something went wrong."
+			/>
+		);
+
+		expect( getByText( container, 'Something went wrong.' ) ).toBeInTheDocument();
+		// The CTA stays available so the user can retry.
+		expect( screen.getByRole( 'button', { name: 'Get bundle' } ) ).toBeEnabled();
+	} );
+
+	it( 'does not render an error notice when errorMessage is not provided', () => {
+		const { container } = render( <BundleCard suggestion={ buildSuggestion( twoDomains ) } /> );
+
+		expect( container.querySelector( '.domain-search-notice' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'marks the CTA busy and disabled while an add-to-cart is in flight', () => {
+		render( <BundleCard suggestion={ buildSuggestion( twoDomains ) } isBusy disabled /> );
+
+		expect( screen.getByRole( 'button', { name: 'Get bundle' } ) ).toBeDisabled();
 	} );
 
 	it( 'renders a placeholder with no CTA or domain rows for a null suggestion', () => {

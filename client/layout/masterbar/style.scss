@@ -978,10 +978,14 @@ body.is-mobile-app-view {
 	}
 }
 
-.button > .masterbar__site-info {
+.button > .masterbar__site-info,
+.masterbar__item-subitems-item a > .masterbar__site-info {
 	margin: 0 -6px;
-		padding: 6px;
-	}
+}
+
+.masterbar__site-plan {
+	padding: 0 6px;
+}
 
 .masterbar__site-status {
 	background-color: var(--color-global-masterbar-site-info-background, color-mix(in srgb, var(--color-masterbar-item-hover-background), $white 15%));

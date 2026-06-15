@@ -1067,12 +1067,6 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	 *
 	 */
 	hosting_intent?: string;
-
-	/**
-	 * Indicates the user was in the rolled-out pricing differentiation cohort.
-	 * Used to add the `gating-business-q1` blog sticker on purchase.
-	 */
-	is_gating_business_q1?: boolean;
 }
 
 export interface GSuiteProductUser {

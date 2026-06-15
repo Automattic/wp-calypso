@@ -166,7 +166,6 @@ function useGenerateActionCallback( {
 	sitePlanSlug,
 	siteId,
 	coupon,
-	isGatingBusinessQ1,
 	redirectTo,
 	pluginSlug,
 }: {
@@ -179,11 +178,6 @@ function useGenerateActionCallback( {
 	sitePlanSlug?: PlanSlug | null;
 	siteId?: number | null;
 	coupon?: string;
-	/**
-	 * When true, adds `is_gating_business_q1` to the plan cart item extra data
-	 * for the rolled-out pricing differentiation cohort.
-	 */
-	isGatingBusinessQ1?: boolean;
 	redirectTo?: string;
 	pluginSlug?: string;
 } ): UseActionCallback {
@@ -289,21 +283,8 @@ function useGenerateActionCallback( {
 				} );
 			}
 
-			// Augment the cart item with pricing differentiation experiment data if applicable.
-			let augmentedCartItemForPlan = cartItemForPlan;
-
-			if ( cartItemForPlan && isGatingBusinessQ1 ) {
-				augmentedCartItemForPlan = {
-					...cartItemForPlan,
-					extra: {
-						...cartItemForPlan.extra,
-						is_gating_business_q1: true,
-					},
-				};
-			}
-
 			handleUpgradeClick( {
-				cartItemForPlan: augmentedCartItemForPlan,
+				cartItemForPlan,
 				selectedStorageAddOn,
 			} );
 			return;

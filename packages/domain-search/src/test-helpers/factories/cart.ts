@@ -7,6 +7,7 @@ export const buildCart = ( overrides: Partial< DomainSearchCart > = {} ): Domain
 		onAddItem: jest.fn(),
 		onAddBundle: jest.fn(),
 		onRemoveItem: jest.fn(),
+		onRemoveBundle: jest.fn(),
 		hasItem: jest.fn(),
 		...overrides,
 	};

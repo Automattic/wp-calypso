@@ -1141,6 +1141,99 @@ describe( 'useWPCOMDomainSearchProps', () => {
 		} );
 	} );
 
+	describe( 'bundle grouping', () => {
+		const buildBundleCartProducts = () => [
+			buildProduct( {
+				uuid: 'bundle-com',
+				product_slug: 'dotcom_domain',
+				meta: 'my-bundle.com',
+				is_domain_registration: true,
+				item_original_cost_integer: 13_00,
+				item_original_subtotal_integer: 13_00,
+				item_subtotal_integer: 13_00,
+				extra: {
+					domain_bundle_group_id: 'v1.test.deadbeef',
+					domain_bundle_role: 'primary',
+				},
+			} ),
+			buildProduct( {
+				uuid: 'bundle-net',
+				product_slug: 'dotnet_domain',
+				meta: 'my-bundle.net',
+				is_domain_registration: true,
+				item_original_cost_integer: 18_00,
+				item_original_subtotal_integer: 18_00,
+				item_subtotal_integer: 18_00,
+				extra: {
+					domain_bundle_group_id: 'v1.test.deadbeef',
+					domain_bundle_role: 'companion',
+				},
+			} ),
+		];
+
+		it( 'attaches the bundle group id and the summed group price to every bundle member', () => {
+			mockUseShoppingCart.mockReturnValue(
+				buildShoppingCart( {
+					responseCart: {
+						products: [
+							...buildBundleCartProducts(),
+							buildProduct( {
+								uuid: 'standalone',
+								product_slug: 'dotorg_domain',
+								meta: 'my-standalone.org',
+								is_domain_registration: true,
+								item_original_cost_integer: 10_00,
+								item_original_subtotal_integer: 10_00,
+								item_subtotal_integer: 10_00,
+							} ),
+						],
+					},
+				} )
+			);
+
+			const { result } = renderHookWithProvider( () => useWPCOMDomainSearchProps( defaultProps ) );
+
+			expect( result.current.cart.items ).toEqual( [
+				expect.objectContaining( {
+					uuid: 'bundle-net',
+					bundle: { groupId: 'v1.test.deadbeef', price: '$31', isPrimary: false },
+				} ),
+				expect.objectContaining( {
+					uuid: 'bundle-com',
+					bundle: { groupId: 'v1.test.deadbeef', price: '$31', isPrimary: true },
+				} ),
+				expect.objectContaining( { uuid: 'standalone', bundle: undefined } ),
+			] );
+		} );
+
+		it( 'removes every member of the bundle, and nothing else, in a single cart call', async () => {
+			const replaceProductsInCart = jest.fn().mockResolvedValue( { products: [] } );
+
+			const standaloneProduct = buildProduct( {
+				uuid: 'standalone',
+				product_slug: 'dotorg_domain',
+				meta: 'my-standalone.org',
+				is_domain_registration: true,
+			} );
+
+			mockUseShoppingCart.mockReturnValue(
+				buildShoppingCart( {
+					responseCart: {
+						products: [ ...buildBundleCartProducts(), standaloneProduct ],
+					},
+					replaceProductsInCart,
+				} )
+			);
+
+			const { result } = renderHookWithProvider( () => useWPCOMDomainSearchProps( defaultProps ) );
+
+			await result.current.cart.onRemoveBundle?.( 'v1.test.deadbeef' );
+
+			expect( replaceProductsInCart ).toHaveBeenCalledTimes( 1 );
+			expect( replaceProductsInCart ).toHaveBeenCalledWith( [ standaloneProduct ] );
+		} );
+	} );
+
 	describe( 'showBundleSuggestions', () => {
 		it( 'is enabled for a regular flow when the domain-bundling flag is on', () => {
 			mockUseShoppingCart.mockReturnValue( buildShoppingCart() );

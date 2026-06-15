@@ -580,7 +580,7 @@ const PlansFeaturesMain = ( {
 		showPricingDifferentiationFeaturePills,
 		useFocusedNewCopyTaglines,
 		isExperimentVariant,
-	} = usePlanDifferentiatorsExperiment( { flowName, isInSignup, siteId } );
+	} = usePlanDifferentiatorsExperiment( { isInSignup, siteId } );
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
@@ -642,7 +642,6 @@ const PlansFeaturesMain = ( {
 		coupon,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 		enableCategorisedFeatures: showSimplifiedFeatures,
-		isGatingBusinessQ1: isExperimentVariant,
 		redirectTo,
 		pluginSlug,
 	} );

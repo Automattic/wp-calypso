@@ -90,11 +90,26 @@ describe( 'BundleLineItem', () => {
 
 		// 2200 + 700 = 2900 smallest-unit => $29.
 		expect( screen.getByText( /\$29\b/ ) ).toBeVisible();
-		// 6500 + 6400 = 12900 smallest-unit => $129, struck through.
-		const crossedOut = screen.getByText( /\$129\b/ );
+		// 6500 + 6400 = 12900 smallest-unit => $129, struck through. The same
+		// amount also appears in the renewal disclosure, so match on the tag.
+		const crossedOut = screen
+			.getAllByText( /\$129\b/ )
+			.find( ( element ) => element.tagName === 'S' );
 		expect( crossedOut ).toBeVisible();
-		expect( crossedOut.tagName ).toBe( 'S' );
 		expect( screen.getByText( 'Discount for first year' ) ).toBeVisible();
+	} );
+
+	test( 'discloses the full-price renewal aggregate when the bundle is discounted', () => {
+		renderBundle( { bundle: discountedBundle } );
+
+		// Bundle members renew at full (pre-discount) price: 6500 + 6400 => $129.
+		expect( screen.getByText( 'Auto-renews at $129/year.' ) ).toBeVisible();
+	} );
+
+	test( 'shows no renewal disclosure when the bundle is not discounted', () => {
+		renderBundle();
+
+		expect( screen.queryByText( /Auto-renews at/ ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'shows no remove button without hasDeleteButton', () => {

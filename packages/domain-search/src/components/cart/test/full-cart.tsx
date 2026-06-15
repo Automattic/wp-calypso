@@ -1,12 +1,21 @@
 /**
  * @jest-environment jsdom
  */
-import { getByRole, getByText, queryByText, render, screen, waitFor } from '@testing-library/react';
+import {
+	getAllByRole,
+	getByLabelText,
+	getByRole,
+	getByText,
+	queryByText,
+	render,
+	screen,
+	waitFor,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useEffect } from 'react';
 import { useDomainSearch } from '../../../page/context';
-import { buildCartItem } from '../../../test-helpers/factories/cart';
-import { TestDomainSearchWithCart } from '../../../test-helpers/renderer';
+import { buildCart, buildCartItem } from '../../../test-helpers/factories/cart';
+import { TestDomainSearch, TestDomainSearchWithCart } from '../../../test-helpers/renderer';
 import { FullCart } from '../full-cart';
 
 const OpenFullCart = () => {
@@ -317,5 +326,220 @@ describe( 'FullCart', () => {
 		);
 
 		expect( await screen.findByText( 'Before Full Cart Items' ) ).toBeInTheDocument();
+	} );
+
+	describe( 'bundle grouping', () => {
+		const buildBundleMembers = () => [
+			buildCartItem( {
+				uuid: '1',
+				domain: 'example',
+				tld: 'com',
+				salePrice: undefined,
+				price: '$22',
+				bundle: { groupId: 'group-1', price: '$40' },
+			} ),
+			buildCartItem( {
+				uuid: '2',
+				domain: 'example',
+				tld: 'net',
+				salePrice: undefined,
+				price: '$18',
+				bundle: { groupId: 'group-1', price: '$40' },
+			} ),
+		];
+
+		it( 'renders items sharing a bundle group as one row with the members, one summed price and one remove action', async () => {
+			render(
+				<TestDomainSearchWithCart initialCartItems={ buildBundleMembers() }>
+					<OpenFullCart />
+					<FullCart />
+				</TestDomainSearchWithCart>
+			);
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Cart' ) ).toBeVisible();
+			} );
+
+			const bundleRow = await screen.findByTitle( 'Domain bundle' );
+
+			expect( getByLabelText( bundleRow, 'example.com' ) ).toBeInTheDocument();
+			expect( getByLabelText( bundleRow, 'example.net' ) ).toBeInTheDocument();
+
+			expect( getByLabelText( bundleRow, 'Price: $40' ) ).toBeInTheDocument();
+			expect( queryByText( bundleRow, '$22' ) ).not.toBeInTheDocument();
+			expect( queryByText( bundleRow, '$18' ) ).not.toBeInTheDocument();
+
+			expect( getAllByRole( bundleRow, 'button', { name: 'Remove bundle' } ) ).toHaveLength( 1 );
+		} );
+
+		it( 'renders standalone items on their own rows next to a bundle', async () => {
+			render(
+				<TestDomainSearchWithCart
+					initialCartItems={ [
+						...buildBundleMembers(),
+						buildCartItem( {
+							uuid: '3',
+							domain: 'standalone',
+							tld: 'org',
+							salePrice: undefined,
+							price: '$10',
+						} ),
+					] }
+				>
+					<OpenFullCart />
+					<FullCart />
+				</TestDomainSearchWithCart>
+			);
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Cart' ) ).toBeVisible();
+			} );
+
+			expect( await screen.findByTitle( 'Domain bundle' ) ).toBeInTheDocument();
+
+			const standaloneRow = await screen.findByTitle( 'standalone.org' );
+			expect( getByLabelText( standaloneRow, 'Price: $10' ) ).toBeInTheDocument();
+
+			// One remove action for the bundle, one for the standalone item.
+			expect( await screen.findAllByRole( 'button', { name: 'Remove bundle' } ) ).toHaveLength( 1 );
+			expect( await screen.findAllByRole( 'button', { name: 'Remove' } ) ).toHaveLength( 1 );
+		} );
+
+		it( 'renders two bundles as two separate grouped rows', async () => {
+			render(
+				<TestDomainSearchWithCart
+					initialCartItems={ [
+						...buildBundleMembers(),
+						buildCartItem( {
+							uuid: '3',
+							domain: 'other',
+							tld: 'com',
+							salePrice: undefined,
+							price: '$12',
+							bundle: { groupId: 'group-2', price: '$25' },
+						} ),
+						buildCartItem( {
+							uuid: '4',
+							domain: 'other',
+							tld: 'net',
+							salePrice: undefined,
+							price: '$13',
+							bundle: { groupId: 'group-2', price: '$25' },
+						} ),
+					] }
+				>
+					<OpenFullCart />
+					<FullCart />
+				</TestDomainSearchWithCart>
+			);
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Cart' ) ).toBeVisible();
+			} );
+
+			const bundleRows = await screen.findAllByTitle( 'Domain bundle' );
+			expect( bundleRows ).toHaveLength( 2 );
+
+			const [ firstBundle, secondBundle ] = bundleRows;
+
+			expect( getByLabelText( firstBundle, 'example.com' ) ).toBeInTheDocument();
+			expect( getByLabelText( firstBundle, 'example.net' ) ).toBeInTheDocument();
+			expect( getByLabelText( firstBundle, 'Price: $40' ) ).toBeInTheDocument();
+
+			expect( getByLabelText( secondBundle, 'other.com' ) ).toBeInTheDocument();
+			expect( getByLabelText( secondBundle, 'other.net' ) ).toBeInTheDocument();
+			expect( getByLabelText( secondBundle, 'Price: $25' ) ).toBeInTheDocument();
+
+			// One remove action per bundle.
+			expect( await screen.findAllByRole( 'button', { name: 'Remove bundle' } ) ).toHaveLength( 2 );
+		} );
+
+		it( 'removes the whole bundle, and only the bundle, with a single remove action', async () => {
+			const fireEvent = userEvent.setup();
+
+			render(
+				<TestDomainSearchWithCart
+					initialCartItems={ [
+						...buildBundleMembers(),
+						buildCartItem( { uuid: '3', domain: 'standalone', tld: 'org' } ),
+					] }
+				>
+					<OpenFullCart />
+					<FullCart />
+				</TestDomainSearchWithCart>
+			);
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Cart' ) ).toBeVisible();
+			} );
+
+			const bundleRow = await screen.findByTitle( 'Domain bundle' );
+
+			await fireEvent.click( getByRole( bundleRow, 'button', { name: 'Remove bundle' } ) );
+
+			await waitFor( () => {
+				expect( screen.queryByTitle( 'Domain bundle' ) ).not.toBeInTheDocument();
+			} );
+
+			expect( screen.queryByLabelText( 'example.com' ) ).not.toBeInTheDocument();
+			expect( screen.queryByLabelText( 'example.net' ) ).not.toBeInTheDocument();
+			expect( screen.getByTitle( 'standalone.org' ) ).toBeInTheDocument();
+		} );
+
+		it( 'falls back to removing each member individually when onRemoveBundle is not provided', async () => {
+			const fireEvent = userEvent.setup();
+			const onRemoveItem = jest.fn().mockResolvedValue( undefined );
+
+			render(
+				<TestDomainSearch
+					cart={ buildCart( {
+						items: buildBundleMembers(),
+						onRemoveItem,
+						onRemoveBundle: undefined,
+					} ) }
+				>
+					<OpenFullCart />
+					<FullCart />
+				</TestDomainSearch>
+			);
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Cart' ) ).toBeVisible();
+			} );
+
+			const bundleRow = await screen.findByTitle( 'Domain bundle' );
+
+			await fireEvent.click( getByRole( bundleRow, 'button', { name: 'Remove bundle' } ) );
+
+			await waitFor( () => {
+				expect( onRemoveItem ).toHaveBeenCalledTimes( 2 );
+			} );
+
+			expect( onRemoveItem ).toHaveBeenCalledWith( '1' );
+			expect( onRemoveItem ).toHaveBeenCalledWith( '2' );
+		} );
+
+		it( 'renders a degenerate single-member group as a plain item', async () => {
+			render(
+				<TestDomainSearchWithCart
+					initialCartItems={ [
+						buildCartItem( {
+							uuid: '1',
+							domain: 'example',
+							tld: 'com',
+							salePrice: undefined,
+							price: '$22',
+							bundle: { groupId: 'group-1', price: '$40' },
+						} ),
+					] }
+				>
+					<OpenFullCart />
+					<FullCart />
+				</TestDomainSearchWithCart>
+			);
+
+			expect( await screen.findByTitle( 'example.com' ) ).toBeInTheDocument();
+			expect( screen.queryByTitle( 'Domain bundle' ) ).not.toBeInTheDocument();
+		} );
 	} );
 } );

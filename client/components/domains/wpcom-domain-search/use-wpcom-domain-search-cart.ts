@@ -14,7 +14,11 @@ import {
 } from '@automattic/shopping-cart';
 import { ComponentProps, useMemo } from 'react';
 
-const wpcomCartToDomainSearchCart = ( domain: ResponseCartProduct, isEffectivelyFree: boolean ) => {
+const wpcomCartToDomainSearchCart = (
+	domain: ResponseCartProduct,
+	isEffectivelyFree: boolean,
+	bundle?: { groupId: string; price: string; isPrimary: boolean }
+) => {
 	const [ domainName, ...tld ] = domain.meta.split( '.' );
 
 	const hasPromotion =
@@ -41,6 +45,7 @@ const wpcomCartToDomainSearchCart = ( domain: ResponseCartProduct, isEffectively
 		tld: tld.join( '.' ),
 		salePrice: hasPromotion ? currentPrice : undefined,
 		price: hasPromotion ? originalPrice : currentPrice,
+		bundle,
 	};
 };
 
@@ -114,6 +119,37 @@ export const useWPCOMDomainSearchCart = ( {
 			stripZeros: true,
 		} );
 
+		// Sum each bundle group's current prices so the domain-search cart panel
+		// can render the group as a single row with one price. Bundle members are
+		// never effectively free (they're excluded from the free-domain promo
+		// above), so the sum is simply the members' subtotals.
+		const bundleTotalsByGroup = new Map< string, number >();
+		for ( const item of domainItems ) {
+			const groupId = item.extra?.domain_bundle_group_id;
+			if ( groupId ) {
+				bundleTotalsByGroup.set(
+					groupId,
+					( bundleTotalsByGroup.get( groupId ) ?? 0 ) + item.item_subtotal_integer
+				);
+			}
+		}
+
+		const getBundleForItem = ( item: ResponseCartProduct ) => {
+			const groupId = item.extra?.domain_bundle_group_id;
+			if ( ! groupId ) {
+				return undefined;
+			}
+
+			return {
+				groupId,
+				price: formatCurrency( bundleTotalsByGroup.get( groupId ) ?? 0, item.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} ),
+				isPrimary: item.extra?.domain_bundle_role === 'primary',
+			};
+		};
+
 		const cart: ComponentProps< typeof DomainSearch >[ 'cart' ] = {
 			items: domainItems.map( ( domainItem ) => {
 				const isCoveredByCredits =
@@ -122,7 +158,8 @@ export const useWPCOMDomainSearchCart = ( {
 					domainItem.meta === firstNonPremiumDomain?.meta;
 				return wpcomCartToDomainSearchCart(
 					domainItem,
-					freeDomainName === domainItem.meta || isCoveredByCredits
+					freeDomainName === domainItem.meta || isCoveredByCredits,
+					getBundleForItem( domainItem )
 				);
 			} ),
 			total,
@@ -209,6 +246,17 @@ export const useWPCOMDomainSearchCart = ( {
 				return cartItems;
 			},
 			onRemoveItem: ( uuid ) => removeProductFromCart( uuid ),
+			onRemoveBundle: ( bundleGroupId ) => {
+				// Remove every member of the bundle in a single cart call so the
+				// removal is all-or-nothing, mirroring how onAddBundle batches the
+				// add. Serial per-member removals could leave orphaned members in
+				// the cart if one of the calls fails.
+				return replaceProductsInCart(
+					responseCart.products.filter(
+						( product ) => product.extra?.domain_bundle_group_id !== bundleGroupId
+					)
+				);
+			},
 		};
 
 		return {
