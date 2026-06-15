@@ -6,7 +6,6 @@ import { Locator, Page } from 'playwright';
 export class NotificationsComponent {
 	private page: Page;
 	private anchor: Locator;
-	private detailPane: Locator;
 
 	/**
 	 * Constructs an instance of the component.
@@ -15,13 +14,8 @@ export class NotificationsComponent {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
-		// The redesigned panel renders inside a portaled popover; `.wpnc-app` is
-		// its root. There is no accessible landmark for it.
-		this.anchor = page.locator( '.wpnc-app' );
-		// The selected note's detail view, where the per-note actions live. Scoping
-		// to this pane disambiguates the note's Actions menu from the panel-level
-		// Actions menu in the list pane.
-		this.detailPane = this.anchor.locator( '.wpnc-app__detail-pane' );
+		// There is no accessible locator for this panel.
+		this.anchor = page.locator( 'div[id=wpnc-panel]' );
 	}
 
 	/**
@@ -31,37 +25,29 @@ export class NotificationsComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async openNotification( text: string ): Promise< void > {
-		// In the DataViews list each row is an absolutely-positioned
-		// `.dataviews-view-list__item` button overlaying its content, so clicking
-		// the matched text node is intercepted. Click the row button of the
-		// article that contains the text instead.
-		await this.anchor
-			.locator( '.wpnc-app__list-pane' )
-			.locator( '[role="article"]', { hasText: text } )
-			.locator( '.dataviews-view-list__item' )
-			.click();
+		await this.anchor.getByText( text ).click();
 	}
 
 	/**
-	 * Given a string of text, click on the inline action button in the expanded single
-	 * notification view to execute the action.
+	 * Given a string of text, click on the button in expanded single notification view to execute the action.
 	 *
-	 * eg. 'Approve' -> Clicks on the 'Approve' button when viewing a single notification.
+	 * eg. 'Trash' -> Clicks on the 'Trash' button when viewing a single notification.
 	 *
 	 * @param {string} action Action to perform on the notification.
 	 */
 	async clickNotificationAction( action: string ): Promise< void > {
-		await this.detailPane.getByRole( 'button', { name: action, exact: true } ).click();
+		await this.anchor
+			.getByRole( 'list' )
+			.getByRole( 'button' )
+			.filter( { hasText: action } )
+			.click();
 	}
 
 	/**
-	 * Trashes the open notification's comment.
-	 *
-	 * Trash lives inside the per-note "Actions" dropdown, whose popover animates
-	 * and can detach mid-interaction. The panel exposes a dedicated `t` shortcut
-	 * for the same action, which is more reliable to drive.
+	 * Clicks the undo link to undo the previous action.
 	 */
-	async trashNotification(): Promise< void > {
-		await this.page.keyboard.press( 't' );
+	async clickUndo(): Promise< void > {
+		await this.anchor.getByRole( 'button', { name: 'Undo', exact: true } ).click();
+		await this.anchor.getByText( 'Comment trashed' ).waitFor( { state: 'detached' } );
 	}
 }
