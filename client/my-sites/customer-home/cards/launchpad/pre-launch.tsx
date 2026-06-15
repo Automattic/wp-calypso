@@ -29,14 +29,13 @@ const LaunchpadPreLaunch = ( props: LaunchpadPreLaunchProps ): JSX.Element => {
 		// Site launch gating: 'semi_gated_site_launch' is the shipped default.
 		// The other branches are scaffolding for future experiments; see
 		// useSiteLaunchGatingVariant().
-		if ( variant === 'semi_gated_site_launch' ) {
-			window.location.assign( `/start/launch-site?siteSlug=${ site?.slug }` );
-			return false;
-		}
-
-		// Ungated site launch. When the action is completed, handleSiteLaunched will be called.
-		if ( variant === 'ungated_site_launch' ) {
-			return;
+		switch ( variant ) {
+			case 'semi_gated_site_launch':
+			case null:
+			default: {
+				window.location.assign( `/start/launch-site?siteSlug=${ site?.slug }` );
+				return false;
+			}
 		}
 	};
 

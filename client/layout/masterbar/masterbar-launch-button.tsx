@@ -5,10 +5,8 @@ import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSiteLaunchGatingVariant } from 'calypso/lib/explat/site-launch-gating';
-import { useCelebrateLaunchModalSideEffects } from 'calypso/my-sites/customer-home/celebrate-site-launch-modal/use-side-effects';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import Item from './item';
@@ -20,8 +18,6 @@ export const MasterbarLaunchButton = ( { siteId }: { siteId: number } ) => {
 	const sectionName = useSelector( getSectionName );
 	const launchSiteMutation = useMutation( siteLaunchMutation( siteId ) );
 
-	const { onSiteLaunched } = useCelebrateLaunchModalSideEffects( siteId );
-
 	const [ isLoading, variant ] = useSiteLaunchGatingVariant();
 
 	const onLaunchSiteClick = () => {
@@ -30,24 +26,19 @@ export const MasterbarLaunchButton = ( { siteId }: { siteId: number } ) => {
 		// Site launch gating: 'semi_gated_site_launch' is the shipped default.
 		// The other branches are scaffolding for future experiments; see
 		// useSiteLaunchGatingVariant().
-		if ( variant === 'semi_gated_site_launch' ) {
-			window.location.assign(
-				addQueryArgs( '/start/launch-site', {
-					siteSlug: site?.slug,
-					back_to: window.location.pathname,
-				} )
-			);
-			return;
+		switch ( variant ) {
+			case 'semi_gated_site_launch':
+			case null:
+			default: {
+				window.location.assign(
+					addQueryArgs( '/start/launch-site', {
+						siteSlug: site?.slug,
+						back_to: window.location.pathname,
+					} )
+				);
+				return;
+			}
 		}
-
-		if ( variant === 'ungated_site_launch' ) {
-			launchSiteMutation.mutate( undefined, {
-				onSuccess: () => onSiteLaunched( !! site?.is_wpcom_atomic ),
-			} );
-			return;
-		}
-
-		dispatch( launchSiteOrRedirectToLaunchSignupFlow( siteId ) );
 	};
 
 	return (

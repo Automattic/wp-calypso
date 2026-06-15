@@ -120,18 +120,6 @@ export function useSiteLaunch(
 		window.history.replaceState( null, '', targetUrl );
 	};
 
-	// The ungated experiment is the only path that triggers celebration.
-	const handleUngatedLaunch = () => {
-		track();
-		launchMutation.mutate( undefined, {
-			onSuccess: () => {
-				// Add a query param to trigger the celebration modal in the parent.
-				redirectAfterLaunch( { celebrate: true } );
-			},
-			onError: onLaunchError,
-		} );
-	};
-
 	const launchForModal = () => {
 		track();
 		launchMutation.mutate( undefined, {
@@ -176,26 +164,6 @@ export function useSiteLaunch(
 		return { ...baseResult, isHidden: true, onClick: () => {} };
 	}
 
-	// Site launch gating: 'semi_gated_site_launch' is the shipped default.
-	// The other branches are scaffolding for future experiments; see
-	// useSiteLaunchGatingVariant().
-	if ( variant === 'semi_gated_site_launch' ) {
-		return {
-			...baseResult,
-			isHidden: false,
-			href: launchUrl,
-			onClick: track,
-		};
-	}
-
-	if ( variant === 'ungated_site_launch' ) {
-		return {
-			...baseResult,
-			isHidden: false,
-			onClick: handleUngatedLaunch,
-		};
-	}
-
 	if ( shouldImmediatelyLaunch ) {
 		return {
 			...baseResult,
@@ -210,10 +178,18 @@ export function useSiteLaunch(
 		};
 	}
 
-	return {
-		...baseResult,
-		isHidden: false,
-		href: launchUrl,
-		onClick: track,
-	};
+	// Site launch gating: 'semi_gated_site_launch' is the shipped default.
+	// The other branches are scaffolding for future experiments; see
+	// useSiteLaunchGatingVariant().
+	switch ( variant ) {
+		case 'semi_gated_site_launch':
+		case null:
+		default:
+			return {
+				...baseResult,
+				isHidden: false,
+				href: launchUrl,
+				onClick: track,
+			};
+	}
 }

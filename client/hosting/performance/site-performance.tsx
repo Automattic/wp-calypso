@@ -191,27 +191,18 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 		// Site launch gating: 'semi_gated_site_launch' is the shipped default.
 		// The other branches are scaffolding for future experiments; see
 		// useSiteLaunchGatingVariant().
-		if ( experimentVariant === 'semi_gated_site_launch' ) {
-			window.location.assign(
-				addQueryArgs( '/start/launch-site', {
-					siteSlug: site?.slug,
-					back_to: window.location.pathname,
-				} )
-			);
-			return;
+		switch ( experimentVariant ) {
+			case 'semi_gated_site_launch':
+			case null:
+			default: {
+				window.location.assign(
+					addQueryArgs( '/start/launch-site', {
+						siteSlug: site?.slug,
+						back_to: window.location.pathname,
+					} )
+				);
+			}
 		}
-
-		if ( experimentVariant === 'ungated_site_launch' ) {
-			// Add celebrateLaunch param immediately so it's ready when site status updates
-			const url = new URL( window.location.href );
-			url.searchParams.set( 'celebrateLaunch', 'true' );
-			window.history.replaceState( {}, '', url.toString() );
-			dispatch( launchSite( siteId! ) );
-			return;
-		}
-
-		// default / control variant
-		dispatch( launchSite( siteId! ) );
 	};
 
 	const isMobile = useMobileBreakpoint();
