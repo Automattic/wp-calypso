@@ -1,3 +1,5 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 .connections-view {
 	max-width: 760px;
 }
@@ -82,6 +84,17 @@
 			var( --studio-pink-0 ) 0%,
 			var( --color-surface ) 60%
 		);
+
+		// --studio-pink-0 keeps its light pale-pink value in dark mode (the dark
+		// palette only regenerates blue/gray), so the gradient would start on a
+		// bright patch. Tint the dark surface with the brand pink instead.
+		@include ui-mixins.when-dark-theme {
+			background: linear-gradient(
+				135deg,
+				color-mix( in srgb, var( --color-surface ) 88%, var( --studio-pink-50 ) ) 0%,
+				var( --color-surface ) 60%
+			);
+		}
 	}
 }
 
