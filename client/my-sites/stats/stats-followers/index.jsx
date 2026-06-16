@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -59,6 +60,9 @@ const StatModuleFollowers = ( { className } ) => {
 
 	const noData = ! subTotals.subscribers.length;
 	const summaryPageSlug = siteSlug || '';
+	// The individual subscriber details route only exists in Calypso, so skip the
+	// name link in Odyssey Stats (wp-admin), where `page()` can't reach it.
+	const isOdysseyStats = config.isEnabled( 'is_odyssey' );
 	const useJetpackCloudLinks = isAtomic || isJetpack;
 	const subscriberManagementUrl = useJetpackCloudLinks
 		? `https://cloud.jetpack.com/subscribers/${ summaryPageSlug }`
@@ -70,6 +74,11 @@ const StatModuleFollowers = ( { className } ) => {
 			data={ subTotals.subscribers.map( ( dataPoint ) => ( {
 				...dataPoint,
 				value: calculateOffset( dataPoint.value?.value ),
+				// Link the subscriber name to its individual details page. `link` is kept
+				// for the right-side icon that opens the subscriber's own site.
+				...( ! isOdysseyStats && dataPoint.subscription_id
+					? { page: `/subscribers/${ summaryPageSlug }/${ dataPoint.subscription_id }` }
+					: {} ),
 			} ) ) }
 			usePlainCard
 			hasNoBackground

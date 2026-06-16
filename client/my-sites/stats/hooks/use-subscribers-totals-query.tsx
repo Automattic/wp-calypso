@@ -71,6 +71,9 @@ const selectSubscribers = ( payload: {
 		avatar: string;
 		url: string;
 		follow_data: { params: object }; //Empty object atm
+		email_subscription_id?: number;
+		subscription_id?: number;
+		wpcom_subscription_id?: number;
 	}[];
 } ) => {
 	return {
@@ -95,6 +98,13 @@ const selectSubscribers = ( payload: {
 					},
 				],
 				date_subscribed: item.date_subscribed,
+				// Preserve the subscription id so the Subscribers module can link each
+				// name to its individual subscriber details page. Mirrors the precedence
+				// used by the Subscribers DataViews list.
+				// Truthy fallback (not `??`) so a `0` placeholder id falls through to the
+				// next field, matching getSubscriptionIdFromSubscriber.
+				subscription_id:
+					item.email_subscription_id || item.subscription_id || item.wpcom_subscription_id,
 			};
 		} ),
 	};
