@@ -152,8 +152,7 @@ export default function AgentDock( {
 	// some add a further requirement, noted below. Ordered to match the routes.
 	//
 	// `/zendesk` also needs the unified agent or using Woo AI.
-	const showZendeskChat =
-		( shouldUseUnifiedAgent || sectionName === 'wooai-admin' ) && ! isReaderChat;
+	const showZendeskChat = shouldUseUnifiedAgent && ! isReaderChat;
 	// `/support-guides` (the list) also needs the unified agent, and is only
 	// reachable from the AI chat entry button (WP admin bar or Calypso masterbar).
 	const showSupportGuides = shouldUseUnifiedAgent && ! isReaderChat && hasAiChatEntry;
