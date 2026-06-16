@@ -28,7 +28,7 @@
     justify-content: center;
     width: 28px;
     height: 28px;
-    margin-right: var(--spacing-2);
+    margin-inline-end: var(--spacing-2);
 }
 
 .content {
