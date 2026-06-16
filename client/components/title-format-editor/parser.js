@@ -1,5 +1,5 @@
 import { convertFromRaw, convertToRaw } from 'draft-js';
-import { compact, get, map, matchesProperty, reduce } from 'lodash';
+import { get, map, matchesProperty, reduce } from 'lodash';
 import { compose } from 'redux';
 
 /*
@@ -97,7 +97,7 @@ export const fromEditor = ( content ) => {
 	);
 
 	// add final remaining text not captured by any entity ranges
-	return compact( [ ...o, i < t.length && { type: 'string', value: t.slice( i ) } ] );
+	return [ ...o, i < t.length && { type: 'string', value: t.slice( i ) } ].filter( Boolean );
 };
 
 const isTextPiece = matchesProperty( 'type', 'string' );
