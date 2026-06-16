@@ -90,6 +90,7 @@ export function AgentUIContainer( {
 	initialChatPosition,
 	onChatPositionChange,
 	onTypingStatusChange,
+	freeDrag = false,
 }: AgentUIContainerProps ) {
 	// Determine if input is controlled or uncontrolled
 	const isControlled = controlledInputValue !== undefined;
@@ -443,6 +444,12 @@ export function AgentUIContainer( {
 		( _event: any, info: PanInfo ) => {
 			setIsDragging( false );
 
+			// In free drag mode the panel stays where dropped. dragElastic={ 0 }
+			// hard-clamps the drag to the constraint box, so skip the corner-snap.
+			if ( freeDrag ) {
+				return;
+			}
+
 			// Determine which side based on drop position
 			// For true 50/50 split, account for the chat widget's width
 			const dropX = info.point.x;
@@ -473,8 +480,56 @@ export function AgentUIContainer( {
 				velocity: info.velocity.y * DRAG_CONSTANTS.VELOCITY_MULTIPLIER,
 			} );
 		},
-		[ x, y, calculateSnapPosition, onChatPositionChange, currentSide ]
+		[
+			x,
+			y,
+			calculateSnapPosition,
+			onChatPositionChange,
+			currentSide,
+			freeDrag,
+		]
 	);
+
+	// Snap back to the nearest corner when freeDrag is turned off at runtime.
+	// Guard on the true→false transition only so a freeDrag=false mount never snaps.
+	const prevFreeDragRef = useRef( freeDrag );
+	useEffect( () => {
+		const wasFreeDrag = prevFreeDragRef.current;
+		prevFreeDragRef.current = freeDrag;
+
+		if ( freeDrag || ! wasFreeDrag ) {
+			return;
+		}
+
+		// Determine side from the panel's center in viewport coords. x.get() is
+		// the transform offset from the panel's CSS left: VIEWPORT_OFFSET origin.
+		const panelCenter =
+			STYLE_CONSTANTS.VIEWPORT_OFFSET +
+			x.get() +
+			STYLE_CONSTANTS.COMPACT_WIDTH / 2;
+		const newSide = panelCenter < window.innerWidth / 2 ? 'left' : 'right';
+
+		if ( currentSide !== newSide ) {
+			setCurrentSide( newSide );
+			setChatPosition( newSide );
+			onChatPositionChange?.( newSide );
+		}
+
+		const position = calculateSnapPosition( newSide );
+		if ( ! position ) {
+			return;
+		}
+
+		animate( x, position.x, DRAG_CONSTANTS.SPRING_CONFIG );
+		animate( y, position.y, DRAG_CONSTANTS.SPRING_CONFIG );
+	}, [
+		freeDrag,
+		x,
+		y,
+		calculateSnapPosition,
+		onChatPositionChange,
+		currentSide,
+	] );
 
 	// Track previous state for animation purposes
 	const prevStateRef = useRef( chat.state );
@@ -661,7 +716,7 @@ export function AgentUIContainer( {
 				dragListener={ false }
 				dragConstraints={ isDragging ? constraintsRef : false }
 				dragMomentum={ false }
-				dragElastic={ 0.1 }
+				dragElastic={ freeDrag ? 0 : 0.1 }
 				dragTransition={ { power: 0.1, timeConstant: 100 } }
 				onDragStart={ handleDragStart }
 				onDragEnd={ handleDragEnd }
