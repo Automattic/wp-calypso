@@ -64,6 +64,7 @@ import QueryActivePromotions from 'calypso/components/data/query-active-promotio
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
@@ -270,6 +271,7 @@ const PlansFeaturesMain = ( {
 		number | null
 	>( null );
 	const translate = useTranslate();
+	const moment = useLocalizedMoment();
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
 
 	const [ isRenewalPricingExperimentLoading, renewalPricingVariation ] =
@@ -338,6 +340,13 @@ const PlansFeaturesMain = ( {
 		currentPurchase && downgradeRefundAmount > 0
 			? formatCurrency( downgradeRefundAmount, currentPurchase.currency_code )
 			: undefined;
+
+	// The date a delayed downgrade will take effect. `renew_date` is the next
+	// auto-renewal attempt date, which for annual plans is up to 30 days before
+	// expiry; the downgrade happens on that renewal, so it's the accurate date.
+	const downgradeRenewalDate = currentPurchase?.renew_date
+		? moment( currentPurchase.renew_date ).format( 'LL' )
+		: undefined;
 
 	// Ignore dismiss requests (X/Escape/overlay) while an instant downgrade is in
 	// flight so the loader stays visible until the redirect.
@@ -1228,6 +1237,7 @@ const PlansFeaturesMain = ( {
 					purchaseId={ currentPlan?.purchaseId }
 					isInstantDowngrade={ downgradeMode === 'instant' }
 					isDelayedDowngrade={ downgradeMode === 'delayed' }
+					renewalDate={ downgradeRenewalDate }
 					refundText={ downgradeRefundText }
 					isConfirming={ cancelAndRefundMutation.isPending || isDowngrading }
 					onClose={ closeDowngradeModal }

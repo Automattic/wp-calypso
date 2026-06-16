@@ -198,17 +198,39 @@ class PurchaseNotice extends Component<
 			? getPlan( purchase.delayedDowngradeToProductSlug )?.getTitle() ??
 			  purchase.delayedDowngradeToProductSlug
 			: null;
+		// `renewDate` is the next auto-renewal attempt date, which for annual
+		// plans is up to 30 days before expiry. The downgrade takes effect on
+		// that renewal, so it's the accurate date to show the customer.
+		const renewalDate = purchase.renewDate
+			? this.props.moment( purchase.renewDate ).format( 'LL' )
+			: null;
 
-		const noticeText = targetPlanName
-			? translate(
-					'Your plan is scheduled to downgrade to %(targetPlanName)s at your next renewal.',
-					{
-						args: { targetPlanName: String( targetPlanName ) },
-						comment:
-							'Warning notice shown when a plan downgrade is scheduled for the end of the billing term',
-					}
-			  )
-			: translate( 'Your plan is scheduled to downgrade at your next renewal.' );
+		let noticeText;
+		if ( targetPlanName && renewalDate ) {
+			noticeText = translate(
+				'Your plan is scheduled to downgrade to %(targetPlanName)s on %(renewalDate)s.',
+				{
+					args: { targetPlanName: String( targetPlanName ), renewalDate },
+					comment: 'Warning notice shown when a plan downgrade is scheduled for a renewal date',
+				}
+			);
+		} else if ( renewalDate ) {
+			noticeText = translate( 'Your plan is scheduled to downgrade on %(renewalDate)s.', {
+				args: { renewalDate },
+				comment: 'Warning notice shown when a plan downgrade is scheduled for a renewal date',
+			} );
+		} else if ( targetPlanName ) {
+			noticeText = translate(
+				'Your plan is scheduled to downgrade to %(targetPlanName)s at your next renewal.',
+				{
+					args: { targetPlanName: String( targetPlanName ) },
+					comment:
+						'Warning notice shown when a plan downgrade is scheduled for the end of the billing term',
+				}
+			);
+		} else {
+			noticeText = translate( 'Your plan is scheduled to downgrade at your next renewal.' );
+		}
 
 		return (
 			<Notice
@@ -352,16 +374,37 @@ class PurchaseNotice extends Component<
 			? getPlan( purchase.delayedDowngradeToProductSlug )?.getTitle() ??
 			  purchase.delayedDowngradeToProductSlug
 			: null;
-		const text = targetPlanName
-			? translate(
-					'Your plan is scheduled to downgrade to %(targetPlanName)s at your next renewal.',
-					{
-						args: { targetPlanName: String( targetPlanName ) },
-						comment:
-							'Success notice shown after scheduling a plan downgrade for end of billing term',
-					}
-			  )
-			: translate( 'Your plan downgrade has been scheduled for your next renewal.' );
+		// `renewDate` is the next auto-renewal attempt date (up to 30 days before
+		// expiry for annual plans) — the date the scheduled downgrade takes effect.
+		const renewalDate = purchase.renewDate
+			? this.props.moment( purchase.renewDate ).format( 'LL' )
+			: null;
+
+		let text;
+		if ( targetPlanName && renewalDate ) {
+			text = translate(
+				'Your plan is scheduled to downgrade to %(targetPlanName)s on %(renewalDate)s.',
+				{
+					args: { targetPlanName: String( targetPlanName ), renewalDate },
+					comment: 'Success notice shown after scheduling a plan downgrade for a renewal date',
+				}
+			);
+		} else if ( renewalDate ) {
+			text = translate( 'Your plan is scheduled to downgrade on %(renewalDate)s.', {
+				args: { renewalDate },
+				comment: 'Success notice shown after scheduling a plan downgrade for a renewal date',
+			} );
+		} else if ( targetPlanName ) {
+			text = translate(
+				'Your plan is scheduled to downgrade to %(targetPlanName)s at your next renewal.',
+				{
+					args: { targetPlanName: String( targetPlanName ) },
+					comment: 'Success notice shown after scheduling a plan downgrade for end of billing term',
+				}
+			);
+		} else {
+			text = translate( 'Your plan downgrade has been scheduled for your next renewal.' );
+		}
 		return (
 			<Notice
 				className="manage-purchase__purchase-expiring-notice"

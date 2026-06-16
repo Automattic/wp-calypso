@@ -23,9 +23,10 @@ import { differenceInCalendarDays } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
+import { useLocale } from '../../../app/locale';
 import { changePaymentMethodRoute, purchaseSettingsRoute } from '../../../app/router/me';
 import Notice from '../../../components/notice';
-import { getRelativeTimeString } from '../../../utils/datetime';
+import { formatDate, getRelativeTimeString } from '../../../utils/datetime';
 import { wpcomLink } from '../../../utils/link';
 import {
 	isExpired,
@@ -55,6 +56,7 @@ import type { Purchase } from '@automattic/api-core';
 
 export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
+	const locale = useLocale();
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	const {
 		refunded,
@@ -212,6 +214,37 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		const slug = purchase.delayed_downgrade_to_product_slug;
 		const planNames = getPlanNames() as Record< string, string | undefined >;
 		const targetPlanName = slug ? planNames[ slug ] ?? null : null;
+		// `renew_date` is the next auto-renewal attempt date, which for annual
+		// plans is up to 30 days before expiry. The downgrade takes effect on
+		// that renewal, so it's the accurate date to show the customer.
+		const renewalDate = purchase.renew_date
+			? formatDate( new Date( purchase.renew_date ), locale, { dateStyle: 'long' } )
+			: null;
+		const getDelayedDowngradeMessage = () => {
+			if ( targetPlanName && renewalDate ) {
+				return sprintf(
+					// translators: %1$s is the name of the plan, e.g. "Personal"; %2$s is a date, e.g. "January 1, 2026"
+					__( 'Your plan is scheduled to downgrade to %1$s on %2$s.' ),
+					targetPlanName,
+					renewalDate
+				);
+			}
+			if ( renewalDate ) {
+				return sprintf(
+					// translators: %s is a date, e.g. "January 1, 2026"
+					__( 'Your plan is scheduled to downgrade on %s.' ),
+					renewalDate
+				);
+			}
+			if ( targetPlanName ) {
+				return sprintf(
+					// translators: %s is the name of the plan, e.g. "Personal"
+					__( 'Your plan is scheduled to downgrade to %s at your next renewal.' ),
+					targetPlanName
+				);
+			}
+			return __( 'Your plan is scheduled to downgrade at your next renewal.' );
+		};
 		return (
 			<Notice
 				variant="warning"
@@ -237,13 +270,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 					</Button>
 				}
 			>
-				{ targetPlanName
-					? sprintf(
-							// translators: %s is the name of the plan, e.g. "Personal"
-							__( 'Your plan is scheduled to downgrade to %s at your next renewal.' ),
-							targetPlanName
-					  )
-					: __( 'Your plan is scheduled to downgrade at your next renewal.' ) }
+				{ getDelayedDowngradeMessage() }
 			</Notice>
 		);
 	}

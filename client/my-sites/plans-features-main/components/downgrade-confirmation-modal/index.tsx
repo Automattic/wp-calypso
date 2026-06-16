@@ -23,6 +23,11 @@ interface DowngradeConfirmationModalProps {
 	 * performed immediately. The confirm button reflects the scheduled nature.
 	 */
 	isDelayedDowngrade?: boolean;
+	/**
+	 * Pre-formatted, localized date of the next renewal (e.g. "January 1, 2026"),
+	 * when the scheduled downgrade will take effect. Shown for delayed downgrades.
+	 */
+	renewalDate?: string;
 	/** Pre-formatted, localized refund amount (e.g. "$48.00"). */
 	refundText?: string;
 	/** When true, the confirm action is in flight; disable buttons and show a spinner. */
@@ -38,6 +43,7 @@ function ModalBody( {
 	lostFeatures,
 	isInstantDowngrade,
 	isDelayedDowngrade,
+	renewalDate,
 	refundText,
 }: {
 	isLoading: boolean;
@@ -46,6 +52,7 @@ function ModalBody( {
 	lostFeatures: { feature_id: string; title: string }[];
 	isInstantDowngrade?: boolean;
 	isDelayedDowngrade?: boolean;
+	renewalDate?: string;
 	refundText?: string;
 } ) {
 	const translate = useTranslate();
@@ -62,14 +69,27 @@ function ModalBody( {
 		return (
 			<>
 				<p className="downgrade-confirmation-modal__description">
-					{ translate(
-						'Your plan will change from %(currentPlan)s to %(targetPlan)s at your next renewal. Until then you’ll continue using %(currentPlan)s.',
-						{
-							args: { currentPlan: currentPlanName, targetPlan: targetPlanName },
-							comment:
-								'Message shown when scheduling a plan downgrade for end of the current billing term',
-						}
-					) }
+					{ renewalDate
+						? translate(
+								'Your plan will change from %(currentPlan)s to %(targetPlan)s on %(renewalDate)s. Until then you’ll continue using %(currentPlan)s.',
+								{
+									args: {
+										currentPlan: currentPlanName,
+										targetPlan: targetPlanName,
+										renewalDate,
+									},
+									comment:
+										'Message shown when scheduling a plan downgrade for a specific renewal date',
+								}
+						  )
+						: translate(
+								'Your plan will change from %(currentPlan)s to %(targetPlan)s at your next renewal. Until then you’ll continue using %(currentPlan)s.',
+								{
+									args: { currentPlan: currentPlanName, targetPlan: targetPlanName },
+									comment:
+										'Message shown when scheduling a plan downgrade for end of the current billing term',
+								}
+						  ) }
 				</p>
 				{ lostFeatures.length > 0 && (
 					<>
@@ -165,6 +185,7 @@ const DowngradeConfirmationModal = ( {
 	purchaseId,
 	isInstantDowngrade,
 	isDelayedDowngrade,
+	renewalDate,
 	refundText,
 	isConfirming,
 	onClose,
@@ -225,6 +246,7 @@ const DowngradeConfirmationModal = ( {
 				lostFeatures={ lostFeatures }
 				isInstantDowngrade={ isInstantDowngrade }
 				isDelayedDowngrade={ isDelayedDowngrade }
+				renewalDate={ renewalDate }
 				refundText={ refundText }
 			/>
 			<div className="downgrade-confirmation-modal__buttons">
