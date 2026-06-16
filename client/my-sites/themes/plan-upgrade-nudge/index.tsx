@@ -6,7 +6,6 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
-import { Icon } from '@wordpress/components';
 import { brush } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -27,7 +26,11 @@ const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 		return null;
 	}
 
-	const nudgeIcon = <Icon icon={ brush } />;
+	const nudgeIcon = (
+		<span style={ { fill: 'var(--studio-white)', display: 'flex', alignItems: 'center' } }>
+			{ brush }
+		</span>
+	);
 
 	if ( isFreePlan( planSlug ) ) {
 		return (
@@ -35,7 +38,7 @@ const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 				callToAction={ translate( 'Upgrade to Personal' ) }
 				description={ translate( 'Get access to a selection of premium themes.' ) }
 				event="calypso_themeshowcase_personal_upgrade_nudge"
-				href={ `/checkout/${ siteSlug }/${ PLAN_PERSONAL }` }
+				href={ `/checkout/${ siteSlug }/personal` }
 				icon={ nudgeIcon }
 				plan={ PLAN_PERSONAL }
 				title={ translate( 'Unlock premium themes' ) }
@@ -49,7 +52,7 @@ const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 				callToAction={ translate( 'Upgrade to Premium' ) }
 				description={ translate( 'Get access to hundreds of premium themes.' ) }
 				event="calypso_themeshowcase_premium_upgrade_nudge"
-				href={ `/checkout/${ siteSlug }/${ PLAN_PREMIUM }` }
+				href={ `/checkout/${ siteSlug }/premium` }
 				icon={ nudgeIcon }
 				plan={ PLAN_PREMIUM }
 				title={ translate( 'Unlock all premium themes' ) }
@@ -65,7 +68,7 @@ const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 					'Get exclusive themes from top theme builders with our partner theme collection.'
 				) }
 				event="calypso_themeshowcase_business_upgrade_nudge"
-				href={ `/checkout/${ siteSlug }/${ PLAN_BUSINESS }` }
+				href={ `/checkout/${ siteSlug }/business` }
 				icon={ nudgeIcon }
 				plan={ PLAN_BUSINESS }
 				title={ translate( 'Unlock partner themes' ) }
