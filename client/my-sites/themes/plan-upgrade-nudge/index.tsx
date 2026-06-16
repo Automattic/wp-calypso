@@ -35,7 +35,7 @@ const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 				callToAction={ translate( 'Upgrade to Personal' ) }
 				description={ translate( 'Get access to a selection of premium themes.' ) }
 				event="calypso_themeshowcase_personal_upgrade_nudge"
-				href={ `/checkout/${ siteSlug }/personal` }
+				href={ `/checkout/${ siteSlug }/${ PLAN_PERSONAL }` }
 				icon={ nudgeIcon }
 				plan={ PLAN_PERSONAL }
 				title={ translate( 'Unlock premium themes' ) }
@@ -49,7 +49,7 @@ const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 				callToAction={ translate( 'Upgrade to Premium' ) }
 				description={ translate( 'Get access to hundreds of premium themes.' ) }
 				event="calypso_themeshowcase_premium_upgrade_nudge"
-				href={ `/checkout/${ siteSlug }/premium` }
+				href={ `/checkout/${ siteSlug }/${ PLAN_PREMIUM }` }
 				icon={ nudgeIcon }
 				plan={ PLAN_PREMIUM }
 				title={ translate( 'Unlock all premium themes' ) }
@@ -65,7 +65,7 @@ const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 					'Get exclusive themes from top theme builders with our partner theme collection.'
 				) }
 				event="calypso_themeshowcase_business_upgrade_nudge"
-				href={ `/checkout/${ siteSlug }/business` }
+				href={ `/checkout/${ siteSlug }/${ PLAN_BUSINESS }` }
 				icon={ nudgeIcon }
 				plan={ PLAN_BUSINESS }
 				title={ translate( 'Unlock partner themes' ) }
