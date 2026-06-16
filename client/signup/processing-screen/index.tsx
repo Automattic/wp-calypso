@@ -50,6 +50,7 @@ const useSteps = ( {
 		case ACCOUNT_FLOW:
 		case HOSTING_LP_FLOW:
 		case ENTREPRENEUR_FLOW:
+		case 'reader':
 			steps = [ { title: __( 'Creating your account' ) } ];
 			break;
 		case 'do-it-for-me':
@@ -122,7 +123,7 @@ export default function ProcessingScreen( props: ProcessingScreenProps ) {
 				progress={ progressValue }
 				subtitle={
 					totalSteps > 1 &&
-					// translators: these are progress steps. Eg: step 1 of 4.
+					// translators: %(currentStep)d is the current step number; %(totalSteps)d is the total number of steps. Eg: step 1 of 4.
 					sprintf( __( 'Step %(currentStep)d of %(totalSteps)d' ), {
 						currentStep: currentStep + 1,
 						totalSteps,
