@@ -32,8 +32,14 @@ export function useNoteNavigation( {
 	const { client } = useAppContext();
 
 	const filter = getFilters()[ filterName ];
+	// Keep the selected note in the navigation list at its natural position even
+	// if it no longer matches the active filter. Opening a note marks it read,
+	// so on the "Unread" tab the selected note would otherwise drop out of the
+	// list — losing its index and disabling prev/next navigation.
 	const visibleNotes = notes.filter(
-		( note ) => filter.filter( note ) && hiddenNoteIds[ note.id ] !== true
+		( note ) =>
+			hiddenNoteIds[ note.id ] !== true &&
+			( filter.filter( note ) || String( note.id ) === selectedNoteId )
 	);
 	const selectedNote =
 		selectedNoteId !== undefined
