@@ -721,8 +721,8 @@ __metadata:
   dependencies:
     "@automattic/api-core": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@stripe/react-stripe-js": "npm:^2.1.0"
-    "@stripe/stripe-js": "npm:^1.54.2"
+    "@stripe/react-stripe-js": "npm:^6.6.0"
+    "@stripe/stripe-js": "npm:^9.8.0"
     debug: "npm:^4.4.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -2580,7 +2580,7 @@ __metadata:
     "@emotion/styled": "npm:^11.11.0"
     "@fnando/cnpj": "npm:2.0.0"
     "@fnando/cpf": "npm:1.0.2"
-    "@stripe/stripe-js": "npm:^1.54.2"
+    "@stripe/stripe-js": "npm:^9.8.0"
     "@testing-library/dom": "npm:^10.4.1"
     "@testing-library/jest-dom": "npm:^6.9.1"
     "@testing-library/react": "npm:^16.3.2"
@@ -8464,23 +8464,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stripe/react-stripe-js@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "@stripe/react-stripe-js@npm:2.1.0"
+"@stripe/react-stripe-js@npm:^6.6.0":
+  version: 6.6.0
+  resolution: "@stripe/react-stripe-js@npm:6.6.0"
   dependencies:
     prop-types: "npm:^15.7.2"
   peerDependencies:
-    "@stripe/stripe-js": ^1.44.1
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: af254114d2d5df0c3b86e165cf9fa0e55dac864e5ac914343a4bf22b14ee4c7e2c79f7403ef188ddb58caac298f80889603795b2a549dd4ca303e0f71a193b16
+    "@stripe/stripe-js": ">=9.5.0 <10.0.0"
+    react: ">=16.8.0 <20.0.0"
+    react-dom: ">=16.8.0 <20.0.0"
+  checksum: fb093073d19efb15c18cd4b4007b886bfff4bbee17b270fabb86c82e1dad0377ebb15d58bab37c41c3ea01599fc0a5117747611226ac232e1350ebbfeecb17a7
   languageName: node
   linkType: hard
 
-"@stripe/stripe-js@npm:^1.54.2":
-  version: 1.54.2
-  resolution: "@stripe/stripe-js@npm:1.54.2"
-  checksum: cf6ea20039fde28a0edc5562f08120ea820b1f8b8f2cf8b769aa92c0a4799a85e614f4112d8d790238960d0a3e1a194c76f6d2d941aa91acc8fbbc8920e63f02
+"@stripe/stripe-js@npm:^9.8.0":
+  version: 9.8.0
+  resolution: "@stripe/stripe-js@npm:9.8.0"
+  checksum: 90c473b938800a3c7f5794e052b22b2a277e1e61a1b54353a8117c3fd630e42cba2530d42ca12a9e06b674cd3ad5d74adf815b54763dc14726aeb05056592031
   languageName: node
   linkType: hard
 
@@ -14409,8 +14409,8 @@ __metadata:
     "@github/webauthn-json": "npm:^2.1.1"
     "@paypal/react-paypal-js": "npm:^8.7.0"
     "@sentry/webpack-plugin": "npm:^1.21.0"
-    "@stripe/react-stripe-js": "npm:^2.1.0"
-    "@stripe/stripe-js": "npm:^1.54.2"
+    "@stripe/react-stripe-js": "npm:^6.6.0"
+    "@stripe/stripe-js": "npm:^9.8.0"
     "@tanstack/query-sync-storage-persister": "npm:^5.83.0"
     "@tanstack/react-query": "npm:^5.83.0"
     "@tanstack/react-query-devtools": "npm:^5.83.0"
