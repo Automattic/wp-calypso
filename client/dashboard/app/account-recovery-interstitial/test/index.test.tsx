@@ -51,9 +51,6 @@ function mockPreferences( calypso_preferences: Partial< UserPreferences > = {} )
 		.query( true )
 		.reply( 200, { calypso_preferences } );
 }
-
-afterEach( () => {
-	nock.cleanAll();
 } );
 
 describe( '<AccountRecoveryInterstitial>', () => {
