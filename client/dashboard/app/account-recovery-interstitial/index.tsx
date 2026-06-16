@@ -12,12 +12,7 @@ import { useId, useState } from 'react';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { Text } from '../../components/text';
 import { useAnalytics } from '../analytics';
-import {
-	RECOVERY_INTERSTITIAL_QA_PARAM,
-	RECOVERY_INTERSTITIAL_SNOOZE_PREFERENCE,
-	SNOOZE_DAYS,
-	type SecurityLevel,
-} from './constants';
+import { RECOVERY_INTERSTITIAL_QA_PARAM, SNOOZE_DAYS, type SecurityLevel } from './constants';
 import { getInterstitialCopy, getInterstitialVariant } from './copy';
 import heroIllustration from './hero-illustration.png';
 import type { InterstitialCta, InterstitialVariant } from './copy';
@@ -128,11 +123,11 @@ export default function AccountRecoveryInterstitial() {
 	);
 	const { data: userSettings, isSuccess: isUserSettingsLoaded } = useQuery( userSettingsQuery() );
 	const { data: snoozeUntilPersisted, isSuccess: isSnoozeLoaded } = useQuery(
-		userPreferenceQuery( RECOVERY_INTERSTITIAL_SNOOZE_PREFERENCE )
+		userPreferenceQuery( 'account-recovery-interstitial-snoozed-until' )
 	);
 
 	const snoozeMutation = useMutation(
-		userPreferenceMutation( RECOVERY_INTERSTITIAL_SNOOZE_PREFERENCE )
+		userPreferenceMutation( 'account-recovery-interstitial-snoozed-until' )
 	);
 
 	const [ isDismissed, setIsDismissed ] = useState( false );

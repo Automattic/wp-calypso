@@ -6,7 +6,6 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
-import { RECOVERY_INTERSTITIAL_SNOOZE_PREFERENCE } from '../constants';
 import AccountRecoveryInterstitial from '../index';
 import type { AccountRecovery, UserPreferences, UserSettings } from '@automattic/api-core';
 
@@ -176,7 +175,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		let snoozedValue: number | undefined;
 		const savePost = nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/me/preferences', ( body ) => {
-				snoozedValue = body.calypso_preferences?.[ RECOVERY_INTERSTITIAL_SNOOZE_PREFERENCE ];
+				snoozedValue = body.calypso_preferences?.[ 'account-recovery-interstitial-snoozed-until' ];
 				return typeof snoozedValue === 'number';
 			} )
 			.query( true )
@@ -203,7 +202,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		const future = Math.floor( Date.now() / 1000 ) + 7 * 86400;
 		mockAccountRecovery( NONE_RECOVERY );
 		mockUserSettings( { two_step_enabled: false } );
-		mockPreferences( { [ RECOVERY_INTERSTITIAL_SNOOZE_PREFERENCE ]: future } );
+		mockPreferences( { 'account-recovery-interstitial-snoozed-until': future } );
 
 		render( <AccountRecoveryInterstitial /> );
 
@@ -221,7 +220,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		let snoozedValue: number | undefined;
 		const savePost = nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/me/preferences', ( body ) => {
-				snoozedValue = body.calypso_preferences?.[ RECOVERY_INTERSTITIAL_SNOOZE_PREFERENCE ];
+				snoozedValue = body.calypso_preferences?.[ 'account-recovery-interstitial-snoozed-until' ];
 				return typeof snoozedValue === 'number';
 			} )
 			.query( true )
