@@ -28,6 +28,12 @@ export function Client() {
 	this.noteRequestLimit = settings.initial_limit;
 	// Latches once the server has no older notes left, so load-more stops paging.
 	this.allNotesLoaded = false;
+	// Active tab's server-side filter (e.g. `{ unread: 1 }`), or null for the
+	// unfiltered "all" list. When set, getFilteredNotes fetches matching notes.
+	this.filter = null;
+	this.filteredRequestLimit = settings.initial_limit;
+	this.filteredHasMore = false;
+	this.gettingFilteredNotes = false;
 	this.retries = 0;
 	this.subscribeTry = 0;
 	this.subscribeTries = 3;
@@ -247,7 +253,10 @@ function getNotes( before ) {
 			const oldIds = getAllNotes( store.getState() ).map( ( { id } ) => id );
 			const newIds = data.notes.map( ( n ) => n.id );
 			const notesToRemove = oldIds.filter( ( id ) => ! newIds.includes( id ) );
-			if ( notesToRemove.length ) {
+			// Skip pruning while a server-side filter is active: the filtered fetch
+			// loads notes outside this top window, and pruning would remove them
+			// from under the filtered view. Pruning resumes on the unfiltered tab.
+			if ( notesToRemove.length && ! this.filter ) {
 				this.allNotesLoaded = false;
 				store.dispatch( actions.notes.removeNotes( notesToRemove ) );
 			}
@@ -272,6 +281,13 @@ function getNotes( before ) {
 		}
 		this.retries = 0;
 		ready.call( this );
+
+		// New notes arriving via polling/push land in the shared store but not in
+		// the active filter's id list. Refresh that list so a filtered view (e.g.
+		// Unread) reflects new arrivals live instead of only on re-entry.
+		if ( this.filter ) {
+			this.getFilteredNotes();
+		}
 	} );
 }
 
@@ -339,6 +355,80 @@ function getNotesList() {
 
 		/* Grab updates/changes from server if they exist */
 		return serverHasChanges ? this.getNotes() : ready.call( this );
+	} );
+}
+
+/**
+ * Set the active server-side filter for the visible tab and (re)fetch.
+ *
+ * Pass `null` for the unfiltered "all" tab, or a query fragment such as
+ * `{ unread: 1 }` for a filtered tab. Switching tabs resets the filtered
+ * pagination window and, for a filtered tab, kicks off a fresh fetch so the
+ * list reflects the server's filtered results immediately.
+ * @param {?Object} filter Query fragment to send to the notes endpoint, or null.
+ */
+function setFilter( filter ) {
+	this.filter = filter ?? null;
+	this.filteredRequestLimit = settings.initial_limit;
+	this.filteredHasMore = false;
+
+	// Reset the filtered view's id list so the tab doesn't show a stale set
+	// before the fresh fetch lands.
+	store.dispatch( actions.notes.setUnreadNoteIds( [] ) );
+
+	if ( this.filter && this.isVisible ) {
+		this.getFilteredNotes();
+	}
+}
+
+/**
+ * Fetch notes matching the active filter from the server.
+ *
+ * Content is added to the shared `allNotes` store (never removed here); the
+ * server's answer for which notes belong to the view is kept as an ordered id
+ * list (`unreadNoteIds`) that the Unread tab renders looked up in the store.
+ */
+function getFilteredNotes() {
+	if ( ! this.filter || this.gettingFilteredNotes ) {
+		return;
+	}
+	this.gettingFilteredNotes = true;
+
+	const parameters = {
+		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash,variant',
+		number: this.filteredRequestLimit,
+		locale: this.locale,
+		...this.filter,
+	};
+
+	// Only show the full-panel spinner for the first page; later pages stream in.
+	if ( this.filteredRequestLimit === settings.initial_limit ) {
+		store.dispatch( actions.ui.loadNotes() );
+	}
+
+	listNotes( parameters, ( error, data ) => {
+		this.gettingFilteredNotes = false;
+		store.dispatch( actions.ui.loadedNotes() );
+
+		if ( error ) {
+			// Leave the polling path's state untouched; it will recover on its
+			// own schedule. A retry happens when the user re-enters the tab.
+			return;
+		}
+
+		store.dispatch( actions.notes.addNotes( data.notes ) );
+
+		// The latest response is authoritative, so replace the id list — notes the
+		// server no longer returns (read/deleted elsewhere) drop from the view.
+		// Guard on the filter so a response landing after a tab switch is ignored,
+		// and so only `unread` writes the unread list.
+		if ( this.filter?.unread ) {
+			store.dispatch( actions.notes.setUnreadNoteIds( data.notes.map( ( note ) => note.id ) ) );
+		}
+
+		// A full page back implies the server may have more matching notes.
+		this.filteredHasMore =
+			data.notes.length >= parameters.number && this.filteredRequestLimit < settings.max_limit;
 	} );
 }
 
@@ -502,6 +592,20 @@ function handleStorageEvent( event ) {
 }
 
 function loadMore() {
+	// Filtered tabs paginate their own window, advancing only while the server
+	// still has matching notes.
+	if ( this.filter ) {
+		if ( this.gettingFilteredNotes || ! this.filteredHasMore ) {
+			return;
+		}
+		this.filteredRequestLimit = Math.min(
+			this.filteredRequestLimit + settings.increment_limit,
+			settings.max_limit
+		);
+		this.getFilteredNotes();
+		return;
+	}
+
 	if ( this.gettingNotes || ! this.hasMoreNotes() ) {
 		return;
 	}
@@ -533,6 +637,9 @@ function loadMore() {
 // keep its optimistic `totalItems` ahead of the scroll window so DataViews
 // keeps advancing it.
 function hasMoreNotes() {
+	if ( this.filter ) {
+		return this.filteredHasMore;
+	}
 	const notes = getAllNotes( store.getState() );
 	return ! this.allNotesLoaded && notes.length < settings.max_limit;
 }
@@ -562,6 +669,8 @@ Client.prototype.reschedule = reschedule;
 Client.prototype.getNote = getNote;
 Client.prototype.getNotes = getNotes;
 Client.prototype.getNotesList = getNotesList;
+Client.prototype.getFilteredNotes = getFilteredNotes;
+Client.prototype.setFilter = setFilter;
 Client.prototype.updateLastSeenTime = updateLastSeenTime;
 Client.prototype.loadMore = loadMore;
 Client.prototype.hasMoreNotes = hasMoreNotes;

@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
+import getUnreadNoteIds from '../../panel/state/selectors/get-unread-note-ids';
 import { getFilters } from '../../panel/templates/filters';
 import { useAppContext } from '../context';
 import { getFields } from './dataviews';
@@ -43,7 +44,21 @@ type NoteListProps = {
 const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListProps ) => {
 	const filter = getFilters()[ filterName ];
 	const allNotes = useSelector( ( state ) => getAllNotes( state ) || [] ) as Note[];
-	const notes = allNotes.filter( ( note ) => filter.filter( note ) );
+	const unreadNoteIds = useSelector( ( state ) => getUnreadNoteIds( state ) ) as number[];
+
+	// "Unread" renders the server's id list; other tabs client-filter the cache.
+	// `filter.filter` still runs on top so an in-app read drops out before a refetch.
+	let notes: Note[];
+	if ( filterName === 'unread' ) {
+		const notesById = new Map( allNotes.map( ( note ) => [ note.id, note ] ) );
+		notes = unreadNoteIds
+			.map( ( id ) => notesById.get( id ) )
+			.filter( ( note ): note is Note => !! note )
+			.filter( ( note ) => filter.filter( note ) );
+	} else {
+		notes = allNotes.filter( ( note ) => filter.filter( note ) );
+	}
+
 	// Filter out hidden notes, i.e. notes that have been just marked as spam or moved to the trash.
 	const hiddenNoteIds = useSelector( ( state ) => getHiddenNoteIds( state ) );
 	const visibleNotes = notes.filter( ( note ) => hiddenNoteIds[ note.id ] !== true );
@@ -63,6 +78,12 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	if ( ! isLoading ) {
 		hasRenderedDataViews.current = true;
 	}
+
+	// Drive the client's server-side filter from the active tab. Only "unread"
+	// maps to a filter today; other tabs stay client-filtered.
+	useEffect( () => {
+		client?.setFilter( filterName === 'unread' ? { unread: 1 } : null );
+	}, [ client, filterName ] );
 
 	const onChangeSelection = ( selection: string[] ) => {
 		const noteId = selection[ 0 ];
@@ -130,9 +151,16 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	useNoteListFocusToLastSelectedNote( { noteListRef, notes } );
 	useNoteListNavigationKeyboardShortcuts( { noteListRef, visibleNotes } );
 
+	// DataViews renders its `empty` prop whenever `data` is empty, ignoring
+	// `isLoading` — so a filtered fetch with no results yet would flash the
+	// "all caught up" message while the request is still in flight. Show the
+	// loader instead until the fetch settles with real results (or a real empty).
+	const showInitialLoader =
+		! hasRenderedDataViews.current || ( isLoading && visibleNotes.length === 0 );
+
 	return (
 		<div ref={ noteListRef } className="wpnc__note-list">
-			{ hasRenderedDataViews.current ? (
+			{ ! showInitialLoader ? (
 				<DataViews< Note >
 					data={ filteredData }
 					fields={ fields }
