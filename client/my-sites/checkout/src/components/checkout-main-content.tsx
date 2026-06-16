@@ -365,7 +365,11 @@ function PortaledCheckoutFormSubmit( {
 		return null;
 	}
 	return createPortal(
-		<CheckoutFormSubmit validateForm={ validateForm } continueToNextIncompleteStep />,
+		<CheckoutFormSubmit
+			validateForm={ validateForm }
+			continueToNextIncompleteStep
+			changePaymentMethodStepId="payment-method-step"
+		/>,
 		slotEl
 	);
 }

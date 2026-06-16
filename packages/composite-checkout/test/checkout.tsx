@@ -991,6 +991,109 @@ describe( 'Checkout', () => {
 		} );
 	} );
 
+	describe( 'with changePaymentMethodStepId', function () {
+		const mockMethod = createMockMethod();
+		const mockMethod2 = createMockMethod( {
+			submitButton: <MockSubmitButton content="Pay Second Method" />,
+			activeContent: <div />,
+		} );
+		const steps = createMockStepObjects();
+
+		// steps[0] = 'custom-summary-step'   (no step number)
+		// steps[1] = 'custom-contact-step'   (numbered, isCompleteCallback () => true)
+		// steps[3] = 'custom-incomplete-step' (numbered, isCompleteCallback () => false)
+
+		function ChangePaymentCheckout( props ) {
+			const [ paymentData, setPaymentData ] = useState( {} );
+			const { stepObjectsWithStepNumber, stepObjectsWithoutStepNumber } =
+				createStepsFromStepObjects( props.steps || steps );
+			const createStepFromStepObject = createStepObjectConverter( paymentData );
+			return (
+				<myContext.Provider value={ [ paymentData, setPaymentData ] }>
+					<CheckoutProvider
+						paymentMethods={ props.paymentMethods || [ mockMethod, mockMethod2 ] }
+						paymentProcessors={ getMockPaymentProcessors() }
+						selectFirstAvailablePaymentMethod
+					>
+						<CheckoutStepGroup>
+							{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
+							{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }
+							<CheckoutFormSubmit
+								continueToNextIncompleteStep
+								changePaymentMethodStepId={ props.changePaymentMethodStepId }
+							/>
+						</CheckoutStepGroup>
+					</CheckoutProvider>
+				</myContext.Provider>
+			);
+		}
+
+		const getSubmitArea = ( container ) =>
+			container.querySelector( '.checkout-steps__submit-button-wrapper' );
+
+		it( 'shows the "Use a different payment method" link when Pay button is shown and there is more than one payment method', () => {
+			const { container } = render(
+				<ChangePaymentCheckout
+					steps={ [ steps[ 0 ], steps[ 1 ] ] }
+					changePaymentMethodStepId="custom-contact-step"
+				/>
+			);
+			const submitArea = getSubmitArea( container );
+			expect(
+				queryByTextInNode( submitArea, 'Use a different payment method' )
+			).toBeInTheDocument();
+		} );
+
+		it( 'clicking the link scrolls to the target step', async () => {
+			const scrollIntoView = jest.fn();
+			window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
+			const { container } = render(
+				<ChangePaymentCheckout
+					steps={ [ steps[ 0 ], steps[ 1 ] ] }
+					changePaymentMethodStepId="custom-contact-step"
+				/>
+			);
+			const submitArea = getSubmitArea( container );
+			const user = userEvent.setup();
+			await user.click( getByTextInNode( submitArea, 'Use a different payment method' ) );
+
+			await waitFor( () => {
+				expect( scrollIntoView ).toHaveBeenCalledWith( { behavior: 'smooth', block: 'start' } );
+			} );
+			expect( ( scrollIntoView.mock.instances[ 0 ] as HTMLElement ).id ).toBe(
+				'custom-contact-step'
+			);
+		} );
+
+		it( 'hides the link when there is only one available payment method', () => {
+			const { container } = render(
+				<ChangePaymentCheckout
+					steps={ [ steps[ 0 ], steps[ 1 ] ] }
+					changePaymentMethodStepId="custom-contact-step"
+					paymentMethods={ [ mockMethod ] }
+				/>
+			);
+			const submitArea = getSubmitArea( container );
+			expect(
+				queryByTextInNode( submitArea, 'Use a different payment method' )
+			).not.toBeInTheDocument();
+		} );
+
+		it( 'hides the link while a step is incomplete (Continue button is showing)', () => {
+			const { container } = render(
+				<ChangePaymentCheckout
+					steps={ [ steps[ 0 ], steps[ 1 ], steps[ 3 ] ] }
+					changePaymentMethodStepId="custom-contact-step"
+				/>
+			);
+			const submitArea = getSubmitArea( container );
+			expect( getByTextInNode( submitArea, 'Continue' ) ).toBeInTheDocument();
+			expect(
+				queryByTextInNode( submitArea, 'Use a different payment method' )
+			).not.toBeInTheDocument();
+		} );
+	} );
+
 	describe( 'submitting the form', function () {
 		let MyCheckout;
 		const submitButtonComponent = <MockSubmitButtonSimple />;
