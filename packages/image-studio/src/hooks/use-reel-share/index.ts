@@ -104,11 +104,14 @@ export function useReelShare(
 	// throws at render and takes down the whole editor. Mirrors the `?.`-guarded
 	// `useSelect( SOCIAL_STORE )` above.
 	const socialActions = useDispatch( SOCIAL_STORE ) as {
-		shareCurrentPost?: (
+		shareCurrentPost: (
 			params: { message: string; skipped_connections: string[] },
 			config: { apiPath: string; savePost?: boolean }
 		) => Promise< boolean >;
 	} | null;
+	// `socialActions` is null when the store isn't registered; optional chaining
+	// yields `undefined` for `shareCurrentPost` in that case. The action itself
+	// is required on a registered store, so it stays non-optional above.
 	const shareCurrentPost = socialActions?.shareCurrentPost;
 	const { addNotice: addModalNotice } = useDispatch( imageStudioStore ) as ImageStudioActions;
 	const { createNotice: createCoreNotice } = useDispatch( 'core/notices' ) as {
