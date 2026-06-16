@@ -81,7 +81,7 @@ const selectSubscribers = ( payload: {
 		total_email: payload.total_email,
 		total_wpcom: payload.total_wpcom,
 		is_owner_subscribed: payload.is_owner_subscribed,
-		subscribers: payload.subscribers?.map( ( item ) => {
+		subscribers: ( payload.subscribers ?? [] ).map( ( item ) => {
 			return {
 				label: item.label ?? item.display_name,
 				iconClassName: 'avatar-user',
