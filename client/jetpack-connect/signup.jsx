@@ -11,10 +11,11 @@ import { Modal } from '@wordpress/components';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import { flowRight, get } from 'lodash';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import SignupForm from 'calypso/blocks/signup-form';
 import { BrandHeader } from 'calypso/components/connect-screen/brand-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
@@ -426,4 +427,4 @@ const connectComponent = connect(
 	} )
 );
 
-export default flowRight( connectComponent, localize )( JetpackSignup );
+export default compose( connectComponent, localize )( JetpackSignup );

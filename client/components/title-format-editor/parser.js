@@ -1,5 +1,6 @@
 import { convertFromRaw, convertToRaw } from 'draft-js';
-import { compact, flowRight as compose, get, map, matchesProperty, reduce } from 'lodash';
+import { compact, get, map, matchesProperty, reduce } from 'lodash';
+import { compose } from 'redux';
 
 /*
  * The functions in this file convert between the

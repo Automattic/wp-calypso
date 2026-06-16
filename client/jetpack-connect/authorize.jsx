@@ -11,10 +11,11 @@ import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
-import { flowRight, get, includes } from 'lodash';
+import { get, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import { formatSlugToURL } from 'calypso/blocks/importer/util';
 import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
 import { BrandHeader } from 'calypso/components/connect-screen/brand-header';
@@ -1523,4 +1524,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight( connectComponent, localize )( JetpackAuthorize );
+export default compose( connectComponent, localize )( JetpackAuthorize );

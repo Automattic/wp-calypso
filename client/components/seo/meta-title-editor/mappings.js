@@ -29,16 +29,14 @@
 //   ]
 //
 
-import {
-	camelCase,
-	flowRight as compose,
-	get,
-	map,
-	mapKeys,
-	mapValues,
-	reduce,
-	snakeCase,
-} from 'lodash';
+import { camelCase, get, map, mapKeys, mapValues, reduce, snakeCase } from 'lodash';
+
+// Right-to-left composition of unary functions. Kept local so this pure mapping
+// module doesn't take on a dependency it otherwise has no need for.
+const compose =
+	( ...fns ) =>
+	( value ) =>
+		fns.reduceRight( ( acc, fn ) => fn( acc ), value );
 
 const mergeStringPieces = ( a, b ) => ( {
 	type: 'string',

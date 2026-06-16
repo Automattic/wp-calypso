@@ -11,9 +11,9 @@ import {
 } from '@automattic/calypso-products';
 import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
-import { mapValues, pickBy, flowRight as compose } from 'lodash';
+import { mapValues, pickBy } from 'lodash';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { compose, bindActionCreators } from 'redux';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { localizeThemesPath, shouldSelectSite } from 'calypso/my-sites/themes/helpers';

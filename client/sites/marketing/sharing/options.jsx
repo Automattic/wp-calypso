@@ -1,10 +1,11 @@
 import { FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
-import { filter, flowRight, get, some, values, xor } from 'lodash';
+import { filter, get, some, values, xor } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import QueryPostTypes from 'calypso/components/data/query-post-types';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -300,4 +301,4 @@ const connectComponent = connect(
 	{ recordGoogleEvent, recordTracksEvent }
 );
 
-export default flowRight( connectComponent, localize )( SharingButtonsOptions );
+export default compose( connectComponent, localize )( SharingButtonsOptions );

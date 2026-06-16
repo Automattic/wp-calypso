@@ -2,8 +2,9 @@ import config from '@automattic/calypso-config';
 import { CompactCard } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
-import { flowRight, pick } from 'lodash';
+import { pick } from 'lodash';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -45,7 +46,7 @@ const getFormSettings = ( settings ) => {
 	return pick( settings, [ 'api_cache' ] );
 };
 
-export default flowRight(
+export default compose(
 	connectComponent,
 	localize,
 	wrapSettingsForm( getFormSettings )

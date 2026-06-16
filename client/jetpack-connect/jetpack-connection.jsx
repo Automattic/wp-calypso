@@ -2,9 +2,10 @@ import { PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
-import { flowRight, get, omit } from 'lodash';
+import { get, omit } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import { JETPACK_ADMIN_PATH, JPC_A4A_PATH } from 'calypso/jetpack-connect/constants';
@@ -350,7 +351,7 @@ const jetpackConnection = ( WrappedComponent ) => {
 		}
 	);
 
-	return flowRight( connectComponent, localize )( JetpackConnection );
+	return compose( connectComponent, localize )( JetpackConnection );
 };
 
 export default jetpackConnection;

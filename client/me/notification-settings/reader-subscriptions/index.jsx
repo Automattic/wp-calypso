@@ -13,9 +13,9 @@ import {
 	__experimentalConfirmDialog as ConfirmDialog,
 } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
-import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLegend from 'calypso/components/forms/form-legend';

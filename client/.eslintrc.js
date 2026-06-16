@@ -28,6 +28,14 @@ module.exports = {
 							'@testing-library/jest-dom is already globally provided by our test setup framework.',
 					},
 				],
+				paths: [
+					// Use Redux's `compose` instead of lodash's `flowRight`.
+					{
+						name: 'lodash',
+						importNames: [ 'flowRight' ],
+						message: "Please use `compose` from 'redux' instead.",
+					},
+				],
 			},
 		],
 		'jest/no-mocks-import': 'off',

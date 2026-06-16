@@ -432,6 +432,12 @@ module.exports = {
 						message:
 							"Node's `url` is deprecated. Please consider migrating to `lib/url` (see `client/lib/url/README.md`).",
 					},
+					// Use Redux's `compose` instead of lodash's `flowRight`.
+					{
+						name: 'lodash',
+						importNames: [ 'flowRight' ],
+						message: "Please use `compose` from 'redux' instead.",
+					},
 				],
 			},
 		],
