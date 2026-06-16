@@ -88,10 +88,11 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 		if ( goToCampaigns ) {
 			page( getAdvertisingDashboardPath( `/campaigns/${ siteSlug }` ) );
 		} else {
-			queryClient &&
+			if ( queryClient ) {
 				queryClient.invalidateQueries( {
 					queryKey: [ 'promote-post-campaigns', siteId ],
 				} );
+			}
 			if ( previousRoute ) {
 				closeModal();
 			} else {
@@ -101,6 +102,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	};
 
 	useEffect( () => {
+		// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 		isVisible &&
 			( async () => {
 				if ( props.siteId === null || props.postId === null ) {
