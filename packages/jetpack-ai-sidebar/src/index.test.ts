@@ -1144,12 +1144,12 @@ describe( 'contextProvider', () => {
 
 		const feedbackContext = contextProvider.getClientContext();
 		expect( feedbackContext.currentPageContent ).toEqual( [] );
-		expect( feedbackContext.jetpackAi ).toEqual( { requestedAction: 'generate-feedback' } );
+		expect( feedbackContext.jetpackAi ).toBeUndefined();
 		expect( contextProvider.getClientContext().currentPageContent ).toHaveLength( 1 );
 		expect( contextProvider.getClientContext().jetpackAi ).toBeUndefined();
 	} );
 
-	it( 'clears pending Generate Feedback context when another suggestion is clicked', () => {
+	it( 'clears pending Generate Feedback content suppression when another suggestion is clicked', () => {
 		installAiEditorialReviewData();
 		installContextProviderMock();
 		const suggestions = getEmptyViewSuggestions();

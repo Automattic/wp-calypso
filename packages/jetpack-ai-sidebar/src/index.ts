@@ -61,7 +61,6 @@ export { applyReviewEdit, findBlockElement, findBlockListLayout };
 let clearSuggestionsFn: ( () => void ) | null = null;
 let wasAgentProcessing = false;
 let suppressCurrentPageContentForNextContext = false;
-let requestedActionForNextContext: string | null = null;
 
 /** Whether `_suggestion_rendered` has fired this page life (once-per-session). */
 let suggestionRenderedFiredOnce = false;
@@ -594,9 +593,7 @@ export const contextProvider = {
 		let selectedBlockContent = '';
 		let currentPostType: string | undefined;
 		const suppressCurrentPageContent = suppressCurrentPageContentForNextContext;
-		const requestedAction = requestedActionForNextContext;
 		suppressCurrentPageContentForNextContext = false;
-		requestedActionForNextContext = null;
 
 		if ( wpData ) {
 			const editor = wpData.select( 'core/editor' );
@@ -628,7 +625,6 @@ export const contextProvider = {
 				...( currentPostType && { postType: currentPostType } ),
 			},
 			currentPageContent,
-			...( requestedAction && { jetpackAi: { requestedAction } } ),
 			selectedBlockClientId,
 			contextEntries: [
 				{
@@ -895,7 +891,6 @@ export function useSuggestions(
 			setHidden( true );
 			clearSuggestionsFn?.();
 			suppressCurrentPageContentForNextContext = false;
-			requestedActionForNextContext = null;
 
 			// Review-style responses are dense, so auto-expand those suggestion
 			// flows to 50vw when they are started from chips.
@@ -904,7 +899,6 @@ export function useSuggestions(
 			}
 			if ( typeof value === 'string' && value === POST_FEEDBACK_SUGGESTION.prompt ) {
 				suppressCurrentPageContentForNextContext = true;
-				requestedActionForNextContext = POST_FEEDBACK_SUGGESTION.id;
 				try {
 					( dispatch as any )( 'automattic/agents-manager' ).setIsSplitScreen( true );
 				} catch {
