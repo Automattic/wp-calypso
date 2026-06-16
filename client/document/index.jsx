@@ -112,6 +112,29 @@ class Document extends Component {
 			( params && params.hasOwnProperty( 'lang' )
 				? `var localeFromRoute = ${ jsonStringifyForHtml( params.lang ?? '' ) };\n`
 				: '' );
+		const shouldHideNav2026UntilAssignment = !! user && ! config.isEnabled( 'nav-redesign/2026' );
+		const nav2026PrePaintScript = `
+			(function() {
+				var hasCachedTreatment = false;
+				try {
+					var rawAssignment = window.localStorage && window.localStorage.getItem( 'explat-experiment--calypso_lossless_revert' );
+					if ( rawAssignment ) {
+						var assignment = JSON.parse( rawAssignment );
+						var expiresAt = assignment.retrievedTimestamp + assignment.ttl * 1000;
+						hasCachedTreatment =
+							Date.now() < expiresAt &&
+							( assignment.variationName === 'treatment_1' || assignment.variationName === 'treatment_2' );
+					}
+				} catch ( error ) {}
+				if ( hasCachedTreatment ) {
+					document.documentElement.classList.add( 'has-nav-2026-cached-treatment' );
+					return;
+				}
+				if ( ${ jsonStringifyForHtml( shouldHideNav2026UntilAssignment ) } ) {
+					document.documentElement.classList.add( 'has-nav-2026-assignment-pending' );
+				}
+			})();
+		`;
 
 		const isDashboardOmnibarPage =
 			( isDashboardEnv() || env === 'development' ) &&
@@ -154,6 +177,14 @@ class Document extends Component {
 					inlineScriptNonce={ inlineScriptNonce }
 					faviconUrl={ headFaviconUrl }
 				>
+					{ /* eslint-disable react/no-danger */ }
+					<script
+						nonce={ inlineScriptNonce }
+						dangerouslySetInnerHTML={ {
+							__html: nav2026PrePaintScript,
+						} }
+					/>
+					{ /* eslint-enable react/no-danger */ }
 					{ head.metas.map( ( props, index ) => (
 						<meta { ...props } key={ index } />
 					) ) }

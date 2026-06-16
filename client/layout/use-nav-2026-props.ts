@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { useEffect } from 'react';
 import { useExperiment } from 'calypso/lib/explat';
 import { useSelector } from 'calypso/state';
 import {
@@ -50,6 +51,16 @@ export function useNav2026Props(): Nav2026Props {
 	const [ isLoadingExperiment, experimentAssignment ] = useExperiment( NAV_2026_EXPERIMENT, {
 		isEligible: ! forcedOn && typeof window !== 'undefined',
 	} );
+
+	useEffect( () => {
+		if ( forcedOn || ! isLoadingExperiment ) {
+			document.documentElement.classList.remove( 'has-nav-2026-assignment-pending' );
+		}
+
+		return () => {
+			document.documentElement.classList.remove( 'has-nav-2026-assignment-pending' );
+		};
+	}, [ forcedOn, isLoadingExperiment ] );
 
 	// Resolve the variant: the config flag forces it on for staff/dev, otherwise
 	// the experiment assignment decides. Anything else (control, null, loading,

@@ -48,6 +48,7 @@ export function getNav2026Menus( {
 				label: __( 'AI website builder', __i18n_text_domain__ ),
 				url: localizeUrl( '//wordpress.com/ai-website-builder/?ref=topnav' ),
 				target: '_self',
+				badge: __( 'New', __i18n_text_domain__ ),
 			},
 		],
 	};
@@ -121,6 +122,7 @@ export function getNav2026Menus( {
 						label: __( 'AI website builder', __i18n_text_domain__ ),
 						url: localizeUrl( '//wordpress.com/ai-website-builder/?ref=topnav' ),
 						target: '_self',
+						badge: __( 'New', __i18n_text_domain__ ),
 					},
 				],
 			},

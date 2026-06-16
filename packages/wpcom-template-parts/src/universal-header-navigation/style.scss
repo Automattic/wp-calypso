@@ -10,6 +10,11 @@ $lp-font-stack-default: -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'Roboto
 $x-content-font-stack: $lp-font-stack-default;
 $studio-blue-15: #e5f4ff;
 
+html.has-nav-2026-cached-treatment .lpc-header-nav-wrapper .masterbar:not( :has( .x-nav--2026-redesign ) ),
+html.has-nav-2026-assignment-pending .lpc-header-nav-wrapper .masterbar:not( :has( .x-nav--2026-redesign ) ) {
+	visibility: hidden;
+}
+
 .x-hidden {
 	border: 0;
 	clip: rect( 0 0 0 0 );
@@ -1489,6 +1494,21 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		}
 	}
 
+	.x-dropdown-badge-new {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		height: 20px;
+		margin-inline-start: 10px;
+		padding: 0 10px;
+		font-size: 10px;
+		line-height: 1;
+		color: #4f3500;
+		background: #f0c930;
+		border-radius: 4px;
+		vertical-align: 2px;
+	}
+
 }
 
 /* Mobile menu — full-screen white panel: header (logo ⇄ back + close), drill-down category list, footer (logged-out CTAs vs logged-in user). */
@@ -1854,6 +1874,22 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		font-weight: $lp-font-weight-regular;
 		line-height: 28px;
 		text-decoration: none;
+	}
+
+	.x-menu-mobile-dropdown-badge-new {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		height: 20px;
+		margin-inline-start: 10px;
+		padding: 0 10px;
+		font-size: 12px;
+		font-weight: $lp-font-weight-medium;
+		line-height: 1;
+		color: #4f3500;
+		background: #f0c930;
+		border-radius: 4px;
+		vertical-align: 1px;
 	}
 
 	/* Footer overlays the scroller's bottom (translucent + blurred, like the header) so the nav list scrolls beneath; the scroller pads its bottom by the footer's measured height. */
