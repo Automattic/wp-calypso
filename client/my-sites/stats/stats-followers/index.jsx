@@ -76,9 +76,10 @@ const StatModuleFollowers = ( { className } ) => {
 				value: calculateOffset( dataPoint.value?.value ),
 				// Link the subscriber name to its individual details page. `link` is kept
 				// for the right-side icon that opens the subscriber's own site.
-				...( ! isOdysseyStats && dataPoint.subscription_id
-					? { page: `/subscribers/${ summaryPageSlug }/${ dataPoint.subscription_id }` }
-					: {} ),
+				page:
+					! isOdysseyStats && dataPoint.subscription_id
+						? `/subscribers/${ summaryPageSlug }/${ dataPoint.subscription_id }`
+						: undefined,
 			} ) ) }
 			usePlainCard
 			hasNoBackground
