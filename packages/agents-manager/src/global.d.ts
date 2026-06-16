@@ -17,6 +17,17 @@ declare const agentsManagerData:
 			sectionName?: string;
 			aiEditorialReviewEnabled?: boolean;
 			reviewMediatorEnabled?: boolean;
+			jetpackAiSidebarPreview?: {
+				enabled: boolean;
+				features?: {
+					aiEditorialReview?: boolean;
+					generateFeedback?: boolean;
+					blockTransformations?: boolean;
+					optimizeTitleSuggestion?: boolean;
+					chatHistory?: boolean;
+					supportGuides?: boolean;
+				};
+			};
 			helpCenterUrl?: string;
 	  }
 	| undefined;

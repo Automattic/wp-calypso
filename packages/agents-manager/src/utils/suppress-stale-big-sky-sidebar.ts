@@ -121,7 +121,7 @@ function ensureSuppressionStyle(): void {
 function suppressSurface( el: HTMLElement ): void {
 	if ( ! suppressedSurfaces.has( el ) ) {
 		suppressedSurfaces.set( el, {
-			hidden: el.hidden,
+			hidden: Boolean( el.hidden ),
 			ariaHidden: el.getAttribute( 'aria-hidden' ),
 		} );
 	}
