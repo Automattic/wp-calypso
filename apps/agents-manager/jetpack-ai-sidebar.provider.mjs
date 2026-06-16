@@ -41,6 +41,7 @@ function scheduleProviderReadyNotification() {
 		}
 		if ( Date.now() - startedAt > PROVIDER_READY_TIMEOUT_MS ) {
 			window.clearInterval( intervalId );
+			providerReadyNotificationScheduled = false;
 		}
 	}, PROVIDER_READY_POLL_MS );
 }
