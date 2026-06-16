@@ -20,6 +20,7 @@ import {
 	clearActiveBlockFocus,
 	clearActiveBlockFocusUnlessBlockReferenceClick,
 	getEditableBlockContent,
+	hasEditableBlockTarget,
 	toggleBlockReferenceFocus,
 	undoBlockEdit,
 } from '../utils/block-actions';
@@ -152,6 +153,9 @@ function getApplyUnavailableReason(
 	}
 	if ( ! item.current_text ) {
 		return __( 'Needs manual edit - no exact source text.', 'jetpack' );
+	}
+	if ( ! hasEditableBlockTarget( block, item.editable_attribute, item.current_text ) ) {
+		return __( 'Needs manual edit - unsupported edit target.', 'jetpack' );
 	}
 
 	const occurrences = countOccurrences(

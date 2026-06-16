@@ -55,6 +55,22 @@ jest.mock( '../utils/block-actions', () => ( {
 			( attributeNames.length === 1 ? block.attributes[ attributeNames[ 0 ] ] : '' )
 		);
 	},
+	hasEditableBlockTarget: ( block: any, attributeName?: string, currentText?: string ) => {
+		if ( attributeName ) {
+			return typeof block?.attributes?.[ attributeName ] === 'string';
+		}
+		const attributeNames = Object.keys( block?.attributes ?? {} ).filter(
+			( key ) => typeof block?.attributes?.[ key ] === 'string'
+		);
+		const currentTextMatches = attributeNames.filter(
+			( key ) => currentText && block.attributes[ key ].includes( currentText )
+		);
+		return (
+			currentTextMatches.length === 1 ||
+			typeof block?.attributes?.content === 'string' ||
+			attributeNames.length === 1
+		);
+	},
 	toggleBlockReferenceFocus: ( ...args: any[] ) => mockToggleBlockReferenceFocus( ...args ),
 	undoBlockEdit: ( ...args: any[] ) => mockUndoBlockEdit( ...args ),
 } ) );
@@ -695,7 +711,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 			/>
 		);
 
-		expect( screen.getByText( 'Needs manual edit — source text changed' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Needs manual edit — unsupported edit target' ) ).toBeInTheDocument();
 		const accept = screen.getByRole( 'button', { name: 'Accept' } );
 		expect( accept ).toBeDisabled();
 		fireEvent.click( accept );

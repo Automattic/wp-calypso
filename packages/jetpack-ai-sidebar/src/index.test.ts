@@ -367,6 +367,39 @@ describe( 'PostFeedback', () => {
 		expect( container.textContent ).toContain( 'Could not apply this rewrite.' );
 	} );
 
+	it( 'explains when a referenced block has no editable text target', () => {
+		mockEditorBlocks = [
+			{
+				clientId: 'block-1',
+				name: 'core/query',
+				attributes: { queryId: 1 },
+			},
+		];
+
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Unsupported block item',
+						feedback: 'Feedback.',
+						action: 'Action.',
+						block_index: 0,
+						current_text: 'Original list content.',
+						suggested_text: 'Updated list content.',
+					},
+				],
+			} )
+		);
+
+		expect( container.textContent ).toContain( 'Needs manual edit - unsupported edit target.' );
+		const acceptButton = Array.from( container.querySelectorAll( 'button' ) ).find(
+			( button ) => button.textContent === 'Accept'
+		);
+		expect( acceptButton?.hasAttribute( 'disabled' ) ).toBe( true );
+	} );
+
 	it( 'toggles sidebar-owned block focus from the referenced block', () => {
 		mockEditorBlocks = [
 			{

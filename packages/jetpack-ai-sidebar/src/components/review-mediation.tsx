@@ -18,6 +18,7 @@ import {
 	clearActiveBlockFocus,
 	clearActiveBlockFocusUnlessBlockReferenceClick,
 	getEditableBlockContent,
+	hasEditableBlockTarget,
 	toggleBlockReferenceFocus,
 	undoBlockEdit,
 } from '../utils/block-actions';
@@ -260,6 +261,9 @@ function getTextTargetDisabledReason(
 ): string | undefined {
 	if ( typeof currentText !== 'string' || currentText === '' ) {
 		return __( 'Needs manual edit — no exact source text', 'jetpack' );
+	}
+	if ( ! hasEditableBlockTarget( block, editableAttribute, currentText ) ) {
+		return __( 'Needs manual edit — unsupported edit target', 'jetpack' );
 	}
 	const occurrences = countOccurrences(
 		getEditableBlockContent( block, editableAttribute, currentText ),

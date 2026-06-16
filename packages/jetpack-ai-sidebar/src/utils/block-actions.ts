@@ -481,6 +481,14 @@ export function getEditableBlockContent(
 	return getAttributeContent( block, resolvedAttribute ) ?? '';
 }
 
+export function hasEditableBlockTarget(
+	block: any,
+	attributeName?: string,
+	currentText?: string
+): boolean {
+	return !! resolveEditableBlockAttribute( block, { attributeName, currentText } );
+}
+
 function getBlockSnapshot(
 	clientId: string,
 	attributeName?: string,
