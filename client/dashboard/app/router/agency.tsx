@@ -3,6 +3,15 @@ import { __ } from '@wordpress/i18n';
 import { requireAgencyUser } from './a4a-guards';
 import { rootRoute } from './root';
 
+// Pathless layout route that applies the agency-only guard to every agency
+// route. The routes share no URL prefix, so this groups them by access rule
+// (not by path) and declares `requireAgencyUser` once instead of per route.
+const agencyProtectedRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	id: 'agency-protected',
+	beforeLoad: requireAgencyUser,
+} );
+
 // `/overview` – agency overview
 const agencyOverviewRoute = createRoute( {
 	head: () => ( {
@@ -12,9 +21,8 @@ const agencyOverviewRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => rootRoute,
+	getParentRoute: () => agencyProtectedRoute,
 	path: 'overview',
-	beforeLoad: requireAgencyUser,
 } ).lazy( () =>
 	import( '../../agency/overview' ).then( ( d ) =>
 		createLazyRoute( 'agency-overview' )( {
@@ -23,4 +31,6 @@ const agencyOverviewRoute = createRoute( {
 	)
 );
 
-export const createAgencyRoutes = () => [ agencyOverviewRoute ];
+export const createAgencyRoutes = () => [
+	agencyProtectedRoute.addChildren( [ agencyOverviewRoute ] ),
+];
