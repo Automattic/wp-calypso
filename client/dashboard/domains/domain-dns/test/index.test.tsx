@@ -2,12 +2,15 @@
  * @jest-environment jsdom
  */
 import { DomainSubtype, type Domain, type DnsRecord } from '@automattic/api-core';
+import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import DomainDns from '../index';
 
 const domainName = 'example.com';
+
+const dnsQueryKey = [ 'domains', domainName, 'dns' ];
 
 const CNAME_WARNING = 'Your domain is not using the default WWW CNAME record';
 
@@ -77,6 +80,32 @@ describe( 'DomainDns', () => {
 		expect( screen.queryByText( CNAME_WARNING ) ).not.toBeInTheDocument();
 
 		// Once the DNS records load, the warning still must not appear.
+		expect( await screen.findByText( 'CNAME' ) ).toBeInTheDocument();
+		expect( screen.queryByText( CNAME_WARNING ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not flash the WWW CNAME warning when the route loader seeded stale records', async () => {
+		mockDomainApiRequest( getDefaultDomainData( { has_wpcom_nameservers: true } ) );
+
+		// In production the route loader prefetches the DNS query via
+		// `ensureQueryData`, so the cache already holds records (possibly stale) when
+		// the component mounts and `isLoading` is false. With `staleTime: 0` a
+		// background refetch then runs. Seed the cache with stale records that lack
+		// the default WWW CNAME record to mirror that scenario.
+		const queryClient = new QueryClient( {
+			defaultOptions: { queries: { retry: false, staleTime: 0 } },
+		} );
+		queryClient.setQueryData( dnsQueryKey, { records: [] } );
+
+		// The server actually has the default WWW CNAME record, so the warning must
+		// never appear — not even while the background refetch is in flight.
+		mockDnsApiRequest( [ defaultCnameRecord ], { delayMs: 200 } );
+
+		render( <DomainDns />, { queryClient } );
+
+		await screen.findByText( 'Add record' );
+		expect( screen.queryByText( CNAME_WARNING ) ).not.toBeInTheDocument();
+
 		expect( await screen.findByText( 'CNAME' ) ).toBeInTheDocument();
 		expect( screen.queryByText( CNAME_WARNING ) ).not.toBeInTheDocument();
 	} );
