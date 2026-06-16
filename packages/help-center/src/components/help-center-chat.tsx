@@ -10,6 +10,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useSupportStatus } from '../data/use-support-status';
 import { useChatStatus, useShouldUseWapuu } from '../hooks';
+import type { JSX } from 'react';
 import './help-center-chat.scss';
 
 export function HelpCenterChat( {

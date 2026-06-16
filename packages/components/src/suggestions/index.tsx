@@ -1,7 +1,6 @@
 import clsx from 'clsx';
 import { find, groupBy, isEqual, partition, property } from 'lodash';
 import { Fragment, Component } from 'react';
-import ReactDOM from 'react-dom';
 import Item from './item';
 
 /**
@@ -79,7 +78,7 @@ class Suggestions extends Component< Props, State > {
 
 	moveSelectionDown = (): void => {
 		const position = ( this.state.suggestionPosition + 1 ) % this.getSuggestionsCount();
-		const element = ReactDOM.findDOMNode( this.refsCollection[ 'suggestion_' + position ] );
+		const element = this.refsCollection[ 'suggestion_' + position ];
 		if ( element instanceof Element ) {
 			element.scrollIntoView( { block: 'nearest' } );
 		}
@@ -91,7 +90,7 @@ class Suggestions extends Component< Props, State > {
 		const position =
 			( this.state.suggestionPosition - 1 + this.getSuggestionsCount() ) %
 			this.getSuggestionsCount();
-		const element = ReactDOM.findDOMNode( this.refsCollection[ 'suggestion_' + position ] );
+		const element = this.refsCollection[ 'suggestion_' + position ];
 		if ( element instanceof Element ) {
 			element.scrollIntoView( { block: 'nearest' } );
 		}
@@ -121,8 +120,9 @@ class Suggestions extends Component< Props, State > {
 				break;
 
 			case 'Enter':
-				this.state.suggestionPosition >= 0 &&
+				if ( this.state.suggestionPosition >= 0 ) {
 					this.suggest( this.getOriginalIndexFromPosition( this.state.suggestionPosition ) );
+				}
 				break;
 		}
 	};

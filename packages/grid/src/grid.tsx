@@ -72,7 +72,7 @@ export function Grid( {
 	}, [ items, layoutMap, effectiveColumns ] );
 
 	const [ childrenMap, remaining ] = useMemo( () => {
-		const map = new Map< string, React.ReactElement >();
+		const map = new Map< string, React.ReactElement< { actionableArea?: React.ReactNode } > >();
 		const rest: React.ReactNode[] = [];
 
 		Children.forEach( children, ( child ) => {

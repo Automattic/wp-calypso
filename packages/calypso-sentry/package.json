@@ -40,8 +40,8 @@
 	"dependencies": {
 		"@automattic/calypso-config": "workspace:^",
 		"@sentry/react": "^7.54.0",
-		"react": "^18.3.1",
-		"react-dom": "^18.3.1",
+		"react": "^18.3.1 || ^19.0.0",
+		"react-dom": "^18.3.1 || ^19.0.0",
 		"tslib": "^2.8.1"
 	},
 	"devDependencies": {
