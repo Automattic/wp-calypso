@@ -12,7 +12,7 @@ import { useId, useState } from 'react';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { Text } from '../../components/text';
 import { useAnalytics } from '../analytics';
-import { RECOVERY_INTERSTITIAL_QA_PARAM, SNOOZE_DAYS, type SecurityLevel } from './constants';
+import { SNOOZE_DAYS, type SecurityLevel } from './constants';
 import { getInterstitialCopy, getInterstitialVariant } from './copy';
 import heroIllustration from './hero-illustration.png';
 import type { InterstitialCta, InterstitialVariant } from './copy';
@@ -73,7 +73,7 @@ function getQaParam(): string | null {
 	if ( typeof window === 'undefined' ) {
 		return null;
 	}
-	return new URLSearchParams( window.location.search ).get( RECOVERY_INTERSTITIAL_QA_PARAM );
+	return new URLSearchParams( window.location.search ).get( 'account-recovery-interstitial' );
 }
 
 /** The simulated setup state when a variant name is passed as the QA param, else null. */
