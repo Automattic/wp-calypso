@@ -25,7 +25,11 @@ const useOpenPromoteWidget = ( { keyValue, entrypoint, external }: Props ) => {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const dspOriginProps = useDspOriginProps();
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
-	const hasNewAdminPage = useJetpackBlazeVersionCheck( siteId, '15.8-alpha', '0.9.0' );
+	// Versions that move the dashboard from tools.php to admin.php: Jetpack
+	// (Automattic/jetpack#49584) and the Blaze Ads plugin (Automattic/blaze-ads#93).
+	// Keep these at or above the actual release versions: a too-low gate links to
+	// admin.php on sites that still serve tools.php (no back-redirect), breaking it.
+	const hasNewAdminPage = useJetpackBlazeVersionCheck( siteId, '16.1', '0.10.0' );
 	const adminPagePath = hasNewAdminPage ? 'admin.php' : 'tools.php';
 	const dispatch = useDispatch();
 
