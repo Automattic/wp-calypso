@@ -12,13 +12,27 @@ import { useId, useState } from 'react';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { Text } from '../../components/text';
 import { useAnalytics } from '../analytics';
-import { SNOOZE_DAYS, type SecurityLevel } from './constants';
 import { getInterstitialCopy, getInterstitialVariant } from './copy';
 import heroIllustration from './hero-illustration.png';
 import type { InterstitialCta, InterstitialVariant } from './copy';
 import './style.scss';
 
 const DAY_IN_SECONDS = 86400;
+
+/**
+ * How secure the user already is. Single source of truth for the tiers; SNOOZE_DAYS and
+ * the copy map are both keyed by it, so adding a tier is a compile error until both update.
+ */
+type SecurityLevel = 'none' | 'partial' | 'strong';
+
+/**
+ * Snooze windows (days) by security level
+ */
+const SNOOZE_DAYS: Record< SecurityLevel, number > = {
+	none: 14, // nothing set up
+	partial: 30, // a recovery method but no 2FA or vice-versa
+	strong: 365, // fully set up -> yearly periodic check
+};
 
 /**
  * QA overrides via the `?account-recovery-interstitial=<value>` query param:
