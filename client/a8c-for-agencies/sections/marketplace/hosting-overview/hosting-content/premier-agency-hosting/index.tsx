@@ -22,8 +22,8 @@ import HostingAdditionalFeaturesSection from '../../../common/hosting-additional
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
 import { MarketplaceTypeContext, TermPricingContext } from '../../../context';
 import { isPressableAddonProduct } from '../../../lib/hosting';
+import useGetPressablePlan from '../../../pressable-overview/hooks/use-get-pressable-plan';
 import useGetPressablePlanByProductId from '../../../pressable-overview/hooks/use-get-pressable-plan-by-product-id';
-import getPressablePlan from '../../../pressable-overview/lib/get-pressable-plan';
 import usePressableOwnershipType from '../../hooks/use-pressable-ownership-type';
 import ClientRelationships from '../common/client-relationships';
 import HostingFeatures from '../common/hosting-features';
@@ -74,6 +74,8 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 	const agencyPressablePlan = useGetPressablePlanByProductId( {
 		product_id: agencyPressableLicense ? agencyPressableLicense.productId : 0,
 	} );
+
+	const getPressablePlan = useGetPressablePlan();
 
 	const existingPlanInfo = getPressablePlan( agencyPressablePlan?.slug ?? '' );
 

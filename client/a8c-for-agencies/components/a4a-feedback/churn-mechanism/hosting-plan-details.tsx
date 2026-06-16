@@ -7,8 +7,8 @@ import {
 	A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
+import useGetPressablePlan from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/hooks/use-get-pressable-plan';
 import useGetPressablePlanByProductId from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/hooks/use-get-pressable-plan-by-product-id';
-import getPressablePlan from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/lib/get-pressable-plan';
 
 const WPCOMHostingPlanDetails = () => {
 	const translate = useTranslate();
@@ -31,6 +31,7 @@ const PressablePlanDetails = ( { productId }: { productId: number } ) => {
 	const translate = useTranslate();
 
 	const pressablePlan = useGetPressablePlanByProductId( { product_id: productId } );
+	const getPressablePlan = useGetPressablePlan();
 	const selectedPlanInfo = pressablePlan ? getPressablePlan( pressablePlan.slug ) : null;
 
 	const isCustomPlan = ! pressablePlan;

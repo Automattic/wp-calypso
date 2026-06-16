@@ -17,7 +17,7 @@ import {
 	PLAN_CATEGORY_SIGNATURE_HIGH,
 	PLAN_CATEGORY_PREMIUM,
 } from '../constants';
-import getPressablePlan, { PressablePlan } from '../lib/get-pressable-plan';
+import useGetPressablePlan, { PressablePlan } from '../hooks/use-get-pressable-plan';
 import getSliderOptions from '../lib/get-slider-options';
 import { FilterType } from '../types';
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
@@ -62,6 +62,8 @@ export default function PlanSelectionFilter( {
 	const isMobile = useMobileBreakpoint();
 	const isDesktop = useDesktopBreakpoint();
 
+	const getPressablePlan = useGetPressablePlan();
+
 	const isPremiumPlanTab = selectedTab === PLAN_CATEGORY_PREMIUM;
 
 	// Currently, we only want the premium plans for referral mode
@@ -76,7 +78,7 @@ export default function PlanSelectionFilter( {
 				areSignaturePlans ? PLAN_CATEGORY_SIGNATURE : PLAN_CATEGORY_STANDARD,
 				isMobile
 			),
-		[ filterType, isMobile, plans, areSignaturePlans ]
+		[ filterType, plans, areSignaturePlans, isMobile, getPressablePlan ]
 	);
 
 	const highPlanOptions = useMemo(
@@ -97,7 +99,15 @@ export default function PlanSelectionFilter( {
 						},
 				  ] ),
 		],
-		[ filterType, isMobile, plans, isPremiumPlanTab, translate, areSignaturePlans ]
+		[
+			filterType,
+			plans,
+			areSignaturePlans,
+			isMobile,
+			isPremiumPlanTab,
+			translate,
+			getPressablePlan,
+		]
 	);
 
 	const premiumPlanOptions = useMemo(
@@ -114,7 +124,7 @@ export default function PlanSelectionFilter( {
 				category: null,
 			},
 		],
-		[ filterType, isMobile, plans, translate ]
+		[ filterType, getPressablePlan, isMobile, plans, translate ]
 	);
 
 	const onSelectOption = useCallback(
@@ -226,7 +236,7 @@ export default function PlanSelectionFilter( {
 			}
 			return categoryOptions.length;
 		},
-		[ pressablePlan ]
+		[ getPressablePlan, pressablePlan ]
 	);
 
 	useEffect( () => {

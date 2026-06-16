@@ -5,8 +5,8 @@ import {
 	FILTER_TYPE_VISITS,
 	PLAN_CATEGORY_PREMIUM,
 } from '../constants';
+import { PressablePlan } from '../hooks/use-get-pressable-plan';
 import { FilterType } from '../types';
-import { PressablePlan } from './get-pressable-plan';
 
 export default function getSliderOptions(
 	type: FilterType,

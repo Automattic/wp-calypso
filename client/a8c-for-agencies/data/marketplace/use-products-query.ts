@@ -13,11 +13,15 @@ import type {
 	APIProductFamilyProduct,
 } from 'calypso/a8c-for-agencies/types/products';
 
-async function queryProducts( agencyId?: number ): Promise< APIProductFamily[] > {
+async function queryProducts(
+	agencyId?: number,
+	forceNewEndpoint?: boolean
+): Promise< APIProductFamily[] > {
 	const isTermPricingEnabled = isEnabled( 'a4a-bd-term-pricing' ) && isEnabled( 'a4a-bd-checkout' );
-	const productsAPIPath = isTermPricingEnabled
-		? '/agency/products'
-		: '/jetpack-licensing/partner/product-families';
+	const productsAPIPath =
+		forceNewEndpoint || isTermPricingEnabled
+			? '/agency/products'
+			: '/jetpack-licensing/partner/product-families';
 	return wpcom.req
 		.get(
 			{
@@ -65,11 +69,18 @@ async function queryProducts( agencyId?: number ): Promise< APIProductFamily[] >
 		} );
 }
 
-const getProductsQueryKey = ( agencyId?: number ) => [ 'a4a', 'marketplace', 'products', agencyId ];
+const getProductsQueryKey = ( agencyId?: number, forceNewEndpoint?: boolean ) => [
+	'a4a',
+	'marketplace',
+	'products',
+	agencyId,
+	forceNewEndpoint,
+];
 
 export default function useProductsQuery(
 	includeRawData = false,
-	useStaleData = false
+	useStaleData = false,
+	forceNewEndpoint = false
 ): UseQueryResult< APIProductFamilyProduct[], unknown > {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -86,8 +97,8 @@ export default function useProductsQuery(
 	}
 
 	const query = useQuery( {
-		queryKey: getProductsQueryKey( agencyId ),
-		queryFn: () => queryProducts( agencyId ),
+		queryKey: getProductsQueryKey( agencyId, forceNewEndpoint ),
+		queryFn: () => queryProducts( agencyId, forceNewEndpoint ),
 		select: includeRawData ? getProductsRaw : selectAlphabeticallySortedProductOptions,
 		enabled: !! agencyId,
 		refetchOnWindowFocus: false,
