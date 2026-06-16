@@ -6,9 +6,9 @@ import { rootRoute } from './root';
 // Pathless layout route that applies the agency-only guard to every agency
 // route. The routes share no URL prefix, so this groups them by access rule
 // (not by path) and declares `requireAgencyUser` once instead of per route.
-const agencyProtectedRoute = createRoute( {
+const agencyRoute = createRoute( {
 	getParentRoute: () => rootRoute,
-	id: 'agency-protected',
+	id: 'agency',
 	beforeLoad: requireAgencyUser,
 } );
 
@@ -21,7 +21,7 @@ const agencyOverviewRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => agencyProtectedRoute,
+	getParentRoute: () => agencyRoute,
 	path: 'overview',
 } ).lazy( () =>
 	import( '../../agency/overview' ).then( ( d ) =>
@@ -31,6 +31,4 @@ const agencyOverviewRoute = createRoute( {
 	)
 );
 
-export const createAgencyRoutes = () => [
-	agencyProtectedRoute.addChildren( [ agencyOverviewRoute ] ),
-];
+export const createAgencyRoutes = () => [ agencyRoute.addChildren( [ agencyOverviewRoute ] ) ];

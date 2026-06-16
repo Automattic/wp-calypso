@@ -3,7 +3,7 @@ import { requireClientUser } from './a4a-guards';
 import { rootRoute } from './root';
 
 // `/client` – parent route for agency-client surfaces
-const agencyClientParentRoute = createRoute( {
+const agencyClientRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'client',
 	beforeLoad: requireClientUser,
@@ -11,7 +11,7 @@ const agencyClientParentRoute = createRoute( {
 
 // `/client/subscriptions` – agency client subscriptions overview
 const agencyClientSubscriptionsRoute = createRoute( {
-	getParentRoute: () => agencyClientParentRoute,
+	getParentRoute: () => agencyClientRoute,
 	path: 'subscriptions',
 } ).lazy( () =>
 	import( '../../agency-client/subscriptions' ).then( ( d ) =>
@@ -21,7 +21,4 @@ const agencyClientSubscriptionsRoute = createRoute( {
 	)
 );
 
-export const createAgencyClientRoutes = () => [
-	agencyClientParentRoute,
-	agencyClientSubscriptionsRoute,
-];
+export const createAgencyClientRoutes = () => [ agencyClientRoute, agencyClientSubscriptionsRoute ];
