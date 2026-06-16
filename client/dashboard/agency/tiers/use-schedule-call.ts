@@ -11,16 +11,24 @@ const A4A_SCHEDULE_CALL_FALLBACK_URL =
  * falling back to the default HubSpot meeting URL on error.
  */
 export function useScheduleCall( agencyId?: number ) {
-	const { refetch, isFetching } = useQuery( agencyScheduleCallLinkQuery( agencyId ?? 0 ) );
+	const enabled = agencyId != null && agencyId > 0;
+	const { refetch, isFetching } = useQuery( {
+		...agencyScheduleCallLinkQuery( agencyId ?? 0 ),
+		enabled: false,
+	} );
 
 	const scheduleCall = useCallback( async () => {
+		if ( ! enabled ) {
+			window.open( A4A_SCHEDULE_CALL_FALLBACK_URL, '_blank' );
+			return;
+		}
 		try {
 			const result = await refetch();
 			window.open( result.data || A4A_SCHEDULE_CALL_FALLBACK_URL, '_blank' );
 		} catch {
 			window.open( A4A_SCHEDULE_CALL_FALLBACK_URL, '_blank' );
 		}
-	}, [ refetch ] );
+	}, [ refetch, enabled ] );
 
 	return { scheduleCall, isLoading: isFetching };
 }

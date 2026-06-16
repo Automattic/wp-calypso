@@ -44,8 +44,13 @@ function InfluencedRevenueStrapline( {
 				onClick={ openInfo }
 			/>
 			{ showPopover && (
-				<Popover offset={ 12 } focusOnMount onClose={ () => setShowPopover( false ) }>
-					<VStack spacing={ 3 } style={ { maxWidth: '320px', padding: '8px' } }>
+				<Popover
+					offset={ 12 }
+					placement="bottom-start"
+					focusOnMount
+					onClose={ () => setShowPopover( false ) }
+				>
+					<VStack spacing={ 3 } style={ { width: '280px', padding: '8px' } }>
 						<Text>
 							{ __(
 								'Influenced revenue is revenue connected to your agency’s direct influence through referrals, client purchases, and managed sites using Automattic products.'
