@@ -178,7 +178,11 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 							}
 						} }
 					>
-						<h2>{ translate( 'Blaze - Powered by Jetpack' ) }</h2>
+						<h2>
+							{ translate( '%(productName)s - Powered by Jetpack', {
+								args: { productName: 'Blaze Ads' },
+							} ) }
+						</h2>
 					</BlankCanvas.Header>
 
 					<div className={ clsx( 'blazepress-widget__content', { loading: isLoading } ) }>

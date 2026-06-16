@@ -91,7 +91,8 @@ const SiteSettingsTraffic = ( {
 							clickEvent="calypso_marketing_traffic_blaze_banner_click"
 							headerText={ translate( 'Reach new readers and customers' ) }
 							contentText={ translate(
-								'Use WordPress Blaze to increase your reach by promoting your work to the larger WordPress.com community of blogs and sites. '
+								'Use WordPress %(productName)s to increase your reach by promoting your work to the larger WordPress.com community of blogs and sites. ',
+								{ args: { productName: 'Blaze Ads' } }
 							) }
 							ctaText={ translate( 'Get started' ) }
 							image={ blazeIllustration }

@@ -223,7 +223,9 @@ const BlazePressStrings = () => {
 	translate(
 		'By clicking "Submit campaign" you agree to our {{linkTos}}Terms of Service{{/linkTos}} and {{linkAdvertisingPolicy}}Advertising Policy{{/linkAdvertisingPolicy}}, and authorize charges to your payment method at regular intervals for the specified budget and duration, until cancellation. {{linkMoreAboutAds}}Learn more{{/linkMoreAboutAds}}.'
 	);
-	translate( 'Blaze campaigns are billed in USD.' );
+	translate( '%(productName)s campaigns are billed in USD.', {
+		args: { productName: 'Blaze Ads' },
+	} );
 	translate(
 		'I agree to recurring weekly charges of up to %(maxBudgetFormatted)s per week starting %(formattedDate)s.'
 	);
