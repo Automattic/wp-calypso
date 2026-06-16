@@ -8,9 +8,6 @@
 
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { dispatch, select } from '@wordpress/data';
-import { unlock } from './unlock-private-apis';
-
-const FOCUS_MODE_CLASS = 'is-focus-mode';
 
 /**
  * Checkpoint API shared between the React `useCheckpoint` hook (which AM
@@ -149,9 +146,7 @@ export function findBlockElement( clientId: string ): HTMLElement | null {
 }
 
 /**
- * Find the block-list root layout element, iframe-aware. Exposed so peer
- * components can toggle Gutenberg's `.is-focus-mode` class to mirror the
- * block-notes "dim other blocks" UX.
+ * Find the block-list root layout element, iframe-aware.
  * @returns The root block-list layout element, or null.
  */
 export function findBlockListLayout(): HTMLElement | null {
@@ -174,7 +169,6 @@ export function findBlockListLayout(): HTMLElement | null {
 type BlockEditorDispatch = {
 	selectBlock?: ( clientId: string, initialPosition?: 0 | -1 | null ) => void;
 	clearSelectedBlock?: () => void;
-	toggleBlockSpotlight?: ( clientId: string, hasBlockSpotlight: boolean ) => void;
 };
 
 type BlockEditorSelect = {
@@ -182,16 +176,11 @@ type BlockEditorSelect = {
 };
 
 function getBlockEditorDispatch(): BlockEditorDispatch {
-	let publicDispatch: BlockEditorDispatch = {};
 	try {
-		publicDispatch = dispatch( blockEditorStore ) as BlockEditorDispatch;
+		return dispatch( blockEditorStore ) as BlockEditorDispatch;
 	} catch {}
 
-	try {
-		return { ...publicDispatch, ...unlock( publicDispatch ) };
-	} catch {
-		return publicDispatch;
-	}
+	return {};
 }
 
 function getSelectedBlockClientId(): string | null {
@@ -204,18 +193,6 @@ function getSelectedBlockClientId(): string | null {
 	}
 }
 
-function setFallbackFocusModeClass( isFocused: boolean ): void {
-	const blockListLayout = findBlockListLayout();
-	if ( ! blockListLayout ) {
-		return;
-	}
-	if ( isFocused ) {
-		blockListLayout.classList.add( FOCUS_MODE_CLASS );
-		return;
-	}
-	blockListLayout.classList.remove( FOCUS_MODE_CLASS );
-}
-
 /**
  * Clear the block focus created by the sidebar. This intentionally clears the
  * selected block only when that selection still belongs to the sidebar-focused
@@ -226,16 +203,13 @@ export function clearActiveBlockFocus(): void {
 	activeBlockFocusClientId = null;
 
 	if ( ! clientId ) {
-		setFallbackFocusModeClass( false );
 		return;
 	}
 
 	const blockEditor = getBlockEditorDispatch();
-	blockEditor.toggleBlockSpotlight?.( clientId, false );
 	if ( getSelectedBlockClientId() === clientId ) {
 		blockEditor.clearSelectedBlock?.();
 	}
-	setFallbackFocusModeClass( false );
 }
 
 /**
@@ -253,13 +227,6 @@ export function toggleBlockReferenceFocus( clientId: string ): 'focused' | 'clea
 	clearActiveBlockFocus();
 
 	const blockEditor = getBlockEditorDispatch();
-	const hasPrivateSpotlight = typeof blockEditor.toggleBlockSpotlight === 'function';
-
-	if ( hasPrivateSpotlight ) {
-		blockEditor.toggleBlockSpotlight?.( clientId, true );
-	} else {
-		setFallbackFocusModeClass( true );
-	}
 	blockEditor.selectBlock?.( clientId, null );
 	activeBlockFocusClientId = clientId;
 	findBlockElement( clientId )?.scrollIntoView?.( { behavior: 'smooth', block: 'center' } );

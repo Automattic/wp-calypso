@@ -41,7 +41,6 @@ const mockSelectBlock = jest.fn( ( clientId?: string | null ) => {
 const mockClearSelectedBlock = jest.fn( () => {
 	mockSelectedBlockClientId = null;
 } );
-const mockToggleBlockSpotlight = jest.fn();
 const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
 	typeof recordTracksEvent
 >;
@@ -54,10 +53,6 @@ const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
 
 jest.mock( '@wordpress/block-editor', () => ( {
 	store: 'core/block-editor',
-} ) );
-
-jest.mock( './utils/unlock-private-apis', () => ( {
-	unlock: ( api: any ) => api,
 } ) );
 
 jest.mock( '@wordpress/components', () => {
@@ -83,7 +78,6 @@ jest.mock( '@wordpress/data', () => ( {
 			return {
 				selectBlock: mockSelectBlock,
 				clearSelectedBlock: mockClearSelectedBlock,
-				toggleBlockSpotlight: mockToggleBlockSpotlight,
 			};
 		}
 		return {};
@@ -272,11 +266,9 @@ describe( 'PostFeedback', () => {
 		mockSelectedBlockClientId = null;
 		mockSelectBlock.mockClear();
 		mockClearSelectedBlock.mockClear();
-		mockToggleBlockSpotlight.mockClear();
 		document.body.innerHTML = '';
 		clearActiveBlockFocus();
 		mockClearSelectedBlock.mockClear();
-		mockToggleBlockSpotlight.mockClear();
 		delete ( window as any ).wp;
 	} );
 
@@ -385,10 +377,7 @@ describe( 'PostFeedback', () => {
 		];
 		const blockElement = document.createElement( 'div' );
 		blockElement.setAttribute( 'data-block', 'block-1' );
-		const layoutElement = document.createElement( 'div' );
-		layoutElement.className = 'block-editor-block-list__layout is-root-container';
 		document.body.appendChild( blockElement );
-		document.body.appendChild( layoutElement );
 
 		const { unmount } = render(
 			React.createElement( PostFeedback, {
@@ -413,22 +402,19 @@ describe( 'PostFeedback', () => {
 		expect( blockRef ).toBeTruthy();
 		( blockRef as HTMLButtonElement ).click();
 
-		expect( mockToggleBlockSpotlight ).toHaveBeenCalledWith( 'block-1', true );
 		expect( mockSelectBlock ).toHaveBeenCalledWith( 'block-1', null );
 		expect( blockElement.scrollIntoView ).toHaveBeenCalledWith( {
 			behavior: 'smooth',
 			block: 'center',
 		} );
-		expect( layoutElement.classList.contains( 'is-focus-mode' ) ).toBe( false );
 
 		( blockRef as HTMLButtonElement ).click();
 
-		expect( mockToggleBlockSpotlight ).toHaveBeenCalledWith( 'block-1', false );
 		expect( mockClearSelectedBlock ).toHaveBeenCalled();
 
 		unmount();
 
-		expect( layoutElement.classList.contains( 'is-focus-mode' ) ).toBe( false );
+		expect( mockClearSelectedBlock ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'moves sidebar-owned block focus between referenced blocks', () => {
@@ -473,13 +459,10 @@ describe( 'PostFeedback', () => {
 		const blockRefs = container.querySelectorAll( '.jetpack-ai-post-feedback__block-ref' );
 		( blockRefs[ 0 ] as HTMLButtonElement ).click();
 		mockClearSelectedBlock.mockClear();
-		mockToggleBlockSpotlight.mockClear();
 
 		( blockRefs[ 1 ] as HTMLButtonElement ).click();
 
-		expect( mockToggleBlockSpotlight ).toHaveBeenCalledWith( 'block-1', false );
 		expect( mockClearSelectedBlock ).toHaveBeenCalled();
-		expect( mockToggleBlockSpotlight ).toHaveBeenCalledWith( 'block-2', true );
 		expect( mockSelectBlock ).toHaveBeenLastCalledWith( 'block-2', null );
 	} );
 
@@ -515,7 +498,6 @@ describe( 'PostFeedback', () => {
 			container.querySelector( '.jetpack-ai-post-feedback__block-ref' ) as HTMLButtonElement
 		 ).click();
 		mockClearSelectedBlock.mockClear();
-		mockToggleBlockSpotlight.mockClear();
 
 		const dismissButton = container.querySelectorAll(
 			'.jetpack-ai-post-feedback__action-button'
@@ -525,7 +507,6 @@ describe( 'PostFeedback', () => {
 			dismissButton.click();
 		} );
 
-		expect( mockToggleBlockSpotlight ).toHaveBeenCalledWith( 'block-1', false );
 		expect( mockClearSelectedBlock ).toHaveBeenCalled();
 	} );
 

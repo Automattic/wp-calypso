@@ -29,7 +29,6 @@ declare module '@wordpress/block-editor' {
 	interface BlockEditorActions {
 		selectBlock( clientId: string, initialPosition?: 0 | -1 | null ): void;
 		clearSelectedBlock(): void;
-		toggleBlockSpotlight?: ( clientId: string, hasBlockSpotlight: boolean ) => void;
 	}
 
 	export const store: StoreDescriptor< BlockEditorSelectors, BlockEditorActions >;
