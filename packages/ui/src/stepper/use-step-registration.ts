@@ -5,7 +5,7 @@ import { warning } from '../utils/warning';
 // Helpers
 // ---------------------------------------------------------------------------
 
-type Instance< T > = { id: string; meta: T };
+type Instance< T > = { id: string; slot: number; meta: T };
 
 /**
  * Maintains an ordered list of registered steps for any record type that
@@ -31,8 +31,10 @@ export function useStepRegistration< T extends { value: string } >() {
 	const mountCounts = useRef( new Map< string, number >() );
 
 	// Stable slot per value, assigned when a value first mounts and held until
-	// its last instance unmounts. Keeps `steps` order pinned to first-appearance
-	// even as duplicate instances of a value come and go.
+	// its last instance unmounts. Duplicate instances of a value reuse its slot,
+	// so each carries its slot in state and `steps` order stays pinned to
+	// first-appearance even as duplicates come and go. Read only here (never
+	// during render) so the derivation stays pure.
 	const slotOrder = useRef( new Map< string, number >() );
 	const nextSlot = useRef( 0 );
 
@@ -44,10 +46,13 @@ export function useStepRegistration< T extends { value: string } >() {
 			warning(
 				`[Stepper] Two steps share value '${ meta.value }'. Each step must have a unique value.`
 			);
-		} else {
-			slotOrder.current.set( meta.value, nextSlot.current++ );
 		}
-		setInstances( ( prev ) => [ ...prev, { id, meta } ] );
+		let slot = slotOrder.current.get( meta.value );
+		if ( slot === undefined ) {
+			slot = nextSlot.current++;
+			slotOrder.current.set( meta.value, slot );
+		}
+		setInstances( ( prev ) => [ ...prev, { id, slot, meta } ] );
 
 		return () => {
 			const remaining = ( counts.get( meta.value ) ?? 1 ) - 1;
@@ -77,7 +82,7 @@ export function useStepRegistration< T extends { value: string } >() {
 			if ( isUnchanged ) {
 				return prev;
 			}
-			return prev.map( ( inst ) => ( inst.id === id ? { id, meta } : inst ) );
+			return prev.map( ( inst ) => ( inst.id === id ? { ...inst, meta } : inst ) );
 		} );
 	}, [] );
 
@@ -86,16 +91,15 @@ export function useStepRegistration< T extends { value: string } >() {
 	// update (which leaves `instances` referentially stable) keeps the same
 	// `steps` reference.
 	const steps = useMemo( () => {
-		const order = slotOrder.current;
-		const canonical = new Map< string, T >();
+		const canonical = new Map< string, { slot: number; meta: T } >();
 		for ( const inst of instances ) {
 			if ( ! canonical.has( inst.meta.value ) ) {
-				canonical.set( inst.meta.value, inst.meta );
+				canonical.set( inst.meta.value, { slot: inst.slot, meta: inst.meta } );
 			}
 		}
-		return [ ...canonical.values() ].sort(
-			( a, b ) => ( order.get( a.value ) ?? 0 ) - ( order.get( b.value ) ?? 0 )
-		);
+		return [ ...canonical.values() ]
+			.sort( ( a, b ) => a.slot - b.slot )
+			.map( ( entry ) => entry.meta );
 	}, [ instances ] );
 
 	return { steps, registerStep, updateStep };
