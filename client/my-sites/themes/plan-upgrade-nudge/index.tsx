@@ -27,14 +27,6 @@ const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 		return null;
 	}
 
-const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
-	const translate = useTranslate();
-	const planSlug = useSelector( ( state: IAppState ) => getSitePlanSlug( state, siteId ) ?? '' );
-
-	if ( ! planSlug ) {
-		return null;
-	}
-
 	const nudgeIcon = <Icon icon={ brush } />;
 
 	if ( isFreePlan( planSlug ) ) {
