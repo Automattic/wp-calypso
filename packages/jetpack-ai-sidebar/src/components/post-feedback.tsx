@@ -140,7 +140,7 @@ function getApplyUnavailableReason(
 	block: BlockSnapshot | null
 ): string | undefined {
 	if ( item.requires_manual ) {
-		return item.manual_reason || __( 'Needs manual edit.', 'jetpack' );
+		return item.manual_reason || __( 'This item cannot be applied automatically.', 'jetpack' );
 	}
 	if ( ! item.suggested_text ) {
 		return __( 'Needs manual edit - no rewrite was generated.', 'jetpack' );
@@ -263,7 +263,7 @@ export default function PostFeedback( { summary, items, sections, postId }: Post
 				return;
 			}
 
-			let result;
+			let result: Awaited< ReturnType< typeof applyReviewEdit > >;
 			try {
 				result = await applyReviewEdit(
 					clientId,

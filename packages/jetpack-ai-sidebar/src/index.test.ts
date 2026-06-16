@@ -316,6 +316,29 @@ describe( 'PostFeedback', () => {
 		);
 	} );
 
+	it( 'does not duplicate the manual edit label when no manual reason is provided', () => {
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Manual item',
+						feedback: 'Feedback.',
+						action: 'Action.',
+						block_index: null,
+						requires_manual: true,
+					},
+				],
+			} )
+		);
+
+		expect( container.textContent ).toContain(
+			'Needs manual edit: This item cannot be applied automatically.'
+		);
+		expect( container.textContent ).not.toContain( 'Needs manual edit: Needs manual edit.' );
+	} );
+
 	it( 'marks the item failed when the block editor store cannot apply the edit', async () => {
 		mockEditorBlocks = [
 			{
