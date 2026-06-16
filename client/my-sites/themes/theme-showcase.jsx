@@ -4,7 +4,7 @@ import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { compact, pickBy } from 'lodash';
+import { pickBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { InView } from 'react-intersection-observer';
@@ -329,7 +329,7 @@ class ThemeShowcase extends Component {
 		const filters = searchString.match( filterRegex ) || [];
 
 		const validFilters = filters.map( ( filter ) => filterToTermTable[ filter ] );
-		const filterString = compact( validFilters ).join( '+' );
+		const filterString = validFilters.filter( Boolean ).join( '+' );
 
 		const search = searchBoxContent.replace( filterRegex, '' ).replace( /\s+/g, ' ' ).trim();
 

@@ -5,7 +5,7 @@ import {
 } from '@automattic/wpcom-checkout';
 import creditcards from 'creditcards';
 import i18n from 'i18n-calypso';
-import { capitalize, compact, isEmpty, mergeWith } from 'lodash';
+import { capitalize, isEmpty, mergeWith } from 'lodash';
 
 /**
  * Returns the credit card validation rule set
@@ -320,15 +320,15 @@ export function getCreditCardType( number ) {
  * @returns {Array} array of errors found, if any
  */
 function getErrors( field, value, paymentDetails ) {
-	return compact(
-		field.rules.map( function ( rule ) {
+	return field.rules
+		.map( function ( rule ) {
 			const validator = getValidator( rule );
 
 			if ( ! validator.isValid( value, paymentDetails ) ) {
 				return validator.error( field.description );
 			}
 		} )
-	);
+		.filter( Boolean );
 }
 
 function getEbanxCreditCardRules( { country } ) {

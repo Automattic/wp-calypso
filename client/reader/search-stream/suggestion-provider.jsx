@@ -1,4 +1,5 @@
-import { map, sampleSize, times } from 'lodash';
+import { times } from '@automattic/js-utils';
+import { map, sampleSize } from 'lodash';
 import { Component } from 'react';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { useFollowedTags } from 'calypso/reader/data/tags';

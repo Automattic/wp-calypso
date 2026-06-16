@@ -1,4 +1,4 @@
-import { times } from 'lodash';
+import { times } from '@automattic/js-utils';
 import PropTypes from 'prop-types';
 import { Fragment, useEffect } from 'react';
 import { connect } from 'react-redux';
