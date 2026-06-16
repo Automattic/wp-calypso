@@ -322,8 +322,11 @@ export function Chat( {
 			x.get() +
 			STYLE_CONSTANTS.COMPACT_WIDTH / 2;
 		const newSide = panelCenter < window.innerWidth / 2 ? 'left' : 'right';
-		setCurrentSide( newSide );
-		setChatPosition( newSide );
+		// Skip the redundant localStorage write when the side hasn't changed.
+		if ( currentSide !== newSide ) {
+			setCurrentSide( newSide );
+			setChatPosition( newSide );
+		}
 
 		const position = calculateSnapPosition( newSide );
 		if ( ! position ) {
@@ -332,7 +335,7 @@ export function Chat( {
 
 		animate( x, position.x, DRAG_CONSTANTS.SPRING_CONFIG );
 		animate( y, position.y, DRAG_CONSTANTS.SPRING_CONFIG );
-	}, [ freeDrag, x, y, calculateSnapPosition ] );
+	}, [ freeDrag, x, y, calculateSnapPosition, currentSide ] );
 
 	// Track previous state for animation purposes
 	const prevStateRef = useRef( chat.state );
