@@ -23,6 +23,7 @@ import { useGetWebsiteContentQuery } from 'calypso/state/signup/steps/website-co
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { AppState, SiteId, SiteSlug } from 'calypso/types';
+import type { JSX } from 'react';
 
 import './difm-lite-in-progress.scss';
 

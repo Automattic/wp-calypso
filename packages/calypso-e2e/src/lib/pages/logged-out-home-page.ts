@@ -48,10 +48,20 @@ export class LoggedOutHomePage {
 			}
 		);
 
-		await this.page.goto( new URL( themesHref, this.page.url() ).href, {
-			timeout: 30_000,
+		const response = await this.page.goto( new URL( themesHref, this.page.url() ).href, {
+			// CI traces in wp-calypso#111117 showed this route can spend over 50s server-side
+			// before the document loads.
+			timeout: 60_000,
 			waitUntil: 'domcontentloaded',
 		} );
+
+		if ( ! response?.ok() ) {
+			throw new Error(
+				`Themes page failed to load: ${ response?.status() ?? 'no response' } ${
+					response?.url() ?? themesHref
+				}`
+			);
+		}
 	}
 
 	/**

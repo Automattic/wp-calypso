@@ -1,5 +1,4 @@
 import {
-	Button,
 	Card,
 	CardBody,
 	CardMedia,
@@ -12,9 +11,12 @@ import {
 import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
 import { Icon, moreVertical, page, trash, cautionFilled as warning } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useState } from 'react';
+import useDeliverableThumbnail from '../../data/use-deliverable-thumbnail';
 import { getAgentStudioOutputPath } from '../../lib/paths';
 import DeleteDeliverableDialog from './delete-deliverable-dialog';
+import DeliverableThumbnailFrame from './deliverable-thumbnail-frame';
 import type { AgentStudioOutput } from '../../types';
 
 import './style.scss';
@@ -25,39 +27,52 @@ interface Props {
 
 export default function DeliverableCard( { output }: Props ) {
 	const [ isDeleteDialogOpen, setIsDeleteDialogOpen ] = useState( false );
+	// Title is resolved server-side, so it's consistent across the card,
+	// delete dialog and detail page.
+	const title = output.title;
+	const isReady = output.status === 'ready';
 
 	return (
-		<Card size="small" className="a4a-agent-studio-deliverable-card">
+		<Card
+			size="small"
+			className={ clsx( 'a4a-agent-studio-deliverable-card', { 'is-clickable': isReady } ) }
+		>
 			<CardMedia className="a4a-agent-studio-deliverable-card__media">
-				<DeliverablePreview output={ output } />
+				<DeliverablePreview output={ output } title={ title } />
 			</CardMedia>
 			<CardBody className="a4a-agent-studio-deliverable-card__body">
-				<VStack spacing={ 1 } className="a4a-agent-studio-deliverable-card__info">
-					<Text size={ 15 } weight={ 600 } className="a4a-agent-studio-deliverable-card__title">
-						{ output.title }
-					</Text>
-					<Text variant="muted">{ dateI18n( 'F j, Y', output.createdAt ) }</Text>
-					<Text variant="muted">{ getMetaLabel( output ) }</Text>
-				</VStack>
-				<HStack justify="space-between" alignment="center">
-					{ output.status === 'ready' && (
-						<Button variant="secondary" href={ getAgentStudioOutputPath( output.id ) }>
-							{ __( 'View' ) }
-						</Button>
-					) }
-					<DropdownMenu
-						icon={ moreVertical }
-						label={ __( 'Deliverable actions' ) }
-						controls={ [
-							{
-								title: __( 'Delete' ),
-								icon: trash,
-								onClick: () => setIsDeleteDialogOpen( true ),
-							},
-						] }
-					/>
+				<HStack justify="space-between" alignment="flex-start" spacing={ 2 }>
+					<VStack spacing={ 1 } className="a4a-agent-studio-deliverable-card__info">
+						<Text size={ 15 } weight={ 600 } className="a4a-agent-studio-deliverable-card__title">
+							{ title }
+						</Text>
+						<Text variant="muted">{ dateI18n( 'F j, Y', output.createdAt ) }</Text>
+					</VStack>
+					{ /* Sits above the card-wide link overlay so its clicks aren't swallowed. */ }
+					<div className="a4a-agent-studio-deliverable-card__menu">
+						<DropdownMenu
+							icon={ moreVertical }
+							label={ __( 'Deliverable actions' ) }
+							controls={ [
+								{
+									title: __( 'Delete' ),
+									icon: trash,
+									onClick: () => setIsDeleteDialogOpen( true ),
+								},
+							] }
+						/>
+					</div>
 				</HStack>
 			</CardBody>
+			{ /* Stretched link makes the whole card open the deliverable without
+			     nesting interactive elements inside one another. */ }
+			{ isReady && (
+				<a
+					className="a4a-agent-studio-deliverable-card__link"
+					href={ getAgentStudioOutputPath( output.id ) }
+					aria-label={ title }
+				/>
+			) }
 			{ isDeleteDialogOpen && (
 				<DeleteDeliverableDialog
 					output={ output }
@@ -69,7 +84,9 @@ export default function DeliverableCard( { output }: Props ) {
 	);
 }
 
-function DeliverablePreview( { output }: Props ) {
+function DeliverablePreview( { output, title }: Props & { title: string } ) {
+	const { frames, isFilmstrip, isLoading } = useDeliverableThumbnail( output );
+
 	if ( output.status === 'generating' ) {
 		return (
 			<div className="a4a-agent-studio-deliverable-card__state">
@@ -88,21 +105,31 @@ function DeliverablePreview( { output }: Props ) {
 		);
 	}
 
+	if ( frames.length > 0 ) {
+		return (
+			<div
+				className={ clsx( 'a4a-agent-studio-deliverable-card__frames', {
+					'is-filmstrip': isFilmstrip,
+				} ) }
+			>
+				{ frames.map( ( frame, index ) => (
+					<DeliverableThumbnailFrame key={ index } frame={ frame } title={ title } />
+				) ) }
+			</div>
+		);
+	}
+
+	if ( isLoading ) {
+		return (
+			<div className="a4a-agent-studio-deliverable-card__state">
+				<Spinner />
+			</div>
+		);
+	}
+
 	return (
 		<div className="a4a-agent-studio-deliverable-card__placeholder">
 			<Icon icon={ page } size={ 32 } />
 		</div>
 	);
-}
-
-function getMetaLabel( output: AgentStudioOutput ) {
-	if ( output.status === 'generating' ) {
-		return __( 'Generating…' );
-	}
-
-	if ( output.status === 'failed' ) {
-		return __( 'Generation failed' );
-	}
-
-	return output.deliverableType;
 }

@@ -1,7 +1,5 @@
 import {
 	WPCOM_FEATURES_INSTALL_PLUGINS,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
@@ -11,12 +9,11 @@ import {
 	FEATURE_INSTALL_THEMES,
 	WPCOM_FEATURES_COMMUNITY_THEMES,
 } from '@automattic/calypso-products';
-import { isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
 import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
-import { mapValues, pickBy, flowRight as compose } from 'lodash';
+import { mapValues, pickBy } from 'lodash';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { compose, bindActionCreators } from 'redux';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { localizeThemesPath, shouldSelectSite } from 'calypso/my-sites/themes/helpers';
@@ -26,7 +23,6 @@ import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { withSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/with-site-global-styles-on-personal';
 import {
 	isJetpackSite,
 	isJetpackSiteMultiSite,
@@ -62,21 +58,19 @@ import { isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors/is-
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
- * Get the checkout path slug for the given site and minimum plan.
+ * Get the plan slug to use in a checkout URL for the given site and minimum plan.
  * @param {Object} state
  * @param {number} siteId
  * @param {string} minimumPlan
  * @returns
  */
-function getPlanPathSlugForThemes( state, siteId, minimumPlan ) {
+function getPlanSlugForThemes( state, siteId, minimumPlan ) {
 	const currentPlanSlug = getSitePlanSlug( state, siteId );
 	const requiredTerm = getPlan( currentPlanSlug )?.term || TERM_ANNUALLY;
-	const requiredPlanSlug = findFirstSimilarPlanKey( minimumPlan, { term: requiredTerm } );
-	const mappedPlan = getPlan( requiredPlanSlug );
-	return mappedPlan?.getPathSlug();
+	return findFirstSimilarPlanKey( minimumPlan, { term: requiredTerm } );
 }
 
-function getAllThemeOptions( { translate, isFSEActive, isGlobalStylesOnPersonal } ) {
+function getAllThemeOptions( { translate, isFSEActive } ) {
 	const purchase = {
 		label: translate( 'Purchase', {
 			context: 'verb',
@@ -98,23 +92,10 @@ function getAllThemeOptions( { translate, isFSEActive, isGlobalStylesOnPersonal 
 			const themeTier = options.themeTier;
 
 			const tierMinimumUpsellPlan = THEME_TIERS[ themeTier?.slug ]?.minimumUpsellPlan;
-			const isLockedStyleVariation =
-				options?.styleVariationSlug &&
-				! isDefaultGlobalStylesVariationSlug( options.styleVariationSlug );
 
-			// @TODO Cleanup once the test phase is over.
-			let minimumPlan;
-			if ( isGlobalStylesOnPersonal ) {
-				minimumPlan = tierMinimumUpsellPlan;
-			} else if ( tierMinimumUpsellPlan === PLAN_PERSONAL && isLockedStyleVariation ) {
-				minimumPlan = PLAN_PREMIUM;
-			} else {
-				minimumPlan = tierMinimumUpsellPlan;
-			}
+			const planSlug = getPlanSlugForThemes( state, siteId, tierMinimumUpsellPlan );
 
-			const planPathSlug = getPlanPathSlugForThemes( state, siteId, minimumPlan );
-
-			return `/checkout/${ slug }/${ planPathSlug }?redirect_to=${ redirectTo }`;
+			return `/checkout/${ slug }/${ planSlug }?redirect_to=${ redirectTo }`;
 		},
 		hideForTheme: ( state, themeId, siteId ) =>
 			( isJetpackSite( state, siteId ) && ! isSiteWpcomAtomic( state, siteId ) ) || // No individual theme purchase on a JP site
@@ -200,9 +181,9 @@ function getAllThemeOptions( { translate, isFSEActive, isGlobalStylesOnPersonal 
 				} )
 			);
 
-			const planPathSlug = getPlanPathSlugForThemes( state, siteId, PLAN_BUSINESS );
+			const planSlug = getPlanSlugForThemes( state, siteId, PLAN_BUSINESS );
 
-			return `/checkout/${ slug }/${ planPathSlug }?redirect_to=${ redirectTo }`;
+			return `/checkout/${ slug }/${ planSlug }?redirect_to=${ redirectTo }`;
 		},
 		hideForTheme: ( state, themeId, siteId ) =>
 			isJetpackSite( state, siteId ) ||
@@ -239,13 +220,13 @@ function getAllThemeOptions( { translate, isFSEActive, isGlobalStylesOnPersonal 
 			const currentPlanSlug = getSitePlanSlug( state, siteId );
 			const isEcommerceTrialMonthly = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 
-			const planPathSlug = getPlanPathSlugForThemes(
+			const planSlug = getPlanSlugForThemes(
 				state,
 				siteId,
 				isEcommerceTrialMonthly ? PLAN_ECOMMERCE : PLAN_BUSINESS
 			);
 
-			return `/checkout/${ slug }/${ planPathSlug }?redirect_to=${ redirectTo }`;
+			return `/checkout/${ slug }/${ planSlug }?redirect_to=${ redirectTo }`;
 		},
 		hideForTheme: ( state, themeId, siteId ) =>
 			isJetpackSite( state, siteId ) ||
@@ -522,9 +503,4 @@ const connectOptionsHoc = connect(
 	}
 );
 
-export const connectOptions = compose(
-	localize,
-	withIsFSEActive,
-	withSiteGlobalStylesOnPersonal,
-	connectOptionsHoc
-);
+export const connectOptions = compose( localize, withIsFSEActive, connectOptionsHoc );

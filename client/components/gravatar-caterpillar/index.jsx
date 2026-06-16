@@ -1,4 +1,5 @@
-import { map, size, filter, uniqBy } from 'lodash';
+import { uniqBy } from '@automattic/js-utils';
+import { map, size, filter } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import Gravatar from 'calypso/components/gravatar';

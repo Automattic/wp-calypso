@@ -1,7 +1,8 @@
-import { flowRight, omit } from 'lodash';
+import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import { withPostLikeActions, withPostLikes } from 'calypso/components/data/post-likes';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
@@ -68,7 +69,7 @@ class LikeButtonContainer extends Component {
 	}
 }
 
-export default flowRight(
+export default compose(
 	connect(
 		( state ) => {
 			return {

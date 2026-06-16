@@ -1,9 +1,10 @@
 import { Card, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
-import { flowRight, pick } from 'lodash';
+import { pick } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLegend from 'calypso/components/forms/form-legend';
@@ -669,7 +670,7 @@ export const getFormSettings = ( settings ) => {
 	] );
 };
 
-export default flowRight(
+export default compose(
 	connectComponent,
 	wrapSettingsForm( getFormSettings )
 )( SiteSettingsFormDiscussion );

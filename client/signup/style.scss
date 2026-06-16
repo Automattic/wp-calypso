@@ -1,6 +1,8 @@
-@import "@automattic/onboarding/styles/mixins";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/elevation";
+@import "@automattic/onboarding/styles/mixins";
 
 body.is-section-signup {
 	background: var( --color-main-background, #fcfcfc );

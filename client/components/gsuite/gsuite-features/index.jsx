@@ -9,7 +9,7 @@ import GSuiteSingleFeature from 'calypso/components/gsuite/gsuite-features/singl
 
 import './style.scss';
 
-const GSuiteFeatures = ( { compact, domainName, productSlug, type } ) => {
+const GSuiteFeatures = ( { compact = false, domainName, productSlug, type = 'grid' } ) => {
 	const translate = useTranslate();
 
 	const getStorageText = () => {
@@ -90,15 +90,10 @@ const GSuiteFeatures = ( { compact, domainName, productSlug, type } ) => {
 };
 
 GSuiteFeatures.propTypes = {
-	compact: PropTypes.bool.isRequired,
+	compact: PropTypes.bool,
 	domainName: PropTypes.string.isRequired,
 	productSlug: PropTypes.string,
-	type: PropTypes.oneOf( [ 'grid', 'list' ] ).isRequired,
-};
-
-GSuiteFeatures.defaultProps = {
-	compact: false,
-	type: 'grid',
+	type: PropTypes.oneOf( [ 'grid', 'list' ] ),
 };
 
 export default GSuiteFeatures;

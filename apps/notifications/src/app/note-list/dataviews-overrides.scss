@@ -2,6 +2,8 @@
 
 @import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/variables';
+// Base DataViews styles, so the app is self-contained in any host.
+@import '@wordpress/dataviews/build-style/style.css';
 
 @mixin dark-unread-note-list-item {
 	div[role="article"]:has(.is-unread),
@@ -21,6 +23,26 @@
 	div[role="article"]:where(.is-hovered):has(.is-unread):focus-within {
 		.dataviews-view-list__item-wrapper {
 			background-color: color-mix(in srgb, var(--wp-admin-theme-color) 22%, var(--color-surface));
+		}
+	}
+}
+
+// Dark-theme selected note: a restrained tint plus accent bar, with toned-down
+// dividers so the row doesn't read as a saturated boxed-in block.
+@mixin dark-selected-note-list-item {
+	div[role="article"].is-selected,
+	div[role="article"].is-selected:focus-within,
+	div[role="article"].is-selected:has(.is-unread),
+	div[role="article"].is-selected:has(.is-unread):focus-within {
+		border-top-color: color-mix(in srgb, var(--wp-admin-theme-color) 28%, var(--color-surface));
+
+		& + div[role="article"] {
+			border-top-color: color-mix(in srgb, var(--wp-admin-theme-color) 28%, var(--color-surface));
+		}
+
+		.dataviews-view-list__item-wrapper {
+			background-color: color-mix(in srgb, var(--wp-admin-theme-color) 20%, var(--color-surface));
+			box-shadow: inset 3px 0 0 var(--wp-admin-theme-color);
 		}
 	}
 }
@@ -58,8 +80,22 @@
 		}
 	}
 
+	// Selected note: accent bar + stronger tint. The unread pairing keeps it
+	// winning over the `:has(.is-unread)` rules above, which would otherwise
+	// mask DataViews' faint built-in selection.
+	div[role="article"].is-selected,
+	div[role="article"].is-selected:focus-within,
+	div[role="article"].is-selected:has(.is-unread),
+	div[role="article"].is-selected:has(.is-unread):focus-within {
+		.dataviews-view-list__item-wrapper {
+			background-color: rgba(var(--wp-admin-theme-color--rgb), 0.12);
+			box-shadow: inset 3px 0 0 var(--wp-admin-theme-color);
+		}
+	}
+
 	@include ui-mixins.when-dark-theme {
 		@include dark-unread-note-list-item;
+		@include dark-selected-note-list-item;
 	}
 
 	// We override the media field

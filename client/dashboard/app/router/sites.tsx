@@ -21,6 +21,7 @@ import {
 	siteJetpackSettingsQuery,
 	siteMediaStorageQuery,
 	sitePHPVersionQuery,
+	sitePostByEmailSettingsQuery,
 	siteCurrentPlanQuery,
 	sitePlansQuery,
 	siteBySlugQuery,
@@ -37,6 +38,7 @@ import {
 	siteSshAccessStatusQuery,
 	siteStaticFile404SettingQuery,
 	siteWordPressVersionQuery,
+	wpOrgCoreVersionQuery,
 	queryClient,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
@@ -64,7 +66,7 @@ import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { AUTH_QUERY_KEY } from '../auth';
-import { dashboardRedirect } from './redirect';
+import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
 import type { DifmWebsiteContentResponse, Site, User } from '@automattic/api-core';
@@ -321,7 +323,9 @@ export const siteLogsPhpRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-php' )( {
-			component: () => <d.default logType={ LogType.PHP } />,
+			component: () => (
+				<d.default logType={ LogType.PHP } siteSlug={ siteRoute.useParams().siteSlug } />
+			),
 		} )
 	)
 );
@@ -340,7 +344,9 @@ export const siteLogsServerRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-server' )( {
-			component: () => <d.default logType={ LogType.SERVER } />,
+			component: () => (
+				<d.default logType={ LogType.SERVER } siteSlug={ siteRoute.useParams().siteSlug } />
+			),
 		} )
 	)
 );
@@ -359,7 +365,9 @@ export const siteLogsActivityRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-activity' )( {
-			component: () => <d.default logType={ LogType.ACTIVITY } />,
+			component: () => (
+				<d.default logType={ LogType.ACTIVITY } siteSlug={ siteRoute.useParams().siteSlug } />
+			),
 		} )
 	)
 );
@@ -856,10 +864,13 @@ export const siteSettingsAIToolsRoute = createRoute( {
 	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		await Promise.all( [
-			queryClient.ensureQueryData( bigSkyPluginQuery( site.ID ) ),
-			queryClient.ensureQueryData( userSettingsQuery() ),
-		] );
+		const pluginStatus = await queryClient.ensureQueryData( bigSkyPluginQuery( site.ID ) );
+
+		if ( pluginStatus?.available ) {
+			queryClient.prefetchQuery( sitePostByEmailSettingsQuery( site ) );
+		}
+
+		await queryClient.ensureQueryData( userSettingsQuery() );
 	},
 } );
 
@@ -1040,6 +1051,11 @@ export const siteSettingsWordPressRoute = createRoute( {
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( canSwitchWordPressVersion( site ) || canOptOutOfWordPressBeta( site, 'beta' ) ) {
+			// Fire-and-forget the external wp.org queries so a slow upstream
+			// doesn't hang navigation; the component suspends on them via
+			// useSuspenseQuery and falls back to the route's Suspense boundary.
+			queryClient.prefetchQuery( wpOrgCoreVersionQuery() );
+			queryClient.prefetchQuery( wpOrgCoreVersionQuery( 'beta' ) );
 			await queryClient.ensureQueryData( siteWordPressVersionQuery( site.ID ) );
 		}
 	},
@@ -1503,11 +1519,6 @@ export const siteSettingsRepositoriesRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'repositories',
-	validateSearch: ( search ): { back_to?: 'site-deployments' } => {
-		return {
-			back_to: search.back_to === 'site-deployments' ? 'site-deployments' : undefined,
-		};
-	},
 } );
 
 export const siteSettingsRepositoriesIndexRoute = createRoute( {
@@ -1560,11 +1571,6 @@ export const siteSettingsRepositoriesManageRoute = createRoute( {
 	parseParams: ( params ) => ( {
 		deploymentId: Number( params.deploymentId ),
 	} ),
-	validateSearch: ( search ): { back_to?: 'site-deployments' } => {
-		return {
-			back_to: search.back_to === 'site-deployments' ? 'site-deployments' : undefined,
-		};
-	},
 	loader: async ( { params: { siteSlug, deploymentId } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		await queryClient.ensureQueryData( codeDeploymentQuery( site.ID, deploymentId ) );
@@ -1916,18 +1922,4 @@ async function loadSiteLogsRoute( { params: { siteSlug } }: { params: { siteSlug
 	if ( ! site.__inaccessible_jetpack_error ) {
 		await queryClient.prefetchQuery( siteSettingsQuery( site.ID ) );
 	}
-}
-
-function redirectAsNotAllowed( options: {
-	to: string;
-	params?: Record< string, string >;
-	search?: Record< string, unknown >;
-} ) {
-	return dashboardRedirect( {
-		...options,
-		search: {
-			...options.search,
-			flash: 'route-not-allowed',
-		},
-	} );
 }

@@ -1,16 +1,28 @@
 import wpcom from 'calypso/lib/wp';
 
-export const useUploadLogo = () => async ( agencyId: number | undefined, file: File ) => {
-	if ( agencyId === undefined ) {
-		return;
-	}
+interface UploadLogoResponse {
+	asset_type: string;
+	attachment_id: number;
+	url: string;
+	mime: string;
+	width: number;
+	height: number;
+}
 
-	const formData = new FormData();
-	formData.append( 'media', file );
+export const useUploadLogo =
+	() =>
+	async ( agencyId: number | undefined, file: File ): Promise< UploadLogoResponse | undefined > => {
+		if ( agencyId === undefined ) {
+			return;
+		}
 
-	return await wpcom.req.post( {
-		apiNamespace: 'wpcom/v2',
-		path: '/agency/' + agencyId + '/profile/logo',
-		body: formData,
-	} );
-};
+		const formData = new FormData();
+		formData.append( 'media', file );
+		formData.append( 'asset_type', 'partner_directory_logo' );
+
+		return await wpcom.req.post( {
+			apiNamespace: 'wpcom/v2',
+			path: '/agency/' + agencyId + '/media',
+			body: formData,
+		} );
+	};

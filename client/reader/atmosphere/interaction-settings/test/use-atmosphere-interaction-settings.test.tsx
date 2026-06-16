@@ -7,7 +7,7 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { useAtmosphereInteractionSettings } from '../use-atmosphere-interaction-settings';
 import type { ActiveMode, ComposerProtocolExtrasSlot } from 'calypso/reader/social/composer';
 
-// The `_changed` Tracks dispatch in `onSave` selects from `state.reader.follows`,
+// The `_changed` Tracks dispatch in `onSave` selects from the follows query cache,
 // which the default test store doesn't initialize. We don't assert on the
 // Tracks payload here — those are covered by the analytics action's own
 // tests — so neutralize the action creator.

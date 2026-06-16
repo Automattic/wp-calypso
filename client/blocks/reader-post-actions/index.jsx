@@ -20,6 +20,9 @@ import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { ReaderFreshlyPressedButton } from '../reader-freshly-pressed-button';
 import './style.scss';
 
+/**
+ * @param {{ post: Object; site?: Object; onCommentClick?: Function; iconSize?: number; className?: string; fullPost?: boolean; commentsApiDisabled?: boolean; }} props
+ */
 const ReaderPostActions = ( {
 	post,
 	site,
@@ -68,7 +71,6 @@ const ReaderPostActions = ( {
 					<CommentButton
 						key="comment-button"
 						commentCount={ post.discussion.comment_count }
-						post={ post }
 						onClick={ onCommentClick }
 						tagName="button"
 						icon={ ReaderCommentIcon( {

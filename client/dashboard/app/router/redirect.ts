@@ -11,3 +11,17 @@ import { redirect } from '@tanstack/react-router';
  */
 export const dashboardRedirect: typeof redirect = ( options ) =>
 	redirect( { ...options, viewTransition: false } );
+
+export function redirectAsNotAllowed( options: {
+	to: string;
+	params?: Record< string, string >;
+	search?: Record< string, unknown >;
+} ) {
+	return dashboardRedirect( {
+		...options,
+		search: {
+			...options.search,
+			flash: 'route-not-allowed',
+		},
+	} );
+}

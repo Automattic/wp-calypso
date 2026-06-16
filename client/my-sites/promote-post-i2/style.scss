@@ -1,6 +1,7 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/variables";
 @import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/components/src/styles/typography";
-@import "@wordpress/base-styles/breakpoints";
 
 @mixin promote-post-i2-font {
 	color: $studio-gray-60;
@@ -136,7 +137,9 @@ body.is-section-promote-post-i2 {
 	.layout__content {
 		position: relative;
 		margin: 0;
-		padding: 32px 0 32px var(--sidebar-width-max);
+		// No bottom padding: the sticky Jetpack footer at the end of the page
+		// should rest flush against the bottom.
+		padding: 32px 0 0 var(--sidebar-width-max);
 
 		.main {
 			margin: 0;
@@ -187,7 +190,6 @@ body.is-section-promote-post-i2 {
 					margin-top: 32px;
 				}
 
-				.promote-post-i2__header-subtitle_mobile,
 				.promote-post-i2__search-bar-wrapper,
 				.promote-post-i2__aux-wrapper,
 				.posts-list__table,
@@ -238,68 +240,48 @@ body.is-section-promote-post-i2 {
 				}
 			}
 
-			.advertising__page-header {
-				.formatted-header__title {
-					color: $studio-gray-100;
-					font-weight: 500;
-					font-size: .875rem;
-				}
-			}
 		}
 	}
 }
 
-.promote-post-i2 {
-	&__top-bar {
-		align-items: center;
-		display: flex;
-		font-family: $font-sf-pro-text;
-		justify-content: space-between;
-		margin: 0 50px;
-		box-sizing: border-box;
+// The admin-ui Page header is sticky by default, but Blaze renders inside a
+// document-scrolled layout where the Calypso masterbar / wp-admin admin bar
+// are fixed above it — a stuck header slides under those bars, and the search
+// input (higher z-index) paints over it. The header has no stable class
+// (CSS Modules), so anchor structurally: it is always the first child because
+// a title or breadcrumb is always passed.
+.promote-post-i2__page > :first-child {
+	position: static;
+}
 
-		.formatted-header.is-left-align,
-		.formatted-header.is-right-align {
-			margin: 0;
-		}
+// Keep the Jetpack footer pinned to the viewport bottom, like the other
+// Jetpack admin pages (they pin it with position: fixed inside their
+// fixed-primary layout). Blaze scrolls the document instead, so let the
+// page fill the viewport and stick the footer: pinned while scrolling,
+// resting at the end of the content once fully scrolled.
+.promote-post-i2__page {
+	// Fill the viewport so the footer lands at the bottom even on short
+	// pages: subtract the fixed masterbar and the .layout__content top
+	// padding (32px, set above). wp-admin gets its own formula in the
+	// blaze-dashboard app's wp-admin.scss.
+	min-height: calc(100vh - var(--masterbar-height, 32px) - 32px);
 
-		@media (min-width: 661px) {
-			.formatted-header.is-left-align,
-			.formatted-header.is-right-align,
-			.formatted-header__title {
-				margin: 0;
-			}
-		}
-
-		.posts-list-banner__border-button {
-			padding: 6px 12px;
-			margin-right: 8px;
-			border: 1px solid var(--studio-gray-10);
-			// padding: 13px 16px; // TODO: Make sure we need it this way
-
-			.inline-support-link__nowrap {
-				color: var(--studio-gray-80);
-			}
-
-			&:hover {
-				border-color: var(--color-neutral-20);
-			}
-		}
-
-		&-buttons {
-			display: flex;
-			margin-left: 10px;
-
-			.button,
-			.is-primary {
-				border-radius: 4px;
-			}
-
-			.is-primary {
-				box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-			}
-		}
+	.jetpack-footer {
+		position: sticky;
+		bottom: 0;
+		margin-top: auto;
+		background-color: var(--wpds-color-bg-surface-neutral);
+		// Above the posts/campaigns search input (z-index 20+).
+		z-index: 30;
 	}
+}
+
+// Breathing room between the last content block and the sticky footer.
+.promote-post-i2__page-body {
+	padding-bottom: 32px;
+}
+
+.promote-post-i2 {
 
 	&__payment-blocked-notice {
 		display: flex;
@@ -313,16 +295,6 @@ body.is-section-promote-post-i2 {
 
 		@media screen and (max-width: ($break-medium + 287px)) {
 			width: calc(100% - 32px);
-		}
-	}
-
-	.promote-post-i2__header-subtitle {
-		&_desktop {
-			display: block;
-		}
-
-		&_mobile {
-			display: none;
 		}
 	}
 
@@ -457,6 +429,10 @@ body.is-section-promote-post-i2 {
 	}
 
 	.section-nav-tab {
+		// wp-admin's global `dd, li { margin-bottom: 6px }` makes the section-nav
+		// tabs float above the underline. Zero it so the tab text sits on the line.
+		margin-bottom: 0;
+
 		@media (min-width: 481px) {
 			margin-right: 8px;
 		}
@@ -546,27 +522,6 @@ body.is-section-promote-post-i2 {
 		}
 	}
 
-	&__top-bar-container {
-		background: var(--studio-white);
-		padding: 16px 0;
-
-		@media (max-width: 985px) {
-			padding: 4px;
-			margin-bottom: 16px;
-		}
-	}
-
-	.promote-post-i2__top-bar-title {
-		display: flex;
-		align-items: center;
-		height: 60px;
-		font-weight: 600;
-		font-size: 0.875rem;
-
-		.campaign-item-details-back-button {
-			color: var(--studio-gray-100);
-		}
-	}
 }
 
 
@@ -618,9 +573,8 @@ body.is-section-promote-post-i2 {
 		}
 
 		.layout__content .layout__primary {
-			.promote-post-i2__top-bar,
-			.promote-post-i2__header-subtitle,
-			.advertising__page-header,
+			.promote-post-i2__page > :first-child,
+			.promote-post-i2__page .jetpack-footer,
 			.promote-post-i2 .posts-list-banner__container,
 			.promote-post-i2 .section-nav,
 			.promote-post-i2 .post-item__view-link,
@@ -662,7 +616,6 @@ body.is-section-promote-post-i2 {
 					}
 				}
 
-				.promote-post-i2__header-subtitle_mobile,
 				.promote-post-i2__search-bar-wrapper,
 				.promote-post-i2__debt-notifier,
 				.posts-list__table,
@@ -688,39 +641,10 @@ body.is-section-promote-post-i2 {
 				}
 			}
 
-			.advertising__page-header {
-				.formatted-header__title,
-				&_has-banner .formatted-header__title {
-					font-size: 0.875rem;
-					line-height: 1;
-				}
-			}
 		}
 	}
 
 	.promote-post-i2 {
-		&__top-bar {
-			margin: 8px;
-			max-width: 1040px;
-			box-sizing: border-box;
-
-			.posts-list-banner__border-button {
-				display: none;
-			}
-		}
-
-		.promote-post-i2__header-subtitle {
-			&_desktop {
-				display: none;
-			}
-
-			&_mobile {
-				display: block;
-				font-size: 1rem;
-				line-height: 1.5;
-			}
-		}
-
 		.section-nav-tab {
 			&__link {
 				.section-nav-tab__text {
@@ -776,7 +700,6 @@ $break-medium-expanded-menu: $break-medium + 272px;
 }
 
 @mixin blazepress-huge {
-	.promote-post-i2__top-bar,
 	.section-nav-tabs .section-nav-tabs__list,
 	.promote-post-i2__search-bar-wrapper,
 	.promote-post-i2__table,

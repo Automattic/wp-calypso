@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
-require 'dotenv'
+require 'fastlane/plugin/wpmreleasetoolkit'
 require 'json'
+
+EnvManager = Fastlane::Wpmreleasetoolkit::EnvManager
 
 fastlane_version '2.0'
 
@@ -10,7 +12,6 @@ default_platform :mac
 PROJECT_ROOT_FOLDER = File.dirname(File.expand_path(__dir__))
 
 ENV_FILE_NAME = 'wordpress-desktop.env'
-USER_ENV_FILE_PATH = File.join(Dir.home, '.a8c-apps', ENV_FILE_NAME)
 
 TEAM_ID = 'PZYM8XX95Q'
 
@@ -34,24 +35,53 @@ ASC_API_KEY_ENV_VARS = %w[
   APP_STORE_CONNECT_API_KEY_KEY
 ].freeze
 
-import 'lib/helpers.rb'
-
 before_all do
   # This is necessary for 'match' to work correctly in CI. When running
   # locally, it has no effect so it's safe to run it before all lanes.
   setup_ci
 
-  Dotenv.load(USER_ENV_FILE_PATH)
+  # The macOS 26 Buildkite VM image doesn't ship the "Developer ID
+  # Certification Authority" intermediate that issues our Developer ID
+  # Application cert. Without that intermediate available in any keychain
+  # in the search list, `security` can't build the chain
+  # `Developer ID App → Developer ID CA G2 → Apple Root` and reports
+  # the identity as `CSSMERR_TP_NOT_TRUSTED`. `electron-builder` then
+  # silently skips signing and the build "passes" with unsigned
+  # binaries that Apple's notary service later rejects.
+  #
+  # `fastlane match` only installs the leaf cert; it relies on the OS
+  # to provide the CA chain. Fetch and install the missing intermediate
+  # into the temp keychain `setup_ci` just created.
+  #
+  # Gated to CI to mirror `setup_ci`'s own no-op-locally behaviour —
+  # we don't want to touch a developer's keychain config when running
+  # lanes from their machine.
+  if FastlaneCore::Helper.is_ci?
+    cert_path = File.join(Dir.tmpdir, 'DeveloperIDG2CA.cer')
+    sh(
+      'curl',
+      '-fsSL',
+      'https://www.apple.com/certificateauthority/DeveloperIDG2CA.cer',
+      '-o',
+      cert_path
+    )
+    import_certificate(
+      certificate_path: cert_path,
+      keychain_name: 'fastlane_tmp_keychain'
+    )
+  end
+
+  EnvManager.set_up(env_file_name: ENV_FILE_NAME)
 end
 
 platform :mac do
   desc 'Download and configure code signing certificates and provisioning profiles .'
   lane :configure_code_signing do |readonly: true|
-    require_env_vars!(*CODE_SIGNING_ENV_VARS)
+    EnvManager.require_env_vars!(*CODE_SIGNING_ENV_VARS)
 
     unless readonly
       # We need the API key instantiated only when making changes on ASC (readonly = false)
-      require_env_vars!(*ASC_API_KEY_ENV_VARS)
+      EnvManager.require_env_vars!(*ASC_API_KEY_ENV_VARS)
       api_key = app_store_connect_api_key
     end
 
@@ -65,5 +95,25 @@ platform :mac do
       readonly: readonly,
       **CODE_SIGNING_STORAGE_OPTIONS
     )
+  end
+
+  desc 'Notarize and staple the .dmg artifacts produced by electron-builder.'
+  # The `.app` is notarized and stapled earlier, in electron-builder's
+  # afterSign hook (`bin/after_sign_hook.js`), so that the `.zip` packaged from
+  # it carries a stapled app. This lane handles the `.dmg` wrapper, which only
+  # exists after the build completes.
+  lane :notarize_app do
+    EnvManager.require_env_vars!(*ASC_API_KEY_ENV_VARS)
+
+    api_key = app_store_connect_api_key
+
+    Dir[File.join(PROJECT_ROOT_FOLDER, 'release', '**', '*.dmg')].each do |path|
+      notarize(
+        bundle_id: 'com.automattic.wordpress',
+        package: path,
+        api_key: api_key,
+        print_log: true
+      )
+    end
   end
 end

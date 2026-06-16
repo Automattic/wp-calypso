@@ -93,11 +93,13 @@ class PostLifecycle extends Component {
 					index={ postKey.index }
 					streamKey={ recsStreamKey }
 					followSource={ IN_STREAM_RECOMMENDATION }
+					itemRef={ this.props.itemRef }
 				/>
 			);
 		} else if ( postKey.isPromptBlock ) {
 			return (
 				<div
+					ref={ this.props.itemRef }
 					className="reader-stream__blogging-prompt"
 					key={ 'blogging-prompt-card-' + postKey.index }
 				>
@@ -116,17 +118,18 @@ class PostLifecycle extends Component {
 					postKey={ postKey }
 					streamKey={ streamKey }
 					fixedHeaderHeight={ this.props.fixedHeaderHeight }
+					itemRef={ this.props.itemRef }
 				/>
 			);
 		} else if ( ! post ) {
-			return <PostPlaceholder />;
+			return <PostPlaceholder itemRef={ this.props.itemRef } />;
 		} else if ( post.is_error ) {
-			return <PostUnavailable post={ post } />;
+			return <PostUnavailable post={ post } itemRef={ this.props.itemRef } />;
 		} else if (
 			( ! post.is_external || post.is_jetpack ) &&
 			includes( this.props.blockedSites, +post.site_ID )
 		) {
-			return <PostBlocked post={ post } />;
+			return <PostBlocked post={ post } itemRef={ this.props.itemRef } />;
 		} else if ( isXPost( post ) ) {
 			const xMetadata = XPostHelper.getXPostMetadata( post );
 			return (

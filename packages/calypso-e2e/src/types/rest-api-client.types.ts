@@ -67,6 +67,7 @@ export interface MyAccountInformationResponse {
 	ID: number;
 	username: string;
 	email: string;
+	email_verified: boolean;
 	primary_blog: number;
 	primary_blog_url: string;
 	language: string;

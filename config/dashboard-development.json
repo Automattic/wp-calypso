@@ -5,8 +5,13 @@
 	"client_slug": "browser",
 	"survicate_enabled": true,
 	"hostname": "my.localhost",
-	"hostname_allowlist": [ "my.localhost", "my.woo.localhost" ],
+	"hostname_allowlist": [ "my.localhost", "my.woo.localhost", "my.a4a.localhost" ],
 	"hostname_overrides": {
+		"my.a4a.localhost": {
+			"oauth_client_id": 95928,
+			"wpcom_login_url": false,
+			"features": { "oauth": true, "always_use_logout_url": true }
+		},
 		"my.woo.localhost": {
 			"oauth_client_id": 134404,
 			"wpcom_login_url": false,
@@ -24,23 +29,25 @@
 		"ciab/allow-domain-features": true,
 		"cookie-banner": false,
 		"dark-mode": true,
+		"dashboard/enable-percentage-rollout": false,
 		"dashboard/omnibar": true,
 		"dashboard/omnibar-radical": false,
 		"dashboard/plans": true,
-		"dashboard/v2": false,
 		"dashboard/wp-beta-program": true,
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
 		"dev/store-sandbox-helper": true,
 		"domain-transfer-redesign": true,
+		"emails/titan-tiers": true,
 		"marketplace-redesign": true,
 		"mcp-settings": true,
+		"me/legacy-contact": true,
 		"onboarding/interval-dropdown": true,
 		"performance/apm": true,
+		"plans/expired-downgrade": true,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
-		"plans/self-service-downgrade": false,
 		"plans/updated-storage-labels": true,
 		"plans/upgradeable-storage": true,
 		"purchases/split-cancel-remove": true,
@@ -53,7 +60,8 @@
 	"enable_all_sections": false,
 	"sections": {
 		"signup": true,
-		"checkout": true
+		"checkout": true,
+		"a8c-for-agencies-signup": true
 	},
 	"site_filter": [],
 	"theme": "dashboard",

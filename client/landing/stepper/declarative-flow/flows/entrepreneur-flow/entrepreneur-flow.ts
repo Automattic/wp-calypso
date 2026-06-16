@@ -4,6 +4,7 @@ import { ENTREPRENEUR_FLOW, SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { anonIdCache, useCachedAnswers } from 'calypso/data/segmentaton-survey';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useEntrepreneurAdminDestination } from 'calypso/landing/stepper/hooks/use-entrepreneur-admin-destination';
@@ -14,6 +15,10 @@ import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
+import {
+	SESSION_KEY_FROM_PLAYGROUND_PUBLISH,
+	SESSION_KEY_PLAYGROUND_ID,
+} from '../../internals/steps-repository/playground/lib/constants';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { ENTREPRENEUR_TRIAL_SURVEY_KEY } from '../../internals/steps-repository/segmentation-survey';
 import type { Flow, ProvidedDependencies, StepperStep } from '../../internals/types';
@@ -26,6 +31,33 @@ const entrepreneurFlow: Flow = {
 	isSignupFlow: true,
 
 	useSteps() {
+		const [ searchParams ] = useSearchParams();
+
+		useEffect( () => {
+			if ( searchParams.get( 'from' ) === 'playground-publish' ) {
+				sessionStorage.setItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH, '1' );
+			}
+			const playgroundId = searchParams.get( 'playground' );
+			if ( playgroundId ) {
+				sessionStorage.setItem( SESSION_KEY_PLAYGROUND_ID, playgroundId );
+			}
+		}, [ searchParams ] );
+
+		const isPlaygroundPublish =
+			searchParams.get( 'from' ) === 'playground-publish' ||
+			sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1';
+
+		// When launched from the Playground publish flow skip straight to site
+		// creation — the WC trial is provisioned in SITE_CREATION_STEP regardless.
+		if ( isPlaygroundPublish ) {
+			return stepsWithRequiredLogin( [
+				STEPS.SITE_CREATION_STEP,
+				STEPS.PROCESSING,
+				STEPS.IMPORTER_PLAYGROUND,
+				STEPS.ERROR,
+			] );
+		}
+
 		// Replacing the `segmentation-survey` slug with `start` as having the
 		// word `survey` in the address bar might discourage users from continuing.
 		const surveyStep = {
@@ -33,7 +65,7 @@ const entrepreneurFlow: Flow = {
 			...{ slug: SEGMENTATION_SURVEY_SLUG as StepperStep[ 'slug' ] },
 		} as StepperStep;
 
-		const steps: StepperStep[] = [
+		return [
 			surveyStep,
 			...stepsWithRequiredLogin( [
 				STEPS.TRIAL_ACKNOWLEDGE,
@@ -44,8 +76,6 @@ const entrepreneurFlow: Flow = {
 				STEPS.ERROR,
 			] ),
 		];
-
-		return steps;
 	},
 
 	useStepNavigation( currentStep, navigate ) {
@@ -160,6 +190,19 @@ const entrepreneurFlow: Flow = {
 						return window.location.assign( `/home/${ siteId }` );
 					}
 
+					const storedPlaygroundId = sessionStorage.getItem( SESSION_KEY_PLAYGROUND_ID );
+					if (
+						sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1' &&
+						storedPlaygroundId
+					) {
+						return navigateWithSiteId(
+							addQueryArgs( STEPS.IMPORTER_PLAYGROUND.slug, {
+								siteSlug: siteSlug || siteSlugDependency,
+								playground: storedPlaygroundId,
+							} )
+						);
+					}
+
 					return navigateWithSiteId( STEPS.WAIT_FOR_ATOMIC.slug, {
 						siteId: siteId || siteIdDependency,
 						siteSlug: siteSlug || siteSlugDependency,
@@ -180,6 +223,16 @@ const entrepreneurFlow: Flow = {
 						siteId: siteId || siteIdDependency,
 						siteSlug: siteSlug || siteSlugDependency,
 					} );
+				}
+
+				case STEPS.IMPORTER_PLAYGROUND.slug: {
+					// Import complete — clear Playground session flags before leaving.
+					sessionStorage.removeItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH );
+					sessionStorage.removeItem( SESSION_KEY_PLAYGROUND_ID );
+					if ( siteAdminUrl ) {
+						return window.location.assign( siteAdminUrl );
+					}
+					return window.location.assign( `/home/${ siteId }` );
 				}
 			}
 			return providedDependencies;

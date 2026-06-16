@@ -6,7 +6,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-modal';
-import { QuickPostSkeleton } from 'calypso/reader/components/quick-post/skeleton';
+import { LazyQuickPost } from 'calypso/reader/components/quick-post/lazy';
 import ReaderOnboardingGate from 'calypso/reader/onboarding/gate';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import ReaderStream from 'calypso/reader/stream';
@@ -18,10 +18,6 @@ import { useFollowingView } from './view-preference';
 import ViewToggle from './view-toggle';
 import './style.scss';
 
-const loadQuickPost = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-reader-components-quick-post" */ 'calypso/reader/components/quick-post'
-	);
 const loadTrackResurrections = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-lib-analytics-track-resurrections" */ 'calypso/lib/analytics/track-resurrections'
@@ -85,7 +81,7 @@ function FollowingStream( { ...props } ) {
 					{ hasSites && (
 						<Card className="following-stream__quick-post-card">
 							<CardBody>
-								<AsyncLoad require={ loadQuickPost } placeholder={ <QuickPostSkeleton /> } />
+								<LazyQuickPost />
 							</CardBody>
 						</Card>
 					) }

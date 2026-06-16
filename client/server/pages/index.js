@@ -19,11 +19,17 @@ import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import { getDashboardFromHostname, isAllowedDashboardRoute } from 'calypso/dashboard/app/routing';
+import { isAllowedA4ADashboardHostname } from 'calypso/dashboard/app-a4a/routing';
+import { A4A_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-a4a/section';
 import { isAllowedCiabDashboardHostname } from 'calypso/dashboard/app-ciab/routing';
 import { CIAB_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-ciab/section';
 import { isAllowedDotcomDashboardHostname } from 'calypso/dashboard/app-dotcom/routing';
 import { DOTCOM_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-dotcom/section';
-import { DASHBOARD_SECTION_PATHS } from 'calypso/dashboard/section';
+import {
+	A4A_DASHBOARD_EXTRA_PATHS,
+	A4A_SIGNUP_PATHS,
+	DASHBOARD_SECTION_PATHS,
+} from 'calypso/dashboard/section';
 import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
@@ -36,6 +42,7 @@ import { login } from 'calypso/lib/paths';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
+import { loadDashboardLocaleData } from 'calypso/server/dashboard-i18n';
 import { serverRouter, getCacheKey } from 'calypso/server/isomorphic-routing';
 import { isWpMobileApp, isWcMobileApp } from 'calypso/server/lib/is-mobile-app';
 import performanceMark from 'calypso/server/lib/performance-mark/index';
@@ -649,6 +656,8 @@ function setUpCSP( req, res, next ) {
 			'https://snap.licdn.com', // LinkedIn analytics
 			'www.redditstatic.com', // Reddit tracking pixel
 			'https://analytics.tiktok.com', // TikTok tracking pixel
+			'https://bzrcdn.openai.com/', // OpenAI tracking pixel
+			'https://bzr.openai.com/', // OpenAI tracking pixel
 			'https://a.quora.com', // Quora tracking pixel.
 			'www.googletagmanager.com',
 			'https://accounts.google.com',
@@ -795,6 +804,7 @@ function setUpCSP( req, res, next ) {
 			'wss://*.zendesk.com', // Zendesk WebSocket connections
 			'https://ekr.zdassets.com', // Zendesk composer
 			'https://*.config.smooch.io', // Smooch/Sunshine Conversations config
+			'https://bzr.openai.com', // OpenAI Ads tracking pixel
 		],
 		'report-uri': [ '/cspreport' ],
 	};
@@ -1190,7 +1200,7 @@ export default function pages() {
 	 * This approach allows requests to an SSR section to skip any section-specific
 	 * SSR middleware if the request wasn't going to be resolved with SSR anyways.
 	 */
-	function handleSectionPath( section, sectionPath, entrypoint, reqFilter ) {
+	function handleSectionPath( section, sectionPath, entrypoint, reqFilter, extraMiddleware ) {
 		const pathRegex = pathToRegExp( sectionPath );
 
 		app.get(
@@ -1210,6 +1220,7 @@ export default function pages() {
 				next();
 			},
 			setUpRoute, // For SSR requests, this will happen in the serverRouter.
+			...( extraMiddleware ? [ extraMiddleware ] : [] ),
 			serverRender
 		);
 	}
@@ -1232,7 +1243,8 @@ export default function pages() {
 				DOTCOM_DASHBOARD_SECTION_DEFINITION,
 				route,
 				'entry-dashboard-dotcom',
-				( req ) => isAllowedDotcomDashboardHostname( req.hostname )
+				( req ) => isAllowedDotcomDashboardHostname( req.hostname ),
+				loadDashboardLocaleData
 			);
 		} );
 		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
@@ -1240,15 +1252,39 @@ export default function pages() {
 				CIAB_DASHBOARD_SECTION_DEFINITION,
 				route,
 				'entry-dashboard-ciab',
-				( req ) => isAllowedCiabDashboardHostname( req.hostname )
+				( req ) => isAllowedCiabDashboardHostname( req.hostname ),
+				loadDashboardLocaleData
 			);
 		} );
 		handleSectionPath(
 			CIAB_DASHBOARD_SECTION_DEFINITION,
 			'/start-store',
 			'entry-dashboard-ciab',
-			( req ) => isAllowedCiabDashboardHostname( req.hostname )
+			( req ) => isAllowedCiabDashboardHostname( req.hostname ),
+			loadDashboardLocaleData
 		);
+	}
+
+	// Multi-site Dashboard (A4A) routing.
+	if ( isDashboardEnv() || calypsoEnv === 'a8c-for-agencies-development' ) {
+		const a4aSignupSectionDefinition = sections.find(
+			( s ) => s.name === 'a8c-for-agencies-signup'
+		);
+		A4A_SIGNUP_PATHS.forEach( ( a4aSignupPath ) => {
+			handleSectionPath( a4aSignupSectionDefinition, a4aSignupPath, undefined, ( req ) =>
+				isAllowedA4ADashboardHostname( req.hostname )
+			);
+		} );
+		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
+			handleSectionPath( A4A_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-a4a', ( req ) =>
+				isAllowedA4ADashboardHostname( req.hostname )
+			);
+		} );
+		A4A_DASHBOARD_EXTRA_PATHS.forEach( ( route ) => {
+			handleSectionPath( A4A_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-a4a', ( req ) =>
+				isAllowedA4ADashboardHostname( req.hostname )
+			);
+		} );
 	}
 
 	sections

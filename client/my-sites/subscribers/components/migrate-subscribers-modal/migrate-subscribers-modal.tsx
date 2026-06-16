@@ -92,7 +92,7 @@ const MigrateSubscribersModal = ( {
 					isPlaceholder={ false }
 					selectedSiteId={ selectedSourceSiteId }
 					onSiteSelect={ setSourceSiteId }
-					filter={ ( siteId ) => {
+					filter={ ( siteId: number ) => {
 						return eligibleSiteIDs.includes( siteId );
 					} }
 				/>
@@ -163,9 +163,9 @@ const MigrateSubscribersModal = ( {
 								source_site_id: sourceSiteId,
 								target_site_id: targetSiteId,
 							} );
-							selectedSourceSiteId &&
-								targetSiteId &&
+							if ( selectedSourceSiteId && targetSiteId ) {
 								migrateSubscribersCallback( selectedSourceSiteId );
+							}
 						} }
 					>
 						{ translate( 'Confirm subscriber move' ) }

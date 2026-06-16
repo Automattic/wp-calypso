@@ -157,7 +157,7 @@ function processNumberFormat( format ) {
 		match: format[ numberFormatIndexes.PATTERN ],
 		replace: format[ numberFormatIndexes.FORMAT ],
 		nationalFormat: format[ numberFormatIndexes.NATIONAL_CALLING_FORMAT ] || undefined,
-		leadingDigitPattern: _.last( format[ numberFormatIndexes.LEADING_DIGIT_PATTERN ] || [] ),
+		leadingDigitPattern: ( format[ numberFormatIndexes.LEADING_DIGIT_PATTERN ] || [] ).at( -1 ),
 	};
 }
 

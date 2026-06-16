@@ -32,6 +32,7 @@ import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboardi
 import { withLocale } from '../../helpers/with-locale';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
+import { ONBOARDING_PROGRESS_EXPERIMENT_NAME } from '../../internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
 import { getOnboardingStepperPosition } from './step-counter-config';
@@ -70,8 +71,9 @@ const onboarding: FlowV2< typeof initialize > = {
 			setHideFreePlan,
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const locale = useFlowLocale();
-		const { planCartItem, blueprint } = useSelect(
+		const { signupDomainOrigin, planCartItem, blueprint } = useSelect(
 			( select ) => ( {
+				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
 				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 				blueprint: ( select( ONBOARD_STORE ) as OnboardSelect ).getBlueprint(),
 			} ),
@@ -91,9 +93,9 @@ const onboarding: FlowV2< typeof initialize > = {
 		const getPostCheckoutDestination = async (
 			providedDependencies: ProvidedDependencies,
 			planCartItem: MinimalRequestCartProduct | null
-		): Promise< [ string, string | null ] > => {
+		): Promise< [ string, string | null, string | null ] > => {
 			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
-				return [ `/home/${ providedDependencies.siteSlug }`, null ];
+				return [ `/home/${ providedDependencies.siteSlug }`, null, null ];
 			}
 
 			if ( playgroundId || blueprint ) {
@@ -103,7 +105,7 @@ const onboarding: FlowV2< typeof initialize > = {
 
 				if ( isFree && ! blueprint ) {
 					// Redirect free plan users to a home page
-					return [ `/home/${ providedDependencies.siteSlug }`, null ];
+					return [ `/home/${ providedDependencies.siteSlug }`, null, null ];
 				}
 
 				const params: Record< string, string | number > = {
@@ -120,6 +122,7 @@ const onboarding: FlowV2< typeof initialize > = {
 				return [
 					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), params ),
 					null,
+					null,
 				];
 			}
 
@@ -127,7 +130,7 @@ const onboarding: FlowV2< typeof initialize > = {
 				const siteSlug = providedDependencies.siteSlug as string;
 				const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
 				const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
-				return [ `${ adminUrl }admin.php?page=wc-admin`, null ];
+				return [ `${ adminUrl }admin.php?page=wc-admin`, null, null ];
 			}
 
 			return getOnboardingPostCheckoutDestination( {
@@ -193,14 +196,15 @@ const onboarding: FlowV2< typeof initialize > = {
 					setPlanCartItem( pickedPlan );
 
 					if ( ! pickedPlan ) {
-						// Redirect free plan selections to the choose page for the PWYW A/B test.
-						// `/choose` is a WordPress.com PHP route, not a Calypso route, so we need an
-						// absolute URL — a relative path resolves to the current Calypso host (e.g.
-						// wpcalypso.wordpress.com/choose) and 404s on pre-release. See TESTOPS-106.
-						window.location.assign(
-							addQueryArgs( 'https://wordpress.com/choose', getQueryArgs( window.location.href ) )
-						);
-						return;
+						// Since we're removing the paid domain, it means that the user chose to continue
+						// with a free domain. Because signupDomainOrigin should reflect the last domain
+						// selection status before they land on the checkout page, this value can be
+						// 'free' or 'choose-later'
+						if ( signupDomainOrigin === 'choose-later' ) {
+							setSignupDomainOrigin( signupDomainOrigin );
+						} else {
+							setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.FREE );
+						}
 					}
 
 					// Make sure to put the rest of products into the cart, e.g. the storage add-ons.
@@ -267,10 +271,8 @@ const onboarding: FlowV2< typeof initialize > = {
 						return;
 					}
 
-					const [ destination, backDestination ] = await getPostCheckoutDestination(
-						providedDependencies,
-						planCartItem
-					);
+					const [ destination, backDestination, backDestinationDomains ] =
+						await getPostCheckoutDestination( providedDependencies, planCartItem );
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
 						persistSignupDestination( destination );
 						setSignupCompleteFlowName( flowName );
@@ -307,7 +309,11 @@ const onboarding: FlowV2< typeof initialize > = {
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 									redirect_to: redirectTo,
 									signup: 1,
+									flow: ONBOARDING_FLOW,
 									checkoutBackUrl: pathToUrl( backDestination ?? '' ),
+									...( backDestinationDomains
+										? { checkoutBackUrlDomains: pathToUrl( backDestinationDomains ) }
+										: {} ),
 									coupon,
 									steps_current: checkoutStepperPosition.current,
 									steps_total: checkoutStepperPosition.total,
@@ -318,7 +324,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							isEnabled( 'onboarding/woo-hosting-post-purchase-setup-choice' )
 						) {
 							return navigate( 'setup-your-site-ai' );
-						} else if ( providedDependencies?.postCheckoutBigSkyVariation === 'big_sky' ) {
+						} else if ( providedDependencies?.postCheckoutBigSky ) {
 							return navigate( 'setup-your-site-ai' );
 						} else {
 							// replace the location to delete processing step from history.
@@ -331,6 +337,16 @@ const onboarding: FlowV2< typeof initialize > = {
 				}
 				case 'playground':
 				case 'blueprint': {
+					const locationParams = new URLSearchParams( window.location.search );
+					if ( locationParams.get( 'intent' ) === 'woocommerce' ) {
+						const playgroundId = locationParams.get( 'playground' );
+						return window.location.assign(
+							addQueryArgs( '/setup/entrepreneur', {
+								from: 'playground-publish',
+								...( playgroundId ? { playground: playgroundId } : {} ),
+							} )
+						);
+					}
 					const backTo = window.location.pathname + window.location.search;
 					return navigate(
 						addQueryArgs( 'domains', { back_to: backTo } ) as typeof currentStepSlug
@@ -393,6 +409,13 @@ const onboarding: FlowV2< typeof initialize > = {
 		useEffect( () => {
 			loadExperimentAssignment( 'calypso_plans_page_visual_separation_2025_09_v2' );
 		}, [] );
+
+		// Preload the onboarding progress bar experiment
+		useEffect( () => {
+			if ( isLoggedIn ) {
+				loadExperimentAssignment( ONBOARDING_PROGRESS_EXPERIMENT_NAME );
+			}
+		}, [ isLoggedIn ] );
 	},
 };
 

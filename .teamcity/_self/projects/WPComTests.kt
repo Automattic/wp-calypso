@@ -136,38 +136,36 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 			// Ask someone from the Team Calypso Platform to know what these channels are. They are also available in the source for `announce.sh` (par of Gutenbot).
 			// password("GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID_TEST", "credentialsJSON:180d1bb6-a28e-4985-bf9a-8acba63bb90c", display = ParameterDisplay.HIDDEN);
 			password("GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID", "credentialsJSON:b8ca97ea-322f-499f-aa21-ecdb8b373527", display = ParameterDisplay.HIDDEN);
+			// Set by an external trigger (Gutenbot's `announce.sh`) to thread the result under
+			// the corresponding GB version announcement. When empty, the helper script exits early.
 			text("GB_E2E_ANNOUNCEMENT_THREAD_TS", value = "", allowEmpty = true, display = ParameterDisplay.HIDDEN);
 		},
 		buildSteps = {
+			// These two steps post the build result as a *threaded reply* under the
+			// corresponding Gutenberg version announcement in Slack. They are only relevant
+			// when this build was kicked off by Gutenbot's `announce.sh`, which injects the
+			// announcement's `GB_E2E_ANNOUNCEMENT_THREAD_TS` (and channel/token).
+			//
+			// They run on every build (one per success/failure), but the helper script exits
+			// early and posts nothing when `GB_E2E_ANNOUNCEMENT_THREAD_TS` is empty — i.e. on
+			// normal scheduled or manual runs. This is separate from the `#gutenberg-e2e`
+			// channel notifications handled by the built-in notifier in `buildFeatures` below.
 			exec {
 				name = "Post Successful Message to Slack"
 				executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
 				path = "./bin/post-threaded-slack-message.sh"
-				arguments = "%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID% %GB_E2E_ANNOUNCEMENT_THREAD_TS% \"The $buildName passed successfully! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" %GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%"
+				arguments = "\"%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID%\" \"%GB_E2E_ANNOUNCEMENT_THREAD_TS%\" \"The $buildName passed successfully! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" \"%GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%\""
 			}
 
 			exec {
 				name = "Post Failure Message to Slack"
 				executionMode = BuildStep.ExecutionMode.RUN_ONLY_ON_FAILURE
 				path = "./bin/post-threaded-slack-message.sh"
-				arguments = "%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID% %GB_E2E_ANNOUNCEMENT_THREAD_TS% \"The $buildName failed! Could you have a look?! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" %GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%"
+				arguments = "\"%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID%\" \"%GB_E2E_ANNOUNCEMENT_THREAD_TS%\" \"The $buildName failed! Could you have a look?! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" \"%GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%\""
 			}
 		},
 		buildFeatures = {
-			notifications {
-				notifierSettings = slackNotifier {
-					connection = "PROJECT_EXT_11"
-					sendTo = "#gutenberg-e2e"
-					messageFormat = verboseMessageFormat {
-						addBranch = true
-						addStatusText = true
-						maximumNumberOfChanges = 10
-					}
-				}
-				branchFilter = "+:<default>"
-				buildFailed = true
-				buildFinishedSuccessfully = true
-			}
+			notifyAllFailuresAndFirstSuccess("#gutenberg-e2e")
 		},
 		buildTriggers = {
 			schedule {
@@ -475,6 +473,30 @@ private object GutenbergPlaywrightTests : BuildType({
 		param("TEST_GROUP", "@gutenberg")
 		param("CALYPSO_BASE_URL", "https://wordpress.com")
 		param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteEdgeUser,gutenbergSimpleSiteUser,simpleSitePersonalPlanUser,gutenbergAtomicSiteUser,gutenbergAtomicSiteEdgeUser,gutenbergAtomicSiteEdgeNightliesUser")
+		password("GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN", "credentialsJSON:8196e9b8-cf0a-4ab5-9547-95145134f04a", display = ParameterDisplay.HIDDEN);
+		// Uncomment the following to route it to the test channel, don't forget to change the reference in the exec() calls below, too.
+		// Ask someone from the Team Calypso Platform to know what these channels are. They are also available in the source for `announce.sh` (par of Gutenbot).
+		// password("GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID_TEST", "credentialsJSON:180d1bb6-a28e-4985-bf9a-8acba63bb90c", display = ParameterDisplay.HIDDEN);
+		password("GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID", "credentialsJSON:b8ca97ea-322f-499f-aa21-ecdb8b373527", display = ParameterDisplay.HIDDEN);
+		// Set by an external trigger (Gutenbot's `announce.sh`) to thread the result under
+		// the corresponding GB version announcement. When empty, the helper script exits early.
+		text("GB_E2E_ANNOUNCEMENT_THREAD_TS", value = "", allowEmpty = true, display = ParameterDisplay.HIDDEN);
+	}
+
+	steps {
+		exec {
+			name = "Post Successful Message to Slack"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
+			path = "./bin/post-threaded-slack-message.sh"
+			arguments = "\"%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID%\" \"%GB_E2E_ANNOUNCEMENT_THREAD_TS%\" \"The Gutenberg E2E Tests matrix leg passed successfully: %PROJECT%, %EXTRA_ENV_VARS%. <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" \"%GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%\""
+		}
+
+		exec {
+			name = "Post Failure Message to Slack"
+			executionMode = BuildStep.ExecutionMode.RUN_ONLY_ON_FAILURE
+			path = "./bin/post-threaded-slack-message.sh"
+			arguments = "\"%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID%\" \"%GB_E2E_ANNOUNCEMENT_THREAD_TS%\" \"The Gutenberg E2E Tests failed: %PROJECT%, %EXTRA_ENV_VARS%. Could you have a look?! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" \"%GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%\""
+		}
 	}
 
 	features {
@@ -491,19 +513,7 @@ private object GutenbergPlaywrightTests : BuildType({
 				value("TEST_ON_ATOMIC=true,GUTENBERG_NIGHTLY=true,PW_WORKERS=1", label = "Atomic Nightly"),
 			))
 		}
-		notifications {
-			notifierSettings = slackNotifier {
-				connection = "PROJECT_EXT_11"
-				sendTo = "#gutenberg-e2e"
-				messageFormat = verboseMessageFormat {
-					addBranch = true
-					addStatusText = true
-				}
-			}
-			branchFilter = "+:<default>"
-			buildFailed = true
-			buildFinishedSuccessfully = true
-		}
+		notifyAllFailuresAndFirstSuccess("#gutenberg-e2e")
 	}
 
 	triggers {

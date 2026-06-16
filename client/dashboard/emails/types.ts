@@ -36,3 +36,9 @@ export enum MailboxProvider {
 	Google = EmailProvider.Google,
 	Titan = EmailProvider.Titan,
 }
+
+export enum TitanPlanTier {
+	Pro = 'pro',
+	Premium = 'premium',
+	Ultra = 'ultra',
+}

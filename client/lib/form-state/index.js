@@ -3,7 +3,6 @@ import {
 	camelCase,
 	debounce,
 	filter,
-	flatten,
 	isEmpty,
 	map,
 	mapValues,
@@ -315,7 +314,7 @@ function getInvalidFields( formState ) {
 function getErrorMessages( formState ) {
 	const invalidFields = getInvalidFields( formState );
 
-	return flatten( map( invalidFields, 'errors' ) );
+	return map( invalidFields, 'errors' ).flat();
 }
 
 function isSubmitButtonDisabled( formState ) {

@@ -1,5 +1,5 @@
 import update from 'immutability-helper';
-import { filter, find, findIndex, matches, pick, reject, some, startsWith, without } from 'lodash';
+import { filter, find, findIndex, matches, pick, reject, some, without } from 'lodash';
 import {
 	DOMAINS_DNS_ADD,
 	DOMAINS_DNS_ADD_COMPLETED,
@@ -17,7 +17,7 @@ import {
 } from 'calypso/state/action-types';
 
 function isWpcomRecord( record ) {
-	return startsWith( record.id, 'wpcom:' );
+	return ( record.id ?? '' ).startsWith( 'wpcom:' );
 }
 
 function isRootARecord( domain ) {

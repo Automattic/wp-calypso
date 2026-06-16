@@ -15,13 +15,16 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { useAnalytics } from '../../app/analytics';
+import { useAuth } from '../../app/auth';
 import ComponentViewTracker from '../../components/component-view-tracker';
+import { getHostingDashboardEnrollment } from '../../utils/hosting-dashboard-enrollment';
 import illustrationUrl from './opt-in-welcome-modal-illustration.webp';
 import './opt-in-welcome-modal.scss';
 
 const preferenceName = 'hosting-dashboard-opt-in-welcome-modal-dismissed' as const;
 
 export default function OptInWelcomeModal() {
+	const { user } = useAuth();
 	const { recordTracksEvent } = useAnalytics();
 	const hasEnTranslation = useHasEnTranslation();
 	const isLargeViewport = useViewportMatch( 'small', '>=' );
@@ -40,7 +43,9 @@ export default function OptInWelcomeModal() {
 		updateDismissed( new Date().toISOString() );
 	};
 
-	if ( dashboardOptIn?.value === 'forced-opt-in' ) {
+	// Users who didn't choose the dashboard themselves shouldn't get the opt-in pitch.
+	const dashboardEnrollment = getHostingDashboardEnrollment( dashboardOptIn, user.ID );
+	if ( dashboardEnrollment.enrolled && dashboardEnrollment.reason === 'forced' ) {
 		return null;
 	}
 

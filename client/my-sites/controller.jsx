@@ -3,7 +3,7 @@ import { PLAN_FREE, PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
-import { some, startsWith } from 'lodash';
+import { some } from 'lodash';
 import { createElement } from 'react';
 import EmptyContentComponent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
@@ -297,7 +297,7 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		domainUseMyDomain( slug ),
 	];
 
-	if ( some( startsWithPaths, ( startsWithPath ) => startsWith( path, startsWithPath ) ) ) {
+	if ( some( startsWithPaths, ( startsWithPath ) => path.startsWith( startsWithPath ) ) ) {
 		return true;
 	}
 
@@ -373,7 +373,7 @@ function onSelectedSiteAvailable( context ) {
 	} else {
 		// If migration is in progress, only /migrate paths should be loaded for the site
 		const isMigrationInProgress = isSiteMigrationInProgress( state, selectedSite.ID );
-		if ( isMigrationInProgress && ! startsWith( context.pathname, '/migrate/' ) ) {
+		if ( isMigrationInProgress && ! context.pathname.startsWith( '/migrate/' ) ) {
 			page.redirect( `/migrate/${ selectedSite.slug }` );
 			return false;
 		}

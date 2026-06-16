@@ -69,6 +69,14 @@ module.exports = {
 	module: {
 		strictExportPresence: true,
 		rules: [
+			// Disable `resolve.fullySpecified` for .mjs and .js files. Some
+			// dependencies ship .mjs that imports bare paths like
+			// `fast-deep-equal/es6`, which webpack would otherwise reject as
+			// not fully specified.
+			{
+				test: /\.m?js$/,
+				resolve: { fullySpecified: false },
+			},
 			TranspileConfig.loader( {
 				workerCount: 2,
 				configFile: path.resolve( '../../babel.config.js' ),
@@ -93,9 +101,6 @@ module.exports = {
 					config: false,
 					plugins: [ autoprefixerPlugin() ],
 				},
-				prelude: `@use '${ require.resolve(
-					'calypso/assets/stylesheets/shared/_utils.scss'
-				) }' as *;`,
 			} ),
 			FileConfig.loader(),
 			{
@@ -135,6 +140,12 @@ module.exports = {
 						'lodash-es',
 						'react',
 						'react-dom',
+						// Externalize the JSX runtime alongside react/react-dom so it matches the
+						// React that WordPress provides. Bundling it (the default here, since it is
+						// absent from this allow list) ships an older React's runtime, whose elements
+						// React 19 rejects ("A React Element from an older version of React was rendered").
+						'react/jsx-runtime',
+						'react/jsx-dev-runtime',
 						'@wordpress/api-fetch',
 						'@wordpress/components',
 						'@wordpress/compose',

@@ -46,6 +46,7 @@ const shouldBuildChunksMap =
 	process.env.BUILD_TRANSLATION_CHUNKS === 'true' ||
 	process.env.ENABLE_FEATURES === 'use-translation-chunks';
 const shouldHotReload = isDevelopment && process.env.CALYPSO_DISABLE_HOT_RELOAD !== 'true';
+const shouldBuildRtlCss = ! isDevelopment || process.env.BUILD_RTL_CSS === 'true';
 
 const defaultBrowserslistEnv = 'evergreen';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
@@ -234,6 +235,7 @@ const webpackConfig = {
 		'entry-browsehappy': [ path.join( __dirname, 'landing', 'browsehappy' ) ],
 		'entry-subscriptions': [ path.join( __dirname, 'landing', 'subscriptions' ) ],
 		'entry-dashboard-dotcom': [ path.join( __dirname, 'dashboard', 'app-dotcom' ) ],
+		'entry-dashboard-a4a': [ path.join( __dirname, 'dashboard', 'app-a4a' ) ],
 		'entry-dashboard-ciab': [ path.join( __dirname, 'dashboard', 'app-ciab' ) ],
 		'entry-reauth-required': [ path.join( __dirname, 'reauth-required', 'bundle' ) ],
 	} ),
@@ -265,6 +267,14 @@ const webpackConfig = {
 	module: {
 		strictExportPresence: true,
 		rules: [
+			// Disable `resolve.fullySpecified` for .mjs and .js files. Some
+			// dependencies ship .mjs that imports bare paths like
+			// `fast-deep-equal/es6`, which webpack would otherwise reject as
+			// not fully specified.
+			{
+				test: /\.m?js$/,
+				resolve: { fullySpecified: false },
+			},
 			TranspileConfig.loader( {
 				workerCount,
 				configFile: path.resolve( 'babel.config.js' ),
@@ -290,7 +300,6 @@ const webpackConfig = {
 					config: false,
 					plugins: [ autoprefixerPlugin() ],
 				},
-				prelude: `@use 'calypso/assets/stylesheets/shared/_utils.scss' as *;`,
 			} ),
 			{
 				include: path.join( __dirname, 'sections.js' ),
@@ -356,6 +365,7 @@ const webpackConfig = {
 		...SassConfig.plugins( {
 			chunkFilename: cssChunkFilename,
 			filename: cssFilename,
+			rtl: shouldBuildRtlCss,
 		} ),
 		new AssetsWriter( {
 			filename: `assets.json`,

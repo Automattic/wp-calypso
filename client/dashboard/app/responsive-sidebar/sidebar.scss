@@ -31,6 +31,6 @@
 }
 
 .dashboard-responsive-sidebar__logo {
-	padding: 14px $grid-unit-30 + 2px;
+	padding: $grid-unit-20 $grid-unit-30;
 	border-block-end: 1px solid var( --dashboard-header__border-color );
 }

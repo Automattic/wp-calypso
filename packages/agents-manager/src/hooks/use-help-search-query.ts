@@ -75,7 +75,9 @@ export default function useHelpSearchQuery(
 		queryKey: [ 'agents-manager-help-search', search, locale, sectionName ],
 		queryFn: () => fetchArticlesAPI( search, locale, sectionName ),
 		refetchOnWindowFocus: false,
-		enabled: !! search,
+		// Help content changes rarely, so cache results for 5 minutes
+		// instead of refetching on remount.
+		staleTime: 5 * 60 * 1000,
 		...queryOptions,
 	} );
 }

@@ -1,8 +1,6 @@
 import { __ } from '@wordpress/i18n';
-import { addQueryArgs } from '@wordpress/url';
 import { upsell } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
-import { isRelativeUrl } from '../../utils/url';
 import HostingFeatureGate from '../hosting-feature-gate';
 import type { OverviewCardProps } from '../../components/overview-card';
 import type { HostingFeatureGateProps } from '../hosting-feature-gate';
@@ -31,11 +29,7 @@ export default function HostingFeatureGatedWithOverviewCard( {
 		icon: upsell,
 		description: upsellDescription,
 		intent: 'upsell' as const,
-		link: isRelativeUrl( upsellLink )
-			? addQueryArgs( upsellLink, {
-					back_to: 'site-overview',
-			  } )
-			: upsellLink,
+		link: upsellLink,
 	};
 
 	return (

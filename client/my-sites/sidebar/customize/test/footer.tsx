@@ -7,6 +7,7 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { CustomizeFooter } from '../footer';
 import { CustomizeProvider, useCustomizeContext } from '../index';
+import type { JSX } from 'react';
 
 function renderInProvider( ui: JSX.Element, state: object = {} ) {
 	const store = configureStore()( {
@@ -37,7 +38,7 @@ describe( '<CustomizeFooter>', () => {
 		expect( container.querySelector( '.admin-sidebar-customize-footer' ) ).toBeNull();
 	} );
 
-	it( 'renders Save / Cancel after entering customize mode', () => {
+	it( 'renders auto-save controls after entering customize mode', () => {
 		const { container } = renderInProvider(
 			<CustomizeProvider>
 				<EnterButton />
@@ -49,11 +50,12 @@ describe( '<CustomizeFooter>', () => {
 		act( () => {
 			( container.querySelector( 'button' ) as HTMLButtonElement ).click();
 		} );
-		expect( screen.getByRole( 'button', { name: /Save/i } ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: /Cancel/i } ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Changes save automatically.' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: /Undo/i } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: /Done/i } ) ).toBeInTheDocument();
 	} );
 
-	it( 'disables Save until the working delta is dirty', () => {
+	it( 'disables Undo until there is a completed move', () => {
 		const { container } = renderInProvider(
 			<CustomizeProvider>
 				<EnterButton />
@@ -63,7 +65,7 @@ describe( '<CustomizeFooter>', () => {
 		act( () => {
 			( container.querySelector( 'button' ) as HTMLButtonElement ).click();
 		} );
-		const save = screen.getByRole( 'button', { name: /Save/i } );
-		expect( save ).toBeDisabled();
+		const undo = screen.getByRole( 'button', { name: /Undo/i } );
+		expect( undo ).toBeDisabled();
 	} );
 } );

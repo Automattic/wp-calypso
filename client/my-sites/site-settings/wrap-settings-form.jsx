@@ -1,9 +1,9 @@
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import { flowRight, get, isEqual, keys, omit, pick } from 'lodash';
+import { get, isEqual, keys, omit, pick } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { compose, bindActionCreators } from 'redux';
 import QueryJetpackSettings from 'calypso/components/data/query-jetpack-settings';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import { withCompleteLaunchpadTasksWithNotice } from 'calypso/launchpad/hooks/with-complete-launchpad-tasks-with-notice';
@@ -465,7 +465,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 		}
 	);
 
-	return flowRight(
+	return compose(
 		withCompleteLaunchpadTasksWithNotice,
 		trackForm,
 		protectForm,

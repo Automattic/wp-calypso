@@ -8,8 +8,8 @@ exports.id = \\"main\\";
 exports.ids = [\\"main\\"];
 exports.modules = {
 
-/***/ \\"./index.js\\":
-/***/ (() => {
+/***/ \\"./index.js\\"
+() {
 
 
 ;// ./constants2.js
@@ -49,7 +49,7 @@ console.log( HOME_PATH );
 console.log( FOO );
 
 
-/***/ })
+/***/ }
 
 };
 ;

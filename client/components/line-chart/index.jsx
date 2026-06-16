@@ -4,7 +4,7 @@ import { axisBottom as d3AxisBottom, axisRight as d3AxisRight } from 'd3-axis';
 import { scaleLinear as d3ScaleLinear, scaleTime as d3TimeScale } from 'd3-scale';
 import { select as d3Select, mouse as d3Mouse } from 'd3-selection';
 import { line as d3Line, area as d3Area, curveMonotoneX as d3MonotoneXCurve } from 'd3-shape';
-import { concat, last, throttle } from 'lodash';
+import { concat, throttle } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import D3Base from 'calypso/components/d3-base';
@@ -183,7 +183,7 @@ class LineChart extends Component {
 			const drawFullSeries = dataSeries.length < POINTS_MAX;
 			const colorNum = dataSeriesIndex % NUM_SERIES;
 
-			( drawFullSeries ? dataSeries : [ dataSeries[ 0 ], last( dataSeries ) ] ).forEach(
+			( drawFullSeries ? dataSeries : [ dataSeries[ 0 ], dataSeries.at( -1 ) ] ).forEach(
 				( datum ) => {
 					svg
 						.append( 'circle' )

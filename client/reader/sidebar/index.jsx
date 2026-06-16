@@ -8,7 +8,7 @@ import { Icon, commentAuthorAvatar, plus } from '@wordpress/icons';
 import clsx from 'clsx';
 import closest from 'component-closest';
 import i18n, { localize } from 'i18n-calypso';
-import { defer, startsWith } from 'lodash';
+import { defer } from 'lodash';
 import { Component, useMemo } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { withReaderOrganizations } from 'calypso/components/data/with-reader-organizations';
@@ -51,6 +51,7 @@ import ReaderSidebarNudges from './reader-sidebar-nudges';
 import ReaderSidebarOrganizations from './reader-sidebar-organizations';
 import ReaderSidebarRecent from './reader-sidebar-recent';
 import ReaderSidebarTags from './reader-sidebar-tags';
+import { ReaderSidebarSpaces } from './spaces';
 
 const TrackingKeys = {
 	conversations: {
@@ -117,7 +118,7 @@ export class ReaderSidebar extends Component {
 	openExpandableMenuForCurrentTagOrList = () => {
 		const pathParts = this.props.path.split( '/' );
 
-		if ( startsWith( this.props.path, '/tag/' ) ) {
+		if ( this.props.path.startsWith( '/tag/' ) ) {
 			const tagSlug = pathParts[ 2 ];
 			if ( tagSlug ) {
 				// Open the sidebar
@@ -128,7 +129,7 @@ export class ReaderSidebar extends Component {
 			}
 		}
 
-		if ( startsWith( this.props.path, '/reader/list/' ) ) {
+		if ( this.props.path.startsWith( '/reader/list/' ) ) {
 			const listOwner = pathParts[ 3 ];
 			const listSlug = pathParts[ 4 ];
 			if ( listOwner && listSlug ) {
@@ -171,6 +172,8 @@ export class ReaderSidebar extends Component {
 							path={ path }
 						/>
 					</li>
+
+					{ isEnabled( 'reader/spaces' ) && <ReaderSidebarSpaces path={ path } /> }
 
 					<SidebarItem
 						className={ clsx( 'sidebar-streams__search', {

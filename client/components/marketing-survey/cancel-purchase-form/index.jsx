@@ -6,9 +6,9 @@ import {
 	isDomainRegistration,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
+import { shuffle } from '@automattic/js-utils';
 import { Button as GutenbergButton, Spinner } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
-import { shuffle } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -92,7 +92,13 @@ class CancelPurchaseForm extends Component {
 	};
 
 	getAllSurveySteps() {
-		const { purchase, skipRemovePlanSurvey, willAtomicSiteRevert, flowType } = this.props;
+		const {
+			purchase,
+			skipRemovePlanSurvey,
+			willAtomicSiteRevert,
+			flowType,
+			isSplitCancelRemoveEnabled,
+		} = this.props;
 		let steps = [ FEEDBACK_STEP ];
 
 		if (
@@ -108,7 +114,11 @@ class CancelPurchaseForm extends Component {
 			steps = [ FEEDBACK_STEP, NEXT_ADVENTURE_STEP ];
 		}
 
-		if ( willAtomicSiteRevert && flowType === CANCEL_FLOW_TYPE.REMOVE ) {
+		if (
+			willAtomicSiteRevert &&
+			flowType === CANCEL_FLOW_TYPE.REMOVE &&
+			! isSplitCancelRemoveEnabled
+		) {
 			steps.push( ATOMIC_REVERT_STEP );
 		}
 
@@ -423,6 +433,7 @@ class CancelPurchaseForm extends Component {
 						onSwitchToMonthly={ this.props.onSwitchToMonthly }
 						purchase={ purchase }
 						purchaseSettingsUrl={ this.props.purchaseSettingsUrl }
+						recordEvent={ this.recordEvent }
 						refundAmount={ this.getRefundAmount() }
 						site={ site }
 					/>

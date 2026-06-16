@@ -5,6 +5,7 @@ import {
 } from '@automattic/calypso-products';
 import { Badge, Button, Card, CompactCard, Gridicon } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
+import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -205,6 +206,29 @@ function ProductsList() {
 									<div className="memberships__products-product-title">
 										{ currentProduct?.title }
 									</div>
+									{ currentProduct.type === TYPE_TIER &&
+										currentProduct.description &&
+										( currentProduct.description_rendered ? (
+											// Server-rendered (and kses-sanitized) markdown — the same
+											// HTML the subscribe modal shows, for a 1:1 preview.
+											// DOMPurify is defense-in-depth in case the API's
+											// sanitization guarantee ever changes. ADD_ATTR keeps the
+											// target="_blank" the server adds to links (DOMPurify
+											// strips `target` by default); `rel` is kept by default.
+											<div
+												className="memberships__products-product-description"
+												// eslint-disable-next-line react/no-danger
+												dangerouslySetInnerHTML={ {
+													__html: DOMPurify.sanitize( currentProduct.description_rendered, {
+														ADD_ATTR: [ 'target' ],
+													} ),
+												} }
+											/>
+										) : (
+											<div className="memberships__products-product-description">
+												{ currentProduct.description }
+											</div>
+										) ) }
 									<sub className="memberships__products-product-price">
 										{ getPriceFromProduct( currentProduct, price ) }
 										{ currentAnnualProduct &&

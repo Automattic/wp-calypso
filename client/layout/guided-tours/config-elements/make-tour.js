@@ -1,14 +1,14 @@
 import debugFactory from 'debug';
 import { isEmpty, omit } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { contextTypes } from '../context-types';
+import { Component, createElement } from 'react';
+import { TourContext } from '../context';
 import { tourBranching } from '../tour-branching';
 
 const debug = debugFactory( 'calypso:guided-tours' );
 
 const makeTour = ( tree ) => {
-	return class TourContext extends Component {
+	return class TourContextProvider extends Component {
 		static propTypes = {
 			isValid: PropTypes.func.isRequired,
 			lastAction: PropTypes.object,
@@ -20,17 +20,11 @@ const makeTour = ( tree ) => {
 			dispatch: PropTypes.func.isRequired,
 		};
 
-		static childContextTypes = contextTypes;
-
 		static meta = omit( tree.props, 'children' );
 
 		state = {
 			tourContext: {},
 		};
-
-		getChildContext() {
-			return this.state.tourContext;
-		}
 
 		static getDerivedStateFromProps( props ) {
 			const {
@@ -69,7 +63,7 @@ const makeTour = ( tree ) => {
 		}
 
 		render() {
-			return tree;
+			return createElement( TourContext.Provider, { value: this.state.tourContext }, tree );
 		}
 	};
 };

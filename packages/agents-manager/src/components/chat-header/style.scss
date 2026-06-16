@@ -27,6 +27,12 @@
 		font-weight: 600;
 		color: var( --color-foreground );
 		flex-grow: 1;
+		// Truncate long titles with an ellipsis.
+		// `min-width: 0` lets the flex item shrink so the ellipsis can show.
+		min-width: 0;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
 	}
 
 	&__actions {

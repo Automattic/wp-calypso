@@ -1,4 +1,18 @@
 /**
+ * The post or comment an achievement was unlocked on. Only present when viewing
+ * your own achievements, and only on achievements the backend can attribute to a
+ * specific post or comment.
+ */
+export interface AchievementContext {
+	blog_id: number;
+	post_id: number;
+	/** Present (and `> 0`) when the achievement was unlocked on a comment. */
+	comment_id?: number;
+	/** Permalink to the post or comment. */
+	url: string;
+}
+
+/**
  * Earned, fully-visible achievement. The shape returned for own-profile reads
  * and for non-secret entries on cross-user reads. A self-read of an earned
  * secret achievement also uses this shape — `is_secret` then reflects the
@@ -34,6 +48,11 @@ export interface Achievement {
 	site_ID?: number;
 	/** Only present when viewing your own achievements. */
 	url?: string;
+	/**
+	 * The post or comment that unlocked the achievement. Only present when viewing
+	 * your own achievements, and only on achievements the backend can attribute.
+	 */
+	context?: AchievementContext;
 }
 
 /**
@@ -119,6 +138,17 @@ export interface EngagementStreak {
 	days?: EngagementStreakDay[];
 }
 
+/**
+ * A per-site daily-post streak: a contiguous run of days on which the user
+ * published at least one post on the given blog. The endpoint returns only
+ * currently-active streaks. Self-reads only.
+ */
+export interface DailyPostStreak {
+	blog_id: number;
+	url: string;
+	current_streak: number;
+}
+
 export interface AchievementsResponse {
 	found: number;
 	achievements: EarnedAchievementEntry[];
@@ -127,4 +157,6 @@ export interface AchievementsResponse {
 	years_of_service?: number;
 	/** Activity streak data. */
 	engagement_streak?: EngagementStreak;
+	/** Self-reads only. Per-site daily-post streaks. Not paginated. */
+	daily_post_streak?: DailyPostStreak[];
 }

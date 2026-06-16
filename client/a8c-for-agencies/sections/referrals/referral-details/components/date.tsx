@@ -1,4 +1,4 @@
-import { Gridicon } from '@automattic/components';
+import EmptyValueIndicator from 'calypso/a8c-for-agencies/components/empty-value-indicator';
 import { ReferralPurchase } from '../../types';
 
 type Props = {
@@ -9,7 +9,7 @@ const DateAssigned = ( { purchase }: Props ) => {
 	return purchase.license?.attached_at ? (
 		new Date( purchase.license.attached_at ).toLocaleDateString()
 	) : (
-		<Gridicon icon="minus" />
+		<EmptyValueIndicator />
 	);
 };
 

@@ -58,6 +58,42 @@
 
 	.reader-onboarding-modal__footer {
 		border-top-color: var( --color-border-subtle );
+
+		.components-button.is-tertiary:not( :disabled, [aria-disabled='true'] ) {
+			color: var( --color-text-subtle );
+
+			&:hover,
+			&:focus,
+			&:active {
+				color: var( --color-text );
+			}
+		}
+	}
+
+	.reader-onboarding {
+		.checklist-item__task-content.components-button:hover:not( [disabled] ),
+		.checklist-item__task-content.components-button:focus:not( [disabled] ) {
+			color: var( --color-link );
+			fill: var( --color-link );
+		}
+
+		.checklist-item__task.completed.enabled > button:hover,
+		.checklist-item__task.completed.enabled > button:focus,
+		.checklist-item__task.pending > button:hover,
+		.checklist-item__task.pending > button:focus,
+		.checklist-item__task.completed.enabled > a:hover,
+		.checklist-item__task.completed.enabled > a:focus,
+		.checklist-item__task.pending > a:hover,
+		.checklist-item__task.pending > a:focus {
+			.checklist-item__text {
+				color: var( --color-link );
+			}
+
+			.checklist-item__chevron,
+			.checklist-item__checkmark {
+				fill: var( --color-link );
+			}
+		}
 	}
 
 	.popover.is-top .popover__arrow::before,
@@ -149,8 +185,18 @@
 	}
 
 	.subscribe-modal__site-list-column .reader-subscription-list-item.is-selected {
-		background-color: color-mix( in srgb, var( --color-primary-0 ) 45%, var( --color-surface ) );
-		border-color: var( --color-primary );
+		background-color: color-mix(
+			in srgb,
+			var( --wp-admin-theme-color ) 12%,
+			var( --color-surface )
+		);
+		border-color: color-mix( in srgb, var( --wp-admin-theme-color ) 60%, var( --color-surface ) );
+
+		&::after {
+			background-color: inherit;
+			border-top-color: inherit;
+			border-right-color: inherit;
+		}
 	}
 
 	.subscribe-modal__preview-placeholder {

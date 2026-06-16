@@ -2,9 +2,10 @@ import config from '@automattic/calypso-config';
 import { Button, Card, Dialog, Gridicon } from '@automattic/components';
 import debugModule from 'debug';
 import { localize, fixMe } from 'i18n-calypso';
-import { flowRight, get, map } from 'lodash';
+import { get, map } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import Site from 'calypso/blocks/site';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
@@ -559,4 +560,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight( connectComponent, localize )( JetpackSsoForm );
+export default compose( connectComponent, localize )( JetpackSsoForm );
