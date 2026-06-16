@@ -20,7 +20,6 @@ import {
 	type ImageUploadHook,
 	type LoadedProviders,
 } from '../utils/load-external-providers';
-import { startSuppressingStaleBigSkySidebar } from '../utils/suppress-stale-big-sky-sidebar';
 import AgentDock from './agent-dock';
 import { PersistentRouter } from './persistent-router';
 
@@ -100,8 +99,6 @@ function AgentSetup( {
 	// Read agent/version overrides from browser URL (?agent=, ?version=).
 	// PersistentRouter (memory router) does not track window.location.search.
 	const { agentId, version, isLoading: isAgentConfigLoading } = useAgentConfig( hostAgentId );
-
-	useEffect( () => startSuppressingStaleBigSkySidebar(), [] );
 
 	// Restore the session ID. Priority:
 	//   1. Router state (calypso navigation carries sessionId on resume).

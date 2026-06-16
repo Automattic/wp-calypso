@@ -14,20 +14,6 @@ declare const agentsManagerData:
 			agentProviders?: ( string | import('./utils/load-external-providers').LoadedProviders )[];
 			useUnifiedExperience?: boolean;
 			agentId?: string;
-			sectionName?: string;
-			aiEditorialReviewEnabled?: boolean;
-			reviewMediatorEnabled?: boolean;
-			jetpackAiSidebarPreview?: {
-				enabled: boolean;
-				features?: {
-					aiEditorialReview?: boolean;
-					generateFeedback?: boolean;
-					blockTransformations?: boolean;
-					optimizeTitleSuggestion?: boolean;
-					chatHistory?: boolean;
-					supportGuides?: boolean;
-				};
-			};
 			helpCenterUrl?: string;
 	  }
 	| undefined;
