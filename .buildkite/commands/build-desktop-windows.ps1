@@ -35,16 +35,17 @@ Invoke-Checked { corepack enable }
 
 Set-Location "$PSScriptRoot\..\..\desktop"
 
-Write-Output "--- :yarn: Installing desktop dependencies"
-Invoke-Checked { yarn install --immutable --inline-builds }
-
-Write-Output "--- :windows: Building unsigned Store appx"
 $env:CONFIG_ENV = 'release'
 $env:SKIP_TSC = 'true'
 $env:PLAYWRIGHT_SKIP_DOWNLOAD = 'true'
 # Tells build-desktop-config.js to disable the in-app updater - the Store owns
 # updates for Store-distributed packages.
 $env:WINDOWS_STORE = '1'
+
+Write-Output "--- :yarn: Installing desktop dependencies"
+Invoke-Checked { yarn install --immutable --inline-builds }
+
+Write-Output "--- :windows: Building unsigned Store appx"
 # Run build:main, then invoke electron-builder directly (Windows shells don't expand `${ELECTRON_BUILDER_ARGS:-}`).
 Invoke-Checked { yarn run build:main }
 Invoke-Checked { yarn electron-builder --config electron-builder-appx.json build --publish never }
