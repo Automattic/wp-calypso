@@ -23,7 +23,7 @@ export function useProfileTabVisibility( profileUserLogin?: string ) {
 		isLoading: settingsLoading,
 		isError,
 	} = useQuery( {
-		...readProfileSettingsQuery( profileUserLogin ),
+		...readProfileSettingsQuery( profileUserLogin ?? '' ),
 		enabled: ! isOwnProfile && profileUserLogin != null,
 	} );
 

@@ -43,7 +43,7 @@ export default function UserTopSites( {
 	}
 
 	const sitesCount = visibleSites.length;
-	const primarySite = visibleSites[ 0 ]; // First site is primary site.
+	const primarySite = visibleSites[ 0 ]; // First site is primary site (if not hidden).
 	const top2SubscribedSites = visibleSites
 		.slice( 1 ) // Exclude primary site from the list.
 		.sort( ( a, b ) => b.subscribers_count - a.subscribers_count )

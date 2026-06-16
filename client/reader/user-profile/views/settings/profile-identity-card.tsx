@@ -41,10 +41,7 @@ export default function ProfileIdentityCard( { user }: ProfileIdentityCardProps 
 		}
 	}, [ settings ] );
 
-	const isDirty =
-		!! settings &&
-		( displayName !== ( settings.display_name ?? '' ) ||
-			description !== ( settings.description ?? '' ) );
+	const isDirty = displayName !== settings?.display_name || description !== settings?.description;
 
 	const refreshProfileHeader = () => {
 		// The profile header reads identity from `userQuery`, a different cache entry than

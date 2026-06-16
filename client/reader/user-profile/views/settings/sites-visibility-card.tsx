@@ -47,15 +47,13 @@ export default function SitesVisibilityCard( {
 		<Card>
 			<CardHeader>
 				<h2 className="user-profile-settings__card-title">{ translate( 'Sites' ) }</h2>
-				{ sites.length >= 3 && (
-					<Button
-						variant="link"
-						disabled={ ! sitesEnabled || isPending }
-						onClick={ () => setAllHidden( allVisible, allSiteIds ) }
-					>
-						{ allVisible ? translate( 'Deselect all' ) : translate( 'Select all' ) }
-					</Button>
-				) }
+				<Button
+					variant="link"
+					disabled={ ! sitesEnabled || isPending }
+					onClick={ () => setAllHidden( allVisible, allSiteIds ) }
+				>
+					{ allVisible ? translate( 'Deselect all' ) : translate( 'Select all' ) }
+				</Button>
 			</CardHeader>
 			<CardBody>
 				<VStack spacing={ 4 }>
