@@ -1,4 +1,6 @@
 import './style.scss';
+import { isAutomatticianQuery } from '@automattic/api-queries';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useLayoutEffect, useRef, useState, type JSX } from 'react';
@@ -25,6 +27,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 	const translate = useTranslate();
 	const { isVisible: showAchievements } = useAchievementsVisibility( user.user_login );
 	const { isOwnProfile, showPosts, showSites } = useProfileTabVisibility( user.user_login );
+	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
 	const [ isExpanded, setIsExpanded ] = useState( false );
 	const [ showMoreToggle, setShowMoreToggle ] = useState( false );
 	const bioRef = useRef< HTMLParagraphElement >( null );
@@ -80,7 +83,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 					},
 			  ]
 			: [] ),
-		...( isOwnProfile
+		...( isOwnProfile && isAutomattician
 			? [
 					{
 						label: translate( 'Settings' ),
