@@ -34,7 +34,7 @@ export default function BlazePage( { actions, children }: Props ) {
 		<Page
 			className="promote-post-i2__page"
 			visual={ isBlazePlugin ? undefined : <JetpackLogo size={ 24 } monochrome={ false } /> }
-			title={ isBlazePlugin ? 'Blaze Ads' : 'Blaze' }
+			title="Blaze Ads"
 			subTitle={ translate( 'Promote your posts and pages across WordPress.com and Tumblr.' ) }
 			showSidebarToggle={ false }
 			actions={ actions }
