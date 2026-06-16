@@ -60,8 +60,9 @@ const StatModuleFollowers = ( { className } ) => {
 
 	const noData = ! subTotals.subscribers.length;
 	const summaryPageSlug = siteSlug || '';
-	// The individual subscriber details route only exists in Calypso, so skip the
-	// name link in Odyssey Stats (wp-admin), where `page()` can't reach it.
+	// Odyssey Stats (wp-admin) can't route to the individual subscriber details
+	// page internally, so the name links out to the full wordpress.com /
+	// cloud.jetpack.com URL there and navigates in-app in Calypso.
 	const isOdysseyStats = config.isEnabled( 'is_odyssey' );
 	const useJetpackCloudLinks = isAtomic || isJetpack;
 	const subscriberManagementUrl = useJetpackCloudLinks
@@ -71,16 +72,23 @@ const StatModuleFollowers = ( { className } ) => {
 	return (
 		<StatsListCard
 			moduleType="followers"
-			data={ subTotals.subscribers.map( ( dataPoint ) => ( {
-				...dataPoint,
-				value: calculateOffset( dataPoint.value?.value ),
+			data={ subTotals.subscribers.map( ( dataPoint ) => {
 				// Link the subscriber name to its individual details page. `link` is kept
-				// for the right-side icon that opens the subscriber's own site.
-				page:
-					! isOdysseyStats && dataPoint.subscription_id
-						? `/subscribers/${ summaryPageSlug }/${ dataPoint.subscription_id }`
-						: undefined,
-			} ) ) }
+				// for the right-side icon that opens the subscriber's own site. Odyssey
+				// (wp-admin) can't route there internally, so use the full URL; Calypso
+				// navigates in-app.
+				let detailPage;
+				if ( dataPoint.subscription_id ) {
+					detailPage = isOdysseyStats
+						? `${ subscriberManagementUrl }/${ dataPoint.subscription_id }`
+						: `/subscribers/${ summaryPageSlug }/${ dataPoint.subscription_id }`;
+				}
+				return {
+					...dataPoint,
+					value: calculateOffset( dataPoint.value?.value ),
+					page: detailPage,
+				};
+			} ) }
 			usePlainCard
 			hasNoBackground
 			title={ translate( 'Subscribers' ) }

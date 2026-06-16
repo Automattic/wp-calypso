@@ -54,7 +54,14 @@ const StatsListCard = ( {
 
 		if ( listItemData?.page ) {
 			gaRecordEvent( 'Stats', ` Clicked ${ moduleNameTitle } Summary Link in List` );
-			page( listItemData.page );
+			// `page` is usually an in-app path, but it can be a full URL when the
+			// destination lives outside the current app (e.g. linking from Odyssey
+			// Stats in wp-admin out to the wordpress.com subscriber details page).
+			if ( /^https?:\/\//.test( listItemData.page ) ) {
+				window.location.href = listItemData.page;
+			} else {
+				page( listItemData.page );
+			}
 		} else if ( listItemData?.link ) {
 			// downloads component and some old search items (not all)
 			gaRecordEvent( 'Stats', ` Clicked ${ moduleNameTitle } External Link in List` );
