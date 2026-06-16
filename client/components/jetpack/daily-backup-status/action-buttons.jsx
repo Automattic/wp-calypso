@@ -93,9 +93,9 @@ const CloneButton = ( { disabled, rewindId, primary, onClickClone } ) => {
 };
 
 const ActionButtons = ( {
-	rewindId,
+	rewindId = null,
 	disabled = false,
-	isMultiSite,
+	isMultiSite = false,
 	hasWarnings = false,
 	availableActions = [ 'rewind', 'download' ],
 	onClickClone = () => {},
