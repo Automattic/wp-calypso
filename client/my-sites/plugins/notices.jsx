@@ -1,6 +1,6 @@
+import { uniqBy } from '@automattic/js-utils';
 import isShallowEqual from '@wordpress/is-shallow-equal';
 import { localize } from 'i18n-calypso';
-import { uniqBy } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import {

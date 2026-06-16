@@ -1,5 +1,6 @@
+import { uniqBy } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { map, get, uniqBy, size, filter, compact } from 'lodash';
+import { map, get, size, filter, compact } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { isAncestor } from 'calypso/blocks/comments/utils';

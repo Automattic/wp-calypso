@@ -38,7 +38,7 @@ module.exports = {
 					// Use the equivalents from `@automattic/js-utils` instead of lodash.
 					{
 						name: 'lodash',
-						importNames: [ 'keyBy', 'shuffle' ],
+						importNames: [ 'keyBy', 'shuffle', 'uniqBy' ],
 						message: 'Please use the equivalent from `@automattic/js-utils` instead.',
 					},
 				],

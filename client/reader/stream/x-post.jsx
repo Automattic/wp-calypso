@@ -1,9 +1,10 @@
 import { getUrlParts } from '@automattic/calypso-url';
 import { Card } from '@automattic/components';
+import { uniqBy } from '@automattic/js-utils';
 import clsx from 'clsx';
 import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
-import { forEach, uniqBy } from 'lodash';
+import { forEach } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, PureComponent } from 'react';
 import { connect } from 'react-redux';
