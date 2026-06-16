@@ -1,5 +1,6 @@
+import { omit } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
-import { get, omit } from 'lodash';
+import { get } from 'lodash';
 import { trailingslashit } from 'calypso/lib/route';
 import { JETPACK_SETTINGS_REQUEST, JETPACK_SETTINGS_SAVE } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
@@ -81,7 +82,9 @@ export const saveJetpackSettings = ( action ) => ( dispatch, getState ) => {
 	const previousSettings = getJetpackSettings( getState(), siteId );
 
 	// We don't want any legacy Jetpack Onboarding credentials in our Jetpack Settings Redux state.
-	const settingsWithoutCredentials = omit( settings, [ 'onboarding.jpUser', 'onboarding.token' ] );
+	const settingsWithoutCredentials = settings.onboarding
+		? { ...settings, onboarding: omit( settings.onboarding, [ 'jpUser', 'token' ] ) }
+		: settings;
 	dispatch( updateJetpackSettings( siteId, settingsWithoutCredentials ) );
 	dispatch(
 		http(

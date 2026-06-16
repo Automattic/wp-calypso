@@ -1,5 +1,6 @@
+import { omit } from '@automattic/js-utils';
 import { createSelector } from '@automattic/state-utils';
-import { isEqual, omit, some } from 'lodash';
+import { isEqual, some } from 'lodash';
 import {
 	getDeserializedThemesQueryDetails,
 	getNormalizedThemesQuery,

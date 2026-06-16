@@ -1,6 +1,7 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
+import { pick } from '@automattic/js-utils';
 import { LocalizeProps, localize } from 'i18n-calypso';
-import { camelCase, difference, isEmpty, map, pick } from 'lodash';
+import { camelCase, difference, isEmpty, map } from 'lodash';
 import { PureComponent, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';

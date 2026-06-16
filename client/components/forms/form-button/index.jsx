@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
+import { omit } from '@automattic/js-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { omit } from 'lodash';
 import { Component, Children } from 'react';
 
 import './style.scss';

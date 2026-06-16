@@ -1,6 +1,7 @@
+import { omit, pick } from '@automattic/js-utils';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import { get, isEqual, omit, pick } from 'lodash';
+import { get, isEqual } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose, bindActionCreators } from 'redux';

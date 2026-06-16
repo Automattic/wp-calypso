@@ -1,4 +1,5 @@
-import { clone, difference, get, isEqual, map, omit, reduce } from 'lodash';
+import { omit } from '@automattic/js-utils';
+import { clone, difference, get, isEqual, map, reduce } from 'lodash';
 import QueryKey from './key';
 
 /**

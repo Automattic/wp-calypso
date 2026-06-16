@@ -1,4 +1,5 @@
-import { omit, mapValues } from 'lodash';
+import { omit } from '@automattic/js-utils';
+import { mapValues } from 'lodash';
 import {
 	JETPACK_MODULE_ACTIVATE,
 	JETPACK_MODULE_ACTIVATE_SUCCESS,

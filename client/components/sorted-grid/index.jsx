@@ -1,4 +1,5 @@
-import { get, map, omit, reduce } from 'lodash';
+import { omit } from '@automattic/js-utils';
+import { get, map, reduce } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, PureComponent } from 'react';
 import InfiniteList from 'calypso/components/infinite-list';

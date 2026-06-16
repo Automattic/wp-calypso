@@ -1,4 +1,5 @@
-import { get, includes, map, omit, omitBy, some } from 'lodash';
+import { omit } from '@automattic/js-utils';
+import { get, includes, map, omitBy, some } from 'lodash';
 import { DEFAULT_THEME_QUERY } from './constants';
 
 /**

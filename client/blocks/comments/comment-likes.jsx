@@ -1,5 +1,6 @@
+import { pick } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
-import { get, pick } from 'lodash';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';

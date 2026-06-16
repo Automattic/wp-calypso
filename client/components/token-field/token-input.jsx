@@ -1,4 +1,4 @@
-import { omit } from 'lodash';
+import { omit } from '@automattic/js-utils';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';

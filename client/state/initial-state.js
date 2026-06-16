@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
+import { pick } from '@automattic/js-utils';
 import debugModule from 'debug';
-import { map, pick, throttle } from 'lodash';
+import { map, throttle } from 'lodash';
 import { setStoredItem } from 'calypso/lib/browser-storage';
 import { isSupportSession } from 'calypso/lib/user/support-user-interop';
 import { APPLY_STORED_STATE } from './action-types';

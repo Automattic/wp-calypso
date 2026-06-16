@@ -1,5 +1,6 @@
+import { pick } from '@automattic/js-utils';
 import update from 'immutability-helper';
-import { filter, find, findIndex, matches, pick, reject, some, without } from 'lodash';
+import { filter, find, findIndex, matches, reject, some, without } from 'lodash';
 import {
 	DOMAINS_DNS_ADD,
 	DOMAINS_DNS_ADD_COMPLETED,
