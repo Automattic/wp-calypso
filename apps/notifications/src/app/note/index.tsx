@@ -124,10 +124,6 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 						</Heading>
 					</HStack>
 					<HStack justify="flex-end" style={ { width: 'auto', flexShrink: 0 } }>
-						{ /* Keep the optional action dropdown leftmost so that, when a note
-						   has no actions and it renders nothing, the navigation arrows and
-						   close button stay anchored to the right edge instead of shifting. */ }
-						<ActionDropdown note={ note } goBack={ goBack } />
 						{ ! isLargeScreen && (
 							<>
 								<Button
@@ -148,6 +144,7 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 								/>
 							</>
 						) }
+						<ActionDropdown note={ note } goBack={ goBack } />
 						{ isDismissible && <CloseButton /> }
 					</HStack>
 				</HStack>
