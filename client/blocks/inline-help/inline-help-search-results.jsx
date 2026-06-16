@@ -80,8 +80,25 @@ function HelpSearchResults( {
 		sectionName
 	);
 
-	const searchResults = searchData ?? [];
+	const searchResults = useMemo( () => searchData ?? [], [ searchData ] );
 	const hasAPIResults = searchResults.length > 0;
+
+	// On the customer home "Need help?" card, surface our website setup
+	// tutorial as the first recommended guide.
+	const recommendedGuides = useMemo( () => {
+		if ( location !== 'customer-home' || searchQuery.length ) {
+			return searchResults;
+		}
+
+		return [
+			{
+				type: SUPPORT_TYPE_API_HELP,
+				link: localizeUrl( 'https://wordpress.com/support/five-step-website-setup/' ),
+				title: translate( 'Build your website in five steps' ),
+			},
+			...searchResults,
+		];
+	}, [ location, searchQuery, searchResults, translate ] );
 
 	useEffect( () => {
 		// Cancel all queued speak messages.
@@ -205,14 +222,14 @@ function HelpSearchResults( {
 			{
 				type: SUPPORT_TYPE_API_HELP,
 				title: translate( 'Recommended guides' ),
-				results: searchResults.slice( 0, 5 ),
-				condition: ! isSearching && searchResults.length > 0,
+				results: recommendedGuides.slice( 0, 5 ),
+				condition: ! isSearching && recommendedGuides.length > 0,
 			},
 			{
 				type: SUPPORT_TYPE_CONTEXTUAL_HELP,
 				title: ! searchQuery.length ? translate( 'Recommended guides' ) : '',
 				results: contextualResults.slice( 0, 6 ),
-				condition: ! isSearching && ! searchResults.length && contextualResults.length > 0,
+				condition: ! isSearching && ! recommendedGuides.length && contextualResults.length > 0,
 			},
 		];
 
