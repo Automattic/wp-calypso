@@ -1,4 +1,5 @@
-import { map, size, filter, get, partition, pickBy, keyBy } from 'lodash';
+import { keyBy } from '@automattic/js-utils';
+import { map, size, filter, get, partition, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, useCallback, useMemo, useRef, useState } from 'react';
 import { connect } from 'react-redux';

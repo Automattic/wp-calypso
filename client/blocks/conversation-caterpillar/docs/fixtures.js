@@ -1,4 +1,5 @@
-import { keyBy, map } from 'lodash';
+import { keyBy } from '@automattic/js-utils';
+import { map } from 'lodash';
 
 export const comments = [
 	{

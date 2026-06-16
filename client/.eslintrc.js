@@ -35,6 +35,12 @@ module.exports = {
 						importNames: [ 'flowRight' ],
 						message: "Please use `compose` from 'redux' instead.",
 					},
+					// Use the equivalents from `@automattic/js-utils` instead of lodash.
+					{
+						name: 'lodash',
+						importNames: [ 'keyBy', 'shuffle' ],
+						message: 'Please use the equivalent from `@automattic/js-utils` instead.',
+					},
 				],
 			},
 		],
