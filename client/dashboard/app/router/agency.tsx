@@ -70,7 +70,6 @@ const exclusiveOffersRoute = createRoute( {
 	} ),
 	getParentRoute: () => agencyRoute,
 	path: 'marketplace/exclusive-offers',
-	beforeLoad: requireAgencyUser,
 } ).lazy( () =>
 	import( '../../marketplace/exclusive-offers' ).then( ( d ) =>
 		createLazyRoute( 'exclusive-offers' )( {
