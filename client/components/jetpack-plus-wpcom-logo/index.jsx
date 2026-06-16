@@ -11,9 +11,6 @@ const COLOR_WORDPRESS = PALETTE[ 'WordPress Blue 40' ];
 const COLOR_WHITE = PALETTE[ 'White' ]; // eslint-disable-line dot-notation
 const COLOR_GRAY = PALETTE[ 'Gray 80' ];
 
-/**
- * @param {{ size?: number; className?: string; }} props
- */
 const JetpackPlusWpComLogo = ( { size = 32, className } ) => {
 	const classes = clsx( 'jetpack-plus-wpcom-logo', className );
 
