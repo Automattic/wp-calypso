@@ -1,5 +1,5 @@
 import { DomainAvailabilityStatus, type BundleSuggestion } from '@automattic/api-core';
-import { getByText, queryByText, render, screen, waitFor } from '@testing-library/react';
+import { act, getByText, queryByText, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { buildAvailability } from '../../test-helpers/factories/availability';
 import { buildCart, buildCartItem } from '../../test-helpers/factories/cart';
@@ -1006,6 +1006,173 @@ describe( 'ResultsPage', () => {
 					)
 				).toBeInTheDocument();
 			} );
+		} );
+
+		it( 'clears the bundle card and refetches the bundle suggestion when the bundle is permanently unavailable', async () => {
+			const user = userEvent.setup();
+			const onAddBundle = jest.fn().mockRejectedValue(
+				Object.assign( new Error( 'The domain bundle could not be added to the cart.' ), {
+					code: 'domain_bundle_unavailable',
+				} )
+			);
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-bundle-permanent' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-permanent.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'test-bundle-permanent' },
+				bundleSuggestion: buildBundleSuggestion( 'test-bundle-permanent' ),
+			} );
+			const refetchRequest = mockGetBundleSuggestionQuery( {
+				params: { query: 'test-bundle-permanent' },
+				bundleSuggestion: null,
+			} );
+
+			render(
+				<TestDomainSearch
+					cart={ buildCart( { onAddBundle } ) }
+					config={ { showBundleSuggestions: true } }
+					query="test-bundle-permanent"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByText( 'test-bundle-permanent.net' ) ).toBeInTheDocument();
+
+			await user.click( screen.getByRole( 'button', { name: 'Get bundle' } ) );
+
+			await waitFor( () => {
+				expect( refetchRequest.isDone() ).toBe( true );
+			} );
+
+			await waitFor( () => {
+				expect( screen.queryByRole( 'button', { name: 'Get bundle' } ) ).not.toBeInTheDocument();
+			} );
+			expect( screen.queryByText( 'test-bundle-permanent.net' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'keeps the stale bundle hidden when the permanent-failure refetch returns the same bundle group', async () => {
+			const user = userEvent.setup();
+			const unavailableBundle = buildBundleSuggestion( 'test-bundle-same-group' );
+			const onAddBundle = jest.fn().mockRejectedValue(
+				Object.assign( new Error( 'The domain bundle could not be added to the cart.' ), {
+					code: 'domain_bundle_unavailable',
+				} )
+			);
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-bundle-same-group' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-same-group.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'test-bundle-same-group' },
+				bundleSuggestion: unavailableBundle,
+			} );
+			const refetchRequest = mockGetBundleSuggestionQuery( {
+				params: { query: 'test-bundle-same-group' },
+				bundleSuggestion: unavailableBundle,
+			} );
+
+			render(
+				<TestDomainSearch
+					cart={ buildCart( { onAddBundle } ) }
+					config={ { showBundleSuggestions: true } }
+					query="test-bundle-same-group"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByText( 'test-bundle-same-group.net' ) ).toBeInTheDocument();
+
+			await user.click( screen.getByRole( 'button', { name: 'Get bundle' } ) );
+
+			await waitFor( () => {
+				expect( refetchRequest.isDone() ).toBe( true );
+			} );
+
+			await waitFor( () => {
+				expect( screen.queryByRole( 'button', { name: 'Get bundle' } ) ).not.toBeInTheDocument();
+			} );
+			expect( screen.queryByText( 'test-bundle-same-group.net' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'does not hide or refetch the next query when an old bundle add fails permanently', async () => {
+			const user = userEvent.setup();
+			let rejectAddBundle: ( error: Error ) => void = () => {};
+			const staleBundle = buildBundleSuggestion( 'test-bundle-late-stale' );
+			const freshBundle = {
+				...buildBundleSuggestion( 'test-bundle-late-fresh' ),
+				bundle_group_id: staleBundle.bundle_group_id,
+			};
+			const onAddBundle = jest.fn(
+				() =>
+					new Promise< void >( ( _resolve, reject ) => {
+						rejectAddBundle = reject;
+					} )
+			);
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-bundle-late-stale' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-late-stale.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'test-bundle-late-stale' },
+				bundleSuggestion: staleBundle,
+			} );
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-bundle-late-fresh' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-late-fresh.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'test-bundle-late-fresh' },
+				bundleSuggestion: freshBundle,
+			} );
+			const freshRefetchRequest = mockGetBundleSuggestionQuery( {
+				params: { query: 'test-bundle-late-fresh' },
+				bundleSuggestion: null,
+			} );
+
+			const { rerender } = render(
+				<TestDomainSearch
+					cart={ buildCart( { onAddBundle } ) }
+					config={ { showBundleSuggestions: true } }
+					query="test-bundle-late-stale"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByText( 'test-bundle-late-stale.net' ) ).toBeInTheDocument();
+
+			await user.click( screen.getByRole( 'button', { name: 'Get bundle' } ) );
+
+			rerender(
+				<TestDomainSearch
+					cart={ buildCart( { onAddBundle } ) }
+					config={ { showBundleSuggestions: true } }
+					query="test-bundle-late-fresh"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByText( 'test-bundle-late-fresh.net' ) ).toBeInTheDocument();
+
+			await act( async () => {
+				rejectAddBundle(
+					Object.assign( new Error( 'The domain bundle could not be added to the cart.' ), {
+						code: 'domain_bundle_unavailable',
+					} )
+				);
+			} );
+
+			expect( freshRefetchRequest.isDone() ).toBe( false );
+			expect( screen.getByText( 'test-bundle-late-fresh.net' ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Get bundle' } ) ).toBeEnabled();
 		} );
 
 		it( 'clears the error when retrying succeeds', async () => {
