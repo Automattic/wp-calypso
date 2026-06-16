@@ -118,7 +118,7 @@ export default function PromoCards( { isOdysseyStats, slug, pageSlug } ) {
 							clickEvent="calypso_stats_traffic_blaze_banner_click"
 							headerText={ translate( 'Reach new readers and customers' ) }
 							contentText={ translate(
-								'Use WordPress %(productName)s to increase your reach by promoting your work to the larger WordPress.com community of blogs and sites. ',
+								'Use %(productName)s to increase your reach by promoting your work to the larger WordPress.com community of blogs and sites. ',
 								{ args: { productName: 'Blaze Ads' } }
 							) }
 							ctaText={ translate( 'Get started' ) }

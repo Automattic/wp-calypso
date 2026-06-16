@@ -100,7 +100,7 @@ export const printReceipt = (
 			<head>
 				<title>${ sprintf(
 					/* translators: %1$s is the product name, %2$d is the payment ID */
-					__( 'WordPress %1$s Payment Receipt - ID %2$d' ),
+					__( '%1$s Payment Receipt - ID %2$d' ),
 					'Blaze Ads',
 					payment.id
 				) }</title>
