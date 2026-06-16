@@ -361,6 +361,7 @@ function PortaledCheckoutFormSubmit( {
 	validateForm?: () => Promise< boolean >;
 } ) {
 	const { slotEl } = useSubmitButtonSlot();
+	const reduxDispatch = useReduxDispatch();
 	if ( ! slotEl ) {
 		return null;
 	}
@@ -369,6 +370,11 @@ function PortaledCheckoutFormSubmit( {
 			validateForm={ validateForm }
 			continueToNextIncompleteStep
 			changePaymentMethodStepId="payment-method-step"
+			onChangePaymentMethodClick={ () =>
+				reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_composite_change_payment_method_click' )
+				)
+			}
 		/>,
 		slotEl
 	);

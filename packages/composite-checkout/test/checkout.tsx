@@ -1021,6 +1021,7 @@ describe( 'Checkout', () => {
 							<CheckoutFormSubmit
 								continueToNextIncompleteStep
 								changePaymentMethodStepId={ props.changePaymentMethodStepId }
+								onChangePaymentMethodClick={ props.onChangePaymentMethodClick }
 							/>
 						</CheckoutStepGroup>
 					</CheckoutProvider>
@@ -1063,6 +1064,25 @@ describe( 'Checkout', () => {
 			expect( ( scrollIntoView.mock.instances[ 0 ] as HTMLElement ).id ).toBe(
 				'custom-contact-step'
 			);
+		} );
+
+		it( 'calls onChangePaymentMethodClick when the link is clicked', async () => {
+			window.HTMLElement.prototype.scrollIntoView = jest.fn();
+			const onChangePaymentMethodClick = jest.fn();
+			const { container } = render(
+				<ChangePaymentCheckout
+					steps={ [ steps[ 0 ], steps[ 1 ] ] }
+					changePaymentMethodStepId="custom-contact-step"
+					onChangePaymentMethodClick={ onChangePaymentMethodClick }
+				/>
+			);
+			const submitArea = getSubmitArea( container );
+			const user = userEvent.setup();
+			await user.click( getByTextInNode( submitArea, 'Use a different payment method' ) );
+
+			await waitFor( () => {
+				expect( onChangePaymentMethodClick ).toHaveBeenCalledTimes( 1 );
+			} );
 		} );
 
 		it( 'hides the link when there is only one available payment method', () => {

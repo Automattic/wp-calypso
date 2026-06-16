@@ -703,6 +703,7 @@ export function CheckoutFormSubmit( {
 	onPageLoadError,
 	continueToNextIncompleteStep,
 	changePaymentMethodStepId,
+	onChangePaymentMethodClick,
 }: {
 	validateForm?: () => Promise< boolean >;
 	submitButtonHeader?: ReactNode;
@@ -712,6 +713,7 @@ export function CheckoutFormSubmit( {
 	onPageLoadError?: CheckoutPageErrorCallback;
 	continueToNextIncompleteStep?: boolean;
 	changePaymentMethodStepId?: string;
+	onChangePaymentMethodClick?: () => void;
 } ) {
 	const { __ } = useI18n();
 	const { state, actions } = useContext( CheckoutStepGroupContext );
@@ -835,6 +837,7 @@ export function CheckoutFormSubmit( {
 		if ( ! changePaymentMethodStepId ) {
 			return;
 		}
+		onChangePaymentMethodClick?.();
 		await makeStepActive( changePaymentMethodStepId );
 		document
 			.getElementById( changePaymentMethodStepId )
