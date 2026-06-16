@@ -208,17 +208,20 @@ class PurchaseNotice extends Component<
 		let noticeText;
 		if ( targetPlanName && renewalDate ) {
 			noticeText = translate(
-				'Your plan is scheduled to downgrade to %(targetPlanName)s on %(renewalDate)s.',
+				'Your plan is scheduled to downgrade to %(targetPlanName)s at your next renewal on %(renewalDate)s.',
 				{
 					args: { targetPlanName: String( targetPlanName ), renewalDate },
 					comment: 'Warning notice shown when a plan downgrade is scheduled for a renewal date',
 				}
 			);
 		} else if ( renewalDate ) {
-			noticeText = translate( 'Your plan is scheduled to downgrade on %(renewalDate)s.', {
-				args: { renewalDate },
-				comment: 'Warning notice shown when a plan downgrade is scheduled for a renewal date',
-			} );
+			noticeText = translate(
+				'Your plan is scheduled to downgrade at your next renewal on %(renewalDate)s.',
+				{
+					args: { renewalDate },
+					comment: 'Warning notice shown when a plan downgrade is scheduled for a renewal date',
+				}
+			);
 		} else if ( targetPlanName ) {
 			noticeText = translate(
 				'Your plan is scheduled to downgrade to %(targetPlanName)s at your next renewal.',
@@ -383,17 +386,20 @@ class PurchaseNotice extends Component<
 		let text;
 		if ( targetPlanName && renewalDate ) {
 			text = translate(
-				'Your plan is scheduled to downgrade to %(targetPlanName)s on %(renewalDate)s.',
+				'Your plan is scheduled to downgrade to %(targetPlanName)s at your next renewal on %(renewalDate)s.',
 				{
 					args: { targetPlanName: String( targetPlanName ), renewalDate },
 					comment: 'Success notice shown after scheduling a plan downgrade for a renewal date',
 				}
 			);
 		} else if ( renewalDate ) {
-			text = translate( 'Your plan is scheduled to downgrade on %(renewalDate)s.', {
-				args: { renewalDate },
-				comment: 'Success notice shown after scheduling a plan downgrade for a renewal date',
-			} );
+			text = translate(
+				'Your plan is scheduled to downgrade at your next renewal on %(renewalDate)s.',
+				{
+					args: { renewalDate },
+					comment: 'Success notice shown after scheduling a plan downgrade for a renewal date',
+				}
+			);
 		} else if ( targetPlanName ) {
 			text = translate(
 				'Your plan is scheduled to downgrade to %(targetPlanName)s at your next renewal.',

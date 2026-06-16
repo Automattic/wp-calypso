@@ -71,7 +71,7 @@ function ModalBody( {
 				<p className="downgrade-confirmation-modal__description">
 					{ renewalDate
 						? translate(
-								'Your plan will change from %(currentPlan)s to %(targetPlan)s on %(renewalDate)s. Until then you’ll continue using %(currentPlan)s.',
+								'Your plan will change from %(currentPlan)s to %(targetPlan)s at your next renewal on %(renewalDate)s. Until then you’ll continue using %(currentPlan)s.',
 								{
 									args: {
 										currentPlan: currentPlanName,

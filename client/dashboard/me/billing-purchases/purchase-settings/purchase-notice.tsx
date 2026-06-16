@@ -224,7 +224,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 			if ( targetPlanName && renewalDate ) {
 				return sprintf(
 					// translators: %1$s is the name of the plan, e.g. "Personal"; %2$s is a date, e.g. "January 1, 2026"
-					__( 'Your plan is scheduled to downgrade to %1$s on %2$s.' ),
+					__( 'Your plan is scheduled to downgrade to %1$s at your next renewal on %2$s.' ),
 					targetPlanName,
 					renewalDate
 				);
@@ -232,7 +232,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 			if ( renewalDate ) {
 				return sprintf(
 					// translators: %s is a date, e.g. "January 1, 2026"
-					__( 'Your plan is scheduled to downgrade on %s.' ),
+					__( 'Your plan is scheduled to downgrade at your next renewal on %s.' ),
 					renewalDate
 				);
 			}
