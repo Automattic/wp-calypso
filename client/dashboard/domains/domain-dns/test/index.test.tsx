@@ -40,13 +40,24 @@ const mockDomainApiRequest = ( domainData: Domain ) =>
 		.get( `/rest/v1.2/domain-details/${ domainName }` )
 		.reply( 200, domainData );
 
-const mockDnsApiRequest = ( records: DnsRecord[], { delayMs = 0 }: { delayMs?: number } = {} ) =>
+const mockDnsApiRequest = ( records: DnsRecord[] ) =>
 	nock( 'https://public-api.wordpress.com' )
 		.get( `/rest/v1.1/domains/${ domainName }/dns` )
-		.delay( delayMs )
 		.reply( 200, { records } );
 
-afterEach( () => nock.cleanAll() );
+// Mocks the DNS request but holds the response pending until the returned
+// `release` callback is invoked, letting tests assert on the in-flight state
+// without relying on `nock.delay()` (which leaves open handles).
+const mockDnsApiRequestPending = ( records: DnsRecord[] ) => {
+	let release!: () => void;
+	const pending = new Promise< void >( ( resolve ) => {
+		release = resolve;
+	} );
+	nock( 'https://public-api.wordpress.com' )
+		.get( `/rest/v1.1/domains/${ domainName }/dns` )
+		.reply( 200, () => pending.then( () => ( { records } ) ) );
+	return release;
+};
 
 describe( 'DomainDns', () => {
 	test( 'shows EmailSetup when domain has WordPress.com nameservers', async () => {
@@ -54,7 +65,7 @@ describe( 'DomainDns', () => {
 
 		render( <DomainDns /> );
 
-		expect( await screen.findByText( 'Email setup' ) ).toBeInTheDocument();
+		expect( await screen.findByText( 'Email setup' ) ).toBeVisible();
 	} );
 
 	test( 'hides EmailSetup when domain does not have WordPress.com nameservers', async () => {
@@ -62,7 +73,7 @@ describe( 'DomainDns', () => {
 
 		render( <DomainDns /> );
 
-		expect( await screen.findByText( 'Add record' ) ).toBeInTheDocument();
+		expect( await screen.findByText( 'Add record' ) ).toBeVisible();
 		expect( screen.queryByText( 'Email setup' ) ).not.toBeInTheDocument();
 	} );
 
@@ -70,7 +81,7 @@ describe( 'DomainDns', () => {
 		mockDomainApiRequest( getDefaultDomainData( { has_wpcom_nameservers: true } ) );
 		// The domain already has the default WWW CNAME record, so the warning must
 		// never appear — not even during the window where the DNS query is loading.
-		mockDnsApiRequest( [ defaultCnameRecord ], { delayMs: 200 } );
+		const release = mockDnsApiRequestPending( [ defaultCnameRecord ] );
 
 		render( <DomainDns /> );
 
@@ -80,7 +91,8 @@ describe( 'DomainDns', () => {
 		expect( screen.queryByText( CNAME_WARNING ) ).not.toBeInTheDocument();
 
 		// Once the DNS records load, the warning still must not appear.
-		expect( await screen.findByText( 'CNAME' ) ).toBeInTheDocument();
+		release();
+		expect( await screen.findByText( 'CNAME' ) ).toBeVisible();
 		expect( screen.queryByText( CNAME_WARNING ) ).not.toBeInTheDocument();
 	} );
 
@@ -98,15 +110,17 @@ describe( 'DomainDns', () => {
 		queryClient.setQueryData( dnsQueryKey, { records: [] } );
 
 		// The server actually has the default WWW CNAME record, so the warning must
-		// never appear — not even while the background refetch is in flight.
-		mockDnsApiRequest( [ defaultCnameRecord ], { delayMs: 200 } );
+		// never appear — not even while the background refetch is in flight over the
+		// stale records.
+		const release = mockDnsApiRequestPending( [ defaultCnameRecord ] );
 
 		render( <DomainDns />, { queryClient } );
 
 		await screen.findByText( 'Add record' );
 		expect( screen.queryByText( CNAME_WARNING ) ).not.toBeInTheDocument();
 
-		expect( await screen.findByText( 'CNAME' ) ).toBeInTheDocument();
+		release();
+		expect( await screen.findByText( 'CNAME' ) ).toBeVisible();
 		expect( screen.queryByText( CNAME_WARNING ) ).not.toBeInTheDocument();
 	} );
 
@@ -117,6 +131,6 @@ describe( 'DomainDns', () => {
 
 		render( <DomainDns /> );
 
-		expect( await screen.findByText( CNAME_WARNING ) ).toBeInTheDocument();
+		expect( await screen.findByText( CNAME_WARNING ) ).toBeVisible();
 	} );
 } );
