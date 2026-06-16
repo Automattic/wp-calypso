@@ -611,10 +611,6 @@ const BundleMemberList = styled.div`
 	font-size: 12px;
 	font-weight: 400;
 	gap: 2px;
-
-	& .cost-overrides-list-bundle-member {
-		display: flex;
-	}
 `;
 
 /**
