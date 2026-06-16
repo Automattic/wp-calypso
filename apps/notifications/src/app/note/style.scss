@@ -8,6 +8,9 @@
 	margin: 0;
 	line-height: 20px;
 	text-wrap: balance;
+	// Break long unbroken strings (e.g. URLs) so they wrap instead of
+	// overflowing horizontally, which is especially visible on mobile.
+	overflow-wrap: break-word;
 
 	.has-text-align-center {
 		text-align: center;
@@ -214,12 +217,31 @@
 }
 
 .wpnc__text-summary {
+	// Allow this flex child to shrink below its content width so the snippet
+	// can truncate instead of overflowing horizontally, especially on mobile.
+	min-width: 0;
+
 	.components-external-link:not(:hover) {
 		color: inherit;
 	}
 
+	// Keep the snippet on a single line, truncating long unbroken strings
+	// (e.g. URLs) with an ellipsis while keeping the trailing link icon visible.
+	.components-external-link {
+		display: flex;
+		align-items: center;
+		max-width: 100%;
+	}
+
 	.components-external-link__contents {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 		text-decoration: none;
+	}
+
+	.components-external-link__icon {
+		flex-shrink: 0;
 	}
 }
 

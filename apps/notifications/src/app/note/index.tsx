@@ -9,7 +9,7 @@ import {
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, isRTL } from '@wordpress/i18n';
-import { chevronLeft, chevronRight } from '@wordpress/icons';
+import { chevronLeft, chevronRight, arrowUp, arrowDown } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -23,6 +23,7 @@ import { NoteBody, ActionBlock } from '../templates/body';
 import CloseButton from '../templates/close-button';
 import NoteSummary from '../templates/note-summary';
 import './style.scss';
+import type { NoteNavigation } from './hooks';
 import type { Note as NoteObject, Block } from '../types';
 
 const hasBadge = ( body: NoteObject[ 'body' ] ) =>
@@ -73,9 +74,10 @@ type NoteProps = {
 	// the exiting id during the slide-out animation.
 	noteId: string | undefined;
 	setSelectedNoteId: ( noteId: string | undefined ) => void;
+	noteNavigation: NoteNavigation;
 };
 
-const Note = ( { isDismissible, noteId, setSelectedNoteId }: NoteProps ) => {
+const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: NoteProps ) => {
 	const dispatch = useDispatch();
 	const isLargeScreen = useViewportMatch( 'large' );
 	const goBack = () => setSelectedNoteId( undefined );
@@ -121,8 +123,31 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId }: NoteProps ) => {
 							{ note.title }
 						</Heading>
 					</HStack>
-					<HStack justify="flex-end" style={ { width: 'auto' } }>
+					<HStack justify="flex-end" style={ { width: 'auto', flexShrink: 0 } }>
+						{ /* Keep the optional action dropdown leftmost so that, when a note
+						   has no actions and it renders nothing, the navigation arrows and
+						   close button stay anchored to the right edge instead of shifting. */ }
 						<ActionDropdown note={ note } goBack={ goBack } />
+						{ ! isLargeScreen && (
+							<>
+								<Button
+									size="small"
+									icon={ arrowUp }
+									label={ __( 'Previous notification' ) }
+									onClick={ noteNavigation.goToPreviousNote }
+									disabled={ ! noteNavigation.hasPreviousNote }
+									accessibleWhenDisabled
+								/>
+								<Button
+									size="small"
+									icon={ arrowDown }
+									label={ __( 'Next notification' ) }
+									onClick={ noteNavigation.goToNextNote }
+									disabled={ ! noteNavigation.hasNextNote }
+									accessibleWhenDisabled
+								/>
+							</>
+						) }
 						{ isDismissible && <CloseButton /> }
 					</HStack>
 				</HStack>
