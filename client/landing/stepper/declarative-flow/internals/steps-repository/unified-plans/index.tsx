@@ -204,8 +204,9 @@ const PlansStepAdaptor: StepType< {
 	const isUsingStepContainerV2 =
 		shouldUseStepContainerV2( props.flow ) || props.flow === DOMAIN_FLOW;
 
-	// The downgrade flow only lets users move between paid plans, so hide the free
-	// and enterprise plans that aren't valid downgrade targets.
+	// The downgrade flow only lets users move between paid plans on the same billing
+	// term, so hide the free and enterprise plans (not valid downgrade targets) and
+	// the billing term selector.
 	const isDowngradeFlow = defaultPlansIntent === 'plans-upgrade-or-downgrade';
 
 	if ( isLoadingSelectedTheme ) {
@@ -217,6 +218,7 @@ const PlansStepAdaptor: StepType< {
 			{ ...getHidePlanPropsBasedOnThemeType( selectedThemeType || '' ) }
 			hideFreePlan={ hideFreePlan || isDowngradeFlow }
 			hideEnterprisePlan={ isDowngradeFlow }
+			hidePlanTypeSelector={ isDowngradeFlow }
 			selectedSite={ site ?? undefined }
 			saveSignupStep={ ( step ) => {
 				setStepState( ( mostRecentState = { ...stepState, ...step } as ProvidedDependencies ) );
