@@ -68,10 +68,14 @@ type WpDataWindow = {
 };
 
 function getCurrentEditorPostIdFromStore(): number | undefined {
-	const postId = ( window as unknown as WpDataWindow ).wp?.data
-		?.select?.( 'core/editor' )
-		?.getCurrentPostId?.();
-	return typeof postId === 'number' && postId > 0 ? postId : undefined;
+	try {
+		const postId = ( window as unknown as WpDataWindow ).wp?.data
+			?.select?.( 'core/editor' )
+			?.getCurrentPostId?.();
+		return typeof postId === 'number' && postId > 0 ? postId : undefined;
+	} catch {
+		return undefined;
+	}
 }
 
 function flattenBlocks( blocks: BlockSnapshot[] ): BlockSnapshot[] {
@@ -255,14 +259,20 @@ export default function PostFeedback( { summary, items, sections, postId }: Post
 				return;
 			}
 
-			const result = await applyReviewEdit(
-				clientId,
-				item.suggested_text,
-				undefined,
-				item.current_text,
-				() => ! isLatestPostContextStale(),
-				item.editable_attribute
-			);
+			let result;
+			try {
+				result = await applyReviewEdit(
+					clientId,
+					item.suggested_text,
+					undefined,
+					item.current_text,
+					() => ! isLatestPostContextStale(),
+					item.editable_attribute
+				);
+			} catch {
+				setItemStatus( key, 'failed' );
+				return;
+			}
 
 			if (
 				result.success &&

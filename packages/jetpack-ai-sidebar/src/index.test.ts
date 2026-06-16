@@ -277,6 +277,7 @@ describe( 'PostFeedback', () => {
 		clearActiveBlockFocus();
 		mockClearSelectedBlock.mockClear();
 		mockToggleBlockSpotlight.mockClear();
+		delete ( window as any ).wp;
 	} );
 
 	it( 'renders backend flat feedback items', () => {
@@ -321,6 +322,57 @@ describe( 'PostFeedback', () => {
 		expect( acceptButtons[ 1 ].getAttribute( 'aria-describedby' ) ).toBe(
 			manualReasons[ 1 ]?.getAttribute( 'id' )
 		);
+	} );
+
+	it( 'marks the item failed when the block editor store cannot apply the edit', async () => {
+		mockEditorBlocks = [
+			{
+				clientId: 'block-1',
+				name: 'core/paragraph',
+				attributes: { content: 'Original paragraph text.' },
+			},
+		];
+		( window as any ).wp = {
+			data: {
+				select: ( store: string ) =>
+					store === 'core/editor' ? { getCurrentPostId: () => 123 } : undefined,
+				dispatch: ( store: string ) => {
+					if ( store === 'core/block-editor' ) {
+						throw new Error( 'missing block editor store' );
+					}
+					return undefined;
+				},
+			},
+		};
+
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Apply item',
+						feedback: 'Feedback.',
+						action: 'Action.',
+						block_index: 0,
+						current_text: 'Original paragraph text.',
+						suggested_text: 'Updated paragraph text.',
+					},
+				],
+			} )
+		);
+		const acceptButton = Array.from( container.querySelectorAll( 'button' ) ).find(
+			( button ) => button.textContent === 'Accept'
+		);
+		expect( acceptButton ).toBeDefined();
+
+		await act( async () => {
+			fireEvent.click( acceptButton as HTMLButtonElement );
+			await Promise.resolve();
+		} );
+
+		expect( container.textContent ).toContain( 'Retry' );
+		expect( container.textContent ).toContain( 'Could not apply this rewrite.' );
 	} );
 
 	it( 'toggles sidebar-owned block focus from the referenced block', () => {
@@ -1607,6 +1659,7 @@ describe( 'applyReviewEdit', () => {
 	afterEach( () => {
 		jest.useRealTimers();
 		document.body.innerHTML = '';
+		delete ( window as any ).wp;
 	} );
 
 	it( 'dispatches updateBlockAttributes with the suggested content', async () => {
@@ -2103,6 +2156,95 @@ describe( 'applyReviewEdit', () => {
 		const result = await promise;
 
 		expect( result ).toMatchObject( { success: false } );
+	} );
+
+	it( 'returns a failed result when block editor dispatch throws', async () => {
+		const select = jest.fn();
+		( window as any ).wp = {
+			data: {
+				select,
+				dispatch: ( store: string ) => {
+					if ( store === 'core/block-editor' ) {
+						throw new Error( 'store missing' );
+					}
+					return undefined;
+				},
+			},
+		};
+
+		const result = await applyReviewEdit( '550e8400-e29b-41d4-a716-446655440000', 'new text' );
+
+		expect( result ).toMatchObject( {
+			success: false,
+			error: 'Block editor not available',
+			returnToAgent: false,
+		} );
+		expect( select ).not.toHaveBeenCalled();
+	} );
+
+	it( 'returns a failed result when block editor select throws during snapshot lookup', async () => {
+		const updateBlockAttributes = jest.fn();
+		( window as any ).wp = {
+			data: {
+				select: ( store: string ) => {
+					if ( store === 'core/block-editor' ) {
+						throw new Error( 'store missing' );
+					}
+					return undefined;
+				},
+				dispatch: ( store: string ) =>
+					store === 'core/block-editor' ? { updateBlockAttributes } : undefined,
+			},
+		};
+
+		const result = await applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'new text',
+			undefined,
+			'original text'
+		);
+
+		expect( result ).toMatchObject( {
+			success: false,
+			error: 'block not found',
+			returnToAgent: false,
+		} );
+		expect( updateBlockAttributes ).not.toHaveBeenCalled();
+	} );
+
+	it( 'returns a failed result when block editor mutation throws', async () => {
+		const updateBlockAttributes = jest.fn( () => {
+			throw new Error( 'mutation failed' );
+		} );
+		( window as any ).wp = {
+			data: {
+				select: ( store: string ) => {
+					if ( store === 'core/block-editor' ) {
+						return {
+							getBlock: ( clientId: string ) => ( {
+								clientId,
+								name: 'core/paragraph',
+								attributes: { content: 'original block content' },
+							} ),
+						};
+					}
+					return undefined;
+				},
+				dispatch: ( store: string ) =>
+					store === 'core/block-editor' ? { updateBlockAttributes } : undefined,
+			},
+		};
+
+		const promise = applyReviewEdit( '550e8400-e29b-41d4-a716-446655440000', 'new text' );
+		jest.advanceTimersByTime( 1000 );
+		const result = await promise;
+
+		expect( result ).toMatchObject( {
+			success: false,
+			error: 'Block editor not available',
+			returnToAgent: false,
+		} );
+		expect( updateBlockAttributes ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'undoBlockEdit restores only when the expected content still matches', () => {

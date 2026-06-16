@@ -33,6 +33,30 @@ let activeBlockFocusClientId: string | null = null;
 export const BLOCK_ACTION_COMPLETE_EVENT = 'jetpack-ai-sidebar-block-action-complete';
 export const SELECTED_BLOCK_CLEAR_EVENT = 'agents-manager-selected-block-cleared';
 
+function getBlockEditorSelect(): any | null {
+	try {
+		const wpData = ( window as any ).wp?.data;
+		if ( ! wpData?.select ) {
+			return null;
+		}
+		return wpData.select( 'core/block-editor' ) ?? null;
+	} catch {
+		return null;
+	}
+}
+
+function getWindowBlockEditorDispatch(): any | null {
+	try {
+		const wpData = ( window as any ).wp?.data;
+		if ( ! wpData?.dispatch ) {
+			return null;
+		}
+		return wpData.dispatch( 'core/block-editor' ) ?? null;
+	} catch {
+		return null;
+	}
+}
+
 export function setModuleCheckpointApi( api: CheckpointApi | null ): void {
 	moduleCheckpointApi = api;
 }
@@ -52,7 +76,7 @@ export function clearRememberedSelectedBlock(): void {
 }
 
 export function getSelectedOrRememberedBlock(): any | null {
-	const blockEditor = ( window as any ).wp?.data?.select( 'core/block-editor' );
+	const blockEditor = getBlockEditorSelect();
 	const selectedBlock = blockEditor?.getSelectedBlock?.();
 	if ( selectedBlock?.clientId ) {
 		rememberSelectedBlock( selectedBlock );
@@ -496,7 +520,7 @@ function getBlockSnapshot(
 	currentText?: string,
 	expectedContent?: string
 ): { clientId: string; name: string; content: string; attributeName?: string } | null {
-	const block = ( window as any ).wp?.data?.select( 'core/block-editor' )?.getBlock?.( clientId );
+	const block = getBlockEditorSelect()?.getBlock?.( clientId );
 	if ( ! block ) {
 		return null;
 	}
@@ -520,7 +544,7 @@ function findBlockSnapshotByCurrentText(
 	snapshot?: { clientId: string; name: string; content: string; attributeName: string };
 	error?: string;
 } {
-	const blocks = ( window as any ).wp?.data?.select( 'core/block-editor' )?.getBlocks?.() ?? [];
+	const blocks = getBlockEditorSelect()?.getBlocks?.() ?? [];
 	const matches: Array< {
 		clientId: string;
 		name: string;
@@ -586,13 +610,8 @@ export function handleUpdateBlockContent( input: any ): any {
 		return { success: false, error: 'clientId and content are required', returnToAgent: false };
 	}
 
-	const wpData = ( window as any ).wp?.data;
-	if ( ! wpData ) {
-		return { success: false, error: 'WordPress data not available', returnToAgent: false };
-	}
-
-	const blockEditor = wpData.dispatch( 'core/block-editor' );
-	if ( ! blockEditor ) {
+	const blockEditor = getWindowBlockEditorDispatch();
+	if ( ! blockEditor?.updateBlockAttributes ) {
 		return { success: false, error: 'Block editor not available', returnToAgent: false };
 	}
 	// Let callers veto before we snapshot if the editor context has changed.
@@ -732,10 +751,15 @@ export function handleUpdateBlockContent( input: any ): any {
 				return;
 			}
 
-			blockEditor.updateBlockAttributes( targetClientId, {
-				[ latestSnapshot.attributeName ]: nextContent,
-			} );
-			blockEditor.selectBlock?.( targetClientId );
+			try {
+				blockEditor.updateBlockAttributes( targetClientId, {
+					[ latestSnapshot.attributeName ]: nextContent,
+				} );
+				blockEditor.selectBlock?.( targetClientId );
+			} catch {
+				resolveFailure( 'Block editor not available' );
+				return;
+			}
 			rememberedSelectedBlockClientId = targetClientId;
 
 			if ( blockEl ) {
@@ -806,7 +830,7 @@ export function undoBlockEdit(
 	expectedContent?: string,
 	editableAttribute?: string
 ): boolean {
-	const blockEditor = ( window as any ).wp?.data?.dispatch?.( 'core/block-editor' );
+	const blockEditor = getWindowBlockEditorDispatch();
 	if ( ! blockEditor?.updateBlockAttributes ) {
 		return false;
 	}
