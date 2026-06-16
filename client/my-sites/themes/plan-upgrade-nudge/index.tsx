@@ -27,11 +27,7 @@ const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 		return null;
 	}
 
-	const nudgeIcon = (
-		<span style={ { fill: 'var(--studio-white)', display: 'flex', alignItems: 'center' } }>
-			<Icon icon={ brush } />
-		</span>
-	);
+	const nudgeIcon = <Icon icon={ brush } />;
 
 	if ( isFreePlan( planSlug ) ) {
 		return (
