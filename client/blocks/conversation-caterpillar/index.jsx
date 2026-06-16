@@ -1,6 +1,6 @@
 import { uniqBy } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { map, get, size, filter } from 'lodash';
+import { map, get, filter } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { isAncestor } from 'calypso/blocks/comments/utils';
@@ -70,14 +70,14 @@ class ConversationCaterpillarComponent extends Component {
 		const allExpandableComments = this.getExpandableComments();
 		const expandableComments = allExpandableComments.slice( -1 * NUMBER_TO_EXPAND );
 		const isRoot = ! parentCommentId;
-		const numberUnfetchedComments = this.props.commentCount - size( comments );
+		const numberUnfetchedComments = this.props.commentCount - comments.length;
 		const commentCount = isRoot
-			? numberUnfetchedComments + size( allExpandableComments )
-			: size( allExpandableComments );
+			? numberUnfetchedComments + allExpandableComments.length
+			: allExpandableComments.length;
 
 		// Only display each author once
 		const uniqueAuthors = uniqBy( map( expandableComments, 'author' ), 'avatar_URL' );
-		const uniqueAuthorsCount = size( uniqueAuthors );
+		const uniqueAuthorsCount = uniqueAuthors.length;
 		const lastAuthorName = get( uniqueAuthors.at( -1 ), 'name' );
 
 		return (

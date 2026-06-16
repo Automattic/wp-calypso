@@ -1,4 +1,4 @@
-import { intersection, isEmpty, keys } from 'lodash';
+import { intersection, isEmpty } from 'lodash';
 import flows from '../flows';
 import { generateFlows } from '../flows-pure';
 import { getStepModuleMap } from '../step-components';
@@ -19,7 +19,7 @@ jest.mock( '@automattic/calypso-config', () => ( {
 describe( 'index', () => {
 	// eslint-disable-next-line jest/expect-expect
 	test( 'should not have overlapping step/flow names', () => {
-		const overlappingNames = intersection( keys( steps ), keys( flows.getFlows() ) );
+		const overlappingNames = intersection( Object.keys( steps ), Object.keys( flows.getFlows() ) );
 
 		if ( ! isEmpty( overlappingNames ) ) {
 			throw new Error(

@@ -11,7 +11,6 @@ import {
 	forEach,
 	includes,
 	isEmpty,
-	keys,
 	pick,
 	reject,
 	reduce,
@@ -222,7 +221,7 @@ export default class SignupFlowController {
 		const dependencyDiff = difference(
 			this._flow.providesDependenciesInQuery,
 			this._flow.optionalDependenciesInQuery || [],
-			keys( providedDependencies )
+			Object.keys( providedDependencies || {} )
 		);
 		if ( dependencyDiff.length > 0 ) {
 			throw new Error(
@@ -240,7 +239,7 @@ export default class SignupFlowController {
 				return;
 			}
 
-			const dependenciesFound = keys(
+			const dependenciesFound = Object.keys(
 				pick( getSignupDependencyStore( this._reduxStore.getState() ), step.dependencies )
 			);
 			const dependenciesNotProvided = difference(
@@ -265,7 +264,9 @@ export default class SignupFlowController {
 	}
 
 	_assertFlowProvidedRequiredDependencies() {
-		const storedDependencies = keys( getSignupDependencyStore( this._reduxStore.getState() ) );
+		const storedDependencies = Object.keys(
+			getSignupDependencyStore( this._reduxStore.getState() )
+		);
 
 		forEach( pick( steps, this._getFlowSteps() ), ( step ) => {
 			if ( ! step.providesDependencies ) {
@@ -380,7 +381,7 @@ export default class SignupFlowController {
 	_canProcessStep( step: Step ) {
 		const { dependencies = [], providesToken } = steps[ step.stepName ];
 		const dependenciesFound = this._findDependencies( step.stepName, 'dependencies' );
-		const dependenciesSatisfied = dependencies.length === keys( dependenciesFound ).length;
+		const dependenciesSatisfied = dependencies.length === Object.keys( dependenciesFound ).length;
 		const currentSteps = this._getFlowSteps();
 		const signupProgress = filter(
 			getSignupProgress( this._reduxStore.getState() ),
@@ -520,7 +521,7 @@ export default class SignupFlowController {
 	}
 
 	cleanup() {
-		this._unsubscribeStore && this._unsubscribeStore();
+		this._unsubscribeStore?.();
 	}
 
 	changeFlowName( flowName: string ) {

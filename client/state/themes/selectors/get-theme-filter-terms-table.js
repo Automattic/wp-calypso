@@ -1,5 +1,5 @@
 import { createSelector } from '@automattic/state-utils';
-import { keys, mapValues } from 'lodash';
+import { mapValues } from 'lodash';
 import { getThemeFilters } from 'calypso/state/themes/selectors/get-theme-filters';
 import { isAmbiguousThemeFilterTerm } from 'calypso/state/themes/selectors/is-ambiguous-theme-filter-term';
 
@@ -14,7 +14,7 @@ import 'calypso/state/themes/init';
 export const getThemeFilterTermsTable = createSelector(
 	( state ) => {
 		const termTable = {};
-		const taxonomies = mapValues( getThemeFilters( state ), keys );
+		const taxonomies = mapValues( getThemeFilters( state ), Object.keys );
 		Object.entries( taxonomies ).map( ( [ taxonomy, terms ] ) => {
 			terms.forEach( ( term ) => {
 				const key = isAmbiguousThemeFilterTerm( state, term ) ? `${ taxonomy }:${ term }` : term;

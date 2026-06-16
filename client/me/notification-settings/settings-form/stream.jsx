@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { find, size } from 'lodash';
+import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -21,7 +21,7 @@ class NotificationSettingsFormStream extends PureComponent {
 	getStreamSettings = () => {
 		let { stream, settings } = this.props;
 
-		if ( this.props.devices && size( this.props.devices ) > 0 ) {
+		if ( this.props.devices && this.props.devices.length > 0 ) {
 			stream = parseInt( this.state.selectedDeviceId || this.props.devices[ 0 ].id, 10 );
 			settings = find( this.props.settings, { device_id: stream } );
 		}

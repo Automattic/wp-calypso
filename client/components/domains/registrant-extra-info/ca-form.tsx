@@ -1,6 +1,6 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
 import { LocalizeProps, localize } from 'i18n-calypso';
-import { camelCase, difference, isEmpty, keys, map, pick } from 'lodash';
+import { camelCase, difference, isEmpty, map, pick } from 'lodash';
 import { PureComponent, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
@@ -92,7 +92,7 @@ export class RegistrantExtraInfoCaForm extends PureComponent<
 		// Add defaults to redux state to make accepting default values work.
 		const neededRequiredDetails = difference(
 			[ 'lang', 'legalType', 'ciraAgreementAccepted' ],
-			keys( this.props.ccTldDetails )
+			Object.keys( this.props.ccTldDetails )
 		);
 
 		// Bail early as we already have the details from a previous purchase.

@@ -1,5 +1,5 @@
 import { createSelector } from '@automattic/state-utils';
-import { keys, mapValues } from 'lodash';
+import { mapValues } from 'lodash';
 import { getThemeFilterTermFromString } from 'calypso/state/themes/selectors/get-theme-filter-term-from-string';
 import { getThemeFilters } from 'calypso/state/themes/selectors/get-theme-filters';
 
@@ -14,7 +14,7 @@ import 'calypso/state/themes/init';
 export const getThemeFilterToTermTable = createSelector(
 	( state ) => {
 		const result = {};
-		const taxonomies = mapValues( getThemeFilters( state ), keys );
+		const taxonomies = mapValues( getThemeFilters( state ), Object.keys );
 		Object.entries( taxonomies ).map( ( [ taxonomy, terms ] ) => {
 			terms.forEach( ( term ) => {
 				const key = `${ taxonomy }:${ term }`;
