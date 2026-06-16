@@ -360,6 +360,16 @@ export interface Purchase {
 	refund_period_in_days: number;
 	regular_price_text: string;
 	regular_price_integer: number;
+
+	/**
+	 * The date this subscription will next attempt to auto-renew (ISO 8601).
+	 *
+	 * For active/auto-renewing subscriptions this is the next *renewal attempt*
+	 * date, NOT the expiry date: WordPress.com begins attempting renewals before
+	 * a subscription expires (e.g. non-monthly WordPress.com plans first attempt
+	 * ~30 days before `expiry_date`). For subscriptions that are not renewing
+	 * (expiring, manual-renew, etc.) it falls back to the expiry date.
+	 */
 	renew_date: string;
 
 	sale_amount?: number;
