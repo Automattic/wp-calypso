@@ -16,8 +16,16 @@ import type { IAppState } from 'calypso/state/types';
 
 interface Props {
 	siteId: number;
-	siteSlug: string;
+	siteSlug?: string | null;
 }
+
+const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
+	const translate = useTranslate();
+	const planSlug = useSelector( ( state: IAppState ) => getSitePlanSlug( state, siteId ) ?? '' );
+
+	if ( ! siteSlug || ! planSlug ) {
+		return null;
+	}
 
 const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 	const translate = useTranslate();
