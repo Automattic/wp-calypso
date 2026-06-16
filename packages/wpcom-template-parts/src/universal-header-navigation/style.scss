@@ -10,11 +10,6 @@ $lp-font-stack-default: -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'Roboto
 $x-content-font-stack: $lp-font-stack-default;
 $studio-blue-15: #e5f4ff;
 
-html.has-nav-2026-cached-treatment .lpc-header-nav-wrapper .masterbar:not( :has( .x-nav--2026-redesign ) ),
-html.has-nav-2026-assignment-pending .lpc-header-nav-wrapper .masterbar:not( :has( .x-nav--2026-redesign ) ) {
-	visibility: hidden;
-}
-
 .x-hidden {
 	border: 0;
 	clip: rect( 0 0 0 0 );
