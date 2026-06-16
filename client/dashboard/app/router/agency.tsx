@@ -1,4 +1,4 @@
-import { agencyQuery, queryClient } from '@automattic/api-queries';
+import { activeAgencyQuery, agencyQuery, queryClient } from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { redirectAsNotAllowed } from './redirect';
@@ -50,6 +50,7 @@ const agencyTiersRoute = createRoute( {
 	} ),
 	getParentRoute: () => agencyRoute,
 	path: 'agency/tiers',
+	loader: () => queryClient.ensureQueryData( activeAgencyQuery() ),
 } ).lazy( () =>
 	import( '../../agency/tiers' ).then( ( d ) =>
 		createLazyRoute( 'agency-tiers' )( {

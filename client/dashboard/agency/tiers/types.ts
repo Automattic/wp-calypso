@@ -1,13 +1,8 @@
+import type { AgencyTierId, AgencyTierStatus } from '@automattic/api-core';
 import type { IconType } from '@wordpress/components';
 
-export type AgencyTierType =
-	| 'emerging-partner'
-	| 'agency-partner'
-	| 'pro-agency-partner'
-	| 'vip-pro-agency-partner'
-	| 'premier-partner';
-
-export type AgencyTierStatus = 'early_access' | 'tier_protected';
+export type AgencyTierType = AgencyTierId;
+export type { AgencyTierStatus };
 
 export interface BenefitAction {
 	id: string;

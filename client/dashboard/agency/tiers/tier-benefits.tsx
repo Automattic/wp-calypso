@@ -116,8 +116,8 @@ function BenefitRow( {
 					width: '48px',
 					height: '48px',
 					borderRadius: '4px',
-					background: 'var(--color-gray-100, #f0f0f0)',
-					color: 'var(--color-gray-700, #3c434a)',
+					background: 'var(--color-gray-100)',
+					color: 'var(--color-gray-700)',
 					opacity: isLocked ? 0.5 : undefined,
 				} }
 			>
