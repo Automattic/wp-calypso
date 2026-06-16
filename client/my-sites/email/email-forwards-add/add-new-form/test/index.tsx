@@ -8,6 +8,7 @@ import { NewForwardForm } from '../index';
 
 jest.mock( 'i18n-calypso', () => ( {
 	useTranslate: () => ( text: string ) => text,
+	localize: ( Component: React.ComponentType ) => Component,
 } ) );
 
 const defaultProps = {

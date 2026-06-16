@@ -5,70 +5,30 @@
 	flex-direction: column;
 	gap: 24px;
 	padding-top: 24px;
+	max-width: 600px;
 
 	div.components-base-control__field {
 		margin-bottom: 0;
 	}
 }
 
-.email-forwarding__mailbox-input-wrapper {
-	position: relative;
+.email-forwarding__mailbox-input {
+	margin-bottom: 0;
 
-	// These margins mess our suffix.
-	div.components-base-control__field {
-		margin-bottom: 0;
-	}
-
-	& div.components-base-control.email-forwarding__mailbox-input {
-		margin-right: 0 !important;
-	}
-
-	& input {
-		// Make sure the suffix doesn't cross the input border.
-		background: transparent;
-		z-index: 2;
-		position: relative;
-	}
-
-
-	.email-forwarding__mailbox-suffix {
-		margin: 0;
-		position: absolute;
-		right: 1px;
-		bottom: 1px;
-		padding: 5px 10px;
-		background: var(--studio-gray-0);
-		border-top: 1px solid var(--studio-gray-0);
-		border-left: 1px solid var(--studio-gray-10);
-		color: var(--studio-gray-50);
-		font-size: $font-body-small;
-		z-index: 1;
-
-		&.animate {
-			animation: blink 3s forwards;
-
-			@keyframes blink {
-				5% {
-					opacity: 0;
-				}
-
-				10% {
-					opacity: 1;
-				}
-
-				15% {
-					opacity: 0;
-				}
-
-				20% {
-					opacity: 1;
-				}
-			}
+	.form-text-input-with-affixes {
+		// Match FormTokenField height when __next40pxDefaultSize is set.
+		.form-text-input,
+		.form-text-input-with-affixes__suffix {
+			min-height: 40px;
+			box-sizing: border-box;
 		}
 	}
 }
 
-
+.email-forwarding__mailbox-suffix {
+	color: var(--studio-gray-50);
+	font-size: $font-body-small;
+}
 
 /* If the user didn't add any tokens, show a shimmer effect, because they may not know to press Enter. */
 .components-form-token-field:not(:has(.components-form-token-field__token)):focus-within {
