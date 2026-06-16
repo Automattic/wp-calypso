@@ -948,7 +948,7 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 $x-nav-2026-height: 64px;
 // Transition timing matches the shipped Landpack nav (hp-2024-jul?nav_2026=1).
 $x-nav-2026-transition: 0.22s ease-in-out;
-$x-nav-2026-scroll-fade-duration: 0.1s;
+$x-nav-2026-scroll-fade-duration: 0.22s;
 $x-dropdown-2026-panel-close-duration: 0.14s;
 $x-dropdown-2026-close-fade-duration: 0s;
 // Backdrop blur behind the nav once scrolled.
@@ -992,6 +992,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		opacity: 0;
 		pointer-events: none;
 		z-index: -1;
+		transform: none;
 		transition: opacity $x-nav-2026-scroll-fade-duration ease-in-out;
 	}
 	// Exit (blur → none) eases out after a short delay so the surface lingers; the z-index drop waits for the close fade.
@@ -1005,6 +1006,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	.masterbar:has( .x-nav--2026-redesign )::after {
 	opacity: 0.97;
 	box-shadow: 0 1px 1px rgba( $studio-black, 0.02 );
+	transform: none;
 	transition: opacity $x-nav-2026-scroll-fade-duration ease-in-out;
 }
 
@@ -1277,6 +1279,16 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	z-index: 100001;
 	// Raise instantly; only the drop back is delayed.
 	transition-delay: 0s;
+}
+
+.lpc-header-nav-container:has( .x-dropdown.x-dropdown--2026.is-dropdown-closing )
+	.x-nav-backdrop {
+	opacity: 0;
+	pointer-events: none;
+	z-index: $x-content-min-z-index - 1;
+	transition:
+		opacity $x-dropdown-2026-close-fade-duration ease-in-out,
+		z-index 0s $x-dropdown-2026-close-fade-duration;
 }
 
 // Nav bar above secondary navs and the raised backdrop while the dropdown is open.
