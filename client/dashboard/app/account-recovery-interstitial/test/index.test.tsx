@@ -51,7 +51,6 @@ function mockPreferences( calypso_preferences: Partial< UserPreferences > = {} )
 		.query( true )
 		.reply( 200, { calypso_preferences } );
 }
-} );
 
 describe( '<AccountRecoveryInterstitial>', () => {
 	test( 'shows the modal and records an impression for a user with no recovery method', async () => {
