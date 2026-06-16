@@ -16,7 +16,10 @@ type Instance< T > = { id: string; meta: T };
  * mounted instance owns its own metadata. The public `steps` list is derived
  * with one entry per `value`, taken from the first still-mounted instance —
  * this means a duplicate value never overrides or leaves stale metadata on the
- * surviving step. Duplicate values are still a dev error and emit a warning.
+ * surviving step. A value holds the slot it was first registered in for as long
+ * as any instance of it stays mounted, so a surviving duplicate does not jump
+ * position when an earlier instance unmounts. Duplicate values are still a dev
+ * error and emit a warning.
  *
  * Used by Stepper.Root (with StepMeta) to maintain step order and metadata.
  */
@@ -27,6 +30,12 @@ export function useStepRegistration< T extends { value: string } >() {
 	// reaching into the (pure) state updater.
 	const mountCounts = useRef( new Map< string, number >() );
 
+	// Stable slot per value, assigned when a value first mounts and held until
+	// its last instance unmounts. Keeps `steps` order pinned to first-appearance
+	// even as duplicate instances of a value come and go.
+	const slotOrder = useRef( new Map< string, number >() );
+	const nextSlot = useRef( 0 );
+
 	const registerStep = useCallback( ( id: string, meta: T ) => {
 		const counts = mountCounts.current;
 		const count = counts.get( meta.value ) ?? 0;
@@ -35,6 +44,8 @@ export function useStepRegistration< T extends { value: string } >() {
 			warning(
 				`[Stepper] Two steps share value '${ meta.value }'. Each step must have a unique value.`
 			);
+		} else {
+			slotOrder.current.set( meta.value, nextSlot.current++ );
 		}
 		setInstances( ( prev ) => [ ...prev, { id, meta } ] );
 
@@ -44,6 +55,7 @@ export function useStepRegistration< T extends { value: string } >() {
 				counts.set( meta.value, remaining );
 			} else {
 				counts.delete( meta.value );
+				slotOrder.current.delete( meta.value );
 			}
 			setInstances( ( prev ) => prev.filter( ( inst ) => inst.id !== id ) );
 		};
@@ -70,20 +82,20 @@ export function useStepRegistration< T extends { value: string } >() {
 	}, [] );
 
 	// One step per value, taken from the first still-mounted instance and
-	// ordered by that value's first appearance in registration order. Memoised
-	// so a no-op update (which leaves `instances` referentially stable) keeps
-	// the same `steps` reference.
+	// ordered by each value's stable first-appearance slot. Memoised so a no-op
+	// update (which leaves `instances` referentially stable) keeps the same
+	// `steps` reference.
 	const steps = useMemo( () => {
-		const seen = new Set< string >();
-		const result: T[] = [];
+		const order = slotOrder.current;
+		const canonical = new Map< string, T >();
 		for ( const inst of instances ) {
-			if ( seen.has( inst.meta.value ) ) {
-				continue;
+			if ( ! canonical.has( inst.meta.value ) ) {
+				canonical.set( inst.meta.value, inst.meta );
 			}
-			seen.add( inst.meta.value );
-			result.push( inst.meta );
 		}
-		return result;
+		return [ ...canonical.values() ].sort(
+			( a, b ) => ( order.get( a.value ) ?? 0 ) - ( order.get( b.value ) ?? 0 )
+		);
 	}, [ instances ] );
 
 	return { steps, registerStep, updateStep };

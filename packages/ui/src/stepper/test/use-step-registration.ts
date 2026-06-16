@@ -27,17 +27,41 @@ describe( 'useStepRegistration duplicate values', () => {
 			} );
 		} );
 		// In real usage each Step's effect syncs its own props; the duplicate's
-		// sync would overwrite the shared-value entry under value-keyed storage.
+		// sync must not overwrite the shared-value entry (the value-keyed bug).
 		act( () => {
 			result.current.updateStep( 'a-2', { value: 'a', status: 'error', disabled: true } );
 		} );
+		// Even while both are mounted, the canonical entry stays 'a-1', not the
+		// later writer 'a-2'.
+		expect( result.current.steps ).toEqual( [
+			{ value: 'a', status: 'completed', disabled: false },
+		] );
 		act( () => {
 			deregisterDuplicate();
 		} );
-		// The survivor is instance 'a-1'; its metadata must be reflected, not the
-		// unmounted duplicate's stale data.
+		// ...and it remains correct after the duplicate unmounts.
 		expect( result.current.steps ).toEqual( [
 			{ value: 'a', status: 'completed', disabled: false },
+		] );
+	} );
+
+	it( 'keeps a value in its original slot when an earlier duplicate unmounts', () => {
+		const { result } = renderHook( () => useStepRegistration< StepMeta >() );
+		let deregisterFirstA: () => void = () => {};
+		act( () => {
+			deregisterFirstA = result.current.registerStep( 'a-1', { value: 'a', disabled: false } );
+			result.current.registerStep( 'b-1', { value: 'b', disabled: false } );
+			// Duplicate of 'a', registered after 'b'.
+			result.current.registerStep( 'a-2', { value: 'a', disabled: true } );
+		} );
+		act( () => {
+			deregisterFirstA();
+		} );
+		// 'a' keeps its first-appearance slot (index 0) rather than jumping to the
+		// end, and now reflects the surviving instance ('a-2').
+		expect( result.current.steps ).toEqual( [
+			{ value: 'a', disabled: true },
+			{ value: 'b', disabled: false },
 		] );
 	} );
 
@@ -54,6 +78,40 @@ describe( 'useStepRegistration duplicate values', () => {
 		// One instance remains, so the value stays registered and reflects the
 		// surviving instance.
 		expect( result.current.steps ).toEqual( [ { value: 'a', disabled: false } ] );
+	} );
+} );
+
+describe( 'useStepRegistration duplicate warning', () => {
+	let warnSpy: jest.SpyInstance;
+
+	beforeEach( () => {
+		warnSpy = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+	} );
+
+	afterEach( () => {
+		warnSpy.mockRestore();
+	} );
+
+	it( 'warns when a second instance registers an already-registered value', () => {
+		const { result } = renderHook( () => useStepRegistration< StepMeta >() );
+		act( () => {
+			result.current.registerStep( 'dup-1', { value: 'shared', disabled: false } );
+			result.current.registerStep( 'dup-2', { value: 'shared', disabled: false } );
+		} );
+		// Distinct values per test keep the warning util's message-level dedupe
+		// from masking this assertion across the file.
+		expect( warnSpy ).toHaveBeenCalledWith(
+			expect.stringContaining( "Two steps share value 'shared'" )
+		);
+	} );
+
+	it( 'does not warn when every step value is unique', () => {
+		const { result } = renderHook( () => useStepRegistration< StepMeta >() );
+		act( () => {
+			result.current.registerStep( 'u-1', { value: 'one', disabled: false } );
+			result.current.registerStep( 'u-2', { value: 'two', disabled: false } );
+		} );
+		expect( warnSpy ).not.toHaveBeenCalled();
 	} );
 } );
 
