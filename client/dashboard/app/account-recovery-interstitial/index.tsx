@@ -1,7 +1,8 @@
 import {
 	accountRecoveryQuery,
 	userSettingsQuery,
-	userSettingsMutation,
+	userPreferenceQuery,
+	userPreferenceMutation,
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
@@ -13,7 +14,7 @@ import { Text } from '../../components/text';
 import { useAnalytics } from '../analytics';
 import {
 	RECOVERY_INTERSTITIAL_QA_PARAM,
-	RECOVERY_INTERSTITIAL_SNOOZE_META,
+	RECOVERY_INTERSTITIAL_SNOOZE_PREFERENCE,
 	SNOOZE_DAYS,
 	type SecurityLevel,
 } from './constants';
@@ -126,8 +127,13 @@ export default function AccountRecoveryInterstitial() {
 		accountRecoveryQuery()
 	);
 	const { data: userSettings, isSuccess: isUserSettingsLoaded } = useQuery( userSettingsQuery() );
+	const { data: snoozeUntilPersisted, isSuccess: isSnoozeLoaded } = useQuery(
+		userPreferenceQuery( RECOVERY_INTERSTITIAL_SNOOZE_PREFERENCE )
+	);
 
-	const snoozeMutation = useMutation( userSettingsMutation() );
+	const snoozeMutation = useMutation(
+		userPreferenceMutation( RECOVERY_INTERSTITIAL_SNOOZE_PREFERENCE )
+	);
 
 	const [ isDismissed, setIsDismissed ] = useState( false );
 
@@ -150,13 +156,14 @@ export default function AccountRecoveryInterstitial() {
 	const snoozeDays = SNOOZE_DAYS[ securityLevel ];
 
 	// Ignore any real snooze when simulating a QA scenario, so the modal always shows.
-	const snoozeUntil = qaScenario ? undefined : userSettings?.[ RECOVERY_INTERSTITIAL_SNOOZE_META ];
+	const snoozeUntil = qaScenario ? undefined : snoozeUntilPersisted;
 	const isSnoozed = !! snoozeUntil && now < snoozeUntil;
 
 	// Every user is nudged once their snooze (if any) has elapsed and the data has loaded:
 	// `none`/`partial` setups are prompted to add a method, while fully-covered (`strong`) users
 	// get a yearly periodic re-check via the 365-day snooze window (SNOOZE_DAYS.strong).
-	const isEligible = isAccountRecoveryLoaded && isUserSettingsLoaded && ! isSnoozed;
+	const isEligible =
+		isAccountRecoveryLoaded && isUserSettingsLoaded && isSnoozeLoaded && ! isSnoozed;
 
 	const hasRecoveryMethod = hasRecoveryEmail || hasRecoveryPhone;
 	// Fine-grained setup state (5-way), recorded on Tracks as `recovery_status` alongside the
@@ -186,8 +193,7 @@ export default function AccountRecoveryInterstitial() {
 	const { primaryCta, secondaryCta } = copy;
 
 	const snooze = () => {
-		const snoozeUntil = now + snoozeDays * DAY_IN_SECONDS;
-		snoozeMutation.mutate( { [ RECOVERY_INTERSTITIAL_SNOOZE_META ]: snoozeUntil } );
+		snoozeMutation.mutate( now + snoozeDays * DAY_IN_SECONDS );
 		setIsDismissed( true );
 	};
 

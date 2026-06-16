@@ -89,10 +89,6 @@ export interface UserSettings {
 	// Email verification fields
 	user_email_change_pending?: boolean;
 	new_user_email?: string;
-
-	// Account-recovery interstitial snooze: a unix timestamp (seconds) until which the
-	// interstitial is snoozed. 0/unset means "never snoozed".
-	account_recovery_interstitial_snoozed_until?: number;
 }
 
 export interface PasswordValidationResponse {

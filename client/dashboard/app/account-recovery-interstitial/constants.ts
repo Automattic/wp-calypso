@@ -3,10 +3,11 @@
  */
 
 /**
- * User-meta key surfaced through /me/settings. Holds a unix timestamp (seconds)
- * until which the interstitial is snoozed; 0/unset = not snoozed.
+ * User-preference key holding a unix timestamp (seconds) until which the
+ * interstitial is snoozed; 0/unset = not snoozed.
  */
-export const RECOVERY_INTERSTITIAL_SNOOZE_META = 'account_recovery_interstitial_snoozed_until';
+export const RECOVERY_INTERSTITIAL_SNOOZE_PREFERENCE =
+	'account-recovery-interstitial-snoozed-until';
 
 /**
  * QA override: append `?account-recovery-interstitial=force` to force the modal to show

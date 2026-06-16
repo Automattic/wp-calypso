@@ -34,7 +34,6 @@ export async function updateUserSettings(
 		'mcp_abilities',
 		'ai_assistant',
 		'user_email_change_pending',
-		'account_recovery_interstitial_snoozed_until',
 	];
 	const payload = Object.fromEntries(
 		saveableKeys.filter( ( key ) => key in data ).map( ( key ) => [ key, data[ key ] ] )

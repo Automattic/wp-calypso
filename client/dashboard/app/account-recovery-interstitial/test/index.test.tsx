@@ -6,9 +6,9 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
-import { RECOVERY_INTERSTITIAL_SNOOZE_META } from '../constants';
+import { RECOVERY_INTERSTITIAL_SNOOZE_PREFERENCE } from '../constants';
 import AccountRecoveryInterstitial from '../index';
-import type { AccountRecovery, UserSettings } from '@automattic/api-core';
+import type { AccountRecovery, UserPreferences, UserSettings } from '@automattic/api-core';
 
 const NONE_RECOVERY = {
 	email: '',
@@ -46,6 +46,13 @@ function mockUserSettings( data: Partial< UserSettings > ) {
 		.reply( 200, data );
 }
 
+function mockPreferences( calypso_preferences: Partial< UserPreferences > = {} ) {
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/me/preferences' )
+		.query( true )
+		.reply( 200, { calypso_preferences } );
+}
+
 afterEach( () => {
 	nock.cleanAll();
 } );
@@ -54,6 +61,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 	test( 'shows the modal and records an impression for a user with no recovery method', async () => {
 		mockAccountRecovery( NONE_RECOVERY );
 		mockUserSettings( { two_step_enabled: false } );
+		mockPreferences();
 
 		const { recordTracksEvent } = render( <AccountRecoveryInterstitial /> );
 
@@ -77,6 +85,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 	test( 'shows the "add 2FA" copy for a user with a recovery method but no 2FA', async () => {
 		mockAccountRecovery( EMAIL_ONLY_RECOVERY );
 		mockUserSettings( { two_step_enabled: false } );
+		mockPreferences();
 
 		const { recordTracksEvent } = render( <AccountRecoveryInterstitial /> );
 
@@ -98,6 +107,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 	test( 'shows the "add a recovery method" copy for a user with 2FA but no recovery method', async () => {
 		mockAccountRecovery( NONE_RECOVERY );
 		mockUserSettings( { two_step_enabled: true } );
+		mockPreferences();
 
 		render( <AccountRecoveryInterstitial /> );
 
@@ -115,6 +125,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 	test( 'shows the "download backup codes" copy when 2FA + recovery are set but backup codes are not', async () => {
 		mockAccountRecovery( STRONG_RECOVERY );
 		mockUserSettings( { two_step_enabled: true, two_step_backup_codes_printed: false } );
+		mockPreferences();
 
 		const { recordTracksEvent } = render( <AccountRecoveryInterstitial /> );
 
@@ -139,6 +150,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 	test( 'shows the strong-tier modal with masked recovery details for a fully-covered user', async () => {
 		mockAccountRecovery( STRONG_RECOVERY );
 		mockUserSettings( { two_step_enabled: true, two_step_backup_codes_printed: true } );
+		mockPreferences();
 
 		const { recordTracksEvent } = render( <AccountRecoveryInterstitial /> );
 
@@ -159,11 +171,12 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		const user = userEvent.setup();
 		mockAccountRecovery( STRONG_RECOVERY );
 		mockUserSettings( { two_step_enabled: true, two_step_backup_codes_printed: true } );
+		mockPreferences();
 
 		let snoozedValue: number | undefined;
 		const savePost = nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/me/settings', ( body ) => {
-				snoozedValue = body[ RECOVERY_INTERSTITIAL_SNOOZE_META ];
+			.post( '/rest/v1.1/me/preferences', ( body ) => {
+				snoozedValue = body.calypso_preferences?.[ RECOVERY_INTERSTITIAL_SNOOZE_PREFERENCE ];
 				return typeof snoozedValue === 'number';
 			} )
 			.query( true )
@@ -189,10 +202,8 @@ describe( '<AccountRecoveryInterstitial>', () => {
 	test( 'does not show when the user is currently snoozed', async () => {
 		const future = Math.floor( Date.now() / 1000 ) + 7 * 86400;
 		mockAccountRecovery( NONE_RECOVERY );
-		mockUserSettings( {
-			two_step_enabled: false,
-			[ RECOVERY_INTERSTITIAL_SNOOZE_META ]: future,
-		} );
+		mockUserSettings( { two_step_enabled: false } );
+		mockPreferences( { [ RECOVERY_INTERSTITIAL_SNOOZE_PREFERENCE ]: future } );
 
 		render( <AccountRecoveryInterstitial /> );
 
@@ -201,15 +212,16 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		} );
 	} );
 
-	test( 'snoozes (writes the meta field and closes) when the reminder link is clicked', async () => {
+	test( 'snoozes (writes the preference and closes) when the reminder link is clicked', async () => {
 		const user = userEvent.setup();
 		mockAccountRecovery( NONE_RECOVERY );
 		mockUserSettings( { two_step_enabled: false } );
+		mockPreferences();
 
 		let snoozedValue: number | undefined;
 		const savePost = nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/me/settings', ( body ) => {
-				snoozedValue = body[ RECOVERY_INTERSTITIAL_SNOOZE_META ];
+			.post( '/rest/v1.1/me/preferences', ( body ) => {
+				snoozedValue = body.calypso_preferences?.[ RECOVERY_INTERSTITIAL_SNOOZE_PREFERENCE ];
 				return typeof snoozedValue === 'number';
 			} )
 			.query( true )
