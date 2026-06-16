@@ -9,39 +9,14 @@ import {
 	makeSuccessResponse,
 	CheckoutFormSubmit,
 } from '@automattic/composite-checkout';
-import { getEmptyResponseCart } from '@automattic/shopping-cart';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useMemo } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-import { CheckoutSubmitButtonContent } from 'calypso/my-sites/checkout/src/components/checkout-submit-button-content';
 import { createExistingCardMethod } from 'calypso/my-sites/checkout/src/payment-methods/existing-credit-card';
 import { createReduxStore } from 'calypso/state';
-
-const mockResponseCart = {
-	...getEmptyResponseCart(),
-	total_cost_integer: 15600,
-	sub_total_integer: 15600,
-	currency: 'USD',
-};
-
-jest.mock( 'calypso/my-sites/checkout/use-cart-key', () => ( {
-	__esModule: true,
-	default: () => 'no-site',
-} ) );
-
-jest.mock( '@automattic/shopping-cart', () => {
-	const actual = jest.requireActual( '@automattic/shopping-cart' );
-	return {
-		...actual,
-		useShoppingCart: () => ( {
-			...actual.emptyCart,
-			responseCart: mockResponseCart,
-		} ),
-	};
-} );
 
 function TestWrapper( { paymentMethods, paymentProcessors = undefined } ) {
 	const store = createReduxStore();
@@ -201,25 +176,6 @@ describe( 'Existing credit card payment methods', () => {
 		await userEvent.click( await screen.findByText( activePayButtonText ) );
 		await waitFor( () => {
 			expect( existingCardProcessor ).not.toHaveBeenCalled();
-		} );
-	} );
-
-	it( 'renders "Pay with <last4>" on the submit button when CheckoutSubmitButtonContent is given a last4 prop', async () => {
-		mockTaxLocationEndpoint();
-		const last4 = '4242';
-		const existingCard = getExistingCardPaymentMethod( {
-			submitButtonContent: <CheckoutSubmitButtonContent last4={ last4 } />,
-		} );
-		render(
-			<TestWrapper
-				paymentMethods={ [ existingCard ] }
-				paymentProcessors={ {
-					[ existingCard.paymentProcessorId ]: () => makeSuccessResponse( 'ok' ),
-				} }
-			></TestWrapper>
-		);
-		await waitFor( () => {
-			expect( screen.getByText( `Pay with **** ${ last4 }` ) ).toBeVisible();
 		} );
 	} );
 } );

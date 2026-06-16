@@ -448,7 +448,7 @@ export default function useCreatePaymentMethods( {
 		isStripeLoading,
 		stripeLoadingError,
 		storedCards,
-		submitButtonContent: ( card ) => <CheckoutSubmitButtonContent last4={ card.card_last_4 } />,
+		submitButtonContent: <CheckoutSubmitButtonContent />,
 	} );
 
 	const existingPayPalPPCPMethods = useCreateExistingPayPalPPCP( {
