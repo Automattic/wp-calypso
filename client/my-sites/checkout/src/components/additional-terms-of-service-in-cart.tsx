@@ -49,7 +49,7 @@ export default function AdditionalTermsOfServiceInCart() {
 
 export function formatDate( isoDate: string ): string {
 	// This somewhat mimics `moment.format('ll')` (used here formerly) without
-	// needing the depdecated `moment` package.
+	// needing the deprecated `moment` package.
 	// Parse only the date portion (YYYY-MM-DD) and construct via the local-time
 	// Date constructor to avoid the UTC-midnight-to-local-time shift that causes
 	// dates to appear one day off for users behind UTC.
