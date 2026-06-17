@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/variables";
 
 // Scoped to this modal rather than reusing the global `.memberships__dialog-sections`
 // selector (owned by add-edit-plan-modal / add-edit-coupon-modal), so we don't ship
