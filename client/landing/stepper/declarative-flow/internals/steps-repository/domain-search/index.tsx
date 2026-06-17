@@ -49,16 +49,13 @@ import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-conta
 import { OnboardingProgress } from '../components/onboarding-progress';
 import { useShowOnboardingProgress } from '../components/onboarding-progress/use-show-onboarding-progress';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
+import { useShowDomainSkipStep } from './use-show-domain-skip-step';
 import type { Step as StepType } from '../../types';
 import type { FreeDomainSuggestion } from '@automattic/api-core';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const HUNDRED_YEAR_DOMAIN_TLDS = [ 'com', 'net', 'org', 'blog' ];
-
-// TODO: replace with useExperiment( 'calypso_onboarding_domain_skip_step' ) once the
-// experiment is ready. Forced on for now so the treatment can be verified in dev.
-const FORCE_SHOW_DOMAIN_SKIP_STEP = true;
 
 import './style.scss';
 
@@ -164,6 +161,12 @@ const DomainSearchStep: StepType< {
 				( isHundredYearDomainFlow( flow ) ? !! query : true ),
 		};
 	}, [ flow, isCiab, isWooHostingSolutions, tldQuery, query ] );
+
+	const showSkipStepButton = useShowDomainSkipStep( {
+		flow,
+		isSkippable: config.skippable,
+		query,
+	} );
 
 	const { submit } = navigation;
 
@@ -490,12 +493,6 @@ const DomainSearchStep: StepType< {
 				</>
 			);
 		};
-
-		const showSkipStepButton =
-			FORCE_SHOW_DOMAIN_SKIP_STEP &&
-			isMobileViewport &&
-			isOnboardingFlow( flow ) &&
-			config.skippable;
 
 		const skipStepBottomBar = showSkipStepButton ? (
 			<Step.StickyBottomBar
