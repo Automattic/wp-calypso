@@ -6,12 +6,15 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { starEmpty } from '@wordpress/icons';
 import { useAnalytics } from '../../app/analytics';
+import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
 import Notice from '../../components/notice';
+import { isOptInToggleVisible } from '../../utils/hosting-dashboard-enrollment';
 import ComponentViewTracker from '../component-view-tracker';
 
 export function OptInWelcome( { tracksContext }: { tracksContext: string } ) {
 	const { optIn } = useAppContext();
+	const { user } = useAuth();
 	const { data: dashboardOptIn } = useSuspenseQuery(
 		userPreferenceQuery( 'hosting-dashboard-opt-in' )
 	);
@@ -30,7 +33,9 @@ export function OptInWelcome( { tracksContext }: { tracksContext: string } ) {
 		} );
 	};
 
-	if ( ! optIn || dashboardOptIn?.value === 'forced-opt-in' ) {
+	// The banner's CTA points users to the Preferences toggle to switch back, so
+	// only show it when that toggle is actually available to them.
+	if ( ! optIn || ! isOptInToggleVisible( dashboardOptIn, user.ID ) ) {
 		return null;
 	}
 
