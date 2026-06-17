@@ -8,10 +8,13 @@ import {
 	deleteReadSpaceSourceMutation,
 	readSpaceQuery,
 	readSpacesQuery,
+	updateReadSpaceMutation,
 } from '../read-spaces';
 import type { ReadSpace, ReadSpaceDetails, SiteSubscriptionItem } from '@automattic/api-core';
 import type { UseMutationOptions } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
+
+const BASE = 'https://public-api.wordpress.com';
 
 function makeWrapper( client: QueryClient ) {
 	return function Wrapper( { children }: { children: ReactNode } ) {
@@ -25,14 +28,7 @@ function newClient() {
 	} );
 }
 
-// Drive the mutation through the real `useMutation` hook (matching the other
-// api-queries tests) so `onMutate`/`onError`/`onSuccess` fire in order — the
-// optimistic cache patch and rollback are the behavior under test.
-//
-// The error paths force a rejecting `mutationFn` because the Spaces mutators are
-// still local no-ops with no network call. Once the real endpoints land, drop
-// that override and drive success/error with a `nock` interceptor (200 vs
-// 4xx/5xx), asserting `scope.isDone()` — see `read-site-recommendations.test.tsx`.
+// Drive the mutation through the real `useMutation` hook so its onSuccess fires.
 async function runMutation< TData, TError, TVars, TContext >(
 	client: QueryClient,
 	mutation: UseMutationOptions< TData, TError, TVars, TContext >,
@@ -46,26 +42,6 @@ async function runMutation< TData, TError, TVars, TContext >(
 		await result.current.mutateAsync( variables ).catch( () => undefined );
 	} );
 }
-
-const SPACE_ID = '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21';
-
-const STRATECHERY_SOURCE = {
-	feedId: 456,
-	blogId: 123,
-	feedUrl: 'https://stratechery.com/feed',
-	siteUrl: 'https://stratechery.com',
-	name: 'Stratechery',
-	siteIcon: 'https://stratechery.com/icon.png',
-};
-
-const makeSpace = ( overrides: Partial< ReadSpaceDetails > = {} ): ReadSpaceDetails => ( {
-	id: SPACE_ID,
-	name: 'Work',
-	tags: [],
-	layout: { color: 'blue', icon: 'inbox' },
-	sources: [],
-	...overrides,
-} );
 
 const makeSubscription = (
 	overrides: Partial< SiteSubscriptionItem > = {}
@@ -81,219 +57,175 @@ const makeSubscription = (
 	...overrides,
 } );
 
-const rejectingMutationFn = () => Promise.reject( new Error( 'nope' ) );
-
-// Sources live only on the single-space detail cache, so the add/delete
-// mutations patch `readSpaceQuery`, not the list.
-const detailSources = ( client: QueryClient ) =>
-	client.getQueryData< ReadSpaceDetails >( readSpaceQuery( SPACE_ID ).queryKey )?.sources;
-
-describe( 'read space source mutations', () => {
-	it( 'optimistically adds a source from a site subscription to the detail cache', async () => {
-		const client = newClient();
-		client.setQueryData( readSpaceQuery( SPACE_ID ).queryKey, makeSpace() );
-
-		await runMutation( client, addReadSpaceSourceMutation( client ), {
-			spaceId: SPACE_ID,
-			subscription: makeSubscription(),
-		} );
-
-		expect( detailSources( client ) ).toEqual( [ STRATECHERY_SOURCE ] );
-	} );
-
-	it( 'cancels an in-flight detail fetch before patching, so it cannot clobber the patch', async () => {
-		const client = newClient();
-		client.setQueryData( readSpaceQuery( SPACE_ID ).queryKey, makeSpace() );
-		const cancelQueries = jest.spyOn( client, 'cancelQueries' );
-
-		await runMutation( client, addReadSpaceSourceMutation( client ), {
-			spaceId: SPACE_ID,
-			subscription: makeSubscription(),
-		} );
-
-		expect( cancelQueries ).toHaveBeenCalledWith( {
-			queryKey: readSpaceQuery( SPACE_ID ).queryKey,
-		} );
-		expect( detailSources( client ) ).toEqual( [ STRATECHERY_SOURCE ] );
-	} );
-
-	it( 'does not add the same subscription twice', async () => {
-		const client = newClient();
-		const subscription = makeSubscription();
-		client.setQueryData( readSpaceQuery( SPACE_ID ).queryKey, makeSpace() );
-
-		await runMutation( client, addReadSpaceSourceMutation( client ), {
-			spaceId: SPACE_ID,
-			subscription,
-		} );
-		await runMutation( client, addReadSpaceSourceMutation( client ), {
-			spaceId: SPACE_ID,
-			subscription,
-		} );
-
-		expect( detailSources( client ) ).toHaveLength( 1 );
-	} );
-
-	it( 'leaves the detail cache untouched when adding before it is cached', async () => {
-		const client = newClient();
-
-		await runMutation( client, addReadSpaceSourceMutation( client ), {
-			spaceId: SPACE_ID,
-			subscription: makeSubscription(),
-		} );
-
-		expect(
-			client.getQueryData< ReadSpaceDetails >( readSpaceQuery( SPACE_ID ).queryKey )
-		).toBeUndefined();
-	} );
-
-	it( 'rolls back the optimistic add when the request fails', async () => {
-		const client = newClient();
-		client.setQueryData( readSpaceQuery( SPACE_ID ).queryKey, makeSpace() );
-
-		await runMutation(
-			client,
-			{ ...addReadSpaceSourceMutation( client ), mutationFn: rejectingMutationFn },
-			{ spaceId: SPACE_ID, subscription: makeSubscription() }
-		);
-
-		expect( detailSources( client ) ).toEqual( [] );
-	} );
-
-	it( 'optimistically deletes a subscription from the detail cache', async () => {
-		const client = newClient();
-		client.setQueryData(
-			readSpaceQuery( SPACE_ID ).queryKey,
-			makeSpace( { sources: [ STRATECHERY_SOURCE ] } )
-		);
-
-		await runMutation( client, deleteReadSpaceSourceMutation( client ), {
-			spaceId: SPACE_ID,
-			subscription: makeSubscription(),
-		} );
-
-		expect( detailSources( client ) ).toEqual( [] );
-	} );
-
-	it( 'deletes a source matched only by blog id', async () => {
-		const client = newClient();
-		client.setQueryData(
-			readSpaceQuery( SPACE_ID ).queryKey,
-			makeSpace( { sources: [ { ...STRATECHERY_SOURCE, feedId: null } ] } )
-		);
-
-		await runMutation( client, deleteReadSpaceSourceMutation( client ), {
-			spaceId: SPACE_ID,
-			subscription: makeSubscription( { feed_ID: null } ),
-		} );
-
-		expect( detailSources( client ) ).toEqual( [] );
-	} );
-
-	it( 'deletes a source matched only by feed url', async () => {
-		const client = newClient();
-		client.setQueryData(
-			readSpaceQuery( SPACE_ID ).queryKey,
-			makeSpace( { sources: [ { ...STRATECHERY_SOURCE, feedId: null, blogId: null } ] } )
-		);
-
-		await runMutation( client, deleteReadSpaceSourceMutation( client ), {
-			spaceId: SPACE_ID,
-			subscription: makeSubscription( { feed_ID: null, blog_ID: null } ),
-		} );
-
-		expect( detailSources( client ) ).toEqual( [] );
-	} );
-
-	it( 'leaves the detail cache untouched when deleting before it is cached', async () => {
-		const client = newClient();
-
-		await runMutation( client, deleteReadSpaceSourceMutation( client ), {
-			spaceId: SPACE_ID,
-			subscription: makeSubscription(),
-		} );
-
-		expect(
-			client.getQueryData< ReadSpaceDetails >( readSpaceQuery( SPACE_ID ).queryKey )
-		).toBeUndefined();
-	} );
-
-	it( 'rolls back the optimistic delete when the request fails', async () => {
-		const client = newClient();
-		client.setQueryData(
-			readSpaceQuery( SPACE_ID ).queryKey,
-			makeSpace( { sources: [ STRATECHERY_SOURCE ] } )
-		);
-
-		await runMutation(
-			client,
-			{ ...deleteReadSpaceSourceMutation( client ), mutationFn: rejectingMutationFn },
-			{ spaceId: SPACE_ID, subscription: makeSubscription() }
-		);
-
-		expect( detailSources( client ) ).toEqual( [ STRATECHERY_SOURCE ] );
-	} );
+// A detail wire response (create/update/add-feed/remove-feed all return one).
+const detailResponse = ( overrides: Record< string, unknown > = {} ) => ( {
+	id: 3,
+	title: 'Work',
+	layout_color: 'blue',
+	layout_icon: 'inbox',
+	follows: [],
+	tags: [],
+	...overrides,
 } );
 
-describe( 'create space cache seeding', () => {
+describe( 'read spaces mutations', () => {
 	afterEach( () => nock.cleanAll() );
 
-	it( 'appends a list item without sources and seeds the detail cache with sources', async () => {
-		const client = newClient();
-		nock( 'https://public-api.wordpress.com' ).post( '/wpcom/v2/reader/spaces/new' ).reply( 201, {
-			id: 99,
-			title: 'New',
-			sites: [],
-			tags: [],
-			layout_color: 'blue',
-			layout_icon: 'inbox',
+	describe( 'createReadSpaceMutation', () => {
+		it( 'appends the summary to the list and seeds the detail cache', async () => {
+			const client = newClient();
+			nock( BASE )
+				.post( '/wpcom/v2/reader/spaces/new' )
+				.reply( 201, detailResponse( { id: 99, title: 'New' } ) );
+
+			await runMutation( client, createReadSpaceMutation( client ), { name: 'New' } );
+
+			expect( client.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey ) ).toEqual( [
+				{ id: '99', name: 'New', layout: { color: 'blue', icon: 'inbox' } },
+			] );
+			expect( client.getQueryData< ReadSpaceDetails >( readSpaceQuery( '99' ).queryKey ) ).toEqual(
+				{
+					id: '99',
+					name: 'New',
+					layout: { color: 'blue', icon: 'inbox' },
+					sources: [],
+					tags: [],
+				}
+			);
+		} );
+	} );
+
+	describe( 'updateReadSpaceMutation', () => {
+		it( 'refreshes the matching list summary and the detail cache', async () => {
+			const client = newClient();
+			client.setQueryData< ReadSpace[] >( readSpacesQuery().queryKey, [
+				{ id: '3', name: 'Old', layout: { color: 'blue', icon: 'inbox' } },
+			] );
+			nock( BASE )
+				.post( '/wpcom/v2/reader/spaces/3/update' )
+				.reply(
+					200,
+					detailResponse( { id: 3, title: 'New name', layout_color: 'green', tags: [ 'x' ] } )
+				);
+
+			await runMutation( client, updateReadSpaceMutation( client ), {
+				spaceId: '3',
+				params: { name: 'New name' },
+			} );
+
+			expect( client.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey ) ).toEqual( [
+				{ id: '3', name: 'New name', layout: { color: 'green', icon: 'inbox' } },
+			] );
+			expect(
+				client.getQueryData< ReadSpaceDetails >( readSpaceQuery( '3' ).queryKey )
+			).toMatchObject( { id: '3', name: 'New name', tags: [ 'x' ] } );
+		} );
+	} );
+
+	describe( 'deleteReadSpaceMutation', () => {
+		it( 'removes the deleted space from the list and discards its detail cache', async () => {
+			const client = newClient();
+			const keep: ReadSpace = { id: 'keep', name: 'Keep', layout: { color: 'red', icon: 'box' } };
+			client.setQueryData< ReadSpace[] >( readSpacesQuery().queryKey, [
+				keep,
+				{ id: '3', name: 'Work', layout: { color: 'blue', icon: 'inbox' } },
+			] );
+			client.setQueryData( readSpaceQuery( '3' ).queryKey, detailResponse() );
+			nock( BASE )
+				.post( '/wpcom/v2/reader/spaces/3/delete' )
+				.reply( 200, { deleted: true, id: 3 } );
+
+			await runMutation( client, deleteReadSpaceMutation( client ), '3' );
+
+			expect( client.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey ) ).toEqual( [
+				keep,
+			] );
+			expect(
+				client.getQueryData< ReadSpaceDetails >( readSpaceQuery( '3' ).queryKey )
+			).toBeUndefined();
+		} );
+	} );
+
+	describe( 'feed (source) mutations', () => {
+		it( 'writes the returned detail to the cache after adding a feed', async () => {
+			const client = newClient();
+			nock( BASE )
+				.post( '/wpcom/v2/reader/spaces/3/feeds/new' )
+				.reply(
+					200,
+					detailResponse( {
+						follows: [
+							{
+								feed_id: 456,
+								feed_url: 'https://stratechery.com/feed',
+								blog_id: 123,
+								name: 'Stratechery',
+								icon: null,
+							},
+						],
+					} )
+				);
+
+			await runMutation( client, addReadSpaceSourceMutation( client ), {
+				spaceId: '3',
+				subscription: makeSubscription(),
+			} );
+
+			expect(
+				client.getQueryData< ReadSpaceDetails >( readSpaceQuery( '3' ).queryKey )?.sources
+			).toEqual( [
+				{
+					feedId: 456,
+					feedUrl: 'https://stratechery.com/feed',
+					blogId: 123,
+					name: 'Stratechery',
+					siteIcon: null,
+				},
+			] );
 		} );
 
-		await runMutation( client, createReadSpaceMutation( client ), { name: 'New', tags: [] } );
+		it( 'writes the returned detail to the cache after removing a feed', async () => {
+			const client = newClient();
+			nock( BASE )
+				.post( '/wpcom/v2/reader/spaces/3/feeds/456/delete' )
+				.reply( 200, detailResponse( { follows: [] } ) );
 
-		const spaces = client.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey );
-		expect( spaces ).toHaveLength( 1 );
+			await runMutation( client, deleteReadSpaceSourceMutation( client ), {
+				spaceId: '3',
+				subscription: makeSubscription(),
+			} );
 
-		const listItem = spaces![ 0 ];
-		expect( listItem ).not.toHaveProperty( 'sources' );
+			expect(
+				client.getQueryData< ReadSpaceDetails >( readSpaceQuery( '3' ).queryKey )?.sources
+			).toEqual( [] );
+		} );
 
-		expect(
-			client.getQueryData< ReadSpaceDetails >( readSpaceQuery( listItem.id ).queryKey )
-		).toEqual( { ...listItem, sources: [] } );
-	} );
-} );
+		it( 'leaves the detail cache untouched when the add request fails', async () => {
+			const client = newClient();
+			const seeded: ReadSpaceDetails = {
+				id: '3',
+				name: 'Work',
+				layout: { color: 'blue', icon: 'inbox' },
+				sources: [],
+				tags: [],
+			};
+			client.setQueryData( readSpaceQuery( '3' ).queryKey, seeded );
+			nock( BASE )
+				.post( '/wpcom/v2/reader/spaces/3/feeds/new' )
+				.reply( 409, {
+					code: 'reader_spaces_duplicate_feed',
+					message: '…',
+					data: { status: 409 },
+				} );
 
-describe( 'delete space cache removal', () => {
-	afterEach( () => nock.cleanAll() );
+			await runMutation( client, addReadSpaceSourceMutation( client ), {
+				spaceId: '3',
+				subscription: makeSubscription(),
+			} );
 
-	it( 'removes the deleted space from the list and discards its detail cache', async () => {
-		const client = newClient();
-		const other: ReadSpace = {
-			id: 'keep-id',
-			name: 'Keep',
-			tags: [],
-			layout: { color: 'red', icon: 'box' },
-		};
-		const target: ReadSpace = {
-			id: SPACE_ID,
-			name: 'Work',
-			tags: [],
-			layout: { color: 'blue', icon: 'inbox' },
-		};
-		client.setQueryData( readSpacesQuery().queryKey, [ other, target ] );
-		client.setQueryData( readSpaceQuery( SPACE_ID ).queryKey, makeSpace() );
-
-		nock( 'https://public-api.wordpress.com' )
-			.post( `/wpcom/v2/reader/spaces/${ SPACE_ID }/delete` )
-			.reply( 200, { deleted: true, id: SPACE_ID } );
-
-		await runMutation( client, deleteReadSpaceMutation( client ), SPACE_ID );
-
-		// Only the deleted space is dropped from the list...
-		expect( client.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey ) ).toEqual( [ other ] );
-		// ...and its detail cache is gone.
-		expect(
-			client.getQueryData< ReadSpaceDetails >( readSpaceQuery( SPACE_ID ).queryKey )
-		).toBeUndefined();
+			expect( client.getQueryData< ReadSpaceDetails >( readSpaceQuery( '3' ).queryKey ) ).toEqual(
+				seeded
+			);
+		} );
 	} );
 } );

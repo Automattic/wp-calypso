@@ -1,13 +1,13 @@
 import type { SiteSubscriptionItem } from '../read-follows';
 
 /**
- * Reader Spaces — a Space groups subscriptions under a name plus optional tags.
- * v0 has a name and tags only, no description (see RSM-4110).
+ * Reader Spaces — a Space groups followed feeds (`sources`) and followed tags
+ * under a name (see RSM-4110).
  *
  * `color` and `icon` are serializable presentation hints (string keys, not
  * rendered glyphs); the client maps `icon` to a `@wordpress/icons` element and
- * `color` to a CSS variant. RSM-4119 will replace the seeded list with real,
- * server-derived data.
+ * `color` to a CSS variant. The API does not validate these against the lists
+ * below — it only sanitizes — so the client constrains the picker.
  */
 export type SpaceColor = 'blue' | 'purple' | 'red' | 'orange' | 'gray' | 'green' | 'celadon';
 
@@ -30,25 +30,47 @@ export interface SpaceLayout {
 	icon: SpaceIcon;
 }
 
+/**
+ * Summary shape returned by the list endpoint (`GET /reader/spaces`). The list
+ * is slim — no `sources` or `tags`; fetch the detail endpoint for those.
+ */
 export interface ReadSpace {
 	id: string;
 	name: string;
-	tags: string[];
 	layout: SpaceLayout;
 }
 
 /**
- * A space plus its sources. Sources are only returned by the single-space
- * endpoint (`GET /read/spaces/{id}`), not by the list endpoint — so the list
- * deals in `ReadSpace` and the detail view deals in `ReadSpaceDetails`.
+ * A space plus its followed feeds (`sources`) and tags. Returned by every
+ * endpoint except the list — the detail GET, create, update, and the feed
+ * mutations all resolve a `ReadSpaceDetails`.
  */
 export interface ReadSpaceDetails extends ReadSpace {
 	sources: SpaceSource[];
+	tags: string[];
 }
 
 export interface CreateReadSpaceParams {
 	name: string;
-	tags: string[];
+	// All optional on the API. Tags must be existing Reader tag slugs and feeds
+	// must be existing feeds (feed id or url); either rejects the whole request
+	// if unresolvable.
+	tags?: string[];
+	feeds?: Array< number | string >;
+	layoutColor?: SpaceColor;
+	layoutIcon?: SpaceIcon;
+}
+
+/**
+ * Params for `POST /reader/spaces/{id}/update`. Send only the fields you are
+ * changing; at least one is required. `tags` is a full replace of the tag set
+ * (pass `[]` to clear), not an add/remove — there are no per-tag endpoints.
+ */
+export interface UpdateReadSpaceParams {
+	name?: string;
+	tags?: string[];
+	layoutColor?: SpaceColor;
+	layoutIcon?: SpaceIcon;
 }
 
 /**
@@ -60,13 +82,18 @@ export interface ReadSpaceDeletionResult {
 	id: number;
 }
 
+/**
+ * A feed followed by a space. The API calls these `follows`; the client keeps
+ * the `sources` vocabulary. `feedId` is the numeric feedbag id used to remove
+ * the feed; `blogId` is null for external (non-WP/Jetpack) feeds; `name`/`icon`
+ * may be null when feedbag has none.
+ */
 export interface SpaceSource {
-	feedId?: number | string | null;
-	blogId?: number | string | null;
+	feedId: number;
 	feedUrl: string;
-	siteUrl: string;
-	name: string;
-	siteIcon?: string | null;
+	blogId: number | null;
+	name: string | null;
+	siteIcon: string | null;
 }
 
 export interface ReadSpaceSourceMutationParams {

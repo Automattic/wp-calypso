@@ -1,46 +1,65 @@
-import type { ReadSpace, ReadSpaceDetails, SpaceColor, SpaceIcon } from './types';
+import type { ReadSpace, ReadSpaceDetails, SpaceColor, SpaceIcon, SpaceSource } from './types';
 
 /**
- * Wire shape returned by the wpcom/v2 Spaces endpoints (list, single, create).
- * Differs from the client `ReadSpace`: numeric id, `title` not `name`, and flat
- * `layout_color`/`layout_icon` rather than a nested `layout` object.
+ * A followed feed as returned in a detail response's `follows` array. The client
+ * calls these `sources`; see `adaptSpaceSource`.
+ */
+export interface ReadSpaceFollowApiItem {
+	feed_id: number;
+	feed_url: string;
+	blog_id: number | null;
+	name: string | null;
+	icon: string | null;
+}
+
+/**
+ * Wire shape for a space. The list (summary) endpoint returns only `id`,
+ * `title`, `layout_color`, `layout_icon`; every other endpoint returns the same
+ * plus `follows` and `tags` (the detail shape). Differs from the client model:
+ * numeric id, `title` not `name`, flat `layout_color`/`layout_icon` rather than a
+ * nested `layout`, and `follows` rather than `sources`.
  */
 export interface ReadSpaceApiItem {
 	id: number;
 	title: string;
-	sites: number[];
-	tags: string[];
 	layout_color: SpaceColor;
 	layout_icon: SpaceIcon;
-	// Returned by the list/detail endpoints but not by `POST /reader/spaces/new`.
-	slug?: string;
-	owner_id?: number;
-	created?: string;
+	// Detail-only — absent on the list (summary) response.
+	follows?: ReadSpaceFollowApiItem[];
+	tags?: string[];
 }
 
 /**
- * Map a wpcom/v2 response item onto the client `ReadSpace` (list) shape,
- * nesting the flat `layout_color`/`layout_icon` fields under `layout`.
+ * Map a wpcom/v2 summary item onto the client `ReadSpace` (list) shape, nesting
+ * the flat `layout_color`/`layout_icon` fields under `layout`.
  */
 export function adaptReadSpace( item: ReadSpaceApiItem ): ReadSpace {
 	return {
 		id: String( item.id ),
 		name: item.title,
-		tags: item.tags ?? [],
 		layout: { color: item.layout_color, icon: item.layout_icon },
 	};
 }
 
+/** Map a wire `follows[]` entry onto the client `SpaceSource` shape. */
+function adaptSpaceSource( follow: ReadSpaceFollowApiItem ): SpaceSource {
+	return {
+		feedId: follow.feed_id,
+		feedUrl: follow.feed_url,
+		blogId: follow.blog_id,
+		name: follow.name,
+		siteIcon: follow.icon,
+	};
+}
+
 /**
- * Map a wpcom/v2 response item onto the client `ReadSpaceDetails` shape.
- *
- * TODO(RSM-4145): the detail/sources endpoint isn't wired yet, so `sources` is
- * empty here. A freshly created space has no sources, so this is correct for the
- * create response; hydrating `sites` into real `SpaceSource`s lands with detail.
+ * Map a wpcom/v2 detail item onto the client `ReadSpaceDetails` shape, mapping
+ * the wire `follows` array onto `sources` and carrying the tag slugs through.
  */
 export function adaptReadSpaceDetails( item: ReadSpaceApiItem ): ReadSpaceDetails {
 	return {
 		...adaptReadSpace( item ),
-		sources: [],
+		sources: ( item.follows ?? [] ).map( adaptSpaceSource ),
+		tags: item.tags ?? [],
 	};
 }

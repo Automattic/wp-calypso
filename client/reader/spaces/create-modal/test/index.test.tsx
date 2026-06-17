@@ -13,7 +13,6 @@ import type { ReadSpace } from '@automattic/api-core';
 const WORK: ReadSpace = {
 	id: '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21',
 	name: 'Work',
-	tags: [],
 	layout: { color: 'blue', icon: 'inbox' },
 };
 
@@ -25,7 +24,7 @@ function mockCreateEndpoint( name: string ) {
 		.reply( 201, {
 			id: 7,
 			title: name,
-			sites: [],
+			follows: [],
 			tags: [],
 			layout_color: 'blue',
 			layout_icon: 'inbox',
@@ -101,9 +100,10 @@ describe( 'CreateSpaceModal', () => {
 		await waitFor( () => expect( onClose ).toHaveBeenCalled() );
 
 		const spaces = queryClient.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey );
-		expect( spaces ).toEqual( [ expect.objectContaining( { name: 'Reading', tags: [] } ) ] );
-		// Sources live only on the single-space detail cache, not on list items.
+		expect( spaces ).toEqual( [ expect.objectContaining( { name: 'Reading' } ) ] );
+		// The list is the slim summary — sources and tags live only on the detail cache.
 		expect( spaces?.[ 0 ] ).not.toHaveProperty( 'sources' );
+		expect( spaces?.[ 0 ] ).not.toHaveProperty( 'tags' );
 		expect( onClose ).toHaveBeenCalled();
 	} );
 

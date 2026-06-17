@@ -1,21 +1,25 @@
 # Reader Spaces
 
-Spaces group subscriptions under a name plus optional tags. v0 is dark-shipped
-behind the `reader/spaces` feature flag and has **no backend yet** (epic
-RSM-4110); creating a space only writes the React Query cache for now.
+Spaces group followed feeds (the client calls them `sources`) and tags under a
+name. Dark-shipped behind the `reader/spaces` feature flag (epic RSM-4110), a8c
+only, and wired to the real `wpcom/v2` backend.
 
-> See [`README.md`](./README.md) for the endpoints and contracts the client
-> expects once the backend lands (and the placeholder-vs-real caching strategy).
+> See [`README.md`](./README.md) for the full endpoint contract, data shapes,
+> error codes, and caching strategy.
 
 ## Layout
 
 - **Model & data** — `@automattic/api-core` → `read-spaces/`: `ReadSpace`,
-  `CreateReadSpaceParams`, `MAX_SPACE_NAME_LENGTH`, and the placeholder list
-  returned by `fetchers.ts`. No JSX, no routes here — api-core stays serializable.
+  `ReadSpaceDetails`, `CreateReadSpaceParams`, `UpdateReadSpaceParams`,
+  `MAX_SPACE_NAME_LENGTH`, the fetchers/mutators, and the wire→client mapping in
+  `adapters.ts` (renames `follows` → `sources`). No JSX, no routes here — api-core
+  stays serializable.
 - **Queries & mutations** — `@automattic/api-queries` → `read-spaces.ts`:
-  `readSpacesQuery`, `createReadSpaceMutation`. The create mutation is
-  cache-only; `TODO(RSM-4139)` swaps in the real `POST`.
-- **Consumer hooks** — `client/reader/data/spaces/`: `useSpaces`, `useCreateSpace`.
+  `readSpacesQuery`/`readSpaceQuery` and the create/update/delete/feed mutations.
+  Each mutation returns the full detail and writes it back to the caches.
+- **Consumer hooks** — `client/reader/data/spaces/`: `useSpaces`, `useSpace`,
+  `useCreateSpace`, `useUpdateSpace`, `useDeleteSpace`, `useAddSpaceSource`,
+  `useDeleteSpaceSource`.
 - **UI (this folder)** — `view.tsx`, `controller.tsx`, `index.tsx` (routes),
   `icons.ts`, `routes.ts`, `create-modal/`.
 - **Sidebar entry point** — `client/reader/sidebar/spaces/`.

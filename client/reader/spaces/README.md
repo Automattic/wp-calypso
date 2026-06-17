@@ -1,28 +1,27 @@
-# Reader Spaces — expected endpoints
+# Reader Spaces — API contract
 
-Spaces are dark-shipped behind the `reader/spaces` flag (epic RSM-4110). The
-**list, create, and delete** endpoints are now live on `wpcom/v2`; the
-**single-space (detail) and source** endpoints are still hard-coded placeholders
-that mutate the React Query cache in-memory. This document lists every endpoint
-the client expects and the contract each honors.
+A Space groups followed feeds (the client calls them `sources`) and followed tags
+under a name. Dark-shipped behind the `reader/spaces` flag (epic RSM-4110), a8c
+only. All endpoints live under `wpcom/v2` and are wired to the real backend.
 
-> Endpoints are marked **live** or **proposed** below. Live paths are pinned to
-> the real `wpcom/v2` routes; proposed paths are the shapes the client expects
-> and are not yet pinned.
+> Ownership: you only ever see or modify your own spaces. Another user's space
+> (or a non-existent id) returns `404 reader_spaces_not_found` — the two are
+> indistinguishable by design, so the UI must treat them the same. `403` is
+> purely the a8c gate.
 
 ## Data shapes
 
-These types live in `@automattic/api-core` → `read-spaces/types.ts`. The wire
-JSON is snake_case (`title`, `layout_color`, `layout_icon`, numeric `id`); the
-fetchers adapt it to these shapes in `read-spaces/adapters.ts` (as `read-follows`
-does for subscriptions).
+These types live in `@automattic/api-core` → `read-spaces/types.ts`. The wire JSON
+is snake_case (`title`, `layout_color`, `layout_icon`, numeric `id`, `follows`);
+`read-spaces/adapters.ts` maps it to the client shapes below (as `read-follows`
+does for subscriptions). Notably it renames the wire `follows` to `sources` and
+nests the flat `layout_*` fields under `layout`.
 
 ```ts
-// List shape — NO sources. Returned by the list endpoint.
+// Summary — returned by the list endpoint only. No sources, no tags.
 interface ReadSpace {
 	id: string;
-	name: string;
-	tags: string[];
+	name: string; // wire `title`
 	layout: SpaceLayout;
 }
 
@@ -32,134 +31,93 @@ interface SpaceLayout {
 	icon: SpaceIcon; // 'inbox'|'box'|'video'|'comment'|'cart'|'star'|'pages'|'category'
 }
 
-// Detail shape — list fields + sources. Returned ONLY by the single-space endpoint.
+// Detail — summary + followed feeds + tags. Returned by every endpoint but list.
 interface ReadSpaceDetails extends ReadSpace {
-	sources: SpaceSource[];
+	sources: SpaceSource[]; // wire `follows`
+	tags: string[]; // tag slugs
 }
 
+// A followed feed (wire `follows[]`).
 interface SpaceSource {
-	feedId?: number | string | null;
-	blogId?: number | string | null;
+	feedId: number; // numeric feedbag id; used to remove the feed
 	feedUrl: string;
-	siteUrl: string;
-	name: string;
-	siteIcon?: string | null;
-}
-
-interface CreateReadSpaceParams {
-	name: string; // required, <= MAX_SPACE_NAME_LENGTH (50)
-	tags: string[];
+	blogId: number | null; // null for external (non-WP/Jetpack) feeds
+	name: string | null;
+	siteIcon: string | null; // wire `icon`
 }
 ```
 
-`color`/`icon` are serializable string keys (mapped to glyphs/CSS in the UI),
-never rendered elements. `MAX_SPACE_NAME_LENGTH` (50) is enforced client-side
-and must stay in sync with the backend (RSM-4139).
+The layout palette is **not** validated server-side (only sanitized) and is
+random-until-set, so the client constrains the picker and should write a value
+early if it shouldn't drift between fetches.
 
 ## Endpoints
 
-### 1. List spaces — `GET /reader/spaces` · RSM-4145 · **live**
+All paths are under `https://public-api.wordpress.com/wpcom/v2/reader/spaces`.
+Every mutation returns the **full updated detail**, so the client writes that
+straight to the caches — no follow-up GET.
 
-Returns the user's spaces **without** their sources.
+| # | Method & path | Body | Returns | Wired as |
+| - | --- | --- | --- | --- |
+| 1 | `GET /reader/spaces` | — | `200` summary[] | `fetchReadSpaces()` |
+| 2 | `GET /reader/spaces/{id}` | — | `200` detail | `fetchReadSpace(id)` |
+| 3 | `POST /reader/spaces/new` | `{ title*, feeds?, tags?, layout_color?, layout_icon? }` | `201` detail | `createReadSpace()` |
+| 4 | `POST /reader/spaces/{id}/update` | `{ title?, tags?, layout_color?, layout_icon? }` (≥1) | `200` detail | `updateReadSpace()` |
+| 5 | `POST /reader/spaces/{id}/delete` | — | `200 { deleted, id }` | `deleteReadSpace()` |
+| 6 | `POST /reader/spaces/{id}/feeds/new` | `{ feed* }` (feed id or url) | `200` detail | `addReadSpaceSource()` |
+| 7 | `POST /reader/spaces/{id}/feeds/{feed_id}/delete` | — | `200` detail | `deleteReadSpaceSource()` |
 
-- **Request:** none (authenticated user).
-- **Response `200`:** array of wire items (snake_case), adapted to `ReadSpace[]`.
-- Wired: `fetchReadSpaces()` → real `GET`, mapped via `adaptReadSpace`.
+Notes:
 
-### 2. Get one space — `GET /reader/spaces/{id}` · RSM-4145 · **proposed**
+- **Feeds** must already exist (a feed id or url the backend can resolve); the
+  client only offers feeds the user already follows. Add/remove are one feed at a
+  time (endpoints 6 & 7); removal is keyed by the numeric `feed_id`.
+- **Tags** are a full replace via `update` (endpoint 4) — there are no per-tag
+  endpoints. Pass the complete desired set; `[]` clears them.
+- **Create** sends only `title` unless the caller supplies the optionals; the
+  create form sends `{ title, tags }` today.
+- **Delete** is a permanent hard delete (no trash/undo) — gate UI behind a
+  confirm. No UI consumer yet; `useDeleteSpace()` / `useUpdateSpace()` are ready.
 
-Returns a single space **with** its sources. This is the only endpoint that
-returns `sources`.
+## Error codes
 
-- **Request:** path param `id`.
-- **Response `200`:** `ReadSpaceDetails`
-- **Response `404`:** unknown id.
-- Placeholder: `fetchReadSpace(id)` still resolves the in-memory set + `sources: []`.
+| HTTP | code | when |
+| - | --- | --- |
+| 403 | `rest_forbidden` | not logged in / not an Automattician |
+| 404 | `reader_spaces_not_found` | space doesn't exist or isn't yours |
+| 404 | `reader_spaces_item_not_found` | removing a feed not in the space |
+| 400 | `reader_spaces_invalid_title` | empty title (create or update) |
+| 400 | `reader_spaces_invalid_feed` | a feed isn't an existing feedbag feed |
+| 400 | `reader_spaces_invalid_tag` | a tag slug isn't a valid Reader tag |
+| 400 | `reader_spaces_no_changes` | `update` with no recognized fields |
+| 409 | `reader_spaces_duplicate_slug` | a space with that title already exists |
+| 409 | `reader_spaces_duplicate_feed` | feed already in the space |
+| 500 | `reader_spaces_delete_failed` | delete didn't persist (rare) |
 
-### 3. Create space — `POST /reader/spaces/new` · RSM-4139 · **live**
+The create modal maps `rest_forbidden` / `reader_spaces_invalid_title` /
+`reader_spaces_invalid_tag` / `reader_spaces_duplicate_slug` to copy; other
+surfaces should map the relevant codes as they adopt the mutations.
 
-- **Request body:** `{ title, tags }` (the create form sends only these; the
-  endpoint also accepts optional `sites`, `layout_color`, `layout_icon`).
-- **Response `201`:** the created space (snake_case wire item), adapted to
-  `ReadSpaceDetails`. Server defaults a random palette `layout_color`/`layout_icon`
-  when omitted, and `sources: []`.
-- **Errors:** `403 rest_forbidden`, `400 reader_spaces_invalid_title`,
-  `400 reader_spaces_invalid_tag`, `409 reader_spaces_duplicate_slug`.
-- Wired: `createReadSpace()` → real `POST`, mapped via `adaptReadSpaceDetails`.
+## Caching
 
-> The create flow is **not** optimistic — the cache is written in `onSuccess`
-> using the returned space, so the list always carries the backend id (no temp-id
-> reconciliation). On success the list gets a `ReadSpace` (sources stripped) and
-> the detail cache is seeded with the full `ReadSpaceDetails`.
-
-### 4. Add a source to a space — `POST /reader/spaces/{id}/sources` · ticket TBD · **proposed**
-
-- **Request body:** a source identifier — at least one of
-  `{ feed_id?: number; blog_id?: number; feed_url?: string }`.
-- **Response `200`/`201`:** the created `SpaceSource` (lets the optimistic patch
-  reconcile), or `204`.
-- Placeholder: `addReadSpaceSource()` is a no-op; the cache patch is optimistic.
-
-### 5. Remove a source from a space — `DELETE /reader/spaces/{id}/sources/{sourceId}` · ticket TBD · **proposed**
-
-- **Request:** identify the source by `feed_id`/`blog_id`/`feed_url` (path or query).
-- **Response `200`/`204`.**
-- Placeholder: `deleteReadSpaceSource()` is a no-op; the cache patch is optimistic.
-
-### 6. Delete a space — `POST /reader/spaces/{id}/delete` · RSM-4110 · **live**
-
-Permanently deletes a space (hard delete — no trash/undo). Owner-only, enforced
-server-side.
-
-- **Request:** path param `id`, no body.
-- **Response `200`:** `{ deleted: true, id }`.
-- **Response `403`:** `rest_forbidden` — logged out / not an Automattician.
-- **Response `404`:** `reader_spaces_not_found` — gone **or** not yours
-  (intentionally indistinguishable; we don't reveal other users' spaces, so the
-  UI must treat both the same).
-- **Response `500`:** `reader_spaces_delete_failed` — yours, but deletion failed.
-- Wired: `deleteReadSpace( id )` → real `POST`; `deleteReadSpaceMutation` removes
-  the space from the list cache and discards its detail cache `onSuccess`. No UI
-  consumer yet — `useDeleteSpace()` is ready for a (confirm-gated) delete control.
-
-## Caching strategy (placeholder vs real)
-
-While the endpoints are placeholders, both `readSpacesQuery` and
-`readSpaceQuery` use `staleTime: Infinity` + `meta: { persist: false }`:
-mutations write the cache directly and we never refetch (a placeholder fetch
-would clobber created spaces). `persist: false` keeps the in-memory data out of
-the persisted cache, so **a full page reload already refetches a fresh list** —
-session-only writes don't leak across reloads.
+Both `readSpacesQuery` and `readSpaceQuery` use `staleTime: Infinity` +
+`meta: { persist: false }`. Every mutation returns the full detail and writes it
+back (the detail cache gets the returned space; the list gets its summary), so
+the caches stay authoritative without refetch churn — `staleTime: Infinity` only
+suppresses refetching already-cached data, so a space's detail still loads the
+first time its modal opens. `persist: false` keeps the layout (random-until-set)
+out of the persisted cache, so a reload refetches fresh rather than rehydrating
+stale colours.
 
 The sources modal stays mounted with `isOpen` toggling, so its queries — the
 space detail (`useSpace`) and site subscriptions (`useSiteSubscriptions`, which
 paginates all pages) — are gated on `isOpen` (`enabled: isOpen`) and only fetch
 while the modal is shown.
 
-When the real endpoints land:
-
-- Replace the manual `setQueryData` in the create / source mutations with
-  `queryClient.invalidateQueries( readSpacesQuery() )` (and the detail query) to
-  reconcile with canonical server state immediately, not just on reload.
-- Drop `staleTime: Infinity` and `meta: { persist: false }`.
-- Add `onMutate` + rollback hardening per the
-  [`client/reader/AGENTS.md`](../AGENTS.md) optimistic-mutation checklist
-  (`cancelQueries` in try/catch, `encodeURIComponent` on the path `id`).
-
-## Open questions for the backend
-
-- REST paths for every endpoint — none are implemented yet; the paths above are
-  proposed.
-- Source identifier shape for add/remove (numeric id vs object; what the add
-  endpoint returns).
-- Wire casing (snake_case vs camelCase) — decides whether the fetchers need an
-  adapter.
-- Tickets for source management (endpoints 4 & 5) — not yet filed.
-
 ## Related
 
 - Data & UI conventions: [`./AGENTS.md`](./AGENTS.md)
-- Reader data layer (three-layer pattern, optimistic hardening): [`../AGENTS.md`](../AGENTS.md)
+- Reader data layer (three-layer pattern): [`../AGENTS.md`](../AGENTS.md)
 - Model: `@automattic/api-core` → `read-spaces/`
 - Queries & mutations: `@automattic/api-queries` → `read-spaces.ts`
 - Consumer hooks: `client/reader/data/spaces/`

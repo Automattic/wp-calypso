@@ -4,16 +4,11 @@ import type { ReadSpaceApiItem } from '../adapters';
 
 const BASE = 'https://public-api.wordpress.com';
 
-const wireSpace = ( overrides: Partial< ReadSpaceApiItem > = {} ): ReadSpaceApiItem => ( {
+const wireSummary = ( overrides: Partial< ReadSpaceApiItem > = {} ): ReadSpaceApiItem => ( {
 	id: 3,
 	title: 'Work',
-	slug: 'work',
-	owner_id: 5107587,
-	sites: [ 242260508 ],
-	tags: [ 'business' ],
 	layout_color: 'blue',
 	layout_icon: 'inbox',
-	created: '2026-06-09 18:32:27',
 	...overrides,
 } );
 
@@ -22,54 +17,25 @@ describe( 'read spaces fetchers', () => {
 
 	describe( 'fetchReadSpaces', () => {
 		it( 'fetches the list from the wpcom/v2 endpoint', async () => {
-			const scope = nock( BASE ).get( '/wpcom/v2/reader/spaces' ).reply( 200, [ wireSpace() ] );
+			const scope = nock( BASE ).get( '/wpcom/v2/reader/spaces' ).reply( 200, [ wireSummary() ] );
 
 			await fetchReadSpaces();
 
 			expect( scope.isDone() ).toBe( true );
 		} );
 
-		it( 'adapts the snake_case wire item to the client ReadSpace shape', async () => {
+		it( 'adapts each summary to the client ReadSpace shape (no sources/tags)', async () => {
 			nock( BASE )
 				.get( '/wpcom/v2/reader/spaces' )
 				.reply( 200, [
-					wireSpace( {
-						id: 4,
-						title: 'Gaming',
-						tags: [ 'games' ],
-						layout_color: 'purple',
-						layout_icon: 'box',
-					} ),
+					wireSummary( { id: 4, title: 'Gaming', layout_color: 'purple', layout_icon: 'box' } ),
 				] );
 
 			const spaces = await fetchReadSpaces();
 
 			expect( spaces ).toEqual( [
-				{
-					id: '4',
-					name: 'Gaming',
-					tags: [ 'games' ],
-					layout: { color: 'purple', icon: 'box' },
-				},
+				{ id: '4', name: 'Gaming', layout: { color: 'purple', icon: 'box' } },
 			] );
-		} );
-
-		it( 'stringifies the numeric wire id', async () => {
-			nock( BASE )
-				.get( '/wpcom/v2/reader/spaces' )
-				.reply( 200, [ wireSpace( { id: 42 } ) ] );
-
-			const [ space ] = await fetchReadSpaces();
-
-			expect( space.id ).toBe( '42' );
-		} );
-
-		it( 'omits sources from the list (they belong to the detail endpoint)', async () => {
-			nock( BASE ).get( '/wpcom/v2/reader/spaces' ).reply( 200, [ wireSpace() ] );
-
-			const [ space ] = await fetchReadSpaces();
-
-			expect( space ).not.toHaveProperty( 'sources' );
 		} );
 
 		it( 'returns an empty list when the response is not an array', async () => {
@@ -79,21 +45,69 @@ describe( 'read spaces fetchers', () => {
 		} );
 	} );
 
-	// The detail endpoint is still a placeholder (RSM-4145) — no network call,
-	// resolves from the in-memory set. Update these to nock once it's wired.
-	describe( 'fetchReadSpace (placeholder)', () => {
-		it( 'resolves a single placeholder space by id, with its sources', async () => {
-			await expect( fetchReadSpace( '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21' ) ).resolves.toEqual(
-				expect.objectContaining( {
-					id: '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21',
-					name: 'Work',
-					sources: [],
-				} )
-			);
+	describe( 'fetchReadSpace', () => {
+		it( 'fetches the detail from the wpcom/v2 single-space endpoint and adapts it', async () => {
+			const scope = nock( BASE )
+				.get( '/wpcom/v2/reader/spaces/3' )
+				.reply( 200, {
+					id: 3,
+					title: 'Work',
+					layout_color: 'blue',
+					layout_icon: 'inbox',
+					tags: [ 'photography' ],
+					follows: [
+						{
+							feed_id: 9981,
+							feed_url: 'https://en.blog/feed/',
+							blog_id: 3584907,
+							name: 'The WordPress.com Blog',
+							icon: null,
+						},
+					],
+				} );
+
+			const space = await fetchReadSpace( '3' );
+
+			expect( scope.isDone() ).toBe( true );
+			expect( space ).toEqual( {
+				id: '3',
+				name: 'Work',
+				layout: { color: 'blue', icon: 'inbox' },
+				tags: [ 'photography' ],
+				sources: [
+					{
+						feedId: 9981,
+						feedUrl: 'https://en.blog/feed/',
+						blogId: 3584907,
+						name: 'The WordPress.com Blog',
+						siteIcon: null,
+					},
+				],
+			} );
 		} );
 
-		it( 'rejects when the space id is unknown', async () => {
-			await expect( fetchReadSpace( 'does-not-exist' ) ).rejects.toThrow( 'Space not found' );
+		it( 'encodes the space id into the path', async () => {
+			const scope = nock( BASE )
+				.get( '/wpcom/v2/reader/spaces/a%2Fb' )
+				.reply( 200, { id: 7, title: 'X', layout_color: 'red', layout_icon: 'box' } );
+
+			await fetchReadSpace( 'a/b' );
+
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'rejects when the space is not found', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/spaces/999' )
+				.reply( 404, {
+					code: 'reader_spaces_not_found',
+					message: 'Space not found.',
+					data: { status: 404 },
+				} );
+
+			await expect( fetchReadSpace( '999' ) ).rejects.toMatchObject( {
+				code: 'reader_spaces_not_found',
+			} );
 		} );
 	} );
 } );

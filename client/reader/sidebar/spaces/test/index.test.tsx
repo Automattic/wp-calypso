@@ -21,13 +21,11 @@ const SPACES: ReadSpace[] = [
 	{
 		id: '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21',
 		name: 'Work',
-		tags: [],
 		layout: { color: 'blue', icon: 'inbox' },
 	},
 	{
 		id: '5cc71d31-97d1-4b7d-93c7-42a5ce9d4cf1',
 		name: 'Gaming',
-		tags: [],
 		layout: { color: 'purple', icon: 'box' },
 	},
 ];
@@ -99,7 +97,7 @@ describe( 'ReaderSidebarSpaces', () => {
 		nock( 'https://public-api.wordpress.com' ).post( '/wpcom/v2/reader/spaces/new' ).reply( 201, {
 			id: 7,
 			title: 'Reading',
-			sites: [],
+			follows: [],
 			tags: [],
 			layout_color: 'blue',
 			layout_icon: 'inbox',
