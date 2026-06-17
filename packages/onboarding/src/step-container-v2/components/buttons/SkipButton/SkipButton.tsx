@@ -6,10 +6,13 @@ import { ButtonProps } from '../../../types';
 import { LinkButton } from '../LinkButton/LinkButton';
 import { SecondaryButton } from '../SecondaryButton/SecondaryButton';
 
+import './style.scss';
+
 type SkipButtonProps = ButtonProps & {
 	/**
 	 * The visual style of the button. Defaults to a text link, matching
-	 * {@link LinkButton}. Use `'secondary'` to render a {@link SecondaryButton}.
+	 * {@link LinkButton}. Use `'secondary'` to render a neutral-bordered
+	 * {@link SecondaryButton} (layout, e.g. width, is left to the consumer).
 	 * @default 'link'
 	 */
 	appearance?: 'link' | 'secondary';
@@ -29,6 +32,7 @@ export const SkipButton = ( { appearance = 'link', ...originalProps }: SkipButto
 	const skipButtonProps = decorateButtonWithTracksEventRecording(
 		normalizeButtonProps( originalProps, {
 			children: __( 'Skip', __i18n_text_domain__ ),
+			className: 'step-container-v2__skip-button',
 		} ),
 		{
 			tracksEventName: 'calypso_signup_skip_step',
