@@ -196,6 +196,18 @@ export default function AccountRecoveryInterstitial() {
 	// coarse 3-tier `security_level`. Also selects the copy variant.
 	const variant = getInterstitialVariant( hasRecoveryMethod, hasTwoFactor, hasBackupCodes );
 
+	// Shared Tracks properties for every interstitial event. The coarse `security_level` and 5-way
+	// `recovery_status` summarize the setup; the `has_*` booleans expose exactly which methods are
+	// in place for a finer-grained breakdown.
+	const tracksProperties = {
+		security_level: securityLevel,
+		recovery_status: variant,
+		has_recovery_email: hasRecoveryEmail,
+		has_recovery_phone: hasRecoveryPhone,
+		has_two_factor: hasTwoFactor,
+		has_backup_codes: hasBackupCodes,
+	};
+
 	// QA overrides bypass the experiment entirely; real users only see the modal when eligible
 	// and assigned to the treatment variation.
 	const shouldDisplay =
@@ -227,17 +239,13 @@ export default function AccountRecoveryInterstitial() {
 	};
 
 	const handleSnooze = () => {
-		recordTracksEvent( 'calypso_account_recovery_interstitial_dismiss', {
-			security_level: securityLevel,
-			recovery_status: variant,
-		} );
+		recordTracksEvent( 'account_recovery_nudge_interstitial_dismiss', tracksProperties );
 		snooze();
 	};
 
 	const handleCtaClick = ( cta: InterstitialCta ) => {
-		recordTracksEvent( 'calypso_account_recovery_interstitial_cta_click', {
-			security_level: securityLevel,
-			recovery_status: variant,
+		recordTracksEvent( 'account_recovery_nudge_interstitial_cta_click', {
+			...tracksProperties,
 			cta_id: cta.id,
 		} );
 		// Snooze for this security level's window in all cases, so the user isn't re-prompted
@@ -271,8 +279,8 @@ export default function AccountRecoveryInterstitial() {
 			className="account-recovery-interstitial"
 		>
 			<ComponentViewTracker
-				eventName="calypso_account_recovery_interstitial_impression"
-				properties={ { security_level: securityLevel, recovery_status: variant } }
+				eventName="account_recovery_nudge_interstitial_impression"
+				properties={ tracksProperties }
 			/>
 			<img className="account-recovery-interstitial__hero" src={ heroIllustration } alt="" />
 			<VStack className="account-recovery-interstitial__body" spacing={ 6 }>
