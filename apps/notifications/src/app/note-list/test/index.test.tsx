@@ -126,4 +126,23 @@ describe( 'NoteList loading state', () => {
 		expect( screen.getByText( 'A comment' ) ).toBeVisible();
 		expect( screen.queryByText( 'A like' ) ).not.toBeInTheDocument();
 	} );
+
+	// A client-filtered tab pages through the shared cache and is often empty
+	// mid-paging. The full loader must not re-take over on each page (that looked
+	// like it continually restarted); the empty/DataViews view stays put.
+	it( 'keeps the view (not the loader) while a client-filtered tab pages empty', () => {
+		const store = initStore();
+		// Settle once with no notes so DataViews has mounted on the Comments tab.
+		store.dispatch( actions.ui.loadedNotes() );
+		renderTab( store, 'comments' as FilterName );
+		expect( screen.getByText( 'No new comments yet!' ) ).toBeVisible();
+
+		// A paging fetch begins while no comments are loaded yet.
+		act( () => {
+			store.dispatch( actions.ui.loadNotes() );
+		} );
+
+		// The empty view stays — the full loader does not take over per page.
+		expect( screen.getByText( 'No new comments yet!' ) ).toBeVisible();
+	} );
 } );

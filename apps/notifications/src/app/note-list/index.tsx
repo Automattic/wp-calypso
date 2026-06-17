@@ -151,12 +151,15 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	useNoteListFocusToLastSelectedNote( { noteListRef, notes } );
 	useNoteListNavigationKeyboardShortcuts( { noteListRef, visibleNotes } );
 
-	// DataViews renders its `empty` prop whenever `data` is empty, ignoring
-	// `isLoading` — so a filtered fetch with no results yet would flash the
-	// "all caught up" message while the request is still in flight. Show the
-	// loader instead until the fetch settles with real results (or a real empty).
+	// On the server-filtered Unread tab, DataViews would flash its `empty` prop
+	// ("all caught up") while the unread fetch is still in flight, since it
+	// ignores `isLoading`. Hold the loader until that fetch settles. Scoped to
+	// "unread" only: client-filtered tabs page through the shared cache, so an
+	// empty-while-loading view there is expected — applying this to them would
+	// re-show the spinner on every page and look like it keeps restarting.
 	const showInitialLoader =
-		! hasRenderedDataViews.current || ( isLoading && visibleNotes.length === 0 );
+		! hasRenderedDataViews.current ||
+		( filterName === 'unread' && isLoading && visibleNotes.length === 0 );
 
 	return (
 		<div ref={ noteListRef } className="wpnc__note-list">
