@@ -6,7 +6,7 @@ import {
 	getOpenLiveInteractions,
 	MAX_OPEN_CONVERSATIONS,
 	type InteractionStatusByUuid,
-} from '../get-most-recent-open-live-interaction';
+} from '../get-open-live-interactions';
 import type { ZendeskConversation } from '@automattic/zendesk-client';
 
 jest.mock( 'smooch', () => ( {
@@ -50,7 +50,7 @@ describe( 'getOpenLiveInteractions', () => {
 		] );
 
 		expect( getOpenLiveInteractions() ).toEqual( {
-			mostRecentId: 'a',
+			mostRecentSupportInteractionId: 'a',
 			openCount: 3,
 			hasReachedLimit: true,
 		} );
@@ -70,7 +70,7 @@ describe( 'getOpenLiveInteractions', () => {
 		] );
 
 		expect( getOpenLiveInteractions( statusMap ) ).toEqual( {
-			mostRecentId: 'a',
+			mostRecentSupportInteractionId: 'a',
 			openCount: 2,
 			hasReachedLimit: false,
 		} );
@@ -90,7 +90,7 @@ describe( 'getOpenLiveInteractions', () => {
 		] );
 
 		expect( getOpenLiveInteractions( statusMap ) ).toEqual( {
-			mostRecentId: 'b',
+			mostRecentSupportInteractionId: 'b',
 			openCount: 1,
 			hasReachedLimit: false,
 		} );
@@ -106,7 +106,7 @@ describe( 'getOpenLiveInteractions', () => {
 		// Empty map → all conversations fall back to the heuristic, all open.
 		const emptyMap: InteractionStatusByUuid = new Map();
 		expect( getOpenLiveInteractions( emptyMap ) ).toEqual( {
-			mostRecentId: 'a',
+			mostRecentSupportInteractionId: 'a',
 			openCount: 3,
 			hasReachedLimit: true,
 		} );
@@ -125,7 +125,7 @@ describe( 'getOpenLiveInteractions', () => {
 		] );
 
 		expect( getOpenLiveInteractions( statusMap ) ).toEqual( {
-			mostRecentId: 'b',
+			mostRecentSupportInteractionId: 'b',
 			openCount: 1,
 			hasReachedLimit: false,
 		} );
@@ -160,18 +160,18 @@ describe( 'getOpenLiveInteractions', () => {
 		] );
 
 		expect( getOpenLiveInteractions() ).toEqual( {
-			mostRecentId: null,
+			mostRecentSupportInteractionId: null,
 			openCount: 0,
 			hasReachedLimit: false,
 		} );
 	} );
 
-	it( 'returns null mostRecentId when nothing is open', () => {
+	it( 'returns null mostRecentSupportInteractionId when nothing is open', () => {
 		mockGetConversations.mockReturnValue( [ makeConversation( 'a' ) ] );
 
 		const statusMap: InteractionStatusByUuid = new Map( [ [ 'a', 'closed' ] ] );
 
-		expect( getOpenLiveInteractions( statusMap ).mostRecentId ).toBeNull();
+		expect( getOpenLiveInteractions( statusMap ).mostRecentSupportInteractionId ).toBeNull();
 	} );
 
 	it( 'exports MAX_OPEN_CONVERSATIONS = 3', () => {

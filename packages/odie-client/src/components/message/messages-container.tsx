@@ -14,8 +14,8 @@ import {
 	useUpdateDocumentTitle,
 } from '../../hooks';
 import { useHelpCenterChatScroll } from '../../hooks/use-help-center-chat-scroll';
-import { getOpenLiveInteractions } from '../notices/get-most-recent-open-live-interaction';
-import { useOpenInteractionStatusMap } from '../notices/use-open-interaction-status-map';
+import { useOpenInteractionStatusMap } from '../../hooks/use-open-interaction-status-map';
+import { getOpenLiveInteractions } from '../../utils/get-open-live-interactions';
 import { JumpToRecent } from './jump-to-recent';
 import { MessagesClusterizer } from './messages-cluster/messages-cluster';
 import { ThinkingPlaceholder } from './thinking-placeholder';
@@ -82,7 +82,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 
 			// Compute from a fresh Smooch snapshot at call time: Smooch can mutate its
 			// conversation list outside React without triggering a re-render.
-			const { mostRecentId: alreadyHasActiveZendeskChatId, hasReachedLimit } =
+			const { mostRecentSupportInteractionId: alreadyHasActiveZendeskChatId, hasReachedLimit } =
 				getOpenLiveInteractions( interactionStatusByUuid );
 
 			// when forwarding to zd avoid creating new chats

@@ -5,8 +5,6 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import { getOpenLiveInteractions } from '../components/notices/get-most-recent-open-live-interaction';
-import { useOpenInteractionStatusMap } from '../components/notices/use-open-interaction-status-map';
 import {
 	getOdieRateLimitMessage,
 	getOdieEmailFallbackMessage,
@@ -19,8 +17,10 @@ import {
 import { useOdieAssistantContext } from '../context';
 import { useCreateZendeskConversation } from '../hooks';
 import { useLoggedOutSession } from '../hooks/use-logged-out-session';
+import { useOpenInteractionStatusMap } from '../hooks/use-open-interaction-status-map';
 import { generateUUID, getOdieIdFromInteraction, getIsRequestingHumanSupport } from '../utils';
 import { hasRecentEscalationAttempt } from '../utils/chat-utils';
+import { getOpenLiveInteractions } from '../utils/get-open-live-interactions';
 import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import { useManageSupportInteraction, broadcastOdieMessage } from '.';
 import type { Chat, Message, ReturnedChat, SupportInteraction } from '../types';
@@ -185,7 +185,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 	} ) => {
 		// Compute from a fresh Smooch snapshot at call time: Smooch can mutate its
 		// conversation list outside React without triggering a re-render.
-		const { mostRecentId: warnAboutExistingConversation, hasReachedLimit } =
+		const { mostRecentSupportInteractionId: warnAboutExistingConversation, hasReachedLimit } =
 			getOpenLiveInteractions( interactionStatusByUuid );
 
 		if ( ! Array.isArray( message ) ) {

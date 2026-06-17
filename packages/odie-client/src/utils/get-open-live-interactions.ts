@@ -1,5 +1,5 @@
 import Smooch from 'smooch';
-import type { InteractionStatus } from '../../types';
+import type { InteractionStatus } from '../types';
 import type { ZendeskConversation, ZendeskMessage } from '@automattic/zendesk-client';
 
 const AGE_THRESHOLD = 1000 * 60 * 60 * 24 * 3; // 3 days
@@ -60,7 +60,7 @@ function getConversations(): ZendeskConversation[] {
 /**
  * Single render-time snapshot of the open live conversations, cross-checked against the
  * cached SupportInteraction status. Reads `Smooch.getConversations()` once and derives
- * the `mostRecentId`, `openCount`, and `hasReachedLimit` the callers need.
+ * the `mostRecentSupportInteractionId`, `openCount`, and `hasReachedLimit` the callers need.
  *
  * Call as late as possible and don't cache the result: Smooch mutates its conversation
  * list outside React (e.g. on incoming messages) without triggering a re-render.
@@ -69,7 +69,7 @@ function getConversations(): ZendeskConversation[] {
  *                                backing SupportInteraction is closed/solved.
  */
 export function getOpenLiveInteractions( interactionStatusByUuid?: InteractionStatusByUuid ): {
-	mostRecentId: string | null;
+	mostRecentSupportInteractionId: string | null;
 	openCount: number;
 	hasReachedLimit: boolean;
 } {
@@ -77,7 +77,7 @@ export function getOpenLiveInteractions( interactionStatusByUuid?: InteractionSt
 		isOpenConversation( conversation, interactionStatusByUuid )
 	);
 	return {
-		mostRecentId: ( open[ 0 ]?.metadata.supportInteractionId as string ) ?? null,
+		mostRecentSupportInteractionId: ( open[ 0 ]?.metadata.supportInteractionId as string ) ?? null,
 		openCount: open.length,
 		hasReachedLimit: open.length >= MAX_OPEN_CONVERSATIONS,
 	};

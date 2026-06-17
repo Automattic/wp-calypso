@@ -1,12 +1,12 @@
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import type { SupportInteraction } from '../../types';
-import { handleSupportInteractionsFetch } from '../../data/handle-support-interactions-fetch';
+import { handleSupportInteractionsFetch } from '../data/handle-support-interactions-fetch';
 import {
 	getOpenLiveInteractions,
 	type InteractionStatusByUuid,
-} from './get-most-recent-open-live-interaction';
+} from '../utils/get-open-live-interactions';
+import type { SupportInteraction } from '../types';
 
 /**
  * Subscribes to the cached SupportInteraction list in TanStack Query and returns a
@@ -41,7 +41,7 @@ export function useOpenInteractionStatusMap(): InteractionStatusByUuid {
 /**
  * Render-time snapshot of open live conversations, cross-checked against the cached
  * SupportInteraction status. Reads the Smooch conversation list once per render and
- * derives `mostRecentId`, `hasReachedLimit`, and `openCount` from that single snapshot.
+ * derives `mostRecentSupportInteractionId`, `hasReachedLimit`, and `openCount` from that single snapshot.
  *
  * Note: the returned values are a snapshot of Smooch state at render time. Smooch can
  * mutate its conversation list outside React (e.g. on incoming messages) without
@@ -50,7 +50,7 @@ export function useOpenInteractionStatusMap(): InteractionStatusByUuid {
  * these values in a closure.
  */
 export function useOpenLiveInteractions(): {
-	mostRecentId: string | null;
+	mostRecentSupportInteractionId: string | null;
 	hasReachedLimit: boolean;
 	openCount: number;
 } {

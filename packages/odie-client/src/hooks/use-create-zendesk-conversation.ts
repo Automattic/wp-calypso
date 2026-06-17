@@ -1,8 +1,6 @@
 import { useUpdateZendeskUserFields, type ZendeskConversation } from '@automattic/zendesk-client';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Smooch from 'smooch';
-import { getOpenLiveInteractions } from '../components/notices/get-most-recent-open-live-interaction';
-import { useOpenInteractionStatusMap } from '../components/notices/use-open-interaction-status-map';
 import {
 	getErrorTryAgainLaterMessage,
 	getOdieTransferMessages,
@@ -11,6 +9,8 @@ import {
 import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
+import { getOpenLiveInteractions } from '../utils/get-open-live-interactions';
+import { useOpenInteractionStatusMap } from './use-open-interaction-status-map';
 
 export const useCreateZendeskConversation = () => {
 	const {
