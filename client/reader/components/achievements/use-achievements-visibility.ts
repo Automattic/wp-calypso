@@ -19,9 +19,9 @@ export default function useAchievementsVisibility( profileUserLogin?: string ) {
 		enabled: isOwnProfile,
 	} );
 
-	const isPublic =
-		settingsData?.settings[ 'achievements-visibility' ] === 'public' ||
-		achievementsVisibility === 'public';
+	const isPublic = isOwnProfile
+		? achievementsVisibility === 'public'
+		: settingsData?.settings[ 'achievements-visibility' ] === 'public';
 
 	return {
 		isOwnProfile,
