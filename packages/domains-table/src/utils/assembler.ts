@@ -1,5 +1,6 @@
 import { DomainData } from '@automattic/data-stores';
-import { camelCase, mapKeys } from 'lodash';
+import { mapKeys } from '@automattic/js-utils';
+import { camelCase } from 'lodash';
 import { getDomainType } from './get-domain-type';
 import { getGdprConsentStatus } from './get-gdpr-consent-status';
 import { getTransferStatus } from './get-transfer-status';
