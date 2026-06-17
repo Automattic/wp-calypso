@@ -76,7 +76,7 @@ const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 			<Banner
 				callToAction={ translate( 'Upgrade to Business' ) }
 				description={ translate(
-					'Get exclusive themes from top theme builders with our partner theme collection.'
+					'Get all premium themes plus exclusive paid themes from top theme builders.'
 				) }
 				event="calypso_themeshowcase_business_upgrade_nudge"
 				href={ `/checkout/${ siteSlug }/business` }
@@ -85,7 +85,7 @@ const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 				secondaryCallToAction={ translate( 'View plans' ) }
 				secondaryEvent="calypso_themeshowcase_business_upgrade_nudge_view_plans"
 				secondaryHref={ viewPlansHref }
-				title={ translate( 'Unlock partner themes' ) }
+				title={ translate( 'Unlock partner themes and more' ) }
 			/>
 		);
 	}
