@@ -109,7 +109,7 @@ const FreePlanModal = ( { closeDialog, siteId }: FreePlanModalProps ) => {
 				{
 					label: translate( 'Save' ),
 					action: 'submit',
-					disabled: ! isFormValid(),
+					disabled: ! isFormValid() || ! targetSiteId,
 					isPrimary: true,
 				},
 			] }
