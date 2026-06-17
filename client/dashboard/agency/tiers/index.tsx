@@ -47,7 +47,7 @@ export default function AgencyTiers() {
 				tierStatus={ tierStatus }
 				recordTracksEvent={ recordTracksEvent }
 			/>
-			<Divider style={ { color: 'var(--dashboard-header__divider-color)' } } />
+			<Divider style={ { color: 'var(--color-gray-100)' } } />
 			{ /*
 			 * TODO: Two benefit actions are not yet wired up for the dashboard:
 			 *  - "Download your badges" is dropped because `renderDownloadBadges` is not

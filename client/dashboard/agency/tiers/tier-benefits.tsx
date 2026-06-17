@@ -208,7 +208,7 @@ export default function TierBenefits( {
 						</CardHeader>
 						{ tier.benefits.map( ( benefit, index ) => (
 							<Fragment key={ benefit.title }>
-								{ index > 0 && <CardDivider /> }
+								{ index > 0 && <CardDivider style={ { borderColor: 'var(--color-gray-100)' } } /> }
 								<CardBody>
 									<BenefitRow
 										benefit={ benefit }
