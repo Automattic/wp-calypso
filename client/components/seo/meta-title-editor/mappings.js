@@ -29,8 +29,8 @@
 //   ]
 //
 
-import { mapValues } from '@automattic/js-utils';
-import { camelCase, get, map, mapKeys, reduce, snakeCase } from 'lodash';
+import { mapKeys, mapValues } from '@automattic/js-utils';
+import { camelCase, get, map, reduce, snakeCase } from 'lodash';
 
 // Right-to-left composition of unary functions. Kept local so this pure mapping
 // module doesn't take on a dependency it otherwise has no need for.

@@ -1,5 +1,7 @@
 export { default as camelToSnakeCase } from './camel-to-snake-case';
+export { default as groupBy } from './group-by';
 export { default as keyBy } from './key-by';
+export { default as mapKeys } from './map-keys';
 export { default as mapRecordKeysRecursively } from './map-record-keys-recursively';
 export { default as mapValues } from './map-values';
 export { default as omit } from './omit';

@@ -1,10 +1,11 @@
 import { PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { groupBy } from '@automattic/js-utils';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { groupBy, isEmpty, map } from 'lodash';
+import { isEmpty, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
