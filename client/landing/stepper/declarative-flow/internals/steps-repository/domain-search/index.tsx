@@ -49,6 +49,7 @@ import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboardi
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { OnboardingProgress } from '../components/onboarding-progress';
 import { useShowOnboardingProgress } from '../components/onboarding-progress/use-show-onboarding-progress';
+import { useOnboardingHelpExperiment } from '../components/use-onboarding-help-experiment';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import type { Step as StepType } from '../../types';
 import type { FreeDomainSuggestion } from '@automattic/api-core';
@@ -111,6 +112,7 @@ const DomainSearchStep: StepType< {
 		}
 		setShowHelpCenter( ! isHelpCenterShown );
 	};
+	const { showHelp: showHelpCenter } = useOnboardingHelpExperiment( flow );
 
 	const isCiab = dashboard === 'ciab';
 	const isWooHostingSolutions = queryParams.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
@@ -468,7 +470,6 @@ const DomainSearchStep: StepType< {
 			// On desktop empty state, the link stays hidden and the
 			// in-body card carries the same CTA.
 			const showUseMyDomain = ( !! query || isMobileViewport ) && config.allowsUsingOwnDomain;
-			const showHelpCenter = isOnboardingFlow( flow );
 
 			if ( ! stepCounter && ! showUseMyDomain && ! showHelpCenter ) {
 				return;
