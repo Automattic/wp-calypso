@@ -46,6 +46,11 @@ Invoke-Checked { corepack enable }
 
 Set-Location "$PSScriptRoot\..\..\desktop"
 
+$env:CONFIG_ENV = 'release'
+$env:SKIP_TSC = 'true'
+$env:PLAYWRIGHT_SKIP_DOWNLOAD = 'true'
+# Note: WINDOWS_STORE is intentionally NOT set, so the in-app updater stays on.
+
 Write-Output "--- :yarn: Installing desktop dependencies"
 Invoke-Checked { yarn install --immutable --inline-builds }
 
@@ -70,10 +75,6 @@ Import-PfxCertificate -FilePath $certPath -CertStoreLocation Cert:\LocalMachine\
     -Password (ConvertTo-SecureString -String $env:WINDOWS_CODE_SIGNING_CERT_PASSWORD -AsPlainText -Force) | Out-Null
 
 Write-Output "--- :windows: Building signed NSIS installer"
-$env:CONFIG_ENV = 'release'
-$env:SKIP_TSC = 'true'
-$env:PLAYWRIGHT_SKIP_DOWNLOAD = 'true'
-# Note: WINDOWS_STORE is intentionally NOT set, so the in-app updater stays on.
 Invoke-Checked { yarn run build:main }
 Invoke-Checked { yarn electron-builder --config electron-builder.json build --publish never }
 
