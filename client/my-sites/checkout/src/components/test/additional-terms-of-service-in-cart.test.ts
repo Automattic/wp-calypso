@@ -11,7 +11,11 @@ describe( 'formatDate', () => {
 	} );
 
 	afterAll( () => {
-		process.env.TZ = originalTZ;
+		if ( originalTZ === undefined ) {
+			delete process.env.TZ;
+		} else {
+			process.env.TZ = originalTZ;
+		}
 	} );
 
 	it( 'formats a bare date string to the correct calendar date', () => {
