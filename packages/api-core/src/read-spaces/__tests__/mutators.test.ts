@@ -28,8 +28,7 @@ const makeSubscription = (
 const detailResponse = ( overrides: Record< string, unknown > = {} ) => ( {
 	id: 42,
 	title: 'Work',
-	layout_color: 'celadon',
-	layout_icon: 'star',
+	layout: { color: 'celadon', icon: 'star' },
 	follows: [],
 	tags: [ 'business' ],
 	...overrides,
@@ -42,7 +41,7 @@ describe( 'read spaces mutators', () => {
 		it( 'posts only { title } when no optional fields are given', async () => {
 			let body: unknown;
 			nock( BASE )
-				.post( '/wpcom/v2/reader/spaces/new', ( sent ) => {
+				.post( '/wpcom/v2/reader/spaces', ( sent ) => {
 					body = sent;
 					return true;
 				} )
@@ -57,7 +56,7 @@ describe( 'read spaces mutators', () => {
 		it( 'sends optional feeds, tags, and layout when provided', async () => {
 			let body: unknown;
 			nock( BASE )
-				.post( '/wpcom/v2/reader/spaces/new', ( sent ) => {
+				.post( '/wpcom/v2/reader/spaces', ( sent ) => {
 					body = sent;
 					return true;
 				} )
@@ -67,22 +66,20 @@ describe( 'read spaces mutators', () => {
 				name: 'Design',
 				feeds: [ 'https://en.blog/feed/', 9982 ],
 				tags: [ 'design' ],
-				layoutColor: 'purple',
-				layoutIcon: 'pages',
+				layout: { color: 'purple', icon: 'pages' },
 			} );
 
 			expect( body ).toEqual( {
 				title: 'Design',
 				feeds: [ 'https://en.blog/feed/', 9982 ],
 				tags: [ 'design' ],
-				layout_color: 'purple',
-				layout_icon: 'pages',
+				layout: { color: 'purple', icon: 'pages' },
 			} );
 		} );
 
 		it( 'adapts the 201 detail response to the client shape', async () => {
 			nock( BASE )
-				.post( '/wpcom/v2/reader/spaces/new' )
+				.post( '/wpcom/v2/reader/spaces' )
 				.reply(
 					201,
 					detailResponse( {
@@ -113,7 +110,7 @@ describe( 'read spaces mutators', () => {
 
 		it( 'rejects when the endpoint returns an error', async () => {
 			nock( BASE )
-				.post( '/wpcom/v2/reader/spaces/new' )
+				.post( '/wpcom/v2/reader/spaces' )
 				.reply( 409, {
 					code: 'reader_spaces_duplicate_slug',
 					message: 'You already have a space with this title.',
@@ -127,10 +124,10 @@ describe( 'read spaces mutators', () => {
 	} );
 
 	describe( 'updateReadSpace', () => {
-		it( 'posts only the changed fields (mapping name -> title, layout) and adapts the result', async () => {
+		it( 'PUTs only the changed fields (mapping name -> title) and adapts the result', async () => {
 			let body: unknown;
 			nock( BASE )
-				.post( '/wpcom/v2/reader/spaces/3/update', ( sent ) => {
+				.put( '/wpcom/v2/reader/spaces/3', ( sent ) => {
 					body = sent;
 					return true;
 				} )
@@ -139,17 +136,22 @@ describe( 'read spaces mutators', () => {
 			const space = await updateReadSpace( '3', {
 				name: 'Renamed',
 				tags: [ 'a', 'b' ],
-				layoutColor: 'green',
+				layout: { color: 'green' },
 			} );
 
-			expect( body ).toEqual( { title: 'Renamed', tags: [ 'a', 'b' ], layout_color: 'green' } );
+			// layout is a partial merge — only the changed field is sent.
+			expect( body ).toEqual( {
+				title: 'Renamed',
+				tags: [ 'a', 'b' ],
+				layout: { color: 'green' },
+			} );
 			expect( space ).toMatchObject( { id: '3', name: 'Renamed', tags: [ 'a', 'b' ] } );
 		} );
 
 		it( 'can clear tags by sending an empty array', async () => {
 			let body: unknown;
 			nock( BASE )
-				.post( '/wpcom/v2/reader/spaces/3/update', ( sent ) => {
+				.put( '/wpcom/v2/reader/spaces/3', ( sent ) => {
 					body = sent;
 					return true;
 				} )
@@ -162,9 +164,9 @@ describe( 'read spaces mutators', () => {
 	} );
 
 	describe( 'deleteReadSpace', () => {
-		it( 'posts to the delete endpoint and resolves the result', async () => {
+		it( 'DELETEs the space and resolves the result', async () => {
 			const scope = nock( BASE )
-				.post( '/wpcom/v2/reader/spaces/42/delete' )
+				.delete( '/wpcom/v2/reader/spaces/42' )
 				.reply( 200, { deleted: true, id: 42 } );
 
 			await expect( deleteReadSpace( '42' ) ).resolves.toEqual( { deleted: true, id: 42 } );
@@ -173,7 +175,7 @@ describe( 'read spaces mutators', () => {
 
 		it( 'rejects on a not-found error', async () => {
 			nock( BASE )
-				.post( '/wpcom/v2/reader/spaces/999/delete' )
+				.delete( '/wpcom/v2/reader/spaces/999' )
 				.reply( 404, { code: 'reader_spaces_not_found', message: '…', data: { status: 404 } } );
 
 			await expect( deleteReadSpace( '999' ) ).rejects.toMatchObject( {
@@ -183,10 +185,10 @@ describe( 'read spaces mutators', () => {
 	} );
 
 	describe( 'addReadSpaceSource', () => {
-		it( 'posts the feed id to feeds/new and adapts the returned detail', async () => {
+		it( 'posts the feed id to feeds and adapts the returned detail', async () => {
 			let body: unknown;
 			nock( BASE )
-				.post( '/wpcom/v2/reader/spaces/3/feeds/new', ( sent ) => {
+				.post( '/wpcom/v2/reader/spaces/3/feeds', ( sent ) => {
 					body = sent;
 					return true;
 				} )
@@ -226,7 +228,7 @@ describe( 'read spaces mutators', () => {
 		it( 'falls back to the feed URL when the subscription has no feed id', async () => {
 			let body: unknown;
 			nock( BASE )
-				.post( '/wpcom/v2/reader/spaces/3/feeds/new', ( sent ) => {
+				.post( '/wpcom/v2/reader/spaces/3/feeds', ( sent ) => {
 					body = sent;
 					return true;
 				} )
@@ -242,9 +244,9 @@ describe( 'read spaces mutators', () => {
 	} );
 
 	describe( 'deleteReadSpaceSource', () => {
-		it( 'posts to feeds/<feed_id>/delete and adapts the returned detail', async () => {
+		it( 'DELETEs feeds/<feed_id> and adapts the returned detail', async () => {
 			const scope = nock( BASE )
-				.post( '/wpcom/v2/reader/spaces/3/feeds/456/delete' )
+				.delete( '/wpcom/v2/reader/spaces/3/feeds/456' )
 				.reply( 200, detailResponse( { id: 3, follows: [] } ) );
 
 			const space = await deleteReadSpaceSource( {

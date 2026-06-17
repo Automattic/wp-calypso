@@ -7,8 +7,7 @@ const BASE = 'https://public-api.wordpress.com';
 const wireSummary = ( overrides: Partial< ReadSpaceApiItem > = {} ): ReadSpaceApiItem => ( {
 	id: 3,
 	title: 'Work',
-	layout_color: 'blue',
-	layout_icon: 'inbox',
+	layout: { color: 'blue', icon: 'inbox' },
 	...overrides,
 } );
 
@@ -28,7 +27,7 @@ describe( 'read spaces fetchers', () => {
 			nock( BASE )
 				.get( '/wpcom/v2/reader/spaces' )
 				.reply( 200, [
-					wireSummary( { id: 4, title: 'Gaming', layout_color: 'purple', layout_icon: 'box' } ),
+					wireSummary( { id: 4, title: 'Gaming', layout: { color: 'purple', icon: 'box' } } ),
 				] );
 
 			const spaces = await fetchReadSpaces();
@@ -52,8 +51,7 @@ describe( 'read spaces fetchers', () => {
 				.reply( 200, {
 					id: 3,
 					title: 'Work',
-					layout_color: 'blue',
-					layout_icon: 'inbox',
+					layout: { color: 'blue', icon: 'inbox' },
 					tags: [ 'photography' ],
 					follows: [
 						{
@@ -89,7 +87,7 @@ describe( 'read spaces fetchers', () => {
 		it( 'encodes the space id into the path', async () => {
 			const scope = nock( BASE )
 				.get( '/wpcom/v2/reader/spaces/a%2Fb' )
-				.reply( 200, { id: 7, title: 'X', layout_color: 'red', layout_icon: 'box' } );
+				.reply( 200, { id: 7, title: 'X', layout: { color: 'red', icon: 'box' } } );
 
 			await fetchReadSpace( 'a/b' );
 

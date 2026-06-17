@@ -1,4 +1,4 @@
-import type { ReadSpace, ReadSpaceDetails, SpaceColor, SpaceIcon, SpaceSource } from './types';
+import type { ReadSpace, ReadSpaceDetails, SpaceLayout, SpaceSource } from './types';
 
 /**
  * A followed feed as returned in a detail response's `follows` array. The client
@@ -14,30 +14,26 @@ export interface ReadSpaceFollowApiItem {
 
 /**
  * Wire shape for a space. The list (summary) endpoint returns only `id`,
- * `title`, `layout_color`, `layout_icon`; every other endpoint returns the same
- * plus `follows` and `tags` (the detail shape). Differs from the client model:
- * numeric id, `title` not `name`, flat `layout_color`/`layout_icon` rather than a
- * nested `layout`, and `follows` rather than `sources`.
+ * `title`, `layout`; every other endpoint returns the same plus `follows` and
+ * `tags` (the detail shape). Differs from the client model: numeric id, `title`
+ * not `name`, and `follows` rather than `sources`. `layout` is now an object
+ * (`{ color, icon }`), matching the client `SpaceLayout`.
  */
 export interface ReadSpaceApiItem {
 	id: number;
 	title: string;
-	layout_color: SpaceColor;
-	layout_icon: SpaceIcon;
+	layout: SpaceLayout;
 	// Detail-only — absent on the list (summary) response.
 	follows?: ReadSpaceFollowApiItem[];
 	tags?: string[];
 }
 
-/**
- * Map a wpcom/v2 summary item onto the client `ReadSpace` (list) shape, nesting
- * the flat `layout_color`/`layout_icon` fields under `layout`.
- */
+/** Map a wpcom/v2 summary item onto the client `ReadSpace` (list) shape. */
 export function adaptReadSpace( item: ReadSpaceApiItem ): ReadSpace {
 	return {
 		id: String( item.id ),
 		name: item.title,
-		layout: { color: item.layout_color, icon: item.layout_icon },
+		layout: { color: item.layout.color, icon: item.layout.icon },
 	};
 }
 

@@ -94,14 +94,15 @@ describe( 'ReaderSidebarSpaces', () => {
 
 	it( 'redirects to the new space sources action after creating a space', async () => {
 		const user = userEvent.setup();
-		nock( 'https://public-api.wordpress.com' ).post( '/wpcom/v2/reader/spaces/new' ).reply( 201, {
-			id: 7,
-			title: 'Reading',
-			follows: [],
-			tags: [],
-			layout_color: 'blue',
-			layout_icon: 'inbox',
-		} );
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/spaces' )
+			.reply( 201, {
+				id: 7,
+				title: 'Reading',
+				follows: [],
+				tags: [],
+				layout: { color: 'blue', icon: 'inbox' },
+			} );
 		render( <ReaderSidebarSpaces path={ OPEN_PATH } /> );
 
 		await user.click( screen.getByRole( 'button', { name: 'Add a space' } ) );

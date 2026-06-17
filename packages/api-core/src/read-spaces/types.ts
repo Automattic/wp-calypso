@@ -57,20 +57,19 @@ export interface CreateReadSpaceParams {
 	// if unresolvable.
 	tags?: string[];
 	feeds?: Array< number | string >;
-	layoutColor?: SpaceColor;
-	layoutIcon?: SpaceIcon;
+	layout?: Partial< SpaceLayout >;
 }
 
 /**
- * Params for `POST /reader/spaces/{id}/update`. Send only the fields you are
- * changing; at least one is required. `tags` is a full replace of the tag set
- * (pass `[]` to clear), not an add/remove — there are no per-tag endpoints.
+ * Params for `PUT /reader/spaces/{id}`. Send only the fields you are changing; at
+ * least one is required. `tags` is a full replace of the tag set (pass `[]` to
+ * clear), not an add/remove — there are no per-tag endpoints. `layout` is a
+ * partial merge — send `{ color }` to change only the colour; the icon is kept.
  */
 export interface UpdateReadSpaceParams {
 	name?: string;
 	tags?: string[];
-	layoutColor?: SpaceColor;
-	layoutIcon?: SpaceIcon;
+	layout?: Partial< SpaceLayout >;
 }
 
 /**

@@ -3,8 +3,7 @@ import { adaptReadSpace, adaptReadSpaceDetails, type ReadSpaceApiItem } from '..
 const wireSpace = ( overrides: Partial< ReadSpaceApiItem > = {} ): ReadSpaceApiItem => ( {
 	id: 3,
 	title: 'Work',
-	layout_color: 'blue',
-	layout_icon: 'inbox',
+	layout: { color: 'blue', icon: 'inbox' },
 	...overrides,
 } );
 
@@ -30,9 +29,9 @@ describe( 'read spaces adapters', () => {
 			expect( adaptReadSpace( wireSpace( { id: 42 } ) ).id ).toBe( '42' );
 		} );
 
-		it( 'nests the flat layout_color/layout_icon under layout', () => {
+		it( 'maps the layout object through', () => {
 			const { layout } = adaptReadSpace(
-				wireSpace( { layout_color: 'celadon', layout_icon: 'star' } )
+				wireSpace( { layout: { color: 'celadon', icon: 'star' } } )
 			);
 
 			expect( layout ).toEqual( { color: 'celadon', icon: 'star' } );

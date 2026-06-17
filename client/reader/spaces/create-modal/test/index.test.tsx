@@ -20,14 +20,13 @@ const WORK: ReadSpace = {
 // `title` so the adapted space carries it through to the cache and callbacks.
 function mockCreateEndpoint( name: string ) {
 	return nock( 'https://public-api.wordpress.com' )
-		.post( '/wpcom/v2/reader/spaces/new' )
+		.post( '/wpcom/v2/reader/spaces' )
 		.reply( 201, {
 			id: 7,
 			title: name,
 			follows: [],
 			tags: [],
-			layout_color: 'blue',
-			layout_icon: 'inbox',
+			layout: { color: 'blue', icon: 'inbox' },
 		} );
 }
 

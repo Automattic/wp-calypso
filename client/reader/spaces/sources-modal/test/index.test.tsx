@@ -115,8 +115,7 @@ const STRATECHERY_FOLLOW = {
 const detailWith = ( follows: object[] ) => ( {
 	id: WORK.id,
 	title: 'Work',
-	layout_color: 'blue',
-	layout_icon: 'inbox',
+	layout: { color: 'blue', icon: 'inbox' },
 	follows,
 	tags: [],
 } );
@@ -247,7 +246,7 @@ describe( 'SourcesModal', () => {
 	it( 'writes the space detail cache from the endpoint response on add and remove', async () => {
 		const { queryClient, user } = setup();
 		nock( BASE )
-			.post( `${ SPACE_FEEDS_PATH }/new` )
+			.post( `${ SPACE_FEEDS_PATH }` )
 			.reply( 200, detailWith( [ STRATECHERY_FOLLOW ] ) );
 
 		await user.click( screen.getByRole( 'button', { name: 'Add Stratechery' } ) );
@@ -258,7 +257,7 @@ describe( 'SourcesModal', () => {
 			).toEqual( [ STRATECHERY_SOURCE ] )
 		);
 
-		nock( BASE ).post( `${ SPACE_FEEDS_PATH }/456/delete` ).reply( 200, detailWith( [] ) );
+		nock( BASE ).delete( `${ SPACE_FEEDS_PATH }/456` ).reply( 200, detailWith( [] ) );
 
 		await user.click( screen.getByRole( 'button', { name: 'Remove Stratechery' } ) );
 
@@ -303,7 +302,7 @@ describe( 'SourcesModal', () => {
 	it( 'shows a success notice when a source is added', async () => {
 		const { user } = setup();
 		nock( BASE )
-			.post( `${ SPACE_FEEDS_PATH }/new` )
+			.post( `${ SPACE_FEEDS_PATH }` )
 			.reply( 200, detailWith( [ STRATECHERY_FOLLOW ] ) );
 
 		await user.click( screen.getByRole( 'button', { name: 'Add Stratechery' } ) );
@@ -319,7 +318,7 @@ describe( 'SourcesModal', () => {
 		const { user } = setup( {
 			space: { ...WORK, sources: [ STRATECHERY_SOURCE ] },
 		} );
-		nock( BASE ).post( `${ SPACE_FEEDS_PATH }/456/delete` ).reply( 200, detailWith( [] ) );
+		nock( BASE ).delete( `${ SPACE_FEEDS_PATH }/456` ).reply( 200, detailWith( [] ) );
 
 		await user.click( screen.getByRole( 'button', { name: 'Remove Stratechery' } ) );
 

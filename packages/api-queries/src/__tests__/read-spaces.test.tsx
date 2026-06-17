@@ -61,8 +61,7 @@ const makeSubscription = (
 const detailResponse = ( overrides: Record< string, unknown > = {} ) => ( {
 	id: 3,
 	title: 'Work',
-	layout_color: 'blue',
-	layout_icon: 'inbox',
+	layout: { color: 'blue', icon: 'inbox' },
 	follows: [],
 	tags: [],
 	...overrides,
@@ -75,7 +74,7 @@ describe( 'read spaces mutations', () => {
 		it( 'appends the summary to the list and seeds the detail cache', async () => {
 			const client = newClient();
 			nock( BASE )
-				.post( '/wpcom/v2/reader/spaces/new' )
+				.post( '/wpcom/v2/reader/spaces' )
 				.reply( 201, detailResponse( { id: 99, title: 'New' } ) );
 
 			await runMutation( client, createReadSpaceMutation( client ), { name: 'New' } );
@@ -102,10 +101,15 @@ describe( 'read spaces mutations', () => {
 				{ id: '3', name: 'Old', layout: { color: 'blue', icon: 'inbox' } },
 			] );
 			nock( BASE )
-				.post( '/wpcom/v2/reader/spaces/3/update' )
+				.put( '/wpcom/v2/reader/spaces/3' )
 				.reply(
 					200,
-					detailResponse( { id: 3, title: 'New name', layout_color: 'green', tags: [ 'x' ] } )
+					detailResponse( {
+						id: 3,
+						title: 'New name',
+						layout: { color: 'green', icon: 'inbox' },
+						tags: [ 'x' ],
+					} )
 				);
 
 			await runMutation( client, updateReadSpaceMutation( client ), {
@@ -131,9 +135,7 @@ describe( 'read spaces mutations', () => {
 				{ id: '3', name: 'Work', layout: { color: 'blue', icon: 'inbox' } },
 			] );
 			client.setQueryData( readSpaceQuery( '3' ).queryKey, detailResponse() );
-			nock( BASE )
-				.post( '/wpcom/v2/reader/spaces/3/delete' )
-				.reply( 200, { deleted: true, id: 3 } );
+			nock( BASE ).delete( '/wpcom/v2/reader/spaces/3' ).reply( 200, { deleted: true, id: 3 } );
 
 			await runMutation( client, deleteReadSpaceMutation( client ), '3' );
 
@@ -150,7 +152,7 @@ describe( 'read spaces mutations', () => {
 		it( 'writes the returned detail to the cache after adding a feed', async () => {
 			const client = newClient();
 			nock( BASE )
-				.post( '/wpcom/v2/reader/spaces/3/feeds/new' )
+				.post( '/wpcom/v2/reader/spaces/3/feeds' )
 				.reply(
 					200,
 					detailResponse( {
@@ -187,7 +189,7 @@ describe( 'read spaces mutations', () => {
 		it( 'writes the returned detail to the cache after removing a feed', async () => {
 			const client = newClient();
 			nock( BASE )
-				.post( '/wpcom/v2/reader/spaces/3/feeds/456/delete' )
+				.delete( '/wpcom/v2/reader/spaces/3/feeds/456' )
 				.reply( 200, detailResponse( { follows: [] } ) );
 
 			await runMutation( client, deleteReadSpaceSourceMutation( client ), {
@@ -211,7 +213,7 @@ describe( 'read spaces mutations', () => {
 			};
 			client.setQueryData( readSpaceQuery( '3' ).queryKey, seeded );
 			nock( BASE )
-				.post( '/wpcom/v2/reader/spaces/3/feeds/new' )
+				.post( '/wpcom/v2/reader/spaces/3/feeds' )
 				.reply( 409, {
 					code: 'reader_spaces_duplicate_feed',
 					message: '…',
