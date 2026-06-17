@@ -1,4 +1,5 @@
 import { helpFilled } from '@wordpress/icons';
+import { cloneElement } from 'react';
 
 interface HelpCenterIconProps {
 	hasUnread: boolean;
@@ -7,9 +8,9 @@ export const HelpCenterIcon: React.FC< HelpCenterIconProps > = ( { hasUnread } )
 	if ( hasUnread ) {
 		return (
 			<svg
-				width="25"
+				width="24"
 				height="24"
-				viewBox="0 0 25 24"
+				viewBox="-1 -1 26 26"
 				fill="none"
 				xmlns="http://www.w3.org/2000/svg"
 			>
@@ -21,6 +22,6 @@ export const HelpCenterIcon: React.FC< HelpCenterIconProps > = ( { hasUnread } )
 			</svg>
 		);
 	}
-	return helpFilled;
+	return cloneElement( helpFilled, { viewBox: '1.5 1.5 21 21' } );
 };
 export default HelpCenterIcon;

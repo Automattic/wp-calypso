@@ -1248,15 +1248,8 @@ a.masterbar__quick-language-switcher {
 }
 
 .masterbar__item-help {
-	@media only screen and (min-width: 782px) {
-		padding-left: 8px;
-		padding-right: 9px;
-	}
-
 	svg {
 		fill: var(--color-masterbar-icon);
-		width: 27px;
-		height: 27px;
 
 		@media only screen and (max-width: 781px) {
 			width: 37px;
