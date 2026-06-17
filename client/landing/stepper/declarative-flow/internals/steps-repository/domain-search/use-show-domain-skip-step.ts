@@ -1,16 +1,16 @@
 import { isOnboardingFlow } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
+import { useExperiment } from 'calypso/lib/explat';
 
-// TODO: replace with useExperiment( 'calypso_onboarding_domain_skip_step' ) once the
-// experiment is ready. Forced on for now so the treatment can be verified in dev.
-const FORCE_SHOW_DOMAIN_SKIP_STEP = true;
+export const DOMAIN_SKIP_STEP_EXPERIMENT_NAME = 'calypso_onboarding_domain_skip_step_202606';
 
 /**
  * Whether to show the "Skip this step" button on the domain search step.
  *
- * Gated to mobile viewports, the onboarding flow, and the empty/initial search
- * screen (once the user has searched, results take over the limited vertical
- * space). Eventually gated behind an A/B experiment — see the TODO above.
+ * Eligibility (mobile viewport, onboarding flow) gates the A/B experiment so the
+ * population stays clean. The button then shows for the treatment variation, on a
+ * skippable step, and only on the empty/initial search screen — once the user has
+ * searched, results take over the limited mobile vertical space.
  */
 export function useShowDomainSkipStep( {
 	flow,
@@ -22,12 +22,15 @@ export function useShowDomainSkipStep( {
 	query: string | undefined;
 } ): boolean {
 	const isMobileViewport = useViewportMatch( 'small', '<' );
+	const isEligible = isMobileViewport && isOnboardingFlow( flow );
 
-	return (
-		FORCE_SHOW_DOMAIN_SKIP_STEP &&
-		isMobileViewport &&
-		isOnboardingFlow( flow ) &&
-		isSkippable &&
-		! query
-	);
+	const [ isLoading, assignment ] = useExperiment( DOMAIN_SKIP_STEP_EXPERIMENT_NAME, {
+		isEligible,
+	} );
+
+	if ( isLoading ) {
+		return false;
+	}
+
+	return isEligible && isSkippable && assignment?.variationName === 'treatment' && ! query;
 }
