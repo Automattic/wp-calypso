@@ -9,6 +9,7 @@ export const A4A_DASHBOARD_SECTION_PATHS = [
 	'/oauth/token',
 	'/overview',
 	'/agency/tiers',
+	'/agency/amplify',
 	'/client',
 	'/client/subscriptions',
 ];
