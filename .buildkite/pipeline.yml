@@ -76,7 +76,7 @@ steps:
   # updater stays enabled). Signed with the org cert the CI Toolkit plugin
   # pulls from AWS Secrets Manager (setup_windows_code_signing.ps1) using
   # WINDOWS_CODE_SIGNING_CERT_PASSWORD. This is the PFX→Azure handover bridge
-  # build — see desktop/docs/windows-cert-handover.md.
+  # build.
   - label: ":windows: Build desktop (windows nsis, signed)"
     branches: ainfra-*
     notify:

@@ -10,8 +10,7 @@
 
     This is the PFX-signed "bridge" build of the PFX -> Azure Trusted Signing
     migration (AINFRA-2237): it must stay PFX-signed and ship while the Sectigo
-    cert is still valid (before 2026-07-05) so existing installs accept it. See
-    desktop/docs/windows-cert-handover.md.
+    cert is still valid (before 2026-07-05) so existing installs accept it.
 #>
 
 # PowerShell does not abort on a failed *native* command, only on failed cmdlets.
