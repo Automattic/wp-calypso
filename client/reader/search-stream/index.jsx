@@ -7,7 +7,6 @@ import {
 } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { flatMap } from 'lodash';
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -146,16 +145,18 @@ class SearchStream extends React.Component {
 		const singleColumnResultsClasses = clsx( 'search-stream__single-column-results', {
 			'is-post-results': searchType === SEARCH_TYPES.POSTS && query,
 		} );
-		const suggestionList = flatMap( suggestions, ( suggestion ) => [
-			<Suggestion
-				suggestion={ suggestion.text }
-				source="search"
-				sort={ sortOrder === 'date' ? sortOrder : undefined }
-				railcar={ suggestion.railcar }
-				key={ 'suggestion-' + suggestion.text }
-			/>,
-			', ',
-		] ).slice( 0, -1 );
+		const suggestionList = ( suggestions || [] )
+			.flatMap( ( suggestion ) => [
+				<Suggestion
+					suggestion={ suggestion.text }
+					source="search"
+					sort={ sortOrder === 'date' ? sortOrder : undefined }
+					railcar={ suggestion.railcar }
+					key={ 'suggestion-' + suggestion.text }
+				/>,
+				', ',
+			] )
+			.slice( 0, -1 );
 
 		const fixedAreaHeight = this.fixedAreaRef && this.fixedAreaRef.clientHeight;
 

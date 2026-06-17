@@ -1,6 +1,7 @@
 import {
 	getPostOldestCommentDate,
 	getPostNewestCommentDate,
+	getCommentById,
 	getCommentLike,
 	getPostCommentsTree,
 	getPostCommentsCountAtDate,
@@ -299,6 +300,41 @@ describe( 'selectors', () => {
 			};
 
 			expect( isCommentsApiDisabled( testState, 123 ) ).toBe( false );
+		} );
+	} );
+
+	describe( '#getCommentById()', () => {
+		const commentsState = {
+			comments: {
+				errors: {},
+				items: {
+					'1-10': [ { ID: 1 }, { ID: 2 } ],
+					'1-20': [ { ID: 3 } ],
+					'2-10': [ { ID: 4 } ],
+				},
+			},
+		};
+
+		test( 'finds a comment across the flattened posts of a site', () => {
+			expect( getCommentById( { state: commentsState, commentId: 3, siteId: 1 } ) ).toEqual( {
+				ID: 3,
+			} );
+		} );
+
+		test( 'ignores comments belonging to other sites', () => {
+			expect( getCommentById( { state: commentsState, commentId: 4, siteId: 1 } ) ).toBeUndefined();
+		} );
+
+		test( 'returns a stored error before looking up items', () => {
+			const errorState = {
+				comments: {
+					errors: { '1-99': { error: true } },
+					items: {},
+				},
+			};
+			expect( getCommentById( { state: errorState, commentId: 99, siteId: 1 } ) ).toEqual( {
+				error: true,
+			} );
 		} );
 	} );
 } );

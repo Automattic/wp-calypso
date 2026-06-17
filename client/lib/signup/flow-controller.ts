@@ -8,7 +8,6 @@ import {
 	difference,
 	filter,
 	find,
-	flatMap,
 	forEach,
 	includes,
 	isEmpty,
@@ -342,10 +341,12 @@ export default class SignupFlowController {
 	 * @returns {Array} a list of dependency names
 	 */
 	_getFlowProvidesDependencies() {
-		return flatMap(
-			this._getFlowSteps(),
-			( stepName ) => ( steps && steps[ stepName ] && steps[ stepName ].providesDependencies ) || []
-		).concat( this._flow.providesDependenciesInQuery || [] );
+		return this._getFlowSteps()
+			.flatMap(
+				( stepName ) =>
+					( steps && steps[ stepName ] && steps[ stepName ].providesDependencies ) || []
+			)
+			.concat( this._flow.providesDependenciesInQuery || [] );
 	}
 
 	_process() {
@@ -500,8 +501,7 @@ export default class SignupFlowController {
 	}
 
 	_getStoredDependencies() {
-		const requiredDependencies = flatMap(
-			this._getFlowSteps(),
+		const requiredDependencies = this._getFlowSteps().flatMap(
 			( stepName ) => ( steps && steps[ stepName ] && steps[ stepName ].providesDependencies ) || []
 		);
 

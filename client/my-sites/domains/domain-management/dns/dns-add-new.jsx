@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { includes, find, flatMap } from 'lodash';
+import { includes, find } from 'lodash';
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -312,7 +312,7 @@ class DnsAddNew extends React.Component {
 
 	render() {
 		const { recordToEdit, translate } = this.props;
-		const dnsRecordTypes = flatMap( this.dnsRecords, ( dnsRecord ) => dnsRecord.types );
+		const dnsRecordTypes = this.dnsRecords.flatMap( ( dnsRecord ) => dnsRecord.types );
 		const options = dnsRecordTypes.map( ( type ) => <option key={ type }>{ type }</option> );
 		const isSubmitDisabled =
 			formState.isSubmitButtonDisabled( this.state.fields ) ||

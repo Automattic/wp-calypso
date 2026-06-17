@@ -44,6 +44,11 @@ module.exports = {
 						],
 						message: 'Please use the equivalent from `@automattic/js-utils` instead.',
 					},
+					{
+						// Deep `lodash/<fn>` imports bypass the named-import guard below.
+						group: [ 'lodash/flatMap', 'lodash/flatten' ],
+						message: 'Please use native `array.flatMap()` / `array.flat()` instead.',
+					},
 				],
 				paths: [
 					// Use Redux's `compose` instead of lodash's `flowRight`.
@@ -75,6 +80,11 @@ module.exports = {
 						name: 'lodash',
 						importNames: [ 'compact' ],
 						message: 'Please use `array.filter( Boolean )` instead of lodash `compact`.',
+					},
+					{
+						name: 'lodash',
+						importNames: [ 'flatMap', 'flatten' ],
+						message: 'Please use native `array.flatMap()` / `array.flat()` instead.',
 					},
 				],
 			},
