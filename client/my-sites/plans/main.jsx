@@ -176,7 +176,8 @@ class PlansComponent extends Component {
 		}
 
 		// The Jetpack mobile app wants to display a specific selection of plans
-		const plansIntent = this.props.jetpackAppPlans ? 'plans-jetpack-app' : null;
+		const intentFromQuery = this.props.context?.query?.intent ?? null;
+		const plansIntent = this.props.jetpackAppPlans ? 'plans-jetpack-app' : intentFromQuery;
 
 		// Experiment: de-emphasized current plan card
 		const showSpotlight = deEmphasizedExperiment?.isControl ? ! isUntangled : false;
