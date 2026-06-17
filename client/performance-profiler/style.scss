@@ -14,26 +14,63 @@
 		}
 	}
 
-	.has-no-sidebar {
-		.masterbar-menu {
-			.masterbar {
-				background: var(--studio-gray-100);
-				border-bottom: 1px solid var(--studio-gray-100);
-			}
+	// The results page sits on a dark hero, so the nav needs light contents in
+	// both nav designs.
+
+	// Legacy nav: dark masterbar overriding the package's light-blue one. Compound
+	// `&.has-no-sidebar` (both classes are on the same element) plus the
+	// `.lpc-header-nav-wrapper` ancestor to outrank the package rule.
+	&.has-no-sidebar {
+		.lpc-header-nav-wrapper .masterbar-menu .masterbar:not( :has( .x-nav--2026-redesign ) ) {
+			background: var(--studio-gray-100);
+			border-bottom: 1px solid var(--studio-gray-100);
 		}
 	}
 
-	.x-nav-link__logo svg path {
-		fill: var(--studio-white);
+	.masterbar:not( :has( .x-nav--2026-redesign ) ) {
+		.x-nav-link__logo svg path {
+			fill: var(--studio-white);
+		}
+
+		.x-nav-item,
+		.x-nav-link-chevron::before {
+			color: var(--studio-white);
+		}
+
+		.x-nav-item .cta-btn-nav {
+			background: var(--studio-white) !important;
+			color: var(--studio-black) !important;
+		}
 	}
 
-	.x-nav-item,
-	.x-nav-link-chevron::before {
-		color: var(--studio-white);
+	// 2026 nav: white ink over the dark hero while the bar rests transparent.
+	// Scoped to the resting bar so the ink reverts to the package's dark default
+	// once the bar turns white on scroll/dropdown-open. CTA hover pair inverted to
+	// suit the dark hero.
+	.lpc-header-nav-container:not(
+			:has( .x-dropdown--2026.x-dropdown-content[aria-hidden='false'] )
+		):not( .is-scrolled )
+		.x-nav--2026-redesign
+		.x-nav-item {
+		--x-nav-2026-cta-hover-fill: var(--studio-white);
+		--x-nav-2026-cta-hover-ink: var(--studio-gray-100);
+
+		color: var(--studio-white) !important;
+
+		.x-nav-link-chevron::before {
+			border-color: var(--studio-white);
+		}
 	}
 
-	.x-nav-item .cta-btn-nav {
-		background: var(--studio-white) !important;
-		color: var(--studio-black) !important;
+	// The 2026 bar floats over the page: drop the legacy clearance so the dark hero
+	// sits behind it, and pad the hero by the bar's height so the heading clears it.
+	&:has( .x-nav--2026-redesign ) {
+		.is-logged-in .lpc-header-nav-wrapper {
+			padding-top: 0;
+		}
+
+		.profiler-header {
+			padding-top: calc(40px + var(--nav-2026-height));
+		}
 	}
 }
