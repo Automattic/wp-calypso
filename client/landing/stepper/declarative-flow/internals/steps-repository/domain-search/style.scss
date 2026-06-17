@@ -53,11 +53,8 @@
 	width: 100%;
 	justify-content: center;
 	color: var( --color-text );
-	box-shadow: inset 0 0 0 1px var( --color-border-subtle );
-
-	&:hover:not( :disabled, [aria-disabled="true"] ) {
-		color: var( --color-text );
-		box-shadow: inset 0 0 0 1px var( --color-border );
+	&:not( :focus ) {
+		box-shadow: inset 0 0 0 1px var( --color-border-subtle );
 	}
 
 	svg {
