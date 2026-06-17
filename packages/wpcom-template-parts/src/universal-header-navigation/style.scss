@@ -999,19 +999,19 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		transition: none;
 	}
 
-	&:has( .x-dropdown.x-dropdown--2026[style*='height: 0px'] )::after {
+	&:has( .x-dropdown.x-dropdown--2026.is-dropdown-closing )::after {
 		bottom: 0;
 		height: auto;
 		opacity: 0;
 		transition: opacity $x-dropdown-2026-close-opacity-duration ease-in-out;
 	}
 
-	&.is-scrolled:has( .x-dropdown.x-dropdown--2026[style*='height: 0px'] )::after {
+	&.is-scrolled:has( .x-dropdown.x-dropdown--2026.is-dropdown-closing )::after {
 		opacity: 0.97;
 	}
 
 	&:has( .x-dropdown.x-dropdown--2026.is-dropdown-open ),
-	&:has( .x-dropdown.x-dropdown--2026[style*='height: 0px'] ) {
+	&:has( .x-dropdown.x-dropdown--2026.is-dropdown-closing ) {
 		z-index: 100002;
 		transition: z-index 0s;
 	}
@@ -1277,7 +1277,10 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	visibility: hidden;
 	pointer-events: none;
 	// The z-index drop on close waits for the fade-out.
-	transition: opacity $x-nav-2026-transition, visibility $x-nav-2026-transition, z-index 0s 0.22s;
+	transition:
+		opacity $x-nav-2026-transition,
+		visibility 0s linear $x-nav-2026-scroll-fade-duration,
+		z-index 0s 0.22s;
 }
 
 // Show the backdrop whenever a dropdown content block is active.
@@ -1286,8 +1289,10 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	opacity: 1;
 	visibility: visible;
 	pointer-events: auto;
-	// Raise instantly; only the drop back is delayed.
-	transition-delay: 0s;
+	transition:
+		opacity $x-nav-2026-transition,
+		visibility 0s,
+		z-index 0s;
 }
 
 // Nav bar above the container surface and backdrop while the dropdown is open.
@@ -1335,7 +1340,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 			height var( --x-dropdown-2026-panel-duration ) var( --x-dropdown-2026-easing ),
 			z-index 0s 0.22s;
 
-		&[style*='height: 0px'] {
+		&.is-dropdown-closing {
 			transition:
 				visibility $x-nav-2026-transition,
 				height var( --x-dropdown-2026-close-duration ) var( --x-dropdown-2026-easing ),

@@ -184,12 +184,15 @@ export function useDropdownFlip( {
 		// Clear any in-flight inline height before measuring.
 		releaseRef.current?.();
 
-		const animateHeight = ( from: number, to: number, duration: number ) => {
+		const animateHeight = ( from: number, to: number, duration: number, className?: string ) => {
 			if ( from === to || window.matchMedia( '( prefers-reduced-motion: reduce )' ).matches ) {
 				return;
 			}
 
 			const node = el;
+			if ( className ) {
+				node.classList.add( className );
+			}
 			node.style.overflow = 'hidden';
 			node.style.height = `${ from }px`;
 			void node.offsetHeight;
@@ -206,6 +209,9 @@ export function useDropdownFlip( {
 				window.clearTimeout( fallback );
 				node.style.height = '';
 				node.style.overflow = '';
+				if ( className ) {
+					node.classList.remove( className );
+				}
 				releaseRef.current = null;
 			}
 			function onEnd( e: TransitionEvent ) {
@@ -243,7 +249,7 @@ export function useDropdownFlip( {
 			if ( ! held ) {
 				return;
 			}
-			return animateHeight( held, 0, closeMs() );
+			return animateHeight( held, 0, closeMs(), 'is-dropdown-closing' );
 		}
 
 		// Open -> open.

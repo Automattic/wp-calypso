@@ -212,6 +212,7 @@ export function Nav2026MobileMenu( {
 														urlValue={ item.url }
 														type="menu"
 														typeClassName="x-menu-mobile-dropdown-link x-link"
+														trackingText={ item.label }
 														target={ item.target }
 														tabIndex={ isActive ? mobileMenuTabIndex : -1 }
 													/>

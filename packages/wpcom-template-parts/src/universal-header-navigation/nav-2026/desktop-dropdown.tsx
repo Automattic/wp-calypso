@@ -69,6 +69,7 @@ export function Nav2026DesktopDropdown( {
 												}
 												urlValue={ item.url }
 												type="dropdown"
+												trackingText={ item.label }
 												target={ item.target }
 												tabIndex={ activeDropdown === menu.name ? undefined : -1 }
 											/>
