@@ -175,7 +175,7 @@
 		"themes/block-theme-previews-premium-and-woo": true,
 		"themes/discovery": true,
 		"themes/premium": true,
-		"themes/showcase-modern": false,
+		"themes/showcase-modern": true,
 		"themes/subscription-purchases": false,
 		"themes/universal-header": true,
 		"two-factor/enhanced-security": true,
