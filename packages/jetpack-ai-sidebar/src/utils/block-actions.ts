@@ -26,6 +26,9 @@ const processingEffectTimeouts = new WeakMap< HTMLElement, ReturnType< typeof se
 const processingEffectElements = new Set< HTMLElement >();
 let rememberedSelectedBlockClientId: string | null = null;
 let activeBlockFocusClientId: string | null = null;
+let activeBlockFocusLayout: HTMLElement | null = null;
+const FOCUS_MODE_CLASS = 'is-focus-mode';
+const ROOT_BLOCK_LIST_SELECTOR = '.block-editor-block-list__layout.is-root-container';
 
 export const BLOCK_ACTION_COMPLETE_EVENT = 'jetpack-ai-sidebar-block-action-complete';
 export const SELECTED_BLOCK_CLEAR_EVENT = 'agents-manager-selected-block-cleared';
@@ -145,24 +148,44 @@ export function findBlockElement( clientId: string ): HTMLElement | null {
 	return null;
 }
 
+function findBlockListLayoutInDocument( doc: Document ): HTMLElement | null {
+	try {
+		return doc.querySelector( ROOT_BLOCK_LIST_SELECTOR ) as HTMLElement | null;
+	} catch {}
+	return null;
+}
+
 /**
- * Find the block-list root layout element, iframe-aware.
+ * Find the block-list root layout element, iframe-aware. When a reference block
+ * is available, prefer the root layout that actually contains that block.
+ * @param referenceElement Optional block element used to resolve the owning layout.
  * @returns The root block-list layout element, or null.
  */
-export function findBlockListLayout(): HTMLElement | null {
-	const selector = '.block-editor-block-list__layout.is-root-container';
-	try {
-		const el = document.querySelector( selector ) as HTMLElement | null;
-		if ( el ) {
-			return el;
+export function findBlockListLayout( referenceElement?: HTMLElement | null ): HTMLElement | null {
+	if ( referenceElement ) {
+		const closestLayout = referenceElement.closest( ROOT_BLOCK_LIST_SELECTOR );
+		if ( closestLayout ) {
+			return closestLayout as HTMLElement;
 		}
-		for ( const frameDocument of getAccessibleFrameDocuments() ) {
-			const frameEl = frameDocument.querySelector( selector ) as HTMLElement | null;
-			if ( frameEl ) {
-				return frameEl;
-			}
+
+		const ownerLayout = findBlockListLayoutInDocument( referenceElement.ownerDocument );
+		if ( ownerLayout ) {
+			return ownerLayout;
 		}
-	} catch {}
+	}
+
+	const el = findBlockListLayoutInDocument( document );
+	if ( el ) {
+		return el;
+	}
+
+	for ( const frameDocument of getAccessibleFrameDocuments() ) {
+		const frameEl = findBlockListLayoutInDocument( frameDocument );
+		if ( frameEl ) {
+			return frameEl;
+		}
+	}
+
 	return null;
 }
 
@@ -200,9 +223,12 @@ function getSelectedBlockClientId(): string | null {
  */
 export function clearActiveBlockFocus(): void {
 	const clientId = activeBlockFocusClientId;
+	const layout = activeBlockFocusLayout;
 	activeBlockFocusClientId = null;
+	activeBlockFocusLayout = null;
 
 	if ( ! clientId ) {
+		layout?.classList.remove( FOCUS_MODE_CLASS );
 		return;
 	}
 
@@ -210,6 +236,9 @@ export function clearActiveBlockFocus(): void {
 	if ( getSelectedBlockClientId() === clientId ) {
 		blockEditor.clearSelectedBlock?.();
 	}
+	( layout ?? findBlockListLayout( findBlockElement( clientId ) ) )?.classList.remove(
+		FOCUS_MODE_CLASS
+	);
 }
 
 /**
@@ -227,9 +256,13 @@ export function toggleBlockReferenceFocus( clientId: string ): 'focused' | 'clea
 	clearActiveBlockFocus();
 
 	const blockEditor = getBlockEditorDispatch();
-	blockEditor.selectBlock?.( clientId, null );
+	blockEditor.selectBlock?.( clientId );
+	const blockElement = findBlockElement( clientId );
+	const layout = findBlockListLayout( blockElement );
 	activeBlockFocusClientId = clientId;
-	findBlockElement( clientId )?.scrollIntoView?.( { behavior: 'smooth', block: 'center' } );
+	activeBlockFocusLayout = layout;
+	blockElement?.scrollIntoView?.( { behavior: 'smooth', block: 'center' } );
+	layout?.classList.add( FOCUS_MODE_CLASS );
 
 	return 'focused';
 }

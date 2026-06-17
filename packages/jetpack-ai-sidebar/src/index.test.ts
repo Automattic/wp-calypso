@@ -51,6 +51,24 @@ let mockEditorBlocks: any[] = [];
 const SHOW_COMPONENT_TOOL_ID = 'jetpack_ai__show_component';
 const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
 
+function appendRootBlockListLayout( doc: Document = document ): HTMLElement {
+	const layout = doc.createElement( 'div' );
+	layout.className = 'block-editor-block-list__layout is-root-container';
+	doc.body.appendChild( layout );
+	return layout;
+}
+
+function appendBlockInRootLayout(
+	clientId: string,
+	doc: Document = document
+): { layout: HTMLElement; block: HTMLElement } {
+	const layout = appendRootBlockListLayout( doc );
+	const block = doc.createElement( 'div' );
+	block.setAttribute( 'data-block', clientId );
+	layout.appendChild( block );
+	return { layout, block };
+}
+
 jest.mock( '@wordpress/block-editor', () => ( {
 	store: 'core/block-editor',
 } ) );
@@ -431,9 +449,8 @@ describe( 'PostFeedback', () => {
 				attributes: { content: 'The paragraph to focus.' },
 			},
 		];
-		const blockElement = document.createElement( 'div' );
-		blockElement.setAttribute( 'data-block', 'block-1' );
-		document.body.appendChild( blockElement );
+		const unrelatedLayout = appendRootBlockListLayout();
+		const { layout: layoutElement, block: blockElement } = appendBlockInRootLayout( 'block-1' );
 
 		const { unmount } = render(
 			React.createElement( PostFeedback, {
@@ -458,15 +475,18 @@ describe( 'PostFeedback', () => {
 		expect( blockRef ).toBeTruthy();
 		( blockRef as HTMLButtonElement ).click();
 
-		expect( mockSelectBlock ).toHaveBeenCalledWith( 'block-1', null );
+		expect( mockSelectBlock ).toHaveBeenCalledWith( 'block-1' );
 		expect( blockElement.scrollIntoView ).toHaveBeenCalledWith( {
 			behavior: 'smooth',
 			block: 'center',
 		} );
+		expect( layoutElement.classList.contains( 'is-focus-mode' ) ).toBe( true );
+		expect( unrelatedLayout.classList.contains( 'is-focus-mode' ) ).toBe( false );
 
 		( blockRef as HTMLButtonElement ).click();
 
 		expect( mockClearSelectedBlock ).toHaveBeenCalled();
+		expect( layoutElement.classList.contains( 'is-focus-mode' ) ).toBe( false );
 
 		unmount();
 
@@ -486,6 +506,8 @@ describe( 'PostFeedback', () => {
 				attributes: { content: 'The second paragraph to focus.' },
 			},
 		];
+		const { layout: firstLayout } = appendBlockInRootLayout( 'block-1' );
+		const { layout: secondLayout } = appendBlockInRootLayout( 'block-2' );
 
 		const { container } = render(
 			React.createElement( PostFeedback, {
@@ -514,12 +536,56 @@ describe( 'PostFeedback', () => {
 
 		const blockRefs = container.querySelectorAll( '.jetpack-ai-post-feedback__block-ref' );
 		( blockRefs[ 0 ] as HTMLButtonElement ).click();
+		expect( firstLayout.classList.contains( 'is-focus-mode' ) ).toBe( true );
+		expect( secondLayout.classList.contains( 'is-focus-mode' ) ).toBe( false );
 		mockClearSelectedBlock.mockClear();
 
 		( blockRefs[ 1 ] as HTMLButtonElement ).click();
 
 		expect( mockClearSelectedBlock ).toHaveBeenCalled();
-		expect( mockSelectBlock ).toHaveBeenLastCalledWith( 'block-2', null );
+		expect( mockSelectBlock ).toHaveBeenLastCalledWith( 'block-2' );
+		expect( firstLayout.classList.contains( 'is-focus-mode' ) ).toBe( false );
+		expect( secondLayout.classList.contains( 'is-focus-mode' ) ).toBe( true );
+	} );
+
+	it( 'clears sidebar-owned block focus on unmount', () => {
+		mockEditorBlocks = [
+			{
+				clientId: 'block-1',
+				name: 'core/paragraph',
+				attributes: { content: 'The paragraph to focus.' },
+			},
+		];
+		const { layout: layoutElement } = appendBlockInRootLayout( 'block-1' );
+
+		const { container, unmount } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Focus item',
+						feedback: 'Feedback.',
+						action: 'Action.',
+						block_index: 0,
+						current_text: '',
+						suggested_text: '',
+						requires_manual: true,
+						manual_reason: 'Needs manual edit.',
+					},
+				],
+			} )
+		);
+
+		(
+			container.querySelector( '.jetpack-ai-post-feedback__block-ref' ) as HTMLButtonElement
+		 ).click();
+		expect( layoutElement.classList.contains( 'is-focus-mode' ) ).toBe( true );
+
+		unmount();
+
+		expect( mockClearSelectedBlock ).toHaveBeenCalled();
+		expect( layoutElement.classList.contains( 'is-focus-mode' ) ).toBe( false );
 	} );
 
 	it( 'clears sidebar-owned block focus on non-block-reference sidebar clicks', () => {
@@ -530,6 +596,7 @@ describe( 'PostFeedback', () => {
 				attributes: { content: 'The paragraph to focus.' },
 			},
 		];
+		const layoutElement = appendRootBlockListLayout();
 
 		const { container } = render(
 			React.createElement( PostFeedback, {
@@ -553,6 +620,7 @@ describe( 'PostFeedback', () => {
 		(
 			container.querySelector( '.jetpack-ai-post-feedback__block-ref' ) as HTMLButtonElement
 		 ).click();
+		expect( layoutElement.classList.contains( 'is-focus-mode' ) ).toBe( true );
 		mockClearSelectedBlock.mockClear();
 
 		const dismissButton = container.querySelectorAll(
@@ -564,6 +632,7 @@ describe( 'PostFeedback', () => {
 		} );
 
 		expect( mockClearSelectedBlock ).toHaveBeenCalled();
+		expect( layoutElement.classList.contains( 'is-focus-mode' ) ).toBe( false );
 	} );
 
 	it( 'opens every section by default when sectioned feedback is provided', () => {
@@ -2393,10 +2462,29 @@ describe( 'findBlockListLayout', () => {
 	} );
 
 	it( 'finds the root block-list layout element in the main document', () => {
-		const el = document.createElement( 'div' );
-		el.className = 'block-editor-block-list__layout is-root-container';
-		document.body.appendChild( el );
+		const el = appendRootBlockListLayout();
 		expect( findBlockListLayout() ).toBe( el );
+	} );
+
+	it( 'prefers the root block-list layout containing a reference block', () => {
+		appendRootBlockListLayout();
+		const { layout: root, block } = appendBlockInRootLayout( 'block-1' );
+
+		expect( findBlockListLayout( block ) ).toBe( root );
+	} );
+
+	it( 'finds the root block-list layout in the reference block owner document', () => {
+		appendRootBlockListLayout();
+
+		const iframe = document.createElement( 'iframe' );
+		document.body.appendChild( iframe );
+		const frameDocument = iframe.contentDocument as Document;
+		const root = appendRootBlockListLayout( frameDocument );
+		const block = frameDocument.createElement( 'div' );
+		block.setAttribute( 'data-block', 'block-1' );
+		frameDocument.body.appendChild( block );
+
+		expect( findBlockListLayout( block ) ).toBe( root );
 	} );
 
 	it( 'returns null when the root layout is not in the DOM', () => {
