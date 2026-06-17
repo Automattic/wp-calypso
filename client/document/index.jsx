@@ -112,6 +112,7 @@ class Document extends Component {
 			( params && params.hasOwnProperty( 'lang' )
 				? `var localeFromRoute = ${ jsonStringifyForHtml( params.lang ?? '' ) };\n`
 				: '' );
+
 		const isDashboardOmnibarPage =
 			( isDashboardEnv() || env === 'development' ) &&
 			( sectionName === DOTCOM_DASHBOARD_SECTION_DEFINITION.name ||
