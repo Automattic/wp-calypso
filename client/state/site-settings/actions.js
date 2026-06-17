@@ -80,13 +80,17 @@ function formatSubscriptionOptions( settings, siteId, state ) {
 		'free_tier_description',
 		'hide_free_tier',
 	];
-	const formattedOptions = [];
+	// Send a plain object keyed by name. The server filters subscription_options
+	// by key (`invitation`, `welcome`, ...), so the keys must survive the wire.
+	// A JS array would not: the request crosses a postMessage/JSON boundary
+	// (wpcom-proxy-request), which drops an array's non-index string properties,
+	// leaving the server an integer-keyed list it filters out entirely — which is
+	// why Jetpack/Atomic saves silently no-op. Filtering to allowedKeys (the part
+	// that actually fixed the original Atomic save bug) is preserved.
+	const formattedOptions = {};
 	Object.entries( settings.subscription_options ).forEach( ( [ key, value ] ) => {
 		if ( allowedKeys.includes( key ) ) {
-			const normalizedValue = key === 'hide_free_tier' ? normalizeHideFreeTier( value ) : value;
-			// Create an array-like object with numeric indices
-			formattedOptions.push( normalizedValue );
-			formattedOptions[ key ] = normalizedValue; // Also keep the key-value pairs
+			formattedOptions[ key ] = key === 'hide_free_tier' ? normalizeHideFreeTier( value ) : value;
 		}
 	} );
 
