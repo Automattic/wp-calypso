@@ -2,8 +2,6 @@ import { siteByIdQuery } from '@automattic/api-queries';
 import { TimeSince } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import FormattedDate from 'calypso/components/formatted-date';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
 import { getOldestAchievement } from '../utils';
 import AchievementCard from './achievement-card';
@@ -19,7 +17,6 @@ export default function GenericAchievement( {
 	isOwnProfile: boolean;
 } ) {
 	const translate = useTranslate();
-	const moment = useLocalizedMoment();
 	const hasMultiple = achievements.filter( ( a ) => a.slug === achievement.slug ).length > 1;
 	const oldest = hasMultiple ? getOldestAchievement( achievement.slug, achievements ) : undefined;
 	const unlockDate = oldest?.date_unlocked ?? achievement.date_unlocked;
@@ -92,11 +89,23 @@ export default function GenericAchievement( {
 			return undefined;
 		}
 		const dateHired = achievement.date_hired;
-		if ( ! dateHired || ! moment( dateHired ).isValid() ) {
+		if ( ! dateHired ) {
 			return undefined;
 		}
+		const parsed = new Date( dateHired );
+		if ( isNaN( parsed.getTime() ) ) {
+			return undefined;
+		}
+		// `date_hired` is an absolute hire date (the backend sends it as a
+		// UTC ISO 8601 timestamp), so format it in UTC — the displayed
+		// calendar day must not shift with the viewer's timezone. `medium`
+		// matches the short-month style TimeSince uses for the unlock date.
+		const formatted = new Intl.DateTimeFormat( translate.localeSlug, {
+			dateStyle: 'medium',
+			timeZone: 'UTC',
+		} ).format( parsed );
 		return translate( 'Started: {{date/}}', {
-			components: { date: <FormattedDate date={ dateHired } format="ll" /> },
+			components: { date: <time dateTime={ dateHired }>{ formatted }</time> },
 			comment: '{{date/}} is the date an Automattician was hired.',
 		} );
 	};
