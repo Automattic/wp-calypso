@@ -77,7 +77,12 @@ const UseMyDomain: StepType< {
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
 		[]
 	);
-	const toggleHelpCenter = () => setShowHelpCenter( ! isHelpCenterShown );
+	const toggleHelpCenter = () => {
+		if ( ! isHelpCenterShown ) {
+			recordTracksEvent( 'calypso_onboarding_help_center_click', { flow, step: 'use-my-domain' } );
+		}
+		setShowHelpCenter( ! isHelpCenterShown );
+	};
 
 	const handleGoBack = () => {
 		if ( String( getQueryArg( window.location.search, 'step' ) ?? '' ) === 'transfer-or-connect' ) {
