@@ -96,25 +96,30 @@ export default function AiMcpOverviewContent() {
 							/>
 						</VStack>
 					</CardBody>
-					<CardDivider style={ { borderColor: 'var(--color-neutral-5)' } } />
-					<DashboardSummaryButton
-						density="medium"
-						title={ __( 'Available tools' ) }
-						decoration={ <Icon icon={ tool } size={ 24 } /> }
-						badges={ [ availableToolsBadge ] }
-						href={ A4A_AI_MCP_AVAILABLE_TOOLS_LINK }
-						onClick={ onAvailableToolsClick }
-						disabled={ ! mainEnabled }
-					/>
+					{ mainEnabled && (
+						<>
+							<CardDivider style={ { borderColor: 'var(--color-neutral-5)' } } />
+							<DashboardSummaryButton
+								density="medium"
+								title={ __( 'Available tools' ) }
+								decoration={ <Icon icon={ tool } size={ 24 } /> }
+								badges={ [ availableToolsBadge ] }
+								href={ A4A_AI_MCP_AVAILABLE_TOOLS_LINK }
+								onClick={ onAvailableToolsClick }
+							/>
+						</>
+					) }
 				</Card>
 
-				<DashboardSummaryButton
-					title={ __( 'Connect external AI assistant' ) }
-					description={ __( 'Get instructions for connecting your external AI assistant.' ) }
-					decoration={ <Icon icon={ plugins } size={ 24 } /> }
-					href={ A4A_AI_MCP_CONNECT_LINK }
-					onClick={ onConnectClick }
-				/>
+				{ mainEnabled && (
+					<DashboardSummaryButton
+						title={ __( 'Connect external AI assistant' ) }
+						description={ __( 'Get instructions for connecting your external AI assistant.' ) }
+						decoration={ <Icon icon={ plugins } size={ 24 } /> }
+						href={ A4A_AI_MCP_CONNECT_LINK }
+						onClick={ onConnectClick }
+					/>
+				) }
 			</VStack>
 		</>
 	);

@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { getSubtitleScenario, type SubtitleScenario } from './scenarios';
+import { getPresentFamilies } from './selectors';
 
 export interface SurfaceCopy {
 	title: string;
@@ -259,4 +260,48 @@ export function getLoginCopy( pluginSlugs: readonly string[] = [] ): SurfaceCopy
 		title: __( 'Log in to WordPress.com' ),
 		subtitle: getLoginSubtitles()[ getSubtitleScenario( pluginSlugs ) ],
 	};
+}
+
+/**
+ * Title + subtitle for the authorize page when a secondary user (not the
+ * connection owner) is connecting via the connector flow.
+ *
+ * Admin subtitles vary by which plugin families are present so the copy
+ * reflects what a secondary admin actually gets. Non-admin connections
+ * primarily enable SSO, so the subtitle uses a simple generic message
+ * regardless of plugins.
+ */
+export function getSecondaryAuthCopy(
+	isAdmin: boolean,
+	pluginSlugs: readonly string[] = []
+): SurfaceCopy {
+	if ( ! isAdmin ) {
+		return {
+			title: __( 'Connect your account' ),
+			subtitle: __( 'Connect to manage this site using your WordPress.com account.' ),
+		};
+	}
+
+	const families = getPresentFamilies( pluginSlugs );
+	const hasJetpack = families.includes( 'jetpack' );
+	const hasWoo = families.includes( 'woo' );
+
+	let subtitle: string;
+	if ( hasJetpack && hasWoo ) {
+		subtitle = __(
+			'Connect your account to access activity logs, Jetpack Cloud management, store analytics, and the Woo mobile app for this site.'
+		);
+	} else if ( hasJetpack ) {
+		subtitle = __(
+			'Connect your account to access activity logs, backups, social sharing, and Jetpack Cloud management for this site.'
+		);
+	} else if ( hasWoo ) {
+		subtitle = __(
+			'Connect your account to access store analytics, the Woo mobile app, and manage this site with your WordPress.com account.'
+		);
+	} else {
+		subtitle = __( 'Connect your account to manage this site with your WordPress.com account.' );
+	}
+
+	return { title: __( 'Connect your account' ), subtitle };
 }

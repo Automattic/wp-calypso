@@ -2,7 +2,7 @@ import { createContext, useContext } from 'react';
 import type { ActiveMode, ComposerMode } from './composer-provider';
 import type { QueryClient, UseMutationOptions } from '@tanstack/react-query';
 import type { useTranslate } from 'i18n-calypso';
-import type { ReactNode } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 
 /**
  * Optional media-attachment slot exposed by per-protocol configs. The shared
@@ -106,6 +106,24 @@ export interface ComposerConfig< TError, TParams, TResult > {
 	 */
 	useLimit: ( connectionId: number | null ) => number;
 	/**
+	 * Counter unit. Atmosphere / Mastodon count graphemes (per-protocol
+	 * char caps). Fediverse counts words instead — AP posts are
+	 * blog-post-shaped, so a word threshold maps better onto when the
+	 * "publish on your own site" overflow handoff should appear.
+	 * Defaults to `'graphemes'` so existing configs need no change.
+	 */
+	counter?: 'graphemes' | 'words';
+	/**
+	 * When true, the `useLimit` value is a UX threshold (e.g. "this is
+	 * getting long, consider the blog editor instead") rather than a
+	 * wire-level cap. Submission stays enabled past the limit and the
+	 * footer label stays "Post" rather than switching to the overflow-
+	 * handoff cue — users see the "publish on your own site" section as
+	 * a suggestion, not a block. Defaults to `false` (atmosphere /
+	 * mastodon: hard protocol caps where overflow really fails).
+	 */
+	softLimit?: boolean;
+	/**
 	 * Short display label for the protocol (e.g. "Bluesky", "Mastodon").
 	 * Surfaced in user-visible copy that mentions the social network by
 	 * name. Not localized — brand names don't translate.
@@ -172,8 +190,10 @@ export interface ComposerConfig< TError, TParams, TResult > {
 	 * "Publish on your own site" escape hatch). `shown` fires once per modal
 	 * session when the handoff section first renders (i.e. after the user
 	 * crosses the limit AND the sites query resolves with ≥1 site).
-	 * `editorOpened` fires when the user clicks "Move to editor" — analogous
-	 * to Reader's Quick Post `calypso_reader_quick_post_full_editor_opened`.
+	 * `editorOpened` fires when the draft save succeeds and the editor tab
+	 * navigates (or the popup-blocker fallback success notice renders) —
+	 * analogous to Reader's Quick Post
+	 * `calypso_reader_quick_post_full_editor_opened`.
 	 * Configs that omit this field don't emit overflow-handoff Tracks events.
 	 */
 	overflowHandoff?: {
@@ -183,9 +203,35 @@ export interface ComposerConfig< TError, TParams, TResult > {
 			meta: { siteId: number }
 		) => { event: string; props: Record< string, unknown > };
 	};
+	/**
+	 * Optional icon forwarded to the WP `<Modal>` `icon` prop (typed as
+	 * `React.JSX.Element` — pass a single element, not a fragment or array).
+	 */
+	headerIcon?: ReactElement;
+	/**
+	 * Optional hook returning the handle of the account the user is posting
+	 * from, given the active connection id (or `null` when no mode is
+	 * active). The shared modal appends "@%(handle)s" to the mode-specific
+	 * title via `copy.title` so the destination account is unambiguous —
+	 * the "New post" header otherwise reads like a generic WordPress post.
+	 *
+	 * Called unconditionally inside `<ComposerModal>` (rules of hooks).
+	 * Implementations must accept `null` for the connection id and return
+	 * `null` when the handle isn't resolvable yet (query pending, missing
+	 * connection). Keep it cheap: cached query reads only.
+	 */
+	useAuthorHandle?: ( connectionId: number | null ) => string | null;
 	/** Per-mode title and placeholder copy. */
 	copy: {
-		title: ( mode: ActiveMode, translate: Translate ) => string;
+		/**
+		 * `handle` is the value returned by `useAuthorHandle` (`null` if the
+		 * config doesn't supply that hook or the handle isn't resolvable
+		 * yet, omitted entirely by tests that don't care). Per-protocol
+		 * configs are free to compose it into the title — atmosphere /
+		 * mastodon render "New post · @handle"; fediverse ignores it
+		 * because the destination is a blog, not a social account.
+		 */
+		title: ( mode: ActiveMode, translate: Translate, handle?: string | null ) => string;
 		placeholder: ( mode: ActiveMode, translate: Translate, handle?: string ) => string;
 	};
 	/**
@@ -205,6 +251,76 @@ export interface ComposerConfig< TError, TParams, TResult > {
 	 * `useMastodonComposerMedia` (CM-676).
 	 */
 	useMedia?: ( ctx: { mode: ActiveMode | null; connectionId: number } ) => ComposerMediaSlot;
+	/**
+	 * Optional protocol-specific extras slot — for modal-level controls
+	 * that aren't media (e.g. Fediverse's visibility selector, content-warning
+	 * toggle, sensitive flag — CM-704). Same lifetime contract as `useMedia`:
+	 * called once at provider mount so the underlying form state survives
+	 * modal mount/unmount and the `extendBuildParams` merge runs on submit.
+	 * Distinct from `useMedia` so a protocol that needs *both* (future
+	 * Fediverse media) can wire each independently. Atmosphere and Mastodon
+	 * don't need this today — they leave it undefined.
+	 */
+	useProtocolExtras?: ( ctx: {
+		mode: ActiveMode | null;
+		connectionId: number;
+	} ) => ComposerProtocolExtrasSlot;
+	/**
+	 * Optional hook returning the user's preferred site id for the overflow
+	 * handoff. When provided and non-null, the handoff filters its site list
+	 * to that single entry — `SiteHandoff` renders the "Publish on
+	 * %(siteName)s" button directly instead of the multi-site chooser.
+	 *
+	 * Fediverse uses this: the composer is already scoped to a specific blog
+	 * connection, so the chooser would be redundant. Atmosphere / Mastodon
+	 * don't (no blog scope; the chooser is meaningful).
+	 *
+	 * Called unconditionally inside `ComposerOverflowHandoff` — must be a
+	 * stable reference across renders. Returns `null` when no preference
+	 * applies (mode is null, connection is missing, etc.) and the handoff
+	 * falls back to the full chooser.
+	 */
+	usePreferredHandoffSiteId?: ( mode: ActiveMode | null ) => number | null;
+}
+
+/**
+ * Per-protocol modal-level controls (visibility selectors, toggles, etc.)
+ * that aren't media uploads. The slot is rendered between the textarea
+ * (and any media grid) and the error region. Mirrors the `useMedia`
+ * surface where it makes sense; omits the upload-specific flags.
+ */
+export interface ComposerProtocolExtrasSlot {
+	/**
+	 * @deprecated Use `renderTrigger` instead. Removed after Mastodon migrates.
+	 */
+	renderControls: () => ReactNode;
+	/**
+	 * Render a footer pill (e.g. "Anyone can reply" with a globe icon). Composed
+	 * into the modal's footer alongside the media trigger. Return `null` to
+	 * render nothing — e.g. when the current mode doesn't expose this protocol's
+	 * extras. Protocols typically pick exactly one of `renderControls` or
+	 * `renderTrigger`, not both.
+	 */
+	renderTrigger?: () => ReactNode;
+	/**
+	 * Merge wire-level extras into the protocol's params before the mutation
+	 * runs. The modal calls `config.buildParams(mode, text)` first, then passes
+	 * the result through this hook AND through `useMedia`'s `extendBuildParams`
+	 * (in that order) for the merged payload.
+	 */
+	extendBuildParams: ( params: unknown ) => unknown | Promise< unknown >;
+	/**
+	 * Drop all extras state. Called by the provider when `mode` transitions
+	 * to `null` (modal closed / discarded / published).
+	 */
+	clear?: () => void;
+	/**
+	 * Optional Tracks-prop projection merged into `tracks.published` props at
+	 * submit time. Used by atmosphere to send reply_allow_kind / allow_quotes;
+	 * Mastodon can similarly expose visibility / CW summary length. Return an
+	 * empty object to add nothing.
+	 */
+	getTracksProps?: () => Record< string, unknown >;
 }
 
 /**

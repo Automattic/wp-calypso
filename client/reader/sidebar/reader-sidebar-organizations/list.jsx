@@ -10,8 +10,8 @@ import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import ReaderA8cIcon from 'calypso/reader/components/icons/a8c-icon';
 import ReaderP2Icon from 'calypso/reader/components/icons/p2-icon';
+import { useOrganizationSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import ReaderSidebarHelper from 'calypso/reader/sidebar/helper';
-import getOrganizationSites from 'calypso/state/reader/follows/selectors/get-reader-follows-organization';
 import { AUTOMATTIC_ORG_ID } from 'calypso/state/reader/organizations/constants';
 import { toggleReaderSidebarOrganization } from 'calypso/state/reader-ui/sidebar/actions';
 import { isOrganizationOpen } from 'calypso/state/reader-ui/sidebar/selectors';
@@ -109,14 +109,18 @@ export class ReaderSidebarOrganizationsList extends Component {
 	}
 }
 
+function OrganizationsListWithFollows( props ) {
+	const sites = useOrganizationSiteSubscriptions( props.organization.id );
+	return <ReaderSidebarOrganizationsList { ...props } sites={ sites } />;
+}
+
 export default connect(
 	( state, ownProps ) => {
 		return {
 			isOrganizationOpen: isOrganizationOpen( state, ownProps.organization.id ),
-			sites: getOrganizationSites( state, ownProps.organization.id ), // get p2 network organizations
 		};
 	},
 	{
 		toggleReaderSidebarOrganization,
 	}
-)( localize( ReaderSidebarOrganizationsList ) );
+)( localize( OrganizationsListWithFollows ) );

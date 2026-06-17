@@ -97,6 +97,19 @@ describe( 'UserProfileHeader', () => {
 		expect( displayNameEl ).toBeVisible();
 	} );
 
+	test( 'should decode HTML entities in display name and bio', () => {
+		const userWithEntities: ReaderUser = {
+			...defaultUser,
+			display_name: 'Tom &amp; Jerry',
+			description: 'Coffee &amp; Code',
+		};
+
+		renderWithClient( <UserProfileHeader user={ userWithEntities } view="posts" /> );
+
+		expect( screen.getByText( 'Tom & Jerry' ) ).toBeVisible();
+		expect( screen.getByText( 'Coffee & Code' ) ).toBeVisible();
+	} );
+
 	test( 'should render top sites of the user', async () => {
 		const mockSites: UserSitesResponse[ 'sites' ] = [
 			{

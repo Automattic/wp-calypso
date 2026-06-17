@@ -1,13 +1,13 @@
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { purchaseSettingsRoute } from '../../../app/router/me';
-import { CancelIntent } from '../../../utils/purchase';
+import { DisplayVariant } from '../../../utils/purchase';
 import { getButtonLabels } from './get-confirmation-copy';
 import type { Purchase } from '@automattic/api-core';
 
 interface KeepSubscriptionButtonProps {
 	purchase: Purchase;
-	intent: CancelIntent;
+	intent: DisplayVariant;
 	onKeepSubscriptionClick: () => void;
 }
 

@@ -1,3 +1,8 @@
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/elevation";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
 @import '@wordpress/base-styles/breakpoints';
 @import '@automattic/components/src/styles/typography';
 @import '@automattic/typography/styles/fonts';
@@ -459,6 +464,12 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 	padding: 0;
 	margin: 1rem 0 2rem;
 	text-align: center;
+
+	&.is-disabled {
+		color: var( --studio-gray-20, #ccc );
+		pointer-events: none;
+		cursor: default;
+	}
 }
 
 // "Already have a WordPress.com account? Log in" link rendered between the

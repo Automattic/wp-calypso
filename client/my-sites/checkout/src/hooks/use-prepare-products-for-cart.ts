@@ -1,4 +1,3 @@
-import { getPlanByPathSlug } from '@automattic/calypso-products';
 import { createRequestCartProduct } from '@automattic/shopping-cart';
 import { decodeProductFromUrl, isValueTruthy } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
@@ -658,7 +657,9 @@ export function getProductPartsFromAlias( productAlias: string ): {
 	};
 }
 
-// Transform a fake slug like 'theme:ovation' into a real slug like 'premium_theme'
+// Transform a fake slug like 'theme:ovation' into a real slug like 'premium_theme'.
+// A plan referenced by its `path_slug` (e.g. `business`) is left as-is: the
+// shopping cart endpoint accepts plan path slugs as well as product slugs.
 function getProductSlugFromAlias( productAlias: string ): string {
 	const { slug: encodedAlias } = getProductPartsFromAlias( productAlias );
 	// Some product slugs contain slashes, so we decode them
@@ -671,11 +672,6 @@ function getProductSlugFromAlias( productAlias: string ): string {
 	}
 	if ( decodedAlias === 'theme' ) {
 		return 'premium_theme';
-	}
-	const plan = getPlanByPathSlug( decodedAlias );
-	const planSlug = plan?.getStoreSlug();
-	if ( planSlug ) {
-		return planSlug;
 	}
 	return decodedAlias;
 }

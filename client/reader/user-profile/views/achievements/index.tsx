@@ -2,10 +2,12 @@ import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useAchievementsQuery } from 'calypso/data/reader/use-achievements-query';
 import useAchievementsVisibility from 'calypso/reader/components/achievements/use-achievements-visibility';
-import { YearsOfServiceBadge } from 'calypso/reader/components/achievements/years-of-service-badge';
 import AchievementsGrid from './achievements-grid';
+import AchievementsPrivacyNotice from './achievements-privacy-notice';
 import AchievementsSettings from './achievements-settings';
+import { ActivityStreak } from './activity-streak';
 import type { ReaderUser } from '@automattic/api-core';
+import type { JSX } from 'react';
 
 import './style.scss';
 
@@ -16,7 +18,7 @@ interface UserAchievementsProps {
 const UserAchievements = ( { user }: UserAchievementsProps ): JSX.Element | null => {
 	const translate = useTranslate();
 	const { isOwnProfile, isVisible, isLoading } = useAchievementsVisibility( user.user_login );
-	const { yearsOfService } = useAchievementsQuery( isVisible ? user.user_login : undefined, {
+	const { engagementStreak } = useAchievementsQuery( isVisible ? user.user_login : undefined, {
 		refetchOnMount: 'always',
 	} );
 
@@ -34,11 +36,14 @@ const UserAchievements = ( { user }: UserAchievementsProps ): JSX.Element | null
 
 	return (
 		<div className="achievements">
+			{ isOwnProfile && <AchievementsPrivacyNotice /> }
 			<div className="achievements__header">
-				{ !! yearsOfService && (
-					<YearsOfServiceBadge size="large" yearsOfService={ yearsOfService } />
+				<ActivityStreak streak={ engagementStreak } isOwnProfile={ isOwnProfile } />
+				{ isOwnProfile && (
+					<div className="achievements__settings">
+						<AchievementsSettings />
+					</div>
 				) }
-				{ isOwnProfile && <AchievementsSettings /> }
 			</div>
 			<AchievementsGrid userLogin={ user.user_login } isOwnProfile={ isOwnProfile } />
 		</div>

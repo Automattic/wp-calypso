@@ -8,23 +8,11 @@ import {
 import page from '@automattic/calypso-router';
 import { GravatarTextLogo } from '@automattic/components';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
-import { camelToSnakeCase } from '@automattic/js-utils';
+import { camelToSnakeCase, omit } from '@automattic/js-utils';
 import * as oauthToken from '@automattic/oauth-token';
 import { isDomainForGravatarFlow } from '@automattic/onboarding';
 import debugModule from 'debug';
-import {
-	clone,
-	defer,
-	find,
-	get,
-	includes,
-	isEmpty,
-	isEqual,
-	kebabCase,
-	map,
-	omit,
-	startsWith,
-} from 'lodash';
+import { clone, defer, find, get, includes, isEmpty, isEqual, kebabCase, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -736,7 +724,7 @@ class Signup extends Component {
 	}
 
 	loginRedirectTo = ( path ) => {
-		if ( startsWith( path, 'https://' ) || startsWith( path, 'http://' ) ) {
+		if ( ( path ?? '' ).startsWith( 'https://' ) || ( path ?? '' ).startsWith( 'http://' ) ) {
 			return path;
 		}
 

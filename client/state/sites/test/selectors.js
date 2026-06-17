@@ -32,6 +32,7 @@ import {
 	canJetpackSiteUpdateFiles,
 	canJetpackSiteAutoUpdateFiles,
 	canJetpackSiteAutoUpdateCore,
+	getJetpackSearchCustomizeUrl,
 	getJetpackSearchDashboardUrl,
 	isJetpackSiteMultiSite,
 	isJetpackSiteSecondaryNetworkSite,
@@ -2581,6 +2582,92 @@ describe( 'selectors', () => {
 
 			expect( dashboardUrl ).toEqual(
 				'https://example.wordpress.com/wp-admin/admin.php?page=jetpack-search'
+			);
+		} );
+	} );
+
+	describe( 'getJetpackSearchCustomizeUrl()', () => {
+		test( "should return null if we can't find the adminUrl", () => {
+			const customizeUrl = getJetpackSearchCustomizeUrl(
+				{
+					sites: {
+						items: {},
+					},
+				},
+				2916284
+			);
+
+			expect( customizeUrl ).toBeNull();
+		} );
+
+		test( 'should return the Customizer for old JP versions', () => {
+			const customizeUrl = getJetpackSearchCustomizeUrl(
+				{
+					sites: {
+						items: {
+							2916284: {
+								ID: 2916284,
+								jetpack: true,
+								options: {
+									admin_url: 'https://example.wordpress.com/wp-admin/',
+									jetpack_version: '10.0',
+								},
+							},
+						},
+					},
+				},
+				2916284
+			);
+
+			expect( customizeUrl ).toEqual(
+				'https://example.wordpress.com/wp-admin/customize.php?autofocus[section]=jetpack_search'
+			);
+		} );
+
+		test( 'should return Search settings for new JP versions', () => {
+			const customizeUrl = getJetpackSearchCustomizeUrl(
+				{
+					sites: {
+						items: {
+							2916284: {
+								ID: 2916284,
+								jetpack: true,
+								options: {
+									admin_url: 'https://example.wordpress.com/wp-admin/',
+									jetpack_version: '10.1',
+								},
+							},
+						},
+					},
+				},
+				2916284
+			);
+
+			expect( customizeUrl ).toEqual(
+				'https://example.wordpress.com/wp-admin/admin.php?page=jetpack-search&tab=settings'
+			);
+		} );
+
+		test( 'should return Search settings for WordPress.com sites', () => {
+			const customizeUrl = getJetpackSearchCustomizeUrl(
+				{
+					sites: {
+						items: {
+							2916284: {
+								ID: 2916284,
+								jetpack: false,
+								options: {
+									admin_url: 'https://example.wordpress.com/wp-admin/',
+								},
+							},
+						},
+					},
+				},
+				2916284
+			);
+
+			expect( customizeUrl ).toEqual(
+				'https://example.wordpress.com/wp-admin/admin.php?page=jetpack-search&tab=settings'
 			);
 		} );
 	} );

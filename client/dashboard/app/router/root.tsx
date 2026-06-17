@@ -1,10 +1,12 @@
 import {
+	agencyQuery,
 	rawUserPreferencesQuery,
 	jetpackSiteUrlsQuery,
 	queryClient,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { createRootRouteWithContext } from '@tanstack/react-router';
+import { getHostingDashboardEnrollment } from '../../utils/hosting-dashboard-enrollment';
 import { wpcomLink } from '../../utils/link';
 import { AUTH_QUERY_KEY } from '../auth';
 import Root from '../root';
@@ -22,7 +24,7 @@ export type RootRouterContext = {
 export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 	component: Root,
 	notFoundComponent: NotFoundRoot,
-	beforeLoad: async ( { cause, context } ) => {
+	beforeLoad: async ( { cause, context, location } ) => {
 		if ( cause === 'preload' ) {
 			return;
 		}
@@ -32,7 +34,29 @@ export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 			queryClient.prefetchQuery( jetpackSiteUrlsQuery() );
 		}
 
+		// For agency-enabled dashboards, load the agency data and guard agency
+		// routes: users who are neither an agency nor an agency client are sent
+		// to signup. This keeps the agency query a pure data fetch.
+		if ( context.config.supports.agency ) {
+			const isSignupPath =
+				location.pathname === '/signup' || location.pathname.startsWith( '/signup/' );
+			if ( ! isSignupPath ) {
+				const agency = await queryClient.ensureQueryData( agencyQuery() );
+				if ( ! agency.isClientUser && ! agency.hasAgency ) {
+					throw dashboardRedirect( { href: '/signup', replace: true } );
+				}
+			}
+		}
+
 		if ( ! context.config.optIn ) {
+			return;
+		}
+
+		// Once the staged rollout has begun the dashboard is publicly marketed, so
+		// anyone who navigates to it directly is let in. Enrollment still governs
+		// where users land by default (see the dashboard opt-in selectors); it no
+		// longer blocks users who navigate directly to the dashboard.
+		if ( config.isEnabled( 'dashboard/enable-percentage-rollout' ) ) {
 			return;
 		}
 
@@ -43,11 +67,7 @@ export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 
 		const userPreference = await queryClient.ensureQueryData( rawUserPreferencesQuery() );
 		const optIn = userPreference[ 'hosting-dashboard-opt-in' ];
-		const isDashboardEnrolled =
-			optIn?.value === 'opt-in' ||
-			optIn?.value === 'forced-opt-in' ||
-			config.isEnabled( 'dashboard/forced-opt-in' );
-		if ( isDashboardEnrolled ) {
+		if ( getHostingDashboardEnrollment( optIn, user?.ID ).enrolled ) {
 			return;
 		}
 

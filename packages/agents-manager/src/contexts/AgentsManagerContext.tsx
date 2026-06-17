@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useState } from '@wordpress/element';
+import { useNavigate } from 'react-router-dom';
 import { getSessionId } from '../utils/agent-session';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 import type { AgentsManagerSite, CurrentUser } from '@automattic/data-stores';
@@ -34,6 +35,8 @@ export interface AgentsManagerContextType {
 	setAgentConfig: ( config: UseAgentChatConfig | null ) => void;
 	/** Returns the active session ID from `agentConfig` or stored session. */
 	getActiveSessionId: () => string;
+	/** Reopen the chat, resuming the active conversation. */
+	resumeActiveChat: () => void;
 }
 
 const defaultContext: AgentsManagerContextType = {
@@ -47,6 +50,7 @@ const defaultContext: AgentsManagerContextType = {
 	agentConfig: null,
 	setAgentConfig: () => {},
 	getActiveSessionId: () => '',
+	resumeActiveChat: () => {},
 };
 
 const AgentsManagerContext = createContext< AgentsManagerContextType >( defaultContext );
@@ -68,9 +72,16 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
 	const isLoggedIn = value.currentUser?.ID !== undefined;
 
+	const navigate = useNavigate();
+
 	const getActiveSessionId = useCallback( () => {
 		return agentConfig?.sessionId || getSessionId( agentConfig?.agentId );
 	}, [ agentConfig ] );
+
+	// Non-reader chats resume only via router `state`, so pass the active `sessionId`.
+	const resumeActiveChat = useCallback( () => {
+		navigate( '/chat', { state: { sessionId: getActiveSessionId() } } );
+	}, [ navigate, getActiveSessionId ] );
 
 	return (
 		<AgentsManagerContext.Provider
@@ -81,6 +92,7 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 				agentConfig,
 				setAgentConfig,
 				getActiveSessionId,
+				resumeActiveChat,
 			} }
 		>
 			{ children }

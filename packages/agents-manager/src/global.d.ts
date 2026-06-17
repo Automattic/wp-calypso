@@ -5,10 +5,13 @@
 /**
  * `agentsManagerData` is set as a global const via wp_add_inline_script
  * in Jetpack's Agents Manager feature.
+ *
+ * `agentProviders` entries may be URL strings (dynamically imported as ES
+ * modules) or already-loaded `LoadedProviders` objects with the same shape.
  */
 declare const agentsManagerData:
 	| {
-			agentProviders?: string[];
+			agentProviders?: ( string | import('./utils/load-external-providers').LoadedProviders )[];
 			useUnifiedExperience?: boolean;
 			agentId?: string;
 			helpCenterUrl?: string;
@@ -99,7 +102,9 @@ interface AgentsManagerActions {
 	removeContextEntry: ( id: string ) => void;
 	setContextCard: ( card: AgentsManagerExternalContextCard ) => void;
 	removeContextCard: ( id: string ) => void;
+	setSiteEditorAction: ( name: string, value: string | number | boolean | null ) => void;
 	chatNavigate: import('react-router-dom').NavigateFunction;
+	resumeChat: () => void;
 	isCompactMode?: boolean;
 	isChatEnabled?: boolean;
 	desktopMediaQuery?: string;

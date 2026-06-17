@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import page from '@automattic/calypso-router';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { SocialAnalyticsProvider } from '../components/post-card/analytics-context';
 import { SocialProfileCard } from '../profile-card';
@@ -289,6 +289,23 @@ describe( 'SocialProfileCard', () => {
 		expect( link ).toHaveAttribute( 'data-id', 'alice.bsky.social' );
 	} );
 
+	it( 'preserves data-handle alongside data-id on bio mention anchors (CM-725)', () => {
+		const { container } = render(
+			<SocialProfileCard
+				bioHtml={
+					'<p><a href="https://example.com/@alice"' +
+					' data-id="https://example.com/users/alice"' +
+					' data-handle="alice@example.com">@alice@example.com</a></p>'
+				}
+				statsLabel="Profile stats"
+				stats={ [ { key: 'followers', count: 0, label: 'followers' } ] }
+			/>
+		);
+		const link = container.querySelector( '.social-profile-card__bio a' );
+		expect( link ).toHaveAttribute( 'data-id', 'https://example.com/users/alice' );
+		expect( link ).toHaveAttribute( 'data-handle', 'alice@example.com' );
+	} );
+
 	it( 'strips arbitrary data-* attributes from bio anchors', () => {
 		const { container } = render(
 			<SocialProfileCard
@@ -455,6 +472,31 @@ describe( 'SocialProfileCard — bio mention click routing', () => {
 		);
 		await user.click( getByText( '@alice' ) );
 		expect( pageMock ).not.toHaveBeenCalled();
+	} );
+
+	it( 'passes data-handle as ref.handle separately from data-id (CM-725)', async () => {
+		// Bios on Fediverse / Mastodon profile pages can carry mention
+		// anchors stamped with both `data-id` (canonical id — actor URL
+		// or numeric) and `data-handle` (webfinger). The bio click
+		// handler routes them to distinct ref fields so resolvers can
+		// build a clean user-readable URL from the handle.
+		const user = userEvent.setup();
+		const getProfileUrl = jest.fn( ( ref: { handle?: string | null } ) =>
+			ref.handle ? `/reader/fediverse/7/profile/${ ref.handle }` : null
+		);
+		const { getByText } = renderInsideProvider(
+			'<p><a href="https://example.com/@alice"' +
+				' data-id="https://example.com/users/alice"' +
+				' data-handle="alice@example.com">@alice</a></p>',
+			getProfileUrl
+		);
+		await user.click( getByText( '@alice' ) );
+		expect( getProfileUrl ).toHaveBeenCalledWith( {
+			id: 'https://example.com/users/alice',
+			handle: 'alice@example.com',
+			did: 'https://example.com/users/alice',
+		} );
+		expect( pageMock ).toHaveBeenCalledWith( '/reader/fediverse/7/profile/alice@example.com' );
 	} );
 } );
 
@@ -731,7 +773,7 @@ describe( 'SocialProfileCard — rich variant', () => {
 		expect( screen.getByRole( 'heading', { level: 2, name: 'Alice' } ) ).toBeVisible();
 	} );
 
-	it( 'hides the banner image on load failure', () => {
+	it( 'swaps the banner image for a same-class placeholder div on load failure', () => {
 		const { container } = render(
 			<SocialProfileCard
 				banner="https://cdn.example/broken.jpg"
@@ -740,11 +782,30 @@ describe( 'SocialProfileCard — rich variant', () => {
 				statsLabel="Profile stats"
 			/>
 		);
-		const banner = container.querySelector(
-			'.social-profile-card__banner'
-		) as HTMLImageElement | null;
-		expect( banner ).not.toBeNull();
-		banner!.dispatchEvent( new Event( 'error', { bubbles: true } ) );
-		expect( banner!.style.display ).toBe( 'none' );
+		const bannerImg = container.querySelector( 'img.social-profile-card__banner' );
+		expect( bannerImg ).not.toBeNull();
+		// `fireEvent.error` triggers React's synthetic onError handler, which
+		// flips the SocialAvatar's `errored` state and renders the fallback
+		// (a `<div>` with the same SCSS class) so the band keeps its
+		// dimensions + background colour instead of collapsing.
+		fireEvent.error( bannerImg! );
+		expect( container.querySelector( 'img.social-profile-card__banner' ) ).toBeNull();
+		expect( container.querySelector( 'div.social-profile-card__banner' ) ).not.toBeNull();
+	} );
+
+	it( 'swaps the avatar image for a same-class placeholder div on load failure', () => {
+		const { container } = render(
+			<SocialProfileCard
+				avatar="https://cdn.example/broken.jpg"
+				displayName="Alice"
+				stats={ [] }
+				statsLabel="Profile stats"
+			/>
+		);
+		const avatarImg = container.querySelector( 'img.social-profile-card__avatar' );
+		expect( avatarImg ).not.toBeNull();
+		fireEvent.error( avatarImg! );
+		expect( container.querySelector( 'img.social-profile-card__avatar' ) ).toBeNull();
+		expect( container.querySelector( 'div.social-profile-card__avatar' ) ).not.toBeNull();
 	} );
 } );

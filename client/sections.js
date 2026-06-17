@@ -178,7 +178,7 @@ const sections = [
 	},
 	{
 		name: 'settings-writing',
-		paths: [ '/settings/writing', '/settings/taxonomies', '/settings/podcasting' ],
+		paths: [ '/settings/writing', '/settings/taxonomies' ],
 		module: 'calypso/my-sites/site-settings/settings-writing',
 		group: 'sites',
 	},
@@ -517,6 +517,22 @@ const sections = [
 	},
 	{
 		name: 'reader',
+		paths: [ '/reader/connections', '/reader/connections/new' ],
+		module: 'calypso/reader/connections',
+		group: 'reader',
+		enableLoggedOut: false,
+		trackLoadPerformance: true,
+	},
+	{
+		name: 'reader',
+		paths: [ '/reader/spaces', '/reader/spaces/:id' ],
+		module: 'calypso/reader/spaces',
+		group: 'reader',
+		enableLoggedOut: false,
+		trackLoadPerformance: true,
+	},
+	{
+		name: 'reader',
 		paths: [
 			'/reader/atmosphere',
 			'/reader/atmosphere/connect',
@@ -546,6 +562,20 @@ const sections = [
 			'/reader/mastodon/:id/tag/:hashtag',
 		],
 		module: 'calypso/reader/mastodon',
+		group: 'reader',
+		enableLoggedOut: false,
+	},
+	{
+		name: 'reader',
+		paths: [
+			'/reader/fediverse',
+			'/reader/fediverse/:id',
+			'/reader/fediverse/:id/:tab',
+			'/reader/fediverse/:id/profile/:actor',
+			'/reader/fediverse/:id/profile/:actor/followers',
+			'/reader/fediverse/:id/profile/:actor/following',
+		],
+		module: 'calypso/reader/fediverse',
 		group: 'reader',
 		enableLoggedOut: false,
 	},
@@ -887,7 +917,9 @@ const sections = [
 		paths: [
 			'/resources-and-tools',
 			'/resources-and-tools/learn',
+			'/resources-and-tools/agent-studio',
 			'/resources-and-tools/dev-tools',
+			'/resources-and-tools/benchmarks',
 		],
 		module: 'calypso/a8c-for-agencies/sections/learn',
 		group: 'a8c-for-agencies',

@@ -22,6 +22,7 @@ export function useSidebarScrollSync( { enabled, sidebarRef, navigatorRef }: Opt
 		if ( ! enabled ) {
 			return;
 		}
+		const originalSidebarElement = sidebarRef.current;
 		let cachedSidebarHeight = 0;
 		let cachedOmnibarHeight = 0;
 		let scheduled = false;
@@ -116,7 +117,9 @@ export function useSidebarScrollSync( { enabled, sidebarRef, navigatorRef }: Opt
 			window.cancelAnimationFrame( initId );
 			window.removeEventListener( 'scroll', schedule );
 			resizeObserver.disconnect();
-			sidebarRef.current?.removeAttribute( 'style' );
+			// sidebarRef may have changed by the time we're cleaning up, so make sure
+			// we clean up the original element from the start of this effect.
+			originalSidebarElement?.removeAttribute( 'style' );
 			document.body.style.minHeight = '';
 		};
 	}, [ enabled, sidebarRef, navigatorRef ] );

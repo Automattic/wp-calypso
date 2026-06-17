@@ -57,7 +57,7 @@ export function generatePassword( {
 	// @link https://dimitri.xyz/random-ints-from-random-bits/
 	for ( let i = 0; i < length; i++ ) {
 		do {
-			window.crypto.getRandomValues( randomNumber );
+			globalThis.crypto.getRandomValues( randomNumber );
 		} while ( randomNumber[ 0 ] >= characterPool.length );
 
 		password += characterPool[ randomNumber[ 0 ] ];

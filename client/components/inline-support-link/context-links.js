@@ -143,6 +143,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/how-to-create-a-staging-site/',
 		post_id: 239448,
 	},
+	'hosting-staging-site-sync': {
+		link: 'https://wordpress.com/support/how-to-create-a-staging-site/sync-staging-site/',
+		post_id: 386882,
+	},
 	'hosting-edge-cache': {
 		link: 'https://wordpress.com/support/clear-your-sites-cache/',
 		post_id: 164969,

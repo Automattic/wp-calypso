@@ -1,3 +1,7 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+
 .manage-purchase > button.card,
 .manage-purchase > a.card,
 .manage-purchase > div > a.card,
@@ -226,6 +230,25 @@
 	.plan-features__targeted-description-heading {
 		display: inline;
 	}
+}
+
+.manage-purchase__feature-list-items {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	transform: translateX( -4px );
+}
+
+.manage-purchase__feature-list-item {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding-block: 2px;
+}
+
+.manage-purchase__feature-icon {
+	fill: var( --color-success );
+	flex-shrink: 0;
 }
 
 .manage-purchase__refund-text {

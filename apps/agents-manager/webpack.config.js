@@ -87,6 +87,14 @@ function getIndividualConfig( options = {} ) {
 					) {
 						return null;
 					}
+					// Bundle @wordpress/ui: neither WordPress core nor the Gutenberg
+					// plugin registers a wp-ui script handle yet, and WP_Scripts
+					// silently skips scripts with unregistered dependencies, so
+					// externalizing it prevents the bundle from loading on
+					// self-hosted sites.
+					if ( request === '@wordpress/ui' ) {
+						return null;
+					}
 				},
 			} ),
 			new ReadableJsAssetsWebpackPlugin(),
@@ -100,7 +108,6 @@ function getIndividualConfig( options = {} ) {
  * Omits DependencyExtractionWebpackPlugin entirely so React, @wordpress/data,
  * and other WP packages are inlined. The resulting reader-chat.min.js is
  * self-contained and safe to load on the frontend (no WP script loader needed).
- *
  * @param   {Object}  options                       options
  * @param   {Object}  options.env                   environment options
  * @param   {Object}  options.argv                  webpack CLI args
@@ -119,10 +126,19 @@ function getReaderConfig( options = {} ) {
 			...webpackConfig.output,
 			path: outputPath,
 			filename: '[name].min.js',
+			chunkLoadingGlobal: 'webpackChunkJetpackReaderChat',
+			uniqueName: 'JetpackReaderChat',
 		},
 		module: {
 			...webpackConfig.module,
-			rules: [ ...( webpackConfig.module?.rules || [] ) ],
+			rules: [
+				...( webpackConfig.module?.rules || [] ),
+				{
+					// P2/O2 expects window._ to remain Underscore.
+					resource: require.resolve( 'lodash/lodash.js' ),
+					use: path.join( __dirname, 'disable-lodash-amd-loader.js' ),
+				},
+			],
 		},
 		resolve: {
 			...webpackConfig.resolve,
@@ -187,7 +203,6 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		getIndividualConfig( { env, argv, name: 'jetpack-ai-sidebar' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-gutenberg-disconnected' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wp-admin-disconnected' } ),
-		getIndividualConfig( { env, argv, name: 'agents-manager-ciab-disconnected' } ),
 		getIndividualConfig( { env, argv, name: 'block-notes' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-ciab' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wooai' } ),

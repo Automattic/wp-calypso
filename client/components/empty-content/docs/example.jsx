@@ -1,13 +1,7 @@
 import EmptyContent from 'calypso/components/empty-content';
 
-const EmptyContentExample = ( props ) => {
-	return props.exampleCode;
-};
-
-EmptyContentExample.displayName = 'EmptyContent';
-
-EmptyContentExample.defaultProps = {
-	exampleCode: (
+const EmptyContentExample = ( {
+	exampleCode = (
 		<div className="design-assets__group">
 			<div>
 				<EmptyContent
@@ -27,6 +21,10 @@ EmptyContentExample.defaultProps = {
 			</div>
 		</div>
 	),
+} ) => {
+	return exampleCode;
 };
+
+EmptyContentExample.displayName = 'EmptyContent';
 
 export default EmptyContentExample;

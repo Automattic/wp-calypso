@@ -98,8 +98,6 @@ const createMockDomain = ( overrides?: Partial< Domain > ): Domain => ( {
 	nominet_pending_contact_verification_request: false,
 	nominet_domain_suspended: false,
 	owner: 'user',
-	is_pending_registration: false,
-	is_pending_registration_at_registry: false,
 	private_domain: false,
 	privacy_available: false,
 	points_to_wpcom: false,

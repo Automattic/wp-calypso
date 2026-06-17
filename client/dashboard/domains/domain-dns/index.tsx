@@ -89,7 +89,7 @@ export default function DomainDns() {
 	} );
 
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
-	const { data: dnsData, isLoading } = useQuery( domainDnsQuery( domainName ) );
+	const { data: dnsData, isLoading, isFetching } = useQuery( domainDnsQuery( domainName ) );
 	const [ isRestoreDefaultARecordsDialogOpen, setIsRestoreDefaultARecordsDialogOpen ] =
 		useState( false );
 	const [ isRestoreDefaultCnameRecordDialogOpen, setIsRestoreDefaultCnameRecordDialogOpen ] =
@@ -220,7 +220,14 @@ export default function DomainDns() {
 	};
 
 	const renderDefaultARecordsNotice = () => {
-		if ( ! domain.has_wpcom_nameservers || hasDefaultARecordsValue ) {
+		// Only judge whether the default records are missing once we have records we
+		// trust. The route loader prefetches the DNS query, so by the time this
+		// component mounts the cache often already holds (possibly stale) records and
+		// `isLoading` is false; a background refetch then runs because of `staleTime: 0`.
+		// Gating on `isFetching` — which is true during both the initial load and any
+		// background revalidation — prevents the warning from flashing against stale or
+		// not-yet-loaded data, matching the legacy "hide while requesting" behavior.
+		if ( isFetching || ! domain.has_wpcom_nameservers || hasDefaultARecordsValue ) {
 			return null;
 		}
 
@@ -253,7 +260,7 @@ export default function DomainDns() {
 	};
 
 	const renderDefaultCnameRecordNotice = () => {
-		if ( ! domain.has_wpcom_nameservers || hasDefaultCnameRecordValue ) {
+		if ( isFetching || ! domain.has_wpcom_nameservers || hasDefaultCnameRecordValue ) {
 			return null;
 		}
 

@@ -1,6 +1,7 @@
 import { HostingFeatures, LogType, type Site, type SiteSettings } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
+import { DateRangePicker, isLast7Days } from '@automattic/date-range-picker';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { TabPanel } from '@wordpress/components';
@@ -9,10 +10,7 @@ import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { useDateRange } from '../../app/hooks/use-date-range';
 import { useLocale } from '../../app/locale';
-import { siteRoute } from '../../app/router/sites';
 import { Card, CardBody, CardHeader } from '../../components/card';
-import { DateRangePicker } from '../../components/date-range-picker';
-import { isLast7Days } from '../../components/date-range-picker/utils';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
@@ -31,8 +29,7 @@ const selectTimeZone = ( s: SiteSettings | undefined ) => ( {
 	timezoneString: s?.timezone_string || undefined,
 } );
 
-function SiteLogs( { logType }: { logType: LogType } ) {
-	const { siteSlug } = siteRoute.useParams();
+function SiteLogs( { logType, siteSlug }: { logType: LogType; siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
 	// Sites with a Jetpack connection error can't reach the settings endpoint;

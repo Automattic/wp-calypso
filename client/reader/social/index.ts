@@ -1,5 +1,8 @@
 import './style.scss';
 
+export { SocialAvatar } from './avatar';
+export type { SocialAvatarProps } from './avatar';
+
 export { SocialProfileCard } from './profile-card';
 export type { SocialProfileCardProps, SocialProfileStat } from './profile-card';
 
@@ -12,11 +15,21 @@ export type { FollowButtonProps } from './follow-button';
 export { SocialAccountRow } from './account-row';
 export type { SocialAccountRowProps, SocialAccountRowFollowState } from './account-row';
 
-export { SocialAccountList } from './account-list';
+export { SocialAccountList, SocialAccountListHeader } from './account-list';
 export type { SocialAccountListProps } from './account-list';
 
 export { SocialPostCard } from './components/post-card';
+export type { PostCardReactionsConfig } from './components/post-card/post-card-counts';
 export { SocialFeedList } from './components/feed-list';
+export { SocialNotificationItem } from './components/notifications-list/notification-item';
+export type { NotificationInAppUrlResolver } from './components/notifications-list/notification-item';
+export { SocialNotificationsList } from './components/notifications-list';
+export type { ChipFilter } from './components/notifications-list/filter';
+export { SocialNotificationsPanel } from './social-notifications-panel';
+export type {
+	SocialNotificationsSource,
+	UseSocialNotificationsInfiniteQuery,
+} from './social-notifications-panel';
 export { SocialAnalyticsProvider } from './components/post-card/analytics-context';
 
 export type {
@@ -40,6 +53,7 @@ export type {
 	SocialError,
 } from './types';
 export { AuthorProfileHeader } from './author-profile-header';
+export { SocialTagFeedHeader } from './tag-feed-header';
 export { SocialAuthorProfileTabs } from './author-profile-tabs';
 export type { TabSpec } from './author-profile-tabs';
 export { useTabSlug } from './use-tab-slug';
@@ -53,4 +67,10 @@ export {
 	mapMastodonFeedItemToSocialPost,
 	mapMastodonThreadResponseToSocialThreadNode,
 } from './mappers/mastodon';
+export {
+	mapFediverseAuthorProfileToSocialProfileCardProps,
+	mapFediverseConnectionToSocialProfileCardProps,
+	mapFediverseFeedItemToSocialPost,
+	stripLeadingAt,
+} from './mappers/fediverse';
 export { socialPostFeedItemKey } from './utils/social-post-feed-item-key';

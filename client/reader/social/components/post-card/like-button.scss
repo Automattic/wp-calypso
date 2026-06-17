@@ -14,8 +14,8 @@
 	position: relative;
 	z-index: 1;
 
-	&:hover:not( :disabled ),
-	&:focus-visible {
+	&:hover:not( [aria-disabled='true'] ),
+	&:focus-visible:not( [aria-disabled='true'] ) {
 		color: var( --studio-red-50 );
 		background: var( --studio-gray-0 );
 	}

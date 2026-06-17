@@ -1,5 +1,6 @@
+import { pick } from '@automattic/js-utils';
 import { createSelector } from '@automattic/state-utils';
-import { filter, find, get, pick, reduce, some, sortBy } from 'lodash';
+import { filter, find, get, reduce, some, sortBy } from 'lodash';
 import {
 	getSite,
 	getSiteTitle,

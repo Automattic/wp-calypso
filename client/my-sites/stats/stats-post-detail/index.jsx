@@ -4,11 +4,13 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Button as CoreButton } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { isEqual, flowRight } from 'lodash';
+import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import titlecase from 'to-title-case';
+import { withPostLikes } from 'calypso/components/data/post-likes';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
@@ -26,7 +28,6 @@ import StatsDetailsNavigation from 'calypso/my-sites/stats/stats-details-navigat
 import { getMappedPreviewUrl } from 'calypso/my-sites/stats/utils';
 import { useSelector } from 'calypso/state';
 import { getSitePost } from 'calypso/state/posts/selectors';
-import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import {
 	isJetpackSite,
@@ -328,6 +329,8 @@ class StatsPostDetail extends Component {
 	}
 }
 
+const StatsPostDetailWithLikes = withPostLikes( StatsPostDetail );
+
 const StatsPostDetailWrapper = ( props ) => {
 	const breadcrumbTrail = useStatsBreadcrumbTrail();
 
@@ -354,7 +357,12 @@ const StatsPostDetailWrapper = ( props ) => {
 	};
 
 	return (
-		<StatsPostDetail { ...props } breadcrumbTrail={ breadcrumbTrail } openSupportDoc={ openDoc } />
+		<StatsPostDetailWithLikes
+			{ ...props }
+			siteId={ siteId }
+			breadcrumbTrail={ breadcrumbTrail }
+			openSupportDoc={ openDoc }
+		/>
 	);
 };
 
@@ -362,7 +370,6 @@ const connectComponent = connect( ( state, { postId } ) => {
 	const siteId = getSelectedSiteId( state );
 	const isPreviewable = isSitePreviewable( state, siteId );
 	const isPostHomepage = postId === 0;
-	const countLikes = countPostLikes( state, siteId, postId ) || 0;
 	const { supportsUTMStats, supportsEmailStats } = getEnvStatsFeatureSupportChecks( state, siteId );
 	const isSimple = isSimpleSite( state, siteId );
 	const previewUrl = getMappedPreviewUrl( state, siteId, postId );
@@ -376,7 +383,6 @@ const connectComponent = connect( ( state, { postId } ) => {
 
 	return {
 		post: getSitePost( state, siteId, postId ),
-		countLikes,
 		// NOTE: Post object from the stats response does not conform to the data structure returned by getSitePost!
 		postFallback: getPostStat( state, siteId, postId, 'post' ),
 		isPostHomepage,
@@ -394,4 +400,4 @@ const connectComponent = connect( ( state, { postId } ) => {
 	};
 } );
 
-export default flowRight( connectComponent, localize )( StatsPostDetailWrapper );
+export default compose( connectComponent, localize )( StatsPostDetailWrapper );

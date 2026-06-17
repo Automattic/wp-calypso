@@ -4,7 +4,6 @@ import { localize } from 'i18n-calypso';
 import { filter, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
-import { findDOMNode } from 'react-dom';
 import ResizableIframe from 'calypso/components/resizable-iframe';
 import { hasTouch } from 'calypso/lib/touch-detect';
 import ButtonsPreviewButton from './preview-button';
@@ -130,7 +129,7 @@ class SharingButtonsPreviewButtons extends Component {
 		} else {
 			// For custom styles, we can calculate the offset using the
 			// position of the rendered button
-			moreButton = findDOMNode( this.moreButtonRef.current );
+			moreButton = this.moreButtonRef.current;
 			offset = {
 				top: moreButton.offsetTop + moreButton.clientHeight,
 				left: moreButton.offsetLeft,
@@ -199,7 +198,7 @@ class SharingButtonsPreviewButtons extends Component {
 		if ( this.props.showMore ) {
 			buttons.push(
 				<ButtonsPreviewButton
-					ref={ this.moreButtonRef }
+					elementRef={ this.moreButtonRef }
 					key="more"
 					button={ {
 						ID: 'more',

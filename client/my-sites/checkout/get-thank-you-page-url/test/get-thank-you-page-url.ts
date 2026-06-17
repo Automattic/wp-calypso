@@ -4,6 +4,7 @@
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
+import config from '@automattic/calypso-config';
 import {
 	JETPACK_REDIRECT_URL,
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
@@ -26,7 +27,9 @@ import {
 import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { addQueryArgs } from 'calypso/lib/url';
-import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
+import getThankYouPageUrl, {
+	getAllowedExternalRedirectHosts,
+} from 'calypso/my-sites/checkout/get-thank-you-page-url';
 
 jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => jest.fn() );
 jest.mock( '@automattic/calypso-products', () => ( {
@@ -36,6 +39,17 @@ jest.mock( '@automattic/calypso-products', () => ( {
 jest.mock( 'calypso/dashboard/app/routing', () => ( {
 	getDashboardFromQuery: jest.fn(),
 } ) );
+jest.mock( '@automattic/calypso-config', () => {
+	// In tests, '@automattic/calypso-config' is module-mapped to
+	// `client/server/config/index.js`, a CJS module whose module.exports is the
+	// config function itself (with isEnabled/enable/etc. attached).
+	const actualConfigFn = jest.requireActual( '@automattic/calypso-config' );
+	const configFn = jest.fn( ( key ) => actualConfigFn( key ) );
+	// Preserve attached methods (isEnabled, enable, disable, etc.) so consumers
+	// like `config.isEnabled(...)` keep working through the spy.
+	Object.assign( configFn, actualConfigFn );
+	return configFn;
+} );
 
 const samplePurchaseId = 12342424241;
 
@@ -2148,5 +2162,45 @@ describe( 'getThankYouPageUrl', () => {
 
 			expect( url ).toBe( '/checkout/thank-you/:siteId/67890' );
 		} );
+	} );
+} );
+
+describe( 'getAllowedExternalRedirectHosts', () => {
+	const mockedConfig = config as unknown as jest.Mock;
+	const actualConfig = jest.requireActual( '@automattic/calypso-config' );
+
+	afterEach( () => {
+		mockedConfig.mockImplementation( ( key ) => actualConfig( key ) );
+	} );
+
+	function mockConfig( extras ) {
+		mockedConfig.mockImplementation( ( key ) => {
+			if ( key === 'checkout_additional_allowed_redirect_hosts' ) {
+				return extras;
+			}
+			return actualConfig( key );
+		} );
+	}
+
+	it( 'returns the base allowlist when no extras are configured', () => {
+		mockConfig( undefined );
+		const hosts = getAllowedExternalRedirectHosts();
+		expect( hosts ).toContain( 'my.wordpress.com' );
+		expect( hosts ).toContain( 'jetpack.com' );
+	} );
+
+	it( 'appends entries from checkout_additional_allowed_redirect_hosts', () => {
+		mockConfig( [ 'telex.example.test', 'telex-staging.example.test' ] );
+		const hosts = getAllowedExternalRedirectHosts();
+		expect( hosts ).toContain( 'my.wordpress.com' );
+		expect( hosts ).toContain( 'telex.example.test' );
+		expect( hosts ).toContain( 'telex-staging.example.test' );
+	} );
+
+	it( 'ignores a non-array extras value defensively', () => {
+		mockConfig( 'not-an-array' );
+		const hosts = getAllowedExternalRedirectHosts();
+		expect( hosts ).toContain( 'my.wordpress.com' );
+		expect( hosts ).not.toContain( 'not-an-array' );
 	} );
 } );

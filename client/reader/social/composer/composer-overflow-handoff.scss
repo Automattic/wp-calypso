@@ -14,66 +14,6 @@
 	@media (prefers-reduced-motion: reduce) {
 		animation: none;
 	}
-
-	> fieldset {
-		border: 0;
-		padding: 0;
-		margin: 0;
-		margin-block-end: 16px;
-	}
-}
-
-.social-composer__overflow-handoff-combobox {
-	// Cap the suggestions popover so it doesn't dominate the composer
-	// modal — ~3 rich rows visible, the rest scroll.
-	.components-form-token-field__suggestions-list {
-		max-height: 180px;
-	}
-
-	// The combobox keeps focus after a selection, so the text caret keeps
-	// blinking in the value display. Hide the caret while the dropdown is
-	// closed — typing to filter reopens the dropdown and brings it back.
-	.components-combobox-control__input[aria-expanded='false'] {
-		caret-color: transparent;
-	}
-
-	// Invert the check icon when the row is highlighted so it stays
-	// readable against the theme primary background.
-	.is-selected .social-composer__overflow-handoff-check path {
-		fill: var(--color-text-inverted);
-	}
-}
-
-.social-composer__overflow-handoff-option {
-	min-block-size: 32px;
-}
-
-.social-composer__overflow-handoff-site-icon,
-.social-composer__overflow-handoff-site-letter {
-	border-radius: 4px;
-	flex-shrink: 0;
-	inline-size: 32px;
-	block-size: 32px;
-}
-
-.social-composer__overflow-handoff-site-icon {
-	display: block;
-	outline: 1px solid var(--color-border-subtle);
-	outline-offset: -1px;
-	background: var(--color-surface);
-	object-fit: cover;
-}
-
-.social-composer__overflow-handoff-site-letter {
-	align-items: center;
-	background: var(--wp-admin-theme-color, var(--color-primary));
-	color: var(--color-text-inverted);
-	display: flex;
-	font-size: 16px;
-	justify-content: center;
-	overflow: hidden;
-	box-sizing: border-box;
-	text-transform: uppercase;
 }
 
 @keyframes social-composer-overflow-handoff-fade-in {

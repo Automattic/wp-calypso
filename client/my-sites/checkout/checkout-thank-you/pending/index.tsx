@@ -24,6 +24,10 @@ import getOrderTransactionError from 'calypso/state/selectors/get-order-transact
 import { requestSite } from 'calypso/state/sites/actions';
 import usePurchaseOrder from '../../src/hooks/use-purchase-order';
 import { logStashLoadErrorEvent } from '../../src/lib/analytics';
+import {
+	PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE,
+	appendNoticeQueryParam,
+} from '../purchase-notice-constants';
 import type { RedirectInstructions } from 'calypso/my-sites/checkout/src/lib/pending-page';
 import type {
 	OrderTransaction,
@@ -181,7 +185,7 @@ function useRedirectOnTransactionSuccess( {
 		isSuccess: isReceiptSuccess,
 		isError: isReceiptError,
 	} = useQuery( {
-		...receiptQuery( finalReceiptId ?? 0 ),
+		...receiptQuery( finalReceiptId ?? 0, { includeFailedPurchases: true } ),
 		enabled: !! finalReceiptId,
 	} );
 	const isReceiptLoaded = isReceiptSuccess || isReceiptError;
@@ -196,6 +200,15 @@ function useRedirectOnTransactionSuccess( {
 	const firstItem = receipt?.items[ 0 ];
 	const isRenewal = receipt?.items.some( ( item ) => item.type === 'recurring' ) ?? false;
 	const productName = firstItem?.variation || firstItem?.product || '';
+
+	// The `domain-and-plan` flow sets `redirect_to=/home/<site>`, so a successful
+	// plan + domain purchase lands the user on `/home/<site>` instead of the
+	// thank-you page. Detect that purchase shape from the receipt items so the
+	// destination can dispatch a success toast on arrival.
+	const isPlanAndDomainPurchase =
+		( receipt?.items.some( ( item ) => item.is_plan ) &&
+			receipt?.items.some( ( item ) => item.is_domain_registration ) ) ??
+		false;
 	const blogId = firstItem?.site_id;
 	const saasRedirectUrl = receipt?.items.reduce< string | undefined >(
 		( url, item ) => url ?? ( item.saas_redirect_url || undefined ),
@@ -295,6 +308,7 @@ function useRedirectOnTransactionSuccess( {
 			saasRedirectUrl,
 			fromSiteSlug,
 			purchaseId: resolvedPurchaseId,
+			receipt,
 		} );
 
 		if ( ! redirectInstructions ) {
@@ -330,7 +344,22 @@ function useRedirectOnTransactionSuccess( {
 			reduxDispatch( requestSite( blogId ) );
 		}
 
-		notifyAndPerformRedirect( siteSlug, redirectInstructions );
+		// For plan + domain purchases the `domain-and-plan` flow sends the user to
+		// `/home/<site>` instead of the thank-you page. Tag the destination URL with
+		// a `notice` query param so the destination can dispatch a success toast on
+		// arrival - we cannot dispatch from here because the global notice renderer
+		// has no concept of "show only on the next page".
+		const finalRedirectInstructions = isPlanAndDomainPurchase
+			? {
+					...redirectInstructions,
+					url: appendNoticeQueryParam(
+						redirectInstructions.url,
+						PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE
+					),
+			  }
+			: redirectInstructions;
+
+		notifyAndPerformRedirect( siteSlug, finalRedirectInstructions );
 	}, [
 		isLoadingOrder,
 		saasRedirectUrl,
@@ -342,9 +371,11 @@ function useRedirectOnTransactionSuccess( {
 		finalReceiptId,
 		isReceiptLoaded,
 		isRenewal,
+		isPlanAndDomainPurchase,
 		blogId,
 		orderId,
 		productName,
+		receipt,
 		receiptId,
 		redirectTo,
 		reduxDispatch,

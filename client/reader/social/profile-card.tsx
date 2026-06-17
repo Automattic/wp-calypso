@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { formatNumberCompact } from '@automattic/number-formatters';
 import { useMemo } from 'react';
+import { SocialAvatar } from './avatar';
 import { useSocialAnalytics } from './components/post-card/analytics-context';
 import { sanitizeReaderSocialHtml } from './components/post-card/sanitize-post-html';
 import type { TranslateResult } from 'i18n-calypso';
@@ -54,7 +55,7 @@ export interface SocialProfileCardProps {
 // route hashtag clicks in-app via `getTagUrl` instead of leaking to bsky.app.
 const BIO_SANITIZE_CONFIG = {
 	ALLOWED_TAGS: [ 'p', 'br', 'a', 'span' ],
-	ALLOWED_ATTR: [ 'href', 'rel', 'target', 'class', 'data-id', 'data-tag' ],
+	ALLOWED_ATTR: [ 'href', 'rel', 'target', 'class', 'data-id', 'data-handle', 'data-tag' ],
 	// DOMPurify allows every data-* attribute by default; restrict to the
 	// explicit allow-list above so a future backend change can't smuggle a
 	// new data-* attribute (e.g. `data-tracking`) through to the DOM.
@@ -120,14 +121,23 @@ export function SocialProfileCard( {
 			return;
 		}
 		const dataId = anchor.getAttribute( 'data-id' );
-		if ( dataId ) {
-			// Set all three fields to the data-id value: per-protocol resolvers
-			// pick whichever they understand and validate. Atmosphere validates
-			// handle then DID; Mastodon reads `id`. The backend stamps either a
-			// DID (atmosphere) or a numeric account id (Mastodon) when available
-			// and falls back to a handle on atmosphere when no DID is known.
+		const dataHandle = anchor.getAttribute( 'data-handle' );
+		if ( dataId || dataHandle ) {
+			// Per-protocol resolvers pick whichever field they understand and
+			// validate. Atmosphere validates handle then DID; Mastodon reads
+			// `id`; Fediverse (CM-725) prefers the user-readable webfinger from
+			// `data-handle` over the canonical AP actor URL in `data-id`. The
+			// backend stamps either a DID (atmosphere), a numeric account id +
+			// webfinger (Mastodon), or an AP actor URL + webfinger pair
+			// (Fediverse). When `data-handle` is absent (atmosphere today),
+			// broadcast `data-id` to the handle slot so the existing resolver
+			// fallback keeps working.
 			const inAppUrl =
-				analytics?.getProfileUrl?.( { id: dataId, handle: dataId, did: dataId } ) ?? null;
+				analytics?.getProfileUrl?.( {
+					id: dataId,
+					handle: dataHandle ?? dataId,
+					did: dataId,
+				} ) ?? null;
 			if ( inAppUrl ) {
 				event.preventDefault();
 				page( inAppUrl );
@@ -136,18 +146,21 @@ export function SocialProfileCard( {
 			if ( ! analytics ) {
 				return;
 			}
-			// data-id present but resolver returned null — likely a backend ↔
-			// frontend desync. Surface the event so it's observable instead of
-			// silently routing to the external host with no analytics signal.
+			// data-id / data-handle present but resolver returned null — likely
+			// a backend ↔ frontend desync. Surface the event so it's observable
+			// instead of silently routing to the external host with no
+			// analytics signal.
 			// eslint-disable-next-line no-console
-			console.warn( '[reader-social] data-id mention anchor not resolved to in-app URL', {
+			console.warn( '[reader-social] mention anchor not resolved to in-app URL', {
 				dataId,
+				dataHandle,
 				href: anchor.getAttribute( 'href' ),
 				source: analytics.source,
 			} );
 			analytics.onClick( `calypso_reader_${ analytics.source }_timeline_mention_unresolved`, {
 				connection_id: analytics.connectionId,
 				data_id: dataId,
+				data_handle: dataHandle,
 			} );
 			return;
 		}
@@ -221,27 +234,24 @@ export function SocialProfileCard( {
 
 	return (
 		<div className="social-profile-card">
-			{ banner ? (
-				<img
-					src={ banner }
-					alt=""
-					className="social-profile-card__banner"
-					onError={ ( event ) => {
-						event.currentTarget.style.display = 'none';
-					} }
-				/>
-			) : null }
+			{ /* `fallback` shares the same SCSS class as the `<img>` so the
+			   placeholder div keeps the avatar/banner box dimensions and the
+			   solid background color when the URL is missing or the image
+			   fails to load. Without it the layout slot collapses entirely
+			   and we get a "no placeholder" gap in the card. */ }
+			<SocialAvatar
+				src={ banner }
+				alt=""
+				className="social-profile-card__banner"
+				fallback={ <div className="social-profile-card__banner" aria-hidden="true" /> }
+			/>
 			<div className="social-profile-card__header-row">
-				{ avatar ? (
-					<img
-						src={ avatar }
-						alt=""
-						className="social-profile-card__avatar"
-						onError={ ( event ) => {
-							event.currentTarget.style.display = 'none';
-						} }
-					/>
-				) : null }
+				<SocialAvatar
+					src={ avatar }
+					alt=""
+					className="social-profile-card__avatar"
+					fallback={ <div className="social-profile-card__avatar" aria-hidden="true" /> }
+				/>
 				{ headerActions ? (
 					<div className="social-profile-card__header-actions">{ headerActions }</div>
 				) : null }

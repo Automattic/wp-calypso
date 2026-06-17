@@ -1,3 +1,6 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 .editor-media-modal__gallery-help {
 	position: absolute;
 	bottom: 8px;

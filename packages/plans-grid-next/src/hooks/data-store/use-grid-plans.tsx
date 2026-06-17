@@ -221,6 +221,15 @@ export const usePlanTypesWithIntent = ( {
 			}
 			break;
 		}
+		case 'plans-upgrade-or-downgrade': {
+			// Show all plans — used when the current plan is expired and the user
+			// may want to downgrade as well as upgrade.
+			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			if ( isEnterpriseAvailable ) {
+				planTypes.push( TYPE_ENTERPRISE_GRID_WPCOM );
+			}
+			break;
+		}
 		case 'plans-jetpack-app':
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
@@ -468,10 +477,11 @@ const useGridPlans: UseGridPlansType = ( {
 			}
 		}
 
-		const productNameShort =
-			isWpcomEnterpriseGridPlan( planSlug ) && planConstantObj.getPathSlug
-				? planConstantObj.getPathSlug()
-				: planObject?.productNameShort ?? null;
+		// The enterprise plan isn't returned by the plans endpoint, so it has no
+		// server-provided product name; fall back to its fixed path slug.
+		const productNameShort = isWpcomEnterpriseGridPlan( planSlug )
+			? 'enterprise'
+			: planObject?.productNameShort ?? null;
 
 		// cartItemForPlan done in line here as it's a small piece of logic to pass another selector for
 		const cartItemForPlan =

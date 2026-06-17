@@ -1,9 +1,18 @@
 @import '@wordpress/base-styles/colors';
 
+// Nudge the icon down so it visually aligns with the cap-height of adjacent
+// text. Scoped to `.wpnc__user` (compound class selector, specificity 0,2,0)
+// so it outranks the body-content reset's `.wpnc__body-content div` rule
+// (0,1,1), which otherwise zeroes margins on all descendant divs.
+.wpnc__user .wpnc__note-icon {
+	margin-block: 4px;
+}
+
 .wpnc__note-icon {
 	position: relative;
 	height: 100%;
 	display: inline-flex;
+	margin-block: 4px;
 
 	img {
 		border-radius: 50%;

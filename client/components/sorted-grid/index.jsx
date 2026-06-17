@@ -1,6 +1,7 @@
-import { get, keys, last, map, omit, reduce } from 'lodash';
+import { omit } from '@automattic/js-utils';
+import { get, map, reduce } from 'lodash';
 import PropTypes from 'prop-types';
-import { PureComponent } from 'react';
+import { createRef, PureComponent } from 'react';
 import InfiniteList from 'calypso/components/infinite-list';
 import Label from './label';
 
@@ -14,6 +15,11 @@ class SortedGrid extends PureComponent {
 		itemsPerRow: PropTypes.number.isRequired,
 		scale: PropTypes.number.isRequired,
 	};
+
+	infiniteListRef = createRef();
+
+	// Exposes the underlying list's container DOM node (replaces the removed `findDOMNode`).
+	getDOMNode = () => this.infiniteListRef.current?.getDOMNode() ?? null;
 
 	getItems() {
 		const items = [];
@@ -47,7 +53,7 @@ class SortedGrid extends PureComponent {
 								text={ this.props.getGroupLabel( group ) }
 								itemsCount={ count }
 								itemsPerRow={ this.props.itemsPerRow }
-								lastInRow={ last( keys( row.groups ) ) === group }
+								lastInRow={ Object.keys( row.groups ).at( -1 ) === group }
 								scale={ this.props.scale }
 							/>
 						)
@@ -57,12 +63,12 @@ class SortedGrid extends PureComponent {
 		);
 	}
 
-	renderItem = ( item ) => {
+	renderItem = ( item, index, itemRef ) => {
 		if ( item.isGridLabel ) {
 			return this.renderLabels( item );
 		}
 
-		return this.props.renderItem( item );
+		return this.props.renderItem( item, index, itemRef );
 	};
 
 	render() {
@@ -75,7 +81,14 @@ class SortedGrid extends PureComponent {
 			'scale'
 		);
 
-		return <InfiniteList items={ this.getItems() } renderItem={ this.renderItem } { ...props } />;
+		return (
+			<InfiniteList
+				ref={ this.infiniteListRef }
+				items={ this.getItems() }
+				renderItem={ this.renderItem }
+				{ ...props }
+			/>
+		);
 	}
 }
 

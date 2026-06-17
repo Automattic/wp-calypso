@@ -1,4 +1,5 @@
-import { pick, set, isEqual } from 'lodash';
+import { pick } from '@automattic/js-utils';
+import { set, isEqual } from 'lodash';
 import { STATS_CHART_COUNTS_REQUEST, STATS_CHART_COUNTS_RECEIVE } from 'calypso/state/action-types';
 import {
 	combineReducers,

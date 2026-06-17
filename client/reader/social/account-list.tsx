@@ -45,11 +45,12 @@ export interface SocialAccountListProps< T > {
 	protocolLabel: string;
 	protocolHomeURL: string;
 	protocolHomeLabel: string;
+	authRequiredCopy?: { title: string; line: string };
 	/** Optional header rendered above the list (e.g. on followers/following views). */
 	header?: SocialAccountListHeader;
 }
 
-function AccountListHeader( {
+export function SocialAccountListHeader( {
 	displayName,
 	handle,
 	count,
@@ -108,7 +109,7 @@ export function SocialAccountList< T >( props: SocialAccountListProps< T > ) {
 
 	return (
 		<>
-			{ props.header && <AccountListHeader { ...props.header } /> }
+			{ props.header && <SocialAccountListHeader { ...props.header } /> }
 			<SocialFeedList< T >
 				items={ items }
 				isPending={ props.query.isPending }
@@ -127,6 +128,7 @@ export function SocialAccountList< T >( props: SocialAccountListProps< T > ) {
 				protocolLabel={ props.protocolLabel }
 				protocolHomeURL={ props.protocolHomeURL }
 				protocolHomeLabel={ props.protocolHomeLabel }
+				authRequiredCopy={ props.authRequiredCopy }
 			/>
 		</>
 	);

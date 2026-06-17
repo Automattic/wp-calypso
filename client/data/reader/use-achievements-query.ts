@@ -1,5 +1,4 @@
 import { readAchievementsQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
 interface UseAchievementsQueryOptions {
@@ -18,17 +17,22 @@ export function useAchievementsQuery(
 	userIdOrLogin?: number | string,
 	options: UseAchievementsQueryOptions = {}
 ) {
-	const enabled = isEnabled( 'reader/achievements' ) && userIdOrLogin != null;
 	const query = useInfiniteQuery( {
 		...readAchievementsQuery( userIdOrLogin ),
-		enabled,
+		enabled: userIdOrLogin != null,
 		...options,
 	} );
+
+	const dailyPostStreaks = [ ...( query.data?.pages[ 0 ]?.daily_post_streak ?? [] ) ].sort(
+		( a, b ) => b.current_streak - a.current_streak
+	);
 
 	return {
 		achievements: query.data?.pages.flatMap( ( p ) => p.achievements ?? [] ) ?? [],
 		lockedAchievements: query.data?.pages[ 0 ]?.locked_achievements ?? [],
 		yearsOfService: query.data?.pages[ 0 ]?.years_of_service,
+		engagementStreak: query.data?.pages[ 0 ]?.engagement_streak,
+		dailyPostStreaks,
 		found: query.data?.pages[ 0 ]?.found ?? 0,
 		isLoading: query.isLoading,
 		isError: query.isError,

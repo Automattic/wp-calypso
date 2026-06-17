@@ -1,4 +1,4 @@
-import { get, keys } from 'lodash';
+import { get } from 'lodash';
 import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import versionCompare from 'calypso/lib/version-compare';
 import wpcom from 'calypso/lib/wp';
@@ -24,7 +24,7 @@ const _fetching = {};
 
 const normalizePluginInstructions = ( data ) => {
 	const _plugins = data.keys;
-	return keys( _plugins ).map( ( slug ) => {
+	return Object.keys( _plugins || {} ).map( ( slug ) => {
 		const apiKey = _plugins[ slug ];
 		return {
 			slug: slug,

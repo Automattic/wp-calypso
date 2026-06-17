@@ -47,7 +47,7 @@ function getPathForCommand( command ) {
 	 * @see printPhpcsDocs
 	 */
 	const path_to_command = path.join( __dirname, '..', 'vendor', 'bin', command );
-	return _.trim( path_to_command );
+	return path_to_command.trim();
 }
 function linterFailure() {
 	console.log(
@@ -187,6 +187,7 @@ if ( toEslint.length ) {
 	const lintResult = spawnSync( './node_modules/.bin/eslint', [ '--quiet', ...toEslint ], {
 		shell: true,
 		stdio: 'inherit',
+		env: { ...process.env, ESLINT_USE_FLAT_CONFIG: 'false' },
 	} );
 
 	if ( lintResult.status ) {

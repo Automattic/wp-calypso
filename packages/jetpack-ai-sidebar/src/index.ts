@@ -10,7 +10,7 @@
  * WordPress dependencies
  */
 import { dispatch, useSelect } from '@wordpress/data';
-import { useState, useEffect } from '@wordpress/element';
+import { useState, useEffect, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
@@ -26,16 +26,29 @@ import {
 	findBlockElement,
 	findBlockListLayout,
 	handleUpdateBlockContent,
-	setAddMessageFn,
 	setModuleCheckpointApi,
 	getModuleCheckpointApi,
 	startBlockShimmer,
+	stopBlockShimmer,
+	getSelectedOrRememberedBlock,
+	rememberSelectedBlock,
+	clearRememberedSelectedBlock,
+	notifyBlockActionComplete,
+	BLOCK_ACTION_COMPLETE_EVENT,
+	SELECTED_BLOCK_CLEAR_EVENT,
 } from './utils/block-actions';
 import {
 	UPDATE_BLOCK_CONTENT_TOOL_ID,
 	UPDATE_BLOCK_CONTENT_ABILITY,
 	isUpdateBlockContentTool,
 } from './utils/tool-provider';
+import {
+	type BlockTransformationSuggestionType,
+	trackAiEditorialReviewSuggestionClick,
+	trackAiEditorialReviewSuggestionRendered,
+	trackBlockTransformationSuggestionClick,
+	trackBlockTransformationSuggestionRendered,
+} from './utils/tracking';
 import type { ComponentType } from 'react';
 
 // Re-export block-action helpers as part of the package's public surface.
@@ -44,6 +57,18 @@ export { applyReviewEdit, findBlockElement, findBlockListLayout };
 // ---------- Module state ----------
 
 let clearSuggestionsFn: ( () => void ) | null = null;
+let wasAgentProcessing = false;
+
+/** Whether `_suggestion_rendered` has fired this page life (once-per-session). */
+let suggestionRenderedFiredOnce = false;
+
+/** Block transformation suggestions whose rendered event has fired this page life. */
+const blockTransformationSuggestionRenderedKeys = new Set< string >();
+
+let lastBlockTransformationSuggestionContext: {
+	blockType: string;
+	suggestions: BlockSuggestion[];
+} | null = null;
 
 /** Default suggestion shown when no block is selected. */
 const OPTIMIZE_TITLE_SUGGESTION = {
@@ -52,18 +77,74 @@ const OPTIMIZE_TITLE_SUGGESTION = {
 	prompt: __( 'Optimize the title of this post', 'jetpack' ),
 };
 
-/** Post-level suggestion to mediate multi-reviewer feedback on a draft. */
-const MEDIATE_REVIEW_SUGGESTION = {
+/**
+ * Post-level suggestion to run AI Editorial Review on a draft.
+ *
+ * The id remains stable because saved chats/tests may still refer to the
+ * original review-mediation identifier.
+ */
+const AI_EDITORIAL_REVIEW_SUGGESTION = {
 	id: 'mediate-review-notes',
-	label: __( 'Mediate review notes', 'jetpack' ),
+	label: __( 'AI Editorial Review', 'jetpack' ),
 	prompt: __(
-		'Review the unresolved notes on this post, apply the site guidelines, and surface conflicts, implications, and suggested edits.',
+		'Run an AI Editorial Review for this post. Check the content, reviewer notes, and site guidelines, then surface conflicts, implications, guideline issues, and suggested edits.',
 		'jetpack'
 	),
 };
 
-function isReviewMediatorEnabled(): boolean {
-	return typeof agentsManagerData !== 'undefined' && !! agentsManagerData?.reviewMediatorEnabled;
+const LIMITED_BLOCK_SUGGESTION_PRIORITY = [
+	'translate',
+	'check-grammar',
+	'change-tone',
+	'simplify-text',
+	'generate-alt-text',
+];
+
+type JetpackAiSidebarPreviewFeature =
+	| 'aiEditorialReview'
+	| 'blockTransformations'
+	| 'optimizeTitleSuggestion'
+	| 'chatHistory'
+	| 'supportGuides';
+
+function getAgentsManagerData() {
+	return typeof agentsManagerData !== 'undefined' ? agentsManagerData : undefined;
+}
+
+function isJetpackAiSidebarPreviewFeatureEnabled(
+	feature: JetpackAiSidebarPreviewFeature,
+	defaultValue: boolean
+): boolean {
+	const preview = getAgentsManagerData()?.jetpackAiSidebarPreview;
+	if ( ! preview ) {
+		return defaultValue;
+	}
+	if ( ! preview.enabled ) {
+		return false;
+	}
+	return preview.features?.[ feature ] === true;
+}
+
+function isAiEditorialReviewEnabled(): boolean {
+	const data = getAgentsManagerData();
+	if ( ! data ) {
+		return false;
+	}
+	if ( data.jetpackAiSidebarPreview ) {
+		return isJetpackAiSidebarPreviewFeatureEnabled(
+			'aiEditorialReview',
+			!! data.aiEditorialReviewEnabled
+		);
+	}
+	return !! data.aiEditorialReviewEnabled || !! data.reviewMediatorEnabled;
+}
+
+function isOptimizeTitleSuggestionEnabled(): boolean {
+	return isJetpackAiSidebarPreviewFeatureEnabled( 'optimizeTitleSuggestion', true );
+}
+
+function isBlockTransformationsEnabled(): boolean {
+	return isJetpackAiSidebarPreviewFeatureEnabled( 'blockTransformations', true );
 }
 
 function getCurrentEditorPostType(): string | undefined {
@@ -71,32 +152,90 @@ function getCurrentEditorPostType(): string | undefined {
 	return typeof postType === 'string' ? postType : undefined;
 }
 
-function isReviewMediatorAvailable(
+function getCurrentEditorPostId(): number | undefined {
+	const postId = ( window as any ).wp?.data?.select?.( 'core/editor' )?.getCurrentPostId?.();
+	return typeof postId === 'number' && postId > 0 ? postId : undefined;
+}
+
+function isAiEditorialReviewAvailable(
 	// Default arguments run at call time, so callers can omit this when they
 	// want the current editor state read live.
 	currentPostType: string | undefined = getCurrentEditorPostType()
 ): boolean {
-	return isReviewMediatorEnabled() && currentPostType === 'post';
+	return isAiEditorialReviewEnabled() && currentPostType === 'post';
 }
 
-function getReviewMediatorSuggestions( currentPostType?: string ) {
-	return isReviewMediatorAvailable( currentPostType ) ? [ MEDIATE_REVIEW_SUGGESTION ] : [];
+function trackAiEditorialReviewSuggestionRenderedOnce(): void {
+	if ( suggestionRenderedFiredOnce ) {
+		return;
+	}
+	suggestionRenderedFiredOnce = true;
+	trackAiEditorialReviewSuggestionRendered();
+}
+
+function getAiEditorialReviewSuggestions( currentPostType?: string ) {
+	if ( ! isAiEditorialReviewAvailable( currentPostType ) ) {
+		return [];
+	}
+	return [ AI_EDITORIAL_REVIEW_SUGGESTION ];
 }
 
 function getPostLevelSuggestions( currentPostType?: string ) {
-	return [ OPTIMIZE_TITLE_SUGGESTION, ...getReviewMediatorSuggestions( currentPostType ) ];
+	return [
+		...( isOptimizeTitleSuggestionEnabled() ? [ OPTIMIZE_TITLE_SUGGESTION ] : [] ),
+		...getAiEditorialReviewSuggestions( currentPostType ),
+	];
+}
+
+function applySuggestionLimit< T extends { id: string } >(
+	suggestions: T[],
+	maxSuggestions?: number
+): T[] {
+	if (
+		typeof maxSuggestions !== 'number' ||
+		! Number.isFinite( maxSuggestions ) ||
+		suggestions.length <= maxSuggestions
+	) {
+		return suggestions;
+	}
+
+	const limit = Math.floor( maxSuggestions );
+	if ( limit <= 0 ) {
+		return [];
+	}
+
+	const aiEditorialReviewSuggestion = suggestions.find(
+		( suggestion ) => suggestion.id === AI_EDITORIAL_REVIEW_SUGGESTION.id
+	);
+	if ( ! aiEditorialReviewSuggestion ) {
+		return suggestions.slice( 0, limit );
+	}
+
+	const nonAiSuggestions = suggestions
+		.filter( ( suggestion ) => suggestion.id !== AI_EDITORIAL_REVIEW_SUGGESTION.id )
+		.sort( ( a, b ) => {
+			const aPriority = LIMITED_BLOCK_SUGGESTION_PRIORITY.indexOf( a.id );
+			const bPriority = LIMITED_BLOCK_SUGGESTION_PRIORITY.indexOf( b.id );
+			const normalizedAPriority = aPriority === -1 ? Number.MAX_SAFE_INTEGER : aPriority;
+			const normalizedBPriority = bPriority === -1 ? Number.MAX_SAFE_INTEGER : bPriority;
+			return normalizedAPriority - normalizedBPriority;
+		} );
+
+	return [ ...nonAiSuggestions.slice( 0, limit - 1 ), aiEditorialReviewSuggestion ];
 }
 
 // ---------- Show-component ability ----------
 
-const SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
+const SHOW_COMPONENT_TOOL_ID = 'jetpack_ai__show_component';
+const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
+const SHOW_COMPONENT_TOOL_IDS = [ SHOW_COMPONENT_TOOL_ID, LEGACY_SHOW_COMPONENT_TOOL_ID ];
 
 /**
- * Client-side ability definition for `big_sky__show_component`.
+ * Client-side ability definition for `jetpack_ai__show_component`.
  *
  * Surfaced to AM via `toolProvider.getAbilities()` so the orchestrator
- * recognizes the tool_id on self-hosted Jetpack sites where Big Sky's own
- * registration isn't present. Same pattern as update-block-content.
+ * recognizes Jetpack-owned component tool calls. Same pattern as
+ * update-block-content.
  */
 const SHOW_COMPONENT_ABILITY: any = {
 	id: SHOW_COMPONENT_TOOL_ID,
@@ -114,9 +253,28 @@ const SHOW_COMPONENT_ABILITY: any = {
 	},
 };
 
+const LEGACY_SHOW_COMPONENT_ABILITY: any = {
+	...SHOW_COMPONENT_ABILITY,
+	id: LEGACY_SHOW_COMPONENT_TOOL_ID,
+	name: LEGACY_SHOW_COMPONENT_TOOL_ID,
+};
+
+function hasShowComponentType( type: unknown ): type is string {
+	return typeof type === 'string' && type.trim() !== '';
+}
+
+function isJetpackShowComponentType( type: unknown ): boolean {
+	return hasShowComponentType( type ) && !! getChatComponent( type );
+}
+
+function shouldDelegateLegacyShowComponent( input: any ): boolean {
+	const type = input?.type;
+	return hasShowComponentType( type ) && ! isJetpackShowComponentType( type );
+}
+
 /**
- * Handle `big_sky__show_component` by returning an agentMessage envelope
- * (Big Sky unified-experience pattern). Title picker opts into AM's
+ * Handle Jetpack show-component calls by returning an agentMessage envelope.
+ * Title picker opts into AM's
  * message-level Undo because the checkpoint API snapshots the post title.
  * @param {any} input - Tool call arguments: `{ type, props, toolCallId, ... }`.
  * @returns {Object} Result containing the `agentMessage` to re-emit.
@@ -124,7 +282,7 @@ const SHOW_COMPONENT_ABILITY: any = {
 function handleShowComponent( input: any ): any {
 	const { type, props } = input || {};
 
-	if ( ! type ) {
+	if ( ! hasShowComponentType( type ) ) {
 		return { success: false, error: 'show-component: missing type', returnToAgent: false };
 	}
 
@@ -136,12 +294,20 @@ function handleShowComponent( input: any ): any {
 		};
 	}
 
+	const componentProps: Record< string, unknown > = { ...( props ?? {} ) };
 	const data: Record< string, unknown > = {
 		type,
-		props: props ?? {},
+		props: componentProps,
 		isCurrent: true,
 		hideZoomAction: true,
 	};
+	if ( type === 'review-mediation' ) {
+		const currentPostId = getCurrentEditorPostId();
+		if ( currentPostId ) {
+			componentProps.postId = currentPostId;
+			data.postId = currentPostId;
+		}
+	}
 
 	if ( type === 'title-picker' ) {
 		// Snapshot state for Undo. Tool call id doubles as the checkpoint id so
@@ -171,6 +337,17 @@ function handleShowComponent( input: any ): any {
 	};
 }
 
+async function handleLegacyShowComponent( input: any ): Promise< any > {
+	if ( shouldDelegateLegacyShowComponent( input ) ) {
+		const executeAbility = getAbilitiesExecuteAbility();
+		if ( executeAbility ) {
+			return executeAbility( 'big-sky/show-component', input );
+		}
+	}
+
+	return handleShowComponent( input );
+}
+
 /**
  * Check whether the `@wordpress/abilities` API is available.
  * @returns {boolean} True when window.wp.abilities.getAbilities exists.
@@ -183,6 +360,17 @@ function hasAbilitiesApi(): boolean {
 	}
 }
 
+function getAbilitiesExecuteAbility():
+	| ( ( name: string, args: unknown ) => Promise< any > )
+	| null {
+	try {
+		const executeAbility = ( window as any ).wp?.abilities?.executeAbility;
+		return typeof executeAbility === 'function' ? executeAbility : null;
+	} catch {
+		return null;
+	}
+}
+
 // ---------- useAbilitiesSetup ----------
 
 /**
@@ -192,12 +380,21 @@ function hasAbilitiesApi(): boolean {
 export function useAbilitiesSetup( actions: {
 	addMessage: ( message: any ) => void;
 	clearSuggestions?: () => void;
+	isProcessing?: boolean;
 	[ key: string ]: unknown;
 } ): void {
-	setAddMessageFn( actions.addMessage );
 	if ( actions.clearSuggestions ) {
 		clearSuggestionsFn = actions.clearSuggestions;
 	}
+
+	const isProcessing = actions.isProcessing === true;
+	if ( isProcessing && ! wasAgentProcessing ) {
+		startBlockShimmer();
+	} else if ( ! isProcessing && wasAgentProcessing ) {
+		stopBlockShimmer();
+		notifyBlockActionComplete();
+	}
+	wasAgentProcessing = isProcessing;
 }
 
 // ---------- toolProvider ----------
@@ -225,14 +422,14 @@ function filterAbility( abilities: any[], toolId: string ): any[] {
 }
 
 function isShowComponentTool( toolId: string ): boolean {
-	return toolId === SHOW_COMPONENT_TOOL_ID || toolId === 'big_sky__show_component';
+	return SHOW_COMPONENT_TOOL_IDS.includes( toolId );
 }
 
 export const toolProvider = {
 	/**
 	 * Client-side abilities this provider handles: `wpcom/update-block-content`
-	 * (block edits + summary) and `big_sky__show_component` (interactive pickers,
-	 * registered here so self-hosted Jetpack sees the tool_id).
+	 * (block edits + summary) and Jetpack show-component tools (interactive
+	 * pickers, registered here so self-hosted Jetpack sees the tool_id).
 	 * @returns {Promise<any[]>} Array of ability descriptors.
 	 */
 	async getAbilities(): Promise< any[] > {
@@ -252,18 +449,28 @@ export const toolProvider = {
 		}
 
 		abilities = filterAbility( abilities, UPDATE_BLOCK_CONTENT_TOOL_ID );
-		abilities = filterAbility( abilities, SHOW_COMPONENT_TOOL_ID );
-		abilities.unshift(
-			{
-				...UPDATE_BLOCK_CONTENT_ABILITY,
-				callback: handleUpdateBlockContent,
-			},
+		for ( const toolId of SHOW_COMPONENT_TOOL_IDS ) {
+			abilities = filterAbility( abilities, toolId );
+		}
+		const jetpackAbilities = [
+			...( isBlockTransformationsEnabled()
+				? [
+						{
+							...UPDATE_BLOCK_CONTENT_ABILITY,
+							callback: handleUpdateBlockContent,
+						},
+				  ]
+				: [] ),
 			{
 				...SHOW_COMPONENT_ABILITY,
 				callback: handleShowComponent,
-			}
-		);
-
+			},
+			{
+				...LEGACY_SHOW_COMPONENT_ABILITY,
+				callback: handleLegacyShowComponent,
+			},
+		];
+		abilities.unshift( ...jetpackAbilities );
 		return abilities;
 	},
 
@@ -271,23 +478,27 @@ export const toolProvider = {
 	 * Execute an ability by name (fallback when callback path is not used).
 	 * @param {string} name - The ability identifier.
 	 * @param {any}    args - Arguments to pass to the ability.
-	 * @returns {Promise<{result: Record<string, unknown>, returnToAgent?: boolean}>} Execution result.
+	 * @returns {Promise<any>} Execution result. Delegated abilities may return provider-specific shapes.
 	 */
-	async executeAbility(
-		name: string,
-		args: any
-	): Promise< { result: Record< string, unknown >; returnToAgent?: boolean } > {
+	async executeAbility( name: string, args: any ): Promise< any > {
 		if ( isUpdateBlockContentTool( name ) ) {
 			const result = await handleUpdateBlockContent( args );
 			return { result, returnToAgent: false };
+		}
+
+		if ( name === LEGACY_SHOW_COMPONENT_TOOL_ID && shouldDelegateLegacyShowComponent( args ) ) {
+			const executeAbility = getAbilitiesExecuteAbility();
+			if ( executeAbility ) {
+				return executeAbility( 'big-sky/show-component', args );
+			}
 		}
 
 		if ( isShowComponentTool( name ) ) {
 			return { result: handleShowComponent( args ), returnToAgent: false };
 		}
 
-		if ( hasAbilitiesApi() ) {
-			const { executeAbility } = ( window as any ).wp.abilities;
+		const executeAbility = getAbilitiesExecuteAbility();
+		if ( executeAbility ) {
 			return executeAbility( name, args );
 		}
 
@@ -350,11 +561,11 @@ export const contextProvider = {
 			if ( blockEditor ) {
 				const blocks = blockEditor.getBlocks?.() ?? [];
 				currentPageContent = blocks.map( serializeBlock );
-				selectedBlockClientId = blockEditor.getSelectedBlockClientId?.() ?? '';
-
-				if ( selectedBlockClientId ) {
-					const selectedBlock = blockEditor.getSelectedBlock?.();
-					if ( selectedBlock?.attributes?.content ) {
+				const selectedBlock = getSelectedOrRememberedBlock();
+				if ( selectedBlock?.clientId ) {
+					selectedBlockClientId = selectedBlock.clientId;
+					rememberSelectedBlock( selectedBlock );
+					if ( selectedBlock.attributes?.content ) {
 						selectedBlockContent = resolveBlockContent( selectedBlock.attributes.content );
 					}
 				}
@@ -476,39 +687,131 @@ const TEXT_BLOCK_TYPES = [ 'core/paragraph', 'core/heading' ];
 /** Block types that support image-related suggestions. */
 const IMAGE_BLOCK_TYPES = [ 'core/image', 'core/media-text', 'core/cover', 'core/gallery' ];
 
+type BlockSuggestion = {
+	id: string;
+	label: string;
+	prompt: string;
+	type: BlockTransformationSuggestionType;
+	condition: ( block: any ) => boolean;
+};
+
 /** Block-aware suggestion definitions with optional condition per block type. */
-const BLOCK_SUGGESTIONS = [
+const BLOCK_SUGGESTIONS: BlockSuggestion[] = [
 	{
-		id: 'translate-content',
+		id: 'translate',
 		label: __( 'Translate content', 'jetpack' ),
 		prompt: __( 'Translate this block content to:', 'jetpack' ),
+		type: 'text',
 		condition: ( block: any ) => TEXT_BLOCK_TYPES.includes( block?.name ),
 	},
 	{
 		id: 'change-tone',
 		label: __( 'Change tone', 'jetpack' ),
 		prompt: __( 'Change the tone of this text to be more:', 'jetpack' ),
+		type: 'text',
 		condition: ( block: any ) => TEXT_BLOCK_TYPES.includes( block?.name ),
 	},
 	{
 		id: 'check-grammar',
 		label: __( 'Check grammar', 'jetpack' ),
 		prompt: __( 'Check the grammar and spelling of this text', 'jetpack' ),
+		type: 'text',
 		condition: ( block: any ) => TEXT_BLOCK_TYPES.includes( block?.name ),
 	},
 	{
 		id: 'simplify-text',
 		label: __( 'Simplify text', 'jetpack' ),
 		prompt: __( 'Simplify this text to make it easier to read', 'jetpack' ),
+		type: 'text',
 		condition: ( block: any ) => TEXT_BLOCK_TYPES.includes( block?.name ),
 	},
 	{
 		id: 'generate-alt-text',
 		label: __( 'Generate alt text', 'jetpack' ),
 		prompt: __( 'Generate descriptive alt text for this image', 'jetpack' ),
+		type: 'image',
 		condition: ( block: any ) => IMAGE_BLOCK_TYPES.includes( block?.name ),
 	},
 ];
+
+function matchesBlockTransformationSuggestion(
+	suggestion: BlockSuggestion,
+	value: string
+): boolean {
+	return [ suggestion.id, suggestion.label, suggestion.prompt ].includes( value );
+}
+
+function getBlockTransformationSuggestionForValue(
+	value: string,
+	suggestions: BlockSuggestion[]
+): BlockSuggestion | undefined {
+	return suggestions.find( ( suggestion ) =>
+		matchesBlockTransformationSuggestion( suggestion, value )
+	);
+}
+
+function trackRenderedBlockTransformationSuggestions(
+	suggestions: BlockSuggestion[],
+	block: any
+): void {
+	if ( typeof block?.name !== 'string' ) {
+		return;
+	}
+
+	lastBlockTransformationSuggestionContext = {
+		blockType: block.name,
+		suggestions,
+	};
+
+	suggestions.forEach( ( suggestion ) => {
+		const renderedKey = `${ suggestion.id }:${ block.name }`;
+		if ( blockTransformationSuggestionRenderedKeys.has( renderedKey ) ) {
+			return;
+		}
+		blockTransformationSuggestionRenderedKeys.add( renderedKey );
+		trackBlockTransformationSuggestionRendered( {
+			suggestionId: suggestion.id,
+			suggestionType: suggestion.type,
+			blockType: block.name,
+		} );
+	} );
+}
+
+function trackBlockTransformationSuggestionClickForValue( value: string ): void {
+	if ( ! isBlockTransformationsEnabled() ) {
+		return;
+	}
+
+	const selectedBlock = getSelectedOrRememberedBlock();
+	if ( typeof selectedBlock?.name === 'string' ) {
+		const selectedBlockSuggestion = getBlockTransformationSuggestionForValue(
+			value,
+			BLOCK_SUGGESTIONS.filter( ( suggestion ) => suggestion.condition( selectedBlock ) )
+		);
+		if ( selectedBlockSuggestion ) {
+			trackBlockTransformationSuggestionClick( {
+				suggestionId: selectedBlockSuggestion.id,
+				suggestionType: selectedBlockSuggestion.type,
+				blockType: selectedBlock.name,
+			} );
+			return;
+		}
+	}
+
+	const lastRenderedContext = lastBlockTransformationSuggestionContext;
+	const lastRenderedSuggestion = lastRenderedContext
+		? getBlockTransformationSuggestionForValue( value, lastRenderedContext.suggestions )
+		: undefined;
+	if ( ! lastRenderedContext || ! lastRenderedSuggestion ) {
+		return;
+	}
+
+	trackBlockTransformationSuggestionClick( {
+		suggestionId: lastRenderedSuggestion.id,
+		suggestionType: lastRenderedSuggestion.type,
+		blockType: lastRenderedContext.blockType,
+	} );
+}
 
 // ---------- capabilities ----------
 
@@ -528,7 +831,10 @@ export const capabilities = {
  * Hides permanently once the conversation becomes active.
  * @returns {Object} Object containing a suggestions array.
  */
-export function useSuggestions(): {
+export function useSuggestions(
+	maxSuggestions?: number,
+	{ suggestionsVisible = true }: { suggestionsVisible?: boolean } = {}
+): {
 	suggestions: Array< { id: string; label: string; prompt?: string } >;
 } {
 	const [ hidden, setHidden ] = useState( false );
@@ -537,16 +843,19 @@ export function useSuggestions(): {
 		const handleSuggestionClick = ( event: Event ) => {
 			setHidden( true );
 			clearSuggestionsFn?.();
-			startBlockShimmer();
 
-			// Mediation output is too dense for the 350px sidebar. Auto-expand
-			// to 50vw on the mediation suggestion only (matched by prompt).
+			// AI Editorial Review output is too dense for the 350px sidebar.
+			// Auto-expand to 50vw on that suggestion only (matched by prompt).
 			const value = ( event as CustomEvent ).detail?.value;
+			if ( typeof value === 'string' ) {
+				trackBlockTransformationSuggestionClickForValue( value );
+			}
 			if (
-				isReviewMediatorAvailable() &&
+				isAiEditorialReviewAvailable() &&
 				typeof value === 'string' &&
-				value === MEDIATE_REVIEW_SUGGESTION.prompt
+				value === AI_EDITORIAL_REVIEW_SUGGESTION.prompt
 			) {
+				trackAiEditorialReviewSuggestionClick();
 				try {
 					( dispatch as any )( 'automattic/agents-manager' ).setIsSplitScreen( true );
 				} catch {
@@ -558,6 +867,27 @@ export function useSuggestions(): {
 		window.addEventListener( 'big-sky-inline-suggestion-click', handleSuggestionClick );
 		return () => {
 			window.removeEventListener( 'big-sky-inline-suggestion-click', handleSuggestionClick );
+		};
+	}, [] );
+
+	useEffect( () => {
+		const handleBlockActionComplete = () => {
+			setHidden( false );
+		};
+		window.addEventListener( BLOCK_ACTION_COMPLETE_EVENT, handleBlockActionComplete );
+		return () => {
+			window.removeEventListener( BLOCK_ACTION_COMPLETE_EVENT, handleBlockActionComplete );
+		};
+	}, [] );
+
+	useEffect( () => {
+		const handleSelectedBlockClear = () => {
+			clearRememberedSelectedBlock();
+			setHidden( false );
+		};
+		window.addEventListener( SELECTED_BLOCK_CLEAR_EVENT, handleSelectedBlockClear );
+		return () => {
+			window.removeEventListener( SELECTED_BLOCK_CLEAR_EVENT, handleSelectedBlockClear );
 		};
 	}, [] );
 
@@ -575,18 +905,101 @@ export function useSuggestions(): {
 		setHidden( false );
 	}, [ editorContext.selectedBlock?.clientId ] );
 
-	if ( hidden ) {
-		return { suggestions: [] };
-	}
-
-	if ( ! editorContext.selectedBlock ) {
-		return { suggestions: getPostLevelSuggestions( editorContext.postType ) };
-	}
-
-	const applicable = BLOCK_SUGGESTIONS.filter( ( s ) =>
-		s.condition( editorContext.selectedBlock )
+	const selectedBlock = editorContext.selectedBlock;
+	const aiEditorialReviewSuggestions = getAiEditorialReviewSuggestions( editorContext.postType );
+	const blockTransformationsEnabled = isBlockTransformationsEnabled();
+	const applicable = useMemo(
+		() =>
+			selectedBlock && blockTransformationsEnabled
+				? BLOCK_SUGGESTIONS.filter( ( suggestion ) => suggestion.condition( selectedBlock ) )
+				: [],
+		[ blockTransformationsEnabled, selectedBlock ]
 	);
-	return {
-		suggestions: applicable.map( ( { id, label, prompt } ) => ( { id, label, prompt } ) ),
-	};
+	const blockTransformationSuggestions = useMemo(
+		() => applicable.map( ( { id, label, prompt } ) => ( { id, label, prompt } ) ),
+		[ applicable ]
+	);
+	const visibleSuggestions = useMemo( () => {
+		if ( hidden ) {
+			return [];
+		}
+
+		if ( ! selectedBlock ) {
+			return applySuggestionLimit(
+				getPostLevelSuggestions( editorContext.postType ),
+				maxSuggestions
+			);
+		}
+
+		if ( ! blockTransformationsEnabled ) {
+			return applySuggestionLimit( aiEditorialReviewSuggestions, maxSuggestions );
+		}
+
+		return applySuggestionLimit(
+			[ ...blockTransformationSuggestions, ...aiEditorialReviewSuggestions ],
+			maxSuggestions
+		);
+	}, [
+		aiEditorialReviewSuggestions,
+		blockTransformationSuggestions,
+		blockTransformationsEnabled,
+		editorContext.postType,
+		hidden,
+		maxSuggestions,
+		selectedBlock,
+	] );
+	const visibleSuggestionIds = useMemo(
+		() => new Set( visibleSuggestions.map( ( suggestion ) => suggestion.id ) ),
+		[ visibleSuggestions ]
+	);
+	const visibleBlockTransformationSuggestions = useMemo(
+		() => applicable.filter( ( suggestion ) => visibleSuggestionIds.has( suggestion.id ) ),
+		[ applicable, visibleSuggestionIds ]
+	);
+	const visibleBlockTransformationSuggestionsKey = visibleBlockTransformationSuggestions
+		.map( ( suggestion ) => suggestion.id )
+		.join( '|' );
+	const isAiEditorialReviewSuggestionVisible = visibleSuggestionIds.has(
+		AI_EDITORIAL_REVIEW_SUGGESTION.id
+	);
+
+	useEffect( () => {
+		if ( editorContext.selectedBlock ) {
+			rememberSelectedBlock( editorContext.selectedBlock );
+		}
+	}, [ editorContext.selectedBlock?.clientId, editorContext.selectedBlock ] );
+
+	useEffect( () => {
+		if ( ! suggestionsVisible || hidden || ! isAiEditorialReviewSuggestionVisible ) {
+			return;
+		}
+		trackAiEditorialReviewSuggestionRenderedOnce();
+	}, [ hidden, isAiEditorialReviewSuggestionVisible, suggestionsVisible ] );
+
+	useEffect( () => {
+		if (
+			! suggestionsVisible ||
+			hidden ||
+			! selectedBlock ||
+			! blockTransformationsEnabled ||
+			visibleBlockTransformationSuggestions.length === 0
+		) {
+			return;
+		}
+		trackRenderedBlockTransformationSuggestions(
+			visibleBlockTransformationSuggestions,
+			selectedBlock
+		);
+	}, [
+		blockTransformationsEnabled,
+		hidden,
+		selectedBlock,
+		selectedBlock?.name,
+		suggestionsVisible,
+		visibleBlockTransformationSuggestions,
+		visibleBlockTransformationSuggestions.length,
+		visibleBlockTransformationSuggestionsKey,
+	] );
+
+	return { suggestions: visibleSuggestions };
 }

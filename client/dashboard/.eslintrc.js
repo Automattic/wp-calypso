@@ -14,14 +14,18 @@ module.exports = {
 							'!calypso/data/data-center',
 							'!calypso/data/php-versions',
 							// Allowed: calypso/lib/explat
+							// Allowed: calypso/lib/color-scheme
 							// Allowed: calypso/lib/interval/use-interval (temporary)
 							// Allowed: calypso/lib/load-dev-helpers
 							// Allowed: calypso/lib/logstash
 							// Allowed: calypso/lib/wp
 							'!calypso/lib',
 							'calypso/lib/*',
+							'!calypso/lib/color-scheme',
 							'!calypso/lib/explat',
 							'!calypso/lib/interval',
+							// Allowed: calypso/lib/use-site-launch-gating-variant (temporary)
+							'!calypso/lib/use-site-launch-gating-variant',
 							'!calypso/lib/load-dev-helpers',
 							'!calypso/lib/logstash',
 							'!calypso/lib/wp',
@@ -55,6 +59,7 @@ module.exports = {
 							'!@automattic/components/src/breadcrumbs',
 							'!@automattic/components/src/breadcrumbs/types',
 							'!@automattic/components/src/logos',
+							'!@automattic/date-range-picker',
 							'!@automattic/domain-search',
 							'!@automattic/domains-table',
 							'!@automattic/domains-table/src/utils/*',
@@ -66,7 +71,6 @@ module.exports = {
 							'!@automattic/load-script',
 							'!@automattic/number-formatters',
 							'!@automattic/search',
-							'!@automattic/calypso-razorpay',
 							'!@automattic/calypso-stripe',
 							'!@automattic/calypso-url',
 							'!@automattic/composite-checkout',
@@ -94,6 +98,12 @@ module.exports = {
 					{
 						name: '@automattic/calypso-analytics',
 						message: 'Please import { useAnalytics } from client/dashboard/app/analytics instead.',
+					},
+					{
+						name: 'calypso/lib/color-scheme',
+						importNames: [ 'ClassicColorSchemeProvider' ],
+						message:
+							'Dashboard must use the query-backed color scheme provider, not the Classic Redux provider.',
 					},
 					{
 						name: '@automattic/components',

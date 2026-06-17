@@ -2,9 +2,10 @@ import { Card } from '@automattic/components';
 import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { get, flowRight } from 'lodash';
+import { get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import Pagination from 'calypso/components/pagination';
 import SectionHeader from 'calypso/components/section-header';
@@ -146,4 +147,4 @@ const connectComponent = connect( ( state, { page, perPage } ) => {
 	};
 } );
 
-export default flowRight( connectComponent, localize )( StatModuleFollowersPage );
+export default compose( connectComponent, localize )( StatModuleFollowersPage );

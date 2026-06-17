@@ -50,7 +50,7 @@ const AssignLicenseStepProgress = ( {
 	}
 
 	if ( paymentMethodRequired ) {
-		steps.push( { key: 'addPaymentMethod', label: translate( 'Add Payment Method' ) } );
+		steps.push( { key: 'addPaymentMethod', label: translate( 'Add payment method' ) } );
 	}
 
 	if ( sites > 0 && ! selectedSite ) {

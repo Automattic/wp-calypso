@@ -99,6 +99,9 @@ export function getFields(): Field< Note >[] {
 						/* eslint-disable-next-line react/no-danger */
 						dangerouslySetInnerHTML={ { __html: field.getValue( { item } ) } }
 					/>
+					{ item.subject.length > 1 && (
+						<div className="wpnc__excerpt">{ item.subject[ 1 ].text }</div>
+					) }
 				</div>
 			),
 		},

@@ -6,6 +6,7 @@ import type {
 	Purchase,
 	Domain,
 	AtomicTransfer,
+	Site,
 	UpgradesCancelFeaturesResponse,
 } from '@automattic/api-core';
 
@@ -15,6 +16,9 @@ interface CancellationPreSurveyContentProps {
 	includedDomainPurchase?: Purchase;
 	atomicTransfer?: AtomicTransfer;
 	selectedDomain?: Domain;
+	site?: Site;
+	wpcomDomain?: string | null;
+	activeMarketplaceSubscriptions?: Purchase[];
 	state: CancelPurchaseState;
 	purchaseCancelFeatures?: UpgradesCancelFeaturesResponse;
 	isBusy?: boolean;
@@ -35,6 +39,9 @@ export default function CancellationPreSurveyContent( {
 	includedDomainPurchase,
 	atomicTransfer,
 	selectedDomain,
+	site,
+	wpcomDomain,
+	activeMarketplaceSubscriptions,
 	state,
 	purchaseCancelFeatures,
 	isBusy,
@@ -66,6 +73,9 @@ export default function CancellationPreSurveyContent( {
 			includedDomainPurchase={ includedDomainPurchase }
 			atomicTransfer={ atomicTransfer }
 			selectedDomain={ selectedDomain }
+			site={ site }
+			wpcomDomain={ wpcomDomain }
+			activeMarketplaceSubscriptions={ activeMarketplaceSubscriptions }
 			state={ state }
 			purchaseCancelFeatures={ purchaseCancelFeatures }
 			isBusy={ isBusy }

@@ -10,10 +10,11 @@ import {
 import { Card, ProgressBar, Button } from '@automattic/components';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import { includes, find, isEmpty, flowRight } from 'lodash';
+import { includes, find, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import AsyncLoad from 'calypso/components/async-load';
@@ -453,4 +454,4 @@ const flowRightArgs = [
 	localize,
 ];
 
-export default flowRight( ...flowRightArgs )( UploadWithOptions );
+export default compose( ...flowRightArgs )( UploadWithOptions );

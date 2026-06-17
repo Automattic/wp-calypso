@@ -7,7 +7,7 @@ import {
 } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { trim, flatMap } from 'lodash';
+import { flatMap } from 'lodash';
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -18,12 +18,12 @@ import { addQueryArgs } from 'calypso/lib/url';
 import withDimensions from 'calypso/lib/with-dimensions';
 import BlankSuggestions from 'calypso/reader/components/reader-blank-suggestions';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { useAliasedSiteSubscriptionFeedUrl } from 'calypso/reader/data/site-subscriptions';
 import { READER_SEARCH_POPULAR_SITES } from 'calypso/reader/follow-sources';
 import { getSearchPlaceholderText } from 'calypso/reader/search/utils';
 import { recordAction } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { getReaderAliasedFollowFeedUrl } from 'calypso/state/reader/follows/selectors';
 import { ReaderPopularSitesSidebarContainer } from '../stream/reader-popular-sites-sidebar';
 import PostResults from './post-results';
 import SearchStreamHeader, { SEARCH_TYPES } from './search-stream-header';
@@ -69,7 +69,7 @@ class SearchStream extends React.Component {
 	updateQuery = ( newValue ) => {
 		this.scrollToTop();
 		// Remove whitespace from newValue and limit to 1024 characters
-		const trimmedValue = trim( newValue ).substring( 0, 1024 );
+		const trimmedValue = ( newValue ?? '' ).trim().substring( 0, 1024 );
 		if (
 			( trimmedValue !== '' && trimmedValue.length > 1 && trimmedValue !== this.props.query ) ||
 			newValue === ''
@@ -266,13 +266,22 @@ const wrapWithMain = ( Component ) => ( props ) => (
 );
 /* eslint-enable */
 
-export default connect(
-	( state, ownProps ) => ( {
-		readerAliasedFollowFeedUrl:
-			ownProps.query && getReaderAliasedFollowFeedUrl( state, ownProps.query ),
+const ConnectedSearchStream = connect(
+	( state ) => ( {
 		isLoggedIn: isUserLoggedIn( state ),
 	} ),
 	{
 		recordReaderTracksEvent,
 	}
 )( localize( SuggestionProvider( wrapWithMain( withDimensions( SearchStream ) ) ) ) );
+
+export default function SearchStreamContainer( props ) {
+	const aliasedFollowFeedUrl = useAliasedSiteSubscriptionFeedUrl( props.query || '' );
+
+	return (
+		<ConnectedSearchStream
+			{ ...props }
+			readerAliasedFollowFeedUrl={ props.query && aliasedFollowFeedUrl }
+		/>
+	);
+}

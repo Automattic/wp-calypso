@@ -12,7 +12,6 @@ import {
 	PLAN_MIGRATION_TRIAL_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
 	is100Year,
-	getPlanPath,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { localize } from 'i18n-calypso';
@@ -109,6 +108,16 @@ class PurchaseNotice extends Component<
 		showCancelledRedirectNotice:
 			typeof window !== 'undefined' &&
 			new URLSearchParams( window.location.search ).get( 'cancelled' ) === 'true',
+		cancelledIntent:
+			typeof window !== 'undefined'
+				? new URLSearchParams( window.location.search ).get( 'intent' )
+				: null,
+		showDowngradedRedirectNotice:
+			typeof window !== 'undefined' &&
+			new URLSearchParams( window.location.search ).get( 'downgraded' ) === 'true',
+		showPlanChangedRedirectNotice:
+			typeof window !== 'undefined' &&
+			new URLSearchParams( window.location.search ).get( 'plan_changed' ) === 'true',
 	};
 
 	componentDidMount() {
@@ -116,8 +125,21 @@ class PurchaseNotice extends Component<
 			return;
 		}
 		const params = new URLSearchParams( window.location.search );
+		let changed = false;
 		if ( params.get( 'cancelled' ) === 'true' ) {
 			params.delete( 'cancelled' );
+			params.delete( 'intent' );
+			changed = true;
+		}
+		if ( params.get( 'downgraded' ) === 'true' ) {
+			params.delete( 'downgraded' );
+			changed = true;
+		}
+		if ( params.get( 'plan_changed' ) === 'true' ) {
+			params.delete( 'plan_changed' );
+			changed = true;
+		}
+		if ( changed ) {
 			const newSearch = params.toString();
 			const newUrl =
 				window.location.pathname + ( newSearch ? '?' + newSearch : '' ) + window.location.hash;
@@ -127,6 +149,14 @@ class PurchaseNotice extends Component<
 
 	dismissCancelledRedirectNotice = () => {
 		this.setState( { showCancelledRedirectNotice: false } );
+	};
+
+	dismissDowngradedRedirectNotice = () => {
+		this.setState( { showDowngradedRedirectNotice: false } );
+	};
+
+	dismissPlanChangedRedirectNotice = () => {
+		this.setState( { showPlanChangedRedirectNotice: false } );
 	};
 
 	/**
@@ -144,6 +174,26 @@ class PurchaseNotice extends Component<
 			return null;
 		}
 		const expiryDate = moment( purchase.expiryDate ).format( 'LL' );
+		if ( this.state.cancelledIntent === 'auto-renew' ) {
+			const noticeText = translate(
+				'Auto-renew has been disabled. You won\u2019t be billed again, and you\u2019ll continue to have access to the %(productNoun)s until %(expiryDate)s.',
+				{
+					args: {
+						productNoun: getProductNounForCategory( classifyPurchaseForCopy( purchase ) ),
+						expiryDate,
+					},
+				}
+			);
+			return (
+				<Notice
+					className="manage-purchase__purchase-expiring-notice"
+					showDismiss
+					onDismissClick={ this.dismissCancelledRedirectNotice }
+					status="is-success"
+					text={ noticeText }
+				/>
+			);
+		}
 		if ( willAtomicSiteRevert ) {
 			const exportUrl = `https://${ purchase.domain }/wp-admin/export.php`;
 			return (
@@ -181,6 +231,45 @@ class PurchaseNotice extends Component<
 				onDismissClick={ this.dismissCancelledRedirectNotice }
 				status="is-success"
 				text={ noticeText }
+			/>
+		);
+	}
+
+	renderDowngradedRedirectNotice() {
+		if ( ! this.state.showDowngradedRedirectNotice ) {
+			return null;
+		}
+		return (
+			<Notice
+				className="manage-purchase__purchase-expiring-notice"
+				showDismiss
+				onDismissClick={ this.dismissDowngradedRedirectNotice }
+				status="is-success"
+				text={ this.props.translate( 'You\u2019ve switched to monthly billing.' ) }
+			/>
+		);
+	}
+
+	/**
+	 * Transient success notice shown after a change-plan checkout (upgrade or
+	 * downgrade) redirects back here with `?plan_changed=true`. The URL param is
+	 * cleared on mount so refresh / back-navigation falls through to the regular
+	 * notices.
+	 */
+	renderPlanChangedRedirectNotice() {
+		const { purchase, translate } = this.props;
+		if ( ! this.state.showPlanChangedRedirectNotice || ! purchase ) {
+			return null;
+		}
+		return (
+			<Notice
+				className="manage-purchase__purchase-expiring-notice"
+				showDismiss
+				onDismissClick={ this.dismissPlanChangedRedirectNotice }
+				status="is-success"
+				text={ translate( 'Your plan has been updated to %(planName)s.', {
+					args: { planName: getName( purchase ) },
+				} ) }
 			/>
 		);
 	}
@@ -1287,9 +1376,8 @@ class PurchaseNotice extends Component<
 				upgrade_plan_slug: upgradePlanSlug,
 			} );
 
-			const planPath = getPlanPath( upgradePlanSlug ?? '' ) ?? '';
 			const checkoutUrl = getTrialCheckoutUrl( {
-				productSlug: planPath,
+				productSlug: upgradePlanSlug ?? '',
 				siteSlug: selectedSiteSlug ?? '',
 			} );
 
@@ -1359,6 +1447,16 @@ class PurchaseNotice extends Component<
 		const cancelledRedirectNotice = this.renderCancelledRedirectNotice();
 		if ( cancelledRedirectNotice ) {
 			return cancelledRedirectNotice;
+		}
+
+		const downgradedRedirectNotice = this.renderDowngradedRedirectNotice();
+		if ( downgradedRedirectNotice ) {
+			return downgradedRedirectNotice;
+		}
+
+		const planChangedRedirectNotice = this.renderPlanChangedRedirectNotice();
+		if ( planChangedRedirectNotice ) {
+			return planChangedRedirectNotice;
 		}
 
 		if ( purchase.asyncPendingPaymentBlockIsSet ) {

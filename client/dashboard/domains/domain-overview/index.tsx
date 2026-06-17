@@ -84,12 +84,12 @@ export default function DomainOverview() {
 									{ ( () => {
 										switch ( domain.subtype.id ) {
 											case DomainSubtype.DOMAIN_CONNECTION:
-												// translators: date is the date the domain was connected.
+												// translators: %(date)s: the date the domain was connected.
 												return sprintf( __( 'Connected on %(date)s' ), {
 													date: formattedRegistrationDate,
 												} );
 											case DomainSubtype.DOMAIN_REGISTRATION:
-												// translators: date is the date the domain was registered.
+												// translators: %(date)s: the date the domain was registered.
 												return sprintf( __( 'Registered on %(date)s' ), {
 													date: formattedRegistrationDate,
 												} );

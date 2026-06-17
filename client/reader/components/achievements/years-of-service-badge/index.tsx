@@ -1,14 +1,16 @@
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
+import type { JSX } from 'react';
 
 import './style.scss';
 
 interface YearsOfServiceBadgeProps {
-	size: 'large' | 'medium' | 'small';
+	size: 'large' | 'achievement-card' | 'medium' | 'small';
 	yearsOfService: number;
 	linked?: boolean;
 	userLogin?: string;
+	label?: string;
 }
 
 export const YearsOfServiceBadge = ( {
@@ -16,6 +18,7 @@ export const YearsOfServiceBadge = ( {
 	yearsOfService,
 	linked,
 	userLogin,
+	label,
 }: YearsOfServiceBadgeProps ): JSX.Element => {
 	const translate = useTranslate();
 	const description = String(
@@ -24,23 +27,25 @@ export const YearsOfServiceBadge = ( {
 			args: { years: yearsOfService },
 		} )
 	);
+	const resolvedLabel =
+		label ??
+		translate( 'Year on WordPress.com', 'Years on WordPress.com', {
+			count: yearsOfService,
+		} );
 
 	const className = clsx( 'years-of-service-badge', `is-${ size }` );
+	const isInlineSize = size === 'medium' || size === 'small';
 	const content = (
 		<>
 			<div
 				className="years-of-service-badge__circle"
-				title={ size !== 'large' ? description : undefined }
-				aria-label={ size !== 'large' ? description : undefined }
+				title={ isInlineSize ? description : undefined }
+				aria-label={ isInlineSize ? description : undefined }
 			>
 				{ yearsOfService }
 			</div>
-			{ size === 'large' && (
-				<span className="years-of-service-badge__label">
-					{ translate( 'Year on WordPress.com', 'Years on WordPress.com', {
-						count: yearsOfService,
-					} ) }
-				</span>
+			{ size === 'large' && resolvedLabel && (
+				<span className="years-of-service-badge__label">{ resolvedLabel }</span>
 			) }
 		</>
 	);

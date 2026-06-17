@@ -1,5 +1,5 @@
 import { formatNumber } from '@automattic/number-formatters';
-import { Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
+import { Dropdown, MenuGroup, MenuItem, Tooltip } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import ReaderRepostIcon from 'calypso/reader/components/icons/repost';
@@ -44,50 +44,23 @@ export function RepostButton( { post, hideCount }: RepostButtonProps ) {
 
 	if ( isReposted ) {
 		return (
-			<button
-				type="button"
-				className={ clsx( 'social-post-card-repost-button', {
-					'is-reposted': true,
-					'is-pending': isPending,
-				} ) }
-				aria-pressed
-				aria-label={ accessibleLabel }
-				disabled={ isPending }
-				onClick={ ( event ) => {
-					event.preventDefault();
-					event.stopPropagation();
-					if ( isPending ) {
-						return;
-					}
-					action.unrepost();
-				} }
-			>
-				<ReaderRepostIcon iconSize={ ICON_SIZE } />
-				{ ! hideCount && (
-					<span className="social-post-card-repost-button__count">{ formattedReposts }</span>
-				) }
-			</button>
-		);
-	}
-
-	return (
-		<Dropdown
-			popoverProps={ { placement: 'bottom-start' } }
-			renderToggle={ ( { isOpen, onToggle } ) => (
+			<Tooltip text={ accessibleLabel }>
 				<button
 					type="button"
-					className={ clsx( 'social-post-card-repost-button', { 'is-pending': isPending } ) }
-					aria-haspopup="menu"
-					aria-expanded={ isOpen }
+					className={ clsx( 'social-post-card-repost-button', {
+						'is-reposted': true,
+						'is-pending': isPending,
+					} ) }
+					aria-pressed
 					aria-label={ accessibleLabel }
-					disabled={ isPending }
+					aria-disabled={ isPending || undefined }
 					onClick={ ( event ) => {
 						event.preventDefault();
 						event.stopPropagation();
 						if ( isPending ) {
 							return;
 						}
-						onToggle();
+						action.unrepost();
 					} }
 				>
 					<ReaderRepostIcon iconSize={ ICON_SIZE } />
@@ -95,6 +68,37 @@ export function RepostButton( { post, hideCount }: RepostButtonProps ) {
 						<span className="social-post-card-repost-button__count">{ formattedReposts }</span>
 					) }
 				</button>
+			</Tooltip>
+		);
+	}
+
+	return (
+		<Dropdown
+			popoverProps={ { placement: 'bottom-start' } }
+			renderToggle={ ( { isOpen, onToggle } ) => (
+				<Tooltip text={ accessibleLabel }>
+					<button
+						type="button"
+						className={ clsx( 'social-post-card-repost-button', { 'is-pending': isPending } ) }
+						aria-haspopup="menu"
+						aria-expanded={ isOpen }
+						aria-label={ accessibleLabel }
+						aria-disabled={ isPending || undefined }
+						onClick={ ( event ) => {
+							event.preventDefault();
+							event.stopPropagation();
+							if ( isPending ) {
+								return;
+							}
+							onToggle();
+						} }
+					>
+						<ReaderRepostIcon iconSize={ ICON_SIZE } />
+						{ ! hideCount && (
+							<span className="social-post-card-repost-button__count">{ formattedReposts }</span>
+						) }
+					</button>
+				</Tooltip>
 			) }
 			renderContent={ ( { onClose } ) => (
 				<MenuGroup>

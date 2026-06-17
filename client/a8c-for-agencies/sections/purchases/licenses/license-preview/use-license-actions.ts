@@ -61,7 +61,7 @@ export default function useLicenseActions(
 				href: `https://wordpress.com/domains/manage/${ siteSlug }`,
 				onClick: () => handleClickMenuItem( 'calypso_a4a_licenses_change_domain_click' ),
 				isExternalLink: true,
-				isEnabled: true,
+				isEnabled: ! isDevSite,
 			},
 			{
 				name: translate( 'Hosting configuration' ),

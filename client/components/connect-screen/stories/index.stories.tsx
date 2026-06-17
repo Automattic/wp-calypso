@@ -1,7 +1,15 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { StoryObj, Meta } from '@storybook/react';
 import { IconType } from '@wordpress/components';
-import { seen, edit, cog, check, chartBar, postList, commentAuthorAvatar } from '@wordpress/icons';
+import {
+	seen,
+	pencil as edit,
+	cog,
+	check,
+	chartBar,
+	postList,
+	commentAuthorAvatar,
+} from '@wordpress/icons';
 import { useState } from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';

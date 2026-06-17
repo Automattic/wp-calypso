@@ -27,6 +27,55 @@ module.exports = {
 						message:
 							'@testing-library/jest-dom is already globally provided by our test setup framework.',
 					},
+					{
+						// Deep `lodash/<fn>` imports bypass the named-import guard below.
+						group: [
+							'lodash/keyBy',
+							'lodash/shuffle',
+							'lodash/uniqBy',
+							'lodash/times',
+							'lodash/pick',
+							'lodash/omit',
+							'lodash/mapValues',
+							'lodash/pickBy',
+							'lodash/omitBy',
+							'lodash/groupBy',
+							'lodash/mapKeys',
+						],
+						message: 'Please use the equivalent from `@automattic/js-utils` instead.',
+					},
+				],
+				paths: [
+					// Use Redux's `compose` instead of lodash's `flowRight`.
+					{
+						name: 'lodash',
+						importNames: [ 'flowRight' ],
+						message: "Please use `compose` from 'redux' instead.",
+					},
+					// Use the equivalents from `@automattic/js-utils` instead of lodash.
+					{
+						name: 'lodash',
+						importNames: [
+							'keyBy',
+							'shuffle',
+							'uniqBy',
+							'times',
+							'pick',
+							'omit',
+							'mapValues',
+							'pickBy',
+							'omitBy',
+							'groupBy',
+							'mapKeys',
+						],
+						message: 'Please use the equivalent from `@automattic/js-utils` instead.',
+					},
+					// Use native equivalents instead of lodash.
+					{
+						name: 'lodash',
+						importNames: [ 'compact' ],
+						message: 'Please use `array.filter( Boolean )` instead of lodash `compact`.',
+					},
 				],
 			},
 		],

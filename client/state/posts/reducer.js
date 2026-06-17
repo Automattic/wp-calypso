@@ -1,17 +1,7 @@
 /* eslint-disable no-case-declarations */
 
-import {
-	get,
-	set,
-	omit,
-	omitBy,
-	isEmpty,
-	isEqual,
-	reduce,
-	merge,
-	findKey,
-	mapValues,
-} from 'lodash';
+import { mapValues, omit, omitBy } from '@automattic/js-utils';
+import { get, set, isEmpty, isEqual, reduce, merge, findKey } from 'lodash';
 import PostQueryManager from 'calypso/lib/query-manager/post';
 import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
 import {
@@ -35,7 +25,6 @@ import {
 import { getFeaturedImageId } from 'calypso/state/posts/utils';
 import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import counts from './counts/reducer';
-import likes from './likes/reducer';
 import { itemsSchema, queriesSchema, allSitesQueriesSchema } from './schema';
 import {
 	appendToPostEditsLog,
@@ -458,5 +447,4 @@ export default combineReducers( {
 	queries,
 	allSitesQueries,
 	edits,
-	likes,
 } );

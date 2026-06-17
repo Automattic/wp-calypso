@@ -103,7 +103,7 @@ export default function UpsellStep( {
 	const { refundAmount } = props;
 	const { setSubject, setShowHelpCenter } = useHelpCenter();
 	const businessPlan = plans?.find( ( plan ) => 'business-bundle' === plan.product_slug );
-	const businessPlanName = businessPlan?.product_name;
+	const businessPlanName = businessPlan?.product_name ?? '';
 	const personalPlan = plans?.find( ( plan ) => 'personal-bundle' === plan.product_slug );
 	const personalPlanName = personalPlan?.product_name ?? '';
 	const thePlan = plans?.find( ( plan ) => purchase.product_slug === plan.product_slug );
@@ -139,7 +139,7 @@ export default function UpsellStep( {
 						setSubject( initialMessage );
 						setShowHelpCenter( true );
 
-						props.closeDialog && props.closeDialog();
+						props.closeDialog?.();
 					} }
 					intent={ props.intent }
 					declineButtonText={ props.declineButtonText }
@@ -220,11 +220,9 @@ export default function UpsellStep( {
 				>
 					{ createInterpolateElement(
 						sprintf(
-							/* translators: %(discountRate)d%% is a discount percentage like 20% or 25%, followed by an escaped percentage sign %% */
+							/* translators: %(numberOfPluginsThemes)s is a count of plugins and themes, %(businessPlanName)s is the name of the WordPress.com Business plan, %(discountRate)d%% is a discount percentage like 20% or 25% followed by an escaped percentage sign %%, %(couponCode)s is a discount coupon code */
 							__(
-								'Did you know that you can now use over %(numberOfPluginsThemes)s third-party plugins and themes on the WordPress.com %(businessPlanName)s plan? ' +
-									'Whatever feature or design you want to add to your site, you’ll find a plugin or theme to get you there. ' +
-									'Claim a %(discountRate)d%% discount when you renew your %(businessPlanName)s plan today – <b>just enter the code %(couponCode)s at checkout.</b>'
+								'Did you know that you can now use over %(numberOfPluginsThemes)s third-party plugins and themes on the WordPress.com %(businessPlanName)s plan? Whatever feature or design you want to add to your site, you’ll find a plugin or theme to get you there. Claim a %(discountRate)d%% discount when you renew your %(businessPlanName)s plan today – <b>just enter the code %(couponCode)s at checkout.</b>'
 							),
 							{
 								numberOfPluginsThemes,
@@ -310,8 +308,7 @@ export default function UpsellStep( {
 							? sprintf(
 									/* translators: %(amount)s is a monetary amount in the form of a refund */
 									__(
-										'You can downgrade and get a partial refund of %(amount)s or ' +
-											'continue to the next step and cancel the plan.'
+										'You can downgrade and get a partial refund of %(amount)s or continue to the next step and cancel the plan.'
 									),
 									{
 										amount: formatCurrency( refundAmount, currencyCode ),
@@ -335,11 +332,9 @@ export default function UpsellStep( {
 					{ sprintf(
 						/* translators: %(currentPlan)s is the name of the plan to which the customer is subscribed */
 						__(
-							'We get it – building a site takes time. ' +
-								'But we’d love to see you stick around to build on what you started. ' +
-								'How about a free month of your %(currentPlan)s plan subscription to continue building your site?'
+							'We get it – building a site takes time. But we’d love to see you stick around to build on what you started. How about a free month of your %(currentPlan)s plan subscription to continue building your site?'
 						),
-						{ planName }
+						{ currentPlan: planName }
 					) }
 				</Upsell>
 			);

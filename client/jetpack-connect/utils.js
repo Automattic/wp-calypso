@@ -34,6 +34,7 @@ export function authQueryTransformer( queryObject ) {
 		// TODO: verify
 		authApproved: !! queryObject.auth_approved,
 		alreadyAuthorized: !! queryObject.already_authorized,
+		hasConnectedOwner: !! queryObject.has_connected_owner,
 		blogname: queryObject.blogname || null,
 		from: queryObject.from || '[unknown]',
 		jpVersion: queryObject.jp_version || null,
@@ -65,6 +66,7 @@ export function authQueryTransformer( queryObject ) {
 export const authQueryPropTypes = PropTypes.shape( {
 	authApproved: PropTypes.bool,
 	alreadyAuthorized: PropTypes.bool,
+	hasConnectedOwner: PropTypes.bool,
 	blogname: PropTypes.string,
 	clientId: PropTypes.number.isRequired,
 	from: PropTypes.string.isRequired,

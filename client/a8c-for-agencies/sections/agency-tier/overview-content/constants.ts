@@ -28,7 +28,11 @@ export const ALL_TIERS: TierItem[] = [
 		level: 0,
 		id: 'emerging-partner',
 		name: __( 'Account activated' ),
-		description: 'Joining the program',
+		description: sprintf(
+			/* translators: %s is the influenced revenue */
+			__( 'Under %s influenced revenue' ),
+			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'agency-partner' ], 'USD', { stripZeros: true } )
+		),
 		heading: __( 'Essential benefits' ),
 		subheading: __( 'Tools, earning opportunities, support & training and more' ),
 		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'agency-partner' ],
@@ -50,7 +54,7 @@ export const ALL_TIERS: TierItem[] = [
 					},
 					{
 						id: 'create-client-reports',
-						label: __( 'Create client reports' ),
+						label: __( 'Create Client Reports' ),
 						href: '/reports',
 					},
 					{
@@ -118,10 +122,10 @@ export const ALL_TIERS: TierItem[] = [
 		description: sprintf(
 			/* translators: %s is the influenced revenue */
 			__( '%s+ influenced revenue' ),
-			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'agency-partner' ], 'USD' )
+			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'agency-partner' ], 'USD', { stripZeros: true } )
 		),
 		heading: __( '2 additional benefits unlocked' ),
-		subheading: __( 'Directory visibility, early access' ),
+		subheading: __( 'Directory inclusion, early access to product & feature improvements' ),
 		progressCardDescription: __(
 			"You're making great progress! Keep growing your influenced revenue to unlock Pro Partner benefits."
 		),
@@ -147,7 +151,7 @@ export const ALL_TIERS: TierItem[] = [
 			},
 			{
 				icon: store,
-				title: __( 'Early Access' ),
+				title: __( 'Early access' ),
 				description: __(
 					'Early access to new Automattic products and features (as available), and opportunities to contribute to the product roadmap.'
 				),
@@ -161,12 +165,14 @@ export const ALL_TIERS: TierItem[] = [
 		description: sprintf(
 			/* translators: %s is the influenced revenue */
 			__( '%s+ influenced revenue' ),
-			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'pro-agency-partner' ], 'USD' )
+			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'pro-agency-partner' ], 'USD', {
+				stripZeros: true,
+			} )
 		),
 		heading: __( '3 additional benefits unlocked' ),
-		subheading: __( 'Co-marketing, qualified leads, partner manager & more' ),
+		subheading: __( 'Co-Marketing, qualified leads, partner manager & more' ),
 		progressCardDescription: __(
-			"Congratulations! You've unlocked all Pro Partner benefits including co-marketing opportunities and your dedicated partner manager."
+			"Congratulations! You've unlocked all Pro Partner benefits including Co-Marketing opportunities and your dedicated partner manager."
 		),
 		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'premier-partner' ],
 		benefits: [
@@ -174,7 +180,7 @@ export const ALL_TIERS: TierItem[] = [
 				icon: starHalf,
 				title: __( 'Co-Marketing' ),
 				description: __(
-					'Pro Agency Partners are eligible to participate in co-marketing activities with Automattic and our suite of brands, including case studies, co-branded campaigns, and other marketing opportunities as they arise.'
+					'Pro Agency Partners are eligible to participate in Co-Marketing activities with Automattic and our suite of brands, including case studies, co-branded campaigns, and other marketing opportunities as they arise.'
 				),
 			},
 			{
@@ -206,7 +212,9 @@ export const ALL_TIERS: TierItem[] = [
 		description: sprintf(
 			/* translators: %s is the influenced revenue */
 			__( '%s+ influenced revenue and invitation to the tier.' ),
-			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'vip-pro-agency-partner' ], 'USD' )
+			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'vip-pro-agency-partner' ], 'USD', {
+				stripZeros: true,
+			} )
 		),
 		heading: __( '2 additional benefits unlocked' ),
 		subheading: __( 'Higher VIP referral commissions, annual credits' ),
@@ -224,7 +232,7 @@ export const ALL_TIERS: TierItem[] = [
 			},
 			{
 				icon: payment,
-				title: __( 'Annual Credit for WooCommerce and Jetpack Extensions' ),
+				title: __( 'Annual Credit for WooCommerce and Jetpack extensions' ),
 				description: __(
 					'WordPress VIP Pro partners receive annual credits toward WooCommerce and Jetpack premium extensions for agency and client sites.'
 				),
@@ -238,7 +246,7 @@ export const ALL_TIERS: TierItem[] = [
 		description: sprintf(
 			/* translators: %s is the influenced revenue */
 			__( '%s+ influenced revenue and invitation to the tier.' ),
-			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'premier-partner' ], 'USD' )
+			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'premier-partner' ], 'USD', { stripZeros: true } )
 		),
 		heading: __( '2 premium benefits' ),
 		subheading: __( 'Parse.ly trial, marketing funds' ),
@@ -258,7 +266,7 @@ export const ALL_TIERS: TierItem[] = [
 				icon: currencyDollar,
 				title: __( 'Marketing development funds' ),
 				description: __(
-					'Premier partners can access marketing development funds upon successful application to support co-marketing initiatives and agency growth.'
+					'Premier partners can access marketing development funds upon successful application to support Co-Marketing initiatives and agency growth.'
 				),
 			},
 		],

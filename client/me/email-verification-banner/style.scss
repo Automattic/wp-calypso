@@ -6,6 +6,10 @@
 
 	.banner__action {
 		display: flex;
+
+		.button {
+			white-space: nowrap;
+		}
 	}
 
 	@media (max-width: $break-xlarge) {

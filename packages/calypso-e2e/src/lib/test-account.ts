@@ -191,14 +191,17 @@ export class TestAccount {
 	async saveAuthCookies( browserContext: BrowserContext ): Promise< void > {
 		const cookiesPath = this.getAuthCookiesPath();
 
-		// Force remove existing cookies to prevent complaints if they don't exist.
-		// We need the remove step because otherwise, existing files will only be
-		// modified and the "created" date will stay the same, failing the freshness
-		// check.
-		await fs.rm( cookiesPath, { force: true } );
+		// Parallel workers share one cookie file per account. Writing in place
+		// lets a concurrent reader (getAuthCookies) observe a half-written file
+		// and throw a JSON parse error. Write to a per-process temp file and
+		// rename it into place: rename is atomic, so a reader always sees a
+		// complete file (old or new), never a torn one. The renamed file also
+		// gets a fresh birthtime, which the freshness check relies on.
+		const tempPath = `${ cookiesPath }.${ process.pid }.tmp`;
 
 		this.log( `Saving auth cookies to ${ cookiesPath }` );
-		await browserContext.storageState( { path: cookiesPath } );
+		await browserContext.storageState( { path: tempPath } );
+		await fs.rename( tempPath, cookiesPath );
 	}
 
 	/**

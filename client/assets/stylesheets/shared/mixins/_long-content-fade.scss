@@ -13,6 +13,8 @@
 // @include long-content-fade( $color: var( --color-sidebar-background ) );
 // ==========================================================================
 
+@import "calypso/assets/stylesheets/shared/functions/overflow-gradient";
+
 @mixin long-content-fade(
 	$direction: right,
 	$size: 20%,

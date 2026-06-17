@@ -7,7 +7,7 @@ import {
 	RestAPIClient,
 } from '@automattic/calypso-e2e';
 import { tags, test, expect } from '../../lib/pw-base';
-import { apiCloseAccount, apiDeleteSite } from '../shared';
+import { apiCloseAccount, apiCreateFreeSiteForUser, apiDeleteSite } from '../shared';
 
 test.describe(
 	'Setup Domain Flows',
@@ -115,7 +115,7 @@ test.describe(
 			} );
 		} );
 
-		test( 'As a new user, I can create a free site and then add a domain WITHOUT a plan upgrade', async ( {
+		test( 'As a new user with a free site, I can add a domain WITHOUT a plan upgrade', async ( {
 			page,
 			componentDomainSearch,
 			componentSelectItems,
@@ -125,7 +125,6 @@ test.describe(
 			pageSignupPickPlan,
 			pageUserSignUp,
 		} ) => {
-			const siteCreationPlan = 'Free';
 			const testUser = helperData.getNewTestUser();
 			let newUserDetails: NewUserResponse;
 			let newSiteDetails: NewSiteResponse;
@@ -139,15 +138,11 @@ test.describe(
 				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
 			} );
 
-			await test.step( 'And I skip the domains step', async function () {
-				await componentDomainSearch.search( helperData.getBlogName() );
-				await componentDomainSearch.skipPurchase();
-			} );
-
-			await test.step( `And I select the ${ siteCreationPlan } plan`, async function () {
-				newSiteDetails = await pageSignupPickPlan.selectPlan(
-					siteCreationPlan,
-					new RegExp( '.*/home/.*' )
+			await test.step( 'Given I have a free site', async function () {
+				newSiteDetails = await apiCreateFreeSiteForUser(
+					testUser,
+					newUserDetails,
+					helperData.getBlogName()
 				);
 				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
 			} );
@@ -192,7 +187,7 @@ test.describe(
 			} );
 		} );
 
-		test( 'As a new user, I can create a free site and then add a domain WITH a plan upgrade', async ( {
+		test( 'As a new user with a free site, I can add a domain WITH a plan upgrade', async ( {
 			page,
 			componentDomainSearch,
 			componentSelectItems,
@@ -202,7 +197,6 @@ test.describe(
 			pageSignupPickPlan,
 			pageUserSignUp,
 		} ) => {
-			const siteCreationPlan = 'Free';
 			const domainAdditionPlan = 'Personal';
 			const testUser = helperData.getNewTestUser();
 			let newUserDetails: NewUserResponse;
@@ -217,15 +211,11 @@ test.describe(
 				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
 			} );
 
-			await test.step( 'And I skip the domains step', async function () {
-				await componentDomainSearch.search( helperData.getBlogName() );
-				await componentDomainSearch.skipPurchase();
-			} );
-
-			await test.step( `And I select the ${ siteCreationPlan } plan`, async function () {
-				newSiteDetails = await pageSignupPickPlan.selectPlan(
-					siteCreationPlan,
-					new RegExp( '.*/home/.*' )
+			await test.step( 'Given I have a free site', async function () {
+				newSiteDetails = await apiCreateFreeSiteForUser(
+					testUser,
+					newUserDetails,
+					helperData.getBlogName()
 				);
 				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
 			} );
@@ -279,11 +269,19 @@ test.describe(
 			componentNotice,
 			helperData,
 			pageCartCheckout,
+			pagePostCheckoutSetupSite,
 			pageSignupPickPlan,
 			pageUserSignUp,
 			pageMyProfile,
 			pagePurchases,
 		} ) => {
+			// This test chains several genuinely slow flows end to end: creating a
+			// paid site, completing checkout, adding a domain, and finally
+			// cancelling the plan with a real refund round-trip. The default 120s
+			// per-test budget is too tight for all of that, so widen it for this
+			// test only.
+			test.setTimeout( 240 * 1000 );
+
 			const planName = 'Personal';
 			let selectedDomain: string;
 			const testUser = helperData.getNewTestUser();
@@ -323,10 +321,11 @@ test.describe(
 				await pageCartCheckout.purchase( { timeout: 90 * 1000 } );
 			} );
 
-			await test.step( 'Then I can see the dashboard with a success message', async function () {
-				await componentNotice.noticeShown( `You're in! The ${ planName } Plan is now active.`, {
-					timeout: 60 * 1000,
-				} );
+			await test.step( 'Then I land on the post-checkout "Set up your site" screen', async function () {
+				// Eligible paid plans now land on the post-checkout choice screen
+				// after checkout. This test re-enters the domain flow next, so just
+				// confirm checkout routed here rather than clicking through.
+				await pagePostCheckoutSetupSite.waitUntilLoaded();
 			} );
 
 			await test.step( 'When I enter the domain flow', async function () {
@@ -375,6 +374,10 @@ test.describe(
 			} );
 
 			await test.step( 'And I cancel the plan renewal', async function () {
+				// cancelAtomicPurchaseFlow now blocks until the cancel-and-refund
+				// API request resolves, so by the time it returns the success
+				// notice is rendering. The notice still carries a 10s auto-dismiss
+				// duration, so keep a comfortable margin to observe it.
 				await cancelAtomicPurchaseFlow( page, {
 					reason: 'Another reason…',
 					customReasonText: 'E2E TEST CANCELLATION',
@@ -511,11 +514,19 @@ test.describe(
 			componentNotice,
 			helperData,
 			pageCartCheckout,
+			pagePostCheckoutSetupSite,
 			pageSignupPickPlan,
 			pageUserSignUp,
 			pageMyProfile,
 			pagePurchases,
 		} ) => {
+			// This test chains several genuinely slow flows end to end: creating a
+			// paid site, completing checkout, adding a domain, and finally
+			// cancelling the plan with a real refund round-trip. The default 120s
+			// per-test budget is too tight for all of that, so widen it for this
+			// test only.
+			test.setTimeout( 240 * 1000 );
+
 			const planName = 'Personal';
 			const testUser = helperData.getNewTestUser();
 			let selectedDomain: string;
@@ -555,10 +566,11 @@ test.describe(
 				await pageCartCheckout.purchase( { timeout: 90 * 1000 } );
 			} );
 
-			await test.step( 'Then I can see the dashboard with a success message', async function () {
-				await componentNotice.noticeShown( `You're in! The ${ planName } Plan is now active.`, {
-					timeout: 60 * 1000,
-				} );
+			await test.step( 'Then I land on the post-checkout "Set up your site" screen', async function () {
+				// Eligible paid plans now land on the post-checkout choice screen
+				// after checkout. This test re-enters the domain flow next, so just
+				// confirm checkout routed here rather than clicking through.
+				await pagePostCheckoutSetupSite.waitUntilLoaded();
 			} );
 
 			await test.step( 'When I enter the domain flow with pre-selected site', async function () {
@@ -596,6 +608,10 @@ test.describe(
 			} );
 
 			await test.step( 'And I cancel the plan renewal', async function () {
+				// cancelAtomicPurchaseFlow now blocks until the cancel-and-refund
+				// API request resolves, so by the time it returns the success
+				// notice is rendering. The notice still carries a 10s auto-dismiss
+				// duration, so keep a comfortable margin to observe it.
 				await cancelAtomicPurchaseFlow( page, {
 					reason: 'Another reason…',
 					customReasonText: 'E2E TEST CANCELLATION',

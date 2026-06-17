@@ -48,6 +48,26 @@ describe( 'SocialAccountRow', () => {
 		expect( screen.getByText( /Follows you/i ) ).toBeInTheDocument();
 	} );
 
+	it( 'suppresses the "Follows you" badge when hideFollowedByBadge is true, but keeps "Follow back"', () => {
+		render(
+			<SocialAccountRow
+				{ ...baseProps }
+				hideFollowedByBadge
+				followState={ {
+					isFollowing: false,
+					isFollowedBy: true,
+					onFollow: jest.fn(),
+					onUnfollow: jest.fn(),
+				} }
+			/>
+		);
+		// Badge is suppressed even though isFollowedBy is true (e.g. on a
+		// followers list where every row trivially follows the viewer).
+		expect( screen.queryByText( /Follows you/i ) ).not.toBeInTheDocument();
+		// The follow button still uses isFollowedBy to pick "Follow back".
+		expect( screen.getByRole( 'button', { name: /^Follow back$/i } ) ).toBeInTheDocument();
+	} );
+
 	it( 'omits the follow button when isSelf is true', () => {
 		render( <SocialAccountRow { ...baseProps } isSelf /> );
 		expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();

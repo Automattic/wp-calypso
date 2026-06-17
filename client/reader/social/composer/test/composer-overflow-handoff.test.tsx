@@ -70,6 +70,96 @@ describe( 'ComposerOverflowHandoff — gate', () => {
 	} );
 } );
 
+describe( 'ComposerOverflowHandoff — media-handoff trigger', () => {
+	it( 'surfaces the section with media-flavoured copy when hasRequestedMediaHandoff is set', async () => {
+		mockSitesQuery( [
+			{
+				ID: 100,
+				name: 'My Blog',
+				slug: 'myblog.wordpress.com',
+				URL: 'https://myblog.wordpress.com',
+				options: { admin_url: 'https://myblog.wordpress.com/wp-admin/' },
+			} as Partial< Site >,
+		] );
+
+		let composer: ReturnType< typeof useComposer > | null = null;
+		function Probe() {
+			composer = useComposer();
+			return null;
+		}
+
+		renderWithComposer(
+			<>
+				<Probe />
+				<ComposerOverflowHandoff text="" />
+			</>,
+			{ withMode: true }
+		);
+
+		act( () => composer!.markMediaHandoffRequested() );
+
+		// Media copy ("Want to add media?…") rather than the limit-overflow
+		// copy ("Too long for…").
+		expect( await screen.findByText( /Want to add media\?/i ) ).toBeVisible();
+		expect( screen.queryByText( /Too long for/i ) ).toBeNull();
+	} );
+
+	it( 'saves a non-empty draft body when the composer is empty (CM-726 empty-text guard)', async () => {
+		const user = userEvent.setup();
+		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+
+		try {
+			mockSitesQuery( [
+				{
+					ID: 100,
+					name: 'My Blog',
+					slug: 'myblog.wordpress.com',
+					URL: 'https://myblog.wordpress.com',
+					site_migration: { in_progress: false, is_complete: false },
+					options: { admin_url: 'https://myblog.wordpress.com/wp-admin/' },
+				} as Partial< Site >,
+			] );
+
+			// Body-matcher: the placeholder must be present in the POST body
+			// so wpcom doesn't reject `content: ''`.
+			nock( ORIGIN )
+				.post(
+					/\/rest\/v1\.\d+\/sites\/100\/posts\/new/,
+					( body: { content?: string; status?: string } ) =>
+						body.content !== '' &&
+						typeof body.content === 'string' &&
+						body.content.trim().length > 0
+				)
+				.reply( 200, { ID: 777 } );
+
+			let composer: ReturnType< typeof useComposer > | null = null;
+			const Probe = () => {
+				composer = useComposer();
+				return null;
+			};
+
+			renderWithComposer(
+				<>
+					<Probe />
+					<ComposerOverflowHandoff text="" />
+				</>,
+				{ withMode: true }
+			);
+
+			act( () => composer!.markMediaHandoffRequested() );
+
+			const button = await screen.findByRole( 'button', { name: /Move to editor/i } );
+			await user.click( button );
+
+			// If the placeholder guard regressed (`content: ''` sent), the
+			// nock matcher above would fail and `isDone()` returns false.
+			await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+		} finally {
+			openSpy.mockRestore();
+		}
+	} );
+} );
+
 describe( 'ComposerOverflowHandoff — null branches', () => {
 	it( 'renders nothing when sites query resolves to []', async () => {
 		mockSitesQuery( [] );
@@ -260,16 +350,20 @@ describe( 'ComposerOverflowHandoff — multi-site picker', () => {
 
 describe( 'ComposerOverflowHandoff — Move to editor click', () => {
 	let openSpy: jest.SpyInstance;
+	let fakeWindow: { location: { href: string }; close: jest.Mock };
 
 	beforeEach( () => {
-		openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+		fakeWindow = { location: { href: '' }, close: jest.fn() };
+		openSpy = jest
+			.spyOn( window, 'open' )
+			.mockImplementation( () => fakeWindow as unknown as Window );
 	} );
 
 	afterEach( () => {
 		openSpy.mockRestore();
 	} );
 
-	it( 'creates a draft post and opens wp-admin in a new tab on success', async () => {
+	it( 'pre-opens a tab synchronously and redirects it to wp-admin on success', async () => {
 		const user = userEvent.setup();
 		mockSitesQuery( [
 			{
@@ -305,17 +399,19 @@ describe( 'ComposerOverflowHandoff — Move to editor click', () => {
 		const button = await screen.findByRole( 'button', { name: /Move to editor/i } );
 		await user.click( button );
 
+		expect( openSpy ).toHaveBeenCalledWith( 'about:blank', '_blank' );
 		await waitFor( () =>
-			expect( openSpy ).toHaveBeenCalledWith(
-				'https://myblog.wordpress.com/wp-admin/post.php?post=555&action=edit',
-				'_blank',
-				'noopener,noreferrer'
+			expect( fakeWindow.location.href ).toBe(
+				'https://myblog.wordpress.com/wp-admin/post.php?post=555&action=edit'
 			)
 		);
 	} );
 
 	it( 'dispatches a fallback success notice with an Open-in-editor button when window.open is blocked', async () => {
 		const user = userEvent.setup();
+		// Re-mock window.open to return null for this test only (popup-blocker
+		// case). The default fakeWindow mock from beforeEach is replaced.
+		openSpy.mockImplementation( () => null );
 		const successNoticeSpy = jest.spyOn( notices, 'successNotice' );
 		mockSitesQuery( [
 			{
@@ -413,10 +509,8 @@ describe( 'ComposerOverflowHandoff — Move to editor click', () => {
 		// before appending `/wp-admin/post.php` so we don't end up with
 		// `//wp-admin/`.
 		await waitFor( () =>
-			expect( openSpy ).toHaveBeenCalledWith(
-				'https://myblog.wordpress.com/wp-admin/post.php?post=555&action=edit',
-				'_blank',
-				'noopener,noreferrer'
+			expect( fakeWindow.location.href ).toBe(
+				'https://myblog.wordpress.com/wp-admin/post.php?post=555&action=edit'
 			)
 		);
 	} );
@@ -457,7 +551,8 @@ describe( 'ComposerOverflowHandoff — Move to editor click', () => {
 		await user.click( button );
 
 		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
-		expect( openSpy ).not.toHaveBeenCalled();
+		await waitFor( () => expect( fakeWindow.close ).toHaveBeenCalled() );
+		expect( fakeWindow.location.href ).toBe( '' );
 	} );
 } );
 
@@ -563,14 +658,16 @@ describe( 'ComposerOverflowHandoff — Tracks events', () => {
 			const button = await screen.findByRole( 'button', { name: /Move to editor/i } );
 			await user.click( button );
 
-			const openedCalls = recordSpy.mock.calls.filter(
-				( call ) => call[ 0 ] === 'test_composer_overflow_handoff_editor_opened'
-			);
-			expect( openedCalls ).toHaveLength( 1 );
-			expect( openedCalls[ 0 ][ 1 ] ).toEqual( {
-				connection_id: 1,
-				mode_kind: 'standalone',
-				site_id: 100,
+			await waitFor( () => {
+				const openedCalls = recordSpy.mock.calls.filter(
+					( call ) => call[ 0 ] === 'test_composer_overflow_handoff_editor_opened'
+				);
+				expect( openedCalls ).toHaveLength( 1 );
+				expect( openedCalls[ 0 ][ 1 ] ).toEqual( {
+					connection_id: 1,
+					mode_kind: 'standalone',
+					site_id: 100,
+				} );
 			} );
 		} finally {
 			openSpy.mockRestore();

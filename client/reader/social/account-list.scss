@@ -45,13 +45,13 @@
 .social-account-list-header-skeleton__name {
 	block-size: 1.25rem;
 	inline-size: 40%;
-	background: var( --studio-gray-5, #dcdcde );
+	background: var( --color-border-subtle, var( --studio-gray-5, #dcdcde ) );
 	border-radius: 4px;
 }
 
 .social-account-list-header-skeleton__count {
 	block-size: 0.875rem;
 	inline-size: 25%;
-	background: var( --studio-gray-5, #dcdcde );
+	background: var( --color-border-subtle, var( --studio-gray-5, #dcdcde ) );
 	border-radius: 4px;
 }

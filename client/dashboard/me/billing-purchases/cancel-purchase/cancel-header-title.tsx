@@ -22,11 +22,14 @@ export default function CancelHeaderTitle( {
 	}
 	// Once the cancel mutation has resolved and the user is on the survey,
 	// the cancellation has already happened — reflect that in the title.
+	if ( surveyShown && displayVariant === 'auto-renew' ) {
+		return __( 'Auto-renew disabled' );
+	}
 	if ( surveyShown && displayVariant === 'cancel' ) {
 		return __( 'Cancellation confirmed' );
 	}
 	return getCancellationHeading( {
 		purchase,
-		intent: displayVariant === 'remove' ? 'remove' : 'cancel',
+		intent: displayVariant,
 	} );
 }

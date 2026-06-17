@@ -4,7 +4,7 @@ import { formatNumber, formatNumberCompact } from '@automattic/number-formatters
 import { Icon, people, postContent, starEmpty, commentContent } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import React, { useMemo } from 'react';
+import React, { useMemo, type JSX } from 'react';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import {

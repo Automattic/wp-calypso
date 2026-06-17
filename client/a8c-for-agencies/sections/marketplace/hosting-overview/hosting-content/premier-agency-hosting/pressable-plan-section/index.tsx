@@ -315,10 +315,10 @@ export default function PressablePlanSection( {
 					<p>
 						{ areSignaturePlans || isStandardPlan
 							? translate(
-									'With Signature Plans, your traffic & storage limits are shared amongst your total sites.'
+									'With Signature plans, your traffic & storage limits are shared amongst your total sites.'
 							  )
 							: translate(
-									'With Enterprise Plans, your traffic & storage limits are shared amongst your total sites.'
+									'With Enterprise plans, your traffic & storage limits are shared amongst your total sites.'
 							  ) }
 					</p>
 				) }

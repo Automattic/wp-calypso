@@ -1,4 +1,4 @@
-import { action } from '@storybook/addon-actions';
+import { action } from 'storybook/actions';
 import { Card, CardBody } from '../../components/card';
 import PageLayout from '../../components/page-layout';
 import NameServersForm from './form';

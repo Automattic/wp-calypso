@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { type JSX } from 'react';
 import { useSelector } from 'react-redux';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';

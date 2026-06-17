@@ -8,6 +8,7 @@ import type {
 	AtmosphereConnectionsResponse,
 	AtmosphereCreateConnectionResponse,
 	AtmosphereCreateFollowResponse,
+	AtmosphereNotificationsPage,
 	AtmosphereScopedProfile,
 	AtmosphereScopedProfilesPage,
 	AtmosphereTagFeedPage,
@@ -92,6 +93,40 @@ export async function getTimeline( params: GetTimelineParams ): Promise< Atmosph
 			},
 			query
 		) ) as AtmosphereTimelinePage;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export interface GetAtmosphereNotificationsParams {
+	connectionId: number;
+	cursor?: string;
+	limit?: number;
+	types?: string;
+}
+
+export async function getAtmosphereNotifications(
+	params: GetAtmosphereNotificationsParams
+): Promise< AtmosphereNotificationsPage > {
+	const { connectionId, cursor, limit, types } = params;
+	const query: Record< string, string > = {};
+	if ( cursor ) {
+		query.cursor = cursor;
+	}
+	if ( typeof limit === 'number' ) {
+		query.limit = String( limit );
+	}
+	if ( types ) {
+		query.types = types;
+	}
+	try {
+		return ( await wpcom.req.get(
+			{
+				path: `/reader/atmosphere/connections/${ connectionId }/notifications`,
+				apiNamespace: NAMESPACE,
+			},
+			query
+		) ) as AtmosphereNotificationsPage;
 	} catch ( raw ) {
 		throw classifyAtmosphereError( raw );
 	}
@@ -449,7 +484,7 @@ export async function uploadBlob( params: UploadBlobParams ): Promise< UploadBlo
 }
 
 export async function createPost( params: CreatePostParams ): Promise< CreatePostResult > {
-	const { connectionId, text, reply, quote, media } = params;
+	const { connectionId, text, reply, quote, media, interaction_settings } = params;
 	const body: Record< string, unknown > = { text };
 	if ( reply ) {
 		body.reply = reply;
@@ -459,6 +494,9 @@ export async function createPost( params: CreatePostParams ): Promise< CreatePos
 	}
 	if ( media ) {
 		body.media = media;
+	}
+	if ( interaction_settings ) {
+		body.interaction_settings = interaction_settings;
 	}
 	try {
 		const response = ( await wpcom.req.post( {

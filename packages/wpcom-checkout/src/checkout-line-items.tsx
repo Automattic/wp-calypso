@@ -32,6 +32,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren, useRef, Dispatch, SetStateAction } from 'react';
 import { getLabel, DefaultLineItemSublabel } from './checkout-labels';
+import { type CartBundleLineItem } from './group-bundle-line-items';
 import {
 	getIntroductoryOfferIntervalDisplay,
 	getItemIntroductoryOfferDisplay,
@@ -204,6 +205,53 @@ const DeleteButtonWrapper = styled.div`
 	width: 100%;
 	display: inherit;
 	justify-content: inherit;
+`;
+
+const BundleLineItemWrapper = styled.div< { theme?: Theme } >`
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	padding: 16px 0;
+	font-weight: ${ ( props ) => props.theme.weights.normal };
+	color: ${ ( props ) => props.theme.colors.textColorDark };
+	font-size: 1.1em;
+	position: relative;
+
+	.checkout-line-item__price {
+		position: relative;
+	}
+`;
+
+const BundleMemberList = styled.div< { theme?: Theme } >`
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	margin-top: 8px;
+	color: ${ ( props ) => props.theme.colors.textColorDark };
+	font-size: 14px;
+	line-height: 1.4;
+`;
+
+const BundleTermRow = styled.div< { theme?: Theme } >`
+	box-sizing: border-box;
+	width: 100%;
+	border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
+	border-radius: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-top: 16px;
+	padding: 16px;
+	color: ${ ( props ) => props.theme.colors.textColorDark };
+	font-size: 14px;
+`;
+
+const BundleTermPrice = styled.span`
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
 `;
 
 const DeleteButton = styled( Button )< { theme?: Theme } >`
@@ -410,6 +458,162 @@ function EmailMeta( { product, isRenewal }: { product: ResponseCartProduct; isRe
 			} ) }
 		</>
 	);
+}
+
+/**
+ * Render a domain bundle as a single grouped line item: one title and total, the
+ * member domains listed beneath, and a single remove action that clears every
+ * member from the cart at once (matching the backend's all-or-nothing rule).
+ */
+export function BundleLineItem( {
+	bundle,
+	className = null,
+	isSummary,
+	hasDeleteButton,
+	removeProductFromCart,
+	onRemoveBundle,
+}: {
+	bundle: CartBundleLineItem;
+	className?: string | null;
+	isSummary?: boolean;
+	hasDeleteButton?: boolean;
+	removeProductFromCart?: RemoveProductFromCart;
+	/**
+	 * Fired once when a bundle group is removed from the cart (after the user
+	 * confirms the removal modal). Threaded from the app layer so this package
+	 * stays free of a direct analytics dependency. Receives the bundle's group id
+	 * and its member count.
+	 */
+	onRemoveBundle?: ( groupId: string, memberCount: number ) => void;
+} ) {
+	const translate = useTranslate();
+	const { formStatus } = useFormStatus();
+	const isDisabled = formStatus !== FormStatus.READY;
+	const [ isModalVisible, setIsModalVisible ] = useState( false );
+
+	const { products } = bundle;
+	// All members of a bundle are guaranteed to share a currency, so the total can
+	// safely be summed in the smallest unit and rendered under the first member's currency.
+	const currency = products[ 0 ]?.currency ?? 'USD';
+	// Raw subtotals (coupon included) are correct on this surface: the order review
+	// shows post-coupon prices on every line item. The order summary's bundle row
+	// (BundleProductAndCostOverridesList in cost-overrides-list.tsx) intentionally
+	// differs — it excludes coupon discounts because that surface lists coupon
+	// savings on a dedicated line. Don't "harmonize" the two.
+	const bundleTotalInteger = products.reduce(
+		( total, product ) => total + product.item_subtotal_integer,
+		0
+	);
+	const bundleTotalDisplay = formatCurrency( bundleTotalInteger, currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
+	// The backend applies the bundle discount as a cost override on each member, so
+	// the pre-discount group price is the sum of the members' original subtotals.
+	const bundleOriginalInteger = products.reduce(
+		( total, product ) => total + product.item_original_subtotal_integer,
+		0
+	);
+	const bundleOriginalDisplay = formatCurrency( bundleOriginalInteger, currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
+	const isBundleDiscounted = bundleTotalInteger < bundleOriginalInteger;
+	const bundleLabel = String( translate( 'Domain Bundle' ) );
+
+	const removeBundleFromCart = () => {
+		products.forEach( ( product ) => {
+			removeProductFromCart?.( product.uuid );
+		} );
+		onRemoveBundle?.( bundle.groupId, products.length );
+	};
+
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	return (
+		<BundleLineItemWrapper
+			className={ joinClasses( [ className, 'checkout-line-item' ] ) }
+			data-e2e-product-slug="domain-bundle"
+			data-product-type="domain-bundle"
+		>
+			<LineItemTitle isSummary={ isSummary }>{ bundleLabel }</LineItemTitle>
+
+			<span className="checkout-line-item__price">
+				<LineItemPrice
+					actualAmount={ bundleTotalDisplay }
+					crossedOutAmount={ isBundleDiscounted ? bundleOriginalDisplay : undefined }
+				/>
+			</span>
+
+			<LineItemMeta>
+				<LineItemSublabelTitle>
+					{ translate( 'Domain Bundle Registration: billed annually' ) }
+				</LineItemSublabelTitle>
+				{ isBundleDiscounted && (
+					<DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>
+				) }
+			</LineItemMeta>
+
+			<BundleMemberList>
+				{ products.map( ( product ) => (
+					<span key={ product.uuid }>{ product.meta }</span>
+				) ) }
+			</BundleMemberList>
+
+			<BundleTermRow>
+				<span>{ translate( 'One year' ) }</span>
+				<BundleTermPrice>
+					<span>{ bundleTotalDisplay }</span>
+					<Gridicon icon="chevron-down" size={ 16 } aria-hidden="true" />
+				</BundleTermPrice>
+			</BundleTermRow>
+
+			{ hasDeleteButton && removeProductFromCart && (
+				<>
+					<DeleteButtonWrapper>
+						<DeleteButton
+							className="checkout-line-item__remove-product"
+							buttonType="text-button"
+							aria-label={ String(
+								translate( 'Remove %s from cart', {
+									args: bundleLabel,
+								} )
+							) }
+							disabled={ isDisabled }
+							onClick={ () => {
+								setIsModalVisible( true );
+							} }
+						>
+							{ translate( 'Remove from cart' ) }
+						</DeleteButton>
+					</DeleteButtonWrapper>
+
+					<CheckoutModal
+						isVisible={ isModalVisible }
+						closeModal={ () => {
+							setIsModalVisible( false );
+						} }
+						secondaryAction={ () => {
+							setIsModalVisible( false );
+						} }
+						primaryAction={ removeBundleFromCart }
+						secondaryButtonCTA={ String( translate( 'Cancel' ) ) }
+						title={ String( translate( 'Remove domain bundle' ) ) }
+						copy={ String(
+							translate(
+								'Removing this domain bundle will remove its %(domainCount)d domain from your cart.',
+								'Removing this domain bundle will remove all %(domainCount)d domains from your cart.',
+								{
+									count: products.length,
+									args: { domainCount: products.length },
+								}
+							)
+						) }
+					/>
+				</>
+			) }
+		</BundleLineItemWrapper>
+	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
 interface ModalCopy {

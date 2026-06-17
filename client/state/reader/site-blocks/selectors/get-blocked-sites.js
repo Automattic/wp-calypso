@@ -1,5 +1,6 @@
+import { pickBy } from '@automattic/js-utils';
 import { createSelector } from '@automattic/state-utils';
-import { map, pickBy } from 'lodash';
+import { map } from 'lodash';
 
 import 'calypso/state/reader/init';
 

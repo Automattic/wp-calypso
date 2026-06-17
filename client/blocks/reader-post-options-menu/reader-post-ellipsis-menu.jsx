@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
-import { edit, external, Icon, seen, published, unseen } from '@wordpress/icons';
+import { pencil as edit, external, Icon, seen, published, unseen } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
-import { size, map } from 'lodash';
+import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -9,6 +9,7 @@ import ConversationFollowButton from 'calypso/blocks/conversation-follow-button'
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
+import { useHasSiteSubscriptionOrganization } from 'calypso/reader/data/site-subscriptions';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_POST_OPTIONS_MENU } from 'calypso/reader/follow-sources';
 import { canBeMarkedAsSeen, isEligibleForUnseen } from 'calypso/reader/get-helpers';
@@ -18,7 +19,6 @@ import * as stats from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import * as PostUtils from 'calypso/state/posts/utils';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
 import {
 	requestMarkAsSeen,
 	requestMarkAsUnseen,
@@ -27,7 +27,6 @@ import {
 } from 'calypso/state/reader/seen-posts/actions';
 import { blockSite } from 'calypso/state/reader/site-blocks/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
 
@@ -174,7 +173,7 @@ class ReaderPostEllipsisMenu extends Component {
 		let feedItemIds = [ post.feed_item_ID ];
 		let globalIds = [ post.global_ID ];
 
-		if ( size( posts ) ) {
+		if ( posts.length ) {
 			postIds = map( posts, 'ID' );
 			feedItemIds = map( posts, 'feed_item_ID' );
 			globalIds = map( posts, 'global_ID' );
@@ -219,7 +218,7 @@ class ReaderPostEllipsisMenu extends Component {
 		let feedItemIds = [ post.feed_item_ID ];
 		let globalIds = [ post.global_ID ];
 
-		if ( size( posts ) ) {
+		if ( posts.length ) {
 			postIds = map( posts, 'ID' );
 			feedItemIds = map( posts, 'feed_item_ID' );
 			globalIds = map( posts, 'global_ID' );
@@ -329,8 +328,8 @@ class ReaderPostEllipsisMenu extends Component {
 							useWordPressIcon
 							iconSize={ 24 }
 						>
-							{ size( posts ) > 0 && translate( 'Mark all as unseen' ) }
-							{ size( posts ) === 0 && translate( 'Mark as unseen' ) }
+							{ posts.length > 0 && translate( 'Mark all as unseen' ) }
+							{ posts.length === 0 && translate( 'Mark as unseen' ) }
 						</PopoverMenuItem>
 					) }
 
@@ -343,8 +342,8 @@ class ReaderPostEllipsisMenu extends Component {
 							useWordPressIcon
 							iconSize={ 24 }
 						>
-							{ size( posts ) > 0 && translate( 'Mark all as seen' ) }
-							{ size( posts ) === 0 && translate( 'Mark as seen' ) }
+							{ posts.length > 0 && translate( 'Mark all as seen' ) }
+							{ posts.length === 0 && translate( 'Mark as seen' ) }
 						</PopoverMenuItem>
 					) }
 
@@ -393,17 +392,19 @@ class ReaderPostEllipsisMenu extends Component {
 		);
 	}
 }
-export default connect(
-	( state, { post: { feed_ID: feedId, is_external, site_ID } = {} } ) => {
+
+const ConnectedPostEllipsisMenu = connect(
+	( state, { feed, post: { is_external, site_ID } = {} } ) => {
 		const siteId = is_external ? null : site_ID;
 
 		return Object.assign(
 			{ currentRoute: getCurrentRoute( state ) },
-			{ isWPForTeamsItem: isSiteWPForTeams( state, siteId ) || isFeedWPForTeams( state, feedId ) },
-			{ isLoggedIn: isUserLoggedIn( state ) },
 			{
-				hasOrganization: hasReaderFollowOrganization( state, feedId, siteId ),
-			}
+				isWPForTeamsItem:
+					isSiteWPForTeams( state, siteId ) ||
+					( feed?.blog_ID ? isSiteWPForTeams( state, feed.blog_ID ) : false ),
+			},
+			{ isLoggedIn: isUserLoggedIn( state ) }
 		);
 	},
 	{
@@ -415,3 +416,10 @@ export default connect(
 		recordReaderTracksEvent,
 	}
 )( localize( ReaderPostEllipsisMenu ) );
+
+export default function PostEllipsisMenuContainer( props ) {
+	const { feed_ID: feedId, is_external: isExternal, site_ID: siteId } = props.post ?? {};
+	const hasOrganization = useHasSiteSubscriptionOrganization( feedId, isExternal ? null : siteId );
+
+	return <ConnectedPostEllipsisMenu { ...props } hasOrganization={ hasOrganization } />;
+}

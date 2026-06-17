@@ -10,6 +10,7 @@ import {
 	deleteRepost,
 	getAtmosphereActorFollowers,
 	getAtmosphereActorFollows,
+	getAtmosphereNotifications,
 	getAtmosphereTagFeed,
 	getAuthorFeed,
 	getAuthorProfile,
@@ -25,6 +26,7 @@ import {
 	PENDING_REPLY_URI,
 	PENDING_REPOST_URI,
 	isValidHashtag,
+	mapNotificationsFilter,
 	readerAtmosphereKeys,
 	uploadBlob,
 } from '@automattic/api-core';
@@ -52,6 +54,7 @@ import type {
 	AtmosphereEmbed,
 	AtmosphereError,
 	AtmosphereFeedItem,
+	AtmosphereNotificationsPage,
 	AtmosphereScopedProfile,
 	AtmosphereScopedProfilesPage,
 	AtmosphereTagFeedPage,
@@ -63,6 +66,7 @@ import type {
 	CreatePostParams,
 	CreatePostResult,
 	CreateRepostResult,
+	NotificationsFilter,
 	UploadBlobParams,
 	UploadBlobResult,
 } from '@automattic/api-core';
@@ -161,6 +165,43 @@ export const timelineInfiniteQuery = ( connectionId: number ) =>
 
 export function useTimelineInfiniteQuery( connectionId: number ) {
 	return useInfiniteQuery( timelineInfiniteQuery( connectionId ) );
+}
+
+export interface UseAtmosphereNotificationsOptions {
+	filter?: NotificationsFilter;
+}
+
+export const notificationsInfiniteQuery = (
+	connectionId: number,
+	filter: NotificationsFilter = 'all'
+) =>
+	infiniteQueryOptions<
+		AtmosphereNotificationsPage,
+		AtmosphereError,
+		InfiniteData< AtmosphereNotificationsPage >,
+		QueryKey,
+		string | undefined
+	>( {
+		queryKey: readerAtmosphereKeys.notifications( connectionId, filter ),
+		queryFn: ( { pageParam } ) =>
+			getAtmosphereNotifications( {
+				connectionId,
+				cursor: pageParam,
+				types: mapNotificationsFilter( filter ),
+			} ),
+		initialPageParam: undefined,
+		getNextPageParam: ( lastPage ) => lastPage.next_cursor ?? undefined,
+		enabled: connectionId > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+	} );
+
+export function useAtmosphereNotificationsInfiniteQuery(
+	connectionId: number,
+	options: UseAtmosphereNotificationsOptions = {}
+) {
+	const { filter = 'all' } = options;
+	return useInfiniteQuery( notificationsInfiniteQuery( connectionId, filter ) );
 }
 
 export const threadQueryOptions = ( uri: string ) =>

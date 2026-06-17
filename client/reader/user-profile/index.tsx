@@ -4,7 +4,7 @@ import page from '@automattic/calypso-router';
 import { useQuery } from '@tanstack/react-query';
 import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, type JSX } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import ReaderBackButton from 'calypso/reader/components/back-button';
 import UserProfileHeader from 'calypso/reader/user-profile/components/user-profile-header';
@@ -71,11 +71,17 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 		}
 	};
 
+	const isAchievementWideView = view === 'achievements';
+
 	return (
 		<div className="user-profile">
-			<ReaderMain>
-				<ReaderBackButton />
-				<UserProfileHeader user={ user } view={ view } />
+			<ReaderMain
+				className={ isAchievementWideView ? 'user-profile__achievements-view' : undefined }
+			>
+				<div className={ isAchievementWideView ? 'user-profile__narrow' : undefined }>
+					<ReaderBackButton />
+					<UserProfileHeader user={ user } view={ view } />
+				</div>
 				{ renderSelectedTabContent() }
 			</ReaderMain>
 		</div>
