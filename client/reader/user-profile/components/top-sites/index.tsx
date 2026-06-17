@@ -24,6 +24,7 @@ export default function UserTopSites( {
 	const { data: hiddenSites = [] } = useQuery( {
 		...userPreferenceQuery( 'reader-profile-hidden-sites' ),
 		enabled: isOwnProfile,
+		refetchOnMount: false, // Don't refetch on mount, since the preference is updated optimistically in settings.
 	} );
 
 	if ( isFetching ) {
