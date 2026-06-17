@@ -88,8 +88,13 @@ interface Props {
 	useImageUpload?: ImageUploadHook;
 	/** Hook for saving and restoring editor state so that AI actions can be undone. */
 	useCheckpoint?: UseCheckpointHook;
-	/** Called when the has-messages state changes. */
-	onHasMessagesChange: ( hasMessages: boolean ) => void;
+	/**
+	 * Called when the conversation advances — on new messages and when a turn
+	 * finishes processing. Receives whether the chat currently has any
+	 * messages, so it covers both the dock's empty state and letting a loaded
+	 * provider re-sync cards it renders in the transcript.
+	 */
+	onMessagesChange?: ( hasMessages: boolean ) => void;
 }
 
 export default function OrchestratorChat( {
@@ -109,7 +114,7 @@ export default function OrchestratorChat( {
 	siteBuildUtils,
 	useImageUpload,
 	useCheckpoint,
-	onHasMessagesChange,
+	onMessagesChange,
 }: Props ) {
 	const { agentConfig, getActiveSessionId, siteKey } = useAgentsManagerContext();
 
@@ -490,11 +495,15 @@ export default function OrchestratorChat( {
 		thinkingMessage,
 	] );
 
-	// Notify parent when has-messages state changes.
+	// Single notification for conversation activity: fires when the chat gains
+	// or loses messages and when a turn finishes processing. Drives the dock's
+	// empty state and lets a loaded provider re-sync cards it renders in the
+	// transcript (e.g. Woo AI's batch-operation card reflecting an
+	// execute/revert run from chat) without a page reload.
 	const hasMessages = displayedMessages.length > 0;
 	useEffect( () => {
-		onHasMessagesChange( hasMessages );
-	}, [ hasMessages, onHasMessagesChange ] );
+		onMessagesChange?.( hasMessages );
+	}, [ hasMessages, isProcessing, onMessagesChange ] );
 
 	const latestDisplayedMessage = displayedMessages[ displayedMessages.length - 1 ];
 	const shouldSuppressTransientThinking = Boolean(

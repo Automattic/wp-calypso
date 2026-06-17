@@ -60,6 +60,8 @@ interface Props {
 	useImageUpload?: ImageUploadHook;
 	/** Hook for saving and restoring editor state so that AI actions can be undone. */
 	useCheckpoint?: UseCheckpointHook;
+	/** Called when the conversation advances (message sent/received or a turn finishes). */
+	onMessagesChange?: () => void;
 	/** Optional capability flags declared by one or more loaded providers. */
 	capabilities?: ProviderCapabilities;
 }
@@ -75,6 +77,7 @@ export default function AgentDock( {
 	siteBuildUtils,
 	useImageUpload,
 	useCheckpoint,
+	onMessagesChange,
 	capabilities,
 }: Props ) {
 	const { siteKey, agentConfig } = useAgentsManagerContext();
@@ -207,9 +210,13 @@ export default function AgentDock( {
 		}
 	}, [ agentId ] );
 
-	const handleChatHasMessagesChange = useCallback(
-		( hasMessages: boolean ) => setIsOrchestratorChatEmpty( ! hasMessages ),
-		[]
+	const handleMessagesChange = useCallback(
+		( hasMessages: boolean ) => {
+			setIsOrchestratorChatEmpty( ! hasMessages );
+			// Forward to any loaded provider so it can re-sync transcript cards.
+			onMessagesChange?.();
+		},
+		[ onMessagesChange ]
 	);
 
 	const handleExpand = () => {
@@ -320,7 +327,7 @@ export default function AgentDock( {
 			siteBuildUtils={ siteBuildUtils }
 			useImageUpload={ useImageUpload }
 			useCheckpoint={ useCheckpoint }
-			onHasMessagesChange={ handleChatHasMessagesChange }
+			onMessagesChange={ handleMessagesChange }
 		/>
 	);
 

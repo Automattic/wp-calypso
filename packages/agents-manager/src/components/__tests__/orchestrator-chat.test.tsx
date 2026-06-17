@@ -132,7 +132,7 @@ describe( 'OrchestratorChat', () => {
 				markdownComponents={ {} }
 				markdownExtensions={ {} }
 				isCompactMode={ false }
-				onHasMessagesChange={ jest.fn() }
+				onMessagesChange={ jest.fn() }
 			/>
 		);
 
@@ -161,7 +161,7 @@ describe( 'OrchestratorChat', () => {
 				markdownComponents={ {} }
 				markdownExtensions={ {} }
 				isCompactMode={ false }
-				onHasMessagesChange={ jest.fn() }
+				onMessagesChange={ jest.fn() }
 			/>
 		);
 
@@ -190,7 +190,7 @@ describe( 'OrchestratorChat', () => {
 				markdownExtensions={ {} }
 				isCompactMode={ false }
 				useSuggestions={ useSuggestions }
-				onHasMessagesChange={ jest.fn() }
+				onMessagesChange={ jest.fn() }
 			/>
 		);
 
@@ -212,7 +212,7 @@ describe( 'OrchestratorChat', () => {
 				markdownExtensions={ {} }
 				isCompactMode={ false }
 				useSuggestions={ useSuggestions }
-				onHasMessagesChange={ jest.fn() }
+				onMessagesChange={ jest.fn() }
 			/>
 		);
 
