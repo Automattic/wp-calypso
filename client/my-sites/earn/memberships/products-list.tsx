@@ -70,6 +70,13 @@ function ProductsList() {
 		getFreeTierDescriptionRenderedForSiteId( state, site?.ID ?? null )
 	);
 	const isFreeTierHidden = Boolean( siteSettings?.subscription_options?.hide_free_tier );
+	// The Free tier's custom description / hide setting are stored in the site's
+	// subscription_options, which only versions of Jetpack new enough to allow
+	// those keys will persist. The settings endpoint advertises support via this
+	// read-only flag (always true on Simple sites). When it's absent/false a save
+	// would silently no-op, so we hide the Free row entirely rather than offer
+	// controls that don't work.
+	const supportsFreeTierSettings = Boolean( siteSettings?.supports_free_tier_customization );
 
 	const hasDonationsFeature = useSelector( ( state ) =>
 		siteHasFeature( state, site?.ID ?? null, FEATURE_DONATIONS )
@@ -284,7 +291,7 @@ function ProductsList() {
 							</CompactCard>
 						);
 					} ) }
-			{ hasLoadedFeatures && hasStripeFeature && hasNewsletterTier && (
+			{ hasLoadedFeatures && hasStripeFeature && hasNewsletterTier && supportsFreeTierSettings && (
 				<CompactCard className="memberships__products-product-card">
 					<div className="memberships__products-product-details">
 						<div className="memberships__products-product-title">{ translate( 'Free' ) }</div>
@@ -329,7 +336,7 @@ function ProductsList() {
 					</EllipsisMenu>
 				</CompactCard>
 			) }
-			{ hasLoadedFeatures && showFreePlanDialog && hasStripeFeature && (
+			{ hasLoadedFeatures && showFreePlanDialog && hasStripeFeature && supportsFreeTierSettings && (
 				<FreePlanModal closeDialog={ closeDialog } siteId={ site?.ID } />
 			) }
 			{ hasLoadedFeatures && showAddEditDialog && hasStripeFeature && (

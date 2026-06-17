@@ -63,7 +63,12 @@ const initialState = {
 	},
 };
 
-const renderProductsList = ( products, subscriptionOptions = null, settings = null ) =>
+const renderProductsList = (
+	products,
+	subscriptionOptions = null,
+	settings = null,
+	supportsFreeTier = true
+) =>
 	renderWithProvider( <ProductsList />, {
 		initialState: {
 			...initialState,
@@ -80,7 +85,12 @@ const renderProductsList = ( products, subscriptionOptions = null, settings = nu
 			// `requesting: { 1: true }` makes QuerySiteSettings treat the fetch as
 			// already in-flight so it doesn't trigger a real network request in tests.
 			siteSettings: {
-				items: subscriptionOptions ? { 1: { subscription_options: subscriptionOptions } } : {},
+				items: {
+					1: {
+						...( subscriptionOptions ? { subscription_options: subscriptionOptions } : {} ),
+						...( supportsFreeTier ? { supports_free_tier_customization: true } : {} ),
+					},
+				},
 				requesting: { 1: true },
 				saveRequests: {},
 			},
@@ -174,6 +184,15 @@ describe( 'ProductsList', () => {
 		renderProductsList( [ donationPlan ] );
 
 		expect( screen.getByText( 'One-time Donation' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Free' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not show the Free row when the site does not support free tier customization', () => {
+		// A newsletter tier exists, but the capability flag is absent (older Jetpack),
+		// so saving the free-tier settings would silently no-op — hide the row.
+		renderProductsList( [ tierWithoutDescription ], null, null, false );
+
+		expect( screen.getByText( 'Basic Tier' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'Free' ) ).not.toBeInTheDocument();
 	} );
 
