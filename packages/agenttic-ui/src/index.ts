@@ -59,6 +59,7 @@ export { ThumbsDownIcon } from './components/icons/ThumbsDownIcon';
 export { CopyIcon } from './components/icons/CopyIcon';
 export { StylesIcon } from './components/icons/StylesIcon';
 export { BigSkyIcon } from './components/icons/BigSkyIcon';
+export { AssistantAvatarIcon } from './components/icons/AssistantAvatarIcon';
 export { StopIcon } from './components/icons/StopIcon';
 export { XIcon } from './components/icons/XIcon';
 export { ArrowUpIcon } from './components/icons/ArrowUpIcon';

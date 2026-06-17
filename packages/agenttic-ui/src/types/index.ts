@@ -93,6 +93,10 @@ export interface AgentUIProps {
 	) => void;
 	messageRenderer?: ComponentType< { children: string } >;
 	messagesPosition?: 'top' | 'bottom';
+	// Render an avatar next to agent text responses. Defaults to false; when
+	// false no icon is shown, preserving the prior behaviour. Individual
+	// messages still control eligibility via their `showIcon` flag.
+	showAgentIcon?: boolean;
 	expandOnClick?: boolean;
 	expandOnHover?: boolean;
 

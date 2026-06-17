@@ -45,6 +45,9 @@ interface ConversationViewProps extends InputHandlers {
 	// Markdown configuration
 	messageRenderer?: ComponentType< { children: string } >;
 
+	// Render an avatar next to agent text responses (defaults to off)
+	showAgentIcon?: boolean;
+
 	// Focus on mount
 	focusOnMount?: boolean;
 }
@@ -69,6 +72,7 @@ export function ConversationView( {
 	suggestions,
 	clearSuggestions,
 	messageRenderer,
+	showAgentIcon,
 	focusOnMount = false,
 }: ConversationViewProps ) {
 	// Listen for escape key to close the chat
@@ -97,6 +101,7 @@ export function ConversationView( {
 				error={ error }
 				emptyView={ emptyView }
 				messageRenderer={ messageRenderer }
+				showAgentIcon={ showAgentIcon }
 			/>
 			<ChatFooter
 				inputValue={ inputValue }
