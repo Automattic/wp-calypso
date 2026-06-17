@@ -8,30 +8,36 @@ export const MAX_OPEN_CONVERSATIONS = 3;
 
 export type InteractionStatusByUuid = Map< string, InteractionStatus >;
 
-function passesSmoochHeuristic( conversation: ZendeskConversation ): boolean {
-	return conversation.messages.every(
-		( message: ZendeskMessage ) =>
-			message.type !== 'form' &&
-			message.metadata?.type !== 'csat' &&
-			message.metadata?.type !== 'form' &&
-			! message.metadata?.rated &&
-			Date.now() - conversation.lastUpdatedAt * 1000 < AGE_THRESHOLD
-	);
-}
-
+/**
+ * A conversation is open unless one of these says otherwise:
+ * - it hasn't been updated within AGE_THRESHOLD (stale — true even with no messages),
+ * - it carries a terminal Smooch message (csat/form/rated),
+ * - its backing SupportInteraction is closed/solved server-side.
+ *
+ * The backend status is authoritative: a conversation can still look open in Smooch
+ * (no csat/form/rated message yet) while its interaction is already closed/solved —
+ * e.g. after a ticket merge.
+ */
 function isOpenConversation(
 	conversation: ZendeskConversation,
 	interactionStatusByUuid?: InteractionStatusByUuid
 ): boolean {
-	if ( ! passesSmoochHeuristic( conversation ) ) {
+	// Stale conversations are never open, even when they have no messages.
+	if ( Date.now() - conversation.lastUpdatedAt * 1000 >= AGE_THRESHOLD ) {
 		return false;
 	}
 
-	// Cross-check with the cached SupportInteraction status when available.
-	// A conversation whose interaction is closed/solved server-side is not open,
-	// even if the Smooch heuristic hasn't caught up yet (no csat/form/rated message).
-	// Conversations missing from the map (e.g. freshly created, not yet indexed)
-	// fall back to the heuristic.
+	const hasTerminalMessage = conversation.messages.some(
+		( message: ZendeskMessage ) =>
+			message.type === 'form' ||
+			message.metadata?.type === 'csat' ||
+			message.metadata?.type === 'form' ||
+			message.metadata?.rated
+	);
+	if ( hasTerminalMessage ) {
+		return false;
+	}
+
 	const supportInteractionId = conversation.metadata?.supportInteractionId as string | undefined;
 	if ( supportInteractionId && interactionStatusByUuid ) {
 		const status = interactionStatusByUuid.get( supportInteractionId );
@@ -52,48 +58,15 @@ function getConversations(): ZendeskConversation[] {
 }
 
 /**
- * Queries the Smooch SDK and gets the latest open conversation. Try to call as late as possible and don't cache the result.
- * @param interactionStatusByUuid Optional map of supportInteractionId → InteractionStatus from the TanStack cache.
- *                                Used to skip conversations whose backing SupportInteraction is closed/solved.
- * @returns The support interaction ID of the latest open conversation.
- */
-export default function getMostRecentOpenLiveInteraction(
-	interactionStatusByUuid?: InteractionStatusByUuid
-) {
-	const conversations = getConversations();
-
-	// They're already sorted by lastUpdatedAt, so we can just find the first one that's open.
-	const latestOpenConversation = conversations.find( ( conversation ) =>
-		isOpenConversation( conversation, interactionStatusByUuid )
-	);
-
-	return ( latestOpenConversation?.metadata.supportInteractionId as string ) ?? null;
-}
-
-/**
- * Returns the number of currently open live conversations.
- */
-export function getOpenLiveInteractionCount(
-	interactionStatusByUuid?: InteractionStatusByUuid
-): number {
-	return getConversations().filter( ( conversation ) =>
-		isOpenConversation( conversation, interactionStatusByUuid )
-	).length;
-}
-
-/**
- * Returns true if the user has reached the maximum number of concurrent open conversations.
- */
-export function hasReachedConversationLimit(
-	interactionStatusByUuid?: InteractionStatusByUuid
-): boolean {
-	return getOpenLiveInteractionCount( interactionStatusByUuid ) >= MAX_OPEN_CONVERSATIONS;
-}
-
-/**
- * Single-pass scan of the Smooch conversation list. Returns the open-conversation
- * trio (`mostRecentId`, `openCount`, `hasReachedLimit`) from one `Smooch.getConversations()`
- * call so callers don't pay 3× SDK reads per render.
+ * Single render-time snapshot of the open live conversations, cross-checked against the
+ * cached SupportInteraction status. Reads `Smooch.getConversations()` once and derives
+ * the `mostRecentId`, `openCount`, and `hasReachedLimit` the callers need.
+ *
+ * Call as late as possible and don't cache the result: Smooch mutates its conversation
+ * list outside React (e.g. on incoming messages) without triggering a re-render.
+ * @param interactionStatusByUuid Optional map of supportInteractionId → InteractionStatus
+ *                                from the TanStack cache. Used to skip conversations whose
+ *                                backing SupportInteraction is closed/solved.
  */
 export function getOpenLiveInteractions( interactionStatusByUuid?: InteractionStatusByUuid ): {
 	mostRecentId: string | null;

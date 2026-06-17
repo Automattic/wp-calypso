@@ -2,9 +2,8 @@
  * @jest-environment jsdom
  */
 import Smooch from 'smooch';
-import getMostRecentOpenLiveInteraction, {
-	getOpenLiveInteractionCount,
-	hasReachedConversationLimit,
+import {
+	getOpenLiveInteractions,
 	MAX_OPEN_CONVERSATIONS,
 	type InteractionStatusByUuid,
 } from '../get-most-recent-open-live-interaction';
@@ -38,7 +37,7 @@ function makeConversation(
 	};
 }
 
-describe( 'get-most-recent-open-live-interaction', () => {
+describe( 'getOpenLiveInteractions', () => {
 	beforeEach( () => {
 		mockGetConversations.mockReset();
 	} );
@@ -50,9 +49,11 @@ describe( 'get-most-recent-open-live-interaction', () => {
 			makeConversation( 'c' ),
 		] );
 
-		expect( getOpenLiveInteractionCount() ).toBe( 3 );
-		expect( hasReachedConversationLimit() ).toBe( true );
-		expect( getMostRecentOpenLiveInteraction() ).toBe( 'a' );
+		expect( getOpenLiveInteractions() ).toEqual( {
+			mostRecentId: 'a',
+			openCount: 3,
+			hasReachedLimit: true,
+		} );
 	} );
 
 	it( 'excludes conversations whose interaction is closed', () => {
@@ -68,9 +69,11 @@ describe( 'get-most-recent-open-live-interaction', () => {
 			[ 'c', 'open' ],
 		] );
 
-		expect( getOpenLiveInteractionCount( statusMap ) ).toBe( 2 );
-		expect( hasReachedConversationLimit( statusMap ) ).toBe( false );
-		expect( getMostRecentOpenLiveInteraction( statusMap ) ).toBe( 'a' );
+		expect( getOpenLiveInteractions( statusMap ) ).toEqual( {
+			mostRecentId: 'a',
+			openCount: 2,
+			hasReachedLimit: false,
+		} );
 	} );
 
 	it( 'excludes conversations whose interaction is solved', () => {
@@ -86,9 +89,11 @@ describe( 'get-most-recent-open-live-interaction', () => {
 			[ 'c', 'solved' ],
 		] );
 
-		expect( getOpenLiveInteractionCount( statusMap ) ).toBe( 1 );
-		expect( hasReachedConversationLimit( statusMap ) ).toBe( false );
-		expect( getMostRecentOpenLiveInteraction( statusMap ) ).toBe( 'b' );
+		expect( getOpenLiveInteractions( statusMap ) ).toEqual( {
+			mostRecentId: 'b',
+			openCount: 1,
+			hasReachedLimit: false,
+		} );
 	} );
 
 	it( 'falls back to the heuristic for conversations missing from the map', () => {
@@ -100,8 +105,11 @@ describe( 'get-most-recent-open-live-interaction', () => {
 
 		// Empty map → all conversations fall back to the heuristic, all open.
 		const emptyMap: InteractionStatusByUuid = new Map();
-		expect( getOpenLiveInteractionCount( emptyMap ) ).toBe( 3 );
-		expect( hasReachedConversationLimit( emptyMap ) ).toBe( true );
+		expect( getOpenLiveInteractions( emptyMap ) ).toEqual( {
+			mostRecentId: 'a',
+			openCount: 3,
+			hasReachedLimit: true,
+		} );
 	} );
 
 	it( 'still excludes conversations older than the 3-day threshold', () => {
@@ -116,8 +124,11 @@ describe( 'get-most-recent-open-live-interaction', () => {
 			[ 'b', 'open' ],
 		] );
 
-		expect( getOpenLiveInteractionCount( statusMap ) ).toBe( 1 );
-		expect( getMostRecentOpenLiveInteraction( statusMap ) ).toBe( 'b' );
+		expect( getOpenLiveInteractions( statusMap ) ).toEqual( {
+			mostRecentId: 'b',
+			openCount: 1,
+			hasReachedLimit: false,
+		} );
 	} );
 
 	it( 'still excludes conversations with a csat message', () => {
@@ -133,15 +144,34 @@ describe( 'get-most-recent-open-live-interaction', () => {
 			[ 'b', 'open' ],
 		] );
 
-		expect( getOpenLiveInteractionCount( statusMap ) ).toBe( 1 );
+		expect( getOpenLiveInteractions( statusMap ).openCount ).toBe( 1 );
 	} );
 
-	it( 'returns null from getMostRecentOpenLiveInteraction when nothing is open', () => {
+	it( 'counts a recent conversation with no messages as open', () => {
+		mockGetConversations.mockReturnValue( [ makeConversation( 'a', { messages: [] } ) ] );
+
+		expect( getOpenLiveInteractions().openCount ).toBe( 1 );
+	} );
+
+	it( 'excludes a stale conversation with no messages', () => {
+		const old = now() - 60 * 60 * 24 * 4; // 4 days ago
+		mockGetConversations.mockReturnValue( [
+			makeConversation( 'a', { messages: [], lastUpdatedAt: old } ),
+		] );
+
+		expect( getOpenLiveInteractions() ).toEqual( {
+			mostRecentId: null,
+			openCount: 0,
+			hasReachedLimit: false,
+		} );
+	} );
+
+	it( 'returns null mostRecentId when nothing is open', () => {
 		mockGetConversations.mockReturnValue( [ makeConversation( 'a' ) ] );
 
 		const statusMap: InteractionStatusByUuid = new Map( [ [ 'a', 'closed' ] ] );
 
-		expect( getMostRecentOpenLiveInteraction( statusMap ) ).toBeNull();
+		expect( getOpenLiveInteractions( statusMap ).mostRecentId ).toBeNull();
 	} );
 
 	it( 'exports MAX_OPEN_CONVERSATIONS = 3', () => {
