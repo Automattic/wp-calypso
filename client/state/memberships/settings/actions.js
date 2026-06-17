@@ -1,5 +1,6 @@
 import wpcom from 'calypso/lib/wp';
 import { MEMBERSHIPS_SETTINGS } from 'calypso/state/action-types';
+import { getFreeTierDescriptionRenderedForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { errorNotice, successNotice, warningNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/data-layer/wpcom/sites/memberships';
@@ -10,6 +11,50 @@ export const requestSettings = ( siteId, source ) => ( {
 	source,
 	type: MEMBERSHIPS_SETTINGS,
 } );
+
+// Delays (ms) between successive memberships-settings refetches after a save.
+// The first refetch fires immediately; these schedule the retries.
+const FREE_TIER_RENDERED_RETRY_DELAYS = [ 1500, 3000, 5000 ];
+
+/**
+ * Refetches memberships settings after a Free-tier save, retrying until the
+ * server-rendered description reflects the change.
+ *
+ * The rendered HTML (`free_tier_description_rendered`) is produced wp.com-side
+ * from the site's `subscription_options`. On Jetpack/Atomic sites the save lands
+ * on the site first and wp.com only sees it once Jetpack sync propagates the
+ * option, so a single immediate refetch usually reads the pre-sync (stale)
+ * value. Poll a few times with backoff and stop as soon as the value changes,
+ * which keeps the preview 1:1 with the server parser without depending on sync
+ * timing. (Simple sites update on the first refetch and exit immediately.)
+ * @param {number} siteId The site ID.
+ * @returns {Function} A thunk.
+ */
+export const refreshFreeTierDescriptionRendered = ( siteId ) => ( dispatch, getState ) => {
+	const previousRendered = getFreeTierDescriptionRenderedForSiteId( getState(), siteId );
+	let retryIndex = 0;
+
+	const attempt = () => {
+		dispatch( requestSettings( siteId ) );
+
+		if ( retryIndex >= FREE_TIER_RENDERED_RETRY_DELAYS.length ) {
+			return;
+		}
+
+		const delay = FREE_TIER_RENDERED_RETRY_DELAYS[ retryIndex ];
+		retryIndex++;
+
+		setTimeout( () => {
+			// Stop once the refetch above has updated the rendered value.
+			if ( getFreeTierDescriptionRenderedForSiteId( getState(), siteId ) !== previousRendered ) {
+				return;
+			}
+			attempt();
+		}, delay );
+	};
+
+	attempt();
+};
 
 const requestDisconnectStripeAccountByUrl = (
 	url,

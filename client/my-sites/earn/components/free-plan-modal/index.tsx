@@ -10,7 +10,10 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { requestSettings } from 'calypso/state/memberships/settings/actions';
+import {
+	requestSettings,
+	refreshFreeTierDescriptionRendered,
+} from 'calypso/state/memberships/settings/actions';
 import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -60,11 +63,14 @@ const FreePlanModal = ( { closeDialog, siteId }: FreePlanModalProps ) => {
 
 	const onClose = ( reason: string | undefined ) => {
 		if ( reason === 'submit' && targetSiteId ) {
+			const trimmedDescription = editedDescription.trim();
+			const descriptionChanged =
+				trimmedDescription !== ( subscriptionOptions.free_tier_description ?? '' );
 			dispatch(
 				saveSiteSettings( targetSiteId, {
 					subscription_options: {
 						...subscriptionOptions,
-						free_tier_description: editedDescription.trim(),
+						free_tier_description: trimmedDescription,
 						// Sent as 1/0 (not a boolean) so the value survives form-encoding
 						// without PHP treating a "false" string as truthy server-side.
 						hide_free_tier: hideFreeTier ? 1 : 0,
@@ -80,8 +86,15 @@ const FreePlanModal = ( { closeDialog, siteId }: FreePlanModalProps ) => {
 				// The Free row preview renders `freeTierDescriptionRendered` from the
 				// memberships settings store, which `saveSiteSettings` doesn't touch.
 				// Refetch it so the server-rendered markdown reflects the new
-				// description immediately instead of staying stale until reload.
-				dispatch( requestSettings( targetSiteId ) );
+				// description. When the description changed, poll with backoff: on
+				// Jetpack/Atomic sites the rendered value is derived wp.com-side from a
+				// synced copy of the option, which can briefly lag the save. Otherwise a
+				// single refetch is enough (the rendered value can't have changed).
+				if ( descriptionChanged ) {
+					dispatch( refreshFreeTierDescriptionRendered( targetSiteId ) );
+				} else {
+					dispatch( requestSettings( targetSiteId ) );
+				}
 				dispatch(
 					recordTracksEvent( 'calypso_earn_page_free_plan_updated', {
 						hide_free_tier: hideFreeTier,

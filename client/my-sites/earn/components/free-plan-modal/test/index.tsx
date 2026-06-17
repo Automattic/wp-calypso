@@ -14,13 +14,19 @@ jest.mock( 'calypso/state/site-settings/actions', () => ( {
 } ) );
 jest.mock( 'calypso/state/memberships/settings/actions', () => ( {
 	requestSettings: jest.fn( () => ( { type: 'TEST_REQUEST_SETTINGS' } ) ),
+	refreshFreeTierDescriptionRendered: jest.fn( () => ( {
+		type: 'TEST_REFRESH_FREE_TIER_RENDERED',
+	} ) ),
 } ) );
 
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { unmountComponentAtNode } from 'react-dom';
 import Modal from 'react-modal';
-import { requestSettings } from 'calypso/state/memberships/settings/actions';
+import {
+	requestSettings,
+	refreshFreeTierDescriptionRendered,
+} from 'calypso/state/memberships/settings/actions';
 import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -77,9 +83,31 @@ describe( 'FreePlanModal', () => {
 			},
 		} );
 		expect( closeDialog ).toHaveBeenCalled();
-		// After the save resolves, memberships settings are refetched so the
-		// server-rendered description preview updates without a reload.
+		// The description changed, so the rendered preview is refreshed with the
+		// retry-until-updated thunk (Jetpack sync can lag the save), not a single
+		// refetch.
+		await waitFor( () => expect( refreshFreeTierDescriptionRendered ).toHaveBeenCalledWith( 1 ) );
+		expect( requestSettings ).not.toHaveBeenCalled();
+	} );
+
+	test( 'refetches once (no retry poll) when only the hide flag changed', async () => {
+		const user = userEvent.setup();
+		getSiteSettings.mockReturnValue( {
+			subscription_options: { free_tier_description: 'Existing copy', hide_free_tier: false },
+		} );
+		renderWithProvider( <FreePlanModal closeDialog={ closeDialog } siteId={ 1 } /> );
+
+		// Toggle hide without touching the description: the rendered value can't
+		// change, so a single refetch is enough.
+		await user.click(
+			screen.getByRole( 'checkbox', {
+				name: 'Hide the free plan from the options shown to new subscribers',
+			} )
+		);
+		await user.click( screen.getByRole( 'button', { name: 'Save' } ) );
+
 		await waitFor( () => expect( requestSettings ).toHaveBeenCalledWith( 1 ) );
+		expect( refreshFreeTierDescriptionRendered ).not.toHaveBeenCalled();
 	} );
 
 	test( 'does not refetch settings when the save fails', async () => {
@@ -99,6 +127,7 @@ describe( 'FreePlanModal', () => {
 		// Flush the save promise and its `.then` before asserting the negative.
 		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 		expect( requestSettings ).not.toHaveBeenCalled();
+		expect( refreshFreeTierDescriptionRendered ).not.toHaveBeenCalled();
 	} );
 
 	test( 'pre-fills existing values and does not save on cancel', async () => {
