@@ -944,7 +944,8 @@ $x-nav-2026-height: 64px;
 // Transition timing matches the shipped Landpack nav (hp-2024-jul?nav_2026=1).
 $x-nav-2026-transition: 0.22s ease-in-out;
 $x-nav-2026-scroll-fade-duration: 0.22s;
-$x-dropdown-2026-panel-close-duration: 0.14s;
+$x-dropdown-2026-panel-close-duration: 0.22s;
+$x-dropdown-2026-content-close-fade-duration: 0.08s;
 $x-dropdown-2026-close-fade-duration: 0s;
 // Backdrop blur behind the nav once scrolled.
 $x-nav-2026-scrolled-blur: 8px;
@@ -1261,29 +1262,22 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	background: rgba( $studio-gray-100, 0.3 );
 	backdrop-filter: blur( 4px );
 	opacity: 0;
+	visibility: hidden;
 	pointer-events: none;
 	// The z-index drop on close waits for the fade-out.
-	transition: opacity $x-nav-2026-transition, z-index 0s 0.22s;
+	transition: opacity $x-nav-2026-transition, visibility $x-nav-2026-transition, z-index 0s 0.22s;
 }
 
 // Show the backdrop whenever a dropdown content block is active.
 .lpc-header-nav-container:has( .x-dropdown--2026.x-dropdown-content[aria-hidden='false'] )
 	.x-nav-backdrop {
 	opacity: 1;
+	visibility: visible;
+	pointer-events: auto;
 	// Above secondary navs (z-index up to 100000); the nav sits one higher.
 	z-index: 100001;
 	// Raise instantly; only the drop back is delayed.
 	transition-delay: 0s;
-}
-
-.lpc-header-nav-container:has( .x-dropdown.x-dropdown--2026.is-dropdown-closing )
-	.x-nav-backdrop {
-	opacity: 0;
-	pointer-events: none;
-	z-index: $x-content-min-z-index - 1;
-	transition:
-		opacity $x-dropdown-2026-close-fade-duration ease-in-out,
-		z-index 0s $x-dropdown-2026-close-fade-duration;
 }
 
 // Nav bar above secondary navs and the raised backdrop while the dropdown is open.
@@ -1298,7 +1292,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	.masterbar:has( .x-nav--2026-redesign ) {
 	transition:
 		backdrop-filter $x-dropdown-2026-close-fade-duration 0s,
-		z-index 0s $x-dropdown-2026-close-fade-duration;
+		z-index 0s $x-nav-2026-scroll-fade-duration;
 }
 
 // Desktop dropdown — one persistent panel easing its height between menus; active block (aria-hidden="false") sits in flow so the wrapper auto-sizes. `position: fixed` + high z escapes section stacking contexts; hidden at rest so it neither intercepts clicks nor paints until JS opens it.
@@ -1385,13 +1379,19 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	transition: transform var( --x-dropdown-2026-close-duration ) var( --x-dropdown-2026-easing ) 0s;
 }
 
-// Close: wipe the content at the rising edge so nothing trails below the roll. `:not()` keeps menu-to-menu switches (wrapper stays open) on the plain cross-fade.
-.x-dropdown.x-dropdown--2026:not( .is-dropdown-open ) .x-dropdown-content {
-	clip-path: inset( 0 0 100% 0 );
-	transition:
-		opacity $x-nav-2026-transition,
-		visibility $x-nav-2026-transition,
-		clip-path var( --x-dropdown-2026-close-duration ) var( --x-dropdown-2026-easing ) 0s;
+@media ( min-width: 1025px ) {
+	// Close: wipe the content at the rising edge so nothing trails below the roll.
+	.x-dropdown.x-dropdown--2026.is-dropdown-closing .x-dropdown-content[aria-hidden='false'],
+	.x-dropdown.x-dropdown--2026:not( .is-dropdown-open ) .x-dropdown-content {
+		opacity: 0;
+		visibility: hidden;
+		pointer-events: none;
+		clip-path: inset( 0 0 100% 0 );
+		transition:
+			opacity $x-dropdown-2026-content-close-fade-duration ease-in-out,
+			visibility 0s linear $x-dropdown-2026-content-close-fade-duration,
+			clip-path var( --x-dropdown-2026-close-duration ) var( --x-dropdown-2026-easing ) 0s;
+	}
 }
 
 .x-dropdown--2026.x-dropdown-content {

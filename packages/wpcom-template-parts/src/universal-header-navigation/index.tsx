@@ -723,6 +723,7 @@ const UniversalNavbarHeader = ( {
 							dropdownRef={ dropdownRef }
 							activeDropdown={ activeDropdown }
 							nav2026Menus={ nav2026Menus }
+							onMouseLeave={ () => setActiveDropdown( null ) }
 						/>
 					) }
 					{ /*<!-- Nav bar ends here. -->*/ }
