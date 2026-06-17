@@ -1,4 +1,14 @@
+import { brush } from '@wordpress/icons';
 import React from 'react';
+
+const DASHICON_TO_WP_ICON = {
+	'dashicons-admin-appearance': React.cloneElement( brush, {
+		width: 18,
+		height: 18,
+		fill: 'currentColor',
+	} ),
+};
+
 /**
  * SidebarCustomIcon -
  *   Handles Dashicons, SVGs, React components, or image URLs and passes on the supplied props.
@@ -16,6 +26,14 @@ const SidebarCustomIcon = ( { icon, ...rest } ) => {
 
 	if ( React.isValidElement( icon ) ) {
 		return icon;
+	}
+
+	if ( DASHICON_TO_WP_ICON[ icon ] ) {
+		return (
+			<span className="sidebar__menu-icon" aria-hidden { ...rest }>
+				{ DASHICON_TO_WP_ICON[ icon ] }
+			</span>
+		);
 	}
 
 	if ( icon.indexOf( 'data:image' ) === 0 || icon.indexOf( 'http' ) === 0 ) {
