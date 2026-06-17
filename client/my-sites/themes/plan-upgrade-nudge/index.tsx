@@ -42,6 +42,7 @@ const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 				description={ translate(
 					'Get access to a selection of premium themes with a Personal plan.'
 				) }
+				dismissPreferenceName="theme-showcase-personal-upgrade-nudge"
 				event="calypso_themeshowcase_personal_upgrade_nudge"
 				href={ `/checkout/${ siteSlug }/personal` }
 				icon={ nudgeIcon }
@@ -59,6 +60,7 @@ const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 			<Banner
 				callToAction={ translate( 'Upgrade to Premium' ) }
 				description={ translate( 'Get access to hundreds of premium themes.' ) }
+				dismissPreferenceName="theme-showcase-premium-upgrade-nudge"
 				event="calypso_themeshowcase_premium_upgrade_nudge"
 				href={ `/checkout/${ siteSlug }/premium` }
 				icon={ nudgeIcon }
@@ -78,6 +80,7 @@ const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 				description={ translate(
 					'Get access to premium themes from top theme builders with a Business plan.'
 				) }
+				dismissPreferenceName="theme-showcase-business-upgrade-nudge"
 				event="calypso_themeshowcase_business_upgrade_nudge"
 				href={ `/checkout/${ siteSlug }/business` }
 				icon={ nudgeIcon }
