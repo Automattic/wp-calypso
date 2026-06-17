@@ -14,7 +14,8 @@ import {
 	useUpdateDocumentTitle,
 } from '../../hooks';
 import { useHelpCenterChatScroll } from '../../hooks/use-help-center-chat-scroll';
-import { useOpenLiveInteractions } from '../notices/use-open-interaction-status-map';
+import { getOpenLiveInteractions } from '../notices/get-most-recent-open-live-interaction';
+import { useOpenInteractionStatusMap } from '../notices/use-open-interaction-status-map';
 import { JumpToRecent } from './jump-to-recent';
 import { MessagesClusterizer } from './messages-cluster/messages-cluster';
 import { ThinkingPlaceholder } from './thinking-placeholder';
@@ -42,8 +43,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
 	const scrollParentRef = useRef< HTMLElement | null >( null );
 
-	const { mostRecentId: alreadyHasActiveZendeskChatId, hasReachedLimit } =
-		useOpenLiveInteractions();
+	const interactionStatusByUuid = useOpenInteractionStatusMap();
 
 	useZendeskMessageListener();
 	const isScrolling = useAutoScroll( messagesContainerRef, shouldEnableAutoScroll );
@@ -80,6 +80,11 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			searchParams.set( 'direct-zd-chat', '1' );
 			setSearchParams( searchParams );
 
+			// Compute from a fresh Smooch snapshot at call time: Smooch can mutate its
+			// conversation list outside React without triggering a re-render.
+			const { mostRecentId: alreadyHasActiveZendeskChatId, hasReachedLimit } =
+				getOpenLiveInteractions( interactionStatusByUuid );
+
 			// when forwarding to zd avoid creating new chats
 			if ( alreadyHasActiveZendeskChatId ) {
 				// Redirect to the existing Zendesk chat.
@@ -104,9 +109,8 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		isChatLoaded,
 		chat?.conversationId,
 		createZendeskConversation,
-		alreadyHasActiveZendeskChatId,
 		forceEmailSupport,
-		supportInteraction?.uuid,
+		interactionStatusByUuid,
 		searchParams,
 		setSearchParams,
 	] );

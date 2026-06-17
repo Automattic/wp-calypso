@@ -5,7 +5,8 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import { useOpenLiveInteractions } from '../components/notices/use-open-interaction-status-map';
+import { getOpenLiveInteractions } from '../components/notices/get-most-recent-open-live-interaction';
+import { useOpenInteractionStatusMap } from '../components/notices/use-open-interaction-status-map';
 import {
 	getOdieRateLimitMessage,
 	getOdieEmailFallbackMessage,
@@ -166,10 +167,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 
 	const hasTriedToEscalateToSupport = hasRecentEscalationAttempt( chat );
 
-	const {
-		mostRecentId: warnAboutExistingConversationId,
-		hasReachedLimit: hasReachedConversationLimitValue,
-	} = useOpenLiveInteractions();
+	const interactionStatusByUuid = useOpenInteractionStatusMap();
 
 	/*
 		Adds a message to the chat.
@@ -185,11 +183,14 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		props?: Partial< Chat >;
 		isFromError: boolean;
 	} ) => {
-		const warnAboutExistingConversation = warnAboutExistingConversationId;
+		// Compute from a fresh Smooch snapshot at call time: Smooch can mutate its
+		// conversation list outside React without triggering a re-render.
+		const { mostRecentId: warnAboutExistingConversation, hasReachedLimit } =
+			getOpenLiveInteractions( interactionStatusByUuid );
 
 		if ( ! Array.isArray( message ) ) {
 			if ( getIsRequestingHumanSupport( message ) ) {
-				if ( hasReachedConversationLimitValue ) {
+				if ( hasReachedLimit ) {
 					setChat( ( prevChat ) => ( {
 						...prevChat,
 						...props,
