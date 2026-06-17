@@ -163,6 +163,19 @@ describe( 'selectors', () => {
 		test( 'should reverse children', () => {
 			expect( getPostCommentsTree( stateWithDeeperChildren, 1, 1, 'all' ) ).toMatchSnapshot();
 		} );
+
+		test( 'handles placeholder comments that have no parent', () => {
+			const stateWithPlaceholder = {
+				comments: {
+					items: {
+						'1-1': [ { ID: 'placeholder-123', isPlaceholder: true, status: 'unapproved' } ],
+					},
+				},
+			};
+			const tree = getPostCommentsTree( stateWithPlaceholder, 1, 1, 'all' );
+			expect( tree[ 'placeholder-123' ].data.ID ).toBe( 'placeholder-123' );
+			expect( tree.children ).toEqual( [] );
+		} );
 	} );
 
 	describe( '#getPostCommentsCountAtDate()', () => {

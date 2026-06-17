@@ -5,11 +5,12 @@ import languages from '@automattic/languages';
 import { ExternalLink } from '@wordpress/components';
 import debugFactory from 'debug';
 import { fixMe, localize } from 'i18n-calypso';
-import { debounce, flowRight as compose, get, map, size } from 'lodash';
+import { debounce, get, map } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
+import { compose } from 'redux';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
 import FormButton from 'calypso/components/forms/form-button';
@@ -705,7 +706,7 @@ class Account extends Component {
 		 * If there are no actions or if there is only one action,
 		 * which we assume is the 'none' action, we ignore the actions.
 		 */
-		if ( size( actions ) <= 1 ) {
+		if ( Object.keys( actions ).length <= 1 ) {
 			return;
 		}
 

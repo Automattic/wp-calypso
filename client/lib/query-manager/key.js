@@ -1,4 +1,5 @@
-import { sortBy, omitBy } from 'lodash';
+import { omitBy } from '@automattic/js-utils';
+import { sortBy } from 'lodash';
 
 /**
  * QueryKey manages the serialization and deserialization of a query key for

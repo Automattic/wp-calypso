@@ -89,12 +89,24 @@ jobs:
               </details>
               <details>
                 <summary>
-                  Dashboard Live <a href="${link}&env=dashboard">(direct link)</a>
+                  Dashboard Live (dotcom) <a href="${link}&env=dashboard">(direct link)</a>
                 </summary>
                 <table>
                   <tr>
                     <td>
                       <a href="${link}&env=dashboard">${link}&env=dashboard</a>
+                    </td>
+                  </tr>
+                </table>
+              </details>
+              <details>
+                <summary>
+                  Dashboard Live (A4A) <a href="${link}&env=dashboard-a4a">(direct link)</a>
+                </summary>
+                <table>
+                  <tr>
+                    <td>
+                      <a href="${link}&env=dashboard-a4a">${link}&env=dashboard-a4a</a>
                     </td>
                   </tr>
                 </table>

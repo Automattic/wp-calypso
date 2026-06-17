@@ -1,4 +1,5 @@
-import { omit, merge, get, includes, reduce, isEqual } from 'lodash';
+import { omit } from '@automattic/js-utils';
+import { merge, get, includes, reduce, isEqual } from 'lodash';
 import {
 	MEDIA_DELETE,
 	SITE_LEAVE_RECEIVE,

@@ -3,16 +3,13 @@ import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
 
-// `/client` – parent route for agency-client surfaces
-const agencyClientParentRoute = createRoute( {
+// `/client` – parent route that guards every agency-client route (blocks agency users).
+const agencyClientRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'client',
-	// Block A4A agency users from client-only routes. `agencyQuery` is primed by
-	// the root route's `beforeLoad`, so this resolves from cache.
 	beforeLoad: async ( { cause } ) => {
-		// Preloads (hover/intent) shouldn't trigger redirects.
 		if ( cause === 'preload' ) {
-			return;
+			return; // Don't redirect on hover/intent preloads.
 		}
 
 		const agency = await queryClient.ensureQueryData( agencyQuery() );
@@ -24,7 +21,7 @@ const agencyClientParentRoute = createRoute( {
 
 // `/client/subscriptions` – agency client subscriptions overview
 const agencyClientSubscriptionsRoute = createRoute( {
-	getParentRoute: () => agencyClientParentRoute,
+	getParentRoute: () => agencyClientRoute,
 	path: 'subscriptions',
 } ).lazy( () =>
 	import( '../../agency-client/subscriptions' ).then( ( d ) =>
@@ -34,7 +31,4 @@ const agencyClientSubscriptionsRoute = createRoute( {
 	)
 );
 
-export const createAgencyClientRoutes = () => [
-	agencyClientParentRoute,
-	agencyClientSubscriptionsRoute,
-];
+export const createAgencyClientRoutes = () => [ agencyClientRoute, agencyClientSubscriptionsRoute ];

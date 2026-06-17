@@ -1,4 +1,5 @@
-import { escapeRegExp, findIndex, get, throttle, pick } from 'lodash';
+import { pick } from '@automattic/js-utils';
+import { escapeRegExp, findIndex, get, throttle } from 'lodash';
 import { createRef, Component, Fragment } from 'react';
 import getCaretCoordinates from 'textarea-caret';
 import UserMentionSuggestionList from './suggestion-list';

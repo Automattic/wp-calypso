@@ -1,9 +1,9 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { isMobile } from '@automattic/viewport';
-import { flowRight } from 'lodash';
 import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import LikeButtonContainer from 'calypso/blocks/like-button';
 import PostLikesPopover from 'calypso/blocks/post-likes/popover';
 import { withPostLikes } from 'calypso/components/data/post-likes';
@@ -130,7 +130,7 @@ class ReaderLikeButton extends Component {
 	}
 }
 
-export default flowRight(
+export default compose(
 	connect( ( state ) => {
 		return {
 			isLoggedIn: isUserLoggedIn( state ),

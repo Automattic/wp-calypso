@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
+import { pickBy } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
-import { get, pickBy, map } from 'lodash';
+import { get, map } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
 import {
 	COMMENTS_REQUEST,

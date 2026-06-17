@@ -11,7 +11,6 @@ import {
 } from '@automattic/wpcom-checkout';
 import clsx from 'clsx';
 import i18n from 'i18n-calypso';
-import { keys } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 
@@ -53,7 +52,7 @@ const ALT_TEXT = {
 	sofort: 'Sofort',
 };
 
-export const POSSIBLE_TYPES = keys( ALT_TEXT );
+export const POSSIBLE_TYPES = Object.keys( ALT_TEXT );
 
 class PaymentLogo extends Component {
 	static propTypes = {

@@ -60,7 +60,7 @@ export const useSitePreviewMShotImageHandler = ( url: string = '' ) => {
 
 	const previewRef = useRef< HTMLDivElement >( null );
 
-	const updateDimensions = ( previewRef: React.RefObject< HTMLDivElement > ) => {
+	const updateDimensions = ( previewRef: React.RefObject< HTMLDivElement | null > ) => {
 		if ( previewRef.current ) {
 			const { offsetWidth } = previewRef.current;
 			const width = Math.min( offsetWidth, 1920 );

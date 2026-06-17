@@ -7,8 +7,9 @@ import { STORAGE_ADD_ONS } from '@automattic/data-stores/src/add-ons';
 import { getAddOn } from '@automattic/data-stores/src/add-ons/add-ons-list';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
+import { pick } from '@automattic/js-utils';
 import debugFactory from 'debug';
-import { defer, difference, get, includes, isEmpty, pick } from 'lodash';
+import { defer, difference, get, includes, isEmpty } from 'lodash';
 import { buildUpgradeFunction } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/unified-plans/util';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import {

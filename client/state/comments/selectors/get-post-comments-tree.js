@@ -1,5 +1,6 @@
+import { groupBy, keyBy, mapValues } from '@automattic/js-utils';
 import treeSelect from '@automattic/tree-select';
-import { filter, groupBy, keyBy, map, mapValues, partition } from 'lodash';
+import { filter, map, partition } from 'lodash';
 import { getPostCommentItems } from 'calypso/state/comments/selectors/get-post-comment-items';
 
 import 'calypso/state/comments/init';
@@ -37,7 +38,7 @@ export const getPostCommentsTree = treeSelect(
 		const [ roots, children ] = partition( items, ( item ) => item.parent === false );
 
 		// group children by their parent ID
-		const childrenGroupedByParent = groupBy( children, 'parent.ID' );
+		const childrenGroupedByParent = groupBy( children, ( child ) => child.parent?.ID );
 
 		// Generate a new map of parent ID to an array of chilren IDs
 		// Reverse the order to keep it in chrono order
@@ -51,7 +52,7 @@ export const getPostCommentsTree = treeSelect(
 			children: parentToChildIdMap[ item.ID ] || [],
 		} );
 
-		const commentsByIdMap = keyBy( map( items, transformItemToNode ), 'data.ID' );
+		const commentsByIdMap = keyBy( map( items, transformItemToNode ), ( node ) => node.data.ID );
 
 		return {
 			...commentsByIdMap,

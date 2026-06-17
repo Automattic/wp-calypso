@@ -8,6 +8,7 @@ import {
 	domainQuery,
 	geoLocationQuery,
 	isAutomatticianQuery,
+	legacyContactsQuery,
 	monetizeSubscriptionsQuery,
 	plansQuery,
 	productsQuery,
@@ -856,6 +857,7 @@ export const securityLegacyContactRoute = createRoute( {
 	} ),
 	getParentRoute: () => securityRoute,
 	path: '/legacy-contact',
+	loader: () => queryClient.ensureQueryData( legacyContactsQuery() ),
 } ).lazy( () =>
 	import( '../../me/security-legacy-contact' ).then( ( d ) =>
 		createLazyRoute( 'security-legacy-contact' )( {

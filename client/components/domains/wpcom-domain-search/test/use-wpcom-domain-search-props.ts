@@ -291,6 +291,37 @@ describe( 'useWPCOMDomainSearchProps', () => {
 			] );
 		} );
 
+		it( 'keeps config.priceRules.freeForFirstYearDomains set to the free domain after it has been added to the cart', () => {
+			mockUseShoppingCart.mockReturnValue(
+				buildShoppingCart( {
+					responseCart: {
+						products: [
+							buildProduct( {
+								uuid: 'dotcom',
+								product_slug: 'dotcom_domain',
+								meta: 'my-domain.com',
+								is_domain_registration: true,
+								item_original_cost_integer: 17100,
+								item_original_subtotal_integer: 17100,
+								item_subtotal_integer: 17100,
+							} ),
+						],
+					},
+				} )
+			);
+
+			const { result } = renderHookWithProvider( () =>
+				useWPCOMDomainSearchProps( { ...defaultProps, isFirstDomainFreeForFirstYear: true } )
+			);
+
+			// freeForFirstYear should be false (the free slot is taken),
+			// but freeForFirstYearDomains should contain the added domain so it still shows $0.
+			expect( result.current.config.priceRules.freeForFirstYear ).toBe( false );
+			expect( result.current.config.priceRules.freeForFirstYearDomains ).toEqual( [
+				'my-domain.com',
+			] );
+		} );
+
 		it( 'does not render any domain as free if there are only premium domains in the cart and config.priceRules.freeForFirstYear is true', () => {
 			mockUseShoppingCart.mockReturnValue(
 				buildShoppingCart( {

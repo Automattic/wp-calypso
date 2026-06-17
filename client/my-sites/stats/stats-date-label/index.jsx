@@ -1,7 +1,8 @@
 import { localize } from 'i18n-calypso';
-import { flowRight, get } from 'lodash';
+import { get } from 'lodash';
 import { useMemo } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import { getShortcuts } from 'calypso/components/date-range/use-shortcuts';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { NAVIGATION_METHOD_ARROW } from 'calypso/my-sites/stats/constants';
@@ -300,4 +301,4 @@ const connectComponent = connect( ( state, { query, statsType, showQueryDate } )
 	};
 } );
 
-export default flowRight( connectComponent, localize, withLocalizedMoment )( StatsDateLabel );
+export default compose( connectComponent, localize, withLocalizedMoment )( StatsDateLabel );

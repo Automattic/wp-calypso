@@ -53,9 +53,7 @@ const getIsVisible = () => {
 
 const isDesktop = config.isEnabled( 'desktop' );
 
-// Keep the legacy panel in the Electron desktop app for now; the redesign is
-// only enabled in the browser.
-const isRedesignEnabled = config.isEnabled( 'notifications/redesign' ) && ! isDesktop;
+const isRedesignEnabled = config.isEnabled( 'notifications/redesign' );
 
 let notificationAppModule;
 

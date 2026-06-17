@@ -11,7 +11,8 @@ import {
 	PLAN_BLOGGER_2_YEARS,
 	PLAN_PERSONAL_2_YEARS,
 } from '@automattic/calypso-products';
-import { filter, map, pick, sortBy } from 'lodash';
+import { pick } from '@automattic/js-utils';
+import { filter, map, sortBy } from 'lodash';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { decodeEntities, parseHtml } from 'calypso/lib/formatting';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';

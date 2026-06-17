@@ -1,8 +1,8 @@
 import './style.scss';
 import { isDefaultLocale } from '@automattic/i18n-utils';
+import { times } from '@automattic/js-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component, Fragment } from 'react';
 import * as React from 'react';

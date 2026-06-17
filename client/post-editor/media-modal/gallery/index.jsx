@@ -1,5 +1,6 @@
+import { omitBy } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { omitBy, some, isEqual } from 'lodash';
+import { some, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';

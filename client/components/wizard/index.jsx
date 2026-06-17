@@ -1,4 +1,4 @@
-import { compact, get } from 'lodash';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { cloneElement, Component } from 'react';
 import NavigationLink from './navigation-link';
@@ -46,7 +46,7 @@ class Wizard extends Component {
 			return;
 		}
 
-		return compact( [ basePath, previousStepName, baseSuffix ] ).join( '/' );
+		return [ basePath, previousStepName, baseSuffix ].filter( Boolean ).join( '/' );
 	};
 
 	getForwardUrl = () => {
@@ -63,7 +63,7 @@ class Wizard extends Component {
 			return;
 		}
 
-		return compact( [ basePath, nextStepName, baseSuffix ] ).join( '/' );
+		return [ basePath, nextStepName, baseSuffix ].filter( Boolean ).join( '/' );
 	};
 
 	render() {

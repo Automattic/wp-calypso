@@ -94,11 +94,13 @@ describe( 'BundleProductAndCostOverridesList', () => {
 	it( 'renders the bundle label, each member domain, and the summed total', () => {
 		renderBundleRow();
 
-		expect( screen.getByText( 'Domain bundle' ) ).toBeVisible();
+		expect( screen.getByText( 'Domain Bundle' ) ).toBeVisible();
 		expect( screen.getByText( 'example.com' ) ).toBeVisible();
 		expect( screen.getByText( 'example.net' ) ).toBeVisible();
 		// 2200 + 1800 = 4000 smallest-unit => $40.
 		expect( screen.getByText( /\$40\b/ ) ).toBeVisible();
+		expect( screen.queryByText( /\$22\b/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /\$18\b/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'shows pre-coupon prices so the dedicated coupon line is not double-counted', () => {
@@ -119,16 +121,13 @@ describe( 'BundleProductAndCostOverridesList', () => {
 			],
 		} );
 
-		// Companion shows the pre-coupon $20, not the $18 post-coupon subtotal.
-		expect( screen.getByText( /\$20\b/ ) ).toBeVisible();
+		// Companion price is included in the grouped total, not shown as a separate row.
+		expect( screen.queryByText( /\$20\b/ ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( /\$18\b/ ) ).not.toBeInTheDocument();
 		// 2200 + 2000 = 4200 smallest-unit => $42.
 		expect( screen.getByText( /\$42\b/ ) ).toBeVisible();
 	} );
-
-	it( 'discloses the full-price renewal aggregate when the bundle is discounted', () => {
-		// Bundle members renew at full (pre-discount) price, so the disclosure
-		// shows the summed item_original_subtotal_integer: 6500 + 6400 => $129.
+	it( 'shows the summed original price crossed out when the bundle is discounted', () => {
 		renderBundleRow( {
 			type: 'bundle',
 			groupId: 'bundle-discounted',
@@ -148,43 +147,10 @@ describe( 'BundleProductAndCostOverridesList', () => {
 			],
 		} );
 
-		expect( screen.getByText( 'Auto-renews at $129/year.' ) ).toBeVisible();
-	} );
-
-	it( 'discloses the list-price aggregate even when a coupon also discounts a member', () => {
-		// Coupon and bundle discount together: the row total strips the coupon
-		// (shown on its dedicated line) while the disclosure uses the list
-		// price, which is pre-coupon by definition.
-		renderBundleRow( {
-			type: 'bundle',
-			groupId: 'bundle-coupon-and-discount',
-			products: [
-				buildDomainProduct( {
-					uuid: 'primary',
-					meta: 'example.com',
-					subtotal: 2200,
-					originalSubtotal: 6500,
-				} ),
-				buildDomainProduct( {
-					uuid: 'companion',
-					meta: 'example.net',
-					subtotal: 700,
-					originalSubtotal: 6400,
-					costOverrides: [ buildCouponOverride( 900, 700 ) ],
-				} ),
-			],
-		} );
-
-		// Row total: 2200 + pre-coupon 900 = 3100 smallest-unit => $31.
-		expect( screen.getByText( /\$31\b/ ) ).toBeVisible();
-		// Disclosure: list price 6500 + 6400 = 12900 => $129, unaffected by the coupon.
-		expect( screen.getByText( 'Auto-renews at $129/year.' ) ).toBeVisible();
-	} );
-
-	it( 'shows no renewal disclosure when the bundle is not discounted', () => {
-		renderBundleRow();
-
-		expect( screen.queryByText( /Auto-renews at/ ) ).not.toBeInTheDocument();
+		expect( screen.getByText( /\$29\b/ ) ).toBeVisible();
+		const crossedOut = screen.getByText( /\$129\b/ );
+		expect( crossedOut ).toBeVisible();
+		expect( crossedOut.tagName ).toBe( 'S' );
 	} );
 } );
 
@@ -251,7 +217,7 @@ describe( 'ProductsAndCostOverridesList', () => {
 			</TestWrapper>
 		);
 
-		expect( screen.getByText( 'Domain bundle' ) ).toBeVisible();
+		expect( screen.getByText( 'Domain Bundle' ) ).toBeVisible();
 		expect( screen.getByText( 'example.com' ) ).toBeVisible();
 		expect( screen.getByText( 'example.net' ) ).toBeVisible();
 	} );
@@ -266,7 +232,7 @@ describe( 'ProductsAndCostOverridesList', () => {
 			</TestWrapper>
 		);
 
-		expect( screen.queryByText( 'Domain bundle' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Domain Bundle' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'example.com' ) ).toBeVisible();
 		expect( screen.getByText( 'example.net' ) ).toBeVisible();
 	} );

@@ -1,4 +1,5 @@
-import { get, merge, omit, pick } from 'lodash';
+import { omit, pick } from '@automattic/js-utils';
+import { get, merge } from 'lodash';
 import {
 	CURRENT_USER_RECEIVE,
 	POST_COUNTS_RECEIVE,

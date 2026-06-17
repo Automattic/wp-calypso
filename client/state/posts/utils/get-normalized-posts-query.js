@@ -1,4 +1,4 @@
-import { omitBy } from 'lodash';
+import { omitBy } from '@automattic/js-utils';
 import { DEFAULT_POST_QUERY } from 'calypso/state/posts/constants';
 
 /**

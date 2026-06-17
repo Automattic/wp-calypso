@@ -164,9 +164,8 @@ describe( 'FeedPreview', () => {
 			);
 
 			await waitFor( () => {
-				expect( ReaderFeedItem ).toHaveBeenCalledWith(
-					expect.objectContaining( { onChangeSubscribe } ),
-					expect.anything()
+				expect( jest.mocked( ReaderFeedItem ).mock.lastCall?.[ 0 ] ).toEqual(
+					expect.objectContaining( { onChangeSubscribe } )
 				);
 			} );
 		} );

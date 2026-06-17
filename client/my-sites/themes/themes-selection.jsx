@@ -1,6 +1,5 @@
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import pageRouter from '@automattic/calypso-router';
-import { compact } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import * as React from 'react';
@@ -334,7 +333,7 @@ export function buildThemesSelectionQuery( {
 		search,
 		page,
 		tier: premiumThemesEnabled ? tier : 'free',
-		filter: compact( [ filter, vertical ] ).concat( hiddenFilters ).join( ',' ),
+		filter: [ filter, vertical ].filter( Boolean ).concat( hiddenFilters ).join( ',' ),
 		number,
 		...( tabFilter === 'recommended' && { collection: 'recommended' } ),
 		...( tabFilter === 'all' && { sort: 'date' } ),
