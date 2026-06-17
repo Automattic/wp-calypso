@@ -285,8 +285,8 @@ const LayoutLoggedOut = ( {
 			<UniversalNavbarHeader
 				isLoggedIn={ isLoggedIn }
 				sectionName={ sectionName }
-				className={ className }
 				{ ...nav2026Props }
+				className={ clsx( className, nav2026Props.className ) }
 				{ ...( isEnabled( 'site-profiler/metrics' ) &&
 					! nonMonochromeSections.includes( sectionName ) && {
 						logoColor: 'white',

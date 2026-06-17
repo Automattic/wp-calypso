@@ -42,14 +42,18 @@ const SubscriptionManagementPage = () => {
 	return (
 		<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Subscriptions }>
 			<UniversalNavbarHeader
-				className={ clsx( 'subscription-manager-header', {
-					'is-logged-in': isLoggedIn,
-				} ) }
 				variant="minimal"
 				isLoggedIn={ isLoggedIn }
 				startUrl={ startUrl }
 				loginUrl={ loginUrl }
 				{ ...nav2026Props }
+				className={ clsx(
+					'subscription-manager-header',
+					{
+						'is-logged-in': isLoggedIn,
+					},
+					nav2026Props.className
+				) }
 			/>
 			<Main className="subscription-manager__container">
 				<FormattedHeader

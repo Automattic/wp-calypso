@@ -2,6 +2,12 @@
 @import "@automattic/typography/styles/variables";
 @import "@automattic/color-studio/dist/color-variables";
 
+// TODO: Remove this loading hide once the Nav 2026 experiment is retired.
+.is-nav-2026-assignment-loading {
+	visibility: hidden;
+	pointer-events: none;
+}
+
 .subscription-manager__container {
 	max-width: 1440px;
 	padding: 48px 62px;

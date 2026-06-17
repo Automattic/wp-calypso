@@ -5,17 +5,26 @@ import {
 	getCurrentUser,
 	getCurrentUserDisplayName,
 	getCurrentUserEmail,
+	isUserLoggedIn,
 } from 'calypso/state/current-user/selectors';
 
 type Nav2026Props =
 	| {
+			className?: string;
 			nav2026: true;
 			nav2026Variant: 1 | 2;
 			userAvatar?: string;
 			userName?: string;
 			userEmail?: string;
 	  }
-	| Record< string, never >;
+	| {
+			className?: string;
+			nav2026?: never;
+			nav2026Variant?: never;
+			userAvatar?: never;
+			userName?: never;
+			userEmail?: never;
+	  };
 
 // ExPlat experiment driving the 2026 Global Nav A/B test. It's a single
 // `wpcom`-platform experiment (also serving the LOHP + Landpack PHP surfaces);
@@ -38,10 +47,13 @@ const VARIATION_TO_VARIANT: Record< string, 1 | 2 > = {
  * 1. `nav-redesign/2026` config flag — manual force-on for staff/dev. Variant
  *    follows the existing `nav-redesign/2026-variant-2` flag.
  * 2. The NAV_2026_EXPERIMENT assignment — `treatment_1`/`treatment_2` map to
- *    variants 1/2; everything else (control, null, still loading) → old nav.
+ *    variants 1/2; everything else (control, null) → old nav.
+ *    While the assignment is still loading for logged-in users, return a
+ *    temporary className that hides the old nav until the assignment resolves.
  */
 export function useNav2026Props(): Nav2026Props {
 	const forcedOn = config.isEnabled( 'nav-redesign/2026' );
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const userAvatar = useSelector( ( state ) => getCurrentUser( state )?.avatar_URL );
 	const userName = useSelector( getCurrentUserDisplayName );
 	const userEmail = useSelector( getCurrentUserEmail );
@@ -52,13 +64,18 @@ export function useNav2026Props(): Nav2026Props {
 	} );
 
 	// Resolve the variant: the config flag forces it on for staff/dev, otherwise
-	// the experiment assignment decides. Anything else (control, null, loading,
-	// unknown variation) leaves it undefined → old nav.
+	// the experiment assignment decides. Anything else (control, null, unknown
+	// variation) leaves it undefined → old nav.
 	let variant: 1 | 2 | undefined;
 	if ( forcedOn ) {
 		variant = config.isEnabled( 'nav-redesign/2026-variant-2' ) ? 2 : 1;
 	} else if ( ! isLoadingExperiment && experimentAssignment?.variationName ) {
 		variant = VARIATION_TO_VARIANT[ experimentAssignment.variationName ];
+	}
+
+	// TODO: Remove this loading hide once the Nav 2026 experiment is retired.
+	if ( isLoggedIn && isLoadingExperiment && ! forcedOn ) {
+		return { className: 'is-nav-2026-assignment-loading' };
 	}
 
 	if ( ! variant ) {
