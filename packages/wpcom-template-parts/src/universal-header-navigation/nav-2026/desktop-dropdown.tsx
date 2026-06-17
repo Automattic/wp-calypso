@@ -60,7 +60,7 @@ export function Nav2026DesktopDropdown( {
 												content={
 													item.badge ? (
 														<>
-															{ item.label }{ ' ' }
+															{ item.label }
 															<span className="x-dropdown-badge-new">{ item.badge }</span>
 														</>
 													) : (

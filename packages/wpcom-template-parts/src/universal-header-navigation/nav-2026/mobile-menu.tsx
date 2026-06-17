@@ -200,7 +200,7 @@ export function Nav2026MobileMenu( {
 														content={
 															item.badge ? (
 																<>
-																	{ item.label }{ ' ' }
+																	{ item.label }
 																	<span className="x-menu-mobile-dropdown-badge-new">
 																		{ item.badge }
 																	</span>

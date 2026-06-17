@@ -999,19 +999,19 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		transition: none;
 	}
 
-	&:has( .x-dropdown.x-dropdown--2026.is-dropdown-closing )::after {
+	&:has( .x-dropdown.x-dropdown--2026[style*='height: 0px'] )::after {
 		bottom: 0;
 		height: auto;
 		opacity: 0;
 		transition: opacity $x-dropdown-2026-close-opacity-duration ease-in-out;
 	}
 
-	&.is-scrolled:has( .x-dropdown.x-dropdown--2026.is-dropdown-closing )::after {
+	&.is-scrolled:has( .x-dropdown.x-dropdown--2026[style*='height: 0px'] )::after {
 		opacity: 0.97;
 	}
 
 	&:has( .x-dropdown.x-dropdown--2026.is-dropdown-open ),
-	&:has( .x-dropdown.x-dropdown--2026.is-dropdown-closing ) {
+	&:has( .x-dropdown.x-dropdown--2026[style*='height: 0px'] ) {
 		z-index: 100002;
 		transition: z-index 0s;
 	}
@@ -1340,7 +1340,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 			height var( --x-dropdown-2026-panel-duration ) var( --x-dropdown-2026-easing ),
 			z-index 0s 0.22s;
 
-		&.is-dropdown-closing {
+		&[style*='height: 0px'] {
 			transition:
 				visibility $x-nav-2026-transition,
 				height var( --x-dropdown-2026-close-duration ) var( --x-dropdown-2026-easing ),
