@@ -47,10 +47,14 @@ export default function AdditionalTermsOfServiceInCart() {
 	);
 }
 
-function formatDate( isoDate: string ): string {
+export function formatDate( isoDate: string ): string {
 	// This somewhat mimics `moment.format('ll')` (used here formerly) without
 	// needing the depdecated `moment` package.
-	return new Date( Date.parse( isoDate ) ).toLocaleDateString( 'en-US', {
+	// Parse only the date portion (YYYY-MM-DD) and construct via the local-time
+	// Date constructor to avoid the UTC-midnight-to-local-time shift that causes
+	// dates to appear one day off for users behind UTC.
+	const [ year, month, day ] = isoDate.slice( 0, 10 ).split( '-' ).map( Number );
+	return new Date( year, month - 1, day ).toLocaleDateString( 'en-US', {
 		weekday: undefined,
 		month: 'short',
 		day: 'numeric',
