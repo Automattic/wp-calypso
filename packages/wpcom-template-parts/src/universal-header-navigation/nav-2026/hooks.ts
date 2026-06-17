@@ -183,114 +183,115 @@ export function useDropdownFlip( {
 			return /ms$/.test( raw ) ? value : value * 1000;
 		};
 		const morphMs = () => cssMs( '--x-dropdown-2026-panel-duration', 280 );
-		const closeMs = () => cssMs( '--x-dropdown-2026-close-duration', 140 );
-		const closeFadeMs = () => cssMs( '--x-dropdown-2026-close-fade-duration', 120 );
+		const closeMs = () => cssMs( '--x-dropdown-2026-close-duration', morphMs() );
 
 		// Snap any in-flight morph back to `auto` before we measure, so reads are clean.
 		releaseRef.current?.();
 
-		// Closed → open: unroll the white surface from the nav edge, and flag the open so items wait for it.
+		// Closed → open: flag the open so items wait for the panel.
 		if ( prev === null && next !== null ) {
-			el.classList.add( 'is-dropdown-open' );
 			el.classList.add( 'is-dropdown-first-open' );
-			// Drive the `::after` scaleY here (not pure CSS): the panel is `visibility: hidden` at
-			// rest, so the open commit has no rendered `scaleY(0)` frame to ease from. Pin 0 with no
-			// transition, force a reflow, then ease to 1 — the same trick the height morph uses below.
-			// Reduced motion is handled in CSS (the `::after` transform is reset there), so no guard here.
-			el.style.setProperty( '--x-dropdown-2026-unroll-duration', '0s' );
-			el.style.setProperty( '--x-dropdown-2026-unroll', '0' );
-			void el.offsetHeight;
-			el.style.setProperty(
-				'--x-dropdown-2026-unroll-duration',
-				'var( --x-dropdown-2026-panel-duration )'
-			);
-			el.style.setProperty( '--x-dropdown-2026-unroll', '1' );
 			const timer = setTimeout(
 				() => el.classList.remove( 'is-dropdown-first-open' ),
 				morphMs() + 50
 			);
 			// Record the opened panel's resting height for a future switch's `from`.
-			heightByNameRef.current[ next ] = el.offsetHeight;
-			return () => clearTimeout( timer );
+			const to = el.offsetHeight;
+			heightByNameRef.current[ next ] = to;
+
+			if ( ! to || window.matchMedia( '( prefers-reduced-motion: reduce )' ).matches ) {
+				return () => clearTimeout( timer );
+			}
+
+			const node = el;
+			node.style.overflow = 'hidden';
+			node.style.height = '0px';
+			void node.offsetHeight;
+			node.style.height = `${ to }px`;
+
+			let released = false;
+			let fallback: ReturnType< typeof window.setTimeout > | undefined;
+			const listenerAbort = new AbortController();
+			const release = () => {
+				if ( released ) {
+					return;
+				}
+				released = true;
+				listenerAbort.abort();
+				if ( fallback !== undefined ) {
+					window.clearTimeout( fallback );
+					fallback = undefined;
+				}
+				node.style.height = '';
+				node.style.overflow = '';
+				releaseRef.current = null;
+			};
+			node.addEventListener(
+				'transitionend',
+				( e: TransitionEvent ) => {
+					if ( e.target === node && e.propertyName === 'height' ) {
+						release();
+					}
+				},
+				{ signal: listenerAbort.signal }
+			);
+			fallback = window.setTimeout( release, morphMs() + 50 );
+			releaseRef.current = release;
+			return () => {
+				clearTimeout( timer );
+				release();
+			};
 		}
 
-		// Open → closed: keep the last panel visible while height collapses, then hide it.
+		// Open → closed: pin the last known height, then collapse it.
 		if ( prev !== null && next === null ) {
 			el.classList.remove( 'is-dropdown-first-open' );
 			const node = el;
-			const panel = Array.from(
-				node.querySelectorAll< HTMLElement >( '.x-dropdown-content[data-dropdown-name]' )
-			).find( ( item ) => item.dataset.dropdownName === prev );
-			panel?.setAttribute( 'aria-hidden', 'false' );
-			const held = heightByNameRef.current[ prev ] ?? panel?.offsetHeight;
+			const held = heightByNameRef.current[ prev ];
 			if ( ! held ) {
-				panel?.setAttribute( 'aria-hidden', 'true' );
-				node.classList.remove( 'is-dropdown-open', 'is-dropdown-closing' );
 				return;
 			}
-			node.classList.add( 'is-dropdown-open', 'is-dropdown-closing' );
 			node.style.overflow = 'hidden';
 			node.style.height = `${ held }px`;
 			void node.offsetHeight;
 			node.style.height = '0px';
 
 			let released = false;
-			let collapsed = false;
-			const timers: {
-				collapse?: ReturnType< typeof window.setTimeout >;
-				fade?: ReturnType< typeof window.setTimeout >;
-			} = {};
+			let fallback: ReturnType< typeof window.setTimeout > | undefined;
 			const listenerAbort = new AbortController();
-			const release = ( hidePanel = true ) => {
+			const release = () => {
 				if ( released ) {
 					return;
 				}
 				released = true;
 				listenerAbort.abort();
-				if ( timers.collapse !== undefined ) {
-					window.clearTimeout( timers.collapse );
-				}
-				if ( timers.fade !== undefined ) {
-					window.clearTimeout( timers.fade );
-				}
-				if ( hidePanel ) {
-					panel?.setAttribute( 'aria-hidden', 'true' );
+				if ( fallback !== undefined ) {
+					window.clearTimeout( fallback );
+					fallback = undefined;
 				}
 				node.style.height = '';
 				node.style.overflow = '';
-				node.classList.remove( 'is-dropdown-open', 'is-dropdown-closing' );
 				releaseRef.current = null;
-			};
-			const finishCollapse = () => {
-				if ( released || collapsed ) {
-					return;
-				}
-				collapsed = true;
-				listenerAbort.abort();
-				if ( timers.collapse !== undefined ) {
-					window.clearTimeout( timers.collapse );
-				}
-				node.classList.remove( 'is-dropdown-open' );
-				panel?.setAttribute( 'aria-hidden', 'true' );
-				timers.fade = window.setTimeout( () => release( false ), closeFadeMs() + 50 );
 			};
 			node.addEventListener(
 				'transitionend',
 				( e: TransitionEvent ) => {
 					if ( e.target === node && e.propertyName === 'height' ) {
-						finishCollapse();
+						release();
 					}
 				},
 				{ signal: listenerAbort.signal }
 			);
-			timers.collapse = window.setTimeout( finishCollapse, closeMs() + 50 );
-			releaseRef.current = () => release();
+			fallback = window.setTimeout( release, closeMs() + 50 );
+			releaseRef.current = release;
+			if ( window.matchMedia( '( prefers-reduced-motion: reduce )' ).matches ) {
+				release();
+			}
 			return () => release();
 		}
 
 		// Open → open: FLIP the wrapper height between the two menus.
 		if ( prev !== null && next !== null && prev !== next ) {
-			el.classList.add( 'is-dropdown-open' );
 			el.classList.remove( 'is-dropdown-first-open' );
 			// `to` is live (DOM already shows `next`); `from` is the outgoing panel's
 			// stored height, falling back to a live read only if we never saw it.
