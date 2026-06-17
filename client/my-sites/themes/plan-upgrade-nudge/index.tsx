@@ -25,7 +25,13 @@ const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 		return null;
 	}
 
-	const nudgeIcon = <span className="dashicons-before dashicons-admin-appearance" aria-hidden />;
+	const nudgeIcon = (
+		<span
+			className="dashicons-before dashicons-admin-appearance"
+			aria-hidden
+			style={ { display: 'flex', alignItems: 'center', lineHeight: 1 } }
+		/>
+	);
 
 	if ( isFreePlan( planSlug ) ) {
 		return (
