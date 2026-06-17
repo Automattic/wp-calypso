@@ -5,9 +5,6 @@ import {
 	PLAN_BUSINESS,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
-	WPCOM_FEATURES_PARTNER_THEMES,
-	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
-	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -36,6 +33,8 @@ const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 		/>
 	);
 
+	const viewPlansHref = `/plans/${ siteSlug }?intent=plans-themes`;
+
 	if ( isFreePlan( planSlug ) ) {
 		return (
 			<Banner
@@ -44,13 +43,12 @@ const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 					'Get access to a selection of premium themes with a Personal plan.'
 				) }
 				event="calypso_themeshowcase_personal_upgrade_nudge"
-				feature={ WPCOM_FEATURES_PREMIUM_THEMES_LIMITED }
 				href={ `/checkout/${ siteSlug }/personal` }
 				icon={ nudgeIcon }
 				plan={ PLAN_PERSONAL }
 				secondaryCallToAction={ translate( 'View plans' ) }
 				secondaryEvent="calypso_themeshowcase_personal_upgrade_nudge_view_plans"
-				secondaryHref={ `/plans/${ siteSlug }?intent=plans-themes` }
+				secondaryHref={ viewPlansHref }
 				title={ translate( 'Unlock more themes' ) }
 			/>
 		);
@@ -62,13 +60,12 @@ const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 				callToAction={ translate( 'Upgrade to Premium' ) }
 				description={ translate( 'Get access to hundreds of premium themes.' ) }
 				event="calypso_themeshowcase_premium_upgrade_nudge"
-				feature={ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED }
 				href={ `/checkout/${ siteSlug }/premium` }
 				icon={ nudgeIcon }
 				plan={ PLAN_PREMIUM }
 				secondaryCallToAction={ translate( 'View plans' ) }
 				secondaryEvent="calypso_themeshowcase_premium_upgrade_nudge_view_plans"
-				secondaryHref={ `/plans/${ siteSlug }?intent=plans-themes` }
+				secondaryHref={ viewPlansHref }
 				title={ translate( 'Unlock all premium themes' ) }
 			/>
 		);
@@ -82,13 +79,12 @@ const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 					'Get exclusive themes from top theme builders with our partner theme collection.'
 				) }
 				event="calypso_themeshowcase_business_upgrade_nudge"
-				feature={ WPCOM_FEATURES_PARTNER_THEMES }
 				href={ `/checkout/${ siteSlug }/business` }
 				icon={ nudgeIcon }
 				plan={ PLAN_BUSINESS }
 				secondaryCallToAction={ translate( 'View plans' ) }
 				secondaryEvent="calypso_themeshowcase_business_upgrade_nudge_view_plans"
-				secondaryHref={ `/plans/${ siteSlug }?intent=plans-themes` }
+				secondaryHref={ viewPlansHref }
 				title={ translate( 'Unlock partner themes' ) }
 			/>
 		);
