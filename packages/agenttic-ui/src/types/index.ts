@@ -106,6 +106,7 @@ export interface AgentUIProps {
 
 	// Drag and drop props
 	draggableStates?: ChatState[]; // Specify which chat states allow dragging (defaults to ['expanded'] for backward compatibility)
+	freeDrag?: boolean; // Keep the panel where dropped instead of snapping to a corner (position is ephemeral, resets on reload/resize)
 
 	// i18n
 	locale?: string; // Language locale (e.g., 'es', 'fr', 'de-DE'). Defaults to 'en'
