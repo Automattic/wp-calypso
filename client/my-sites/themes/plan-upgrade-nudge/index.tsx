@@ -75,9 +75,7 @@ const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 		return (
 			<Banner
 				callToAction={ translate( 'Upgrade to Business' ) }
-				description={ translate(
-					'Get all premium themes plus exclusive paid themes from top theme builders.'
-				) }
+				description={ translate( 'Get all premium themes plus access to premium partner themes.' ) }
 				event="calypso_themeshowcase_business_upgrade_nudge"
 				href={ `/checkout/${ siteSlug }/business` }
 				icon={ nudgeIcon }
