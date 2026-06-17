@@ -271,6 +271,7 @@ export default function AgentChat( {
 			error={ error }
 			onSubmit={ onSubmit }
 			variant={ isDocked ? 'embedded' : 'floating' }
+			freeDrag={ ! isDocked }
 			suggestions={ suggestions }
 			clearSuggestions={ clearSuggestions }
 			onSuggestionClick={ onSuggestionClick }
