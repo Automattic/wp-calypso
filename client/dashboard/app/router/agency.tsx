@@ -1,4 +1,10 @@
-import { activeAgencyQuery, agencyQuery, queryClient } from '@automattic/api-queries';
+import {
+	activeAgencyQuery,
+	agencyQuery,
+	amplifyReportsQuery,
+	amplifyJobsQuery,
+	queryClient,
+} from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { redirectAsNotAllowed } from './redirect';
@@ -79,6 +85,37 @@ const agencyAmplifyRoute = createRoute( {
 	)
 );
 
+// `/agency/amplify/reports` – Amplify reports table
+const agencyAmplifyReportsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Amplify reports' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'agency/amplify/reports',
+	loader: async () => {
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		if ( agency ) {
+			await queryClient.ensureQueryData( amplifyReportsQuery( agency.id ) );
+			queryClient.prefetchQuery( amplifyJobsQuery( agency.id ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../../agency/amplify/reports' ).then( ( d ) =>
+		createLazyRoute( 'agency-amplify-reports' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createAgencyRoutes = () => [
-	agencyRoute.addChildren( [ agencyOverviewRoute, agencyTiersRoute, agencyAmplifyRoute ] ),
+	agencyRoute.addChildren( [
+		agencyOverviewRoute,
+		agencyTiersRoute,
+		agencyAmplifyRoute,
+		agencyAmplifyReportsRoute,
+	] ),
 ];
