@@ -8,6 +8,7 @@ import {
 } from '@automattic/calypso-products';
 import { brush } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { cloneElement } from 'react';
 import { useSelector } from 'react-redux';
 import Banner from 'calypso/components/banner';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
@@ -26,11 +27,7 @@ const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 		return null;
 	}
 
-	const nudgeIcon = (
-		<span style={ { fill: 'var(--studio-white)', display: 'flex', alignItems: 'center' } }>
-			{ brush }
-		</span>
-	);
+	const nudgeIcon = cloneElement( brush, { fill: 'currentColor' } );
 
 	if ( isFreePlan( planSlug ) ) {
 		return (
