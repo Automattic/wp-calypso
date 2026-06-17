@@ -13,6 +13,17 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) 
 		#wpbody {
 			padding-left: 0;
 		}
+
+		// Fill and clip the framed `#wpbody` so app-like pages (e.g. Jetpack
+		// Social) stay inside the frame instead of scrolling the whole admin body.
+		#wpbody-content {
+			position: absolute;
+			inset: 0;
+			display: flex;
+			flex-direction: column;
+			overflow: hidden;
+			border-radius: 0 0 $main-border-radius $main-border-radius;
+		}
 	}
 
 	&.plugins_page_wpcom-install-plugin {
