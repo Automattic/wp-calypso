@@ -1,3 +1,4 @@
+import { useBreakpoint } from '@automattic/viewport-react';
 import { helpFilled } from '@wordpress/icons';
 import { cloneElement } from 'react';
 
@@ -5,12 +6,16 @@ interface HelpCenterIconProps {
 	hasUnread: boolean;
 }
 export const HelpCenterIcon: React.FC< HelpCenterIconProps > = ( { hasUnread } ) => {
+	// The help icon SVGs have some internal padding, and custom viewBox
+	// tweaks are needed to make sure they line up perfectly.
+	const isDesktop = useBreakpoint( '>782px' );
+
 	if ( hasUnread ) {
 		return (
 			<svg
 				width="24"
 				height="24"
-				viewBox="-1 -1 26 26"
+				viewBox={ isDesktop ? '-1 -1 26 26' : '-3 -3 30 30' }
 				fill="none"
 				xmlns="http://www.w3.org/2000/svg"
 			>
@@ -22,6 +27,6 @@ export const HelpCenterIcon: React.FC< HelpCenterIconProps > = ( { hasUnread } )
 			</svg>
 		);
 	}
-	return cloneElement( helpFilled, { viewBox: '1.5 1.5 21 21' } );
+	return isDesktop ? cloneElement( helpFilled, { viewBox: '1.5 1.5 21 21' } ) : helpFilled;
 };
 export default HelpCenterIcon;
