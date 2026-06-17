@@ -59,6 +59,26 @@ const agencyTiersRoute = createRoute( {
 	)
 );
 
+// `/agency/amplify` – Amplify website analysis
+const agencyAmplifyRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Amplify' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'agency/amplify',
+	loader: () => queryClient.ensureQueryData( activeAgencyQuery() ),
+} ).lazy( () =>
+	import( '../../agency/amplify' ).then( ( d ) =>
+		createLazyRoute( 'agency-amplify' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createAgencyRoutes = () => [
-	agencyRoute.addChildren( [ agencyOverviewRoute, agencyTiersRoute ] ),
+	agencyRoute.addChildren( [ agencyOverviewRoute, agencyTiersRoute, agencyAmplifyRoute ] ),
 ];
