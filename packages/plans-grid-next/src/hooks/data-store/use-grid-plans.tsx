@@ -293,9 +293,17 @@ export const usePlanTypesWithIntent = ( {
 		case 'plans-migration':
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
-		case 'plans-themes':
-			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
+		case 'plans-themes': {
+			const themesPlanTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
+			const currentThemesPlanIndex = currentSitePlanType
+				? themesPlanTypes.findIndex( ( planType ) => planType === currentSitePlanType )
+				: -1;
+			planTypes =
+				currentThemesPlanIndex >= 0
+					? themesPlanTypes.slice( currentThemesPlanIndex )
+					: themesPlanTypes;
 			break;
+		}
 		default:
 			planTypes = availablePlanTypes;
 	}
