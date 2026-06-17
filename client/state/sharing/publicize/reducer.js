@@ -1,5 +1,5 @@
-import { keyBy } from '@automattic/js-utils';
-import { omit, omitBy } from 'lodash';
+import { keyBy, omit } from '@automattic/js-utils';
+import { omitBy } from 'lodash';
 import {
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_DELETE,

@@ -82,7 +82,7 @@ export default function useGenerateActionHook( {
 	plansIntent?: PlansIntent | null;
 	isInSignup: boolean;
 	isLaunchPage: boolean | null;
-	showModalAndExit?: ( planSlug: PlanSlug ) => boolean;
+	showModalAndExit?: ( planSlug: PlanSlug ) => boolean | Promise< boolean >;
 	coupon?: string;
 	showBillingDescriptionForIncreasedRenewalPrice?: string | null;
 	enableCategorisedFeatures?: boolean;

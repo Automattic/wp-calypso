@@ -1,5 +1,5 @@
-import { keyBy } from '@automattic/js-utils';
-import { omit, without } from 'lodash';
+import { keyBy, omit } from '@automattic/js-utils';
+import { without } from 'lodash';
 import {
 	KEYRING_CONNECTION_DELETE,
 	KEYRING_CONNECTIONS_RECEIVE,

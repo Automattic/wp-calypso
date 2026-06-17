@@ -611,23 +611,12 @@ const BundleMemberList = styled.div`
 	font-size: 12px;
 	font-weight: 400;
 	gap: 2px;
-
-	& .cost-overrides-list-bundle-member {
-		display: flex;
-		justify-content: space-between;
-		gap: 0 16px;
-	}
-`;
-
-const BundleRenewalNote = styled.div`
-	font-size: 12px;
-	font-weight: 400;
 `;
 
 /**
  * Render a domain bundle as a single compact row in the order summary, mirroring
- * the order-review surface's `BundleLineItem`: a "Domain bundle" title with the
- * summed bundle total, and each member domain listed beneath with its own price.
+ * the order-review surface's `BundleLineItem`: a "Domain Bundle" title with the
+ * summed bundle total, and each member domain listed beneath.
  * The presentation matches the summary's other product rows (green check icon,
  * label-and-price header) rather than reusing the heavier review component.
  */
@@ -650,48 +639,33 @@ export function BundleProductAndCostOverridesList( { bundle }: { bundle: CartBun
 		isSmallestUnit: true,
 		stripZeros: true,
 	} );
-	// Bundle members renew at full price (no plan credit at renewal —
-	// DOMAINS-2173), so the renewal aggregate is the pre-discount group total.
-	// item_original_subtotal_integer is the list price, so it needs no coupon
-	// exclusion (DOMAINS-2184).
 	const bundleOriginalInteger = products.reduce(
 		( total, product ) => total + product.item_original_subtotal_integer,
 		0
 	);
+	const bundleOriginalDisplay = formatCurrency( bundleOriginalInteger, currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
 	const isBundleDiscounted = bundleTotalInteger < bundleOriginalInteger;
 
 	return (
 		<SimplifiedSingleProductAndCostOverridesListWrapper className="cost-overrides-list-product-wrapper">
 			<WPCheckoutCheckIcon />
 			<ProductTitleAreaForCostOverridesList>
-				<span className="cost-overrides-list-product__title">{ translate( 'Domain bundle' ) }</span>
-				<SimplifiedLineItemPrice actualAmount={ bundleTotalDisplay } />
+				<span className="cost-overrides-list-product__title">{ translate( 'Domain Bundle' ) }</span>
+				<SimplifiedLineItemPrice
+					actualAmount={ bundleTotalDisplay }
+					crossedOutAmount={ isBundleDiscounted ? bundleOriginalDisplay : undefined }
+				/>
 			</ProductTitleAreaForCostOverridesList>
 			<BundleMemberList>
 				{ products.map( ( product ) => (
 					<div className="cost-overrides-list-bundle-member" key={ product.uuid }>
 						<span>{ product.meta }</span>
-						<span>
-							{ formatCurrency( getItemSubtotalExcludingCoupon( product ), product.currency, {
-								isSmallestUnit: true,
-								stripZeros: true,
-							} ) }
-						</span>
 					</div>
 				) ) }
 			</BundleMemberList>
-			{ isBundleDiscounted && (
-				<BundleRenewalNote>
-					{ translate( 'Auto-renews at %(price)s/year.', {
-						args: {
-							price: formatCurrency( bundleOriginalInteger, currency, {
-								isSmallestUnit: true,
-								stripZeros: true,
-							} ),
-						},
-					} ) }
-				</BundleRenewalNote>
-			) }
 		</SimplifiedSingleProductAndCostOverridesListWrapper>
 	);
 }

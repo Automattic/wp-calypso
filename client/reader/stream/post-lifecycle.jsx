@@ -1,4 +1,5 @@
-import { omit, includes } from 'lodash';
+import { omit } from '@automattic/js-utils';
+import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, forwardRef, useCallback, useRef } from 'react';
 import { connect } from 'react-redux';

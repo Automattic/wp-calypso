@@ -2,7 +2,7 @@ import { Button, Gridicon, SegmentedControl } from '@automattic/components';
 import { Icon, published } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { get, size, delay, pickBy } from 'lodash';
+import { get, delay, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
@@ -589,7 +589,7 @@ class PostCommentList extends Component {
 		// orphans (parent deleted/unapproved), that comment will become unreachable but still counted.
 		const showViewMoreComments =
 			! this.props.expandableView &&
-			( size( commentsTree.children ) > amountOfCommentsToTake ||
+			( commentsTree.children.length > amountOfCommentsToTake ||
 				haveEarlierCommentsToFetch ||
 				haveLaterCommentsToFetch ) &&
 			displayedCommentsCount > 0;

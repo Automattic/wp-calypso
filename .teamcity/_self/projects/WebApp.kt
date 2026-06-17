@@ -65,9 +65,14 @@ object BuildDockerImage : BuildType({
             qrEnv = "env=a8c-for-agencies&flags=oauth",
         ),
 		EnvConfig(
-			label = "Dashboard Live",
+			label = "Dashboard Live (dotcom)",
 			envQuery = "&env=dashboard",
 			qrEnv = "env=dashboard&flags=oauth",
+		),
+		EnvConfig(
+			label = "Dashboard Live (A4A)",
+			envQuery = "&env=dashboard-a4a",
+			qrEnv = "env=dashboard-a4a&flags=oauth",
 		)
     )
 

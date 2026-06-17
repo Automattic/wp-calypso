@@ -1,6 +1,6 @@
-import { keyBy } from '@automattic/js-utils';
+import { keyBy, omit } from '@automattic/js-utils';
 import debugFactory from 'debug';
-import { get, omit } from 'lodash';
+import { get } from 'lodash';
 import stepsConfig from 'calypso/signup/config/steps-pure';
 import {
 	SIGNUP_COMPLETE_RESET,

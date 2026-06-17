@@ -1,7 +1,7 @@
 import { FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
-import { filter, get, some, values, xor } from 'lodash';
+import { filter, get, some, xor } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -288,7 +288,7 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 		const path = getCurrentRouteParameterized( state, siteId );
 
-		const postTypes = filter( values( getPostTypes( state, siteId ) ), 'public' );
+		const postTypes = filter( Object.values( getPostTypes( state, siteId ) || {} ), 'public' );
 
 		return {
 			initialized: !! postTypes || !! getSiteSettings( state, siteId ),

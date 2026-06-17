@@ -4,7 +4,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { groupBy, isEmpty, map, size, values } from 'lodash';
+import { groupBy, isEmpty, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -424,9 +424,11 @@ export default withMobileBreakpoint(
 		( state, ownProps ) => {
 			const guidedTourState = getGuidedTourState( state );
 			const selectedSiteId = getSelectedSiteId( state );
-			const mediaValidationErrorTypes = values( ownProps.mediaValidationErrors ).map( first );
+			const mediaValidationErrorTypes = Object.values( ownProps.mediaValidationErrors || {} ).map(
+				first
+			);
 			const shouldPauseGuidedTour =
-				! isEmpty( guidedTourState.tour ) && 0 < size( mediaValidationErrorTypes );
+				! isEmpty( guidedTourState.tour ) && 0 < mediaValidationErrorTypes.length;
 			const googleConnection = getKeyringConnectionsByName( state, 'google_photos' );
 
 			return {

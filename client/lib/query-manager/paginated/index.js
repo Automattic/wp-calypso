@@ -1,4 +1,5 @@
-import { cloneDeep, omit, range } from 'lodash';
+import { omit } from '@automattic/js-utils';
+import { cloneDeep, range } from 'lodash';
 import QueryManager from '../';
 import { DEFAULT_PAGINATED_QUERY, PAGINATION_QUERY_KEYS } from './constants';
 import PaginatedQueryKey from './key';

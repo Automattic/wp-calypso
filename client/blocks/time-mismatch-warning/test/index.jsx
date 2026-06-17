@@ -68,6 +68,9 @@ describe( 'TimeMismatchWarning', () => {
 		getSiteGmtOffset.mockReturnValueOnce( 10 );
 		useTranslate.mockImplementationOnce( () => translate );
 		render( <TimeMismatchWarning siteId={ 1 } settingsUrl="https://example.com" /> );
+		// Assert on the interpolation component rather than snapshotting the mock:
+		// React 19 elements carry non-deterministic debug/owner data that breaks
+		// snapshot serialization.
 		const [ , options ] = translate.mock.calls[ 0 ];
 		expect( options.components.SiteSettings.props.href ).toBe( 'https://example.com' );
 	} );

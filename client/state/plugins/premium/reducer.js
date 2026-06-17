@@ -1,4 +1,5 @@
-import { mapValues, omit } from 'lodash';
+import { omit } from '@automattic/js-utils';
+import { mapValues } from 'lodash';
 import {
 	PLUGIN_SETUP_INSTRUCTIONS_FETCH,
 	PLUGIN_SETUP_INSTRUCTIONS_RECEIVE,

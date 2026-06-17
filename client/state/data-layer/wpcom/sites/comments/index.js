@@ -1,5 +1,6 @@
+import { omit } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
-import { forEach, get, groupBy, omit } from 'lodash';
+import { forEach, get, groupBy } from 'lodash';
 import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_LIST_REQUEST,

@@ -1,5 +1,6 @@
+import { omit } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
-import { filter, orderBy, has, map, reject, isEqual, get, includes, omit } from 'lodash';
+import { filter, orderBy, has, map, reject, isEqual, get, includes } from 'lodash';
 import {
 	COMMENT_COUNTS_UPDATE,
 	COMMENTS_CHANGE_STATUS,

@@ -2,8 +2,9 @@
  * External dependencis
  *
  */
+import { pick } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
-import { pick, get } from 'lodash';
+import { get } from 'lodash';
 import {
 	JETPACK_SYNC_START_REQUEST,
 	JETPACK_SYNC_START_SUCCESS,

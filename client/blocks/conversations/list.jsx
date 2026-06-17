@@ -1,5 +1,5 @@
 import { keyBy } from '@automattic/js-utils';
-import { map, size, filter, get, partition, pickBy } from 'lodash';
+import { map, filter, get, partition, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, useCallback, useMemo, useRef, useState } from 'react';
 import { connect } from 'react-redux';
@@ -136,7 +136,7 @@ export class ConversationCommentList extends Component {
 		const hiddenComments = this.getHiddenComments( commentsToShow );
 
 		// if we are running low on comments to expand then fetch more
-		if ( size( hiddenComments ) < FETCH_NEW_COMMENTS_THRESHOLD ) {
+		if ( Object.keys( hiddenComments ).length < FETCH_NEW_COMMENTS_THRESHOLD ) {
 			this.reqMoreComments();
 		}
 
@@ -164,7 +164,7 @@ export class ConversationCommentList extends Component {
 
 	getInaccessibleParentsIds = ( commentsTree, commentIds ) => {
 		// base case
-		if ( size( commentIds ) === 0 ) {
+		if ( commentIds.length === 0 ) {
 			return [];
 		}
 
@@ -269,7 +269,8 @@ export class ConversationCommentList extends Component {
 			? filter( commentsTree, ( comment ) => get( comment, 'data.type' ) === 'comment' ).length // filter out pingbacks/trackbacks
 			: post.discussion.comment_count;
 
-		const showCaterpillar = enableCaterpillar && size( commentsToShow ) < commentCount;
+		const showCaterpillar =
+			enableCaterpillar && Object.keys( commentsToShow ).length < commentCount;
 
 		return (
 			<div className="conversations__comment-list">

@@ -4,6 +4,7 @@ import {
 	WPCOM_DIFM_LITE,
 	OFFSITE_REDIRECT,
 	DomainTransferStatus,
+	SubscriptionBillPeriod,
 } from '@automattic/api-core';
 import {
 	domainQuery,
@@ -138,16 +139,37 @@ function getExpiredNewPlanUrl( purchase: Purchase ): string {
 	}
 
 	if ( purchase.is_plan ) {
-		return getWpcomPlanGridUrl( purchase.site_slug );
+		return getWpcomPlanGridUrl( purchase );
 	}
 
 	return wpcomLink( `/plans/${ purchase.site_slug }` );
 }
 
-function getWpcomPlanGridUrl( siteSlug: string | undefined ): string {
+// Map the purchase's billing term to the plans grid's `intervalType` param so the
+// grid opens on the same term as the current plan. Downgrades only work within the
+// same term, and the grid hides the term selector in the downgrade flow.
+function getPlanGridIntervalType( purchase: Purchase ): string | undefined {
+	switch ( purchase.bill_period_days ) {
+		case SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD:
+			return 'monthly';
+		case SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD:
+			return 'yearly';
+		case SubscriptionBillPeriod.PLAN_BIENNIAL_PERIOD:
+			return '2yearly';
+		case SubscriptionBillPeriod.PLAN_TRIENNIAL_PERIOD:
+			return '3yearly';
+		default:
+			return undefined;
+	}
+}
+
+function getWpcomPlanGridUrl( purchase: Purchase ): string {
 	const backUrl = redirectToDashboardLink();
+	const siteSlug = purchase.site_slug;
+	const intervalType = getPlanGridIntervalType( purchase );
 	return addQueryArgs( wpcomLink( '/setup/plan-upgrade' ), {
 		...( siteSlug && { siteSlug } ),
+		...( intervalType && { intervalType } ),
 		cancel_to: backUrl,
 		dashboard: getCurrentDashboard(),
 		redirect_to: getChangedPlanRedirectUrl(),

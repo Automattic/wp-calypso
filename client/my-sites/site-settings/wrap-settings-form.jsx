@@ -1,6 +1,7 @@
+import { omit, pick } from '@automattic/js-utils';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import { get, isEqual, keys, omit, pick } from 'lodash';
+import { get, isEqual } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose, bindActionCreators } from 'redux';
@@ -390,7 +391,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 			let saveInstantSearchRequest;
 			const siteSettingsSaveError = getSiteSettingsSaveError( state, siteId );
 			const settingsFields = {
-				site: keys( settings ),
+				site: Object.keys( settings || {} ),
 			};
 			const path = getCurrentRouteParameterized( state, siteId );
 
@@ -399,7 +400,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 			if ( isJetpack ) {
 				const jetpackSettings = getJetpackSettings( state, siteId );
 				settings = { ...settings, ...jetpackSettings };
-				settingsFields.jetpack = keys( jetpackSettings );
+				settingsFields.jetpack = Object.keys( jetpackSettings || {} );
 				const fieldsToUpdate = /^error_/.test( fields.lang_id )
 					? omit( fields, 'lang_id' )
 					: fields;

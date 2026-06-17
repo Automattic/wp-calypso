@@ -264,6 +264,7 @@ export const useWPCOMDomainSearchCart = ( {
 			isNextDomainFree: forceFirstNonPremiumDomainToBeFree
 				? freeDomainName === undefined
 				: responseCart.next_domain_is_free,
+			freeDomainName,
 			onContinue: () => onContinue( domainItems ),
 		};
 	}, [

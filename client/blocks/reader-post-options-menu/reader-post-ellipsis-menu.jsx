@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { pencil as edit, external, Icon, seen, published, unseen } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
-import { size, map } from 'lodash';
+import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -173,7 +173,7 @@ class ReaderPostEllipsisMenu extends Component {
 		let feedItemIds = [ post.feed_item_ID ];
 		let globalIds = [ post.global_ID ];
 
-		if ( size( posts ) ) {
+		if ( posts.length ) {
 			postIds = map( posts, 'ID' );
 			feedItemIds = map( posts, 'feed_item_ID' );
 			globalIds = map( posts, 'global_ID' );
@@ -218,7 +218,7 @@ class ReaderPostEllipsisMenu extends Component {
 		let feedItemIds = [ post.feed_item_ID ];
 		let globalIds = [ post.global_ID ];
 
-		if ( size( posts ) ) {
+		if ( posts.length ) {
 			postIds = map( posts, 'ID' );
 			feedItemIds = map( posts, 'feed_item_ID' );
 			globalIds = map( posts, 'global_ID' );
@@ -328,8 +328,8 @@ class ReaderPostEllipsisMenu extends Component {
 							useWordPressIcon
 							iconSize={ 24 }
 						>
-							{ size( posts ) > 0 && translate( 'Mark all as unseen' ) }
-							{ size( posts ) === 0 && translate( 'Mark as unseen' ) }
+							{ posts.length > 0 && translate( 'Mark all as unseen' ) }
+							{ posts.length === 0 && translate( 'Mark as unseen' ) }
 						</PopoverMenuItem>
 					) }
 
@@ -342,8 +342,8 @@ class ReaderPostEllipsisMenu extends Component {
 							useWordPressIcon
 							iconSize={ 24 }
 						>
-							{ size( posts ) > 0 && translate( 'Mark all as seen' ) }
-							{ size( posts ) === 0 && translate( 'Mark as seen' ) }
+							{ posts.length > 0 && translate( 'Mark all as seen' ) }
+							{ posts.length === 0 && translate( 'Mark as seen' ) }
 						</PopoverMenuItem>
 					) }
 

@@ -1,4 +1,5 @@
-import { omit, omitBy } from 'lodash';
+import { omit } from '@automattic/js-utils';
+import { omitBy } from 'lodash';
 import { DEFAULT_TERMS_QUERY } from './constants';
 
 /**
