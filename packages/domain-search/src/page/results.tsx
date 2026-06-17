@@ -91,6 +91,9 @@ export const ResultsPage = () => {
 		mutationFn: async ( { bundle }: AddBundleToCartVariables ) => {
 			await cart.onAddBundle?.( bundle );
 		},
+		onSuccess: ( _data, { bundle } ) => {
+			events.onBundleAddToCart( bundle );
+		},
 		onError: async ( error, { bundle, query: failedQuery } ) => {
 			if ( ! isBundleUnavailableError( error ) ) {
 				return;
@@ -201,7 +204,6 @@ export const ResultsPage = () => {
 					<BundleCard
 						suggestion={ visibleBundleSuggestion }
 						onAddToCart={ ( bundle ) => {
-							events.onBundleAddToCart( bundle );
 							addBundleToCart( { bundle, query } );
 						} }
 						isAddedToCart={ visibleBundleSuggestion.domains.every( ( { domain } ) =>

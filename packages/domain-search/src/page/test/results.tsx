@@ -1540,8 +1540,15 @@ describe( 'ResultsPage', () => {
 			expect( onBundleShown ).not.toHaveBeenCalled();
 		} );
 
-		it( 'fires the onBundleAddToCart event when the bundle CTA is clicked', async () => {
+		it( 'fires the onBundleAddToCart event after the bundle add succeeds', async () => {
 			const user = userEvent.setup();
+			let resolveAddBundle: () => void = () => {};
+			const onAddBundle = jest.fn(
+				() =>
+					new Promise< void >( ( resolve ) => {
+						resolveAddBundle = resolve;
+					} )
+			);
 			const onBundleAddToCart = jest.fn();
 
 			mockGetSuggestionsQuery( {
@@ -1555,6 +1562,7 @@ describe( 'ResultsPage', () => {
 
 			render(
 				<TestDomainSearch
+					cart={ buildCart( { onAddBundle } ) }
 					events={ { onBundleAddToCart } }
 					config={ { showBundleSuggestions: true } }
 					query="bundle-accept"
@@ -1565,10 +1573,55 @@ describe( 'ResultsPage', () => {
 
 			await user.click( await screen.findByRole( 'button', { name: 'Get bundle' } ) );
 
-			expect( onBundleAddToCart ).toHaveBeenCalledTimes( 1 );
+			expect( onAddBundle ).toHaveBeenCalledTimes( 1 );
+			expect( onBundleAddToCart ).not.toHaveBeenCalled();
+
+			await act( async () => {
+				resolveAddBundle();
+			} );
+
+			await waitFor( () => {
+				expect( onBundleAddToCart ).toHaveBeenCalledTimes( 1 );
+			} );
 			expect( onBundleAddToCart ).toHaveBeenCalledWith(
 				expect.objectContaining( { bundle_group_id: 'mock-bundle-accept-group' } )
 			);
+		} );
+
+		it( 'does not fire the onBundleAddToCart event when the bundle add fails', async () => {
+			const user = userEvent.setup();
+			const onAddBundle = jest.fn().mockRejectedValue( new Error( 'Bundle add failed' ) );
+			const onBundleAddToCart = jest.fn();
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'bundle-reject' },
+				suggestions: [ buildSuggestion( { domain_name: 'bundle-reject.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'bundle-reject' },
+				bundleSuggestion: buildBundleSuggestion( 'bundle-reject' ),
+			} );
+
+			const { container } = render(
+				<TestDomainSearch
+					cart={ buildCart( { onAddBundle } ) }
+					events={ { onBundleAddToCart } }
+					config={ { showBundleSuggestions: true } }
+					query="bundle-reject"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Get bundle' } ) );
+
+			await waitFor( () => {
+				expect( onAddBundle ).toHaveBeenCalledTimes( 1 );
+			} );
+			await waitFor( () => {
+				expect( getByText( container, 'Bundle add failed' ) ).toBeInTheDocument();
+			} );
+			expect( onBundleAddToCart ).not.toHaveBeenCalled();
 		} );
 
 		it( 'fires the onQueryAvailabilityCheck event when the availability is checked', async () => {
