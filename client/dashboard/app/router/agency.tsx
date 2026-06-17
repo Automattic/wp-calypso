@@ -1,15 +1,23 @@
+import { agencyQuery, queryClient } from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import { requireAgencyUser } from './a4a-guards';
+import { redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
 
-// Pathless layout route that applies the agency-only guard to every agency
-// route. The routes share no URL prefix, so this groups them by access rule
-// (not by path) and declares `requireAgencyUser` once instead of per route.
+// Pathless layout route that guards every agency route (blocks client users).
 const agencyRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	id: 'agency',
-	beforeLoad: requireAgencyUser,
+	beforeLoad: async ( { cause } ) => {
+		if ( cause === 'preload' ) {
+			return; // Don't redirect on hover/intent preloads.
+		}
+
+		const agency = await queryClient.ensureQueryData( agencyQuery() );
+		if ( agency.isClientUser ) {
+			throw redirectAsNotAllowed( { to: '/client/subscriptions' } );
+		}
+	},
 } );
 
 // `/overview` – agency overview

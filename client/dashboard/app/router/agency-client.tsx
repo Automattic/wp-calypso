@@ -1,12 +1,22 @@
+import { agencyQuery, queryClient } from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
-import { requireClientUser } from './a4a-guards';
+import { redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
 
-// `/client` – parent route for agency-client surfaces
+// `/client` – parent route that guards every agency-client route (blocks agency users).
 const agencyClientRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'client',
-	beforeLoad: requireClientUser,
+	beforeLoad: async ( { cause } ) => {
+		if ( cause === 'preload' ) {
+			return; // Don't redirect on hover/intent preloads.
+		}
+
+		const agency = await queryClient.ensureQueryData( agencyQuery() );
+		if ( ! agency.isClientUser ) {
+			throw redirectAsNotAllowed( { to: '/overview' } );
+		}
+	},
 } );
 
 // `/client/subscriptions` – agency client subscriptions overview
