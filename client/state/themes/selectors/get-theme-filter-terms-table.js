@@ -1,5 +1,5 @@
+import { mapValues } from '@automattic/js-utils';
 import { createSelector } from '@automattic/state-utils';
-import { mapValues } from 'lodash';
 import { getThemeFilters } from 'calypso/state/themes/selectors/get-theme-filters';
 import { isAmbiguousThemeFilterTerm } from 'calypso/state/themes/selectors/is-ambiguous-theme-filter-term';
 

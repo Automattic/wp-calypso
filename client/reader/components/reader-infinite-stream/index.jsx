@@ -1,3 +1,4 @@
+import { pickBy } from '@automattic/js-utils';
 import {
 	CellMeasurer,
 	CellMeasurerCache,
@@ -5,7 +6,7 @@ import {
 	List,
 	WindowScroller,
 } from '@automattic/react-virtualized';
-import { debounce, get, pickBy } from 'lodash';
+import { debounce, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { recordTracksRailcarRender } from 'calypso/reader/stats';

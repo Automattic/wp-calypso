@@ -1,6 +1,5 @@
-import { omit } from '@automattic/js-utils';
+import { mapValues, omit } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
-import { mapValues } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import {
 	JETPACK_MODULE_ACTIVATE,

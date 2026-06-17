@@ -1,5 +1,4 @@
-import { keyBy, omit } from '@automattic/js-utils';
-import { omitBy } from 'lodash';
+import { keyBy, omit, omitBy } from '@automattic/js-utils';
 import {
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_DELETE,
@@ -59,7 +58,7 @@ export const connections = withSchemaValidation( connectionsSchema, ( state = {}
 	switch ( action.type ) {
 		case PUBLICIZE_CONNECTIONS_RECEIVE:
 			return {
-				...omitBy( state, { site_ID: action.siteId } ),
+				...omitBy( state, ( value ) => value.site_ID === action.siteId ),
 				...keyBy( action.data.connections, 'ID' ),
 			};
 		case PUBLICIZE_CONNECTION_CREATE: {

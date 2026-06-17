@@ -1,5 +1,5 @@
+import { omitBy } from '@automattic/js-utils';
 import { useTranslate } from 'i18n-calypso';
-import { omitBy } from 'lodash';
 import {
 	getFollowingSource,
 	useFollowSite,

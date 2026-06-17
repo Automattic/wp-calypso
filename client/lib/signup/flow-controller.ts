@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { pick } from '@automattic/js-utils';
 import debugModule from 'debug';
 import { translate } from 'i18n-calypso';
 import {
@@ -11,7 +12,6 @@ import {
 	forEach,
 	includes,
 	isEmpty,
-	pick,
 	reject,
 	reduce,
 } from 'lodash';

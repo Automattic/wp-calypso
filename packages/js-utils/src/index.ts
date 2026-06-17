@@ -1,8 +1,11 @@
 export { default as camelToSnakeCase } from './camel-to-snake-case';
 export { default as keyBy } from './key-by';
 export { default as mapRecordKeysRecursively } from './map-record-keys-recursively';
+export { default as mapValues } from './map-values';
 export { default as omit } from './omit';
+export { default as omitBy } from './omit-by';
 export { default as pick } from './pick';
+export { default as pickBy } from './pick-by';
 export { default as shuffle } from './shuffle';
 export { default as snakeToCamelCase } from './snake-to-camel-case';
 export { default as times } from './times';

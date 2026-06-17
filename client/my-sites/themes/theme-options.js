@@ -9,9 +9,9 @@ import {
 	FEATURE_INSTALL_THEMES,
 	WPCOM_FEATURES_COMMUNITY_THEMES,
 } from '@automattic/calypso-products';
+import { mapValues, pickBy } from '@automattic/js-utils';
 import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
-import { mapValues, pickBy } from 'lodash';
 import { connect } from 'react-redux';
 import { compose, bindActionCreators } from 'redux';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
@@ -469,7 +469,7 @@ const connectOptionsHoc = connect(
 	},
 	( dispatch, props ) => {
 		const { siteId, source = 'unknown' } = props;
-		const options = pickBy( getAllThemeOptions( props ), 'action' );
+		const options = pickBy( getAllThemeOptions( props ), ( option ) => option.action );
 		let mapAction;
 
 		if ( siteId ) {

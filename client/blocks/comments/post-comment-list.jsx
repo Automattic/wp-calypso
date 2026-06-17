@@ -1,8 +1,9 @@
 import { Button, Gridicon, SegmentedControl } from '@automattic/components';
+import { pickBy } from '@automattic/js-utils';
 import { Icon, published } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { get, delay, pickBy } from 'lodash';
+import { get, delay } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';

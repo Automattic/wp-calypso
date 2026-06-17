@@ -1,7 +1,7 @@
 import { getThemeIdFromStylesheet } from '@automattic/data-stores';
-import { omit } from '@automattic/js-utils';
+import { mapValues, omit } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
-import { mapValues, map } from 'lodash';
+import { map } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import withQueryManager from 'calypso/lib/query-manager/with-query-manager';

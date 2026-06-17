@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { omitBy, pick } from '@automattic/js-utils';
 import { Spinner } from '@wordpress/components';
 import clsx from 'clsx';
 import debugModule from 'debug';
@@ -14,8 +15,6 @@ import {
 	map,
 	mapKeys,
 	merge,
-	pick,
-	omitBy,
 	snakeCase,
 	isEmpty,
 } from 'lodash';
