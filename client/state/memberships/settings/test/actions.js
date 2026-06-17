@@ -46,6 +46,28 @@ describe( 'refreshFreeTierDescriptionRendered()', () => {
 		expect( dispatch ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	test( 'keeps retrying when settings had not loaded (null baseline), not stopping on a stale value', () => {
+		const dispatch = jest.fn();
+		// Settings hadn't loaded when the save happened, so the baseline is null.
+		let rendered = null;
+		const getState = jest.fn( () => stateWithRendered( rendered ) );
+
+		refreshFreeTierDescriptionRendered( SITE_ID )( dispatch, getState );
+		expect( dispatch ).toHaveBeenCalledTimes( 1 );
+
+		// The first refetch lands a (pre-sync) stale value. It differs from the null
+		// baseline, but must NOT be treated as "updated" — keep polling.
+		rendered = '<p>stale</p>';
+		jest.advanceTimersByTime( 1500 );
+		expect( dispatch ).toHaveBeenCalledTimes( 2 );
+
+		jest.advanceTimersByTime( 3000 );
+		expect( dispatch ).toHaveBeenCalledTimes( 3 );
+
+		jest.advanceTimersByTime( 5000 );
+		expect( dispatch ).toHaveBeenCalledTimes( 4 );
+	} );
+
 	test( 'retries with backoff and gives up after exhausting the budget', () => {
 		const dispatch = jest.fn();
 		// The rendered value never changes (e.g. sync never lands within the budget).

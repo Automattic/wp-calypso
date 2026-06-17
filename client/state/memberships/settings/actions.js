@@ -45,8 +45,19 @@ export const refreshFreeTierDescriptionRendered = ( siteId ) => ( dispatch, getS
 		retryIndex++;
 
 		setTimeout( () => {
-			// Stop once the refetch above has updated the rendered value.
-			if ( getFreeTierDescriptionRenderedForSiteId( getState(), siteId ) !== previousRendered ) {
+			const currentRendered = getFreeTierDescriptionRenderedForSiteId( getState(), siteId );
+			// Stop once the refetch has produced a new rendered value — but only when
+			// we have a real baseline to compare against. A `null` `previousRendered`
+			// means settings hadn't loaded when we started, so the first refetch
+			// returning the (possibly pre-sync, stale) value would differ from `null`
+			// and stop us prematurely; keep retrying through the budget instead so a
+			// late Jetpack sync is still picked up. Likewise ignore a `null` current
+			// (a failed/empty refetch) rather than treating it as a change.
+			if (
+				previousRendered !== null &&
+				currentRendered !== null &&
+				currentRendered !== previousRendered
+			) {
 				return;
 			}
 			attempt();
