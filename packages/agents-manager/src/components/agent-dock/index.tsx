@@ -76,7 +76,7 @@ export default function AgentDock( {
 	useCheckpoint,
 	capabilities,
 }: Props ) {
-	const { siteKey, sectionName, agentConfig } = useAgentsManagerContext();
+	const { siteKey, agentConfig } = useAgentsManagerContext();
 
 	const [ isCompactMode, setIsCompactMode ] = useState(
 		window.__agentsManagerActions?.isCompactMode ?? false
