@@ -149,13 +149,9 @@ export function useDropdownFlip( {
 	activeDropdown,
 }: UseDropdownFlipArgs ): React.RefObject< HTMLDivElement > {
 	const dropdownRef = useRef< HTMLDivElement >( null );
-	// Tells first-open from switch.
 	const prevDropdownRef = useRef< string | null >( null );
-	// Each panel's resting height, keyed by name. By the time this effect runs the
-	// DOM already shows the incoming panel, so the outgoing height (the FLIP `from`)
-	// has to come from here, not a live measurement.
+	// React has already rendered the next panel, so cache previous panel heights.
 	const heightByNameRef = useRef< Record< string, number > >( {} );
-	// Release callback for an in-flight morph, so a rapid re-switch can snap back first.
 	const releaseRef = useRef< ( () => void ) | null >( null );
 
 	useIsomorphicLayoutEffect( () => {
@@ -185,166 +181,83 @@ export function useDropdownFlip( {
 		const morphMs = () => cssMs( '--x-dropdown-2026-panel-duration', 280 );
 		const closeMs = () => cssMs( '--x-dropdown-2026-close-duration', morphMs() );
 
-		// Snap any in-flight morph back to `auto` before we measure, so reads are clean.
+		// Clear any in-flight inline height before measuring.
 		releaseRef.current?.();
 
-		// Closed → open: flag the open so items wait for the panel.
+		const animateHeight = ( from: number, to: number, duration: number ) => {
+			if ( from === to || window.matchMedia( '( prefers-reduced-motion: reduce )' ).matches ) {
+				return;
+			}
+
+			const node = el;
+			node.style.overflow = 'hidden';
+			node.style.height = `${ from }px`;
+			void node.offsetHeight;
+			node.style.height = `${ to }px`;
+
+			let released = false;
+			const fallback = window.setTimeout( release, duration + 50 );
+			function release() {
+				if ( released ) {
+					return;
+				}
+				released = true;
+				node.removeEventListener( 'transitionend', onEnd );
+				window.clearTimeout( fallback );
+				node.style.height = '';
+				node.style.overflow = '';
+				releaseRef.current = null;
+			}
+			function onEnd( e: TransitionEvent ) {
+				if ( e.target === node && e.propertyName === 'height' ) {
+					release();
+				}
+			}
+
+			node.addEventListener( 'transitionend', onEnd );
+			releaseRef.current = release;
+			return release;
+		};
+
+		// Closed -> open.
 		if ( prev === null && next !== null ) {
 			el.classList.add( 'is-dropdown-first-open' );
 			const timer = setTimeout(
 				() => el.classList.remove( 'is-dropdown-first-open' ),
 				morphMs() + 50
 			);
-			// Record the opened panel's resting height for a future switch's `from`.
 			const to = el.offsetHeight;
 			heightByNameRef.current[ next ] = to;
 
-			if ( ! to || window.matchMedia( '( prefers-reduced-motion: reduce )' ).matches ) {
-				return () => clearTimeout( timer );
-			}
-
-			const node = el;
-			node.style.overflow = 'hidden';
-			node.style.height = '0px';
-			void node.offsetHeight;
-			node.style.height = `${ to }px`;
-
-			let released = false;
-			let fallback: ReturnType< typeof window.setTimeout > | undefined;
-			const listenerAbort = new AbortController();
-			const release = () => {
-				if ( released ) {
-					return;
-				}
-				released = true;
-				listenerAbort.abort();
-				if ( fallback !== undefined ) {
-					window.clearTimeout( fallback );
-					fallback = undefined;
-				}
-				node.style.height = '';
-				node.style.overflow = '';
-				releaseRef.current = null;
-			};
-			node.addEventListener(
-				'transitionend',
-				( e: TransitionEvent ) => {
-					if ( e.target === node && e.propertyName === 'height' ) {
-						release();
-					}
-				},
-				{ signal: listenerAbort.signal }
-			);
-			fallback = window.setTimeout( release, morphMs() + 50 );
-			releaseRef.current = release;
+			const release = to ? animateHeight( 0, to, morphMs() ) : undefined;
 			return () => {
 				clearTimeout( timer );
-				release();
+				release?.();
 			};
 		}
 
-		// Open → closed: pin the last known height, then collapse it.
+		// Open -> closed.
 		if ( prev !== null && next === null ) {
 			el.classList.remove( 'is-dropdown-first-open' );
-			const node = el;
 			const held = heightByNameRef.current[ prev ];
 			if ( ! held ) {
 				return;
 			}
-			node.style.overflow = 'hidden';
-			node.style.height = `${ held }px`;
-			void node.offsetHeight;
-			node.style.height = '0px';
-
-			let released = false;
-			let fallback: ReturnType< typeof window.setTimeout > | undefined;
-			const listenerAbort = new AbortController();
-			const release = () => {
-				if ( released ) {
-					return;
-				}
-				released = true;
-				listenerAbort.abort();
-				if ( fallback !== undefined ) {
-					window.clearTimeout( fallback );
-					fallback = undefined;
-				}
-				node.style.height = '';
-				node.style.overflow = '';
-				releaseRef.current = null;
-			};
-			node.addEventListener(
-				'transitionend',
-				( e: TransitionEvent ) => {
-					if ( e.target === node && e.propertyName === 'height' ) {
-						release();
-					}
-				},
-				{ signal: listenerAbort.signal }
-			);
-			fallback = window.setTimeout( release, closeMs() + 50 );
-			releaseRef.current = release;
-			if ( window.matchMedia( '( prefers-reduced-motion: reduce )' ).matches ) {
-				release();
-			}
-			return () => release();
+			return animateHeight( held, 0, closeMs() );
 		}
 
-		// Open → open: FLIP the wrapper height between the two menus.
+		// Open -> open.
 		if ( prev !== null && next !== null && prev !== next ) {
 			el.classList.remove( 'is-dropdown-first-open' );
-			// `to` is live (DOM already shows `next`); `from` is the outgoing panel's
-			// stored height, falling back to a live read only if we never saw it.
 			const to = el.offsetHeight;
 			const from = heightByNameRef.current[ prev ] ?? to;
-			// Keep the incoming panel's height fresh for the next switch.
 			heightByNameRef.current[ next ] = to;
 
-			// Reduced motion, equal heights, or no usable `from`: snap, don't animate.
-			if (
-				! from ||
-				from === to ||
-				window.matchMedia( '( prefers-reduced-motion: reduce )' ).matches
-			) {
+			if ( ! from ) {
 				return;
 			}
 
-			// Alias keeps `el`'s non-null narrowing inside the closures.
-			const node = el;
-			node.style.overflow = 'hidden';
-			node.style.height = `${ from }px`;
-			void node.offsetHeight; // force reflow so the height change transitions
-			node.style.height = `${ to }px`;
-			// `release` snaps back to auto height; idempotent, so listener or fallback can win.
-			let released = false;
-			// AbortController over `{ once: true }` — a stale once-handler could fire on the
-			// next morph's transitionend and release it early.
-			const listenerAbort = new AbortController();
-			const release = () => {
-				if ( released ) {
-					return;
-				}
-				released = true;
-				listenerAbort.abort();
-				node.style.height = '';
-				node.style.overflow = '';
-				releaseRef.current = null;
-			};
-			releaseRef.current = release;
-			node.addEventListener(
-				'transitionend',
-				( e: TransitionEvent ) => {
-					if ( e.target === node && e.propertyName === 'height' ) {
-						release();
-					}
-				},
-				{ signal: listenerAbort.signal }
-			);
-			const fallback = window.setTimeout( release, morphMs() + 50 );
-			return () => {
-				clearTimeout( fallback );
-				release();
-			};
+			return animateHeight( from, to, morphMs() );
 		}
 	}, [ nav2026, activeDropdown ] );
 
