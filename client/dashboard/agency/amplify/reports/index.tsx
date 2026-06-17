@@ -1,5 +1,6 @@
 import { activeAgencyQuery, amplifyReportsQuery, amplifyJobsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { Button } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
@@ -7,6 +8,7 @@ import { useAnalytics } from '../../../app/analytics';
 import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../../components/dataviews';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
+import AmplifyAnalysisModal from './amplify-analysis-modal';
 import { useReportFields } from './fields';
 import { toRows } from './to-rows';
 import { DEFAULT_LAYOUTS, DEFAULT_VIEW } from './views';
@@ -17,6 +19,7 @@ function AmplifyReportsList( { agencyId }: { agencyId: number } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const fields = useReportFields();
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
+	const [ isFlowOpen, setIsFlowOpen ] = useState( false );
 
 	const { data: reports } = useSuspenseQuery( amplifyReportsQuery( agencyId ) );
 	const { data: jobs } = useSuspenseQuery( amplifyJobsQuery( agencyId ) );
@@ -47,13 +50,23 @@ function AmplifyReportsList( { agencyId }: { agencyId: number } ) {
 
 	const hasRows = rows.length > 0;
 
+	const amplifyButton = (
+		<Button variant="primary" onClick={ () => setIsFlowOpen( true ) }>
+			{ __( 'Amplify a site' ) }
+		</Button>
+	);
+
 	return (
-		<PageLayout header={ <PageHeader title={ __( 'Amplify reports' ) } /> }>
+		<PageLayout
+			header={ <PageHeader title={ __( 'Amplify reports' ) } actions={ amplifyButton } /> }
+		>
 			{ ! hasRows ? (
 				<DataViewsEmptyStateLayout
 					title={ __( 'No reports yet' ) }
-					description={ __( 'Run an analysis from the Amplify overview to see reports here.' ) }
-				/>
+					description={ __( 'Run your first analysis to see reports here.' ) }
+				>
+					{ amplifyButton }
+				</DataViewsEmptyStateLayout>
 			) : (
 				<DataViewsCard>
 					<DataViews< AmplifyReportRow >
@@ -75,6 +88,9 @@ function AmplifyReportsList( { agencyId }: { agencyId: number } ) {
 						}
 					/>
 				</DataViewsCard>
+			) }
+			{ isFlowOpen && (
+				<AmplifyAnalysisModal agencyId={ agencyId } onClose={ () => setIsFlowOpen( false ) } />
 			) }
 		</PageLayout>
 	);
