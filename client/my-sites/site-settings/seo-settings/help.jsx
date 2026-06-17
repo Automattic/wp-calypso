@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import getJetpackModules from 'calypso/state/selectors/get-jetpack-modules';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -13,12 +14,17 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 export const SeoSettingsHelpCard = ( {
 	disabled,
 	hasAdvancedSEOFeature,
+	isAtomic,
 	siteId,
 	siteIsJetpack,
 	translate,
 } ) => {
 	const seoHelpLink = siteIsJetpack
-		? localizeUrl( 'https://wordpress.com/support/seo-tools/' )
+		? localizeUrl(
+				isAtomic
+					? 'https://wordpress.com/support/seo-tools/'
+					: 'https://jetpack.com/support/seo-tools/'
+		  )
 		: 'https://wpbizseo.wordpress.com/';
 
 	return (
@@ -58,6 +64,7 @@ export const SeoSettingsHelpCard = ( {
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
+	const isAtomic = isAtomicSite( state, siteId );
 	const hasAdvancedSEOFeature =
 		siteHasFeature( state, siteId, FEATURE_ADVANCED_SEO ) &&
 		( ! siteIsJetpack || get( getJetpackModules( state, siteId ), 'seo-tools.available', false ) );
@@ -65,6 +72,7 @@ export default connect( ( state ) => {
 	return {
 		siteId,
 		siteIsJetpack,
+		isAtomic,
 		hasAdvancedSEOFeature,
 	};
 } )( localize( SeoSettingsHelpCard ) );
