@@ -255,5 +255,15 @@ describe( 'read spaces mutators', () => {
 			expect( scope.isDone() ).toBe( true );
 			expect( space.sources ).toEqual( [] );
 		} );
+
+		it( 'rejects without a request when the subscription has no numeric feed id', async () => {
+			// No nock interceptor: the guard must throw before any request is made.
+			await expect(
+				deleteReadSpaceSource( {
+					spaceId: '3',
+					subscription: makeSubscription( { feed_ID: null } ),
+				} )
+			).rejects.toThrow( 'numeric feed id' );
+		} );
 	} );
 } );

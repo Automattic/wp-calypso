@@ -115,10 +115,16 @@ export async function deleteReadSpaceSource( {
 	spaceId,
 	subscription,
 }: ReadSpaceSourceMutationParams ): Promise< ReadSpaceDetails > {
+	// Removal is keyed strictly by the numeric feedbag feed id (from
+	// `follows[].feed_id`). `feed_ID` is loosely typed, so guard against a
+	// missing/non-numeric value rather than POSTing a `/feeds/null/delete` path.
+	const feedId = Number( subscription.feed_ID );
+	if ( ! Number.isInteger( feedId ) || feedId <= 0 ) {
+		throw new Error( 'Cannot remove a space feed without a numeric feed id.' );
+	}
+
 	const item: ReadSpaceApiItem = await wpcom.req.post( {
-		path: `/reader/spaces/${ encodeURIComponent( spaceId ) }/feeds/${ encodeURIComponent(
-			String( subscription.feed_ID )
-		) }/delete`,
+		path: `/reader/spaces/${ encodeURIComponent( spaceId ) }/feeds/${ feedId }/delete`,
 		apiNamespace: 'wpcom/v2',
 	} );
 
