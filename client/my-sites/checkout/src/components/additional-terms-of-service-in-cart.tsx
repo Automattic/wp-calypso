@@ -1,4 +1,9 @@
-import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
+import {
+	localizeUrl,
+	useIsEnglishLocale,
+	useLocale,
+	getShortDateString,
+} from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import {
 	TermsOfServiceRecord,
@@ -47,19 +52,12 @@ export default function AdditionalTermsOfServiceInCart() {
 	);
 }
 
-export function formatDate( isoDate: string ): string {
-	// This somewhat mimics `moment.format('ll')` (used here formerly) without
-	// needing the deprecated `moment` package.
+export function formatDate( isoDate: string, locale: string ): string {
 	// Parse only the date portion (YYYY-MM-DD) and construct via the local-time
 	// Date constructor to avoid the UTC-midnight-to-local-time shift that causes
 	// dates to appear one day off for users behind UTC.
 	const [ year, month, day ] = isoDate.slice( 0, 10 ).split( '-' ).map( Number );
-	return new Date( year, month - 1, day ).toLocaleDateString( 'en-US', {
-		weekday: undefined,
-		month: 'short',
-		day: 'numeric',
-		year: 'numeric',
-	} );
+	return getShortDateString( new Date( year, month - 1, day ).getTime(), locale );
 }
 
 function MessageForTermsOfServiceRecordUnknown( {
@@ -73,6 +71,7 @@ function MessageForTermsOfServiceRecordUnknown( {
 } ): ReactNode {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
+	const locale = useLocale();
 	const args = termsOfServiceRecord.args;
 	if ( ! args ) {
 		return null;
@@ -87,7 +86,7 @@ function MessageForTermsOfServiceRecordUnknown( {
 		isSmallestUnit: true,
 		stripZeros: true,
 	} );
-	const startDate = formatDate( args.subscription_start_date );
+	const startDate = formatDate( args.subscription_start_date, locale );
 	const maybeProratedRegularPrice = formatCurrency(
 		args.maybe_prorated_regular_renewal_price_integer,
 		currency,
@@ -99,12 +98,13 @@ function MessageForTermsOfServiceRecordUnknown( {
 	const manageSubscriptionLink = `/purchases/subscriptions/${ siteSlug }`;
 
 	if ( doesTermsOfServiceRecordHaveDates( args ) ) {
-		const promotionEndDate = formatDate( args.subscription_end_of_promotion_date );
-		const subscriptionEndDate = formatDate( args.subscription_expiry_date );
+		const promotionEndDate = formatDate( args.subscription_end_of_promotion_date, locale );
+		const subscriptionEndDate = formatDate( args.subscription_expiry_date, locale );
 		const numberOfDays = args.subscription_pre_renew_reminder_days || 7;
-		const renewalDate = formatDate( args.subscription_auto_renew_date );
+		const renewalDate = formatDate( args.subscription_auto_renew_date, locale );
 		const proratedRenewalDate = formatDate(
-			args.subscription_maybe_prorated_regular_auto_renew_date
+			args.subscription_maybe_prorated_regular_auto_renew_date,
+			locale
 		);
 
 		const termLengthText = translate(
