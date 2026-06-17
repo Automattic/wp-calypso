@@ -45,7 +45,7 @@ const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 				dismissPreferenceName="theme-showcase-personal-upgrade-nudge"
 				horizontal
 				event="calypso_themeshowcase_personal_upgrade_nudge"
-				href={ `/checkout/${ siteSlug }/personal` }
+				href={ `/checkout/${ siteSlug }/${ PLAN_PERSONAL }` }
 				icon={ nudgeIcon }
 				plan={ PLAN_PERSONAL }
 				secondaryCallToAction={ translate( 'View plans' ) }
@@ -64,7 +64,7 @@ const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 				dismissPreferenceName="theme-showcase-premium-upgrade-nudge"
 				horizontal
 				event="calypso_themeshowcase_premium_upgrade_nudge"
-				href={ `/checkout/${ siteSlug }/premium` }
+				href={ `/checkout/${ siteSlug }/${ PLAN_PREMIUM }` }
 				icon={ nudgeIcon }
 				plan={ PLAN_PREMIUM }
 				secondaryCallToAction={ translate( 'View plans' ) }
@@ -85,7 +85,7 @@ const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 				dismissPreferenceName="theme-showcase-business-upgrade-nudge"
 				horizontal
 				event="calypso_themeshowcase_business_upgrade_nudge"
-				href={ `/checkout/${ siteSlug }/business` }
+				href={ `/checkout/${ siteSlug }/${ PLAN_BUSINESS }` }
 				icon={ nudgeIcon }
 				plan={ PLAN_BUSINESS }
 				secondaryCallToAction={ translate( 'View plans' ) }

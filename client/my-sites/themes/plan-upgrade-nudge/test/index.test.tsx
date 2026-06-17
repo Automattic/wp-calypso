@@ -1,7 +1,12 @@
 /**
  * @jest-environment jsdom
  */
-import { PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
+import {
+	PLAN_BUSINESS,
+	PLAN_FREE,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+} from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
 import { useSelector } from 'react-redux';
 import PlanUpgradeNudge from '../index';
@@ -52,19 +57,19 @@ describe( 'PlanUpgradeNudge', () => {
 		[
 			PLAN_FREE,
 			'Upgrade to Personal',
-			'/checkout/example-site/personal',
+			`/checkout/example-site/${ PLAN_PERSONAL }`,
 			'calypso_themeshowcase_personal_upgrade_nudge',
 		],
 		[
 			PLAN_PERSONAL,
 			'Upgrade to Premium',
-			'/checkout/example-site/premium',
+			`/checkout/example-site/${ PLAN_PREMIUM }`,
 			'calypso_themeshowcase_premium_upgrade_nudge',
 		],
 		[
 			PLAN_PREMIUM,
 			'Upgrade to Business',
-			'/checkout/example-site/business',
+			`/checkout/example-site/${ PLAN_BUSINESS }`,
 			'calypso_themeshowcase_business_upgrade_nudge',
 		],
 	] )(
