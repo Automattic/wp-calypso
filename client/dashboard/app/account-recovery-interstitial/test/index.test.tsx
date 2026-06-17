@@ -52,7 +52,33 @@ function mockPreferences( calypso_preferences: Partial< UserPreferences > = {} )
 		.reply( 200, { calypso_preferences } );
 }
 
+const EXPERIMENT_NAME = 'account_recovery_nudge_interstitial_experiment';
+
+// The interstitial only renders for users assigned to the experiment's `treatment` variation.
+// Seed a live assignment into the storage ExPlat reads from, so the real `useExperiment` hook
+// resolves to the given variation through its normal code path — no network call, no mocking.
+// `loadExperimentAssignment` returns a stored, still-alive assignment before hitting the server.
+function assignExperiment( variationName: string | null = 'treatment' ) {
+	window.localStorage.setItem(
+		`explat-experiment--${ EXPERIMENT_NAME }`,
+		JSON.stringify( {
+			experimentName: EXPERIMENT_NAME,
+			variationName,
+			retrievedTimestamp: Date.now(),
+			ttl: 3600,
+		} )
+	);
+}
+
 describe( '<AccountRecoveryInterstitial>', () => {
+	beforeEach( () => {
+		assignExperiment();
+	} );
+
+	afterEach( () => {
+		window.localStorage.clear();
+	} );
+
 	test( 'shows the modal and records an impression for a user with no recovery method', async () => {
 		mockAccountRecovery( NONE_RECOVERY );
 		mockUserSettings( { two_step_enabled: false } );
@@ -72,8 +98,15 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		).toBeVisible();
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_account_recovery_interstitial_impression',
-			{ security_level: 'none', recovery_status: 'none' }
+			'account_recovery_nudge_interstitial_impression',
+			{
+				security_level: 'none',
+				recovery_status: 'none',
+				has_recovery_email: false,
+				has_recovery_phone: false,
+				has_two_factor: false,
+				has_backup_codes: false,
+			}
 		);
 	} );
 
@@ -94,8 +127,15 @@ describe( '<AccountRecoveryInterstitial>', () => {
 			screen.getByRole( 'button', { name: 'Review recovery email or phone' } )
 		).toBeVisible();
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_account_recovery_interstitial_impression',
-			{ security_level: 'partial', recovery_status: 'add-two-factor' }
+			'account_recovery_nudge_interstitial_impression',
+			{
+				security_level: 'partial',
+				recovery_status: 'add-two-factor',
+				has_recovery_email: true,
+				has_recovery_phone: false,
+				has_two_factor: false,
+				has_backup_codes: false,
+			}
 		);
 	} );
 
@@ -137,8 +177,15 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		).toBeVisible();
 		// Coarse tier stays 'strong'; the fine-grained dimension captures the missing backup codes.
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_account_recovery_interstitial_impression',
-			{ security_level: 'strong', recovery_status: 'add-backup-codes' }
+			'account_recovery_nudge_interstitial_impression',
+			{
+				security_level: 'strong',
+				recovery_status: 'add-backup-codes',
+				has_recovery_email: true,
+				has_recovery_phone: false,
+				has_two_factor: true,
+				has_backup_codes: false,
+			}
 		);
 	} );
 
@@ -157,8 +204,15 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		expect( screen.getByRole( 'button', { name: 'Update recovery information' } ) ).toBeVisible();
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_account_recovery_interstitial_impression',
-			{ security_level: 'strong', recovery_status: 'strong' }
+			'account_recovery_nudge_interstitial_impression',
+			{
+				security_level: 'strong',
+				recovery_status: 'strong',
+				has_recovery_email: true,
+				has_recovery_phone: false,
+				has_two_factor: true,
+				has_backup_codes: true,
+			}
 		);
 	} );
 
@@ -189,8 +243,16 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		// strong-tier window is 365 days into the future.
 		expect( snoozedValue ).toBeGreaterThan( Math.floor( Date.now() / 1000 ) + 300 * 86400 );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_account_recovery_interstitial_cta_click',
-			{ security_level: 'strong', recovery_status: 'strong', cta_id: 'confirm_recovery' }
+			'account_recovery_nudge_interstitial_cta_click',
+			{
+				security_level: 'strong',
+				recovery_status: 'strong',
+				has_recovery_email: true,
+				has_recovery_phone: false,
+				has_two_factor: true,
+				has_backup_codes: true,
+				cta_id: 'confirm_recovery',
+			}
 		);
 	} );
 
@@ -235,8 +297,33 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		// none-tier window is 14 days into the future.
 		expect( snoozedValue ).toBeGreaterThan( Math.floor( Date.now() / 1000 ) );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_account_recovery_interstitial_dismiss',
-			{ security_level: 'none', recovery_status: 'none' }
+			'account_recovery_nudge_interstitial_dismiss',
+			{
+				security_level: 'none',
+				recovery_status: 'none',
+				has_recovery_email: false,
+				has_recovery_phone: false,
+				has_two_factor: false,
+				has_backup_codes: false,
+			}
+		);
+	} );
+
+	test( 'does not show for a user in the experiment control group, even when eligible', async () => {
+		// Otherwise-eligible user (no recovery method, not snoozed) assigned to control.
+		assignExperiment( null );
+		mockAccountRecovery( NONE_RECOVERY );
+		mockUserSettings( { two_step_enabled: false } );
+		mockPreferences();
+
+		const { recordTracksEvent } = render( <AccountRecoveryInterstitial /> );
+
+		await waitFor( () => {
+			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+		} );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'account_recovery_nudge_interstitial_impression',
+			expect.anything()
 		);
 	} );
 } );
