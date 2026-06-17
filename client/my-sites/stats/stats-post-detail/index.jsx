@@ -4,10 +4,11 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Button as CoreButton } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { isEqual, flowRight } from 'lodash';
+import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import titlecase from 'to-title-case';
 import { withPostLikes } from 'calypso/components/data/post-likes';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
@@ -399,4 +400,4 @@ const connectComponent = connect( ( state, { postId } ) => {
 	};
 } );
 
-export default flowRight( connectComponent, localize )( StatsPostDetailWrapper );
+export default compose( connectComponent, localize )( StatsPostDetailWrapper );

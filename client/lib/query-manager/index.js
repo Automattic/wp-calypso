@@ -1,4 +1,5 @@
-import { clone, difference, get, isEqual, map, omit, reduce, values } from 'lodash';
+import { omit } from '@automattic/js-utils';
+import { clone, difference, get, isEqual, map, reduce } from 'lodash';
 import QueryKey from './key';
 
 /**
@@ -32,7 +33,7 @@ function getItemsForKeys( items, itemKeys ) {
 	if ( itemKeys == null ) {
 		let resultForAllKeys = cacheForItems.get( ALL_ITEMS_KEY );
 		if ( ! resultForAllKeys ) {
-			resultForAllKeys = values( items );
+			resultForAllKeys = Object.values( items );
 			cacheForItems.set( ALL_ITEMS_KEY, resultForAllKeys );
 		}
 		return resultForAllKeys;

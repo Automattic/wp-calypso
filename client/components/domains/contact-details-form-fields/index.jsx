@@ -1,4 +1,5 @@
 import { FormLabel } from '@automattic/components';
+import { pick } from '@automattic/js-utils';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import {
 	tryToGuessPostalCodeFormat,
@@ -7,7 +8,7 @@ import {
 import { Notice } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { get, kebabCase, pick, includes, isEqual, isEmpty, camelCase } from 'lodash';
+import { get, kebabCase, includes, isEqual, isEmpty, camelCase } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createElement } from 'react';
 import { connect } from 'react-redux';

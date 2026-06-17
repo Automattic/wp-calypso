@@ -1,5 +1,12 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/hide-content-accessibly";
+@import "calypso/assets/stylesheets/shared/mixins/long-content-fade";
+
 .reader-post-options-menu__ellipsis-menu {
 	margin-left: 16px;
 

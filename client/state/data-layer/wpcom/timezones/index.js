@@ -1,4 +1,5 @@
-import { map, mapValues } from 'lodash';
+import { mapValues } from '@automattic/js-utils';
+import { map } from 'lodash';
 import { TIMEZONES_REQUEST } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';

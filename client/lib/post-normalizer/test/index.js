@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { safeImageUrl as safeImageUrlFake } from '@automattic/calypso-url';
-import { flow, trim } from 'lodash';
+import { flow } from 'lodash';
 import detectMedia from '../rule-content-detect-media';
 import detectPolls from '../rule-content-detect-polls';
 import detectSurveys from '../rule-content-detect-surveys';
@@ -905,7 +905,7 @@ describe( 'index', () => {
 					`,
 			};
 			const normalized = withContentDOM( [ removeElementsBySelector ] )( post );
-			expect( trim( normalized.content ) ).toBe( '' );
+			expect( normalized.content.trim() ).toBe( '' );
 		} );
 	} );
 

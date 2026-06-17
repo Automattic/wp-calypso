@@ -1,3 +1,6 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 .threat-item-subheader {
 	&__subheader {
 		color: var(--studio-gray-50);

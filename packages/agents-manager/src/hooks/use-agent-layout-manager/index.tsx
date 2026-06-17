@@ -20,6 +20,11 @@ const SIDEBAR_TRANSITION_DURATION_MS = 200;
 const FULLSCREEN_GATED_BODY_CLASSES = [ 'post-php', 'post-new-php', 'site-editor-php' ];
 const FULLSCREEN_BODY_CLASS = 'is-fullscreen-mode';
 
+// The Jetpack pre-paint gate watches for this element to know the app has mounted,
+// then hands off docking. Keep in sync with
+// `jetpack/projects/packages/agents-manager/src/js/sidebar-docking-gate.ts`.
+const CHAT_PORTAL_CLASS = 'agents-manager-chat';
+
 function getIsFullscreenGateOpen(): boolean {
 	const { classList } = document.body;
 	const isGated = FULLSCREEN_GATED_BODY_CLASSES.some( ( cls ) => classList.contains( cls ) );
@@ -33,6 +38,37 @@ function subscribeToBodyClasses( notify: () => void ): () => void {
 	observer.observe( document.body, { attributes: true, attributeFilter: [ 'class' ] } );
 	return () => observer.disconnect();
 }
+
+/**
+ * Prevents docking the assistant when the user is browsing with certain conditions.
+ *
+ * IMPORTANT: Keep this logic in sync with
+ * `jetpack/projects/packages/agents-manager/src/js/sidebar-docking-gate.ts`.
+ */
+const useCanDock = ( { desktopMediaQuery }: { desktopMediaQuery: string } ) => {
+	const isDesktop = useMediaQuery( desktopMediaQuery );
+	const { height } = useWindowDimensions();
+	const [ adminMenuHeight, setAdminMenuHeight ] = useState( 0 );
+	const hasEnoughHeight = height >= adminMenuHeight;
+	const isFullscreenGateOpen = useSyncExternalStore(
+		subscribeToBodyClasses,
+		getIsFullscreenGateOpen
+	);
+
+	const calculateAdminMenuHeight = useCallback( () => {
+		const adminMenu = document.getElementById( 'adminmenu' );
+		if ( adminMenu ) {
+			const adminBar = document.getElementById( 'wpadminbar' );
+			const adminBarHeight = adminBar ? adminBar.offsetHeight : 32;
+			setAdminMenuHeight( adminMenu.offsetHeight + adminBarHeight + 20 );
+		}
+	}, [] );
+
+	return {
+		canDock: isDesktop && hasEnoughHeight && isFullscreenGateOpen,
+		calculateAdminMenuHeight,
+	};
+};
 
 interface Options {
 	sidebarContainer?: string | HTMLElement;
@@ -73,16 +109,8 @@ export default function useAgentLayoutManager( {
 	const portalRef = useRef< HTMLDivElement >();
 	const wasOpenRef = useRef( defaultOpen );
 	const [ isPortalReady, setIsPortalReady ] = useState( false );
-	const isDesktop = useMediaQuery( desktopMediaQuery );
-	const { height } = useWindowDimensions();
 	const [ isDocked, setIsDocked ] = useState< boolean | null >( null );
-	const [ adminMenuHeight, setAdminMenuHeight ] = useState( 0 );
-	const hasEnoughHeight = height >= adminMenuHeight;
-	const isFullscreenGateOpen = useSyncExternalStore(
-		subscribeToBodyClasses,
-		getIsFullscreenGateOpen
-	);
-	const canDock = isDesktop && hasEnoughHeight && isFullscreenGateOpen;
+	const { canDock, calculateAdminMenuHeight } = useCanDock( { desktopMediaQuery } );
 	const shouldRenderSidebar = canDock && isDocked;
 	const openSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > >();
 	const closeSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > >();
@@ -118,13 +146,7 @@ export default function useAgentLayoutManager( {
 			return;
 		}
 
-		// Calculate admin menu height
-		const adminMenu = document.getElementById( 'adminmenu' );
-		if ( adminMenu ) {
-			const menuHeight = adminMenu.offsetHeight;
-			const menuTopOffset = adminMenu.getBoundingClientRect().top + window.scrollY;
-			setAdminMenuHeight( menuHeight + menuTopOffset + 20 );
-		}
+		calculateAdminMenuHeight();
 
 		// Set initial docked state
 		if ( isDocked === null ) {
@@ -134,7 +156,7 @@ export default function useAgentLayoutManager( {
 		// Create portal element if it doesn't exist
 		if ( ! portalRef.current ) {
 			portalRef.current = document.createElement( 'div' );
-			portalRef.current.className = 'agents-manager-chat';
+			portalRef.current.className = CHAT_PORTAL_CLASS;
 			container.appendChild( portalRef.current );
 
 			// Apply initial classes

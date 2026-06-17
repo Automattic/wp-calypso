@@ -1,6 +1,24 @@
+import { agencyQuery, queryClient } from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
+
+// Pathless layout route that guards every agency route (blocks client users).
+const agencyRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	id: 'agency',
+	beforeLoad: async ( { cause } ) => {
+		if ( cause === 'preload' ) {
+			return; // Don't redirect on hover/intent preloads.
+		}
+
+		const agency = await queryClient.ensureQueryData( agencyQuery() );
+		if ( agency.isClientUser ) {
+			throw redirectAsNotAllowed( { to: '/client/subscriptions' } );
+		}
+	},
+} );
 
 // `/overview` – agency overview
 const agencyOverviewRoute = createRoute( {
@@ -11,7 +29,7 @@ const agencyOverviewRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => rootRoute,
+	getParentRoute: () => agencyRoute,
 	path: 'overview',
 } ).lazy( () =>
 	import( '../../agency/overview' ).then( ( d ) =>
@@ -21,4 +39,4 @@ const agencyOverviewRoute = createRoute( {
 	)
 );
 
-export const createAgencyRoutes = () => [ agencyOverviewRoute ];
+export const createAgencyRoutes = () => [ agencyRoute.addChildren( [ agencyOverviewRoute ] ) ];

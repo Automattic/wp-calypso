@@ -11,10 +11,10 @@ const settings = {
 	max_refresh_ms: 180000,
 	refresh_ms: 30000,
 	initial_limit: 10,
-	// Matches NOTES_PER_PAGE in the DataViews note list: DataViews advances its
-	// infinite-scroll window by `perPage` rows per scroll, so each loadMore()
-	// must fetch at least that many or the window outruns the loaded notes.
-	increment_limit: 20,
+	// Network page size for load-more. May be smaller than the note list's render
+	// window (NOTES_PER_PAGE); the list fetches as many pages as needed to fill
+	// the window, so the window never outruns the loaded notes.
+	increment_limit: 10,
 	max_limit: 100,
 };
 
@@ -26,6 +26,8 @@ export function Client() {
 	this.isShowing = false;
 	this.lastSeenTime = 0;
 	this.noteRequestLimit = settings.initial_limit;
+	// Latches once the server has no older notes left, so load-more stops paging.
+	this.allNotesLoaded = false;
 	this.retries = 0;
 	this.subscribeTry = 0;
 	this.subscribeTries = 3;
@@ -163,34 +165,53 @@ function getNote( note_id ) {
 	} );
 }
 
-function getNotes() {
+/**
+ * Fetch notes from the server.
+ *
+ * Without `before` this refreshes the top window and treats the response as
+ * authoritative, pruning notes the server no longer returns. With `before`
+ * (UNIX epoch seconds) it pages older notes in additively for load-more and
+ * never prunes, since an older slice isn't a superset of what's loaded.
+ */
+function getNotes( before ) {
 	if ( this.gettingNotes ) {
 		return;
 	}
 	this.gettingNotes = true;
 
+	const notes = getAllNotes( store.getState() );
+
 	const parameters = {
 		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash,variant',
-		number: this.noteRequestLimit,
+		// Older pages only request what's left under max_limit, so an additive
+		// page can't push the loaded count past the cap.
+		number: before
+			? Math.min( settings.increment_limit, settings.max_limit - notes.length )
+			: this.noteRequestLimit,
 		locale: this.locale,
 	};
+	if ( before ) {
+		parameters.before = before;
+	}
 
-	const notes = getAllNotes( store.getState() );
 	if ( ! notes.length || this.noteRequestLimit > notes.length ) {
 		store.dispatch( actions.ui.loadNotes() );
 	}
 
 	listNotes( parameters, ( error, data ) => {
 		this.gettingNotes = false;
+
 		if ( error ) {
+			// Load-more: clear the spinner, leave state untouched; scrolling retries.
+			if ( before ) {
+				store.dispatch( actions.ui.loadedNotes() );
+				return;
+			}
 			/*
-			 * Something failed, so try again and
-			 * reset the local noteList copy. We
-			 * might have optimistically modified
-			 * it when we last compared it to the
-			 * server, but there's been a failure
-			 * here so resetting it will force a
-			 * full refresh.
+			 * Something failed, so try again and reset the local noteList copy.
+			 * We might have optimistically modified it when we last compared it
+			 * to the server, but there's been a failure here so resetting it
+			 * will force a full refresh.
 			 */
 			this.retries = this.retries + 1;
 			const backoff_ms = Math.min(
@@ -205,26 +226,46 @@ function getNotes() {
 
 		store.dispatch( actions.ui.loadedNotes() );
 
-		const oldNotes = getAllNotes( store.getState() ).map( ( { id } ) => id );
-		const newNotes = data.notes.map( ( n ) => n.id );
-		const notesToRemove = oldNotes.filter( ( old ) => ! newNotes.includes( old ) );
+		// Short page (fewer than requested) means the server has nothing more.
+		if ( data.notes.length < parameters.number ) {
+			this.allNotesLoaded = true;
+		}
 
-		notesToRemove.length && store.dispatch( actions.notes.removeNotes( notesToRemove ) );
+		if ( before ) {
+			// Also stop when an older page adds no new ids — e.g. an inclusive
+			// `before` echoes back only the anchor note, or capping near max_limit
+			// left room for just that anchor. Such a page isn't "short", so without
+			// this the catch-up loop would refetch the same notes forever.
+			const knownIds = new Set( getAllNotes( store.getState() ).map( ( n ) => n.id ) );
+			if ( ! data.notes.some( ( n ) => ! knownIds.has( n.id ) ) ) {
+				this.allNotesLoaded = true;
+			}
+		} else {
+			// Authoritative top window: prune notes the server dropped. A prune
+			// means newer notes pushed older ones below the window, so let
+			// load-more re-fetch them. The additive `before` path never prunes.
+			const oldIds = getAllNotes( store.getState() ).map( ( { id } ) => id );
+			const newIds = data.notes.map( ( n ) => n.id );
+			const notesToRemove = oldIds.filter( ( id ) => ! newIds.includes( id ) );
+			if ( notesToRemove.length ) {
+				this.allNotesLoaded = false;
+				store.dispatch( actions.notes.removeNotes( notesToRemove ) );
+			}
+		}
+
+		// The lightweight id/hash list the polling diff compares against: a fresh
+		// top window replaces it; an older page appends to it.
+		const pageList = data.notes.map( ( { id, note_hash } ) => ( { id, note_hash } ) );
+		this.noteList = before ? this.noteList.concat( pageList ) : pageList;
+
 		store.dispatch( actions.notes.addNotes( data.notes ) );
-
-		// Store id/hash pairs for now until properly reduxified
-		// this is used as a network optimization to quickly determine
-		// changes without downloading all the data
-		this.noteList = data.notes.map( ( { id, note_hash } ) => ( { id, note_hash } ) );
-
 		this.updateLastSeenTime( Number( data.last_seen_time ) );
+
 		if ( parameters.number === settings.max_limit ) {
 			/*
-			 * Since we store note data in a local cache,
-			 * we want to purge the data if the notes
-			 * no longer exist, but we only want to do it
-			 * if we have loaded all the notes, otherwise
-			 * we might expunge legitimate entries that
+			 * Since we store note data in a local cache, we want to purge the
+			 * data if the notes no longer exist, but only once we've loaded all
+			 * the notes, otherwise we might expunge legitimate entries that
 			 * simply haven't been loaded yet.
 			 */
 			cleanupLocalCache.call( this );
@@ -283,6 +324,9 @@ function getNotesList() {
 		const notesToRemove = localIds.filter( ( local ) => ! serverIds.includes( local ) );
 
 		if ( notesToRemove.length ) {
+			// The polling window shifted, so notes we'd paged in may sit below it
+			// again — let load-more re-page them (mirrors getNotes()).
+			this.allNotesLoaded = false;
 			store.dispatch( actions.notes.removeNotes( notesToRemove ) );
 		}
 
@@ -458,31 +502,39 @@ function handleStorageEvent( event ) {
 }
 
 function loadMore() {
-	const notes = getAllNotes( store.getState() );
-	if ( ! notes.length || this.noteRequestLimit > notes.length ) {
-		// we're already attempting to load more notes
+	if ( this.gettingNotes || ! this.hasMoreNotes() ) {
 		return;
-	}
-	if ( this.noteRequestLimit >= settings.max_limit ) {
-		return;
-	}
-	this.noteRequestLimit = this.noteRequestLimit + settings.increment_limit;
-	if ( this.noteRequestLimit > settings.max_limit ) {
-		this.noteRequestLimit = settings.max_limit;
 	}
 
-	this.getNotes();
+	// getAllNotes is newest-first, so the last entry is the oldest loaded note —
+	// the cursor for the next, older page.
+	const notes = getAllNotes( store.getState() );
+	const oldest = notes[ notes.length - 1 ];
+	if ( ! oldest ) {
+		return;
+	}
+
+	// Grow the polling window so getNotes()/getNotesList() keep covering every
+	// note we've paged in; their diff treats the response as the full set, so a
+	// shorter window would prune the older notes back out.
+	this.noteRequestLimit = Math.min(
+		this.noteRequestLimit + settings.increment_limit,
+		settings.max_limit
+	);
+
+	// The endpoint's `before` cursor is UNIX epoch seconds, not the note's ISO
+	// timestamp; a raw string is ignored and load-more would refetch page one.
+	this.getNotes( Math.floor( Date.parse( oldest.timestamp ) / 1000 ) );
 }
 
-// Whether the server may still have notes beyond those already loaded.
-// A fully-filled request (`notes.length >= noteRequestLimit`) means the
-// server had at least that many, so requesting more could yield more;
-// a short response means the server is exhausted. The window-driven note
-// list uses this to keep its optimistic `totalItems` ahead of the scroll
-// window so DataViews keeps advancing it.
+// Whether the server may still have notes older than those already loaded.
+// `allNotesLoaded` latches once a short page proves the server is exhausted;
+// until then there may be more, capped at max_limit. The note list uses this to
+// keep its optimistic `totalItems` ahead of the scroll window so DataViews
+// keeps advancing it.
 function hasMoreNotes() {
 	const notes = getAllNotes( store.getState() );
-	return notes.length >= this.noteRequestLimit && this.noteRequestLimit < settings.max_limit;
+	return ! this.allNotesLoaded && notes.length < settings.max_limit;
 }
 
 function setVisibility( { isShowing, isVisible } ) {

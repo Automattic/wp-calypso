@@ -7,9 +7,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import { useGetSupportInteractionById } from '../../data';
 import { useCreateZendeskConversation } from '../../hooks';
-import getMostRecentOpenLiveInteraction, {
-	hasReachedConversationLimit,
-} from '../notices/get-most-recent-open-live-interaction';
+import { useOpenLiveInteractions } from '../../hooks/use-open-interaction-status-map';
 
 import './get-support.scss';
 
@@ -51,8 +49,8 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		forceEmailSupport: contextForceEmailSupport,
 	} = useOdieAssistantContext();
 
-	const isConversationLimitReached = hasReachedConversationLimit();
-	const mostRecentSupportInteractionId = getMostRecentOpenLiveInteraction();
+	const { mostRecentSupportInteractionId, hasReachedLimit: isConversationLimitReached } =
+		useOpenLiveInteractions();
 
 	const { data: supportInteraction } = useGetSupportInteractionById(
 		mostRecentSupportInteractionId || null

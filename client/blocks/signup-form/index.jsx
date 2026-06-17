@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { mapKeys, omitBy, pick } from '@automattic/js-utils';
 import { Spinner } from '@wordpress/components';
 import clsx from 'clsx';
 import debugModule from 'debug';
@@ -11,12 +12,8 @@ import {
 	forEach,
 	get,
 	includes,
-	keys,
 	map,
-	mapKeys,
 	merge,
-	pick,
-	omitBy,
 	snakeCase,
 	isEmpty,
 } from 'lodash';
@@ -309,7 +306,7 @@ class SignupForm extends Component {
 
 					if ( field === 'username' && ! includes( usernamesSearched, fields.username ) ) {
 						recordTracksEvent( 'calypso_signup_username_validation_failed', {
-							error: keys( fieldError )[ 0 ],
+							error: Object.keys( fieldError )[ 0 ],
 							username: fields.username,
 						} );
 
@@ -318,7 +315,7 @@ class SignupForm extends Component {
 
 					if ( field === 'password' ) {
 						recordTracksEvent( 'calypso_signup_password_validation_failed', {
-							error: keys( fieldError )[ 0 ],
+							error: Object.keys( fieldError )[ 0 ],
 						} );
 
 						timesPasswordValidationFailed++;
@@ -326,7 +323,7 @@ class SignupForm extends Component {
 
 					if ( field === 'email' ) {
 						recordTracksEvent( 'calypso_signup_email_validation_failed', {
-							error: keys( fieldError )[ 0 ],
+							error: Object.keys( fieldError )[ 0 ],
 							email: fields.email,
 						} );
 

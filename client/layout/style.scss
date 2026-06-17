@@ -1,3 +1,10 @@
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
+@import "@wordpress/base-styles/mixins";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/clear-fix";
+@import "calypso/assets/stylesheets/shared/mixins/long-content-fade";
+
 // Disable scroll when Site Picker is active. In future,
 // the Site Picker's Site List could be made compatible
 // SidebarScrollSynchronizer. Currently, it is not and

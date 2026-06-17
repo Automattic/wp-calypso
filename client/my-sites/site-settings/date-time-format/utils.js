@@ -1,4 +1,3 @@
-import { startsWith } from 'lodash';
 import moment from 'moment-timezone';
 
 /**
@@ -13,7 +12,7 @@ import moment from 'moment-timezone';
  * @returns {Object} The timezone-adjusted Moment.js object of the current date and time.
  */
 export function getLocalizedDate( timezoneString ) {
-	return startsWith( timezoneString, 'UTC' )
+	return ( timezoneString ?? '' ).startsWith( 'UTC' )
 		? moment().utcOffset( timezoneString.substring( 3 ) * 60 ) // E.g. "UTC+5" -> "+5" * 60 -> 300
 		: moment.tz( timezoneString );
 }

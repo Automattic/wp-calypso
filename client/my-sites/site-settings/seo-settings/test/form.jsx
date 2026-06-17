@@ -73,9 +73,9 @@ describe( 'SeoForm basic tests', () => {
 			/>
 		);
 		expect( screen.queryByTestId( 'UpsellNudge' ) ).toBeVisible();
-		expect( UpsellNudge ).toHaveBeenCalledWith(
-			expect.objectContaining( { event: 'calypso_seo_settings_upgrade_nudge' } ),
-			expect.anything()
+		expect( UpsellNudge ).toHaveBeenCalled();
+		expect( UpsellNudge.mock.lastCall[ 0 ] ).toEqual(
+			expect.objectContaining( { event: 'calypso_seo_settings_upgrade_nudge' } )
 		);
 	} );
 
@@ -155,9 +155,9 @@ describe( 'UpsellNudge should get appropriate plan constant', () => {
 			);
 			const nudge = screen.getByTestId( 'UpsellNudge' );
 			expect( nudge ).toBeVisible();
-			expect( UpsellNudge ).toHaveBeenCalledWith(
-				expect.objectContaining( { plan: PLAN_BUSINESS } ),
-				expect.anything()
+			expect( UpsellNudge ).toHaveBeenCalled();
+			expect( UpsellNudge.mock.lastCall[ 0 ] ).toEqual(
+				expect.objectContaining( { plan: PLAN_BUSINESS } )
 			);
 		}
 	);
@@ -169,9 +169,9 @@ describe( 'UpsellNudge should get appropriate plan constant', () => {
 				<SeoForm { ...props } siteIsJetpack={ false } selectedSite={ { plan: { product_slug } } } />
 			);
 			expect( screen.getByTestId( 'UpsellNudge' ) ).toBeVisible();
-			expect( UpsellNudge ).toHaveBeenCalledWith(
-				expect.objectContaining( { plan: PLAN_BUSINESS_2_YEARS } ),
-				expect.anything()
+			expect( UpsellNudge ).toHaveBeenCalled();
+			expect( UpsellNudge.mock.lastCall[ 0 ] ).toEqual(
+				expect.objectContaining( { plan: PLAN_BUSINESS_2_YEARS } )
 			);
 		}
 	);
@@ -181,9 +181,11 @@ describe( 'UpsellNudge should get appropriate plan constant', () => {
 		( product_slug ) => {
 			render( <SeoForm { ...props } siteIsJetpack selectedSite={ { plan: { product_slug } } } /> );
 			expect( screen.getByTestId( 'UpsellNudge' ) ).toBeVisible();
-			expect( UpsellNudge ).toHaveBeenCalledWith(
-				expect.objectContaining( { href: expect.stringContaining( PLAN_JETPACK_SECURITY_DAILY ) } ),
-				expect.anything()
+			expect( UpsellNudge ).toHaveBeenCalled();
+			expect( UpsellNudge.mock.lastCall[ 0 ] ).toEqual(
+				expect.objectContaining( {
+					href: expect.stringContaining( PLAN_JETPACK_SECURITY_DAILY ),
+				} )
 			);
 		}
 	);

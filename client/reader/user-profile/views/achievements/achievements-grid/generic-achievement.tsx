@@ -2,6 +2,7 @@ import { siteByIdQuery } from '@automattic/api-queries';
 import { TimeSince } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
+import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
 import { getOldestAchievement } from '../utils';
 import AchievementCard from './achievement-card';
 import type { Achievement } from '@automattic/api-core';
@@ -9,9 +10,11 @@ import type { Achievement } from '@automattic/api-core';
 export default function GenericAchievement( {
 	achievement,
 	achievements,
+	isOwnProfile,
 }: {
 	achievement: Achievement;
 	achievements: Achievement[];
+	isOwnProfile: boolean;
 } ) {
 	const translate = useTranslate();
 	const hasMultiple = achievements.filter( ( a ) => a.slug === achievement.slug ).length > 1;
@@ -50,6 +53,47 @@ export default function GenericAchievement( {
 			  } );
 	};
 
+	// Only own-profile reads carry `context`, and only on achievements the
+	// backend can attribute to a specific post or comment. Link to the post or
+	// comment depending on which IDs are present.
+	const contextLink = () => {
+		const context = achievement.context;
+		if ( ! isOwnProfile || ! context?.url ) {
+			return undefined;
+		}
+		const { blog_id, post_id, comment_id, url } = context;
+		if ( ! ( blog_id > 0 ) || ! ( post_id > 0 ) ) {
+			return undefined;
+		}
+		// `url` comes from an API payload — restrict it to http(s) so an unsafe
+		// protocol (e.g. `javascript:`) can't be used as the anchor href.
+		const safeUrl = safeProtocolUrl( url );
+		if ( ! safeUrl ) {
+			return undefined;
+		}
+		const isComment = !! comment_id && comment_id > 0;
+		return isComment
+			? translate( '{{a}}View comment{{/a}}', {
+					components: { a: <a href={ safeUrl } target="_blank" rel="noopener noreferrer" /> },
+			  } )
+			: translate( '{{a}}View post{{/a}}', {
+					components: { a: <a href={ safeUrl } target="_blank" rel="noopener noreferrer" /> },
+			  } );
+	};
+
+	const renderCaption = () => {
+		const link = contextLink();
+		if ( ! link ) {
+			return caption();
+		}
+		return (
+			<>
+				{ caption() }
+				<span className="achievement-card__caption-context">{ link }</span>
+			</>
+		);
+	};
+
 	return (
 		<AchievementCard
 			image={ achievement.image }
@@ -63,7 +107,7 @@ export default function GenericAchievement( {
 			isRetired={ !! achievement.date_retired }
 			isA8cOnly={ achievement.is_a8c_only }
 			description={ achievement.description }
-			caption={ caption() }
+			caption={ renderCaption() }
 		/>
 	);
 }

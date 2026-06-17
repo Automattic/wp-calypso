@@ -7,6 +7,7 @@ import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getStreamUrl } from 'calypso/reader/route';
 import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
+import type { JSX } from 'react';
 
 interface ReaderSiteItemProps {
 	site: ReaderSite;

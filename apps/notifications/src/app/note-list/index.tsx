@@ -28,9 +28,10 @@ const DEFAULT_LAYOUTS = {
 };
 
 // DataViews 14 only loads more in response to scroll events, so the rendered
-// window (`perPage` rows) must be tall enough to overflow the panel and
-// produce a scrollbar. It must also match the REST client's `increment_limit`
-// so the window never advances past the notes already fetched.
+// window (`perPage` rows) must be tall enough to overflow the panel and produce
+// a scrollbar. The REST client may fetch smaller network pages
+// (`increment_limit`); the effect below loads as many as needed to fill this
+// window, so it never outruns the loaded notes.
 const NOTES_PER_PAGE = 20;
 
 type NoteListProps = {
@@ -80,6 +81,7 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	} );
 
 	const view = { ...initialView, perPage: NOTES_PER_PAGE };
+	const startPosition = view.startPosition ?? 1;
 
 	// Field identities must stay stable or DataViews remounts every cell per re-render.
 	const fields = useMemo( () => getFields(), [] );
@@ -108,30 +110,20 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 		}
 	}, [ client, isLoading ] );
 
-	// Bootstrap: keep loading until enough notes exist to fill a window and
-	// overflow the panel. Without this the initial batch can be too short to
-	// produce a scrollbar, and scroll-driven loading would never start.
+	// Keep enough notes loaded to cover the current scroll window, and to
+	// overflow the panel on first paint so a scrollbar exists for DataViews to
+	// drive further loading. A network page (`increment_limit`) can be smaller
+	// than this window, so fetch one page at a time until the window is filled or
+	// the server runs out — re-runs after each page as `visibleNotes` grows.
 	useEffect( () => {
-		if ( visibleNotes.length <= NOTES_PER_PAGE && ! isLoading ) {
+		if ( startPosition + NOTES_PER_PAGE > visibleNotes.length && ! isLoading && hasMoreNotes ) {
 			infiniteScrollHandler();
 		}
-	}, [ visibleNotes.length, isLoading, infiniteScrollHandler ] );
+	}, [ startPosition, visibleNotes.length, isLoading, hasMoreNotes, infiniteScrollHandler ] );
 
-	const handleChangeView = useCallback(
-		( nextView: View ) => {
-			setView( nextView );
-
-			// DataViews drives infinite scroll by advancing `startPosition`.
-			// Load more notes once the scroll window nears the end of those
-			// already loaded.
-			const start = nextView.startPosition ?? 1;
-			const perPage = nextView.perPage ?? NOTES_PER_PAGE;
-			if ( start + perPage > visibleNotes.length ) {
-				infiniteScrollHandler();
-			}
-		},
-		[ visibleNotes.length, infiniteScrollHandler ]
-	);
+	// DataViews drives infinite scroll by advancing `startPosition`; the effect
+	// above reacts to that and loads more as the window nears the loaded notes.
+	const handleChangeView = useCallback( ( nextView: View ) => setView( nextView ), [] );
 
 	const noteListRef = useRef< HTMLObjectElement >( null );
 

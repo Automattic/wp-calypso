@@ -463,10 +463,11 @@ export function isJetpackCrmProduct( keyOrSlug: string ): boolean {
 type ObjectWithProductSlug = { product_slug?: string };
 
 export function isTitanMail( purchase: Purchase | ObjectWithProductSlug ): boolean {
-	return (
-		purchase.product_slug === TitanMailSlugs.TITAN_MAIL_MONTHLY_SLUG ||
-		purchase.product_slug === TitanMailSlugs.TITAN_MAIL_YEARLY_SLUG
-	);
+	if ( ! purchase.product_slug ) {
+		return false;
+	}
+
+	return ( Object.values( TitanMailSlugs ) as readonly string[] ).includes( purchase.product_slug );
 }
 
 export function isGoogleWorkspace( purchase: Purchase | ObjectWithProductSlug ): boolean {

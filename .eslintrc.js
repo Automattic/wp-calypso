@@ -432,6 +432,12 @@ module.exports = {
 						message:
 							"Node's `url` is deprecated. Please consider migrating to `lib/url` (see `client/lib/url/README.md`).",
 					},
+					// Use Redux's `compose` instead of lodash's `flowRight`.
+					{
+						name: 'lodash',
+						importNames: [ 'flowRight' ],
+						message: "Please use `compose` from 'redux' instead.",
+					},
 				],
 			},
 		],
@@ -580,6 +586,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/extend-own': 'error',
 		'you-dont-need-lodash-underscore/fill': 'error',
 		'you-dont-need-lodash-underscore/first': 'error',
+		'you-dont-need-lodash-underscore/flatten': 'error',
 		'you-dont-need-lodash-underscore/foldl': 'error',
 		'you-dont-need-lodash-underscore/foldr': 'error',
 		'you-dont-need-lodash-underscore/index-of': 'error',
@@ -594,6 +601,8 @@ module.exports = {
 		'you-dont-need-lodash-underscore/is-string': 'error',
 		'you-dont-need-lodash-underscore/is-undefined': 'error',
 		'you-dont-need-lodash-underscore/join': 'error',
+		'you-dont-need-lodash-underscore/keys': 'error',
+		'you-dont-need-lodash-underscore/last': 'error',
 		'you-dont-need-lodash-underscore/last-index-of': 'error',
 		'you-dont-need-lodash-underscore/pad-end': 'error',
 		'you-dont-need-lodash-underscore/pad-start': 'error',
@@ -602,13 +611,17 @@ module.exports = {
 		'you-dont-need-lodash-underscore/replace': 'error',
 		'you-dont-need-lodash-underscore/reverse': 'error',
 		'you-dont-need-lodash-underscore/select': 'error',
+		'you-dont-need-lodash-underscore/size': 'error',
 		'you-dont-need-lodash-underscore/slice': 'error',
 		'you-dont-need-lodash-underscore/split': 'error',
+		'you-dont-need-lodash-underscore/starts-with': 'error',
 		'you-dont-need-lodash-underscore/take-right': 'error',
 		'you-dont-need-lodash-underscore/to-lower': 'error',
 		'you-dont-need-lodash-underscore/to-pairs': 'error',
 		'you-dont-need-lodash-underscore/to-upper': 'error',
+		'you-dont-need-lodash-underscore/trim': 'error',
 		'you-dont-need-lodash-underscore/uniq': 'error',
+		'you-dont-need-lodash-underscore/values': 'error',
 
 		// @TODO remove these lines once we fixed the warnings so
 		// they'll become errors for new code added to the codebase

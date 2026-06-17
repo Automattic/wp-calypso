@@ -2,7 +2,6 @@ import { withRtl } from 'i18n-calypso';
 import { clone, filter, findIndex } from 'lodash';
 import PropTypes from 'prop-types';
 import { createElement, Component } from 'react';
-import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import SortedGrid from 'calypso/components/sorted-grid';
@@ -55,7 +54,7 @@ export class MediaLibraryList extends Component {
 		}
 
 		this.setState( {
-			listContext: ReactDom.findDOMNode( component ),
+			listContext: component.getDOMNode(),
 		} );
 	};
 
@@ -151,12 +150,11 @@ export class MediaLibraryList extends Component {
 		const index = findIndex( this.props.media, { ID: item.ID } );
 		const selectedItems = this.props.selectedItems;
 		const selectedIndex = findIndex( selectedItems, { ID: item.ID } );
-		const ref = this.getItemRef( item );
+		const itemKey = this.getItemRef( item );
 
 		return (
 			<ListItem
-				ref={ ref }
-				key={ ref }
+				key={ itemKey }
 				style={ this.getMediaItemStyle( index ) }
 				media={ item }
 				scale={ this.props.mediaScale }

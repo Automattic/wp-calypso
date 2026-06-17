@@ -3,7 +3,7 @@
  */
 
 /* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["testOnBlur", "expect.*"] }] */
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { filter, map } from 'lodash';
 import fixtures from './lib/fixtures';
@@ -450,7 +450,7 @@ describe( 'TokenField', () => {
 			const user = userEvent.setup();
 			const { container } = render( <TokenFieldWrapper /> );
 
-			screen.getByRole( 'textbox' ).focus();
+			act( () => screen.getByRole( 'textbox' ).focus() );
 
 			const firstSuggestion = container.querySelectorAll( '.token-field__suggestion' )[ 0 ];
 
@@ -626,7 +626,7 @@ describe( 'TokenField', () => {
 			const user = userEvent.setup();
 			const { container } = render( <TokenFieldWrapper /> );
 
-			screen.getByRole( 'textbox' ).focus();
+			act( () => screen.getByRole( 'textbox' ).focus() );
 
 			await user.click( container.querySelectorAll( '.token-field__remove-token' )[ 0 ] );
 
@@ -634,9 +634,9 @@ describe( 'TokenField', () => {
 		} );
 
 		test( 'should remove the token to the left when backspace pressed', () => {
-			const { container } = render( <TokenFieldWrapper />, { legacyRoot: true } );
+			const { container } = render( <TokenFieldWrapper /> );
 
-			screen.getByRole( 'textbox' ).focus();
+			act( () => screen.getByRole( 'textbox' ).focus() );
 
 			sendKeyDown( keyCodes.backspace );
 
@@ -646,7 +646,7 @@ describe( 'TokenField', () => {
 		test( 'should remove the token to the right when delete pressed', () => {
 			const { container } = render( <TokenFieldWrapper /> );
 
-			screen.getByRole( 'textbox' ).focus();
+			act( () => screen.getByRole( 'textbox' ).focus() );
 
 			sendKeyDown( keyCodes.leftArrow );
 			sendKeyDown( keyCodes.leftArrow );

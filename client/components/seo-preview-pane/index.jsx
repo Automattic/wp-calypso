@@ -8,7 +8,7 @@ import {
 	TYPE_ARTICLE,
 } from '@automattic/social-previews';
 import { localize } from 'i18n-calypso';
-import { compact, find, get } from 'lodash';
+import { find, get } from 'lodash';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import SeoPreviewUpgradeNudge from 'calypso/components/seo/preview-upgrade-nudge';
@@ -200,7 +200,7 @@ export class SeoPreviewPane extends PureComponent {
 
 		const { selectedService } = this.state;
 
-		const services = compact( [ post && 'wordpress', 'google', 'facebook', 'x' ] );
+		const services = [ post && 'wordpress', 'google', 'facebook', 'x' ].filter( Boolean );
 
 		if ( showNudge ) {
 			return <SeoPreviewUpgradeNudge { ...{ site } } />;

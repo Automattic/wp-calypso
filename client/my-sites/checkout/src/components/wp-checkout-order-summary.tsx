@@ -813,9 +813,6 @@ const CheckoutSummaryFeaturesListItem = styled( 'li' )< { isSupported?: boolean 
 		padding-left: 0;
 	}
 `;
-CheckoutSummaryFeaturesListItem.defaultProps = {
-	isSupported: true,
-};
 
 const CheckoutSummaryTitle = styled.div`
 	margin-bottom: 16px;

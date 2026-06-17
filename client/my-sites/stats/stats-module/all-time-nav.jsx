@@ -2,9 +2,10 @@ import { ComponentSwapper, SegmentedControl, SelectDropdown } from '@automattic/
 import { Icon, lock } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { flowRight, find, get } from 'lodash';
+import { find, get } from 'lodash';
 import { useMemo } from 'react';
 import { connect, useDispatch } from 'react-redux';
+import { compose } from 'redux';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
@@ -291,4 +292,4 @@ const connectComponent = connect(
 	{ recordGoogleEvent }
 );
 
-export default flowRight( connectComponent, localize )( StatsModuleSummaryLinks );
+export default compose( connectComponent, localize )( StatsModuleSummaryLinks );

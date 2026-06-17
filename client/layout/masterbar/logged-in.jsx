@@ -104,6 +104,10 @@ class MasterbarLoggedIn extends Component {
 		dashboardOptIn: PropTypes.bool,
 		useUnifiedAgent: PropTypes.bool,
 		launchButton: PropTypes.node,
+		// When provided, the "Plan" menu item navigates to this URL via a regular
+		// anchor instead of calling the page.js router. The interim omnibar (which
+		// runs outside the page.js routing context) passes this so the link works.
+		sitePlanUrl: PropTypes.string,
 	};
 
 	state = { mounted: false };
@@ -515,6 +519,7 @@ class MasterbarLoggedIn extends Component {
 			domainOnlySite,
 			sitePlanName,
 			site,
+			sitePlanUrl,
 		} = this.props;
 
 		// Only display when a site is selected and is not domain-only site.
@@ -558,9 +563,15 @@ class MasterbarLoggedIn extends Component {
 						</div>
 					</div>
 				),
+				// In the interim omnibar `page.js` routing is unavailable, so navigate
+				// via a regular anchor using the provided `sitePlanUrl`. Elsewhere, fall
+				// back to client-side routing.
+				...( sitePlanUrl && { url: sitePlanUrl } ),
 				onClick: () => {
 					this.props.recordTracksEvent( 'calypso_masterbar_plan_clicked' );
-					page( `/plans/${ siteSlug }` );
+					if ( ! sitePlanUrl ) {
+						page( `/plans/${ siteSlug }` );
+					}
 				},
 			} );
 		}

@@ -1,4 +1,5 @@
-import { forEach, get, omit } from 'lodash';
+import { omit } from '@automattic/js-utils';
+import { forEach, get } from 'lodash';
 
 /**
  * Normalize settings for use in Redux.

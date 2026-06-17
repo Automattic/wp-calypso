@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
+import { times } from '@automattic/js-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import { Children, PureComponent, cloneElement } from 'react';
 import { useSelector } from 'react-redux';

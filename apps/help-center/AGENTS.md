@@ -4,7 +4,7 @@ Build and deployment layer for the Help Center on Simple and Atomic sites. Most 
 
 ## Overview
 
-This app takes `@automattic/help-center` and bundles it into 8 separate webpack entry points deployed to `widgets.wp.com/help-center/`. Jetpack enqueues these bundles on various types of websites and pages (editor, wp-admin, logged out pages (/support and /forums), CIAB)
+This app takes `@automattic/help-center` and bundles it into 6 separate webpack entry points deployed to `widgets.wp.com/help-center/`. Jetpack enqueues these bundles on various types of websites and pages (editor, wp-admin, logged out pages (/support and /forums), CIAB)
 
 ## Entry Points
 
@@ -14,8 +14,6 @@ This app takes `@automattic/help-center` and bundles it into 8 separate webpack 
 | `help-center-gutenberg-disconnected.js`  | Gutenberg editor (disconnected from Jetpack) |
 | `help-center-wp-admin.js`                | wp-admin bar (connected)                     |
 | `help-center-wp-admin-disconnected.js`   | wp-admin bar (disconnected from Jetpack)     |
-| `help-center-ciab-admin.js`              | CIAB admin (connected)                       |
-| `help-center-ciab-admin-disconnected.js` | CIAB admin (disconnected)                    |
 | `help-center-customizer.js`              | Customizer                                   |
 | `help-center-logged-out.js`              | Logged-out view                              |
 

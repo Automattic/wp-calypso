@@ -2,6 +2,7 @@ import { readFeedSearchQuery } from '@automattic/api-queries';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
+import type { JSX } from 'react';
 
 const NotFoundSiteSubscriptions = (): JSX.Element => {
 	const translate = useTranslate();

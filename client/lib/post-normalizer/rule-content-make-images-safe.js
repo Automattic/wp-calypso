@@ -1,5 +1,5 @@
 import { getUrlParts, getUrlFromParts, safeImageUrl } from '@automattic/calypso-url';
-import { forEach, startsWith, some, includes, filter } from 'lodash';
+import { forEach, some, includes, filter } from 'lodash';
 import { resolveRelativePath } from 'calypso/lib/url';
 import { maxWidthPhotonishURL } from './utils';
 
@@ -15,7 +15,7 @@ const removeUnwantedAttributes = ( node ) => {
 	}
 
 	const inlineEventHandlerAttributes = filter( node.attributes, ( attr ) =>
-		startsWith( attr.name, 'on' )
+		attr.name.startsWith( 'on' )
 	);
 	inlineEventHandlerAttributes.forEach( ( a ) => node.removeAttribute( a.name ) );
 
@@ -84,7 +84,7 @@ function makeImageSafe( post, image, maxWidth ) {
 
 	// allow https sources through even if we can't make them 'safe'
 	// helps images that use querystring params and are from secure sources
-	if ( ! safeSource && startsWith( imgSource, 'https://' ) ) {
+	if ( ! safeSource && ( imgSource ?? '' ).startsWith( 'https://' ) ) {
 		safeSource = imgSource;
 	}
 

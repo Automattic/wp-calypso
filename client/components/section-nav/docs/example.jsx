@@ -1,4 +1,5 @@
-import { forEach, omit } from 'lodash';
+import { omit } from '@automattic/js-utils';
+import { forEach } from 'lodash';
 import { PureComponent } from 'react';
 import Search from 'calypso/components/search';
 import SectionNav from 'calypso/components/section-nav';

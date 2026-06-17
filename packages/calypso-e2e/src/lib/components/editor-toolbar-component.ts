@@ -322,10 +322,13 @@ export class EditorToolbarComponent {
 		if ( target !== 'Settings' ) {
 			await this.openMoreOptionsMenu();
 
-			button = editorParent.getByRole( 'menuitemcheckbox', {
-				name: translatedTargetName,
-				exact: true,
-			} );
+			// Match the sidebar's stable `aria-controls` id, not the visible
+			// label: "Jetpack" is a prefix of "Jetpack Newsletter" and the menu
+			// entries reorder as plugin sidebars register, so a name match can
+			// land on the sibling and open the wrong sidebar.
+			button = editorParent.locator(
+				'[role="menuitemcheckbox"][aria-controls="jetpack-sidebar:jetpack"]'
+			);
 		}
 
 		if ( await this.targetIsOpen( button ) ) {

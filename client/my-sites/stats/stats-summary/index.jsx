@@ -4,10 +4,11 @@ import { formatNumber } from '@automattic/number-formatters';
 import { Icon, video } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { isEqual, find, flowRight } from 'lodash';
+import { isEqual, find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import ElementChart from 'calypso/components/chart';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import StatsEmptyState from '../stats-empty-state';
@@ -124,4 +125,4 @@ class StatsSummaryChart extends Component {
 
 const connectComponent = connect( null, { recordGoogleEvent } );
 
-export default flowRight( connectComponent, localize )( StatsSummaryChart );
+export default compose( connectComponent, localize )( StatsSummaryChart );

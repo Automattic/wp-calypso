@@ -1,4 +1,5 @@
-import { includes, omitBy } from 'lodash';
+import { omitBy } from '@automattic/js-utils';
+import { includes } from 'lodash';
 import {
 	GalleryColumnedTypes,
 	GalleryDefaultAttrs,

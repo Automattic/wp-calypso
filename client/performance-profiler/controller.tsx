@@ -11,6 +11,7 @@ import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slu
 import { TabTypes } from './components/header';
 import { PerformanceProfilerDashboardWrapper } from './pages/dashboard';
 import { WeeklyReport } from './pages/weekly-report';
+import type { JSX } from 'react';
 
 import './style.scss';
 
