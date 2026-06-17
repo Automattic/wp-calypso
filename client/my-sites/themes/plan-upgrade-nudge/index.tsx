@@ -6,9 +6,7 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
-import { brush } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { cloneElement } from 'react';
 import { useSelector } from 'react-redux';
 import Banner from 'calypso/components/banner';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
@@ -27,7 +25,7 @@ const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 		return null;
 	}
 
-	const nudgeIcon = cloneElement( brush, { fill: 'currentColor' } );
+	const nudgeIcon = <span className="dashicons-before dashicons-admin-appearance" aria-hidden />;
 
 	if ( isFreePlan( planSlug ) ) {
 		return (
