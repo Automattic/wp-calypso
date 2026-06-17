@@ -1,6 +1,13 @@
-import { fetchAgency, fetchAgencyScheduleCallLink } from '@automattic/api-core';
-import { queryOptions } from '@tanstack/react-query';
-import type { Agency } from '@automattic/api-core';
+import {
+	fetchAgency,
+	fetchAgencyScheduleCallLink,
+	fetchAmplifyReports,
+	fetchAmplifyJobs,
+	submitAmplifyAnalysis,
+} from '@automattic/api-core';
+import { mutationOptions, queryOptions } from '@tanstack/react-query';
+import { queryClient } from './query-client';
+import type { Agency, SubmitAmplifyAnalysisParams } from '@automattic/api-core';
 
 type AgencyQueryResult = {
 	isClientUser: boolean;
@@ -59,4 +66,36 @@ export const agencyScheduleCallLinkQuery = ( agencyId: number ) =>
 		enabled: false,
 		staleTime: 5 * 60 * 1000,
 		retry: false,
+	} );
+
+/** All finished Amplify reports for the agency. */
+export const amplifyReportsQuery = ( agencyId: number ) =>
+	queryOptions( {
+		queryKey: [ 'agency', agencyId, 'amplify', 'reports' ] as const,
+		queryFn: () => fetchAmplifyReports( agencyId ),
+	} );
+
+/**
+ * The agency's in-flight/failed Amplify runs. Polls every 15s while any job is
+ * still pending, then stops — completed runs move to the reports list.
+ */
+export const amplifyJobsQuery = ( agencyId: number ) =>
+	queryOptions( {
+		queryKey: [ 'agency', agencyId, 'amplify', 'jobs' ] as const,
+		queryFn: () => fetchAmplifyJobs( agencyId ),
+		refetchInterval: ( query ) =>
+			query.state.data?.some( ( job ) => job.status === 'pending' ) ? 15_000 : false,
+	} );
+
+/**
+ * Submits a new Amplify analysis. On success the run shows up as a pending job,
+ * so the jobs query is invalidated to surface it immediately.
+ */
+export const submitAmplifyAnalysisMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		mutationFn: ( params: SubmitAmplifyAnalysisParams ) =>
+			submitAmplifyAnalysis( agencyId, params ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( amplifyJobsQuery( agencyId ) );
+		},
 	} );
