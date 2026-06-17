@@ -1,18 +1,19 @@
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
-import { skipToken, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
+import type { SupportInteraction } from '../../types';
+import { handleSupportInteractionsFetch } from '../../data/handle-support-interactions-fetch';
 import {
 	getOpenLiveInteractions,
 	type InteractionStatusByUuid,
 } from './get-most-recent-open-live-interaction';
-import type { SupportInteraction } from '../../types';
 
 /**
  * Subscribes to the cached SupportInteraction list in TanStack Query and returns a
  * Map<supportInteractionId, status> for use by the open-conversation helpers.
  *
- * Uses `useQuery` with `skipToken` (instead of `queryClient.getQueryData`) so the
- * hook re-renders when the cache entry is updated by other queries/mutations.
+ * Uses `useQuery` (instead of `queryClient.getQueryData`) so the hook re-renders when
+ * the cache entry is updated by other queries/mutations.
  * Returns an empty Map when the query hasn't populated yet — callers fall back to
  * the Smooch heuristic in that case.
  */
@@ -21,7 +22,8 @@ export function useOpenInteractionStatusMap(): InteractionStatusByUuid {
 
 	const { data: interactions } = useQuery< SupportInteraction[] >( {
 		queryKey: [ 'support-interactions', 'get-interactions', isTestMode ],
-		queryFn: skipToken,
+		queryFn: () => handleSupportInteractionsFetch( 'GET', '?per_page=100&page=1', isTestMode ),
+		enabled: false,
 	} );
 
 	return useMemo( () => {
