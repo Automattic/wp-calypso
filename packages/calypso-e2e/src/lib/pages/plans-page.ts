@@ -194,7 +194,9 @@ export class PlansPage {
 	async getDomainFromRedirectWarning( siteSlug: string ): Promise< string > {
 		const warningPattern = new RegExp( `^(\\S+) redirects to ${ escapeRegExp( siteSlug ) }$` );
 		const warning = this.page.getByText( warningPattern ).first();
-		await warning.waitFor();
+		// Same late-render budget as getIncludedDomain: the warning appears
+		// after the escape-hatch/step transition, past the 10s action timeout.
+		await warning.waitFor( { state: 'visible', timeout: 30_000 } );
 
 		const warningText = ( await warning.textContent() )?.trim();
 		const match = warningText?.match( warningPattern );
@@ -211,7 +213,10 @@ export class PlansPage {
 	async getIncludedDomain(): Promise< string > {
 		const includedDomainPattern = /^(\S+) is included$/;
 		const includedDomain = this.page.getByText( includedDomainPattern ).first();
-		await includedDomain.waitFor();
+		// The plans grid renders after a step transition the caller does not
+		// wait on, so the included-domain line can appear later than the 10s
+		// action timeout. Match the 30s budget used by selectPlan/selectAddOn.
+		await includedDomain.waitFor( { state: 'visible', timeout: 30_000 } );
 
 		const includedDomainText = ( await includedDomain.textContent() )?.trim();
 		const match = includedDomainText?.match( includedDomainPattern );
