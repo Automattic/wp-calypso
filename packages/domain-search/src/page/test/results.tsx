@@ -1624,6 +1624,38 @@ describe( 'ResultsPage', () => {
 			expect( onBundleAddToCart ).not.toHaveBeenCalled();
 		} );
 
+		it( 'does not fire the onBundleAddToCart event when no bundle add handler exists', async () => {
+			const user = userEvent.setup();
+			const onBundleAddToCart = jest.fn();
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'bundle-no-handler' },
+				suggestions: [ buildSuggestion( { domain_name: 'bundle-no-handler.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'bundle-no-handler' },
+				bundleSuggestion: buildBundleSuggestion( 'bundle-no-handler' ),
+			} );
+
+			render(
+				<TestDomainSearch
+					cart={ buildCart( { onAddBundle: undefined } ) }
+					events={ { onBundleAddToCart } }
+					config={ { showBundleSuggestions: true } }
+					query="bundle-no-handler"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Get bundle' } ) );
+			await act( async () => {
+				await Promise.resolve();
+			} );
+
+			expect( onBundleAddToCart ).not.toHaveBeenCalled();
+		} );
+
 		it( 'fires the onQueryAvailabilityCheck event when the availability is checked', async () => {
 			const onQueryAvailabilityCheck = jest.fn();
 
