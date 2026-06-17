@@ -12,10 +12,10 @@ only. All endpoints live under `wpcom/v2` and are wired to the real backend.
 ## Data shapes
 
 These types live in `@automattic/api-core` → `read-spaces/types.ts`. The wire JSON
-is snake_case (`title`, `layout_color`, `layout_icon`, numeric `id`, `follows`);
+is snake-cased (`title`, `layout_color`, `layout_icon`, numeric `id`, `follows`);
 `read-spaces/adapters.ts` maps it to the client shapes below (as `read-follows`
 does for subscriptions). Notably it renames the wire `follows` to `sources` and
-nests the flat `layout_*` fields under `layout`.
+nests the flat `layout_color` / `layout_icon` fields under `layout`.
 
 ```ts
 // Summary — returned by the list endpoint only. No sources, no tags.
@@ -57,15 +57,15 @@ All paths are under `https://public-api.wordpress.com/wpcom/v2/reader/spaces`.
 Every mutation returns the **full updated detail**, so the client writes that
 straight to the caches — no follow-up GET.
 
-| # | Method & path | Body | Returns | Wired as |
-| - | --- | --- | --- | --- |
-| 1 | `GET /reader/spaces` | — | `200` summary[] | `fetchReadSpaces()` |
-| 2 | `GET /reader/spaces/{id}` | — | `200` detail | `fetchReadSpace(id)` |
-| 3 | `POST /reader/spaces/new` | `{ title*, feeds?, tags?, layout_color?, layout_icon? }` | `201` detail | `createReadSpace()` |
-| 4 | `POST /reader/spaces/{id}/update` | `{ title?, tags?, layout_color?, layout_icon? }` (≥1) | `200` detail | `updateReadSpace()` |
-| 5 | `POST /reader/spaces/{id}/delete` | — | `200 { deleted, id }` | `deleteReadSpace()` |
-| 6 | `POST /reader/spaces/{id}/feeds/new` | `{ feed* }` (feed id or url) | `200` detail | `addReadSpaceSource()` |
-| 7 | `POST /reader/spaces/{id}/feeds/{feed_id}/delete` | — | `200` detail | `deleteReadSpaceSource()` |
+| #   | Method & path                                     | Body                                                     | Returns               | Wired as                  |
+| --- | ------------------------------------------------- | -------------------------------------------------------- | --------------------- | ------------------------- |
+| 1   | `GET /reader/spaces`                              | —                                                        | `200` summary[]       | `fetchReadSpaces()`       |
+| 2   | `GET /reader/spaces/{id}`                         | —                                                        | `200` detail          | `fetchReadSpace(id)`      |
+| 3   | `POST /reader/spaces/new`                         | `{ title*, feeds?, tags?, layout_color?, layout_icon? }` | `201` detail          | `createReadSpace()`       |
+| 4   | `POST /reader/spaces/{id}/update`                 | `{ title?, tags?, layout_color?, layout_icon? }` (≥1)    | `200` detail          | `updateReadSpace()`       |
+| 5   | `POST /reader/spaces/{id}/delete`                 | —                                                        | `200 { deleted, id }` | `deleteReadSpace()`       |
+| 6   | `POST /reader/spaces/{id}/feeds/new`              | `{ feed* }` (feed id or url)                             | `200` detail          | `addReadSpaceSource()`    |
+| 7   | `POST /reader/spaces/{id}/feeds/{feed_id}/delete` | —                                                        | `200` detail          | `deleteReadSpaceSource()` |
 
 Notes:
 
@@ -81,18 +81,18 @@ Notes:
 
 ## Error codes
 
-| HTTP | code | when |
-| - | --- | --- |
-| 403 | `rest_forbidden` | not logged in / not an Automattician |
-| 404 | `reader_spaces_not_found` | space doesn't exist or isn't yours |
-| 404 | `reader_spaces_item_not_found` | removing a feed not in the space |
-| 400 | `reader_spaces_invalid_title` | empty title (create or update) |
-| 400 | `reader_spaces_invalid_feed` | a feed isn't an existing feedbag feed |
-| 400 | `reader_spaces_invalid_tag` | a tag slug isn't a valid Reader tag |
-| 400 | `reader_spaces_no_changes` | `update` with no recognized fields |
-| 409 | `reader_spaces_duplicate_slug` | a space with that title already exists |
-| 409 | `reader_spaces_duplicate_feed` | feed already in the space |
-| 500 | `reader_spaces_delete_failed` | delete didn't persist (rare) |
+| HTTP | code                           | when                                   |
+| ---- | ------------------------------ | -------------------------------------- |
+| 403  | `rest_forbidden`               | not logged in / not an Automattician   |
+| 404  | `reader_spaces_not_found`      | space doesn't exist or isn't yours     |
+| 404  | `reader_spaces_item_not_found` | removing a feed not in the space       |
+| 400  | `reader_spaces_invalid_title`  | empty title (create or update)         |
+| 400  | `reader_spaces_invalid_feed`   | a feed isn't an existing feedbag feed  |
+| 400  | `reader_spaces_invalid_tag`    | a tag slug isn't a valid Reader tag    |
+| 400  | `reader_spaces_no_changes`     | `update` with no recognized fields     |
+| 409  | `reader_spaces_duplicate_slug` | a space with that title already exists |
+| 409  | `reader_spaces_duplicate_feed` | feed already in the space              |
+| 500  | `reader_spaces_delete_failed`  | delete didn't persist (rare)           |
 
 The create modal maps `rest_forbidden` / `reader_spaces_invalid_title` /
 `reader_spaces_invalid_tag` / `reader_spaces_duplicate_slug` to copy; other
