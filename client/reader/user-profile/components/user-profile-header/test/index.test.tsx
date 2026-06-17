@@ -42,6 +42,14 @@ jest.mock( 'calypso/reader/data/user-profile/use-profile-tab-visibility', () => 
 	useProfileTabVisibility: () => mockUseProfileTabVisibility(),
 } ) );
 
+jest.mock( '@automattic/api-queries', () => ( {
+	...jest.requireActual( '@automattic/api-queries' ),
+	isAutomatticianQuery: () => ( {
+		queryKey: [ 'me', 'is-automattician' ],
+		initialData: { teams: [ { slug: 'a8c' } ] },
+	} ),
+} ) );
+
 describe( 'UserProfileHeader', () => {
 	const defaultUser: ReaderUser = {
 		ID: 123,

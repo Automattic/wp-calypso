@@ -155,16 +155,7 @@ describe( 'SitesVisibilityCard', () => {
 		expect( await screen.findByText( 'untitled.wordpress.com' ) ).toBeVisible();
 	} );
 
-	test( 'does not show the select/deselect all link with fewer than 3 sites', async () => {
-		renderWithClient( <SitesVisibilityCard userId={ userId } sitesEnabled /> );
-
-		await screen.findByText( 'Visible Site' );
-		expect(
-			screen.queryByRole( 'button', { name: /select all|deselect all/i } )
-		).not.toBeInTheDocument();
-	} );
-
-	test( 'shows "Deselect all" when 3+ sites are all visible and hides all on click', async () => {
+	test( 'shows "Deselect all" when sites are all visible and hides all on click', async () => {
 		const user = userEvent.setup();
 		const threeSites = [
 			makeSite( 1, 'Site One' ),
@@ -175,7 +166,8 @@ describe( 'SitesVisibilityCard', () => {
 
 		renderWithClient( <SitesVisibilityCard userId={ userId } sitesEnabled /> );
 
-		const link = await screen.findByRole( 'button', { name: 'Deselect all' } );
+		await screen.findByText( 'Site One' );
+		const link = screen.getByRole( 'button', { name: 'Deselect all' } );
 		await user.click( link );
 
 		expect( mockSetAllHidden ).toHaveBeenCalledWith( true, [ 1, 2, 3 ] );
@@ -192,6 +184,7 @@ describe( 'SitesVisibilityCard', () => {
 
 		renderWithClient( <SitesVisibilityCard userId={ userId } sitesEnabled /> );
 
+		await screen.findByText( 'Site One' );
 		const link = await screen.findByRole( 'button', { name: 'Select all' } );
 		await user.click( link );
 
@@ -208,6 +201,7 @@ describe( 'SitesVisibilityCard', () => {
 
 		renderWithClient( <SitesVisibilityCard userId={ userId } sitesEnabled={ false } /> );
 
+		await screen.findByText( 'Site One' );
 		expect( await screen.findByRole( 'button', { name: 'Deselect all' } ) ).toBeDisabled();
 	} );
 } );
