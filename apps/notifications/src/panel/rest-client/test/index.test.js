@@ -289,5 +289,28 @@ describe( 'RestClient', () => {
 
 			expect( getUnreadNoteIds( store.getState() ) ).toEqual( [ 900, 901 ] );
 		} );
+
+		// Polling's getNotesList() prunes against the unfiltered window. While a
+		// filter is active it must not drop a note that fell out of that window —
+		// the Unread view still resolves it through the shared store.
+		it( 'does not prune the shared store via getNotesList while a filter is active', () => {
+			// Seed the polling window: 100 and 99 are in this.noteList and the store.
+			client.getNotes();
+			getCalls[ 0 ].callback( null, {
+				notes: [ makeNote( 100 ), makeNote( 99 ) ],
+				last_seen_time: 0,
+			} );
+			getCalls.length = 0;
+
+			// A filter is active (e.g. the Unread tab).
+			client.filter = { unread: 1 };
+
+			// Polling sees 99 has dropped out of the unfiltered top window.
+			client.getNotesList();
+			getCalls[ 0 ].callback( null, { notes: [ makeNote( 100 ) ], last_seen_time: 0 } );
+
+			// 99 stays in the store so the Unread view can still resolve it.
+			expect( getAllNotes( store.getState() ).map( ( note ) => note.id ) ).toContain( 99 );
+		} );
 	} );
 } );

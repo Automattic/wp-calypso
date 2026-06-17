@@ -339,9 +339,11 @@ function getNotesList() {
 		/* Actually remove the notes from the local copy */
 		const notesToRemove = localIds.filter( ( local ) => ! serverIds.includes( local ) );
 
-		if ( notesToRemove.length ) {
-			// The polling window shifted, so notes we'd paged in may sit below it
-			// again — let load-more re-page them (mirrors getNotes()).
+		// Don't prune while a filter is active: the filtered view shares this cache,
+		// and a note that fell out of the unfiltered window could be dropped from it
+		// (mirrors getNotes()). The shifted window otherwise means load-more should
+		// re-page these, so clear allNotesLoaded.
+		if ( notesToRemove.length && ! this.filter ) {
 			this.allNotesLoaded = false;
 			store.dispatch( actions.notes.removeNotes( notesToRemove ) );
 		}
