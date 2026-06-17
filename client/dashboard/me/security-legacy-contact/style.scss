@@ -1,0 +1,63 @@
+.legacy-contact-print__key {
+	font-family: monospace;
+	font-size: 1.5rem;
+	font-weight: 600;
+	line-height: 1.4;
+	word-break: break-all;
+	padding: 16px;
+	border: 1px solid var( --dashboard-surface__border-color );
+	border-radius: 4px;
+	background: var( --dashboard-background-color__elevated, var( --color-surface ) );
+}
+
+@media print {
+	// Scope the print rules to this page (the key block only exists here) so the
+	// shared layout/card components print normally on other pages.
+	body:has( .legacy-contact-print__key ) {
+		// The shared print reset for the body gutter/overflow loses to the
+		// higher-specificity `:has()` selectors that set them, so re-apply with
+		// enough specificity here. Also drop the viewport-height floor, which
+		// otherwise overflows the document onto a blank second page.
+		.dashboard-root__body {
+			padding-inline-start: 0;
+			overflow-x: visible;
+			min-height: 0;
+		}
+
+		// Hide the dev/staging environment badge (position: fixed, so it leaks
+		// into the printed output).
+		.environment-badge {
+			display: none;
+		}
+
+		// Use the full page width rather than the on-screen centered column.
+		.dashboard-page-layout {
+			max-width: none;
+		}
+
+		// Hide the action button — it's not useful on paper.
+		.legacy-contact-print__actions {
+			display: none;
+		}
+
+		// Hide the breadcrumbs; keep the page title as the document heading.
+		.dashboard-section-header__prefix {
+			display: none;
+		}
+
+		// Flatten the card into a plain document — no shadow or border.
+		.components-card {
+			box-shadow: none;
+			border: none;
+		}
+
+		.components-card-body {
+			padding: 0;
+		}
+
+		// Keep the key block's outline and background in the printed output.
+		.legacy-contact-print__key {
+			print-color-adjust: exact;
+		}
+	}
+}
