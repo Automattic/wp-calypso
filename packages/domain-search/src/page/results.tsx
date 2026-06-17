@@ -32,6 +32,10 @@ type AddBundleToCartVariables = {
 	query: string;
 };
 
+type AddBundleToCartResult = {
+	wasAdded: boolean;
+};
+
 type UnavailableBundle = {
 	groupId: string;
 	query: string;
@@ -88,8 +92,20 @@ export const ResultsPage = () => {
 		meta: {
 			mutationId,
 		},
-		mutationFn: async ( { bundle }: AddBundleToCartVariables ) => {
-			await cart.onAddBundle?.( bundle );
+		mutationFn: async ( {
+			bundle,
+		}: AddBundleToCartVariables ): Promise< AddBundleToCartResult > => {
+			if ( ! cart.onAddBundle ) {
+				return { wasAdded: false };
+			}
+
+			await cart.onAddBundle( bundle );
+			return { wasAdded: true };
+		},
+		onSuccess: ( { wasAdded }, { bundle } ) => {
+			if ( wasAdded ) {
+				events.onBundleAddToCart( bundle );
+			}
 		},
 		onError: async ( error, { bundle, query: failedQuery } ) => {
 			if ( ! isBundleUnavailableError( error ) ) {
@@ -201,7 +217,6 @@ export const ResultsPage = () => {
 					<BundleCard
 						suggestion={ visibleBundleSuggestion }
 						onAddToCart={ ( bundle ) => {
-							events.onBundleAddToCart( bundle );
 							addBundleToCart( { bundle, query } );
 						} }
 						isAddedToCart={ visibleBundleSuggestion.domains.every( ( { domain } ) =>
