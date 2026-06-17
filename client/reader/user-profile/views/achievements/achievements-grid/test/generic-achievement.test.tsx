@@ -123,3 +123,51 @@ describe( 'GenericAchievement context link', () => {
 		expect( screen.queryByRole( 'link', { name: /View (post|comment)/ } ) ).not.toBeInTheDocument();
 	} );
 } );
+
+describe( 'GenericAchievement hire date', () => {
+	const automattician = ( overrides: Partial< Achievement > = {} ): Achievement =>
+		achievement( {
+			slug: 'automattician',
+			name: 'Automattician',
+			is_a8c_only: true,
+			date_unlocked: '2012-04-09T00:00:00+00:00',
+			...overrides,
+		} );
+
+	test( 'renders the hire date for the automattician achievement', () => {
+		const a = automattician( { date_hired: '2015-06-01T00:00:00+00:00' } );
+
+		renderCard( { achievement: a, achievements: [ a ], isOwnProfile: false } );
+
+		const hired = screen.getByText( /Started:/ );
+		expect( hired ).toBeVisible();
+		expect( hired ).toHaveTextContent( 'Started: Jun 1, 2015' );
+		// Inline within the existing caption, prefixed by the CSS middot.
+		expect( hired ).toHaveClass( 'achievement-card__caption-context' );
+		expect( hired.closest( '.achievement-card__caption' ) ).not.toBeNull();
+	} );
+
+	test( 'does not render a hire date on a non-automattician achievement', () => {
+		const a = achievement( { date_hired: '2015-06-01T00:00:00+00:00' } );
+
+		renderCard( { achievement: a, achievements: [ a ], isOwnProfile: false } );
+
+		expect( screen.queryByText( /Started:/ ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not render a hire date when date_hired is absent', () => {
+		const a = automattician();
+
+		renderCard( { achievement: a, achievements: [ a ], isOwnProfile: false } );
+
+		expect( screen.queryByText( /Started:/ ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not render a hire date when date_hired is not a valid date', () => {
+		const a = automattician( { date_hired: 'not-a-date' } );
+
+		renderCard( { achievement: a, achievements: [ a ], isOwnProfile: false } );
+
+		expect( screen.queryByText( /Started:/ ) ).not.toBeInTheDocument();
+	} );
+} );

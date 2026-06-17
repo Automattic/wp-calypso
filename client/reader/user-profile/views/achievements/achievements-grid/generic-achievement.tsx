@@ -2,6 +2,8 @@ import { siteByIdQuery } from '@automattic/api-queries';
 import { TimeSince } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
+import FormattedDate from 'calypso/components/formatted-date';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
 import { getOldestAchievement } from '../utils';
 import AchievementCard from './achievement-card';
@@ -17,6 +19,7 @@ export default function GenericAchievement( {
 	isOwnProfile: boolean;
 } ) {
 	const translate = useTranslate();
+	const moment = useLocalizedMoment();
 	const hasMultiple = achievements.filter( ( a ) => a.slug === achievement.slug ).length > 1;
 	const oldest = hasMultiple ? getOldestAchievement( achievement.slug, achievements ) : undefined;
 	const unlockDate = oldest?.date_unlocked ?? achievement.date_unlocked;
@@ -81,15 +84,34 @@ export default function GenericAchievement( {
 			  } );
 	};
 
+	// The `automattician` achievement pins its `date_unlocked` to the 2012
+	// launch, so old-timers all show the same legacy date. When the backend
+	// supplies the real hire date, surface it alongside the unlock date.
+	const hiredContext = () => {
+		if ( achievement.slug !== 'automattician' ) {
+			return undefined;
+		}
+		const dateHired = achievement.date_hired;
+		if ( ! dateHired || ! moment( dateHired ).isValid() ) {
+			return undefined;
+		}
+		return translate( 'Started: {{date/}}', {
+			components: { date: <FormattedDate date={ dateHired } format="ll" /> },
+			comment: '{{date/}} is the date an Automattician was hired.',
+		} );
+	};
+
 	const renderCaption = () => {
+		const hired = hiredContext();
 		const link = contextLink();
-		if ( ! link ) {
+		if ( ! hired && ! link ) {
 			return caption();
 		}
 		return (
 			<>
 				{ caption() }
-				<span className="achievement-card__caption-context">{ link }</span>
+				{ hired && <span className="achievement-card__caption-context">{ hired }</span> }
+				{ link && <span className="achievement-card__caption-context">{ link }</span> }
 			</>
 		);
 	};

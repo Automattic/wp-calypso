@@ -28,6 +28,13 @@ export interface Achievement {
 	date_unlocked: string;
 	/** Y-m-d date the achievement was added to the registry. Used for sort order. */
 	date_created: string;
+	/**
+	 * ISO 8601 hire date, exposed only on the `automattician` achievement and
+	 * only to Automattic requesters. Its `date_unlocked` is pinned to the
+	 * achievement's 2012 launch, so for old-timers this carries the real hire
+	 * date instead. Omitted when no date is on record.
+	 */
+	date_hired?: string;
 	image: string;
 	/**
 	 * Y-m-d (or ISO 8601) date string when the achievement was retired, or
