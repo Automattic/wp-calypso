@@ -27,7 +27,10 @@
     align-items: center;
     justify-content: center;
     width: 28px;
-    height: 28px;
+    /* Match one line of body text so the icon's center aligns with the first
+       line of the message (.message uses align-items: flex-start). The 28px
+       SVG overflows this box symmetrically, so its visual size is unchanged. */
+    height: calc(var(--text-sm) * var(--text-sm--line-height));
     margin-inline-end: var(--spacing-2);
 }
 
