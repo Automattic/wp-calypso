@@ -2,9 +2,18 @@
 @import '../../styles/mixins.scss';
 
 @mixin sidebar-base( $main-container-selector ) {
-	// Also set the background color for the sidebar chat to prevent transparency issues during transitions (e.g., site editor)
-	&,
+	// The docked chat panel keeps the dark background at all times to prevent
+	// transparency issues during dock/undock transitions (e.g., site editor).
 	.agents-manager-chat {
+		background-color: $gray-900 !important;
+	}
+
+	// The body is only the dark backdrop *behind* the chat, so only darken it
+	// while the sidebar is open (or animating closed). In the resting closed/FAB
+	// state the main container may not span the full viewport (e.g. the narrow
+	// domain-transfer step), and a dark body would bleed around it.
+	&.agents-manager-sidebar-container--sidebar-open,
+	&.agents-manager-sidebar-container--closing {
 		background-color: $gray-900 !important;
 	}
 
