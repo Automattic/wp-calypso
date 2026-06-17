@@ -881,7 +881,7 @@ export const securityLegacyContactPrintRoute = createRoute( {
 	} ),
 	getParentRoute: () => securityLegacyContactRoute,
 	path: '/print',
-	loader: () => queryClient.ensureQueryData( legacyContactsQuery() ),
+} ).lazy( () =>
 } ).lazy( () =>
 	import( '../../me/security-legacy-contact/print' ).then( ( d ) =>
 		createLazyRoute( 'security-legacy-contact-print' )( {
