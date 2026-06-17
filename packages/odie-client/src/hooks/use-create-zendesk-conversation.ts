@@ -35,6 +35,18 @@ export const useCreateZendeskConversation = () => {
 	const getErrorMessage = ( error: unknown ) =>
 		error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error';
 
+	// The Smooch (Zendesk Web Messenger) SDK is initialized asynchronously elsewhere.
+	// When an escalation fires before init completes, `Smooch.createConversation` is
+	// either missing ("createConversation is not a function") or throws because the
+	// messenger isn't initialized yet. Both are transient — retry until it's ready.
+	const isSmoochNotReadyError = ( error: unknown ) => {
+		const message = getErrorMessage( error );
+		return (
+			message.includes( 'createConversation is not a function' ) ||
+			message.includes( 'Must initialize the Web Messenger' )
+		);
+	};
+
 	const createConversation = async ( {
 		createdFrom = '',
 		isFromError = false,
@@ -90,6 +102,10 @@ export const useCreateZendeskConversation = () => {
 		const previousProvider = chat.provider;
 		const previousConversationId = chat.conversationId;
 
+		// Time spent waiting for the Smooch SDK to become ready before the
+		// conversation could be created (see the retry loop below).
+		let smoochWaitedMs = 0;
+
 		const handleErrorCreatingZendeskConversation = ( errorType: string, error?: unknown ) => {
 			trackEvent( errorType, {
 				error_message: getErrorMessage( error ),
@@ -97,6 +113,7 @@ export const useCreateZendeskConversation = () => {
 				escalation_on_second_attempt: escalationOnSecondAttempt,
 				active_interaction_id: activeInteractionId || null,
 				is_chat_loaded: isChatLoaded,
+				smooch_waited_ms: smoochWaitedMs,
 			} );
 
 			setChat( {
@@ -143,17 +160,32 @@ export const useCreateZendeskConversation = () => {
 		let conversation: ZendeskConversation | null = null;
 		let interaction = null;
 
-		try {
-			conversation = await Smooch.createConversation( {
-				metadata: {
-					createdAt: Date.now(),
-					...( activeInteractionId ? { supportInteractionId: activeInteractionId } : {} ),
-					...( chatId ? { odieChatId: chatId } : {} ),
-				},
-			} );
-		} catch ( error ) {
-			handleErrorCreatingZendeskConversation( 'error_creating_zendesk_conversation', error );
-			return;
+		const SMOOCH_READY_TIMEOUT_MS = 10000;
+		const SMOOCH_RETRY_INTERVAL_MS = 250;
+		const smoochWaitStart = Date.now();
+		const smoochReadyDeadline = smoochWaitStart + SMOOCH_READY_TIMEOUT_MS;
+
+		// eslint-disable-next-line no-constant-condition
+		while ( true ) {
+			try {
+				conversation = await Smooch.createConversation( {
+					metadata: {
+						createdAt: Date.now(),
+						...( activeInteractionId ? { supportInteractionId: activeInteractionId } : {} ),
+						...( chatId ? { odieChatId: chatId } : {} ),
+					},
+				} );
+				smoochWaitedMs = Date.now() - smoochWaitStart;
+				break;
+			} catch ( error ) {
+				if ( isSmoochNotReadyError( error ) && Date.now() < smoochReadyDeadline ) {
+					await new Promise( ( resolve ) => setTimeout( resolve, SMOOCH_RETRY_INTERVAL_MS ) );
+					continue;
+				}
+				smoochWaitedMs = Date.now() - smoochWaitStart;
+				handleErrorCreatingZendeskConversation( 'error_creating_zendesk_conversation', error );
+				return;
+			}
 		}
 
 		if ( ! conversation ) {
@@ -215,6 +247,7 @@ export const useCreateZendeskConversation = () => {
 				created_from: createdFrom,
 				messaging_site_id: selectedSiteId || null,
 				messaging_url: selectedSiteURL || null,
+				smooch_waited_ms: smoochWaitedMs,
 			} );
 
 			// If the interaction id has changed, update the URL.
