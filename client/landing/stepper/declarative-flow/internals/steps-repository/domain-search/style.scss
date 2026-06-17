@@ -38,6 +38,33 @@
 	}
 }
 
+// The shared sticky bar gives the center element 32px inline margins; match
+// the 16px block margins so the skip button has even spacing on all sides.
+.step-container-v2__sticky-bottom-bar-center-element:has( .domain-search__skip-step-button ) {
+	margin-inline: 1rem;
+}
+
+// The flow's theme accent is blueberry blue, so a native secondary button
+// renders a blue border and blue text. Override to a neutral border (matching
+// the "Already have a domain?" CTA) and a text-colored label/chevron per Figma.
+.domain-search__skip-step-button.components-button.is-secondary {
+	// `fullWidth` on the sticky bar only stretches the centerElement wrapper;
+	// the button needs its own width to fill it edge-to-edge.
+	width: 100%;
+	justify-content: center;
+	color: var( --color-text );
+	box-shadow: inset 0 0 0 1px var( --color-border-subtle );
+
+	&:hover:not( :disabled, [aria-disabled="true"] ) {
+		color: var( --color-text );
+		box-shadow: inset 0 0 0 1px var( --color-border );
+	}
+
+	svg {
+		fill: currentColor;
+	}
+}
+
 .step-container-v2--domain-search {
 	flex: 1;
 	display: flex;

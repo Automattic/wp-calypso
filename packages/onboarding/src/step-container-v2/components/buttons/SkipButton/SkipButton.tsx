@@ -4,27 +4,39 @@ import { decorateButtonWithTracksEventRecording } from '../../../helpers/decorat
 import { normalizeButtonProps } from '../../../helpers/normalizeButtonProps';
 import { ButtonProps } from '../../../types';
 import { LinkButton } from '../LinkButton/LinkButton';
+import { SecondaryButton } from '../SecondaryButton/SecondaryButton';
+
+type SkipButtonProps = ButtonProps & {
+	/**
+	 * The visual style of the button. Defaults to a text link, matching
+	 * {@link LinkButton}. Use `'secondary'` to render a {@link SecondaryButton}.
+	 * @default 'link'
+	 */
+	appearance?: 'link' | 'secondary';
+};
 
 /**
  * Do NOT use this button if you don't intend to skip the step.
  *
- * This button is visually identical to {@link LinkButton}.
- * The difference between them is that this one fires a Tracks event when clicked.
+ * Fires the `calypso_signup_skip_step` Tracks event when clicked — this is the
+ * difference from the plain {@link LinkButton}/{@link SecondaryButton}. The
+ * `appearance` prop selects the visual style without changing that behavior.
  */
-export const SkipButton = ( originalProps: ButtonProps ) => {
+export const SkipButton = ( { appearance = 'link', ...originalProps }: SkipButtonProps ) => {
 	const { __ } = useI18n();
 	const stepContext = useStepContainerV2Context();
 
-	const skipButtonProps = normalizeButtonProps( originalProps, {
-		children: __( 'Skip', __i18n_text_domain__ ),
-	} );
-
-	return (
-		<LinkButton
-			{ ...decorateButtonWithTracksEventRecording( skipButtonProps, {
-				tracksEventName: 'calypso_signup_skip_step',
-				stepContext,
-			} ) }
-		/>
+	const skipButtonProps = decorateButtonWithTracksEventRecording(
+		normalizeButtonProps( originalProps, {
+			children: __( 'Skip', __i18n_text_domain__ ),
+		} ),
+		{
+			tracksEventName: 'calypso_signup_skip_step',
+			stepContext,
+		}
 	);
+
+	const Button = appearance === 'secondary' ? SecondaryButton : LinkButton;
+
+	return <Button { ...skipButtonProps } />;
 };
