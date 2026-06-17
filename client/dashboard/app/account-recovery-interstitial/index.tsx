@@ -9,6 +9,7 @@ import { useRouter } from '@tanstack/react-router';
 import { Modal, Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { _n, sprintf } from '@wordpress/i18n';
 import { useId, useState } from 'react';
+import { useExperiment } from 'calypso/lib/explat';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { Text } from '../../components/text';
 import { useAnalytics } from '../analytics';
@@ -18,6 +19,13 @@ import type { InterstitialCta, InterstitialVariant } from './copy';
 import './style.scss';
 
 const DAY_IN_SECONDS = 86400;
+
+/**
+ * ExPlat A/B experiment gating the interstitial. Users in the `treatment` variation see the
+ * modal; everyone else (control / unassigned) does not. Update this to the registered
+ * experiment name when it changes.
+ */
+const EXPERIMENT_NAME = 'account_recovery_nudge_interstitial_experiment';
 
 /**
  * How secure the user already is. Single source of truth for the tiers; SNOOZE_DAYS and
@@ -174,12 +182,24 @@ export default function AccountRecoveryInterstitial() {
 	const isEligible =
 		isAccountRecoveryLoaded && isUserSettingsLoaded && isSnoozeLoaded && ! isSnoozed;
 
+	// Gate the interstitial behind an A/B experiment. Mark the user eligible only once they would
+	// otherwise qualify, so the exposure event fires for the right population and the control vs.
+	// treatment split isn't diluted by users who would never see the modal.
+	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment( EXPERIMENT_NAME, {
+		isEligible,
+	} );
+	const isInExperimentTreatment =
+		! isLoadingExperimentAssignment && experimentAssignment?.variationName === 'treatment';
+
 	const hasRecoveryMethod = hasRecoveryEmail || hasRecoveryPhone;
 	// Fine-grained setup state (5-way), recorded on Tracks as `recovery_status` alongside the
 	// coarse 3-tier `security_level`. Also selects the copy variant.
 	const variant = getInterstitialVariant( hasRecoveryMethod, hasTwoFactor, hasBackupCodes );
 
-	const shouldDisplay = ! isDismissed && ( isQaForced() || isEligible );
+	// QA overrides bypass the experiment entirely; real users only see the modal when eligible
+	// and assigned to the treatment variation.
+	const shouldDisplay =
+		! isDismissed && ( isQaForced() || ( isEligible && isInExperimentTreatment ) );
 
 	if ( ! shouldDisplay ) {
 		return null;
