@@ -293,6 +293,9 @@ export const usePlanTypesWithIntent = ( {
 		case 'plans-migration':
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
+		case 'plans-themes':
+			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
+			break;
 		default:
 			planTypes = availablePlanTypes;
 	}
