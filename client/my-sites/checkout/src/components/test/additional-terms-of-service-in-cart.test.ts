@@ -33,6 +33,6 @@ describe( 'formatDate', () => {
 	} );
 
 	it( 'respects the locale when formatting', () => {
-		expect( formatDate( '2026-06-17', 'fr' ) ).toBe( '17 juin 2027' );
+		expect( formatDate( '2026-06-17', 'fr' ) ).toBe( '17 juin 2026' );
 	} );
 } );
