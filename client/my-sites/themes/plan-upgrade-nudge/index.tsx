@@ -10,7 +10,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Banner from 'calypso/components/banner';
-import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
+import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { getSitePlanSlug, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import type { IAppState } from 'calypso/state/types';
 
@@ -26,7 +26,7 @@ const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 	const isLoading = useSelector( ( state: IAppState ) => isRequestingSitePlans( state, siteId ) );
 
 	useEffect( () => {
-		dispatch( fetchSitePlans( siteId ) );
+		dispatch( refreshSitePlans( siteId ) );
 	}, [ dispatch, siteId ] );
 
 	if ( ! siteSlug || ! planSlug || isLoading ) {
