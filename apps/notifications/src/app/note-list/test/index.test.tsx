@@ -47,25 +47,21 @@ describe( 'NoteList loading state', () => {
 		Element.prototype.scrollIntoView = noop;
 	} );
 
-	it( 'shows the loader, not the empty message, until the Unread fetch settles', () => {
+	it( 'shows the loader, not the empty message, while a filtered fetch is in flight', () => {
 		const store = initStore();
+		// Settle once with no notes so DataViews has mounted and shows its empty state.
+		store.dispatch( actions.ui.loadedNotes() );
 		const { container } = renderUnread( store );
+		expect( screen.getByText( "You're all caught up!" ) ).toBeVisible();
 
-		// Fresh mount: the fetch hasn't run yet, so the empty message must not flash.
-		expect( screen.queryByText( "You're all caught up!" ) ).not.toBeInTheDocument();
-		expect( container.querySelector( '.components-spinner' ) ).toBeTruthy();
-
-		// The fetch runs and is still in flight: loading, data empty.
+		// A filtered fetch begins: loading is true while the data is still empty.
 		act( () => {
 			store.dispatch( actions.ui.loadNotes() );
 		} );
-		expect( screen.queryByText( "You're all caught up!" ) ).not.toBeInTheDocument();
 
-		// It settles with no unread notes: now the real message shows.
-		act( () => {
-			store.dispatch( actions.ui.loadedNotes() );
-		} );
-		expect( screen.getByText( "You're all caught up!" ) ).toBeVisible();
+		// The "all caught up" message must not show until the fetch settles.
+		expect( screen.queryByText( "You're all caught up!" ) ).not.toBeInTheDocument();
+		expect( container.querySelector( '.components-spinner' ) ).toBeTruthy();
 	} );
 
 	// Regression: a refetch that flips `isLoading` on while the Unread list is

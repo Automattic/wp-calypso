@@ -79,13 +79,6 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 		hasRenderedDataViews.current = true;
 	}
 
-	// A fresh Unread mount fetches after first paint; until that fetch starts, an
-	// empty view isn't "all caught up" yet. Latch once loading begins.
-	const unreadFetchStarted = useRef( false );
-	if ( filterName === 'unread' && isLoading ) {
-		unreadFetchStarted.current = true;
-	}
-
 	// Drive the client's server-side filter from the active tab. Only "unread"
 	// maps to a filter today; other tabs stay client-filtered.
 	useEffect( () => {
@@ -165,9 +158,8 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	const showInitialLoader = ! hasRenderedDataViews.current;
 
 	// Spinner instead of an empty message while the view may still be filling —
-	// more cache pages to search, or the Unread fetch not started/settled yet.
-	const showEmptyLoader =
-		hasMoreNotes || ( filterName === 'unread' && ( isLoading || ! unreadFetchStarted.current ) );
+	// more cache pages to search, or the Unread fetch in flight.
+	const showEmptyLoader = hasMoreNotes || ( filterName === 'unread' && isLoading );
 
 	return (
 		<div ref={ noteListRef } className="wpnc__note-list">
