@@ -14,7 +14,7 @@ const SELECTED_ITEMS_SESSION_STORAGE_KEY_REFERRAL = 'referrals-shopping-card-sel
 
 function serializeCartItem( item: ShoppingCartItem ) {
 	const siteUrls = encodeURIComponent( item.siteUrls?.join( ',' ) ?? '' );
-	const siteDomain = encodeURIComponent( item.site_domain ?? '' );
+	const siteDomain = encodeURIComponent( getPressableMemoryTarget( item ) );
 
 	if ( item.licenseId ) {
 		const cachedItem = `${ item.slug }:${ item.quantity }:${ item.licenseId }:${ siteUrls }`;
@@ -98,13 +98,14 @@ export default function useShoppingCart() {
 			const loadedItems: ShoppingCartItem[] = [];
 
 			selectedItemsCache.forEach( ( { slug, quantity, licenseId, siteUrls, site_domain } ) => {
+				const cachedPressableMemoryTarget = getPressableMemoryTarget( { site_domain } );
 				const match =
 					quantity === 1 || slug.startsWith( 'wpcom-hosting' )
 						? data.find(
 								( product ) =>
 									product.slug === slug &&
 									( ! isPressablePhpMemoryAddon( product ) ||
-										getPressableMemoryTarget( product ) === ( site_domain ?? '' ) )
+										getPressableMemoryTarget( product ) === cachedPressableMemoryTarget )
 						  )
 						: data.find(
 								( product ) =>
