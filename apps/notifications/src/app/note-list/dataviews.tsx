@@ -106,6 +106,14 @@ export function getFields(): Field< Note >[] {
 			),
 		},
 		{
+			id: 'description',
+			label: __( 'Description' ),
+			getValue: ( { item } ) =>
+				html( item.subject[ 0 ], {
+					links: false,
+				} ),
+		},
+		{
 			id: 'info',
 			label: __( 'Info' ),
 			render: ( { item } ) => {

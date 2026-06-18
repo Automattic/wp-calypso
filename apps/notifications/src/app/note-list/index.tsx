@@ -96,6 +96,7 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	const [ initialView, setView ] = useState< View >( {
 		type: 'list',
 		titleField: 'title',
+		descriptionField: 'description',
 		mediaField: 'icon',
 		fields: [ 'info' ],
 		page: 1,
