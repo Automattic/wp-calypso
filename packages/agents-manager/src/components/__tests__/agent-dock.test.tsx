@@ -219,7 +219,7 @@ describe( 'AgentDock', () => {
 		expect( screen.getByTestId( 'orchestrator-chat' ).dataset.chatOpen ).toBe( 'true' );
 	} );
 
-	it( 'resumes the active session when expanding from the minimized state', () => {
+	it( 'keeps the chat history view when expanding from the minimized state', () => {
 		useWpAdminAgent();
 		mockHasAdminBar = true;
 		mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
@@ -227,7 +227,9 @@ describe( 'AgentDock', () => {
 		renderAgentDock( '/history' );
 		fireEvent.click( screen.getByText( 'Expand history' ) );
 
-		expect( mockResumeActiveChat ).toHaveBeenCalled();
+		// Expanding restores the last view instead of jumping back to the chat.
+		expect( mockResumeActiveChat ).not.toHaveBeenCalled();
+		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/history' );
 	} );
 
 	it( 'keeps the current route when opening the docked sidebar', () => {
@@ -242,7 +244,7 @@ describe( 'AgentDock', () => {
 		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/history' );
 	} );
 
-	it( 'resumes the active session when expanding from the support guides view', () => {
+	it( 'keeps the support guides view when expanding from the minimized state', () => {
 		useWpAdminAgent();
 		mockShouldUseUnifiedAgent = true;
 		mockHasAdminBar = true;
@@ -251,7 +253,8 @@ describe( 'AgentDock', () => {
 		renderAgentDock( '/support-guides' );
 		fireEvent.click( screen.getByText( 'Expand guides' ) );
 
-		expect( mockResumeActiveChat ).toHaveBeenCalled();
+		expect( mockResumeActiveChat ).not.toHaveBeenCalled();
+		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/support-guides' );
 	} );
 
 	it( 'hides the support guides list without the WP admin bar trigger', () => {

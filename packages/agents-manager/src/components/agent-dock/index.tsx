@@ -76,7 +76,7 @@ export default function AgentDock( {
 	useCheckpoint,
 	capabilities,
 }: Props ) {
-	const { siteKey, sectionName, agentConfig, resumeActiveChat } = useAgentsManagerContext();
+	const { siteKey, agentConfig } = useAgentsManagerContext();
 
 	const [ isCompactMode, setIsCompactMode ] = useState(
 		window.__agentsManagerActions?.isCompactMode ?? false
@@ -91,10 +91,10 @@ export default function AgentDock( {
 	const { setIsOpen, setIsDocked, setIsMinimized, setIsSplitScreen } =
 		useDispatch( AGENTS_MANAGER_STORE );
 	const {
-		isOpen: isPersistedOpen = false,
-		isDocked: isPersistedDocked = false,
-		isMinimized = false,
-		isSplitScreen = false,
+		isOpen: isPersistedOpen,
+		isDocked: isPersistedDocked,
+		isMinimized,
+		isSplitScreen,
 	} = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
@@ -128,10 +128,11 @@ export default function AgentDock( {
 			isSplitScreen,
 		} );
 
+	const handleClose = isDocked ? closeSidebar : () => setOpenState( false );
+
 	// WP admin bar integration. Returns whether the AI chat entry button is present.
 	const hasAiChatEntry = useAdminBarIntegration( {
-		isOpen: isPersistedOpen,
-		sectionName,
+		closeChat: handleClose,
 		// Open/un-minimize the chat panel, leaving the route unchanged.
 		maybeOpenChat: () => {
 			if ( isMinimized ) {
@@ -189,8 +190,6 @@ export default function AgentDock( {
 		[]
 	);
 
-	const handleClose = isDocked ? closeSidebar : () => setOpenState( false );
-
 	const handleExpand = () => {
 		if ( isMinimized ) {
 			setIsMinimized( false );
@@ -199,12 +198,6 @@ export default function AgentDock( {
 		// from the minimized bar).
 		if ( ! isPersistedOpen ) {
 			setOpenState( true );
-		}
-
-		// Return to the active chat, resuming its session — unless already on the
-		// `/chat` or `/zendesk` view.
-		if ( pathname !== '/chat' && pathname !== '/zendesk' ) {
-			resumeActiveChat();
 		}
 	};
 
