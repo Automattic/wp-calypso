@@ -93,6 +93,10 @@ export interface AgentUIProps {
 	) => void;
 	messageRenderer?: ComponentType< { children: string } >;
 	messagesPosition?: 'top' | 'bottom';
+	// Render an avatar next to agent text responses. Defaults to false; when
+	// false no icon is shown, preserving the prior behaviour. Individual
+	// messages still control eligibility via their `showIcon` flag.
+	showAgentIcon?: boolean;
 	expandOnClick?: boolean;
 	expandOnHover?: boolean;
 
@@ -102,6 +106,7 @@ export interface AgentUIProps {
 
 	// Drag and drop props
 	draggableStates?: ChatState[]; // Specify which chat states allow dragging (defaults to ['expanded'] for backward compatibility)
+	freeDrag?: boolean; // Keep the panel where dropped instead of snapping to a corner (position is ephemeral, resets on reload/resize)
 
 	// i18n
 	locale?: string; // Language locale (e.g., 'es', 'fr', 'de-DE'). Defaults to 'en'

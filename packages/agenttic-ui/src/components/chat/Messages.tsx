@@ -19,6 +19,7 @@ interface MessagesProps {
 	thinkingMessage?: string;
 	className?: string;
 	messagesPosition?: 'top' | 'bottom';
+	showAgentIcon?: boolean;
 }
 
 export function Messages( {
@@ -29,6 +30,7 @@ export function Messages( {
 	messageRenderer,
 	thinkingMessage,
 	messagesPosition = 'top',
+	showAgentIcon,
 }: MessagesProps ) {
 	const scrollAreaRef = useRef< HTMLDivElement >( null );
 
@@ -111,6 +113,7 @@ export function Messages( {
 							key={ message.reactKey || message.id }
 							message={ message }
 							messageRenderer={ messageRenderer }
+							showAgentIcon={ showAgentIcon }
 						/>
 					) ) }
 					{ isProcessing && ! isAgentTextStreaming && (

@@ -118,18 +118,33 @@ export function serverMessageToMessage(
 	serverMessage: ServerMessage
 ): Message {
 	const parts: Part[] = [];
+	const context = serverMessage.context;
+
+	// A message the server flagged as context-only is sent to the model but
+	// must not be shown in the UI (e.g. a tool turn-closing ack that would
+	// otherwise duplicate a picker's caption on reload). Map it to the existing
+	// `contentType: 'context'` text metadata so `getVisibleMessages` strips it —
+	// no bespoke client-side filter needed.
+	const isContextOnly =
+		!! context &&
+		! Array.isArray( context ) &&
+		!! context.flags &&
+		typeof context.flags === 'object' &&
+		( context.flags as Record< string, unknown > ).context_only === true;
 
 	// Add text content if available
 	if ( serverMessage.content ) {
 		const textPart: TextPart = {
 			type: 'text',
 			text: serverMessage.content,
+			...( isContextOnly && {
+				metadata: { contentType: 'context' },
+			} ),
 		};
 		parts.push( textPart );
 	}
 
 	// Add file parts from context (images/attachments)
-	const context = serverMessage.context;
 	if (
 		context &&
 		! Array.isArray( context ) &&
