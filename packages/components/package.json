@@ -77,7 +77,7 @@
 		"lodash": "^4.17.21",
 		"prop-types": "^15.8.1",
 		"react-modal": "^3.16.3",
-		"react-router-dom": "^6.23.1",
+		"react-router-dom": "6.30.4",
 		"utility-types": "^3.10.0"
 	},
 	"peerDependencies": {
