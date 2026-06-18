@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import { useRegisterCustomActions } from '../../hooks/custom-actions';
+import { useBroadcastConversationActivity } from '../../hooks/use-broadcast-conversation-activity';
 import useCheckpointAction from '../../hooks/use-checkpoint-action';
 import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
@@ -88,13 +89,8 @@ interface Props {
 	useImageUpload?: ImageUploadHook;
 	/** Hook for saving and restoring editor state so that AI actions can be undone. */
 	useCheckpoint?: UseCheckpointHook;
-	/**
-	 * Called when the conversation advances — on new messages and when a turn
-	 * finishes processing. Receives whether the chat currently has any
-	 * messages, so it covers both the dock's empty state and letting a loaded
-	 * provider re-sync cards it renders in the transcript.
-	 */
-	onMessagesChange?: ( hasMessages: boolean ) => void;
+	/** Called when the has-messages state changes. Drives the dock's empty state. */
+	onHasMessagesChange: ( hasMessages: boolean ) => void;
 }
 
 export default function OrchestratorChat( {
@@ -114,7 +110,7 @@ export default function OrchestratorChat( {
 	siteBuildUtils,
 	useImageUpload,
 	useCheckpoint,
-	onMessagesChange,
+	onHasMessagesChange,
 }: Props ) {
 	const { agentConfig, getActiveSessionId, siteKey } = useAgentsManagerContext();
 
@@ -495,15 +491,15 @@ export default function OrchestratorChat( {
 		thinkingMessage,
 	] );
 
-	// Single notification for conversation activity: fires when the chat gains
-	// or loses messages and when a turn finishes processing. Drives the dock's
-	// empty state and lets a loaded provider re-sync cards it renders in the
-	// transcript (e.g. Woo AI's batch-operation card reflecting an
-	// execute/revert run from chat) without a page reload.
-	const hasMessages = displayedMessages.length > 0;
+	// Notify parent when has-messages state changes (drives the dock's empty state).
+	const messageCount = displayedMessages.length;
+	const hasMessages = messageCount > 0;
 	useEffect( () => {
-		onMessagesChange?.( hasMessages );
-	}, [ hasMessages, isProcessing, onMessagesChange ] );
+		onHasMessagesChange( hasMessages );
+	}, [ hasMessages, onHasMessagesChange ] );
+
+	// Broadcast conversation activity so other bundles can re-sync transcript cards.
+	useBroadcastConversationActivity( messageCount );
 
 	const latestDisplayedMessage = displayedMessages[ displayedMessages.length - 1 ];
 	const shouldSuppressTransientThinking = Boolean(

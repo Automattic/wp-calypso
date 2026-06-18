@@ -162,12 +162,6 @@ export interface LoadedProviders {
 	siteBuildUtils?: SiteBuildUtils;
 	useImageUpload?: ImageUploadHook;
 	useCheckpoint?: UseCheckpointHook;
-	/**
-	 * Called whenever the conversation advances (a message is sent/received or
-	 * a turn finishes). Lets a provider re-sync state for cards it renders in
-	 * the transcript without Agents Manager knowing about those cards.
-	 */
-	onMessagesChange?: () => void;
 	capabilities?: ProviderCapabilities;
 }
 
@@ -256,7 +250,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	const allAbilitiesSetups: AbilitiesSetupHook[] = [];
 	const allUseSuggestions: UseSuggestionsHook[] = [];
 	const allGetEmptyViewSuggestions: ( () => Suggestion[] )[] = [];
-	const allOnMessagesChange: ( () => void )[] = [];
 
 	// Load all providers in parallel to avoid serializing network/module fetches.
 	// Results are processed in registration order to preserve first-write-wins semantics.
@@ -301,9 +294,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		}
 		if ( module.getEmptyViewSuggestions ) {
 			allGetEmptyViewSuggestions.push( module.getEmptyViewSuggestions );
-		}
-		if ( module.onMessagesChange ) {
-			allOnMessagesChange.push( module.onMessagesChange );
 		}
 
 		// First-write-wins for singleton exports.
@@ -417,18 +407,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		} ) as AbilitiesSetupHook;
 	}
 
-	// Merge onMessagesChange: notify ALL providers that opted in.
-	let mergedOnMessagesChange: ( () => void ) | undefined;
-	if ( allOnMessagesChange.length === 1 ) {
-		mergedOnMessagesChange = allOnMessagesChange[ 0 ];
-	} else if ( allOnMessagesChange.length > 1 ) {
-		mergedOnMessagesChange = () => {
-			for ( const fn of allOnMessagesChange ) {
-				fn();
-			}
-		};
-	}
-
 	// Merge useSuggestions: combine from all providers, dedupe by id.
 	const mergedUseSuggestions = mergeUseSuggestionsHooks( allUseSuggestions );
 
@@ -464,7 +442,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		siteBuildUtils: mergedSiteBuildUtils,
 		useImageUpload: mergedImageUpload,
 		useCheckpoint: mergedUseCheckpoint,
-		onMessagesChange: mergedOnMessagesChange,
 		// Match peer fields: undefined when no provider opted in.
 		capabilities: Object.keys( mergedCapabilities ).length ? mergedCapabilities : undefined,
 	};

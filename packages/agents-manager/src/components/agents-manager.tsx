@@ -197,7 +197,6 @@ function AgentSetup( {
 			siteBuildUtils={ loadedProviders.siteBuildUtils }
 			useImageUpload={ loadedProviders.useImageUpload ?? fallbackUseImageUpload }
 			useCheckpoint={ loadedProviders.useCheckpoint }
-			onMessagesChange={ loadedProviders.onMessagesChange }
 			capabilities={ loadedProviders.capabilities }
 		/>
 	);
