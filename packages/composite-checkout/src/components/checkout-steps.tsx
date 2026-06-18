@@ -16,7 +16,7 @@ import {
 import { getDefaultPaymentMethodStep } from '../components/default-steps';
 import { useFormStatus } from '../lib/form-status';
 import joinClasses from '../lib/join-classes';
-import { useAvailablePaymentMethodIds, usePaymentMethod } from '../lib/payment-methods';
+import { usePaymentMethod } from '../lib/payment-methods';
 import { SubscriptionManager } from '../lib/subscription-manager';
 import { CheckoutStepGroupActions, FormStatus } from '../types';
 import Button from './button';
@@ -658,23 +658,6 @@ export const SubmitButtonWrapper = styled.div`
 	}
 `;
 
-const ChangePaymentMethodButton = styled.button`
-	display: block;
-	margin: 12px auto 0;
-	padding: 0;
-	border: none;
-	background: none;
-	color: ${ ( props ) => props.theme.colors.highlight };
-	font-size: 14px;
-	text-align: center;
-	text-decoration: underline;
-	cursor: pointer;
-
-	&:hover {
-		text-decoration: none;
-	}
-`;
-
 function CheckoutStepArea( {
 	children,
 	className,
@@ -702,8 +685,6 @@ export function CheckoutFormSubmit( {
 	submitButton,
 	onPageLoadError,
 	continueToNextIncompleteStep,
-	changePaymentMethodStepId,
-	onChangePaymentMethodClick,
 }: {
 	validateForm?: () => Promise< boolean >;
 	submitButtonHeader?: ReactNode;
@@ -712,8 +693,6 @@ export function CheckoutFormSubmit( {
 	submitButton?: ReactNode;
 	onPageLoadError?: CheckoutPageErrorCallback;
 	continueToNextIncompleteStep?: boolean;
-	changePaymentMethodStepId?: string;
-	onChangePaymentMethodClick?: () => void;
 } ) {
 	const { __ } = useI18n();
 	const { state, actions } = useContext( CheckoutStepGroupContext );
@@ -827,23 +806,6 @@ export function CheckoutFormSubmit( {
 		isThereAnotherNumberedStep &&
 		!! nextIncompleteStepId;
 
-	const availablePaymentMethodIds = useAvailablePaymentMethodIds();
-	const showChangePaymentMethodLink =
-		!! changePaymentMethodStepId &&
-		! showContinueToNextIncompleteStep &&
-		availablePaymentMethodIds.length > 1;
-
-	const goToChangePaymentMethod = async () => {
-		if ( ! changePaymentMethodStepId ) {
-			return;
-		}
-		onChangePaymentMethodClick?.();
-		await makeStepActive( changePaymentMethodStepId );
-		document
-			.getElementById( changePaymentMethodStepId )
-			?.scrollIntoView?.( { behavior: 'smooth', block: 'start' } );
-	};
-
 	const goToNextIncompleteStep = async () => {
 		// Prefer the next incomplete step; otherwise just advance one step so the
 		// user always moves forward (covers the rare all-complete-but-not-last case).
@@ -890,15 +852,6 @@ export function CheckoutFormSubmit( {
 						onLoadError={ onSubmitButtonLoadError }
 					/>
 				)
-			) }
-			{ showChangePaymentMethodLink && (
-				<ChangePaymentMethodButton
-					type="button"
-					className="checkout-steps__change-payment-method-button"
-					onClick={ goToChangePaymentMethod }
-				>
-					{ __( 'Use a different payment method' ) }
-				</ChangePaymentMethodButton>
 			) }
 			<div className="checkout-steps__submit-footer-wrapper">{ submitButtonFooter || null }</div>
 		</SubmitButtonWrapper>
@@ -1121,6 +1074,38 @@ export function useCompleteAllSteps(): CompleteAllSteps {
 export function useMakeStepActive(): MakeStepActive {
 	const store = useContext( CheckoutStepGroupContext );
 	return store.actions.makeStepActive;
+}
+
+/**
+ * Returns the id of the step the "Continue" submit button would advance to (the
+ * first incomplete numbered step at or after the active step, falling back to
+ * the lowest incomplete step overall), or undefined when there is no such step
+ * to continue to (all steps complete, or the active step is the last one).
+ *
+ * Consumers can use this to tell whether the submit area is showing "Continue"
+ * versus the final submit button — e.g. to gate UI rendered via
+ * `submitButtonFooter` so it only appears on the final step.
+ */
+export function useNextIncompleteStepId(): string | undefined {
+	const { state } = useContext( CheckoutStepGroupContext );
+	const { activeStepNumber, totalSteps, stepCompleteStatus, stepIdMap } = state;
+	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
+	if ( ! isThereAnotherNumberedStep ) {
+		return undefined;
+	}
+	const getStepIdFromNumber = ( stepNumber: number ): string | undefined =>
+		Object.entries( stepIdMap ).find( ( [ , num ] ) => num === stepNumber )?.[ 0 ];
+	for ( let step = Math.max( activeStepNumber, 1 ); step <= totalSteps; step++ ) {
+		if ( ! stepCompleteStatus[ step ] ) {
+			return getStepIdFromNumber( step );
+		}
+	}
+	for ( let step = 1; step <= totalSteps; step++ ) {
+		if ( ! stepCompleteStatus[ step ] ) {
+			return getStepIdFromNumber( step );
+		}
+	}
+	return undefined;
 }
 
 const StepTitle = styled.span< StepTitleProps & HTMLAttributes< HTMLSpanElement > >`

@@ -22,6 +22,7 @@ import {
 	useTogglePaymentMethod,
 	makeErrorResponse,
 	useMakeStepActive,
+	useNextIncompleteStepId,
 } from '../src/public-api';
 import { PaymentProcessorFunction, PaymentProcessorResponseType } from '../src/types';
 import { DefaultCheckoutSteps } from './utils/default-checkout-steps';
@@ -991,19 +992,23 @@ describe( 'Checkout', () => {
 		} );
 	} );
 
-	describe( 'with changePaymentMethodStepId', function () {
+	describe( 'useNextIncompleteStepId', function () {
 		const mockMethod = createMockMethod();
-		const mockMethod2 = createMockMethod( {
-			submitButton: <MockSubmitButton content="Pay Second Method" />,
-			activeContent: <div />,
-		} );
 		const steps = createMockStepObjects();
 
 		// steps[0] = 'custom-summary-step'   (no step number)
 		// steps[1] = 'custom-contact-step'   (numbered, isCompleteCallback () => true)
 		// steps[3] = 'custom-incomplete-step' (numbered, isCompleteCallback () => false)
 
-		function ChangePaymentCheckout( props ) {
+		// Renders the hook's value (or the string 'none' when undefined) so tests can
+		// assert on it. This is the generic primitive consumers use to tell whether the
+		// submit area is showing "Continue" (a step remains) versus the final Pay button.
+		function NextIncompleteStepIdProbe() {
+			const nextIncompleteStepId = useNextIncompleteStepId();
+			return <div data-testid="next-incomplete-step-id">{ nextIncompleteStepId ?? 'none' }</div>;
+		}
+
+		function ProbeCheckout( props ) {
 			const [ paymentData, setPaymentData ] = useState( {} );
 			const { stepObjectsWithStepNumber, stepObjectsWithoutStepNumber } =
 				createStepsFromStepObjects( props.steps || steps );
@@ -1011,106 +1016,30 @@ describe( 'Checkout', () => {
 			return (
 				<myContext.Provider value={ [ paymentData, setPaymentData ] }>
 					<CheckoutProvider
-						paymentMethods={ props.paymentMethods || [ mockMethod, mockMethod2 ] }
+						paymentMethods={ [ mockMethod ] }
 						paymentProcessors={ getMockPaymentProcessors() }
 						selectFirstAvailablePaymentMethod
 					>
 						<CheckoutStepGroup>
 							{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
 							{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }
-							<CheckoutFormSubmit
-								continueToNextIncompleteStep
-								changePaymentMethodStepId={ props.changePaymentMethodStepId }
-								onChangePaymentMethodClick={ props.onChangePaymentMethodClick }
-							/>
+							<NextIncompleteStepIdProbe />
 						</CheckoutStepGroup>
 					</CheckoutProvider>
 				</myContext.Provider>
 			);
 		}
 
-		const getSubmitArea = ( container ) =>
-			container.querySelector( '.checkout-steps__submit-button-wrapper' );
-
-		it( 'shows the "Use a different payment method" link when Pay button is shown and there is more than one payment method', () => {
-			const { container } = render(
-				<ChangePaymentCheckout
-					steps={ [ steps[ 0 ], steps[ 1 ] ] }
-					changePaymentMethodStepId="custom-contact-step"
-				/>
-			);
-			const submitArea = getSubmitArea( container );
-			expect(
-				queryByTextInNode( submitArea, 'Use a different payment method' )
-			).toBeInTheDocument();
+		it( 'returns undefined when the active step is the last numbered step (Pay button state)', () => {
+			render( <ProbeCheckout steps={ [ steps[ 0 ], steps[ 1 ] ] } /> );
+			expect( screen.getByTestId( 'next-incomplete-step-id' ) ).toHaveTextContent( 'none' );
 		} );
 
-		it( 'clicking the link scrolls to the target step', async () => {
-			const scrollIntoView = jest.fn();
-			window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
-			const { container } = render(
-				<ChangePaymentCheckout
-					steps={ [ steps[ 0 ], steps[ 1 ] ] }
-					changePaymentMethodStepId="custom-contact-step"
-				/>
-			);
-			const submitArea = getSubmitArea( container );
-			const user = userEvent.setup();
-			await user.click( getByTextInNode( submitArea, 'Use a different payment method' ) );
-
-			await waitFor( () => {
-				expect( scrollIntoView ).toHaveBeenCalledWith( { behavior: 'smooth', block: 'start' } );
-			} );
-			expect( ( scrollIntoView.mock.instances[ 0 ] as HTMLElement ).id ).toBe(
+		it( 'returns the next incomplete step id when there is a later numbered step (Continue state)', () => {
+			render( <ProbeCheckout steps={ [ steps[ 0 ], steps[ 1 ], steps[ 3 ] ] } /> );
+			expect( screen.getByTestId( 'next-incomplete-step-id' ) ).toHaveTextContent(
 				'custom-contact-step'
 			);
-		} );
-
-		it( 'calls onChangePaymentMethodClick when the link is clicked', async () => {
-			window.HTMLElement.prototype.scrollIntoView = jest.fn();
-			const onChangePaymentMethodClick = jest.fn();
-			const { container } = render(
-				<ChangePaymentCheckout
-					steps={ [ steps[ 0 ], steps[ 1 ] ] }
-					changePaymentMethodStepId="custom-contact-step"
-					onChangePaymentMethodClick={ onChangePaymentMethodClick }
-				/>
-			);
-			const submitArea = getSubmitArea( container );
-			const user = userEvent.setup();
-			await user.click( getByTextInNode( submitArea, 'Use a different payment method' ) );
-
-			await waitFor( () => {
-				expect( onChangePaymentMethodClick ).toHaveBeenCalledTimes( 1 );
-			} );
-		} );
-
-		it( 'hides the link when there is only one available payment method', () => {
-			const { container } = render(
-				<ChangePaymentCheckout
-					steps={ [ steps[ 0 ], steps[ 1 ] ] }
-					changePaymentMethodStepId="custom-contact-step"
-					paymentMethods={ [ mockMethod ] }
-				/>
-			);
-			const submitArea = getSubmitArea( container );
-			expect(
-				queryByTextInNode( submitArea, 'Use a different payment method' )
-			).not.toBeInTheDocument();
-		} );
-
-		it( 'hides the link while a step is incomplete (Continue button is showing)', () => {
-			const { container } = render(
-				<ChangePaymentCheckout
-					steps={ [ steps[ 0 ], steps[ 1 ], steps[ 3 ] ] }
-					changePaymentMethodStepId="custom-contact-step"
-				/>
-			);
-			const submitArea = getSubmitArea( container );
-			expect( getByTextInNode( submitArea, 'Continue' ) ).toBeInTheDocument();
-			expect(
-				queryByTextInNode( submitArea, 'Use a different payment method' )
-			).not.toBeInTheDocument();
 		} );
 	} );
 
