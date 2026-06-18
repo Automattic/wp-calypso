@@ -45,8 +45,8 @@ const VARIATION_TO_VARIANT: Record< string, 1 | 2 > = {
 
 /**
  * Props to spread onto `UniversalNavbarHeader` to opt into the 2026 Global Nav.
- * Returns `{}` when the nav stays on the old design, so `{ ...useNav2026Props() }`
- * is a no-op then.
+ * Returns a temporary loading class while a logged-in assignment is pending,
+ * otherwise returns `{}` when the nav stays on the old design.
  *
  * Resolution order:
  * 1. Minimal universal headers are not eligible for Nav 2026.
@@ -80,7 +80,6 @@ export function useNav2026Props( options: Nav2026Options = {} ): Nav2026Props {
 		variant = VARIATION_TO_VARIANT[ experimentAssignment.variationName ];
 	}
 
-	// TODO: Remove this loading hide once the Nav 2026 experiment is retired.
 	if ( isLoggedIn && isLoadingExperiment && ! forcedOn ) {
 		return { className: 'is-nav-2026-assignment-loading' };
 	}

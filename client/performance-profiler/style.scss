@@ -62,15 +62,20 @@
 		}
 	}
 
-	// The 2026 bar floats over the page: drop the legacy clearance so the dark hero
-	// sits behind it, and pad the hero by the bar's height so the heading clears it.
+	// The 2026 bar floats over the page: drop the legacy clearance and let the hero
+	// clear the fixed nav with a smaller, consistent top gap.
 	&:has( .x-nav--2026-redesign ) {
-		.is-logged-in .lpc-header-nav-wrapper {
+		.layout__header-section {
+			min-height: 0;
+		}
+
+		.lpc-header-nav-wrapper {
 			padding-top: 0;
+			z-index: auto;
 		}
 
 		.profiler-header {
-			padding-top: calc(40px + var(--nav-2026-height));
+			padding-top: calc(24px + var(--nav-2026-sticky-offset));
 		}
 	}
 }
