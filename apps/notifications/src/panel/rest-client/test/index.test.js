@@ -184,6 +184,16 @@ describe( 'RestClient', () => {
 			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 90 ), last_seen_time: 0 } );
 			expect( client.hasMoreNotes() ).toBe( true );
 		} );
+
+		// hasMoreNotes must measure this view's own window, not the shared store a
+		// filtered fetch can inflate to the cap.
+		it( 'keeps paging when a filtered fetch fills the shared store to the cap', () => {
+			seedFirstWindow(); // All window: ids 100..91 (10 notes)
+			// A filtered (Unread) visit dumps older notes into the store, filling it
+			// to max_limit, while the All view's own window stays at 10.
+			store.dispatch( actions.notes.addNotes( fullPage( 90, 90 ) ) ); // store now 100
+			expect( client.hasMoreNotes() ).toBe( true );
+		} );
 	} );
 
 	describe( 'server-side (unread) filtering', () => {
@@ -316,6 +326,28 @@ describe( 'RestClient', () => {
 			expect( client.filteredHasMore ).toBe( false );
 
 			// No more pages: load-more is a no-op.
+			getCalls.length = 0;
+			client.loadMore();
+			expect( getCalls ).toHaveLength( 0 );
+		} );
+
+		// Reaching the cap with a full page must clear `filteredHasMore`, or the next
+		// load-more fires a zero-count request (number = max_limit - 100).
+		it( 'stops filtered paging at the cap without a zero-count request', () => {
+			client.setFilter( { unread: 1 } );
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 209 ), last_seen_time: 0 } );
+
+			// Page in full older pages until the list reaches max_limit (100).
+			for ( let oldest = 199; oldest >= 119; oldest -= 10 ) {
+				getCalls.length = 0;
+				client.loadMore();
+				getCalls[ 0 ].callback( null, { notes: fullPage( 10, oldest ), last_seen_time: 0 } );
+			}
+
+			expect( getUnreadNoteIds( store.getState() ) ).toHaveLength( 100 );
+			expect( client.filteredHasMore ).toBe( false );
+
+			// At the cap, load-more must not fire another request.
 			getCalls.length = 0;
 			client.loadMore();
 			expect( getCalls ).toHaveLength( 0 );

@@ -440,12 +440,15 @@ function getFilteredNotes( before ) {
 				const current = getUnreadNoteIds( store.getState() );
 				const known = new Set( current );
 				const fresh = pageIds.filter( ( id ) => ! known.has( id ) );
-				store.dispatch( actions.notes.setUnreadNoteIds( current.concat( fresh ) ) );
+				const appended = current.concat( fresh );
+				store.dispatch( actions.notes.setUnreadNoteIds( appended ) );
 
 				// More only while the page is full, adds new ids (an inclusive
-				// `before` can echo the anchor), and there's room under the cap.
+				// `before` can echo the anchor), and the list is under the cap.
 				this.filteredHasMore =
-					fresh.length > 0 && data.notes.length >= parameters.number && parameters.number > 0;
+					fresh.length > 0 &&
+					data.notes.length >= parameters.number &&
+					appended.length < settings.max_limit;
 			} else {
 				// The top window is authoritative, so replace the id list — notes the
 				// server no longer returns (read/deleted elsewhere) drop from the view.
@@ -680,8 +683,10 @@ function hasMoreNotes() {
 	if ( this.filter ) {
 		return this.filteredHasMore;
 	}
-	const notes = getAllNotes( store.getState() );
-	return ! this.allNotesLoaded && notes.length < settings.max_limit;
+	// Measure this view's own window (`noteList`), not the shared store, which a
+	// filtered fetch can inflate to the cap with notes outside this window.
+	const loaded = this.noteList.length || getAllNotes( store.getState() ).length;
+	return ! this.allNotesLoaded && loaded < settings.max_limit;
 }
 
 function setVisibility( { isShowing, isVisible } ) {
