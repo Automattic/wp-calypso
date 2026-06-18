@@ -608,7 +608,7 @@ class ManagePurchase extends Component<
 	}
 
 	renderChangePlanNavItem() {
-		const { siteSlug, getManagePurchaseUrlFor = managePurchase, translate } = this.props;
+		const { purchase, siteSlug, getManagePurchaseUrlFor = managePurchase, translate } = this.props;
 		if ( ! this.shouldRenderDowngradeOption() ) {
 			return null;
 		}
@@ -617,7 +617,23 @@ class ManagePurchase extends Component<
 		// substituted by the checkout pending page once the new subscription
 		// appears (analogous to `:receiptId`).
 		const redirectTo = getManagePurchaseUrlFor( siteSlug, ':purchaseId' ) + '?plan_changed=true';
-		const href = addQueryArgs( { redirect_to: redirectTo }, `/plans/${ siteSlug }` );
+		const cancelTo = getManagePurchaseUrlFor( siteSlug, String( purchase.id ) );
+		const intervalMap: Record< number, string > = {
+			31: 'monthly',
+			365: 'yearly',
+			730: '2yearly',
+			1095: '3yearly',
+		};
+		const href = addQueryArgs(
+			{
+				siteSlug,
+				allow_downgrade: 'true',
+				cancel_to: cancelTo,
+				redirect_to: redirectTo,
+				intervalType: intervalMap[ purchase.billPeriodDays ] ?? 'yearly',
+			},
+			'/setup/plan-upgrade'
+		);
 		return (
 			<CompactCard tagName="a" displayAsLink href={ href }>
 				<Icon icon={ column } className="card__icon" />
