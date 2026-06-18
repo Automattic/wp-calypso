@@ -38,6 +38,18 @@
 	}
 }
 
+// The shared sticky bar gives the center element 32px inline margins; match
+// the 16px block margins so the skip button has even spacing on all sides.
+.step-container-v2__sticky-bottom-bar-center-element:has( .domain-search__skip-step-button ) {
+	margin-inline: 1rem;
+}
+
+// Make the skip button fill the full width of the sticky bar.
+.domain-search__skip-step-button.components-button.is-secondary {
+	width: 100%;
+	justify-content: center;
+}
+
 .step-container-v2--domain-search {
 	flex: 1;
 	display: flex;

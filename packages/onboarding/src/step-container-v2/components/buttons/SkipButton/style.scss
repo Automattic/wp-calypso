@@ -1,0 +1,10 @@
+// Render the skip button neutral (not the theme accent) per the onboarding design.
+.step-container-v2__skip-button.components-button.is-secondary {
+	color: var( --color-text );
+
+	// Scope the border to :not(:focus) so it doesn't override the focus ring,
+	// which @wordpress/components also draws with box-shadow.
+	&:not( :focus ) {
+		box-shadow: inset 0 0 0 1px var( --color-border-subtle );
+	}
+}

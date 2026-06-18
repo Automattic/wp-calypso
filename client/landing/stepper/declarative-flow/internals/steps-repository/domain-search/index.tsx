@@ -14,6 +14,7 @@ import {
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
+import { chevronRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
@@ -48,6 +49,7 @@ import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-conta
 import { OnboardingProgress } from '../components/onboarding-progress';
 import { useShowOnboardingProgress } from '../components/onboarding-progress/use-show-onboarding-progress';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
+import { useShowDomainSkipStep } from './use-show-domain-skip-step';
 import type { Step as StepType } from '../../types';
 import type { FreeDomainSuggestion } from '@automattic/api-core';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -159,6 +161,12 @@ const DomainSearchStep: StepType< {
 				( isHundredYearDomainFlow( flow ) ? !! query : true ),
 		};
 	}, [ flow, isCiab, isWooHostingSolutions, tldQuery, query ] );
+
+	const showSkipStepButton = useShowDomainSkipStep( {
+		flow,
+		isSkippable: config.skippable,
+		query,
+	} );
 
 	const { submit } = navigation;
 
@@ -486,6 +494,26 @@ const DomainSearchStep: StepType< {
 			);
 		};
 
+		const skipStepBottomBar = showSkipStepButton ? (
+			<Step.StickyBottomBar
+				fullWidth
+				hasTransparentBackground
+				noBoxShadow
+				centerElement={
+					<Step.SkipButton
+						appearance="secondary"
+						className="domain-search__skip-step-button"
+						icon={ chevronRight }
+						iconPosition="right"
+						iconSize={ 24 }
+						onClick={ () => events.onSkip() }
+					>
+						{ __( 'Skip this step' ) }
+					</Step.SkipButton>
+				}
+			/>
+		) : undefined;
+
 		return (
 			<Step.CenteredColumnLayout
 				topBar={
@@ -496,6 +524,7 @@ const DomainSearchStep: StepType< {
 				}
 				columnWidth={ 10 }
 				className="step-container-v2--domain-search"
+				stickyBottomBar={ skipStepBottomBar }
 				heading={
 					// On mobile, once the user has searched the persistent fixed
 					// search overlay (rendered by @automattic/domain-search) is the
