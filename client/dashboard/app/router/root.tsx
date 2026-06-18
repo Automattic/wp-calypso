@@ -1,19 +1,13 @@
 import {
 	agencyQuery,
-	rawUserPreferencesQuery,
 	jetpackSiteUrlsQuery,
 	queryClient,
 } from '@automattic/api-queries';
-import config from '@automattic/calypso-config';
 import { createRootRouteWithContext } from '@tanstack/react-router';
-import { getHostingDashboardEnrollment } from '../../utils/hosting-dashboard-enrollment';
-import { wpcomLink } from '../../utils/link';
-import { AUTH_QUERY_KEY } from '../auth';
 import Root from '../root';
 import NotFoundRoot from '../root/error';
 import { dashboardRedirect } from './redirect';
 import type { AppConfig } from '../context';
-import type { User } from '@automattic/api-core';
 
 export type RootRouterContext = {
 	config: AppConfig;
@@ -45,26 +39,5 @@ export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 				}
 			}
 		}
-
-		if ( ! context.config.optIn ) {
-			return;
-		}
-
-		// Once the staged rollout has begun the dashboard is publicly marketed, so
-		// anyone who navigates to it directly is let in. Enrollment still governs
-		// where users land by default (see the dashboard opt-in selectors); it no
-		// longer blocks users who navigate directly to the dashboard.
-		if ( config.isEnabled( 'dashboard/enable-percentage-rollout' ) ) {
-			return;
-		}
-
-		const user = queryClient.getQueryData< User >( AUTH_QUERY_KEY );
-		const userPreference = await queryClient.ensureQueryData( rawUserPreferencesQuery() );
-		const optIn = userPreference[ 'hosting-dashboard-opt-in' ];
-		if ( getHostingDashboardEnrollment( optIn, user?.ID ).enrolled ) {
-			return;
-		}
-
-		throw dashboardRedirect( { href: wpcomLink( '/' ), replace: true } );
 	},
 } );
