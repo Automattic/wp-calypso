@@ -1,4 +1,5 @@
 import { ORCHESTRATOR_AGENT_ID, UNIFIED_CHAT_AGENT_ID } from '../constants';
+import { getAgentIdOverride } from '../utils/provider-composition';
 import { useUnifiedAiChat } from './use-unified-ai-chat';
 
 interface AgentConfig {
@@ -24,17 +25,12 @@ interface AgentConfig {
  */
 export function useAgentConfig( hostAgentId?: string ): AgentConfig {
 	const { data: useUnifiedExperience, isLoading } = useUnifiedAiChat( ! hostAgentId );
-	const urlSearchParams = new URLSearchParams( window.location.search );
-	const agentIdParam = urlSearchParams.get( 'agent' );
-	const versionParam = urlSearchParams.get( 'version' );
+	const versionParam = new URLSearchParams( window.location.search ).get( 'version' );
 
-	const inlineAgentId =
-		typeof agentsManagerData !== 'undefined' ? agentsManagerData?.agentId : undefined;
 	const unifiedChatAgentId = useUnifiedExperience ? UNIFIED_CHAT_AGENT_ID : undefined;
 
 	return {
-		agentId:
-			hostAgentId || agentIdParam || inlineAgentId || unifiedChatAgentId || ORCHESTRATOR_AGENT_ID,
+		agentId: hostAgentId || getAgentIdOverride() || unifiedChatAgentId || ORCHESTRATOR_AGENT_ID,
 		version: versionParam || undefined,
 		isLoading: hostAgentId ? false : isLoading,
 	};

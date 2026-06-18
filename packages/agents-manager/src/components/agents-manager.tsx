@@ -137,10 +137,12 @@ function AgentSetup( {
 				return;
 			}
 
-			// Load external providers (only once)
+			// Load external providers (only once). The resolved agent id gates
+			// guest provider manifests (supportedAgentIds), so the effect waits
+			// for useAgentConfig to settle before reaching this point.
 			let providers = loadedProvidersRef.current;
 			if ( ! providers ) {
-				providers = await loadExternalProviders();
+				providers = await loadExternalProviders( agentId );
 				loadedProvidersRef.current = providers;
 			}
 

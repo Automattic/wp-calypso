@@ -17,6 +17,7 @@ interface Options {
 	messages: UIMessage[];
 	getChatComponent?: GetChatComponent;
 	currentPostId?: number;
+	isEditorContext?: boolean;
 	onSubmit: UseAgentChatReturn[ 'onSubmit' ];
 }
 
@@ -27,6 +28,7 @@ export default function convertToolMessagesToComponents( {
 	messages,
 	getChatComponent,
 	currentPostId,
+	isEditorContext = false,
 	onSubmit,
 }: Options ): AgentsManagerUIMessage[] {
 	return messages.flatMap( ( message, index, array ) => {
@@ -68,8 +70,12 @@ export default function convertToolMessagesToComponents( {
 
 		// Handle `show-component` tool message
 		if ( isShowComponentTool( textData.tool_id ) ) {
+			if ( typeof textData.data !== 'object' || textData.data === null ) {
+				return [];
+			}
+
 			// If not on an editor page, show an unavailable tool message instead of the component
-			if ( ! isEditorPage() ) {
+			if ( ! isEditorPage() && ! isEditorContext ) {
 				return [
 					{
 						...message,
@@ -84,8 +90,18 @@ export default function convertToolMessagesToComponents( {
 				];
 			}
 
-			const toolData = textData.data ?? {};
-			const { type: contentType, props, followUpTasks, isCurrent, postId, summary } = toolData;
+			const {
+				type: contentType,
+				props = {},
+				followUpTasks,
+				isCurrent,
+				postId,
+				summary,
+			} = textData.data;
+			if ( typeof contentType !== 'string' ) {
+				return [];
+			}
+
 			const Component = getChatComponent?.( contentType );
 
 			// No matching component found for this content type — drop the message to avoid showing raw JSON.
@@ -93,17 +109,18 @@ export default function convertToolMessagesToComponents( {
 				return [];
 			}
 
+			const componentProps = typeof props === 'object' && props !== null ? props : {};
 			const summaryText =
 				typeof summary === 'string' && summary.trim() ? summary.trim() : undefined;
-
-			// Whether this is the last message in the array.
 			const isLastMessage = index === array.length - 1;
 
 			// In the site editor, React-Query caching keeps past conversations alive when the
 			// user navigates to a different page. Compare the picker's `postId` with the
 			// current editor page to disable pickers that no longer belong to this page.
-			const isPageChanged = !! postId && !! currentPostId && postId !== currentPostId;
-			const isStale = ! isLastMessage || ! isCurrent || isPageChanged;
+			const isPageChanged =
+				typeof postId === 'number' && !! currentPostId && postId !== currentPostId;
+			const isMessageCurrent = typeof isCurrent === 'boolean' ? isCurrent : false;
+			const isStale = ! isLastMessage || ! isMessageCurrent || isPageChanged;
 
 			const componentMessage: AgentsManagerUIMessage = {
 				...message,
@@ -120,7 +137,7 @@ export default function convertToolMessagesToComponents( {
 						type: 'component' as const,
 						component: Component,
 						componentProps: {
-							...props,
+							...componentProps,
 							...( summaryText && { summary: summaryText } ),
 							contentType,
 						},

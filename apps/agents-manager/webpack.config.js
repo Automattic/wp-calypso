@@ -72,9 +72,10 @@ function getIndividualConfig( options = {} ) {
 					// The extraction logic will only extract a package if requestToExternal
 					// explicitly returns undefined for the given request. Null
 					// shortcuts the logic such that the package will be bundled.
-					if ( request === '@wordpress/react-i18n' ) {
+					if ( request === '@wordpress/react-i18n' || request === '@wordpress/ui' ) {
 						return null;
 					}
+
 					// TODO: Remove this override when @wordpress/abilities ships with
 					// WordPress core (expected in WP 7.0).
 					// Bundle @wordpress/abilities into image-studio so it works on

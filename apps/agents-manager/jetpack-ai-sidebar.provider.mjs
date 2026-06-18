@@ -38,3 +38,16 @@ export const capabilities = new Proxy(
 	{},
 	{ get: ( _, prop ) => window.__JetpackAIProvider?.capabilities?.[ prop ] }
 );
+// The manifest is read synchronously and only once while Agents Manager
+// resolves provider ownership, so keep it available even if the IIFE has not
+// assigned window.__JetpackAIProvider yet.
+export const compositionManifest = {
+	providerId: 'jetpack-ai-sidebar',
+	role: 'guest',
+	supportedAgentIds: [ 'wp-orchestrator', 'wpcom-workflow-unified_chat' ],
+	claims: {
+		abilities: [ 'jetpack_ai' ],
+		components: [ 'title-picker', 'review-mediation' ],
+		context: [ 'titleSuggestionCount' ],
+	},
+};

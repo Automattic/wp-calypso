@@ -39,6 +39,7 @@ import {
 } from './utils/block-actions';
 import {
 	UPDATE_BLOCK_CONTENT_TOOL_ID,
+	LEGACY_UPDATE_BLOCK_CONTENT_TOOL_ID,
 	UPDATE_BLOCK_CONTENT_ABILITY,
 	isUpdateBlockContentTool,
 } from './utils/tool-provider';
@@ -227,8 +228,6 @@ function applySuggestionLimit< T extends { id: string } >(
 // ---------- Show-component ability ----------
 
 const SHOW_COMPONENT_TOOL_ID = 'jetpack_ai__show_component';
-const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
-const SHOW_COMPONENT_TOOL_IDS = [ SHOW_COMPONENT_TOOL_ID, LEGACY_SHOW_COMPONENT_TOOL_ID ];
 
 /**
  * Client-side ability definition for `jetpack_ai__show_component`.
@@ -253,23 +252,8 @@ const SHOW_COMPONENT_ABILITY: any = {
 	},
 };
 
-const LEGACY_SHOW_COMPONENT_ABILITY: any = {
-	...SHOW_COMPONENT_ABILITY,
-	id: LEGACY_SHOW_COMPONENT_TOOL_ID,
-	name: LEGACY_SHOW_COMPONENT_TOOL_ID,
-};
-
 function hasShowComponentType( type: unknown ): type is string {
 	return typeof type === 'string' && type.trim() !== '';
-}
-
-function isJetpackShowComponentType( type: unknown ): boolean {
-	return hasShowComponentType( type ) && !! getChatComponent( type );
-}
-
-function shouldDelegateLegacyShowComponent( input: any ): boolean {
-	const type = input?.type;
-	return hasShowComponentType( type ) && ! isJetpackShowComponentType( type );
 }
 
 /**
@@ -337,17 +321,6 @@ function handleShowComponent( input: any ): any {
 	};
 }
 
-async function handleLegacyShowComponent( input: any ): Promise< any > {
-	if ( shouldDelegateLegacyShowComponent( input ) ) {
-		const executeAbility = getAbilitiesExecuteAbility();
-		if ( executeAbility ) {
-			return executeAbility( 'big-sky/show-component', input );
-		}
-	}
-
-	return handleShowComponent( input );
-}
-
 /**
  * Check whether the `@wordpress/abilities` API is available.
  * @returns {boolean} True when window.wp.abilities.getAbilities exists.
@@ -401,8 +374,8 @@ export function useAbilitiesSetup( actions: {
 
 /**
  * Normalize an ability name to the format used by agenttic-client for matching.
- * @param {string} name - Ability name (e.g., 'wpcom/update-block-content').
- * @returns {string} Normalized name (e.g., 'wpcom__update_block_content').
+ * @param {string} name - Ability name (e.g., 'jetpack-ai/update-block-content').
+ * @returns {string} Normalized name (e.g., 'jetpack_ai__update_block_content').
  */
 function normalizeAbilityName( name: string ): string {
 	return name.replace( /\//g, '__' ).replace( /-/g, '_' );
@@ -422,12 +395,12 @@ function filterAbility( abilities: any[], toolId: string ): any[] {
 }
 
 function isShowComponentTool( toolId: string ): boolean {
-	return SHOW_COMPONENT_TOOL_IDS.includes( toolId );
+	return toolId === SHOW_COMPONENT_TOOL_ID;
 }
 
 export const toolProvider = {
 	/**
-	 * Client-side abilities this provider handles: `wpcom/update-block-content`
+	 * Client-side abilities this provider handles: `jetpack-ai/update-block-content`
 	 * (block edits + summary) and Jetpack show-component tools (interactive
 	 * pickers, registered here so self-hosted Jetpack sees the tool_id).
 	 * @returns {Promise<any[]>} Array of ability descriptors.
@@ -449,9 +422,8 @@ export const toolProvider = {
 		}
 
 		abilities = filterAbility( abilities, UPDATE_BLOCK_CONTENT_TOOL_ID );
-		for ( const toolId of SHOW_COMPONENT_TOOL_IDS ) {
-			abilities = filterAbility( abilities, toolId );
-		}
+		abilities = filterAbility( abilities, LEGACY_UPDATE_BLOCK_CONTENT_TOOL_ID );
+		abilities = filterAbility( abilities, SHOW_COMPONENT_TOOL_ID );
 		const jetpackAbilities = [
 			...( isBlockTransformationsEnabled()
 				? [
@@ -464,10 +436,6 @@ export const toolProvider = {
 			{
 				...SHOW_COMPONENT_ABILITY,
 				callback: handleShowComponent,
-			},
-			{
-				...LEGACY_SHOW_COMPONENT_ABILITY,
-				callback: handleLegacyShowComponent,
 			},
 		];
 		abilities.unshift( ...jetpackAbilities );
@@ -484,13 +452,6 @@ export const toolProvider = {
 		if ( isUpdateBlockContentTool( name ) ) {
 			const result = await handleUpdateBlockContent( args );
 			return { result, returnToAgent: false };
-		}
-
-		if ( name === LEGACY_SHOW_COMPONENT_TOOL_ID && shouldDelegateLegacyShowComponent( args ) ) {
-			const executeAbility = getAbilitiesExecuteAbility();
-			if ( executeAbility ) {
-				return executeAbility( 'big-sky/show-component', args );
-			}
 		}
 
 		if ( isShowComponentTool( name ) ) {

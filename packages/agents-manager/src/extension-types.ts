@@ -5,6 +5,15 @@
  * the wp-calypso orchestrator agent with custom abilities and context.
  */
 
+// Providers may also export a `compositionManifest` declaring how Agents
+// Manager composes them with peers (host/guest roles and claims). The shape
+// is defined alongside the policy engine; re-exported here so the full
+// provider contract is discoverable from one file.
+export type {
+	ProviderCompositionClaims,
+	ProviderCompositionManifest,
+} from './utils/provider-composition';
+
 /**
  * Tool Provider Interface
  *

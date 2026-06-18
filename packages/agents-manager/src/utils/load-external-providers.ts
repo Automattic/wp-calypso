@@ -13,6 +13,28 @@
 
 import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
 import { isReaderChatAgent } from './is-reader-chat-agent';
+import {
+	abilityNameAliases,
+	findAbilityClaimant,
+	normalizeAbilityName,
+	resolveEffectiveAgentId,
+	resolveProviderComposition,
+	type ProviderCompositionManifest,
+	type ProviderCompositionPolicy,
+	type ResolvedProviderManifest,
+} from './provider-composition';
+import {
+	addProviderCallbackToAbility,
+	applyGuestClaimedContext,
+	dedupeById,
+	mergeCapabilitiesInto,
+	mergeCheckpointApis,
+	mergeContextProviders,
+	mergeMany,
+	mergeUseSuggestionsHooks,
+	type AbilityProviderEntry,
+	type ProviderClientContext,
+} from './provider-merging';
 import { useReaderFollowupSuggestions } from './reader-followup-hook';
 import type { ImageUploadHook } from '../hooks/use-image-upload';
 import type { ToolProvider, ContextProvider, Suggestion, BigSkyMessage } from '../types';
@@ -84,15 +106,17 @@ export type SiteBuildUtils = {
 };
 
 /**
- * Supported chat component types for agent messages.
+ * Supported built-in chat component types for agent messages.
  */
-type ChatComponentType =
+export type BuiltInChatComponentType =
 	| 'button-picker'
 	| 'font-picker'
 	| 'color-picker'
 	| 'pattern-picker'
 	| 'chat-suggestions'
 	| 'next-step-button';
+
+export type ChatComponentType = BuiltInChatComponentType | ( string & {} );
 
 /**
  * Get a chat component by type for rendering in agent messages.
@@ -132,22 +156,6 @@ export interface ProviderCapabilities {
 	supportsSplitScreen?: boolean;
 }
 
-/**
- * OR-merge a provider's `capabilities` into the running map. Works on both
- * plain objects and lazy Proxies (probed by direct key access, not iteration).
- */
-export function mergeCapabilitiesInto( merged: ProviderCapabilities, capabilities: unknown ): void {
-	if ( ! capabilities || typeof capabilities !== 'object' ) {
-		return;
-	}
-	const caps = capabilities as ProviderCapabilities;
-	// Strict `=== true` because `capabilities` arrives as `unknown` from
-	// runtime-imported modules; a stray `'false'` string would otherwise opt in.
-	if ( caps.supportsSplitScreen === true ) {
-		merged.supportsSplitScreen = true;
-	}
-}
-
 export interface LoadedProviders {
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
@@ -163,34 +171,23 @@ export interface LoadedProviders {
 	useImageUpload?: ImageUploadHook;
 	useCheckpoint?: UseCheckpointHook;
 	capabilities?: ProviderCapabilities;
+	compositionManifest?: ProviderCompositionManifest;
 }
 
-export function mergeUseSuggestionsHooks(
-	hooks: UseSuggestionsHook[]
-): UseSuggestionsHook | undefined {
-	if ( hooks.length === 0 ) {
-		return undefined;
-	}
+type ProviderAbilities = Awaited< ReturnType< ToolProvider[ 'getAbilities' ] > >;
 
-	if ( hooks.length === 1 ) {
-		return hooks[ 0 ];
-	}
-
-	return ( maxSuggestions?: number, options?: { suggestionsVisible?: boolean } ) => {
-		const combined: Suggestion[] = [];
-		const seenIds = new Set< string >();
-		for ( const hook of hooks ) {
-			const suggestions = hook( maxSuggestions, options )?.suggestions ?? [];
-			for ( const s of suggestions ) {
-				if ( ! seenIds.has( s.id ) ) {
-					seenIds.add( s.id );
-					combined.push( s );
-				}
-			}
-		}
-		return { suggestions: combined };
-	};
-}
+type ToolProviderEntry = {
+	toolProvider: ToolProvider;
+	manifest: ResolvedProviderManifest;
+};
+type ContextProviderEntry = {
+	contextProvider: ContextProvider;
+	manifest: ResolvedProviderManifest;
+};
+type ChatComponentProviderEntry = {
+	getChatComponent: GetChatComponent;
+	manifest: ResolvedProviderManifest;
+};
 
 /**
  * Load external agent providers from agentsManagerData.agentProviders.
@@ -203,9 +200,14 @@ export function mergeUseSuggestionsHooks(
  * Both shapes feed the same downstream merge: any of `toolProvider`,
  * `contextProvider`, `getChatComponent`, `useSuggestions`, etc. are picked
  * up from each entry and merged across all entries.
+ * @param effectiveAgentId The resolved agent id from `useAgentConfig`. Guest
+ * manifests are gated against this; when omitted, the loader falls back to
+ * the synchronous parts of the same resolution chain.
  * @returns Promise resolving to merged providers or empty object if none found.
  */
-export async function loadExternalProviders(): Promise< LoadedProviders > {
+export async function loadExternalProviders(
+	effectiveAgentId?: string
+): Promise< LoadedProviders > {
 	const agentProviders =
 		typeof agentsManagerData !== 'undefined' ? agentsManagerData?.agentProviders || [] : [];
 
@@ -231,25 +233,32 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	}
 
 	let mergedToolProvider: ToolProvider | undefined;
-	let mergedContextProvider: ContextProvider | undefined;
-	let mergedGetEmptyViewSuggestions: ( () => Suggestion[] ) | undefined;
 	let mergedMarkdownComponents: MarkdownComponents | undefined;
 	let mergedMarkdownExtensions: MarkdownExtensions | undefined;
 	let mergedNavigationContinuation: NavigationContinuationHook | undefined;
-	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
 	let mergedGetChatComponent: GetChatComponent | undefined;
 	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
 	let mergedImageUpload: ImageUploadHook | undefined;
 	let mergedUseCheckpoint: UseCheckpointHook | undefined;
 	// OR-merged across all providers.
 	const mergedCapabilities: ProviderCapabilities = {};
+	const abilityProviderMap = new Map< string, AbilityProviderEntry >();
+	const lastGoodProviderAbilities = new Map< ToolProvider, ProviderAbilities >();
 
 	// Collect exports that need to be merged across all providers.
-	const allToolProviders: ToolProvider[] = [];
-	const allGetChatComponents: GetChatComponent[] = [];
+	const allToolProviders: ToolProviderEntry[] = [];
+	const allContextProviders: ContextProviderEntry[] = [];
+	const allGetChatComponents: ChatComponentProviderEntry[] = [];
 	const allAbilitiesSetups: AbilitiesSetupHook[] = [];
 	const allUseSuggestions: UseSuggestionsHook[] = [];
 	const allGetEmptyViewSuggestions: ( () => Suggestion[] )[] = [];
+	const allUseCheckpoints: Array< {
+		hook: UseCheckpointHook;
+		manifest: ResolvedProviderManifest;
+	} > = [];
+	// Routing drops are logged once per (provider, ability) so the per-call
+	// abilities refresh cannot spam the console.
+	const loggedAbilityRoutingDrops = new Set< string >();
 
 	// Load all providers in parallel to avoid serializing network/module fetches.
 	// Results are processed in registration order to preserve first-write-wins semantics.
@@ -274,17 +283,54 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		} )
 	);
 
-	for ( const module of loadedModules ) {
-		if ( ! module ) {
-			continue;
-		}
+	const policy = resolveProviderComposition(
+		loadedModules,
+		resolveEffectiveAgentId( effectiveAgentId )
+	) as ProviderCompositionPolicy< LoadedProviders >;
+	for ( const notice of policy.notices ) {
+		// eslint-disable-next-line no-console
+		console.warn( notice );
+	}
+	const guests = policy.guests;
 
-		// These exports are merged across all providers.
+	// Claims are immutable after load, so memoize name -> claimant.
+	const abilityClaimantCache = new Map< string, ( typeof guests )[ number ] | undefined >();
+	const getAbilityClaimant = ( abilityName: string ) => {
+		if ( ! abilityClaimantCache.has( abilityName ) ) {
+			abilityClaimantCache.set( abilityName, findAbilityClaimant( guests, abilityName ) );
+		}
+		return abilityClaimantCache.get( abilityName );
+	};
+	const warnRoutingDropOnce = ( dropKey: string, message: string ) => {
+		if ( loggedAbilityRoutingDrops.has( dropKey ) ) {
+			return;
+		}
+		loggedAbilityRoutingDrops.add( dropKey );
+		// eslint-disable-next-line no-console
+		console.warn( message );
+	};
+
+	for ( const providerEntry of policy.providers ) {
+		const module = providerEntry.module;
+		const manifest = providerEntry.manifest;
+
 		if ( module.toolProvider ) {
-			allToolProviders.push( module.toolProvider );
+			allToolProviders.push( {
+				toolProvider: module.toolProvider,
+				manifest,
+			} );
+		}
+		if ( module.contextProvider ) {
+			allContextProviders.push( {
+				contextProvider: module.contextProvider,
+				manifest,
+			} );
 		}
 		if ( module.getChatComponent ) {
-			allGetChatComponents.push( module.getChatComponent );
+			allGetChatComponents.push( {
+				getChatComponent: module.getChatComponent,
+				manifest,
+			} );
 		}
 		if ( module.useAbilitiesSetup ) {
 			allAbilitiesSetups.push( module.useAbilitiesSetup );
@@ -296,98 +342,198 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			allGetEmptyViewSuggestions.push( module.getEmptyViewSuggestions );
 		}
 
-		// First-write-wins for singleton exports.
-		if ( module.contextProvider && ! mergedContextProvider ) {
-			mergedContextProvider = module.contextProvider;
-		}
-		if ( module.markdownComponents && ! mergedMarkdownComponents ) {
-			mergedMarkdownComponents = module.markdownComponents;
-		}
-		if ( module.markdownExtensions && ! mergedMarkdownExtensions ) {
-			mergedMarkdownExtensions = module.markdownExtensions;
-		}
-		if ( module.useNavigationContinuation && ! mergedNavigationContinuation ) {
-			mergedNavigationContinuation = module.useNavigationContinuation;
-		}
-		if ( module.siteBuildUtils && ! mergedSiteBuildUtils ) {
-			mergedSiteBuildUtils = module.siteBuildUtils;
-		}
-		if ( module.useImageUpload && ! mergedImageUpload ) {
-			mergedImageUpload = module.useImageUpload;
-		}
-		if ( module.useCheckpoint && ! mergedUseCheckpoint ) {
-			mergedUseCheckpoint = module.useCheckpoint;
+		if ( module.useCheckpoint ) {
+			allUseCheckpoints.push( { hook: module.useCheckpoint, manifest } );
 		}
 
 		mergeCapabilitiesInto( mergedCapabilities, module.capabilities );
 	}
 
-	// Merge toolProviders: first-write-wins by ability name, matching the
-	// resolution order of every other merged provider export (contextProvider,
-	// getChatComponent, useSuggestions, etc). Providers are processed in the
-	// order they were registered; earlier providers win on ability-name
-	// collisions.
-	if ( allToolProviders.length === 1 ) {
-		mergedToolProvider = allToolProviders[ 0 ];
-	} else if ( allToolProviders.length > 1 ) {
-		// Fetch all abilities once and build a name→provider map so that
-		// executeAbility can look up the owning provider in O(1) instead of
-		// re-querying getAbilities() on every call.
+	// For singleton exports, host wins before guest; registration order breaks ties.
+	const singletonProviderOrder = [
+		...policy.providers.filter( ( entry ) => entry.manifest.role === 'host' ),
+		...policy.providers.filter( ( entry ) => entry.manifest.role === 'guest' ),
+	];
+	for ( const { module } of singletonProviderOrder ) {
+		mergedMarkdownComponents ??= module.markdownComponents;
+		mergedMarkdownExtensions ??= module.markdownExtensions;
+		mergedNavigationContinuation ??= module.useNavigationContinuation;
+		mergedSiteBuildUtils ??= module.siteBuildUtils;
+		mergedImageUpload ??= module.useImageUpload;
+	}
+
+	// Run all checkpoint hooks so providers can register module-level snapshot
+	// APIs, then route Undo actions to whichever provider owns the checkpoint id.
+	if ( allUseCheckpoints.length === 1 ) {
+		mergedUseCheckpoint = allUseCheckpoints[ 0 ].hook;
+	} else if ( allUseCheckpoints.length > 1 ) {
+		const primary =
+			allUseCheckpoints.find( ( entry ) => entry.manifest.role === 'host' ) ??
+			allUseCheckpoints[ 0 ];
+		mergedUseCheckpoint = () => {
+			let primaryReturn: UseCheckpointReturn | undefined;
+			const checkpointReturns: UseCheckpointReturn[] = [];
+			for ( const entry of allUseCheckpoints ) {
+				const hookReturn = entry.hook();
+				checkpointReturns.push( hookReturn );
+				if ( entry === primary ) {
+					primaryReturn = hookReturn;
+				}
+			}
+			return mergeCheckpointApis( primaryReturn as UseCheckpointReturn, checkpointReturns );
+		};
+	}
+
+	// Guest claims own matching abilities; hosts keep first-provider-wins for the rest.
+	const refreshProviderAbilities = async () => {
 		const allAbilityResults = await Promise.all(
-			allToolProviders.map( async ( tp ) => {
+			allToolProviders.map( async ( entry ) => {
 				try {
-					return await tp.getAbilities();
+					const abilities = await entry.toolProvider.getAbilities();
+					if ( ! Array.isArray( abilities ) ) {
+						// eslint-disable-next-line no-console
+						console.warn( '[AgentsManager] Provider returned invalid abilities; expected array.' );
+						return lastGoodProviderAbilities.get( entry.toolProvider ) ?? [];
+					}
+					lastGoodProviderAbilities.set( entry.toolProvider, abilities );
+					return abilities;
 				} catch ( error ) {
 					// eslint-disable-next-line no-console
 					console.warn( '[AgentsManager] Failed to load abilities from provider:', error );
-					return [];
+					return lastGoodProviderAbilities.get( entry.toolProvider ) ?? [];
 				}
 			} )
 		);
-		const abilityProviderMap = new Map< string, ToolProvider >();
+		const nextAbilityProviderMap = new Map< string, AbilityProviderEntry >();
 		const seenAbilities = new Map< string, unknown >();
-		// Normalize ability names: AM converts `/` → `__` and `-` → `_`
-		// when routing tool calls. Index both raw and normalized forms
-		// so executeAbility matches regardless of which form the caller uses.
-		const normalize = ( name: string ) => name.replace( /\//g, '__' ).replace( /-/g, '_' );
+
 		for ( let i = 0; i < allToolProviders.length; i++ ) {
+			const providerEntry = allToolProviders[ i ];
 			for ( const ability of allAbilityResults[ i ] ) {
-				if ( ! abilityProviderMap.has( ability.name ) ) {
-					abilityProviderMap.set( ability.name, allToolProviders[ i ] );
-					const normalized = normalize( ability.name );
-					if ( normalized !== ability.name ) {
-						abilityProviderMap.set( normalized, allToolProviders[ i ] );
+				if ( ! ability || typeof ability.name !== 'string' ) {
+					continue;
+				}
+
+				const claimant = getAbilityClaimant( ability.name );
+				if ( providerEntry.manifest.role === 'guest' ) {
+					if ( claimant?.manifest !== providerEntry.manifest ) {
+						// Guest providers can expose broad runtime abilities, but only
+						// manifest-claimed names participate in composition.
+						continue;
 					}
-					seenAbilities.set( ability.name, ability );
+				} else if ( claimant ) {
+					warnRoutingDropOnce(
+						`host:${ providerEntry.manifest.providerId }:${ ability.name }`,
+						`[AgentsManager] Host ability "${ ability.name }" suppressed: namespace claimed by guest "${ claimant.manifest.providerId }".`
+					);
+					continue;
+				}
+
+				// Unclaimed names keep the legacy first-provider-wins rule.
+				const normalized = normalizeAbilityName( ability.name );
+				const aliases = abilityNameAliases( ability.name );
+				let existingEntry: AbilityProviderEntry | undefined;
+				for ( const alias of aliases ) {
+					existingEntry = nextAbilityProviderMap.get( alias );
+					if ( existingEntry ) {
+						break;
+					}
+				}
+				const entry = existingEntry ?? {
+					provider: providerEntry.toolProvider,
+					abilityName: ability.name,
+				};
+				for ( const alias of aliases ) {
+					if ( ! nextAbilityProviderMap.has( alias ) ) {
+						nextAbilityProviderMap.set( alias, entry );
+					}
+				}
+				if ( ! existingEntry ) {
+					seenAbilities.set( normalized, addProviderCallbackToAbility( ability, entry ) );
 				}
 			}
 		}
-		const cachedAbilities = [ ...seenAbilities.values() ] as Awaited<
-			ReturnType< ToolProvider[ 'getAbilities' ] >
-		>;
 
+		abilityProviderMap.clear();
+		for ( const [ key, entry ] of nextAbilityProviderMap ) {
+			abilityProviderMap.set( key, entry );
+		}
+
+		return [ ...seenAbilities.values() ] as Awaited< ReturnType< ToolProvider[ 'getAbilities' ] > >;
+	};
+
+	if ( allToolProviders.length > 0 ) {
 		mergedToolProvider = {
-			getAbilities: async () => cachedAbilities,
+			getAbilities: refreshProviderAbilities,
 			executeAbility: async ( name: string, args: unknown ) => {
-				// Use the pre-built map — avoids re-querying getAbilities() on
-				// every call and surfaces real errors from the owning provider
-				// instead of silently swallowing them.
-				const provider = abilityProviderMap.get( name );
-				if ( provider ) {
-					return provider.executeAbility( name, args );
+				// Setup hooks can register provider abilities after module import.
+				await refreshProviderAbilities();
+				const entry = abilityProviderMap.get( name );
+				// Check claims on the canonical name when the map knows it.
+				const claimant = getAbilityClaimant( entry?.abilityName ?? name );
+				if ( entry ) {
+					return entry.provider.executeAbility( entry.abilityName, args );
+				}
+				// Late-registered guest tools can execute before they appear in getAbilities().
+				const claimantToolProvider = claimant?.module.toolProvider;
+				if ( claimantToolProvider ) {
+					return claimantToolProvider.executeAbility( name, args );
 				}
 				throw new Error( `No provider handled ability: ${ name }` );
 			},
 		};
 	}
 
-	// Merge getChatComponent: try each provider, return first non-null.
+	// Hosts form the base context; guests add claimed keys and contextEntries.
+	const hostMergedContextProvider = mergeContextProviders(
+		allContextProviders
+			.filter( ( entry ) => entry.manifest.role === 'host' )
+			.map( ( entry ) => entry.contextProvider )
+	);
+	const guestContextProviders = allContextProviders.filter(
+		( entry ) => entry.manifest.role === 'guest'
+	);
+	const mergedContextProvider: ContextProvider | undefined = guestContextProviders.length
+		? {
+				getClientContext: () =>
+					guestContextProviders.reduce(
+						( merged, entry ) =>
+							applyGuestClaimedContext(
+								merged,
+								entry.contextProvider.getClientContext(),
+								entry.manifest.claims.context
+							),
+						hostMergedContextProvider
+							? { ...hostMergedContextProvider.getClientContext() }
+							: ( {} as ProviderClientContext )
+					),
+		  }
+		: hostMergedContextProvider;
+
+	// Guest-claimed component types override host components.
+	const componentClaimants = new Map< string, GetChatComponent >();
+	for ( const guest of guests ) {
+		const guestGetChatComponent = guest.module.getChatComponent;
+		if ( ! guestGetChatComponent ) {
+			continue;
+		}
+		for ( const type of guest.manifest.claims.components ) {
+			componentClaimants.set( type, guestGetChatComponent );
+		}
+	}
 	if ( allGetChatComponents.length === 1 ) {
-		mergedGetChatComponent = allGetChatComponents[ 0 ];
+		mergedGetChatComponent = allGetChatComponents[ 0 ].getChatComponent;
 	} else if ( allGetChatComponents.length > 1 ) {
 		mergedGetChatComponent = ( ( type: string ) => {
-			for ( const fn of allGetChatComponents ) {
-				const result = fn( type as ChatComponentType );
+			const claimed = componentClaimants.get( type )?.( type );
+			if ( claimed ) {
+				return claimed;
+			}
+			for ( const entry of allGetChatComponents ) {
+				if ( entry.manifest.role !== 'host' ) {
+					continue;
+				}
+				const result = entry.getChatComponent( type );
 				if ( result ) {
 					return result;
 				}
@@ -396,38 +542,23 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		} ) as GetChatComponent;
 	}
 
-	// Merge useAbilitiesSetup: call ALL providers' hooks.
-	if ( allAbilitiesSetups.length === 1 ) {
-		mergedAbilitiesSetup = allAbilitiesSetups[ 0 ];
-	} else if ( allAbilitiesSetups.length > 1 ) {
-		mergedAbilitiesSetup = ( ( actions ) => {
-			for ( const fn of allAbilitiesSetups ) {
-				fn( actions );
-			}
-		} ) as AbilitiesSetupHook;
-	}
-
-	// Merge useSuggestions: combine from all providers, dedupe by id.
-	const mergedUseSuggestions = mergeUseSuggestionsHooks( allUseSuggestions );
-
-	// Merge getEmptyViewSuggestions: combine from all providers, dedupe by id.
-	if ( allGetEmptyViewSuggestions.length === 1 ) {
-		mergedGetEmptyViewSuggestions = allGetEmptyViewSuggestions[ 0 ];
-	} else if ( allGetEmptyViewSuggestions.length > 1 ) {
-		mergedGetEmptyViewSuggestions = () => {
-			const combined: Suggestion[] = [];
-			const seenIds = new Set< string >();
-			for ( const fn of allGetEmptyViewSuggestions ) {
-				for ( const s of fn() ) {
-					if ( ! seenIds.has( s.id ) ) {
-						seenIds.add( s.id );
-						combined.push( s );
-					}
+	// Every provider's setup hook runs.
+	const mergedAbilitiesSetup = mergeMany(
+		allAbilitiesSetups,
+		( setups ): AbilitiesSetupHook =>
+			( actions ) => {
+				for ( const fn of setups ) {
+					fn( actions );
 				}
 			}
-			return combined;
-		};
-	}
+	);
+
+	const mergedUseSuggestions = mergeUseSuggestionsHooks( allUseSuggestions );
+
+	const mergedGetEmptyViewSuggestions = mergeMany(
+		allGetEmptyViewSuggestions,
+		( fns ) => () => dedupeById( fns.flatMap( ( fn ) => fn() ) )
+	);
 
 	return {
 		toolProvider: mergedToolProvider,

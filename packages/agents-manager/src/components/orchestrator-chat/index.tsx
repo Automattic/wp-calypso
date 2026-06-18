@@ -30,21 +30,22 @@ import {
 	type ExternalContextCardAction,
 } from '../../utils/external-context';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
+import {
+	type NavigationContinuationHook,
+	type AbilitiesSetupHook,
+	type GetChatComponent,
+	type UseSuggestionsHook,
+	type SiteBuildUtils,
+	type ImageUploadHook,
+	type UseCheckpointHook,
+} from '../../utils/load-external-providers';
 import { getOrchestratorErrorMessage } from '../../utils/orchestrator-error-message';
 import { persistLastActivity } from '../../utils/persist-last-activity';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
+import { isSiteEditorContext } from '../../utils/site-editor-context';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import type { BigSkyMessage } from '../../types';
-import type {
-	NavigationContinuationHook,
-	AbilitiesSetupHook,
-	GetChatComponent,
-	UseSuggestionsHook,
-	SiteBuildUtils,
-	ImageUploadHook,
-	UseCheckpointHook,
-} from '../../utils/load-external-providers';
 
 interface Props {
 	/** Suggestions displayed when the chat is empty. */
@@ -83,6 +84,23 @@ interface Props {
 	onHasMessagesChange: ( hasMessages: boolean ) => void;
 }
 
+function mergeSuggestionsById( ...suggestionLists: Suggestion[][] ): Suggestion[] {
+	const merged: Suggestion[] = [];
+	const seenIds = new Set< string >();
+
+	for ( const suggestionList of suggestionLists ) {
+		for ( const suggestion of suggestionList ) {
+			if ( seenIds.has( suggestion.id ) ) {
+				continue;
+			}
+			seenIds.add( suggestion.id );
+			merged.push( suggestion );
+		}
+	}
+
+	return merged;
+}
+
 export default function OrchestratorChat( {
 	emptyViewSuggestions,
 	isDocked,
@@ -102,7 +120,8 @@ export default function OrchestratorChat( {
 	useCheckpoint,
 	onHasMessagesChange,
 }: Props ) {
-	const { agentConfig, getActiveSessionId, siteKey } = useAgentsManagerContext();
+	const { agentConfig, getActiveSessionId, siteKey, sectionName, currentRoute } =
+		useAgentsManagerContext();
 
 	const navigate = useNavigate();
 	const [ inputValue, setInputValue ] = useState( '' );
@@ -111,9 +130,22 @@ export default function OrchestratorChat( {
 	const [ isBuildingSite, setIsBuildingSite ] = useState( false );
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
 	const [ hasUserSentMessage, setHasUserSentMessage ] = useState( false );
-	const currentPostId = useSelect( ( select ) => {
-		return ( select( 'core/editor' ) as { getCurrentPostId?: () => number } )?.getCurrentPostId?.();
+	const { currentPostId, isEditorContext } = useSelect( ( select ) => {
+		const editorStore = select( 'core/editor' ) as {
+			getCurrentPostId?: () => number;
+			getCurrentPostType?: () => string | undefined;
+		};
+		const postId = editorStore?.getCurrentPostId?.();
+		const postType = editorStore?.getCurrentPostType?.();
+		const editorPostTypes = [ 'post', 'page', 'wp_template', 'wp_template_part' ];
+
+		return {
+			currentPostId: postId,
+			isEditorContext: postId != null || ( !! postType && editorPostTypes.includes( postType ) ),
+		};
 	}, [] );
+	const shouldRenderEditorComponents =
+		isEditorContext || isSiteEditorContext( sectionName, currentRoute );
 
 	const {
 		addMessage,
@@ -162,25 +194,19 @@ export default function OrchestratorChat( {
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const maxDynamicSuggestions = isDocked ? undefined : 3;
 	const dynamicSuggestions = useSuggestions?.( maxDynamicSuggestions, {
-		suggestionsVisible: isOpen || isCompactMode,
+		suggestionsVisible: isDocked || isOpen || isCompactMode,
 	} );
 	const dynamicSuggestionsList = dynamicSuggestions?.suggestions ?? [];
-	const dynamicSuggestionsKey = JSON.stringify(
-		dynamicSuggestionsList.map( ( s ) => [ s.id, s.label, s.prompt ] )
-	);
-
-	// Register dynamic suggestions whenever they change
-	useEffect( () => {
-		if ( dynamicSuggestionsList.length > 0 ) {
-			registerSuggestions?.( dynamicSuggestionsList );
-		} else {
-			// Clear suggestions when there are none
-			clearSuggestions?.();
+	const hasSelectedBlock = useSelect( ( select ) => {
+		try {
+			const blockEditorStore = select( 'core/block-editor' ) as {
+				getSelectedBlock?: () => unknown;
+			};
+			return !! blockEditorStore?.getSelectedBlock?.();
+		} catch {
+			return false;
 		}
-		// Track suggestion content, not array identity. Some merged providers
-		// return a fresh empty array on each render.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ dynamicSuggestionsKey, registerSuggestions, clearSuggestions ] );
+	}, [] );
 
 	// Persist the chat route so the conversation can be resumed later.
 	useSaveNewChatRoute( hasUserSentMessage );
@@ -432,6 +458,7 @@ export default function OrchestratorChat( {
 			messages: currentMessages,
 			getChatComponent,
 			currentPostId,
+			isEditorContext: shouldRenderEditorComponents,
 			onSubmit: onSubmitWithImages,
 		} );
 
@@ -443,6 +470,7 @@ export default function OrchestratorChat( {
 		isBuildingSite,
 		messages,
 		onSubmitWithImages,
+		shouldRenderEditorComponents,
 		siteBuildUtils,
 		thinkingMessage,
 	] );
@@ -460,20 +488,40 @@ export default function OrchestratorChat( {
 	const showProcessingIndicator =
 		( isProcessing || ( isThinking && ! isBuildingSite ) ) && ! shouldSuppressTransientThinking;
 
-	// Determine which suggestions to show following Big Sky's logic:
-	// - When there are dynamic suggestions (from block selection, etc.), show those
-	// - Otherwise, show empty view suggestions only when there are no messages AND no input text
-	let displayedEmptyViewSuggestions: Suggestion[] = [];
-	if ( suggestions.length > 0 ) {
-		displayedEmptyViewSuggestions = suggestions;
-	} else if ( displayedMessages.length === 0 && inputValue.length === 0 ) {
-		displayedEmptyViewSuggestions = emptyViewSuggestions;
-	}
+	const shouldShowEmptySuggestions = displayedMessages.length === 0 && inputValue.length === 0;
+	const agentticSuggestions =
+		hasSelectedBlock && dynamicSuggestionsList.length > 0 ? [] : suggestions;
+	const registeredSuggestions = shouldShowEmptySuggestions
+		? mergeSuggestionsById(
+				dynamicSuggestionsList,
+				agentticSuggestions,
+				hasSelectedBlock ? [] : emptyViewSuggestions
+		  )
+		: mergeSuggestionsById( dynamicSuggestionsList, agentticSuggestions );
+	const activeSuggestions = shouldShowEmptySuggestions ? [] : registeredSuggestions;
+	const activeSuggestionsKey = JSON.stringify(
+		registeredSuggestions.map( ( s ) => [ s.id, s.label, s.prompt ] )
+	);
+
+	// Register the same suggestions Agenttic receives as props so string-based
+	// suggestion callbacks and provider-composed chips stay in sync.
+	useEffect( () => {
+		if ( registeredSuggestions.length > 0 ) {
+			registerSuggestions?.( registeredSuggestions );
+		} else {
+			clearSuggestions?.();
+		}
+		// Track suggestion content, not array identity. Some merged providers
+		// return a fresh empty array on each render.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ activeSuggestionsKey, registerSuggestions, clearSuggestions ] );
+
+	const displayedEmptyViewSuggestions = shouldShowEmptySuggestions ? registeredSuggestions : [];
 
 	return (
 		<AgentChat
 			messages={ displayedMessages }
-			suggestions={ suggestions }
+			suggestions={ activeSuggestions }
 			emptyViewSuggestions={ displayedEmptyViewSuggestions }
 			isProcessing={ showProcessingIndicator }
 			thinkingMessage={ progressMessage }
