@@ -633,6 +633,9 @@ export const securityIndexRoute = createRoute( {
 			queryClient.ensureQueryData( accountRecoveryQuery() ),
 			queryClient.ensureQueryData( connectedApplicationsQuery() ),
 			queryClient.ensureQueryData( sshKeysQuery() ),
+			...( isEnabled( 'me/legacy-contact' )
+				? [ queryClient.ensureQueryData( legacyContactsQuery() ) ]
+				: [] ),
 		] );
 	},
 } ).lazy( () =>
