@@ -651,12 +651,18 @@ export class CheckoutThankYou extends Component<
 					return this.renderLoading();
 				}
 
-				pageContent = (
-					<DomainOnly
-						domainPurchase={ domainPurchases[ 0 ] }
-						currency={ this.props.receipt.data.currency }
-					/>
-				);
+				if ( ! domainPurchases[ 0 ] ) {
+					pageContent = (
+						<GenericThankYou purchases={ purchases } emailAddress={ email } />
+					);
+				} else {
+					pageContent = (
+						<DomainOnly
+							domainPurchase={ domainPurchases[ 0 ] }
+							currency={ this.props.receipt.data.currency }
+						/>
+					);
+				}
 			} else if ( purchases.length === 1 && isPlan( purchases[ 0 ] ) ) {
 				pageContent = (
 					<PlanOnlyThankYou

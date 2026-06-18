@@ -123,6 +123,10 @@ export function getDomainPurchaseTypeAndPredicate(
 		return [ 'MAPPING', isDomainMapping ];
 	}
 
+	if ( purchases.some( isDomainRegistration ) ) {
+		return [ 'REGISTRATION', isDomainRegistration ];
+	}
+
 	return [ 'TRANSFER', isDomainTransfer ];
 }
 
