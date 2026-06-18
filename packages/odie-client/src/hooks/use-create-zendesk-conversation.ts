@@ -178,8 +178,11 @@ export const useCreateZendeskConversation = () => {
 				smoochWaitedMs = Date.now() - smoochWaitStart;
 				break;
 			} catch ( error ) {
-				if ( isSmoochNotReadyError( error ) && Date.now() < smoochReadyDeadline ) {
-					await new Promise( ( resolve ) => setTimeout( resolve, SMOOCH_RETRY_INTERVAL_MS ) );
+				const remainingMs = smoochReadyDeadline - Date.now();
+				if ( isSmoochNotReadyError( error ) && remainingMs > 0 ) {
+					// Cap the sleep to the time left so we never overshoot the deadline.
+					const sleepMs = Math.min( SMOOCH_RETRY_INTERVAL_MS, remainingMs );
+					await new Promise( ( resolve ) => setTimeout( resolve, sleepMs ) );
 					continue;
 				}
 				smoochWaitedMs = Date.now() - smoochWaitStart;
