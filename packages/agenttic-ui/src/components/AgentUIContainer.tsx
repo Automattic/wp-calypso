@@ -92,6 +92,8 @@ export function AgentUIContainer( {
 	onChatPositionChange,
 	onTypingStatusChange,
 	freeDrag = false,
+	initialFreeDragPosition,
+	onFreeDragEnd,
 }: AgentUIContainerProps ) {
 	// Determine if input is controlled or uncontrolled
 	const isControlled = controlledInputValue !== undefined;
@@ -216,15 +218,19 @@ export function AgentUIContainer( {
 	const chatRef = useRef< HTMLDivElement >( null );
 
 	// Motion values for programmatic control
-	// Initialize position based on saved side (right-aligned needs offset)
-	const initialX =
+	// In free drag mode, seed from a persisted pixel position when provided.
+	// Otherwise initialize position based on saved side (right-aligned needs offset).
+	const seedFreeDrag = freeDrag && initialFreeDragPosition !== undefined;
+	const cornerX =
 		currentSide === 'right'
 			? window.innerWidth -
 			  STYLE_CONSTANTS.COMPACT_WIDTH -
 			  STYLE_CONSTANTS.VIEWPORT_OFFSET * 2
 			: 0;
-	const x = useMotionValue( initialX );
-	const y = useMotionValue( 0 );
+	const x = useMotionValue(
+		seedFreeDrag ? initialFreeDragPosition.x : cornerX
+	);
+	const y = useMotionValue( seedFreeDrag ? initialFreeDragPosition.y : 0 );
 	const dragControls = useDragControls();
 
 	// Handle suggestion submission
@@ -446,8 +452,10 @@ export function AgentUIContainer( {
 			setIsDragging( false );
 
 			// In free drag mode the panel stays where dropped. dragElastic={ 0 }
-			// hard-clamps the drag to the constraint box, so skip the corner-snap.
+			// hard-clamps the drag to the constraint box, so skip the corner-snap
+			// and report the dropped pixel position so consumers can persist it.
 			if ( freeDrag ) {
+				onFreeDragEnd?.( { x: x.get(), y: y.get() } );
 				return;
 			}
 
@@ -488,6 +496,7 @@ export function AgentUIContainer( {
 			onChatPositionChange,
 			currentSide,
 			freeDrag,
+			onFreeDragEnd,
 		]
 	);
 
