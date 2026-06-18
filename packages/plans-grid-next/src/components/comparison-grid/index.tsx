@@ -780,7 +780,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	const featureSlug = feature?.getSlug() ?? '';
 	const footnote = planFeatureFootnotes?.footnotesByFeature?.[ featureSlug ];
 	const tooltipId = `${ featureGroupSlug }-${ feature?.getSlug() }-comparison-grid`;
-	const title = feature?.getTitle?.();
+	const title = feature?.getComparisonGridTitle?.() ?? feature?.getTitle?.();
 	const headerAriaLabel: string = typeof title === 'string' ? title : '';
 
 	const { enableFeatureTooltips } = usePlansGridContext();

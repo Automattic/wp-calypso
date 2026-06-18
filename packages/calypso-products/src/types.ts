@@ -91,6 +91,7 @@ export type FeatureObject = {
 	} ) => TranslateResult;
 	getStoreSlug?: () => string;
 	getCompareTitle?: () => TranslateResult;
+	getComparisonGridTitle?: () => TranslateResult;
 	getCompareSubtitle?: () => TranslateResult;
 	getIcon?: () => string | { icon: string; component: MemoExoticComponent< any > } | JSX.Element;
 	isPlan?: boolean;
