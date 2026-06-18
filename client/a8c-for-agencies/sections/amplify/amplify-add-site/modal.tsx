@@ -9,7 +9,8 @@ import A4AModal from 'calypso/a8c-for-agencies/components/a4a-modal';
 import useStartAmplifyAnalysis from 'calypso/a8c-for-agencies/data/amplify/use-start-amplify-analysis';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
+import AnalysisProgress from './analysis-progress';
 import AnalysisTypeCards from './analysis-type-cards';
 import AmplifySiteSelector from './site-selector';
 import type { AmplifyMode } from 'calypso/a8c-for-agencies/data/amplify/types';
@@ -21,19 +22,15 @@ export default function AmplifyAddSiteModal( { onClose }: { onClose: () => void 
 
 	const [ targetUrl, setTargetUrl ] = useState( '' );
 	const [ mode, setMode ] = useState< AmplifyMode | null >( null );
+	const [ inProgress, setInProgress ] = useState( false );
 
 	const handleTargetChange = useCallback( ( url: string ) => setTargetUrl( url ), [] );
 
 	const mutation = useStartAmplifyAnalysis( {
-		onSuccess: () => {
-			dispatch(
-				successNotice( __( 'Analysis started. Your report will appear here when it’s ready.' ), {
-					id: 'amplify-analysis-started',
-					duration: 5000,
-				} )
-			);
-			onClose();
-		},
+		// The run is seeded into the jobs cache by the hook, so closing this
+		// modal reveals the in-progress row. Here we just switch to the
+		// progress view instead of showing a notice.
+		onSuccess: () => setInProgress( true ),
 		onError: () => {
 			dispatch(
 				errorNotice( __( 'Could not start the analysis. Please try again.' ), {
@@ -51,6 +48,24 @@ export default function AmplifyAddSiteModal( { onClose }: { onClose: () => void 
 		dispatch( recordTracksEvent( 'calypso_a4a_amplify_start_analysis_click', { mode } ) );
 		mutation.mutate( { url: targetUrl, mode } );
 	};
+
+	if ( inProgress ) {
+		return (
+			<A4AModal
+				title={ __( 'Analysis in progress' ) }
+				subtile={ null }
+				onClose={ onClose }
+				showCloseButton={ false }
+				extraActions={
+					<Button variant="primary" onClick={ onClose }>
+						{ __( 'View reports' ) }
+					</Button>
+				}
+			>
+				<AnalysisProgress url={ targetUrl } />
+			</A4AModal>
+		);
+	}
 
 	return (
 		<A4AModal
