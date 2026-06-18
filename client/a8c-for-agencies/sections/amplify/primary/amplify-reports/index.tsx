@@ -8,6 +8,7 @@ import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
+import AmplifyAddSite from '../../amplify-add-site';
 import AmplifyReportsContent from './amplify-reports-content';
 
 const AmplifyReports = () => {
@@ -25,6 +26,7 @@ const AmplifyReports = () => {
 					/>
 					<Actions>
 						<MobileSidebarNavigation />
+						<AmplifyAddSite />
 					</Actions>
 				</LayoutHeader>
 			</LayoutTop>
