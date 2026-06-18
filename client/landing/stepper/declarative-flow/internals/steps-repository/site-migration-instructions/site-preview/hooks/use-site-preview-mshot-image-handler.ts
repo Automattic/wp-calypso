@@ -1,5 +1,5 @@
+import { throttle } from '@wordpress/compose';
 import { useEffect, useRef, useState } from '@wordpress/element';
-import { throttle } from 'lodash';
 
 interface MShotConfig {
 	vpw: number;

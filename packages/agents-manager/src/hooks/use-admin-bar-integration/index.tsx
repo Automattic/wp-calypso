@@ -1,7 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useSelect } from '@wordpress/data';
 import { useEffect, useRef, useState } from '@wordpress/element';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
+import { AGENTS_MANAGER_STORE } from '../../stores';
+import type { AgentsManagerSelect } from '@automattic/data-stores';
 import './style.scss';
 
 // Admin bar element selectors
@@ -35,9 +38,8 @@ const DESTINATION_HISTORY = 'agents-manager-history';
 const DESTINATION_GUIDES = 'agents-manager-support-guides';
 
 interface UseAdminBarIntegrationOptions {
-	isOpen: boolean;
-	sectionName: string;
 	maybeOpenChat: () => void;
+	closeChat: () => void;
 }
 
 /**
@@ -51,21 +53,37 @@ interface UseAdminBarIntegrationOptions {
  * Returns whether the AI chat entry button is present on the page.
  */
 export default function useAdminBarIntegration( {
-	isOpen,
-	sectionName,
 	maybeOpenChat,
+	closeChat,
 }: UseAdminBarIntegrationOptions ): boolean {
 	const navigate = useNavigate();
-	const { resumeActiveChat } = useAgentsManagerContext();
+	const { pathname } = useLocation();
+	const { resumeActiveChat, sectionName } = useAgentsManagerContext();
+	const { isOpen, isMinimized } = useSelect(
+		( select ) => ( select( AGENTS_MANAGER_STORE ) as AgentsManagerSelect ).getAgentsManagerState(),
+		[]
+	);
 
 	// Refs keep the latest callbacks without re-attaching DOM listeners each render.
 	const maybeOpenChatRef = useRef( maybeOpenChat );
 	maybeOpenChatRef.current = maybeOpenChat;
+	const closeChatRef = useRef( closeChat );
+	closeChatRef.current = closeChat;
 	const resumeActiveChatRef = useRef( resumeActiveChat );
 	resumeActiveChatRef.current = resumeActiveChat;
 
 	// Whether the AI chat entry button is present (captured once on mount).
 	const [ hasAiChatEntry ] = useState( hasAiChatEntryButton );
+
+	// Whether the chat is visible (open and not minimized), read inside the
+	// one-time DOM click handlers below to decide whether a click opens or closes.
+	const isChatVisibleRef = useRef( false );
+	isChatVisibleRef.current = isOpen && ! isMinimized;
+
+	// The chat's current route, read inside those same handlers so a Help menu item
+	// only closes the chat when it targets the route already showing.
+	const currentRouteRef = useRef( pathname );
+	currentRouteRef.current = pathname;
 
 	// Toggle the Help button's dropdown menu when it is clicked.
 	useEffect( () => {
@@ -112,7 +130,8 @@ export default function useAdminBarIntegration( {
 		};
 	}, [] );
 
-	// The standalone AI button reopens the chat, resuming the active conversation.
+	// The standalone AI button toggles the chat: close it if it's already showing,
+	// otherwise resume the active conversation and open it.
 	useEffect( () => {
 		const aiChatButton = document.getElementById( ADMIN_BAR_AI_CHAT_BUTTON_ID );
 		if ( ! aiChatButton ) {
@@ -122,7 +141,12 @@ export default function useAdminBarIntegration( {
 		const handleClick = () => {
 			recordTracksEvent( 'calypso_admin_bar_agents_manager_ai_chat_clicked', {
 				section: sectionName || 'wp-admin',
+				action: isChatVisibleRef.current ? 'close' : 'open',
 			} );
+			if ( isChatVisibleRef.current ) {
+				closeChatRef.current();
+				return;
+			}
 			resumeActiveChatRef.current();
 			maybeOpenChatRef.current();
 		};
@@ -131,36 +155,47 @@ export default function useAdminBarIntegration( {
 		return () => aiChatButton.removeEventListener( 'click', handleClick );
 	}, [ sectionName ] );
 
-	// Wire each Help menu item's click: track it, go to its view, then open the chat.
+	// Wire each Help menu item's click: track it, then open or close the chat.
 	useEffect( () => {
 		const menuItems = [
 			// Chat Support resumes the active conversation, matching the AI button.
 			{
 				id: ADMIN_BAR_CHAT_ITEM_ID,
 				destination: DESTINATION_CHAT,
+				route: '/chat',
 				action: () => resumeActiveChatRef.current(),
 			},
 			{
 				id: ADMIN_BAR_HISTORY_ITEM_ID,
 				destination: DESTINATION_HISTORY,
+				route: '/history',
 				action: () => navigate( '/history' ),
 			},
 			{
 				id: ADMIN_BAR_GUIDES_ITEM_ID,
 				destination: DESTINATION_GUIDES,
+				route: '/support-guides',
 				action: () => navigate( '/support-guides' ),
 			},
 		];
 
-		const listeners = menuItems.map( ( { id, destination, action } ) => {
+		const listeners = menuItems.map( ( { id, destination, route, action: onSelect } ) => {
 			const element = document.getElementById( id );
 
 			const handleClick = () => {
+				// Re-clicking the item for the current route closes the chat; a
+				// different route switches view (and opens/expands) without closing.
+				const isClosing = isChatVisibleRef.current && currentRouteRef.current === route;
 				recordTracksEvent( 'calypso_dashboard_help_center_menu_panel_click', {
 					section: sectionName || 'wp-admin',
 					destination,
+					action: isClosing ? 'close' : 'open',
 				} );
-				action();
+				if ( isClosing ) {
+					closeChatRef.current();
+					return;
+				}
+				onSelect();
 				maybeOpenChatRef.current();
 			};
 

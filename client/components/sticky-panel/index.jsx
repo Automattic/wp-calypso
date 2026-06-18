@@ -1,6 +1,7 @@
 import { isMobile } from '@automattic/viewport';
+import { debounce, throttle } from '@wordpress/compose';
 import clsx from 'clsx';
-import { throttle, debounce, defer } from 'lodash';
+import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import afterLayoutFlush from 'calypso/lib/after-layout-flush';

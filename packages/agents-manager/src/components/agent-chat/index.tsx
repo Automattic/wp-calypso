@@ -9,15 +9,17 @@ import {
 	type MarkdownExtensions,
 	type Suggestion,
 	type ChatState,
+	type UploadedImage,
 } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useMemo, useRef } from '@wordpress/element';
+import { useCallback, useMemo, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { hasAiChatEntryButton } from '../../hooks/use-admin-bar-integration';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { isPluginCompassHost } from '../../utils/is-plugin-compass-agent';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
+import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
 import ContextCards from '../context-cards';
@@ -222,6 +224,65 @@ export default function AgentChat( {
 		floatingChatState = 'compact';
 	}
 
+	// Image-upload tracking mirrors Big Sky's `file_upload_*` events. The
+	// uploader only renders on the editor surface (a provider supplies
+	// `useImageUpload`); reader-chat has no provider, but gate defensively so
+	// `jetpack_big_sky_*` never fires from that surface.
+	const trackImageUpload = ! isReaderChatHost() && !! imageUpload;
+
+	const handleFilesSelected = useCallback(
+		async ( files: File[] ) => {
+			await imageUpload?.handleFilesSelected( files );
+		},
+		[ imageUpload ]
+	);
+
+	const handleBrowse = useCallback(
+		( files: File[] ) => {
+			if ( trackImageUpload ) {
+				recordBigSkyTracksEvent( 'file_upload_click', {
+					count: files.length,
+				} );
+			}
+		},
+		[ trackImageUpload ]
+	);
+
+	const handleDrop = useCallback(
+		( files: File[] ) => {
+			if ( trackImageUpload ) {
+				recordBigSkyTracksEvent( 'file_upload_drop', {
+					count: files.length,
+				} );
+			}
+		},
+		[ trackImageUpload ]
+	);
+
+	const handleRemoveImage = useCallback(
+		( image: UploadedImage ) => {
+			if ( trackImageUpload ) {
+				recordBigSkyTracksEvent( 'file_upload_remove', {
+					image_id: image.id,
+				} );
+			}
+			imageUpload?.handleRemoveImage( image );
+		},
+		[ imageUpload, trackImageUpload ]
+	);
+
+	const handleImageDragStart = useCallback( () => {
+		if ( trackImageUpload ) {
+			recordBigSkyTracksEvent( 'file_upload_drag_start' );
+		}
+	}, [ trackImageUpload ] );
+
+	const handleUploadError = useCallback( () => {
+		if ( trackImageUpload ) {
+			recordBigSkyTracksEvent( 'file_upload_invalid' );
+		}
+	}, [ trackImageUpload ] );
+
 	return (
 		<AgentUI.Container
 			initialChatPosition={ floatingPosition }
@@ -261,7 +322,7 @@ export default function AgentChat( {
 			}
 		>
 			<AgentUI.ConversationView ref={ conversationViewRef }>
-				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } />
+				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } isDocked={ isDocked } />
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
 				{ ( onContextCardAction || onContextCardDismiss ) && (
 					<ContextCards onAction={ onContextCardAction } onDismiss={ onContextCardDismiss } />
@@ -280,8 +341,12 @@ export default function AgentChat( {
 								ref={ imageUploaderRef }
 								images={ imageUpload.pendingImages }
 								uploadingImages={ imageUpload.uploadingImages }
-								onFilesSelected={ imageUpload.handleFilesSelected }
-								onRemoveImage={ imageUpload.handleRemoveImage }
+								onFilesSelected={ handleFilesSelected }
+								onBrowse={ handleBrowse }
+								onDrop={ handleDrop }
+								onRemoveImage={ handleRemoveImage }
+								onImageDragStart={ handleImageDragStart }
+								onError={ handleUploadError }
 								acceptedFileTypes={ acceptedImageFileTypes }
 								showFileMetadata
 								allowDragToInsert={ false }

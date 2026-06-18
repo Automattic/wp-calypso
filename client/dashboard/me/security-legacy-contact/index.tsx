@@ -8,6 +8,7 @@ import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
 
 export default function SecurityLegacyContact() {
@@ -30,12 +31,20 @@ export default function SecurityLegacyContact() {
 				<CardBody>
 					<VStack spacing={ 4 }>
 						{ contact ? (
-							<Text>
-								{ /* TODO: translate this string once the legacy contact UI is finalized. */ }
-								{ createInterpolateElement( 'Your legacy contact is <contactEmail />.', {
-									contactEmail: <strong>{ contact.email }</strong>,
-								} ) }
-							</Text>
+							<>
+								<Text>
+									{ /* TODO: translate this string once the legacy contact UI is finalized. */ }
+									{ createInterpolateElement( 'Your legacy contact is <contactEmail />.', {
+										contactEmail: <strong>{ contact.email }</strong>,
+									} ) }
+								</Text>
+								<ButtonStack justify="flex-start">
+									<RouterLinkButton variant="secondary" to="/me/security/legacy-contact/print">
+										{ /* TODO: translate this string once the legacy contact UI is finalized. */ }
+										View printable details
+									</RouterLinkButton>
+								</ButtonStack>
+							</>
 						) : (
 							<ButtonStack justify="flex-start">
 								<Button

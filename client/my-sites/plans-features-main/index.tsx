@@ -702,6 +702,7 @@ const PlansFeaturesMain = ( {
 		showPricingDifferentiationFeaturePills,
 		useFocusedNewCopyTaglines,
 		isExperimentVariant,
+		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 	} );
 
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
@@ -730,6 +731,7 @@ const PlansFeaturesMain = ( {
 		showPricingDifferentiationFeaturePills,
 		useFocusedNewCopyTaglines,
 		isExperimentVariant,
+		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.

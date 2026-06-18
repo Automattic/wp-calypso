@@ -51,7 +51,7 @@
 @mixin notice-panel-open( $notice-panel-selector ) {
 	#{$notice-panel-selector} {
 		right: $sidebar-width !important;
-		top: $layout-spacing + $admin-bar-height + 1px !important;
+		top: calc( $admin-content-top + 1px ) !important;
 		bottom: $layout-spacing !important;
 		border-bottom-right-radius: $main-border-radius !important;
 		border: 1px solid $admin-border-color;
@@ -242,7 +242,7 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 		}
 
 		#secondary {
-			top: calc( $layout-spacing + $admin-bar-height );
+			top: $admin-content-top;
 			left: $layout-spacing;
 			bottom: $layout-spacing;
 			overflow: hidden;
@@ -338,20 +338,19 @@ body.is-section-stepper.agents-manager-sidebar-container {
 /* Calypso: Fix sticky headers on marketplace pages when the sidebar is open */
 .agents-manager-sidebar-container--sidebar-open .layout__secondary ~ .layout__primary {
 	.plugins-browser--site-view .search-categories.fixed-top {
-		top: calc( $admin-bar-height + $layout-spacing + 1px );
+		top: calc( $admin-content-top + 1px );
 		right: calc( $sidebar-width + 1px );
 		left: calc( var( --sidebar-width-max, #{$admin-menu-width-unified} ) + 17px );
 
 		&::after {
 			width: calc(
-				100vw - var( --sidebar-width-max, #{$admin-menu-width-unified} ) - $sidebar-width -
-					18px
+				100vw - var( --sidebar-width-max, #{$admin-menu-width-unified} ) - $sidebar-width - 18px
 			);
 		}
 	}
 
 	.themes__content .themes__controls.is-sticky:not( .is-global-sidebar-visible ) {
-		top: calc( $admin-bar-height + $layout-spacing + 1px );
+		top: calc( $admin-content-top + 1px );
 		left: calc( var( --sidebar-width-max, #{$admin-menu-width-unified} ) + 17px );
 		width: calc(
 			100vw - var( --sidebar-width-max, #{$admin-menu-width-unified} ) - $sidebar-width - 18px

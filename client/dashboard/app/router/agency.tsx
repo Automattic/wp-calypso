@@ -1,4 +1,4 @@
-import { agencyQuery, queryClient } from '@automattic/api-queries';
+import { activeAgencyQuery, agencyQuery, queryClient } from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { redirectAsNotAllowed } from './redirect';
@@ -39,4 +39,26 @@ const agencyOverviewRoute = createRoute( {
 	)
 );
 
-export const createAgencyRoutes = () => [ agencyRoute.addChildren( [ agencyOverviewRoute ] ) ];
+// `/tiers` – agency tiers & benefits
+const agencyTiersRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Tiers' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'agency/tiers',
+	loader: () => queryClient.ensureQueryData( activeAgencyQuery() ),
+} ).lazy( () =>
+	import( '../../agency/tiers' ).then( ( d ) =>
+		createLazyRoute( 'agency-tiers' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const createAgencyRoutes = () => [
+	agencyRoute.addChildren( [ agencyOverviewRoute, agencyTiersRoute ] ),
+];

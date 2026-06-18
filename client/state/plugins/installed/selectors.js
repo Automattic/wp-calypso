@@ -1,6 +1,6 @@
 import { pick } from '@automattic/js-utils';
 import { createSelector } from '@automattic/state-utils';
-import { filter, find, get, reduce, some, sortBy } from 'lodash';
+import { filter, find, reduce, some, sortBy } from 'lodash';
 import {
 	getSite,
 	getSiteTitle,
@@ -230,7 +230,7 @@ export function getSiteObjectsWithPlugin( state, siteIds, pluginSlug ) {
 export function getSitesWithoutPlugin( state, siteIds, pluginSlug ) {
 	const installedOnSiteIds = getSitesWithPlugin( state, siteIds, pluginSlug ) || [];
 	return filter( siteIds, function ( siteId ) {
-		if ( ! get( getSite( state, siteId ), 'visible' ) || ! isJetpackSite( state, siteId ) ) {
+		if ( ! getSite( state, siteId )?.visible || ! isJetpackSite( state, siteId ) ) {
 			return false;
 		}
 

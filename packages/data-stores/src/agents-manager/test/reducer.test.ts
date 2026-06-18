@@ -45,8 +45,8 @@ describe( 'getIsSplitScreen selector', () => {
 } );
 
 describe( 'isMinimized reducer slice', () => {
-	it( 'defaults to undefined', () => {
-		expect( isMinimized( undefined, { type: '@@INIT' } as never ) ).toBeUndefined();
+	it( 'defaults to false', () => {
+		expect( isMinimized( undefined, { type: '@@INIT' } as never ) ).toBe( false );
 	} );
 
 	it( 'returns the action value on `AGENTS_MANAGER_SET_MINIMIZED`', () => {

@@ -147,6 +147,87 @@ describe( 'usePricingMetaForGridPlans', () => {
 		expect( pricingMeta ).toEqual( expectedPricingMeta );
 	} );
 
+	describe( 'current plan with an active introductory offer', () => {
+		beforeEach( () => {
+			Plans.useCurrentPlan.mockImplementation( () => ( {
+				productSlug: PLAN_BUSINESS,
+				planSlug: PLAN_BUSINESS,
+				purchaseId: 1234,
+			} ) );
+			// Yearly purchase: renewal 600/yr, active intro 120/yr.
+			Purchases.useSitePurchaseById.mockImplementation( () => ( {
+				priceInteger: 600,
+				currencyCode: 'USD',
+				billPeriodDays: 365,
+				introductoryOffer: {
+					isWithinPeriod: true,
+					costPerIntervalInteger: 120,
+				},
+			} ) );
+		} );
+
+		it( 'should return the intro price as the headline plus a renewal price for the experiment treatment', () => {
+			const pricingMeta = usePricingMetaForGridPlans( {
+				planSlugs: [ PLAN_BUSINESS ],
+				siteId,
+				coupon: undefined,
+				useCheckPlanAvailabilityForPurchase,
+				showBillingDescriptionForIncreasedRenewalPrice: 'crossed_price',
+			} );
+
+			const expectedPricingMeta = {
+				[ PLAN_BUSINESS ]: {
+					originalPrice: {
+						full: 120,
+						monthly: 10,
+					},
+					discountedPrice: {
+						full: null,
+						monthly: null,
+					},
+					billingPeriod: 365,
+					currencyCode: 'USD',
+					expiry: null,
+					introOffer: undefined,
+					renewalPrice: {
+						full: 600,
+						monthly: 50,
+					},
+				},
+			};
+
+			expect( pricingMeta ).toEqual( expectedPricingMeta );
+		} );
+
+		it( 'should return the renewal price as the headline for non-treatment users', () => {
+			const pricingMeta = usePricingMetaForGridPlans( {
+				planSlugs: [ PLAN_BUSINESS ],
+				siteId,
+				coupon: undefined,
+				useCheckPlanAvailabilityForPurchase,
+			} );
+
+			const expectedPricingMeta = {
+				[ PLAN_BUSINESS ]: {
+					originalPrice: {
+						full: 600,
+						monthly: 50,
+					},
+					discountedPrice: {
+						full: null,
+						monthly: null,
+					},
+					billingPeriod: 365,
+					currencyCode: 'USD',
+					expiry: null,
+					introOffer: undefined,
+				},
+			};
+
+			expect( pricingMeta ).toEqual( expectedPricingMeta );
+		} );
+	} );
+
 	it( 'should return the original price as the site plan price and discounted price as Null for plans not available for purchase', () => {
 		Plans.useCurrentPlan.mockImplementation( () => ( {
 			productSlug: PLAN_BUSINESS,

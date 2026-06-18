@@ -1,7 +1,7 @@
 import { AutoSizer, List } from '@automattic/react-virtualized';
+import { debounce } from '@wordpress/compose';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { cloneElement, createRef, Component } from 'react';
 
@@ -46,7 +46,7 @@ class VirtualList extends Component {
 	rowHeights = {};
 	listRef = createRef();
 
-	queueRecomputeRowHeights = debounce( this.recomputeRowHeights );
+	queueRecomputeRowHeights = debounce( this.recomputeRowHeights, 0 );
 
 	componentDidUpdate( prevProps ) {
 		const forceUpdate =

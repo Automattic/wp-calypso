@@ -1,6 +1,6 @@
 import { omit, omitBy } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
-import { get, isEmpty, map } from 'lodash';
+import { isEmpty, map } from 'lodash';
 import {
 	IMPORTS_AUTHORS_SET_MAPPING,
 	IMPORTS_AUTHORS_START_MAPPING,
@@ -127,7 +127,7 @@ function importerStatus( state = {}, action ) {
 					customData: {
 						...state[ action.importerId ]?.customData,
 						sourceAuthors: map(
-							get( state[ action.importerId ], 'customData.sourceAuthors' ),
+							state[ action.importerId ]?.customData?.sourceAuthors,
 							( author ) =>
 								action.sourceAuthor.id === author.id
 									? {

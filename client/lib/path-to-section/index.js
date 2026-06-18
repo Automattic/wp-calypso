@@ -1,4 +1,4 @@
-import { filter, get, maxBy } from 'lodash';
+import { filter, maxBy } from 'lodash';
 import { getSections } from 'calypso/sections-helper';
 
 export default function pathToSection( path ) {
@@ -20,7 +20,7 @@ export default function pathToSection( path ) {
 	}
 	// make sure the best match is actually a match (in case nothing matches)
 	if ( bestMatch.paths.some( ( sectionPath ) => ( path ?? '' ).startsWith( sectionPath ) ) ) {
-		return get( bestMatch, 'name' );
+		return bestMatch?.name;
 	}
 	return null;
 }

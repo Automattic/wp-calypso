@@ -1,5 +1,6 @@
+import { groupBy } from '@automattic/js-utils';
 import clsx from 'clsx';
-import { find, groupBy, isEqual, partition, property } from 'lodash';
+import { find, isEqual, partition } from 'lodash';
 import { Fragment, Component } from 'react';
 import ReactDOM from 'react-dom';
 import Item from './item';
@@ -121,8 +122,9 @@ class Suggestions extends Component< Props, State > {
 				break;
 
 			case 'Enter':
-				this.state.suggestionPosition >= 0 &&
+				if ( this.state.suggestionPosition >= 0 ) {
 					this.suggest( this.getOriginalIndexFromPosition( this.state.suggestionPosition ) );
+				}
 				break;
 		}
 	};
@@ -150,7 +152,9 @@ class Suggestions extends Component< Props, State > {
 
 		// For all intents and purposes `groupBy` keeps the order stable
 		// https://github.com/lodash/lodash/issues/2212
-		const byCategory = groupBy( withCategory, property( 'category' ) );
+		// `withCategory` is the truthy-category half of the partition above, so
+		// `category` is always present here.
+		const byCategory = groupBy( withCategory, ( suggestion ) => suggestion.category! );
 
 		const categories: CategorizedSuggestions = Object.entries( byCategory ).map(
 			( [ category, suggestions ] ) => ( {

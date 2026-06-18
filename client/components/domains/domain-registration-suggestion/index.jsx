@@ -6,7 +6,7 @@ import { HUNDRED_YEAR_DOMAIN_FLOW } from '@automattic/onboarding';
 import { HTTPS_SSL } from '@automattic/urls';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { get, includes } from 'lodash';
+import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -596,7 +596,7 @@ class DomainRegistrationSuggestion extends Component {
 }
 
 const mapStateToProps = ( state, props ) => {
-	const productSlug = get( props, 'suggestion.product_slug' );
+	const productSlug = props?.suggestion?.product_slug;
 	const productsList = props.products ?? getProductsList( state );
 	const currentUserCurrencyCode =
 		props.suggestion.currency_code || getCurrentUserCurrencyCode( state );

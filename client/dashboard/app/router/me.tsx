@@ -858,9 +858,32 @@ export const securityLegacyContactRoute = createRoute( {
 	getParentRoute: () => securityRoute,
 	path: '/legacy-contact',
 	loader: () => queryClient.ensureQueryData( legacyContactsQuery() ),
+} );
+
+export const securityLegacyContactIndexRoute = createRoute( {
+	getParentRoute: () => securityLegacyContactRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../me/security-legacy-contact' ).then( ( d ) =>
 		createLazyRoute( 'security-legacy-contact' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const securityLegacyContactPrintRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Legacy contact' ),
+			},
+		],
+	} ),
+	getParentRoute: () => securityLegacyContactRoute,
+	path: '/print',
+} ).lazy( () =>
+	import( '../../me/security-legacy-contact/print' ).then( ( d ) =>
+		createLazyRoute( 'security-legacy-contact-print' )( {
 			component: d.default,
 		} )
 	)
@@ -1348,7 +1371,14 @@ export const createMeRoutes = ( config: AppConfig ) => {
 				: [] ),
 			securityConnectedAppsRoute,
 			securitySocialLoginsRoute,
-			...( isEnabled( 'me/legacy-contact' ) ? [ securityLegacyContactRoute ] : [] ),
+			...( isEnabled( 'me/legacy-contact' )
+				? [
+						securityLegacyContactRoute.addChildren( [
+							securityLegacyContactIndexRoute,
+							securityLegacyContactPrintRoute,
+						] ),
+				  ]
+				: [] ),
 		] )
 	);
 

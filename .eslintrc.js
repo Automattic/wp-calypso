@@ -1,5 +1,5 @@
 const path = require( 'path' );
-const { nodeConfig } = require( '@automattic/calypso-eslint-overrides' );
+const { nodeConfig, lodashRestrictedImports } = require( '@automattic/calypso-eslint-overrides' );
 const wpI18nConfig = require( '@wordpress/eslint-plugin/eslintrc' ).configs.i18n;
 const { merge } = require( 'lodash' );
 const reactVersion = require( './client/package.json' ).dependencies.react;
@@ -68,8 +68,16 @@ module.exports = {
 		{
 			files: [ 'packages/**/*' ],
 			rules: {
-				// These two rules are to ensure packages don't import from calypso by accident to avoid circular deps.
-				'no-restricted-imports': [ 'error', { patterns: [ 'calypso/*' ] } ],
+				// The `calypso/*` patterns ensure packages don't import from calypso by accident
+				// to avoid circular deps. The lodash entries keep the repo-wide guard in place
+				// here, since this override replaces the root `no-restricted-imports` rule.
+				'no-restricted-imports': [
+					'error',
+					{
+						paths: lodashRestrictedImports.paths,
+						patterns: [ { group: [ 'calypso/*' ] }, ...lodashRestrictedImports.patterns ],
+					},
+				],
 				'no-restricted-modules': [ 'error', { patterns: [ 'calypso/*' ] } ],
 			},
 		},
@@ -402,6 +410,7 @@ module.exports = {
 						message:
 							"Please use 'webp' files instead. You can convert using `brew install webp && cwebp -q 90 -alpha_q 85 -m 6 <input>.png -o <output>.webp`",
 					},
+					...lodashRestrictedImports.patterns,
 				],
 				paths: [
 					// Prevent naked import of gridicons module. Use 'components/gridicon' instead.
@@ -438,6 +447,7 @@ module.exports = {
 						importNames: [ 'flowRight' ],
 						message: "Please use `compose` from 'redux' instead.",
 					},
+					...lodashRestrictedImports.paths,
 				],
 			},
 		],

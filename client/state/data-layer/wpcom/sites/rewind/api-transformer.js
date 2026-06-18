@@ -1,4 +1,4 @@
-import { camelCase } from 'lodash';
+import { camelCase } from '@automattic/js-utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { requestRewindState } from 'calypso/state/rewind/state/actions';
 

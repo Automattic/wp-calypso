@@ -46,6 +46,7 @@ export default function AgentHistory( {
 
 	// Without the AI chat entry button, use `collapsed` (a FAB) instead of `minimized`.
 	const closedChatState = hasAiChatEntryButton() ? 'minimized' : 'collapsed';
+	const title = __( 'Past chats', '__i18n_text_domain__' );
 
 	const handleBack = () => resumeActiveChat();
 
@@ -60,6 +61,7 @@ export default function AgentHistory( {
 			onSubmit={ () => {} }
 			variant={ isDocked ? 'embedded' : 'floating' }
 			floatingChatState={ isOpen ? 'expanded' : closedChatState }
+			triggerTitle={ title }
 			onClose={ onClose }
 			onExpand={ onExpand }
 			onStop={ onAbort }
@@ -70,7 +72,8 @@ export default function AgentHistory( {
 					onClose={ onClose }
 					onBack={ handleBack }
 					options={ chatHeaderOptions }
-					title={ __( 'Past chats', '__i18n_text_domain__' ) }
+					title={ title }
+					isDocked={ isDocked }
 				/>
 				<ConversationHistoryView onSelectConversation={ onSelectConversation } />
 			</AgentUI.ConversationView>

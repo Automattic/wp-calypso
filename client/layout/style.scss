@@ -573,6 +573,11 @@ body.is-mobile-app-view {
 	padding-top: var( --masterbar-height );
 }
 
+.is-nav-2026-assignment-loading {
+	visibility: hidden;
+	pointer-events: none;
+}
+
 // Source of truth for the fixed 2026 nav's geometry; everything that clears or sticks
 // to the nav derives from these vars.
 .layout:has( .x-nav--2026-redesign ) {

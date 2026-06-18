@@ -1,8 +1,13 @@
 import page from '@automattic/calypso-router';
 import { Dialog } from '@automattic/components';
-import { camelToSnakeCase, mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
+import {
+	camelToSnakeCase,
+	mapRecordKeysRecursively,
+	snakeCase,
+	snakeToCamelCase,
+} from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { get, includes, isEmpty, isEqual, snakeCase } from 'lodash';
+import { get, includes, isEmpty, isEqual } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
