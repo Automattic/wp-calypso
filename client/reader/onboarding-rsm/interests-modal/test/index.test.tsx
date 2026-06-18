@@ -393,7 +393,7 @@ describe( 'InterestsModal – analytics for pack subscribe', () => {
 		for ( const blog of packBlogs ) {
 			expect( mockFollowMutate ).toHaveBeenCalledWith( {
 				feedUrl: blog.feed_URL,
-				source: 'test-source',
+				source: 'reader-onboarding',
 			} );
 			expect( recordFollow ).toHaveBeenCalledWith( blog.feed_URL, undefined, {
 				follow_source: 'reader-onboarding-modal',

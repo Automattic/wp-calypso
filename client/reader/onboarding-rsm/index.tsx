@@ -35,6 +35,7 @@ import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { useSiteSubscriptions } from '../following/use-site-subscriptions';
 import { getReloadStep } from './get-reload-step';
+import { useFlushWelcomeDigest } from './use-flush-welcome-digest';
 import { useRefreshFollowingStreams } from './use-refresh-following-streams';
 import type { CuratedBlog } from 'calypso/reader/onboarding-rsm/curated-blogs';
 import './style.scss';
@@ -61,6 +62,7 @@ const ReaderOnboardingRsm = ( {
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const refreshFollowingStreams = useRefreshFollowingStreams();
+	const flushWelcomeDigest = useFlushWelcomeDigest();
 
 	const preferencesLoaded = useSelector( hasReceivedRemotePreferences );
 	const {
@@ -322,6 +324,7 @@ const ReaderOnboardingRsm = ( {
 	};
 
 	const handleDiscoverFinish = () => {
+		flushWelcomeDigest();
 		recordOnboardingCompleted();
 		runStepSideEffects( 'discover' );
 		setCurrentStep( null );

@@ -157,6 +157,11 @@ jest.mock( '../use-refresh-following-streams', () => ( {
 	useRefreshFollowingStreams: () => mockRefreshFollowingStreams,
 } ) );
 
+const mockFlushWelcomeDigest = jest.fn();
+jest.mock( '../use-flush-welcome-digest', () => ( {
+	useFlushWelcomeDigest: () => mockFlushWelcomeDigest,
+} ) );
+
 // ── Data hooks ────────────────────────────────────────────────────────────────
 
 jest.mock( 'calypso/reader/data/tags', () => ( {
@@ -189,6 +194,7 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 
 beforeEach( () => {
 	mockRefreshFollowingStreams.mockClear();
+	mockFlushWelcomeDigest.mockClear();
 	jest.mocked( savePreference ).mockClear();
 	jest.mocked( recordTracksEvent ).mockClear();
 
@@ -561,6 +567,75 @@ describe( 'ReaderOnboardingRsm – step close vs navigation analytics', () => {
 			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
 			expect.anything()
 		);
+	} );
+} );
+
+describe( 'ReaderOnboardingRsm – welcome digest flush', () => {
+	const navigateToDiscoverStep = async ( user: ReturnType< typeof userEvent.setup > ) => {
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		await screen.findByTestId( 'subscribe-modal-content' );
+	};
+
+	it( 'calls flushWelcomeDigest when the user clicks Finish on the discover step', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToDiscoverStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+
+		expect( mockFlushWelcomeDigest ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'does not call flushWelcomeDigest when the discover step is dismissed', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToDiscoverStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Close modal' } ) );
+
+		expect( mockFlushWelcomeDigest ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not call flushWelcomeDigest when the welcome step is dismissed', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Close modal' } ) );
+
+		expect( mockFlushWelcomeDigest ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not call flushWelcomeDigest when the interests step is dismissed', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Close modal' } ) );
+
+		expect( mockFlushWelcomeDigest ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not call flushWelcomeDigest when navigating with Continue or Back', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		await screen.findByTestId( 'subscribe-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
+		await screen.findByTestId( 'welcome-modal-content' );
+
+		expect( mockFlushWelcomeDigest ).not.toHaveBeenCalled();
 	} );
 } );
 

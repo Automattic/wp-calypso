@@ -130,3 +130,9 @@ export interface FollowDeliveryResponse {
 	subscribed?: boolean;
 	success?: boolean;
 }
+
+export interface FlushOnboardingWelcomeDigestResponse {
+	success: boolean;
+	sent: boolean;
+	blog_count: number;
+}

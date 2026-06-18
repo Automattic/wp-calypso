@@ -2,6 +2,7 @@ import {
 	commonFeedExtensions,
 	fetchReadFollows,
 	followSite,
+	flushOnboardingWelcomeDigest,
 	prepareComparableUrl,
 	sortSiteSubscriptionsByLastUpdated,
 	unfollowSite,
@@ -555,3 +556,8 @@ export const updateSitePostNotificationSubscriptionMutation = ( queryClient: Que
 			onSettled: () => invalidateSiteSubscriptions( queryClient ),
 		}
 	);
+
+export const flushOnboardingWelcomeDigestMutation = () =>
+	mutationOptions( {
+		mutationFn: () => flushOnboardingWelcomeDigest(),
+	} );
