@@ -1,4 +1,3 @@
-import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 
@@ -17,12 +16,7 @@ export function useMcpPageChrome() {
 				'Control how AI assistants interact with your WordPress.com account and sites. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 				{
 					components: {
-						learnMoreLink: (
-							<InlineSupportLink
-								supportLink={ localizeUrl( 'https://wordpress.com/support/mcp/' ) }
-								showIcon={ false }
-							/>
-						),
+						learnMoreLink: <InlineSupportLink supportContext="mcp" showIcon={ false } />,
 					},
 				}
 			),
