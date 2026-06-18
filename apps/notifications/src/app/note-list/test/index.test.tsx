@@ -22,10 +22,14 @@ const makeNote = ( id: number, label: string, type = 'comment' ) => ( {
 	subject: [ { text: label, ranges: [], media: [] } ],
 } );
 
-const renderTab = ( store: ReturnType< typeof initStore >, filterName: FilterName ) =>
+const renderTab = (
+	store: ReturnType< typeof initStore >,
+	filterName: FilterName,
+	clientOverride: Partial< typeof client > = {}
+) =>
 	render(
 		<Provider store={ store }>
-			<AppProvider client={ client as never } locale="en">
+			<AppProvider client={ { ...client, ...clientOverride } as never } locale="en">
 				<NoteList
 					filterName={ filterName }
 					selectedNoteId={ undefined }
@@ -43,21 +47,25 @@ describe( 'NoteList loading state', () => {
 		Element.prototype.scrollIntoView = noop;
 	} );
 
-	it( 'shows the loader, not the empty message, while a filtered fetch is in flight', () => {
+	it( 'shows the loader, not the empty message, until the Unread fetch settles', () => {
 		const store = initStore();
-		// Settle once with no notes so DataViews has mounted and shows its empty state.
-		store.dispatch( actions.ui.loadedNotes() );
 		const { container } = renderUnread( store );
-		expect( screen.getByText( "You're all caught up!" ) ).toBeVisible();
 
-		// A filtered fetch begins: loading is true while the data is still empty.
+		// Fresh mount: the fetch hasn't run yet, so the empty message must not flash.
+		expect( screen.queryByText( "You're all caught up!" ) ).not.toBeInTheDocument();
+		expect( container.querySelector( '.components-spinner' ) ).toBeTruthy();
+
+		// The fetch runs and is still in flight: loading, data empty.
 		act( () => {
 			store.dispatch( actions.ui.loadNotes() );
 		} );
-
-		// The "all caught up" message must not show until the fetch settles.
 		expect( screen.queryByText( "You're all caught up!" ) ).not.toBeInTheDocument();
-		expect( container.querySelector( '.components-spinner' ) ).toBeTruthy();
+
+		// It settles with no unread notes: now the real message shows.
+		act( () => {
+			store.dispatch( actions.ui.loadedNotes() );
+		} );
+		expect( screen.getByText( "You're all caught up!" ) ).toBeVisible();
 	} );
 
 	// Regression: a refetch that flips `isLoading` on while the Unread list is
@@ -153,22 +161,31 @@ describe( 'NoteList loading state', () => {
 		expect( screen.queryByText( 'A like' ) ).not.toBeInTheDocument();
 	} );
 
-	// A client-filtered tab pages through the shared cache and is often empty
-	// mid-paging. The full loader must not re-take over on each page (that looked
-	// like it continually restarted); the empty/DataViews view stays put.
-	it( 'keeps the view (not the loader) while a client-filtered tab pages empty', () => {
+	// Once the cache is exhausted (no more to page), a background refresh must not
+	// flash the spinner over the settled empty message.
+	it( 'keeps the empty message on a settled client-filtered tab during a refresh', () => {
 		const store = initStore();
-		// Settle once with no notes so DataViews has mounted on the Comments tab.
 		store.dispatch( actions.ui.loadedNotes() );
-		renderTab( store, 'comments' as FilterName );
+		renderTab( store, 'comments' as FilterName ); // client.hasMoreNotes() is false
 		expect( screen.getByText( 'No new comments yet!' ) ).toBeVisible();
 
-		// A paging fetch begins while no comments are loaded yet.
 		act( () => {
 			store.dispatch( actions.ui.loadNotes() );
 		} );
 
-		// The empty view stays — the full loader does not take over per page.
 		expect( screen.getByText( 'No new comments yet!' ) ).toBeVisible();
+	} );
+
+	// While a client-filtered tab still has cache pages to search, show the spinner
+	// rather than flashing its empty message before matching notes arrive.
+	it( 'shows the loader on a client-filtered tab while the cache still has pages', () => {
+		const store = initStore();
+		store.dispatch( actions.ui.loadedNotes() );
+		const { container } = renderTab( store, 'comments' as FilterName, {
+			hasMoreNotes: () => true,
+		} );
+
+		expect( screen.queryByText( 'No new comments yet!' ) ).not.toBeInTheDocument();
+		expect( container.querySelector( '.components-spinner' ) ).toBeTruthy();
 	} );
 } );

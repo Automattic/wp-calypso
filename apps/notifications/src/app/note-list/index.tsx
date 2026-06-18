@@ -79,6 +79,13 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 		hasRenderedDataViews.current = true;
 	}
 
+	// A fresh Unread mount fetches after first paint; until that fetch starts, an
+	// empty view isn't "all caught up" yet. Latch once loading begins.
+	const unreadFetchStarted = useRef( false );
+	if ( filterName === 'unread' && isLoading ) {
+		unreadFetchStarted.current = true;
+	}
+
 	// Drive the client's server-side filter from the active tab. Only "unread"
 	// maps to a filter today; other tabs stay client-filtered.
 	useEffect( () => {
@@ -151,14 +158,16 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	useNoteListFocusToLastSelectedNote( { noteListRef, notes } );
 	useNoteListNavigationKeyboardShortcuts( { noteListRef, visibleNotes } );
 
-	// Show the full-panel loader only until DataViews first mounts. Once mounted it
-	// must never be swapped back out for the spinner: DataViews binds its
-	// infinite-scroll listener a single time, on mount, and only if the scroll
-	// container is present. Unmounting it mid-load (e.g. while the Unread fetch is
-	// in flight) and remounting it leaves scroll-driven loading dead. The in-flight
-	// Unread spinner is rendered inside DataViews via the `empty` slot instead, so
-	// the mounted instance — and its listener — survives the fetch.
+	// Full-panel loader only until DataViews first mounts; never swap it back out
+	// after. DataViews binds its infinite-scroll listener once, on mount, and only
+	// if the scroll container exists, so a remount mid-load leaves scrolling dead.
+	// In-flight loading shows via the `empty` slot instead (see `showEmptyLoader`).
 	const showInitialLoader = ! hasRenderedDataViews.current;
+
+	// Spinner instead of an empty message while the view may still be filling —
+	// more cache pages to search, or the Unread fetch not started/settled yet.
+	const showEmptyLoader =
+		hasMoreNotes || ( filterName === 'unread' && ( isLoading || ! unreadFetchStarted.current ) );
 
 	return (
 		<div ref={ noteListRef } className="wpnc__note-list">
@@ -171,10 +180,8 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 					defaultLayouts={ DEFAULT_LAYOUTS }
 					paginationInfo={ effectivePaginationInfo }
 					empty={
-						// While the Unread fetch is in flight DataViews still renders its
-						// `empty` slot (data hasn't landed yet), so show the spinner here
-						// rather than the "all caught up" message to avoid flashing it.
-						filterName === 'unread' && isLoading ? (
+						// Spinner while still filling; the real message once settled.
+						showEmptyLoader ? (
 							<VStack alignment="center" style={ { padding: '40px 0' } }>
 								<Spinner />
 							</VStack>
