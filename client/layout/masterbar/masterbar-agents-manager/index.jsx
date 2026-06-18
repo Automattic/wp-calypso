@@ -41,18 +41,21 @@ const MasterbarAgentsManager = ( { tooltip } ) => {
 	};
 
 	const handleMenuClick = ( destination, isExternal = false ) => {
+		// Re-clicking the current route closes the chat; external links never do.
+		const isClosing =
+			! isExternal && isAgentsManagerChatVisible() && getAgentsManagerChatRoute() === destination;
+
 		recordTracksEvent( 'calypso_dashboard_help_center_menu_panel_click', {
 			section: sectionName,
 			destination,
+			action: isClosing ? 'close' : 'open',
 		} );
 
 		if ( isExternal ) {
 			return window.open( destination, '_blank', 'noopener,noreferrer' );
 		}
 
-		// Re-clicking the item for the current route closes the chat; a different
-		// route switches view (and opens/expands) without closing.
-		if ( isAgentsManagerChatVisible() && getAgentsManagerChatRoute() === destination ) {
+		if ( isClosing ) {
 			recordTracksEvent( 'calypso_inlinehelp_close', {
 				force_site_id: true,
 				location: 'help-center',
