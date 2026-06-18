@@ -1,7 +1,7 @@
 import { OnboardActions } from '@automattic/data-stores';
 import { WRITE_ON_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -57,14 +57,21 @@ const writeOn: FlowV2< typeof initialize > = {
 	useSideEffect( currentStepSlug ) {
 		const { setSiteTitle } = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const isLoggedIn = useSelector( isUserLoggedIn );
+		const hasRunEntryChecks = useRef( false );
 
-		// Runs only on flow entry (before any step is selected). The flow re-reads
-		// localStorage at publish time, so a refresh mid-signup still finds the
-		// draft.
+		// Entry checks must fire at most once per mount. Re-running them on a
+		// later isLoggedIn flip (e.g. mid-signup) would redirect the user out of
+		// the flow during the auth round-trip.
 		useEffect( () => {
-			if ( currentStepSlug ) {
+			if ( hasRunEntryChecks.current ) {
 				return;
 			}
+			if ( currentStepSlug ) {
+				// The flow already advanced past entry — entry checks aren't needed.
+				hasRunEntryChecks.current = true;
+				return;
+			}
+			hasRunEntryChecks.current = true;
 
 			// Phase 1 is a logged-out fake door. If the visitor is already
 			// authenticated they should not be here — send them to the standard
