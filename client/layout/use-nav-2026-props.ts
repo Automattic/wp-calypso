@@ -7,6 +7,7 @@ import {
 	getCurrentUserEmail,
 	isUserLoggedIn,
 } from 'calypso/state/current-user/selectors';
+import type { HeaderProps } from '@automattic/wpcom-template-parts';
 
 type Nav2026Props =
 	| {
@@ -26,6 +27,10 @@ type Nav2026Props =
 			userEmail?: never;
 	  };
 
+type Nav2026Options = {
+	variant?: HeaderProps[ 'variant' ];
+};
+
 // ExPlat experiment driving the 2026 Global Nav A/B test. It's a single
 // `wpcom`-platform experiment (also serving the LOHP + Landpack PHP surfaces);
 // the wpcom assignments controller allowlists it so the /assignments/calypso
@@ -44,15 +49,17 @@ const VARIATION_TO_VARIANT: Record< string, 1 | 2 > = {
  * is a no-op then.
  *
  * Resolution order:
- * 1. `nav-redesign/2026` config flag — manual force-on for staff/dev. Variant
+ * 1. Minimal universal headers are not eligible for Nav 2026.
+ * 2. `nav-redesign/2026` config flag — manual force-on for staff/dev. Variant
  *    follows the existing `nav-redesign/2026-variant-2` flag.
- * 2. The NAV_2026_EXPERIMENT assignment — `treatment_1`/`treatment_2` map to
+ * 3. The NAV_2026_EXPERIMENT assignment — `treatment_1`/`treatment_2` map to
  *    variants 1/2; everything else (control, null) → old nav.
  *    While the assignment is still loading for logged-in users, return a
  *    temporary className that hides the old nav until the assignment resolves.
  */
-export function useNav2026Props(): Nav2026Props {
-	const forcedOn = config.isEnabled( 'nav-redesign/2026' );
+export function useNav2026Props( options: Nav2026Options = {} ): Nav2026Props {
+	const isHeaderEligible = options.variant !== 'minimal';
+	const forcedOn = isHeaderEligible && config.isEnabled( 'nav-redesign/2026' );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const userAvatar = useSelector( ( state ) => getCurrentUser( state )?.avatar_URL );
 	const userName = useSelector( getCurrentUserDisplayName );
@@ -60,7 +67,7 @@ export function useNav2026Props(): Nav2026Props {
 
 	// SSR is ineligible (no assignment server-side); the browser refetches on hydration.
 	const [ isLoadingExperiment, experimentAssignment ] = useExperiment( NAV_2026_EXPERIMENT, {
-		isEligible: ! forcedOn && typeof window !== 'undefined',
+		isEligible: isHeaderEligible && ! forcedOn && typeof window !== 'undefined',
 	} );
 
 	// Resolve the variant: the config flag forces it on for staff/dev, otherwise
