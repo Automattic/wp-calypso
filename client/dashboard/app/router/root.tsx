@@ -15,8 +15,6 @@ import { dashboardRedirect } from './redirect';
 import type { AppConfig } from '../context';
 import type { User } from '@automattic/api-core';
 
-const OLDEST_ELIGIBLE_USER: number = config( 'dashboard_opt_in_oldest_eligible_user' ); // Cut-off on 22 December 2025
-
 export type RootRouterContext = {
 	config: AppConfig;
 };
@@ -61,10 +59,6 @@ export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 		}
 
 		const user = queryClient.getQueryData< User >( AUTH_QUERY_KEY );
-		if ( user && user.ID <= OLDEST_ELIGIBLE_USER ) {
-			return;
-		}
-
 		const userPreference = await queryClient.ensureQueryData( rawUserPreferencesQuery() );
 		const optIn = userPreference[ 'hosting-dashboard-opt-in' ];
 		if ( getHostingDashboardEnrollment( optIn, user?.ID ).enrolled ) {

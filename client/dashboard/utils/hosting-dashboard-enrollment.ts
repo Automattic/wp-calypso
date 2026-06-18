@@ -59,5 +59,5 @@ export function isOptInToggleVisible(
 		return false;
 	}
 
-	return userId !== undefined;
+	return true;
 }

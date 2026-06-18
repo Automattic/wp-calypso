@@ -12,12 +12,11 @@ jest.mock( '@automattic/calypso-config', () => {
 
 const mockedIsEnabled = jest.mocked( config.isEnabled );
 
-const PRE_CUTOFF_IN_COHORT = 100; // % 100 === 0, in cohort
+const IN_COHORT = 100; // % 100 === 0, in cohort
 // The out-of-cohort fixtures assume the current 50% rollout (last two digits
 // >= 50). At 100% no user is outside the cohort, so the cases using these no
 // longer apply.
-const PRE_CUTOFF_OUT_OF_COHORT = 99; // % 100 === 99, not in cohort
-const ANY_NON_COHORT_USER = 999999999; // % 100 === 99, not in cohort
+const OUT_OF_COHORT = 99; // % 100 === 99, not in cohort
 
 const preference = ( value: HostingDashboardOptIn[ 'value' ] ): HostingDashboardOptIn => ( {
 	value,
@@ -34,7 +33,7 @@ beforeEach( () => {
 
 describe( 'getHostingDashboardEnrollment', () => {
 	it( 'leaves cohort-range users unenrolled while the rollout flag is off', () => {
-		expect( getHostingDashboardEnrollment( undefined, PRE_CUTOFF_IN_COHORT ) ).toEqual( {
+		expect( getHostingDashboardEnrollment( undefined, IN_COHORT ) ).toEqual( {
 			enrolled: false,
 		} );
 	} );
@@ -44,24 +43,24 @@ describe( 'getHostingDashboardEnrollment', () => {
 
 		it( 'the escape hatch (forced-opt-out) wins over cohort membership', () => {
 			expect(
-				getHostingDashboardEnrollment( preference( 'forced-opt-out' ), PRE_CUTOFF_IN_COHORT )
+				getHostingDashboardEnrollment( preference( 'forced-opt-out' ), IN_COHORT )
 			).toEqual( { enrolled: false } );
 		} );
 
 		it( 'keeps opted-in users enrolled even when outside the cohort', () => {
 			expect(
-				getHostingDashboardEnrollment( preference( 'opt-in' ), PRE_CUTOFF_OUT_OF_COHORT )
+				getHostingDashboardEnrollment( preference( 'opt-in' ), OUT_OF_COHORT )
 			).toEqual( { enrolled: true, reason: 'opt-in' } );
 		} );
 
 		it( 'the cohort overrides an explicit opt-out', () => {
 			expect(
-				getHostingDashboardEnrollment( preference( 'opt-out' ), PRE_CUTOFF_IN_COHORT )
+				getHostingDashboardEnrollment( preference( 'opt-out' ), IN_COHORT )
 			).toEqual( { enrolled: true, reason: 'forced' } );
 		} );
 
 		it( 'enrolls cohort members who have no preference', () => {
-			expect( getHostingDashboardEnrollment( undefined, PRE_CUTOFF_IN_COHORT ) ).toEqual( {
+			expect( getHostingDashboardEnrollment( undefined, IN_COHORT ) ).toEqual( {
 				enrolled: true,
 				reason: 'forced',
 			} );
@@ -69,7 +68,7 @@ describe( 'getHostingDashboardEnrollment', () => {
 
 		it( 'leaves non-cohort users who never opted in unenrolled', () => {
 			expect(
-				getHostingDashboardEnrollment( preference( 'opt-out' ), PRE_CUTOFF_OUT_OF_COHORT )
+				getHostingDashboardEnrollment( preference( 'opt-out' ), OUT_OF_COHORT )
 			).toEqual( { enrolled: false } );
 		} );
 	} );
@@ -77,17 +76,13 @@ describe( 'getHostingDashboardEnrollment', () => {
 
 describe( 'isOptInToggleVisible', () => {
 	it( 'shows the toggle to users who are not in the cohort', () => {
-		expect( isOptInToggleVisible( preference( 'opt-out' ), PRE_CUTOFF_OUT_OF_COHORT ) ).toBe(
+		expect( isOptInToggleVisible( preference( 'opt-out' ), OUT_OF_COHORT ) ).toBe(
 			true
 		);
 	} );
 
-	it( 'shows the toggle regardless of account age', () => {
-		expect( isOptInToggleVisible( undefined, ANY_NON_COHORT_USER ) ).toBe( true );
-	} );
-
 	it( 'hides the toggle from escape-hatched users even while the rollout flag is off', () => {
-		expect( isOptInToggleVisible( preference( 'forced-opt-out' ), PRE_CUTOFF_OUT_OF_COHORT ) ).toBe(
+		expect( isOptInToggleVisible( preference( 'forced-opt-out' ), OUT_OF_COHORT ) ).toBe(
 			false
 		);
 	} );
@@ -96,11 +91,11 @@ describe( 'isOptInToggleVisible', () => {
 		beforeEach( () => enableFlags( 'dashboard/enable-percentage-rollout' ) );
 
 		it( 'hides the toggle from cohort members', () => {
-			expect( isOptInToggleVisible( preference( 'opt-in' ), PRE_CUTOFF_IN_COHORT ) ).toBe( false );
+			expect( isOptInToggleVisible( preference( 'opt-in' ), IN_COHORT ) ).toBe( false );
 		} );
 
 		it( 'still shows the toggle to non-cohort users', () => {
-			expect( isOptInToggleVisible( preference( 'opt-out' ), PRE_CUTOFF_OUT_OF_COHORT ) ).toBe(
+			expect( isOptInToggleVisible( preference( 'opt-out' ), OUT_OF_COHORT ) ).toBe(
 				true
 			);
 		} );
@@ -109,9 +104,9 @@ describe( 'isOptInToggleVisible', () => {
 	describe( 'with force-opt-in-visibility on', () => {
 		it( 'overrides the cohort and the escape hatch', () => {
 			enableFlags( 'dashboard/force-opt-in-visibility', 'dashboard/enable-percentage-rollout' );
-			expect( isOptInToggleVisible( undefined, PRE_CUTOFF_IN_COHORT ) ).toBe( true );
+			expect( isOptInToggleVisible( undefined, IN_COHORT ) ).toBe( true );
 			expect(
-				isOptInToggleVisible( preference( 'forced-opt-out' ), PRE_CUTOFF_OUT_OF_COHORT )
+				isOptInToggleVisible( preference( 'forced-opt-out' ), OUT_OF_COHORT )
 			).toBe( true );
 		} );
 	} );
