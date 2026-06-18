@@ -150,6 +150,42 @@ describe( 'RestClient', () => {
 			client.loadMore();
 			expect( getCalls ).toHaveLength( 0 );
 		} );
+
+		// A filtered (Unread) fetch drops matching notes — sometimes older than the
+		// All view's loaded window — into the shared store. Load-more must keep
+		// pacing off this view's own window (`noteList`), not those stray notes, or
+		// the `before` cursor jumps past unloaded notes, the next page comes back
+		// short, and paging latches with the list half-loaded.
+		it( 'keeps paging the All view from its own window after an Unread visit', () => {
+			// All view's first window: ids 100..91 (oldest loaded = 91).
+			seedFirstWindow();
+
+			// Visit Unread; the response includes a note far older than the window.
+			client.setFilter( { unread: 1 } );
+			getCalls[ 0 ].callback( null, {
+				notes: [ makeNote( 91 ), makeNote( 5 ) ],
+				last_seen_time: 0,
+			} );
+			getCalls.length = 0;
+
+			// Back to the All view.
+			client.setFilter( null );
+			getCalls.length = 0;
+
+			// Load-more must anchor on the All window's oldest (91), not the stray
+			// unread note (5), and still consider there to be more to load.
+			expect( client.hasMoreNotes() ).toBe( true );
+			client.loadMore();
+
+			expect( getCalls ).toHaveLength( 1 );
+			expect( getCalls[ 0 ].query.before ).toBe(
+				Math.floor( Date.parse( makeNote( 91 ).timestamp ) / 1000 )
+			);
+
+			// A full older page keeps the catch-up going instead of latching.
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 90 ), last_seen_time: 0 } );
+			expect( client.hasMoreNotes() ).toBe( true );
+		} );
 	} );
 
 	describe( 'server-side (unread) filtering', () => {

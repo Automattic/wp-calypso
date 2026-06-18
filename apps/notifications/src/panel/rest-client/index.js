@@ -241,8 +241,12 @@ function getNotes( before ) {
 			// Also stop when an older page adds no new ids — e.g. an inclusive
 			// `before` echoes back only the anchor note, or capping near max_limit
 			// left room for just that anchor. Such a page isn't "short", so without
-			// this the catch-up loop would refetch the same notes forever.
-			const knownIds = new Set( getAllNotes( store.getState() ).map( ( n ) => n.id ) );
+			// this the catch-up loop would refetch the same notes forever. Compare
+			// against this view's own window, not the shared store: a filtered fetch
+			// may have cached an older matching note that this page legitimately
+			// brings into the All view, which must still count as new.
+			const viewNotes = this.noteList.length ? this.noteList : getAllNotes( store.getState() );
+			const knownIds = new Set( viewNotes.map( ( n ) => n.id ) );
 			if ( ! data.notes.some( ( n ) => ! knownIds.has( n.id ) ) ) {
 				this.allNotesLoaded = true;
 			}
@@ -612,10 +616,17 @@ function loadMore() {
 		return;
 	}
 
-	// getAllNotes is newest-first, so the last entry is the oldest loaded note —
-	// the cursor for the next, older page.
-	const notes = getAllNotes( store.getState() );
-	const oldest = notes[ notes.length - 1 ];
+	// Page from this view's own window (`noteList`), newest-first, so its last
+	// entry is the oldest note this view has paged in. A filtered (Unread) fetch
+	// drops matching notes — often older ones — into the shared store, so pacing
+	// the `before` cursor off `getAllNotes()` could jump it past notes the All
+	// view hasn't loaded and strand the rest of the list. Fall back to the store
+	// only before this view has a window of its own.
+	const allNotes = getAllNotes( store.getState() );
+	const oldestId = this.noteList.length
+		? this.noteList[ this.noteList.length - 1 ].id
+		: allNotes[ allNotes.length - 1 ]?.id;
+	const oldest = allNotes.find( ( note ) => note.id === oldestId );
 	if ( ! oldest ) {
 		return;
 	}
