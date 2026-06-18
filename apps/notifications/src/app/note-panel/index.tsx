@@ -3,12 +3,10 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHeading as Heading,
 	CardHeader,
-	Icon,
 	privateApis,
 } from '@wordpress/components';
 import '@wordpress/components/build-style/style.css';
 import { __ } from '@wordpress/i18n';
-import { bell } from '@wordpress/icons';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { useEffect, useCallback, useRef } from 'react';
 import { useSelector } from 'react-redux';
@@ -113,7 +111,6 @@ const NotePanel = ( {
 				<VStack>
 					<HStack>
 						<HStack justify="flex-start">
-							<Icon icon={ bell } />
 							<Heading level={ 3 } size={ 15 } weight={ 500 }>
 								{ __( 'Notifications' ) }
 							</Heading>
