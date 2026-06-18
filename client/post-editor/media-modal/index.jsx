@@ -499,7 +499,7 @@ export class EditorMediaModal extends Component {
 
 				content = (
 					<ImageEditor
-						siteId={ get( site, 'ID' ) }
+						siteId={ site?.ID }
 						media={ media }
 						onDone={ this.onImageEditorDone }
 						onCancel={ this.onImageEditorCancel }

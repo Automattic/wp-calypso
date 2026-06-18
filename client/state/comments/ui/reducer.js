@@ -85,7 +85,7 @@ export const queries = ( state = {}, action ) => {
 			return deepUpdateComments( state, without( comments, action.commentId ), query );
 		}
 		case COMMENTS_QUERY_UPDATE:
-			return typeof get( action, 'query.page' ) === 'undefined'
+			return typeof action?.query?.page === 'undefined'
 				? state
 				: deepUpdateComments( state, map( action.comments, 'ID' ), action.query );
 		default:

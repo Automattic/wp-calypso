@@ -203,7 +203,7 @@ export const announceDeleteFailure = ( action ) => {
 			siteId,
 			postId,
 			comments: [ comment ],
-			skipSort: !! get( comment, 'parent.ID' ),
+			skipSort: !! comment?.parent?.ID,
 			meta: {
 				comment: {
 					context: 'add', //adds a hint for the counts reducer.

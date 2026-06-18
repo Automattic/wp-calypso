@@ -304,8 +304,8 @@ class PostCommentList extends Component {
 	};
 
 	setActiveReplyComment = ( commentId ) => {
-		const siteId = get( this.props, 'post.site_ID' );
-		const postId = get( this.props, 'post.ID' );
+		const siteId = this.props?.post?.site_ID;
+		const postId = this.props?.post?.ID;
 
 		if ( ! siteId || ! postId ) {
 			return;

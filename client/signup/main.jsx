@@ -385,7 +385,7 @@ class Signup extends Component {
 		const { signupDependencies, hostingFlow, queryObject, wccomFrom, oauth2Client } = this.props;
 		const mainFlow = queryObject?.main_flow;
 
-		let theme = get( signupDependencies, 'selectedDesign.theme' );
+		let theme = signupDependencies?.selectedDesign?.theme;
 
 		if ( ! theme && signupDependencies.themeParameter ) {
 			theme = signupDependencies.themeParameter;
@@ -396,8 +396,8 @@ class Signup extends Component {
 		return {
 			...deps,
 			theme,
-			intent: get( signupDependencies, 'intent' ),
-			starting_point: get( signupDependencies, 'startingPoint' ),
+			intent: signupDependencies?.intent,
+			starting_point: signupDependencies?.startingPoint,
 			is_in_hosting_flow: hostingFlow,
 			wccom_from: wccomFrom,
 			oauth2_client_id: oauth2Client?.id,
@@ -589,13 +589,13 @@ class Signup extends Component {
 		const hasCartItems = dependenciesContainCartItem( dependencies );
 		// @TODO: cartItem is now deprecated. Remove this once all steps and flows have been
 		// updated to use cartItems
-		const cartItem = get( dependencies, 'cartItem' );
-		const cartItems = get( dependencies, 'cartItems' );
-		const domainItem = get( dependencies, 'domainItem' );
-		const selectedDesign = get( dependencies, 'selectedDesign' );
-		const intent = get( dependencies, 'intent' );
-		const startingPoint = get( dependencies, 'startingPoint' );
-		const signupDomainOrigin = get( dependencies, 'signupDomainOrigin' );
+		const cartItem = dependencies?.cartItem;
+		const cartItems = dependencies?.cartItems;
+		const domainItem = dependencies?.domainItem;
+		const selectedDesign = dependencies?.selectedDesign;
+		const intent = dependencies?.intent;
+		const startingPoint = dependencies?.startingPoint;
+		const signupDomainOrigin = dependencies?.signupDomainOrigin;
 		const planProductSlug = cartItems?.length
 			? cartItems.find( ( item ) => isPlan( item ) )?.product_slug
 			: cartItem?.product_slug;

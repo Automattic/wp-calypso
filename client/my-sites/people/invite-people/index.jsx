@@ -375,7 +375,7 @@ class InvitePeople extends Component {
 	};
 
 	goBack = () => {
-		const siteSlug = get( this.props, 'site.slug' );
+		const siteSlug = this.props?.site?.slug;
 		const route = isEnabled( 'user-management-revamp' ) ? 'team' : 'team-members';
 		const fallback = siteSlug ? `/people/${ route }/${ siteSlug }` : `/people/${ route }`;
 

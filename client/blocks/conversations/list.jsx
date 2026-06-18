@@ -233,8 +233,8 @@ export class ConversationCommentList extends Component {
 	};
 
 	setActiveReplyComment = ( commentId ) => {
-		const siteId = get( this.props, 'post.site_ID' );
-		const postId = get( this.props, 'post.ID' );
+		const siteId = this.props?.post?.site_ID;
+		const postId = this.props?.post?.ID;
 
 		if ( ! siteId || ! postId ) {
 			return;
@@ -266,7 +266,7 @@ export class ConversationCommentList extends Component {
 		// if you have finished loading comments, then lets use the comments we have as the final comment count
 		// if we are still loading comments, then assume what the server initially told us is right
 		const commentCount = isDoneLoadingComments
-			? filter( commentsTree, ( comment ) => get( comment, 'data.type' ) === 'comment' ).length // filter out pingbacks/trackbacks
+			? filter( commentsTree, ( comment ) => comment?.data?.type === 'comment' ).length // filter out pingbacks/trackbacks
 			: post.discussion.comment_count;
 
 		const showCaterpillar =

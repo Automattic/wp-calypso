@@ -708,7 +708,7 @@ const ConnectedUser = connect(
 			isWoo,
 			isWooJPC: isWooJPCFlow( state ),
 			isBlazePro,
-			from: get( getCurrentQueryArguments( state ), 'from' ),
+			from: getCurrentQueryArguments( state )?.from,
 			userLoggedIn: isUserLoggedIn( state ),
 			isOnboardingAffiliateFlow: getIsOnboardingAffiliateFlow( state ),
 			isA4A,

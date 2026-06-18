@@ -445,7 +445,7 @@ class PostComment extends PureComponent {
 		}
 
 		// Author Details
-		const parentCommentId = get( comment, 'parent.ID' );
+		const parentCommentId = comment?.parent?.ID;
 		const { commentAuthorUrl, commentAuthorName } = this.getAuthorDetails( commentId );
 		const { commentAuthorUrl: parentAuthorUrl, commentAuthorName: parentAuthorName } =
 			this.getAuthorDetails( parentCommentId );

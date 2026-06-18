@@ -5,7 +5,7 @@ import { get } from 'lodash';
 import { lostPassword } from 'calypso/lib/paths';
 
 export function getSMSMessageFromResponse( response ) {
-	const phoneNumber = get( response, 'body.data.phone_number' );
+	const phoneNumber = response?.body?.data?.phone_number;
 
 	return translate( 'Message sent to phone number ending in %(phoneNumber)s', {
 		args: {
@@ -53,7 +53,7 @@ export function getErrorFromHTTPError( httpError ) {
 		};
 	}
 
-	const code = get( httpError, 'response.body.data.errors[0].code' );
+	const code = httpError?.response?.body?.data?.errors?.[ 0 ]?.code;
 
 	if ( code ) {
 		if ( code in errorFields ) {
@@ -114,7 +114,7 @@ export function getErrorFromHTTPError( httpError ) {
 		}
 	}
 
-	let message = get( httpError, 'response.body.data.errors[0].message' );
+	let message = httpError?.response?.body?.data?.errors?.[ 0 ]?.message;
 
 	if ( ! message ) {
 		message = get( httpError, 'response.body.data', httpError.message );
