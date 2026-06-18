@@ -89,7 +89,7 @@ interface Props {
 	useImageUpload?: ImageUploadHook;
 	/** Hook for saving and restoring editor state so that AI actions can be undone. */
 	useCheckpoint?: UseCheckpointHook;
-	/** Called when the has-messages state changes. Drives the dock's empty state. */
+	/** Called when the has-messages state changes. */
 	onHasMessagesChange: ( hasMessages: boolean ) => void;
 }
 
@@ -491,7 +491,7 @@ export default function OrchestratorChat( {
 		thinkingMessage,
 	] );
 
-	// Notify parent when has-messages state changes (drives the dock's empty state).
+	// Notify parent when has-messages state changes.
 	const messageCount = displayedMessages.length;
 	const hasMessages = messageCount > 0;
 	useEffect( () => {
