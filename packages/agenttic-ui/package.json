@@ -11,6 +11,12 @@
 			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js"
 		},
+		"./embedded-agent-ui": {
+			"types": "./dist/embedded-agent-ui.d.ts",
+			"import": "./dist/embedded-agent-ui.js"
+		},
+		"./global.css": "./dist/global.css",
+		"./embedded-agent-ui.css": "./dist/embedded-agent-ui.css",
 		"./index.css": "./dist/index.css"
 	},
 	"files": [
