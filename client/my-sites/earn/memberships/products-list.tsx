@@ -19,7 +19,6 @@ import SectionHeader from 'calypso/components/section-header';
 import { useDispatch, useSelector } from 'calypso/state';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
-import { getFreeTierDescriptionRenderedForSiteId } from 'calypso/state/memberships/settings/selectors';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';
@@ -65,17 +64,12 @@ function ProductsList() {
 		siteSettings?.subscription_options?.free_tier_description ?? '';
 	// Server-rendered markdown for the Free tier, parsed by the same backend
 	// parser the subscribe modal uses, so the preview is 1:1 with what
-	// subscribers see (the raw value above is still used for editing).
-	const freeTierDescriptionRendered = useSelector( ( state ) =>
-		getFreeTierDescriptionRenderedForSiteId( state, site?.ID ?? null )
-	);
+	// subscribers see (the raw value above is still used for editing). It's
+	// colocated with subscription_options on the site-settings endpoint, so it
+	// stays read-after-write consistent with the source after a save.
+	const freeTierDescriptionRendered = siteSettings?.free_tier_description_rendered ?? null;
 	const isFreeTierHidden = Boolean( siteSettings?.subscription_options?.hide_free_tier );
-	// The Free tier's custom description / hide setting are stored in the site's
-	// subscription_options, which only versions of Jetpack new enough to allow
-	// those keys will persist. The settings endpoint advertises support via this
-	// read-only flag (always true on Simple sites). When it's absent/false a save
-	// would silently no-op, so we hide the Free row entirely rather than offer
-	// controls that don't work.
+
 	const supportsFreeTierSettings = Boolean( siteSettings?.supports_free_tier_customization );
 
 	const hasDonationsFeature = useSelector( ( state ) =>

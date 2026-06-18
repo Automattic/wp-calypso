@@ -48,6 +48,7 @@ export function getSiteSettingsSaveRequestStatus( state, siteId ) {
  hide_free_tier?: boolean | number;
  };
  supports_free_tier_customization?: boolean;
+ free_tier_description_rendered?: string;
  }} SiteSettingsItem
  */
 

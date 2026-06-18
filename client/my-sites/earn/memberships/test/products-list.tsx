@@ -66,7 +66,7 @@ const initialState = {
 const renderProductsList = (
 	products,
 	subscriptionOptions = null,
-	settings = null,
+	freeTierDescriptionRendered = null,
 	supportsFreeTier = true
 ) =>
 	renderWithProvider( <ProductsList />, {
@@ -79,16 +79,21 @@ const renderProductsList = (
 						1: products,
 					},
 				},
-				settings: settings ? { 1: settings } : {},
+				settings: {},
 			},
 			// Provide a complete site-settings slice (items + requesting + saveRequests).
 			// `requesting: { 1: true }` makes QuerySiteSettings treat the fetch as
 			// already in-flight so it doesn't trigger a real network request in tests.
+			// The Free tier's server-rendered markdown is colocated here with
+			// subscription_options (it's returned by the site-settings endpoint).
 			siteSettings: {
 				items: {
 					1: {
 						...( subscriptionOptions ? { subscription_options: subscriptionOptions } : {} ),
 						...( supportsFreeTier ? { supports_free_tier_customization: true } : {} ),
+						...( freeTierDescriptionRendered
+							? { free_tier_description_rendered: freeTierDescriptionRendered }
+							: {} ),
 					},
 				},
 				requesting: { 1: true },
@@ -208,9 +213,7 @@ describe( 'ProductsList', () => {
 		const { container } = renderProductsList(
 			[ tierWithoutDescription ],
 			{ free_tier_description: 'Includes:\n\n- Weekly posts' },
-			{
-				freeTierDescriptionRendered: '<p>Includes:</p>\n<ul>\n<li>Weekly posts</li>\n</ul>',
-			}
+			'<p>Includes:</p>\n<ul>\n<li>Weekly posts</li>\n</ul>'
 		);
 
 		const description = container.querySelector( '.memberships__products-product-description' );
@@ -223,11 +226,8 @@ describe( 'ProductsList', () => {
 		const { container } = renderProductsList(
 			[ tierWithoutDescription ], // No paid description, so the only description container is the Free row's.
 			{ free_tier_description: '[Learn more](https://example.com)' },
-			{
-				freeTierDescriptionRendered:
-					'<p><a href="https://example.com" target="_blank" rel="noopener">Learn more</a></p>' +
-					'<script>alert(1)</script><p onclick="alert(1)">unsafe</p>',
-			}
+			'<p><a href="https://example.com" target="_blank" rel="noopener">Learn more</a></p>' +
+				'<script>alert(1)</script><p onclick="alert(1)">unsafe</p>'
 		);
 
 		const description = container.querySelector( '.memberships__products-product-description' );
