@@ -7,7 +7,7 @@ import {
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Banner from 'calypso/components/banner';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
@@ -24,12 +24,14 @@ const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 	const dispatch = useDispatch();
 	const planSlug = useSelector( ( state: IAppState ) => getSitePlanSlug( state, siteId ) ?? '' );
 	const isLoading = useSelector( ( state: IAppState ) => isRequestingSitePlans( state, siteId ) );
+	const [ refreshStarted, setRefreshStarted ] = useState( false );
 
 	useEffect( () => {
+		setRefreshStarted( true );
 		dispatch( refreshSitePlans( siteId ) );
 	}, [ dispatch, siteId ] );
 
-	if ( ! siteSlug || ! planSlug || isLoading ) {
+	if ( ! siteSlug || ! refreshStarted || ! planSlug || isLoading ) {
 		return null;
 	}
 
