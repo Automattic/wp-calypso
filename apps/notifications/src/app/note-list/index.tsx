@@ -115,11 +115,9 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 		fields
 	);
 
-	// The list's unread indicator renders off each note's raw `read` flag, but
-	// marking a note read in-app updates the read state in Redux, not that flag.
-	// Merge the effective read state (which accounts for in-app reads) into the
-	// rendered items so a row sheds its unread styling immediately on open,
-	// without waiting for a server refetch.
+	// DataViews shows the unread dot from `note.read`, which an in-app read leaves
+	// stale. Swap in the effective read state, reusing the note when unchanged so
+	// only the affected row re-renders.
 	const notesState = useSelector( getNotes );
 	const data = filteredData.map( ( note ) => {
 		const isRead = getIsNoteRead( notesState, note );
