@@ -151,11 +151,9 @@ describe( 'RestClient', () => {
 			expect( getCalls ).toHaveLength( 0 );
 		} );
 
-		// A filtered (Unread) fetch drops matching notes — sometimes older than the
-		// All view's loaded window — into the shared store. Load-more must keep
-		// pacing off this view's own window (`noteList`), not those stray notes, or
-		// the `before` cursor jumps past unloaded notes, the next page comes back
-		// short, and paging latches with the list half-loaded.
+		// A filtered (Unread) fetch drops older notes into the shared store. The All
+		// view's load-more must pace off its own window (`noteList`), or the `before`
+		// cursor jumps past unloaded notes and paging latches half-loaded.
 		it( 'keeps paging the All view from its own window after an Unread visit', () => {
 			// All view's first window: ids 100..91 (oldest loaded = 91).
 			seedFirstWindow();

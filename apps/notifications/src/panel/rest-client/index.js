@@ -239,13 +239,9 @@ function getNotes( before ) {
 		}
 
 		if ( before ) {
-			// Also stop when an older page adds no new ids — e.g. an inclusive
-			// `before` echoes back only the anchor note, or capping near max_limit
-			// left room for just that anchor. Such a page isn't "short", so without
-			// this the catch-up loop would refetch the same notes forever. Compare
-			// against this view's own window, not the shared store: a filtered fetch
-			// may have cached an older matching note that this page legitimately
-			// brings into the All view, which must still count as new.
+			// Stop when an older page adds nothing new (an inclusive `before` can
+			// echo back just the anchor). Compare against the view's own window so
+			// a note already cached by a filtered fetch still counts as new.
 			const viewNotes = this.noteList.length ? this.noteList : getAllNotes( store.getState() );
 			const knownIds = new Set( viewNotes.map( ( n ) => n.id ) );
 			if ( ! data.notes.some( ( n ) => ! knownIds.has( n.id ) ) ) {
@@ -405,9 +401,8 @@ function getFilteredNotes( before ) {
 
 	const parameters = {
 		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash,variant',
-		// Without `before` this re-requests the authoritative top window. With it,
-		// load-more pages an older slice in additively — only what's left under the
-		// cap, so a page can't push the view past max_limit.
+		// No `before`: re-request the authoritative top window. With it: page an
+		// older slice, capped to what's left under max_limit.
 		number: before
 			? Math.min( settings.increment_limit, settings.max_limit - unreadIds.length )
 			: this.filteredRequestLimit,
@@ -447,9 +442,8 @@ function getFilteredNotes( before ) {
 				const fresh = pageIds.filter( ( id ) => ! known.has( id ) );
 				store.dispatch( actions.notes.setUnreadNoteIds( current.concat( fresh ) ) );
 
-				// Keep paging only while an older page is full and still adds new ids
-				// (an inclusive `before` can echo the anchor back) and there's room
-				// left under the cap.
+				// More only while the page is full, adds new ids (an inclusive
+				// `before` can echo the anchor), and there's room under the cap.
 				this.filteredHasMore =
 					fresh.length > 0 && data.notes.length >= parameters.number && parameters.number > 0;
 			} else {
@@ -631,15 +625,13 @@ function loadMore() {
 		if ( this.gettingFilteredNotes || ! this.filteredHasMore ) {
 			return;
 		}
-		// Grow the refresh window so the polling re-fetch keeps covering every
-		// matching note paged in (mirrors the unfiltered noteRequestLimit).
+		// Grow the refresh window so the poll keeps covering paged-in notes.
 		this.filteredRequestLimit = Math.min(
 			this.filteredRequestLimit + settings.increment_limit,
 			settings.max_limit
 		);
-		// Page older matching notes in additively, anchored on the oldest note in
-		// the view's own id list — `before` is the endpoint's UNIX epoch seconds
-		// cursor, so a raw ISO timestamp would be ignored and refetch page one.
+		// Page older notes additively, anchored on the view's oldest. `before` is
+		// epoch seconds, not the ISO timestamp.
 		const unreadIds = getUnreadNoteIds( store.getState() );
 		const oldestId = unreadIds[ unreadIds.length - 1 ];
 		const oldest = oldestId && getAllNotes( store.getState() ).find( ( n ) => n.id === oldestId );
@@ -654,12 +646,9 @@ function loadMore() {
 		return;
 	}
 
-	// Page from this view's own window (`noteList`), newest-first, so its last
-	// entry is the oldest note this view has paged in. A filtered (Unread) fetch
-	// drops matching notes — often older ones — into the shared store, so pacing
-	// the `before` cursor off `getAllNotes()` could jump it past notes the All
-	// view hasn't loaded and strand the rest of the list. Fall back to the store
-	// only before this view has a window of its own.
+	// Anchor on the view's own window (`noteList`), not the shared store: a
+	// filtered fetch seeds the store with older notes, so pacing `before` off it
+	// could skip notes this view hasn't loaded. Fall back to the store only first.
 	const allNotes = getAllNotes( store.getState() );
 	const oldestId = this.noteList.length
 		? this.noteList[ this.noteList.length - 1 ].id

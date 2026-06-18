@@ -64,10 +64,8 @@ describe( 'NoteList loading state', () => {
 		expect( container.querySelector( '.components-spinner' ) ).toBeTruthy();
 	} );
 
-	// Regression: a refetch that flips `isLoading` on while the Unread list is
-	// briefly empty must not unmount DataViews. DataViews binds its infinite-scroll
-	// listener a single time, on mount, so tearing it down here leaves scrolling
-	// dead until the next tab switch.
+	// Regression: a refetch that empties the Unread list mid-flight must not
+	// unmount DataViews — it binds its scroll listener once, on mount.
 	it( 'keeps DataViews mounted when the Unread list empties mid-fetch', () => {
 		const store = initStore();
 		store.dispatch( actions.notes.addNotes( [ makeNote( 800, 'Unread one' ) ] ) );

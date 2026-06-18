@@ -151,10 +151,9 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	useNoteListFocusToLastSelectedNote( { noteListRef, notes } );
 	useNoteListNavigationKeyboardShortcuts( { noteListRef, visibleNotes } );
 
-	// Full-panel loader only until DataViews first mounts; never swap it back out
-	// after. DataViews binds its infinite-scroll listener once, on mount, and only
-	// if the scroll container exists, so a remount mid-load leaves scrolling dead.
-	// In-flight loading shows via the `empty` slot instead (see `showEmptyLoader`).
+	// Loader only until DataViews first mounts, then never again: it binds its
+	// scroll listener once, on mount, only if the container exists, so a remount
+	// mid-load leaves scrolling dead. In-flight loading uses the `empty` slot.
 	const showInitialLoader = ! hasRenderedDataViews.current;
 
 	// Spinner instead of an empty message while the view may still be filling —
