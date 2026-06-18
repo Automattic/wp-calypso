@@ -21,18 +21,20 @@ survives reloads. The draft is only cleared after the POST succeeds.
 
 ## Testing instructions
 
-1. Open devtools and set a draft in localStorage:
+1. Open devtools on any `calypso.localhost:3000` page (so the localStorage
+   write lands on the right origin) and paste this into the console — the
+   block markup matches what the anon editor's autosave will eventually
+   write, so the Write editor opens the draft without a "classic editor"
+   formatting modal:
 
    ```js
-   localStorage.setItem(
-   	'wpcom-write-anon-draft',
-   	JSON.stringify( { title: 'Hello world', content: 'My first post.', ts: Date.now() } )
-   );
+   localStorage.setItem('wpcom-write-anon-draft', JSON.stringify({title:'Test',content:`<!-- wp:paragraph --><p>Test</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>Testing...</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>Test more....</p><!-- /wp:paragraph -->`,ts:Date.now()}));
    ```
 
 2. While logged out, visit `/setup/write-on`.
-3. Complete signup; verify a new site is created and you land on the Write
-   editor for a draft titled "Hello world" on the new blog.
+3. Complete signup; verify a new site is created and you land at
+   `https://{newSlug}.wordpress.com/wp-admin/admin.php?page=write&post={id}`
+   with the three paragraphs already loaded into the Write editor.
 4. Verify `localStorage['wpcom-write-anon-draft']` is cleared.
 5. Visit `/setup/write-on` again with no draft and confirm you are redirected
    to `/setup/onboarding`.
