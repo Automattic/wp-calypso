@@ -140,6 +140,7 @@ export default function SupportGuides( {
 			error={ null }
 			onSubmit={ () => {} }
 			variant={ isDocked ? 'embedded' : 'floating' }
+			freeDrag={ ! isDocked }
 			floatingChatState={ isOpen ? 'expanded' : closedChatState }
 			triggerTitle={ title }
 			onClose={ onClose }

@@ -1,6 +1,7 @@
 /**
  * External Dependencies
  */
+import observeEditorCanvasPointerDown from '@automattic/agents-manager/src/utils/observe-editor-canvas-pointerdown';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useWindowDimensions } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
@@ -59,8 +60,10 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 	const { sectionName } = useHelpCenterContext();
 	const nodeRef = useRef< HTMLDivElement >( null );
 	const isMobile = useMobileBreakpoint();
+	const [ isFocused, setIsFocused ] = useState( false );
 	const classNames = clsx( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
 		'is-minimized': isMinimized,
+		'is-focused': isFocused,
 	} );
 
 	useActionHooks();
@@ -92,6 +95,46 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 			document.removeEventListener( 'keydown', handleKeydown );
 		};
 	}, [ shouldCloseOnEscapeRef, onDismiss ] );
+
+	// Track focus so this panel can raise its z-index above the Agents Manager
+	// panel when the user interacts with it. `pointerdown` also covers clicks on
+	// non-focusable regions (drag handle, scroll area) that don't fire `focusin`.
+	useEffect( () => {
+		const node = nodeRef.current;
+		if ( ! node ) {
+			return;
+		}
+		const handleFocusIn = () => {
+			setIsFocused( true );
+		};
+		const handleFocusOut = ( e: FocusEvent ) => {
+			if ( ! node.contains( e.relatedTarget as Node | null ) ) {
+				setIsFocused( false );
+			}
+		};
+		const handlePointerDown = () => {
+			setIsFocused( true );
+		};
+		const handleDocumentPointerDown = ( e: PointerEvent ) => {
+			if ( ! node.contains( e.target as Node | null ) ) {
+				setIsFocused( false );
+			}
+		};
+
+		node.addEventListener( 'focusin', handleFocusIn );
+		node.addEventListener( 'focusout', handleFocusOut );
+		node.addEventListener( 'pointerdown', handlePointerDown );
+		document.addEventListener( 'pointerdown', handleDocumentPointerDown );
+		const stopCanvasObserver = observeEditorCanvasPointerDown( handleDocumentPointerDown );
+
+		return () => {
+			node.removeEventListener( 'focusin', handleFocusIn );
+			node.removeEventListener( 'focusout', handleFocusOut );
+			node.removeEventListener( 'pointerdown', handlePointerDown );
+			document.removeEventListener( 'pointerdown', handleDocumentPointerDown );
+			stopCanvasObserver();
+		};
+	}, [ show, hidden ] );
 
 	if ( ! show || hidden ) {
 		return null;
