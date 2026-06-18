@@ -7,9 +7,11 @@ import {
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import Banner from 'calypso/components/banner';
-import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
+import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
+import { getSitePlanSlug, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import type { IAppState } from 'calypso/state/types';
 
 interface Props {
@@ -19,9 +21,15 @@ interface Props {
 
 const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const planSlug = useSelector( ( state: IAppState ) => getSitePlanSlug( state, siteId ) ?? '' );
+	const isLoading = useSelector( ( state: IAppState ) => isRequestingSitePlans( state, siteId ) );
 
-	if ( ! siteSlug || ! planSlug ) {
+	useEffect( () => {
+		dispatch( fetchSitePlans( siteId ) );
+	}, [ dispatch, siteId ] );
+
+	if ( ! siteSlug || ! planSlug || isLoading ) {
 		return null;
 	}
 
