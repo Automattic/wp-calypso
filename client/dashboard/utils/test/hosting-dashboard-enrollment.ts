@@ -10,16 +10,14 @@ jest.mock( '@automattic/calypso-config', () => {
 	return Object.assign( mock, { isEnabled: jest.fn() } );
 } );
 
-const mockedConfig = jest.mocked( config );
 const mockedIsEnabled = jest.mocked( config.isEnabled );
 
-const CUTOFF_USER_ID = 275231967;
-const PRE_CUTOFF_IN_COHORT = 100; // % 100 === 0, below the cutoff
+const PRE_CUTOFF_IN_COHORT = 100; // % 100 === 0, in cohort
 // The out-of-cohort fixtures assume the current 50% rollout (last two digits
 // >= 50). At 100% no user is outside the cohort, so the cases using these no
 // longer apply.
-const PRE_CUTOFF_OUT_OF_COHORT = 99; // % 100 === 99, below the cutoff
-const POST_CUTOFF_OUT_OF_COHORT = ( Math.floor( CUTOFF_USER_ID / 100 ) + 1 ) * 100 + 99; // % 100 === 99, above the cutoff
+const PRE_CUTOFF_OUT_OF_COHORT = 99; // % 100 === 99, not in cohort
+const ANY_NON_COHORT_USER = 999999999; // % 100 === 99, not in cohort
 
 const preference = ( value: HostingDashboardOptIn[ 'value' ] ): HostingDashboardOptIn => ( {
 	value,
@@ -31,9 +29,6 @@ const enableFlags = ( ...flags: string[] ) => {
 };
 
 beforeEach( () => {
-	mockedConfig.mockImplementation( ( key: string ) =>
-		key === 'dashboard_opt_in_oldest_eligible_user' ? CUTOFF_USER_ID : undefined
-	);
 	mockedIsEnabled.mockReturnValue( false );
 } );
 
@@ -81,14 +76,14 @@ describe( 'getHostingDashboardEnrollment', () => {
 } );
 
 describe( 'isOptInToggleVisible', () => {
-	it( 'shows the toggle to pre-cutoff users', () => {
+	it( 'shows the toggle to users who are not in the cohort', () => {
 		expect( isOptInToggleVisible( preference( 'opt-out' ), PRE_CUTOFF_OUT_OF_COHORT ) ).toBe(
 			true
 		);
 	} );
 
-	it( 'hides the toggle from post-cutoff users', () => {
-		expect( isOptInToggleVisible( undefined, POST_CUTOFF_OUT_OF_COHORT ) ).toBe( false );
+	it( 'shows the toggle regardless of account age', () => {
+		expect( isOptInToggleVisible( undefined, ANY_NON_COHORT_USER ) ).toBe( true );
 	} );
 
 	it( 'hides the toggle from escape-hatched users even while the rollout flag is off', () => {
@@ -112,11 +107,6 @@ describe( 'isOptInToggleVisible', () => {
 	} );
 
 	describe( 'with force-opt-in-visibility on', () => {
-		it( 'shows the toggle to post-cutoff users who would otherwise not see it', () => {
-			enableFlags( 'dashboard/force-opt-in-visibility' );
-			expect( isOptInToggleVisible( undefined, POST_CUTOFF_OUT_OF_COHORT ) ).toBe( true );
-		} );
-
 		it( 'overrides the cohort and the escape hatch', () => {
 			enableFlags( 'dashboard/force-opt-in-visibility', 'dashboard/enable-percentage-rollout' );
 			expect( isOptInToggleVisible( undefined, PRE_CUTOFF_IN_COHORT ) ).toBe( true );
