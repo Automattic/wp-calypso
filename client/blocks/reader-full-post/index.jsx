@@ -1,3 +1,4 @@
+import './style.scss';
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon, EmbedContainer } from '@automattic/components';
@@ -68,7 +69,6 @@ import ReaderFullPostContentPlaceholder from './placeholders/content';
 import ReaderFullPostNavigation from './post-navigation';
 import ScrollTracker from './scroll-tracker';
 import ReaderFullPostUnavailable from './unavailable';
-import './style.scss';
 
 const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
 
@@ -651,18 +651,20 @@ export class FullPostView extends Component {
 
 	renderMarkAsSenButton = () => {
 		const { post } = this.props;
+		const label = post.is_seen
+			? translate( 'Mark post as unseen' )
+			: translate( 'Mark post as seen' );
+
 		return (
-			<div
+			<button
+				type="button"
 				className="reader-full-post__seen-button"
-				title={ post.is_seen ? 'Mark post as unseen' : 'Mark post as seen' }
+				title={ label }
+				aria-label={ label }
+				onClick={ post.is_seen ? this.markAsUnseen : this.markAsSeen }
 			>
-				<Gridicon
-					icon={ post.is_seen ? 'not-visible' : 'visible' }
-					size={ 18 }
-					onClick={ post.is_seen ? this.markAsUnseen : this.markAsSeen }
-					ref={ this.seenTooltipContextRef }
-				/>
-			</div>
+				<Gridicon icon={ post.is_seen ? 'not-visible' : 'visible' } size={ 18 } />
+			</button>
 		);
 	};
 
