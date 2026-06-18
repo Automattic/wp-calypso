@@ -1,3 +1,5 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 // Legacy standalone panel (rendered under `.wpnc__main`, where `.wpnc__note`
 // wraps `.wpnc__body`). Left untouched to avoid regressing the old widget.
 .wpnc__note .wpnc__body .wpnc__pending-approval-section {
@@ -9,6 +11,11 @@
 // the `.wpnc-app` root where `.wpnc__note` is a sibling of `.wpnc__body`.
 .wpnc-app .wpnc__pending-approval-section {
 	box-shadow: inset 3px 0 0 var(--color-warning);
+
+	// Match the badge text's lighter warning foreground in dark mode.
+	@include ui-mixins.when-dark-theme {
+		box-shadow: inset 3px 0 0 var(--dashboard__foreground-color-warning, #f5c15c);
+	}
 }
 
 .wpnc-pending-approval-badge {
@@ -23,11 +30,21 @@
 	svg {
 		fill: var(--color-warning, #f0b849);
 		flex-shrink: 0;
+
+		@include ui-mixins.when-dark-theme {
+			fill: var(--dashboard__foreground-color-warning, #f5c15c);
+		}
 	}
 
 	.wpnc-pending-approval-badge__text {
 		font-weight: 500;
 		color: var(--color-warning-80, #614200);
+
+		// The `-80` warning shade is too dark to read in dark mode; use the
+		// lighter warning foreground instead.
+		@include ui-mixins.when-dark-theme {
+			color: var(--dashboard__foreground-color-warning, #f5c15c);
+		}
 	}
 
 	.wpnc-pending-approval-badge__link {
@@ -35,8 +52,14 @@
 		color: var(--color-warning-80, #614200);
 		text-decoration: none;
 		font-weight: 500;
-		opacity: 0.5;
+		// Keep the link visibly lighter than the label while still meeting the
+		// WCAG AA 4.5:1 contrast minimum in both light and dark modes.
+		opacity: 0.8;
 		white-space: nowrap;
+
+		@include ui-mixins.when-dark-theme {
+			color: var(--dashboard__foreground-color-warning, #f5c15c);
+		}
 
 		&:hover {
 			text-decoration: underline;
