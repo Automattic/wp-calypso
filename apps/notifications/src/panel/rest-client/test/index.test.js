@@ -185,14 +185,24 @@ describe( 'RestClient', () => {
 			expect( client.hasMoreNotes() ).toBe( true );
 		} );
 
-		// hasMoreNotes must measure this view's own window, not the shared store a
-		// filtered fetch can inflate to the cap.
+		// Both hasMoreNotes and the request size must measure this view's own
+		// window, not the shared store a filtered fetch can inflate to the cap —
+		// otherwise the next page is requested as number=0 and the view stalls.
 		it( 'keeps paging when a filtered fetch fills the shared store to the cap', () => {
-			seedFirstWindow(); // All window: ids 100..91 (10 notes)
+			seedFirstWindow(); // All window: noteList = ids 100..91 (10 notes)
 			// A filtered (Unread) visit dumps older notes into the store, filling it
 			// to max_limit, while the All view's own window stays at 10.
 			store.dispatch( actions.notes.addNotes( fullPage( 90, 90 ) ) ); // store now 100
 			expect( client.hasMoreNotes() ).toBe( true );
+
+			client.loadMore();
+			expect( getCalls ).toHaveLength( 1 );
+			// Anchored on the view's oldest (91) and sized off its own count (10 left
+			// under the cap), not 0 from the full store.
+			expect( getCalls[ 0 ].query ).toMatchObject( {
+				number: 10,
+				before: Math.floor( Date.parse( makeNote( 91 ).timestamp ) / 1000 ),
+			} );
 		} );
 	} );
 
@@ -351,6 +361,31 @@ describe( 'RestClient', () => {
 			getCalls.length = 0;
 			client.loadMore();
 			expect( getCalls ).toHaveLength( 0 );
+		} );
+
+		// Switching tabs away and back while a load-more is in flight resets the
+		// filter; the stale older-page response must not append to the cleared list.
+		it( 'discards a stale unread load-more response after a filter reset', () => {
+			client.setFilter( { unread: 1 } );
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 209 ), last_seen_time: 0 } );
+
+			// Start a load-more; capture its still-pending callback.
+			getCalls.length = 0;
+			client.loadMore();
+			const staleCallback = getCalls[ 0 ].callback;
+
+			// User switches to All and back to Unread before it resolves. The fresh
+			// fetch is skipped because the in-flight request still holds the lock.
+			client.setFilter( null );
+			client.setFilter( { unread: 1 } );
+			expect( getUnreadNoteIds( store.getState() ) ).toEqual( [] );
+
+			// The stale older page lands: it must be dropped, not appended…
+			getCalls.length = 0;
+			staleCallback( null, { notes: fullPage( 10, 199 ), last_seen_time: 0 } );
+			expect( getUnreadNoteIds( store.getState() ) ).toEqual( [] );
+			// …and a fresh fetch for the re-selected filter must be kicked off.
+			expect( getCalls.find( ( call ) => call.query.unread ) ).toBeTruthy();
 		} );
 
 		// A new note arriving via the polling/push path (getNotes) while a filter is

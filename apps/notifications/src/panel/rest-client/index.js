@@ -35,6 +35,9 @@ export function Client() {
 	this.filteredRequestLimit = settings.initial_limit;
 	this.filteredHasMore = false;
 	this.gettingFilteredNotes = false;
+	// Bumped on every setFilter so an in-flight fetch whose filter was reset
+	// (tab switched away and back) can discard its now-stale response.
+	this.filterGeneration = 0;
 	this.retries = 0;
 	this.subscribeTry = 0;
 	this.subscribeTries = 3;
@@ -187,13 +190,17 @@ function getNotes( before ) {
 	this.gettingNotes = true;
 
 	const notes = getAllNotes( store.getState() );
+	// Cap older pages by this view's own loaded count (`noteList`), matching
+	// hasMoreNotes — a filtered fetch can inflate the shared store, which would
+	// otherwise shrink the request to zero while the view still has a gap.
+	const loaded = this.noteList.length || notes.length;
 
 	const parameters = {
 		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash,variant',
 		// Older pages only request what's left under max_limit, so an additive
 		// page can't push the loaded count past the cap.
 		number: before
-			? Math.min( settings.increment_limit, settings.max_limit - notes.length )
+			? Math.min( settings.increment_limit, settings.max_limit - loaded )
 			: this.noteRequestLimit,
 		locale: this.locale,
 	};
@@ -374,6 +381,7 @@ function setFilter( filter ) {
 	this.filter = filter ?? null;
 	this.filteredRequestLimit = settings.initial_limit;
 	this.filteredHasMore = false;
+	this.filterGeneration++;
 
 	// Reset the filtered view's id list so the tab doesn't show a stale set
 	// before the fresh fetch lands.
@@ -396,6 +404,7 @@ function getFilteredNotes( before ) {
 		return;
 	}
 	this.gettingFilteredNotes = true;
+	const generation = this.filterGeneration;
 
 	const unreadIds = getUnreadNoteIds( store.getState() );
 
@@ -425,6 +434,16 @@ function getFilteredNotes( before ) {
 		if ( error ) {
 			// Leave the polling path's state untouched; it will recover on its
 			// own schedule. A retry happens when the user re-enters the tab.
+			return;
+		}
+
+		// The filter was reset (tab switched away and back) while this was in
+		// flight: drop the stale response and refetch the current view, since
+		// setFilter's own fetch was skipped while this request held the lock.
+		if ( generation !== this.filterGeneration ) {
+			if ( this.filter && this.isVisible ) {
+				this.getFilteredNotes();
+			}
 			return;
 		}
 
