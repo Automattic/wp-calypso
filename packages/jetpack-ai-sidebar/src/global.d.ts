@@ -3,17 +3,13 @@
  */
 declare const agentsManagerData:
 	| {
-			aiEditorialReviewEnabled?: boolean;
-			reviewMediatorEnabled?: boolean;
-			jetpackAiSidebarPreview?: {
+			jetpackAiSidebar?: {
 				enabled: boolean;
 				features?: {
 					aiEditorialReview?: boolean;
 					generateFeedback?: boolean;
 					blockTransformations?: boolean;
 					optimizeTitleSuggestion?: boolean;
-					chatHistory?: boolean;
-					supportGuides?: boolean;
 				};
 			};
 	  }
