@@ -1,8 +1,8 @@
-import JetpackLogo from 'calypso/dashboard/marketplace/exclusive-offers/images/jetpack.svg';
-import PressableLogo from 'calypso/dashboard/marketplace/exclusive-offers/images/pressable.svg';
-import VIPLogo from 'calypso/dashboard/marketplace/exclusive-offers/images/vip.svg';
-import WooLogo from 'calypso/dashboard/marketplace/exclusive-offers/images/woo.svg';
-import WordPressDotComLogo from 'calypso/dashboard/marketplace/exclusive-offers/images/wordpressdotcom.svg';
+import JetpackLogo from 'calypso/dashboard/agency/marketplace/exclusive-offers/images/jetpack.svg';
+import PressableLogo from 'calypso/dashboard/agency/marketplace/exclusive-offers/images/pressable.svg';
+import VIPLogo from 'calypso/dashboard/agency/marketplace/exclusive-offers/images/vip.svg';
+import WooLogo from 'calypso/dashboard/agency/marketplace/exclusive-offers/images/woo.svg';
+import WordPressDotComLogo from 'calypso/dashboard/agency/marketplace/exclusive-offers/images/wordpressdotcom.svg';
 import type { APIAgencyResource } from 'calypso/a8c-for-agencies/data/learn/types';
 import type { ResourceItem } from 'calypso/a8c-for-agencies/sections/learn/resource-center/overview-content/types';
 import type { JSX } from 'react';

@@ -71,7 +71,7 @@ const exclusiveOffersRoute = createRoute( {
 	getParentRoute: () => agencyRoute,
 	path: 'marketplace/exclusive-offers',
 } ).lazy( () =>
-	import( '../../marketplace/exclusive-offers' ).then( ( d ) =>
+	import( '../../agency/marketplace/exclusive-offers' ).then( ( d ) =>
 		createLazyRoute( 'exclusive-offers' )( {
 			component: d.default,
 		} )

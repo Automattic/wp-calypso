@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
 import { MARKETPLACE_TYPE_SESSION_STORAGE_KEY } from 'calypso/a8c-for-agencies/sections/marketplace/hoc/with-marketplace-type';
-import PartnerOffers from 'calypso/dashboard/marketplace/exclusive-offers/partner-offers';
+import PartnerOffers from 'calypso/dashboard/agency/marketplace/exclusive-offers/partner-offers';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import type { PartnerOffer } from 'calypso/dashboard/marketplace/exclusive-offers/types';
+import type { PartnerOffer } from 'calypso/dashboard/agency/marketplace/exclusive-offers/types';
 
 import './style.scss';
 

@@ -10,8 +10,8 @@ import {
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
-import { ButtonStack } from '../../components/button-stack';
-import { Card, CardBody } from '../../components/card';
+import { ButtonStack } from '../../../components/button-stack';
+import { Card, CardBody } from '../../../components/card';
 import { filterOptions, partnerOffers } from './constants';
 import type { PartnerOffer, RecordTracksEvent } from './types';
 import type { View, Field } from '@wordpress/dataviews';
