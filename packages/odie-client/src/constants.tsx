@@ -157,7 +157,7 @@ export const getOdieThirdPartyMessageContent = (): string =>
 		'I’m happy to connect you to a human! However, it looks like 3rd party cookies are disabled in your browser. Please turn them on for our live chat to work properly. [Use our guide](https://wordpress.com/support/third-party-cookies/)',
 		__i18n_text_domain__
 	) } \n\n ${ __(
-		'Once you’re done, you can come back here to start talking with someone by clicking on the following button.',
+		'Once you’re done, you can come back here and ask me to speak with a human. I’ll connect you to our support right away.',
 		__i18n_text_domain__
 	) }`;
 
