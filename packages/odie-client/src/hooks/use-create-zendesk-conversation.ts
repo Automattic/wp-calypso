@@ -102,9 +102,11 @@ export const useCreateZendeskConversation = () => {
 		const previousProvider = chat.provider;
 		const previousConversationId = chat.conversationId;
 
-		// Time spent waiting for the Smooch SDK to become ready before the
-		// conversation could be created (see the retry loop below).
+		// Time spent waiting for the Smooch SDK to become ready, and how many
+		// createConversation attempts it took (see the retry loop below).
+		// attempts > 1 means the retry rescued an otherwise-failed escalation.
 		let smoochWaitedMs = 0;
+		let smoochAttempts = 0;
 
 		const handleErrorCreatingZendeskConversation = ( errorType: string, error?: unknown ) => {
 			trackEvent( errorType, {
@@ -114,6 +116,7 @@ export const useCreateZendeskConversation = () => {
 				active_interaction_id: activeInteractionId || null,
 				is_chat_loaded: isChatLoaded,
 				smooch_waited_ms: smoochWaitedMs,
+				smooch_attempts: smoochAttempts,
 			} );
 
 			setChat( {
@@ -168,6 +171,7 @@ export const useCreateZendeskConversation = () => {
 		// eslint-disable-next-line no-constant-condition
 		while ( true ) {
 			try {
+				smoochAttempts++;
 				conversation = await Smooch.createConversation( {
 					metadata: {
 						createdAt: Date.now(),
@@ -251,6 +255,7 @@ export const useCreateZendeskConversation = () => {
 				messaging_site_id: selectedSiteId || null,
 				messaging_url: selectedSiteURL || null,
 				smooch_waited_ms: smoochWaitedMs,
+				smooch_attempts: smoochAttempts,
 			} );
 
 			// If the interaction id has changed, update the URL.
