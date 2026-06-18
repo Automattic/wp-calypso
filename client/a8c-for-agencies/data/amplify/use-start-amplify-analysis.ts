@@ -8,7 +8,12 @@ import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { getAmplifyJobsQueryKey } from './use-fetch-amplify-jobs';
-import type { AmplifyAnalysisRun, AmplifyApiError, StartAmplifyAnalysisParams } from './types';
+import type {
+	AmplifyAnalysisRun,
+	AmplifyApiError,
+	AmplifyJob,
+	StartAmplifyAnalysisParams,
+} from './types';
 
 function startAmplifyAnalysis(
 	params: StartAmplifyAnalysisParams,
@@ -45,9 +50,18 @@ export default function useStartAmplifyAnalysis< TContext = unknown >(
 			return startAmplifyAnalysis( params, agencyId );
 		},
 		onSuccess: ( data, variables, context ) => {
-			// A new run starts as `pending`; refresh the jobs list so it surfaces
-			// immediately (and polling picks up from there).
-			queryClient.invalidateQueries( { queryKey: getAmplifyJobsQueryKey( agencyId ) } );
+			// Seed the jobs cache with the new pending run so its row appears
+			// immediately and the jobs query starts polling (its refetchInterval
+			// keys off the presence of a pending job) — without waiting for a
+			// manual page refresh. We seed rather than only invalidate because the
+			// server's /jobs list may not reflect the run on an immediate refetch.
+			queryClient.setQueryData< AmplifyJob[] >(
+				getAmplifyJobsQueryKey( agencyId ),
+				( previous ) => {
+					const existing = previous ?? [];
+					return existing.some( ( job ) => job.id === data.id ) ? existing : [ data, ...existing ];
+				}
+			);
 			options?.onSuccess?.( data, variables, context );
 		},
 	} );
