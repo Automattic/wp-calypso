@@ -266,11 +266,6 @@
 
 	.wpnc__user-description-separator {
 		color: $gray-700;
-
-		&:first-child,
-		&:last-child {
-			display: none;
-		}
 	}
 
 	a {
