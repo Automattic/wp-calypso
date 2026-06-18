@@ -165,11 +165,9 @@ export const useCreateZendeskConversation = () => {
 
 		const SMOOCH_READY_TIMEOUT_MS = 10000;
 		const SMOOCH_RETRY_INTERVAL_MS = 250;
-		const smoochWaitStart = Date.now();
-		const smoochReadyDeadline = smoochWaitStart + SMOOCH_READY_TIMEOUT_MS;
+		const smoochReadyDeadline = Date.now() + SMOOCH_READY_TIMEOUT_MS;
 
-		// eslint-disable-next-line no-constant-condition
-		while ( true ) {
+		for (;;) {
 			try {
 				smoochAttempts++;
 				conversation = await Smooch.createConversation( {
@@ -179,17 +177,17 @@ export const useCreateZendeskConversation = () => {
 						...( chatId ? { odieChatId: chatId } : {} ),
 					},
 				} );
-				smoochWaitedMs = Date.now() - smoochWaitStart;
 				break;
 			} catch ( error ) {
 				const remainingMs = smoochReadyDeadline - Date.now();
 				if ( isSmoochNotReadyError( error ) && remainingMs > 0 ) {
 					// Cap the sleep to the time left so we never overshoot the deadline.
 					const sleepMs = Math.min( SMOOCH_RETRY_INTERVAL_MS, remainingMs );
+					// Only the backoff sleeps count as wait time, not the SDK call itself.
+					smoochWaitedMs += sleepMs;
 					await new Promise( ( resolve ) => setTimeout( resolve, sleepMs ) );
 					continue;
 				}
-				smoochWaitedMs = Date.now() - smoochWaitStart;
 				handleErrorCreatingZendeskConversation( 'error_creating_zendesk_conversation', error );
 				return;
 			}
