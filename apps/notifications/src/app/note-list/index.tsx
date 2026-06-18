@@ -6,6 +6,7 @@ import {
 } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useSelector } from 'react-redux';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
@@ -124,17 +125,14 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 		return !! note.read === isRead ? note : { ...note, read: isRead ? 1 : 0 };
 	} );
 
-	// `filterSortAndPaginate` reports `totalItems` as the count of notes loaded
-	// so far. DataViews advances its infinite-scroll window only while
-	// `totalItems` stays ahead of the window, so reporting the loaded count
-	// alone stalls scrolling after the first page: the window catches up, no
-	// `onChangeView` fires, and `loadMore()` is never called again. Report an
-	// optimistic total while the REST client still has notes left to fetch so
-	// DataViews keeps advancing the window and driving `loadMore()`.
+	// Report the real loaded count. DataViews advances its infinite-scroll
+	// window only while `totalItems` stays ahead of the window; the prefetch
+	// effect below keeps a page of notes loaded beyond the window, so the real
+	// count stays ahead on its own. An optimistic total instead let DataViews
+	// advance the window into not-yet-fetched positions, so the load that filled
+	// them arrived asynchronously and DataViews' scroll-anchor restoration then
+	// re-applied a stale anchor — yanking the scroll position.
 	const hasMoreNotes = client?.hasMoreNotes() ?? false;
-	const effectivePaginationInfo = hasMoreNotes
-		? { ...paginationInfo, totalItems: paginationInfo.totalItems + NOTES_PER_PAGE }
-		: paginationInfo;
 
 	const infiniteScrollHandler = useCallback( () => {
 		if ( ! isLoading ) {
@@ -142,13 +140,16 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 		}
 	}, [ client, isLoading ] );
 
-	// Keep enough notes loaded to cover the current scroll window, and to
-	// overflow the panel on first paint so a scrollbar exists for DataViews to
-	// drive further loading. A network page (`increment_limit`) can be smaller
-	// than this window, so fetch one page at a time until the window is filled or
-	// the server runs out — re-runs after each page as `visibleNotes` grows.
+	// Keep a full page of notes loaded *beyond* the current scroll window (and
+	// enough to overflow the panel on first paint so a scrollbar exists). This
+	// buffer means DataViews only ever advances its window over notes already in
+	// hand, so a network page never has to arrive mid-advance — which is what let
+	// the scroll-anchor restoration fire against a stale anchor. A network page
+	// (`increment_limit`) can be smaller than this window, so fetch one page at a
+	// time until the buffer is filled or the server runs out — re-runs after each
+	// page as `visibleNotes` grows.
 	useEffect( () => {
-		if ( startPosition + NOTES_PER_PAGE > visibleNotes.length && ! isLoading && hasMoreNotes ) {
+		if ( startPosition + NOTES_PER_PAGE * 2 > visibleNotes.length && ! isLoading && hasMoreNotes ) {
 			infiniteScrollHandler();
 		}
 	}, [ startPosition, visibleNotes.length, isLoading, hasMoreNotes, infiniteScrollHandler ] );
@@ -171,6 +172,27 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	// more cache pages to search, or the Unread fetch in flight.
 	const showEmptyLoader = hasMoreNotes || ( filterName === 'unread' && isLoading );
 
+	// DataViews reads `isLoading` as "the list is being (re)built from scratch"
+	// and uses its transitions to gate scroll-anchor restoration. Our load-more
+	// and the background poll both flip the shared flag while notes are already on
+	// screen; surfacing those as loading makes DataViews restore a stale scroll
+	// anchor once the async fetch lands, jumping the list. Report loading to
+	// DataViews only while there is nothing to show (initial load / empty tab) —
+	// incremental appends are not a from-scratch rebuild — and render our own
+	// load-more spinner (below) for the in-flight incremental case.
+	const isListLoading = isLoading && visibleNotes.length === 0;
+
+	// DataViews' own load-more spinner is gated on the `isLoading` we just scoped
+	// off, so render one ourselves into its scroll container — appended after the
+	// list so it sits at the end and scrolls with the notes, like the native one.
+	const [ scrollContainer, setScrollContainer ] = useState< HTMLElement | null >( null );
+	useEffect( () => {
+		const node =
+			noteListRef.current?.querySelector< HTMLElement >( '.dataviews-layout__container' ) ?? null;
+		setScrollContainer( ( prev ) => ( prev === node ? prev : node ) );
+	} );
+	const showLoadMoreSpinner = isLoading && ! isListLoading && visibleNotes.length > 0;
+
 	return (
 		<div ref={ noteListRef } className="wpnc__note-list">
 			{ ! showInitialLoader ? (
@@ -178,9 +200,9 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 					data={ data }
 					fields={ fields }
 					view={ view }
-					isLoading={ isLoading }
+					isLoading={ isListLoading }
 					defaultLayouts={ DEFAULT_LAYOUTS }
-					paginationInfo={ effectivePaginationInfo }
+					paginationInfo={ paginationInfo }
 					empty={
 						// Spinner while still filling; the real message once settled.
 						showEmptyLoader ? (
@@ -208,6 +230,14 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 					<Spinner />
 				</VStack>
 			) }
+			{ showLoadMoreSpinner &&
+				scrollContainer &&
+				createPortal(
+					<p className="dataviews-loading-more">
+						<Spinner />
+					</p>,
+					scrollContainer
+				) }
 		</div>
 	);
 };
