@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { WooLogo } from '@automattic/components';
 import { __ } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { createElement, type ReactElement } from 'react';
 
 // Raw config structure from the server
@@ -179,6 +180,24 @@ export function getDefaultSiteSpecConfig(): SiteSpecConfig {
 		agentUrl: siteSpecConfig?.agent_url,
 		agentId: siteSpecConfig?.agent_id,
 		buildSiteUrl: siteSpecConfig?.build_site_url,
+		// Skipping the AI builder sends the user to the standard WordPress.com
+		// site-creation flow, preserving the source/ref they arrived with.
+		// (The "Skip setup" label comes from the bundled white-sky preset.)
+		exitButton: {
+			callback: () => {
+				const params = new URLSearchParams( window.location.search );
+				const args: Record< string, string > = {};
+				const source = params.get( 'source' );
+				const ref = params.get( 'ref' );
+				if ( source ) {
+					args.source = source;
+				}
+				if ( ref ) {
+					args.ref = ref;
+				}
+				window.location.href = addQueryArgs( '/start', args );
+			},
+		},
 		tracking: {
 			enabled: true,
 			prefix: 'jetpack_calypso',

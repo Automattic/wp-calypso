@@ -26,7 +26,7 @@ jest.mock( '@automattic/calypso-config', () => {
 } );
 
 describe( 'SiteSpec Utils', () => {
-	const mockConfig = require( '@automattic/calypso-config' );
+	const mockConfig = jest.requireMock( '@automattic/calypso-config' ) as MockWithIsEnabled;
 
 	beforeEach( () => {
 		// Reset all mocks
@@ -135,6 +135,9 @@ describe( 'SiteSpec Utils', () => {
 				agentUrl: 'https://api.example.com/agent',
 				agentId: 'test-agent-id',
 				buildSiteUrl: 'https://example.com/build?spec_id=',
+				exitButton: {
+					callback: expect.any( Function ),
+				},
 				tracking: {
 					enabled: true,
 					prefix: 'jetpack_calypso',
@@ -159,6 +162,9 @@ describe( 'SiteSpec Utils', () => {
 
 			expect( result ).toEqual( {
 				agentId: 'test-agent-id',
+				exitButton: {
+					callback: expect.any( Function ),
+				},
 				tracking: {
 					enabled: true,
 					prefix: 'jetpack_calypso',
