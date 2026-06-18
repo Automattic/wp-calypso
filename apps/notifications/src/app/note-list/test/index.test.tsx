@@ -139,6 +139,27 @@ describe( 'NoteList loading state', () => {
 		expect( screen.queryByText( 'Trash me' ) ).not.toBeInTheDocument();
 	} );
 
+	// Reading a note in-app must update the list row's unread styling right away,
+	// before any server refetch flips the note's raw `read` flag.
+	it( 'drops the unread styling from a row the moment its note is read', () => {
+		const store = initStore();
+		store.dispatch( actions.notes.addNotes( [ makeNote( 950, 'Read me' ) ] ) );
+		store.dispatch( actions.ui.loadedNotes() );
+
+		renderTab( store, 'all' as FilterName );
+
+		const row = screen.getByText( 'Read me' ).closest( '.wpnc__note-list-item' );
+		expect( row ).toHaveClass( 'is-unread' );
+
+		act( () => {
+			store.dispatch( actions.notes.readNote( 950 ) );
+		} );
+
+		expect( screen.getByText( 'Read me' ).closest( '.wpnc__note-list-item' ) ).not.toHaveClass(
+			'is-unread'
+		);
+	} );
+
 	it( 'client-filters the Comments tab from the shared cache', () => {
 		const store = initStore();
 		store.dispatch(
