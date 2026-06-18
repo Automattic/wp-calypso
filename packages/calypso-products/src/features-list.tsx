@@ -2484,8 +2484,6 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate( 'Real-time backups and one-click restores' )
 				: i18n.translate( 'Real-time backups' ),
-		// Always display the short title in comparison grid.
-		getAlternativeTitle: () => i18n.translate( 'Real-time backups' ),
 		getDescription: ( params ) =>
 			params?.isExperimentVariant
 				? i18n.translate( 'Protect against disaster with easy backups and restores.' )

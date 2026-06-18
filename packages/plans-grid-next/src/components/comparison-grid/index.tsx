@@ -780,7 +780,11 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	const featureSlug = feature?.getSlug() ?? '';
 	const footnote = planFeatureFootnotes?.footnotesByFeature?.[ featureSlug ];
 	const tooltipId = `${ featureGroupSlug }-${ feature?.getSlug() }-comparison-grid`;
-	const title = feature?.getAlternativeTitle?.() ?? feature?.getTitle?.();
+	const comparisonGridTitleOverrides: Record< string, string > = {
+		// Always display the short title for backups in comparison grid.
+		'realtime-backups-jp': translate( 'Real-time backups' ) as string,
+	};
+	const title = comparisonGridTitleOverrides[ featureSlug ] ?? feature?.getTitle?.();
 	const headerAriaLabel: string = typeof title === 'string' ? title : '';
 
 	const { enableFeatureTooltips } = usePlansGridContext();
