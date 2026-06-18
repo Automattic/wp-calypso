@@ -1,18 +1,9 @@
 import { FormLabel } from '@automattic/components';
 import { AutoSizer, List } from '@automattic/react-virtualized';
+import { debounce } from '@wordpress/compose';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import {
-	debounce,
-	difference,
-	filter,
-	includes,
-	isEqual,
-	map,
-	memoize,
-	range,
-	reduce,
-} from 'lodash';
+import { difference, filter, includes, isEqual, map, memoize, range, reduce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -86,7 +77,7 @@ class TermTreeSelectorList extends Component {
 
 		this.termIds = map( this.props.terms, 'ID' );
 		this.getTermChildren = memoize( this.getTermChildren );
-		this.queueRecomputeRowHeights = debounce( this.recomputeRowHeights );
+		this.queueRecomputeRowHeights = debounce( this.recomputeRowHeights, 0 );
 		this.debouncedSearch = debounce( () => {
 			this.props.onSearch( this.state.searchTerm );
 		}, SEARCH_DEBOUNCE_TIME_MS );

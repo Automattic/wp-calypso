@@ -1,6 +1,7 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { hexToRgb } from '@automattic/onboarding';
-import _, { debounce } from 'lodash';
+import { debounce } from '@wordpress/compose';
+import _ from 'lodash';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';

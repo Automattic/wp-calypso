@@ -1,5 +1,6 @@
 import { TimeSince } from '@automattic/components';
-import { get, debounce } from 'lodash';
+import { debounce } from '@wordpress/compose';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';

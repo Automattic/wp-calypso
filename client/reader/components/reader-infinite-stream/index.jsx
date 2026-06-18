@@ -6,7 +6,8 @@ import {
 	List,
 	WindowScroller,
 } from '@automattic/react-virtualized';
-import { debounce, get } from 'lodash';
+import { debounce } from '@wordpress/compose';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { recordTracksRailcarRender } from 'calypso/reader/stats';

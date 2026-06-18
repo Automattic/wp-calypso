@@ -1,4 +1,5 @@
-import { throttle, defer } from 'lodash';
+import { throttle } from '@wordpress/compose';
+import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import afterLayoutFlush from 'calypso/lib/after-layout-flush';

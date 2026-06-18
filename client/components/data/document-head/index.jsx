@@ -1,4 +1,5 @@
-import { debounce, isEqual } from 'lodash';
+import { debounce } from '@wordpress/compose';
+import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -71,7 +72,7 @@ class DocumentHead extends Component {
 
 	setFormattedTitle = debounce( () => {
 		document.title = this.props.formattedTitle;
-	} );
+	}, 0 );
 
 	render() {
 		return null;

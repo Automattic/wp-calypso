@@ -4,12 +4,13 @@ import { Card, FormInputValidation, FormLabel, Gridicon } from '@automattic/comp
 import { localizeUrl } from '@automattic/i18n-utils';
 import { suggestEmailCorrection } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
+import { debounce } from '@wordpress/compose';
 import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import cookie from 'cookie';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
-import { capitalize, defer, includes, get, debounce } from 'lodash';
+import { capitalize, defer, includes, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';

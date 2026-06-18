@@ -1,8 +1,9 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
 import { Button, CheckboxControl, Icon, Modal } from '@wordpress/components';
+import { debounce } from '@wordpress/compose';
 import { check, closeSmall, chevronDown, info } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
-import { debounce, get, isEmpty } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
