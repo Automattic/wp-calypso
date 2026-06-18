@@ -143,7 +143,7 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 				</div>
 				{ startingHumanSupport && (
 					<ChatWithSupportLabel
-						labelText={ __( 'Chat with support team started', __i18n_text_domain__ ) }
+						labelText={ __( 'Support request started', __i18n_text_domain__ ) }
 					/>
 				) }
 			</Fragment>
