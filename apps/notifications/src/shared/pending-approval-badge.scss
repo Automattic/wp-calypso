@@ -1,8 +1,8 @@
 // Legacy standalone panel (rendered under `.wpnc__main`, where `.wpnc__note`
 // wraps `.wpnc__body`). Left untouched to avoid regressing the old widget.
 .wpnc__note .wpnc__body .wpnc__pending-approval-section {
-	margin: 0 0 0 14px;
-	box-shadow: inset 4px 0 0 var(--color-warning);
+	margin: 0;
+	box-shadow: inset 3px 0 0 var(--color-warning);
 }
 
 // New notifications app (Dashboard + redesigned standalone widget), scoped to
