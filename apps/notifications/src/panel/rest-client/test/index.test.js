@@ -214,18 +214,37 @@ describe( 'RestClient', () => {
 			expect( getCalls ).toHaveLength( 0 );
 		} );
 
-		it( 'keeps paginating with a larger window while the server has more', () => {
+		it( 'pages older unread notes in with a before cursor while the server has more', () => {
 			client.setFilter( { unread: 1 } );
-			// A full page back implies more may exist.
-			const firstPage = Array.from( { length: 10 }, ( _, i ) => makeNote( 200 + i ) );
-			getCalls[ 0 ].callback( null, { notes: firstPage, last_seen_time: 0 } );
+			// A full first window (newest-first, oldest id 200) implies more may exist.
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 209 ), last_seen_time: 0 } );
 
 			expect( client.filteredHasMore ).toBe( true );
 
 			getCalls.length = 0;
 			client.loadMore();
 			expect( getCalls ).toHaveLength( 1 );
-			expect( getCalls[ 0 ].query ).toMatchObject( { unread: 1, number: 20 } );
+			// Load-more pages a fixed increment older than the oldest loaded note —
+			// not a re-request of the whole grown window.
+			expect( getCalls[ 0 ].query ).toMatchObject( {
+				unread: 1,
+				number: 10,
+				before: Math.floor( Date.parse( makeNote( 200 ).timestamp ) / 1000 ),
+			} );
+		} );
+
+		it( 'de-dupes an older unread page that echoes an already-loaded id', () => {
+			client.setFilter( { unread: 1 } );
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 209 ), last_seen_time: 0 } ); // 209..200
+			getCalls.length = 0;
+
+			client.loadMore();
+			// The server's inclusive `before` echoes the anchor (200) back alongside
+			// genuinely older notes (199..191).
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 200 ), last_seen_time: 0 } );
+
+			// Only the nine genuinely-older ids are appended; the anchor isn't duped.
+			expect( getUnreadNoteIds( store.getState() ) ).toHaveLength( 19 );
 		} );
 
 		it( 'replaces the unread id list with the response, leaving the shared store intact', () => {
@@ -268,29 +287,33 @@ describe( 'RestClient', () => {
 			expect( getAllNotes( store.getState() ).length ).toBe( before );
 		} );
 
-		it( 'accumulates unread notes across load-more pages and stops when exhausted', () => {
-			// Each fetch re-requests a growing top-N window, so every response is a
-			// superset; the id list is replaced and therefore grows.
-			const page = ( count ) => Array.from( { length: count }, ( _, i ) => makeNote( 300 + i ) );
-
+		it( 'pages older unread notes in additively and stops when exhausted', () => {
 			client.setFilter( { unread: 1 } );
-			getCalls[ 0 ].callback( null, { notes: page( 10 ), last_seen_time: 0 } );
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 209 ), last_seen_time: 0 } ); // 209..200
 			expect( getUnreadNoteIds( store.getState() ) ).toHaveLength( 10 );
 			expect( client.filteredHasMore ).toBe( true );
 
-			// Page 2: load-more requests number=20 and the list grows to 20.
+			// Page 2: a fixed increment older than the oldest loaded note (200).
 			getCalls.length = 0;
 			client.loadMore();
-			expect( getCalls[ 0 ].query ).toMatchObject( { unread: 1, number: 20 } );
-			getCalls[ 0 ].callback( null, { notes: page( 20 ), last_seen_time: 0 } );
+			expect( getCalls[ 0 ].query ).toMatchObject( {
+				unread: 1,
+				number: 10,
+				before: Math.floor( Date.parse( makeNote( 200 ).timestamp ) / 1000 ),
+			} );
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 199 ), last_seen_time: 0 } ); // 199..190
 			expect( getUnreadNoteIds( store.getState() ) ).toHaveLength( 20 );
 			expect( client.filteredHasMore ).toBe( true );
 
-			// Page 3: requests number=30 but the server returns fewer (25) — exhausted.
+			// Page 3: older than the new oldest (190); a short page means exhausted.
 			getCalls.length = 0;
 			client.loadMore();
-			expect( getCalls[ 0 ].query ).toMatchObject( { unread: 1, number: 30 } );
-			getCalls[ 0 ].callback( null, { notes: page( 25 ), last_seen_time: 0 } );
+			expect( getCalls[ 0 ].query ).toMatchObject( {
+				unread: 1,
+				number: 10,
+				before: Math.floor( Date.parse( makeNote( 190 ).timestamp ) / 1000 ),
+			} );
+			getCalls[ 0 ].callback( null, { notes: fullPage( 5, 189 ), last_seen_time: 0 } ); // 189..185
 			expect( getUnreadNoteIds( store.getState() ) ).toHaveLength( 25 );
 			expect( client.filteredHasMore ).toBe( false );
 

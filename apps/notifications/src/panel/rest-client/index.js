@@ -3,6 +3,7 @@ import repliesCache from '../comment-replies-cache';
 import { store } from '../state';
 import actions from '../state/actions';
 import getAllNotes from '../state/selectors/get-all-notes';
+import getUnreadNoteIds from '../state/selectors/get-unread-note-ids';
 import { fetchNote, listNotes, sendLastSeenTime, subscribeToNoteStream } from './wpcom';
 
 const debug = debugFactory( 'notifications:rest-client' );
@@ -394,21 +395,31 @@ function setFilter( filter ) {
  * server's answer for which notes belong to the view is kept as an ordered id
  * list (`unreadNoteIds`) that the Unread tab renders looked up in the store.
  */
-function getFilteredNotes() {
+function getFilteredNotes( before ) {
 	if ( ! this.filter || this.gettingFilteredNotes ) {
 		return;
 	}
 	this.gettingFilteredNotes = true;
 
+	const unreadIds = getUnreadNoteIds( store.getState() );
+
 	const parameters = {
 		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash,variant',
-		number: this.filteredRequestLimit,
+		// Without `before` this re-requests the authoritative top window. With it,
+		// load-more pages an older slice in additively — only what's left under the
+		// cap, so a page can't push the view past max_limit.
+		number: before
+			? Math.min( settings.increment_limit, settings.max_limit - unreadIds.length )
+			: this.filteredRequestLimit,
 		locale: this.locale,
 		...this.filter,
 	};
+	if ( before ) {
+		parameters.before = before;
+	}
 
 	// Only show the full-panel spinner for the first page; later pages stream in.
-	if ( this.filteredRequestLimit === settings.initial_limit ) {
+	if ( ! before && this.filteredRequestLimit === settings.initial_limit ) {
 		store.dispatch( actions.ui.loadNotes() );
 	}
 
@@ -424,17 +435,33 @@ function getFilteredNotes() {
 
 		store.dispatch( actions.notes.addNotes( data.notes ) );
 
-		// The latest response is authoritative, so replace the id list — notes the
-		// server no longer returns (read/deleted elsewhere) drop from the view.
 		// Guard on the filter so a response landing after a tab switch is ignored,
 		// and so only `unread` writes the unread list.
 		if ( this.filter?.unread ) {
-			store.dispatch( actions.notes.setUnreadNoteIds( data.notes.map( ( note ) => note.id ) ) );
-		}
+			const pageIds = data.notes.map( ( note ) => note.id );
+			if ( before ) {
+				// Append the older page to the view's id list, de-duped — a filtered
+				// fetch can return notes an earlier page already loaded.
+				const current = getUnreadNoteIds( store.getState() );
+				const known = new Set( current );
+				const fresh = pageIds.filter( ( id ) => ! known.has( id ) );
+				store.dispatch( actions.notes.setUnreadNoteIds( current.concat( fresh ) ) );
 
-		// A full page back implies the server may have more matching notes.
-		this.filteredHasMore =
-			data.notes.length >= parameters.number && this.filteredRequestLimit < settings.max_limit;
+				// Keep paging only while an older page is full and still adds new ids
+				// (an inclusive `before` can echo the anchor back) and there's room
+				// left under the cap.
+				this.filteredHasMore =
+					fresh.length > 0 && data.notes.length >= parameters.number && parameters.number > 0;
+			} else {
+				// The top window is authoritative, so replace the id list — notes the
+				// server no longer returns (read/deleted elsewhere) drop from the view.
+				store.dispatch( actions.notes.setUnreadNoteIds( pageIds ) );
+
+				// A full page back implies the server may have more matching notes.
+				this.filteredHasMore =
+					data.notes.length >= parameters.number && this.filteredRequestLimit < settings.max_limit;
+			}
+		}
 	} );
 }
 
@@ -604,11 +631,22 @@ function loadMore() {
 		if ( this.gettingFilteredNotes || ! this.filteredHasMore ) {
 			return;
 		}
+		// Grow the refresh window so the polling re-fetch keeps covering every
+		// matching note paged in (mirrors the unfiltered noteRequestLimit).
 		this.filteredRequestLimit = Math.min(
 			this.filteredRequestLimit + settings.increment_limit,
 			settings.max_limit
 		);
-		this.getFilteredNotes();
+		// Page older matching notes in additively, anchored on the oldest note in
+		// the view's own id list — `before` is the endpoint's UNIX epoch seconds
+		// cursor, so a raw ISO timestamp would be ignored and refetch page one.
+		const unreadIds = getUnreadNoteIds( store.getState() );
+		const oldestId = unreadIds[ unreadIds.length - 1 ];
+		const oldest = oldestId && getAllNotes( store.getState() ).find( ( n ) => n.id === oldestId );
+		if ( ! oldest ) {
+			return;
+		}
+		this.getFilteredNotes( Math.floor( Date.parse( oldest.timestamp ) / 1000 ) );
 		return;
 	}
 
