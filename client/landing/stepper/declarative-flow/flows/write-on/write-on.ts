@@ -145,11 +145,7 @@ const writeOn: FlowV2< typeof initialize > = {
 			}
 		};
 
-		const goBack = () => {
-			window.history.back();
-		};
-
-		return { submit, goBack };
+		return { submit };
 	},
 };
 
