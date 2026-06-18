@@ -24,11 +24,13 @@
 	width: var( --a8c-ui-stepper-indicator-size );
 	height: var( --a8c-ui-stepper-indicator-size );
 	border-radius: 50%;
-	border: var( --wpds-border-width-xs ) solid var( --wpds-color-fg-interactive-neutral );
+	// The indicator is static status content, not an interactive control
+	// (the .trigger button is), so it reads from the content token family.
+	border: var( --wpds-border-width-xs ) solid var( --wpds-color-fg-content-neutral );
 	flex-shrink: 0;
 	font-size: var( --wpds-typography-font-size-sm );
 	font-weight: 400;
-	color: var( --wpds-color-fg-interactive-neutral );
+	color: var( --wpds-color-fg-content-neutral );
 	background: var( --wpds-color-bg-surface-neutral-strong );
 }
 
@@ -89,19 +91,19 @@
 	border-style: solid;
 }
 
-// Upcoming step titles
+// Upcoming step titles — de-emphasized static content
 [data-indicator-variant] .title {
-	color: var( --wpds-color-fg-interactive-neutral );
+	color: var( --wpds-color-fg-content-neutral-weak );
 }
 
 // Completed step titles — same weight as upcoming but full neutral (not weak)
 [data-indicator-variant] [data-status='completed'] .title {
-	color: var( --wpds-color-fg-interactive-neutral-active );
+	color: var( --wpds-color-fg-content-neutral );
 }
 
 // Current/active step title — full neutral, bold (weight set on the trigger below)
 [data-indicator-variant] [data-current] .title {
-	color: var( --wpds-color-fg-interactive-neutral-active );
+	color: var( --wpds-color-fg-content-neutral );
 }
 
 // ---------------------------------------------------------------------------
