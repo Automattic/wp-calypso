@@ -106,23 +106,25 @@ function BenefitRow( {
 
 	return (
 		<HStack spacing={ 4 } alignment="flex-start" justify="flex-start">
-			<div
-				aria-hidden="true"
-				style={ {
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'center',
-					flexShrink: 0,
-					width: '48px',
-					height: '48px',
-					borderRadius: '4px',
-					background: 'var(--color-gray-100)',
-					color: 'var(--color-gray-700)',
-					opacity: isLocked ? 0.5 : undefined,
-				} }
-			>
-				<Icon icon={ benefit.icon } size={ 28 } />
-			</div>
+			{ ! isSmallViewport && (
+				<div
+					aria-hidden="true"
+					style={ {
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+						flexShrink: 0,
+						width: '48px',
+						height: '48px',
+						borderRadius: '4px',
+						background: 'var(--color-gray-100)',
+						color: 'var(--color-gray-700)',
+						opacity: isLocked ? 0.5 : undefined,
+					} }
+				>
+					<Icon icon={ benefit.icon } size={ 28 } />
+				</div>
+			) }
 			<VStack spacing={ 2 } style={ { flexGrow: 1 } }>
 				<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
 					<Text weight={ 500 } variant={ isLocked ? 'muted' : undefined }>
