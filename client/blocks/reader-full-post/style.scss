@@ -62,7 +62,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 .reader-full-post__seen-button {
 	align-items: center;
 	box-sizing: border-box;
-	cursor: pointer;
+	pointer-events: none;
 	display: inline-flex;
 	list-style-type: none;
 	user-select: none;
