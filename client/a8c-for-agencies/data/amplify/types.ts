@@ -41,3 +41,23 @@ export interface AmplifyJobsResponse {
 export interface AmplifyReportsResponse {
 	reports: AmplifyReport[];
 }
+
+export interface StartAmplifyAnalysisParams {
+	url: string;
+	mode: AmplifyMode;
+}
+
+// 202 response from POST /reports — the newly created run, always `pending`.
+export interface AmplifyAnalysisRun {
+	id: string;
+	status: 'pending';
+	url: string;
+	mode: AmplifyMode;
+	timestamp: string;
+}
+
+export interface AmplifyApiError {
+	status: number;
+	code: string | null;
+	message: string;
+}
