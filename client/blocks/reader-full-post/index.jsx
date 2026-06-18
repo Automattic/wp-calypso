@@ -31,6 +31,7 @@ import { usePostCommentsApiDisabled } from 'calypso/reader/data/comments';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import { usePost } from 'calypso/reader/data/post';
 import { withPostLikeActions } from 'calypso/reader/data/post/likes';
+import { withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
 import { withSite } from 'calypso/reader/data/site';
 import {
 	useSiteSubscriptionForFeed,
@@ -49,12 +50,6 @@ import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post
 import { getPostTitleFallback, showSelectedPost } from 'calypso/reader/utils';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { useSelector } from 'calypso/state';
-import {
-	requestMarkAsSeen,
-	requestMarkAsUnseen,
-	requestMarkAsSeenBlog,
-	requestMarkAsUnseenBlog,
-} from 'calypso/state/reader/seen-posts/actions';
 import {
 	setViewingFullPostKey,
 	unsetViewingFullPostKey,
@@ -941,12 +936,13 @@ const ConnectedFullPostView = connect( mapStateToFullPostProps, {
 	enableAppBanner,
 	setViewingFullPostKey,
 	unsetViewingFullPostKey,
-	requestMarkAsSeen,
-	requestMarkAsUnseen,
-	requestMarkAsSeenBlog,
-	requestMarkAsUnseenBlog,
 	showSelectedPost,
-} )( withSite( withPostLikes( withPostLikeActions( FullPostView ) ), getPostSiteId ) );
+} )(
+	withSite(
+		withPostLikes( withPostLikeActions( withSeenPostsMutations( FullPostView ) ) ),
+		getPostSiteId
+	)
+);
 
 export const withFullPostNavigation = ( WrappedComponent ) =>
 	function FullPostNavigationContainer( props ) {
