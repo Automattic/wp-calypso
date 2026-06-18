@@ -1,6 +1,9 @@
-import { screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
+import { Provider } from 'react-redux';
+import { init as initStore } from '../../../panel/state';
+import actions from '../../../panel/state/actions';
 import { renderWithProvider } from '../../../testing-library';
 import NodePanel, { getNotificationTabs } from '../index';
 import type { FilterName } from '../../types';
@@ -80,5 +83,56 @@ describe( 'NotePanel', () => {
 				} )
 			).toBeVisible()
 		);
+	} );
+
+	it( 'ignores tab keyboard shortcuts while keyboard shortcuts are disabled', async () => {
+		// The reply input disables keyboard shortcuts on focus. Typing a
+		// letter that maps to a tab (e.g. "u") must not switch tabs or clear
+		// the selected note, which would close the open note and the panel.
+		const store = initStore();
+		const setFilterName = jest.fn();
+		const setSelectedNoteId = jest.fn();
+
+		render(
+			<Provider store={ store }>
+				<NodePanel
+					filterName="all"
+					setFilterName={ setFilterName }
+					selectedNoteId="123"
+					setSelectedNoteId={ setSelectedNoteId }
+				/>
+			</Provider>
+		);
+
+		await waitForComponentToBeInitializedWithSelectedTab( getNotificationTabs()[ 0 ].title );
+
+		await userEvent.keyboard( 'u' );
+
+		expect( setFilterName ).not.toHaveBeenCalled();
+		expect( setSelectedNoteId ).not.toHaveBeenCalled();
+	} );
+
+	it( 'handles tab keyboard shortcuts while keyboard shortcuts are enabled', async () => {
+		const store = initStore();
+		store.dispatch( actions.ui.enableKeyboardShortcuts() );
+		const setFilterName = jest.fn();
+		const setSelectedNoteId = jest.fn();
+
+		render(
+			<Provider store={ store }>
+				<NodePanel
+					filterName="all"
+					setFilterName={ setFilterName }
+					selectedNoteId="123"
+					setSelectedNoteId={ setSelectedNoteId }
+				/>
+			</Provider>
+		);
+
+		await waitForComponentToBeInitializedWithSelectedTab( getNotificationTabs()[ 0 ].title );
+
+		await userEvent.keyboard( 'u' );
+
+		expect( setFilterName ).toHaveBeenCalledWith( 'unread' );
 	} );
 } );
