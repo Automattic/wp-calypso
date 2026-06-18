@@ -10,6 +10,8 @@ import { useSelector } from 'react-redux';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
+import { getIsNoteRead } from '../../panel/state/selectors/get-is-note-read';
+import getNotes from '../../panel/state/selectors/get-notes';
 import getUnreadNoteIds from '../../panel/state/selectors/get-unread-note-ids';
 import { getFilters } from '../../panel/templates/filters';
 import { useAppContext } from '../context';
@@ -113,6 +115,17 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 		fields
 	);
 
+	// The list's unread indicator renders off each note's raw `read` flag, but
+	// marking a note read in-app updates the read state in Redux, not that flag.
+	// Merge the effective read state (which accounts for in-app reads) into the
+	// rendered items so a row sheds its unread styling immediately on open,
+	// without waiting for a server refetch.
+	const notesState = useSelector( getNotes );
+	const data = filteredData.map( ( note ) => {
+		const isRead = getIsNoteRead( notesState, note );
+		return !! note.read === isRead ? note : { ...note, read: isRead ? 1 : 0 };
+	} );
+
 	// `filterSortAndPaginate` reports `totalItems` as the count of notes loaded
 	// so far. DataViews advances its infinite-scroll window only while
 	// `totalItems` stays ahead of the window, so reporting the loaded count
@@ -164,7 +177,7 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 		<div ref={ noteListRef } className="wpnc__note-list">
 			{ ! showInitialLoader ? (
 				<DataViews< Note >
-					data={ filteredData }
+					data={ data }
 					fields={ fields }
 					view={ view }
 					isLoading={ isLoading }
