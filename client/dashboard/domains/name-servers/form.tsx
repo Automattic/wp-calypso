@@ -167,7 +167,7 @@ export default function NameServersForm( {
 								const ns = Object.fromEntries(
 									Array.from( { length: MAX_NAME_SERVERS_LENGTH }, ( _, i ) => [
 										`nameServer${ i + 1 }` as NameServerKey,
-										value ? defaultNameServers[ i ] : '',
+										value ? defaultNameServers[ i ] ?? '' : '',
 									] )
 								);
 
