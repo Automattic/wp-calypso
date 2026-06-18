@@ -12,6 +12,8 @@ import {
 	AI_SITE_BUILDER_FLOW,
 	AI_SITE_BUILDER_SPEC_FLOW,
 	DOMAIN_FLOW,
+	DOMAIN_TRANSFER,
+	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	WOO_HOSTED_PLANS_FLOW,
 	setRequester as setOnboardingRequester,
 } from '@automattic/onboarding';
@@ -102,6 +104,17 @@ const FLOWS_WITHOUT_HELP_CENTER = new Set< string >( [
 	AI_SITE_BUILDER_FLOW,
 	AI_SITE_BUILDER_SPEC_FLOW,
 	DOMAIN_FLOW,
+] );
+
+/**
+ * Flows that should not mount the unified AI agent (Agents Manager). The docked agent dock is
+ * geared toward site management, not focused checkout-style flows; on the domain-transfer flows
+ * it also overlaps with the narrow, fixed-width step layout. This mirrors the sibling
+ * `DOMAIN_FLOW` (`/setup/domain`), which already runs without the agent dock.
+ */
+const FLOWS_WITHOUT_AGENTS_MANAGER = new Set< string >( [
+	DOMAIN_TRANSFER,
+	HUNDRED_YEAR_DOMAIN_TRANSFER,
 ] );
 
 const HELP_CENTER_STORE = HelpCenter.register();
@@ -289,12 +302,14 @@ async function main() {
 									currentUser={ user as UserStore.CurrentUser }
 									sectionName="stepper"
 								/>
-								<AsyncLoad
-									require={ loadAgentsManagerLoader }
-									placeholder={ null }
-									sectionName={ flowName }
-									loadAgentsManager
-								/>
+								{ ! FLOWS_WITHOUT_AGENTS_MANAGER.has( flowName ) && (
+									<AsyncLoad
+										require={ loadAgentsManagerLoader }
+										placeholder={ null }
+										sectionName={ flowName }
+										loadAgentsManager
+									/>
+								) }
 							</>
 						) ) }
 					{ 'development' === process.env.NODE_ENV && (

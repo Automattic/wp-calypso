@@ -311,10 +311,6 @@ body.is-section-stepper.agents-manager-sidebar-container {
 		overflow: hidden;
 	}
 
-	.domain-transfer {
-		max-width: unset;
-	}
-
 	&.agents-manager-sidebar-container--sidebar-open {
 		@include sidebar-open-base( '#wpcom .step-route' );
 
