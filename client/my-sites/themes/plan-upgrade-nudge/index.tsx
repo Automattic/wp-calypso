@@ -7,11 +7,9 @@ import {
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Banner from 'calypso/components/banner';
-import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
-import { getSitePlanSlug, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
+import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import type { IAppState } from 'calypso/state/types';
 
 interface Props {
@@ -21,17 +19,11 @@ interface Props {
 
 const PlanUpgradeNudge = ( { siteId, siteSlug }: Props ) => {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
-	const planSlug = useSelector( ( state: IAppState ) => getSitePlanSlug( state, siteId ) ?? '' );
-	const isLoading = useSelector( ( state: IAppState ) => isRequestingSitePlans( state, siteId ) );
-	const [ refreshStarted, setRefreshStarted ] = useState( false );
+	const planSlug = useSelector(
+		( state: IAppState ) => getSitePlan( state, siteId )?.product_slug ?? ''
+	);
 
-	useEffect( () => {
-		setRefreshStarted( true );
-		dispatch( refreshSitePlans( siteId ) );
-	}, [ dispatch, siteId ] );
-
-	if ( ! siteSlug || ! refreshStarted || ! planSlug || isLoading ) {
+	if ( ! siteSlug || ! planSlug ) {
 		return null;
 	}
 
