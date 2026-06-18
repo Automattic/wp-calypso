@@ -52,7 +52,9 @@
 		color: var(--color-warning-80, #614200);
 		text-decoration: none;
 		font-weight: 500;
-		opacity: 0.5;
+		// Keep the link visibly lighter than the label while still meeting the
+		// WCAG AA 4.5:1 contrast minimum in both light and dark modes.
+		opacity: 0.8;
 		white-space: nowrap;
 
 		@include ui-mixins.when-dark-theme {
