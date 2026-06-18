@@ -251,7 +251,7 @@
 		"@automattic/calypso-package-generator": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/eslint-plugin-json": "workspace:^",
-		"@babel/core": "^7.27.1",
+		"@babel/core": "^8.0.0",
 		"@babel/eslint-parser": "^7.27.1",
 		"@babel/register": "^7.27.1",
 		"@babel/runtime": "^7.27.1",
