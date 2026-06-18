@@ -1,6 +1,6 @@
-import { mapValues, pickBy } from '@automattic/js-utils';
+import { camelCase, mapValues, pickBy } from '@automattic/js-utils';
 import update from 'immutability-helper';
-import { camelCase, debounce, filter, isEmpty, map, property, some } from 'lodash';
+import { debounce, filter, isEmpty, map, property, some } from 'lodash';
 
 function Controller( options ) {
 	if ( ! ( this instanceof Controller ) ) {

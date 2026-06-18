@@ -1,9 +1,9 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
-import { pick } from '@automattic/js-utils';
+import { camelCase, pick } from '@automattic/js-utils';
 import { DomainContactDetails } from '@automattic/shopping-cart';
 import { DomainContactDetailsErrors } from '@automattic/wpcom-checkout';
 import { LocalizeProps, localize } from 'i18n-calypso';
-import { camelCase, difference, get, isEmpty, map } from 'lodash';
+import { difference, get, isEmpty, map } from 'lodash';
 import { PureComponent, ReactNode } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';

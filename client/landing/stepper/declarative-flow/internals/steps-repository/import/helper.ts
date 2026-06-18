@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { camelCase } from '@automattic/js-utils';
 import { addQueryArgs } from '@wordpress/url';
-import { camelCase } from 'lodash';
 import {
 	getImporterUrl,
 	getWpComOnboardingUrl,
@@ -73,7 +73,6 @@ export function generateStepPath( stepName: string, stepSectionName?: string ) {
 
 /**
  * Returns true if the platform is importable
- *
  * @param platform - The platform to check
  * @returns True if the platform is importable, false otherwise
  */
@@ -84,7 +83,6 @@ export function isPlatformImportable( platform: ImporterPlatform ) {
 
 /**
  * Returns the full importer URL for the given platform
- *
  * @param platform - The platform to get the importer URL for
  * @param targetSlug - The target slug for the importer URL
  * @param fromSite - The from site for the importer URL

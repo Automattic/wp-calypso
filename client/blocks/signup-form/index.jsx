@@ -1,22 +1,11 @@
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { mapKeys, omitBy, pick } from '@automattic/js-utils';
+import { camelCase, mapKeys, omitBy, pick, snakeCase } from '@automattic/js-utils';
 import { Spinner } from '@wordpress/components';
 import clsx from 'clsx';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
-import {
-	camelCase,
-	find,
-	filter,
-	forEach,
-	get,
-	includes,
-	map,
-	merge,
-	snakeCase,
-	isEmpty,
-} from 'lodash';
+import { find, filter, forEach, get, includes, map, merge, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
