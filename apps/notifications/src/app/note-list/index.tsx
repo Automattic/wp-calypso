@@ -151,12 +151,14 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	useNoteListFocusToLastSelectedNote( { noteListRef, notes } );
 	useNoteListNavigationKeyboardShortcuts( { noteListRef, visibleNotes } );
 
-	// Hold the loader while the Unread fetch is in flight (DataViews shows `empty`
-	// regardless of `isLoading`). Unread only — other tabs page through the cache
-	// while empty and would otherwise flicker the spinner on every page.
-	const showInitialLoader =
-		! hasRenderedDataViews.current ||
-		( filterName === 'unread' && isLoading && visibleNotes.length === 0 );
+	// Show the full-panel loader only until DataViews first mounts. Once mounted it
+	// must never be swapped back out for the spinner: DataViews binds its
+	// infinite-scroll listener a single time, on mount, and only if the scroll
+	// container is present. Unmounting it mid-load (e.g. while the Unread fetch is
+	// in flight) and remounting it leaves scroll-driven loading dead. The in-flight
+	// Unread spinner is rendered inside DataViews via the `empty` slot instead, so
+	// the mounted instance — and its listener — survives the fetch.
+	const showInitialLoader = ! hasRenderedDataViews.current;
 
 	return (
 		<div ref={ noteListRef } className="wpnc__note-list">
@@ -169,12 +171,21 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 					defaultLayouts={ DEFAULT_LAYOUTS }
 					paginationInfo={ effectivePaginationInfo }
 					empty={
-						<VStack alignment="center">
-							<Text size={ 15 } weight={ 500 }>
-								{ filter.emptyMessage }
-							</Text>
-							<ExternalLink href={ filter.emptyLink }>{ filter.emptyLinkMessage }</ExternalLink>
-						</VStack>
+						// While the Unread fetch is in flight DataViews still renders its
+						// `empty` slot (data hasn't landed yet), so show the spinner here
+						// rather than the "all caught up" message to avoid flashing it.
+						filterName === 'unread' && isLoading ? (
+							<VStack alignment="center" style={ { padding: '40px 0' } }>
+								<Spinner />
+							</VStack>
+						) : (
+							<VStack alignment="center">
+								<Text size={ 15 } weight={ 500 }>
+									{ filter.emptyMessage }
+								</Text>
+								<ExternalLink href={ filter.emptyLink }>{ filter.emptyLinkMessage }</ExternalLink>
+							</VStack>
+						)
 					}
 					getItemId={ ( item ) => item.id.toString() }
 					selection={ selectedNoteId ? [ selectedNoteId ] : [] }

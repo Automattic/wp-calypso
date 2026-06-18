@@ -60,6 +60,32 @@ describe( 'NoteList loading state', () => {
 		expect( container.querySelector( '.components-spinner' ) ).toBeTruthy();
 	} );
 
+	// Regression: a refetch that flips `isLoading` on while the Unread list is
+	// briefly empty must not unmount DataViews. DataViews binds its infinite-scroll
+	// listener a single time, on mount, so tearing it down here leaves scrolling
+	// dead until the next tab switch.
+	it( 'keeps DataViews mounted when the Unread list empties mid-fetch', () => {
+		const store = initStore();
+		store.dispatch( actions.notes.addNotes( [ makeNote( 800, 'Unread one' ) ] ) );
+		store.dispatch( actions.notes.setUnreadNoteIds( [ 800 ] ) );
+		store.dispatch( actions.ui.loadedNotes() );
+		const { container } = renderUnread( store );
+
+		const dataViews = container.querySelector( '.dataviews-layout__container' );
+		expect( dataViews ).toBeTruthy();
+
+		// A refetch clears the id list and flips loading on: the list is empty while
+		// the request is in flight.
+		act( () => {
+			store.dispatch( actions.notes.setUnreadNoteIds( [] ) );
+			store.dispatch( actions.ui.loadNotes() );
+		} );
+
+		// The same DataViews node is still mounted — it was not swapped for the
+		// full-panel loader and remounted.
+		expect( container.querySelector( '.dataviews-layout__container' ) ).toBe( dataViews );
+	} );
+
 	it( 'renders only the notes in the unread id list, not the whole cache', () => {
 		const store = initStore();
 		// Two cached notes the client would both treat as unread; only one is in
