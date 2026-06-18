@@ -27,7 +27,9 @@ export const SupportArticleHeader = ( {
 				target="_blank"
 				icon
 			>
-				{ __( 'Open support page', __i18n_text_domain__ ) }
+				{ post.lesson_navigation
+					? __( 'Open full course', __i18n_text_domain__ )
+					: __( 'Open support page', __i18n_text_domain__ ) }
 			</ExternalLink>
 		</div>
 	);
