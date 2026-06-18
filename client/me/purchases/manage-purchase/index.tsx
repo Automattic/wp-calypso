@@ -609,7 +609,7 @@ class ManagePurchase extends Component<
 
 	renderChangePlanNavItem() {
 		const { purchase, siteSlug, getManagePurchaseUrlFor = managePurchase, translate } = this.props;
-		if ( ! this.shouldRenderDowngradeOption() ) {
+		if ( ! this.shouldRenderDowngradeOption() || ! purchase ) {
 			return null;
 		}
 		// Land back on the newly-provisioned plan's manage-purchase page after
