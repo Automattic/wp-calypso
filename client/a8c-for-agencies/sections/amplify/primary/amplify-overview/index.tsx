@@ -1,4 +1,4 @@
-import { __experimentalText as Text } from '@wordpress/components';
+import { __experimentalText as Text, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
@@ -29,7 +29,9 @@ const AmplifyOverview = () => {
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody>
-				<Text>{ __( 'Placeholder content for Amplify > Overview.' ) }</Text>
+				<VStack spacing={ 6 }>
+					<Text>{ __( 'Placeholder content for Amplify > Overview.' ) }</Text>
+				</VStack>
 			</LayoutBody>
 		</Layout>
 	);
