@@ -3,7 +3,6 @@ import { Card } from '@automattic/components';
 import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import BlogStickers from 'calypso/blocks/blog-stickers';
@@ -37,14 +36,14 @@ class ReaderFeedHeader extends Component {
 		const description = getSiteDescription( { site, feed } );
 		const siteTitle = getSiteName( { feed, site } );
 		const siteUrl = getSiteUrl( { feed, site } );
-		const siteIcon = site ? get( site, 'icon.img' ) : null;
+		const siteIcon = site ? site?.icon?.img : null;
 		const narrowDisplay = width < 480;
 
 		const classes = clsx( 'reader-feed-header', {
 			'is-placeholder': ! site && ! feed,
 		} );
 
-		let feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
+		let feedIcon = feed ? feed.site_icon ?? feed?.image : null;
 		// don't show the default favicon for some sites
 		if ( feedIcon?.endsWith( 'wp.com/i/buttonw-com.png' ) ) {
 			feedIcon = null;

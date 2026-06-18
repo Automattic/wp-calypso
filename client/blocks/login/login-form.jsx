@@ -10,7 +10,7 @@ import clsx from 'clsx';
 import cookie from 'cookie';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
-import { capitalize, defer, includes, get } from 'lodash';
+import { capitalize, defer, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -506,7 +506,7 @@ export class LoginForm extends Component {
 							locale: this.props.locale,
 							action: this.props.isWooJPC ? 'jetpack/lostpassword' : 'lostpassword',
 							oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
-							from: get( this.props.currentQuery, 'from' ),
+							from: this.props.currentQuery?.from,
 						} )
 					);
 				} }
@@ -1028,7 +1028,7 @@ export default connect(
 			isFormDisabled: isFormDisabledSelector( state ),
 			oauth2Client,
 			isFromAutomatticForAgenciesPlugin:
-				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ),
+				'automattic-for-agencies-client' === getCurrentQueryArguments( state )?.from,
 			allowedSocialServices: getPartnerAllowedSocialServices( oauth2Client ),
 			isWooJPC: isWooJPCFlow( state ),
 			isWoo: getIsWoo( state ),
@@ -1045,7 +1045,7 @@ export default connect(
 			wccomFrom: getWccomFrom( state ),
 			currentQuery,
 			isBlazePro: getIsBlazePro( state ),
-			isOneTapAuth: !! get( getCurrentQueryArguments( state ), 'oneTapAuth' ),
+			isOneTapAuth: !! getCurrentQueryArguments( state )?.oneTapAuth,
 			isGravatarFixedAccountLogin:
 				isFromGravatar3rdPartyApp || isFromGravatarQuickEditor || isGravatarFlowWithEmail,
 			isGravPoweredClient: isGravPoweredOAuth2Client( oauth2Client ),

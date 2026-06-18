@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 /**
  * Returns true if the locally edited author ID is equal to the saved post author's ID. Other
  * properties of the `author` object are irrelevant.
@@ -8,5 +6,5 @@ import { get } from 'lodash';
  * @returns {boolean}                 are the locally edited and saved values equal?
  */
 export function isAuthorEqual( localAuthorEdit, savedAuthor ) {
-	return get( localAuthorEdit, 'ID' ) === get( savedAuthor, 'ID' );
+	return localAuthorEdit?.ID === savedAuthor?.ID;
 }

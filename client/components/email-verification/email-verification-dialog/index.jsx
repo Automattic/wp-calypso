@@ -1,7 +1,7 @@
 import { Button, Spinner } from '@automattic/components';
 import { Modal } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
-import { get, includes } from 'lodash';
+import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -198,7 +198,7 @@ VerifyEmailDialog.defaultProps = {
 export default connect(
 	( state ) => ( {
 		email: getCurrentUserEmail( state ),
-		emailVerificationStatus: get( state, 'currentUser.emailVerification.status' ),
+		emailVerificationStatus: state?.currentUser?.emailVerification?.status,
 		currentRoute: getCurrentRoute( state ),
 		isPendingEmailChange: isPendingEmailChange( state ),
 		userSettings: getUserSettings( state ),

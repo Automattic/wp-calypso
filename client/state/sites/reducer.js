@@ -1,5 +1,5 @@
 import { omit } from '@automattic/js-utils';
-import { merge, get, includes, reduce, isEqual } from 'lodash';
+import { merge, includes, reduce, isEqual } from 'lodash';
 import {
 	MEDIA_DELETE,
 	SITE_LEAVE_RECEIVE,
@@ -241,7 +241,7 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 
 		case MEDIA_DELETE: {
 			const { siteId, mediaIds } = action;
-			const siteIconId = get( state[ siteId ], 'icon.media_id' );
+			const siteIconId = state[ siteId ]?.icon?.media_id;
 			if ( siteIconId && includes( mediaIds, siteIconId ) ) {
 				return {
 					...state,
@@ -254,7 +254,7 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 
 		case SITE_PLUGIN_UPDATED: {
 			const { siteId } = action;
-			const siteUpdates = get( state[ siteId ], 'updates' );
+			const siteUpdates = state[ siteId ]?.updates;
 			if ( ! siteUpdates ) {
 				return state;
 			}

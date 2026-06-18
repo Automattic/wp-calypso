@@ -1,6 +1,6 @@
 import { pick } from '@automattic/js-utils';
 import { throttle } from '@wordpress/compose';
-import { escapeRegExp, findIndex, get } from 'lodash';
+import { escapeRegExp, findIndex } from 'lodash';
 import { createRef, Component, Fragment } from 'react';
 import getCaretCoordinates from 'textarea-caret';
 import UserMentionSuggestionList from './suggestion-list';
@@ -281,7 +281,7 @@ export default ( WrappedComponent ) =>
 
 			this.matchingSuggestions = this.getMatchingSuggestions( suggestions, query );
 			const selectedSuggestionId =
-				this.state.selectedSuggestionId || get( this.matchingSuggestions[ 0 ], 'ID' );
+				this.state.selectedSuggestionId || this.matchingSuggestions[ 0 ]?.ID;
 
 			const popoverPosition = pick( this.state.popoverPosition, [ 'top', 'left' ] );
 

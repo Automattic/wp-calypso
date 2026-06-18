@@ -5,7 +5,7 @@ import { Spinner } from '@wordpress/components';
 import clsx from 'clsx';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
-import { find, filter, forEach, get, includes, map, merge, isEmpty } from 'lodash';
+import { find, filter, forEach, includes, map, merge, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -831,7 +831,7 @@ export default connect(
 			currentUser: getCurrentUser( state ),
 			oauth2Client,
 			sectionName: getSectionName( state ),
-			from: get( getCurrentQueryArguments( state ), 'from' ),
+			from: getCurrentQueryArguments( state )?.from,
 			wccomFrom: getWccomFrom( state ),
 			isWoo: getIsWoo( state ),
 			isWooJPC,

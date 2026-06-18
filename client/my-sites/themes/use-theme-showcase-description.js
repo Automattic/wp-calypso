@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { get, includes } from 'lodash';
+import { includes } from 'lodash';
 import { useSelector } from 'react-redux';
 import { findThemeFilterTerm } from 'calypso/state/themes/selectors/find-theme-filter-term';
 import { getThemeFilterTerm } from 'calypso/state/themes/selectors/get-theme-filter-term';
@@ -8,13 +8,13 @@ export default function useThemeShowcaseDescription( { filter, tier, vertical } 
 	const translate = useTranslate();
 	const description = useSelector( ( state ) => {
 		if ( vertical ) {
-			return get( getThemeFilterTerm( state, 'subject', vertical ), 'description' );
+			return getThemeFilterTerm( state, 'subject', vertical )?.description;
 		}
 	} );
 	const filterDescription = useSelector( ( state ) => {
 		// If we have *one* filter, use its description
 		if ( filter && ! includes( filter, '+' ) ) {
-			return get( findThemeFilterTerm( state, filter ), 'description' );
+			return findThemeFilterTerm( state, filter )?.description;
 		}
 	} );
 
