@@ -563,7 +563,7 @@ __metadata:
     "@types/totp-generator": "npm:^0.0.8"
     "@wordpress/i18n": "npm:^6.21.0"
     asana-phrase: "npm:^0.0.8"
-    form-data: "npm:^4.0.4"
+    form-data: "npm:^4.0.6"
     jest-docblock: "npm:^29.7.0"
     mailosaur: "npm:^8.4.0"
     nock: "npm:^14.0.15"
@@ -1880,7 +1880,7 @@ __metadata:
     "@wordpress/icons": "npm:^13.3.0"
     autosize: "npm:^6.0.1"
     clsx: "npm:^2.1.1"
-    dompurify: "npm:3.4.9"
+    dompurify: "npm:3.4.11"
     framer-motion: "npm:^12.23.12"
     jest: "npm:^29.7.0"
     react: "npm:^18.3.1"
@@ -14442,7 +14442,7 @@ __metadata:
     deepmerge: "npm:^4.3.1"
     diff: "npm:^4.0.2"
     dom-helpers: "npm:^5.1.3"
-    dompurify: "npm:3.4.9"
+    dompurify: "npm:3.4.11"
     draft-js: "npm:^0.11.7"
     duplicate-package-checker-webpack-plugin: "npm:^3.0.0"
     email-validator: "npm:^2.0.4"
@@ -14497,7 +14497,7 @@ __metadata:
     react-markdown: "npm:^8.0.7"
     react-modal: "npm:^3.16.3"
     react-redux: "npm:^9.2.0"
-    react-router: "npm:6.30.4"
+    react-router: "npm:8.0.1"
     react-router-dom: "npm:6.30.4"
     react-slider: "npm:^2.0.6"
     react-test-renderer: "npm:^18.3.1"
@@ -15542,6 +15542,13 @@ __metadata:
   version: 2.0.0
   resolution: "convert-source-map@npm:2.0.0"
   checksum: 8f2f7a27a1a011cc6cc88cc4da2d7d0cfa5ee0369508baae3d98c260bb3ac520691464e5bbe4ae7cdf09860c1d69ecc6f70c63c6e7c7f7e3f18ec08484dc7d9b
+  languageName: node
+  linkType: hard
+
+"cookie-es@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "cookie-es@npm:3.1.1"
+  checksum: 62cf0c325cc547b52477b351e9b5d068b3ffc74f7d143cdf7af854648dd1015fca3aed1498b355365e24b0746333f0b15688ed3a535abecc5ed0a046ae956a84
   languageName: node
   linkType: hard
 
@@ -16938,6 +16945,18 @@ __metadata:
   dependencies:
     domelementtype: "npm:^2.2.0"
   checksum: 5c199c7468cb052a8b5ab80b13528f0db3d794c64fc050ba793b574e158e67c93f8336e87fd81e9d5ee43b0e04aea4d8b93ed7be4899cb726a1601b3ba18538b
+  languageName: node
+  linkType: hard
+
+"dompurify@npm:3.4.11":
+  version: 3.4.11
+  resolution: "dompurify@npm:3.4.11"
+  dependencies:
+    "@types/trusted-types": "npm:^2.0.7"
+  dependenciesMeta:
+    "@types/trusted-types":
+      optional: true
+  checksum: 31439481c7e8fc3805d40c376936fd66936620fb1b1a31a2ec097f6165412c37f2d868e082c9ceba62bb37661c1ea132a5db4d5213434317e30df68d4aca9cc9
   languageName: node
   linkType: hard
 
@@ -19190,16 +19209,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data@npm:^4.0.4":
-  version: 4.0.4
-  resolution: "form-data@npm:4.0.4"
+"form-data@npm:^4.0.6":
+  version: 4.0.6
+  resolution: "form-data@npm:4.0.6"
   dependencies:
     asynckit: "npm:^0.4.0"
     combined-stream: "npm:^1.0.8"
     es-set-tostringtag: "npm:^2.1.0"
-    hasown: "npm:^2.0.2"
-    mime-types: "npm:^2.1.12"
-  checksum: 373525a9a034b9d57073e55eab79e501a714ffac02e7a9b01be1c820780652b16e4101819785e1e18f8d98f0aee866cc654d660a435c378e16a72f2e7cac9695
+    hasown: "npm:^2.0.4"
+    mime-types: "npm:^2.1.35"
+  checksum: 43947a77bf0ff45c6ceed789778982d47a3f3e720a74b71721174ebf3310a5f1a8be1d6b38a3ee3688e8a18a2c4273073ec0844cd37efda3eaf46d41c9c318ff
   languageName: node
   linkType: hard
 
@@ -20154,6 +20173,15 @@ __metadata:
   dependencies:
     function-bind: "npm:^1.1.2"
   checksum: f5eb28c3fd0d3e4facd821c1eeee3836c37b70ab0b0fc532e8a39976e18fef43652415dadc52f8c7a5ff6d5ac93b7bef128789aa6f90f4e9b9a9083dce74ab38
+  languageName: node
+  linkType: hard
+
+"hasown@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "hasown@npm:2.0.4"
+  dependencies:
+    function-bind: "npm:^1.1.2"
+  checksum: 2d8de939e270b70618f8cebb69746620db10617dbb495bc66ddad326955ea24d3ca4af133aff3eb7c1853e0218f867bc2b050ec26fe02e3aea58f880ffc5e506
   languageName: node
   linkType: hard
 
@@ -24462,7 +24490,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mime-types@npm:^2.1.12, mime-types@npm:^2.1.27, mime-types@npm:^2.1.31, mime-types@npm:~2.1.24, mime-types@npm:~2.1.34":
+"mime-types@npm:^2.1.27, mime-types@npm:^2.1.31, mime-types@npm:^2.1.35, mime-types@npm:~2.1.24, mime-types@npm:~2.1.34":
   version: 2.1.35
   resolution: "mime-types@npm:2.1.35"
   dependencies:
@@ -27718,6 +27746,21 @@ __metadata:
   peerDependencies:
     react: ">=16.8"
   checksum: fb6de7d1002bcab9ea12c4072d93792eca494f1e4f30cfec334ccb6523756d23ce3e093c7c1241399296cebed94789a3fb89f96ee76004e0e746458a8f6bab33
+  languageName: node
+  linkType: hard
+
+"react-router@npm:8.0.1":
+  version: 8.0.1
+  resolution: "react-router@npm:8.0.1"
+  dependencies:
+    cookie-es: "npm:^3.1.1"
+  peerDependencies:
+    react: ">=19.2.7"
+    react-dom: ">=19.2.7"
+  peerDependenciesMeta:
+    react-dom:
+      optional: true
+  checksum: 7ffcac5caf209b6988a0e045fd044f5f8e91e7f677475f707becd514f316f6c2d556f90e371c5a41f6033da891a2d97370b1c5d443ba96991ab0f4f71252c8ba
   languageName: node
   linkType: hard
 
@@ -33813,7 +33856,7 @@ __metadata:
     eslint: "npm:^8.34.0"
     eslint-plugin-jest: "npm:^25.3.0"
     esm: "npm:^3.2.25"
-    form-data: "npm:^4.0.4"
+    form-data: "npm:^4.0.6"
     jest: "npm:^29.6.1"
     jest-docblock: "npm:^29.4.3"
     jest-environment-node: "npm:^29.6.1"
