@@ -21,6 +21,11 @@ export const ArticleLessonNavigation = ( {
 				<Link
 					to={ `?link=${ encodeURIComponent( previous.url ) }` }
 					className="help-center-article-lesson-navigation__link help-center-article-lesson-navigation__link--previous"
+					aria-label={ sprintf(
+						/* translators: %s is the title of the previous lesson */
+						__( 'Previous lesson: %s', __i18n_text_domain__ ),
+						previous.title
+					) }
 				>
 					← { __( 'Previous lesson', __i18n_text_domain__ ) }
 				</Link>
