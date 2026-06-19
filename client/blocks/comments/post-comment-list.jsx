@@ -3,7 +3,7 @@ import { pickBy } from '@automattic/js-utils';
 import { Icon, published } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { get, delay } from 'lodash';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
@@ -210,9 +210,9 @@ class PostCommentList extends Component {
 	scrollWhenDOMReady = () => {
 		if ( this.props.startingCommentId && ! this.hasScrolledToComment ) {
 			if ( this.commentIsOnDOM( this.props.startingCommentId ) ) {
-				delay( () => this.scrollToComment(), 50 );
+				setTimeout( () => this.scrollToComment(), 50 );
 			}
-			delay( this.scrollWhenDOMReady, 100 );
+			setTimeout( this.scrollWhenDOMReady, 100 );
 		}
 	};
 

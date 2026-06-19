@@ -35,6 +35,7 @@ const COMPOSE_MESSAGE = 'Please use the equivalent from `@wordpress/compose` ins
 const COMPACT_MESSAGE = 'Please use `array.filter( Boolean )` instead of lodash `compact`.';
 const FLATTEN_MESSAGE = 'Please use native `array.flatMap()` / `array.flat()` instead.';
 const DEFER_MESSAGE = 'Please use native `setTimeout( fn, 0 )` instead of lodash `defer`.';
+const DELAY_MESSAGE = 'Please use native `setTimeout( fn, wait )` instead of lodash `delay`.';
 
 const paths = [
 	{ name: 'lodash', importNames: JS_UTILS_NAMES, message: JS_UTILS_MESSAGE },
@@ -43,6 +44,7 @@ const paths = [
 	{ name: 'lodash', importNames: [ 'compact' ], message: COMPACT_MESSAGE },
 	{ name: 'lodash', importNames: [ 'flatMap', 'flatten' ], message: FLATTEN_MESSAGE },
 	{ name: 'lodash', importNames: [ 'defer' ], message: DEFER_MESSAGE },
+	{ name: 'lodash', importNames: [ 'delay' ], message: DELAY_MESSAGE },
 ];
 
 // Deep `lodash/<fn>` imports bypass the named-import paths above.
@@ -53,6 +55,7 @@ const patterns = [
 	{ group: [ 'lodash/compact' ], message: COMPACT_MESSAGE },
 	{ group: [ 'lodash/flatMap', 'lodash/flatten' ], message: FLATTEN_MESSAGE },
 	{ group: [ 'lodash/defer' ], message: DEFER_MESSAGE },
+	{ group: [ 'lodash/delay' ], message: DELAY_MESSAGE },
 ];
 
 module.exports = { paths, patterns };
