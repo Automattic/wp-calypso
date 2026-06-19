@@ -506,7 +506,7 @@ const DomainSearchStep: StepType< {
 								<span className="domain-search--top-bar-divider" aria-hidden="true" />
 							) }
 							<Step.LinkButton icon={ help } iconSize={ 20 } onClick={ toggleHelpCenter }>
-								{ __( 'Need help?' ) }
+								{ isMobileViewport ? __( 'Help' ) : __( 'Need help?' ) }
 							</Step.LinkButton>
 						</>
 					) }
