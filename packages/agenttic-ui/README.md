@@ -139,6 +139,45 @@ The `onTypingStatusChange` callback is triggered when the typing status changes.
 
 ## Architecture
 
+### Portable Question Choices
+
+Agentic question renderers should use a portable question payload so product
+agents can ask lightweight structured questions inline in chat without coupling
+the UI to one product or workflow.
+
+```ts
+interface QuestionPrompt {
+	question: string;
+	choices: QuestionChoice[];
+	allow_freeform?: boolean;
+	freeform_label?: string;
+	freeform_placeholder?: string;
+}
+
+interface QuestionChoice {
+	label: string;
+	message?: string;
+	description?: string;
+	presentation?: {
+		swatches?: string[];
+		font_sample?: {
+			heading?: string;
+			body?: string;
+			heading_font?: string;
+			body_font?: string;
+		};
+		image?: {
+			url: string;
+			alt?: string;
+		};
+		layout_hint?: string;
+	};
+}
+```
+
+All `presentation` fields are optional. Renderers should fall back to the choice
+label and description when presentation metadata is absent or unsupported.
+
 ### AgentUI Components
 
 **AgentUI** - Convenience wrapper with default layout
