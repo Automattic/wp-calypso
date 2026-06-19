@@ -1,5 +1,7 @@
-@import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
 
 .profile__settings .edit-gravatar {
 	text-align: center;

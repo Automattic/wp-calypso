@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { withShoppingCart } from '@automattic/shopping-cart';
-import { get, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -75,7 +75,7 @@ export class TransferDomain extends Component {
 	};
 
 	handleRegisterDomain = ( suggestion ) => {
-		const trademarkClaimsNoticeInfo = get( suggestion, 'trademark_claims_notice_info' );
+		const trademarkClaimsNoticeInfo = suggestion?.trademark_claims_notice_info;
 		if ( ! isEmpty( trademarkClaimsNoticeInfo ) ) {
 			this.setState( {
 				suggestion,
@@ -138,8 +138,8 @@ export class TransferDomain extends Component {
 
 	trademarkClaimsNotice = () => {
 		const { suggestion } = this.state;
-		const domain = get( suggestion, 'domain_name' );
-		const trademarkClaimsNoticeInfo = get( suggestion, 'trademark_claims_notice_info' );
+		const domain = suggestion?.domain_name;
+		const trademarkClaimsNoticeInfo = suggestion?.trademark_claims_notice_info;
 
 		return (
 			<TrademarkClaimsNotice

@@ -114,7 +114,7 @@ class BlogsSettings extends Component {
 				<FilteredInfiniteList
 					searchTerm={ this.state.searchTerm }
 					items={ sites }
-					renderItem={ renderBlog }
+					renderItem={ ( site, index ) => renderBlog( site, index ) }
 				/>
 			</Fragment>
 		);

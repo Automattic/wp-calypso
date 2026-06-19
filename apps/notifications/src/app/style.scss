@@ -92,6 +92,11 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	flex-direction: column;
 	overflow: hidden;
 	background: var(--color-surface, #fff);
+	// DataViews paints its wrapper with --wp-dataviews-color-background, which
+	// falls back to a --wpds surface token (the dark canvas in the dashboard).
+	// That shows through the transparent rows as a darker block. Track the pane
+	// surface so the list sits flush with the panel.
+	--wp-dataviews-color-background: var(--color-surface, #fff);
 	transition: transform 300ms $wpnc-slide-easing;
 }
 

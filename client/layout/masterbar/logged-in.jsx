@@ -56,11 +56,15 @@ import isSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
-import { getSectionGroup } from 'calypso/state/ui/selectors';
+import { getSectionGroup, getSectionName } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
 import BigSkyIcon from './masterbar-agents-manager/big-sky-icon';
-import { openAgentsManagerChat } from './masterbar-agents-manager/chat-actions';
+import {
+	closeAgentsManagerChat,
+	isAgentsManagerChatVisible,
+	openAgentsManagerChat,
+} from './masterbar-agents-manager/chat-actions';
 import HelpIcon from './masterbar-agents-manager/help-icon';
 import { HelpCenterIcon } from './masterbar-help-center/help-center-icon';
 import { MasterbarLaunchButton } from './masterbar-launch-button';
@@ -90,6 +94,7 @@ class MasterbarLoggedIn extends Component {
 		user: PropTypes.object.isRequired,
 		domainOnlySite: PropTypes.bool,
 		section: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
+		sectionName: PropTypes.string,
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		currentLayoutFocus: PropTypes.string,
 		siteSlug: PropTypes.string,
@@ -104,6 +109,10 @@ class MasterbarLoggedIn extends Component {
 		dashboardOptIn: PropTypes.bool,
 		useUnifiedAgent: PropTypes.bool,
 		launchButton: PropTypes.node,
+		// When provided, the "Plan" menu item navigates to this URL via a regular
+		// anchor instead of calling the page.js router. The interim omnibar (which
+		// runs outside the page.js routing context) passes this so the link works.
+		sitePlanUrl: PropTypes.string,
 	};
 
 	state = { mounted: false };
@@ -515,6 +524,7 @@ class MasterbarLoggedIn extends Component {
 			domainOnlySite,
 			sitePlanName,
 			site,
+			sitePlanUrl,
 		} = this.props;
 
 		// Only display when a site is selected and is not domain-only site.
@@ -558,9 +568,15 @@ class MasterbarLoggedIn extends Component {
 						</div>
 					</div>
 				),
+				// In the interim omnibar `page.js` routing is unavailable, so navigate
+				// via a regular anchor using the provided `sitePlanUrl`. Elsewhere, fall
+				// back to client-side routing.
+				...( sitePlanUrl && { url: sitePlanUrl } ),
 				onClick: () => {
 					this.props.recordTracksEvent( 'calypso_masterbar_plan_clicked' );
-					page( `/plans/${ siteSlug }` );
+					if ( ! sitePlanUrl ) {
+						page( `/plans/${ siteSlug }` );
+					}
 				},
 			} );
 		}
@@ -893,9 +909,18 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	clickAgentsManagerAiChat = () => {
-		this.props.recordTracksEvent( 'calypso_masterbar_agents_manager_ai_chat_clicked' );
-		// Reopen and resume the active conversation rather than start a new one.
-		openAgentsManagerChat();
+		// Toggle: close the chat if it's already showing, otherwise resume the active
+		// conversation and open it.
+		const isVisible = isAgentsManagerChatVisible();
+		this.props.recordTracksEvent( 'calypso_masterbar_agents_manager_ai_chat_clicked', {
+			section: this.props.sectionName,
+			action: isVisible ? 'close' : 'open',
+		} );
+		if ( isVisible ) {
+			closeAgentsManagerChat();
+		} else {
+			openAgentsManagerChat();
+		}
 	};
 
 	renderAgentsManagerAiChat() {
@@ -982,6 +1007,7 @@ const ConnectedMasterbarLoggedIn = connect(
 			siteHomeUrl: getSiteHomeUrl( state, siteId ),
 			adminMenu: getAdminMenu( state, siteId ),
 			sectionGroup,
+			sectionName: getSectionName( state ),
 			domainOnlySite: isDomainOnlySite( state, siteId ),
 			hasNoSites: siteCount === 0,
 			user: getCurrentUser( state ),

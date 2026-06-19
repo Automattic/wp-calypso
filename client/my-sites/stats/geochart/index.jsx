@@ -1,8 +1,9 @@
 import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
+import { throttle } from '@wordpress/compose';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { throttle, map } from 'lodash';
+import { map } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';

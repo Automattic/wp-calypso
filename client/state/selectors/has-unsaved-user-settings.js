@@ -1,4 +1,4 @@
-import { get, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 
 import 'calypso/state/user-settings/init';
 
@@ -8,5 +8,5 @@ import 'calypso/state/user-settings/init';
  * @returns {boolean} are there any unsaved settings?
  */
 export default function hasUnsavedUserSettings( state ) {
-	return ! isEmpty( get( state, 'userSettings.unsavedSettings' ) );
+	return ! isEmpty( state?.userSettings?.unsavedSettings );
 }

@@ -1,6 +1,7 @@
 import { SelectDropdown } from '@automattic/components';
+import { times } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { includes, times } from 'lodash';
+import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';

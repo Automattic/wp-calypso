@@ -12,7 +12,7 @@ import {
 } from '@automattic/urls';
 import _debug from 'debug';
 import { localize } from 'i18n-calypso';
-import { intersection, map, find, get } from 'lodash';
+import { intersection, map, find } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -160,8 +160,8 @@ export class DomainWarnings extends PureComponent {
 		debug( 'Rendering wrongNSMappedDomains' );
 
 		if (
-			get( this.props, 'selectedSite.jetpack' ) &&
-			! get( this.props, 'selectedSite.options.is_automated_transfer' )
+			this.props?.selectedSite?.jetpack &&
+			! this.props?.selectedSite?.options?.is_automated_transfer
 		) {
 			return null;
 		}
@@ -581,7 +581,7 @@ export class DomainWarnings extends PureComponent {
 	};
 
 	newDomains = () => {
-		if ( get( this.props, 'selectedSite.options.is_domain_only' ) ) {
+		if ( this.props?.selectedSite?.options?.is_domain_only ) {
 			return null;
 		}
 

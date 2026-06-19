@@ -90,7 +90,6 @@ class TokenField extends PureComponent {
 		} );
 
 		let tokenFieldProps = {
-			ref: 'main',
 			className: classes,
 		};
 

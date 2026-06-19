@@ -14,7 +14,7 @@ import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type JSX } from 'react';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import { DEFAULT_SCHEME, PREFERENCE_KEY, isColorScheme } from 'calypso/lib/color-scheme';
 import { useDispatch, useSelector } from 'calypso/state';

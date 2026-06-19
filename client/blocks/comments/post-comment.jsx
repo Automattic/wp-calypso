@@ -6,7 +6,7 @@ import { Icon, external } from '@wordpress/icons';
 import { isURL, getAuthority, getProtocol } from '@wordpress/url';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { get, some, flatMap } from 'lodash';
+import { get, some } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -177,7 +177,7 @@ class PostComment extends PureComponent {
 
 		const immediateChildren = get( commentsTree, [ id, 'children' ], [] );
 		return immediateChildren.concat(
-			flatMap( immediateChildren, ( childId ) => this.getAllChildrenIds( childId ) )
+			immediateChildren.flatMap( ( childId ) => this.getAllChildrenIds( childId ) )
 		);
 	};
 
@@ -445,7 +445,7 @@ class PostComment extends PureComponent {
 		}
 
 		// Author Details
-		const parentCommentId = get( comment, 'parent.ID' );
+		const parentCommentId = comment?.parent?.ID;
 		const { commentAuthorUrl, commentAuthorName } = this.getAuthorDetails( commentId );
 		const { commentAuthorUrl: parentAuthorUrl, commentAuthorName: parentAuthorName } =
 			this.getAuthorDetails( parentCommentId );

@@ -44,6 +44,7 @@ function buildDomainProduct( overrides: {
 	uuid: string;
 	meta: string;
 	subtotal: number;
+	originalSubtotal?: number;
 	costOverrides?: ResponseCartCostOverride[];
 	extra?: ResponseCartProduct[ 'extra' ];
 } ) {
@@ -54,6 +55,7 @@ function buildDomainProduct( overrides: {
 		uuid: overrides.uuid,
 		meta: overrides.meta,
 		item_subtotal_integer: overrides.subtotal,
+		item_original_subtotal_integer: overrides.originalSubtotal ?? overrides.subtotal,
 		cost_overrides: overrides.costOverrides ?? [],
 		extra: overrides.extra ?? {},
 	};
@@ -92,11 +94,13 @@ describe( 'BundleProductAndCostOverridesList', () => {
 	it( 'renders the bundle label, each member domain, and the summed total', () => {
 		renderBundleRow();
 
-		expect( screen.getByText( 'Domain bundle' ) ).toBeVisible();
+		expect( screen.getByText( 'Domain Bundle' ) ).toBeVisible();
 		expect( screen.getByText( 'example.com' ) ).toBeVisible();
 		expect( screen.getByText( 'example.net' ) ).toBeVisible();
 		// 2200 + 1800 = 4000 smallest-unit => $40.
 		expect( screen.getByText( /\$40\b/ ) ).toBeVisible();
+		expect( screen.queryByText( /\$22\b/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /\$18\b/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'shows pre-coupon prices so the dedicated coupon line is not double-counted', () => {
@@ -117,11 +121,36 @@ describe( 'BundleProductAndCostOverridesList', () => {
 			],
 		} );
 
-		// Companion shows the pre-coupon $20, not the $18 post-coupon subtotal.
-		expect( screen.getByText( /\$20\b/ ) ).toBeVisible();
+		// Companion price is included in the grouped total, not shown as a separate row.
+		expect( screen.queryByText( /\$20\b/ ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( /\$18\b/ ) ).not.toBeInTheDocument();
 		// 2200 + 2000 = 4200 smallest-unit => $42.
 		expect( screen.getByText( /\$42\b/ ) ).toBeVisible();
+	} );
+	it( 'shows the summed original price crossed out when the bundle is discounted', () => {
+		renderBundleRow( {
+			type: 'bundle',
+			groupId: 'bundle-discounted',
+			products: [
+				buildDomainProduct( {
+					uuid: 'primary',
+					meta: 'example.com',
+					subtotal: 2200,
+					originalSubtotal: 6500,
+				} ),
+				buildDomainProduct( {
+					uuid: 'companion',
+					meta: 'example.net',
+					subtotal: 700,
+					originalSubtotal: 6400,
+				} ),
+			],
+		} );
+
+		expect( screen.getByText( /\$29\b/ ) ).toBeVisible();
+		const crossedOut = screen.getByText( /\$129\b/ );
+		expect( crossedOut ).toBeVisible();
+		expect( crossedOut.tagName ).toBe( 'S' );
 	} );
 } );
 
@@ -188,7 +217,7 @@ describe( 'ProductsAndCostOverridesList', () => {
 			</TestWrapper>
 		);
 
-		expect( screen.getByText( 'Domain bundle' ) ).toBeVisible();
+		expect( screen.getByText( 'Domain Bundle' ) ).toBeVisible();
 		expect( screen.getByText( 'example.com' ) ).toBeVisible();
 		expect( screen.getByText( 'example.net' ) ).toBeVisible();
 	} );
@@ -203,7 +232,7 @@ describe( 'ProductsAndCostOverridesList', () => {
 			</TestWrapper>
 		);
 
-		expect( screen.queryByText( 'Domain bundle' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Domain Bundle' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'example.com' ) ).toBeVisible();
 		expect( screen.getByText( 'example.net' ) ).toBeVisible();
 	} );

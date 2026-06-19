@@ -1,4 +1,5 @@
-import { omit, reduce } from 'lodash';
+import { omit } from '@automattic/js-utils';
+import { reduce } from 'lodash';
 import {
 	READER_SITE_BLOCK,
 	READER_SITE_BLOCKS_RECEIVE,

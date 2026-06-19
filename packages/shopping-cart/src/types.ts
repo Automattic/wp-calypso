@@ -949,6 +949,12 @@ export interface ResponseCartProductExtra {
 	agency_id?: number;
 
 	/**
+	 * A4A Pressable PHP Memory add-on target domain.
+	 * Sent with checkout cart items so WPCOM can provision the add-on for the selected Pressable site.
+	 */
+	a4a_pressable_site_domain?: string;
+
+	/**
 	 * Marketplace properties
 	 *
 	 * These extra properties are always set for marketplace products.
@@ -1067,12 +1073,6 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	 *
 	 */
 	hosting_intent?: string;
-
-	/**
-	 * Indicates the user was in the rolled-out pricing differentiation cohort.
-	 * Used to add the `gating-business-q1` blog sticker on purchase.
-	 */
-	is_gating_business_q1?: boolean;
 }
 
 export interface GSuiteProductUser {

@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { once, defer } from 'lodash';
+import { once } from 'lodash';
 import {
 	ROUTE_SET,
 	SELECTED_SITE_SET,
@@ -50,9 +50,9 @@ const notifyAboutImmediateLoginLinkEffects = once( ( dispatch, action, getState 
 	}
 
 	// Let redux process all dispatches that are currently queued and show the message
-	defer( () => {
+	setTimeout( () => {
 		dispatch( successNotice( createImmediateLoginMessage( action.query.login_reason, email ) ) );
-	} );
+	}, 0 );
 } );
 
 const handler = async ( dispatch, action, getState ) => {

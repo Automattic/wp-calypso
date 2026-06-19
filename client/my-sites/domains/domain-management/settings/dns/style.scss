@@ -1,6 +1,7 @@
-@import "@automattic/onboarding/styles/mixins";
-@import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+@import "@automattic/onboarding/styles/mixins";
 
 .dns-card {
 	&__button {

@@ -33,6 +33,7 @@ import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { getOrchestratorErrorMessage } from '../../utils/orchestrator-error-message';
 import { persistLastActivity } from '../../utils/persist-last-activity';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
+import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import type { BigSkyMessage } from '../../types';
@@ -45,6 +46,14 @@ import type {
 	ImageUploadHook,
 	UseCheckpointHook,
 } from '../../utils/load-external-providers';
+
+/**
+ * Pipe-delimited list of suggestion ids (e.g. `|id1|id2|`), matching Big Sky's
+ * `suggestions` / `available_suggestions` tracks-prop format.
+ */
+function formatSuggestionIds( suggestions: Suggestion[] ): string {
+	return '|' + suggestions.map( ( s ) => s.id ).join( '|' ) + '|';
+}
 
 interface Props {
 	/** Suggestions displayed when the chat is empty. */
@@ -182,6 +191,19 @@ export default function OrchestratorChat( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ dynamicSuggestionsKey, registerSuggestions, clearSuggestions ] );
 
+	// Track when a new set of suggestions is rendered. Keyed on the rendered
+	// ids so re-renders that don't change the set don't re-fire.
+	const renderedSuggestionsKey = suggestions.map( ( s ) => s.id ).join( '|' );
+	useEffect( () => {
+		if ( suggestions.length > 0 ) {
+			recordBigSkyTracksEvent( 'chat_suggestions_rendered', {
+				suggestions: formatSuggestionIds( suggestions ),
+			} );
+		}
+		// `suggestions` identity is unstable; key on its rendered ids instead.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ renderedSuggestionsKey ] );
+
 	// Persist the chat route so the conversation can be resumed later.
 	useSaveNewChatRoute( hasUserSentMessage );
 
@@ -213,10 +235,19 @@ export default function OrchestratorChat( {
 			setHasUserSentMessage( true );
 			persistLastActivity( siteKey );
 
+			recordBigSkyTracksEvent( 'chat_input_send_message', {
+				message_length: message?.length || 0,
+				has_images: pendingImages.length > 0,
+			} );
+
 			if ( pendingImages.length > 0 && uploadImagesToWordPress ) {
 				try {
 					// Upload files to WordPress media library
 					const mediaObjects = await uploadImagesToWordPress();
+
+					recordBigSkyTracksEvent( 'file_upload_success', {
+						count: mediaObjects.length,
+					} );
 
 					// Create image data objects with full metadata including attachment ID
 					const imageData = mediaObjects.map( ( media ) => ( {
@@ -363,13 +394,25 @@ export default function OrchestratorChat( {
 		};
 	}, [] );
 
-	const handleSuggestionClick = useCallback( ( suggestion: Suggestion | string ) => {
-		const value =
-			typeof suggestion === 'string' ? suggestion : suggestion.prompt ?? suggestion.label;
-		window.dispatchEvent(
-			new CustomEvent( 'big-sky-inline-suggestion-click', { detail: { value } } )
-		);
-	}, [] );
+	const handleSuggestionClick = useCallback(
+		( suggestion: Suggestion | string, availableSuggestions?: Suggestion[] ) => {
+			const value =
+				typeof suggestion === 'string' ? suggestion : suggestion.prompt ?? suggestion.label;
+
+			if ( typeof suggestion !== 'string' ) {
+				recordBigSkyTracksEvent( 'chat_suggestion_click', {
+					suggestion_text: suggestion.prompt || '',
+					suggestion_id: suggestion.id || '',
+					available_suggestions: formatSuggestionIds( availableSuggestions ?? [] ),
+				} );
+			}
+
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', { detail: { value } } )
+			);
+		},
+		[]
+	);
 
 	// Invoke abilities setup hook to register hook-based abilities that utilize React context.
 	// Provides custom action handlers for agent and chat interaction within Big Sky's AI store.

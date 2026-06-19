@@ -2,7 +2,6 @@ import { followReadTagMutation } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { localize, translate as i18nTranslate } from 'i18n-calypso';
-import { startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect, useDispatch } from 'react-redux';
@@ -31,7 +30,7 @@ export class ReaderSidebarTags extends Component {
 	};
 
 	followTag = ( tag ) => {
-		if ( startsWith( tag, '#' ) ) {
+		if ( ( tag ?? '' ).startsWith( '#' ) ) {
 			tag = tag.substring( 1 );
 		}
 

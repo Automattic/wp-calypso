@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
+import { pick } from '@automattic/js-utils';
 import i18n from 'i18n-calypso';
-import { find, pick } from 'lodash';
+import { find } from 'lodash';
 import moment from 'moment';
 import AsyncLoad from 'calypso/components/async-load';
 import { bumpStat } from 'calypso/lib/analytics/mc';

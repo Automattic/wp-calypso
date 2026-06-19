@@ -244,41 +244,45 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 	return (
 		<>
 			<Card className="scan-threats__card-header">
-				<SecurityIcon icon={ securityIcon } className="scan-threats security-icon" />
-				<h1 className="scan-threats scan__header">{ headerMessage }</h1>
-				<p className="scan-threats__header-message">
-					{ headerSummary }{ ' ' }
-					{ maxSeverity < 3 && (
-						<InfoPopover position="top" screenReaderText={ translate( 'Learn more' ) }>
-							{ translate(
-								'Low risk items could have a negative impact on your site and should either be fixed or ignored at your convenience.'
-							) }
-						</InfoPopover>
+				<div className="scan__header">
+					<SecurityIcon icon={ securityIcon } className="scan-threats security-icon" />
+				</div>
+				<div className="scan__card-body scan-threats__card-body">
+					<h1 className="scan-threats scan__header">{ headerMessage }</h1>
+					<p className="scan-threats__header-message">
+						{ headerSummary }{ ' ' }
+						{ maxSeverity < 3 && (
+							<InfoPopover position="top" screenReaderText={ translate( 'Learn more' ) }>
+								{ translate(
+									'Low risk items could have a negative impact on your site and should either be fixed or ignored at your convenience.'
+								) }
+							</InfoPopover>
+						) }
+					</p>
+					{ hasFixableThreats && (
+						<>
+							<div className="scan-threats__buttons">
+								<p>{ fixSummary }</p>
+								<Button
+									primary
+									className="scan-threats__fix-all-threats-button"
+									onClick={ openFixAllThreatsDialog }
+									disabled={ ! hasFixableThreats || updatingThreats.length > 0 }
+								>
+									{ translate( 'Show auto fixers' ) }
+								</Button>
+								<Button className="scan-threats__scan-secondary-button" onClick={ dispatchScanRun }>
+									{ translate( 'Scan now' ) }
+								</Button>
+							</div>
+						</>
 					) }
-				</p>
-				{ hasFixableThreats && (
-					<>
-						<div className="scan-threats__buttons">
-							<p>{ fixSummary }</p>
-							<Button
-								primary
-								className="scan-threats__fix-all-threats-button"
-								onClick={ openFixAllThreatsDialog }
-								disabled={ ! hasFixableThreats || updatingThreats.length > 0 }
-							>
-								{ translate( 'Show auto fixers' ) }
-							</Button>
-							<Button className="scan-threats__scan-secondary-button" onClick={ dispatchScanRun }>
-								{ translate( 'Scan now' ) }
-							</Button>
-						</div>
-					</>
-				) }
-				{ ! hasFixableThreats && (
-					<Button primary className="scan-threats__button" onClick={ dispatchScanRun }>
-						{ translate( 'Scan now' ) }
-					</Button>
-				) }
+					{ ! hasFixableThreats && (
+						<Button primary className="scan-threats__button" onClick={ dispatchScanRun }>
+							{ translate( 'Scan now' ) }
+						</Button>
+					) }
+				</div>
 			</Card>
 			<ThreatListHeader />
 			<div className="scan-threats__threats">

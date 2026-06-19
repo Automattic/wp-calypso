@@ -7,8 +7,9 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import { Button, FormInputValidation, FormLabel } from '@automattic/components';
+import { mapValues, pickBy } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { get, isEqual, mapValues, pickBy } from 'lodash';
+import { get, isEqual } from 'lodash';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import pageTitleImage from 'calypso/assets/images/illustrations/seo-page-title.svg';

@@ -228,8 +228,8 @@ export default connect(
 		const siteSettings = getSiteSettings( state, siteId );
 		const canSetAsDefault = taxonomy === 'category';
 		const isDefault = canSetAsDefault && get( siteSettings, [ 'default_category' ] ) === term.ID;
-		const siteSlug = get( site, 'slug' );
-		const siteUrl = get( site, 'URL' );
+		const siteSlug = site?.slug;
+		const siteUrl = site?.URL;
 		const isPodcastingCategory =
 			taxonomy === 'category' && getPodcastingCategoryId( state, siteId ) === term.ID;
 

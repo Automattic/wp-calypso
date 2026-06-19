@@ -31,11 +31,12 @@
 	}
 }
 
-// Baton-pass: filter sticks at the fixed nav's top and rides above it, covering
-// it as it pins.
+// Baton-pass: filter sticks at the fixed nav's top and rides above it (beats the
+// nav's closed 177), covering it as it pins. Stays below the nav's open state
+// (179) and the masterbar (180), which is always on top.
 .is-section-themes:has(.x-nav--2026-redesign) .filter-bar-modern {
 	top: var(--nav-2026-admin-offset);
-	z-index: 1000;
+	z-index: var( --nav-2026-z-sub-nav, 178 );
 }
 
 .filter-bar-modern__content {

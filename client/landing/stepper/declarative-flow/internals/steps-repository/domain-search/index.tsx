@@ -1,3 +1,4 @@
+import { HelpCenter } from '@automattic/data-stores';
 import {
 	isAIBuilderFlow,
 	isCopySiteFlow,
@@ -13,7 +14,8 @@ import {
 } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { useSelect } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { help } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
@@ -47,13 +49,16 @@ import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboardi
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { OnboardingProgress } from '../components/onboarding-progress';
 import { useShowOnboardingProgress } from '../components/onboarding-progress/use-show-onboarding-progress';
+import { useOnboardingHelpExperiment } from '../components/use-onboarding-help-experiment';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import type { Step as StepType } from '../../types';
 import type { FreeDomainSuggestion } from '@automattic/api-core';
-import type { OnboardSelect } from '@automattic/data-stores';
+import type { HelpCenterSelect, OnboardSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const HUNDRED_YEAR_DOMAIN_TLDS = [ 'com', 'net', 'org', 'blog' ];
+
+const HELP_CENTER_STORE = HelpCenter.register();
 
 import './style.scss';
 
@@ -95,6 +100,19 @@ const DomainSearchStep: StepType< {
 	const sourceSlug = queryParams.get( 'sourceSlug' );
 	const dashboard = queryParams.get( 'dashboard' );
 	const { __ } = useI18n();
+
+	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
+	const isHelpCenterShown = useSelect(
+		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
+		[]
+	);
+	const toggleHelpCenter = () => {
+		if ( ! isHelpCenterShown ) {
+			recordTracksEvent( 'calypso_onboarding_help_center_click', { flow, step: 'domains' } );
+		}
+		setShowHelpCenter( ! isHelpCenterShown );
+	};
+	const { showHelp: showHelpCenter } = useOnboardingHelpExperiment( flow );
 
 	const isCiab = dashboard === 'ciab';
 	const isWooHostingSolutions = queryParams.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
@@ -453,7 +471,7 @@ const DomainSearchStep: StepType< {
 			// in-body card carries the same CTA.
 			const showUseMyDomain = ( !! query || isMobileViewport ) && config.allowsUsingOwnDomain;
 
-			if ( ! stepCounter && ! showUseMyDomain ) {
+			if ( ! stepCounter && ! showUseMyDomain && ! showHelpCenter ) {
 				return;
 			}
 
@@ -481,6 +499,16 @@ const DomainSearchStep: StepType< {
 						>
 							{ __( 'Use a domain I own' ) }
 						</Step.LinkButton>
+					) }
+					{ showHelpCenter && (
+						<>
+							{ showUseMyDomain && (
+								<span className="domain-search--top-bar-divider" aria-hidden="true" />
+							) }
+							<Step.LinkButton icon={ help } iconSize={ 20 } onClick={ toggleHelpCenter }>
+								{ __( 'Need help?' ) }
+							</Step.LinkButton>
+						</>
 					) }
 				</>
 			);

@@ -1,9 +1,9 @@
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import { withSite } from 'calypso/reader/data/site';

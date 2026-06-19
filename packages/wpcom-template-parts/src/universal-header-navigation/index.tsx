@@ -310,8 +310,16 @@ const UniversalNavbarHeader = ( {
 										className="x-nav-item"
 										role="none"
 										onMouseEnter={
-											nav2026 ? () => recordNavItemHover( isScrolled, 'logo', false ) : undefined
+											nav2026
+												? () => {
+														recordNavItemHover( isScrolled, 'logo', false );
+														// Hovering a non-dropdown item closes the open dropdown.
+														setActiveDropdown( null );
+												  }
+												: undefined
 										}
+										// Keyboard parity: focusing into the logo also closes the open dropdown.
+										onFocusCapture={ nav2026 ? () => setActiveDropdown( null ) : undefined }
 									>
 										<a
 											role="menuitem"
@@ -364,9 +372,13 @@ const UniversalNavbarHeader = ( {
 														urlValue={ menu.href }
 														type="nav"
 														target="_self"
-														onItemMouseEnter={ () =>
-															recordNavItemHover( isScrolled, menu.name, false )
-														}
+														onItemMouseEnter={ () => {
+															recordNavItemHover( isScrolled, menu.name, false );
+															// Hovering a non-dropdown item closes the open dropdown.
+															setActiveDropdown( null );
+														} }
+														// Keyboard parity: focusing the item also closes the open dropdown.
+														onItemFocus={ () => setActiveDropdown( null ) }
 													/>
 												)
 											) }
@@ -650,6 +662,8 @@ const UniversalNavbarHeader = ( {
 												localizeUrl( '//wordpress.com/log-in', locale, isLoggedIn, true )
 											}
 											type="nav"
+											onItemMouseEnter={ nav2026 ? () => setActiveDropdown( null ) : undefined }
+											onItemFocus={ nav2026 ? () => setActiveDropdown( null ) : undefined }
 										/>
 									) }
 									{ ! hideGetStartedCta && (
@@ -664,6 +678,8 @@ const UniversalNavbarHeader = ( {
 											urlValue={ startUrl }
 											type="nav"
 											typeClassName="x-nav-link x-nav-link__primary x-link cta-btn-nav"
+											onItemMouseEnter={ nav2026 ? () => setActiveDropdown( null ) : undefined }
+											onItemFocus={ nav2026 ? () => setActiveDropdown( null ) : undefined }
 										/>
 									) }
 									<li className="x-nav-item x-nav-item__narrow" role="none">
@@ -679,11 +695,21 @@ const UniversalNavbarHeader = ( {
 											onClick={ nav2026 ? openMobileMenu : openLegacyMobileMenu }
 										>
 											<span className="x-hidden">{ __( 'Menu', __i18n_text_domain__ ) }</span>
-											<span className="x-icon x-icon__menu">
-												<span></span>
-												<span></span>
-												<span></span>
-											</span>
+											<svg
+												className="x-icon x-icon__menu"
+												xmlns="http://www.w3.org/2000/svg"
+												width="18"
+												height="14"
+												viewBox="0 0 18 14"
+												role="presentation"
+												aria-hidden="true"
+												focusable="false"
+											>
+												<path
+													d="M18 13.5H0V12H18V13.5ZM18 7.5H0V6H18V7.5ZM18 1.5H0V0H18V1.5Z"
+													fill="currentColor"
+												/>
+											</svg>
 										</button>
 									</li>
 								</ul>
@@ -697,35 +723,17 @@ const UniversalNavbarHeader = ( {
 							dropdownRef={ dropdownRef }
 							activeDropdown={ activeDropdown }
 							nav2026Menus={ nav2026Menus }
+							onMouseLeave={ () => setActiveDropdown( null ) }
 						/>
 					) }
 					{ /*<!-- Nav bar ends here. -->*/ }
 
 					{ /*<!-- Mobile menu starts here. -->*/ }
-					{ nav2026 ? (
-						<Nav2026MobileMenu
-							isMobileMenuOpen={ isMobileMenuOpen }
-							isMenuOpening={ isMenuOpening }
-							activeCategory={ activeCategory }
-							nav2026Menus={ nav2026Menus }
-							isLoggedIn={ isLoggedIn }
-							mobileMenuTabIndex={ mobileMenuTabIndex }
-							logoColor={ logoColor }
-							userAvatar={ userAvatar }
-							userName={ userName }
-							userEmail={ userEmail }
-							localizeUrl={ localizeUrl }
-							locale={ locale }
-							startUrl={ startUrl }
-							loginUrl={ loginUrl }
-							__={ __ }
-							variant={ variant }
-							mobilePlatform={ mobilePlatform }
-							mobileFooterRef={ mobileFooterRef }
-							closeMobileMenu={ closeMobileMenu }
-							setCurrentDropdown={ selectMobileCategory }
-						/>
-					) : (
+					{ /* The 2026 mobile menu renders as a sibling after this container's
+					     closing tag, so its overlay can sit above the sticky sub-nav while
+					     the nav bar inside the container stays below it. Legacy menu
+					     stays here. */ }
+					{ ! nav2026 && (
 						<div
 							className={ isMobileMenuOpen ? 'x-menu x-menu__active x-menu__open' : 'x-menu' }
 							role="menu"
@@ -1031,6 +1039,33 @@ const UniversalNavbarHeader = ( {
 					) }
 					{ /*<!-- Mobile menu ends here. -->*/ }
 				</div>
+				{ /* 2026 mobile menu — sibling of the nav container so its overlay/panel
+				     stack above the sticky sub-nav (the nav bar inside the container
+				     stays below it). */ }
+				{ nav2026 && (
+					<Nav2026MobileMenu
+						isMobileMenuOpen={ isMobileMenuOpen }
+						isMenuOpening={ isMenuOpening }
+						activeCategory={ activeCategory }
+						nav2026Menus={ nav2026Menus }
+						isLoggedIn={ isLoggedIn }
+						mobileMenuTabIndex={ mobileMenuTabIndex }
+						logoColor={ logoColor }
+						userAvatar={ userAvatar }
+						userName={ userName }
+						userEmail={ userEmail }
+						localizeUrl={ localizeUrl }
+						locale={ locale }
+						startUrl={ startUrl }
+						loginUrl={ loginUrl }
+						__={ __ }
+						variant={ variant }
+						mobilePlatform={ mobilePlatform }
+						mobileFooterRef={ mobileFooterRef }
+						closeMobileMenu={ closeMobileMenu }
+						setCurrentDropdown={ selectMobileCategory }
+					/>
+				) }
 			</div>
 		</div>
 	);

@@ -1,5 +1,5 @@
 const path = require( 'path' );
-const { nodeConfig } = require( '@automattic/calypso-eslint-overrides' );
+const { nodeConfig, lodashRestrictedImports } = require( '@automattic/calypso-eslint-overrides' );
 const wpI18nConfig = require( '@wordpress/eslint-plugin/eslintrc' ).configs.i18n;
 const { merge } = require( 'lodash' );
 const reactVersion = require( './client/package.json' ).dependencies.react;
@@ -68,8 +68,16 @@ module.exports = {
 		{
 			files: [ 'packages/**/*' ],
 			rules: {
-				// These two rules are to ensure packages don't import from calypso by accident to avoid circular deps.
-				'no-restricted-imports': [ 'error', { patterns: [ 'calypso/*' ] } ],
+				// The `calypso/*` patterns ensure packages don't import from calypso by accident
+				// to avoid circular deps. The lodash entries keep the repo-wide guard in place
+				// here, since this override replaces the root `no-restricted-imports` rule.
+				'no-restricted-imports': [
+					'error',
+					{
+						paths: lodashRestrictedImports.paths,
+						patterns: [ { group: [ 'calypso/*' ] }, ...lodashRestrictedImports.patterns ],
+					},
+				],
 				'no-restricted-modules': [ 'error', { patterns: [ 'calypso/*' ] } ],
 			},
 		},
@@ -402,6 +410,7 @@ module.exports = {
 						message:
 							"Please use 'webp' files instead. You can convert using `brew install webp && cwebp -q 90 -alpha_q 85 -m 6 <input>.png -o <output>.webp`",
 					},
+					...lodashRestrictedImports.patterns,
 				],
 				paths: [
 					// Prevent naked import of gridicons module. Use 'components/gridicon' instead.
@@ -432,6 +441,13 @@ module.exports = {
 						message:
 							"Node's `url` is deprecated. Please consider migrating to `lib/url` (see `client/lib/url/README.md`).",
 					},
+					// Use Redux's `compose` instead of lodash's `flowRight`.
+					{
+						name: 'lodash',
+						importNames: [ 'flowRight' ],
+						message: "Please use `compose` from 'redux' instead.",
+					},
+					...lodashRestrictedImports.paths,
 				],
 			},
 		],
@@ -580,6 +596,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/extend-own': 'error',
 		'you-dont-need-lodash-underscore/fill': 'error',
 		'you-dont-need-lodash-underscore/first': 'error',
+		'you-dont-need-lodash-underscore/flatten': 'error',
 		'you-dont-need-lodash-underscore/foldl': 'error',
 		'you-dont-need-lodash-underscore/foldr': 'error',
 		'you-dont-need-lodash-underscore/index-of': 'error',
@@ -594,6 +611,8 @@ module.exports = {
 		'you-dont-need-lodash-underscore/is-string': 'error',
 		'you-dont-need-lodash-underscore/is-undefined': 'error',
 		'you-dont-need-lodash-underscore/join': 'error',
+		'you-dont-need-lodash-underscore/keys': 'error',
+		'you-dont-need-lodash-underscore/last': 'error',
 		'you-dont-need-lodash-underscore/last-index-of': 'error',
 		'you-dont-need-lodash-underscore/pad-end': 'error',
 		'you-dont-need-lodash-underscore/pad-start': 'error',
@@ -602,13 +621,17 @@ module.exports = {
 		'you-dont-need-lodash-underscore/replace': 'error',
 		'you-dont-need-lodash-underscore/reverse': 'error',
 		'you-dont-need-lodash-underscore/select': 'error',
+		'you-dont-need-lodash-underscore/size': 'error',
 		'you-dont-need-lodash-underscore/slice': 'error',
 		'you-dont-need-lodash-underscore/split': 'error',
+		'you-dont-need-lodash-underscore/starts-with': 'error',
 		'you-dont-need-lodash-underscore/take-right': 'error',
 		'you-dont-need-lodash-underscore/to-lower': 'error',
 		'you-dont-need-lodash-underscore/to-pairs': 'error',
 		'you-dont-need-lodash-underscore/to-upper': 'error',
+		'you-dont-need-lodash-underscore/trim': 'error',
 		'you-dont-need-lodash-underscore/uniq': 'error',
+		'you-dont-need-lodash-underscore/values': 'error',
 
 		// @TODO remove these lines once we fixed the warnings so
 		// they'll become errors for new code added to the codebase

@@ -1,4 +1,5 @@
 import { isAutomatticianQuery, siteBySlugQuery, siteByIdQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	useQuery,
@@ -214,7 +215,9 @@ export default function Sites() {
 
 	return (
 		<>
-			{ ! isDashboardBackport() && <OptInWelcomeModal /> }
+			{ ! isDashboardBackport() && isEnabled( 'dashboard/opt-in-welcome-modal' ) && (
+				<OptInWelcomeModal />
+			) }
 			<InviteAcceptedFlashMessage />
 			{ isModalOpen && (
 				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>

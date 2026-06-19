@@ -7,6 +7,7 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import MySitesSidebarUnifiedItem from '../../item';
 import { CustomizeProvider, useCustomizeContext } from '../index';
+import type { JSX } from 'react';
 
 function renderInProvider( ui: JSX.Element ) {
 	const store = configureStore()( {

@@ -65,7 +65,7 @@ class StepImportOrMigrate extends Component {
 
 	isTargetSitePlanCompatible = () => {
 		const { targetSite } = this.props;
-		const planSlug = get( targetSite, 'plan.product_slug' );
+		const planSlug = targetSite?.plan?.product_slug;
 
 		return planSlug && planHasFeature( planSlug, FEATURE_UPLOAD_THEMES_PLUGINS );
 	};
