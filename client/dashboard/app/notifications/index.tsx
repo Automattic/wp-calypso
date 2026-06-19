@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { bellUnread, bell } from '@wordpress/icons';
 import clsx from 'clsx';
 import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
+import { isCookieAuthMissing } from 'wpcom-proxy-request';
 import wpcom from 'calypso/lib/wp';
 import { useAuth } from '../auth';
 import { useHelpCenter } from '../help-center';
@@ -14,6 +15,40 @@ import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
 import './style.scss';
 
 const AsyncNotificationApp = lazy( () => import( '@automattic/notifications/src/app' ) );
+
+/**
+ * The panel that the notifications bell opens authenticates its API requests
+ * through the `wpcom-proxy-request` iframe, which relies on third-party
+ * cookies. When the browser blocks them the request fails and the panel's REST
+ * client retries forever, leaving it stuck on a spinner. The dedicated
+ * `/reader/notifications` page is served same-origin and doesn't need the
+ * proxy, so — matching the old masterbar bell — fall back to a full-page
+ * redirect there instead of opening the panel.
+ */
+const NOTIFICATIONS_FALLBACK_URL = '/reader/notifications';
+
+/**
+ * Polls the proxy iframe's cookie-auth flag while `enabled`. The iframe reports
+ * the missing cookie asynchronously after it loads, so the value can flip from
+ * `false` to `true` shortly after the panel opens.
+ */
+function useIsCookieAuthMissing( enabled: boolean ) {
+	const [ isMissing, setIsMissing ] = useState( () => isCookieAuthMissing() );
+
+	useEffect( () => {
+		if ( ! enabled || isMissing ) {
+			return;
+		}
+		const intervalId = setInterval( () => {
+			if ( isCookieAuthMissing() ) {
+				setIsMissing( true );
+			}
+		}, 1000 );
+		return () => clearInterval( intervalId );
+	}, [ enabled, isMissing ] );
+
+	return isMissing;
+}
 
 export default function Notifications( {
 	className,
@@ -31,6 +66,7 @@ export default function Notifications( {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState( user.has_unseen_notes );
 	const [ anchorEl, setAnchorEl ] = useState< HTMLElement | null >( null );
+	const isCookieAuthMissingValue = useIsCookieAuthMissing( isOpen );
 
 	// The masterbar remounts the bell when the unseen count changes, detaching any
 	// cached node. Resolve the live bell at measurement time so the popover stays
@@ -46,8 +82,18 @@ export default function Notifications( {
 		[ anchorEl ]
 	);
 
+	// When third-party cookies are blocked the panel can't load, so navigate to
+	// the same-origin notifications page instead of opening it.
+	const redirectToNotificationsPage = useCallback( () => {
+		window.location.href = NOTIFICATIONS_FALLBACK_URL;
+	}, [] );
+
 	const handleToggle = ( willOpen: boolean ) => {
 		if ( willOpen ) {
+			if ( isCookieAuthMissing() ) {
+				redirectToNotificationsPage();
+				return;
+			}
 			setShowHelpCenter( false, undefined, true );
 		}
 		setIsOpen( willOpen );
@@ -96,13 +142,25 @@ export default function Notifications( {
 	};
 
 	const handleOmnibarToggle = useCallback( () => {
+		if ( ! isOpen && isCookieAuthMissing() ) {
+			redirectToNotificationsPage();
+			return;
+		}
 		setIsOpen( ( prev ) => {
 			if ( ! prev ) {
 				setShowHelpCenter( false, undefined, true );
 			}
 			return ! prev;
 		} );
-	}, [ setShowHelpCenter ] );
+	}, [ isOpen, redirectToNotificationsPage, setShowHelpCenter ] );
+
+	// The proxy iframe may only report the blocked cookie after the panel has
+	// already opened; redirect as soon as we detect it so it can't spin forever.
+	useEffect( () => {
+		if ( isOpen && isCookieAuthMissingValue ) {
+			redirectToNotificationsPage();
+		}
+	}, [ isOpen, isCookieAuthMissingValue, redirectToNotificationsPage ] );
 
 	useOmnibarEvent( 'notificationsAnchor', setAnchorEl );
 	useOmnibarEvent( 'notifications', handleOmnibarToggle );
