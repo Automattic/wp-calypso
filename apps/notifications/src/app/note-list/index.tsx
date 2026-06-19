@@ -125,17 +125,15 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 		return !! note.read === isRead ? note : { ...note, read: isRead ? 1 : 0 };
 	} );
 
-	// `filterSortAndPaginate` reports `totalItems` as the count of notes loaded
-	// so far. DataViews advances its infinite-scroll window only while
-	// `totalItems` stays ahead of the window, so reporting the loaded count
-	// alone stalls scrolling after the first page: the window catches up, no
-	// `onChangeView` fires, and `loadMore()` is never called again. Report an
-	// optimistic total while the REST client still has notes left to fetch so
-	// DataViews keeps advancing the window and driving `loadMore()`.
+	// Report the real loaded count to DataViews. It advances its infinite-scroll
+	// window only while `totalItems` stays ahead of the window; the prefetch
+	// effect below keeps a page of notes loaded beyond the window, so the real
+	// count stays ahead on its own and keeps the window advancing. Reporting an
+	// optimistic total instead lets DataViews advance the window into
+	// not-yet-fetched positions, so the page that fills them arrives mid-advance
+	// and its scroll-anchor restoration re-applies a stale anchor — yanking the
+	// scroll position.
 	const hasMoreNotes = client?.hasMoreNotes() ?? false;
-	const effectivePaginationInfo = hasMoreNotes
-		? { ...paginationInfo, totalItems: paginationInfo.totalItems + NOTES_PER_PAGE }
-		: paginationInfo;
 
 	const infiniteScrollHandler = useCallback( () => {
 		if ( ! isLoading ) {
@@ -143,13 +141,16 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 		}
 	}, [ client, isLoading ] );
 
-	// Keep enough notes loaded to cover the current scroll window, and to
-	// overflow the panel on first paint so a scrollbar exists for DataViews to
-	// drive further loading. A network page (`increment_limit`) can be smaller
-	// than this window, so fetch one page at a time until the window is filled or
-	// the server runs out — re-runs after each page as `visibleNotes` grows.
+	// Keep a full page of notes loaded *beyond* the current scroll window (and
+	// enough to overflow the panel on first paint so a scrollbar exists). This
+	// buffer means DataViews only ever advances its window over notes already in
+	// hand, so a network page never has to arrive mid-advance — which is what let
+	// the scroll-anchor restoration fire against a stale anchor and jump the list.
+	// A network page (`increment_limit`) can be smaller than this window, so fetch
+	// one page at a time until the buffer is filled or the server runs out —
+	// re-runs after each page as `visibleNotes` grows.
 	useEffect( () => {
-		if ( startPosition + NOTES_PER_PAGE > visibleNotes.length && ! isLoading && hasMoreNotes ) {
+		if ( startPosition + NOTES_PER_PAGE * 2 > visibleNotes.length && ! isLoading && hasMoreNotes ) {
 			infiniteScrollHandler();
 		}
 	}, [ startPosition, visibleNotes.length, isLoading, hasMoreNotes, infiniteScrollHandler ] );
@@ -181,7 +182,7 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 					view={ view }
 					isLoading={ isLoading }
 					defaultLayouts={ DEFAULT_LAYOUTS }
-					paginationInfo={ effectivePaginationInfo }
+					paginationInfo={ paginationInfo }
 					empty={
 						// Spinner while still filling; the real message once settled.
 						showEmptyLoader ? (
