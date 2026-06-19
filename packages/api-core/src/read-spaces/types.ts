@@ -22,12 +22,23 @@ export type SpaceIcon =
 	| 'category';
 
 /**
+ * How a space renders its feed. Each value selects a distinct list geometry —
+ * `standard-list` (dense vertical list), `magazine` (large vertical cards),
+ * `gallery` (grid), `board` (masonry), `legacy` (the classic Reader stream:
+ * InfiniteList + post cards). Unset falls back to `standard-list`.
+ */
+export type SpaceFeedLayout = 'standard-list' | 'magazine' | 'gallery' | 'board' | 'legacy';
+
+/**
  * Presentation settings for a space, grouped so they can grow beyond color and
  * icon (e.g. cover image, sort order) without widening `ReadSpace` itself.
  */
 export interface SpaceLayout {
 	color: SpaceColor;
 	icon: SpaceIcon;
+	// Which feed layout to render. The API does not persist this yet, so the
+	// Customize modal writes it optimistically into the React Query cache.
+	view?: SpaceFeedLayout;
 }
 
 /**

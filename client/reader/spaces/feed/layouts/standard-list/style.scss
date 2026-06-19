@@ -1,0 +1,109 @@
+.space-feed-standard-list {
+	position: relative;
+	inline-size: 100%;
+}
+
+.space-feed-standard-list__item {
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline: 0;
+}
+
+.space-feed-standard-list__group {
+	margin: 0;
+	padding-block: 20px 8px;
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--color-text-subtle);
+}
+
+.space-feed-standard-list__row {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding-block: 16px;
+	border-block-end: 1px solid var(--color-border-subtle);
+	color: inherit;
+	text-decoration: none;
+}
+
+.space-feed-standard-list__row:hover .space-feed-standard-list__title {
+	text-decoration: underline;
+}
+
+.space-feed-standard-list__unread {
+	flex: 0 0 auto;
+	inline-size: 8px;
+	block-size: 8px;
+	margin-block-start: 6px;
+	border-radius: 50%;
+	background: transparent;
+}
+
+.space-feed-standard-list__unread[data-unread='true'] {
+	background: var(--color-accent, var(--color-primary));
+}
+
+.space-feed-standard-list__body {
+	flex: 1 1 auto;
+	min-inline-size: 0;
+}
+
+.space-feed-standard-list__title {
+	margin: 0;
+	font-size: 0.875rem;
+	font-weight: 600;
+	line-height: 1.35;
+	color: var(--color-text);
+}
+
+.space-feed-standard-list__excerpt {
+	margin: 4px 0 0;
+	font-size: 0.875rem;
+	line-height: 1.4;
+	color: var(--color-text-subtle);
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+}
+
+.space-feed-standard-list__excerpt p {
+	display: inline;
+	margin: 0;
+}
+
+.space-feed-standard-list__source-row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-block-start: 8px;
+	font-size: 0.75rem;
+	color: var(--color-text-subtle);
+}
+
+.space-feed-standard-list__source {
+	font-weight: 500;
+	color: var(--color-text);
+}
+
+.space-feed-standard-list__tag::before {
+	content: '·';
+	margin-inline-end: 8px;
+	color: var(--color-text-subtle);
+}
+
+.space-feed-standard-list__aside {
+	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	color: var(--color-text-subtle);
+	font-size: 0.75rem;
+}
+
+.space-feed-standard-list__bookmark {
+	color: var(--color-text-subtle);
+}

@@ -33,7 +33,9 @@ export function adaptReadSpace( item: ReadSpaceApiItem ): ReadSpace {
 	return {
 		id: String( item.id ),
 		name: item.title,
-		layout: { color: item.layout.color, icon: item.layout.icon },
+		// `view` is forward-looking: the API does not return it yet (stays
+		// `undefined`), but mapping it now means it flows through once it does.
+		layout: { color: item.layout.color, icon: item.layout.icon, view: item.layout.view },
 	};
 }
 
