@@ -12,4 +12,14 @@ export {
 	ThinkingMessage,
 } from './components/EmbeddedAgentUI';
 export { LightweightMarkdownRenderer } from './components/LightweightMarkdownRenderer';
-export type { AgentUIProps, Message, NoticeConfig, Suggestion } from './types';
+export type {
+	AgentUIProps,
+	Message,
+	NoticeConfig,
+	QuestionChoice,
+	QuestionChoiceFontSamplePresentation,
+	QuestionChoiceImagePresentation,
+	QuestionChoicePresentation,
+	QuestionPrompt,
+	Suggestion,
+} from './types';
