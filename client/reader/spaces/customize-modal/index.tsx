@@ -5,7 +5,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSetSpaceLayoutView, useSpace } from 'calypso/reader/data/spaces';
 import { DEFAULT_SPACE_FEED_LAYOUT } from 'calypso/reader/spaces/feed/layouts/registry';
 import { useDispatch } from 'calypso/state';
@@ -67,7 +67,16 @@ function CustomizeModalContent( { spaceId, onClose }: { spaceId: string; onClose
 		space?.layout.view ?? DEFAULT_SPACE_FEED_LAYOUT
 	);
 
+	useEffect( () => {
+		if ( space ) {
+			setSelected( space.layout.view ?? DEFAULT_SPACE_FEED_LAYOUT );
+		}
+	}, [ space ] );
+
 	const handleSave = () => {
+		if ( ! space ) {
+			return;
+		}
 		setLayoutView( spaceId, selected );
 		dispatch(
 			recordReaderTracksEvent( 'calypso_reader_spaces_layout_changed', { layout: selected } )
@@ -112,7 +121,12 @@ function CustomizeModalContent( { spaceId, onClose }: { spaceId: string; onClose
 					<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
 						{ translate( 'Cancel' ) }
 					</Button>
-					<Button __next40pxDefaultSize variant="primary" onClick={ handleSave }>
+					<Button
+						__next40pxDefaultSize
+						variant="primary"
+						disabled={ ! space }
+						onClick={ handleSave }
+					>
 						{ translate( 'Save changes' ) }
 					</Button>
 				</HStack>

@@ -1,3 +1,5 @@
+import { Button } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { INITIAL_FETCH, PER_FETCH, useInfiniteStream } from 'calypso/reader/data/stream';
@@ -52,10 +54,12 @@ export function ReaderStreamV2( {
 	className,
 	restoreKey,
 }: ReaderStreamV2Props ) {
+	const translate = useTranslate();
 	const blockedSites = useSelector( getBlockedSites );
-	const { items, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } = useInfiniteStream( {
-		streamKey,
-	} );
+	const { items, isLoading, error, refetch, hasNextPage, isFetchingNextPage, fetchNextPage } =
+		useInfiniteStream( {
+			streamKey,
+		} );
 
 	// Open the full-post view on click, mirroring the classic stream. `showSelectedPost`
 	// returns a thunk that navigates via the router (no Redux dispatch needed), so we
@@ -101,6 +105,28 @@ export function ReaderStreamV2( {
 				{ Array.from( { length: INITIAL_FETCH } ).map( ( _, index ) => (
 					<PostPlaceholder key={ `placeholder-${ index }` } />
 				) ) }
+			</div>
+		);
+	}
+
+	if ( error && items.length === 0 ) {
+		return (
+			<div className="space-feed__status">
+				<p className="space-feed__status-title">{ translate( 'Couldn’t load this feed' ) }</p>
+				<Button variant="secondary" onClick={ refetch }>
+					{ translate( 'Try again' ) }
+				</Button>
+			</div>
+		);
+	}
+
+	if ( items.length === 0 ) {
+		return (
+			<div className="space-feed__status">
+				<p className="space-feed__status-title">{ translate( 'Nothing here yet' ) }</p>
+				<p className="space-feed__status-line">
+					{ translate( 'Posts from this space’s sources will show up here.' ) }
+				</p>
 			</div>
 		);
 	}

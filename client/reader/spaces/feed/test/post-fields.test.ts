@@ -35,6 +35,22 @@ describe( 'getPostFields', () => {
 		expect( getPostFields( post ).postHref ).toBe( '/reader/blogs/20/posts/7' );
 	} );
 
+	it( 'keys posts by the Reader compound identity, not just post id', () => {
+		const first = {
+			ID: 7,
+			site_ID: 20,
+			title: 'First',
+		} as unknown as ReadStreamPost;
+		const second = {
+			ID: 7,
+			site_ID: 21,
+			title: 'Second',
+		} as unknown as ReadStreamPost;
+
+		expect( getPostFields( first ).key ).toBe( 'blog-7-20' );
+		expect( getPostFields( second ).key ).toBe( 'blog-7-21' );
+	} );
+
 	it( 'reads the image from canonical_media and the author name', () => {
 		const post = {
 			ID: 1,

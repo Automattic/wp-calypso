@@ -1,10 +1,10 @@
 import page from '@automattic/calypso-router';
-import { TimeSince } from '@automattic/components';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { useInfiniteList } from 'calypso/reader/hooks/use-infinite-list';
 import { getPostUrl } from 'calypso/reader/route';
-import { getPostFields } from '../../post-fields';
+import { SpaceFeedTimeSince } from '../../components/time-since';
+import { getPostFieldKey, getPostFields } from '../../post-fields';
 import type { SpaceFeedLayoutProps } from '../types';
 import type { ReadStreamPost } from '@automattic/api-core';
 
@@ -49,7 +49,7 @@ function MagazineCard( { post }: { post: ReadStreamPost } ) {
 				<p className="space-feed-magazine__meta">
 					{ metaText }
 					{ metaText && fields.publishedDate ? ' · ' : '' }
-					{ fields.publishedDate && <TimeSince date={ fields.publishedDate } /> }
+					{ fields.publishedDate && <SpaceFeedTimeSince date={ fields.publishedDate } /> }
 				</p>
 			) }
 			<div className="space-feed-magazine__actions">
@@ -76,7 +76,7 @@ export function MagazineLayout( {
 		count: posts.length,
 		estimateSize: ESTIMATED_SIZE,
 		overscan: 4,
-		getItemKey: ( index ) => posts[ index ].ID,
+		getItemKey: ( index ) => getPostFieldKey( posts[ index ] ),
 		hasMore,
 		isLoadingMore,
 		loadMore,

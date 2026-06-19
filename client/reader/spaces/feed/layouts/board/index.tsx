@@ -1,10 +1,10 @@
 import page from '@automattic/calypso-router';
-import { TimeSince } from '@automattic/components';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { useInfiniteList } from 'calypso/reader/hooks/use-infinite-list';
 import { getPostUrl } from 'calypso/reader/route';
-import { getPostFields } from '../../post-fields';
+import { SpaceFeedTimeSince } from '../../components/time-since';
+import { getPostFieldKey, getPostFields } from '../../post-fields';
 import type { SpaceFeedLayoutProps } from '../types';
 import type { ReadStreamPost } from '@automattic/api-core';
 
@@ -44,7 +44,7 @@ function BoardCard( { post }: { post: ReadStreamPost } ) {
 					</span>
 					{ fields.publishedDate && (
 						<span className="space-feed-board__time">
-							<TimeSince date={ fields.publishedDate } />
+							<SpaceFeedTimeSince date={ fields.publishedDate } />
 						</span>
 					) }
 				</div>
@@ -74,7 +74,7 @@ export function BoardLayout( {
 		estimateSize: ESTIMATED_SIZE,
 		overscan: 6,
 		lanes: LANES,
-		getItemKey: ( index ) => posts[ index ].ID,
+		getItemKey: ( index ) => getPostFieldKey( posts[ index ] ),
 		hasMore,
 		isLoadingMore,
 		loadMore,

@@ -1,5 +1,6 @@
 import { decodeEntities } from 'calypso/lib/formatting';
 import { formatExcerpt } from 'calypso/lib/post-normalizer/rule-create-better-excerpt';
+import { keyForPost, keyToString } from 'calypso/reader/post-key';
 import { getPostUrl } from 'calypso/reader/route';
 import type { ReadStreamPost } from '@automattic/api-core';
 
@@ -16,6 +17,7 @@ export type SpaceFeedDayGroup = 'today' | 'yesterday' | 'earlier' | 'older' | ''
  */
 export interface SpaceFeedPostFields {
 	id: number;
+	key: string;
 	title: string;
 	/**
 	 * Sanitized excerpt HTML (Reader's `formatExcerpt` — same as PostLifecycle's
@@ -101,11 +103,20 @@ function authorOf( post: ReadStreamPost ): string | undefined {
 	return undefined;
 }
 
+export function getPostFieldKey( post: ReadStreamPost ): string {
+	return (
+		keyToString( keyForPost( post ) ) ??
+		asString( post.global_ID ) ??
+		`post-${ post.site_ID ?? '' }-${ post.feed_ID ?? '' }-${ post.feed_item_ID ?? '' }-${ post.ID }`
+	);
+}
+
 export function getPostFields( post: ReadStreamPost ): SpaceFeedPostFields {
 	const date = asString( post.date );
 	const author = authorOf( post );
 	return {
 		id: post.ID,
+		key: getPostFieldKey( post ),
 		// Title, source and author render as plain text, so decode the HTML
 		// entities the raw API title carries (e.g. `&nbsp;`, `&#039;`) — the legacy
 		// card gets this for free from the normalized post. Titles are sometimes

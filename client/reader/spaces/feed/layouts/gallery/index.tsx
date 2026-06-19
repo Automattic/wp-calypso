@@ -1,11 +1,11 @@
 import page from '@automattic/calypso-router';
-import { TimeSince } from '@automattic/components';
 import { useMemo } from 'react';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { useInfiniteList } from 'calypso/reader/hooks/use-infinite-list';
 import { getPostUrl } from 'calypso/reader/route';
-import { getPostFields } from '../../post-fields';
+import { SpaceFeedTimeSince } from '../../components/time-since';
+import { getPostFieldKey, getPostFields } from '../../post-fields';
 import type { SpaceFeedLayoutProps } from '../types';
 import type { ReadStreamPost } from '@automattic/api-core';
 
@@ -43,7 +43,7 @@ function GalleryCard( { post }: { post: ReadStreamPost } ) {
 				</span>
 				{ fields.publishedDate && (
 					<span className="space-feed-gallery__time">
-						<TimeSince date={ fields.publishedDate } />
+						<SpaceFeedTimeSince date={ fields.publishedDate } />
 					</span>
 				) }
 			</div>
@@ -79,7 +79,7 @@ export function GalleryLayout( {
 		count: rows.length,
 		estimateSize: ROW_SIZE,
 		overscan: 4,
-		getItemKey: ( index ) => rows[ index ][ 0 ]?.ID ?? index,
+		getItemKey: ( index ) => ( rows[ index ][ 0 ] ? getPostFieldKey( rows[ index ][ 0 ] ) : index ),
 		hasMore,
 		isLoadingMore,
 		loadMore,
@@ -97,7 +97,7 @@ export function GalleryLayout( {
 					style={ { transform: `translateY(${ virtualRow.start - scrollMargin }px)` } }
 				>
 					{ rows[ virtualRow.index ].map( ( post ) => (
-						<GalleryCard key={ post.ID } post={ post } />
+						<GalleryCard key={ getPostFieldKey( post ) } post={ post } />
 					) ) }
 				</div>
 			) ) }

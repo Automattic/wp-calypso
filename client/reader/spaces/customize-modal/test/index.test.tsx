@@ -28,6 +28,20 @@ function render( onClose = jest.fn() ) {
 	return { ...view, queryClient, onClose };
 }
 
+function renderWithPendingSpace( onClose = jest.fn() ) {
+	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	queryClient.prefetchQuery( {
+		...readSpaceQuery( SPACE.id ),
+		queryFn: () => new Promise< never >( () => undefined ),
+	} );
+
+	const view = renderWithProvider(
+		<CustomizeModal isOpen spaceId={ SPACE.id } onClose={ onClose } />,
+		{ queryClient, initialState: { currentUser: { id: 1 } } }
+	);
+	return { ...view, queryClient, onClose };
+}
+
 describe( 'CustomizeModal', () => {
 	it( 'lists the layout presets and pre-selects the space layout', () => {
 		render();
@@ -65,5 +79,16 @@ describe( 'CustomizeModal', () => {
 		);
 		expect( cached?.layout.view ).toBe( 'standard-list' );
 		expect( onClose ).toHaveBeenCalled();
+	} );
+
+	it( 'does not allow saving before the space detail has loaded', async () => {
+		const user = userEvent.setup();
+		const { queryClient, onClose } = renderWithPendingSpace();
+
+		await user.click( screen.getByRole( 'radio', { name: /Gallery/ } ) );
+		expect( screen.getByRole( 'button', { name: 'Save changes' } ) ).toBeDisabled();
+
+		expect( queryClient.getQueryData( readSpaceQuery( SPACE.id ).queryKey ) ).toBeUndefined();
+		expect( onClose ).not.toHaveBeenCalled();
 	} );
 } );

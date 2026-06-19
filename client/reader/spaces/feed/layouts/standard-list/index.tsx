@@ -1,8 +1,8 @@
-import { TimeSince } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { useInfiniteList } from 'calypso/reader/hooks/use-infinite-list';
+import { SpaceFeedTimeSince } from '../../components/time-since';
 import { getPostFields, type SpaceFeedDayGroup } from '../../post-fields';
 import type { SpaceFeedLayoutProps } from '../types';
 import type { ReadStreamPost } from '@automattic/api-core';
@@ -68,7 +68,7 @@ function PostRow( { post }: { post: ReadStreamPost } ) {
 			<div className="space-feed-standard-list__aside">
 				{ fields.publishedDate && (
 					<span className="space-feed-standard-list__time">
-						<TimeSince date={ fields.publishedDate } />
+						<SpaceFeedTimeSince date={ fields.publishedDate } />
 					</span>
 				) }
 				<BookmarkGlyph />
@@ -83,6 +83,7 @@ export function StandardListLayout( {
 	hasMore,
 	isLoadingMore,
 	loadMore,
+	restoreKey,
 }: SpaceFeedLayoutProps ) {
 	const translate = useTranslate();
 
@@ -103,7 +104,7 @@ export function StandardListLayout( {
 		const out: Row[] = [];
 		let lastGroup: SpaceFeedDayGroup = '';
 		posts.forEach( ( post, index ) => {
-			const { dayGroup, id } = getPostFields( post );
+			const { dayGroup, key } = getPostFields( post );
 			if ( dayGroup && dayGroup !== lastGroup ) {
 				out.push( {
 					kind: 'header',
@@ -112,7 +113,7 @@ export function StandardListLayout( {
 				} );
 				lastGroup = dayGroup;
 			}
-			out.push( { kind: 'post', key: `post-${ index }-${ id }`, post } );
+			out.push( { kind: 'post', key: `post-${ key }`, post } );
 		} );
 		return out;
 	}, [ posts, translate ] );
@@ -125,6 +126,7 @@ export function StandardListLayout( {
 		hasMore,
 		isLoadingMore,
 		loadMore,
+		restoreKey,
 	} );
 
 	return (

@@ -42,7 +42,12 @@ function collectPosts( pages: ReadStreamResponse[] ): ReadStreamPost[] {
  * reads that same per-space query.
  */
 export function SpaceFeed( { spaceId }: Props ) {
-	const { data: space, isLoading: isSpaceLoading } = useSpace( spaceId );
+	const {
+		data: space,
+		error: spaceError,
+		isLoading: isSpaceLoading,
+		refetch: refetchSpace,
+	} = useSpace( spaceId );
 	const layout = space?.layout.view ?? DEFAULT_SPACE_FEED_LAYOUT;
 
 	// The stream is the discover `recommended` feed for the space's tags, so it
@@ -82,6 +87,9 @@ export function SpaceFeed( { spaceId }: Props ) {
 	const renderBody = () => {
 		// Load the space detail before anything else — the stream key is derived
 		// from its tags, and the layout from its `view`.
+		if ( ! space && spaceError ) {
+			return <SpaceFeedError onRetry={ refetchSpace } />;
+		}
 		if ( isSpaceLoading || ! space ) {
 			return <SpaceFeedLoading />;
 		}
