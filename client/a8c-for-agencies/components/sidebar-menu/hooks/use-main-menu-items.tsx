@@ -258,6 +258,7 @@ const useMainMenuItems = ( path: string ) => {
 							trackEventProps: {
 								menu_item: 'Automattic for Agencies / Amplify',
 							},
+							withChevron: true,
 						},
 				  ]
 				: [] ),
