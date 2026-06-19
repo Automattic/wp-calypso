@@ -28,13 +28,13 @@
 }
 
 .amplify-analysis-card__icon.is-human {
-	background: var(--color-accent-5);
-	color: var(--color-accent);
+	background: var(--color-primary-5);
+	color: var(--color-primary);
 }
 
 .amplify-analysis-card__icon.is-ai {
-	background: var(--studio-purple-0);
-	color: var(--studio-purple-50);
+	background: color-mix( in srgb, var( --color-woocommerce ) 10%, transparent );
+	color: var( --color-woocommerce );
 }
 
 .amplify-analysis-card__icon.is-full {
