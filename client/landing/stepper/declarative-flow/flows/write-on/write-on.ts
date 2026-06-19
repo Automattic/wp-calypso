@@ -3,6 +3,7 @@ import { OnboardActions } from '@automattic/data-stores';
 import { WRITE_ON_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from 'react';
+import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -141,8 +142,16 @@ const writeOn: FlowV2< typeof initialize > = {
 						// the standard new-site flow; fall back to the site's home
 						// so they at least land somewhere meaningful with the draft
 						// preserved in localStorage for a retry.
-						// eslint-disable-next-line no-console
-						console.error( 'write-on: failed to transfer anon draft', error );
+						logToLogstash( {
+							feature: 'calypso_client',
+							message: 'write-on: failed to transfer anon draft',
+							severity: 'error',
+							blog_id: siteId,
+							properties: {
+								type: 'write_on_draft_transfer_failed',
+								error: error instanceof Error ? error.message : String( error ),
+							},
+						} );
 						window.location.assign( `/home/${ siteSlug }` );
 					}
 					return;

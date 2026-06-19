@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import writeOn, { ANON_DRAFT_STORAGE_KEY } from '../write-on';
@@ -21,6 +22,10 @@ jest.mock( '@automattic/onboarding', () => ( {
 jest.mock( 'calypso/lib/wp', () => ( {
 	__esModule: true,
 	default: { req: { post: jest.fn() } },
+} ) );
+
+jest.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/landing/stepper/stores', () => ( {
@@ -120,13 +125,12 @@ describe( 'write-on flow', () => {
 		expect( window.localStorage.getItem( ANON_DRAFT_STORAGE_KEY ) ).toBeNull();
 	} );
 
-	it( 'preserves the localStorage draft and lands on the site home when the POST fails', async () => {
+	it( 'preserves the localStorage draft, logs to logstash, and lands on the site home when the POST fails', async () => {
 		window.localStorage.setItem(
 			ANON_DRAFT_STORAGE_KEY,
 			JSON.stringify( { title: 'Keep me', content: '<p>Body</p>', ts: 1 } )
 		);
 		wpcomPostMock.mockRejectedValue( new Error( 'boom' ) );
-		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 		await submitFor( 'processing', {
 			processingResult: ProcessingResult.SUCCESS,
@@ -136,8 +140,17 @@ describe( 'write-on flow', () => {
 
 		expect( window.location.assign ).toHaveBeenCalledWith( '/home/example.wordpress.com' );
 		expect( window.localStorage.getItem( ANON_DRAFT_STORAGE_KEY ) ).not.toBeNull();
-
-		consoleError.mockRestore();
+		expect( logToLogstash ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				feature: 'calypso_client',
+				severity: 'error',
+				blog_id: 99,
+				properties: expect.objectContaining( {
+					type: 'write_on_draft_transfer_failed',
+					error: 'boom',
+				} ),
+			} )
+		);
 	} );
 
 	it( 'sends empty title and content when no localStorage draft exists at publish time', async () => {
