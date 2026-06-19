@@ -1,3 +1,4 @@
+import { TimeSince } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { SiteIcon } from 'calypso/blocks/site-icon';
@@ -59,11 +60,16 @@ function PostRow( { post }: { post: ReadStreamPost } ) {
 					{ fields.authorName && (
 						<span className="space-feed-standard-list__tag">{ fields.authorName }</span>
 					) }
+					{ fields.siteDomain && (
+						<span className="space-feed-standard-list__tag">{ fields.siteDomain }</span>
+					) }
 				</div>
 			</div>
 			<div className="space-feed-standard-list__aside">
-				{ fields.timeLabel && (
-					<span className="space-feed-standard-list__time">{ fields.timeLabel }</span>
+				{ fields.publishedDate && (
+					<span className="space-feed-standard-list__time">
+						<TimeSince date={ fields.publishedDate } />
+					</span>
 				) }
 				<BookmarkGlyph />
 			</div>

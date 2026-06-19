@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { TimeSince } from '@automattic/components';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { useInfiniteList } from 'calypso/reader/hooks/use-infinite-list';
@@ -13,7 +14,7 @@ const ESTIMATED_SIZE = 420;
 
 function MagazineCard( { post }: { post: ReadStreamPost } ) {
 	const fields = getPostFields( post );
-	const meta = [ fields.authorName, fields.timeLabel ].filter( Boolean ).join( ' · ' );
+	const metaText = [ fields.authorName, fields.siteDomain ].filter( Boolean ).join( ' · ' );
 	return (
 		<div className="space-feed-magazine__card">
 			<div className="space-feed-magazine__hero">
@@ -44,7 +45,13 @@ function MagazineCard( { post }: { post: ReadStreamPost } ) {
 					dangerouslySetInnerHTML={ { __html: fields.excerptHtml } } // eslint-disable-line react/no-danger
 				/>
 			) }
-			{ meta && <p className="space-feed-magazine__meta">{ meta }</p> }
+			{ ( metaText || fields.publishedDate ) && (
+				<p className="space-feed-magazine__meta">
+					{ metaText }
+					{ metaText && fields.publishedDate ? ' · ' : '' }
+					{ fields.publishedDate && <TimeSince date={ fields.publishedDate } /> }
+				</p>
+			) }
 			<div className="space-feed-magazine__actions">
 				<ReaderPostActions
 					post={ post }

@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { TimeSince } from '@automattic/components';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { useInfiniteList } from 'calypso/reader/hooks/use-infinite-list';
@@ -41,8 +42,10 @@ function BoardCard( { post }: { post: ReadStreamPost } ) {
 						<SiteIcon iconUrl={ fields.siteIconUrl } size={ 18 } />
 						<span className="space-feed-board__source">{ fields.sourceName }</span>
 					</span>
-					{ fields.timeLabel && (
-						<span className="space-feed-board__time">{ fields.timeLabel }</span>
+					{ fields.publishedDate && (
+						<span className="space-feed-board__time">
+							<TimeSince date={ fields.publishedDate } />
+						</span>
 					) }
 				</div>
 				<div className="space-feed-board__actions">

@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { TimeSince } from '@automattic/components';
 import { useMemo } from 'react';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import { SiteIcon } from 'calypso/blocks/site-icon';
@@ -40,6 +41,11 @@ function GalleryCard( { post }: { post: ReadStreamPost } ) {
 					{ fields.sourceName }
 					{ fields.authorName ? ` · ${ fields.authorName }` : '' }
 				</span>
+				{ fields.publishedDate && (
+					<span className="space-feed-gallery__time">
+						<TimeSince date={ fields.publishedDate } />
+					</span>
+				) }
 			</div>
 			<div className="space-feed-gallery__actions">
 				<ReaderPostActions

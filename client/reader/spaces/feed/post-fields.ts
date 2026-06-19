@@ -1,3 +1,4 @@
+import { decodeEntities } from 'calypso/lib/formatting';
 import { formatExcerpt } from 'calypso/lib/post-normalizer/rule-create-better-excerpt';
 import { getPostUrl } from 'calypso/reader/route';
 import type { ReadStreamPost } from '@automattic/api-core';
@@ -27,7 +28,10 @@ export interface SpaceFeedPostFields {
 	imageUrl?: string;
 	/** Blog/site icon URL (`post.site_icon.ico`); empty falls back to a globe. */
 	siteIconUrl?: string;
-	timeLabel?: string;
+	/** The blog's domain (host of `feed_URL`), e.g. `example.wordpress.com`. */
+	siteDomain?: string;
+	/** Raw ISO publish date, for a relative `<TimeSince>` (e.g. "6h ago"). */
+	publishedDate?: string;
 	dayGroup: SpaceFeedDayGroup;
 	/** Reader full-post page path, e.g. `/reader/feeds/:feed/posts/:post`. */
 	postHref: string;
@@ -65,17 +69,17 @@ function dayGroupOf( dateIso?: string ): SpaceFeedDayGroup {
 	return 'older';
 }
 
-function timeLabelOf( dateIso?: string ): string | undefined {
-	if ( ! dateIso ) {
+/** The blog's domain from `feed_URL` (fallback the post URL), `www.` stripped. */
+function domainOf( post: ReadStreamPost ): string | undefined {
+	const url = asString( post.feed_URL ) ?? asString( post.URL );
+	if ( ! url ) {
 		return undefined;
 	}
-	const date = new Date( dateIso );
-	if ( Number.isNaN( date.getTime() ) ) {
+	try {
+		return new URL( url ).hostname.replace( /^www\./, '' );
+	} catch {
 		return undefined;
 	}
-	const hours = String( date.getHours() ).padStart( 2, '0' );
-	const minutes = String( date.getMinutes() ).padStart( 2, '0' );
-	return `${ hours }:${ minutes }`;
 }
 
 function imageOf( post: ReadStreamPost ): string | undefined {
@@ -99,15 +103,25 @@ function authorOf( post: ReadStreamPost ): string | undefined {
 
 export function getPostFields( post: ReadStreamPost ): SpaceFeedPostFields {
 	const date = asString( post.date );
+	const author = authorOf( post );
 	return {
 		id: post.ID,
-		title: asString( post.title ) ?? asString( post.site_name ) ?? '',
+		// Title, source and author render as plain text, so decode the HTML
+		// entities the raw API title carries (e.g. `&nbsp;`, `&#039;`) — the legacy
+		// card gets this for free from the normalized post. Titles are sometimes
+		// double-encoded, so decode twice, mirroring the Reader post normalizer
+		// (rule-decode-entities). The excerpt is rendered as HTML, so it doesn't
+		// need this.
+		title: decodeEntities(
+			decodeEntities( asString( post.title ) ?? asString( post.site_name ) ?? '' )
+		),
 		excerptHtml: formatExcerpt( asString( post.excerpt ) ?? post.description ?? '' ),
-		sourceName: asString( post.site_name ) ?? '',
-		authorName: authorOf( post ),
+		sourceName: decodeEntities( asString( post.site_name ) ?? '' ),
+		authorName: author ? decodeEntities( author ) : undefined,
 		imageUrl: imageOf( post ),
 		siteIconUrl: asString( post.site_icon?.ico ),
-		timeLabel: timeLabelOf( date ),
+		siteDomain: domainOf( post ),
+		publishedDate: date,
 		dayGroup: dayGroupOf( date ),
 		postHref: getPostUrl( post ),
 		isUnread: post.is_seen === false,

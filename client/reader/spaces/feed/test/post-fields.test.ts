@@ -63,6 +63,21 @@ describe( 'getPostFields', () => {
 		expect( host.textContent ).toBe( 'Latin, Asian Pop and R&B genres, including the Best…' );
 	} );
 
+	it( 'decodes HTML entities in the plain-text title, source and author', () => {
+		const post = {
+			ID: 1,
+			site_ID: 2,
+			title: 'Pre-Order Reveal&nbsp;: GTA&nbsp;6',
+			site_name: 'Kendall Lacey&#039;s Webworld',
+			author: { name: 'A &amp; B' },
+		} as unknown as ReadStreamPost;
+
+		const fields = getPostFields( post );
+		expect( fields.title ).toBe( 'Pre-Order Reveal : GTA 6' );
+		expect( fields.sourceName ).toBe( "Kendall Lacey's Webworld" );
+		expect( fields.authorName ).toBe( 'A & B' );
+	} );
+
 	it( 'reads the blog icon from site_icon.ico', () => {
 		const post = {
 			ID: 1,
