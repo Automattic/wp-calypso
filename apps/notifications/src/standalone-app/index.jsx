@@ -134,7 +134,14 @@ const NotesWrapper = ( { wpcom } ) => {
 			if ( event.button !== 0 ) {
 				return;
 			}
-			if ( event.target.closest( '.wpnc-app__list-pane, .wpnc-app__detail-pane' ) ) {
+			// The panes' own popovers (the Actions menu with its Settings /
+			// Keyboard shortcuts items, and the shortcuts popover) portal to the
+			// iframe body, outside the panes. Treat them as inside, otherwise this
+			// mousedown closes the panel before the menu item's click fires and
+			// those actions appear to do nothing.
+			if (
+				event.target.closest( '.wpnc-app__list-pane, .wpnc-app__detail-pane, .components-popover' )
+			) {
 				return;
 			}
 			// Stop the click from starting a text selection on the backdrop.

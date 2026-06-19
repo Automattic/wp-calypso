@@ -93,17 +93,20 @@ export function getFields(): Field< Note >[] {
 					links: false,
 				} ),
 			render: ( { field, item } ) => (
-				<div className={ clsx( 'wpnc__note-list-item', { 'is-unread': ! item.read } ) }>
-					<div
-						className="wpnc__subject"
-						/* eslint-disable-next-line react/no-danger */
-						dangerouslySetInnerHTML={ { __html: field.getValue( { item } ) } }
-					/>
-					{ item.subject.length > 1 && (
-						<div className="wpnc__excerpt">{ item.subject[ 1 ].text }</div>
-					) }
-				</div>
+				<div
+					className="wpnc__subject"
+					/* eslint-disable-next-line react/no-danger */
+					dangerouslySetInnerHTML={ { __html: field.getValue( { item } ) } }
+				/>
 			),
+		},
+		{
+			id: 'description',
+			label: __( 'Description' ),
+			render: ( { item } ) =>
+				item.subject.length > 1 ? (
+					<div className="wpnc__excerpt">{ item.subject[ 1 ].text }</div>
+				) : null,
 		},
 		{
 			id: 'info',

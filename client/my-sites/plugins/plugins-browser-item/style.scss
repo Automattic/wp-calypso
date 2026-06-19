@@ -1,7 +1,8 @@
 @use "../variables";
-@import "@automattic/color-studio/dist/color-variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/variables";
+@import "@automattic/color-studio/dist/color-variables";
 
 .plugins-browser-item {
 	width: 100%;

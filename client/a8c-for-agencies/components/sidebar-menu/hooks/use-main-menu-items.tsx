@@ -33,7 +33,6 @@ import {
 	A4A_PURCHASES_LINK,
 	A4A_REFERRALS_LINK,
 	A4A_SITES_LINK,
-	A4A_MARKETPLACE_HOSTING_LINK,
 	A4A_MIGRATIONS_LINK,
 	A4A_SETTINGS_LINK,
 	A4A_PLUGINS_LINK,
@@ -170,7 +169,7 @@ const useMainMenuItems = ( path: string ) => {
 			{
 				icon: tag,
 				path: A4A_MARKETPLACE_LINK,
-				link: A4A_MARKETPLACE_HOSTING_LINK,
+				link: A4A_MARKETPLACE_LINK,
 				title: translate( 'Marketplace' ),
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / Marketplace',

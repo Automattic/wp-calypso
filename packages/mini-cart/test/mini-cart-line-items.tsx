@@ -59,7 +59,7 @@ describe( 'MiniCartLineItems bundle grouping', () => {
 	test( 'folds bundle members into one grouped line item when grouping is enabled', () => {
 		renderLineItems( true );
 
-		expect( screen.getByText( 'Domain bundle' ) ).toBeVisible();
+		expect( screen.getByText( 'Domain Bundle' ) ).toBeVisible();
 		// Both members show inside the group; the standalone domain stays on its own line.
 		expect( screen.getByText( 'example.com' ) ).toBeVisible();
 		expect( screen.getByText( 'example.net' ) ).toBeVisible();
@@ -69,7 +69,7 @@ describe( 'MiniCartLineItems bundle grouping', () => {
 	test( 'renders every product on its own line when grouping is disabled', () => {
 		renderLineItems( false );
 
-		expect( screen.queryByText( 'Domain bundle' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Domain Bundle' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'example.com' ) ).toBeVisible();
 		expect( screen.getByText( 'example.net' ) ).toBeVisible();
 		expect( screen.getByText( 'standalone.com' ) ).toBeVisible();
@@ -96,11 +96,12 @@ describe( 'MiniCartLineItems bundle grouping', () => {
 
 		const { container } = renderLineItems( true, cart );
 
-		const crossedOut = screen.getByText( /\$129\b/ );
+		const crossedOut = screen
+			.getAllByText( /\$129\b/ )
+			.find( ( element ) => element.tagName === 'S' );
 		expect( crossedOut ).toBeVisible();
-		expect( crossedOut.tagName ).toBe( 'S' );
-		expect( screen.getByText( /\$29\b/ ) ).toBeVisible();
-		expect( screen.getByText( /\$40\b/ ) ).toBeVisible();
+		expect( screen.getAllByText( /\$29\b/ ) ).toHaveLength( 2 );
+		expect( screen.getAllByText( /\$40\b/ ) ).toHaveLength( 2 );
 
 		// Only the discounted bundle shows a strikethrough.
 		expect( container.querySelectorAll( 's' ) ).toHaveLength( 1 );

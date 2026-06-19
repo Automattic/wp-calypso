@@ -17,6 +17,8 @@ Consuming the API? See [Public API](#public-api). Adding a new action? See [Addi
 | -------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------- |
 | `getChatState`             | `() => Promise<{ isOpen, isDocked, floatingPosition }>` | Current chat state. Waits for the store to load before resolving.         |
 | `getSessionId`             | `() => string`                                          | Active session ID.                                                        |
+| `isChatVisible`            | `() => boolean`                                         | Whether the chat is visible (open and not minimized).                     |
+| `getCurrentRoute`          | `() => string`                                          | The chat's current route, e.g. `/chat`, `/history`, `/support-guides`.    |
 | `setChatOpen`              | `(isOpen: boolean) => void`                             | Open or close the chat. Opening also expands it from the minimized bar.   |
 | `setChatDocked`            | `(isDocked: boolean) => void`                           | Dock or undock the chat.                                                  |
 | `setChatEnabled`           | `(isEnabled: boolean) => void`                          | Enable or disable chat rendering.                                         |
@@ -28,6 +30,7 @@ Consuming the API? See [Public API](#public-api). Adding a new action? See [Addi
 | `removeContextEntry`       | `(id: string) => void`                                  | Remove a context entry. Linked cards (`contextEntryIds`) are removed too. |
 | `setContextCard`           | `(card) => void`                                        | Add or replace a card shown inside the chat.                              |
 | `removeContextCard`        | `(id: string) => void`                                  | Remove a card.                                                            |
+| `setSiteEditorAction`      | `(name, value) => void`                                 | Record a Site Editor action (name → value) for the chat to read.          |
 | `chatNavigate`             | `NavigateFunction`                                      | The `react-router-dom` navigate function (path with options, or delta).   |
 | `resumeChat`               | `() => void`                                            | Reopen the chat, resuming the active conversation (not a new one).        |
 | `isReady`                  | `boolean`                                               | `true` once the API is fully populated and safe to call.                  |

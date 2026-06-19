@@ -62,7 +62,7 @@ const getRequestStatus = ( action ) => {
 
 export const getRequestKey = ( fullAction ) => {
 	const { meta, ...action } = fullAction;
-	const requestKey = get( meta, 'dataLayer.requestKey' );
+	const requestKey = meta?.dataLayer?.requestKey;
 
 	return requestKey ? requestKey : deterministicStringify( action );
 };
@@ -106,7 +106,7 @@ export const reducer = keyedReducer( 'meta.dataLayer.requestKey', requestsReduce
 export const trackRequests = ( next ) => ( store, action ) => {
 	// progress events don't affect
 	// any tracking meta at the moment
-	if ( true !== get( action, 'meta.dataLayer.trackRequest' ) || getProgress( action ) ) {
+	if ( true !== action?.meta?.dataLayer?.trackRequest || getProgress( action ) ) {
 		return next( store, action );
 	}
 

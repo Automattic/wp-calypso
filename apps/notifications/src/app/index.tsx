@@ -14,7 +14,7 @@ import getIsPanelOpen from '../panel/state/selectors/get-is-panel-open';
 import getKeyboardShortcutsEnabled from '../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import { AppProvider } from './context';
 import Note from './note';
-import { useNoteNavigationViaKeyboardShortcuts } from './note/hooks';
+import { useNoteNavigation } from './note/hooks';
 import NotePanel from './note-panel';
 import type { FilterName } from './types';
 
@@ -80,7 +80,7 @@ const NotificationContent = ( { isDismissible }: { isDismissible: boolean } ) =>
 		}
 	};
 
-	useNoteNavigationViaKeyboardShortcuts( { filterName, selectedNoteId, setSelectedNoteId } );
+	const noteNavigation = useNoteNavigation( { filterName, selectedNoteId, setSelectedNoteId } );
 
 	return (
 		<HStack className="wpnc-app" spacing={ 0 } alignment="stretch">
@@ -100,6 +100,7 @@ const NotificationContent = ( { isDismissible }: { isDismissible: boolean } ) =>
 					isDismissible={ isDismissible }
 					noteId={ displayedNoteId }
 					setSelectedNoteId={ setSelectedNoteId }
+					noteNavigation={ noteNavigation }
 				/>
 			</div>
 			<div className="wpnc-app__list-pane">

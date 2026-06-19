@@ -29,7 +29,7 @@ function unescape( str: string ): string {
 
 export default function PostTrackback( props: PostTrackbackProps ): JSX.Element | null {
 	const commentsTree = props.commentsTree;
-	const comment = get( commentsTree[ props.commentId ], 'data' );
+	const comment = commentsTree[ props.commentId ]?.data;
 	if ( ! comment ) {
 		return null;
 	}

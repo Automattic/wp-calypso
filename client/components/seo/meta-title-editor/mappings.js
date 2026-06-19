@@ -29,17 +29,15 @@
 //   ]
 //
 
-import {
-	camelCase,
-	flowRight as compose,
-	get,
-	last,
-	map,
-	mapKeys,
-	mapValues,
-	reduce,
-	snakeCase,
-} from 'lodash';
+import { camelCase, mapKeys, mapValues, snakeCase } from '@automattic/js-utils';
+import { get, map, reduce } from 'lodash';
+
+// Right-to-left composition of unary functions. Kept local so this pure mapping
+// module doesn't take on a dependency it otherwise has no need for.
+const compose =
+	( ...fns ) =>
+	( value ) =>
+		fns.reduceRight( ( acc, fn ) => fn( acc ), value );
 
 const mergeStringPieces = ( a, b ) => ( {
 	type: 'string',
@@ -71,7 +69,7 @@ export const nativeToRaw = compose(
 		reduce(
 			list,
 			( format, piece ) => {
-				const lastPiece = last( format );
+				const lastPiece = format.at( -1 );
 
 				if ( lastPiece && 'string' === lastPiece.type && 'string' === piece.type ) {
 					return [ ...format.slice( 0, -1 ), mergeStringPieces( lastPiece, piece ) ];

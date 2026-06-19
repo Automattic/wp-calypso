@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { values } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import SectionNav from 'calypso/components/section-nav';
@@ -14,7 +13,7 @@ class SearchStreamHeader extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
 		wideDisplay: PropTypes.bool,
-		selected: PropTypes.oneOf( values( SEARCH_TYPES ) ),
+		selected: PropTypes.oneOf( Object.values( SEARCH_TYPES ) ),
 		onSelection: PropTypes.func,
 		isLoggedIn: PropTypes.bool,
 	};

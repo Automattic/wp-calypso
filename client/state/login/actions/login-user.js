@@ -46,19 +46,19 @@ export const loginUser =
 			...( blackboxSessionId && { blackbox_session_id: blackboxSessionId } ),
 		} )
 			.then( ( response ) => {
-				if ( get( response, 'body.data.two_step_notification_sent' ) === 'sms' ) {
+				if ( response?.body?.data?.two_step_notification_sent === 'sms' ) {
 					dispatch( {
 						type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 						notice: {
 							message: getSMSMessageFromResponse( response ),
 							status: 'is-success',
 						},
-						twoStepNonce: get( response, 'body.data.two_step_nonce_sms' ),
+						twoStepNonce: response?.body?.data?.two_step_nonce_sms,
 					} );
 				}
 
 				// if the user has 2FA, in this stage he's not yet logged in.
-				if ( ! get( response, 'body.data.two_step_notification_sent' ) ) {
+				if ( ! response?.body?.data?.two_step_notification_sent ) {
 					return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
 						dispatch( {
 							type: LOGIN_REQUEST_SUCCESS,

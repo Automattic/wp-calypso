@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { addLocaleToPath, isDefaultLocale } from '@automattic/i18n-utils';
 import { getLocaleSlug } from 'i18n-calypso';
-import { get, includes, startsWith } from 'lodash';
+import { get, includes } from 'lodash';
 import {
 	isAkismetOAuth2Client,
 	isCrowdsignalOAuth2Client,
@@ -56,7 +56,7 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 
 	if (
 		// Match locales like `/log-in/jetpack/es`
-		startsWith( currentRoute, '/log-in/jetpack' )
+		( currentRoute ?? '' ).startsWith( '/log-in/jetpack' )
 	) {
 		// Basic validation that we're in a valid Jetpack Authorization flow
 		if (
@@ -64,7 +64,7 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 			includes( redirectTo, '_wp_nonce' )
 		) {
 			// If the current query has plugin_name param, but redirect_to doesn't, add it to the redirect_to
-			const pluginName = get( currentQuery, 'plugin_name' );
+			const pluginName = currentQuery?.plugin_name;
 			try {
 				const urlObj = new URL( redirectTo );
 				if ( ! urlObj.searchParams.has( 'plugin_name' ) && pluginName ) {
@@ -139,7 +139,7 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 		return `/start/wpcc?${ oauth2Params.toString() }`;
 	}
 
-	const signupFlow = get( currentQuery, 'signup_flow' );
+	const signupFlow = currentQuery?.signup_flow;
 	if ( signupFlow ) {
 		if ( redirectTo ) {
 			const params = new URLSearchParams( {

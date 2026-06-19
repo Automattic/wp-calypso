@@ -1,3 +1,6 @@
+@import "calypso/assets/stylesheets/shared/mixins/banner";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/long-content-fade";
 @import '@automattic/onboarding/styles/mixins';
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';

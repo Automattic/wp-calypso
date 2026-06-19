@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { filter, find, get, noop } from 'lodash';
+import { filter, find, noop } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Children, cloneElement, Component, forwardRef } from 'react';
 import Count from '../count';
@@ -106,10 +106,7 @@ class SelectDropdown extends Component {
 		}
 
 		// Otherwise find the first option that is an item, i.e., not label or separator
-		return get(
-			find( this.props.options, ( item ) => item && ! item.isLabel ),
-			'value'
-		);
+		return find( this.props.options, ( item ) => item && ! item.isLabel )?.value;
 	}
 
 	getSelectedText() {
@@ -121,7 +118,7 @@ class SelectDropdown extends Component {
 		}
 
 		// return currently selected text
-		return get( find( options, { value: selected } ), 'label' );
+		return find( options, { value: selected } )?.label;
 	}
 
 	getSelectedIcon() {
@@ -133,7 +130,7 @@ class SelectDropdown extends Component {
 		}
 
 		// return currently selected icon
-		return get( find( options, { value: selected } ), 'icon' );
+		return find( options, { value: selected } )?.icon;
 	}
 
 	getSelectedSecondaryIcon() {
@@ -144,7 +141,7 @@ class SelectDropdown extends Component {
 			return selectedSecondaryIcon;
 		}
 
-		return get( find( options, { value: selected } ), 'secondaryIcon' );
+		return find( options, { value: selected } )?.secondaryIcon;
 	}
 
 	dropdownOptions() {
@@ -414,3 +411,4 @@ export default SelectDropdown;
 export const SelectDropdownForwardingRef = forwardRef( ( props, ref ) => (
 	<SelectDropdown { ...props } innerRef={ ref } />
 ) );
+SelectDropdownForwardingRef.displayName = 'SelectDropdownForwardingRef';

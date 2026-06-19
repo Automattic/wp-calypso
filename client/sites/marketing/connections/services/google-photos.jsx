@@ -1,4 +1,4 @@
-import { last, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { deleteStoredKeyringConnection } from 'calypso/state/sharing/keyring/actions';
 import { SharingService, connectFor } from '../service';
@@ -23,7 +23,7 @@ export class GooglePhotos extends SharingService {
 	 */
 	removeConnection = () => {
 		this.setState( { isDisconnecting: true } );
-		this.props.deleteStoredKeyringConnection( last( this.props.keyringConnections ) );
+		this.props.deleteStoredKeyringConnection( this.props.keyringConnections?.at( -1 ) );
 	};
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!

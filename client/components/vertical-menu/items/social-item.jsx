@@ -24,7 +24,7 @@ const services = ( translate = ( string ) => string ) => ( {
 const noop = () => {};
 
 export const SocialItem = ( props ) => {
-	const { isSelected, onClick, service, translate } = props;
+	const { isSelected = false, onClick = noop, service, translate } = props;
 
 	const { icon, label } = get( services( translate ), service );
 	const classes = clsx( 'vertical-menu__social-item', 'vertical-menu__items', {
@@ -48,11 +48,6 @@ SocialItem.propTypes = {
 	onClick: PropTypes.func,
 	service: PropTypes.oneOf( Object.keys( services() ) ).isRequired,
 	translate: PropTypes.func,
-};
-
-SocialItem.defaultProps = {
-	isSelected: false,
-	onClick: noop,
 };
 
 export default localize( SocialItem );

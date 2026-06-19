@@ -1,6 +1,9 @@
+import { HelpCenter } from '@automattic/data-stores';
 import { StepContainer, isStartWritingFlow, Step } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useState } from '@wordpress/element';
+import { help } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import { useSelector } from 'react-redux';
@@ -24,9 +27,13 @@ import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { useQuery } from '../../../../hooks/use-query';
 import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboarding-step-counter';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
+import { useOnboardingHelpExperiment } from '../components/use-onboarding-help-experiment';
 import type { Step as StepType } from '../../types';
+import type { HelpCenterSelect } from '@automattic/data-stores';
 
 import './style.scss';
+
+const HELP_CENTER_STORE = HelpCenter.register();
 
 type OwnershipVerificationData = {
 	ownership_verification_data: {
@@ -65,6 +72,19 @@ const UseMyDomain: StepType< {
 		inputMode.domainInput
 	);
 	const stepCounter = useOnboardingStepCounter( flow, 'use-my-domain' );
+
+	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
+	const isHelpCenterShown = useSelect(
+		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
+		[]
+	);
+	const toggleHelpCenter = () => {
+		if ( ! isHelpCenterShown ) {
+			recordTracksEvent( 'calypso_onboarding_help_center_click', { flow, step: 'use-my-domain' } );
+		}
+		setShowHelpCenter( ! isHelpCenterShown );
+	};
+	const { showHelp: showHelpCenter } = useOnboardingHelpExperiment( flow );
 
 	const handleGoBack = () => {
 		if ( String( getQueryArg( window.location.search, 'step' ) ?? '' ) === 'transfer-or-connect' ) {
@@ -229,8 +249,20 @@ const UseMyDomain: StepType< {
 						<Step.TopBar
 							leftElement={ getTopBarLeftElement() }
 							rightElement={
-								stepCounter && (
-									<Step.StepCounter current={ stepCounter.current } total={ stepCounter.total } />
+								( stepCounter || showHelpCenter ) && (
+									<>
+										{ stepCounter && (
+											<Step.StepCounter
+												current={ stepCounter.current }
+												total={ stepCounter.total }
+											/>
+										) }
+										{ showHelpCenter && (
+											<Step.LinkButton icon={ help } iconSize={ 20 } onClick={ toggleHelpCenter }>
+												{ __( 'Need help?' ) }
+											</Step.LinkButton>
+										) }
+									</>
 								)
 							}
 						/>

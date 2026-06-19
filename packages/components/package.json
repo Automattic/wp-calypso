@@ -47,6 +47,7 @@
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/color-studio": "^4.1.0",
 		"@automattic/i18n-utils": "workspace:^",
+		"@automattic/js-utils": "workspace:^",
 		"@automattic/load-script": "workspace:^",
 		"@automattic/material-design-icons": "workspace:^",
 		"@automattic/number-formatters": "^1.2.0",
@@ -76,7 +77,7 @@
 		"lodash": "^4.17.21",
 		"prop-types": "^15.8.1",
 		"react-modal": "^3.16.3",
-		"react-router-dom": "^6.23.1",
+		"react-router-dom": "6.30.4",
 		"utility-types": "^3.10.0"
 	},
 	"peerDependencies": {

@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from '@testing-library/react';
+import { getByText, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BundleCard } from '..';
 import type { BundleSuggestion, BundleSuggestionDomain } from '@automattic/api-core';
@@ -80,6 +80,26 @@ describe( 'BundleCard', () => {
 		expect( original.closest( 's' ) ).not.toBeNull();
 	} );
 
+	it( 'renders formatted bundle totals when provided', () => {
+		render(
+			<BundleCard
+				suggestion={ buildSuggestion( twoDomains, {
+					bundle_price: 29.9,
+					bundle_cost: '$29.90',
+					original_price: 39,
+					original_cost: '$39',
+				} ) }
+			/>
+		);
+
+		expect( screen.getByText( '$29.90' ) ).toBeInTheDocument();
+
+		const original = screen.getByText( '$39' );
+		expect( original.closest( 's' ) ).not.toBeNull();
+
+		expect( screen.queryByText( '29.9' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'renders the discount percent text', () => {
 		render( <BundleCard suggestion={ buildSuggestion( twoDomains, { discount_percent: 20 } ) } /> );
 
@@ -124,6 +144,38 @@ describe( 'BundleCard', () => {
 		expect( onAddToCart ).toHaveBeenCalledWith( suggestion );
 	} );
 
+	it( 'renders a Continue CTA instead of Get bundle when the bundle is already in the cart', async () => {
+		const user = userEvent.setup();
+		const onContinue = jest.fn();
+		const onAddToCart = jest.fn();
+
+		render(
+			<BundleCard
+				suggestion={ buildSuggestion( twoDomains ) }
+				onAddToCart={ onAddToCart }
+				isAddedToCart
+				onContinue={ onContinue }
+			/>
+		);
+
+		expect( screen.queryByRole( 'button', { name: 'Get bundle' } ) ).not.toBeInTheDocument();
+
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+		expect( onContinue ).toHaveBeenCalledTimes( 1 );
+		expect( onAddToCart ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not throw when Continue is clicked without an onContinue callback', async () => {
+		const user = userEvent.setup();
+
+		render( <BundleCard suggestion={ buildSuggestion( twoDomains ) } isAddedToCart /> );
+
+		await expect(
+			user.click( screen.getByRole( 'button', { name: 'Continue' } ) )
+		).resolves.not.toThrow();
+	} );
+
 	it( 'does not throw when the CTA is clicked without an onAddToCart callback', async () => {
 		const user = userEvent.setup();
 
@@ -132,6 +184,33 @@ describe( 'BundleCard', () => {
 		await expect(
 			user.click( screen.getByRole( 'button', { name: 'Get bundle' } ) )
 		).resolves.not.toThrow();
+	} );
+
+	it( 'renders the error message when errorMessage is provided', () => {
+		// Scoped to the render container because the Notice also announces the
+		// message through the a11y-speak live region appended to document.body.
+		const { container } = render(
+			<BundleCard
+				suggestion={ buildSuggestion( twoDomains ) }
+				errorMessage="Something went wrong."
+			/>
+		);
+
+		expect( getByText( container, 'Something went wrong.' ) ).toBeInTheDocument();
+		// The CTA stays available so the user can retry.
+		expect( screen.getByRole( 'button', { name: 'Get bundle' } ) ).toBeEnabled();
+	} );
+
+	it( 'does not render an error notice when errorMessage is not provided', () => {
+		const { container } = render( <BundleCard suggestion={ buildSuggestion( twoDomains ) } /> );
+
+		expect( container.querySelector( '.domain-search-notice' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'marks the CTA busy and disabled while an add-to-cart is in flight', () => {
+		render( <BundleCard suggestion={ buildSuggestion( twoDomains ) } isBusy disabled /> );
+
+		expect( screen.getByRole( 'button', { name: 'Get bundle' } ) ).toBeDisabled();
 	} );
 
 	it( 'renders a placeholder with no CTA or domain rows for a null suggestion', () => {

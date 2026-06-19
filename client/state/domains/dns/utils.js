@@ -1,4 +1,5 @@
-import { filter, mapValues } from 'lodash';
+import { mapValues } from '@automattic/js-utils';
+import { filter } from 'lodash';
 
 function validateAllFields( fieldValues, domainName, domain ) {
 	return mapValues( fieldValues, ( value, fieldName ) => {

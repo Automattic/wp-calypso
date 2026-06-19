@@ -6,7 +6,6 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
-	Icon,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, _n, sprintf } from '@wordpress/i18n';
@@ -20,7 +19,6 @@ import { Card, CardBody, CardHeader } from '../../components/card';
 import { useFormattedTime } from '../../components/formatted-time';
 import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
-import { gridiconToWordPressIcon } from '../../utils/gridicons';
 import { ImagePreview } from './image-preview';
 import type { ActivityLogEntry, Site } from '@automattic/api-core';
 
@@ -135,11 +133,7 @@ export function BackupDetails( { backup, site, timezoneString, gmtOffset }: Back
 	return (
 		<Card>
 			<CardHeader style={ { flexDirection: 'column', alignItems: 'stretch' } }>
-				<SectionHeader
-					title={ backup.summary }
-					decoration={ <Icon icon={ gridiconToWordPressIcon( backup.gridicon ) } /> }
-					actions={ ! isSmallViewport ? actions : null }
-				/>
+				<SectionHeader title={ backup.summary } actions={ ! isSmallViewport ? actions : null } />
 				{ isSmallViewport ? actions : null }
 			</CardHeader>
 			<CardBody style={ { minHeight: '300px' } }>

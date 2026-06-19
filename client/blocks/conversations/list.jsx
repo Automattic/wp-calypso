@@ -1,4 +1,5 @@
-import { map, size, filter, get, partition, pickBy, keyBy } from 'lodash';
+import { keyBy, pickBy } from '@automattic/js-utils';
+import { map, filter, get, partition } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, useCallback, useMemo, useRef, useState } from 'react';
 import { connect } from 'react-redux';
@@ -135,7 +136,7 @@ export class ConversationCommentList extends Component {
 		const hiddenComments = this.getHiddenComments( commentsToShow );
 
 		// if we are running low on comments to expand then fetch more
-		if ( size( hiddenComments ) < FETCH_NEW_COMMENTS_THRESHOLD ) {
+		if ( Object.keys( hiddenComments ).length < FETCH_NEW_COMMENTS_THRESHOLD ) {
 			this.reqMoreComments();
 		}
 
@@ -163,7 +164,7 @@ export class ConversationCommentList extends Component {
 
 	getInaccessibleParentsIds = ( commentsTree, commentIds ) => {
 		// base case
-		if ( size( commentIds ) === 0 ) {
+		if ( commentIds.length === 0 ) {
 			return [];
 		}
 
@@ -232,8 +233,8 @@ export class ConversationCommentList extends Component {
 	};
 
 	setActiveReplyComment = ( commentId ) => {
-		const siteId = get( this.props, 'post.site_ID' );
-		const postId = get( this.props, 'post.ID' );
+		const siteId = this.props?.post?.site_ID;
+		const postId = this.props?.post?.ID;
 
 		if ( ! siteId || ! postId ) {
 			return;
@@ -265,10 +266,11 @@ export class ConversationCommentList extends Component {
 		// if you have finished loading comments, then lets use the comments we have as the final comment count
 		// if we are still loading comments, then assume what the server initially told us is right
 		const commentCount = isDoneLoadingComments
-			? filter( commentsTree, ( comment ) => get( comment, 'data.type' ) === 'comment' ).length // filter out pingbacks/trackbacks
+			? filter( commentsTree, ( comment ) => comment?.data?.type === 'comment' ).length // filter out pingbacks/trackbacks
 			: post.discussion.comment_count;
 
-		const showCaterpillar = enableCaterpillar && size( commentsToShow ) < commentCount;
+		const showCaterpillar =
+			enableCaterpillar && Object.keys( commentsToShow ).length < commentCount;
 
 		return (
 			<div className="conversations__comment-list">

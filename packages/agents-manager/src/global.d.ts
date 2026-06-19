@@ -15,6 +15,8 @@ declare const agentsManagerData:
 			useUnifiedExperience?: boolean;
 			agentId?: string;
 			helpCenterUrl?: string;
+			/** Dev/internal context (localhost, jurassic, proxied a11ns, internal Atomic). Drives `is_test`. */
+			isDevMode?: boolean;
 	  }
 	| undefined;
 
@@ -105,6 +107,8 @@ interface AgentsManagerActions {
 	setSiteEditorAction: ( name: string, value: string | number | boolean | null ) => void;
 	chatNavigate: import('react-router-dom').NavigateFunction;
 	resumeChat: () => void;
+	isChatVisible: () => boolean;
+	getCurrentRoute: () => string;
 	isCompactMode?: boolean;
 	isChatEnabled?: boolean;
 	desktopMediaQuery?: string;
@@ -121,4 +125,11 @@ interface AgentsManagerActions {
  */
 interface Window {
 	__agentsManagerActions?: AgentsManagerActions;
+	/** Big Sky injects this on editor surfaces. Narrowed to the fields AM consumes. */
+	bigSkyInitialState?: {
+		bigSkyVersion?: string;
+		isFreeTrial?: string;
+		isDevMode?: string;
+		currentScreen?: { screen?: string };
+	};
 }

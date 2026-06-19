@@ -38,7 +38,7 @@ import './lib/init-app-config';
 
 ### Bundle Size Limits
 
-- `build.min.js`: 495 KiB max
+- `build.min.js`: 545 KiB max
 - `widget-loader.min.js`: 8 KiB max
 
 Run `yarn test:size` to verify.

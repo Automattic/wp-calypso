@@ -153,7 +153,8 @@ export const createSite = async (
 	siteGoals?: SiteGoal[],
 	gardenName?: string | null,
 	gardenPartnerName?: string | null,
-	specId?: string | null
+	specId?: string | null,
+	ref?: string
 ) => {
 	const siteUrl = storedSiteUrl || domainItem?.domain_name;
 
@@ -210,7 +211,7 @@ export const createSite = async (
 					? { segmentation_survey_answers_anon_id: segmentationSurveyAnswersAnonId }
 					: {} ),
 				...( siteGoals && { site_goals: siteGoals } ),
-				...( refParam && { ref: refParam } ),
+				...( ( ref ?? refParam ) && { ref: ref ?? refParam } ),
 				// Trigger backend build for ai-site-builder flow with commerce garden and spec_id
 				...( flowName === AI_SITE_BUILDER_FLOW &&
 					gardenName === 'commerce' &&

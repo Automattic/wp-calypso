@@ -156,7 +156,7 @@ const MarketplaceProductInstall = ( {
 	const hasAtomicFeature = useSelector( ( state ) =>
 		siteHasFeature( state, selectedSite?.ID ?? null, WPCOM_FEATURES_ATOMIC )
 	);
-	const supportsAtomicUpgrade = useRef< boolean >();
+	const supportsAtomicUpgrade = useRef< boolean >( undefined );
 	useEffect( () => {
 		supportsAtomicUpgrade.current = hasAtomicFeature;
 	}, [ hasAtomicFeature ] );
@@ -194,8 +194,9 @@ const MarketplaceProductInstall = ( {
 	useEffect( () => {
 		if ( shouldShowNoDirectAccessError ) {
 			waitFor( 2 ).then( () => {
-				// eslint-disable-next-line  @typescript-eslint/no-unused-expressions
-				shouldShowNoDirectAccessError && setNoDirectAccessError( true );
+				if ( shouldShowNoDirectAccessError ) {
+					setNoDirectAccessError( true );
+				}
 			} );
 		}
 	}, [ shouldShowNoDirectAccessError ] );

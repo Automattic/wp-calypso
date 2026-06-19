@@ -1,16 +1,6 @@
+import { omit } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
-import {
-	filter,
-	orderBy,
-	has,
-	map,
-	reject,
-	isEqual,
-	get,
-	includes,
-	omit,
-	startsWith,
-} from 'lodash';
+import { filter, orderBy, has, map, reject, isEqual, get, includes } from 'lodash';
 import {
 	COMMENT_COUNTS_UPDATE,
 	COMMENTS_CHANGE_STATUS,
@@ -461,7 +451,7 @@ export const counts = ( state = {}, action ) => {
 		}
 		case COMMENTS_CHANGE_STATUS: {
 			const { siteId, postId = -1, status } = action;
-			const previousStatus = get( action, 'meta.comment.previousStatus' );
+			const previousStatus = action?.meta?.comment?.previousStatus;
 			if ( ! siteId || ! status || ! state[ siteId ] || ! previousStatus ) {
 				return state;
 			}
@@ -482,10 +472,10 @@ export const counts = ( state = {}, action ) => {
 		}
 		case COMMENTS_DELETE: {
 			const { siteId, postId = -1, commentId } = action;
-			if ( commentId && startsWith( commentId, 'placeholder' ) ) {
+			if ( commentId && String( commentId ).startsWith( 'placeholder' ) ) {
 				return state;
 			}
-			const previousStatus = get( action, 'meta.comment.previousStatus' );
+			const previousStatus = action?.meta?.comment?.previousStatus;
 
 			if ( ! siteId || ! state[ siteId ] || ! previousStatus ) {
 				return state;
@@ -504,7 +494,7 @@ export const counts = ( state = {}, action ) => {
 			return Object.assign( {}, state, { [ siteId ]: newTotalSiteCounts } );
 		}
 		case COMMENTS_RECEIVE: {
-			if ( get( action, 'meta.comment.context' ) !== 'add' ) {
+			if ( action?.meta?.comment?.context !== 'add' ) {
 				return state;
 			}
 			const { siteId, postId = -1 } = action;

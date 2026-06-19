@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, ChangeEvent, useRef } from 'react';
+import { useState, useEffect, useRef, type ChangeEvent } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import accept from 'calypso/lib/accept';
@@ -27,7 +27,7 @@ export function InviteLinkForm( props: Props ) {
 		getInviteLinksForSite( state, siteId )
 	) as InviteLinks | null;
 
-	const copyConfirmTimeoutId = useRef< NodeJS.Timeout >();
+	const copyConfirmTimeoutId = useRef< NodeJS.Timeout >( undefined );
 
 	useEffect( resetActiveLinkValue, [ inviteLinks, role ] );
 	useEffect( toggleIsGeneratingInviteLinks, [ activeInviteLink ] );

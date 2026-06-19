@@ -8,6 +8,7 @@ import {
 	domainQuery,
 	geoLocationQuery,
 	isAutomatticianQuery,
+	legacyContactsQuery,
 	monetizeSubscriptionsQuery,
 	plansQuery,
 	productsQuery,
@@ -42,6 +43,7 @@ import {
 	isSiteAction,
 	type SiteAction,
 } from '../../me/billing-purchases/site-level-actions/constants';
+import { isOptInToggleVisible } from '../../utils/hosting-dashboard-enrollment';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { reauthRequiredLink } from '../../utils/link';
 import {
@@ -53,10 +55,11 @@ import {
 	CANCEL_FLOW_TYPE,
 	type CancelIntent,
 } from '../../utils/purchase';
+import { AUTH_QUERY_KEY } from '../auth';
 import { dashboardRedirect } from './redirect';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
-import type { Purchase } from '@automattic/api-core';
+import type { Purchase, User } from '@automattic/api-core';
 import type { AnyRoute } from '@tanstack/react-router';
 
 export const meRoute = createRoute( {
@@ -630,6 +633,9 @@ export const securityIndexRoute = createRoute( {
 			queryClient.ensureQueryData( accountRecoveryQuery() ),
 			queryClient.ensureQueryData( connectedApplicationsQuery() ),
 			queryClient.ensureQueryData( sshKeysQuery() ),
+			...( isEnabled( 'me/legacy-contact' )
+				? [ queryClient.ensureQueryData( legacyContactsQuery() ) ]
+				: [] ),
 		] );
 	},
 } ).lazy( () =>
@@ -844,6 +850,48 @@ export const securitySocialLoginsRoute = createRoute( {
 	)
 );
 
+export const securityLegacyContactRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Legacy contact' ),
+			},
+		],
+	} ),
+	getParentRoute: () => securityRoute,
+	path: '/legacy-contact',
+	loader: () => queryClient.ensureQueryData( legacyContactsQuery() ),
+} );
+
+export const securityLegacyContactIndexRoute = createRoute( {
+	getParentRoute: () => securityLegacyContactRoute,
+	path: '/',
+} ).lazy( () =>
+	import( '../../me/security-legacy-contact' ).then( ( d ) =>
+		createLazyRoute( 'security-legacy-contact' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const securityLegacyContactPrintRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Legacy contact' ),
+			},
+		],
+	} ),
+	getParentRoute: () => securityLegacyContactRoute,
+	path: '/print',
+} ).lazy( () =>
+	import( '../../me/security-legacy-contact/print' ).then( ( d ) =>
+		createLazyRoute( 'security-legacy-contact-print' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const privacyRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -991,6 +1039,13 @@ export const hostingDashboardRoute = createRoute( {
 	} ),
 	getParentRoute: () => preferencesRoute,
 	path: 'hosting-dashboard',
+	beforeLoad: async () => {
+		const user = queryClient.getQueryData< User >( AUTH_QUERY_KEY );
+		const preferences = await queryClient.ensureQueryData( rawUserPreferencesQuery() );
+		if ( ! isOptInToggleVisible( preferences[ 'hosting-dashboard-opt-in' ], user?.ID ) ) {
+			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
+		}
+	},
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
@@ -1319,6 +1374,14 @@ export const createMeRoutes = ( config: AppConfig ) => {
 				: [] ),
 			securityConnectedAppsRoute,
 			securitySocialLoginsRoute,
+			...( isEnabled( 'me/legacy-contact' )
+				? [
+						securityLegacyContactRoute.addChildren( [
+							securityLegacyContactIndexRoute,
+							securityLegacyContactPrintRoute,
+						] ),
+				  ]
+				: [] ),
 		] )
 	);
 

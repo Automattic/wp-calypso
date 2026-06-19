@@ -1,3 +1,4 @@
+import { translationExists } from '@automattic/i18n-utils';
 import { __ } from '@wordpress/i18n';
 import cx from 'clsx';
 import { Fragment } from 'react';
@@ -143,7 +144,11 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 				</div>
 				{ startingHumanSupport && (
 					<ChatWithSupportLabel
-						labelText={ __( 'Chat with support team started', __i18n_text_domain__ ) }
+						labelText={
+							translationExists( 'Support request started' )
+								? __( 'Support request started', __i18n_text_domain__ )
+								: __( 'Chat with support team started', __i18n_text_domain__ )
+						}
 					/>
 				) }
 			</Fragment>

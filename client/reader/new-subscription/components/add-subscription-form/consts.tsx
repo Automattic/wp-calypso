@@ -3,6 +3,7 @@ import ReaderRedditIcon from 'calypso/reader/components/icons/reddit-icon';
 import ReaderSubstackIcon from 'calypso/reader/components/icons/substack-icon';
 import ReaderTumblrIcon from 'calypso/reader/components/icons/tumblr-icon';
 import ReaderYouTubeIcon from 'calypso/reader/components/icons/youtube-icon';
+import type { JSX } from 'react';
 
 export type SubscriptionType = 'add-new' | 'reddit' | 'youtube' | 'tumblr' | 'substack';
 

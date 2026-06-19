@@ -58,6 +58,12 @@ interface Props {
 	 * from the final price.
 	 */
 	reflectStorageSelectionInPlanPrices?: boolean;
+
+	/**
+	 * Renewal-pricing experiment flag. When falsy (non-treatment), the current plan's
+	 * headline uses the renewal price, not an active intro price.
+	 */
+	showBillingDescriptionForIncreasedRenewalPrice?: string | null;
 }
 
 function getTotalPrice( planPrice: number | null | undefined, addOnPrice = 0 ): number | null {
@@ -81,6 +87,7 @@ const usePricingMetaForGridPlans = ( {
 	useCheckPlanAvailabilityForPurchase,
 	withProratedDiscounts,
 	reflectStorageSelectionInPlanPrices = false,
+	showBillingDescriptionForIncreasedRenewalPrice,
 }: Props ): { [ planSlug: string ]: Plans.PricingMetaForGridPlan } | null => {
 	// plans - should have a definition for all plans, being the main source of API data
 	const plans = Plans.usePlans( { coupon } );
@@ -186,15 +193,17 @@ const usePricingMetaForGridPlans = ( {
 					let fullPrice = sitePlan?.pricing.originalPrice.full;
 
 					/**
-					 * Ensure the spotlight (current) plan shows the price with which the plan was purchased.
-					 * When the purchase has an active intro offer, use the intro offer price (what the
-					 * user is actually paying this billing term) instead of the renewal price.
+					 * Spotlight (current) plan headline. Only the renewal-pricing experiment treatment shows
+					 * the active intro price (with a separate "renews at" line); everyone else sees the renewal
+					 * price, so the headline is never lower than what they'll actually pay.
 					 */
 					let renewalPrice: Plans.PlanPricing[ 'originalPrice' ] | undefined;
 
 					if ( purchasedPlan ) {
-						const hasActiveIntroOffer = purchasedPlan.introductoryOffer?.isWithinPeriod;
-						const currentTermPrice = hasActiveIntroOffer
+						const showIntroOfferHeadline =
+							!! showBillingDescriptionForIncreasedRenewalPrice &&
+							purchasedPlan.introductoryOffer?.isWithinPeriod;
+						const currentTermPrice = showIntroOfferHeadline
 							? purchasedPlan.introductoryOffer!.costPerIntervalInteger
 							: purchasedPlan.priceInteger;
 						const isMonthly = purchasedPlan.billPeriodDays === PLAN_MONTHLY_PERIOD;
@@ -208,7 +217,7 @@ const usePricingMetaForGridPlans = ( {
 							fullPrice = currentTermPrice;
 						}
 
-						if ( hasActiveIntroOffer ) {
+						if ( showIntroOfferHeadline ) {
 							const renewalTerm = getTermFromDuration( purchasedPlan.billPeriodDays ) || '';
 							renewalPrice = {
 								monthly: isMonthly

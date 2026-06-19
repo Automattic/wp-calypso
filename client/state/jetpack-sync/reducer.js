@@ -2,8 +2,9 @@
  * External dependencis
  *
  */
+import { pick } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
-import { pick, get } from 'lodash';
+import { get } from 'lodash';
 import {
 	JETPACK_SYNC_START_REQUEST,
 	JETPACK_SYNC_START_SUCCESS,
@@ -29,7 +30,7 @@ export function fullSyncRequest( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: Object.assign( {}, get( state, [ action.siteId ], {} ), {
 					isRequesting: false,
-					scheduled: get( action, 'data.scheduled' ),
+					scheduled: action?.data?.scheduled,
 					error: false,
 				} ),
 			} );
@@ -64,14 +65,14 @@ export function syncStatus( state = {}, action ) {
 
 			// lastSuccessfulStatus is any status after we have started sycing
 			let lastSuccessfulStatus = get( thisState, 'lastSuccessfulStatus', false );
-			const isFullSyncing = get( action, 'data.started' ) && ! get( action, 'data.finished' );
+			const isFullSyncing = action?.data?.started && ! action?.data?.finished;
 			if ( lastSuccessfulStatus || isFullSyncing ) {
 				lastSuccessfulStatus = Date.now();
 			}
 
 			// Check if Sync Completed before seeing a successful status request
 			if ( false === lastSuccessfulStatus ) {
-				if ( get( action, 'data.started' ) < get( action, 'data.finished' ) ) {
+				if ( action?.data?.started < action?.data?.finished ) {
 					lastSuccessfulStatus = Date.now();
 				}
 			}

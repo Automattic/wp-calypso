@@ -79,20 +79,39 @@ jest.mock( 'calypso/components/infinite-list', () => {
 	return class InfiniteList extends ReactLib.Component< {
 		items: Array< { postId: number } >;
 		fetchingNextPage?: boolean;
-		renderItem: ( postKey: { postId: number }, idx: number ) => ReactNode;
+		// Mirror the real signature: the third argument is the callback ref the
+		// list hands to consumers so they can register their item's DOM node.
+		renderItem: (
+			postKey: { postId: number },
+			idx: number,
+			registerItemRef: ( node: HTMLElement | null ) => void
+		) => ReactNode;
 		renderLoadingPlaceholders?: () => ReactNode;
 	} > {
+		containerRef = ReactLib.createRef< HTMLDivElement >();
+		itemRefs = new Map< number, HTMLElement >();
 		scrollToTop = jest.fn();
 		getVisibleItemIndexes = jest.fn( () => [] );
+		getDOMNode = () => this.containerRef.current;
+
+		setItemRef = ( key: number ) => ( node: HTMLElement | null ) => {
+			if ( node ) {
+				this.itemRefs.set( key, node );
+			} else {
+				this.itemRefs.delete( key );
+			}
+		};
 
 		render() {
 			const { items, fetchingNextPage, renderItem, renderLoadingPlaceholders } = this.props;
 			const showPlaceholders = items.length === 0 && fetchingNextPage;
 			return (
-				<div data-testid="infinite-list" style={ { overflowY: 'auto' } }>
+				<div ref={ this.containerRef } data-testid="infinite-list" style={ { overflowY: 'auto' } }>
 					{ showPlaceholders
 						? renderLoadingPlaceholders?.()
-						: items.map( ( item, idx ) => <div key={ idx }>{ renderItem( item, idx ) }</div> ) }
+						: items.map( ( item, idx ) => (
+								<div key={ idx }>{ renderItem( item, idx, this.setItemRef( idx ) ) }</div>
+						  ) ) }
 				</div>
 			);
 		}
@@ -431,6 +450,29 @@ describe( 'Stream — keyboard navigation', () => {
 		await waitFor( () => expect( getByTestId( 'post-20' ) ).toHaveClass( 'is-selected' ) );
 		expect( getByTestId( 'post-10' ) ).not.toHaveClass( 'is-selected' );
 		expect( getByTestId( 'post-30' ) ).not.toHaveClass( 'is-selected' );
+	} );
+
+	it( 'j advances the selection when the stream scrolls with the window', async () => {
+		// Regression test: when no ancestor is a scroll container the stream's
+		// `listContext` resolves to `false`, and `false?.querySelector` throws a
+		// TypeError instead of short-circuiting — `j` must still advance the
+		// selection by querying the list's own DOM node.
+		const origGetComputedStyle = window.getComputedStyle.bind( window );
+		const spy = jest.spyOn( window, 'getComputedStyle' ).mockImplementation( ( el, pseudo ) => {
+			const style = origGetComputedStyle( el, pseudo );
+			if ( el instanceof HTMLElement && el.dataset.testid === 'infinite-list' ) {
+				return { ...style, overflowY: 'visible' } as CSSStyleDeclaration;
+			}
+			return style;
+		} );
+
+		try {
+			const { getByTestId } = await setupAndSelectFirst();
+			fireEvent.keyDown( document, { key: 'j' } );
+			await waitFor( () => expect( getByTestId( 'post-20' ) ).toHaveClass( 'is-selected' ) );
+		} finally {
+			spy.mockRestore();
+		}
 	} );
 
 	it( 'ArrowRight is an alias for j', async () => {

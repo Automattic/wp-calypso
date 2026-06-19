@@ -144,7 +144,7 @@ const AddProfessionalEmail = () => {
 	let mailboxCost;
 	const totalItems = mailboxEntities.length;
 	let totalPrice = '0';
-	if ( isAddMailboxRoute ) {
+	if ( isAddMailboxRoute && product ) {
 		mailboxCost = getMailboxCost( {
 			domain,
 			product,

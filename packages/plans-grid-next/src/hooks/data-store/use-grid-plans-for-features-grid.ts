@@ -29,6 +29,7 @@ const useGridPlansForFeaturesGrid = ( {
 	showPricingDifferentiationFeaturePills,
 	useFocusedNewCopyTaglines,
 	isExperimentVariant,
+	showBillingDescriptionForIncreasedRenewalPrice,
 }: UseGridPlansParams ): GridPlan[] | null => {
 	const gridPlans = useGridPlans( {
 		allFeaturesList,
@@ -50,6 +51,7 @@ const useGridPlansForFeaturesGrid = ( {
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices,
 		useFocusedNewCopyTaglines,
+		showBillingDescriptionForIncreasedRenewalPrice,
 	} );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {

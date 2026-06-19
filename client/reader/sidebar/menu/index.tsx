@@ -2,6 +2,7 @@ import './style.scss';
 
 import { Icon, plus } from '@wordpress/icons';
 import clsx from 'clsx';
+import { forwardRef } from 'react';
 
 interface MenuItemProps extends React.HTMLAttributes< HTMLLIElement > {
 	selected: boolean;
@@ -9,18 +10,24 @@ interface MenuItemProps extends React.HTMLAttributes< HTMLLIElement > {
 	className?: string;
 }
 
-export const MenuItem = ( { selected, children, className, ...props }: MenuItemProps ) => {
-	return (
-		<li
-			{ ...props }
-			className={ clsx( 'sidebar__menu-item', className, {
-				'sidebar__menu-item--selected selected': selected,
-			} ) }
-		>
-			{ children }
-		</li>
-	);
-};
+// forwardRef so consumers can reach the rendered `li` (e.g. to scroll the
+// current item into view). Needed on React 18; React 19 passes `ref` as a prop.
+export const MenuItem = forwardRef< HTMLLIElement, MenuItemProps >(
+	( { selected, children, className, ...props }, ref ) => {
+		return (
+			<li
+				{ ...props }
+				ref={ ref }
+				className={ clsx( 'sidebar__menu-item', className, {
+					'sidebar__menu-item--selected selected': selected,
+				} ) }
+			>
+				{ children }
+			</li>
+		);
+	}
+);
+MenuItem.displayName = 'MenuItem';
 
 interface MenuItemLinkProps extends React.AnchorHTMLAttributes< HTMLAnchorElement > {
 	children: React.ReactNode;

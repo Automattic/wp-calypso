@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/mixins";
+
 .is-section-a8c-for-agencies-plugins {
 	.wpcom-site {
 		.main.hosting-dashboard-layout.sites-dashboard.sites-dashboard__layout:not(.preview-hidden) {
@@ -33,6 +35,10 @@
 				}
 			}
 		}
+	}
+
+	.plugins__confirmation-modal .components-modal__content p {
+		@include body-medium;
 	}
 }
 

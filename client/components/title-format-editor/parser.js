@@ -1,5 +1,6 @@
 import { convertFromRaw, convertToRaw } from 'draft-js';
-import { compact, flowRight as compose, get, map, matchesProperty, reduce } from 'lodash';
+import { get, map, matchesProperty, reduce } from 'lodash';
+import { compose } from 'redux';
 
 /*
  * The functions in this file convert between the
@@ -75,7 +76,7 @@ export const fromEditor = ( content ) => {
 	const rawContent = convertToRaw( content );
 	const text = get( rawContent, 'blocks[0].text', '' );
 	const ranges = get( rawContent, 'blocks[0].entityRanges', [] );
-	const entities = get( rawContent, 'entityMap' );
+	const entities = rawContent?.entityMap;
 
 	// [ output, index, text ]
 	const [ o, i, t ] = ranges.reduce(
@@ -96,7 +97,7 @@ export const fromEditor = ( content ) => {
 	);
 
 	// add final remaining text not captured by any entity ranges
-	return compact( [ ...o, i < t.length && { type: 'string', value: t.slice( i ) } ] );
+	return [ ...o, i < t.length && { type: 'string', value: t.slice( i ) } ].filter( Boolean );
 };
 
 const isTextPiece = matchesProperty( 'type', 'string' );

@@ -5,6 +5,7 @@ export const NOTES_ADD = 'NOTES_ADD';
 export const NOTES_REMOVE = 'NOTES_REMOVE';
 export const NOTES_LOADING = 'NOTES_LOADING';
 export const NOTES_LOADED = 'NOTES_LOADED';
+export const SET_UNREAD_NOTE_IDS = 'SET_UNREAD_NOTE_IDS';
 export const SELECT_NOTE = 'SELECT_NOTE';
 export const READ_NOTE = 'READ_NOTE';
 export const RESET_LOCAL_APPROVAL = 'RESET_LOCAL_APPROVAL';

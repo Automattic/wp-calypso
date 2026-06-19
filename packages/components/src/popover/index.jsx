@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import { useRtl } from 'i18n-calypso';
-import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, useState, useEffect, Component } from 'react';
 import ReactDom from 'react-dom';
@@ -80,10 +79,10 @@ class PopoverInner extends Component {
 		// setting and checking `this.scheduledPositionUpdate`.
 		// See https://github.com/Automattic/wp-calypso/commit/38e779cfebf6dd42bb30d8be7127951b0c531ae2
 		if ( this.scheduledPositionUpdate == null ) {
-			this.scheduledPositionUpdate = defer( () => {
+			this.scheduledPositionUpdate = setTimeout( () => {
 				this.setPosition();
 				this.scheduledPositionUpdate = null;
-			} );
+			}, 0 );
 		}
 	}
 
@@ -208,12 +207,12 @@ class PopoverInner extends Component {
 		// { top: -9999, left: -9999 } where it already has dimensions. These dimensions are measured
 		// and used to calculate the final position.
 		// Focusing the element while it's off the screen would cause unwanted scrolling.
-		this.scheduledFocus = defer( () => {
+		this.scheduledFocus = setTimeout( () => {
 			if ( this.popoverNodeRef.current ) {
 				this.popoverNodeRef.current.focus();
 			}
 			this.scheduledFocus = null;
-		} );
+		}, 0 );
 	}
 
 	getPositionClass( position ) {

@@ -73,7 +73,6 @@ export default function useGenerateActionHook( {
 	coupon,
 	showBillingDescriptionForIncreasedRenewalPrice,
 	enableCategorisedFeatures,
-	isGatingBusinessQ1,
 	redirectTo,
 	pluginSlug,
 }: {
@@ -83,15 +82,10 @@ export default function useGenerateActionHook( {
 	plansIntent?: PlansIntent | null;
 	isInSignup: boolean;
 	isLaunchPage: boolean | null;
-	showModalAndExit?: ( planSlug: PlanSlug ) => boolean;
+	showModalAndExit?: ( planSlug: PlanSlug ) => boolean | Promise< boolean >;
 	coupon?: string;
 	showBillingDescriptionForIncreasedRenewalPrice?: string | null;
 	enableCategorisedFeatures?: boolean;
-	/**
-	 * When true, adds `is_gating_business_q1` to the plan cart item extra data
-	 * for the rolled-out pricing differentiation cohort.
-	 */
-	isGatingBusinessQ1?: boolean;
 	redirectTo?: string;
 	pluginSlug?: string;
 } ): UseAction {
@@ -124,7 +118,6 @@ export default function useGenerateActionHook( {
 		sitePlanSlug,
 		siteId,
 		coupon,
-		isGatingBusinessQ1,
 		redirectTo,
 		pluginSlug,
 	} );
