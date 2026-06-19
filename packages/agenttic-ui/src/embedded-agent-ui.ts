@@ -12,6 +12,8 @@ export {
 	ThinkingMessage,
 } from './components/EmbeddedAgentUI';
 export { LightweightMarkdownRenderer } from './components/LightweightMarkdownRenderer';
+export { QuestionCard } from './components/question';
+export type { QuestionCardProps } from './components/question';
 export type {
 	AgentUIProps,
 	Message,

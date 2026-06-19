@@ -4,6 +4,8 @@ export * from './chat';
 // UI components
 export { Button } from './ui/button';
 export { Textarea } from './ui/textarea';
+export { QuestionCard } from './question';
+export type { QuestionCardProps } from './question';
 
 // Feature components
 export { Suggestions } from './chat/Suggestions';
