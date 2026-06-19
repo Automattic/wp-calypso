@@ -16,22 +16,32 @@ import { type FlowV2, type SubmitHandler } from '../../internals/types';
 
 export const ANON_DRAFT_STORAGE_KEY = 'wpcom-write-anon-draft';
 
+// Cap the localStorage payload at ~200K characters. A long blog post in
+// Gutenberg block markup is well under 100K; anything larger is almost
+// certainly corrupted or hostile and is treated as "no draft."
+export const MAX_DRAFT_SIZE = 200_000;
+
 type AnonDraft = {
-	title?: string;
-	content?: string;
-	ts?: number;
+	title: string;
+	content: string;
 };
 
 function readAnonDraft(): AnonDraft | null {
 	try {
 		const raw = window.localStorage.getItem( ANON_DRAFT_STORAGE_KEY );
-		if ( ! raw ) {
+		if ( ! raw || raw.length > MAX_DRAFT_SIZE ) {
 			return null;
 		}
 		const parsed = JSON.parse( raw );
-		if ( parsed && typeof parsed === 'object' ) {
-			return parsed as AnonDraft;
+		if ( ! parsed || typeof parsed !== 'object' ) {
+			return null;
 		}
+		const title = typeof parsed.title === 'string' ? parsed.title : '';
+		const content = typeof parsed.content === 'string' ? parsed.content : '';
+		if ( ! title && ! content ) {
+			return null;
+		}
+		return { title, content };
 	} catch {
 		// Treat unreadable storage as "no draft" — the side-effect handler will
 		// redirect to standard onboarding rather than running an empty flow.
@@ -101,7 +111,7 @@ const writeOn: FlowV2< typeof initialize > = {
 			}
 
 			recordTracksEvent( 'calypso_write_on_flow_entered', {
-				draft_size: ( draft.title?.length ?? 0 ) + ( draft.content?.length ?? 0 ),
+				draft_size: draft.title.length + draft.content.length,
 			} );
 
 			if ( draft.title ) {

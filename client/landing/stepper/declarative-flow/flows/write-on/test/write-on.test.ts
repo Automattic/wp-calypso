@@ -5,7 +5,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
-import writeOn, { ANON_DRAFT_STORAGE_KEY } from '../write-on';
+import writeOn, { ANON_DRAFT_STORAGE_KEY, MAX_DRAFT_SIZE } from '../write-on';
 
 const mockIsEnabled = jest.fn( ( flag: string ) => flag === 'calypso/write-on-flow' );
 
@@ -186,6 +186,66 @@ describe( 'write-on flow', () => {
 			site_id: 99,
 			error: 'x'.repeat( 200 ),
 		} );
+	} );
+
+	it( 'treats an oversized localStorage payload as no draft at publish time', async () => {
+		window.localStorage.setItem(
+			ANON_DRAFT_STORAGE_KEY,
+			JSON.stringify( { title: 'T', content: 'x'.repeat( MAX_DRAFT_SIZE + 1 ) } )
+		);
+		wpcomPostMock.mockResolvedValue( { ID: 7 } );
+
+		await submitFor( 'processing', {
+			processingResult: ProcessingResult.SUCCESS,
+			siteId: 99,
+			siteSlug: 'example.wordpress.com',
+		} );
+
+		expect( wpcomPostMock ).toHaveBeenCalledWith(
+			'/sites/99/posts/new',
+			{ apiVersion: '1.2' },
+			{ title: '', content: '', status: 'draft' }
+		);
+	} );
+
+	it( 'coerces non-string draft fields to empty strings', async () => {
+		window.localStorage.setItem(
+			ANON_DRAFT_STORAGE_KEY,
+			JSON.stringify( { title: 12345, content: '<p>Body</p>' } )
+		);
+		wpcomPostMock.mockResolvedValue( { ID: 7 } );
+
+		await submitFor( 'processing', {
+			processingResult: ProcessingResult.SUCCESS,
+			siteId: 99,
+			siteSlug: 'example.wordpress.com',
+		} );
+
+		expect( wpcomPostMock ).toHaveBeenCalledWith(
+			'/sites/99/posts/new',
+			{ apiVersion: '1.2' },
+			{ title: '', content: '<p>Body</p>', status: 'draft' }
+		);
+	} );
+
+	it( 'treats a draft with no string fields as no draft', async () => {
+		window.localStorage.setItem(
+			ANON_DRAFT_STORAGE_KEY,
+			JSON.stringify( { title: 12345, content: [ 'not', 'a', 'string' ] } )
+		);
+		wpcomPostMock.mockResolvedValue( { ID: 7 } );
+
+		await submitFor( 'processing', {
+			processingResult: ProcessingResult.SUCCESS,
+			siteId: 99,
+			siteSlug: 'example.wordpress.com',
+		} );
+
+		expect( wpcomPostMock ).toHaveBeenCalledWith(
+			'/sites/99/posts/new',
+			{ apiVersion: '1.2' },
+			{ title: '', content: '', status: 'draft' }
+		);
 	} );
 
 	it( 'sends empty title and content when no localStorage draft exists at publish time', async () => {
