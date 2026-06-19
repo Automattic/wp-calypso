@@ -99,7 +99,7 @@ export default function McpOverview( {
 					</CardBody>
 					{ mainEnabled && (
 						<>
-							<CardDivider />
+							<CardDivider style={ { borderColor: 'var(--color-neutral-5)' } } />
 							<SummaryButton
 								density="medium"
 								title={ __( 'Available tools' ) }

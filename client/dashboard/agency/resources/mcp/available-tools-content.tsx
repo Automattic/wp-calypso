@@ -137,7 +137,7 @@ export default function McpAvailableTools( {
 										/>
 									</HStack>
 								</CardBody>
-								<CardDivider />
+								<CardDivider style={ { borderColor: 'var(--color-neutral-5)' } } />
 								<CardBody>
 									<VStack spacing={ 4 }>
 										{ group.abilities.map( ( ability ) => (

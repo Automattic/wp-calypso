@@ -1,33 +1,14 @@
-import {
-	activeAgencyQuery,
-	mcpSettingsQuery,
-	agencyMcpSettingsMutation,
-} from '@automattic/api-queries';
-import { useMutation, useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import McpAvailableTools from './available-tools-content';
-import type { McpSettingsUpdate } from '@automattic/api-core';
+import { useMcpSettings } from './use-mcp-settings';
 
 export default function McpAvailableToolsScreen() {
 	const { recordTracksEvent } = useAnalytics();
-	const { data: agency } = useQuery( activeAgencyQuery() );
-	const agencyId = agency?.id ?? 0;
-	const { data: settings } = useQuery( mcpSettingsQuery( agencyId ) );
-	const mutation = useMutation( {
-		...agencyMcpSettingsMutation( agencyId ),
-		meta: {
-			snackbar: {
-				success: __( 'MCP settings saved.' ),
-				error: __( 'Could not save. Please try again.' ),
-			},
-		},
-	} );
-
-	const onSave = ( update: McpSettingsUpdate ) => mutation.mutate( update );
+	const { settings, save } = useMcpSettings();
 
 	return (
 		<PageLayout
@@ -37,7 +18,7 @@ export default function McpAvailableToolsScreen() {
 		>
 			<McpAvailableTools
 				settings={ settings }
-				onSave={ onSave }
+				onSave={ save }
 				recordTracksEvent={ recordTracksEvent }
 			/>
 		</PageLayout>
