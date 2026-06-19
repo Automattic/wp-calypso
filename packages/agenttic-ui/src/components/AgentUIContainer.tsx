@@ -17,6 +17,7 @@ import { cn } from '../utils/classNames';
 import {
 	type ChatPosition,
 	getChatPosition,
+	getInitialChatPosition,
 	setChatPosition,
 } from '../utils/chatStorage';
 import { morphSpring } from './animations';
@@ -218,19 +219,13 @@ export function AgentUIContainer( {
 	const chatRef = useRef< HTMLDivElement >( null );
 
 	// Motion values for programmatic control
-	// In free drag mode, seed from a persisted pixel position when provided.
-	// Otherwise initialize position based on saved side (right-aligned needs offset).
-	const seedFreeDrag = freeDrag && initialFreeDragPosition !== undefined;
-	const cornerX =
-		currentSide === 'right'
-			? window.innerWidth -
-			  STYLE_CONSTANTS.COMPACT_WIDTH -
-			  STYLE_CONSTANTS.VIEWPORT_OFFSET * 2
-			: 0;
-	const x = useMotionValue(
-		seedFreeDrag ? initialFreeDragPosition.x : cornerX
-	);
-	const y = useMotionValue( seedFreeDrag ? initialFreeDragPosition.y : 0 );
+	const { x: initialX, y: initialY } = getInitialChatPosition( {
+		freeDrag,
+		initialFreeDragPosition,
+		side: currentSide,
+	} );
+	const x = useMotionValue( initialX );
+	const y = useMotionValue( initialY );
 	const dragControls = useDragControls();
 
 	// Handle suggestion submission
