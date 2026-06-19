@@ -80,6 +80,32 @@ function clusterMessagesBySender( messages: Message[] ) {
 		return [];
 	}
 
+	const shouldStartNewGroup = (
+		message: Message,
+		currentGroup: {
+			role:
+				| MessageRole
+				| 'csat'
+				| 'attachment'
+				| 'feedback'
+				| 'zendesk-intro'
+				| 'business-automated';
+			messages: Message[];
+		}
+	) => {
+		const presentedRole = getPresentedRole( message );
+
+		if ( presentedRole !== currentGroup.role ) {
+			return true;
+		}
+
+		return (
+			presentedRole === 'business-automated' &&
+			currentGroup.messages.length > 0 &&
+			message.displayName !== currentGroup.messages[ 0 ]?.displayName
+		);
+	};
+
 	let currentGroup: {
 		id: string;
 		role: MessageRole | 'csat' | 'attachment' | 'feedback' | 'zendesk-intro' | 'business-automated';
@@ -97,7 +123,7 @@ function clusterMessagesBySender( messages: Message[] ) {
 			continue;
 		}
 
-		if ( getPresentedRole( message ) !== currentGroup.role ) {
+		if ( shouldStartNewGroup( message, currentGroup ) ) {
 			currentGroup = {
 				id: crypto.randomUUID(),
 				role: getPresentedRole( message ),
