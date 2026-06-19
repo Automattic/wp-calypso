@@ -37,6 +37,7 @@
 		"dashboard/enable-percentage-rollout": false,
 		"dashboard/force-opt-in-visibility": true,
 		"dashboard/opt-in-banners": false,
+		"dashboard/opt-in-welcome-modal": false,
 		"emails/titan-tiers": false,
 		"google-my-business": false,
 		"help": true,

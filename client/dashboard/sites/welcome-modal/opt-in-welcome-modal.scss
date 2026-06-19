@@ -1,0 +1,12 @@
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/mixins';
+
+.dashboard-opt-in-welcome-modal {
+	@include break-small {
+		width: 600px;
+	}
+
+	.dashboard-opt-in-welcome-modal__title {
+		@include heading-large;
+	}
+}

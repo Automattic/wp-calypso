@@ -1,4 +1,5 @@
 import { isAutomatticianQuery, siteBySlugQuery, siteByIdQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	useQuery,
@@ -36,6 +37,7 @@ import {
 import { EmptySitesStateContent, EmptySitesSearchStateContent } from './empty-sites-state';
 import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
 import { SitesNotices } from './notices';
+import { OptInWelcomeModal } from './welcome-modal';
 import type { FetchPaginatedSitesOptions, Site, DashboardFilters } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
 
@@ -213,6 +215,9 @@ export default function Sites() {
 
 	return (
 		<>
+			{ ! isDashboardBackport() && isEnabled( 'dashboard/opt-in-welcome-modal' ) && (
+				<OptInWelcomeModal />
+			) }
 			<InviteAcceptedFlashMessage />
 			{ isModalOpen && (
 				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>

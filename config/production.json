@@ -44,6 +44,7 @@
 		"dashboard/enable-percentage-rollout": false,
 		"dashboard/omnibar": true,
 		"dashboard/opt-in-banners": false,
+		"dashboard/opt-in-welcome-modal": false,
 		"dashboard/wp-beta-program": true,
 		"dolly/telegram": true,
 		"domain-bundling": false,
