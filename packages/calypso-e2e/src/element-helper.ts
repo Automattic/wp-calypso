@@ -205,6 +205,95 @@ export async function reloadAndRetry(
 	return;
 }
 
+export type AvailabilityClock = {
+	now: () => number;
+	sleep: ( ms: number ) => Promise< void >;
+};
+
+const realAvailabilityClock: AvailabilityClock = {
+	now: () => Date.now(),
+	sleep: ( ms ) => new Promise( ( resolve ) => setTimeout( resolve, ms ) ),
+};
+
+/**
+ * Result of polling a single target for availability.
+ */
+export type ProbeTargetResult = {
+	label: string;
+	/** Time (relative to `AvailabilityProbe.measuredFrom`) at which the target first returned 200, or null if it never did within the cap. */
+	recoveredMs: number | null;
+	/** Last HTTP status seen: 200 when recovered, otherwise the final failing status, or -1 on network error. */
+	lastStatus: number;
+};
+
+/**
+ * Aggregate result of a post-publish availability probe.
+ */
+export type AvailabilityProbe = {
+	capMs: number;
+	measuredFrom: 'publish' | 'probe-start';
+	targets: ProbeTargetResult[];
+};
+
+/**
+ * Polls `getStatus` until it returns 200 or `capMs` elapses since the first call.
+ *
+ * The cap is strict: no poll is started and no sleep runs once the budget is
+ * exhausted, and each call receives the remaining budget so callers can clamp
+ * their own per-request timeout to it. The clock is injectable so the loop can be
+ * unit tested without real timers or network access.
+ *
+ * @param {Function} getStatus Async function that receives the remaining budget (ms) and returns an HTTP status code (use -1 for a network error).
+ * @param {Object} options Poll options.
+ * @param {number} options.capMs Maximum time to keep polling, measured from the first call.
+ * @param {number} options.intervalMs Delay between polls.
+ * @param {AvailabilityClock} options.clock Injectable clock, defaults to real time.
+ * @returns {Promise} `recoveredAfterMs` (ms from the first call to the first 200, or null) and the last status seen.
+ */
+export async function pollUntilAvailable(
+	getStatus: ( remainingMs: number ) => Promise< number >,
+	{
+		capMs,
+		intervalMs,
+		clock = realAvailabilityClock,
+	}: { capMs: number; intervalMs: number; clock?: AvailabilityClock }
+): Promise< { recoveredAfterMs: number | null; lastStatus: number } > {
+	const start = clock.now();
+	const remaining = () => capMs - ( clock.now() - start );
+
+	let lastStatus = await getStatus( capMs );
+
+	while ( lastStatus !== 200 && remaining() > 0 ) {
+		await clock.sleep( Math.min( intervalMs, remaining() ) );
+		if ( remaining() <= 0 ) {
+			break;
+		}
+		lastStatus = await getStatus( remaining() );
+	}
+
+	if ( lastStatus === 200 ) {
+		return { recoveredAfterMs: clock.now() - start, lastStatus };
+	}
+	return { recoveredAfterMs: null, lastStatus };
+}
+
+/**
+ * Formats an availability probe for inclusion in a failure message.
+ *
+ * @param {AvailabilityProbe} probe The probe result.
+ * @returns {string} A multi-line, log-correlation-friendly summary.
+ */
+export function formatAvailabilityProbe( probe: AvailabilityProbe ): string {
+	const lines = probe.targets.map( ( target ) => {
+		if ( target.recoveredMs !== null ) {
+			return `  ${ target.label }: recovered after ${ target.recoveredMs }ms (since ${ probe.measuredFrom })`;
+		}
+		return `  ${ target.label }: not recovered within ${ probe.capMs }ms (last status ${ target.lastStatus })`;
+	} );
+
+	return [ `Availability probe (cap ${ probe.capMs }ms):`, ...lines ].join( '\n' );
+}
+
 /**
  * Gets and validates the block ID from a Locator to a parent Block element in the editor.
  *

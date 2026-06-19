@@ -1,6 +1,12 @@
-import { Page, ElementHandle, Response, Locator } from 'playwright';
+import { Page, ElementHandle, Response, Locator, request } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
-import { reloadAndRetry } from '../../element-helper';
+import {
+	reloadAndRetry,
+	pollUntilAvailable,
+	formatAvailabilityProbe,
+	type AvailabilityProbe,
+	type ProbeTargetResult,
+} from '../../element-helper';
 import envVariables from '../../env-variables';
 import {
 	EditorComponent,
@@ -72,6 +78,10 @@ type ResponseDiagnostic = {
 type PublishDiagnostics = {
 	publishedURL: string;
 	publishResponse: ResponseDiagnostic;
+	/** The REST by-ID endpoint (the publish response URL), used to probe by-ID resolution. */
+	restByIdURL?: string;
+	/** `Date.now()` when the publish response was received, used to measure the read-after-write window. */
+	publishedAtMs?: number;
 	postId?: number | string;
 	postSlug?: string;
 	postStatus?: string;
@@ -130,13 +140,16 @@ function getResponseDiagnostic( response: Response | null, action: string ): Res
 function getPublishDiagnostics(
 	response: Response,
 	body: PublishResponseBody,
-	publishedURL: string
+	publishedURL: string,
+	publishedAtMs?: number
 ): PublishDiagnostics {
 	const publishedContent = body.body ?? body;
 
 	return {
 		publishedURL: sanitizeURLForDiagnostics( publishedURL ),
 		publishResponse: getResponseDiagnostic( response, 'publish' ),
+		restByIdURL: sanitizeURLForDiagnostics( response.url() ),
+		publishedAtMs,
 		postId: publishedContent.id ?? publishedContent.ID,
 		postSlug: publishedContent.slug,
 		postStatus: publishedContent.status,
@@ -200,6 +213,103 @@ function getPublishedPost404Message( {
 				: 'not captured'
 		}`,
 	].join( '\n' );
+}
+
+const PUBLISHED_POST_PROBE_CAP_MS = 20 * 1000;
+const PUBLISHED_POST_PROBE_INTERVAL_MS = 1000;
+
+/**
+ * After a post-publish 404, measures when (if ever, within a cap) the published
+ * post becomes routable. This bounds the read-after-write window and isolates the
+ * failing layer. It is diagnostic only and does not change the failure outcome.
+ *
+ * Probes three targets in parallel until each returns 200 or the cap elapses:
+ *  - `permalink-authenticated`: the permalink with the test session cookies (what the test saw).
+ *  - `permalink-anonymous`: the permalink with no cookies (what a logged-out visitor sees).
+ *  - `rest-by-id`: the REST by-ID endpoint, isolating permalink/rewrite resolution from row visibility.
+ *
+ * @param {Page} page The page whose request context (cookies) mirrors the test session.
+ * @param {string} permalink The published permalink that returned 404.
+ * @param {PublishDiagnostics} publishDiagnostics Captured publish diagnostics, if available.
+ */
+async function probePublishedPostAvailability(
+	page: Page,
+	permalink: string,
+	publishDiagnostics?: PublishDiagnostics
+): Promise< AvailabilityProbe > {
+	const capMs = PUBLISHED_POST_PROBE_CAP_MS;
+	const intervalMs = PUBLISHED_POST_PROBE_INTERVAL_MS;
+	const probeStartMs = Date.now();
+	const publishedAtMs = publishDiagnostics?.publishedAtMs;
+	const restByIdURL = publishDiagnostics?.restByIdURL;
+
+	// Convert a probe-relative recovery time into a publish-relative one when the
+	// publish timestamp is known, so the reported number reflects the full window.
+	const toReportedMs = ( recoveredAfterMs: number | null ): number | null => {
+		if ( recoveredAfterMs === null ) {
+			return null;
+		}
+		if ( publishedAtMs === undefined ) {
+			return recoveredAfterMs;
+		}
+		return probeStartMs - publishedAtMs + recoveredAfterMs;
+	};
+
+	// Bound each request to the smaller of a fixed ceiling and the remaining cap
+	// budget, so the probe never runs meaningfully past `capMs`.
+	const maxRequestTimeout = intervalMs * 5;
+	const clampTimeout = ( remainingMs: number ): number =>
+		Math.max( 1, Math.min( maxRequestTimeout, remainingMs ) );
+
+	const probeTarget = async (
+		label: string,
+		get: ( timeout: number ) => Promise< { status: () => number } >
+	): Promise< ProbeTargetResult > => {
+		const result = await pollUntilAvailable(
+			async ( remainingMs ) => {
+				try {
+					const response = await get( clampTimeout( remainingMs ) );
+					return response.status();
+				} catch {
+					return -1;
+				}
+			},
+			{ capMs, intervalMs }
+		);
+		return {
+			label,
+			recoveredMs: toReportedMs( result.recoveredAfterMs ),
+			lastStatus: result.lastStatus,
+		};
+	};
+
+	// Cookie-less context mirrors a logged-out public visitor.
+	const anonymousContext = await request.newContext();
+
+	try {
+		const targets: Promise< ProbeTargetResult >[] = [
+			probeTarget( 'permalink-authenticated', ( timeout ) =>
+				page.request.get( permalink, { timeout } )
+			),
+			probeTarget( 'permalink-anonymous', ( timeout ) =>
+				anonymousContext.get( permalink, { timeout } )
+			),
+		];
+
+		if ( restByIdURL ) {
+			targets.push(
+				probeTarget( 'rest-by-id', ( timeout ) => page.request.get( restByIdURL, { timeout } ) )
+			);
+		}
+
+		return {
+			capMs,
+			measuredFrom: publishedAtMs === undefined ? 'probe-start' : 'publish',
+			targets: await Promise.all( targets ),
+		};
+	} finally {
+		await anonymousContext.dispose();
+	}
 }
 
 /**
@@ -1022,6 +1132,7 @@ export class EditorPage {
 		);
 
 		// Resolve the promises.
+		let publishedAtMs: number | undefined;
 		const [ response ] = await Promise.all( [
 			// First URL matches Atomic requests while the second matches Simple requests.
 			Promise.race( [
@@ -1037,7 +1148,12 @@ export class EditorPage {
 						response.request().method() === 'PUT',
 					{ timeout: timeout }
 				),
-			] ),
+			] ).then( ( publishResponse ) => {
+				// Captured the moment the publish response arrives, before the remaining
+				// publish-panel actions settle, so the probe measures the full window.
+				publishedAtMs = Date.now();
+				return publishResponse;
+			} ),
 			...actionsArray,
 		] );
 
@@ -1049,7 +1165,7 @@ export class EditorPage {
 		}
 		// `response` is the Promise.race winner — either the POST (Atomic) or the PUT (Simple).
 		// The `publishResponse.method` field in diagnostics will reflect whichever verb won.
-		const publishDiagnostics = getPublishDiagnostics( response, json, publishedURL );
+		const publishDiagnostics = getPublishDiagnostics( response, json, publishedURL, publishedAtMs );
 
 		if ( visit ) {
 			await this.visitPublishedPost( publishedURL, { timeout: timeout, publishDiagnostics } );
@@ -1166,11 +1282,29 @@ export class EditorPage {
 		// `reloadAndRetry` re-throws without reloading, so the response for the last
 		// page load before the error is not captured — `publicResponses` reflects all
 		// attempts up to but not including the final failing check.
-		await reloadAndRetry( this.page, confirmPostShown, {
-			onReload: ( response ) => {
-				publicResponses.push( getResponseDiagnostic( response, 'published-url-reload' ) );
-			},
-		} );
+		try {
+			await reloadAndRetry( this.page, confirmPostShown, {
+				onReload: ( response ) => {
+					publicResponses.push( getResponseDiagnostic( response, 'published-url-reload' ) );
+				},
+			} );
+		} catch ( error ) {
+			// On a post-publish 404, measure when the post actually becomes routable to
+			// bound the read-after-write window and isolate the failing layer. This is
+			// diagnostic only: the original error is always re-thrown, so pass/fail is
+			// unchanged even if the probe itself fails.
+			if ( error instanceof Error && error.message.startsWith( 'Post not found - 404' ) ) {
+				try {
+					const probe = await probePublishedPostAvailability( this.page, url, publishDiagnostics );
+					error.message = `${ error.message }\n${ formatAvailabilityProbe( probe ) }`;
+				} catch ( probeError ) {
+					error.message = `${ error.message }\nAvailability probe failed: ${
+						probeError instanceof Error ? probeError.message : String( probeError )
+					}`;
+				}
+			}
+			throw error;
+		}
 
 		/**
 		 * Closure to confirm that post is shown on screen as expected.
