@@ -1,4 +1,5 @@
 import debugFactory from 'debug';
+import { captureException } from '../../lib/sentry';
 import repliesCache from '../comment-replies-cache';
 import { store } from '../state';
 import actions from '../state/actions';
@@ -220,6 +221,13 @@ function getNotes( before ) {
 			if ( before ) {
 				store.dispatch( actions.ui.loadedNotes() );
 				return;
+			}
+			// A top-window fetch failure never clears the loading state — it just
+			// retries with backoff — so the panel spins forever. Report the first
+			// failure of a streak (no-op unless the host opted into Sentry) so the
+			// stuck state is visible. `this.retries` resets to 0 on success.
+			if ( this.retries === 0 ) {
+				captureException( error, { phase: 'getNotes', locale: this.locale } );
 			}
 			/*
 			 * Something failed, so try again and reset the local noteList copy.

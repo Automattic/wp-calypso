@@ -6,12 +6,18 @@ import { setLocale } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import NotificationApp, { refreshNotes } from '../app';
+import { captureException, initSentry } from '../lib/sentry';
 import { SET_IS_SHOWING } from '../panel/state/action-types';
 import actions from '../panel/state/actions';
 import { createClient } from '../standalone/client';
 import { receiveMessage, sendMessage } from '../standalone/messaging';
+import ErrorBoundary, { NotificationsErrorFallback } from './error-boundary';
 
 import './style.scss';
+
+// Install error reporting before anything else runs, so boot failures below
+// (createClient, render) are captured rather than silently spinning forever.
+initSentry();
 
 const debug = debugFactory( 'notifications:standalone-app' );
 
@@ -34,7 +40,11 @@ const fetchLocale = async ( localeSlug ) => {
 		// Sync @wordpress/i18n first — setLocale triggers re-renders that call __()
 		setLocaleData( localeData );
 		setLocale( localeData );
-	} catch {}
+	} catch ( error ) {
+		// Non-fatal: the widget falls back to English. Report so a broken locale
+		// bundle is visible rather than silently degrading every translated user.
+		captureException( error, { phase: 'fetchLocale', locale: localeSlug } );
+	}
 };
 
 // The notifications app (src/app) owns its Redux store internally and exposes
@@ -232,7 +242,22 @@ const render = ( wpcom ) => {
 	applyAdminThemeVars();
 
 	const root = createRoot( document.getElementsByClassName( 'wpnc__main' )[ 0 ] );
-	root.render( <NotesWrapper wpcom={ wpcom } /> );
+	root.render(
+		<ErrorBoundary>
+			<NotesWrapper wpcom={ wpcom } />
+		</ErrorBoundary>
+	);
+};
+
+// Replace the boot spinner with a recoverable error message when the widget
+// can't start at all — most often because the proxy-auth request never
+// resolves (e.g. blocked third-party cookies in the wp-admin iframe).
+const renderBootError = () => {
+	const container = document.getElementsByClassName( 'wpnc__main' )[ 0 ];
+	if ( ! container ) {
+		return;
+	}
+	createRoot( container ).render( <NotificationsErrorFallback /> );
 };
 
 const setTracksUser = ( wpcom ) => {
@@ -242,7 +267,7 @@ const setTracksUser = ( wpcom ) => {
 			window._tkq = window._tkq || [];
 			window._tkq.push( [ 'identifyUser', ID, username ] );
 		} )
-		.catch( () => {} );
+		.catch( ( error ) => captureException( error, { phase: 'setTracksUser' } ) );
 };
 
 const init = ( wpcom ) => {
@@ -250,4 +275,11 @@ const init = ( wpcom ) => {
 	render( wpcom );
 };
 
-createClient().then( init );
+createClient()
+	.then( init )
+	.catch( ( error ) => {
+		// The widget can't start without an authenticated client. Report it and
+		// show the fallback so the user isn't left on an endless spinner.
+		captureException( error, { phase: 'createClient' } );
+		renderBootError();
+	} );

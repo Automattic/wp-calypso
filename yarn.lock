@@ -1776,6 +1776,7 @@ __metadata:
     "@automattic/languages": "workspace:^"
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
+    "@sentry/browser": "npm:^7.54.0"
     "@wordpress/components": "npm:^35.0.0"
     "@wordpress/compose": "npm:^8.1.0"
     "@wordpress/data": "npm:^10.48.0"
@@ -8053,7 +8054,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/browser@npm:7.120.4":
+"@sentry/browser@npm:7.120.4, @sentry/browser@npm:^7.54.0":
   version: 7.120.4
   resolution: "@sentry/browser@npm:7.120.4"
   dependencies:
