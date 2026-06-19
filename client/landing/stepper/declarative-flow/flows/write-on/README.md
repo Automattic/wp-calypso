@@ -4,6 +4,12 @@ Phase 1 fake-door for the Write On experiment: handles the publish → signup �
 site-creation → draft-transfer hand-off for a logged-out visitor who started
 writing in the anonymous Write editor at `/write-editor` and clicked Publish.
 
+## Feature flag
+
+Gated by `calypso/write-on-flow`. Enabled on `development`, `stage`, and
+`wpcalypso`; disabled on `production` and `horizon`. When the flag is off,
+`initialize()` redirects to `/setup/onboarding` before any steps mount.
+
 ## Flow
 
 1. Read `localStorage['wpcom-write-anon-draft']` (set by the anon Write editor).

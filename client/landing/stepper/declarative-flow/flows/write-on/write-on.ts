@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { OnboardActions } from '@automattic/data-stores';
 import { WRITE_ON_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
@@ -46,6 +47,13 @@ function clearAnonDraft() {
 }
 
 function initialize() {
+	// Phase 1 is staging-only; the companion endpoint is proxy-gated so the
+	// flow has nothing to land users on in production. Redirect to the
+	// standard onboarding flow when the feature flag is off.
+	if ( ! config.isEnabled( 'calypso/write-on-flow' ) ) {
+		window.location.replace( '/setup/onboarding' );
+		return [];
+	}
 	return stepsWithRequiredLogin( [ STEPS.SITE_CREATION_STEP, STEPS.PROCESSING ] );
 }
 

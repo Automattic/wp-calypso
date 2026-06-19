@@ -5,6 +5,15 @@ import wpcom from 'calypso/lib/wp';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import writeOn, { ANON_DRAFT_STORAGE_KEY } from '../write-on';
 
+const mockIsEnabled = jest.fn( ( flag: string ) => flag === 'calypso/write-on-flow' );
+
+jest.mock( '@automattic/calypso-config', () => {
+	const fn = Object.assign( ( key: string ) => key, {
+		isEnabled: ( flag: string ) => mockIsEnabled( flag ),
+	} );
+	return { __esModule: true, default: fn };
+} );
+
 jest.mock( '@automattic/onboarding', () => ( {
 	WRITE_ON_FLOW: 'write-on',
 } ) );
@@ -43,6 +52,7 @@ describe( 'write-on flow', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockIsEnabled.mockImplementation( ( flag: string ) => flag === 'calypso/write-on-flow' );
 		window.localStorage.clear();
 		Object.defineProperty( window, 'location', {
 			value: { assign: jest.fn(), replace: jest.fn() },
@@ -63,6 +73,15 @@ describe( 'write-on flow', () => {
 		expect( writeOn.name ).toBe( 'write-on' );
 		expect( writeOn.isSignupFlow ).toBe( true );
 		expect( writeOn.__experimentalUseBuiltinAuth ).toBe( true );
+	} );
+
+	it( 'redirects to /setup/onboarding and exposes no steps when the feature flag is off', () => {
+		mockIsEnabled.mockReturnValue( false );
+
+		const steps = writeOn.initialize();
+
+		expect( steps ).toEqual( [] );
+		expect( window.location.replace ).toHaveBeenCalledWith( '/setup/onboarding' );
 	} );
 
 	it( 'navigates from create-site to processing', async () => {

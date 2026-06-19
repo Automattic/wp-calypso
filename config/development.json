@@ -58,6 +58,7 @@
 		"calypso/big-sky": true,
 		"calypso/domains-dataviews": true,
 		"calypso/refund-eligibility-notice": false,
+		"calypso/write-on-flow": true,
 		"checkout/checkout-version": true,
 		"checkout/google-pay": true,
 		"checkout/stripe-upi": true,
