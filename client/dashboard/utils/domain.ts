@@ -59,7 +59,8 @@ export function isDomainRenewable( domain: DomainSummary ): boolean {
 
 /**
  * Whether "Turn on auto-renew" is meaningful for a domain, or whether it must
- * be renewed/redeemed first (expired, redeemable, in auction, pending renewal).
+ * be renewed/redeemed first (no subscription, expired/redeemable/in auction, or
+ * pending renewal/transfer/registration).
  */
 export function canEnableAutoRenew( domain: DomainSummary ): boolean {
 	// Auto-renew is managed through the domain's subscription.
