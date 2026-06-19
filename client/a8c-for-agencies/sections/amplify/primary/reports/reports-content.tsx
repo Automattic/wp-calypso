@@ -21,7 +21,7 @@ import { DataViews } from 'calypso/components/dataviews';
 import EmptyState from 'calypso/dashboard/components/empty-state';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import useAmplifyReportRows, { AmplifyReportRow } from './use-amplify-report-rows';
+import useAmplifyReportRows, { AmplifyReportRow } from './use-report-rows';
 import type { BadgeType } from '@automattic/components';
 import type { Field } from '@wordpress/dataviews';
 import type { AmplifyMode } from 'calypso/a8c-for-agencies/data/amplify/types';

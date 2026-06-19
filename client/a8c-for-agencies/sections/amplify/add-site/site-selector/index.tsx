@@ -81,7 +81,6 @@ export default function AmplifySiteSelector( { onChange, disabled }: Props ) {
 			<Text weight={ 500 }>{ __( 'Select a site or enter a URL' ) }</Text>
 			<ToggleGroupControl
 				__next40pxDefaultSize
-				__nextHasNoMarginBottom
 				isBlock
 				hideLabelFromVision
 				label={ __( 'Site source' ) }
@@ -108,7 +107,6 @@ export default function AmplifySiteSelector( { onChange, disabled }: Props ) {
 			) : (
 				<TextControl
 					__next40pxDefaultSize
-					__nextHasNoMarginBottom
 					label={ __( 'Enter a URL' ) }
 					hideLabelFromVision
 					type="text"

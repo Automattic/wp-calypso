@@ -8,8 +8,8 @@ import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
-import AmplifyAddSite from '../../amplify-add-site';
-import AmplifyReportsContent from './amplify-reports-content';
+import AmplifyAddSite from '../../add-site';
+import AmplifyReportsContent from './reports-content';
 
 const AmplifyReports = () => {
 	const title = __( 'Reports' );
