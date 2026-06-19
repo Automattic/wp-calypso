@@ -142,7 +142,7 @@ export default function NameServersForm( {
 
 	// Separate memo (no formData dep) keeps the Edit reference stable across
 	// keystrokes, so DataForm doesn't remount it and reload the UpsellNudge image.
-	const useWpcomNameServersField = useMemo< Field< FormData > >(
+	const wpcomNameServersField = useMemo< Field< FormData > >(
 		() => ( {
 			id: 'useWpcomNameServers',
 			label: __( 'Use WordPress.com name servers' ),
@@ -214,12 +214,12 @@ export default function NameServersForm( {
 
 	const fields = useMemo(
 		(): Field< FormData >[] => [
-			useWpcomNameServersField,
+			wpcomNameServersField,
 			...Array.from( { length: MAX_NAME_SERVERS_LENGTH }, ( _, i ) =>
 				createNameServerField( i + 1, formData, isBusy )
 			),
 		],
-		[ useWpcomNameServersField, formData, isBusy ]
+		[ wpcomNameServersField, formData, isBusy ]
 	);
 
 	const handleSubmit = useCallback(
