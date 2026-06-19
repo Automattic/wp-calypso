@@ -174,8 +174,9 @@ export default function AgentDock( {
 	// Route visibility. All are hidden in reader chat (public blog frontends);
 	// some add a further requirement, noted below. Ordered to match the routes.
 	//
-	// `/zendesk` also needs the unified agent or using Woo AI.
-	const showZendeskChat = shouldUseUnifiedAgent && ! isReaderChat;
+	// `/zendesk` is used by agent handoff buttons. Keep it available for
+	// non-reader agents even when the full unified Help Center experience is off.
+	const showZendeskChat = ! isReaderChat;
 	// `/support-guides` (the list) also needs the unified agent, and is only
 	// reachable from the AI chat entry button (WP admin bar or Calypso masterbar).
 	const showSupportGuides = shouldUseUnifiedAgent && ! isReaderChat && hasAiChatEntry;
