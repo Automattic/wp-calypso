@@ -7,6 +7,7 @@ import { isCSATMessage } from '../../../utils';
 import {
 	hasFeedbackForm,
 	isAttachment,
+	isHappinessEngineerMessage,
 	isZendeskChatStartedMessage,
 	isZendeskIntroMessage,
 } from '../../../utils/csat';
@@ -32,6 +33,10 @@ function getPresentedRole( message: Message ) {
 		return 'feedback';
 	} else if ( isZendeskIntroMessage( message ) ) {
 		return 'zendesk-intro';
+	} else if ( message.role === 'business' && ! isHappinessEngineerMessage( message ) ) {
+		// Automated/system business messages (messaging triggers, etc.) keep their Zendesk-configured
+		// name and must cluster separately from real Happiness Engineer messages.
+		return 'business-automated';
 	}
 	return message.role;
 }
@@ -77,7 +82,7 @@ function clusterMessagesBySender( messages: Message[] ) {
 
 	let currentGroup: {
 		id: string;
-		role: MessageRole | 'csat' | 'attachment' | 'feedback' | 'zendesk-intro';
+		role: MessageRole | 'csat' | 'attachment' | 'feedback' | 'zendesk-intro' | 'business-automated';
 		messages: Message[];
 	} = {
 		id: crypto.randomUUID(),
@@ -115,13 +120,19 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 		const endingHumanSupport = group.messages.some( isCSATMessage );
 
 		const messageHeader = () => {
-			// Only business messages have a header.
+			// Real Happiness Engineer messages always show the "Happiness Engineer" override so that
+			// silent transfers between HEs don't leak individual agent names.
 			if ( group.role === 'business' ) {
 				return (
 					<div className="message-header business">
 						{ __( 'Happiness Engineer', __i18n_text_domain__ ) }
 					</div>
 				);
+			}
+			// Automated/system messages keep whatever name is configured for them in Zendesk.
+			if ( group.role === 'business-automated' ) {
+				const displayName = group.messages[ 0 ]?.displayName;
+				return displayName ? <div className="message-header business">{ displayName }</div> : null;
 			}
 			return null;
 		};
