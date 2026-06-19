@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Link } from 'react-router-dom';
 import type { LessonNavigation } from '../../types';
 
@@ -29,6 +29,11 @@ export const ArticleLessonNavigation = ( {
 				<Link
 					to={ `?link=${ encodeURIComponent( next.url ) }` }
 					className="help-center-article-lesson-navigation__link help-center-article-lesson-navigation__link--next"
+					aria-label={ sprintf(
+						/* translators: %s is the title of the next lesson */
+						__( 'Next lesson: %s', __i18n_text_domain__ ),
+						next.title
+					) }
 				>
 					{ __( 'Next lesson', __i18n_text_domain__ ) } →
 				</Link>
