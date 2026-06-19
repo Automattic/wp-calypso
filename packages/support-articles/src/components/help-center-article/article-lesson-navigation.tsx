@@ -1,3 +1,4 @@
+import { decodeEntities } from '@wordpress/html-entities';
 import { __, sprintf } from '@wordpress/i18n';
 import { Link } from 'react-router-dom';
 import type { LessonNavigation } from '../../types';
