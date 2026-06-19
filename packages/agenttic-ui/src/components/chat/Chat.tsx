@@ -12,7 +12,11 @@ import { useChat } from '../../hooks/useChat';
 import { useInput } from '../../hooks/useInput';
 import type { ChatProps } from '../../types';
 import { cn } from '../../utils/classNames';
-import { getChatPosition, setChatPosition } from '../../utils/chatStorage';
+import {
+	getChatPosition,
+	getInitialChatPosition,
+	setChatPosition,
+} from '../../utils/chatStorage';
 import { DRAG_CONSTANTS, STYLE_CONSTANTS } from '../../utils/constants';
 import { morphSpring } from '../animations';
 import { CollapsedView } from '../views/CollapsedView';
@@ -44,6 +48,8 @@ export function Chat( {
 	className,
 	expandOnHover = true,
 	freeDrag = false,
+	initialFreeDragPosition,
+	onFreeDragEnd,
 }: ChatProps ) {
 	// Local input state for controlled component pattern
 	const [ inputValue, setInputValue ] = useState( '' );
@@ -96,15 +102,13 @@ export function Chat( {
 	const chatRef = useRef< HTMLDivElement >( null );
 
 	// Motion values for programmatic control
-	// Initialize position based on saved side (right-aligned needs offset)
-	const initialX =
-		currentSide === 'right'
-			? window.innerWidth -
-			  STYLE_CONSTANTS.COMPACT_WIDTH -
-			  STYLE_CONSTANTS.VIEWPORT_OFFSET * 2
-			: 0;
+	const { x: initialX, y: initialY } = getInitialChatPosition( {
+		freeDrag,
+		initialFreeDragPosition,
+		side: currentSide,
+	} );
 	const x = useMotionValue( initialX );
-	const y = useMotionValue( 0 );
+	const y = useMotionValue( initialY );
 	const dragControls = useDragControls();
 
 	// Handle opening the chat and call onOpen callback
@@ -271,8 +275,10 @@ export function Chat( {
 	const handleDragEnd = useCallback(
 		( _event: any, info: PanInfo ) => {
 			// In free drag mode the panel stays where dropped. dragElastic={ 0 }
-			// hard-clamps the drag to the constraint box, so skip the corner-snap.
+			// hard-clamps the drag to the constraint box, so skip the corner-snap
+			// and report the dropped pixel position so consumers can persist it.
 			if ( freeDrag ) {
+				onFreeDragEnd?.( { x: x.get(), y: y.get() } );
 				return;
 			}
 
@@ -302,7 +308,7 @@ export function Chat( {
 				velocity: info.velocity.y * DRAG_CONSTANTS.VELOCITY_MULTIPLIER,
 			} );
 		},
-		[ x, y, calculateSnapPosition, freeDrag ]
+		[ x, y, calculateSnapPosition, freeDrag, onFreeDragEnd ]
 	);
 
 	// Snap back to the nearest corner when freeDrag is turned off at runtime.

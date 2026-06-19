@@ -31,6 +31,11 @@ const FloatingCompactDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { cu
 	} ) );
 	const [ isZoomed, setIsZoomed ] = useState( false );
 	const [ freeDragEnabled, setFreeDragEnabled ] = useState( false );
+	// Persist the dropped free-drag position so it survives remounts (Remount button below).
+	const [ freeDragPosition, setFreeDragPosition ] = useState<
+		{ x: number; y: number } | undefined
+	>( undefined );
+	const [ remountKey, setRemountKey ] = useState( 0 );
 	const [ feedbackState, setFeedbackState ] = useState<
 		Record< string, 'up' | 'down' >
 	>( {} );
@@ -320,9 +325,24 @@ const FloatingCompactDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { cu
 				>
 					Free Drag: { freeDragEnabled ? 'ON' : 'OFF' }
 				</button>
+				<button
+					onClick={ () => setRemountKey( ( prev ) => prev + 1 ) }
+					style={ {
+						padding: '4px 8px',
+						background: '#000',
+						color: '#fff',
+						cursor: 'pointer',
+						fontSize: '12px',
+						fontFamily: 'monospace',
+						textTransform: 'uppercase',
+					} }
+				>
+					Remount
+				</button>
 				<MessageTester addMessage={ addMessage } onClear={ () => loadMessages( [] ) } />
 			</div>
 			<AgentUI
+				key={ remountKey }
 				className={ `agenttic ${ currentTheme }` }
 				messages={ messages }
 				isProcessing={ isProcessing }
@@ -348,6 +368,8 @@ const FloatingCompactDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { cu
 				} }
 				emptyView={ <EmptyView suggestions={ suggestions } /> }
 				freeDrag={ freeDragEnabled }
+				initialFreeDragPosition={ freeDragPosition }
+				onFreeDragEnd={ setFreeDragPosition }
 			/>
 		</div>
 	);
