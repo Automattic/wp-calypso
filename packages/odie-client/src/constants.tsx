@@ -302,31 +302,6 @@ export const getErrorTryAgainLaterMessage = (): Message => {
 	};
 };
 
-export const getOdieZendeskConnectionErrorMessageContent = (): string => {
-	return __(
-		"Sorry, I couldn't connect you to our support team right now. Please try again later or use the button below to reach out via email.",
-		__i18n_text_domain__
-	);
-};
-
-export const getOdieZendeskConnectionErrorMessage = (): Message => {
-	return {
-		content: getOdieZendeskConnectionErrorMessageContent(),
-		role: 'bot',
-		type: 'message',
-		context: {
-			site_id: null,
-			flags: {
-				is_error_message: false,
-				forward_to_human_support: true,
-			},
-			question_tags: {
-				inquiry_type: 'request-for-human-support',
-			},
-		},
-	};
-};
-
 export const getZendeskChatStartedMetaMessage = (): Message => ( {
 	content: null,
 	role: 'bot',

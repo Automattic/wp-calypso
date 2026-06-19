@@ -1,13 +1,4 @@
-import {
-	getConversationLimitReachedMessage,
-	getOdieForwardToForumsMessage,
-	getOdieForwardToZendeskMessage,
-	getOdieThirdPartyMessageContent,
-	getOdieEmailFallbackMessageContent,
-	getOdieErrorMessage,
-	getOdieErrorMessageNonEligible,
-	getOdieZendeskConnectionErrorMessageContent,
-} from '../../constants';
+import { getConversationLimitReachedMessage } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { useCurrentSupportInteraction } from '../../data/use-current-support-interaction';
 import { useOpenLiveInteractions } from '../../hooks/use-open-interaction-status-map';
@@ -16,6 +7,7 @@ import {
 	getIsRequestingHumanSupport,
 	getIsLastBotMessage,
 	getIsErrorMessage,
+	getDisplayMessage,
 } from '../../utils';
 import BotMessageActions from './bot-message-actions';
 import CustomALink from './custom-a-link';
@@ -23,42 +15,6 @@ import { GetSupport } from './get-support';
 import { MarkdownOrChildren } from './mardown-or-children';
 import Sources from './sources';
 import type { Message } from '../../types';
-
-const getDisplayMessage = (
-	userHasRecentOpenConversation: boolean,
-	isUserEligibleForPaidSupport: boolean,
-	canConnectToZendesk: boolean,
-	forceEmailSupport?: boolean,
-	isChatRestricted?: boolean,
-	isErrorMessage?: boolean,
-	isChatLoaded?: boolean
-) => {
-	if ( isUserEligibleForPaidSupport && ! canConnectToZendesk ) {
-		return getOdieThirdPartyMessageContent();
-	}
-
-	if ( isUserEligibleForPaidSupport && forceEmailSupport ) {
-		return getOdieEmailFallbackMessageContent( isChatRestricted );
-	}
-
-	if ( isErrorMessage && ! isUserEligibleForPaidSupport ) {
-		return getOdieErrorMessageNonEligible();
-	}
-
-	const forwardMessage = isUserEligibleForPaidSupport
-		? getOdieForwardToZendeskMessage( userHasRecentOpenConversation )
-		: getOdieForwardToForumsMessage();
-
-	if ( isErrorMessage ) {
-		return getOdieErrorMessage();
-	}
-
-	if ( isUserEligibleForPaidSupport && ! isChatLoaded ) {
-		return getOdieZendeskConnectionErrorMessageContent();
-	}
-
-	return forwardMessage;
-};
 
 export const UserMessage = ( {
 	message,
