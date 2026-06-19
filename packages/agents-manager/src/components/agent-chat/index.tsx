@@ -1,4 +1,3 @@
-import { SubmitOptions } from '@automattic/agenttic-client';
 import {
 	AgentUI,
 	createMessageRenderer,
@@ -54,7 +53,7 @@ interface Props {
 	/** Indicates if the chat is expanded (floating mode). */
 	isOpen: boolean;
 	/** Called when the user submits a message. */
-	onSubmit: ( message: string, options?: SubmitOptions ) => Promise< void > | void;
+	onSubmit: ( message: string, files?: File[] ) => Promise< void > | void;
 	/** Called when the user aborts the current request. */
 	onAbort: () => void;
 	/** Called when the chat is closed. */
