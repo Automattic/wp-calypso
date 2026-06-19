@@ -24,7 +24,7 @@ export const ArticleLessonNavigation = ( {
 					aria-label={ sprintf(
 						/* translators: %s is the title of the previous lesson */
 						__( 'Previous lesson: %s', __i18n_text_domain__ ),
-						previous.title
+						decodeEntities( previous.title )
 					) }
 				>
 					← { __( 'Previous lesson', __i18n_text_domain__ ) }
@@ -37,7 +37,7 @@ export const ArticleLessonNavigation = ( {
 					aria-label={ sprintf(
 						/* translators: %s is the title of the next lesson */
 						__( 'Next lesson: %s', __i18n_text_domain__ ),
-						next.title
+						decodeEntities( next.title )
 					) }
 				>
 					{ __( 'Next lesson', __i18n_text_domain__ ) } →
