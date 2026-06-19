@@ -3,6 +3,7 @@ import { OnboardActions } from '@automattic/data-stores';
 import { WRITE_ON_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
@@ -52,6 +53,7 @@ function initialize() {
 	// flow has nothing to land users on in production. Redirect to the
 	// standard onboarding flow when the feature flag is off.
 	if ( ! config.isEnabled( 'calypso/write-on-flow' ) ) {
+		recordTracksEvent( 'calypso_write_on_flow_blocked', { reason: 'flag_off' } );
 		window.location.replace( '/setup/onboarding' );
 		return [];
 	}
@@ -86,15 +88,21 @@ const writeOn: FlowV2< typeof initialize > = {
 			// authenticated they should not be here — send them to the standard
 			// onboarding flow.
 			if ( isLoggedIn ) {
+				recordTracksEvent( 'calypso_write_on_flow_blocked', { reason: 'logged_in' } );
 				window.location.replace( '/setup/onboarding' );
 				return;
 			}
 
 			const draft = readAnonDraft();
 			if ( ! draft ) {
+				recordTracksEvent( 'calypso_write_on_flow_blocked', { reason: 'no_draft' } );
 				window.location.replace( '/setup/onboarding' );
 				return;
 			}
+
+			recordTracksEvent( 'calypso_write_on_flow_entered', {
+				draft_size: ( draft.title?.length ?? 0 ) + ( draft.content?.length ?? 0 ),
+			} );
 
 			if ( draft.title ) {
 				setSiteTitle( draft.title );
@@ -134,6 +142,10 @@ const writeOn: FlowV2< typeof initialize > = {
 
 						clearAnonDraft();
 
+						recordTracksEvent( 'calypso_write_on_draft_transfer_succeeded', {
+							site_id: siteId,
+						} );
+
 						window.location.assign(
 							`https://${ siteSlug }/wp-admin/admin.php?page=write&post=${ post.ID }`
 						);
@@ -142,6 +154,14 @@ const writeOn: FlowV2< typeof initialize > = {
 						// the standard new-site flow; fall back to the site's home
 						// so they at least land somewhere meaningful with the draft
 						// preserved in localStorage for a retry.
+						const errorMessage = ( error instanceof Error ? error.message : String( error ) ).slice(
+							0,
+							200
+						);
+						recordTracksEvent( 'calypso_write_on_draft_transfer_failed', {
+							site_id: siteId,
+							error: errorMessage,
+						} );
 						logToLogstash( {
 							feature: 'calypso_client',
 							message: 'write-on: failed to transfer anon draft',
@@ -149,7 +169,7 @@ const writeOn: FlowV2< typeof initialize > = {
 							blog_id: siteId,
 							properties: {
 								type: 'write_on_draft_transfer_failed',
-								error: error instanceof Error ? error.message : String( error ),
+								error: errorMessage,
 							},
 						} );
 						window.location.assign( `/home/${ siteSlug }` );

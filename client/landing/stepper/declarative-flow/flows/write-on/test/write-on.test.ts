@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
@@ -26,6 +27,10 @@ jest.mock( 'calypso/lib/wp', () => ( {
 
 jest.mock( 'calypso/lib/logstash', () => ( {
 	logToLogstash: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/landing/stepper/stores', () => ( {
@@ -80,13 +85,16 @@ describe( 'write-on flow', () => {
 		expect( writeOn.__experimentalUseBuiltinAuth ).toBe( true );
 	} );
 
-	it( 'redirects to /setup/onboarding and exposes no steps when the feature flag is off', () => {
+	it( 'redirects to /setup/onboarding, records a blocked event, and exposes no steps when the feature flag is off', () => {
 		mockIsEnabled.mockReturnValue( false );
 
 		const steps = writeOn.initialize();
 
 		expect( steps ).toEqual( [] );
 		expect( window.location.replace ).toHaveBeenCalledWith( '/setup/onboarding' );
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_write_on_flow_blocked', {
+			reason: 'flag_off',
+		} );
 	} );
 
 	it( 'navigates from create-site to processing', async () => {
@@ -123,6 +131,9 @@ describe( 'write-on flow', () => {
 			'https://example.wordpress.com/wp-admin/admin.php?page=write&post=42'
 		);
 		expect( window.localStorage.getItem( ANON_DRAFT_STORAGE_KEY ) ).toBeNull();
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_write_on_draft_transfer_succeeded', {
+			site_id: 99,
+		} );
 	} );
 
 	it( 'preserves the localStorage draft, logs to logstash, and lands on the site home when the POST fails', async () => {
@@ -151,6 +162,30 @@ describe( 'write-on flow', () => {
 				} ),
 			} )
 		);
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_write_on_draft_transfer_failed', {
+			site_id: 99,
+			error: 'boom',
+		} );
+	} );
+
+	it( 'truncates the error message on the failed-transfer tracks event', async () => {
+		window.localStorage.setItem(
+			ANON_DRAFT_STORAGE_KEY,
+			JSON.stringify( { title: 'Keep me', content: '<p>Body</p>', ts: 1 } )
+		);
+		const longError = 'x'.repeat( 500 );
+		wpcomPostMock.mockRejectedValue( new Error( longError ) );
+
+		await submitFor( 'processing', {
+			processingResult: ProcessingResult.SUCCESS,
+			siteId: 99,
+			siteSlug: 'example.wordpress.com',
+		} );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_write_on_draft_transfer_failed', {
+			site_id: 99,
+			error: 'x'.repeat( 200 ),
+		} );
 	} );
 
 	it( 'sends empty title and content when no localStorage draft exists at publish time', async () => {
