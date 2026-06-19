@@ -49,7 +49,11 @@ const createBusinessMessage = ( {
 describe( 'MessagesClusterizer', () => {
 	beforeEach( () => {
 		let nextId = 0;
-		jest.spyOn( crypto, 'randomUUID' ).mockImplementation( () => `fake-uuid-${ ++nextId }` );
+		jest
+			.spyOn( crypto, 'randomUUID' )
+			.mockImplementation(
+				() => `00000000-0000-0000-0000-${ String( ++nextId ).padStart( 12, '0' ) }`
+			);
 	} );
 
 	afterEach( () => {
