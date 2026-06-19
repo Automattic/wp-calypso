@@ -729,8 +729,8 @@ const UniversalNavbarHeader = ( {
 					{ /*<!-- Nav bar ends here. -->*/ }
 
 					{ /*<!-- Mobile menu starts here. -->*/ }
-					{ /* The 2026 mobile menu renders OUTSIDE this container (after it
-					     closes), so its overlay can sit above the sticky sub-nav while
+					{ /* The 2026 mobile menu renders as a sibling after this container's
+					     closing tag, so its overlay can sit above the sticky sub-nav while
 					     the nav bar inside the container stays below it. Legacy menu
 					     stays here. */ }
 					{ ! nav2026 && (

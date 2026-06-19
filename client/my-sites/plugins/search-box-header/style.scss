@@ -178,7 +178,7 @@
 			.is-section-plugins:has(.x-nav--2026-redesign) & {
 				top: var(--nav-2026-admin-offset);
 				margin-top: 0;
-				z-index: 178;
+				z-index: var(--nav-2026-z-sub-nav, 178);
 			}
 
 			.layout__secondary ~ .layout__primary & {

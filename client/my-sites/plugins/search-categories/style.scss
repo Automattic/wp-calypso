@@ -109,7 +109,7 @@ $search-categories-height: 40px;
 		// the masterbar (180), which is always on top.
 		.is-section-plugins:has(.x-nav--2026-redesign) & {
 			top: var(--nav-2026-admin-offset);
-			z-index: 178;
+			z-index: var(--nav-2026-z-sub-nav, 178);
 			background-color: var(--studio-white);
 		}
 

@@ -973,7 +973,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	// shows on top — above the sidebar (176), below the masterbar. The whole nav
 	// band lives in this 177–179 window; the masterbar stays on top in every
 	// state, including the open dropdown and mobile menu.
-	z-index: 177;
+	z-index: var( --nav-2026-z-closed, 177 );
 	transition: z-index 0s 0.22s;
 
 	&::after {
@@ -1024,7 +1024,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	// need a container bump — that keeps the nav bar below the sub-nav while open.
 	&:has( .x-dropdown.x-dropdown--2026.is-dropdown-open ),
 	&:has( .x-dropdown.x-dropdown--2026[style*='height: 0px'] ) {
-		z-index: 179;
+		z-index: var( --nav-2026-z-open, 179 );
 		transition: z-index 0s;
 	}
 }
@@ -2149,7 +2149,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	&.x-menu__open {
 		// Cover the sticky sub-nav (178) while open; stay below the masterbar (180),
 		// which is always on top. Raise instantly.
-		z-index: 179;
+		z-index: var( --nav-2026-z-open, 179 );
 		transition-delay: 0s;
 
 		.x-menu-mobile-logo:not( .is-hidden ),
