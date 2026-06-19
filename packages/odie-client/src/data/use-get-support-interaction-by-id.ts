@@ -23,10 +23,14 @@ export const useGetSupportInteractionById = ( interactionId: string | null ) => 
 		enabled: !! interactionId,
 		staleTime: 1000 * 10, // 10 seconds,
 		select: ( interaction ) => {
-			const env = isTestMode ? 'staging' : 'production';
-			// getting a support interaction by ID doesn't honor the isTestMode flag, so we need to throw an error if the interaction is in staging and we're not in test mode.
-			// this way to act as if the interaction is not found and create a new one. This is needed for people who have access to both staging and production.
-			if ( interaction?.environment !== env ) {
+			// Getting a support interaction by ID doesn't honor the isTestMode flag, so the
+			// response can come back from either environment. Only reject a staging interaction
+			// when we're NOT in test mode — production must never load staging data. Test-mode
+			// clients (real staging, and local dev proxying to the production API) can read both,
+			// so accept production interactions there: rejecting them treats every interaction as
+			// "not found" and triggers an infinite create/navigate loop on local dev, where
+			// is_test_mode is true but the backing data store is production.
+			if ( ! isTestMode && interaction?.environment === 'staging' ) {
 				throw new Error( 'Support interaction not found' );
 			}
 			return interaction;
