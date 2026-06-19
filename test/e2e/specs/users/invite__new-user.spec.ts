@@ -1,11 +1,14 @@
 import {
 	DataHelper,
 	CloseAccountFlow,
+	RestAPIClient,
 	RoleValue,
 	Roles,
 	UserSignupPage,
 } from '@automattic/calypso-e2e';
 import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-base';
+import { apiCloseAccount } from '../shared';
+import type { NewUserResponse } from '@automattic/calypso-e2e';
 
 test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 	skipIfMailosaurLimitReached();
@@ -17,6 +20,17 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 
 	let userManagementRevampFeature = false;
 	let acceptInviteLink: string;
+
+	// Accounts created during the run, closed via API in afterAll as a guaranteed
+	// teardown. The in-body UI close below stays as product coverage; the API close
+	// is the safety net for any run where the UI close did not happen. If the UI
+	// close did run, this account's token is dead and apiCloseAccount is a safe
+	// no-op (its existence probe writes no leak marker).
+	const accountsToCleanup: {
+		user: NewUserResponse[ 'body' ];
+		password: string;
+		email: string;
+	}[] = [];
 
 	test( 'As a WordPress.com user, I can invite a new user to my site, they can accept the invite and sign up, then I can remove them', async ( {
 		page,
@@ -61,7 +75,9 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 
 		await test.step( 'When I navigate to Users > All Users', async function () {
 			await componentSidebar.navigate( 'Users', 'All Users' );
-			! userManagementRevampFeature && ( await pagePeople.clickTab( 'Invites' ) );
+			if ( ! userManagementRevampFeature ) {
+				await pagePeople.clickTab( 'Invites' );
+			}
 			await pagePeople.clickViewAllIfAvailable();
 		} );
 
@@ -89,7 +105,19 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 			const userSignupPage = new UserSignupPage( pageIncognito.getPage() );
 			const signUpResponse = await userSignupPage.signupThroughInvite( testUser.email );
 
-			signedUpUsername = signUpResponse?.body?.username;
+			const created = signUpResponse.body;
+			// Runtime guards: the signup response is untyped JSON, so the declared
+			// type is not a wire guarantee. Assert the full identity the afterAll
+			// teardown consumes, not just the username.
+			expect( created?.user_id ).toBeDefined();
+			expect( created?.bearer_token ).toBeDefined();
+			accountsToCleanup.push( {
+				user: created,
+				password: testUser.password,
+				email: testUser.email,
+			} );
+
+			signedUpUsername = created.username;
 			expect( signedUpUsername ).toBeDefined();
 		} );
 
@@ -120,5 +148,22 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 			const closeAccountFlow = new CloseAccountFlow( pageIncognito.getPage() );
 			await closeAccountFlow.closeAccount();
 		} );
+	} );
+
+	test.afterAll( async function () {
+		for ( const acct of accountsToCleanup ) {
+			if ( ! acct.user?.bearer_token ) {
+				continue;
+			}
+			const restAPIClient = new RestAPIClient(
+				{ username: acct.user.username, password: acct.password },
+				acct.user.bearer_token
+			);
+			await apiCloseAccount( restAPIClient, {
+				userID: acct.user.user_id,
+				username: acct.user.username,
+				email: acct.email,
+			} );
+		}
 	} );
 } );

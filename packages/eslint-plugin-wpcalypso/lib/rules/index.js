@@ -28,4 +28,5 @@ module.exports = {
 	'post-message-no-wildcard-targets': adapt( require( './post-message-no-wildcard-targets' ) ),
 	'redux-no-bound-selectors': adapt( require( './redux-no-bound-selectors' ) ),
 	'no-unsafe-wp-apis': adapt( require( './no-unsafe-wp-apis' ) ),
+	'e2e-require-account-teardown': adapt( require( './e2e-require-account-teardown' ) ),
 };
