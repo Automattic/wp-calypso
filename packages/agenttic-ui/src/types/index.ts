@@ -141,6 +141,8 @@ export interface AgentUIProps {
 	// Drag and drop props
 	draggableStates?: ChatState[]; // Specify which chat states allow dragging (defaults to ['expanded'] for backward compatibility)
 	freeDrag?: boolean; // Keep the panel where dropped instead of snapping to a corner (position is ephemeral, resets on reload/resize)
+	initialFreeDragPosition?: { x: number; y: number }; // Seed the free-drag pixel position on mount (only applied when freeDrag is on)
+	onFreeDragEnd?: ( position: { x: number; y: number } ) => void; // Reports the dropped free-drag pixel position so consumers can persist it
 
 	// i18n
 	locale?: string; // Language locale (e.g., 'es', 'fr', 'de-DE'). Defaults to 'en'
