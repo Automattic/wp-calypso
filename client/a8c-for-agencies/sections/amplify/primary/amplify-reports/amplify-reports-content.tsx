@@ -19,6 +19,8 @@ import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { DataViews } from 'calypso/components/dataviews';
 import EmptyState from 'calypso/dashboard/components/empty-state';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useAmplifyReportRows, { AmplifyReportRow } from './use-amplify-report-rows';
 import type { BadgeType } from '@automattic/components';
 import type { Field } from '@wordpress/dataviews';
@@ -94,6 +96,7 @@ function openPdf( pdfUrl: string | null ): void {
 }
 
 export default function AmplifyReportsContent() {
+	const dispatch = useDispatch();
 	const { rows, isLoading, error } = useAmplifyReportRows();
 
 	// Align the toolbar controls with the table's column padding: 64px on wide
@@ -219,7 +222,15 @@ export default function AmplifyReportsContent() {
 							icon={ download }
 							iconSize={ 16 }
 							disabled={ ! item.pdfUrl }
-							onClick={ () => openPdf( item.pdfUrl ) }
+							onClick={ () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_amplify_report_download_click', {
+										report_id: item.id,
+										mode: item.mode,
+									} )
+								);
+								openPdf( item.pdfUrl );
+							} }
 						>
 							{ __( 'Download PDF' ) }
 						</Button>
@@ -229,7 +240,7 @@ export default function AmplifyReportsContent() {
 				enableSorting: false,
 			},
 		],
-		[]
+		[ dispatch ]
 	);
 
 	const { data: items, paginationInfo: pagination } = useMemo(
