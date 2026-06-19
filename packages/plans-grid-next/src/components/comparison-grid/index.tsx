@@ -5,6 +5,7 @@ import {
 	getPlans,
 	FEATURE_AI_WRITER_DESIGNER,
 	FEATURE_AI_WRITER_DESIGNER_LIMITED,
+	FEATURE_REALTIME_BACKUPS_JP,
 } from '@automattic/calypso-products';
 import { Gridicon, JetpackLogo } from '@automattic/components';
 import { AddOns } from '@automattic/data-stores';
@@ -780,11 +781,11 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	const featureSlug = feature?.getSlug() ?? '';
 	const footnote = planFeatureFootnotes?.footnotesByFeature?.[ featureSlug ];
 	const tooltipId = `${ featureGroupSlug }-${ feature?.getSlug() }-comparison-grid`;
-	const comparisonGridTitleOverrides: Record< string, string > = {
-		// Always display the short title for backups in comparison grid.
-		'realtime-backups-jp': translate( 'Real-time backups' ) as string,
-	};
-	const title = comparisonGridTitleOverrides[ featureSlug ] ?? feature?.getTitle?.();
+	const title =
+		featureSlug === FEATURE_REALTIME_BACKUPS_JP
+			? // Always display the short title for backups in comparison grid.
+			  translate( 'Real-time backups', { textOnly: true } )
+			: feature?.getTitle?.();
 	const headerAriaLabel: string = typeof title === 'string' ? title : '';
 
 	const { enableFeatureTooltips } = usePlansGridContext();
