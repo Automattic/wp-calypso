@@ -148,7 +148,7 @@ const FreePlanModal = ( { closeDialog, siteId }: FreePlanModalProps ) => {
 					/>
 					<FormSettingExplanation>
 						{ translate(
-							'Optional. Shown to readers when they choose the free option on your site. Basic {{a}}Markdown{{/a}} — bold, italics, lists, and links — is supported.',
+							'Optional. Shown to readers when they choose a newsletter tier on your site. Basic {{a}}Markdown{{/a}} — bold, italics, lists, and links — is supported.',
 							{
 								components: {
 									a: (
