@@ -306,37 +306,154 @@ export class EditorToolbarComponent {
 
 	/**
 	 * Opens the editor settings.
+	 *
+	 * For `target: 'Settings'` this toggles the standard post/page settings
+	 * sidebar from its pinned header button.
+	 *
+	 * For `target: 'Jetpack'` this toggles the Jetpack ("Share to social
+	 * media"/Publicize) sidebar from the more-options menu. That menu is shared
+	 * with sibling plugin sidebars, notably "Jetpack Newsletter", so the entry
+	 * is matched by its stable `aria-controls` id rather than the visible label.
+	 * Selecting it usually activates the Jetpack complementary area, but the
+	 * editor intermittently ends up with a sibling area active instead, from the
+	 * exact same click. We therefore verify the active complementary area via
+	 * the editor data store (the source of truth, unaffected by the sidebar's
+	 * exit transition) and re-toggle if a sibling won.
 	 */
 	async openSettings( target: EditorToolbarSettingsButton ): Promise< void > {
 		const editorParent = await this.editor.parent();
 
-		// To support i18n tests.
-		const translatedTargetName = await this.translateFromPage( target );
+		if ( target === 'Settings' ) {
+			// To support i18n tests.
+			const translatedTargetName = await this.translateFromPage( target );
+			const button = editorParent
+				.locator( '.editor-header__settings, .edit-post-header__settings' )
+				.getByLabel( translatedTargetName );
 
-		let button = editorParent
-			.locator( '.editor-header__settings, .edit-post-header__settings' )
-			.getByLabel( translatedTargetName );
+			if ( await this.targetIsOpen( button ) ) {
+				await this.closeMoreOptionsMenu();
+				return;
+			}
 
-		// For other pinned settings, we need to open the options menu
-		// because those are hidden on mobile/small screens
-		if ( target !== 'Settings' ) {
-			await this.openMoreOptionsMenu();
-
-			// Match the sidebar's stable `aria-controls` id, not the visible
-			// label: "Jetpack" is a prefix of "Jetpack Newsletter" and the menu
-			// entries reorder as plugin sidebars register, so a name match can
-			// land on the sibling and open the wrong sidebar.
-			button = editorParent.locator(
-				'[role="menuitemcheckbox"][aria-controls="jetpack-sidebar:jetpack"]'
-			);
-		}
-
-		if ( await this.targetIsOpen( button ) ) {
-			await this.closeMoreOptionsMenu();
+			await button.click();
 			return;
 		}
 
-		await button.click();
+		const menuItem = editorParent.locator(
+			'[role="menuitemcheckbox"][aria-controls="jetpack-sidebar:jetpack"]'
+		);
+
+		const maxAttempts = 3;
+		for ( let attempt = 1; attempt <= maxAttempts; attempt++ ) {
+			await this.openMoreOptionsMenu();
+
+			if ( await this.targetIsOpen( menuItem ) ) {
+				// The Jetpack entry is already selected; close the menu and let
+				// the verification below confirm the right area is active.
+				await this.closeMoreOptionsMenu();
+			} else {
+				await menuItem.click();
+			}
+
+			if ( await this.waitForJetpackSidebarActive() ) {
+				return;
+			}
+		}
+
+		throw new Error(
+			'openSettings( "Jetpack" ): a sibling sidebar (such as "Jetpack Newsletter") kept ' +
+				`winning activation; the Jetpack sidebar was not the active complementary area after ${ maxAttempts } attempts.`
+		);
+	}
+
+	/**
+	 * Polls the editor data store until the Jetpack sidebar is the active
+	 * complementary area, requiring two consecutive positive reads so a sidebar
+	 * that briefly activates and is then replaced by a sibling is not mistaken
+	 * for success.
+	 *
+	 * @param {number} timeout Maximum time to wait, in milliseconds.
+	 * @returns {Promise<boolean>} True if the Jetpack sidebar settled as active.
+	 */
+	private async waitForJetpackSidebarActive( timeout = 5 * 1000 ): Promise< boolean > {
+		const deadline = Date.now() + timeout;
+		let consecutive = 0;
+
+		while ( Date.now() < deadline ) {
+			if ( await this.isJetpackSidebarActive() ) {
+				consecutive += 1;
+				if ( consecutive >= 2 ) {
+					return true;
+				}
+			} else {
+				consecutive = 0;
+			}
+
+			await this.page.waitForTimeout( 300 );
+		}
+
+		return false;
+	}
+
+	/**
+	 * Determines whether the Jetpack sidebar (`jetpack-sidebar/jetpack`) is the
+	 * active complementary area. The check runs inside the Editor frame so it
+	 * works for both the iframed (Simple) and non-iframed (Atomic) editors.
+	 *
+	 * The editor data store is the source of truth: when it reports an active
+	 * area for a known editor scope (`core` or `core/edit-post`, which vary by
+	 * Gutenberg version) that answer is authoritative. If the store is
+	 * unavailable or reports nothing for those scopes, it falls back to the DOM,
+	 * treating Jetpack as active only when its region is present and the sibling
+	 * Newsletter region is not.
+	 *
+	 * @returns {Promise<boolean>} True if the Jetpack sidebar is active.
+	 */
+	private async isJetpackSidebarActive(): Promise< boolean > {
+		const editorParent = await this.editor.parent();
+
+		return editorParent.evaluate( ( element ) => {
+			const jetpackId = 'jetpack-sidebar:jetpack';
+			const jetpackArea = 'jetpack-sidebar/jetpack';
+			const newsletterId = 'jetpack-subscriptions:jetpack-newsletter-settings-sidebar';
+
+			const editorWindow = element.ownerDocument?.defaultView as
+				| ( Window & {
+						wp?: {
+							data?: {
+								select?: ( store: string ) => {
+									getActiveComplementaryArea?: ( scope: string ) => string | null | undefined;
+								};
+							};
+						};
+				  } )
+				| null;
+
+			const interfaceStore = editorWindow?.wp?.data?.select?.( 'core/interface' );
+			if ( interfaceStore?.getActiveComplementaryArea ) {
+				const activeAreas = [ 'core', 'core/edit-post' ].map(
+					( scope ) => interfaceStore.getActiveComplementaryArea?.( scope )
+				);
+
+				if ( activeAreas.includes( jetpackArea ) ) {
+					return true;
+				}
+
+				// A defined reading (another area's id, or `null` for "closed") is
+				// an authoritative "not Jetpack". Only an absent reading
+				// (`undefined` for every known scope, i.e. store unavailable or an
+				// unrecognised scope) warrants consulting the DOM below.
+				if ( activeAreas.some( ( area ) => area !== undefined ) ) {
+					return false;
+				}
+			}
+
+			const document = element.ownerDocument;
+			return (
+				!! document?.querySelector( `[id="${ jetpackId }"]` ) &&
+				! document?.querySelector( `[id="${ newsletterId }"]` )
+			);
+		} );
 	}
 
 	/**
