@@ -87,12 +87,11 @@ const writeOn: FlowV2< typeof initialize > = {
 			if ( hasRunEntryChecks.current ) {
 				return;
 			}
+			hasRunEntryChecks.current = true;
 			if ( currentStepSlug ) {
 				// The flow already advanced past entry — entry checks aren't needed.
-				hasRunEntryChecks.current = true;
 				return;
 			}
-			hasRunEntryChecks.current = true;
 
 			// Phase 1 is a logged-out fake door. If the visitor is already
 			// authenticated they should not be here — send them to the standard
@@ -133,8 +132,7 @@ const writeOn: FlowV2< typeof initialize > = {
 						return;
 					}
 
-					const siteId = providedDependencies.siteId as number | undefined;
-					const siteSlug = providedDependencies.siteSlug as string | undefined;
+					const { siteId, siteSlug } = providedDependencies;
 					if ( ! siteId || ! siteSlug ) {
 						return;
 					}
