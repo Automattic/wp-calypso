@@ -170,7 +170,7 @@ $x-color-link: var( --studio-wordpress-blue-50 );
 $x-color-content-separator: rgba( $studio-gray-5, 0.85 );
 // "New" badge (2026 nav). Brand green per design; no Studio token matches #48ff50.
 $x-nav-2026-badge-new-bg: #48ff50;
-$x-nav-2026-badge-new-color: #4f3500;
+$x-nav-2026-badge-new-color: #003d03;
 $x-content-min-z-index: 801;
 // One above the nav, in its stacking band, so it never escapes above Calypso modals.
 $x-nav-2026-dropdown-z-index: $x-content-min-z-index + 1;
