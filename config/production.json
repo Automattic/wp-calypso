@@ -108,7 +108,6 @@
 		"me/legacy-contact": false,
 		"migration-flow/introductory-offer": true,
 		"migration/ssh-migration": false,
-		"notifications/redesign": true,
 		"oauth/unified-experience": false,
 		"onboarding/create-course": false,
 		"onboarding/import": true,
