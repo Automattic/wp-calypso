@@ -20,6 +20,12 @@ jest.mock( 'calypso/components/data/document-head', () => ( {
 	default: () => null,
 } ) );
 
+// The feed loads a live Reader stream; this view test only covers the header and
+// sources modal, so stub it out to keep the test off the network.
+jest.mock( 'calypso/reader/spaces/feed', () => ( {
+	SpaceFeed: () => null,
+} ) );
+
 jest.mock( '@automattic/react-virtualized', () => ( {
 	AutoSizer: ( {
 		children,
