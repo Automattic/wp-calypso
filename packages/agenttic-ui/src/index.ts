@@ -46,6 +46,8 @@ export { CompactView } from './components/views/CompactView';
 export { ConversationView } from './components/views/ConversationView';
 export { MinimizedView } from './components/views/MinimizedView';
 export { ImageRenderer } from './components/chat/ImageRenderer';
+export { QuestionCard } from './components/question';
+export type { QuestionCardProps } from './components/question';
 
 // Hooks
 export { useChat } from './hooks/useChat';
