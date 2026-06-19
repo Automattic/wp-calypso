@@ -62,6 +62,23 @@ describe( 'SiteLogs page', () => {
 		} );
 	} );
 
+	test( 'shows the custom error log notice on the PHP errors tab', async () => {
+		render( <SiteLogs logType={ LogType.PHP } siteSlug="test-site" /> );
+
+		expect( await screen.findByText( /Custom error log paths are not monitored/ ) ).toBeVisible();
+	} );
+
+	test( 'does not show the custom error log notice on the Web server tab', async () => {
+		render( <SiteLogs logType={ LogType.SERVER } siteSlug="test-site" /> );
+
+		// Wait for the page to settle on a stable element before asserting absence.
+		await screen.findByRole( 'tab', { name: 'Web server' } );
+
+		expect(
+			screen.queryByText( /Custom error log paths are not monitored/ )
+		).not.toBeInTheDocument();
+	} );
+
 	test( 'URL from/to params are normalized from ms to seconds', async () => {
 		const replaceSpy = jest.spyOn( window.history, 'replaceState' );
 		const msFrom = 1730000000000; // ms

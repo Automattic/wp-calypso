@@ -30,6 +30,12 @@
 	}
 }
 
+// `.site-logs` scope raises specificity above the component's default
+// `.calypso-notice` bottom margin (24px above 660px), which is too large here.
+.site-logs .site-logs__notice {
+	margin-block: 16px;
+}
+
 // This is to compensate the padding set by the wrapper .hosting-dashboard-item-view__content
 // `.wpcom-site` is included to match the broad rule's (0,4,0) specificity so
 // the `padding-inline: 0` override below actually wins on `.dataviews-filters__container`
