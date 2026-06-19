@@ -61,7 +61,7 @@ export function getSiteNameField(
 		id: 'name',
 		label: __( 'Site' ),
 		enableHiding: false,
-		enableSorting: false,
+		enableSorting: true,
 		enableGlobalSearch: true,
 		getValue: ( { item } ) => getSiteName( item ),
 		// TODO: temporary raw link to wp-admin; replace with the full site-link
