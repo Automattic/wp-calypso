@@ -496,51 +496,54 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	if ( allToolProviders.length === 1 ) {
 		mergedToolProvider = allToolProviders[ 0 ];
 	} else if ( allToolProviders.length > 1 ) {
-		// Fetch all abilities once and build a name→provider map so that
-		// executeAbility can look up the owning provider in O(1) instead of
-		// re-querying getAbilities() on every call.
-		const allAbilityResults = await Promise.all(
-			allToolProviders.map( async ( tp ) => {
-				try {
-					return await tp.getAbilities();
-				} catch ( error ) {
-					// eslint-disable-next-line no-console
-					console.warn( '[AgentsManager] Failed to load abilities from provider:', error );
-					return [];
-				}
-			} )
-		);
-		const abilityProviderMap = new Map< string, ToolProvider >();
-		const seenAbilities = new Map< string, unknown >();
-		// Normalize ability names: AM converts `/` → `__` and `-` → `_`
-		// when routing tool calls. Index both raw and normalized forms
-		// so executeAbility matches regardless of which form the caller uses.
+		// Normalize ability names: AM converts `/` → `__` and `-` → `_` when
+		// routing tool calls, so we match on either the raw or normalized form.
 		const normalize = ( name: string ) => name.replace( /\//g, '__' ).replace( /-/g, '_' );
-		for ( let i = 0; i < allToolProviders.length; i++ ) {
-			for ( const ability of allAbilityResults[ i ] ) {
-				if ( ! abilityProviderMap.has( ability.name ) ) {
-					abilityProviderMap.set( ability.name, allToolProviders[ i ] );
-					const normalized = normalize( ability.name );
-					if ( normalized !== ability.name ) {
-						abilityProviderMap.set( normalized, allToolProviders[ i ] );
+
+		// Query providers live on each call rather than snapshotting at load.
+		// agenttic-client calls getAbilities()/executeAbility() fresh every turn,
+		// so abilities registered later stay visible. Big Sky, for one, registers
+		// its editor abilities (big-sky/apply-block-edits and friends) from a
+		// React effect that runs after loadExternalProviders(); a captured list
+		// would freeze those out and the agent's calls would silently not dispatch.
+		const collectAbilityResults = async () =>
+			Promise.all(
+				allToolProviders.map( async ( tp ) => {
+					try {
+						return await tp.getAbilities();
+					} catch ( error ) {
+						// eslint-disable-next-line no-console
+						console.warn( '[AgentsManager] Failed to load abilities from provider:', error );
+						return [];
 					}
-					seenAbilities.set( ability.name, ability );
-				}
-			}
-		}
-		const cachedAbilities = [ ...seenAbilities.values() ] as Awaited<
-			ReturnType< ToolProvider[ 'getAbilities' ] >
-		>;
+				} )
+			);
 
 		mergedToolProvider = {
-			getAbilities: async () => cachedAbilities,
+			getAbilities: async () => {
+				const results = await collectAbilityResults();
+				// Dedupe by ability name; earlier providers win on collisions.
+				const seenAbilities = new Map< string, ( typeof results )[ number ][ number ] >();
+				for ( const abilities of results ) {
+					for ( const ability of abilities ) {
+						if ( ! seenAbilities.has( ability.name ) ) {
+							seenAbilities.set( ability.name, ability );
+						}
+					}
+				}
+				return [ ...seenAbilities.values() ];
+			},
 			executeAbility: async ( name: string, args: unknown ) => {
-				// Use the pre-built map — avoids re-querying getAbilities() on
-				// every call and surfaces real errors from the owning provider
-				// instead of silently swallowing them.
-				const provider = abilityProviderMap.get( name );
-				if ( provider ) {
-					return provider.executeAbility( name, args );
+				// Resolve the owning provider live, in registration order, so the
+				// earliest provider that currently exposes the ability handles it.
+				const results = await collectAbilityResults();
+				for ( let i = 0; i < allToolProviders.length; i++ ) {
+					const owns = results[ i ].some(
+						( ability ) => ability.name === name || normalize( ability.name ) === name
+					);
+					if ( owns ) {
+						return allToolProviders[ i ].executeAbility( name, args );
+					}
 				}
 				throw new Error( `No provider handled ability: ${ name }` );
 			},
