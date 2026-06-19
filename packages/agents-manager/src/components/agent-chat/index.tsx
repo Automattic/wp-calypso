@@ -19,6 +19,7 @@ import { hasAiChatEntryButton } from '../../hooks/use-admin-bar-integration';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { isPluginCompassHost } from '../../utils/is-plugin-compass-agent';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
+import { isWooAiHost } from '../../utils/is-wooai-agent';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
@@ -110,10 +111,14 @@ const DEFAULT_ACCEPTED_IMAGE_TYPES = [
 ];
 
 /**
- * Read a string override from `window.agentsManagerData[key]`. Embedded
- * hosts (reader-chat on blog frontends, Plugin Compass on Calypso's plugins
- * marketplace) can customize the empty-view greeting/help copy by setting
- * these keys before AgentsManager mounts.
+ * Read a string override from `agentsManagerData[key]`. Embedded hosts can
+ * customize the empty-view greeting/help copy by setting these keys before
+ * AgentsManager mounts: reader-chat on blog frontends, Plugin Compass on
+ * Calypso's plugins marketplace, and the Woo AI admin assistant.
+ *
+ * Reader-chat / Plugin Compass loaders assign `window.agentsManagerData`; Woo
+ * runs through Jetpack, which injects a bare `const agentsManagerData` global.
+ * We read the bare global first and fall back to `window`.
  */
 function readAgentsManagerDataString(
 	key: 'emptyViewHeading' | 'emptyViewHelp'
@@ -122,12 +127,15 @@ function readAgentsManagerDataString(
 		return undefined;
 	}
 
-	if ( ! isReaderChatHost() && ! isPluginCompassHost() ) {
+	if ( ! isReaderChatHost() && ! isPluginCompassHost() && ! isWooAiHost() ) {
 		return undefined;
 	}
 
-	const data = ( window as unknown as { agentsManagerData?: Record< string, unknown > } )
-		.agentsManagerData;
+	const data =
+		typeof agentsManagerData !== 'undefined' && agentsManagerData
+			? ( agentsManagerData as unknown as Record< string, unknown > )
+			: ( window as unknown as { agentsManagerData?: Record< string, unknown > } )
+					.agentsManagerData;
 	const value = data?.[ key ];
 	return typeof value === 'string' ? value : undefined;
 }
