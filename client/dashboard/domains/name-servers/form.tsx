@@ -15,6 +15,8 @@ import { MIN_NAME_SERVERS_LENGTH, MAX_NAME_SERVERS_LENGTH, FormData, NameServerK
 import UpsellNudge from './upsell-nudge';
 import { validateHostname } from './utils';
 
+const EMPTY_DEFAULT_NAME_SERVERS: string[] = [];
+
 const createNameServerField = ( index: number, formData: FormData, isBusy?: boolean ) => {
 	const baseField = {
 		id: `nameServer${ index }` as NameServerKey,
@@ -102,7 +104,7 @@ export default function NameServersForm( {
 	domainSiteSlug,
 	showUpsellNudge,
 	nameServers = [],
-	defaultNameServers = [],
+	defaultNameServers = EMPTY_DEFAULT_NAME_SERVERS,
 	isUsingDefaultNameServers = false,
 	isBusy,
 	onSubmit,
