@@ -9,7 +9,7 @@ import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import { pick } from '@automattic/js-utils';
 import debugFactory from 'debug';
-import { defer, difference, get, includes, isEmpty } from 'lodash';
+import { difference, get, includes, isEmpty } from 'lodash';
 import { buildUpgradeFunction } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/unified-plans/util';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import {
@@ -325,7 +325,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 
 export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo, themeStyleVariation } ) {
 	if ( isEmpty( themeSlugWithRepo ) ) {
-		defer( callback );
+		setTimeout( callback, 0 );
 		return;
 	}
 
@@ -447,7 +447,7 @@ export function submitWebsiteContent( callback, { siteSlug }, step, reduxStore )
 	const state = reduxStore.getState();
 	const websiteContent = getWebsiteContent( state );
 	if ( ! websiteContent ) {
-		defer( callback );
+		setTimeout( callback, 0 );
 		return;
 	}
 
@@ -489,7 +489,7 @@ export function addWithThemePlanToCart( callback, dependencies, stepProvidedItem
 	 * If the user selected the free option, then we should abort the checkout part.
 	 */
 	if ( ! planCartItem ) {
-		defer( callback );
+		setTimeout( callback, 0 );
 		return;
 	}
 
@@ -618,7 +618,7 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 	const { cartItems, lastKnownFlow } = stepProvidedItems;
 	if ( isEmpty( cartItems ) && isEmpty( emailItem ) ) {
 		// the user selected the free plan
-		defer( callback );
+		setTimeout( callback, 0 );
 
 		return;
 	}
@@ -643,7 +643,7 @@ export function addAddOnsToCart(
 	const providedDependencies = stepProvidedDependencies || { cartItem };
 	if ( ! cartItem || isEmpty( cartItem ) ) {
 		// the user hans't selected any addons
-		defer( callback );
+		setTimeout( callback, 0 );
 
 		return;
 	}
@@ -787,7 +787,7 @@ export function createAccount(
 		// If purchasing item in this flow, return without creating a user account.
 		if ( isPurchasingItem ) {
 			const providedDependencies = { allowUnauthenticated: true };
-			return defer( () => callback( undefined, providedDependencies ) );
+			return setTimeout( () => callback( undefined, providedDependencies ), 0 );
 		}
 	}
 

@@ -12,7 +12,7 @@ import { camelToSnakeCase, kebabCase, omit } from '@automattic/js-utils';
 import * as oauthToken from '@automattic/oauth-token';
 import { isDomainForGravatarFlow } from '@automattic/onboarding';
 import debugModule from 'debug';
-import { clone, defer, find, get, includes, isEmpty, isEqual, map } from 'lodash';
+import { clone, find, get, includes, isEmpty, isEqual, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -654,7 +654,7 @@ class Signup extends Component {
 			}
 
 			// deferred in case the user is logged in and the redirect triggers a dispatch
-			defer( () => {
+			setTimeout( () => {
 				debug( `Redirecting you to "${ destination }"` );
 				// Experimental: added the flowName check to restrict this functionality only for the 'website-design-services' flow.
 				if ( destination?.startsWith( '/checkout/' ) && 'website-design-services' === flowName ) {
@@ -662,7 +662,7 @@ class Signup extends Component {
 					return;
 				}
 				window.location.href = destination;
-			} );
+			}, 0 );
 
 			return;
 		}

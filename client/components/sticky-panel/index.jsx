@@ -1,7 +1,6 @@
 import { isMobile } from '@automattic/viewport';
 import { debounce, throttle } from '@wordpress/compose';
 import clsx from 'clsx';
-import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import afterLayoutFlush from 'calypso/lib/after-layout-flush';
@@ -129,13 +128,13 @@ class StickyPanelWithIntersectionObserver extends Component {
 		window.addEventListener( 'resize', this.throttleOnResize );
 		window.addEventListener( 'scroll', this.throttleOnScroll );
 
-		this.deferredMount = defer( () => {
+		this.deferredMount = setTimeout( () => {
 			this.observer = new IntersectionObserver( this.onIntersection, {
 				threshold: [ 0, 1 ],
 				rootMargin: `-${ calculateOffset() }px 0px 0px 0px`,
 			} );
 			this.observer.observe( this.state._ref.current );
-		} );
+		}, 0 );
 	}
 
 	componentWillUnmount() {

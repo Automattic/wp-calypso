@@ -1,5 +1,4 @@
 import { throttle } from '@wordpress/compose';
-import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import afterLayoutFlush from 'calypso/lib/after-layout-flush';
@@ -44,12 +43,12 @@ class InfiniteScrollWithIntersectionObserver extends Component {
 	componentDidUpdate() {
 		if ( ! this.deferredPageFetch && ! this.hasScrolledPastBottom ) {
 			// We still need more pages, so schedule a page fetch.
-			this.deferredPageFetch = defer( () => {
+			this.deferredPageFetch = setTimeout( () => {
 				if ( ! this.hasScrolledPastBottom ) {
 					this.getNextPage();
 				}
 				this.deferredPageFetch = null;
-			} );
+			}, 0 );
 		}
 	}
 

@@ -3,17 +3,7 @@ import page from '@automattic/calypso-router';
 import { pick } from '@automattic/js-utils';
 import debugModule from 'debug';
 import { translate } from 'i18n-calypso';
-import {
-	defer,
-	difference,
-	filter,
-	find,
-	forEach,
-	includes,
-	isEmpty,
-	reject,
-	reduce,
-} from 'lodash';
+import { difference, filter, find, forEach, includes, isEmpty, reject, reduce } from 'lodash';
 import { Store, Unsubscribe as ReduxUnsubscribe, AnyAction } from 'redux';
 import { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -375,7 +365,7 @@ export default class SignupFlowController {
 			this._assertFlowProvidedRequiredDependencies();
 			// deferred to ensure that the onComplete function is called after the stores have
 			// emitted their final change events.
-			defer( () => this._onComplete( dependencies, this._destination( dependencies ) ) );
+			setTimeout( () => this._onComplete( dependencies, this._destination( dependencies ) ), 0 );
 		}
 	}
 
@@ -430,9 +420,9 @@ export default class SignupFlowController {
 		}
 
 		// deferred because a step can be processed as soon as it is submitted
-		defer( () => {
+		setTimeout( () => {
 			this._reduxStore.dispatch( processStep( step ) );
-		} );
+		}, 0 );
 
 		const apiFunction = steps[ step.stepName ].apiRequestFunction;
 		if ( ! apiFunction ) {

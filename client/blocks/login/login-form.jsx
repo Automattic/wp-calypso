@@ -10,7 +10,7 @@ import clsx from 'clsx';
 import cookie from 'cookie';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
-import { capitalize, defer, includes } from 'lodash';
+import { capitalize, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -128,7 +128,8 @@ export class LoginForm extends Component {
 
 		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( { isFormDisabledWhileLoading: false }, () => {
-			! disableAutoFocus && defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
+			! disableAutoFocus &&
+				setTimeout( () => this.usernameOrEmail && this.usernameOrEmail.focus(), 0 );
 		} );
 		// Remove url param to keep the last used login consistent upon refresh
 		const url = new URL( window.location );
@@ -169,11 +170,12 @@ export class LoginForm extends Component {
 		}
 
 		if ( requestError.field === 'password' ) {
-			! disableAutoFocus && defer( () => this.password && this.password.focus() );
+			! disableAutoFocus && setTimeout( () => this.password && this.password.focus(), 0 );
 		}
 
 		if ( requestError.field === 'usernameOrEmail' ) {
-			! disableAutoFocus && defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
+			! disableAutoFocus &&
+				setTimeout( () => this.usernameOrEmail && this.usernameOrEmail.focus(), 0 );
 		}
 
 		// User entered an email address or username that doesn't have a corresponding WPCOM account
@@ -203,11 +205,12 @@ export class LoginForm extends Component {
 		if ( this.props.hasAccountTypeLoaded && ! nextProps.hasAccountTypeLoaded ) {
 			this.setState( { password: '' } );
 
-			! disableAutoFocus && defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
+			! disableAutoFocus &&
+				setTimeout( () => this.usernameOrEmail && this.usernameOrEmail.focus(), 0 );
 		}
 
 		if ( ! this.props.hasAccountTypeLoaded && isRegularAccount( nextProps.accountType ) ) {
-			! disableAutoFocus && defer( () => this.password && this.password.focus() );
+			! disableAutoFocus && setTimeout( () => this.password && this.password.focus(), 0 );
 		}
 
 		if ( nextProps.requestError ) {
