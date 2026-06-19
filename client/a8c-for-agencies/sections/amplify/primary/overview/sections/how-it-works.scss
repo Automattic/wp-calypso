@@ -572,16 +572,8 @@
 	color: var(--color-text-inverted);
 	font-size: 11px;
 	font-weight: 700;
-	font-family: inherit;
 	text-align: center;
-	border: none;
 	border-radius: 4px;
-	cursor: pointer;
 	letter-spacing: 0.2px;
-	transition: opacity 0.15s ease;
-}
-
-.amplify-landing-how-overlay-btn:hover {
-	opacity: 0.9;
 }
 

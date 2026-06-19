@@ -389,7 +389,7 @@ export default function AmplifyHowItWorks() {
 								) ) }
 							</div>
 
-							<div className="amplify-landing-how-overlay">
+							<div className="amplify-landing-how-overlay" aria-hidden="true">
 								<div className="amplify-landing-how-overlay-mode">{ data.modeLabel }</div>
 								<div className="amplify-landing-how-overlay-score-row">
 									<span className={ clsx( 'amplify-landing-how-overlay-num', ringSeverity ) }>
@@ -419,9 +419,7 @@ export default function AmplifyHowItWorks() {
 										);
 									} ) }
 								</div>
-								<button type="button" className="amplify-landing-how-overlay-btn">
-									{ data.improveLabel }
-								</button>
+								<div className="amplify-landing-how-overlay-btn">{ data.improveLabel }</div>
 							</div>
 						</div>
 					</div>
