@@ -1,5 +1,4 @@
-import { createElement, type ComponentType } from 'react';
-import { groupToolMessages, renderToolGroups } from './normalizer';
+import { type ComponentType, createElement } from 'react';
 import type { AgentsApiToolGroup, AgentsApiToolRenderers } from './types';
 
 export { groupToolMessages, renderToolGroups } from './normalizer';
@@ -67,6 +66,112 @@ function isQuestionChoice( value: unknown ): value is PresentQuestionChoice {
 	return typeof asRecord( value ).label === 'string';
 }
 
+function normalizeStringArray( value: unknown ): string[] | undefined {
+	if ( ! Array.isArray( value ) ) {
+		return undefined;
+	}
+
+	const strings = value.filter(
+		( item ): item is string => typeof item === 'string' && item !== ''
+	);
+
+	return strings.length ? strings : undefined;
+}
+
+function normalizeFontSample(
+	value: unknown
+): PresentQuestionChoiceFontSamplePresentation | undefined {
+	const sample = asRecord( value );
+	const normalized: PresentQuestionChoiceFontSamplePresentation = {};
+	const heading = asString( sample.heading );
+	const body = asString( sample.body );
+	const headingFont = asString( sample.heading_font );
+	const bodyFont = asString( sample.body_font );
+
+	if ( heading ) {
+		normalized.heading = heading;
+	}
+	if ( body ) {
+		normalized.body = body;
+	}
+	if ( headingFont ) {
+		normalized.heading_font = headingFont;
+	}
+	if ( bodyFont ) {
+		normalized.body_font = bodyFont;
+	}
+
+	return Object.values( normalized ).some( Boolean ) ? normalized : undefined;
+}
+
+function normalizeImage(
+	value: unknown
+): PresentQuestionChoiceImagePresentation | undefined {
+	const image = asRecord( value );
+	const url = asString( image.url );
+
+	if ( ! url ) {
+		return undefined;
+	}
+
+	return {
+		url,
+		alt: asString( image.alt ) || undefined,
+	};
+}
+
+function normalizePresentation(
+	value: unknown
+): PresentQuestionChoicePresentation | undefined {
+	const presentation = asRecord( value );
+	const normalized: PresentQuestionChoicePresentation = {};
+	const swatches = normalizeStringArray( presentation.swatches );
+	const fontSample = normalizeFontSample( presentation.font_sample );
+	const image = normalizeImage( presentation.image );
+	const layoutHint = asString( presentation.layout_hint );
+
+	if ( swatches ) {
+		normalized.swatches = swatches;
+	}
+	if ( fontSample ) {
+		normalized.font_sample = fontSample;
+	}
+	if ( image ) {
+		normalized.image = image;
+	}
+	if ( layoutHint ) {
+		normalized.layout_hint = layoutHint;
+	}
+
+	return Object.values( normalized ).some( Boolean ) ? normalized : undefined;
+}
+
+function normalizeChoice( value: unknown ): PresentQuestionChoice | null {
+	if ( ! isQuestionChoice( value ) ) {
+		return null;
+	}
+
+	const choice = asRecord( value );
+	const normalized: PresentQuestionChoice = {
+		label: asString( choice.label ),
+	};
+	const message = asString( choice.message );
+	const description = asString( choice.description );
+	const presentation = normalizePresentation( choice.presentation );
+
+	if ( message ) {
+		normalized.message = message;
+	}
+	if ( description ) {
+		normalized.description = description;
+	}
+	if ( presentation ) {
+		normalized.presentation = presentation;
+	}
+
+	return normalized;
+}
+
 export function normalizePresentQuestionPrompt(
 	input: unknown
 ): PresentQuestionPrompt | null {
@@ -74,7 +179,10 @@ export function normalizePresentQuestionPrompt(
 	const prompt = asRecord( value.prompt ?? value.question_prompt ?? value );
 	const question = asString( prompt.question );
 	const choices = Array.isArray( prompt.choices )
-		? prompt.choices.filter( isQuestionChoice )
+		? prompt.choices.flatMap( ( choice ) => {
+				const normalized = normalizeChoice( choice );
+				return normalized ? [ normalized ] : [];
+		  } )
 		: [];
 
 	if ( ! question || choices.length === 0 ) {

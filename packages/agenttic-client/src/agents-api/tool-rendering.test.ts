@@ -41,6 +41,47 @@ describe( 'present_question tool rendering', () => {
 		).toBeNull();
 	} );
 
+	it( 'normalizes optional presentation fields defensively', () => {
+		expect(
+			normalizePresentQuestionPrompt( {
+				question: 'Pick a style',
+				choices: [
+					{
+						label: 'Editorial',
+						description: 42,
+						presentation: {
+							swatches: [ '#111111', 123, '' ],
+							font_sample: {
+								heading: 'Feature heading',
+								body_font: 'Inter, sans-serif',
+							},
+							image: { alt: 'Missing URL' },
+							layout_hint: 'Use a strong hero.',
+						},
+					},
+				],
+			} )
+		).toEqual( {
+			question: 'Pick a style',
+			choices: [
+				{
+					label: 'Editorial',
+					presentation: {
+						swatches: [ '#111111' ],
+						font_sample: {
+							heading: 'Feature heading',
+							body_font: 'Inter, sans-serif',
+						},
+						layout_hint: 'Use a strong hero.',
+					},
+				},
+			],
+			allow_freeform: undefined,
+			freeform_label: undefined,
+			freeform_placeholder: undefined,
+		} );
+	} );
+
 	it( 'creates a present_question renderer that returns the supplied QuestionCard', () => {
 		const onAnswer = vi.fn();
 		const group: AgentsApiToolGroup = {

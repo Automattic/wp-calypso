@@ -45,6 +45,12 @@ describe( 'QuestionCard', () => {
 		expect( container.textContent ).toContain(
 			'Which direction should we take?'
 		);
+		expect(
+			container.querySelector( '[data-agenttic-question-card]' )
+		).toBeTruthy();
+		expect(
+			container.querySelector( '[data-slot="choice"]' )?.textContent
+		).toContain( 'Concise' );
 		expect( container.textContent ).toContain( 'Concise' );
 
 		const detailed = Array.from(
@@ -101,6 +107,12 @@ describe( 'QuestionCard', () => {
 		expect( container.querySelector( 'img' )?.getAttribute( 'alt' ) ).toBe(
 			'Style preview'
 		);
+		expect(
+			container.querySelector( '[data-slot="presentation"]' )
+		).toBeTruthy();
+		expect(
+			container.querySelector( '[data-slot="font-sample"]' )
+		).toBeTruthy();
 	} );
 
 	it( 'disables choices after answering', async () => {

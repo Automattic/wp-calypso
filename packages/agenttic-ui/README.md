@@ -178,6 +178,25 @@ interface QuestionChoice {
 All `presentation` fields are optional. Renderers should fall back to the choice
 label and description when presentation metadata is absent or unsupported.
 
+`QuestionCard` uses CSS Modules internally. Consumers that need product-level
+design-system overrides should target the stable data hooks instead of generated
+class names:
+
+```css
+[data-agenttic-question-card] [data-slot="choice"] {
+	/* Product choice styles. */
+}
+
+[data-agenttic-question-card] [data-slot="presentation"] {
+	/* Product presentation layout. */
+}
+```
+
+Supported slots include `card`, `question`, `choices`, `choice`, `label`,
+`description`, `presentation`, `swatches`, `swatch`, `font-sample`,
+`font-heading`, `font-body`, `image`, `layout-hint`, `freeform`,
+`freeform-label`, `freeform-input`, and `freeform-submit`.
+
 ### AgentUI Components
 
 **AgentUI** - Convenience wrapper with default layout

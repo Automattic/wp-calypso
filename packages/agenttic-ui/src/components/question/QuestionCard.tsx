@@ -1,4 +1,4 @@
-import { useState, type CSSProperties, type FormEvent } from 'react';
+import { type CSSProperties, type FormEvent, useId, useState } from 'react';
 import type {
 	QuestionChoice,
 	QuestionChoiceFontSamplePresentation,
@@ -26,11 +26,16 @@ function renderSwatches( swatches?: string[] ) {
 	}
 
 	return (
-		<div className={ styles.swatches } aria-label="Color swatches">
+		<div
+			className={ styles.swatches }
+			data-slot="swatches"
+			aria-label="Color swatches"
+		>
 			{ swatches.map( ( swatch, index ) => (
 				<span
 					key={ `${ swatch }-${ index }` }
 					className={ styles.swatch }
+					data-slot="swatch"
 					style={ { background: swatch } }
 					title={ swatch }
 				/>
@@ -52,14 +57,22 @@ function renderFontSample( fontSample?: QuestionChoiceFontSamplePresentation ) {
 		: undefined;
 
 	return (
-		<div className={ styles.fontSample }>
+		<div className={ styles.fontSample } data-slot="font-sample">
 			{ fontSample.heading ? (
-				<p className={ styles.fontHeading } style={ headingStyle }>
+				<p
+					className={ styles.fontHeading }
+					data-slot="font-heading"
+					style={ headingStyle }
+				>
 					{ fontSample.heading }
 				</p>
 			) : null }
 			{ fontSample.body ? (
-				<p className={ styles.fontBody } style={ bodyStyle }>
+				<p
+					className={ styles.fontBody }
+					data-slot="font-body"
+					style={ bodyStyle }
+				>
 					{ fontSample.body }
 				</p>
 			) : null }
@@ -83,10 +96,11 @@ function renderPresentation( presentation?: QuestionChoicePresentation ) {
 	}
 
 	return (
-		<div className={ styles.presentation }>
+		<div className={ styles.presentation } data-slot="presentation">
 			{ presentation.image ? (
 				<img
 					className={ styles.image }
+					data-slot="image"
 					src={ presentation.image.url }
 					alt={ presentation.image.alt ?? '' }
 				/>
@@ -94,7 +108,7 @@ function renderPresentation( presentation?: QuestionChoicePresentation ) {
 			{ renderSwatches( presentation.swatches ) }
 			{ renderFontSample( presentation.font_sample ) }
 			{ presentation.layout_hint ? (
-				<div className={ styles.layoutHint }>
+				<div className={ styles.layoutHint } data-slot="layout-hint">
 					{ presentation.layout_hint }
 				</div>
 			) : null }
@@ -112,6 +126,7 @@ export function QuestionCard( {
 }: QuestionCardProps ) {
 	const controlsDisabled = disabled || answered;
 	const [ freeformAnswer, setFreeformAnswer ] = useState( '' );
+	const freeformInputId = useId();
 	const freeformChoice: QuestionChoice = {
 		label: prompt.freeform_label ?? 'Type your own answer',
 	};
@@ -128,9 +143,15 @@ export function QuestionCard( {
 	}
 
 	return (
-		<section className={ cn( styles.card, className ) }>
-			<p className={ styles.question }>{ prompt.question }</p>
-			<div className={ styles.choices }>
+		<section
+			className={ cn( styles.card, className ) }
+			data-agenttic-question-card
+			data-slot="card"
+		>
+			<p className={ styles.question } data-slot="question">
+				{ prompt.question }
+			</p>
+			<div className={ styles.choices } data-slot="choices">
 				{ prompt.choices.map( ( choice, index ) => {
 					const answer = choice.message ?? choice.label;
 					const isAnsweredChoice = answeredChoice === answer;
@@ -139,6 +160,7 @@ export function QuestionCard( {
 						<button
 							key={ `${ choice.label }-${ index }` }
 							type="button"
+							data-slot="choice"
 							className={ cn(
 								styles.choice,
 								isAnsweredChoice ? styles.answered : undefined
@@ -147,11 +169,14 @@ export function QuestionCard( {
 							aria-pressed={ isAnsweredChoice || undefined }
 							onClick={ () => onAnswer( answer, choice ) }
 						>
-							<span className={ styles.label }>
+							<span className={ styles.label } data-slot="label">
 								{ choice.label }
 							</span>
 							{ choice.description ? (
-								<span className={ styles.description }>
+								<span
+									className={ styles.description }
+									data-slot="description"
+								>
 									{ choice.description }
 								</span>
 							) : null }
@@ -163,12 +188,19 @@ export function QuestionCard( {
 			{ prompt.allow_freeform ? (
 				<form
 					className={ styles.freeform }
+					data-slot="freeform"
 					onSubmit={ submitFreeformAnswer }
 				>
-					<label className={ styles.freeformLabel }>
+					<label
+						htmlFor={ freeformInputId }
+						className={ styles.freeformLabel }
+						data-slot="freeform-label"
+					>
 						<span>{ freeformChoice.label }</span>
 						<input
+							id={ freeformInputId }
 							className={ styles.freeformInput }
+							data-slot="freeform-input"
 							type="text"
 							value={ freeformAnswer }
 							disabled={ controlsDisabled }
@@ -181,6 +213,7 @@ export function QuestionCard( {
 					<button
 						type="submit"
 						className={ styles.freeformSubmit }
+						data-slot="freeform-submit"
 						disabled={ controlsDisabled || ! freeformAnswer.trim() }
 					>
 						Submit
