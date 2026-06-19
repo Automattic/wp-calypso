@@ -8,32 +8,18 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
+import { isValidUrl } from 'calypso/a8c-for-agencies/components/form/utils';
+import { addSchemeIfMissing } from 'calypso/lib/url';
 import useConnectableSites from './use-connectable-sites';
 
 /**
- * Normalize a user-typed URL. Prepends `https://` when no scheme is given,
- * then validates. Returns the canonical href, or `null` when the input is
- * empty or isn't a plausible http(s) URL. A bare label like "foo" (no dot)
- * is rejected as a likely typo.
+ * Normalize a user-typed URL: validate it looks like an http(s) site and add a
+ * default `https://` scheme when none is given. Returns `null` when the input
+ * isn't a plausible URL.
  */
-export function normalizeUrl( raw: string ): string | null {
+function normalizeUrl( raw: string ): string | null {
 	const trimmed = raw.trim();
-	if ( ! trimmed ) {
-		return null;
-	}
-	const withScheme = /^https?:\/\//i.test( trimmed ) ? trimmed : `https://${ trimmed }`;
-	try {
-		const parsed = new URL( withScheme );
-		if ( parsed.protocol !== 'http:' && parsed.protocol !== 'https:' ) {
-			return null;
-		}
-		if ( parsed.hostname !== 'localhost' && ! parsed.hostname.includes( '.' ) ) {
-			return null;
-		}
-		return parsed.href;
-	} catch {
-		return null;
-	}
+	return isValidUrl( trimmed ) ? addSchemeIfMissing( trimmed, 'https' ) : null;
 }
 
 type InputSource = 'site' | 'url';
