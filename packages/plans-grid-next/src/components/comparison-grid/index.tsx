@@ -621,6 +621,10 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	}
 
 	const featureSlug = feature?.getSlug();
+	const comparisonGridTitle =
+		featureSlug === FEATURE_REALTIME_BACKUPS_JP
+			? translate( 'Real-time backups', { textOnly: true } )
+			: feature?.getAlternativeTitle?.() || feature?.getTitle();
 
 	const planFeatures = [
 		...gridPlan.features.wpcomFeatures,
@@ -679,7 +683,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 										id={ `${ planSlug }-${ featureSlug }` }
 									>
 										<span className="plan-comparison-grid__plan-title">
-											{ feature?.getAlternativeTitle?.() || feature?.getTitle() }
+											{ comparisonGridTitle }
 										</span>
 									</Plans2023Tooltip>
 									<span className="plan-comparison-grid__plan-conditional-title">
@@ -704,9 +708,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 								activeTooltipId={ activeTooltipId }
 								id={ `${ planSlug }-${ featureSlug }` }
 							>
-								<span className="plan-comparison-grid__plan-title">
-									{ feature?.getAlternativeTitle?.() || feature?.getTitle() }
-								</span>
+								<span className="plan-comparison-grid__plan-title">{ comparisonGridTitle }</span>
 							</Plans2023Tooltip>
 							{ feature?.getCompareTitle && (
 								<span className="plan-comparison-grid__plan-subtitle">
