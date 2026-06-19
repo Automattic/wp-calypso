@@ -28,7 +28,11 @@ const ArticleContent = ( {
 					<SupportArticleHeader post={ post } isLoading={ false } />
 					<EmbedContainer>
 						<div
-							className="help-center-article-content__main"
+							className={
+								post.lesson_navigation
+									? 'help-center-article-content__main help-center-article-content__main--with-lesson-navigation'
+									: 'help-center-article-content__main'
+							}
 							// eslint-disable-next-line react/no-danger
 							dangerouslySetInnerHTML={ { __html: post.content } }
 							ref={ articleContentRef }

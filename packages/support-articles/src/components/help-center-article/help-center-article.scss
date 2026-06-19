@@ -537,13 +537,15 @@
 				}
 			}
 
-			// Course lesson videos span the full width of the Help Center,
-			// bleeding past the article's horizontal padding.
-			.wp-block-embed.is-type-video {
-				margin-left: -16px;
-				margin-right: -16px;
-				max-width: none;
-				width: calc( 100% + 32px );
+			&.help-center-article-content__main--with-lesson-navigation {
+				// Course lesson videos span the full width of the Help Center,
+				// bleeding past the article's horizontal padding.
+				.wp-block-embed.is-type-video {
+					margin-left: -16px;
+					margin-right: -16px;
+					max-width: none;
+					width: calc( 100% + 32px );
+				}
 			}
 
 			.wp-block-wpsupport3-update-plan-cta {
