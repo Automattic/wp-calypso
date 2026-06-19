@@ -1,8 +1,4 @@
-import {
-	agencyQuery,
-	jetpackSiteUrlsQuery,
-	queryClient,
-} from '@automattic/api-queries';
+import { agencyQuery, jetpackSiteUrlsQuery, queryClient } from '@automattic/api-queries';
 import { createRootRouteWithContext } from '@tanstack/react-router';
 import Root from '../root';
 import NotFoundRoot from '../root/error';
