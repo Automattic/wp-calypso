@@ -8,7 +8,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useInfiniteStream } from 'calypso/reader/data/stream';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import { SpaceFeed } from '../index';
+import { SpaceFeed, collectPosts } from '../index';
 import type {
 	ReadSpaceDetails,
 	ReadStreamPost,
@@ -166,5 +166,29 @@ describe( 'SpaceFeed', () => {
 		render( WORK );
 
 		expect( screen.queryByText( 'Loading more posts…' ) ).not.toBeInTheDocument();
+	} );
+} );
+
+describe( 'collectPosts', () => {
+	it( 'prefers post cards over the legacy posts field when both are present', () => {
+		const postFromPosts = {
+			ID: 1,
+			site_ID: 2,
+			title: 'posts field',
+		} as unknown as ReadStreamPost;
+		const postFromCard = {
+			ID: 2,
+			site_ID: 3,
+			title: 'card field',
+		} as unknown as ReadStreamPost;
+
+		expect(
+			collectPosts( [
+				{
+					posts: [ postFromPosts ],
+					cards: [ { type: 'post', data: postFromCard }, { type: 'recommendation' } ],
+				} as unknown as ReadStreamResponse,
+			] )
+		).toEqual( [ postFromCard ] );
 	} );
 } );

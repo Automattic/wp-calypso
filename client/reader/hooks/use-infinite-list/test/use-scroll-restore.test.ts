@@ -46,4 +46,16 @@ describe( 'useScrollRestore', () => {
 
 		expect( readScrollSnapshot( undefined ) ).toBeUndefined();
 	} );
+
+	it( 'evicts old snapshots instead of growing without bound', () => {
+		for ( let index = 0; index < 60; index++ ) {
+			const { unmount } = renderHook( () =>
+				useScrollRestore( fakeVirtualizer( [], index ), `feed:${ index }` )
+			);
+			unmount();
+		}
+
+		expect( readScrollSnapshot( 'feed:0' ) ).toBeUndefined();
+		expect( readScrollSnapshot( 'feed:59' ) ).toEqual( { measurements: [], offset: 59 } );
+	} );
 } );

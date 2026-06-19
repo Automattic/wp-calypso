@@ -46,7 +46,7 @@ const asString = ( value: unknown ): string | undefined =>
 const MS_PER_DAY = 86_400_000;
 
 const startOfDay = ( date: Date ): number =>
-	new Date( date.getFullYear(), date.getMonth(), date.getDate() ).getTime();
+	Date.UTC( date.getFullYear(), date.getMonth(), date.getDate() );
 
 function dayGroupOf( dateIso?: string ): SpaceFeedDayGroup {
 	if ( ! dateIso ) {

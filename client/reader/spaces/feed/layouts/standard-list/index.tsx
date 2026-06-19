@@ -3,15 +3,14 @@ import { useMemo } from 'react';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { useInfiniteList } from 'calypso/reader/hooks/use-infinite-list';
 import { SpaceFeedTimeSince } from '../../components/time-since';
-import { getPostFields, type SpaceFeedDayGroup } from '../../post-fields';
+import { getPostFields, type SpaceFeedDayGroup, type SpaceFeedPostFields } from '../../post-fields';
 import type { SpaceFeedLayoutProps } from '../types';
-import type { ReadStreamPost } from '@automattic/api-core';
 
 import './style.scss';
 
 type Row =
 	| { kind: 'header'; key: string; label: string }
-	| { kind: 'post'; key: string; post: ReadStreamPost };
+	| { kind: 'post'; key: string; fields: SpaceFeedPostFields };
 
 const HEADER_SIZE = 44;
 const ROW_SIZE = 88;
@@ -36,8 +35,7 @@ function BookmarkGlyph() {
 	);
 }
 
-function PostRow( { post }: { post: ReadStreamPost } ) {
-	const fields = getPostFields( post );
+function PostRow( { fields }: { fields: SpaceFeedPostFields } ) {
 	return (
 		<a className="space-feed-standard-list__row" href={ fields.postHref }>
 			<span
@@ -104,7 +102,8 @@ export function StandardListLayout( {
 		const out: Row[] = [];
 		let lastGroup: SpaceFeedDayGroup = '';
 		posts.forEach( ( post, index ) => {
-			const { dayGroup, key } = getPostFields( post );
+			const fields = getPostFields( post );
+			const { dayGroup, key } = fields;
 			if ( dayGroup && dayGroup !== lastGroup ) {
 				out.push( {
 					kind: 'header',
@@ -113,7 +112,7 @@ export function StandardListLayout( {
 				} );
 				lastGroup = dayGroup;
 			}
-			out.push( { kind: 'post', key: `post-${ key }`, post } );
+			out.push( { kind: 'post', key: `post-${ key }`, fields } );
 		} );
 		return out;
 	}, [ posts, translate ] );
@@ -144,7 +143,7 @@ export function StandardListLayout( {
 						{ row.kind === 'header' ? (
 							<h2 className="space-feed-standard-list__group">{ row.label }</h2>
 						) : (
-							<PostRow post={ row.post } />
+							<PostRow fields={ row.fields } />
 						) }
 					</div>
 				);

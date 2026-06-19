@@ -9,6 +9,21 @@ interface ScrollSnapshot {
 // Snapshot per restore key, kept for the SPA session so Back returns to the
 // exact scroll position with measured item sizes already known.
 const snapshots = new Map< string, ScrollSnapshot >();
+const MAX_SNAPSHOTS = 50;
+
+function saveScrollSnapshot( restoreKey: string, snapshot: ScrollSnapshot ): void {
+	// Refresh recency when revisiting the same feed/layout.
+	if ( snapshots.has( restoreKey ) ) {
+		snapshots.delete( restoreKey );
+	}
+	snapshots.set( restoreKey, snapshot );
+	if ( snapshots.size > MAX_SNAPSHOTS ) {
+		const oldestKey = snapshots.keys().next().value;
+		if ( oldestKey ) {
+			snapshots.delete( oldestKey );
+		}
+	}
+}
 
 /**
  * Read a saved scroll snapshot. The component feeds its `measurements` and
@@ -34,7 +49,7 @@ export function useScrollRestore(
 			return;
 		}
 		return () => {
-			snapshots.set( restoreKey, {
+			saveScrollSnapshot( restoreKey, {
 				measurements: virtualizer.takeSnapshot(),
 				offset: virtualizer.scrollOffset ?? 0,
 			} );

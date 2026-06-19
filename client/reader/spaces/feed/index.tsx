@@ -19,17 +19,17 @@ interface Props {
 	spaceId: string;
 }
 
-function collectPosts( pages: ReadStreamResponse[] ): ReadStreamPost[] {
+export function collectPosts( pages: ReadStreamResponse[] ): ReadStreamPost[] {
 	const posts: ReadStreamPost[] = [];
 	for ( const page of pages ) {
-		if ( page.posts?.length ) {
-			posts.push( ...page.posts );
-		} else if ( page.cards?.length ) {
+		if ( page.cards?.length ) {
 			for ( const card of page.cards ) {
 				if ( card.type === 'post' ) {
 					posts.push( card.data );
 				}
 			}
+		} else if ( page.posts?.length ) {
+			posts.push( ...page.posts );
 		}
 	}
 	return posts;
