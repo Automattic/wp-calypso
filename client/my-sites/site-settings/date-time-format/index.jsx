@@ -1,6 +1,7 @@
 import { FoldableCard } from '@automattic/components';
+import { capitalize } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { capitalize, includes } from 'lodash';
+import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';

@@ -1,6 +1,6 @@
-import { camelCase } from '@automattic/js-utils';
+import { camelCase, capitalize } from '@automattic/js-utils';
 import { translate, getLocaleSlug } from 'i18n-calypso';
-import { sortBy, get, filter, map, capitalize } from 'lodash';
+import { sortBy, get, filter, map } from 'lodash';
 import moment from 'moment';
 import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
 
@@ -211,7 +211,7 @@ export function getChartLabels( unit, date, localizedDate ) {
 	if ( validDate && validLocalizedDate && unit ) {
 		const dayOfWeek = date.toDate().getDay();
 		const isWeekend = 'day' === unit && ( 6 === dayOfWeek || 0 === dayOfWeek );
-		const labelName = `label${ unit.charAt( 0 ).toUpperCase() + unit.slice( 1 ) }`;
+		const labelName = `label${ capitalize( unit ) }`;
 		return {
 			[ labelName ]: localizedDate.format( chartLabelformats[ unit ] ),
 			classNames: isWeekend ? [ 'is-weekend' ] : [],

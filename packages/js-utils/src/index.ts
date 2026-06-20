@@ -1,5 +1,6 @@
 export { default as camelCase } from './camel-case';
 export { default as camelToSnakeCase } from './camel-to-snake-case';
+export { default as capitalize } from './capitalize';
 export { default as groupBy } from './group-by';
 export { default as kebabCase } from './kebab-case';
 export { default as keyBy } from './key-by';
