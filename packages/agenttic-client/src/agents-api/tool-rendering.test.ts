@@ -31,9 +31,6 @@ describe( 'present_question tool rendering', () => {
 				{ label: 'Minimal' },
 				{ label: 'Bold', message: 'Use the bold direction.' },
 			],
-			allow_freeform: undefined,
-			freeform_label: undefined,
-			freeform_placeholder: undefined,
 		} );
 
 		expect(
@@ -41,48 +38,30 @@ describe( 'present_question tool rendering', () => {
 		).toBeNull();
 	} );
 
-	it( 'normalizes optional presentation fields defensively', () => {
+	it( 'preserves opaque choice presentation data for consumers', () => {
 		expect(
 			normalizePresentQuestionPrompt( {
-				question: 'Pick a style',
+				question: 'Pick one',
 				choices: [
 					{
-						label: 'Editorial',
+						label: 'First',
 						description: 42,
-						presentation: {
-							swatches: [ '#111111', 123, '' ],
-							font_sample: {
-								heading: 'Feature heading',
-								body_font: 'Inter, sans-serif',
-							},
-							image: { alt: 'Missing URL' },
-							layout_hint: 'Use a strong hero.',
-						},
+						presentation: { custom: 'value' },
 					},
 				],
 			} )
 		).toEqual( {
-			question: 'Pick a style',
+			question: 'Pick one',
 			choices: [
 				{
-					label: 'Editorial',
-					presentation: {
-						swatches: [ '#111111' ],
-						font_sample: {
-							heading: 'Feature heading',
-							body_font: 'Inter, sans-serif',
-						},
-						layout_hint: 'Use a strong hero.',
-					},
+					label: 'First',
+					presentation: { custom: 'value' },
 				},
 			],
-			allow_freeform: undefined,
-			freeform_label: undefined,
-			freeform_placeholder: undefined,
 		} );
 	} );
 
-	it( 'unwraps Studio tool result envelopes and normalizes key aliases', () => {
+	it( 'unwraps generic tool result envelopes', () => {
 		expect(
 			normalizePresentQuestionPrompt( {
 				success: true,
@@ -92,19 +71,9 @@ describe( 'present_question tool rendering', () => {
 					choices: [
 						{
 							label: 'Editorial',
-							presentation: {
-								fontsample: {
-									heading: 'Feature heading',
-									headingfont: 'Georgia, serif',
-									bodyfont: 'Inter, sans-serif',
-								},
-								layouthint: 'Use a strong hero.',
-							},
+							presentation: { custom: 'value' },
 						},
 					],
-					allowfreeform: true,
-					freeformlabel: 'Something else',
-					freeform_placeholder: 'Type your own answer...',
 				},
 			} )
 		).toEqual( {
@@ -112,19 +81,9 @@ describe( 'present_question tool rendering', () => {
 			choices: [
 				{
 					label: 'Editorial',
-					presentation: {
-						font_sample: {
-							heading: 'Feature heading',
-							heading_font: 'Georgia, serif',
-							body_font: 'Inter, sans-serif',
-						},
-						layout_hint: 'Use a strong hero.',
-					},
+					presentation: { custom: 'value' },
 				},
 			],
-			allow_freeform: true,
-			freeform_label: 'Something else',
-			freeform_placeholder: 'Type your own answer...',
 		} );
 	} );
 
@@ -173,6 +132,57 @@ describe( 'present_question tool rendering', () => {
 			{ label: 'First' },
 			group
 		);
+	} );
+
+	it( 'renders question cards from tool call args before results arrive', () => {
+		const group: AgentsApiToolGroup = {
+			id: 'tool-call-1',
+			name: 'present_question',
+			call: {
+				id: 'tool-call-1',
+				message: {} as AgentsApiToolGroup[ 'call' ][ 'message' ],
+				args: {
+					question: 'Pick one',
+					choices: [ { label: 'First' } ],
+				},
+			},
+		};
+
+		const element = createPresentQuestionRenderer( {
+			QuestionCard: FakeQuestionCard,
+			onAnswer: vi.fn(),
+		} )( group );
+
+		expect( isValidElement( element ) ).toBe( true );
+		expect( element ).toMatchObject( {
+			type: FakeQuestionCard,
+			props: {
+				prompt: {
+					question: 'Pick one',
+					choices: [ { label: 'First' } ],
+				},
+			},
+		} );
+	} );
+
+	it( 'limits questions to four choices', () => {
+		expect(
+			normalizePresentQuestionPrompt( {
+				question: 'Pick one',
+				choices: [
+					{ label: 'First' },
+					{ label: 'Second' },
+					{ label: 'Third' },
+					{ label: 'Fourth' },
+					{ label: 'Fifth' },
+				],
+			} )?.choices
+		).toEqual( [
+			{ label: 'First' },
+			{ label: 'Second' },
+			{ label: 'Third' },
+			{ label: 'Fourth' },
+		] );
 	} );
 
 	it( 'creates the default renderer map entry', () => {

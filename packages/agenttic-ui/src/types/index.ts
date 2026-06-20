@@ -18,38 +18,16 @@ export interface Suggestion {
 	options?: SuggestionOption[]; // When present, renders as a dropdown picker
 }
 
-export interface QuestionChoiceFontSamplePresentation {
-	heading?: string;
-	body?: string;
-	heading_font?: string;
-	body_font?: string;
-}
-
-export interface QuestionChoiceImagePresentation {
-	url: string;
-	alt?: string;
-}
-
-export interface QuestionChoicePresentation {
-	swatches?: string[];
-	font_sample?: QuestionChoiceFontSamplePresentation;
-	image?: QuestionChoiceImagePresentation;
-	layout_hint?: string;
-}
-
 export interface QuestionChoice {
 	label: string;
 	message?: string;
 	description?: string;
-	presentation?: QuestionChoicePresentation;
+	presentation?: unknown;
 }
 
 export interface QuestionPrompt {
 	question: string;
 	choices: QuestionChoice[];
-	allow_freeform?: boolean;
-	freeform_label?: string;
-	freeform_placeholder?: string;
 }
 
 export interface Message {

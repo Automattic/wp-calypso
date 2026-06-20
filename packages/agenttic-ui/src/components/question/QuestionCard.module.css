@@ -22,6 +22,16 @@
 	gap: var(--spacing-2);
 }
 
+.choicesGrid {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 520px) {
+	.choicesGrid {
+		grid-template-columns: 1fr;
+	}
+}
+
 .choice {
 	align-items: stretch;
 	background: var(--color-background);
@@ -67,102 +77,4 @@
 	color: var(--color-muted-foreground);
 	font-size: var(--text-sm);
 	line-height: var(--text-sm--line-height);
-}
-
-.presentation {
-	display: grid;
-	gap: var(--spacing-2);
-}
-
-.swatches {
-	display: flex;
-	flex-wrap: wrap;
-	gap: var(--spacing-1);
-}
-
-.swatch {
-	border: 1px solid color-mix(in srgb, var(--color-foreground) 10%, transparent);
-	border-radius: var(--radius-xs);
-	height: var(--spacing-6);
-	width: var(--spacing-6);
-}
-
-.image {
-	border-radius: var(--radius-sm);
-	display: block;
-	height: auto;
-	max-height: 160px;
-	max-width: 100%;
-	object-fit: cover;
-}
-
-.fontSample {
-	border-left: 2px solid color-mix(in srgb, var(--color-foreground) 10%, transparent);
-	display: grid;
-	gap: var(--spacing-1);
-	padding-left: var(--spacing-2);
-}
-
-.fontHeading,
-.fontBody {
-	margin: 0;
-}
-
-.fontHeading {
-	font-size: var(--text-base);
-	font-weight: var(--font-weight-semibold);
-	line-height: var(--text-base--line-height);
-}
-
-.fontBody {
-	color: var(--color-muted-foreground);
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
-}
-
-.freeform {
-	display: grid;
-	gap: var(--spacing-2);
-}
-
-.freeformLabel {
-	color: var(--color-muted-foreground);
-	display: grid;
-	font-size: var(--text-sm);
-	gap: var(--spacing-1);
-	line-height: var(--text-sm--line-height);
-}
-
-.freeformInput {
-	background: var(--color-background);
-	border: 1px solid color-mix(in srgb, var(--color-foreground) 10%, transparent);
-	border-radius: var(--radius-md);
-	color: var(--color-foreground);
-	font: inherit;
-	padding: var(--spacing-2) var(--spacing-3);
-	width: 100%;
-}
-
-.freeformInput:focus-visible {
-	outline: 2px solid var(--color-ring);
-	outline-offset: 2px;
-}
-
-.freeformSubmit {
-	background: var(--color-primary);
-	border: 0;
-	border-radius: var(--radius-md);
-	color: var(--color-primary-foreground);
-	cursor: pointer;
-	font: inherit;
-	font-size: var(--text-sm);
-	font-weight: var(--font-weight-semibold);
-	justify-self: start;
-	line-height: var(--text-sm--line-height);
-	padding: var(--spacing-2) var(--spacing-3);
-}
-
-.freeformSubmit:disabled {
-	cursor: default;
-	opacity: 0.66;
 }
