@@ -36,6 +36,7 @@
 
 .content {
     flex: 1;
+    min-width: 0;
     text-align: start;
     word-break: break-word;
     white-space: normal;
@@ -44,6 +45,18 @@
 .message.user .content {
     display: flex;
     justify-content: flex-end;
+}
+
+.bubble {
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.bubble pre {
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: pre-wrap;
 }
 
 /* MARKDOWN */

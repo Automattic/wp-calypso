@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
+	normalizeAgentsApiMessage,
 	normalizeLoadedSession,
 	normalizeSendResponse,
 	normalizeSessions,
@@ -102,8 +103,21 @@ export function useAgentsApiChat( {
 			if ( ! content ) {
 				return;
 			}
+			const submittedMessage = normalizeAgentsApiMessage(
+				{
+					id: `submitted-user-${ Date.now() }`,
+					role: 'user',
+					content,
+				},
+				'user'
+			);
 			setIsProcessing( true );
 			setError( null );
+			setMessages( ( currentMessages ) => [
+				...currentMessages,
+				submittedMessage,
+			] );
+			onMessageRef.current?.( submittedMessage );
 			try {
 				const attachments = await uploadFiles( files, mediaUploadFn );
 				const existingMessageIds = new Set( messageIdsRef.current );
