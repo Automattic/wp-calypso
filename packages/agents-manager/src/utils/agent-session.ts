@@ -130,8 +130,45 @@ export function getOrCreateSessionId(
 	}
 
 	saveSessionId( generateUUID(), agentId, siteKey, userId );
+	markSessionFresh( agentId, siteKey, userId );
 
 	// Read back so unavailable storage yields a stable '' instead of a fresh
 	// UUID per call, which would re-initialize the agent on every render.
 	return getSessionId( agentId, siteKey, userId );
+}
+
+/** Fresh-session flag key: a client-minted id the server has not seen yet. */
+function getFreshFlagKey( agentId?: string, siteKey?: string, userId?: string | number ): string {
+	return `${ getTabSessionKey( agentId, siteKey, userId ) }-fresh`;
+}
+
+/** Mark a client-minted session as never-yet-sent to the server. */
+function markSessionFresh( agentId?: string, siteKey?: string, userId?: string | number ): void {
+	try {
+		sessionStorage.setItem( getFreshFlagKey( agentId, siteKey, userId ), '1' );
+	} catch {
+		// ignore
+	}
+}
+
+/** Whether this session was minted client-side and has no server conversation to fetch. */
+export function isFreshSession(
+	agentId?: string,
+	siteKey?: string,
+	userId?: string | number
+): boolean {
+	try {
+		return sessionStorage.getItem( getFreshFlagKey( agentId, siteKey, userId ) ) === '1';
+	} catch {
+		return false;
+	}
+}
+
+/** Clear the fresh flag once a send is committed, so later loads fetch the conversation. */
+export function markSessionUsed( agentId?: string, siteKey?: string, userId?: string | number ): void {
+	try {
+		sessionStorage.removeItem( getFreshFlagKey( agentId, siteKey, userId ) );
+	} catch {
+		// ignore
+	}
 }

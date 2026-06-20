@@ -69,6 +69,7 @@ import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message
 import { isShowComponentTool } from '../../utils/show-component-tools';
 import { isBlockEditToolId } from '../../utils/tool-message-utils';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
+import { usesLocalStatePersistence } from '../../utils/uses-local-state-persistence';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import type { BigSkyMessage } from '../../types';
@@ -1329,8 +1330,16 @@ export default function OrchestratorChat( {
 			}
 
 			consumeNextMessageExternalContextEntries();
+
+			// A committed send means the server now owns this conversation.
+			if ( usesLocalStatePersistence( agentConfig?.agentId ) ) {
+				markSessionUsed( agentConfig?.agentId, siteKey, currentUser?.ID );
+			}
 		},
 		[
+			agentConfig?.agentId,
+			currentUser?.ID,
+			siteKey,
 			flushPendingNavigation,
 			inputValue,
 			isUploadingImages,

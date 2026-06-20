@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef } from '@wordpress/element';
 import { API_BASE_URL } from '../constants';
 import { useAgentsManagerContext } from '../contexts';
+import { isFreshSession } from '../utils/agent-session';
 import { getConversationBotId } from '../utils/conversation-bot-id';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 
@@ -55,7 +56,13 @@ export default function useConversation( {
 		// Public Reader Chat does not expose conversation history, and the
 		// server-side history endpoint requires permissions public readers
 		// usually do not have.
-		enabled: enabled && !! sessionId && ! isReaderChatAgent( agentId ),
+		//
+		// Also skip a brand-new ("fresh") session — one generated client-side that
+		// has never been sent to the server, so no chat row exists yet. Fetching it
+		// would just 404. The flag is cleared after the first message round-trip
+		// (see orchestrator-chat), so reloads of a real conversation still fetch.
+		enabled:
+			enabled && !! sessionId && ! isReaderChatAgent( agentId ) && ! isFreshSession( agentId ),
 		refetchOnWindowFocus: false,
 	} );
 
