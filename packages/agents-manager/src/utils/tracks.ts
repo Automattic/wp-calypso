@@ -15,9 +15,10 @@ import { select } from '@wordpress/data';
 import { DOLLY_AGENT_ID } from '../constants';
 import { getActiveSessionId } from './agent-session';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
-import { isReaderChatAgent, isReaderChatHost } from './is-reader-chat-agent';
+import { isReaderChatHost } from './is-reader-chat-agent';
 import { getLoadedProviderIds } from './loaded-provider-ids';
 import { getResolvedAgentId } from './resolved-agent-id';
+import { usesLocalStatePersistence } from './uses-local-state-persistence';
 
 type TracksProps = Record< string, unknown >;
 
@@ -115,8 +116,8 @@ export function recordBigSkyTracksEvent(
 	eventName: BigSkyEventName,
 	props: TracksProps = {}
 ): void {
-	if ( isReaderChatAgent( getResolvedAgentId() ) ) {
-		return; // Big Sky parity events are editor-only; never on reader-chat.
+	if ( usesLocalStatePersistence( getResolvedAgentId() ) ) {
+		return; // Editor-only events; getBigSkyPageProps() also 401s on public surfaces.
 	}
 
 	const bigSky = getBigSkyTracksData();
