@@ -30,6 +30,30 @@ function unreadTotal( sessions: AgentsApiSession[] ): number {
 	);
 }
 
+function messageText( message: AgentsApiMessage ): string {
+	return message.content
+		.filter(
+			( part ) => part.type === 'text' && typeof part.text === 'string'
+		)
+		.map( ( part ) => part.text )
+		.join( '' )
+		.trim();
+}
+
+function containsUserMessage(
+	messages: AgentsApiMessage[],
+	message: AgentsApiMessage
+): boolean {
+	const submittedText = messageText( message );
+	return messages.some(
+		( candidate ) =>
+			candidate.id === message.id ||
+			( candidate.role === 'user' &&
+				submittedText !== '' &&
+				messageText( candidate ) === submittedText )
+	);
+}
+
 export function useAgentsApiChat( {
 	adapter,
 	mediaUploadFn,
@@ -117,6 +141,10 @@ export function useAgentsApiChat( {
 				...currentMessages,
 				submittedMessage,
 			] );
+			messageIdsRef.current = new Set( [
+				...messageIdsRef.current,
+				submittedMessage.id,
+			] );
 			onMessageRef.current?.( submittedMessage );
 			try {
 				const attachments = await uploadFiles( files, mediaUploadFn );
@@ -134,10 +162,16 @@ export function useAgentsApiChat( {
 				if ( ! mountedRef.current ) {
 					return;
 				}
+				const nextMessages = containsUserMessage(
+					normalized.messages,
+					submittedMessage
+				)
+					? normalized.messages
+					: [ submittedMessage, ...normalized.messages ];
 				messageIdsRef.current = new Set(
-					normalized.messages.map( ( item ) => item.id )
+					nextMessages.map( ( item ) => item.id )
 				);
-				setMessages( normalized.messages );
+				setMessages( nextMessages );
 				setSessionId( normalized.sessionId ?? sessionId );
 				const nextRunId =
 					( getRunId && getRunId( normalized.metadata ) ) ??

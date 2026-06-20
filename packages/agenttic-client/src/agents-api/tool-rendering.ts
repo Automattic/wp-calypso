@@ -62,6 +62,31 @@ function asString( value: unknown ): string {
 	return typeof value === 'string' ? value : '';
 }
 
+function pickString(
+	record: Record< string, unknown >,
+	keys: string[]
+): string {
+	for ( const key of keys ) {
+		const value = asString( record[ key ] );
+		if ( value ) {
+			return value;
+		}
+	}
+	return '';
+}
+
+function pickBoolean(
+	record: Record< string, unknown >,
+	keys: string[]
+): boolean | undefined {
+	for ( const key of keys ) {
+		if ( typeof record[ key ] === 'boolean' ) {
+			return record[ key ] as boolean;
+		}
+	}
+	return undefined;
+}
+
 function isQuestionChoice( value: unknown ): value is PresentQuestionChoice {
 	return typeof asRecord( value ).label === 'string';
 }
@@ -85,8 +110,16 @@ function normalizeFontSample(
 	const normalized: PresentQuestionChoiceFontSamplePresentation = {};
 	const heading = asString( sample.heading );
 	const body = asString( sample.body );
-	const headingFont = asString( sample.heading_font );
-	const bodyFont = asString( sample.body_font );
+	const headingFont = pickString( sample, [
+		'heading_font',
+		'headingFont',
+		'headingfont',
+	] );
+	const bodyFont = pickString( sample, [
+		'body_font',
+		'bodyFont',
+		'bodyfont',
+	] );
 
 	if ( heading ) {
 		normalized.heading = heading;
@@ -126,9 +159,17 @@ function normalizePresentation(
 	const presentation = asRecord( value );
 	const normalized: PresentQuestionChoicePresentation = {};
 	const swatches = normalizeStringArray( presentation.swatches );
-	const fontSample = normalizeFontSample( presentation.font_sample );
+	const fontSample = normalizeFontSample(
+		presentation.font_sample ??
+			presentation.fontSample ??
+			presentation.fontsample
+	);
 	const image = normalizeImage( presentation.image );
-	const layoutHint = asString( presentation.layout_hint );
+	const layoutHint = pickString( presentation, [
+		'layout_hint',
+		'layoutHint',
+		'layouthint',
+	] );
 
 	if ( swatches ) {
 		normalized.swatches = swatches;
@@ -176,7 +217,17 @@ export function normalizePresentQuestionPrompt(
 	input: unknown
 ): PresentQuestionPrompt | null {
 	const value = asRecord( input );
-	const prompt = asRecord( value.prompt ?? value.question_prompt ?? value );
+	const result = asRecord( value.result );
+	const payload =
+		asString( result.question ) || Array.isArray( result.choices )
+			? result
+			: value;
+	const prompt = asRecord(
+		payload.prompt ??
+			payload.question_prompt ??
+			payload.questionPrompt ??
+			payload
+	);
 	const question = asString( prompt.question );
 	const choices = Array.isArray( prompt.choices )
 		? prompt.choices.flatMap( ( choice ) => {
@@ -192,13 +243,23 @@ export function normalizePresentQuestionPrompt(
 	return {
 		question,
 		choices,
-		allow_freeform:
-			typeof prompt.allow_freeform === 'boolean'
-				? prompt.allow_freeform
-				: undefined,
-		freeform_label: asString( prompt.freeform_label ) || undefined,
+		allow_freeform: pickBoolean( prompt, [
+			'allow_freeform',
+			'allowFreeform',
+			'allowfreeform',
+		] ),
+		freeform_label:
+			pickString( prompt, [
+				'freeform_label',
+				'freeformLabel',
+				'freeformlabel',
+			] ) || undefined,
 		freeform_placeholder:
-			asString( prompt.freeform_placeholder ) || undefined,
+			pickString( prompt, [
+				'freeform_placeholder',
+				'freeformPlaceholder',
+				'freeformplaceholder',
+			] ) || undefined,
 	};
 }
 

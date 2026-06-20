@@ -82,6 +82,52 @@ describe( 'present_question tool rendering', () => {
 		} );
 	} );
 
+	it( 'unwraps Studio tool result envelopes and normalizes key aliases', () => {
+		expect(
+			normalizePresentQuestionPrompt( {
+				success: true,
+				tool_name: 'present_question',
+				result: {
+					question: 'Choose a direction',
+					choices: [
+						{
+							label: 'Editorial',
+							presentation: {
+								fontsample: {
+									heading: 'Feature heading',
+									headingfont: 'Georgia, serif',
+									bodyfont: 'Inter, sans-serif',
+								},
+								layouthint: 'Use a strong hero.',
+							},
+						},
+					],
+					allowfreeform: true,
+					freeformlabel: 'Something else',
+					freeform_placeholder: 'Type your own answer...',
+				},
+			} )
+		).toEqual( {
+			question: 'Choose a direction',
+			choices: [
+				{
+					label: 'Editorial',
+					presentation: {
+						font_sample: {
+							heading: 'Feature heading',
+							heading_font: 'Georgia, serif',
+							body_font: 'Inter, sans-serif',
+						},
+						layout_hint: 'Use a strong hero.',
+					},
+				},
+			],
+			allow_freeform: true,
+			freeform_label: 'Something else',
+			freeform_placeholder: 'Type your own answer...',
+		} );
+	} );
+
 	it( 'creates a present_question renderer that returns the supplied QuestionCard', () => {
 		const onAnswer = vi.fn();
 		const group: AgentsApiToolGroup = {
