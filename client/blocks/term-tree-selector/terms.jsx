@@ -3,7 +3,7 @@ import { AutoSizer, List } from '@automattic/react-virtualized';
 import { debounce } from '@wordpress/compose';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { difference, filter, includes, isEqual, map, memoize, range, reduce } from 'lodash';
+import { filter, includes, isEqual, map, memoize, range, reduce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -127,13 +127,10 @@ class TermTreeSelectorList extends Component {
 
 	setRequestedPages = ( { startIndex, stopIndex } ) => {
 		const { requestedPages } = this.state;
-		const pagesToRequest = difference(
-			range(
-				this.getPageForIndex( startIndex - LOAD_OFFSET ),
-				this.getPageForIndex( stopIndex + LOAD_OFFSET ) + 1
-			),
-			requestedPages
-		);
+		const pagesToRequest = range(
+			this.getPageForIndex( startIndex - LOAD_OFFSET ),
+			this.getPageForIndex( stopIndex + LOAD_OFFSET ) + 1
+		).filter( ( page ) => ! requestedPages.includes( page ) );
 
 		if ( ! pagesToRequest.length ) {
 			return;

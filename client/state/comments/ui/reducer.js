@@ -1,4 +1,4 @@
-import { get, includes, map, without } from 'lodash';
+import { get, includes, map } from 'lodash';
 import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_DELETE,
@@ -82,7 +82,11 @@ export const queries = ( state = {}, action ) => {
 					.sort( query.order === 'DESC' ? sortDescending : sortAscending );
 				return deepUpdateComments( state, sortedList, query );
 			}
-			return deepUpdateComments( state, without( comments, action.commentId ), query );
+			return deepUpdateComments(
+				state,
+				( comments ?? [] ).filter( ( commentId ) => commentId !== action.commentId ),
+				query
+			);
 		}
 		case COMMENTS_QUERY_UPDATE:
 			return typeof action?.query?.page === 'undefined'

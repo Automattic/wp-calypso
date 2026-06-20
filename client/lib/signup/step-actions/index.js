@@ -9,7 +9,7 @@ import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import { pick } from '@automattic/js-utils';
 import debugFactory from 'debug';
-import { difference, get, includes, isEmpty } from 'lodash';
+import { get, includes, isEmpty } from 'lodash';
 import { buildUpgradeFunction } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/unified-plans/util';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import {
@@ -1001,10 +1001,10 @@ function shouldExcludeStep( stepName, fulfilledDependencies ) {
 	const stepProvidesDependencies = steps[ stepName ].providesDependencies;
 	const stepOptionalDependencies = steps[ stepName ].optionalDependencies;
 
-	const dependenciesNotProvided = difference(
-		stepProvidesDependencies,
-		stepOptionalDependencies,
-		fulfilledDependencies
+	const dependenciesNotProvided = ( stepProvidesDependencies ?? [] ).filter(
+		( dependency ) =>
+			! ( stepOptionalDependencies ?? [] ).includes( dependency ) &&
+			! fulfilledDependencies.includes( dependency )
 	);
 
 	return isEmpty( dependenciesNotProvided );

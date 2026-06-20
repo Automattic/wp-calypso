@@ -1,7 +1,7 @@
 import { RootChild, Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { includes, without } from 'lodash';
+import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import TranslatableString from 'calypso/components/translatable/proptype';
@@ -104,7 +104,8 @@ export class DropZone extends Component {
 				return;
 			}
 
-			this.dragEnterNodes = without( this.dragEnterNodes, Array.from( mutation.removedNodes ) );
+			const removedNodes = Array.from( mutation.removedNodes );
+			this.dragEnterNodes = this.dragEnterNodes.filter( ( node ) => node !== removedNodes );
 		} );
 	};
 
@@ -114,7 +115,7 @@ export class DropZone extends Component {
 		if ( 'dragenter' === event.type && ! includes( this.dragEnterNodes, event.target ) ) {
 			this.dragEnterNodes.push( event.target );
 		} else if ( 'dragleave' === event.type ) {
-			this.dragEnterNodes = without( this.dragEnterNodes, event.target );
+			this.dragEnterNodes = this.dragEnterNodes.filter( ( node ) => node !== event.target );
 		}
 
 		// In some contexts, it may be necessary to capture and redirect the
@@ -137,7 +138,7 @@ export class DropZone extends Component {
 		if ( window.CustomEvent && event instanceof window.CustomEvent ) {
 			// For redirected CustomEvent instances, immediately remove window
 			// from tracked nodes since another "real" event will be triggered.
-			this.dragEnterNodes = without( this.dragEnterNodes, window );
+			this.dragEnterNodes = this.dragEnterNodes.filter( ( node ) => node !== window );
 		}
 	};
 

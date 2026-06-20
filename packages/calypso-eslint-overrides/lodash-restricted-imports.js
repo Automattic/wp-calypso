@@ -36,6 +36,10 @@ const COMPACT_MESSAGE = 'Please use `array.filter( Boolean )` instead of lodash 
 const FLATTEN_MESSAGE = 'Please use native `array.flatMap()` / `array.flat()` instead.';
 const DEFER_MESSAGE = 'Please use native `setTimeout( fn, 0 )` instead of lodash `defer`.';
 const DELAY_MESSAGE = 'Please use native `setTimeout( fn, wait )` instead of lodash `delay`.';
+const WITHOUT_MESSAGE =
+	'Please use native `array.filter( ( item ) => item !== value )` instead of lodash `without`.';
+const DIFFERENCE_MESSAGE =
+	'Please use native `array.filter( ( item ) => ! other.includes( item ) )` instead of lodash `difference`.';
 
 const paths = [
 	{ name: 'lodash', importNames: JS_UTILS_NAMES, message: JS_UTILS_MESSAGE },
@@ -45,6 +49,8 @@ const paths = [
 	{ name: 'lodash', importNames: [ 'flatMap', 'flatten' ], message: FLATTEN_MESSAGE },
 	{ name: 'lodash', importNames: [ 'defer' ], message: DEFER_MESSAGE },
 	{ name: 'lodash', importNames: [ 'delay' ], message: DELAY_MESSAGE },
+	{ name: 'lodash', importNames: [ 'without' ], message: WITHOUT_MESSAGE },
+	{ name: 'lodash', importNames: [ 'difference' ], message: DIFFERENCE_MESSAGE },
 ];
 
 // Deep `lodash/<fn>` imports bypass the named-import paths above.
@@ -56,6 +62,8 @@ const patterns = [
 	{ group: [ 'lodash/flatMap', 'lodash/flatten' ], message: FLATTEN_MESSAGE },
 	{ group: [ 'lodash/defer' ], message: DEFER_MESSAGE },
 	{ group: [ 'lodash/delay' ], message: DELAY_MESSAGE },
+	{ group: [ 'lodash/without' ], message: WITHOUT_MESSAGE },
+	{ group: [ 'lodash/difference' ], message: DIFFERENCE_MESSAGE },
 ];
 
 module.exports = { paths, patterns };
