@@ -19,9 +19,6 @@ export type {
 	Message,
 	NoticeConfig,
 	QuestionChoice,
-	QuestionChoiceFontSamplePresentation,
-	QuestionChoiceImagePresentation,
-	QuestionChoicePresentation,
 	QuestionPrompt,
 	Suggestion,
 } from './types';

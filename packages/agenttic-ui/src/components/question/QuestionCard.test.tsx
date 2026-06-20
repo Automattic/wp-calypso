@@ -67,51 +67,38 @@ describe( 'QuestionCard', () => {
 		);
 	} );
 
-	it( 'renders optional choice presentation', async () => {
+	it( 'lets consumers compose custom choice content', async () => {
 		const prompt: QuestionPrompt = {
-			question: 'Pick a visual style',
+			question: 'Pick a direction',
 			choices: [
 				{
-					label: 'Editorial',
-					description: 'A type-led direction.',
-					presentation: {
-						swatches: [ '#111111', 'rebeccapurple' ],
-						font_sample: {
-							heading: 'Feature heading',
-							body: 'Readable body copy',
-							heading_font: 'Georgia, serif',
-							body_font: 'Arial, sans-serif',
-						},
-						image: {
-							url: 'https://example.com/style.png',
-							alt: 'Style preview',
-						},
-						layout_hint: 'Use a strong hero and compact cards.',
-					},
+					label: 'First',
+					description: 'A composed option.',
+					presentation: { custom: 'value' },
 				},
 			],
 		};
 
 		await act( async () => {
 			root.render(
-				<QuestionCard prompt={ prompt } onAnswer={ vi.fn() } />
+				<QuestionCard
+					prompt={ prompt }
+					onAnswer={ vi.fn() }
+					renderChoiceContent={ ( choice ) =>
+						choice.presentation ? (
+							<span data-slot="consumer-content">
+								Custom content
+							</span>
+						) : null
+					}
+				/>
 			);
 		} );
 
-		expect( container.textContent ).toContain( 'A type-led direction.' );
-		expect( container.textContent ).toContain( 'Feature heading' );
-		expect( container.textContent ).toContain(
-			'Use a strong hero and compact cards.'
-		);
-		expect( container.querySelectorAll( '[title]' ) ).toHaveLength( 2 );
-		expect( container.querySelector( 'img' )?.getAttribute( 'alt' ) ).toBe(
-			'Style preview'
-		);
+		expect( container.textContent ).toContain( 'A composed option.' );
+		expect( container.textContent ).toContain( 'Custom content' );
 		expect(
-			container.querySelector( '[data-slot="presentation"]' )
-		).toBeTruthy();
-		expect(
-			container.querySelector( '[data-slot="font-sample"]' )
+			container.querySelector( '[data-slot="consumer-content"]' )
 		).toBeTruthy();
 	} );
 
@@ -138,41 +125,68 @@ describe( 'QuestionCard', () => {
 		expect( button?.getAttribute( 'aria-pressed' ) ).toBe( 'true' );
 	} );
 
-	it( 'submits freeform answers when allowed', async () => {
-		const onAnswer = vi.fn();
+	it( 'uses the grid layout for four-choice questions', async () => {
 		const prompt: QuestionPrompt = {
-			question: 'Choose or describe one',
-			choices: [ { label: 'First' } ],
-			allow_freeform: true,
-			freeform_label: 'Custom answer',
-			freeform_placeholder: 'Describe another option',
+			question: 'Choose one',
+			choices: [
+				{ label: 'First' },
+				{ label: 'Second' },
+				{ label: 'Third' },
+				{ label: 'Fourth' },
+			],
 		};
 
 		await act( async () => {
 			root.render(
-				<QuestionCard prompt={ prompt } onAnswer={ onAnswer } />
+				<QuestionCard prompt={ prompt } onAnswer={ vi.fn() } />
 			);
 		} );
 
-		const input = container.querySelector( 'input' );
-		expect( input?.getAttribute( 'placeholder' ) ).toBe(
-			'Describe another option'
-		);
+		expect(
+			container.querySelector( '[data-slot="choices"]' )?.className
+		).toContain( 'choicesGrid' );
+	} );
+
+	it( 'keeps two-choice questions stacked', async () => {
+		const prompt: QuestionPrompt = {
+			question: 'Choose one',
+			choices: [ { label: 'First' }, { label: 'Second' } ],
+		};
 
 		await act( async () => {
-			Object.getOwnPropertyDescriptor(
-				HTMLInputElement.prototype,
-				'value'
-			)?.set?.call( input, 'Use a warmer palette' );
-			input!.dispatchEvent( new Event( 'input', { bubbles: true } ) );
+			root.render(
+				<QuestionCard prompt={ prompt } onAnswer={ vi.fn() } />
+			);
 		} );
+
+		expect(
+			container.querySelector( '[data-slot="choices"]' )?.className
+		).not.toContain( 'choicesGrid' );
+		expect( container.querySelector( 'form' ) ).toBeNull();
+		expect( container.querySelector( 'input' ) ).toBeNull();
+	} );
+
+	it( 'renders no more than four choices', async () => {
+		const prompt: QuestionPrompt = {
+			question: 'Choose one',
+			choices: [
+				{ label: 'First' },
+				{ label: 'Second' },
+				{ label: 'Third' },
+				{ label: 'Fourth' },
+				{ label: 'Fifth' },
+			],
+		};
 
 		await act( async () => {
-			container.querySelector( 'form' )?.requestSubmit();
+			root.render(
+				<QuestionCard prompt={ prompt } onAnswer={ vi.fn() } />
+			);
 		} );
 
-		expect( onAnswer ).toHaveBeenCalledWith( 'Use a warmer palette', {
-			label: 'Custom answer',
-		} );
+		expect(
+			container.querySelectorAll( '[data-slot="choice"]' )
+		).toHaveLength( 4 );
+		expect( container.textContent ).not.toContain( 'Fifth' );
 	} );
 } );

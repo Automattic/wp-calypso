@@ -6,38 +6,16 @@ export type { AgentsApiToolGroup, AgentsApiToolRenderers } from './types';
 
 const PRESENT_QUESTION_TOOL_NAME = 'present_question';
 
-export interface PresentQuestionChoiceFontSamplePresentation {
-	heading?: string;
-	body?: string;
-	heading_font?: string;
-	body_font?: string;
-}
-
-export interface PresentQuestionChoiceImagePresentation {
-	url: string;
-	alt?: string;
-}
-
-export interface PresentQuestionChoicePresentation {
-	swatches?: string[];
-	font_sample?: PresentQuestionChoiceFontSamplePresentation;
-	image?: PresentQuestionChoiceImagePresentation;
-	layout_hint?: string;
-}
-
 export interface PresentQuestionChoice {
 	label: string;
 	message?: string;
 	description?: string;
-	presentation?: PresentQuestionChoicePresentation;
+	presentation?: unknown;
 }
 
 export interface PresentQuestionPrompt {
 	question: string;
 	choices: PresentQuestionChoice[];
-	allow_freeform?: boolean;
-	freeform_label?: string;
-	freeform_placeholder?: string;
 }
 
 export interface PresentQuestionCardProps {
@@ -62,129 +40,8 @@ function asString( value: unknown ): string {
 	return typeof value === 'string' ? value : '';
 }
 
-function pickString(
-	record: Record< string, unknown >,
-	keys: string[]
-): string {
-	for ( const key of keys ) {
-		const value = asString( record[ key ] );
-		if ( value ) {
-			return value;
-		}
-	}
-	return '';
-}
-
-function pickBoolean(
-	record: Record< string, unknown >,
-	keys: string[]
-): boolean | undefined {
-	for ( const key of keys ) {
-		if ( typeof record[ key ] === 'boolean' ) {
-			return record[ key ] as boolean;
-		}
-	}
-	return undefined;
-}
-
 function isQuestionChoice( value: unknown ): value is PresentQuestionChoice {
 	return typeof asRecord( value ).label === 'string';
-}
-
-function normalizeStringArray( value: unknown ): string[] | undefined {
-	if ( ! Array.isArray( value ) ) {
-		return undefined;
-	}
-
-	const strings = value.filter(
-		( item ): item is string => typeof item === 'string' && item !== ''
-	);
-
-	return strings.length ? strings : undefined;
-}
-
-function normalizeFontSample(
-	value: unknown
-): PresentQuestionChoiceFontSamplePresentation | undefined {
-	const sample = asRecord( value );
-	const normalized: PresentQuestionChoiceFontSamplePresentation = {};
-	const heading = asString( sample.heading );
-	const body = asString( sample.body );
-	const headingFont = pickString( sample, [
-		'heading_font',
-		'headingFont',
-		'headingfont',
-	] );
-	const bodyFont = pickString( sample, [
-		'body_font',
-		'bodyFont',
-		'bodyfont',
-	] );
-
-	if ( heading ) {
-		normalized.heading = heading;
-	}
-	if ( body ) {
-		normalized.body = body;
-	}
-	if ( headingFont ) {
-		normalized.heading_font = headingFont;
-	}
-	if ( bodyFont ) {
-		normalized.body_font = bodyFont;
-	}
-
-	return Object.values( normalized ).some( Boolean ) ? normalized : undefined;
-}
-
-function normalizeImage(
-	value: unknown
-): PresentQuestionChoiceImagePresentation | undefined {
-	const image = asRecord( value );
-	const url = asString( image.url );
-
-	if ( ! url ) {
-		return undefined;
-	}
-
-	return {
-		url,
-		alt: asString( image.alt ) || undefined,
-	};
-}
-
-function normalizePresentation(
-	value: unknown
-): PresentQuestionChoicePresentation | undefined {
-	const presentation = asRecord( value );
-	const normalized: PresentQuestionChoicePresentation = {};
-	const swatches = normalizeStringArray( presentation.swatches );
-	const fontSample = normalizeFontSample(
-		presentation.font_sample ??
-			presentation.fontSample ??
-			presentation.fontsample
-	);
-	const image = normalizeImage( presentation.image );
-	const layoutHint = pickString( presentation, [
-		'layout_hint',
-		'layoutHint',
-		'layouthint',
-	] );
-
-	if ( swatches ) {
-		normalized.swatches = swatches;
-	}
-	if ( fontSample ) {
-		normalized.font_sample = fontSample;
-	}
-	if ( image ) {
-		normalized.image = image;
-	}
-	if ( layoutHint ) {
-		normalized.layout_hint = layoutHint;
-	}
-
-	return Object.values( normalized ).some( Boolean ) ? normalized : undefined;
 }
 
 function normalizeChoice( value: unknown ): PresentQuestionChoice | null {
@@ -198,7 +55,6 @@ function normalizeChoice( value: unknown ): PresentQuestionChoice | null {
 	};
 	const message = asString( choice.message );
 	const description = asString( choice.description );
-	const presentation = normalizePresentation( choice.presentation );
 
 	if ( message ) {
 		normalized.message = message;
@@ -206,8 +62,8 @@ function normalizeChoice( value: unknown ): PresentQuestionChoice | null {
 	if ( description ) {
 		normalized.description = description;
 	}
-	if ( presentation ) {
-		normalized.presentation = presentation;
+	if ( choice.presentation !== undefined ) {
+		normalized.presentation = choice.presentation;
 	}
 
 	return normalized;
@@ -230,10 +86,12 @@ export function normalizePresentQuestionPrompt(
 	);
 	const question = asString( prompt.question );
 	const choices = Array.isArray( prompt.choices )
-		? prompt.choices.flatMap( ( choice ) => {
-				const normalized = normalizeChoice( choice );
-				return normalized ? [ normalized ] : [];
-		  } )
+		? prompt.choices
+				.flatMap( ( choice ) => {
+					const normalized = normalizeChoice( choice );
+					return normalized ? [ normalized ] : [];
+				} )
+				.slice( 0, 4 )
 		: [];
 
 	if ( ! question || choices.length === 0 ) {
@@ -243,23 +101,6 @@ export function normalizePresentQuestionPrompt(
 	return {
 		question,
 		choices,
-		allow_freeform: pickBoolean( prompt, [
-			'allow_freeform',
-			'allowFreeform',
-			'allowfreeform',
-		] ),
-		freeform_label:
-			pickString( prompt, [
-				'freeform_label',
-				'freeformLabel',
-				'freeformlabel',
-			] ) || undefined,
-		freeform_placeholder:
-			pickString( prompt, [
-				'freeform_placeholder',
-				'freeformPlaceholder',
-				'freeformplaceholder',
-			] ) || undefined,
 	};
 }
 
