@@ -23,6 +23,7 @@ import {
 	type AbilitiesSetupHook,
 	type LoadedProviders,
 } from '../utils/load-external-providers';
+import { usesLocalStatePersistence } from '../utils/uses-local-state-persistence';
 import { canExposeWebMcpTools } from '../webmcp/eligibility';
 import AgentDock from './agent-dock';
 import { PersistentRouter } from './persistent-router';
@@ -150,7 +151,7 @@ function resolveTabSessionId(
 	if ( isNewChat ) {
 		return '';
 	}
-	if ( isReaderChatAgent( agentId ) ) {
+	if ( usesLocalStatePersistence( agentId ) ) {
 		return getOrCreateSessionId( agentId, siteKey, userId );
 	}
 	return getSessionId( agentId, siteKey, userId );
