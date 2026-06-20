@@ -73,6 +73,40 @@ describe( 'Agents API normalizers', () => {
 		} );
 	} );
 
+	it( 'groups tool messages from generic metadata envelopes', () => {
+		const message = normalizeAgentsApiMessage( {
+			id: 'tool-result-1',
+			role: 'user',
+			content: '',
+			metadata: {
+				type: 'tool_result',
+				tool_name: 'present_question',
+				tool_call_id: 'call-1',
+				tool_data: {
+					result: {
+						question: 'Pick one',
+						choices: [ { label: 'A' }, { label: 'B' } ],
+					},
+				},
+			},
+		} );
+
+		expect( groupToolMessages( [ message ] ) ).toEqual( [
+			{
+				id: 'call-1',
+				name: 'present_question',
+				result: {
+					id: 'call-1',
+					message,
+					result: {
+						question: 'Pick one',
+						choices: [ { label: 'A' }, { label: 'B' } ],
+					},
+				},
+			},
+		] );
+	} );
+
 	it( 'normalizes session envelopes and filters invalid rows', () => {
 		expect(
 			normalizeSessions( {

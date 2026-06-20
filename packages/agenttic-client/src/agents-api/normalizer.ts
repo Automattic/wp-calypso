@@ -213,20 +213,52 @@ export function normalizeRunEvent(
 export function groupToolMessages(
 	messages: AgentsApiMessage[]
 ): AgentsApiToolGroup[] {
-	return messages.flatMap( ( message ) => {
+	return messages.flatMap< AgentsApiToolGroup >( ( message ) => {
 		const raw = message.raw ?? {};
-		const name = asString( raw.tool_name ) || asString( raw.name );
+		const metadata = message.metadata ?? {};
+		const toolData = asRecord( metadata.tool_data ?? raw.tool_data );
+		const name =
+			asString( raw.tool_name ) ||
+			asString( raw.name ) ||
+			asString( metadata.tool_name ) ||
+			asString( toolData.tool_name );
 		if ( ! name ) {
 			return [];
 		}
+		const type = asString( metadata.type ) || asString( raw.type );
+		const id =
+			asString( metadata.tool_call_id ) ||
+			asString( raw.tool_call_id ) ||
+			message.id;
+		const parameters = asRecord(
+			metadata.parameters ?? raw.parameters ?? toolData.parameters
+		);
+		const result = asRecord(
+			toolData.result ?? raw.result ?? metadata.result ?? toolData
+		);
+
+		if ( type === 'tool_call' ) {
+			return [
+				{
+					id,
+					name,
+					call: {
+						id,
+						message,
+						args: parameters,
+					},
+				},
+			];
+		}
+
 		return [
 			{
-				id: message.id,
+				id,
 				name,
 				result: {
-					id: message.id,
+					id,
 					message,
-					result: asRecord( raw.result ?? raw ),
+					result,
 				},
 			},
 		];
