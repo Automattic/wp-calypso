@@ -7,8 +7,9 @@ import {
 } from '@automattic/wpcom-checkout';
 import { Notice } from '@wordpress/components';
 import clsx from 'clsx';
+import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { get, includes, isEqual, isEmpty } from 'lodash';
+import { get, includes, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createElement } from 'react';
 import { connect } from 'react-redux';

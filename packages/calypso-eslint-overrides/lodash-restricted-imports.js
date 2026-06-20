@@ -41,6 +41,7 @@ const WITHOUT_MESSAGE =
 	'Please use native `array.filter( ( item ) => item !== value )` instead of lodash `without`.';
 const DIFFERENCE_MESSAGE =
 	'Please use native `array.filter( ( item ) => ! other.includes( item ) )` instead of lodash `difference`.';
+const ISEQUAL_MESSAGE = 'Please use `fast-deep-equal/es6` instead of lodash `isEqual`.';
 
 const paths = [
 	{ name: 'lodash', importNames: JS_UTILS_NAMES, message: JS_UTILS_MESSAGE },
@@ -52,6 +53,7 @@ const paths = [
 	{ name: 'lodash', importNames: [ 'delay' ], message: DELAY_MESSAGE },
 	{ name: 'lodash', importNames: [ 'without' ], message: WITHOUT_MESSAGE },
 	{ name: 'lodash', importNames: [ 'difference' ], message: DIFFERENCE_MESSAGE },
+	{ name: 'lodash', importNames: [ 'isEqual' ], message: ISEQUAL_MESSAGE },
 ];
 
 // Deep `lodash/<fn>` imports bypass the named-import paths above.
@@ -65,6 +67,7 @@ const patterns = [
 	{ group: [ 'lodash/delay' ], message: DELAY_MESSAGE },
 	{ group: [ 'lodash/without' ], message: WITHOUT_MESSAGE },
 	{ group: [ 'lodash/difference' ], message: DIFFERENCE_MESSAGE },
+	{ group: [ 'lodash/isEqual' ], message: ISEQUAL_MESSAGE },
 ];
 
 module.exports = { paths, patterns };

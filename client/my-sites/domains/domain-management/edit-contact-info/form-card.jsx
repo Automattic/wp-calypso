@@ -6,8 +6,9 @@ import {
 	snakeCase,
 	snakeToCamelCase,
 } from '@automattic/js-utils';
+import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { get, includes, isEmpty, isEqual } from 'lodash';
+import { get, includes, isEmpty } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';

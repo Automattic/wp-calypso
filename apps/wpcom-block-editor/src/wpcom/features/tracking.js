@@ -4,7 +4,8 @@ import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import debugFactory from 'debug';
-import { find, isEqual, cloneDeep } from 'lodash';
+import isEqual from 'fast-deep-equal/es6';
+import { find, cloneDeep } from 'lodash';
 import delegateEventTracking, {
 	registerSubscriber as registerDelegateEventSubscriber,
 } from './tracking/delegate-event-tracking';
@@ -988,6 +989,7 @@ if (
 } else {
 	debug( 'registering tracking handlers.' );
 	// Intercept dispatch function and add tracking for actions that need it.
+	// eslint-disable-next-line react-hooks/rules-of-hooks -- `use` is the @wordpress/data registry plugin API, not a React hook.
 	use( ( registry ) => ( {
 		dispatch: ( namespace ) => {
 			const namespaceName = typeof namespace === 'object' ? namespace.name : namespace;

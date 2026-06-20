@@ -1,6 +1,7 @@
 import { mapValues, omit, pickBy } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
-import { isEmpty, merge, isEqual } from 'lodash';
+import isEqual from 'fast-deep-equal/es6';
+import { isEmpty, merge } from 'lodash';
 import { ValidationErrors as MediaValidationErrors } from 'calypso/lib/media/constants';
 import isTransientMediaId from 'calypso/lib/media/utils/is-transient-media-id';
 import MediaQueryManager from 'calypso/lib/query-manager/media';

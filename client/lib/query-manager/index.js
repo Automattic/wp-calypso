@@ -1,5 +1,6 @@
 import { omit } from '@automattic/js-utils';
-import { clone, get, isEqual, map, reduce } from 'lodash';
+import isEqual from 'fast-deep-equal/es6';
+import { clone, get, map, reduce } from 'lodash';
 import QueryKey from './key';
 
 /**

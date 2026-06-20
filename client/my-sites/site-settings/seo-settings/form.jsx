@@ -10,8 +10,9 @@ import {
 } from '@automattic/calypso-products';
 import { Button, FormInputValidation, FormLabel } from '@automattic/components';
 import { mapValues, pickBy } from '@automattic/js-utils';
+import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { get, isEqual } from 'lodash';
+import { get } from 'lodash';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import pageTitleImage from 'calypso/assets/images/illustrations/seo-page-title.svg';

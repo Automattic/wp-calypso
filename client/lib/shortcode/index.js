@@ -1,4 +1,5 @@
-import { isEqual, memoize } from 'lodash';
+import isEqual from 'fast-deep-equal/es6';
+import { memoize } from 'lodash';
 
 /**
  * Module variables

@@ -1,6 +1,7 @@
 import { omit } from '@automattic/js-utils';
 import { createSelector } from '@automattic/state-utils';
-import { isEqual, some } from 'lodash';
+import isEqual from 'fast-deep-equal/es6';
+import { some } from 'lodash';
 import {
 	getDeserializedThemesQueryDetails,
 	getNormalizedThemesQuery,

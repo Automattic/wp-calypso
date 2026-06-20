@@ -1,7 +1,8 @@
 import config from '@automattic/calypso-config';
 import clsx from 'clsx';
+import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { includes, isEqual } from 'lodash';
+import { includes } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';

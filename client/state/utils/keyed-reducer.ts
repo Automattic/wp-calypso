@@ -1,5 +1,6 @@
 import { mapValues, omit, omitBy } from '@automattic/js-utils';
-import { get, isEqual, reduce } from 'lodash';
+import isEqual from 'fast-deep-equal/es6';
+import { get, reduce } from 'lodash';
 import { SerializationResult } from 'calypso/state/serialization-result';
 import { serialize, deserialize, SerializableReducer } from './serialize';
 import { withPersistence } from './with-persistence';

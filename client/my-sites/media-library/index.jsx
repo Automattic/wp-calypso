@@ -1,5 +1,6 @@
 import clsx from 'clsx';
-import { includes, isEqual, some } from 'lodash';
+import isEqual from 'fast-deep-equal/es6';
+import { includes, some } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';

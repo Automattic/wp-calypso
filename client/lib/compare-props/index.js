@@ -1,4 +1,5 @@
-import { includes, isEqual } from 'lodash';
+import isEqual from 'fast-deep-equal/es6';
+import { includes } from 'lodash';
 
 export default ( options = {} ) => {
 	const { ignore, deep, shallow } = options;

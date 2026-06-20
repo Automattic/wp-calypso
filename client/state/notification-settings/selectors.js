@@ -1,4 +1,5 @@
-import { get, isEqual } from 'lodash';
+import isEqual from 'fast-deep-equal/es6';
+import { get } from 'lodash';
 
 import 'calypso/state/notification-settings/init';
 
