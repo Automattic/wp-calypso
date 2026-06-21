@@ -205,11 +205,5 @@ export const useFields = ( {
 		[ site, showPrimaryDomainBadge, siteElements, inOverview ]
 	);
 
-	// In the overview context, column controls are intentionally hidden. Prevent them
-	// from appearing via right-click by making all fields non-hideable.
-	if ( inOverview ) {
-		return fields.map( ( field ) => ( { ...field, enableHiding: false } ) );
-	}
-
 	return fields;
 };
