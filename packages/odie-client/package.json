@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/odie-client",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Odie client to chat with bots.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",

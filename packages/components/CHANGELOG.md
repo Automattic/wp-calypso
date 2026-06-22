@@ -4,6 +4,10 @@
 
 - `Icon`: Remove component. Use `Icon` from `@wordpress/ui` instead.
 
+## 3.0.4
+
+- Declare React 19 compatibility for package consumers (#111721).
+
 ## 3.0.3
 
 - Fix `@wordpress/base-styles/colors` usage ([#107019](https://github.com/Automattic/wp-calypso/pull/107019)).
