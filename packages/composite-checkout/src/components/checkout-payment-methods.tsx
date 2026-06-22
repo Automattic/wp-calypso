@@ -70,6 +70,34 @@ const PaymentMethodsContainer = styled.div< { isLoading: boolean } >`
 	opacity: ${ ( props ) => ( props.isLoading ? 0.3 : 1 ) };
 `;
 
+const SinglePaymentMethodWrapper = styled.div`
+	position: relative;
+	border-radius: 3px;
+	box-sizing: border-box;
+	width: 100%;
+`;
+
+const SinglePaymentMethodLabel = styled.div`
+	padding-block: 16px;
+	padding-inline: 12px;
+	box-sizing: border-box;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	justify-content: center;
+	align-items: flex-start;
+	font-size: 14px;
+	min-height: 72px;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		gap: 7px;
+	}
+`;
+
 export default function CheckoutPaymentMethods( {
 	summary,
 	isComplete,
@@ -202,6 +230,18 @@ function PaymentMethod( {
 
 	if ( summary ) {
 		return <>{ inactiveContent && inactiveContent }</>;
+	}
+
+	// When there is only a single available payment method and it is already
+	// selected, there is nothing to choose between, so render it as a plain
+	// container rather than an interactive radio button.
+	if ( isSinglePaymentMethod && checked ) {
+		return (
+			<SinglePaymentMethodWrapper>
+				<SinglePaymentMethodLabel>{ label }</SinglePaymentMethodLabel>
+				{ activeContent && activeContent }
+			</SinglePaymentMethodWrapper>
+		);
 	}
 
 	return (
