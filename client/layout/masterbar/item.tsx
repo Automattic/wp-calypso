@@ -141,12 +141,10 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 						} ) }
 					>
 						{ item.url && item.openInNewTab && (
-							<ExternalLink
-								href={ item.url }
-								onClick={ item.onClick }
-								onTouchEnd={ ( ev ) => this.navigateSubAnchorTouch( ev, item.onClick, true ) }
-								onKeyDown={ ( ev ) => this.navigateSubAnchorByKey( ev, item.onClick, true ) }
-							>
+							// ExternalLink renders a `target="_blank"` anchor, so native activation
+							// (click, Enter, tap) opens the new tab and `onClick` covers tracking on all
+							// input methods. No custom touch/keyboard navigation is needed here.
+							<ExternalLink href={ item.url } onClick={ item.onClick }>
 								{ item.label }
 							</ExternalLink>
 						) }
@@ -209,8 +207,7 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 
 	navigateSubAnchorTouch = (
 		event: React.TouchEvent | React.KeyboardEvent,
-		onClick?: () => void,
-		openInNewTab?: boolean
+		onClick?: () => void
 	) => {
 		// We must prevent the default anchor behavior and navigate manually. Otherwise there is a
 		// race condition between the click on the anchor firing and the menu closing before that
@@ -220,22 +217,14 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 		const url = event.currentTarget.getAttribute( 'href' );
 		onClick?.();
 		if ( url ) {
-			if ( openInNewTab ) {
-				window.open( url, '_blank', 'noopener,noreferrer' );
-			} else {
-				navigate( url );
-			}
+			navigate( url );
 		}
 		this.setState( { isOpenForNonMouseFlow: false } );
 	};
 
-	navigateSubAnchorByKey = (
-		event: React.KeyboardEvent,
-		onClick?: () => void,
-		openInNewTab?: boolean
-	) => {
+	navigateSubAnchorByKey = ( event: React.KeyboardEvent, onClick?: () => void ) => {
 		if ( event.key === 'Enter' || event.key === ' ' ) {
-			this.navigateSubAnchorTouch( event, onClick, openInNewTab );
+			this.navigateSubAnchorTouch( event, onClick );
 		}
 	};
 
