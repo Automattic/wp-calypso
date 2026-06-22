@@ -204,8 +204,14 @@ const SiteSpec: StepType = function SiteSpec() {
 				const blogId = response?.blog_details?.blogid
 					? parseInt( String( response.blog_details.blogid ), 10 )
 					: null;
+				const atomicTransferId = response?.atomic_transfer?.id;
 
-				if ( blogId && ! Number.isNaN( blogId ) ) {
+				if (
+					response?.early_provision_target === EARLY_PROVISION_TARGET_WPCOM_ATOMIC &&
+					atomicTransferId &&
+					blogId &&
+					! Number.isNaN( blogId )
+				) {
 					saveEarlyProvisionedSite( blogId );
 					return blogId;
 				}
