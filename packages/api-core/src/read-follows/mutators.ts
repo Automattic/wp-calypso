@@ -188,9 +188,12 @@ export const updateSitePostNotificationSubscription = async ( {
 
 export const flushOnboardingWelcomeDigest =
 	async (): Promise< FlushOnboardingWelcomeDigestResponse > => {
-		return wpcom.req.post( {
+		const response: FlushOnboardingWelcomeDigestResponse = await wpcom.req.post( {
 			path: '/read/onboarding/welcome-digest/flush',
 			apiVersion: '1.2',
 			body: {},
 		} );
+		assertSuccessfulResponse( response, 'Onboarding welcome digest flush failed' );
+
+		return response;
 	};

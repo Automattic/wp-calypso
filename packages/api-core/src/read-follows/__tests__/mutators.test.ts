@@ -366,5 +366,17 @@ describe( 'read follows mutators', () => {
 				blog_count: 3,
 			} );
 		} );
+
+		it( 'throws when the response does not confirm success', async () => {
+			nock( BASE ).post( '/rest/v1.2/read/onboarding/welcome-digest/flush', {} ).reply( 200, {
+				success: false,
+				sent: false,
+				blog_count: 0,
+			} );
+
+			await expect( flushOnboardingWelcomeDigest() ).rejects.toThrow(
+				'Onboarding welcome digest flush failed'
+			);
+		} );
 	} );
 } );
