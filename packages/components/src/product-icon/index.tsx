@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import { findKey } from 'lodash';
 import * as React from 'react';
 import { iconToProductSlugMap, paths } from './config';
 import type { SupportedSlugs } from './config';
@@ -16,9 +15,9 @@ const ProductIcon: React.FunctionComponent< Props > = ( { className, slug } ) =>
 		return null;
 	}
 
-	const iconSlug = findKey( iconToProductSlugMap, ( products ) =>
-		products.includes( slug )
-	) as keyof typeof paths;
+	const iconSlug = (
+		Object.keys( iconToProductSlugMap ) as ( keyof typeof iconToProductSlugMap )[]
+	 ).find( ( key ) => iconToProductSlugMap[ key ].includes( slug ) ) as keyof typeof paths;
 
 	const iconPath = paths[ iconSlug ];
 

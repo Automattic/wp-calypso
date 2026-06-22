@@ -53,6 +53,11 @@ const INCLUDES_MESSAGE =
 	'Please use native `array.includes( value )` / `string.includes( substring )` instead of lodash ' +
 	'`includes`. Guard possibly-undefined collections (`value?.includes( … )`), and use ' +
 	'`Object.values( obj ).includes( value )` for object collections.';
+const ISNUMBER_MESSAGE = "Please use `typeof value === 'number'` instead of lodash `isNumber`.";
+const FINDKEY_MESSAGE =
+	'Please use `Object.keys( obj ).find( ( key ) => … )` instead of lodash `findKey`.';
+const FINDINDEX_MESSAGE =
+	'Please use native `array.findIndex( ( item ) => … )` instead of lodash `findIndex`.';
 
 const paths = [
 	{ name: 'lodash', importNames: JS_UTILS_NAMES, message: JS_UTILS_MESSAGE },
@@ -68,6 +73,9 @@ const paths = [
 	{ name: 'lodash', importNames: [ 'intersection' ], message: INTERSECTION_MESSAGE },
 	{ name: 'lodash', importNames: [ 'noop' ], message: NOOP_MESSAGE },
 	{ name: 'lodash', importNames: [ 'includes' ], message: INCLUDES_MESSAGE },
+	{ name: 'lodash', importNames: [ 'isNumber' ], message: ISNUMBER_MESSAGE },
+	{ name: 'lodash', importNames: [ 'findKey' ], message: FINDKEY_MESSAGE },
+	{ name: 'lodash', importNames: [ 'findIndex' ], message: FINDINDEX_MESSAGE },
 ];
 
 // Deep `lodash/<fn>` imports bypass the named-import paths above.
@@ -85,6 +93,9 @@ const patterns = [
 	{ group: [ 'lodash/intersection' ], message: INTERSECTION_MESSAGE },
 	{ group: [ 'lodash/noop' ], message: NOOP_MESSAGE },
 	{ group: [ 'lodash/includes' ], message: INCLUDES_MESSAGE },
+	{ group: [ 'lodash/isNumber' ], message: ISNUMBER_MESSAGE },
+	{ group: [ 'lodash/findKey' ], message: FINDKEY_MESSAGE },
+	{ group: [ 'lodash/findIndex' ], message: FINDINDEX_MESSAGE },
 ];
 
 module.exports = { paths, patterns };

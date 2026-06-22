@@ -1,5 +1,5 @@
 import { withRtl } from 'i18n-calypso';
-import { clone, filter, findIndex } from 'lodash';
+import { clone, filter } from 'lodash';
 import PropTypes from 'prop-types';
 import { createElement, Component } from 'react';
 import { connect } from 'react-redux';
@@ -100,9 +100,9 @@ export class MediaLibraryList extends Component {
 			selectedItems = clone( this.props.selectedItems );
 		}
 
-		const selectedItemsIndex = findIndex( selectedItems, { ID: item.ID } );
+		const selectedItemsIndex = selectedItems.findIndex( ( i ) => i.ID === item.ID );
 		const isToBeSelected = -1 === selectedItemsIndex;
-		const selectedMediaIndex = findIndex( this.props.media, { ID: item.ID } );
+		const selectedMediaIndex = this.props.media.findIndex( ( i ) => i.ID === item.ID );
 
 		let start = selectedMediaIndex;
 		let end = selectedMediaIndex;
@@ -113,9 +113,9 @@ export class MediaLibraryList extends Component {
 		}
 
 		for ( let i = start; i <= end; i++ ) {
-			const interimIndex = findIndex( selectedItems, {
-				ID: this.props.media[ i ].ID,
-			} );
+			const interimIndex = selectedItems.findIndex(
+				( selectedItem ) => selectedItem.ID === this.props.media[ i ].ID
+			);
 
 			if ( isToBeSelected && -1 === interimIndex ) {
 				selectedItems.push( this.props.media[ i ] );
@@ -147,9 +147,9 @@ export class MediaLibraryList extends Component {
 	};
 
 	renderItem = ( item ) => {
-		const index = findIndex( this.props.media, { ID: item.ID } );
+		const index = this.props.media.findIndex( ( i ) => i.ID === item.ID );
 		const selectedItems = this.props.selectedItems;
-		const selectedIndex = findIndex( selectedItems, { ID: item.ID } );
+		const selectedIndex = selectedItems.findIndex( ( i ) => i.ID === item.ID );
 		const itemKey = this.getItemRef( item );
 
 		return (
