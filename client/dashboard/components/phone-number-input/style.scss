@@ -1,11 +1,9 @@
 .phone-number-input {
 	align-items: baseline;
 
-	.phone-number-input__country-code-input {
-		width: 35%;
+	.phone-number-input__country-code-input,
+	.components-validated-control {
+		width: 100%;
 	}
 
-	.components-validated-control {
-		width: 65%;
-	}
 }
