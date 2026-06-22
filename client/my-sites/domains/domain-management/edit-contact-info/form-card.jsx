@@ -8,7 +8,7 @@ import {
 } from '@automattic/js-utils';
 import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { get, includes, isEmpty } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -436,7 +436,7 @@ class EditContactInfoFormCard extends Component {
 			[ 'selectedDomain', 'whoisUpdateUnmodifiableFields' ],
 			[]
 		);
-		return this.state.formSubmitting || includes( unmodifiableFields, snakeCase( name ) );
+		return this.state.formSubmitting || unmodifiableFields.includes( snakeCase( name ) );
 	};
 
 	updateWpcomEmail( newContactDetails, updateWpcomEmail ) {

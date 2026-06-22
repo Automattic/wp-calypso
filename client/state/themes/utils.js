@@ -1,5 +1,5 @@
 import { omit, omitBy } from '@automattic/js-utils';
-import { get, includes, map, some } from 'lodash';
+import { get, map, some } from 'lodash';
 import { DEFAULT_THEME_QUERY } from './constants';
 
 /**
@@ -206,16 +206,16 @@ export function isThemeMatchingQuery( query, theme ) {
 						theme.taxonomies &&
 						some(
 							theme.taxonomies[ 'theme_' + taxonomy ],
-							( { name } ) => name && includes( name.toLowerCase(), search )
+							( { name } ) => name && name.toLowerCase().includes( search )
 						)
 				);
 
 				return (
 					foundInTaxonomies ||
-					( theme.id && includes( theme.id.toLowerCase(), search ) ) ||
-					( theme.name && includes( theme.name.toLowerCase(), search ) ) ||
-					( theme.author && includes( theme.author.toLowerCase(), search ) ) ||
-					( theme.descriptionLong && includes( theme.descriptionLong.toLowerCase(), search ) )
+					( theme.id && theme.id.toLowerCase().includes( search ) ) ||
+					( theme.name && theme.name.toLowerCase().includes( search ) ) ||
+					( theme.author && theme.author.toLowerCase().includes( search ) ) ||
+					( theme.descriptionLong && theme.descriptionLong.toLowerCase().includes( search ) )
 				);
 			}
 			case 'filter': {

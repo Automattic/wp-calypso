@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { addLocaleToPath, isDefaultLocale } from '@automattic/i18n-utils';
 import { getLocaleSlug } from 'i18n-calypso';
-import { get, includes } from 'lodash';
+import { get } from 'lodash';
 import {
 	isAkismetOAuth2Client,
 	isCrowdsignalOAuth2Client,
@@ -60,8 +60,8 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 	) {
 		// Basic validation that we're in a valid Jetpack Authorization flow
 		if (
-			includes( redirectTo, '/jetpack/connect/authorize' ) &&
-			includes( redirectTo, '_wp_nonce' )
+			redirectTo.includes( '/jetpack/connect/authorize' ) &&
+			redirectTo.includes( '_wp_nonce' )
 		) {
 			// If the current query has plugin_name param, but redirect_to doesn't, add it to the redirect_to
 			const pluginName = currentQuery?.plugin_name;

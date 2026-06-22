@@ -5,7 +5,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { groupBy, pickBy } from '@automattic/js-utils';
 import debugModule from 'debug';
 import { localize, fixMe } from 'i18n-calypso';
-import { filter, get, includes, some } from 'lodash';
+import { filter, get, some } from 'lodash';
 import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
@@ -245,7 +245,7 @@ class InvitePeople extends Component {
 					onMouseEnter: () => this.setState( { errorToDisplay: value } ),
 				};
 			}
-			if ( ! includes( success, value ) ) {
+			if ( ! success.includes( value ) ) {
 				return {
 					value,
 					status: 'validating',
@@ -330,7 +330,7 @@ class InvitePeople extends Component {
 		this.sendInvites( this.props.siteId, usernamesOrEmails, role, message, isExternal );
 
 		const groupedInvitees = groupBy( usernamesOrEmails, ( invitee ) => {
-			return includes( invitee, '@' ) ? 'email' : 'username';
+			return invitee.includes( '@' ) ? 'email' : 'username';
 		} );
 
 		this.props.recordTracksEvent( 'calypso_invite_people_form_submit', {
@@ -363,7 +363,7 @@ class InvitePeople extends Component {
 		// If there are invitees, and there are no errors, let's check
 		// if there are any pending validations.
 		return some( usernamesOrEmails, ( value ) => {
-			return ! includes( success, value );
+			return ! success.includes( value );
 		} );
 	};
 
@@ -401,7 +401,7 @@ class InvitePeople extends Component {
 
 	isExternalRole = ( role ) => {
 		const roles = [ 'administrator', 'editor', 'author', 'contributor' ];
-		return includes( roles, role );
+		return roles.includes( role );
 	};
 
 	renderInviteForm = () => {

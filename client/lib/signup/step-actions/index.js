@@ -9,7 +9,7 @@ import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import { pick } from '@automattic/js-utils';
 import debugFactory from 'debug';
-import { get, includes, isEmpty } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { buildUpgradeFunction } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/unified-plans/util';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import {
@@ -1032,7 +1032,7 @@ export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
 	if (
 		flowName === 'launch-site' &&
 		stepName === 'domains-launch' &&
-		includes( flows.excludedSteps, stepName )
+		flows.excludedSteps.includes( stepName )
 	) {
 		return;
 	}
@@ -1056,7 +1056,7 @@ export function maybeRemoveStepForUserlessCheckout( stepName, defaultDependencie
 	const isPurchasingItem = ! isEmpty( cartItem ) || ! isEmpty( domainItem );
 
 	if ( isPurchasingItem ) {
-		if ( includes( flows.excludedSteps, stepName ) ) {
+		if ( flows.excludedSteps.includes( stepName ) ) {
 			return;
 		}
 
@@ -1071,7 +1071,7 @@ export function maybeRemoveStepForUserlessCheckout( stepName, defaultDependencie
 		if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
 			flows.excludeStep( stepName );
 		}
-	} else if ( includes( flows.excludedSteps, stepName ) ) {
+	} else if ( flows.excludedSteps.includes( stepName ) ) {
 		flows.resetExcludedStep( stepName );
 		nextProps.removeStep( { stepName } );
 	}

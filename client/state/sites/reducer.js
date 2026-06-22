@@ -1,6 +1,6 @@
 import { omit } from '@automattic/js-utils';
 import isEqual from 'fast-deep-equal/es6';
-import { merge, includes, reduce } from 'lodash';
+import { merge, reduce } from 'lodash';
 import {
 	MEDIA_DELETE,
 	SITE_LEAVE_RECEIVE,
@@ -243,7 +243,7 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 		case MEDIA_DELETE: {
 			const { siteId, mediaIds } = action;
 			const siteIconId = state[ siteId ]?.icon?.media_id;
-			if ( siteIconId && includes( mediaIds, siteIconId ) ) {
+			if ( siteIconId && mediaIds.includes( siteIconId ) ) {
 				return {
 					...state,
 					[ siteId ]: omit( state[ siteId ], 'icon' ),

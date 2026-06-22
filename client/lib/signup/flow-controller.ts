@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { pick } from '@automattic/js-utils';
 import debugModule from 'debug';
 import { translate } from 'i18n-calypso';
-import { filter, find, forEach, includes, isEmpty, reject, reduce } from 'lodash';
+import { filter, find, forEach, isEmpty, reject, reduce } from 'lodash';
 import { Store, Unsubscribe as ReduxUnsubscribe, AnyAction } from 'redux';
 import { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -343,7 +343,7 @@ export default class SignupFlowController {
 	_process() {
 		const currentSteps = this._getFlowSteps();
 		const signupProgress = filter( getSignupProgress( this._reduxStore.getState() ), ( step ) =>
-			includes( currentSteps, step.stepName )
+			currentSteps.includes( step.stepName )
 		);
 		const pendingSteps = filter( signupProgress, { status: 'pending' } );
 		const completedSteps = filter( signupProgress, { status: 'completed' } );
@@ -377,7 +377,7 @@ export default class SignupFlowController {
 		const currentSteps = this._getFlowSteps();
 		const signupProgress = filter(
 			getSignupProgress( this._reduxStore.getState() ),
-			( { stepName } ) => includes( currentSteps, stepName )
+			( { stepName } ) => currentSteps.includes( stepName )
 		);
 		const allStepsSubmitted =
 			reject( signupProgress, { status: 'in-progress' } ).length === currentSteps.length;

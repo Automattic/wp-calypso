@@ -46,6 +46,10 @@ const INTERSECTION_MESSAGE =
 	'Please use `array.some( ( item ) => other.includes( item ) )` for a boolean check, or ' +
 	'`Array.from( new Set( array ) ).filter( ( item ) => other.includes( item ) )` to dedupe like lodash `intersection`.';
 const NOOP_MESSAGE = 'Please use a local `const noop = () => {};` instead of lodash `noop`.';
+const INCLUDES_MESSAGE =
+	'Please use native `array.includes( value )` / `string.includes( substring )` instead of lodash ' +
+	'`includes`. Guard possibly-undefined collections (`value?.includes( … )`), and use ' +
+	'`Object.values( obj ).includes( value )` for object collections.';
 
 const paths = [
 	{ name: 'lodash', importNames: JS_UTILS_NAMES, message: JS_UTILS_MESSAGE },
@@ -60,6 +64,7 @@ const paths = [
 	{ name: 'lodash', importNames: [ 'isEqual' ], message: ISEQUAL_MESSAGE },
 	{ name: 'lodash', importNames: [ 'intersection' ], message: INTERSECTION_MESSAGE },
 	{ name: 'lodash', importNames: [ 'noop' ], message: NOOP_MESSAGE },
+	{ name: 'lodash', importNames: [ 'includes' ], message: INCLUDES_MESSAGE },
 ];
 
 // Deep `lodash/<fn>` imports bypass the named-import paths above.
@@ -76,6 +81,7 @@ const patterns = [
 	{ group: [ 'lodash/isEqual' ], message: ISEQUAL_MESSAGE },
 	{ group: [ 'lodash/intersection' ], message: INTERSECTION_MESSAGE },
 	{ group: [ 'lodash/noop' ], message: NOOP_MESSAGE },
+	{ group: [ 'lodash/includes' ], message: INCLUDES_MESSAGE },
 ];
 
 module.exports = { paths, patterns };

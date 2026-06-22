@@ -5,7 +5,7 @@ import { Spinner } from '@wordpress/components';
 import clsx from 'clsx';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
-import { find, filter, forEach, includes, map, merge, isEmpty } from 'lodash';
+import { find, filter, forEach, map, merge, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -293,7 +293,7 @@ class SignupForm extends Component {
 						return;
 					}
 
-					if ( field === 'username' && ! includes( usernamesSearched, fields.username ) ) {
+					if ( field === 'username' && ! usernamesSearched.includes( fields.username ) ) {
 						recordTracksEvent( 'calypso_signup_username_validation_failed', {
 							error: Object.keys( fieldError )[ 0 ],
 							username: fields.username,

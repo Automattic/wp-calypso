@@ -1,7 +1,6 @@
 import { RootChild, Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import TranslatableString from 'calypso/components/translatable/proptype';
@@ -112,7 +111,7 @@ export class DropZone extends Component {
 	toggleDraggingOverDocument = ( event ) => {
 		// Track nodes that have received a drag event. So long as nodes exist
 		// in the set, we can assume that an item is being dragged on the page.
-		if ( 'dragenter' === event.type && ! includes( this.dragEnterNodes, event.target ) ) {
+		if ( 'dragenter' === event.type && ! this.dragEnterNodes.includes( event.target ) ) {
 			this.dragEnterNodes.push( event.target );
 		} else if ( 'dragleave' === event.type ) {
 			this.dragEnterNodes = this.dragEnterNodes.filter( ( node ) => node !== event.target );

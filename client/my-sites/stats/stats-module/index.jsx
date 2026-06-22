@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -225,7 +224,7 @@ class StatsModule extends Component {
 			summarizedTypes.push( 'statsTopPosts' );
 		}
 
-		return summary && includes( summarizedTypes, statType );
+		return summary && summarizedTypes.includes( statType );
 	}
 
 	remapData() {

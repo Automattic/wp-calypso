@@ -1,4 +1,4 @@
-import { get, includes, map } from 'lodash';
+import { get, map } from 'lodash';
 import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_DELETE,
@@ -65,7 +65,7 @@ export const queries = ( state = {}, action ) => {
 			if (
 				COMMENTS_CHANGE_STATUS === action.type &&
 				'all' === status &&
-				includes( comments, action.commentId ) && // if the comment is not in the current view this is an undo
+				comments?.includes( action.commentId ) && // if the comment is not in the current view this is an undo
 				[ 'approved', 'unapproved' ].includes( action.status )
 			) {
 				// No-op when status changes from `approved` or `unapproved` in the All tab

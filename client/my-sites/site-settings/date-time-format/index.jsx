@@ -1,7 +1,6 @@
 import { FoldableCard } from '@automattic/components';
 import { capitalize } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -54,8 +53,8 @@ export class DateTimeFormat extends Component {
 		}
 
 		return {
-			customDateFormat: ! includes( getDefaultDateFormats(), dateFormat ),
-			customTimeFormat: ! includes( getDefaultTimeFormats(), timeFormat ),
+			customDateFormat: ! getDefaultDateFormats().includes( dateFormat ),
+			customTimeFormat: ! getDefaultTimeFormats().includes( timeFormat ),
 		};
 	}
 
@@ -63,7 +62,7 @@ export class DateTimeFormat extends Component {
 		const { value: format } = event.currentTarget;
 		this.props.updateFields( { [ `${ name }_format` ]: format } );
 		this.setState( {
-			[ `custom${ capitalize( name ) }Format` ]: ! includes( defaultFormats, format ),
+			[ `custom${ capitalize( name ) }Format` ]: ! defaultFormats.includes( format ),
 		} );
 	};
 

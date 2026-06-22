@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import isEqual from 'fast-deep-equal/es6';
-import { includes, some } from 'lodash';
+import { some } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -28,7 +28,7 @@ import './style.scss';
 // External media sources that do not need a user to connect them should be listed here.
 const noConnectionNeeded = [ 'openverse', 'pexels' ];
 
-const sourceNeedsKeyring = ( source ) => source !== '' && ! includes( noConnectionNeeded, source );
+const sourceNeedsKeyring = ( source ) => source !== '' && ! noConnectionNeeded.includes( source );
 
 const isConnected = ( state, source ) =>
 	! sourceNeedsKeyring( source ) ||

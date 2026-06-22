@@ -4,7 +4,7 @@ import { debounce } from '@wordpress/compose';
 import clsx from 'clsx';
 import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { filter, includes, map, memoize, range, reduce } from 'lodash';
+import { filter, map, memoize, range, reduce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -203,7 +203,7 @@ class TermTreeSelectorList extends Component {
 		}
 
 		// if item has a parent, and parent is in payload, height is already part of parent
-		if ( item.parent && ! _recurse && includes( this.termIds, item.parent ) ) {
+		if ( item.parent && ! _recurse && this.termIds.includes( item.parent ) ) {
 			return 0;
 		}
 
@@ -274,7 +274,7 @@ class TermTreeSelectorList extends Component {
 
 	renderItem = ( item, _recurse = false ) => {
 		// if item has a parent and it is in current props.terms, do not render
-		if ( item.parent && ! _recurse && includes( this.termIds, item.parent ) ) {
+		if ( item.parent && ! _recurse && this.termIds.includes( item.parent ) ) {
 			return;
 		}
 
@@ -292,7 +292,7 @@ class TermTreeSelectorList extends Component {
 		const itemId = item.ID;
 		const isPodcastingCategory = taxonomy === 'category' && podcastingCategoryId === itemId;
 		const name = decodeEntities( item.name ) || translate( 'Untitled' );
-		const checked = includes( selected, itemId );
+		const checked = selected.includes( itemId );
 		const InputComponent = multiple ? FormCheckbox : FormRadio;
 		const disabled =
 			multiple && checked && defaultTermId && 1 === selected.length && defaultTermId === itemId;

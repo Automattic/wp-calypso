@@ -13,7 +13,7 @@ import * as oauthToken from '@automattic/oauth-token';
 import { isDomainForGravatarFlow } from '@automattic/onboarding';
 import debugModule from 'debug';
 import isEqual from 'fast-deep-equal/es6';
-import { clone, find, get, includes, isEmpty, map } from 'lodash';
+import { clone, find, get, isEmpty, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -206,7 +206,7 @@ class Signup extends Component {
 			if (
 				! this.state.shouldShowLoadingScreen &&
 				this.isStepFulfillmentReady( stepName, nextProps ) &&
-				! includes( flows.excludedSteps, stepName ) &&
+				! flows.excludedSteps.includes( stepName ) &&
 				! this._recordedSteps.has( stepName )
 			) {
 				this._recordStepsInOrder( { includeCurrentStep: true, forStep: stepName } );
@@ -290,7 +290,7 @@ class Signup extends Component {
 		if ( siteDomains !== prevProps.siteDomains || didCurrentStepBecomeFulfillmentReady ) {
 			this.removeFulfilledSteps( this.props );
 
-			if ( ! includes( flows.excludedSteps, stepName ) && ! this._recordedSteps.has( stepName ) ) {
+			if ( ! flows.excludedSteps.includes( stepName ) && ! this._recordedSteps.has( stepName ) ) {
 				this._recordStepsInOrder( { includeCurrentStep: true } );
 			}
 		}
@@ -344,7 +344,7 @@ class Signup extends Component {
 
 		for ( const step of rawFlow.steps ) {
 			if ( ! this._recordedSteps.has( step ) ) {
-				if ( includes( flows.excludedSteps, step ) ) {
+				if ( flows.excludedSteps.includes( step ) ) {
 					this.recordSignupStepAndPageView( {
 						skipStepRender: true,
 						overrideStepName: step,
@@ -559,7 +559,7 @@ class Signup extends Component {
 			currentStepIndex >= 0 ? flowSteps.slice( 0, currentStepIndex + 1 ) : flowSteps;
 		const previouslyExcludedSteps = clone( flows.excludedSteps );
 		map( previouslyExcludedSteps, ( flowStepName ) => {
-			if ( includes( stepsToProcess, flowStepName ) ) {
+			if ( stepsToProcess.includes( flowStepName ) ) {
 				this.processFulfilledSteps( flowStepName, nextProps );
 			}
 		} );
@@ -567,7 +567,7 @@ class Signup extends Component {
 			this.processFulfilledSteps( flowStepName, nextProps )
 		);
 
-		if ( includes( flows.excludedSteps, stepName ) ) {
+		if ( flows.excludedSteps.includes( stepName ) ) {
 			this._recordStepsInOrder( { forStep: stepName } );
 			this.goToNextStep( flowName );
 		}
@@ -940,10 +940,9 @@ class Signup extends Component {
 	}
 
 	isCurrentStepRemovedFromFlow() {
-		return ! includes(
-			flows.getFlow( this.props.flowName, this.props.isLoggedIn ).steps,
-			this.props.stepName
-		);
+		return ! flows
+			.getFlow( this.props.flowName, this.props.isLoggedIn )
+			.steps.includes( this.props.stepName );
 	}
 
 	shouldWaitToRender() {
