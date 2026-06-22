@@ -15,9 +15,17 @@ import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
 import { isReaderChatAgent } from './is-reader-chat-agent';
 import { useReaderFollowupSuggestions } from './reader-followup-hook';
 import type { ImageUploadHook } from '../hooks/use-image-upload';
-import type { ToolProvider, ContextProvider, Suggestion, BigSkyMessage } from '../types';
+import type {
+	ToolProvider,
+	ContextProvider,
+	ClientContextType,
+	ContextEntry,
+	Suggestion,
+	BigSkyMessage,
+} from '../types';
 import type { UseAgentChatReturn } from '@automattic/agenttic-client';
 import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
+import type { ReactNode } from 'react';
 
 /**
  * Check if the unified experience flag is set via agentsManagerData.
@@ -192,6 +200,181 @@ export function mergeUseSuggestionsHooks(
 	};
 }
 
+function isRecord( value: unknown ): value is Record< string, unknown > {
+	return typeof value === 'object' && value !== null;
+}
+
+function mergeContextEntries(
+	firstEntries: ContextEntry[] | undefined,
+	nextEntries: ContextEntry[] | undefined
+): ContextEntry[] | undefined {
+	const entries = [ ...( firstEntries || [] ) ];
+	const seenIds = new Set( entries.map( ( entry ) => entry.id ) );
+
+	for ( const entry of nextEntries || [] ) {
+		if ( seenIds.has( entry.id ) ) {
+			continue;
+		}
+		seenIds.add( entry.id );
+		entries.push( entry );
+	}
+
+	return entries.length ? entries : undefined;
+}
+
+function getConstructorArguments(
+	context: ClientContextType
+): Record< string, unknown > | undefined {
+	const constructorArguments = context.constructorArguments;
+	return isRecord( constructorArguments ) ? constructorArguments : undefined;
+}
+
+function mergeClientContexts( contexts: ClientContextType[] ): ClientContextType {
+	const [ firstContext, ...remainingContexts ] = contexts;
+	let mergedContext = { ...firstContext };
+
+	for ( const context of remainingContexts ) {
+		const contextEntries = mergeContextEntries(
+			mergedContext.contextEntries,
+			context.contextEntries
+		);
+		const constructorArguments = {
+			...( getConstructorArguments( context ) || {} ),
+			...( getConstructorArguments( mergedContext ) || {} ),
+		};
+
+		mergedContext = {
+			...context,
+			...mergedContext,
+			...( contextEntries && { contextEntries } ),
+			...( Object.keys( constructorArguments ).length > 0 && { constructorArguments } ),
+		};
+	}
+
+	return mergedContext;
+}
+
+function getFallbackClientContext(): ClientContextType {
+	const location =
+		typeof window !== 'undefined' ? window.location : { href: '', pathname: '', search: '' };
+
+	return {
+		url: location.href,
+		pathname: location.pathname,
+		search: location.search,
+		environment: 'wp-admin',
+	};
+}
+
+export function mergeContextProviders(
+	contextProviders: ContextProvider[]
+): ContextProvider | undefined {
+	if ( contextProviders.length === 0 ) {
+		return undefined;
+	}
+
+	if ( contextProviders.length === 1 ) {
+		return contextProviders[ 0 ];
+	}
+
+	return {
+		getClientContext: () => {
+			const contexts: ClientContextType[] = [];
+
+			for ( const contextProvider of contextProviders ) {
+				try {
+					contexts.push( contextProvider.getClientContext() );
+				} catch ( error ) {
+					// eslint-disable-next-line no-console
+					console.warn( '[AgentsManager] Failed to load context from provider:', error );
+				}
+			}
+
+			return contexts.length ? mergeClientContexts( contexts ) : getFallbackClientContext();
+		},
+	};
+}
+
+function isPlainMarkdownFallback( value: unknown, componentName: string ): boolean {
+	return isRecord( value ) && value.type === componentName;
+}
+
+function composeMarkdownCodeComponents( components: unknown[] ): unknown {
+	const callableComponents = components.filter(
+		( component ): component is ( props: Record< string, unknown > ) => ReactNode =>
+			typeof component === 'function'
+	);
+
+	if ( callableComponents.length !== components.length ) {
+		return components[ 0 ];
+	}
+
+	return ( props: Record< string, unknown > ) => {
+		let firstFallback: ReactNode | undefined;
+
+		for ( const component of callableComponents ) {
+			const result = component( props );
+			if ( ! isPlainMarkdownFallback( result, 'code' ) ) {
+				return result;
+			}
+
+			if ( firstFallback === undefined ) {
+				firstFallback = result;
+			}
+		}
+
+		return firstFallback ?? null;
+	};
+}
+
+export function mergeMarkdownComponentsFromProviders(
+	componentGroups: MarkdownComponents[]
+): MarkdownComponents | undefined {
+	if ( componentGroups.length === 0 ) {
+		return undefined;
+	}
+
+	if ( componentGroups.length === 1 ) {
+		return componentGroups[ 0 ];
+	}
+
+	const componentsByName = new Map< string, unknown[] >();
+	for ( const components of componentGroups ) {
+		for ( const [ name, component ] of Object.entries( components ) ) {
+			const existing = componentsByName.get( name ) || [];
+			existing.push( component );
+			componentsByName.set( name, existing );
+		}
+	}
+
+	const mergedComponents: Record< string, unknown > = {};
+	for ( const [ name, components ] of componentsByName ) {
+		mergedComponents[ name ] =
+			name === 'code' && components.length > 1
+				? composeMarkdownCodeComponents( components )
+				: components[ 0 ];
+	}
+
+	return mergedComponents as MarkdownComponents;
+}
+
+export function mergeMarkdownExtensionsFromProviders(
+	extensionGroups: MarkdownExtensions[]
+): MarkdownExtensions | undefined {
+	if ( extensionGroups.length === 0 ) {
+		return undefined;
+	}
+
+	if ( extensionGroups.length === 1 ) {
+		return extensionGroups[ 0 ];
+	}
+
+	return extensionGroups.reduce< MarkdownExtensions >(
+		( merged, extensions ) => ( { ...extensions, ...merged } ),
+		{}
+	);
+}
+
 /**
  * Load external agent providers from agentsManagerData.agentProviders.
  *
@@ -231,10 +414,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	}
 
 	let mergedToolProvider: ToolProvider | undefined;
-	let mergedContextProvider: ContextProvider | undefined;
 	let mergedGetEmptyViewSuggestions: ( () => Suggestion[] ) | undefined;
-	let mergedMarkdownComponents: MarkdownComponents | undefined;
-	let mergedMarkdownExtensions: MarkdownExtensions | undefined;
 	let mergedNavigationContinuation: NavigationContinuationHook | undefined;
 	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
 	let mergedGetChatComponent: GetChatComponent | undefined;
@@ -246,6 +426,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 
 	// Collect exports that need to be merged across all providers.
 	const allToolProviders: ToolProvider[] = [];
+	const allContextProviders: ContextProvider[] = [];
+	const allMarkdownComponents: MarkdownComponents[] = [];
+	const allMarkdownExtensions: MarkdownExtensions[] = [];
 	const allGetChatComponents: GetChatComponent[] = [];
 	const allAbilitiesSetups: AbilitiesSetupHook[] = [];
 	const allUseSuggestions: UseSuggestionsHook[] = [];
@@ -295,17 +478,17 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		if ( module.getEmptyViewSuggestions ) {
 			allGetEmptyViewSuggestions.push( module.getEmptyViewSuggestions );
 		}
+		if ( module.contextProvider ) {
+			allContextProviders.push( module.contextProvider );
+		}
+		if ( module.markdownComponents ) {
+			allMarkdownComponents.push( module.markdownComponents );
+		}
+		if ( module.markdownExtensions ) {
+			allMarkdownExtensions.push( module.markdownExtensions );
+		}
 
 		// First-write-wins for singleton exports.
-		if ( module.contextProvider && ! mergedContextProvider ) {
-			mergedContextProvider = module.contextProvider;
-		}
-		if ( module.markdownComponents && ! mergedMarkdownComponents ) {
-			mergedMarkdownComponents = module.markdownComponents;
-		}
-		if ( module.markdownExtensions && ! mergedMarkdownExtensions ) {
-			mergedMarkdownExtensions = module.markdownExtensions;
-		}
 		if ( module.useNavigationContinuation && ! mergedNavigationContinuation ) {
 			mergedNavigationContinuation = module.useNavigationContinuation;
 		}
@@ -322,11 +505,13 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		mergeCapabilitiesInto( mergedCapabilities, module.capabilities );
 	}
 
+	const mergedContextProvider = mergeContextProviders( allContextProviders );
+	const mergedMarkdownComponents = mergeMarkdownComponentsFromProviders( allMarkdownComponents );
+	const mergedMarkdownExtensions = mergeMarkdownExtensionsFromProviders( allMarkdownExtensions );
+
 	// Merge toolProviders: first-write-wins by ability name, matching the
-	// resolution order of every other merged provider export (contextProvider,
-	// getChatComponent, useSuggestions, etc). Providers are processed in the
-	// order they were registered; earlier providers win on ability-name
-	// collisions.
+	// resolution order of colliding provider exports. Providers are processed
+	// in the order they were registered; earlier providers win on collisions.
 	if ( allToolProviders.length === 1 ) {
 		mergedToolProvider = allToolProviders[ 0 ];
 	} else if ( allToolProviders.length > 1 ) {

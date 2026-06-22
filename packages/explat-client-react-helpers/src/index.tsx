@@ -36,7 +36,7 @@ export interface ExPlatClientReactHelpers {
 		treatmentExperience: React.ReactNode;
 		loadingExperience: React.ReactNode;
 		options?: ExperimentOptions;
-	} ) => JSX.Element;
+	} ) => React.JSX.Element;
 
 	/**
 	 * Inject experiment data into a child component.
@@ -46,10 +46,10 @@ export interface ExPlatClientReactHelpers {
 		children: (
 			isLoading: boolean,
 			experimentAssignment: ExperimentAssignment | null
-		) => JSX.Element;
+		) => React.JSX.Element;
 		name: string;
 		options?: ExperimentOptions;
-	} ) => JSX.Element;
+	} ) => React.JSX.Element;
 }
 
 export default function createExPlatClientReactHelpers(
@@ -131,7 +131,7 @@ export default function createExPlatClientReactHelpers(
 		children: (
 			isLoading: boolean,
 			experimentAssignment: ExperimentAssignment | null
-		) => JSX.Element;
+		) => React.JSX.Element;
 		name: string;
 		options?: ExperimentOptions;
 	} ) => {

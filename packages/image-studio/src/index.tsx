@@ -17,6 +17,7 @@ import {
 	trackImageStudioImageSaved,
 	trackImageStudioOpened,
 } from './utils/tracking';
+import type { JSX } from 'react';
 
 /**
  * Type definitions
