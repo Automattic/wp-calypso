@@ -56,26 +56,12 @@ export function ReaderSidebarSpaces( { path }: Props ) {
 		page( getManageSourcesPath( space.id ) );
 	};
 
-	const handleMainClick = () => {
-		dispatch( recordReaderTracksEvent( 'calypso_reader_sidebar_spaces_clicked' ) );
-		if ( ! isOpen ) {
-			setIsOpen( true );
-		}
-		// When the user isn't already viewing a specific space, clicking the
-		// header takes them to the Spaces landing route; otherwise it just
-		// opens the menu without yanking them off the page they're on.
-		if ( activeId === null && path !== SPACES_BASE_PATH ) {
-			page( SPACES_BASE_PATH );
-		}
-	};
-
 	return (
 		<li>
 			<ExpandableSidebarMenu
 				expanded={ isOpen }
 				title={ translate( 'Spaces' ) }
 				customIcon={ <Icon className="sidebar__menu-icon" icon={ category } /> }
-				onClick={ handleMainClick }
 				expandableIconClick={ () => setIsOpen( ! isOpen ) }
 				disableFlyout
 				className={ ! isOpen && isOnSpaces ? 'sidebar__menu--selected' : undefined }
