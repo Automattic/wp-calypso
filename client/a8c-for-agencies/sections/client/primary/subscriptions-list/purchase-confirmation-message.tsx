@@ -10,8 +10,8 @@ export default function PurchaseConfirmationMessage() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const wpcomHostingPurchased = ( getQueryArg( window.location.href, 'wpcom_plan_purchased' ) ??
-		'' ) as string;
+	const rawArg = getQueryArg( window.location.href, 'wpcom_plan_purchased' );
+	const wpcomHostingPurchased = typeof rawArg === 'string' ? rawArg : '';
 
 	const [ successNotification, setSuccessNotification ] = useState< boolean >( false );
 
