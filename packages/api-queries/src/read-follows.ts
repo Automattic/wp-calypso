@@ -2,7 +2,6 @@ import {
 	commonFeedExtensions,
 	fetchReadFollows,
 	followSite,
-	flushOnboardingWelcomeDigest,
 	prepareComparableUrl,
 	sortSiteSubscriptionsByLastUpdated,
 	unfollowSite,
@@ -15,7 +14,6 @@ import {
 	type FollowSiteParams,
 	type SiteSubscriptionsPage,
 	type UnfollowSiteParams,
-	type FlushOnboardingWelcomeDigestResponse,
 } from '@automattic/api-core';
 import {
 	infiniteQueryOptions,
@@ -557,8 +555,3 @@ export const updateSitePostNotificationSubscriptionMutation = ( queryClient: Que
 			onSettled: () => invalidateSiteSubscriptions( queryClient ),
 		}
 	);
-
-export const flushOnboardingWelcomeDigestMutation = () =>
-	mutationOptions< FlushOnboardingWelcomeDigestResponse, Error, void >( {
-		mutationFn: () => flushOnboardingWelcomeDigest(),
-	} );

@@ -25,7 +25,6 @@ import {
 	updateSitePostEmailDeliveryFrequencyMutation,
 	updateSitePostEmailSubscriptionMutation,
 	updateSitePostNotificationSubscriptionMutation,
-	flushOnboardingWelcomeDigestMutation,
 	type SiteSubscriptionsInfiniteData,
 } from '../read-follows';
 import type { SiteSubscriptionItem, FollowDeliveryParams } from '@automattic/api-core';
@@ -632,30 +631,5 @@ describe( 'delivery mutations', () => {
 		).toEqual( {
 			send_posts: true,
 		} );
-	} );
-} );
-
-describe( 'flushOnboardingWelcomeDigestMutation', () => {
-	afterEach( () => nock.cleanAll() );
-
-	it( 'posts to the onboarding welcome digest flush endpoint', async () => {
-		const scope = nock( BASE )
-			.post( '/rest/v1.2/read/onboarding/welcome-digest/flush', {} )
-			.reply( 200, {
-				success: true,
-				sent: true,
-				blog_count: 2,
-			} );
-		const client = newClient();
-
-		const { result } = renderHook( () => useMutation( flushOnboardingWelcomeDigestMutation() ), {
-			wrapper: makeWrapper( client ),
-		} );
-
-		await act( async () => {
-			await result.current.mutateAsync();
-		} );
-
-		expect( scope.isDone() ).toBe( true );
 	} );
 } );
