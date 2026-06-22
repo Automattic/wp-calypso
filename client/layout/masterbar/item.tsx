@@ -21,6 +21,7 @@ interface MasterbarSubItemProps {
 	url?: string;
 	onClick?: () => void;
 	className?: string;
+	openInNewTab?: boolean;
 }
 
 type MasterbarItemOwnProps = {
@@ -141,11 +142,23 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 						{ item.url && (
 							<a
 								href={ item.url }
+								{ ...( item.openInNewTab ? { target: '_blank', rel: 'noopener noreferrer' } : {} ) }
 								onClick={ item.onClick }
-								onTouchEnd={ ( ev ) => this.navigateSubAnchorTouch( ev, item.onClick ) }
-								onKeyDown={ ( ev ) => this.navigateSubAnchorByKey( ev, item.onClick ) }
+								onTouchEnd={ ( ev ) =>
+									this.navigateSubAnchorTouch( ev, item.onClick, item.openInNewTab )
+								}
+								onKeyDown={ ( ev ) =>
+									this.navigateSubAnchorByKey( ev, item.onClick, item.openInNewTab )
+								}
 							>
 								{ item.label }
+								{ item.openInNewTab && (
+									<Gridicon
+										className="masterbar__item-subitems-item-external-icon"
+										icon="external"
+										size={ 16 }
+									/>
+								) }
 							</a>
 						) }
 						{ ! item.url && item.onClick && (
@@ -197,7 +210,8 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 
 	navigateSubAnchorTouch = (
 		event: React.TouchEvent | React.KeyboardEvent,
-		onClick?: () => void
+		onClick?: () => void,
+		openInNewTab?: boolean
 	) => {
 		// We must prevent the default anchor behavior and navigate manually. Otherwise there is a
 		// race condition between the click on the anchor firing and the menu closing before that
@@ -207,14 +221,22 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 		const url = event.currentTarget.getAttribute( 'href' );
 		onClick?.();
 		if ( url ) {
-			navigate( url );
+			if ( openInNewTab ) {
+				window.open( url, '_blank', 'noopener,noreferrer' );
+			} else {
+				navigate( url );
+			}
 		}
 		this.setState( { isOpenForNonMouseFlow: false } );
 	};
 
-	navigateSubAnchorByKey = ( event: React.KeyboardEvent, onClick?: () => void ) => {
+	navigateSubAnchorByKey = (
+		event: React.KeyboardEvent,
+		onClick?: () => void,
+		openInNewTab?: boolean
+	) => {
 		if ( event.key === 'Enter' || event.key === ' ' ) {
-			this.navigateSubAnchorTouch( event, onClick );
+			this.navigateSubAnchorTouch( event, onClick, openInNewTab );
 		}
 	};
 

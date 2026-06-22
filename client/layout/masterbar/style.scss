@@ -317,6 +317,12 @@ body.is-mobile-app-view {
 				color: var(--color-masterbar-submenu-text, var(--color-masterbar-text));
 			}
 
+			.masterbar__item-subitems-item-external-icon {
+				margin-inline-start: 4px;
+				vertical-align: text-bottom;
+				opacity: 0.7;
+			}
+
 			.is-link {
 				border: none;
 				background: none;
