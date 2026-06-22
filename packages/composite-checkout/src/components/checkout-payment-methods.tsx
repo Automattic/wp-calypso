@@ -79,7 +79,13 @@ const SinglePaymentMethodWrapper = styled.div`
 
 const SinglePaymentMethodLabel = styled.div`
 	padding-block: 16px;
-	padding-inline: 12px;
+	/*
+	 * Align the label with the inline padding of the payment method's form
+	 * fields below it. That padding differs between surfaces (24px in checkout,
+	 * 12px in the Dashboard), so consumers can override this custom property to
+	 * match their form.
+	 */
+	padding-inline: var( --checkout-single-payment-method-label-inline-padding, 24px );
 	box-sizing: border-box;
 	width: 100%;
 	display: flex;
