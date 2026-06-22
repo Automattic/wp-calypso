@@ -330,17 +330,17 @@ class MasterbarLoggedIn extends Component {
 							  ]
 							: [
 									{
+										label: translate( 'Plugins' ),
+										url: '/plugins/manage/sites',
+										onClick: () =>
+											this.props.recordTracksEvent( 'calypso_masterbar_plugins_clicked' ),
+									},
+									{
 										label: translate( 'Themes' ),
 										url: wpcomLink( '/themes' ),
 										openInNewTab: true,
 										onClick: () =>
 											this.props.recordTracksEvent( 'calypso_masterbar_themes_clicked' ),
-									},
-									{
-										label: translate( 'Plugins' ),
-										url: '/plugins/manage/sites',
-										onClick: () =>
-											this.props.recordTracksEvent( 'calypso_masterbar_plugins_clicked' ),
 									},
 							  ] ),
 					],
