@@ -4,14 +4,17 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
+import { recordAction } from 'calypso/reader/stats';
 import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 
 import './style.scss';
 
 export default function AchievementsNotificationSettings() {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 
 	const { data: savedNotifications, isLoading } = useQuery(
 		userPreferenceQuery( 'achievements-global-notifications' )
@@ -40,6 +43,11 @@ export default function AchievementsNotificationSettings() {
 						{ duration: 4000 }
 					)
 				);
+				recordAction( `set_achievements_notifications_${ newNotifications }` );
+				recordReaderTracksEvent( 'calypso_reader_achievements_settings_saved', {
+					setting: 'me-achievements-notifications',
+					value: newNotifications,
+				} );
 			},
 			onError() {
 				dispatch(
