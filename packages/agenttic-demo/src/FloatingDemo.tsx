@@ -72,6 +72,10 @@ const FloatingDemo: React.FC< {
 	}, [ addMessage ] );
 
 	const [ showSuggestions, setShowSuggestions ] = useState( true );
+	const [ freeDragEnabled, setFreeDragEnabled ] = useState( false );
+	const [ freeDragPosition, setFreeDragPosition ] = useState<
+		{ x: number; y: number } | undefined
+	>( undefined );
 
 	const defaultSuggestions = useMemo(
 		() => [
@@ -265,6 +269,20 @@ const FloatingDemo: React.FC< {
 				>
 					Suggestions
 				</button>
+				<button
+					onClick={ () => setFreeDragEnabled( ( prev ) => ! prev ) }
+					style={ {
+						padding: '4px 8px',
+						background: freeDragEnabled ? '#0a0' : '#000',
+						color: '#fff',
+						cursor: 'pointer',
+						fontSize: '12px',
+						fontFamily: 'monospace',
+						textTransform: 'uppercase',
+					} }
+				>
+					Free Drag: { freeDragEnabled ? 'ON' : 'OFF' }
+				</button>
 				<MessageTester
 					addMessage={ addMessage }
 					onClear={ () => loadMessages( [] ) }
@@ -287,6 +305,9 @@ const FloatingDemo: React.FC< {
 				locale="en"
 				messagesPosition="bottom"
 				emptyView={ <EmptyView suggestions={ suggestions } /> }
+				freeDrag={ freeDragEnabled }
+				initialFreeDragPosition={ freeDragPosition }
+				onFreeDragEnd={ setFreeDragPosition }
 			/>
 		</div>
 	);
