@@ -209,7 +209,9 @@ object CalypsoE2ETestsBuildTemplate : Template({
 
 				cd test/e2e
 				# Clear any stale teardown-leak markers from a reused checkout before this run.
-				rm -rf output/teardown-leaks
+				# Recursive over output/: markers should land in output/teardown-leaks, but a
+				# path drift must not leave a stale marker that fails a later run.
+				find output -name 'account-*.json' -delete 2>/dev/null || true
 				echo "CALYPSO_BASE_URL=%CALYPSO_BASE_URL%"
 				export CALYPSO_BASE_URL="%CALYPSO_BASE_URL%"
 				echo "DASHBOARD_BASE_URL=%DASHBOARD_BASE_URL%"
@@ -226,14 +228,18 @@ object CalypsoE2ETestsBuildTemplate : Template({
 			// Runs even when tests passed or failed: a leaked test user can occur on a green run.
 			executionMode = BuildStep.ExecutionMode.ALWAYS
 			scriptContent = """
-				LEAK_DIR="test/e2e/output/teardown-leaks"
-				if [ -d "${'$'}LEAK_DIR" ] && [ -n "${'$'}( ls "${'$'}LEAK_DIR"/account-*.json 2>/dev/null || true )" ]; then
-					COUNT=${'$'}( ls -1 "${'$'}LEAK_DIR"/account-*.json 2>/dev/null | wc -l | tr -d ' ' || true )
+				# Recursive over output/ rather than only output/teardown-leaks: if the
+				# marker path ever drifts from the spec-side LEAK_DIR, a hardcoded subdir
+				# check would find nothing and pass a leaking run green. Markers are named
+				# account-*.json wherever they land.
+				MARKERS=${'$'}( find test/e2e/output -name 'account-*.json' 2>/dev/null || true )
+				if [ -n "${'$'}MARKERS" ]; then
+					COUNT=${'$'}( printf '%s\n' "${'$'}MARKERS" | wc -l | tr -d ' ' )
 					echo "E2E TEARDOWN LEAK - the following test users were not closed (their blogs leak with them):"
-					cat "${'$'}LEAK_DIR"/account-*.json 2>/dev/null || true
+					printf '%s\n' "${'$'}MARKERS" | while IFS= read -r marker; do cat "${'$'}marker" 2>/dev/null || true; done
 					# A buildProblem service message fails the build regardless of the runner exit code
 					# (nonZeroExitCode = false). Do NOT add 'exit 1': this ALWAYS step must leave green runs green.
-					echo "##teamcity[buildProblem description='E2E teardown leak: ${'$'}COUNT test user(s) not closed - see %PROJECT%/output/teardown-leaks' identity='e2e_teardown_leak']"
+					echo "##teamcity[buildProblem description='E2E teardown leak: ${'$'}COUNT test user(s) not closed - see %PROJECT%/output' identity='e2e_teardown_leak']"
 				fi
 				""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
