@@ -31,14 +31,16 @@ const onChangeView = () => {};
 
 const SiteDomainDataViews = ( { site, domains }: { site: Site; domains: DomainSummary[] } ) => {
 	const router = useRouter();
-	const fields = useFields( { site, inOverview: true } )
-		// Ensure the column controls do not appear in this DataView.
-		.map( ( field ) => ( {
-			...field,
-			enableHiding: false,
-			enableSorting: false,
-			filterBy: false as const,
-		} ) );
+	const fields = useFields( { site, inOverview: true } );
+
+	// Disable the column controls for the DataView display without affecting
+	// sorting/filtering in `filterSortAndPaginate`, which reads the raw fields.
+	const displayFields = fields.map( ( field ) => ( {
+		...field,
+		enableHiding: false,
+		enableSorting: false,
+		filterBy: false as const,
+	} ) );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( domains, view, fields );
 
@@ -72,7 +74,7 @@ const SiteDomainDataViews = ( { site, domains }: { site: Site; domains: DomainSu
 			<CardBody>
 				<DataViews< DomainSummary >
 					data={ filteredData || [] }
-					fields={ fields }
+					fields={ displayFields }
 					onChangeView={ onChangeView }
 					view={ view }
 					paginationInfo={ paginationInfo }
