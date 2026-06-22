@@ -16,6 +16,7 @@ import type { Step as StepType } from '../../types';
 
 const EARLY_PROVISIONED_SITE_STORAGE_KEY = 'site-spec-early-provisioned-site';
 const EARLY_PROVISION_TARGET_WPCOM_ATOMIC = 'wpcom-atomic';
+const EARLY_PROVISION_ERROR_MESSAGE = 'Failed to start WPCOM Atomic early provisioning.';
 
 type SiteCreateResponse = {
 	blog_details?: {
@@ -243,6 +244,10 @@ const SiteSpec: StepType = function SiteSpec() {
 					? await earlyProvisionSitePromiseRef.current
 					: null;
 				const blogId = blogIdFromPromise ?? getSavedEarlyProvisionedSite();
+				if ( ! blogId ) {
+					throw new Error( EARLY_PROVISION_ERROR_MESSAGE );
+				}
+
 				const phSessionId = getPostHogSessionId();
 				const source = queryParams.get( 'source' );
 				const destination = addQueryArgs( '/setup/ai-site-builder/', {

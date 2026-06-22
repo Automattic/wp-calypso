@@ -268,9 +268,17 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		// Flow A: The site was early-created during the AI chat session.
 		// Flow B: If early_created_site is absent, the regular createSiteWithCart path below handles creation.
 		const earlyCreatedSite = urlQueryParams.get( 'early_created_site' );
+		const earlyProvisionTarget = urlQueryParams.get( 'early_provision_target' );
+		if (
+			flow === AI_SITE_BUILDER_FLOW &&
+			earlyProvisionTarget === EARLY_PROVISION_TARGET_WPCOM_ATOMIC &&
+			! earlyCreatedSite
+		) {
+			throw new Error( 'Missing early_created_site for WPCOM Atomic early provisioning.' );
+		}
+
 		if ( flow === AI_SITE_BUILDER_FLOW && earlyCreatedSite ) {
 			const blogId = parseInt( earlyCreatedSite, 10 );
-			const earlyProvisionTarget = urlQueryParams.get( 'early_provision_target' );
 
 			if ( isNaN( blogId ) ) {
 				throw new Error( 'Invalid early_created_site parameter.' );
