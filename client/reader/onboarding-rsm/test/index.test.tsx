@@ -143,7 +143,7 @@ jest.mock( 'calypso/state/preferences/selectors', () => ( {
 } ) );
 
 jest.mock( 'calypso/state/preferences/actions', () => ( {
-	savePreference: jest.fn( () => ( { type: 'PREFERENCES_SAVE' } ) ),
+	savePreference: jest.fn( () => () => Promise.resolve() ),
 } ) );
 
 jest.mock( 'calypso/state/current-user/selectors', () => ( {
@@ -1229,7 +1229,7 @@ describe( 'ReaderOnboardingRsm – permanent checklist dismiss', () => {
 					prefKey === READER_ONBOARDING_DISMISSED_PREFERENCE_KEY ? value : null
 				);
 			}
-			return { type: 'PREFERENCES_SAVE' };
+			return () => Promise.resolve();
 		} );
 
 		const onRender = jest.fn();
