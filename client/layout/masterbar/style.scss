@@ -965,14 +965,14 @@ body.is-mobile-app-view {
 	min-width: 248px;
 	padding: 12px;
 
-	.masterbar__site-info-label {
-		margin-bottom: 4px;
-	}
-
 	.masterbar__info-badges {
 		display: flex;
+		flex: 1;
 		flex-wrap: wrap;
 		gap: 4px;
+		justify-content: flex-end;
+		margin-left: 16px;
+		min-width: 0;
 	}
 
 	// TODO: Remove this once the new Badge APIs are implemented (DS-203).
