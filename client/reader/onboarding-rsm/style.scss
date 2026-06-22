@@ -1,9 +1,16 @@
 .reader-onboarding {
+	position: relative;
 	background-color: var( --color-surface-1 );
 	border-radius: 6px; /* stylelint-disable-line scales/radii */
 	box-shadow: rgba( 0, 0, 0, 0.05 ) 0 0 0 1px inset;
 	margin-bottom: 24px;
 	padding: 20px 20px 5px 20px;
+
+	&__dismiss-button {
+		position: absolute;
+		top: 12px;
+		inset-inline-end: 12px;
+	}
 
 	h2 {
 		font-weight: 600;
