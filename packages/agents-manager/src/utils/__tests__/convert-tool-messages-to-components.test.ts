@@ -307,6 +307,96 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 	} );
 
+	it( 'renders `EscalationButton` from live data-only handoff messages', () => {
+		const message = createMessage( {
+			content: [
+				{
+					type: 'data',
+					data: { flags: { forward_to_human_support: true } },
+				},
+			],
+		} );
+
+		const result = convertWithDefaults( {
+			messages: [ message ],
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
+			type: 'component',
+			component: EscalationButton,
+		} );
+	} );
+
+	it.each( [
+		[
+			'root flags',
+			{
+				flags: { forward_to_human_support: true },
+			},
+		],
+		[
+			'data flags',
+			{
+				data: { flags: { forward_to_human_support: true } },
+			},
+		],
+		[
+			'context flags',
+			{
+				context: { flags: { forward_to_human_support: true } },
+			},
+		],
+	] )( 'renders `EscalationButton` from parsed handoff messages with %s', ( _name, data ) => {
+		const message = createMessage( {
+			content: [ { type: 'text', text: JSON.stringify( data ) } ],
+		} );
+
+		const result = convertWithDefaults( {
+			messages: [ message ],
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
+			type: 'component',
+			component: EscalationButton,
+		} );
+	} );
+
+	it( 'renders `EscalationButton` from completed support handoff outcome messages', () => {
+		const message = createMessage( {
+			content: [
+				{
+					type: 'text',
+					text: JSON.stringify( {
+						final_text: 'This conversation has been forwarded to non-AI support (chat/forums)',
+						outcome: {
+							type: 'handoff_required',
+							handoff_target: 'human_support',
+							reason: 'support_workflow_handoff',
+						},
+						sources: [
+							{
+								title: 'Contact WordPress.com support',
+								url: 'https://en.support.wordpress.com/help-support-options/',
+							},
+						],
+					} ),
+				},
+			],
+		} );
+
+		const result = convertWithDefaults( {
+			messages: [ message ],
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
+			type: 'component',
+			component: EscalationButton,
+		} );
+	} );
+
 	it( 'filters out unhandled tool messages', () => {
 		const result = convertWithDefaults( {
 			messages: [ createToolMessage( 'other_tool' ) ],

@@ -22,6 +22,7 @@ import { persistLastActivity } from '../../utils/persist-last-activity';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
+import EditorHelpCenterEntryPoint from '../editor-help-center-entry-point';
 import OrchestratorChat from '../orchestrator-chat';
 import SupportGuide from '../support-guide';
 import SupportGuides from '../support-guides';
@@ -77,7 +78,8 @@ export default function AgentDock( {
 	useCheckpoint,
 	capabilities,
 }: Props ) {
-	const { siteKey, agentConfig } = useAgentsManagerContext();
+	const { siteKey, agentConfig, sectionName, currentRoute, resumeActiveChat } =
+		useAgentsManagerContext();
 
 	const [ isCompactMode, setIsCompactMode ] = useState(
 		window.__agentsManagerActions?.isCompactMode ?? false
@@ -111,6 +113,16 @@ export default function AgentDock( {
 	// detect it to hide docking options and skip persisting open/close state to
 	// the logged-in REST endpoint.
 	const isReaderChat = isReaderChatAgent( agentId );
+	const isEditorContext =
+		sectionName === 'gutenberg' ||
+		sectionName === 'site-editor' ||
+		!! currentRoute?.includes( 'site-editor.php' ) ||
+		!! currentRoute?.includes( 'post.php' ) ||
+		!! currentRoute?.includes( 'post-new.php' ) ||
+		document.body?.classList.contains( 'site-editor-php' ) ||
+		document.body?.classList.contains( 'post-php' ) ||
+		document.body?.classList.contains( 'post-new-php' );
+	const showEditorHelpEntry = ! isReaderChat && isEditorContext;
 
 	const setOpenState = useCallback(
 		( isOpen: boolean ) => setIsOpen( isOpen, ! isReaderChat ),
@@ -152,33 +164,38 @@ export default function AgentDock( {
 		}
 	};
 
-	// WP admin bar integration. Returns whether the AI chat entry button is present.
-	const hasAiChatEntry = useAdminBarIntegration( {
+	const openChatPanel = useCallback( () => {
+		if ( isMinimized ) {
+			setIsMinimized( false );
+		}
+		// Skip a redundant save when the chat is already open.
+		if ( ! isPersistedOpen ) {
+			if ( isDocked ) {
+				openSidebar();
+			} else {
+				setOpenState( true );
+			}
+		}
+	}, [ isDocked, isMinimized, isPersistedOpen, openSidebar, setIsMinimized, setOpenState ] );
+
+	// WP admin bar integration. Returns whether an external entry point is present.
+	const hasAdminBarEntry = useAdminBarIntegration( {
 		closeChat: handleClose,
 		// Open/un-minimize the chat panel, leaving the route unchanged.
-		maybeOpenChat: () => {
-			if ( isMinimized ) {
-				setIsMinimized( false );
-			}
-			// Skip a redundant save when the chat is already open.
-			if ( ! isPersistedOpen ) {
-				if ( isDocked ) {
-					openSidebar();
-				} else {
-					setOpenState( true );
-				}
-			}
-		},
+		maybeOpenChat: openChatPanel,
 	} );
+	const hasAgentsManagerEntry = hasAdminBarEntry || showEditorHelpEntry;
 
 	// Route visibility. All are hidden in reader chat (public blog frontends);
 	// some add a further requirement, noted below. Ordered to match the routes.
 	//
 	// `/zendesk` also needs the unified agent or using Woo AI.
 	const showZendeskChat = shouldUseUnifiedAgent && ! isReaderChat;
-	// `/support-guides` (the list) also needs the unified agent, and is only
-	// reachable from the AI chat entry button (WP admin bar or Calypso masterbar).
-	const showSupportGuides = shouldUseUnifiedAgent && ! isReaderChat && hasAiChatEntry;
+	// `/support-guides` (the list) is reached from the Help menu. Host-level
+	// opt-ins, such as Dolly in the editor, can expose that menu without turning
+	// on the full unified Help Center experience for every screen.
+	const showSupportGuides =
+		! isReaderChat && ( showEditorHelpEntry || ( shouldUseUnifiedAgent && hasAdminBarEntry ) );
 	// `/post` (the viewer) opens a guide or link from in-chat links and sources,
 	// so unlike the list it isn't tied to the admin bar.
 	const showSupportGuide = ! isReaderChat;
@@ -296,10 +313,10 @@ export default function AgentDock( {
 
 	const chatHeaderOptions = getChatHeaderOptions();
 
-	// With the AI chat entry button, the chat hides on close and can minimize to
-	// the bar. Without one, it stays mounted and collapses to a button instead.
-	const isChatVisible = isPersistedOpen || ! hasAiChatEntry;
-	const isMinimizedActive = hasAiChatEntry && isMinimized;
+	// With an external entry point, the chat can hide on close and reopen from it.
+	// Without one, it stays mounted and collapses to a button instead.
+	const isChatVisible = isPersistedOpen || ! hasAgentsManagerEntry;
+	const isMinimizedActive = hasAgentsManagerEntry && isMinimized;
 	const chatIsOpen = isPersistedOpen && ! isMinimizedActive;
 
 	const OrchestratorChatRoute = (
@@ -371,18 +388,35 @@ export default function AgentDock( {
 	);
 
 	return (
-		shouldRenderChat &&
-		isChatVisible &&
-		createAgentPortal(
-			// NOTE: Use route state to pass data that needs to be accessed throughout the app.
-			<Routes>
-				<Route path="/chat" element={ OrchestratorChatRoute } />
-				{ showZendeskChat && <Route path="/zendesk" element={ ZendeskChatRoute } /> }
-				{ showSupportGuides && <Route path="/support-guides" element={ SupportGuidesRoute } /> }
-				{ showSupportGuide && <Route path="/post" element={ SupportGuideRoute } /> }
-				{ showChatHistory && <Route path="/history" element={ HistoryRoute } /> }
-				<Route path="*" element={ <Navigate to="/chat" state={ { isNewChat: true } } replace /> } />
-			</Routes>
+		shouldRenderChat && (
+			<>
+				{ showEditorHelpEntry && (
+					<EditorHelpCenterEntryPoint
+						isChatVisible={ chatIsOpen }
+						onOpen={ openChatPanel }
+						onClose={ handleClose }
+						onResumeChat={ resumeActiveChat }
+						sectionName={ sectionName }
+					/>
+				) }
+				{ isChatVisible &&
+					createAgentPortal(
+						// NOTE: Use route state to pass data that needs to be accessed throughout the app.
+						<Routes>
+							<Route path="/chat" element={ OrchestratorChatRoute } />
+							{ showZendeskChat && <Route path="/zendesk" element={ ZendeskChatRoute } /> }
+							{ showSupportGuides && (
+								<Route path="/support-guides" element={ SupportGuidesRoute } />
+							) }
+							{ showSupportGuide && <Route path="/post" element={ SupportGuideRoute } /> }
+							{ showChatHistory && <Route path="/history" element={ HistoryRoute } /> }
+							<Route
+								path="*"
+								element={ <Navigate to="/chat" state={ { isNewChat: true } } replace /> }
+							/>
+						</Routes>
+					) }
+			</>
 		)
 	);
 }
