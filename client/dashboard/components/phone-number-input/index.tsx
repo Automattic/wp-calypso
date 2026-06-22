@@ -67,7 +67,6 @@ export default function PhoneNumberInput( {
 						onChange={ onChangeCountryCode }
 						__next40pxDefaultSize
 						__nextHasNoMarginBottom
-						expandOnFocus={ false }
 					/>
 				</Disabled>
 			</div>
