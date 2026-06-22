@@ -82,7 +82,12 @@ const EllipsisMenu = () => {
 	};
 
 	return (
-		<DropdownMenu icon={ moreVertical } label={ __( 'Help Center Options', __i18n_text_domain__ ) }>
+		<DropdownMenu
+			icon={ moreVertical }
+			label={ __( 'Help Center Options', __i18n_text_domain__ ) }
+			// Render the popover inside the panel node so opening the menu doesn't blur the panel
+			popoverProps={ { inline: true } }
+		>
 			{ ( { onClose } ) => (
 				<>
 					<MenuGroup>

@@ -104,13 +104,29 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 		if ( ! node ) {
 			return;
 		}
+		// Raise the panel on open so it paints above Agents Manager. Paint-order
+		// only — no real DOM focus. The handlers below still demote it afterward.
+		if ( show && ! hidden ) {
+			setIsFocused( true );
+		}
 		const handleFocusIn = () => {
 			setIsFocused( true );
 		};
-		const handleFocusOut = ( e: FocusEvent ) => {
-			if ( ! node.contains( e.relatedTarget as Node | null ) ) {
-				setIsFocused( false );
+		let pendingFocusOut: number | undefined;
+		const handleFocusOut = () => {
+			// Defer: in-panel navigation unmounts the focused element, transiently
+			// dropping focus to <body>. Re-test activeElement after focus settles so
+			// we only demote when it truly moved to a real element outside the panel.
+			if ( pendingFocusOut !== undefined ) {
+				cancelAnimationFrame( pendingFocusOut );
 			}
+			pendingFocusOut = requestAnimationFrame( () => {
+				pendingFocusOut = undefined;
+				const active = document.activeElement;
+				if ( active !== document.body && ! node.contains( active ) ) {
+					setIsFocused( false );
+				}
+			} );
 		};
 		const handlePointerDown = () => {
 			setIsFocused( true );
@@ -128,6 +144,9 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 		const stopCanvasObserver = observeEditorCanvasPointerDown( handleDocumentPointerDown );
 
 		return () => {
+			if ( pendingFocusOut !== undefined ) {
+				cancelAnimationFrame( pendingFocusOut );
+			}
 			node.removeEventListener( 'focusin', handleFocusIn );
 			node.removeEventListener( 'focusout', handleFocusOut );
 			node.removeEventListener( 'pointerdown', handlePointerDown );

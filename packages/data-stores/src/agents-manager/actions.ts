@@ -106,6 +106,13 @@ export function* setFloatingPosition(
 	} as const;
 }
 
+export function setFreeDragPosition( freeDragPosition: { x: number; y: number } | null ) {
+	return {
+		type: 'AGENTS_MANAGER_SET_FREE_DRAG_POSITION',
+		freeDragPosition,
+	} as const;
+}
+
 export function setLastActivity( lastActivity: PerSiteLastActivity | undefined ) {
 	return {
 		type: 'AGENTS_MANAGER_SET_LAST_ACTIVITY',
@@ -145,6 +152,7 @@ export type AgentsManagerAction =
 	| ReturnType< typeof setIsLoading >
 	| ReturnType< typeof setHasLoaded >
 	| ReturnType< typeof setIsSplitScreen >
+	| ReturnType< typeof setFreeDragPosition >
 	| GeneratorReturnType< typeof setIsOpen >
 	| GeneratorReturnType< typeof setIsDocked >
 	| GeneratorReturnType< typeof setIsMinimized >
