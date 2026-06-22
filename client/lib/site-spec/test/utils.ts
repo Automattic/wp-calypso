@@ -8,11 +8,13 @@
  * - Error handling for missing configurations
  *
  */
+import config from '@automattic/calypso-config';
 import {
 	isSiteSpecEnabled,
 	getSiteSpecUrl,
 	getSiteSpecUrlByType,
 	getDefaultSiteSpecConfig,
+	getTelexSiteSpecConfig,
 } from '../utils';
 
 interface MockWithIsEnabled extends jest.Mock {
@@ -26,7 +28,7 @@ jest.mock( '@automattic/calypso-config', () => {
 } );
 
 describe( 'SiteSpec Utils', () => {
-	const mockConfig = require( '@automattic/calypso-config' );
+	const mockConfig = config as unknown as MockWithIsEnabled;
 
 	beforeEach( () => {
 		// Reset all mocks
@@ -182,6 +184,18 @@ describe( 'SiteSpec Utils', () => {
 			const overrides = result.tracking?.getOverrides?.( 'test-event' );
 			expect( overrides ).toEqual( {
 				client: 'calypso',
+			} );
+		} );
+	} );
+
+	describe( 'getTelexSiteSpecConfig', () => {
+		it( 'should route confirmed specs back through the Telex Site Spec flow', () => {
+			const result = getTelexSiteSpecConfig();
+
+			expect( result ).toMatchObject( {
+				agentUrl: 'https://api.example.com/agent',
+				agentId: 'test-agent',
+				buildSiteUrl: '/setup/ai-site-builder-spec/site-spec?telex=1&spec_id=',
 			} );
 		} );
 	} );

@@ -116,7 +116,7 @@ export interface SiteSpecConfig {
 	tracking?: {
 		enabled: boolean;
 		prefix: string;
-		getOverrides?: ( event: string ) => Record< string, any >;
+		getOverrides?: ( event: string ) => Record< string, unknown >;
 	};
 	backButton?: BackButtonConfig;
 	exitButton?: {
@@ -316,5 +316,21 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 		tosConfig: {
 			showToS: true,
 		},
+	};
+}
+
+/**
+ * Retrieves the Telex-specific SiteSpec configuration.
+ *
+ * The widget may either call `onSpecConfirm` or navigate to `buildSiteUrl`
+ * with the spec id appended. Keep the navigation inside the Telex Site Spec
+ * route so Calypso can finalize the provisioned site before redirecting to
+ * wp-admin.
+ * @returns {SiteSpecConfig} Configuration object for Telex.
+ */
+export function getTelexSiteSpecConfig(): SiteSpecConfig {
+	return {
+		...getDefaultSiteSpecConfig(),
+		buildSiteUrl: '/setup/ai-site-builder-spec/site-spec?telex=1&spec_id=',
 	};
 }
