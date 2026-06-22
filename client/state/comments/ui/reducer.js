@@ -60,7 +60,7 @@ export const queries = ( state = {}, action ) => {
 			const { page, postId, status } = query;
 			const parent = postId || 'site';
 			const filter = getFiltersKey( query );
-			const comments = get( state, [ parent, filter, page ] );
+			const comments = state?.[ parent ]?.[ filter ]?.[ page ];
 
 			if (
 				COMMENTS_CHANGE_STATUS === action.type &&

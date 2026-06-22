@@ -442,7 +442,7 @@ class ActivityLog extends Component {
 
 		const disableRestore =
 			! enableRewind ||
-			[ 'queued', 'running' ].includes( get( this.props, [ 'restoreProgress', 'status' ] ) ) ||
+			[ 'queued', 'running' ].includes( this.props?.restoreProgress?.status ) ||
 			( ! isAtomic && areCredentialsInvalid ) ||
 			'active' !== rewindState.state;
 		const disableBackup = 0 <= get( this.props, [ 'backupProgress', 'progress' ], -Infinity );

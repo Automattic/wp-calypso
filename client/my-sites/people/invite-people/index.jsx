@@ -5,7 +5,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { groupBy, pickBy } from '@automattic/js-utils';
 import debugModule from 'debug';
 import { localize, fixMe } from 'i18n-calypso';
-import { filter, get, some } from 'lodash';
+import { filter, some } from 'lodash';
 import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
@@ -230,7 +230,7 @@ class InvitePeople extends Component {
 		if ( errorToDisplay && value !== errorToDisplay ) {
 			return null;
 		}
-		return get( errors, [ value, 'message' ] );
+		return errors?.[ value ]?.message;
 	};
 
 	getTokensWithStatus = () => {

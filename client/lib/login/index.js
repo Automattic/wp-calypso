@@ -124,7 +124,7 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 			oauth2_redirect: redirectTo,
 		} );
 
-		const wccomFrom = get( currentQuery, 'wccom-from' );
+		const wccomFrom = currentQuery?.[ 'wccom-from' ];
 		if ( wccomFrom ) {
 			oauth2Params.set( 'wccom-from', wccomFrom );
 		}

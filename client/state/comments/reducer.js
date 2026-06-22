@@ -503,7 +503,7 @@ export const counts = ( state = {}, action ) => {
 				return state;
 			}
 			const { site: siteCounts, [ postId ]: postCounts } = state[ siteId ];
-			const status = get( action, [ 'comments', 0, 'status' ] );
+			const status = action?.comments?.[ 0 ]?.status;
 
 			const newSiteCounts = updateCount( siteCounts, status, 1 );
 			const newPostCounts = updateCount( postCounts, status, 1 );

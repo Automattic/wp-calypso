@@ -39,7 +39,7 @@ export default {
 			other: {
 				...state?.dirty?.other,
 				...( isNaN( stream )
-					? toggleInStream( stream, get( state, [ 'dirty', 'other', stream ] ), setting )
+					? toggleInStream( stream, state?.dirty?.other?.[ stream ], setting )
 					: toggleInDevice( devices, stream, setting ) ),
 			},
 		};

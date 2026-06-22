@@ -101,12 +101,12 @@ export function normalizeWporgTheme( theme, tier ) {
 		] )
 	);
 
-	const description = get( theme, [ 'sections', 'description' ] );
+	const description = theme?.sections?.description;
 	if ( description ) {
 		normalizedTheme.description = description;
 	}
 
-	const author = get( theme, [ 'author', 'display_name' ] );
+	const author = theme?.author?.display_name;
 	if ( author ) {
 		normalizedTheme.author = author;
 	}

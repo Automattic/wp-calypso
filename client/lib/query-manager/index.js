@@ -315,10 +315,7 @@ export default class QueryManager {
 			}
 
 			let nextQueryFound;
-			if (
-				options.found >= 0 &&
-				options.found !== get( nextQueries, [ receivedQueryKey, 'found' ] )
-			) {
+			if ( options.found >= 0 && options.found !== nextQueries?.[ receivedQueryKey ]?.found ) {
 				nextQueryFound = options.found;
 			}
 

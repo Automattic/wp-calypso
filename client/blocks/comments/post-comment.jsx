@@ -211,7 +211,7 @@ class PostComment extends PureComponent {
 			maxDepth,
 		} = this.props;
 
-		const commentChildrenIds = get( commentsTree, [ commentId, 'children' ] );
+		const commentChildrenIds = commentsTree?.[ commentId ]?.children;
 		// Hide children if more than maxChildrenToShow, but not if replying
 		const exceedsMaxChildrenToShow =
 			commentChildrenIds && commentChildrenIds.length < maxChildrenToShow;
@@ -292,11 +292,8 @@ class PostComment extends PureComponent {
 		}
 
 		// If a comment save is pending, don't show the form
-		const placeholderState = get( this.props.commentsTree, [
-			this.props.commentId,
-			'data',
-			'placeholderState',
-		] );
+		const placeholderState =
+			this.props.commentsTree?.[ this.props.commentId ]?.data?.placeholderState;
 		if ( placeholderState === PLACEHOLDER_STATE.PENDING ) {
 			return null;
 		}
@@ -404,7 +401,7 @@ class PostComment extends PureComponent {
 			shouldHighlightNew,
 		} = this.props;
 
-		const comment = get( commentsTree, [ commentId, 'data' ] );
+		const comment = commentsTree?.[ commentId ]?.data;
 		const isPingbackOrTrackback = comment.type === 'trackback' || comment.type === 'pingback';
 
 		if ( ! comment || ( hidePingbacksAndTrackbacks && isPingbackOrTrackback ) ) {
@@ -421,9 +418,8 @@ class PostComment extends PureComponent {
 
 		// todo: connect this constants to the state (new selector)
 		const haveReplyWithError = some(
-			get( commentsTree, [ this.props.commentId, 'children' ] ),
-			( childId ) =>
-				get( commentsTree, [ childId, 'data', 'placeholderState' ] ) === PLACEHOLDER_STATE.ERROR
+			commentsTree?.[ this.props.commentId ]?.children,
+			( childId ) => commentsTree?.[ childId ]?.data?.placeholderState === PLACEHOLDER_STATE.ERROR
 		);
 
 		// If it's a pending comment, use the current user as the author

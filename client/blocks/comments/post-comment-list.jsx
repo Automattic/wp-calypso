@@ -3,7 +3,6 @@ import { pickBy } from '@automattic/js-utils';
 import { Icon, published } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
@@ -441,9 +440,7 @@ class PostCommentList extends Component {
 		// we always count prevSum, children sum, and +1 for the current processed comment
 		return commentIds.reduce(
 			( prevSum, commentId ) =>
-				prevSum +
-				this.getCommentsCount( get( this.props.commentsTree, [ commentId, 'children' ] ) ) +
-				1,
+				prevSum + this.getCommentsCount( this.props.commentsTree?.[ commentId ]?.children ) + 1,
 			0
 		);
 	};

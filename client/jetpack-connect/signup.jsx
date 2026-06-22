@@ -11,7 +11,6 @@ import { Modal } from '@wordpress/components';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -262,7 +261,7 @@ export class JetpackSignup extends Component {
 			} );
 			return;
 		}
-		if ( get( error, [ 'error' ] ) === 'password_invalid' ) {
+		if ( error?.error === 'password_invalid' ) {
 			errorNotice( error.message, { id: 'user-creation-error-password_invalid' } );
 			return;
 		}

@@ -2,7 +2,7 @@
 
 import { mapValues, omit, omitBy } from '@automattic/js-utils';
 import isEqual from 'fast-deep-equal/es6';
-import { get, set, isEmpty, reduce, merge, findKey } from 'lodash';
+import { set, isEmpty, reduce, merge, findKey } from 'lodash';
 import PostQueryManager from 'calypso/lib/query-manager/post';
 import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
 import {
@@ -320,7 +320,7 @@ export function edits( state = {}, action ) {
 					// Receive a new version of a post object, in most cases returned in the POST
 					// response after a successful save. Removes the edits that have been applied
 					// and leaves only the ones that are not noops.
-					let postEditsLog = get( memoState, [ post.site_ID, post.ID ] );
+					let postEditsLog = memoState?.[ post.site_ID ]?.[ post.ID ];
 
 					if ( ! postEditsLog ) {
 						return memoState;
@@ -393,7 +393,7 @@ export function edits( state = {}, action ) {
 			// process new edit for a post: merge it into the existing edits
 			const siteId = action.siteId;
 			const postId = action.postId || '';
-			const postEditsLog = get( state, [ siteId, postId ] );
+			const postEditsLog = state?.[ siteId ]?.[ postId ];
 			const newEditsLog = appendToPostEditsLog( postEditsLog, action.post );
 
 			return {
