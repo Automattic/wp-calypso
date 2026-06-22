@@ -12,7 +12,6 @@ import { CompactCard, Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import { includes } from 'lodash';
 import { useState } from 'react';
 import { connect } from 'react-redux';
 import DataCenterPicker from 'calypso/blocks/data-center-picker';
@@ -420,19 +419,19 @@ function mergeProps(
 		context = ownProps.currentContext;
 		feature = FEATURE_SFTP;
 		ctaName = 'calypso-hosting-features-eligibility-upgrade-nudge';
-	} else if ( includes( ownProps.backUrl, 'plugins' ) ) {
+	} else if ( ownProps.backUrl?.includes( 'plugins' ) ) {
 		context = 'plugins-upload';
 		feature = FEATURE_UPLOAD_PLUGINS;
 		ctaName = 'calypso-plugin-eligibility-upgrade-nudge';
-	} else if ( includes( ownProps.backUrl, 'themes' ) ) {
+	} else if ( ownProps.backUrl?.includes( 'themes' ) ) {
 		context = 'themes';
 		feature = FEATURE_UPLOAD_THEMES;
 		ctaName = 'calypso-theme-eligibility-upgrade-nudge';
-	} else if ( includes( ownProps.backUrl, 'hosting' ) ) {
+	} else if ( ownProps.backUrl?.includes( 'hosting' ) ) {
 		context = 'hosting';
 		feature = FEATURE_SFTP;
 		ctaName = 'calypso-hosting-eligibility-upgrade-nudge';
-	} else if ( includes( ownProps.backUrl, 'performance' ) ) {
+	} else if ( ownProps.backUrl?.includes( 'performance' ) ) {
 		context = 'performance';
 		feature = FEATURE_PERFORMANCE;
 		ctaName = 'calypso-performance-features-activate-nudge';

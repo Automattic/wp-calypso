@@ -1,7 +1,7 @@
 import { Button, Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
-import { includes, some } from 'lodash';
+import { some } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -67,14 +67,14 @@ class AllowList extends Component {
 		const allowedIps = this.getProtectAllowedIps().split( '\n' );
 
 		return (
-			includes( allowedIps, ipAddress ) ||
+			allowedIps.includes( ipAddress ) ||
 			some( allowedIps, ( entry ) => {
 				if ( entry.indexOf( '-' ) < 0 ) {
 					return false;
 				}
 
 				const range = entry.split( '-' ).map( ( ip ) => ip.trim() );
-				return includes( range, ipAddress );
+				return range.includes( ipAddress );
 			} )
 		);
 	}

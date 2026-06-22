@@ -145,6 +145,7 @@ export type ChatFeedbackActions = {
 export type Message = {
 	content: ReactNode;
 	context?: Context;
+	displayName?: string;
 	internal_message_id?: string;
 	message_id?: number;
 	meta?: Record< string, string >;

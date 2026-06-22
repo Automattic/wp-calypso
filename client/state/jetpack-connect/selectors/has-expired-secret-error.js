@@ -1,4 +1,4 @@
-import { get, includes } from 'lodash';
+import { get } from 'lodash';
 import { getAuthorizationData } from 'calypso/state/jetpack-connect/selectors/get-authorization-data';
 
 import 'calypso/state/jetpack-connect/init';
@@ -13,6 +13,6 @@ export const hasExpiredSecretError = function ( state ) {
 
 	return (
 		!! get( authorizeData, 'authorizationCode', false ) &&
-		includes( get( authorizeData, [ 'authorizeError', 'message' ] ), 'verify_secrets_expired' )
+		get( authorizeData, [ 'authorizeError', 'message' ], '' ).includes( 'verify_secrets_expired' )
 	);
 };

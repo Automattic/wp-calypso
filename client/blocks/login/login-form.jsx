@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Card, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { capitalize } from '@automattic/js-utils';
 import { suggestEmailCorrection } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { debounce } from '@wordpress/compose';
@@ -10,7 +11,6 @@ import clsx from 'clsx';
 import cookie from 'cookie';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
-import { capitalize, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -351,7 +351,7 @@ export class LoginForm extends Component {
 			} );
 
 			if ( this.props.isJetpack ) {
-				const isEmailAddress = includes( usernameOrEmail, '@' );
+				const isEmailAddress = usernameOrEmail.includes( '@' );
 
 				if ( isEmailAddress && isPasswordlessAccount( this.props.accountType ) ) {
 					this.jetpackCreateAccountWithMagicLink();
@@ -385,7 +385,7 @@ export class LoginForm extends Component {
 		// a username, we need to prompt the user specifically for an email address to proceed with
 		// the WPCOM account creation with magic links.
 
-		const isEmailAddress = includes( this.state.usernameOrEmail, '@' );
+		const isEmailAddress = this.state.usernameOrEmail.includes( '@' );
 		if ( isEmailAddress ) {
 			// With Magic Links, create the user a WPCOM account linked to the entered email address
 			this.props.sendEmailLogin( this.state.usernameOrEmail, {
@@ -466,7 +466,7 @@ export class LoginForm extends Component {
 				size="compact"
 			>
 				<Gridicon icon="arrow-left" size={ 18 } />
-				{ includes( this.state.usernameOrEmail, '@' )
+				{ this.state.usernameOrEmail.includes( '@' )
 					? this.props.translate( 'Change email address' )
 					: this.props.translate( 'Change username' ) }
 			</Button>

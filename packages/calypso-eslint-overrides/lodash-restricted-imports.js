@@ -19,6 +19,10 @@ const JS_UTILS_NAMES = [
 	'omitBy',
 	'groupBy',
 	'mapKeys',
+	'capitalize',
+	'escapeRegExp',
+	'once',
+	'isError',
 ];
 
 // The js-utils case converters cover ASCII identifiers/keys, not lodash's full
@@ -35,6 +39,20 @@ const COMPOSE_MESSAGE = 'Please use the equivalent from `@wordpress/compose` ins
 const COMPACT_MESSAGE = 'Please use `array.filter( Boolean )` instead of lodash `compact`.';
 const FLATTEN_MESSAGE = 'Please use native `array.flatMap()` / `array.flat()` instead.';
 const DEFER_MESSAGE = 'Please use native `setTimeout( fn, 0 )` instead of lodash `defer`.';
+const DELAY_MESSAGE = 'Please use native `setTimeout( fn, wait )` instead of lodash `delay`.';
+const WITHOUT_MESSAGE =
+	'Please use native `array.filter( ( item ) => item !== value )` instead of lodash `without`.';
+const DIFFERENCE_MESSAGE =
+	'Please use native `array.filter( ( item ) => ! other.includes( item ) )` instead of lodash `difference`.';
+const ISEQUAL_MESSAGE = 'Please use `fast-deep-equal/es6` instead of lodash `isEqual`.';
+const INTERSECTION_MESSAGE =
+	'Please use `array.some( ( item ) => other.includes( item ) )` for a boolean check, or ' +
+	'`Array.from( new Set( array ) ).filter( ( item ) => other.includes( item ) )` to dedupe like lodash `intersection`.';
+const NOOP_MESSAGE = 'Please use a local `const noop = () => {};` instead of lodash `noop`.';
+const INCLUDES_MESSAGE =
+	'Please use native `array.includes( value )` / `string.includes( substring )` instead of lodash ' +
+	'`includes`. Guard possibly-undefined collections (`value?.includes( … )`), and use ' +
+	'`Object.values( obj ).includes( value )` for object collections.';
 
 const paths = [
 	{ name: 'lodash', importNames: JS_UTILS_NAMES, message: JS_UTILS_MESSAGE },
@@ -43,6 +61,13 @@ const paths = [
 	{ name: 'lodash', importNames: [ 'compact' ], message: COMPACT_MESSAGE },
 	{ name: 'lodash', importNames: [ 'flatMap', 'flatten' ], message: FLATTEN_MESSAGE },
 	{ name: 'lodash', importNames: [ 'defer' ], message: DEFER_MESSAGE },
+	{ name: 'lodash', importNames: [ 'delay' ], message: DELAY_MESSAGE },
+	{ name: 'lodash', importNames: [ 'without' ], message: WITHOUT_MESSAGE },
+	{ name: 'lodash', importNames: [ 'difference' ], message: DIFFERENCE_MESSAGE },
+	{ name: 'lodash', importNames: [ 'isEqual' ], message: ISEQUAL_MESSAGE },
+	{ name: 'lodash', importNames: [ 'intersection' ], message: INTERSECTION_MESSAGE },
+	{ name: 'lodash', importNames: [ 'noop' ], message: NOOP_MESSAGE },
+	{ name: 'lodash', importNames: [ 'includes' ], message: INCLUDES_MESSAGE },
 ];
 
 // Deep `lodash/<fn>` imports bypass the named-import paths above.
@@ -53,6 +78,13 @@ const patterns = [
 	{ group: [ 'lodash/compact' ], message: COMPACT_MESSAGE },
 	{ group: [ 'lodash/flatMap', 'lodash/flatten' ], message: FLATTEN_MESSAGE },
 	{ group: [ 'lodash/defer' ], message: DEFER_MESSAGE },
+	{ group: [ 'lodash/delay' ], message: DELAY_MESSAGE },
+	{ group: [ 'lodash/without' ], message: WITHOUT_MESSAGE },
+	{ group: [ 'lodash/difference' ], message: DIFFERENCE_MESSAGE },
+	{ group: [ 'lodash/isEqual' ], message: ISEQUAL_MESSAGE },
+	{ group: [ 'lodash/intersection' ], message: INTERSECTION_MESSAGE },
+	{ group: [ 'lodash/noop' ], message: NOOP_MESSAGE },
+	{ group: [ 'lodash/includes' ], message: INCLUDES_MESSAGE },
 ];
 
 module.exports = { paths, patterns };

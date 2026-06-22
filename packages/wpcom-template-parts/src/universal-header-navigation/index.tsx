@@ -729,30 +729,11 @@ const UniversalNavbarHeader = ( {
 					{ /*<!-- Nav bar ends here. -->*/ }
 
 					{ /*<!-- Mobile menu starts here. -->*/ }
-					{ nav2026 ? (
-						<Nav2026MobileMenu
-							isMobileMenuOpen={ isMobileMenuOpen }
-							isMenuOpening={ isMenuOpening }
-							activeCategory={ activeCategory }
-							nav2026Menus={ nav2026Menus }
-							isLoggedIn={ isLoggedIn }
-							mobileMenuTabIndex={ mobileMenuTabIndex }
-							logoColor={ logoColor }
-							userAvatar={ userAvatar }
-							userName={ userName }
-							userEmail={ userEmail }
-							localizeUrl={ localizeUrl }
-							locale={ locale }
-							startUrl={ startUrl }
-							loginUrl={ loginUrl }
-							__={ __ }
-							variant={ variant }
-							mobilePlatform={ mobilePlatform }
-							mobileFooterRef={ mobileFooterRef }
-							closeMobileMenu={ closeMobileMenu }
-							setCurrentDropdown={ selectMobileCategory }
-						/>
-					) : (
+					{ /* The 2026 mobile menu renders as a sibling after this container's
+					     closing tag, so its overlay can sit above the sticky sub-nav while
+					     the nav bar inside the container stays below it. Legacy menu
+					     stays here. */ }
+					{ ! nav2026 && (
 						<div
 							className={ isMobileMenuOpen ? 'x-menu x-menu__active x-menu__open' : 'x-menu' }
 							role="menu"
@@ -1058,6 +1039,33 @@ const UniversalNavbarHeader = ( {
 					) }
 					{ /*<!-- Mobile menu ends here. -->*/ }
 				</div>
+				{ /* 2026 mobile menu — sibling of the nav container so its overlay/panel
+				     stack above the sticky sub-nav (the nav bar inside the container
+				     stays below it). */ }
+				{ nav2026 && (
+					<Nav2026MobileMenu
+						isMobileMenuOpen={ isMobileMenuOpen }
+						isMenuOpening={ isMenuOpening }
+						activeCategory={ activeCategory }
+						nav2026Menus={ nav2026Menus }
+						isLoggedIn={ isLoggedIn }
+						mobileMenuTabIndex={ mobileMenuTabIndex }
+						logoColor={ logoColor }
+						userAvatar={ userAvatar }
+						userName={ userName }
+						userEmail={ userEmail }
+						localizeUrl={ localizeUrl }
+						locale={ locale }
+						startUrl={ startUrl }
+						loginUrl={ loginUrl }
+						__={ __ }
+						variant={ variant }
+						mobilePlatform={ mobilePlatform }
+						mobileFooterRef={ mobileFooterRef }
+						closeMobileMenu={ closeMobileMenu }
+						setCurrentDropdown={ selectMobileCategory }
+					/>
+				) }
 			</div>
 		</div>
 	);

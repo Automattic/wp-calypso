@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import { useRegisterCustomActions } from '../../hooks/custom-actions';
+import { useBroadcastConversationActivity } from '../../hooks/use-broadcast-conversation-activity';
 import useCheckpointAction from '../../hooks/use-checkpoint-action';
 import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
@@ -491,10 +492,14 @@ export default function OrchestratorChat( {
 	] );
 
 	// Notify parent when has-messages state changes.
-	const hasMessages = displayedMessages.length > 0;
+	const messageCount = displayedMessages.length;
+	const hasMessages = messageCount > 0;
 	useEffect( () => {
 		onHasMessagesChange( hasMessages );
 	}, [ hasMessages, onHasMessagesChange ] );
+
+	// Broadcast conversation activity so other bundles can re-sync transcript cards.
+	useBroadcastConversationActivity( messageCount );
 
 	const latestDisplayedMessage = displayedMessages[ displayedMessages.length - 1 ];
 	const shouldSuppressTransientThinking = Boolean(

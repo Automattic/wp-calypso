@@ -586,6 +586,11 @@ body.is-mobile-app-view {
 	--nav-2026-height: 64px;
 	--nav-2026-sticky-offset: calc( var( --nav-2026-admin-offset ) + var( --nav-2026-height ) );
 
+	// Shared stacking contract: sidebar 176 < nav-closed 177 < sub-nav 178 < open 179 < masterbar 180.
+	--nav-2026-z-closed: 177;
+	--nav-2026-z-sub-nav: 178;
+	--nav-2026-z-open: 179;
+
 	// The nav is fixed (out of flow); reserve its height on the wrapper so every section's
 	// content clears it, and zero the content's own clearance so the two never stack.
 	.layout__header-section {

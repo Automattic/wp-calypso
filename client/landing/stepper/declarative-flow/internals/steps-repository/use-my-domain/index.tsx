@@ -1,6 +1,7 @@
 import { HelpCenter } from '@automattic/data-stores';
 import { StepContainer, isStartWritingFlow, Step } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { help } from '@wordpress/icons';
@@ -61,6 +62,7 @@ const UseMyDomain: StepType< {
 		| undefined;
 } > = function UseMyDomain( { navigation, flow } ) {
 	const { __ } = useI18n();
+	const isMobileViewport = useViewportMatch( 'small', '<' );
 	const { goNext, goBack, submit } = navigation;
 	const location = useLocation();
 	const { site } = useSiteData();
@@ -259,7 +261,7 @@ const UseMyDomain: StepType< {
 										) }
 										{ showHelpCenter && (
 											<Step.LinkButton icon={ help } iconSize={ 20 } onClick={ toggleHelpCenter }>
-												{ __( 'Need help?' ) }
+												{ isMobileViewport ? __( 'Help' ) : __( 'Need help?' ) }
 											</Step.LinkButton>
 										) }
 									</>

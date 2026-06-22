@@ -1,6 +1,6 @@
 import { Gridicon, ProgressBar, Spinner } from '@automattic/components';
 import clsx from 'clsx';
-import { isEqual } from 'lodash';
+import isEqual from 'fast-deep-equal/es6';
 import * as React from 'react';
 import { getMimePrefix } from 'calypso/lib/media/utils';
 import ListItemDocument from './list-item-document';

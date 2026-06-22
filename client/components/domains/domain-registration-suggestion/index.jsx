@@ -6,7 +6,6 @@ import { HUNDRED_YEAR_DOMAIN_FLOW } from '@automattic/onboarding';
 import { HTTPS_SSL } from '@automattic/urls';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -127,7 +126,7 @@ class DomainRegistrationSuggestion extends Component {
 	};
 
 	isUnavailableDomain = ( domain ) => {
-		return includes( this.props.unavailableDomains, domain );
+		return this.props.unavailableDomains?.includes( domain ) ?? false;
 	};
 
 	getSelectDomainAriaLabel() {

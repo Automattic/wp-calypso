@@ -35,6 +35,15 @@ describe( 'read spaces adapters', () => {
 			);
 
 			expect( layout ).toEqual( { color: 'celadon', icon: 'star' } );
+			expect( layout ).not.toHaveProperty( 'view' );
+		} );
+
+		it( 'passes through the optional feed layout view when present', () => {
+			const { layout } = adaptReadSpace(
+				wireSpace( { layout: { color: 'celadon', icon: 'star', view: 'gallery' } } )
+			);
+
+			expect( layout ).toEqual( { color: 'celadon', icon: 'star', view: 'gallery' } );
 		} );
 
 		it( 'carries neither sources nor tags on the summary shape', () => {
