@@ -38,8 +38,30 @@ ruleTester.run( 'e2e-require-account-teardown', rule, {
 				const u = DataHelper.getNewTestUser();
 				flow.userSignupPage.signupWithEmail( u.email );
 				afterAll( async () => {
-					apiCloseAccount( client, { userID: u.id } );
+					await apiCloseAccount( client, { userID: u.id } );
 				} );
+			`,
+		},
+		// Member-form apiCloseAccount, awaited inside afterAll.
+		{
+			code: `
+				const u = getNewTestUser();
+				test( 't', async () => {
+					await pageUserSignUp.signupThroughInvite( u.email );
+				} );
+				test.afterAll( async () => {
+					await shared.apiCloseAccount( client, { userID: u.id } );
+				} );
+			`,
+		},
+		// apiCloseAccount returned (not awaited) from an afterAll callback.
+		{
+			code: `
+				const u = getNewTestUser();
+				test( 't', async () => {
+					await pageUserSignUp.signupThroughInvite( u.email );
+				} );
+				afterAll( () => apiCloseAccount( client, { userID: u.id } ) );
 			`,
 		},
 		// getNewTestUser but NO signup helper (the invite__revoke shape): not a leak.
@@ -98,6 +120,33 @@ ruleTester.run( 'e2e-require-account-teardown', rule, {
 				const u = helperData.getNewTestUser();
 				test( 't', async () => {
 					await pageUserSignUp.signupSocialFirstWithEmail( u.email );
+				} );
+			`,
+			errors: [ { messageId: 'missingTeardown' } ],
+		},
+		// apiCloseAccount in afterAll but floating (unawaited): races teardown, does not count.
+		{
+			code: `
+				const u = getNewTestUser();
+				test( 't', async () => {
+					await pageUserSignUp.signupThroughInvite( u.email );
+				} );
+				afterAll( async () => {
+					apiCloseAccount( client, { userID: u.id } );
+				} );
+			`,
+			errors: [ { messageId: 'missingTeardown' } ],
+		},
+		// Concise arrow body, but nested in a discarded `.map()` (not the afterAll
+		// callback): the promises are dropped, so this does not count.
+		{
+			code: `
+				const u = getNewTestUser();
+				test( 't', async () => {
+					await pageUserSignUp.signupThroughInvite( u.email );
+				} );
+				afterAll( () => {
+					[ u ].map( ( a ) => apiCloseAccount( client, { userID: a.id } ) );
 				} );
 			`,
 			errors: [ { messageId: 'missingTeardown' } ],

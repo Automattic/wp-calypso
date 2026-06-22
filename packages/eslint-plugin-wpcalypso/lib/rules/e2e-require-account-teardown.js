@@ -1,7 +1,10 @@
 /**
  * @file Flag E2E specs that create a test account (getNewTestUser + a signup
- *       helper) but register no afterAll `apiCloseAccount` teardown, so the
- *       account (and its blogs) leaks. Specs may opt out via the `allow` list.
+ *       helper) but register no afterAll teardown that awaits `apiCloseAccount`,
+ *       so the account (and its blogs) leaks. A floating (unawaited) call does
+ *       not count, since it races worker teardown. Specs may opt out via the
+ *       `allow` list. This is a coarse presence backstop, not a proof that the
+ *       teardown is wired to the created account.
  * @author Automattic
  */
 
@@ -59,9 +62,70 @@ function isSignupHelper( callee ) {
 	);
 }
 
+/**
+ * Whether a callee references `apiCloseAccount` (bare or as a member, e.g.
+ * `shared.apiCloseAccount`).
+ * @param {import('estree').Node} callee Callee node.
+ * @returns {boolean} True if it references apiCloseAccount.
+ */
+function isApiCloseAccount( callee ) {
+	if ( callee.type === 'Identifier' ) {
+		return callee.name === 'apiCloseAccount';
+	}
+	return (
+		callee.type === 'MemberExpression' &&
+		callee.property.type === 'Identifier' &&
+		callee.property.name === 'apiCloseAccount'
+	);
+}
+
+/**
+ * Whether `node` is the concise body of an arrow that is itself the `afterAll`
+ * callback, e.g. `afterAll( () => apiCloseAccount( ... ) )`. The runner awaits
+ * the promise the callback returns, so this is a real teardown. A concise body
+ * nested deeper (e.g. a discarded `accounts.map( a => apiCloseAccount( a ) )`)
+ * is NOT awaited and must not qualify.
+ * @param {import('estree').Node} node The apiCloseAccount CallExpression.
+ * @returns {boolean} True if the call is the returned body of the afterAll callback.
+ */
+function isReturnedFromAfterAllCallback( node ) {
+	const arrow = node.parent;
+	if ( ! arrow || arrow.type !== 'ArrowFunctionExpression' || arrow.body !== node ) {
+		return false;
+	}
+	const call = arrow.parent;
+	return Boolean(
+		call &&
+			call.type === 'CallExpression' &&
+			call.arguments.includes( arrow ) &&
+			isAfterAllCall( call )
+	);
+}
+
+/**
+ * Whether the `apiCloseAccount` call at `node` is actually consumed (awaited or
+ * returned), not left floating. A floating call inside an `afterAll` races with
+ * worker teardown and may never complete, so it does not count as teardown.
+ * Accepts `await apiCloseAccount(...)` and `return apiCloseAccount(...)` (which
+ * also covers `await Promise.all( accounts.map( ... ) )`), and the direct
+ * `afterAll( () => apiCloseAccount(...) )` callback body.
+ * @param {import('estree').Node} node The apiCloseAccount CallExpression.
+ * @param {import('estree').Node[]} ancestors The node's ancestors, root-first.
+ * @returns {boolean} True if the call is awaited or returned.
+ */
+function isAwaitedOrReturned( node, ancestors ) {
+	if (
+		ancestors.some(
+			( ancestor ) => ancestor.type === 'AwaitExpression' || ancestor.type === 'ReturnStatement'
+		)
+	) {
+		return true;
+	}
+	return isReturnedFromAfterAllCallback( node );
+}
+
 /** @type {import('eslint').Rule.RuleModule} */
 module.exports = {
-	type: 'problem',
 	meta: {
 		type: 'problem',
 		docs: {
@@ -83,7 +147,7 @@ module.exports = {
 		],
 		messages: {
 			missingTeardown:
-				'This spec creates a test account (getNewTestUser + a signup helper) but registers no afterAll apiCloseAccount teardown, so the account and its blogs leak. Add a test.afterAll/afterAll that calls apiCloseAccount, or add this file to the rule allow list with justification.',
+				'This spec creates a test account (getNewTestUser + a signup helper) but registers no afterAll apiCloseAccount teardown, so the account and its blogs leak. Add a test.afterAll/afterAll that awaits apiCloseAccount, or add this file to the rule allow list with justification.',
 		},
 	},
 	create( context ) {
@@ -120,8 +184,9 @@ module.exports = {
 					usesSignupHelper = true;
 				}
 
-				if ( callee.type === 'Identifier' && callee.name === 'apiCloseAccount' ) {
-					if ( sourceCode.getAncestors( node ).some( isAfterAllCall ) ) {
+				if ( isApiCloseAccount( callee ) ) {
+					const ancestors = sourceCode.getAncestors( node );
+					if ( ancestors.some( isAfterAllCall ) && isAwaitedOrReturned( node, ancestors ) ) {
 						hasApprovedTeardown = true;
 					}
 				}
