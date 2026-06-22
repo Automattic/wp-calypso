@@ -15,6 +15,18 @@
 
 const JETPACK_AI_SIDEBAR_PROVIDER_FILE = 'jetpack-ai-sidebar.provider.mjs';
 
+function getProviderUrl( provider ) {
+	if ( typeof provider === 'string' ) {
+		return provider;
+	}
+
+	if ( provider && typeof provider === 'object' && typeof provider.url === 'string' ) {
+		return provider.url;
+	}
+
+	return '';
+}
+
 /**
  * Gate the Jetpack AI Sidebar preview on non-Simple sites.
  *
@@ -39,8 +51,7 @@ export function shouldSuppressJetpackAiSidebarPreview() {
 
 	const providers = Array.isArray( data.agentProviders ) ? data.agentProviders : [];
 	const remaining = providers.filter(
-		( provider ) =>
-			! ( typeof provider === 'string' && provider.includes( JETPACK_AI_SIDEBAR_PROVIDER_FILE ) )
+		( provider ) => ! getProviderUrl( provider ).includes( JETPACK_AI_SIDEBAR_PROVIDER_FILE )
 	);
 	data.agentProviders = remaining;
 
