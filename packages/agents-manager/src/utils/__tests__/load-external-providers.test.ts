@@ -218,6 +218,92 @@ describe( 'loadExternalProviders', () => {
 		} );
 	} );
 
+	it( 'skips failed context providers when merging context from multiple providers', async () => {
+		const consoleWarn = jest.spyOn( console, 'warn' ).mockImplementation();
+		setAgentsManagerData( {
+			agentProviders: [
+				{
+					contextProvider: {
+						getClientContext: () => ( {
+							url: 'https://example.com/wp-admin/site-editor.php',
+							pathname: '/wp-admin/site-editor.php',
+							search: '',
+							environment: 'wp-admin',
+							currentScreen: { url: 'https://example.com/wp-admin/site-editor.php' },
+						} ),
+					},
+				},
+				{
+					contextProvider: {
+						getClientContext: () => {
+							throw new Error( 'Provider is not ready on this surface.' );
+						},
+					},
+				},
+				{
+					contextProvider: {
+						getClientContext: () => ( {
+							url: 'https://example.com/wp-admin/admin.php?page=wc-admin',
+							pathname: '/wp-admin/admin.php?page=wc-admin',
+							search: '?page=wc-admin',
+							environment: 'woocommerce-ai',
+							store: { currency: 'USD' },
+						} ),
+					},
+				},
+			],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.contextProvider?.getClientContext() ).toEqual( {
+			url: 'https://example.com/wp-admin/site-editor.php',
+			pathname: '/wp-admin/site-editor.php',
+			search: '',
+			environment: 'wp-admin',
+			currentScreen: { url: 'https://example.com/wp-admin/site-editor.php' },
+			store: { currency: 'USD' },
+		} );
+		expect( consoleWarn ).toHaveBeenCalledWith(
+			'[AgentsManager] Failed to load context from provider:',
+			expect.any( Error )
+		);
+		consoleWarn.mockRestore();
+	} );
+
+	it( 'returns a minimal browser context when every merged context provider fails', async () => {
+		const consoleWarn = jest.spyOn( console, 'warn' ).mockImplementation();
+		setAgentsManagerData( {
+			agentProviders: [
+				{
+					contextProvider: {
+						getClientContext: () => {
+							throw new Error( 'First provider failed.' );
+						},
+					},
+				},
+				{
+					contextProvider: {
+						getClientContext: () => {
+							throw new Error( 'Second provider failed.' );
+						},
+					},
+				},
+			],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.contextProvider?.getClientContext() ).toEqual( {
+			url: window.location.href,
+			pathname: window.location.pathname,
+			search: window.location.search,
+			environment: 'wp-admin',
+		} );
+		expect( consoleWarn ).toHaveBeenCalledTimes( 2 );
+		consoleWarn.mockRestore();
+	} );
+
 	it( 'merges markdown components and extensions from multiple providers', async () => {
 		const hostStrong = jest.fn( () => ( { type: 'strong', props: { provider: 'host' } } ) );
 		const wooTable = jest.fn( () => ( { type: 'table', props: { provider: 'woo' } } ) );

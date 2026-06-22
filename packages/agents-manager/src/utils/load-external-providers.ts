@@ -254,6 +254,18 @@ function mergeClientContexts( contexts: ClientContextType[] ): ClientContextType
 	return mergedContext;
 }
 
+function getFallbackClientContext(): ClientContextType {
+	const location =
+		typeof window !== 'undefined' ? window.location : { href: '', pathname: '', search: '' };
+
+	return {
+		url: location.href,
+		pathname: location.pathname,
+		search: location.search,
+		environment: 'wp-admin',
+	};
+}
+
 export function mergeContextProviders(
 	contextProviders: ContextProvider[]
 ): ContextProvider | undefined {
@@ -266,10 +278,20 @@ export function mergeContextProviders(
 	}
 
 	return {
-		getClientContext: () =>
-			mergeClientContexts(
-				contextProviders.map( ( contextProvider ) => contextProvider.getClientContext() )
-			),
+		getClientContext: () => {
+			const contexts: ClientContextType[] = [];
+
+			for ( const contextProvider of contextProviders ) {
+				try {
+					contexts.push( contextProvider.getClientContext() );
+				} catch ( error ) {
+					// eslint-disable-next-line no-console
+					console.warn( '[AgentsManager] Failed to load context from provider:', error );
+				}
+			}
+
+			return contexts.length ? mergeClientContexts( contexts ) : getFallbackClientContext();
+		},
 	};
 }
 
