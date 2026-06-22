@@ -1,6 +1,5 @@
 import { domainDnssecMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -10,10 +9,8 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
-import { domainNameServersRoute } from '../../app/router/domains';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
-import { Notice } from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
 import { DnsSecRecordTextarea } from './dnssec-record-textarea';
 import type { Domain } from '@automattic/api-core';
@@ -89,23 +86,6 @@ export default function DnsSec( { domainName, domain }: DnsSecProps ) {
 						<Text>{ __( 'DNSSEC is not supported for this domain.' ) }</Text>
 					) : (
 						<VStack spacing={ 4 }>
-							{ isEnablingDisabled && (
-								<Notice
-									variant="warning"
-									title={ __( 'Your domain is using external name servers' ) }
-								>
-									{ createInterpolateElement(
-										__(
-											'DNSSEC can only be enabled when your domain is using WordPress.com name servers. <updateNameServersLink>You can update your name servers here</updateNameServersLink>'
-										),
-										{
-											updateNameServersLink: (
-												<Link to={ domainNameServersRoute.fullPath } params={ { domainName } } />
-											),
-										}
-									) }
-								</Notice>
-							) }
 							<HStack alignment="left">
 								<ToggleControl
 									__nextHasNoMarginBottom

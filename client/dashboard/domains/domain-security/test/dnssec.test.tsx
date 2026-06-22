@@ -19,7 +19,7 @@ const getMockedDomainData = ( customProps: Partial< Domain > = {} ): Domain => {
 };
 
 describe( '<DnsSec>', () => {
-	test( 'shows external name servers notice and disables the toggle when the domain uses external name servers', () => {
+	test( 'disables the toggle when the domain uses external name servers and DNSSEC is off', () => {
 		const domain = getMockedDomainData( {
 			has_wpcom_nameservers: false,
 			is_dnssec_enabled: false,
@@ -27,11 +27,10 @@ describe( '<DnsSec>', () => {
 
 		render( <DnsSec domainName={ domainName } domain={ domain } /> );
 
-		expect( screen.getByText( /your domain is using external name servers/i ) ).toBeVisible();
 		expect( screen.getByRole( 'checkbox', { name: /enable dnssec/i } ) ).toBeDisabled();
 	} );
 
-	test( 'enables the toggle and hides the notice when the domain uses WordPress.com name servers', () => {
+	test( 'enables the toggle when the domain uses WordPress.com name servers', () => {
 		const domain = getMockedDomainData( {
 			has_wpcom_nameservers: true,
 			is_dnssec_enabled: false,
@@ -39,9 +38,6 @@ describe( '<DnsSec>', () => {
 
 		render( <DnsSec domainName={ domainName } domain={ domain } /> );
 
-		expect(
-			screen.queryByText( /your domain is using external name servers/i )
-		).not.toBeInTheDocument();
 		expect( screen.getByRole( 'checkbox', { name: /enable dnssec/i } ) ).toBeEnabled();
 	} );
 
@@ -53,9 +49,6 @@ describe( '<DnsSec>', () => {
 
 		render( <DnsSec domainName={ domainName } domain={ domain } /> );
 
-		expect(
-			screen.queryByText( /your domain is using external name servers/i )
-		).not.toBeInTheDocument();
 		expect( screen.getByRole( 'checkbox', { name: /disable dnssec/i } ) ).toBeEnabled();
 	} );
 } );
