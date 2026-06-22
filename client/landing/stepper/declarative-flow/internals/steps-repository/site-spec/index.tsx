@@ -9,6 +9,11 @@ import { getCiabSiteSpecConfig, type SiteSpecConfig } from 'calypso/lib/site-spe
 import wpcom from 'calypso/lib/wp';
 import type { Step as StepType } from '../../types';
 
+type TelexPrepareSiteResponse = {
+	admin_url?: string;
+	url?: string;
+};
+
 function SiteSpecContainer( {
 	siteSpecConfig,
 	onMessage,
@@ -22,11 +27,26 @@ function SiteSpecContainer( {
 	return <div id="site-spec-container" style={ { height: '100vh' } } />;
 }
 
+function getSpecId( specData: unknown ): string {
+	if ( ! specData || typeof specData !== 'object' ) {
+		return '';
+	}
+
+	const specRecord = specData as { session_id?: unknown; spec_id?: unknown };
+	const specId = specRecord.session_id ?? specRecord.spec_id;
+
+	return typeof specId === 'string' ? specId : '';
+}
+
 const SiteSpec: StepType = function SiteSpec() {
 	const translate = useTranslate();
 	const queryParams = useQuery();
 	const querySource = queryParams.get( 'source' );
 	const isCiab = !! querySource && querySource.startsWith( 'ciab-' );
+	const isTelexPrepare =
+		queryParams.get( 'telex' ) === '1' ||
+		queryParams.get( 'telex_prepare_site' ) === '1' ||
+		querySource === 'telex';
 
 	const siteCreationPromiseRef = useRef< Promise< number | null > | null >( null );
 	const messageCountRef = useRef( 0 );
@@ -75,11 +95,7 @@ const SiteSpec: StepType = function SiteSpec() {
 
 		isSubmittingRef.current = true;
 
-		const sessionId =
-			specData && typeof specData === 'object' && 'session_id' in specData
-				? ( specData as { session_id?: string } ).session_id
-				: undefined;
-		const specId = sessionId || '';
+		const specId = getSpecId( specData );
 		const blogId = siteCreationPromiseRef.current ? await siteCreationPromiseRef.current : null;
 
 		let url = `/setup/ai-site-builder/?create_garden_site=1&trigger_backend_build=0&spec_id=${ encodeURIComponent(
@@ -97,18 +113,65 @@ const SiteSpec: StepType = function SiteSpec() {
 		window.location.href = url;
 	}, [] );
 
+	const handleTelexSpecConfirm = useCallback( async ( specData: unknown ) => {
+		if ( isSubmittingRef.current ) {
+			return;
+		}
+
+		isSubmittingRef.current = true;
+
+		const specId = getSpecId( specData );
+		if ( ! specId ) {
+			// eslint-disable-next-line no-console
+			console.error( 'Failed to prepare Telex site: missing site spec session ID.' );
+			isSubmittingRef.current = false;
+			return;
+		}
+
+		try {
+			const response = ( await wpcom.req.post(
+				{
+					path: '/telex/prepare-site',
+					apiVersion: '1.1',
+				},
+				{},
+				{
+					spec_id: specId,
+					user_confirmed: true,
+				}
+			) ) as TelexPrepareSiteResponse;
+
+			const destination = response.admin_url || response.url;
+			if ( destination ) {
+				window.location.href = destination;
+				return;
+			}
+
+			throw new Error( 'Telex prepare-site response did not include a destination URL.' );
+		} catch ( error ) {
+			// eslint-disable-next-line no-console
+			console.error( 'Failed to prepare Telex site:', error );
+			isSubmittingRef.current = false;
+		}
+	}, [] );
+
+	let siteSpecStep = <SiteSpecContainer />;
+	if ( isTelexPrepare ) {
+		siteSpecStep = <SiteSpecContainer onSpecConfirm={ handleTelexSpecConfirm } />;
+	} else if ( isCiab ) {
+		siteSpecStep = (
+			<SiteSpecContainer
+				siteSpecConfig={ getCiabSiteSpecConfig() }
+				onMessage={ handleCiabMessage }
+				onSpecConfirm={ handleCiabSpecConfirm }
+			/>
+		);
+	}
+
 	return (
 		<>
 			<DocumentHead title={ translate( 'Build Your Site with AI' ) } />
-			{ isCiab ? (
-				<SiteSpecContainer
-					siteSpecConfig={ getCiabSiteSpecConfig() }
-					onMessage={ handleCiabMessage }
-					onSpecConfirm={ handleCiabSpecConfirm }
-				/>
-			) : (
-				<SiteSpecContainer />
-			) }
+			{ siteSpecStep }
 		</>
 	);
 };
