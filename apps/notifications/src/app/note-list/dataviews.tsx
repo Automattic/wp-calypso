@@ -1,4 +1,4 @@
-import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
+import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import {
 	chartBar,
@@ -47,7 +47,9 @@ const groupTitles = [
 	__( 'Older than a month' ),
 ];
 
-const RelativeDate = ( { timestamp }: { timestamp: string } ) => {
+// Map a note's timestamp to its time-group index (0 = Today … 4 = Older than a
+// month), using the same day boundaries the classic panel grouped by.
+const getTimeGroupKey = ( timestamp: string ): number => {
 	const now = new Date().setHours( 0, 0, 0, 0 );
 	const timeBoundaries = [
 		Infinity,
@@ -63,9 +65,7 @@ const RelativeDate = ( { timestamp }: { timestamp: string } ) => {
 		.map( ( val, index ) => [ val, timeBoundaries[ index + 1 ] ] );
 
 	const time = new Date( timestamp );
-	const groupKey = timeGroups.findIndex( ( [ after, before ] ) => before < time && time <= after );
-
-	return <span>{ groupTitles[ groupKey ] }</span>;
+	return timeGroups.findIndex( ( [ after, before ] ) => before < time && time <= after );
 };
 
 export function getFields(): Field< Note >[] {
@@ -114,15 +114,24 @@ export function getFields(): Field< Note >[] {
 		{
 			id: 'info',
 			label: __( 'Info' ),
-			render: ( { item } ) => {
-				return (
-					<HStack spacing={ 1 }>
-						<RelativeDate timestamp={ item.timestamp } />
-						<span>•</span>
-						<span>{ item.title }</span>
-					</HStack>
-				);
-			},
+			render: ( { item } ) => <span>{ item.title }</span>,
+		},
+		{
+			// Group-only field: drives the time-section headers ("Today",
+			// "Yesterday", "Older than 2 days"…) restored from the classic panel.
+			// It is never added to the view's visible `fields`, so it only renders
+			// as a group header, never as a cell.
+			//
+			// `enableSorting: false` keeps `filterSortAndPaginate` from reordering
+			// notes by this field — its value is a localized label, which would sort
+			// the groups alphabetically. The notes already arrive newest-first, and
+			// the group boundaries are monotonic in time, so plain insertion order
+			// yields correctly ordered, non-repeating groups (as the classic panel
+			// did when it reduced over the already-sorted notes).
+			id: 'timeGroup',
+			label: __( 'Date' ),
+			enableSorting: false,
+			getValue: ( { item } ) => groupTitles[ getTimeGroupKey( item.timestamp ) ],
 		},
 	];
 }

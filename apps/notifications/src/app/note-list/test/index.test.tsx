@@ -160,6 +160,28 @@ describe( 'NoteList loading state', () => {
 		expect( getRow()?.querySelector( '.is-unread' ) ).not.toBeInTheDocument();
 	} );
 
+	// The classic panel's time-grouped sections are restored via DataViews'
+	// `groupBy`: notes are bucketed under "Today" / "Older than a month" / … headers
+	// in newest-first order.
+	it( 'renders time-grouped section headers in newest-first order', () => {
+		const store = initStore();
+		const today = new Date().toISOString();
+		store.dispatch(
+			actions.notes.addNotes( [
+				{ ...makeNote( 700, 'Fresh note' ), timestamp: today },
+				{ ...makeNote( 701, 'Ancient note' ), timestamp: '2020-01-01T00:00:00+00:00' },
+			] )
+		);
+		store.dispatch( actions.ui.loadedNotes() );
+
+		const { container } = renderTab( store, 'all' as FilterName );
+
+		const headers = Array.from(
+			container.querySelectorAll( '.dataviews-view-list__group-header' )
+		).map( ( el ) => el.textContent );
+		expect( headers ).toEqual( [ 'Today', 'Older than a month' ] );
+	} );
+
 	it( 'client-filters the Comments tab from the shared cache', () => {
 		const store = initStore();
 		store.dispatch(
