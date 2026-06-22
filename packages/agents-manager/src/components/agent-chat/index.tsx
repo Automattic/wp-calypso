@@ -17,6 +17,7 @@ import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { hasAiChatEntryButton } from '../../hooks/use-admin-bar-integration';
 import { AGENTS_MANAGER_STORE } from '../../stores';
+import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isPluginCompassHost } from '../../utils/is-plugin-compass-agent';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
 import { isWooAiHost } from '../../utils/is-wooai-agent';
@@ -131,11 +132,7 @@ function readAgentsManagerDataString(
 		return undefined;
 	}
 
-	const data =
-		typeof agentsManagerData !== 'undefined' && agentsManagerData
-			? ( agentsManagerData as unknown as Record< string, unknown > )
-			: ( window as unknown as { agentsManagerData?: Record< string, unknown > } )
-					.agentsManagerData;
+	const data = getAgentsManagerInlineData() as Record< string, unknown >;
 	const value = data?.[ key ];
 	return typeof value === 'string' ? value : undefined;
 }
