@@ -18,9 +18,7 @@ import clsx from 'clsx';
 import { hasAiChatEntryButton } from '../../hooks/use-admin-bar-integration';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
-import { isPluginCompassHost } from '../../utils/is-plugin-compass-agent';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
-import { isWooAiHost } from '../../utils/is-wooai-agent';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
@@ -112,39 +110,13 @@ const DEFAULT_ACCEPTED_IMAGE_TYPES = [
 ];
 
 /**
- * Read a string override from `agentsManagerData[key]`. Embedded hosts can
- * customize the empty-view greeting/help copy by setting these keys before
- * AgentsManager mounts: reader-chat on blog frontends, Plugin Compass on
- * Calypso's plugins marketplace, and the Woo AI admin assistant.
- *
- * Reader-chat / Plugin Compass loaders assign `window.agentsManagerData`; Woo
- * runs through Jetpack, which injects a bare `const agentsManagerData` global.
- * We read the bare global first and fall back to `window`.
- */
-function readAgentsManagerDataString(
-	key: 'emptyViewHeading' | 'emptyViewHelp'
-): string | undefined {
-	if ( typeof window === 'undefined' ) {
-		return undefined;
-	}
-
-	if ( ! isReaderChatHost() && ! isPluginCompassHost() && ! isWooAiHost() ) {
-		return undefined;
-	}
-
-	const data = getAgentsManagerInlineData() as Record< string, unknown >;
-	const value = data?.[ key ];
-	return typeof value === 'string' ? value : undefined;
-}
-
-/**
  * Returns the empty-view greeting. Priority:
  *   1. Explicit host override via `window.agentsManagerData.emptyViewHeading`.
  *   2. Reader-chat default (contextual to blog frontends).
  *   3. Orchestrator default.
  */
 function getEmptyViewHeading(): string {
-	const override = readAgentsManagerDataString( 'emptyViewHeading' );
+	const override = getAgentsManagerInlineData()?.emptyViewHeading;
 	if ( override ) {
 		return override;
 	}
@@ -155,7 +127,7 @@ function getEmptyViewHeading(): string {
 }
 
 function getEmptyViewHelp(): string {
-	const override = readAgentsManagerDataString( 'emptyViewHelp' );
+	const override = getAgentsManagerInlineData()?.emptyViewHelp;
 	if ( override ) {
 		return override;
 	}

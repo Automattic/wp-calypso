@@ -14,10 +14,11 @@ declare const agentsManagerData:
 			agentProviders?: ( string | import('./utils/load-external-providers').LoadedProviders )[];
 			useUnifiedExperience?: boolean;
 			agentId?: string;
-			sectionName?: string;
 			helpCenterUrl?: string;
 			/** Dev/internal context (localhost, jurassic, proxied a11ns, internal Atomic). Drives `is_test`. */
 			isDevMode?: boolean;
+			emptyViewHeading?: string;
+			emptyViewHelp?: string;
 	  }
 	| undefined;
 
