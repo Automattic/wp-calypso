@@ -15,6 +15,7 @@ import {
 	type FollowSiteParams,
 	type SiteSubscriptionsPage,
 	type UnfollowSiteParams,
+	type FlushOnboardingWelcomeDigestResponse,
 } from '@automattic/api-core';
 import {
 	infiniteQueryOptions,
@@ -558,6 +559,6 @@ export const updateSitePostNotificationSubscriptionMutation = ( queryClient: Que
 	);
 
 export const flushOnboardingWelcomeDigestMutation = () =>
-	mutationOptions( {
+	mutationOptions< FlushOnboardingWelcomeDigestResponse, Error, void >( {
 		mutationFn: () => flushOnboardingWelcomeDigest(),
 	} );
