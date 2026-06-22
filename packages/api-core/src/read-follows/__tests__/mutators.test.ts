@@ -1,6 +1,7 @@
 import nock from 'nock';
 import {
 	followSite,
+	flushOnboardingWelcomeDigest,
 	unfollowSite,
 	updateSiteCommentEmailSubscription,
 	updateSitePostEmailDeliveryFrequency,
@@ -343,6 +344,27 @@ describe( 'read follows mutators', () => {
 				'sendPosts must be a boolean'
 			);
 			expect( nock.pendingMocks() ).toEqual( [] );
+		} );
+	} );
+
+	describe( 'flushOnboardingWelcomeDigest', () => {
+		it( 'flushes the onboarding welcome digest with REST v1.2', async () => {
+			const scope = nock( BASE )
+				.post( '/rest/v1.2/read/onboarding/welcome-digest/flush', {} )
+				.reply( 200, {
+					success: true,
+					sent: true,
+					blog_count: 3,
+				} );
+
+			const response = await flushOnboardingWelcomeDigest();
+
+			expect( scope.isDone() ).toBe( true );
+			expect( response ).toEqual( {
+				success: true,
+				sent: true,
+				blog_count: 3,
+			} );
 		} );
 	} );
 } );

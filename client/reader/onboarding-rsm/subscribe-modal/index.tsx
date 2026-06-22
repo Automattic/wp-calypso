@@ -225,6 +225,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 											showLastUpdatedDate={ false }
 											showNotificationSettings={ false }
 											showFollowedOnDate={ false }
+											followApiSource={ READER_ONBOARDING_FOLLOW_SOURCE }
 											followSource="reader-onboarding-modal"
 											replaceStreamClickWithItemClick
 											onItemClick={ () => handleItemClick( site ) }
