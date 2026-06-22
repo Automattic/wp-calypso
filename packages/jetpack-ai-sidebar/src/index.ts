@@ -17,6 +17,8 @@ import { __ } from '@wordpress/i18n';
  */
 import PostFeedback from './components/post-feedback';
 import './components/post-feedback.scss';
+import Proofread from './components/proofread';
+import './components/proofread.scss';
 import ReviewMediation from './components/review-mediation';
 import './components/review-mediation.scss';
 import TitlePicker from './components/title-picker';
@@ -43,6 +45,7 @@ import {
 	isAiEditorialReviewEnabled,
 	isBlockTransformationsEnabled,
 	isGenerateFeedbackEnabled,
+	isProofreadEnabled,
 	isOptimizeTitleSuggestionEnabled,
 } from './utils/preview-features';
 import {
@@ -111,6 +114,15 @@ const POST_FEEDBACK_SUGGESTION = {
 	),
 };
 
+const PROOFREAD_SUGGESTION = {
+	id: 'proofread-content',
+	label: __( 'Proofread', 'jetpack' ),
+	prompt: __(
+		'Proofread this saved post for spelling, grammar, and punctuation. Review the saved title and saved block content, and return practical fixes with one-click suggestions when safe.',
+		'jetpack'
+	),
+};
+
 const LIMITED_BLOCK_SUGGESTION_PRIORITY = [
 	'translate',
 	'check-grammar',
@@ -144,6 +156,13 @@ function isGenerateFeedbackAvailable(
 	return isGenerateFeedbackEnabled() && currentPostType === 'post' && !! currentPostId;
 }
 
+function isProofreadAvailable(
+	currentPostType: string | undefined = getCurrentEditorPostType(),
+	currentPostId: number | null | undefined = getCurrentEditorPostId()
+): boolean {
+	return isProofreadEnabled() && currentPostType === 'post' && !! currentPostId;
+}
+
 function trackAiEditorialReviewSuggestionRenderedOnce(): void {
 	if ( suggestionRenderedFiredOnce ) {
 		return;
@@ -165,12 +184,13 @@ function getPostLevelSuggestions( currentPostType?: string, currentPostId?: numb
 		...( isGenerateFeedbackAvailable( currentPostType, currentPostId )
 			? [ POST_FEEDBACK_SUGGESTION ]
 			: [] ),
+		...( isProofreadAvailable( currentPostType, currentPostId ) ? [ PROOFREAD_SUGGESTION ] : [] ),
 		...getAiEditorialReviewSuggestions( currentPostType ),
 	];
 }
 
 function getReservedSuggestions< T extends { id: string } >( suggestions: T[] ): T[] {
-	return [ POST_FEEDBACK_SUGGESTION.id, AI_EDITORIAL_REVIEW_SUGGESTION.id ]
+	return [ POST_FEEDBACK_SUGGESTION.id, PROOFREAD_SUGGESTION.id, AI_EDITORIAL_REVIEW_SUGGESTION.id ]
 		.map( ( id ) => suggestions.find( ( suggestion ) => suggestion.id === id ) )
 		.filter( Boolean ) as T[];
 }
@@ -293,7 +313,7 @@ function handleShowComponent( input: any ): any {
 		isCurrent: true,
 		hideZoomAction: true,
 	};
-	if ( type === 'review-mediation' || type === 'post-feedback' ) {
+	if ( type === 'review-mediation' || type === 'post-feedback' || type === 'proofread' ) {
 		const reviewedPostId =
 			typeof componentProps.postId === 'number' && componentProps.postId > 0
 				? componentProps.postId
@@ -611,6 +631,9 @@ export function getChatComponent( type: string ): ComponentType | null {
 	if ( type === 'post-feedback' ) {
 		return PostFeedback as ComponentType;
 	}
+	if ( type === 'proofread' ) {
+		return Proofread as ComponentType;
+	}
 	return null;
 }
 
@@ -857,6 +880,14 @@ export function useSuggestions(
 				trackBlockTransformationSuggestionClickForValue( value );
 			}
 			if ( typeof value === 'string' && value === POST_FEEDBACK_SUGGESTION.prompt ) {
+				suppressCurrentPageContentForNextContext = true;
+				try {
+					( dispatch as any )( 'automattic/agents-manager' ).setIsSplitScreen( true );
+				} catch {
+					// Store not registered yet (e.g. tests); split-screen is demo polish.
+				}
+			}
+			if ( typeof value === 'string' && value === PROOFREAD_SUGGESTION.prompt ) {
 				suppressCurrentPageContentForNextContext = true;
 				try {
 					( dispatch as any )( 'automattic/agents-manager' ).setIsSplitScreen( true );

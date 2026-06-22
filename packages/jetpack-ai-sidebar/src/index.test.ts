@@ -11,6 +11,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
 import PostFeedback from './components/post-feedback';
+import Proofread from './components/proofread';
 import ReviewMediation from './components/review-mediation';
 import TitlePicker from './components/title-picker';
 import { clearActiveBlockFocus, undoBlockEdit } from './utils/block-actions';
@@ -270,6 +271,10 @@ describe( 'getChatComponent', () => {
 
 	it( 'returns PostFeedback for type "post-feedback"', () => {
 		expect( getChatComponent( 'post-feedback' ) ).toBe( PostFeedback );
+	} );
+
+	it( 'returns Proofread for type "proofread"', () => {
+		expect( getChatComponent( 'proofread' ) ).toBe( Proofread );
 	} );
 
 	it( 'returns null for an unknown type', () => {
@@ -680,6 +685,138 @@ describe( 'PostFeedback', () => {
 	} );
 } );
 
+describe( 'Proofread', () => {
+	beforeEach( () => {
+		mockEditorBlocks = [];
+		document.body.innerHTML = '';
+		clearActiveBlockFocus();
+		delete ( window as any ).wp;
+	} );
+
+	it( 'renders the summary notes and proofread items', () => {
+		const { container } = render(
+			React.createElement( Proofread, {
+				summary: 'Found a duplicated period.',
+				postId: 123,
+				items: [
+					{
+						title: 'Punctuation',
+						feedback: 'The sentence ends with a doubled period.',
+						action: 'Remove the extra period.',
+						block_index: 0,
+						current_text: 'children..',
+						suggested_text: 'children.',
+					},
+				],
+			} )
+		);
+
+		expect( container.textContent ).toContain( 'Found a duplicated period.' );
+		expect( container.textContent ).toContain( 'Spelling and grammar check complete.' );
+		expect( container.textContent ).toContain( 'Reviews your last saved version.' );
+		expect( container.textContent ).toContain( 'Spelling & grammar' );
+		expect( container.textContent ).toContain( 'Punctuation' );
+	} );
+
+	const findAcceptAllButton = ( container: HTMLElement ) =>
+		Array.from( container.querySelectorAll( 'button' ) ).find(
+			( button ) => button.textContent?.startsWith( 'Accept all' )
+		);
+
+	it( 'shows an enabled Accept all button when one-click fixes are available', () => {
+		mockEditorBlocks = [
+			{
+				clientId: 'block-1',
+				name: 'core/paragraph',
+				attributes: { content: 'There will be a lot of activities for children..' },
+			},
+		];
+
+		const { container } = render(
+			React.createElement( Proofread, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Punctuation',
+						feedback: 'Doubled period.',
+						action: 'Remove the extra period.',
+						block_index: 0,
+						current_text: 'There will be a lot of activities for children..',
+						suggested_text: 'There will be a lot of activities for children.',
+					},
+				],
+			} )
+		);
+
+		const acceptAll = findAcceptAllButton( container );
+		expect( acceptAll ).toBeTruthy();
+		expect( acceptAll?.hasAttribute( 'disabled' ) ).toBe( false );
+	} );
+
+	it( 'hides Accept all when no one-click fixes are available', () => {
+		const { container } = render(
+			React.createElement( Proofread, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Manual item',
+						feedback: 'Feedback.',
+						action: 'Action.',
+						block_index: null,
+						requires_manual: true,
+						manual_reason: 'Needs author review.',
+					},
+				],
+			} )
+		);
+
+		expect( findAcceptAllButton( container ) ).toBeUndefined();
+	} );
+
+	it( 'runs Accept all over the pending one-click items', async () => {
+		mockEditorBlocks = [
+			{
+				clientId: 'block-1',
+				name: 'core/paragraph',
+				attributes: { content: 'There will be a lot of activities for children..' },
+			},
+		];
+
+		const { container } = render(
+			React.createElement( Proofread, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Punctuation',
+						feedback: 'Doubled period.',
+						action: 'Remove the extra period.',
+						block_index: 0,
+						current_text: 'There will be a lot of activities for children..',
+						suggested_text: 'There will be a lot of activities for children.',
+					},
+				],
+			} )
+		);
+
+		const acceptAll = findAcceptAllButton( container ) as HTMLButtonElement;
+		await act( async () => {
+			fireEvent.click( acceptAll );
+		} );
+
+		// The bulk run invoked applyItem on the pending item, so it is no longer in
+		// the default "Accept" state (it resolves to applied/collapsed or retry).
+		const ranOverItem =
+			!! container.textContent?.includes( 'Applied' ) ||
+			Array.from( container.querySelectorAll( 'button' ) ).some(
+				( button ) => button.textContent === 'Retry'
+			);
+		expect( ranOverItem ).toBe( true );
+	} );
+} );
+
 describe( 'getEmptyViewSuggestions', () => {
 	beforeEach( () => {
 		mockedRecordTracksEvent.mockClear();
@@ -743,6 +880,29 @@ describe( 'getEmptyViewSuggestions', () => {
 
 		expect( labels ).not.toContain( 'Generate Feedback' );
 		expect( labels ).toContain( 'AI Editorial Review' );
+	} );
+
+	it( 'hides Proofread by default and shows it when the preview feature enables it', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post' );
+		expect( getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label ) ).not.toContain(
+			'Proofread'
+		);
+
+		installAiEditorialReviewData( { proofreadContent: true } );
+		installPostTypeMock( 'post' );
+		expect( getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label ) ).toContain(
+			'Proofread'
+		);
+	} );
+
+	it( 'hides Proofread until the post has a saved post ID', () => {
+		installAiEditorialReviewData( { proofreadContent: true } );
+		installPostTypeMock( 'post', null );
+
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+
+		expect( labels ).not.toContain( 'Proofread' );
 	} );
 
 	it( 'hides Optimize Title when the feature disables it', () => {
@@ -1028,6 +1188,26 @@ describe( 'useSuggestions', () => {
 		expect( addMessage ).not.toHaveBeenCalled();
 	} );
 
+	it( 'opens split-screen when the Proofread suggestion is clicked', () => {
+		installAiEditorialReviewData( { proofreadContent: true } );
+		installPostTypeMock( 'post' );
+		const proofreadPrompt = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'proofread-content'
+		)?.prompt;
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: proofreadPrompt },
+				} )
+			);
+		} );
+
+		expect( mockSetIsSplitScreen ).toHaveBeenCalledWith( true );
+	} );
+
 	it( 'opens split-screen when the AI Editorial Review suggestion is clicked', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock( 'post' );
@@ -1297,6 +1477,27 @@ describe( 'contextProvider', () => {
 		expect( feedbackContext.jetpackAi ).toBeUndefined();
 		expect( contextProvider.getClientContext().currentPageContent ).toHaveLength( 1 );
 		expect( contextProvider.getClientContext().jetpackAi ).toBeUndefined();
+	} );
+
+	it( 'suppresses full page content for the next Proofread chip request', () => {
+		installAiEditorialReviewData( { proofreadContent: true } );
+		installContextProviderMock();
+		const proofreadPrompt = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'proofread-content'
+		)?.prompt;
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: proofreadPrompt },
+				} )
+			);
+		} );
+
+		expect( contextProvider.getClientContext().currentPageContent ).toEqual( [] );
+		expect( contextProvider.getClientContext().currentPageContent ).toHaveLength( 1 );
 	} );
 
 	it( 'clears pending Generate Feedback content suppression when another suggestion is clicked', () => {
