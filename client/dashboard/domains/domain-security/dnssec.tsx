@@ -1,5 +1,6 @@
 import { domainDnssecMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -9,8 +10,10 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
+import { domainNameServersRoute } from '../../app/router/domains';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
+import { Notice } from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
 import { DnsSecRecordTextarea } from './dnssec-record-textarea';
 import type { Domain } from '@automattic/api-core';
@@ -34,6 +37,12 @@ export default function DnsSec( { domainName, domain }: DnsSecProps ) {
 	} );
 
 	const { isPending } = mutation;
+
+	const isDnssecEnabled = domain.is_dnssec_enabled ?? false;
+	// DNSSEC can only be enabled when the domain uses WordPress.com name servers.
+	// Prevent enabling it otherwise, since the request would fail server-side with
+	// `domain_does_not_use_wpcom_ns`. Disabling an already-enabled record stays allowed.
+	const isEnablingDisabled = ! domain.has_wpcom_nameservers && ! isDnssecEnabled;
 
 	const handleToggleChange = ( enabled: boolean ) => {
 		// Track the toggle action
@@ -80,18 +89,33 @@ export default function DnsSec( { domainName, domain }: DnsSecProps ) {
 						<Text>{ __( 'DNSSEC is not supported for this domain.' ) }</Text>
 					) : (
 						<VStack spacing={ 4 }>
+							{ isEnablingDisabled && (
+								<Notice
+									variant="warning"
+									title={ __( 'Your domain is using external name servers' ) }
+								>
+									{ createInterpolateElement(
+										__(
+											'DNSSEC can only be enabled when your domain is using WordPress.com name servers. <updateNameServersLink>You can update your name servers here</updateNameServersLink>'
+										),
+										{
+											updateNameServersLink: (
+												<Link to={ domainNameServersRoute.fullPath } params={ { domainName } } />
+											),
+										}
+									) }
+								</Notice>
+							) }
 							<HStack alignment="left">
 								<ToggleControl
 									__nextHasNoMarginBottom
-									checked={ domain.is_dnssec_enabled ?? false }
+									checked={ isDnssecEnabled }
 									onChange={ ( checked ) => handleToggleChange( checked ) }
-									disabled={ isPending }
-									label={
-										domain.is_dnssec_enabled ? __( 'Disable DNSSEC' ) : __( 'Enable DNSSEC' )
-									}
+									disabled={ isPending || isEnablingDisabled }
+									label={ isDnssecEnabled ? __( 'Disable DNSSEC' ) : __( 'Enable DNSSEC' ) }
 								/>
 							</HStack>
-							{ domain.is_dnssec_enabled && (
+							{ isDnssecEnabled && (
 								<VStack spacing={ 3 }>
 									{ domain.dnssec_records?.dnskey?.map( ( dnskey, index ) => (
 										<DnsSecRecordTextarea
