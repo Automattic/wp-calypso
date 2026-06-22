@@ -106,6 +106,11 @@ export function* setFloatingPosition(
 	} as const;
 }
 
+/**
+ * Set the free-drag position of the floating panel. Session-scoped —
+ * intentionally not persisted to the backend (unlike floatingPosition); it
+ * survives view switches via the in-memory store but resets on full reload.
+ */
 export function setFreeDragPosition( freeDragPosition: { x: number; y: number } | null ) {
 	return {
 		type: 'AGENTS_MANAGER_SET_FREE_DRAG_POSITION',
