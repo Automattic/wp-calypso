@@ -16,7 +16,7 @@ export async function fetchOdieAssistantPerformanceProfiler( {
 } ) {
 	const response = await wpcom.req.post(
 		{
-			path: '/odie/assistant/performance-profiler',
+			path: '/site-profiler/assistant',
 			apiNamespace: 'wpcom/v2',
 		},
 		{
@@ -31,7 +31,7 @@ export async function fetchOdieAssistantPerformanceProfiler( {
 	);
 
 	return {
-		messages: response.messages?.[ 0 ]?.content ?? '',
+		messages: response.content ?? '',
 		chatId: response.chat_id,
 	};
 }
