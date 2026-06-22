@@ -1,4 +1,5 @@
 import { Gridicon, Button } from '@automattic/components';
+import { ExternalLink } from '@wordpress/components';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment, forwardRef } from 'react';
@@ -139,26 +140,24 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 							'masterbar__item-subitems-item--odd': groupIndex % 2 === 1,
 						} ) }
 					>
-						{ item.url && (
-							<a
+						{ item.url && item.openInNewTab && (
+							<ExternalLink
 								href={ item.url }
-								{ ...( item.openInNewTab ? { target: '_blank', rel: 'noopener noreferrer' } : {} ) }
 								onClick={ item.onClick }
-								onTouchEnd={ ( ev ) =>
-									this.navigateSubAnchorTouch( ev, item.onClick, item.openInNewTab )
-								}
-								onKeyDown={ ( ev ) =>
-									this.navigateSubAnchorByKey( ev, item.onClick, item.openInNewTab )
-								}
+								onTouchEnd={ ( ev ) => this.navigateSubAnchorTouch( ev, item.onClick, true ) }
+								onKeyDown={ ( ev ) => this.navigateSubAnchorByKey( ev, item.onClick, true ) }
 							>
 								{ item.label }
-								{ item.openInNewTab && (
-									<Gridicon
-										className="masterbar__item-subitems-item-external-icon"
-										icon="external"
-										size={ 16 }
-									/>
-								) }
+							</ExternalLink>
+						) }
+						{ item.url && ! item.openInNewTab && (
+							<a
+								href={ item.url }
+								onClick={ item.onClick }
+								onTouchEnd={ ( ev ) => this.navigateSubAnchorTouch( ev, item.onClick ) }
+								onKeyDown={ ( ev ) => this.navigateSubAnchorByKey( ev, item.onClick ) }
+							>
+								{ item.label }
 							</a>
 						) }
 						{ ! item.url && item.onClick && (
