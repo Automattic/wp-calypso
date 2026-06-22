@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { flushOnboardingWelcomeDigest } from '@automattic/api-core';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { QueryClient } from '@tanstack/react-query';
@@ -157,9 +158,13 @@ jest.mock( '../use-refresh-following-streams', () => ( {
 	useRefreshFollowingStreams: () => mockRefreshFollowingStreams,
 } ) );
 
-const mockFlushWelcomeDigest = jest.fn();
-jest.mock( '../use-flush-welcome-digest', () => ( {
-	useFlushWelcomeDigest: () => mockFlushWelcomeDigest,
+jest.mock( '@automattic/api-core', () => ( {
+	...jest.requireActual( '@automattic/api-core' ),
+	flushOnboardingWelcomeDigest: jest.fn().mockResolvedValue( {
+		success: true,
+		sent: false,
+		blog_count: 0,
+	} ),
 } ) );
 
 // ── Data hooks ────────────────────────────────────────────────────────────────
@@ -194,7 +199,7 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 
 beforeEach( () => {
 	mockRefreshFollowingStreams.mockClear();
-	mockFlushWelcomeDigest.mockClear();
+	jest.mocked( flushOnboardingWelcomeDigest ).mockClear();
 	jest.mocked( savePreference ).mockClear();
 	jest.mocked( recordTracksEvent ).mockClear();
 
@@ -579,14 +584,14 @@ describe( 'ReaderOnboardingRsm – welcome digest flush', () => {
 		await screen.findByTestId( 'subscribe-modal-content' );
 	};
 
-	it( 'calls flushWelcomeDigest when the user clicks Finish on the discover step', async () => {
+	it( 'calls flushOnboardingWelcomeDigest when the user clicks Finish on the discover step', async () => {
 		const user = userEvent.setup();
 		renderWithProvider( <ReaderOnboardingRsm /> );
 
 		await navigateToDiscoverStep( user );
 		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
 
-		expect( mockFlushWelcomeDigest ).toHaveBeenCalledTimes( 1 );
+		expect( flushOnboardingWelcomeDigest ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'does not call flushWelcomeDigest when the discover step is dismissed', async () => {
@@ -596,7 +601,7 @@ describe( 'ReaderOnboardingRsm – welcome digest flush', () => {
 		await navigateToDiscoverStep( user );
 		await user.click( screen.getByRole( 'button', { name: 'Close modal' } ) );
 
-		expect( mockFlushWelcomeDigest ).not.toHaveBeenCalled();
+		expect( flushOnboardingWelcomeDigest ).not.toHaveBeenCalled();
 	} );
 
 	it( 'does not call flushWelcomeDigest when the welcome step is dismissed', async () => {
@@ -606,7 +611,7 @@ describe( 'ReaderOnboardingRsm – welcome digest flush', () => {
 		await screen.findByTestId( 'welcome-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Close modal' } ) );
 
-		expect( mockFlushWelcomeDigest ).not.toHaveBeenCalled();
+		expect( flushOnboardingWelcomeDigest ).not.toHaveBeenCalled();
 	} );
 
 	it( 'does not call flushWelcomeDigest when the interests step is dismissed', async () => {
@@ -618,7 +623,7 @@ describe( 'ReaderOnboardingRsm – welcome digest flush', () => {
 		await screen.findByTestId( 'interests-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Close modal' } ) );
 
-		expect( mockFlushWelcomeDigest ).not.toHaveBeenCalled();
+		expect( flushOnboardingWelcomeDigest ).not.toHaveBeenCalled();
 	} );
 
 	it( 'does not call flushWelcomeDigest when navigating with Continue or Back', async () => {
@@ -635,7 +640,7 @@ describe( 'ReaderOnboardingRsm – welcome digest flush', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
 		await screen.findByTestId( 'welcome-modal-content' );
 
-		expect( mockFlushWelcomeDigest ).not.toHaveBeenCalled();
+		expect( flushOnboardingWelcomeDigest ).not.toHaveBeenCalled();
 	} );
 } );
 
