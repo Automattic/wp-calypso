@@ -7,7 +7,7 @@ import {
 	UserSignupPage,
 } from '@automattic/calypso-e2e';
 import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-base';
-import { apiCloseAccount } from '../shared';
+import { apiCloseAccount, recordAccountLeakMarker } from '../shared';
 import type { NewUserResponse } from '@automattic/calypso-e2e';
 
 test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
@@ -162,7 +162,14 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 	test.afterAll( async function () {
 		for ( const acct of accountsToCleanup ) {
 			if ( ! acct.user?.user_id ) {
-				// No account identity at all: nothing to close or flag by ID.
+				// The account was queued (created) but the signup response carried no
+				// user ID, so it cannot be closed by ID. Record a leak marker keyed by
+				// email so CI still surfaces it rather than dropping it silently.
+				recordAccountLeakMarker( {
+					username: acct.user?.username ?? '',
+					email: acct.email,
+					error: 'Signup response missing user_id; account created but not closeable by ID.',
+				} );
 				continue;
 			}
 			// Prefer the bearer token captured at signup; fall back to the signup

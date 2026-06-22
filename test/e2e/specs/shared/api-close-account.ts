@@ -1,6 +1,6 @@
 import path from 'node:path';
-import { closeAccountAndRecordLeak } from '@automattic/calypso-e2e';
-import type { AccountDetails, RestAPIClient } from '@automattic/calypso-e2e';
+import { closeAccountAndRecordLeak, recordAccountLeak } from '@automattic/calypso-e2e';
+import type { AccountDetails, AccountLeak, RestAPIClient } from '@automattic/calypso-e2e';
 
 // Teardown leak markers live under the published, gitignored e2e output dir.
 // Playwright transpiles TS in place, so `__dirname` is the source dir:
@@ -25,4 +25,16 @@ export async function apiCloseAccount(
 	accountDetails: AccountDetails
 ): Promise< void > {
 	await closeAccountAndRecordLeak( client, accountDetails, LEAK_DIR );
+}
+
+/**
+ * Records a teardown leak marker under the shared e2e output dir for an account
+ * that cannot be closed by ID (e.g. signup created the account but returned no
+ * user ID), so CI still surfaces the leak. Keyed by email when the ID is absent.
+ * Never throws.
+ *
+ * @param {AccountLeak} leak Details of the leaked account.
+ */
+export function recordAccountLeakMarker( leak: AccountLeak ): void {
+	recordAccountLeak( LEAK_DIR, leak );
 }
