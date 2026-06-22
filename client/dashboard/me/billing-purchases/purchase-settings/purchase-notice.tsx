@@ -209,7 +209,10 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		);
 	}
 
-	// Persistent warning notice when a delayed downgrade is pending.
+	// Persistent warning notice when a delayed downgrade is pending. Left ungated
+	// by `plans/delayed-downgrade` so a scheduled downgrade (and its cancel
+	// button) always stays visible, even if the flag is turned off as a kill
+	// switch while a downgrade is pending.
 	if ( purchase.is_delayed_downgrade_pending ) {
 		const slug = purchase.delayed_downgrade_to_product_slug;
 		const planNames = getPlanNames() as Record< string, string | undefined >;

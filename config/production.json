@@ -124,6 +124,7 @@
 		"onboarding/woo-hosting-post-purchase-setup-choice": true,
 		"p2/p2-plus": true,
 		"performance/apm": false,
+		"plans/delayed-downgrade": false,
 		"plans/expired-downgrade": true,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,

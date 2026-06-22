@@ -313,6 +313,9 @@ const PlansFeaturesMain = ( {
 		!! currentPurchase &&
 		currentPurchase.is_within_initial_refund_window &&
 		! currentPurchase.is_past_expiry_date;
+	// The delayed-downgrade flow (schedule a downgrade at renewal for an active
+	// plan) is gated separately from the launched expired/refund downgrade flow.
+	const isDelayedDowngradeEnabled = config.isEnabled( 'plans/delayed-downgrade' );
 	// Three downgrade modes:
 	//   'instant'  — within refund window: cancel+refund via the cancel endpoint
 	//   'checkout' — expired plan: route to checkout to purchase the new plan
@@ -320,10 +323,10 @@ const PlansFeaturesMain = ( {
 	let downgradeMode: 'instant' | 'checkout' | 'delayed';
 	if ( isWithinRefundWindow ) {
 		downgradeMode = 'instant';
-	} else if ( isPlanExpired ) {
-		downgradeMode = 'checkout';
-	} else {
+	} else if ( isDelayedDowngradeEnabled && ! isPlanExpired ) {
 		downgradeMode = 'delayed';
+	} else {
+		downgradeMode = 'checkout';
 	}
 
 	// The product the user is downgrading to, and the refund specific to that
@@ -734,7 +737,7 @@ const PlansFeaturesMain = ( {
 		// For active paid plans (not expired, not in refund window), intercept
 		// paid-plan downgrades to schedule the downgrade at end-of-term instead.
 		if (
-			config.isEnabled( 'plans/expired-downgrade' ) &&
+			isDelayedDowngradeEnabled &&
 			! isPlanExpired &&
 			! isWithinRefundWindow &&
 			currentPurchase?.is_plan_type_downgradable &&
