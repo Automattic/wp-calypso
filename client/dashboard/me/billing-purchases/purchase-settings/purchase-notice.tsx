@@ -57,6 +57,7 @@ import type { Purchase } from '@automattic/api-core';
 export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
 	const locale = useLocale();
+	const { recordTracksEvent } = useAnalytics();
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	const {
 		refunded,
@@ -129,7 +130,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 			} );
 		}
 	}, [ delayed_downgrade_scheduled, navigate ] );
-	const { createSuccessNotice } = useDispatch( noticesStore );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { mutate: cancelDelayedDowngrade, isPending: isCancellingDelayedDowngrade } = useMutation(
 		setDelayedDowngradeMutation()
 	);
@@ -255,7 +256,10 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 					<Button
 						variant="secondary"
 						size="compact"
-						onClick={ () =>
+						onClick={ () => {
+							recordTracksEvent( 'calypso_purchases_cancel_delayed_downgrade_click', {
+								purchase_id: purchase.ID,
+							} );
 							cancelDelayedDowngrade(
 								{ purchaseId: purchase.ID, enabled: false },
 								{
@@ -263,9 +267,16 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 										createSuccessNotice( __( 'Your scheduled downgrade has been cancelled.' ), {
 											type: 'snackbar',
 										} ),
+									onError: () =>
+										createErrorNotice(
+											__(
+												'There was a problem cancelling your scheduled downgrade. Please try again later or contact support.'
+											),
+											{ type: 'snackbar' }
+										),
 								}
-							)
-						}
+							);
+						} }
 						disabled={ isCancellingDelayedDowngrade }
 						isBusy={ isCancellingDelayedDowngrade }
 					>
