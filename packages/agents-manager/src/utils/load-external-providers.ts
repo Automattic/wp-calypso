@@ -12,6 +12,7 @@
  */
 
 import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
+import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent } from './is-reader-chat-agent';
 import { useReaderFollowupSuggestions } from './reader-followup-hook';
 import type { ImageUploadHook } from '../hooks/use-image-upload';
@@ -26,20 +27,6 @@ import type {
 import type { UseAgentChatReturn } from '@automattic/agenttic-client';
 import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
 import type { ReactNode } from 'react';
-
-/**
- * Check if the unified experience flag is set via agentsManagerData.
- *
- * This is used on wp-admin environments (Atomic, Garden, Simple sites) where
- * the flag is injected server-side by Jetpack's Agents Manager.
- * @returns The useUnifiedExperience value, or undefined if not available.
- */
-export function getUseUnifiedExperienceFromInlineData(): boolean | undefined {
-	if ( typeof agentsManagerData !== 'undefined' ) {
-		return agentsManagerData?.useUnifiedExperience;
-	}
-	return undefined;
-}
 
 /**
  * Hook that resumes the conversation after a full page navigation
@@ -389,19 +376,13 @@ export function mergeMarkdownExtensionsFromProviders(
  * @returns Promise resolving to merged providers or empty object if none found.
  */
 export async function loadExternalProviders(): Promise< LoadedProviders > {
-	const agentProviders =
-		typeof agentsManagerData !== 'undefined' ? agentsManagerData?.agentProviders || [] : [];
+	const agentProviders = getAgentsManagerInlineData()?.agentProviders ?? [];
 
 	// Only the public reader-chat entry registers the follow-up chip globals
 	// (`window.__jetpackReaderFollowupChips` / `reader-chat-followups-updated`).
 	// Register the bridge for every reader-chat agent variant that uses the
 	// public reader-chat entry.
-	const registerReaderFollowups =
-		typeof window !== 'undefined' &&
-		isReaderChatAgent(
-			( window as unknown as { agentsManagerData?: { agentId?: string } } ).agentsManagerData
-				?.agentId
-		);
+	const registerReaderFollowups = isReaderChatAgent( getAgentsManagerInlineData()?.agentId );
 
 	if ( registerReaderFollowups ) {
 		// Reader Chat runs on the public frontend and should not inherit editor providers
