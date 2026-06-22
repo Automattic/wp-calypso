@@ -1,4 +1,4 @@
-import { omit } from 'lodash';
+import { omit } from '@automattic/js-utils';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';

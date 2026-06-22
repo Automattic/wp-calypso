@@ -47,6 +47,7 @@
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/color-studio": "^4.1.0",
 		"@automattic/i18n-utils": "workspace:^",
+		"@automattic/js-utils": "workspace:^",
 		"@automattic/load-script": "workspace:^",
 		"@automattic/material-design-icons": "workspace:^",
 		"@automattic/number-formatters": "^1.2.0",
@@ -71,12 +72,13 @@
 		"clsx": "^2.1.1",
 		"colord": "2.9.3",
 		"debug": "^4.4.1",
+		"fast-deep-equal": "^3.1.3",
 		"gridicons": "^3.4.2",
 		"i18n-calypso": "workspace:^",
 		"lodash": "^4.17.21",
 		"prop-types": "^15.8.1",
 		"react-modal": "^3.16.3",
-		"react-router-dom": "^6.23.1",
+		"react-router-dom": "6.30.4",
 		"utility-types": "^3.10.0"
 	},
 	"peerDependencies": {

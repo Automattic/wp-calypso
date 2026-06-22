@@ -2,9 +2,9 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon, EmbedContainer } from '@automattic/components';
 import { isDefaultLocale } from '@automattic/i18n-utils';
+import { pickBy } from '@automattic/js-utils';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { get, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component, useMemo } from 'react';
 import { connect } from 'react-redux';
@@ -148,9 +148,9 @@ export class FullPostView extends Component {
 	componentDidUpdate( prevProps ) {
 		// Send page view if applicable
 		if (
-			get( prevProps, 'post.ID' ) !== get( this.props, 'post.ID' ) ||
-			get( prevProps, 'feed.ID' ) !== get( this.props, 'feed.ID' ) ||
-			get( prevProps, 'site.ID' ) !== get( this.props, 'site.ID' )
+			prevProps?.post?.ID !== this.props?.post?.ID ||
+			prevProps?.feed?.ID !== this.props?.feed?.ID ||
+			prevProps?.site?.ID !== this.props?.site?.ID
 		) {
 			this.hasSentPageView = false;
 			this.hasLoaded = false;
@@ -158,7 +158,7 @@ export class FullPostView extends Component {
 			this.maybeDisableAppBanner();
 
 			// If the post being viewed changes, track the reading time.
-			if ( get( prevProps, 'post.ID' ) !== get( this.props, 'post.ID' ) ) {
+			if ( prevProps?.post?.ID !== this.props?.post?.ID ) {
 				this.trackReadingTime( prevProps.post );
 				this.trackScrollDepth( prevProps.post );
 				this.trackExitBeforeCompletion( prevProps.post );
@@ -719,9 +719,9 @@ export class FullPostView extends Component {
 
 		const isLoading = ! post || post._state === 'pending' || post._state === 'minimal';
 		const startingCommentId = this.getCommentIdFromUrl();
-		const commentCount = get( post, 'discussion.comment_count' );
+		const commentCount = post?.discussion?.comment_count;
 		const contentWidth = readerContentWidth();
-		const feedUrl = get( post, 'feed_URL' );
+		const feedUrl = post?.feed_URL;
 		const shouldShowMarkAsSeen =
 			isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) && canBeMarkedAsSeen( { post } );
 

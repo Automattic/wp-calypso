@@ -1,4 +1,6 @@
-import { clone, difference, get, isEqual, map, omit, reduce, values } from 'lodash';
+import { omit } from '@automattic/js-utils';
+import isEqual from 'fast-deep-equal/es6';
+import { clone, get, map, reduce } from 'lodash';
 import QueryKey from './key';
 
 /**
@@ -32,7 +34,7 @@ function getItemsForKeys( items, itemKeys ) {
 	if ( itemKeys == null ) {
 		let resultForAllKeys = cacheForItems.get( ALL_ITEMS_KEY );
 		if ( ! resultForAllKeys ) {
-			resultForAllKeys = values( items );
+			resultForAllKeys = Object.values( items );
 			cacheForItems.set( ALL_ITEMS_KEY, resultForAllKeys );
 		}
 		return resultForAllKeys;
@@ -303,9 +305,8 @@ export default class QueryManager {
 					// When merging into a query where items already exist,
 					// omit incoming keys from existing set. These keys will
 					// be restored below during match testing.
-					nextQueryReceivedItemKeys = difference(
-						this.data.queries[ receivedQueryKey ].itemKeys,
-						receivedItemKeys
+					nextQueryReceivedItemKeys = this.data.queries[ receivedQueryKey ].itemKeys.filter(
+						( key ) => ! receivedItemKeys.includes( key )
 					);
 				} else {
 					// If not merging, assign incoming keys as next items
@@ -314,10 +315,7 @@ export default class QueryManager {
 			}
 
 			let nextQueryFound;
-			if (
-				options.found >= 0 &&
-				options.found !== get( nextQueries, [ receivedQueryKey, 'found' ] )
-			) {
+			if ( options.found >= 0 && options.found !== nextQueries?.[ receivedQueryKey ]?.found ) {
 				nextQueryFound = options.found;
 			}
 

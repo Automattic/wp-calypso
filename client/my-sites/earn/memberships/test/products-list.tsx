@@ -63,7 +63,12 @@ const initialState = {
 	},
 };
 
-const renderProductsList = ( products ) =>
+const renderProductsList = (
+	products,
+	subscriptionOptions = null,
+	freeTierDescriptionRendered = null,
+	supportsFreeTier = true
+) =>
 	renderWithProvider( <ProductsList />, {
 		initialState: {
 			...initialState,
@@ -74,6 +79,25 @@ const renderProductsList = ( products ) =>
 						1: products,
 					},
 				},
+				settings: {},
+			},
+			// Provide a complete site-settings slice (items + requesting + saveRequests).
+			// `requesting: { 1: true }` makes QuerySiteSettings treat the fetch as
+			// already in-flight so it doesn't trigger a real network request in tests.
+			// The Free tier's server-rendered markdown is colocated here with
+			// subscription_options (it's returned by the site-settings endpoint).
+			siteSettings: {
+				items: {
+					1: {
+						...( subscriptionOptions ? { subscription_options: subscriptionOptions } : {} ),
+						...( supportsFreeTier ? { supports_free_tier_customization: true } : {} ),
+						...( freeTierDescriptionRendered
+							? { free_tier_description_rendered: freeTierDescriptionRendered }
+							: {} ),
+					},
+				},
+				requesting: { 1: true },
+				saveRequests: {},
 			},
 		},
 		reducers: {
@@ -152,5 +176,73 @@ describe( 'ProductsList', () => {
 		expect( description.querySelector( 'img' ) ).toBeNull();
 		expect( description.querySelector( 'strong' ) ).toBeNull();
 		expect( description ).toHaveTextContent( '**not parsed** <img src="x"> plain text' );
+	} );
+
+	test( 'shows the Free row when at least one newsletter tier exists', () => {
+		renderProductsList( [ tierWithoutDescription ] );
+
+		// The Free row contributes both a title and a price reading "Free".
+		expect( screen.getAllByText( 'Free' ).length ).toBeGreaterThan( 0 );
+	} );
+
+	test( 'does not show the Free row when no newsletter tier exists', () => {
+		renderProductsList( [ donationPlan ] );
+
+		expect( screen.getByText( 'One-time Donation' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Free' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not show the Free row when the site does not support free tier customization', () => {
+		// A newsletter tier exists, but the capability flag is absent (older Jetpack),
+		// so saving the free-tier settings would silently no-op — hide the row.
+		renderProductsList( [ tierWithoutDescription ], null, null, false );
+
+		expect( screen.getByText( 'Basic Tier' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Free' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'renders the custom free tier description preview', () => {
+		renderProductsList( [ tierWithoutDescription ], {
+			free_tier_description: 'A free taste of the newsletter',
+		} );
+
+		expect( screen.getByText( 'A free taste of the newsletter' ) ).toBeInTheDocument();
+	} );
+
+	test( 'renders the server-rendered free tier description HTML when provided', () => {
+		const { container } = renderProductsList(
+			[ tierWithoutDescription ],
+			{ free_tier_description: 'Includes:\n\n- Weekly posts' },
+			'<p>Includes:</p>\n<ul>\n<li>Weekly posts</li>\n</ul>'
+		);
+
+		const description = container.querySelector( '.memberships__products-product-description' );
+		expect( description.querySelector( 'ul li' ) ).toHaveTextContent( 'Weekly posts' );
+		// The raw markdown source must not leak through when rendered HTML exists.
+		expect( description ).not.toHaveTextContent( '- Weekly posts' );
+	} );
+
+	test( 'sanitizes the free tier rendered HTML, keeping target="_blank" and stripping unsafe markup', () => {
+		const { container } = renderProductsList(
+			[ tierWithoutDescription ], // No paid description, so the only description container is the Free row's.
+			{ free_tier_description: '[Learn more](https://example.com)' },
+			'<p><a href="https://example.com" target="_blank" rel="noopener">Learn more</a></p>' +
+				'<script>alert(1)</script><p onclick="alert(1)">unsafe</p>'
+		);
+
+		const description = container.querySelector( '.memberships__products-product-description' );
+		const link = description.querySelector( 'a' );
+		// target="_blank" must survive sanitization — links escape the page context.
+		expect( link ).toHaveAttribute( 'target', '_blank' );
+		expect( link ).toHaveAttribute( 'rel', 'noopener' );
+		// ...while DOMPurify still strips unsafe markup.
+		expect( description.querySelector( 'script' ) ).toBeNull();
+		expect( description.innerHTML ).not.toContain( 'onclick' );
+	} );
+
+	test( 'marks the Free row as hidden when hide_free_tier is set', () => {
+		renderProductsList( [ tierWithoutDescription ], { hide_free_tier: true } );
+
+		expect( screen.getByText( 'Hidden from subscribers' ) ).toBeInTheDocument();
 	} );
 } );

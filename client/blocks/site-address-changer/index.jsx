@@ -1,8 +1,9 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
 import { Button, CheckboxControl, Icon, Modal } from '@wordpress/components';
+import { debounce } from '@wordpress/compose';
 import { check, closeSmall, chevronDown, info } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
-import { debounce, get, isEmpty } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -221,7 +222,7 @@ export class SiteAddressChanger extends Component {
 	shouldShowValidationMessage() {
 		const { isAvailable, validationError } = this.props;
 		const { showValidationMessage } = this.state;
-		const serverValidationMessage = get( validationError, 'message' );
+		const serverValidationMessage = validationError?.message;
 
 		return isAvailable || showValidationMessage || !! serverValidationMessage;
 	}
@@ -247,7 +248,7 @@ export class SiteAddressChanger extends Component {
 	getValidationMessage() {
 		const { isAvailable, validationError, translate } = this.props;
 		const { validationMessage } = this.state;
-		const serverValidationMessage = get( validationError, 'message' );
+		const serverValidationMessage = validationError?.message;
 
 		if ( this.isUnsyncedAtomicSite() ) {
 			return translate( "This site's address cannot be changed" );

@@ -38,33 +38,33 @@ export const loginSocialUser = ( socialInfo, redirectTo ) => ( dispatch ) => {
 		anon_id: getTracksAnonymousUserId(),
 	} )
 		.then( ( response ) => {
-			if ( get( response, 'body.data.two_step_notification_sent' ) === 'sms' ) {
+			if ( response?.body?.data?.two_step_notification_sent === 'sms' ) {
 				dispatch( {
 					type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 					notice: {
 						message: getSMSMessageFromResponse( response ),
 						status: 'is-success',
 					},
-					twoStepNonce: get( response, 'body.data.two_step_nonce_sms' ),
+					twoStepNonce: response?.body?.data?.two_step_nonce_sms,
 				} );
 			}
 
 			return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
 				dispatch( {
 					type: SOCIAL_LOGIN_REQUEST_SUCCESS,
-					data: get( response, 'body.data' ),
+					data: response?.body?.data,
 				} );
 			} );
 		} )
 		.catch( ( httpError ) => {
 			const error = getErrorFromHTTPError( httpError );
-			error.email = get( httpError, 'response.body.data.email' );
+			error.email = httpError?.response?.body?.data?.email;
 
 			dispatch( {
 				type: SOCIAL_LOGIN_REQUEST_FAILURE,
 				error,
 				authInfo: socialInfo,
-				data: get( httpError, 'response.body.data' ),
+				data: httpError?.response?.body?.data,
 			} );
 
 			return Promise.reject( error );

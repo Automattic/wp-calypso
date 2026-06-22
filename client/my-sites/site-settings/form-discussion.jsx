@@ -1,7 +1,7 @@
 import { Card, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { pick } from '@automattic/js-utils';
 import { ToggleControl } from '@wordpress/components';
-import { pick } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';

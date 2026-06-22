@@ -1,8 +1,9 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
+import { camelCase, pick } from '@automattic/js-utils';
 import { DomainContactDetails } from '@automattic/shopping-cart';
 import { DomainContactDetailsErrors } from '@automattic/wpcom-checkout';
 import { LocalizeProps, localize } from 'i18n-calypso';
-import { camelCase, difference, get, isEmpty, keys, map, pick } from 'lodash';
+import { get, isEmpty, map } from 'lodash';
 import { PureComponent, ReactNode } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
@@ -58,9 +59,9 @@ export class RegistrantExtraInfoUkForm extends PureComponent< FormProps & Locali
 
 	componentDidMount() {
 		// Add defaults to redux state to make accepting default values work.
-		const neededRequiredDetails = difference(
-			[ 'registrantType' ],
-			keys( this.props.ccTldDetails )
+		const providedDetails = Object.keys( this.props.ccTldDetails );
+		const neededRequiredDetails = [ 'registrantType' ].filter(
+			( key ) => ! providedDetails.includes( key )
 		);
 
 		// Bail early as we already have the details from a previous purchase.

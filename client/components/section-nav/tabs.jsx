@@ -1,7 +1,7 @@
 import { SelectDropdown } from '@automattic/components';
 import { getWindowInnerWidth } from '@automattic/viewport';
+import { debounce } from '@wordpress/compose';
 import clsx from 'clsx';
-import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Children, cloneElement, Component } from 'react';
 import TranslatableString from 'calypso/components/translatable/proptype';

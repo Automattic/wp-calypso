@@ -46,6 +46,35 @@ function validateName(
 	return null;
 }
 
+/**
+ * Map a failed create-space request to user-facing copy. The wpcom transports
+ * surface the WP REST error code on `.code` (proxy) or `.error` (legacy xhr), so
+ * read both. Unknown codes fall back to the generic message.
+ */
+function getCreateSpaceErrorMessage( error: unknown, translate: TranslateFn ): string {
+	const generic = translate( 'Something went wrong. Please try again.' ) as string;
+	if ( ! error || typeof error !== 'object' ) {
+		return generic;
+	}
+	const record = error as { code?: unknown; error?: unknown };
+	// wpcom surfaces the code on `.code` (proxy) or `.error` (legacy xhr); take
+	// whichever is a string so the switch always compares `string | undefined`.
+	const rawCode = typeof record.code === 'string' ? record.code : record.error;
+	const code = typeof rawCode === 'string' ? rawCode : undefined;
+	switch ( code ) {
+		case 'reader_spaces_invalid_title':
+			return translate( 'Please enter a name for your space.' ) as string;
+		case 'reader_spaces_invalid_tag':
+			return translate( 'One or more of those tags is not an existing Reader tag.' ) as string;
+		case 'reader_spaces_duplicate_slug':
+			return translate( 'You already have a space with that name.' ) as string;
+		case 'rest_forbidden':
+			return translate( 'You do not have permission to create a space.' ) as string;
+		default:
+			return generic;
+	}
+}
+
 interface Props {
 	isOpen: boolean;
 	onClose: () => void;
@@ -143,10 +172,9 @@ function CreateSpaceModalContent( {
 							{ nameError }
 						</p>
 					) : null }
-					{ /* TODO(RSM-4139): map real backend error kinds once the endpoint exists. */ }
 					{ createSpace.isError ? (
 						<p className="create-space-modal__error" role="alert">
-							{ translate( 'Something went wrong. Please try again.' ) }
+							{ getCreateSpaceErrorMessage( createSpace.error, translate ) }
 						</p>
 					) : null }
 					<HStack justify="flex-end" spacing={ 2 }>

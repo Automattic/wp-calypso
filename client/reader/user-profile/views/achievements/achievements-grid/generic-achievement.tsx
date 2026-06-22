@@ -81,15 +81,46 @@ export default function GenericAchievement( {
 			  } );
 	};
 
+	// The `automattician` achievement pins its `date_unlocked` to the 2012
+	// launch, so old-timers all show the same legacy date. When the backend
+	// supplies the real hire date, surface it alongside the unlock date.
+	const hiredContext = () => {
+		if ( achievement.slug !== 'automattician' ) {
+			return undefined;
+		}
+		const dateHired = achievement.date_hired;
+		if ( ! dateHired ) {
+			return undefined;
+		}
+		const parsed = new Date( dateHired );
+		if ( isNaN( parsed.getTime() ) ) {
+			return undefined;
+		}
+		// `date_hired` is an absolute hire date (the backend sends it as a
+		// UTC ISO 8601 timestamp), so format it in UTC — the displayed
+		// calendar day must not shift with the viewer's timezone. `medium`
+		// matches the short-month style TimeSince uses for the unlock date.
+		const formatted = new Intl.DateTimeFormat( translate.localeSlug, {
+			dateStyle: 'medium',
+			timeZone: 'UTC',
+		} ).format( parsed );
+		return translate( 'Started: {{date/}}', {
+			components: { date: <time dateTime={ dateHired }>{ formatted }</time> },
+			comment: '{{date/}} is the date an Automattician was hired.',
+		} );
+	};
+
 	const renderCaption = () => {
+		const hired = hiredContext();
 		const link = contextLink();
-		if ( ! link ) {
+		if ( ! hired && ! link ) {
 			return caption();
 		}
 		return (
 			<>
 				{ caption() }
-				<span className="achievement-card__caption-context">{ link }</span>
+				{ hired && <span className="achievement-card__caption-context">{ hired }</span> }
+				{ link && <span className="achievement-card__caption-context">{ link }</span> }
 			</>
 		);
 	};

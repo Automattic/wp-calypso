@@ -11,6 +11,7 @@ import {
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
 import { successNotice } from 'calypso/state/notices/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SourcesModal } from '../index';
@@ -100,6 +101,34 @@ function makeSiteSubscriptionsData(
 	};
 }
 
+const BASE = 'https://public-api.wordpress.com';
+const SPACE_FEEDS_PATH = `/wpcom/v2/reader/spaces/${ WORK.id }/feeds`;
+
+// The detail wire shape the feed endpoints return, carrying `follows`.
+const STRATECHERY_FOLLOW = {
+	feed_id: 456,
+	feed_url: 'https://stratechery.com/feed',
+	blog_id: 123,
+	name: 'Stratechery',
+	icon: 'https://stratechery.com/icon.png',
+};
+const detailWith = ( follows: object[] ) => ( {
+	id: WORK.id,
+	title: 'Work',
+	layout: { color: 'blue', icon: 'inbox' },
+	follows,
+	tags: [],
+} );
+
+// The client `SpaceSource` STRATECHERY_FOLLOW adapts to.
+const STRATECHERY_SOURCE = {
+	feedId: 456,
+	feedUrl: 'https://stratechery.com/feed',
+	blogId: 123,
+	name: 'Stratechery',
+	siteIcon: 'https://stratechery.com/icon.png',
+};
+
 function setup( {
 	space = WORK,
 	subscriptions = [ STRATECHERY, VERGE ],
@@ -132,6 +161,8 @@ describe( 'SourcesModal', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 	} );
+
+	afterEach( () => nock.cleanAll() );
 
 	it( 'does not fetch subscriptions or space details while closed', () => {
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
@@ -212,25 +243,21 @@ describe( 'SourcesModal', () => {
 		expect( screen.queryByText( 'No subscriptions found.' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'adds and removes a subscription in the space cache immediately', async () => {
+	it( 'writes the space detail cache from the endpoint response on add and remove', async () => {
 		const { queryClient, user } = setup();
+		nock( BASE )
+			.post( `${ SPACE_FEEDS_PATH }` )
+			.reply( 200, detailWith( [ STRATECHERY_FOLLOW ] ) );
 
 		await user.click( screen.getByRole( 'button', { name: 'Add Stratechery' } ) );
 
 		await waitFor( () =>
 			expect(
 				queryClient.getQueryData< ReadSpaceDetails >( readSpaceQuery( WORK.id ).queryKey )?.sources
-			).toEqual( [
-				expect.objectContaining( {
-					feedId: 456,
-					blogId: 123,
-					feedUrl: 'https://stratechery.com/feed',
-					siteUrl: 'https://stratechery.com',
-					name: 'Stratechery',
-					siteIcon: 'https://stratechery.com/icon.png',
-				} ),
-			] )
+			).toEqual( [ STRATECHERY_SOURCE ] )
 		);
+
+		nock( BASE ).delete( `${ SPACE_FEEDS_PATH }/456` ).reply( 200, detailWith( [] ) );
 
 		await user.click( screen.getByRole( 'button', { name: 'Remove Stratechery' } ) );
 
@@ -243,19 +270,7 @@ describe( 'SourcesModal', () => {
 
 	it( 'filters to subscriptions already in this space', async () => {
 		const { user } = setup( {
-			space: {
-				...WORK,
-				sources: [
-					{
-						feedId: 456,
-						blogId: 123,
-						feedUrl: 'https://stratechery.com/feed',
-						siteUrl: 'https://stratechery.com',
-						name: 'Stratechery',
-						siteIcon: 'https://stratechery.com/icon.png',
-					},
-				],
-			},
+			space: { ...WORK, sources: [ STRATECHERY_SOURCE ] },
 		} );
 
 		await user.click( screen.getByRole( 'button', { name: 'In this space · 1' } ) );
@@ -286,36 +301,32 @@ describe( 'SourcesModal', () => {
 
 	it( 'shows a success notice when a source is added', async () => {
 		const { user } = setup();
+		nock( BASE )
+			.post( `${ SPACE_FEEDS_PATH }` )
+			.reply( 200, detailWith( [ STRATECHERY_FOLLOW ] ) );
 
 		await user.click( screen.getByRole( 'button', { name: 'Add Stratechery' } ) );
 
-		expect( successNotice ).toHaveBeenCalledWith( 'Source added to this space.', {
-			duration: 5000,
-		} );
+		await waitFor( () =>
+			expect( successNotice ).toHaveBeenCalledWith( 'Source added to this space.', {
+				duration: 5000,
+			} )
+		);
 	} );
 
 	it( 'shows a success notice when a source is removed', async () => {
 		const { user } = setup( {
-			space: {
-				...WORK,
-				sources: [
-					{
-						feedId: 456,
-						blogId: 123,
-						feedUrl: 'https://stratechery.com/feed',
-						siteUrl: 'https://stratechery.com',
-						name: 'Stratechery',
-						siteIcon: 'https://stratechery.com/icon.png',
-					},
-				],
-			},
+			space: { ...WORK, sources: [ STRATECHERY_SOURCE ] },
 		} );
+		nock( BASE ).delete( `${ SPACE_FEEDS_PATH }/456` ).reply( 200, detailWith( [] ) );
 
 		await user.click( screen.getByRole( 'button', { name: 'Remove Stratechery' } ) );
 
-		expect( successNotice ).toHaveBeenCalledWith( 'Source removed from this space.', {
-			duration: 5000,
-		} );
+		await waitFor( () =>
+			expect( successNotice ).toHaveBeenCalledWith( 'Source removed from this space.', {
+				duration: 5000,
+			} )
+		);
 	} );
 
 	it( 'uses SiteIcon for each subscription row', () => {

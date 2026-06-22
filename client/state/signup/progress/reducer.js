@@ -1,6 +1,6 @@
-import { keyBy } from '@automattic/js-utils';
+import { keyBy, omit } from '@automattic/js-utils';
 import debugFactory from 'debug';
-import { get, omit } from 'lodash';
+import { get } from 'lodash';
 import stepsConfig from 'calypso/signup/config/steps-pure';
 import {
 	SIGNUP_COMPLETE_RESET,
@@ -91,7 +91,7 @@ const invalidateStep = ( state, { step, errors } ) => {
 const processStep = ( state, { step } ) => updateStep( state, { ...step, status: 'processing' } );
 
 const saveStep = ( state, { step } ) => {
-	const status = get( state, [ step.stepName, 'status' ] );
+	const status = state?.[ step.stepName ]?.status;
 
 	return state.hasOwnProperty( step.stepName )
 		? updateStep( state, {
@@ -102,7 +102,7 @@ const saveStep = ( state, { step } ) => {
 };
 
 const submitStep = ( state, { step } ) => {
-	const stepHasApiRequestFunction = get( stepsConfig, [ step.stepName, 'apiRequestFunction' ] );
+	const stepHasApiRequestFunction = stepsConfig?.[ step.stepName ]?.apiRequestFunction;
 	const status = stepHasApiRequestFunction ? 'pending' : 'completed';
 
 	return state.hasOwnProperty( step.stepName )

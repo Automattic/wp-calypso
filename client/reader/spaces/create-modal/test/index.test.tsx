@@ -5,6 +5,7 @@ import { readSpacesQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { CreateSpaceModal } from '../index';
 import type { ReadSpace } from '@automattic/api-core';
@@ -12,9 +13,22 @@ import type { ReadSpace } from '@automattic/api-core';
 const WORK: ReadSpace = {
 	id: '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21',
 	name: 'Work',
-	tags: [],
 	layout: { color: 'blue', icon: 'inbox' },
 };
+
+// Mock the wpcom/v2 create endpoint, echoing the submitted name back as the wire
+// `title` so the adapted space carries it through to the cache and callbacks.
+function mockCreateEndpoint( name: string ) {
+	return nock( 'https://public-api.wordpress.com' )
+		.post( '/wpcom/v2/reader/spaces' )
+		.reply( 201, {
+			id: 7,
+			title: name,
+			follows: [],
+			tags: [],
+			layout: { color: 'blue', icon: 'inbox' },
+		} );
+}
 
 function setup( { existing = [] as ReadSpace[], onCreated = jest.fn() } = {} ) {
 	const queryClient = new QueryClient();
@@ -28,6 +42,8 @@ function setup( { existing = [] as ReadSpace[], onCreated = jest.fn() } = {} ) {
 }
 
 describe( 'CreateSpaceModal', () => {
+	afterEach( () => nock.cleanAll() );
+
 	it( 'renders nothing when closed', () => {
 		renderWithProvider( <CreateSpaceModal isOpen={ false } onClose={ jest.fn() } /> );
 
@@ -75,6 +91,7 @@ describe( 'CreateSpaceModal', () => {
 
 	it( 'creates a space (tags optional), appends it to the cached list, and closes', async () => {
 		const { user, onClose, queryClient } = setup();
+		mockCreateEndpoint( 'Reading' );
 
 		await user.type( screen.getByLabelText( 'Name' ), 'Reading' );
 		await user.click( screen.getByRole( 'button', { name: 'Create' } ) );
@@ -82,14 +99,16 @@ describe( 'CreateSpaceModal', () => {
 		await waitFor( () => expect( onClose ).toHaveBeenCalled() );
 
 		const spaces = queryClient.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey );
-		expect( spaces ).toEqual( [ expect.objectContaining( { name: 'Reading', tags: [] } ) ] );
-		// Sources live only on the single-space detail cache, not on list items.
+		expect( spaces ).toEqual( [ expect.objectContaining( { name: 'Reading' } ) ] );
+		// The list is the slim summary — sources and tags live only on the detail cache.
 		expect( spaces?.[ 0 ] ).not.toHaveProperty( 'sources' );
+		expect( spaces?.[ 0 ] ).not.toHaveProperty( 'tags' );
 		expect( onClose ).toHaveBeenCalled();
 	} );
 
 	it( 'notifies the parent with the created space', async () => {
 		const { user, onCreated } = setup();
+		mockCreateEndpoint( 'Reading' );
 
 		await user.type( screen.getByLabelText( 'Name' ), 'Reading' );
 		await user.click( screen.getByRole( 'button', { name: 'Create' } ) );

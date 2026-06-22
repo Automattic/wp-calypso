@@ -4,8 +4,9 @@
 import { readSpacesQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
 import { getSpacePath } from 'calypso/reader/spaces/routes';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ReaderSidebarSpaces } from '../index';
@@ -20,13 +21,11 @@ const SPACES: ReadSpace[] = [
 	{
 		id: '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21',
 		name: 'Work',
-		tags: [],
 		layout: { color: 'blue', icon: 'inbox' },
 	},
 	{
 		id: '5cc71d31-97d1-4b7d-93c7-42a5ce9d4cf1',
 		name: 'Gaming',
-		tags: [],
 		layout: { color: 'purple', icon: 'box' },
 	},
 ];
@@ -48,6 +47,8 @@ describe( 'ReaderSidebarSpaces', () => {
 		jest.mocked( page ).mockClear();
 		jest.mocked( page.replace ).mockClear();
 	} );
+
+	afterEach( () => nock.cleanAll() );
 
 	it( 'renders every space with a link to its page', () => {
 		render( <ReaderSidebarSpaces path={ OPEN_PATH } /> );
@@ -93,14 +94,27 @@ describe( 'ReaderSidebarSpaces', () => {
 
 	it( 'redirects to the new space sources action after creating a space', async () => {
 		const user = userEvent.setup();
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/spaces' )
+			.reply( 201, {
+				id: 7,
+				title: 'Reading',
+				follows: [],
+				tags: [],
+				layout: { color: 'blue', icon: 'inbox' },
+			} );
 		render( <ReaderSidebarSpaces path={ OPEN_PATH } /> );
 
 		await user.click( screen.getByRole( 'button', { name: 'Add a space' } ) );
 		await user.type( screen.getByLabelText( 'Name' ), 'Reading' );
 		await user.click( screen.getByRole( 'button', { name: 'Create' } ) );
 
-		expect( page ).toHaveBeenCalledWith(
-			expect.stringMatching( /^\/reader\/spaces\/.+#action=manage-sources$/ )
+		// The redirect happens in the create mutation's onSuccess, after the POST
+		// resolves, so wait for it.
+		await waitFor( () =>
+			expect( page ).toHaveBeenCalledWith(
+				expect.stringMatching( /^\/reader\/spaces\/.+#action=manage-sources$/ )
+			)
 		);
 	} );
 

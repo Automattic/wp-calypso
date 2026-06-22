@@ -1,6 +1,5 @@
 import { CheckboxControl, SelectControl, TextControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { without } from 'lodash';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -30,7 +29,7 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ) {
 		const productTypes = getProfileValue( 'product_types' ) || [];
 
 		const newTypes = productTypes.includes( type )
-			? without( productTypes, type )
+			? productTypes.filter( ( productType: string ) => productType !== type )
 			: [ ...productTypes, type ];
 
 		updateOnboardingProfile( 'product_types', newTypes );

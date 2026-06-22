@@ -207,6 +207,53 @@ const DeleteButtonWrapper = styled.div`
 	justify-content: inherit;
 `;
 
+const BundleLineItemWrapper = styled.div< { theme?: Theme } >`
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	padding: 16px 0;
+	font-weight: ${ ( props ) => props.theme.weights.normal };
+	color: ${ ( props ) => props.theme.colors.textColorDark };
+	font-size: 1.1em;
+	position: relative;
+
+	.checkout-line-item__price {
+		position: relative;
+	}
+`;
+
+const BundleMemberList = styled.div< { theme?: Theme } >`
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	margin-top: 8px;
+	color: ${ ( props ) => props.theme.colors.textColorDark };
+	font-size: 14px;
+	line-height: 1.4;
+`;
+
+const BundleTermRow = styled.div< { theme?: Theme } >`
+	box-sizing: border-box;
+	width: 100%;
+	border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
+	border-radius: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-top: 16px;
+	padding: 16px;
+	color: ${ ( props ) => props.theme.colors.textColorDark };
+	font-size: 14px;
+`;
+
+const BundleTermPrice = styled.span`
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+`;
+
 const DeleteButton = styled( Button )< { theme?: Theme } >`
 	width: auto;
 	font-size: 0.75rem;
@@ -472,7 +519,7 @@ export function BundleLineItem( {
 		stripZeros: true,
 	} );
 	const isBundleDiscounted = bundleTotalInteger < bundleOriginalInteger;
-	const bundleLabel = String( translate( 'Domain bundle' ) );
+	const bundleLabel = String( translate( 'Domain Bundle' ) );
 
 	const removeBundleFromCart = () => {
 		products.forEach( ( product ) => {
@@ -483,7 +530,7 @@ export function BundleLineItem( {
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<div
+		<BundleLineItemWrapper
 			className={ joinClasses( [ className, 'checkout-line-item' ] ) }
 			data-e2e-product-slug="domain-bundle"
 			data-product-type="domain-bundle"
@@ -497,36 +544,28 @@ export function BundleLineItem( {
 				/>
 			</span>
 
-			{ isBundleDiscounted && (
-				<LineItemMeta>
+			<LineItemMeta>
+				<LineItemSublabelTitle>
+					{ translate( 'Domain Bundle Registration: billed annually' ) }
+				</LineItemSublabelTitle>
+				{ isBundleDiscounted && (
 					<DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>
-				</LineItemMeta>
-			) }
+				) }
+			</LineItemMeta>
 
-			{ /* Bundle members renew at full price (no plan credit at renewal —
-			     DOMAINS-2173), so the renewal aggregate is the pre-discount group
-			     total already computed for the strikethrough (DOMAINS-2184). */ }
-			{ isBundleDiscounted && (
-				<LineItemMeta>
-					<span>
-						{ translate( 'Auto-renews at %(price)s/year.', {
-							args: { price: bundleOriginalDisplay },
-						} ) }
-					</span>
-				</LineItemMeta>
-			) }
+			<BundleMemberList>
+				{ products.map( ( product ) => (
+					<span key={ product.uuid }>{ product.meta }</span>
+				) ) }
+			</BundleMemberList>
 
-			{ products.map( ( product ) => (
-				<LineItemMeta key={ product.uuid }>
-					<span>{ product.meta }</span>
-					<span>
-						{ formatCurrency( product.item_subtotal_integer, product.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ) }
-					</span>
-				</LineItemMeta>
-			) ) }
+			<BundleTermRow>
+				<span>{ translate( 'One year' ) }</span>
+				<BundleTermPrice>
+					<span>{ bundleTotalDisplay }</span>
+					<Gridicon icon="chevron-down" size={ 16 } aria-hidden="true" />
+				</BundleTermPrice>
+			</BundleTermRow>
 
 			{ hasDeleteButton && removeProductFromCart && (
 				<>
@@ -572,7 +611,7 @@ export function BundleLineItem( {
 					/>
 				</>
 			) }
-		</div>
+		</BundleLineItemWrapper>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }

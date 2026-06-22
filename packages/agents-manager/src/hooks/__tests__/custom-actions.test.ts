@@ -25,6 +25,7 @@ let mockSelectState: {
 	isDocked: false,
 	floatingPosition: '',
 };
+let mockLocation = { pathname: '/chat' };
 
 jest.mock( '@wordpress/data', () => ( {
 	useSelect: jest.fn( () => mockSelectState ),
@@ -37,6 +38,7 @@ jest.mock( '@wordpress/data', () => ( {
 
 jest.mock( 'react-router-dom', () => ( {
 	useNavigate: jest.fn( () => jest.fn() ),
+	useLocation: jest.fn( () => mockLocation ),
 } ) );
 
 jest.mock( '../../contexts', () => ( {
@@ -69,6 +71,7 @@ describe( 'useSetupCustomActions', () => {
 			agentConfig: { agentId: 'reader-chat' },
 		};
 		mockSelectState = { hasLoaded: true, isOpen: false, isDocked: false, floatingPosition: '' };
+		mockLocation = { pathname: '/chat' };
 	} );
 
 	it( 'sets `isReady` on the global after mount', () => {
@@ -233,6 +236,29 @@ describe( 'useSetupCustomActions', () => {
 		expect( getSiteEditorActions() ).toEqual( {
 			colorPickerItemSelected: 'Ruby',
 		} );
+	} );
+
+	it( '`isChatVisible` is true only when open and not minimized', () => {
+		mockSelectState = {
+			hasLoaded: true,
+			isOpen: true,
+			isDocked: false,
+			isMinimized: false,
+			floatingPosition: '',
+		};
+		const { rerender } = renderHook( () => useSetupCustomActions( baseProps ) );
+		expect( window.__agentsManagerActions?.isChatVisible?.() ).toBe( true );
+
+		mockSelectState = { ...mockSelectState, isMinimized: true };
+		rerender();
+		expect( window.__agentsManagerActions?.isChatVisible?.() ).toBe( false );
+	} );
+
+	it( 'reports the current route via `getCurrentRoute`', () => {
+		mockLocation = { pathname: '/history' };
+		renderHook( () => useSetupCustomActions( baseProps ) );
+
+		expect( window.__agentsManagerActions?.getCurrentRoute?.() ).toBe( '/history' );
 	} );
 } );
 

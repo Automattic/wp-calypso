@@ -37,7 +37,7 @@ class JetpackSyncPanel extends Component {
 	};
 
 	isErrored = () => {
-		const syncRequestError = get( this.props, 'fullSyncRequest.error' );
+		const syncRequestError = this.props?.fullSyncRequest?.error;
 		const syncStatusErrorCount = get( this.props, 'syncStatus.errorCounter', 0 );
 		return !! ( syncRequestError || syncStatusErrorCount >= SYNC_STATUS_ERROR_NOTICE_THRESHOLD );
 	};
@@ -72,18 +72,18 @@ class JetpackSyncPanel extends Component {
 	};
 
 	renderErrorNotice = () => {
-		const syncRequestError = get( this.props, 'fullSyncRequest.error' );
+		const syncRequestError = this.props?.fullSyncRequest?.error;
 		const syncStatusErrorCount = get( this.props, 'syncStatus.errorCounter', 0 );
 		const { translate } = this.props;
 
 		let errorNotice = null;
 		if ( syncStatusErrorCount >= SYNC_STATUS_ERROR_NOTICE_THRESHOLD ) {
-			const adminUrl = get( this.props, 'site.options.admin_url' );
+			const adminUrl = this.props?.site?.options?.admin_url;
 			errorNotice = (
 				<Notice isCompact status="is-error">
 					{ translate( '%(site)s is unresponsive.', {
 						args: {
-							site: get( this.props, 'site.name' ),
+							site: this.props?.site?.name,
 						},
 					} ) }
 					{ adminUrl && (
@@ -126,7 +126,7 @@ class JetpackSyncPanel extends Component {
 			return null;
 		}
 
-		const finished = get( this.props, 'syncStatus.finished' );
+		const finished = this.props?.syncStatus?.finished;
 		const { isPendingSyncStart, isFullSyncing, moment, translate } = this.props;
 		const finishedTimestamp = parseInt( finished, 10 ) * 1000;
 		const finishedTimestampObj = moment( finishedTimestamp );

@@ -101,7 +101,6 @@ export function recordNavLinkClick( link: HTMLAnchorElement ): void {
 		is_floating: isFloating,
 		href: link.href,
 		text: ( link.textContent || '' ).trim(),
-		name: link.dataset.dropdownTrigger || null,
 		source,
 		category,
 	} );

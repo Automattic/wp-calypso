@@ -71,3 +71,23 @@ steps:
     command: powershell -NoProfile -ExecutionPolicy Bypass -File .buildkite/commands/build-desktop-windows.ps1
     artifact_paths:
       - desktop/release/*.appx
+
+  # Signed NSIS direct-download installer — the auto-update path (electron-
+  # updater stays enabled). Signed with the org cert the CI Toolkit plugin
+  # pulls from AWS Secrets Manager (setup_windows_code_signing.ps1) using
+  # WINDOWS_CODE_SIGNING_CERT_PASSWORD. This is the PFX→Azure handover bridge
+  # build.
+  - label: ":windows: Build desktop (windows nsis, signed)"
+    branches: ainfra-*
+    notify:
+      - github_commit_status:
+          context: Desktop / Build (windows nsis, signed)
+    agents:
+      queue: windows
+    plugins:
+      - automattic/a8c-ci-toolkit#6.1.0
+    command: powershell -NoProfile -ExecutionPolicy Bypass -File .buildkite/commands/build-desktop-windows-nsis.ps1
+    artifact_paths:
+      - desktop/release/*.exe
+      - desktop/release/*.exe.blockmap
+      - desktop/release/latest.yml

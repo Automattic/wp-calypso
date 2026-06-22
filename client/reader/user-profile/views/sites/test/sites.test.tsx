@@ -148,4 +148,82 @@ describe( 'UserSites', () => {
 		expect( screen.getByText( 'Test Site 1' ) ).toBeVisible();
 		expect( screen.getByText( 'Test Site 2' ) ).toBeVisible();
 	} );
+
+	test( 'should not render sites flagged as hidden for a public viewer', async () => {
+		const mockSites: UserSitesResponse[ 'sites' ] = [
+			{
+				ID: 1,
+				name: 'Visible Site',
+				description: '',
+				feed_ID: 101,
+				URL: 'https://visible.wordpress.com',
+				icon: {},
+				is_following: false,
+				last_published: '2024-01-01',
+				posts_count: 10,
+				subscribers_count: 100,
+			},
+			{
+				ID: 2,
+				name: 'Hidden Site',
+				description: '',
+				feed_ID: 102,
+				URL: 'https://hidden.wordpress.com',
+				icon: {},
+				is_following: false,
+				last_published: '2024-01-02',
+				posts_count: 20,
+				subscribers_count: 200,
+				is_hidden: true,
+			},
+		];
+
+		nockGetUserSites( defaultUser.ID, { sites: mockSites, total: 2, primary_site_id: 1 } );
+
+		renderWithClient( <UserSites user={ defaultUser } /> );
+
+		expect( await screen.findByText( 'Visible Site' ) ).toBeVisible();
+		expect( screen.queryByText( 'Hidden Site' ) ).not.toBeInTheDocument();
+	} );
+
+	test( "should exclude the owner's hidden sites based on their preference", async () => {
+		useSelector.mockReturnValue( { username: 'test_user' } );
+
+		const mockSites: UserSitesResponse[ 'sites' ] = [
+			{
+				ID: 1,
+				name: 'Kept Site',
+				description: '',
+				feed_ID: 101,
+				URL: 'https://kept.wordpress.com',
+				icon: {},
+				is_following: false,
+				last_published: '2024-01-01',
+				posts_count: 10,
+				subscribers_count: 100,
+			},
+			{
+				ID: 2,
+				name: 'Owner Hidden Site',
+				description: '',
+				feed_ID: 102,
+				URL: 'https://owner-hidden.wordpress.com',
+				icon: {},
+				is_following: false,
+				last_published: '2024-01-02',
+				posts_count: 20,
+				subscribers_count: 200,
+			},
+		];
+
+		nockGetUserSites( defaultUser.ID, { sites: mockSites, total: 2, primary_site_id: 1 } );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/preferences' )
+			.reply( 200, { calypso_preferences: { 'reader-profile-hidden-sites': [ 2 ] } } );
+
+		renderWithClient( <UserSites user={ defaultUser } /> );
+
+		expect( await screen.findByText( 'Kept Site' ) ).toBeVisible();
+		expect( screen.queryByText( 'Owner Hidden Site' ) ).not.toBeInTheDocument();
+	} );
 } );

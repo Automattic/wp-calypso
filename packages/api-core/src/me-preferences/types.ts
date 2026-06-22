@@ -35,4 +35,7 @@ export interface UserPreferences {
 	[ key: `cancellation-offer-accepted-notice-dismissed-${ string | number }` ]: string | undefined;
 	'achievements-visibility'?: 'public' | 'private';
 	'achievements-global-notifications'?: 'enabled' | 'disabled';
+	'reader-profile-posts-visibility'?: 'public' | 'hidden';
+	'reader-profile-sites-visibility'?: 'public' | 'hidden';
+	'reader-profile-hidden-sites'?: number[];
 }

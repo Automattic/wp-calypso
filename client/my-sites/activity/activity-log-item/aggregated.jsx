@@ -1,8 +1,8 @@
 import { Button, FoldableCard } from '@automattic/components';
+import { omit } from '@automattic/js-utils';
 import { withDesktopBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { omit } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';

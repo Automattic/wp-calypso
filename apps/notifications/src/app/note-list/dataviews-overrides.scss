@@ -13,7 +13,7 @@
 		}
 
 		.dataviews-view-list__item-wrapper {
-			background-color: color-mix(in srgb, var(--wp-admin-theme-color) 16%, var(--color-surface));
+			background-color: color-mix(in srgb, var(--wp-admin-theme-color) 10%, var(--color-surface));
 			box-shadow: inset 3px 0 0
 				color-mix(in srgb, var(--wp-admin-theme-color) 72%, transparent);
 		}
@@ -22,7 +22,7 @@
 	div[role="article"]:where(.is-hovered):has(.is-unread),
 	div[role="article"]:where(.is-hovered):has(.is-unread):focus-within {
 		.dataviews-view-list__item-wrapper {
-			background-color: color-mix(in srgb, var(--wp-admin-theme-color) 22%, var(--color-surface));
+			background-color: color-mix(in srgb, var(--wp-admin-theme-color) 16%, var(--color-surface));
 		}
 	}
 }
@@ -41,7 +41,7 @@
 		}
 
 		.dataviews-view-list__item-wrapper {
-			background-color: color-mix(in srgb, var(--wp-admin-theme-color) 20%, var(--color-surface));
+			background-color: color-mix(in srgb, var(--wp-admin-theme-color) 24%, var(--color-surface));
 			box-shadow: inset 3px 0 0 var(--wp-admin-theme-color);
 		}
 	}
@@ -58,6 +58,21 @@
 				color: $gray-700;
 			}
 		}
+	}
+
+	// DataViews' default list metrics leave the rows taller than we want, so
+	// tighten the title and field rows to a 20px min-height and line-height.
+	.dataviews-view-list__title-field,
+	.dataviews-view-list__fields .dataviews-view-list__field-value {
+		min-height: calc(var(--wpds-dimension-base, 4px) * 5);
+		line-height: var(--wpds-typography-line-height-sm, 20px);
+	}
+
+	// Notes without an excerpt render an empty description field, but DataViews
+	// still emits its cell as a flex item in the column, which doubles the row
+	// gap. Drop the empty cell so only one gap remains.
+	.dataviews-view-list__field-wrapper > .dataviews-view-list__field:empty {
+		display: none;
 	}
 
 	// We override styles with the selected styles for unread items.
@@ -96,6 +111,13 @@
 	@include ui-mixins.when-dark-theme {
 		@include dark-unread-note-list-item;
 		@include dark-selected-note-list-item;
+
+		// $gray-700 (#757575) is a light-mode literal — it fails WCAG AA on the
+		// dark surface and the accent tints (~1.8–2.7:1). Use a light muted that
+		// clears 4.5:1 on every row state, including the stronger selected tint.
+		div[role="article"] .dataviews-view-list__item-wrapper .dataviews-view-list__fields {
+			color: #c2c5cc;
+		}
 	}
 
 	// We override the media field
@@ -103,6 +125,7 @@
 		width: 32px;
 		height: 32px;
 		margin-inline-end: $grid-unit-05;
+		margin-block-start: 4px;
 		border-radius: 50%;
 		overflow: visible;
 

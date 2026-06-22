@@ -14,6 +14,11 @@
 		padding: 32px;
 	}
 
+	&__card-body {
+		flex: 1 1 auto;
+		min-width: 0;
+	}
+
 	&__header-message {
 		display: flex;
 		padding-bottom: 8px;
@@ -124,13 +129,9 @@
 		display: flex;
 		border-top: 1px solid var(--studio-gray-5);
 		padding-top: 32px;
-		flex-direction: space-between;
 		flex-wrap: wrap;
 		align-items: center;
-
-		@include breakpoint-deprecated( ">800px" ) {
-			flex-direction: row;
-		}
+		gap: 10px;
 
 		> p {
 			font-size: $font-body;
@@ -150,19 +151,19 @@
 		}
 	}
 
+	// 180px keeps action button labels readable before wrapping.
 	&__fix-all-threats-button {
 		height: 40px;
 		border-radius: 2px;
 		font-weight: 600;
 		@include breakpoint-deprecated( "<960px" ) {
-			flex-grow: 1;
+			flex: 1 1 180px;
 		}
 	}
 
 	&__scan-secondary-button {
-		margin-left: 10px;
 		@include breakpoint-deprecated( "<960px" ) {
-			flex-grow: 1;
+			flex: 1 1 180px;
 		}
 	}
 

@@ -1,6 +1,6 @@
+import { omitBy } from '@automattic/js-utils';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
-import { omitBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { createElement, PureComponent } from 'react';
 import LikeIcons from './icons';

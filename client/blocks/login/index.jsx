@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
-import { get, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -437,7 +437,7 @@ class Login extends Component {
 							locale={ locale }
 							isWoo={ isWoo }
 							isWooJPC={ isWooJPC }
-							from={ get( currentQuery, 'from' ) }
+							from={ currentQuery?.from }
 							isJetpack={ isJetpack }
 						/>
 					</div>
@@ -630,7 +630,7 @@ export default connect(
 		isFromPassport: isPassportRedirect( getRedirectToOriginal( state ) ),
 
 		isFromAutomatticForAgenciesPlugin:
-			'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ) ||
+			'automattic-for-agencies-client' === getCurrentQueryArguments( state )?.from ||
 			'automattic-for-agencies-client' ===
 				new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
 		isWooJPC: isWooJPCFlow( state ),
@@ -650,7 +650,7 @@ export default connect(
 		isSendingEmail: isFetchingMagicLoginEmail( state ),
 		emailRequested: isMagicLoginEmailRequested( state ),
 		isLoggedIn: isUserLoggedIn( state ),
-		from: get( getCurrentQueryArguments( state ), 'from' ),
+		from: getCurrentQueryArguments( state )?.from,
 	} ),
 	{
 		rebootAfterLogin,
@@ -675,7 +675,7 @@ export default connect(
 					isWooJPC: stateProps.isWooJPC,
 					isJetpack: ownProps.isJetpack,
 				} ) && { tokenType: 'code' } ),
-				source: stateProps.isWooJPC ? 'woo-passwordless-jpc' + '-' + get( stateProps, 'from' ) : '',
+				source: stateProps.isWooJPC ? 'woo-passwordless-jpc' + '-' + stateProps?.from : '',
 				flow:
 					( ownProps.isJetpack && 'jetpack' ) ||
 					( ownProps.isGravPoweredClient && getGravatarOAuth2Flow( ownProps.oauth2Client ) ) ||

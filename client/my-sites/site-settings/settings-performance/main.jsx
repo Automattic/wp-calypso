@@ -1,7 +1,7 @@
 import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
 import { CompactCard } from '@automattic/components';
+import { pick } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { pick } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';

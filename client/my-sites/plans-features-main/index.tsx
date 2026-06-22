@@ -1,5 +1,6 @@
 import {
 	cancelAndRefundPurchaseMutation,
+	purchaseCancelFeaturesQuery,
 	purchaseQuery,
 	userPurchasesQuery,
 } from '@automattic/api-queries';
@@ -584,8 +585,25 @@ const PlansFeaturesMain = ( {
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
+	// Prefetch the list of features lost in the downgrade before opening the
+	// confirmation modal. The downgrade button stays in its busy state (the action
+	// callback awaits this) until the data is ready, so the modal opens already
+	// populated instead of revealing a spinner.
+	const openDowngradeModal = async ( planSlug: PlanSlug ) => {
+		if ( currentPlanPurchaseId ) {
+			try {
+				await queryClient.ensureQueryData(
+					purchaseCancelFeaturesQuery( currentPlanPurchaseId, 'control', planSlug )
+				);
+			} catch {
+				// Open the modal regardless; its own query will retry and show a spinner.
+			}
+		}
+		setPendingDowngradePlanSlug( planSlug );
+	};
+
 	// TODO: We should move the modal logic into a data store
-	const showModalAndExit = ( planSlug: PlanSlug ): boolean => {
+	const showModalAndExit = async ( planSlug: PlanSlug ): Promise< boolean > => {
 		if (
 			sitePlanSlug &&
 			isFreePlan( sitePlanSlug ) &&
@@ -604,7 +622,7 @@ const PlansFeaturesMain = ( {
 			! isFreePlan( planSlug ) &&
 			sitePlansData?.find( ( p ) => p.productSlug === planSlug )?.availableForDowngrade
 		) {
-			setPendingDowngradePlanSlug( planSlug );
+			await openDowngradeModal( planSlug );
 			return true;
 		}
 
@@ -616,7 +634,7 @@ const PlansFeaturesMain = ( {
 			! isFreePlan( planSlug ) &&
 			sitePlansData?.find( ( p ) => p.productSlug === planSlug )?.availableForDowngrade
 		) {
-			setPendingDowngradePlanSlug( planSlug );
+			await openDowngradeModal( planSlug );
 			return true;
 		}
 
@@ -684,6 +702,7 @@ const PlansFeaturesMain = ( {
 		showPricingDifferentiationFeaturePills,
 		useFocusedNewCopyTaglines,
 		isExperimentVariant,
+		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 	} );
 
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
@@ -712,6 +731,7 @@ const PlansFeaturesMain = ( {
 		showPricingDifferentiationFeaturePills,
 		useFocusedNewCopyTaglines,
 		isExperimentVariant,
+		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.

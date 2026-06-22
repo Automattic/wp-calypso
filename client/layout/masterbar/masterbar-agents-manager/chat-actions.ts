@@ -7,6 +7,8 @@ interface AgentsManagerActions {
 	chatNavigate: NavigateFunction;
 	resumeChat: () => void;
 	setChatOpen: ( isOpen: boolean ) => void;
+	isChatVisible: () => boolean;
+	getCurrentRoute: () => string;
 	isReady?: boolean;
 }
 
@@ -43,3 +45,18 @@ export const openAgentsManagerChat = ( path?: string ): void => {
 
 // No readiness wait needed: the chat can only be closed once it is already open.
 export const closeAgentsManagerChat = (): void => getAgentsManagerActions()?.setChatOpen( false );
+
+/**
+ * Whether the chat is visible (open and not minimized). Entry points use this to
+ * toggle: re-clicking while visible closes it; otherwise it opens (which also
+ * expands a minimized chat).
+ */
+export const isAgentsManagerChatVisible = (): boolean =>
+	!! getAgentsManagerActions()?.isChatVisible?.();
+
+/**
+ * The chat's current route (e.g. `/chat`), or `undefined` if the bundle isn't loaded.
+ * The Help menu uses it to detect a same-route re-click, which closes the chat.
+ */
+export const getAgentsManagerChatRoute = (): string | undefined =>
+	getAgentsManagerActions()?.getCurrentRoute?.();

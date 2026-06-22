@@ -123,6 +123,12 @@ const DowngradeConfirmationModal = ( {
 	const { data: cancelFeaturesData, isLoading } = useQuery( {
 		...purchaseCancelFeaturesQuery( purchaseId ?? 0, 'control', targetPlanSlug ?? undefined ),
 		enabled: !! purchaseId && !! targetPlanSlug && isOpen,
+		// The feature delta is fixed for the dialog's lifetime. Don't refetch on
+		// window focus: in the instant-downgrade flow the dialog stays open (with its
+		// loader) until the redirect, and a focus refetch after the downgrade has
+		// completed would return an empty delta and wipe out the displayed list.
+		refetchOnWindowFocus: false,
+		staleTime: Infinity,
 	} );
 
 	if ( ! targetPlanSlug || ! isOpen ) {

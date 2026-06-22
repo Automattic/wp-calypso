@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
 import { CompactCard } from '@automattic/components';
+import { pick } from '@automattic/js-utils';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
-import { pick } from 'lodash';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';

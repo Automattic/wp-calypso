@@ -72,6 +72,7 @@ export interface UnifiedPlansStepProps {
 	hidePremiumPlan?: boolean;
 	hideEnterprisePlan?: boolean;
 	hideEcommercePlan?: boolean;
+	hidePlanTypeSelector?: boolean;
 
 	flowName: string;
 	stepName: string;
@@ -220,6 +221,7 @@ function UnifiedPlansStep( {
 	hidePersonalPlan,
 	hidePremiumPlan,
 	hideEnterprisePlan,
+	hidePlanTypeSelector,
 	saveSignupStep: saveSignupStepFromProps,
 	submitSignupStep: submitSignupStepFromProps,
 	customerType: customerTypeFromProps,
@@ -270,7 +272,15 @@ function UnifiedPlansStep( {
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
 		[]
 	);
-	const toggleHelpCenter = () => setShowHelpCenter( ! isHelpCenterShown );
+	const toggleHelpCenter = () => {
+		if ( ! isHelpCenterShown ) {
+			recordTracksEvent( 'calypso_onboarding_help_center_click', {
+				flow: flowName,
+				step: 'plans',
+			} );
+		}
+		setShowHelpCenter( ! isHelpCenterShown );
+	};
 	const stepCounter = useOnboardingStepCounter( flowName, 'plans' );
 	const showProgress = useShowOnboardingProgress( isOnboardingFlow( flowName ) );
 	const initializedSitesBackUrl = useSelector( ( state ) => {
@@ -671,6 +681,7 @@ function UnifiedPlansStep( {
 				hidePremiumPlan={ hidePremiumPlan }
 				hideEcommercePlan={ shouldHideEcommercePlan() }
 				hideEnterprisePlan={ hideEnterprisePlan }
+				hidePlanTypeSelector={ hidePlanTypeSelector }
 				removePaidDomain={ handleRemovePaidDomain }
 				setSiteUrlAsFreeDomainSuggestion={ handleSetSiteUrlAsFreeDomainSuggestion }
 				coupon={ coupon ?? undefined }

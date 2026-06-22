@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { formatNumber } from '@automattic/number-formatters';
 import { localize } from 'i18n-calypso';
-import { find, includes } from 'lodash';
+import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -80,7 +80,7 @@ class AnnualSiteStats extends Component {
 	formatTableValue( key, value ) {
 		const singleDecimal = [ 'avg_comments', 'avg_likes' ];
 
-		if ( includes( singleDecimal, key ) ) {
+		if ( singleDecimal.includes( key ) ) {
 			return formatNumber( value, { decimals: 1 } );
 		}
 		if ( 'year' === key ) {

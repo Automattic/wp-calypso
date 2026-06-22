@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 /**
  * Returns true if the modified properties in the local edit of the `discussion` object (the edited
  * properties are a subset of the full object) are equal to the values in the saved post.
@@ -9,6 +7,6 @@ import { get } from 'lodash';
  */
 export function isDiscussionEqual( localDiscussionEdits, savedDiscussion ) {
 	return Object.entries( localDiscussionEdits ).every(
-		( [ key, value ] ) => get( savedDiscussion, [ key ] ) === value
+		( [ key, value ] ) => savedDiscussion?.[ key ] === value
 	);
 }

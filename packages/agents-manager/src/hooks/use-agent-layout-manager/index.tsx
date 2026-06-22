@@ -107,7 +107,6 @@ export default function useAgentLayoutManager( {
 	isSplitScreen = false,
 }: Options = {} ): ReturnValue {
 	const portalRef = useRef< HTMLDivElement >();
-	const wasOpenRef = useRef( defaultOpen );
 	const [ isPortalReady, setIsPortalReady ] = useState( false );
 	const [ isDocked, setIsDocked ] = useState< boolean | null >( null );
 	const { canDock, calculateAdminMenuHeight } = useCanDock( { desktopMediaQuery } );
@@ -182,12 +181,15 @@ export default function useAgentLayoutManager( {
 			portalRef.current.classList.add( 'agents-manager-chat--docked' );
 			portalRef.current.classList.remove( 'agents-manager-chat--undocked' );
 
-			if ( wasOpenRef.current ) {
+			if ( defaultOpenRef.current ) {
 				container.classList.add( 'agents-manager-sidebar-container--sidebar-open' );
 			}
 
 			onDockRef.current();
 		} else {
+			// Cancel the sidebar-open `dock()` scheduled — its closure captured
+			// `canDock` as true, so it would otherwise open the just-undocked sidebar.
+			clearTimeout( openSidebarTimeoutRef.current );
 			clearTimeout( closeSidebarTimeoutRef.current );
 			container.classList.remove(
 				'agents-manager-sidebar-container',
@@ -241,7 +243,6 @@ export default function useAgentLayoutManager( {
 			return;
 		}
 
-		wasOpenRef.current = true;
 		clearTimeout( closeSidebarTimeoutRef.current );
 		container.classList.remove( 'agents-manager-sidebar-container--closing' );
 		container.classList.add( 'agents-manager-sidebar-container--sidebar-open' );
@@ -258,7 +259,6 @@ export default function useAgentLayoutManager( {
 			'agents-manager-sidebar-container--sidebar-open'
 		);
 
-		wasOpenRef.current = false;
 		container.classList.remove( 'agents-manager-sidebar-container--sidebar-open' );
 
 		// Only suppress admin bar pointer events during an actual sidebar-close transition.

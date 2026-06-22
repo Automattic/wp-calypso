@@ -174,7 +174,7 @@ function useGenerateActionCallback( {
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 	flowName?: string | null;
 	intent?: PlansIntent | null;
-	showModalAndExit?: ( planSlug: PlanSlug ) => boolean;
+	showModalAndExit?: ( planSlug: PlanSlug ) => boolean | Promise< boolean >;
 	sitePlanSlug?: PlanSlug | null;
 	siteId?: number | null;
 	coupon?: string;
@@ -212,7 +212,7 @@ function useGenerateActionCallback( {
 			const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
 			const freeTrialPlanSlug = freeTrialPlanSlugs?.[ planConstantObj.type ];
 
-			const earlyReturn = showModalAndExit?.( planSlug );
+			const earlyReturn = await showModalAndExit?.( planSlug );
 			if ( earlyReturn ) {
 				return;
 			}

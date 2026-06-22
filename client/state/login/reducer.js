@@ -1,5 +1,6 @@
+import { pick } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
-import { get, isEmpty, pick } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import {

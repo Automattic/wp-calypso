@@ -1,6 +1,18 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.domain-search--top-bar-divider {
+	inline-size: 1px;
+	block-size: 1.25rem;
+	background-color: var( --color-border-subtle );
+
+	// Drop the help button's leading padding so the gap from the divider to the
+	// help icon matches the gap from "Use a domain I own" to the divider.
+	+ .components-button.components-button {
+		padding-inline-start: 0;
+	}
+}
+
 .domain-search--step-container {
 	--domain-search-content-max-width: 1040px;
 	--domain-search-mini-cart-inline-padding: 16px;

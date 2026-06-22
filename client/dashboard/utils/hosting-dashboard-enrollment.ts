@@ -59,7 +59,5 @@ export function isOptInToggleVisible(
 		return false;
 	}
 
-	// Only users created before 22 December 2025 can manually opt in or out.
-	const oldestEligibleUser: number = config( 'dashboard_opt_in_oldest_eligible_user' );
-	return userId !== undefined && userId <= oldestEligibleUser;
+	return true;
 }

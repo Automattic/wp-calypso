@@ -41,9 +41,19 @@ export const BundleCard = ( {
 		);
 	}
 
-	const { sld, domains, bundle_price, original_price, discount_percent } = suggestion;
+	const {
+		sld,
+		domains,
+		bundle_price,
+		bundle_cost,
+		original_price,
+		original_cost,
+		discount_percent,
+	} = suggestion;
 
 	const hasPremiumDomain = domains.some( ( domain ) => domain.is_premium );
+	const displayBundlePrice = bundle_cost ?? bundle_price;
+	const displayOriginalPrice = original_cost ?? original_price;
 
 	return (
 		<div className="bundle-card">
@@ -71,10 +81,10 @@ export const BundleCard = ( {
 				<div className="bundle-card__pricing">
 					<HStack alignment="center" justify="flex-start" spacing={ 2 } expanded={ false }>
 						<Text size={ 20 } weight={ 500 } className="bundle-card__bundle-price">
-							{ bundle_price }
+							{ displayBundlePrice }
 						</Text>
 						<Text className="bundle-card__original-price">
-							<s>{ original_price }</s>
+							<s>{ displayOriginalPrice }</s>
 						</Text>
 					</HStack>
 					<Text className="bundle-card__discount">

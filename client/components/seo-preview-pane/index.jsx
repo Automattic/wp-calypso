@@ -29,7 +29,7 @@ import './style.scss';
 const PREVIEW_IMAGE_WIDTH = 512;
 
 const largeBlavatar = ( site ) => {
-	const siteIcon = get( site, 'icon.img' );
+	const siteIcon = site?.icon?.img;
 	if ( ! siteIcon ) {
 		return null;
 	}
@@ -86,10 +86,7 @@ const getSeoExcerptForSite = ( site ) => {
 	}
 
 	return formatExcerpt(
-		find(
-			[ get( site, 'options.advanced_seo_front_page_description' ), site.description ],
-			Boolean
-		)
+		find( [ site.options?.advanced_seo_front_page_description, site.description ], Boolean )
 	);
 };
 

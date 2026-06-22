@@ -69,7 +69,7 @@ export const useWPCOMDomainSearchProps = ( {
 		[ dispatch, analyticsSection, externalOnContinue ]
 	);
 
-	const { cart, isNextDomainFree, onContinue } = useWPCOMDomainSearchCart( {
+	const { cart, isNextDomainFree, freeDomainName, onContinue } = useWPCOMDomainSearchCart( {
 		cartKey: getCartKey( { isLoggedIn, currentSiteId } ),
 		flowName,
 		isFirstDomainFreeForFirstYear,
@@ -94,9 +94,12 @@ export const useWPCOMDomainSearchProps = ( {
 			priceRules: {
 				...externalConfig?.priceRules,
 				freeForFirstYear: isNextDomainFree,
+				// Keep the already-added free domain showing as $0 in the suggestion list,
+				// matching what the user saw when they clicked and what appears in their cart.
+				freeForFirstYearDomains: freeDomainName ? [ freeDomainName ] : undefined,
 			},
 		};
-	}, [ externalConfig, isNextDomainFree, flowName ] );
+	}, [ externalConfig, isNextDomainFree, freeDomainName, flowName ] );
 
 	const analyticsEvents = useWPCOMDomainSearchEvents( {
 		vendor: config.vendor,

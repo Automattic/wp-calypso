@@ -14,22 +14,27 @@ import {
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
 import express from 'express';
-import { get, includes } from 'lodash';
+import { get } from 'lodash';
 import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import { getDashboardFromHostname, isAllowedDashboardRoute } from 'calypso/dashboard/app/routing';
 import { isAllowedA4ADashboardHostname } from 'calypso/dashboard/app-a4a/routing';
-import { A4A_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-a4a/section';
-import { isAllowedCiabDashboardHostname } from 'calypso/dashboard/app-ciab/routing';
-import { CIAB_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-ciab/section';
-import { isAllowedDotcomDashboardHostname } from 'calypso/dashboard/app-dotcom/routing';
-import { DOTCOM_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-dotcom/section';
 import {
-	A4A_DASHBOARD_EXTRA_PATHS,
-	A4A_SIGNUP_PATHS,
-	DASHBOARD_SECTION_PATHS,
-} from 'calypso/dashboard/section';
+	A4A_DASHBOARD_SECTION_DEFINITION,
+	A4A_DASHBOARD_SECTION_PATHS,
+} from 'calypso/dashboard/app-a4a/section';
+import { isAllowedCiabDashboardHostname } from 'calypso/dashboard/app-ciab/routing';
+import {
+	CIAB_DASHBOARD_SECTION_DEFINITION,
+	CIAB_DASHBOARD_SECTION_PATHS,
+} from 'calypso/dashboard/app-ciab/section';
+import { isAllowedDotcomDashboardHostname } from 'calypso/dashboard/app-dotcom/routing';
+import {
+	DOTCOM_DASHBOARD_SECTION_DEFINITION,
+	DOTCOM_DASHBOARD_SECTION_PATHS,
+} from 'calypso/dashboard/app-dotcom/section';
+import { A4A_SIGNUP_PATHS } from 'calypso/dashboard/section';
 import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
@@ -306,6 +311,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	context.app = {
 		// use ipv4 address when is ipv4 mapped address
 		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
+		isFirefox: request.useragent.browser === 'Firefox',
 		isWpMobileApp: isWpMobileApp( request.useragent.source ),
 		isWcMobileApp: isWcMobileApp( request.useragent.source ),
 		isDevelopmentEnv: devEnvironments.includes( calypsoEnv ),
@@ -1083,7 +1089,9 @@ function wpcomPages( app ) {
 				const activeFlags = get( data, 'meta.data.flags.active_flags', [] );
 
 				// A8C check
-				if ( ! includes( activeFlags, 'calypso_support_user' ) ) {
+				if (
+					! ( Array.isArray( activeFlags ) && activeFlags.includes( 'calypso_support_user' ) )
+				) {
 					return res.send( renderJsx( 'support-user' ) );
 				}
 
@@ -1238,7 +1246,7 @@ export default function pages() {
 		handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper', ( req ) =>
 			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
 		);
-		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
+		DOTCOM_DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
 			handleSectionPath(
 				DOTCOM_DASHBOARD_SECTION_DEFINITION,
 				route,
@@ -1247,7 +1255,7 @@ export default function pages() {
 				loadDashboardLocaleData
 			);
 		} );
-		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
+		CIAB_DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
 			handleSectionPath(
 				CIAB_DASHBOARD_SECTION_DEFINITION,
 				route,
@@ -1256,13 +1264,6 @@ export default function pages() {
 				loadDashboardLocaleData
 			);
 		} );
-		handleSectionPath(
-			CIAB_DASHBOARD_SECTION_DEFINITION,
-			'/start-store',
-			'entry-dashboard-ciab',
-			( req ) => isAllowedCiabDashboardHostname( req.hostname ),
-			loadDashboardLocaleData
-		);
 	}
 
 	// Multi-site Dashboard (A4A) routing.
@@ -1275,12 +1276,7 @@ export default function pages() {
 				isAllowedA4ADashboardHostname( req.hostname )
 			);
 		} );
-		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
-			handleSectionPath( A4A_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-a4a', ( req ) =>
-				isAllowedA4ADashboardHostname( req.hostname )
-			);
-		} );
-		A4A_DASHBOARD_EXTRA_PATHS.forEach( ( route ) => {
+		A4A_DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
 			handleSectionPath( A4A_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-a4a', ( req ) =>
 				isAllowedA4ADashboardHostname( req.hostname )
 			);

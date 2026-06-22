@@ -1,18 +1,10 @@
 import { FormLabel } from '@automattic/components';
 import { AutoSizer, List } from '@automattic/react-virtualized';
+import { debounce } from '@wordpress/compose';
 import clsx from 'clsx';
+import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import {
-	debounce,
-	difference,
-	filter,
-	includes,
-	isEqual,
-	map,
-	memoize,
-	range,
-	reduce,
-} from 'lodash';
+import { filter, map, memoize, range, reduce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -86,7 +78,7 @@ class TermTreeSelectorList extends Component {
 
 		this.termIds = map( this.props.terms, 'ID' );
 		this.getTermChildren = memoize( this.getTermChildren );
-		this.queueRecomputeRowHeights = debounce( this.recomputeRowHeights );
+		this.queueRecomputeRowHeights = debounce( this.recomputeRowHeights, 0 );
 		this.debouncedSearch = debounce( () => {
 			this.props.onSearch( this.state.searchTerm );
 		}, SEARCH_DEBOUNCE_TIME_MS );
@@ -136,13 +128,10 @@ class TermTreeSelectorList extends Component {
 
 	setRequestedPages = ( { startIndex, stopIndex } ) => {
 		const { requestedPages } = this.state;
-		const pagesToRequest = difference(
-			range(
-				this.getPageForIndex( startIndex - LOAD_OFFSET ),
-				this.getPageForIndex( stopIndex + LOAD_OFFSET ) + 1
-			),
-			requestedPages
-		);
+		const pagesToRequest = range(
+			this.getPageForIndex( startIndex - LOAD_OFFSET ),
+			this.getPageForIndex( stopIndex + LOAD_OFFSET ) + 1
+		).filter( ( page ) => ! requestedPages.includes( page ) );
 
 		if ( ! pagesToRequest.length ) {
 			return;
@@ -214,7 +203,7 @@ class TermTreeSelectorList extends Component {
 		}
 
 		// if item has a parent, and parent is in payload, height is already part of parent
-		if ( item.parent && ! _recurse && includes( this.termIds, item.parent ) ) {
+		if ( item.parent && ! _recurse && this.termIds.includes( item.parent ) ) {
 			return 0;
 		}
 
@@ -285,7 +274,7 @@ class TermTreeSelectorList extends Component {
 
 	renderItem = ( item, _recurse = false ) => {
 		// if item has a parent and it is in current props.terms, do not render
-		if ( item.parent && ! _recurse && includes( this.termIds, item.parent ) ) {
+		if ( item.parent && ! _recurse && this.termIds.includes( item.parent ) ) {
 			return;
 		}
 
@@ -303,7 +292,7 @@ class TermTreeSelectorList extends Component {
 		const itemId = item.ID;
 		const isPodcastingCategory = taxonomy === 'category' && podcastingCategoryId === itemId;
 		const name = decodeEntities( item.name ) || translate( 'Untitled' );
-		const checked = includes( selected, itemId );
+		const checked = selected.includes( itemId );
 		const InputComponent = multiple ? FormCheckbox : FormRadio;
 		const disabled =
 			multiple && checked && defaultTermId && 1 === selected.length && defaultTermId === itemId;

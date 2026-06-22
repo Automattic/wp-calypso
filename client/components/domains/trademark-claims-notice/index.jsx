@@ -1,7 +1,7 @@
 import { Button, CompactCard } from '@automattic/components';
 import { TRADE_MARK_CLAIMS_MODAL_COPY } from '@automattic/domain-search';
 import { localize } from 'i18n-calypso';
-import { defer, get, isEmpty } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -133,7 +133,7 @@ class TrademarkClaimsNotice extends Component {
 		const { domain } = this.props;
 		this.setState( { showFullNotice: true } );
 		window.addEventListener( 'scroll', this.handleScroll );
-		defer( this.checkWindowIsScrollable );
+		setTimeout( this.checkWindowIsScrollable, 0 );
 		this.props.recordShowTrademarkNoticeButtonClickInTrademarkNotice( domain );
 	};
 

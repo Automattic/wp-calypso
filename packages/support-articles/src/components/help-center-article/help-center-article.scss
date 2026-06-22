@@ -38,6 +38,7 @@
 				svg.gridicons-external {
 					top: 3px;
 					fill: currentColor;
+					opacity: 0.6;
 				}
 			}
 
@@ -45,6 +46,7 @@
 				font-size: 1.75rem;
 				font-weight: 600;
 				line-height: 1.2;
+				margin-top: 0;
 			}
 		}
 
@@ -535,6 +537,17 @@
 				}
 			}
 
+			&.help-center-article-content__main--with-lesson-navigation {
+				// Course lesson videos span the full width of the Help Center,
+				// bleeding past the article's horizontal padding.
+				.wp-block-embed.is-type-video {
+					margin-left: -16px;
+					margin-right: -16px;
+					max-width: none;
+					width: calc( 100% + 32px );
+				}
+			}
+
 			.wp-block-wpsupport3-update-plan-cta {
 				.container .card {
 					margin-top: 16px;
@@ -652,45 +665,26 @@
 
 	.help-center-article-lesson-navigation {
 		display: flex;
+		justify-content: space-between;
 		gap: 16px;
 		margin-top: 24px;
 		padding-top: 24px;
 		border-top: 1px solid var( --color-neutral-10 );
 
 		&__link {
-			display: flex;
-			flex-direction: column;
-			gap: 4px;
+			font-size: $font-body;
+			font-weight: 500;
+			color: var( --studio-gray-80 );
 			text-decoration: none;
-			flex: 1;
 
 			&:hover {
-				text-decoration: none;
-
-				.help-center-article-lesson-navigation__title {
-					text-decoration: underline;
-				}
-			}
-
-			&--previous {
-				align-items: flex-start;
+				text-decoration: underline;
 			}
 
 			&--next {
-				align-items: flex-end;
+				margin-left: auto;
 				text-align: right;
 			}
-		}
-
-		&__label {
-			font-size: $font-body-small;
-			color: var( --color-neutral-50 );
-		}
-
-		&__title {
-			font-size: $font-body;
-			font-weight: 500;
-			color: var( --color-text );
 		}
 	}
 }

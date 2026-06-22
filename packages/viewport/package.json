@@ -37,9 +37,6 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"dependencies": {
-		"lodash": "^4.17.21"
-	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"react": "^18.3.1",

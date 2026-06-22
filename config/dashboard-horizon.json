@@ -27,6 +27,7 @@
 		"dark-mode": true,
 		"dashboard/enable-percentage-rollout": false,
 		"dashboard/omnibar": true,
+		"dashboard/opt-in-welcome-modal": false,
 		"dashboard/plans": true,
 		"dashboard/wp-beta-program": true,
 		"dev/auth-helper": true,

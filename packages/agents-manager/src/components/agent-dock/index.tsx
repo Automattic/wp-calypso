@@ -19,6 +19,7 @@ import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { persistLastActivity } from '../../utils/persist-last-activity';
+import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import OrchestratorChat from '../orchestrator-chat';
@@ -76,7 +77,7 @@ export default function AgentDock( {
 	useCheckpoint,
 	capabilities,
 }: Props ) {
-	const { siteKey, sectionName, agentConfig, resumeActiveChat } = useAgentsManagerContext();
+	const { siteKey, agentConfig } = useAgentsManagerContext();
 
 	const [ isCompactMode, setIsCompactMode ] = useState(
 		window.__agentsManagerActions?.isCompactMode ?? false
@@ -91,10 +92,10 @@ export default function AgentDock( {
 	const { setIsOpen, setIsDocked, setIsMinimized, setIsSplitScreen } =
 		useDispatch( AGENTS_MANAGER_STORE );
 	const {
-		isOpen: isPersistedOpen = false,
-		isDocked: isPersistedDocked = false,
-		isMinimized = false,
-		isSplitScreen = false,
+		isOpen: isPersistedOpen,
+		isDocked: isPersistedDocked,
+		isMinimized,
+		isSplitScreen,
 	} = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
@@ -123,15 +124,37 @@ export default function AgentDock( {
 			desktopMediaQuery,
 			// Only open the sidebar; keep the current route. Admin-bar items
 			// set their own route (e.g. history) before opening it.
-			onOpenSidebar: () => setOpenState( true ),
-			onCloseSidebar: () => setOpenState( false ),
+			onOpenSidebar: () => {
+				recordBigSkyTracksEvent( 'sidebar_open_click' );
+				setOpenState( true );
+			},
+			onCloseSidebar: () => {
+				recordBigSkyTracksEvent( 'sidebar_close_click' );
+				setOpenState( false );
+			},
+			onDock: () => {
+				recordBigSkyTracksEvent( 'ai_chat_docked' );
+			},
+			onUndock: () => {
+				recordBigSkyTracksEvent( 'ai_chat_undocked' );
+			},
 			isSplitScreen,
 		} );
 
+	// Docked close fires `sidebar_close_click` (via `onCloseSidebar`); undocked
+	// close fires `dock_back_button_click`. Matches Big Sky.
+	const handleClose = () => {
+		if ( isDocked ) {
+			closeSidebar();
+		} else {
+			recordBigSkyTracksEvent( 'dock_back_button_click' );
+			setOpenState( false );
+		}
+	};
+
 	// WP admin bar integration. Returns whether the AI chat entry button is present.
 	const hasAiChatEntry = useAdminBarIntegration( {
-		isOpen: isPersistedOpen,
-		sectionName,
+		closeChat: handleClose,
 		// Open/un-minimize the chat panel, leaving the route unchanged.
 		maybeOpenChat: () => {
 			if ( isMinimized ) {
@@ -189,9 +212,8 @@ export default function AgentDock( {
 		[]
 	);
 
-	const handleClose = isDocked ? closeSidebar : () => setOpenState( false );
-
 	const handleExpand = () => {
+		recordBigSkyTracksEvent( 'dock_assistant_icon_click' );
 		if ( isMinimized ) {
 			setIsMinimized( false );
 		}
@@ -199,12 +221,6 @@ export default function AgentDock( {
 		// from the minimized bar).
 		if ( ! isPersistedOpen ) {
 			setOpenState( true );
-		}
-
-		// Return to the active chat, resuming its session — unless already on the
-		// `/chat` or `/zendesk` view.
-		if ( pathname !== '/chat' && pathname !== '/zendesk' ) {
-			resumeActiveChat();
 		}
 	};
 
@@ -229,7 +245,12 @@ export default function AgentDock( {
 				icon: comment,
 				title: __( 'New chat', '__i18n_text_domain__' ),
 				isDisabled: pathname === '/chat' && isOrchestratorChatEmpty,
-				onClick: () => navigate( '/' ),
+				onClick: () => {
+					recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
+						type: 'reset_chat',
+					} );
+					navigate( '/' );
+				},
 			},
 			// Sidebar docking only makes sense in wp-admin where a block-editor
 			// sidebar slot exists. On public reader-chat frontends there's no
@@ -239,6 +260,9 @@ export default function AgentDock( {
 					icon: login,
 					title: __( 'Pop out sidebar', '__i18n_text_domain__' ),
 					onClick: () => {
+						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
+							type: 'undock',
+						} );
 						undock();
 						setIsDocked( false );
 					},
@@ -249,6 +273,9 @@ export default function AgentDock( {
 					icon: drawerRight,
 					title: __( 'Move to sidebar', '__i18n_text_domain__' ),
 					onClick: () => {
+						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
+							type: 'dock',
+						} );
 						dock();
 						setIsDocked( true );
 					},

@@ -60,6 +60,7 @@
 		"qs": "^6.15.2"
 	},
 	"devDependencies": {
+		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@storybook/addon-a11y": "^9.1.20",

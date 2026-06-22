@@ -128,6 +128,7 @@ export default function SupportGuides( {
 
 	// Without the AI chat entry button, use `collapsed` (a FAB) instead of `minimized`.
 	const closedChatState = hasAiChatEntryButton() ? 'minimized' : 'collapsed';
+	const title = __( 'Support Guides', '__i18n_text_domain__' );
 
 	return (
 		<AgentUI.Container
@@ -140,6 +141,7 @@ export default function SupportGuides( {
 			onSubmit={ () => {} }
 			variant={ isDocked ? 'embedded' : 'floating' }
 			floatingChatState={ isOpen ? 'expanded' : closedChatState }
+			triggerTitle={ title }
 			onClose={ onClose }
 			onExpand={ onExpand }
 			onStop={ onAbort }
@@ -149,7 +151,8 @@ export default function SupportGuides( {
 				<ChatHeader
 					onClose={ onClose }
 					options={ chatHeaderOptions }
-					title={ __( 'Support Guides', '__i18n_text_domain__' ) }
+					title={ title }
+					isDocked={ isDocked }
 				/>
 				<VStack
 					className="agent-manager-support-guides-wrapper"
