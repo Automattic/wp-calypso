@@ -64,6 +64,74 @@ ruleTester.run( 'e2e-require-account-teardown', rule, {
 				afterAll( () => apiCloseAccount( client, { userID: u.id } ) );
 			`,
 		},
+		// Awaited inside a for-of loop in the afterAll callback's own body (the
+		// shape invite__new-user.spec.ts uses): consumed, so it counts.
+		{
+			code: `
+				const u = getNewTestUser();
+				test( 't', async () => {
+					await pageUserSignUp.signupThroughInvite( u.email );
+				} );
+				afterAll( async () => {
+					for ( const a of accounts ) {
+						await apiCloseAccount( client, { userID: a.id } );
+					}
+				} );
+			`,
+		},
+		// Awaited array literal: each close is a direct argument (no nested
+		// function), so Promise.all gates the callback on all of them.
+		{
+			code: `
+				const u = getNewTestUser();
+				test( 't', async () => {
+					await pageUserSignUp.signupThroughInvite( u.email );
+				} );
+				afterAll( async () => {
+					await Promise.all( [
+						apiCloseAccount( client, { userID: a.id } ),
+						apiCloseAccount( client, { userID: b.id } ),
+					] );
+				} );
+			`,
+		},
+		// `return apiCloseAccount(...)` from a block body (not concise): the runner
+		// awaits the returned promise, so it counts.
+		{
+			code: `
+				const u = getNewTestUser();
+				test( 't', async () => {
+					await pageUserSignUp.signupThroughInvite( u.email );
+				} );
+				afterAll( () => {
+					return apiCloseAccount( client, { userID: u.id } );
+				} );
+			`,
+		},
+		// Member-form afterAll with a concise body: test.afterAll( () => apiCloseAccount(...) ).
+		{
+			code: `
+				const u = getNewTestUser();
+				test( 't', async () => {
+					await pageUserSignUp.signupThroughInvite( u.email );
+				} );
+				test.afterAll( () => apiCloseAccount( client, { userID: u.id } ) );
+			`,
+		},
+		// Concise body returning Promise.all of an array of direct close calls: the
+		// runner awaits the returned promise and Promise.all awaits each element.
+		{
+			code: `
+				const u = getNewTestUser();
+				test( 't', async () => {
+					await pageUserSignUp.signupThroughInvite( u.email );
+				} );
+				afterAll( () => Promise.all( [
+					apiCloseAccount( client, { userID: a.id } ),
+					apiCloseAccount( client, { userID: b.id } ),
+				] ) );
+			`,
+		},
 		// getNewTestUser but NO signup helper (the invite__revoke shape): not a leak.
 		{
 			code: `
@@ -147,6 +215,160 @@ ruleTester.run( 'e2e-require-account-teardown', rule, {
 				} );
 				afterAll( () => {
 					[ u ].map( ( a ) => apiCloseAccount( client, { userID: a.id } ) );
+				} );
+			`,
+			errors: [ { messageId: 'missingTeardown' } ],
+		},
+		// `await` INSIDE a discarded `.map()` callback: each promise is awaited in
+		// its own inner function, but the afterAll callback never awaits the array
+		// of promises the map returns, so they race teardown. Must NOT count.
+		{
+			code: `
+				const u = getNewTestUser();
+				test( 't', async () => {
+					await pageUserSignUp.signupThroughInvite( u.email );
+				} );
+				afterAll( async () => {
+					accounts.map( async ( a ) => await apiCloseAccount( client, { userID: a.id } ) );
+				} );
+			`,
+			errors: [ { messageId: 'missingTeardown' } ],
+		},
+		// `return accounts.map( ... )` returns an array of promises, not a single
+		// promise the runner awaits element-wise (no Promise.all), so the closes
+		// float. Must NOT count.
+		{
+			code: `
+				const u = getNewTestUser();
+				test( 't', async () => {
+					await pageUserSignUp.signupThroughInvite( u.email );
+				} );
+				afterAll( () => accounts.map( ( a ) => apiCloseAccount( client, { userID: a.id } ) ) );
+			`,
+			errors: [ { messageId: 'missingTeardown' } ],
+		},
+		// Known limitation: `await Promise.all( accounts.map( ( a ) => apiCloseAccount(
+		// a ) ) )` is technically correct teardown, but the close sits in a nested
+		// `.map()` callback so the rule cannot tell it from a dropped map and flags
+		// it. Use an awaited array literal or a for-of loop instead, or allow-list.
+		{
+			code: `
+				const u = getNewTestUser();
+				test( 't', async () => {
+					await pageUserSignUp.signupThroughInvite( u.email );
+				} );
+				afterAll( async () => {
+					await Promise.all( accounts.map( ( a ) => apiCloseAccount( client, { userID: a.id } ) ) );
+				} );
+			`,
+			errors: [ { messageId: 'missingTeardown' } ],
+		},
+		// afterEach (not afterAll) does not satisfy the rule: it intentionally
+		// targets a single suite-level afterAll teardown.
+		{
+			code: `
+				const u = getNewTestUser();
+				test( 't', async () => {
+					await pageUserSignUp.signupThroughInvite( u.email );
+				} );
+				afterEach( async () => {
+					await apiCloseAccount( client, { userID: u.id } );
+				} );
+			`,
+			errors: [ { messageId: 'missingTeardown' } ],
+		},
+		// `await [ apiCloseAccount(...) ]` awaits the array, not the element promise,
+		// which still floats. A bare array (no Promise.all) must NOT count.
+		{
+			code: `
+				const u = getNewTestUser();
+				test( 't', async () => {
+					await pageUserSignUp.signupThroughInvite( u.email );
+				} );
+				afterAll( async () => {
+					await [ apiCloseAccount( client, { userID: u.id } ) ];
+				} );
+			`,
+			errors: [ { messageId: 'missingTeardown' } ],
+		},
+		// `return [ apiCloseAccount(...) ]` returns an array of promises, not a
+		// thenable the runner awaits element-wise. Must NOT count.
+		{
+			code: `
+				const u = getNewTestUser();
+				test( 't', async () => {
+					await pageUserSignUp.signupThroughInvite( u.email );
+				} );
+				afterAll( () => [ apiCloseAccount( client, { userID: u.id } ) ] );
+			`,
+			errors: [ { messageId: 'missingTeardown' } ],
+		},
+		// `void apiCloseAccount(...)` evaluates the close but yields undefined, so the
+		// awaited value is not the close promise: it floats. Must NOT count.
+		{
+			code: `
+				const u = getNewTestUser();
+				test( 't', async () => {
+					await pageUserSignUp.signupThroughInvite( u.email );
+				} );
+				afterAll( async () => {
+					await void apiCloseAccount( client, { userID: u.id } );
+				} );
+			`,
+			errors: [ { messageId: 'missingTeardown' } ],
+		},
+		// Sequence expression: `( apiCloseAccount(...), other() )` returns the LAST
+		// operand, so the close promise floats. Must NOT count.
+		{
+			code: `
+				const u = getNewTestUser();
+				test( 't', async () => {
+					await pageUserSignUp.signupThroughInvite( u.email );
+				} );
+				afterAll( async () => {
+					await ( apiCloseAccount( client, { userID: u.id } ), Promise.resolve() );
+				} );
+			`,
+			errors: [ { messageId: 'missingTeardown' } ],
+		},
+		// Logical expression: `apiCloseAccount(...) && other()` returns `other()`
+		// (the close promise is truthy), so the close floats. Must NOT count.
+		{
+			code: `
+				const u = getNewTestUser();
+				test( 't', async () => {
+					await pageUserSignUp.signupThroughInvite( u.email );
+				} );
+				afterAll( async () => {
+					await ( apiCloseAccount( client, { userID: u.id } ) && Promise.resolve() );
+				} );
+			`,
+			errors: [ { messageId: 'missingTeardown' } ],
+		},
+		// Conditional with the close as the test: the truthy promise selects a
+		// branch and the close itself floats. Must NOT count.
+		{
+			code: `
+				const u = getNewTestUser();
+				test( 't', async () => {
+					await pageUserSignUp.signupThroughInvite( u.email );
+				} );
+				afterAll( async () => {
+					await ( apiCloseAccount( client, { userID: u.id } ) ? a : b );
+				} );
+			`,
+			errors: [ { messageId: 'missingTeardown' } ],
+		},
+		// Wrapped in an arbitrary call: `wrapper( apiCloseAccount(...) )` awaits the
+		// wrapper's result, not the close promise, which may be discarded. Must NOT count.
+		{
+			code: `
+				const u = getNewTestUser();
+				test( 't', async () => {
+					await pageUserSignUp.signupThroughInvite( u.email );
+				} );
+				afterAll( async () => {
+					await wrapper( apiCloseAccount( client, { userID: u.id } ) );
 				} );
 			`,
 			errors: [ { messageId: 'missingTeardown' } ],

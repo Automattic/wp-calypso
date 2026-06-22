@@ -80,48 +80,137 @@ function isApiCloseAccount( callee ) {
 }
 
 /**
- * Whether `node` is the concise body of an arrow that is itself the `afterAll`
- * callback, e.g. `afterAll( () => apiCloseAccount( ... ) )`. The runner awaits
- * the promise the callback returns, so this is a real teardown. A concise body
- * nested deeper (e.g. a discarded `accounts.map( a => apiCloseAccount( a ) )`)
- * is NOT awaited and must not qualify.
- * @param {import('estree').Node} node The apiCloseAccount CallExpression.
- * @returns {boolean} True if the call is the returned body of the afterAll callback.
+ * Whether a node introduces a function scope.
+ * @param {import('estree').Node} node Candidate node.
+ * @returns {boolean} True for function/arrow nodes.
  */
-function isReturnedFromAfterAllCallback( node ) {
-	const arrow = node.parent;
-	if ( ! arrow || arrow.type !== 'ArrowFunctionExpression' || arrow.body !== node ) {
-		return false;
-	}
-	const call = arrow.parent;
-	return Boolean(
-		call &&
-			call.type === 'CallExpression' &&
-			call.arguments.includes( arrow ) &&
-			isAfterAllCall( call )
+function isFunctionNode( node ) {
+	return (
+		node.type === 'FunctionExpression' ||
+		node.type === 'FunctionDeclaration' ||
+		node.type === 'ArrowFunctionExpression'
 	);
 }
 
 /**
- * Whether the `apiCloseAccount` call at `node` is actually consumed (awaited or
- * returned), not left floating. A floating call inside an `afterAll` races with
- * worker teardown and may never complete, so it does not count as teardown.
- * Accepts `await apiCloseAccount(...)` and `return apiCloseAccount(...)` (which
- * also covers `await Promise.all( accounts.map( ... ) )`), and the direct
- * `afterAll( () => apiCloseAccount(...) )` callback body.
- * @param {import('estree').Node} node The apiCloseAccount CallExpression.
+ * The function passed directly as the callback of the innermost enclosing
+ * `afterAll(...)` / `test.afterAll(...)` call, or null when the node is not
+ * inside an afterAll callback.
  * @param {import('estree').Node[]} ancestors The node's ancestors, root-first.
- * @returns {boolean} True if the call is awaited or returned.
+ * @returns {import('estree').Node|null} The afterAll callback function node.
  */
-function isAwaitedOrReturned( node, ancestors ) {
-	if (
-		ancestors.some(
-			( ancestor ) => ancestor.type === 'AwaitExpression' || ancestor.type === 'ReturnStatement'
-		)
-	) {
+function afterAllCallback( ancestors ) {
+	for ( let i = ancestors.length - 1; i >= 0; i-- ) {
+		if ( ! isAfterAllCall( ancestors[ i ] ) ) {
+			continue;
+		}
+		const callback = ancestors[ i + 1 ];
+		if ( callback && isFunctionNode( callback ) && ancestors[ i ].arguments.includes( callback ) ) {
+			return callback;
+		}
+		return null;
+	}
+	return null;
+}
+
+/**
+ * The nearest enclosing function of a node, given its ancestors, or null.
+ * @param {import('estree').Node[]} ancestors The node's ancestors, root-first.
+ * @returns {import('estree').Node|null} The innermost function/arrow ancestor.
+ */
+function nearestFunction( ancestors ) {
+	for ( let i = ancestors.length - 1; i >= 0; i-- ) {
+		if ( isFunctionNode( ancestors[ i ] ) ) {
+			return ancestors[ i ];
+		}
+	}
+	return null;
+}
+
+/**
+ * Whether `array` (an ArrayExpression) is the argument of a `Promise.all(...)` or
+ * `Promise.allSettled(...)` call, i.e. its element promises are actually awaited
+ * together. A bare array (`await [ p ]`, `return [ p ]`) is a non-thenable that
+ * swallows its element promises, so it must not count as consuming them.
+ * @param {import('estree').Node} array The ArrayExpression node.
+ * @returns {boolean} True if the array is a Promise.all / Promise.allSettled argument.
+ */
+function isPromiseAllArgument( array ) {
+	const call = array.parent;
+	return Boolean(
+		call &&
+			call.type === 'CallExpression' &&
+			call.arguments.includes( array ) &&
+			call.callee.type === 'MemberExpression' &&
+			call.callee.object.type === 'Identifier' &&
+			call.callee.object.name === 'Promise' &&
+			call.callee.property.type === 'Identifier' &&
+			( call.callee.property.name === 'all' || call.callee.property.name === 'allSettled' )
+	);
+}
+
+/**
+ * Whether `node`'s promise is directly consumed, so awaiting/returning it gates
+ * the enclosing function. "Directly" is deliberately strict to avoid accepting a
+ * floated promise: only the operand of `await`/`return`, the concise arrow body
+ * itself, or an element of a `Promise.all`/`allSettled` array whose call is in
+ * turn directly consumed. Anything that merely *evaluates* the promise but
+ * yields a different value - `void p`, `( p, x )`, `p && x`, `p ? a : b`,
+ * `` tag`${ p }` ``, `wrapper( p )`, `p.then( … )` - does NOT consume it.
+ * @param {import('estree').Node} node The node whose promise must be consumed.
+ * @param {import('estree').Node} callback The afterAll callback function.
+ * @returns {boolean} True if the promise is awaited or returned.
+ */
+function isDirectlyConsumed( node, callback ) {
+	if ( node === callback.body ) {
+		// Concise arrow body: the runner awaits the implicitly returned promise.
 		return true;
 	}
-	return isReturnedFromAfterAllCallback( node );
+	const parent = node.parent;
+	if ( ! parent ) {
+		return false;
+	}
+	if ( parent.type === 'AwaitExpression' && parent.argument === node ) {
+		return true;
+	}
+	if ( parent.type === 'ReturnStatement' && parent.argument === node ) {
+		return true;
+	}
+	if ( parent.type === 'ArrayExpression' && isPromiseAllArgument( parent ) ) {
+		// Element of Promise.all/allSettled([...]): consumed iff the call itself is.
+		return isDirectlyConsumed( parent.parent, callback );
+	}
+	return false;
+}
+
+/**
+ * Whether the `apiCloseAccount` call at `node` is consumed (awaited or returned)
+ * in the afterAll callback's OWN body, so the callback's promise gates on it.
+ *
+ * The call must live directly in the callback body, not in a nested callback
+ * (e.g. a `.map()` callback the afterAll discards), and must be directly
+ * consumed (see {@link isDirectlyConsumed}). Supported: `await apiCloseAccount(
+ * ... )`, `return apiCloseAccount( ... )`, the concise body `() =>
+ * apiCloseAccount( ... )`, `() => Promise.all( [ ... ] )`, and an awaited/
+ * returned `Promise.all`/`allSettled` array. Known limitation: `Promise.all(
+ * accounts.map( ( a ) => apiCloseAccount( a ) ) )` (close in a nested callback)
+ * and method chains like `apiCloseAccount( … ).then( … )` are not recognized;
+ * use a for-of loop, an awaited array literal, or the allow list.
+ * @param {import('estree').Node} node The apiCloseAccount CallExpression.
+ * @param {import('estree').Node[]} ancestors The node's ancestors, root-first.
+ * @returns {boolean} True if the call is awaited or returned by the afterAll callback.
+ */
+function isConsumedByAfterAll( node, ancestors ) {
+	const callback = afterAllCallback( ancestors );
+	if ( ! callback ) {
+		return false;
+	}
+	// The close must be in the callback's own body, not a nested function whose
+	// result the callback discards.
+	if ( nearestFunction( ancestors ) !== callback ) {
+		return false;
+	}
+	return isDirectlyConsumed( node, callback );
 }
 
 /** @type {import('eslint').Rule.RuleModule} */
@@ -185,8 +274,7 @@ module.exports = {
 				}
 
 				if ( isApiCloseAccount( callee ) ) {
-					const ancestors = sourceCode.getAncestors( node );
-					if ( ancestors.some( isAfterAllCall ) && isAwaitedOrReturned( node, ancestors ) ) {
+					if ( isConsumedByAfterAll( node, sourceCode.getAncestors( node ) ) ) {
 						hasApprovedTeardown = true;
 					}
 				}
