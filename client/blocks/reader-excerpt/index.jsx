@@ -1,5 +1,5 @@
+import { escapeRegExp } from '@automattic/js-utils';
 import clsx from 'clsx';
-import { escapeRegExp } from 'lodash';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import AutoDirection from 'calypso/components/auto-direction';

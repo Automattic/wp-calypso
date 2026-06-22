@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { once } from 'lodash';
+import { once } from '@automattic/js-utils';
 import {
 	ROUTE_SET,
 	SELECTED_SITE_SET,

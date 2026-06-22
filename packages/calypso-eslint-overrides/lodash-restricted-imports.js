@@ -20,6 +20,9 @@ const JS_UTILS_NAMES = [
 	'groupBy',
 	'mapKeys',
 	'capitalize',
+	'escapeRegExp',
+	'once',
+	'isError',
 ];
 
 // The js-utils case converters cover ASCII identifiers/keys, not lodash's full

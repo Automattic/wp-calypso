@@ -1,7 +1,9 @@
 export { default as camelCase } from './camel-case';
 export { default as camelToSnakeCase } from './camel-to-snake-case';
 export { default as capitalize } from './capitalize';
+export { default as escapeRegExp } from './escape-reg-exp';
 export { default as groupBy } from './group-by';
+export { default as isError } from './is-error';
 export { default as kebabCase } from './kebab-case';
 export { default as keyBy } from './key-by';
 export { default as mapKeys } from './map-keys';
@@ -9,6 +11,7 @@ export { default as mapRecordKeysRecursively } from './map-record-keys-recursive
 export { default as mapValues } from './map-values';
 export { default as omit } from './omit';
 export { default as omitBy } from './omit-by';
+export { default as once } from './once';
 export { default as pick } from './pick';
 export { default as pickBy } from './pick-by';
 export { default as shuffle } from './shuffle';
