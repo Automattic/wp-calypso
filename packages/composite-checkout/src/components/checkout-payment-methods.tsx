@@ -255,7 +255,6 @@ function PaymentMethod( {
 			onChange={ onClick ? () => onClick( id ) : undefined }
 			ariaLabel={ ariaLabel }
 			label={ label }
-			hideRadioButton={ isSinglePaymentMethod }
 		>
 			{ activeContent && activeContent }
 		</RadioButton>
