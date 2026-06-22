@@ -38,6 +38,7 @@ import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { useSimplifiedOnboarding } from '../../../../hooks/use-simplified-onboarding';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../playground/lib/constants';
+import { EARLY_PROVISION_TARGET_WPCOM_ATOMIC, getEarlyCreatedSiteId } from './early-provisioning';
 import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './styles.scss';
@@ -47,7 +48,6 @@ const DEFAULT_ENTREPRENEUR_FLOW = 'pub/twentytwentytwo';
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 // Changing this? Consider also updating WRITE_INTENT_DEFAULT_DESIGN so the write *intent* matches the write flow
 const DEFAULT_START_WRITING_THEME = 'pub/poema';
-const EARLY_PROVISION_TARGET_WPCOM_ATOMIC = 'wpcom-atomic';
 
 type SiteProvisioningResponse = {
 	is_wpcom_atomic?: boolean;
@@ -269,32 +269,24 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		// Flow B: If early_created_site is absent, the regular createSiteWithCart path below handles creation.
 		const earlyCreatedSite = urlQueryParams.get( 'early_created_site' );
 		const earlyProvisionTarget = urlQueryParams.get( 'early_provision_target' );
-		if (
-			flow === AI_SITE_BUILDER_FLOW &&
-			earlyProvisionTarget === EARLY_PROVISION_TARGET_WPCOM_ATOMIC &&
-			! earlyCreatedSite
-		) {
-			throw new Error( 'Missing early_created_site for WPCOM Atomic early provisioning.' );
-		}
+		const earlyCreatedSiteId = getEarlyCreatedSiteId(
+			flow,
+			earlyCreatedSite,
+			earlyProvisionTarget
+		);
 
-		if ( flow === AI_SITE_BUILDER_FLOW && earlyCreatedSite ) {
-			const blogId = parseInt( earlyCreatedSite, 10 );
-
-			if ( isNaN( blogId ) ) {
-				throw new Error( 'Invalid early_created_site parameter.' );
-			}
-
+		if ( earlyCreatedSiteId ) {
 			if ( earlyProvisionTarget === EARLY_PROVISION_TARGET_WPCOM_ATOMIC ) {
-				await pollForAtomicProvisioning( blogId );
+				await pollForAtomicProvisioning( earlyCreatedSiteId );
 			} else if ( gardenName ) {
 				// Poll until the provisioning is considered complete.
 				// Skip the initial delay since the site may have been provisioning for minutes already.
-				await pollForGardenProvisioning( blogId, 22, 5000, 0 );
+				await pollForGardenProvisioning( earlyCreatedSiteId, 22, 5000, 0 );
 			}
 
 			return {
-				siteId: blogId,
-				siteSlug: String( blogId ),
+				siteId: earlyCreatedSiteId,
+				siteSlug: String( earlyCreatedSiteId ),
 				goToCheckout: false,
 				siteCreated: true,
 			};
