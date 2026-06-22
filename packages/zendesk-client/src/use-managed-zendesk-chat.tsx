@@ -19,7 +19,12 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import SmoochLibrary from 'smooch';
 import { AttachmentMessage } from './components/attachment-message';
 import { CSATForm } from './components/csat-form';
-import { SMOOCH_INTEGRATION_ID, SMOOCH_INTEGRATION_ID_STAGING } from './constants';
+import {
+	SMOOCH_INTEGRATION_ID,
+	SMOOCH_INTEGRATION_ID_STAGING,
+	ZENDESK_CUSTOM_FIELD_AI_CHAT_SESSION_ID,
+	ZENDESK_CUSTOM_FIELD_AI_MESSAGE_ID,
+} from './constants';
 import {
 	ConversationData,
 	ZendeskConversation,
@@ -174,6 +179,7 @@ export const useManagedZendeskChat = () => {
 	const { state } = useLocation();
 	const conversationId = state?.conversationId;
 	const startedFromChatId = state?.startedFromChatId;
+	const startedFromMessageId = state?.startedFromMessageId;
 	const [ conversation, setConversation ] = useState< ZendeskConversation | undefined >();
 	const [ typingStatus, setTypingStatus ] = useState< Record< string, boolean > >( {} );
 	const [ connectionStatus, setConnectionStatus ] = useState<
@@ -271,6 +277,9 @@ export const useManagedZendeskChat = () => {
 					createdAt: Date.now(),
 					started_from: 'chat',
 					chat_session_id: startedFromChatId,
+					message_id: startedFromMessageId,
+					[ `zen:ticket_field:${ ZENDESK_CUSTOM_FIELD_AI_MESSAGE_ID }` ]: startedFromMessageId,
+					[ `zen:ticket_field:${ ZENDESK_CUSTOM_FIELD_AI_CHAT_SESSION_ID }` ]: startedFromChatId,
 				},
 			} ).then( ( conversation ) => {
 				setConversation( conversation );

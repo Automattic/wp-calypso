@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import './style.scss';
 
-export function EscalationButton() {
+export function EscalationButton( { messageId }: { messageId: string } ) {
 	const { getActiveSessionId } = useAgentsManagerContext();
 	const navigate = useNavigate();
 
@@ -14,7 +14,9 @@ export function EscalationButton() {
 			title={ __( 'Switch to Happiness Engineer' ) }
 			description={ __( 'A new chat will start' ) }
 			onClick={ () => {
-				navigate( '/zendesk', { state: { startedFromChatId: getActiveSessionId() } } );
+				navigate( '/zendesk', {
+					state: { startedFromChatId: getActiveSessionId(), startedFromMessageId: messageId },
+				} );
 			} }
 		/>
 	);

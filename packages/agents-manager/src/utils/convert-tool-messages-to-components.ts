@@ -53,6 +53,9 @@ export default function convertToolMessagesToComponents( {
 					{
 						type: 'component',
 						component: EscalationButton,
+						componentProps: {
+							messageId: message.id,
+						},
 					},
 				],
 			};
