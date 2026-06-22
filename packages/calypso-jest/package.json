@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-jest",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Shared Calypso config for Jest.",
 	"keywords": [
 		"jest",

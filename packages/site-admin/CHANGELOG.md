@@ -1,3 +1,7 @@
+## 0.1.4
+
+- Declare React 19 compatibility for package consumers (#111721).
+
 ## 0.0.1
 
 Initial release of the site-admin package providing a framework for building modern WordPress admin interfaces.
