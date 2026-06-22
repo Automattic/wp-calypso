@@ -57,7 +57,7 @@ export default function PhoneNumberInput( {
 	};
 
 	return (
-		<HStack className="phone-number-input">
+		<HStack className="phone-number-input" spacing={ 4 }>
 			<div className="phone-number-input__country-code-input">
 				<Disabled isDisabled={ isDisabled }>
 					<ComboboxControl
