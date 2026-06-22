@@ -27,7 +27,6 @@ const allAdTrackers = [
 	'experian',
 	'iconMedia',
 	'linkedin',
-	'logrocket',
 	'criteo',
 	'pandora',
 	'quora',
@@ -39,7 +38,7 @@ const allAdTrackers = [
 	'openai',
 ] as const;
 
-const sessionAdTrackers = [ 'hotjar', 'logrocket' ];
+const sessionAdTrackers = [ 'hotjar' ];
 
 export type AdTracker = ( typeof allAdTrackers )[ number ];
 
@@ -61,7 +60,6 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	floodlight: Bucket.ADVERTISING,
 	googleAds: Bucket.ADVERTISING,
 	googleTagManager: Bucket.ADVERTISING,
-	logrocket: Bucket.ADVERTISING,
 	twitter: Bucket.ADVERTISING,
 	facebook: Bucket.ADVERTISING,
 	reddit: Bucket.ADVERTISING,
