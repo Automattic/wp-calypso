@@ -162,4 +162,22 @@ describe( 'RestAPIClient: deleteSite', function () {
 		expect( deleteScope.isDone() ).toBe( true );
 		expect( response?.status ).toBe( 'deleted' );
 	} );
+
+	test( 'matches ownership case-insensitively', async function () {
+		nock( allDomainsURL.origin )
+			.get( allDomainsURL.pathname )
+			.reply( 200, {
+				// `/all-domains/` casing differs from the caller-passed domain.
+				domains: [ { blog_id: targetSite.id, domain: 'E2EFlowTesting12345.WordPress.com' } ],
+			} );
+
+		const deleteScope = nock( deleteURL.origin )
+			.post( deleteURL.pathname )
+			.reply( 200, { status: 'deleted' } );
+
+		const response = await restAPIClient.deleteSite( targetSite );
+
+		expect( deleteScope.isDone() ).toBe( true );
+		expect( response?.status ).toBe( 'deleted' );
+	} );
 } );

@@ -66,6 +66,37 @@ describe( 'teardown-markers: record / clear', () => {
 	test( 'clearAccountLeak is a safe no-op when no marker exists', () => {
 		expect( () => clearAccountLeak( leakDir, 999999 ) ).not.toThrow();
 	} );
+
+	test( 'serializes a non-Error close failure as JSON, not "[object Object]"', () => {
+		recordAccountLeak( leakDir, {
+			userID: 1003,
+			username: 'u',
+			email: 'e@mailosaur.io',
+			error: { success: false, code: 'has_active_subscription' },
+		} );
+
+		const data = JSON.parse( readFileSync( markerFile( 1003 ), 'utf8' ) );
+		expect( data.error ).toContain( 'has_active_subscription' );
+		expect( data.error ).not.toContain( '[object Object]' );
+	} );
+
+	test( 'records a marker keyed by email when the user ID is unknown', () => {
+		recordAccountLeak( leakDir, {
+			username: 'e2eflowtestinginvited',
+			email: 'e2e+noid@mailosaur.io',
+			error: 'Signup response missing user_id.',
+		} );
+
+		// Keyed by the URL-encoded email so distinct emails never collide.
+		const file = path.join(
+			leakDir,
+			`account-${ encodeURIComponent( 'e2e+noid@mailosaur.io' ) }.json`
+		);
+		expect( existsSync( file ) ).toBe( true );
+		const data = JSON.parse( readFileSync( file, 'utf8' ) );
+		expect( data.userID ).toBeUndefined();
+		expect( data.email ).toBe( 'e2e+noid@mailosaur.io' );
+	} );
 } );
 
 describe( 'teardown-markers: isAccountClosedError', () => {

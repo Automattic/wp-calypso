@@ -289,10 +289,19 @@ export class RestAPIClient {
 			return null;
 		}
 
-		// `/all-domains/` returns scheme-less `domain` values, while callers commonly
-		// pass `blog_details.url` (e.g. `https://e2eflowtesting….wordpress.com`). Strip
-		// any scheme and trailing slash so the ownership comparison below matches.
-		const targetDomain = targetSite.domain.replace( /^https?:\/\//, '' ).replace( /\/$/, '' );
+		// `/all-domains/` returns scheme-less, lowercase `domain` values, while
+		// callers commonly pass `blog_details.url` (e.g.
+		// `https://e2eflowtesting….wordpress.com/`). Normalize both sides (strip
+		// scheme, path and trailing slash; lowercase) so the ownership comparison
+		// below is not defeated by a formatting or case difference, which would
+		// abort a legitimate cleanup and leak the site.
+		const normalizeDomain = ( value: string ): string =>
+			value
+				.trim()
+				.replace( /^https?:\/\//i, '' )
+				.replace( /\/.*$/, '' )
+				.toLowerCase();
+		const targetDomain = normalizeDomain( targetSite.domain );
 
 		const mySites: AllDomainsResponse = await this.getAllDomains();
 
@@ -301,7 +310,8 @@ export class RestAPIClient {
 		// previous `.filter()` callback returned no value (always an empty, truthy
 		// array), so this ownership guard never fired.
 		const isOwnedByUser = mySites.domains.some(
-			( site: DomainData ) => site.blog_id === targetSite.id && site.domain === targetDomain
+			( site: DomainData ) =>
+				site.blog_id === targetSite.id && normalizeDomain( site.domain ) === targetDomain
 		);
 
 		if ( ! isOwnedByUser ) {

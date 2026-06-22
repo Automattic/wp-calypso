@@ -6,7 +6,11 @@ import type { AccountClosureResponse, AccountDetails } from './types';
 const MAX_ERROR_LENGTH = 300;
 
 export interface AccountLeak {
-	userID: number;
+	/**
+	 * Numeric user ID; absent when a signup response created an account but did
+	 * not return its ID. Markers then fall back to keying on the email.
+	 */
+	userID?: number;
 	username: string;
 	email: string;
 	/** Optional blog URLs the caller tracked, surfaced in the marker for richer evidence. */
@@ -16,24 +20,49 @@ export interface AccountLeak {
 }
 
 /**
- * Absolute path of the marker file for a given user inside `leakDir`.
+ * Absolute path of the marker file for a given account inside `leakDir`. Keyed
+ * by user ID when known, otherwise by a filesystem-safe form of the email so an
+ * account created without a returned ID is still recorded.
  *
  * @param {string} leakDir Directory where markers are written.
- * @param {number} userID The user ID.
+ * @param {number|string} key The user ID, or an email/identifier fallback.
  * @returns {string} Absolute marker file path.
  */
-function markerPath( leakDir: string, userID: number ): string {
-	return path.join( leakDir, `account-${ userID }.json` );
+function markerPath( leakDir: string, key: number | string ): string {
+	// `encodeURIComponent` is injective, so distinct emails never collide on the
+	// same marker file (a plain character-class replacement would collapse e.g.
+	// `+` and `@` to `_` and let two accounts overwrite each other).
+	const safeKey = typeof key === 'number' ? String( key ) : encodeURIComponent( key );
+	return path.join( leakDir, `account-${ safeKey }.json` );
 }
 
 /**
- * Reduces an unknown error to a short, single-line message safe to embed in a marker.
+ * Reduces an unknown error to a short, single-line message safe to embed in a
+ * marker. Plain objects (e.g. a `{ success: false, … }` close response) are
+ * JSON-serialized so the CI artifact says why the close failed rather than the
+ * useless `"[object Object]"` that `String()` would produce.
  *
  * @param {unknown} error The error value.
  * @returns {string} A bounded message string.
  */
 function errorMessage( error: unknown ): string {
-	const message = error instanceof Error ? error.message : String( error ?? '' );
+	let message: string;
+	if ( error instanceof Error ) {
+		message = error.message;
+	} else if ( error && typeof error === 'object' ) {
+		// `JSON.stringify` returns `undefined` (not `"undefined"`) when the value
+		// serializes to nothing, e.g. a custom `toJSON()` returning undefined; fall
+		// back to `String()` so `.slice` below never throws.
+		let serialized: string | undefined;
+		try {
+			serialized = JSON.stringify( error );
+		} catch {
+			serialized = undefined;
+		}
+		message = serialized !== undefined ? serialized : String( error );
+	} else {
+		message = String( error ?? '' );
+	}
 	return message.slice( 0, MAX_ERROR_LENGTH );
 }
 
@@ -45,6 +74,14 @@ function errorMessage( error: unknown ): string {
  * should be cleared (account already closed) or kept (state unknown -> assume leak).
  * Errors thrown by `RestAPIClient.getMyAccountInformation` are `Error`s whose
  * message is `"<code>: <message>"` (e.g. `"invalid_token: …"`).
+ *
+ * Assumption: an auth error here means the account was closed. This is not
+ * provable in general - a revoked or expired token on a still-open account would
+ * be misclassified as closed, clearing a real leak. It holds in practice because
+ * the accounts torn down here are created within the same test and live for
+ * minutes: the bearer token is long-lived relative to that window, so a token
+ * going dead mid-test for any reason other than the account being closed (e.g.
+ * the in-body UI close, which is exactly the no-leak case) is unlikely.
  *
  * @param {unknown} error The error value.
  * @returns {boolean} True only for a confirmed dead-token / unauthorized error.
@@ -64,18 +101,19 @@ export function isAccountClosedError( error: unknown ): boolean {
  * @param {AccountLeak} leak Details of the leaked account.
  */
 export function recordAccountLeak( leakDir: string, leak: AccountLeak ): void {
+	const key = leak.userID || leak.email;
 	try {
 		mkdirSync( leakDir, { recursive: true } );
 		const payload = {
-			userID: leak.userID,
+			...( leak.userID ? { userID: leak.userID } : {} ),
 			username: leak.username,
 			email: leak.email,
 			...( leak.blogs && leak.blogs.length ? { blogs: leak.blogs } : {} ),
 			error: errorMessage( leak.error ),
 		};
-		writeFileSync( markerPath( leakDir, leak.userID ), JSON.stringify( payload ) + '\n' );
+		writeFileSync( markerPath( leakDir, key ), JSON.stringify( payload ) + '\n' );
 	} catch ( error ) {
-		console.warn( `Failed to record teardown leak marker for user ${ leak.userID }: ${ error }` );
+		console.warn( `Failed to record teardown leak marker for account ${ key }: ${ error }` );
 	}
 }
 
