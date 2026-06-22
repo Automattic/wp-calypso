@@ -27,7 +27,30 @@
 	}
 }
 
+// In grouped mode DataViews nests `@wordpress/ui` Stacks whose inline `gap`
+// over-spaces the list (16px between groups, 8px within). Collapse those gaps
+// via structural selectors — no build-hashed class — so spacing is driven by
+// the rows and the list's own margin. The first selector targets each per-group
+// Stack (the div whose first child is the group header); the second targets the
+// outer Stack holding all groups. The gap is set inline, so `!important` is
+// required to override it.
+.wpnc__note-list div:has(> .dataviews-view-list__group-header),
+.wpnc__note-list .dataviews-view-list__group .dataviews-view-list {
+	gap: 0 !important;
+}
+
+// Align the section header's text with the row content below it. DataViews
+// defaults to `0 24px`; match the item-wrapper's `12px 16px` so the header and
+// the notes share a left edge. The top border separates each section.
+.wpnc__note-list .dataviews-view-list__group-header {
+	margin: 0;
+	padding: $grid-unit-15 $grid-unit-20;
+	border-top: 1px solid var(--wpds-color-stroke-surface-neutral-weak, #e4e4e4);
+}
+
 .wpnc__note-list .dataviews-view-list {
+	margin-top: $grid-unit-10;
+
 	// When displaying fields in the DataViews, using the --wp-admin-theme-color color on hover is overwhelming.
 	// We override the hover color with the text color.
 	div[role="article"] {
