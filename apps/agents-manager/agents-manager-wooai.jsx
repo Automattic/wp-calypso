@@ -17,7 +17,12 @@ const container = document.createElement( 'div' );
 container.id = 'agents-manager-root';
 
 const renderAssistant = () => {
-	createRoot( container ).render( <AgentsManagerWithProvider useImageUpload={ useImageUpload } /> );
+	createRoot( container ).render(
+		<AgentsManagerWithProvider
+			useImageUpload={ useImageUpload }
+			zendeskConversationTags={ [ 'woo_support_flow_ai_plugin' ] }
+		/>
+	);
 };
 
 if ( document.body ) {

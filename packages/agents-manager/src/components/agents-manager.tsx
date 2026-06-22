@@ -40,6 +40,8 @@ export interface AgentsManagerProps {
 	handleClose?: () => void;
 	/** The hook for handling image uploads. */
 	useImageUpload?: ImageUploadHook;
+	/** Zendesk conversation tags to apply when a new support conversation is created. */
+	zendeskConversationTags?: string[];
 }
 
 const queryClient = new QueryClient();
@@ -52,6 +54,7 @@ export default function AgentsManager( {
 	currentSiteId,
 	agentId,
 	useImageUpload,
+	zendeskConversationTags = [],
 }: AgentsManagerProps ): JSX.Element | null {
 	// Wait for the store to load before rendering PersistentRouter
 	// This ensures router history is restored from persisted state
@@ -70,7 +73,14 @@ export default function AgentsManager( {
 		<QueryClientProvider client={ queryClient }>
 			<PersistentRouter siteKey={ siteKey }>
 				<AgentsManagerContextProvider
-					value={ { sectionName, currentUser, site, siteKey, currentRoute } }
+					value={ {
+						sectionName,
+						currentUser,
+						site,
+						siteKey,
+						currentRoute,
+						zendeskConversationTags,
+					} }
 				>
 					<AgentSetup agentId={ agentId } useImageUpload={ useImageUpload } />
 				</AgentsManagerContextProvider>

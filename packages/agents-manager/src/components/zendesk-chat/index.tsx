@@ -21,6 +21,8 @@ interface Props {
 	markdownComponents?: MarkdownComponents;
 	/** Custom markdown extensions. */
 	markdownExtensions?: MarkdownExtensions;
+	/** Zendesk conversation tags to apply when a new support conversation is created. */
+	conversationTags?: string[];
 }
 
 export default function ZendeskChat( {
@@ -31,6 +33,7 @@ export default function ZendeskChat( {
 	onExpand,
 	markdownComponents = {},
 	markdownExtensions = {},
+	conversationTags = [],
 }: Props ) {
 	const {
 		agentticMessages,
@@ -42,7 +45,7 @@ export default function ZendeskChat( {
 		supportedImageTypes,
 		notice,
 		hasInteractionEnded,
-	} = useManagedZendeskChat();
+	} = useManagedZendeskChat( { conversationTags } );
 
 	return (
 		<AgentChat

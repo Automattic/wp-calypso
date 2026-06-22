@@ -5,7 +5,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient();
 
-export default function AgentsManagerWithProvider( { useImageUpload } ) {
+export default function AgentsManagerWithProvider( {
+	useImageUpload,
+	zendeskConversationTags = [],
+} ) {
 	return (
 		<QueryClientProvider client={ queryClient }>
 			<AgentsManager
@@ -14,6 +17,7 @@ export default function AgentsManagerWithProvider( { useImageUpload } ) {
 				site={ agentsManagerData.site }
 				currentSiteId={ agentsManagerData.site?.ID }
 				useImageUpload={ useImageUpload }
+				zendeskConversationTags={ zendeskConversationTags }
 			/>
 		</QueryClientProvider>
 	);
