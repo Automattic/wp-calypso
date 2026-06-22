@@ -16,6 +16,16 @@ export default function observeEditorCanvasPointerDown(
 	const attach = () => {
 		const iframe = document.querySelector< HTMLIFrameElement >( 'iframe[name="editor-canvas"]' );
 		const doc = iframe?.contentDocument ?? null;
+
+		// Drop documents from detached iframes (a remount yields a fresh
+		// contentDocument); a detached doc has `defaultView === null`.
+		attachedDocs.forEach( ( attached ) => {
+			if ( attached !== doc && ! attached.defaultView ) {
+				attached.removeEventListener( 'pointerdown', onPointerDown );
+				attachedDocs.delete( attached );
+			}
+		} );
+
 		if ( ! doc || attachedDocs.has( doc ) ) {
 			return;
 		}
