@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/jetpack-ai-calypso",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"description": "Jetpack AI utilities available to Calypso.",
 	"calypso:src": "src/index.ts",
 	"main": "dist/cjs/index.js",
