@@ -141,9 +141,6 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 						} ) }
 					>
 						{ item.url && item.openInNewTab && (
-							// ExternalLink renders a `target="_blank"` anchor, so native activation
-							// (click, Enter, tap) opens the new tab and `onClick` covers tracking on all
-							// input methods. No custom touch/keyboard navigation is needed here.
 							<ExternalLink href={ item.url } onClick={ item.onClick }>
 								{ item.label }
 							</ExternalLink>
