@@ -15,11 +15,17 @@ import wpcom from 'calypso/lib/wp';
 import type { Step as StepType } from '../../types';
 
 const EARLY_PROVISIONED_SITE_STORAGE_KEY = 'site-spec-early-provisioned-site';
+const EARLY_PROVISION_TARGET_WPCOM_ATOMIC = 'wpcom-atomic';
 
 type SiteCreateResponse = {
 	blog_details?: {
 		blogid?: number | string;
 	};
+	atomic_transfer?: {
+		id?: number | string;
+		status?: string;
+	};
+	early_provision_target?: string;
 };
 
 function saveEarlyProvisionedSite( blogId: number ): void {
@@ -190,6 +196,7 @@ const SiteSpec: StepType = function SiteSpec() {
 						options: {
 							site_creation_flow: 'ai-site-builder',
 							trigger_backend_build: false,
+							early_provision_target: EARLY_PROVISION_TARGET_WPCOM_ATOMIC,
 						},
 					}
 				) ) as SiteCreateResponse;
@@ -228,6 +235,10 @@ const SiteSpec: StepType = function SiteSpec() {
 			}
 
 			try {
+				if ( ! earlyProvisionSitePromiseRef.current && ! getSavedEarlyProvisionedSite() ) {
+					handleEarlyProvisionMessage();
+				}
+
 				const blogIdFromPromise = earlyProvisionSitePromiseRef.current
 					? await earlyProvisionSitePromiseRef.current
 					: null;
@@ -237,6 +248,7 @@ const SiteSpec: StepType = function SiteSpec() {
 				const destination = addQueryArgs( '/setup/ai-site-builder/', {
 					trigger_backend_build: '0',
 					spec_id: specId,
+					early_provision_target: EARLY_PROVISION_TARGET_WPCOM_ATOMIC,
 					...( blogId ? { early_created_site: blogId } : {} ),
 					...( phSessionId ? { _ph: phSessionId } : {} ),
 					...( source ? { source } : {} ),
@@ -250,7 +262,7 @@ const SiteSpec: StepType = function SiteSpec() {
 				isSubmittingRef.current = false;
 			}
 		},
-		[ queryParams ]
+		[ handleEarlyProvisionMessage, queryParams ]
 	);
 
 	useEffect( () => {
