@@ -320,17 +320,17 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 }
 
 /**
- * Retrieves the Telex-specific SiteSpec configuration.
+ * Retrieves the SiteSpec configuration for early site provisioning.
  *
  * The widget may either call `onSpecConfirm` or navigate to `buildSiteUrl`
- * with the spec id appended. Keep the navigation inside the Telex Site Spec
- * route so Calypso can finalize the provisioned site before redirecting to
- * wp-admin.
- * @returns {SiteSpecConfig} Configuration object for Telex.
+ * with the spec id appended. Keep the navigation inside the Site Spec route so
+ * Calypso can attach the confirmed spec to the early-created site through the
+ * regular AI site builder flow.
+ * @returns {SiteSpecConfig} Configuration object for early site provisioning.
  */
-export function getTelexSiteSpecConfig(): SiteSpecConfig {
+export function getEarlyProvisionSiteSpecConfig(): SiteSpecConfig {
 	return {
 		...getDefaultSiteSpecConfig(),
-		buildSiteUrl: '/setup/ai-site-builder-spec/site-spec?telex=1&spec_id=',
+		buildSiteUrl: '/setup/ai-site-builder-spec/site-spec?early_provision_site=1&spec_id=',
 	};
 }

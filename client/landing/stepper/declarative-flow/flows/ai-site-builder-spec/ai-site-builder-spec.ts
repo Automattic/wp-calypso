@@ -19,12 +19,9 @@ function initialize() {
 	// Check for spec_id parameter - if present, redirect to main ai-site-builder flow
 	const queryParams = new URLSearchParams( window.location.search );
 	const specId = queryParams.get( 'spec_id' );
-	const isTelexPrepare =
-		queryParams.get( 'telex' ) === '1' ||
-		queryParams.get( 'telex_prepare_site' ) === '1' ||
-		queryParams.get( 'source' ) === 'telex';
+	const shouldEarlyProvisionSite = queryParams.get( 'early_provision_site' ) === '1';
 
-	if ( specId && ! isTelexPrepare ) {
+	if ( specId && ! shouldEarlyProvisionSite ) {
 		// Redirect to main ai-site-builder flow preserving query parameters
 		window.location.replace( `/setup/ai-site-builder?${ queryParams.toString() }` );
 		return [];

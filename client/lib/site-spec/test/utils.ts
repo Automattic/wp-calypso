@@ -14,7 +14,7 @@ import {
 	getSiteSpecUrl,
 	getSiteSpecUrlByType,
 	getDefaultSiteSpecConfig,
-	getTelexSiteSpecConfig,
+	getEarlyProvisionSiteSpecConfig,
 } from '../utils';
 
 interface MockWithIsEnabled extends jest.Mock {
@@ -188,14 +188,14 @@ describe( 'SiteSpec Utils', () => {
 		} );
 	} );
 
-	describe( 'getTelexSiteSpecConfig', () => {
-		it( 'should route confirmed specs back through the Telex Site Spec flow', () => {
-			const result = getTelexSiteSpecConfig();
+	describe( 'getEarlyProvisionSiteSpecConfig', () => {
+		it( 'should route confirmed specs back through the early-provision Site Spec flow', () => {
+			const result = getEarlyProvisionSiteSpecConfig();
 
 			expect( result ).toMatchObject( {
 				agentUrl: 'https://api.example.com/agent',
 				agentId: 'test-agent',
-				buildSiteUrl: '/setup/ai-site-builder-spec/site-spec?telex=1&spec_id=',
+				buildSiteUrl: '/setup/ai-site-builder-spec/site-spec?early_provision_site=1&spec_id=',
 			} );
 		} );
 	} );

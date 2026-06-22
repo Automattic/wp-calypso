@@ -8,54 +8,48 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSpec } from 'calypso/lib/site-spec';
 import {
 	getCiabSiteSpecConfig,
-	getTelexSiteSpecConfig,
+	getEarlyProvisionSiteSpecConfig,
 	type SiteSpecConfig,
 } from 'calypso/lib/site-spec/utils';
 import wpcom from 'calypso/lib/wp';
 import type { Step as StepType } from '../../types';
 
-const TELEX_PROVISIONED_SITE_STORAGE_KEY = 'site-spec-telex-provisioned-site';
+const EARLY_PROVISIONED_SITE_STORAGE_KEY = 'site-spec-early-provisioned-site';
 
-type TelexPrepareSiteResponse = {
-	admin_url?: string;
-	blog_id?: number;
-	builder_session_id?: string;
-	spec_id?: string;
-	url?: string;
+type SiteCreateResponse = {
+	blog_details?: {
+		blogid?: number | string;
+	};
 };
 
-function saveTelexProvisionedSite( response: TelexPrepareSiteResponse ): void {
+function saveEarlyProvisionedSite( blogId: number ): void {
 	if ( typeof window === 'undefined' ) {
 		return;
 	}
 
-	window.sessionStorage.setItem( TELEX_PROVISIONED_SITE_STORAGE_KEY, JSON.stringify( response ) );
+	window.sessionStorage.setItem( EARLY_PROVISIONED_SITE_STORAGE_KEY, String( blogId ) );
 }
 
-function getSavedTelexProvisionedSite(): TelexPrepareSiteResponse | null {
+function getSavedEarlyProvisionedSite(): number | null {
 	if ( typeof window === 'undefined' ) {
 		return null;
 	}
 
-	try {
-		const stored = window.sessionStorage.getItem( TELEX_PROVISIONED_SITE_STORAGE_KEY );
-		if ( ! stored ) {
-			return null;
-		}
-
-		const parsed = JSON.parse( stored ) as TelexPrepareSiteResponse;
-		return parsed && typeof parsed === 'object' ? parsed : null;
-	} catch {
+	const stored = window.sessionStorage.getItem( EARLY_PROVISIONED_SITE_STORAGE_KEY );
+	if ( ! stored ) {
 		return null;
 	}
+
+	const blogId = parseInt( stored, 10 );
+	return Number.isNaN( blogId ) ? null : blogId;
 }
 
-function clearSavedTelexProvisionedSite(): void {
+function clearSavedEarlyProvisionedSite(): void {
 	if ( typeof window === 'undefined' ) {
 		return;
 	}
 
-	window.sessionStorage.removeItem( TELEX_PROVISIONED_SITE_STORAGE_KEY );
+	window.sessionStorage.removeItem( EARLY_PROVISIONED_SITE_STORAGE_KEY );
 }
 
 function SiteSpecContainer( {
@@ -98,27 +92,16 @@ function getSpecId( specData: unknown ): string {
 	return getSpecId( specRecord.data ) || getSpecId( specRecord.detail );
 }
 
-function isTelexProvisionResponse(
-	response: TelexPrepareSiteResponse | null
-): response is TelexPrepareSiteResponse {
-	return !! response?.builder_session_id;
-}
-
 const SiteSpec: StepType = function SiteSpec() {
 	const translate = useTranslate();
 	const queryParams = useQuery();
 	const querySource = queryParams.get( 'source' );
 	const isCiab = !! querySource && querySource.startsWith( 'ciab-' );
-	const isTelexPrepare =
-		queryParams.get( 'telex' ) === '1' ||
-		queryParams.get( 'telex_prepare_site' ) === '1' ||
-		querySource === 'telex';
-	const telexSpecId = isTelexPrepare ? queryParams.get( 'spec_id' ) ?? '' : '';
+	const shouldEarlyProvisionSite = queryParams.get( 'early_provision_site' ) === '1';
+	const earlyProvisionSpecId = shouldEarlyProvisionSite ? queryParams.get( 'spec_id' ) ?? '' : '';
 
 	const ciabSiteCreationPromiseRef = useRef< Promise< number | null > | null >( null );
-	const telexSiteProvisionPromiseRef = useRef< Promise< TelexPrepareSiteResponse | null > | null >(
-		null
-	);
+	const earlyProvisionSitePromiseRef = useRef< Promise< number | null > | null >( null );
 	const messageCountRef = useRef( 0 );
 	const isSubmittingRef = useRef( false );
 
@@ -185,110 +168,106 @@ const SiteSpec: StepType = function SiteSpec() {
 		window.location.href = url;
 	}, [] );
 
-	const handleTelexMessage = useCallback( () => {
+	const handleEarlyProvisionMessage = useCallback( () => {
 		messageCountRef.current += 1;
 		if ( messageCountRef.current !== 1 ) {
 			return;
 		}
 
-		telexSiteProvisionPromiseRef.current = ( async () => {
+		earlyProvisionSitePromiseRef.current = ( async () => {
 			try {
 				const response = ( await wpcom.req.post(
 					{
-						path: '/telex/prepare-site',
+						path: '/sites/new',
 						apiVersion: '1.1',
 					},
 					{},
 					{
-						provision_only: true,
-						user_confirmed: true,
+						client_id: config( 'wpcom_signup_id' ),
+						client_secret: config( 'wpcom_signup_key' ),
+						blog_title: '',
+						blog_name: '',
+						options: {
+							site_creation_flow: 'ai-site-builder',
+							trigger_backend_build: false,
+						},
 					}
-				) ) as TelexPrepareSiteResponse;
-				if ( isTelexProvisionResponse( response ) ) {
-					saveTelexProvisionedSite( response );
+				) ) as SiteCreateResponse;
+				const blogId = response?.blog_details?.blogid
+					? parseInt( String( response.blog_details.blogid ), 10 )
+					: null;
+
+				if ( blogId && ! Number.isNaN( blogId ) ) {
+					saveEarlyProvisionedSite( blogId );
+					return blogId;
 				}
-				return response;
+
+				return null;
 			} catch ( error ) {
 				// eslint-disable-next-line no-console
-				console.error( 'Failed to provision Telex site:', error );
+				console.error( 'Failed to provision site:', error );
 				return null;
 			}
 		} )();
 	}, [] );
 
-	const handleTelexSpecConfirm = useCallback( async ( specData: unknown ) => {
-		if ( isSubmittingRef.current ) {
-			return;
-		}
-
-		isSubmittingRef.current = true;
-
-		const specId = getSpecId( specData );
-		if ( ! specId ) {
-			// eslint-disable-next-line no-console
-			console.error( 'Failed to prepare Telex site: missing site spec session ID.' );
-			isSubmittingRef.current = false;
-			return;
-		}
-
-		try {
-			const provisionedSiteFromPromise = telexSiteProvisionPromiseRef.current
-				? await telexSiteProvisionPromiseRef.current
-				: null;
-			const provisionedSite = provisionedSiteFromPromise ?? getSavedTelexProvisionedSite();
-			const requestBody: {
-				builder_session_id?: string;
-				spec_id: string;
-				user_confirmed: boolean;
-			} = {
-				spec_id: specId,
-				user_confirmed: true,
-			};
-			if ( provisionedSite?.builder_session_id ) {
-				requestBody.builder_session_id = provisionedSite.builder_session_id;
-			}
-
-			const response = ( await wpcom.req.post(
-				{
-					path: '/telex/prepare-site',
-					apiVersion: '1.1',
-				},
-				{},
-				requestBody
-			) ) as TelexPrepareSiteResponse;
-
-			const destination = response.admin_url || response.url;
-			if ( destination ) {
-				clearSavedTelexProvisionedSite();
-				window.location.href = addQueryArgs( destination, {
-					spec_id: response.spec_id || specId,
-				} );
+	const handleEarlyProvisionSpecConfirm = useCallback(
+		async ( specData: unknown ) => {
+			if ( isSubmittingRef.current ) {
 				return;
 			}
 
-			throw new Error( 'Telex prepare-site response did not include a destination URL.' );
-		} catch ( error ) {
-			// eslint-disable-next-line no-console
-			console.error( 'Failed to prepare Telex site:', error );
-			isSubmittingRef.current = false;
-		}
-	}, [] );
+			isSubmittingRef.current = true;
+
+			const specId = getSpecId( specData );
+			if ( ! specId ) {
+				// eslint-disable-next-line no-console
+				console.error( 'Failed to continue site provisioning: missing site spec session ID.' );
+				isSubmittingRef.current = false;
+				return;
+			}
+
+			try {
+				const blogIdFromPromise = earlyProvisionSitePromiseRef.current
+					? await earlyProvisionSitePromiseRef.current
+					: null;
+				const blogId = blogIdFromPromise ?? getSavedEarlyProvisionedSite();
+				const phSessionId = getPostHogSessionId();
+				const source = queryParams.get( 'source' );
+				const destination = addQueryArgs( '/setup/ai-site-builder/', {
+					trigger_backend_build: '0',
+					spec_id: specId,
+					...( blogId ? { early_created_site: blogId } : {} ),
+					...( phSessionId ? { _ph: phSessionId } : {} ),
+					...( source ? { source } : {} ),
+				} );
+
+				clearSavedEarlyProvisionedSite();
+				window.location.href = destination;
+			} catch ( error ) {
+				// eslint-disable-next-line no-console
+				console.error( 'Failed to continue site provisioning:', error );
+				isSubmittingRef.current = false;
+			}
+		},
+		[ queryParams ]
+	);
 
 	useEffect( () => {
-		if ( ! isTelexPrepare || ! telexSpecId ) {
+		if ( ! shouldEarlyProvisionSite || ! earlyProvisionSpecId ) {
 			return;
 		}
 
-		handleTelexSpecConfirm( { spec_id: telexSpecId } );
-	}, [ handleTelexSpecConfirm, isTelexPrepare, telexSpecId ] );
+		handleEarlyProvisionSpecConfirm( { spec_id: earlyProvisionSpecId } );
+	}, [ handleEarlyProvisionSpecConfirm, shouldEarlyProvisionSite, earlyProvisionSpecId ] );
 
 	let siteSpecStep = <SiteSpecContainer />;
-	if ( isTelexPrepare ) {
+	if ( shouldEarlyProvisionSite ) {
 		siteSpecStep = (
 			<SiteSpecContainer
-				siteSpecConfig={ getTelexSiteSpecConfig() }
-				onMessage={ handleTelexMessage }
-				onSpecConfirm={ handleTelexSpecConfirm }
+				siteSpecConfig={ getEarlyProvisionSiteSpecConfig() }
+				onMessage={ handleEarlyProvisionMessage }
+				onSpecConfirm={ handleEarlyProvisionSpecConfirm }
 			/>
 		);
 	} else if ( isCiab ) {

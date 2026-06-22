@@ -215,16 +215,18 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		// Flow A: The site was early-created during the AI chat session.
 		// Flow B: If early_created_site is absent, the regular createSiteWithCart path below handles creation.
 		const earlyCreatedSite = urlQueryParams.get( 'early_created_site' );
-		if ( flow === AI_SITE_BUILDER_FLOW && gardenName && earlyCreatedSite ) {
+		if ( flow === AI_SITE_BUILDER_FLOW && earlyCreatedSite ) {
 			const blogId = parseInt( earlyCreatedSite, 10 );
 
 			if ( isNaN( blogId ) ) {
 				throw new Error( 'Invalid early_created_site parameter.' );
 			}
 
-			// Poll until the provisioning is considered complete.
-			// Skip the initial delay since the site may have been provisioning for minutes already.
-			await pollForGardenProvisioning( blogId, 22, 5000, 0 );
+			if ( gardenName ) {
+				// Poll until the provisioning is considered complete.
+				// Skip the initial delay since the site may have been provisioning for minutes already.
+				await pollForGardenProvisioning( blogId, 22, 5000, 0 );
+			}
 
 			return {
 				siteId: blogId,
