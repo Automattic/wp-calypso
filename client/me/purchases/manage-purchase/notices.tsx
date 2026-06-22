@@ -17,11 +17,10 @@ import {
 import page from '@automattic/calypso-router';
 import { minBy } from '@automattic/js-utils';
 import { useMutation } from '@tanstack/react-query';
-import { localize } from 'i18n-calypso';
-import { isEmpty, merge } from 'lodash';
+import { localize, useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { Component } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice, { NoticeStatus } from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -56,6 +55,7 @@ import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getAddNewPaymentMethodPath } from '../utils';
 import { classifyPurchaseForCopy } from './classify-purchase-for-copy';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -775,7 +775,7 @@ class PurchaseNotice extends Component<
 		const otherRenewableSitePurchases = renewableSitePurchases.filter(
 			( otherPurchase ) => otherPurchase.id !== currentPurchase.id
 		);
-		if ( isEmpty( otherRenewableSitePurchases ) ) {
+		if ( ! otherRenewableSitePurchases.length ) {
 			return null;
 		}
 
@@ -1085,15 +1085,17 @@ class PurchaseNotice extends Component<
 				noticeText = creditCardHasAlreadyExpired( currentPurchase )
 					? translate(
 							'Your %(cardType)s ending in %(cardNumber)d expired %(cardExpiry)s – before the next renewal. You have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.',
-							merge( translateOptions, {
+							{
+								...translateOptions,
 								args: this.creditCardDetails( currentPurchase.payment.creditCard ),
-							} )
+							}
 					  )
 					: translate(
 							'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. You have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.',
-							merge( translateOptions, {
+							{
+								...translateOptions,
 								args: this.creditCardDetails( currentPurchase.payment.creditCard ),
-							} )
+							}
 					  );
 			}
 		}
@@ -1220,15 +1222,17 @@ class PurchaseNotice extends Component<
 				noticeText = creditCardHasAlreadyExpired( currentPurchase )
 					? translate(
 							'Your %(cardType)s ending in %(cardNumber)d expired %(cardExpiry)s – before the next renewal. You have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.',
-							merge( translateOptions, {
+							{
+								...translateOptions,
 								args: this.creditCardDetails( currentPurchase.payment.creditCard ),
-							} )
+							}
 					  )
 					: translate(
 							'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. You have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.',
-							merge( translateOptions, {
+							{
+								...translateOptions,
 								args: this.creditCardDetails( currentPurchase.payment.creditCard ),
-							} )
+							}
 					  );
 			}
 		}
@@ -1690,11 +1694,36 @@ const ConnectedPurchaseNotice = connect( null, { recordTracksEvent } )(
 
 function PurchaseNoticeWithExperiment( props: PurchaseNoticeProps ) {
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
+	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const { mutate: cancelDelayedDowngrade, isPending: isCancellingDelayedDowngrade } = useMutation(
 		setDelayedDowngradeMutation()
 	);
 	const onCancelDelayedDowngrade = () => {
-		cancelDelayedDowngrade( { purchaseId: props.purchase.id, enabled: false } );
+		dispatch(
+			recordTracksEvent( 'calypso_purchases_cancel_delayed_downgrade_click', {
+				purchase_id: props.purchase.id,
+			} )
+		);
+		cancelDelayedDowngrade(
+			{ purchaseId: props.purchase.id, enabled: false },
+			{
+				onSuccess: () =>
+					dispatch(
+						successNotice( translate( 'Your scheduled downgrade has been cancelled.' ), {
+							duration: 5000,
+						} )
+					),
+				onError: () =>
+					dispatch(
+						errorNotice(
+							translate(
+								'There was a problem cancelling your scheduled downgrade. Please try again later or contact support.'
+							)
+						)
+					),
+			}
+		);
 	};
 	return (
 		<ConnectedPurchaseNotice
