@@ -17,7 +17,7 @@ import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { hasAiChatEntryButton } from '../../hooks/use-admin-bar-integration';
 import { AGENTS_MANAGER_STORE } from '../../stores';
-import { isPluginCompassHost } from '../../utils/is-plugin-compass-agent';
+import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
@@ -110,36 +110,13 @@ const DEFAULT_ACCEPTED_IMAGE_TYPES = [
 ];
 
 /**
- * Read a string override from `window.agentsManagerData[key]`. Embedded
- * hosts (reader-chat on blog frontends, Plugin Compass on Calypso's plugins
- * marketplace) can customize the empty-view greeting/help copy by setting
- * these keys before AgentsManager mounts.
- */
-function readAgentsManagerDataString(
-	key: 'emptyViewHeading' | 'emptyViewHelp'
-): string | undefined {
-	if ( typeof window === 'undefined' ) {
-		return undefined;
-	}
-
-	if ( ! isReaderChatHost() && ! isPluginCompassHost() ) {
-		return undefined;
-	}
-
-	const data = ( window as unknown as { agentsManagerData?: Record< string, unknown > } )
-		.agentsManagerData;
-	const value = data?.[ key ];
-	return typeof value === 'string' ? value : undefined;
-}
-
-/**
  * Returns the empty-view greeting. Priority:
  *   1. Explicit host override via `window.agentsManagerData.emptyViewHeading`.
  *   2. Reader-chat default (contextual to blog frontends).
  *   3. Orchestrator default.
  */
 function getEmptyViewHeading(): string {
-	const override = readAgentsManagerDataString( 'emptyViewHeading' );
+	const override = getAgentsManagerInlineData()?.emptyViewHeading;
 	if ( override ) {
 		return override;
 	}
@@ -150,7 +127,7 @@ function getEmptyViewHeading(): string {
 }
 
 function getEmptyViewHelp(): string {
-	const override = readAgentsManagerDataString( 'emptyViewHelp' );
+	const override = getAgentsManagerInlineData()?.emptyViewHelp;
 	if ( override ) {
 		return override;
 	}

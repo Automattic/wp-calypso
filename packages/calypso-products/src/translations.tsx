@@ -1,6 +1,6 @@
 import { formatNumber } from '@automattic/number-formatters';
 import { translate, useTranslate, getLocaleSlug } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
+import { type JSX, useCallback, useMemo } from 'react';
 import {
 	PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY,
 	PRODUCT_JETPACK_ANTI_SPAM,

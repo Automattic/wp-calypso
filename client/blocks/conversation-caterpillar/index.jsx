@@ -28,7 +28,7 @@ class ConversationCaterpillarComponent extends Component {
 	getExpandableComments = () => {
 		const { comments, commentsToShow, parentCommentId, commentsTree } = this.props;
 		const isRoot = ! parentCommentId;
-		const parentComment = get( commentsTree, [ parentCommentId, 'data' ] );
+		const parentComment = commentsTree?.[ parentCommentId ]?.data;
 
 		const childComments = isRoot
 			? comments

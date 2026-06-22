@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 import { render, fireEvent } from '@testing-library/react';
-import { unmountComponentAtNode } from 'react-dom';
 import Modal from 'react-modal';
 import '@testing-library/jest-dom';
 import { DoNotSellDialog } from '..';
@@ -32,7 +31,6 @@ describe( 'DoNotSellDialog', () => {
 
 	afterEach( () => {
 		if ( null !== modalRoot ) {
-			unmountComponentAtNode( modalRoot );
 			document.body.removeChild( modalRoot );
 			modalRoot = null;
 		}

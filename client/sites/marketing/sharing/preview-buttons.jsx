@@ -1,7 +1,8 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import clsx from 'clsx';
+import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { filter, isEqual } from 'lodash';
+import { filter } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import ResizableIframe from 'calypso/components/resizable-iframe';

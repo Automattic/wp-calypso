@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { pick } from '@automattic/js-utils';
 import debugModule from 'debug';
 import { translate } from 'i18n-calypso';
-import { difference, filter, find, forEach, includes, isEmpty, reject, reduce } from 'lodash';
+import { filter, find, forEach, isEmpty, reject, reduce } from 'lodash';
 import { Store, Unsubscribe as ReduxUnsubscribe, AnyAction } from 'redux';
 import { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -207,10 +207,11 @@ export default class SignupFlowController {
 	}
 
 	_assertFlowProvidedDependenciesFromConfig( providedDependencies: Dependencies ) {
-		const dependencyDiff = difference(
-			this._flow.providesDependenciesInQuery,
-			this._flow.optionalDependenciesInQuery || [],
-			Object.keys( providedDependencies || {} )
+		const optionalInQuery = this._flow.optionalDependenciesInQuery || [];
+		const providedKeys = Object.keys( providedDependencies || {} );
+		const dependencyDiff = ( this._flow.providesDependenciesInQuery ?? [] ).filter(
+			( dependency ) =>
+				! optionalInQuery.includes( dependency ) && ! providedKeys.includes( dependency )
 		);
 		if ( dependencyDiff.length > 0 ) {
 			throw new Error(
@@ -231,10 +232,10 @@ export default class SignupFlowController {
 			const dependenciesFound = Object.keys(
 				pick( getSignupDependencyStore( this._reduxStore.getState() ), step.dependencies )
 			);
-			const dependenciesNotProvided = difference(
-				step.dependencies,
-				dependenciesFound,
-				this._getFlowProvidesDependencies()
+			const flowProvides = this._getFlowProvidesDependencies();
+			const dependenciesNotProvided = step.dependencies.filter(
+				( dependency ) =>
+					! dependenciesFound.includes( dependency ) && ! flowProvides.includes( dependency )
 			);
 
 			if ( dependenciesNotProvided.length > 0 ) {
@@ -264,10 +265,10 @@ export default class SignupFlowController {
 
 			const optionalDependencies = step.optionalDependencies || [];
 
-			const dependenciesNotProvided = difference(
-				step.providesDependencies,
-				optionalDependencies,
-				storedDependencies
+			const dependenciesNotProvided = step.providesDependencies.filter(
+				( dependency ) =>
+					! optionalDependencies.includes( dependency ) &&
+					! storedDependencies.includes( dependency )
 			);
 
 			if ( dependenciesNotProvided.length > 0 ) {
@@ -342,7 +343,7 @@ export default class SignupFlowController {
 	_process() {
 		const currentSteps = this._getFlowSteps();
 		const signupProgress = filter( getSignupProgress( this._reduxStore.getState() ), ( step ) =>
-			includes( currentSteps, step.stepName )
+			currentSteps.includes( step.stepName )
 		);
 		const pendingSteps = filter( signupProgress, { status: 'pending' } );
 		const completedSteps = filter( signupProgress, { status: 'completed' } );
@@ -376,7 +377,7 @@ export default class SignupFlowController {
 		const currentSteps = this._getFlowSteps();
 		const signupProgress = filter(
 			getSignupProgress( this._reduxStore.getState() ),
-			( { stepName } ) => includes( currentSteps, stepName )
+			( { stepName } ) => currentSteps.includes( stepName )
 		);
 		const allStepsSubmitted =
 			reject( signupProgress, { status: 'in-progress' } ).length === currentSteps.length;

@@ -157,8 +157,7 @@ export class ConversationCommentList extends Component {
 			} );
 	}
 
-	getParentId = ( commentsTree, childId ) =>
-		get( commentsTree, [ childId, 'data', 'parent', 'ID' ] );
+	getParentId = ( commentsTree, childId ) => commentsTree?.[ childId ]?.data?.parent?.ID;
 	commentHasParent = ( commentsTree, childId ) => !! this.getParentId( commentsTree, childId );
 	commentIsLoaded = ( commentsTree, commentId ) => !! get( commentsTree, commentId );
 

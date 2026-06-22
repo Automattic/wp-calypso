@@ -1,6 +1,6 @@
-import { pick } from '@automattic/js-utils';
+import { pick, escapeRegExp } from '@automattic/js-utils';
 import { throttle } from '@wordpress/compose';
-import { escapeRegExp, findIndex } from 'lodash';
+import { findIndex } from 'lodash';
 import { createRef, Component, Fragment } from 'react';
 import getCaretCoordinates from 'textarea-caret';
 import UserMentionSuggestionList from './suggestion-list';

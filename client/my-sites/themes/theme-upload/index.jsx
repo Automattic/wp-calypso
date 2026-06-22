@@ -10,7 +10,7 @@ import {
 import { Card, ProgressBar, Button } from '@automattic/components';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import { includes, find, isEmpty } from 'lodash';
+import { find, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -162,7 +162,7 @@ class Upload extends Component {
 
 		const errorString = JSON.stringify( error ).toLowerCase();
 		const cause = find( errorCauses, ( v, key ) => {
-			return includes( errorString, key );
+			return errorString.includes( key );
 		} );
 
 		const unknownCause = error.error ? `: ${ error.error }` : '';

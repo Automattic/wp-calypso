@@ -57,6 +57,36 @@ export function isDomainRenewable( domain: DomainSummary ): boolean {
 	);
 }
 
+/**
+ * Whether "Turn on auto-renew" is meaningful for a domain, or whether it must
+ * be renewed/redeemed first (no subscription, expired/redeemable/in auction, or
+ * pending renewal/transfer/registration).
+ */
+export function canEnableAutoRenew( domain: DomainSummary ): boolean {
+	// Auto-renew is managed through the domain's subscription.
+	if ( ! domain.subscription_id ) {
+		return false;
+	}
+
+	// Expired domains (including redeemable and cancelled-but-recoverable ones,
+	// which are surfaced as expired in the list) must be renewed or redeemed
+	// before auto-renew can apply.
+	if ( domain.expired ) {
+		return false;
+	}
+
+	// Domains in a transitional state (renewal, transfer, or registration in
+	// progress, or past redemption and in auction) must be resolved before
+	// auto-renew is meaningful. This matches the pending states that
+	// `isDomainRenewable` rejects.
+	return ! (
+		domain.domain_status.id === DomainStatus.PENDING_RENEWAL ||
+		domain.domain_status.id === DomainStatus.PENDING_TRANSFER ||
+		domain.domain_status.id === DomainStatus.PENDING_REGISTRATION ||
+		domain.domain_status.id === DomainStatus.EXPIRED_IN_AUCTION
+	);
+}
+
 export function isDomainInGracePeriod( domain: DomainSummary ) {
 	if ( domain.expiry === null ) {
 		return true;

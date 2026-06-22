@@ -1,10 +1,10 @@
-import { find, findIndex, get, includes } from 'lodash';
+import { find, findIndex, get } from 'lodash';
 
 const replaceAtIndex = ( array, index, newItem ) =>
 	array.map( ( item, idx ) => ( idx === index ? newItem : item ) );
 
 const replaceOrAppend = ( array, originalItem, newItem ) =>
-	includes( array, originalItem )
+	array.includes( originalItem )
 		? replaceAtIndex( array, findIndex( array, originalItem ), newItem )
 		: [ ...array, newItem ];
 
@@ -39,7 +39,7 @@ export default {
 			other: {
 				...state?.dirty?.other,
 				...( isNaN( stream )
-					? toggleInStream( stream, get( state, [ 'dirty', 'other', stream ] ), setting )
+					? toggleInStream( stream, state?.dirty?.other?.[ stream ], setting )
 					: toggleInDevice( devices, stream, setting ) ),
 			},
 		};
