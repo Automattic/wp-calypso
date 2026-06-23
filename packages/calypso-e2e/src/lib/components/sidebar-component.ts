@@ -37,7 +37,7 @@ export class SidebarComponent {
 	 * Waits for the WordPress.com Calypso sidebar to be ready on the page.
 	 */
 	async waitForSidebarInitialization(): Promise< void > {
-		const sidebarLocator = this.page.locator( selectors.sidebar );
+		const sidebarLocator = this.page.locator( `${ selectors.sidebar }, .global-sidebar` ).first();
 
 		await Promise.all( [
 			this.page.waitForLoadState( 'load', { timeout: 20 * 1000 } ),
