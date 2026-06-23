@@ -11,10 +11,10 @@ import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
 import './style.scss';
 
-function LegacyContactDetails( { id }: { id: number } ) {
+function LegacyContactDetails( { legacyContactId }: { legacyContactId: number } ) {
 	// The access key is only returned by the single-contact endpoint, so fetch
 	// the full contact here rather than relying on the listing response.
-	const { data: contact } = useSuspenseQuery( legacyContactQuery( id ) );
+	const { data: contact } = useSuspenseQuery( legacyContactQuery( legacyContactId ) );
 
 	const handlePrint = () => {
 		window.print();
@@ -66,7 +66,7 @@ export default function SecurityLegacyContactPrint() {
 				<CardBody>
 					{ /* TODO: translate these strings once the legacy contact UI is finalized. */ }
 					{ contact ? (
-						<LegacyContactDetails id={ contact.legacy_contact_id } />
+						<LegacyContactDetails legacyContactId={ contact.legacy_contact_id } />
 					) : (
 						<VStack spacing={ 4 } alignment="flex-start">
 							<Text>You don’t have a legacy contact set up yet.</Text>

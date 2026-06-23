@@ -8,9 +8,11 @@ export async function fetchLegacyContacts(): Promise< LegacyContact[] > {
 	} );
 }
 
-export async function fetchLegacyContact( id: number ): Promise< LegacyContactWithAccessKey > {
+export async function fetchLegacyContact(
+	legacyContactId: number
+): Promise< LegacyContactWithAccessKey > {
 	return wpcom.req.get( {
-		path: `/me/legacy-contacts/${ id }`,
+		path: `/me/legacy-contacts/${ legacyContactId }`,
 		apiNamespace: 'wpcom/v2',
 	} );
 }
