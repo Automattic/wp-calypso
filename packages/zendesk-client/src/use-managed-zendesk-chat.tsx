@@ -169,20 +169,6 @@ type ManagedZendeskChatOptions = {
 	conversationTags?: string[];
 };
 
-type ZendeskMessengerWindow = Window & {
-	zE?: ( command: 'messenger:set', setting: 'conversationTags', value: string[] ) => void;
-};
-
-function setZendeskConversationTags( conversationTags: string[] ) {
-	const zE = ( window as ZendeskMessengerWindow ).zE;
-
-	if ( ! conversationTags.length || typeof zE !== 'function' ) {
-		return;
-	}
-
-	zE( 'messenger:set', 'conversationTags', conversationTags );
-}
-
 /**
  * Returns a complete API for managing a Zendesk chat.
  * @returns An object with the following properties:
@@ -299,13 +285,13 @@ export const useManagedZendeskChat = ( {
 				return;
 			}
 
-			setZendeskConversationTags( conversationTags );
 			Smooch.createConversation( {
 				metadata: {
 					createdAt: Date.now(),
 					started_from: 'chat',
 					chat_session_id: startedFromChatId,
 					message_id: startedFromMessageId,
+					'zen:ticket:tags': conversationTags.join( ',' ),
 					[ `zen:ticket_field:${ ZENDESK_CUSTOM_FIELD_AI_MESSAGE_ID }` ]: startedFromMessageId,
 					[ `zen:ticket_field:${ ZENDESK_CUSTOM_FIELD_AI_CHAT_SESSION_ID }` ]: startedFromChatId,
 				},
