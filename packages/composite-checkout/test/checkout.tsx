@@ -119,13 +119,16 @@ describe( 'Checkout', () => {
 				expect( getAllByText( mockMethod.inactiveContent )[ 0 ] ).toBeVisible();
 			} );
 
-			it( 'renders the second payment method label as selected if the first is disabled', async () => {
-				const { getByText, getAllByText, findByLabelText } = render( <MyCheckout /> );
+			it( 'renders the second payment method as the selected single method if the first is disabled', async () => {
+				const { getByText, getAllByText, queryByText, findByText } = render( <MyCheckout /> );
 				const user = userEvent.setup();
 				await user.click( getAllByText( 'Continue' )[ 0 ] );
 				await user.click( getByText( 'Disable Payment Method' ) );
-				const paymentMethod = await findByLabelText( mockMethod2.inactiveContent );
-				expect( paymentMethod ).toBeChecked();
+				// Only one payment method remains available, so it is rendered as a
+				// plain selected container (not a radio button): its label is visible
+				// while the disabled method is hidden.
+				expect( await findByText( mockMethod2.inactiveContent ) ).toBeVisible();
+				expect( queryByText( mockMethod.inactiveContent ) ).not.toBeVisible();
 			} );
 
 			it( 'renders the payment method activeContent', () => {

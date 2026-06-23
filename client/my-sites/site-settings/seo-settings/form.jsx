@@ -255,11 +255,6 @@ export class SiteSettingsFormSEO extends Component {
 
 		const upsellPlan = hasGatingFlag ? PLAN_PREMIUM : PLAN_BUSINESS;
 		const upsellPlanType = hasGatingFlag ? TYPE_PREMIUM : TYPE_BUSINESS;
-		// eslint-disable-next-line no-unused-vars
-		const upsellMessagePlaceholder = translate(
-			'Boost your search engine ranking with the powerful SEO tools in the %(planName)s plan',
-			{ args: { planName: getPlan( upsellPlan ).getTitle() } }
-		);
 
 		const upsellProps =
 			siteIsJetpack && ! isAtomic
@@ -270,8 +265,8 @@ export class SiteSettingsFormSEO extends Component {
 				  }
 				: {
 						title: translate(
-							'Boost your search engine ranking with the powerful SEO tools in the %(businessPlanName)s plan',
-							{ args: { businessPlanName: getPlan( upsellPlan ).getTitle() } }
+							'Boost your search engine ranking with the powerful SEO tools in the %(planName)s plan',
+							{ args: { planName: getPlan( upsellPlan ).getTitle() } }
 						),
 						feature: FEATURE_ADVANCED_SEO,
 						plan:

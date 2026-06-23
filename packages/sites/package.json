@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/sites",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Automattic Sites utilities.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",

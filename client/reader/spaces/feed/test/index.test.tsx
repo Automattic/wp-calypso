@@ -124,6 +124,14 @@ describe( 'SpaceFeed', () => {
 		expect( screen.getByText( 'Nothing here yet' ) ).toBeVisible();
 	} );
 
+	it( 'requests the space posts stream keyed by the space id', () => {
+		render( WORK );
+
+		expect( mockUseInfiniteStream ).toHaveBeenCalledWith(
+			expect.objectContaining( { streamKey: `space:${ WORK.id }` } )
+		);
+	} );
+
 	it( 'shows the empty state for the legacy layout when the legacy stream has no posts', () => {
 		render( makeSpace( 'work-id', 'Work', 'legacy' ) );
 

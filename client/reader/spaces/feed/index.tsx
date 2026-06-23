@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useSpace } from 'calypso/reader/data/spaces';
 import { useInfiniteStream } from 'calypso/reader/data/stream';
-import { RECOMMENDED_TAB, buildDiscoverStreamKey } from 'calypso/reader/discover/helper';
 import { ScrollDebugOverlay } from 'calypso/reader/hooks/use-infinite-list';
 import { SpaceFeedSourceNotice } from './components/source-notice';
 import {
@@ -38,8 +37,9 @@ export function collectPosts( pages: ReadStreamResponse[] ): ReadStreamPost[] {
 /**
  * The space feed. Loads the space detail first, then derives the feed from it:
  * the layout from `space.layout.view` (chosen via the Customize modal) and the
- * stream from the space's `tags` (a discover `recommended` query). Every layout
- * reads that same per-space query.
+ * stream from the space's own posts endpoint (`/reader/spaces/<id>/posts`,
+ * keyed `space:<id>`), which the backend builds from the space's followed feeds
+ * and tags. Every layout reads that same per-space query.
  */
 export function SpaceFeed( { spaceId }: Props ) {
 	const {
@@ -50,12 +50,13 @@ export function SpaceFeed( { spaceId }: Props ) {
 	} = useSpace( spaceId );
 	const layout = space?.layout.view ?? DEFAULT_SPACE_FEED_LAYOUT;
 
-	// The stream is the discover `recommended` feed for the space's tags, so it
-	// can't be built until the detail (which carries `tags`) has loaded. The
-	// legacy layout (ReaderStreamV2) fetches the same key itself; React Query
+	// The stream is the Space's own posts feed (`/reader/spaces/<id>/posts`),
+	// built server-side from the space's followed feeds and tags. We only request
+	// it once the detail has loaded, since the layout is read from the detail too.
+	// The legacy layout (ReaderStreamV2) fetches the same key itself; React Query
 	// dedupes, so we skip the shell's fetch there to avoid recomputing `items` it
 	// never uses — same query, fetched once.
-	const streamKey = space ? buildDiscoverStreamKey( RECOMMENDED_TAB, space.tags ) : '';
+	const streamKey = space ? `space:${ spaceId }` : '';
 	const isLegacy = layout === 'legacy';
 	const stream = useInfiniteStream( {
 		streamKey,
@@ -85,8 +86,8 @@ export function SpaceFeed( { spaceId }: Props ) {
 	const showLoadingMore = posts.length > 0 && ! stream.error && stream.isFetchingNextPage;
 
 	const renderBody = () => {
-		// Load the space detail before anything else — the stream key is derived
-		// from its tags, and the layout from its `view`.
+		// Load the space detail before anything else — the feed layout is read
+		// from its `view`, and the posts stream is only requested once it has loaded.
 		if ( ! space && spaceError ) {
 			return <SpaceFeedError onRetry={ refetchSpace } />;
 		}

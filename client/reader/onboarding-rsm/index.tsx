@@ -6,17 +6,18 @@ import { SubscriptionManager } from '@automattic/data-stores';
 import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button, Modal } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
-import { chevronLeft } from '@wordpress/icons';
+import { chevronLeft, close } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
+import { ConfirmDialog, DialogContent, DialogFooter } from 'calypso/components/confirm-dialog';
 import { useSiteSubscriptions as useCachedSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import { useFollowedTags } from 'calypso/reader/data/tags';
 import {
 	READER_ONBOARDING_ELIGIBLE_REGISTRATION_DATE,
 	READER_ONBOARDING_MIN_FOLLOWED_SITES,
 	READER_ONBOARDING_MIN_FOLLOWED_TAGS,
+	READER_ONBOARDING_DISMISSED_PREFERENCE_KEY,
 	READER_ONBOARDING_SEEN_PREFERENCE_KEY,
 	READER_ONBOARDING_PREFERENCE_KEY,
 	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
@@ -107,6 +108,9 @@ const ReaderOnboardingRsm = ( {
 	const hasSeenOnboarding: boolean | null = useSelector( ( state ) =>
 		getPreference( state, READER_ONBOARDING_SEEN_PREFERENCE_KEY )
 	);
+	const hasDismissedOnboarding: boolean | null = useSelector( ( state ) =>
+		getPreference( state, READER_ONBOARDING_DISMISSED_PREFERENCE_KEY )
+	);
 
 	const hasFollowedTags = ( followedTags?.length ?? 0 ) >= READER_ONBOARDING_MIN_FOLLOWED_TAGS;
 	const hasFollowedSites = nonSelfSubscriptionsCount >= READER_ONBOARDING_MIN_FOLLOWED_SITES;
@@ -117,18 +121,21 @@ const ReaderOnboardingRsm = ( {
 	//
 	// - `currentStep`: which onboarding modal body is mounted, or `null` when
 	//   the modal is closed.
-	// - `hasFinished`: latched on Finish in the discover step so `forceShow`
-	//   stays off for the rest of the session even before subscription
-	//   queries refresh.
+	// - `hasHiddenOnboardingThisSession`: latched when the user finishes the
+	//   discover step or permanently dismisses the checklist so onboarding
+	//   stays hidden for the rest of the browser session — including under
+	//   `reader/force-onboarding` and before subscription queries refresh.
 	// - `hasFollowedInInterestsStep`: tracks any subscribe action (tag follow
 	//   or pack subscribe) inside the interests step. Owned here so it
 	//   persists across remounts of `InterestsModal` — without that, a user
 	//   could subscribe to a tagless pack, advance to discover, click Back,
 	//   and find the relaxed Continue gate forgotten on the fresh modal.
 	const [ currentStep, setCurrentStep ] = useState< Step | null >( null );
-	const [ hasFinished, setHasFinished ] = useState( false );
+	const [ hasHiddenOnboardingThisSession, setHasHiddenOnboardingThisSession ] = useState( false );
 	const [ hasFollowedInInterestsStep, setHasFollowedInInterestsStep ] = useState( false );
+	const [ isDismissConfirmOpen, setIsDismissConfirmOpen ] = useState( false );
 	const markFollowedInInterestsStep = () => setHasFollowedInInterestsStep( true );
+	const hideOnboardingThisSession = () => setHasHiddenOnboardingThisSession( true );
 
 	// Stable blog map for the interests step — initialized lazily the first
 	// time the onboarding modal is actually shown, so the random blog selection
@@ -199,10 +206,11 @@ const ReaderOnboardingRsm = ( {
 		setStartingForceShow( ! hasNonSelfSubscriptions );
 	}, [ startingForceShow, subscriptionsLoading, hasNonSelfSubscriptions ] );
 
-	const forceShow = ! hasFinished && startingForceShow === true;
+	const forceShow = ! hasHiddenOnboardingThisSession && startingForceShow === true;
 
 	const shouldShowOnboarding =
-		forceShow || isEnabled( 'reader/force-onboarding' ) || !! meetsEligibility;
+		( isEnabled( 'reader/force-onboarding' ) && ! hasHiddenOnboardingThisSession ) ||
+		( ! hasDismissedOnboarding && ( forceShow || !! meetsEligibility ) );
 
 	const shouldRenderOnboarding = shouldShowOnboarding && ! isSuppressed;
 
@@ -325,7 +333,7 @@ const ReaderOnboardingRsm = ( {
 		recordOnboardingCompleted();
 		runStepSideEffects( 'discover' );
 		setCurrentStep( null );
-		setHasFinished( true );
+		hideOnboardingThisSession();
 	};
 
 	const itemClickHandler = ( task: Task ) => {
@@ -333,6 +341,28 @@ const ReaderOnboardingRsm = ( {
 			task: task.id,
 		} );
 		task?.actionDispatch?.();
+	};
+
+	const handleDismissClick = () => {
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }checklist_dismiss_click` );
+		setIsDismissConfirmOpen( true );
+	};
+
+	const handleDismissCancel = () => {
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }checklist_dismiss_cancel` );
+		setIsDismissConfirmOpen( false );
+	};
+
+	const handleDismissConfirm = () => {
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }checklist_dismiss_confirm` );
+		if ( currentStep ) {
+			recordStepClose( currentStep );
+			runStepSideEffects( currentStep );
+			setCurrentStep( null );
+		}
+		dispatch( savePreference( READER_ONBOARDING_DISMISSED_PREFERENCE_KEY, true ) );
+		setIsDismissConfirmOpen( false );
+		hideOnboardingThisSession();
 	};
 
 	// Track if user viewed Reader Onboarding.
@@ -407,7 +437,7 @@ const ReaderOnboardingRsm = ( {
 				className="reader-onboarding-modal__back-button"
 				onClick={ handleInterestsBack }
 				icon={ chevronLeft }
-				label={ __( 'Back' ) }
+				label={ translate( 'Back' ) }
 			/>
 		);
 	} else if ( currentStep === 'discover' ) {
@@ -417,7 +447,7 @@ const ReaderOnboardingRsm = ( {
 				className="reader-onboarding-modal__back-button"
 				onClick={ handleDiscoverBack }
 				icon={ chevronLeft }
-				label={ __( 'Back' ) }
+				label={ translate( 'Back' ) }
 			/>
 		);
 	}
@@ -426,13 +456,24 @@ const ReaderOnboardingRsm = ( {
 		<>
 			<div className="reader-onboarding">
 				<div className="reader-onboarding__intro-column">
-					<CircularProgressBar
-						size={ 40 }
-						enableDesktopScaling
-						numberOfSteps={ tasks.length }
-						currentStep={ tasks.filter( ( task ) => task.completed ).length }
-					/>
-					<h2>{ translate( 'Your personal reading adventure' ) }</h2>
+					<div className="reader-onboarding__header">
+						<h2>{ translate( 'Your personal reading adventure' ) }</h2>
+						<div className="reader-onboarding__header-actions">
+							<CircularProgressBar
+								size={ 40 }
+								enableDesktopScaling
+								numberOfSteps={ tasks.length }
+								currentStep={ tasks.filter( ( task ) => task.completed ).length }
+							/>
+							<Button
+								size="compact"
+								className="reader-onboarding__dismiss-button"
+								icon={ close }
+								label={ translate( 'Dismiss onboarding checklist' ) }
+								onClick={ handleDismissClick }
+							/>
+						</div>
+					</div>
 					<p>{ translate( 'Tailor your feed, connect with your favorite topics.' ) }</p>
 				</div>
 				<div className="reader-onboarding__steps-column">
@@ -447,6 +488,30 @@ const ReaderOnboardingRsm = ( {
 					</Checklist>
 				</div>
 			</div>
+
+			{ isDismissConfirmOpen && (
+				<ConfirmDialog
+					onRequestClose={ handleDismissCancel }
+					title={ translate( 'Dismiss Reader onboarding?' ) }
+					className="reader-onboarding__dismiss-confirm-dialog"
+				>
+					<DialogContent>
+						<p>
+							{ translate(
+								'You will not be able to access the Reader onboarding flow again. Are you sure you want to dismiss it?'
+							) }
+						</p>
+					</DialogContent>
+					<DialogFooter>
+						<Button variant="tertiary" onClick={ handleDismissCancel }>
+							{ translate( 'Cancel' ) }
+						</Button>
+						<Button variant="primary" isDestructive onClick={ handleDismissConfirm }>
+							{ translate( 'Dismiss' ) }
+						</Button>
+					</DialogFooter>
+				</ConfirmDialog>
+			) }
 
 			{ currentStep && (
 				<Modal
