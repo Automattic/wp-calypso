@@ -1,9 +1,22 @@
 import { AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
+import wpcom from 'calypso/lib/wp';
 import {
 	EARLY_PROVISION_TARGET_WPCOM_ATOMIC,
 	getAtomicProvisionedSiteSlug,
 	getEarlyCreatedSiteId,
+	pollForAtomicProvisioning,
 } from '../early-provisioning';
+
+jest.mock( 'calypso/lib/wp', () => ( {
+	__esModule: true,
+	default: { req: { get: jest.fn() } },
+} ) );
+
+const wpcomGetMock = wpcom.req.get as jest.Mock;
+
+beforeEach( () => {
+	jest.clearAllMocks();
+} );
 
 describe( 'getEarlyCreatedSiteId', () => {
 	it( 'requires an early-created site for WPCOM Atomic early provisioning', () => {
@@ -60,5 +73,68 @@ describe( 'getAtomicProvisionedSiteSlug', () => {
 				123
 			)
 		).toBe( '123' );
+	} );
+} );
+
+describe( 'pollForAtomicProvisioning', () => {
+	it( 'returns the real site slug once the site is WPCOM Atomic', async () => {
+		wpcomGetMock.mockResolvedValue( {
+			is_wpcom_atomic: true,
+			slug: 'provisioned.wordpress.com',
+		} );
+
+		await expect( pollForAtomicProvisioning( 123, 1, 0 ) ).resolves.toEqual( {
+			siteSlug: 'provisioned.wordpress.com',
+		} );
+		expect( wpcomGetMock ).toHaveBeenCalledWith(
+			{
+				path: '/sites/123',
+				apiVersion: '1.1',
+			},
+			{
+				fields: 'ID,URL,slug,is_wpcom_atomic,options',
+				options: 'is_wpcom_atomic',
+			}
+		);
+	} );
+
+	it( 'accepts the options.is_wpcom_atomic response shape', async () => {
+		wpcomGetMock.mockResolvedValue( {
+			URL: 'https://atomic-site.wordpress.com',
+			options: {
+				is_wpcom_atomic: true,
+			},
+		} );
+
+		await expect( pollForAtomicProvisioning( 123, 1, 0 ) ).resolves.toEqual( {
+			siteSlug: 'atomic-site.wordpress.com',
+		} );
+	} );
+
+	it( 'keeps polling until the site becomes WPCOM Atomic', async () => {
+		wpcomGetMock
+			.mockResolvedValueOnce( {
+				is_wpcom_atomic: false,
+			} )
+			.mockResolvedValueOnce( {
+				is_wpcom_atomic: true,
+				slug: 'ready.wordpress.com',
+			} );
+
+		await expect( pollForAtomicProvisioning( 123, 2, 0 ) ).resolves.toEqual( {
+			siteSlug: 'ready.wordpress.com',
+		} );
+		expect( wpcomGetMock ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	it( 'throws a timeout error when the site never becomes WPCOM Atomic', async () => {
+		wpcomGetMock.mockResolvedValue( {
+			is_wpcom_atomic: false,
+		} );
+
+		await expect( pollForAtomicProvisioning( 123, 2, 0 ) ).rejects.toMatchObject( {
+			code: 'wpcom_atomic_provisioning_timeout',
+		} );
+		expect( wpcomGetMock ).toHaveBeenCalledTimes( 2 );
 	} );
 } );

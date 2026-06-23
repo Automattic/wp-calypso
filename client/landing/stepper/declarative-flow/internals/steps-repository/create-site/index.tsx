@@ -40,8 +40,8 @@ import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-conta
 import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../playground/lib/constants';
 import {
 	EARLY_PROVISION_TARGET_WPCOM_ATOMIC,
-	getAtomicProvisionedSiteSlug,
 	getEarlyCreatedSiteId,
+	pollForAtomicProvisioning,
 } from './early-provisioning';
 import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -52,15 +52,6 @@ const DEFAULT_ENTREPRENEUR_FLOW = 'pub/twentytwentytwo';
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 // Changing this? Consider also updating WRITE_INTENT_DEFAULT_DESIGN so the write *intent* matches the write flow
 const DEFAULT_START_WRITING_THEME = 'pub/poema';
-
-type SiteProvisioningResponse = {
-	URL?: string;
-	slug?: string;
-	is_wpcom_atomic?: boolean;
-	options?: {
-		is_wpcom_atomic?: boolean;
-	};
-};
 
 function hasSourceSlug( data: unknown ): data is { sourceSlug: string } {
 	if ( data && ( data as { sourceSlug: string } ).sourceSlug ) {
@@ -106,53 +97,6 @@ async function pollForGardenProvisioning(
 		'We were unable to create your site. Please try again or contact support.'
 	) as Error & { code: string };
 	error.code = 'garden_provisioning_timeout';
-	throw error;
-}
-
-async function pollForAtomicProvisioning(
-	siteId: number,
-	maxAttempts = 100,
-	delayMs = 3000,
-	initialDelayMs = 0
-) {
-	if ( initialDelayMs > 0 ) {
-		await new Promise( ( resolve ) => setTimeout( resolve, initialDelayMs ) );
-	}
-
-	for ( let attempt = 1; attempt <= maxAttempts; attempt++ ) {
-		try {
-			const siteResponse = ( await wpcom.req.get(
-				{
-					path: `/sites/${ siteId }`,
-					apiVersion: '1.1',
-				},
-				{
-					fields: 'ID,URL,slug,is_wpcom_atomic,options',
-					options: 'is_wpcom_atomic',
-				}
-			) ) as SiteProvisioningResponse;
-
-			if ( siteResponse?.is_wpcom_atomic || siteResponse?.options?.is_wpcom_atomic ) {
-				return {
-					siteSlug: getAtomicProvisionedSiteSlug( siteResponse, siteId ),
-				};
-			}
-		} catch ( error ) {
-			if ( attempt < maxAttempts ) {
-				await new Promise( ( resolve ) => setTimeout( resolve, delayMs ) );
-			}
-			continue;
-		}
-
-		if ( attempt < maxAttempts ) {
-			await new Promise( ( resolve ) => setTimeout( resolve, delayMs ) );
-		}
-	}
-
-	const error = new Error(
-		'We were unable to finish provisioning your site. Please try again or contact support.'
-	) as Error & { code: string };
-	error.code = 'wpcom_atomic_provisioning_timeout';
 	throw error;
 }
 

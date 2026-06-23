@@ -1,10 +1,15 @@
 import { AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
+import wpcom from 'calypso/lib/wp';
 
 export const EARLY_PROVISION_TARGET_WPCOM_ATOMIC = 'wpcom-atomic';
 
 type AtomicProvisioningSite = {
 	URL?: string;
 	slug?: string;
+	is_wpcom_atomic?: boolean;
+	options?: {
+		is_wpcom_atomic?: boolean;
+	};
 };
 
 export function getEarlyCreatedSiteId(
@@ -49,4 +54,51 @@ export function getAtomicProvisionedSiteSlug(
 	}
 
 	return String( fallbackSiteId );
+}
+
+export async function pollForAtomicProvisioning(
+	siteId: number,
+	maxAttempts = 100,
+	delayMs = 3000,
+	initialDelayMs = 0
+) {
+	if ( initialDelayMs > 0 ) {
+		await new Promise( ( resolve ) => setTimeout( resolve, initialDelayMs ) );
+	}
+
+	for ( let attempt = 1; attempt <= maxAttempts; attempt++ ) {
+		try {
+			const siteResponse = ( await wpcom.req.get(
+				{
+					path: `/sites/${ siteId }`,
+					apiVersion: '1.1',
+				},
+				{
+					fields: 'ID,URL,slug,is_wpcom_atomic,options',
+					options: 'is_wpcom_atomic',
+				}
+			) ) as AtomicProvisioningSite;
+
+			if ( siteResponse?.is_wpcom_atomic || siteResponse?.options?.is_wpcom_atomic ) {
+				return {
+					siteSlug: getAtomicProvisionedSiteSlug( siteResponse, siteId ),
+				};
+			}
+		} catch ( error ) {
+			if ( attempt < maxAttempts ) {
+				await new Promise( ( resolve ) => setTimeout( resolve, delayMs ) );
+			}
+			continue;
+		}
+
+		if ( attempt < maxAttempts ) {
+			await new Promise( ( resolve ) => setTimeout( resolve, delayMs ) );
+		}
+	}
+
+	const error = new Error(
+		'We were unable to finish provisioning your site. Please try again or contact support.'
+	) as Error & { code: string };
+	error.code = 'wpcom_atomic_provisioning_timeout';
+	throw error;
 }
