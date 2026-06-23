@@ -30,8 +30,6 @@ const mockConversation = {
 	metadata: {},
 };
 
-let mockIsMessagingScriptLoaded = true;
-
 jest.mock( 'smooch', () => ( {
 	__esModule: true,
 	default: {
@@ -75,12 +73,6 @@ jest.mock( '../src/use-attach-file', () => ( {
 
 jest.mock( '../src/use-connection-status-notice', () => ( {
 	useConnectionStatusNotice: () => undefined,
-} ) );
-
-jest.mock( '../src/use-load-zendesk-messaging', () => ( {
-	useLoadZendeskMessaging: () => ( {
-		isMessagingScriptLoaded: mockIsMessagingScriptLoaded,
-	} ),
 } ) );
 
 jest.mock( '../src/util', () => ( {
@@ -138,41 +130,25 @@ function renderUseManagedZendeskChat( {
 describe( 'useManagedZendeskChat', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockIsMessagingScriptLoaded = true;
-		( window as Window & { zE?: jest.Mock } ).zE = jest.fn();
 		smooch.init.mockResolvedValue( undefined );
 		smooch.createConversation.mockResolvedValue( mockConversation );
 		smooch.getConversationById.mockResolvedValue( mockConversation );
 	} );
 
-	it( 'sets Zendesk conversation tags before creating a new conversation', async () => {
+	it( 'passes the conversation tags as metadata when creating a new conversation', async () => {
 		renderUseManagedZendeskChat( {
 			conversationTags: [ 'woo_support_flow_ai_plugin' ],
 		} );
 
 		await waitFor( () => expect( smooch.createConversation ).toHaveBeenCalled() );
 
-		expect( ( window as Window & { zE?: jest.Mock } ).zE ).toHaveBeenCalledWith(
-			'messenger:set',
-			'conversationTags',
-			[ 'woo_support_flow_ai_plugin' ]
+		expect( smooch.createConversation ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				metadata: expect.objectContaining( {
+					'zen:ticket:tags': 'woo_support_flow_ai_plugin',
+				} ),
+			} )
 		);
-		expect(
-			( window as Window & { zE?: jest.Mock } ).zE?.mock.invocationCallOrder[ 0 ]
-		).toBeLessThan( smooch.createConversation.mock.invocationCallOrder[ 0 ] );
-	} );
-
-	it( 'waits for Zendesk Messenger before creating a tagged conversation', async () => {
-		mockIsMessagingScriptLoaded = false;
-
-		renderUseManagedZendeskChat( {
-			conversationTags: [ 'woo_support_flow_ai_plugin' ],
-		} );
-
-		await waitFor( () => expect( smooch.init ).toHaveBeenCalled() );
-
-		expect( ( window as Window & { zE?: jest.Mock } ).zE ).not.toHaveBeenCalled();
-		expect( smooch.createConversation ).not.toHaveBeenCalled();
 	} );
 
 	it( 'does not set new conversation tags when loading an existing conversation', async () => {
@@ -185,11 +161,6 @@ describe( 'useManagedZendeskChat', () => {
 			expect( smooch.getConversationById ).toHaveBeenCalledWith( 'conversation-1' )
 		);
 
-		expect( ( window as Window & { zE?: jest.Mock } ).zE ).not.toHaveBeenCalledWith(
-			'messenger:set',
-			'conversationTags',
-			expect.anything()
-		);
 		expect( smooch.createConversation ).not.toHaveBeenCalled();
 	} );
 } );

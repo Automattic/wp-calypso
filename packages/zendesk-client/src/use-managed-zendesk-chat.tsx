@@ -38,7 +38,6 @@ import {
 	fetchMessagingAuth,
 } from './use-authenticate-zendesk-messaging';
 import { useConnectionStatusNotice } from './use-connection-status-notice';
-import { useLoadZendeskMessaging } from './use-load-zendesk-messaging';
 import {
 	convertZendeskMessageToAgentticFormat,
 	getSmoochContainer,
@@ -203,8 +202,6 @@ export const useManagedZendeskChat = ( {
 
 	const { data: authData } = useAuthenticateZendeskMessaging( true, 'zendesk', false );
 	const { data: Smooch, isLoading: isSettingUpSmooch } = useSmooch();
-	const shouldSetConversationTags = conversationTags.length > 0 && ! conversationId;
-	const { isMessagingScriptLoaded } = useLoadZendeskMessaging( shouldSetConversationTags, false );
 	const { isPending: isAttachingFile, mutateAsync: attachFileToConversation } =
 		useAttachFileToConversation();
 
@@ -281,10 +278,6 @@ export const useManagedZendeskChat = ( {
 			Smooch.getConversationById( conversationId ).then( setConversation );
 			Smooch.loadConversation( conversationId );
 		} else {
-			if ( shouldSetConversationTags && ! isMessagingScriptLoaded ) {
-				return;
-			}
-
 			Smooch.createConversation( {
 				metadata: {
 					createdAt: Date.now(),
@@ -309,8 +302,6 @@ export const useManagedZendeskChat = ( {
 		Smooch?.render,
 		startedFromChatId,
 		conversationTags,
-		shouldSetConversationTags,
-		isMessagingScriptLoaded,
 	] );
 
 	const currentTypingStatus = typingStatus[ conversation?.id ?? '' ];
