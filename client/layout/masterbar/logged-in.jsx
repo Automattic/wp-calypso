@@ -525,6 +525,7 @@ class MasterbarLoggedIn extends Component {
 			sitePlanName,
 			site,
 			sitePlanUrl,
+			adminMenu,
 		} = this.props;
 
 		// Only display when a site is selected and is not domain-only site.
@@ -544,13 +545,16 @@ class MasterbarLoggedIn extends Component {
 			},
 		];
 
-		if ( isClassicView ) {
+		// In the wp-admin context (adminMenu is loaded), the Dashboard link is redundant
+		// since the user is already there. Only show it when viewing from Calypso contexts
+		// like the Hosting Dashboard or Reader.
+		if ( isClassicView && ! adminMenu ) {
 			menuItems.push( {
 				label: translate( 'Dashboard' ),
 				url: siteAdminUrl,
 				onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_dashboard_clicked' ),
 			} );
-		} else {
+		} else if ( ! isClassicView ) {
 			menuItems.push( {
 				label: translate( 'My Home' ),
 				url: siteHomeUrl,
