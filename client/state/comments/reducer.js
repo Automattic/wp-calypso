@@ -1,7 +1,7 @@
-import { omit } from '@automattic/js-utils';
+import { omit, orderBy } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
 import isEqual from 'fast-deep-equal/es6';
-import { filter, orderBy, has, map, reject, get } from 'lodash';
+import { filter, has, map, reject, get } from 'lodash';
 import {
 	COMMENT_COUNTS_UPDATE,
 	COMMENTS_CHANGE_STATUS,

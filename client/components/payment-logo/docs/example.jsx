@@ -1,4 +1,5 @@
-import { concat, filter, flow, map, sortBy } from 'lodash';
+import { sortBy } from '@automattic/js-utils';
+import { concat, filter, flow, map } from 'lodash';
 import { PureComponent } from 'react';
 import PaymentLogo, { POSSIBLE_TYPES } from '../index';
 
