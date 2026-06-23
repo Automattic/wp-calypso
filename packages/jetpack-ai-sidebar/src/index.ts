@@ -206,6 +206,12 @@ function getReservedSuggestions< T extends { id: string } >( suggestions: T[] ):
 		.filter( Boolean ) as T[];
 }
 
+/** Rank a suggestion id by its position in the priority list; unranked ids sort last. */
+function priorityRank( id: string ): number {
+	const index = LIMITED_BLOCK_SUGGESTION_PRIORITY.indexOf( id );
+	return index === -1 ? Number.MAX_SAFE_INTEGER : index;
+}
+
 function applySuggestionLimit< T extends { id: string } >(
 	suggestions: T[],
 	maxSuggestions?: number
@@ -232,13 +238,7 @@ function applySuggestionLimit< T extends { id: string } >(
 		.filter(
 			( suggestion ) => ! reservedSuggestions.some( ( reserved ) => reserved.id === suggestion.id )
 		)
-		.sort( ( a, b ) => {
-			const aPriority = LIMITED_BLOCK_SUGGESTION_PRIORITY.indexOf( a.id );
-			const bPriority = LIMITED_BLOCK_SUGGESTION_PRIORITY.indexOf( b.id );
-			const normalizedAPriority = aPriority === -1 ? Number.MAX_SAFE_INTEGER : aPriority;
-			const normalizedBPriority = bPriority === -1 ? Number.MAX_SAFE_INTEGER : bPriority;
-			return normalizedAPriority - normalizedBPriority;
-		} );
+		.sort( ( a, b ) => priorityRank( a.id ) - priorityRank( b.id ) );
 
 	const reservedSlots = Math.min( reservedSuggestions.length, limit );
 	return [
