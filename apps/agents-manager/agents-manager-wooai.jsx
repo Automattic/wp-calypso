@@ -16,11 +16,14 @@ import AgentsManagerWithProvider from './agents-manager-with-provider';
 const container = document.createElement( 'div' );
 container.id = 'agents-manager-root';
 
+// Hoisted to a stable reference so it doesn't change identity on every render.
+const ZENDESK_CONVERSATION_TAGS = [ 'woo_support_flow_ai_plugin' ];
+
 const renderAssistant = () => {
 	createRoot( container ).render(
 		<AgentsManagerWithProvider
 			useImageUpload={ useImageUpload }
-			zendeskConversationTags={ [ 'woo_support_flow_ai_plugin' ] }
+			zendeskConversationTags={ ZENDESK_CONVERSATION_TAGS }
 		/>
 	);
 };
