@@ -5,7 +5,6 @@ export const legacyContactsQuery = () =>
 	queryOptions( {
 		queryKey: [ 'me', 'legacy-contacts' ],
 		queryFn: fetchLegacyContacts,
-		meta: { persist: false },
 	} );
 
 export const legacyContactQuery = ( id: number ) =>
