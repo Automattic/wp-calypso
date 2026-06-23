@@ -1,4 +1,4 @@
-import { Popover } from '@automattic/components';
+import { Button as AutomatticButton, Popover } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { Icon, mobile, desktop, share, link, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -19,7 +19,7 @@ type HeaderProps = {
 	showNavigationTabs?: boolean;
 	timestamp?: string;
 	showWPcomBadge?: boolean;
-	shareLink: string;
+	shareLink?: string;
 };
 
 export const TabTypes = {
@@ -63,6 +63,10 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 	}, [ linkCopied ] );
 
 	const onCopyLink = () => {
+		if ( ! shareLink ) {
+			return;
+		}
+
 		navigator.clipboard.writeText( shareLink );
 		setLinkCopied( true );
 	};
@@ -155,14 +159,6 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 										position="top"
 										onClose={ () => setPopoverMenu( false ) }
 									>
-										<Button
-											className="copy-link-button"
-											onClick={ onCopyLink }
-											label={ linkCopied ? translate( 'Copied!' ) : translate( 'Copy link' ) }
-											showTooltip
-										>
-											<Icon icon={ linkCopied ? check : link } size={ 28 } />
-										</Button>
 										{ SocialServices.map( ( item ) => (
 											<ShareButton
 												key={ item.service }
@@ -172,6 +168,15 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 												service={ item.service }
 											/>
 										) ) }
+										<AutomatticButton
+											className="copy-link-button"
+											onClick={ onCopyLink }
+											disabled={ ! shareLink }
+											title={ linkCopied ? translate( 'Copied!' ) : translate( 'Copy link' ) }
+											borderless
+										>
+											<Icon icon={ linkCopied ? check : link } size={ 28 } />
+										</AutomatticButton>
 									</Popover>
 								</>
 							) }

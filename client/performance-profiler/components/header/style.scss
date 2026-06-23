@@ -270,13 +270,8 @@
 			padding-left: 4px;
 		}
 
-		.copy-link-button {
-			height: auto;
-			min-width: 0;
-
-			svg {
-				fill: var( --color-text );
-			}
+		.copy-link-button svg {
+			fill: var( --color-text );
 		}
 	}
 	.popover__arrow {
