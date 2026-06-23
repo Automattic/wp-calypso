@@ -16,6 +16,7 @@ import type { AgentUIProps, Suggestion } from '../types';
 import { cn } from '../utils/classNames';
 import {
 	type ChatPosition,
+	clampFreeDragPosition,
 	getChatPosition,
 	getInitialChatPosition,
 	setChatPosition,
@@ -592,6 +593,19 @@ export function AgentUIContainer( {
 	// Handle window resize to maintain bottom positioning
 	useEffect( () => {
 		const handleResize = () => {
+			// In free-drag mode the panel keeps its dragged position; just clamp
+			// it back on-screen if the resize would push it off — no corner-snap.
+			if ( freeDrag ) {
+				const clamped = clampFreeDragPosition(
+					{ x: x.get(), y: y.get() },
+					STYLE_CONSTANTS.COMPACT_WIDTH,
+					STYLE_CONSTANTS.EXPANDED_HEIGHT
+				);
+				x.set( clamped.x );
+				y.set( clamped.y );
+				return;
+			}
+
 			const position = calculateSnapPosition();
 			if ( ! position ) {
 				return;
@@ -609,7 +623,7 @@ export function AgentUIContainer( {
 
 		window.addEventListener( 'resize', handleResize );
 		return () => window.removeEventListener( 'resize', handleResize );
-	}, [ chat.state, x, y, calculateSnapPosition ] );
+	}, [ chat.state, x, y, calculateSnapPosition, freeDrag ] );
 
 	// Cleanup timeouts on unmount
 	useEffect( () => {
