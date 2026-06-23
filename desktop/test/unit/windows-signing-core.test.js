@@ -1,11 +1,4 @@
-const fs = require( 'fs' );
-const os = require( 'os' );
-const path = require( 'path' );
-const {
-	resolveSigner,
-	buildSignToolArgs,
-	collectSignableBinaries,
-} = require( '../../bin/windows-signing-core' );
+const { resolveSigner, buildSignToolArgs } = require( '../../bin/windows-signing-core' );
 
 const AZURE_ENV = {
 	AZURE_CODE_SIGNING_DLIB: 'C:\\dlib\\Azure.CodeSigning.Dlib.dll',
@@ -73,54 +66,6 @@ describe( 'buildSignToolArgs', () => {
 		);
 		expect( args ).not.toContain( '/dlib' );
 		expect( args[ args.length - 1 ] ).toBe( 'app.exe' );
-	} );
-} );
-
-describe( 'collectSignableBinaries', () => {
-	let root;
-
-	beforeEach( () => {
-		root = fs.mkdtempSync( path.join( os.tmpdir(), 'sign-collect-' ) );
-	} );
-
-	afterEach( () => {
-		fs.rmSync( root, { recursive: true, force: true } );
-	} );
-
-	it( 'signs *.node/*.dll at any depth and *.exe only below the top level', () => {
-		// electron-builder signs the top-level app exe itself, so afterPack must skip it.
-		fs.writeFileSync( path.join( root, 'WordPress.com.exe' ), '' );
-		fs.writeFileSync( path.join( root, 'ffmpeg.dll' ), '' );
-		fs.writeFileSync( path.join( root, 'app.txt' ), '' );
-		const nested = path.join( root, 'resources', 'app', 'node_modules', 'pkg' );
-		fs.mkdirSync( nested, { recursive: true } );
-		fs.writeFileSync( path.join( nested, 'helper.exe' ), '' );
-		fs.writeFileSync( path.join( nested, 'binding.node' ), '' );
-		fs.writeFileSync( path.join( nested, 'readme.md' ), '' );
-
-		const found = collectSignableBinaries( root )
-			.map( ( f ) => path.relative( root, f ) )
-			.sort();
-
-		expect( found ).toEqual(
-			[
-				'ffmpeg.dll',
-				path.join( 'resources', 'app', 'node_modules', 'pkg', 'binding.node' ),
-				path.join( 'resources', 'app', 'node_modules', 'pkg', 'helper.exe' ),
-			].sort()
-		);
-		expect( found ).not.toContain( 'WordPress.com.exe' );
-	} );
-
-	it( 'skips symlinks', () => {
-		const nested = path.join( root, 'resources' );
-		fs.mkdirSync( nested );
-		fs.writeFileSync( path.join( nested, 'real.exe' ), '' );
-		fs.symlinkSync( path.join( nested, 'real.exe' ), path.join( nested, 'link.exe' ) );
-
-		const found = collectSignableBinaries( root ).map( ( f ) => path.basename( f ) );
-
-		expect( found ).toEqual( [ 'real.exe' ] );
 	} );
 } );
 
