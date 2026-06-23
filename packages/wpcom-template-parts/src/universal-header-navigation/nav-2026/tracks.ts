@@ -36,6 +36,9 @@ export function recordSubmenuHide( isFloating: boolean, name: string ): void {
 
 export function recordMobileMenuOpen( isFloating: boolean ): void {
 	record( 'calypso_global_nav_mobile_menu_open', isFloating, {
+		// The hamburger is the only way to open the menu, so `reason` is constant
+		// for now; it's recorded for parity with the close event's `reason`.
+		reason: 'burger_menu',
 		start_type: 'burger_menu',
 		viewport_width: typeof window !== 'undefined' ? window.innerWidth : 0,
 	} );
@@ -115,6 +118,7 @@ function recordLegacy( name: string, props: TracksProps = {} ): void {
 
 export function recordLegacyMobileMenuOpen(): void {
 	recordLegacy( 'calypso_global_nav_mobile_menu_open', {
+		reason: 'burger_menu',
 		start_type: 'burger_menu',
 		viewport_width: typeof window !== 'undefined' ? window.innerWidth : 0,
 	} );
