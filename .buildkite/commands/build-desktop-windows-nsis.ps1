@@ -8,7 +8,7 @@
     direct-download path: it is code-signed and keeps the in-app
     electron-updater enabled, so existing users auto-update to it.
 
-    Signs via Azure Trusted Signing by default (AINFRA-2237). The org Sectigo
+    Signs via Azure Artifact Signing by default (AINFRA-2237). The org Sectigo
     PFX is retained as a fallback, selected by setting FORCE_PFX_SIGNING, until
     the Azure-signed build is confirmed in distribution. The signer choice here
     only decides which env vars are populated; electron-builder's `win.sign`
@@ -79,7 +79,7 @@ if ($env:FORCE_PFX_SIGNING) {
 } else {
     # Sets AZURE_CODE_SIGNING_DLIB, AZURE_METADATA_JSON,
     # and SIGNTOOL_PATH for bin/windows-sign.js.
-    Write-Output "--- :lock: Configuring Windows code signing (Azure Trusted Signing)"
+    Write-Output "--- :lock: Configuring Windows code signing (Azure Artifact Signing)"
     Invoke-Checked { & 'setup_azure_trusted_signing.ps1' }
 }
 

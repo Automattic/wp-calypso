@@ -4,7 +4,7 @@ const { spawn } = require( 'child_process' );
 const fs = require( 'fs' );
 const path = require( 'path' );
 
-// Azure Trusted Signing is SHA256-only. The PFX path matches it so both modes
+// Azure Artifact Signing is SHA256-only. The PFX path matches it so both modes
 // emit a single SHA256 signature.
 const FILE_DIGEST = 'SHA256';
 const TIMESTAMP_DIGEST = 'SHA256';
@@ -38,7 +38,7 @@ function resolveSigner( env = process.env ) {
 		);
 		if ( missing.length ) {
 			throw new Error(
-				`Azure Trusted Signing selected but missing: ${ missing.join(
+				`Azure Artifact Signing selected but missing: ${ missing.join(
 					', '
 				) }. Did setup_azure_trusted_signing.ps1 run?`
 			);
