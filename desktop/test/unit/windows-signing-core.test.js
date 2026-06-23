@@ -1,4 +1,11 @@
-const { resolveSigner, buildSignToolArgs } = require( '../../bin/windows-signing-core' );
+const fs = require( 'fs' );
+const os = require( 'os' );
+const path = require( 'path' );
+const {
+	resolveSigner,
+	buildSignToolArgs,
+	collectSignableBinaries,
+} = require( '../../bin/windows-signing-core' );
 
 const AZURE_ENV = {
 	AZURE_CODE_SIGNING_DLIB: 'C:\\dlib\\Azure.CodeSigning.Dlib.dll',
@@ -66,6 +73,51 @@ describe( 'buildSignToolArgs', () => {
 		);
 		expect( args ).not.toContain( '/dlib' );
 		expect( args[ args.length - 1 ] ).toBe( 'app.exe' );
+	} );
+} );
+
+describe( 'collectSignableBinaries', () => {
+	let root;
+
+	beforeEach( () => {
+		root = fs.mkdtempSync( path.join( os.tmpdir(), 'sign-collect-' ) );
+	} );
+
+	afterEach( () => {
+		fs.rmSync( root, { recursive: true, force: true } );
+	} );
+
+	it( 'collects nested *.exe, *.node and *.dll and skips other files', () => {
+		fs.writeFileSync( path.join( root, 'WordPress.com.exe' ), '' );
+		fs.writeFileSync( path.join( root, 'ffmpeg.dll' ), '' );
+		fs.writeFileSync( path.join( root, 'app.txt' ), '' );
+		const nested = path.join( root, 'resources', 'app', 'node_modules', 'pkg' );
+		fs.mkdirSync( nested, { recursive: true } );
+		fs.writeFileSync( path.join( nested, 'helper.exe' ), '' );
+		fs.writeFileSync( path.join( nested, 'binding.node' ), '' );
+		fs.writeFileSync( path.join( nested, 'readme.md' ), '' );
+
+		const found = collectSignableBinaries( root )
+			.map( ( f ) => path.relative( root, f ) )
+			.sort();
+
+		expect( found ).toEqual(
+			[
+				'WordPress.com.exe',
+				'ffmpeg.dll',
+				path.join( 'resources', 'app', 'node_modules', 'pkg', 'binding.node' ),
+				path.join( 'resources', 'app', 'node_modules', 'pkg', 'helper.exe' ),
+			].sort()
+		);
+	} );
+
+	it( 'skips symlinks', () => {
+		fs.writeFileSync( path.join( root, 'real.exe' ), '' );
+		fs.symlinkSync( path.join( root, 'real.exe' ), path.join( root, 'link.exe' ) );
+
+		const found = collectSignableBinaries( root ).map( ( f ) => path.basename( f ) );
+
+		expect( found ).toEqual( [ 'real.exe' ] );
 	} );
 } );
 

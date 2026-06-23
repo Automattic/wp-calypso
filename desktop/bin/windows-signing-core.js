@@ -14,10 +14,15 @@ const TIMESTAMP_DIGEST = 'SHA256';
 const AZURE_TIMESTAMP_SERVER = 'http://timestamp.acs.microsoft.com';
 const PFX_TIMESTAMP_SERVER = 'http://timestamp.sectigo.com';
 
-// electron-builder routes *.exe through the sign callback but not these, so
-// native binaries ship unsigned without an explicit afterPack pass — and
-// Windows Smart App Control blocks an app that loads unsigned ones.
-const NATIVE_BINARY_EXTENSIONS = new Set( [ '.node', '.dll' ] );
+// afterPack signs every packed binary so the verify gate can't trip on an
+// unsigned one. electron-builder signs only the top-level app .exe under
+// `asar: false` (its signApp returns before walking the rest of the tree),
+// leaving two gaps this fills:
+//   - *.node/*.dll: native modules it never signs — Smart App Control blocks
+//     an app that loads unsigned ones.
+//   - *.exe nested below the top level (e.g. bundled by production node_modules).
+// Re-signing the top-level .exe here is harmless: signApp re-signs it afterward.
+const SIGNABLE_EXTENSIONS = new Set( [ '.exe', '.node', '.dll' ] );
 
 // Resolve the active signer from the environment, or throw naming exactly what
 // is missing. Azure takes precedence; the PFX fallback engages only when no
@@ -111,19 +116,19 @@ function signFile( signer, file ) {
 	} );
 }
 
-function collectNativeBinaries( dir, acc = [] ) {
+function collectSignableBinaries( dir, acc = [] ) {
 	for ( const entry of fs.readdirSync( dir, { withFileTypes: true } ) ) {
 		const full = path.join( dir, entry.name );
 		// Skip symlinks to avoid following workspace links / cycles; the packaged
-		// output dereferences them, so real native binaries are still visited.
+		// output dereferences them, so real binaries are still visited.
 		if ( entry.isSymbolicLink() ) {
 			continue;
 		}
 		if ( entry.isDirectory() ) {
-			collectNativeBinaries( full, acc );
+			collectSignableBinaries( full, acc );
 		} else if (
 			entry.isFile() &&
-			NATIVE_BINARY_EXTENSIONS.has( path.extname( entry.name ).toLowerCase() )
+			SIGNABLE_EXTENSIONS.has( path.extname( entry.name ).toLowerCase() )
 		) {
 			acc.push( full );
 		}
@@ -131,15 +136,17 @@ function collectNativeBinaries( dir, acc = [] ) {
 	return acc;
 }
 
-async function signNativeBinaries( appOutDir, env = process.env ) {
+async function signPackagedBinaries( appOutDir, env = process.env ) {
 	const signer = resolveSigner( env );
-	const binaries = collectNativeBinaries( appOutDir );
+	const binaries = collectSignableBinaries( appOutDir );
 	if ( binaries.length === 0 ) {
-		console.log( `[windows-sign] No native binaries (*.node, *.dll) under ${ appOutDir }` );
+		console.log(
+			`[windows-sign] No signable binaries (*.exe, *.node, *.dll) under ${ appOutDir }`
+		);
 		return;
 	}
 	console.log(
-		`[windows-sign] Signing ${ binaries.length } native binaries (*.node, *.dll) under ${ appOutDir }`
+		`[windows-sign] Signing ${ binaries.length } packed binaries (*.exe, *.node, *.dll) under ${ appOutDir }`
 	);
 	for ( const binary of binaries ) {
 		await signFile( signer, binary );
@@ -150,6 +157,6 @@ module.exports = {
 	resolveSigner,
 	buildSignToolArgs,
 	signFile,
-	signNativeBinaries,
-	collectNativeBinaries,
+	signPackagedBinaries,
+	collectSignableBinaries,
 };
