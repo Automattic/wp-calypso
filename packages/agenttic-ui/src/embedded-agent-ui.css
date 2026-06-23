@@ -8,6 +8,9 @@
 }
 
 .agenttic-embedded__messages {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
 	flex: 1;
 	min-height: 0;
 	overflow-y: auto;
@@ -16,8 +19,15 @@
 
 .agenttic-embedded__message {
 	display: flex;
-	margin: 8px 0;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 8px;
+	margin: 0;
 	min-width: 0;
+}
+
+.agenttic-embedded__bubble {
+	max-width: 100%;
 }
 
 .agenttic-embedded__message p {
@@ -31,7 +41,7 @@
 }
 
 .agenttic-embedded__message--user {
-	justify-content: flex-end;
+	align-items: flex-end;
 }
 
 .agenttic-embedded__message pre {
