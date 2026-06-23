@@ -106,10 +106,8 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 		page: 1,
 		infiniteScrollEnabled: true,
 		startPosition: 1,
-		// Restore the classic panel's time-grouped sections. The notes already
-		// arrive newest-first and `timeGroup` opts out of sorting, so `direction`
-		// is inert here; DataViews requires it on the type. `showLabel: false`
-		// renders just the group title ("Today") instead of "Date: Today".
+		// Group notes into time sections ("Today", "Yesterday", …). `direction` is
+		// required by the type but inert, since `timeGroup` opts out of sorting.
 		groupBy: { field: 'timeGroup', direction: 'asc', showLabel: false },
 	} );
 

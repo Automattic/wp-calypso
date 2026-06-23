@@ -28,20 +28,15 @@
 }
 
 // In grouped mode DataViews nests `@wordpress/ui` Stacks whose inline `gap`
-// over-spaces the list (16px between groups, 8px within). Collapse those gaps
-// via structural selectors — no build-hashed class — so spacing is driven by
-// the rows and the list's own margin. The first selector targets each per-group
-// Stack (the div whose first child is the group header); the second targets the
-// outer Stack holding all groups. The gap is set inline, so `!important` is
-// required to override it.
+// over-spaces the list. Collapse the per-group and outer Stack gaps via
+// structural selectors (no build-hashed class); `!important` beats the inline gap.
 .wpnc__note-list div:has(> .dataviews-view-list__group-header),
 .wpnc__note-list .dataviews-view-list__group .dataviews-view-list {
 	gap: 0 !important;
 }
 
-// Align the section header's text with the row content below it. DataViews
-// defaults to `0 24px`; match the item-wrapper's `12px 16px` so the header and
-// the notes share a left edge. The top border separates each section.
+// Align the header padding with the row content (`12px 16px`) so they share a
+// left edge; the top border separates each section.
 .wpnc__note-list .dataviews-view-list__group-header {
 	margin: 0;
 	padding: $grid-unit-15 $grid-unit-20;

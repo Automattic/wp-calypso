@@ -160,9 +160,6 @@ describe( 'NoteList loading state', () => {
 		expect( getRow()?.querySelector( '.is-unread' ) ).not.toBeInTheDocument();
 	} );
 
-	// The classic panel's time-grouped sections are restored via DataViews'
-	// `groupBy`: notes are bucketed under "Today" / "Older than a month" / … headers
-	// in newest-first order.
 	it( 'renders time-grouped section headers in newest-first order', () => {
 		const store = initStore();
 		const today = new Date().toISOString();

@@ -47,8 +47,7 @@ const groupTitles = [
 	__( 'Older than a month' ),
 ];
 
-// Map a note's timestamp to its time-group index (0 = Today … 4 = Older than a
-// month), using the same day boundaries the classic panel grouped by.
+// Map a note's timestamp to its time-group index (0 = Today … 4 = Older than a month).
 const getTimeGroupKey = ( timestamp: string ): number => {
 	const now = new Date().setHours( 0, 0, 0, 0 );
 	const timeBoundaries = [
@@ -117,17 +116,10 @@ export function getFields(): Field< Note >[] {
 			render: ( { item } ) => <span>{ item.title }</span>,
 		},
 		{
-			// Group-only field: drives the time-section headers ("Today",
-			// "Yesterday", "Older than 2 days"…) restored from the classic panel.
-			// It is never added to the view's visible `fields`, so it only renders
-			// as a group header, never as a cell.
-			//
-			// `enableSorting: false` keeps `filterSortAndPaginate` from reordering
-			// notes by this field — its value is a localized label, which would sort
-			// the groups alphabetically. The notes already arrive newest-first, and
-			// the group boundaries are monotonic in time, so plain insertion order
-			// yields correctly ordered, non-repeating groups (as the classic panel
-			// did when it reduced over the already-sorted notes).
+			// Group-only field for the time-section headers; never added to the
+			// view's `fields`, so it only renders as a header. `enableSorting: false`
+			// keeps notes in their newest-first arrival order rather than sorting by
+			// this label, which would order the groups alphabetically.
 			id: 'timeGroup',
 			label: __( 'Date' ),
 			enableSorting: false,
