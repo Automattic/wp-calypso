@@ -246,6 +246,7 @@ export default function QuickPost(): JSX.Element | null {
 					className="quick-post-minimize-toggle"
 					icon={ isMinimized ? chevronDown : chevronUp }
 					onClick={ toggleMinimized }
+					aria-expanded={ ! isMinimized }
 					label={
 						isMinimized
 							? translate( 'Expand the quick post editor' )

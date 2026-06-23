@@ -304,7 +304,7 @@ describe( 'QuickPost', () => {
 
 		expect( screen.getByRole( 'textbox', { name: 'Quick post editor' } ) ).toBeVisible();
 		expect(
-			screen.getByRole( 'button', { name: 'Minimize the quick post editor' } )
+			screen.getByRole( 'button', { name: 'Minimize the quick post editor', expanded: true } )
 		).toBeVisible();
 	} );
 
@@ -317,7 +317,9 @@ describe( 'QuickPost', () => {
 			screen.queryByRole( 'textbox', { name: 'Quick post editor' } )
 		).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'Post' } ) ).not.toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'Expand the quick post editor' } ) ).toBeVisible();
+		expect(
+			screen.getByRole( 'button', { name: 'Expand the quick post editor', expanded: false } )
+		).toBeVisible();
 	} );
 
 	it( 'saves the minimized preference and tracks the event when minimizing', async () => {
