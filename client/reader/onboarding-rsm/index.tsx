@@ -503,7 +503,7 @@ const ReaderOnboardingRsm = ( {
 						<Button variant="tertiary" onClick={ handleDismissCancel }>
 							{ __( 'Cancel' ) }
 						</Button>
-						<Button variant="primary" onClick={ handleDismissConfirm }>
+						<Button variant="primary" isDestructive onClick={ handleDismissConfirm }>
 							{ __( 'Dismiss' ) }
 						</Button>
 					</DialogFooter>
