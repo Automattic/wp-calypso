@@ -367,93 +367,153 @@ export class EditorToolbarComponent {
 	}
 
 	/**
-	 * Polls the editor data store until the Jetpack sidebar is the active
-	 * complementary area, requiring two consecutive positive reads so a sidebar
-	 * that briefly activates and is then replaced by a sibling is not mistaken
-	 * for success.
+	 * Waits until the Jetpack sidebar (`jetpack-sidebar/jetpack`) is the active
+	 * complementary area and has stayed active, uninterrupted, for a short
+	 * settle window.
 	 *
-	 * @param {number} timeout Maximum time to wait, in milliseconds.
+	 * An earlier version sampled the state on a fixed 300ms cadence and accepted
+	 * two consecutive positive reads. That is a heuristic: it can miss a sibling
+	 * stealing activation in the gap between two samples, and can give up one
+	 * read short of success near the deadline. Instead, this subscribes to the
+	 * editor data store and reacts as state transitions are dispatched, then
+	 * requires Jetpack to stay the active area, uninterrupted, for `settleMs`
+	 * before reporting success. A settle in progress is the only path to `true`;
+	 * the deadline gives up with `false` and lets the caller retry. This is not a
+	 * formal proof of stability (a steal-and-restore coalesced into a single
+	 * `wp.data.batch` notification could still go unseen), but it observes far
+	 * more than fixed-cadence sampling, and the flake this targets leaves the
+	 * sibling persistently active, which the settle requirement reliably catches.
+	 * When the store is unavailable the same settle logic runs over a DOM poll.
+	 *
+	 * The check runs inside the Editor frame, so it works for both the iframed
+	 * (Simple) and non-iframed (Atomic) editors.
+	 *
+	 * @param {number} timeout  Maximum time to wait, in milliseconds.
+	 * @param {number} settleMs How long Jetpack must stay active, uninterrupted,
+	 *                          to count as settled.
 	 * @returns {Promise<boolean>} True if the Jetpack sidebar settled as active.
 	 */
-	private async waitForJetpackSidebarActive( timeout = 5 * 1000 ): Promise< boolean > {
-		const deadline = Date.now() + timeout;
-		let consecutive = 0;
-
-		while ( Date.now() < deadline ) {
-			if ( await this.isJetpackSidebarActive() ) {
-				consecutive += 1;
-				if ( consecutive >= 2 ) {
-					return true;
-				}
-			} else {
-				consecutive = 0;
-			}
-
-			await this.page.waitForTimeout( 300 );
-		}
-
-		return false;
-	}
-
-	/**
-	 * Determines whether the Jetpack sidebar (`jetpack-sidebar/jetpack`) is the
-	 * active complementary area. The check runs inside the Editor frame so it
-	 * works for both the iframed (Simple) and non-iframed (Atomic) editors.
-	 *
-	 * The editor data store is the source of truth: when it reports an active
-	 * area for a known editor scope (`core` or `core/edit-post`, which vary by
-	 * Gutenberg version) that answer is authoritative. If the store is
-	 * unavailable or reports nothing for those scopes, it falls back to the DOM,
-	 * treating Jetpack as active only when its region is present and the sibling
-	 * Newsletter region is not.
-	 *
-	 * @returns {Promise<boolean>} True if the Jetpack sidebar is active.
-	 */
-	private async isJetpackSidebarActive(): Promise< boolean > {
+	private async waitForJetpackSidebarActive(
+		timeout = 5 * 1000,
+		settleMs = 750
+	): Promise< boolean > {
 		const editorParent = await this.editor.parent();
 
-		return editorParent.evaluate( ( element ) => {
-			const jetpackId = 'jetpack-sidebar:jetpack';
-			const jetpackArea = 'jetpack-sidebar/jetpack';
-			const newsletterId = 'jetpack-subscriptions:jetpack-newsletter-settings-sidebar';
+		return editorParent.evaluate(
+			( element, { timeoutMs, settleWindowMs }: { timeoutMs: number; settleWindowMs: number } ) =>
+				new Promise< boolean >( ( resolve ) => {
+					const jetpackId = 'jetpack-sidebar:jetpack';
+					const jetpackArea = 'jetpack-sidebar/jetpack';
+					const newsletterId = 'jetpack-subscriptions:jetpack-newsletter-settings-sidebar';
 
-			const editorWindow = element.ownerDocument?.defaultView as
-				| ( Window & {
-						wp?: {
-							data?: {
-								select?: ( store: string ) => {
-									getActiveComplementaryArea?: ( scope: string ) => string | null | undefined;
+					const editorWindow = element.ownerDocument?.defaultView as
+						| ( Window & {
+								wp?: {
+									data?: {
+										select?: ( store: string ) => {
+											getActiveComplementaryArea?: ( scope: string ) => string | null | undefined;
+										};
+										subscribe?: ( listener: () => void ) => () => void;
+									};
 								};
-							};
-						};
-				  } )
-				| null;
+						  } )
+						| null;
 
-			const interfaceStore = editorWindow?.wp?.data?.select?.( 'core/interface' );
-			if ( interfaceStore?.getActiveComplementaryArea ) {
-				const activeAreas = [ 'core', 'core/edit-post' ].map(
-					( scope ) => interfaceStore.getActiveComplementaryArea?.( scope )
-				);
+					const ownerDocument = element.ownerDocument;
 
-				if ( activeAreas.includes( jetpackArea ) ) {
-					return true;
-				}
+					// The editor data store is the source of truth. A defined
+					// reading (another area's id, or `null` for "closed") is
+					// authoritative. The active-area scope is `core` on current
+					// Gutenberg and `core/edit-post` on older builds; read `core`
+					// first and consult the legacy scope only when `core` has no
+					// answer, both to support old builds and to skip the
+					// deprecation warning the legacy scope emits. Only when no
+					// scope can answer do we consult the DOM, treating Jetpack as
+					// active when its region is present and the sibling Newsletter
+					// region is not.
+					const isJetpackActive = (): boolean => {
+						const store = editorWindow?.wp?.data?.select?.( 'core/interface' );
+						if ( store?.getActiveComplementaryArea ) {
+							let area = store.getActiveComplementaryArea( 'core' );
+							if ( area === undefined ) {
+								area = store.getActiveComplementaryArea( 'core/edit-post' );
+							}
+							if ( area === jetpackArea ) {
+								return true;
+							}
+							if ( area !== undefined ) {
+								return false;
+							}
+						}
 
-				// A defined reading (another area's id, or `null` for "closed") is
-				// an authoritative "not Jetpack". Only an absent reading
-				// (`undefined` for every known scope, i.e. store unavailable or an
-				// unrecognised scope) warrants consulting the DOM below.
-				if ( activeAreas.some( ( area ) => area !== undefined ) ) {
-					return false;
-				}
-			}
+						return (
+							!! ownerDocument?.querySelector( `[id="${ jetpackId }"]` ) &&
+							! ownerDocument?.querySelector( `[id="${ newsletterId }"]` )
+						);
+					};
 
-			const document = element.ownerDocument;
-			return (
-				!! document?.querySelector( `[id="${ jetpackId }"]` ) &&
-				! document?.querySelector( `[id="${ newsletterId }"]` )
-			);
-		} );
+					const timers: {
+						settle?: ReturnType< typeof setTimeout >;
+						poll?: ReturnType< typeof setInterval >;
+						backstop?: ReturnType< typeof setTimeout >;
+					} = {};
+					let unsubscribe = () => {};
+					let finished = false;
+
+					const finish = ( settled: boolean ) => {
+						if ( finished ) {
+							return;
+						}
+						finished = true;
+						if ( timers.settle ) {
+							clearTimeout( timers.settle );
+						}
+						if ( timers.poll ) {
+							clearInterval( timers.poll );
+						}
+						if ( timers.backstop ) {
+							clearTimeout( timers.backstop );
+						}
+						unsubscribe();
+						resolve( settled );
+					};
+
+					// Start the settle timer the first time Jetpack is seen
+					// active; cancel it the moment anything else takes over, so
+					// only an uninterrupted run of `settleWindowMs` resolves true.
+					const onChange = () => {
+						if ( isJetpackActive() ) {
+							if ( ! timers.settle ) {
+								timers.settle = setTimeout( () => finish( true ), settleWindowMs );
+							}
+						} else if ( timers.settle ) {
+							clearTimeout( timers.settle );
+							timers.settle = undefined;
+						}
+					};
+
+					// Deadline: if Jetpack has not settled by now it is not going
+					// to, so give up with `false` and let the caller retry. Because
+					// the settle timer is the only path to `true`, a late, unsettled
+					// flicker of Jetpack cannot slip a false positive through here.
+					timers.backstop = setTimeout( () => finish( false ), timeoutMs );
+
+					const subscribe = editorWindow?.wp?.data?.subscribe;
+					if ( subscribe ) {
+						unsubscribe = subscribe( onChange );
+					} else {
+						// No store to observe; poll the DOM so the same settle
+						// logic still applies.
+						timers.poll = setInterval( onChange, 200 );
+					}
+
+					// Evaluate the current state immediately so an already-active
+					// sidebar starts its settle timer without waiting for a store
+					// change that may never come.
+					onChange();
+				} ),
+			{ timeoutMs: timeout, settleWindowMs: settleMs }
+		);
 	}
 
 	/**
