@@ -2,13 +2,14 @@ import { BlockControls } from '@wordpress/block-editor';
 import { ToolbarButton, ToolbarGroup } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { store as coreStore } from '@wordpress/core-data';
-import { dispatch, useSelect } from '@wordpress/data';
+import { dispatch, select, useSelect } from '@wordpress/data';
 import { Component, useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store/index';
 import { type BlockEditProps, IMAGE_STUDIO_SUPPORTED_MIME_TYPES, ImageStudioMode } from '../types';
 import { type ImageData } from '../utils/get-image-data';
 import { trackImageStudioOpened } from '../utils/tracking';
+import { applyDisclosureToCaption } from './utils';
 
 /**
  * Add Image Studio button to image blocks toolbar
@@ -57,16 +58,19 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 						return;
 					}
 					if ( image?.id ) {
+						const showDisclosure = ! select( imageStudioStore ).getAiDisclosureHidden();
+						const existingCaption = ( attributes?.caption as string | undefined ) ?? '';
 						setAttributes( {
 							url: image.url,
 							id: image.id,
 							alt: image.alt,
 							description: image.description,
 							title: image.title,
+							caption: applyDisclosureToCaption( existingCaption, showDisclosure ),
 						} );
 					}
 				},
-				[ setAttributes ]
+				[ setAttributes, attributes?.caption ]
 			);
 
 			const attachmentId = attributes.id as number | undefined;

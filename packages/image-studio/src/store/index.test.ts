@@ -343,6 +343,24 @@ describe( 'Image Studio Store', () => {
 
 				expect( state.isSidebarOpen ).toBe( true );
 			} );
+
+			it( 'seeds the disclosure preference from a remembered localStorage value on open', () => {
+				const initialState = reducer( undefined, { type: '@@INIT' } as any );
+				localStorageMock.setItem( 'big-sky-image-studio-ai-disclosure-hidden', 'false' );
+
+				const state = reducer( initialState, actions.openImageStudio( 123 ) );
+
+				expect( state.aiDisclosureHidden ).toBe( false );
+			} );
+
+			it( 'defaults the disclosure to hidden when no preference is remembered', () => {
+				const initialState = reducer( undefined, { type: '@@INIT' } as any );
+				localStorageMock.clear();
+
+				const state = reducer( initialState, actions.openImageStudio( 123 ) );
+
+				expect( state.aiDisclosureHidden ).toBe( true );
+			} );
 		} );
 
 		describe( 'CLOSE_IMAGE_STUDIO', () => {
@@ -810,6 +828,16 @@ describe( 'Image Studio Store', () => {
 				expect( state.hasUpdatedMetadata ).toBe( true );
 			} );
 
+			it( 'SET_AI_DISCLOSURE_HIDDEN updates state and persists the choice to localStorage', () => {
+				const state = reducer( getInitialState(), actions.setAiDisclosureHidden( false ) );
+
+				expect( state.aiDisclosureHidden ).toBe( false );
+				expect( localStorageMock.setItem ).toHaveBeenCalledWith(
+					'big-sky-image-studio-ai-disclosure-hidden',
+					'false'
+				);
+			} );
+
 			it( 'SET_CANVAS_METADATA', () => {
 				const metadata = { title: 'Test Title', alt_text: 'Test Alt' };
 				const state = reducer( getInitialState(), actions.setCanvasMetadata( metadata ) );
@@ -988,6 +1016,11 @@ describe( 'Image Studio Store', () => {
 		it( 'getHasUpdatedMetadata', () => {
 			const state: ImageStudioState = { ...getInitialState(), hasUpdatedMetadata: true };
 			expect( selectors.getHasUpdatedMetadata( state ) ).toBe( true );
+		} );
+
+		it( 'getAiDisclosureHidden', () => {
+			const state: ImageStudioState = { ...getInitialState(), aiDisclosureHidden: true };
+			expect( selectors.getAiDisclosureHidden( state ) ).toBe( true );
 		} );
 
 		it( 'getCanvasMetadata', () => {
