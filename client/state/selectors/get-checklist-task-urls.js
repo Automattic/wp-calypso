@@ -32,7 +32,7 @@ function getPageEditorUrl( state, siteId, pageId ) {
 export default createSelector(
 	( state, siteId ) => {
 		const posts = getPostsForQuery( state, siteId, FIRST_TEN_SITE_POSTS_QUERY );
-		const firstPostID = get( find( posts, { type: 'post' } ), [ 0, 'ID' ] );
+		const firstPostID = find( posts, { type: 'post' } )?.[ 0 ]?.ID;
 		const contactPageUrl = getPageEditorUrl( state, siteId, getContactPage( posts ) );
 		const frontPageUrl = getFrontPageEditorUrl( state, siteId );
 

@@ -11,7 +11,6 @@ import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -749,7 +748,7 @@ export class JetpackAuthorize extends Component {
 			return null;
 		}
 
-		if ( includes( authorizeError?.message, 'already_connected' ) ) {
+		if ( authorizeError.message?.includes( 'already_connected' ) ) {
 			return (
 				<JetpackConnectNotices
 					noticeType={ ALREADY_CONNECTED }

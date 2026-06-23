@@ -1,5 +1,6 @@
 import { select } from '@wordpress/data';
-import { isEqual, some } from 'lodash';
+import isEqual from 'fast-deep-equal/es6';
+import { some } from 'lodash';
 import tracksRecordEvent from './tracking/track-record-event';
 
 /**

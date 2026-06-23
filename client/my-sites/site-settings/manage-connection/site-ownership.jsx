@@ -1,6 +1,5 @@
 import { Card, FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import AuthorSelector from 'calypso/blocks/author-selector';
@@ -39,7 +38,7 @@ class SiteOwnership extends Component {
 		return (
 			user.linked_user_ID === false ||
 			user.linked_user_ID === currentUser.ID ||
-			! includes( user.roles, 'administrator' )
+			! user.roles?.includes( 'administrator' )
 		);
 	};
 

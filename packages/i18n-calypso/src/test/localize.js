@@ -1,6 +1,12 @@
-import { Component } from 'react';
-import ShallowRenderer from 'react-test-renderer/shallow';
+/**
+ * @jest-environment jsdom
+ */
+
+import { act, Component } from 'react';
+import { createRoot } from 'react-dom/client';
 import i18n, { localize } from '..';
+
+globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 describe( 'localize()', () => {
 	it( 'should be named using the variable name of the composed component', () => {
@@ -35,13 +41,23 @@ describe( 'localize()', () => {
 	} );
 
 	it( 'should provide translate and locale props to rendered child', () => {
-		const renderer = new ShallowRenderer();
-		const LocalizedComponent = localize( () => null );
+		const container = document.createElement( 'div' );
+		const root = createRoot( container );
+		let localizedProps;
+		const LocalizedComponent = localize( ( props ) => {
+			localizedProps = props;
+			return null;
+		} );
 
-		renderer.render( <LocalizedComponent /> );
-		const result = renderer.getRenderOutput();
+		act( () => {
+			root.render( <LocalizedComponent /> );
+		} );
 
-		expect( result.props.translate ).toBeInstanceOf( Function );
-		expect( result.props.locale ).toBe( i18n.getLocaleSlug() );
+		expect( localizedProps.translate ).toBeInstanceOf( Function );
+		expect( localizedProps.locale ).toBe( i18n.getLocaleSlug() );
+
+		act( () => {
+			root.unmount();
+		} );
 	} );
 } );

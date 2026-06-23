@@ -6,8 +6,10 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { Fragment, useState } from 'react';
 import InlineSupportLink from '../../../components/inline-support-link';
 import { TaxLocationForm, defaultTaxLocation } from '../../../components/tax-location-form';
@@ -200,6 +202,7 @@ function CreditCardSubmitButton( {
 	getCardElement: () => StripeCardNumberElement | undefined;
 } ) {
 	const { formStatus } = useFormStatus();
+	const { createErrorNotice } = useDispatch( noticesStore );
 
 	const handleButtonPress = () => {
 		if ( ! onClick ) {
@@ -209,6 +212,11 @@ function CreditCardSubmitButton( {
 		}
 		const formData = getFormData();
 		const cardElement = getCardElement();
+
+		if ( ! formData.taxLocation.country_code ) {
+			createErrorNotice( __( 'Please select a country.' ), { type: 'snackbar' } );
+			return;
+		}
 
 		onClick( {
 			name: formData.cardholderName,

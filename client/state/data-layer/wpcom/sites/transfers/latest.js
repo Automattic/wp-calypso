@@ -1,4 +1,3 @@
-import { delay } from 'lodash';
 import { ATOMIC_TRANSFER_REQUEST } from 'calypso/state/action-types';
 import { fetchAtomicTransfer, setAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
@@ -24,7 +23,7 @@ export const receiveTransfer =
 
 		const status = transfer.status;
 		if ( status !== transferStates.ERROR && status !== transferStates.COMPLETED ) {
-			delay( () => dispatch( fetchAtomicTransfer( siteId ) ), 10000 );
+			setTimeout( () => dispatch( fetchAtomicTransfer( siteId ) ), 10000 );
 		}
 
 		if ( status === transferStates.COMPLETED ) {

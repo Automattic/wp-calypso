@@ -7,6 +7,7 @@ import {
 import { isRTL } from '@wordpress/i18n';
 import { Icon, chevronLeft, chevronRight, check } from '@wordpress/icons';
 import clsx from 'clsx';
+import type { JSX } from 'react';
 import './style.scss';
 
 interface NavigatorItemProps {

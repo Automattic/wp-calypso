@@ -17,6 +17,9 @@ jest.mock(
 	} ),
 	{ virtual: true }
 );
+jest.mock( '@automattic/zendesk-client', () => ( {
+	useGetZendeskConversations: () => ( { conversations: [], isLoading: false } ),
+} ) );
 jest.mock( '../is-editor-page' );
 
 const MockComponent = jest.fn();

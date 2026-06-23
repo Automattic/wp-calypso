@@ -18,6 +18,11 @@ jest.mock( 'calypso/reader/data/user-profile/use-set-profile-tab-visibility', ()
 	useSetProfileTabVisibility: () => ( { setVisibility: jest.fn(), isPending: false } ),
 } ) );
 
+jest.mock( 'calypso/reader/components/achievements/use-set-achievements-visibility', () => ( {
+	__esModule: true,
+	default: () => ( { setVisibility: jest.fn(), isPending: false } ),
+} ) );
+
 describe( 'UserProfileSettings', () => {
 	const { useSelector } = jest.requireMock( 'calypso/state' );
 	const user: ReaderUser = {

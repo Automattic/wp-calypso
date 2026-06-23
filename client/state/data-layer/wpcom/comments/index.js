@@ -36,7 +36,7 @@ export const commentsFromApi = ( comments ) =>
 					...comment,
 					author: {
 						...comment.author,
-						name: decodeEntities( get( comment, [ 'author', 'name' ] ) ),
+						name: decodeEntities( comment?.author?.name ),
 					},
 			  }
 			: comment

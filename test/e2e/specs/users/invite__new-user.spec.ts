@@ -1,11 +1,14 @@
 import {
 	DataHelper,
 	CloseAccountFlow,
+	RestAPIClient,
 	RoleValue,
 	Roles,
 	UserSignupPage,
 } from '@automattic/calypso-e2e';
 import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-base';
+import { apiCloseAccount, recordAccountLeakMarker } from '../shared';
+import type { NewUserResponse } from '@automattic/calypso-e2e';
 
 test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 	skipIfMailosaurLimitReached();
@@ -17,6 +20,17 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 
 	let userManagementRevampFeature = false;
 	let acceptInviteLink: string;
+
+	// Accounts created during the run, closed via API in afterAll as a guaranteed
+	// teardown. The in-body UI close below stays as product coverage; the API close
+	// is the safety net for any run where the UI close did not happen. If the UI
+	// close did run, this account's token is dead and apiCloseAccount is a safe
+	// no-op (its existence probe writes no leak marker).
+	const accountsToCleanup: {
+		user: NewUserResponse[ 'body' ];
+		password: string;
+		email: string;
+	}[] = [];
 
 	test( 'As a WordPress.com user, I can invite a new user to my site, they can accept the invite and sign up, then I can remove them', async ( {
 		page,
@@ -61,7 +75,9 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 
 		await test.step( 'When I navigate to Users > All Users', async function () {
 			await componentSidebar.navigate( 'Users', 'All Users' );
-			! userManagementRevampFeature && ( await pagePeople.clickTab( 'Invites' ) );
+			if ( ! userManagementRevampFeature ) {
+				await pagePeople.clickTab( 'Invites' );
+			}
 			await pagePeople.clickViewAllIfAvailable();
 		} );
 
@@ -89,7 +105,28 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 			const userSignupPage = new UserSignupPage( pageIncognito.getPage() );
 			const signUpResponse = await userSignupPage.signupThroughInvite( testUser.email );
 
-			signedUpUsername = signUpResponse?.body?.username;
+			const created = signUpResponse.body;
+			// Queue teardown before asserting the rest of the identity: a created
+			// account must be scheduled for cleanup even if the response is partial.
+			// Otherwise a failed assertion below aborts the test before the in-body
+			// UI close, and the account leaks with no teardown and no leak marker.
+			accountsToCleanup.push( {
+				user: created,
+				password: testUser.password,
+				email: testUser.email,
+			} );
+
+			// Runtime guards: the signup response is untyped JSON, so the declared
+			// type is not a wire guarantee. Require the identity the afterAll teardown
+			// consumes to be truthy, not merely defined: an empty/null token passes
+			// `toBeDefined` but RestAPIClient treats it as absent and would fetch a
+			// fresh token from credentials, which fails on an already-closed account
+			// and records a false leak marker. Failing here aborts before the in-body
+			// UI close, so the queued account stays open and the fallback is correct.
+			expect( created?.user_id ).toBeTruthy();
+			expect( created?.bearer_token ).toBeTruthy();
+
+			signedUpUsername = created.username;
 			expect( signedUpUsername ).toBeDefined();
 		} );
 
@@ -120,5 +157,36 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 			const closeAccountFlow = new CloseAccountFlow( pageIncognito.getPage() );
 			await closeAccountFlow.closeAccount();
 		} );
+	} );
+
+	test.afterAll( async function () {
+		for ( const acct of accountsToCleanup ) {
+			if ( ! acct.user?.user_id ) {
+				// The account was queued (created) but the signup response carried no
+				// user ID, so it cannot be closed by ID. Record a leak marker keyed by
+				// email so CI still surfaces it rather than dropping it silently.
+				recordAccountLeakMarker( {
+					username: acct.user?.username ?? '',
+					email: acct.email,
+					error: 'Signup response missing user_id; account created but not closeable by ID.',
+				} );
+				continue;
+			}
+			// Prefer the bearer token captured at signup; fall back to the signup
+			// credentials so an account whose response omitted a token is still torn
+			// down. RestAPIClient fetches a fresh token from the credentials, which
+			// works because such an account never reached the in-body UI close and is
+			// therefore still open. apiCloseAccount records a leak marker when it
+			// cannot confirm closure, so a leak is never silently dropped.
+			const restAPIClient = new RestAPIClient(
+				{ username: acct.user.username ?? acct.email, password: acct.password },
+				acct.user.bearer_token
+			);
+			await apiCloseAccount( restAPIClient, {
+				userID: acct.user.user_id,
+				username: acct.user.username,
+				email: acct.email,
+			} );
+		}
 	} );
 } );

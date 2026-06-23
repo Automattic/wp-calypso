@@ -1,0 +1,5 @@
+// The shared WordPressLogo defaults to a white fill for dark backgrounds;
+// recolor it to the WordPress blue so it reads on the light task card.
+.use-built-by__logo {
+	fill: var(--studio-wordpress-blue-50);
+}

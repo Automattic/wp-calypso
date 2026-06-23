@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.4
+
+- Declare React 19 compatibility for package consumers (#111721).
+
 ## 1.0.3
 
 - Fix: restore `*.scss` in `sideEffects` so Calypso (which consumes the package via `calypso:src`) doesn't tree-shake the `import './style.scss'` and lose all of the picker's styles.

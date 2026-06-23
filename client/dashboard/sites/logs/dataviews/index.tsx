@@ -15,7 +15,7 @@ import { useMemo, useEffect, useCallback, useRef, useLayoutEffect, useState } fr
 import { useAnalytics } from '../../../app/analytics';
 import { usePersistentView } from '../../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../../app/performance-tracking';
-import { DataViews } from '../../../components/dataviews';
+import { DataViews, DataViewsEmptyStateLayout } from '../../../components/dataviews';
 import Notice from '../../../components/notice';
 import { LogsDownloader } from '../downloader';
 import {
@@ -326,6 +326,18 @@ function SiteLogsDataViews( {
 		totalPages: 1,
 	};
 
+	const emptyState = (
+		<DataViewsEmptyStateLayout
+			isBorderless
+			title={ __( 'No results' ) }
+			description={
+				logType === LogType.PHP
+					? __( 'No PHP errors were logged for the selected time range.' )
+					: __( 'No server requests were logged for the selected time range.' )
+			}
+		/>
+	);
+
 	return (
 		<>
 			{ logType === LogType.PHP && ! isLoadingLogQuery && logs.length === 0 && (
@@ -355,6 +367,7 @@ function SiteLogsDataViews( {
 					onChangeView={ onChangeView }
 					onReset={ resetView }
 					header={ LogsHeader }
+					empty={ emptyState }
 				/>
 			) : (
 				<DataViews< ServerLog >
@@ -370,6 +383,7 @@ function SiteLogsDataViews( {
 					onChangeView={ onChangeView }
 					onReset={ resetView }
 					header={ LogsHeader }
+					empty={ emptyState }
 				/>
 			) }
 			{ showScrollTop && (

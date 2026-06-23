@@ -168,9 +168,9 @@ $x-color-link-hover: var( --studio-wordpress-blue-60 );
 $x-color-link-background-hover: var( --studio-wordpress-blue-5 );
 $x-color-link: var( --studio-wordpress-blue-50 );
 $x-color-content-separator: rgba( $studio-gray-5, 0.85 );
-// "New" badge (2026 nav). Brand green per design; no Studio token matches #48ff50.
+// "New" badge (2026 nav). Brand green background; no Studio token matches #48ff50.
 $x-nav-2026-badge-new-bg: #48ff50;
-$x-nav-2026-badge-new-color: #003d03;
+$x-nav-2026-badge-new-color: var( --studio-gray-100 );
 $x-content-min-z-index: 801;
 // One above the nav, in its stacking band, so it never escapes above Calypso modals.
 $x-nav-2026-dropdown-z-index: $x-content-min-z-index + 1;
@@ -1500,7 +1500,6 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		padding: 0 10px;
 		font-size: 10px;
 		line-height: 1;
-		text-transform: uppercase;
 		color: $x-nav-2026-badge-new-color;
 		background: $x-nav-2026-badge-new-bg;
 		border-radius: 4px;
@@ -1887,7 +1886,6 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		font-size: 10px;
 		font-weight: $lp-font-weight-medium;
 		line-height: 1;
-		text-transform: uppercase;
 		color: $x-nav-2026-badge-new-color;
 		background: $x-nav-2026-badge-new-bg;
 		border-radius: 4px;

@@ -1,6 +1,6 @@
 import { pick } from '@automattic/js-utils';
 import update from 'immutability-helper';
-import { filter, find, findIndex, matches, reject, some, without } from 'lodash';
+import { filter, find, matches, reject, some } from 'lodash';
 import {
 	DOMAINS_DNS_ADD,
 	DOMAINS_DNS_ADD_COMPLETED,
@@ -40,7 +40,7 @@ function removeDuplicateWpcomRecords( domain, records ) {
 	const customRootAaaaRecords = filter( records, isRootAaaaRecord( domain ) );
 
 	if ( wpcomARecord && ( customARecord || customRootAaaaRecords ) ) {
-		return without( records, wpcomARecord );
+		return records.filter( ( record ) => record !== wpcomARecord );
 	}
 
 	return records;
@@ -157,8 +157,10 @@ function updateDnsState( state, domainName, record, updatedFields ) {
 }
 
 function findDnsIndex( records, record ) {
-	const matchingFields = pick( record, [ 'id', 'data', 'name', 'type' ] );
-	return findIndex( records, matchingFields );
+	const matchingFields = Object.entries( pick( record, [ 'id', 'data', 'name', 'type' ] ) );
+	return ( records ?? [] ).findIndex( ( r ) =>
+		matchingFields.every( ( [ key, value ] ) => r[ key ] === value )
+	);
 }
 
 export default function reducer( state = {}, action ) {

@@ -1,5 +1,5 @@
 import { getUrlParts, getUrlFromParts, safeImageUrl } from '@automattic/calypso-url';
-import { forEach, some, includes, filter } from 'lodash';
+import { forEach, some, filter } from 'lodash';
 import { resolveRelativePath } from 'calypso/lib/url';
 import { maxWidthPhotonishURL } from './utils';
 
@@ -44,7 +44,7 @@ const imageShouldBeRemovedFromContent = ( imageUrl ) => {
 		'pixel.wp.com',
 	];
 
-	return some( bannedUrlParts, ( part ) => includes( imageUrl.toLowerCase(), part ) );
+	return some( bannedUrlParts, ( part ) => imageUrl.toLowerCase().includes( part ) );
 };
 
 function provideProtocol( post, url ) {

@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import { includes } from 'lodash';
 import { useSelector } from 'react-redux';
 import { findThemeFilterTerm } from 'calypso/state/themes/selectors/find-theme-filter-term';
 import { getThemeFilterTerm } from 'calypso/state/themes/selectors/get-theme-filter-term';
@@ -13,7 +12,7 @@ export default function useThemeShowcaseDescription( { filter, tier, vertical } 
 	} );
 	const filterDescription = useSelector( ( state ) => {
 		// If we have *one* filter, use its description
-		if ( filter && ! includes( filter, '+' ) ) {
+		if ( filter && ! filter.includes( '+' ) ) {
 			return findThemeFilterTerm( state, filter )?.description;
 		}
 	} );
@@ -37,7 +36,7 @@ export default function useThemeShowcaseDescription( { filter, tier, vertical } 
 	}
 
 	// If we have *one* filter, use its description
-	if ( filter && ! includes( filter, '+' ) ) {
+	if ( filter && ! filter.includes( '+' ) ) {
 		if ( filterDescription ) {
 			return filterDescription;
 		}

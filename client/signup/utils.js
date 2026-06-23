@@ -1,6 +1,6 @@
 import { pick } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
-import { filter, find, includes, isEmpty, sortBy } from 'lodash';
+import { filter, find, isEmpty, sortBy } from 'lodash';
 import { addQueryArgs } from 'calypso/lib/url';
 import flows from 'calypso/signup/config/flows';
 import { getStepModuleName } from 'calypso/signup/config/step-components';
@@ -144,7 +144,7 @@ export function getFilteredSteps( flowName, progress, isUserLoggedIn ) {
 
 	return sortBy(
 		// filter steps...
-		filter( progress, ( step ) => includes( flow.steps, step.stepName ) ),
+		filter( progress, ( step ) => flow.steps.includes( step.stepName ) ),
 		// then order according to the flow definition...
 		( { stepName } ) => flow.steps.indexOf( stepName )
 	);

@@ -23,6 +23,7 @@ const getDomainId = ( domain: DomainSummary ): string => {
 
 const view = {
 	...DEFAULT_VIEW,
+	layout: { ...DEFAULT_VIEW.layout, enableMoving: false },
 	fields: [ 'expiry', 'domain_status' ],
 };
 
@@ -31,6 +32,15 @@ const onChangeView = () => {};
 const SiteDomainDataViews = ( { site, domains }: { site: Site; domains: DomainSummary[] } ) => {
 	const router = useRouter();
 	const fields = useFields( { site, inOverview: true } );
+
+	// Disable the column controls for the DataView display without affecting
+	// sorting/filtering in `filterSortAndPaginate`, which reads the raw fields.
+	const displayFields = fields.map( ( field ) => ( {
+		...field,
+		enableHiding: false,
+		enableSorting: false,
+		filterBy: false as const,
+	} ) );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( domains, view, fields );
 
@@ -64,7 +74,7 @@ const SiteDomainDataViews = ( { site, domains }: { site: Site; domains: DomainSu
 			<CardBody>
 				<DataViews< DomainSummary >
 					data={ filteredData || [] }
-					fields={ fields }
+					fields={ displayFields }
 					onChangeView={ onChangeView }
 					view={ view }
 					paginationInfo={ paginationInfo }

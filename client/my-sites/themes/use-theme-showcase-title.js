@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import { includes } from 'lodash';
 import { useSelector } from 'react-redux';
 import { findThemeFilterTerm } from 'calypso/state/themes/selectors/find-theme-filter-term';
 import { getThemeFilterTerm } from 'calypso/state/themes/selectors/get-theme-filter-term';
@@ -15,7 +14,7 @@ export default function useThemeShowcaseTitle( { filter, tier, vertical } = {} )
 
 	// If we have *one* filter, use its name
 	const filterName = useSelector( ( state ) => {
-		if ( filter && ! includes( filter, '+' ) ) {
+		if ( filter && ! filter.includes( '+' ) ) {
 			return findThemeFilterTerm( state, filter )?.name;
 		}
 	} );

@@ -7,6 +7,7 @@ import SiteNotificationSettings from 'calypso/blocks/reader-site-notification-se
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import { useFeedRecommendationsMutation } from 'calypso/data/reader/use-feed-recommendations-mutation';
 import { useFeedQuery } from 'calypso/reader/data/feed';
+import { useMarkAllAsSeenMutation } from 'calypso/reader/data/seen-posts';
 import {
 	useHasSiteSubscriptionOrganization,
 	useIsSubscribed,
@@ -17,7 +18,6 @@ import { RecommendButton } from 'calypso/reader/recommend-button';
 import { useDispatch, useSelector } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import type { AppState } from 'calypso/types';
@@ -105,16 +105,24 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 		setIsSuggestedFollowsModalOpen( false );
 	};
 
+	const { mutate: markAllAsSeenMutate } = useMarkAllAsSeenMutation();
+
 	const markAllAsSeen = () => {
 		dispatch( recordReaderTracksEvent( 'calypso_reader_mark_all_as_seen_clicked' ) );
 
-		dispatch(
-			requestMarkAllAsSeen( {
-				identifier: streamKey,
-				feedIds: [ resolvedFeed?.feed_ID ],
-				feedUrls: [ resolvedFeed?.feed_URL || resolvedFeed?.URL ],
-			} )
-		);
+		if ( ! resolvedFeed?.feed_ID ) {
+			return;
+		}
+
+		const feedIds = [ resolvedFeed.feed_ID ];
+		const feedUrl = resolvedFeed?.feed_URL || resolvedFeed?.URL;
+		const feedUrls = feedUrl ? [ feedUrl ] : [];
+
+		markAllAsSeenMutate( {
+			identifier: streamKey ?? '',
+			feedIds,
+			feedUrls,
+		} );
 	};
 
 	return (
