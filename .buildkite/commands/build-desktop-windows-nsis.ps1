@@ -77,8 +77,8 @@ if ($env:FORCE_PFX_SIGNING) {
     }
     $env:SIGNTOOL_PATH = $signtool.FullName
 } else {
-    # Default: Azure Trusted Signing. Sets AZURE_CODE_SIGNING_DLIB,
-    # AZURE_METADATA_JSON, and SIGNTOOL_PATH for bin/windows-sign.js.
+    # Sets AZURE_CODE_SIGNING_DLIB, AZURE_METADATA_JSON,
+    # and SIGNTOOL_PATH for bin/windows-sign.js.
     Write-Output "--- :lock: Configuring Windows code signing (Azure Trusted Signing)"
     Invoke-Checked { & 'setup_azure_trusted_signing.ps1' }
 }
