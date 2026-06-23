@@ -116,10 +116,10 @@ describe( 'SpaceFeed', () => {
 		expect( refetch ).toHaveBeenCalled();
 	} );
 
-	it( 'shows an error with a retry when the space detail fails to load', async () => {
-		const user = userEvent.setup();
+	it( 'requests the posts stream in parallel, without waiting for the detail', async () => {
+		// No detail seeded — the stream must still be enabled (fetched immediately),
+		// proving it no longer waterfalls behind the space detail.
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
-		nock( BASE ).get( `/wpcom/v2/reader/spaces/${ WORK.id }` ).reply( 500, {} );
 		nock( BASE ).get( `/wpcom/v2/reader/spaces/${ WORK.id }` ).reply( 200, {
 			id: WORK.id,
 			title: WORK.name,
@@ -133,14 +133,34 @@ describe( 'SpaceFeed', () => {
 			initialState: { currentUser: { id: 1 } },
 		} );
 
-		expect( await screen.findByText( 'Couldn’t load this feed' ) ).toBeVisible();
+		await waitFor( () =>
+			expect( mockUseInfiniteStream ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					streamKey: `space:${ WORK.id }`,
+					options: expect.objectContaining( { enabled: true } ),
+				} )
+			)
+		);
+	} );
 
-		await user.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+	it( 'renders the feed from the layout-view fallback when the detail fails to load', async () => {
+		// The detail fails, but the feed must still render from `layoutView` + the
+		// stream rather than blocking on the detail.
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		nock( BASE ).get( `/wpcom/v2/reader/spaces/${ WORK.id }` ).reply( 500, {} );
+		mockUseInfiniteStream.mockReturnValue(
+			streamResult( { pages: [ { posts: [ makePost() ] } as unknown as ReadStreamResponse ] } )
+		);
+
+		const { container } = renderWithProvider(
+			<SpaceFeed spaceId={ WORK.id } layoutView="gallery" />,
+			{ queryClient, initialState: { currentUser: { id: 1 } } }
+		);
 
 		await waitFor( () =>
-			expect( screen.queryByText( 'Couldn’t load this feed' ) ).not.toBeInTheDocument()
+			expect( container.querySelector( '.space-feed-gallery' ) ).toBeInTheDocument()
 		);
-		expect( await screen.findByText( 'Nothing here yet' ) ).toBeVisible();
+		expect( screen.queryByText( 'Couldn’t load this feed' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'shows the empty state when the stream has no posts', () => {
