@@ -456,21 +456,25 @@ const ReaderOnboardingRsm = ( {
 	return (
 		<>
 			<div className="reader-onboarding">
-				<Button
-					size="compact"
-					className="reader-onboarding__dismiss-button"
-					icon={ close }
-					label={ __( 'Dismiss onboarding checklist' ) }
-					onClick={ handleDismissClick }
-				/>
 				<div className="reader-onboarding__intro-column">
-					<CircularProgressBar
-						size={ 40 }
-						enableDesktopScaling
-						numberOfSteps={ tasks.length }
-						currentStep={ tasks.filter( ( task ) => task.completed ).length }
-					/>
-					<h2>{ translate( 'Your personal reading adventure' ) }</h2>
+					<div className="reader-onboarding__header">
+						<h2>{ translate( 'Your personal reading adventure' ) }</h2>
+						<div className="reader-onboarding__header-actions">
+							<CircularProgressBar
+								size={ 40 }
+								enableDesktopScaling
+								numberOfSteps={ tasks.length }
+								currentStep={ tasks.filter( ( task ) => task.completed ).length }
+							/>
+							<Button
+								size="compact"
+								className="reader-onboarding__dismiss-button"
+								icon={ close }
+								label={ __( 'Dismiss onboarding checklist' ) }
+								onClick={ handleDismissClick }
+							/>
+						</div>
+					</div>
 					<p>{ translate( 'Tailor your feed, connect with your favorite topics.' ) }</p>
 				</div>
 				<div className="reader-onboarding__steps-column">
