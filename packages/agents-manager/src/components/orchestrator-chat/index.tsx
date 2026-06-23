@@ -543,7 +543,14 @@ export default function OrchestratorChat( {
 	if ( suggestions.length > 0 ) {
 		displayedEmptyViewSuggestions = suggestions;
 	} else if ( displayedMessages.length === 0 && inputValue.length === 0 ) {
-		displayedEmptyViewSuggestions = emptyViewSuggestions;
+		// Read straight from the live `useSuggestions` output rather than the
+		// registered store. Clicking a suggestion calls `clearSuggestions()`,
+		// which empties the store, and the re-registration effect is keyed on
+		// the (unchanged) hook output so it won't restore it. Persistent
+		// empty-view chips must survive that clear; fall back to the static
+		// defaults only when the hook genuinely has none.
+		displayedEmptyViewSuggestions =
+			dynamicSuggestionsList.length > 0 ? dynamicSuggestionsList : emptyViewSuggestions;
 	}
 
 	return (
