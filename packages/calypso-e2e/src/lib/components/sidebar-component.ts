@@ -49,10 +49,8 @@ export class SidebarComponent {
 		if ( await this.sidebarIsCollapsed() ) {
 			const sidebarCollapseToggle = this.page.locator( selectors.linkWithText( 'Collapse menu' ) );
 			// Wait until the collapsed sidebar CSS is detached from DOM, ie. it is no longer collapsed.
-			await Promise.all( [
-				this.page.waitForSelector( selectors.collapsedSidebar, { state: 'detached' } ),
-				sidebarCollapseToggle.click(),
-			] );
+			await sidebarCollapseToggle.click();
+			await this.page.locator( selectors.collapsedSidebar ).waitFor( { state: 'detached' } );
 		}
 	}
 
