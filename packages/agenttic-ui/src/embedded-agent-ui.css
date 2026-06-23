@@ -28,16 +28,33 @@
 
 .agenttic-embedded__bubble {
 	max-width: 100%;
-}
-
-.agenttic-embedded__message p {
-	max-width: 100%;
-	margin: 0;
 	padding: 10px 12px;
 	border-radius: 14px;
 	background: #f3f4f6;
 	line-height: 1.45;
 	overflow-wrap: anywhere;
+}
+
+.agenttic-embedded__bubble > * {
+	margin: 0 0 0.75em;
+	padding: 0;
+}
+
+.agenttic-embedded__bubble > :last-child {
+	margin-bottom: 0;
+}
+
+.agenttic-embedded__bubble ul,
+.agenttic-embedded__bubble ol {
+	padding-left: 1.25em;
+}
+
+.agenttic-embedded__bubble li + li {
+	margin-top: 4px;
+}
+
+.agenttic-embedded__message p {
+	max-width: 100%;
 }
 
 .agenttic-embedded__message--user {
@@ -50,7 +67,7 @@
 	white-space: pre-wrap;
 }
 
-.agenttic-embedded__message--user p {
+.agenttic-embedded__message--user .agenttic-embedded__bubble {
 	background: #111827;
 	color: #fff;
 }
