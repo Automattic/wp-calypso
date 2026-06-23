@@ -131,7 +131,6 @@ export interface Client {
 	isShowing: boolean;
 	lastSeenTime: number;
 	filter: Record< string, unknown > | null;
-	filteredRequestLimit: number;
 	filteredHasMore: boolean;
 	gettingFilteredNotes: boolean;
 	retries: number;

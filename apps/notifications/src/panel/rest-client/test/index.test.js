@@ -485,5 +485,44 @@ describe( 'RestClient', () => {
 			// 99 stays in the store so the Unread view can still resolve it.
 			expect( getAllNotes( store.getState() ).map( ( note ) => note.id ) ).toContain( 99 );
 		} );
+
+		// The filtered refresh/poll must keep a small fixed window too, instead of
+		// growing to cover everything paged into the Unread tab.
+		it( 'keeps the filtered poll window fixed after paging unread notes in', () => {
+			client.setFilter( { unread: 1 } );
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 209 ), last_seen_time: 0 } ); // 209..200
+			getCalls.length = 0;
+			client.loadMore();
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 199 ), last_seen_time: 0 } ); // 199..190
+			getCalls.length = 0;
+
+			// A poll-driven refresh (no `before`) requests the small fixed window, not
+			// the 20 unread notes loaded.
+			client.getFilteredNotes();
+			expect( getCalls ).toHaveLength( 1 );
+			expect( getCalls[ 0 ].query.number ).toBe( 10 );
+			expect( getCalls[ 0 ].query ).not.toHaveProperty( 'before' );
+			expect( getCalls[ 0 ].query.unread ).toBe( 1 );
+		} );
+
+		it( 'keeps older paged-in unread notes on a head-only refresh', () => {
+			client.setFilter( { unread: 1 } );
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 209 ), last_seen_time: 0 } ); // 209..200
+			getCalls.length = 0;
+			client.loadMore();
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 199 ), last_seen_time: 0 } ); // 199..190
+			expect( getUnreadNoteIds( store.getState() ) ).toHaveLength( 20 );
+			getCalls.length = 0;
+
+			// The refresh returns only the head window (209..200); the older paged-in
+			// ids (199..190) are outside it and must survive.
+			client.getFilteredNotes();
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 209 ), last_seen_time: 0 } );
+
+			const unread = getUnreadNoteIds( store.getState() );
+			expect( unread ).toHaveLength( 20 );
+			expect( unread ).toContain( 209 ); // head kept
+			expect( unread ).toContain( 190 ); // older paged-in id kept
+		} );
 	} );
 } );
