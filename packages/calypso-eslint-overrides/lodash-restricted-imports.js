@@ -23,6 +23,8 @@ const JS_UTILS_NAMES = [
 	'escapeRegExp',
 	'once',
 	'isError',
+	'random',
+	'range',
 ];
 
 // The js-utils case converters cover ASCII identifiers/keys, not lodash's full
@@ -58,6 +60,10 @@ const FINDKEY_MESSAGE =
 	'Please use `Object.keys( obj ).find( ( key ) => … )` instead of lodash `findKey`.';
 const FINDINDEX_MESSAGE =
 	'Please use native `array.findIndex( ( item ) => … )` instead of lodash `findIndex`.';
+const CLONE_MESSAGE =
+	'Please use a spread copy (`{ ...obj }` / `[ ...arr ]`) instead of lodash `clone`.';
+const PROPERTY_MESSAGE =
+	'Please use an arrow function (`( obj ) => obj.key`) instead of lodash `property`.';
 
 const paths = [
 	{ name: 'lodash', importNames: JS_UTILS_NAMES, message: JS_UTILS_MESSAGE },
@@ -76,6 +82,8 @@ const paths = [
 	{ name: 'lodash', importNames: [ 'isNumber' ], message: ISNUMBER_MESSAGE },
 	{ name: 'lodash', importNames: [ 'findKey' ], message: FINDKEY_MESSAGE },
 	{ name: 'lodash', importNames: [ 'findIndex' ], message: FINDINDEX_MESSAGE },
+	{ name: 'lodash', importNames: [ 'clone' ], message: CLONE_MESSAGE },
+	{ name: 'lodash', importNames: [ 'property' ], message: PROPERTY_MESSAGE },
 ];
 
 // Deep `lodash/<fn>` imports bypass the named-import paths above.
@@ -96,6 +104,8 @@ const patterns = [
 	{ group: [ 'lodash/isNumber' ], message: ISNUMBER_MESSAGE },
 	{ group: [ 'lodash/findKey' ], message: FINDKEY_MESSAGE },
 	{ group: [ 'lodash/findIndex' ], message: FINDINDEX_MESSAGE },
+	{ group: [ 'lodash/clone' ], message: CLONE_MESSAGE },
+	{ group: [ 'lodash/property' ], message: PROPERTY_MESSAGE },
 ];
 
 module.exports = { paths, patterns };

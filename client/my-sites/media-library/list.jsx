@@ -1,5 +1,5 @@
 import { withRtl } from 'i18n-calypso';
-import { clone, filter } from 'lodash';
+import { filter } from 'lodash';
 import PropTypes from 'prop-types';
 import { createElement, Component } from 'react';
 import { connect } from 'react-redux';
@@ -97,7 +97,7 @@ export class MediaLibraryList extends Component {
 		if ( this.props.single ) {
 			selectedItems = filter( this.props.selectedItems, { ID: item.ID } );
 		} else {
-			selectedItems = clone( this.props.selectedItems );
+			selectedItems = [ ...this.props.selectedItems ];
 		}
 
 		const selectedItemsIndex = selectedItems.findIndex( ( i ) => i.ID === item.ID );

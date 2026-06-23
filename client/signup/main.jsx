@@ -13,7 +13,7 @@ import * as oauthToken from '@automattic/oauth-token';
 import { isDomainForGravatarFlow } from '@automattic/onboarding';
 import debugModule from 'debug';
 import isEqual from 'fast-deep-equal/es6';
-import { clone, find, get, isEmpty, map } from 'lodash';
+import { find, get, isEmpty, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -557,7 +557,7 @@ class Signup extends Component {
 		const currentStepIndex = flowSteps.indexOf( stepName );
 		const stepsToProcess =
 			currentStepIndex >= 0 ? flowSteps.slice( 0, currentStepIndex + 1 ) : flowSteps;
-		const previouslyExcludedSteps = clone( flows.excludedSteps );
+		const previouslyExcludedSteps = [ ...flows.excludedSteps ];
 		map( previouslyExcludedSteps, ( flowStepName ) => {
 			if ( stepsToProcess.includes( flowStepName ) ) {
 				this.processFulfilledSteps( flowStepName, nextProps );

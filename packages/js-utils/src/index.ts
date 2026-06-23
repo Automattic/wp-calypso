@@ -14,6 +14,8 @@ export { default as omitBy } from './omit-by';
 export { default as once } from './once';
 export { default as pick } from './pick';
 export { default as pickBy } from './pick-by';
+export { default as random } from './random';
+export { default as range } from './range';
 export { default as shuffle } from './shuffle';
 export { default as snakeCase } from './snake-case';
 export { default as snakeToCamelCase } from './snake-to-camel-case';
