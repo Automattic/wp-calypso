@@ -110,13 +110,14 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		);
 
 		it( 'Open Jetpack settings', async function () {
-			// @TODO https://github.com/Automattic/wp-calypso/pull/82301
-			// Works around the scenario where the Jetpack icon isn't pinned on the
-			// editor toolbar.
-			await editorPage.openEditorOptionsMenu();
-			const page = await editorPage.getEditorParent();
-
-			await page.getByRole( 'menuitemcheckbox', { name: 'Jetpack', exact: true } ).click();
+			// Open the Jetpack sidebar through the shared helper. It goes via the
+			// more-options menu (the Jetpack icon is not always pinned to the
+			// toolbar, see https://github.com/Automattic/wp-calypso/pull/82301),
+			// matches the entry by its stable `aria-controls` id rather than the
+			// "Jetpack" label, and verifies the Jetpack complementary area
+			// actually became active, retrying if a sibling sidebar (such as
+			// "Jetpack Newsletter") wins the activation race.
+			await editorPage.openSettings( 'Jetpack' );
 		} );
 
 		skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )( 'Link preview', function () {
