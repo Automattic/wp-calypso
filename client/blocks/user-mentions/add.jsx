@@ -1,6 +1,5 @@
 import { pick, escapeRegExp } from '@automattic/js-utils';
 import { throttle } from '@wordpress/compose';
-import { findIndex } from 'lodash';
 import { createRef, Component, Fragment } from 'react';
 import getCaretCoordinates from 'textarea-caret';
 import UserMentionSuggestionList from './suggestion-list';
@@ -208,8 +207,7 @@ export default ( WrappedComponent ) =>
 				return 0;
 			}
 
-			return findIndex(
-				this.matchingSuggestions,
+			return this.matchingSuggestions.findIndex(
 				( { ID: id } ) => id === this.state.selectedSuggestionId
 			);
 		}

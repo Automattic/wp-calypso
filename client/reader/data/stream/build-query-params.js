@@ -1,5 +1,5 @@
+import { random } from '@automattic/js-utils';
 import i18n from 'i18n-calypso';
-import { random } from 'lodash';
 import { getTagsFromStreamKey } from 'calypso/reader/discover/helper';
 import { getStreamType } from 'calypso/reader/utils';
 import {

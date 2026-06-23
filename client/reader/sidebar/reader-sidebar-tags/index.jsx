@@ -66,7 +66,7 @@ export class ReaderSidebarTags extends Component {
 					onClick={ this.selectMenu }
 					customIcon={ <ReaderTagIcon viewBox="0 0 24 24" /> }
 					disableFlyout
-					className={ path.startsWith( '/tag' ) && 'sidebar__menu--selected' }
+					className={ path.startsWith( '/tag' ) ? 'sidebar__menu--selected' : '' }
 					expandableIconClick={ onClick }
 				>
 					<ReaderSidebarTagsList { ...this.props } />

@@ -1,6 +1,6 @@
 import { omit } from '@automattic/js-utils';
 import isEqual from 'fast-deep-equal/es6';
-import { clone, get, map, reduce } from 'lodash';
+import { get, map, reduce } from 'lodash';
 import QueryKey from './key';
 
 /**
@@ -269,7 +269,7 @@ export default class QueryManager {
 					// Did not exist previously or has changed
 					if ( memo === this.data.items ) {
 						// Create a copy of memo, as we don't want to mutate the original items set
-						memo = clone( memo );
+						memo = { ...memo };
 					}
 
 					memo[ receivedItemKey ] = mergedItem;
@@ -373,7 +373,7 @@ export default class QueryManager {
 						if ( ! updatedItem || ! this.constructor.matches( query, updatedItem ) ) {
 							// Create a copy of the original details to avoid mutating
 							if ( memo[ queryKey ] === queryDetails ) {
-								memo[ queryKey ] = clone( queryDetails );
+								memo[ queryKey ] = { ...queryDetails };
 							}
 
 							// Omit item by slicing previous and next
@@ -393,7 +393,7 @@ export default class QueryManager {
 
 						// Create a copy of the original details to avoid mutating
 						if ( memo[ queryKey ] === queryDetails ) {
-							memo[ queryKey ] = clone( queryDetails );
+							memo[ queryKey ] = { ...queryDetails };
 						}
 
 						// Increment found count for query

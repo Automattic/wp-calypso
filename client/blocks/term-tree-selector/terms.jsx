@@ -1,10 +1,11 @@
 import { FormLabel } from '@automattic/components';
+import { range } from '@automattic/js-utils';
 import { AutoSizer, List } from '@automattic/react-virtualized';
 import { debounce } from '@wordpress/compose';
 import clsx from 'clsx';
 import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { filter, map, memoize, range, reduce } from 'lodash';
+import { filter, map, memoize, reduce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';

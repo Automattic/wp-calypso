@@ -2,7 +2,7 @@
 
 import { mapValues, omit, omitBy } from '@automattic/js-utils';
 import isEqual from 'fast-deep-equal/es6';
-import { set, isEmpty, reduce, merge, findKey } from 'lodash';
+import { set, isEmpty, reduce, merge } from 'lodash';
 import PostQueryManager from 'calypso/lib/query-manager/post';
 import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
 import {
@@ -70,7 +70,8 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 			);
 		}
 		case POST_DELETE_SUCCESS: {
-			const globalId = findKey( state, ( [ siteId, postId ] ) => {
+			const globalId = Object.keys( state ).find( ( key ) => {
+				const [ siteId, postId ] = state[ key ];
 				return siteId === action.siteId && postId === action.postId;
 			} );
 
@@ -228,7 +229,8 @@ export const queries = withSchemaValidation(
 
 function findItemKey( state, siteId, postId ) {
 	return (
-		findKey( state.data.items, ( post ) => {
+		Object.keys( state.data.items ?? {} ).find( ( key ) => {
+			const post = state.data.items[ key ];
 			return post.site_ID === siteId && post.ID === postId;
 		} ) || null
 	);

@@ -3,6 +3,7 @@ import { useContext, createContext, useMemo } from '@wordpress/element';
 import { PRODUCT_PRESETS } from '../feature-config';
 import type { HelpCenterFeatureConfig, HelpCenterProduct } from '../feature-config';
 import type { CurrentUser, HelpCenterSite } from '@automattic/data-stores';
+import type { JSX } from 'react';
 
 export type HelpCenterRequiredInformation = {
 	newInteractionsBotSlug: string;

@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/components",
-	"version": "3.0.3",
+	"version": "3.0.5",
 	"description": "Automattic Components.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -83,8 +83,8 @@
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^10.48.0",
-		"react": "^18.3.1",
-		"react-dom": "^18.3.1"
+		"react": "^18.3.1 || ^19.0.0",
+		"react-dom": "^18.3.1 || ^19.0.0"
 	},
 	"devDependencies": {
 		"@ariakit/test": "0.4.15",

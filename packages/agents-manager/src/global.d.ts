@@ -17,6 +17,8 @@ declare const agentsManagerData:
 			helpCenterUrl?: string;
 			/** Dev/internal context (localhost, jurassic, proxied a11ns, internal Atomic). Drives `is_test`. */
 			isDevMode?: boolean;
+			emptyViewHeading?: string;
+			emptyViewHelp?: string;
 	  }
 	| undefined;
 

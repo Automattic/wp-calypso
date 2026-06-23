@@ -1,3 +1,4 @@
+import './style.scss';
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon, EmbedContainer } from '@automattic/components';
@@ -31,6 +32,7 @@ import { usePostCommentsApiDisabled } from 'calypso/reader/data/comments';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import { usePost } from 'calypso/reader/data/post';
 import { withPostLikeActions } from 'calypso/reader/data/post/likes';
+import { withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
 import { withSite } from 'calypso/reader/data/site';
 import {
 	useSiteSubscriptionForFeed,
@@ -50,12 +52,6 @@ import { getPostTitleFallback, showSelectedPost } from 'calypso/reader/utils';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { useSelector } from 'calypso/state';
 import {
-	requestMarkAsSeen,
-	requestMarkAsUnseen,
-	requestMarkAsSeenBlog,
-	requestMarkAsUnseenBlog,
-} from 'calypso/state/reader/seen-posts/actions';
-import {
 	setViewingFullPostKey,
 	unsetViewingFullPostKey,
 } from 'calypso/state/reader/viewing/actions';
@@ -73,7 +69,6 @@ import ReaderFullPostContentPlaceholder from './placeholders/content';
 import ReaderFullPostNavigation from './post-navigation';
 import ScrollTracker from './scroll-tracker';
 import ReaderFullPostUnavailable from './unavailable';
-import './style.scss';
 
 const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
 
@@ -656,18 +651,20 @@ export class FullPostView extends Component {
 
 	renderMarkAsSenButton = () => {
 		const { post } = this.props;
+		const label = post.is_seen
+			? translate( 'Mark post as unseen' )
+			: translate( 'Mark post as seen' );
+
 		return (
-			<div
+			<button
+				type="button"
 				className="reader-full-post__seen-button"
-				title={ post.is_seen ? 'Mark post as unseen' : 'Mark post as seen' }
+				title={ label }
+				aria-label={ label }
+				onClick={ post.is_seen ? this.markAsUnseen : this.markAsSeen }
 			>
-				<Gridicon
-					icon={ post.is_seen ? 'not-visible' : 'visible' }
-					size={ 18 }
-					onClick={ post.is_seen ? this.markAsUnseen : this.markAsSeen }
-					ref={ this.seenTooltipContextRef }
-				/>
-			</div>
+				<Gridicon icon={ post.is_seen ? 'not-visible' : 'visible' } size={ 18 } />
+			</button>
 		);
 	};
 
@@ -941,12 +938,13 @@ const ConnectedFullPostView = connect( mapStateToFullPostProps, {
 	enableAppBanner,
 	setViewingFullPostKey,
 	unsetViewingFullPostKey,
-	requestMarkAsSeen,
-	requestMarkAsUnseen,
-	requestMarkAsSeenBlog,
-	requestMarkAsUnseenBlog,
 	showSelectedPost,
-} )( withSite( withPostLikes( withPostLikeActions( FullPostView ) ), getPostSiteId ) );
+} )(
+	withSite(
+		withPostLikes( withPostLikeActions( withSeenPostsMutations( FullPostView ) ) ),
+		getPostSiteId
+	)
+);
 
 export const withFullPostNavigation = ( WrappedComponent ) =>
 	function FullPostNavigationContainer( props ) {

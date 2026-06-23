@@ -49,18 +49,18 @@
 		"@wordpress/icons": "^13.3.0",
 		"@wordpress/ui": "^0.15.0",
 		"clsx": "^2.1.1",
-		"react": "^18.3.1",
-		"react-dom": "^18.3.1",
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
 		"typescript": "^6.0.3"
 	},
 	"peerDependencies": {
 		"@wordpress/element": "^8.0.0",
-		"react": "^18.3.1",
-		"react-dom": "^18.3.1"
+		"react": "^18.3.1 || ^19.0.0",
+		"react-dom": "^18.3.1 || ^19.0.0"
 	},
 	"private": true
 }
