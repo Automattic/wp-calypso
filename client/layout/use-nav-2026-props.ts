@@ -38,7 +38,7 @@ type Nav2026Options = {
 // Keep in sync with the PHP constant WPCOM_Global_Nav_Helpers::NAV_2026_EXPERIMENT.
 const NAV_2026_EXPERIMENT = 'wpcom_global_navigation_202606';
 
-const VARIATION_TO_VARIANT: Record< string, 1 | 2 > = {
+const VARIATION_TO_VARIANT: Partial< Record< string, 1 | 2 > > = {
 	showcase_products: 1,
 	showcase_products_and_ai: 2,
 };
