@@ -218,10 +218,14 @@
 	min-block-size: 0;
 	margin: 0;
 	padding: 0;
+	overflow-y: auto;
 }
 
-.space-sources__virtualized-list {
-	outline: none;
+.space-sources__virtual-row {
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline: 0;
+	padding-inline-end: 12px;
 }
 
 .space-sources__row-main {

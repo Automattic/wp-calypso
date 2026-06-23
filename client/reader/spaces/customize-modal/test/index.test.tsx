@@ -48,29 +48,31 @@ jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
 	} ),
 } ) );
 
-jest.mock( '@automattic/react-virtualized', () => ( {
-	AutoSizer: ( {
-		children,
+// jsdom has no layout, so the real virtualizer would window nothing. Render every
+// item so the source rows the tests interact with (Add/Remove) are in the DOM.
+jest.mock( 'calypso/reader/hooks/use-infinite-list', () => ( {
+	useInfiniteList: ( {
+		count,
+		getItemKey,
 	}: {
-		children: ( size: { width: number; height: number } ) => React.ReactNode;
-	} ) => children( { width: 480, height: 360 } ),
-	List: ( {
-		rowCount,
-		rowRenderer,
-	}: {
-		rowCount: number;
-		rowRenderer: ( props: {
-			index: number;
-			key: string;
-			style: React.CSSProperties;
-		} ) => React.ReactNode;
-	} ) => (
-		<>
-			{ Array.from( { length: rowCount }, ( _, index ) =>
-				rowRenderer( { index, key: String( index ), style: {} } )
-			) }
-		</>
-	),
+		count: number;
+		getItemKey: ( index: number ) => string | number;
+	} ) => ( {
+		getListProps: ( props: { className?: string; style?: React.CSSProperties } = {} ) => ( {
+			ref: () => {},
+			className: props.className,
+			style: props.style ?? {},
+		} ),
+		items: Array.from( { length: count }, ( _value, index ) => ( {
+			index,
+			key: String( getItemKey( index ) ),
+			start: 0,
+		} ) ),
+		scrollMargin: 0,
+		measureElement: () => {},
+		scrollToIndex: () => {},
+		scrollToOffset: () => {},
+	} ),
 } ) );
 
 const SPACE: ReadSpaceDetails = {

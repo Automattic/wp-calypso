@@ -1,5 +1,4 @@
 import { getSiteSubscriptionSourceKey, type SiteSubscriptionItem } from '@automattic/api-core';
-import { AutoSizer, List } from '@automattic/react-virtualized';
 import { useFuzzySearch } from '@automattic/search';
 import {
 	Button,
@@ -11,8 +10,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
 import Skeleton from 'calypso/reader/components/skeleton';
 import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
+import { useInfiniteList } from 'calypso/reader/hooks/use-infinite-list';
 import { SourceSubscription } from './source-subscription';
-import type { CSSProperties } from 'react';
 
 interface Props {
 	selectedSourceKeys: string[];
@@ -25,17 +24,13 @@ type Filter = 'all' | 'selected';
 
 type SourcesContentState = 'loading' | 'error' | 'empty' | 'list';
 
-const SOURCE_ROW_HEIGHT = 64;
+// Estimated row height in px (corrected per-row once measured) and the gap the
+// virtualizer inserts between rows — set via the hook's `gap`, not CSS margins.
+const SOURCE_ROW_ESTIMATE = 56;
 const SOURCE_ROW_GAP = 8;
 
 // Stable identity so `useFuzzySearch` can reuse its Fuse instance across renders.
 const SEARCH_KEYS: ( keyof SiteSubscriptionItem )[] = [ 'name', 'URL', 'feed_URL' ];
-
-type SourceRowRendererProps = {
-	index: number;
-	key: string;
-	style: CSSProperties;
-};
 
 const getSourcesContentState = ( {
 	isLoading,
@@ -101,37 +96,6 @@ export function SourcesTab( {
 		},
 		[ onRemoveDraftSource ]
 	);
-	const renderSourceRow = useCallback(
-		( { index, key, style }: SourceRowRendererProps ) => {
-			const subscription = filteredSubscriptions[ index ];
-
-			if ( ! subscription ) {
-				return null;
-			}
-
-			const isAdded = selectedKeys.has( getSiteSubscriptionSourceKey( subscription ) );
-
-			return (
-				<div
-					key={ key }
-					role="presentation"
-					style={ {
-						...style,
-						boxSizing: 'border-box',
-						paddingBottom: SOURCE_ROW_GAP,
-					} }
-				>
-					<SourceSubscription
-						subscription={ subscription }
-						isAdded={ isAdded }
-						onAdd={ handleAddSource }
-						onRemove={ handleRemoveSource }
-					/>
-				</div>
-			);
-		},
-		[ filteredSubscriptions, handleAddSource, handleRemoveSource, selectedKeys ]
-	);
 
 	const sourcesState = getSourcesContentState( {
 		isLoading: siteSubscriptions.isLoading,
@@ -173,7 +137,9 @@ export function SourcesTab( {
 				state={ sourcesState }
 				filter={ filter }
 				filteredSubscriptions={ filteredSubscriptions }
-				renderSourceRow={ renderSourceRow }
+				selectedKeys={ selectedKeys }
+				onAdd={ handleAddSource }
+				onRemove={ handleRemoveSource }
 				translate={ translate }
 			/>
 		</VStack>
@@ -184,7 +150,9 @@ type SourcesTabContentProps = {
 	state: SourcesContentState;
 	filter: Filter;
 	filteredSubscriptions: SiteSubscriptionItem[];
-	renderSourceRow: ( props: SourceRowRendererProps ) => React.ReactNode;
+	selectedKeys: Set< string >;
+	onAdd: ( subscription: SiteSubscriptionItem ) => void;
+	onRemove: ( subscription: SiteSubscriptionItem ) => void;
 	translate: ReturnType< typeof useTranslate >;
 };
 
@@ -192,7 +160,9 @@ function SourcesTabContent( {
 	state,
 	filter,
 	filteredSubscriptions,
-	renderSourceRow,
+	selectedKeys,
+	onAdd,
+	onRemove,
 	translate,
 }: SourcesTabContentProps ) {
 	switch ( state ) {
@@ -215,25 +185,73 @@ function SourcesTabContent( {
 		case 'list':
 		default:
 			return (
-				<div className="space-sources__list" role="list">
-					<AutoSizer>
-						{ ( { width, height }: { width: number; height: number } ) => (
-							<List
-								className="space-sources__virtualized-list"
-								containerRole="presentation"
-								height={ height }
-								overscanRowCount={ 4 }
-								role="presentation"
-								rowCount={ filteredSubscriptions.length }
-								rowHeight={ SOURCE_ROW_HEIGHT }
-								rowRenderer={ renderSourceRow }
-								width={ width }
-							/>
-						) }
-					</AutoSizer>
-				</div>
+				<SourcesVirtualList
+					subscriptions={ filteredSubscriptions }
+					selectedKeys={ selectedKeys }
+					onAdd={ onAdd }
+					onRemove={ onRemove }
+				/>
 			);
 	}
+}
+
+type SourcesVirtualListProps = {
+	subscriptions: SiteSubscriptionItem[];
+	selectedKeys: Set< string >;
+	onAdd: ( subscription: SiteSubscriptionItem ) => void;
+	onRemove: ( subscription: SiteSubscriptionItem ) => void;
+};
+
+function SourcesVirtualList( {
+	subscriptions,
+	selectedKeys,
+	onAdd,
+	onRemove,
+}: SourcesVirtualListProps ) {
+	// State (not a ref) so the virtualizer re-evaluates once the scroll container
+	// mounts. The list is fully loaded (`fetchAllPages`), so the hook is used for
+	// windowing only — no `hasMore` / `loadMore`.
+	const [ scrollElement, setScrollElement ] = useState< HTMLElement | null >( null );
+
+	const { getListProps, items, measureElement, scrollMargin } = useInfiniteList( {
+		scrollElement,
+		count: subscriptions.length,
+		estimateSize: SOURCE_ROW_ESTIMATE,
+		gap: SOURCE_ROW_GAP,
+		overscan: 6,
+		getItemKey: ( index ) => getSiteSubscriptionSourceKey( subscriptions[ index ] ),
+	} );
+
+	return (
+		<div className="space-sources__list" ref={ setScrollElement }>
+			<div { ...getListProps( { className: 'space-sources__virtualized-list' } ) } role="list">
+				{ items.map( ( virtualRow ) => {
+					const subscription = subscriptions[ virtualRow.index ];
+					if ( ! subscription ) {
+						return null;
+					}
+					const isAdded = selectedKeys.has( getSiteSubscriptionSourceKey( subscription ) );
+					return (
+						<div
+							key={ virtualRow.key }
+							data-index={ virtualRow.index }
+							ref={ measureElement }
+							role="presentation"
+							className="space-sources__virtual-row"
+							style={ { transform: `translateY(${ virtualRow.start - scrollMargin }px)` } }
+						>
+							<SourceSubscription
+								subscription={ subscription }
+								isAdded={ isAdded }
+								onAdd={ onAdd }
+								onRemove={ onRemove }
+							/>
+						</div>
+					);
+				} ) }
+			</div>
+		</div>
+	);
 }
 
 function SourcesTabSkeleton( { label }: { label: string } ) {
