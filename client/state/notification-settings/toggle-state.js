@@ -1,11 +1,11 @@
-import { find, findIndex, get } from 'lodash';
+import { find, get } from 'lodash';
 
 const replaceAtIndex = ( array, index, newItem ) =>
 	array.map( ( item, idx ) => ( idx === index ? newItem : item ) );
 
 const replaceOrAppend = ( array, originalItem, newItem ) =>
 	array.includes( originalItem )
-		? replaceAtIndex( array, findIndex( array, originalItem ), newItem )
+		? replaceAtIndex( array, array.indexOf( originalItem ), newItem )
 		: [ ...array, newItem ];
 
 const toggleInStream = ( streamName, stream, setting ) => ( {

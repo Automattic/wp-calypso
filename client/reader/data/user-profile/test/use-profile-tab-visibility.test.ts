@@ -50,7 +50,7 @@ describe( 'useProfileTabVisibility', () => {
 			.reply( 200, { calypso_preferences: prefs } );
 	}
 
-	test( "reflects the owner's own visibility preferences (not the public endpoint)", async () => {
+	test( "always shows the owner's own tabs, but reports the hidden ones as not public", async () => {
 		useSelector.mockReturnValue( { username: 'me' } );
 		nockPreferences( {
 			'reader-profile-posts-visibility': 'public',
@@ -60,11 +60,13 @@ describe( 'useProfileTabVisibility', () => {
 		const { result } = renderHook( () => useProfileTabVisibility( 'me' ), { wrapper } );
 
 		expect( result.current.isOwnProfile ).toBe( true );
-		await waitFor( () => expect( result.current.showSites ).toBe( false ) );
+		expect( result.current.showSites ).toBe( true );
+		expect( result.current.isSitesPublic ).toBe( true );
 		expect( result.current.showPosts ).toBe( true );
+		expect( result.current.isPostsPublic ).toBe( true );
 	} );
 
-	test( 'defaults the owner to all tabs visible while preferences load / when unset', () => {
+	test( 'defaults the owner to all tabs visible and public while preferences load / when unset', () => {
 		useSelector.mockReturnValue( { username: 'me' } );
 		nockPreferences( {} );
 
@@ -72,6 +74,8 @@ describe( 'useProfileTabVisibility', () => {
 
 		expect( result.current.showPosts ).toBe( true );
 		expect( result.current.showSites ).toBe( true );
+		expect( result.current.isPostsPublic ).toBe( true );
+		expect( result.current.isSitesPublic ).toBe( true );
 		// The owner never hits the public profile-settings endpoint.
 		expect( nock.pendingMocks().some( ( m ) => m.includes( 'profile-settings' ) ) ).toBe( false );
 	} );
@@ -87,8 +91,11 @@ describe( 'useProfileTabVisibility', () => {
 		const { result } = renderHook( () => useProfileTabVisibility( 'someone' ), { wrapper } );
 
 		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+		// For a public viewer, the shown tabs and the public flags agree.
 		expect( result.current.showPosts ).toBe( true );
+		expect( result.current.isPostsPublic ).toBe( true );
 		expect( result.current.showSites ).toBe( false );
+		expect( result.current.isSitesPublic ).toBe( false );
 	} );
 
 	test( 'defaults to visible while the settings are loading', () => {
@@ -114,5 +121,33 @@ describe( 'useProfileTabVisibility', () => {
 		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
 		expect( result.current.showPosts ).toBe( false );
 		expect( result.current.showSites ).toBe( false );
+		expect( result.current.isPostsPublic ).toBe( false );
+		expect( result.current.isSitesPublic ).toBe( false );
+	} );
+
+	test( 'still shows the owner the Posts tab when they have hidden it, but reports it as not public', async () => {
+		useSelector.mockReturnValue( { username: 'me' } );
+		nockPreferences( {
+			'reader-profile-posts-visibility': 'hidden',
+			'reader-profile-sites-visibility': 'public',
+		} );
+
+		const { result } = renderHook( () => useProfileTabVisibility( 'me' ), { wrapper } );
+
+		await waitFor( () => expect( result.current.isPostsPublic ).toBe( false ) );
+		expect( result.current.showPosts ).toBe( true );
+	} );
+
+	test( 'still shows the owner the Sites tab when they have hidden it, but reports it as not public', async () => {
+		useSelector.mockReturnValue( { username: 'me' } );
+		nockPreferences( {
+			'reader-profile-posts-visibility': 'public',
+			'reader-profile-sites-visibility': 'hidden',
+		} );
+
+		const { result } = renderHook( () => useProfileTabVisibility( 'me' ), { wrapper } );
+
+		await waitFor( () => expect( result.current.isSitesPublic ).toBe( false ) );
+		expect( result.current.showSites ).toBe( true );
 	} );
 } );

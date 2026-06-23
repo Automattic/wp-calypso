@@ -26,8 +26,18 @@ function getDOMNode( context ) {
 		return context;
 	}
 
+	if ( typeof context?.getDOMNode === 'function' ) {
+		const node = context.getDOMNode();
+		return isDOMElement( node ) ? node : null;
+	}
+
 	if ( isDOMElement( context?.current ) ) {
 		return context.current;
+	}
+
+	if ( typeof context?.current?.getDOMNode === 'function' ) {
+		const node = context.current.getDOMNode();
+		return isDOMElement( node ) ? node : null;
 	}
 
 	return null;
@@ -461,11 +471,19 @@ function Popover( { isVisible = false, showDelay = 0, hideArrow = false, ...prop
 	);
 }
 
-// We accept DOM elements and React refs as the `context` prop.
+// We accept DOM elements, React refs, and explicit getDOMNode accessors as the `context` prop.
 const PropTypeElement = PropTypes.oneOfType( [
 	PropTypes.instanceOf( DOMElement ),
 	PropTypes.shape( {
 		current: PropTypes.instanceOf( DOMElement ),
+	} ),
+	PropTypes.shape( {
+		getDOMNode: PropTypes.func,
+	} ),
+	PropTypes.shape( {
+		current: PropTypes.shape( {
+			getDOMNode: PropTypes.func,
+		} ),
 	} ),
 ] );
 

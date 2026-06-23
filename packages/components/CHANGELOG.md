@@ -4,6 +4,10 @@
 
 - `Icon`: Remove component. Use `Icon` from `@wordpress/ui` instead.
 
+## 3.0.5
+
+- Fix popover positioning for contexts that expose DOM nodes through `getDOMNode()` (#111903).
+
 ## 3.0.4
 
 - Declare React 19 compatibility for package consumers (#111721).

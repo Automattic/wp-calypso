@@ -5,6 +5,7 @@ const DISPLAYABLE_TOOL_MESSAGE_TOOL_IDS = new Set( [
 	'big_sky__set_site_logo',
 	'big_sky__editor_navigate',
 	'big_sky__restore_checkpoint',
+	'big_sky__open_help_center',
 ] );
 
 export function isDisplayableToolMessageTool( toolId: unknown ): toolId is string {

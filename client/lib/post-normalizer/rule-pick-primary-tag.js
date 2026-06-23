@@ -1,4 +1,4 @@
-import { maxBy } from 'lodash';
+import { maxBy } from '@automattic/js-utils';
 
 export default function pickPrimaryTag( post ) {
 	// if we hand max an invalid or empty array, it returns -Infinity

@@ -66,6 +66,7 @@ straight to the caches — no follow-up GET.
 | 5   | `DELETE /reader/spaces/{id}`                 | —                                                              | `200 { deleted, id }` | `deleteReadSpace()`       |
 | 6   | `POST /reader/spaces/{id}/feeds`             | `{ feed* }` (feed id or url)                                   | `200` detail          | `addReadSpaceSource()`    |
 | 7   | `DELETE /reader/spaces/{id}/feeds/{feed_id}` | —                                                              | `200` detail          | `deleteReadSpaceSource()` |
+| 8   | `GET /reader/spaces/{id}/posts`              | query: `count?` (≤15), `tag_limit?`, `page_handle?`            | `200` stream          | `space:{id}` stream       |
 
 Notes:
 
@@ -78,6 +79,16 @@ Notes:
   create form sends `{ title, tags }` today.
 - **Delete** is a permanent hard delete (no trash/undo) — gate UI behind a
   confirm. No UI consumer yet; `useDeleteSpace()` / `useUpdateSpace()` are ready.
+- **Feed** (endpoint 8) returns the standard Reader stream shape
+  (`{ cards, next_page_handle }`), built server-side from the space's followed
+  feeds and tags. It is wired as a normal Reader stream keyed `space:{id}` (see
+  `read-streams` `fetchReadSpacePosts` and the `space` case in
+  `build-query-params`), so `client/reader/spaces/feed/` consumes it through
+  `useInfiniteStream` like every other stream. `count` is capped at 15
+  server-side; paginate via the returned `page_handle`. Followed tags are
+  merged in, capped per page at `tag_limit` (server default 3, `0` = feeds
+  only); the rest of each page is followed-feed posts. The client does not
+  send `tag_limit` today, so the server default applies.
 
 ## Error codes
 

@@ -360,6 +360,62 @@ describe( 'loadExternalProviders', () => {
 		expect( hostCode ).toHaveBeenCalled();
 		expect( wooCode ).toHaveBeenCalled();
 	} );
+
+	it( 'resolves abilities registered after load time (queried live, not snapshotted)', async () => {
+		// Big Sky registers its editor abilities (e.g. big-sky/apply-block-edits)
+		// from a React effect that runs after the chat UI mounts, which is after
+		// loadExternalProviders() has run. The merged tool provider must query
+		// each provider's abilities live so those late registrations are visible,
+		// matching the single-provider path and agenttic-client's "callbacks are
+		// called fresh each time" contract. A list snapshotted at load time would
+		// never see them, so the agent's calls to those abilities would silently
+		// never dispatch.
+		const createAbility = ( name: string ) => ( {
+			name,
+			label: name,
+			description: `${ name } description`,
+			category: 'test',
+		} );
+		let editorAbilityRegistered = false;
+		const bigSkyProvider = {
+			getAbilities: jest.fn( () =>
+				Promise.resolve(
+					editorAbilityRegistered ? [ createAbility( 'big-sky/apply-block-edits' ) ] : []
+				)
+			),
+			executeAbility: jest.fn( () => Promise.resolve( { handledBy: 'big-sky' } ) ),
+		};
+		const otherProvider = {
+			getAbilities: jest.fn( () => Promise.resolve( [ createAbility( 'wpcom/manage-site' ) ] ) ),
+			executeAbility: jest.fn( () => Promise.resolve( { handledBy: 'wpcom' } ) ),
+		};
+		const agentsManagerData = {
+			agentProviders: [ { toolProvider: bigSkyProvider }, { toolProvider: otherProvider } ],
+		};
+		( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData =
+			agentsManagerData;
+		( window as typeof window & { agentsManagerData?: unknown } ).agentsManagerData =
+			agentsManagerData;
+
+		// loadExternalProviders() queries getAbilities() here, before the editor
+		// ability is registered.
+		const providers = await loadExternalProviders();
+
+		// The editor ability registers later, once the chat UI has mounted.
+		editorAbilityRegistered = true;
+
+		await expect( providers.toolProvider?.getAbilities() ).resolves.toEqual( [
+			createAbility( 'big-sky/apply-block-edits' ),
+			createAbility( 'wpcom/manage-site' ),
+		] );
+		await expect(
+			providers.toolProvider?.executeAbility( 'big_sky__apply_block_edits', { updates: [] } )
+		).resolves.toEqual( { handledBy: 'big-sky' } );
+		expect( bigSkyProvider.executeAbility ).toHaveBeenCalledWith( 'big_sky__apply_block_edits', {
+			updates: [],
+		} );
+		expect( otherProvider.executeAbility ).not.toHaveBeenCalled();
+	} );
 } );
 
 describe( 'mergeUseSuggestionsHooks', () => {
