@@ -77,7 +77,7 @@ export default function AgentDock( {
 	useCheckpoint,
 	capabilities,
 }: Props ) {
-	const { siteKey, agentConfig, zendeskConversationTags } = useAgentsManagerContext();
+	const { siteKey, agentConfig } = useAgentsManagerContext();
 
 	const [ isCompactMode, setIsCompactMode ] = useState(
 		window.__agentsManagerActions?.isCompactMode ?? false
@@ -333,7 +333,6 @@ export default function AgentDock( {
 			chatHeaderOptions={ chatHeaderOptions }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
-			conversationTags={ zendeskConversationTags }
 		/>
 	);
 

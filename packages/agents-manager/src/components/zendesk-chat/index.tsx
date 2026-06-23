@@ -1,5 +1,6 @@
 import { type MarkdownComponents, type MarkdownExtensions } from '@automattic/agenttic-ui';
 import { useManagedZendeskChat } from '@automattic/zendesk-client';
+import { useAgentsManagerContext } from '../../contexts';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import ConcludedConversationFooter from '../concluded-conversation-footer';
@@ -21,8 +22,6 @@ interface Props {
 	markdownComponents?: MarkdownComponents;
 	/** Custom markdown extensions. */
 	markdownExtensions?: MarkdownExtensions;
-	/** Zendesk conversation tags to apply when a new support conversation is created. */
-	conversationTags?: string[];
 }
 
 export default function ZendeskChat( {
@@ -33,8 +32,8 @@ export default function ZendeskChat( {
 	onExpand,
 	markdownComponents = {},
 	markdownExtensions = {},
-	conversationTags = [],
 }: Props ) {
+	const { zendeskConversationTags } = useAgentsManagerContext();
 	const {
 		agentticMessages,
 		onSubmit,
@@ -45,7 +44,7 @@ export default function ZendeskChat( {
 		supportedImageTypes,
 		notice,
 		hasInteractionEnded,
-	} = useManagedZendeskChat( { conversationTags } );
+	} = useManagedZendeskChat( { conversationTags: zendeskConversationTags } );
 
 	return (
 		<AgentChat

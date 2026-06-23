@@ -105,19 +105,10 @@ jest.mock( '../orchestrator-chat', () => ( {
 
 jest.mock( '../zendesk-chat', () => ( {
 	__esModule: true,
-	default: ( {
-		conversationTags,
-		onExpand,
-	}: {
-		conversationTags?: string[];
-		onExpand: () => void;
-	} ) => {
+	default: ( { onExpand }: { onExpand: () => void } ) => {
 		return (
 			<div data-testid="zendesk-chat">
 				Zendesk chat
-				<span data-testid="zendesk-conversation-tags">
-					{ JSON.stringify( conversationTags ?? [] ) }
-				</span>
 				<button onClick={ onExpand }>Expand Zendesk</button>
 			</div>
 		);
@@ -315,21 +306,6 @@ describe( 'AgentDock', () => {
 		fireEvent.click( screen.getByText( 'Expand Zendesk' ) );
 
 		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/zendesk' );
-	} );
-
-	it( 'passes configured Zendesk conversation tags to the Zendesk chat route', () => {
-		useWpAdminAgent();
-		mockShouldUseUnifiedAgent = true;
-		mockContext = {
-			...mockContext,
-			zendeskConversationTags: [ 'woo_support_flow_ai_plugin' ],
-		};
-
-		renderAgentDock( '/zendesk' );
-
-		expect( screen.getByTestId( 'zendesk-conversation-tags' ).textContent ).toBe(
-			JSON.stringify( [ 'woo_support_flow_ai_plugin' ] )
-		);
 	} );
 
 	it( 'opens Reader Chat without saving shared Agents Manager state', () => {
