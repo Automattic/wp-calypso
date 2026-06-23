@@ -6,7 +6,6 @@ import { SubscriptionManager } from '@automattic/data-stores';
 import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button, Modal } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
 import { chevronLeft, close } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
@@ -438,7 +437,7 @@ const ReaderOnboardingRsm = ( {
 				className="reader-onboarding-modal__back-button"
 				onClick={ handleInterestsBack }
 				icon={ chevronLeft }
-				label={ __( 'Back' ) }
+				label={ translate( 'Back' ) }
 			/>
 		);
 	} else if ( currentStep === 'discover' ) {
@@ -448,7 +447,7 @@ const ReaderOnboardingRsm = ( {
 				className="reader-onboarding-modal__back-button"
 				onClick={ handleDiscoverBack }
 				icon={ chevronLeft }
-				label={ __( 'Back' ) }
+				label={ translate( 'Back' ) }
 			/>
 		);
 	}
@@ -470,7 +469,7 @@ const ReaderOnboardingRsm = ( {
 								size="compact"
 								className="reader-onboarding__dismiss-button"
 								icon={ close }
-								label={ __( 'Dismiss onboarding checklist' ) }
+								label={ translate( 'Dismiss onboarding checklist' ) }
 								onClick={ handleDismissClick }
 							/>
 						</div>
@@ -505,10 +504,10 @@ const ReaderOnboardingRsm = ( {
 					</DialogContent>
 					<DialogFooter>
 						<Button variant="tertiary" onClick={ handleDismissCancel }>
-							{ __( 'Cancel' ) }
+							{ translate( 'Cancel' ) }
 						</Button>
 						<Button variant="primary" isDestructive onClick={ handleDismissConfirm }>
-							{ __( 'Dismiss' ) }
+							{ translate( 'Dismiss' ) }
 						</Button>
 					</DialogFooter>
 				</ConfirmDialog>
