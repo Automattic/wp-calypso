@@ -1,6 +1,6 @@
 import { Badge } from '@automattic/components';
 import clsx from 'clsx';
-import { findKey, map } from 'lodash';
+import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormRadio from 'calypso/components/forms/form-radio';
@@ -15,12 +15,14 @@ export default class ImportTypeChoice extends Component {
 	constructor( props ) {
 		super( props );
 
-		let firstSelectedItem = findKey(
-			props.radioOptions,
-			( el ) => el.selected !== true && el.enabled !== false
-		);
+		let firstSelectedItem = Object.keys( props.radioOptions ).find( ( key ) => {
+			const el = props.radioOptions[ key ];
+			return el.selected !== true && el.enabled !== false;
+		} );
 		if ( firstSelectedItem === -1 ) {
-			firstSelectedItem = findKey( props.radioOptions, ( el ) => el.enabled !== false );
+			firstSelectedItem = Object.keys( props.radioOptions ).find(
+				( key ) => props.radioOptions[ key ].enabled !== false
+			);
 		}
 
 		this.state.activeItem = firstSelectedItem !== -1 ? firstSelectedItem : null;

@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Icon, currencyDollar } from '@wordpress/icons';
 import clsx from 'clsx';
-import { findIndex, find } from 'lodash';
+import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ElementChart from 'calypso/components/chart';
@@ -152,7 +152,7 @@ class StoreStatsChart extends Component {
 		const isLoading = ! data.length;
 		const chartFormat = UNITS[ unit ].chartFormat;
 		const chartData = data.map( ( item ) => this.buildChartData( item, selectedTab, chartFormat ) );
-		const selectedIndex = findIndex( data, ( d ) => d.period === selectedDate );
+		const selectedIndex = data.findIndex( ( d ) => d.period === selectedDate );
 
 		const classes = clsx( 'is-chart-tabs', className, {
 			'is-loading': isLoading,

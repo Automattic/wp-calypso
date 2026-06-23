@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-products",
-	"version": "1.2.2",
+	"version": "1.2.3",
 	"description": "This module contains information about the various products sold within calypso, such as product slugs, plan intervals, etc.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
@@ -61,6 +61,6 @@
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^10.48.0",
-		"react": "^18.3.1"
+		"react": "^18.3.1 || ^19.0.0"
 	}
 }

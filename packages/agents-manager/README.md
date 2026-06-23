@@ -96,17 +96,14 @@ See `src/hooks/custom-actions/README.md` for details.
 ### Exported Hooks and Utilities
 
 ```tsx
-import {
-	useShouldUseUnifiedAgent,
-	getUseUnifiedExperienceFromInlineData,
-} from '@automattic/agents-manager';
+import { useShouldUseUnifiedAgent, getAgentsManagerInlineData } from '@automattic/agents-manager';
 
 function MyComponent() {
 	// Check if the unified agent experience is active
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 
 	// Read the unified experience flag from inline script data (non-hook)
-	const useUnifiedExperience = getUseUnifiedExperienceFromInlineData();
+	const useUnifiedExperience = getAgentsManagerInlineData()?.useUnifiedExperience;
 }
 ```
 

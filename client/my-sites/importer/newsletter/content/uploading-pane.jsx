@@ -1,8 +1,8 @@
+import { truncate } from '@automattic/js-utils';
 import { ProgressBar } from '@wordpress/components';
 import { Icon, cloudUpload } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { truncate } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, PureComponent } from 'react';
 import { connect } from 'react-redux';

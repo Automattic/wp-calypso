@@ -14,8 +14,9 @@ import {
 	is100Year,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { minBy } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { isEmpty, merge, minBy } from 'lodash';
+import { isEmpty, merge } from 'lodash';
 import moment from 'moment';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -665,7 +666,7 @@ class PurchaseNotice extends Component<
 					isExpired( otherPurchase ) ||
 					isInExpirationGracePeriod( otherPurchase )
 			),
-			( otherPurchase ) => moment( otherPurchase.expiryDate ).format( 'X' )
+			( otherPurchase ) => Number( moment( otherPurchase.expiryDate ).format( 'X' ) )
 		);
 
 		const expiry = moment( currentPurchase.expiryDate );

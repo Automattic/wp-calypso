@@ -60,8 +60,6 @@
 		"deepmerge": "^4.3.1",
 		"i18n-calypso": "workspace:^",
 		"is-plain-object": "^5.0.0",
-		"react": "^18.3.1",
-		"react-dom": "^18.3.1",
 		"react-intersection-observer": "^9.4.3",
 		"tslib": "^2.8.1",
 		"wpcom-proxy-request": "workspace:^"
@@ -70,11 +68,15 @@
 		"@wordpress/data": "^10.48.0",
 		"@wordpress/element": "^8.0.0",
 		"@wordpress/i18n": "^6.21.0",
-		"debug": "^4.4.1"
+		"debug": "^4.4.1",
+		"react": "^18.3.1 || ^19.0.0",
+		"react-dom": "^18.3.1 || ^19.0.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@types/wordpress__block-library": "^2.6.3",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
 		"typescript": "^6.0.3"
 	},
 	"private": true

@@ -12,6 +12,10 @@ module.exports = {
 				// We use jest-runner-groups to run spec suites, and these involve a custom doc header tag.
 				'jsdoc/check-tag-names': [ 'error', { definedTags: [ 'group', 'browser' ] } ],
 				'jest/no-standalone-expect': [ 'error', { additionalTestBlockFunctions: [ 'skipItIf' ] } ],
+				// Specs that create a test account (getNewTestUser + a signup helper) must register
+				// an afterAll apiCloseAccount teardown, or the account and its blogs leak. Opt out
+				// via `allow` only with justification.
+				'wpcalypso/e2e-require-account-teardown': [ 'error', { allow: [] } ],
 			},
 		},
 		{

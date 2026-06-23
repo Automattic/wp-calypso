@@ -1,11 +1,12 @@
 import { privateApis } from '@wordpress/components';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import {
-	ForwardRefExoticComponent,
-	Context,
-	RefAttributes,
-	HTMLAttributes,
-	ReactNode,
+	type JSX,
+	type ForwardRefExoticComponent,
+	type Context,
+	type RefAttributes,
+	type HTMLAttributes,
+	type ReactNode,
 } from 'react';
 import type {
 	Props as MenuProps,
