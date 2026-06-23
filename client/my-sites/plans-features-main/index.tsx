@@ -65,6 +65,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
@@ -1243,6 +1244,14 @@ const PlansFeaturesMain = ( {
 					renewalDate={ downgradeRenewalDate }
 					refundText={ downgradeRefundText }
 					isConfirming={ cancelAndRefundMutation.isPending || isDowngrading }
+					isRechargeable={ currentPurchase?.is_rechargeable ?? false }
+					changePaymentMethodUrl={
+						currentPlanPurchaseId
+							? dashboardLink(
+									`/me/billing/purchases/${ currentPlanPurchaseId }/payment-method/change`
+							  )
+							: undefined
+					}
 					onClose={ closeDowngradeModal }
 					onConfirm={ confirmDowngrade }
 				/>

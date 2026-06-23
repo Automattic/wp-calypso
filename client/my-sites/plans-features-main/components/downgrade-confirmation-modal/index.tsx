@@ -1,7 +1,7 @@
 import { purchaseCancelFeaturesQuery } from '@automattic/api-queries';
 import { Gridicon, Spinner } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
-import { Button, Modal } from '@wordpress/components';
+import { Button, Modal, Notice } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 
 import './style.scss';
@@ -32,6 +32,13 @@ interface DowngradeConfirmationModalProps {
 	refundText?: string;
 	/** When true, the confirm action is in flight; disable buttons and show a spinner. */
 	isConfirming?: boolean;
+	/**
+	 * When false and isDelayedDowngrade is true, shows a notice that a rechargeable
+	 * payment method is required and disables the confirm button.
+	 */
+	isRechargeable?: boolean;
+	/** URL to the change payment method page, linked from the rechargeable payment notice. */
+	changePaymentMethodUrl?: string;
 	onClose: () => void;
 	onConfirm: () => void;
 }
@@ -45,6 +52,8 @@ function ModalBody( {
 	isDelayedDowngrade,
 	renewalDate,
 	refundText,
+	isRechargeable,
+	changePaymentMethodUrl,
 }: {
 	isLoading: boolean;
 	currentPlanName: string;
@@ -54,6 +63,8 @@ function ModalBody( {
 	isDelayedDowngrade?: boolean;
 	renewalDate?: string;
 	refundText?: string;
+	isRechargeable?: boolean;
+	changePaymentMethodUrl?: string;
 } ) {
 	const translate = useTranslate();
 
@@ -68,6 +79,27 @@ function ModalBody( {
 	if ( isDelayedDowngrade ) {
 		return (
 			<>
+				{ isRechargeable === false && (
+					<Notice
+						status="warning"
+						isDismissible={ false }
+						className="downgrade-confirmation-modal__payment-notice"
+					>
+						{ translate( 'Scheduling a downgrade requires a rechargeable payment method.', {
+							comment: 'Notice shown when the subscription has no rechargeable payment method',
+						} ) }
+						{ changePaymentMethodUrl && (
+							<>
+								<br />
+								<a href={ changePaymentMethodUrl }>
+									{ translate( 'Add or change payment method', {
+										comment: 'Link to the change payment method page',
+									} ) }
+								</a>
+							</>
+						) }
+					</Notice>
+				) }
 				<p className="downgrade-confirmation-modal__description">
 					{ renewalDate
 						? translate(
@@ -188,6 +220,8 @@ const DowngradeConfirmationModal = ( {
 	renewalDate,
 	refundText,
 	isConfirming,
+	isRechargeable,
+	changePaymentMethodUrl,
 	onClose,
 	onConfirm,
 }: DowngradeConfirmationModalProps ) => {
@@ -248,6 +282,8 @@ const DowngradeConfirmationModal = ( {
 				isDelayedDowngrade={ isDelayedDowngrade }
 				renewalDate={ renewalDate }
 				refundText={ refundText }
+				isRechargeable={ isRechargeable }
+				changePaymentMethodUrl={ changePaymentMethodUrl }
 			/>
 			<div className="downgrade-confirmation-modal__buttons">
 				<span className="downgrade-confirmation-modal__plan-transition">
@@ -272,7 +308,7 @@ const DowngradeConfirmationModal = ( {
 						variant="primary"
 						onClick={ onConfirm }
 						isBusy={ isConfirming }
-						disabled={ isConfirming }
+						disabled={ isConfirming || ( isDelayedDowngrade && isRechargeable === false ) }
 					>
 						{ confirmButtonLabel }
 					</Button>
