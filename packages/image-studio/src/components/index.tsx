@@ -7,7 +7,16 @@ import {
 } from '@wordpress/components';
 import { useMediaQuery, withInstanceId } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
+import {
+	lazy,
+	memo,
+	Suspense,
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAgentConfig } from '../hooks/use-agent-config';
 import { useAnnotation } from '../hooks/use-annotation';
@@ -44,13 +53,20 @@ import { type ActionButton, ConfirmationDialog } from './confirmation-dialog';
 import { EditLayout } from './edit-layout';
 import { ExperimentalBadge } from './experimental-badge';
 import { Footer } from './footer';
-import { GenerateLayout } from './generate-layout';
 import { Header } from './header';
 import LoadingSpinner from './loading-spinner';
 import { ImageStudioNotice } from './notice';
 import { ImageStudioAltTextSidebar } from './sidebar';
 import { StylePicker } from './style-picker';
 import './style.scss';
+
+// GenerateLayout is the modal's generate-mode UI; it renders only when the modal
+// is open in generate mode. Load it as a separate chunk so its generate/video
+// weight stays out of the bundle every block editor boots, and only loads when a
+// user actually opens generate mode.
+const GenerateLayout = lazy( () =>
+	import( './generate-layout' ).then( ( module ) => ( { default: module.GenerateLayout } ) )
+);
 
 /** Content for one flavor of the modal's close-confirmation dialog. */
 type CloseDialogConfig = {
@@ -657,13 +673,15 @@ const ImageStudioContent = withInstanceId(
 								originalAttachmentId={ originalAttachmentId }
 							/>
 						) : (
-							<GenerateLayout
-								isAiProcessing={ isAiProcessing }
-								isPromptSent={ isPromptSent }
-								videoUrl={ isVideoMode ? currentVideoUrl : null }
-								onFeedback={ handleFeedback }
-								onSubmitFeedbackText={ handleSubmitFeedbackText }
-							/>
+							<Suspense fallback={ <LoadingSpinner /> }>
+								<GenerateLayout
+									isAiProcessing={ isAiProcessing }
+									isPromptSent={ isPromptSent }
+									videoUrl={ isVideoMode ? currentVideoUrl : null }
+									onFeedback={ handleFeedback }
+									onSubmitFeedbackText={ handleSubmitFeedbackText }
+								/>
+							</Suspense>
 						) }
 
 						<Footer
