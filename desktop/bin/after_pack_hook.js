@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-// electron-builder `afterPack` hook. Signs the packaged native binaries
-// (*.node, *.dll) that the `win.sign` callback never sees — electron-builder
+// `afterPack` hook for electron-builder. Signs the packaged native binaries
+// (*.node, *.dll) that the `win.sign` callback never sees because electron-builder
 // routes only *.exe through it. Runs before the app exe and installer are
 // signed, so the whole tree is covered by the time the installer is built.
 

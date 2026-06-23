@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 
-// electron-builder `win.sign` callback. Invoked for every Windows .exe (the
+// `win.sign` callback for electron-builder. Invoked for every Windows .exe (the
 // app exe, nested exes, and the NSIS installer). Signs via Azure Trusted
-// Signing by default, falling back to the org PFX when no Azure env is present.
 
 const { resolveSigner, signFile } = require( './windows-signing-core' );
 

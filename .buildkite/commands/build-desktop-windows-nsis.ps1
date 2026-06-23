@@ -91,9 +91,7 @@ Write-Output "--- :windows: Building signed NSIS installer"
 Invoke-Checked { yarn run build:main }
 Invoke-Checked { yarn electron-builder --config electron-builder.json build --publish never }
 
-# Fail loud on any unsigned binary rather than shipping it: verify every packed
-# *.exe/*.node/*.dll (signed by win.sign + the afterPack native pass) before the
-# unpacked trees are dropped, then the installer itself below.
+# Fail loud on any unsigned binary rather than shipping it.
 function Assert-Signed {
     param([Parameter(Mandatory)][System.IO.FileInfo[]]$Binaries, [Parameter(Mandatory)][string]$Label)
     if ($Binaries.Count -eq 0) {

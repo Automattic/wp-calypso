@@ -1,16 +1,4 @@
 // Shared Windows code-signing helpers for the Buildkite NSIS build.
-//
-// Azure Trusted Signing is the default path; the org Sectigo PFX is retained as
-// a fallback until the Azure-signed build is confirmed in distribution. Both
-// paths drive `signtool` directly so a single electron-builder `win.sign`
-// callback covers them (electron-builder 24 has no native Azure support).
-//
-// Env vars come from the CI Toolkit Buildkite plugin (6.1.0+):
-//   - setup_azure_trusted_signing.ps1 → AZURE_CODE_SIGNING_DLIB,
-//     AZURE_METADATA_JSON, SIGNTOOL_PATH
-//   - setup_windows_code_signing.ps1  → certificate.pfx, surfaced by the build
-//     script as WIN_CSC_LINK / WIN_CSC_KEY_PASSWORD (SIGNTOOL_PATH located from
-//     the Windows SDK in the same branch)
 
 const { spawn } = require( 'child_process' );
 const fs = require( 'fs' );
@@ -80,7 +68,6 @@ function resolveSigner( env = process.env ) {
 	);
 }
 
-// Build the `signtool sign` argument vector for the resolved signer.
 function buildSignToolArgs( signer, file ) {
 	const common = [
 		'sign',
