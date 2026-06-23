@@ -1,5 +1,9 @@
 import { AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
-import { EARLY_PROVISION_TARGET_WPCOM_ATOMIC, getEarlyCreatedSiteId } from '../early-provisioning';
+import {
+	EARLY_PROVISION_TARGET_WPCOM_ATOMIC,
+	getAtomicProvisionedSiteSlug,
+	getEarlyCreatedSiteId,
+} from '../early-provisioning';
 
 describe( 'getEarlyCreatedSiteId', () => {
 	it( 'requires an early-created site for WPCOM Atomic early provisioning', () => {
@@ -20,5 +24,41 @@ describe( 'getEarlyCreatedSiteId', () => {
 
 	it( 'allows regular AI Site Builder creation when WPCOM Atomic early provisioning is not requested', () => {
 		expect( getEarlyCreatedSiteId( AI_SITE_BUILDER_FLOW, null, null ) ).toBeNull();
+	} );
+} );
+
+describe( 'getAtomicProvisionedSiteSlug', () => {
+	it( 'prefers the site slug from the provisioning response', () => {
+		expect(
+			getAtomicProvisionedSiteSlug(
+				{
+					URL: 'https://fallback.wordpress.com',
+					slug: 'provisioned.wordpress.com',
+				},
+				123
+			)
+		).toBe( 'provisioned.wordpress.com' );
+	} );
+
+	it( 'falls back to the host from the site URL', () => {
+		expect(
+			getAtomicProvisionedSiteSlug(
+				{
+					URL: 'https://provisioned.wordpress.com',
+				},
+				123
+			)
+		).toBe( 'provisioned.wordpress.com' );
+	} );
+
+	it( 'falls back to the site ID when the response has no usable slug', () => {
+		expect(
+			getAtomicProvisionedSiteSlug(
+				{
+					URL: 'not a url',
+				},
+				123
+			)
+		).toBe( '123' );
 	} );
 } );

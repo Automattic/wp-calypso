@@ -38,7 +38,11 @@ import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { useSimplifiedOnboarding } from '../../../../hooks/use-simplified-onboarding';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../playground/lib/constants';
-import { EARLY_PROVISION_TARGET_WPCOM_ATOMIC, getEarlyCreatedSiteId } from './early-provisioning';
+import {
+	EARLY_PROVISION_TARGET_WPCOM_ATOMIC,
+	getAtomicProvisionedSiteSlug,
+	getEarlyCreatedSiteId,
+} from './early-provisioning';
 import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './styles.scss';
@@ -50,6 +54,8 @@ const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 const DEFAULT_START_WRITING_THEME = 'pub/poema';
 
 type SiteProvisioningResponse = {
+	URL?: string;
+	slug?: string;
 	is_wpcom_atomic?: boolean;
 	options?: {
 		is_wpcom_atomic?: boolean;
@@ -121,13 +127,15 @@ async function pollForAtomicProvisioning(
 					apiVersion: '1.1',
 				},
 				{
-					fields: 'ID,is_wpcom_atomic,options',
+					fields: 'ID,URL,slug,is_wpcom_atomic,options',
 					options: 'is_wpcom_atomic',
 				}
 			) ) as SiteProvisioningResponse;
 
 			if ( siteResponse?.is_wpcom_atomic || siteResponse?.options?.is_wpcom_atomic ) {
-				return true;
+				return {
+					siteSlug: getAtomicProvisionedSiteSlug( siteResponse, siteId ),
+				};
 			}
 		} catch ( error ) {
 			if ( attempt < maxAttempts ) {
@@ -276,8 +284,10 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		);
 
 		if ( earlyCreatedSiteId ) {
+			let siteSlug = String( earlyCreatedSiteId );
 			if ( earlyProvisionTarget === EARLY_PROVISION_TARGET_WPCOM_ATOMIC ) {
-				await pollForAtomicProvisioning( earlyCreatedSiteId );
+				const atomicSite = await pollForAtomicProvisioning( earlyCreatedSiteId );
+				siteSlug = atomicSite.siteSlug;
 			} else if ( gardenName ) {
 				// Poll until the provisioning is considered complete.
 				// Skip the initial delay since the site may have been provisioning for minutes already.
@@ -286,7 +296,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 
 			return {
 				siteId: earlyCreatedSiteId,
-				siteSlug: String( earlyCreatedSiteId ),
+				siteSlug,
 				goToCheckout: false,
 				siteCreated: true,
 			};

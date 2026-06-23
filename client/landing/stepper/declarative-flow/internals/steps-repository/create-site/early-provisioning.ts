@@ -2,6 +2,11 @@ import { AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
 
 export const EARLY_PROVISION_TARGET_WPCOM_ATOMIC = 'wpcom-atomic';
 
+type AtomicProvisioningSite = {
+	URL?: string;
+	slug?: string;
+};
+
 export function getEarlyCreatedSiteId(
 	flow: string | undefined,
 	earlyCreatedSite: string | null,
@@ -25,4 +30,23 @@ export function getEarlyCreatedSiteId(
 	}
 
 	return blogId;
+}
+
+export function getAtomicProvisionedSiteSlug(
+	siteResponse: AtomicProvisioningSite,
+	fallbackSiteId: number
+): string {
+	if ( siteResponse?.slug ) {
+		return siteResponse.slug;
+	}
+
+	if ( siteResponse?.URL ) {
+		try {
+			return new URL( siteResponse.URL ).host;
+		} catch {
+			// Fall through to the numeric site ID below.
+		}
+	}
+
+	return String( fallbackSiteId );
 }
