@@ -60,6 +60,32 @@ function sortMessagesByTimestamp( messages: ZendeskMessage[] ) {
 	} );
 }
 
+function normalizeTicketId( ticketId: unknown ) {
+	return ticketId === undefined || ticketId === null ? undefined : String( ticketId );
+}
+
+function conversationHasTicketId( conversation: ZendeskConversation, ticketId: unknown ) {
+	const normalizedTicketId = normalizeTicketId( ticketId );
+	if ( ! normalizedTicketId ) {
+		return false;
+	}
+
+	const metadataTicketId =
+		conversation.metadata?.zendesk_ticket_id ?? conversation.metadata?.ticket_id;
+	if ( normalizeTicketId( metadataTicketId ) === normalizedTicketId ) {
+		return true;
+	}
+
+	return conversation.messages.some(
+		( message ) =>
+			normalizeTicketId( message.metadata?.zendesk_ticket_id ?? message.metadata?.ticket_id ) ===
+				normalizedTicketId ||
+			!! message.actions?.some(
+				( action ) => normalizeTicketId( action.metadata?.ticket_id ) === normalizedTicketId
+			)
+	);
+}
+
 function useSmooch( enabled = true ) {
 	const queryClient = useQueryClient();
 	const { data: authData, isFetching: isAuthenticatingZendeskMessaging } =
@@ -178,6 +204,7 @@ export const useManagedZendeskChat = () => {
 	const [ attachmentsNotice, setAttachmentNotice ] = useState< NoticeConfig | undefined >();
 	const { state } = useLocation();
 	const conversationId = state?.conversationId;
+	const zendeskTicketId = normalizeTicketId( state?.zendeskTicketId );
 	const startedFromChatId = state?.startedFromChatId;
 	const startedFromMessageId = state?.startedFromMessageId;
 	const [ conversation, setConversation ] = useState< ZendeskConversation | undefined >();
@@ -271,6 +298,16 @@ export const useManagedZendeskChat = () => {
 		if ( conversationId ) {
 			Smooch.getConversationById( conversationId ).then( setConversation );
 			Smooch.loadConversation( conversationId );
+		} else if ( zendeskTicketId ) {
+			const ticketConversation = Smooch.getConversations().find( ( conversation ) =>
+				conversationHasTicketId( conversation, zendeskTicketId )
+			);
+
+			if ( ticketConversation ) {
+				Smooch.getConversationById( ticketConversation.id ).then( setConversation );
+				Smooch.loadConversation( ticketConversation.id );
+				navigate( '/zendesk', { state: { conversationId: ticketConversation.id }, replace: true } );
+			}
 		} else {
 			Smooch.createConversation( {
 				metadata: {
@@ -287,7 +324,16 @@ export const useManagedZendeskChat = () => {
 				Smooch.loadConversation( conversation.id );
 			} );
 		}
-	}, [ Smooch, conversationId, navigate, conversation, Smooch?.render, startedFromChatId ] );
+	}, [
+		Smooch,
+		conversationId,
+		zendeskTicketId,
+		navigate,
+		conversation,
+		Smooch?.render,
+		startedFromChatId,
+		startedFromMessageId,
+	] );
 
 	const currentTypingStatus = typingStatus[ conversation?.id ?? '' ];
 
