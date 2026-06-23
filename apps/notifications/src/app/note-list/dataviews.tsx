@@ -79,7 +79,7 @@ export function getFields(): Field< Note >[] {
 					size={ 32 }
 					badge={
 						<span className={ clsx( 'wpnc__gridicon', { 'is-unread': ! item.read } ) }>
-							<Icon icon={ iconMap[ item.noticon ] ?? info } size={ 10 } />
+							<Icon icon={ iconMap[ item.noticon ] ?? info } size={ 12 } />
 						</span>
 					}
 				/>
