@@ -14,15 +14,9 @@ const TIMESTAMP_DIGEST = 'SHA256';
 const AZURE_TIMESTAMP_SERVER = 'http://timestamp.acs.microsoft.com';
 const PFX_TIMESTAMP_SERVER = 'http://timestamp.sectigo.com';
 
-// afterPack signs every packed binary so the verify gate can't trip on an
-// unsigned one. electron-builder signs only the top-level app .exe under
-// `asar: false` (its signApp returns before walking the rest of the tree),
-// leaving two gaps this fills:
-//   - *.node/*.dll: native modules it never signs — Smart App Control blocks
-//     an app that loads unsigned ones.
-//   - *.exe nested below the top level (e.g. bundled by production node_modules).
-// Re-signing the top-level .exe here is harmless: signApp re-signs it afterward.
-const SIGNABLE_EXTENSIONS = new Set( [ '.exe', '.node', '.dll' ] );
+// Native modules electron-builder never signs — Smart App Control blocks an app
+// that loads unsigned ones — so afterPack signs these at every depth.
+const NATIVE_BINARY_EXTENSIONS = new Set( [ '.node', '.dll' ] );
 
 // Resolve the active signer from the environment, or throw naming exactly what
 // is missing. Azure takes precedence; the PFX fallback engages only when no
@@ -116,7 +110,7 @@ function signFile( signer, file ) {
 	} );
 }
 
-function collectSignableBinaries( dir, acc = [] ) {
+function collectSignableBinaries( dir, rootDir = dir, acc = [] ) {
 	for ( const entry of fs.readdirSync( dir, { withFileTypes: true } ) ) {
 		const full = path.join( dir, entry.name );
 		// Skip symlinks to avoid following workspace links / cycles; the packaged
@@ -125,12 +119,19 @@ function collectSignableBinaries( dir, acc = [] ) {
 			continue;
 		}
 		if ( entry.isDirectory() ) {
-			collectSignableBinaries( full, acc );
-		} else if (
-			entry.isFile() &&
-			SIGNABLE_EXTENSIONS.has( path.extname( entry.name ).toLowerCase() )
-		) {
-			acc.push( full );
+			collectSignableBinaries( full, rootDir, acc );
+		} else if ( entry.isFile() ) {
+			const ext = path.extname( entry.name ).toLowerCase();
+			// Take *.exe only below the top level. electron-builder signs the
+			// top-level app exe itself (rcedit then signtool); pre-signing it here
+			// breaks that pass — rcedit rewrites resources on the already-signed PE
+			// and signtool then rejects it with 0x800700C1 (bad exe format). Its
+			// asar:false signApp never reaches nested exes, so those are ours.
+			if ( NATIVE_BINARY_EXTENSIONS.has( ext ) ) {
+				acc.push( full );
+			} else if ( ext === '.exe' && dir !== rootDir ) {
+				acc.push( full );
+			}
 		}
 	}
 	return acc;

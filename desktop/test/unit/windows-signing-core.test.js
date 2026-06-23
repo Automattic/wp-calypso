@@ -87,7 +87,8 @@ describe( 'collectSignableBinaries', () => {
 		fs.rmSync( root, { recursive: true, force: true } );
 	} );
 
-	it( 'collects nested *.exe, *.node and *.dll and skips other files', () => {
+	it( 'signs *.node/*.dll at any depth and *.exe only below the top level', () => {
+		// electron-builder signs the top-level app exe itself, so afterPack must skip it.
 		fs.writeFileSync( path.join( root, 'WordPress.com.exe' ), '' );
 		fs.writeFileSync( path.join( root, 'ffmpeg.dll' ), '' );
 		fs.writeFileSync( path.join( root, 'app.txt' ), '' );
@@ -103,17 +104,19 @@ describe( 'collectSignableBinaries', () => {
 
 		expect( found ).toEqual(
 			[
-				'WordPress.com.exe',
 				'ffmpeg.dll',
 				path.join( 'resources', 'app', 'node_modules', 'pkg', 'binding.node' ),
 				path.join( 'resources', 'app', 'node_modules', 'pkg', 'helper.exe' ),
 			].sort()
 		);
+		expect( found ).not.toContain( 'WordPress.com.exe' );
 	} );
 
 	it( 'skips symlinks', () => {
-		fs.writeFileSync( path.join( root, 'real.exe' ), '' );
-		fs.symlinkSync( path.join( root, 'real.exe' ), path.join( root, 'link.exe' ) );
+		const nested = path.join( root, 'resources' );
+		fs.mkdirSync( nested );
+		fs.writeFileSync( path.join( nested, 'real.exe' ), '' );
+		fs.symlinkSync( path.join( nested, 'real.exe' ), path.join( nested, 'link.exe' ) );
 
 		const found = collectSignableBinaries( root ).map( ( f ) => path.basename( f ) );
 

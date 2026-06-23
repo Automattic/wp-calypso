@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 
-// `afterPack` hook for electron-builder. Signs every packed binary (*.exe,
-// *.node, *.dll) so none ship unsigned: under `asar: false` electron-builder's
-// signApp signs only the top-level app exe, and it never routes *.node/*.dll
-// through `win.sign`. Runs before signApp and the installer build, so the whole
-// tree is covered by the time the installer is built.
+// `afterPack` hook for electron-builder. Signs the packed binaries it won't:
+// *.node/*.dll (never routed through `win.sign`) and nested *.exe (its
+// asar:false signApp signs only the top-level app exe). The top-level exe is
+// left to electron-builder — signing it here would corrupt its rcedit+sign pass.
 
 const { signPackagedBinaries } = require( './windows-signing-core' );
 
