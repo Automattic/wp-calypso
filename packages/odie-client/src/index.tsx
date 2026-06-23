@@ -19,12 +19,15 @@ export const OdieAssistant: React.FC = () => {
 	const { mostRecentSupportInteractionId, openCount } = useOpenLiveInteractions();
 
 	// When the current chat is closed and at least one other live chat is open, link
-	// the user to the most recent open chat. Guard against self-link in case the
-	// status cache is stale and the current interaction leaks into the open list.
+	// the user to the most recent open chat. Require both UUIDs to be present so the
+	// self-link guard is reliable even before currentSupportInteraction has loaded.
+	const currentUuid = currentSupportInteraction?.uuid;
 	const openChatTarget =
 		showClosedConversationFooter &&
 		openCount >= 1 &&
-		mostRecentSupportInteractionId !== currentSupportInteraction?.uuid
+		mostRecentSupportInteractionId != null &&
+		currentUuid != null &&
+		mostRecentSupportInteractionId !== currentUuid
 			? mostRecentSupportInteractionId
 			: null;
 

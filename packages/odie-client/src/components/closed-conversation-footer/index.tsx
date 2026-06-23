@@ -15,13 +15,16 @@ export const ClosedConversationFooter = ( { targetInteractionId }: Props ) => {
 	const { search } = useLocation();
 
 	const handleGoToOpenChat = () => {
+		if ( ! targetInteractionId ) {
+			return;
+		}
 		trackEvent( 'chat_go_to_open_from_merged_conversation' );
 		const params = new URLSearchParams( search );
-		params.set( 'id', targetInteractionId as string );
+		params.set( 'id', targetInteractionId );
 		navigate( '/odie?' + params.toString() );
 	};
 
-	const handleStartNewChat = async () => {
+	const handleStartNewChat = () => {
 		trackEvent( 'chat_new_from_closed_conversation' );
 		navigate( '/odie' );
 	};
