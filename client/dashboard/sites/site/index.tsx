@@ -5,6 +5,7 @@ import { notFound, Outlet } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Suspense, useMemo, lazy } from 'react';
+import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
 import { siteRoute } from '../../app/router/sites';
 import StagingSiteSyncMonitor from '../../app/staging-site-sync-monitor';
@@ -22,6 +23,7 @@ import type { SiteSwitcherProps } from '../site-switcher/types';
 function Site() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site, isError, error } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { user } = useAuth();
 	const { components } = useAppContext();
 	const SiteSwitcher = useMemo(
 		() =>
@@ -45,7 +47,7 @@ function Site() {
 					<HStack spacing={ 3 }>
 						<HeaderBar.Title>
 							<SiteSwitcher site={ site } />
-							{ canSwitchEnvironment( site ) && (
+							{ canSwitchEnvironment( site, user ) && (
 								<>
 									<MenuDivider />
 									<EnvironmentSwitcher site={ site } />

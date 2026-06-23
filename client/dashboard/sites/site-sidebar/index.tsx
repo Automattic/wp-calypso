@@ -16,6 +16,7 @@ import {
 	settings,
 	shield,
 } from '@wordpress/icons';
+import { useAuth } from '../../app/auth';
 import {
 	siteRoute,
 	siteOverviewRoute,
@@ -48,6 +49,7 @@ import type { AnyRoute } from '@tanstack/react-router';
 export default function SiteSidebar() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
+	const { user } = useAuth();
 
 	if ( ! site ) {
 		return null;
@@ -59,7 +61,7 @@ export default function SiteSidebar() {
 			<VStack spacing={ 4 }>
 				<SidebarMenu>
 					<SiteSwitcherItem site={ site } />
-					{ canSwitchEnvironment( site ) && <SidebarEnvironmentSwitcher site={ site } /> }
+					{ canSwitchEnvironment( site, user ) && <SidebarEnvironmentSwitcher site={ site } /> }
 				</SidebarMenu>
 				<SiteMenuSidebar site={ site } />
 			</VStack>
