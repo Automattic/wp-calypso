@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { useSiteSpec } from 'calypso/lib/site-spec';
 import {
 	getCiabSiteSpecConfig,
@@ -17,6 +18,7 @@ import {
 	buildEarlyProvisionDestination,
 	getEarlyProvisionSiteCreateBody,
 	getEarlyProvisionedSiteId,
+	getReadyAtomicSiteEditorUrl,
 	type SiteCreateResponse,
 } from './early-provisioning';
 import type { Step as StepType } from '../../types';
@@ -53,14 +55,73 @@ function clearSavedEarlyProvisionedSite(): void {
 
 function SiteSpecContainer( {
 	siteSpecConfig,
+	onFirstIntent,
 	onMessage,
 	onSpecConfirm,
 }: {
 	siteSpecConfig?: SiteSpecConfig;
+	onFirstIntent?: () => void;
 	onMessage?: ( message: unknown ) => void;
 	onSpecConfirm?: ( specData: unknown ) => void | Promise< void >;
 } ) {
 	useSiteSpec( { siteSpecConfig, onMessage, onSpecConfirm } );
+
+	useEffect( () => {
+		if ( ! onFirstIntent || typeof document === 'undefined' ) {
+			return;
+		}
+
+		const container = document.getElementById( 'site-spec-container' );
+		if ( ! container ) {
+			return;
+		}
+
+		const handleSubmit = () => onFirstIntent();
+
+		const handleClick = ( event: MouseEvent ) => {
+			const target = event.target;
+			if ( ! ( target instanceof HTMLElement ) ) {
+				return;
+			}
+
+			const control = target.closest( 'button,[role="button"],input[type="submit"]' );
+			if ( control && container.contains( control ) ) {
+				onFirstIntent();
+			}
+		};
+
+		const handleKeyDown = ( event: KeyboardEvent ) => {
+			if (
+				event.key !== 'Enter' ||
+				event.shiftKey ||
+				event.altKey ||
+				event.ctrlKey ||
+				event.metaKey
+			) {
+				return;
+			}
+
+			const target = event.target;
+			if (
+				target instanceof HTMLInputElement ||
+				target instanceof HTMLTextAreaElement ||
+				( target instanceof HTMLElement && target.isContentEditable )
+			) {
+				onFirstIntent();
+			}
+		};
+
+		container.addEventListener( 'submit', handleSubmit, true );
+		container.addEventListener( 'click', handleClick, true );
+		container.addEventListener( 'keydown', handleKeyDown, true );
+
+		return () => {
+			container.removeEventListener( 'submit', handleSubmit, true );
+			container.removeEventListener( 'click', handleClick, true );
+			container.removeEventListener( 'keydown', handleKeyDown, true );
+		};
+	}, [ onFirstIntent ] );
+
 	return <div id="site-spec-container" style={ { height: '100vh' } } />;
 }
 
@@ -89,6 +150,23 @@ function getSpecId( specData: unknown ): string {
 	}
 
 	return getSpecId( specRecord.data ) || getSpecId( specRecord.detail );
+}
+
+function logEarlyProvisionEvent(
+	type: string,
+	properties: Record< string, unknown > = {},
+	blogId?: number
+): void {
+	void logToLogstash( {
+		feature: 'calypso_client',
+		message: 'AI Site Builder early WPCOM Atomic provisioning',
+		severity: 'debug',
+		...( blogId ? { blog_id: blogId } : {} ),
+		properties: {
+			type: `ai_site_builder_early_wpcom_atomic_${ type }`,
+			...properties,
+		},
+	} ).catch( () => {} );
 }
 
 const SiteSpec: StepType = function SiteSpec() {
@@ -167,11 +245,12 @@ const SiteSpec: StepType = function SiteSpec() {
 		window.location.href = url;
 	}, [] );
 
-	const handleEarlyProvisionMessage = useCallback( () => {
-		messageCountRef.current += 1;
-		if ( messageCountRef.current !== 1 ) {
+	const startEarlyProvisionSite = useCallback( ( trigger: string ) => {
+		if ( earlyProvisionSitePromiseRef.current || getSavedEarlyProvisionedSite() ) {
 			return;
 		}
+
+		logEarlyProvisionEvent( 'create_request_start', { trigger } );
 
 		earlyProvisionSitePromiseRef.current = ( async () => {
 			try {
@@ -190,11 +269,25 @@ const SiteSpec: StepType = function SiteSpec() {
 
 				if ( blogId ) {
 					saveEarlyProvisionedSite( blogId );
+					logEarlyProvisionEvent(
+						'create_request_success',
+						{
+							trigger,
+							atomic_transfer_id: response.atomic_transfer?.id,
+							atomic_transfer_status: response.atomic_transfer?.status,
+						},
+						blogId
+					);
 					return blogId;
 				}
 
+				logEarlyProvisionEvent( 'create_request_invalid_response', { trigger } );
 				return null;
 			} catch ( error ) {
+				logEarlyProvisionEvent( 'create_request_error', {
+					trigger,
+					error: error instanceof Error ? error.message : String( error ),
+				} );
 				// eslint-disable-next-line no-console
 				console.error( 'Failed to provision site:', error );
 				return null;
@@ -220,7 +313,7 @@ const SiteSpec: StepType = function SiteSpec() {
 
 			try {
 				if ( ! earlyProvisionSitePromiseRef.current && ! getSavedEarlyProvisionedSite() ) {
-					handleEarlyProvisionMessage();
+					startEarlyProvisionSite( 'spec_confirm_fallback' );
 				}
 
 				const blogIdFromPromise = earlyProvisionSitePromiseRef.current
@@ -233,6 +326,46 @@ const SiteSpec: StepType = function SiteSpec() {
 
 				const phSessionId = getPostHogSessionId();
 				const source = queryParams.get( 'source' );
+				let directSiteEditorUrl: string | null = null;
+				try {
+					directSiteEditorUrl = await getReadyAtomicSiteEditorUrl( {
+						blogId,
+						specId,
+						source,
+					} );
+				} catch ( error ) {
+					logEarlyProvisionEvent(
+						'direct_ready_check_error',
+						{
+							spec_id: specId,
+							error: error instanceof Error ? error.message : String( error ),
+						},
+						blogId
+					);
+				}
+
+				if ( directSiteEditorUrl ) {
+					logEarlyProvisionEvent(
+						'site_editor_direct_redirect',
+						{
+							spec_id: specId,
+						},
+						blogId
+					);
+					clearSavedEarlyProvisionedSite();
+					window.location.href = directSiteEditorUrl;
+					return;
+				}
+
+				logEarlyProvisionEvent(
+					'site_editor_direct_not_ready',
+					{
+						spec_id: specId,
+						destination_path: '/setup/ai-site-builder/',
+					},
+					blogId
+				);
+
 				const destination = buildEarlyProvisionDestination( {
 					specId,
 					blogId,
@@ -240,6 +373,14 @@ const SiteSpec: StepType = function SiteSpec() {
 					source,
 				} );
 
+				logEarlyProvisionEvent(
+					'spec_confirm_redirect',
+					{
+						spec_id: specId,
+						destination_path: '/setup/ai-site-builder/',
+					},
+					blogId
+				);
 				clearSavedEarlyProvisionedSite();
 				window.location.href = destination;
 			} catch ( error ) {
@@ -248,7 +389,7 @@ const SiteSpec: StepType = function SiteSpec() {
 				isSubmittingRef.current = false;
 			}
 		},
-		[ handleEarlyProvisionMessage, queryParams ]
+		[ queryParams, startEarlyProvisionSite ]
 	);
 
 	useEffect( () => {
@@ -264,7 +405,8 @@ const SiteSpec: StepType = function SiteSpec() {
 		siteSpecStep = (
 			<SiteSpecContainer
 				siteSpecConfig={ getEarlyProvisionSiteSpecConfig() }
-				onMessage={ handleEarlyProvisionMessage }
+				onFirstIntent={ () => startEarlyProvisionSite( 'first_intent' ) }
+				onMessage={ () => startEarlyProvisionSite( 'site_spec_message' ) }
 				onSpecConfirm={ handleEarlyProvisionSpecConfirm }
 			/>
 		);

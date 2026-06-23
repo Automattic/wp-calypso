@@ -1,4 +1,5 @@
 import { AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
+import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
 
 export const EARLY_PROVISION_TARGET_WPCOM_ATOMIC = 'wpcom-atomic';
@@ -56,12 +57,31 @@ export function getAtomicProvisionedSiteSlug(
 	return String( fallbackSiteId );
 }
 
+function logAtomicProvisioningEvent(
+	type: string,
+	siteId: number,
+	properties: Record< string, unknown > = {}
+): void {
+	void logToLogstash( {
+		feature: 'calypso_client',
+		message: 'AI Site Builder early WPCOM Atomic provisioning',
+		severity: 'debug',
+		blog_id: siteId,
+		properties: {
+			type: `ai_site_builder_early_wpcom_atomic_${ type }`,
+			...properties,
+		},
+	} ).catch( () => {} );
+}
+
 export async function pollForAtomicProvisioning(
 	siteId: number,
 	maxAttempts = 100,
 	delayMs = 3000,
 	initialDelayMs = 0
 ) {
+	const startTime = Date.now();
+
 	if ( initialDelayMs > 0 ) {
 		await new Promise( ( resolve ) => setTimeout( resolve, initialDelayMs ) );
 	}
@@ -80,8 +100,14 @@ export async function pollForAtomicProvisioning(
 			) ) as AtomicProvisioningSite;
 
 			if ( siteResponse?.is_wpcom_atomic || siteResponse?.options?.is_wpcom_atomic ) {
+				const siteSlug = getAtomicProvisionedSiteSlug( siteResponse, siteId );
+				logAtomicProvisioningEvent( 'ready', siteId, {
+					attempt,
+					duration_ms: Date.now() - startTime,
+					site_slug: siteSlug,
+				} );
 				return {
-					siteSlug: getAtomicProvisionedSiteSlug( siteResponse, siteId ),
+					siteSlug,
 				};
 			}
 		} catch ( error ) {
@@ -95,6 +121,11 @@ export async function pollForAtomicProvisioning(
 			await new Promise( ( resolve ) => setTimeout( resolve, delayMs ) );
 		}
 	}
+
+	logAtomicProvisioningEvent( 'timeout', siteId, {
+		attempts: maxAttempts,
+		duration_ms: Date.now() - startTime,
+	} );
 
 	const error = new Error(
 		'We were unable to finish provisioning your site. Please try again or contact support.'
