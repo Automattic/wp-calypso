@@ -301,7 +301,6 @@ function SpaceUpsertModalContent( {
 			return (
 				<SourcesTab
 					selectedSourceKeys={ selectedSources.map( ( source ) => source.key ) }
-					selectedCount={ selectedSources.length }
 					onAddDraftSource={ handleAddDraftSource }
 					onRemoveDraftSource={ handleRemoveDraftSource }
 				/>

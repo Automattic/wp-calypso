@@ -1,8 +1,6 @@
 import {
-	addReadSpaceSourceMutation,
 	createReadSpaceMutation,
 	deleteReadSpaceMutation,
-	deleteReadSpaceSourceMutation,
 	readSpaceQuery,
 	readSpacesQuery,
 	updateReadSpaceMutation,
@@ -21,7 +19,7 @@ export function useSpaces(): ReadSpace[] {
 
 /**
  * A single space's details (its followed feeds and tags), loaded on demand from
- * the live detail endpoint (e.g. by the sources modal). Disabled until an id is
+ * the live detail endpoint (e.g. by the Customize modal). Disabled until an id is
  * known; pass `enabled: false` to also hold it off while the consumer (e.g. a
  * closed modal) doesn't need it yet.
  */
@@ -48,8 +46,8 @@ export function useCreateSpace() {
 /**
  * Update-space mutation wired to Calypso's QueryClient. On success the returned
  * detail is written to the detail cache and the matching list summary is
- * refreshed. Not used by any UI yet — an edit control can adopt it when built.
- * Note `tags` and `feeds` are full replaces of their sets.
+ * refreshed. Consumed by the Customize modal's edit/save path. Note `tags` and
+ * `feeds` are full replaces of their sets.
  */
 export function useUpdateSpace() {
 	const queryClient = useQueryClient();
@@ -58,21 +56,10 @@ export function useUpdateSpace() {
 
 /**
  * Delete-space mutation wired to Calypso's QueryClient. On success the space is
- * removed from the cached list and its detail cache is discarded. Not used by
- * any UI yet — a delete control (with a confirm, since it's a hard delete) can
- * adopt this hook when one is built.
+ * removed from the cached list and its detail cache is discarded. Consumed by
+ * the Customize modal's Delete tab (behind a confirm, since it's a hard delete).
  */
 export function useDeleteSpace() {
 	const queryClient = useQueryClient();
 	return useMutation( deleteReadSpaceMutation( queryClient ) );
-}
-
-export function useAddSpaceSource() {
-	const queryClient = useQueryClient();
-	return useMutation( addReadSpaceSourceMutation( queryClient ) );
-}
-
-export function useDeleteSpaceSource() {
-	const queryClient = useQueryClient();
-	return useMutation( deleteReadSpaceSourceMutation( queryClient ) );
 }

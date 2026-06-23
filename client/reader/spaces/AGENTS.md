@@ -18,8 +18,10 @@ only, and wired to the real `wpcom/v2` backend.
   `readSpacesQuery`/`readSpaceQuery` and the create/update/delete/feed mutations.
   Each mutation returns the full detail and writes it back to the caches.
 - **Consumer hooks** — `client/reader/data/spaces/`: `useSpaces`, `useSpace`,
-  `useCreateSpace`, `useUpdateSpace`, `useDeleteSpace`, `useAddSpaceSource`,
-  `useDeleteSpaceSource`.
+  `useCreateSpace`, `useUpdateSpace`, `useDeleteSpace`. The Customize modal edits
+  sources as local draft state and persists them via the `feeds` replace on
+  `useUpdateSpace`, so there are no per-source consumer hooks (the underlying
+  `addReadSpaceSource`/`deleteReadSpaceSource` endpoints stay in `api-core`).
 - **UI (this folder)** — `view.tsx`, `controller.tsx`, `index.tsx` (routes),
   `icons.ts`, `colors.ts`/`colors.scss`, `routes.ts`, `form-helpers.ts`,
   `color-picker.tsx`, `icon-picker.tsx`, `create-modal/`, `customize-modal/`.

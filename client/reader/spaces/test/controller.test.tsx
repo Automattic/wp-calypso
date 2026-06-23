@@ -16,6 +16,7 @@ jest.mock( '@automattic/calypso-config', () => ( {
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { spaces } from '../controller';
+import type { ReactElement } from 'react';
 
 function makeContext( params: Record< string, string > = {} ) {
 	return { params, query: {}, primary: null } as unknown as Parameters< typeof spaces >[ 0 ];
@@ -32,6 +33,7 @@ describe( 'spaces controller', () => {
 		const ctx = makeContext();
 		spaces( ctx, mockNext );
 		expect( ctx.primary ).not.toBeNull();
+		expect( ( ctx.primary as ReactElement ).props ).toMatchObject( { tab: 'feed' } );
 		expect( mockNext ).toHaveBeenCalled();
 		expect( page.redirect ).not.toHaveBeenCalled();
 	} );
@@ -45,10 +47,14 @@ describe( 'spaces controller', () => {
 		expect( mockNext ).not.toHaveBeenCalled();
 	} );
 
-	it( 'mounts the view for the discover tab', () => {
+	it( 'mounts the view on the discover tab and forwards the parsed tab', () => {
 		const ctx = makeContext( { id: 'work-id', tab: 'discover' } );
 		spaces( ctx, mockNext );
 		expect( ctx.primary ).not.toBeNull();
+		expect( ( ctx.primary as ReactElement ).props ).toMatchObject( {
+			id: 'work-id',
+			tab: 'discover',
+		} );
 		expect( mockNext ).toHaveBeenCalled();
 		expect( page.redirect ).not.toHaveBeenCalled();
 	} );

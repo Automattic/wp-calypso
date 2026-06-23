@@ -116,31 +116,35 @@ describe( 'SpaceFeed', () => {
 		expect( refetch ).toHaveBeenCalled();
 	} );
 
-	it( 'requests the posts stream in parallel, without waiting for the detail', async () => {
-		// No detail seeded — the stream must still be enabled (fetched immediately),
-		// proving it no longer waterfalls behind the space detail.
+	it( 'requests the posts stream in parallel with the space detail', async () => {
+		// No detail seeded. The stream must be enabled immediately (not gated on the
+		// detail) AND the detail request must also fire — both in flight together.
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
-		nock( BASE ).get( `/wpcom/v2/reader/spaces/${ WORK.id }` ).reply( 200, {
-			id: WORK.id,
-			title: WORK.name,
-			layout: WORK.layout,
-			follows: [],
-			tags: [],
-		} );
+		let detailRequested = false;
+		nock( BASE )
+			.get( `/wpcom/v2/reader/spaces/${ WORK.id }` )
+			.reply( () => {
+				detailRequested = true;
+				return [
+					200,
+					{ id: WORK.id, title: WORK.name, layout: WORK.layout, follows: [], tags: [] },
+				];
+			} );
 
 		renderWithProvider( <SpaceFeed spaceId={ WORK.id } />, {
 			queryClient,
 			initialState: { currentUser: { id: 1 } },
 		} );
 
-		await waitFor( () =>
-			expect( mockUseInfiniteStream ).toHaveBeenCalledWith(
-				expect.objectContaining( {
-					streamKey: `space:${ WORK.id }`,
-					options: expect.objectContaining( { enabled: true } ),
-				} )
-			)
+		// Stream is enabled on first render, with no detail in the cache.
+		expect( mockUseInfiniteStream ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				streamKey: `space:${ WORK.id }`,
+				options: expect.objectContaining( { enabled: true } ),
+			} )
 		);
+		// The detail request is also initiated, confirming the two load in parallel.
+		await waitFor( () => expect( detailRequested ).toBe( true ) );
 	} );
 
 	it( 'renders the feed from the layout-view fallback when the detail fails to load', async () => {

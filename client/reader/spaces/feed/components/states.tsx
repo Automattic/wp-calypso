@@ -48,7 +48,8 @@ export function SpaceFeedEmpty() {
 export function SpaceFeedError( { onRetry }: { onRetry: () => void } ) {
 	const translate = useTranslate();
 	return (
-		<div className="space-feed__status">
+		// `role="alert"` so the failure is announced when it replaces the loading region.
+		<div className="space-feed__status" role="alert">
 			<p className="space-feed__status-title">{ translate( 'Couldn’t load this feed' ) }</p>
 			<Button variant="secondary" onClick={ onRetry }>
 				{ translate( 'Try again' ) }

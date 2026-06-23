@@ -23,7 +23,7 @@
 }
 
 .customize-space-modal__header {
-	padding-bottom: 12px;
+	padding-block-end: 12px;
 	&-heading {
 		font-size: 20px;
 		font-weight: 600;
@@ -33,7 +33,7 @@
 .customize-space-modal__subtitle {
 	color: var( --color-text-subtle );
 	font-size: 0.875rem;
-	margin-bottom: 0;
+	margin-block-end: 0;
 }
 
 .customize-space-modal__tabs {
@@ -41,7 +41,7 @@
 	flex: 1;
 	flex-direction: column;
 	min-block-size: 0;
-	padding-bottom: 12px;
+	padding-block-end: 12px;
 	.components-tab-panel__tabs {
 		border-block-end: 1px solid var( --color-neutral-5 );
 		border-block-start: 1px solid var( --color-neutral-5 );
@@ -71,12 +71,6 @@
 	text-align: center;
 }
 
-.customize-space-modal__empty {
-	margin: 24px 0;
-	color: var( --color-text-subtle );
-	text-align: center;
-}
-
 .customize-space-modal__field-label {
 	color: var( --color-text-subtle );
 	font-size: 0.75rem;
@@ -87,7 +81,7 @@
 
 .customize-space-modal__error {
 	margin: 8px 0 0;
-	color: var( --studio-red-50 );
+	color: var( --color-error );
 	font-size: 0.875rem;
 }
 
@@ -269,13 +263,6 @@
 .customize-space-modal__delete-tab {
 	align-items: flex-start;
 	max-inline-size: 520px;
-}
-
-.customize-space-modal__delete-heading {
-	margin: 0;
-	color: var( --color-text );
-	font-size: 1rem;
-	font-weight: 600;
 }
 
 .customize-space-modal__delete-description {

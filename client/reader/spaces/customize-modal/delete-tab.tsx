@@ -11,14 +11,12 @@ export function DeleteTab( { spaceName, onDelete }: Props ) {
 
 	return (
 		<VStack spacing={ 4 } className="customize-space-modal__delete-tab">
-			<VStack spacing={ 2 }>
-				<p className="customize-space-modal__delete-description">
-					{ translate(
-						'Delete %(name)s and remove it from your Reader spaces. This does not unfollow any sites or tags.',
-						{ args: { name: spaceName } }
-					) }
-				</p>
-			</VStack>
+			<p className="customize-space-modal__delete-description">
+				{ translate(
+					'Delete %(name)s and remove it from your Reader spaces. This does not unfollow any sites or tags.',
+					{ args: { name: spaceName } }
+				) }
+			</p>
 			<Button __next40pxDefaultSize variant="primary" isDestructive onClick={ onDelete }>
 				{ translate( 'Delete space' ) }
 			</Button>

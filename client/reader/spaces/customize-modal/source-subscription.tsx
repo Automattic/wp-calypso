@@ -61,7 +61,8 @@ export const SourceSubscription = memo( function SourceSubscription( {
 				justify="flex-start"
 				className="space-sources__row-main"
 			>
-				<SiteIcon iconUrl={ subscription.site_icon } size={ 40 } alt={ name } />
+				{ /* Decorative: the row is already labeled by the site name (aria-label above). */ }
+				<SiteIcon iconUrl={ subscription.site_icon } size={ 40 } alt="" />
 				<VStack spacing={ 0 } className="space-sources__row-content">
 					<div className="space-sources__row-name">{ name }</div>
 					<div className="space-sources__row-url">{ url }</div>

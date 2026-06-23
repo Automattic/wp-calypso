@@ -7,7 +7,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import Skeleton from 'calypso/reader/components/skeleton';
 import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import { useInfiniteList } from 'calypso/reader/hooks/use-infinite-list';
@@ -15,9 +15,8 @@ import { SourceSubscription } from './source-subscription';
 
 interface Props {
 	selectedSourceKeys: string[];
-	selectedCount: number;
-	onAddDraftSource?: ( subscription: SiteSubscriptionItem ) => void;
-	onRemoveDraftSource?: ( subscription: SiteSubscriptionItem ) => void;
+	onAddDraftSource: ( subscription: SiteSubscriptionItem ) => void;
+	onRemoveDraftSource: ( subscription: SiteSubscriptionItem ) => void;
 }
 
 type Filter = 'all' | 'selected';
@@ -53,12 +52,7 @@ const getSourcesContentState = ( {
 	return 'list';
 };
 
-export function SourcesTab( {
-	selectedSourceKeys,
-	selectedCount,
-	onAddDraftSource,
-	onRemoveDraftSource,
-}: Props ) {
+export function SourcesTab( { selectedSourceKeys, onAddDraftSource, onRemoveDraftSource }: Props ) {
 	const translate = useTranslate();
 	// This tab only mounts while it's the active TabPanel tab, so the (paginating)
 	// subscriptions query only runs once the user opens Sources.
@@ -67,6 +61,7 @@ export function SourcesTab( {
 	const [ filter, setFilter ] = useState< Filter >( 'all' );
 	const [ search, setSearch ] = useState( '' );
 
+	const selectedCount = selectedSourceKeys.length;
 	const selectedKeys = useMemo( () => new Set( selectedSourceKeys ), [ selectedSourceKeys ] );
 
 	const subscriptionsForFilter = useMemo( () => {
@@ -83,19 +78,6 @@ export function SourcesTab( {
 		keys: SEARCH_KEYS,
 		query: search.trim(),
 	} );
-
-	const handleAddSource = useCallback(
-		( subscription: SiteSubscriptionItem ) => {
-			onAddDraftSource?.( subscription );
-		},
-		[ onAddDraftSource ]
-	);
-	const handleRemoveSource = useCallback(
-		( subscription: SiteSubscriptionItem ) => {
-			onRemoveDraftSource?.( subscription );
-		},
-		[ onRemoveDraftSource ]
-	);
 
 	const sourcesState = getSourcesContentState( {
 		isLoading: siteSubscriptions.isLoading,
@@ -121,12 +103,14 @@ export function SourcesTab( {
 			<HStack justify="flex-start" spacing={ 2 } className="space-sources__filters">
 				<Button
 					variant={ filter === 'all' ? 'primary' : 'secondary' }
+					aria-pressed={ filter === 'all' }
 					onClick={ () => setFilter( 'all' ) }
 				>
 					{ translate( 'All subscriptions' ) }
 				</Button>
 				<Button
 					variant={ filter === 'selected' ? 'primary' : 'secondary' }
+					aria-pressed={ filter === 'selected' }
 					onClick={ () => setFilter( 'selected' ) }
 				>
 					{ translate( 'In this space · %(count)d', { args: { count: selectedCount } } ) }
@@ -138,8 +122,8 @@ export function SourcesTab( {
 				filter={ filter }
 				filteredSubscriptions={ filteredSubscriptions }
 				selectedKeys={ selectedKeys }
-				onAdd={ handleAddSource }
-				onRemove={ handleRemoveSource }
+				onAdd={ onAddDraftSource }
+				onRemove={ onRemoveDraftSource }
 				translate={ translate }
 			/>
 		</VStack>
@@ -176,7 +160,8 @@ function SourcesTabContent( {
 			);
 		case 'empty':
 			return (
-				<p className="space-sources__empty">
+				// `role="status"` so a search/filter that yields zero results is announced.
+				<p className="space-sources__empty" role="status">
 					{ filter === 'selected'
 						? translate( 'No subscriptions added to this space yet.' )
 						: translate( 'No subscriptions found.' ) }

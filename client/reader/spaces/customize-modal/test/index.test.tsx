@@ -231,6 +231,47 @@ describe( 'CustomizeModal', () => {
 		);
 	} );
 
+	it( 'keeps unsaved identity edits when a source is changed (seeds the draft once)', async () => {
+		mockSubscriptions = [ existingSubscription, newSubscription ];
+		const user = userEvent.setup();
+		const { onClose } = render( {
+			space: {
+				...SPACE,
+				sources: [
+					{
+						feedId: 456,
+						feedUrl: 'https://existing.example/feed',
+						blogId: 123,
+						name: 'Existing Blog',
+						siteIcon: null,
+					},
+				],
+			},
+		} );
+		const onBody = jest.fn();
+		mockUpdateEndpoint( onBody );
+
+		// Edit the name first...
+		const name = screen.getByLabelText( 'Name' );
+		await user.clear( name );
+		await user.type( name, 'Reading' );
+
+		// ...then toggle a source on another tab. This must not re-seed the draft and
+		// wipe the pending name edit.
+		await user.click( screen.getByRole( 'tab', { name: 'Sources' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Add New Blog' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Save changes' } ) );
+
+		await waitFor( () => expect( onClose ).toHaveBeenCalled() );
+
+		expect( onBody ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				title: 'Reading',
+				feeds: [ 456, 789 ],
+			} )
+		);
+	} );
+
 	it( 'allows keeping the current name but blocks a name that collides with another space', async () => {
 		const user = userEvent.setup();
 		render( { others: [ { id: '9', name: 'Reading', layout: { color: 'red', icon: 'box' } } ] } );
