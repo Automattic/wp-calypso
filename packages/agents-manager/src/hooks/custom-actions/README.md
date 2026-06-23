@@ -53,6 +53,20 @@ if ( window.__agentsManagerActions?.isReady ) {
 }
 ```
 
+## Conversation activity
+
+`agents-manager-conversation-changed` fires on `window` whenever the conversation advances — a message is sent or received, or a turn finishes processing. Use it to re-sync state a host bundle renders inside the chat transcript (e.g. a card reflecting an action run from chat) without a page reload. The event carries no detail; read whatever you need from your own state or the API when it fires.
+
+```js
+function resync() {
+	// re-fetch / re-render whatever the chat may have changed
+}
+
+window.addEventListener( 'agents-manager-conversation-changed', resync );
+```
+
+Dispatched by `OrchestratorChat` as the transcript grows. Prefer this over the provider contract for chat interactions — providers are reserved for agent setup.
+
 ## Initial values
 
 Pre-set these on `window.__agentsManagerActions` **before** Agents Manager mounts:

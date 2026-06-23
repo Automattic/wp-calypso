@@ -3,7 +3,6 @@ import page from '@automattic/calypso-router';
 import { omit } from '@automattic/js-utils';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
@@ -220,7 +219,7 @@ const jetpackConnection = ( WrappedComponent ) => {
 			return (
 				this.state.url &&
 				this.isCurrentUrlFetched() &&
-				get( this.props.jetpackConnectSite, [ 'error', 'error' ] ) === error
+				this.props.jetpackConnectSite?.error?.error === error
 			);
 		}
 

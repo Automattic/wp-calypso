@@ -368,7 +368,6 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						plugin={ plugin }
 						saasRedirectHRef={ saasRedirectHRef }
 						isWpcomStaging={ isWpcomStaging }
-						sitesWithPlugins={ sitesWithPlugins }
 						installedOnSitesQuantity={ installedOnSitesQuantity }
 					/>
 				</div>
@@ -407,7 +406,6 @@ function PrimaryButton( {
 	plugin,
 	saasRedirectHRef,
 	isWpcomStaging,
-	sitesWithPlugins,
 	installedOnSitesQuantity,
 } ) {
 	const dispatch = useDispatch();
@@ -429,7 +427,7 @@ function PrimaryButton( {
 		);
 	}, [ dispatch, plugin, isLoggedIn ] );
 
-	if ( isLoggedIn && currentUserSiteCount > 0 && sitesWithPlugins.length > 0 && ! selectedSite ) {
+	if ( isLoggedIn && currentUserSiteCount > 0 && ! selectedSite ) {
 		return (
 			<ManageSitesButton plugin={ plugin } installedOnSitesQuantity={ installedOnSitesQuantity } />
 		);

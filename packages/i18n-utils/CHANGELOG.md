@@ -6,6 +6,10 @@ Add `getNumericFirstDayOfWeek` method as a wrapper for native (but not yet fully
 
 Get rid of implicit lodash dependency
 
+## 1.2.4
+
+- Declare React 19 compatibility for package consumers (#111721).
+
 ## 1.2.3
 
 Get rid of i18n-calypso dependency

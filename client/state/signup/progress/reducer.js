@@ -91,7 +91,7 @@ const invalidateStep = ( state, { step, errors } ) => {
 const processStep = ( state, { step } ) => updateStep( state, { ...step, status: 'processing' } );
 
 const saveStep = ( state, { step } ) => {
-	const status = get( state, [ step.stepName, 'status' ] );
+	const status = state?.[ step.stepName ]?.status;
 
 	return state.hasOwnProperty( step.stepName )
 		? updateStep( state, {
@@ -102,7 +102,7 @@ const saveStep = ( state, { step } ) => {
 };
 
 const submitStep = ( state, { step } ) => {
-	const stepHasApiRequestFunction = get( stepsConfig, [ step.stepName, 'apiRequestFunction' ] );
+	const stepHasApiRequestFunction = stepsConfig?.[ step.stepName ]?.apiRequestFunction;
 	const status = stepHasApiRequestFunction ? 'pending' : 'completed';
 
 	return state.hasOwnProperty( step.stepName )

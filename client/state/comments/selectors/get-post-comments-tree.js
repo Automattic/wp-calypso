@@ -1,6 +1,6 @@
-import { groupBy, keyBy, mapValues } from '@automattic/js-utils';
+import { groupBy, keyBy, mapValues, partition } from '@automattic/js-utils';
 import treeSelect from '@automattic/tree-select';
-import { filter, map, partition } from 'lodash';
+import { filter, map } from 'lodash';
 import { getPostCommentItems } from 'calypso/state/comments/selectors/get-post-comment-items';
 
 import 'calypso/state/comments/init';

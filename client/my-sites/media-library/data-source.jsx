@@ -1,7 +1,7 @@
 import { Button, ScreenReaderText, Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { find, includes } from 'lodash';
+import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -53,7 +53,7 @@ export class MediaLibraryDataSource extends Component {
 				icon: <Gridicon icon="image" size={ 24 } />,
 			},
 		];
-		return sources.filter( ( { value } ) => ! includes( disabledSources, value ) );
+		return sources.filter( ( { value } ) => ! disabledSources.includes( value ) );
 	};
 
 	renderScreenReader( selected ) {

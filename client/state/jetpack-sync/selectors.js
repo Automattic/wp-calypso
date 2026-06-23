@@ -1,4 +1,4 @@
-import { get, reduce } from 'lodash';
+import { reduce } from 'lodash';
 
 import 'calypso/state/jetpack-sync/init';
 
@@ -9,7 +9,7 @@ import 'calypso/state/jetpack-sync/init';
  * @returns {Object}          Sync status object
  */
 function getSyncStatus( state, siteId ) {
-	return get( state, [ 'jetpackSync', 'syncStatus', siteId ] );
+	return state?.jetpackSync?.syncStatus?.[ siteId ];
 }
 
 /**
@@ -19,7 +19,7 @@ function getSyncStatus( state, siteId ) {
  * @returns {Object}          Full sync request object
  */
 function getFullSyncRequest( state, siteId ) {
-	return get( state, [ 'jetpackSync', 'fullSyncRequest', siteId ] );
+	return state?.jetpackSync?.fullSyncRequest?.[ siteId ];
 }
 
 /**

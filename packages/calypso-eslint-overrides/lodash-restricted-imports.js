@@ -19,6 +19,13 @@ const JS_UTILS_NAMES = [
 	'omitBy',
 	'groupBy',
 	'mapKeys',
+	'capitalize',
+	'escapeRegExp',
+	'once',
+	'isError',
+	'random',
+	'range',
+	'truncate',
 ];
 
 // The js-utils case converters cover ASCII identifiers/keys, not lodash's full
@@ -35,6 +42,39 @@ const COMPOSE_MESSAGE = 'Please use the equivalent from `@wordpress/compose` ins
 const COMPACT_MESSAGE = 'Please use `array.filter( Boolean )` instead of lodash `compact`.';
 const FLATTEN_MESSAGE = 'Please use native `array.flatMap()` / `array.flat()` instead.';
 const DEFER_MESSAGE = 'Please use native `setTimeout( fn, 0 )` instead of lodash `defer`.';
+const DELAY_MESSAGE = 'Please use native `setTimeout( fn, wait )` instead of lodash `delay`.';
+const WITHOUT_MESSAGE =
+	'Please use native `array.filter( ( item ) => item !== value )` instead of lodash `without`.';
+const DIFFERENCE_MESSAGE =
+	'Please use native `array.filter( ( item ) => ! other.includes( item ) )` instead of lodash `difference`.';
+const ISEQUAL_MESSAGE = 'Please use `fast-deep-equal/es6` instead of lodash `isEqual`.';
+const INTERSECTION_MESSAGE =
+	'Please use `array.some( ( item ) => other.includes( item ) )` for a boolean check, or ' +
+	'`Array.from( new Set( array ) ).filter( ( item ) => other.includes( item ) )` to dedupe like lodash `intersection`.';
+const NOOP_MESSAGE = 'Please use a local `const noop = () => {};` instead of lodash `noop`.';
+const INCLUDES_MESSAGE =
+	'Please use native `array.includes( value )` / `string.includes( substring )` instead of lodash ' +
+	'`includes`. Guard possibly-undefined collections (`value?.includes( … )`), and use ' +
+	'`Object.values( obj ).includes( value )` for object collections.';
+const ISNUMBER_MESSAGE = "Please use `typeof value === 'number'` instead of lodash `isNumber`.";
+const FINDKEY_MESSAGE =
+	'Please use `Object.keys( obj ).find( ( key ) => … )` instead of lodash `findKey`.';
+const FINDINDEX_MESSAGE =
+	'Please use native `array.findIndex( ( item ) => … )` instead of lodash `findIndex`.';
+const CLONE_MESSAGE =
+	'Please use a spread copy (`{ ...obj }` / `[ ...arr ]`) instead of lodash `clone`.';
+const PROPERTY_MESSAGE =
+	'Please use an arrow function (`( obj ) => obj.key`) instead of lodash `property`.';
+// The js-utils maxBy/minBy rank by numeric iteratee values only — not lodash's
+// full string/symbol comparison or iteratee shorthands.
+const EXTREMUM_MESSAGE =
+	'Please use `maxBy`/`minBy` from `@automattic/js-utils` for numeric rankings. ' +
+	'For non-numeric comparisons or iteratee shorthands, write an explicit reducer.';
+// The js-utils partition requires a function predicate — not lodash's iteratee
+// shorthands (string / object / array).
+const PARTITION_MESSAGE =
+	'Please use `partition` from `@automattic/js-utils` with a function predicate. ' +
+	'It does not support lodash iteratee shorthands — expand those to a predicate function.';
 
 const paths = [
 	{ name: 'lodash', importNames: JS_UTILS_NAMES, message: JS_UTILS_MESSAGE },
@@ -43,6 +83,20 @@ const paths = [
 	{ name: 'lodash', importNames: [ 'compact' ], message: COMPACT_MESSAGE },
 	{ name: 'lodash', importNames: [ 'flatMap', 'flatten' ], message: FLATTEN_MESSAGE },
 	{ name: 'lodash', importNames: [ 'defer' ], message: DEFER_MESSAGE },
+	{ name: 'lodash', importNames: [ 'delay' ], message: DELAY_MESSAGE },
+	{ name: 'lodash', importNames: [ 'without' ], message: WITHOUT_MESSAGE },
+	{ name: 'lodash', importNames: [ 'difference' ], message: DIFFERENCE_MESSAGE },
+	{ name: 'lodash', importNames: [ 'isEqual' ], message: ISEQUAL_MESSAGE },
+	{ name: 'lodash', importNames: [ 'intersection' ], message: INTERSECTION_MESSAGE },
+	{ name: 'lodash', importNames: [ 'noop' ], message: NOOP_MESSAGE },
+	{ name: 'lodash', importNames: [ 'includes' ], message: INCLUDES_MESSAGE },
+	{ name: 'lodash', importNames: [ 'isNumber' ], message: ISNUMBER_MESSAGE },
+	{ name: 'lodash', importNames: [ 'findKey' ], message: FINDKEY_MESSAGE },
+	{ name: 'lodash', importNames: [ 'findIndex' ], message: FINDINDEX_MESSAGE },
+	{ name: 'lodash', importNames: [ 'clone' ], message: CLONE_MESSAGE },
+	{ name: 'lodash', importNames: [ 'property' ], message: PROPERTY_MESSAGE },
+	{ name: 'lodash', importNames: [ 'maxBy', 'minBy' ], message: EXTREMUM_MESSAGE },
+	{ name: 'lodash', importNames: [ 'partition' ], message: PARTITION_MESSAGE },
 ];
 
 // Deep `lodash/<fn>` imports bypass the named-import paths above.
@@ -53,6 +107,20 @@ const patterns = [
 	{ group: [ 'lodash/compact' ], message: COMPACT_MESSAGE },
 	{ group: [ 'lodash/flatMap', 'lodash/flatten' ], message: FLATTEN_MESSAGE },
 	{ group: [ 'lodash/defer' ], message: DEFER_MESSAGE },
+	{ group: [ 'lodash/delay' ], message: DELAY_MESSAGE },
+	{ group: [ 'lodash/without' ], message: WITHOUT_MESSAGE },
+	{ group: [ 'lodash/difference' ], message: DIFFERENCE_MESSAGE },
+	{ group: [ 'lodash/isEqual' ], message: ISEQUAL_MESSAGE },
+	{ group: [ 'lodash/intersection' ], message: INTERSECTION_MESSAGE },
+	{ group: [ 'lodash/noop' ], message: NOOP_MESSAGE },
+	{ group: [ 'lodash/includes' ], message: INCLUDES_MESSAGE },
+	{ group: [ 'lodash/isNumber' ], message: ISNUMBER_MESSAGE },
+	{ group: [ 'lodash/findKey' ], message: FINDKEY_MESSAGE },
+	{ group: [ 'lodash/findIndex' ], message: FINDINDEX_MESSAGE },
+	{ group: [ 'lodash/clone' ], message: CLONE_MESSAGE },
+	{ group: [ 'lodash/property' ], message: PROPERTY_MESSAGE },
+	{ group: [ 'lodash/maxBy', 'lodash/minBy' ], message: EXTREMUM_MESSAGE },
+	{ group: [ 'lodash/partition' ], message: PARTITION_MESSAGE },
 ];
 
 module.exports = { paths, patterns };

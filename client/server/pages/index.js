@@ -14,7 +14,7 @@ import {
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
 import express from 'express';
-import { get, includes } from 'lodash';
+import { get } from 'lodash';
 import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
@@ -311,6 +311,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	context.app = {
 		// use ipv4 address when is ipv4 mapped address
 		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
+		isFirefox: request.useragent.browser === 'Firefox',
 		isWpMobileApp: isWpMobileApp( request.useragent.source ),
 		isWcMobileApp: isWcMobileApp( request.useragent.source ),
 		isDevelopmentEnv: devEnvironments.includes( calypsoEnv ),
@@ -1088,7 +1089,9 @@ function wpcomPages( app ) {
 				const activeFlags = get( data, 'meta.data.flags.active_flags', [] );
 
 				// A8C check
-				if ( ! includes( activeFlags, 'calypso_support_user' ) ) {
+				if (
+					! ( Array.isArray( activeFlags ) && activeFlags.includes( 'calypso_support_user' ) )
+				) {
 					return res.send( renderJsx( 'support-user' ) );
 				}
 

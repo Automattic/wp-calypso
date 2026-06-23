@@ -12,7 +12,7 @@ import {
 } from '@automattic/urls';
 import _debug from 'debug';
 import { localize } from 'i18n-calypso';
-import { intersection, map, find } from 'lodash';
+import { map, find } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -133,7 +133,7 @@ export class DomainWarnings extends PureComponent {
 			this.pendingConsent,
 		];
 		const validRules = this.props.allowedRules.map( ( ruleName ) => this[ ruleName ] );
-		return intersection( allRules, validRules );
+		return allRules.filter( ( rule ) => validRules.includes( rule ) );
 	}
 
 	getDomains() {

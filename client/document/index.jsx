@@ -153,6 +153,8 @@ class Document extends Component {
 					branchName={ branchName }
 					inlineScriptNonce={ inlineScriptNonce }
 					faviconUrl={ headFaviconUrl }
+					// Firefox can reuse the anonymous REST proxy prefetch after login; see https://github.com/Automattic/wp-calypso/pull/111842.
+					shouldPrefetchRestProxy={ ! app?.isFirefox }
 				>
 					{ head.metas.map( ( props, index ) => (
 						<meta { ...props } key={ index } />

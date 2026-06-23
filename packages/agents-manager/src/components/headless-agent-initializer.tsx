@@ -13,6 +13,7 @@ import { createAgentConfig } from '../utils/create-agent-config';
 import { loadExternalProviders, type LoadedProviders } from '../utils/load-external-providers';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 import type { HelpCenterSite } from '@automattic/data-stores';
+import type { JSX } from 'react';
 
 export interface HeadlessAgentInitializerProps {
 	/** The selected site object. */

@@ -1,6 +1,6 @@
 {
 	"name": "i18n-calypso",
-	"version": "7.4.0",
+	"version": "7.4.1",
 	"description": "I18n JavaScript library on top of Tannin originally used in Calypso.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
@@ -53,6 +53,6 @@
 		"typescript": "^6.0.3"
 	},
 	"peerDependencies": {
-		"react": "^18.3.1"
+		"react": "^18.3.1 || ^19.0.0"
 	}
 }

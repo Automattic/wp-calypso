@@ -19,7 +19,12 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import SmoochLibrary from 'smooch';
 import { AttachmentMessage } from './components/attachment-message';
 import { CSATForm } from './components/csat-form';
-import { SMOOCH_INTEGRATION_ID, SMOOCH_INTEGRATION_ID_STAGING } from './constants';
+import {
+	SMOOCH_INTEGRATION_ID,
+	SMOOCH_INTEGRATION_ID_STAGING,
+	ZENDESK_CUSTOM_FIELD_AI_CHAT_SESSION_ID,
+	ZENDESK_CUSTOM_FIELD_AI_MESSAGE_ID,
+} from './constants';
 import {
 	ConversationData,
 	ZendeskConversation,
@@ -195,6 +200,7 @@ export const useManagedZendeskChat = ( {
 	const { state } = useLocation();
 	const conversationId = state?.conversationId;
 	const startedFromChatId = state?.startedFromChatId;
+	const startedFromMessageId = state?.startedFromMessageId;
 	const [ conversation, setConversation ] = useState< ZendeskConversation | undefined >();
 	const [ typingStatus, setTypingStatus ] = useState< Record< string, boolean > >( {} );
 	const [ connectionStatus, setConnectionStatus ] = useState<
@@ -299,6 +305,9 @@ export const useManagedZendeskChat = ( {
 					createdAt: Date.now(),
 					started_from: 'chat',
 					chat_session_id: startedFromChatId,
+					message_id: startedFromMessageId,
+					[ `zen:ticket_field:${ ZENDESK_CUSTOM_FIELD_AI_MESSAGE_ID }` ]: startedFromMessageId,
+					[ `zen:ticket_field:${ ZENDESK_CUSTOM_FIELD_AI_CHAT_SESSION_ID }` ]: startedFromChatId,
 				},
 			} ).then( ( conversation ) => {
 				setConversation( conversation );
@@ -347,6 +356,7 @@ export const useManagedZendeskChat = ( {
 
 	const agentticMessages = useMemo( () => {
 		const rawMessages = sortMessagesByTimestamp( conversation?.messages ?? [] );
+		const chatSessionId = conversation?.metadata?.chat_session_id;
 		const ratingMessage = rawMessages.find( ( msg ) => msg.metadata?.rated === true );
 		const hasRated = ratingMessage !== undefined;
 		let score: 'GOOD' | 'BAD' | null = null;
@@ -475,10 +485,7 @@ export const useManagedZendeskChat = ( {
 				],
 			} );
 		}
-		if (
-			conversation?.metadata?.started_from === 'chat' &&
-			conversation?.metadata?.chat_session_id
-		) {
+		if ( conversation?.metadata?.started_from === 'chat' && chatSessionId ) {
 			messages.unshift( {
 				id: 'transfer_message',
 				role: 'agent',
@@ -494,11 +501,7 @@ export const useManagedZendeskChat = ( {
 									{ createInterpolateElement(
 										__( 'Started from <a>another chat</a>', '__i18n_text_domain__' ),
 										{
-											a: (
-												<Link
-													to={ `/chat?sessionId=${ conversation?.metadata?.chat_session_id }` }
-												/>
-											),
+											a: <Link to="/chat" state={ { sessionId: chatSessionId } } />,
 										}
 									) }
 								</div>

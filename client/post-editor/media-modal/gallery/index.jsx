@@ -1,6 +1,7 @@
 import { omitBy } from '@automattic/js-utils';
+import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { some, isEqual } from 'lodash';
+import { some } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
