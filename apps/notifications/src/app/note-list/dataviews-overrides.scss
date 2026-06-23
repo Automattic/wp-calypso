@@ -87,8 +87,7 @@
 		}
 	}
 
-	// Unread hover matches the resting unread tint, so hovering an unread row
-	// doesn't shift its background.
+	// We override hover styles for unread items.
 	div[role="article"]:where(.is-hovered):has(.is-unread),
 	div[role="article"]:where(.is-hovered):has(.is-unread):focus-within {
 		.dataviews-view-list__item-wrapper {
