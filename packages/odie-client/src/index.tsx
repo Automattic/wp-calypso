@@ -4,6 +4,7 @@ import { MessagesContainer } from './components/message/messages-container';
 import { OdieSendMessageButton } from './components/send-message-input';
 import { useOdieAssistantContext, OdieAssistantProvider } from './context';
 import { useCurrentSupportInteraction } from './data/use-current-support-interaction';
+import { useOpenLiveInteractions } from './hooks/use-open-interaction-status-map';
 import { hasCSATMessage, interactionHasEnded } from './utils';
 
 import './style.scss';
@@ -15,6 +16,18 @@ export const OdieAssistant: React.FC = () => {
 	const showClosedConversationFooter =
 		chatHasCSATMessage || interactionHasEnded( currentSupportInteraction );
 
+	const { mostRecentSupportInteractionId, openCount } = useOpenLiveInteractions();
+
+	// When the current chat is closed and exactly one other live chat is open, link
+	// the user directly to that chat. Guard against self-link in case the status
+	// cache is stale and the current interaction leaks into the open list.
+	const openChatTarget =
+		showClosedConversationFooter &&
+		openCount === 1 &&
+		mostRecentSupportInteractionId !== currentSupportInteraction?.uuid
+			? mostRecentSupportInteractionId
+			: null;
+
 	useEffect( () => {
 		trackEvent( 'chatbox_view' );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -25,7 +38,11 @@ export const OdieAssistant: React.FC = () => {
 			<div className="chat-box-message-container" id="odie-messages-container">
 				<MessagesContainer currentUser={ currentUser } />
 			</div>
-			{ showClosedConversationFooter ? <ClosedConversationFooter /> : <OdieSendMessageButton /> }
+			{ showClosedConversationFooter ? (
+				<ClosedConversationFooter targetInteractionId={ openChatTarget } />
+			) : (
+				<OdieSendMessageButton />
+			) }
 		</div>
 	);
 };
