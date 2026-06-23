@@ -2,7 +2,7 @@ import { rawUserPreferencesQuery, userPreferenceOptimisticMutation } from '@auto
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'calypso/state';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import type { UserPreferences } from '@automattic/api-core';
 
@@ -48,6 +48,23 @@ export function useSetProfileTabVisibility() {
 
 		mutation.mutate( next, {
 			onSuccess() {
+				let successMessage = '';
+				if ( tab === 'posts' ) {
+					successMessage =
+						next === 'public'
+							? translate( 'Your posts page is now public.' )
+							: translate( 'Your posts page is now private.' );
+				} else {
+					successMessage =
+						next === 'public'
+							? translate( 'Your sites page is now public.' )
+							: translate( 'Your sites page is now private.' );
+				}
+
+				if ( successMessage ) {
+					dispatch( successNotice( successMessage, { duration: 4000 } ) );
+				}
+
 				recordReaderTracksEvent( 'calypso_reader_profile_visibility_toggled', {
 					tab,
 					visibility: next,

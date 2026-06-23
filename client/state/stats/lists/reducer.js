@@ -1,6 +1,6 @@
 /* eslint-disable no-case-declarations */
 
-import { merge, get } from 'lodash';
+import { merge } from 'lodash';
 import {
 	ALL_SITES_STATS_RECEIVE,
 	SITE_STATS_RECEIVE,
@@ -78,7 +78,7 @@ export const items = withSchemaValidation( itemSchema, ( state = {}, action ) =>
 				[ siteId ]: {
 					...state[ siteId ],
 					[ statType ]: {
-						...get( state, [ siteId, statType ] ),
+						...state?.[ siteId ]?.[ statType ],
 						[ queryKey ]: data || null,
 					},
 				},

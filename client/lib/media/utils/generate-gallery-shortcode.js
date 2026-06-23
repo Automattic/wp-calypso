@@ -1,5 +1,4 @@
 import { omitBy } from '@automattic/js-utils';
-import { includes } from 'lodash';
 import {
 	GalleryColumnedTypes,
 	GalleryDefaultAttrs,
@@ -31,11 +30,11 @@ export function generateGalleryShortcode( settings ) {
 
 	delete attrs.items;
 
-	if ( ! includes( GalleryColumnedTypes, attrs.type ) ) {
+	if ( ! GalleryColumnedTypes.includes( attrs.type ) ) {
 		delete attrs.columns;
 	}
 
-	if ( ! includes( GallerySizeableTypes, attrs.type ) ) {
+	if ( ! GallerySizeableTypes.includes( attrs.type ) ) {
 		delete attrs.size;
 	}
 

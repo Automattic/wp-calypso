@@ -76,7 +76,7 @@ export const fromEditor = ( content ) => {
 	const rawContent = convertToRaw( content );
 	const text = get( rawContent, 'blocks[0].text', '' );
 	const ranges = get( rawContent, 'blocks[0].entityRanges', [] );
-	const entities = get( rawContent, 'entityMap' );
+	const entities = rawContent?.entityMap;
 
 	// [ output, index, text ]
 	const [ o, i, t ] = ranges.reduce(

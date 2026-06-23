@@ -1,5 +1,4 @@
 import { keyBy, omit } from '@automattic/js-utils';
-import { without } from 'lodash';
 import {
 	KEYRING_CONNECTION_DELETE,
 	KEYRING_CONNECTIONS_RECEIVE,
@@ -65,7 +64,9 @@ export const items = withSchemaValidation( itemSchema, ( state = {}, action ) =>
 			const { connection } = action;
 			const { keyring_connection_ID: id, site_ID: siteId } = connection;
 			const keyringConnection = state[ id ];
-			const sites = without( keyringConnection.sites, siteId.toString() );
+			const sites = keyringConnection.sites.filter(
+				( connectedSiteId ) => connectedSiteId !== siteId.toString()
+			);
 
 			return { ...state, [ id ]: { ...keyringConnection, sites } };
 		}

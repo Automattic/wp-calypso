@@ -1,5 +1,6 @@
 import { omit } from '@automattic/js-utils';
-import { clone, difference, get, isEqual, map, reduce } from 'lodash';
+import isEqual from 'fast-deep-equal/es6';
+import { get, map, reduce } from 'lodash';
 import QueryKey from './key';
 
 /**
@@ -268,7 +269,7 @@ export default class QueryManager {
 					// Did not exist previously or has changed
 					if ( memo === this.data.items ) {
 						// Create a copy of memo, as we don't want to mutate the original items set
-						memo = clone( memo );
+						memo = { ...memo };
 					}
 
 					memo[ receivedItemKey ] = mergedItem;
@@ -304,9 +305,8 @@ export default class QueryManager {
 					// When merging into a query where items already exist,
 					// omit incoming keys from existing set. These keys will
 					// be restored below during match testing.
-					nextQueryReceivedItemKeys = difference(
-						this.data.queries[ receivedQueryKey ].itemKeys,
-						receivedItemKeys
+					nextQueryReceivedItemKeys = this.data.queries[ receivedQueryKey ].itemKeys.filter(
+						( key ) => ! receivedItemKeys.includes( key )
 					);
 				} else {
 					// If not merging, assign incoming keys as next items
@@ -315,10 +315,7 @@ export default class QueryManager {
 			}
 
 			let nextQueryFound;
-			if (
-				options.found >= 0 &&
-				options.found !== get( nextQueries, [ receivedQueryKey, 'found' ] )
-			) {
+			if ( options.found >= 0 && options.found !== nextQueries?.[ receivedQueryKey ]?.found ) {
 				nextQueryFound = options.found;
 			}
 
@@ -376,7 +373,7 @@ export default class QueryManager {
 						if ( ! updatedItem || ! this.constructor.matches( query, updatedItem ) ) {
 							// Create a copy of the original details to avoid mutating
 							if ( memo[ queryKey ] === queryDetails ) {
-								memo[ queryKey ] = clone( queryDetails );
+								memo[ queryKey ] = { ...queryDetails };
 							}
 
 							// Omit item by slicing previous and next
@@ -396,7 +393,7 @@ export default class QueryManager {
 
 						// Create a copy of the original details to avoid mutating
 						if ( memo[ queryKey ] === queryDetails ) {
-							memo[ queryKey ] = clone( queryDetails );
+							memo[ queryKey ] = { ...queryDetails };
 						}
 
 						// Increment found count for query

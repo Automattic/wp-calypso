@@ -24,8 +24,11 @@ interface UserProfileHeaderProps {
 
 const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Element => {
 	const translate = useTranslate();
-	const { isVisible: showAchievements } = useAchievementsVisibility( user.user_login );
-	const { isOwnProfile, showPosts, showSites } = useProfileTabVisibility( user.user_login );
+	const { isVisible: showAchievements, isPublic: isAchievementsPublic } = useAchievementsVisibility(
+		user.user_login
+	);
+	const { isOwnProfile, showPosts, isPostsPublic, showSites, isSitesPublic } =
+		useProfileTabVisibility( user.user_login );
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
 	const [ isExpanded, setIsExpanded ] = useState( false );
 	const [ showMoreToggle, setShowMoreToggle ] = useState( false );
@@ -48,6 +51,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 		...( showPosts
 			? [
 					{
+						className: clsx( { 'is-private': ! isPostsPublic } ),
 						label: translate( 'Posts' ),
 						path: userProfileUrl,
 						selected: view === 'posts',
@@ -57,6 +61,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 		...( showSites
 			? [
 					{
+						className: clsx( { 'is-private': ! isSitesPublic } ),
 						label: translate( 'Sites' ),
 						path: `${ userProfileUrl }/sites`,
 						selected: view === 'sites',
@@ -76,6 +81,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 		...( showAchievements
 			? [
 					{
+						className: clsx( { 'is-private': ! isAchievementsPublic } ),
 						label: translate( 'Achievements' ),
 						path: `${ userProfileUrl }/achievements`,
 						selected: view === 'achievements',
@@ -160,7 +166,12 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 			<SectionNav enforceTabsView variation="minimal">
 				<NavTabs>
 					{ navigationItems.map( ( item ) => (
-						<NavItem key={ item.path } path={ item.path } selected={ item.selected }>
+						<NavItem
+							className={ item.className }
+							key={ item.path }
+							path={ item.path }
+							selected={ item.selected }
+						>
 							{ item.label }
 						</NavItem>
 					) ) }

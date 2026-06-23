@@ -239,7 +239,7 @@ export const addEmailForwarderRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Add Email Forwarder' ),
+				title: __( 'Add email forwarder' ),
 			},
 		],
 	} ),

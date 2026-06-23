@@ -28,7 +28,7 @@ class ConversationCaterpillarComponent extends Component {
 	getExpandableComments = () => {
 		const { comments, commentsToShow, parentCommentId, commentsTree } = this.props;
 		const isRoot = ! parentCommentId;
-		const parentComment = get( commentsTree, [ parentCommentId, 'data' ] );
+		const parentComment = commentsTree?.[ parentCommentId ]?.data;
 
 		const childComments = isRoot
 			? comments
@@ -78,7 +78,7 @@ class ConversationCaterpillarComponent extends Component {
 		// Only display each author once
 		const uniqueAuthors = uniqBy( map( expandableComments, 'author' ), 'avatar_URL' );
 		const uniqueAuthorsCount = uniqueAuthors.length;
-		const lastAuthorName = get( uniqueAuthors.at( -1 ), 'name' );
+		const lastAuthorName = uniqueAuthors.at( -1 )?.name;
 
 		return (
 			<div className="conversation-caterpillar">

@@ -33,6 +33,7 @@ import type {
 	GridSize,
 	PlanActionOverrides,
 } from '../../types';
+import type { JSX } from 'react';
 
 import './style.scss';
 

@@ -1,5 +1,3 @@
-@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
-
 @import '@wordpress/base-styles/colors';
 
 .wpnc__note-list {
@@ -15,31 +13,17 @@
 		min-height: 0;
 	}
 
-	.wpnc__note-list-item {
-		.wpnc__subject,
-		.wpnc__excerpt {
-			display: -webkit-box;
-			-webkit-line-clamp: 2;
-			-webkit-box-orient: vertical;
-			white-space: pre-wrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-		}
-
-		.wpnc__excerpt {
-			font-weight: normal;
-			color: var(--color-text-subtle);
-			padding-top: 2px;
-
-			@include ui-mixins.when-dark-theme {
-				color: var(--dashboard__text-muted-color, var(--color-text-subtle));
-			}
-		}
-
-		&:hover .wpnc__excerpt,
-		&:focus-within .wpnc__excerpt {
-			color: inherit;
-		}
+	// The subject and excerpt render in separate DataViews cells (the title and
+	// description fields), so they're styled directly rather than under a shared
+	// row wrapper.
+	.wpnc__subject,
+	.wpnc__excerpt {
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		white-space: pre-wrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.wpnc__note-icon .wpnc__gridicon {

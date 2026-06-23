@@ -151,7 +151,7 @@ class CloneReadyStep extends Component {
 
 export default connect(
 	( state, ownProps ) => ( {
-		destinationSiteName: get( ownProps, [ 'signupDependencies', 'destinationSiteName' ] ),
+		destinationSiteName: ownProps?.signupDependencies?.destinationSiteName,
 		payload: get( ownProps, [ 'signupDependencies' ], {} ),
 	} ),
 	{

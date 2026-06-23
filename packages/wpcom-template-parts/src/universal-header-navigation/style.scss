@@ -168,6 +168,9 @@ $x-color-link-hover: var( --studio-wordpress-blue-60 );
 $x-color-link-background-hover: var( --studio-wordpress-blue-5 );
 $x-color-link: var( --studio-wordpress-blue-50 );
 $x-color-content-separator: rgba( $studio-gray-5, 0.85 );
+// "New" badge (2026 nav). Brand green background; no Studio token matches #48ff50.
+$x-nav-2026-badge-new-bg: #48ff50;
+$x-nav-2026-badge-new-color: var( --studio-gray-100 );
 $x-content-min-z-index: 801;
 // One above the nav, in its stacking band, so it never escapes above Calypso modals.
 $x-nav-2026-dropdown-z-index: $x-content-min-z-index + 1;
@@ -966,7 +969,11 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	position: fixed;
 	top: var( --nav-2026-admin-offset, var( --masterbar-height, 0 ) );
 	inset-inline: 0;
-	z-index: $x-content-min-z-index;
+	// Sit just below the masterbar (z-index 180) so its account dropdown always
+	// shows on top — above the sidebar (176), below the masterbar. The whole nav
+	// band lives in this 177–179 window; the masterbar stays on top in every
+	// state, including the open dropdown and mobile menu.
+	z-index: var( --nav-2026-z-closed, 177 );
 	transition: z-index 0s 0.22s;
 
 	&::after {
@@ -1010,9 +1017,14 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		opacity: 0.97;
 	}
 
+	// Raise the container above the sticky filter/search sub-nav bars (z-index 178)
+	// while the desktop dropdown is open, so the dropdown covers them. Stays below
+	// the masterbar (180), which is always on top. The mobile menu lives OUTSIDE
+	// this container (page sibling) and carries its own z-index, so it doesn't
+	// need a container bump — that keeps the nav bar below the sub-nav while open.
 	&:has( .x-dropdown.x-dropdown--2026.is-dropdown-open ),
 	&:has( .x-dropdown.x-dropdown--2026[style*='height: 0px'] ) {
-		z-index: 100002;
+		z-index: var( --nav-2026-z-open, 179 );
 		transition: z-index 0s;
 	}
 }
@@ -1488,8 +1500,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		padding: 0 10px;
 		font-size: 10px;
 		line-height: 1;
-		color: #4f3500;
-		background: #f0c930;
+		color: $x-nav-2026-badge-new-color;
+		background: $x-nav-2026-badge-new-bg;
 		border-radius: 4px;
 		vertical-align: 2px;
 	}
@@ -1514,9 +1526,12 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	--x-menu-2026-title-pad-top: 16px; // drilled-in title's top padding
 	--x-menu-2026-navlink-pad-block: 4px; // each nav link's vertical padding
 
-	// Own stacking root, so the legacy billion z-indexes (overridden below) aren't load-bearing here.
+	// Page-level sibling of the nav container. Closed: sits just below the nav
+	// container (177) so it never intercepts anything; open: bumps to 179 (below) —
+	// see the .x-menu__open rule — to cover the sub-nav while staying under the
+	// masterbar (180), which is always on top.
 	position: relative;
-	z-index: $x-content-min-z-index;
+	z-index: 176;
 	// The z-index drop on close waits for the panel slide-out.
 	transition: z-index 0s var( --x-menu-2026-panel-duration, 0.34s );
 
@@ -1868,11 +1883,11 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		height: 20px;
 		margin-inline-start: 10px;
 		padding: 0 10px;
-		font-size: 12px;
+		font-size: 10px;
 		font-weight: $lp-font-weight-medium;
 		line-height: 1;
-		color: #4f3500;
-		background: #f0c930;
+		color: $x-nav-2026-badge-new-color;
+		background: $x-nav-2026-badge-new-bg;
 		border-radius: 4px;
 		vertical-align: 1px;
 	}
@@ -2132,8 +2147,9 @@ $x-menu-2026-admin-bar-mobile: 46px;
 
 	/* Open: logo / close / footer-contents reveal immediately except during initial open, where they wait for the panel slide. */
 	&.x-menu__open {
-		// Sit above secondary navs (z-index up to 100000) while open; raise instantly.
-		z-index: 100001;
+		// Cover the sticky sub-nav (178) while open; stay below the masterbar (180),
+		// which is always on top. Raise instantly.
+		z-index: var( --nav-2026-z-open, 179 );
 		transition-delay: 0s;
 
 		.x-menu-mobile-logo:not( .is-hidden ),

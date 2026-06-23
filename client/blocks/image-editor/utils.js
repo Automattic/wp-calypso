@@ -1,4 +1,4 @@
-import { includes, get } from 'lodash';
+import { get } from 'lodash';
 import { AspectRatios, AspectRatiosValues } from 'calypso/state/editor/image-editor/constants';
 
 /**
@@ -15,11 +15,11 @@ import { AspectRatios, AspectRatiosValues } from 'calypso/state/editor/image-edi
  * @returns {string}              the default valid aspect ratio image editor should use
  */
 export function getDefaultAspectRatio( aspectRatio = null, aspectRatios = AspectRatiosValues ) {
-	if ( ! includes( aspectRatios, aspectRatio ) ) {
+	if ( ! aspectRatios?.includes( aspectRatio ) ) {
 		aspectRatio = get( aspectRatios, '0', AspectRatios.FREE );
 	}
 
-	return includes( AspectRatiosValues, aspectRatio )
+	return AspectRatiosValues.includes( aspectRatio )
 		? aspectRatio
 		: getDefaultAspectRatio( aspectRatio );
 }

@@ -2,8 +2,8 @@
  * This is a Odyssey implementation of 'calypso/components/data/query-site-purchases'.
  */
 import { APIError } from '@automattic/data-stores';
+import { isError } from '@automattic/js-utils';
 import { useQuery } from '@tanstack/react-query';
-import { isError } from 'lodash';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import wpcom from 'calypso/lib/wp';

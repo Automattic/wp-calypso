@@ -76,7 +76,7 @@ import {
 } from './constants';
 import { PriceTierEntry } from './get-price-tier-for-units';
 import type { TranslateResult } from 'i18n-calypso';
-import type { ReactElement, MemoExoticComponent } from 'react';
+import type { JSX, ReactElement, MemoExoticComponent } from 'react';
 
 export type Feature = string;
 

@@ -6,8 +6,9 @@ import {
 	snakeCase,
 	snakeToCamelCase,
 } from '@automattic/js-utils';
+import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { get, includes, isEmpty, isEqual } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -102,18 +103,18 @@ class EditContactInfoFormCard extends Component {
 		const registrantWhoisData = findRegistrantWhois( this.props.whoisData );
 
 		return {
-			firstName: get( registrantWhoisData, 'fname' ),
-			lastName: get( registrantWhoisData, 'lname' ),
-			organization: get( registrantWhoisData, 'org' ),
-			email: get( registrantWhoisData, 'email' ),
-			phone: get( registrantWhoisData, 'phone' ),
-			address1: get( registrantWhoisData, 'sa1' ),
-			address2: get( registrantWhoisData, 'sa2' ),
-			city: get( registrantWhoisData, 'city' ),
-			state: get( registrantWhoisData, 'state' ),
-			countryCode: get( registrantWhoisData, 'country_code' ),
-			postalCode: get( registrantWhoisData, 'pc' ),
-			fax: get( registrantWhoisData, 'fax' ),
+			firstName: registrantWhoisData?.fname,
+			lastName: registrantWhoisData?.lname,
+			organization: registrantWhoisData?.org,
+			email: registrantWhoisData?.email,
+			phone: registrantWhoisData?.phone,
+			address1: registrantWhoisData?.sa1,
+			address2: registrantWhoisData?.sa2,
+			city: registrantWhoisData?.city,
+			state: registrantWhoisData?.state,
+			countryCode: registrantWhoisData?.country_code,
+			postalCode: registrantWhoisData?.pc,
+			fax: registrantWhoisData?.fax,
 		};
 	}
 
@@ -279,7 +280,7 @@ class EditContactInfoFormCard extends Component {
 		this.setState( {
 			newContactDetails,
 			haveContactDetailsChanged: ! isEqual( registrantWhoisData, newContactDetails ),
-			hasEmailChanged: get( registrantWhoisData, 'email' ) !== email,
+			hasEmailChanged: registrantWhoisData?.email !== email,
 		} );
 	};
 
@@ -395,7 +396,7 @@ class EditContactInfoFormCard extends Component {
 
 	onWhoisUpdateError = () => {
 		const message =
-			get( this.props.whoisSaveError, 'message' ) ||
+			this.props.whoisSaveError?.message ||
 			this.props.translate(
 				'There was a problem updating your contact info. ' +
 					'Please try again later or contact support.'
@@ -435,7 +436,7 @@ class EditContactInfoFormCard extends Component {
 			[ 'selectedDomain', 'whoisUpdateUnmodifiableFields' ],
 			[]
 		);
-		return this.state.formSubmitting || includes( unmodifiableFields, snakeCase( name ) );
+		return this.state.formSubmitting || unmodifiableFields.includes( snakeCase( name ) );
 	};
 
 	updateWpcomEmail( newContactDetails, updateWpcomEmail ) {

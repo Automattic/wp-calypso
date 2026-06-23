@@ -68,6 +68,26 @@ export const fetchReadSitePosts = (
 	} );
 
 /**
+ * Fetch a Reader Space's posts feed — `/reader/spaces/{spaceId}/posts` on
+ * `wpcom/v2`. The backend builds the stream from the Space's followed feeds
+ * (and tags), returning the standard `{ cards, next_page_handle }` stream shape
+ * so the Reader consumes it like any other stream. `count` is capped at 15
+ * server-side; paginate with the returned `page_handle`.
+ */
+export const fetchReadSpacePosts = (
+	spaceId: string | number,
+	params: ReadStreamQueryParams = {}
+): Promise< ReadStreamResponse > =>
+	wpcom.req.get( {
+		// Encode the id into the path segment: it arrives as a string (from the
+		// `space:<id>` stream key), so harden against a stray separator even though
+		// today's ids are numeric — `addQueryArgs` only encodes the query string.
+		path: addQueryArgs( `/reader/spaces/${ encodeURIComponent( spaceId ) }/posts`, params ),
+		apiNamespace: 'wpcom/v2',
+		method: 'GET',
+	} );
+
+/**
  * Fetch the `notifications` stream — `/read/notifications`.
  */
 export const fetchReadNotifications = (

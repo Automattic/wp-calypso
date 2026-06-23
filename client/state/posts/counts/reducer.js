@@ -148,7 +148,7 @@ export const counts = ( () => {
 					}
 
 					postStatuses[ postStatusKey ] = pick( post, 'type', 'status' );
-					postStatuses[ postStatusKey ].authorId = get( post.author, 'ID' );
+					postStatuses[ postStatusKey ].authorId = post.author?.ID;
 				} );
 
 				return state;

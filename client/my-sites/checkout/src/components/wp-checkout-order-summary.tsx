@@ -710,13 +710,15 @@ const CheckoutSummaryPayButtonSlot = styled.div`
 	 * Each payment method provides its own button element, and a "Continue" button
 	 * renders here while steps are incomplete, so normalize every button in the slot
 	 * to a consistent full-width, 50px-tall look in the sidebar regardless of which
-	 * one is showing (Pay, Continue, PayPal, etc.).
+	 * one is showing (Pay, Continue, PayPal, etc.). The "Use a different payment
+	 * method" link is also a <button> but is a text link, so it is excluded from
+	 * the 50px submit-button sizing below.
 	 */
 	.checkout-submit-button {
 		width: 100%;
 	}
 
-	button {
+	button:not( .checkout-steps__change-payment-method-button ) {
 		width: 100%;
 		height: 50px;
 		box-sizing: border-box;

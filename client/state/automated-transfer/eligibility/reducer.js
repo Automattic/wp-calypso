@@ -1,4 +1,4 @@
-import { property, sortBy } from 'lodash';
+import { sortBy } from 'lodash';
 import { AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE } from 'calypso/state/action-types';
 import { withPersistence } from 'calypso/state/utils';
 
@@ -14,7 +14,7 @@ export default withPersistence( ( state = initialState, action ) => {
 		case AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE:
 			return {
 				eligibilityHolds: sortBy( action.eligibilityHolds ),
-				eligibilityWarnings: sortBy( action.eligibilityWarnings, property( 'name' ) ),
+				eligibilityWarnings: sortBy( action.eligibilityWarnings, ( warning ) => warning?.name ),
 				lastUpdate: action.lastUpdate,
 			};
 	}

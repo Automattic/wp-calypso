@@ -54,7 +54,7 @@ export const handleChangeCommentStatusSuccess = ( { commentId, refreshCommentLis
 
 const announceStatusChangeFailure = ( action ) => ( dispatch ) => {
 	const { siteId, postId, commentId, status, refreshCommentListQuery } = action;
-	const previousStatus = get( action, 'meta.comment.previousStatus' );
+	const previousStatus = action?.meta?.comment?.previousStatus;
 
 	dispatch( removeNotice( `comment-notice-${ commentId }` ) );
 
@@ -119,7 +119,7 @@ export const receiveCommentError = ( { siteId, commentId, query = {} } ) => {
 
 // @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/comments/
 export const fetchCommentsList = ( action ) => {
-	if ( 'site' !== get( action, 'query.listType' ) ) {
+	if ( 'site' !== action?.query?.listType ) {
 		return;
 	}
 

@@ -6,6 +6,9 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { store as blockEditorStore } from '@wordpress/block-editor';
+import { dispatch, select } from '@wordpress/data';
+
 /**
  * Checkpoint API shared between the React `useCheckpoint` hook (which AM
  * calls) and the synchronous `handleShowComponent` callback.
@@ -22,9 +25,37 @@ let moduleCheckpointApi: CheckpointApi | null = null;
 const processingEffectTimeouts = new WeakMap< HTMLElement, ReturnType< typeof setTimeout > >();
 const processingEffectElements = new Set< HTMLElement >();
 let rememberedSelectedBlockClientId: string | null = null;
+let activeBlockFocusClientId: string | null = null;
+let activeBlockFocusLayout: HTMLElement | null = null;
+const FOCUS_MODE_CLASS = 'is-focus-mode';
+const ROOT_BLOCK_LIST_SELECTOR = '.block-editor-block-list__layout.is-root-container';
 
 export const BLOCK_ACTION_COMPLETE_EVENT = 'jetpack-ai-sidebar-block-action-complete';
 export const SELECTED_BLOCK_CLEAR_EVENT = 'agents-manager-selected-block-cleared';
+
+function getBlockEditorSelect(): any | null {
+	try {
+		const wpData = ( window as any ).wp?.data;
+		if ( ! wpData?.select ) {
+			return null;
+		}
+		return wpData.select( 'core/block-editor' ) ?? null;
+	} catch {
+		return null;
+	}
+}
+
+function getWindowBlockEditorDispatch(): any | null {
+	try {
+		const wpData = ( window as any ).wp?.data;
+		if ( ! wpData?.dispatch ) {
+			return null;
+		}
+		return wpData.dispatch( 'core/block-editor' ) ?? null;
+	} catch {
+		return null;
+	}
+}
 
 export function setModuleCheckpointApi( api: CheckpointApi | null ): void {
 	moduleCheckpointApi = api;
@@ -45,7 +76,7 @@ export function clearRememberedSelectedBlock(): void {
 }
 
 export function getSelectedOrRememberedBlock(): any | null {
-	const blockEditor = ( window as any ).wp?.data?.select( 'core/block-editor' );
+	const blockEditor = getBlockEditorSelect();
 	const selectedBlock = blockEditor?.getSelectedBlock?.();
 	if ( selectedBlock?.clientId ) {
 		rememberSelectedBlock( selectedBlock );
@@ -117,27 +148,134 @@ export function findBlockElement( clientId: string ): HTMLElement | null {
 	return null;
 }
 
-/**
- * Find the block-list root layout element, iframe-aware. Exposed so peer
- * components can toggle Gutenberg's `.is-focus-mode` class to mirror the
- * block-notes "dim other blocks" UX.
- * @returns The root block-list layout element, or null.
- */
-export function findBlockListLayout(): HTMLElement | null {
-	const selector = '.block-editor-block-list__layout.is-root-container';
+function findBlockListLayoutInDocument( doc: Document ): HTMLElement | null {
 	try {
-		const el = document.querySelector( selector ) as HTMLElement | null;
-		if ( el ) {
-			return el;
-		}
-		for ( const frameDocument of getAccessibleFrameDocuments() ) {
-			const frameEl = frameDocument.querySelector( selector ) as HTMLElement | null;
-			if ( frameEl ) {
-				return frameEl;
-			}
-		}
+		return doc.querySelector( ROOT_BLOCK_LIST_SELECTOR ) as HTMLElement | null;
 	} catch {}
 	return null;
+}
+
+/**
+ * Find the block-list root layout element, iframe-aware. When a reference block
+ * is available, prefer the root layout that actually contains that block.
+ * @param referenceElement Optional block element used to resolve the owning layout.
+ * @returns The root block-list layout element, or null.
+ */
+export function findBlockListLayout( referenceElement?: HTMLElement | null ): HTMLElement | null {
+	if ( referenceElement ) {
+		const closestLayout = referenceElement.closest( ROOT_BLOCK_LIST_SELECTOR );
+		if ( closestLayout ) {
+			return closestLayout as HTMLElement;
+		}
+
+		const ownerLayout = findBlockListLayoutInDocument( referenceElement.ownerDocument );
+		if ( ownerLayout ) {
+			return ownerLayout;
+		}
+	}
+
+	const el = findBlockListLayoutInDocument( document );
+	if ( el ) {
+		return el;
+	}
+
+	for ( const frameDocument of getAccessibleFrameDocuments() ) {
+		const frameEl = findBlockListLayoutInDocument( frameDocument );
+		if ( frameEl ) {
+			return frameEl;
+		}
+	}
+
+	return null;
+}
+
+type BlockEditorDispatch = {
+	selectBlock?: ( clientId: string, initialPosition?: 0 | -1 | null ) => void;
+	clearSelectedBlock?: () => void;
+};
+
+type BlockEditorSelect = {
+	getSelectedBlockClientId?: () => string | null;
+};
+
+function getBlockEditorDispatch(): BlockEditorDispatch {
+	try {
+		return dispatch( blockEditorStore ) as BlockEditorDispatch;
+	} catch {}
+
+	return {};
+}
+
+function getSelectedBlockClientId(): string | null {
+	try {
+		return (
+			( select( blockEditorStore ) as BlockEditorSelect )?.getSelectedBlockClientId?.() ?? null
+		);
+	} catch {
+		return null;
+	}
+}
+
+/**
+ * Clear the block focus created by the sidebar. This intentionally clears the
+ * selected block only when that selection still belongs to the sidebar-focused
+ * block, so normal editor selections made after focus are left alone.
+ */
+export function clearActiveBlockFocus(): void {
+	const clientId = activeBlockFocusClientId;
+	const layout = activeBlockFocusLayout;
+	activeBlockFocusClientId = null;
+	activeBlockFocusLayout = null;
+
+	if ( ! clientId ) {
+		layout?.classList.remove( FOCUS_MODE_CLASS );
+		return;
+	}
+
+	const blockEditor = getBlockEditorDispatch();
+	if ( getSelectedBlockClientId() === clientId ) {
+		blockEditor.clearSelectedBlock?.();
+	}
+	( layout ?? findBlockListLayout( findBlockElement( clientId ) ) )?.classList.remove(
+		FOCUS_MODE_CLASS
+	);
+}
+
+/**
+ * Focus a block reference from the sidebar, or clear focus when the same
+ * sidebar-owned block is clicked again.
+ * @param clientId Block clientId.
+ * @returns Whether the click focused or cleared the block.
+ */
+export function toggleBlockReferenceFocus( clientId: string ): 'focused' | 'cleared' {
+	if ( activeBlockFocusClientId === clientId && getSelectedBlockClientId() === clientId ) {
+		clearActiveBlockFocus();
+		return 'cleared';
+	}
+
+	clearActiveBlockFocus();
+
+	const blockEditor = getBlockEditorDispatch();
+	blockEditor.selectBlock?.( clientId );
+	const blockElement = findBlockElement( clientId );
+	const layout = findBlockListLayout( blockElement );
+	activeBlockFocusClientId = clientId;
+	activeBlockFocusLayout = layout;
+	blockElement?.scrollIntoView?.( { behavior: 'smooth', block: 'center' } );
+	layout?.classList.add( FOCUS_MODE_CLASS );
+
+	return 'focused';
+}
+
+/**
+ * Clear sidebar-created block focus for clicks that are not block reference links.
+ * @param target Event target from a sidebar click.
+ */
+export function clearActiveBlockFocusUnlessBlockReferenceClick( target: EventTarget | null ): void {
+	if ( target instanceof Element && target.closest( '.jetpack-ai-block-ref.is-clickable' ) ) {
+		return;
+	}
+	clearActiveBlockFocus();
 }
 
 // ---------- Processing effect (Flow Block shimmer) ----------
@@ -271,16 +409,6 @@ export function startBlockShimmer(): void {
 
 // ---------- Ability callbacks ----------
 
-/** Block types whose `content` attribute can be safely replaced by a plain text/HTML string. */
-export const SUPPORTED_EDIT_BLOCK_TYPES = [ 'core/paragraph', 'core/heading' ] as const;
-
-export function isSupportedEditBlockType( blockName?: string | null ): boolean {
-	return (
-		typeof blockName === 'string' &&
-		( SUPPORTED_EDIT_BLOCK_TYPES as readonly string[] ).includes( blockName )
-	);
-}
-
 function countOccurrences( source: string, needle: string ): number {
 	if ( needle === '' ) {
 		return 0;
@@ -297,48 +425,166 @@ function countOccurrences( source: string, needle: string ): number {
 	}
 }
 
-function getEditableBlockContent( block: any ): string {
-	const raw = block.attributes?.content;
-	return typeof raw === 'string' ? raw : raw?.toHTMLString?.() ?? '';
+function normaliseAttributeName( attributeName?: string | null ): string | undefined {
+	return typeof attributeName === 'string' && attributeName.trim() !== ''
+		? attributeName.trim()
+		: undefined;
+}
+
+function getAttributeContent( block: any, attributeName?: string ): string | undefined {
+	if ( ! attributeName ) {
+		return undefined;
+	}
+	const raw = block?.attributes?.[ attributeName ];
+	if ( typeof raw === 'string' ) {
+		return raw;
+	}
+	const richTextHtml = raw?.toHTMLString?.();
+	return typeof richTextHtml === 'string' ? richTextHtml : undefined;
+}
+
+function getStringLikeAttributeNames( block: any ): string[] {
+	if ( ! block?.attributes || typeof block.attributes !== 'object' ) {
+		return [];
+	}
+	return Object.keys( block.attributes ).filter(
+		( attributeName ) => getAttributeContent( block, attributeName ) !== undefined
+	);
+}
+
+function findAttributeByCurrentText( block: any, currentText?: string ): string | undefined {
+	if ( typeof currentText !== 'string' || currentText === '' ) {
+		return undefined;
+	}
+
+	const matches = getStringLikeAttributeNames( block ).filter( ( attributeName ) => {
+		const content = getAttributeContent( block, attributeName ) ?? '';
+		return countOccurrences( content, currentText ) === 1;
+	} );
+
+	return matches.length === 1 ? matches[ 0 ] : undefined;
+}
+
+function findAttributeByExactContent( block: any, expectedContent?: string ): string | undefined {
+	if ( expectedContent === undefined ) {
+		return undefined;
+	}
+
+	const matches = getStringLikeAttributeNames( block ).filter(
+		( attributeName ) => getAttributeContent( block, attributeName ) === expectedContent
+	);
+
+	return matches.length === 1 ? matches[ 0 ] : undefined;
+}
+
+function resolveEditableBlockAttribute(
+	block: any,
+	{
+		attributeName,
+		currentText,
+		expectedContent,
+	}: { attributeName?: string; currentText?: string; expectedContent?: string } = {}
+): string | undefined {
+	const requestedAttribute = normaliseAttributeName( attributeName );
+	if ( requestedAttribute ) {
+		return getAttributeContent( block, requestedAttribute ) !== undefined
+			? requestedAttribute
+			: undefined;
+	}
+
+	const stringLikeAttributes = getStringLikeAttributeNames( block );
+
+	return (
+		findAttributeByCurrentText( block, currentText ) ??
+		findAttributeByExactContent( block, expectedContent ) ??
+		( getAttributeContent( block, 'content' ) !== undefined ? 'content' : undefined ) ??
+		( stringLikeAttributes.length === 1 ? stringLikeAttributes[ 0 ] : undefined )
+	);
+}
+
+export function getEditableBlockContent(
+	block: any,
+	attributeName?: string,
+	currentText?: string
+): string {
+	const resolvedAttribute = resolveEditableBlockAttribute( block, { attributeName, currentText } );
+	if ( ! resolvedAttribute ) {
+		return '';
+	}
+	return getAttributeContent( block, resolvedAttribute ) ?? '';
+}
+
+export function hasEditableBlockTarget(
+	block: any,
+	attributeName?: string,
+	currentText?: string
+): boolean {
+	return !! resolveEditableBlockAttribute( block, { attributeName, currentText } );
 }
 
 function getBlockSnapshot(
-	clientId: string
-): { clientId: string; name: string; content: string } | null {
-	const block = ( window as any ).wp?.data?.select( 'core/block-editor' )?.getBlock?.( clientId );
+	clientId: string,
+	attributeName?: string,
+	currentText?: string,
+	expectedContent?: string
+): { clientId: string; name: string; content: string; attributeName?: string } | null {
+	const block = getBlockEditorSelect()?.getBlock?.( clientId );
 	if ( ! block ) {
 		return null;
 	}
+	const resolvedAttribute = resolveEditableBlockAttribute( block, {
+		attributeName,
+		currentText,
+		expectedContent,
+	} );
 	return {
 		clientId: block.clientId ?? clientId,
 		name: block.name,
-		content: getEditableBlockContent( block ),
+		...( resolvedAttribute ? { attributeName: resolvedAttribute } : {} ),
+		content: resolvedAttribute ? getEditableBlockContent( block, resolvedAttribute ) : '',
 	};
 }
 
-function findBlockSnapshotByCurrentText( currentText: string ): {
-	snapshot?: { clientId: string; name: string; content: string };
+function findBlockSnapshotByCurrentText(
+	currentText: string,
+	attributeName?: string
+): {
+	snapshot?: { clientId: string; name: string; content: string; attributeName: string };
 	error?: string;
 } {
-	const blocks = ( window as any ).wp?.data?.select( 'core/block-editor' )?.getBlocks?.() ?? [];
-	const matches: Array< { clientId: string; name: string; content: string } > = [];
+	const blocks = getBlockEditorSelect()?.getBlocks?.() ?? [];
+	const matches: Array< {
+		clientId: string;
+		name: string;
+		content: string;
+		attributeName: string;
+	} > = [];
 
 	const visit = ( block: any ) => {
 		if ( ! block ) {
 			return;
 		}
-		const snapshot = {
-			clientId: block.clientId,
-			name: block.name,
-			content: getEditableBlockContent( block ),
-		};
-
-		if ( snapshot.clientId && isSupportedEditBlockType( snapshot.name ) ) {
-			const matchCount = countOccurrences( snapshot.content, currentText );
+		const attributeNames = attributeName
+			? [ attributeName ].filter(
+					( candidate ) => getAttributeContent( block, candidate ) !== undefined
+			  )
+			: getStringLikeAttributeNames( block );
+		attributeNames.forEach( ( candidate ) => {
+			if ( ! block.clientId ) {
+				return;
+			}
+			const content = getAttributeContent( block, candidate ) ?? '';
+			const snapshot = {
+				clientId: block.clientId,
+				name: block.name,
+				attributeName: candidate,
+				content,
+			};
+			const matchCount = countOccurrences( content, currentText );
 			for ( let i = 0; i < matchCount; i++ ) {
 				matches.push( snapshot );
 			}
-		}
+		} );
 
 		( block.innerBlocks ?? [] ).forEach( visit );
 	};
@@ -365,17 +611,15 @@ function findBlockSnapshotByCurrentText( currentText: string ): {
  */
 export function handleUpdateBlockContent( input: any ): any {
 	const { clientId, content, summary, currentText, shouldApply } = input;
+	const editableAttribute = normaliseAttributeName(
+		input.editableAttribute ?? input.attributeName
+	);
 	if ( ! clientId || content === undefined || content === null ) {
 		return { success: false, error: 'clientId and content are required', returnToAgent: false };
 	}
 
-	const wpData = ( window as any ).wp?.data;
-	if ( ! wpData ) {
-		return { success: false, error: 'WordPress data not available', returnToAgent: false };
-	}
-
-	const blockEditor = wpData.dispatch( 'core/block-editor' );
-	if ( ! blockEditor ) {
+	const blockEditor = getWindowBlockEditorDispatch();
+	if ( ! blockEditor?.updateBlockAttributes ) {
 		return { success: false, error: 'Block editor not available', returnToAgent: false };
 	}
 	// Let callers veto before we snapshot if the editor context has changed.
@@ -385,10 +629,10 @@ export function handleUpdateBlockContent( input: any ): any {
 
 	const hasCurrentText = typeof currentText === 'string' && currentText !== '';
 	let targetClientId = clientId;
-	let snapshot = getBlockSnapshot( targetClientId );
+	let snapshot = getBlockSnapshot( targetClientId, editableAttribute, currentText );
 	if ( ! snapshot ) {
 		if ( hasCurrentText ) {
-			const fallback = findBlockSnapshotByCurrentText( currentText );
+			const fallback = findBlockSnapshotByCurrentText( currentText, editableAttribute );
 			if ( fallback.error ) {
 				// eslint-disable-next-line no-console
 				console.warn( '[ReviewMediation] currentText matches multiple spans in block content', {
@@ -415,10 +659,10 @@ export function handleUpdateBlockContent( input: any ): any {
 			return { success: false, error: 'block not found', returnToAgent: false };
 		}
 	}
-	if ( ! isSupportedEditBlockType( snapshot.name ) ) {
+	if ( ! snapshot.attributeName ) {
 		return {
 			success: false,
-			error: `unsupported block type: ${ snapshot.name }`,
+			error: `unsupported edit target: ${ snapshot.name }`,
 			returnToAgent: false,
 		};
 	}
@@ -459,7 +703,11 @@ export function handleUpdateBlockContent( input: any ): any {
 	// Short delay so the shimmer is visible before content swaps
 	return new Promise< any >( ( resolve ) => {
 		setTimeout( () => {
-			const latestSnapshot = getBlockSnapshot( targetClientId );
+			const latestSnapshot = getBlockSnapshot(
+				targetClientId,
+				snapshot?.attributeName,
+				currentText
+			);
 			const resolveFailure = ( error: string ) => {
 				if ( blockEl ) {
 					removeProcessingEffect( blockEl );
@@ -477,8 +725,8 @@ export function handleUpdateBlockContent( input: any ): any {
 				resolveFailure( 'block not found' );
 				return;
 			}
-			if ( ! isSupportedEditBlockType( latestSnapshot.name ) ) {
-				resolveFailure( `unsupported block type: ${ latestSnapshot.name }` );
+			if ( ! latestSnapshot.attributeName ) {
+				resolveFailure( `unsupported edit target: ${ latestSnapshot.name }` );
 				return;
 			}
 
@@ -511,8 +759,15 @@ export function handleUpdateBlockContent( input: any ): any {
 				return;
 			}
 
-			blockEditor.updateBlockAttributes( targetClientId, { content: nextContent } );
-			blockEditor.selectBlock?.( targetClientId );
+			try {
+				blockEditor.updateBlockAttributes( targetClientId, {
+					[ latestSnapshot.attributeName ]: nextContent,
+				} );
+				blockEditor.selectBlock?.( targetClientId );
+			} catch {
+				resolveFailure( 'Block editor not available' );
+				return;
+			}
 			rememberedSelectedBlockClientId = targetClientId;
 
 			if ( blockEl ) {
@@ -526,6 +781,7 @@ export function handleUpdateBlockContent( input: any ): any {
 				clientId: targetClientId,
 				contentBefore: latestSnapshot.content,
 				contentAfter: nextContent,
+				editableAttribute: latestSnapshot.attributeName,
 				returnToAgent: false,
 				...( summary ? { agentMessage: summary } : {} ),
 			} );
@@ -537,7 +793,7 @@ export function handleUpdateBlockContent( input: any ): any {
  * Apply a mediation-suggested edit. When `currentText` is provided and uniquely
  * matches a span in the block, only that span is replaced. When it is missing or
  * ambiguous, the edit fails safely rather than replacing the whole block. Returns
- * `success: false` for unsupported block types so the UI can show 'failed' rather
+ * `success: false` for unsupported edit targets so the UI can show 'failed' rather
  * than corrupting the block. On success, returns `contentBefore` so the caller can
  * pair it with `clientId` and call `undoBlockEdit` later. The optional shouldApply
  * guard lets callers abort safely if editor context changes while the edit is pending.
@@ -547,17 +803,26 @@ export async function applyReviewEdit(
 	content: string,
 	summary?: string,
 	currentText?: string,
-	shouldApply?: () => boolean
+	shouldApply?: () => boolean,
+	editableAttribute?: string
 ): Promise< {
 	success: boolean;
 	clientId?: string;
 	contentBefore?: string;
 	contentAfter?: string;
+	editableAttribute?: string;
 	agentMessage?: string;
 	error?: string;
 	returnToAgent?: boolean;
 } > {
-	return handleUpdateBlockContent( { clientId, content, summary, currentText, shouldApply } );
+	return handleUpdateBlockContent( {
+		clientId,
+		content,
+		summary,
+		currentText,
+		shouldApply,
+		editableAttribute,
+	} );
 }
 
 /**
@@ -570,20 +835,27 @@ export async function applyReviewEdit(
 export function undoBlockEdit(
 	clientId: string,
 	contentBefore: string,
-	expectedContent?: string
+	expectedContent?: string,
+	editableAttribute?: string
 ): boolean {
-	const blockEditor = ( window as any ).wp?.data?.dispatch?.( 'core/block-editor' );
+	const blockEditor = getWindowBlockEditorDispatch();
 	if ( ! blockEditor?.updateBlockAttributes ) {
 		return false;
 	}
 	try {
 		if ( expectedContent !== undefined ) {
-			const snapshot = getBlockSnapshot( clientId );
+			const snapshot = getBlockSnapshot( clientId, editableAttribute, undefined, expectedContent );
 			if ( ! snapshot || snapshot.content !== expectedContent ) {
 				return false;
 			}
 		}
-		blockEditor.updateBlockAttributes( clientId, { content: contentBefore } );
+		const snapshot = getBlockSnapshot( clientId, editableAttribute, undefined, expectedContent );
+		if ( ! snapshot?.attributeName ) {
+			return false;
+		}
+		blockEditor.updateBlockAttributes( clientId, {
+			[ snapshot.attributeName ]: contentBefore,
+		} );
 		return true;
 	} catch {
 		return false;

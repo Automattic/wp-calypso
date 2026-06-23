@@ -8,7 +8,6 @@ import { Icon, commentAuthorAvatar, plus } from '@wordpress/icons';
 import clsx from 'clsx';
 import closest from 'component-closest';
 import i18n, { localize } from 'i18n-calypso';
-import { defer } from 'lodash';
 import { Component, useMemo } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { withReaderOrganizations } from 'calypso/components/data/with-reader-organizations';
@@ -108,10 +107,10 @@ export class ReaderSidebar extends Component {
 	highlightNewTag( tagSlug ) {
 		const tagStreamUrl = getTagStreamUrl( tagSlug );
 		if ( tagStreamUrl !== page.current ) {
-			defer( function () {
+			setTimeout( function () {
 				page( tagStreamUrl );
 				window.scrollTo( 0, 0 );
-			} );
+			}, 0 );
 		}
 	}
 

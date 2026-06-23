@@ -60,6 +60,21 @@
 		}
 	}
 
+	// DataViews' default list metrics leave the rows taller than we want, so
+	// tighten the title and field rows to a 20px min-height and line-height.
+	.dataviews-view-list__title-field,
+	.dataviews-view-list__fields .dataviews-view-list__field-value {
+		min-height: calc(var(--wpds-dimension-base, 4px) * 5);
+		line-height: var(--wpds-typography-line-height-sm, 20px);
+	}
+
+	// Notes without an excerpt render an empty description field, but DataViews
+	// still emits its cell as a flex item in the column, which doubles the row
+	// gap. Drop the empty cell so only one gap remains.
+	.dataviews-view-list__field-wrapper > .dataviews-view-list__field:empty {
+		display: none;
+	}
+
 	// We override styles with the selected styles for unread items.
 	div[role="article"]:has(.is-unread),
 	div[role="article"]:has(.is-unread):focus-within {

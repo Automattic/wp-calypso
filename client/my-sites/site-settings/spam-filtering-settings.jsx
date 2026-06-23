@@ -12,7 +12,7 @@ import {
 	ExternalLink,
 } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { includes, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -43,7 +43,7 @@ const SpamFilteringSettings = ( {
 } ) => {
 	const { akismet: akismetActive, wordpress_api_key } = fields;
 	const isStoredKey = wordpress_api_key === currentAkismetKey && !! wordpress_api_key;
-	const isDirty = includes( dirtyFields, 'wordpress_api_key' );
+	const isDirty = dirtyFields.includes( 'wordpress_api_key' );
 	const isCurrentKeyEmpty = isEmpty( currentAkismetKey );
 	const isKeyFieldEmpty = isEmpty( wordpress_api_key );
 	const isEmptyKey = isCurrentKeyEmpty || isKeyFieldEmpty;
@@ -159,7 +159,7 @@ export default connect( ( state, { dirtyFields, fields } ) => {
 	const selectedSiteSlug = getSelectedSiteSlug( state );
 	const hasAkismetKeyError =
 		isJetpackSettingsSaveFailure( state, selectedSiteId, fields ) &&
-		includes( dirtyFields, 'wordpress_api_key' );
+		dirtyFields.includes( 'wordpress_api_key' );
 	const hasAkismetFeature = siteHasFeature( state, selectedSiteId, WPCOM_FEATURES_AKISMET );
 	const hasAntiSpamFeature = siteHasFeature( state, selectedSiteId, WPCOM_FEATURES_ANTISPAM );
 	const hasJetpackAntiSpamProduct =

@@ -2,7 +2,6 @@ import { Card } from '@automattic/components';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
-import { defer } from 'lodash';
 import { Component, CSSProperties, FunctionComponent } from 'react';
 import pathToSection from 'calypso/lib/path-to-section';
 import { ROUTE_SET } from 'calypso/state/action-types';
@@ -295,14 +294,14 @@ export default class Step extends Component< Props, State > {
 		);
 
 		if ( ! hasContinue && hasJustNavigated && this.isDifferentSection( lastAction.path ) ) {
-			defer( () => {
+			setTimeout( () => {
 				debug( 'Step.quitIfInvalidRoute: quitting (different section)' );
 				( this.context as SectionContext ).quit( this.context as SectionContext );
-			} );
+			}, 0 );
 		}
 
 		// quit if we have a target but cant find it
-		defer( () => {
+		setTimeout( () => {
 			const { quit } = this.context as SectionContext;
 			const target = targetForSlug( this.props.target );
 			if ( this.props.target && ! target ) {
@@ -311,7 +310,7 @@ export default class Step extends Component< Props, State > {
 			} else {
 				debug( 'Step.quitIfInvalidRoute: not quitting' );
 			}
-		} );
+		}, 0 );
 	}
 
 	isDifferentSection( path: string ) {

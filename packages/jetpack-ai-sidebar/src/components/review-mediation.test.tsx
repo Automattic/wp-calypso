@@ -24,8 +24,9 @@ global.requestAnimationFrame = jest.fn( ( cb ) => {
 } );
 
 const mockApplyReviewEdit = jest.fn();
-const mockFindBlockElement = jest.fn();
-const mockFindBlockListLayout = jest.fn();
+const mockClearActiveBlockFocus = jest.fn();
+const mockClearActiveBlockFocusUnlessBlockReferenceClick = jest.fn();
+const mockToggleBlockReferenceFocus = jest.fn();
 const mockUndoBlockEdit = jest.fn();
 const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
 	typeof recordTracksEvent
@@ -33,10 +34,44 @@ const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
 
 jest.mock( '../utils/block-actions', () => ( {
 	applyReviewEdit: ( ...args: any[] ) => mockApplyReviewEdit( ...args ),
-	findBlockElement: ( ...args: any[] ) => mockFindBlockElement( ...args ),
-	findBlockListLayout: ( ...args: any[] ) => mockFindBlockListLayout( ...args ),
-	isSupportedEditBlockType: ( blockName?: string | null ) =>
-		[ 'core/paragraph', 'core/heading' ].includes( blockName ?? '' ),
+	clearActiveBlockFocus: ( ...args: any[] ) => mockClearActiveBlockFocus( ...args ),
+	clearActiveBlockFocusUnlessBlockReferenceClick: ( ...args: any[] ) =>
+		mockClearActiveBlockFocusUnlessBlockReferenceClick( ...args ),
+	getEditableBlockContent: ( block: any, attributeName?: string, currentText?: string ) => {
+		if ( attributeName ) {
+			return block?.attributes?.[ attributeName ] ?? '';
+		}
+		const attributeNames = Object.keys( block?.attributes ?? {} ).filter(
+			( key ) => typeof block?.attributes?.[ key ] === 'string'
+		);
+		const currentTextMatches = attributeNames.filter(
+			( key ) => currentText && block.attributes[ key ].includes( currentText )
+		);
+		if ( currentTextMatches.length === 1 ) {
+			return block.attributes[ currentTextMatches[ 0 ] ];
+		}
+		return (
+			block?.attributes?.content ??
+			( attributeNames.length === 1 ? block.attributes[ attributeNames[ 0 ] ] : '' )
+		);
+	},
+	hasEditableBlockTarget: ( block: any, attributeName?: string, currentText?: string ) => {
+		if ( attributeName ) {
+			return typeof block?.attributes?.[ attributeName ] === 'string';
+		}
+		const attributeNames = Object.keys( block?.attributes ?? {} ).filter(
+			( key ) => typeof block?.attributes?.[ key ] === 'string'
+		);
+		const currentTextMatches = attributeNames.filter(
+			( key ) => currentText && block.attributes[ key ].includes( currentText )
+		);
+		return (
+			currentTextMatches.length === 1 ||
+			typeof block?.attributes?.content === 'string' ||
+			attributeNames.length === 1
+		);
+	},
+	toggleBlockReferenceFocus: ( ...args: any[] ) => mockToggleBlockReferenceFocus( ...args ),
 	undoBlockEdit: ( ...args: any[] ) => mockUndoBlockEdit( ...args ),
 } ) );
 
@@ -66,7 +101,7 @@ jest.mock( '@wordpress/data', () => ( {
 // Stub @wordpress/components: real one transitively boots rich-text + data.
 // PanelBody honours the controlled `opened` prop so toggle tests work.
 jest.mock( '@wordpress/components', () => {
-	const React = require( 'react' );
+	const React = jest.requireActual< typeof import('react') >( 'react' );
 	return {
 		Panel: ( { children, className }: any ) =>
 			React.createElement( 'div', { className }, children ),
@@ -117,8 +152,9 @@ function basePayload(
 
 beforeEach( () => {
 	mockApplyReviewEdit.mockReset();
-	mockFindBlockElement.mockReset();
-	mockFindBlockListLayout.mockReset();
+	mockClearActiveBlockFocus.mockReset();
+	mockClearActiveBlockFocusUnlessBlockReferenceClick.mockReset();
+	mockToggleBlockReferenceFocus.mockReset();
 	mockUndoBlockEdit.mockReset();
 	mockUndoBlockEdit.mockReturnValue( true );
 	mockSelectBlock.mockReset();
@@ -492,7 +528,8 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 			'voted on Tuesday',
 			undefined,
 			'voted last Tuesday',
-			expect.any( Function )
+			expect.any( Function ),
+			undefined
 		);
 
 		await waitFor( () => {
@@ -510,6 +547,50 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		// Collapsed: rationale gone, Undo present.
 		expect( screen.queryByText( 'Concise.' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'Undo' ) ).toBeInTheDocument();
+	} );
+
+	it( 'passes the editable attribute from the payload to one-click edits', async () => {
+		mockBlocks = [
+			{
+				clientId: 'image-1',
+				name: 'core/image',
+				attributes: { caption: 'Outdoor map activity' },
+			},
+		];
+		mockApplyReviewEdit.mockResolvedValueOnce( {
+			success: true,
+			editableAttribute: 'caption',
+		} );
+
+		render(
+			<ReviewMediation
+				{ ...basePayload( {
+					suggested_edits: [
+						{
+							block_index: 0,
+							editable_attribute: 'caption',
+							current_text: 'Outdoor map activity',
+							suggested_text: 'Children exploring an outdoor map',
+							rationale: 'Clarify image context.',
+							supported_by_reviewers: [],
+						},
+					],
+				} ) }
+			/>
+		);
+
+		await act( async () => {
+			fireEvent.click( screen.getByRole( 'button', { name: 'Accept' } ) );
+		} );
+
+		expect( mockApplyReviewEdit ).toHaveBeenCalledWith(
+			'image-1',
+			'Children exploring an outdoor map',
+			undefined,
+			'Outdoor map activity',
+			expect.any( Function ),
+			'caption'
+		);
 	} );
 
 	it( 'restores the full card from the collapsed row on Undo', async () => {
@@ -554,7 +635,8 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		expect( mockUndoBlockEdit ).toHaveBeenCalledWith(
 			'b1',
 			'The council voted last Tuesday on the procedural matter.',
-			'The council voted on Tuesday on the procedural matter.'
+			'The council voted on Tuesday on the procedural matter.',
+			undefined
 		);
 	} );
 
@@ -610,11 +692,8 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		expect( screen.queryByRole( 'button', { name: 'Undo' } ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'disables Accept for unsupported block targets', () => {
-		mockBlocks = [
-			...blocks,
-			{ clientId: 'b3', name: 'core/list', attributes: { content: 'List content' } },
-		];
+	it( 'disables Accept when the block has no editable text target', () => {
+		mockBlocks = [ ...blocks, { clientId: 'b3', name: 'core/query', attributes: { queryId: 1 } } ];
 
 		render(
 			<ReviewMediation
@@ -632,7 +711,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 			/>
 		);
 
-		expect( screen.getByText( 'Needs manual edit — unsupported block type' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Needs manual edit — unsupported edit target' ) ).toBeInTheDocument();
 		const accept = screen.getByRole( 'button', { name: 'Accept' } );
 		expect( accept ).toBeDisabled();
 		fireEvent.click( accept );
@@ -672,23 +751,20 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 	} );
 
 	it( 'keeps block focus on the explicit block reference button', () => {
-		const blockElement = document.createElement( 'div' );
-		const layoutElement = document.createElement( 'div' );
-		mockFindBlockElement.mockReturnValue( blockElement );
-		mockFindBlockListLayout.mockReturnValue( layoutElement );
-
 		render( <ReviewMediation { ...editsPayload } /> );
 
 		const card = screen.getByText( 'Concise.' ).closest( '.jetpack-ai-review-mediation__card' );
 		expect( card ).toBeInTheDocument();
 
-		fireEvent.click( card! );
+		fireEvent.mouseDown( card! );
 		expect( mockSelectBlock ).not.toHaveBeenCalled();
+		expect( mockToggleBlockReferenceFocus ).not.toHaveBeenCalled();
+		expect( mockClearActiveBlockFocusUnlessBlockReferenceClick ).toHaveBeenCalledWith( card );
 
-		fireEvent.click( screen.getByTitle( 'Scroll to block in editor' ) );
-		expect( mockSelectBlock ).toHaveBeenCalledWith( 'b1' );
-		expect( mockFindBlockElement ).toHaveBeenCalledWith( 'b1' );
-		expect( layoutElement.classList.contains( 'is-focus-mode' ) ).toBe( true );
+		const blockRef = screen.getByTitle( 'Scroll to block in editor' );
+		fireEvent.mouseDown( blockRef );
+		fireEvent.click( blockRef );
+		expect( mockToggleBlockReferenceFocus ).toHaveBeenCalledWith( 'b1' );
 	} );
 
 	it( 'maps block_index against the recursive flattened block tree', async () => {
@@ -744,7 +820,8 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 			'Updated nested paragraph text.',
 			undefined,
 			'Nested paragraph text.',
-			expect.any( Function )
+			expect.any( Function ),
+			undefined
 		);
 	} );
 
@@ -834,7 +911,8 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 			'voted softly on Tuesday',
 			undefined,
 			'voted last Tuesday',
-			expect.any( Function )
+			expect.any( Function ),
+			undefined
 		);
 		await waitFor( () => {
 			expect( screen.getByText( 'Accepted' ) ).toBeInTheDocument();
@@ -855,7 +933,8 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 			'voted on Tuesday',
 			undefined,
 			'voted last Tuesday',
-			expect.any( Function )
+			expect.any( Function ),
+			undefined
 		);
 	} );
 
@@ -882,7 +961,8 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 		expect( mockUndoBlockEdit ).toHaveBeenCalledWith(
 			'b1',
 			'The council voted last Tuesday on the procedural matter.',
-			'The council voted on Tuesday on the procedural matter.'
+			'The council voted on Tuesday on the procedural matter.',
+			undefined
 		);
 		expect( mockUndoBlockEdit ).toHaveBeenCalledTimes( 1 );
 		expect( screen.getByText( 'Accepted' ) ).toBeInTheDocument();
@@ -928,7 +1008,7 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 			/>
 		);
 
-		expect( screen.getByText( 'Needs manual edit — unsupported block type' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Needs manual edit — no exact source text' ) ).toBeInTheDocument();
 		expect(
 			screen.queryByRole( 'button', { name: 'Accept AI resolution' } )
 		).not.toBeInTheDocument();
@@ -1147,7 +1227,8 @@ describe( 'ReviewMediation — bulk Accept all AI resolutions', () => {
 			'AI rewrite',
 			undefined,
 			'voted last Tuesday',
-			expect.any( Function )
+			expect.any( Function ),
+			undefined
 		);
 		expect( mockApplyReviewEdit ).toHaveBeenNthCalledWith(
 			2,
@@ -1155,7 +1236,8 @@ describe( 'ReviewMediation — bulk Accept all AI resolutions', () => {
 			'tighter copy',
 			undefined,
 			'Funding',
-			expect.any( Function )
+			expect.any( Function ),
+			undefined
 		);
 
 		// Footer disappears once everything is accepted (totalPendingCount === 0).

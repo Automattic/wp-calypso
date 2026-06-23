@@ -1,5 +1,5 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
-import { clone, cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash';
 import { mayWeTrackByTracker } from '../tracker-buckets';
 import { debug, TRACKING_IDS } from './constants';
 import { loadTrackingScripts } from './load-tracking-scripts';
@@ -31,7 +31,7 @@ export async function recordInCriteo( eventName, eventProps ) {
 		events.push( { event: 'setEmail', email: [ currentUser.hashedPii.email ] } );
 	}
 
-	const conversionEvent = clone( eventProps );
+	const conversionEvent = { ...eventProps };
 	conversionEvent.event = eventName;
 	events.push( conversionEvent );
 

@@ -32,9 +32,9 @@ class SubscribersCount extends Component {
 
 export default connect( ( state ) => {
 	const site = getSelectedSite( state );
-	const siteId = get( site, 'ID' );
+	const siteId = site?.ID;
 	const data = getSiteStatsNormalizedData( state, siteId, 'stats' );
-	const siteSubscribers = get( site, 'subscribers_count' );
+	const siteSubscribers = site?.subscribers_count;
 
 	return {
 		slug: getSiteSlug( state, siteId ),

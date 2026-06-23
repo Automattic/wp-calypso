@@ -692,7 +692,7 @@ class TransferDomainStep extends Component {
 				this.setState( { submittingAuthCodeCheck: false } );
 
 				if ( ! isEmpty( error ) ) {
-					const message = get( error, 'message' );
+					const message = error?.message;
 					if ( message ) {
 						this.props.errorNotice( message );
 					}

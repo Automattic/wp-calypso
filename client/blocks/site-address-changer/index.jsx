@@ -222,7 +222,7 @@ export class SiteAddressChanger extends Component {
 	shouldShowValidationMessage() {
 		const { isAvailable, validationError } = this.props;
 		const { showValidationMessage } = this.state;
-		const serverValidationMessage = get( validationError, 'message' );
+		const serverValidationMessage = validationError?.message;
 
 		return isAvailable || showValidationMessage || !! serverValidationMessage;
 	}
@@ -248,7 +248,7 @@ export class SiteAddressChanger extends Component {
 	getValidationMessage() {
 		const { isAvailable, validationError, translate } = this.props;
 		const { validationMessage } = this.state;
-		const serverValidationMessage = get( validationError, 'message' );
+		const serverValidationMessage = validationError?.message;
 
 		if ( this.isUnsyncedAtomicSite() ) {
 			return translate( "This site's address cannot be changed" );
