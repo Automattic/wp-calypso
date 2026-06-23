@@ -8,13 +8,7 @@ import {
 	updateReadSpaceMutation,
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useCallback } from 'react';
-import type {
-	ReadSpace,
-	ReadSpaceDetails,
-	SpaceFeedLayout,
-	SpaceLayout,
-} from '@automattic/api-core';
+import type { ReadSpace } from '@automattic/api-core';
 
 /**
  * The user's spaces for the sidebar and space views, from the live list
@@ -29,8 +23,7 @@ export function useSpaces(): ReadSpace[] {
  * A single space's details (its followed feeds and tags), loaded on demand from
  * the live detail endpoint (e.g. by the sources modal). Disabled until an id is
  * known; pass `enabled: false` to also hold it off while the consumer (e.g. a
- * closed modal) doesn't need it yet. The add/delete source mutations write the
- * returned detail back here, so consumers see source changes immediately.
+ * closed modal) doesn't need it yet.
  */
 export function useSpace(
 	spaceId: string | null | undefined,
@@ -56,7 +49,7 @@ export function useCreateSpace() {
  * Update-space mutation wired to Calypso's QueryClient. On success the returned
  * detail is written to the detail cache and the matching list summary is
  * refreshed. Not used by any UI yet — an edit control can adopt it when built.
- * Note `tags` is a full replace of the tag set (there are no per-tag endpoints).
+ * Note `tags` and `feeds` are full replaces of their sets.
  */
 export function useUpdateSpace() {
 	const queryClient = useQueryClient();
@@ -82,34 +75,4 @@ export function useAddSpaceSource() {
 export function useDeleteSpaceSource() {
 	const queryClient = useQueryClient();
 	return useMutation( deleteReadSpaceSourceMutation( queryClient ) );
-}
-
-/**
- * Set a space's feed layout (`layout.view`).
- *
- * INTERIM: the API does not persist `layout.view` yet, so we write the choice
- * straight into the React Query cache (both the detail and the matching list
- * summary). This is session-only — the spaces queries are not persisted, so a
- * reload drops it, and a later space mutation that overwrites the detail cache
- * with a server response (which omits `view`) clears it. Swap this for the
- * real `useUpdateSpace({ layout: { view } })` once the endpoint accepts it.
- */
-export function useSetSpaceLayoutView() {
-	const queryClient = useQueryClient();
-	return useCallback(
-		( spaceId: string, view: SpaceFeedLayout ) => {
-			const withView = ( layout: SpaceLayout ): SpaceLayout => ( { ...layout, view } );
-			queryClient.setQueryData< ReadSpaceDetails >( readSpaceQuery( spaceId ).queryKey, ( prev ) =>
-				prev ? { ...prev, layout: withView( prev.layout ) } : prev
-			);
-			queryClient.setQueryData< ReadSpace[] >(
-				readSpacesQuery().queryKey,
-				( prev ) =>
-					prev?.map( ( space ) =>
-						space.id === spaceId ? { ...space, layout: withView( space.layout ) } : space
-					)
-			);
-		},
-		[ queryClient ]
-	);
 }

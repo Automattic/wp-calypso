@@ -17,6 +17,22 @@ jest.mock( '@automattic/calypso-router', () => ( {
 	default: Object.assign( jest.fn(), { replace: jest.fn() } ),
 } ) );
 
+// The create modal is backed by the shared upsert modal, which imports the
+// Sources tab. Sidebar tests never exercise the sources list, so stub its heavy
+// dependencies here.
+jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
+	useSiteSubscriptions: () => ( { subscriptions: [], isLoading: false, isError: false } ),
+} ) );
+
+jest.mock( '@automattic/react-virtualized', () => ( {
+	AutoSizer: ( {
+		children,
+	}: {
+		children: ( size: { width: number; height: number } ) => React.ReactNode;
+	} ) => children( { width: 480, height: 360 } ),
+	List: () => null,
+} ) );
+
 const SPACES: ReadSpace[] = [
 	{
 		id: '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21',
@@ -92,7 +108,7 @@ describe( 'ReaderSidebarSpaces', () => {
 		expect( screen.getByRole( 'heading', { name: 'Create a new space' } ) ).toBeVisible();
 	} );
 
-	it( 'redirects to the new space sources action after creating a space', async () => {
+	it( 'redirects to the new space after creating it', async () => {
 		const user = userEvent.setup();
 		nock( 'https://public-api.wordpress.com' )
 			.post( '/wpcom/v2/reader/spaces' )
@@ -112,14 +128,12 @@ describe( 'ReaderSidebarSpaces', () => {
 		// The redirect happens in the create mutation's onSuccess, after the POST
 		// resolves, so wait for it.
 		await waitFor( () =>
-			expect( page ).toHaveBeenCalledWith(
-				expect.stringMatching( /^\/reader\/spaces\/.+#action=manage-sources$/ )
-			)
+			expect( page ).toHaveBeenCalledWith( expect.stringMatching( /^\/reader\/spaces\/[^#]+$/ ) )
 		);
 	} );
 
 	it( 'does not render the sources modal from the sidebar', () => {
-		render( <ReaderSidebarSpaces path={ `${ OPEN_PATH }#action=manage-sources` } /> );
+		render( <ReaderSidebarSpaces path={ OPEN_PATH } /> );
 
 		expect(
 			screen.queryByRole( 'heading', { name: 'Sources for “Work”' } )

@@ -1,13 +1,8 @@
-import {
-	getReadSpaceSourceKey,
-	getSiteSubscriptionSourceKey,
-	type SiteSubscriptionItem,
-} from '@automattic/api-core';
+import { getSiteSubscriptionSourceKey, type SiteSubscriptionItem } from '@automattic/api-core';
 import { AutoSizer, List } from '@automattic/react-virtualized';
 import { useFuzzySearch } from '@automattic/search';
 import {
 	Button,
-	Modal,
 	SearchControl,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -16,18 +11,14 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
 import Skeleton from 'calypso/reader/components/skeleton';
 import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
-import { useAddSpaceSource, useDeleteSpaceSource, useSpace } from 'calypso/reader/data/spaces';
-import { useDispatch } from 'calypso/state';
-import { successNotice } from 'calypso/state/notices/actions';
-import { SourceSubscription } from './subscription';
+import { SourceSubscription } from './source-subscription';
 import type { CSSProperties } from 'react';
 
-import './style.scss';
-
 interface Props {
-	isOpen: boolean;
-	spaceId: string | null;
-	onClose: () => void;
+	selectedSourceKeys: string[];
+	selectedCount: number;
+	onAddDraftSource?: ( subscription: SiteSubscriptionItem ) => void;
+	onRemoveDraftSource?: ( subscription: SiteSubscriptionItem ) => void;
 }
 
 type Filter = 'all' | 'selected';
@@ -67,29 +58,21 @@ const getSourcesContentState = ( {
 	return 'list';
 };
 
-export function SourcesModal( { isOpen, spaceId, onClose }: Props ) {
+export function SourcesTab( {
+	selectedSourceKeys,
+	selectedCount,
+	onAddDraftSource,
+	onRemoveDraftSource,
+}: Props ) {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
-	// Only fetch while the modal is open — `view.tsx` keeps this mounted with
-	// `isOpen` toggling, so gating avoids background pagination when it's closed.
-	const {
-		data: space,
-		isLoading: isSpaceLoading,
-		isError: isSpaceError,
-	} = useSpace( spaceId, {
-		enabled: isOpen,
-	} );
-	const siteSubscriptions = useSiteSubscriptions( { fetchAllPages: true, enabled: isOpen } );
-	const { mutate: addSpaceSource } = useAddSpaceSource();
-	const { mutate: deleteSpaceSource } = useDeleteSpaceSource();
+	// This tab only mounts while it's the active TabPanel tab, so the (paginating)
+	// subscriptions query only runs once the user opens Sources.
+	const siteSubscriptions = useSiteSubscriptions( { fetchAllPages: true, enabled: true } );
 
 	const [ filter, setFilter ] = useState< Filter >( 'all' );
 	const [ search, setSearch ] = useState( '' );
 
-	const selectedKeys = useMemo(
-		() => new Set( ( space?.sources ?? [] ).map( ( source ) => getReadSpaceSourceKey( source ) ) ),
-		[ space?.sources ]
-	);
+	const selectedKeys = useMemo( () => new Set( selectedSourceKeys ), [ selectedSourceKeys ] );
 
 	const subscriptionsForFilter = useMemo( () => {
 		if ( filter !== 'selected' ) {
@@ -108,39 +91,15 @@ export function SourcesModal( { isOpen, spaceId, onClose }: Props ) {
 
 	const handleAddSource = useCallback(
 		( subscription: SiteSubscriptionItem ) => {
-			if ( ! spaceId ) {
-				return;
-			}
-
-			addSpaceSource(
-				{ spaceId, subscription },
-				{
-					onSuccess: () =>
-						dispatch(
-							successNotice( translate( 'Source added to this space.' ), { duration: 5000 } )
-						),
-				}
-			);
+			onAddDraftSource?.( subscription );
 		},
-		[ spaceId, addSpaceSource, dispatch, translate ]
+		[ onAddDraftSource ]
 	);
 	const handleRemoveSource = useCallback(
 		( subscription: SiteSubscriptionItem ) => {
-			if ( ! spaceId ) {
-				return;
-			}
-
-			deleteSpaceSource(
-				{ spaceId, subscription },
-				{
-					onSuccess: () =>
-						dispatch(
-							successNotice( translate( 'Source removed from this space.' ), { duration: 5000 } )
-						),
-				}
-			);
+			onRemoveDraftSource?.( subscription );
 		},
-		[ spaceId, deleteSpaceSource, dispatch, translate ]
+		[ onRemoveDraftSource ]
 	);
 	const renderSourceRow = useCallback(
 		( { index, key, style }: SourceRowRendererProps ) => {
@@ -174,81 +133,54 @@ export function SourcesModal( { isOpen, spaceId, onClose }: Props ) {
 		[ filteredSubscriptions, handleAddSource, handleRemoveSource, selectedKeys ]
 	);
 
-	if ( ! isOpen ) {
-		return null;
-	}
-
-	const selectedCount = space?.sources.length ?? 0;
 	const sourcesState = getSourcesContentState( {
-		isLoading: isSpaceLoading || siteSubscriptions.isLoading,
-		isError: isSpaceError || siteSubscriptions.isError,
+		isLoading: siteSubscriptions.isLoading,
+		isError: siteSubscriptions.isError,
 		isEmpty: filteredSubscriptions.length === 0,
 	} );
 
 	return (
-		<Modal
-			title={
-				( space
-					? translate( 'Sources for “%(spaceName)s”', { args: { spaceName: space.name } } )
-					: translate( 'Sources' ) ) as string
-			}
-			size="large"
-			onRequestClose={ onClose }
-			className="sources-modal"
-		>
-			<VStack spacing={ 4 } justify="flex-start" className="sources-modal__body">
-				<p className="sources-modal__description">
-					{ translate( 'Choose which of your subscriptions appear in this space.' ) }
-				</p>
+		<VStack spacing={ 4 } justify="flex-start" className="space-sources">
+			<p className="space-sources__description">
+				{ translate( 'Choose which of your subscriptions appear in this space.' ) }
+			</p>
 
-				<SearchControl
-					__nextHasNoMarginBottom
-					label={ translate( 'Search your subscriptions' ) }
-					value={ search }
-					onChange={ ( value = '' ) => setSearch( value ) }
-					placeholder={ translate( 'Search your subscriptions…' ) }
-					className="sources-modal__search"
-				/>
+			<SearchControl
+				__nextHasNoMarginBottom
+				label={ translate( 'Search your subscriptions' ) }
+				value={ search }
+				onChange={ ( value = '' ) => setSearch( value ) }
+				placeholder={ translate( 'Search your subscriptions…' ) }
+				className="space-sources__search"
+			/>
 
-				<HStack justify="flex-start" spacing={ 2 } className="sources-modal__filters">
-					<Button
-						variant={ filter === 'all' ? 'primary' : 'secondary' }
-						onClick={ () => setFilter( 'all' ) }
-					>
-						{ translate( 'All subscriptions' ) }
-					</Button>
-					<Button
-						variant={ filter === 'selected' ? 'primary' : 'secondary' }
-						onClick={ () => setFilter( 'selected' ) }
-					>
-						{ translate( 'In this space · %(count)d', { args: { count: selectedCount } } ) }
-					</Button>
-				</HStack>
-
-				<SourcesModalContent
-					state={ sourcesState }
-					filter={ filter }
-					filteredSubscriptions={ filteredSubscriptions }
-					renderSourceRow={ renderSourceRow }
-					translate={ translate }
-				/>
-			</VStack>
-
-			<HStack justify="space-between" className="sources-modal__footer">
-				<div className="sources-modal__count">
-					{ translate( '%(count)d sources in this space', {
-						args: { count: selectedCount },
-					} ) }
-				</div>
-				<Button __next40pxDefaultSize variant="primary" onClick={ onClose }>
-					{ translate( 'Done' ) }
+			<HStack justify="flex-start" spacing={ 2 } className="space-sources__filters">
+				<Button
+					variant={ filter === 'all' ? 'primary' : 'secondary' }
+					onClick={ () => setFilter( 'all' ) }
+				>
+					{ translate( 'All subscriptions' ) }
+				</Button>
+				<Button
+					variant={ filter === 'selected' ? 'primary' : 'secondary' }
+					onClick={ () => setFilter( 'selected' ) }
+				>
+					{ translate( 'In this space · %(count)d', { args: { count: selectedCount } } ) }
 				</Button>
 			</HStack>
-		</Modal>
+
+			<SourcesTabContent
+				state={ sourcesState }
+				filter={ filter }
+				filteredSubscriptions={ filteredSubscriptions }
+				renderSourceRow={ renderSourceRow }
+				translate={ translate }
+			/>
+		</VStack>
 	);
 }
 
-type SourcesModalContentProps = {
+type SourcesTabContentProps = {
 	state: SourcesContentState;
 	filter: Filter;
 	filteredSubscriptions: SiteSubscriptionItem[];
@@ -256,25 +188,25 @@ type SourcesModalContentProps = {
 	translate: ReturnType< typeof useTranslate >;
 };
 
-function SourcesModalContent( {
+function SourcesTabContent( {
 	state,
 	filter,
 	filteredSubscriptions,
 	renderSourceRow,
 	translate,
-}: SourcesModalContentProps ) {
+}: SourcesTabContentProps ) {
 	switch ( state ) {
 		case 'loading':
-			return <SourcesModalSkeleton label={ translate( 'Loading subscriptions' ) as string } />;
+			return <SourcesTabSkeleton label={ translate( 'Loading subscriptions' ) as string } />;
 		case 'error':
 			return (
-				<p className="sources-modal__empty" role="alert">
+				<p className="space-sources__empty" role="alert">
 					{ translate( 'We couldn’t load your subscriptions. Please try again.' ) }
 				</p>
 			);
 		case 'empty':
 			return (
-				<p className="sources-modal__empty">
+				<p className="space-sources__empty">
 					{ filter === 'selected'
 						? translate( 'No subscriptions added to this space yet.' )
 						: translate( 'No subscriptions found.' ) }
@@ -283,11 +215,11 @@ function SourcesModalContent( {
 		case 'list':
 		default:
 			return (
-				<div className="sources-modal__list" role="list">
+				<div className="space-sources__list" role="list">
 					<AutoSizer>
 						{ ( { width, height }: { width: number; height: number } ) => (
 							<List
-								className="sources-modal__virtualized-list"
+								className="space-sources__virtualized-list"
 								containerRole="presentation"
 								height={ height }
 								overscanRowCount={ 4 }
@@ -304,11 +236,11 @@ function SourcesModalContent( {
 	}
 }
 
-function SourcesModalSkeleton( { label }: { label: string } ) {
+function SourcesTabSkeleton( { label }: { label: string } ) {
 	return (
 		<VStack
 			spacing={ 3 }
-			className="sources-modal__list"
+			className="space-sources__list"
 			role="status"
 			aria-label={ label }
 			aria-live="polite"
@@ -319,11 +251,11 @@ function SourcesModalSkeleton( { label }: { label: string } ) {
 					spacing={ 3 }
 					alignment="center"
 					justify="space-between"
-					className="sources-modal__skeleton-row"
+					className="space-sources__skeleton-row"
 					style={ { minHeight: 56 } }
 				>
 					<Skeleton shape="circle" width="40px" height="40px" />
-					<VStack spacing={ 2 } className="sources-modal__skeleton-text">
+					<VStack spacing={ 2 } className="space-sources__skeleton-text">
 						<Skeleton width="180px" height="18px" />
 						<Skeleton width="120px" height="14px" />
 					</VStack>

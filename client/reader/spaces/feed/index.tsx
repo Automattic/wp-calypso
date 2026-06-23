@@ -10,12 +10,13 @@ import {
 	SpaceFeedLoadingMore,
 } from './components/states';
 import { DEFAULT_SPACE_FEED_LAYOUT, getLayout } from './layouts/registry';
-import type { ReadStreamPost, ReadStreamResponse } from '@automattic/api-core';
+import type { ReadStreamPost, ReadStreamResponse, SpaceFeedLayout } from '@automattic/api-core';
 
 import './style.scss';
 
 interface Props {
 	spaceId: string;
+	layoutView?: SpaceFeedLayout;
 }
 
 export function collectPosts( pages: ReadStreamResponse[] ): ReadStreamPost[] {
@@ -39,16 +40,18 @@ export function collectPosts( pages: ReadStreamResponse[] ): ReadStreamPost[] {
  * the layout from `space.layout.view` (chosen via the Customize modal) and the
  * stream from the space's own posts endpoint (`/reader/spaces/<id>/posts`,
  * keyed `space:<id>`), which the backend builds from the space's followed feeds
- * and tags. Every layout reads that same per-space query.
+ * and tags. `layoutView` is the summary value from the spaces list and acts as
+ * a fallback while the detail is missing that field. Every layout reads that
+ * same per-space query.
  */
-export function SpaceFeed( { spaceId }: Props ) {
+export function SpaceFeed( { spaceId, layoutView }: Props ) {
 	const {
 		data: space,
 		error: spaceError,
 		isLoading: isSpaceLoading,
 		refetch: refetchSpace,
 	} = useSpace( spaceId );
-	const layout = space?.layout.view ?? DEFAULT_SPACE_FEED_LAYOUT;
+	const layout = space?.layout.view ?? layoutView ?? DEFAULT_SPACE_FEED_LAYOUT;
 
 	// The stream is the Space's own posts feed (`/reader/spaces/<id>/posts`),
 	// built server-side from the space's followed feeds and tags. We only request

@@ -6,7 +6,7 @@ import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import { useSpaces } from 'calypso/reader/data/spaces';
 import { AddMenuItem } from 'calypso/reader/sidebar/menu';
 import { CreateSpaceModal } from 'calypso/reader/spaces/create-modal';
-import { getManageSourcesPath, SPACES_BASE_PATH } from 'calypso/reader/spaces/routes';
+import { getSpacePath, SPACES_BASE_PATH } from 'calypso/reader/spaces/routes';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { SpaceMenuItem } from './menu-item';
@@ -53,7 +53,7 @@ export function ReaderSidebarSpaces( { path }: Props ) {
 	};
 
 	const handleSpaceCreated = ( space: ReadSpace ) => {
-		page( getManageSourcesPath( space.id ) );
+		page( getSpacePath( space.id ) );
 	};
 
 	return (

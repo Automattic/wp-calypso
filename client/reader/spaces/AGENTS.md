@@ -21,8 +21,40 @@ only, and wired to the real `wpcom/v2` backend.
   `useCreateSpace`, `useUpdateSpace`, `useDeleteSpace`, `useAddSpaceSource`,
   `useDeleteSpaceSource`.
 - **UI (this folder)** — `view.tsx`, `controller.tsx`, `index.tsx` (routes),
-  `icons.ts`, `routes.ts`, `create-modal/`.
+  `icons.ts`, `colors.ts`/`colors.scss`, `routes.ts`, `form-helpers.ts`,
+  `color-picker.tsx`, `icon-picker.tsx`, `create-modal/`, `customize-modal/`.
 - **Sidebar entry point** — `client/reader/sidebar/spaces/`.
+
+## Editing a space (RSM-4117)
+
+`customize-modal/` is the **single upsert editor** for a space: a `TabPanel` with
+**Identity** (name, tags, accent color, icon), **Layout** (the feed-layout
+presets), **Sources** (the subscription add/remove list — migrated here from the
+old standalone `sources-modal/`, which no longer exists), and **Delete** (edit
+mode only, destructive _Delete space_ action that confirms via
+`confirm-delete.tsx`). The **Customize** header button opens edit mode on
+Identity. `create-modal/index.tsx` is a thin wrapper around the same upsert modal
+in create mode; after create, the sidebar navigates to the new space route
+without an action hash.
+
+- **Save/Create batches the editable fields.** "Save changes" and "Create" send
+  the same draft model: `name`, `tags`, `feeds`, and
+  `layout: { color, icon, view }`. Source add/remove in the modal updates local
+  draft state only; the endpoint receives the final `feeds` list on submit.
+- **Draft state is seeded once** (a `isSeeded` flag), not on every `space` change,
+  so a source add/remove (which rewrites the detail cache) can't clobber unsaved
+  identity/layout edits.
+- **Name validation excludes the current space** (`spaces.filter( id !== spaceId )`)
+  so an unchanged name doesn't read as a duplicate.
+- **Palette is client-owned.** `SpaceColor`/`SpaceIcon` are widened freely
+  (server only sanitizes). The accent palette lives once in `colors.scss`
+  (`$space-colors` + the `space-accent-color` mixin), consumed by both the sidebar
+  item and `color-picker.tsx`; icon glyphs map through `SPACE_ICONS` in `icons.ts`.
+  When adding a color/icon, update `colors.ts` (`SPACE_COLORS` + labels) /
+  `icons.ts` and the `icon-picker.tsx` label map (typed `Record< SpaceIcon, … >`,
+  so a missing label is a type error).
+- **Not yet built (no backend):** description, AI tag auto-fill, text size, and
+  column layout shown in the design mockups are intentionally omitted.
 
 ## Conventions
 
@@ -35,7 +67,7 @@ only, and wired to the real `wpcom/v2` backend.
 - Exported identifiers stay descriptive and qualified (`SpacesView`,
   `CreateSpaceModal`, `SPACE_ICONS`) — the redundancy rule is about file paths,
   not symbols.
-- CSS class names keep a namespace prefix (`create-space-modal__…`,
+- CSS class names keep a namespace prefix (`customize-space-modal__…`,
   `sidebar-spaces__…`) because Calypso CSS is global; that prefix is not subject
   to the rule above.
 - **Named exports only** — no `export default`. Two framework-mandated
@@ -57,18 +89,17 @@ only, and wired to the real `wpcom/v2` backend.
 
 ### Form
 
-- The create form is a **single component**, `create-modal/index.tsx` — fields,
-  validation, mutation, and actions inline. There is no generic/base form yet:
-  **do not abstract one until edit (RSM-4117) actually needs it**, then extract
-  the shared parts knowing their real shape. (We had a speculative
-  `BaseSpaceForm`/wrapper split and deliberately collapsed it — resist
-  re-adding it early.)
+- Create and edit share the upsert implementation in `customize-modal/index.tsx`;
+  `create-modal/index.tsx` only adapts the existing public `CreateSpaceModal`
+  export to create mode. Keep Identity/Layout/Sources behavior in the shared
+  upsert modal so create and edit do not drift.
 - Validation: name required, <= `MAX_SPACE_NAME_LENGTH`, and case-insensitive
-  duplicate against the existing names. The duplicate message is rendered
-  manually (`<p className="create-space-modal__error">`); we intentionally do
-  not wire validation through a form abstraction.
-- On success: append to the cache (via the mutation), fire a
-  `calypso_reader_*` Tracks event, show a `successNotice`, then close.
+  duplicate against the existing names (edit passes the list with the current
+  space removed). The error message is rendered manually
+  (`<p className="…__error">`).
+- On create success: append to the cache (via the mutation), fire a
+  `calypso_reader_*` Tracks event, show a `successNotice`, close, then the
+  sidebar navigates to `getSpacePath( space.id )`.
 - `TODO(RSM-4139)`: when the real backend lands, map its error kinds to copy
   where the generic `createSpace.isError` message is shown today.
 - Forms use WordPress components and `useTranslate` from `i18n-calypso`.

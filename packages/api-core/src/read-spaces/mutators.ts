@@ -38,7 +38,7 @@ export async function createReadSpace(
 /**
  * Update a space via `PUT /reader/spaces/{id}`, returning the updated detail.
  * Sends only the provided fields (at least one is required server-side). `tags`
- * is a full replace of the tag set; `layout` is a partial merge (send only the
+ * and `feeds` are full replaces; `layout` is a partial merge (send only the
  * fields you're changing).
  */
 export async function updateReadSpace(
@@ -51,6 +51,9 @@ export async function updateReadSpace(
 	}
 	if ( params.tags !== undefined ) {
 		body.tags = params.tags;
+	}
+	if ( params.feeds !== undefined ) {
+		body.feeds = params.feeds;
 	}
 	if ( params.layout !== undefined ) {
 		body.layout = params.layout;
