@@ -161,8 +161,14 @@ export class PostsPage {
 	async clickPost( title: string ): Promise< void > {
 		await this.ensurePostShown( title );
 
-		const locator = this.page.locator( `${ selectors.postRow } ${ selectors.postItem( title ) }` );
-		await locator.click();
+		const locator = this.page.locator(
+			`${ selectors.postRow } a.row-title:has-text("${ title }")`
+		);
+		const href = await locator.getAttribute( 'href' );
+		if ( ! href ) {
+			throw new Error( `No href found on row-title for post "${ title }"` );
+		}
+		await this.page.goto( href );
 	}
 
 	/**
