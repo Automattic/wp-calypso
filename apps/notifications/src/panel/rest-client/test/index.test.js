@@ -206,6 +206,55 @@ describe( 'RestClient', () => {
 		} );
 	} );
 
+	describe( 'polling window', () => {
+		// Load-more pages with `before`; the poll/refresh must keep requesting a small
+		// fixed head window instead of growing to cover everything paged in (which
+		// ballooned the request to number=100 with no `before`).
+		it( 'keeps the poll window fixed after paging many notes in', () => {
+			seedFirstWindow(); // ids 100..91
+
+			// Page two more windows in (ids 90..71), growing the loaded list to 30.
+			client.loadMore();
+			getCalls[ 0 ].callback( null, { notes: fullPage( 20, 90 ), last_seen_time: 0 } );
+			getCalls.length = 0;
+
+			client.getNotesList();
+			expect( getCalls ).toHaveLength( 1 );
+			// Small fixed window, not the 30 (or eventual 100) notes loaded.
+			expect( getCalls[ 0 ].query.number ).toBe( 10 );
+			expect( getCalls[ 0 ].query ).not.toHaveProperty( 'before' );
+		} );
+
+		it( 'does not prune older paged-in notes when the poll only returns the head', () => {
+			seedFirstWindow(); // ids 100..91
+			client.loadMore();
+			getCalls[ 0 ].callback( null, { notes: fullPage( 20, 90 ), last_seen_time: 0 } ); // 90..71
+			getCalls.length = 0;
+
+			// A poll returns only the authoritative top window (ids 100..91).
+			client.getNotesList();
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 100 ), last_seen_time: 0 } );
+
+			// The older paged-in notes are outside the head window, not deleted.
+			const ids = getAllNotes( store.getState() ).map( ( note ) => note.id );
+			expect( ids ).toContain( 71 );
+			expect( ids ).toContain( 90 );
+		} );
+
+		it( 'still prunes a note dropped from within the head window', () => {
+			seedFirstWindow(); // ids 100..91
+
+			// The poll's top window no longer includes 95 (read/deleted elsewhere); the
+			// freed slot is filled by an older note (90), so 95 fell out of the head.
+			client.getNotesList();
+			const polled = [ 100, 99, 98, 97, 96, 94, 93, 92, 91, 90 ].map( makeNote );
+			getCalls[ 0 ].callback( null, { notes: polled, last_seen_time: 0 } );
+
+			const ids = getAllNotes( store.getState() ).map( ( note ) => note.id );
+			expect( ids ).not.toContain( 95 );
+		} );
+	} );
+
 	describe( 'server-side (unread) filtering', () => {
 		it( 'sends unread=1 to the server and adds the returned notes', () => {
 			client.setFilter( { unread: 1 } );
