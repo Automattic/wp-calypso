@@ -13,11 +13,99 @@ export type AgentsManagerUIMessage = UIMessage & {
 	suppressThinking?: boolean;
 };
 
+type RawChatMessage = Omit< UIMessage, 'role' > & {
+	role: UIMessage[ 'role' ] | 'assistant' | 'escalation';
+	message_id?: number | string;
+	created_at?: string;
+	ts?: number | string;
+	context?: {
+		ai_chat_message_id?: number | string;
+		zendesk_ticket_id?: number | string;
+	};
+};
+
+type EscalationTransfer = {
+	zendeskTicketId: number | string;
+	escalatedAt?: string;
+};
+
 interface Options {
 	messages: UIMessage[];
 	getChatComponent?: GetChatComponent;
 	currentPostId?: number;
 	onSubmit: UseAgentChatReturn[ 'onSubmit' ];
+}
+
+function normalizeMessageId( messageId: number | string | undefined ) {
+	return messageId === undefined ? undefined : String( messageId );
+}
+
+function getMessageId( message: RawChatMessage ) {
+	return normalizeMessageId( message.message_id ) ?? message.id;
+}
+
+function getTimestampInMilliseconds( timestamp: number | string | undefined ) {
+	if ( typeof timestamp === 'number' && Number.isFinite( timestamp ) ) {
+		return timestamp > 9999999999 ? timestamp : timestamp * 1000;
+	}
+
+	if ( typeof timestamp === 'string' ) {
+		const parsedTimestamp = Number( timestamp );
+		if ( Number.isFinite( parsedTimestamp ) ) {
+			return parsedTimestamp > 9999999999 ? parsedTimestamp : parsedTimestamp * 1000;
+		}
+	}
+
+	return undefined;
+}
+
+function getEscalatedAt( message: RawChatMessage ) {
+	const timestamp = getTimestampInMilliseconds( message.ts );
+	if ( timestamp ) {
+		const date = new Date( timestamp );
+		return Number.isNaN( date.getTime() ) ? undefined : date.toISOString();
+	}
+
+	if ( ! message.created_at ) {
+		return undefined;
+	}
+
+	const createdAt = message.created_at.trim().replace( ' ', 'T' );
+	const createdAtWithTimezone = /(?:Z|[+-]\d{2}:?\d{2})$/.test( createdAt )
+		? createdAt
+		: `${ createdAt }Z`;
+	const date = new Date( createdAtWithTimezone );
+	return Number.isNaN( date.getTime() ) ? undefined : date.toISOString();
+}
+
+export function findEscalationTransferForMessage(
+	messages: UIMessage[],
+	message: UIMessage
+): EscalationTransfer | undefined {
+	const rawMessages = messages as RawChatMessage[];
+	const messageId = getMessageId( message as RawChatMessage );
+
+	const escalationMessage = rawMessages.find(
+		( candidate ) =>
+			candidate.role === 'escalation' &&
+			normalizeMessageId( candidate.context?.ai_chat_message_id ) === messageId &&
+			candidate.context?.zendesk_ticket_id !== undefined &&
+			candidate.context.zendesk_ticket_id !== null
+	);
+
+	if ( ! escalationMessage ) {
+		return undefined;
+	}
+
+	const zendeskTicketId = escalationMessage.context?.zendesk_ticket_id;
+	if ( zendeskTicketId === undefined || zendeskTicketId === null ) {
+		return undefined;
+	}
+
+	return {
+		zendeskTicketId,
+		escalatedAt: getEscalatedAt( escalationMessage ),
+	};
 }
 
 /**
@@ -30,6 +118,10 @@ export default function convertToolMessagesToComponents( {
 	onSubmit,
 }: Options ): AgentsManagerUIMessage[] {
 	return messages.flatMap( ( message, index, array ) => {
+		if ( ( message as RawChatMessage ).role === 'escalation' ) {
+			return [];
+		}
+
 		const firstContentText = message.content?.[ 0 ]?.text;
 
 		// @ts-expect-error -- `assistant` comes from Big Sky messages
@@ -47,6 +139,8 @@ export default function convertToolMessagesToComponents( {
 					'forward_to_human_support' in content.data.flags
 			)
 		) {
+			const escalationTransfer = findEscalationTransferForMessage( array, message );
+
 			return {
 				...message,
 				content: [
@@ -55,6 +149,8 @@ export default function convertToolMessagesToComponents( {
 						component: EscalationButton as React.ComponentType,
 						componentProps: {
 							messageId: message.id,
+							zendeskTicketId: escalationTransfer?.zendeskTicketId,
+							escalatedAt: escalationTransfer?.escalatedAt,
 						},
 					},
 				],
