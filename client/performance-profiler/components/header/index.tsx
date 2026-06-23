@@ -1,8 +1,8 @@
 import { Popover } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import { Icon, mobile, desktop, share } from '@wordpress/icons';
+import { Icon, mobile, desktop, share, link, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import WPcomBadge from 'calypso/assets/images/performance-profiler/wpcom-badge.svg';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
@@ -47,10 +47,25 @@ const SocialServices = [
 export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 	const translate = useTranslate();
 	const [ showPopoverMenu, setPopoverMenu ] = useState( false );
+	const [ linkCopied, setLinkCopied ] = useState( false );
 	const popoverButtonRef = useRef( null );
 	const { url, activeTab, onTabChange, showNavigationTabs, timestamp, showWPcomBadge, shareLink } =
 		props;
 	const urlParts = new URL( url );
+
+	useEffect( () => {
+		if ( ! linkCopied ) {
+			return;
+		}
+
+		const timeoutId = setTimeout( () => setLinkCopied( false ), 2000 );
+		return () => clearTimeout( timeoutId );
+	}, [ linkCopied ] );
+
+	const onCopyLink = () => {
+		navigator.clipboard.writeText( shareLink );
+		setLinkCopied( true );
+	};
 
 	const renderTimestampAndBadge = () => (
 		<>
@@ -140,6 +155,14 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 										position="top"
 										onClose={ () => setPopoverMenu( false ) }
 									>
+										<Button
+											className="copy-link-button"
+											onClick={ onCopyLink }
+											label={ linkCopied ? translate( 'Copied!' ) : translate( 'Copy link' ) }
+											showTooltip
+										>
+											<Icon icon={ linkCopied ? check : link } size={ 28 } />
+										</Button>
 										{ SocialServices.map( ( item ) => (
 											<ShareButton
 												key={ item.service }
