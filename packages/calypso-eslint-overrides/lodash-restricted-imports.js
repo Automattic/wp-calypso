@@ -25,6 +25,7 @@ const JS_UTILS_NAMES = [
 	'isError',
 	'random',
 	'range',
+	'truncate',
 ];
 
 // The js-utils case converters cover ASCII identifiers/keys, not lodash's full
@@ -64,6 +65,16 @@ const CLONE_MESSAGE =
 	'Please use a spread copy (`{ ...obj }` / `[ ...arr ]`) instead of lodash `clone`.';
 const PROPERTY_MESSAGE =
 	'Please use an arrow function (`( obj ) => obj.key`) instead of lodash `property`.';
+// The js-utils maxBy/minBy rank by numeric iteratee values only — not lodash's
+// full string/symbol comparison or iteratee shorthands.
+const EXTREMUM_MESSAGE =
+	'Please use `maxBy`/`minBy` from `@automattic/js-utils` for numeric rankings. ' +
+	'For non-numeric comparisons or iteratee shorthands, write an explicit reducer.';
+// The js-utils partition requires a function predicate — not lodash's iteratee
+// shorthands (string / object / array).
+const PARTITION_MESSAGE =
+	'Please use `partition` from `@automattic/js-utils` with a function predicate. ' +
+	'It does not support lodash iteratee shorthands — expand those to a predicate function.';
 
 const paths = [
 	{ name: 'lodash', importNames: JS_UTILS_NAMES, message: JS_UTILS_MESSAGE },
@@ -84,6 +95,8 @@ const paths = [
 	{ name: 'lodash', importNames: [ 'findIndex' ], message: FINDINDEX_MESSAGE },
 	{ name: 'lodash', importNames: [ 'clone' ], message: CLONE_MESSAGE },
 	{ name: 'lodash', importNames: [ 'property' ], message: PROPERTY_MESSAGE },
+	{ name: 'lodash', importNames: [ 'maxBy', 'minBy' ], message: EXTREMUM_MESSAGE },
+	{ name: 'lodash', importNames: [ 'partition' ], message: PARTITION_MESSAGE },
 ];
 
 // Deep `lodash/<fn>` imports bypass the named-import paths above.
@@ -106,6 +119,8 @@ const patterns = [
 	{ group: [ 'lodash/findIndex' ], message: FINDINDEX_MESSAGE },
 	{ group: [ 'lodash/clone' ], message: CLONE_MESSAGE },
 	{ group: [ 'lodash/property' ], message: PROPERTY_MESSAGE },
+	{ group: [ 'lodash/maxBy', 'lodash/minBy' ], message: EXTREMUM_MESSAGE },
+	{ group: [ 'lodash/partition' ], message: PARTITION_MESSAGE },
 ];
 
 module.exports = { paths, patterns };

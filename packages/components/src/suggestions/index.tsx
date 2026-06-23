@@ -1,7 +1,7 @@
-import { groupBy } from '@automattic/js-utils';
+import { groupBy, partition } from '@automattic/js-utils';
 import clsx from 'clsx';
 import isEqual from 'fast-deep-equal/es6';
-import { find, partition } from 'lodash';
+import { find } from 'lodash';
 import { Fragment, Component } from 'react';
 import Item from './item';
 

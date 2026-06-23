@@ -1,15 +1,7 @@
+import isSymbol from './is-symbol';
+
 // lodash's largest finite number; ±Infinity coerce to this in `toFinite`.
 const MAX_INTEGER = 1.7976931348623157e308;
-
-/**
- * Whether a value is a symbol, including boxed symbols (`Object( Symbol() )`).
- * Uses the object tag so the check is realm-safe, matching lodash `isSymbol`.
- */
-const isSymbol = ( value: unknown ): boolean =>
-	typeof value === 'symbol' ||
-	( typeof value === 'object' &&
-		value !== null &&
-		Object.prototype.toString.call( value ) === '[object Symbol]' );
 
 /**
  * Coerces a value to a number, matching lodash `toNumber`. Notably, the
