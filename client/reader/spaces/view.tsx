@@ -1,4 +1,5 @@
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
+import { settings } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, type ReactNode } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -25,7 +26,14 @@ export function SpacesView( { id, tab = 'feed' }: Props ) {
 	const space = id ? spaces.find( ( item ) => item.id === id ) : undefined;
 	const layoutView: SpaceFeedLayout | undefined = space?.layout.view;
 	const title = space ? space.name : translate( 'Spaces' );
-	const headerTitle = space ? <>{ space.name }</> : title;
+	// The generic "Spaces" heading belongs to the landing page only — while a
+	// specific space is still loading, render no heading rather than flashing it.
+	let headerTitle: string = '';
+	if ( space ) {
+		headerTitle = space.name;
+	} else if ( ! id ) {
+		headerTitle = translate( 'Spaces' );
+	}
 	// Which tab the unified Customize modal opens on, or `null` when it's closed.
 	const [ customizeTab, setCustomizeTab ] = useState< CustomizeTab | null >( null );
 
@@ -52,12 +60,16 @@ export function SpacesView( { id, tab = 'feed' }: Props ) {
 					textOnly: true,
 				} ) }
 			/>
-			<NavigationHeader title={ headerTitle }>
+			<NavigationHeader
+				title={ headerTitle }
+				subtitle={ space ? translate( 'Your curated reading space' ) : undefined }
+			>
 				{ space ? (
 					<HStack spacing={ 2 } justify="flex-end" expanded={ false }>
 						<Button
 							__next40pxDefaultSize
 							variant="secondary"
+							icon={ settings }
 							onClick={ () => setCustomizeTab( 'identity' ) }
 						>
 							{ translate( 'Customize' ) }

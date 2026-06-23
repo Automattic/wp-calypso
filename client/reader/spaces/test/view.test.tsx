@@ -80,6 +80,28 @@ describe( 'SpacesView', () => {
 		expect( screen.queryByRole( 'button', { name: 'Customize' } ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'shows the generic Spaces heading on the landing page', () => {
+		render( <SpacesView /> );
+
+		expect( screen.getByText( 'Spaces' ) ).toBeVisible();
+	} );
+
+	it( 'shows a subtitle under the name on a space detail page but not on the landing page', () => {
+		const { unmount } = render( <SpacesView id={ WORK.id } /> );
+		expect( screen.getByText( 'Your curated reading space' ) ).toBeVisible();
+		unmount();
+
+		render( <SpacesView /> );
+		expect( screen.queryByText( 'Your curated reading space' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'does not flash the generic Spaces heading while a specific space is loading', () => {
+		// The id is not in the loaded list yet, so the space is still resolving.
+		render( <SpacesView id="not-loaded-yet" /> );
+
+		expect( screen.queryByText( 'Spaces' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'passes the space layout view to the feed', () => {
 		render( <SpacesView id={ WORK.id } /> );
 
