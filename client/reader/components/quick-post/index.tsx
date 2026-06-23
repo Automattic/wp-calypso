@@ -30,6 +30,7 @@ import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getMostRecentlySelectedSiteId, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { READER_QUICK_POST_MINIMIZED_PREFERENCE } from './constants';
 import { savePostMutation } from './hooks/use-post-mutation';
 import type { AppState } from 'calypso/types';
 
@@ -75,7 +76,7 @@ const QUICK_POST_EDITOR_DARK_STYLES = `
 	}
 `;
 
-export const READER_QUICK_POST_MINIMIZED_PREFERENCE = 'reader_quick_post_minimized';
+export { READER_QUICK_POST_MINIMIZED_PREFERENCE };
 
 export default function QuickPost(): JSX.Element | null {
 	const translate = useTranslate();
