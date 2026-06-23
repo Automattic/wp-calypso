@@ -215,19 +215,6 @@ function SiteLogsContent( {
 							siteId={ siteId }
 						/>
 					) }
-					{ logType === LogType.PHP && (
-						<Notice variant="info">
-							{ createInterpolateElement(
-								__(
-									'Custom error log paths are not monitored. If your site has <wpDebugLog>WP_DEBUG_LOG</wpDebugLog> or a custom <errorLog>error_log</errorLog> path enabled, those logs will not appear here. Access them via SFTP or SSH instead.'
-								),
-								{
-									wpDebugLog: <code />,
-									errorLog: <code />,
-								}
-							) }
-						</Notice>
-					) }
 				</>
 			}
 		>

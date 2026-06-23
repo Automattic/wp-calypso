@@ -6,6 +6,7 @@ import { ToggleControl, Button } from '@wordpress/components';
 import { throttle } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { View, Filter, Field } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { arrowUp } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
@@ -15,6 +16,7 @@ import { useAnalytics } from '../../../app/analytics';
 import { usePersistentView } from '../../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../../app/performance-tracking';
 import { DataViews } from '../../../components/dataviews';
+import Notice from '../../../components/notice';
 import { LogsDownloader } from '../downloader';
 import {
 	buildTimeRangeInSeconds,
@@ -326,6 +328,19 @@ function SiteLogsDataViews( {
 
 	return (
 		<>
+			{ logType === LogType.PHP && ! isLoadingLogQuery && logs.length === 0 && (
+				<Notice variant="info">
+					{ createInterpolateElement(
+						__(
+							'Custom error log paths are not monitored. If your site has <wpDebugLog>WP_DEBUG_LOG</wpDebugLog> or a custom <errorLog>error_log</errorLog> path enabled, those logs will not appear here. Access them via SFTP or SSH instead.'
+						),
+						{
+							wpDebugLog: <code />,
+							errorLog: <code />,
+						}
+					) }
+				</Notice>
+			) }
 			{ logType === LogType.PHP ? (
 				<DataViews< PHPLog >
 					data={ phpLogs }

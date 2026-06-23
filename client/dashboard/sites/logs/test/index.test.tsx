@@ -39,6 +39,14 @@ function mockSiteAndSettings( {
 		.reply( 200, { settings: { gmt_offset: gmtOffset, timezone_string: timezoneString } } );
 }
 
+function mockPhpLogs( logs: unknown[] ) {
+	nock( API_BASE )
+		.persist()
+		.get( `/wpcom/v2/sites/${ mockSiteId }/hosting/error-logs` )
+		.query( true )
+		.reply( 200, { data: { total_results: logs.length, logs, scroll_id: null } } );
+}
+
 beforeEach( () => {
 	mockUserPreferences();
 	mockSiteAndSettings();
@@ -62,10 +70,33 @@ describe( 'SiteLogs page', () => {
 		} );
 	} );
 
-	test( 'shows the custom error log notice on the PHP errors tab', async () => {
+	test( 'shows the custom error log notice when the PHP errors log is empty', async () => {
+		mockPhpLogs( [] );
 		render( <SiteLogs logType={ LogType.PHP } siteSlug="test-site" /> );
 
 		expect( await screen.findByText( /Custom error log paths are not monitored/ ) ).toBeVisible();
+	} );
+
+	test( 'does not show the custom error log notice when PHP errors are present', async () => {
+		mockPhpLogs( [
+			{
+				timestamp: '2026-06-19T00:00:00Z',
+				severity: 'Warning',
+				message: 'Something happened',
+				kind: 'warning',
+				name: 'E_WARNING',
+				file: '/wp-content/plugins/example/example.php',
+				line: 42,
+				atomic_site_id: mockSiteId,
+			},
+		] );
+		render( <SiteLogs logType={ LogType.PHP } siteSlug="test-site" /> );
+
+		// Wait for the log row to render before asserting the notice is absent.
+		expect( await screen.findByText( 'Something happened' ) ).toBeVisible();
+		expect(
+			screen.queryByText( /Custom error log paths are not monitored/ )
+		).not.toBeInTheDocument();
 	} );
 
 	test( 'does not show the custom error log notice on the Web server tab', async () => {
