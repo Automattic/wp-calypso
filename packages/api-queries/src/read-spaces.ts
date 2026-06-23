@@ -12,7 +12,12 @@ import {
 	type ReadSpaceSourceMutationParams,
 	type UpdateReadSpaceParams,
 } from '@automattic/api-core';
-import { mutationOptions, queryOptions, type QueryClient } from '@tanstack/react-query';
+import {
+	keepPreviousData,
+	mutationOptions,
+	queryOptions,
+	type QueryClient,
+} from '@tanstack/react-query';
 import { getStreamInfiniteQueryKeyPrefix } from './read-streams';
 
 const readSpacesListKey = [ 'read', 'spaces', 'list' ] as const;
@@ -42,13 +47,12 @@ export const readSpacesQuery = () =>
 		queryKey: readSpacesListKey,
 		queryFn: () => fetchReadSpaces(),
 		// Every mutation returns the full detail and writes it back to these caches,
-		// so they stay authoritative without refetch churn — hold refetches off.
-		// (First load still fetches; staleTime only suppresses refetching fresh data.)
+		// then invalidates them for a canonical refresh. Persisted data can render
+		// immediately after reload while the active query refreshes in the background.
 		staleTime: Infinity,
-		// Keep the list out of Calypso's persisted query cache: layout_color/icon
-		// are random-until-set server-side, so a dehydrated copy could show stale
-		// colours across reloads. A reload refetches fresh instead.
-		meta: { persist: false },
+		refetchOnMount: 'always',
+		placeholderData: keepPreviousData,
+		meta: { persist: true },
 	} );
 
 export const readSpaceQuery = ( spaceId: string ) =>
@@ -56,7 +60,9 @@ export const readSpaceQuery = ( spaceId: string ) =>
 		queryKey: readSpaceDetailKey( spaceId ),
 		queryFn: () => fetchReadSpace( spaceId ),
 		staleTime: Infinity,
-		meta: { persist: false },
+		refetchOnMount: 'always',
+		placeholderData: keepPreviousData,
+		meta: { persist: true },
 	} );
 
 // The summary (list) shape is the detail minus its `sources` and `tags`.
@@ -71,8 +77,21 @@ const toSummary = ( space: ReadSpaceDetails ): ReadSpace => {
 // from the consuming component.
 //
 // Every mutation returns the full updated detail, so we write that straight into
-// the caches (no follow-up GET, no optimistic patch/rollback): the detail cache
-// gets the returned space, and the list cache gets its summary.
+// the caches for an immediate UI update. We then invalidate the affected queries
+// so active consumers refetch the canonical server state and inactive consumers
+// refresh the next time they mount.
+
+const invalidateReadSpacesList = ( queryClient: QueryClient ) =>
+	queryClient.invalidateQueries( { queryKey: readSpacesQuery().queryKey } );
+
+const invalidateReadSpaceDetail = ( queryClient: QueryClient, spaceId: string ) =>
+	queryClient.invalidateQueries( { queryKey: readSpaceQuery( spaceId ).queryKey } );
+
+const invalidateReadSpaceListAndDetail = ( queryClient: QueryClient, spaceId: string ) =>
+	Promise.all( [
+		invalidateReadSpacesList( queryClient ),
+		invalidateReadSpaceDetail( queryClient, spaceId ),
+	] ).then( () => undefined );
 
 export const createReadSpaceMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
@@ -85,6 +104,7 @@ export const createReadSpaceMutation = ( queryClient: QueryClient ) =>
 				toSummary( space ),
 			] );
 			queryClient.setQueryData< ReadSpaceDetails >( readSpaceQuery( space.id ).queryKey, space );
+			return invalidateReadSpaceListAndDetail( queryClient, space.id );
 		},
 	} );
 
@@ -107,6 +127,7 @@ export const updateReadSpaceMutation = ( queryClient: QueryClient ) =>
 			queryClient.setQueryData< ReadSpaceDetails >( readSpaceQuery( space.id ).queryKey, space );
 			// Tags/feeds may have changed, so reload the space's posts feed.
 			reloadReadSpaceStream( queryClient, space.id );
+			return invalidateReadSpaceListAndDetail( queryClient, space.id );
 		},
 	} );
 
@@ -124,6 +145,7 @@ export const deleteReadSpaceMutation = ( queryClient: QueryClient ) =>
 			);
 			// ...and discard its now-defunct detail cache.
 			queryClient.removeQueries( { queryKey: readSpaceQuery( spaceId ).queryKey } );
+			return invalidateReadSpacesList( queryClient );
 		},
 	} );
 
@@ -134,6 +156,7 @@ const writeReadSpaceDetail = ( queryClient: QueryClient, space: ReadSpaceDetails
 	queryClient.setQueryData< ReadSpaceDetails >( readSpaceQuery( space.id ).queryKey, space );
 	// Adding/removing a feed changes the space's posts feed, so reload it too.
 	reloadReadSpaceStream( queryClient, space.id );
+	return invalidateReadSpaceDetail( queryClient, space.id );
 };
 
 export const addReadSpaceSourceMutation = ( queryClient: QueryClient ) =>
