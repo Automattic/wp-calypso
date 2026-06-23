@@ -122,19 +122,21 @@ const ReaderOnboardingRsm = ( {
 	//
 	// - `currentStep`: which onboarding modal body is mounted, or `null` when
 	//   the modal is closed.
-	// - `hasFinished`: latched on Finish in the discover step so `forceShow`
-	//   stays off for the rest of the session even before subscription
-	//   queries refresh.
+	// - `hasHiddenOnboardingThisSession`: latched when the user finishes the
+	//   discover step or permanently dismisses the checklist so onboarding
+	//   stays hidden for the rest of the browser session — including under
+	//   `reader/force-onboarding` and before subscription queries refresh.
 	// - `hasFollowedInInterestsStep`: tracks any subscribe action (tag follow
 	//   or pack subscribe) inside the interests step. Owned here so it
 	//   persists across remounts of `InterestsModal` — without that, a user
 	//   could subscribe to a tagless pack, advance to discover, click Back,
 	//   and find the relaxed Continue gate forgotten on the fresh modal.
 	const [ currentStep, setCurrentStep ] = useState< Step | null >( null );
-	const [ hasFinished, setHasFinished ] = useState( false );
+	const [ hasHiddenOnboardingThisSession, setHasHiddenOnboardingThisSession ] = useState( false );
 	const [ hasFollowedInInterestsStep, setHasFollowedInInterestsStep ] = useState( false );
 	const [ isDismissConfirmOpen, setIsDismissConfirmOpen ] = useState( false );
 	const markFollowedInInterestsStep = () => setHasFollowedInInterestsStep( true );
+	const hideOnboardingThisSession = () => setHasHiddenOnboardingThisSession( true );
 
 	// Stable blog map for the interests step — initialized lazily the first
 	// time the onboarding modal is actually shown, so the random blog selection
@@ -205,10 +207,10 @@ const ReaderOnboardingRsm = ( {
 		setStartingForceShow( ! hasNonSelfSubscriptions );
 	}, [ startingForceShow, subscriptionsLoading, hasNonSelfSubscriptions ] );
 
-	const forceShow = ! hasFinished && startingForceShow === true;
+	const forceShow = ! hasHiddenOnboardingThisSession && startingForceShow === true;
 
 	const shouldShowOnboarding =
-		isEnabled( 'reader/force-onboarding' ) ||
+		( isEnabled( 'reader/force-onboarding' ) && ! hasHiddenOnboardingThisSession ) ||
 		( ! hasDismissedOnboarding && ( forceShow || !! meetsEligibility ) );
 
 	const shouldRenderOnboarding = shouldShowOnboarding && ! isSuppressed;
@@ -332,7 +334,7 @@ const ReaderOnboardingRsm = ( {
 		recordOnboardingCompleted();
 		runStepSideEffects( 'discover' );
 		setCurrentStep( null );
-		setHasFinished( true );
+		hideOnboardingThisSession();
 	};
 
 	const itemClickHandler = ( task: Task ) => {
@@ -361,6 +363,7 @@ const ReaderOnboardingRsm = ( {
 		}
 		dispatch( savePreference( READER_ONBOARDING_DISMISSED_PREFERENCE_KEY, true ) );
 		setIsDismissConfirmOpen( false );
+		hideOnboardingThisSession();
 	};
 
 	// Track if user viewed Reader Onboarding.

@@ -985,7 +985,7 @@ describe( 'ReaderOnboardingRsm – forceShow snapshot', () => {
 		expect( screen.getByTestId( 'welcome-modal-content' ) ).toBeVisible();
 	} );
 
-	it( 'disables forceShow after the user clicks Finish on the subscribe step', async () => {
+	it( 'hides onboarding for the session after the user clicks Finish on the subscribe step', async () => {
 		seedAboveEligibilityThresholds();
 		const useSiteSubscriptions = getUseSiteSubscriptionsMock();
 		useSiteSubscriptions.mockImplementation( () => ( {
@@ -1019,8 +1019,8 @@ describe( 'ReaderOnboardingRsm – forceShow snapshot', () => {
 
 		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
 
-		// Modal is closed, and forceShow is now off — onRender should report false
-		// even though hasNonSelfSubscriptions is still false.
+		// Modal is closed, and the session hide latch is set — onRender should
+		// report false even though hasNonSelfSubscriptions is still false.
 		await waitFor( () => {
 			expect( onRender ).toHaveBeenLastCalledWith( false );
 		} );
@@ -1278,7 +1278,7 @@ describe( 'ReaderOnboardingRsm – permanent checklist dismiss', () => {
 		).not.toBeInTheDocument();
 	} );
 
-	it( 'still renders onboarding when reader/force-onboarding is enabled even if dismissed', async () => {
+	it( 'still renders onboarding when reader/force-onboarding is enabled even if permanently dismissed', async () => {
 		overrideMocks( { hasDismissedOnboarding: true } );
 		jest
 			.mocked( isEnabled )
@@ -1288,5 +1288,28 @@ describe( 'ReaderOnboardingRsm – permanent checklist dismiss', () => {
 
 		expect( await screen.findByTestId( 'welcome-modal-content' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Dismiss onboarding checklist' } ) ).toBeVisible();
+	} );
+
+	it( 'hides onboarding for the session when dismissed under reader/force-onboarding', async () => {
+		overrideMocks( { hasDismissedOnboarding: true } );
+		jest
+			.mocked( isEnabled )
+			.mockImplementation( ( flag: string ) => flag === 'reader/force-onboarding' );
+
+		const onRender = jest.fn();
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm onRender={ onRender } /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Dismiss onboarding checklist' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );
+
+		await waitFor( () => {
+			expect( onRender ).toHaveBeenLastCalledWith( false );
+		} );
+		expect( screen.queryByTestId( 'welcome-modal-content' ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'button', { name: 'Dismiss onboarding checklist' } )
+		).not.toBeInTheDocument();
 	} );
 } );
