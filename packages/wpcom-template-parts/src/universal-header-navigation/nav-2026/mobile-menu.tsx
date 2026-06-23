@@ -36,7 +36,7 @@ interface Nav2026MobileMenuProps {
 	variant: 'default' | 'minimal';
 	mobilePlatform: 'ios' | 'android' | null;
 	mobileFooterRef: React.RefObject< HTMLDivElement >;
-	closeMobileMenu: ( reason?: string ) => void;
+	closeMobileMenu: ( reason: string ) => void;
 	setCurrentDropdown: ( name: string | null ) => void;
 }
 

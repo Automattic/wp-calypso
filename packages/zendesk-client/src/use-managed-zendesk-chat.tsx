@@ -318,6 +318,7 @@ export const useManagedZendeskChat = () => {
 
 	const agentticMessages = useMemo( () => {
 		const rawMessages = sortMessagesByTimestamp( conversation?.messages ?? [] );
+		const chatSessionId = conversation?.metadata?.chat_session_id;
 		const ratingMessage = rawMessages.find( ( msg ) => msg.metadata?.rated === true );
 		const hasRated = ratingMessage !== undefined;
 		let score: 'GOOD' | 'BAD' | null = null;
@@ -446,10 +447,7 @@ export const useManagedZendeskChat = () => {
 				],
 			} );
 		}
-		if (
-			conversation?.metadata?.started_from === 'chat' &&
-			conversation?.metadata?.chat_session_id
-		) {
+		if ( conversation?.metadata?.started_from === 'chat' && chatSessionId ) {
 			messages.unshift( {
 				id: 'transfer_message',
 				role: 'agent',
@@ -465,11 +463,7 @@ export const useManagedZendeskChat = () => {
 									{ createInterpolateElement(
 										__( 'Started from <a>another chat</a>', '__i18n_text_domain__' ),
 										{
-											a: (
-												<Link
-													to={ `/chat?sessionId=${ conversation?.metadata?.chat_session_id }` }
-												/>
-											),
+											a: <Link to="/chat" state={ { sessionId: chatSessionId } } />,
 										}
 									) }
 								</div>

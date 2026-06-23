@@ -112,56 +112,42 @@ const LIMITED_BLOCK_SUGGESTION_PRIORITY = [
 	'generate-alt-text',
 ];
 
-type JetpackAiSidebarPreviewFeature =
+type SidebarFeature =
 	| 'aiEditorialReview'
 	| 'generateFeedback'
 	| 'blockTransformations'
-	| 'optimizeTitleSuggestion'
-	| 'chatHistory'
-	| 'supportGuides';
+	| 'optimizeTitleSuggestion';
 
 function getAgentsManagerData() {
 	return typeof agentsManagerData !== 'undefined' ? agentsManagerData : undefined;
 }
 
-function isJetpackAiSidebarPreviewFeatureEnabled(
-	feature: JetpackAiSidebarPreviewFeature,
-	defaultValue: boolean
-): boolean {
-	const preview = getAgentsManagerData()?.jetpackAiSidebarPreview;
-	if ( ! preview ) {
-		return defaultValue;
+function getSidebarConfig() {
+	return getAgentsManagerData()?.jetpackAiSidebar;
+}
+
+function isSidebarFeatureEnabled( feature: SidebarFeature, fallback: boolean ): boolean {
+	const config = getSidebarConfig();
+	if ( ! config ) {
+		return fallback;
 	}
-	if ( ! preview.enabled ) {
-		return false;
-	}
-	return preview.features?.[ feature ] === true;
+	return config.enabled ? config.features?.[ feature ] === true : false;
 }
 
 function isAiEditorialReviewEnabled(): boolean {
-	const data = getAgentsManagerData();
-	if ( ! data ) {
-		return false;
-	}
-	if ( data.jetpackAiSidebarPreview ) {
-		return isJetpackAiSidebarPreviewFeatureEnabled(
-			'aiEditorialReview',
-			!! data.aiEditorialReviewEnabled
-		);
-	}
-	return !! data.aiEditorialReviewEnabled || !! data.reviewMediatorEnabled;
+	return isSidebarFeatureEnabled( 'aiEditorialReview', false );
 }
 
 function isOptimizeTitleSuggestionEnabled(): boolean {
-	return isJetpackAiSidebarPreviewFeatureEnabled( 'optimizeTitleSuggestion', true );
+	return isSidebarFeatureEnabled( 'optimizeTitleSuggestion', false );
 }
 
 function isBlockTransformationsEnabled(): boolean {
-	return isJetpackAiSidebarPreviewFeatureEnabled( 'blockTransformations', true );
+	return isSidebarFeatureEnabled( 'blockTransformations', true );
 }
 
 function isGenerateFeedbackEnabled(): boolean {
-	return isJetpackAiSidebarPreviewFeatureEnabled( 'generateFeedback', false );
+	return isSidebarFeatureEnabled( 'generateFeedback', false );
 }
 
 function getCurrentEditorPostType(): string | undefined {

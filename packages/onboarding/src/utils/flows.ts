@@ -107,6 +107,10 @@ export const isStartWritingFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ START_WRITING_FLOW ].includes( flowName ) );
 };
 
+export const isWriteOnFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ WRITE_ON_FLOW ].includes( flowName ) );
+};
+
 export const isOnboardingFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ ONBOARDING_FLOW ].includes( flowName ) );
 };

@@ -94,7 +94,9 @@ const UniversalNavbarHeader = ( {
 	const activeCategory = nav2026Menus.find( ( menu ) => menu.name === currentDropdown );
 
 	const closeMobileMenu = useCallback(
-		( reason = 'close_button' ) => {
+		// `reason` is required (no default) so a new close path that forgets to
+		// label itself fails the type-check instead of silently logging a wrong reason.
+		( reason: string ) => {
 			setMobileMenuOpen( ( open ) => {
 				if ( open && nav2026 ) {
 					recordMobileMenuClose( isScrolledRef.current, reason );
