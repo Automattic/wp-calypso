@@ -49,8 +49,6 @@
 }
 
 .wpnc__note-list .dataviews-view-list {
-	margin-top: $grid-unit-10;
-
 	// When displaying fields in the DataViews, using the --wp-admin-theme-color color on hover is overwhelming.
 	// We override the hover color with the text color.
 	div[role="article"] {
