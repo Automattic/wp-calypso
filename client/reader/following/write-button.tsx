@@ -25,9 +25,10 @@ export function WriteButton() {
 		<Button
 			variant="primary"
 			className="following__write-button"
-			// `origin=reader` tells the write editor (in jetpack-mu-wpcom) where the
-			// user came from, so its back button can return them to the Reader.
-			href="https://wordpress.com/write-editor?origin=reader"
+			// `source=reader` tells the write editor (in jetpack-mu-wpcom) where the
+			// user came from, so its back button can return them to the Reader. It
+			// reuses the editor's existing `source` query param.
+			href="https://wordpress.com/write-editor?source=reader"
 			// The write editor is served by wpcom, not Calypso, so this must be a
 			// full-page navigation rather than an SPA route. `rel="external"` stops
 			// page.js from intercepting it as a client-side route.
