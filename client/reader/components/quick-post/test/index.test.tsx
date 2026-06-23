@@ -9,6 +9,7 @@ import nock from 'nock';
 import { DEFAULT_SCHEME, PREFERENCE_KEY } from 'calypso/lib/color-scheme';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
@@ -16,7 +17,7 @@ import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getMostRecentlySelectedSiteId, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import QuickPost from '../index';
+import QuickPost, { READER_QUICK_POST_MINIMIZED_PREFERENCE } from '../index';
 
 jest.mock( 'calypso/state/notices/actions', () => ( {
 	successNotice: jest.fn( () => ( {
@@ -85,6 +86,9 @@ jest.mock( 'calypso/state/current-user/selectors', () => ( {
 jest.mock( 'calypso/state/preferences/selectors', () => ( {
 	getPreference: jest.fn(),
 } ) );
+jest.mock( 'calypso/state/preferences/actions', () => ( {
+	savePreference: jest.fn( ( key, value ) => ( { type: 'SAVE_PREFERENCE', key, value } ) ),
+} ) );
 jest.mock( 'calypso/state/selectors/get-primary-site-id', () => ( {
 	__esModule: true,
 	default: jest.fn(),
@@ -120,6 +124,16 @@ describe( 'QuickPost', () => {
 	const mockEditor = Editor as jest.Mock;
 	const getLastEditorProps = () => mockEditor.mock.calls[ mockEditor.mock.calls.length - 1 ][ 0 ];
 
+	// `getPreference` is read for both the color scheme and the minimized state, so
+	// resolve each call by its preference key rather than a single return value.
+	const mockPreferences = ( {
+		colorScheme = DEFAULT_SCHEME,
+		minimized = false,
+	}: { colorScheme?: string; minimized?: boolean } = {} ) =>
+		( getPreference as jest.Mock ).mockImplementation( ( _state, key ) =>
+			key === READER_QUICK_POST_MINIMIZED_PREFERENCE ? minimized : colorScheme
+		);
+
 	beforeEach( () => {
 		jest.clearAllMocks();
 		localStorage.clear();
@@ -138,7 +152,7 @@ describe( 'QuickPost', () => {
 		( getPrimarySiteId as jest.Mock ).mockReturnValue( null );
 		( hasLoadedSites as jest.Mock ).mockReturnValue( true );
 		( getSiteAdminUrl as jest.Mock ).mockReturnValue( 'https://example.com/wp-admin' );
-		( getPreference as jest.Mock ).mockReturnValue( DEFAULT_SCHEME );
+		mockPreferences();
 		( useMediaQuery as jest.Mock ).mockReturnValue( false );
 	} );
 
@@ -148,7 +162,7 @@ describe( 'QuickPost', () => {
 	} );
 
 	it( 'passes dark mode props to the editor when the saved preference is dark', () => {
-		( getPreference as jest.Mock ).mockReturnValue( 'dark' );
+		mockPreferences( { colorScheme: 'dark' } );
 
 		renderWithProvider( <QuickPost /> );
 
@@ -162,7 +176,7 @@ describe( 'QuickPost', () => {
 	} );
 
 	it( 'passes dark mode props to the editor when the system preference resolves to dark', () => {
-		( getPreference as jest.Mock ).mockReturnValue( 'system' );
+		mockPreferences( { colorScheme: 'system' } );
 		( useMediaQuery as jest.Mock ).mockReturnValue( true );
 
 		renderWithProvider( <QuickPost /> );
@@ -176,7 +190,7 @@ describe( 'QuickPost', () => {
 	} );
 
 	it( 'keeps light editor props when the system preference resolves to light', () => {
-		( getPreference as jest.Mock ).mockReturnValue( 'system' );
+		mockPreferences( { colorScheme: 'system' } );
 		( useMediaQuery as jest.Mock ).mockReturnValue( false );
 
 		renderWithProvider( <QuickPost /> );
@@ -283,5 +297,53 @@ describe( 'QuickPost', () => {
 				'calypso_reader_quick_post_full_editor_opened'
 			);
 		} );
+	} );
+
+	it( 'renders the editor expanded by default with a minimize control', () => {
+		renderWithProvider( <QuickPost /> );
+
+		expect( screen.getByRole( 'textbox', { name: 'Quick post editor' } ) ).toBeVisible();
+		expect(
+			screen.getByRole( 'button', { name: 'Minimize the quick post editor' } )
+		).toBeVisible();
+	} );
+
+	it( 'hides the editor and shows an expand control when the minimized preference is set', () => {
+		mockPreferences( { minimized: true } );
+
+		renderWithProvider( <QuickPost /> );
+
+		expect(
+			screen.queryByRole( 'textbox', { name: 'Quick post editor' } )
+		).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Post' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Expand the quick post editor' } ) ).toBeVisible();
+	} );
+
+	it( 'saves the minimized preference and tracks the event when minimizing', async () => {
+		const mockTrackEvent = jest.fn();
+		( useRecordReaderTracksEvent as jest.Mock ).mockReturnValue( mockTrackEvent );
+
+		renderWithProvider( <QuickPost /> );
+
+		await userEvent.click(
+			screen.getByRole( 'button', { name: 'Minimize the quick post editor' } )
+		);
+
+		expect( savePreference ).toHaveBeenCalledWith( READER_QUICK_POST_MINIMIZED_PREFERENCE, true );
+		expect( mockTrackEvent ).toHaveBeenCalledWith( 'calypso_reader_quick_post_minimized' );
+	} );
+
+	it( 'saves the expanded preference and tracks the event when expanding', async () => {
+		mockPreferences( { minimized: true } );
+		const mockTrackEvent = jest.fn();
+		( useRecordReaderTracksEvent as jest.Mock ).mockReturnValue( mockTrackEvent );
+
+		renderWithProvider( <QuickPost /> );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Expand the quick post editor' } ) );
+
+		expect( savePreference ).toHaveBeenCalledWith( READER_QUICK_POST_MINIMIZED_PREFERENCE, false );
+		expect( mockTrackEvent ).toHaveBeenCalledWith( 'calypso_reader_quick_post_expanded' );
 	} );
 } );

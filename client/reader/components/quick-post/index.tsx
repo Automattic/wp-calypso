@@ -12,7 +12,9 @@ import * as heading from '@wordpress/block-library/build-module/heading';
 import { createBlock, parse, serialize } from '@wordpress/blocks';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
+import { chevronDown, chevronUp } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, type JSX } from 'react';
 import SitesDropdown from 'calypso/components/sites-dropdown';
@@ -20,6 +22,7 @@ import { DEFAULT_SCHEME, PREFERENCE_KEY, isColorScheme } from 'calypso/lib/color
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice, warningNotice } from 'calypso/state/notices/actions';
+import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
@@ -72,6 +75,8 @@ const QUICK_POST_EDITOR_DARK_STYLES = `
 	}
 `;
 
+export const READER_QUICK_POST_MINIMIZED_PREFERENCE = 'reader_quick_post_minimized';
+
 export default function QuickPost(): JSX.Element | null {
 	const translate = useTranslate();
 	const locale = useLocale();
@@ -95,6 +100,11 @@ export default function QuickPost(): JSX.Element | null {
 	const isReaderDarkMode =
 		colorScheme === 'dark' || ( colorScheme === 'system' && systemPrefersDark );
 	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
+	const isMinimized = Boolean(
+		useSelector( ( state: AppState ) =>
+			getPreference( state, READER_QUICK_POST_MINIMIZED_PREFERENCE )
+		)
+	);
 	const siteId = selectedSiteId || mostRecentlySelectedSiteId || primarySiteId || undefined;
 	const siteAdminUrl = useSelector( ( state ) =>
 		siteId ? getSiteAdminUrl( state, siteId ) : null
@@ -190,6 +200,14 @@ export default function QuickPost(): JSX.Element | null {
 		dispatch( setSelectedSiteId( siteId ) );
 	};
 
+	const toggleMinimized = () => {
+		const nextMinimized = ! isMinimized;
+		dispatch( savePreference( READER_QUICK_POST_MINIMIZED_PREFERENCE, nextMinimized ) );
+		recordReaderTracksEvent(
+			nextMinimized ? 'calypso_reader_quick_post_minimized' : 'calypso_reader_quick_post_expanded'
+		);
+	};
+
 	const handleFullEditorClick = () => {
 		recordReaderTracksEvent( 'calypso_reader_quick_post_full_editor_opened' );
 
@@ -220,48 +238,66 @@ export default function QuickPost(): JSX.Element | null {
 	}
 
 	return (
-		<div className="quick-post">
-			<SitesDropdown
-				selectedSiteId={ siteId }
-				onSiteSelect={ handleSiteSelect }
-				isPlaceholder={ ! hasLoaded }
-			/>
-
-			<div className="verbum-editor-wrapper">
-				<Editor
-					key={ editorKey }
-					focusOnMount={ false }
-					initialContent={ postContent }
-					onChange={ setPostContent }
-					isRTL={ isLocaleRtl( locale ) ?? false }
-					isDarkMode={ isReaderDarkMode }
-					customStyles={ `${
-						isReaderDarkMode ? QUICK_POST_EDITOR_DARK_STYLES : ''
-					}${ QUICK_POST_EDITOR_BASE_STYLES }` }
+		<div className={ clsx( 'quick-post', { 'is-minimized': isMinimized } ) }>
+			<HStack className="quick-post-header" justify="space-between">
+				<span className="quick-post-title">{ translate( 'Write a quick post' ) }</span>
+				<Button
+					className="quick-post-minimize-toggle"
+					icon={ isMinimized ? chevronDown : chevronUp }
+					onClick={ toggleMinimized }
+					label={
+						isMinimized
+							? translate( 'Expand the quick post editor' )
+							: translate( 'Minimize the quick post editor' )
+					}
 				/>
-			</div>
-
-			<HStack className="quick-post-actions" justify="flex-end">
-				<Button
-					variant="tertiary"
-					onClick={ handleFullEditorClick }
-					title={ translate( 'Edit using the full editor.' ) }
-					disabled={ isPublishing }
-					isBusy={ isSavingDraft }
-				>
-					<span>{ isSavingDraft ? translate( 'Saving…' ) : translate( 'Edit' ) }</span>
-					<span>{ isLocaleRtl( locale ) ? '\u2196' : '\u2197' }</span>
-				</Button>
-
-				<Button
-					variant="primary"
-					onClick={ handlePublish }
-					disabled={ isPublishing || isSavingDraft }
-					isBusy={ isPublishing }
-				>
-					{ isPublishing ? translate( 'Posting…' ) : translate( 'Post' ) }
-				</Button>
 			</HStack>
+
+			{ ! isMinimized && (
+				<>
+					<SitesDropdown
+						selectedSiteId={ siteId }
+						onSiteSelect={ handleSiteSelect }
+						isPlaceholder={ ! hasLoaded }
+					/>
+
+					<div className="verbum-editor-wrapper">
+						<Editor
+							key={ editorKey }
+							focusOnMount={ false }
+							initialContent={ postContent }
+							onChange={ setPostContent }
+							isRTL={ isLocaleRtl( locale ) ?? false }
+							isDarkMode={ isReaderDarkMode }
+							customStyles={ `${
+								isReaderDarkMode ? QUICK_POST_EDITOR_DARK_STYLES : ''
+							}${ QUICK_POST_EDITOR_BASE_STYLES }` }
+						/>
+					</div>
+
+					<HStack className="quick-post-actions" justify="flex-end">
+						<Button
+							variant="tertiary"
+							onClick={ handleFullEditorClick }
+							title={ translate( 'Edit using the full editor.' ) }
+							disabled={ isPublishing }
+							isBusy={ isSavingDraft }
+						>
+							<span>{ isSavingDraft ? translate( 'Saving…' ) : translate( 'Edit' ) }</span>
+							<span>{ isLocaleRtl( locale ) ? '\u2196' : '\u2197' }</span>
+						</Button>
+
+						<Button
+							variant="primary"
+							onClick={ handlePublish }
+							disabled={ isPublishing || isSavingDraft }
+							isBusy={ isPublishing }
+						>
+							{ isPublishing ? translate( 'Posting…' ) : translate( 'Post' ) }
+						</Button>
+					</HStack>
+				</>
+			) }
 		</div>
 	);
 }

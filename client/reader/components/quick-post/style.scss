@@ -99,6 +99,20 @@
 		}
 	}
 
+	.quick-post-header {
+		.quick-post-title {
+			font-weight: 600;
+		}
+
+		.quick-post-minimize-toggle {
+			color: var( --color-text-subtle );
+		}
+	}
+
+	&:not( .is-minimized ) .quick-post-header {
+		margin-block-end: 14px;
+	}
+
 	.sites-dropdown__wrapper {
 		width: 200px;
 
