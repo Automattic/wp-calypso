@@ -238,17 +238,9 @@ export type AvailabilityProbe = {
 /**
  * Polls `getStatus` until it returns 200 or `capMs` elapses since the first call.
  *
- * The cap is strict: no poll is started and no sleep runs once the budget is
- * exhausted, and each call receives the remaining budget so callers can clamp
- * their own per-request timeout to it. The clock is injectable so the loop can be
- * unit tested without real timers or network access.
- *
- * @param {Function} getStatus Async function that receives the remaining budget (ms) and returns an HTTP status code (use -1 for a network error).
- * @param {Object} options Poll options.
- * @param {number} options.capMs Maximum time to keep polling, measured from the first call.
- * @param {number} options.intervalMs Delay between polls.
- * @param {AvailabilityClock} options.clock Injectable clock, defaults to real time.
- * @returns {Promise} `recoveredAfterMs` (ms from the first call to the first 200, or null) and the last status seen.
+ * Cap is strict: no poll starts and no sleep runs once the budget is exhausted.
+ * Each call receives the remaining budget so callers can clamp per-request timeouts.
+ * Clock is injectable for unit testing without real timers or network access.
  */
 export async function pollUntilAvailable(
 	getStatus: ( remainingMs: number ) => Promise< number >,
@@ -279,9 +271,6 @@ export async function pollUntilAvailable(
 
 /**
  * Formats an availability probe for inclusion in a failure message.
- *
- * @param {AvailabilityProbe} probe The probe result.
- * @returns {string} A multi-line, log-correlation-friendly summary.
  */
 export function formatAvailabilityProbe( probe: AvailabilityProbe ): string {
 	const lines = probe.targets.map( ( target ) => {

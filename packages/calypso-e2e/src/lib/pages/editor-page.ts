@@ -219,18 +219,9 @@ const PUBLISHED_POST_PROBE_CAP_MS = 20 * 1000;
 const PUBLISHED_POST_PROBE_INTERVAL_MS = 1000;
 
 /**
- * After a post-publish 404, measures when (if ever, within a cap) the published
- * post becomes routable. This bounds the read-after-write window and isolates the
- * failing layer. It is diagnostic only and does not change the failure outcome.
- *
- * Probes three targets in parallel until each returns 200 or the cap elapses:
- *  - `permalink-authenticated`: the permalink with the test session cookies (what the test saw).
- *  - `permalink-anonymous`: the permalink with no cookies (what a logged-out visitor sees).
- *  - `rest-by-id`: the REST by-ID endpoint, isolating permalink/rewrite resolution from row visibility.
- *
- * @param {Page} page The page whose request context (cookies) mirrors the test session.
- * @param {string} permalink The published permalink that returned 404.
- * @param {PublishDiagnostics} publishDiagnostics Captured publish diagnostics, if available.
+ * After a post-publish 404, probes when the permalink and REST by-ID endpoint
+ * become routable to bound the read-after-write window and isolate the failing
+ * layer. Diagnostic only — does not change the failure outcome.
  */
 async function probePublishedPostAvailability(
 	page: Page,
@@ -1260,6 +1251,7 @@ export class EditorPage {
 		}: { timeout?: number; publishDiagnostics?: PublishDiagnostics } = {}
 	): Promise< void > {
 		const publicResponses: ResponseDiagnostic[] = [];
+		let post404 = false;
 
 		// Some blocks, like "Click To Tweet" or "Logos" cause the post-publish
 		// panel to close immediately and leave the post in the unsaved state for
@@ -1293,7 +1285,7 @@ export class EditorPage {
 			// bound the read-after-write window and isolate the failing layer. This is
 			// diagnostic only: the original error is always re-thrown, so pass/fail is
 			// unchanged even if the probe itself fails.
-			if ( error instanceof Error && error.message.startsWith( 'Post not found - 404' ) ) {
+			if ( post404 && error instanceof Error ) {
 				try {
 					const probe = await probePublishedPostAvailability( this.page, url, publishDiagnostics );
 					error.message = `${ error.message }\n${ formatAvailabilityProbe( probe ) }`;
@@ -1325,6 +1317,7 @@ export class EditorPage {
 			const error404 = main.locator( 'div.error-404' );
 			if ( ( await error404.count() ) > 0 ) {
 				await page.waitForTimeout( 1000 ); // Give it a second before retrying.
+				post404 = true;
 				throw new Error(
 					getPublishedPost404Message( {
 						publishDiagnostics,
