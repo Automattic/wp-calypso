@@ -49,6 +49,20 @@ function render( ui: React.ReactElement ) {
 }
 
 describe( 'SpacesView', () => {
+	// The space sub-navigation (NavTabs) uses IntersectionObserver, absent in jsdom.
+	beforeAll( () => {
+		global.IntersectionObserver = class IntersectionObserver {
+			observe() {}
+			unobserve() {}
+			disconnect() {}
+		} as unknown as typeof global.IntersectionObserver;
+	} );
+
+	afterAll( () => {
+		// @ts-expect-error -- cleaning up the stub
+		delete global.IntersectionObserver;
+	} );
+
 	beforeEach( () => {
 		window.history.replaceState( {}, '', '/reader/spaces' );
 		mockSpaceFeed.mockClear();
@@ -91,5 +105,26 @@ describe( 'SpacesView', () => {
 		render( <SpacesView id={ WORK.id } /> );
 
 		expect( screen.queryByRole( 'dialog', { name: 'Customize space' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'shows the Feed and Discover sub-navigation on a space detail page', () => {
+		render( <SpacesView id={ WORK.id } /> );
+
+		expect( screen.getByRole( 'menuitem', { name: /feed/i } ) ).toBeVisible();
+		expect( screen.getByRole( 'menuitem', { name: /discover/i } ) ).toBeVisible();
+	} );
+
+	it( 'renders the feed on the default (feed) tab', () => {
+		render( <SpacesView id={ WORK.id } /> );
+
+		expect( mockSpaceFeed ).toHaveBeenCalled();
+		expect( screen.queryByText( 'Discover is coming soon' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders the Discover placeholder instead of the feed on the discover tab', () => {
+		render( <SpacesView id={ WORK.id } tab="discover" /> );
+
+		expect( screen.getByText( 'Discover is coming soon' ) ).toBeVisible();
+		expect( mockSpaceFeed ).not.toHaveBeenCalled();
 	} );
 } );

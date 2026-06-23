@@ -1,21 +1,25 @@
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { useSpaces } from 'calypso/reader/data/spaces';
 import { CustomizeModal, type CustomizeTab } from 'calypso/reader/spaces/customize-modal';
+import { SpaceDiscoverPlaceholder } from 'calypso/reader/spaces/discover/placeholder';
 import { SpaceFeed } from 'calypso/reader/spaces/feed';
+import { SpaceNavigation } from 'calypso/reader/spaces/space-navigation';
 import type { SpaceFeedLayout } from '@automattic/api-core';
+import type { SpaceTab } from 'calypso/reader/spaces/routes';
 
 import './style.scss';
 
 interface Props {
 	id?: string;
+	tab?: SpaceTab;
 }
 
-export function SpacesView( { id }: Props ) {
+export function SpacesView( { id, tab = 'feed' }: Props ) {
 	const translate = useTranslate();
 	const spaces = useSpaces();
 	const space = id ? spaces.find( ( item ) => item.id === id ) : undefined;
@@ -28,6 +32,16 @@ export function SpacesView( { id }: Props ) {
 	const handleClose = () => {
 		setCustomizeTab( null );
 	};
+
+	let activePanel: ReactNode = null;
+	if ( id && space ) {
+		activePanel =
+			tab === 'discover' ? (
+				<SpaceDiscoverPlaceholder />
+			) : (
+				<SpaceFeed spaceId={ id } layoutView={ layoutView } />
+			);
+	}
 
 	return (
 		<ReaderMain className="reader-spaces">
@@ -51,7 +65,8 @@ export function SpacesView( { id }: Props ) {
 					</HStack>
 				) : null }
 			</NavigationHeader>
-			{ id && space ? <SpaceFeed spaceId={ id } layoutView={ layoutView } /> : null }
+			{ id && space ? <SpaceNavigation spaceId={ id } selectedTab={ tab } /> : null }
+			{ activePanel }
 			<CustomizeModal
 				isOpen={ customizeTab !== null }
 				spaceId={ id ?? null }
