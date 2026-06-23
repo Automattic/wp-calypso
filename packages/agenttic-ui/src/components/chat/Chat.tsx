@@ -13,6 +13,7 @@ import { useInput } from '../../hooks/useInput';
 import type { ChatProps } from '../../types';
 import { cn } from '../../utils/classNames';
 import {
+	clampFreeDragPosition,
 	getChatPosition,
 	getInitialChatPosition,
 	setChatPosition,
@@ -344,6 +345,48 @@ export function Chat( {
 		animate( y, position.y, DRAG_CONSTANTS.SPRING_CONFIG );
 	}, [ freeDrag, x, y, calculateSnapPosition, currentSide ] );
 
+	// In free-drag mode the `bottom: 0` minimize animation already docks the
+	// panel's bottom edge to the viewport bottom, so the correct drag `y` offset
+	// while minimized is 0 — any residual offset would shift the tab off the edge.
+	// Pin `y` to 0 on minimize and restore the dragged offset on un-minimize.
+	// Stashed in a ref to avoid re-render churn, and we never fire onFreeDragEnd
+	// here — this transition is internal and must not corrupt the consumer's
+	// persisted free-drag position.
+	const stashedFreeDragYRef = useRef< number | null >( null );
+	const prevMinimizedRef = useRef( chat.state === 'minimized' );
+	useEffect( () => {
+		const wasMinimized = prevMinimizedRef.current;
+		const isMinimized = chat.state === 'minimized';
+		prevMinimizedRef.current = isMinimized;
+
+		// Corner-snap mode already docks via handleDragEnd → calculateSnapPosition.
+		if ( ! freeDrag || isMinimized === wasMinimized ) {
+			return;
+		}
+
+		if ( isMinimized ) {
+			// Stash the dragged offset, then let `bottom: 0` do the docking by
+			// zeroing the transform. Pinning to 0 avoids double-counting the
+			// in-flight `bottom` and height springs that calculateSnapPosition
+			// would otherwise snapshot mid-transition.
+			stashedFreeDragYRef.current = y.get();
+			const controls = animate( y, 0, DRAG_CONSTANTS.SPRING_CONFIG );
+			return () => controls.stop();
+		}
+
+		// Restore the dragged offset so un-minimizing returns to the dropped spot.
+		if ( stashedFreeDragYRef.current === null ) {
+			return;
+		}
+		const controls = animate(
+			y,
+			stashedFreeDragYRef.current,
+			DRAG_CONSTANTS.SPRING_CONFIG
+		);
+		stashedFreeDragYRef.current = null;
+		return () => controls.stop();
+	}, [ chat.state, freeDrag, y ] );
+
 	// Track previous state for animation purposes
 	const prevStateRef = useRef( chat.state );
 	const fromCompact =
@@ -362,6 +405,19 @@ export function Chat( {
 		}
 
 		const handleResize = () => {
+			// In free-drag mode the panel keeps its dragged position; just clamp
+			// it back on-screen if the resize would push it off — no corner-snap.
+			if ( freeDrag ) {
+				const clamped = clampFreeDragPosition(
+					{ x: x.get(), y: y.get() },
+					STYLE_CONSTANTS.COMPACT_WIDTH,
+					STYLE_CONSTANTS.EXPANDED_HEIGHT
+				);
+				x.set( clamped.x );
+				y.set( clamped.y );
+				return;
+			}
+
 			const position = calculateSnapPosition();
 			if ( ! position ) {
 				return;
@@ -374,7 +430,7 @@ export function Chat( {
 
 		window.addEventListener( 'resize', handleResize );
 		return () => window.removeEventListener( 'resize', handleResize );
-	}, [ chat.state, x, y, calculateSnapPosition ] );
+	}, [ chat.state, x, y, calculateSnapPosition, freeDrag ] );
 
 	// Cleanup timeouts on unmount
 	useEffect( () => {

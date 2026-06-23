@@ -33,6 +33,36 @@ export function getChatPosition(
 }
 
 /**
+ * Clamp a free-drag pixel offset to the inset viewport so the panel can't be
+ * stranded off-screen. Uses the same constraint geometry as the drag box:
+ * x in [0, innerWidth - width - VIEWPORT_OFFSET*2], y in
+ * [2*VIEWPORT_OFFSET + height - innerHeight, 0]. When the viewport is smaller
+ * than the panel the min bound wins (Math.min runs after Math.max).
+ *
+ * @param position   - The free-drag pixel offset to clamp
+ * @param position.x - Horizontal offset
+ * @param position.y - Vertical offset
+ * @param width      - Panel width
+ * @param height     - Panel height
+ * @return The clamped { x, y } pixel offset
+ */
+export function clampFreeDragPosition(
+	{ x, y }: { x: number; y: number },
+	width: number,
+	height: number
+): { x: number; y: number } {
+	const maxX =
+		window.innerWidth - width - STYLE_CONSTANTS.VIEWPORT_OFFSET * 2;
+	const minY =
+		2 * STYLE_CONSTANTS.VIEWPORT_OFFSET + height - window.innerHeight;
+
+	return {
+		x: Math.max( 0, Math.min( x, maxX ) ),
+		y: Math.max( minY, Math.min( y, 0 ) ),
+	};
+}
+
+/**
  * Compute the initial { x, y } pixel seed for the chat panel's motion values.
  *
  * In free drag mode with a persisted position, the saved pixel position is
@@ -67,20 +97,12 @@ export function getInitialChatPosition( {
 		return { x: cornerX, y: 0 };
 	}
 
-	const maxSeedX =
-		window.innerWidth -
-		STYLE_CONSTANTS.COMPACT_WIDTH -
-		STYLE_CONSTANTS.VIEWPORT_OFFSET * 2;
-	const minSeedY =
-		2 * STYLE_CONSTANTS.VIEWPORT_OFFSET +
-		STYLE_CONSTANTS.EXPANDED_HEIGHT -
-		window.innerHeight;
-
 	// Clamp the seed so a persisted off-screen position is pulled back on-screen.
-	return {
-		x: Math.max( 0, Math.min( initialFreeDragPosition.x, maxSeedX ) ),
-		y: Math.max( minSeedY, Math.min( initialFreeDragPosition.y, 0 ) ),
-	};
+	return clampFreeDragPosition(
+		initialFreeDragPosition,
+		STYLE_CONSTANTS.COMPACT_WIDTH,
+		STYLE_CONSTANTS.EXPANDED_HEIGHT
+	);
 }
 
 /**
