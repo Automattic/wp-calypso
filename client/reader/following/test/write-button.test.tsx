@@ -22,7 +22,8 @@ describe( 'WriteButton', () => {
 	it( 'renders a full-page link to the wpcom write editor when the user has sites', () => {
 		render( <WriteButton />, { initialState: stateWithSites } );
 		const link = screen.getByRole( 'link', { name: 'Write' } );
-		expect( link ).toHaveAttribute( 'href', 'https://wordpress.com/write-editor' );
+		// origin=reader lets the write editor's back button return to the Reader.
+		expect( link ).toHaveAttribute( 'href', 'https://wordpress.com/write-editor?origin=reader' );
 		// rel="external" keeps page.js from hijacking it as an SPA route.
 		expect( link ).toHaveAttribute( 'rel', 'external' );
 	} );
