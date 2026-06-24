@@ -1,10 +1,17 @@
 import { createFeedbackActions, ThumbsUpIcon, ThumbsDownIcon } from '@automattic/agenttic-ui';
-import { createElement, useCallback, useEffect, useRef, useState } from '@wordpress/element';
+import {
+	createElement,
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from '@wordpress/element';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../constants';
 import { useAgentsManagerContext } from '../contexts';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../utils/tracks';
 import type { AuthProvider, UseAgentChatReturn } from '@automattic/agenttic-client';
-import type { Message } from '@automattic/agenttic-ui/dist/types';
+import type { Message, MessageAction } from '@automattic/agenttic-ui/dist/types';
 
 const FEEDBACK_API_BASE = 'https://public-api.wordpress.com/wpcom/v2/ai/feedback';
 
@@ -17,6 +24,7 @@ export interface UseFeedbackActionReturn {
 	showFeedbackInput: boolean;
 	submitFeedbackText: ( feedbackText: string ) => Promise< void >;
 	resetFeedback: () => void;
+	getFeedbackActionsForMessage: ( message: Message ) => MessageAction[];
 }
 
 export async function rateMessage(
@@ -159,7 +167,6 @@ function getPreviousMessages( messages: Message[], targetMessageId: string ): Pr
 }
 
 export default function useFeedbackAction( {
-	registerMessageActions,
 	messages,
 }: UseFeedbackActionConfig ): UseFeedbackActionReturn {
 	const { agentConfig, isLoggedIn, getActiveSessionId } = useAgentsManagerContext();
@@ -209,13 +216,13 @@ export default function useFeedbackAction( {
 		[ getActiveSessionId ]
 	);
 
-	useEffect( () => {
-		// Only register feedback actions for logged-in users.
+	const feedbackManager = useMemo( () => {
+		// Only provide feedback actions for logged-in users.
 		if ( ! isLoggedIn ) {
-			return;
+			return null;
 		}
 
-		const feedbackManager = createFeedbackActions( {
+		return createFeedbackActions( {
 			onFeedback: handleFeedback,
 			condition: ( message: Message ) => message.role === 'agent',
 			icons: {
@@ -223,27 +230,38 @@ export default function useFeedbackAction( {
 				down: createElement( ThumbsDownIcon, { className: 'agents-manager-message-action-icon' } ),
 			},
 		} );
+	}, [ handleFeedback, isLoggedIn ] );
 
-		const feedbackRegistration = {
-			id: 'agents-manager-feedback',
-			actions: ( message: Message ) =>
-				feedbackManager.getActionsForMessage( message ).map( ( action, index ) => ( {
-					...action,
-					order: 2 + index,
-				} ) ),
-		};
+	const [ feedbackActionsVersion, setFeedbackActionsVersion ] = useState( 0 );
 
-		registerMessageActions( feedbackRegistration );
+	useEffect( () => {
+		if ( ! feedbackManager ) {
+			return;
+		}
 
 		const handleFeedbackChange = () => {
-			registerMessageActions( { ...feedbackRegistration } );
+			setFeedbackActionsVersion( ( version ) => version + 1 );
 		};
 		feedbackManager.onChange( handleFeedbackChange );
 
 		return () => {
 			feedbackManager.offChange( handleFeedbackChange );
 		};
-	}, [ registerMessageActions, handleFeedback, isLoggedIn ] );
+	}, [ feedbackManager ] );
+
+	const getFeedbackActionsForMessage = useCallback(
+		( message: Message ) => {
+			void feedbackActionsVersion;
+
+			return (
+				feedbackManager?.getActionsForMessage( message ).map( ( action, index ) => ( {
+					...action,
+					order: 2 + index,
+				} ) ) ?? []
+			);
+		},
+		[ feedbackActionsVersion, feedbackManager ]
+	);
 
 	const resetFeedback = useCallback( () => {
 		setShowFeedbackInput( false );
@@ -291,5 +309,6 @@ export default function useFeedbackAction( {
 		showFeedbackInput,
 		submitFeedbackText: handleSubmitFeedbackText,
 		resetFeedback,
+		getFeedbackActionsForMessage,
 	};
 }
