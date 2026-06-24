@@ -90,7 +90,7 @@ function isShowComponentMessage( message: Pick< UIMessage, 'content' > ): boolea
 
 function getShowComponentIdentity( message: Pick< UIMessage, 'content' > ): string | undefined {
 	const toolData = getToolMessageData( message );
-	if ( ! isShowComponentTool( toolData?.toolId ) ) {
+	if ( ! toolData || ! isShowComponentTool( toolData.toolId ) ) {
 		return undefined;
 	}
 
@@ -334,11 +334,7 @@ export default function OrchestratorChat( {
 
 			debugShowComponentMessages( 'useConversation onSuccess loading messages', {
 				serverSessionId,
-				messageIds: loadedMessages.map( ( message ) => message.id ),
-				showComponents: loadedMessages.filter( isShowComponentMessage ).map( ( message ) => ( {
-					id: message.id,
-					tool: getToolMessageData( message ),
-				} ) ),
+				messageCount: loadedMessages.length,
 			} );
 
 			// Update the UI with the loaded messages
@@ -631,9 +627,9 @@ export default function OrchestratorChat( {
 			const deleteDecisions = msgs.map( ( msg ) => {
 				const messageFromRequest = msg as Pick< UIMessage, 'id' > &
 					Partial< Pick< UIMessage, 'content' > >;
-				const fullMessage =
-					( messageFromRequest.content ? messageFromRequest : undefined ) ??
-					messagesRef.current.find( ( message ) => message.id === msg.id );
+				const fullMessage = messageFromRequest.content
+					? ( messageFromRequest as UIMessage )
+					: messagesRef.current.find( ( message ) => message.id === msg.id );
 				const isShowComponent = !! fullMessage && isShowComponentMessage( fullMessage );
 
 				return {

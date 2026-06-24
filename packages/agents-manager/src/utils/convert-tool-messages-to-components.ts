@@ -50,6 +50,11 @@ function getShowComponentSummary( message: UIMessage ): string | undefined {
 	}
 }
 
+function hasAgentRole( message: UIMessage ): boolean {
+	const role = message.role as string;
+	return role === 'agent' || role === 'assistant';
+}
+
 function isDuplicateAdjacentShowComponentSummary(
 	message: UIMessage,
 	messages: UIMessage[],
@@ -78,8 +83,7 @@ function hasLaterAgentToolMessageInSameTurn(
 			return false;
 		}
 
-		// @ts-expect-error -- `assistant` comes from Big Sky messages
-		if ( laterMessage.role !== 'agent' && laterMessage.role !== 'assistant' ) {
+		if ( ! hasAgentRole( laterMessage ) ) {
 			continue;
 		}
 
@@ -111,8 +115,7 @@ export default function convertToolMessagesToComponents( {
 
 		const firstContentText = message.content?.[ 0 ]?.text;
 
-		// @ts-expect-error -- `assistant` comes from Big Sky messages
-		if ( ( message.role !== 'agent' && message.role !== 'assistant' ) || ! firstContentText ) {
+		if ( ! hasAgentRole( message ) || ! firstContentText ) {
 			return [ message ];
 		}
 
