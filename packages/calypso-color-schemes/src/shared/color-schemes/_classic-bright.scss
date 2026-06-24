@@ -36,6 +36,8 @@
 	--color-masterbar-text: var(--studio-white);
 	--color-masterbar-icon: var(--studio-white);
 	--color-masterbar-highlight: var(--color-accent-30);
+	--color-masterbar-submenu-group-background: var(--color-deprecated-blue-80); /* wp-admin ul.ab-sub-secondary */
+	--color-global-masterbar-site-info-background: var(--color-masterbar-submenu-group-background);
 	--color-masterbar-item-hover-background: var(--color-deprecated-blue-70);
 	--color-masterbar-item-active-background: var(--color-deprecated-blue-90);
 	--color-masterbar-item-new-editor-background: var(--studio-gray-50);

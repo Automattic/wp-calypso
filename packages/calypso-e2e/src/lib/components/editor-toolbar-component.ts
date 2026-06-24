@@ -306,37 +306,214 @@ export class EditorToolbarComponent {
 
 	/**
 	 * Opens the editor settings.
+	 *
+	 * For `target: 'Settings'` this toggles the standard post/page settings
+	 * sidebar from its pinned header button.
+	 *
+	 * For `target: 'Jetpack'` this toggles the Jetpack ("Share to social
+	 * media"/Publicize) sidebar from the more-options menu. That menu is shared
+	 * with sibling plugin sidebars, notably "Jetpack Newsletter", so the entry
+	 * is matched by its stable `aria-controls` id rather than the visible label.
+	 * Selecting it usually activates the Jetpack complementary area, but the
+	 * editor intermittently ends up with a sibling area active instead, from the
+	 * exact same click. We therefore verify the active complementary area via
+	 * the editor data store (the source of truth, unaffected by the sidebar's
+	 * exit transition) and re-toggle if a sibling won.
 	 */
 	async openSettings( target: EditorToolbarSettingsButton ): Promise< void > {
 		const editorParent = await this.editor.parent();
 
-		// To support i18n tests.
-		const translatedTargetName = await this.translateFromPage( target );
+		if ( target === 'Settings' ) {
+			// To support i18n tests.
+			const translatedTargetName = await this.translateFromPage( target );
+			const button = editorParent
+				.locator( '.editor-header__settings, .edit-post-header__settings' )
+				.getByLabel( translatedTargetName );
 
-		let button = editorParent
-			.locator( '.editor-header__settings, .edit-post-header__settings' )
-			.getByLabel( translatedTargetName );
+			if ( await this.targetIsOpen( button ) ) {
+				await this.closeMoreOptionsMenu();
+				return;
+			}
 
-		// For other pinned settings, we need to open the options menu
-		// because those are hidden on mobile/small screens
-		if ( target !== 'Settings' ) {
-			await this.openMoreOptionsMenu();
-
-			// Match the sidebar's stable `aria-controls` id, not the visible
-			// label: "Jetpack" is a prefix of "Jetpack Newsletter" and the menu
-			// entries reorder as plugin sidebars register, so a name match can
-			// land on the sibling and open the wrong sidebar.
-			button = editorParent.locator(
-				'[role="menuitemcheckbox"][aria-controls="jetpack-sidebar:jetpack"]'
-			);
-		}
-
-		if ( await this.targetIsOpen( button ) ) {
-			await this.closeMoreOptionsMenu();
+			await button.click();
 			return;
 		}
 
-		await button.click();
+		const menuItem = editorParent.locator(
+			'[role="menuitemcheckbox"][aria-controls="jetpack-sidebar:jetpack"]'
+		);
+
+		const maxAttempts = 3;
+		for ( let attempt = 1; attempt <= maxAttempts; attempt++ ) {
+			await this.openMoreOptionsMenu();
+
+			if ( await this.targetIsOpen( menuItem ) ) {
+				// The Jetpack entry is already selected; close the menu and let
+				// the verification below confirm the right area is active.
+				await this.closeMoreOptionsMenu();
+			} else {
+				await menuItem.click();
+			}
+
+			if ( await this.waitForJetpackSidebarActive() ) {
+				return;
+			}
+		}
+
+		throw new Error(
+			'openSettings( "Jetpack" ): a sibling sidebar (such as "Jetpack Newsletter") kept ' +
+				`winning activation; the Jetpack sidebar was not the active complementary area after ${ maxAttempts } attempts.`
+		);
+	}
+
+	/**
+	 * Waits until the Jetpack sidebar (`jetpack-sidebar/jetpack`) is the active
+	 * complementary area and has stayed active, uninterrupted, for a short
+	 * settle window.
+	 *
+	 * An earlier version sampled the state on a fixed 300ms cadence and accepted
+	 * two consecutive positive reads. That is a heuristic: it can miss a sibling
+	 * stealing activation in the gap between two samples, and can give up one
+	 * read short of success near the deadline. Instead, this subscribes to the
+	 * editor data store and reacts as state transitions are dispatched, then
+	 * requires Jetpack to stay the active area, uninterrupted, for `settleMs`
+	 * before reporting success. A settle in progress is the only path to `true`;
+	 * the deadline gives up with `false` and lets the caller retry. This is not a
+	 * formal proof of stability (a steal-and-restore coalesced into a single
+	 * `wp.data.batch` notification could still go unseen), but it observes far
+	 * more than fixed-cadence sampling, and the flake this targets leaves the
+	 * sibling persistently active, which the settle requirement reliably catches.
+	 * When the store is unavailable the same settle logic runs over a DOM poll.
+	 *
+	 * The check runs inside the Editor frame, so it works for both the iframed
+	 * (Simple) and non-iframed (Atomic) editors.
+	 *
+	 * @param {number} timeout  Maximum time to wait, in milliseconds.
+	 * @param {number} settleMs How long Jetpack must stay active, uninterrupted,
+	 *                          to count as settled.
+	 * @returns {Promise<boolean>} True if the Jetpack sidebar settled as active.
+	 */
+	private async waitForJetpackSidebarActive(
+		timeout = 5 * 1000,
+		settleMs = 750
+	): Promise< boolean > {
+		const editorParent = await this.editor.parent();
+
+		return editorParent.evaluate(
+			( element, { timeoutMs, settleWindowMs }: { timeoutMs: number; settleWindowMs: number } ) =>
+				new Promise< boolean >( ( resolve ) => {
+					const jetpackId = 'jetpack-sidebar:jetpack';
+					const jetpackArea = 'jetpack-sidebar/jetpack';
+					const newsletterId = 'jetpack-subscriptions:jetpack-newsletter-settings-sidebar';
+
+					const editorWindow = element.ownerDocument?.defaultView as
+						| ( Window & {
+								wp?: {
+									data?: {
+										select?: ( store: string ) => {
+											getActiveComplementaryArea?: ( scope: string ) => string | null | undefined;
+										};
+										subscribe?: ( listener: () => void ) => () => void;
+									};
+								};
+						  } )
+						| null;
+
+					const ownerDocument = element.ownerDocument;
+
+					// The editor data store is the source of truth. A defined
+					// reading (another area's id, or `null` for "closed") is
+					// authoritative. The active-area scope is `core` on current
+					// Gutenberg and `core/edit-post` on older builds; read `core`
+					// first and consult the legacy scope only when `core` has no
+					// answer, both to support old builds and to skip the
+					// deprecation warning the legacy scope emits. Only when no
+					// scope can answer do we consult the DOM, treating Jetpack as
+					// active when its region is present and the sibling Newsletter
+					// region is not.
+					const isJetpackActive = (): boolean => {
+						const store = editorWindow?.wp?.data?.select?.( 'core/interface' );
+						if ( store?.getActiveComplementaryArea ) {
+							let area = store.getActiveComplementaryArea( 'core' );
+							if ( area === undefined ) {
+								area = store.getActiveComplementaryArea( 'core/edit-post' );
+							}
+							if ( area === jetpackArea ) {
+								return true;
+							}
+							if ( area !== undefined ) {
+								return false;
+							}
+						}
+
+						return (
+							!! ownerDocument?.querySelector( `[id="${ jetpackId }"]` ) &&
+							! ownerDocument?.querySelector( `[id="${ newsletterId }"]` )
+						);
+					};
+
+					const timers: {
+						settle?: ReturnType< typeof setTimeout >;
+						poll?: ReturnType< typeof setInterval >;
+						backstop?: ReturnType< typeof setTimeout >;
+					} = {};
+					let unsubscribe = () => {};
+					let finished = false;
+
+					const finish = ( settled: boolean ) => {
+						if ( finished ) {
+							return;
+						}
+						finished = true;
+						if ( timers.settle ) {
+							clearTimeout( timers.settle );
+						}
+						if ( timers.poll ) {
+							clearInterval( timers.poll );
+						}
+						if ( timers.backstop ) {
+							clearTimeout( timers.backstop );
+						}
+						unsubscribe();
+						resolve( settled );
+					};
+
+					// Start the settle timer the first time Jetpack is seen
+					// active; cancel it the moment anything else takes over, so
+					// only an uninterrupted run of `settleWindowMs` resolves true.
+					const onChange = () => {
+						if ( isJetpackActive() ) {
+							if ( ! timers.settle ) {
+								timers.settle = setTimeout( () => finish( true ), settleWindowMs );
+							}
+						} else if ( timers.settle ) {
+							clearTimeout( timers.settle );
+							timers.settle = undefined;
+						}
+					};
+
+					// Deadline: if Jetpack has not settled by now it is not going
+					// to, so give up with `false` and let the caller retry. Because
+					// the settle timer is the only path to `true`, a late, unsettled
+					// flicker of Jetpack cannot slip a false positive through here.
+					timers.backstop = setTimeout( () => finish( false ), timeoutMs );
+
+					const subscribe = editorWindow?.wp?.data?.subscribe;
+					if ( subscribe ) {
+						unsubscribe = subscribe( onChange );
+					} else {
+						// No store to observe; poll the DOM so the same settle
+						// logic still applies.
+						timers.poll = setInterval( onChange, 200 );
+					}
+
+					// Evaluate the current state immediately so an already-active
+					// sidebar starts its settle timer without waiting for a store
+					// change that may never come.
+					onChange();
+				} ),
+			{ timeoutMs: timeout, settleWindowMs: settleMs }
+		);
 	}
 
 	/**

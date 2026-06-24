@@ -6,7 +6,7 @@ import {
 } from '@automattic/design-picker';
 import { DOMAIN_FOR_GRAVATAR_FLOW, isDomainForGravatarFlow } from '@automattic/onboarding';
 import { isURL } from '@wordpress/url';
-import { get, reject } from 'lodash';
+import { get } from 'lodash';
 import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { getOnboardingPostCheckoutDestination } from 'calypso/landing/stepper/declarative-flow/helpers/get-onboarding-post-checkout-destination';
@@ -325,7 +325,7 @@ const Flows = {
 
 		return {
 			...flow,
-			steps: reject( flow.steps, ( stepName ) => Flows.excludedSteps.includes( stepName ) ),
+			steps: flow.steps.filter( ( stepName ) => ! Flows.excludedSteps.includes( stepName ) ),
 		};
 	},
 

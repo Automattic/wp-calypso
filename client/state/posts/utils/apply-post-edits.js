@@ -1,4 +1,4 @@
-import { cloneDeep, find, map, mergeWith, reduce, reject } from 'lodash';
+import { cloneDeep, find, map, mergeWith, reduce } from 'lodash';
 
 /*
  * Applies a metadata edit operation (either update or delete) to an existing array of
@@ -19,7 +19,7 @@ function applyMetadataEdit( metadata, edit ) {
 			// return unmodified original value.
 			const { key } = edit;
 			if ( find( metadata, { key } ) ) {
-				return reject( metadata, { key } );
+				return ( Array.isArray( metadata ) ? metadata : [] ).filter( ( m ) => m.key !== key );
 			}
 			return metadata;
 		}

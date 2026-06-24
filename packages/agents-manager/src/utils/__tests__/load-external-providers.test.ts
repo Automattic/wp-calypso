@@ -103,6 +103,14 @@ describe( 'loadExternalProviders', () => {
 		expect( providers.useSuggestions ).toEqual( expect.any( Function ) );
 	} );
 
+	it( 'treats malformed agentProviders data as no providers', async () => {
+		setAgentsManagerData( {
+			agentProviders: 'not-an-array',
+		} );
+
+		await expect( loadExternalProviders() ).resolves.toEqual( {} );
+	} );
+
 	it( 'merges abilities from multiple tool providers and dispatches execution to the owner', async () => {
 		const firstProvider = {
 			getAbilities: jest.fn( () => Promise.resolve( [ createAbility( 'host/navigate' ) ] ) ),
@@ -158,6 +166,23 @@ describe( 'loadExternalProviders', () => {
 		);
 		expect( firstProvider.executeAbility ).toHaveBeenCalled();
 		expect( secondProvider.executeAbility ).not.toHaveBeenCalled();
+	} );
+
+	it( 'returns valid IDs for loaded providers and ignores missing, empty, and duplicate IDs', async () => {
+		setAgentsManagerData( {
+			agentProviders: [
+				{ providerId: 'jetpack-ai-sidebar', getEmptyViewSuggestions: () => [] },
+				{ providerId: '', getEmptyViewSuggestions: () => [] },
+				{ providerId: 'woocommerce-ai', getEmptyViewSuggestions: () => [] },
+				{ getEmptyViewSuggestions: () => [] },
+				{ providerId: 'jetpack-ai-sidebar', getEmptyViewSuggestions: () => [] },
+				{ providerId: 123, getEmptyViewSuggestions: () => [] },
+			],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.providerIds ).toEqual( [ 'jetpack-ai-sidebar', 'woocommerce-ai' ] );
 	} );
 
 	it( 'merges context from multiple context providers', async () => {

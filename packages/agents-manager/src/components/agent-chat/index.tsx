@@ -1,4 +1,3 @@
-import { SubmitOptions } from '@automattic/agenttic-client';
 import {
 	AgentUI,
 	createMessageRenderer,
@@ -54,7 +53,7 @@ interface Props {
 	/** Indicates if the chat is expanded (floating mode). */
 	isOpen: boolean;
 	/** Called when the user submits a message. */
-	onSubmit: ( message: string, options?: SubmitOptions ) => Promise< void > | void;
+	onSubmit: ( message: string, files?: File[] ) => Promise< void > | void;
 	/** Called when the user aborts the current request. */
 	onAbort: () => void;
 	/** Called when the chat is closed. */
@@ -171,10 +170,10 @@ export default function AgentChat( {
 	onContextCardAction,
 	onContextCardDismiss,
 }: Props ) {
-	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
+	const { setFloatingPosition, setFreeDragPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const conversationViewRef = useRef< HTMLDivElement >( null );
 	const imageUploaderRef = useRef< ImageUploaderHandle >( null );
-	const { floatingPosition } = useSelect( ( select ) => {
+	const { floatingPosition, freeDragPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
@@ -264,6 +263,8 @@ export default function AgentChat( {
 		<AgentUI.Container
 			initialChatPosition={ floatingPosition }
 			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
+			initialFreeDragPosition={ freeDragPosition ?? undefined }
+			onFreeDragEnd={ setFreeDragPosition }
 			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ messages }
 			isProcessing={ isProcessing }
@@ -271,6 +272,7 @@ export default function AgentChat( {
 			error={ error }
 			onSubmit={ onSubmit }
 			variant={ isDocked ? 'embedded' : 'floating' }
+			freeDrag={ ! isDocked }
 			suggestions={ suggestions }
 			clearSuggestions={ clearSuggestions }
 			onSuggestionClick={ onSuggestionClick }

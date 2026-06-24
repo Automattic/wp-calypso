@@ -37,7 +37,7 @@ export class SidebarComponent {
 	 * Waits for the WordPress.com Calypso sidebar to be ready on the page.
 	 */
 	async waitForSidebarInitialization(): Promise< void > {
-		const sidebarLocator = this.page.locator( selectors.sidebar );
+		const sidebarLocator = this.page.locator( `${ selectors.sidebar }, .global-sidebar` ).first();
 
 		await Promise.all( [
 			this.page.waitForLoadState( 'load', { timeout: 20 * 1000 } ),
@@ -49,10 +49,8 @@ export class SidebarComponent {
 		if ( await this.sidebarIsCollapsed() ) {
 			const sidebarCollapseToggle = this.page.locator( selectors.linkWithText( 'Collapse menu' ) );
 			// Wait until the collapsed sidebar CSS is detached from DOM, ie. it is no longer collapsed.
-			await Promise.all( [
-				this.page.waitForSelector( selectors.collapsedSidebar, { state: 'detached' } ),
-				sidebarCollapseToggle.dispatchEvent( 'click' ),
-			] );
+			await sidebarCollapseToggle.click();
+			await this.page.locator( selectors.collapsedSidebar ).waitFor( { state: 'detached' } );
 		}
 	}
 

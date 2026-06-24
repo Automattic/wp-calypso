@@ -1,6 +1,6 @@
-import { pick } from '@automattic/js-utils';
+import { pick, sortBy } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
-import { filter, find, isEmpty, sortBy } from 'lodash';
+import { filter, find, isEmpty } from 'lodash';
 import { addQueryArgs } from 'calypso/lib/url';
 import flows from 'calypso/signup/config/flows';
 import { getStepModuleName } from 'calypso/signup/config/step-components';

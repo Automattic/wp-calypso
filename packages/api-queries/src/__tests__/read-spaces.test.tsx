@@ -1,4 +1,9 @@
-import { QueryClient, QueryClientProvider, useMutation } from '@tanstack/react-query';
+import {
+	keepPreviousData,
+	QueryClient,
+	QueryClientProvider,
+	useMutation,
+} from '@tanstack/react-query';
 import { act, renderHook } from '@testing-library/react';
 import nock from 'nock';
 import {
@@ -10,6 +15,7 @@ import {
 	readSpacesQuery,
 	updateReadSpaceMutation,
 } from '../read-spaces';
+import { getStreamInfiniteQueryKeyPrefix } from '../read-streams';
 import type { ReadSpace, ReadSpaceDetails, SiteSubscriptionItem } from '@automattic/api-core';
 import type { UseMutationOptions } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
@@ -70,9 +76,33 @@ const detailResponse = ( overrides: Record< string, unknown > = {} ) => ( {
 describe( 'read spaces mutations', () => {
 	afterEach( () => nock.cleanAll() );
 
+	describe( 'queries', () => {
+		it( 'persists and keeps previous data for the spaces list query', () => {
+			const options = readSpacesQuery();
+
+			expect( options.queryKey ).toEqual( [ 'read', 'spaces', 'list' ] );
+			expect( options.meta ).toEqual( { persist: true } );
+			expect( options.placeholderData ).toBe( keepPreviousData );
+			expect( options.refetchOnMount ).toBe( 'always' );
+		} );
+
+		it( 'persists space detail queries without bleeding the previous space', () => {
+			const options = readSpaceQuery( '3' );
+
+			expect( options.queryKey ).toEqual( [ 'read', 'spaces', 'detail', '3' ] );
+			expect( options.meta ).toEqual( { persist: true } );
+			// No keepPreviousData on the detail query: a spaceId change must not flash
+			// the previous space's name/sources. Persisted cache + refetchOnMount keep
+			// the same space visible during refetch.
+			expect( options.placeholderData ).toBeUndefined();
+			expect( options.refetchOnMount ).toBe( 'always' );
+		} );
+	} );
+
 	describe( 'createReadSpaceMutation', () => {
 		it( 'appends the summary to the list and seeds the detail cache', async () => {
 			const client = newClient();
+			const invalidateQueries = jest.spyOn( client, 'invalidateQueries' );
 			nock( BASE )
 				.post( '/wpcom/v2/reader/spaces' )
 				.reply( 201, detailResponse( { id: 99, title: 'New' } ) );
@@ -91,12 +121,19 @@ describe( 'read spaces mutations', () => {
 					tags: [],
 				}
 			);
+			expect( invalidateQueries ).toHaveBeenCalledWith( {
+				queryKey: readSpacesQuery().queryKey,
+			} );
+			expect( invalidateQueries ).toHaveBeenCalledWith( {
+				queryKey: readSpaceQuery( '99' ).queryKey,
+			} );
 		} );
 	} );
 
 	describe( 'updateReadSpaceMutation', () => {
 		it( 'refreshes the matching list summary and the detail cache', async () => {
 			const client = newClient();
+			const invalidateQueries = jest.spyOn( client, 'invalidateQueries' );
 			client.setQueryData< ReadSpace[] >( readSpacesQuery().queryKey, [
 				{ id: '3', name: 'Old', layout: { color: 'blue', icon: 'inbox' } },
 			] );
@@ -123,12 +160,36 @@ describe( 'read spaces mutations', () => {
 			expect(
 				client.getQueryData< ReadSpaceDetails >( readSpaceQuery( '3' ).queryKey )
 			).toMatchObject( { id: '3', name: 'New name', tags: [ 'x' ] } );
+			expect( invalidateQueries ).toHaveBeenCalledWith( {
+				queryKey: readSpacesQuery().queryKey,
+			} );
+			expect( invalidateQueries ).toHaveBeenCalledWith( {
+				queryKey: readSpaceQuery( '3' ).queryKey,
+			} );
+		} );
+
+		it( "resets the space's posts feed so it reloads after a tag/feed edit", async () => {
+			const client = newClient();
+			const spy = jest.spyOn( client, 'resetQueries' );
+			nock( BASE )
+				.put( '/wpcom/v2/reader/spaces/3' )
+				.reply( 200, detailResponse( { id: 3, tags: [ 'x' ] } ) );
+
+			await runMutation( client, updateReadSpaceMutation( client ), {
+				spaceId: '3',
+				params: { tags: [ 'x' ] },
+			} );
+
+			expect( spy ).toHaveBeenCalledWith( {
+				queryKey: getStreamInfiniteQueryKeyPrefix( 'space:3' ),
+			} );
 		} );
 	} );
 
 	describe( 'deleteReadSpaceMutation', () => {
 		it( 'removes the deleted space from the list and discards its detail cache', async () => {
 			const client = newClient();
+			const invalidateQueries = jest.spyOn( client, 'invalidateQueries' );
 			const keep: ReadSpace = { id: 'keep', name: 'Keep', layout: { color: 'red', icon: 'box' } };
 			client.setQueryData< ReadSpace[] >( readSpacesQuery().queryKey, [
 				keep,
@@ -145,12 +206,17 @@ describe( 'read spaces mutations', () => {
 			expect(
 				client.getQueryData< ReadSpaceDetails >( readSpaceQuery( '3' ).queryKey )
 			).toBeUndefined();
+			expect( invalidateQueries ).toHaveBeenCalledWith( {
+				queryKey: readSpacesQuery().queryKey,
+			} );
 		} );
 	} );
 
 	describe( 'feed (source) mutations', () => {
 		it( 'writes the returned detail to the cache after adding a feed', async () => {
 			const client = newClient();
+			const resetQueries = jest.spyOn( client, 'resetQueries' );
+			const invalidateQueries = jest.spyOn( client, 'invalidateQueries' );
 			nock( BASE )
 				.post( '/wpcom/v2/reader/spaces/3/feeds' )
 				.reply(
@@ -184,10 +250,17 @@ describe( 'read spaces mutations', () => {
 					siteIcon: null,
 				},
 			] );
+			expect( resetQueries ).toHaveBeenCalledWith( {
+				queryKey: getStreamInfiniteQueryKeyPrefix( 'space:3' ),
+			} );
+			expect( invalidateQueries ).toHaveBeenCalledWith( {
+				queryKey: readSpaceQuery( '3' ).queryKey,
+			} );
 		} );
 
 		it( 'writes the returned detail to the cache after removing a feed', async () => {
 			const client = newClient();
+			const invalidateQueries = jest.spyOn( client, 'invalidateQueries' );
 			nock( BASE )
 				.delete( '/wpcom/v2/reader/spaces/3/feeds/456' )
 				.reply( 200, detailResponse( { follows: [] } ) );
@@ -200,6 +273,9 @@ describe( 'read spaces mutations', () => {
 			expect(
 				client.getQueryData< ReadSpaceDetails >( readSpaceQuery( '3' ).queryKey )?.sources
 			).toEqual( [] );
+			expect( invalidateQueries ).toHaveBeenCalledWith( {
+				queryKey: readSpaceQuery( '3' ).queryKey,
+			} );
 		} );
 
 		it( 'leaves the detail cache untouched when the add request fails', async () => {

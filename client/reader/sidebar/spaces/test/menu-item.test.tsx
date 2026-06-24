@@ -78,6 +78,23 @@ describe( 'SpaceMenuItem', () => {
 		expect( onClick ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	it( 'invokes onPrefetch when the link is hovered', async () => {
+		const user = userEvent.setup();
+		const onPrefetch = jest.fn();
+		render(
+			<SpaceMenuItem
+				space={ SPACE }
+				isSelected={ false }
+				onClick={ jest.fn() }
+				onPrefetch={ onPrefetch }
+			/>
+		);
+
+		await user.hover( screen.getByRole( 'link', { name: new RegExp( SPACE.name ) } ) );
+
+		expect( onPrefetch ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	it( 'marks the row as selected and tags it with the space colour modifier', () => {
 		const { container } = render(
 			<SpaceMenuItem space={ SPACE } isSelected onClick={ jest.fn() } />

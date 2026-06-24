@@ -55,9 +55,10 @@ export default function ChatHeader( { onClose, options, title, onBack, isDocked 
 					controls={ options }
 					icon={ moreVertical }
 					label={ __( 'More Options', '__i18n_text_domain__' ) }
-					// Body-level popovers need a stable anchor for public host style isolation.
+					// Render inside the panel node so opening the menu doesn't blur the panel
 					popoverProps={ {
 						className: 'agents-manager-chat-header__menu-popover',
+						inline: true,
 					} }
 					toggleProps={ { size: 'small' } }
 				/>

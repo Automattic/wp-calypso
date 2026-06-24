@@ -57,7 +57,8 @@ early if it shouldn't drift between fetches.
 
 All paths are under `https://public-api.wordpress.com/wpcom/v2/reader/spaces`.
 Every mutation returns the **full updated detail**, so the client writes that
-straight to the caches — no follow-up GET.
+straight to the caches for an immediate UI update, then invalidates the affected
+queries for a canonical refresh.
 
 | #   | Method & path                                | Body                                                                   | Returns               | Wired as                  |
 | --- | -------------------------------------------- | ---------------------------------------------------------------------- | --------------------- | ------------------------- |
@@ -116,14 +117,17 @@ surfaces should map the relevant codes as they adopt the mutations.
 
 ## Caching
 
-Both `readSpacesQuery` and `readSpaceQuery` use `staleTime: Infinity` +
-`meta: { persist: false }`. Every mutation returns the full detail and writes it
-back (the detail cache gets the returned space; the list gets its summary), so
-the caches stay authoritative without refetch churn — `staleTime: Infinity` only
-suppresses refetching already-cached data, so a space's detail still loads the
-first time its modal opens. `persist: false` keeps the layout (random-until-set)
-out of the persisted cache, so a reload refetches fresh rather than rehydrating
-stale colours.
+Both `readSpacesQuery` and `readSpaceQuery` use `staleTime: Infinity`,
+`refetchOnMount: 'always'`, and `meta: { persist: true }`. The persisted cache
+lets the sidebar and space views render immediately after reload, while
+mount-time refetch refreshes the canonical server state in the background. The
+list query (`readSpacesQuery`) also sets `placeholderData: keepPreviousData`
+because its key is stable; the detail query (`readSpaceQuery`) deliberately omits
+it so a `spaceId` change never flashes the previous space's name/sources. Every
+mutation returns the full detail
+and writes it back (the detail cache gets the returned space; the list gets its
+summary), then invalidates the affected queries so active consumers refetch and
+inactive consumers refresh the next time they mount.
 
 The Sources tab (`customize-modal/sources-tab.tsx`) only mounts while it is the
 active `TabPanel` tab, so its `useSiteSubscriptions` query (which paginates all

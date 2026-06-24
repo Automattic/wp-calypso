@@ -153,6 +153,7 @@ function AgentSetup( {
 				currentRoute,
 				toolProvider: providers.toolProvider,
 				contextProvider: providers.contextProvider,
+				providerIds: providers.providerIds,
 				environment: sectionName || 'calypso',
 				agentId,
 				version,

@@ -12,6 +12,12 @@
 	background-color: var(--color-surface);
 	z-index: $help-center-z-index;
 	cursor: default;
+
+	// Raise above the Agents Manager panel while focused, so the last-clicked
+	// panel wins. Both panels share one base/focused scale.
+	&.is-focused {
+		z-index: $help-center-z-index-focused;
+	}
 	transition: max-height 0.5s;
 	animation: slideIn 0.2s ease-out forwards;
 	transform-origin: bottom;

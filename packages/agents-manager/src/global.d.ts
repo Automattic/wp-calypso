@@ -7,11 +7,12 @@
  * in Jetpack's Agents Manager feature.
  *
  * `agentProviders` entries may be URL strings (dynamically imported as ES
- * modules) or already-loaded `LoadedProviders` objects with the same shape.
+ * modules), URL metadata objects, or already-loaded `LoadedProviders` objects
+ * with the same shape.
  */
 declare const agentsManagerData:
 	| {
-			agentProviders?: ( string | import('./utils/load-external-providers').LoadedProviders )[];
+			agentProviders?: import('./utils/load-external-providers').AgentProviderEntry[];
 			useUnifiedExperience?: boolean;
 			agentId?: string;
 			helpCenterUrl?: string;

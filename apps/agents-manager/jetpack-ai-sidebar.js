@@ -21,8 +21,11 @@ import {
 	capabilities,
 } from '@automattic/jetpack-ai-sidebar';
 
+const providerId = 'jetpack-ai-sidebar';
+
 // Expose on window for the ESM wrapper to re-export
 window.__JetpackAIProvider = {
+	providerId,
 	useAbilitiesSetup,
 	toolProvider,
 	contextProvider,

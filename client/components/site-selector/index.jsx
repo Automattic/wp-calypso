@@ -1,11 +1,11 @@
 import page from '@automattic/calypso-router';
 import { getUrlParts, getUrlFromParts, determineUrlType, format } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
+import { flow } from '@automattic/js-utils';
 import Search from '@automattic/search';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import { flow } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
