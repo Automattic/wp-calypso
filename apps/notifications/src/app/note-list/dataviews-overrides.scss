@@ -119,6 +119,11 @@
 	@include ui-mixins.when-dark-theme {
 		@include dark-unread-note-list-item;
 
+		// The note title reads --wpds-color-fg-content-neutral, whose light-mode
+		// default (#1e1e1e) is near-black and unreadable on the dark surface. Point
+		// it at a light foreground for dark mode.
+		--wpds-color-fg-content-neutral: #f0f0f0;
+
 		// $gray-700 (#757575) is a light-mode literal — it fails WCAG AA on the
 		// dark surface and the accent tints (~1.8–2.7:1). Use a light muted that
 		// clears 4.5:1 on every row state, including the stronger selected tint.
