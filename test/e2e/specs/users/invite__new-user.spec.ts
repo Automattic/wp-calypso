@@ -54,6 +54,20 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 
 		await test.step( 'When I navigate to Users > All Users', async function () {
 			await componentSidebar.navigate( 'Users', 'All Users' );
+			// Capture the slug of the site authenticate() landed on, which is the site
+			// the invite below is sent to (not necessarily testSites.primary on the
+			// shared pre-release account). Reading it from the All Users URL now, before
+			// the invite and signup round-trip, makes the later removal act on the exact
+			// site we invited the user to. Fail loudly if the URL is not the expected
+			// `/people/team/<slug>` list route.
+			const peopleUrl = new URL( page.url() );
+			const slugMatch = peopleUrl.pathname.match( /^\/people\/team\/([^/?#]+\.[^/?#]+)/ );
+			if ( ! slugMatch ) {
+				throw new Error(
+					`Could not determine the invited site slug from the people URL: ${ peopleUrl.href }`
+				);
+			}
+			invitedSiteSlug = slugMatch[ 1 ];
 		} );
 
 		await test.step( `And I invite a new user with role ${ role }`, async function () {
@@ -139,20 +153,6 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 
 		await test.step( 'When I navigate back to Users > All Users', async function () {
 			await componentSidebar.navigate( 'Users', 'All Users' );
-			// The invite was sent to whichever site is currently selected (the site
-			// authenticate() landed on), which is not necessarily testSites.primary on
-			// the shared pre-release account. Capture that site's slug from the people
-			// URL so the removal acts on the same site we actually invited the user to.
-			// Match the site fragment (a domain-like segment) after the people filter
-			// and fail loudly if the URL isn't the expected `/people/<filter>/<slug>`.
-			const peopleUrl = new URL( page.url() );
-			const slugMatch = peopleUrl.pathname.match( /\/people\/[^/]+\/([^/?#]+\.[^/?#]+)/ );
-			if ( ! slugMatch ) {
-				throw new Error(
-					`Could not determine the invited site slug from the people URL: ${ peopleUrl.href }`
-				);
-			}
-			invitedSiteSlug = slugMatch[ 1 ];
 		} );
 
 		await test.step( 'Then I can see the invited user part of the team', async function () {
