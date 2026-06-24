@@ -942,6 +942,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_GUIDED_WEBSITE_BUILDER_LIMITED,
 		FEATURE_AI_ASSISTANT,
+		FEATURE_BUILT_IN_SITE_ASSISTANT,
 		FEATURE_WORDPRESS_STUDIO_SYNC,
 		FEATURE_PLUGINS_THEMES,
 	],
@@ -966,7 +967,8 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 				: i18n.translate( 'Support from our expert\u00A0team' ),
 			...( isExperimentVariant && {
 				[ FEATURE_AI_ASSISTANT ]: i18n.translate( 'Usage limits apply' ),
-				[ FEATURE_GUIDED_WEBSITE_BUILDER_LIMITED ]: i18n.translate( 'Limited' ),
+				[ FEATURE_GUIDED_WEBSITE_BUILDER_LIMITED ]: i18n.translate( 'Usage limits apply' ),
+				[ FEATURE_BUILT_IN_SITE_ASSISTANT ]: i18n.translate( 'Usage limits apply' ),
 			} ),
 		};
 
@@ -1763,6 +1765,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_PAYMENT_TRANSACTION_FEES_4,
 			FEATURE_ISOLATED_INFRA,
 			FEATURE_AI_ASSISTANT,
+			FEATURE_BUILT_IN_SITE_ASSISTANT,
 			FEATURE_WORDPRESS_STUDIO_SYNC,
 			FEATURE_PLUGINS_THEMES,
 		];
@@ -1800,6 +1803,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			[ FEATURE_AI_WRITER_DESIGNER_LIMITED ]: i18n.translate( 'Limited' ),
 			...( isExperimentVariant && {
 				[ FEATURE_AI_ASSISTANT ]: i18n.translate( 'Usage limits apply' ),
+				[ FEATURE_BUILT_IN_SITE_ASSISTANT ]: i18n.translate( 'Usage limits apply' ),
 			} ),
 		};
 
