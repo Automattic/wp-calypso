@@ -99,28 +99,6 @@ function getShowComponentIdentity( message: Pick< UIMessage, 'content' > ): stri
 		.join( '|' );
 }
 
-function isShowComponentDebugEnabled(): boolean {
-	return window.localStorage?.getItem( 'agents-manager-debug-show-components' ) === 'true';
-}
-
-function debugShowComponentMessages( message: string, data?: unknown ): void {
-	if ( ! isShowComponentDebugEnabled() ) {
-		return;
-	}
-
-	// eslint-disable-next-line no-console
-	console.debug( `[AgentsManager show-component] ${ message }`, data ?? '' );
-}
-
-function debugShowComponentTrace( message: string, data?: unknown ): void {
-	if ( ! isShowComponentDebugEnabled() ) {
-		return;
-	}
-
-	// eslint-disable-next-line no-console
-	console.trace( `[AgentsManager show-component] ${ message }`, data ?? '' );
-}
-
 function convertBigSkyMessageToUIMessage( message: BigSkyMessage ): UIMessage {
 	const uiMessage = {
 		// Keep Big Sky message properties without explicit mapping to keep linter happy.
@@ -226,7 +204,6 @@ export default function OrchestratorChat( {
 	} = useAgentChat( agentConfig! );
 	const messagesRef = useRef( messages );
 	const previousMessagesRef = useRef( messages );
-	const previousShowComponentIdsRef = useRef< string[] >( [] );
 	const showComponentOrderRef = useRef< Map< string, number > >( new Map() );
 	const nextShowComponentOrderRef = useRef( 0 );
 	messagesRef.current = messages;
@@ -273,45 +250,10 @@ export default function OrchestratorChat( {
 					}
 				}
 
-				debugShowComponentMessages( 'retained replaced show-component messages', {
-					retained: retainedCandidates.map( ( message ) => ( {
-						id: message.id,
-						retainedId: `${ message.id }-retained-${ getShowComponentIdentity( message ) }`,
-						tool: getToolMessageData( message ),
-					} ) ),
-				} );
-
 				return changed ? nextRetainedMessages : previousRetainedMessages;
 			} );
 		}
 
-		const showComponents = messages.filter( isShowComponentMessage ).map( ( message ) => ( {
-			id: message.id,
-			role: message.role,
-			archived: message.archived,
-			tool: getToolMessageData( message ),
-		} ) );
-		const showComponentIds = showComponents.map( ( message ) => message.id );
-		const removedShowComponentIds = previousShowComponentIdsRef.current.filter(
-			( id ) => ! showComponentIds.includes( id )
-		);
-
-		debugShowComponentMessages( 'agenttic messages changed', {
-			messageIds: messages.map( ( message ) => message.id ),
-			showComponents,
-			removedShowComponentIds,
-		} );
-
-		if ( removedShowComponentIds.length > 0 ) {
-			debugShowComponentTrace( 'show-component disappeared from agenttic messages', {
-				removedShowComponentIds,
-				previousShowComponentIds: previousShowComponentIdsRef.current,
-				currentShowComponentIds: showComponentIds,
-				currentMessageIds: messages.map( ( message ) => message.id ),
-			} );
-		}
-
-		previousShowComponentIdsRef.current = showComponentIds;
 		previousMessagesRef.current = messages;
 	}, [ getShowComponentOrder, messages ] );
 
@@ -331,11 +273,6 @@ export default function OrchestratorChat( {
 			if ( isReaderChat && ( hasUserSentMessage || messages.length > 0 || isProcessing ) ) {
 				return;
 			}
-
-			debugShowComponentMessages( 'useConversation onSuccess loading messages', {
-				serverSessionId,
-				messageCount: loadedMessages.length,
-			} );
 
 			// Update the UI with the loaded messages
 			loadMessages( loadedMessages );
@@ -602,28 +539,14 @@ export default function OrchestratorChat( {
 	useAbilitiesSetup?.( {
 		addMessage: ( message: BigSkyMessage ) => {
 			// Transform Big Sky message format to `UIMessage` format and add to chat.
-			const uiMessage = convertBigSkyMessageToUIMessage( message );
-			debugShowComponentMessages( 'addMessage called', {
-				incomingId: message.id,
-				uiId: uiMessage.id,
-				role: uiMessage.role,
-				tool: getToolMessageData( uiMessage ),
-				isShowComponent: isShowComponentMessage( uiMessage ),
-			} );
-			addMessage( uiMessage );
+			addMessage( convertBigSkyMessageToUIMessage( message ) );
 		},
-		clearMessages: () => {
-			debugShowComponentTrace( 'clearMessages called' );
-			loadMessages( [] );
-		},
+		clearMessages: () => loadMessages( [] ),
 		clearSuggestions,
 		getAgentManager,
 		isProcessing,
 		setIsThinking,
 		deleteMarkedMessages: ( msgs ) => {
-			debugShowComponentTrace( 'deleteMarkedMessages stack trace', {
-				requestedIds: msgs.map( ( msg ) => msg.id ),
-			} );
 			const deleteDecisions = msgs.map( ( msg ) => {
 				const messageFromRequest = msg as Pick< UIMessage, 'id' > &
 					Partial< Pick< UIMessage, 'content' > >;
@@ -640,7 +563,6 @@ export default function OrchestratorChat( {
 					shouldDelete: fullMessage ? ! isShowComponent : false,
 				};
 			} );
-			debugShowComponentMessages( 'deleteMarkedMessages called', deleteDecisions );
 
 			const deletableMessages = msgs.filter(
 				( msg ) => deleteDecisions.find( ( decision ) => decision.id === msg.id )?.shouldDelete
@@ -649,14 +571,9 @@ export default function OrchestratorChat( {
 				return;
 			}
 
-			setDeletedMessageIds( ( prevIds ) => {
-				const nextIds = new Set( [ ...prevIds, ...deletableMessages.map( ( msg ) => msg.id ) ] );
-				debugShowComponentMessages( 'deletedMessageIds updated', {
-					previous: [ ...prevIds ],
-					next: [ ...nextIds ],
-				} );
-				return nextIds;
-			} );
+			setDeletedMessageIds(
+				( prevIds ) => new Set( [ ...prevIds, ...deletableMessages.map( ( msg ) => msg.id ) ] )
+			);
 		},
 		// This ensures the same session ID is used between Big Sky and Calypso agents,
 		// so that messages will be stored in the same conversation.
@@ -667,14 +584,6 @@ export default function OrchestratorChat( {
 
 	const displayedMessages = useMemo< AgentsManagerUIMessage[] >( () => {
 		let currentMessages: AgentsManagerUIMessage[] = messages;
-		debugShowComponentMessages( 'displayedMessages start', {
-			messageIds: currentMessages.map( ( message ) => message.id ),
-			showComponentIds: currentMessages
-				.filter( isShowComponentMessage )
-				.map( ( message ) => message.id ),
-			deletedMessageIds: [ ...deletedMessageIds ],
-			isBuildingSite,
-		} );
 
 		currentMessages = currentMessages.filter(
 			( message ) =>
@@ -712,13 +621,6 @@ export default function OrchestratorChat( {
 			);
 		}
 
-		debugShowComponentMessages( 'after local filter', {
-			messageIds: currentMessages.map( ( message ) => message.id ),
-			showComponentIds: currentMessages
-				.filter( isShowComponentMessage )
-				.map( ( message ) => message.id ),
-		} );
-
 		// Group site-build messages only when needed
 		const hasBuildMessages = siteBuildUtils?.hasSiteBuildMessages( currentMessages );
 
@@ -729,12 +631,6 @@ export default function OrchestratorChat( {
 				currentMessages,
 				isBuildingSite ? thinkingMessage : null
 			);
-			debugShowComponentMessages( 'after groupSiteBuildMessages', {
-				messageIds: currentMessages.map( ( message ) => message.id ),
-				showComponentIds: currentMessages
-					.filter( isShowComponentMessage )
-					.map( ( message ) => message.id ),
-			} );
 		}
 
 		currentMessages = convertToolMessagesToComponents( {
@@ -742,15 +638,6 @@ export default function OrchestratorChat( {
 			getChatComponent,
 			currentPostId,
 			onSubmit: onSubmitWithImages,
-		} );
-
-		debugShowComponentMessages( 'after convertToolMessagesToComponents', {
-			messageIds: currentMessages.map( ( message ) => message.id ),
-			componentMessages: currentMessages
-				.filter(
-					( message ) => message.content?.some( ( content ) => content.type === 'component' )
-				)
-				.map( ( message ) => ( { id: message.id, disabled: message.disabled } ) ),
 		} );
 
 		currentMessages = currentMessages.map( ( message ) => {
