@@ -94,60 +94,9 @@ body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .main.m
 		border-radius: 0;
 	}
 
-	.mcp-tools-subpage__group-card-body {
-		display: flex;
-		flex-direction: column;
-		gap: 0;
-		// WP CardBody defaults can leave titles flush to the card edge — set explicit inset
-		padding: 24px;
-
-		@include break-mobile {
-			padding: 24px 32px;
-		}
-	}
-
-	.mcp-tools-subpage__group-header {
-		width: 100%;
-		gap: 16px;
-		// Space above the divider so the title row isn’t cramped against the rule
-		padding-bottom: 20px;
-
-		.mcp-tools-subpage__group-title {
-			flex: 1 1 auto;
-			margin: 0 !important;
-			line-height: 1.35;
-			color: var(--color-neutral-100);
-		}
-
-		.mcp-tools-subpage__group-toggle {
-			flex: 0 0 auto;
-		}
-	}
-
-	// Divider + tool list — negative margins match CardBody horizontal padding (full-bleed rule)
-	.mcp-tools-subpage__group-body {
-		border-top: 1px solid var(--color-border-subtle);
-		margin-left: -24px;
-		margin-right: -24px;
-		padding: 20px 24px 4px;
-
-		@include break-mobile {
-			margin-left: -32px;
-			margin-right: -32px;
-			padding: 24px 32px 8px;
-		}
-	}
-
-	// Sub-group tool list — same padding as group-body but no top border
-	.mcp-tools-subpage__sub-group-body {
-		padding: 0 0 4px;
-	}
-
-	// Sub-group divider within merged cards (e.g. Posts) — content-width, equal spacing
-	.mcp-tools-subpage__sub-divider {
-		border-top: 1px solid var(--color-border-subtle);
-		margin: 16px 0 24px;
-	}
+	// STRAP groups use FoldableCard's own header/summary/action styling — the
+	// "Enable all" toggle lives in the actionButton slot, which FoldableCard
+	// already centers and spaces correctly, so no overrides are needed here.
 }
 
 // Setup page — zero out card-heading margins so CardBody padding is the only spacing

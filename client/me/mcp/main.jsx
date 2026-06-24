@@ -25,7 +25,13 @@ import { SectionHeader } from '../../dashboard/components/section-header';
 import { filterVisibleTools, isReadTool, isWriteTool } from './categories';
 import { getAccessSummaryBadge, getWriteAccessBadge } from './hub-helpers';
 import { useMcpPageChrome } from './mcp-page-header';
-import { getAccountMcpAbilities, getDisabledSiteIds, getEnabledSiteIds } from './utils';
+import {
+	getAccountMcpAbilities,
+	getDisabledSiteIds,
+	getEnabledSiteIds,
+	getStrapDescriptors,
+	strapGroupKey,
+} from './utils';
 
 import './style.scss';
 
@@ -84,16 +90,45 @@ function McpComponent( { path } ) {
 	const anyToolsEnabled = hasTools && visibleTools.some( ( [ , tool ] ) => tool.enabled );
 
 	const handleToggleAll = ( enabled ) => {
+		// Enabling: rely on the backend's default-on resolution (read AND write ops
+		// default enabled once a covering group intent is set) rather than
+		// materializing every ability — this also means newly-added abilities
+		// inherit the "on" state automatically.
+		if ( enabled ) {
+			mutation.mutate(
+				{
+					mcp_abilities: {
+						group_intents: { read: true, write: true },
+					},
+				},
+				{
+					onSuccess: () => {
+						recordTracksEvent( 'calypso_dashboard_mcp_account_toggled', { enabled } );
+					},
+				}
+			);
+			return;
+		}
+
+		// Disabling: explicitly turn every known ability off (an explicit `false`
+		// always wins, guaranteeing a clean kill switch) and clear every group
+		// intent so a future newly-added ability can't be silently re-enabled by a
+		// stale "enable all" intent left over from before this disable.
 		const accountAbilities = {};
 		Object.keys( mcpAbilities ).forEach( ( toolId ) => {
-			// When enabling, only turn on read tools by default — write tools must be opted in explicitly.
-			accountAbilities[ toolId ] = enabled ? isReadTool( mcpAbilities[ toolId ] ) : false;
+			accountAbilities[ toolId ] = false;
+		} );
+
+		const groupIntents = { read: false, write: false };
+		getStrapDescriptors( userSettings || {} ).forEach( ( strap ) => {
+			groupIntents[ strapGroupKey( strap.name ) ] = false;
 		} );
 
 		mutation.mutate(
 			{
 				mcp_abilities: {
 					account: accountAbilities,
+					group_intents: groupIntents,
 				},
 			},
 			{

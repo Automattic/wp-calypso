@@ -22,7 +22,18 @@ export type McpAbility = {
 	enabled: boolean;
 	/** When false, hide this tool from account settings UIs. */
 	visible?: boolean;
+	/** Whether this ability is read-only. Always present (guaranteed boolean) as of AIINT-469. */
+	readonly: boolean;
+	/** The STRAP facade this ability belongs to (e.g. `wpcom-mcp/site`), or `null` for standalone abilities not behind a facade. */
+	strap: string | null;
 	annotations?: McpAbilityAnnotations;
+};
+
+/** Ordered STRAP facade descriptor for the settings UI's middle grouping layer (AIINT-469). */
+export type McpStrapDescriptor = {
+	name: string;
+	label: string;
+	order: number;
 };
 
 export type McpSiteOverride = {
@@ -30,6 +41,8 @@ export type McpSiteOverride = {
 	account_tools_enabled?: boolean;
 	site_level_enabled?: boolean;
 	abilities?: Record< string, unknown >;
+	/** Site-level group "enable all" intents (AIINT-471): keys are `read`, `write`, or `strap:<facade>`. */
+	group_intents?: Record< string, boolean >;
 };
 
 export type McpAbilities = {
@@ -37,6 +50,10 @@ export type McpAbilities = {
 	site?: Record< string, McpAbility >; // Site-scoped ability defaults
 	sites?: McpSiteOverride[]; // Array of site-specific overrides
 	site_level_enabled_default?: boolean;
+	/** Ordered STRAP facade descriptors (AIINT-469). */
+	straps?: McpStrapDescriptor[];
+	/** Account-level group "enable all" intents (AIINT-471): keys are `read`, `write`, or `strap:<facade>`. */
+	group_intents?: Record< string, boolean >;
 };
 
 export interface UserSettings {

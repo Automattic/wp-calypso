@@ -127,6 +127,36 @@ export function getDisabledSiteIds( userSettings ) {
 }
 
 /**
+ * Get the ordered STRAP facade descriptors for the settings UI's middle grouping
+ * layer (AIINT-469), sorted by their `order` field.
+ * @param {Object} userSettings - The user settings object
+ * @returns {Array<{name: string, label: string, order: number}>}
+ */
+export function getStrapDescriptors( userSettings ) {
+	const straps = userSettings?.mcp_abilities?.straps ?? [];
+	return [ ...straps ].sort( ( a, b ) => a.order - b.order );
+}
+
+/**
+ * Get the account-level group "enable all" intents (AIINT-471).
+ * Keys are `read`, `write`, or `strap:<facade>` (see strapGroupKey()).
+ * @param {Object} userSettings - The user settings object
+ * @returns {Record<string, boolean>}
+ */
+export function getGroupIntents( userSettings ) {
+	return userSettings?.mcp_abilities?.group_intents ?? {};
+}
+
+/**
+ * Build the group-intent key for a STRAP facade's "enable all" intent.
+ * @param {string} strapName - The facade ability name, e.g. 'wpcom-mcp/site'
+ * @returns {string}
+ */
+export function strapGroupKey( strapName ) {
+	return `strap:${ strapName }`;
+}
+
+/**
  * Check if the site-level MCP server is enabled for a specific site.
  * Uses site_level_enabled from the site's entry if present, otherwise
  * falls back to mcp_abilities.site_level_enabled_default.
