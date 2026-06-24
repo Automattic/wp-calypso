@@ -5,16 +5,15 @@ import { __, sprintf } from '@wordpress/i18n';
 import { securityAccountRecoveryRoute, securityTwoStepAuthRoute } from '../router/me';
 
 /**
- * Which message to show. Maps to `SecurityLevel` as: `none` → none; `add-two-factor` /
- * `add-recovery-method` → partial; `add-backup-codes` / `strong` → strong (both have a recovery
- * method **and** 2FA; they differ only on whether backup codes have been downloaded).
+ * Which message to show in the interstitial, depending on account recovery settings.
+ * Each of these variants map to a correspondent `SecurityLevel` ("none", "partial", "strong").
  */
 export type InterstitialVariant =
-	| 'none'
-	| 'add-two-factor'
-	| 'add-recovery-method'
-	| 'add-backup-codes'
-	| 'strong';
+	| 'none' // none
+	| 'add-two-factor' // partial
+	| 'add-recovery-method' // partial
+	| 'add-backup-codes' // strong
+	| 'strong'; // strong
 
 export interface InterstitialCta {
 	/** Tracks `cta_id` dimension. */
@@ -31,7 +30,7 @@ interface InterstitialCopy {
 	secondaryCta?: InterstitialCta;
 }
 
-/** Picks the copy variant from what the user already has set up. */
+/** Picks the copy variant depending on the user's account recovery settings. */
 export function getInterstitialVariant(
 	hasRecoveryMethod: boolean,
 	hasTwoFactor: boolean,
@@ -70,6 +69,7 @@ function maskPhone( number: string ): string {
 	return `••${ digits.slice( -2 ) }`;
 }
 
+/** The "strong" SecurityLevel description varies depending on what account recovery methods are available. */
 function getStrongDescription( {
 	recoveryEmail,
 	recoveryPhoneNumber,

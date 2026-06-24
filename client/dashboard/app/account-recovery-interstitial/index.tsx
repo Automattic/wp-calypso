@@ -20,21 +20,21 @@ import './style.scss';
 const DAY_IN_SECONDS = 86400;
 
 /**
- * How secure the user already is. Single source of truth for the tiers; SNOOZE_DAYS and
- * the copy map are both keyed by it, so adding a tier is a compile error until both update.
+ * How secure the user's account already is. Single source of truth for the tiers;
+ * SNOOZE_DAYS and the copy map are both keyed by it.
  */
 type SecurityLevel = 'none' | 'partial' | 'strong';
 
 /**
- * Snooze windows (days) by security level
+ * Snooze windows (in days) by security level
  */
 const SNOOZE_DAYS: Record< SecurityLevel, number > = {
-	none: 14, // nothing set up
+	none: 14, // no recovery method or 2FA set up
 	partial: 30, // a recovery method but no 2FA or vice-versa
 	strong: 365, // fully set up -> yearly periodic check
 };
 
-/** Maps the user's account-recovery setup to a coarse security tier. */
+/** Maps the user's account-recovery setup to a SecurityLevel. */
 function getSecurityLevel(
 	hasRecoveryEmail: boolean,
 	hasRecoveryPhone: boolean,
@@ -58,7 +58,7 @@ function getSecurityLevel(
  *
  * App-level overlay mounted in the dashboard shell. Shows a single modal to users with
  * incomplete account-recovery setup, nudging them to add a recovery method. Renders
- * nothing unless the feature flag is on and the user is eligible.
+ * nothing unless the feature flag is on and the user is eligible (not snoozed).
  */
 export default function AccountRecoveryInterstitial() {
 	const router = useRouter();
@@ -91,15 +91,12 @@ export default function AccountRecoveryInterstitial() {
 
 	const isSnoozed = !! snoozeUntilPersisted && now < snoozeUntilPersisted;
 
-	// Every user is nudged once their snooze (if any) has elapsed and the data has loaded:
-	// `none`/`partial` setups are prompted to add a method, while fully-covered (`strong`) users
-	// get a yearly periodic re-check via the 365-day snooze window (SNOOZE_DAYS.strong).
+	// Every user is nudged once their snooze (if any) has elapsed and the data has loaded
 	const isEligible =
 		isAccountRecoveryLoaded && isUserSettingsLoaded && isSnoozeLoaded && ! isSnoozed;
 
 	const hasRecoveryMethod = hasRecoveryEmail || hasRecoveryPhone;
-	// Fine-grained setup state (5-way), recorded on Tracks as `recovery_status` alongside the
-	// coarse 3-tier `security_level`. Also selects the copy variant.
+	// Selects the copy variant depending on the user's account recovery settings
 	const variant = getInterstitialVariant( hasRecoveryMethod, hasTwoFactor, hasBackupCodes );
 
 	// Shared Tracks properties for every interstitial event. The coarse `security_level` and 5-way
@@ -145,8 +142,7 @@ export default function AccountRecoveryInterstitial() {
 		} );
 		// Snooze for this security level's window in all cases, so the user isn't re-prompted
 		// on their next page load — whether they head off to set up a recovery method or positively
-		// confirm ("Yes, all good"). Eligibility gates only on the snooze, so completing setup
-		// alone wouldn't suppress the modal.
+		// confirm ("Yes, all good").
 		snooze();
 		if ( cta.route ) {
 			router.navigate( { to: cta.route } );
