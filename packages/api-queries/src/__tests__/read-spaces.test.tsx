@@ -10,6 +10,7 @@ import {
 	readSpacesQuery,
 	updateReadSpaceMutation,
 } from '../read-spaces';
+import { getStreamInfiniteQueryKeyPrefix } from '../read-streams';
 import type { ReadSpace, ReadSpaceDetails, SiteSubscriptionItem } from '@automattic/api-core';
 import type { UseMutationOptions } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
@@ -124,6 +125,23 @@ describe( 'read spaces mutations', () => {
 				client.getQueryData< ReadSpaceDetails >( readSpaceQuery( '3' ).queryKey )
 			).toMatchObject( { id: '3', name: 'New name', tags: [ 'x' ] } );
 		} );
+
+		it( "resets the space's posts feed so it reloads after a tag/feed edit", async () => {
+			const client = newClient();
+			const spy = jest.spyOn( client, 'resetQueries' );
+			nock( BASE )
+				.put( '/wpcom/v2/reader/spaces/3' )
+				.reply( 200, detailResponse( { id: 3, tags: [ 'x' ] } ) );
+
+			await runMutation( client, updateReadSpaceMutation( client ), {
+				spaceId: '3',
+				params: { tags: [ 'x' ] },
+			} );
+
+			expect( spy ).toHaveBeenCalledWith( {
+				queryKey: getStreamInfiniteQueryKeyPrefix( 'space:3' ),
+			} );
+		} );
 	} );
 
 	describe( 'deleteReadSpaceMutation', () => {
@@ -151,6 +169,7 @@ describe( 'read spaces mutations', () => {
 	describe( 'feed (source) mutations', () => {
 		it( 'writes the returned detail to the cache after adding a feed', async () => {
 			const client = newClient();
+			const spy = jest.spyOn( client, 'resetQueries' );
 			nock( BASE )
 				.post( '/wpcom/v2/reader/spaces/3/feeds' )
 				.reply(
@@ -184,6 +203,9 @@ describe( 'read spaces mutations', () => {
 					siteIcon: null,
 				},
 			] );
+			expect( spy ).toHaveBeenCalledWith( {
+				queryKey: getStreamInfiniteQueryKeyPrefix( 'space:3' ),
+			} );
 		} );
 
 		it( 'writes the returned detail to the cache after removing a feed', async () => {

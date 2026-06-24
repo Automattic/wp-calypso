@@ -13,10 +13,29 @@ import {
 	type UpdateReadSpaceParams,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions, type QueryClient } from '@tanstack/react-query';
+import { getStreamInfiniteQueryKeyPrefix } from './read-streams';
 
 const readSpacesListKey = [ 'read', 'spaces', 'list' ] as const;
 
 const readSpaceDetailKey = ( spaceId: string ) => [ 'read', 'spaces', 'detail', spaceId ] as const;
+
+// A space's posts feed is served under the `space:<id>` stream key, built
+// server-side from the space's followed feeds and tags. Editing either changes
+// which posts appear, so the feed list has to reload.
+//
+// The feed is a cursor-paginated `useInfiniteQuery`, so a plain
+// `invalidateQueries` is not enough: it refetches each cached page using the
+// cursor (`before`/`offset`) it was originally loaded with, and those cursors
+// were derived from the *old* post set. After the tags/feeds change the page
+// boundaries no longer line up, so the reloaded list can show stale, duplicated
+// or gapped posts. `resetQueries` discards the cached pages and their cursors
+// and refetches the active stream from the first page — a clean reload. This
+// mirrors the stream "force refresh" pattern in
+// `client/reader/stream/use-stream-pending-posts.ts`.
+const reloadReadSpaceStream = ( queryClient: QueryClient, spaceId: string ) =>
+	queryClient.resetQueries( {
+		queryKey: getStreamInfiniteQueryKeyPrefix( `space:${ spaceId }` ),
+	} );
 
 export const readSpacesQuery = () =>
 	queryOptions( {
@@ -86,6 +105,8 @@ export const updateReadSpaceMutation = ( queryClient: QueryClient ) =>
 				( previous ) => previous?.map( ( item ) => ( item.id === space.id ? summary : item ) )
 			);
 			queryClient.setQueryData< ReadSpaceDetails >( readSpaceQuery( space.id ).queryKey, space );
+			// Tags/feeds may have changed, so reload the space's posts feed.
+			reloadReadSpaceStream( queryClient, space.id );
 		},
 	} );
 
@@ -109,8 +130,11 @@ export const deleteReadSpaceMutation = ( queryClient: QueryClient ) =>
 // Add/remove a followed feed. Both endpoints return the updated detail, so we
 // write it straight to the detail cache (the list summary is unaffected by
 // feeds). `subscription` carries the feed id/url the api-core mutator sends.
-const writeReadSpaceDetail = ( queryClient: QueryClient, space: ReadSpaceDetails ) =>
+const writeReadSpaceDetail = ( queryClient: QueryClient, space: ReadSpaceDetails ) => {
 	queryClient.setQueryData< ReadSpaceDetails >( readSpaceQuery( space.id ).queryKey, space );
+	// Adding/removing a feed changes the space's posts feed, so reload it too.
+	reloadReadSpaceStream( queryClient, space.id );
+};
 
 export const addReadSpaceSourceMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< ReadSpaceDetails, unknown, ReadSpaceSourceMutationParams >( {
