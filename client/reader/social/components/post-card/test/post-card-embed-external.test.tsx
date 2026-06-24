@@ -194,7 +194,10 @@ describe( 'PostCardEmbedExternal', () => {
 				const viewLink = screen.getByRole( 'link', { name: /View publication/i } );
 				expect( viewLink ).toHaveAttribute( 'href', 'https://herve.bzh/' );
 				expect( viewLink ).toHaveAttribute( 'target', '_blank' );
-				expect( viewLink ).toHaveAttribute( 'rel', 'noopener noreferrer' );
+				// `ExternalLink` hardens rel with the off-site tokens.
+				const rel = viewLink.getAttribute( 'rel' ) ?? '';
+				expect( rel ).toContain( 'noopener' );
+				expect( rel ).toContain( 'noreferrer' );
 			} );
 
 			it( 'omits the handle line when publication.handle is empty', () => {

@@ -607,6 +607,9 @@ button.social-post-card-embed-video--thumbnail {
 
 .social-post-card-embed-external__publication-pill-link {
 	flex-shrink: 0;
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
 	font-size: 0.875rem;
 	font-weight: 500;
 	color: var( --color-primary );

@@ -1,6 +1,7 @@
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	ExternalLink,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -180,15 +181,15 @@ export function PostCardEmbedExternal( {
 						) }
 					</div>
 					{ pillUrl && (
-						<a
+						<ExternalLink
 							className="social-post-card-embed-external__publication-pill-link"
 							href={ pillUrl }
-							target="_blank"
-							rel="noopener noreferrer"
+							// ExternalLink adds `external noopener`; keep `noreferrer` too.
+							rel="noreferrer"
 							onClick={ handleViewPublication }
 						>
 							{ translate( 'View publication' ) }
-						</a>
+						</ExternalLink>
 					) }
 				</div>
 			) }
