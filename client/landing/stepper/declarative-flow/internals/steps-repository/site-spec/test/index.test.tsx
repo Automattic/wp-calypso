@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { useQuery as useReactQuery } from '@tanstack/react-query';
 import { act, render } from '@testing-library/react';
 import { useSiteSpec } from 'calypso/lib/site-spec';
 import wpcom from 'calypso/lib/wp';
@@ -27,6 +28,20 @@ jest.mock( '@automattic/posthog', () => ( {
 	getSessionId: jest.fn( () => 'ph-session' ),
 } ) );
 
+jest.mock( '@automattic/api-queries', () => ( {
+	isAutomatticianQuery: jest.fn( () => ( {
+		queryKey: [ 'me', 'is-automattician' ],
+		queryFn: jest.fn(),
+	} ) ),
+} ) );
+
+jest.mock( '@tanstack/react-query', () => ( {
+	useQuery: jest.fn( () => ( {
+		data: true,
+		isLoading: false,
+	} ) ),
+} ) );
+
 jest.mock( 'i18n-calypso', () => ( {
 	useTranslate: () => ( text: string ) => text,
 } ) );
@@ -41,34 +56,47 @@ jest.mock( 'calypso/lib/site-spec', () => ( {
 	useSiteSpec: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: jest.fn( () => Promise.resolve() ),
+} ) );
+
 jest.mock( 'calypso/lib/site-spec/utils', () => ( {
+	getBuildWowSiteSpecConfig: jest.fn( () => ( { agentId: 'build-wow-site-spec' } ) ),
 	getCiabSiteSpecConfig: jest.fn( () => ( { agentId: 'ciab-site-spec' } ) ),
 	getEarlyProvisionSiteSpecConfig: jest.fn( () => ( { agentId: 'early-provision-site-spec' } ) ),
 } ) );
 
 jest.mock( 'calypso/lib/wp', () => ( {
 	__esModule: true,
-	default: { req: { post: jest.fn() } },
+	default: {
+		req: {
+			get: jest.fn(),
+			post: jest.fn(),
+		},
+	},
 } ) );
 
 describe( 'SiteSpec early provisioning step', () => {
 	const originalLocation = window.location;
 	const mockUseSiteSpec = useSiteSpec as jest.Mock;
 	const wpcomPostMock = wpcom.req.post as jest.Mock;
+	const mockUseReactQuery = useReactQuery as jest.Mock;
+	const navigation = {
+		submit: jest.fn(),
+	};
+
+	const renderSiteSpec = () =>
+		render(
+			<SiteSpec navigation={ navigation } stepName="site-spec" flow="ai-site-builder-spec" />
+		);
 
 	beforeEach( () => {
 		jest.clearAllMocks();
 		window.sessionStorage.clear();
 		mockQueryParams = new URLSearchParams( 'early_provision_site=1&source=vega' );
-		wpcomPostMock.mockResolvedValue( {
-			blog_details: {
-				blogid: 255716498,
-			},
-			atomic_transfer: {
-				id: 123,
-				status: 'pending',
-			},
-			early_provision_target: EARLY_PROVISION_TARGET_WPCOM_ATOMIC,
+		mockUseReactQuery.mockReturnValue( {
+			data: true,
+			isLoading: false,
 		} );
 		Object.defineProperty( window, 'location', {
 			value: { href: '' },
@@ -85,39 +113,14 @@ describe( 'SiteSpec early provisioning step', () => {
 		} );
 	} );
 
-	it( 'starts WPCOM Atomic provisioning on the first message and redirects with the early-created site', async () => {
-		render( <SiteSpec /> );
+	it( 'redirects to WPCOM Atomic provisioning after the spec is confirmed', async () => {
+		renderSiteSpec();
 
 		const siteSpecOptions = mockUseSiteSpec.mock.calls[ 0 ][ 0 ];
 		expect( siteSpecOptions.siteSpecConfig ).toEqual( {
 			agentId: 'early-provision-site-spec',
 		} );
-
-		await act( async () => {
-			siteSpecOptions.onMessage( { content: 'Build a bakery site' } );
-		} );
-
-		expect( wpcomPostMock ).toHaveBeenCalledTimes( 1 );
-		expect( wpcomPostMock ).toHaveBeenCalledWith(
-			{
-				path: '/sites/new',
-				apiVersion: '1.1',
-			},
-			{},
-			{
-				client_id: 'signup-id',
-				client_secret: 'signup-key',
-				blog_title: '',
-				blog_name: '',
-				options: {
-					site_creation_flow: 'ai-site-builder',
-					trigger_backend_build: false,
-					early_provision_target: EARLY_PROVISION_TARGET_WPCOM_ATOMIC,
-				},
-			}
-		);
-		expect( wpcomPostMock.mock.calls[ 0 ][ 2 ] ).not.toHaveProperty( 'garden_name' );
-		expect( wpcomPostMock.mock.calls[ 0 ][ 2 ] ).not.toHaveProperty( 'garden_partner_name' );
+		expect( siteSpecOptions.onMessage ).toBeUndefined();
 
 		await act( async () => {
 			await siteSpecOptions.onSpecConfirm( { spec_id: 'spec-123' } );
@@ -127,12 +130,64 @@ describe( 'SiteSpec early provisioning step', () => {
 		expect( redirect.pathname ).toBe( '/setup/ai-site-builder/' );
 		expect( redirect.searchParams.get( 'trigger_backend_build' ) ).toBe( '0' );
 		expect( redirect.searchParams.get( 'spec_id' ) ).toBe( 'spec-123' );
-		expect( redirect.searchParams.get( 'early_provision_target' ) ).toBe(
+		expect( redirect.searchParams.get( 'provision_target' ) ).toBe(
 			EARLY_PROVISION_TARGET_WPCOM_ATOMIC
 		);
-		expect( redirect.searchParams.get( 'early_created_site' ) ).toBe( '255716498' );
+		expect( redirect.searchParams.has( 'early_created_site' ) ).toBe( false );
 		expect( redirect.searchParams.get( '_ph' ) ).toBe( 'ph-session' );
 		expect( redirect.searchParams.get( 'source' ) ).toBe( 'vega' );
 		expect( redirect.searchParams.has( 'create_garden_site' ) ).toBe( false );
+	} );
+
+	it( 'attaches a confirmed spec to the existing build-wow site and redirects to Site Editor', async () => {
+		mockQueryParams = new URLSearchParams( 'build_wow=1&siteSlug=example.wordpress.com' );
+		wpcomPostMock.mockResolvedValue( {
+			site_editor_url: 'https://example.wordpress.com/wp-admin/site-editor.php',
+			atomic: {
+				is_atomic: true,
+				ready_for_editor: true,
+			},
+			remote_option_ready: true,
+		} );
+
+		renderSiteSpec();
+
+		const siteSpecOptions = mockUseSiteSpec.mock.calls[ 0 ][ 0 ];
+		expect( siteSpecOptions.siteSpecConfig ).toEqual( {
+			agentId: 'build-wow-site-spec',
+		} );
+
+		await act( async () => {
+			await siteSpecOptions.onSpecConfirm( { spec_id: 'spec-456' } );
+		} );
+
+		expect( wpcomPostMock ).toHaveBeenCalledWith(
+			{
+				path: '/sites/example.wordpress.com/big-sky/build-wow',
+				apiNamespace: 'wpcom/v2',
+			},
+			{
+				spec_id: 'spec-456',
+			}
+		);
+
+		const redirect = new URL( window.location.href );
+		expect( redirect.pathname ).toBe( '/wp-admin/site-editor.php' );
+		expect( redirect.searchParams.get( 'spec_id' ) ).toBe( 'spec-456' );
+	} );
+
+	it( 'ignores build-wow Site Spec routing for non-Automatticians', () => {
+		mockQueryParams = new URLSearchParams( 'build_wow=1&siteSlug=example.wordpress.com' );
+		mockUseReactQuery.mockReturnValue( {
+			data: false,
+			isLoading: false,
+		} );
+
+		renderSiteSpec();
+
+		const siteSpecOptions = mockUseSiteSpec.mock.calls[ 0 ][ 0 ];
+		expect( siteSpecOptions.siteSpecConfig ).toBeUndefined();
+		expect( siteSpecOptions.onSpecConfirm ).toBeUndefined();
+		expect( wpcomPostMock ).not.toHaveBeenCalled();
 	} );
 } );

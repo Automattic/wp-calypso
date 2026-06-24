@@ -1,7 +1,6 @@
 import { AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
 import wpcom from 'calypso/lib/wp';
 import {
-	EARLY_PROVISION_TARGET_WPCOM_ATOMIC,
 	getAtomicProvisionedSiteSlug,
 	getEarlyCreatedSiteId,
 	pollForAtomicProvisioning,
@@ -19,24 +18,16 @@ beforeEach( () => {
 } );
 
 describe( 'getEarlyCreatedSiteId', () => {
-	it( 'requires an early-created site for WPCOM Atomic early provisioning', () => {
-		expect( () =>
-			getEarlyCreatedSiteId( AI_SITE_BUILDER_FLOW, null, EARLY_PROVISION_TARGET_WPCOM_ATOMIC )
-		).toThrow( 'Missing early_created_site for WPCOM Atomic early provisioning.' );
+	it( 'allows WPCOM Atomic provisioning to happen during regular site creation', () => {
+		expect( getEarlyCreatedSiteId( AI_SITE_BUILDER_FLOW, null ) ).toBeNull();
 	} );
 
 	it( 'returns the early-created site ID for WPCOM Atomic early provisioning', () => {
-		expect(
-			getEarlyCreatedSiteId(
-				AI_SITE_BUILDER_FLOW,
-				'255716498',
-				EARLY_PROVISION_TARGET_WPCOM_ATOMIC
-			)
-		).toBe( 255716498 );
+		expect( getEarlyCreatedSiteId( AI_SITE_BUILDER_FLOW, '255716498' ) ).toBe( 255716498 );
 	} );
 
 	it( 'allows regular AI Site Builder creation when WPCOM Atomic early provisioning is not requested', () => {
-		expect( getEarlyCreatedSiteId( AI_SITE_BUILDER_FLOW, null, null ) ).toBeNull();
+		expect( getEarlyCreatedSiteId( AI_SITE_BUILDER_FLOW, null ) ).toBeNull();
 	} );
 } );
 

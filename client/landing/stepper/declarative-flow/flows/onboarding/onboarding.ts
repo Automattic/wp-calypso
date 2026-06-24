@@ -1,7 +1,9 @@
+import { isAutomatticianQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { clearStepPersistedState, ONBOARDING_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { useQuery as useReactQuery } from '@tanstack/react-query';
 import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
@@ -27,6 +29,13 @@ import { isPlanProductFree } from '../../../../../../packages/data-stores/src/pl
 import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
+import {
+	getBuildWowSiteIdentifier,
+	getBuildWowSiteSpecUrl,
+	isBuildWowEnabled,
+	logBuildWowEvent,
+	requestBuildWowSite,
+} from '../../../utils/build-wow';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboarding-post-checkout-destination';
 import { withLocale } from '../../helpers/with-locale';
@@ -79,13 +88,19 @@ const onboarding: FlowV2< typeof initialize > = {
 			} ),
 			[]
 		);
-		const coupon = useQuery().get( 'coupon' );
-		const refParameter = useQuery().get( 'ref' );
-		const siteSlugParam = useQuery().get( 'siteSlug' );
+		const queryParams = useQuery();
+		const coupon = queryParams.get( 'coupon' );
+		const refParameter = queryParams.get( 'ref' );
+		const siteSlugParam = queryParams.get( 'siteSlug' );
+		const buildWowRequested = queryParams.get( 'build_wow' ) === '1';
+		const { data: isAutomattician, refetch: refetchIsAutomattician } = useReactQuery( {
+			...isAutomatticianQuery(),
+			enabled: buildWowRequested,
+		} );
 
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
-		const playgroundId = useQuery().get( 'playground' );
+		const playgroundId = queryParams.get( 'playground' );
 
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
@@ -226,7 +241,50 @@ const onboarding: FlowV2< typeof initialize > = {
 					const prompt = providedDependencies?.prompt as string | undefined;
 
 					switch ( setupChoice ) {
-						case 'build-with-ai':
+						case 'build-with-ai': {
+							let canUseBuildWow = isBuildWowEnabled( queryParams, isAutomattician === true );
+							if ( buildWowRequested && typeof isAutomattician === 'undefined' ) {
+								const { data: resolvedIsAutomattician } = await refetchIsAutomattician();
+								canUseBuildWow = isBuildWowEnabled( queryParams, resolvedIsAutomattician === true );
+							}
+
+							if ( canUseBuildWow ) {
+								const siteIdentifier = getBuildWowSiteIdentifier( {
+									siteSlug,
+									siteId,
+								} );
+
+								if ( ! siteIdentifier ) {
+									logBuildWowEvent( 'start_missing_site', {
+										site_slug: siteSlug,
+										site_id: siteId,
+									} );
+									return navigate( 'error' as typeof currentStepSlug );
+								}
+
+								try {
+									await requestBuildWowSite( siteIdentifier );
+									logBuildWowEvent( 'start_success', {
+										site_identifier: siteIdentifier,
+									} );
+								} catch ( error ) {
+									logBuildWowEvent( 'start_error', {
+										site_identifier: siteIdentifier,
+										error: error instanceof Error ? error.message : String( error ),
+									} );
+									return navigate( 'error' as typeof currentStepSlug );
+								}
+
+								window.location.assign(
+									getBuildWowSiteSpecUrl( {
+										siteSlug,
+										siteId,
+										ref: refParameter,
+									} )
+								);
+								return;
+							}
+
 							window.location.assign(
 								addQueryArgs( `/setup/${ SITE_SETUP_FLOW }/${ STEPS.LAUNCH_BIG_SKY.slug }`, {
 									siteSlug,
@@ -240,6 +298,7 @@ const onboarding: FlowV2< typeof initialize > = {
 								} )
 							);
 							return;
+						}
 						case 'blank-site':
 							if ( refParameter === WOO_HOSTING_SOLUTIONS_REF ) {
 								const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );

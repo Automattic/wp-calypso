@@ -1,126 +1,42 @@
+import { isAutomatticianQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { getSessionId as getPostHogSessionId } from '@automattic/posthog';
+import { useQuery as useReactQuery } from '@tanstack/react-query';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import {
+	getBuildWowSiteIdentifier,
+	isBuildWowEnabled,
+	isBuildWowSiteEditorReady,
+	logBuildWowEvent,
+	requestBuildWowSite,
+	waitForBuildWowSiteEditorReady,
+} from 'calypso/landing/stepper/utils/build-wow';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { useSiteSpec } from 'calypso/lib/site-spec';
 import {
+	getBuildWowSiteSpecConfig,
 	getCiabSiteSpecConfig,
 	getEarlyProvisionSiteSpecConfig,
 	type SiteSpecConfig,
 } from 'calypso/lib/site-spec/utils';
 import wpcom from 'calypso/lib/wp';
-import {
-	EARLY_PROVISIONED_SITE_STORAGE_KEY,
-	EARLY_PROVISION_ERROR_MESSAGE,
-	buildEarlyProvisionDestination,
-	getEarlyProvisionSiteCreateBody,
-	getEarlyProvisionedSiteId,
-	getReadyAtomicSiteEditorUrl,
-	type SiteCreateResponse,
-} from './early-provisioning';
+import { buildEarlyProvisionDestination } from './early-provisioning';
 import type { Step as StepType } from '../../types';
-
-function saveEarlyProvisionedSite( blogId: number ): void {
-	if ( typeof window === 'undefined' ) {
-		return;
-	}
-
-	window.sessionStorage.setItem( EARLY_PROVISIONED_SITE_STORAGE_KEY, String( blogId ) );
-}
-
-function getSavedEarlyProvisionedSite(): number | null {
-	if ( typeof window === 'undefined' ) {
-		return null;
-	}
-
-	const stored = window.sessionStorage.getItem( EARLY_PROVISIONED_SITE_STORAGE_KEY );
-	if ( ! stored ) {
-		return null;
-	}
-
-	const blogId = parseInt( stored, 10 );
-	return Number.isNaN( blogId ) ? null : blogId;
-}
-
-function clearSavedEarlyProvisionedSite(): void {
-	if ( typeof window === 'undefined' ) {
-		return;
-	}
-
-	window.sessionStorage.removeItem( EARLY_PROVISIONED_SITE_STORAGE_KEY );
-}
 
 function SiteSpecContainer( {
 	siteSpecConfig,
-	onFirstIntent,
 	onMessage,
 	onSpecConfirm,
 }: {
 	siteSpecConfig?: SiteSpecConfig;
-	onFirstIntent?: () => void;
 	onMessage?: ( message: unknown ) => void;
 	onSpecConfirm?: ( specData: unknown ) => void | Promise< void >;
 } ) {
 	useSiteSpec( { siteSpecConfig, onMessage, onSpecConfirm } );
-
-	useEffect( () => {
-		if ( ! onFirstIntent || typeof document === 'undefined' ) {
-			return;
-		}
-
-		const container = document.getElementById( 'site-spec-container' );
-		if ( ! container ) {
-			return;
-		}
-
-		const handleSubmit = () => onFirstIntent();
-
-		const handleClick = ( event: MouseEvent ) => {
-			const target = event.target;
-			if ( ! ( target instanceof HTMLElement ) ) {
-				return;
-			}
-
-			const control = target.closest( 'button,[role="button"],input[type="submit"]' );
-			if ( control && container.contains( control ) ) {
-				onFirstIntent();
-			}
-		};
-
-		const handleKeyDown = ( event: KeyboardEvent ) => {
-			if (
-				event.key !== 'Enter' ||
-				event.shiftKey ||
-				event.altKey ||
-				event.ctrlKey ||
-				event.metaKey
-			) {
-				return;
-			}
-
-			const target = event.target;
-			if (
-				target instanceof HTMLInputElement ||
-				target instanceof HTMLTextAreaElement ||
-				( target instanceof HTMLElement && target.isContentEditable )
-			) {
-				onFirstIntent();
-			}
-		};
-
-		container.addEventListener( 'submit', handleSubmit, true );
-		container.addEventListener( 'click', handleClick, true );
-		container.addEventListener( 'keydown', handleKeyDown, true );
-
-		return () => {
-			container.removeEventListener( 'submit', handleSubmit, true );
-			container.removeEventListener( 'click', handleClick, true );
-			container.removeEventListener( 'keydown', handleKeyDown, true );
-		};
-	}, [ onFirstIntent ] );
 
 	return <div id="site-spec-container" style={ { height: '100vh' } } />;
 }
@@ -175,10 +91,22 @@ const SiteSpec: StepType = function SiteSpec() {
 	const querySource = queryParams.get( 'source' );
 	const isCiab = !! querySource && querySource.startsWith( 'ciab-' );
 	const shouldEarlyProvisionSite = queryParams.get( 'early_provision_site' ) === '1';
-	const earlyProvisionSpecId = shouldEarlyProvisionSite ? queryParams.get( 'spec_id' ) ?? '' : '';
+	const shouldProvisionAtomicSite =
+		shouldEarlyProvisionSite || queryParams.get( 'provision_target' ) === 'wpcom-atomic';
+	const buildWowRequested = queryParams.get( 'build_wow' ) === '1';
+	const { data: isAutomattician, isLoading: isLoadingAutomattician } = useReactQuery( {
+		...isAutomatticianQuery(),
+		enabled: buildWowRequested,
+	} );
+	const shouldBuildWow = isBuildWowEnabled( queryParams, isAutomattician === true );
+	const atomicProvisionSpecId = shouldProvisionAtomicSite ? queryParams.get( 'spec_id' ) ?? '' : '';
+	const buildWowSpecId = shouldBuildWow ? queryParams.get( 'spec_id' ) ?? '' : '';
+	const buildWowSiteIdentifier = getBuildWowSiteIdentifier( {
+		siteSlug: queryParams.get( 'siteSlug' ),
+		siteId: queryParams.get( 'siteId' ),
+	} );
 
 	const ciabSiteCreationPromiseRef = useRef< Promise< number | null > | null >( null );
-	const earlyProvisionSitePromiseRef = useRef< Promise< number | null > | null >( null );
 	const messageCountRef = useRef( 0 );
 	const isSubmittingRef = useRef( false );
 
@@ -245,58 +173,8 @@ const SiteSpec: StepType = function SiteSpec() {
 		window.location.href = url;
 	}, [] );
 
-	const startEarlyProvisionSite = useCallback( ( trigger: string ) => {
-		if ( earlyProvisionSitePromiseRef.current || getSavedEarlyProvisionedSite() ) {
-			return;
-		}
-
-		logEarlyProvisionEvent( 'create_request_start', { trigger } );
-
-		earlyProvisionSitePromiseRef.current = ( async () => {
-			try {
-				const response = ( await wpcom.req.post(
-					{
-						path: '/sites/new',
-						apiVersion: '1.1',
-					},
-					{},
-					getEarlyProvisionSiteCreateBody(
-						config( 'wpcom_signup_id' ),
-						config( 'wpcom_signup_key' )
-					)
-				) ) as SiteCreateResponse;
-				const blogId = getEarlyProvisionedSiteId( response );
-
-				if ( blogId ) {
-					saveEarlyProvisionedSite( blogId );
-					logEarlyProvisionEvent(
-						'create_request_success',
-						{
-							trigger,
-							atomic_transfer_id: response.atomic_transfer?.id,
-							atomic_transfer_status: response.atomic_transfer?.status,
-						},
-						blogId
-					);
-					return blogId;
-				}
-
-				logEarlyProvisionEvent( 'create_request_invalid_response', { trigger } );
-				return null;
-			} catch ( error ) {
-				logEarlyProvisionEvent( 'create_request_error', {
-					trigger,
-					error: error instanceof Error ? error.message : String( error ),
-				} );
-				// eslint-disable-next-line no-console
-				console.error( 'Failed to provision site:', error );
-				return null;
-			}
-		} )();
-	}, [] );
-
 	const handleEarlyProvisionSpecConfirm = useCallback(
-		async ( specData: unknown ) => {
+		( specData: unknown ) => {
 			if ( isSubmittingRef.current ) {
 				return;
 			}
@@ -311,102 +189,118 @@ const SiteSpec: StepType = function SiteSpec() {
 				return;
 			}
 
+			const phSessionId = getPostHogSessionId();
+			const source = queryParams.get( 'source' );
+			const destination = buildEarlyProvisionDestination( {
+				specId,
+				phSessionId,
+				source,
+			} );
+
+			logEarlyProvisionEvent( 'spec_confirm_redirect', {
+				spec_id: specId,
+				destination_path: '/setup/ai-site-builder/',
+			} );
+			window.location.href = destination;
+		},
+		[ queryParams ]
+	);
+
+	const handleBuildWowSpecConfirm = useCallback(
+		async ( specData: unknown ) => {
+			if ( isSubmittingRef.current ) {
+				return;
+			}
+
+			isSubmittingRef.current = true;
+
+			const specId = getSpecId( specData );
+			if ( ! specId ) {
+				// eslint-disable-next-line no-console
+				console.error( 'Failed to continue build-wow provisioning: missing site spec session ID.' );
+				isSubmittingRef.current = false;
+				return;
+			}
+
+			if ( ! buildWowSiteIdentifier ) {
+				// eslint-disable-next-line no-console
+				console.error( 'Failed to continue build-wow provisioning: missing target site.' );
+				isSubmittingRef.current = false;
+				return;
+			}
+
 			try {
-				if ( ! earlyProvisionSitePromiseRef.current && ! getSavedEarlyProvisionedSite() ) {
-					startEarlyProvisionSite( 'spec_confirm_fallback' );
+				const response = await requestBuildWowSite( buildWowSiteIdentifier, specId );
+				if ( ! isBuildWowSiteEditorReady( response ) ) {
+					await waitForBuildWowSiteEditorReady( buildWowSiteIdentifier );
 				}
 
-				const blogIdFromPromise = earlyProvisionSitePromiseRef.current
-					? await earlyProvisionSitePromiseRef.current
-					: null;
-				const blogId = blogIdFromPromise ?? getSavedEarlyProvisionedSite();
-				if ( ! blogId ) {
-					throw new Error( EARLY_PROVISION_ERROR_MESSAGE );
+				if ( ! response.site_editor_url ) {
+					throw new Error( 'Build-wow response is missing the Site Editor URL.' );
 				}
 
-				const phSessionId = getPostHogSessionId();
 				const source = queryParams.get( 'source' );
-				let directSiteEditorUrl: string | null = null;
-				try {
-					directSiteEditorUrl = await getReadyAtomicSiteEditorUrl( {
-						blogId,
-						specId,
-						source,
-					} );
-				} catch ( error ) {
-					logEarlyProvisionEvent(
-						'direct_ready_check_error',
-						{
-							spec_id: specId,
-							error: error instanceof Error ? error.message : String( error ),
-						},
-						blogId
-					);
-				}
-
-				if ( directSiteEditorUrl ) {
-					logEarlyProvisionEvent(
-						'site_editor_direct_redirect',
-						{
-							spec_id: specId,
-						},
-						blogId
-					);
-					clearSavedEarlyProvisionedSite();
-					window.location.href = directSiteEditorUrl;
-					return;
-				}
-
-				logEarlyProvisionEvent(
-					'site_editor_direct_not_ready',
-					{
-						spec_id: specId,
-						destination_path: '/setup/ai-site-builder/',
-					},
-					blogId
-				);
-
-				const destination = buildEarlyProvisionDestination( {
-					specId,
-					blogId,
-					phSessionId,
-					source,
+				const destination = addQueryArgs( response.site_editor_url, {
+					spec_id: specId,
+					...( source ? { source } : {} ),
 				} );
 
-				logEarlyProvisionEvent(
-					'spec_confirm_redirect',
-					{
-						spec_id: specId,
-						destination_path: '/setup/ai-site-builder/',
-					},
-					blogId
-				);
-				clearSavedEarlyProvisionedSite();
+				logBuildWowEvent( 'site_editor_redirect', {
+					spec_id: specId,
+					site_identifier: buildWowSiteIdentifier,
+				} );
 				window.location.href = destination;
 			} catch ( error ) {
+				logBuildWowEvent( 'spec_confirm_error', {
+					spec_id: specId,
+					site_identifier: buildWowSiteIdentifier,
+					error: error instanceof Error ? error.message : String( error ),
+				} );
 				// eslint-disable-next-line no-console
-				console.error( 'Failed to continue site provisioning:', error );
+				console.error( 'Failed to continue build-wow provisioning:', error );
 				isSubmittingRef.current = false;
 			}
 		},
-		[ queryParams, startEarlyProvisionSite ]
+		[ buildWowSiteIdentifier, queryParams ]
 	);
 
 	useEffect( () => {
-		if ( ! shouldEarlyProvisionSite || ! earlyProvisionSpecId ) {
+		if ( ! shouldProvisionAtomicSite || ! atomicProvisionSpecId ) {
 			return;
 		}
 
-		handleEarlyProvisionSpecConfirm( { spec_id: earlyProvisionSpecId } );
-	}, [ handleEarlyProvisionSpecConfirm, shouldEarlyProvisionSite, earlyProvisionSpecId ] );
+		handleEarlyProvisionSpecConfirm( { spec_id: atomicProvisionSpecId } );
+	}, [ handleEarlyProvisionSpecConfirm, shouldProvisionAtomicSite, atomicProvisionSpecId ] );
+
+	useEffect( () => {
+		if ( ! shouldBuildWow || ! buildWowSpecId ) {
+			return;
+		}
+
+		handleBuildWowSpecConfirm( { spec_id: buildWowSpecId } );
+	}, [ handleBuildWowSpecConfirm, shouldBuildWow, buildWowSpecId ] );
+
+	if ( buildWowRequested && isLoadingAutomattician ) {
+		return <DocumentHead title={ translate( 'Build Your Site with AI' ) } />;
+	}
 
 	let siteSpecStep = <SiteSpecContainer />;
-	if ( shouldEarlyProvisionSite ) {
+	if ( shouldBuildWow ) {
+		siteSpecStep = (
+			<SiteSpecContainer
+				siteSpecConfig={ getBuildWowSiteSpecConfig( {
+					siteSlug: queryParams.get( 'siteSlug' ),
+					siteId: queryParams.get( 'siteId' ),
+					ref: queryParams.get( 'ref' ),
+					source: querySource,
+				} ) }
+				onSpecConfirm={ handleBuildWowSpecConfirm }
+			/>
+		);
+	} else if ( shouldProvisionAtomicSite ) {
 		siteSpecStep = (
 			<SiteSpecContainer
 				siteSpecConfig={ getEarlyProvisionSiteSpecConfig() }
-				onFirstIntent={ () => startEarlyProvisionSite( 'first_intent' ) }
-				onMessage={ () => startEarlyProvisionSite( 'site_spec_message' ) }
 				onSpecConfirm={ handleEarlyProvisionSpecConfirm }
 			/>
 		);

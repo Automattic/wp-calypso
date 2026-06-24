@@ -15,17 +15,8 @@ type AtomicProvisioningSite = {
 
 export function getEarlyCreatedSiteId(
 	flow: string | undefined,
-	earlyCreatedSite: string | null,
-	earlyProvisionTarget: string | null
+	earlyCreatedSite: string | null
 ): number | null {
-	if (
-		flow === AI_SITE_BUILDER_FLOW &&
-		earlyProvisionTarget === EARLY_PROVISION_TARGET_WPCOM_ATOMIC &&
-		! earlyCreatedSite
-	) {
-		throw new Error( 'Missing early_created_site for WPCOM Atomic early provisioning.' );
-	}
-
 	if ( flow !== AI_SITE_BUILDER_FLOW || ! earlyCreatedSite ) {
 		return null;
 	}

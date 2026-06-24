@@ -177,8 +177,11 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 
 							const source = queryParams.get( 'source' );
 							const specId = queryParams.get( 'spec_id' );
+							const provisionTarget =
+								queryParams.get( 'provision_target' ) ??
+								queryParams.get( 'early_provision_target' );
 							const isEarlyWpcomAtomicProvisioning =
-								queryParams.get( 'early_provision_target' ) === EARLY_PROVISION_TARGET_WPCOM_ATOMIC;
+								provisionTarget === EARLY_PROVISION_TARGET_WPCOM_ATOMIC;
 
 							/**
 							 * Redirect behavior after site creation:
@@ -205,6 +208,9 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							 * | 1                  | (not set)            | /wp-admin/                                        |
 							 * | 1                  | 0                    | /wp-admin/site-editor.php?canvas=edit&ai-step=spec |
 							 * | 1                  | 1                    | /wp-admin/                                        |
+							 *
+							 * WPCOM Atomic provision targets use Easy Site Editor instead of the legacy
+							 * Big Sky site-editor surface.
 							 */
 							const triggerBackendBuildParam = queryParams.get( 'trigger_backend_build' );
 							const triggerBackendBuild = gardenName
@@ -284,18 +290,25 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 									} )
 								);
 							} else {
-								const siteEditorUrl = addQueryArgs( `${ siteURL }/wp-admin/site-editor.php`, {
-									canvas: 'edit',
-									p: '/',
-									'ai-step': isEarlyWpcomAtomicProvisioning ? 'edit' : 'spec',
-									referrer: AI_SITE_BUILDER_FLOW,
-									...( promptValue ? { prompt: promptValue } : {} ),
-									...( source ? { source } : {} ),
-									...( specId ? { spec_id: specId } : {} ),
-								} );
+								const siteEditorUrl = isEarlyWpcomAtomicProvisioning
+									? addQueryArgs( `${ siteURL }/wp-admin/admin.php`, {
+											page: 'easy-site-editor',
+											referrer: AI_SITE_BUILDER_FLOW,
+											...( source ? { source } : {} ),
+											...( specId ? { spec_id: specId } : {} ),
+									  } )
+									: addQueryArgs( `${ siteURL }/wp-admin/site-editor.php`, {
+											canvas: 'edit',
+											p: '/',
+											'ai-step': 'spec',
+											referrer: AI_SITE_BUILDER_FLOW,
+											...( promptValue ? { prompt: promptValue } : {} ),
+											...( source ? { source } : {} ),
+											...( specId ? { spec_id: specId } : {} ),
+									  } );
 
 								if ( isEarlyWpcomAtomicProvisioning ) {
-									logEarlyWpcomAtomicEvent( 'site_editor_redirect', siteId, {
+									logEarlyWpcomAtomicEvent( 'easy_site_editor_redirect', siteId, {
 										spec_id: specId,
 									} );
 								}

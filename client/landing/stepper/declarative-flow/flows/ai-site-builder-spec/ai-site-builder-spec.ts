@@ -20,8 +20,10 @@ function initialize() {
 	const queryParams = new URLSearchParams( window.location.search );
 	const specId = queryParams.get( 'spec_id' );
 	const shouldEarlyProvisionSite = queryParams.get( 'early_provision_site' ) === '1';
+	const shouldProvisionAtomicSite = queryParams.get( 'provision_target' ) === 'wpcom-atomic';
+	const shouldBuildWow = queryParams.get( 'build_wow' ) === '1';
 
-	if ( specId && ! shouldEarlyProvisionSite ) {
+	if ( specId && ! shouldEarlyProvisionSite && ! shouldProvisionAtomicSite && ! shouldBuildWow ) {
 		// Redirect to main ai-site-builder flow preserving query parameters
 		window.location.replace( `/setup/ai-site-builder?${ queryParams.toString() }` );
 		return [];
