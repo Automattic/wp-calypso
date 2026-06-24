@@ -5,7 +5,6 @@ import {
 	getCurrentUser,
 	getCurrentUserDisplayName,
 	getCurrentUserEmail,
-	isUserLoggedIn,
 } from 'calypso/state/current-user/selectors';
 import type { HeaderProps } from '@automattic/wpcom-template-parts';
 
@@ -45,8 +44,8 @@ const VARIATION_TO_VARIANT: Partial< Record< string, 1 | 2 > > = {
 
 /**
  * Props to spread onto `UniversalNavbarHeader` to opt into the 2026 Global Nav.
- * Returns a temporary loading class while a logged-in assignment is pending,
- * otherwise returns `{}` when the nav stays on the old design.
+ * Returns a temporary loading class while the assignment is pending, otherwise
+ * returns `{}` when the nav stays on the old design.
  *
  * Resolution order:
  * 1. Minimal universal headers are not eligible for Nav 2026.
@@ -54,13 +53,13 @@ const VARIATION_TO_VARIANT: Partial< Record< string, 1 | 2 > > = {
  *    follows the existing `nav-redesign/2026-variant-2` flag.
  * 3. The NAV_2026_EXPERIMENT assignment — `showcase_products`/`showcase_products_and_ai`
  *    map to variants 1/2; everything else (control, null) → old nav.
- *    While the assignment is still loading for logged-in users, return a
- *    temporary className that hides the old nav until the assignment resolves.
+ *    While the assignment is still loading, return a temporary className that
+ *    hides the old nav until the assignment resolves, avoiding the old-nav→new-nav
+ *    flash on navigation.
  */
 export function useNav2026Props( options: Nav2026Options = {} ): Nav2026Props {
 	const isHeaderEligible = options.variant !== 'minimal';
 	const forcedOn = isHeaderEligible && config.isEnabled( 'nav-redesign/2026' );
-	const isLoggedIn = useSelector( isUserLoggedIn );
 	const userAvatar = useSelector( ( state ) => getCurrentUser( state )?.avatar_URL );
 	const userName = useSelector( getCurrentUserDisplayName );
 	const userEmail = useSelector( getCurrentUserEmail );
@@ -80,7 +79,12 @@ export function useNav2026Props( options: Nav2026Options = {} ): Nav2026Props {
 		variant = VARIATION_TO_VARIANT[ experimentAssignment.variationName ];
 	}
 
-	if ( isLoggedIn && isLoadingExperiment && ! forcedOn ) {
+	// Hide the old nav while the client-side assignment is still pending, then let
+	// it render once we know the variant. This avoids the brief old-nav→new-nav
+	// flash when navigating between logged-out marketing surfaces. The nav stays in
+	// the server HTML (only `visibility` is toggled), so crawlers still see it and
+	// its links — the hide is purely client-side and visual.
+	if ( isLoadingExperiment && ! forcedOn ) {
 		return { className: 'is-nav-2026-assignment-loading' };
 	}
 
