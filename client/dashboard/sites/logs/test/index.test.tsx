@@ -74,7 +74,7 @@ describe( 'SiteLogs page', () => {
 		mockPhpLogs( [] );
 		render( <SiteLogs logType={ LogType.PHP } siteSlug="test-site" /> );
 
-		expect( await screen.findByText( /Custom error log paths are not monitored/ ) ).toBeVisible();
+		expect( await screen.findByText( /paths aren’t shown here/ ) ).toBeVisible();
 	} );
 
 	test( 'does not show the custom error log notice when PHP errors are present', async () => {
@@ -94,9 +94,7 @@ describe( 'SiteLogs page', () => {
 
 		// Wait for the log row to render before asserting the notice is absent.
 		expect( await screen.findByText( 'Something happened' ) ).toBeVisible();
-		expect(
-			screen.queryByText( /Custom error log paths are not monitored/ )
-		).not.toBeInTheDocument();
+		expect( screen.queryByText( /paths aren’t shown here/ ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'does not show the custom error log notice on the Web server tab', async () => {
@@ -105,9 +103,7 @@ describe( 'SiteLogs page', () => {
 		// Wait for the page to settle on a stable element before asserting absence.
 		await screen.findByRole( 'tab', { name: 'Web server' } );
 
-		expect(
-			screen.queryByText( /Custom error log paths are not monitored/ )
-		).not.toBeInTheDocument();
+		expect( screen.queryByText( /paths aren’t shown here/ ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'URL from/to params are normalized from ms to seconds', async () => {

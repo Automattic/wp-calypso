@@ -30,10 +30,21 @@
 	}
 }
 
-// `.site-logs` scope raises specificity above the component's default
-// `.calypso-notice` bottom margin (24px above 660px), which is too large here.
-.site-logs .site-logs__notice {
-	margin-block: 16px;
+.site-logs__empty {
+	text-align: center;
+}
+
+.site-logs__empty-title {
+	font-weight: 600;
+	margin-block-end: 8px;
+}
+
+.site-logs__empty-description {
+	color: var( --color-text-subtle );
+
+	code {
+		font-size: inherit;
+	}
 }
 
 // This is to compensate the padding set by the wrapper .hosting-dashboard-item-view__content

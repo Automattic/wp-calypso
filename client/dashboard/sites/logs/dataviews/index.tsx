@@ -16,7 +16,6 @@ import { useAnalytics } from '../../../app/analytics';
 import { usePersistentView } from '../../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../../app/performance-tracking';
 import { DataViews, DataViewsEmptyStateLayout } from '../../../components/dataviews';
-import Notice from '../../../components/notice';
 import { LogsDownloader } from '../downloader';
 import {
 	buildTimeRangeInSeconds,
@@ -332,7 +331,15 @@ function SiteLogsDataViews( {
 			title={ __( 'No results' ) }
 			description={
 				logType === LogType.PHP
-					? __( 'No PHP errors were logged for the selected time range.' )
+					? createInterpolateElement(
+							__(
+								'The custom <wpDebugLog>WP_DEBUG_LOG</wpDebugLog> or <errorLog>error_log</errorLog> paths aren’t shown here.'
+							),
+							{
+								wpDebugLog: <code />,
+								errorLog: <code />,
+							}
+					  )
 					: __( 'No server requests were logged for the selected time range.' )
 			}
 		/>
@@ -340,19 +347,6 @@ function SiteLogsDataViews( {
 
 	return (
 		<>
-			{ logType === LogType.PHP && ! isLoadingLogQuery && logs.length === 0 && (
-				<Notice variant="info">
-					{ createInterpolateElement(
-						__(
-							'Custom error log paths are not monitored. If your site has <wpDebugLog>WP_DEBUG_LOG</wpDebugLog> or a custom <errorLog>error_log</errorLog> path enabled, those logs will not appear here. Access them via SFTP or SSH instead.'
-						),
-						{
-							wpDebugLog: <code />,
-							errorLog: <code />,
-						}
-					) }
-				</Notice>
-			) }
 			{ logType === LogType.PHP ? (
 				<DataViews< PHPLog >
 					data={ phpLogs }

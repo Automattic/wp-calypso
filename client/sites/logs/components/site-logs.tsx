@@ -15,7 +15,6 @@ import { getShortcuts } from 'calypso/components/date-range/use-shortcuts';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import NavigationHeader from 'calypso/components/navigation-header';
-import Notice from 'calypso/components/notice';
 import {
 	LogType,
 	LogQueryParams,
@@ -242,6 +241,20 @@ export const SiteLogsDataViews = ( {
 		setItemDetailsModal( null );
 	}, [] );
 
+	const phpEmptyState = (
+		<div className="site-logs__empty">
+			<p className="site-logs__empty-title">{ translate( 'No results' ) }</p>
+			<p className="site-logs__empty-description">
+				{ translate( 'The custom {{wpDebugLog/}} or {{errorLog/}} paths aren’t shown here.', {
+					components: {
+						wpDebugLog: <code>WP_DEBUG_LOG</code>,
+						errorLog: <code>error_log</code>,
+					},
+				} ) }
+			</p>
+		</div>
+	);
+
 	return (
 		<>
 			{ siteId && <QuerySiteSettings siteId={ siteId } /> }
@@ -316,19 +329,6 @@ export const SiteLogsDataViews = ( {
 					tooltip={ translate( 'Select a date range' ) }
 				/>
 			</div>
-			{ logType === LogType.PHP && ! isLoading && data.length === 0 && (
-				<Notice className="site-logs__notice" status="is-info" showDismiss={ false }>
-					{ translate(
-						'Custom error log paths are not monitored. If your site has {{wpDebugLog/}} or a custom {{errorLog/}} path enabled, those logs will not appear here. Access them via SFTP or SSH instead.',
-						{
-							components: {
-								wpDebugLog: <code>WP_DEBUG_LOG</code>,
-								errorLog: <code>error_log</code>,
-							},
-						}
-					) }
-				</Notice>
-			) }
 			<DataViews< PHPLog | ServerLog >
 				data={ data }
 				isLoading={ isLoading }
@@ -339,6 +339,7 @@ export const SiteLogsDataViews = ( {
 				onClickItem={ onOpenDetailsModal }
 				actions={ actions }
 				search={ false }
+				empty={ logType === LogType.PHP ? phpEmptyState : undefined }
 				defaultLayouts={ { table: {} } }
 				header={
 					<>
