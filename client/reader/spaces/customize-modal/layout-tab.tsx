@@ -25,7 +25,7 @@ export function getLayoutPresetTitle( view: SpaceFeedLayout, translate: Translat
 			return translate( 'Calm reading' ) as string;
 		case 'legacy':
 		default:
-			return translate( 'Legacy' ) as string;
+			return translate( 'Classic' ) as string;
 	}
 }
 
