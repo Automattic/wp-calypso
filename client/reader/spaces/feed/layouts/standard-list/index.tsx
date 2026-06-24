@@ -60,6 +60,7 @@ function PostRow( { fields, post }: { fields: SpaceFeedPostFields; post: ReadStr
 					post={ post }
 					onCommentClick={ () => page( getPostUrl( post ) ) }
 					iconSize={ 18 }
+					variant="discreet"
 				/>
 			</VStack>
 			<div className="space-feed-standard-list__aside">

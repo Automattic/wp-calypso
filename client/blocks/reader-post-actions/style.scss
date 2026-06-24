@@ -90,6 +90,27 @@
 	}
 }
 
+// `discreet` variant: low-emphasis, borderless actions for dense surfaces (e.g.
+// the Reader Spaces compact list). The selector carries the same `:root … item
+// button` chain as the default rule above, plus the `.is-discreet` class, so it
+// outranks the boxed default without `!important`.
+:root .reader-post-actions.is-discreet {
+	gap: 12px;
+
+	.reader-post-actions__item button {
+		min-height: 0;
+		padding: 6px;
+		margin: -6px; // keep the row tight while preserving the 44px hit area
+		border: none;
+		background: transparent;
+
+		&:hover {
+			background: var( --color-surface-backdrop );
+			color: var( --color-link );
+		}
+	}
+}
+
 .reader-post-actions {
 	@include ui-mixins.when-dark-theme {
 		.reader-post-actions__item button {

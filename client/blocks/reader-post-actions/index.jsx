@@ -21,7 +21,7 @@ import { ReaderFreshlyPressedButton } from '../reader-freshly-pressed-button';
 import './style.scss';
 
 /**
- * @param {{ post: Object; site?: Object; onCommentClick?: Function; iconSize?: number; className?: string; fullPost?: boolean; commentsApiDisabled?: boolean; }} props
+ * @param {{ post: Object; site?: Object; onCommentClick?: Function; iconSize?: number; className?: string; fullPost?: boolean; commentsApiDisabled?: boolean; variant?: 'default' | 'discreet'; }} props
  */
 const ReaderPostActions = ( {
 	post,
@@ -31,13 +31,16 @@ const ReaderPostActions = ( {
 	className,
 	fullPost,
 	commentsApiDisabled = false,
+	variant = 'default',
 } ) => {
 	const hasSites = !! useSelector( getPrimarySiteId );
 	const showShare = isSharable( post );
 	const showReblog = isRebloggable( post, hasSites );
 	const showComments = isCommentsOpen( post ) || post.discussion?.comment_count > 0;
 	const showLikes = isLikeable( post );
-	const listClassnames = clsx( 'reader-post-actions', className );
+	const listClassnames = clsx( 'reader-post-actions', className, {
+		'is-discreet': variant === 'discreet',
+	} );
 	const { data } = useQuery( readTeamsQuery() );
 	const isAutomattician = isAutomatticTeamMember( data?.teams ?? [] );
 	const shouldShowFreshlyPressed = fullPost && isAutomattician && showShare;
@@ -114,6 +117,7 @@ ReaderPostActions.propTypes = {
 	iconSize: PropTypes.number,
 	fullPost: PropTypes.bool,
 	commentsApiDisabled: PropTypes.bool,
+	variant: PropTypes.oneOf( [ 'default', 'discreet' ] ),
 };
 
 export default ReaderPostActions;

@@ -86,24 +86,3 @@
 	color: var(--color-text-subtle);
 	font-size: 0.75rem;
 }
-
-// Discreet, borderless post actions inside the standard-list feed only.
-// Specificity (0,4,1) intentionally beats the shared reader-post-actions
-// block's `:root .reader-post-actions … button` rule (0,3,1), so the global
-// block (used elsewhere in the Reader) is left untouched.
-.space-feed-standard-list .reader-post-actions {
-	gap: 20px;
-}
-
-:root .space-feed-standard-list .reader-post-actions .reader-post-actions__item button {
-	min-height: 0;
-	padding: 6px;
-	margin: -6px; // keep the row tight while preserving the 44px hit area
-	border: none;
-	background: transparent;
-
-	&:hover {
-		background: var(--color-surface-backdrop);
-		color: var(--color-link);
-	}
-}
