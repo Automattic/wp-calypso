@@ -1,7 +1,7 @@
 import { omit, orderBy } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
 import isEqual from 'fast-deep-equal/es6';
-import { filter, has, map, reject, get } from 'lodash';
+import { filter, has, map, get } from 'lodash';
 import {
 	COMMENT_COUNTS_UPDATE,
 	COMMENTS_CHANGE_STATUS,
@@ -122,7 +122,7 @@ export function items( state = {}, action ) {
 		case COMMENTS_DELETE:
 			return {
 				...state,
-				[ stateKey ]: reject( state[ stateKey ], { ID: commentId } ),
+				[ stateKey ]: ( state[ stateKey ] ?? [] ).filter( ( comment ) => comment.ID !== commentId ),
 			};
 		case COMMENTS_LIKE:
 			return {

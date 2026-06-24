@@ -26,6 +26,8 @@ const JS_UTILS_NAMES = [
 	'random',
 	'range',
 	'truncate',
+	'flow',
+	'defaults',
 ];
 
 // The js-utils case converters cover ASCII identifiers/keys, not lodash's full
@@ -81,6 +83,11 @@ const PARTITION_MESSAGE =
 const SORT_MESSAGE =
 	'Please use `sortBy`/`orderBy` from `@automattic/js-utils`. They support function and ' +
 	'property-path iteratees (and arrays of those) but not lodash object-match shorthands.';
+const REJECT_MESSAGE =
+	'Please use native `array.filter( ( item ) => ! … )` instead of lodash `reject` ' +
+	'(expand object-match shorthands to a predicate, and guard nullable collections with `?? []`).';
+const CONCAT_MESSAGE =
+	'Please use native `array.concat( … )` (or `[].concat( ...arrays )`) instead of lodash `concat`.';
 
 const paths = [
 	{ name: 'lodash', importNames: JS_UTILS_NAMES, message: JS_UTILS_MESSAGE },
@@ -104,6 +111,8 @@ const paths = [
 	{ name: 'lodash', importNames: [ 'maxBy', 'minBy' ], message: EXTREMUM_MESSAGE },
 	{ name: 'lodash', importNames: [ 'partition' ], message: PARTITION_MESSAGE },
 	{ name: 'lodash', importNames: [ 'sortBy', 'orderBy' ], message: SORT_MESSAGE },
+	{ name: 'lodash', importNames: [ 'reject' ], message: REJECT_MESSAGE },
+	{ name: 'lodash', importNames: [ 'concat' ], message: CONCAT_MESSAGE },
 ];
 
 // Deep `lodash/<fn>` imports bypass the named-import paths above.
@@ -129,6 +138,8 @@ const patterns = [
 	{ group: [ 'lodash/maxBy', 'lodash/minBy' ], message: EXTREMUM_MESSAGE },
 	{ group: [ 'lodash/partition' ], message: PARTITION_MESSAGE },
 	{ group: [ 'lodash/sortBy', 'lodash/orderBy' ], message: SORT_MESSAGE },
+	{ group: [ 'lodash/reject' ], message: REJECT_MESSAGE },
+	{ group: [ 'lodash/concat' ], message: CONCAT_MESSAGE },
 ];
 
 module.exports = { paths, patterns };
