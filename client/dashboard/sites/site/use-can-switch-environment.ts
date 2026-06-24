@@ -22,13 +22,10 @@ export default function useCanSwitchEnvironment( site?: Site ) {
 		return false;
 	}
 
-	// Match V1: only show the switcher to users who can manage the other
-	// environment. When no other environment exists yet, fall back to whether
-	// they can create one so the "Add staging site" affordance is preserved.
 	const otherEnvironmentSite = site.is_wpcom_staging_site ? productionSite : stagingSite;
+	if ( otherEnvironmentSite ) {
+		return canManageSite( otherEnvironmentSite );
+	}
 
-	return (
-		( !! otherEnvironmentSite && canManageSite( otherEnvironmentSite ) ) ||
-		canCreateStagingSite( site )
-	);
+	return canCreateStagingSite( site );
 }
