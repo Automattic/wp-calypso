@@ -3,11 +3,18 @@ import { getCalypsoURL } from '../../../data-helper';
 import type { NewSiteResponse, NewUserResponse } from '../../../types/rest-api-client.types';
 
 /**
- * Signals a transient upstream failure during signup (a 5xx server-error page
- * or a 5xx /users/new? response) for which retrying is safe because no account
+ * Signals a transient upstream failure during signup (a 502/503/504 server-error
+ * page or /users/new? response) for which retrying is safe because no account
  * was created.
  */
 class TransientSignupError extends Error {}
+
+// Upstream gateway statuses that indicate a transient infra failure rather than
+// the app itself. 500 (Internal Server Error) and 501 are deliberately excluded:
+// they usually mean the app crashed or a genuine bug, which we want to fail on
+// fast rather than mask by retrying. Mirrors the phrases isServerErrorPage()
+// matches (Bad Gateway / Service Unavailable / Gateway Timeout).
+const TRANSIENT_UPSTREAM_STATUSES = [ 502, 503, 504 ];
 
 /**
  * This object represents multiple pages on WordPress.com:
@@ -252,9 +259,13 @@ export class UserSignupPage {
 	}
 
 	/**
-	 * Rejects with a {@link TransientSignupError} when the /users/new? POST
-	 * returns a 5xx. Never resolves; intended to be raced against the successful
-	 * response capture.
+	 * Rejects as soon as the /users/new? POST returns any 5xx, so the attempt
+	 * fails fast instead of waiting out the full capture timeout. A transient
+	 * upstream status (502/503/504) rejects with a {@link TransientSignupError}
+	 * so the caller can retry; any other 5xx (e.g. 500 Internal Server Error)
+	 * rejects with a plain Error so the run fails immediately rather than
+	 * masking an app crash behind retries. Never resolves; intended to be raced
+	 * against the successful response capture.
 	 *
 	 * @returns {Promise<never>} A promise that only rejects.
 	 */
@@ -268,9 +279,12 @@ export class UserSignupPage {
 				{ timeout: 60_000 }
 			)
 			.then( ( response ) => {
-				throw new TransientSignupError(
-					`/users/new? responded with status ${ response.status() }.`
-				);
+				const status = response.status();
+				const message = `/users/new? responded with status ${ status }.`;
+				if ( TRANSIENT_UPSTREAM_STATUSES.includes( status ) ) {
+					throw new TransientSignupError( message );
+				}
+				throw new Error( message );
 			} );
 	}
 
