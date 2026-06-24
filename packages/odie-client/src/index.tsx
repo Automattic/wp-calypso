@@ -11,10 +11,14 @@ import './style.scss';
 
 export const OdieAssistant: React.FC = () => {
 	const { trackEvent, currentUser, chat } = useOdieAssistantContext();
-	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
+	const { data: currentSupportInteraction, isLoading: isLoadingInteraction } =
+		useCurrentSupportInteraction();
 	const chatHasCSATMessage = hasCSATMessage( chat );
+	// While the interaction is loading (e.g. immediately after navigating to a new
+	// chat via the "Continue in your open chat" button), keep the closed footer
+	// visible so the send-message input doesn't flash into view prematurely.
 	const showClosedConversationFooter =
-		chatHasCSATMessage || interactionHasEnded( currentSupportInteraction );
+		isLoadingInteraction || chatHasCSATMessage || interactionHasEnded( currentSupportInteraction );
 
 	const currentUuid = currentSupportInteraction?.uuid;
 	const { mostRecentSupportInteractionId, openCount } = useOpenLiveInteractions( currentUuid );
