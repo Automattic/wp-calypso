@@ -432,6 +432,9 @@ function getFilteredNotes( before ) {
 	}
 	this.gettingFilteredNotes = true;
 	const generation = this.filterGeneration;
+	// Tag this fetch's loading dispatches with its filter, stable even if the
+	// active filter changes mid-flight.
+	const filter = this.filter;
 
 	const unreadIds = getUnreadNoteIds( store.getState() );
 
@@ -443,7 +446,7 @@ function getFilteredNotes( before ) {
 			? Math.min( settings.increment_limit, settings.max_limit - unreadIds.length )
 			: settings.initial_limit,
 		locale: this.locale,
-		...this.filter,
+		...filter,
 	};
 	if ( before ) {
 		parameters.before = before;
@@ -453,16 +456,16 @@ function getFilteredNotes( before ) {
 	// is empty) and while paging older notes (`before` → the list's load-more
 	// indicator); a steady-state refresh of a non-empty list stays silent.
 	if ( before || unreadIds.length === 0 ) {
-		store.dispatch( actions.ui.loadNotes() );
+		store.dispatch( actions.ui.loadNotes( { filter } ) );
 	}
 
 	listNotes( parameters, ( error, data ) => {
 		this.gettingFilteredNotes = false;
-		store.dispatch( actions.ui.loadedNotes() );
 
 		if ( error ) {
 			// Leave the polling path's state untouched; it will recover on its
 			// own schedule. A retry happens when the user re-enters the tab.
+			store.dispatch( actions.ui.loadedNotes( { filter } ) );
 			return;
 		}
 
@@ -471,7 +474,10 @@ function getFilteredNotes( before ) {
 		// setFilter's own fetch was skipped while this request held the lock.
 		if ( generation !== this.filterGeneration ) {
 			if ( this.filter && this.isVisible ) {
+				// The refetch keeps the loading state; don't clear it here.
 				this.getFilteredNotes();
+			} else {
+				store.dispatch( actions.ui.loadedNotes( { filter } ) );
 			}
 			return;
 		}
@@ -518,6 +524,10 @@ function getFilteredNotes( before ) {
 						: this.filteredHasMore ) && merged.length < settings.max_limit;
 			}
 		}
+
+		// Clear loading only after the notes and ids are in the store, so the list
+		// never flashes empty between "loaded" and the ids landing.
+		store.dispatch( actions.ui.loadedNotes( { filter } ) );
 	} );
 }
 

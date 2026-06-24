@@ -8,6 +8,7 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
+import getFilteredLoading from '../../panel/state/selectors/get-filtered-loading';
 import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
 import { getIsNoteRead } from '../../panel/state/selectors/get-is-note-read';
@@ -70,6 +71,7 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	const visibleNotes = notes.filter( ( note ) => hiddenNoteIds[ note.id ] !== true );
 
 	const isLoading = useSelector( ( state ) => getIsLoading( state ) );
+	const filteredLoading = useSelector( ( state ) => getFilteredLoading( state ) );
 	const { client } = useAppContext();
 
 	// DataViews 14 binds its infinite-scroll listener in an effect that runs
@@ -180,9 +182,10 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	// mid-load leaves scrolling dead. In-flight loading uses the `empty` slot.
 	const showInitialLoader = ! hasRenderedDataViews.current;
 
-	// Spinner instead of an empty message while the view may still be filling —
-	// more cache pages to search, or the Unread fetch in flight.
-	const showEmptyLoader = hasMoreNotes || ( filterName === 'unread' && isLoading );
+	// Spinner instead of an empty message while the view may still be filling: more
+	// cache pages to search, or the Unread fetch in flight. Unread keys off the
+	// in-flight filter, not the shared `isLoading` the background poll also toggles.
+	const showEmptyLoader = hasMoreNotes || ( filterName === 'unread' && !! filteredLoading?.unread );
 
 	return (
 		<div ref={ noteListRef } className="wpnc__note-list">

@@ -4,6 +4,7 @@
 import { store } from '../../state';
 import actions from '../../state/actions';
 import getAllNotes from '../../state/selectors/get-all-notes';
+import getFilteredLoading from '../../state/selectors/get-filtered-loading';
 import getIsLoading from '../../state/selectors/get-is-loading';
 import getUnreadNoteIds from '../../state/selectors/get-unread-note-ids';
 import Client from '../index';
@@ -561,6 +562,52 @@ describe( 'RestClient', () => {
 
 			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 199 ), last_seen_time: 0 } );
 			expect( getIsLoading( store.getState() ) ).toBe( false );
+		} );
+
+		// Regression: clearing the loading state before the unread ids land makes
+		// the list render an empty frame between "loaded" and the ids ("small
+		// loading → empty → list"). Loading must clear only once the ids are set.
+		it( 'sets the unread ids before clearing the loading state', () => {
+			client.setFilter( { unread: 1 } );
+			expect( getIsLoading( store.getState() ) ).toBe( true );
+
+			const frames = [];
+			const unsubscribe = store.subscribe( () =>
+				frames.push( {
+					isLoading: getIsLoading( store.getState() ),
+					unreadCount: getUnreadNoteIds( store.getState() ).length,
+				} )
+			);
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 50 ), last_seen_time: 0 } );
+			unsubscribe();
+
+			// No frame may show "done loading" over a still-empty list.
+			expect( frames.some( ( f ) => ! f.isLoading && f.unreadCount === 0 ) ).toBe( false );
+			expect( getIsLoading( store.getState() ) ).toBe( false );
+			expect( getUnreadNoteIds( store.getState() ) ).toHaveLength( 10 );
+		} );
+
+		// Regression: the always-running unfiltered poll shares the global loading
+		// flag. When it lands while a filtered (Unread) fetch is still in flight, it
+		// clears the shared flag — but the filtered loading state must hold its
+		// filter, or the Unread tab flashes its empty message before the ids land.
+		it( 'keeps the filtered loading state set when a background poll lands mid-fetch', () => {
+			// A full head window is already loaded, so the poll stays silent on start
+			// yet still clears the shared loading flag when it lands.
+			store.dispatch( actions.notes.addNotes( fullPage( 10, 100 ) ) );
+			client.noteList = fullPage( 10, 100 ).map( ( { id, note_hash } ) => ( { id, note_hash } ) );
+
+			client.setFilter( { unread: 1 } ); // filtered fetch A in flight
+			expect( getFilteredLoading( store.getState() ) ).toEqual( { unread: 1 } );
+			getCalls.length = 0;
+
+			client.getNotes(); // background poll B
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 100 ), last_seen_time: 0 } );
+
+			// B cleared the shared flag, but A is still in flight — the filter holds.
+			expect( getIsLoading( store.getState() ) ).toBe( false );
+			expect( getFilteredLoading( store.getState() ) ).toEqual( { unread: 1 } );
+			expect( client.gettingFilteredNotes ).toBe( true );
 		} );
 	} );
 } );
