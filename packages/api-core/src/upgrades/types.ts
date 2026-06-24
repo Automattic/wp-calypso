@@ -87,6 +87,8 @@ export interface Purchase {
 	 */
 	attached_to_purchase_id: number | null;
 
+	advertised_total_upload_space_in_gb?: number | null;
+
 	auto_renew_coupon_code: string | null;
 	auto_renew_coupon_discount_percentage: number | null;
 
@@ -139,6 +141,49 @@ export interface Purchase {
 	domain_registration_agreement_url: string | undefined;
 	blog_created_date: string;
 	expiry_date: string;
+
+	/**
+	 * A coarse, display-oriented summary of where this purchase is in its
+	 * lifecycle. Derived on the backend from
+	 * `Store_Subscription::get_expiry_status()`, which combines the subscription
+	 * status, the expiry date, whether it expires "soon", and whether it is
+	 * configured to auto-renew. One of:
+	 *
+	 * - 'active': Active, has a future expiry date, and set to auto-renew, but
+	 *   renewal is not imminent (more than ~3 months away; ~10 days for monthly
+	 *   plans). Renews automatically on the renewal date. No action needed.
+	 *
+	 * - 'auto-renewing': Same as 'active' but renewal IS imminent (within the
+	 *   "expiring soon" window). Will auto-renew on the renewal date.
+	 *
+	 * - 'manual-renew': Active, has a future expiry date, but NOT set to
+	 *   auto-renew and not yet expiring soon. The user must renew manually
+	 *   before the expiry date or it will lapse.
+	 *
+	 * - 'expiring': Active, expiring soon (or already PAST its expiry date, see
+	 *   below), and NOT going to auto-renew. This is the "needs attention"
+	 *   state: the purchase is still active but will lapse unless renewed.
+	 *
+	 * - 'expired': The underlying subscription is no longer active
+	 *   (`subscription_status !== 'active'`). Note this is NOT the same as being
+	 *   past the expiry date — see below.
+	 *
+	 * - 'included': This purchase is part of a bundle (e.g. a domain bundled
+	 *   with a plan) and its lifecycle is governed by the parent subscription.
+	 *   This overrides any of the above.
+	 *
+	 * - 'one-time-purchase': The purchase has no expiry time at all (a perpetual
+	 *   purchase or a one-time product). Never renews and never lapses.
+	 *
+	 * Determining an active subscription that is PAST its expiry date (grace
+	 * period): this status alone is NOT sufficient, and it is NOT 'expired'.
+	 * A subscription that is still `active` but whose expiry date has passed
+	 * surfaces here as 'expiring' (because past-expiry trivially satisfies
+	 * "expiring soon" and a lapsed purchase is not auto-renewing). However,
+	 * 'expiring' also covers subscriptions that are merely approaching expiry
+	 * and have NOT passed it yet. To distinguish "active but already past
+	 * expiry" precisely, use `is_past_expiry_date`.
+	 */
 	expiry_status:
 		| 'expiring'
 		| 'included'
@@ -147,6 +192,19 @@ export interface Purchase {
 		| 'manual-renew'
 		| 'expired'
 		| 'one-time-purchase';
+
+	/**
+	 * True if the subscription's expiry date has already passed, whether it is
+	 * still active (i.e. in its post-expiry grace period) or has since become
+	 * inactive ('expired'). This is a more precise signal than
+	 * `expiry_status === 'expiring'`, which also covers subscriptions that are
+	 * merely approaching expiry but have not passed it.
+	 *
+	 * Always false for purchases with no expiry time (one-time purchases and
+	 * perpetual purchases).
+	 */
+	is_past_expiry_date: boolean;
+
 	iap_purchase_management_link: string | null;
 
 	/**
@@ -302,6 +360,16 @@ export interface Purchase {
 	refund_period_in_days: number;
 	regular_price_text: string;
 	regular_price_integer: number;
+
+	/**
+	 * The date this subscription will next attempt to auto-renew (ISO 8601).
+	 *
+	 * For active/auto-renewing subscriptions this is the next *renewal attempt*
+	 * date, NOT the expiry date: WordPress.com begins attempting renewals before
+	 * a subscription expires (e.g. non-monthly WordPress.com plans first attempt
+	 * ~30 days before `expiry_date`). For subscriptions that are not renewing
+	 * (expiring, manual-renew, etc.) it falls back to the expiry date.
+	 */
 	renew_date: string;
 
 	sale_amount?: number;
@@ -379,6 +447,26 @@ export interface Purchase {
 	is_upgradable: boolean;
 
 	/**
+	 * True if this subscription's plan can be downgraded to a different, lower
+	 * plan type (eg: Business to Personal).
+	 *
+	 * Only ever true for plans. Like `is_upgradable`, this is false for A4A
+	 * plans, bundle-`included` subscriptions, and (for Jetpack plans) holding
+	 * sites. Unlike `is_upgradable`, an active subscription that is merely past
+	 * its expiry date (grace period) is still considered downgradable; only
+	 * inactive ('expired') subscriptions are excluded.
+	 */
+	is_plan_type_downgradable: boolean;
+
+	/**
+	 * True if this subscription's plan can be downgraded to a shorter billing
+	 * term of the same plan (eg: annual to monthly).
+	 *
+	 * Gated by the same eligibility rules as `is_plan_type_downgradable`.
+	 */
+	is_plan_term_downgradable: boolean;
+
+	/**
 	 * True if deactivating this subscription will cause the site to be reverted
 	 * from an Atomic site to a Simple site. This is only true if the site is
 	 * currently on the Atomic architecture and removing this subscription would
@@ -407,6 +495,19 @@ export interface Purchase {
 	 * number.
 	 */
 	cancellation_offer_notice_discount_percentage: number | null;
+
+	/**
+	 * True when a delayed downgrade has been scheduled for this subscription.
+	 * The plan will be downgraded at the next renewal rather than immediately.
+	 * See `delayed_downgrade_to_product_slug` for the target plan.
+	 */
+	is_delayed_downgrade_pending: boolean;
+
+	/**
+	 * The product slug of the plan this subscription will downgrade to at
+	 * renewal, or null when no delayed downgrade is scheduled.
+	 */
+	delayed_downgrade_to_product_slug: string | null;
 }
 
 export type RawPurchase = Purchase & {

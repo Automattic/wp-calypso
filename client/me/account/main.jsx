@@ -3,13 +3,15 @@ import { Button, Card, Dialog, FormInputValidation, FormLabel } from '@automatti
 import { canBeTranslated, getLanguage, isLocaleVariant } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import { ExternalLink } from '@wordpress/components';
+import { debounce } from '@wordpress/compose';
 import debugFactory from 'debug';
 import { fixMe, localize } from 'i18n-calypso';
-import { debounce, flowRight as compose, get, map, size } from 'lodash';
+import { get, map } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
+import { compose } from 'redux';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
 import FormButton from 'calypso/components/forms/form-button';
@@ -90,12 +92,6 @@ const INTERFACE_FIELDS = [
 ];
 
 class Account extends Component {
-	constructor( props ) {
-		super( props );
-
-		this.props.removeUnsavedUserSetting( 'user_login' );
-	}
-
 	state = {
 		redirect: false,
 		showConfirmUsernameForm: false,
@@ -114,6 +110,8 @@ class Account extends Component {
 	}
 
 	componentDidMount() {
+		this.props.removeUnsavedUserSetting( 'user_login' );
+
 		const params = new URLSearchParams( window.location.search );
 		if ( params.get( 'usernameChangeSuccess' ) === 'true' ) {
 			this.props.successNotice( this.props.translate( 'Username changed successfully!' ), {
@@ -709,7 +707,7 @@ class Account extends Component {
 		 * If there are no actions or if there is only one action,
 		 * which we assume is the 'none' action, we ignore the actions.
 		 */
-		if ( size( actions ) <= 1 ) {
+		if ( Object.keys( actions ).length <= 1 ) {
 			return;
 		}
 

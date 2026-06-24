@@ -1,0 +1,129 @@
+.space-feed {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.space-feed__toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.space-feed__viewport {
+	// No nested scroll: the feed scrolls on the Reader's main container
+	// (`.layout__primary > div > div`), the same scrollbar as the rest of the
+	// Reader. This element just holds the list and grows with it.
+	min-block-size: 320px;
+}
+
+.space-feed__status {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding-block: 64px;
+	text-align: center;
+	color: var(--color-text-subtle);
+}
+
+.space-feed__status-title {
+	margin: 0;
+	font-size: 1rem;
+	font-weight: 600;
+	color: var(--color-text);
+}
+
+.space-feed__status-line {
+	margin: 0;
+	font-size: 0.875rem;
+	color: var(--color-text-subtle);
+}
+
+.space-feed__loading-more {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	padding-block: 16px;
+}
+
+.space-feed__skeleton-row {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+}
+
+.space-feed__skeleton-body {
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.space-feed__skeleton-avatar {
+	flex: 0 0 auto;
+	inline-size: 18px;
+	block-size: 18px;
+	border-radius: 4px;
+}
+
+.space-feed__skeleton-line {
+	block-size: 12px;
+	border-radius: 4px;
+}
+
+.space-feed__skeleton-line.is-short {
+	inline-size: 40%;
+}
+
+.space-feed__skeleton-avatar,
+.space-feed__skeleton-line {
+	background: linear-gradient(
+		90deg,
+		var(--color-surface-backdrop) 0%,
+		var(--color-border-subtle) 50%,
+		var(--color-surface-backdrop) 100%
+	);
+	background-size: 200% 100%;
+	animation: space-feed-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes space-feed-shimmer {
+	0% {
+		background-position: 200% 0;
+	}
+
+	100% {
+		background-position: -200% 0;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.space-feed__skeleton-avatar,
+	.space-feed__skeleton-line {
+		animation: none;
+	}
+}
+
+.space-feed__source-notice {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 10px 14px;
+	border: 1px solid var(--color-border-subtle);
+	border-radius: 8px;
+	background: var(--color-surface-backdrop);
+	font-size: 0.875rem;
+	color: var(--color-text);
+}
+
+.space-feed__source-notice-retry {
+	border: none;
+	background: none;
+	padding: 0;
+	color: var(--color-accent, var(--color-primary));
+	font-weight: 600;
+	cursor: pointer;
+}

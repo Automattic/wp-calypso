@@ -2,9 +2,9 @@
  * @jest-environment jsdom
  */
 
+import { omit } from '@automattic/js-utils';
 import { screen } from '@testing-library/react';
 import update from 'immutability-helper';
-import { omit } from 'lodash';
 import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ContactDetailsFormFields } from '../';
@@ -114,7 +114,10 @@ describe( 'ContactDetailsFormFields', () => {
 
 	describe( 'Country selection', () => {
 		test( 'should not render address fieldset when no country code is available', () => {
-			const newProps = omit( defaultProps, 'contactDetails.countryCode' );
+			const newProps = {
+				...defaultProps,
+				contactDetails: omit( defaultProps.contactDetails, 'countryCode' ),
+			};
 			render( <ContactDetailsFormFields { ...newProps } /> );
 
 			expect( screen.queryByTestId( 'region-address-fieldsets' ) ).not.toBeInTheDocument();
@@ -247,11 +250,10 @@ describe( 'ContactDetailsFormFields', () => {
 
 			render( <ContactDetailsFormFields { ...newProps } /> );
 
-			expect( FormPhoneMediaInput ).toHaveBeenCalledWith(
+			expect( FormPhoneMediaInput.mock.lastCall?.[ 0 ] ).toEqual(
 				expect.objectContaining( {
 					value: { countryCode: 'JP', phoneNumber: defaultProps.contactDetails.phone },
-				} ),
-				expect.anything()
+				} )
 			);
 		} );
 
@@ -263,11 +265,10 @@ describe( 'ContactDetailsFormFields', () => {
 
 			render( <ContactDetailsFormFields { ...newProps } /> );
 
-			expect( FormPhoneMediaInput ).toHaveBeenCalledWith(
+			expect( FormPhoneMediaInput.mock.lastCall?.[ 0 ] ).toEqual(
 				expect.objectContaining( {
 					value: { countryCode: 'FR', phoneNumber: defaultProps.contactDetails.phone },
-				} ),
-				expect.anything()
+				} )
 			);
 		} );
 
@@ -276,11 +277,10 @@ describe( 'ContactDetailsFormFields', () => {
 
 			render( <ContactDetailsFormFields { ...newProps } /> );
 
-			expect( FormPhoneMediaInput ).toHaveBeenCalledWith(
+			expect( FormPhoneMediaInput.mock.lastCall?.[ 0 ] ).toEqual(
 				expect.objectContaining( {
 					value: { countryCode: 'US', phoneNumber: defaultProps.contactDetails.phone },
-				} ),
-				expect.anything()
+				} )
 			);
 		} );
 	} );

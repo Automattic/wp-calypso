@@ -53,10 +53,30 @@ const GoalsStep: StepType< {
 		action?: 'dashboard';
 		shouldSkipSubmitTracking?: true;
 	};
-} > = ( { navigation, flow } ) => {
+	accepts: {
+		headerText?: string;
+		subHeaderText?: string;
+		goalTitles?: Partial< Record< Onboard.SiteGoal, string > >;
+		hiddenGoals?: Onboard.SiteGoal[];
+		hideSecondaryLinks?: {
+			import?: boolean;
+			difm?: boolean;
+			dashboard?: boolean;
+		};
+	};
+} > = ( {
+	navigation,
+	flow,
+	headerText: headerTextOverride,
+	subHeaderText: subHeaderTextOverride,
+	goalTitles,
+	hiddenGoals,
+	hideSecondaryLinks,
+} ) => {
 	const translate = useTranslate();
-	const whatAreYourGoalsText = translate( 'What would you like to create?' );
-	const subHeaderText = translate( 'Pick one or more goals to get started.' );
+	const whatAreYourGoalsText = headerTextOverride ?? translate( 'What would you like to create?' );
+	const subHeaderText =
+		subHeaderTextOverride ?? translate( 'Pick one or more goals to get started.' );
 
 	const goals = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
@@ -163,27 +183,45 @@ const GoalsStep: StepType< {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ refParameter, refGoals ] );
 
+	const showImportLink = ! hideSecondaryLinks?.import;
+	const showDIFMLink = ! hideSecondaryLinks?.difm;
+	const showDashboardLink = ! hideSecondaryLinks?.dashboard;
+	const showAnySecondaryLink = showImportLink || showDIFMLink || showDashboardLink;
+
 	const getStepContent = ( nextButton?: ReactNode ) => (
 		<div className="select-goals">
-			<SelectGoals selectedGoals={ goals } onChange={ setGoals } />
+			<SelectGoals
+				selectedGoals={ goals }
+				onChange={ setGoals }
+				goalTitles={ goalTitles }
+				hiddenGoals={ hiddenGoals }
+			/>
 			{ nextButton }
-			<div className="select-goals__alternative-flows-container">
-				<Button variant="link" onClick={ handleImportClick } className="select-goals__link">
-					{ translate( 'Import or migrate an existing site' ) }
-				</Button>
-				<span className="select-goals__link-separator" />
-				<Button variant="link" onClick={ handleDIFMClick } className="select-goals__link">
-					{ translate( 'Let us build a custom site for you' ) }
-				</Button>
-				<Button
-					variant="link"
-					onClick={ handleDashboardClick }
-					className="select-goals__link select-goals__dashboard-button"
-				>
-					<DashboardIcon />
-					{ translate( 'Skip to dashboard' ) }
-				</Button>
-			</div>
+			{ showAnySecondaryLink && (
+				<div className="select-goals__alternative-flows-container">
+					{ showImportLink && (
+						<Button variant="link" onClick={ handleImportClick } className="select-goals__link">
+							{ translate( 'Import or migrate an existing site' ) }
+						</Button>
+					) }
+					{ showImportLink && showDIFMLink && <span className="select-goals__link-separator" /> }
+					{ showDIFMLink && (
+						<Button variant="link" onClick={ handleDIFMClick } className="select-goals__link">
+							{ translate( 'Let us build a custom site for you' ) }
+						</Button>
+					) }
+					{ showDashboardLink && (
+						<Button
+							variant="link"
+							onClick={ handleDashboardClick }
+							className="select-goals__link select-goals__dashboard-button"
+						>
+							<DashboardIcon />
+							{ translate( 'Skip to dashboard' ) }
+						</Button>
+					) }
+				</div>
+			) }
 		</div>
 	);
 

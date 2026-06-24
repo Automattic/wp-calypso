@@ -1,4 +1,18 @@
 /**
+ * The post or comment an achievement was unlocked on. Only present when viewing
+ * your own achievements, and only on achievements the backend can attribute to a
+ * specific post or comment.
+ */
+export interface AchievementContext {
+	blog_id: number;
+	post_id: number;
+	/** Present (and `> 0`) when the achievement was unlocked on a comment. */
+	comment_id?: number;
+	/** Permalink to the post or comment. */
+	url: string;
+}
+
+/**
  * Earned, fully-visible achievement. The shape returned for own-profile reads
  * and for non-secret entries on cross-user reads. A self-read of an earned
  * secret achievement also uses this shape — `is_secret` then reflects the
@@ -14,6 +28,13 @@ export interface Achievement {
 	date_unlocked: string;
 	/** Y-m-d date the achievement was added to the registry. Used for sort order. */
 	date_created: string;
+	/**
+	 * ISO 8601 hire date, exposed only on the `automattician` achievement and
+	 * only to Automattic requesters. Its `date_unlocked` is pinned to the
+	 * achievement's 2012 launch, so for old-timers this carries the real hire
+	 * date instead. Omitted when no date is on record.
+	 */
+	date_hired?: string;
 	image: string;
 	/**
 	 * Y-m-d (or ISO 8601) date string when the achievement was retired, or
@@ -34,6 +55,11 @@ export interface Achievement {
 	site_ID?: number;
 	/** Only present when viewing your own achievements. */
 	url?: string;
+	/**
+	 * The post or comment that unlocked the achievement. Only present when viewing
+	 * your own achievements, and only on achievements the backend can attribute.
+	 */
+	context?: AchievementContext;
 }
 
 /**
@@ -119,6 +145,17 @@ export interface EngagementStreak {
 	days?: EngagementStreakDay[];
 }
 
+/**
+ * A per-site daily-post streak: a contiguous run of days on which the user
+ * published at least one post on the given blog. The endpoint returns only
+ * currently-active streaks. Self-reads only.
+ */
+export interface DailyPostStreak {
+	blog_id: number;
+	url: string;
+	current_streak: number;
+}
+
 export interface AchievementsResponse {
 	found: number;
 	achievements: EarnedAchievementEntry[];
@@ -127,4 +164,6 @@ export interface AchievementsResponse {
 	years_of_service?: number;
 	/** Activity streak data. */
 	engagement_streak?: EngagementStreak;
+	/** Self-reads only. Per-site daily-post streaks. Not paginated. */
+	daily_post_streak?: DailyPostStreak[];
 }

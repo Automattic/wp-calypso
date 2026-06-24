@@ -1,9 +1,13 @@
 import { Button, DropdownMenu } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { close, moreVertical, backup, chevronLeft, Icon } from '@wordpress/icons';
+import { close, lineSolid, moreVertical, backup, chevronLeft, Icon } from '@wordpress/icons';
 import { useNavigate } from 'react-router-dom';
+import { hasAiChatEntryButton } from '../../hooks/use-admin-bar-integration';
+import { AGENTS_MANAGER_STORE } from '../../stores';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
-import { isJetpackAiSidebarPreviewFeatureEnabled } from '../../utils/jetpack-ai-sidebar-preview';
+import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import type { ComponentProps } from 'react';
 import './style.scss';
 
@@ -14,12 +18,18 @@ interface Props {
 	onClose: () => void;
 	options: Options;
 	onBack?: () => void;
+	/** Effective docked state (`canDock && isDocked`), not the stored preference. */
+	isDocked: boolean;
 }
 
-export default function ChatHeader( { onClose, options, title, onBack }: Props ) {
+export default function ChatHeader( { onClose, options, title, onBack, isDocked }: Props ) {
 	const navigate = useNavigate();
-	const showChatHistory =
-		! isReaderChatHost() && isJetpackAiSidebarPreviewFeatureEnabled( 'chatHistory' );
+	const { setIsMinimized } = useDispatch( AGENTS_MANAGER_STORE );
+	const [ hasAiChatEntry ] = useState( hasAiChatEntryButton );
+
+	// Minimize only applies to the floating chat reachable from the AI chat button
+	// (WP admin bar or Calypso masterbar).
+	const showMinimize = hasAiChatEntry && ! isDocked;
 
 	return (
 		<div className="agents-manager-chat-header">
@@ -33,27 +43,49 @@ export default function ChatHeader( { onClose, options, title, onBack }: Props )
 					<Icon icon={ chevronLeft } />
 				</Button>
 			) }
-			{ title && <div className="agents-manager-chat-header__title">{ title }</div> }
+			{ title && (
+				// Show the full title on hover when it's truncated.
+				<div className="agents-manager-chat-header__title" title={ title }>
+					{ title }
+				</div>
+			) }
 			<div className="agents-manager-chat-header__actions">
 				<DropdownMenu
 					className="agents-manager-chat-header__more-options"
 					controls={ options }
 					icon={ moreVertical }
 					label={ __( 'More Options', '__i18n_text_domain__' ) }
+					// Body-level popovers need a stable anchor for public host style isolation.
+					popoverProps={ {
+						className: 'agents-manager-chat-header__menu-popover',
+					} }
 					toggleProps={ { size: 'small' } }
 				/>
 				{ /*
-				 * Public reader-chat runs on blog frontends where session history
+				 * Reader chat runs on public blog frontends where session history
 				 * isn't user-accessible (no account, per-visit local storage).
-				 * Jetpack AI Sidebar Preview can also opt out of chat history
-				 * while exposing only a smaller feature set.
 				 */ }
-				{ showChatHistory && (
+				{ ! isReaderChatHost() && (
 					<Button
 						className="agents-manager-chat-header__history-btn"
 						icon={ backup }
-						onClick={ () => navigate( '/history' ) }
+						onClick={ () => {
+							recordAgentsManagerTracksEvent( 'chat_history_open' );
+							navigate( '/history' );
+						} }
 						label={ __( 'View history', '__i18n_text_domain__' ) }
+						size="small"
+					/>
+				) }
+				{ showMinimize && (
+					<Button
+						className="agents-manager-chat-header__minimize-btn"
+						icon={ lineSolid }
+						onClick={ () => {
+							recordAgentsManagerTracksEvent( 'chat_minimize' );
+							setIsMinimized( true );
+						} }
+						label={ __( 'Minimize', '__i18n_text_domain__' ) }
 						size="small"
 					/>
 				) }

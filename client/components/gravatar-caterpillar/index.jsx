@@ -1,4 +1,5 @@
-import { map, size, filter, uniqBy } from 'lodash';
+import { uniqBy } from '@automattic/js-utils';
+import { map, filter } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import Gravatar from 'calypso/components/gravatar';
@@ -15,7 +16,7 @@ class GravatarCaterpillar extends Component {
 	render() {
 		const { users, onClick, maxGravatarsToDisplay } = this.props;
 
-		if ( size( users ) < 1 ) {
+		if ( users.length < 1 ) {
 			return null;
 		}
 
@@ -25,7 +26,7 @@ class GravatarCaterpillar extends Component {
 		const displayedUsers = filter( uniqBy( users, 'avatar_URL' ), 'avatar_URL' ).slice(
 			-1 * maxGravatarsToDisplay
 		);
-		const displayedUsersCount = size( displayedUsers );
+		const displayedUsersCount = displayedUsers.length;
 
 		return (
 			<div className="gravatar-caterpillar" onClick={ onClick } aria-hidden="true">

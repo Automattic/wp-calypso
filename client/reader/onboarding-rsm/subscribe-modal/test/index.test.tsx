@@ -6,6 +6,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import { prefetchInfiniteStream } from 'calypso/reader/data/stream';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import SubscribeModal from '../index';
 import type { CardData } from '../use-subscribe-recommendations';
@@ -38,6 +39,10 @@ jest.mock( 'calypso/reader/stream', () => ( {
 	default: () => null,
 } ) );
 
+jest.mock( 'calypso/reader/data/stream', () => ( {
+	prefetchInfiniteStream: jest.fn( () => Promise.resolve() ),
+} ) );
+
 // Render the list item as a button so tests can click it and exercise the
 // `onItemClick` callback (which is what fires the site-previewed event).
 jest.mock( 'calypso/blocks/reader-subscription-list-item/connected', () => ( {
@@ -61,14 +66,26 @@ jest.mock( 'calypso/blocks/site-icon', () => ( {
 	SiteIcon: () => null,
 } ) );
 
-jest.mock( 'calypso/components/data/query-reader-site', () => ( {
-	__esModule: true,
-	default: () => null,
-} ) );
+// Track each mount of the preview follow button (keyed by feedId) so a test
+// can assert that switching previews remounts it. The `key={ feed_ID }` on the
+// real button is what forces this remount, which resets the follow mutation's
+// lingering `isPending` state so it can't disable the button for the next site.
+const mockFollowButtonMounts: number[] = [];
+
+function MockFollowButton( { feedId }: { feedId: number } ) {
+	React.useEffect( () => {
+		mockFollowButtonMounts.push( feedId );
+		// Empty deps: only count true mounts. A dependency on `feedId` would also
+		// fire on prop updates, which would defeat the remount assertion (the
+		// no-`key` regression updates props on a persistent instance).
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+	return null;
+}
 
 jest.mock( 'calypso/reader/follow-button', () => ( {
 	__esModule: true,
-	default: () => null,
+	default: MockFollowButton,
 } ) );
 
 jest.mock( 'calypso/reader/controller-helper', () => ( {
@@ -84,16 +101,6 @@ jest.mock( '@automattic/components', () => ( {
 jest.mock( '../verificationNudge', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="subscribe-verification-nudge" />,
-} ) );
-
-// ── Redux / state ────────────────────────────────────────────────────────────
-
-jest.mock( 'calypso/state/reader/feeds/selectors', () => ( {
-	getFeed: jest.fn().mockReturnValue( null ),
-} ) );
-
-jest.mock( 'calypso/state/reader/streams/actions', () => ( {
-	requestPage: jest.fn( () => ( { type: 'READER_REQUEST_PAGE' } ) ),
 } ) );
 
 // ── Analytics ────────────────────────────────────────────────────────────────
@@ -176,7 +183,35 @@ describe( 'SubscribeModal – site preview analytics', () => {
 
 	beforeEach( () => {
 		jest.mocked( recordTracksEvent ).mockClear();
+		jest.mocked( prefetchInfiniteStream ).mockClear();
 		mockedRecommendationsHook.mockReturnValue( defaultRecommendationsHookValue );
+		mockFollowButtonMounts.length = 0;
+	} );
+
+	it( 'remounts the preview follow button when a different site is previewed', async () => {
+		const user = userEvent.setup();
+		const recommendations = [ makeRecommendation( 0 ), makeRecommendation( 1 ) ];
+		mockedRecommendationsHook.mockReturnValue( {
+			...defaultRecommendationsHookValue,
+			combinedRecommendations: recommendations,
+			recommendations,
+		} );
+
+		renderWithProvider( <SubscribeModal onFinish={ jest.fn() } promptVerification={ false } /> );
+
+		// The first recommendation is auto-selected on mount.
+		expect( mockFollowButtonMounts ).toEqual( [ 100 ] );
+
+		// Previewing a different site must remount the follow button (via its
+		// `key`) rather than reusing the persistent instance — otherwise a
+		// lingering follow-mutation pending state would disable it for the new
+		// site. A fresh mount appends the newly selected feedId.
+		await user.click( screen.getByTestId( 'reader-list-item-101' ) );
+		expect( mockFollowButtonMounts ).toEqual( [ 100, 101 ] );
+
+		// Returning to the first site remounts it again.
+		await user.click( screen.getByTestId( 'reader-list-item-100' ) );
+		expect( mockFollowButtonMounts ).toEqual( [ 100, 101, 100 ] );
 	} );
 
 	it( 'records discover_modal_site_previewed when the user picks a different site in the list', async () => {
@@ -226,5 +261,23 @@ describe( 'SubscribeModal – site preview analytics', () => {
 			'calypso_reader_onboarding_discover_modal_site_previewed',
 			expect.anything()
 		);
+	} );
+
+	it( 'prefetches recommendation streams through the React Query stream cache', () => {
+		const recommendations = [ makeRecommendation( 0 ), makeRecommendation( 1 ) ];
+		mockedRecommendationsHook.mockReturnValue( {
+			...defaultRecommendationsHookValue,
+			combinedRecommendations: recommendations,
+			recommendations,
+		} );
+
+		renderWithProvider( <SubscribeModal onFinish={ jest.fn() } promptVerification={ false } /> );
+
+		expect( prefetchInfiniteStream ).toHaveBeenCalledWith( expect.anything(), expect.anything(), {
+			streamKey: 'feed:100',
+		} );
+		expect( prefetchInfiniteStream ).toHaveBeenCalledWith( expect.anything(), expect.anything(), {
+			streamKey: 'feed:101',
+		} );
 	} );
 } );

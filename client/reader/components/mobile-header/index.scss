@@ -1,4 +1,5 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+@import "@wordpress/base-styles/mixins";
 
 .mobile-header {
 	display: flex;

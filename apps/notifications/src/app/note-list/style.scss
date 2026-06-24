@@ -1,43 +1,41 @@
-@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
-
 @import '@wordpress/base-styles/colors';
 
 .wpnc__note-list {
 	flex: 1;
+	min-height: 0;
 	margin-top: -1px; // Make border collapsed
 	overflow: hidden;
+	display: flex;
+	flex-direction: column;
 
-	.wpnc__note-list-item {
-		.wpnc__subject,
-		.wpnc__excerpt {
-			display: -webkit-box;
-			-webkit-line-clamp: 2;
-			-webkit-box-orient: vertical;
-			white-space: pre-wrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-		}
+	> .dataviews-wrapper {
+		flex: 1;
+		min-height: 0;
+	}
 
-		.wpnc__excerpt {
-			color: var(--color-text-subtle);
-			padding-top: 2px;
-
-			@include ui-mixins.when-dark-theme {
-				color: var(--dashboard__text-muted-color, var(--color-text-subtle));
-			}
-		}
+	// The subject and excerpt render in separate DataViews cells (the title and
+	// description fields), so they're styled directly rather than under a shared
+	// row wrapper.
+	.wpnc__subject,
+	.wpnc__excerpt {
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		white-space: normal;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.wpnc__note-icon .wpnc__gridicon {
 		position: absolute;
-		bottom: -4px;
-		right: -4px;
+		bottom: -6px;
+		right: -6px;
 		display: flex;
-		padding: 2px;
-		border: 1.5px solid $white;
+		padding: 1px;
+		border: 1px solid $white;
 		border-radius: 50%;
 		color: $white;
-		background: $gray-300;
+		background: $gray-600;
 		overflow: hidden;
 		z-index: 1;
 

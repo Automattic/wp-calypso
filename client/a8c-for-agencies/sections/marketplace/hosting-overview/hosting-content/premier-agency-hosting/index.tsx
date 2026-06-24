@@ -1,5 +1,6 @@
 import { JetpackLogo } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
+import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useMemo } from 'react';
 import { BackgroundType10 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
@@ -142,14 +143,13 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 					translate( 'Site Search up to 100k records and 100k requests/mo' ),
 					translate( 'CRM Entrepreneur' ),
 					translate( 'All Jetpack features' ),
-					translate( '{{a}}And more{{/a}} ↗', {
+					translate( '{{a}}And more{{/a}}', {
 						components: {
 							a: (
-								<a
+								<ExternalLink
 									href="https://jetpack.com/complete/"
-									target="_blank"
-									rel="noopener noreferrer"
 									onClick={ onJetpackCompleteMoreLinkClick }
+									children={ null }
 								/>
 							),
 						},

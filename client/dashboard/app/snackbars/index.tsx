@@ -70,7 +70,6 @@ export default function Snackbars() {
 
 	return (
 		<SnackbarList
-			// @ts-expect-error Bypass typecheck as WPNoticeAction is structurally incompatible with NoticeAction
 			notices={ snackbarNotices }
 			className="dashboard-snackbars"
 			onRemove={ removeNotice }

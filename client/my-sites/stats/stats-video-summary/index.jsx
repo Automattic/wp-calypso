@@ -1,8 +1,8 @@
 import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import {
@@ -90,4 +90,4 @@ const connectComponent = connect( ( state, { postId, statType, period } ) => {
 	};
 } );
 
-export default flowRight( connectComponent, localize, withLocalizedMoment )( StatsVideoSummary );
+export default compose( connectComponent, localize, withLocalizedMoment )( StatsVideoSummary );

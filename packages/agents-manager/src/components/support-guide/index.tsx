@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
+import { hasAiChatEntryButton } from '../../hooks/use-admin-bar-integration';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import './style.scss';
@@ -22,6 +23,8 @@ interface SupportGuideProps {
 	onAbort: () => void;
 	/** Called when the chat is closed. */
 	onClose: () => void;
+	/** Called when the chat is expanded (floating mode). */
+	onExpand: () => void;
 }
 
 export default function SupportGuide( {
@@ -30,6 +33,7 @@ export default function SupportGuide( {
 	isDocked,
 	onAbort,
 	onClose,
+	onExpand,
 }: SupportGuideProps ) {
 	const { site, sectionName, isEligibleForChat } = useAgentsManagerContext();
 	const navigate = useNavigate();
@@ -40,7 +44,10 @@ export default function SupportGuide( {
 		return store.getAgentsManagerState();
 	}, [] );
 
+	// Without the AI chat entry button, use `collapsed` (a FAB) instead of `minimized`.
+	const closedChatState = hasAiChatEntryButton() ? 'minimized' : 'collapsed';
 	const isFromChat = !! ( state?.sessionId || state?.conversationId );
+	const title = __( 'Support Guides', '__i18n_text_domain__' );
 
 	// Navigate back to the source route, preserving relevant state.
 	const handleBack = () => {
@@ -63,8 +70,10 @@ export default function SupportGuide( {
 			error={ null }
 			onSubmit={ () => {} }
 			variant={ isDocked ? 'embedded' : 'floating' }
-			floatingChatState={ isOpen ? 'expanded' : 'collapsed' }
+			floatingChatState={ isOpen ? 'expanded' : closedChatState }
+			triggerTitle={ title }
 			onClose={ onClose }
+			onExpand={ onExpand }
 			onStop={ onAbort }
 			expandOnHover={ false }
 		>
@@ -73,7 +82,8 @@ export default function SupportGuide( {
 					onClose={ onClose }
 					onBack={ handleBack }
 					options={ chatHeaderOptions }
-					title={ __( 'Support Guides', '__i18n_text_domain__' ) }
+					title={ title }
+					isDocked={ isDocked }
 				/>
 				<div className="agent-manager-support-guide-wrapper">
 					<div className="agent-manager-support-guide-content help-center__container-content">

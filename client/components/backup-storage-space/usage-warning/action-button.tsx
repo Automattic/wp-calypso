@@ -4,6 +4,7 @@ import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import { StorageUsageLevelName } from 'calypso/state/rewind/storage/types';
 import useStorageStatusText from './use-storage-status-text';
+import type { JSX } from 'react';
 
 type OwnProps = {
 	className?: string;

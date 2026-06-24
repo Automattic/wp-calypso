@@ -63,7 +63,7 @@ export function processItem( item ) {
 			activityUnparsedTs: activityDate,
 			activityTs: Date.parse( activityDate ),
 			activityDescription: parseActivityLogEntryContent( item.content ),
-			activityMedia: get( item, 'image' ),
+			activityMedia: item?.image,
 			activityMeta,
 			baseRewindId: item.base_rewind_id,
 			rewindStepCount: item.rewind_step_count,

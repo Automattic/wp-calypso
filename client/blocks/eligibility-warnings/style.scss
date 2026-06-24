@@ -1,3 +1,6 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+
 .eligibility-warnings {
 	// 16px from card padding + 32 = 48 gap from top|bottom
 	// 24px from card padding + 24 = 48 gap from left|right

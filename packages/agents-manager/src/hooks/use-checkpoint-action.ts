@@ -1,6 +1,7 @@
 import { createElement, useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { undo, Icon } from '@wordpress/icons';
+import { recordBigSkyTracksEvent } from '../utils/tracks';
 import type { UseCheckpointReturn } from '../utils/load-external-providers';
 import type { UseAgentChatReturn, UIMessage } from '@automattic/agenttic-client';
 
@@ -65,6 +66,9 @@ export default function useCheckpointAction(
 							className: 'agents-manager-message-action-icon',
 						} ),
 						onClick: async () => {
+							recordBigSkyTracksEvent( 'restore_checkpoint_action', {
+								id: checkpointId,
+							} );
 							try {
 								await checkpointRef.current?.restoreCheckpoint( checkpointId );
 							} catch ( error ) {

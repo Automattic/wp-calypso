@@ -1,6 +1,12 @@
-import { Page, ElementHandle, Response, Locator } from 'playwright';
+import { Page, ElementHandle, Response, Locator, request } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
-import { reloadAndRetry } from '../../element-helper';
+import {
+	reloadAndRetry,
+	pollUntilAvailable,
+	formatAvailabilityProbe,
+	type AvailabilityProbe,
+	type ProbeTargetResult,
+} from '../../element-helper';
 import envVariables from '../../env-variables';
 import {
 	EditorComponent,
@@ -35,6 +41,7 @@ const selectors = {
 
 	// Within the editor body.
 	blockWarning: '.block-editor-warning',
+	editorBlock: '.block-editor-block-list__block',
 
 	// Toast
 	toastViewPostLink: '.components-snackbar__content a:text-matches("View (Post|Page)", "i")',
@@ -42,6 +49,259 @@ const selectors = {
 	// Welcome tour
 	welcomeTourCloseButton: 'button[aria-label="Close Tour"]',
 };
+
+type PublishResponseBody = {
+	ID?: number | string;
+	id?: number | string;
+	link?: string;
+	slug?: string;
+	status?: string;
+	type?: string;
+	body?: {
+		ID?: number | string;
+		id?: number | string;
+		link?: string;
+		slug?: string;
+		status?: string;
+		type?: string;
+	};
+};
+
+type ResponseDiagnostic = {
+	action: string;
+	method?: string;
+	status?: number;
+	url: string;
+	headers?: Record< string, string >;
+};
+
+type PublishDiagnostics = {
+	publishedURL: string;
+	publishResponse: ResponseDiagnostic;
+	/** The REST by-ID endpoint (the publish response URL), used to probe by-ID resolution. */
+	restByIdURL?: string;
+	/** `Date.now()` when the publish response was received, used to measure the read-after-write window. */
+	publishedAtMs?: number;
+	postId?: number | string;
+	postSlug?: string;
+	postStatus?: string;
+	postType?: string;
+};
+
+const diagnosticHeaderNames = [ 'x-ac', 'x-nc', 'server-timing' ];
+
+/**
+ * Removes query strings and hashes before writing URLs to failure output.
+ */
+function sanitizeURLForDiagnostics( url: string ): string {
+	try {
+		const parsedURL = new URL( url );
+		return `${ parsedURL.origin }${ parsedURL.pathname }`;
+	} catch {
+		return url.replace( /[?#].*$/, '' );
+	}
+}
+
+/**
+ * Builds a small, safe response summary for publish/read-after-write failures.
+ */
+function getResponseDiagnostic( response: Response | null, action: string ): ResponseDiagnostic {
+	if ( ! response ) {
+		return {
+			action,
+			url: 'no response',
+		};
+	}
+
+	const headers = response.headers();
+	const diagnosticHeaders = Object.fromEntries(
+		diagnosticHeaderNames
+			.map( ( name ) => [ name, headers[ name ] ] as const )
+			.filter( ( entry ): entry is readonly [ string, string ] => Boolean( entry[ 1 ] ) )
+	);
+
+	const diagnostic: ResponseDiagnostic = {
+		action,
+		method: response.request().method(),
+		status: response.status(),
+		url: sanitizeURLForDiagnostics( response.url() ),
+	};
+
+	if ( Object.keys( diagnosticHeaders ).length > 0 ) {
+		diagnostic.headers = diagnosticHeaders;
+	}
+
+	return diagnostic;
+}
+
+/**
+ * Extracts the publish response fields needed to debug public 404s after publish.
+ */
+function getPublishDiagnostics(
+	response: Response,
+	body: PublishResponseBody,
+	publishedURL: string,
+	publishedAtMs?: number
+): PublishDiagnostics {
+	const publishedContent = body.body ?? body;
+
+	return {
+		publishedURL: sanitizeURLForDiagnostics( publishedURL ),
+		publishResponse: getResponseDiagnostic( response, 'publish' ),
+		restByIdURL: sanitizeURLForDiagnostics( response.url() ),
+		publishedAtMs,
+		postId: publishedContent.id ?? publishedContent.ID,
+		postSlug: publishedContent.slug,
+		postStatus: publishedContent.status,
+		postType: publishedContent.type,
+	};
+}
+
+/**
+ * Formats one response diagnostic for the thrown error message.
+ */
+function formatResponseDiagnostic( response: ResponseDiagnostic ): string {
+	const status = response.status ?? 'no status';
+	const method = response.method ?? 'unknown method';
+	const headers = response.headers ? ` headers=${ JSON.stringify( response.headers ) }` : '';
+
+	return `${ response.action }: ${ method } ${ status } ${ response.url }${ headers }`;
+}
+
+/**
+ * Formats post/page identifiers from the publish response.
+ */
+function formatPublishedContentDiagnostic( diagnostics?: PublishDiagnostics ): string {
+	if ( ! diagnostics ) {
+		return 'not captured';
+	}
+
+	const values = [
+		[ 'id', diagnostics.postId ],
+		[ 'type', diagnostics.postType ],
+		[ 'status', diagnostics.postStatus ],
+		[ 'slug', diagnostics.postSlug ],
+	]
+		.filter( ( [ , value ] ) => value !== undefined && value !== '' )
+		.map( ( [ key, value ] ) => `${ key }=${ value }` );
+
+	return values.length > 0 ? values.join( ' ' ) : 'no id/type/status/slug captured';
+}
+
+/**
+ * Builds the post-publish 404 error with enough context for log correlation.
+ */
+function getPublishedPost404Message( {
+	publishDiagnostics,
+	publicResponses,
+}: {
+	publishDiagnostics?: PublishDiagnostics;
+	publicResponses: ResponseDiagnostic[];
+} ): string {
+	return [
+		'Post not found - 404 error displayed',
+		`Published URL: ${ publishDiagnostics?.publishedURL ?? 'not captured' }`,
+		`Published content: ${ formatPublishedContentDiagnostic( publishDiagnostics ) }`,
+		`Publish response: ${
+			publishDiagnostics
+				? formatResponseDiagnostic( publishDiagnostics.publishResponse )
+				: 'not captured'
+		}`,
+		`Public responses: ${
+			publicResponses.length > 0
+				? publicResponses.map( formatResponseDiagnostic ).join( '; ' )
+				: 'not captured'
+		}`,
+	].join( '\n' );
+}
+
+const PUBLISHED_POST_PROBE_CAP_MS = 20 * 1000;
+const PUBLISHED_POST_PROBE_INTERVAL_MS = 1000;
+
+/**
+ * After a post-publish 404, probes when the permalink and REST by-ID endpoint
+ * become routable to bound the read-after-write window and isolate the failing
+ * layer. Diagnostic only — does not change the failure outcome.
+ */
+async function probePublishedPostAvailability(
+	page: Page,
+	permalink: string,
+	publishDiagnostics?: PublishDiagnostics
+): Promise< AvailabilityProbe > {
+	const capMs = PUBLISHED_POST_PROBE_CAP_MS;
+	const intervalMs = PUBLISHED_POST_PROBE_INTERVAL_MS;
+	const probeStartMs = Date.now();
+	const publishedAtMs = publishDiagnostics?.publishedAtMs;
+	const restByIdURL = publishDiagnostics?.restByIdURL;
+
+	// Convert a probe-relative recovery time into a publish-relative one when the
+	// publish timestamp is known, so the reported number reflects the full window.
+	const toReportedMs = ( recoveredAfterMs: number | null ): number | null => {
+		if ( recoveredAfterMs === null ) {
+			return null;
+		}
+		if ( publishedAtMs === undefined ) {
+			return recoveredAfterMs;
+		}
+		return probeStartMs - publishedAtMs + recoveredAfterMs;
+	};
+
+	// Bound each request to the smaller of a fixed ceiling and the remaining cap
+	// budget, so the probe never runs meaningfully past `capMs`.
+	const maxRequestTimeout = intervalMs * 5;
+	const clampTimeout = ( remainingMs: number ): number =>
+		Math.max( 1, Math.min( maxRequestTimeout, remainingMs ) );
+
+	const probeTarget = async (
+		label: string,
+		get: ( timeout: number ) => Promise< { status: () => number } >
+	): Promise< ProbeTargetResult > => {
+		const result = await pollUntilAvailable(
+			async ( remainingMs ) => {
+				try {
+					const response = await get( clampTimeout( remainingMs ) );
+					return response.status();
+				} catch {
+					return -1;
+				}
+			},
+			{ capMs, intervalMs }
+		);
+		return {
+			label,
+			recoveredMs: toReportedMs( result.recoveredAfterMs ),
+			lastStatus: result.lastStatus,
+		};
+	};
+
+	// Cookie-less context mirrors a logged-out public visitor.
+	const anonymousContext = await request.newContext();
+
+	try {
+		const targets: Promise< ProbeTargetResult >[] = [
+			probeTarget( 'permalink-authenticated', ( timeout ) =>
+				page.request.get( permalink, { timeout } )
+			),
+			probeTarget( 'permalink-anonymous', ( timeout ) =>
+				anonymousContext.get( permalink, { timeout } )
+			),
+		];
+
+		if ( restByIdURL ) {
+			targets.push(
+				probeTarget( 'rest-by-id', ( timeout ) => page.request.get( restByIdURL, { timeout } ) )
+			);
+		}
+
+		return {
+			capMs,
+			measuredFrom: publishedAtMs === undefined ? 'probe-start' : 'publish',
+			targets: await Promise.all( targets ),
+		};
+	} finally {
+		await anonymousContext.dispose();
+	}
+}
 
 /**
  * Represents an instance of the WPCOM's Gutenberg editor page.
@@ -236,14 +496,18 @@ export class EditorPage {
 	/**
 	 * Select a template from the grid of options.
 	 *
-	 * @param {string} label Label for the template (the string underneath the preview).
+	 * @param {string|Locator} template Template label or already-located template option.
 	 * @param param1 Keyed object parameter.
 	 * @param {number} param1.timeout Timeout to apply.
 	 */
 	async selectTemplate(
-		label: string,
+		template: string | Locator,
 		{ timeout = envVariables.TIMEOUT }: { timeout?: number } = {}
 	) {
+		if ( typeof template !== 'string' ) {
+			return await template.click( { timeout } );
+		}
+
 		const editor = await this.getEditorParent();
 		const inserterSelector = await editor.getByRole( 'listbox', { name: 'All' } );
 		const modalSelector = await editor.getByRole( 'listbox', {
@@ -251,7 +515,7 @@ export class EditorPage {
 		} );
 		return await inserterSelector
 			.or( modalSelector )
-			.getByRole( 'option', { name: label, exact: true } )
+			.getByRole( 'option', { name: template, exact: true } )
 			.first()
 			.click( { timeout: timeout } );
 	}
@@ -284,7 +548,7 @@ export class EditorPage {
 		const enteredText = await this.editorGutenbergComponent.getText();
 
 		if ( text !== enteredText ) {
-			`Failed to verify entered text: got ${ enteredText }, expected ${ text }`;
+			throw new Error( `Failed to verify entered text: got ${ enteredText }, expected ${ text }` );
 		}
 	}
 
@@ -431,7 +695,7 @@ export class EditorPage {
 			// If it is not present, exit early.
 			try {
 				await blockInsertedPopupConfirmButtonLocator.waitFor( { timeout: 100 } );
-			} catch ( e ) {
+			} catch {
 				// Probably doesn't exist. That's ok.
 			}
 
@@ -510,6 +774,8 @@ export class EditorPage {
 		exactMatch = true
 	): Promise< Locator > {
 		const editorParent = await this.editor.parent();
+		const editorCanvas = await this.editor.canvas();
+		const editorBlockCountBefore = await editorCanvas.locator( selectors.editorBlock ).count();
 
 		await inserter.searchBlockInserter( patternName );
 		const locator = await inserter.selectBlockInserterResult( patternName, {
@@ -526,7 +792,21 @@ export class EditorPage {
 		const insertConfirmationToastLocator = editorParent.locator(
 			`.components-snackbar__content:text('Block pattern "${ actualPatternName }" inserted.')`
 		);
-		await insertConfirmationToastLocator.waitFor();
+		const insertedBlockLocator = editorCanvas
+			.locator( selectors.editorBlock )
+			.nth( editorBlockCountBefore );
+
+		try {
+			await Promise.any( [
+				insertConfirmationToastLocator.waitFor( { timeout: 15 * 1000 } ),
+				insertedBlockLocator.waitFor( { timeout: 15 * 1000 } ),
+			] );
+		} catch ( error ) {
+			throw new Error(
+				`Timed out waiting for pattern "${ actualPatternName }" to finish inserting.`,
+				{ cause: error }
+			);
+		}
 		return locator;
 	}
 
@@ -843,6 +1123,7 @@ export class EditorPage {
 		);
 
 		// Resolve the promises.
+		let publishedAtMs: number | undefined;
 		const [ response ] = await Promise.all( [
 			// First URL matches Atomic requests while the second matches Simple requests.
 			Promise.race( [
@@ -858,19 +1139,27 @@ export class EditorPage {
 						response.request().method() === 'PUT',
 					{ timeout: timeout }
 				),
-			] ),
+			] ).then( ( publishResponse ) => {
+				// Captured the moment the publish response arrives, before the remaining
+				// publish-panel actions settle, so the probe measures the full window.
+				publishedAtMs = Date.now();
+				return publishResponse;
+			} ),
 			...actionsArray,
 		] );
 
-		const json = await response.json();
+		const json = ( await response.json() ) as PublishResponseBody;
 		// AT and Simple sites have slightly differing response from the API.
 		const publishedURL = json.link || json.body?.link;
 		if ( ! publishedURL ) {
 			throw new Error( 'No published article URL found in response.' );
 		}
+		// `response` is the Promise.race winner — either the POST (Atomic) or the PUT (Simple).
+		// The `publishResponse.method` field in diagnostics will reflect whichever verb won.
+		const publishDiagnostics = getPublishDiagnostics( response, json, publishedURL, publishedAtMs );
 
 		if ( visit ) {
-			await this.visitPublishedPost( publishedURL, { timeout: timeout } );
+			await this.visitPublishedPost( publishedURL, { timeout: timeout, publishDiagnostics } );
 		}
 
 		return new URL( publishedURL );
@@ -956,8 +1245,14 @@ export class EditorPage {
 	 */
 	private async visitPublishedPost(
 		url: string,
-		{ timeout }: { timeout?: number } = {}
+		{
+			timeout,
+			publishDiagnostics,
+		}: { timeout?: number; publishDiagnostics?: PublishDiagnostics } = {}
 	): Promise< void > {
+		const publicResponses: ResponseDiagnostic[] = [];
+		let post404 = false;
+
 		// Some blocks, like "Click To Tweet" or "Logos" cause the post-publish
 		// panel to close immediately and leave the post in the unsaved state for
 		// some reason. Since the post state is unsaved, the warning dialog will be
@@ -969,9 +1264,39 @@ export class EditorPage {
 		// this listener can be removed.
 		this.allowLeavingWithoutSaving();
 
-		await this.page.goto( url, { waitUntil: 'domcontentloaded', timeout: timeout } );
+		const response = await this.page.goto( url, {
+			waitUntil: 'domcontentloaded',
+			timeout: timeout,
+		} );
+		publicResponses.push( getResponseDiagnostic( response, 'published-url-goto' ) );
 
-		await reloadAndRetry( this.page, confirmPostShown );
+		// `onReload` is called only when retrying (retries > 1). On the final attempt,
+		// `reloadAndRetry` re-throws without reloading, so the response for the last
+		// page load before the error is not captured — `publicResponses` reflects all
+		// attempts up to but not including the final failing check.
+		try {
+			await reloadAndRetry( this.page, confirmPostShown, {
+				onReload: ( response ) => {
+					publicResponses.push( getResponseDiagnostic( response, 'published-url-reload' ) );
+				},
+			} );
+		} catch ( error ) {
+			// On a post-publish 404, measure when the post actually becomes routable to
+			// bound the read-after-write window and isolate the failing layer. This is
+			// diagnostic only: the original error is always re-thrown, so pass/fail is
+			// unchanged even if the probe itself fails.
+			if ( post404 && error instanceof Error ) {
+				try {
+					const probe = await probePublishedPostAvailability( this.page, url, publishDiagnostics );
+					error.message = `${ error.message }\n${ formatAvailabilityProbe( probe ) }`;
+				} catch ( probeError ) {
+					error.message = `${ error.message }\nAvailability probe failed: ${
+						probeError instanceof Error ? probeError.message : String( probeError )
+					}`;
+				}
+			}
+			throw error;
+		}
 
 		/**
 		 * Closure to confirm that post is shown on screen as expected.
@@ -992,7 +1317,13 @@ export class EditorPage {
 			const error404 = main.locator( 'div.error-404' );
 			if ( ( await error404.count() ) > 0 ) {
 				await page.waitForTimeout( 1000 ); // Give it a second before retrying.
-				throw new Error( 'Post not found - 404 error displayed' );
+				post404 = true;
+				throw new Error(
+					getPublishedPost404Message( {
+						publishDiagnostics,
+						publicResponses,
+					} )
+				);
 			}
 		}
 	}

@@ -119,9 +119,14 @@ function SiteMenuSidebar( { site }: { site: Site } ) {
 					{ __( 'Overview' ) }
 				</SidebarMenuItem>
 			) }
-			{ isAvailable( siteDeploymentsRoute ) && siteTypeSupports.deployments && (
-				<SidebarMenuItem icon={ code } to={ `/sites/${ siteSlug }/deployments` }>
-					{ __( 'Deployments' ) }
+			{ isAvailable( siteDomainsRoute ) && siteTypeSupports.domains && (
+				<SidebarMenuItem icon={ globe } to={ `/sites/${ siteSlug }/domains` }>
+					{ __( 'Domains' ) }
+				</SidebarMenuItem>
+			) }
+			{ isAvailable( siteBackupsRoute ) && siteTypeSupports.backups && (
+				<SidebarMenuItem icon={ backup } to={ `/sites/${ siteSlug }/backups` }>
+					{ __( 'Backups' ) }
 				</SidebarMenuItem>
 			) }
 			{ isAvailable( sitePerformanceRoute ) &&
@@ -186,14 +191,9 @@ function SiteMenuSidebar( { site }: { site: Site } ) {
 						{ __( 'Scan' ) }
 					</SidebarMenuItem>
 				) ) }
-			{ isAvailable( siteBackupsRoute ) && siteTypeSupports.backups && (
-				<SidebarMenuItem icon={ backup } to={ `/sites/${ siteSlug }/backups` }>
-					{ __( 'Backups' ) }
-				</SidebarMenuItem>
-			) }
-			{ isAvailable( siteDomainsRoute ) && siteTypeSupports.domains && (
-				<SidebarMenuItem icon={ globe } to={ `/sites/${ siteSlug }/domains` }>
-					{ __( 'Domains' ) }
+			{ isAvailable( siteDeploymentsRoute ) && siteTypeSupports.deployments && (
+				<SidebarMenuItem icon={ code } to={ `/sites/${ siteSlug }/deployments` }>
+					{ __( 'Deployments' ) }
 				</SidebarMenuItem>
 			) }
 			{ isAvailable( siteSettingsRoute ) &&

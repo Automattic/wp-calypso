@@ -3,7 +3,7 @@ import { PerSiteLastActivity, PerSiteRouterHistory } from './types';
 import type { AgentsManagerAction } from './actions';
 import type { Reducer } from 'redux';
 
-const isOpen: Reducer< boolean | undefined, AgentsManagerAction > = ( state, action ) => {
+const isOpen: Reducer< boolean, AgentsManagerAction > = ( state = false, action ) => {
 	switch ( action.type ) {
 		case 'AGENTS_MANAGER_SET_OPEN':
 			return action.isOpen;
@@ -11,10 +11,18 @@ const isOpen: Reducer< boolean | undefined, AgentsManagerAction > = ( state, act
 	return state;
 };
 
-const isDocked: Reducer< boolean | undefined, AgentsManagerAction > = ( state, action ) => {
+const isDocked: Reducer< boolean, AgentsManagerAction > = ( state = false, action ) => {
 	switch ( action.type ) {
 		case 'AGENTS_MANAGER_SET_DOCKED':
 			return action.isDocked;
+	}
+	return state;
+};
+
+export const isMinimized: Reducer< boolean, AgentsManagerAction > = ( state = false, action ) => {
+	switch ( action.type ) {
+		case 'AGENTS_MANAGER_SET_MINIMIZED':
+			return action.isMinimized;
 	}
 	return state;
 };
@@ -84,6 +92,7 @@ export const isSplitScreen: Reducer< boolean, AgentsManagerAction > = ( state = 
 const reducer = combineReducers( {
 	isOpen,
 	isDocked,
+	isMinimized,
 	routerHistory,
 	lastActivity,
 	isLoading,

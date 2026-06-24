@@ -1,9 +1,3 @@
-export interface Post {
-	site_name: string;
-	postId: number;
-	feedId: number;
-}
-
 export interface PostItem {
 	title?: string;
 	excerpt?: string;

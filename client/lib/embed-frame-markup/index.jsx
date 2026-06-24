@@ -1,7 +1,7 @@
 // Here be dragons...
 /* eslint-disable react/no-danger */
 
-import { flatMap, map } from 'lodash';
+import { map } from 'lodash';
 import { renderToStaticMarkup } from 'react-dom/server.browser';
 
 /**
@@ -39,7 +39,7 @@ export default function generateEmbedFrameMarkup( { body, scripts, styles } = {}
 				`,
 					} }
 				/>
-				{ flatMap( scripts, ( { extra, src }, key ) => {
+				{ Object.entries( scripts || {} ).flatMap( ( [ key, { extra, src } ] ) => {
 					return [
 						extra ? (
 							<script

@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import { find, includes } from 'lodash';
+import { find } from 'lodash';
 import { MAX_UPLOAD_ZIP_SIZE } from 'calypso/lib/automated-transfer/constants';
 import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import { PLUGIN_INSTALL_REQUEST_SUCCESS, PLUGIN_UPLOAD } from 'calypso/state/action-types';
@@ -40,7 +40,7 @@ const showErrorNotice = ( error ) => {
 		unsupported_mime_type: translate( 'The uploaded file is not a valid zip.' ),
 	};
 	const errorString = `${ error.error }${ error.message }`.toLowerCase();
-	const knownError = find( knownErrors, ( v, key ) => includes( errorString, key ) );
+	const knownError = find( knownErrors, ( v, key ) => errorString.includes( key ) );
 
 	if ( knownError ) {
 		return errorNotice( knownError );

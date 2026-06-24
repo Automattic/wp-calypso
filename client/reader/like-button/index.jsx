@@ -1,9 +1,9 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { isMobile } from '@automattic/viewport';
-import { flowRight } from 'lodash';
 import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import LikeButtonContainer from 'calypso/blocks/like-button';
 import PostLikesPopover from 'calypso/blocks/post-likes/popover';
 import { withPostLikes } from 'calypso/components/data/post-likes';
@@ -11,8 +11,8 @@ import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
-import { withCachedPost } from 'calypso/reader/data/post-cache';
-import { withPostLikeActions } from 'calypso/reader/data/post-likes';
+import { withCachedPost } from 'calypso/reader/data/post/cache';
+import { withPostLikeActions } from 'calypso/reader/data/post/likes';
 import { markPostSeen } from 'calypso/reader/mark-post-seen';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -100,16 +100,20 @@ class ReaderLikeButton extends Component {
 
 		return (
 			<Fragment>
-				<LikeButtonContainer
-					{ ...this.props }
-					ref={ this.likeButtonRef }
-					onLikeToggle={ this.onLikeToggle }
-					likeSource="reader"
-					icon={ likeIcon }
-					onMouseEnter={ this.showLikesPopover }
-					onMouseLeave={ this.hideLikesPopover }
-					showTooltip={ likeCount === 0 }
-				/>
+				{ /* Wrap in a DOM element so we can pass a real DOM node as the popover `context`.
+				     React 19 removed `findDOMNode`, so a ref on the connected class component
+				     `LikeButtonContainer` would no longer resolve to its DOM node. */ }
+				<span className="reader-like-button__ref-wrapper" ref={ this.likeButtonRef }>
+					<LikeButtonContainer
+						{ ...this.props }
+						onLikeToggle={ this.onLikeToggle }
+						likeSource="reader"
+						icon={ likeIcon }
+						onMouseEnter={ this.showLikesPopover }
+						onMouseLeave={ this.hideLikesPopover }
+						showTooltip={ likeCount === 0 }
+					/>
+				</span>
 				{ showLikesPopover && siteId && postId && hasEnoughLikes && (
 					<PostLikesPopover
 						className="reader-likes-popover ignore-click" // eslint-disable-line wpcalypso/jsx-classname-namespace
@@ -126,7 +130,7 @@ class ReaderLikeButton extends Component {
 	}
 }
 
-export default flowRight(
+export default compose(
 	connect( ( state ) => {
 		return {
 			isLoggedIn: isUserLoggedIn( state ),

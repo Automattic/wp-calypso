@@ -14,7 +14,7 @@ import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type JSX } from 'react';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import { DEFAULT_SCHEME, PREFERENCE_KEY, isColorScheme } from 'calypso/lib/color-scheme';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -34,7 +34,7 @@ import './style.scss';
 
 // Initialize the editor blocks and text formatting.
 loadBlocksWithCustomizations( [ heading ] );
-loadTextFormatting( [ heading.name ] );
+loadTextFormatting();
 
 // Add API middleware for embeds.
 // This redirects `/wp-json/oembed/1.0/proxy` requests to the WordPress.com embed API.
@@ -178,11 +178,12 @@ export default function QuickPost(): JSX.Element | null {
 	function isPostContentEmpty(): boolean {
 		const parsedContent = parse( postContent );
 
-		return (
-			parsedContent.length === 1 &&
-			parsedContent[ 0 ].name === 'core/paragraph' &&
-			parsedContent[ 0 ].attributes.content.trim().length === 0
-		);
+		if ( parsedContent.length !== 1 || parsedContent[ 0 ].name !== 'core/paragraph' ) {
+			return false;
+		}
+
+		const content = ( parsedContent[ 0 ].attributes as { content?: string } ).content;
+		return typeof content === 'string' && content.trim().length === 0;
 	}
 
 	const handleSiteSelect = ( siteId: number ) => {

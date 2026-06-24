@@ -28,7 +28,7 @@ import {
 } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import {
 	getSolutionsForReason,
@@ -166,6 +166,7 @@ type SolutionsCardsUpsellStepProps = {
 	onSwitchToMonthly?: () => void;
 	purchase: Purchase;
 	purchaseSettingsUrl?: string;
+	recordEvent?: ( name: string, properties?: Record< string, unknown > ) => void;
 	refundAmount?: string;
 	site: SiteDetails;
 };
@@ -183,6 +184,7 @@ export default function SolutionsCardsUpsellStep( {
 	onSwitchToMonthly,
 	purchase,
 	purchaseSettingsUrl,
+	recordEvent,
 	refundAmount,
 	site,
 }: SolutionsCardsUpsellStepProps ) {
@@ -214,6 +216,16 @@ export default function SolutionsCardsUpsellStep( {
 		}
 		return true;
 	} );
+
+	useEffect( () => {
+		if ( filteredSolutions?.length ) {
+			recordEvent?.( 'calypso_cancellation_solution_cards_view', {
+				solution_ids: filteredSolutions.map( ( card ) => card.id ).join( ',' ),
+				cancellation_reason: cancellationReason,
+			} );
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	if ( ! filteredSolutions?.length ) {
 		return null;
@@ -304,6 +316,10 @@ export default function SolutionsCardsUpsellStep( {
 							href || config.onClick || ( card.id === 'switch-to-monthly' && onClickDowngrade )
 						);
 						const handleClick = ( e: React.MouseEvent ) => {
+							recordEvent?.( 'calypso_cancellation_solution_card_click', {
+								solution_id: card.id,
+								cancellation_reason: cancellationReason,
+							} );
 							if ( href && config.onClick ) {
 								e.preventDefault();
 							}

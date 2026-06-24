@@ -89,9 +89,9 @@ class CloneCredentialsStep extends Component {
 export default connect(
 	( state, ownProps ) => {
 		const originSiteName = get( ownProps, [ 'signupDependencies', 'originSiteName' ], '' );
-		const originBlogId = get( ownProps, [ 'signupDependencies', 'originBlogId' ] );
-		const destinationSiteName = get( ownProps, [ 'signupDependencies', 'destinationSiteName' ] );
-		const destinationSiteUrl = get( ownProps, [ 'signupDependencies', 'destinationSiteUrl' ] );
+		const originBlogId = ownProps?.signupDependencies?.originBlogId;
+		const destinationSiteName = ownProps?.signupDependencies?.destinationSiteName;
+		const destinationSiteUrl = ownProps?.signupDependencies?.destinationSiteUrl;
 
 		return {
 			originBlogId,

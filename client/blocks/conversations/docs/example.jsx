@@ -1,4 +1,4 @@
-import { map, compact } from 'lodash';
+import { map } from 'lodash';
 import { commentsTree } from 'calypso/blocks/conversations/docs/fixtures';
 import { ConversationCommentList } from 'calypso/blocks/conversations/list';
 import { posts } from 'calypso/blocks/reader-post-card/docs/fixtures';
@@ -16,7 +16,7 @@ const ConversationCommentListExample = () => {
 				blogId={ 123 }
 				postId={ 12 }
 				commentIds={ [ 1, 2, 3 ] }
-				sortedComments={ compact( map( commentsTree, 'data' ) ) }
+				sortedComments={ map( commentsTree, 'data' ).filter( Boolean ) }
 				post={ post }
 				enableCaterpillar={ false }
 				shouldRequestComments={ false }

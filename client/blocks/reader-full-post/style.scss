@@ -1,8 +1,14 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+@import "@automattic/typography/styles/variables";
+
+@import "@wordpress/base-styles/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+@import "calypso/assets/stylesheets/shared/mixins/tooltip";
+
 // Styles targeted at story content
 @import './content';
-@import "@wordpress/base-styles/breakpoints";
 
 // Since we cannot use css variables in media queries, we need to define the valuess in scss.
 $reader-full-post-sidebar-width: 220px;

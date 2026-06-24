@@ -14,6 +14,7 @@
 		{ "path": "../data-stores" },
 		{ "path": "../viewport" },
 		{ "path": "../i18n-utils" },
+		{ "path": "../js-utils" },
 		{ "path": "../search" }
 	]
 }

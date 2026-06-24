@@ -6,7 +6,7 @@ import type { Email } from '../types';
 export const mapMailboxToEmail = ( box: EmailBox, emailAccount: EmailAccount ): Email => {
 	const provider = emailAccount.account_type;
 
-	let providerDisplayName = __( 'Email Forwarding' );
+	let providerDisplayName: string = __( 'Email Forwarding' );
 	if ( provider === 'titan' ) {
 		providerDisplayName = __( 'Titan Mail' );
 	} else if ( provider === 'google_workspace' ) {
@@ -33,7 +33,7 @@ export const mapMailboxToEmail = ( box: EmailBox, emailAccount: EmailAccount ): 
 
 	return {
 		id,
-		subscriptionId: String( emailAccount.subscription_id ) ?? emailAccount.account_id,
+		subscriptionId: emailAccount.subscription_id?.toString() ?? emailAccount.account_id?.toString(),
 		emailAddress: `${ box.mailbox }@${ box.domain }`,
 		type,
 		provider,

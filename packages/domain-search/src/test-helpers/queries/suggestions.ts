@@ -1,6 +1,7 @@
 import nock from 'nock';
 import qs from 'qs';
 import type {
+	BundleSuggestion,
 	DomainSuggestion,
 	DomainSuggestionQuery,
 	FreeDomainSuggestion,
@@ -33,6 +34,23 @@ export const mockGetSuggestionsQuery = ( {
 	}
 
 	return request.reply( 200, suggestions );
+};
+
+export const mockGetBundleSuggestionQuery = ( {
+	params,
+	bundleSuggestion,
+}: {
+	params: Partial< DomainSuggestionQuery >;
+	bundleSuggestion: BundleSuggestion | null;
+} ) => {
+	return nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/domains/suggestions' )
+		.query( {
+			vendor: 'variation2_front',
+			with_bundles: 1,
+			...params,
+		} )
+		.reply( 200, { bundle_suggestion: bundleSuggestion } );
 };
 
 export const mockGetFreeSuggestionQuery = ( {

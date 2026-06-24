@@ -18,8 +18,8 @@ There is simpler implementation of infinite scroll - the [InfiniteScroll](../inf
 - `guessedItemHeight` Number, height to be used when real rendered height is unknown
 - `itemsPerRow` Number (default: `1`), number of items per row if rendered as rows of items
 - `fetchNextPage` Function, called to trigger loading of next page, takes `options` as argument, described below
-- `getItemRef` Function, for given item returns string usable as React `key` and `ref`
-- `renderItem` Function, for given item gets its React component. Render _must_ sets `ref` and `key` using `getItemRef`.
+- `getItemRef` Function, for given item returns a string usable as React `key` and as the list's internal item key
+- `renderItem` Function `( item, index, registerItemRef )`, for given item gets its React component. Render _must_ set `key` using `getItemRef`, and _should_ attach the `registerItemRef` callback as the `ref` of the item's root DOM element so the list can measure rendered items. Items that don't register a node fall back to `guessedItemHeight`.
 - `renderLoadingPlaceholders` Function, returning array of react components to be appended to list to indicate loading state.
 - `renderTrailingItems` Function, returning markup to be rendered after the content items. Optional, useful for padding flexbox grid with invisible elements.
 - `context` Object, DOM node in which the content is to be monitored for scroll state (optional, defaults to window if omitted or set to `false`)
@@ -45,9 +45,9 @@ class Listing extends React.Component {
 		return 'item-' + item.id;
 	}
 
-	renderItem( item ) {
+	renderItem( item, index, registerItemRef ) {
 		const itemKey = this.getItemRef( item );
-		return <Item ref={ itemKey } key={ itemKey } />;
+		return <Item ref={ registerItemRef } key={ itemKey } />;
 	}
 
 	renderLoadingPlaceholders() {

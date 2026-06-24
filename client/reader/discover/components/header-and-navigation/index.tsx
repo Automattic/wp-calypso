@@ -8,6 +8,7 @@ import DiscoverNavigation from 'calypso/reader/discover/components/navigation';
 import DiscoverTagsNavigation from 'calypso/reader/discover/components/tags-navigation';
 import ReaderOnboardingGate from 'calypso/reader/onboarding/gate';
 import { RECOMMENDED_TAB, FRESHLY_PRESSED_TAB, TAGS_TAB, LATEST_TAB } from '../../helper';
+import type { JSX } from 'react';
 
 export interface DiscoverHeaderAndNavigationProps {
 	selectedTab: string;

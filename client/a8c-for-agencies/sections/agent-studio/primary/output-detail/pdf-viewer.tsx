@@ -6,6 +6,12 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 import './pdf-viewer.scss';
 
+declare global {
+	interface Window {
+		applyA4aFit?: ( root: Document | ShadowRoot ) => Promise< void >;
+	}
+}
+
 export interface PdfViewerPage {
 	srcDoc: string;
 	role: 'cover' | 'body';
@@ -21,13 +27,18 @@ interface Props {
 	pages: PdfViewerPage[];
 	/** Hover-revealed chevrons over the cover page. */
 	coverNavigation?: CoverNavigation;
+	/**
+	 * Extra layer rendered inside each page frame, on top of the page.
+	 * Receives the 1-based page number (cover included). Used by annotate mode.
+	 */
+	renderPageOverlay?: ( pageNumber: number ) => ReactNode;
 }
 
 // US Letter at 96dpi. The natural height only appears in CSS (see
 // `aspect-ratio: 816 / 1056` on the wrap).
 const PAGE_NATURAL_WIDTH = 816;
 
-export default function PdfViewer( { pages, coverNavigation }: Props ) {
+export default function PdfViewer( { pages, coverNavigation, renderPageOverlay }: Props ) {
 	if ( pages.length === 0 ) {
 		return null;
 	}
@@ -40,6 +51,8 @@ export default function PdfViewer( { pages, coverNavigation }: Props ) {
 					className={ clsx( 'a4a-one-pager-viewer__page', {
 						'is-cover': page.role === 'cover',
 					} ) }
+					data-a4a-page-number={ idx + 1 }
+					data-a4a-page-role={ page.role }
 				>
 					<div className="a4a-one-pager-viewer__frame">
 						<ShadowPage
@@ -71,6 +84,7 @@ export default function PdfViewer( { pages, coverNavigation }: Props ) {
 								</CircleButton>
 							</div>
 						) }
+						{ renderPageOverlay?.( idx + 1 ) }
 					</div>
 				</div>
 			) ) }
@@ -87,6 +101,31 @@ const rewriteRootSelectors = ( css: string ): string =>
 		.replace( /(^|[\s,{}])html(?=[\s,{[:.])/g, '$1:host' )
 		.replace( /(^|[\s,{}])body(?=[\s,{[:.])/g, '$1:host' )
 		.replace( /(^|[\s,{}]):root(?=[\s,{[:.])/g, '$1:host' );
+
+// `@font-face` declared inside a shadow root does not register the font
+// face in Chrome / Safari / Firefox: the rule parses, DevTools shows it,
+// `--wp--preset--font-family--display` still resolves to `Knockout`, but
+// no face named `Knockout` is reachable from inside the shadow tree, so
+// the browser falls through to `system-ui`. Faces registered on the host
+// Document ARE visible inside every nested shadow root, so we peel
+// `@font-face` blocks off the deck CSS at mount and append them to
+// `document.head` instead. The Set dedupes by rule body so a multi-page
+// deck (one shadow root per page, every page carrying the same face
+// payload) does not register the same face N times.
+const hoistedFontFaces = new Set< string >();
+
+function hoistFontFaces( css: string ): string {
+	return css.replace( /@font-face\s*\{[^}]*\}/g, ( rule ) => {
+		if ( ! hoistedFontFaces.has( rule ) ) {
+			hoistedFontFaces.add( rule );
+			const style = document.createElement( 'style' );
+			style.dataset.a4aFontFace = '';
+			style.textContent = rule;
+			document.head.appendChild( style );
+		}
+		return '';
+	} );
+}
 
 const HOST_BASELINE =
 	'<style>:host{display:block;width:816px;height:1056px;overflow:hidden;}</style>';
@@ -116,12 +155,32 @@ function ShadowPage( { srcDoc, title }: { srcDoc: string; title: string } ) {
 		)
 			.map( ( node ) =>
 				node.tagName === 'STYLE'
-					? `<style>${ rewriteRootSelectors( node.textContent ?? '' ) }</style>`
+					? `<style>${ rewriteRootSelectors( hoistFontFaces( node.textContent ?? '' ) ) }</style>`
 					: node.outerHTML
 			)
 			.join( '' );
+		// Shadow roots don't execute scripts inserted via `innerHTML`,
+		// so pull the deck's inline fit.js out of the parsed body and
+		// re-attach it to the outer document. `window.applyA4aFit` is
+		// the once-per-tab load marker.
+		const scripts = Array.from( parsed.body.querySelectorAll( 'script' ) );
+		parsed.body.querySelectorAll( 'script' ).forEach( ( s ) => s.remove() );
 		shadow.innerHTML = HOST_BASELINE + styleMarkup + parsed.body.innerHTML;
-	}, [ srcDoc ] );
+		if ( ! window.applyA4aFit ) {
+			const fitter = scripts.find( ( s ) => ( s.textContent ?? '' ).includes( 'applyA4aFit' ) );
+			if ( fitter ) {
+				const live = document.createElement( 'script' );
+				live.textContent = fitter.textContent;
+				document.head.appendChild( live );
+			}
+		}
+		if ( window.applyA4aFit ) {
+			window.applyA4aFit( shadow ).catch( ( e ) => {
+				// eslint-disable-next-line no-console
+				console.warn( '[a4a-preview] applyA4aFit error', e );
+			} );
+		}
+	}, [ srcDoc, title ] );
 
 	return (
 		<div

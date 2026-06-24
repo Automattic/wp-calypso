@@ -3,7 +3,7 @@
 //
 @import "shared/utils";
 @import '@automattic/calypso-color-schemes';
-@import "client/blocks/reader-full-post/content";
+@import "calypso/blocks/reader-full-post/content";
 
 @media (prefers-color-scheme: dark) {
 	.reader-full-post__story-content .jetpack-blogging-prompt .jetpack-blogging-prompt__label::before {

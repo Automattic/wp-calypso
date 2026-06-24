@@ -10,6 +10,8 @@ import { __ } from '@wordpress/i18n';
 import { useNavigate } from 'react-router-dom';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
+import { useRegisterCustomActions } from '../../hooks/custom-actions';
+import { useBroadcastConversationActivity } from '../../hooks/use-broadcast-conversation-activity';
 import useCheckpointAction from '../../hooks/use-checkpoint-action';
 import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
@@ -18,7 +20,9 @@ import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
 import useSourcesAction from '../../hooks/use-sources-action';
 import useZoomAction from '../../hooks/use-zoom-action';
 import { markSessionUsed } from '../../utils/agent-session';
-import convertToolMessagesToComponents from '../../utils/convert-tool-messages-to-components';
+import convertToolMessagesToComponents, {
+	type AgentsManagerUIMessage,
+} from '../../utils/convert-tool-messages-to-components';
 import {
 	consumeNextMessageExternalContextEntries,
 	removeExternalContextCard,
@@ -27,8 +31,10 @@ import {
 	type ExternalContextCardAction,
 } from '../../utils/external-context';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
+import { getOrchestratorErrorMessage } from '../../utils/orchestrator-error-message';
 import { persistLastActivity } from '../../utils/persist-last-activity';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
+import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import type { BigSkyMessage } from '../../types';
@@ -41,6 +47,14 @@ import type {
 	ImageUploadHook,
 	UseCheckpointHook,
 } from '../../utils/load-external-providers';
+
+/**
+ * Pipe-delimited list of suggestion ids (e.g. `|id1|id2|`), matching Big Sky's
+ * `suggestions` / `available_suggestions` tracks-prop format.
+ */
+function formatSuggestionIds( suggestions: Suggestion[] ): string {
+	return '|' + suggestions.map( ( s ) => s.id ).join( '|' ) + '|';
+}
 
 interface Props {
 	/** Suggestions displayed when the chat is empty. */
@@ -131,7 +145,9 @@ export default function OrchestratorChat( {
 	const isReaderChat = isReaderChatAgent( agentConfig?.agentId );
 	const shouldLoadConversation =
 		! isReaderChat || ( ! hasUserSentMessage && messages.length === 0 && ! isProcessing );
-	const chatError = isReaderChat ? getReaderChatErrorMessage( error ) : error;
+	const chatError = isReaderChat
+		? getReaderChatErrorMessage( error )
+		: getOrchestratorErrorMessage( error );
 
 	const { isLoading: isLoadingConversation } = useConversation( {
 		maxPages: isReaderChat ? 1 : 10,
@@ -154,7 +170,10 @@ export default function OrchestratorChat( {
 	} );
 
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
-	const dynamicSuggestions = useSuggestions?.();
+	const maxDynamicSuggestions = isDocked ? undefined : 3;
+	const dynamicSuggestions = useSuggestions?.( maxDynamicSuggestions, {
+		suggestionsVisible: isOpen || isCompactMode,
+	} );
 	const dynamicSuggestionsList = dynamicSuggestions?.suggestions ?? [];
 	const dynamicSuggestionsKey = JSON.stringify(
 		dynamicSuggestionsList.map( ( s ) => [ s.id, s.label, s.prompt ] )
@@ -172,6 +191,19 @@ export default function OrchestratorChat( {
 		// return a fresh empty array on each render.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ dynamicSuggestionsKey, registerSuggestions, clearSuggestions ] );
+
+	// Track when a new set of suggestions is rendered. Keyed on the rendered
+	// ids so re-renders that don't change the set don't re-fire.
+	const renderedSuggestionsKey = suggestions.map( ( s ) => s.id ).join( '|' );
+	useEffect( () => {
+		if ( suggestions.length > 0 ) {
+			recordBigSkyTracksEvent( 'chat_suggestions_rendered', {
+				suggestions: formatSuggestionIds( suggestions ),
+			} );
+		}
+		// `suggestions` identity is unstable; key on its rendered ids instead.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ renderedSuggestionsKey ] );
 
 	// Persist the chat route so the conversation can be resumed later.
 	useSaveNewChatRoute( hasUserSentMessage );
@@ -204,10 +236,19 @@ export default function OrchestratorChat( {
 			setHasUserSentMessage( true );
 			persistLastActivity( siteKey );
 
+			recordBigSkyTracksEvent( 'chat_input_send_message', {
+				message_length: message?.length || 0,
+				has_images: pendingImages.length > 0,
+			} );
+
 			if ( pendingImages.length > 0 && uploadImagesToWordPress ) {
 				try {
 					// Upload files to WordPress media library
 					const mediaObjects = await uploadImagesToWordPress();
+
+					recordBigSkyTracksEvent( 'file_upload_success', {
+						count: mediaObjects.length,
+					} );
 
 					// Create image data objects with full metadata including attachment ID
 					const imageData = mediaObjects.map( ( media ) => ( {
@@ -282,20 +323,7 @@ export default function OrchestratorChat( {
 		[ inputValue, onSubmitWithImages ]
 	);
 
-	useEffect( () => {
-		window.__agentsManagerActions = window.__agentsManagerActions || ( {} as AgentsManagerActions );
-		window.__agentsManagerActions.setChatInput = setChatInput;
-		window.__agentsManagerActions.submitChatMessage = submitChatMessage;
-
-		return () => {
-			if ( window.__agentsManagerActions?.setChatInput === setChatInput ) {
-				delete window.__agentsManagerActions.setChatInput;
-			}
-			if ( window.__agentsManagerActions?.submitChatMessage === submitChatMessage ) {
-				delete window.__agentsManagerActions.submitChatMessage;
-			}
-		};
-	}, [ setChatInput, submitChatMessage ] );
+	useRegisterCustomActions( { setChatInput, submitChatMessage } );
 
 	const handleContextCardAction = useCallback(
 		( card: ExternalContextCard, action: ExternalContextCardAction ) => {
@@ -367,12 +395,25 @@ export default function OrchestratorChat( {
 		};
 	}, [] );
 
-	const handleSuggestionClick = useCallback( ( suggestion: Suggestion ) => {
-		const value = suggestion.prompt ?? suggestion.label;
-		window.dispatchEvent(
-			new CustomEvent( 'big-sky-inline-suggestion-click', { detail: { value } } )
-		);
-	}, [] );
+	const handleSuggestionClick = useCallback(
+		( suggestion: Suggestion | string, availableSuggestions?: Suggestion[] ) => {
+			const value =
+				typeof suggestion === 'string' ? suggestion : suggestion.prompt ?? suggestion.label;
+
+			if ( typeof suggestion !== 'string' ) {
+				recordBigSkyTracksEvent( 'chat_suggestion_click', {
+					suggestion_text: suggestion.prompt || '',
+					suggestion_id: suggestion.id || '',
+					available_suggestions: formatSuggestionIds( availableSuggestions ?? [] ),
+				} );
+			}
+
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', { detail: { value } } )
+			);
+		},
+		[]
+	);
 
 	// Invoke abilities setup hook to register hook-based abilities that utilize React context.
 	// Provides custom action handlers for agent and chat interaction within Big Sky's AI store.
@@ -410,8 +451,8 @@ export default function OrchestratorChat( {
 		setThinkingMessage,
 	} );
 
-	const displayedMessages = useMemo( () => {
-		let currentMessages = messages;
+	const displayedMessages = useMemo< AgentsManagerUIMessage[] >( () => {
+		let currentMessages: AgentsManagerUIMessage[] = messages;
 
 		currentMessages = currentMessages.filter(
 			( message ) =>
@@ -451,10 +492,21 @@ export default function OrchestratorChat( {
 	] );
 
 	// Notify parent when has-messages state changes.
-	const hasMessages = displayedMessages.length > 0;
+	const messageCount = displayedMessages.length;
+	const hasMessages = messageCount > 0;
 	useEffect( () => {
 		onHasMessagesChange( hasMessages );
 	}, [ hasMessages, onHasMessagesChange ] );
+
+	// Broadcast conversation activity so other bundles can re-sync transcript cards.
+	useBroadcastConversationActivity( messageCount );
+
+	const latestDisplayedMessage = displayedMessages[ displayedMessages.length - 1 ];
+	const shouldSuppressTransientThinking = Boolean(
+		latestDisplayedMessage?.role === 'agent' && latestDisplayedMessage.suppressThinking
+	);
+	const showProcessingIndicator =
+		( isProcessing || ( isThinking && ! isBuildingSite ) ) && ! shouldSuppressTransientThinking;
 
 	// Determine which suggestions to show following Big Sky's logic:
 	// - When there are dynamic suggestions (from block selection, etc.), show those
@@ -471,7 +523,7 @@ export default function OrchestratorChat( {
 			messages={ displayedMessages }
 			suggestions={ suggestions }
 			emptyViewSuggestions={ displayedEmptyViewSuggestions }
-			isProcessing={ isProcessing || ( isThinking && ! isBuildingSite ) }
+			isProcessing={ showProcessingIndicator }
 			thinkingMessage={ progressMessage }
 			error={ chatError }
 			onSubmit={ onSubmitWithImages }

@@ -7,24 +7,19 @@
  * in Jetpack's Agents Manager feature.
  *
  * `agentProviders` entries may be URL strings (dynamically imported as ES
- * modules) or already-loaded `LoadedProviders` objects with the same shape.
+ * modules), URL metadata objects, or already-loaded `LoadedProviders` objects
+ * with the same shape.
  */
 declare const agentsManagerData:
 	| {
-			agentProviders?: ( string | import('./utils/load-external-providers').LoadedProviders )[];
+			agentProviders?: import('./utils/load-external-providers').AgentProviderEntry[];
 			useUnifiedExperience?: boolean;
 			agentId?: string;
 			helpCenterUrl?: string;
-			jetpackAiSidebarPreview?: {
-				enabled: boolean;
-				features?: {
-					aiEditorialReview?: boolean;
-					blockTransformations?: boolean;
-					optimizeTitleSuggestion?: boolean;
-					chatHistory?: boolean;
-					supportGuides?: boolean;
-				};
-			};
+			/** Dev/internal context (localhost, jurassic, proxied a11ns, internal Atomic). Drives `is_test`. */
+			isDevMode?: boolean;
+			emptyViewHeading?: string;
+			emptyViewHelp?: string;
 	  }
 	| undefined;
 
@@ -112,7 +107,11 @@ interface AgentsManagerActions {
 	removeContextEntry: ( id: string ) => void;
 	setContextCard: ( card: AgentsManagerExternalContextCard ) => void;
 	removeContextCard: ( id: string ) => void;
+	setSiteEditorAction: ( name: string, value: string | number | boolean | null ) => void;
 	chatNavigate: import('react-router-dom').NavigateFunction;
+	resumeChat: () => void;
+	isChatVisible: () => boolean;
+	getCurrentRoute: () => string;
 	isCompactMode?: boolean;
 	isChatEnabled?: boolean;
 	desktopMediaQuery?: string;
@@ -129,4 +128,11 @@ interface AgentsManagerActions {
  */
 interface Window {
 	__agentsManagerActions?: AgentsManagerActions;
+	/** Big Sky injects this on editor surfaces. Narrowed to the fields AM consumes. */
+	bigSkyInitialState?: {
+		bigSkyVersion?: string;
+		isFreeTrial?: string;
+		isDevMode?: string;
+		currentScreen?: { screen?: string };
+	};
 }

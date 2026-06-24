@@ -1,3 +1,5 @@
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
@@ -5,13 +7,6 @@
 .premier-agency-hosting ul.hosting-additional-features {
 	.gridicon {
 		fill: var( --color-jetpack );
-	}
-
-	a,
-	a:visited,
-	a:hover {
-		text-decoration: underline;
-		color: var( --color-text );
 	}
 }
 

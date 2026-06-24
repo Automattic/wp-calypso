@@ -1,6 +1,7 @@
 import { Button, FormInputValidation, ExternalLink } from '@automattic/components';
+import { omit } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { get, omit } from 'lodash';
+import { get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';

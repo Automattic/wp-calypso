@@ -35,6 +35,12 @@ export default function DnsSec( { domainName, domain }: DnsSecProps ) {
 
 	const { isPending } = mutation;
 
+	const isDnssecEnabled = domain.is_dnssec_enabled ?? false;
+	// DNSSEC can only be enabled when the domain uses WordPress.com name servers.
+	// Prevent enabling it otherwise, since the request would fail server-side with
+	// `domain_does_not_use_wpcom_ns`. Disabling an already-enabled record stays allowed.
+	const isEnablingDisabled = ! domain.has_wpcom_nameservers && ! isDnssecEnabled;
+
 	const handleToggleChange = ( enabled: boolean ) => {
 		// Track the toggle action
 
@@ -83,15 +89,13 @@ export default function DnsSec( { domainName, domain }: DnsSecProps ) {
 							<HStack alignment="left">
 								<ToggleControl
 									__nextHasNoMarginBottom
-									checked={ domain.is_dnssec_enabled ?? false }
+									checked={ isDnssecEnabled }
 									onChange={ ( checked ) => handleToggleChange( checked ) }
-									disabled={ isPending }
-									label={
-										domain.is_dnssec_enabled ? __( 'Disable DNSSEC' ) : __( 'Enable DNSSEC' )
-									}
+									disabled={ isPending || isEnablingDisabled }
+									label={ isDnssecEnabled ? __( 'Disable DNSSEC' ) : __( 'Enable DNSSEC' ) }
 								/>
 							</HStack>
-							{ domain.is_dnssec_enabled && (
+							{ isDnssecEnabled && (
 								<VStack spacing={ 3 }>
 									{ domain.dnssec_records?.dnskey?.map( ( dnskey, index ) => (
 										<DnsSecRecordTextarea

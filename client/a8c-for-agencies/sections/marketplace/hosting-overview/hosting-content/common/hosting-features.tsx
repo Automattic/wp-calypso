@@ -9,9 +9,15 @@ type Props = {
 	heading: string;
 	isPressable?: boolean;
 	areSignaturePlans?: boolean;
+	showFreeDomain?: boolean;
 };
 
-export default function HostingFeatures( { heading, isPressable, areSignaturePlans }: Props ) {
+export default function HostingFeatures( {
+	heading,
+	isPressable,
+	areSignaturePlans,
+	showFreeDomain = true,
+}: Props ) {
 	const translate = useTranslate();
 	const { __ } = useI18n();
 
@@ -79,7 +85,9 @@ export default function HostingFeatures( { heading, isPressable, areSignaturePla
 						translate( 'In-depth site analytics dashboard' ),
 						translate( 'Elastic-powered search' ),
 						translate( '4K, unbranded VideoPress player' ),
-						...( isPressable ? [] : [ translate( 'Free domain for one year' ) ] ),
+						...( ! isPressable && showFreeDomain
+							? [ translate( 'Free domain for one year' ) ]
+							: [] ),
 						translate( 'Smart redirects' ),
 					],
 				},

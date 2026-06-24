@@ -9,7 +9,7 @@ export interface AddNewSiteMenuItemsProps {
 
 export interface AddNewSiteContentProps {
 	isMenuVisible: boolean;
-	popoverMenuContext: React.RefObject< HTMLButtonElement >;
+	popoverMenuContext: React.RefObject< HTMLButtonElement | null >;
 	setMenuVisible: ( value: boolean ) => void;
 	toggleMenu: () => void;
 }

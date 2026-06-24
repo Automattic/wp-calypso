@@ -1,6 +1,5 @@
 import { ScreenReaderText, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { reject } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -21,7 +20,7 @@ class RemoveButton extends PureComponent {
 			return;
 		}
 
-		const items = reject( selectedItems, ( item ) => item.ID === itemId );
+		const items = selectedItems.filter( ( item ) => item.ID !== itemId );
 
 		this.props.selectMediaItems( siteId, items );
 	};

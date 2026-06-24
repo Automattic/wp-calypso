@@ -1,4 +1,3 @@
-import { last } from 'lodash';
 import { REASONS_FOR_MANUAL_RENEWAL } from '../constants';
 import { createPathWithoutImmediateLoginInformation, createImmediateLoginMessage } from '../utils';
 
@@ -114,7 +113,7 @@ describe( 'immediate-login/utils', () => {
 		const messages = [
 			createImmediateLoginMessage( '', 'test@wordpress.com' ),
 			createImmediateLoginMessage( REASONS_FOR_MANUAL_RENEWAL[ 0 ], 'test@wordpress.com' ),
-			createImmediateLoginMessage( last( REASONS_FOR_MANUAL_RENEWAL ), 'test@wordpress.com' ),
+			createImmediateLoginMessage( REASONS_FOR_MANUAL_RENEWAL.at( -1 ), 'test@wordpress.com' ),
 		];
 		test( 'should put an email in every message', () => {
 			for ( const m of messages ) {

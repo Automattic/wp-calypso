@@ -7,8 +7,8 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
-import { upsertPostCache } from 'calypso/reader/data/post-cache';
-import { createPostCacheMiddleware } from 'calypso/reader/data/post-cache-middleware';
+import { upsertPostCache } from 'calypso/reader/data/post/cache';
+import { createPostCacheMiddleware } from 'calypso/reader/data/post/middleware';
 import readerReducer from 'calypso/state/reader/reducer';
 import DialogContent from '../dialog-content';
 
@@ -33,11 +33,6 @@ jest.mock( 'calypso/state/reader/conversations/actions', () => ( {
 		type: 'UPDATE_CONVERSATION_FOLLOW_STATUS',
 		payload,
 	} ) ),
-} ) );
-
-jest.mock( 'calypso/components/data/query-reader-site', () => ( {
-	__esModule: true,
-	default: () => <div data-testid="query-reader-site" />,
 } ) );
 
 const makeQueryClient = () => new QueryClient( { defaultOptions: { queries: { retry: false } } } );

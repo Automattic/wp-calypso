@@ -97,6 +97,7 @@ import CancelPurchaseFeatureList from './feature-list';
 import RefundEligibilityNotice from './refund-eligibility-notice';
 import TimeRemainingNotice from './time-remaining-notice';
 import { toPurchaseForCopy } from './to-purchase-for-copy';
+import { getCancellationTopNotice } from './which-top-notice';
 import type { UpgradesCancelFeaturesResponse } from '@automattic/api-core';
 import type { Purchases, SiteDetails } from '@automattic/data-stores';
 import type { GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
@@ -749,6 +750,21 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		}
 	};
 
+	handleSurveyClose = () => {
+		if ( this.shouldFireMutationOnConfirm() ) {
+			this.props.refreshSitePlans( this.props.purchase.siteId );
+			this.props.clearPurchases();
+			const managePurchaseUrl = ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
+				this.props.siteSlug,
+				this.props.purchaseId
+			);
+			const backupRedirect = this.props.purchaseListUrl ?? purchasesRoot;
+			page.redirect( managePurchaseUrl ?? backupRedirect );
+			return;
+		}
+		this.setState( { surveyShown: false } );
+	};
+
 	onDialogClose = () => {
 		this.setState( {
 			showDialog: false,
@@ -1041,6 +1057,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			cancelBundledDomain: this.state.cancelBundledDomain,
 			purchaseListUrl: purchaseListUrl ?? purchasesRoot,
 			displayVariant: this.props.intent ?? undefined,
+			showMarketplaceDialog: ! isSplitCancelRemoveEnabled,
 			cancelIntentOverride:
 				urlIntentOverride ??
 				( this.shouldUseAutoRenewFlow() ? ( 'autorenew' as const ) : undefined ),
@@ -1420,6 +1437,11 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			includedDomainHasRadioButtons || this.state.cancelBundledDomain,
 			this.props.includedDomainPurchase
 		);
+		const topNotice = getCancellationTopNotice( {
+			showDomainOptionsStep: this.state.showDomainOptionsStep,
+			hasRefund: Boolean( refundAmountString ),
+			displayVariant,
+		} );
 		return (
 			<>
 				{ ! isJetpack && ! isAkismet && ! isDomainRegistrationPurchase && (
@@ -1427,7 +1449,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						disableButtons={ this.state.isLoading }
 						purchase={ purchase }
 						isVisible={ this.state.surveyShown }
-						onClose={ () => this.setState( { surveyShown: false } ) }
+						onClose={ this.handleSurveyClose }
 						onSurveyComplete={ this.onSurveyComplete }
 						flowType={ this.getCancelFlowType( purchase ) }
 						cancelBundledDomain={ this.state.cancelBundledDomain }
@@ -1467,30 +1489,24 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						align="left"
 					/>
 
-					{ ! this.state.showDomainOptionsStep &&
-						( ! refundAmountString ||
-							intent === 'auto-renew' ||
-							( intent === 'cancel' && ! this.props.isSplitCancelRemoveEnabled ) ) && (
-							<TimeRemainingNotice
-								purchase={ purchase }
-								displayVariant={ displayVariant }
-								intent={ intent ?? null }
-							/>
-						) }
+					{ topNotice === 'time-remaining' && (
+						<TimeRemainingNotice
+							purchase={ purchase }
+							displayVariant={ displayVariant }
+							intent={ intent ?? null }
+						/>
+					) }
 
 					<div className="cancel-purchase__inner-wrapper">
 						<div className="cancel-purchase__left">
-							{ ! this.state.showDomainOptionsStep &&
-								this.props.isSplitCancelRemoveEnabled &&
-								refundAmountString &&
-								intent === 'cancel' && (
-									<RefundEligibilityNotice
-										mode="refund-eligibility"
-										refundAmount={ refundAmountString }
-										purchase={ purchase }
-									/>
-								) }
-							{ ! this.state.showDomainOptionsStep && refundAmountString && intent === 'remove' && (
+							{ topNotice === 'refund-eligibility' && refundAmountString && (
+								<RefundEligibilityNotice
+									mode="refund-eligibility"
+									refundAmount={ refundAmountString }
+									purchase={ purchase }
+								/>
+							) }
+							{ topNotice === 'confirmed' && refundAmountString && (
 								<RefundEligibilityNotice
 									refundAmount={ refundAmountString }
 									mode="confirmed"

@@ -1,5 +1,5 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
-import { Button, Modal, Spinner } from '@wordpress/components';
+import { __experimentalHStack as HStack, Button, Modal, Spinner } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { Icon, external, download, close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -8,6 +8,7 @@ import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
+import { DataViews } from 'calypso/components/dataviews';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useWooPaymentsContext } from '../context';
@@ -56,6 +57,16 @@ export default function SitesWithWooPayments() {
 			'woopaymentsStatus',
 			'commissionEligibility',
 		],
+		layout: {
+			styles: {
+				site: { minWidth: '260px' },
+				transactions: { minWidth: '120px' },
+				commissionsPaid: { minWidth: '150px' },
+				timeframeCommissions: { minWidth: '170px' },
+				woopaymentsStatus: { minWidth: '160px' },
+				commissionEligibility: { minWidth: '190px' },
+			},
+		},
 	} );
 
 	const fields = useMemo(
@@ -86,7 +97,7 @@ export default function SitesWithWooPayments() {
 			},
 			{
 				id: 'commissionsPaid',
-				label: translate( 'Commissions Paid' ).toUpperCase(),
+				label: translate( 'Commissions paid' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item } ) => {
 					if ( isLoadingWooPaymentsData ) {
@@ -100,7 +111,7 @@ export default function SitesWithWooPayments() {
 			},
 			{
 				id: 'timeframeCommissions',
-				label: translate( 'Timeframe Commissions' ).toUpperCase(),
+				label: translate( 'Timeframe commissions' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item } ) => {
 					if ( isLoadingWooPaymentsData ) {
@@ -114,7 +125,7 @@ export default function SitesWithWooPayments() {
 			},
 			{
 				id: 'woopaymentsStatus',
-				label: translate( 'WooPayments Status' ).toUpperCase(),
+				label: translate( 'WooPayments status' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item } ) => (
 					<WooPaymentsStatusColumn state={ item.state } siteId={ item.blogId } />
@@ -124,7 +135,7 @@ export default function SitesWithWooPayments() {
 			},
 			{
 				id: 'commissionEligibility',
-				label: translate( 'Commission Eligibility' ).toUpperCase(),
+				label: translate( 'Commission eligibility' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item } ) => (
 					<CommissionEligibilityColumn
@@ -222,7 +233,17 @@ export default function SitesWithWooPayments() {
 							dataViewsState,
 							defaultLayouts: { table: {} },
 						} }
-					/>
+					>
+						<HStack
+							className="dataviews__view-actions"
+							justify="end"
+							style={ { paddingInline: '64px' } }
+						>
+							<DataViews.ViewConfig />
+						</HStack>
+						<DataViews.Layout />
+						<DataViews.Footer />
+					</ItemsDataViews>
 				</div>
 			) }
 

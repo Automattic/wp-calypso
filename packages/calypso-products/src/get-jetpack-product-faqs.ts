@@ -1,4 +1,5 @@
 import { getJetpackProductsFAQs } from './translations';
+import type { JSX } from 'react';
 /**
  * Get Jetpack product "FAQs" info based on the product slug.
  */

@@ -119,7 +119,7 @@ export default function MigrationsAddSitesTable( {
 
 		const dateColumn = {
 			id: 'date',
-			label: translate( 'Date Added' ).toUpperCase(),
+			label: translate( 'Date added' ).toUpperCase(),
 			getValue: () => '-',
 			render: ( { item }: { item: SiteItem } ) =>
 				item.date ? new Date( item.date ).toLocaleDateString() : '-',

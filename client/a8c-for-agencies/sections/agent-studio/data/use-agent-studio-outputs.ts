@@ -9,17 +9,35 @@ export const getAgentStudioOutputsQueryKey = ( agencyId?: number ) => [
 	agencyId,
 ];
 
-export default function useAgentStudioOutputs() {
+export type AgentStudioOutputsPollPredicate = (
+	outputs: AgentStudioOutput[] | undefined
+) => boolean;
+
+const defaultPollPredicate: AgentStudioOutputsPollPredicate = ( outputs ) =>
+	!! outputs?.some( ( output ) => output.status === 'generating' );
+
+interface UseAgentStudioOutputsOptions {
+	/**
+	 * Decides whether to keep polling the outputs list every 2s. The
+	 * default polls whenever any output is in `generating`. Consumers
+	 * that only care about one row (e.g. the detail page) can narrow
+	 * this so an unrelated stuck `generating` row doesn't keep the
+	 * 2s heartbeat alive while the user sits on a finished page.
+	 */
+	pollPredicate?: AgentStudioOutputsPollPredicate;
+}
+
+export default function useAgentStudioOutputs( options: UseAgentStudioOutputsOptions = {} ) {
 	const agencyId = useSelector( getActiveAgencyId );
+	const pollPredicate = options.pollPredicate ?? defaultPollPredicate;
 
 	return useQuery< AgentStudioOutput[] >( {
 		queryKey: getAgentStudioOutputsQueryKey( agencyId ),
 		queryFn: () => agentStudioService.listOutputs( agencyId ),
 		enabled: !! agencyId,
 		refetchOnWindowFocus: false,
-		// Poll while a deliverable is generating; pause while the tab is hidden.
-		refetchInterval: ( query ) =>
-			query.state.data?.some( ( output ) => output.status === 'generating' ) ? 2000 : false,
+		// Tab-hidden pause is handled by `refetchIntervalInBackground: false`.
+		refetchInterval: ( query ) => ( pollPredicate( query.state.data ) ? 2000 : false ),
 		refetchIntervalInBackground: false,
 	} );
 }

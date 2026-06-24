@@ -1,5 +1,7 @@
+import { sortBy } from '@automattic/js-utils';
 import debugFactory from 'debug';
-import { get, isEqual, sortBy } from 'lodash';
+import isEqual from 'fast-deep-equal/es6';
+import { get } from 'lodash';
 const debug = debugFactory( 'calypso:data-layer:remove-duplicate-gets' );
 
 /**

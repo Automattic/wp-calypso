@@ -3,8 +3,9 @@ import { Badge, FoldableCard, ExternalLink } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import requestExternalAccess from '@automattic/request-external-access';
 import clsx from 'clsx';
+import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { isEqual, find, some, get } from 'lodash';
+import { find, some } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, cloneElement } from 'react';
 import { connect } from 'react-redux';
@@ -373,7 +374,7 @@ export class SharingService extends Component {
 			 * This immediately connects the account, which is needed for non-publicize accounts
 			 */
 			if (
-				get( nextProps, 'service.type' ) !== 'publicize' &&
+				nextProps?.service?.type !== 'publicize' &&
 				this.didKeyringConnectionSucceed( nextProps.availableExternalAccounts )
 			) {
 				const account = find( nextProps.availableExternalAccounts, { isConnected: false } );
@@ -516,12 +517,12 @@ export class SharingService extends Component {
 		if ( ! config.isEnabled( 'mailchimp' ) ) {
 			return false;
 		}
-		return get( this, 'props.service.ID' ) === 'mailchimp';
+		return this?.props?.service?.ID === 'mailchimp';
 	};
 
 	// Is the service a Google Photos that requires migration to Google Photos Picker API
 	isGooglePhotosMigration( status ) {
-		if ( status === 'must-disconnect' && get( this, 'props.service.ID' ) === 'google_photos' ) {
+		if ( status === 'must-disconnect' && this?.props?.service?.ID === 'google_photos' ) {
 			return true;
 		}
 

@@ -12,8 +12,10 @@ import {
 	getNotificationSettings,
 	hasUnsavedNotificationSettingsChanges,
 } from 'calypso/state/notification-settings/selectors';
+import AchievementsNotificationSettings from './achievements-notification-settings';
 import BlogsSettings from './blogs-settings';
 import Navigation from './navigation';
+import OnThisDayNotificationSettings from './on-this-day-notification-settings';
 import PushNotificationSettings from './push-notification-settings';
 import SubscriptionManagementBackButton from './subscription-management-back-button';
 
@@ -63,6 +65,8 @@ class NotificationSettings extends Component {
 
 				<Navigation path={ this.props.path } />
 				<PushNotificationSettings pushNotifications={ this.props.pushNotifications } />
+				<OnThisDayNotificationSettings />
+				<AchievementsNotificationSettings />
 				<BlogsSettings
 					settings={ this.props.settings }
 					hasUnsavedChanges={ this.props.hasUnsavedChanges }

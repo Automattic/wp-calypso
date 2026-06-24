@@ -1,4 +1,5 @@
-import { memoize, pick } from 'lodash';
+import { pick } from '@automattic/js-utils';
+import { memoize } from 'lodash';
 
 class WpcomTaskList {
 	constructor( tasks = [] ) {

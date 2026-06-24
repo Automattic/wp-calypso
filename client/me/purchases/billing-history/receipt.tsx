@@ -17,6 +17,7 @@ import { Component, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryBillingTransaction from 'calypso/components/data/query-billing-transaction';
+import QueryBillingTransactions from 'calypso/components/data/query-billing-transactions';
 import HeaderCake from 'calypso/components/header-cake';
 import { withLocalizedMoment, useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
@@ -126,6 +127,7 @@ class BillingReceipt extends Component< BillingReceiptProps & BillingReceiptConn
 
 				<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
 
+				<QueryBillingTransactions transactionType="past" />
 				<QueryBillingTransaction transactionId={ transactionId } />
 
 				<ReceiptTitle backHref={ getBillingHistoryUrl( previousRoute ) } />
@@ -311,7 +313,9 @@ function UserVatDetails( { transaction }: { transaction: BillingTransaction } ) 
 								<Button
 									plain
 									className="receipt__email-button"
-									onClick={ getEmailReceiptLinkClickHandler( transaction.id ) as any }
+									onClick={
+										getEmailReceiptLinkClickHandler( transaction.id ) as ( id: FormEvent ) => void
+									}
 								/>
 							),
 						},
@@ -536,17 +540,50 @@ function getReceiptItemOriginalCost( item: BillingTransactionItem ): number {
 	return item.subtotal_integer;
 }
 
-function ReceiptItemTaxes( { transaction }: { transaction: BillingTransaction } ) {
+function getBusinessTaxStateName( state: string ): string {
+	const businessUseTaxStates: Record< string, string > = {
+		CT: 'Connecticut',
+		OH: 'Ohio',
+	};
+
+	return businessUseTaxStates[ state.toUpperCase() ] ?? state;
+}
+
+function hasBusinessUseTaxDetails( transaction: BillingTransaction ): boolean {
+	return transaction.tax_is_for_business === true && Boolean( transaction.tax_state );
+}
+
+export function ReceiptItemTaxes( { transaction }: { transaction: BillingTransaction } ) {
 	const translate = useTranslate();
 	const taxName = useTaxName( transaction.tax_country_code );
 
-	if ( ! transactionIncludesTax( transaction ) ) {
+	if ( ! transactionIncludesTax( transaction ) && ! hasBusinessUseTaxDetails( transaction ) ) {
 		return null;
 	}
 
+	const baseTaxLabel = taxName ?? String( translate( 'Tax' ) );
+	const businessTaxSuffixLabel =
+		transaction.tax_is_for_business && transaction.tax_state
+			? String(
+					translate( '%(state)s business use taxrate', {
+						args: { state: getBusinessTaxStateName( transaction.tax_state ) },
+						comment:
+							'Label indicating a state-level business use tax. %(state)s is a state name like "Ohio".',
+					} )
+			  )
+			: null;
+
 	return (
 		<div className="billing-history__transaction-tax-amount">
-			<span>{ taxName ?? translate( 'Tax' ) }</span>
+			<span>
+				{ baseTaxLabel }
+				{ businessTaxSuffixLabel && (
+					<>
+						{ ' (' }
+						<em>{ businessTaxSuffixLabel }</em>)
+					</>
+				) }
+			</span>
 			<span>
 				{ formatCurrency( transaction.tax_integer, transaction.currency, {
 					isSmallestUnit: true,
@@ -685,7 +722,7 @@ function ReceiptDetails( { transaction }: { transaction: BillingTransaction } ) 
 			setHideDetailsOnPrint( value.length === 0 );
 			setPrintableBillingDetailsText( e.target.value );
 		},
-		[ hideDetailsOnPrint, setHideDetailsOnPrint ]
+		[ setHideDetailsOnPrint ]
 	);
 
 	if ( transaction.cc_num !== 'XXXX' && ! transaction.cc_name && ! transaction.cc_email ) {

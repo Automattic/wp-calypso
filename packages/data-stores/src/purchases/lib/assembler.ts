@@ -5,6 +5,10 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 	const object: Purchase = {
 		id: Number( purchase.ID ),
 		amount: Number( purchase.amount ),
+		advertisedTotalUploadSpaceInGb:
+			purchase.advertised_total_upload_space_in_gb == null
+				? null
+				: Number( purchase.advertised_total_upload_space_in_gb ),
 		attachedToPurchaseId: Number( purchase.attached_to_purchase_id ),
 		autoRenewCouponCode: purchase.auto_renew_coupon_code,
 		autoRenewCouponDiscountPercentage: Number( purchase.auto_renew_coupon_discount_percentage ),
@@ -57,6 +61,7 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		isHundredYearDomain: Boolean( purchase.is_hundred_year_domain ),
 		isLocked: Boolean( purchase.is_locked ),
 		isInAppPurchase: Boolean( purchase.is_iap_purchase ),
+		isPlanTypeDowngradable: Boolean( purchase.is_plan_type_downgradable ),
 		isRechargeable: Boolean( purchase.is_rechargeable ),
 		isRefundable: Boolean( purchase.is_refundable ),
 		isWithinInitialRefundWindow: Boolean( purchase.is_within_initial_refund_window ),
@@ -118,6 +123,8 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		isAutoRenewEnabled: purchase.is_auto_renew_enabled,
 		isJetpackPlanOrProduct: purchase.is_jetpack_plan_or_product,
 		isAttachedToHoldingSite: Boolean( purchase.is_attached_to_holding_site ),
+		isDelayedDowngradePending: Boolean( purchase.is_delayed_downgrade_pending ),
+		delayedDowngradeToProductSlug: purchase.delayed_downgrade_to_product_slug ?? null,
 	};
 
 	if ( isCreditCardPurchase( purchase ) ) {

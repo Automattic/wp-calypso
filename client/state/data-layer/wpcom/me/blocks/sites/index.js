@@ -1,6 +1,8 @@
+import { readSiteQuery } from '@automattic/api-queries';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import {
 	READER_SITE_BLOCKS_RECEIVE,
 	READER_SITE_BLOCKS_REQUEST,
@@ -20,10 +22,29 @@ export const handleSiteBlocksRequest = ( action ) =>
 		action
 	);
 
-export const siteBlocksRequestReceived = ( action, payload ) => ( {
-	type: READER_SITE_BLOCKS_RECEIVE,
-	payload,
-} );
+const seedReadSiteCacheFromBlocks = ( payload ) => {
+	const queryClient = getCalypsoQueryClient();
+	if ( ! queryClient || ! payload || ! payload.sites ) {
+		return;
+	}
+	for ( const site of payload.sites ) {
+		const queryKey = readSiteQuery( site.ID ).queryKey;
+		// Only seed when there's no fresher entry. Mark the seed as immediately
+		// stale (`updatedAt: 0`) so a subsequent `useSite( site.ID )` still
+		// triggers a full fetch — the seed only lets icon/name render quickly.
+		if ( ! queryClient.getQueryData( queryKey ) ) {
+			queryClient.setQueryData( queryKey, site, { updatedAt: 0 } );
+		}
+	}
+};
+
+export const siteBlocksRequestReceived = ( action, payload ) => {
+	seedReadSiteCacheFromBlocks( payload );
+	return {
+		type: READER_SITE_BLOCKS_RECEIVE,
+		payload,
+	};
+};
 
 export const siteBlocksRequestFailure = ( error ) => ( {
 	type: READER_SITE_BLOCKS_RECEIVE,

@@ -1,8 +1,7 @@
 import { withRtl } from 'i18n-calypso';
-import { clone, filter, findIndex } from 'lodash';
+import { filter } from 'lodash';
 import PropTypes from 'prop-types';
 import { createElement, Component } from 'react';
-import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import SortedGrid from 'calypso/components/sorted-grid';
@@ -55,7 +54,7 @@ export class MediaLibraryList extends Component {
 		}
 
 		this.setState( {
-			listContext: ReactDom.findDOMNode( component ),
+			listContext: component.getDOMNode(),
 		} );
 	};
 
@@ -98,12 +97,12 @@ export class MediaLibraryList extends Component {
 		if ( this.props.single ) {
 			selectedItems = filter( this.props.selectedItems, { ID: item.ID } );
 		} else {
-			selectedItems = clone( this.props.selectedItems );
+			selectedItems = [ ...this.props.selectedItems ];
 		}
 
-		const selectedItemsIndex = findIndex( selectedItems, { ID: item.ID } );
+		const selectedItemsIndex = selectedItems.findIndex( ( i ) => i.ID === item.ID );
 		const isToBeSelected = -1 === selectedItemsIndex;
-		const selectedMediaIndex = findIndex( this.props.media, { ID: item.ID } );
+		const selectedMediaIndex = this.props.media.findIndex( ( i ) => i.ID === item.ID );
 
 		let start = selectedMediaIndex;
 		let end = selectedMediaIndex;
@@ -114,9 +113,9 @@ export class MediaLibraryList extends Component {
 		}
 
 		for ( let i = start; i <= end; i++ ) {
-			const interimIndex = findIndex( selectedItems, {
-				ID: this.props.media[ i ].ID,
-			} );
+			const interimIndex = selectedItems.findIndex(
+				( selectedItem ) => selectedItem.ID === this.props.media[ i ].ID
+			);
 
 			if ( isToBeSelected && -1 === interimIndex ) {
 				selectedItems.push( this.props.media[ i ] );
@@ -148,15 +147,14 @@ export class MediaLibraryList extends Component {
 	};
 
 	renderItem = ( item ) => {
-		const index = findIndex( this.props.media, { ID: item.ID } );
+		const index = this.props.media.findIndex( ( i ) => i.ID === item.ID );
 		const selectedItems = this.props.selectedItems;
-		const selectedIndex = findIndex( selectedItems, { ID: item.ID } );
-		const ref = this.getItemRef( item );
+		const selectedIndex = selectedItems.findIndex( ( i ) => i.ID === item.ID );
+		const itemKey = this.getItemRef( item );
 
 		return (
 			<ListItem
-				ref={ ref }
-				key={ ref }
+				key={ itemKey }
 				style={ this.getMediaItemStyle( index ) }
 				media={ item }
 				scale={ this.props.mediaScale }

@@ -1,6 +1,7 @@
-import { Card, Gridicon } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
+import EmptyValueIndicator from 'calypso/a8c-for-agencies/components/empty-value-indicator';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import useFetchBillingSummary from 'calypso/a8c-for-agencies/data/purchases/use-fetch-billing-summary';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -93,25 +94,25 @@ export default function BillingDetails() {
 						<div className="billing-details__product">
 							{ billing.isLoading && <TextPlaceholder /> }
 
-							{ billing.isError && <Gridicon icon="minus" /> }
+							{ billing.isError && <EmptyValueIndicator /> }
 						</div>
 
 						<div className="billing-details__assigned">
 							{ billing.isLoading && <TextPlaceholder /> }
 
-							{ billing.isError && <Gridicon icon="minus" /> }
+							{ billing.isError && <EmptyValueIndicator /> }
 						</div>
 
 						<div className="billing-details__unassigned">
 							{ billing.isLoading && <TextPlaceholder /> }
 
-							{ billing.isError && <Gridicon icon="minus" /> }
+							{ billing.isError && <EmptyValueIndicator /> }
 						</div>
 
 						<div className="billing-details__subtotal">
 							{ billing.isLoading && <TextPlaceholder /> }
 
-							{ billing.isError && <Gridicon icon="minus" /> }
+							{ billing.isError && <EmptyValueIndicator /> }
 						</div>
 					</div>
 				</Card>
@@ -154,7 +155,7 @@ export default function BillingDetails() {
 
 						{ billing.isLoading && <TextPlaceholder /> }
 
-						{ billing.isError && <Gridicon icon="minus" /> }
+						{ billing.isError && <EmptyValueIndicator /> }
 					</strong>
 				</div>
 			</Card>
