@@ -239,12 +239,12 @@ export default function AccountRecoveryInterstitial() {
 	};
 
 	const handleSnooze = () => {
-		recordTracksEvent( 'account_recovery_nudge_interstitial_dismiss', tracksProperties );
+		recordTracksEvent( 'calypso_account_recovery_nudge_interstitial_dismiss', tracksProperties );
 		snooze();
 	};
 
 	const handleCtaClick = ( cta: InterstitialCta ) => {
-		recordTracksEvent( 'account_recovery_nudge_interstitial_cta_click', {
+		recordTracksEvent( 'calypso_account_recovery_nudge_interstitial_cta_click', {
 			...tracksProperties,
 			cta_id: cta.id,
 		} );
@@ -279,7 +279,7 @@ export default function AccountRecoveryInterstitial() {
 			className="account-recovery-interstitial"
 		>
 			<ComponentViewTracker
-				eventName="account_recovery_nudge_interstitial_impression"
+				eventName="calypso_account_recovery_nudge_interstitial_impression"
 				properties={ tracksProperties }
 			/>
 			<img className="account-recovery-interstitial__hero" src={ heroIllustration } alt="" />

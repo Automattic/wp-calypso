@@ -98,7 +98,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		).toBeVisible();
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'account_recovery_nudge_interstitial_impression',
+			'calypso_account_recovery_nudge_interstitial_impression',
 			{
 				security_level: 'none',
 				recovery_status: 'none',
@@ -127,7 +127,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 			screen.getByRole( 'button', { name: 'Review recovery email or phone' } )
 		).toBeVisible();
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'account_recovery_nudge_interstitial_impression',
+			'calypso_account_recovery_nudge_interstitial_impression',
 			{
 				security_level: 'partial',
 				recovery_status: 'add-two-factor',
@@ -177,7 +177,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		).toBeVisible();
 		// Coarse tier stays 'strong'; the fine-grained dimension captures the missing backup codes.
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'account_recovery_nudge_interstitial_impression',
+			'calypso_account_recovery_nudge_interstitial_impression',
 			{
 				security_level: 'strong',
 				recovery_status: 'add-backup-codes',
@@ -204,7 +204,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		expect( screen.getByRole( 'button', { name: 'Update recovery information' } ) ).toBeVisible();
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'account_recovery_nudge_interstitial_impression',
+			'calypso_account_recovery_nudge_interstitial_impression',
 			{
 				security_level: 'strong',
 				recovery_status: 'strong',
@@ -243,7 +243,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		// strong-tier window is 365 days into the future.
 		expect( snoozedValue ).toBeGreaterThan( Math.floor( Date.now() / 1000 ) + 300 * 86400 );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'account_recovery_nudge_interstitial_cta_click',
+			'calypso_account_recovery_nudge_interstitial_cta_click',
 			{
 				security_level: 'strong',
 				recovery_status: 'strong',
@@ -297,7 +297,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		// none-tier window is 14 days into the future.
 		expect( snoozedValue ).toBeGreaterThan( Math.floor( Date.now() / 1000 ) );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'account_recovery_nudge_interstitial_dismiss',
+			'calypso_account_recovery_nudge_interstitial_dismiss',
 			{
 				security_level: 'none',
 				recovery_status: 'none',
@@ -322,7 +322,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 		} );
 		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
-			'account_recovery_nudge_interstitial_impression',
+			'calypso_account_recovery_nudge_interstitial_impression',
 			expect.anything()
 		);
 	} );
