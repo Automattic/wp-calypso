@@ -102,7 +102,7 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 		titleField: 'title',
 		descriptionField: 'description',
 		mediaField: 'icon',
-		fields: [ 'info' ],
+		fields: [],
 		page: 1,
 		infiniteScrollEnabled: true,
 		startPosition: 1,

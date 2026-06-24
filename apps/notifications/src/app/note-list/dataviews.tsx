@@ -111,11 +111,6 @@ export function getFields(): Field< Note >[] {
 				) : null,
 		},
 		{
-			id: 'info',
-			label: __( 'Info' ),
-			render: ( { item } ) => <span>{ item.title }</span>,
-		},
-		{
 			// Group-only field for the time-section headers; never added to the
 			// view's `fields`, so it only renders as a header. `enableSorting: false`
 			// keeps notes in their newest-first arrival order rather than sorting by

@@ -35,12 +35,28 @@
 	gap: 0 !important;
 }
 
-// Align the header padding with the row content (`12px 16px`) so they share a
-// left edge; the top border separates each section.
+// Match the rows' 16px left edge; tighter 8px vertical padding; top border
+// separates sections.
 .wpnc__note-list .dataviews-view-list__group-header {
 	margin: 0;
-	padding: $grid-unit-15 $grid-unit-20;
+	padding: $grid-unit-10 $grid-unit-20;
 	border-top: 1px solid var(--wpds-color-stroke-surface-neutral-weak, #e4e4e4);
+	// Shrink the default 15px heading-sized label, keeping core weight and color.
+	font-size: var(--wpds-typography-font-size-sm, 13px);
+}
+
+// Persistent divider under the tabs, even on non-grouped views. The wrapper
+// draws it; the first group header drops its border so they don't stack.
+.wpnc__note-list > .dataviews-wrapper {
+	border-top: 1px solid var(--wpds-color-stroke-surface-neutral-weak, #e4e4e4);
+}
+
+.wpnc__note-list
+	.dataviews-view-list__group
+	> .dataviews-view-list
+	> div:first-child
+	> .dataviews-view-list__group-header {
+	border-top: 0;
 }
 
 .wpnc__note-list .dataviews-view-list {
