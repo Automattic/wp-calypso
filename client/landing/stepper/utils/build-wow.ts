@@ -105,11 +105,15 @@ export async function waitForBuildWowSiteEditorReady(
 	{ totalTimeoutSeconds = 300, pollIntervalMs = 3000 } = {}
 ): Promise< void > {
 	const maxFinishTime = Date.now() + totalTimeoutSeconds * 1000;
+	let lastIsAtomic: boolean | undefined;
+	let lastRemoteOptionReady: boolean | undefined;
+	let lastError: string | undefined;
 
 	while ( Date.now() < maxFinishTime ) {
 		await wait( pollIntervalMs );
 
 		try {
+			lastError = undefined;
 			const site = ( await wpcom.req.get(
 				{
 					path: `/sites/${ siteIdentifier }`,
@@ -120,8 +124,9 @@ export async function waitForBuildWowSiteEditorReady(
 					options: 'is_wpcom_atomic',
 				}
 			) ) as SiteResponse;
+			lastIsAtomic = site?.is_wpcom_atomic || site?.options?.is_wpcom_atomic;
 
-			if ( ! site?.is_wpcom_atomic && ! site?.options?.is_wpcom_atomic ) {
+			if ( ! lastIsAtomic ) {
 				continue;
 			}
 
@@ -129,16 +134,22 @@ export async function waitForBuildWowSiteEditorReady(
 				path: `/sites/${ siteIdentifier }/big-sky-plugin`,
 				apiVersion: '1.1',
 			} ) ) as BigSkyPluginStatus;
+			lastRemoteOptionReady = status.remote_option_ready;
 
 			if ( status.remote_option_ready !== false ) {
 				return;
 			}
-		} catch {
+		} catch ( error ) {
+			lastError = error instanceof Error ? error.message : String( error );
 			continue;
 		}
 	}
 
-	throw new Error( 'Timed out waiting for build-wow site editor readiness.' );
+	throw new Error(
+		`Timed out waiting for build-wow site editor readiness. Last state: is_atomic=${ String(
+			lastIsAtomic
+		) }, remote_option_ready=${ String( lastRemoteOptionReady ) }, error=${ lastError ?? 'none' }.`
+	);
 }
 
 export function logBuildWowEvent(

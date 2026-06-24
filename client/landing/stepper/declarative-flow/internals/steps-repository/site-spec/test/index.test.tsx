@@ -3,6 +3,7 @@
  */
 import { useQuery as useReactQuery } from '@tanstack/react-query';
 import { act, render } from '@testing-library/react';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { useSiteSpec } from 'calypso/lib/site-spec';
 import wpcom from 'calypso/lib/wp';
 import { EARLY_PROVISION_TARGET_WPCOM_ATOMIC } from '../early-provisioning';
@@ -80,6 +81,7 @@ describe( 'SiteSpec early provisioning step', () => {
 	const originalLocation = window.location;
 	const mockUseSiteSpec = useSiteSpec as jest.Mock;
 	const wpcomPostMock = wpcom.req.post as jest.Mock;
+	const logToLogstashMock = logToLogstash as jest.Mock;
 	const mockUseReactQuery = useReactQuery as jest.Mock;
 	const navigation = {
 		submit: jest.fn(),
@@ -142,6 +144,7 @@ describe( 'SiteSpec early provisioning step', () => {
 	it( 'attaches a confirmed spec to the existing build-wow site and redirects to Site Editor', async () => {
 		mockQueryParams = new URLSearchParams( 'build_wow=1&siteSlug=example.wordpress.com' );
 		wpcomPostMock.mockResolvedValue( {
+			blog_id: 123,
 			site_editor_url: 'https://example.wordpress.com/wp-admin/site-editor.php',
 			atomic: {
 				is_atomic: true,
@@ -174,6 +177,21 @@ describe( 'SiteSpec early provisioning step', () => {
 		const redirect = new URL( window.location.href );
 		expect( redirect.pathname ).toBe( '/wp-admin/site-editor.php' );
 		expect( redirect.searchParams.get( 'spec_id' ) ).toBe( 'spec-456' );
+
+		expect( logToLogstashMock ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				blog_id: 123,
+				properties: expect.objectContaining( {
+					type: 'build_wow_spec_confirm_response',
+					spec_id: 'spec-456',
+					site_identifier: 'example.wordpress.com',
+					ready_for_editor: true,
+					atomic_ready_for_editor: true,
+					remote_option_ready: true,
+					is_atomic: true,
+				} ),
+			} )
+		);
 	} );
 
 	it( 'ignores build-wow Site Spec routing for non-Automatticians', () => {

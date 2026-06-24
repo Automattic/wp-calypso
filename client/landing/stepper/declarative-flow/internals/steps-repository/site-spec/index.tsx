@@ -229,10 +229,64 @@ const SiteSpec: StepType = function SiteSpec() {
 				return;
 			}
 
+			const specConfirmStartTime = Date.now();
+			const elapsedMs = () => Date.now() - specConfirmStartTime;
+			let responseBlogId: number | undefined;
+
 			try {
+				logBuildWowEvent( 'spec_confirm_request_start', {
+					spec_id: specId,
+					site_identifier: buildWowSiteIdentifier,
+				} );
+
 				const response = await requestBuildWowSite( buildWowSiteIdentifier, specId );
-				if ( ! isBuildWowSiteEditorReady( response ) ) {
+				responseBlogId = response.blog_id;
+				const isReadyForEditor = isBuildWowSiteEditorReady( response );
+
+				logBuildWowEvent(
+					'spec_confirm_response',
+					{
+						spec_id: specId,
+						site_identifier: buildWowSiteIdentifier,
+						elapsed_ms: elapsedMs(),
+						ready_for_editor: isReadyForEditor,
+						atomic_ready_for_editor: response.atomic?.ready_for_editor,
+						remote_option_ready: response.remote_option_ready,
+						is_atomic: response.atomic?.is_atomic,
+						is_transfer_active: response.atomic?.is_transfer_active,
+						build_status: response.build?.status,
+					},
+					response.blog_id
+				);
+
+				if ( ! isReadyForEditor ) {
+					const waitStartTime = Date.now();
+					logBuildWowEvent(
+						'site_editor_ready_wait_start',
+						{
+							spec_id: specId,
+							site_identifier: buildWowSiteIdentifier,
+							elapsed_ms: elapsedMs(),
+							ready_for_editor: isReadyForEditor,
+							remote_option_ready: response.remote_option_ready,
+							is_atomic: response.atomic?.is_atomic,
+							is_transfer_active: response.atomic?.is_transfer_active,
+						},
+						response.blog_id
+					);
+
 					await waitForBuildWowSiteEditorReady( buildWowSiteIdentifier );
+
+					logBuildWowEvent(
+						'site_editor_ready_wait_complete',
+						{
+							spec_id: specId,
+							site_identifier: buildWowSiteIdentifier,
+							elapsed_ms: elapsedMs(),
+							wait_elapsed_ms: Date.now() - waitStartTime,
+						},
+						response.blog_id
+					);
 				}
 
 				if ( ! response.site_editor_url ) {
@@ -245,17 +299,27 @@ const SiteSpec: StepType = function SiteSpec() {
 					...( source ? { source } : {} ),
 				} );
 
-				logBuildWowEvent( 'site_editor_redirect', {
-					spec_id: specId,
-					site_identifier: buildWowSiteIdentifier,
-				} );
+				logBuildWowEvent(
+					'site_editor_redirect',
+					{
+						spec_id: specId,
+						site_identifier: buildWowSiteIdentifier,
+						elapsed_ms: elapsedMs(),
+					},
+					responseBlogId
+				);
 				window.location.href = destination;
 			} catch ( error ) {
-				logBuildWowEvent( 'spec_confirm_error', {
-					spec_id: specId,
-					site_identifier: buildWowSiteIdentifier,
-					error: error instanceof Error ? error.message : String( error ),
-				} );
+				logBuildWowEvent(
+					'spec_confirm_error',
+					{
+						spec_id: specId,
+						site_identifier: buildWowSiteIdentifier,
+						elapsed_ms: elapsedMs(),
+						error: error instanceof Error ? error.message : String( error ),
+					},
+					responseBlogId
+				);
 				// eslint-disable-next-line no-console
 				console.error( 'Failed to continue build-wow provisioning:', error );
 				isSubmittingRef.current = false;
