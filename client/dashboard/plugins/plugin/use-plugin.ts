@@ -39,6 +39,10 @@ export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: b
 	const availableIcon = useMarketplaceSearchIcon( pluginSlug );
 	const { queries } = useAppContext();
 	const locale = useLocale();
+	// When the plugin search returns no results, there is no selected plugin to
+	// look up. Skip the queries and resolve immediately so the detail panel shows
+	// its empty state without a loading flash.
+	const hasPluginSlug = !! pluginSlug;
 	const {
 		data: sitesPlugins,
 		isLoading: isLoadingSitesPlugins,
@@ -51,7 +55,7 @@ export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: b
 	const isMarketplacePlugin = !! marketplacePlugins?.results[ pluginSlug ];
 	const { data: wpOrgPlugin, isLoading: isLoadingWpOrgPlugin } = useQuery( {
 		...wpOrgPluginQuery( pluginSlug, locale ),
-		enabled: ! availableIcon,
+		enabled: ! availableIcon && hasPluginSlug,
 	} );
 	// Query needed to get the action_links
 	const sitePluginQueryResults = useQueries( {
@@ -142,11 +146,12 @@ export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: b
 
 	return {
 		isLoading:
-			isLoadingSitesPlugins ||
-			isLoadingSites ||
-			isLoadingWpOrgPlugin ||
-			isLoadingMarketplacePlugins ||
-			isLoadingSitePlugins,
+			hasPluginSlug &&
+			( isLoadingSitesPlugins ||
+				isLoadingSites ||
+				isLoadingWpOrgPlugin ||
+				isLoadingMarketplacePlugins ||
+				isLoadingSitePlugins ),
 		isFetching: isFetchingSitePlugins,
 		pluginBySiteId,
 		sitesWithThisPlugin,
