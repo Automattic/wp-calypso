@@ -7,11 +7,13 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
-	PanelBody,
+	Button,
+	FlexItem,
 	ToggleControl,
 	Card,
 	CardBody,
 } from '@wordpress/components';
+import { chevronDown, chevronUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -25,10 +27,10 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { SectionHeader } from '../../dashboard/components/section-header';
 import { filterVisibleTools } from './categories';
+import { groupToolsByGroup } from './groups';
 import { getAccessSummaryBadge, getWriteAccessBadge } from './hub-helpers';
 import { useMcpPageChrome } from './mcp-page-header';
-import { groupToolsByStrap } from './strap-groups';
-import { getAccountMcpAbilities, getStrapDescriptors, strapGroupKey } from './utils';
+import { getAccountMcpAbilities, getGroupDescriptors } from './utils';
 
 import './style.scss';
 
@@ -59,6 +61,19 @@ export default function McpToolsSubpage( {
 	useQuery( sitesQuery( 'all', { site_visibility: 'visible' } ) );
 
 	const [ reauthRequired, setReauthRequired ] = useState( false );
+	const [ openGroups, setOpenGroups ] = useState( () => new Set() );
+
+	const toggleGroupOpen = ( groupKey ) => {
+		setOpenGroups( ( current ) => {
+			const next = new Set( current );
+			if ( next.has( groupKey ) ) {
+				next.delete( groupKey );
+			} else {
+				next.add( groupKey );
+			}
+			return next;
+		} );
+	};
 
 	useEffect( () => {
 		const checkReauth = () => setReauthRequired( twoStepAuthorization.isReauthRequired() );
@@ -84,8 +99,8 @@ export default function McpToolsSubpage( {
 	const tools = filterVisibleTools( Object.entries( mcpAbilities ) ).filter( ( [ , tool ] ) =>
 		filterTool( tool )
 	);
-	const straps = getStrapDescriptors( userSettings || {} );
-	const groups = groupToolsByStrap( tools, straps );
+	const groupDescriptors = getGroupDescriptors( userSettings || {} );
+	const groups = groupToolsByGroup( tools, groupDescriptors );
 	const getBadge = toolCategory === 'write' ? getWriteAccessBadge : getAccessSummaryBadge;
 
 	const eventPrefix =
@@ -124,22 +139,22 @@ export default function McpToolsSubpage( {
 	};
 
 	/**
-	 * @param {string} strapName
+	 * @param {string} groupName
 	 * @param {boolean} enabled
 	 */
-	const handleGroupEnableAll = ( strapName, enabled ) => {
+	const handleGroupEnableAll = ( groupName, enabled ) => {
 		mutation.mutate(
 			{
 				mcp_abilities: {
-					group_intents: { [ strapGroupKey( strapName ) ]: enabled },
+					group_intents: { [ groupName ]: enabled },
 				},
 			},
 			{
 				onSuccess: () => {
 					recordTracksEvent( `${ eventPrefix }_enable_all_toggled`, {
 						enabled,
-						scope: 'strap',
-						strap: strapName,
+						scope: 'group',
+						group: groupName,
 					} );
 				},
 			}
@@ -203,38 +218,54 @@ export default function McpToolsSubpage( {
 
 					{ groups.length > 0 ? (
 						<VStack spacing={ 3 }>
-							{ groups.map( ( group ) => {
-								const groupKey = group.strap?.name ?? '__other__';
-								const enabledCount = group.tools.filter( ( [ , t ] ) => t.enabled ).length;
-								const badge = getBadge( enabledCount, group.tools.length, translate );
-								const allGroupEnabled = group.tools.every( ( [ , t ] ) => t.enabled );
+							{ groups.map( ( { group: descriptor, label, tools: groupTools } ) => {
+								const groupKey = descriptor?.name ?? '__other__';
+								const enabledCount = groupTools.filter( ( [ , t ] ) => t.enabled ).length;
+								const badge = getBadge( enabledCount, groupTools.length, translate );
+								const allGroupEnabled = groupTools.every( ( [ , t ] ) => t.enabled );
+								const isOpen = openGroups.has( groupKey );
 
 								return (
 									<Card key={ groupKey }>
 										<CardBody>
-											<VStack spacing={ 4 }>
+											<VStack spacing={ isOpen ? 4 : 0 }>
 												<HStack justify="space-between" alignment="center" spacing={ 4 }>
-													<Text weight={ 600 } size={ 14 }>
-														{ group.label }
-													</Text>
-													<HStack justify="flex-end" alignment="center" spacing={ 3 }>
+													<FlexItem isBlock>
+														<VStack spacing={ 0 }>
+															<Text truncate weight={ 600 } size={ 14 }>
+																{ label }
+															</Text>
+															{ descriptor?.description && (
+																<Text truncate variant="muted" size={ 12 }>
+																	{ descriptor.description }
+																</Text>
+															) }
+														</VStack>
+													</FlexItem>
+													<HStack expanded={ false } alignment="center" spacing={ 3 }>
 														<Badge intent={ badge.intent }>{ badge.text }</Badge>
-														{ group.strap && (
+														{ descriptor && (
 															<ToggleControl
 																__nextHasNoMarginBottom
 																checked={ allGroupEnabled }
 																disabled={ mutation.isPending }
 																label={ translate( 'Enable all' ) }
 																onChange={ ( checked ) =>
-																	handleGroupEnableAll( group.strap.name, checked )
+																	handleGroupEnableAll( descriptor.name, checked )
 																}
 															/>
 														) }
+														<Button
+															icon={ isOpen ? chevronUp : chevronDown }
+															label={ translate( 'Show operations' ) }
+															aria-expanded={ isOpen }
+															onClick={ () => toggleGroupOpen( groupKey ) }
+														/>
 													</HStack>
 												</HStack>
-												<PanelBody title={ translate( 'Operations' ) } initialOpen={ false }>
-													<VStack spacing={ 6 }>{ renderToolToggles( group.tools ) }</VStack>
-												</PanelBody>
+												{ isOpen && (
+													<VStack spacing={ 6 }>{ renderToolToggles( groupTools ) }</VStack>
+												) }
 											</VStack>
 										</CardBody>
 									</Card>

@@ -94,9 +94,8 @@ body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .main.m
 		border-radius: 0;
 	}
 
-	// STRAP groups use FoldableCard's own header/summary/action styling — the
-	// "Enable all" toggle lives in the actionButton slot, which FoldableCard
-	// already centers and spaces correctly, so no overrides are needed here.
+	// STRAP groups: a Card per group with a header row (Text + Badge + ToggleControl +
+	// expand Button, all native `@wordpress/components`) — no overrides needed here.
 }
 
 // Setup page — zero out card-heading margins so CardBody padding is the only spacing

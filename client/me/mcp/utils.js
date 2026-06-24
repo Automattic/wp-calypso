@@ -127,33 +127,27 @@ export function getDisabledSiteIds( userSettings ) {
 }
 
 /**
- * Get the ordered STRAP facade descriptors for the settings UI's middle grouping
- * layer (AIINT-469), sorted by their `order` field.
+ * Get the ordered display-group descriptors for the settings UI's middle
+ * grouping layer (AIINT-469), sorted by their `order` field. A group defaults
+ * to a STRAP facade, but some facades are merged into another group (e.g.
+ * Create Site into Site).
  * @param {Object} userSettings - The user settings object
- * @returns {Array<{name: string, label: string, order: number}>}
+ * @returns {Array<{name: string, label: string, description: string, order: number}>}
  */
-export function getStrapDescriptors( userSettings ) {
-	const straps = userSettings?.mcp_abilities?.straps ?? [];
-	return [ ...straps ].sort( ( a, b ) => a.order - b.order );
+export function getGroupDescriptors( userSettings ) {
+	const groups = userSettings?.mcp_abilities?.groups ?? [];
+	return [ ...groups ].sort( ( a, b ) => a.order - b.order );
 }
 
 /**
  * Get the account-level group "enable all" intents (AIINT-471).
- * Keys are `read`, `write`, or `strap:<facade>` (see strapGroupKey()).
+ * Keys are `read`, `write`, or a bare group name (e.g. `wpcom-mcp/site`) —
+ * matching a getGroupDescriptors() entry's `name`.
  * @param {Object} userSettings - The user settings object
  * @returns {Record<string, boolean>}
  */
 export function getGroupIntents( userSettings ) {
 	return userSettings?.mcp_abilities?.group_intents ?? {};
-}
-
-/**
- * Build the group-intent key for a STRAP facade's "enable all" intent.
- * @param {string} strapName - The facade ability name, e.g. 'wpcom-mcp/site'
- * @returns {string}
- */
-export function strapGroupKey( strapName ) {
-	return `strap:${ strapName }`;
 }
 
 /**

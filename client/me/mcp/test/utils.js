@@ -1,26 +1,31 @@
-import { getGroupIntents, getStrapDescriptors, strapGroupKey } from '../utils';
+import { getGroupDescriptors, getGroupIntents } from '../utils';
 
 describe( 'client/me/mcp/utils', () => {
-	describe( 'getStrapDescriptors', () => {
-		it( 'returns the strap descriptors sorted by order', () => {
+	describe( 'getGroupDescriptors', () => {
+		it( 'returns the group descriptors sorted by order', () => {
 			const userSettings = {
 				mcp_abilities: {
-					straps: [
-						{ name: 'wpcom-mcp/site', label: 'Site', order: 1 },
-						{ name: 'wpcom-mcp/content-authoring', label: 'Content Authoring', order: 0 },
+					groups: [
+						{ name: 'wpcom-mcp/site', label: 'Site', description: 'Manage sites.', order: 1 },
+						{
+							name: 'wpcom-mcp/content-authoring',
+							label: 'Content Authoring',
+							description: 'Create posts.',
+							order: 0,
+						},
 					],
 				},
 			};
 
-			expect( getStrapDescriptors( userSettings ).map( ( s ) => s.name ) ).toEqual( [
+			expect( getGroupDescriptors( userSettings ).map( ( s ) => s.name ) ).toEqual( [
 				'wpcom-mcp/content-authoring',
 				'wpcom-mcp/site',
 			] );
 		} );
 
-		it( 'returns an empty array when straps are missing', () => {
-			expect( getStrapDescriptors( {} ) ).toEqual( [] );
-			expect( getStrapDescriptors( { mcp_abilities: {} } ) ).toEqual( [] );
+		it( 'returns an empty array when groups are missing', () => {
+			expect( getGroupDescriptors( {} ) ).toEqual( [] );
+			expect( getGroupDescriptors( { mcp_abilities: {} } ) ).toEqual( [] );
 		} );
 	} );
 
@@ -32,12 +37,6 @@ describe( 'client/me/mcp/utils', () => {
 
 		it( 'returns an empty object when group intents are missing', () => {
 			expect( getGroupIntents( {} ) ).toEqual( {} );
-		} );
-	} );
-
-	describe( 'strapGroupKey', () => {
-		it( 'prefixes the strap name with "strap:"', () => {
-			expect( strapGroupKey( 'wpcom-mcp/site' ) ).toBe( 'strap:wpcom-mcp/site' );
 		} );
 	} );
 } );

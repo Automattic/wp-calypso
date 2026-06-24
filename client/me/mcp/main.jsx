@@ -29,8 +29,7 @@ import {
 	getAccountMcpAbilities,
 	getDisabledSiteIds,
 	getEnabledSiteIds,
-	getStrapDescriptors,
-	strapGroupKey,
+	getGroupDescriptors,
 } from './utils';
 
 import './style.scss';
@@ -120,8 +119,8 @@ function McpComponent( { path } ) {
 		} );
 
 		const groupIntents = { read: false, write: false };
-		getStrapDescriptors( userSettings || {} ).forEach( ( strap ) => {
-			groupIntents[ strapGroupKey( strap.name ) ] = false;
+		getGroupDescriptors( userSettings || {} ).forEach( ( group ) => {
+			groupIntents[ group.name ] = false;
 		} );
 
 		mutation.mutate(
