@@ -186,6 +186,12 @@ export const updateSitePostNotificationSubscription = async ( {
 	return response;
 };
 
+/**
+ * Request an immediate onboarding welcome digest flush.
+ *
+ * When `in_progress` is true, another server-side flush already owns delivery;
+ * the client does not need to retry.
+ */
 export const flushOnboardingWelcomeDigest =
 	async (): Promise< FlushOnboardingWelcomeDigestResponse > => {
 		const response: FlushOnboardingWelcomeDigestResponse = await wpcom.req.post( {
