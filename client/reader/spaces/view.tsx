@@ -68,7 +68,7 @@ export function SpacesView( { id, tab = 'feed' }: Props ) {
 					<HStack spacing={ 2 } justify="flex-end" expanded={ false }>
 						<Button
 							__next40pxDefaultSize
-							variant="secondary"
+							variant="tertiary"
 							icon={ settings }
 							onClick={ () => setCustomizeTab( 'identity' ) }
 						>

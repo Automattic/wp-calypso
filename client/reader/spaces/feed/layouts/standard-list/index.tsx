@@ -21,12 +21,12 @@ type Row =
 	| { kind: 'post'; key: string; fields: SpaceFeedPostFields; post: ReadStreamPost };
 
 const HEADER_SIZE = 44;
-const ROW_SIZE = 186;
+const ROW_SIZE = 170;
 
 function PostRow( { fields, post }: { fields: SpaceFeedPostFields; post: ReadStreamPost } ) {
 	return (
 		<HStack className="space-feed-standard-list__row" spacing={ 3 } alignment="flex-start">
-			<VStack className="space-feed-standard-list__body" spacing={ 2 } alignment="stretch">
+			<VStack className="space-feed-standard-list__body" spacing={ 3 } alignment="stretch">
 				<VStack className="space-feed-standard-list__headline" spacing={ 1 } alignment="stretch">
 					<h3 className="space-feed-standard-list__title">
 						<a className="space-feed-standard-list__title-link" href={ fields.postHref }>
