@@ -5,6 +5,7 @@
 import { shouldSuppressJetpackAiSidebarPreview } from '../jetpack-ai-sidebar-preview-gate';
 
 const JETPACK_PROVIDER = 'https://widgets.wp.com/agents-manager/jetpack-ai-sidebar.provider.mjs';
+const JETPACK_PROVIDER_ENTRY = { providerId: 'jetpack-ai-sidebar', url: JETPACK_PROVIDER };
 const BIG_SKY_PROVIDER =
 	'https://example.com/wp-content/plugins/big-sky/build/calypso-agent-provider/index.js';
 const BLOCK_NOTES_PROVIDER = 'block-notes/headless-agent-provider';
@@ -23,7 +24,31 @@ describe( 'shouldSuppressJetpackAiSidebarPreview', () => {
 		expect( shouldSuppressJetpackAiSidebarPreview() ).toBe( false );
 	} );
 
-	it( 'does not suppress or filter when the preview data is absent', () => {
+	it( 'does not suppress when new Jetpack advertises the jetpackAiSidebar contract', () => {
+		window._currentSiteType = 'atomic';
+		setAgentsManagerData( {
+			sectionName: 'gutenberg',
+			agentProviders: [ JETPACK_PROVIDER ],
+			jetpackAiSidebar: { enabled: true },
+		} );
+
+		expect( shouldSuppressJetpackAiSidebarPreview() ).toBe( false );
+		expect( globalThis.agentsManagerData.agentProviders ).toEqual( [ JETPACK_PROVIDER ] );
+	} );
+
+	it( 'does not suppress on Simple sites (server-gated)', () => {
+		window._currentSiteType = 'simple';
+		setAgentsManagerData( {
+			sectionName: 'gutenberg',
+			agentProviders: [ JETPACK_PROVIDER ],
+		} );
+
+		expect( shouldSuppressJetpackAiSidebarPreview() ).toBe( false );
+		expect( globalThis.agentsManagerData.agentProviders ).toEqual( [ JETPACK_PROVIDER ] );
+	} );
+
+	it( 'does not suppress non-Jetpack providers like Block Notes', () => {
+		window._currentSiteType = 'atomic';
 		setAgentsManagerData( {
 			sectionName: 'gutenberg',
 			agentProviders: [ BLOCK_NOTES_PROVIDER ],
@@ -33,35 +58,31 @@ describe( 'shouldSuppressJetpackAiSidebarPreview', () => {
 		expect( globalThis.agentsManagerData.agentProviders ).toEqual( [ BLOCK_NOTES_PROVIDER ] );
 	} );
 
-	it( 'does not suppress or filter on Simple sites', () => {
-		window._currentSiteType = 'simple';
+	it( 'suppresses on non-Simple sites when the legacy sidebar is the only provider', () => {
 		setAgentsManagerData( {
 			sectionName: 'gutenberg',
 			agentProviders: [ JETPACK_PROVIDER ],
-			jetpackAiSidebarPreview: { enabled: true },
-		} );
-
-		expect( shouldSuppressJetpackAiSidebarPreview() ).toBe( false );
-		expect( globalThis.agentsManagerData.agentProviders ).toEqual( [ JETPACK_PROVIDER ] );
-	} );
-
-	it( 'suppresses on self-hosted sites where the preview registered the only provider', () => {
-		setAgentsManagerData( {
-			sectionName: 'gutenberg',
-			agentProviders: [ JETPACK_PROVIDER ],
-			jetpackAiSidebarPreview: { enabled: true },
 		} );
 
 		expect( shouldSuppressJetpackAiSidebarPreview() ).toBe( true );
 		expect( globalThis.agentsManagerData.agentProviders ).toEqual( [] );
 	} );
 
-	it( 'suppresses on Atomic sites when no providers remain', () => {
+	it( 'suppresses metadata provider entries on self-hosted sites', () => {
+		setAgentsManagerData( {
+			sectionName: 'gutenberg',
+			agentProviders: [ JETPACK_PROVIDER_ENTRY ],
+		} );
+
+		expect( shouldSuppressJetpackAiSidebarPreview() ).toBe( true );
+		expect( globalThis.agentsManagerData.agentProviders ).toEqual( [] );
+	} );
+
+	it( 'suppresses on Atomic when no providers remain', () => {
 		window._currentSiteType = 'atomic';
 		setAgentsManagerData( {
 			sectionName: 'gutenberg',
 			agentProviders: [],
-			jetpackAiSidebarPreview: { enabled: true },
 		} );
 
 		expect( shouldSuppressJetpackAiSidebarPreview() ).toBe( true );
@@ -72,8 +93,7 @@ describe( 'shouldSuppressJetpackAiSidebarPreview', () => {
 		const objectProvider = { toolProvider: {} };
 		setAgentsManagerData( {
 			sectionName: 'gutenberg',
-			agentProviders: [ objectProvider, BIG_SKY_PROVIDER, JETPACK_PROVIDER ],
-			jetpackAiSidebarPreview: { enabled: true },
+			agentProviders: [ objectProvider, BIG_SKY_PROVIDER, JETPACK_PROVIDER_ENTRY ],
 		} );
 
 		expect( shouldSuppressJetpackAiSidebarPreview() ).toBe( false );
@@ -87,7 +107,6 @@ describe( 'shouldSuppressJetpackAiSidebarPreview', () => {
 		setAgentsManagerData( {
 			sectionName: 'gutenberg',
 			agentProviders: [ JETPACK_PROVIDER ],
-			jetpackAiSidebarPreview: { enabled: true },
 		} );
 
 		expect( shouldSuppressJetpackAiSidebarPreview() ).toBe( true );
@@ -98,7 +117,6 @@ describe( 'shouldSuppressJetpackAiSidebarPreview', () => {
 		setAgentsManagerData( {
 			sectionName: 'gutenberg',
 			agentProviders: 'not-an-array',
-			jetpackAiSidebarPreview: { enabled: true },
 		} );
 
 		expect( shouldSuppressJetpackAiSidebarPreview() ).toBe( true );

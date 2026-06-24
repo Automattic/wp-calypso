@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { safeImageUrl as safeImageUrlFake } from '@automattic/calypso-url';
-import { flow } from 'lodash';
+import { flow } from '@automattic/js-utils';
 import detectMedia from '../rule-content-detect-media';
 import detectPolls from '../rule-content-detect-polls';
 import detectSurveys from '../rule-content-detect-surveys';

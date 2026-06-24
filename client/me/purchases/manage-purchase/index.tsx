@@ -614,19 +614,18 @@ class ManagePurchase extends Component<
 
 	shouldRenderDowngradeOption(): boolean {
 		const { purchase } = this.props;
-		if ( ! config.isEnabled( 'plans/expired-downgrade' ) ) {
-			return false;
-		}
 		if ( ! purchase || ! isPlan( purchase ) ) {
 			return false;
 		}
-		if (
-			! isInExpirationGracePeriod( purchase ) &&
-			! isWithinRefundWindowDowngradeEligible( purchase )
-		) {
+		if ( ! purchase.isPlanTypeDowngradable ) {
 			return false;
 		}
-		return true;
+		const expiredOrRefundDowngrade =
+			config.isEnabled( 'plans/expired-downgrade' ) &&
+			( isInExpirationGracePeriod( purchase ) ||
+				isWithinRefundWindowDowngradeEligible( purchase ) );
+		const delayedDowngrade = config.isEnabled( 'plans/delayed-downgrade' );
+		return expiredOrRefundDowngrade || delayedDowngrade;
 	}
 
 	renderChangePlanNavItem() {

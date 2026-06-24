@@ -84,6 +84,7 @@
 		"onboarding/import-from-wordpress": true,
 		"onboarding/post-checkout-ai-step": false,
 		"onboarding/woo-hosting-post-purchase-setup-choice": false,
+		"plans/delayed-downgrade": false,
 		"plans/expired-downgrade": false,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,

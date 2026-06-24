@@ -1,3 +1,4 @@
+import { setDelayedDowngradeMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import {
 	getPlan,
@@ -15,11 +16,11 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { minBy } from '@automattic/js-utils';
-import { localize } from 'i18n-calypso';
-import { isEmpty, merge } from 'lodash';
+import { useMutation } from '@tanstack/react-query';
+import { localize, useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { Component } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice, { NoticeStatus } from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -54,6 +55,7 @@ import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getAddNewPaymentMethodPath } from '../utils';
 import { classifyPurchaseForCopy } from './classify-purchase-for-copy';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -83,6 +85,10 @@ export interface PurchaseNoticeProps {
 	renewableSitePurchases: Purchase[];
 	selectedSite: SiteDetails | null | undefined;
 	willAtomicSiteRevert?: boolean;
+	/** Called when the user clicks the cancel button on the pending delayed-downgrade notice. */
+	onCancelDelayedDowngrade?: () => void;
+	/** True while the cancel-delayed-downgrade API call is in flight. */
+	isCancellingDelayedDowngrade?: boolean;
 }
 
 export interface PurchaseNoticeConnectedProps {
@@ -116,9 +122,17 @@ class PurchaseNotice extends Component<
 		showDowngradedRedirectNotice:
 			typeof window !== 'undefined' &&
 			new URLSearchParams( window.location.search ).get( 'downgraded' ) === 'true',
+		// Suppressed when delayed_downgrade_scheduled is also present: plan_changed=true
+		// comes from the redirect_to template and is a red herring in that flow.
 		showPlanChangedRedirectNotice:
 			typeof window !== 'undefined' &&
-			new URLSearchParams( window.location.search ).get( 'plan_changed' ) === 'true',
+			new URLSearchParams( window.location.search ).get( 'plan_changed' ) === 'true' &&
+			new URLSearchParams( window.location.search ).get( 'delayed_downgrade_scheduled' ) !== 'true',
+		// Seeded from `?delayed_downgrade_scheduled=true` on first render.
+		// The URL param is cleared in componentDidMount.
+		showDelayedDowngradeScheduledNotice:
+			typeof window !== 'undefined' &&
+			new URLSearchParams( window.location.search ).get( 'delayed_downgrade_scheduled' ) === 'true',
 	};
 
 	componentDidMount() {
@@ -140,6 +154,10 @@ class PurchaseNotice extends Component<
 			params.delete( 'plan_changed' );
 			changed = true;
 		}
+		if ( params.get( 'delayed_downgrade_scheduled' ) === 'true' ) {
+			params.delete( 'delayed_downgrade_scheduled' );
+			changed = true;
+		}
 		if ( changed ) {
 			const newSearch = params.toString();
 			const newUrl =
@@ -159,6 +177,81 @@ class PurchaseNotice extends Component<
 	dismissPlanChangedRedirectNotice = () => {
 		this.setState( { showPlanChangedRedirectNotice: false } );
 	};
+
+	dismissDelayedDowngradeScheduledNotice = () => {
+		this.setState( { showDelayedDowngradeScheduledNotice: false } );
+	};
+
+	/**
+	 * Persistent notice shown when a delayed downgrade is pending on this
+	 * purchase. Includes a cancel button. Suppressed by transient notices.
+	 */
+	renderDelayedDowngradePendingNotice() {
+		const { purchase, translate, onCancelDelayedDowngrade, isCancellingDelayedDowngrade } =
+			this.props;
+
+		if ( ! purchase.isDelayedDowngradePending ) {
+			return null;
+		}
+
+		const targetPlanName = purchase.delayedDowngradeToProductSlug
+			? getPlan( purchase.delayedDowngradeToProductSlug )?.getTitle() ??
+			  purchase.delayedDowngradeToProductSlug
+			: null;
+		// `renewDate` is the next auto-renewal attempt date, which for annual
+		// plans is up to 30 days before expiry. The downgrade takes effect on
+		// that renewal, so it's the accurate date to show the customer.
+		const renewalDate = purchase.renewDate
+			? this.props.moment( purchase.renewDate ).format( 'LL' )
+			: null;
+
+		let noticeText;
+		if ( targetPlanName && renewalDate ) {
+			noticeText = translate(
+				'Your plan is scheduled to downgrade to %(targetPlanName)s at your next renewal on %(renewalDate)s.',
+				{
+					args: { targetPlanName: String( targetPlanName ), renewalDate },
+					comment: 'Warning notice shown when a plan downgrade is scheduled for a renewal date',
+				}
+			);
+		} else if ( renewalDate ) {
+			noticeText = translate(
+				'Your plan is scheduled to downgrade at your next renewal on %(renewalDate)s.',
+				{
+					args: { renewalDate },
+					comment: 'Warning notice shown when a plan downgrade is scheduled for a renewal date',
+				}
+			);
+		} else if ( targetPlanName ) {
+			noticeText = translate(
+				'Your plan is scheduled to downgrade to %(targetPlanName)s at your next renewal.',
+				{
+					args: { targetPlanName: String( targetPlanName ) },
+					comment:
+						'Warning notice shown when a plan downgrade is scheduled for the end of the billing term',
+				}
+			);
+		} else {
+			noticeText = translate( 'Your plan is scheduled to downgrade at your next renewal.' );
+		}
+
+		return (
+			<Notice
+				className="manage-purchase__delayed-downgrade-pending-notice"
+				showDismiss={ false }
+				status="is-warning"
+				text={ noticeText }
+			>
+				{ onCancelDelayedDowngrade && (
+					<NoticeAction onClick={ onCancelDelayedDowngrade }>
+						{ isCancellingDelayedDowngrade
+							? translate( 'Cancelling…' )
+							: translate( 'Cancel downgrade' ) }
+					</NoticeAction>
+				) }
+			</Notice>
+		);
+	}
 
 	/**
 	 * Transient success notice shown after a cancel-flow redirect. Suppresses
@@ -271,6 +364,60 @@ class PurchaseNotice extends Component<
 				text={ translate( 'Your plan has been updated to %(planName)s.', {
 					args: { planName: getName( purchase ) },
 				} ) }
+			/>
+		);
+	}
+
+	renderDelayedDowngradeScheduledNotice() {
+		const { purchase, translate } = this.props;
+		if ( ! this.state.showDelayedDowngradeScheduledNotice || ! purchase ) {
+			return null;
+		}
+		const targetPlanName = purchase.delayedDowngradeToProductSlug
+			? getPlan( purchase.delayedDowngradeToProductSlug )?.getTitle() ??
+			  purchase.delayedDowngradeToProductSlug
+			: null;
+		// `renewDate` is the next auto-renewal attempt date (up to 30 days before
+		// expiry for annual plans) — the date the scheduled downgrade takes effect.
+		const renewalDate = purchase.renewDate
+			? this.props.moment( purchase.renewDate ).format( 'LL' )
+			: null;
+
+		let text;
+		if ( targetPlanName && renewalDate ) {
+			text = translate(
+				'Your plan is scheduled to downgrade to %(targetPlanName)s at your next renewal on %(renewalDate)s.',
+				{
+					args: { targetPlanName: String( targetPlanName ), renewalDate },
+					comment: 'Success notice shown after scheduling a plan downgrade for a renewal date',
+				}
+			);
+		} else if ( renewalDate ) {
+			text = translate(
+				'Your plan is scheduled to downgrade at your next renewal on %(renewalDate)s.',
+				{
+					args: { renewalDate },
+					comment: 'Success notice shown after scheduling a plan downgrade for a renewal date',
+				}
+			);
+		} else if ( targetPlanName ) {
+			text = translate(
+				'Your plan is scheduled to downgrade to %(targetPlanName)s at your next renewal.',
+				{
+					args: { targetPlanName: String( targetPlanName ) },
+					comment: 'Success notice shown after scheduling a plan downgrade for end of billing term',
+				}
+			);
+		} else {
+			text = translate( 'Your plan downgrade has been scheduled for your next renewal.' );
+		}
+		return (
+			<Notice
+				className="manage-purchase__purchase-expiring-notice"
+				showDismiss
+				onDismissClick={ this.dismissDelayedDowngradeScheduledNotice }
+				status="is-success"
+				text={ text }
 			/>
 		);
 	}
@@ -628,7 +775,7 @@ class PurchaseNotice extends Component<
 		const otherRenewableSitePurchases = renewableSitePurchases.filter(
 			( otherPurchase ) => otherPurchase.id !== currentPurchase.id
 		);
-		if ( isEmpty( otherRenewableSitePurchases ) ) {
+		if ( ! otherRenewableSitePurchases.length ) {
 			return null;
 		}
 
@@ -938,15 +1085,17 @@ class PurchaseNotice extends Component<
 				noticeText = creditCardHasAlreadyExpired( currentPurchase )
 					? translate(
 							'Your %(cardType)s ending in %(cardNumber)d expired %(cardExpiry)s – before the next renewal. You have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.',
-							merge( translateOptions, {
+							{
+								...translateOptions,
 								args: this.creditCardDetails( currentPurchase.payment.creditCard ),
-							} )
+							}
 					  )
 					: translate(
 							'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. You have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.',
-							merge( translateOptions, {
+							{
+								...translateOptions,
 								args: this.creditCardDetails( currentPurchase.payment.creditCard ),
-							} )
+							}
 					  );
 			}
 		}
@@ -1073,15 +1222,17 @@ class PurchaseNotice extends Component<
 				noticeText = creditCardHasAlreadyExpired( currentPurchase )
 					? translate(
 							'Your %(cardType)s ending in %(cardNumber)d expired %(cardExpiry)s – before the next renewal. You have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.',
-							merge( translateOptions, {
+							{
+								...translateOptions,
 								args: this.creditCardDetails( currentPurchase.payment.creditCard ),
-							} )
+							}
 					  )
 					: translate(
 							'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. You have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.',
-							merge( translateOptions, {
+							{
+								...translateOptions,
 								args: this.creditCardDetails( currentPurchase.payment.creditCard ),
-							} )
+							}
 					  );
 			}
 		}
@@ -1460,6 +1611,26 @@ class PurchaseNotice extends Component<
 			return planChangedRedirectNotice;
 		}
 
+		// These delayed-downgrade notices are intentionally left ungated by
+		// `plans/delayed-downgrade` so a scheduled downgrade (and its cancel
+		// button) always stays visible, even if the flag is turned off as a kill
+		// switch while a downgrade is pending.
+		//
+		// Transient success notice after scheduling — only shown when the
+		// persistent warning isn't available yet (e.g. data still loading).
+		if ( ! purchase.isDelayedDowngradePending ) {
+			const delayedDowngradeScheduledNotice = this.renderDelayedDowngradeScheduledNotice();
+			if ( delayedDowngradeScheduledNotice ) {
+				return delayedDowngradeScheduledNotice;
+			}
+		}
+
+		// Persistent warning notice when a delayed downgrade is pending.
+		const delayedDowngradePendingNotice = this.renderDelayedDowngradePendingNotice();
+		if ( delayedDowngradePendingNotice ) {
+			return delayedDowngradePendingNotice;
+		}
+
 		if ( purchase.asyncPendingPaymentBlockIsSet ) {
 			return this.renderAsyncPendingPaymentNotice();
 		}
@@ -1523,10 +1694,43 @@ const ConnectedPurchaseNotice = connect( null, { recordTracksEvent } )(
 
 function PurchaseNoticeWithExperiment( props: PurchaseNoticeProps ) {
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const { mutate: cancelDelayedDowngrade, isPending: isCancellingDelayedDowngrade } = useMutation(
+		setDelayedDowngradeMutation()
+	);
+	const onCancelDelayedDowngrade = () => {
+		dispatch(
+			recordTracksEvent( 'calypso_purchases_cancel_delayed_downgrade_click', {
+				purchase_id: props.purchase.id,
+			} )
+		);
+		cancelDelayedDowngrade(
+			{ purchaseId: props.purchase.id, enabled: false },
+			{
+				onSuccess: () =>
+					dispatch(
+						successNotice( translate( 'Your scheduled downgrade has been cancelled.' ), {
+							duration: 5000,
+						} )
+					),
+				onError: () =>
+					dispatch(
+						errorNotice(
+							translate(
+								'There was a problem cancelling your scheduled downgrade. Please try again later or contact support.'
+							)
+						)
+					),
+			}
+		);
+	};
 	return (
 		<ConnectedPurchaseNotice
 			{ ...props }
 			isSplitCancelRemoveEnabled={ isSplitCancelRemoveEnabled }
+			onCancelDelayedDowngrade={ onCancelDelayedDowngrade }
+			isCancellingDelayedDowngrade={ isCancellingDelayedDowngrade }
 		/>
 	);
 }

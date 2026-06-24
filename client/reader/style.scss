@@ -513,6 +513,16 @@ body.is-section-reader {
 		}
 	}
 
+	// The 2026 global nav is fixed and floats over this dark hero band, so add its
+	// height on top of the hero's own top padding to keep the heading clear of the nav.
+	&:has( .x-nav--2026-redesign ) .layout__header-section-content {
+		padding-top: calc( 24px + var( --nav-2026-height ) );
+
+		@include break-medium {
+			padding-top: calc( 48px + var( --nav-2026-height ) );
+		}
+	}
+
 	.masterbar {
 		border-bottom: none;
 		background: transparent;

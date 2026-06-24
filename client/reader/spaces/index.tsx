@@ -10,4 +10,5 @@ import { spaces } from './controller';
 export default function initSpaces() {
 	page( '/reader/spaces', sidebar, setBeforePrimary, spaces, makeLayout, clientRender );
 	page( '/reader/spaces/:id', sidebar, setBeforePrimary, spaces, makeLayout, clientRender );
+	page( '/reader/spaces/:id/:tab', sidebar, setBeforePrimary, spaces, makeLayout, clientRender );
 }

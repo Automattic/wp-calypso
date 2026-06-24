@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
@@ -9,6 +10,7 @@ import PurchaseNotice from '../notices';
 
 describe( 'PurchaseNotice', () => {
 	const store = createReduxStore();
+	const queryClient = new QueryClient();
 	const futureYearDate = new Date();
 	futureYearDate.setFullYear( futureYearDate.getFullYear() + 10 );
 	const pastYearDate = new Date();
@@ -40,12 +42,14 @@ describe( 'PurchaseNotice', () => {
 		};
 		render(
 			<ReduxProvider store={ store }>
-				<PurchaseNotice
-					purchase={ purchase }
-					isProductOwner
-					selectedSite={ { slug: 'testingsite' } }
-					renewableSitePurchases={ [] }
-				/>
+				<QueryClientProvider client={ queryClient }>
+					<PurchaseNotice
+						purchase={ purchase }
+						isProductOwner
+						selectedSite={ { slug: 'testingsite' } }
+						renewableSitePurchases={ [] }
+					/>
+				</QueryClientProvider>
 			</ReduxProvider>
 		);
 		expect(
@@ -58,7 +62,9 @@ describe( 'PurchaseNotice', () => {
 	it( 'renders nothing when data is still loading', () => {
 		render(
 			<ReduxProvider store={ store }>
-				<PurchaseNotice isDataLoading renewableSitePurchases={ [] } />
+				<QueryClientProvider client={ queryClient }>
+					<PurchaseNotice isDataLoading renewableSitePurchases={ [] } />
+				</QueryClientProvider>
 			</ReduxProvider>
 		);
 		expect( screen.container ).toBeFalsy();
@@ -68,7 +74,9 @@ describe( 'PurchaseNotice', () => {
 		const purchase = { product_slug: 'domain_transfer' };
 		render(
 			<ReduxProvider store={ store }>
-				<PurchaseNotice purchase={ purchase } renewableSitePurchases={ [] } />
+				<QueryClientProvider client={ queryClient }>
+					<PurchaseNotice purchase={ purchase } renewableSitePurchases={ [] } />
+				</QueryClientProvider>
 			</ReduxProvider>
 		);
 		expect( screen.container ).toBeFalsy();
@@ -78,11 +86,13 @@ describe( 'PurchaseNotice', () => {
 		const purchase = { product_slug: 'something_else' };
 		render(
 			<ReduxProvider store={ store }>
-				<PurchaseNotice
-					purchase={ purchase }
-					isProductOwner={ false }
-					renewableSitePurchases={ [] }
-				/>
+				<QueryClientProvider client={ queryClient }>
+					<PurchaseNotice
+						purchase={ purchase }
+						isProductOwner={ false }
+						renewableSitePurchases={ [] }
+					/>
+				</QueryClientProvider>
 			</ReduxProvider>
 		);
 		expect(
@@ -94,7 +104,9 @@ describe( 'PurchaseNotice', () => {
 		const purchase = { product_slug: 'concierge-session', expiryStatus: 'expired' };
 		render(
 			<ReduxProvider store={ store }>
-				<PurchaseNotice purchase={ purchase } isProductOwner renewableSitePurchases={ [] } />
+				<QueryClientProvider client={ queryClient }>
+					<PurchaseNotice purchase={ purchase } isProductOwner renewableSitePurchases={ [] } />
+				</QueryClientProvider>
 			</ReduxProvider>
 		);
 		expect( screen.getByText( 'This session has been used.' ) ).toBeInTheDocument();
@@ -112,12 +124,14 @@ describe( 'PurchaseNotice', () => {
 		};
 		render(
 			<ReduxProvider store={ store }>
-				<PurchaseNotice
-					purchase={ purchase }
-					isProductOwner
-					selectedSite={ { slug: 'testingsite' } }
-					renewableSitePurchases={ [] }
-				/>
+				<QueryClientProvider client={ queryClient }>
+					<PurchaseNotice
+						purchase={ purchase }
+						isProductOwner
+						selectedSite={ { slug: 'testingsite' } }
+						renewableSitePurchases={ [] }
+					/>
+				</QueryClientProvider>
 			</ReduxProvider>
 		);
 		expect(
@@ -146,12 +160,14 @@ describe( 'PurchaseNotice', () => {
 		};
 		render(
 			<ReduxProvider store={ store }>
-				<PurchaseNotice
-					purchase={ purchase }
-					isProductOwner
-					selectedSite={ { slug: 'testingsite' } }
-					renewableSitePurchases={ [] }
-				/>
+				<QueryClientProvider client={ queryClient }>
+					<PurchaseNotice
+						purchase={ purchase }
+						isProductOwner
+						selectedSite={ { slug: 'testingsite' } }
+						renewableSitePurchases={ [] }
+					/>
+				</QueryClientProvider>
 			</ReduxProvider>
 		);
 		expect(
@@ -185,13 +201,15 @@ describe( 'PurchaseNotice', () => {
 		};
 		render(
 			<ReduxProvider store={ store }>
-				<PurchaseNotice
-					purchase={ purchase }
-					purchaseAttachedTo={ plan }
-					isProductOwner
-					renewableSitePurchases={ [] }
-					selectedSite={ { slug: 'testingsite' } }
-				/>
+				<QueryClientProvider client={ queryClient }>
+					<PurchaseNotice
+						purchase={ purchase }
+						purchaseAttachedTo={ plan }
+						isProductOwner
+						renewableSitePurchases={ [] }
+						selectedSite={ { slug: 'testingsite' } }
+					/>
+				</QueryClientProvider>
 			</ReduxProvider>
 		);
 		expect( screen.getByText( 'Premium plan' ) ).toBeInTheDocument();
@@ -210,12 +228,14 @@ describe( 'PurchaseNotice', () => {
 		};
 		render(
 			<ReduxProvider store={ store }>
-				<PurchaseNotice
-					purchase={ purchase }
-					isProductOwner
-					selectedSite={ { slug: 'testingsite' } }
-					renewableSitePurchases={ [] }
-				/>
+				<QueryClientProvider client={ queryClient }>
+					<PurchaseNotice
+						purchase={ purchase }
+						isProductOwner
+						selectedSite={ { slug: 'testingsite' } }
+						renewableSitePurchases={ [] }
+					/>
+				</QueryClientProvider>
 			</ReduxProvider>
 		);
 		expect(
@@ -233,12 +253,14 @@ describe( 'PurchaseNotice', () => {
 		};
 		render(
 			<ReduxProvider store={ store }>
-				<PurchaseNotice
-					purchase={ purchase }
-					isProductOwner
-					selectedSite={ { slug: 'testingsite' } }
-					renewableSitePurchases={ [] }
-				/>
+				<QueryClientProvider client={ queryClient }>
+					<PurchaseNotice
+						purchase={ purchase }
+						isProductOwner
+						selectedSite={ { slug: 'testingsite' } }
+						renewableSitePurchases={ [] }
+					/>
+				</QueryClientProvider>
 			</ReduxProvider>
 		);
 		expect(
@@ -257,12 +279,14 @@ describe( 'PurchaseNotice', () => {
 		};
 		render(
 			<ReduxProvider store={ store }>
-				<PurchaseNotice
-					purchase={ purchase }
-					isProductOwner
-					selectedSite={ { slug: 'testingsite' } }
-					renewableSitePurchases={ [] }
-				/>
+				<QueryClientProvider client={ queryClient }>
+					<PurchaseNotice
+						purchase={ purchase }
+						isProductOwner
+						selectedSite={ { slug: 'testingsite' } }
+						renewableSitePurchases={ [] }
+					/>
+				</QueryClientProvider>
 			</ReduxProvider>
 		);
 		expect(
@@ -281,12 +305,14 @@ describe( 'PurchaseNotice', () => {
 		};
 		render(
 			<ReduxProvider store={ store }>
-				<PurchaseNotice
-					purchase={ purchase }
-					isProductOwner
-					selectedSite={ { slug: 'testingsite' } }
-					renewableSitePurchases={ [] }
-				/>
+				<QueryClientProvider client={ queryClient }>
+					<PurchaseNotice
+						purchase={ purchase }
+						isProductOwner
+						selectedSite={ { slug: 'testingsite' } }
+						renewableSitePurchases={ [] }
+					/>
+				</QueryClientProvider>
 			</ReduxProvider>
 		);
 		expect( screen.container ).toBeFalsy();
@@ -303,12 +329,14 @@ describe( 'PurchaseNotice', () => {
 		};
 		render(
 			<ReduxProvider store={ store }>
-				<PurchaseNotice
-					purchase={ purchase }
-					isProductOwner
-					selectedSite={ { slug: 'testingsite' } }
-					renewableSitePurchases={ [] }
-				/>
+				<QueryClientProvider client={ queryClient }>
+					<PurchaseNotice
+						purchase={ purchase }
+						isProductOwner
+						selectedSite={ { slug: 'testingsite' } }
+						renewableSitePurchases={ [] }
+					/>
+				</QueryClientProvider>
 			</ReduxProvider>
 		);
 		expect( screen.container ).toBeFalsy();
@@ -335,13 +363,15 @@ describe( 'PurchaseNotice', () => {
 		};
 		render(
 			<ReduxProvider store={ store }>
-				<PurchaseNotice
-					purchase={ purchase }
-					isProductOwner
-					selectedSite={ { slug: 'testingsite' } }
-					purchaseAttachedTo={ plan }
-					renewableSitePurchases={ [] }
-				/>
+				<QueryClientProvider client={ queryClient }>
+					<PurchaseNotice
+						purchase={ purchase }
+						isProductOwner
+						selectedSite={ { slug: 'testingsite' } }
+						purchaseAttachedTo={ plan }
+						renewableSitePurchases={ [] }
+					/>
+				</QueryClientProvider>
 			</ReduxProvider>
 		);
 		expect( screen.getByText( 'Premium plan' ) ).toBeInTheDocument();
@@ -362,12 +392,14 @@ describe( 'PurchaseNotice', () => {
 		};
 		render(
 			<ReduxProvider store={ store }>
-				<PurchaseNotice
-					purchase={ purchase }
-					isProductOwner
-					selectedSite={ { slug: 'testingsite' } }
-					renewableSitePurchases={ [] }
-				/>
+				<QueryClientProvider client={ queryClient }>
+					<PurchaseNotice
+						purchase={ purchase }
+						isProductOwner
+						selectedSite={ { slug: 'testingsite' } }
+						renewableSitePurchases={ [] }
+					/>
+				</QueryClientProvider>
 			</ReduxProvider>
 		);
 		expect(
@@ -388,12 +420,14 @@ describe( 'PurchaseNotice', () => {
 		};
 		render(
 			<ReduxProvider store={ store }>
-				<PurchaseNotice
-					purchase={ purchase }
-					isProductOwner
-					selectedSite={ { slug: 'testingsite' } }
-					renewableSitePurchases={ [] }
-				/>
+				<QueryClientProvider client={ queryClient }>
+					<PurchaseNotice
+						purchase={ purchase }
+						isProductOwner
+						selectedSite={ { slug: 'testingsite' } }
+						renewableSitePurchases={ [] }
+					/>
+				</QueryClientProvider>
 			</ReduxProvider>
 		);
 		expect(
@@ -413,12 +447,14 @@ describe( 'PurchaseNotice', () => {
 		};
 		render(
 			<ReduxProvider store={ store }>
-				<PurchaseNotice
-					purchase={ purchase }
-					isProductOwner
-					selectedSite={ { slug: 'testingsite' } }
-					renewableSitePurchases={ [] }
-				/>
+				<QueryClientProvider client={ queryClient }>
+					<PurchaseNotice
+						purchase={ purchase }
+						isProductOwner
+						selectedSite={ { slug: 'testingsite' } }
+						renewableSitePurchases={ [] }
+					/>
+				</QueryClientProvider>
 			</ReduxProvider>
 		);
 		expect(
@@ -449,12 +485,14 @@ describe( 'PurchaseNotice', () => {
 		};
 		render(
 			<ReduxProvider store={ store }>
-				<PurchaseNotice
-					purchase={ purchase }
-					isProductOwner
-					selectedSite={ { slug: 'testingsite' } }
-					renewableSitePurchases={ [] }
-				/>
+				<QueryClientProvider client={ queryClient }>
+					<PurchaseNotice
+						purchase={ purchase }
+						isProductOwner
+						selectedSite={ { slug: 'testingsite' } }
+						renewableSitePurchases={ [] }
+					/>
+				</QueryClientProvider>
 			</ReduxProvider>
 		);
 		expect( screen.getByText( /Your VISA ending in 1111 expired/ ) ).toBeInTheDocument();
@@ -483,12 +521,14 @@ describe( 'PurchaseNotice', () => {
 		};
 		render(
 			<ReduxProvider store={ store }>
-				<PurchaseNotice
-					purchase={ purchase }
-					isProductOwner
-					selectedSite={ { slug: 'testingsite' } }
-					renewableSitePurchases={ [] }
-				/>
+				<QueryClientProvider client={ queryClient }>
+					<PurchaseNotice
+						purchase={ purchase }
+						isProductOwner
+						selectedSite={ { slug: 'testingsite' } }
+						renewableSitePurchases={ [] }
+					/>
+				</QueryClientProvider>
 			</ReduxProvider>
 		);
 		expect( screen.container ).toBeFalsy();
@@ -516,12 +556,14 @@ describe( 'PurchaseNotice', () => {
 		};
 		render(
 			<ReduxProvider store={ store }>
-				<PurchaseNotice
-					purchase={ purchase }
-					isProductOwner
-					selectedSite={ { slug: 'testingsite' } }
-					renewableSitePurchases={ [] }
-				/>
+				<QueryClientProvider client={ queryClient }>
+					<PurchaseNotice
+						purchase={ purchase }
+						isProductOwner
+						selectedSite={ { slug: 'testingsite' } }
+						renewableSitePurchases={ [] }
+					/>
+				</QueryClientProvider>
 			</ReduxProvider>
 		);
 		expect( screen.container ).toBeFalsy();

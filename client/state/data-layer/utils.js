@@ -1,6 +1,6 @@
-import { camelCase, snakeCase } from '@automattic/js-utils';
+import { camelCase, set, snakeCase } from '@automattic/js-utils';
 import { extendAction } from '@automattic/state-utils';
-import { map, reduce, set } from 'lodash';
+import { map, reduce } from 'lodash';
 
 const doBypassDataLayer = {
 	meta: {

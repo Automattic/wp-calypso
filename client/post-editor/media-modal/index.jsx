@@ -1,5 +1,6 @@
+import { flow } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { flow, get, isEmpty, some } from 'lodash';
+import { get, isEmpty, some } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
