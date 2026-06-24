@@ -20,6 +20,7 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 
 	let userManagementRevampFeature = false;
 	let acceptInviteLink: string;
+	let invitedSiteSlug: string;
 
 	// Accounts created during the run, closed via API in afterAll as a guaranteed
 	// teardown. The in-body UI close below stays as product coverage; the API close
@@ -138,13 +139,27 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 
 		await test.step( 'When I navigate back to Users > All Users', async function () {
 			await componentSidebar.navigate( 'Users', 'All Users' );
+			// The invite was sent to whichever site is currently selected (the site
+			// authenticate() landed on), which is not necessarily testSites.primary on
+			// the shared pre-release account. Capture that site's slug from the people
+			// URL so the removal acts on the same site we actually invited the user to.
+			// Match the site fragment (a domain-like segment) after the people filter
+			// and fail loudly if the URL isn't the expected `/people/<filter>/<slug>`.
+			const peopleUrl = new URL( page.url() );
+			const slugMatch = peopleUrl.pathname.match( /\/people\/[^/]+\/([^/?#]+\.[^/?#]+)/ );
+			if ( ! slugMatch ) {
+				throw new Error(
+					`Could not determine the invited site slug from the people URL: ${ peopleUrl.href }`
+				);
+			}
+			invitedSiteSlug = slugMatch[ 1 ];
 		} );
 
 		await test.step( 'Then I can see the invited user part of the team', async function () {
 			// Use direct navigation to avoid finding the user when there are over 100 team members piled up.
 			await pagePeople.visitTeamMemberUserDetails(
 				helperData.getCalypsoURL(),
-				accountPreRelease.credentials.testSites?.primary?.url as string,
+				invitedSiteSlug,
 				signedUpUsername
 			);
 		} );
