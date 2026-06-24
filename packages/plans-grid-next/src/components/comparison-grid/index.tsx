@@ -5,6 +5,8 @@ import {
 	getPlans,
 	FEATURE_AI_WRITER_DESIGNER,
 	FEATURE_AI_WRITER_DESIGNER_LIMITED,
+	FEATURE_GUIDED_WEBSITE_BUILDER,
+	FEATURE_GUIDED_WEBSITE_BUILDER_LIMITED,
 	FEATURE_REALTIME_BACKUPS_JP,
 } from '@automattic/calypso-products';
 import { Gridicon, JetpackLogo } from '@automattic/components';
@@ -63,6 +65,7 @@ import './style.scss';
 // Plans Differentiators Experiment: treat feature variants (e.g., _LIMITED) as the same row
 const FEATURE_ALIASES: Record< string, string[] > = {
 	[ FEATURE_AI_WRITER_DESIGNER ]: [ FEATURE_AI_WRITER_DESIGNER_LIMITED ],
+	[ FEATURE_GUIDED_WEBSITE_BUILDER ]: [ FEATURE_GUIDED_WEBSITE_BUILDER_LIMITED ],
 };
 
 // Finds a matching feature, checking both the base slug and any aliases
