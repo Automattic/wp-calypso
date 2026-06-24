@@ -32,7 +32,7 @@ export function getCountRecords( state, siteId, date, period, quantity ) {
 export function getLoadingTabs( state, siteId, date, period, quantity ) {
 	const requestKey = `${ date }-${ period }-${ quantity }`;
 
-	return QUERY_FIELDS.filter( ( type ) =>
-		get( state, [ 'stats', 'chartTabs', 'isLoading', siteId, requestKey, type ] )
+	return QUERY_FIELDS.filter(
+		( type ) => state?.stats?.chartTabs?.isLoading?.[ siteId ]?.[ requestKey ]?.[ type ]
 	);
 }

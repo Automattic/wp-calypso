@@ -52,7 +52,10 @@ export default function convertToolMessagesToComponents( {
 				content: [
 					{
 						type: 'component',
-						component: EscalationButton,
+						component: EscalationButton as React.ComponentType,
+						componentProps: {
+							messageId: message.id,
+						},
 					},
 				],
 			};

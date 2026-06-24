@@ -1,4 +1,4 @@
-@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+@use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
 
 img.payment-method-image {
 	vertical-align: middle;
@@ -15,6 +15,11 @@ img.payment-method-image {
 }
 
 .payment-method-selector__content {
+	// The Dashboard's payment method form fields use 12px of inline padding (see
+	// `.credit-card-fields` / `.paypal-fields` below), so align the single,
+	// pre-selected payment method's label to match.
+	--checkout-single-payment-method-label-inline-padding: 12px;
+
 	@include ui-mixins.when-dark-theme {
 		.checkout-steps__submit-button-wrapper {
 			background: var( --dashboard-surface__background-color );

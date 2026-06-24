@@ -10,6 +10,7 @@ import {
 	fetchUserTransferredPurchases,
 	fetchSitePurchases,
 	fetchCancellationFeatures,
+	setDelayedDowngrade,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
@@ -113,5 +114,23 @@ export const extendPurchaseWithFreeMonthMutation = () =>
 		mutationFn: ( purchaseId: number ) => extendPurchaseWithFreeMonth( purchaseId ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( userPurchasesQuery() );
+		},
+	} );
+
+export const setDelayedDowngradeMutation = () =>
+	mutationOptions( {
+		mutationFn: (
+			params: { purchaseId: number } & (
+				| { enabled: true; toProductId: number }
+				| { enabled: false }
+			)
+		) =>
+			setDelayedDowngrade(
+				params.purchaseId,
+				params.enabled ? { enabled: true, to_product_id: params.toProductId } : { enabled: false }
+			),
+		onSuccess: ( _data, params ) => {
+			queryClient.invalidateQueries( userPurchasesQuery() );
+			queryClient.invalidateQueries( purchaseQuery( params.purchaseId ) );
 		},
 	} );

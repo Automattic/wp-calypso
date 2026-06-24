@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 const noop = () => {};
 
-const ProductCardAction = ( { intro, label, onClick, primary, href } ) => (
+const ProductCardAction = ( { intro, label, onClick = noop, primary = true, href = null } ) => (
 	<div className="product-card__action">
 		{ intro && <h4 className="product-card__action-intro">{ intro }</h4> }
 		<Button
@@ -23,12 +23,6 @@ ProductCardAction.propTypes = {
 	onClick: PropTypes.func,
 	href: PropTypes.string,
 	primary: PropTypes.bool,
-};
-
-ProductCardAction.defaultProps = {
-	href: null,
-	onClick: noop,
-	primary: true,
 };
 
 export default ProductCardAction;

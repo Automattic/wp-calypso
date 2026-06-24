@@ -8,6 +8,7 @@ import configureStore from 'redux-mock-store';
 import { CustomizeProvider, useCustomizeContext } from '../index';
 import { MoveMenu } from '../move-menu';
 import type { LayoutDelta } from 'calypso/state/admin-sidebar/layout/types';
+import type { JSX } from 'react';
 
 function renderInProvider( ui: JSX.Element, state: object = {} ) {
 	const store = configureStore()( {

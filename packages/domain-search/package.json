@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/domain-search",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Domain search components for WordPress.com.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -60,6 +60,7 @@
 		"qs": "^6.15.2"
 	},
 	"devDependencies": {
+		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@storybook/addon-a11y": "^9.1.20",
@@ -76,6 +77,6 @@
 	},
 	"peerDependencies": {
 		"@wordpress/i18n": "^6.21.0",
-		"react": "^18.3.1"
+		"react": "^18.3.1 || ^19.0.0"
 	}
 }

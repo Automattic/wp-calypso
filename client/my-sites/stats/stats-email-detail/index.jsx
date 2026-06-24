@@ -3,12 +3,14 @@ import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button as CoreButton, Spinner } from '@wordpress/components';
 import clsx from 'clsx';
+import isEqual from 'fast-deep-equal/es6';
 import { localize, translate } from 'i18n-calypso';
-import { find, flowRight, isEqual } from 'lodash';
+import { find } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import titlecase from 'to-title-case';
 import { emailIntervals } from 'calypso/blocks/stats-navigation/constants';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
@@ -505,4 +507,4 @@ const connectComponent = connect(
 	{ recordGoogleEvent }
 );
 
-export default flowRight( connectComponent, localize )( StatsEmailDetailWrapper );
+export default compose( connectComponent, localize )( StatsEmailDetailWrapper );

@@ -39,6 +39,7 @@ export class EditGravatar extends Component {
 		recordClickButtonEvent: PropTypes.func,
 		recordAvatarUpdatedEvent: PropTypes.func,
 		receiveGravatarDetails: PropTypes.func,
+		onAvatarUpdated: PropTypes.func,
 	};
 
 	quickEditor = null;
@@ -61,6 +62,9 @@ export class EditGravatar extends Component {
 				setUser( { ...user, avatar_URL: addQueryArgs( user.avatar_URL, { ver: Date.now() } ) } );
 				// Update Gravatar details
 				updateGravatarDetails( { has_gravatar: true } );
+				// Let consumers (e.g. the Reader profile settings) react to the avatar change,
+				// for instance to refresh data that reads the avatar from a different source.
+				this.props.onAvatarUpdated?.();
 			},
 		} );
 

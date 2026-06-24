@@ -2,11 +2,10 @@ import { Card } from '@automattic/components';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
-import { defer } from 'lodash';
 import { Component, CSSProperties, FunctionComponent } from 'react';
 import pathToSection from 'calypso/lib/path-to-section';
 import { ROUTE_SET } from 'calypso/state/action-types';
-import { contextTypes } from '../context-types';
+import { TourContext, ContextWhen, TourContextValue as SectionContext } from '../context';
 import {
 	posToCss,
 	getStepPosition,
@@ -15,7 +14,6 @@ import {
 	targetForSlug,
 } from '../positioning';
 import { ArrowPosition, DialogPosition, Coordinate } from '../types';
-import type { CalypsoDispatch } from 'calypso/state/types';
 import type { TimestampMS } from 'calypso/types';
 import type { AnyAction } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
@@ -27,30 +25,10 @@ const anyFrom = ( obj: Record< string, string > ): string => {
 	return key && obj[ key ];
 };
 
-interface SectionContext {
-	sectionName?: string;
-	dispatch: CalypsoDispatch;
-	step: string;
-	shouldPause?: boolean;
-	branching: Record< string, { continue: string } >;
-	lastAction: { type: string; path: string };
-	next: ( newCtx: Partial< SectionContext > ) => void;
-	nextStepName?: string;
-	skipping?: boolean;
-	tour: string;
-	tourVersion: string;
-	isValid: ( when: ContextWhen ) => boolean;
-	isLastStep: boolean;
-	quit: ( context: Partial< SectionContext > ) => void;
-	start: ( context: Partial< SectionContext > ) => void;
-}
-
 interface RequiredProps {
 	name: string;
 	children: FunctionComponent< { translate: typeof translate } >;
 }
-
-type ContextWhen = ( ...args: unknown[] ) => boolean;
 
 interface AcceptedProps {
 	arrow?: ArrowPosition;
@@ -90,7 +68,7 @@ export default class Step extends Component< Props, State > {
 		canSkip: true,
 	};
 
-	static contextTypes = contextTypes;
+	static contextType = TourContext;
 
 	lastTransitionTimestamp: TimestampMS | null = null;
 
@@ -316,14 +294,14 @@ export default class Step extends Component< Props, State > {
 		);
 
 		if ( ! hasContinue && hasJustNavigated && this.isDifferentSection( lastAction.path ) ) {
-			defer( () => {
+			setTimeout( () => {
 				debug( 'Step.quitIfInvalidRoute: quitting (different section)' );
 				( this.context as SectionContext ).quit( this.context as SectionContext );
-			} );
+			}, 0 );
 		}
 
 		// quit if we have a target but cant find it
-		defer( () => {
+		setTimeout( () => {
 			const { quit } = this.context as SectionContext;
 			const target = targetForSlug( this.props.target );
 			if ( this.props.target && ! target ) {
@@ -332,7 +310,7 @@ export default class Step extends Component< Props, State > {
 			} else {
 				debug( 'Step.quitIfInvalidRoute: not quitting' );
 			}
-		} );
+		}, 0 );
 	}
 
 	isDifferentSection( path: string ) {

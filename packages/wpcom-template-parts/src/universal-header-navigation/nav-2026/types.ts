@@ -3,6 +3,7 @@ export interface Nav2026Item {
 	label: string;
 	url: string;
 	target?: string;
+	badge?: string;
 }
 
 export interface Nav2026Group {

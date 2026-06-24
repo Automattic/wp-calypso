@@ -112,7 +112,10 @@ export { default as useIssueAndAssignLicenses } from './use-issue-and-assign-lic
  * @param productSlug
  * @returns
  */
-export function useProductDescription( productSlug: string ): {
+export function useProductDescription(
+	productSlug: string,
+	pressableMemoryTargetSite?: string
+): {
 	description: TranslateResult | null;
 	features: ReadonlyArray< TranslateResult >;
 } {
@@ -137,14 +140,25 @@ export function useProductDescription( productSlug: string ): {
 			const phpMemory =
 				plan?.phpMemory != null ? `${ formatNumber( plan.phpMemory ) } MB` : '512 MB';
 
-			description = translate(
-				'Add %(phpMemory)s of PHP memory for each PHP worker/process on your Pressable plan.',
-				{
-					args: {
-						phpMemory,
-					},
-				}
-			);
+			description = pressableMemoryTargetSite
+				? translate(
+						'Add %(phpMemory)s of PHP memory for each PHP worker/process on %(siteDomain)s.',
+						{
+							args: {
+								phpMemory,
+								siteDomain: pressableMemoryTargetSite,
+							},
+							comment: '%(siteDomain)s is the target site/domain for the add-on.',
+						}
+				  )
+				: translate(
+						'Add %(phpMemory)s of PHP memory for each PHP worker/process on one Pressable site/domain.',
+						{
+							args: {
+								phpMemory,
+							},
+						}
+				  );
 		}
 
 		switch ( productSlug ) {
@@ -538,7 +552,7 @@ export function useProductDescription( productSlug: string ): {
 			description,
 			features,
 		};
-	}, [ productSlug, translate ] );
+	}, [ pressableMemoryTargetSite, productSlug, translate ] );
 }
 
 type Params = Array< { key: string; value: string } >;

@@ -289,22 +289,39 @@ export class RestAPIClient {
 			return null;
 		}
 
-		console.log( `Deleting site ${ targetSite.domain }.` );
-
-		const scheme = 'http://';
-		const targetDomain = targetSite.domain.startsWith( scheme )
-			? targetSite.domain.replace( scheme, '' )
-			: targetSite.domain;
+		// `/all-domains/` returns scheme-less, lowercase `domain` values, while
+		// callers commonly pass `blog_details.url` (e.g.
+		// `https://e2eflowtesting….wordpress.com/`). Normalize both sides (strip
+		// scheme, path and trailing slash; lowercase) so the ownership comparison
+		// below is not defeated by a formatting or case difference, which would
+		// abort a legitimate cleanup and leak the site.
+		const normalizeDomain = ( value: string ): string =>
+			value
+				.trim()
+				.replace( /^https?:\/\//i, '' )
+				.replace( /\/.*$/, '' )
+				.toLowerCase();
+		const targetDomain = normalizeDomain( targetSite.domain );
 
 		const mySites: AllDomainsResponse = await this.getAllDomains();
 
-		const match = mySites.domains.filter( ( site: DomainData ) => {
-			site.blog_id === targetSite.id && site.domain === targetDomain;
-		} );
+		// Ensure the target site actually belongs to the authenticated user before
+		// issuing the deletion. The `.some()` predicate returns a real boolean; the
+		// previous `.filter()` callback returned no value (always an empty, truthy
+		// array), so this ownership guard never fired.
+		const isOwnedByUser = mySites.domains.some(
+			( site: DomainData ) =>
+				site.blog_id === targetSite.id && normalizeDomain( site.domain ) === targetDomain
+		);
 
-		if ( ! match ) {
+		if ( ! isOwnedByUser ) {
+			console.warn(
+				`Aborting site deletion: site ${ targetSite.id } (${ targetDomain }) is not owned by the authenticated user.`
+			);
 			return null;
 		}
+
+		console.log( `Deleting site ${ targetSite.domain }.` );
 
 		const params: RequestParams = {
 			method: 'post',

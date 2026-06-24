@@ -1,0 +1,47 @@
+.space-icon-picker {
+	display: grid;
+	grid-template-columns: repeat( 8, 1fr );
+	gap: 8px;
+}
+
+.space-icon-picker__tile {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	aspect-ratio: 1;
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 8px;
+	color: var( --color-text );
+	cursor: pointer;
+
+	&[data-selected='true'] {
+		border-color: var( --color-primary );
+		box-shadow: 0 0 0 1px var( --color-primary );
+		color: var( --color-primary );
+	}
+}
+
+// Visually hidden, but still focusable so the tiles keep native radio keyboard
+// behaviour (arrow keys move between options, single tab stop).
+.space-icon-picker__radio {
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline-start: 0;
+	inline-size: 100%;
+	block-size: 100%;
+	margin: 0;
+	opacity: 0;
+	cursor: pointer;
+}
+
+.space-icon-picker__radio:focus-visible {
+	outline: 2px solid var( --color-primary );
+	outline-offset: 2px;
+}
+
+@media ( max-width: 660px ) {
+	.space-icon-picker {
+		grid-template-columns: repeat( 4, 1fr );
+	}
+}

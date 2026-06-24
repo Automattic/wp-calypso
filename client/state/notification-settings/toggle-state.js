@@ -1,11 +1,11 @@
-import { find, findIndex, get, includes } from 'lodash';
+import { find, get } from 'lodash';
 
 const replaceAtIndex = ( array, index, newItem ) =>
 	array.map( ( item, idx ) => ( idx === index ? newItem : item ) );
 
 const replaceOrAppend = ( array, originalItem, newItem ) =>
-	includes( array, originalItem )
-		? replaceAtIndex( array, findIndex( array, originalItem ), newItem )
+	array.includes( originalItem )
+		? replaceAtIndex( array, array.indexOf( originalItem ), newItem )
 		: [ ...array, newItem ];
 
 const toggleInStream = ( streamName, stream, setting ) => ( {
@@ -29,24 +29,24 @@ const toggleInDevice = ( devices, deviceId, setting ) => {
 
 export default {
 	wpcom( state, source, stream, setting ) {
-		return toggleInStream( 'wpcom', get( state, 'dirty.wpcom' ), setting );
+		return toggleInStream( 'wpcom', state?.dirty?.wpcom, setting );
 	},
 
 	other( state, source, stream, setting ) {
-		const devices = get( state, 'dirty.other.devices' );
+		const devices = state?.dirty?.other?.devices;
 
 		return {
 			other: {
-				...get( state, 'dirty.other' ),
+				...state?.dirty?.other,
 				...( isNaN( stream )
-					? toggleInStream( stream, get( state, [ 'dirty', 'other', stream ] ), setting )
+					? toggleInStream( stream, state?.dirty?.other?.[ stream ], setting )
 					: toggleInDevice( devices, stream, setting ) ),
 			},
 		};
 	},
 
 	blog( state, source, stream, setting ) {
-		const blogs = get( state, 'dirty.blogs' );
+		const blogs = state?.dirty?.blogs;
 		const blog = find( blogs, { blog_id: parseInt( source, 10 ) } );
 		const devices = get( blog, 'devices', [] );
 

@@ -66,9 +66,26 @@ jest.mock( 'calypso/blocks/site-icon', () => ( {
 	SiteIcon: () => null,
 } ) );
 
+// Track each mount of the preview follow button (keyed by feedId) so a test
+// can assert that switching previews remounts it. The `key={ feed_ID }` on the
+// real button is what forces this remount, which resets the follow mutation's
+// lingering `isPending` state so it can't disable the button for the next site.
+const mockFollowButtonMounts: number[] = [];
+
+function MockFollowButton( { feedId }: { feedId: number } ) {
+	React.useEffect( () => {
+		mockFollowButtonMounts.push( feedId );
+		// Empty deps: only count true mounts. A dependency on `feedId` would also
+		// fire on prop updates, which would defeat the remount assertion (the
+		// no-`key` regression updates props on a persistent instance).
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+	return null;
+}
+
 jest.mock( 'calypso/reader/follow-button', () => ( {
 	__esModule: true,
-	default: () => null,
+	default: MockFollowButton,
 } ) );
 
 jest.mock( 'calypso/reader/controller-helper', () => ( {
@@ -168,6 +185,33 @@ describe( 'SubscribeModal – site preview analytics', () => {
 		jest.mocked( recordTracksEvent ).mockClear();
 		jest.mocked( prefetchInfiniteStream ).mockClear();
 		mockedRecommendationsHook.mockReturnValue( defaultRecommendationsHookValue );
+		mockFollowButtonMounts.length = 0;
+	} );
+
+	it( 'remounts the preview follow button when a different site is previewed', async () => {
+		const user = userEvent.setup();
+		const recommendations = [ makeRecommendation( 0 ), makeRecommendation( 1 ) ];
+		mockedRecommendationsHook.mockReturnValue( {
+			...defaultRecommendationsHookValue,
+			combinedRecommendations: recommendations,
+			recommendations,
+		} );
+
+		renderWithProvider( <SubscribeModal onFinish={ jest.fn() } promptVerification={ false } /> );
+
+		// The first recommendation is auto-selected on mount.
+		expect( mockFollowButtonMounts ).toEqual( [ 100 ] );
+
+		// Previewing a different site must remount the follow button (via its
+		// `key`) rather than reusing the persistent instance — otherwise a
+		// lingering follow-mutation pending state would disable it for the new
+		// site. A fresh mount appends the newly selected feedId.
+		await user.click( screen.getByTestId( 'reader-list-item-101' ) );
+		expect( mockFollowButtonMounts ).toEqual( [ 100, 101 ] );
+
+		// Returning to the first site remounts it again.
+		await user.click( screen.getByTestId( 'reader-list-item-100' ) );
+		expect( mockFollowButtonMounts ).toEqual( [ 100, 101, 100 ] );
 	} );
 
 	it( 'records discover_modal_site_previewed when the user picks a different site in the list', async () => {

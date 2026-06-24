@@ -150,7 +150,7 @@ const ReaderSidebarRecent = ( {
 								<SiteIcon iconUrl={ site.site_icon } size={ 22 } />
 								<span title={ displayName } className="sidebar__menu-item-sitename">
 									<span>{ displayName }</span>
-									{ typeof site.last_updated === 'number' && site.last_updated > 0 && (
+									{ site.last_updated && (
 										<span className="sidebar__menu-item-last-updated">
 											{ moment( new Date( site.last_updated ) ).fromNow() }
 										</span>

@@ -4,6 +4,7 @@ import {
 	WPCOM_DIFM_LITE,
 	OFFSITE_REDIRECT,
 	DomainTransferStatus,
+	SubscriptionBillPeriod,
 } from '@automattic/api-core';
 import {
 	domainQuery,
@@ -138,16 +139,37 @@ function getExpiredNewPlanUrl( purchase: Purchase ): string {
 	}
 
 	if ( purchase.is_plan ) {
-		return getWpcomPlanGridUrl( purchase.site_slug );
+		return getWpcomPlanGridUrl( purchase );
 	}
 
 	return wpcomLink( `/plans/${ purchase.site_slug }` );
 }
 
-function getWpcomPlanGridUrl( siteSlug: string | undefined ): string {
+// Map the purchase's billing term to the plans grid's `intervalType` param so the
+// grid opens on the same term as the current plan. Downgrades only work within the
+// same term, and the grid hides the term selector in the downgrade flow.
+function getPlanGridIntervalType( purchase: Purchase ): string | undefined {
+	switch ( purchase.bill_period_days ) {
+		case SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD:
+			return 'monthly';
+		case SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD:
+			return 'yearly';
+		case SubscriptionBillPeriod.PLAN_BIENNIAL_PERIOD:
+			return '2yearly';
+		case SubscriptionBillPeriod.PLAN_TRIENNIAL_PERIOD:
+			return '3yearly';
+		default:
+			return undefined;
+	}
+}
+
+function getWpcomPlanGridUrl( purchase: Purchase ): string {
 	const backUrl = redirectToDashboardLink();
+	const siteSlug = purchase.site_slug;
+	const intervalType = getPlanGridIntervalType( purchase );
 	return addQueryArgs( wpcomLink( '/setup/plan-upgrade' ), {
 		...( siteSlug && { siteSlug } ),
+		...( intervalType && { intervalType } ),
 		cancel_to: backUrl,
 		dashboard: getCurrentDashboard(),
 		redirect_to: getChangedPlanRedirectUrl(),
@@ -442,18 +464,21 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 }
 
 /**
- * Whether the "Change plan" action should be offered for this purchase: either
- * the plan is past expiry (downgrade-to-checkout) or still within its refund
- * window (instant downgrade). Gated by the `plans/expired-downgrade` flag.
+ * Whether the "Change plan" action should be offered for this purchase. Covers
+ * three downgrade flows, each gated by its own flag:
+ *   - past expiry (downgrade-to-checkout) — `plans/expired-downgrade`
+ *   - within refund window (instant downgrade) — `plans/expired-downgrade`
+ *   - active downgradable plan (delayed downgrade) — `plans/delayed-downgrade`
  */
 function shouldShowChangePlan( purchase: Purchase ): boolean {
-	if ( ! config.isEnabled( 'plans/expired-downgrade' ) ) {
+	if ( ! purchase.is_plan || ! purchase.is_plan_type_downgradable ) {
 		return false;
 	}
-	return (
-		( purchase.is_past_expiry_date && purchase.is_plan ) ||
-		isWithinRefundWindowDowngradeEligible( purchase )
-	);
+	const expiredOrRefundDowngrade =
+		config.isEnabled( 'plans/expired-downgrade' ) &&
+		( purchase.is_past_expiry_date || isWithinRefundWindowDowngradeEligible( purchase ) );
+	const delayedDowngrade = config.isEnabled( 'plans/delayed-downgrade' );
+	return expiredOrRefundDowngrade || delayedDowngrade;
 }
 
 function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
@@ -633,6 +658,15 @@ function ChangePlanActionItem( { purchase }: { purchase: Purchase } ) {
 	}
 
 	const isPastExpiryDowngrade = purchase.is_past_expiry_date && purchase.is_plan;
+	const mode = ( () => {
+		if ( isPastExpiryDowngrade ) {
+			return 'expired';
+		}
+		if ( isWithinRefundWindowDowngradeEligible( purchase ) ) {
+			return 'refund-window';
+		}
+		return 'delayed-downgrade';
+	} )();
 
 	return (
 		<ActionList.ActionItem
@@ -645,7 +679,7 @@ function ChangePlanActionItem( { purchase }: { purchase: Purchase } ) {
 					onClick={ () => {
 						recordTracksEvent( 'calypso_purchases_change_plan_click', {
 							product_slug: purchase.product_slug,
-							mode: isPastExpiryDowngrade ? 'expired' : 'refund-window',
+							mode,
 						} );
 						window.location.href = getExpiredNewPlanUrl( purchase );
 					} }

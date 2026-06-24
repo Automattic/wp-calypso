@@ -1,6 +1,6 @@
 import { createSelector } from '@automattic/state-utils';
 import treeSelect from '@automattic/tree-select';
-import { get, map, flatten } from 'lodash';
+import { get, map } from 'lodash';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSerializedStatsQuery, normalizers, buildExportArray } from './utils';
@@ -18,7 +18,7 @@ import 'calypso/state/stats/init';
  */
 export function isRequestingSiteStatsForQuery( state, siteId, statType, query ) {
 	const serializedQuery = getSerializedStatsQuery( query );
-	return !! get( state.stats.lists.requests, [ siteId, statType, serializedQuery, 'requesting' ] );
+	return !! state.stats.lists.requests?.[ siteId ]?.[ statType ]?.[ serializedQuery ]?.requesting;
 }
 
 /**
@@ -33,9 +33,9 @@ export function isRequestingSiteStatsForQuery( state, siteId, statType, query ) 
 export function hasSiteStatsForQueryFinished( state, siteId, statType, query ) {
 	const serializedQuery = getSerializedStatsQuery( query );
 	return (
-		get( state.stats.lists.requests, [ siteId, statType, serializedQuery, 'status' ] ) ===
+		state.stats.lists.requests?.[ siteId ]?.[ statType ]?.[ serializedQuery ]?.status ===
 			'success' ||
-		get( state.stats.lists.requests, [ siteId, statType, serializedQuery, 'status' ] ) === 'error'
+		state.stats.lists.requests?.[ siteId ]?.[ statType ]?.[ serializedQuery ]?.status === 'error'
 	);
 }
 
@@ -51,7 +51,7 @@ export function hasSiteStatsForQueryFinished( state, siteId, statType, query ) {
 export function hasSiteStatsQueryFailed( state, siteId, statType, query ) {
 	const serializedQuery = getSerializedStatsQuery( query );
 	return (
-		get( state.stats.lists.requests, [ siteId, statType, serializedQuery, 'status' ] ) === 'error'
+		state.stats.lists.requests?.[ siteId ]?.[ statType ]?.[ serializedQuery ]?.status === 'error'
 	);
 }
 
@@ -175,11 +175,9 @@ export function getSiteStatsCSVData( state, siteId, statType, query, modifierFn 
 		return [];
 	}
 
-	return flatten(
-		map( data, ( item ) => {
-			return buildExportArray( item, null, modifierFn );
-		} )
-	);
+	return map( data, ( item ) => {
+		return buildExportArray( item, null, modifierFn );
+	} ).flat();
 }
 
 /**
@@ -192,7 +190,7 @@ export function getSiteStatsCSVData( state, siteId, statType, query, modifierFn 
  */
 export function getSiteStatsQueryDate( state, siteId, statType, query ) {
 	const serializedQuery = getSerializedStatsQuery( query );
-	return get( state.stats.lists.requests, [ siteId, statType, serializedQuery, 'date' ] );
+	return state.stats.lists.requests?.[ siteId ]?.[ statType ]?.[ serializedQuery ]?.date;
 }
 
 /**

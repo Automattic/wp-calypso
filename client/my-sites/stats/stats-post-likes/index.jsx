@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
+import { compose } from 'redux';
 import PostLikes from 'calypso/blocks/post-likes';
 import { usePostLikes } from 'calypso/components/data/post-likes';
 import StatsModulePlaceholder from '../stats-module/placeholder';
@@ -32,4 +32,4 @@ StatsPostLikes.defaultProps = {
 	postType: 'post',
 };
 
-export default flowRight( toggleInfo, localize )( StatsPostLikes );
+export default compose( toggleInfo, localize )( StatsPostLikes );

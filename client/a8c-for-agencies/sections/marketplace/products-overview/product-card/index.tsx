@@ -13,6 +13,10 @@ import getProductShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/
 import getProductVariantShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-variant-short-title';
 import LicenseLightboxLink from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox-link';
 import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
+import {
+	getPressableMemoryTarget,
+	isPressablePhpMemoryAddon,
+} from '../../lib/pressable-memory-addon';
 import withProductLightbox, {
 	ProductLightboxActivatorProps,
 	WithProductLightboxProps,
@@ -52,7 +56,12 @@ function ProductCard( props: Props ) {
 	} = props;
 	const translate = useTranslate();
 
-	const { description: productDescription } = useProductDescription( currentProduct.slug );
+	const pressableMemoryTarget = getPressableMemoryTarget( currentProduct );
+	const isPressableMemoryAddon = isPressablePhpMemoryAddon( currentProduct );
+	const { description: productDescription } = useProductDescription(
+		currentProduct.slug,
+		pressableMemoryTarget
+	);
 
 	const customProductCard = useCustomProductCard( withCustomCard ? currentProduct : null );
 
@@ -195,6 +204,16 @@ function ProductCard( props: Props ) {
 							<div className="product-card__description">
 								{ preventWidows( customProductCard?.description ?? productDescription ) }
 							</div>
+							{ isPressableMemoryAddon && (
+								<div className="product-card__target-domain">
+									{ pressableMemoryTarget
+										? translate( 'Applies to %(siteDomain)s', {
+												args: { siteDomain: pressableMemoryTarget },
+												comment: '%(siteDomain)s is the target site/domain for the add-on.',
+										  } )
+										: translate( 'Applies to one Pressable site/domain.' ) }
+								</div>
+							) }
 						</div>
 					</div>
 				</div>

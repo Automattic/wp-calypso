@@ -1,10 +1,10 @@
 import { SegmentedControl } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
-import { flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';

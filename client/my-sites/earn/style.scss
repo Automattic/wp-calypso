@@ -1,6 +1,9 @@
 @import "@wordpress/base-styles/breakpoints";
-@import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+@import "@automattic/components/src/styles/typography";
 @import "calypso/components/jetpack-page-layout/admin-ui-page";
 
 // The same `calypso/my-sites/earn` module is registered under two section

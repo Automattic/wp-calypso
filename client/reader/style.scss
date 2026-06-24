@@ -1,3 +1,8 @@
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/hide-content-accessibly";
 @import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
@@ -505,6 +510,16 @@ body.is-section-reader {
 		padding: 0 24px 36px;
 		@include break-medium {
 			padding: 24px 108px 36px;
+		}
+	}
+
+	// The 2026 global nav is fixed and floats over this dark hero band, so add its
+	// height on top of the hero's own top padding to keep the heading clear of the nav.
+	&:has( .x-nav--2026-redesign ) .layout__header-section-content {
+		padding-top: calc( 24px + var( --nav-2026-height ) );
+
+		@include break-medium {
+			padding-top: calc( 48px + var( --nav-2026-height ) );
 		}
 	}
 

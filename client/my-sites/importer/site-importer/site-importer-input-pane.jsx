@@ -1,11 +1,13 @@
 import config from '@automattic/calypso-config';
 import { FormLabel } from '@automattic/components';
+import { sortBy } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { isEmpty, flowRight, trim, sortBy } from 'lodash';
+import { isEmpty } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import FormSelect from 'calypso/components/forms/form-select';
 import TextInput from 'calypso/components/forms/form-text-input';
 import { validateImportUrl } from 'calypso/lib/importer/url-validation';
@@ -141,7 +143,7 @@ class SiteImporterInputPane extends Component {
 	};
 
 	validateSite = () => {
-		const siteURL = trim( this.state.siteURLInput );
+		const siteURL = this.state.siteURLInput.trim();
 
 		if ( ! siteURL ) {
 			return;
@@ -269,7 +271,7 @@ class SiteImporterInputPane extends Component {
 	}
 }
 
-export default flowRight(
+export default compose(
 	connect(
 		( state ) => ( {
 			error: getError( state ),

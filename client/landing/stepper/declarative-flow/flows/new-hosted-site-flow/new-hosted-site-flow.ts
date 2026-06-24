@@ -229,7 +229,9 @@ const hosting: FlowV2< typeof initialize > = {
 							setSignupCompleteSlug( providedDependencies?.siteSlug );
 							setSignupCompleteFlowName( flowName );
 
-							couponCode && resetCouponCode();
+							if ( couponCode ) {
+								resetCouponCode();
+							}
 							return window.location.assign(
 								addQueryArgs(
 									`/checkout/${ encodeURIComponent(
@@ -254,15 +256,17 @@ const hosting: FlowV2< typeof initialize > = {
 	useSideEffect( currentStepSlug ) {
 		const studioSiteId = useQuery().get( 'studioSiteId' );
 		const autoOpenPush = useQuery().get( 'autoOpenPush' );
+		const section = useQuery().get( 'section' );
 		useEffect( () => {
 			if ( studioSiteId ) {
 				recordTracksEvent( 'calypso_studio_sync_step', {
 					flow: NEW_HOSTED_SITE_FLOW,
 					step: currentStepSlug,
+					section: section || undefined,
 					auto_open_push: autoOpenPush === 'true',
 				} );
 			}
-		}, [ currentStepSlug, studioSiteId, autoOpenPush ] );
+		}, [ currentStepSlug, studioSiteId, autoOpenPush, section ] );
 	},
 };
 

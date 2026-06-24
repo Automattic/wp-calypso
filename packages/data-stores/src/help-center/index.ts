@@ -39,4 +39,5 @@ export function register(): typeof STORE_KEY {
 	return STORE_KEY;
 }
 
+export { setHelpCenterAppId } from './utils';
 export type { HelpCenterSite } from './types';

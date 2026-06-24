@@ -14,9 +14,9 @@ function PostCommentWithError( {
 	repliesList,
 } ) {
 	const commentParentId = get( commentsTree, [ commentId, 'data', 'parent', 'ID' ], null );
-	const commentText = get( commentsTree, [ commentId, 'data', 'content' ] );
-	const placeholderError = get( commentsTree, [ commentId, 'data', 'placeholderError' ] );
-	const placeholderErrorType = get( commentsTree, [ commentId, 'data', 'placeholderErrorType' ] );
+	const commentText = commentsTree?.[ commentId ]?.data?.content;
+	const placeholderError = commentsTree?.[ commentId ]?.data?.placeholderError;
+	const placeholderErrorType = commentsTree?.[ commentId ]?.data?.placeholderErrorType;
 
 	const [ comment, setComment ] = useState( commentText );
 

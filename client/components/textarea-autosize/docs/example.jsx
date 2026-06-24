@@ -3,12 +3,8 @@ import TextareaAutosize from '../index';
 TextareaAutosize.displayName = 'TextareaAutosize';
 TextareaAutosizeExample.displayName = 'TextareaAutosize';
 
-function TextareaAutosizeExample( props ) {
-	return props.exampleCode;
-}
-
-TextareaAutosizeExample.defaultProps = {
-	exampleCode: (
+function TextareaAutosizeExample( {
+	exampleCode = (
 		<TextareaAutosize
 			rows="1"
 			defaultValue={
@@ -17,6 +13,8 @@ TextareaAutosizeExample.defaultProps = {
 			}
 		/>
 	),
-};
+} ) {
+	return exampleCode;
+}
 
 export default TextareaAutosizeExample;

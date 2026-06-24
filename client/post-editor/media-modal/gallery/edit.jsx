@@ -1,5 +1,6 @@
+import { sortBy } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { map, sortBy } from 'lodash';
+import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';

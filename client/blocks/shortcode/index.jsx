@@ -1,5 +1,5 @@
+import { omit } from '@automattic/js-utils';
 import clsx from 'clsx';
-import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import wpcom from 'calypso/lib/wp';
@@ -51,10 +51,6 @@ Shortcode.propTypes = {
 	filterRenderResult: PropTypes.func.isRequired,
 	className: PropTypes.string,
 	allowSameOrigin: PropTypes.bool,
-};
-
-Shortcode.defaultProps = {
-	allowSameOrigin: false,
 };
 
 export default Shortcode;

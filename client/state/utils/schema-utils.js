@@ -1,7 +1,8 @@
 import { getInitialState } from '@automattic/state-utils';
 import warn from '@wordpress/warning';
+import isEqual from 'fast-deep-equal/es6';
 import validator from 'is-my-json-valid';
-import { forEach, get, isEmpty, isEqual } from 'lodash';
+import { forEach, get, isEmpty } from 'lodash';
 import { serialize, deserialize } from './serialize';
 import { withPersistence } from './with-persistence';
 

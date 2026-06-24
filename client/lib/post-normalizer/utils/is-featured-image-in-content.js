@@ -1,5 +1,4 @@
 import { getUrlParts } from '@automattic/calypso-url';
-import { findIndex } from 'lodash';
 import { isPhotonHost } from 'calypso/lib/post-normalizer/utils/is-photon-host';
 import { thumbIsLikelyImage } from 'calypso/lib/post-normalizer/utils/thumb-is-likely-image';
 
@@ -21,11 +20,10 @@ export function isFeaturedImageInContent( post ) {
 	if ( thumbIsLikelyImage( post.post_thumbnail ) ) {
 		const featuredImagePath = getPathname( post.post_thumbnail.URL );
 
-		const indexOfContentImage = findIndex(
-			post.images,
-			( img ) => getPathname( img.src ) === featuredImagePath,
-			1
-		); // skip first element in post.images because it is always the featuredImage
+		// skip first element in post.images because it is always the featuredImage
+		const indexOfContentImage = ( post.images ?? [] ).findIndex(
+			( img, i ) => i >= 1 && getPathname( img.src ) === featuredImagePath
+		);
 
 		if ( indexOfContentImage > 0 ) {
 			return indexOfContentImage;

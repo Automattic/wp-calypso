@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import { isWooDnaFlow } from './is-woo-dna-flow';
@@ -9,19 +8,19 @@ import type { AppState } from 'calypso/types';
 // and is now absorbed into the Woo JPC Onboarding flow.
 // See https://github.com/Automattic/wp-calypso/pull/99558 for more details.
 const isLegacyJetpackWooOnboardingFlow = ( state: AppState ) => {
-	return 'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' );
+	return 'woocommerce-onboarding' === getCurrentQueryArguments( state )?.from;
 };
 
 export const isWooCommercePaymentsOnboardingFlow = ( state: AppState ) => {
 	const from =
-		get( getInitialQueryArguments( state ), 'from' ) === 'woocommerce-payments' ||
-		get( getCurrentQueryArguments( state ), 'from' ) === 'woocommerce-payments' ||
-		get( getInitialQueryArguments( state ), 'from' ) === 'woocommerce-onboarding' ||
-		get( getCurrentQueryArguments( state ), 'from' ) === 'woocommerce-onboarding';
+		getInitialQueryArguments( state )?.from === 'woocommerce-payments' ||
+		getCurrentQueryArguments( state )?.from === 'woocommerce-payments' ||
+		getInitialQueryArguments( state )?.from === 'woocommerce-onboarding' ||
+		getCurrentQueryArguments( state )?.from === 'woocommerce-onboarding';
 
 	const redirectTo =
-		get( getInitialQueryArguments( state ), 'redirect_to' ) ||
-		get( getCurrentQueryArguments( state ), 'redirect_to' );
+		getInitialQueryArguments( state )?.redirect_to ||
+		getCurrentQueryArguments( state )?.redirect_to;
 
 	// Unlike WooCommerce Core Profiler flow, we use both `from` and `plugin_name` to determine if the user is in the Woo Payments onboarding flow.
 	// `plugin_name` might not present in the query arguments, so we need to check the `redirect_to` query argument as well.
@@ -36,8 +35,8 @@ export const isWooCommercePaymentsOnboardingFlow = ( state: AppState ) => {
 		} )();
 
 	const plugin =
-		get( getInitialQueryArguments( state ), 'plugin_name' ) === 'woocommerce-payments' ||
-		get( getCurrentQueryArguments( state ), 'plugin_name' ) === 'woocommerce-payments' ||
+		getInitialQueryArguments( state )?.plugin_name === 'woocommerce-payments' ||
+		getCurrentQueryArguments( state )?.plugin_name === 'woocommerce-payments' ||
 		redirectToHasWooCommercePayments;
 
 	return from && plugin;

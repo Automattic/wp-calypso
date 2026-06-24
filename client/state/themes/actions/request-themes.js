@@ -1,4 +1,4 @@
-import { map, property } from 'lodash';
+import { map } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import { fetchThemesList as fetchWporgThemesList } from 'calypso/lib/wporg';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -104,7 +104,7 @@ export function requestThemes( siteId, query = {}, locale ) {
 						tier: query.tier,
 						response_time_in_ms: responseTime,
 						result_count: found,
-						results_first_page: themes.map( property( 'id' ) ).join(),
+						results_first_page: themes.map( ( theme ) => theme?.id ).join(),
 					} );
 					dispatch( trackShowcaseSearch );
 

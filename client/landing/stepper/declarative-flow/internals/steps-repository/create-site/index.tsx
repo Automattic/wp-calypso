@@ -11,6 +11,7 @@ import {
 	isNewsletterFlow,
 	isReadymadeFlow,
 	isStartWritingFlow,
+	isWriteOnFlow,
 	isOnboardingFlow,
 	Step,
 	isNewSiteMigrationFlow,
@@ -37,6 +38,7 @@ import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { useSimplifiedOnboarding } from '../../../../hooks/use-simplified-onboarding';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
+import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../playground/lib/constants';
 import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './styles.scss';
@@ -163,6 +165,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		isOnboardingFlow( flow ) ||
 		isCopySiteFlow( flow ) ||
 		isStartWritingFlow( flow ) ||
+		isWriteOnFlow( flow ) ||
 		isNewHostedSiteCreationFlow( flow ) ||
 		isReadymadeFlow( flow ) ||
 		wooFlows.includes( flow || '' ) ||
@@ -242,6 +245,9 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			: '';
 
 		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
+		const isPlaygroundPublish =
+			sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1';
+
 		const site = await createSite(
 			flow,
 			theme,
@@ -261,7 +267,8 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			undefined, // siteGoals
 			gardenName,
 			gardenPartnerName,
-			urlQueryParams.get( 'spec_id' )
+			urlQueryParams.get( 'spec_id' ),
+			isPlaygroundPublish ? 'playground-publish' : undefined
 		);
 
 		if ( ! site ) {

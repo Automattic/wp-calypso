@@ -1,6 +1,6 @@
 // packages/ui/src/stepper/step.tsx
 import { Accordion } from '@base-ui/react/accordion';
-import { forwardRef, useContext, useEffect, useLayoutEffect } from '@wordpress/element';
+import { forwardRef, useContext, useEffect, useId, useLayoutEffect } from '@wordpress/element';
 import { StepContext, StepperContext } from './context';
 import type { StepContextValue, StepStatus } from './types';
 import type { ReactNode } from 'react';
@@ -33,6 +33,10 @@ export const StepperStep = forwardRef< HTMLDivElement, StepperStepProps >( funct
 		orientation,
 	} = rootCtx;
 
+	// Stable per-mount id so each instance owns its own registration, even when
+	// two steps transiently share the same `value`.
+	const id = useId();
+
 	// Compute derived state
 	const isCurrent = value === activeValue;
 	const index = steps.findIndex( ( s ) => s.value === value );
@@ -47,17 +51,17 @@ export const StepperStep = forwardRef< HTMLDivElement, StepperStepProps >( funct
 	// useLayoutEffect ensures registration happens before the first browser paint,
 	// so totalSteps and index are correct on the first visible render.
 	useLayoutEffect( () => {
-		const deregister = registerStep( { value, status, disabled: isDisabled } );
+		const deregister = registerStep( id, { value, status, disabled: isDisabled } );
 		return deregister;
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ value ] );
+	}, [ id, value ] );
 
 	// useEffect (not useLayoutEffect) is intentional: syncing metadata after
 	// commit does not affect the initial render. The redundant call on first
 	// mount is harmless — updateStep is a no-op when props have not changed.
 	useEffect( () => {
-		updateStep( { value, status, disabled: isDisabled } );
-	}, [ value, status, isDisabled, updateStep ] );
+		updateStep( id, { value, status, disabled: isDisabled } );
+	}, [ id, value, status, isDisabled, updateStep ] );
 
 	const stepCtx: StepContextValue = {
 		value,

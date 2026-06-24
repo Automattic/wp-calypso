@@ -5,6 +5,10 @@
   - After: `const unsubscribe = i18n.subscribe( callback ); unsubscribe();`
 - Breaking: Removed `geolocateCurrencySymbol` function. Country code assignment is handled in the `format-currency` package `setGeoLocation` function.
 
+## 7.4.1
+
+- Declare React 19 compatibility for package consumers (#111721).
+
 ## 7.5.0
 
 - Add `translationOptions` to fixMe so it can work on translations with context.

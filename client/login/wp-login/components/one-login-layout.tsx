@@ -3,6 +3,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
+import { type JSX } from 'react';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { useLoginContext } from 'calypso/login/login-context';
@@ -143,7 +144,7 @@ const OneLoginLayout = ( {
 		);
 	};
 
-	const topBar = (): React.JSX.Element => {
+	const topBar = (): JSX.Element => {
 		const rightElement = (
 			<nav className="wp-login__one-login-layout-top-right">
 				{ isSectionSignup ? <LoginLink /> : <SignUpLink /> }

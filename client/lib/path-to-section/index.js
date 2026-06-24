@@ -1,4 +1,5 @@
-import { filter, get, maxBy, startsWith } from 'lodash';
+import { maxBy } from '@automattic/js-utils';
+import { filter } from 'lodash';
 import { getSections } from 'calypso/sections-helper';
 
 export default function pathToSection( path ) {
@@ -6,21 +7,21 @@ export default function pathToSection( path ) {
 	const bestMatch = maxBy( getSections(), ( section ) =>
 		Math.max(
 			...section.paths.map( ( sectionPath ) =>
-				startsWith( path, sectionPath ) ? sectionPath.length : 0
+				( path ?? '' ).startsWith( sectionPath ) ? sectionPath.length : 0
 			)
 		)
 	);
 
 	// sort out special case we don't want to match: matching on '/' but path isn't exactly '/'
 	const matchingPaths = filter( bestMatch.paths, ( sectionPath ) =>
-		startsWith( path, sectionPath )
+		( path ?? '' ).startsWith( sectionPath )
 	);
 	if ( matchingPaths.length === 1 && matchingPaths[ 0 ] === '/' && path !== '/' ) {
 		return null;
 	}
 	// make sure the best match is actually a match (in case nothing matches)
-	if ( bestMatch.paths.some( ( sectionPath ) => startsWith( path, sectionPath ) ) ) {
-		return get( bestMatch, 'name' );
+	if ( bestMatch.paths.some( ( sectionPath ) => ( path ?? '' ).startsWith( sectionPath ) ) ) {
+		return bestMatch?.name;
 	}
 	return null;
 }

@@ -7,6 +7,7 @@ interface Nav2026DesktopDropdownProps {
 	dropdownRef: React.RefObject< HTMLDivElement >;
 	activeDropdown: string | null;
 	nav2026Menus: Nav2026Menu[];
+	onMouseLeave?: React.MouseEventHandler< HTMLDivElement >;
 }
 
 // One persistent panel; the active menu cross-fades in so switching never blanks it.
@@ -14,6 +15,7 @@ export function Nav2026DesktopDropdown( {
 	dropdownRef,
 	activeDropdown,
 	nav2026Menus,
+	onMouseLeave,
 }: Nav2026DesktopDropdownProps ) {
 	return (
 		<div
@@ -21,6 +23,7 @@ export function Nav2026DesktopDropdown( {
 			className={ clsx( 'x-dropdown x-dropdown--2026', {
 				'is-dropdown-open': activeDropdown !== null,
 			} ) }
+			onMouseLeave={ onMouseLeave }
 		>
 			{ nav2026Menus.map( ( menu ) => {
 				if ( ! menu.groups ) {
@@ -54,9 +57,19 @@ export function Nav2026DesktopDropdown( {
 												key={ item.url }
 												index={ staggerIndex++ }
 												titleValue=""
-												content={ item.label }
+												content={
+													item.badge ? (
+														<>
+															{ item.label }
+															<span className="x-dropdown-badge-new">{ item.badge }</span>
+														</>
+													) : (
+														item.label
+													)
+												}
 												urlValue={ item.url }
 												type="dropdown"
+												trackingText={ item.label }
 												target={ item.target }
 												tabIndex={ activeDropdown === menu.name ? undefined : -1 }
 											/>

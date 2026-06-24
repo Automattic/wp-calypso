@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component, useEffect } from 'react';
@@ -22,7 +21,7 @@ import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-util
 import { installKonamiListener } from 'calypso/layout/arcade-mode/detect';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
-import { useNav2026Props } from 'calypso/layout/use-nav-2026-props';
+import { Nav2026UniversalHeader } from 'calypso/layout/nav-2026-universal-header';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { ClassicColorSchemeProvider, withColorScheme } from 'calypso/lib/color-scheme';
@@ -468,19 +467,6 @@ class Layout extends Component {
 			</div>
 		);
 	}
-}
-
-// Resolves the 2026 nav experiment only where the universal header renders,
-// so non-universal-header routes don't fetch an unused ExPlat assignment.
-function Nav2026UniversalHeader( { isLoggedIn, sectionName } ) {
-	const nav2026Props = useNav2026Props();
-	return (
-		<UniversalNavbarHeader
-			isLoggedIn={ isLoggedIn }
-			sectionName={ sectionName }
-			{ ...nav2026Props }
-		/>
-	);
 }
 
 export default withCurrentRoute(

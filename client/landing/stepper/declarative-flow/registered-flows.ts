@@ -22,6 +22,7 @@ import {
 	WOO_HOSTED_PLANS_FLOW,
 	ART_PROMO_FLOW,
 	DIRECT_TO_CART_FLOW,
+	WRITE_ON_FLOW,
 } from '@automattic/onboarding';
 import type { Flow, FlowV2 } from '../declarative-flow/internals/types';
 
@@ -70,6 +71,9 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 
 	[ ART_PROMO_FLOW ]: () =>
 		import( /* webpackChunkName: "artpromo-flow" */ './flows/artpromo/artpromo' ),
+
+	[ WRITE_ON_FLOW ]: () =>
+		import( /* webpackChunkName: "write-on-flow" */ './flows/write-on/write-on' ),
 };
 
 /**

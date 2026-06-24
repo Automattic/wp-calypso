@@ -6,8 +6,8 @@ export type { HeadlessAgentInitializerProps } from './components/headless-agent-
 
 export { AGENTS_MANAGER_STORE } from './stores';
 
-// Utility for checking unified experience from inline script data
-export { getUseUnifiedExperienceFromInlineData } from './utils/load-external-providers';
+// Utility for agents manager inline data
+export { getAgentsManagerInlineData } from './utils/get-agents-manager-inline-data';
 
 // Extension API types for other plugins to hook into
 export type {

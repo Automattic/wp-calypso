@@ -1,5 +1,6 @@
+import { debounce } from '@wordpress/compose';
 import { select } from '@wordpress/data';
-import { debounce, get } from 'lodash';
+import { get } from 'lodash';
 import tracksRecordEvent from './track-record-event';
 
 /**

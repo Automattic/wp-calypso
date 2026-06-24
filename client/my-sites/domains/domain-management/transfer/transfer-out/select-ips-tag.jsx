@@ -1,7 +1,7 @@
 import { Card, Dialog, Suggestions } from '@automattic/components';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import { find, isEmpty, startsWith } from 'lodash';
+import { find, isEmpty } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
@@ -68,7 +68,8 @@ class SelectIpsTag extends Component {
 		return this.state.ipsTagList
 			.filter(
 				( hint ) =>
-					this.state.currentQuery && startsWith( hint.tag, this.state.currentQuery.toUpperCase() )
+					this.state.currentQuery &&
+					( hint.tag ?? '' ).startsWith( this.state.currentQuery.toUpperCase() )
 			)
 			.map( ( hint ) => ( { label: hint.tag + '  (' + hint.registrarName + ')' } ) );
 	}

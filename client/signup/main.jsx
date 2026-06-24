@@ -8,23 +8,12 @@ import {
 import page from '@automattic/calypso-router';
 import { GravatarTextLogo } from '@automattic/components';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
-import { camelToSnakeCase } from '@automattic/js-utils';
+import { camelToSnakeCase, kebabCase, omit } from '@automattic/js-utils';
 import * as oauthToken from '@automattic/oauth-token';
 import { isDomainForGravatarFlow } from '@automattic/onboarding';
 import debugModule from 'debug';
-import {
-	clone,
-	defer,
-	find,
-	get,
-	includes,
-	isEmpty,
-	isEqual,
-	kebabCase,
-	map,
-	omit,
-	startsWith,
-} from 'lodash';
+import isEqual from 'fast-deep-equal/es6';
+import { find, get, isEmpty, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -217,7 +206,7 @@ class Signup extends Component {
 			if (
 				! this.state.shouldShowLoadingScreen &&
 				this.isStepFulfillmentReady( stepName, nextProps ) &&
-				! includes( flows.excludedSteps, stepName ) &&
+				! flows.excludedSteps.includes( stepName ) &&
 				! this._recordedSteps.has( stepName )
 			) {
 				this._recordStepsInOrder( { includeCurrentStep: true, forStep: stepName } );
@@ -301,7 +290,7 @@ class Signup extends Component {
 		if ( siteDomains !== prevProps.siteDomains || didCurrentStepBecomeFulfillmentReady ) {
 			this.removeFulfilledSteps( this.props );
 
-			if ( ! includes( flows.excludedSteps, stepName ) && ! this._recordedSteps.has( stepName ) ) {
+			if ( ! flows.excludedSteps.includes( stepName ) && ! this._recordedSteps.has( stepName ) ) {
 				this._recordStepsInOrder( { includeCurrentStep: true } );
 			}
 		}
@@ -355,7 +344,7 @@ class Signup extends Component {
 
 		for ( const step of rawFlow.steps ) {
 			if ( ! this._recordedSteps.has( step ) ) {
-				if ( includes( flows.excludedSteps, step ) ) {
+				if ( flows.excludedSteps.includes( step ) ) {
 					this.recordSignupStepAndPageView( {
 						skipStepRender: true,
 						overrideStepName: step,
@@ -397,7 +386,7 @@ class Signup extends Component {
 		const { signupDependencies, hostingFlow, queryObject, wccomFrom, oauth2Client } = this.props;
 		const mainFlow = queryObject?.main_flow;
 
-		let theme = get( signupDependencies, 'selectedDesign.theme' );
+		let theme = signupDependencies?.selectedDesign?.theme;
 
 		if ( ! theme && signupDependencies.themeParameter ) {
 			theme = signupDependencies.themeParameter;
@@ -408,8 +397,8 @@ class Signup extends Component {
 		return {
 			...deps,
 			theme,
-			intent: get( signupDependencies, 'intent' ),
-			starting_point: get( signupDependencies, 'startingPoint' ),
+			intent: signupDependencies?.intent,
+			starting_point: signupDependencies?.startingPoint,
 			is_in_hosting_flow: hostingFlow,
 			wccom_from: wccomFrom,
 			oauth2_client_id: oauth2Client?.id,
@@ -568,9 +557,9 @@ class Signup extends Component {
 		const currentStepIndex = flowSteps.indexOf( stepName );
 		const stepsToProcess =
 			currentStepIndex >= 0 ? flowSteps.slice( 0, currentStepIndex + 1 ) : flowSteps;
-		const previouslyExcludedSteps = clone( flows.excludedSteps );
+		const previouslyExcludedSteps = [ ...flows.excludedSteps ];
 		map( previouslyExcludedSteps, ( flowStepName ) => {
-			if ( includes( stepsToProcess, flowStepName ) ) {
+			if ( stepsToProcess.includes( flowStepName ) ) {
 				this.processFulfilledSteps( flowStepName, nextProps );
 			}
 		} );
@@ -578,7 +567,7 @@ class Signup extends Component {
 			this.processFulfilledSteps( flowStepName, nextProps )
 		);
 
-		if ( includes( flows.excludedSteps, stepName ) ) {
+		if ( flows.excludedSteps.includes( stepName ) ) {
 			this._recordStepsInOrder( { forStep: stepName } );
 			this.goToNextStep( flowName );
 		}
@@ -601,13 +590,13 @@ class Signup extends Component {
 		const hasCartItems = dependenciesContainCartItem( dependencies );
 		// @TODO: cartItem is now deprecated. Remove this once all steps and flows have been
 		// updated to use cartItems
-		const cartItem = get( dependencies, 'cartItem' );
-		const cartItems = get( dependencies, 'cartItems' );
-		const domainItem = get( dependencies, 'domainItem' );
-		const selectedDesign = get( dependencies, 'selectedDesign' );
-		const intent = get( dependencies, 'intent' );
-		const startingPoint = get( dependencies, 'startingPoint' );
-		const signupDomainOrigin = get( dependencies, 'signupDomainOrigin' );
+		const cartItem = dependencies?.cartItem;
+		const cartItems = dependencies?.cartItems;
+		const domainItem = dependencies?.domainItem;
+		const selectedDesign = dependencies?.selectedDesign;
+		const intent = dependencies?.intent;
+		const startingPoint = dependencies?.startingPoint;
+		const signupDomainOrigin = dependencies?.signupDomainOrigin;
 		const planProductSlug = cartItems?.length
 			? cartItems.find( ( item ) => isPlan( item ) )?.product_slug
 			: cartItem?.product_slug;
@@ -666,7 +655,7 @@ class Signup extends Component {
 			}
 
 			// deferred in case the user is logged in and the redirect triggers a dispatch
-			defer( () => {
+			setTimeout( () => {
 				debug( `Redirecting you to "${ destination }"` );
 				// Experimental: added the flowName check to restrict this functionality only for the 'website-design-services' flow.
 				if ( destination?.startsWith( '/checkout/' ) && 'website-design-services' === flowName ) {
@@ -674,7 +663,7 @@ class Signup extends Component {
 					return;
 				}
 				window.location.href = destination;
-			} );
+			}, 0 );
 
 			return;
 		}
@@ -736,7 +725,7 @@ class Signup extends Component {
 	}
 
 	loginRedirectTo = ( path ) => {
-		if ( startsWith( path, 'https://' ) || startsWith( path, 'http://' ) ) {
+		if ( ( path ?? '' ).startsWith( 'https://' ) || ( path ?? '' ).startsWith( 'http://' ) ) {
 			return path;
 		}
 
@@ -951,10 +940,9 @@ class Signup extends Component {
 	}
 
 	isCurrentStepRemovedFromFlow() {
-		return ! includes(
-			flows.getFlow( this.props.flowName, this.props.isLoggedIn ).steps,
-			this.props.stepName
-		);
+		return ! flows
+			.getFlow( this.props.flowName, this.props.isLoggedIn )
+			.steps.includes( this.props.stepName );
 	}
 
 	shouldWaitToRender() {
