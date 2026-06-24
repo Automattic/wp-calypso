@@ -1,9 +1,10 @@
-// Shared accent-color definitions for Spaces. A space exposes its accent as two
+// Shared accent-color definitions for Spaces. A space exposes its accent as
 // custom properties — `--space-color` (foreground: the icon glyph, the active
-// row's name, a selected swatch) and `--space-color-bg` (the icon's surface
-// tint) — both derived from the matching color-studio ramp. Consumers (the
-// sidebar item, the color picker) `@use` this partial and emit the variables on
-// their own selectors, so the palette lives in one place.
+// row's name, a selected swatch), `--space-color-bg` (the icon's surface tint),
+// and the interaction variants `--space-color-hover` / `--space-color-visited`
+// — all derived from the matching color-studio ramp. Consumers (the sidebar
+// item, the color picker, the feed) `@use` this partial and emit the variables
+// on their own selectors, so the palette lives in one place.
 
 // The accent palette, in display order. Mirror `SPACE_COLORS` in `colors.ts`.
 // Quoted so stylelint doesn't read the bare words as CSS named colors; they
@@ -11,6 +12,13 @@
 $space-colors: 'blue', 'purple', 'red', 'orange', 'green', 'celadon', 'pink', 'gray';
 
 @mixin space-accent-color( $color ) {
-	--space-color: var( --studio-#{$color}-50 );
+	// Base/foreground sits at the dark `-80` step (same darkness as `--color-text`),
+	// so the accent reads as a sober default rather than a bright hue.
+	--space-color: var( --studio-#{$color}-80 );
 	--space-color-bg: var( --studio-#{$color}-5 );
+	// Interaction variants off the same accent: a lighter, more saturated step so
+	// the hue surfaces on hover, and — for the visited / “already read” state —
+	// the accent muted toward the subtle text color so it reads as faded.
+	--space-color-hover: var( --studio-#{$color}-60 );
+	--space-color-visited: color-mix( in srgb, var( --studio-#{$color}-80 ) 40%, var( --color-text-subtle ) );
 }

@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { useCallback, useMemo, useState } from 'react';
 import { useSpace } from 'calypso/reader/data/spaces';
 import { useInfiniteStream } from 'calypso/reader/data/stream';
@@ -132,7 +133,7 @@ export function SpaceFeed( { spaceId, layoutView }: Props ) {
 	};
 
 	return (
-		<div className="space-feed">
+		<div className={ clsx( 'space-feed', space && `space-feed--${ space.layout.color }` ) }>
 			<SpaceFeedSourceNotice failedCount={ 0 } />
 			<div className="space-feed__viewport" ref={ setViewport }>
 				{ renderBody() }
