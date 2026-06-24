@@ -658,6 +658,15 @@ function ChangePlanActionItem( { purchase }: { purchase: Purchase } ) {
 	}
 
 	const isPastExpiryDowngrade = purchase.is_past_expiry_date && purchase.is_plan;
+	const mode = ( () => {
+		if ( isPastExpiryDowngrade ) {
+			return 'expired';
+		}
+		if ( isWithinRefundWindowDowngradeEligible( purchase ) ) {
+			return 'refund-window';
+		}
+		return 'delayed-downgrade';
+	} )();
 
 	return (
 		<ActionList.ActionItem
@@ -670,7 +679,7 @@ function ChangePlanActionItem( { purchase }: { purchase: Purchase } ) {
 					onClick={ () => {
 						recordTracksEvent( 'calypso_purchases_change_plan_click', {
 							product_slug: purchase.product_slug,
-							mode: isPastExpiryDowngrade ? 'expired' : 'refund-window',
+							mode,
 						} );
 						window.location.href = getExpiredNewPlanUrl( purchase );
 					} }
