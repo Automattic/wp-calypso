@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { getStreamInfiniteQueryKey } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
@@ -224,7 +225,111 @@ describe( 'useStreamPendingPosts', () => {
 		expect( result.current.pendingCount ).toBe( 0 );
 	} );
 
-	it( 'reset() drops the polled head from cache', async () => {
+	it( 'consume() prepends the polled pending posts to the rendered stream cache', async () => {
+		nock( BASE )
+			.get( LIKES_PATH )
+			.query( true )
+			.reply( 200, {
+				posts: [ apiPost( 1 ), apiPost( 2 ), apiPost( 3 ) ],
+				date_range: { after: null, before: null },
+			} );
+
+		const queryClient = makeQueryClient();
+		const streamQueryKey = getStreamInfiniteQueryKey( {
+			streamKey: 'likes',
+			feedId: null,
+			localeSlug: null,
+			startDate: null,
+		} );
+		queryClient.setQueryData( streamQueryKey, {
+			pageParams: [ null ],
+			pages: [
+				{
+					posts: [ apiPost( 2 ), apiPost( 3 ) ],
+					date_range: { after: null, before: null },
+				},
+			],
+		} );
+
+		const { Wrapper } = makeWrapper( queryClient );
+		const items = [ postKey( 2 ), postKey( 3 ) ];
+		const { result } = renderHook(
+			() => useStreamPendingPosts( { streamKey: 'likes', items, shouldPoll: true } ),
+			{ wrapper: Wrapper }
+		);
+
+		await waitFor( () => expect( result.current.pendingCount ).toBe( 1 ) );
+
+		act( () => {
+			result.current.consume();
+		} );
+
+		const streamData = queryClient.getQueryData< {
+			pages: Array< { posts?: ApiPost[] } >;
+		} >( streamQueryKey );
+		expect( streamData?.pages[ 0 ].posts?.map( ( post ) => post.ID ) ).toEqual( [ 1, 2, 3 ] );
+		await waitFor( () =>
+			expect( queryClient.getQueryState( streamQueryKey )?.isInvalidated ).toBe( true )
+		);
+		await waitFor( () => expect( result.current.pendingCount ).toBe( 0 ) );
+	} );
+
+	it( 'consume() does not duplicate posts already present in the current stream cache', async () => {
+		nock( BASE )
+			.get( LIKES_PATH )
+			.query( true )
+			.reply( 200, {
+				posts: [ apiPost( 1 ), apiPost( 2 ), apiPost( 3 ) ],
+				date_range: { after: null, before: null },
+			} );
+
+		const queryClient = makeQueryClient();
+		const streamQueryKey = getStreamInfiniteQueryKey( {
+			streamKey: 'likes',
+			feedId: null,
+			localeSlug: null,
+			startDate: null,
+		} );
+		queryClient.setQueryData( streamQueryKey, {
+			pageParams: [ null ],
+			pages: [
+				{
+					posts: [ apiPost( 2 ), apiPost( 3 ) ],
+					date_range: { after: null, before: null },
+				},
+			],
+		} );
+
+		const { Wrapper } = makeWrapper( queryClient );
+		const items = [ postKey( 2 ), postKey( 3 ) ];
+		const { result } = renderHook(
+			() => useStreamPendingPosts( { streamKey: 'likes', items, shouldPoll: true } ),
+			{ wrapper: Wrapper }
+		);
+
+		await waitFor( () => expect( result.current.pendingCount ).toBe( 1 ) );
+
+		act( () => {
+			queryClient.setQueryData( streamQueryKey, {
+				pageParams: [ null ],
+				pages: [
+					{
+						posts: [ apiPost( 1 ), apiPost( 2 ), apiPost( 3 ) ],
+						date_range: { after: null, before: null },
+					},
+				],
+			} );
+			result.current.consume();
+		} );
+
+		const streamData = queryClient.getQueryData< {
+			pages: Array< { posts?: ApiPost[] } >;
+		} >( streamQueryKey );
+		expect( streamData?.pages[ 0 ].posts?.map( ( post ) => post.ID ) ).toEqual( [ 1, 2, 3 ] );
+		await waitFor( () => expect( result.current.pendingCount ).toBe( 0 ) );
+	} );
+
+	it( 'reset() drops the polled head from cache without immediately refetching', async () => {
 		nock( BASE )
 			.get( LIKES_PATH )
 			.query( true )
@@ -243,8 +348,7 @@ describe( 'useStreamPendingPosts', () => {
 
 		await waitFor( () => expect( result.current.pendingCount ).toBe( 1 ) );
 
-		// `resetQueries` re-fetches active observers; mock the second call.
-		nock( BASE )
+		const unexpectedRefetch = nock( BASE )
 			.get( LIKES_PATH )
 			.query( true )
 			.reply( 200, {
@@ -256,9 +360,10 @@ describe( 'useStreamPendingPosts', () => {
 			result.current.reset();
 		} );
 
-		// pendingCount snaps to 0 immediately after reset (data is undefined),
-		// and stays 0 once the follow-up fetch lands matching the visible items.
+		// pendingCount snaps to 0 immediately after reset (data is cleared),
+		// without the active poll observer starting a new network request.
 		await waitFor( () => expect( result.current.pendingCount ).toBe( 0 ) );
+		expect( unexpectedRefetch.isDone() ).toBe( false );
 	} );
 
 	it( 'rotates queryKey on streamKey change so polled head does not bleed across streams', async () => {

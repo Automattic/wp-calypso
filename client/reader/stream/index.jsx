@@ -886,7 +886,7 @@ const withStreamPosts = ( WrappedComponent ) =>
 		const {
 			pendingCount,
 			hasPendingPosts,
-			reset: resetPending,
+			consume: consumePendingPosts,
 		} = useStreamPendingPosts( {
 			streamKey: props.streamKey,
 			feedId: props.selectedFeedId,
@@ -907,15 +907,13 @@ const withStreamPosts = ( WrappedComponent ) =>
 			}
 		}, [ hasPendingPosts, invalidate ] );
 
-		// Click handler for `<UpdateNotice>`: refetch all loaded pages now and
-		// drop the polled head from cache so the pill clears immediately
-		// (instead of flickering until the next poll tick recomputes against
-		// the freshly refetched items).
-		const { refetch } = streamPostsQuery;
+		// Click handler for `<UpdateNotice>`: prepend the already-polled head to
+		// the rendered infinite stream and clear the poll cache. This keeps the
+		// legacy "show updates" behavior without waiting on a second fetch.
 		const consumePending = React.useCallback( () => {
-			refetch();
-			resetPending();
-		}, [ refetch, resetPending ] );
+			consumePendingPosts();
+		}, [ consumePendingPosts ] );
+		const { refetch } = streamPostsQuery;
 
 		// Selection lives in the React Query cache (not Redux). The hook is
 		// keyed by `[streamKey, localeSlug]`, so switching streams (including
