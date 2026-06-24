@@ -4,6 +4,7 @@
 import { store } from '../../state';
 import actions from '../../state/actions';
 import getAllNotes from '../../state/selectors/get-all-notes';
+import getIsLoading from '../../state/selectors/get-is-loading';
 import getUnreadNoteIds from '../../state/selectors/get-unread-note-ids';
 import Client from '../index';
 import { init } from '../wpcom';
@@ -523,6 +524,29 @@ describe( 'RestClient', () => {
 			expect( unread ).toHaveLength( 20 );
 			expect( unread ).toContain( 209 ); // head kept
 			expect( unread ).toContain( 190 ); // older paged-in id kept
+		} );
+	} );
+
+	describe( 'loading state', () => {
+		// Regression: with the fixed head window, paging older notes must still flip
+		// the loading state on, so the UI shows its load-more indicator.
+		it( 'flips loading on while paging older notes and off when the page lands', () => {
+			seedFirstWindow(); // 10 notes loaded; settles loading to false
+			expect( getIsLoading( store.getState() ) ).toBe( false );
+
+			client.loadMore();
+			expect( getIsLoading( store.getState() ) ).toBe( true );
+
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 90 ), last_seen_time: 0 } );
+			expect( getIsLoading( store.getState() ) ).toBe( false );
+		} );
+
+		// A steady-state poll (no `before`, a full window already loaded) must not
+		// flash the loading state.
+		it( 'stays silent on a steady-state refresh once a full window is loaded', () => {
+			seedFirstWindow(); // 10 notes loaded, loading false
+			client.getNotes();
+			expect( getIsLoading( store.getState() ) ).toBe( false );
 		} );
 	} );
 } );

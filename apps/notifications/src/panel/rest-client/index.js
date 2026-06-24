@@ -206,7 +206,9 @@ function getNotes( before ) {
 		parameters.before = before;
 	}
 
-	if ( ! notes.length || settings.initial_limit > notes.length ) {
+	// Show the loading state while paging older notes (`before`) and until the
+	// first head window has filled; a steady-state background poll stays silent.
+	if ( before || notes.length < settings.initial_limit ) {
 		store.dispatch( actions.ui.loadNotes() );
 	}
 
