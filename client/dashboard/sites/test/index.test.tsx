@@ -123,24 +123,39 @@ describe( '<Sites>', () => {
 		} );
 		startSiteCollisionListener( queryClient );
 
-		// The collision listener (started by test-utils) should auto-detect the
-		// Jetpack site and fix the wpcom site's slug without manual intervention.
-		const links = await screen.findAllByRole( 'link', { name: /WPcom Site/ } );
-		for ( const link of links ) {
-			expect( link ).toHaveAttribute(
-				'href',
-				expect.stringMatching( /\/sites\/wpcomsite.wordpress\.com$/ )
-			);
-		}
+		// <Sites> uses a suspense query; wait for the table to render before
+		// asserting.
+		await screen.findByRole( 'table' );
+
+		// The collision listener rewrites the wpcom site's slug asynchronously, so
+		// poll until the rewrite lands instead of racing it. Scope the link lookup
+		// to the table (so a link rendered elsewhere can't satisfy the assertion)
+		// and re-query the table each poll so a re-render replacing the node leaves
+		// no stale reference.
+		await waitFor( () => {
+			const links = within( screen.getByRole( 'table' ) ).getAllByRole( 'link', {
+				name: /WPcom Site/,
+			} );
+			for ( const link of links ) {
+				expect( link ).toHaveAttribute(
+					'href',
+					expect.stringMatching( /\/sites\/wpcomsite\.wordpress\.com$/ )
+				);
+			}
+		} );
 
 		// The Jetpack site's links should remain unchanged.
-		const jpLinks = await screen.findAllByRole( 'link', { name: /Jetpack Site/ } );
-		for ( const jpLink of jpLinks ) {
-			expect( jpLink ).toHaveAttribute(
-				'href',
-				expect.stringMatching( /\/sites\/shared-domain\.com$/ )
-			);
-		}
+		await waitFor( () => {
+			const jpLinks = within( screen.getByRole( 'table' ) ).getAllByRole( 'link', {
+				name: /Jetpack Site/,
+			} );
+			for ( const jpLink of jpLinks ) {
+				expect( jpLink ).toHaveAttribute(
+					'href',
+					expect.stringMatching( /\/sites\/shared-domain\.com$/ )
+				);
+			}
+		} );
 	} );
 
 	test( 'renders DataViews when the user has sites', async () => {
