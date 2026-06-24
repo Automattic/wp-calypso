@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/jetpack/init';
 
 /**
@@ -11,5 +9,5 @@ import 'calypso/state/jetpack/init';
  * @returns {?boolean}            Whether module is currently being deactivated
  */
 export default function isDeactivatingJetpackModule( state, siteId, moduleSlug ) {
-	return get( state.jetpack.modules.requests, [ siteId, moduleSlug, 'deactivating' ], null );
+	return state.jetpack.modules.requests?.[ siteId ]?.[ moduleSlug ]?.deactivating ?? null;
 }

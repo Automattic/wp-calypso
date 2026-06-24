@@ -81,7 +81,7 @@ export const fromEditor = ( content ) => {
 	// [ output, index, text ]
 	const [ o, i, t ] = ranges.reduce(
 		( [ output, lastIndex, remainingText ], next ) => {
-			const tokenName = get( entities, [ next.key, 'data', 'name' ], null );
+			const tokenName = entities?.[ next.key ]?.data?.name ?? null;
 			const textBlock =
 				next.offset > lastIndex
 					? { type: 'string', value: remainingText.slice( lastIndex, next.offset ) }

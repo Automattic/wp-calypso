@@ -331,7 +331,7 @@ class TransferDomainStep extends Component {
 				losingRegistrar={ inboundTransferStatus.losingRegistrar }
 				losingRegistrarIanaId={ inboundTransferStatus.losingRegistrarIanaId }
 				refreshStatus={ this.getInboundTransferStatus }
-				selectedSiteSlug={ get( this.props, 'selectedSite.slug', null ) }
+				selectedSiteSlug={ this.props?.selectedSite?.slug ?? null }
 				setValid={ onSetValid }
 				supportsPrivacy={ this.state.supportsPrivacy }
 				unlocked={ inboundTransferStatus.unlocked }
@@ -365,7 +365,7 @@ class TransferDomainStep extends Component {
 				domain={ domain }
 				goBack={ this.goBack }
 				mapDomainUrl={ this.getMapDomainUrl() }
-				selectedSiteSlug={ get( this.props, 'selectedSite.slug', null ) }
+				selectedSiteSlug={ this.props?.selectedSite?.slug ?? null }
 				termMaximumInYears={ termMaximumInYears }
 				transferEligibleDate={ transferEligibleDate }
 				transferRestrictionStatus={ transferRestrictionStatus }
@@ -540,7 +540,7 @@ class TransferDomainStep extends Component {
 
 		return new Promise( ( resolve ) => {
 			checkDomainAvailability(
-				{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
+				{ domainName: domain, blogId: this.props?.selectedSite?.ID ?? null },
 				( error, result ) => {
 					const status = get( result, 'status', error );
 					const tld = result.tld || getTld( domain );
@@ -630,12 +630,12 @@ class TransferDomainStep extends Component {
 							}
 						}
 						default: {
-							let site = get( result, 'other_site_domain', null );
+							let site = result?.other_site_domain ?? null;
 							if ( ! site ) {
-								site = get( this.props, 'selectedSite.slug', null );
+								site = this.props?.selectedSite?.slug ?? null;
 							}
 
-							const maintenanceEndTime = get( result, 'maintenance_end_time', null );
+							const maintenanceEndTime = result?.maintenance_end_time ?? null;
 							const { message, severity } = getAvailabilityNotice(
 								domain,
 								status,

@@ -1,4 +1,5 @@
 import { get } from 'lodash';
+import type { AppState } from 'calypso/types';
 
 import 'calypso/state/stats/init';
 
@@ -10,5 +11,5 @@ export function getUpsellModalView( state: object, siteId: number ) {
 }
 
 export function getUpsellModalStatType( state: object, siteId: number ) {
-	return get( state, [ 'stats', 'paidStatsUpsell', 'data', siteId, 'statType' ], null );
+	return ( state as AppState )?.stats?.paidStatsUpsell?.data?.[ siteId ]?.statType ?? null;
 }

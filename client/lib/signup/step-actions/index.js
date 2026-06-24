@@ -259,7 +259,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 
 	const isFreeThemePreselected = ( themeSlugWithRepo ?? '' ).startsWith( 'pub' ) && ! themeItem;
 	const state = reduxStore.getState();
-	const bearerToken = get( getSignupDependencyStore( state ), 'bearer_token', null );
+	const bearerToken = getSignupDependencyStore( state )?.bearer_token ?? null;
 
 	const isManageSiteFlow = get( getSignupDependencyStore( state ), 'isManageSiteFlow', false );
 
@@ -1083,7 +1083,7 @@ export function maybeAddStorageAddonToCart( stepName, defaultDependencies, nextP
 	const cartItem = [];
 
 	const state = store.getState();
-	const selectedStorage = get( getSignupDependencyStore( state ), 'storage', null );
+	const selectedStorage = getSignupDependencyStore( state )?.storage ?? null;
 
 	if ( STORAGE_ADD_ONS.includes( selectedStorage ) ) {
 		const selectedAddOn = getAddOn( selectedStorage );

@@ -126,7 +126,7 @@ export const getSiteEmail = createSelector(
  */
 export function getEmailStat( state, siteId, postId, period, statType ) {
 	const stats = state.stats.emails
-		? get( state.stats.emails.items, [ siteId, postId, period, statType ], null )
+		? state.stats.emails.items?.[ siteId ]?.[ postId ]?.[ period ]?.[ statType ] ?? null
 		: null;
 	return stats ? Object.keys( stats ).map( ( key ) => stats[ key ] ) : null;
 }

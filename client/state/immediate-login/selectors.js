@@ -38,7 +38,7 @@ export const wasImmediateLoginSuccessfulAccordingToClient = ( state ) => {
  * @returns {?string} - Reason for immediate login, or null
  */
 export const getImmediateLoginReason = ( state ) => {
-	return get( state, 'immediateLogin.reason', null );
+	return state?.immediateLogin?.reason ?? null;
 };
 
 /**
@@ -49,7 +49,7 @@ export const getImmediateLoginReason = ( state ) => {
  *                     null
  */
 export const getImmediateLoginEmail = ( state ) => {
-	return get( state, 'immediateLogin.email', null );
+	return state?.immediateLogin?.email ?? null;
 };
 
 /**
@@ -60,7 +60,7 @@ export const getImmediateLoginEmail = ( state ) => {
  *                     attempting to log in, or null
  */
 export const getImmediateLoginLocale = ( state ) => {
-	return get( state, 'immediateLogin.locale', null );
+	return state?.immediateLogin?.locale ?? null;
 };
 
 /**

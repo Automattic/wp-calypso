@@ -15,7 +15,7 @@ const EMPTY_RESULT = [];
  * @returns {Array}            Array of count objects
  */
 export function getCountRecords( state, siteId, postId, period, statType ) {
-	const stats = get( state.stats.emails.items, [ siteId, postId, period, statType ], null );
+	const stats = state.stats.emails.items?.[ siteId ]?.[ postId ]?.[ period ]?.[ statType ] ?? null;
 	return ! stats
 		? EMPTY_RESULT
 		: sortBy(
@@ -48,7 +48,8 @@ export function isLoadingTabs(
 	dataLength,
 	barNumber
 ) {
-	const stats = get( state.stats.emails.items, [ siteId, postId, period, statType, date ], null );
+	const stats =
+		state.stats.emails.items?.[ siteId ]?.[ postId ]?.[ period ]?.[ statType ]?.[ date ] ?? null;
 	// If we have data for 30 columns, that's the maximum the endpoint can return
 	if ( dataLength < barNumber && dataLength < 30 ) {
 		return true;
