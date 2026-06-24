@@ -515,7 +515,9 @@ test.describe( 'Themes dark-mode surfaces', { tag: [ tags.CALYPSO_PR ] }, () => 
 
 		await test.step( 'Then the Themes listing renders in dark mode', async () => {
 			await pageThemes.visitShowcase();
-			await page.getByRole( 'heading', { name: /Find the perfect theme/ } ).waitFor();
+			await expect( page.getByRole( 'heading', { name: /Find the perfect theme/ } ) ).toBeVisible( {
+				timeout: 30_000,
+			} );
 			await expectDarkModeRoot( page, {
 				bodyClasses: [ 'is-themes-dark-mode' ],
 				expectColorSchemeBodyClass: true,
