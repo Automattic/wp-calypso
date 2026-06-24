@@ -21,11 +21,14 @@ export const OdieAssistant: React.FC = () => {
 
 	// Show the link only when at least one other live chat exists and the target is
 	// known. Require currentUuid to be loaded so we know the exclusion was applied.
+	// Use truthy checks: an empty string is not a valid target.
+	// Also guard defensively that the resolved target isn't the current interaction.
 	const openChatTarget =
 		showClosedConversationFooter &&
 		openCount >= 1 &&
-		mostRecentSupportInteractionId != null &&
-		currentUuid != null
+		!! mostRecentSupportInteractionId &&
+		!! currentUuid &&
+		mostRecentSupportInteractionId !== currentUuid
 			? mostRecentSupportInteractionId
 			: null;
 

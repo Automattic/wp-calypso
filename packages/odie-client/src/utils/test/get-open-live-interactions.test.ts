@@ -174,6 +174,29 @@ describe( 'getOpenLiveInteractions', () => {
 		expect( getOpenLiveInteractions( statusMap ).mostRecentSupportInteractionId ).toBeNull();
 	} );
 
+	it( 'excludeInteractionId skips the specified interaction and returns the next open one', () => {
+		mockGetConversations.mockReturnValue( [
+			makeConversation( 'current' ),
+			makeConversation( 'other' ),
+		] );
+
+		expect( getOpenLiveInteractions( undefined, 'current' ) ).toEqual( {
+			mostRecentSupportInteractionId: 'other',
+			openCount: 2,
+			hasReachedLimit: false,
+		} );
+	} );
+
+	it( 'excludeInteractionId returns null when the only open conversation is the excluded one', () => {
+		mockGetConversations.mockReturnValue( [ makeConversation( 'current' ) ] );
+
+		expect( getOpenLiveInteractions( undefined, 'current' ) ).toEqual( {
+			mostRecentSupportInteractionId: null,
+			openCount: 1,
+			hasReachedLimit: false,
+		} );
+	} );
+
 	it( 'exports MAX_OPEN_CONVERSATIONS = 3', () => {
 		expect( MAX_OPEN_CONVERSATIONS ).toBe( 3 );
 	} );
