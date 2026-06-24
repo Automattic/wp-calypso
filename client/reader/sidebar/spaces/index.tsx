@@ -1,11 +1,10 @@
 import page from '@automattic/calypso-router';
 import { Icon, category } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import { useSpaces } from 'calypso/reader/data/spaces';
 import { AddMenuItem } from 'calypso/reader/sidebar/menu';
-import { CreateSpaceModal } from 'calypso/reader/spaces/create-modal';
 import { getSpacePath, SPACES_BASE_PATH } from 'calypso/reader/spaces/routes';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -13,6 +12,17 @@ import { SpaceMenuItem } from './menu-item';
 import type { ReadSpace } from '@automattic/api-core';
 
 import './style.scss';
+
+// Click-gated UI: the create/edit modal pulls in the heavy customize-modal chain
+// (tabs, colour/icon pickers, search, sources, layout registry). The sidebar
+// loads broadly for flagged users, so defer that code until the user opens the
+// modal — React.lazy + Suspense, mounted only while open. The named → default
+// mapping is needed because the module uses named exports only.
+const CreateSpaceModal = lazy( () =>
+	import( 'calypso/reader/spaces/create-modal' ).then( ( { CreateSpaceModal } ) => ( {
+		default: CreateSpaceModal,
+	} ) )
+);
 
 interface Props {
 	path: string;
@@ -80,11 +90,15 @@ export function ReaderSidebarSpaces( { path }: Props ) {
 				) ) }
 				<AddMenuItem label={ translate( 'Add a space' ) } onClick={ handleAddSpaceClick } />
 			</ExpandableSidebarMenu>
-			<CreateSpaceModal
-				isOpen={ isCreateModalOpen }
-				onClose={ () => setIsCreateModalOpen( false ) }
-				onCreated={ handleSpaceCreated }
-			/>
+			{ isCreateModalOpen && (
+				<Suspense fallback={ null }>
+					<CreateSpaceModal
+						isOpen
+						onClose={ () => setIsCreateModalOpen( false ) }
+						onCreated={ handleSpaceCreated }
+					/>
+				</Suspense>
+			) }
 		</li>
 	);
 }

@@ -79,6 +79,36 @@ without an action hash.
   the named export in the loader instead (see `controller.tsx`:
   `import( './view' ).then( ( { SpacesView } ) => ( { default: SpacesView } ) )`).
 
+### Code splitting
+
+- **Route-level** chunks use `AsyncLoad` + dynamic `import()` (see
+  `controller.tsx` loading `view.tsx`). That's the section/route convention.
+- **Click-gated UI** (a modal/panel that only renders on user action) uses the
+  native React mechanism — `React.lazy()` + `<Suspense>` — not `AsyncLoad`, and
+  is mounted **only while open** so the chunk isn't fetched until needed. The
+  sidebar opens the create/edit modal this way: the
+  `customize-modal/` chain is heavy (tabs, `color-picker`/`icon-picker`,
+  `@automattic/search`, sources, layout registry) and the sidebar loads broadly
+  for flagged users, so deferring it keeps that code out of the sidebar's eager
+  bundle. Pattern (see `client/reader/sidebar/spaces/index.tsx`):
+
+  ```tsx
+  const CreateSpaceModal = lazy( () =>
+    import( 'calypso/reader/spaces/create-modal' ).then(
+      ( { CreateSpaceModal } ) => ( { default: CreateSpaceModal } )
+    )
+  );
+
+  { isCreateModalOpen && (
+    <Suspense fallback={ null }>
+      <CreateSpaceModal isOpen onClose={ () => setIsCreateModalOpen( false ) } />
+    </Suspense>
+  ) }
+  ```
+
+  The named → default mapping is needed because these modules use named exports
+  only (per the rule above).
+
 ### Model & presentation
 
 - `ReadSpace` is serializable. Presentation settings live grouped under
