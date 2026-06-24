@@ -104,7 +104,9 @@ export const createReadSpaceMutation = ( queryClient: QueryClient ) =>
 				toSummary( space ),
 			] );
 			queryClient.setQueryData< ReadSpaceDetails >( readSpaceQuery( space.id ).queryKey, space );
-			return invalidateReadSpaceListAndDetail( queryClient, space.id );
+			// Reconcile in the background — don't await the refetch so the consumer's
+			// own onSuccess (close modal, redirect) fires immediately off the cache write.
+			void invalidateReadSpaceListAndDetail( queryClient, space.id );
 		},
 	} );
 
@@ -127,7 +129,7 @@ export const updateReadSpaceMutation = ( queryClient: QueryClient ) =>
 			queryClient.setQueryData< ReadSpaceDetails >( readSpaceQuery( space.id ).queryKey, space );
 			// Tags/feeds may have changed, so reload the space's posts feed.
 			reloadReadSpaceStream( queryClient, space.id );
-			return invalidateReadSpaceListAndDetail( queryClient, space.id );
+			void invalidateReadSpaceListAndDetail( queryClient, space.id );
 		},
 	} );
 
@@ -145,7 +147,7 @@ export const deleteReadSpaceMutation = ( queryClient: QueryClient ) =>
 			);
 			// ...and discard its now-defunct detail cache.
 			queryClient.removeQueries( { queryKey: readSpaceQuery( spaceId ).queryKey } );
-			return invalidateReadSpacesList( queryClient );
+			void invalidateReadSpacesList( queryClient );
 		},
 	} );
 
@@ -156,7 +158,7 @@ const writeReadSpaceDetail = ( queryClient: QueryClient, space: ReadSpaceDetails
 	queryClient.setQueryData< ReadSpaceDetails >( readSpaceQuery( space.id ).queryKey, space );
 	// Adding/removing a feed changes the space's posts feed, so reload it too.
 	reloadReadSpaceStream( queryClient, space.id );
-	return invalidateReadSpaceDetail( queryClient, space.id );
+	void invalidateReadSpaceDetail( queryClient, space.id );
 };
 
 export const addReadSpaceSourceMutation = ( queryClient: QueryClient ) =>
