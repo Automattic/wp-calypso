@@ -61,10 +61,11 @@ function hasLaterRenderableAgentTextMessage(
 		}
 
 		const text = message.content.find(
-			( content ) => content.type === 'text' && content.text.trim()
+			( content ) =>
+				content.type === 'text' && typeof content.text === 'string' && content.text.trim()
 		)?.text;
 
-		if ( text && ! isJsonToolMessageText( text ) ) {
+		if ( typeof text === 'string' && text.trim() && ! isJsonToolMessageText( text ) ) {
 			return true;
 		}
 	}
