@@ -4,6 +4,7 @@ import { useMediaQuery } from '@wordpress/compose';
 import {
 	createPortal,
 	useCallback,
+	useEffect,
 	useLayoutEffect,
 	useRef,
 	useState,
@@ -204,23 +205,26 @@ export default function useAgentLayoutManager( {
 		}
 	}, [ container, isDocked, isReady, shouldRenderSidebar ] );
 
-	// Track focus on the chat panel so it can raise its z-index above the Help
-	// Center panel when interacted with. Both panels share one base/focused
-	// scale, so the last-clicked panel ends up on top. `pointerdown` also covers
-	// clicks on non-focusable regions (e.g. scroll areas) that skip `focusin`.
-	useLayoutEffect( () => {
+	// Track focus on the chat panel so the floating chat can raise its z-index. `pointerdown` also
+	// covers clicks on non-focusable regions (e.g. scroll areas) that skip `focusin`
+	useEffect( () => {
 		const node = portalRef.current;
-		if ( ! isPortalReady || ! node ) {
+
+		if ( ! isPortalReady || ! node || shouldRenderSidebar ) {
+			node?.classList.remove( 'is-focused' );
 			return;
 		}
+
 		const setFocused = () => {
 			node.classList.add( 'is-focused' );
 		};
+
 		const handleFocusOut = ( e: FocusEvent ) => {
 			if ( ! node.contains( e.relatedTarget as Node | null ) ) {
 				node.classList.remove( 'is-focused' );
 			}
 		};
+
 		const handleDocumentPointerDown = ( e: PointerEvent ) => {
 			if ( ! node.contains( e.target as Node | null ) ) {
 				node.classList.remove( 'is-focused' );
@@ -240,7 +244,7 @@ export default function useAgentLayoutManager( {
 			document.removeEventListener( 'pointerdown', handleDocumentPointerDown );
 			stopCanvasObserver();
 		};
-	}, [ isPortalReady ] );
+	}, [ isPortalReady, shouldRenderSidebar ] );
 
 	// Reflect split-screen state on the container as `is-split-screen`.
 	useLayoutEffect( () => {

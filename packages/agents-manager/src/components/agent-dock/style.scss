@@ -431,13 +431,7 @@ body.post-new-php.agents-manager-sidebar-container {
 	padding: $layout-spacing;
 	width: $sidebar-width;
 	box-sizing: border-box;
-	z-index: $agents-manager-z-index-docked;
-
-	// Raise above the Help Center panel while focused, so the last-clicked
-	// panel wins. Both panels share one base/focused scale.
-	&.is-focused {
-		z-index: $agents-manager-z-index-focused;
-	}
+	z-index: $agents-manager-z-index-sidebar;
 
 	.agents-manager-sidebar-fab {
 		visibility: visible;
