@@ -136,6 +136,21 @@ describe( 'createAgentConfig', () => {
 		);
 	} );
 
+	it( 'adds loaded provider IDs to default client context', async () => {
+		const config = await createAgentConfig( {
+			sessionId: 'session-1',
+			agentId: 'dolly',
+			providerIds: [ 'jetpack-ai-sidebar', 'woocommerce-ai' ],
+		} );
+		const context = config.contextProvider?.getClientContext();
+
+		expect( context ).toEqual(
+			expect.objectContaining( {
+				loadedProviderIds: [ 'jetpack-ai-sidebar', 'woocommerce-ai' ],
+			} )
+		);
+	} );
+
 	it( 'merges site editor actions into default client context', async () => {
 		setSiteEditorAction( 'colorPickerItemSelected', 'Ruby' );
 
@@ -162,6 +177,7 @@ describe( 'createAgentConfig', () => {
 			siteId: 987,
 			agentId: 'dolly',
 			environment: 'site-editor',
+			providerIds: [ 'jetpack-ai-sidebar', 'woocommerce-ai' ],
 			contextProvider: {
 				getClientContext: () => ( {
 					url: 'https://example.com/wp-admin/site-editor.php',
@@ -186,6 +202,7 @@ describe( 'createAgentConfig', () => {
 					colorPickerItemSelected: 'Ruby',
 					fontPickerItemSelected: 'Serif',
 				},
+				loadedProviderIds: [ 'jetpack-ai-sidebar', 'woocommerce-ai' ],
 				constructorArguments: {
 					version: 'provider-version',
 					client: 'site-editor',

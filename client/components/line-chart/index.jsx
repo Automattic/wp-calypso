@@ -5,7 +5,6 @@ import { axisBottom as d3AxisBottom, axisRight as d3AxisRight } from 'd3-axis';
 import { scaleLinear as d3ScaleLinear, scaleTime as d3TimeScale } from 'd3-scale';
 import { select as d3Select, mouse as d3Mouse } from 'd3-selection';
 import { line as d3Line, area as d3Area, curveMonotoneX as d3MonotoneXCurve } from 'd3-shape';
-import { concat } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import D3Base from 'calypso/components/d3-base';
@@ -424,7 +423,7 @@ class LineChart extends Component {
 		const newWidth = node.offsetWidth;
 		const newHeight = newWidth / aspectRatio;
 
-		const concatData = concat( ...data );
+		const concatData = [].concat( ...data );
 
 		return {
 			height: newHeight,

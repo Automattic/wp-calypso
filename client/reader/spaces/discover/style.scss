@@ -1,0 +1,18 @@
+.space-discover-placeholder {
+	padding-block: 64px;
+	padding-inline: 24px;
+	text-align: center;
+}
+
+.space-discover-placeholder__title {
+	margin: 0;
+	color: var( --color-text );
+	font-size: 1.25rem;
+	font-weight: 600;
+}
+
+.space-discover-placeholder__text {
+	margin: 0;
+	color: var( --color-text-subtle );
+	font-size: 0.875rem;
+}

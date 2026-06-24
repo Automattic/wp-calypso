@@ -50,7 +50,7 @@ export const SourceSubscription = memo( function SourceSubscription( {
 			spacing={ 3 }
 			alignment="center"
 			justify="space-between"
-			className="sources-modal-subscription"
+			className="space-sources__row"
 			role="listitem"
 			aria-label={ name }
 			style={ { minHeight: 56 } }
@@ -59,12 +59,13 @@ export const SourceSubscription = memo( function SourceSubscription( {
 				spacing={ 3 }
 				alignment="center"
 				justify="flex-start"
-				className="sources-modal-subscription__main"
+				className="space-sources__row-main"
 			>
-				<SiteIcon iconUrl={ subscription.site_icon } size={ 40 } alt={ name } />
-				<VStack spacing={ 0 } className="sources-modal-subscription__content">
-					<div className="sources-modal-subscription__name">{ name }</div>
-					<div className="sources-modal-subscription__url">{ url }</div>
+				{ /* Decorative: the row is already labeled by the site name (aria-label above). */ }
+				<SiteIcon iconUrl={ subscription.site_icon } size={ 40 } alt="" />
+				<VStack spacing={ 0 } className="space-sources__row-content">
+					<div className="space-sources__row-name">{ name }</div>
+					<div className="space-sources__row-url">{ url }</div>
 				</VStack>
 			</HStack>
 			<Button

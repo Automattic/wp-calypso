@@ -1,6 +1,5 @@
-import { partition } from '@automattic/js-utils';
+import { partition, sortBy } from '@automattic/js-utils';
 import { createSelector } from '@automattic/state-utils';
-import { sortBy } from 'lodash';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import { getSite } from 'calypso/state/sites/selectors';

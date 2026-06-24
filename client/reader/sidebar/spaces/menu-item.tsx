@@ -1,4 +1,4 @@
-import { Icon } from '@wordpress/icons';
+import { Icon, rss } from '@wordpress/icons';
 import { MenuItem, MenuItemLink } from 'calypso/reader/sidebar/menu';
 import { SPACE_ICONS } from 'calypso/reader/spaces/icons';
 import { getSpacePath } from 'calypso/reader/spaces/routes';
@@ -11,6 +11,10 @@ interface Props {
 }
 
 export function SpaceMenuItem( { space, isSelected, onClick }: Props ) {
+	// Fall back to a generic icon when the API returns an icon key the UI
+	// doesn't recognize, so the item still renders a glyph.
+	const icon = SPACE_ICONS[ space.layout.icon ] ?? rss;
+
 	return (
 		<MenuItem
 			selected={ isSelected }
@@ -22,7 +26,7 @@ export function SpaceMenuItem( { space, isSelected, onClick }: Props ) {
 				onClick={ onClick }
 			>
 				<span className="sidebar-spaces__icon" aria-hidden="true">
-					<Icon icon={ SPACE_ICONS[ space.layout.icon ] } size={ 18 } />
+					<Icon icon={ icon } size={ 18 } />
 				</span>
 				<span className="sidebar-spaces__text">
 					<span className="sidebar-spaces__name">{ space.name }</span>

@@ -25,14 +25,15 @@ const makeNote = ( id: number, label: string, type = 'comment' ) => ( {
 const renderTab = (
 	store: ReturnType< typeof initStore >,
 	filterName: FilterName,
-	clientOverride: Partial< typeof client > = {}
+	clientOverride: Partial< typeof client > = {},
+	selectedNoteId: string | undefined = undefined
 ) =>
 	render(
 		<Provider store={ store }>
 			<AppProvider client={ { ...client, ...clientOverride } as never } locale="en">
 				<NoteList
 					filterName={ filterName }
-					selectedNoteId={ undefined }
+					selectedNoteId={ selectedNoteId }
 					setSelectedNoteId={ noop }
 				/>
 			</AppProvider>
@@ -159,6 +160,25 @@ describe( 'NoteList loading state', () => {
 		expect( getRow()?.querySelector( '.is-unread' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'renders time-grouped section headers in newest-first order', () => {
+		const store = initStore();
+		const today = new Date().toISOString();
+		store.dispatch(
+			actions.notes.addNotes( [
+				{ ...makeNote( 700, 'Fresh note' ), timestamp: today },
+				{ ...makeNote( 701, 'Ancient note' ), timestamp: '2020-01-01T00:00:00+00:00' },
+			] )
+		);
+		store.dispatch( actions.ui.loadedNotes() );
+
+		const { container } = renderTab( store, 'all' as FilterName );
+
+		const headers = Array.from(
+			container.querySelectorAll( '.dataviews-view-list__group-header' )
+		).map( ( el ) => el.textContent );
+		expect( headers ).toEqual( [ 'Today', 'Older than a month' ] );
+	} );
+
 	it( 'client-filters the Comments tab from the shared cache', () => {
 		const store = initStore();
 		store.dispatch(
@@ -201,5 +221,19 @@ describe( 'NoteList loading state', () => {
 
 		expect( screen.queryByText( 'No new comments yet!' ) ).not.toBeInTheDocument();
 		expect( container.querySelector( '.components-spinner' ) ).toBeTruthy();
+	} );
+
+	it( 'marks only the open note row with the active highlight', () => {
+		const store = initStore();
+		store.dispatch(
+			actions.notes.addNotes( [ makeNote( 300, 'Open me' ), makeNote( 301, 'Other note' ) ] )
+		);
+		store.dispatch( actions.ui.loadedNotes() );
+
+		const { container } = renderTab( store, 'all' as FilterName, {}, '300' );
+
+		const active = container.querySelectorAll( '.wpnc__subject.is-active' );
+		expect( active ).toHaveLength( 1 );
+		expect( active[ 0 ].textContent ).toContain( 'Open me' );
 	} );
 } );

@@ -464,18 +464,22 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 }
 
 /**
- * Whether the "Change plan" action should be offered for this purchase: either
- * the plan is past expiry (downgrade-to-checkout) or still within its refund
- * window (instant downgrade). Gated by the `plans/expired-downgrade` flag.
+ * Whether the "Change plan" action should be offered for this purchase. Covers
+ * three downgrade flows, each gated by its own flag:
+ *   - past expiry (downgrade-to-checkout) — `plans/expired-downgrade`
+ *   - within refund window (instant downgrade) — `plans/expired-downgrade`
+ *   - active downgradable plan (delayed downgrade) — `plans/delayed-downgrade`
  */
 function shouldShowChangePlan( purchase: Purchase ): boolean {
-	if ( ! config.isEnabled( 'plans/expired-downgrade' ) ) {
-		return false;
-	}
-	return (
-		( purchase.is_past_expiry_date && purchase.is_plan ) ||
-		isWithinRefundWindowDowngradeEligible( purchase )
-	);
+	const expiredOrRefundDowngrade =
+		config.isEnabled( 'plans/expired-downgrade' ) &&
+		( ( purchase.is_past_expiry_date && purchase.is_plan ) ||
+			isWithinRefundWindowDowngradeEligible( purchase ) );
+	const delayedDowngrade =
+		config.isEnabled( 'plans/delayed-downgrade' ) &&
+		purchase.is_plan &&
+		purchase.is_plan_type_downgradable;
+	return expiredOrRefundDowngrade || delayedDowngrade;
 }
 
 function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {

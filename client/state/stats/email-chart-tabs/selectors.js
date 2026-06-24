@@ -1,4 +1,5 @@
-import { get, sortBy } from 'lodash';
+import { sortBy } from '@automattic/js-utils';
+import { get } from 'lodash';
 
 import 'calypso/state/stats/init';
 

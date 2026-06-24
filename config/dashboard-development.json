@@ -45,6 +45,7 @@
 		"me/legacy-contact": true,
 		"onboarding/interval-dropdown": true,
 		"performance/apm": true,
+		"plans/delayed-downgrade": true,
 		"plans/expired-downgrade": true,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,

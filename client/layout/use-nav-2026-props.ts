@@ -36,11 +36,11 @@ type Nav2026Options = {
 // the wpcom assignments controller allowlists it so the /assignments/calypso
 // endpoint returns it here too, giving every surface consistent bucketing.
 // Keep in sync with the PHP constant WPCOM_Global_Nav_Helpers::NAV_2026_EXPERIMENT.
-const NAV_2026_EXPERIMENT = 'calypso_lossless_revert';
+const NAV_2026_EXPERIMENT = 'wpcom_global_navigation_202606';
 
-const VARIATION_TO_VARIANT: Record< string, 1 | 2 > = {
-	treatment_1: 1,
-	treatment_2: 2,
+const VARIATION_TO_VARIANT: Partial< Record< string, 1 | 2 > > = {
+	showcase_products: 1,
+	showcase_products_and_ai: 2,
 };
 
 /**
@@ -52,8 +52,8 @@ const VARIATION_TO_VARIANT: Record< string, 1 | 2 > = {
  * 1. Minimal universal headers are not eligible for Nav 2026.
  * 2. `nav-redesign/2026` config flag — manual force-on for staff/dev. Variant
  *    follows the existing `nav-redesign/2026-variant-2` flag.
- * 3. The NAV_2026_EXPERIMENT assignment — `treatment_1`/`treatment_2` map to
- *    variants 1/2; everything else (control, null) → old nav.
+ * 3. The NAV_2026_EXPERIMENT assignment — `showcase_products`/`showcase_products_and_ai`
+ *    map to variants 1/2; everything else (control, null) → old nav.
  *    While the assignment is still loading for logged-in users, return a
  *    temporary className that hides the old nav until the assignment resolves.
  */

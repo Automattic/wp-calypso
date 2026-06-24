@@ -69,6 +69,26 @@ function buildListQueryParams( extras ) {
 }
 
 /**
+ * `space` (`/reader/spaces/<id>/posts`) takes `count` (the per-page size, capped
+ * at 15 server-side — Elasticsearch query limit) and a `page_handle` cursor,
+ * rather than the `number`/offset shape the other streams use. The normalized
+ * fetch size (`INITIAL_FETCH` / `PER_FETCH`) is well under the cap, but clamp
+ * defensively so an oversized page can't silently break end-of-stream detection.
+ * Locale is passed as `_locale`, the param the endpoint reads to build the stream.
+ */
+function buildSpaceQueryParams( extras ) {
+	const { number, page_handle: pageHandle, lang } = extras;
+	const queryParams = { count: Math.min( number || INITIAL_FETCH, 15 ) };
+	if ( pageHandle ) {
+		queryParams.page_handle = pageHandle;
+	}
+	if ( lang ) {
+		queryParams._locale = lang;
+	}
+	return queryParams;
+}
+
+/**
  * `on_this_day` parses optional `month`/`day` numerics out of the streamKey
  * suffix (`on_this_day:{m}:{d}`) and always pins `number: 15`.
  */
@@ -212,6 +232,8 @@ export function buildStreamQueryParams( {
 			return buildListQueryParams( extras );
 		case 'on_this_day':
 			return buildOnThisDayQueryParams( extras, streamKey );
+		case 'space':
+			return buildSpaceQueryParams( extras );
 		case 'conversations':
 			return getQueryString( { ...extras, comments_per_post: 20 } );
 		case 'conversations-a8c':

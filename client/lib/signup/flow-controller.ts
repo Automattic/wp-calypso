@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { pick } from '@automattic/js-utils';
 import debugModule from 'debug';
 import { translate } from 'i18n-calypso';
-import { filter, find, forEach, isEmpty, reject, reduce } from 'lodash';
+import { filter, find, forEach, isEmpty, reduce } from 'lodash';
 import { Store, Unsubscribe as ReduxUnsubscribe, AnyAction } from 'redux';
 import { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -380,7 +380,8 @@ export default class SignupFlowController {
 			( { stepName } ) => currentSteps.includes( stepName )
 		);
 		const allStepsSubmitted =
-			reject( signupProgress, { status: 'in-progress' } ).length === currentSteps.length;
+			signupProgress.filter( ( step ) => step.status !== 'in-progress' ).length ===
+			currentSteps.length;
 		const allowUnauthenticated =
 			getSignupDependencyStore( this._reduxStore.getState() )?.allowUnauthenticated ?? false;
 

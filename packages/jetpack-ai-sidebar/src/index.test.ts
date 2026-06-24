@@ -222,16 +222,13 @@ function installContextProviderMock( postType = 'post', postId: number | null = 
 
 function installAiEditorialReviewData( features: Record< string, boolean > = {} ) {
 	( globalThis as any ).agentsManagerData = {
-		aiEditorialReviewEnabled: true,
-		jetpackAiSidebarPreview: {
+		jetpackAiSidebar: {
 			enabled: true,
 			features: {
 				aiEditorialReview: true,
 				generateFeedback: true,
 				blockTransformations: true,
 				optimizeTitleSuggestion: false,
-				chatHistory: false,
-				supportGuides: false,
 				...features,
 			},
 		},
@@ -689,9 +686,9 @@ describe( 'getEmptyViewSuggestions', () => {
 		delete ( window as any ).wp;
 	} );
 
-	it( 'hides AI Editorial Review by default', () => {
+	it( 'hides post suggestions without a sidebar config', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
-		expect( labels ).toContain( 'Optimize Title' );
+		expect( labels ).not.toContain( 'Optimize Title' );
 		expect( labels ).not.toContain( 'AI Editorial Review' );
 	} );
 
@@ -702,17 +699,6 @@ describe( 'getEmptyViewSuggestions', () => {
 		expect( labels ).not.toContain( 'Optimize Title' );
 		expect( labels ).toContain( 'AI Editorial Review' );
 		expect( labels ).toContain( 'Generate Feedback' );
-	} );
-
-	it( 'supports the legacy reviewMediatorEnabled flag while bundles roll forward', () => {
-		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
-		installPostTypeMock( 'post' );
-
-		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
-
-		expect( labels ).toContain( 'Optimize Title' );
-		expect( labels ).toContain( 'AI Editorial Review' );
-		expect( labels ).not.toContain( 'Generate Feedback' );
 	} );
 
 	it( 'hides AI Editorial Review on page editors', () => {
@@ -755,7 +741,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		expect( labels ).toContain( 'AI Editorial Review' );
 	} );
 
-	it( 'hides Optimize Title when the preview feature disables it', () => {
+	it( 'hides Optimize Title when the feature disables it', () => {
 		installAiEditorialReviewData( { aiEditorialReview: false, optimizeTitleSuggestion: false } );
 		installPostTypeMock( 'post' );
 
@@ -765,10 +751,9 @@ describe( 'getEmptyViewSuggestions', () => {
 		expect( labels ).not.toContain( 'AI Editorial Review' );
 	} );
 
-	it( 'treats missing preview features as disabled', () => {
+	it( 'treats missing features as disabled', () => {
 		( globalThis as any ).agentsManagerData = {
-			aiEditorialReviewEnabled: true,
-			jetpackAiSidebarPreview: {
+			jetpackAiSidebar: {
 				enabled: true,
 				features: { aiEditorialReview: true },
 			},
@@ -968,7 +953,7 @@ describe( 'useSuggestions', () => {
 		] );
 	} );
 
-	it( 'keeps AI Editorial Review when the preview feature disables block transformations', () => {
+	it( 'keeps AI Editorial Review when the feature disables block transformations', () => {
 		installAiEditorialReviewData( { blockTransformations: false } );
 		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
 		const onSuggestions = jest.fn();
@@ -983,10 +968,9 @@ describe( 'useSuggestions', () => {
 		] );
 	} );
 
-	it( 'keeps AI Editorial Review when the block transformations preview feature is missing', () => {
+	it( 'keeps AI Editorial Review when the block transformations feature is missing', () => {
 		( globalThis as any ).agentsManagerData = {
-			aiEditorialReviewEnabled: true,
-			jetpackAiSidebarPreview: {
+			jetpackAiSidebar: {
 				enabled: true,
 				features: { aiEditorialReview: true },
 			},

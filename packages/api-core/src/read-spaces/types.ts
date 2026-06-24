@@ -9,7 +9,15 @@ import type { SiteSubscriptionItem } from '../read-follows';
  * `color` to a CSS variant. The API does not validate these against the lists
  * below — it only sanitizes — so the client constrains the picker.
  */
-export type SpaceColor = 'blue' | 'purple' | 'red' | 'orange' | 'gray' | 'green' | 'celadon';
+export type SpaceColor =
+	| 'blue'
+	| 'purple'
+	| 'red'
+	| 'orange'
+	| 'gray'
+	| 'green'
+	| 'celadon'
+	| 'pink';
 
 export type SpaceIcon =
 	| 'inbox'
@@ -19,7 +27,15 @@ export type SpaceIcon =
 	| 'cart'
 	| 'star'
 	| 'pages'
-	| 'category';
+	| 'category'
+	| 'globe'
+	| 'tag'
+	| 'rss'
+	| 'people'
+	| 'home'
+	| 'gallery'
+	| 'chart'
+	| 'palette';
 
 /**
  * How a space renders its feed. Each value selects a distinct list geometry —
@@ -36,8 +52,7 @@ export type SpaceFeedLayout = 'standard-list' | 'magazine' | 'gallery' | 'board'
 export interface SpaceLayout {
 	color: SpaceColor;
 	icon: SpaceIcon;
-	// Which feed layout to render. The API does not persist this yet, so the
-	// Customize modal writes it optimistically into the React Query cache.
+	// Which feed layout to render.
 	view?: SpaceFeedLayout;
 }
 
@@ -73,13 +88,14 @@ export interface CreateReadSpaceParams {
 
 /**
  * Params for `PUT /reader/spaces/{id}`. Send only the fields you are changing; at
- * least one is required. `tags` is a full replace of the tag set (pass `[]` to
- * clear), not an add/remove — there are no per-tag endpoints. `layout` is a
- * partial merge — send `{ color }` to change only the colour; the icon is kept.
+ * least one is required. `tags` and `feeds` are full replaces (pass `[]` to
+ * clear); `layout` is a partial merge — send `{ color }` to change only the
+ * colour; the icon is kept.
  */
 export interface UpdateReadSpaceParams {
 	name?: string;
 	tags?: string[];
+	feeds?: Array< number | string >;
 	layout?: Partial< SpaceLayout >;
 }
 

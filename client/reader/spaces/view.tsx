@@ -1,67 +1,55 @@
-import page from '@automattic/calypso-router';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
+import { settings } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { useSpaces } from 'calypso/reader/data/spaces';
-import { CustomizeModal } from 'calypso/reader/spaces/customize-modal';
+import { CustomizeModal, type CustomizeTab } from 'calypso/reader/spaces/customize-modal';
+import { SpaceDiscoverPlaceholder } from 'calypso/reader/spaces/discover/placeholder';
 import { SpaceFeed } from 'calypso/reader/spaces/feed';
-import { SourcesModal } from 'calypso/reader/spaces/sources-modal';
-import { getManageSourcesPath, getSpacePath, MANAGE_SOURCES_HASH } from './routes';
+import { SpaceNavigation } from 'calypso/reader/spaces/space-navigation';
+import type { SpaceFeedLayout } from '@automattic/api-core';
+import type { SpaceTab } from 'calypso/reader/spaces/routes';
 
 import './style.scss';
 
 interface Props {
 	id?: string;
+	tab?: SpaceTab;
 }
 
-const getCurrentHash = () => ( typeof window === 'undefined' ? '' : window.location.hash );
-
-export function SpacesView( { id }: Props ) {
+export function SpacesView( { id, tab = 'feed' }: Props ) {
 	const translate = useTranslate();
 	const spaces = useSpaces();
 	const space = id ? spaces.find( ( item ) => item.id === id ) : undefined;
+	const layoutView: SpaceFeedLayout | undefined = space?.layout.view;
 	const title = space ? space.name : translate( 'Spaces' );
-	// POC: the space feed currently shows the discover content, so label it as such
-	// after the space name in the header.
-	const headerTitle = space ? (
-		<>
-			{ space.name }{ ' ' }
-			<span className="reader-spaces__section-label">{ translate( 'Discover' ) }</span>
-		</>
-	) : (
-		title
-	);
-	const [ hash, setHash ] = useState( getCurrentHash );
-	const [ isCustomizeOpen, setIsCustomizeOpen ] = useState( false );
-	const shouldShowSourcesModal = Boolean( id && space && hash === MANAGE_SOURCES_HASH );
+	// The generic "Spaces" heading belongs to the landing page only — while a
+	// specific space is still loading, render no heading rather than flashing it.
+	let headerTitle: string = '';
+	if ( space ) {
+		headerTitle = space.name;
+	} else if ( ! id ) {
+		headerTitle = translate( 'Spaces' );
+	}
+	// Which tab the unified Customize modal opens on, or `null` when it's closed.
+	const [ customizeTab, setCustomizeTab ] = useState< CustomizeTab | null >( null );
 
-	useEffect( () => {
-		const handleHashChange = () => setHash( getCurrentHash() );
-
-		handleHashChange();
-		window.addEventListener( 'hashchange', handleHashChange );
-
-		return () => window.removeEventListener( 'hashchange', handleHashChange );
-	}, [] );
-
-	const handleManageSources = () => {
-		if ( ! id ) {
-			return;
-		}
-		page( getManageSourcesPath( id ) );
-		setHash( MANAGE_SOURCES_HASH );
+	const handleClose = () => {
+		setCustomizeTab( null );
 	};
 
-	const handleCloseSourcesModal = () => {
-		if ( ! id ) {
-			return;
-		}
-		page.replace( getSpacePath( id ) );
-		setHash( '' );
-	};
+	let activePanel: ReactNode = null;
+	if ( id && space ) {
+		activePanel =
+			tab === 'discover' ? (
+				<SpaceDiscoverPlaceholder />
+			) : (
+				<SpaceFeed spaceId={ id } layoutView={ layoutView } />
+			);
+	}
 
 	return (
 		<ReaderMain className="reader-spaces">
@@ -72,32 +60,30 @@ export function SpacesView( { id }: Props ) {
 					textOnly: true,
 				} ) }
 			/>
-			<NavigationHeader title={ headerTitle }>
+			<NavigationHeader
+				title={ headerTitle }
+				subtitle={ space ? translate( 'Your curated reading space' ) : undefined }
+			>
 				{ space ? (
 					<HStack spacing={ 2 } justify="flex-end" expanded={ false }>
 						<Button
 							__next40pxDefaultSize
 							variant="secondary"
-							onClick={ () => setIsCustomizeOpen( true ) }
+							icon={ settings }
+							onClick={ () => setCustomizeTab( 'identity' ) }
 						>
 							{ translate( 'Customize' ) }
-						</Button>
-						<Button __next40pxDefaultSize variant="secondary" onClick={ handleManageSources }>
-							{ translate( 'Manage sources' ) }
 						</Button>
 					</HStack>
 				) : null }
 			</NavigationHeader>
-			{ id && space ? <SpaceFeed spaceId={ id } /> : null }
+			{ id && space ? <SpaceNavigation spaceId={ id } selectedTab={ tab } /> : null }
+			{ activePanel }
 			<CustomizeModal
-				isOpen={ isCustomizeOpen }
+				isOpen={ customizeTab !== null }
 				spaceId={ id ?? null }
-				onClose={ () => setIsCustomizeOpen( false ) }
-			/>
-			<SourcesModal
-				isOpen={ shouldShowSourcesModal }
-				spaceId={ id ?? null }
-				onClose={ handleCloseSourcesModal }
+				initialTab={ customizeTab ?? 'identity' }
+				onClose={ handleClose }
 			/>
 		</ReaderMain>
 	);

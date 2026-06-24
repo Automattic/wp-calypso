@@ -1,3 +1,5 @@
+@use 'calypso/reader/spaces/colors' as space-colors;
+
 .sidebar-spaces__link {
 	display: flex;
 	align-items: center;
@@ -11,8 +13,8 @@
 	flex-shrink: 0;
 	block-size: 22px;
 	border-radius: 8px;
-	background: var(--space-color-bg);
-	color: var(--space-color);
+	background: var( --space-color-bg );
+	color: var( --space-color );
 }
 
 .sidebar-spaces__text {
@@ -23,7 +25,7 @@
 }
 
 .sidebar-spaces__name {
-	color: var(--color-text);
+	color: var( --color-text );
 	font-weight: 500;
 	line-height: 1.2;
 	overflow: hidden;
@@ -34,43 +36,15 @@
 // Each space exposes its accent colour as two custom properties — `--space-color`
 // (foreground: the icon glyph and the active row's name) and `--space-color-bg`
 // (the icon's surface tint). The modifier classes below only redefine those two
-// values; the icon/name rules above consume them, so colours live in one place.
-.sidebar-spaces__item--blue {
-	--space-color: var(--studio-blue-50);
-	--space-color-bg: var(--studio-blue-5);
-}
-
-.sidebar-spaces__item--purple {
-	--space-color: var(--studio-purple-50);
-	--space-color-bg: var(--studio-purple-5);
-}
-
-.sidebar-spaces__item--red {
-	--space-color: var(--studio-red-50);
-	--space-color-bg: var(--studio-red-5);
-}
-
-.sidebar-spaces__item--orange {
-	--space-color: var(--studio-orange-50);
-	--space-color-bg: var(--studio-orange-5);
-}
-
-.sidebar-spaces__item--gray {
-	--space-color: var(--studio-gray-50);
-	--space-color-bg: var(--studio-gray-5);
-}
-
-.sidebar-spaces__item--green {
-	--space-color: var(--studio-green-50);
-	--space-color-bg: var(--studio-green-5);
-}
-
-.sidebar-spaces__item--celadon {
-	--space-color: var(--studio-celadon-50);
-	--space-color-bg: var(--studio-celadon-5);
+// values (via the shared `space-accent-color` mixin); the icon/name rules above
+// consume them, so colours live in one place (`colors.scss`).
+@each $color in space-colors.$space-colors {
+	.sidebar-spaces__item--#{$color} {
+		@include space-colors.space-accent-color( $color );
+	}
 }
 
 // Active row: the name takes on the space's own foreground colour.
 .sidebar-spaces__item.selected .sidebar-spaces__name {
-	color: var(--space-color);
+	color: var( --space-color );
 }
