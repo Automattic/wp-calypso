@@ -13,7 +13,7 @@ const baseSite = {
 	is_a4a_dev_site: false,
 	plan: { features: { active: [ 'staging-sites' ] } },
 	site_migration: { in_progress: false, is_complete: false },
-} as Site;
+} as unknown as Site;
 
 describe( 'canSwitchEnvironment', () => {
 	test( 'returns true for the site owner with staging feature', () => {
@@ -27,8 +27,12 @@ describe( 'canSwitchEnvironment', () => {
 	test( 'returns false when site migration is in progress', () => {
 		const migratingSite = {
 			...baseSite,
-			site_migration: { migration_status: 'migration-in-progress', in_progress: true, is_complete: false },
-		} as Site;
+			site_migration: {
+				migration_status: 'migration-in-progress',
+				in_progress: true,
+				is_complete: false,
+			},
+		} as unknown as Site;
 		expect( canSwitchEnvironment( migratingSite, ownerUser ) ).toBe( false );
 	} );
 
@@ -36,7 +40,7 @@ describe( 'canSwitchEnvironment', () => {
 		const siteWithoutStaging = {
 			...baseSite,
 			plan: { features: { active: [] } },
-		} as Site;
+		} as unknown as Site;
 		expect( canSwitchEnvironment( siteWithoutStaging, ownerUser ) ).toBe( false );
 	} );
 } );
