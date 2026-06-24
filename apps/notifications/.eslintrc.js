@@ -1,4 +1,4 @@
-const { nodeConfig } = require( '@automattic/calypso-eslint-overrides' );
+const { nodeConfig, lodashRestrictedImports } = require( '@automattic/calypso-eslint-overrides' );
 
 module.exports = {
 	env: {
@@ -11,16 +11,12 @@ module.exports = {
 		},
 	],
 	rules: {
+		// This app imports `combineReducers` from redux directly, so the root
+		// restriction on it is intentionally not applied here. The shared lodash
+		// guard still applies.
 		'no-restricted-imports': [
-			0,
-			{
-				paths: [
-					{
-						name: 'redux',
-						importNames: [ 'combineReducers' ],
-					},
-				],
-			},
+			'error',
+			{ paths: lodashRestrictedImports.paths, patterns: lodashRestrictedImports.patterns },
 		],
 	},
 };

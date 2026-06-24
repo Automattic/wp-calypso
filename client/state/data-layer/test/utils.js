@@ -1,4 +1,4 @@
-import { kebabCase } from 'lodash';
+import { kebabCase } from '@automattic/js-utils';
 import { bypassDataLayer, convertKeysBy, convertToCamelCase, convertToSnakeCase } from '../utils';
 
 describe( 'Data Layer', () => {

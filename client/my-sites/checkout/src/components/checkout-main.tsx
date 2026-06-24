@@ -575,8 +575,6 @@ export default function CheckoutMain( {
 				genericRedirectProcessor( 'bancontact', transactionData, dataForProcessor ),
 			wechat: ( transactionData: unknown ) =>
 				weChatProcessor( transactionData, dataForProcessor, translate ),
-			netbanking: ( transactionData: unknown ) =>
-				genericRedirectProcessor( 'netbanking', transactionData, dataForProcessor ),
 			ideal: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'ideal', transactionData, dataForProcessor ),
 			sofort: ( transactionData: unknown ) =>

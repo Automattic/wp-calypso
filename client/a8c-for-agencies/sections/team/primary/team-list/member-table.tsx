@@ -1,11 +1,13 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
-import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import { useBreakpoint, useDesktopBreakpoint } from '@automattic/viewport-react';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
+import { DataViews } from 'calypso/components/dataviews';
 import { useSelector } from 'calypso/state';
 import { hasAgencyCapability } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { A4AStore } from 'calypso/state/a8c-for-agencies/types';
@@ -24,6 +26,7 @@ export function TeamMemberTable( { members, onRefresh }: Props ) {
 	const translate = useTranslate();
 
 	const isDesktop = useDesktopBreakpoint();
+	const isNarrowView = useBreakpoint( '<660px' );
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
@@ -124,7 +127,17 @@ export function TeamMemberTable( { members, onRefresh }: Props ) {
 						dataViewsState: dataViewsState,
 						defaultLayouts: { table: {} },
 					} }
-				/>
+				>
+					<HStack
+						className="dataviews__view-actions"
+						justify="end"
+						style={ { paddingInline: isNarrowView ? '16px' : '64px' } }
+					>
+						<DataViews.ViewConfig />
+					</HStack>
+					<DataViews.Layout />
+					<DataViews.Footer />
+				</ItemsDataViews>
 			</div>
 
 			{ activeRequest && (

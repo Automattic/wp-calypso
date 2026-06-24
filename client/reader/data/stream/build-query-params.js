@@ -1,5 +1,5 @@
+import { random } from '@automattic/js-utils';
 import i18n from 'i18n-calypso';
-import { random } from 'lodash';
 import { getTagsFromStreamKey } from 'calypso/reader/discover/helper';
 import { getStreamType } from 'calypso/reader/utils';
 import {
@@ -66,6 +66,26 @@ function buildTagPopularQueryParams( extras, streamKey ) {
  */
 function buildListQueryParams( extras ) {
 	return getQueryString( { ...extras, number: 40 } );
+}
+
+/**
+ * `space` (`/reader/spaces/<id>/posts`) takes `count` (the per-page size, capped
+ * at 15 server-side — Elasticsearch query limit) and a `page_handle` cursor,
+ * rather than the `number`/offset shape the other streams use. The normalized
+ * fetch size (`INITIAL_FETCH` / `PER_FETCH`) is well under the cap, but clamp
+ * defensively so an oversized page can't silently break end-of-stream detection.
+ * Locale is passed as `_locale`, the param the endpoint reads to build the stream.
+ */
+function buildSpaceQueryParams( extras ) {
+	const { number, page_handle: pageHandle, lang } = extras;
+	const queryParams = { count: Math.min( number || INITIAL_FETCH, 15 ) };
+	if ( pageHandle ) {
+		queryParams.page_handle = pageHandle;
+	}
+	if ( lang ) {
+		queryParams._locale = lang;
+	}
+	return queryParams;
 }
 
 /**
@@ -155,7 +175,15 @@ export function buildStreamQueryParams( {
 		number = gap ? PER_GAP : fetchCount;
 	}
 	const lang = localeSlug || i18n.getLocaleSlug();
-	const commonQueryParams = { ...algorithm, feed_id: feedId };
+	// Omit `feed_id` when not set: the new `wpcom/v2/read/streams/*` endpoints
+	// validate it as an integer and reject the empty string the URL serializer
+	// would produce from `null`/`undefined`. The legacy `rest/v1.2/read/*`
+	// endpoints tolerated the empty value, which is why this only surfaced
+	// after the stream-data-layer migration (f3b2cddb32e).
+	const commonQueryParams = {
+		...algorithm,
+		...( feedId != null ? { feed_id: feedId } : {} ),
+	};
 
 	if ( isPoll ) {
 		if ( streamType === 'user' ) {
@@ -204,6 +232,8 @@ export function buildStreamQueryParams( {
 			return buildListQueryParams( extras );
 		case 'on_this_day':
 			return buildOnThisDayQueryParams( extras, streamKey );
+		case 'space':
+			return buildSpaceQueryParams( extras );
 		case 'conversations':
 			return getQueryString( { ...extras, comments_per_post: 20 } );
 		case 'conversations-a8c':

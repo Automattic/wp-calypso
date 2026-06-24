@@ -1,5 +1,5 @@
 import { getUrlParts } from '@automattic/calypso-url';
-import { some, forEach, startsWith } from 'lodash';
+import { some, forEach } from 'lodash';
 import { iframeIsAllowed } from './utils';
 
 /**
@@ -30,7 +30,7 @@ export default function makeEmbedsSafe( post, dom ) {
 	const iframes = dom.querySelectorAll( 'iframe' );
 
 	forEach( iframes, function ( iframe ) {
-		if ( ! startsWith( iframe.src, 'http' ) ) {
+		if ( ! ( iframe.src ?? '' ).startsWith( 'http' ) ) {
 			iframe.parentNode.removeChild( iframe );
 			return;
 		}

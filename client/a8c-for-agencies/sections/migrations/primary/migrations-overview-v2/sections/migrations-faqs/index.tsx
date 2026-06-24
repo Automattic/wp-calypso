@@ -1,4 +1,5 @@
 import { formatCurrency } from '@automattic/number-formatters';
+import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import PageSection from 'calypso/a8c-for-agencies/components/page-section';
@@ -81,7 +82,7 @@ export default function MigrationsFAQs() {
 				<>
 					{ preventWidows(
 						translate(
-							"Receive %(amount)s for each site you migrate to Pressable or WordPress.com, up to %(maxAmount)s.* If you're a WP\u00A0Engine customer, we'll also credit the costs to set you free. {{a}}Full Terms ↗{{/a}}",
+							"Receive %(amount)s for each site you migrate to Pressable or WordPress.com, up to %(maxAmount)s.* If you're a WP\u00A0Engine customer, we'll also credit the costs to set you free. {{a}}Full Terms{{/a}}",
 							{
 								args: {
 									amount: formatCurrency( 100, 'USD' ),
@@ -89,10 +90,9 @@ export default function MigrationsFAQs() {
 								},
 								components: {
 									a: (
-										<a
+										<ExternalLink
 											href="https://automattic.com/for-agencies/program-incentives"
-											target="_blank"
-											rel="noopener noreferrer"
+											children={ null }
 										/>
 									),
 								},

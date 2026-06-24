@@ -36,7 +36,7 @@ function useAccountCreationExperiment( {
 	// Excluded from the experiment:
 	//   - Woo-referrer users (permanent treatment from PR #110118 — preserve their UX).
 	//   - Sub-960 px viewports — mobile-web signup is owned by a separate team.
-	const [ isLoading, assignment ] = useExperiment( 'calypso_account_step_improvement_202605_v2', {
+	const [ isLoading, assignment ] = useExperiment( 'calypso_account_step_improvement_202606_v2', {
 		isEligible: isOnboardingFlow( flow ) && ! isWooReferrer && isLargeViewport,
 	} );
 

@@ -1,5 +1,7 @@
 import { createContext, useCallback, useContext, useState } from '@wordpress/element';
+import { useNavigate } from 'react-router-dom';
 import { getSessionId } from '../utils/agent-session';
+import { setResolvedAgentId } from '../utils/resolved-agent-id';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 import type { AgentsManagerSite, CurrentUser } from '@automattic/data-stores';
 
@@ -34,6 +36,8 @@ export interface AgentsManagerContextType {
 	setAgentConfig: ( config: UseAgentChatConfig | null ) => void;
 	/** Returns the active session ID from `agentConfig` or stored session. */
 	getActiveSessionId: () => string;
+	/** Reopen the chat, resuming the active conversation. */
+	resumeActiveChat: () => void;
 }
 
 const defaultContext: AgentsManagerContextType = {
@@ -47,6 +51,7 @@ const defaultContext: AgentsManagerContextType = {
 	agentConfig: null,
 	setAgentConfig: () => {},
 	getActiveSessionId: () => '',
+	resumeActiveChat: () => {},
 };
 
 const AgentsManagerContext = createContext< AgentsManagerContextType >( defaultContext );
@@ -68,9 +73,22 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
 	const isLoggedIn = value.currentUser?.ID !== undefined;
 
+	const navigate = useNavigate();
+
 	const getActiveSessionId = useCallback( () => {
 		return agentConfig?.sessionId || getSessionId( agentConfig?.agentId );
 	}, [ agentConfig ] );
+
+	// Non-reader chats resume only via router `state`, so pass the active `sessionId`.
+	const resumeActiveChat = useCallback( () => {
+		navigate( '/chat', { state: { sessionId: getActiveSessionId() } } );
+	}, [ navigate, getActiveSessionId ] );
+
+	// Publish the resolved agent id for non-React callers. Written in render (not a
+	// useEffect) so it lands in the same render that sets `agentConfig`, before the
+	// chat tree mounts and reads it from event handlers; a useEffect runs post-commit
+	// and could lag a synchronous child interaction. The write is idempotent, so safe in render.
+	setResolvedAgentId( agentConfig?.agentId );
 
 	return (
 		<AgentsManagerContext.Provider
@@ -81,6 +99,7 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 				agentConfig,
 				setAgentConfig,
 				getActiveSessionId,
+				resumeActiveChat,
 			} }
 		>
 			{ children }

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import { getUseUnifiedExperienceFromInlineData } from '../utils/load-external-providers';
+import { getAgentsManagerInlineData } from '../utils/get-agents-manager-inline-data';
 
 interface AgentsManagerStateResponse {
 	unified_ai_chat?: boolean;
@@ -26,7 +26,7 @@ export function useUnifiedAiChat( enabled = true ) {
 		queryKey: [ 'unified-ai-chat' ],
 		queryFn: async () => {
 			// 1. Check inline script first (available on wp-admin via Jetpack's Agents Manager)
-			const inlineValue = getUseUnifiedExperienceFromInlineData();
+			const inlineValue = getAgentsManagerInlineData()?.useUnifiedExperience;
 			if ( inlineValue !== undefined ) {
 				return inlineValue;
 			}

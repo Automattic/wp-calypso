@@ -6,11 +6,9 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
-	Icon,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { rotateLeft, download } from '@wordpress/icons';
 import { useCallback } from 'react';
 import FileBrowser from '../../../my-sites/backup/backup-contents-page/file-browser';
 import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
@@ -21,7 +19,6 @@ import { Card, CardBody, CardHeader } from '../../components/card';
 import { useFormattedTime } from '../../components/formatted-time';
 import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
-import { gridiconToWordPressIcon } from '../../utils/gridicons';
 import { ImagePreview } from './image-preview';
 import type { ActivityLogEntry, Site } from '@automattic/api-core';
 
@@ -51,7 +48,7 @@ export function BackupDetails( { backup, site, timezoneString, gmtOffset }: Back
 	);
 
 	// Granular backup download mutation
-	const granularDownloadRequest = useMutation(
+	const { mutate: granularDownloadMutate, isPending: isGranularDownloadPending } = useMutation(
 		siteGranularBackupDownloadInitiateMutation( site.ID )
 	);
 
@@ -79,7 +76,7 @@ export function BackupDetails( { backup, site, timezoneString, gmtOffset }: Back
 
 		recordTracksEvent( 'calypso_dashboard_backup_granular_download_request' );
 
-		granularDownloadRequest.mutate(
+		granularDownloadMutate(
 			{
 				rewindId: backup.rewind_id,
 				includePaths,
@@ -99,7 +96,7 @@ export function BackupDetails( { backup, site, timezoneString, gmtOffset }: Back
 	}, [
 		fileBrowserState,
 		recordTracksEvent,
-		granularDownloadRequest,
+		granularDownloadMutate,
 		backup.rewind_id,
 		router,
 		site.slug,
@@ -111,11 +108,10 @@ export function BackupDetails( { backup, site, timezoneString, gmtOffset }: Back
 			<Button
 				variant="tertiary"
 				size={ isSmallViewport ? 'default' : 'compact' }
-				icon={ download }
 				onClick={ hasSelectedFiles ? handleGranularDownloadClick : handleDownloadClick }
 				style={ { justifyContent: 'center' } }
-				disabled={ granularDownloadRequest.isPending }
-				isBusy={ granularDownloadRequest.isPending }
+				disabled={ isGranularDownloadPending }
+				isBusy={ isGranularDownloadPending }
 			>
 				{ hasSelectedFiles
 					? _n( 'Download selected file', 'Download selected files', selectedFilesCount )
@@ -124,7 +120,6 @@ export function BackupDetails( { backup, site, timezoneString, gmtOffset }: Back
 			<Button
 				variant="primary"
 				size={ isSmallViewport ? 'default' : 'compact' }
-				icon={ rotateLeft }
 				onClick={ handleRestoreClick }
 				style={ { justifyContent: 'center' } }
 			>
@@ -138,11 +133,7 @@ export function BackupDetails( { backup, site, timezoneString, gmtOffset }: Back
 	return (
 		<Card>
 			<CardHeader style={ { flexDirection: 'column', alignItems: 'stretch' } }>
-				<SectionHeader
-					title={ backup.summary }
-					decoration={ <Icon icon={ gridiconToWordPressIcon( backup.gridicon ) } /> }
-					actions={ ! isSmallViewport ? actions : null }
-				/>
+				<SectionHeader title={ backup.summary } actions={ ! isSmallViewport ? actions : null } />
 				{ isSmallViewport ? actions : null }
 			</CardHeader>
 			<CardBody style={ { minHeight: '300px' } }>

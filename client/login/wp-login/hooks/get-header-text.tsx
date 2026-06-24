@@ -1,5 +1,5 @@
+import { capitalize } from '@automattic/js-utils';
 import { TranslateResult, fixMe } from 'i18n-calypso';
-import { capitalize } from 'lodash';
 import { getLoginCopy } from 'calypso/jetpack-connect/connection-content';
 import {
 	isJetpackCloudOAuth2Client,

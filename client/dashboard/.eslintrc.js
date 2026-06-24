@@ -24,6 +24,8 @@ module.exports = {
 							'!calypso/lib/color-scheme',
 							'!calypso/lib/explat',
 							'!calypso/lib/interval',
+							// Allowed: calypso/lib/use-site-launch-gating-variant (temporary)
+							'!calypso/lib/use-site-launch-gating-variant',
 							'!calypso/lib/load-dev-helpers',
 							'!calypso/lib/logstash',
 							'!calypso/lib/wp',

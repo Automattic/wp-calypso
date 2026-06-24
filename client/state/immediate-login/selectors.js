@@ -1,4 +1,4 @@
-import { get, includes } from 'lodash';
+import { get } from 'lodash';
 import { REASONS_FOR_MANUAL_RENEWAL } from './constants';
 
 import 'calypso/state/immediate-login/init';
@@ -73,5 +73,5 @@ export const getImmediateLoginLocale = ( state ) => {
  *                      login attempt was made from a manual renewal email
  */
 export const wasManualRenewalImmediateLoginAttempted = ( state ) => {
-	return includes( REASONS_FOR_MANUAL_RENEWAL, getImmediateLoginReason( state ) );
+	return REASONS_FOR_MANUAL_RENEWAL.includes( getImmediateLoginReason( state ) );
 };

@@ -1,10 +1,8 @@
 import { RootChild, Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { includes, without } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
-import ReactDom from 'react-dom';
 import TranslatableString from 'calypso/components/translatable/proptype';
 
 import './style.scss';
@@ -105,17 +103,18 @@ export class DropZone extends Component {
 				return;
 			}
 
-			this.dragEnterNodes = without( this.dragEnterNodes, Array.from( mutation.removedNodes ) );
+			const removedNodes = Array.from( mutation.removedNodes );
+			this.dragEnterNodes = this.dragEnterNodes.filter( ( node ) => node !== removedNodes );
 		} );
 	};
 
 	toggleDraggingOverDocument = ( event ) => {
 		// Track nodes that have received a drag event. So long as nodes exist
 		// in the set, we can assume that an item is being dragged on the page.
-		if ( 'dragenter' === event.type && ! includes( this.dragEnterNodes, event.target ) ) {
+		if ( 'dragenter' === event.type && ! this.dragEnterNodes.includes( event.target ) ) {
 			this.dragEnterNodes.push( event.target );
 		} else if ( 'dragleave' === event.type ) {
-			this.dragEnterNodes = without( this.dragEnterNodes, event.target );
+			this.dragEnterNodes = this.dragEnterNodes.filter( ( node ) => node !== event.target );
 		}
 
 		// In some contexts, it may be necessary to capture and redirect the
@@ -138,7 +137,7 @@ export class DropZone extends Component {
 		if ( window.CustomEvent && event instanceof window.CustomEvent ) {
 			// For redirected CustomEvent instances, immediately remove window
 			// from tracked nodes since another "real" event will be triggered.
-			this.dragEnterNodes = without( this.dragEnterNodes, window );
+			this.dragEnterNodes = this.dragEnterNodes.filter( ( node ) => node !== window );
 		}
 	};
 
@@ -172,10 +171,7 @@ export class DropZone extends Component {
 		// prevent the browser default action, which navigates to the file.
 		event.preventDefault();
 
-		if (
-			! this.props.fullScreen &&
-			! ReactDom.findDOMNode( this.zoneRef.current ).contains( event.target )
-		) {
+		if ( ! this.props.fullScreen && ! this.zoneRef.current.contains( event.target ) ) {
 			return;
 		}
 

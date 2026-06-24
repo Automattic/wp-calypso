@@ -23,14 +23,16 @@ export default function DomainRemovalFlow( { purchase, onCancel }: DomainRemoval
 	const [ currentStep, setCurrentStep ] = useState< RemovalStep >( 'warning' );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const navigate = useNavigate();
-	const removePurchaseMutator = useMutation( removePurchaseMutation() );
+	const { mutate: removePurchase, isPending: isRemovingPurchase } = useMutation(
+		removePurchaseMutation()
+	);
 
 	const handleContinue = useCallback( () => {
 		setCurrentStep( 'confirmation' );
 	}, [] );
 
 	const handleConfirm = useCallback( () => {
-		removePurchaseMutator.mutate( purchase.ID, {
+		removePurchase( purchase.ID, {
 			onSuccess: () => {
 				const domainName = purchase.meta || purchase.product_name;
 				createSuccessNotice(
@@ -62,9 +64,7 @@ export default function DomainRemovalFlow( { purchase, onCancel }: DomainRemoval
 				);
 			},
 		} );
-	}, [ purchase, removePurchaseMutator, createSuccessNotice, createErrorNotice, navigate ] );
-
-	const isLoading = removePurchaseMutator.isPending;
+	}, [ purchase, removePurchase, createSuccessNotice, createErrorNotice, navigate ] );
 
 	return (
 		<div>
@@ -73,7 +73,7 @@ export default function DomainRemovalFlow( { purchase, onCancel }: DomainRemoval
 					purchase={ purchase }
 					onContinue={ handleContinue }
 					onCancel={ onCancel }
-					isLoading={ isLoading }
+					isLoading={ isRemovingPurchase }
 				/>
 			) }
 			{ currentStep === 'confirmation' && (
@@ -81,7 +81,7 @@ export default function DomainRemovalFlow( { purchase, onCancel }: DomainRemoval
 					purchase={ purchase }
 					onConfirm={ handleConfirm }
 					onCancel={ onCancel }
-					isLoading={ isLoading }
+					isLoading={ isRemovingPurchase }
 				/>
 			) }
 		</div>

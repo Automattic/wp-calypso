@@ -1,5 +1,6 @@
+import { flow } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { flow, get, isEmpty, some, values } from 'lodash';
+import { get, isEmpty, some } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -58,7 +59,7 @@ export class EditorMediaModal extends Component {
 		single: PropTypes.bool,
 		defaultFilter: PropTypes.string,
 		enabledFilters: PropTypes.arrayOf( PropTypes.string ),
-		view: PropTypes.oneOf( values( ModalViews ) ),
+		view: PropTypes.oneOf( Object.values( ModalViews ) ),
 		galleryViewEnabled: PropTypes.bool,
 		setView: PropTypes.func,
 		resetView: PropTypes.func,
@@ -499,7 +500,7 @@ export class EditorMediaModal extends Component {
 
 				content = (
 					<ImageEditor
-						siteId={ get( site, 'ID' ) }
+						siteId={ site?.ID }
 						media={ media }
 						onDone={ this.onImageEditorDone }
 						onCancel={ this.onImageEditorCancel }

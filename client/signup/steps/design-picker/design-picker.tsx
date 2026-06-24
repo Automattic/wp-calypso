@@ -12,7 +12,6 @@ import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { noop } from 'lodash';
 import { useMemo } from 'react';
 import { DesignPickerCategoryFilter } from './design-picker-category-filter';
 import { filterDesignsByCategory, sortDesigns } from './utils';
@@ -20,6 +19,8 @@ import type { Categorization } from './use-categorization';
 import type { Design } from '@automattic/design-picker';
 import type { FC, ReactNode } from 'react';
 import './design-picker.scss';
+
+const noop = () => {};
 
 const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name__${ slug }`;
 

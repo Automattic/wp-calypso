@@ -77,6 +77,8 @@ function injectScopedReset() {
 		.agents-manager-chat button {
 			font-family: inherit !important;
 			font-size: inherit !important;
+			letter-spacing: inherit !important;
+			text-transform: none !important;
 		}
 		/*
 		 * Themes often give inputs/textareas thick borders that leak
@@ -94,8 +96,100 @@ function injectScopedReset() {
 		}
 		#jetpack-reader-chat,
 		.agents-manager-chat {
+			font-size: 16px !important;
 			line-height: 1.5 !important;
 			color: #1e1e1e !important;
+		}
+		/*
+		 * The .agenttic widget's sizes are derived from --base-font-size. Some blog
+		 * themes set html { font-size: 62.5%; }, which shrinks every rem in
+		 * the widget. Pin the wrapper and widget base to px so inherited em
+		 * text and rem-derived spacing do not inherit the host page's scale.
+		 */
+		.agents-manager-chat .agenttic {
+			--base-font-size: 16px !important;
+		}
+		.agents-manager-chat .components-button {
+			-webkit-appearance: none !important;
+			appearance: none !important;
+			font-family: inherit !important;
+			font-size: inherit !important;
+			font-weight: 400 !important;
+			letter-spacing: normal !important;
+			line-height: normal !important;
+			text-decoration: none !important;
+			text-transform: none !important;
+		}
+		.agents-manager-chat .components-button.has-icon {
+			align-items: center !important;
+			background: transparent !important;
+			border: 0 !important;
+			border-radius: 4px !important;
+			box-shadow: none !important;
+			color: var( --color-foreground, #1e1e1e ) !important;
+			display: inline-flex !important;
+			justify-content: center !important;
+			margin: 0 !important;
+		}
+		.agents-manager-chat .agents-manager-chat-header .components-button.has-icon,
+		.agents-manager-chat .agents-manager-copy-action-button.components-button.has-icon,
+		.agents-manager-chat .agents-manager-zoom-action-button.components-button.has-icon {
+			height: 32px !important;
+			padding: 6px !important;
+			width: 32px !important;
+		}
+		.agents-manager-chat .agents-manager-chat-header .components-button.has-icon:hover:not(:disabled):not([aria-disabled="true"]),
+		.agents-manager-chat .agents-manager-copy-action-button.components-button.has-icon:hover:not(:disabled):not([aria-disabled="true"]),
+		.agents-manager-chat .agents-manager-zoom-action-button.components-button.has-icon:hover:not(:disabled):not([aria-disabled="true"]) {
+			background: var( --color-muted, rgba( 0, 0, 0, 0.06 ) ) !important;
+		}
+		.agents-manager-chat-header__menu-popover {
+			--color-foreground: #1e1e1e;
+			--color-muted: rgba( 0, 0, 0, 0.06 );
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif !important;
+			font-size: 13px !important;
+			line-height: 1.4 !important;
+			color: var( --color-foreground, #1e1e1e ) !important;
+		}
+		.agents-manager-chat-header__menu-popover .components-button,
+		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item {
+			-webkit-appearance: none !important;
+			appearance: none !important;
+			background: transparent !important;
+			border: 0 !important;
+			box-shadow: none !important;
+			color: var( --color-foreground, #1e1e1e ) !important;
+			font-family: inherit !important;
+			font-size: inherit !important;
+			font-weight: 400 !important;
+			letter-spacing: normal !important;
+			line-height: inherit !important;
+			text-decoration: none !important;
+			text-transform: none !important;
+		}
+		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item {
+			align-items: center !important;
+			display: flex !important;
+			gap: 8px !important;
+			height: auto !important;
+			justify-content: flex-start !important;
+			min-height: 32px !important;
+			padding: 6px 8px !important;
+			text-align: left !important;
+			width: 100% !important;
+		}
+		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item:hover:not(:disabled):not([aria-disabled="true"]) {
+			background: var( --color-muted, rgba( 0, 0, 0, 0.06 ) ) !important;
+		}
+		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item[aria-disabled="true"],
+		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item:disabled {
+			background: transparent !important;
+			color: var( --color-foreground, #1e1e1e ) !important;
+			cursor: default !important;
+			opacity: 0.5 !important;
+		}
+		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item svg {
+			fill: currentColor !important;
 		}
 		/*
 		 * wp-components dropdown/menu fix: the popover is portalled to body
@@ -969,7 +1063,7 @@ if ( container ) {
 	setupInitialSuggestions();
 }
 
-// Exported for unit tests only — these are pure helpers with no side effects.
+// Exported for unit tests only; injectScopedReset mutates document.head.
 export {
 	parseAgentSseResponse,
 	slugify,
@@ -982,4 +1076,5 @@ export {
 	normalizeSuggestions,
 	parseSuggestionsResponse,
 	getSuggestionsFetchHeaders,
+	injectScopedReset,
 };

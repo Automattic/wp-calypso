@@ -2,9 +2,9 @@ import { select } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { useLocation } from 'react-router-dom';
 import { useAgentsManagerContext } from '../contexts';
-import { AGENTS_MANAGER_STORE } from '../stores';
+import { AGENTS_MANAGER_STORE, persistAgentsManagerState } from '../stores';
 import { getSessionId } from '../utils/agent-session';
-import { persistAgentsManagerState } from '../utils/persist-agents-manager-state';
+import { generateUUID } from '../utils/generate-uuid';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 /**
@@ -18,7 +18,7 @@ function saveNewChatRoute( sessionId: string, siteKey: string ): void {
 		pathname: '/chat',
 		search: '',
 		hash: '',
-		key: crypto.randomUUID(),
+		key: generateUUID(),
 		state: { sessionId },
 	};
 

@@ -1,4 +1,5 @@
-import { get, mapValues, reduce } from 'lodash';
+import { mapValues } from '@automattic/js-utils';
+import { get, reduce } from 'lodash';
 import { combineReducers as combine } from 'redux'; // eslint-disable-line no-restricted-imports
 import { APPLY_STORED_STATE } from 'calypso/state/action-types';
 import { SerializationResult } from 'calypso/state/serialization-result';

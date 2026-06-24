@@ -1,6 +1,7 @@
 export const TYPE_FREE = 'TYPE_FREE';
 export const TYPE_BLOGGER = 'TYPE_BLOGGER';
 export const TYPE_PERSONAL = 'TYPE_PERSONAL';
+export const TYPE_STUDENT = 'TYPE_STUDENT';
 export const TYPE_PREMIUM = 'TYPE_PREMIUM';
 export const TYPE_BUSINESS = 'TYPE_BUSINESS';
 export const TYPE_100_YEAR = 'TYPE_100_YEAR';
@@ -24,12 +25,12 @@ export const TYPE_FLEXIBLE = 'TYPE_FLEXIBLE';
 export const TYPE_PRO = 'TYPE_PRO';
 export const TYPE_STARTER = 'TYPE_STARTER';
 export const TYPE_GOLDEN_TOKEN = 'TYPE_GOLDEN_TOKEN';
-export const TYPE_CHOOSE = 'TYPE_CHOOSE';
 
 export const TYPES_LIST = < const >[
 	TYPE_FREE,
 	TYPE_BLOGGER,
 	TYPE_PERSONAL,
+	TYPE_STUDENT,
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
 	TYPE_100_YEAR,
@@ -53,5 +54,4 @@ export const TYPES_LIST = < const >[
 	TYPE_JETPACK_STARTER,
 	TYPE_SECURITY_T1,
 	TYPE_SECURITY_T2,
-	TYPE_CHOOSE,
 ];

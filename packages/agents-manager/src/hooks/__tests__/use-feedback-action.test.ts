@@ -1,9 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { renderHook, act } from '@testing-library/react';
 import { useAgentsManagerContext } from '../../contexts';
+import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import useFeedbackAction from '../use-feedback-action';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
 
@@ -28,9 +28,10 @@ jest.mock(
 	} ),
 	{ virtual: true }
 );
-jest.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: jest.fn() } ), {
-	virtual: true,
-} );
+jest.mock( '../../utils/tracks', () => ( {
+	recordBigSkyTracksEvent: jest.fn(),
+	recordAgentsManagerTracksEvent: jest.fn(),
+} ) );
 jest.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: jest.fn(),
 } ) );
@@ -43,7 +44,12 @@ const mockFetch = jest.fn().mockResolvedValue( { ok: true } );
 globalThis.fetch = mockFetch;
 
 const mockRegisterMessageActions = jest.fn();
-const mockRecordTracksEvent = recordTracksEvent as jest.MockedFunction< typeof recordTracksEvent >;
+const mockRecordBigSkyTracksEvent = recordBigSkyTracksEvent as jest.MockedFunction<
+	typeof recordBigSkyTracksEvent
+>;
+const mockRecordAgentsManagerTracksEvent = recordAgentsManagerTracksEvent as jest.MockedFunction<
+	typeof recordAgentsManagerTracksEvent
+>;
 const mockGetActiveSessionId = jest.fn();
 
 const mockAuthProvider = jest.fn().mockResolvedValue( { Authorization: 'Bearer test-token' } );
@@ -174,14 +180,13 @@ describe( 'useFeedbackAction', () => {
 			);
 		} );
 
-		it( 'records tracks event', async () => {
+		it( 'records the verbatim Big Sky thumbs-up event', async () => {
 			renderHook( () => useFeedbackAction( defaultConfig ) );
 			await triggerFeedback( 'msg-1', 'up' );
 
-			expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_agents_manager_response_feedback_action',
-				{ type: 'thumb_up', message_id: 'msg-1' }
-			);
+			expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'response_action_thumbs_up', {
+				message_id: 'msg-1',
+			} );
 		} );
 
 		it( 'does not show feedback input', async () => {
@@ -212,14 +217,13 @@ describe( 'useFeedbackAction', () => {
 			);
 		} );
 
-		it( 'records tracks event', async () => {
+		it( 'records the verbatim Big Sky thumbs-down event', async () => {
 			renderHook( () => useFeedbackAction( defaultConfig ) );
 			await triggerFeedback( 'msg-1', 'down' );
 
-			expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_agents_manager_response_feedback_action',
-				{ type: 'thumb_down', message_id: 'msg-1' }
-			);
+			expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'response_action_thumbs_down', {
+				message_id: 'msg-1',
+			} );
 		} );
 
 		it( 'shows feedback input', async () => {
@@ -296,9 +300,11 @@ describe( 'useFeedbackAction', () => {
 				await result.current.submitFeedbackText( 'Helpful feedback' );
 			} );
 
-			expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_agents_manager_response_feedback_submitted',
-				{ message_id: 'msg-1' }
+			expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+				'response_feedback_submitted',
+				{
+					message_id: 'msg-1',
+				}
 			);
 		} );
 

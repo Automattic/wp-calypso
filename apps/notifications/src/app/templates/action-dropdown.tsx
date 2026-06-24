@@ -16,10 +16,6 @@ export default function ActionDropdown( { note, goBack }: { note: Note; goBack: 
 	const actions = getActions( note );
 	const hasDeleteAction = actions?.hasOwnProperty( 'trash-comment' );
 
-	if ( ! hasDeleteAction ) {
-		return null;
-	}
-
 	const handleDelete = async () => {
 		setIsDeleting( true );
 		await ( dispatch as any )( trashNote( note, true ) );
@@ -27,11 +23,18 @@ export default function ActionDropdown( { note, goBack }: { note: Note; goBack: 
 	};
 
 	return (
-		<HotkeyContainer shortcuts={ [ { hotkey: 't', action: handleDelete } ] }>
+		// Always render the dropdown — disabled when the note has no actions — so
+		// the header layout stays stable across notes instead of the toggle
+		// appearing and disappearing.
+		<HotkeyContainer shortcuts={ hasDeleteAction ? [ { hotkey: 't', action: handleDelete } ] : [] }>
 			<DropdownMenu
 				icon={ moreVertical }
 				label={ __( 'Actions' ) }
-				toggleProps={ { size: 'small' } }
+				toggleProps={ {
+					size: 'small',
+					disabled: ! hasDeleteAction,
+					accessibleWhenDisabled: true,
+				} }
 			>
 				{ ( { onClose } ) => {
 					return (

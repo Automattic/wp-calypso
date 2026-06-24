@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import requestExternalAccess from '@automattic/request-external-access';
 import { localize } from 'i18n-calypso';
-import { find, last, some } from 'lodash';
+import { find, some } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -85,7 +85,7 @@ class KeyringConnectButton extends Component {
 		// Depending on current status, perform an action when user clicks the
 		// service action button
 		if ( 'connected' === connectionStatus && ! forceReconnect ) {
-			this.props.onConnect( last( keyringConnections ) );
+			this.props.onConnect( keyringConnections.at( -1 ) );
 		} else {
 			this.addConnection();
 		}

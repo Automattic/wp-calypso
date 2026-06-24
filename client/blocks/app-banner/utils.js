@@ -1,4 +1,4 @@
-import { get, includes, reduce } from 'lodash';
+import { get, reduce } from 'lodash';
 
 export const APP_BANNER_DISMISS_TIMES_PREFERENCE = 'appBannerDismissTimes';
 export const GUTENBERG = 'gutenberg-editor';
@@ -66,7 +66,7 @@ export function getCurrentSection( currentSection, isNotesOpen ) {
 		return NOTES;
 	}
 
-	if ( includes( ALLOWED_SECTIONS, currentSection ) ) {
+	if ( ALLOWED_SECTIONS.includes( currentSection ) ) {
 		return currentSection;
 	}
 

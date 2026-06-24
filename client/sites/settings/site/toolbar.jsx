@@ -14,8 +14,8 @@ import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const Masterbar = ( {
-	isRequestingSettings,
-	isSavingSettings,
+	isRequestingSettings = true,
+	isSavingSettings = false,
 	selectedSiteId,
 	masterbarModuleUnavailable,
 	translate,
@@ -64,11 +64,6 @@ const Masterbar = ( {
 			{ renderForm() }
 		</PanelCard>
 	);
-};
-
-Masterbar.defaultProps = {
-	isSavingSettings: false,
-	isRequestingSettings: true,
 };
 
 Masterbar.propTypes = {

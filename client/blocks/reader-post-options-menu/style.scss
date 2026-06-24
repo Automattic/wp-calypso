@@ -1,4 +1,5 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 
 .reader-post-options-menu,
 .reader-post-options-menu .ellipsis-menu {

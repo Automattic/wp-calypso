@@ -1,4 +1,4 @@
-import { omit } from 'lodash';
+import { omit } from '@automattic/js-utils';
 import validateContactDetails from '../fr-validate-contact-details';
 
 describe( 'validateContactDetails', () => {

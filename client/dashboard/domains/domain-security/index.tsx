@@ -9,6 +9,7 @@ import PageLayout from '../../components/page-layout';
 import { isTldInMaintenance } from '../../utils/domain';
 import { TLDMaintenanceNotice } from '../maintenance-notice';
 import DnsSec from './dnssec';
+import { DnsSecNameserversNotice } from './notice';
 import SslCertificate from './ssl-certificate';
 
 export default function DomainSecurity() {
@@ -33,6 +34,7 @@ export default function DomainSecurity() {
 		>
 			{ ! isInMaintenance && (
 				<>
+					<DnsSecNameserversNotice domainName={ domainName } domain={ domain } />
 					<SslCertificate domainName={ domainName } domain={ domain } sslDetails={ sslDetails } />
 					<DnsSec domainName={ domainName } domain={ domain } />
 				</>

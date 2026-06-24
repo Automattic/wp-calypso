@@ -13,7 +13,11 @@ export const getAgentStudioVariantHtmlQueryKey = ( htmlUrl: string | undefined )
 
 export const fetchAgentStudioVariantHtml = async ( htmlUrl: string ): Promise< string > => {
 	const token = oauthToken.getToken();
+	// Refine rewrites HTML to the same html_url, so force revalidation —
+	// otherwise the browser HTTP cache can serve the pre-refine body even
+	// after React Query has invalidated its in-memory entry.
 	const response = await fetch( htmlUrl, {
+		cache: 'no-cache',
 		headers: {
 			Accept: 'text/html',
 			...( typeof token === 'string' ? { Authorization: `Bearer ${ token }` } : {} ),
@@ -31,6 +35,11 @@ export default function useAgentStudioVariantHtml( htmlUrl: string | undefined )
 		queryFn: () => fetchAgentStudioVariantHtml( htmlUrl as string ),
 		enabled: !! htmlUrl,
 		refetchOnWindowFocus: false,
-		staleTime: Infinity,
+		// Match wpcom's `Cache-Control: max-age=60` on the deck endpoint.
+		// `Infinity` here would persist composed HTML across sessions via
+		// Calypso's React Query localStorage persister, locking the
+		// preview to whichever fitter / layout director was current when
+		// the page was first fetched.
+		staleTime: 60_000,
 	} );
 }

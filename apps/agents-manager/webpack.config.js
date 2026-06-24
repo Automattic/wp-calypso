@@ -87,6 +87,14 @@ function getIndividualConfig( options = {} ) {
 					) {
 						return null;
 					}
+					// Bundle @wordpress/ui: neither WordPress core nor the Gutenberg
+					// plugin registers a wp-ui script handle yet, and WP_Scripts
+					// silently skips scripts with unregistered dependencies, so
+					// externalizing it prevents the bundle from loading on
+					// self-hosted sites.
+					if ( request === '@wordpress/ui' ) {
+						return null;
+					}
 				},
 			} ),
 			new ReadableJsAssetsWebpackPlugin(),
@@ -195,7 +203,6 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		getIndividualConfig( { env, argv, name: 'jetpack-ai-sidebar' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-gutenberg-disconnected' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wp-admin-disconnected' } ),
-		getIndividualConfig( { env, argv, name: 'agents-manager-ciab-disconnected' } ),
 		getIndividualConfig( { env, argv, name: 'block-notes' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-ciab' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wooai' } ),

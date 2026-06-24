@@ -95,7 +95,7 @@ describe( 'FediverseAuthorProfilePanel — follow / unfollow button', () => {
 	} );
 
 	beforeEach( () => {
-		// recordReaderTracksEvent is a thunk that reads state.reader.follows.
+		// recordReaderTracksEvent is a thunk that reads the follows query cache.
 		// Replace it with a no-op action creator so dispatch() doesn't throw,
 		// while letting spies observe call-site arguments.
 		jest

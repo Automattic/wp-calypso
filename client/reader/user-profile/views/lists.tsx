@@ -8,6 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
 import { List } from 'calypso/reader/list-manage/types';
 import type { ReaderUser } from '@automattic/api-core';
+import type { JSX } from 'react';
 
 interface UserListsProps {
 	user: ReaderUser;
@@ -18,6 +19,9 @@ export const UserLists = ( { user }: UserListsProps ): JSX.Element => {
 	const userLogin = user.user_login ?? '';
 	const { data, isLoading, isFetched } = useQuery( readUserListsQuery( userLogin ) );
 	const lists = data?.lists ?? [];
+	const visibleLists = lists.filter(
+		( list: List ) => ! ( list.slug === 'recommended-blogs' && list.is_owner )
+	);
 
 	if ( isLoading || ! isFetched ) {
 		return (
@@ -27,7 +31,7 @@ export const UserLists = ( { user }: UserListsProps ): JSX.Element => {
 		);
 	}
 
-	if ( lists.length === 0 ) {
+	if ( visibleLists.length === 0 ) {
 		return (
 			<div className="user-profile__lists">
 				<EmptyContent
@@ -42,7 +46,7 @@ export const UserLists = ( { user }: UserListsProps ): JSX.Element => {
 
 	return (
 		<div className="user-profile__lists">
-			{ lists.map( ( list: List ) => {
+			{ visibleLists.map( ( list: List ) => {
 				let description: React.ReactNode = list.description;
 				if ( list.slug === 'recommended-blogs' ) {
 					description = translate( 'A list of blogs recommended by %s.', {

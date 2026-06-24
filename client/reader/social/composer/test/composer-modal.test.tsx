@@ -95,7 +95,7 @@ describe( '<ComposerModal>', () => {
 		openFn = null;
 		closeFn = null;
 
-		// recordReaderTracksEvent is a thunk that reads state.reader.follows.
+		// recordReaderTracksEvent is a thunk that reads the follows query cache.
 		// Replace it with a no-op action creator so dispatch() doesn't throw,
 		// while still letting spies observe call-site arguments.
 		jest
@@ -136,6 +136,48 @@ describe( '<ComposerModal>', () => {
 		// Touch the unused bindings so TS / lint don't trip on them.
 		void rerender;
 		void queryClient;
+	} );
+
+	it( 'passes config.headerIcon to the Modal and calls config.useAuthorHandle for the title', () => {
+		const useAuthorHandle = jest.fn( ( id: number | null ) =>
+			id === 7 ? 'jordesign.bsky.social' : null
+		);
+		const config: ComposerConfig< TestError, TestParams, TestResult > = {
+			...testComposerConfig,
+			useAuthorHandle,
+			headerIcon: <span data-testid="composer-header-icon" />,
+			copy: {
+				...testComposerConfig.copy,
+				title: ( mode, _t, handle ) =>
+					handle ? `Title:${ mode.kind } · @${ handle }` : `Title:${ mode.kind }`,
+			},
+		};
+		renderModal( config );
+
+		act( () => openFn?.( standaloneMode ) );
+
+		expect( useAuthorHandle ).toHaveBeenCalledWith( 7 );
+		expect(
+			screen.getByRole( 'dialog', { name: 'Title:standalone · @jordesign.bsky.social' } )
+		).toBeVisible();
+		expect( screen.getByTestId( 'composer-header-icon' ) ).toBeVisible();
+	} );
+
+	it( 'falls back to the bare title when config.useAuthorHandle returns null', () => {
+		const config: ComposerConfig< TestError, TestParams, TestResult > = {
+			...testComposerConfig,
+			useAuthorHandle: () => null,
+			copy: {
+				...testComposerConfig.copy,
+				title: ( mode, _t, handle ) =>
+					handle ? `Title:${ mode.kind } · @${ handle }` : `Title:${ mode.kind }`,
+			},
+		};
+		renderModal( config );
+
+		act( () => openFn?.( standaloneMode ) );
+
+		expect( screen.getByRole( 'dialog', { name: 'Title:standalone' } ) ).toBeVisible();
 	} );
 
 	it( 'fires tracks.opened on mount when a mode is active', () => {
@@ -429,6 +471,111 @@ describe( '<ComposerModal>', () => {
 
 		// Modal stays open after the error.
 		expect( screen.getByRole( 'dialog' ) ).toBeVisible();
+	} );
+
+	it( 'composes media and protocol-extras triggers into footerStart', () => {
+		const config: ComposerConfig< TestError, TestParams, TestResult > = {
+			...testComposerConfig,
+			useMedia: () => ( {
+				hasAny: false,
+				hasUploaded: false,
+				isAllUploaded: true,
+				isAnyPending: false,
+				renderGrid: () => null,
+				renderFooterTrigger: () => (
+					<button type="button" data-testid="media-trigger">
+						Media
+					</button>
+				),
+				extendBuildParams: ( params ) => params,
+				onPublishSuccess: () => undefined,
+				clear: () => undefined,
+			} ),
+			useProtocolExtras: () => ( {
+				renderControls: () => null,
+				renderTrigger: () => (
+					<button type="button" data-testid="extras-trigger">
+						Extras
+					</button>
+				),
+				extendBuildParams: ( params ) => params,
+			} ),
+		};
+
+		renderModal( config );
+		act( () => openFn?.( standaloneMode ) );
+
+		expect( screen.getByTestId( 'media-trigger' ) ).toBeVisible();
+		expect( screen.getByTestId( 'extras-trigger' ) ).toBeVisible();
+	} );
+
+	it( 'merges getTracksProps() into the published tracks event props', async () => {
+		const user = userEvent.setup();
+		const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+
+		const config: ComposerConfig< TestError, TestParams, TestResult > = {
+			...testComposerConfig,
+			mutationFactory: () =>
+				mutationOptions< TestResult, TestError, TestParams >( {
+					mutationFn: async () => ( { uri: 'at://posted' } ),
+				} ),
+			useProtocolExtras: () => ( {
+				renderControls: () => null,
+				renderTrigger: () => null,
+				extendBuildParams: ( params ) => params,
+				getTracksProps: () => ( { reply_allow_kind: 'combo', allow_quotes: false } ),
+			} ),
+		};
+
+		renderModal( config );
+		act( () => openFn?.( standaloneMode ) );
+
+		await user.type( screen.getByRole( 'textbox' ), 'Hello' );
+		await user.click( screen.getByRole( 'button', { name: /post/i } ) );
+
+		await waitFor( () =>
+			expect( recordSpy ).toHaveBeenCalledWith(
+				'test_composer_published_standalone',
+				expect.objectContaining( {
+					connection_id: 7,
+					reply_allow_kind: 'combo',
+					allow_quotes: false,
+				} )
+			)
+		);
+	} );
+
+	it( 'canonical tracks props win when getTracksProps() returns a colliding key', async () => {
+		const user = userEvent.setup();
+		const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+
+		const config: ComposerConfig< TestError, TestParams, TestResult > = {
+			...testComposerConfig,
+			mutationFactory: () =>
+				mutationOptions< TestResult, TestError, TestParams >( {
+					mutationFn: async () => ( { uri: 'at://posted' } ),
+				} ),
+			useProtocolExtras: () => ( {
+				renderControls: () => null,
+				renderTrigger: () => null,
+				extendBuildParams: ( params ) => params,
+				// Try to clobber a canonical prop — the modal must not let this through.
+				getTracksProps: () => ( { connection_id: 999, my_extra: 'kept' } ),
+			} ),
+		};
+
+		renderModal( config );
+		act( () => openFn?.( standaloneMode ) );
+
+		await user.type( screen.getByRole( 'textbox' ), 'Hello' );
+		await user.click( screen.getByRole( 'button', { name: /post/i } ) );
+
+		await waitFor( () =>
+			expect( recordSpy ).toHaveBeenCalledWith(
+				'test_composer_published_standalone',
+				expect.objectContaining( { connection_id: 7, my_extra: 'kept' } )
+			)
+		);
 	} );
 
 	it( 'fires config.logBadRequest when an error of kind bad_request arrives', async () => {

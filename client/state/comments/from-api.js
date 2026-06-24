@@ -1,4 +1,4 @@
-import { pickBy } from 'lodash';
+import { pickBy } from '@automattic/js-utils';
 
 export const toAuthor = ( { avatar_URL, email, ID, name } ) => {
 	if ( ID > 0 ) {

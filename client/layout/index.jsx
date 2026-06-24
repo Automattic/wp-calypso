@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component, useEffect } from 'react';
@@ -22,6 +21,7 @@ import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-util
 import { installKonamiListener } from 'calypso/layout/arcade-mode/detect';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
+import { Nav2026UniversalHeader } from 'calypso/layout/nav-2026-universal-header';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { ClassicColorSchemeProvider, withColorScheme } from 'calypso/lib/color-scheme';
@@ -251,7 +251,7 @@ class Layout extends Component {
 		return null;
 	}
 
-	renderMasterbar( loadHelpCenterIcon ) {
+	renderMasterbar( loadHelpCenterIcon, loadAgentsManager ) {
 		if ( this.props.masterbarIsHidden ) {
 			return <EmptyMasterbar />;
 		}
@@ -281,7 +281,7 @@ class Layout extends Component {
 		return (
 			<>
 				{ this.props.hasUniversalHeader && (
-					<UniversalNavbarHeader
+					<Nav2026UniversalHeader
 						isLoggedIn={ this.props.isLoggedIn }
 						sectionName={ this.props.sectionName }
 					/>
@@ -293,6 +293,7 @@ class Layout extends Component {
 					isCheckoutPending={ this.props.sectionName === 'checkout-pending' }
 					isCheckoutFailed={ isCheckoutFailed }
 					loadHelpCenterIcon={ loadHelpCenterIcon }
+					loadAgentsManager={ loadAgentsManager }
 					isGlobalSidebarVisible={ this.props.isGlobalSidebarVisible }
 				/>
 			</>
@@ -407,7 +408,9 @@ class Layout extends Component {
 				{ config.isEnabled( 'layout/guided-tours' ) && (
 					<AsyncLoad require={ loadGuidedTours } placeholder={ null } />
 				) }
-				<div className="layout__header-section">{ this.renderMasterbar( loadHelpCenter ) }</div>
+				<div className="layout__header-section">
+					{ this.renderMasterbar( loadHelpCenter, loadAgentsManager ) }
+				</div>
 				<LayoutLoader />
 				{ isJetpackCloud() && <AsyncLoad require={ loadJetpackCloudStyle } placeholder={ null } /> }
 				{ isA8CForAgencies() && (

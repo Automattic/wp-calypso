@@ -6,10 +6,11 @@ import {
 	useMastodonConnectionsQuery,
 } from '@automattic/api-queries';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Button, Card, ExternalLink, Spinner } from '@wordpress/components';
+import { Button, Card, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { DEFAULT_ATMOSPHERE_TAB } from 'calypso/reader/atmosphere/helper';
 import ReaderMain from 'calypso/reader/components/reader-main';
@@ -241,9 +242,17 @@ export function SocialOverviewView() {
 						{ translate( 'Pick a network →' ) }
 					</Button>
 					<p className="social-empty__learn-more">
-						<ExternalLink href={ localizeUrl( 'https://wordpress.com/support/reader/social/' ) }>
+						<InlineSupportLink
+							supportPostId={ 439167 }
+							supportLink={ localizeUrl( 'https://wordpress.com/support/reader/social/' ) }
+							onClick={ () =>
+								dispatch( recordReaderTracksEvent( 'calypso_reader_social_learn_more_clicked' ) )
+							}
+							showIcon={ false }
+							noWrap={ false }
+						>
 							{ translate( 'Learn more about your social accounts in the Reader' ) }
-						</ExternalLink>
+						</InlineSupportLink>
 					</p>
 				</Card>
 			) }

@@ -15,7 +15,7 @@
 		}
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"sideEffects": [
 		"*.scss",
 		"*.css"
@@ -35,15 +35,18 @@
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
-		"@wordpress/api-fetch": "^7.23.0",
-		"@wordpress/element": "^6.23.0",
-		"@wordpress/url": "^4.23.0",
-		"react": "^18.3.1",
+		"@wordpress/api-fetch": "^7.48.0",
+		"@wordpress/element": "^8.0.0",
+		"@wordpress/url": "^4.48.0",
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^5.8.3"
+		"react": "^18.3.1",
+		"typescript": "^6.0.3"
 	},
-	"license": "GPL-2.0-or-later"
+	"license": "GPL-2.0-or-later",
+	"peerDependencies": {
+		"react": "^18.3.1 || ^19.0.0"
+	}
 }

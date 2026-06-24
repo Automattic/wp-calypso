@@ -19,6 +19,8 @@ import { ComposerTextarea } from './composer-textarea';
 import { countGraphemes, countWords } from './grapheme-count';
 import type { AppState } from 'calypso/types';
 
+const NOOP_USE_AUTHOR_HANDLE = (): string | null => null;
+
 export function ComposerModal< TError, TParams, TResult >() {
 	const translate = useTranslate();
 	const config = useComposerConfig< TError, TParams, TResult >();
@@ -76,6 +78,35 @@ export function ComposerModal< TError, TParams, TResult >() {
 		dispatch( recordReaderTracksEvent( event, props ) );
 	}, [ mode, dispatch, config.tracks ] );
 
+	// Mobile keyboard handling. The WordPress Modal overlay is anchored to the
+	// layout viewport, but browsers shrink the *visual* viewport when the
+	// on-screen keyboard appears — so the bottom of the bottom-sheet (Post
+	// button + media controls) ends up hidden behind the keyboard. Mirror
+	// `window.visualViewport.height` into a CSS variable that the overlay
+	// reads on narrow widths. See style.scss.
+	const isOpen = mode != null;
+	useEffect( () => {
+		if ( ! isOpen ) {
+			return;
+		}
+		const vv = window.visualViewport;
+		if ( ! vv ) {
+			return;
+		}
+		const root = document.documentElement;
+		const update = () => {
+			root.style.setProperty( '--composer-modal-viewport-height', `${ vv.height }px` );
+		};
+		update();
+		vv.addEventListener( 'resize', update );
+		vv.addEventListener( 'scroll', update );
+		return () => {
+			vv.removeEventListener( 'resize', update );
+			vv.removeEventListener( 'scroll', update );
+			root.style.removeProperty( '--composer-modal-viewport-height' );
+		};
+	}, [ isOpen ] );
+
 	// Merge mutation errors with pre-mutation `extendBuildParams` rejections so
 	// both paths render through `config.errorMessage` and fire `errorShown`.
 	// `extendError` takes precedence on the (rare) chance both are non-null
@@ -128,6 +159,9 @@ export function ComposerModal< TError, TParams, TResult >() {
 	// always called (rules of hooks). When `mode` is null the modal isn't
 	// rendering interactive content anyway, so the value is unused.
 	const limit = config.useLimit( mode?.connectionId ?? null );
+	// Same rules-of-hooks contract as `useLimit` above.
+	const useAuthorHandle = config.useAuthorHandle ?? NOOP_USE_AUTHOR_HANDLE;
+	const authorHandle = useAuthorHandle( mode?.connectionId ?? null );
 	const tooLong = graphemeCount > limit;
 	useEffect( () => {
 		if ( tooLong ) {
@@ -153,8 +187,14 @@ export function ComposerModal< TError, TParams, TResult >() {
 		mediaSlot.isAllUploaded &&
 		( ! empty || mediaSlot.hasUploaded );
 
+	// Destructure the unstable `mutation` object so `useCallback` deps below
+	// can track the referentially-stable pieces individually — `useMutation`
+	// returns a fresh object on every render and pulling `mutation` straight
+	// into the deps array would invalidate the callback unnecessarily.
+	const { isPending: mutationIsPending, mutate: mutationMutate } = mutation;
+
 	const handleSubmit = useCallback( async () => {
-		if ( ! mode || mutation.isPending || isExtending ) {
+		if ( ! mode || mutationIsPending || isExtending ) {
 			return;
 		}
 		if ( ! canSubmit ) {
@@ -192,11 +232,14 @@ export function ComposerModal< TError, TParams, TResult >() {
 		// A previous extend rejection shouldn't linger across a successful
 		// retry — clear it before invoking the mutation.
 		setExtendError( null );
-		mutation.mutate( params, {
+		mutationMutate( params, {
 			onSuccess: ( result ) => {
 				mediaSlot.onPublishSuccess( queryClient, result );
 				const { event, props } = config.tracks.published( mode, result );
-				dispatch( recordReaderTracksEvent( event, props ) );
+				const extraProps = protocolExtrasSlot.getTracksProps?.() ?? {};
+				// Extras merged first so canonical props (connection_id, mode_kind, …)
+				// always win when a protocol's extras key collides.
+				dispatch( recordReaderTracksEvent( event, { ...extraProps, ...props } ) );
 				const { text: noticeText, threadUrl } = config.successNotice( mode, result, translate );
 				const options = threadUrl
 					? { button: translate( 'View' ) as string, onClick: () => page( threadUrl ) }
@@ -207,7 +250,8 @@ export function ComposerModal< TError, TParams, TResult >() {
 		} );
 	}, [
 		mode,
-		mutation,
+		mutationIsPending,
+		mutationMutate,
 		isExtending,
 		text,
 		canSubmit,
@@ -227,7 +271,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 	const handle =
 		mode.kind === 'reply' || mode.kind === 'quote' ? mode.previewPost.author.handle : undefined;
 
-	const title = config.copy.title( mode, translate );
+	const title = config.copy.title( mode, translate, authorHandle );
 	const placeholder = config.copy.placeholder( mode, translate, handle );
 	const errorMessage = displayError ? config.errorMessage( displayError, translate ) : null;
 
@@ -235,6 +279,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 		<>
 			<Modal
 				title={ title }
+				icon={ config.headerIcon ?? undefined }
 				onRequestClose={ handleClose }
 				className="social-composer"
 				focusOnMount
@@ -266,7 +311,12 @@ export function ComposerModal< TError, TParams, TResult >() {
 					isPending={ mutation.isPending }
 					limit={ limit }
 					disabled={ ! canSubmit }
-					footerStart={ mediaSlot.renderFooterTrigger() }
+					footerStart={
+						<>
+							{ mediaSlot.renderFooterTrigger() }
+							{ protocolExtrasSlot.renderTrigger?.() ?? null }
+						</>
+					}
 					counterUnit={ counterUnit }
 					softLimit={ config.softLimit }
 				/>

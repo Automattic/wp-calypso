@@ -269,6 +269,7 @@ test.describe(
 			componentNotice,
 			helperData,
 			pageCartCheckout,
+			pagePostCheckoutSetupSite,
 			pageSignupPickPlan,
 			pageUserSignUp,
 			pageMyProfile,
@@ -320,10 +321,11 @@ test.describe(
 				await pageCartCheckout.purchase( { timeout: 90 * 1000 } );
 			} );
 
-			await test.step( 'Then I can see the dashboard with a success message', async function () {
-				await componentNotice.noticeShown( `You're in! The ${ planName } Plan is now active.`, {
-					timeout: 60 * 1000,
-				} );
+			await test.step( 'Then I land on the post-checkout "Set up your site" screen', async function () {
+				// Eligible paid plans now land on the post-checkout choice screen
+				// after checkout. This test re-enters the domain flow next, so just
+				// confirm checkout routed here rather than clicking through.
+				await pagePostCheckoutSetupSite.waitUntilLoaded();
 			} );
 
 			await test.step( 'When I enter the domain flow', async function () {
@@ -512,6 +514,7 @@ test.describe(
 			componentNotice,
 			helperData,
 			pageCartCheckout,
+			pagePostCheckoutSetupSite,
 			pageSignupPickPlan,
 			pageUserSignUp,
 			pageMyProfile,
@@ -563,10 +566,11 @@ test.describe(
 				await pageCartCheckout.purchase( { timeout: 90 * 1000 } );
 			} );
 
-			await test.step( 'Then I can see the dashboard with a success message', async function () {
-				await componentNotice.noticeShown( `You're in! The ${ planName } Plan is now active.`, {
-					timeout: 60 * 1000,
-				} );
+			await test.step( 'Then I land on the post-checkout "Set up your site" screen', async function () {
+				// Eligible paid plans now land on the post-checkout choice screen
+				// after checkout. This test re-enters the domain flow next, so just
+				// confirm checkout routed here rather than clicking through.
+				await pagePostCheckoutSetupSite.waitUntilLoaded();
 			} );
 
 			await test.step( 'When I enter the domain flow with pre-selected site', async function () {

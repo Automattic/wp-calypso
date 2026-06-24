@@ -1,4 +1,4 @@
-import { sortBy } from 'lodash';
+import { sortBy } from '@automattic/js-utils';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import LegendItem from 'calypso/components/legend-item';

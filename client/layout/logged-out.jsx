@@ -1,8 +1,7 @@
 import config, { isEnabled } from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
-import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
-import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
+import { UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -18,6 +17,7 @@ import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
 import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
+import { Nav2026UniversalHeader } from 'calypso/layout/nav-2026-universal-header';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -36,7 +36,6 @@ import {
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
-import untrailingslashit from 'calypso/lib/route/untrailingslashit';
 import { getOnboardingUrl as getPatternLibraryOnboardingUrl } from 'calypso/my-sites/patterns/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getRedirectToOriginal, isTwoFactorEnabled } from 'calypso/state/login/selectors';
@@ -85,13 +84,11 @@ const loadSupportArticleDialog = () =>
 const HELP_CENTER_FAB_SECTIONS = [
 	'accept-invite',
 	'checkout',
-	'login',
 	'mailing-lists',
 	'patterns',
 	'performance-profiler',
 	'plugins',
 	'reader',
-	'signup',
 	'site-profiler',
 	'theme',
 	'themes',
@@ -99,31 +96,6 @@ const HELP_CENTER_FAB_SECTIONS = [
 
 // Fallback when section name is unreliable — e.g. /me/account/closed activates as 'me'.
 const HELP_CENTER_FAB_ROUTES = [ '/me/account/closed' ];
-
-// /log-in briefly carries social-handoff tokens before the login controller strips
-// them (?access_token / ?id_token in query, #id_token / #client_id in hash).
-// Suppress the FAB during that window so window.location.href doesn't reach Zendesk.
-const WPCOM_LOGIN_FAB_PATHNAMES = new Set( [
-	'/log-in',
-	...getLanguageSlugs().map( ( slug ) => `/log-in/${ slug }` ),
-] );
-
-const TOKEN_BEARING_LOGIN_QUERY_KEYS = [ 'access_token', 'id_token' ];
-
-const isFabSafeLoginUrl = () => {
-	if ( typeof window === 'undefined' ) {
-		return false;
-	}
-	const { pathname, search, hash } = window.location;
-	if ( ! WPCOM_LOGIN_FAB_PATHNAMES.has( untrailingslashit( pathname ) ) || hash ) {
-		return false;
-	}
-	if ( ! search ) {
-		return true;
-	}
-	const params = new URLSearchParams( search );
-	return ! TOKEN_BEARING_LOGIN_QUERY_KEYS.some( ( key ) => params.has( key ) );
-};
 
 const LayoutLoggedOut = ( {
 	isAkismet,
@@ -200,19 +172,7 @@ const LayoutLoggedOut = ( {
 		! isJetpackCloud &&
 		! isWooOAuth2Client( oauth2Client );
 
-	// OAuth client logins (Gravatar, WPJobManager, Woo, etc.) and /log-in/jetpack
-	// have their own branding and support paths.
-	const isWpcomLogin =
-		sectionName === 'login' && ! useOAuth2Layout && ! isJetpackLogin && isFabSafeLoginUrl();
-
-	// OAuth client signups (Woo, BlazePro, Gravatar, WPJobManager, etc.) likewise
-	// run under their own brand and route support elsewhere.
-	const isWpcomSignup = sectionName === 'signup' && ! useOAuth2Layout;
-
-	const isEligibleSection =
-		HELP_CENTER_FAB_SECTIONS.includes( sectionName ) &&
-		( sectionName !== 'login' || isWpcomLogin ) &&
-		( sectionName !== 'signup' || isWpcomSignup );
+	const isEligibleSection = HELP_CENTER_FAB_SECTIONS.includes( sectionName );
 
 	// Logged-in users use the masterbar control instead.
 	// Reader tag embeds are widgets meant to be iframed by third parties — no FAB.
@@ -321,7 +281,7 @@ const LayoutLoggedOut = ( {
 		} );
 
 		masterbar = (
-			<UniversalNavbarHeader
+			<Nav2026UniversalHeader
 				isLoggedIn={ isLoggedIn }
 				sectionName={ sectionName }
 				className={ className }

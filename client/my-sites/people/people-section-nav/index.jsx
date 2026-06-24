@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import { find, get, includes } from 'lodash';
+import { find, get } from 'lodash';
 import { Component } from 'react';
 import * as React from 'react';
 import SectionNav from 'calypso/components/section-nav';
@@ -90,7 +90,7 @@ class PeopleSectionNav extends Component {
 		}
 
 		return this.getFilters().filter(
-			( filter ) => this.props.filter === filter.id || includes( allowedFilterIds, filter.id )
+			( filter ) => this.props.filter === filter.id || allowedFilterIds.includes( filter.id )
 		);
 	}
 

@@ -7,6 +7,7 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import MySitesSidebarUnifiedMenu from '../../menu';
 import { CustomizeProvider, useCustomizeContext } from '../index';
+import type { JSX } from 'react';
 
 function renderInProvider( ui: JSX.Element ) {
 	const store = configureStore()( {
@@ -82,7 +83,7 @@ describe( '<MySitesSidebarUnifiedMenu> customize keyboard behaviour', () => {
 		expect( row ).toBeInTheDocument();
 		expect( heading ).toHaveAttribute( 'tabindex', '-1' );
 		expect( screen.getByRole( 'button', { name: 'Reorder Upgrades' } ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'More options' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'More options' } ) ).toHaveTextContent( '⋮' );
 		expect( screen.queryByRole( 'button', { name: 'Reorder Plans' } ) ).not.toBeInTheDocument();
 	} );
 

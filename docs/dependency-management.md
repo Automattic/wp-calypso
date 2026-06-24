@@ -2,6 +2,8 @@
 
 This project uses [yarn v3](https://yarnpkg.com/) to manage its dependencies. It uses workspaces[https://yarnpkg.com/features/workspaces] functionality to manage the monorepo.
 
+For GitHub Dependabot security alerts, use the [dependency security alerts playbook](dependency-security-alerts.md).
+
 ## Working with sub-packages
 
 In this context, a 'sub-package' is any package of the monorepo. That includes `./packages/*`, `./client` and `./apps/*`.

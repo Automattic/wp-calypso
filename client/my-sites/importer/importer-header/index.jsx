@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -31,7 +30,7 @@ class ImporterHeader extends PureComponent {
 	render() {
 		const { importerStatus, icon, title, description } = this.props;
 		const { importerState } = importerStatus;
-		const showStart = includes( startStates, importerState );
+		const showStart = startStates.includes( importerState );
 		const headerClasses = clsx( 'importer-header', {
 			'importer-header__is-start': showStart,
 		} );

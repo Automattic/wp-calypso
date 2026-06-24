@@ -2,8 +2,7 @@ import { loadScript, loadjQueryDependentScript } from '@automattic/load-script';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { filter, forEach } from 'lodash';
-import { PureComponent } from 'react';
-import ReactDom from 'react-dom';
+import { createRef, PureComponent } from 'react';
 import { createRoot } from 'react-dom/client';
 import DotPager from '../dot-pager';
 import { addImageCarousel } from '../image-carousel';
@@ -330,25 +329,49 @@ function embedGallery( domNode ) {
  * A component that notices when the content has embeds that require outside JS. Load the outside JS and process the embeds
  */
 export default class EmbedContainer extends PureComponent {
+	startMarkerRef = createRef();
+	endMarkerRef = createRef();
+
+	getContentNodes = () => {
+		const nodes = [];
+		const endMarker = this.endMarkerRef.current;
+		let node = this.startMarkerRef.current?.nextSibling;
+
+		while ( node && node !== endMarker ) {
+			if ( node.nodeType === 1 ) {
+				nodes.push( node );
+			}
+			node = node.nextSibling;
+		}
+
+		return nodes;
+	};
+
+	processEmbeds = () => {
+		this.getContentNodes().forEach( processEmbeds );
+	};
+
 	componentDidMount() {
-		processEmbeds( ReactDom.findDOMNode( this ) );
+		this.processEmbeds();
 	}
 	componentDidUpdate() {
-		processEmbeds( ReactDom.findDOMNode( this ) );
+		this.processEmbeds();
 	}
 	componentWillUnmount() {
 		// Unmark the contents as done because they may not be on the following re-render.
-		// findDOMNode can return null when the DOM has already been detached (e.g. during
-		// route transitions), so guard before calling querySelectorAll.
-		const domNode = ReactDom.findDOMNode( this );
-		if ( ! domNode ) {
-			return;
-		}
-		domNode.querySelectorAll( '[data-wpcom-embed-processed]' ).forEach( ( node ) => {
-			node.removeAttribute( 'data-wpcom-embed-processed' );
+		this.getContentNodes().forEach( ( domNode ) => {
+			domNode.querySelectorAll( '[data-wpcom-embed-processed]' ).forEach( ( node ) => {
+				node.removeAttribute( 'data-wpcom-embed-processed' );
+			} );
 		} );
 	}
 	render() {
-		return this.props.children;
+		return (
+			<>
+				<template ref={ this.startMarkerRef } />
+				{ this.props.children }
+				<template ref={ this.endMarkerRef } />
+			</>
+		);
 	}
 }

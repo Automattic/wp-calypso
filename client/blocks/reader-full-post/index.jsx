@@ -1,10 +1,11 @@
+import './style.scss';
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon, EmbedContainer } from '@automattic/components';
 import { isDefaultLocale } from '@automattic/i18n-utils';
+import { pickBy } from '@automattic/js-utils';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { get, startsWith, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component, useMemo } from 'react';
 import { connect } from 'react-redux';
@@ -19,8 +20,6 @@ import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follow
 import AutoDirection from 'calypso/components/auto-direction';
 import DocumentHead from 'calypso/components/data/document-head';
 import { withPostLikes } from 'calypso/components/data/post-likes';
-import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import PostExcerpt from 'calypso/components/post-excerpt';
 import {
 	RelatedPostsFromSameSite,
@@ -29,8 +28,16 @@ import {
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import ReaderBackButton from 'calypso/reader/components/back-button';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { usePostCommentsApiDisabled } from 'calypso/reader/data/comments';
+import { useFeedQuery } from 'calypso/reader/data/feed';
 import { usePost } from 'calypso/reader/data/post';
 import { withPostLikeActions } from 'calypso/reader/data/post/likes';
+import { withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
+import { withSite } from 'calypso/reader/data/site';
+import {
+	useSiteSubscriptionForFeed,
+	useHasSiteSubscriptionOrganization,
+} from 'calypso/reader/data/site-subscriptions';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { markPostSeen } from 'calypso/reader/mark-post-seen';
@@ -44,20 +51,6 @@ import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post
 import { getPostTitleFallback, showSelectedPost } from 'calypso/reader/utils';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { useSelector } from 'calypso/state';
-import { requestPostComments } from 'calypso/state/comments/actions';
-import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
-import {
-	getReaderFollowForFeed,
-	hasReaderFollowOrganization,
-} from 'calypso/state/reader/follows/selectors';
-import {
-	requestMarkAsSeen,
-	requestMarkAsUnseen,
-	requestMarkAsSeenBlog,
-	requestMarkAsUnseenBlog,
-} from 'calypso/state/reader/seen-posts/actions';
-import { getSite } from 'calypso/state/reader/sites/selectors';
 import {
 	setViewingFullPostKey,
 	unsetViewingFullPostKey,
@@ -66,7 +59,6 @@ import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slu
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream';
-import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { disableAppBanner, enableAppBanner } from 'calypso/state/ui/actions';
@@ -77,7 +69,6 @@ import ReaderFullPostContentPlaceholder from './placeholders/content';
 import ReaderFullPostNavigation from './post-navigation';
 import ScrollTracker from './scroll-tracker';
 import ReaderFullPostUnavailable from './unavailable';
-import './style.scss';
 
 const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
 
@@ -129,9 +120,6 @@ export class FullPostView extends Component {
 			this.scrollToComments();
 		}
 
-		// Ensure we check comments API availability for this post
-		this.checkCommentsApiAvailability();
-
 		// Adds WPiFrameResize listener for setting the corect height in embedded iFrames.
 		this.stopResize =
 			this.postContentWrapper.current && WPiFrameResize( this.postContentWrapper.current );
@@ -155,9 +143,9 @@ export class FullPostView extends Component {
 	componentDidUpdate( prevProps ) {
 		// Send page view if applicable
 		if (
-			get( prevProps, 'post.ID' ) !== get( this.props, 'post.ID' ) ||
-			get( prevProps, 'feed.ID' ) !== get( this.props, 'feed.ID' ) ||
-			get( prevProps, 'site.ID' ) !== get( this.props, 'site.ID' )
+			prevProps?.post?.ID !== this.props?.post?.ID ||
+			prevProps?.feed?.ID !== this.props?.feed?.ID ||
+			prevProps?.site?.ID !== this.props?.site?.ID
 		) {
 			this.hasSentPageView = false;
 			this.hasLoaded = false;
@@ -165,7 +153,7 @@ export class FullPostView extends Component {
 			this.maybeDisableAppBanner();
 
 			// If the post being viewed changes, track the reading time.
-			if ( get( prevProps, 'post.ID' ) !== get( this.props, 'post.ID' ) ) {
+			if ( prevProps?.post?.ID !== this.props?.post?.ID ) {
 				this.trackReadingTime( prevProps.post );
 				this.trackScrollDepth( prevProps.post );
 				this.trackExitBeforeCompletion( prevProps.post );
@@ -173,9 +161,6 @@ export class FullPostView extends Component {
 				this.resetScroll();
 				this.focusPostTitle();
 			}
-
-			// Check comments API availability when post changes
-			this.checkCommentsApiAvailability();
 		}
 
 		if ( this.props.shouldShowComments && ! prevProps.shouldShowComments ) {
@@ -512,7 +497,7 @@ export class FullPostView extends Component {
 	 * @returns {number} - the commentId in the url of the form #comment-${id}
 	 */
 	getCommentIdFromUrl = () =>
-		startsWith( window.location.hash, '#comment-' )
+		window.location.hash.startsWith( '#comment-' )
 			? +window.location.hash.split( '-' )[ 1 ]
 			: undefined;
 
@@ -664,33 +649,22 @@ export class FullPostView extends Component {
 		}
 	};
 
-	checkCommentsApiAvailability = () => {
-		const { post, commentsApiDisabled } = this.props;
-
-		// Only check if we don't already know the API is disabled
-		// and if we have a valid post with a site ID
-		if ( ! commentsApiDisabled && post?.site_ID && post?.ID && ! post.is_external ) {
-			this.props.requestPostComments( {
-				siteId: post.site_ID,
-				postId: post.ID,
-			} );
-		}
-	};
-
 	renderMarkAsSenButton = () => {
 		const { post } = this.props;
+		const label = post.is_seen
+			? translate( 'Mark post as unseen' )
+			: translate( 'Mark post as seen' );
+
 		return (
-			<div
+			<button
+				type="button"
 				className="reader-full-post__seen-button"
-				title={ post.is_seen ? 'Mark post as unseen' : 'Mark post as seen' }
+				title={ label }
+				aria-label={ label }
+				onClick={ post.is_seen ? this.markAsUnseen : this.markAsSeen }
 			>
-				<Gridicon
-					icon={ post.is_seen ? 'not-visible' : 'visible' }
-					size={ 18 }
-					onClick={ post.is_seen ? this.markAsUnseen : this.markAsSeen }
-					ref={ this.seenTooltipContextRef }
-				/>
-			</div>
+				<Gridicon icon={ post.is_seen ? 'not-visible' : 'visible' } size={ 18 } />
+			</button>
 		);
 	};
 
@@ -742,9 +716,9 @@ export class FullPostView extends Component {
 
 		const isLoading = ! post || post._state === 'pending' || post._state === 'minimal';
 		const startingCommentId = this.getCommentIdFromUrl();
-		const commentCount = get( post, 'discussion.comment_count' );
+		const commentCount = post?.discussion?.comment_count;
 		const contentWidth = readerContentWidth();
-		const feedUrl = get( post, 'feed_URL' );
+		const feedUrl = post?.feed_URL;
 		const shouldShowMarkAsSeen =
 			isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) && canBeMarkedAsSeen( { post } );
 
@@ -760,10 +734,6 @@ export class FullPostView extends Component {
 						<DocumentHead
 							title={ `${ post.title || getPostTitleFallback( post ) } ‹ ${ siteName } ‹ Reader` }
 						/>
-					) }
-					{ post && post.feed_ID && <QueryReaderFeed feedId={ +post.feed_ID } /> }
-					{ post && ! post.is_external && post.site_ID && (
-						<QueryReaderSite siteId={ +post.site_ID } />
 					) }
 					<ReaderBackButton
 						handleBack={ this.handleBack }
@@ -933,33 +903,25 @@ export const mapStateToFullPostProps = ( state, ownProps ) => {
 	const postKey = pickBy( { feedId: +feedId, blogId: +blogId, postId: +postId } );
 	const post = ownProps.post || { _state: 'pending' };
 	const currentPath = state.route.path.current;
+	const feed = ownProps.feed;
 
-	const { site_ID: siteId, is_external: isExternal } = post;
+	const { site_ID: siteId } = post;
 
 	const props = {
 		siteId,
-		isWPForTeamsItem: isSiteWPForTeams( state, blogId ) || isFeedWPForTeams( state, feedId ),
+		isWPForTeamsItem:
+			isSiteWPForTeams( state, blogId ) ||
+			( feed?.blog_ID ? isSiteWPForTeams( state, feed.blog_ID ) : false ),
 		notificationsOpen: isNotificationsOpen( state ),
-		hasOrganization: hasReaderFollowOrganization( state, feedId, blogId ),
 		post,
 		postKey,
 		currentPath,
 		referralStream: getPreviousPath( state ),
 		previousRoute: getPreviousRoute( state ),
-		commentsApiDisabled: isCommentsApiDisabled( state, siteId ),
 	};
 
-	if ( ! isExternal && siteId ) {
-		props.site = getSite( state, siteId );
-	}
-	if ( feedId ) {
-		const feed = getFeed( state, feedId );
-
-		// Add site icon to feed object so have icon for external feeds
-		if ( feed ) {
-			const follow = getReaderFollowForFeed( state, parseInt( feedId ) );
-			props.feed = { ...feed, site_icon: follow?.site_icon };
-		}
+	if ( feedId && feed ) {
+		props.feed = feed;
 	}
 	if ( ownProps.referral ) {
 		props.referralPost = ownProps.referralPost;
@@ -968,18 +930,21 @@ export const mapStateToFullPostProps = ( state, ownProps ) => {
 	return props;
 };
 
+const getPostSiteId = ( { post } ) =>
+	post && ! post.is_external && post.site_ID ? +post.site_ID : undefined;
+
 const ConnectedFullPostView = connect( mapStateToFullPostProps, {
 	disableAppBanner,
 	enableAppBanner,
 	setViewingFullPostKey,
 	unsetViewingFullPostKey,
-	requestMarkAsSeen,
-	requestMarkAsUnseen,
-	requestMarkAsSeenBlog,
-	requestMarkAsUnseenBlog,
 	showSelectedPost,
-	requestPostComments,
-} )( withPostLikes( withPostLikeActions( FullPostView ) ) );
+} )(
+	withSite(
+		withPostLikes( withPostLikeActions( withSeenPostsMutations( FullPostView ) ) ),
+		getPostSiteId
+	)
+);
 
 export const withFullPostNavigation = ( WrappedComponent ) =>
 	function FullPostNavigationContainer( props ) {
@@ -995,6 +960,13 @@ export const withFullPostNavigation = ( WrappedComponent ) =>
 		} );
 		const { data: post } = usePost( Object.keys( currentPostKey ).length ? currentPostKey : null );
 		const { data: referralPost } = usePost( props.referral );
+		const commentsApiDisabled = usePostCommentsApiDisabled(
+			{
+				siteId: post?.site_ID,
+				postId: post?.ID,
+			},
+			{ enabled: ! post?.is_external }
+		);
 		const { previousPostKey, nextPostKey } = useStreamPostKeySelection( {
 			streamKey: currentStreamKey ?? '',
 			localeSlug,
@@ -1024,6 +996,7 @@ export const withFullPostNavigation = ( WrappedComponent ) =>
 				nextPostKey={ nextPostKey }
 				post={ post }
 				referralPost={ referralPost }
+				commentsApiDisabled={ commentsApiDisabled }
 				previousPost={ previousPost }
 				nextPost={ nextPost }
 				previousPostUrl={ previousPostUrl }
@@ -1062,4 +1035,19 @@ function navigationUrlFor( post, postKey ) {
 	return `/reader/blogs/${ postKey.blogId }/posts/${ postKey.postId }`;
 }
 
-export default withFullPostNavigation( ConnectedFullPostView );
+const FullPostWithNavigation = withFullPostNavigation( ConnectedFullPostView );
+
+export default function FullPostContainer( props ) {
+	const { data: feed } = useFeedQuery( props.feedId );
+	const follow = useSiteSubscriptionForFeed( props.feedId );
+	const hasOrganization = useHasSiteSubscriptionOrganization( props.feedId, props.blogId );
+	const feedWithIcon = feed ? { ...feed, site_icon: follow?.site_icon } : feed;
+
+	return (
+		<FullPostWithNavigation
+			{ ...props }
+			feed={ feedWithIcon }
+			hasOrganization={ hasOrganization }
+		/>
+	);
+}
