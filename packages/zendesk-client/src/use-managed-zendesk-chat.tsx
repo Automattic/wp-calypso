@@ -49,6 +49,10 @@ import {
 } from './util';
 import type { AgentticMessage, ZendeskMessage, ZendeskContentType } from './types';
 
+// Stable empty-array reference so the `conversationTags` default doesn't change
+// identity on every render and retrigger the conversation-creation effect.
+const EMPTY_ARRAY: string[] = [];
+
 function sortMessagesByTimestamp( messages: ZendeskMessage[] ) {
 	return messages.slice( 0 ).sort( ( a, b ) => {
 		// Give precedence to the local timestamp, if it exists.
@@ -179,7 +183,7 @@ type ManagedZendeskChatOptions = {
  * - sendMessage: A function to send a message to the conversation.
  */
 export const useManagedZendeskChat = ( {
-	conversationTags = [],
+	conversationTags = EMPTY_ARRAY,
 }: ManagedZendeskChatOptions = {} ) => {
 	const [ attachmentsNotice, setAttachmentNotice ] = useState< NoticeConfig | undefined >();
 	const { state } = useLocation();
@@ -284,7 +288,7 @@ export const useManagedZendeskChat = ( {
 					started_from: 'chat',
 					chat_session_id: startedFromChatId,
 					message_id: startedFromMessageId,
-					'zen:ticket:tags': conversationTags.join( ',' ),
+					'zen:ticket:tags': conversationTags.join(),
 					[ `zen:ticket_field:${ ZENDESK_CUSTOM_FIELD_AI_MESSAGE_ID }` ]: startedFromMessageId,
 					[ `zen:ticket_field:${ ZENDESK_CUSTOM_FIELD_AI_CHAT_SESSION_ID }` ]: startedFromChatId,
 				},

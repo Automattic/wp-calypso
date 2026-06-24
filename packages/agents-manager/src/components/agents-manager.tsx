@@ -47,6 +47,10 @@ export interface AgentsManagerProps {
 
 const queryClient = new QueryClient();
 
+// Stable empty-array reference so the default prop doesn't change identity on
+// every render and retrigger downstream conversation effects.
+const EMPTY_ARRAY: string[] = [];
+
 export default function AgentsManager( {
 	sectionName,
 	currentUser,
@@ -55,7 +59,7 @@ export default function AgentsManager( {
 	currentSiteId,
 	agentId,
 	useImageUpload,
-	zendeskConversationTags = [],
+	zendeskConversationTags = EMPTY_ARRAY,
 }: AgentsManagerProps ): JSX.Element | null {
 	// Wait for the store to load before rendering PersistentRouter
 	// This ensures router history is restored from persisted state
