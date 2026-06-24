@@ -20,11 +20,12 @@
 }
 
 .space-feed-standard-list__row {
-	display: flex;
-	align-items: flex-start;
-	gap: 12px;
-	padding-block: 16px;
+	padding-block: 24px;
 	border-block-end: 1px solid var(--color-border-subtle);
+}
+
+.space-feed-standard-list__item[data-first='true'] .space-feed-standard-list__row {
+	padding-block-start: 12px;
 }
 
 .space-feed-standard-list__title-link {
@@ -50,7 +51,6 @@
 }
 
 .space-feed-standard-list__excerpt {
-	margin: 4px 0 0;
 	font-size: 0.875rem;
 	line-height: 1.4;
 	color: var(--color-text-subtle);
@@ -66,10 +66,6 @@
 }
 
 .space-feed-standard-list__source-row {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	margin-block-start: 8px;
 	font-size: 0.75rem;
 	color: var(--color-text-subtle);
 }
@@ -85,15 +81,8 @@
 	color: var(--color-text-subtle);
 }
 
-.space-feed-standard-list__actions {
-	margin-block-start: 8px;
-}
-
 .space-feed-standard-list__aside {
 	flex: 0 0 auto;
-	display: flex;
-	align-items: center;
-	gap: 12px;
 	color: var(--color-text-subtle);
 	font-size: 0.75rem;
 }

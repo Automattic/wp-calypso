@@ -1,4 +1,8 @@
 import page from '@automattic/calypso-router';
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
@@ -17,25 +21,32 @@ type Row =
 	| { kind: 'post'; key: string; fields: SpaceFeedPostFields; post: ReadStreamPost };
 
 const HEADER_SIZE = 44;
-const ROW_SIZE = 120;
+const ROW_SIZE = 186;
 
 function PostRow( { fields, post }: { fields: SpaceFeedPostFields; post: ReadStreamPost } ) {
 	return (
-		<div className="space-feed-standard-list__row">
-			<div className="space-feed-standard-list__body">
-				<h3 className="space-feed-standard-list__title">
-					<a className="space-feed-standard-list__title-link" href={ fields.postHref }>
-						{ fields.title }
-					</a>
-				</h3>
-				{ fields.excerptHtml && (
-					<div
-						className="space-feed-standard-list__excerpt"
-						// Sanitized by the Reader's formatExcerpt (allows only p/br/sup/sub).
-						dangerouslySetInnerHTML={ { __html: fields.excerptHtml } } // eslint-disable-line react/no-danger
-					/>
-				) }
-				<div className="space-feed-standard-list__source-row">
+		<HStack className="space-feed-standard-list__row" spacing={ 3 } alignment="flex-start">
+			<VStack className="space-feed-standard-list__body" spacing={ 2 } alignment="stretch">
+				<VStack className="space-feed-standard-list__headline" spacing={ 1 } alignment="stretch">
+					<h3 className="space-feed-standard-list__title">
+						<a className="space-feed-standard-list__title-link" href={ fields.postHref }>
+							{ fields.title }
+						</a>
+					</h3>
+					{ fields.excerptHtml && (
+						<div
+							className="space-feed-standard-list__excerpt"
+							// Sanitized by the Reader's formatExcerpt (allows only p/br/sup/sub).
+							dangerouslySetInnerHTML={ { __html: fields.excerptHtml } } // eslint-disable-line react/no-danger
+						/>
+					) }
+				</VStack>
+				<HStack
+					className="space-feed-standard-list__source-row"
+					spacing={ 2 }
+					alignment="center"
+					justify="flex-start"
+				>
 					<SiteIcon iconUrl={ fields.siteIconUrl } size={ 20 } />
 					<span className="space-feed-standard-list__source">{ fields.sourceName }</span>
 					{ fields.authorName && (
@@ -44,15 +55,13 @@ function PostRow( { fields, post }: { fields: SpaceFeedPostFields; post: ReadStr
 					{ fields.siteDomain && (
 						<span className="space-feed-standard-list__tag">{ fields.siteDomain }</span>
 					) }
-				</div>
-				<div className="space-feed-standard-list__actions">
-					<ReaderPostActions
-						post={ post }
-						onCommentClick={ () => page( getPostUrl( post ) ) }
-						iconSize={ 18 }
-					/>
-				</div>
-			</div>
+				</HStack>
+				<ReaderPostActions
+					post={ post }
+					onCommentClick={ () => page( getPostUrl( post ) ) }
+					iconSize={ 18 }
+				/>
+			</VStack>
 			<div className="space-feed-standard-list__aside">
 				{ fields.publishedDate && (
 					<span className="space-feed-standard-list__time">
@@ -60,7 +69,7 @@ function PostRow( { fields, post }: { fields: SpaceFeedPostFields; post: ReadStr
 					</span>
 				) }
 			</div>
-		</div>
+		</HStack>
 	);
 }
 
@@ -117,6 +126,11 @@ export function StandardListLayout( {
 		restoreKey,
 	} );
 
+	// The first post row tightens its top padding (the day-group header above it
+	// already supplies the gap). Detect it by index so it stays correct under
+	// virtualization, where the first rendered DOM node isn't always row 0.
+	const firstPostIndex = rows.findIndex( ( row ) => row.kind === 'post' );
+
 	return (
 		<div { ...getListProps( { className: 'space-feed-standard-list' } ) }>
 			{ items.map( ( virtualRow ) => {
@@ -125,6 +139,7 @@ export function StandardListLayout( {
 					<div
 						key={ virtualRow.key }
 						data-index={ virtualRow.index }
+						data-first={ virtualRow.index === firstPostIndex || undefined }
 						ref={ measureElement }
 						className="space-feed-standard-list__item"
 						style={ { transform: `translateY(${ virtualRow.start - scrollMargin }px)` } }

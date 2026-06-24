@@ -37,7 +37,7 @@ jest.mock( '../../post-fields', () => ( {
 // ReaderPostActions is a Redux/React-Query-connected block tested on its own and
 // exercised through the real layout in `../../test/index.test.tsx`; stub it here
 // so this unit test stays focused on the list structure and field wiring.
-const mockReaderPostActions = jest.fn( () => null );
+const mockReaderPostActions = jest.fn().mockReturnValue( null );
 jest.mock( 'calypso/blocks/reader-post-actions', () => ( {
 	__esModule: true,
 	default: ( props: Record< string, unknown > ) => mockReaderPostActions( props ),
