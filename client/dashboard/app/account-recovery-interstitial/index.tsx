@@ -15,7 +15,7 @@ import { Text } from '../../components/text';
 import { useAnalytics } from '../analytics';
 import { getInterstitialCopy, getInterstitialVariant } from './copy';
 import heroIllustration from './hero-illustration.png';
-import type { InterstitialCta, InterstitialVariant } from './copy';
+import type { InterstitialCta } from './copy';
 import './style.scss';
 
 const DAY_IN_SECONDS = 86400;
@@ -42,73 +42,6 @@ const SNOOZE_DAYS: Record< SecurityLevel, number > = {
 	strong: 365, // fully set up -> yearly periodic check
 };
 
-/**
- * QA overrides via the `?account-recovery-interstitial=<value>` query param:
- *
- * - `force` — show the modal with the user's real data, bypassing eligibility.
- * - a variant name (`none`, `add-two-factor`, `add-recovery-method`, `add-backup-codes`,
- *   `strong`) — simulate that scenario's underlying setup state (recovery email/phone, 2FA,
- *   backup codes) so the heading, copy, masked details, snooze window, and Tracks all derive
- *   from it exactly as a real user in that state would see. The real snooze is ignored.
- */
-interface QaScenario {
-	hasRecoveryEmail: boolean;
-	hasRecoveryPhone: boolean;
-	hasTwoFactor: boolean;
-	hasBackupCodes: boolean;
-}
-
-const QA_SCENARIOS: Record< InterstitialVariant, QaScenario > = {
-	none: {
-		hasRecoveryEmail: false,
-		hasRecoveryPhone: false,
-		hasTwoFactor: false,
-		hasBackupCodes: false,
-	},
-	'add-two-factor': {
-		hasRecoveryEmail: true,
-		hasRecoveryPhone: false,
-		hasTwoFactor: false,
-		hasBackupCodes: false,
-	},
-	'add-recovery-method': {
-		hasRecoveryEmail: false,
-		hasRecoveryPhone: false,
-		hasTwoFactor: true,
-		hasBackupCodes: false,
-	},
-	'add-backup-codes': {
-		hasRecoveryEmail: true,
-		hasRecoveryPhone: true,
-		hasTwoFactor: true,
-		hasBackupCodes: false,
-	},
-	strong: {
-		hasRecoveryEmail: true,
-		hasRecoveryPhone: true,
-		hasTwoFactor: true,
-		hasBackupCodes: true,
-	},
-};
-
-function getQaParam(): string | null {
-	if ( typeof window === 'undefined' ) {
-		return null;
-	}
-	return new URLSearchParams( window.location.search ).get( 'account-recovery-interstitial' );
-}
-
-/** The simulated setup state when a variant name is passed as the QA param, else null. */
-function getQaScenario(): QaScenario | null {
-	const value = getQaParam();
-	return value && value in QA_SCENARIOS ? QA_SCENARIOS[ value as InterstitialVariant ] : null;
-}
-
-/** Whether the modal should be force-shown for QA, bypassing eligibility. */
-function isQaForced(): boolean {
-	return getQaParam() === 'force' || getQaScenario() !== null;
-}
-
 /** Maps the user's account-recovery setup to a coarse security tier. */
 function getSecurityLevel(
 	hasRecoveryEmail: boolean,
@@ -133,7 +66,7 @@ function getSecurityLevel(
  *
  * App-level overlay mounted in the dashboard shell. Shows a single modal to users with
  * incomplete account-recovery setup, nudging them to add a recovery method. Renders
- * nothing unless the feature flag is on and the user is eligible (or QA-forced).
+ * nothing unless the feature flag is on and the user is eligible.
  */
 export default function AccountRecoveryInterstitial() {
 	const router = useRouter();
@@ -156,25 +89,15 @@ export default function AccountRecoveryInterstitial() {
 
 	const now = Math.floor( Date.now() / 1000 );
 
-	// When a QA scenario is forced, simulate its setup state; otherwise read the real account.
-	const qaScenario = getQaScenario();
-	const hasRecoveryEmail = qaScenario
-		? qaScenario.hasRecoveryEmail
-		: !! accountRecovery?.email_validated;
-	const hasRecoveryPhone = qaScenario
-		? qaScenario.hasRecoveryPhone
-		: !! accountRecovery?.phone_validated;
-	const hasTwoFactor = qaScenario ? qaScenario.hasTwoFactor : !! userSettings?.two_step_enabled;
-	const hasBackupCodes = qaScenario
-		? qaScenario.hasBackupCodes
-		: !! userSettings?.two_step_backup_codes_printed;
+	const hasRecoveryEmail = !! accountRecovery?.email_validated;
+	const hasRecoveryPhone = !! accountRecovery?.phone_validated;
+	const hasTwoFactor = !! userSettings?.two_step_enabled;
+	const hasBackupCodes = !! userSettings?.two_step_backup_codes_printed;
 
 	const securityLevel = getSecurityLevel( hasRecoveryEmail, hasRecoveryPhone, hasTwoFactor );
 	const snoozeDays = SNOOZE_DAYS[ securityLevel ];
 
-	// Ignore any real snooze when simulating a QA scenario, so the modal always shows.
-	const snoozeUntil = qaScenario ? undefined : snoozeUntilPersisted;
-	const isSnoozed = !! snoozeUntil && now < snoozeUntil;
+	const isSnoozed = !! snoozeUntilPersisted && now < snoozeUntilPersisted;
 
 	// Every user is nudged once their snooze (if any) has elapsed and the data has loaded:
 	// `none`/`partial` setups are prompted to add a method, while fully-covered (`strong`) users
@@ -208,29 +131,19 @@ export default function AccountRecoveryInterstitial() {
 		has_backup_codes: hasBackupCodes,
 	};
 
-	// QA overrides bypass the experiment entirely; real users only see the modal when eligible
-	// and assigned to the treatment variation.
-	const shouldDisplay =
-		! isDismissed && ( isQaForced() || ( isEligible && isInExperimentTreatment ) );
+	// Real users only see the modal when eligible and assigned to the treatment variation.
+	const shouldDisplay = ! isDismissed && isEligible && isInExperimentTreatment;
 
 	if ( ! shouldDisplay ) {
 		return null;
 	}
 
-	const copy = getInterstitialCopy(
-		qaScenario
-			? {
-					// Sample details so the personalized `strong` copy renders under QA.
-					recoveryEmail: qaScenario.hasRecoveryEmail ? 'qa@example.com' : undefined,
-					recoveryPhoneNumber: qaScenario.hasRecoveryPhone ? '5551234542' : undefined,
-			  }
-			: {
-					recoveryEmail: accountRecovery?.email_validated ? accountRecovery.email : undefined,
-					recoveryPhoneNumber: accountRecovery?.phone_validated
-						? accountRecovery.phone?.number
-						: undefined,
-			  }
-	)[ variant ];
+	const copy = getInterstitialCopy( {
+		recoveryEmail: accountRecovery?.email_validated ? accountRecovery.email : undefined,
+		recoveryPhoneNumber: accountRecovery?.phone_validated
+			? accountRecovery.phone?.number
+			: undefined,
+	} )[ variant ];
 	const { primaryCta, secondaryCta } = copy;
 
 	const snooze = () => {
