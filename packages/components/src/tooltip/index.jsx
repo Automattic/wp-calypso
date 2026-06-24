@@ -6,7 +6,7 @@ import Popover from '../popover';
 import './style.scss';
 
 function Tooltip( {
-	autoPosition = false,
+	autoPosition = true,
 	className,
 	id,
 	isVisible = false,
