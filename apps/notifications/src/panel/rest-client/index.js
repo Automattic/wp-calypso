@@ -449,8 +449,10 @@ function getFilteredNotes( before ) {
 		parameters.before = before;
 	}
 
-	// Only show the full-panel spinner for the first page; later pages stream in.
-	if ( ! before && unreadIds.length === 0 ) {
+	// Loading state on the first page (the full-panel spinner shows while the list
+	// is empty) and while paging older notes (`before` → the list's load-more
+	// indicator); a steady-state refresh of a non-empty list stays silent.
+	if ( before || unreadIds.length === 0 ) {
 		store.dispatch( actions.ui.loadNotes() );
 	}
 

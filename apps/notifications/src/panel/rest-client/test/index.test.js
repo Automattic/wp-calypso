@@ -548,5 +548,19 @@ describe( 'RestClient', () => {
 			client.getNotes();
 			expect( getIsLoading( store.getState() ) ).toBe( false );
 		} );
+
+		// The filtered (Unread) tab gets the same load-more indicator as the others.
+		it( 'flips loading on while paging older unread notes', () => {
+			client.setFilter( { unread: 1 } );
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 209 ), last_seen_time: 0 } );
+			getCalls.length = 0;
+			expect( getIsLoading( store.getState() ) ).toBe( false );
+
+			client.loadMore();
+			expect( getIsLoading( store.getState() ) ).toBe( true );
+
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 199 ), last_seen_time: 0 } );
+			expect( getIsLoading( store.getState() ) ).toBe( false );
+		} );
 	} );
 } );
