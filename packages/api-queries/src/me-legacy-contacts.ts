@@ -5,6 +5,9 @@ export const legacyContactsQuery = () =>
 	queryOptions( {
 		queryKey: [ 'me', 'legacy-contacts' ],
 		queryFn: fetchLegacyContacts,
+		// The response carries personal data (contact emails + ids), so keep it
+		// out of the persisted (localStorage) query cache to limit its exposure.
+		meta: { persist: false },
 	} );
 
 export const legacyContactQuery = ( legacyContactId: number ) =>
