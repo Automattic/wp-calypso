@@ -630,7 +630,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 			: feature?.getAlternativeTitle?.() || feature?.getTitle();
 	if ( featureSlug === FEATURE_GUIDED_WEBSITE_BUILDER ) {
 		// Use the short title for the guided website builder in the comparison grid.
-		comparisonGridTitle = translate( 'Guided website builder' );
+		comparisonGridTitle = translate( 'Guided website builder', { textOnly: true } );
 	}
 
 	const planFeatures = [
@@ -797,7 +797,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 			: feature?.getTitle?.();
 	if ( featureSlug === FEATURE_GUIDED_WEBSITE_BUILDER ) {
 		// Use the short title for the guided website builder in the comparison grid.
-		title = translate( 'Guided website builder' );
+		title = translate( 'Guided website builder', { textOnly: true } );
 	}
 	const headerAriaLabel: string = typeof title === 'string' ? title : '';
 
