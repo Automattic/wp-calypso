@@ -30,6 +30,7 @@ import type { UseImageUploadResult } from '../../hooks/use-image-upload';
 import type { ExternalContextCard, ExternalContextCardAction } from '../../utils/external-context';
 import type { Message, NoticeConfig } from '@automattic/agenttic-ui/dist/types';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
+import type { RefObject } from 'react';
 
 interface Props {
 	/** Chat messages to display. */
@@ -329,12 +330,14 @@ export default function AgentChat( {
 								acceptedFileTypes={ acceptedImageFileTypes }
 								showFileMetadata
 								allowDragToInsert={ false }
-								dropZoneRef={ conversationViewRef }
+								dropZoneRef={ conversationViewRef as RefObject< HTMLElement > }
 							/>
 						) }
 						<SelectedBlock />
 						<AgentUI.Input
-							imageUploaderRef={ imageUpload ? imageUploaderRef : undefined }
+							imageUploaderRef={
+								imageUpload ? ( imageUploaderRef as RefObject< ImageUploaderHandle > ) : undefined
+							}
 							disabled={ imageUpload?.pendingImages?.length ? false : undefined }
 						/>
 					</AgentUI.Footer>

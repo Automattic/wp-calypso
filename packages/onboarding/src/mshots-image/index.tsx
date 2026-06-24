@@ -59,10 +59,10 @@ const useMshotsImg = (
 	const [ count, setCount ] = useState( 0 );
 	const previousSrc = useRef( src );
 
-	const timeoutIdRef = useRef< number >();
+	const timeoutIdRef = useRef< number >( undefined );
 
 	const previousImg = useRef< HTMLImageElement | null >( null );
-	const previousOptions = useRef< MShotsOptions >();
+	const previousOptions = useRef< MShotsOptions >( undefined );
 	// Oddly, we need to assign to current here after ref creation in order to
 	// pass the equivalence check and avoid a spurious reset
 	previousOptions.current = options;
@@ -149,11 +149,11 @@ const useMshotsImgTreatment = (
 	const [ count, setCount ] = useState( 0 );
 	const previousSrc = useRef( src );
 
-	const imgRef = useRef< HTMLImageElement >();
-	const timeoutIdRef = useRef< number >();
+	const imgRef = useRef< HTMLImageElement >( undefined );
+	const timeoutIdRef = useRef< number >( undefined );
 
-	const previousImg = useRef< HTMLImageElement >();
-	const previousOptions = useRef< MShotsOptions >();
+	const previousImg = useRef< HTMLImageElement >( undefined );
+	const previousOptions = useRef< MShotsOptions >( undefined );
 	// Oddly, we need to assign to current here after ref creation in order to
 	// pass the equivalence check and avoid a spurious reset
 	previousOptions.current = options;
