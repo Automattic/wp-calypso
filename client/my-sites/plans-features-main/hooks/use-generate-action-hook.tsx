@@ -27,6 +27,7 @@ import {
 	FREE_HOSTING_TRIAL_ENABLED,
 	isUserEligibleForFreeHostingTrial,
 } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
+import { getSitePlan } from 'calypso/state/sites/plans/selectors';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors/is-current-user-current-plan-owner';
 import isCurrentPlanPaid from 'calypso/state/sites/selectors/is-current-plan-paid';
 import { IAppState } from 'calypso/state/types';
@@ -136,6 +137,12 @@ export default function useGenerateActionHook( {
 		planTitle,
 		pricing,
 	}: UseActionHookProps ): GridAction => {
+		const availableForDowngrade = useSelector( ( state: IAppState ) =>
+			siteId
+				? ( getSitePlan( state, siteId, planSlug ) as { availableForDowngrade?: boolean } | null )
+						?.availableForDowngrade
+				: undefined
+		);
 		// Get renewal pricing text - this will be used as postButtonText if available
 		const renewalPricingText = useRenewalPricingPostButtonText( {
 			planSlug,
@@ -213,6 +220,7 @@ export default function useGenerateActionHook( {
 			priceString,
 			sitePlanSlug,
 			availableForPurchase,
+			availableForDowngrade,
 			domainFromHomeUpsellFlow,
 			canUserManageCurrentPlan,
 			isPlanExpired,
@@ -413,6 +421,7 @@ function getLoggedInPlansAction( {
 	priceString,
 	sitePlanSlug,
 	availableForPurchase,
+	availableForDowngrade,
 	domainFromHomeUpsellFlow,
 	canUserManageCurrentPlan,
 	isPlanExpired,
@@ -432,6 +441,7 @@ function getLoggedInPlansAction( {
 	isLoading: boolean;
 	setIsLoading: ( value: boolean ) => void;
 	plansIntent?: PlansIntent | null;
+	availableForDowngrade?: boolean;
 } & UseActionHookProps ): GridAction {
 	// Use plan type matching instead of exact slug matching for the 'plans-upgrade' intent.
 	// This allows monthly/yearly versions of the same plan to be considered "current"
@@ -509,14 +519,19 @@ function getLoggedInPlansAction( {
 		return createLoggedInPlansAction( translate( 'View plan' ), 'secondary' );
 	}
 
-	// Downgrade action if the plan is not available for purchase
+	// Downgrade action if the plan is not available for purchase and is available for downgrade
 	if ( ! availableForPurchase ) {
-		return createLoggedInPlansAction(
-			translate( 'Downgrade', { context: 'verb' } ),
-			'secondary',
-			undefined,
-			canUserManageCurrentPlan ? undefined : 'disabled'
-		);
+		if ( availableForDowngrade ) {
+			return createLoggedInPlansAction(
+				translate( 'Downgrade', { context: 'verb' } ),
+				'secondary',
+				undefined,
+				canUserManageCurrentPlan ? undefined : 'disabled'
+			);
+		}
+		// Not purchasable and not downgradeable — return a disabled no-op to avoid
+		// falling through to the upgrade button path.
+		return createLoggedInPlansAction( '', 'secondary', undefined, 'disabled' );
 	}
 
 	/**
