@@ -105,10 +105,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 		await page.waitForURL( new RegExp( `/plugins/browse/seo/${ siteUrl }$` ) );
 	} );
 
-	it.each( [ 'Yoast SEO' ] )(
-		'SEO category should show the %s plugin',
-		async function ( plugin: string ) {
-			await pluginsPage.validateHasPluginInCategory( 'Search Engine Optimization', plugin );
-		}
-	);
+	it( 'SEO category lists plugins', async function () {
+		await pluginsPage.validateCategoryHasPlugins( 'Search Engine Optimization' );
+	} );
 } );
