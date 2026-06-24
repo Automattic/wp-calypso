@@ -4,11 +4,13 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import './style.scss';
 
-type Props = {
+export const ClosedConversationFooter = ( {
+	currentInteractionId,
+	targetInteractionId,
+}: {
+	currentInteractionId?: string | null;
 	targetInteractionId?: string | null;
-};
-
-export const ClosedConversationFooter = ( { targetInteractionId }: Props ) => {
+} ) => {
 	const { __ } = useI18n();
 	const { trackEvent } = useOdieAssistantContext();
 	const navigate = useNavigate();
@@ -18,7 +20,10 @@ export const ClosedConversationFooter = ( { targetInteractionId }: Props ) => {
 		if ( ! targetInteractionId ) {
 			return;
 		}
-		trackEvent( 'chat_go_to_open_from_merged_conversation' );
+		trackEvent( 'chat_go_to_open_from_merged_conversation', {
+			from_interaction_id: currentInteractionId ?? null,
+			to_interaction_id: targetInteractionId,
+		} );
 		const params = new URLSearchParams( search );
 		params.set( 'id', targetInteractionId );
 		navigate( '/odie?' + params.toString() );

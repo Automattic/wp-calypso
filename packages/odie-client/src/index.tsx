@@ -16,9 +16,6 @@ export const OdieAssistant: React.FC = () => {
 	const showClosedConversationFooter =
 		chatHasCSATMessage || interactionHasEnded( currentSupportInteraction );
 
-	// Exclude the current interaction so a stale-cache scenario (closed chat still
-	// appearing open in Smooch) doesn't cause mostRecentSupportInteractionId to point
-	// back at the chat the user is already on.
 	const currentUuid = currentSupportInteraction?.uuid;
 	const { mostRecentSupportInteractionId, openCount } = useOpenLiveInteractions( currentUuid );
 
@@ -43,7 +40,10 @@ export const OdieAssistant: React.FC = () => {
 				<MessagesContainer currentUser={ currentUser } />
 			</div>
 			{ showClosedConversationFooter ? (
-				<ClosedConversationFooter targetInteractionId={ openChatTarget } />
+				<ClosedConversationFooter
+					currentInteractionId={ currentUuid }
+					targetInteractionId={ openChatTarget }
+				/>
 			) : (
 				<OdieSendMessageButton />
 			) }
