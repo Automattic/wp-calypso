@@ -10,16 +10,12 @@ export interface TagStats {
 }
 
 export const useTagStats = ( tag: string ): UseQueryResult< TagStats | null > => {
-	// The endpoint reads `lang` (not `locale`) and only matches the ES index for base
-	// language codes (`pt`, `de`, …). Regional variants like `pt_BR`/`pt-br` (which
-	// `get_user_locale()` returns for users with that interface language) match nothing
-	// and the response collapses to `{ total_posts: 0, total_sites: 1 }`. Send the base
-	// slug explicitly so counters match what the timeline renders for the user.
+	// The stats endpoint matches the ES index on base language codes only; regional
+	// variants (`pt_BR`) match nothing and collapse to `{ total_posts: 0, total_sites: 1 }`.
 	const lang = getLocaleSlug()?.split( '-' )[ 0 ] ?? undefined;
 
 	return useQuery( {
-		// `lang` is part of the key: the response varies by language, so cached counts
-		// must not leak across an interface-language switch.
+		// `lang` is in the key so cached counts don't leak across a language switch.
 		queryKey: [ 'tag-stats', tag, lang ],
 		queryFn: () =>
 			wp.req.get( `/read/topics/${ encodeURIComponent( tag ) }/stats`, {
