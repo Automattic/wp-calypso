@@ -256,6 +256,51 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 	} );
 
+	it( 'suppresses displayable tool summaries when a later agent text message exists in the same turn', () => {
+		const toolMessage = createToolMessage(
+			'big_sky__apply_block_edits',
+			{ summary: 'Updated the heading.' },
+			{ id: 'tool-1' }
+		);
+		const finalMessage = createMessage( {
+			id: 'final-1',
+			content: [ { type: 'text', text: 'Done — the heading is updated.' } ],
+		} );
+
+		const result = convertWithDefaults( {
+			messages: [ toolMessage, finalMessage ],
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].id ).toBe( 'final-1' );
+	} );
+
+	it( 'keeps displayable tool summaries when the later agent text message is context-only', () => {
+		const toolMessage = createToolMessage(
+			'big_sky__apply_block_edits',
+			{ summary: 'Updated the heading.' },
+			{ id: 'tool-1' }
+		);
+		const contextOnlyMessage = createMessage( {
+			id: 'context-only-1',
+			content: [
+				{ type: 'text', text: 'Updated the heading.' },
+				{ type: 'data', data: { flags: { context_only: true } } },
+			],
+		} );
+
+		const result = convertWithDefaults( {
+			messages: [ toolMessage, contextOnlyMessage ],
+		} );
+
+		expect( result ).toHaveLength( 2 );
+		expect( result[ 0 ].id ).toBe( 'tool-1' );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
+			type: 'text',
+			text: 'Updated the heading.',
+		} );
+	} );
+
 	it( 'suppresses transient thinking for converted apply-block-edits messages', () => {
 		const message = createToolMessage( 'big_sky__apply_block_edits', {
 			followUpTasks: true,
