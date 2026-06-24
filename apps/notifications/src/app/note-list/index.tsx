@@ -30,6 +30,10 @@ const DEFAULT_LAYOUTS = {
 	list: {},
 };
 
+// Stable empty selection: DataViews' selection styling is left unused (the open
+// note is highlighted via our own `is-active` marker), so this never changes.
+const NO_SELECTION: string[] = [];
+
 // DataViews 14 only loads more in response to scroll events, so the rendered
 // window (`perPage` rows) must be tall enough to overflow the panel and produce
 // a scrollbar. The REST client may fetch smaller network pages
@@ -117,12 +121,17 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	);
 
 	// DataViews shows the unread dot from `note.read`, which an in-app read leaves
-	// stale. Swap in the effective read state, reusing the note when unchanged so
-	// only the affected row re-renders.
+	// stale. Swap in the effective read state, and tag the open note so its row
+	// can render the active highlight. Reuse the note object when neither changed
+	// so only the affected rows re-render.
 	const notesState = useSelector( getNotes );
 	const data = filteredData.map( ( note ) => {
 		const isRead = getIsNoteRead( notesState, note );
-		return !! note.read === isRead ? note : { ...note, read: isRead ? 1 : 0 };
+		const isActive = note.id.toString() === selectedNoteId;
+		if ( !! note.read === isRead && ! isActive ) {
+			return note;
+		}
+		return { ...note, read: isRead ? 1 : 0, isActive };
 	} );
 
 	// `filterSortAndPaginate` reports `totalItems` as the count of notes loaded
@@ -198,7 +207,11 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 						)
 					}
 					getItemId={ ( item ) => item.id.toString() }
-					selection={ selectedNoteId ? [ selectedNoteId ] : [] }
+					// Keep selection empty so DataViews applies none of its own selected-row
+					// styling; the open note is highlighted via our `is-active` marker
+					// instead. `onChangeSelection` is still the list layout's only row-click
+					// hook, so it stays — it's what opens the note.
+					selection={ NO_SELECTION }
 					onChangeView={ handleChangeView }
 					onChangeSelection={ onChangeSelection }
 				>

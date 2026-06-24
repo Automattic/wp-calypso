@@ -25,14 +25,15 @@ const makeNote = ( id: number, label: string, type = 'comment' ) => ( {
 const renderTab = (
 	store: ReturnType< typeof initStore >,
 	filterName: FilterName,
-	clientOverride: Partial< typeof client > = {}
+	clientOverride: Partial< typeof client > = {},
+	selectedNoteId: string | undefined = undefined
 ) =>
 	render(
 		<Provider store={ store }>
 			<AppProvider client={ { ...client, ...clientOverride } as never } locale="en">
 				<NoteList
 					filterName={ filterName }
-					selectedNoteId={ undefined }
+					selectedNoteId={ selectedNoteId }
 					setSelectedNoteId={ noop }
 				/>
 			</AppProvider>
@@ -201,5 +202,19 @@ describe( 'NoteList loading state', () => {
 
 		expect( screen.queryByText( 'No new comments yet!' ) ).not.toBeInTheDocument();
 		expect( container.querySelector( '.components-spinner' ) ).toBeTruthy();
+	} );
+
+	it( 'marks only the open note row with the active highlight', () => {
+		const store = initStore();
+		store.dispatch(
+			actions.notes.addNotes( [ makeNote( 300, 'Open me' ), makeNote( 301, 'Other note' ) ] )
+		);
+		store.dispatch( actions.ui.loadedNotes() );
+
+		const { container } = renderTab( store, 'all' as FilterName, {}, '300' );
+
+		const active = container.querySelectorAll( '.wpnc__subject.is-active' );
+		expect( active ).toHaveLength( 1 );
+		expect( active[ 0 ].textContent ).toContain( 'Open me' );
 	} );
 } );
