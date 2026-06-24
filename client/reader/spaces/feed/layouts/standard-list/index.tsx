@@ -1,50 +1,33 @@
+import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { useInfiniteList } from 'calypso/reader/hooks/use-infinite-list';
+import { getPostUrl } from 'calypso/reader/route';
 import { SpaceFeedTimeSince } from '../../components/time-since';
 import { getPostFields, type SpaceFeedDayGroup, type SpaceFeedPostFields } from '../../post-fields';
 import type { SpaceFeedLayoutProps } from '../types';
+import type { ReadStreamPost } from '@automattic/api-core';
 
 import './style.scss';
 
 type Row =
 	| { kind: 'header'; key: string; label: string }
-	| { kind: 'post'; key: string; fields: SpaceFeedPostFields };
+	| { kind: 'post'; key: string; fields: SpaceFeedPostFields; post: ReadStreamPost };
 
 const HEADER_SIZE = 44;
-const ROW_SIZE = 88;
+const ROW_SIZE = 120;
 
-function BookmarkGlyph() {
+function PostRow( { fields, post }: { fields: SpaceFeedPostFields; post: ReadStreamPost } ) {
 	return (
-		<svg
-			className="space-feed-standard-list__bookmark"
-			width="18"
-			height="18"
-			viewBox="0 0 24 24"
-			fill="none"
-			aria-hidden="true"
-		>
-			<path
-				d="M7 4h10a1 1 0 0 1 1 1v15l-6-3.5L6 20V5a1 1 0 0 1 1-1Z"
-				stroke="currentColor"
-				strokeWidth="1.5"
-				strokeLinejoin="round"
-			/>
-		</svg>
-	);
-}
-
-function PostRow( { fields }: { fields: SpaceFeedPostFields } ) {
-	return (
-		<a className="space-feed-standard-list__row" href={ fields.postHref }>
-			<span
-				className="space-feed-standard-list__unread"
-				data-unread={ fields.isUnread }
-				aria-hidden="true"
-			/>
+		<div className="space-feed-standard-list__row">
 			<div className="space-feed-standard-list__body">
-				<h3 className="space-feed-standard-list__title">{ fields.title }</h3>
+				<h3 className="space-feed-standard-list__title">
+					<a className="space-feed-standard-list__title-link" href={ fields.postHref }>
+						{ fields.title }
+					</a>
+				</h3>
 				{ fields.excerptHtml && (
 					<div
 						className="space-feed-standard-list__excerpt"
@@ -62,6 +45,13 @@ function PostRow( { fields }: { fields: SpaceFeedPostFields } ) {
 						<span className="space-feed-standard-list__tag">{ fields.siteDomain }</span>
 					) }
 				</div>
+				<div className="space-feed-standard-list__actions">
+					<ReaderPostActions
+						post={ post }
+						onCommentClick={ () => page( getPostUrl( post ) ) }
+						iconSize={ 18 }
+					/>
+				</div>
 			</div>
 			<div className="space-feed-standard-list__aside">
 				{ fields.publishedDate && (
@@ -69,9 +59,8 @@ function PostRow( { fields }: { fields: SpaceFeedPostFields } ) {
 						<SpaceFeedTimeSince date={ fields.publishedDate } />
 					</span>
 				) }
-				<BookmarkGlyph />
 			</div>
-		</a>
+		</div>
 	);
 }
 
@@ -112,7 +101,7 @@ export function StandardListLayout( {
 				} );
 				lastGroup = dayGroup;
 			}
-			out.push( { kind: 'post', key: `post-${ key }`, fields } );
+			out.push( { kind: 'post', key: `post-${ key }`, fields, post } );
 		} );
 		return out;
 	}, [ posts, translate ] );
@@ -143,7 +132,7 @@ export function StandardListLayout( {
 						{ row.kind === 'header' ? (
 							<h2 className="space-feed-standard-list__group">{ row.label }</h2>
 						) : (
-							<PostRow fields={ row.fields } />
+							<PostRow fields={ row.fields } post={ row.post } />
 						) }
 					</div>
 				);

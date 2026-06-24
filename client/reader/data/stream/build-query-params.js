@@ -68,17 +68,22 @@ function buildListQueryParams( extras ) {
 	return getQueryString( { ...extras, number: 40 } );
 }
 
+// Posts per page for the space feed. The space pins its own page size rather
+// than the shared `INITIAL_FETCH`/`PER_FETCH` sizes the other streams use; kept
+// at or under the 15-post server cap (Elasticsearch query limit).
+const SPACE_PER_PAGE = 10;
+
 /**
  * `space` (`/reader/spaces/<id>/posts`) takes `count` (the per-page size, capped
  * at 15 server-side — Elasticsearch query limit) and a `page_handle` cursor,
- * rather than the `number`/offset shape the other streams use. The normalized
- * fetch size (`INITIAL_FETCH` / `PER_FETCH`) is well under the cap, but clamp
- * defensively so an oversized page can't silently break end-of-stream detection.
- * Locale is passed as `_locale`, the param the endpoint reads to build the stream.
+ * rather than the `number`/offset shape the other streams use. It pins
+ * `SPACE_PER_PAGE` for every page, clamped to the cap so an oversized page can't
+ * silently break end-of-stream detection. Locale is passed as `_locale`, the
+ * param the endpoint reads to build the stream.
  */
 function buildSpaceQueryParams( extras ) {
-	const { number, page_handle: pageHandle, lang } = extras;
-	const queryParams = { count: Math.min( number || INITIAL_FETCH, 15 ) };
+	const { page_handle: pageHandle, lang } = extras;
+	const queryParams = { count: Math.min( SPACE_PER_PAGE, 15 ) };
 	if ( pageHandle ) {
 		queryParams.page_handle = pageHandle;
 	}
