@@ -1,13 +1,9 @@
 import { canSwitchEnvironment } from '../features';
-import type { Site, User } from '@automattic/api-core';
-
-const ownerUser = { ID: 1 } as User;
-const secondaryAdminUser = { ID: 2 } as User;
+import type { Site } from '@automattic/api-core';
 
 const baseSite = {
 	ID: 1,
 	slug: 'test-site',
-	site_owner: 1,
 	is_wpcom_atomic: true,
 	is_wpcom_staging_site: false,
 	is_a4a_dev_site: false,
@@ -16,12 +12,8 @@ const baseSite = {
 } as unknown as Site;
 
 describe( 'canSwitchEnvironment', () => {
-	test( 'returns true for the site owner with staging feature', () => {
-		expect( canSwitchEnvironment( baseSite, ownerUser ) ).toBe( true );
-	} );
-
-	test( 'returns false for a secondary admin (non-owner)', () => {
-		expect( canSwitchEnvironment( baseSite, secondaryAdminUser ) ).toBe( false );
+	test( 'returns true when the site has the staging feature', () => {
+		expect( canSwitchEnvironment( baseSite ) ).toBe( true );
 	} );
 
 	test( 'returns false when site migration is in progress', () => {
@@ -33,14 +25,19 @@ describe( 'canSwitchEnvironment', () => {
 				is_complete: false,
 			},
 		} as unknown as Site;
-		expect( canSwitchEnvironment( migratingSite, ownerUser ) ).toBe( false );
+		expect( canSwitchEnvironment( migratingSite ) ).toBe( false );
 	} );
 
-	test( 'returns false when site does not have staging feature', () => {
+	test( 'returns false for an A4A dev site', () => {
+		const a4aDevSite = { ...baseSite, is_a4a_dev_site: true } as unknown as Site;
+		expect( canSwitchEnvironment( a4aDevSite ) ).toBe( false );
+	} );
+
+	test( 'returns false when the site does not have the staging feature', () => {
 		const siteWithoutStaging = {
 			...baseSite,
 			plan: { features: { active: [] } },
 		} as unknown as Site;
-		expect( canSwitchEnvironment( siteWithoutStaging, ownerUser ) ).toBe( false );
+		expect( canSwitchEnvironment( siteWithoutStaging ) ).toBe( false );
 	} );
 } );

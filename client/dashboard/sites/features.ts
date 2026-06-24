@@ -106,13 +106,8 @@ export function canRestoreSite( site: Site ) {
 	return site.is_deleted && ! isP2( site ) && ! isSelfHostedJetpackConnected( site );
 }
 
-export function canSwitchEnvironment( site: Site, user: User ) {
+export function canSwitchEnvironment( site: Site ) {
 	if ( isSiteMigrationInProgress( site ) || site.is_a4a_dev_site ) {
-		return false;
-	}
-
-	// Only the site owner can switch between production and staging environments.
-	if ( site.site_owner !== user.ID ) {
 		return false;
 	}
 

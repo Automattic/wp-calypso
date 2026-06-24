@@ -16,7 +16,6 @@ import {
 	settings,
 	shield,
 } from '@wordpress/icons';
-import { useAuth } from '../../app/auth';
 import {
 	siteRoute,
 	siteOverviewRoute,
@@ -40,8 +39,8 @@ import { isSiteMigrationInProgress } from '../../utils/site-status';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
-import { canSwitchEnvironment } from '../features';
 import SidebarEnvironmentSwitcher from '../site/sidebar-environment-switcher';
+import useCanSwitchEnvironment from '../site/use-can-switch-environment';
 import SiteSwitcherItem from './site-switcher-item';
 import type { Site } from '@automattic/api-core';
 import type { AnyRoute } from '@tanstack/react-router';
@@ -49,7 +48,7 @@ import type { AnyRoute } from '@tanstack/react-router';
 export default function SiteSidebar() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
-	const { user } = useAuth();
+	const canSwitchEnv = useCanSwitchEnvironment( site );
 
 	if ( ! site ) {
 		return null;
@@ -61,7 +60,7 @@ export default function SiteSidebar() {
 			<VStack spacing={ 4 }>
 				<SidebarMenu>
 					<SiteSwitcherItem site={ site } />
-					{ canSwitchEnvironment( site, user ) && <SidebarEnvironmentSwitcher site={ site } /> }
+					{ canSwitchEnv && <SidebarEnvironmentSwitcher site={ site } /> }
 				</SidebarMenu>
 				<SiteMenuSidebar site={ site } />
 			</VStack>

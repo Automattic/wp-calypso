@@ -5,7 +5,6 @@ import { notFound, Outlet } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Suspense, useMemo, lazy } from 'react';
-import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
 import { siteRoute } from '../../app/router/sites';
 import StagingSiteSyncMonitor from '../../app/staging-site-sync-monitor';
@@ -14,16 +13,17 @@ import HeaderBar from '../../components/header-bar';
 import MenuDivider from '../../components/menu-divider';
 import { hasStagingSite } from '../../utils/site-staging-site';
 import { isSiteMigrationInProgress } from '../../utils/site-status';
-import { canManageSite, canSwitchEnvironment } from '../features';
+import { canManageSite } from '../features';
 import SiteLaunchCelebrationModal from '../site-launch-celebration-modal';
 import SiteMenu from '../site-menu';
 import EnvironmentSwitcher from './environment-switcher';
+import useCanSwitchEnvironment from './use-can-switch-environment';
 import type { SiteSwitcherProps } from '../site-switcher/types';
 
 function Site() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site, isError, error } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { user } = useAuth();
+	const canSwitchEnv = useCanSwitchEnvironment( site );
 	const { components } = useAppContext();
 	const SiteSwitcher = useMemo(
 		() =>
@@ -47,7 +47,7 @@ function Site() {
 					<HStack spacing={ 3 }>
 						<HeaderBar.Title>
 							<SiteSwitcher site={ site } />
-							{ canSwitchEnvironment( site, user ) && (
+							{ canSwitchEnv && (
 								<>
 									<MenuDivider />
 									<EnvironmentSwitcher site={ site } />
