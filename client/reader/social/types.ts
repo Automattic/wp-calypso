@@ -67,14 +67,14 @@ export interface SocialEmbedAudio {
 export interface SocialLongFormDocument {
 	title: string;
 	description: string;
-	text_content: string;
 	/** Site-relative path; expected to start with `/`. */
 	path: string;
-	tags: string[];
 	/** ISO-8601 timestamp, or empty string when unknown. */
 	published_at: string;
-	/** Cover-image URL projected from the underlying record's blob ref. */
+	/** Cover-image URL (Bluesky CDN), or null when the post carries none. */
 	cover_image: string | null;
+	/** Reading time in minutes (AppView-computed), or null when unavailable. */
+	reading_time: number | null;
 }
 
 export interface SocialLongFormPublication {
@@ -84,7 +84,7 @@ export interface SocialLongFormPublication {
 	url: string;
 	/** Publisher's protocol handle (e.g. `jeremy.herve.bzh`). Empty when unresolved. */
 	handle: string;
-	/** Avatar URL projected from the underlying record's blob ref. */
+	/** Avatar URL (Bluesky CDN), or null when absent. */
 	avatar: string | null;
 }
 

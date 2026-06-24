@@ -11,8 +11,6 @@
 	.social-post-card-timestamp-link,
 	.social-post-card-body a,
 	a.social-post-card-embed-external,
-	.social-post-card-embed-external__long-form-toggle,
-	.social-post-card-embed-external__long-form-original,
 	.social-post-card-embed-external__publication-pill-link,
 	.social-post-card-embed-quote-link,
 	button.social-post-card-embed-images__item,
@@ -519,8 +517,16 @@ button.social-post-card-embed-video--thumbnail {
 	background: var( --color-border-subtle );
 }
 
-.social-post-card-embed-external__cover-meta {
+// Padded text block under the long-form cover image (title / description /
+// meta line). The cover image runs full-bleed above it.
+.social-post-card-embed-external__content {
 	padding: 12px;
+}
+
+// Published date · reading time, mirroring Bluesky's standard.site card.
+.social-post-card-embed-external__meta {
+	font-size: 0.75rem;
+	color: var( --studio-gray-50 );
 }
 
 .social-post-card-embed-external__title {
@@ -549,67 +555,13 @@ button.social-post-card-embed-video--thumbnail {
 	color: var( --studio-gray-50 );
 }
 
-// Long-form reading view — sits below the external card.
-.social-post-card-embed-external__long-form {
-	margin-block-start: 8px;
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-}
-
-.social-post-card-embed-external__long-form-toggle.components-button {
-	align-self: flex-start;
-	font-size: 0.875rem;
-}
-
-.social-post-card-embed-external__long-form-body {
-	padding: 12px;
-	border: 1px solid var( --color-border-subtle );
-	border-radius: 8px;
-	background: var( --color-surface );
-	color: var( --color-text );
-	font-size: 1rem;
-	line-height: 1.55;
-
-	p {
-		// Preserve author-typed line breaks from the plain-text body.
-		white-space: pre-line;
-		margin-block: 0 0.75em;
-
-		&:last-of-type {
-			margin-block-end: 0;
-		}
-	}
-}
-
-.social-post-card-embed-external__long-form-empty {
-	color: var( --studio-gray-50 );
-	font-style: italic;
-}
-
-.social-post-card-embed-external__long-form-original {
-	display: inline-block;
-	margin-block-start: 12px;
-	font-size: 0.875rem;
-	font-weight: 500;
-	color: var( --color-primary );
-
-	&:hover,
-	&:focus-visible {
-		text-decoration: underline;
-	}
-
-	&::after {
-		content: ' \2192';
-	}
-}
-
-// Publication "pill" — small attribution row sitting between the link
-// card and the long-form toggle. Mirrors Bluesky's own clients' card
-// layout. Avatar + (name + handle) stacked vertically + "View publication"
-// link aligned to the inline-end. Behaves as a horizontal flex row so a
-// missing avatar or empty handle collapses cleanly without leaving a hole.
+// Publication "pill" — small attribution row sitting below the long-form
+// preview card. Mirrors Bluesky's own clients' card layout. Avatar + (name +
+// handle) stacked vertically + "View publication" link aligned to the
+// inline-end. Behaves as a horizontal flex row so a missing avatar or empty
+// handle collapses cleanly without leaving a hole.
 .social-post-card-embed-external__publication-pill {
+	margin-block-start: 8px;
 	display: flex;
 	align-items: center;
 	gap: 10px;

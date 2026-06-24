@@ -98,17 +98,20 @@ export interface AtmosphereEmbedVideo {
 export interface AtmosphereLongFormDocument {
 	title: string;
 	description: string;
-	text_content: string;
 	/** Site-relative path; expected to start with `/`. */
 	path: string;
-	tags: string[];
 	/** ISO-8601 timestamp, or empty string when unknown. */
 	published_at: string;
 	/**
-	 * Bluesky CDN URL for the document's cover image, or null when the
-	 * underlying record carries no `coverImage` blob ref.
+	 * Bluesky CDN URL for the document's cover image (the AppView's
+	 * `thumb`), or null when the post carries none.
 	 */
 	cover_image: string | null;
+	/**
+	 * Reading time in minutes, computed by Bluesky's AppView. Null when
+	 * the AppView omits it.
+	 */
+	reading_time: number | null;
 }
 
 export interface AtmosphereLongFormPublication {
@@ -117,14 +120,14 @@ export interface AtmosphereLongFormPublication {
 	description: string;
 	url: string;
 	/**
-	 * Publisher's current bsky handle, resolved server-side via
-	 * `app.bsky.actor.getProfile`. Empty string when resolution failed
-	 * or the profile is taken down / unknown.
+	 * Publisher's bsky handle, taken from the AppView view's
+	 * `associatedProfiles`. Empty string when the AppView omits it or
+	 * returns an unresolvable (`handle.invalid`) profile.
 	 */
 	handle: string;
 	/**
-	 * Bluesky CDN URL for the publication's avatar blob, or null when
-	 * the record carries no `avatar` ref.
+	 * Bluesky CDN URL for the publication's avatar (the AppView source's
+	 * `icon`), or null when absent.
 	 */
 	avatar: string | null;
 }
