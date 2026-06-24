@@ -525,7 +525,7 @@ class MasterbarLoggedIn extends Component {
 			sitePlanName,
 			site,
 			sitePlanUrl,
-			adminMenu,
+			sectionGroup,
 		} = this.props;
 
 		// Only display when a site is selected and is not domain-only site.
@@ -545,10 +545,9 @@ class MasterbarLoggedIn extends Component {
 			},
 		];
 
-		// In the wp-admin context (adminMenu is loaded), this link is redundant since the user
-		// is already in the admin. Only show it in non-admin Calypso contexts like the Hosting
-		// Dashboard or Reader.
-		if ( ! adminMenu ) {
+		const isWithinSiteContext = sectionGroup === 'sites';
+
+		if ( ! isWithinSiteContext ) {
 			if ( isClassicView ) {
 				menuItems.push( {
 					label: translate( 'Dashboard' ),
