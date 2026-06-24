@@ -1,6 +1,5 @@
 import { getUrlParts } from '@automattic/calypso-url';
 import { translate } from 'i18n-calypso';
-import { trim } from 'lodash';
 import { ReactNode } from 'react';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
@@ -181,7 +180,7 @@ export const getSiteAuthorName = ( site: ReaderSite ): string => {
 	const authorFullName =
 		siteAuthor &&
 		( siteAuthor.name ||
-			trim( `${ siteAuthor.first_name || '' } ${ siteAuthor.last_name || '' }` ) );
+			`${ siteAuthor.first_name || '' } ${ siteAuthor.last_name || '' }`.trim() );
 
 	return decodeEntities( authorFullName || '' );
 };

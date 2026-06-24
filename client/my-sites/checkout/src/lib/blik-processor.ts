@@ -128,7 +128,10 @@ export default async function blikProcessor(
 			while ( isModalActive && [ 'processing', 'async-pending' ].includes( orderStatus ) ) {
 				orderStatus = await pollForOrderStatus( response.order_id, 2000, genericErrorMessage );
 			}
-			if ( orderStatus !== 'success' ) {
+			// `payment-confirmed` is treated as success: Stripe has accepted the payment
+			// but order finalization can still take a while. Hand off to the framework's
+			// pending page rather than keeping the user waiting in the modal.
+			if ( orderStatus !== 'success' && orderStatus !== 'payment-confirmed' ) {
 				throw new Error( explicitClosureMessage ?? genericFailureMessage );
 			}
 
@@ -157,7 +160,10 @@ async function pollForOrderStatus(
 		console.error( 'Order was not found.' );
 		throw new Error( genericErrorMessage );
 	}
-	if ( orderData.processing_status === 'success' ) {
+	if (
+		orderData.processing_status === 'success' ||
+		orderData.processing_status === 'payment-confirmed'
+	) {
 		return orderData.processing_status;
 	}
 	await new Promise( ( resolve ) => setTimeout( resolve, pollInterval ) );

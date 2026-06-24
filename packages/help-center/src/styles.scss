@@ -183,6 +183,25 @@
 }
 
 /**
+ * Mobile scrim — fade in a translucent backdrop behind the sheet so the help
+ * center reads as modal, matching the @wordpress/components Modal scrim used
+ * elsewhere (e.g. "Save your cart for later?"). Visible only when the sheet is
+ * open in its mobile layout and not minimized.
+ */
+.help-center:has( > div.help-center__container.is-mobile:not( .is-minimized ) ) {
+	position: fixed;
+	inset: 0;
+	z-index: $help-center-z-index;
+	background-color: rgba( 0, 0, 0, 0.35 );
+	pointer-events: none;
+	animation: fadeIn 0.2s ease-out forwards;
+
+	> div.help-center__container {
+		pointer-events: auto;
+	}
+}
+
+/**
  * Popover component
  * Fixes broken popover component on frontend.
  */

@@ -1,7 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Dropdown } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useAiSiteBuilderPath } from 'calypso/lib/site-spec';
 import { AuthProvider } from '../../dashboard/app/auth';
 import { AsyncContent } from './async';
 import AddNewSiteButton from './button';
@@ -16,9 +15,6 @@ interface Props extends PropsWithChildren {
 
 export const SitesAddNewSitePopover = ( { showCompact, context }: Props ) => {
 	const translate = useTranslate();
-	// Resolve the Vega assignment at the popover level so the legacy `/sites`
-	// dashboard prefetches on page mount rather than on popover open.
-	const aiSiteBuilderPath = useAiSiteBuilderPath();
 
 	return (
 		<AuthProvider>
@@ -36,7 +32,7 @@ export const SitesAddNewSitePopover = ( { showCompact, context }: Props ) => {
 				) }
 				renderContent={ () => (
 					<div className="sites-add-new-site__popover-content">
-						<AsyncContent context={ context } aiSiteBuilderPath={ aiSiteBuilderPath } />
+						<AsyncContent context={ context } aiSiteBuilderPath="/setup/ai-site-builder" />
 					</div>
 				) }
 				onToggle={ ( isOpen ) => {

@@ -18,9 +18,10 @@ import { Icon, image as imageIcon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
+import { MediaGrid } from 'calypso/reader/social/composer-media';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { ACCEPTED_IMAGE_TYPES, MAX_IMAGES } from './composer-media/constants';
-import { ImageGrid } from './composer-media/image-grid';
+import { getMediaErrorMessage } from './composer-media/error-copy';
 import { useImageUploads } from './composer-media/use-image-uploads';
 import type { ComposerImage } from './composer-media/types';
 import type {
@@ -69,16 +70,25 @@ export function useAtmosphereComposerMedia( { mode, connectionId }: Ctx ): Compo
 
 	const renderGrid = useCallback(
 		() => (
-			<ImageGrid
-				images={ images }
+			<MediaGrid
+				items={ images.map( ( i ) =>
+					'previewUrl' in i ? i : { ...i, previewUrl: '', alt: '' }
+				) }
 				max={ MAX_IMAGES }
+				accept={ ACCEPTED_IMAGE_TYPES }
 				onPickFiles={ addFiles }
 				onRemove={ removeImage }
 				onRetry={ retryImage }
 				onSetAlt={ setAlt }
+				isPending={ ( i ) => i.kind === 'compressing' || i.kind === 'uploading' }
+				canEditAlt={ ( i ) => i.kind === 'uploading' || i.kind === 'uploaded' }
+				isFailed={ ( i ) => i.kind === 'failed' }
+				errorMessage={ ( i ) =>
+					i.kind === 'failed' ? getMediaErrorMessage( i.error, translate ) : null
+				}
 			/>
 		),
-		[ images, addFiles, removeImage, retryImage, setAlt ]
+		[ images, addFiles, removeImage, retryImage, setAlt, translate ]
 	);
 
 	const renderFooterTrigger = useCallback(

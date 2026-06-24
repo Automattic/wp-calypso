@@ -10,6 +10,9 @@ import {
 	deleteLike,
 	deletePost,
 	deleteRepost,
+	getAtmosphereActorFollowers,
+	getAtmosphereActorFollows,
+	getAtmosphereNotifications,
 	getAtmosphereTagFeed,
 	getAuthorFeed,
 	getAuthorProfile,
@@ -26,6 +29,7 @@ import type {
 	AtmosphereAuthorFeedPage,
 	AtmosphereAuthorProfile,
 	AtmosphereFeedItem,
+	AtmosphereNotificationsPage,
 	AtmosphereScopedProfile,
 	AtmosphereThreadResponse,
 } from '../types';
@@ -1096,6 +1100,48 @@ describe( 'atmosphere fetchers', () => {
 			expect( scope.isDone() ).toBe( true );
 		} );
 
+		it( 'forwards interaction_settings on the request body when provided', async () => {
+			const scope = nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/posts', ( body ) => {
+					expect( body ).toMatchObject( {
+						text: 'Hello',
+						interaction_settings: {
+							reply_allow: { kind: 'combo', following: true },
+							allow_quotes: false,
+						},
+					} );
+					return true;
+				} )
+				.reply( 200, {
+					post: { uri: 'at://did/app.bsky.feed.post/abc', cid: 'bafy', rkey: 'abcde12345xyz' },
+				} );
+
+			await createPost( {
+				connectionId: 42,
+				text: 'Hello',
+				interaction_settings: {
+					reply_allow: { kind: 'combo', following: true },
+					allow_quotes: false,
+				},
+			} );
+
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'omits interaction_settings when caller does not provide it', async () => {
+			const scope = nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/posts', ( body ) => {
+					expect( body.interaction_settings ).toBeUndefined();
+					return true;
+				} )
+				.reply( 200, {
+					post: { uri: 'at://did/app.bsky.feed.post/abc', cid: 'bafy', rkey: 'abcde12345xyz' },
+				} );
+
+			await createPost( { connectionId: 42, text: 'Hello' } );
+			expect( scope.isDone() ).toBe( true );
+		} );
+
 		it.each( [
 			[ 400, 'atmosphere_bad_request', 'bad_request' ],
 			[ 400, 'atmosphere_text_too_long', 'text_too_long' ],
@@ -1235,5 +1281,175 @@ describe( 'atmosphere fetchers', () => {
 
 			await expect( deletePost( { connectionId, rkey } ) ).rejects.toMatchObject( { kind } );
 		} );
+	} );
+
+	describe( 'getAtmosphereActorFollowers', () => {
+		const samplePage = {
+			items: [
+				{
+					did: 'did:plc:alice',
+					handle: 'alice.bsky.social',
+					display_name: 'Alice',
+					description: 'hi',
+					avatar: 'https://cdn.test/alice.jpg',
+					viewer: {
+						following: 'at://did:plc:caller/app.bsky.graph.follow/abc1234567890',
+						following_rkey: 'abc1234567890',
+						followed_by: false,
+					},
+				},
+			],
+			cursor: 'next',
+		};
+
+		it( 'GETs the followers path and returns the typed page', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/followers' )
+				.query( { limit: 50 } )
+				.reply( 200, samplePage );
+
+			const res = await getAtmosphereActorFollowers( {
+				connectionId: 42,
+				actor: 'alice.bsky.social',
+			} );
+			expect( res.cursor ).toBe( 'next' );
+			expect( res.items ).toHaveLength( 1 );
+			expect( res.items[ 0 ].handle ).toBe( 'alice.bsky.social' );
+		} );
+
+		it( 'forwards cursor and limit query params', async () => {
+			const scope = nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/followers' )
+				.query( { cursor: 'abc', limit: 25 } )
+				.reply( 200, { items: [], cursor: null } );
+
+			await getAtmosphereActorFollowers( {
+				connectionId: 42,
+				actor: 'alice.bsky.social',
+				cursor: 'abc',
+				limit: 25,
+			} );
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'percent-encodes the actor', async () => {
+			const scope = nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/did%3Aplc%3Aabc/followers' )
+				.query( { limit: 50 } )
+				.reply( 200, { items: [], cursor: null } );
+
+			await getAtmosphereActorFollowers( { connectionId: 42, actor: 'did:plc:abc' } );
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'classifies upstream auth failure', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/followers' )
+				.query( true )
+				.reply( 401, { error: 'atmosphere_auth_required' } );
+
+			await expect(
+				getAtmosphereActorFollowers( { connectionId: 42, actor: 'alice.bsky.social' } )
+			).rejects.toMatchObject( { kind: 'auth_required' } );
+		} );
+	} );
+
+	describe( 'getAtmosphereActorFollows', () => {
+		it( 'GETs the follows path and returns the typed page', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/follows' )
+				.query( { limit: 50 } )
+				.reply( 200, { items: [], cursor: null } );
+
+			const res = await getAtmosphereActorFollows( {
+				connectionId: 42,
+				actor: 'alice.bsky.social',
+			} );
+			expect( res.cursor ).toBeNull();
+			expect( res.items ).toEqual( [] );
+		} );
+	} );
+
+	it( 'getAtmosphereNotifications hits the connection-scoped path with cursor + limit', async () => {
+		const page: AtmosphereNotificationsPage = {
+			items: [
+				{
+					id: 'at://did:plc:jane/app.bsky.feed.like/3l',
+					protocol_type: 'like',
+					canonical_type: 'like',
+					actor: {
+						handle: 'jane.bsky.social',
+						display_name: 'Jane',
+						avatar_url: null,
+						profile_uri: 'at://did:plc:jane',
+					},
+					target: {
+						kind: 'post',
+						uri: 'at://did:plc:me/app.bsky.feed.post/3k',
+						excerpt: 'hello',
+					},
+					target_url: 'https://bsky.app/profile/me/post/3k',
+					created_at: '2026-05-11T12:34:56Z',
+					is_read: false,
+				},
+			],
+			next_cursor: 'next',
+			seen_at: '2026-05-10T00:00:00Z',
+		};
+
+		nock( BASE )
+			.get( '/wpcom/v2/reader/atmosphere/connections/101/notifications' )
+			.query( { cursor: 'abc', limit: '30' } )
+			.reply( 200, page );
+
+		const res = await getAtmosphereNotifications( {
+			connectionId: 101,
+			cursor: 'abc',
+			limit: 30,
+		} );
+		expect( res ).toEqual( page );
+	} );
+
+	it( 'getAtmosphereNotifications omits cursor + limit when not provided', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/atmosphere/connections/101/notifications' )
+			.query( {} )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const res = await getAtmosphereNotifications( { connectionId: 101 } );
+		expect( res.items ).toEqual( [] );
+	} );
+
+	it( 'getAtmosphereNotifications forwards types when provided', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/atmosphere/connections/101/notifications' )
+			.query( { types: 'like,repost' } )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const res = await getAtmosphereNotifications( {
+			connectionId: 101,
+			types: 'like,repost',
+		} );
+		expect( res.items ).toEqual( [] );
+	} );
+
+	it( 'getAtmosphereNotifications omits types when not provided', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/atmosphere/connections/101/notifications' )
+			.query( {} )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const res = await getAtmosphereNotifications( { connectionId: 101 } );
+		expect( res.items ).toEqual( [] );
+	} );
+
+	it( 'getAtmosphereNotifications omits types when empty string', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/atmosphere/connections/101/notifications' )
+			.query( {} )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const res = await getAtmosphereNotifications( { connectionId: 101, types: '' } );
+		expect( res.items ).toEqual( [] );
 	} );
 } );

@@ -13,6 +13,7 @@ import { createAgentConfig } from '../utils/create-agent-config';
 import { loadExternalProviders, type LoadedProviders } from '../utils/load-external-providers';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 import type { HelpCenterSite } from '@automattic/data-stores';
+import type { JSX } from 'react';
 
 export interface HeadlessAgentInitializerProps {
 	/** The selected site object. */
@@ -54,6 +55,7 @@ export default function HeadlessAgentInitializer( {
 				currentRoute,
 				toolProvider: providers.toolProvider,
 				contextProvider: providers.contextProvider,
+				providerIds: providers.providerIds,
 				environment: 'wp-admin',
 			} );
 

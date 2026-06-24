@@ -1,14 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import { isEnabled } from '@automattic/calypso-config';
 import { render, screen } from '@testing-library/react';
+import { useAchievementsQuery } from 'calypso/data/reader/use-achievements-query';
+import useAchievementsVisibility from 'calypso/reader/components/achievements/use-achievements-visibility';
 import UserAchievements from '../index';
 import type { ReaderUser } from '@automattic/api-core';
-
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: jest.fn(),
-} ) );
 
 jest.mock( 'calypso/reader/components/achievements/use-achievements-visibility' );
 
@@ -28,22 +25,50 @@ jest.mock( '../achievements-settings', () => ( {
 	default: () => <button data-testid="achievements-settings">Settings</button>,
 } ) );
 
-jest.mock( 'calypso/reader/components/achievements/years-of-service-badge', () => ( {
-	YearsOfServiceBadge: ( { yearsOfService }: { yearsOfService: number } ) => (
-		<div data-testid="years-of-service-badge">{ yearsOfService }</div>
+jest.mock( 'calypso/reader/user-profile/components/private-tab-notice', () => ( {
+	__esModule: true,
+	default: ( { title }: { title: string } ) => (
+		<div data-testid="private-tab-notice">{ title }</div>
 	),
 } ) );
+const mockActivityStreakProps = jest.fn();
+jest.mock( '../activity-streak', () => ( {
+	__esModule: true,
+	ActivityStreak: ( props: { streak?: { current_streak: number }; isOwnProfile: boolean } ) => {
+		mockActivityStreakProps( props );
+		return <div data-testid="activity-streak" />;
+	},
+} ) );
 
-const mockIsEnabled = isEnabled as jest.MockedFunction< typeof isEnabled >;
+const mockUseAchievementsVisibility = jest.mocked( useAchievementsVisibility );
+const mockUseAchievementsQuery = jest.mocked( useAchievementsQuery );
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const useAchievementsVisibility =
-	require( 'calypso/reader/components/achievements/use-achievements-visibility' )
-		.default as jest.Mock;
+const getAchievementsVisibility = (
+	overrides: Partial< ReturnType< typeof useAchievementsVisibility > > = {}
+): ReturnType< typeof useAchievementsVisibility > => ( {
+	isOwnProfile: false,
+	isPublic: false,
+	isVisible: false,
+	isLoading: false,
+	...overrides,
+} );
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const useAchievementsQuery = require( 'calypso/data/reader/use-achievements-query' )
-	.useAchievementsQuery as jest.Mock;
+const getAchievementsQuery = (
+	overrides: Partial< ReturnType< typeof useAchievementsQuery > > = {}
+): ReturnType< typeof useAchievementsQuery > => ( {
+	achievements: [],
+	lockedAchievements: [],
+	yearsOfService: undefined,
+	engagementStreak: undefined,
+	dailyPostStreaks: [],
+	found: 0,
+	isLoading: false,
+	isError: false,
+	hasNextPage: false,
+	isFetchingNextPage: false,
+	fetchNextPage: jest.fn(),
+	...overrides,
+} );
 
 describe( 'UserAchievements', () => {
 	const defaultUser: ReaderUser = {
@@ -61,33 +86,23 @@ describe( 'UserAchievements', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockAchievementsGridProps.mockClear();
-		mockIsEnabled.mockReturnValue( true );
-		useAchievementsQuery.mockReturnValue( {
-			yearsOfService: undefined,
-			lockedAchievements: [],
-			isLoading: false,
-		} );
-	} );
-
-	test( 'should render nothing when feature flag is disabled', () => {
-		mockIsEnabled.mockReturnValue( false );
-		useAchievementsVisibility.mockReturnValue( {
-			isOwnProfile: true,
-			isVisible: true,
-			isLoading: false,
-		} );
-
-		const { container } = render( <UserAchievements user={ defaultUser } /> );
-
-		expect( container.innerHTML ).toBe( '' );
+		mockActivityStreakProps.mockClear();
+		mockUseAchievementsQuery.mockReturnValue(
+			getAchievementsQuery( {
+				lockedAchievements: [],
+				isLoading: false,
+			} )
+		);
 	} );
 
 	test( 'should render nothing when achievements are not visible', () => {
-		useAchievementsVisibility.mockReturnValue( {
-			isOwnProfile: false,
-			isVisible: false,
-			isLoading: false,
-		} );
+		mockUseAchievementsVisibility.mockReturnValue(
+			getAchievementsVisibility( {
+				isOwnProfile: false,
+				isVisible: false,
+				isLoading: false,
+			} )
+		);
 
 		const { container } = render( <UserAchievements user={ defaultUser } /> );
 
@@ -95,11 +110,13 @@ describe( 'UserAchievements', () => {
 	} );
 
 	test( 'should render achievements grid when visible', () => {
-		useAchievementsVisibility.mockReturnValue( {
-			isOwnProfile: true,
-			isVisible: true,
-			isLoading: false,
-		} );
+		mockUseAchievementsVisibility.mockReturnValue(
+			getAchievementsVisibility( {
+				isOwnProfile: true,
+				isVisible: true,
+				isLoading: false,
+			} )
+		);
 
 		render( <UserAchievements user={ defaultUser } /> );
 
@@ -107,11 +124,13 @@ describe( 'UserAchievements', () => {
 	} );
 
 	test( 'should show settings button on own profile', () => {
-		useAchievementsVisibility.mockReturnValue( {
-			isOwnProfile: true,
-			isVisible: true,
-			isLoading: false,
-		} );
+		mockUseAchievementsVisibility.mockReturnValue(
+			getAchievementsVisibility( {
+				isOwnProfile: true,
+				isVisible: true,
+				isLoading: false,
+			} )
+		);
 
 		render( <UserAchievements user={ defaultUser } /> );
 
@@ -119,11 +138,13 @@ describe( 'UserAchievements', () => {
 	} );
 
 	test( 'should show spinner while loading visibility', () => {
-		useAchievementsVisibility.mockReturnValue( {
-			isOwnProfile: false,
-			isVisible: false,
-			isLoading: true,
-		} );
+		mockUseAchievementsVisibility.mockReturnValue(
+			getAchievementsVisibility( {
+				isOwnProfile: false,
+				isVisible: false,
+				isLoading: true,
+			} )
+		);
 
 		render( <UserAchievements user={ defaultUser } /> );
 
@@ -132,11 +153,13 @@ describe( 'UserAchievements', () => {
 	} );
 
 	test( 'should not show settings button on other user profile', () => {
-		useAchievementsVisibility.mockReturnValue( {
-			isOwnProfile: false,
-			isVisible: true,
-			isLoading: false,
-		} );
+		mockUseAchievementsVisibility.mockReturnValue(
+			getAchievementsVisibility( {
+				isOwnProfile: false,
+				isVisible: true,
+				isLoading: false,
+			} )
+		);
 
 		render( <UserAchievements user={ defaultUser } /> );
 
@@ -144,56 +167,14 @@ describe( 'UserAchievements', () => {
 		expect( screen.queryByTestId( 'achievements-settings' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'should render YearsOfServiceBadge when years_of_service > 0', () => {
-		useAchievementsVisibility.mockReturnValue( {
-			isOwnProfile: false,
-			isVisible: true,
-			isLoading: false,
-		} );
-		useAchievementsQuery.mockReturnValue( { yearsOfService: 5, isLoading: false } );
-
-		render( <UserAchievements user={ defaultUser } /> );
-
-		expect( screen.getByTestId( 'years-of-service-badge' ) ).toBeVisible();
-		expect( screen.getByText( '5' ) ).toBeVisible();
-	} );
-
-	test( 'should not render YearsOfServiceBadge when years_of_service is 0', () => {
-		useAchievementsVisibility.mockReturnValue( {
-			isOwnProfile: false,
-			isVisible: true,
-			isLoading: false,
-		} );
-		useAchievementsQuery.mockReturnValue( { yearsOfService: 0, isLoading: false } );
-
-		render( <UserAchievements user={ defaultUser } /> );
-
-		expect( screen.queryByTestId( 'years-of-service-badge' ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'should not render YearsOfServiceBadge when years_of_service is undefined', () => {
-		useAchievementsVisibility.mockReturnValue( {
-			isOwnProfile: false,
-			isVisible: true,
-			isLoading: false,
-		} );
-		useAchievementsQuery.mockReturnValue( {
-			yearsOfService: undefined,
-			lockedAchievements: [],
-			isLoading: false,
-		} );
-
-		render( <UserAchievements user={ defaultUser } /> );
-
-		expect( screen.queryByTestId( 'years-of-service-badge' ) ).not.toBeInTheDocument();
-	} );
-
 	test( 'forwards isOwnProfile=true to AchievementsGrid on own profile', () => {
-		useAchievementsVisibility.mockReturnValue( {
-			isOwnProfile: true,
-			isVisible: true,
-			isLoading: false,
-		} );
+		mockUseAchievementsVisibility.mockReturnValue(
+			getAchievementsVisibility( {
+				isOwnProfile: true,
+				isVisible: true,
+				isLoading: false,
+			} )
+		);
 
 		render( <UserAchievements user={ defaultUser } /> );
 
@@ -203,16 +184,75 @@ describe( 'UserAchievements', () => {
 	} );
 
 	test( 'forwards isOwnProfile=false to AchievementsGrid on someone else’s profile', () => {
-		useAchievementsVisibility.mockReturnValue( {
-			isOwnProfile: false,
-			isVisible: true,
-			isLoading: false,
-		} );
+		mockUseAchievementsVisibility.mockReturnValue(
+			getAchievementsVisibility( {
+				isOwnProfile: false,
+				isVisible: true,
+				isLoading: false,
+			} )
+		);
 
 		render( <UserAchievements user={ defaultUser } /> );
 
 		expect( mockAchievementsGridProps ).toHaveBeenCalledWith(
 			expect.objectContaining( { userLogin: 'test_user', isOwnProfile: false } )
+		);
+	} );
+
+	test( 'renders ActivityStreak with the engagement streak slice', () => {
+		mockUseAchievementsVisibility.mockReturnValue(
+			getAchievementsVisibility( {
+				isOwnProfile: true,
+				isVisible: true,
+				isLoading: false,
+			} )
+		);
+		mockUseAchievementsQuery.mockReturnValue(
+			getAchievementsQuery( {
+				lockedAchievements: [],
+				engagementStreak: {
+					current_streak: 7,
+					longest_streak: 12,
+					last_streak_date: '2026-06-18',
+					freezes_available: 1,
+					freeze_used_date: null,
+					next_freeze_in_days: 0,
+				},
+				isLoading: false,
+			} )
+		);
+
+		render( <UserAchievements user={ defaultUser } /> );
+
+		expect( mockActivityStreakProps ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				streak: expect.objectContaining( { current_streak: 7 } ),
+				isOwnProfile: true,
+			} )
+		);
+	} );
+
+	test( 'still mounts ActivityStreak when engagement streak is undefined (component self-handles)', () => {
+		mockUseAchievementsVisibility.mockReturnValue(
+			getAchievementsVisibility( {
+				isOwnProfile: false,
+				isVisible: true,
+				isLoading: false,
+			} )
+		);
+		mockUseAchievementsQuery.mockReturnValue(
+			getAchievementsQuery( {
+				lockedAchievements: [],
+				engagementStreak: undefined,
+				isLoading: false,
+			} )
+		);
+
+		render( <UserAchievements user={ defaultUser } /> );
+
+		// ActivityStreak is mounted; it returns null internally when streak is undefined.
+		expect( mockActivityStreakProps ).toHaveBeenCalledWith(
+			expect.objectContaining( { streak: undefined, isOwnProfile: false } )
 		);
 	} );
 } );

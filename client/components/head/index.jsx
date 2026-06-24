@@ -2,7 +2,13 @@ import config from '@automattic/calypso-config';
 import PropTypes from 'prop-types';
 import Favicons from './favicons';
 
-const Head = ( { title = 'WordPress.com', children, branchName, faviconUrl } ) => {
+const Head = ( {
+	title = 'WordPress.com',
+	children,
+	branchName,
+	faviconUrl,
+	shouldPrefetchRestProxy = true,
+} ) => {
 	return (
 		<head>
 			<title>{ title }</title>
@@ -16,11 +22,13 @@ const Head = ( { title = 'WordPress.com', children, branchName, faviconUrl } ) =
 			<meta name="theme-color" content={ config( 'theme_color' ) } />
 			<meta name="referrer" content="origin" />
 
-			<link
-				rel="prefetch"
-				as="document"
-				href="https://public-api.wordpress.com/wp-admin/rest-proxy/?v=2.0"
-			/>
+			{ shouldPrefetchRestProxy && (
+				<link
+					rel="prefetch"
+					as="document"
+					href="https://public-api.wordpress.com/wp-admin/rest-proxy/?v=2.0"
+				/>
+			) }
 
 			<Favicons environmentFaviconURL={ faviconUrl || config( 'favicon_url' ) } />
 
@@ -44,6 +52,7 @@ Head.propTypes = {
 	children: PropTypes.node,
 	branchName: PropTypes.string,
 	faviconUrl: PropTypes.string,
+	shouldPrefetchRestProxy: PropTypes.bool,
 };
 
 export default Head;

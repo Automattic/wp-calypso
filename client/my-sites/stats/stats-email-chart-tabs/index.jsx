@@ -1,9 +1,9 @@
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import Chart from 'calypso/components/chart';
 import Legend from 'calypso/components/chart/legend';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -157,7 +157,7 @@ const connectComponent = connect(
 	{ recordGoogleEvent }
 );
 
-export default flowRight(
+export default compose(
 	localize,
 	connectComponent
 )( withPerformanceTrackerStop( StatModuleChartTabs ) );

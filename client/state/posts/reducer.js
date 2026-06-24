@@ -1,17 +1,8 @@
 /* eslint-disable no-case-declarations */
 
-import {
-	get,
-	set,
-	omit,
-	omitBy,
-	isEmpty,
-	isEqual,
-	reduce,
-	merge,
-	findKey,
-	mapValues,
-} from 'lodash';
+import { mapValues, omit, omitBy, set } from '@automattic/js-utils';
+import isEqual from 'fast-deep-equal/es6';
+import { isEmpty, reduce, merge } from 'lodash';
 import PostQueryManager from 'calypso/lib/query-manager/post';
 import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
 import {
@@ -35,7 +26,6 @@ import {
 import { getFeaturedImageId } from 'calypso/state/posts/utils';
 import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import counts from './counts/reducer';
-import likes from './likes/reducer';
 import { itemsSchema, queriesSchema, allSitesQueriesSchema } from './schema';
 import {
 	appendToPostEditsLog,
@@ -80,7 +70,8 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 			);
 		}
 		case POST_DELETE_SUCCESS: {
-			const globalId = findKey( state, ( [ siteId, postId ] ) => {
+			const globalId = Object.keys( state ).find( ( key ) => {
+				const [ siteId, postId ] = state[ key ];
 				return siteId === action.siteId && postId === action.postId;
 			} );
 
@@ -238,7 +229,8 @@ export const queries = withSchemaValidation(
 
 function findItemKey( state, siteId, postId ) {
 	return (
-		findKey( state.data.items, ( post ) => {
+		Object.keys( state.data.items ?? {} ).find( ( key ) => {
+			const post = state.data.items[ key ];
 			return post.site_ID === siteId && post.ID === postId;
 		} ) || null
 	);
@@ -330,7 +322,7 @@ export function edits( state = {}, action ) {
 					// Receive a new version of a post object, in most cases returned in the POST
 					// response after a successful save. Removes the edits that have been applied
 					// and leaves only the ones that are not noops.
-					let postEditsLog = get( memoState, [ post.site_ID, post.ID ] );
+					let postEditsLog = memoState?.[ post.site_ID ]?.[ post.ID ];
 
 					if ( ! postEditsLog ) {
 						return memoState;
@@ -403,7 +395,7 @@ export function edits( state = {}, action ) {
 			// process new edit for a post: merge it into the existing edits
 			const siteId = action.siteId;
 			const postId = action.postId || '';
-			const postEditsLog = get( state, [ siteId, postId ] );
+			const postEditsLog = state?.[ siteId ]?.[ postId ];
 			const newEditsLog = appendToPostEditsLog( postEditsLog, action.post );
 
 			return {
@@ -458,5 +450,4 @@ export default combineReducers( {
 	queries,
 	allSitesQueries,
 	edits,
-	likes,
 } );

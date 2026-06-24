@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component, useEffect } from 'react';
@@ -19,10 +18,13 @@ import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
 import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
+import { installKonamiListener } from 'calypso/layout/arcade-mode/detect';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
+import { Nav2026UniversalHeader } from 'calypso/layout/nav-2026-universal-header';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
+import { ClassicColorSchemeProvider, withColorScheme } from 'calypso/lib/color-scheme';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';
 import {
@@ -34,6 +36,7 @@ import {
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
+import PluginCompassAgentLoader from 'calypso/my-sites/plugins/plugin-compass-agent-loader';
 import { isFetchingAdminColor } from 'calypso/state/admin-color/selectors';
 import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -73,6 +76,7 @@ import { shouldLoadInlineHelp, handleScroll } from './utils';
 import '@automattic/components/src/button/style.scss';
 import '@automattic/components/src/card/style.scss';
 
+import 'calypso/reader/color-scheme/dark-mode.scss';
 import './style.scss';
 
 const loadWooCoreProfiler = () =>
@@ -137,6 +141,8 @@ const loadGlobalNotifications = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-layout-global-notifications" */ 'calypso/layout/global-notifications'
 	);
+
+const READER_DARK_MODE_BODY_CLASS = 'is-reader-dark-mode';
 
 function SidebarScrollSynchronizer() {
 	const isNarrow = useBreakpoint( '<660px' );
@@ -226,6 +232,10 @@ class Layout extends Component {
 		if ( this.props.isLoggedIn ) {
 			this.props.dispatch( loadTrackingTool( 'Survicate' ) );
 		}
+
+		if ( ! isJetpackCloud() && ! isA8CForAgencies() ) {
+			installKonamiListener();
+		}
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -241,7 +251,7 @@ class Layout extends Component {
 		return null;
 	}
 
-	renderMasterbar( loadHelpCenterIcon ) {
+	renderMasterbar( loadHelpCenterIcon, loadAgentsManager ) {
 		if ( this.props.masterbarIsHidden ) {
 			return <EmptyMasterbar />;
 		}
@@ -271,18 +281,19 @@ class Layout extends Component {
 		return (
 			<>
 				{ this.props.hasUniversalHeader && (
-					<UniversalNavbarHeader
+					<Nav2026UniversalHeader
 						isLoggedIn={ this.props.isLoggedIn }
 						sectionName={ this.props.sectionName }
 					/>
 				) }
 				<MasterbarComponent
-					siteId={ this.props.siteId }
+					siteId={ this.props.siteIdForLaunch }
 					section={ this.props.sectionGroup }
 					isCheckout={ this.props.sectionName === 'checkout' }
 					isCheckoutPending={ this.props.sectionName === 'checkout-pending' }
 					isCheckoutFailed={ isCheckoutFailed }
 					loadHelpCenterIcon={ loadHelpCenterIcon }
+					loadAgentsManager={ loadAgentsManager }
 					isGlobalSidebarVisible={ this.props.isGlobalSidebarVisible }
 				/>
 			</>
@@ -298,7 +309,7 @@ class Layout extends Component {
 			<AsyncLoad
 				require={ loadCelebrateSiteLaunchModal }
 				placeholder={ null }
-				siteId={ this.props.siteId }
+				siteId={ this.props.siteIdForLaunch }
 			/>
 		);
 	}
@@ -367,6 +378,7 @@ class Layout extends Component {
 					sectionName={ this.props.sectionName }
 					loadAgentsManager={ loadAgentsManager }
 				/>
+				<PluginCompassAgentLoader sectionName={ this.props.sectionName } />
 				{ ! shouldDisableSidebarScrollSynchronizer && (
 					<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
 				) }
@@ -384,6 +396,11 @@ class Layout extends Component {
 					<QuerySites primaryAndRecent={ ! config.isEnabled( 'jetpack-cloud' ) } />
 				) }
 				<QueryPreferences />
+				{ withColorScheme( null, {
+					bodyClass: READER_DARK_MODE_BODY_CLASS,
+					enabled: this.props.sectionName === 'reader' && this.props.isLoggedIn,
+					Provider: ClassicColorSchemeProvider,
+				} ) }
 				<QuerySiteFeatures siteIds={ [ this.props.siteId ] } />
 				<QuerySiteAdminMenu siteId={ this.props.siteId } />
 				<QuerySiteAdminColor siteId={ this.props.siteId } />
@@ -391,7 +408,9 @@ class Layout extends Component {
 				{ config.isEnabled( 'layout/guided-tours' ) && (
 					<AsyncLoad require={ loadGuidedTours } placeholder={ null } />
 				) }
-				<div className="layout__header-section">{ this.renderMasterbar( loadHelpCenter ) }</div>
+				<div className="layout__header-section">
+					{ this.renderMasterbar( loadHelpCenter, loadAgentsManager ) }
+				</div>
 				<LayoutLoader />
 				{ isJetpackCloud() && <AsyncLoad require={ loadJetpackCloudStyle } placeholder={ null } /> }
 				{ isA8CForAgencies() && (
@@ -456,12 +475,14 @@ export default withCurrentRoute(
 		const sectionGroup = currentSection?.group ?? null;
 		const sectionName = currentSection?.name ?? null;
 
+		const siteId = getSelectedSiteId( state );
 		// Falls back to using the user's primary site if no site has been selected
-		// by the user yet
-		const siteId =
-			getSelectedSiteId( state ) ||
-			getMostRecentlySelectedSiteId( state ) ||
-			getPrimarySiteId( state );
+		// by the user yet. Only consumed by the masterbar launch button and the
+		// site launch celebration modal — other layout logic (sidebar type,
+		// universal header, color scheme, jetpack detection) must keep using the
+		// actually-selected site.
+		const siteIdForLaunch =
+			siteId || getMostRecentlySelectedSiteId( state ) || getPrimarySiteId( state );
 		const sectionJitmPath = getMessagePathForJITM( currentRoute );
 		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
 		const isJetpack =
@@ -581,7 +602,8 @@ export default withCurrentRoute(
 			needsColorScheme,
 			isFetchingColorScheme: isFetchingAdminColor( state, siteId ),
 			siteId,
-			site: getSite( state, siteId ),
+			siteIdForLaunch,
+			site: getSite( state, siteIdForLaunch ),
 			// We avoid requesting sites in the Jetpack Connect authorization step, because this would
 			// request all sites before authorization has finished. That would cause the "all sites"
 			// request to lack the newly authorized site, and when the request finishes after

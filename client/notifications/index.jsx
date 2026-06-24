@@ -12,13 +12,12 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
-import NotificationsPanel, {
-	refreshNotes,
-} from '@automattic/notifications/src/panel/Notifications';
+import { Dropdown } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { Component } from 'react';
+import { Component, Suspense, lazy, useMemo } from 'react';
 import { connect } from 'react-redux';
 import localStorageHelper from 'store';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -54,7 +53,30 @@ const getIsVisible = () => {
 
 const isDesktop = config.isEnabled( 'desktop' );
 
+const isRedesignEnabled = config.isEnabled( 'notifications/redesign' );
+
+let notificationAppModule;
+
+const loadNotificationApp = () => {
+	if ( ! notificationAppModule ) {
+		notificationAppModule = isRedesignEnabled
+			? import( '@automattic/notifications/src/app' )
+			: import( '@automattic/notifications/src/panel/Notifications' );
+	}
+
+	return notificationAppModule;
+};
+
+const NotificationApp = lazy( loadNotificationApp );
+
+// Read the memoized module rather than calling the loader, so this stays a
+// no-op until the panel has actually mounted instead of fetching the chunk
+// just to refresh a client that isn't there yet.
+const refreshNotes = () => notificationAppModule?.then( ( module ) => module.refreshNotes() );
+
 const debug = debugFactory( 'notifications:panel' );
+
+const getMasterbarBell = () => document.querySelector( '.masterbar-notifications' );
 
 const Notifications3PCNotice = ( { className } ) => {
 	const translate = useTranslate();
@@ -73,6 +95,89 @@ const Notifications3PCNotice = ( { className } ) => {
 				) }
 			</p>
 		</div>
+	);
+};
+
+/**
+ * Renders the new `apps/notifications` app following its own
+ * mount-on-open lifecycle. On the masterbar it lives inside a `Dropdown`
+ * anchored to the bell (so it owns its popover layout and outside-click
+ * handling); on the dedicated `/reader/notifications` page it renders
+ * inline, filling the content area.
+ */
+const RedesignedNotifications = ( {
+	isShowing,
+	isDedicatedReaderPage,
+	locale,
+	actionHandlers,
+	closePanel,
+} ) => {
+	const isMobile = useViewportMatch( 'small', '<' );
+
+	// Resolve the bell at measurement time: the masterbar remounts it when
+	// the unseen count changes, so a captured node can go stale.
+	const popoverAnchor = useMemo(
+		() => ( {
+			getBoundingClientRect: () => getMasterbarBell()?.getBoundingClientRect() ?? new DOMRect(),
+		} ),
+		[]
+	);
+
+	if ( isDedicatedReaderPage ) {
+		return (
+			<div className="reader-notifications__app">
+				<Suspense fallback={ null }>
+					<NotificationApp
+						locale={ locale }
+						isDismissible={ isMobile }
+						actionHandlers={ actionHandlers }
+						wpcom={ wpcom }
+					/>
+				</Suspense>
+			</div>
+		);
+	}
+
+	return (
+		<Dropdown
+			open={ isShowing }
+			expandOnMobile={ isMobile }
+			onToggle={ ( willOpen ) => {
+				// Closing via Escape routes through here; opening is driven by
+				// the masterbar bell, so there's nothing to do on `willOpen`.
+				if ( ! willOpen ) {
+					closePanel();
+				}
+			} }
+			popoverProps={ {
+				anchor: popoverAnchor,
+				placement: 'bottom-start',
+				offset: 8,
+				focusOnMount: true,
+				flip: false,
+				shift: true,
+				onFocusOutside: () => {
+					// Clicking the bell while the panel is open should let the
+					// bell's own toggle close it; suppress the popover's
+					// focus-outside close to avoid a close-then-reopen race.
+					if ( getMasterbarBell()?.contains( document.activeElement ) ) {
+						return;
+					}
+					closePanel();
+				},
+			} }
+			renderToggle={ () => null }
+			renderContent={ () => (
+				<Suspense fallback={ null }>
+					<NotificationApp
+						locale={ locale }
+						isDismissible={ isMobile }
+						actionHandlers={ actionHandlers }
+						wpcom={ wpcom }
+					/>
+				</Suspense>
+			) }
+		/>
 	);
 };
 
@@ -177,15 +282,22 @@ export class Notifications extends Component {
 	};
 
 	componentDidMount() {
-		document.addEventListener( 'click', this.props.checkToggle );
-		document.addEventListener( 'keydown', this.handleKeyPress );
+		if ( isRedesignEnabled ) {
+			// The app owns its outside-click handling (via the Dropdown) and its
+			// own keyboard shortcuts (`n` to close, `i` for the shortcuts
+			// popover). We only need a global `n` to open it from elsewhere.
+			document.addEventListener( 'keydown', this.handleRedesignKeyPress );
+		} else {
+			document.addEventListener( 'click', this.props.checkToggle );
+			document.addEventListener( 'keydown', this.handleKeyPress );
+
+			if ( typeof document.hidden !== 'undefined' ) {
+				document.addEventListener( 'visibilitychange', this.handleVisibilityChange );
+			}
+		}
 
 		if ( this.props.isShowing ) {
 			this.focusedElementBeforeOpen = document.activeElement;
-		}
-
-		if ( typeof document.hidden !== 'undefined' ) {
-			document.addEventListener( 'visibilitychange', this.handleVisibilityChange );
 		}
 
 		if (
@@ -198,9 +310,24 @@ export class Notifications extends Component {
 			);
 			this.postServiceWorkerMessage( { action: 'sendQueuedMessages' } );
 		}
+
+		this.maybeForceRefresh();
+	}
+
+	// Honor a requested force-refresh (e.g. dispatched from the desktop app) in
+	// the commit phase rather than during render, where it ran on every —
+	// possibly discarded — render attempt under concurrent rendering.
+	maybeForceRefresh() {
+		if ( this.props.forceRefresh ) {
+			debug( 'Refreshing notes panel...' );
+			refreshNotes();
+			this.props.didForceRefresh();
+		}
 	}
 
 	componentDidUpdate( prevProps ) {
+		this.maybeForceRefresh();
+
 		if ( prevProps.isShowing === this.props.isShowing ) {
 			return;
 		}
@@ -213,11 +340,15 @@ export class Notifications extends Component {
 	}
 
 	componentWillUnmount() {
-		document.removeEventListener( 'click', this.props.checkToggle );
-		document.removeEventListener( 'keydown', this.handleKeyPress );
+		if ( isRedesignEnabled ) {
+			document.removeEventListener( 'keydown', this.handleRedesignKeyPress );
+		} else {
+			document.removeEventListener( 'click', this.props.checkToggle );
+			document.removeEventListener( 'keydown', this.handleKeyPress );
 
-		if ( typeof document.hidden !== 'undefined' ) {
-			document.removeEventListener( 'visibilitychange', this.handleVisibilityChange );
+			if ( typeof document.hidden !== 'undefined' ) {
+				document.removeEventListener( 'visibilitychange', this.handleVisibilityChange );
+			}
 		}
 
 		if (
@@ -254,6 +385,25 @@ export class Notifications extends Component {
 			this.props.checkToggle( null, true );
 		}
 	};
+
+	// Redesign: `n` opens the panel. Closing is handled by the app's own
+	// shortcut (which dispatches CLOSE_PANEL → checkToggle) once it is mounted.
+	handleRedesignKeyPress = ( event ) => {
+		if ( event.target !== document.body && event.target.tagName !== 'A' ) {
+			return;
+		}
+		if ( event.altKey || event.ctrlKey || event.metaKey ) {
+			return;
+		}
+
+		if ( 78 === event.keyCode && ! this.props.isShowing ) {
+			event.stopPropagation();
+			event.preventDefault();
+			this.props.checkToggle( null, true, true );
+		}
+	};
+
+	closePanel = () => this.props.checkToggle( null, true );
 
 	// Desktop: override isVisible to maintain active polling for native UI elements (e.g. notification badge)
 	handleVisibilityChange = () => this.setState( { isVisible: isDesktop ? true : getIsVisible() } );
@@ -300,10 +450,30 @@ export class Notifications extends Component {
 		const localeSlug = this.props.currentLocaleSlug || config( 'i18n_default_locale_slug' );
 		const isDedicatedReaderPage = this.props.currentRoute?.startsWith( '/reader/notifications' );
 
-		if ( this.props.forceRefresh ) {
-			debug( 'Refreshing notes panel...' );
-			refreshNotes();
-			this.props.didForceRefresh();
+		if ( isRedesignEnabled ) {
+			const redesigned = (
+				<RedesignedNotifications
+					isShowing={ this.props.isShowing }
+					isDedicatedReaderPage={ isDedicatedReaderPage }
+					locale={ localeSlug }
+					actionHandlers={ this.actionHandlers }
+					closePanel={ this.closePanel }
+				/>
+			);
+
+			// On the dedicated page, stack the cookie notice above the panel as a
+			// normal-flow banner (the legacy flyout's absolutely-positioned notice
+			// doesn't apply without `#wpnc-panel`).
+			if ( isDedicatedReaderPage ) {
+				return (
+					<div className="reader-notifications__app-page">
+						<Notifications3PCNotice className="reader-notifications__3pc-notice-page" />
+						{ redesigned }
+					</div>
+				);
+			}
+
+			return redesigned;
 		}
 
 		return (
@@ -326,13 +496,15 @@ export class Notifications extends Component {
 					{ isDedicatedReaderPage && (
 						<Notifications3PCNotice className="reader-notifications__3pc-notice-internal" />
 					) }
-					<NotificationsPanel
-						actionHandlers={ this.actionHandlers }
-						isShowing={ this.props.isShowing }
-						isVisible={ this.state.isVisible }
-						locale={ localeSlug }
-						wpcom={ wpcom }
-					/>
+					<Suspense fallback={ null }>
+						<NotificationApp
+							actionHandlers={ this.actionHandlers }
+							isShowing={ this.props.isShowing }
+							isVisible={ this.state.isVisible }
+							locale={ localeSlug }
+							wpcom={ wpcom }
+						/>
+					</Suspense>
 				</div>
 			</>
 		);

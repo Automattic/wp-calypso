@@ -1,6 +1,6 @@
 import { Button, Gridicon, SegmentedControl } from '@automattic/components';
+import { throttle } from '@wordpress/compose';
 import clsx from 'clsx';
-import { throttle } from 'lodash';
 import { useEffect, useRef } from 'react';
 
 import './styles.scss';
@@ -71,12 +71,16 @@ const ScrollableHorizontalNavigation = < T extends object >( {
 		const rightScrollButton = document.querySelector(
 			'.scrollable-horizontal-navigation__right-button-wrapper'
 		);
-		shouldHideLeftScrollButton()
-			? hideElement( leftScrollButton )
-			: showElement( leftScrollButton );
-		shouldHideRightScrollButton()
-			? hideElement( rightScrollButton )
-			: showElement( rightScrollButton );
+		if ( shouldHideLeftScrollButton() ) {
+			hideElement( leftScrollButton );
+		} else {
+			showElement( leftScrollButton );
+		}
+		if ( shouldHideRightScrollButton() ) {
+			hideElement( rightScrollButton );
+		} else {
+			showElement( rightScrollButton );
+		}
 	}, 50 );
 
 	return (

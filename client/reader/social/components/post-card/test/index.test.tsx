@@ -221,6 +221,22 @@ describe( 'SocialPostCard compact + cardLink', () => {
 	} );
 } );
 
+const basicPost: SocialPost = makeSocialPost();
+
+describe( 'SocialPostCard prominentTimestamp forwards to counts row', () => {
+	it( 'adds the --prominent-timestamp modifier to the counts row when prominentTimestamp is true', () => {
+		const { container } = render( <SocialPostCard post={ basicPost } prominentTimestamp /> );
+		expect(
+			container.querySelector( '.social-post-card-counts--prominent-timestamp' )
+		).not.toBeNull();
+	} );
+
+	it( 'omits the modifier when prominentTimestamp is unset', () => {
+		const { container } = render( <SocialPostCard post={ basicPost } /> );
+		expect( container.querySelector( '.social-post-card-counts--prominent-timestamp' ) ).toBeNull();
+	} );
+} );
+
 // Fixture for owner-gating tests. author.id holds the DID (mapped from
 // AtmosphereAuthor.did by mapAtmosphereFeedItemToSocialPost).
 const ownPost: SocialPost = {

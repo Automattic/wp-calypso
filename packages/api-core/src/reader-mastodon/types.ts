@@ -142,7 +142,10 @@ export interface MastodonThreadResponse {
 // Backend projects the home-instance Mastodon Account object. We surface
 // only the fields we render plus `raw` for forward-compat (matches the
 // existing MastodonConnectionDetails convention). `note` arrives sanitized
-// from the wire and is sanitized again client-side (defense-in-depth).
+// from the wire and is sanitized again client-side (defense-in-depth);
+// `SocialProfileCard` consumes it through its `bioHtml` slot. The full
+// profile shape does NOT carry a plain-text bio — the row variant
+// (`MastodonAccountSummary`) projects `note_text` for compact surfaces.
 // `id` is instance-local — same handle on a different home instance has a
 // different id; we still use it as the URL key when known because the
 // home-instance perspective is stable per connection. Webfinger handle
@@ -159,7 +162,37 @@ export interface MastodonAuthorProfile {
 	note: string;
 	counts: MastodonProfileCounts;
 	locked: boolean;
+	/**
+	 * Web URL of the actor's profile on their home instance, e.g.
+	 * `https://social.growyourown.services/@FediTips`. Used by the
+	 * followers / following surfaces to link out to the source-of-truth
+	 * list (the home-instance API only returns the locally-known subset).
+	 * Optional: older backend revisions don't emit it.
+	 */
+	url?: string | null;
+	/**
+	 * `true` when the actor has opted to hide their followers / following
+	 * collections. Absent on backends that haven't deployed the flag yet —
+	 * consumers must treat `undefined` as `false` (visible) rather than as
+	 * "hidden", so a missing field on an older backend doesn't black out
+	 * the tabs.
+	 */
+	hide_collections?: boolean;
 	raw: Record< string, unknown >;
+	/**
+	 * Relationship state from the connected account's perspective. Absent
+	 * on backends that haven't deployed the viewer projection yet —
+	 * consumers must treat undefined as "no follow UI available" rather
+	 * than synthesizing a default, which would mislead users into
+	 * clicking Follow on accounts they already follow.
+	 */
+	viewer?: MastodonAuthorProfileViewer;
+	/**
+	 * `true` when the resolved actor matches the connection's own account.
+	 * Absent on backends that haven't deployed the projection yet. The
+	 * panel hides the follow button on `is_self === true`.
+	 */
+	is_self?: boolean;
 }
 
 // Author-feed pages share the timeline page shape; alias rather than
@@ -222,6 +255,36 @@ export interface MastodonDeleteRepostParams {
 }
 
 /**
+ * Per-instance composer limits, projected by the wpcom backend from the
+ * home instance's `/api/v2/instance` (or v1) endpoint. Stock Mastodon
+ * defaults to `max_characters: 500`; instances commonly raise it (some
+ * self-hosted instances run 5000+). Older Mastodon / Pleroma /
+ * GoToSocial expose `max_toot_chars` instead — the backend collapses
+ * both to `max_characters`.
+ *
+ * Slice A (CM-677) only surfaces `max_characters`. `characters_reserved_per_url`
+ * is purely a server-side cap-counting detail and doesn't affect display,
+ * and `max_media_attachments` matters only once Mastodon image upload ships.
+ */
+export interface MastodonInstanceConfig {
+	max_characters: number;
+}
+
+/**
+ * Visibility levels the composer can stamp on a new Mastodon post. The
+ * upstream API also accepts `'direct'` for DM-style posts, but that's
+ * intentionally omitted from the in-Reader composer (parity with the
+ * Fediverse composer's scope — CM-704). Re-introduce when the per-
+ * recipient direct surface lands.
+ *
+ * Wire value `'private'` is what Mastodon labels "Followers only" in the
+ * upstream UI; the visible label in the composer matches that wording
+ * (and the wp-admin ActivityPub plugin), but the wire key stays
+ * `'private'` per the Mastodon API contract.
+ */
+export type MastodonVisibility = 'public' | 'unlisted' | 'private';
+
+/**
  * Wire-pure shape passed to `createMastodonPost`. Every field here lands
  * in the request body (or the path, in `connectionId`'s case). Do not
  * widen this type with client-only metadata — see
@@ -242,6 +305,25 @@ export interface MastodonCreatePostParams {
 	 * that support native quotes.
 	 */
 	quoted_status_id?: string;
+	// Slice 8a: optional media attachments + sensitive flag.
+	media_ids?: string[];
+	sensitive?: boolean;
+	/**
+	 * Per-post visibility. Optional — the upstream defaults to the user's
+	 * account-level default when omitted. The composer always supplies a
+	 * value via `extendBuildParams` (per-connection localStorage pick
+	 * falling back to `'public'`; the connection detail shape doesn't
+	 * currently surface the user's account default, so the bare `'public'`
+	 * floor is the only fallback).
+	 */
+	visibility?: MastodonVisibility;
+	/**
+	 * Content-warning summary, ≤ instance-configured limit (treated as 100
+	 * chars in the composer UI for parity with the Mastodon web client).
+	 * Maps to the upstream `spoiler_text` body field; omitted from the
+	 * wire when empty.
+	 */
+	spoiler_text?: string;
 }
 
 /**
@@ -269,4 +351,183 @@ export interface MastodonCreatePostResult {
 	id: string;
 	url: string;
 	in_reply_to_id: string | null;
+}
+
+// Slice 8a: image attachments via `POST /reader/mastodon/connections/{id}/media`.
+export interface MastodonMediaUploadParams {
+	connectionId: number;
+	file: File;
+	// Alt text passed through to the instance as the `description` form field.
+	// Mastodon does not let us update alt text after upload via the wpcom backend,
+	// so this is the only opportunity to set it.
+	description?: string;
+}
+
+export interface MastodonMediaUploadResult {
+	id: string;
+	type: 'image' | 'video' | 'gifv' | 'audio' | 'unknown';
+	// `null` when the instance returns 202 (still processing). Mastodon's
+	// `POST /api/v1/statuses` accepts media_ids whose backing media is still
+	// processing — it queues the status until processing completes — so callers
+	// pass the id through regardless.
+	url: string | null;
+	preview_url: string | null;
+	description: string;
+}
+
+/**
+ * Caller-relative relationship state on the scoped Mastodon profile
+ * endpoint. Optional during the backend rollout window — the absence of
+ * this block means the backend hasn't deployed the viewer projection
+ * yet, and consumers should treat that as "no follow UI available".
+ */
+export interface MastodonAuthorProfileViewer {
+	/** Whether the caller follows the target. */
+	following: boolean;
+	/** Whether the target follows the caller. Drives the "Follow back" affordance. */
+	followed_by: boolean;
+	/**
+	 * Whether the caller has a pending follow request. Set when following
+	 * a locked account; unlocked accounts transition straight to
+	 * `following: true`.
+	 */
+	requested: boolean;
+}
+
+export interface MastodonCreateFollowParams {
+	connectionId: number;
+	/** Numeric Mastodon account id. Webfinger handles must be resolved first. */
+	accountId: string;
+}
+
+export interface MastodonDeleteFollowParams {
+	connectionId: number;
+	/** Numeric Mastodon account id. */
+	accountId: string;
+}
+
+/**
+ * Response shape returned by both the create-follow and delete-follow
+ * endpoints. The wpcom backend projects the upstream Mastodon
+ * `Relationship` object into a uniform `viewer` block so optimistic +
+ * server-state updates use the same patcher.
+ */
+export interface MastodonFollowResponse {
+	viewer: MastodonAuthorProfileViewer;
+}
+
+export interface MastodonAuthStatus {
+	needs_reauth: boolean;
+}
+
+/**
+ * Slim Mastodon Account shape returned by the followers / following list
+ * endpoints. Mirrors the fields the wpcom backend's row normaliser projects:
+ * profile-card surface fields plus per-viewer relationship state. `note` is
+ * sanitised server-side through the FEP-b2b8 allow-list (same subset as
+ * status `content`); `note_text` is the plain-text projection (HTML stripped
+ * server-side) so the row can render in compact form without un-rendering
+ * the HTML on the client. Mirrors AtmosphereProfileSummary's choice to
+ * expose a plain-text `description` field for list rows (Atmosphere's
+ * `description_html` companion lives on the full profile only).
+ */
+export interface MastodonAccountSummary {
+	id: string;
+	username: string;
+	acct: string;
+	/**
+	 * Bare webfinger handle (`user@instance`) synthesised server-side from
+	 * `acct` + connection's home instance. Mirrors the ATmosphere row
+	 * convention where `handle` is bare (`alice.bsky.social`); the display
+	 * layer (`SocialAccountRow`) renders the `@` prefix once.
+	 */
+	handle: string;
+	display_name: string;
+	note: string;
+	note_text: string;
+	avatar: string | null;
+	locked: boolean;
+	viewer: MastodonAuthorProfileViewer;
+	/** `true` when the row matches the connection's own account id; the server skips the relationships call for this row. */
+	is_self: boolean;
+}
+
+export interface MastodonAccountSummariesPage {
+	items: MastodonAccountSummary[];
+	cursor: string | null;
+}
+
+/**
+ * Normalized cross-protocol notification kind. Identical to
+ * `AtmosphereNotificationCanonicalType` by design — the wpcom backend
+ * commits to a byte-compatible envelope across protocols so the shared
+ * frontend renderer doesn't have to branch on `source`. `'other'` is the
+ * forward-compat bucket for upstream Mastodon types we don't yet render
+ * with bespoke templates (`status`, `admin.*`, `update`, etc.). The
+ * shared renderer falls through to a generic phrase that humanizes
+ * `protocol_type` for the label.
+ */
+export type MastodonNotificationCanonicalType =
+	| 'like'
+	| 'repost'
+	| 'follow'
+	| 'mention'
+	| 'reply'
+	| 'quote'
+	| 'other';
+
+export interface MastodonNotificationActor {
+	handle: string;
+	display_name: string | null;
+	avatar_url: string | null;
+	profile_uri: string;
+}
+
+export interface MastodonNotificationTarget {
+	kind: 'post' | 'profile';
+	uri: string;
+	excerpt: string;
+}
+
+/**
+ * Envelope shape returned by
+ * `/wpcom/v2/reader/mastodon/connections/:id/notifications`. Byte-compatible
+ * with `AtmosphereNotification` — the wpcom backend normalizes both protocols
+ * to the same shape so the shared frontend renderer takes either.
+ *
+ * `protocol_type` is the raw upstream Mastodon `type` value (verbatim,
+ * lossless: `favourite`, `reblog`, `follow`, `mention`, `status`, …);
+ * `canonical_type` is the normalized enum. There is no `raw` passthrough —
+ * `protocol_type` is the long-tail escape hatch for upstream kinds we don't
+ * yet render with bespoke templates. `target.excerpt` is `''` for
+ * `like`/`repost` (the subject post text isn't fetched for these — only
+ * mention/reply/quote shapes populate it). `target_url` is best-effort: the
+ * status URL when buildable, otherwise the actor profile URL, otherwise the
+ * empty string (the frontend skips linkification when empty). `created_at` is
+ * normalized to `YYYY-MM-DDTHH:MM:SSZ` (UTC, no fractional seconds) and is
+ * nullable when the upstream timestamp is missing or unparseable. `is_read`
+ * is server-computed against the user's `last_read_id` watermark.
+ */
+export interface MastodonNotification {
+	id: string;
+	/** Raw upstream type string, e.g. Mastodon `notification.type`. */
+	protocol_type: string;
+	canonical_type: MastodonNotificationCanonicalType;
+	actor: MastodonNotificationActor;
+	target: MastodonNotificationTarget | null;
+	target_url: string;
+	created_at: string | null;
+	is_read: boolean;
+}
+
+/**
+ * Single page from the cursor-paginated notifications endpoint.
+ * `next_cursor: null` means end-of-list. `seen_at` is the server's watermark
+ * timestamp, exposed at the page level (not per-item) so subsequent "Load
+ * more" pages can classify items without re-fetching.
+ */
+export interface MastodonNotificationsPage {
+	items: MastodonNotification[];
+	next_cursor: string | null;
+	seen_at: string | null;
 }

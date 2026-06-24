@@ -1,5 +1,17 @@
 ## Unreleased
 
+### Breaking Changes
+
+- `Icon`: Remove component. Use `Icon` from `@wordpress/ui` instead.
+
+### Enhancements
+
+- `Stepper`, `VerticalStepper`, `HorizontalStepper`: Add Stepper component suite with vertical and horizontal orientations, step indicators, linear flow support, and accessible ARIA semantics ([#111036](https://github.com/Automattic/wp-calypso/pull/111036)).
+
+## 1.0.3
+
+- Declare React 19 compatibility for package consumers (#111721).
+
 ## 1.0.2
 
 ### Enhancements

@@ -415,6 +415,11 @@ exports[`JetpackSignup should render with the connector branding when from=jetpa
           You'll use it to log in to the Woo mobile app, view your store analytics, and power Jetpack features.
         </p>
       </div>
+      <p
+        class="jetpack-connect__signup-existing-account"
+      >
+        Already have a WordPress.com account? {{a}}Log in{{/a}}
+      </p>
       <div
         class="signup-form"
       >

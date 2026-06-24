@@ -1,9 +1,11 @@
 /**
  * @jest-environment jsdom
  */
+import { readerMastodonKeys } from '@automattic/api-core';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, renderHook } from '@testing-library/react';
 import { useTranslate } from 'i18n-calypso';
-import { mastodonComposerConfig } from '../composer-config';
+import { mastodonComposerConfig, useMastodonAuthorHandle } from '../composer-config';
 import type { MastodonError } from '@automattic/api-core';
 import type { ActiveMode, Translate } from 'calypso/reader/social/composer';
 
@@ -54,9 +56,36 @@ describe( 'mastodonComposerConfig', () => {
 		} );
 	} );
 
-	describe( 'limit', () => {
-		it( 'is 500 (default Mastodon per-instance limit)', () => {
-			expect( mastodonComposerConfig.limit ).toBe( 500 );
+	describe( 'useLimit', () => {
+		it( 'falls back to 500 (default Mastodon per-instance limit) when the instance config query has no data', () => {
+			const queryClient = new QueryClient( {
+				defaultOptions: { queries: { retry: false } },
+			} );
+			const { result } = renderHook( () => mastodonComposerConfig.useLimit( 99 ), {
+				wrapper: ( { children } ) => (
+					<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+				),
+			} );
+			expect( result.current ).toBe( 500 );
+		} );
+
+		it( 'reads max_characters from the instance config query when available', () => {
+			const queryClient = new QueryClient( {
+				defaultOptions: { queries: { retry: false } },
+			} );
+			// Pre-seed the instance config so the hook reads from the cache
+			// without firing nock — `gh ci` doesn't run nock, so seeding is
+			// the deterministic shape for this hook test. Use the key
+			// factory so the test follows shape changes automatically.
+			queryClient.setQueryData( readerMastodonKeys.instanceConfig( 99 ), {
+				max_characters: 4096,
+			} );
+			const { result } = renderHook( () => mastodonComposerConfig.useLimit( 99 ), {
+				wrapper: ( { children } ) => (
+					<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+				),
+			} );
+			expect( result.current ).toBe( 4096 );
 		} );
 	} );
 
@@ -169,6 +198,24 @@ describe( 'mastodonComposerConfig', () => {
 			expect( link ).not.toBeNull();
 			expect( link?.getAttribute( 'href' ) ).toBe( '/reader/mastodon/connect' );
 		} );
+
+		it.each( [
+			[ 'media_too_large', 'Image is too large. Try a smaller image (under 8 MB).' ],
+			[ 'media_unsupported_type', 'Image format isn’t supported. Try JPEG, PNG, GIF, or WebP.' ],
+			[ 'media_decode_failed', 'We couldn’t process this image. Try a different file.' ],
+			[ 'media_invalid', 'We couldn’t post this. Try a different image.' ],
+		] as const )( 'returns expected copy for kind=%s', ( kind, expected ) => {
+			const t = getTranslate();
+			const node = mastodonComposerConfig.errorMessage( { kind } as MastodonError, t );
+			const { container } = render( <span>{ node }</span> );
+			expect( container.textContent ).toBe( expected );
+		} );
+	} );
+
+	describe( 'useMedia', () => {
+		it( 'wires useMedia to useMastodonComposerMedia', () => {
+			expect( mastodonComposerConfig.useMedia ).toBeDefined();
+		} );
 	} );
 
 	describe( 'successNotice', () => {
@@ -235,20 +282,93 @@ describe( 'mastodonComposerConfig', () => {
 	} );
 
 	describe( 'copy', () => {
-		it( 'reply title is "Reply"', () => {
+		it( 'reply title is "Reply" with no handle', () => {
 			const t = getTranslate();
 			expect( mastodonComposerConfig.copy.title( replyMode, t ) ).toBe( 'Reply' );
 		} );
 
-		it( 'standalone title is "New post"', () => {
+		it( 'quote title is "Quote post" with no handle', () => {
+			const t = getTranslate();
+			expect( mastodonComposerConfig.copy.title( quoteMode, t ) ).toBe( 'Quote post' );
+		} );
+
+		it( 'standalone title is "New post" with no handle', () => {
 			const t = getTranslate();
 			expect( mastodonComposerConfig.copy.title( standaloneMode, t ) ).toBe( 'New post' );
+		} );
+
+		it( 'appends "· @handle" to the title when a handle is supplied', () => {
+			const t = getTranslate();
+			expect(
+				mastodonComposerConfig.copy.title( standaloneMode, t, 'alice@mastodon.social' )
+			).toBe( 'New post · @alice@mastodon.social' );
+			expect( mastodonComposerConfig.copy.title( replyMode, t, 'alice@mastodon.social' ) ).toBe(
+				'Reply · @alice@mastodon.social'
+			);
+			expect( mastodonComposerConfig.copy.title( quoteMode, t, 'alice@mastodon.social' ) ).toBe(
+				'Quote post · @alice@mastodon.social'
+			);
 		} );
 
 		it( 'reply placeholder mentions the handle', () => {
 			const t = getTranslate();
 			const placeholder = mastodonComposerConfig.copy.placeholder( replyMode, t, 'alice' );
 			expect( placeholder ).toContain( 'alice' );
+		} );
+	} );
+
+	describe( 'useMastodonAuthorHandle', () => {
+		function wrapperFor( client: QueryClient ) {
+			return function Wrapper( { children }: { children: React.ReactNode } ) {
+				return <QueryClientProvider client={ client }>{ children }</QueryClientProvider>;
+			};
+		}
+
+		const baseConnection = {
+			id: 42,
+			handle: '@alice@mastodon.social',
+			instance: 'mastodon.social',
+			display_name: 'Alice',
+			avatar: null,
+		};
+
+		it( 'returns null when connectionId is null (skips the query)', () => {
+			const client = new QueryClient();
+			const { result } = renderHook( () => useMastodonAuthorHandle( null ), {
+				wrapper: wrapperFor( client ),
+			} );
+			expect( result.current ).toBeNull();
+		} );
+
+		it( 'returns the normalized handle for the matching connection', () => {
+			const client = new QueryClient();
+			client.setQueryData( readerMastodonKeys.connections(), { connections: [ baseConnection ] } );
+			const { result } = renderHook( () => useMastodonAuthorHandle( 42 ), {
+				wrapper: wrapperFor( client ),
+			} );
+			// `normalizeHandle` strips leading `@`s so the modal's `@%(handle)s`
+			// template doesn't double up.
+			expect( result.current ).toBe( 'alice@mastodon.social' );
+		} );
+
+		it( 'returns null when no connection matches the connectionId', () => {
+			const client = new QueryClient();
+			client.setQueryData( readerMastodonKeys.connections(), { connections: [ baseConnection ] } );
+			const { result } = renderHook( () => useMastodonAuthorHandle( 999 ), {
+				wrapper: wrapperFor( client ),
+			} );
+			expect( result.current ).toBeNull();
+		} );
+
+		it( 'returns null when the matching connection has no handle', () => {
+			const client = new QueryClient();
+			client.setQueryData( readerMastodonKeys.connections(), {
+				connections: [ { ...baseConnection, handle: '' } ],
+			} );
+			const { result } = renderHook( () => useMastodonAuthorHandle( 42 ), {
+				wrapper: wrapperFor( client ),
+			} );
+			expect( result.current ).toBeNull();
 		} );
 	} );
 } );

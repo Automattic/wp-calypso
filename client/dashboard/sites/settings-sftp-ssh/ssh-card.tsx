@@ -152,7 +152,7 @@ export default function SshCard( {
 			sprintf(
 				/* translators: %s is the copied field */
 				__( 'Copied %s to clipboard.' ),
-				label
+				String( label )
 			),
 			{
 				type: 'snackbar',
@@ -316,7 +316,7 @@ export default function SshCard( {
 						title={ __( 'SSH' ) }
 						description={ createInterpolateElement(
 							__(
-								'SSH lets you access your site’s backend via a terminal, so you can manage files and use <wpCliLink>WP-CLI</wpCliLink> for quick changes and troubleshooting. <learnMoreLink />'
+								'SSH lets you access your site’s backend via a terminal, so you can manage files and use <wpCliLink>WP-CLI</wpCliLink> for quick changes and troubleshooting. <learnMoreLink/>'
 							),
 							{
 								wpCliLink: <ExternalLink href="https://wp-cli.org/" children={ null } />,

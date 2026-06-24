@@ -11,6 +11,7 @@ import {
 	ComposerConfigProvider,
 	type ComposerConfig,
 	type ComposerMediaSlot,
+	type ComposerProtocolExtrasSlot,
 } from './composer-config';
 import type { ReactNode } from 'react';
 
@@ -35,6 +36,24 @@ const NOOP_MEDIA_SLOT: ComposerMediaSlot = {
 
 function useNoopMedia(): ComposerMediaSlot {
 	return NOOP_MEDIA_SLOT;
+}
+
+/**
+ * Default `ComposerProtocolExtrasSlot` returned when a config doesn't
+ * supply `useProtocolExtras`. Render is null; the param hook is the
+ * identity. Atmosphere / Mastodon configs leave the slot undefined and
+ * fall through to this.
+ */
+const NOOP_EXTRAS_SLOT: ComposerProtocolExtrasSlot = {
+	renderControls: () => null,
+	renderTrigger: () => null,
+	extendBuildParams: ( params ) => params,
+	clear: () => undefined,
+	getTracksProps: () => ( {} ),
+};
+
+function useNoopProtocolExtras(): ComposerProtocolExtrasSlot {
+	return NOOP_EXTRAS_SLOT;
 }
 
 /**
@@ -88,7 +107,18 @@ export type ComposerMode =
 			previewPost: PreviewPost;
 			replyTo?: { root: ComposerParentRef; parent: ComposerParentRef };
 	  }
-	| { kind: 'standalone'; entry_point: ComposerEntryPoint };
+	| {
+			kind: 'standalone';
+			entry_point: ComposerEntryPoint;
+			/**
+			 * Raw textarea content (including any trailing space) seeded into
+			 * the composer on open. Used by profile-page FABs to prepend
+			 * `@<handle> ` so the compose surface kicks off a mention. Seeded
+			 * exactly once on the null→non-null mode transition; later edits
+			 * by the user are not clobbered.
+			 */
+			initialText?: string;
+	  };
 
 export type ActiveMode = ComposerMode & { connectionId: number };
 
@@ -109,6 +139,30 @@ interface ComposerContextValue {
 	closeComposer: ( options?: CloseComposerOptions ) => void;
 	/** Read by the modal to render media UI and gate submission. */
 	mediaSlot: ComposerMediaSlot;
+	/** Read by the modal to render protocol-specific controls. */
+	protocolExtrasSlot: ComposerProtocolExtrasSlot;
+	/**
+	 * Sticky-once flag: true after the user has crossed the per-protocol
+	 * char limit at least once during the current modal session. Reset on
+	 * each modal open. Stays true once tripped so the overflow-handoff UI
+	 * doesn't disappear when the user trims back under the limit, which
+	 * would otherwise hide the escape hatch they're working toward.
+	 */
+	hasBeenOverLimit: boolean;
+	markOverLimit: () => void;
+	/**
+	 * Sticky-once flag: true after the user has explicitly asked to hand
+	 * off to the block editor for a feature the in-pane composer can't
+	 * cover (today: Fediverse media, CM-726 — blog-level ActivityPub C2S
+	 * has no media-upload endpoint). The fediverse `useMedia` slot's
+	 * footer-start button flips this flag on click; the overflow-handoff
+	 * section reuses its existing UI to render the "Move to editor" CTA
+	 * with media-flavoured copy. Stays true once tripped so the section
+	 * stays visible across re-renders (same lifecycle as `hasBeenOverLimit`).
+	 * Reset on each modal open.
+	 */
+	hasRequestedMediaHandoff: boolean;
+	markMediaHandoffRequested: () => void;
 }
 
 const ComposerContext = createContext< ComposerContextValue | null >( null );
@@ -125,6 +179,8 @@ export function ComposerProvider< TError, TParams, TResult >( {
 	children,
 }: Props< TError, TParams, TResult > ) {
 	const [ mode, setMode ] = useState< ActiveMode | null >( null );
+	const [ hasBeenOverLimit, setHasBeenOverLimit ] = useState( false );
+	const [ hasRequestedMediaHandoff, setHasRequestedMediaHandoff ] = useState( false );
 	const triggerRef = useRef< HTMLElement | null >( null );
 	const wasOpenRef = useRef( false );
 
@@ -145,6 +201,8 @@ export function ComposerProvider< TError, TParams, TResult >( {
 				return;
 			}
 			triggerRef.current = document.activeElement as HTMLElement | null;
+			setHasBeenOverLimit( false );
+			setHasRequestedMediaHandoff( false );
 			setMode( { ...next, connectionId } );
 		},
 		[ connectionId, config.supportedModes ]
@@ -161,6 +219,14 @@ export function ComposerProvider< TError, TParams, TResult >( {
 		setMode( null );
 	}, [] );
 
+	const markOverLimit = useCallback( () => {
+		setHasBeenOverLimit( true );
+	}, [] );
+
+	const markMediaHandoffRequested = useCallback( () => {
+		setHasRequestedMediaHandoff( true );
+	}, [] );
+
 	// `config.useMedia` is captured once at the start of the provider's life
 	// and called every render. Per the contract on `ComposerConfig.useMedia`,
 	// it must be a stable reference — atmosphere exports a module-level hook
@@ -171,6 +237,12 @@ export function ComposerProvider< TError, TParams, TResult >( {
 	const useMedia = config.useMedia ?? useNoopMedia;
 	const mediaSlot = useMedia( { mode, connectionId } );
 
+	// Protocol-specific extras slot (visibility selectors, CW toggles, etc.).
+	// Same lifetime contract as `useMedia` — invoked unconditionally so React's
+	// hook-ordering rules apply, even when no extras are wired.
+	const useProtocolExtras = config.useProtocolExtras ?? useNoopProtocolExtras;
+	const protocolExtrasSlot = useProtocolExtras( { mode, connectionId } );
+
 	// Reset media state when the composer closes (mode → null). `clear` is
 	// driven by the per-protocol slot — atmosphere's implementation calls
 	// `useImageUploads.clearAll` with deferred revocation when the publish
@@ -180,16 +252,38 @@ export function ComposerProvider< TError, TParams, TResult >( {
 			const keepPreviewUrlsAlive = keepPreviewUrlsAliveRef.current;
 			keepPreviewUrlsAliveRef.current = false;
 			mediaSlot.clear( { keepPreviewUrlsAlive } );
+			protocolExtrasSlot.clear?.();
 		}
-		// `mediaSlot` is recreated each render — capturing it in deps would
-		// re-run the effect every render. The closure reads the snapshot at
-		// effect time, which is the desired behavior.
+		// `mediaSlot` / `protocolExtrasSlot` are recreated each render —
+		// capturing them in deps would re-run the effect every render. The
+		// closure reads the snapshot at effect time, which is the desired
+		// behavior.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ mode ] );
 
 	const value = useMemo(
-		() => ( { mode, openComposer, closeComposer, mediaSlot } ),
-		[ mode, openComposer, closeComposer, mediaSlot ]
+		() => ( {
+			mode,
+			openComposer,
+			closeComposer,
+			mediaSlot,
+			protocolExtrasSlot,
+			hasBeenOverLimit,
+			markOverLimit,
+			hasRequestedMediaHandoff,
+			markMediaHandoffRequested,
+		} ),
+		[
+			mode,
+			openComposer,
+			closeComposer,
+			mediaSlot,
+			protocolExtrasSlot,
+			hasBeenOverLimit,
+			markOverLimit,
+			hasRequestedMediaHandoff,
+			markMediaHandoffRequested,
+		]
 	);
 
 	return (

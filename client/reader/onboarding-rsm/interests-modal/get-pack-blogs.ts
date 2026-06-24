@@ -5,6 +5,8 @@ export type GetPackBlogsOptions = {
 	count?: number;
 	curatedBlogs?: CuratedBlogsList;
 	random?: () => number;
+	/** When set, resolve blogs from `curatedBlogs[ directKey ]` (e.g. tagless pack id). Ignores `tags`. */
+	directKey?: string;
 };
 
 const pickRandom = < T >( items: T[], count: number, random: () => number ): T[] => {
@@ -19,6 +21,16 @@ const pickRandom = < T >( items: T[], count: number, random: () => number ): T[]
 		picked.push( pool.splice( index, 1 )[ 0 ] );
 	}
 	return picked;
+};
+
+/**
+ * After random selection, move `has_icon` blogs to the front so the topic card
+ * can show real avatars in its first slots without biasing which feeds join the pack.
+ */
+const orderPackWithIconsFirst = ( pack: CuratedBlog[] ): CuratedBlog[] => {
+	const withIcon = pack.filter( ( b ) => b.has_icon );
+	const withoutIcon = pack.filter( ( b ) => ! b.has_icon );
+	return [ ...withIcon, ...withoutIcon ];
 };
 
 /**
@@ -50,14 +62,36 @@ const distributeSlots = ( tagCount: number, count: number ): number[] => {
  * - Blogs are de-duplicated by `feed_ID` across tags. If duplicates are
  *   dropped, additional blogs are pulled from any tag with remaining capacity
  *   so the final list size still approaches `count`.
- * - Selection within each tag is random; the `random` option allows tests to
- *   inject a deterministic generator.
+ * - Selection within each tag is random (no `has_icon` bias); the `random`
+ *   option allows tests to inject a deterministic generator.
+ * - The returned pack is ordered with `has_icon` blogs first so the interests
+ *   card can show icon-backed avatars in its first slots without excluding
+ *   non-icon feeds from packs.
+ * - When `directKey` is set, returns up to `count` blogs from `curatedBlogs[ directKey ]`
+ *   with the same icon-first ordering (for tagless packs keyed by pack id).
  */
 export const getPackBlogs = (
 	tags: string[],
-	{ count = 5, curatedBlogs = defaultCuratedBlogs, random = Math.random }: GetPackBlogsOptions = {}
+	{
+		count = 5,
+		curatedBlogs = defaultCuratedBlogs,
+		random = Math.random,
+		directKey,
+	}: GetPackBlogsOptions = {}
 ): CuratedBlog[] => {
-	if ( ! tags?.length || count <= 0 ) {
+	if ( count <= 0 ) {
+		return [];
+	}
+
+	if ( directKey !== undefined && directKey !== '' ) {
+		const directList = curatedBlogs[ directKey ];
+		if ( Array.isArray( directList ) && directList.length > 0 ) {
+			return orderPackWithIconsFirst( directList.slice( 0, count ) );
+		}
+		return [];
+	}
+
+	if ( ! tags?.length ) {
 		return [];
 	}
 
@@ -129,5 +163,5 @@ export const getPackBlogs = (
 		}
 	}
 
-	return picked;
+	return orderPackWithIconsFirst( picked );
 };

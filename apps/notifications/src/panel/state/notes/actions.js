@@ -11,6 +11,13 @@ export const removeNotes = ( noteIds, isComment = false ) => ( {
 	isComment,
 } );
 
+// Replace the "Unread" view's id list. This only sets the list; note content
+// lives in `allNotes` and is unaffected.
+export const setUnreadNoteIds = ( noteIds ) => ( {
+	type: types.SET_UNREAD_NOTE_IDS,
+	noteIds,
+} );
+
 export const noteAction = ( action ) => ( noteId ) => ( {
 	type: action,
 	noteId,
@@ -72,6 +79,7 @@ export default {
 	removeNotes,
 	resetLocalApproval,
 	resetLocalLike,
+	setUnreadNoteIds,
 	spamNote,
 	trashNote,
 };

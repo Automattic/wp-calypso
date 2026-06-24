@@ -1,9 +1,1 @@
-export const DASHBOARD_SECTION_PATHS = [
-	'/',
-	'/sites',
-	'/domains',
-	'/emails',
-	'/plugins',
-	'/me',
-	'/oauth/token',
-];
+export const A4A_SIGNUP_PATHS = [ '/signup', '/signup/finish', '/signup/oauth/token' ];

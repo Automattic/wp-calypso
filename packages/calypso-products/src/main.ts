@@ -49,6 +49,7 @@ import {
 	TYPE_SECURITY_T1,
 	TYPE_SECURITY_T2,
 	TYPE_STARTER,
+	TYPE_STUDENT,
 	TYPE_JETPACK_GROWTH,
 	WOO_EXPRESS_PLANS,
 	WOO_HOSTED_PLANS,
@@ -129,18 +130,6 @@ export function getPlan( planKey: string | Plan ): Plan | JetpackPlan | WPComPla
 	return PLANS_LIST[ planKey ];
 }
 
-export function getPlanByPathSlug( pathSlug: string, group?: string ): Plan | undefined {
-	let plans: Plan[] = Object.values( PLANS_LIST );
-	plans = plans.filter( ( p ) => ( group ? p.group === group : true ) );
-	return plans.find( ( p ) => typeof p.getPathSlug === 'function' && p.getPathSlug() === pathSlug );
-}
-
-export function getPlanPath( plan: string ): string | undefined {
-	const retrievedPlan = getPlan( plan );
-	const slug = retrievedPlan?.getPathSlug || ( () => undefined );
-	return slug();
-}
-
 export function getPlanClass( planKey: string ): string {
 	if ( isFreePlan( planKey ) ) {
 		return 'is-free-plan';
@@ -156,6 +145,10 @@ export function getPlanClass( planKey: string ): string {
 
 	if ( isPersonalPlan( planKey ) ) {
 		return 'is-personal-plan';
+	}
+
+	if ( isStudentPlan( planKey ) ) {
+		return 'is-student-plan';
 	}
 
 	if ( isPremiumPlan( planKey ) ) {
@@ -366,6 +359,10 @@ export function isPersonalPlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_PERSONAL } );
 }
 
+export function isStudentPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_STUDENT } );
+}
+
 export function isBloggerPlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_BLOGGER } );
 }
@@ -482,6 +479,10 @@ export function isWpComPremiumPlan( planSlug: string ): boolean {
 
 export function isWpComPersonalPlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_PERSONAL, group: GROUP_WPCOM } );
+}
+
+export function isWpComStudentPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_STUDENT, group: GROUP_WPCOM } );
 }
 
 export function isWpComBloggerPlan( planSlug: string ): boolean {

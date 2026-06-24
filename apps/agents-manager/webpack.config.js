@@ -87,9 +87,86 @@ function getIndividualConfig( options = {} ) {
 					) {
 						return null;
 					}
+					// Bundle @wordpress/ui: neither WordPress core nor the Gutenberg
+					// plugin registers a wp-ui script handle yet, and WP_Scripts
+					// silently skips scripts with unregistered dependencies, so
+					// externalizing it prevents the bundle from loading on
+					// self-hosted sites.
+					if ( request === '@wordpress/ui' ) {
+						return null;
+					}
 				},
 			} ),
 			new ReadableJsAssetsWebpackPlugin(),
+		],
+	};
+}
+
+/**
+ * Reader chat config — bundles all dependencies (no WP externals).
+ *
+ * Omits DependencyExtractionWebpackPlugin entirely so React, @wordpress/data,
+ * and other WP packages are inlined. The resulting reader-chat.min.js is
+ * self-contained and safe to load on the frontend (no WP script loader needed).
+ * @param   {Object}  options                       options
+ * @param   {Object}  options.env                   environment options
+ * @param   {Object}  options.argv                  webpack CLI args
+ * @returns {Object}                                webpack config
+ */
+function getReaderConfig( options = {} ) {
+	const { env, argv } = options;
+	const outputPath = path.join( __dirname, 'dist' );
+	const webpackConfig = getBaseWebpackConfig( env, argv );
+
+	return {
+		...webpackConfig,
+		mode: isDevelopment ? 'development' : 'production',
+		entry: { 'reader-chat': path.join( __dirname, 'reader-chat.js' ) },
+		output: {
+			...webpackConfig.output,
+			path: outputPath,
+			filename: '[name].min.js',
+			chunkLoadingGlobal: 'webpackChunkJetpackReaderChat',
+			uniqueName: 'JetpackReaderChat',
+		},
+		module: {
+			...webpackConfig.module,
+			rules: [
+				...( webpackConfig.module?.rules || [] ),
+				{
+					// P2/O2 expects window._ to remain Underscore.
+					resource: require.resolve( 'lodash/lodash.js' ),
+					use: path.join( __dirname, 'disable-lodash-amd-loader.js' ),
+				},
+			],
+		},
+		resolve: {
+			...webpackConfig.resolve,
+			alias: {
+				...( webpackConfig.resolve?.alias || {} ),
+				'../agent-history': path.join( __dirname, 'reader-chat-route-stub.js' ),
+				'../support-guide': path.join( __dirname, 'reader-chat-route-stub.js' ),
+				'../support-guides': path.join( __dirname, 'reader-chat-route-stub.js' ),
+				'../zendesk-chat': path.join( __dirname, 'reader-chat-route-stub.js' ),
+			},
+		},
+		optimization: {
+			...webpackConfig.optimization,
+			// Disable module concatenation so __() calls are not renamed.
+			concatenateModules: false,
+		},
+		plugins: [
+			// Strip the base config's DependencyExtractionWebpackPlugin — we want
+			// everything bundled, not externalized.
+			...webpackConfig.plugins.filter(
+				( plugin ) => plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'
+			),
+			new webpack.DefinePlugin( {
+				__i18n_text_domain__: JSON.stringify( 'default' ),
+				'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
+			} ),
+			new ReadableJsAssetsWebpackPlugin(),
+			// Intentionally NO DependencyExtractionWebpackPlugin — all WP deps are bundled.
 		],
 	};
 }
@@ -126,10 +203,10 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		getIndividualConfig( { env, argv, name: 'jetpack-ai-sidebar' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-gutenberg-disconnected' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wp-admin-disconnected' } ),
-		getIndividualConfig( { env, argv, name: 'agents-manager-ciab-disconnected' } ),
 		getIndividualConfig( { env, argv, name: 'block-notes' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-ciab' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wooai' } ),
+		getReaderConfig( { env, argv } ),
 	];
 
 	// Attach the copy plugin to the first config.

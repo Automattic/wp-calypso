@@ -9,13 +9,16 @@ $omnibar-text-color: #fff;
 $omnibar-submenu-text-color: #bcbcbc;
 $omnibar-highlight-color: #7b90ff;
 
-.omnibar {
+body:has( .omnibar ) {
 	--omnibar-height: #{$omnibar-height-mobile};
+	--masterbar-height: var( --omnibar-height );
 
 	@media ( min-width: 782px ) {
 		--omnibar-height: #{$omnibar-height};
 	}
+}
 
+.omnibar {
 	background-color: $omnibar-base-color;
 	min-height: var( --omnibar-height );
 	height: var( --omnibar-height );

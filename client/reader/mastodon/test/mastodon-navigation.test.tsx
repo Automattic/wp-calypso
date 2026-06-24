@@ -37,14 +37,18 @@ describe( 'MastodonNavigation', () => {
 		renderWithProvider( <MastodonNavigation connectionId={ 42 } selectedTab="profile" /> );
 
 		expect( screen.getByRole( 'menuitem', { name: /timeline/i } ) ).toBeVisible();
+		expect( screen.getByRole( 'menuitem', { name: /notifications/i } ) ).toBeVisible();
 		expect( screen.getByRole( 'menuitem', { name: /profile/i } ) ).toBeVisible();
-		expect( screen.getByRole( 'menuitem', { name: /settings/i } ) ).toBeVisible();
 
 		expect( screen.getByRole( 'menuitem', { name: /profile/i } ) ).toHaveAttribute(
 			'aria-current',
 			'true'
 		);
 		expect( screen.getByRole( 'menuitem', { name: /timeline/i } ) ).toHaveAttribute(
+			'aria-current',
+			'false'
+		);
+		expect( screen.getByRole( 'menuitem', { name: /notifications/i } ) ).toHaveAttribute(
 			'aria-current',
 			'false'
 		);
@@ -57,13 +61,13 @@ describe( 'MastodonNavigation', () => {
 			'href',
 			'/reader/mastodon/42/timeline'
 		);
+		expect( screen.getByRole( 'menuitem', { name: /notifications/i } ) ).toHaveAttribute(
+			'href',
+			'/reader/mastodon/42/notifications'
+		);
 		expect( screen.getByRole( 'menuitem', { name: /profile/i } ) ).toHaveAttribute(
 			'href',
 			'/reader/mastodon/42/profile'
-		);
-		expect( screen.getByRole( 'menuitem', { name: /settings/i } ) ).toHaveAttribute(
-			'href',
-			'/reader/mastodon/42/settings'
 		);
 	} );
 

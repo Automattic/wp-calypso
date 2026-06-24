@@ -1,4 +1,4 @@
-import { getAuthCopy, getLoginCopy, getSignupCopy } from '../copy';
+import { getAuthCopy, getLoginCopy, getSignupCopy, getSecondaryAuthCopy } from '../copy';
 import type { SubtitleScenario } from '../scenarios';
 
 /**
@@ -128,63 +128,63 @@ describe( 'auth subtitles', () => {
 	test.each( [
 		[
 			'A4A_ONLY',
-			'Your site is registered with WordPress.com — connect this account to manage it from your Automattic for Agencies dashboard.',
+			'Your site is registered with WordPress.com — connecting your account gives it secure access to features from Automattic for Agencies.',
 		],
 		[
 			'A4A_WOO',
-			'Your store is registered with WordPress.com — connect this account to manage it from Automattic for Agencies, use the Woo mobile app, and access store analytics.',
+			'Your store is registered with WordPress.com — connecting your account gives it secure access to features from Automattic for Agencies and WooCommerce.',
 		],
 		[
 			'A4A_JETPACK',
-			'Your site is registered with WordPress.com — connect this account to manage it from Automattic for Agencies and activate Jetpack.',
+			'Your site is registered with WordPress.com — connecting your account gives it secure access to features from Automattic for Agencies and Jetpack.',
 		],
 		[
 			'ALL_THREE',
-			'Your store is registered with WordPress.com — connect this account to use the Automattic for Agencies dashboard, the Woo mobile app, and Jetpack.',
+			'Your store is registered with WordPress.com — connecting your account gives it secure access to features from Automattic for Agencies, WooCommerce, and Jetpack.',
 		],
 		[
 			'WOO_ONLY',
-			'Your store is registered with WordPress.com — connect this account to use the Woo mobile app and access your store analytics.',
+			'Your store is registered with WordPress.com — connecting your account gives it secure access to features from WooCommerce.',
 		],
 		[
 			'WOO_AND_PAY',
-			'Your store is registered with WordPress.com — connect this account to use the Woo mobile app, access your store analytics, and enable WooPayments for payment processing.',
+			'Your store is registered with WordPress.com — connecting your account gives it secure access to features from WooCommerce and WooPayments.',
 		],
 		[
 			'WOO_JETPACK',
-			'Your store is registered with WordPress.com — connect this account to use the Woo mobile app, access your store analytics, and activate Jetpack.',
+			'Your store is registered with WordPress.com — connecting your account gives it secure access to features from WooCommerce and Jetpack.',
 		],
 		[
 			'JETPACK_FULL',
-			'Your site is registered with WordPress.com — connect this account to activate Jetpack with backups, security, and growth tools.',
+			'Your site is registered with WordPress.com — connecting your account gives it secure access to features from Jetpack.',
 		],
 		[
 			'JETPACK_BACKUP',
-			'Your site is registered with WordPress.com — connect this account to enable real-time backups and one-click restore via Jetpack VaultPress Backup.',
+			'Your site is registered with WordPress.com — connecting your account gives it secure access to features from Jetpack VaultPress Backup.',
 		],
 		[
 			'JETPACK_PROTECT',
-			"Your site is registered with WordPress.com — connect this account to enable Jetpack Protect's security scanning and malware protection.",
+			'Your site is registered with WordPress.com — connecting your account gives it secure access to features from Jetpack Protect.',
 		],
 		[
 			'JETPACK_BOOST',
-			"Your site is registered with WordPress.com — connect this account to enable Jetpack Boost's site performance optimization.",
+			'Your site is registered with WordPress.com — connecting your account gives it secure access to features from Jetpack Boost.',
 		],
 		[
 			'JETPACK_SEARCH',
-			"Your site is registered with WordPress.com — connect this account to enable Jetpack Search's instant results.",
+			'Your site is registered with WordPress.com — connecting your account gives it secure access to features from Jetpack Search.',
 		],
 		[
 			'JETPACK_SOCIAL',
-			"Your site is registered with WordPress.com — connect this account to enable Jetpack Social's automated post sharing.",
+			'Your site is registered with WordPress.com — connecting your account gives it secure access to features from Jetpack Social.',
 		],
 		[
 			'JETPACK_VIDEOPRESS',
-			"Your site is registered with WordPress.com — connect this account to enable Jetpack VideoPress's ad-free video hosting.",
+			'Your site is registered with WordPress.com — connecting your account gives it secure access to features from Jetpack VideoPress.',
 		],
 		[
 			'OTHER_ONLY',
-			'Your site is registered with WordPress.com — connect this account to power your active plugins.',
+			'Your site is registered with WordPress.com — connecting your account gives it secure access to the features your active plugins need.',
 		],
 	] satisfies Array< [ SubtitleScenario, string ] > )(
 		'%s renders the expected pre-composed sentence',
@@ -271,8 +271,59 @@ describe( 'default arguments', () => {
 		expect( getLoginCopy() ).toEqual( expectedLogin );
 		expect( getSignupCopy() ).toEqual( expectedSignup );
 
-		expect( expectedAuth.subtitle ).toContain( 'power your active plugins' );
+		expect( expectedAuth.subtitle ).toContain( 'features your active plugins need' );
 		expect( expectedLogin.subtitle ).toContain( 'power your active plugins' );
 		expect( expectedSignup.subtitle ).toContain( 'power your active plugins' );
+	} );
+} );
+
+describe( 'secondary auth copy', () => {
+	test( 'title is "Connect your account" for both admin and non-admin', () => {
+		expect( getSecondaryAuthCopy( true, [ 'jetpack' ] ).title ).toBe( 'Connect your account' );
+		expect( getSecondaryAuthCopy( false, [ 'jetpack' ] ).title ).toBe( 'Connect your account' );
+	} );
+
+	test( 'non-admin subtitle uses simple manage-site framing regardless of plugins', () => {
+		const jp = getSecondaryAuthCopy( false, [ 'jetpack' ] ).subtitle;
+		const woo = getSecondaryAuthCopy( false, [ 'woocommerce' ] ).subtitle;
+		const empty = getSecondaryAuthCopy( false, [] ).subtitle;
+		expect( jp ).toContain( 'manage this site' );
+		expect( woo ).toBe( jp );
+		expect( empty ).toBe( jp );
+	} );
+
+	test( 'admin subtitle with Jetpack mentions activity logs and Jetpack Cloud', () => {
+		const { subtitle } = getSecondaryAuthCopy( true, [ 'jetpack' ] );
+		expect( subtitle ).toContain( 'activity logs' );
+		expect( subtitle ).toContain( 'Jetpack Cloud' );
+	} );
+
+	test( 'admin subtitle with Woo (no Jetpack) mentions store analytics and Woo mobile app', () => {
+		const { subtitle } = getSecondaryAuthCopy( true, [ 'woocommerce' ] );
+		expect( subtitle ).toContain( 'store analytics' );
+		expect( subtitle ).toContain( 'Woo mobile app' );
+		expect( subtitle ).not.toContain( 'Jetpack Cloud' );
+	} );
+
+	test( 'admin subtitle with Jetpack + Woo mentions both Jetpack Cloud and Woo', () => {
+		const { subtitle } = getSecondaryAuthCopy( true, [ 'jetpack', 'woocommerce' ] );
+		expect( subtitle ).toContain( 'Jetpack Cloud' );
+		expect( subtitle ).toContain( 'Woo mobile app' );
+	} );
+
+	test( 'admin subtitle with unknown plugins uses generic manage-site framing', () => {
+		const { subtitle } = getSecondaryAuthCopy( true, [ 'unknown-plugin' ] );
+		expect( subtitle ).toContain( 'manage this site' );
+	} );
+
+	test( 'admin subtitle with empty plugins uses generic manage-site framing', () => {
+		const { subtitle } = getSecondaryAuthCopy( true, [] );
+		expect( subtitle ).toContain( 'manage this site' );
+	} );
+
+	test( 'admin and non-admin subtitles are different', () => {
+		expect( getSecondaryAuthCopy( true, [ 'jetpack' ] ).subtitle ).not.toBe(
+			getSecondaryAuthCopy( false, [ 'jetpack' ] ).subtitle
+		);
 	} );
 } );

@@ -8,7 +8,9 @@ import {
 	SocialAnalyticsProvider,
 	SocialFeedList,
 	SocialPostCard,
+	SocialTagFeedHeader,
 	mapAtmosphereFeedItemToSocialPost,
+	socialPostFeedItemKey,
 	type SocialPost,
 } from 'calypso/reader/social';
 import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
@@ -145,7 +147,7 @@ export function TagFeedPanel( { connection, hashtag }: Props ) {
 		),
 		[ connection.id ]
 	);
-	const itemKey = useCallback( ( post: SocialPost ) => post.uri, [] );
+	const itemKey = useCallback( ( post: SocialPost ) => socialPostFeedItemKey( post ), [] );
 
 	const analyticsValue = useMemo(
 		() => ( {
@@ -170,16 +172,6 @@ export function TagFeedPanel( { connection, hashtag }: Props ) {
 	);
 
 	const tagInfo = feed.data?.pages[ 0 ]?.tag;
-	// Backend emits `count: null` when the AppView's `hitsTotal` is absent
-	// (see `tag-feed-page` normaliser); use a loose check so we hide the
-	// count line for both a missing field and an explicit null.
-	const countLine =
-		typeof tagInfo?.count === 'number'
-			? translate( '%(count)d post', '%(count)d posts', {
-					count: tagInfo.count,
-					args: { count: tagInfo.count },
-			  } )
-			: null;
 
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
@@ -190,10 +182,7 @@ export function TagFeedPanel( { connection, hashtag }: Props ) {
 							timelineUrl={ getTimelineUrl( connection.id ) }
 							onBackToTimeline={ handleBackToTimeline }
 						/>
-						<div className="atmosphere-tag-feed__header">
-							<h1 className="atmosphere-tag-feed__heading">{ `#${ hashtag }` }</h1>
-							{ countLine ? <p className="atmosphere-tag-feed__count">{ countLine }</p> : null }
-						</div>
+						<SocialTagFeedHeader hashtag={ hashtag } count={ tagInfo?.count } />
 						<SocialFeedList< SocialPost >
 							items={ items }
 							isPending={ feed.isPending }
@@ -212,6 +201,10 @@ export function TagFeedPanel( { connection, hashtag }: Props ) {
 							protocolLabel="Bluesky"
 							protocolHomeURL="/reader/atmosphere"
 							protocolHomeLabel={ String( translate( 'Back to ATmosphere' ) ) }
+							authRequiredCopy={ {
+								title: String( translate( "Couldn't load posts" ) ),
+								line: String( translate( 'Something went wrong with your Bluesky connection.' ) ),
+							} }
 						/>
 					</VStack>
 				</RepostProvider>

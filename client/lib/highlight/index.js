@@ -1,5 +1,4 @@
 import debugFactory from 'debug';
-import { compact } from 'lodash';
 const debug = debugFactory( 'calypso:highlight' );
 
 /**
@@ -55,7 +54,7 @@ function highlightNode( node, term, wrapperNode ) {
 	}
 	nodes.push( document.createTextNode( remainingText ) );
 
-	nodes = compact( nodes );
+	nodes = nodes.filter( Boolean );
 	if ( nodes.length && found ) {
 		replaceChildNodesWithGroup( node.parentElement, nodes, node );
 	}

@@ -1,6 +1,7 @@
 import { isTitanMail, WPCOM_DIFM_LITE } from '@automattic/calypso-products';
+import { snakeCase } from '@automattic/js-utils';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
-import { isEmpty, reduce, snakeCase } from 'lodash';
+import { isEmpty, reduce } from 'lodash';
 import { assertValidDependencies } from 'calypso/lib/signup/asserts';
 import {
 	SIGNUP_PROGRESS_SAVE_STEP,
@@ -78,6 +79,9 @@ function recordSubmitStep( flow, stepName, providedDependencies, optionalProps )
 
 			if ( propName === 'selected_page_titles' && Array.isArray( propValue ) ) {
 				propValue = propValue.join( ',' );
+			}
+			if ( propName === 'selected_page_instances' && Array.isArray( propValue ) ) {
+				propValue = JSON.stringify( propValue );
 			}
 
 			if (

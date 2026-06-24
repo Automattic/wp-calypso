@@ -1,6 +1,6 @@
 import { useMastodonConnectionsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
-import { Button } from '@wordpress/components';
+import { Button, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -8,6 +8,7 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 import { ComposeFab, ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
 import { mastodonComposerConfig } from './composer-config';
 import { ThreadPanel } from './thread-panel';
+import { MastodonReauthGate, useMastodonReauthGateState } from './use-mastodon-reauth-gate';
 
 interface Props {
 	connectionId: number;
@@ -20,6 +21,12 @@ export function MastodonThreadView( { connectionId, statusId }: Props ) {
 
 	const connections = data?.connections ?? [];
 	const connection = connections.find( ( c ) => c.id === connectionId ) ?? null;
+
+	// The compose FAB and modal sit outside <ConnectionReauthGate>, so without
+	// an explicit guard they'd float over the reauth prompt. Hide both while
+	// the connection needs reauth — any post submitted via that path would
+	// fail with auth_required anyway.
+	const { needsReauth } = useMastodonReauthGateState( connection?.id ?? null );
 
 	useEffect( () => {
 		if ( isPending || isError ) {
@@ -48,8 +55,9 @@ export function MastodonThreadView( { connectionId, statusId }: Props ) {
 		return (
 			<ReaderMain className="mastodon-view">
 				<DocumentHead title={ translate( 'Thread ‹ Mastodon ‹ Reader' ) } />
-				<div role="status" aria-live="polite">
-					{ translate( 'Loading…' ) }
+				<div className="wp-spinner-wrapper" role="status" aria-live="polite">
+					<Spinner />
+					<p>{ translate( 'Loading…' ) }</p>
 				</div>
 			</ReaderMain>
 		);
@@ -61,10 +69,16 @@ export function MastodonThreadView( { connectionId, statusId }: Props ) {
 				<DocumentHead
 					title={ translate( '%s ‹ Mastodon ‹ Reader', { args: connection.handle } ) }
 				/>
-				<ThreadPanel connection={ connection } statusId={ statusId } />
+				<MastodonReauthGate connection={ connection }>
+					<ThreadPanel connection={ connection } statusId={ statusId } />
+				</MastodonReauthGate>
 			</ReaderMain>
-			<ComposeFab />
-			<ComposerModal />
+			{ ! needsReauth && (
+				<>
+					<ComposeFab />
+					<ComposerModal />
+				</>
+			) }
 		</ComposerProvider>
 	);
 }

@@ -1,4 +1,7 @@
 @use 'sass:math';
+
+@import "@automattic/typography/styles/variables";
+
 @import "@wordpress/base-styles/breakpoints";
 
 $column-gap: 19px; // Roughly 1.2rem, which is the gap in Gutenberg columns. This needs to be px for unit consistency in the math.div function.

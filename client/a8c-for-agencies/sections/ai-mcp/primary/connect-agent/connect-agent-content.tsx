@@ -115,7 +115,11 @@ export default function AiMcpConnectAgentContent() {
 								</ol>
 								{ selectedAgent.installAction && (
 									<>
-										<Text>{ __( 'Or use the one-click install to add the A4A MCP app.' ) }</Text>
+										<Text>
+											{ __(
+												'Or use the one-click install to add the Automattic for Agencies MCP app.'
+											) }
+										</Text>
 										<Button
 											style={ { width: 'fit-content' } }
 											variant="primary"

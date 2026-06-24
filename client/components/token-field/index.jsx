@@ -1,7 +1,6 @@
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
-import { difference } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import isSuggestionLabel from './helpers';
@@ -90,7 +89,6 @@ class TokenField extends PureComponent {
 		} );
 
 		let tokenFieldProps = {
-			ref: 'main',
 			className: classes,
 		};
 
@@ -346,7 +344,9 @@ class TokenField extends PureComponent {
 		const containsMatch = [];
 
 		if ( match.length === 0 ) {
-			suggestions = difference( suggestions, this.props.value );
+			suggestions = suggestions.filter(
+				( suggestion ) => ! this.props.value.includes( suggestion )
+			);
 		} else {
 			match = match.toLocaleLowerCase();
 

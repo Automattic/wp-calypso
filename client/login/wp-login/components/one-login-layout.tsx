@@ -3,6 +3,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
+import { type JSX } from 'react';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { useLoginContext } from 'calypso/login/login-context';
@@ -30,7 +31,6 @@ export const ensureHeadingProvided = (
 interface OneLoginLayoutProps {
 	isJetpack: boolean;
 	isFromJetpackConnector?: boolean;
-	isUnifiedConnectionFlow?: boolean;
 	connectorPlugins?: string[];
 	children: React.ReactNode;
 	/**
@@ -152,7 +152,7 @@ const OneLoginLayout = ( {
 			</nav>
 		);
 
-		return <Step.TopBar rightElement={ rightElement } compactLogo="always" logo={ topBarLogo } />;
+		return <Step.TopBar rightElement={ rightElement } logo={ topBarLogo } />;
 	};
 
 	const effectiveColumnWidth: 4 | 5 | 6 | 8 | 10 = ( columnWidth ?? 6 ) as 4 | 5 | 6 | 8 | 10;

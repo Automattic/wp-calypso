@@ -8,6 +8,8 @@ import {
 	atmosphereConnect,
 	atmosphereIdRedirect,
 	atmosphereProfile,
+	atmosphereProfileFollowers,
+	atmosphereProfileFollowing,
 	atmosphereTagFeed,
 	atmosphereThread,
 	atmosphereAccount,
@@ -44,6 +46,22 @@ export default function () {
 		sidebar,
 		setBeforePrimary,
 		atmosphereProfile,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/reader/atmosphere/:id(\\d+)/profile/:actor/followers',
+		sidebar,
+		setBeforePrimary,
+		atmosphereProfileFollowers,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/reader/atmosphere/:id(\\d+)/profile/:actor/following',
+		sidebar,
+		setBeforePrimary,
+		atmosphereProfileFollowing,
 		makeLayout,
 		clientRender
 	);

@@ -1,7 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import ReactDom from 'react-dom';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import AutoDirection from 'calypso/components/auto-direction';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
@@ -19,14 +18,15 @@ export class ReaderSidebarListsListItem extends Component {
 		currentUser: PropTypes.object,
 	};
 
+	itemRef = createRef();
+
 	componentDidMount() {
 		// Scroll to the current list
 		if (
 			this.props.list.slug === this.props.currentListSlug &&
 			this.props.list.owner === this.props.currentListOwner
 		) {
-			const node = ReactDom.findDOMNode( this );
-			node.scrollIntoView();
+			this.itemRef.current?.scrollIntoView();
 		}
 	}
 
@@ -68,7 +68,12 @@ export class ReaderSidebarListsListItem extends Component {
 		const displayTitle = isOwnedByCurrentUser ? list.title : `${ list.title } (${ list.owner })`;
 
 		return (
-			<MenuItem className="sidebar__menu-item--reader-list" key={ list.ID } selected={ selected }>
+			<MenuItem
+				ref={ this.itemRef }
+				className="sidebar__menu-item--reader-list"
+				key={ list.ID }
+				selected={ selected }
+			>
 				<MenuItemLink
 					className="sidebar__menu-link"
 					href={ listRelativeUrl }

@@ -21,6 +21,7 @@ export interface UserPreferences {
 	recentSites?: number[];
 	'hosting-dashboard-color-scheme'?: 'light' | 'dark' | 'system';
 	'hosting-dashboard-opt-in'?: HostingDashboardOptIn;
+	'hosting-dashboard-dark-mode-announcement-dismissed'?: string; // Timestamp when the user dismissed the notice
 	'hosting-dashboard-opt-in-welcome-modal-dismissed'?: string; // Timestamp when the user dismissed the modal
 	[ key: `hosting-dashboard-dataviews-view-${ string }` ]: View | undefined;
 	[ key: `hosting-dashboard-overview-storage-notice-dismissed-${ number }` ]: string | undefined; // Timestamp when the user dismissed the notice
@@ -34,4 +35,7 @@ export interface UserPreferences {
 	[ key: `cancellation-offer-accepted-notice-dismissed-${ string | number }` ]: string | undefined;
 	'achievements-visibility'?: 'public' | 'private';
 	'achievements-global-notifications'?: 'enabled' | 'disabled';
+	'reader-profile-posts-visibility'?: 'public' | 'hidden';
+	'reader-profile-sites-visibility'?: 'public' | 'hidden';
+	'reader-profile-hidden-sites'?: number[];
 }

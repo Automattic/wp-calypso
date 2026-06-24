@@ -71,7 +71,7 @@ function makeQueryClient() {
 
 describe( 'AuthorProfilePanel', () => {
 	beforeEach( () => {
-		// recordReaderTracksEvent is a thunk that reads state.reader.follows.
+		// recordReaderTracksEvent is a thunk that reads the follows query cache.
 		// Replace it with a no-op action creator so dispatch() doesn't throw,
 		// while still letting spies observe call-site arguments.
 		jest
@@ -113,7 +113,7 @@ describe( 'AuthorProfilePanel', () => {
 		expect( handles.length ).toBeGreaterThanOrEqual( 1 );
 		expect( handles[ 0 ] ).toBeVisible();
 		expect( await screen.findByText( 'hello' ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: /like, 0 likes/i } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: /^like$/i } ) ).toBeVisible();
 	} );
 
 	it( 'does not render the back-to-timeline button (it is owned by the parent view)', async () => {
@@ -756,7 +756,10 @@ describe( 'AuthorProfilePanel — quote composer integration', () => {
 			{ queryClient }
 		);
 
-		await user.click( await screen.findByRole( 'button', { name: /quote, 3 quotes/i } ) );
+		const repostButton = await screen.findByRole( 'button', { name: /repost, 3 reposts/i } );
+		await user.click( repostButton );
+		const quoteItem = await screen.findByRole( 'menuitem', { name: 'Quote post' } );
+		await user.click( quoteItem );
 		expect( await screen.findByRole( 'dialog', { name: /quote post/i } ) ).toBeVisible();
 	} );
 } );

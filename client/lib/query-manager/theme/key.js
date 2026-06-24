@@ -1,4 +1,4 @@
-import { omitBy } from 'lodash';
+import { omitBy } from '@automattic/js-utils';
 import PaginatedQueryKey from '../paginated/key';
 import { DEFAULT_THEME_QUERY } from './constants';
 

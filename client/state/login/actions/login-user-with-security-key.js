@@ -29,7 +29,7 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 	} )
 		.then( ( response ) => {
 			const parameters = get( response, 'body.data', [] );
-			const twoStepNonce = get( parameters, 'two_step_nonce' );
+			const twoStepNonce = parameters?.two_step_nonce;
 
 			if ( twoStepNonce ) {
 				dispatch( updateNonce( twoFactorAuthType, twoStepNonce ) );
@@ -54,7 +54,7 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 			} );
 		} )
 		.catch( ( httpError ) => {
-			const twoStepNonce = get( httpError, 'response.body.data.two_step_nonce' );
+			const twoStepNonce = httpError?.response?.body?.data?.two_step_nonce;
 
 			if ( twoStepNonce ) {
 				dispatch( updateNonce( twoFactorAuthType, twoStepNonce ) );

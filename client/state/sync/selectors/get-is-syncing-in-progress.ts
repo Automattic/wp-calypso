@@ -1,4 +1,5 @@
-import { get, flowRight as compose } from 'lodash';
+import { get } from 'lodash';
+import { compose } from 'redux';
 import { getSiteSync } from 'calypso/state/sync/selectors/get-site-sync';
 import type { AppState } from 'calypso/types';
 

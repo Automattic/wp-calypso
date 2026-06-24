@@ -1,6 +1,13 @@
-import { Button, Card, CardBody, TextControl } from '@wordpress/components';
+import {
+	__experimentalVStack as VStack,
+	Button,
+	Card,
+	CardBody,
+	TextControl,
+} from '@wordpress/components';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import { useState, type FormEvent } from 'react';
+import { normalizeInstance } from './utils/normalize-instance';
 import type { MastodonError } from '@automattic/api-core';
 
 interface ConnectFormProps {
@@ -19,32 +26,51 @@ export function ConnectForm( { onSubmit, isSubmitting, error }: ConnectFormProps
 		if ( ! canSubmit ) {
 			return;
 		}
-		onSubmit( { instance: instance.trim() } );
+		const normalized = normalizeInstance( instance );
+		if ( ! normalized ) {
+			return;
+		}
+		onSubmit( { instance: normalized } );
 	};
 
 	return (
 		<Card>
 			<CardBody>
 				<form onSubmit={ handleSubmit }>
-					<TextControl
-						label={ translate( 'Instance' ) }
-						value={ instance }
-						onChange={ setInstance }
-						placeholder="mastodon.social"
-						help={ translate(
-							'The domain of the Mastodon (or compatible) server where your account lives.'
-						) }
-						disabled={ isSubmitting }
-						__nextHasNoMarginBottom
-					/>
-					{ error ? (
-						<p className="mastodon-error" role="alert">
-							{ errorMessage( error, translate ) }
+					<VStack spacing={ 4 }>
+						<p>
+							{ translate(
+								'Once connected, your Mastodon timeline appears alongside your blog feeds. You can like, boost, reply, and post directly from the Reader, with no app switching needed.'
+							) }
 						</p>
-					) : null }
-					<Button variant="primary" type="submit" disabled={ ! canSubmit } isBusy={ isSubmitting }>
-						{ translate( 'Continue' ) }
-					</Button>
+						<TextControl
+							label={ translate( 'Instance' ) }
+							value={ instance }
+							onChange={ setInstance }
+							placeholder="mastodon.social"
+							help={ translate(
+								'The domain where your account lives. We’ll hand you off to sign in there, so we never see your password.'
+							) }
+							disabled={ isSubmitting }
+							__nextHasNoMarginBottom
+						/>
+						{ error ? (
+							<p className="mastodon-error" role="alert">
+								{ errorMessage( error, translate ) }
+							</p>
+						) : null }
+						{ /* Wrap so the button stays intrinsic-sized inside VStack (which stretches children by default). */ }
+						<div>
+							<Button
+								variant="primary"
+								type="submit"
+								disabled={ ! canSubmit }
+								isBusy={ isSubmitting }
+							>
+								{ translate( 'Continue' ) }
+							</Button>
+						</div>
+					</VStack>
 				</form>
 			</CardBody>
 		</Card>
@@ -74,6 +100,10 @@ function errorMessage(
 			return translate( 'That connection is no longer available.' );
 		case 'not_found':
 			return translate( 'That Mastodon resource is no longer available.' );
+		case 'media_too_large':
+		case 'media_unsupported_type':
+		case 'media_decode_failed':
+		case 'media_invalid':
 		case 'unknown':
 			return translate( 'Something went wrong.' );
 		default:

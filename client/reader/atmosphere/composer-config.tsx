@@ -1,20 +1,41 @@
-import { createPostMutation } from '@automattic/api-queries';
+import { createPostMutation, useConnectionsQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { ReaderBlueskyIcon } from 'calypso/reader/components/icons/bluesky-icon';
+import { normalizeHandle } from 'calypso/reader/social/utils/normalize-handle';
+import { useAtmosphereInteractionSettings } from './interaction-settings';
 import { getThreadUrl } from './route';
 import { useAtmosphereComposerMedia } from './use-atmosphere-composer-media';
 import type { AtmosphereError, CreatePostParams, CreatePostResult } from '@automattic/api-core';
 import type { ActiveMode, ComposerConfig, Translate } from 'calypso/reader/social/composer';
 import type { ReactNode } from 'react';
 
+// AT-Proto's hard cap for `app.bsky.feed.post.text` is 300 graphemes;
+// the protocol doesn't vary by connection, so the hook just returns a
+// constant. Wrapping in `useLimit` matches the shared composer
+// contract — see `ComposerConfig.useLimit` in
+// `client/reader/social/composer/composer-config.tsx`.
 const LIMIT = 300;
+const useAtmosphereComposerLimit = (): number => LIMIT;
+
+function useAtmosphereAuthorHandle( connectionId: number | null ): string | null {
+	const { data } = useConnectionsQuery( { enabled: connectionId !== null } );
+	if ( connectionId === null ) {
+		return null;
+	}
+	const connection = data?.connections?.find( ( c ) => c.id === connectionId );
+	return connection?.handle ? normalizeHandle( connection.handle ) : null;
+}
 
 export const atmosphereComposerConfig: ComposerConfig<
 	AtmosphereError,
 	CreatePostParams,
 	CreatePostResult
 > = {
-	limit: LIMIT,
+	useLimit: useAtmosphereComposerLimit,
+	useAuthorHandle: useAtmosphereAuthorHandle,
+	headerIcon: <ReaderBlueskyIcon filled />,
+	protocolLabel: 'Bluesky',
 	supportedModes: [ 'reply', 'quote', 'standalone' ],
 	mutationFactory: createPostMutation,
 	buildParams: ( mode, text ) => buildParamsForMode( mode, text ),
@@ -114,8 +135,18 @@ export const atmosphereComposerConfig: ComposerConfig<
 			};
 		},
 	},
+	overflowHandoff: {
+		shown: ( mode ) => ( {
+			event: 'calypso_reader_atmosphere_overflow_handoff_shown',
+			props: { connection_id: mode.connectionId, mode_kind: mode.kind },
+		} ),
+		editorOpened: ( mode, { siteId } ) => ( {
+			event: 'calypso_reader_atmosphere_overflow_handoff_editor_opened',
+			props: { connection_id: mode.connectionId, mode_kind: mode.kind, site_id: siteId },
+		} ),
+	},
 	copy: {
-		title: ( mode, translate ) => titleForMode( mode, translate ),
+		title: ( mode, translate, handle ) => titleForMode( mode, translate, handle ),
 		placeholder: ( mode, translate, handle ) => placeholderForMode( mode, translate, handle ),
 	},
 	logBadRequest: ( mode, error ) => {
@@ -137,9 +168,19 @@ export const atmosphereComposerConfig: ComposerConfig<
 		} );
 	},
 	useMedia: useAtmosphereComposerMedia,
+	useProtocolExtras: useAtmosphereInteractionSettings,
 };
 
-function titleForMode( mode: ActiveMode, t: Translate ): string {
+function titleForMode( mode: ActiveMode, t: Translate, handle?: string | null ): string {
+	const base = baseTitleForMode( mode, t );
+	// "@handle" and the middle-dot separator are unlocalized — the handle is a
+	// fixed ATProto identifier and the dot is the same in every locale we
+	// ship. Composing here keeps the protocol-specific title format inside
+	// the protocol-specific config.
+	return handle ? `${ base } · @${ handle }` : base;
+}
+
+function baseTitleForMode( mode: ActiveMode, t: Translate ): string {
 	if ( mode.kind === 'reply' ) {
 		return t( 'Reply' ) as string;
 	}
@@ -204,13 +245,7 @@ function errorMessageFor( err: AtmosphereError, t: Translate ): ReactNode {
 		case 'auth_required':
 		case 'auth_failed':
 		case 'invalid_credentials':
-			return t( 'Your Bluesky connection needs to be reconnected. {{a}}Reconnect{{/a}}', {
-				components: {
-					a: <a href="/reader/atmosphere/connect" target="_blank" rel="noopener noreferrer" />,
-				},
-				comment:
-					'Composer error shown when the user’s Bluesky session expired; {{a}}…{{/a}} wraps a link to reconnect.',
-			} );
+			return t( 'Something went wrong with your Bluesky connection.' );
 		case 'reply_disabled':
 			return t( 'The author has restricted who can reply to this post.' );
 		case 'quote_disabled':

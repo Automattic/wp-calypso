@@ -162,3 +162,32 @@ describe( 'classifyMastodonError — wpcom-proxy wire shape', () => {
 		} );
 	} );
 } );
+
+describe( 'classifyMastodonError — slice 8a media kinds', () => {
+	it.each( [
+		[ 'mastodon_media_too_large', 'media_too_large' ],
+		[ 'mastodon_media_unsupported_type', 'media_unsupported_type' ],
+		[ 'mastodon_media_decode_failed', 'media_decode_failed' ],
+		[ 'mastodon_media_invalid', 'media_invalid' ],
+	] )( 'maps wpcom error code %s to kind %s', ( code, kind ) => {
+		expect( classifyMastodonError( wpErr( code, 400, 'm' ) ) ).toMatchObject( { kind } );
+	} );
+
+	it.each( [
+		[ 'mastodon_media_too_large', 'media_too_large' ],
+		[ 'mastodon_media_unsupported_type', 'media_unsupported_type' ],
+		[ 'mastodon_media_decode_failed', 'media_decode_failed' ],
+		[ 'mastodon_media_invalid', 'media_invalid' ],
+	] )(
+		'maps wpcom error code %s to kind %s when surfaced on .code (proxy wire shape)',
+		( code, kind ) => {
+			expect( classifyMastodonError( wpProxyErr( code, 400, 'm' ) ) ).toMatchObject( { kind } );
+		}
+	);
+
+	it( 'preserves the message on media_too_large', () => {
+		expect( classifyMastodonError( wpErr( 'mastodon_media_too_large', 400, 'too big' ) ) ).toEqual(
+			{ kind: 'media_too_large', message: 'too big' }
+		);
+	} );
+} );

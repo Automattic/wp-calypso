@@ -1,6 +1,7 @@
 import { Gridicon, TimeSince } from '@automattic/components';
 import { get } from 'lodash';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
+import type { JSX } from 'react';
 
 import './post-comment.scss'; // yes, this is intentional. they share styles.
 
@@ -28,7 +29,7 @@ function unescape( str: string ): string {
 
 export default function PostTrackback( props: PostTrackbackProps ): JSX.Element | null {
 	const commentsTree = props.commentsTree;
-	const comment = get( commentsTree[ props.commentId ], 'data' );
+	const comment = commentsTree[ props.commentId ]?.data;
 	if ( ! comment ) {
 		return null;
 	}

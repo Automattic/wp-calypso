@@ -12,6 +12,7 @@ import {
 	wordpress,
 } from '@wordpress/icons';
 import { FileType } from './types';
+import type { JSX } from 'react';
 
 interface FileTypeIconProps {
 	type: FileType;

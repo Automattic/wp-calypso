@@ -112,13 +112,44 @@ function qualifyAcct( acct: string, instance: string ): string {
 	return acct.includes( '@' ) ? acct : `${ acct }@${ instance }`;
 }
 
+// Defence-in-depth on the federated `acct` value. Mastodon's API normalises
+// account shape on the home instance, but `acct` carries data federated from
+// arbitrary remote servers — a malformed value (`alice@`, `@alice`,
+// `alice@@two.example`, etc.) would silently produce a hostile-looking URL
+// (`https:///@alice`, `https://alice/@`, `https://@two.example/@alice`) that
+// still parses as `https:` and slips past the SocialProfileCard scheme guard.
+// Reject anything that isn't exactly `<username>` or `<username>@<host>` with
+// non-empty parts and a hostname-shaped second segment.
+const MASTODON_HOST_RE = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/i;
+function safeProfileUrl( acct: string, instance: string ): string | undefined {
+	const at = acct.indexOf( '@' );
+	if ( at === -1 ) {
+		if ( ! acct || ! MASTODON_HOST_RE.test( instance ) ) {
+			return undefined;
+		}
+		return `https://${ instance }/@${ acct }`;
+	}
+	const username = acct.slice( 0, at );
+	const remoteInstance = acct.slice( at + 1 );
+	if ( ! username || ! remoteInstance || remoteInstance.includes( '@' ) ) {
+		return undefined;
+	}
+	if ( ! MASTODON_HOST_RE.test( remoteInstance ) ) {
+		return undefined;
+	}
+	return `https://${ remoteInstance }/@${ username }`;
+}
+
 // Map a Mastodon Account-shaped profile onto the subset of SocialProfileCard
 // props we control (avatar / banner / displayName / handle / bioHtml). Stats
 // and statsLabel come from the panel since they're translation-bound.
 export function mapMastodonAccountToSocialProfileCardProps(
 	profile: MastodonAuthorProfile,
 	options: MapMastodonOptions
-): Pick< SocialProfileCardProps, 'avatar' | 'banner' | 'displayName' | 'handle' | 'bioHtml' > {
+): Pick<
+	SocialProfileCardProps,
+	'avatar' | 'banner' | 'displayName' | 'handle' | 'bioHtml' | 'displayNameLink'
+> {
 	return {
 		avatar: profile.avatar,
 		banner: profile.header,
@@ -126,6 +157,7 @@ export function mapMastodonAccountToSocialProfileCardProps(
 		displayName: profile.display_name ? profile.display_name : undefined,
 		handle: qualifyAcct( profile.acct, options.instance ),
 		bioHtml: profile.note,
+		displayNameLink: safeProfileUrl( profile.acct, options.instance ),
 	};
 }
 

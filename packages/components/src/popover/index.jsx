@@ -1,9 +1,7 @@
 import clsx from 'clsx';
 import { useRtl } from 'i18n-calypso';
-import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, useState, useEffect, Component } from 'react';
-import ReactDom from 'react-dom';
 import RootChild from '../root-child';
 import {
 	bindWindowListeners,
@@ -17,6 +15,33 @@ import {
 import './style.scss';
 
 const noop = () => {};
+const DOMElement = typeof window !== 'undefined' ? window.Element : Object;
+
+function isDOMElement( value ) {
+	return Boolean( value && value.nodeType === 1 );
+}
+
+function getDOMNode( context ) {
+	if ( isDOMElement( context ) ) {
+		return context;
+	}
+
+	if ( typeof context?.getDOMNode === 'function' ) {
+		const node = context.getDOMNode();
+		return isDOMElement( node ) ? node : null;
+	}
+
+	if ( isDOMElement( context?.current ) ) {
+		return context.current;
+	}
+
+	if ( typeof context?.current?.getDOMNode === 'function' ) {
+		const node = context.current.getDOMNode();
+		return isDOMElement( node ) ? node : null;
+	}
+
+	return null;
+}
 
 class PopoverInner extends Component {
 	static defaultProps = {
@@ -80,10 +105,10 @@ class PopoverInner extends Component {
 		// setting and checking `this.scheduledPositionUpdate`.
 		// See https://github.com/Automattic/wp-calypso/commit/38e779cfebf6dd42bb30d8be7127951b0c531ae2
 		if ( this.scheduledPositionUpdate == null ) {
-			this.scheduledPositionUpdate = defer( () => {
+			this.scheduledPositionUpdate = setTimeout( () => {
 				this.setPosition();
 				this.scheduledPositionUpdate = null;
-			} );
+			}, 0 );
 		}
 	}
 
@@ -133,7 +158,7 @@ class PopoverInner extends Component {
 
 	onKeydown = ( event ) => {
 		if ( event.keyCode === 27 ) {
-			const domContext = ReactDom.findDOMNode( this.props.context );
+			const domContext = getDOMNode( this.props.context );
 			if ( domContext ) {
 				domContext.focus();
 			}
@@ -173,12 +198,12 @@ class PopoverInner extends Component {
 		let shouldClose = popoverContext && ! popoverContext.contains( event.target );
 
 		if ( shouldClose && this.props.context ) {
-			const domContext = ReactDom.findDOMNode( this.props.context );
+			const domContext = getDOMNode( this.props.context );
 			shouldClose = domContext && ! domContext.contains( event.target );
 		}
 
 		if ( shouldClose && this.props.ignoreContext ) {
-			const ignoreContext = ReactDom.findDOMNode( this.props.ignoreContext );
+			const ignoreContext = getDOMNode( this.props.ignoreContext );
 			shouldClose = ignoreContext && ! ignoreContext.contains( event.target );
 		}
 
@@ -208,12 +233,12 @@ class PopoverInner extends Component {
 		// { top: -9999, left: -9999 } where it already has dimensions. These dimensions are measured
 		// and used to calculate the final position.
 		// Focusing the element while it's off the screen would cause unwanted scrolling.
-		this.scheduledFocus = defer( () => {
+		this.scheduledFocus = setTimeout( () => {
 			if ( this.popoverNodeRef.current ) {
 				this.popoverNodeRef.current.focus();
 			}
 			this.scheduledFocus = null;
-		} );
+		}, 0 );
 	}
 
 	getPositionClass( position ) {
@@ -263,7 +288,7 @@ class PopoverInner extends Component {
 	computePosition() {
 		const { position, relativePosition } = this.props;
 		const domContainer = this.popoverInnerNodeRef.current;
-		const domContext = ReactDom.findDOMNode( this.props.context );
+		const domContext = getDOMNode( this.props.context );
 
 		if ( ! domContext ) {
 			return null;
@@ -446,11 +471,20 @@ function Popover( { isVisible = false, showDelay = 0, hideArrow = false, ...prop
 	);
 }
 
-// We accept DOM elements and React component instances as the `context` prop.
-// In case of a React component instance, we'll find the DOM element with `findDOMNode`.
+// We accept DOM elements, React refs, and explicit getDOMNode accessors as the `context` prop.
 const PropTypeElement = PropTypes.oneOfType( [
-	PropTypes.instanceOf( Component ),
-	PropTypes.instanceOf( typeof window !== 'undefined' ? window.Element : Object ),
+	PropTypes.instanceOf( DOMElement ),
+	PropTypes.shape( {
+		current: PropTypes.instanceOf( DOMElement ),
+	} ),
+	PropTypes.shape( {
+		getDOMNode: PropTypes.func,
+	} ),
+	PropTypes.shape( {
+		current: PropTypes.shape( {
+			getDOMNode: PropTypes.func,
+		} ),
+	} ),
 ] );
 
 Popover.propTypes = {

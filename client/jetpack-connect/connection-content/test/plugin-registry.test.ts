@@ -1,4 +1,9 @@
-import { PLUGIN_REGISTRY, getLogoForFamilies, getPluginEntry } from '../plugin-registry';
+import {
+	PLUGIN_REGISTRY,
+	getLogoForFamilies,
+	getPluginDisplayName,
+	getPluginEntry,
+} from '../plugin-registry';
 
 describe( 'PLUGIN_REGISTRY', () => {
 	test( 'every entry agrees with its key on slug', () => {
@@ -47,6 +52,23 @@ describe( 'getPluginEntry', () => {
 		expect( getPluginEntry( 'unknown-plugin' ) ).toBeUndefined();
 		expect( getPluginEntry( 'jetpack-search-extra' ) ).toBeUndefined();
 		expect( getPluginEntry( '' ) ).toBeUndefined();
+	} );
+} );
+
+describe( 'getPluginDisplayName', () => {
+	test( 'returns the registered display name for known slugs', () => {
+		expect( getPluginDisplayName( 'jetpack' ) ).toBe( 'Jetpack' );
+		expect( getPluginDisplayName( 'jetpack-backup' ) ).toBe( 'Jetpack VaultPress Backup' );
+		expect( getPluginDisplayName( 'woocommerce-payments' ) ).toBe( 'WooPayments' );
+		expect( getPluginDisplayName( 'automattic-for-agencies-client' ) ).toBe(
+			'Automattic for Agencies'
+		);
+	} );
+
+	test( 'falls back to the raw slug for unknown plugins', () => {
+		expect( getPluginDisplayName( 'unknown-plugin' ) ).toBe( 'unknown-plugin' );
+		expect( getPluginDisplayName( 'jetpack-search-extra' ) ).toBe( 'jetpack-search-extra' );
+		expect( getPluginDisplayName( '' ) ).toBe( '' );
 	} );
 } );
 

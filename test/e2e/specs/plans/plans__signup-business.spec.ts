@@ -22,6 +22,7 @@ test.describe(
 			helperData,
 			page,
 			pageCartCheckout,
+			pagePostCheckoutSetupSite,
 			pageSignupPickPlan,
 		} ) => {
 			await test.step( `Given I am authenticated as '${ accountPreRelease.accountName }'`, async function () {
@@ -59,11 +60,16 @@ test.describe(
 				await pageCartCheckout.purchase( { timeout: 75 * 1000 } );
 			} );
 
-			await test.step( 'Then I land on Home', async function () {
-				await page.waitForURL( /home/ );
+			await test.step( 'Then I land on the post-checkout "Set up your site" screen', async function () {
+				// Eligible paid plans now land on the post-checkout choice screen
+				// after checkout, instead of going straight to Home.
+				await pagePostCheckoutSetupSite.waitUntilLoaded();
 			} );
 
 			await test.step( `And the sidebar shows I am on the ${ planName } plan`, async function () {
+				await page.goto(
+					helperData.getCalypsoURL( `home/${ newSiteDetails?.blog_details.site_slug as string }` )
+				);
 				const currentPlan = await componentSidebar.getCurrentPlanName();
 				expect( currentPlan ).toBe( planName );
 			} );

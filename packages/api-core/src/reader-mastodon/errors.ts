@@ -7,6 +7,10 @@ export type MastodonError =
 	| { kind: 'rate_limited'; retry_after?: number }
 	| { kind: 'upstream_unavailable' }
 	| { kind: 'bad_request'; message: string }
+	| { kind: 'media_too_large'; message?: string }
+	| { kind: 'media_unsupported_type'; message?: string }
+	| { kind: 'media_decode_failed'; message?: string }
+	| { kind: 'media_invalid'; message?: string }
 	| { kind: 'unknown'; cause: unknown };
 
 interface WpErrorLike {
@@ -70,6 +74,14 @@ export function classifyMastodonError( raw: unknown ): MastodonError {
 		case 'bad_request':
 		case 'reader_mastodon_bad_request':
 			return { kind: 'bad_request', message: raw.message ?? '' };
+		case 'mastodon_media_too_large':
+			return { kind: 'media_too_large', message: raw.message };
+		case 'mastodon_media_unsupported_type':
+			return { kind: 'media_unsupported_type', message: raw.message };
+		case 'mastodon_media_decode_failed':
+			return { kind: 'media_decode_failed', message: raw.message };
+		case 'mastodon_media_invalid':
+			return { kind: 'media_invalid', message: raw.message };
 	}
 	const statusCode = raw.statusCode ?? raw.status;
 	if ( statusCode === 429 ) {

@@ -1,5 +1,6 @@
+import { omit, omitBy } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
-import { get, isEmpty, map, omit, omitBy } from 'lodash';
+import { isEmpty, map } from 'lodash';
 import {
 	IMPORTS_AUTHORS_SET_MAPPING,
 	IMPORTS_AUTHORS_START_MAPPING,
@@ -82,6 +83,7 @@ function importerStatus( state = {}, action ) {
 
 			// convert the response with `fromApi` only after we know it's not empty
 			const newImporterStatus = fromApi( action.importerStatus );
+			const newSiteId = newImporterStatus.site?.ID;
 
 			return omitBy(
 				{
@@ -90,10 +92,21 @@ function importerStatus( state = {}, action ) {
 					// ...and the importer being received.
 					[ newImporterStatus.importerId ]: newImporterStatus,
 				},
-				( importer ) =>
-					[ appStates.CANCEL_PENDING, appStates.DEFUNCT, appStates.EXPIRED ].includes(
-						importer.importerState
-					)
+				( importer ) => {
+					// Drop terminal-state importers.
+					if (
+						[ appStates.CANCEL_PENDING, appStates.DEFUNCT, appStates.EXPIRED ].includes(
+							importer.importerState
+						)
+					) {
+						return true;
+					}
+					// The server only tracks one importer per site (a single restapi_import_manager_data blog option).
+					// Without this, an old importerId could linger in Redux, and the UI would keep POSTing to /imports/{stale-id} and getting 404s.
+					return (
+						importer.importerId !== newImporterStatus.importerId && importer.site?.ID === newSiteId
+					);
+				}
 			);
 		}
 
@@ -114,7 +127,7 @@ function importerStatus( state = {}, action ) {
 					customData: {
 						...state[ action.importerId ]?.customData,
 						sourceAuthors: map(
-							get( state[ action.importerId ], 'customData.sourceAuthors' ),
+							state[ action.importerId ]?.customData?.sourceAuthors,
 							( author ) =>
 								action.sourceAuthor.id === author.id
 									? {

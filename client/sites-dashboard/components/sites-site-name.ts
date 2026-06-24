@@ -6,7 +6,7 @@ export const SiteName = styled.a< { fontSize?: number } >`
 	white-space: nowrap;
 	margin-inline-end: 8px;
 	font-weight: 500;
-	font-size: ${ ( props ) => `${ props.fontSize }px` };
+	font-size: ${ ( props ) => `${ props.fontSize ?? 14 }px` };
 	letter-spacing: -0.4px;
 	color: var( --studio-gray-100 );
 	line-height: 18px;
@@ -15,7 +15,3 @@ export const SiteName = styled.a< { fontSize?: number } >`
 		text-decoration: underline;
 	}
 `;
-
-SiteName.defaultProps = {
-	fontSize: 14,
-};

@@ -8,7 +8,7 @@ import {
 	TYPE_ARTICLE,
 } from '@automattic/social-previews';
 import { localize } from 'i18n-calypso';
-import { compact, find, get } from 'lodash';
+import { find, get } from 'lodash';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import SeoPreviewUpgradeNudge from 'calypso/components/seo/preview-upgrade-nudge';
@@ -29,7 +29,7 @@ import './style.scss';
 const PREVIEW_IMAGE_WIDTH = 512;
 
 const largeBlavatar = ( site ) => {
-	const siteIcon = get( site, 'icon.img' );
+	const siteIcon = site?.icon?.img;
 	if ( ! siteIcon ) {
 		return null;
 	}
@@ -86,10 +86,7 @@ const getSeoExcerptForSite = ( site ) => {
 	}
 
 	return formatExcerpt(
-		find(
-			[ get( site, 'options.advanced_seo_front_page_description' ), site.description ],
-			Boolean
-		)
+		find( [ site.options?.advanced_seo_front_page_description, site.description ], Boolean )
 	);
 };
 
@@ -200,7 +197,7 @@ export class SeoPreviewPane extends PureComponent {
 
 		const { selectedService } = this.state;
 
-		const services = compact( [ post && 'wordpress', 'google', 'facebook', 'x' ] );
+		const services = [ post && 'wordpress', 'google', 'facebook', 'x' ].filter( Boolean );
 
 		if ( showNudge ) {
 			return <SeoPreviewUpgradeNudge { ...{ site } } />;

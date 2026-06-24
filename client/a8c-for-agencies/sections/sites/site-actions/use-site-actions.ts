@@ -102,7 +102,7 @@ export default function useSiteActions( {
 				href: `https://wordpress.com/domains/manage/${ blog_id }`,
 				onClick: () => handleClickMenuItem( 'change_domain' ),
 				isExternalLink: true,
-				isEnabled: isWPCOMSite && ! isUrlOnly,
+				isEnabled: isWPCOMSite && ! isUrlOnly && ! isDevSite,
 			},
 			{
 				name: translate( 'Hosting configuration' ),
@@ -173,7 +173,7 @@ export default function useSiteActions( {
 				href: `${ urlWithScheme }/wp-admin`,
 				onClick: () => handleClickMenuItem( 'visit_wp_admin' ),
 				isExternalLink: true,
-				isEnabled: true && ! isUrlOnly,
+				isEnabled: ! isUrlOnly,
 			},
 			{
 				name: translate( 'Remove site' ),
@@ -300,7 +300,12 @@ export function useSiteActionsDataViews( {
 				label: translate( 'Change domain' ),
 				icon: external,
 				isEligible( item: SiteData ) {
-					return canHaveActions( item ) && isAtomicSite( item ) && ! isUrlOnly( item );
+					return (
+						canHaveActions( item ) &&
+						isAtomicSite( item ) &&
+						! isUrlOnly( item ) &&
+						! isDevSite( item )
+					);
 				},
 				callback( items: SiteData[] ) {
 					window.open( `https://wordpress.com/domains/manage/${ getBlogId( items[ 0 ] ) }` );
@@ -335,7 +340,7 @@ export function useSiteActionsDataViews( {
 			{
 				id: 'view_activity_not_wpcom',
 				label: translate( 'View activity' ),
-				isEligible( item: SiteData ) {
+				isEligible( item: SiteData ): boolean {
 					return canHaveActions( item ) && ! isAtomicSite( item ) && ! isUrlOnly( item );
 				},
 				callback( items: SiteData[] ) {
@@ -451,7 +456,7 @@ export function useSiteActionsDataViews( {
 			{
 				id: 'delete_site',
 				label: translate( 'Delete site' ),
-				isEligible( item: SiteData ) {
+				isEligible( item: SiteData ): boolean {
 					return canHaveActions( item ) && false; // Feature is always disabled, see canDelete above.
 				},
 				RenderModal: createDeleteSiteActionModal( {

@@ -1,6 +1,7 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { brush, envelope, globe, layout, plugins } from '@wordpress/icons';
+import { useRef } from 'react';
 import RouterLinkButton from '../../components/router-link-button';
 import { SidebarExpandableMenuItem, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
 import SidebarNavigator from '../../components/sidebar-navigator';
@@ -10,15 +11,22 @@ import SiteSidebar from '../../sites/site-sidebar';
 import { wpcomLink } from '../../utils/link';
 import { useAnalytics } from '../analytics';
 import { useAppContext } from '../context';
+import AgencySidebar from './agency';
+import AgencyClientSidebar from './agency-client';
+import { useSidebarScrollSync } from './use-sidebar-scroll-sync';
 
 import './sidebar.scss';
 
-export default function Sidebar() {
+export default function Sidebar( { scrollSyncEnabled = false }: { scrollSyncEnabled?: boolean } ) {
 	const { Logo, name } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
+	const sidebarRef = useRef< HTMLDivElement >( null );
+	const navigatorRef = useRef< HTMLDivElement >( null );
+
+	useSidebarScrollSync( { enabled: scrollSyncEnabled, sidebarRef, navigatorRef } );
 
 	return (
-		<div className="dashboard-responsive-sidebar__sidebar">
+		<div ref={ sidebarRef } className="dashboard-responsive-sidebar__sidebar">
 			{ Logo && (
 				<div className="dashboard-responsive-sidebar__logo">
 					<RouterLinkButton
@@ -32,7 +40,7 @@ export default function Sidebar() {
 					/>
 				</div>
 			) }
-			<SidebarNavigator>
+			<SidebarNavigator ref={ navigatorRef }>
 				<SidebarNavigator.Screen path="/">
 					<PrimaryMenuSidebar />
 				</SidebarNavigator.Screen>
@@ -55,6 +63,8 @@ function PrimaryMenuSidebar() {
 
 	return (
 		<SidebarMenu>
+			{ supports.agency && <AgencySidebar /> }
+			{ supports.agencyClient && <AgencyClientSidebar /> }
 			{ supports.sites && (
 				<SidebarMenuItem icon={ layout } to="/sites">
 					{ __( 'Sites' ) }

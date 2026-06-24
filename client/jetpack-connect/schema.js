@@ -23,6 +23,7 @@ export const authorizeQueryDataSchema = {
 		close_window_after_login: { type: 'string' }, // '1' if true
 		close_window_after_auth: { type: 'string' }, // '1' if true
 		from: { type: 'string' },
+		has_connected_owner: { type: 'string' },
 		home_url: { type: 'string' },
 		is_popup: { type: 'string' }, // '1' if true
 		jp_version: { type: 'string' },

@@ -4,6 +4,7 @@ import {
 } from '@automattic/api-queries';
 import { formatNumber } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
+import { createElement } from 'react';
 import { useDispatch } from 'react-redux';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -115,17 +116,34 @@ export function makeUseMastodonLikeAction( connectionId: number ): UseLikeAction
 		};
 
 		const accessibleLabel = ( count: number ) =>
-			translate( 'Favorite, %(count)s favorite', 'Favorite, %(count)s favorites', {
-				count,
-				args: { count: formatNumber( count ) },
-				textOnly: true,
-			} );
+			count > 0
+				? translate( 'Favorite, %(count)s favorite', 'Favorite, %(count)s favorites', {
+						count,
+						args: { count: formatNumber( count ) },
+						textOnly: true,
+				  } )
+				: translate( 'Favorite', {
+						textOnly: true,
+						comment:
+							'Accessible label and tooltip for the favorite button on a Mastodon post card when the post has no favorites yet. Verb (Mastodon UI vocabulary; equivalent to "like").',
+				  } );
+
+		const statRowText = ( count: number ) =>
+			translate(
+				'{{strong}}%(count)s{{/strong}} favorite',
+				'{{strong}}%(count)s{{/strong}} favorites',
+				{
+					count,
+					args: { count: formatNumber( count ) },
+					components: { strong: createElement( 'strong' ) },
+				}
+			);
 
 		return {
 			supported: true,
 			isLiked,
 			isPending,
-			label: { accessibleLabel },
+			label: { accessibleLabel, statRowText },
 			like,
 			unlike,
 		};

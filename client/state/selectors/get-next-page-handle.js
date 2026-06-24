@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/media/init';
 
 /**
@@ -8,5 +6,5 @@ import 'calypso/state/media/init';
  * @param {number} siteId The site ID
  */
 export default function getNextPageHandle( state, siteId ) {
-	return get( state.media.fetching, [ siteId, 'nextPageHandle' ] );
+	return state.media.fetching?.[ siteId ]?.nextPageHandle;
 }

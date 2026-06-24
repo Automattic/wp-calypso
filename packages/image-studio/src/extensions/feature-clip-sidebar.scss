@@ -10,6 +10,10 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 8px;
+		// Keep "Feature Clip" + badge on a single line. Without this the
+		// panel toggle's narrow flex column can wrap the two-word title
+		// onto separate lines.
+		white-space: nowrap;
 	}
 
 	&__description {
@@ -21,5 +25,90 @@
 	&__cta {
 		width: 100%;
 		justify-content: center;
+	}
+
+	&__preview-frame {
+		position: relative;
+		display: block;
+		width: 100%;
+		aspect-ratio: 9 / 16;
+		margin: 0 auto 8px;
+		background: #000;
+		border-radius: 8px;
+		overflow: hidden;
+
+		&--loading {
+			background:
+				linear-gradient(
+					90deg,
+					rgba(255, 255, 255, 0) 0%,
+					rgba(255, 255, 255, 0.06) 50%,
+					rgba(255, 255, 255, 0) 100%
+				),
+				#1a1a1a;
+			background-size: 200% 100%, 100% 100%;
+			background-repeat: no-repeat;
+
+			@media (prefers-reduced-motion: no-preference) {
+				animation: image-studio-feature-clip-shimmer 1.5s ease-in-out infinite;
+			}
+		}
+	}
+
+	// Core Notice has no outer margin; keep the panel's 12px rhythm below it.
+	&__error-notice {
+		margin-bottom: 12px;
+	}
+
+	&__preview-video {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		border-radius: inherit;
+
+		// Fullscreen makes the box 16:9; switch to contain so the 9:16 clip
+		// letterboxes instead of cropping. Separate blocks, not a group: an
+		// unknown pseudo would invalidate the whole selector list.
+		&:fullscreen {
+			object-fit: contain;
+		}
+
+		&:-webkit-full-screen {
+			object-fit: contain;
+		}
+	}
+
+	&__share-cta {
+		width: 100%;
+		// WP's Button defaults to a left-justified inline-flex row even when
+		// width is forced to 100%. Specify center alignment + a small gap so
+		// the icon + label cluster sits visually centered in the full-width
+		// pill and tracks the bottom-action row beneath it.
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 8px;
+		margin-bottom: 8px;
+	}
+
+	&__bottom-actions {
+		display: flex;
+		align-items: stretch;
+		gap: 8px;
+	}
+
+	&__bottom-action {
+		flex: 1 1 0;
+		justify-content: center;
+	}
+}
+
+@keyframes image-studio-feature-clip-shimmer {
+	0% {
+		background-position: 200% 0, 0 0;
+	}
+	100% {
+		background-position: -200% 0, 0 0;
 	}
 }

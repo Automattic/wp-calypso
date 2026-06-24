@@ -1,7 +1,7 @@
 import config, { isEnabled } from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Step } from '@automattic/onboarding';
-import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
+import { UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -10,12 +10,14 @@ import { connect, useSelector } from 'react-redux';
 import { CookieBannerContainerSSR } from 'calypso/blocks/cookie-banner';
 import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversation/dialog';
 import AsyncLoad from 'calypso/components/async-load';
+import AsyncHelpCenterFab from 'calypso/components/help-center-fab/async';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
 import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
+import { Nav2026UniversalHeader } from 'calypso/layout/nav-2026-universal-header';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -78,6 +80,22 @@ const loadSupportArticleDialog = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-blocks-support-article-dialog" */ 'calypso/blocks/support-article-dialog'
 	);
+
+const HELP_CENTER_FAB_SECTIONS = [
+	'accept-invite',
+	'checkout',
+	'mailing-lists',
+	'patterns',
+	'performance-profiler',
+	'plugins',
+	'reader',
+	'site-profiler',
+	'theme',
+	'themes',
+];
+
+// Fallback when section name is unreliable — e.g. /me/account/closed activates as 'me'.
+const HELP_CENTER_FAB_ROUTES = [ '/me/account/closed' ];
 
 const LayoutLoggedOut = ( {
 	isAkismet,
@@ -153,6 +171,17 @@ const LayoutLoggedOut = ( {
 		! hasGravPoweredClientClass &&
 		! isJetpackCloud &&
 		! isWooOAuth2Client( oauth2Client );
+
+	const isEligibleSection = HELP_CENTER_FAB_SECTIONS.includes( sectionName );
+
+	// Logged-in users use the masterbar control instead.
+	// Reader tag embeds are widgets meant to be iframed by third parties — no FAB.
+	const showHelpCenterFab =
+		! isLoggedIn &&
+		isEnabled( 'help-center/logged-out-fab' ) &&
+		( isEligibleSection || HELP_CENTER_FAB_ROUTES.includes( currentRoute ) ) &&
+		! isReaderTagEmbed &&
+		userAllowedToHelpCenter;
 
 	const loadHelpCenter =
 		isLoggedIn &&
@@ -252,7 +281,7 @@ const LayoutLoggedOut = ( {
 		} );
 
 		masterbar = (
-			<UniversalNavbarHeader
+			<Nav2026UniversalHeader
 				isLoggedIn={ isLoggedIn }
 				sectionName={ sectionName }
 				className={ className }
@@ -361,6 +390,8 @@ const LayoutLoggedOut = ( {
 							} }
 						/>
 					) }
+				{ /* Rendered last so the FAB tabs after the form, just before the dev badge. */ }
+				{ showHelpCenterFab && <AsyncHelpCenterFab sectionName={ sectionName } /> }
 			</div>
 		</Step.StepContainerV2Provider>
 	);
@@ -395,8 +426,10 @@ export default withCurrentRoute(
 			const isWooJPC = isWooJPCFlow( state );
 			const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
 			const isLogin = currentRoute.startsWith( '/log-in' );
+			const isWooCommerceQrLogin =
+				currentRoute === '/me/security/qr-login' && currentQuery?.origin === 'woocommerce';
 
-			const noMasterbarForRoute = isLogin || isInvitationURL;
+			const noMasterbarForRoute = isLogin || isInvitationURL || isWooCommerceQrLogin;
 			const isPopup = '1' === currentQuery?.is_popup;
 			const noMasterbarForSection =
 				! isWooOAuth2Client( oauth2Client ) &&

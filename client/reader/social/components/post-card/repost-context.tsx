@@ -19,6 +19,13 @@ export interface RepostAction {
 		 * "Repost, %d repost(s)" or "Undo repost, %d repost(s)" form.
 		 */
 		accessibleLabel: ( count: number, isReposted: boolean ) => TranslateResult;
+		/**
+		 * Full stat-row phrase, plural-aware — e.g. "<strong>5</strong> reposts" /
+		 * "<strong>1</strong> boost". Adapter owns the singular/plural form
+		 * AND the `%(count)s` placeholder so translators see the whole sentence
+		 * and control count/noun ordering.
+		 */
+		statRowText: ( count: number ) => TranslateResult;
 	};
 	/** Whether the Quote post action is available (slice-7d follow-up). */
 	canQuote: boolean;
@@ -41,6 +48,7 @@ const nullRepostActionFn: UseRepostActionFn = () => ( {
 	label: {
 		action: '',
 		accessibleLabel: () => '',
+		statRowText: () => '',
 	},
 	canQuote: false,
 	repost: () => {},

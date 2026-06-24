@@ -1,0 +1,258 @@
+@import 'calypso/lib/color-scheme/dark-theme';
+
+@mixin themes-dark-mode-color-scheme {
+	@include color-scheme-dark-theme-calypso-overrides;
+	@include color-scheme-dark-theme-color-palette-alias( 'theme-highlight-color', 'color-accent' );
+
+	--color-success-dark: var( --color-success-70 );
+	--color-success-light: var( --color-success-30 );
+	--color-warning-dark: var( --color-warning-70 );
+	--color-warning-light: var( --color-warning-30 );
+	--color-error-dark: var( --color-error-70 );
+	--color-error-light: var( --color-error-30 );
+	--theme-text-color: var( --dashboard__text-color );
+	--theme-base-color: var( --dashboard__background-color );
+	--theme-submenu-text-color: var( --dashboard__text-muted-color );
+	--theme-submenu-background-color: var( --dashboard-surface__background-color );
+	--theme-icon-color: var( --dashboard__text-muted-color );
+	--theme-notification-color: var( --wp-admin-theme-color );
+
+	// Activation modal: the dashboard dark theme re-generates the studio-blue
+	// scale so 60+ are mixed with white — pick higher-index blues here.
+	.iframe-preview-card {
+		// Lower the default so the hover step matches light mode in magnitude.
+		border-color: var( --color-neutral-50 );
+
+		&:hover {
+			border-color: var( --color-neutral-70 );
+		}
+
+		&:focus-within {
+			border-color: var( --studio-blue-80 );
+		}
+
+		&.is-selected {
+			border-color: var( --studio-blue-60 );
+		}
+
+		.form-radio {
+			border-color: var( --color-neutral-50 );
+
+			&:hover {
+				border-color: var( --color-neutral-70 );
+			}
+
+			// The default focus halo uses --color-primary-10, which lands in
+			// the surface-blended end of the regenerated studio-blue scale —
+			// invisible against the dark card. Swap in a lighter blue.
+			&:focus {
+				box-shadow: 0 0 0 2px var( --studio-blue-70 );
+			}
+
+			&:checked::before {
+				background: var( --studio-blue-60 );
+			}
+		}
+
+		// Overlays an always-light iframe, so use the dashboard page background
+		// (a stable dark color) instead of any neutral that the dark-mode mixin
+		// has remapped toward the foreground.
+		.iframe-preview-card__enter-preview {
+			background: var( --dashboard__background-color );
+		}
+	}
+
+	.themes__activation-modal .components-button.is-tertiary {
+		color: var( --studio-blue-70 );
+	}
+}
+
+@mixin themes-dark-mode-root {
+	@include themes-dark-mode-color-scheme;
+
+	@include color-scheme-dark-theme-wpnc-panel;
+	@include color-scheme-dark-theme-community-translator;
+
+	@include color-scheme-dark-theme-masterbar;
+
+	.theme-tier-badge .premium-badge,
+	.global-styles-variations__header .premium-badge {
+		--studio-black: var( --dashboard-surface__background-color );
+		--studio-white: var( --dashboard__text-color );
+	}
+
+	.is-logged-out {
+		--color-primary: var( --wp-admin-theme-color-darker-20 );
+	}
+
+	.card.theme-card.is-placeholder,
+	.theme__sheet-placeholder {
+		background-color: var( --dashboard-surface__border-color );
+	}
+
+	.themes-list__empty-search-text,
+	.themes-list__options-subheading,
+	.themes-list__option-description,
+	.themes-list__option-description > ul,
+	.themes-list__option-icon {
+		color: var( --dashboard__text-muted-color );
+	}
+
+	.themes-list__option-icon {
+		fill: currentColor;
+	}
+
+	.themes-list__options {
+		background-color: var( --dashboard-surface__background-color );
+		border-color: var( --dashboard-surface__border-color );
+		color: var( --dashboard__text-color );
+	}
+
+	.themes-list__option-content {
+		border-bottom-color: var( --dashboard-surface__border-color );
+	}
+
+	.themes-list__option-description > ul > li::before {
+		border-color: var( --dashboard__text-muted-color );
+		color: var( --dashboard__text-muted-color );
+	}
+
+	.themes-list__option-button.button.is-primary {
+		background-color: var( --wp-admin-theme-color );
+		border-color: var( --wp-admin-theme-color );
+		color: var( --wp-components-color-accent-inverted );
+
+		&:visited {
+			color: var( --wp-components-color-accent-inverted );
+		}
+
+		&:focus,
+		&:hover {
+			background-color: var( --wp-admin-theme-color-darker-10 );
+			border-color: var( --wp-admin-theme-color-darker-10 );
+			color: var( --wp-components-color-accent-inverted );
+		}
+	}
+
+	.theme-tier-badge .badge--info {
+		background-color: var( --dashboard-item-selected__background-color );
+		color: var( --wp-admin-theme-color-darker-20 );
+	}
+
+	.theme-download-card__external-icon {
+		fill: currentColor;
+	}
+
+	.theme-card__image-container {
+		background-color: color-mix( in srgb, var( --dashboard__text-color ) 12%, transparent );
+		border-color: color-mix( in srgb, var( --dashboard__text-color ) 12%, transparent );
+		box-shadow: 0 1px 4px 0 color-mix( in srgb, var( --dashboard__text-color ) 12%, transparent );
+	}
+
+	.theme__sheet-style-variations::after {
+		@include long-content-fade(
+			$direction: right,
+			$size: 24px,
+			$color: var( --dashboard__background-color )
+		);
+		right: -1px; // fixes a 1px gap between the fade and the edge of the container
+	}
+
+	.themes-list__option-button.button:not( .is-primary ),
+	.theme-download-card .button,
+	.theme__sheet-demo-button {
+		background-color: transparent;
+		border-color: var( --dashboard-field__border-color );
+		color: var( --dashboard__text-color );
+
+		&:visited {
+			color: var( --dashboard__text-color );
+		}
+
+		&:focus,
+		&:hover {
+			background-color: transparent;
+			border-color: var( --dashboard__text-muted-color );
+			color: var( --dashboard__text-color );
+		}
+	}
+
+	.theme__sheet-preview-demo-site.button {
+		background: var( --dashboard-surface__background-color );
+		border-color: var( --dashboard-field__border-color );
+		color: var( --dashboard__text-color );
+
+		&:visited {
+			color: var( --dashboard__text-color );
+		}
+
+		&:focus,
+		&:hover {
+			background: var( --dashboard-surface__background-color );
+			border-color: var( --dashboard__text-muted-color );
+		}
+	}
+
+	.card.theme__sheet-card-support .components-button {
+		--wp-components-color-accent: var( --wp-admin-theme-color );
+		--wp-components-color-accent-darker-20: var( --color-accent-80 );
+		background-color: transparent;
+
+		&:hover {
+			background-color: transparent;
+		}
+	}
+	.components-card-footer.help-center__container-footer .button.help-center-contact-page__button {
+		--wp-components-color-accent: var( --wp-admin-theme-color );
+	}
+
+	.theme__sheet-features-list {
+		a,
+		span {
+			color: var( --color-text );
+		}
+	}
+
+	.theme__sheet-web-preview,
+	.theme__sheet-screenshot {
+		background-color: var( --dashboard-surface__background-color );
+		box-shadow: 0 0 0 1px var( --dashboard-surface__border-color );
+	}
+
+	.theme__sheet-web-preview .theme-preview__container--loading .theme-preview__frame-wrapper {
+		background: var( --dashboard-surface__background-color );
+	}
+
+	.web-preview__close.button {
+		border-inline-end-color: var( --dashboard-surface__border-color );
+		color: var( --wp-components-color-accent-darker-20 );
+
+		&:hover {
+			color: var( --wp-components-color-accent-darker-10 );
+		}
+	}
+
+	.theme-collection__carousel-controls {
+		.theme-collection__see-all {
+			color: var( --dashboard__text-color );
+
+			&:focus,
+			&:hover {
+				color: var( --wp-components-color-accent-darker-20 );
+			}
+		}
+
+		.theme-collection__carousel-nav-button {
+			background-color: var( --dashboard-surface__background-color );
+			border-color: var( --dashboard-surface__border-color );
+			color: var( --dashboard__text-color );
+
+			&:focus,
+			&:hover {
+				background-color: var( --dashboard-item-selected-hover__background-color );
+				border-color: var( --wp-components-color-accent-darker-20 );
+				color: var( --wp-components-color-accent-darker-20 );
+			}
+		}
+	}
+}

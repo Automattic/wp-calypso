@@ -6,6 +6,14 @@ export interface AtmosphereConnection {
 	// The list endpoint always returns null. Real avatars come from
 	// getConnection(id).
 	avatar: string | null;
+	// Hostname of the PDS this connection's token resolves to (e.g.
+	// `bsky.social`, `pds.example.com`). Optional during the rollout
+	// window: older serializer revisions (pre-CM-740) don't emit the
+	// field at all. Once CM-740 is in production the key is always
+	// present — `string` when resolvable, `null` when the fallback
+	// chain fails.
+	// TODO(post-CM-740): drop the `?` and keep `string | null`.
+	pds_hostname?: string | null;
 }
 
 export interface AtmosphereConnectionsResponse {
@@ -30,6 +38,10 @@ export interface AtmosphereConnectionDetails {
 	avatar: string | null;
 	banner: string | null;
 	counts: AtmosphereProfileCounts;
+	// Same caveat as `AtmosphereConnection.pds_hostname` — optional during
+	// the rollout window. TODO(post-CM-740): drop the `?` alongside the
+	// one on `AtmosphereConnection`.
+	pds_hostname?: string | null;
 }
 
 export interface AtmosphereAuthor {
@@ -264,6 +276,29 @@ export interface AtmosphereScopedProfile extends AtmosphereAuthorProfile {
 }
 
 /**
+ * Slim profile shape returned by `getFollowers` / `getFollows`.
+ * Bluesky's `app.bsky.actor.defs#profileView` lacks the count and
+ * banner fields included in `ProfileViewDetailed`, so this is a
+ * subset of `AtmosphereAuthorProfile`.
+ */
+export interface AtmosphereProfileSummary {
+	did: string;
+	handle: string;
+	display_name: string | null;
+	description: string;
+	avatar: string | null;
+}
+
+export interface AtmosphereScopedProfileSummary extends AtmosphereProfileSummary {
+	viewer: AtmosphereProfileViewer;
+}
+
+export interface AtmosphereScopedProfilesPage {
+	items: AtmosphereScopedProfileSummary[];
+	cursor: string | null;
+}
+
+/**
  * A single follow record returned by the create-follow endpoint.
  * The rkey is parsed server-side from `uri` so callers can issue
  * the matching DELETE without splitting the AT-URI themselves.
@@ -363,12 +398,35 @@ export interface UploadBlobResult {
 	blob: AtmosphereBlobRef;
 }
 
+export interface CreatePostInteractionSettings {
+	/**
+	 * Reply gating. Omit field entirely → backend writes no threadgate
+	 * (= anyone can reply). `{ kind: 'nobody' }` disables replies altogether.
+	 * `{ kind: 'combo', ... }` enables one or more of the follower / following /
+	 * mention rules.
+	 */
+	reply_allow?:
+		| { kind: 'nobody' }
+		| {
+				kind: 'combo';
+				follower?: boolean;
+				following?: boolean;
+				mention?: boolean;
+		  };
+	/**
+	 * Omit field → backend writes no postgate (= quotes allowed). Only `false`
+	 * is meaningful; the backend rejects an explicit `true`.
+	 */
+	allow_quotes?: false;
+}
+
 export interface CreatePostParams {
 	connectionId: number;
 	text: string;
 	reply?: { root: AtUriRef; parent: AtUriRef };
 	quote?: AtUriRef;
 	media?: { images: AtmosphereImageEmbed[] };
+	interaction_settings?: CreatePostInteractionSettings;
 }
 
 export interface CreatePostResult {
@@ -380,4 +438,66 @@ export interface CreatePostResult {
 export interface DeletePostParams {
 	connectionId: number;
 	rkey: string;
+}
+
+/**
+ * Normalized cross-protocol notification kind. `'other'` is the forward-compat
+ * bucket for upstream types we don't yet render with bespoke templates (e.g.
+ * starterpack-joined, verified, subscribed-post). The frontend falls through to
+ * a generic renderer that uses `protocol_type` for the label.
+ */
+export type AtmosphereNotificationCanonicalType =
+	| 'like'
+	| 'repost'
+	| 'follow'
+	| 'mention'
+	| 'reply'
+	| 'quote'
+	| 'other';
+
+export interface AtmosphereNotificationActor {
+	handle: string;
+	display_name: string | null;
+	avatar_url: string | null;
+	profile_uri: string;
+}
+
+export interface AtmosphereNotificationTarget {
+	kind: 'post' | 'profile';
+	uri: string;
+	excerpt: string;
+}
+
+/**
+ * Envelope shape returned by
+ * `/wpcom/v2/reader/atmosphere/connections/:id/notifications`.
+ * `protocol_type` is the raw upstream string (verbatim, lossless);
+ * `canonical_type` is the normalized enum. There is no `raw` passthrough —
+ * `protocol_type` is the long-tail escape hatch for upstream kinds we don't
+ * yet render with bespoke templates. `created_at` is nullable: the backend
+ * returns `null` when `indexedAt` is missing or unparseable. `is_read` is
+ * server-computed against the user's `seenAt` watermark.
+ */
+export interface AtmosphereNotification {
+	id: string;
+	/** Raw upstream type string, e.g. ATProto `reason`. */
+	protocol_type: string;
+	canonical_type: AtmosphereNotificationCanonicalType;
+	actor: AtmosphereNotificationActor;
+	target: AtmosphereNotificationTarget | null;
+	target_url: string;
+	created_at: string | null;
+	is_read: boolean;
+}
+
+/**
+ * Single page from the cursor-paginated notifications endpoint.
+ * `next_cursor: null` means end-of-list. `seen_at` is the server's watermark
+ * timestamp, exposed at the page level (not per-item) so subsequent "Load more"
+ * pages can classify items without re-fetching.
+ */
+export interface AtmosphereNotificationsPage {
+	items: AtmosphereNotification[];
+	next_cursor: string | null;
+	seen_at: string | null;
 }

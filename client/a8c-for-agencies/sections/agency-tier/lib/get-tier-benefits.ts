@@ -11,7 +11,7 @@ interface Benefit {
 
 const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 	{
-		title: translate( 'Tools & platforms' ),
+		title: translate( 'Tools & Platforms' ),
 		description: translate(
 			'Intuitive agency dashboard for streamlined client billing, and client and product management.'
 		),
@@ -25,7 +25,7 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 		],
 	},
 	{
-		title: translate( 'Earning opportunities' ),
+		title: translate( 'Earning Opportunities' ),
 		description: translate(
 			"All partners get access to referral and reseller earning opportunities across all of Automattic's suite of products. Premier partners receive the highest earning opportunities."
 		),
@@ -55,7 +55,7 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 		],
 	},
 	{
-		title: translate( 'Training & resources' ),
+		title: translate( 'Training & Resources' ),
 		description: translate(
 			'Foundational product training, education and best practices on growing your agency, marketing materials, and advanced sales training*.'
 		),
@@ -73,7 +73,7 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 		],
 	},
 	{
-		title: translate( 'Networking & community' ),
+		title: translate( 'Networking & Community' ),
 		description: translate(
 			"Access Automattic's community platforms and network with like-minded agencies."
 		),
@@ -87,7 +87,7 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 		],
 	},
 	{
-		title: translate( 'Directory visibility & badging' ),
+		title: translate( 'Directory Visibility & Badging' ),
 		description: preventWidows(
 			translate(
 				"Eligible for inclusion in Automattic's agency directories and increased exposure to potential clients."
@@ -107,9 +107,9 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 		availableTiers: [ 'agency-partner', 'pro-agency-partner', 'premier-partner' ],
 	},
 	{
-		title: translate( 'Co-marketing' ),
+		title: translate( 'Co-Marketing' ),
 		description: translate(
-			'Pro Agency Partners are eligible to participate in co-marketing activities with Automattic and our suite of brands, including case studies, co-branded campaigns, and other marketing opportunities as they arise. Premier partners can access marketing development funds upon successful application.'
+			'Pro Agency Partners are eligible to participate in Co-Marketing activities with Automattic and our suite of brands, including case studies, co-branded campaigns, and other marketing opportunities as they arise. Premier partners can access marketing development funds upon successful application.'
 		),
 		features: [],
 		isComingSoon: false,

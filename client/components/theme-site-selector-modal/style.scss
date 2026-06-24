@@ -1,3 +1,5 @@
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
 .theme-site-selector-modal {
 	z-index: z-index("root", ".theme-site-selector-modal");
 }

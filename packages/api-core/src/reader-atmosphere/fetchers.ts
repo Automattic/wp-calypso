@@ -8,7 +8,9 @@ import type {
 	AtmosphereConnectionsResponse,
 	AtmosphereCreateConnectionResponse,
 	AtmosphereCreateFollowResponse,
+	AtmosphereNotificationsPage,
 	AtmosphereScopedProfile,
+	AtmosphereScopedProfilesPage,
 	AtmosphereTagFeedPage,
 	AtmosphereThreadResponse,
 	AtmosphereTimelinePage,
@@ -91,6 +93,40 @@ export async function getTimeline( params: GetTimelineParams ): Promise< Atmosph
 			},
 			query
 		) ) as AtmosphereTimelinePage;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export interface GetAtmosphereNotificationsParams {
+	connectionId: number;
+	cursor?: string;
+	limit?: number;
+	types?: string;
+}
+
+export async function getAtmosphereNotifications(
+	params: GetAtmosphereNotificationsParams
+): Promise< AtmosphereNotificationsPage > {
+	const { connectionId, cursor, limit, types } = params;
+	const query: Record< string, string > = {};
+	if ( cursor ) {
+		query.cursor = cursor;
+	}
+	if ( typeof limit === 'number' ) {
+		query.limit = String( limit );
+	}
+	if ( types ) {
+		query.types = types;
+	}
+	try {
+		return ( await wpcom.req.get(
+			{
+				path: `/reader/atmosphere/connections/${ connectionId }/notifications`,
+				apiNamespace: NAMESPACE,
+			},
+			query
+		) ) as AtmosphereNotificationsPage;
 	} catch ( raw ) {
 		throw classifyAtmosphereError( raw );
 	}
@@ -285,6 +321,76 @@ export async function getScopedProfile(
 	}
 }
 
+export interface GetAtmosphereActorFollowersParams {
+	connectionId: number;
+	actor: string;
+	cursor?: string;
+	limit?: number;
+}
+
+const DEFAULT_ACTOR_PAGE_LIMIT = 50;
+
+/**
+ * Authed page of accounts that follow `actor`. Returns the slim
+ * `AtmosphereScopedProfileSummary` shape with per-row viewer follow
+ * state.
+ */
+export async function getAtmosphereActorFollowers(
+	params: GetAtmosphereActorFollowersParams
+): Promise< AtmosphereScopedProfilesPage > {
+	const { connectionId, actor, cursor, limit } = params;
+	try {
+		return ( await wpcom.req.get(
+			{
+				path: `/reader/atmosphere/connections/${ connectionId }/profile/${ encodeURIComponent(
+					actor
+				) }/followers`,
+				apiNamespace: NAMESPACE,
+			},
+			buildActorPageQuery( cursor, limit )
+		) ) as AtmosphereScopedProfilesPage;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export interface GetAtmosphereActorFollowsParams extends GetAtmosphereActorFollowersParams {}
+
+/**
+ * Authed page of accounts that `actor` follows.
+ */
+export async function getAtmosphereActorFollows(
+	params: GetAtmosphereActorFollowsParams
+): Promise< AtmosphereScopedProfilesPage > {
+	const { connectionId, actor, cursor, limit } = params;
+	try {
+		return ( await wpcom.req.get(
+			{
+				path: `/reader/atmosphere/connections/${ connectionId }/profile/${ encodeURIComponent(
+					actor
+				) }/follows`,
+				apiNamespace: NAMESPACE,
+			},
+			buildActorPageQuery( cursor, limit )
+		) ) as AtmosphereScopedProfilesPage;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+function buildActorPageQuery(
+	cursor: string | undefined,
+	limit: number | undefined
+): Record< string, string > {
+	const out: Record< string, string > = {
+		limit: String( limit ?? DEFAULT_ACTOR_PAGE_LIMIT ),
+	};
+	if ( cursor && cursor.length > 0 ) {
+		out.cursor = cursor;
+	}
+	return out;
+}
+
 export interface CreateFollowParams {
 	connectionId: number;
 	subject_did: string;
@@ -378,7 +484,7 @@ export async function uploadBlob( params: UploadBlobParams ): Promise< UploadBlo
 }
 
 export async function createPost( params: CreatePostParams ): Promise< CreatePostResult > {
-	const { connectionId, text, reply, quote, media } = params;
+	const { connectionId, text, reply, quote, media, interaction_settings } = params;
 	const body: Record< string, unknown > = { text };
 	if ( reply ) {
 		body.reply = reply;
@@ -388,6 +494,9 @@ export async function createPost( params: CreatePostParams ): Promise< CreatePos
 	}
 	if ( media ) {
 		body.media = media;
+	}
+	if ( interaction_settings ) {
+		body.interaction_settings = interaction_settings;
 	}
 	try {
 		const response = ( await wpcom.req.post( {

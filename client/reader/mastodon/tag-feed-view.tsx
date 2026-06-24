@@ -1,11 +1,12 @@
 import { useMastodonConnectionsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
-import { Button } from '@wordpress/components';
+import { Button, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { MastodonTagFeedPanel } from './tag-feed-panel';
+import { MastodonReauthGate } from './use-mastodon-reauth-gate';
 
 interface Props {
 	connectionId: number;
@@ -46,8 +47,9 @@ export function MastodonTagFeedView( { connectionId, hashtag }: Props ) {
 		return (
 			<ReaderMain className="mastodon-view">
 				<DocumentHead title={ translate( 'Tag ‹ Mastodon ‹ Reader' ) } />
-				<div role="status" aria-live="polite">
-					{ translate( 'Loading…' ) }
+				<div className="wp-spinner-wrapper" role="status" aria-live="polite">
+					<Spinner />
+					<p>{ translate( 'Loading…' ) }</p>
 				</div>
 			</ReaderMain>
 		);
@@ -56,7 +58,9 @@ export function MastodonTagFeedView( { connectionId, hashtag }: Props ) {
 	return (
 		<ReaderMain className="mastodon-view">
 			<DocumentHead title={ translate( '#%s ‹ Mastodon ‹ Reader', { args: hashtag } ) } />
-			<MastodonTagFeedPanel connection={ connection } hashtag={ hashtag } />
+			<MastodonReauthGate connection={ connection }>
+				<MastodonTagFeedPanel connection={ connection } hashtag={ hashtag } />
+			</MastodonReauthGate>
 		</ReaderMain>
 	);
 }

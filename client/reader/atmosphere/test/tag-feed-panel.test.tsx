@@ -101,7 +101,7 @@ describe( 'TagFeedPanel', () => {
 		mockAllIsIntersecting( false );
 
 		expect( await screen.findByText( 'hello tag' ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: /like, 0 likes/i } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: /^like$/i } ) ).toBeVisible();
 	} );
 
 	it( 'omits the count line when count is undefined', async () => {

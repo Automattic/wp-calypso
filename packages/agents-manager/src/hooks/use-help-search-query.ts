@@ -1,12 +1,10 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { buildQueryString } from '@wordpress/url';
 import { getLocaleSlug } from 'i18n-calypso';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { useAgentsManagerContext } from '../contexts';
-
-type ApiFetchOptions = Parameters< typeof apiFetch >[ 0 ] & { global?: boolean };
+import { recordAgentsManagerTracksEvent } from '../utils/tracks';
 
 interface HelpSearchRailcar {
 	railcar?: string;
@@ -46,7 +44,7 @@ const fetchArticlesAPI = async (
 		: await apiFetch< HelpSearchResult[] >( {
 				global: true,
 				path: `/help-center/search?${ queryString }`,
-		  } as ApiFetchOptions );
+		  } as { path: string; global: boolean } );
 
 	const results = Array.isArray( searchResults ) ? searchResults : [];
 
@@ -54,7 +52,7 @@ const fetchArticlesAPI = async (
 	results.forEach( ( result, index ) => {
 		if ( result.railcar ) {
 			queueMicrotask( () => {
-				recordTracksEvent( 'calypso_agents_manager_search_traintracks_render', {
+				recordAgentsManagerTracksEvent( 'search_traintracks_render', {
 					...result.railcar,
 					ui_algo: 'default',
 					ui_position: index,
@@ -77,7 +75,9 @@ export default function useHelpSearchQuery(
 		queryKey: [ 'agents-manager-help-search', search, locale, sectionName ],
 		queryFn: () => fetchArticlesAPI( search, locale, sectionName ),
 		refetchOnWindowFocus: false,
-		enabled: !! search,
+		// Help content changes rarely, so cache results for 5 minutes
+		// instead of refetching on remount.
+		staleTime: 5 * 60 * 1000,
 		...queryOptions,
 	} );
 }

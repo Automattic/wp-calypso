@@ -1,8 +1,8 @@
 import { createFeedbackActions, ThumbsUpIcon, ThumbsDownIcon } from '@automattic/agenttic-ui';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { createElement, useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../constants';
 import { useAgentsManagerContext } from '../contexts';
+import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../utils/tracks';
 import type { AuthProvider, UseAgentChatReturn } from '@automattic/agenttic-client';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
 
@@ -182,10 +182,10 @@ export default function useFeedbackAction( {
 				return;
 			}
 
-			recordTracksEvent( 'calypso_agents_manager_response_feedback_action', {
-				type: feedback === 'up' ? 'thumb_up' : 'thumb_down',
-				message_id: messageId,
-			} );
+			recordBigSkyTracksEvent(
+				feedback === 'up' ? 'response_action_thumbs_up' : 'response_action_thumbs_down',
+				{ message_id: messageId }
+			);
 
 			const message = messagesRef.current.find( ( m ) => m.id === messageId );
 			const messageText = message ? getMessageText( message ) : undefined;
@@ -280,7 +280,7 @@ export default function useFeedbackAction( {
 				previousMessages
 			);
 
-			recordTracksEvent( 'calypso_agents_manager_response_feedback_submitted', {
+			recordAgentsManagerTracksEvent( 'response_feedback_submitted', {
 				message_id: currentMessageId,
 			} );
 		},

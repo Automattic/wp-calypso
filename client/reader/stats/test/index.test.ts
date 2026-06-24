@@ -699,11 +699,6 @@ describe( 'reader stats', () => {
 					description: 'atmosphere profile for a specific connection',
 				},
 				{
-					url: '/reader/atmosphere/7/settings',
-					expected: 'atmosphere_settings',
-					description: 'atmosphere settings for a specific connection',
-				},
-				{
 					url: '/reader/mastodon',
 					expected: 'mastodon_landing',
 					description: 'mastodon landing page',
@@ -722,11 +717,6 @@ describe( 'reader stats', () => {
 					url: '/reader/mastodon/7/profile',
 					expected: 'mastodon_profile',
 					description: 'mastodon profile for a specific connection',
-				},
-				{
-					url: '/reader/mastodon/7/settings',
-					expected: 'mastodon_settings',
-					description: 'mastodon settings for a specific connection',
 				},
 				{
 					url: '/reader/mastodon/7/tag/rust',

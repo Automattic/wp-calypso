@@ -2,61 +2,98 @@ import { followReadTagMutation, unfollowReadTagMutation } from '@automattic/api-
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-	Modal,
 	Button,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { fixMe, translate } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
 import { useReaderInterestTags } from 'calypso/data/reader/use-reader-interest-tags';
-import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
-import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding-rsm/constants';
+import {
+	getFollowingSource,
+	useSiteSubscriptions,
+	useFollowSite,
+} from 'calypso/reader/data/site-subscriptions';
+import { useFollowedTags } from 'calypso/reader/data/tags';
+import {
+	READER_ONBOARDING_MIN_FOLLOWED_TAGS,
+	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
+} from 'calypso/reader/onboarding-rsm/constants';
 import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
-import { useSelector, useDispatch } from 'calypso/state';
+import { recordFollow } from 'calypso/reader/stats';
+import { useDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { follow } from 'calypso/state/reader/follows/actions';
-import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
-import { getPackBlogs } from './get-pack-blogs';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import TopicGroupCard from './topic-group-card';
 import { getTopicGroups, type TopicGroup } from './topic-groups';
+import InterestsVerificationNudge from './verificationNudge';
 import type { CuratedBlog } from '../curated-blogs';
 
 import './style.scss';
 
 interface InterestsModalProps {
-	isOpen: boolean;
-	onClose: () => void;
 	onContinue: () => void;
+	promptVerification: boolean;
+	// Whether the user has performed any subscribe action (individual tag
+	// follow or pack subscribe) during the current onboarding session. The
+	// parent owns this flag so it persists across remounts of this modal —
+	// e.g. user subscribes to a tagless pack, advances to discover, then uses
+	// Back; the relaxed Continue gate must still apply on return.
+	hasFollowed: boolean;
+	onFollowed: () => void;
+	// Pre-computed blog map owned by the parent so the random blog selection
+	// stays stable when the user navigates away from this step and returns.
+	// In production always provided by ReaderOnboardingRsm; optional here
+	// only so tests that don't care about packs can skip the boilerplate.
+	packBlogsById?: Map< string, CuratedBlog[] >;
+	// Tracks which packs have been explicitly subscribed in-session. Owned by
+	// the parent so it survives remounts of this component (e.g. user
+	// subscribes to a pack, advances to discover, then clicks Back).
+	// Optional for the same test-ergonomics reason as packBlogsById.
+	relaxedPackCriteria?: Set< string >;
+	onPackSubscribed?: ( packId: string ) => void;
 }
 
 type ResolvedPack = TopicGroup & { blogs: CuratedBlog[] };
 const MAX_INTEREST_TOPICS = 40;
 
-const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onContinue } ) => {
+// Renders the body of the "interests" step. The shared <Modal> wrapper is
+// provided by the parent (`ReaderOnboardingRsm`); this component is only
+// mounted while the step is active. X-out / escape are handled by the
+// wrapper's `onRequestClose`.
+const InterestsModal: React.FC< InterestsModalProps > = ( {
+	onContinue,
+	promptVerification,
+	hasFollowed,
+	onFollowed,
+	packBlogsById = new Map(),
+	relaxedPackCriteria = new Set(),
+	onPackSubscribed = () => {},
+} ) => {
 	const [ followedTags, setFollowedTags ] = useState< string[] >( [] );
 	const [ showAllTopics, setShowAllTopics ] = useState( false );
 	const hasSyncedFromServerRef = useRef( false );
 	const followedTagsRef = useRef< string[] >( [] );
-	const interestTopics = useReaderInterestTags( { enabled: isOpen } ).slice(
-		0,
-		MAX_INTEREST_TOPICS
-	);
-	const { data: followedTagsFromState } = useFollowedReaderTags();
-	const reduxFollows = useSelector( getReaderFollows );
+	const interestTopics = useReaderInterestTags( { enabled: true } ).slice( 0, MAX_INTEREST_TOPICS );
+	const { data: followedTagsFromState } = useFollowedTags();
+	const { subscriptions } = useSiteSubscriptions();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const [ processingTags, setProcessingTags ] = useState< Set< string > >( new Set() );
 	const inFlightTagOpsRef = useRef< Map< string, Promise< boolean > > >( new Map() );
 	const [ processingPacks, setProcessingPacks ] = useState< Set< string > >( new Set() );
-	const [ relaxedPackCriteria, setRelaxedPackCriteria ] = useState< Set< string > >( new Set() );
 	const { mutateAsync: followTag } = useMutation( followReadTagMutation( queryClient ) );
 	const { mutateAsync: unfollowTag } = useMutation( unfollowReadTagMutation( queryClient ) );
+	const followSite = useFollowSite();
 
+	// Sync the user's already-followed tags from server once on mount. The
+	// component only mounts while the step is active, so the previous
+	// `isOpen`-gated reset effect is no longer needed — the ref is reset
+	// implicitly when the component unmounts after the user leaves the step.
 	useEffect( () => {
-		if ( ! isOpen || ! followedTagsFromState || hasSyncedFromServerRef.current ) {
+		if ( ! followedTagsFromState || hasSyncedFromServerRef.current ) {
 			return;
 		}
 		if ( inFlightTagOpsRef.current.size > 0 ) {
@@ -66,14 +103,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 		followedTagsRef.current = syncedTags;
 		setFollowedTags( syncedTags );
 		hasSyncedFromServerRef.current = true;
-	}, [ isOpen, followedTagsFromState ] );
-
-	useEffect( () => {
-		if ( isOpen ) {
-			return;
-		}
-		hasSyncedFromServerRef.current = false;
-	}, [ isOpen ] );
+	}, [ followedTagsFromState ] );
 
 	useEffect( () => {
 		followedTagsRef.current = followedTags;
@@ -81,30 +111,20 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 
 	const topicGroups = getTopicGroups();
 
-	// Resolve each topic group's blog list once per mounted component instance.
-	// Random blog picks remain stable while mounted, but translated group labels
-	// can still update if locale changes.
-	const packBlogsByIdRef = useRef< Map< string, CuratedBlog[] > | null >( null );
-	if ( ! packBlogsByIdRef.current ) {
-		packBlogsByIdRef.current = new Map(
-			topicGroups.map( ( group ) => [ group.id, getPackBlogs( group.tags ) ] )
-		);
-	}
-	const packBlogsById = packBlogsByIdRef.current;
-
 	const packs = topicGroups
 		.map( ( group ) => ( {
 			...group,
 			blogs: packBlogsById.get( group.id ) ?? [],
 		} ) )
-		// Hide the "Most Subscribed" pack while it has nothing to subscribe to.
+		// Defensive: hide any pack that resolves to nothing to subscribe to
+		// (e.g., a tagless pack id with no curated entry).
 		.filter( ( pack ) => pack.tags.length > 0 || pack.blogs.length > 0 );
 
 	const isBlogFollowed = ( blog: CuratedBlog ): boolean =>
-		reduxFollows.some(
-			( f ) =>
-				( blog.feed_ID && f.feed_ID === blog.feed_ID ) ||
-				( blog.site_ID && f.blog_ID === blog.site_ID )
+		subscriptions.some(
+			( subscription ) =>
+				( blog.feed_ID && subscription.feed_ID === blog.feed_ID ) ||
+				( blog.site_ID && subscription.blog_ID === blog.site_ID )
 		);
 
 	const isPackSubscribed = ( pack: ResolvedPack ): boolean => {
@@ -124,7 +144,8 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 		return followedBlogCount === pack.blogs.length;
 	};
 
-	const isContinueDisabled = followedTags.length < 3;
+	const isContinueDisabled =
+		followedTags.length < READER_ONBOARDING_MIN_FOLLOWED_TAGS && ! hasFollowed;
 
 	const handleTopicChange = async ( checked: boolean, tag: string ): Promise< boolean > => {
 		const existingOperation = inFlightTagOpsRef.current.get( tag );
@@ -133,6 +154,10 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 		}
 
 		const operation = ( async (): Promise< boolean > => {
+			if ( checked ) {
+				onFollowed();
+			}
+
 			// Mark the tag as being processed.
 			setProcessingTags( ( current ) => new Set( current ).add( tag ) );
 
@@ -145,14 +170,15 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 			followedTagsRef.current = nextTags;
 			setFollowedTags( nextTags );
 
-			recordTracksEvent(
-				`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_tag_${
-					checked ? 'followed' : 'unfollowed'
-				}`,
-				{
-					tag,
-					total_followed: nextTags.length,
-				}
+			dispatch(
+				recordReaderTracksEvent(
+					checked ? 'calypso_reader_reader_tag_followed' : 'calypso_reader_reader_tag_unfollowed',
+					{
+						tag,
+						follow_source: 'reader-onboarding-modal',
+						total_followed: nextTags.length,
+					}
+				)
 			);
 
 			try {
@@ -198,6 +224,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 		}
 
 		setProcessingPacks( ( current ) => new Set( current ).add( pack.id ) );
+		onFollowed();
 		try {
 			// Follow tags in deterministic order so state updates don't race each other.
 			for ( const tag of pack.tags ) {
@@ -220,7 +247,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 				}
 			}
 
-			setRelaxedPackCriteria( ( current ) => new Set( current ).add( pack.id ) );
+			onPackSubscribed( pack.id );
 
 			recordTracksEvent(
 				`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_pack_subscribed`,
@@ -236,13 +263,18 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 				if ( isBlogFollowed( blog ) ) {
 					continue;
 				}
-				const followData: { feed_ID: number; blog_ID?: number } = { feed_ID: blog.feed_ID };
-				if ( blog.site_ID && blog.site_ID > 0 ) {
-					followData.blog_ID = blog.site_ID;
-				}
 				// Best effort only: site-specific failures are handled by existing
-				// follow data-layer notices and should not block pack completion.
-				dispatch( follow( blog.site_URL, followData, null ) );
+				// follow notices and should not block pack completion.
+				followSite.mutate( {
+					feedUrl: blog.feed_URL,
+					source: getFollowingSource(),
+				} );
+				// Mirror how the rest of Reader tracks site follows so pack-blog
+				// follows show up under the standard `calypso_reader_site_followed`
+				// event with a `reader-onboarding-modal` follow source.
+				recordFollow( blog.feed_URL, undefined, {
+					follow_source: 'reader-onboarding-modal',
+				} );
 			}
 		} finally {
 			setProcessingPacks( ( current ) => {
@@ -255,7 +287,6 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 
 	const handleContinue = () => {
 		if ( ! isContinueDisabled ) {
-			onClose();
 			onContinue();
 		}
 	};
@@ -270,108 +301,96 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 	};
 
 	return (
-		isOpen && (
-			<Modal onRequestClose={ onClose } size="large" className="interests-modal">
-				<VStack spacing={ 8 } className="interests-modal__content">
-					<VStack spacing={ 0 }>
-						<h2 className="interests-modal__title">{ __( 'What topics interest you?' ) }</h2>
-						<p className="interests-modal__subtitle">
+		<>
+			{ promptVerification && <InterestsVerificationNudge /> }
+			<VStack spacing={ 4 } className="interests-modal__content">
+				<VStack spacing={ 0 }>
+					<h2 className="interests-modal__title">{ __( 'What topics interest you?' ) }</h2>
+					<p className="interests-modal__subtitle">
+						<span>
 							{ __(
 								'​​Stay up-to-date with your favorite blogs and discover new voices—all from one place.'
 							) }
-						</p>
-						<p className="interests-modal__subtitle">
-							{ fixMe( {
-								text: 'Pick a pack that describes your interest, or switch to individual topics.',
-								newCopy: __(
-									'Pick a pack that describes your interest, or switch to individual topics.'
-								),
-								oldCopy: __( 'Follow at least 3 topics to personalize your Reader feed.' ),
-							} ) }
-						</p>
-					</VStack>
-
-					{ packs.length > 0 && (
-						<div className="interests-modal__packs" role="list">
-							{ packs.map( ( pack ) => (
-								<div className="interests-modal__pack-item" role="listitem" key={ pack.id }>
-									<TopicGroupCard
-										title={ pack.title }
-										imageUrl={ pack.imageUrl }
-										description={ pack.description }
-										tags={ pack.tags }
-										blogs={ pack.blogs }
-										isSubscribed={ isPackSubscribed( pack ) }
-										isBusy={ processingPacks.has( pack.id ) }
-										onSubscribe={ () => void handlePackSubscribe( pack ) }
-									/>
-								</div>
-							) ) }
-						</div>
-					) }
-
-					{ interestTopics.length > 0 && (
-						<div className="interests-modal__topics-toggle-row">
-							<Button
-								variant="link"
-								onClick={ handleToggleTopics }
-								className="interests-modal__topics-toggle"
-								aria-expanded={ showAllTopics }
-							>
-								{ showAllTopics ? __( 'See less topics' ) : __( 'See more topics' ) }
-							</Button>
-						</div>
-					) }
-
-					{ showAllTopics && (
-						<div
-							className="interests-modal__topics-pills"
-							role="group"
-							aria-label={ __( 'Topics' ) }
-						>
-							{ interestTopics.map( ( topic ) => {
-								const checked = followedTags.includes( topic.tag );
-								return (
-									<button
-										key={ topic.tag }
-										type="button"
-										className={ clsx( 'interests-modal__topic-pill', {
-											'is-selected': checked,
-										} ) }
-										aria-pressed={ checked }
-										disabled={ processingTags.has( topic.tag ) }
-										onClick={ () => void handleTopicChange( ! checked, topic.tag ) }
-									>
-										{ topic.name }
-									</button>
-								);
-							} ) }
-						</div>
-					) }
+						</span>
+						<br className="interests-modal__subtitle-break" />{ ' ' }
+						<span>
+							{ __( 'Pick a pack that describes your interest, or switch to individual topics.' ) }
+						</span>
+					</p>
 				</VStack>
 
-				<div className="reader-onboarding-modal__footer">
-					<HStack justify="space-between" className="reader-onboarding-modal__footer-actions">
-						<StepIndicator totalSteps={ 3 } currentStep={ 2 } />
-						<HStack
-							spacing={ 2 }
-							justify="right"
-							className="reader-onboarding-modal__footer-buttons"
+				{ packs.length > 0 && (
+					<div className="interests-modal__packs" role="list">
+						{ packs.map( ( pack ) => (
+							<div className="interests-modal__pack-item" role="listitem" key={ pack.id }>
+								<TopicGroupCard
+									title={ pack.title }
+									imageUrl={ pack.imageUrl }
+									description={ pack.description }
+									tags={ pack.tags }
+									blogs={ pack.blogs }
+									isSubscribed={ isPackSubscribed( pack ) }
+									isBusy={ processingPacks.has( pack.id ) }
+									onSubscribe={ () => void handlePackSubscribe( pack ) }
+								/>
+							</div>
+						) ) }
+					</div>
+				) }
+
+				{ interestTopics.length > 0 && (
+					<div className="interests-modal__topics-toggle-row">
+						<Button
+							variant="link"
+							onClick={ handleToggleTopics }
+							className="interests-modal__topics-toggle"
+							aria-expanded={ showAllTopics }
 						>
-							<Button
-								__next40pxDefaultSize
-								onClick={ handleContinue }
-								variant="secondary"
-								disabled={ isContinueDisabled }
-								accessibleWhenDisabled
-							>
-								{ __( 'Continue' ) }
-							</Button>
-						</HStack>
+							{ showAllTopics ? __( 'See less topics' ) : __( 'See more topics' ) }
+						</Button>
+					</div>
+				) }
+
+				{ showAllTopics && (
+					<div className="interests-modal__topics-pills" role="group" aria-label={ __( 'Topics' ) }>
+						{ interestTopics.map( ( topic ) => {
+							const checked = followedTags.includes( topic.tag );
+							return (
+								<button
+									key={ topic.tag }
+									type="button"
+									className={ clsx( 'interests-modal__topic-pill', {
+										'is-selected': checked,
+									} ) }
+									aria-pressed={ checked }
+									disabled={ processingTags.has( topic.tag ) }
+									onClick={ () => void handleTopicChange( ! checked, topic.tag ) }
+								>
+									{ topic.name }
+								</button>
+							);
+						} ) }
+					</div>
+				) }
+			</VStack>
+
+			<div className="reader-onboarding-modal__footer">
+				<HStack justify="space-between" className="reader-onboarding-modal__footer-actions">
+					<StepIndicator totalSteps={ 3 } currentStep={ 2 } />
+					<HStack spacing={ 2 } justify="right" className="reader-onboarding-modal__footer-buttons">
+						<Button
+							__next40pxDefaultSize
+							onClick={ handleContinue }
+							variant="secondary"
+							disabled={ isContinueDisabled || promptVerification }
+							accessibleWhenDisabled
+						>
+							{ __( 'Continue' ) }
+						</Button>
 					</HStack>
-				</div>
-			</Modal>
-		)
+				</HStack>
+			</div>
+		</>
 	);
 };
 

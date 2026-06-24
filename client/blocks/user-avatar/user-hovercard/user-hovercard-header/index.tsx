@@ -4,6 +4,7 @@ import AutoDirection from 'calypso/components/auto-direction';
 import PreloadedImage from 'calypso/components/preloaded-image';
 import UserAvatarDefaultIcon from 'calypso/reader/components/icons/user-avatar-default-icon';
 import { getProcessedGravatarUrl } from '../../utils';
+import type { JSX } from 'react';
 
 interface UserHovercardHeaderProps {
 	user: UserResponse;

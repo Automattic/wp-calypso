@@ -20,7 +20,7 @@ export const decorateButtonWithTracksEventRecording = (
 		stepContext?.recordTracksEvent?.( tracksEventName, {
 			flow: stepContext?.flowName,
 			step: stepContext?.stepName,
-			intent: ( select( Onboard.register() ) as OnboardSelect ).getIntent(),
+			intent: ( select( Onboard.register() ) as unknown as OnboardSelect ).getIntent(),
 		} );
 	};
 

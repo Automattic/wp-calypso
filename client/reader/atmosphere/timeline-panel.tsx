@@ -9,6 +9,7 @@ import {
 	SocialFeedList,
 	SocialPostCard,
 	mapAtmosphereFeedItemToSocialPost,
+	socialPostFeedItemKey,
 } from 'calypso/reader/social';
 import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
 import { RepostProvider } from 'calypso/reader/social/components/post-card/repost-context';
@@ -170,7 +171,7 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		),
 		[ connection.id ]
 	);
-	const itemKey = useCallback( ( post: SocialPost ) => post.uri, [] );
+	const itemKey = useCallback( ( post: SocialPost ) => socialPostFeedItemKey( post ), [] );
 
 	const analyticsValue = useMemo(
 		() => ( {
@@ -234,6 +235,10 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 						protocolLabel="Bluesky"
 						protocolHomeURL="/reader/atmosphere"
 						protocolHomeLabel={ translate( 'Back to ATmosphere' ) }
+						authRequiredCopy={ {
+							title: String( translate( "Couldn't load timeline" ) ),
+							line: String( translate( 'Something went wrong with your Bluesky connection.' ) ),
+						} }
 					/>
 				</RepostProvider>
 			</LikeProvider>

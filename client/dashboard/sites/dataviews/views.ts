@@ -54,10 +54,11 @@ export function getDefaultView( {
 } ): View {
 	const type = isRestoringAccount || siteCount > DEFAULT_PER_PAGE ? 'table' : 'grid';
 
+	const layout = DEFAULT_LAYOUTS[ type ];
 	const defaultView = {
 		type,
 		...DEFAULT_VIEW,
-		...DEFAULT_LAYOUTS[ type ],
+		...( typeof layout === 'object' ? layout : {} ),
 	} as View;
 
 	if ( isAutomattician ) {
@@ -78,6 +79,12 @@ export function recordViewChanges(
 	newView: View,
 	recordTracksEvent: AnalyticsClient[ 'recordTracksEvent' ]
 ) {
+	// Fire once when the user starts searching (empty -> non-empty), rather than
+	// on every keystroke, and without logging the term itself.
+	if ( ! oldView.search && newView.search ) {
+		recordTracksEvent( 'calypso_dashboard_sites_search' );
+	}
+
 	if ( oldView.type !== newView.type ) {
 		recordTracksEvent( 'calypso_dashboard_sites_view_type_changed', { type: newView.type } );
 

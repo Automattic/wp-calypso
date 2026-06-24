@@ -15,7 +15,7 @@ function CancelledSubscriptionRedirectReturn( { translate } ) {
 			successNotice( translate( 'This item has been removed.' ), { displayOnNextPage: true } )
 		);
 		page( purchasesRoot );
-	} );
+	}, [ dispatch, translate ] );
 }
 
 export default connect( () => ( {} ) )(

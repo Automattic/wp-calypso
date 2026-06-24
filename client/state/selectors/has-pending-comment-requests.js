@@ -1,4 +1,4 @@
-import { get, some } from 'lodash';
+import { some } from 'lodash';
 
 import 'calypso/state/comments/init';
 
@@ -8,8 +8,8 @@ import 'calypso/state/comments/init';
  * @returns {boolean} - true if we have pending actions
  */
 export default ( state ) => {
-	const pendingActions = get( state, [ 'comments', 'ui', 'pendingActions' ] );
+	const pendingActions = state?.comments?.ui?.pendingActions;
 	return some( pendingActions, ( requestKey ) => {
-		return get( state, [ 'dataRequests', requestKey, 'status' ] ) === 'pending';
+		return state?.dataRequests?.[ requestKey ]?.status === 'pending';
 	} );
 };

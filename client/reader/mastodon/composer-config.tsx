@@ -1,7 +1,12 @@
-import { createMastodonPostMutation } from '@automattic/api-queries';
+import { createMastodonPostMutation, useMastodonConnectionsQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { ReaderMastodonIcon } from 'calypso/reader/components/icons/mastodon-icon';
+import { normalizeHandle } from 'calypso/reader/social/utils/normalize-handle';
 import { getThreadUrl } from './route';
+import { useMastodonComposerExtras } from './use-mastodon-composer-extras';
+import { useMastodonComposerLimit } from './use-mastodon-composer-limit';
+import { useMastodonComposerMedia } from './use-mastodon-composer-media';
 import type {
 	MastodonCreatePostMutationParams,
 	MastodonCreatePostResult,
@@ -10,18 +15,27 @@ import type {
 import type { ActiveMode, ComposerConfig, Translate } from 'calypso/reader/social/composer';
 import type { ReactNode } from 'react';
 
-// Mastodon's per-instance limit defaults to 500. Instances can configure a
-// different value (advertised via the `instance.configuration.statuses.
-// max_characters` endpoint), but instance-aware limits ship in a follow-up;
-// 500 covers the vast majority of instances today including mastodon.social.
-const LIMIT = 500;
+export function useMastodonAuthorHandle( connectionId: number | null ): string | null {
+	const { data } = useMastodonConnectionsQuery( { enabled: connectionId !== null } );
+	if ( connectionId === null ) {
+		return null;
+	}
+	const connection = data?.connections?.find( ( c ) => c.id === connectionId );
+	return connection?.handle ? normalizeHandle( connection.handle ) : null;
+}
 
 export const mastodonComposerConfig: ComposerConfig<
 	MastodonError,
 	MastodonCreatePostMutationParams,
 	MastodonCreatePostResult
 > = {
-	limit: LIMIT,
+	// Per-instance — reads `max_characters` from the home instance's
+	// configuration via `useMastodonInstanceConfigQuery` and falls back to
+	// 500 (stock Mastodon default) when the query is pending or errors.
+	useLimit: useMastodonComposerLimit,
+	useAuthorHandle: useMastodonAuthorHandle,
+	headerIcon: <ReaderMastodonIcon />,
+	protocolLabel: 'Mastodon',
 	// Quote mode uses Mastodon 4.5+'s native `quoted_status_id` with a
 	// text-based fallback (permalink appended to status) for older
 	// instances. The retry lives in `createMastodonPostWithQuoteFallback`
@@ -147,8 +161,18 @@ export const mastodonComposerConfig: ComposerConfig<
 			};
 		},
 	},
+	overflowHandoff: {
+		shown: ( mode ) => ( {
+			event: 'calypso_reader_mastodon_overflow_handoff_shown',
+			props: { connection_id: mode.connectionId, mode_kind: mode.kind },
+		} ),
+		editorOpened: ( mode, { siteId } ) => ( {
+			event: 'calypso_reader_mastodon_overflow_handoff_editor_opened',
+			props: { connection_id: mode.connectionId, mode_kind: mode.kind, site_id: siteId },
+		} ),
+	},
 	copy: {
-		title: ( mode, translate ) => titleForMode( mode, translate ),
+		title: ( mode, translate, handle ) => titleForMode( mode, translate, handle ),
 		placeholder: ( mode, translate, handle ) => placeholderForMode( mode, translate, handle ),
 	},
 	logBadRequest: ( mode, error ) => {
@@ -167,9 +191,19 @@ export const mastodonComposerConfig: ComposerConfig<
 			},
 		} );
 	},
+	useMedia: useMastodonComposerMedia,
+	useProtocolExtras: useMastodonComposerExtras,
 };
 
-function titleForMode( mode: ActiveMode, t: Translate ): string {
+function titleForMode( mode: ActiveMode, t: Translate, handle?: string | null ): string {
+	const base = baseTitleForMode( mode, t );
+	// "@handle" and the middle-dot separator are unlocalized — the handle is
+	// a fixed `user@instance` identifier and the dot is the same in every
+	// locale we ship. Mirrors the atmosphere title format.
+	return handle ? `${ base } · @${ handle }` : base;
+}
+
+function baseTitleForMode( mode: ActiveMode, t: Translate ): string {
 	if ( mode.kind === 'reply' ) {
 		return t( 'Reply' ) as string;
 	}
@@ -241,6 +275,14 @@ function errorMessageFor( err: MastodonError, t: Translate ): ReactNode {
 		case 'connection_not_found':
 		case 'not_found':
 			return t( 'This Mastodon connection no longer exists.' );
+		case 'media_too_large':
+			return t( 'Image is too large. Try a smaller image (under 8 MB).' );
+		case 'media_unsupported_type':
+			return t( 'Image format isn’t supported. Try JPEG, PNG, GIF, or WebP.' );
+		case 'media_decode_failed':
+			return t( 'We couldn’t process this image. Try a different file.' );
+		case 'media_invalid':
+			return t( 'We couldn’t post this. Try a different image.' );
 		case 'invalid_instance':
 		case 'unknown':
 			return t( 'Something went wrong. Please try again.' );

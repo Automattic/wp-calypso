@@ -13,6 +13,13 @@ export interface LikeAction {
 	label: {
 		/** Accessible label with count — e.g. "Like, 5 likes". */
 		accessibleLabel: ( count: number ) => TranslateResult;
+		/**
+		 * Full stat-row phrase, plural-aware — e.g. "<strong>5</strong> likes" /
+		 * "<strong>1</strong> favorite". Adapter owns the singular/plural form
+		 * AND the `%(count)s` placeholder so translators see the whole sentence
+		 * and control count/noun ordering.
+		 */
+		statRowText: ( count: number ) => TranslateResult;
 	};
 	like: () => void;
 	unlike: () => void;
@@ -30,6 +37,7 @@ const nullLikeActionFn: UseLikeActionFn = () => ( {
 	isPending: false,
 	label: {
 		accessibleLabel: () => '',
+		statRowText: () => '',
 	},
 	like: () => {},
 	unlike: () => {},

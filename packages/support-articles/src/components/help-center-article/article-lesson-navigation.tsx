@@ -1,5 +1,5 @@
 import { decodeEntities } from '@wordpress/html-entities';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Link } from 'react-router-dom';
 import type { LessonNavigation } from '../../types';
 
@@ -22,26 +22,26 @@ export const ArticleLessonNavigation = ( {
 				<Link
 					to={ `?link=${ encodeURIComponent( previous.url ) }` }
 					className="help-center-article-lesson-navigation__link help-center-article-lesson-navigation__link--previous"
+					aria-label={ sprintf(
+						/* translators: %s is the title of the previous lesson */
+						__( 'Previous lesson: %s', __i18n_text_domain__ ),
+						decodeEntities( previous.title )
+					) }
 				>
-					<span className="help-center-article-lesson-navigation__label">
-						← { __( 'Back', __i18n_text_domain__ ) }
-					</span>
-					<span className="help-center-article-lesson-navigation__title">
-						{ decodeEntities( previous.title ) }
-					</span>
+					← { __( 'Previous lesson', __i18n_text_domain__ ) }
 				</Link>
 			) }
 			{ next?.url && (
 				<Link
 					to={ `?link=${ encodeURIComponent( next.url ) }` }
 					className="help-center-article-lesson-navigation__link help-center-article-lesson-navigation__link--next"
+					aria-label={ sprintf(
+						/* translators: %s is the title of the next lesson */
+						__( 'Next lesson: %s', __i18n_text_domain__ ),
+						decodeEntities( next.title )
+					) }
 				>
-					<span className="help-center-article-lesson-navigation__label">
-						{ __( 'Up next', __i18n_text_domain__ ) } →
-					</span>
-					<span className="help-center-article-lesson-navigation__title">
-						{ decodeEntities( next.title ) }
-					</span>
+					{ __( 'Next lesson', __i18n_text_domain__ ) } →
 				</Link>
 			) }
 		</nav>

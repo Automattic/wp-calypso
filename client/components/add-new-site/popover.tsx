@@ -4,7 +4,7 @@ import React from 'react';
 type Props = {
 	isMenuVisible: boolean;
 	toggleMenu: () => void;
-	popoverMenuContext: React.RefObject< HTMLButtonElement >;
+	popoverMenuContext: React.RefObject< HTMLButtonElement | null >;
 	children: React.ReactNode;
 };
 

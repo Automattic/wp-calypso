@@ -24,5 +24,6 @@ export function toPurchaseForCopy( purchase: Purchases.Purchase ): PurchaseForCo
 		expiry_status: isOneTimePurchase( purchase ) ? 'one-time-purchase' : purchase.expiryStatus,
 		meta: purchase.meta,
 		domain: purchase.domain ?? '',
+		advertised_total_upload_space_in_gb: purchase.advertisedTotalUploadSpaceInGb,
 	};
 }

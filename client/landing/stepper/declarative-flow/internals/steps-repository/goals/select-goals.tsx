@@ -7,6 +7,8 @@ import { useGoals } from './goals';
 type SelectGoalsProps = {
 	onChange: ( selectedGoals: Onboard.SiteGoal[] ) => void;
 	selectedGoals: Onboard.SiteGoal[];
+	goalTitles?: Partial< Record< Onboard.SiteGoal, string > >;
+	hiddenGoals?: Onboard.SiteGoal[];
 };
 
 const Placeholder = styled.div`
@@ -31,8 +33,20 @@ const Placeholder = styled.div`
 
 const SiteGoal = Onboard.SiteGoal;
 
-export const SelectGoals = ( { onChange, selectedGoals }: SelectGoalsProps ) => {
-	const goalOptions = useGoals();
+export const SelectGoals = ( {
+	onChange,
+	selectedGoals,
+	goalTitles,
+	hiddenGoals,
+}: SelectGoalsProps ) => {
+	const allGoals = useGoals();
+	const hiddenSet = new Set( hiddenGoals ?? [] );
+	const goalOptions = allGoals
+		.filter( ( g ) => ! hiddenSet.has( g.key ) )
+		.map( ( g ) => ( {
+			...g,
+			title: goalTitles?.[ g.key ] ?? g.title,
+		} ) );
 
 	// *******************************************************************************
 	// ****  Experiment skeleton left in for future BBE (Goal) copy change tests  ****

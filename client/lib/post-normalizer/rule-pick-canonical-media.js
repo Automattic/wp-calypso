@@ -1,5 +1,5 @@
 import { safeImageUrl } from '@automattic/calypso-url';
-import { find, get } from 'lodash';
+import { find } from 'lodash';
 import { isUrlLikelyAnImage } from './utils';
 
 /**
@@ -52,8 +52,8 @@ export default function pickCanonicalMedia( post ) {
 	) {
 		post.canonical_media = {
 			src: post.featured_image,
-			height: get( post, 'post_thumbnail.height' ),
-			width: get( post, 'post_thumbnail.width' ),
+			height: post?.post_thumbnail?.height,
+			width: post?.post_thumbnail?.width,
 			mediaType: 'image',
 		};
 		return post;

@@ -3,8 +3,8 @@
  * connection flow.
  *
  * Used to drive priority-based UI decisions across the flow — titles,
- * subtitles, featured "Connection enables" cards, and the "Also used by"
- * overflow row.
+ * subtitles, and the cards rendered in the connect-account features
+ * section.
  */
 export type Family = 'a4a' | 'woo' | 'jetpack' | 'other';
 
@@ -21,8 +21,9 @@ export const FAMILY_PRIORITY: readonly Family[] = [ 'a4a', 'woo', 'jetpack', 'ot
  * Determine the family for a given plugin slug.
  *
  * Falls back to `'other'` for any slug that doesn't match a known family
- * prefix — unknown plugins never block the connection flow, they just land
- * in the generic overflow bucket.
+ * prefix — unknown plugins never block the connection flow. The `'other'`
+ * family is treated as the lowest priority and only surfaces a generic
+ * fallback card when no known family is present.
  * @param slug Plugin slug exactly as it arrives in the `plugins` query
  *             parameter. Slugs are matched by family prefix so that future
  *             plugin additions in a known family don't require a registry

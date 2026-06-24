@@ -19,7 +19,7 @@ type CoreWebVitalsDetailsProps = Record< Metrics, number > & {
 	history: PerformanceMetricsHistory;
 	activeTab: Metrics | null;
 	audits: Record< string, PerformanceMetricAudit >;
-	recommendationsRef: React.RefObject< HTMLDivElement > | null;
+	recommendationsRef: React.RefObject< HTMLDivElement | null > | null;
 	onRecommendationsFilterChange?: ( filter: string ) => void;
 };
 

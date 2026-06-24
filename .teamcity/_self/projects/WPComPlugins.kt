@@ -7,8 +7,6 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
@@ -43,6 +41,8 @@ object WPComPlugins : Project({
 					"happy-blocks-release-build",
 					"help-center-release-build",
 					"agents-manager-release-build",
+					"wpcom-smart-dictation-release-build",
+					"content-research-release-build",
 				)
 			}
 			dataToKeep = everything()
@@ -75,15 +75,6 @@ object CalypsoApps: BuildType({
 	features {
 		perfmon {
 		}
-		pullRequests {
-			vcsRootExtId = "${Settings.WpCalypso.id}"
-			provider = github {
-				authType = token {
-					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-				}
-				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
-			}
-		}
 		commitStatusPublisher {
 			vcsRootExtId = "${Settings.WpCalypso.id}"
 			publisher = github {
@@ -97,10 +88,7 @@ object CalypsoApps: BuildType({
 
 	triggers {
 		vcs {
-			branchFilter = """
-				+:*
-				-:pull*
-			""".trimIndent()
+			branchFilter = "+:<default>"
 			triggerRules = """
 				-:test/e2e/**
 				-:docs/**.md
@@ -125,6 +113,8 @@ object CalypsoApps: BuildType({
 		apps/happy-blocks/release-files => happy-blocks.zip
 		apps/help-center/dist => help-center.zip
 		apps/agents-manager/dist => agents-manager.zip
+		apps/wpcom-smart-dictation/dist => wpcom-smart-dictation.zip
+		apps/content-research/dist => content-research.zip
 	""".trimIndent()
 
 	steps {

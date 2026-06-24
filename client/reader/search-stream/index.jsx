@@ -1,3 +1,4 @@
+import { ReadFeedSearchSort } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
 import { CompactCard } from '@automattic/components';
 import {
@@ -6,7 +7,6 @@ import {
 } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { trim, flatMap } from 'lodash';
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -17,21 +17,16 @@ import { addQueryArgs } from 'calypso/lib/url';
 import withDimensions from 'calypso/lib/with-dimensions';
 import BlankSuggestions from 'calypso/reader/components/reader-blank-suggestions';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { useAliasedSiteSubscriptionFeedUrl } from 'calypso/reader/data/site-subscriptions';
 import { READER_SEARCH_POPULAR_SITES } from 'calypso/reader/follow-sources';
 import { getSearchPlaceholderText } from 'calypso/reader/search/utils';
 import { recordAction } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import {
-	SORT_BY_RELEVANCE,
-	SORT_BY_LAST_UPDATED,
-} from 'calypso/state/reader/feed-searches/actions';
-import { getReaderAliasedFollowFeedUrl } from 'calypso/state/reader/follows/selectors';
-import { getTransformedStreamItems } from 'calypso/state/reader/streams/selectors';
-import ReaderPopularSitesSidebar from '../stream/reader-popular-sites-sidebar';
+import { ReaderPopularSitesSidebarContainer } from '../stream/reader-popular-sites-sidebar';
 import PostResults from './post-results';
 import SearchStreamHeader, { SEARCH_TYPES } from './search-stream-header';
-import SiteResults from './site-results';
+import SiteResultsContainer from './site-results-container';
 import Suggestion from './suggestion';
 import SuggestionProvider from './suggestion-provider';
 import './style.scss';
@@ -41,7 +36,8 @@ const WIDE_DISPLAY_CUTOFF = 660;
 const updateQueryArg = ( params ) =>
 	page.replace( addQueryArgs( params, window.location.pathname + window.location.search ) );
 
-const pickSort = ( sort ) => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE );
+const pickSort = ( sort ) =>
+	sort === 'date' ? ReadFeedSearchSort.LastUpdated : ReadFeedSearchSort.Relevance;
 
 class SearchStream extends React.Component {
 	static propTypes = {
@@ -72,7 +68,7 @@ class SearchStream extends React.Component {
 	updateQuery = ( newValue ) => {
 		this.scrollToTop();
 		// Remove whitespace from newValue and limit to 1024 characters
-		const trimmedValue = trim( newValue ).substring( 0, 1024 );
+		const trimmedValue = ( newValue ?? '' ).trim().substring( 0, 1024 );
 		if (
 			( trimmedValue !== '' && trimmedValue.length > 1 && trimmedValue !== this.props.query ) ||
 			newValue === ''
@@ -149,16 +145,18 @@ class SearchStream extends React.Component {
 		const singleColumnResultsClasses = clsx( 'search-stream__single-column-results', {
 			'is-post-results': searchType === SEARCH_TYPES.POSTS && query,
 		} );
-		const suggestionList = flatMap( suggestions, ( suggestion ) => [
-			<Suggestion
-				suggestion={ suggestion.text }
-				source="search"
-				sort={ sortOrder === 'date' ? sortOrder : undefined }
-				railcar={ suggestion.railcar }
-				key={ 'suggestion-' + suggestion.text }
-			/>,
-			', ',
-		] ).slice( 0, -1 );
+		const suggestionList = ( suggestions || [] )
+			.flatMap( ( suggestion ) => [
+				<Suggestion
+					suggestion={ suggestion.text }
+					source="search"
+					sort={ sortOrder === 'date' ? sortOrder : undefined }
+					railcar={ suggestion.railcar }
+					key={ 'suggestion-' + suggestion.text }
+				/>,
+				', ',
+			] )
+			.slice( 0, -1 );
 
 		const fixedAreaHeight = this.fixedAreaRef && this.fixedAreaRef.clientHeight;
 
@@ -220,15 +218,15 @@ class SearchStream extends React.Component {
 						</div>
 						<div className="search-stream__site-results">
 							{ query && (
-								<SiteResults
+								<SiteResultsContainer
 									query={ query }
 									sort={ pickSort( sortOrder ) }
 									onReceiveSearchResults={ this.setSearchFeeds }
 								/>
 							) }
 							{ ! query && (
-								<ReaderPopularSitesSidebar
-									items={ this.props.items }
+								<ReaderPopularSitesSidebarContainer
+									streamKey={ this.props.streamKey }
 									followSource={ READER_SEARCH_POPULAR_SITES }
 								/>
 							) }
@@ -241,14 +239,14 @@ class SearchStream extends React.Component {
 							<PostResults { ...this.props } fixedHeaderHeight={ fixedAreaHeight } />
 						) ) ||
 							( query && (
-								<SiteResults
+								<SiteResultsContainer
 									query={ query }
 									sort={ pickSort( sortOrder ) }
 									onReceiveSearchResults={ this.setSearchFeeds }
 								/>
 							) ) || (
-								<ReaderPopularSitesSidebar
-									items={ this.props.items }
+								<ReaderPopularSitesSidebarContainer
+									streamKey={ this.props.streamKey }
 									followSource={ READER_SEARCH_POPULAR_SITES }
 								/>
 							) }
@@ -269,17 +267,22 @@ const wrapWithMain = ( Component ) => ( props ) => (
 );
 /* eslint-enable */
 
-export default connect(
-	( state, ownProps ) => ( {
-		readerAliasedFollowFeedUrl:
-			ownProps.query && getReaderAliasedFollowFeedUrl( state, ownProps.query ),
+const ConnectedSearchStream = connect(
+	( state ) => ( {
 		isLoggedIn: isUserLoggedIn( state ),
-		items: getTransformedStreamItems( state, {
-			streamKey: ownProps.streamKey,
-			recsStreamKey: ownProps.recsStreamKey,
-		} ),
 	} ),
 	{
 		recordReaderTracksEvent,
 	}
 )( localize( SuggestionProvider( wrapWithMain( withDimensions( SearchStream ) ) ) ) );
+
+export default function SearchStreamContainer( props ) {
+	const aliasedFollowFeedUrl = useAliasedSiteSubscriptionFeedUrl( props.query || '' );
+
+	return (
+		<ConnectedSearchStream
+			{ ...props }
+			readerAliasedFollowFeedUrl={ props.query && aliasedFollowFeedUrl }
+		/>
+	);
+}

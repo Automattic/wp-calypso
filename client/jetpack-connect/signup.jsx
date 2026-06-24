@@ -11,16 +11,13 @@ import { Modal } from '@wordpress/components';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import { flowRight, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
+import { compose } from 'redux';
 import SignupForm from 'calypso/blocks/signup-form';
 import { BrandHeader } from 'calypso/components/connect-screen/brand-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
-import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
-import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
@@ -45,7 +42,6 @@ import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import AuthFormHeader from './auth-form-header';
 import { getSignupCopy } from './connection-content';
 import { getConnectorBranding } from './connector-branding-config';
-import HelpButton from './help-button';
 import MainWrapper from './main-wrapper';
 import { authQueryPropTypes } from './utils';
 import wooDnaConfig from './woo-dna-config';
@@ -173,6 +169,13 @@ export class JetpackSignup extends Component {
 		return this.isFromJetpackOnboarding( props ) || this.isFromJetpackConnector( props );
 	}
 
+	handleExistingAccountClick = () => {
+		this.props.recordTracksEvent( 'calypso_jpc_signup_use_existing_account_clicked', {
+			from: this.props.authQuery.from,
+			site: this.props.authQuery.clientId,
+		} );
+	};
+
 	handleSubmitSignup = ( _, userData, analyticsData, afterSubmit = noop ) => {
 		debug( 'submitting new account', userData );
 		this.setState( { isCreatingAccount: true }, () =>
@@ -184,6 +187,8 @@ export class JetpackSignup extends Component {
 						...userData.extra,
 						jpc: true,
 						source: this.isWooJPC() ? 'woo-passwordless-jpc' + '-' + this.props.authQuery.from : '',
+						from: this.props.authQuery.from,
+						plugins: this.props.authQuery.plugins,
 					},
 				} )
 				.then( this.handleUserCreationSuccess, this.handleUserCreationError )
@@ -256,7 +261,7 @@ export class JetpackSignup extends Component {
 			} );
 			return;
 		}
-		if ( get( error, [ 'error' ] ) === 'password_invalid' ) {
+		if ( error?.error === 'password_invalid' ) {
 			errorNotice( error.message, { id: 'user-creation-error-password_invalid' } );
 			return;
 		}
@@ -286,32 +291,19 @@ export class JetpackSignup extends Component {
 		) : null;
 	}
 
-	renderFooterLink() {
-		const { authQuery } = this.props;
-
-		if ( this.isWooJPC() ) {
+	renderUseExistingAccountLink() {
+		if ( ! this.isUnifiedConnectionFlow() ) {
 			return null;
 		}
 
-		const allowSiteConnection =
-			authQuery.allowSiteConnection && ! this.isFromAutomatticForAgenciesPlugin();
-
 		return (
-			<LoggedOutFormLinks>
-				<LoggedOutFormLinkItem href={ this.getLoginRoute() }>
-					{ this.props.translate( 'Already have an account? Sign in' ) }
-				</LoggedOutFormLinkItem>
-
-				{ allowSiteConnection && (
-					<JetpackConnectSiteOnly
-						homeUrl={ authQuery.homeUrl }
-						redirectAfterAuth={ authQuery.redirectAfterAuth }
-						source="signup"
-					/>
-				) }
-
-				<HelpButton />
-			</LoggedOutFormLinks>
+			<p className="jetpack-connect__signup-existing-account">
+				{ this.props.translate( 'Already have a WordPress.com account? {{a}}Log in{{/a}}', {
+					components: {
+						a: <a href={ this.getLoginRoute() } onClick={ this.handleExistingAccountClick } />,
+					},
+				} ) }
+			</p>
 		);
 	}
 
@@ -371,13 +363,13 @@ export class JetpackSignup extends Component {
 							wooDnaConfig={ this.getWooDnaConfig() }
 						/>
 					) }
+					{ this.renderUseExistingAccountLink() }
 					<SignupForm
 						disabled={ isCreatingAccount }
 						isPasswordless={ isWooJPC }
 						disableTosText={ isWooJPC }
 						labelText={ isWooJPC ? this.props.translate( 'Your Email' ) : null }
 						email={ this.props.authQuery.userEmail }
-						footerLink={ this.renderFooterLink() }
 						handleSocialResponse={ this.handleSocialResponse }
 						isSocialSignupEnabled={ isEnabled( 'signup/social' ) }
 						locale={ this.props.locale }
@@ -434,4 +426,4 @@ const connectComponent = connect(
 	} )
 );
 
-export default flowRight( connectComponent, localize )( JetpackSignup );
+export default compose( connectComponent, localize )( JetpackSignup );

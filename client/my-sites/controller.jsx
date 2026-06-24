@@ -3,7 +3,7 @@ import { PLAN_FREE, PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
-import { some, startsWith } from 'lodash';
+import { some } from 'lodash';
 import { createElement } from 'react';
 import EmptyContentComponent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
@@ -69,6 +69,7 @@ import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progress';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import isSiteA4ADevSite from 'calypso/state/selectors/is-site-a4a-dev-site';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
@@ -297,7 +298,7 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		domainUseMyDomain( slug ),
 	];
 
-	if ( some( startsWithPaths, ( startsWithPath ) => startsWith( path, startsWithPath ) ) ) {
+	if ( some( startsWithPaths, ( startsWithPath ) => path.startsWith( startsWithPath ) ) ) {
 		return true;
 	}
 
@@ -373,7 +374,7 @@ function onSelectedSiteAvailable( context ) {
 	} else {
 		// If migration is in progress, only /migrate paths should be loaded for the site
 		const isMigrationInProgress = isSiteMigrationInProgress( state, selectedSite.ID );
-		if ( isMigrationInProgress && ! startsWith( context.pathname, '/migrate/' ) ) {
+		if ( isMigrationInProgress && ! context.pathname.startsWith( '/migrate/' ) ) {
 			page.redirect( `/migrate/${ selectedSite.slug }` );
 			return false;
 		}
@@ -795,6 +796,25 @@ export function stagingSiteNotSupportedRedirect( context, next ) {
 	const selectedSite = getSelectedSite( store.getState() );
 
 	if ( selectedSite && isSiteWpcomStaging( store.getState(), selectedSite.ID ) ) {
+		const siteSlug = getSiteSlug( store.getState(), selectedSite.ID );
+
+		return page.redirect( `/home/${ siteSlug }` );
+	}
+
+	next();
+}
+
+/**
+ * Use this middleware to prevent navigation to pages which are not supported by
+ * Automattic for Agencies dev sites.
+ * @param {Object} context -- Middleware context
+ * @param {Function} next -- Call next middleware in chain
+ */
+export function a4aDevSiteNotSupportedRedirect( context, next ) {
+	const store = context.store;
+	const selectedSite = getSelectedSite( store.getState() );
+
+	if ( selectedSite && isSiteA4ADevSite( store.getState(), selectedSite.ID ) ) {
 		const siteSlug = getSiteSlug( store.getState(), selectedSite.ID );
 
 		return page.redirect( `/home/${ siteSlug }` );

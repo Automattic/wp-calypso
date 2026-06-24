@@ -18,7 +18,7 @@ import { useResizeObserver } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
-import { info, warning } from '@wordpress/icons';
+import { info, cautionFilled as warning } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
@@ -427,7 +427,7 @@ function PaymentMethodExpiry( { paymentMethod }: { paymentMethod: StoredPaymentM
 			<VStack>
 				<Text>
 					{ sprintf(
-						// translators: date is a formatted credit card expiration date, eg: 10/25
+						// translators: %(date)s: a formatted credit card expiration date, eg: 10/25
 						__( 'Expires %(date)s' ),
 						{
 							// The use of `MM/YY` should not be localized as it is an ISO standard across credit card forms: https://en.wikipedia.org/wiki/ISO/IEC_7813
