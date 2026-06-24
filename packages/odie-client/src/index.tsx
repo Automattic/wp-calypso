@@ -14,9 +14,6 @@ export const OdieAssistant: React.FC = () => {
 	const { data: currentSupportInteraction, isLoading: isLoadingInteraction } =
 		useCurrentSupportInteraction();
 	const chatHasCSATMessage = hasCSATMessage( chat );
-	// While the interaction is loading (e.g. immediately after navigating to a new
-	// chat via the "Continue in your open chat" button), keep the closed footer
-	// visible so the send-message input doesn't flash into view prematurely.
 	const showClosedConversationFooter =
 		isLoadingInteraction || chatHasCSATMessage || interactionHasEnded( currentSupportInteraction );
 
