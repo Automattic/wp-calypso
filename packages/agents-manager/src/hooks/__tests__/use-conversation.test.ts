@@ -18,13 +18,19 @@ jest.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: jest.fn(),
 } ) );
 
+jest.mock( '../../utils/agent-session', () => ( {
+	isFreshSession: jest.fn(),
+} ) );
+
 import { useQuery } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
 import { useAgentsManagerContext } from '../../contexts';
 import useConversation from '../use-conversation';
+import { isFreshSession } from '../../utils/agent-session';
 
 const mockUseQuery = useQuery as jest.Mock;
 const mockUseAgentsManagerContext = useAgentsManagerContext as jest.Mock;
+const mockIsFreshSession = isFreshSession as jest.Mock;
 
 describe( 'useConversation', () => {
 	beforeEach( () => {
@@ -34,6 +40,9 @@ describe( 'useConversation', () => {
 			isError: false,
 			isLoading: false,
 		} );
+		// Default: not fresh at mount, so the fresh-session gate is a no-op for the
+		// existing cases (a resumed/server-backed session still fetches).
+		mockIsFreshSession.mockReturnValue( false );
 	} );
 
 	afterEach( () => {
@@ -63,6 +72,44 @@ describe( 'useConversation', () => {
 			agentConfig: {
 				agentId: 'wp-orchestrator',
 				sessionId: 'orchestrator-session',
+				authProvider: {},
+			},
+		} );
+
+		renderHook( () => useConversation( {} ) );
+
+		expect( mockUseQuery ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				enabled: true,
+			} )
+		);
+	} );
+
+	it( 'skips the fetch for a session that was fresh at mount (client-generated, never sent to the server)', () => {
+		mockIsFreshSession.mockReturnValue( true );
+		mockUseAgentsManagerContext.mockReturnValue( {
+			agentConfig: {
+				agentId: 'wp-orchestrator',
+				sessionId: 'fresh-session',
+				authProvider: {},
+			},
+		} );
+
+		renderHook( () => useConversation( {} ) );
+
+		expect( mockUseQuery ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				enabled: false,
+			} )
+		);
+	} );
+
+	it( 'still fetches a resumed (non-fresh) session for a server-backed host', () => {
+		mockIsFreshSession.mockReturnValue( false );
+		mockUseAgentsManagerContext.mockReturnValue( {
+			agentConfig: {
+				agentId: 'wp-orchestrator',
+				sessionId: 'used-session',
 				authProvider: {},
 			},
 		} );
