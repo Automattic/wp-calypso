@@ -1,6 +1,12 @@
-import { addLegacyContact, fetchLegacyContact, fetchLegacyContacts } from '@automattic/api-core';
+import {
+	addLegacyContact,
+	deleteLegacyContact,
+	fetchLegacyContact,
+	fetchLegacyContacts,
+} from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
+import type { LegacyContact } from '@automattic/api-core';
 
 export const legacyContactsQuery = () =>
 	queryOptions( {
@@ -25,5 +31,24 @@ export const addLegacyContactMutation = () =>
 		mutationFn: ( email: string ) => addLegacyContact( email ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( legacyContactsQuery() );
+		},
+	} );
+
+export const deleteLegacyContactMutation = () =>
+	mutationOptions( {
+		mutationFn: ( legacyContactId: number ) => deleteLegacyContact( legacyContactId ),
+		onSuccess: ( _data, legacyContactId ) => {
+			// Drop the contact from the cached list right away so the UI returns to
+			// the empty state immediately, rather than showing the removed contact
+			// until the invalidation refetch below completes.
+			queryClient.setQueryData< LegacyContact[] >(
+				legacyContactsQuery().queryKey,
+				( contacts ) =>
+					contacts?.filter( ( contact ) => contact.legacy_contact_id !== legacyContactId )
+			);
+			queryClient.invalidateQueries( legacyContactsQuery() );
+			// Drop the single-contact query from the cache; it holds a sensitive
+			// `access_key` that should not linger after the contact is removed.
+			queryClient.removeQueries( { queryKey: legacyContactQuery( legacyContactId ).queryKey } );
 		},
 	} );

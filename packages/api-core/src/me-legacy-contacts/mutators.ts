@@ -10,3 +10,11 @@ export async function addLegacyContact( email: string ): Promise< LegacyContact 
 		{ email }
 	);
 }
+
+export async function deleteLegacyContact( legacyContactId: number ): Promise< void > {
+	return wpcom.req.post( {
+		path: `/me/legacy-contacts/${ legacyContactId }`,
+		apiNamespace: 'wpcom/v2',
+		method: 'DELETE',
+	} );
+}
