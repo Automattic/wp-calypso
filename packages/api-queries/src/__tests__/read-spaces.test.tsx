@@ -86,12 +86,15 @@ describe( 'read spaces mutations', () => {
 			expect( options.refetchOnMount ).toBe( 'always' );
 		} );
 
-		it( 'persists and keeps previous data for space detail queries', () => {
+		it( 'persists space detail queries without bleeding the previous space', () => {
 			const options = readSpaceQuery( '3' );
 
 			expect( options.queryKey ).toEqual( [ 'read', 'spaces', 'detail', '3' ] );
 			expect( options.meta ).toEqual( { persist: true } );
-			expect( options.placeholderData ).toBe( keepPreviousData );
+			// No keepPreviousData on the detail query: a spaceId change must not flash
+			// the previous space's name/sources. Persisted cache + refetchOnMount keep
+			// the same space visible during refetch.
+			expect( options.placeholderData ).toBeUndefined();
 			expect( options.refetchOnMount ).toBe( 'always' );
 		} );
 	} );

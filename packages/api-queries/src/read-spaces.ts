@@ -61,7 +61,10 @@ export const readSpaceQuery = ( spaceId: string ) =>
 		queryFn: () => fetchReadSpace( spaceId ),
 		staleTime: Infinity,
 		refetchOnMount: 'always',
-		placeholderData: keepPreviousData,
+		// No `placeholderData: keepPreviousData` here: when `spaceId` changes the
+		// detail view (or a still-mounted Sources modal) must not flash the previous
+		// space's name/sources. The persisted cache + mount-time refetch already keep
+		// the *same* space's data visible while it refreshes.
 		meta: { persist: true },
 	} );
 
