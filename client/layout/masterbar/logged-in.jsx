@@ -545,21 +545,23 @@ class MasterbarLoggedIn extends Component {
 			},
 		];
 
-		// In the wp-admin context (adminMenu is loaded), the Dashboard link is redundant
-		// since the user is already there. Only show it when viewing from Calypso contexts
-		// like the Hosting Dashboard or Reader.
-		if ( isClassicView && ! adminMenu ) {
-			menuItems.push( {
-				label: translate( 'Dashboard' ),
-				url: siteAdminUrl,
-				onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_dashboard_clicked' ),
-			} );
-		} else if ( ! isClassicView ) {
-			menuItems.push( {
-				label: translate( 'My Home' ),
-				url: siteHomeUrl,
-				onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_my_home_clicked' ),
-			} );
+		// In the wp-admin context (adminMenu is loaded), this link is redundant since the user
+		// is already in the admin. Only show it in non-admin Calypso contexts like the Hosting
+		// Dashboard or Reader.
+		if ( ! adminMenu ) {
+			if ( isClassicView ) {
+				menuItems.push( {
+					label: translate( 'Dashboard' ),
+					url: siteAdminUrl,
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_dashboard_clicked' ),
+				} );
+			} else {
+				menuItems.push( {
+					label: translate( 'My Home' ),
+					url: siteHomeUrl,
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_my_home_clicked' ),
+				} );
+			}
 		}
 
 		if ( ! site?.is_wpcom_staging_site ) {
