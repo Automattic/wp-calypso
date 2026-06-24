@@ -36,10 +36,11 @@
 
 .site-logs__empty-title {
 	font-weight: 600;
-	margin-block-end: 8px;
+	margin-block-end: 2px;
 }
 
 .site-logs__empty-description {
+	margin-block-start: 0;
 	color: var( --color-text-subtle );
 
 	code {
