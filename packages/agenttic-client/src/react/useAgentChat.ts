@@ -6,6 +6,7 @@ import type {
 	Message as ClientMessage,
 	ContentType,
 	ContextProvider,
+	TaskUpdate,
 	ToolProvider,
 } from '../client/types/index';
 import { useMessageActions } from '../message-actions/useMessageActions';
@@ -344,6 +345,8 @@ export interface UseAgentChatConfig {
 	toolProvider?: ToolProvider;
 	authProvider?: AuthProvider;
 	enableStreaming?: boolean; // Enable token-by-token streaming
+	// Observe every raw TaskUpdate yielded by the stream before built-in UI handling.
+	onTaskUpdate?: ( update: TaskUpdate ) => void | Promise< void >;
 	odieBotId?: string; // Odie bot ID for server-based conversation storage (e.g., 'wpcom-agent-wp_orchestrator'). When set, enables server storage.
 	credentials?: RequestCredentials; // Set 'include' to send cookies with cross-origin requests.
 }
@@ -455,6 +458,13 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 	useEffect( () => {
 		stateRef.current = state;
 	}, [ state ] );
+
+	// Keep the raw task-update observer fresh without reinitializing the agent
+	// or changing the stable onSubmit callback identity.
+	const onTaskUpdateRef = useRef( config.onTaskUpdate );
+	useEffect( () => {
+		onTaskUpdateRef.current = config.onTaskUpdate;
+	}, [ config.onTaskUpdate ] );
 
 	// Use a ref to always have access to the latest registrations
 	const registrationsRef = useRef( registrations );
@@ -739,6 +749,17 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					  );
 
 				for await ( const update of stream ) {
+					if ( onTaskUpdateRef.current ) {
+						try {
+							await onTaskUpdateRef.current( update );
+						} catch ( observerError ) {
+							logger(
+								'Error in onTaskUpdate callback: %O',
+								observerError
+							);
+						}
+					}
+
 					// Update progress message and phase if present
 					if ( update.progressMessage || update.progressPhase ) {
 						setState( ( prev ) => ( {
