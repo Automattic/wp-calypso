@@ -98,7 +98,7 @@ export function getNewDismissTimes( dismissedSection, currentDismissTimes ) {
 				// if it was longer than that (e.g. if other section was also dismissed for a month).
 				result[ section ] =
 					get( currentDismissTimes, section, -Infinity ) > dismissTimes.shorterDuration
-						? get( currentDismissTimes, section )
+						? currentDismissTimes?.[ section ]
 						: dismissTimes.shorterDuration;
 			}
 
