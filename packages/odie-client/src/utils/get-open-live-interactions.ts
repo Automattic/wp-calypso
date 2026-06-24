@@ -67,8 +67,16 @@ function getConversations(): ZendeskConversation[] {
  * @param interactionStatusByUuid Optional map of supportInteractionId → InteractionStatus
  *                                from the TanStack cache. Used to skip conversations whose
  *                                backing SupportInteraction is closed/solved.
+ * @param excludeInteractionId Optional interaction UUID to skip when selecting
+ *                             `mostRecentSupportInteractionId`. Useful when the caller is
+ *                             already viewing that conversation (e.g. a stale-cache merge
+ *                             scenario where the current chat still appears open in Smooch).
+ *                             Does not affect `openCount` or `hasReachedLimit`.
  */
-export function getOpenLiveInteractions( interactionStatusByUuid?: InteractionStatusByUuid ): {
+export function getOpenLiveInteractions(
+	interactionStatusByUuid?: InteractionStatusByUuid,
+	excludeInteractionId?: string | null
+): {
 	mostRecentSupportInteractionId: string | null;
 	openCount: number;
 	hasReachedLimit: boolean;
@@ -76,8 +84,13 @@ export function getOpenLiveInteractions( interactionStatusByUuid?: InteractionSt
 	const open = getConversations().filter( ( conversation ) =>
 		isOpenConversation( conversation, interactionStatusByUuid )
 	);
+	const candidate = excludeInteractionId
+		? open.find(
+				( c ) => ( c.metadata?.supportInteractionId as string | undefined ) !== excludeInteractionId
+		  )
+		: open[ 0 ];
 	return {
-		mostRecentSupportInteractionId: ( open[ 0 ]?.metadata.supportInteractionId as string ) ?? null,
+		mostRecentSupportInteractionId: ( candidate?.metadata.supportInteractionId as string ) ?? null,
 		openCount: open.length,
 		hasReachedLimit: open.length >= MAX_OPEN_CONVERSATIONS,
 	};
