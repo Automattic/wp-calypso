@@ -28,6 +28,7 @@ const JS_UTILS_NAMES = [
 	'truncate',
 	'flow',
 	'defaults',
+	'set',
 ];
 
 // The js-utils case converters cover ASCII identifiers/keys, not lodash's full

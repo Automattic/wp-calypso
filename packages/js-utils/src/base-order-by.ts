@@ -1,4 +1,5 @@
 import isSymbol from './is-symbol';
+import castPath from './to-path';
 
 export type Order = 'asc' | 'desc';
 export type Iteratee< T > =
@@ -55,49 +56,6 @@ const compareAscending = ( value: unknown, other: unknown ): number => {
 		}
 	}
 	return 0;
-};
-
-// Property-path resolution, ported from lodash so a string iteratee tokenizes
-// the same way (dot, bracket, and quoted-bracket notation) and a string that is
-// a literal key of the object is used whole rather than split.
-const reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/;
-const reIsPlainProp = /^\w*$/;
-const rePropName =
-	/[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
-const reEscapeChar = /\\(\\)?/g;
-
-const isKey = ( value: unknown, object: unknown ): boolean => {
-	if ( Array.isArray( value ) ) {
-		return false;
-	}
-	const type = typeof value;
-	if ( type === 'number' || type === 'boolean' || value == null || isSymbol( value ) ) {
-		return true;
-	}
-	return (
-		reIsPlainProp.test( value as string ) ||
-		! reIsDeepProp.test( value as string ) ||
-		( object != null && ( value as string ) in Object( object ) )
-	);
-};
-
-const stringToPath = ( string: string ): string[] => {
-	const result: string[] = [];
-	if ( string.charCodeAt( 0 ) === 46 /* . */ ) {
-		result.push( '' );
-	}
-	string.replace( rePropName, ( match, number, quote, substring ) => {
-		result.push( quote ? substring.replace( reEscapeChar, '$1' ) : number || match );
-		return match;
-	} );
-	return result;
-};
-
-const castPath = ( value: string | number | ReadonlyArray< string | number >, object: unknown ) => {
-	if ( Array.isArray( value ) ) {
-		return value;
-	}
-	return isKey( value, object ) ? [ value ] : stringToPath( String( value ) );
 };
 
 const baseGet = (
