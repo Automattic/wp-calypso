@@ -106,16 +106,18 @@ describe( 'PaymentRiskNoticeBanner', () => {
 			primary_action_label: 'Update your payment method',
 			primary_action_url: 'https://wordpress.com/me/billing/purchases',
 		};
-		mockedIsEnabled.mockImplementation( ( flag ) => flag === 'a4a-payment-risk-notice-banner' );
+		mockedIsEnabled.mockReturnValue( false );
 	} );
 
-	it( 'does not render when the feature flag is disabled', () => {
-		mockedIsEnabled.mockReturnValue( false );
+	it( 'renders when the payment notice is present without requiring a feature flag', () => {
+		render( <PaymentRiskNoticeBanner source="overview" /> );
 
-		const { container } = render( <PaymentRiskNoticeBanner source="overview" /> );
-
-		expect( container ).toBeEmptyDOMElement();
-		expect( mockDispatch ).not.toHaveBeenCalled();
+		expect(
+			screen.getByRole( 'heading', {
+				name: 'Action required: We are unable to renew your subscription(s)',
+			} )
+		).toBeVisible();
+		expect( mockedIsEnabled ).toHaveBeenCalledWith( 'a4a-bd-checkout' );
 	} );
 
 	it( 'does not render when the payment notice is missing', () => {
