@@ -91,8 +91,31 @@ const countPendingItems = (
 	return firstSeen === -1 ? streamItems.length : firstSeen;
 };
 
-const streamItemsFromPages = ( pages: ReadStreamResponse[], streamType: string ): StreamItem[] =>
-	pages.flatMap( ( page ) => normalizeStreamPage( page, streamType ).streamItems );
+const countPendingItemsFromPages = (
+	pollPage: ReadStreamResponse | null | undefined,
+	pages: ReadStreamResponse[],
+	streamType: string
+): number => {
+	const streamItems = pollPage ? normalizeStreamPage( pollPage, streamType ).streamItems : [];
+	if ( streamItems.length === 0 ) {
+		return 0;
+	}
+
+	let firstSeen = -1;
+	for ( const page of pages ) {
+		const seen = new Set( normalizeStreamPage( page, streamType ).streamItems.map( postKeyId ) );
+		const pageFirstSeen = streamItems.findIndex( ( k ) => seen.has( postKeyId( k ) ) );
+		if ( pageFirstSeen === -1 ) {
+			continue;
+		}
+		firstSeen = firstSeen === -1 ? pageFirstSeen : Math.min( firstSeen, pageFirstSeen );
+		if ( firstSeen === 0 ) {
+			break;
+		}
+	}
+
+	return firstSeen === -1 ? streamItems.length : firstSeen;
+};
 
 const siteHasPost = ( site: unknown ): boolean => {
 	if ( ! site || typeof site !== 'object' ) {
@@ -309,10 +332,9 @@ export function useStreamPendingPosts( {
 				startDate,
 			} );
 			queryClient.setQueryData< StreamInfiniteData >( streamQueryKey, ( current ) => {
-				const currentItems = current?.pages.length
-					? streamItemsFromPages( current.pages, streamType )
-					: items;
-				const currentPendingCount = countPendingItems( pollHead.data, currentItems, streamType );
+				const currentPendingCount = current?.pages.length
+					? countPendingItemsFromPages( pollHead.data, current.pages, streamType )
+					: countPendingItems( pollHead.data, items, streamType );
 				return currentPendingCount > 0
 					? prependPendingPage(
 							current,
