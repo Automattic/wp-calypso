@@ -5,7 +5,6 @@ import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import debugFactory from 'debug';
 import isEqual from 'fast-deep-equal/es6';
-import { find } from 'lodash';
 import delegateEventTracking, {
 	registerSubscriber as registerDelegateEventSubscriber,
 } from './tracking/delegate-event-tracking';
@@ -339,7 +338,7 @@ const maybeTrackPatternInsertion = ( actionData, additionalData ) => {
 		select( 'core/block-editor' ).getSettings();
 	const patterns = select( 'core/block-editor' ).__experimentalGetAllowedPatterns();
 
-	const meta = find( actionData, ( item ) => item?.patternName );
+	const meta = actionData?.find( ( item ) => item?.patternName );
 	let patternName = meta?.patternName;
 	// Quick block inserter doesn't use an object to store the patternName
 	// in the metadata. The pattern name is just directly used as a string.

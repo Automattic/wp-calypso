@@ -1,7 +1,7 @@
 import { Card, Dialog, Suggestions } from '@automattic/components';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import { find, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
@@ -61,7 +61,7 @@ class SelectIpsTag extends Component {
 	};
 
 	getRegistrarInfo( ipsTag, ipsTagList ) {
-		return find( ipsTagList, [ 'tag', ipsTag ] );
+		return ipsTagList.find( ( item ) => item.tag === ipsTag );
 	}
 
 	getSuggestions() {

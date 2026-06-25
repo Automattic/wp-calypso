@@ -1,4 +1,4 @@
-import { find, get } from 'lodash';
+import { get } from 'lodash';
 import {
 	GP_PROJECT,
 	GP_BASE_URL,
@@ -76,9 +76,9 @@ export function submitTranslation(
  * @returns {Object} normalized data
  */
 export function normalizeDetailsFromTranslationData( glotPressData ) {
-	const translationDetails = find( glotPressData.translations, {
-		original_id: glotPressData.original_id,
-	} );
+	const translationDetails = glotPressData.translations?.find(
+		( translation ) => translation.original_id === glotPressData.original_id
+	);
 
 	return {
 		originalId: glotPressData.original_id,

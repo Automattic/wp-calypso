@@ -8,7 +8,7 @@ import {
 	TYPE_ARTICLE,
 } from '@automattic/social-previews';
 import { localize } from 'i18n-calypso';
-import { find, get } from 'lodash';
+import { get } from 'lodash';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import SeoPreviewUpgradeNudge from 'calypso/components/seo/preview-upgrade-nudge';
@@ -55,7 +55,7 @@ const getPostImage = ( post ) => {
 
 	const imgElements = parseHtml( content ).querySelectorAll( 'img' );
 	const imageUrl = get(
-		find( imgElements, ( { width } ) => width >= PREVIEW_IMAGE_WIDTH ),
+		Array.from( imgElements ).find( ( { width } ) => width >= PREVIEW_IMAGE_WIDTH ),
 		'src',
 		null
 	);
@@ -63,20 +63,19 @@ const getPostImage = ( post ) => {
 	return imageUrl ? `${ imageUrl }?s=${ PREVIEW_IMAGE_WIDTH }` : null;
 };
 
-const getSeoExcerptForPost = ( post ) => {
+export const getSeoExcerptForPost = ( post ) => {
 	if ( ! post ) {
 		return null;
 	}
 
 	return formatExcerpt(
-		find(
-			[
-				post.metadata?.find( ( { key } ) => key === 'advanced_seo_description' )?.value,
-				post.excerpt,
-				post.content,
-			],
-			Boolean
-		)
+		[
+			( Array.isArray( post.metadata ) ? post.metadata : [] ).find(
+				( { key } ) => key === 'advanced_seo_description'
+			)?.value,
+			post.excerpt,
+			post.content,
+		].find( Boolean )
 	);
 };
 
@@ -86,7 +85,7 @@ const getSeoExcerptForSite = ( site ) => {
 	}
 
 	return formatExcerpt(
-		find( [ site.options?.advanced_seo_front_page_description, site.description ], Boolean )
+		[ site.options?.advanced_seo_front_page_description, site.description ].find( Boolean )
 	);
 };
 

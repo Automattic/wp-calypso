@@ -1,6 +1,6 @@
 import { pick, sortBy } from '@automattic/js-utils';
 import { createSelector } from '@automattic/state-utils';
-import { filter, find, some } from 'lodash';
+import { filter, some } from 'lodash';
 import {
 	getSite,
 	getSiteTitle,
@@ -155,23 +155,23 @@ export const getPluginsWithUpdateStatuses = createSelector(
 				} );
 			} );
 
-			if ( find( withUpdate, { slug: plugin.slug } ) ) {
+			if ( withUpdate.find( ( item ) => item.slug === plugin.slug ) ) {
 				status.push( PLUGINS_STATUS.UPDATE );
 			}
 
-			if ( find( inactive, { slug: plugin.slug } ) ) {
+			if ( inactive.find( ( item ) => item.slug === plugin.slug ) ) {
 				status.push( PLUGINS_STATUS.INACTIVE );
 			}
 
-			if ( find( active, { slug: plugin.slug } ) ) {
+			if ( active.find( ( item ) => item.slug === plugin.slug ) ) {
 				status.push( PLUGINS_STATUS.ACTIVE );
 			}
 
-			if ( find( withAutoUpdate, { slug: plugin.slug } ) ) {
+			if ( withAutoUpdate.find( ( item ) => item.slug === plugin.slug ) ) {
 				status.push( PLUGINS_STATUS.AUTOUPDATE_ENABLED );
 			}
 
-			if ( find( withAutoUpdateDisabled, { slug: plugin.slug } ) ) {
+			if ( withAutoUpdateDisabled.find( ( item ) => item.slug === plugin.slug ) ) {
 				status.push( PLUGINS_STATUS.AUTOUPDATE_DISABLED );
 			}
 
@@ -195,7 +195,7 @@ export const getPluginOnSites = createSelector( ( state, siteIds, pluginSlug ) =
 
 export function getPluginOnSite( state, siteId, pluginSlug ) {
 	const pluginList = getPlugins( state, [ siteId ] );
-	return find( pluginList, ( plugin ) => isEqualSlugOrId( pluginSlug, plugin ) );
+	return pluginList.find( ( plugin ) => isEqualSlugOrId( pluginSlug, plugin ) );
 }
 
 export function getPluginsOnSite( state, siteId, pluginSlugs ) {
@@ -204,7 +204,7 @@ export function getPluginsOnSite( state, siteId, pluginSlugs ) {
 
 export function getSitesWithPlugin( state, siteIds, pluginSlug ) {
 	const pluginList = getPlugins( state, siteIds );
-	const plugin = find( pluginList, ( pluginItem ) => isEqualSlugOrId( pluginSlug, pluginItem ) );
+	const plugin = pluginList.find( ( pluginItem ) => isEqualSlugOrId( pluginSlug, pluginItem ) );
 
 	if ( ! plugin ) {
 		return [];
