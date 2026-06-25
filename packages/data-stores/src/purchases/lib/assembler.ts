@@ -1,5 +1,18 @@
-import { snakeToCamelCase } from '@automattic/js-utils';
 import type { PurchasePriceTier, Purchase, RawPurchase } from '../types';
+
+/**
+ * Convert a snake_case_word to a camelCaseWord.
+ */
+function snakeToCamelCase( snakeCaseString: string | undefined ): string {
+	if ( ! snakeCaseString ) {
+		return '';
+	}
+	return snakeCaseString
+		.toLowerCase()
+		.replace( /([-_][a-z0-9])/g, ( group ) =>
+			group.toUpperCase().replace( '-', '' ).replace( '_', '' )
+		);
+}
 
 export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 	const object: Purchase = {

@@ -50,7 +50,6 @@
 		"@automattic/calypso-products": "workspace:^",
 		"@automattic/design-types": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
-		"@automattic/js-utils": "workspace:^",
 		"@automattic/number-formatters": "^1.2.0",
 		"@automattic/oauth-token": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",

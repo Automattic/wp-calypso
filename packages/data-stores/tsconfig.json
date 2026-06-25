@@ -15,7 +15,6 @@
 		{ "path": "../api-queries" },
 		{ "path": "../design-types" },
 		{ "path": "../i18n-utils" },
-		{ "path": "../shopping-cart" },
-		{ "path": "../js-utils" }
+		{ "path": "../shopping-cart" }
 	]
 }
