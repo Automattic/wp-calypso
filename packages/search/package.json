@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/search",
-	"version": "1.1.1",
+	"version": "1.1.2",
 	"description": "Automattic Search.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -53,6 +53,7 @@
 		"react-dom": "^18.3.1 || ^19.0.0"
 	},
 	"devDependencies": {
+		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
@@ -62,6 +63,7 @@
 		"@testing-library/user-event": "^14.6.1",
 		"@wordpress/data": "^10.48.0",
 		"@wordpress/is-shallow-equal": "^5.48.0",
+		"postcss": "^8.5.3",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"storybook": "^9.1.20",
