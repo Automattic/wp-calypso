@@ -107,6 +107,9 @@ body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .main.m
 		flex: 1;
 		min-width: 0; // allow text-overflow: ellipsis inside flex children
 		order: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
 	}
 
 	// On mobile: toggle wraps below the title row (full width, order after chevron).
