@@ -42,8 +42,9 @@ import { InaccessibleJetpackNotice } from '../site/notices';
 import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
 import { StorageWarningBanner } from './storage-warning-banner';
 import type { Site } from '@automattic/api-core';
-import type { WPBreakpoint } from '@wordpress/compose/build-types/hooks/use-viewport-match';
 import './style.scss';
+
+type WPBreakpoint = Parameters< typeof useViewportMatch >[ 0 ];
 
 const SPACING = {
 	DEFAULT: 6,

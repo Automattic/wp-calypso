@@ -1,5 +1,4 @@
 import { EscalationButton } from '../../components/escalation-button';
-import NextStepButton from '../../components/next-step-button';
 import UnavailableToolMessage from '../../components/unavailable-tool-message';
 import convertToolMessagesToComponents from '../convert-tool-messages-to-components';
 import { isEditorPage } from '../is-editor-page';
@@ -76,6 +75,19 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result ).toEqual( [ message ] );
 	} );
 
+	it( 'filters out context-only messages', () => {
+		const message = createMessage( {
+			content: [ { type: 'text', text: 'This is only context for the model.' } ],
+			context: { flags: { context_only: true } },
+		} as Partial< UIMessage > );
+
+		const result = convertWithDefaults( {
+			messages: [ message ],
+		} );
+
+		expect( result ).toEqual( [] );
+	} );
+
 	it( 'renders tool messages as components', () => {
 		const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
 			type: 'my-component',
@@ -127,6 +139,22 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 	} );
 
+	it( 'does not suppress the thinking indicator for component messages with follow-up tasks', () => {
+		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+			type: 'my-component',
+			followUpTasks: true,
+			isCurrent: true,
+		} );
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+
+		const result = convertWithDefaults( {
+			messages: [ message ],
+			getChatComponent,
+		} );
+
+		expect( result[ 0 ].suppressThinking ).toBe( false );
+	} );
+
 	it( 'filters out unregistered components', () => {
 		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'unknown-component',
@@ -141,7 +169,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result ).toEqual( [] );
 	} );
 
-	it( 'appends `NextStepButton` with `onSubmit` as `onMoveToNextStep` only to the last active message with follow-up tasks', () => {
+	it( 'does not append a move-to-next-step button for active messages with follow-up tasks', () => {
 		const data = { type: 'my-component', followUpTasks: true, isCurrent: true };
 		const actions = [
 			{ id: 'action-1', label: 'Do something', onClick: jest.fn() },
@@ -156,16 +184,10 @@ describe( 'convertToolMessagesToComponents', () => {
 			getChatComponent,
 		} );
 
-		expect( result ).toHaveLength( 3 );
-		expect( result[ 0 ].id ).toBe( 'msg-1' );
-		expect( result[ 1 ].id ).toBe( 'msg-2' );
-		expect( result[ 2 ].id ).toBe( 'msg-2-next-step' );
-		expect( result[ 2 ].content[ 0 ] ).toMatchObject( {
-			type: 'component',
-			component: NextStepButton,
-			componentProps: { onMoveToNextStep: mockOnSubmit },
-		} );
-		expect( result[ 2 ].actions ).toBeUndefined();
+		expect( result ).toHaveLength( 2 );
+		expect( result.map( ( message ) => message.id ) ).toEqual( [ 'msg-1', 'msg-2' ] );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
+		expect( result[ 1 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
 	} );
 
 	it( 'renders `UnavailableToolMessage` when not on an editor page', () => {
@@ -269,6 +291,39 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 0 ].suppressThinking ).toBe( true );
 	} );
 
+	it( 'hides intermediate apply-block-edits summaries when a later tool response exists in the same turn', () => {
+		const intermediateMessage = createToolMessage(
+			'big_sky__apply_block_edits',
+			{
+				followUpTasks: true,
+				summary: 'Updated the heading.',
+			},
+			{ id: 'tool-1' }
+		);
+		const finalMessage = createToolMessage(
+			LEGACY_SHOW_COMPONENT_TOOL_ID,
+			{
+				type: 'color-picker',
+				summary: 'Pick a blue palette.',
+				isCurrent: true,
+			},
+			{ id: 'tool-2' }
+		);
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+
+		const result = convertWithDefaults( {
+			messages: [ intermediateMessage, finalMessage ],
+			getChatComponent,
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].id ).toBe( 'tool-2' );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
+			type: 'text',
+			text: 'Pick a blue palette.',
+		} );
+	} );
+
 	it( 'renders update-theme structured result message as plain text', () => {
 		const message = createToolMessage( 'big_sky__apply_update_theme', {
 			result: {
@@ -316,6 +371,28 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 
 		expect( result ).toEqual( [] );
+	} );
+
+	it( 'filters out a plain-text agent message that duplicates an adjacent show-component summary', () => {
+		const summary = 'Pick a palette from beyond the grave.';
+		const toolMessage = createToolMessage(
+			SHOW_COMPONENT_TOOL_ID,
+			{ type: 'color-picker', summary, isCurrent: true },
+			{ id: 'tool-1' }
+		);
+		const prose = createMessage( {
+			id: 'prose-1',
+			content: [ { type: 'text', text: summary } ],
+		} );
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+
+		const result = convertWithDefaults( {
+			messages: [ toolMessage, prose ],
+			getChatComponent,
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].id ).toBe( 'tool-1' );
 	} );
 
 	it( 'keeps a plain-text agent message that does not match any adjacent tool summary', () => {

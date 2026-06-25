@@ -1,3 +1,4 @@
+import { flushOnboardingWelcomeDigest } from '@automattic/api-core';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
@@ -330,6 +331,8 @@ const ReaderOnboardingRsm = ( {
 	};
 
 	const handleDiscoverFinish = () => {
+		// Fire-and-forget: errors are swallowed so Finish UI is never blocked.
+		void flushOnboardingWelcomeDigest().catch( () => {} );
 		recordOnboardingCompleted();
 		runStepSideEffects( 'discover' );
 		setCurrentStep( null );

@@ -41,7 +41,7 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@automattic/agenttic-ui": "^0.1.69",
+		"@automattic/agenttic-ui": "^0.1.71",
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/zendesk-client": "workspace:^",
@@ -53,7 +53,7 @@
 		"@wordpress/icons": "^13.3.0",
 		"autosize": "^6.0.1",
 		"clsx": "^2.1.1",
-		"dompurify": "3.4.9",
+		"dompurify": "3.4.11",
 		"framer-motion": "^12.23.12",
 		"react-intersection-observer": "^9.4.3",
 		"react-markdown": "^9.0.1",

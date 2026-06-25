@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/user-settings/init';
 
 /**
@@ -9,5 +7,5 @@ import 'calypso/state/user-settings/init';
  * @returns {*} setting key value
  */
 export default function getOriginalUserSetting( state, settingName ) {
-	return get( state, [ 'userSettings', 'settings', settingName ], null );
+	return state?.userSettings?.settings?.[ settingName ] ?? null;
 }

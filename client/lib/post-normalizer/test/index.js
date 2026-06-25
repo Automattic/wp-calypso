@@ -191,6 +191,38 @@ describe( 'index', () => {
 			const normalized = safeImageProperties( 200 )( post );
 			expect( normalized.featured_media.uri ).toBe( 'http://example.com/media.jpg' );
 		} );
+
+		test( 'falls back to post_thumbnail when featured_image cannot be made safe', () => {
+			const post = {
+				// The `?ad` param makes the mocked safeImageUrl return null, mirroring
+				// how the real safeImageUrl rejects external URLs with non-resize query
+				// strings (e.g. `?wsr` appended by WebP-delivery plugins).
+				featured_image: 'http://foo.bar/image.webp?ad=1',
+				post_thumbnail: {
+					URL: 'http://example.com/thumb.jpg',
+					height: 1000,
+					width: 1000,
+					mime_type: '',
+				},
+			};
+			const normalized = safeImageProperties( 200 )( post );
+			expect( normalized.featured_image ).toBe(
+				'http://example.com/thumb.jpg-SAFE?quality=80&strip=info&w=200'
+			);
+		} );
+
+		test( 'does not fabricate a featured_image from post_thumbnail when none was set', () => {
+			const post = {
+				post_thumbnail: {
+					URL: 'http://example.com/thumb.jpg',
+					height: 1000,
+					width: 1000,
+					mime_type: '',
+				},
+			};
+			const normalized = safeImageProperties( 200 )( post );
+			expect( normalized.featured_image ).toBeUndefined();
+		} );
 	} );
 
 	describe( 'pickPrimaryTag', () => {

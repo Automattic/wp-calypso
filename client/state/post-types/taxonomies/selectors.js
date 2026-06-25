@@ -23,7 +23,7 @@ export function isRequestingPostTypeTaxonomies( state, siteId, postType ) {
  * @returns {Array?}           Post type taxonomies
  */
 export function getPostTypeTaxonomies( state, siteId, postType ) {
-	return get( state.postTypes.taxonomies.items, [ siteId, postType ], null );
+	return state.postTypes.taxonomies.items?.[ siteId ]?.[ postType ] ?? null;
 }
 
 /**

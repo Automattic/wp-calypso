@@ -193,7 +193,7 @@ export const maybeRedirectToDashboard = ( context, next ) => {
 
 	dispatch( waitForPrefs() ).finally( () => {
 		if ( hasDashboardOptIn( getState() ) ) {
-			window.location.replace( dashboardLink( '/me/profile' ) );
+			window.location.replace( dashboardLink( '/me' ) );
 			return;
 		}
 		context.page.replace( removeQueryArgs( context.canonicalPath, 'origin_admin_bar' ) );

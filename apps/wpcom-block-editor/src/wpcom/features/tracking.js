@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import debugFactory from 'debug';
 import isEqual from 'fast-deep-equal/es6';
-import { find, cloneDeep } from 'lodash';
+import { find } from 'lodash';
 import delegateEventTracking, {
 	registerSubscriber as registerDelegateEventSubscriber,
 } from './tracking/delegate-event-tracking';
@@ -740,12 +740,12 @@ const trackEditEntityRecord = ( kind, type, id, updates ) => {
 	if ( kind === 'root' && type === 'globalStyles' ) {
 		const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
 		const entityContent = {
-			settings: cloneDeep( editedEntity.settings ),
-			styles: cloneDeep( editedEntity.styles ),
+			settings: structuredClone( editedEntity.settings ),
+			styles: structuredClone( editedEntity.styles ),
 		};
 		const updatedContent = {
-			settings: cloneDeep( updates.settings ),
-			styles: cloneDeep( updates.styles ),
+			settings: structuredClone( updates.settings ),
+			styles: structuredClone( updates.styles ),
 		};
 
 		// Sometimes a second update is triggered corresponding to no changes since the last update.
@@ -789,12 +789,12 @@ const trackSaveEditedEntityRecord = ( kind, type, id ) => {
 
 	if ( kind === 'root' && type === 'globalStyles' ) {
 		const entityContent = {
-			settings: cloneDeep( savedEntity.settings ),
-			styles: cloneDeep( savedEntity.styles ),
+			settings: structuredClone( savedEntity.settings ),
+			styles: structuredClone( savedEntity.styles ),
 		};
 		const updatedContent = {
-			settings: cloneDeep( editedEntity.settings ),
-			styles: cloneDeep( editedEntity.styles ),
+			settings: structuredClone( editedEntity.settings ),
+			styles: structuredClone( editedEntity.styles ),
 		};
 
 		buildGlobalStylesContentEvents(

@@ -574,8 +574,7 @@ body.is-mobile-app-view {
 }
 
 .is-nav-2026-assignment-loading {
-	visibility: hidden;
-	pointer-events: none;
+	display: none;
 }
 
 // Source of truth for the fixed 2026 nav's geometry; everything that clears or sticks
