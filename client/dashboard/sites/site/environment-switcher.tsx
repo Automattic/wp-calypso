@@ -1,8 +1,9 @@
 import { __experimentalHStack as HStack, Button, Dropdown } from '@wordpress/components';
 import { chevronDownSmall } from '@wordpress/icons';
 import Environment from '../../components/environment';
+import { canCreateStagingSite } from '../features';
 import EnvironmentSwitcherDropdown from './environment-switcher-dropdown';
-import useCanSwitchToOtherEnvironment from './use-can-switch-to-other-environment';
+import useCanManageOtherEnvironment from './use-can-manage-other-environment';
 import useStagingSite from './use-staging-site';
 import type { Site } from '@automattic/api-core';
 
@@ -16,9 +17,14 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 		environmentType,
 	} = useStagingSite( site );
 
-	const canToggle = useCanSwitchToOtherEnvironment( site );
+	const canManageOtherEnvironment = useCanManageOtherEnvironment( site );
+	const showEnvironmentToggle =
+		canManageOtherEnvironment ||
+		canCreateStagingSite( site ) ||
+		isStagingSiteCreating ||
+		isStagingSiteDeleting;
 
-	if ( ! canToggle ) {
+	if ( ! showEnvironmentToggle ) {
 		return (
 			<HStack expanded={ false } style={ { flexShrink: 0 } }>
 				<Environment environmentType={ environmentType } />

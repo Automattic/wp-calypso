@@ -4,9 +4,7 @@ import { getProductionSiteId, getStagingSiteId } from '../../utils/site-staging-
 import { canManageSite } from '../features';
 import type { Site } from '@automattic/api-core';
 
-// Stays enabled until the other environment has loaded and we know the user
-// cannot manage it, so the dropdown doesn't flicker in and out while loading.
-export default function useCanSwitchToOtherEnvironment( site: Site ) {
+export default function useCanManageOtherEnvironment( site: Site ) {
 	const otherEnvironmentSiteId = site.is_wpcom_staging_site
 		? getProductionSiteId( site )
 		: getStagingSiteId( site );
@@ -15,5 +13,5 @@ export default function useCanSwitchToOtherEnvironment( site: Site ) {
 		enabled: !! otherEnvironmentSiteId,
 	} );
 
-	return ! otherEnvironmentSite || canManageSite( otherEnvironmentSite );
+	return !! otherEnvironmentSite && canManageSite( otherEnvironmentSite );
 }
