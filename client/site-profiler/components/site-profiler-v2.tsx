@@ -122,7 +122,11 @@ export default function SiteProfilerV2( props: Props ) {
 	const updateDomainRouteParam = ( value: string ) => {
 		// Update the domain param;
 		// URL param is the source of truth
-		value ? page( `/site-profiler/${ value }` ) : page( '/site-profiler' );
+		if ( value ) {
+			page( `/site-profiler/${ value }` );
+		} else {
+			page( '/site-profiler' );
+		}
 	};
 
 	const { is_wpcom: isWpCom = false, is_wordpress: isWordPress = false } = performanceMetrics ?? {};

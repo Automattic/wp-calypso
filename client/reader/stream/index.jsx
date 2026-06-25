@@ -16,7 +16,6 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import scrollTo from 'calypso/lib/scroll-to';
 import withDimensions from 'calypso/lib/with-dimensions';
-import { isEditorIframeFocused } from 'calypso/reader/components/quick-post/utils';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { useCachedPost } from 'calypso/reader/data/post/cache';
 import { withPostLikeActions } from 'calypso/reader/data/post/likes';
@@ -336,11 +335,7 @@ class ReaderStream extends Component {
 		}
 
 		const tagName = ( event.target || event.srcElement ).tagName;
-		if (
-			inputTags.includes( tagName ) ||
-			event.target.isContentEditable ||
-			isEditorIframeFocused() // Disable keyboard shortcuts when quick post editor is focused.
-		) {
+		if ( inputTags.includes( tagName ) || event.target.isContentEditable ) {
 			return;
 		}
 

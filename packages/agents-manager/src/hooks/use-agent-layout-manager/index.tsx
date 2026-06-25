@@ -4,6 +4,7 @@ import { useMediaQuery } from '@wordpress/compose';
 import {
 	createPortal,
 	useCallback,
+	useEffect,
 	useLayoutEffect,
 	useRef,
 	useState,
@@ -12,6 +13,7 @@ import {
 } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { AI } from '../../components/icons';
+import observeEditorCanvasPointerDown from '../../utils/observe-editor-canvas-pointerdown';
 
 const SIDEBAR_TRANSITION_DURATION_MS = 200;
 
@@ -202,6 +204,47 @@ export default function useAgentLayoutManager( {
 			onUndockRef.current();
 		}
 	}, [ container, isDocked, isReady, shouldRenderSidebar ] );
+
+	// Track focus on the chat panel so the floating chat can raise its z-index. `pointerdown` also
+	// covers clicks on non-focusable regions (e.g. scroll areas) that skip `focusin`
+	useEffect( () => {
+		const node = portalRef.current;
+
+		if ( ! isPortalReady || ! node || shouldRenderSidebar ) {
+			node?.classList.remove( 'is-focused' );
+			return;
+		}
+
+		const setFocused = () => {
+			node.classList.add( 'is-focused' );
+		};
+
+		const handleFocusOut = ( e: FocusEvent ) => {
+			if ( ! node.contains( e.relatedTarget as Node | null ) ) {
+				node.classList.remove( 'is-focused' );
+			}
+		};
+
+		const handleDocumentPointerDown = ( e: PointerEvent ) => {
+			if ( ! node.contains( e.target as Node | null ) ) {
+				node.classList.remove( 'is-focused' );
+			}
+		};
+
+		node.addEventListener( 'focusin', setFocused );
+		node.addEventListener( 'focusout', handleFocusOut );
+		node.addEventListener( 'pointerdown', setFocused );
+		document.addEventListener( 'pointerdown', handleDocumentPointerDown );
+		const stopCanvasObserver = observeEditorCanvasPointerDown( handleDocumentPointerDown );
+
+		return () => {
+			node.removeEventListener( 'focusin', setFocused );
+			node.removeEventListener( 'focusout', handleFocusOut );
+			node.removeEventListener( 'pointerdown', setFocused );
+			document.removeEventListener( 'pointerdown', handleDocumentPointerDown );
+			stopCanvasObserver();
+		};
+	}, [ isPortalReady, shouldRenderSidebar ] );
 
 	// Reflect split-screen state on the container as `is-split-screen`.
 	useLayoutEffect( () => {

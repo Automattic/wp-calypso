@@ -202,11 +202,12 @@ body.is-section-reader {
 		padding: 4px 6px;
 		line-height: 1;
 		min-width: 22px;
+		white-space: nowrap;
 		background-color: transparent;
 		border-color: currentColor;
 		outline-color: currentColor;
 		color: currentColor;
-		margin: 0 auto;
+		justify-self: end;
 		align-self: self-start;
 	}
 
@@ -334,7 +335,7 @@ body.is-section-reader {
 		}
 
 		&.has-counts .sidebar__menu-link {
-			grid-template-columns: 24px 1fr 36px;
+			grid-template-columns: 24px 1fr 48px;
 		}
 
 		.sidebar__menu-link {

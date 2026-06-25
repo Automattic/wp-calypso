@@ -5,7 +5,7 @@ import { isHostingSignupFlow, isNewsletterFlow } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize, fixMe } from 'i18n-calypso';
-import { get, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -176,7 +176,7 @@ export class UserStep extends Component {
 
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 
-		const clientId = get( this.props.initialContext, 'query.oauth2_client_id', null );
+		const clientId = this.props.initialContext?.query?.oauth2_client_id ?? null;
 		if ( this.props.oauth2Signup && clientId ) {
 			this.props.fetchOAuth2ClientData( clientId );
 		}

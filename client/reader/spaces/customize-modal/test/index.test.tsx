@@ -300,7 +300,7 @@ describe( 'CustomizeModal', () => {
 
 		await waitFor( () => expect( onClose ).toHaveBeenCalled() );
 
-		expect( page ).toHaveBeenCalledWith( '/reader/spaces' );
+		expect( page ).toHaveBeenCalledWith( '/reader' );
 		const list = queryClient.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey );
 		expect( list ).toEqual( [] );
 	} );

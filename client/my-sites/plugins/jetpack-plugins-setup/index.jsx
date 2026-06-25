@@ -467,7 +467,7 @@ class PlansSetup extends Component {
 		}
 
 		const pluginsWithErrors = filter( this.props.plugins, ( item ) => {
-			const errorCode = get( item, 'error.code', null );
+			const errorCode = item?.error?.code ?? null;
 			return errorCode && errorCode !== 'already_registered';
 		} );
 

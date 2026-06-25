@@ -25,7 +25,7 @@ export function isRequestingPostStats( state, siteId, postId, fields = [] ) {
  * @returns {*}              Stat value
  */
 export function getPostStat( state, siteId, postId, stat ) {
-	return get( state.stats.posts.items, [ siteId, postId, stat ], null );
+	return state.stats.posts.items?.[ siteId ]?.[ postId ]?.[ stat ] ?? null;
 }
 
 /**
@@ -36,5 +36,5 @@ export function getPostStat( state, siteId, postId, stat ) {
  * @returns {Object}         Stats
  */
 export function getPostStats( state, siteId, postId ) {
-	return get( state.stats.posts.items, [ siteId, postId ], null );
+	return state.stats.posts.items?.[ siteId ]?.[ postId ] ?? null;
 }

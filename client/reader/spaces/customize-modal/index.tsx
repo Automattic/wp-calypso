@@ -28,7 +28,6 @@ import {
 } from 'calypso/reader/data/spaces';
 import { getSpaceErrorMessage, validateName } from 'calypso/reader/spaces/form-helpers';
 import { SPACE_ICONS } from 'calypso/reader/spaces/icons';
-import { SPACES_BASE_PATH } from 'calypso/reader/spaces/routes';
 import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -271,8 +270,8 @@ function SpaceUpsertModalContent( {
 					)
 				);
 				onClose();
-				// We are viewing the now-deleted space, so leave it for the landing view.
-				page( SPACES_BASE_PATH );
+				// We are viewing the now-deleted space, so send the user back to the Reader.
+				page( '/reader' );
 			},
 		} );
 	};

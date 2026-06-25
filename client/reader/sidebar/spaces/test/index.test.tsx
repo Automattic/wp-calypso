@@ -132,6 +132,44 @@ describe( 'ReaderSidebarSpaces', () => {
 		);
 	} );
 
+	it( 'prefetches the feed and detail of a space on hover', async () => {
+		const user = userEvent.setup();
+		const HOVERED = SPACES[ 1 ]; // Not the active space.
+		const postsScope = nock( 'https://public-api.wordpress.com' )
+			.get( `/wpcom/v2/reader/spaces/${ HOVERED.id }/posts` )
+			.query( true )
+			.reply( 200, { posts: [] } );
+		const detailScope = nock( 'https://public-api.wordpress.com' )
+			.get( `/wpcom/v2/reader/spaces/${ HOVERED.id }` )
+			.reply( 200, { ...HOVERED, follows: [], tags: [] } );
+
+		render( <ReaderSidebarSpaces path={ OPEN_PATH } /> );
+
+		await user.hover( screen.getByRole( 'link', { name: new RegExp( HOVERED.name ) } ) );
+
+		await waitFor( () => expect( postsScope.isDone() ).toBe( true ) );
+		await waitFor( () => expect( detailScope.isDone() ).toBe( true ) );
+	} );
+
+	it( 'does not prefetch the space that is already open', async () => {
+		const user = userEvent.setup();
+		// Interceptors for the active space; they must stay pending (never called).
+		nock( 'https://public-api.wordpress.com' )
+			.get( `/wpcom/v2/reader/spaces/${ FIRST_SPACE.id }/posts` )
+			.query( true )
+			.reply( 200, { posts: [] } );
+		nock( 'https://public-api.wordpress.com' )
+			.get( `/wpcom/v2/reader/spaces/${ FIRST_SPACE.id }` )
+			.reply( 200, { ...FIRST_SPACE, follows: [], tags: [] } );
+
+		render( <ReaderSidebarSpaces path={ OPEN_PATH } /> );
+
+		await user.hover( screen.getByRole( 'link', { name: new RegExp( FIRST_SPACE.name ) } ) );
+
+		// The guard short-circuits synchronously, so no request goes out.
+		expect( nock.pendingMocks() ).toHaveLength( 2 );
+	} );
+
 	it( 'does not render the sources modal from the sidebar', () => {
 		render( <ReaderSidebarSpaces path={ OPEN_PATH } /> );
 

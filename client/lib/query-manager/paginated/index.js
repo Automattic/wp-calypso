@@ -1,5 +1,4 @@
 import { omit, range } from '@automattic/js-utils';
-import { cloneDeep } from 'lodash';
 import QueryManager from '../';
 import { DEFAULT_PAGINATED_QUERY, PAGINATION_QUERY_KEYS } from './constants';
 import PaginatedQueryKey from './key';
@@ -173,7 +172,7 @@ export default class PaginatedQueryManager extends QueryManager {
 
 		// If we've reached this point, we know that we've received a paged
 		// set of data where our assumed item set is incorrect.
-		const modifiedNextQuery = cloneDeep( nextQuery );
+		const modifiedNextQuery = structuredClone( nextQuery );
 
 		// Found count is not always reliable.  For example, if one or more
 		// password-protected posts would appear in a page of API results, but

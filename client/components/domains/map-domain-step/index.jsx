@@ -230,7 +230,7 @@ class MapDomainStep extends Component {
 		this.setState( { suggestion: null, notice: null, isPendingSubmit: true } );
 
 		checkDomainAvailability(
-			{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
+			{ domainName: domain, blogId: this.props?.selectedSite?.ID ?? null },
 			( error, result ) => {
 				const mappableStatus = get( result, 'mappable', error );
 				const status = get( result, 'status', error );
@@ -251,14 +251,14 @@ class MapDomainStep extends Component {
 					return;
 				}
 
-				let site = get( result, 'other_site_domain', null );
+				let site = result?.other_site_domain ?? null;
 				if ( ! site ) {
-					site = get( this.props, 'selectedSite.slug', null );
+					site = this.props?.selectedSite?.slug ?? null;
 				}
 
 				const availabilityStatus = MAPPED === mappableStatus ? mappableStatus : status;
 
-				const maintenanceEndTime = get( result, 'maintenance_end_time', null );
+				const maintenanceEndTime = result?.maintenance_end_time ?? null;
 				const { message, severity } = getAvailabilityNotice(
 					domain,
 					availabilityStatus,

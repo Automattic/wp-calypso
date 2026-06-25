@@ -35,7 +35,7 @@ export default function SecurityLegacyContact() {
 								<Text>
 									{ /* TODO: translate this string once the legacy contact UI is finalized. */ }
 									{ createInterpolateElement( 'Your legacy contact is <contactEmail />.', {
-										contactEmail: <strong>{ contact.email }</strong>,
+										contactEmail: <strong>{ contact.contact_email }</strong>,
 									} ) }
 								</Text>
 								<ButtonStack justify="flex-start">
