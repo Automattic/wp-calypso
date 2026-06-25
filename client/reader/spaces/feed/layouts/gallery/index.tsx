@@ -4,19 +4,26 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { useInfiniteList } from 'calypso/reader/hooks/use-infinite-list';
 import { getPostUrl } from 'calypso/reader/route';
 import { SpaceFeedTimeSince } from '../../components/time-since';
-import { getPostFieldKey, getPostFields } from '../../post-fields';
+import { getPostFieldKey, getPostFields, type SpaceFeedDayGroup } from '../../post-fields';
 import type { SpaceFeedLayoutProps } from '../types';
 import type { ReadStreamPost } from '@automattic/api-core';
 
 import './style.scss';
 
-// Card is a fixed 270px; the item adds 40px of block padding (20px top + bottom).
+const HEADER_SIZE = 44;
+// Card is a fixed 270px; the grid row adds 40px of block-end padding.
 const ROW_SIZE = 310;
+
+type GalleryRow =
+	| { kind: 'header'; key: string; label: string }
+	| { kind: 'posts'; key: string; posts: ReadStreamPost[] };
 
 function GalleryCard( { post }: { post: ReadStreamPost } ) {
 	const fields = getPostFields( post );
@@ -81,10 +88,8 @@ export function GalleryLayout( {
 	loadMore,
 	restoreKey,
 }: SpaceFeedLayoutProps ) {
-	// Responsive column count: 3 on desktop, 2 on tablet, 1 on mobile. Each post is
-	// its own virtual item spread across `columns` lanes — the virtualizer handles
-	// the main-axis (vertical) position; the cross-axis (left/width) is stable per
-	// item and set in JSX, per TanStack Virtual's multi-lane guidance.
+	const translate = useTranslate();
+	// Responsive column count: 3 on desktop, 2 on tablet, 1 on mobile.
 	const isDesktop = useBreakpoint( '>960px' );
 	const isTablet = useBreakpoint( '>660px' );
 	let columns = 1;
@@ -94,13 +99,62 @@ export function GalleryLayout( {
 		columns = 2;
 	}
 
+	// Build virtual rows: a full-width day header (Today / Yesterday / …) followed
+	// by CSS-grid rows of up to `columns` cards from that same day — the day
+	// grouping mirrors the standard list. Fixed-height cards keep each grid row
+	// uniform, so virtualizing per row (rather than per card) stays simple.
+	const rows = useMemo< GalleryRow[] >( () => {
+		const labelFor = ( group: Exclude< SpaceFeedDayGroup, '' > ): string => {
+			switch ( group ) {
+				case 'today':
+					return translate( 'Today' );
+				case 'yesterday':
+					return translate( 'Yesterday' );
+				case 'earlier':
+					return translate( 'Earlier this week' );
+				case 'older':
+					return translate( 'Older' );
+			}
+		};
+
+		const out: GalleryRow[] = [];
+		let buffer: ReadStreamPost[] = [];
+		const flush = () => {
+			for ( let index = 0; index < buffer.length; index += columns ) {
+				const slice = buffer.slice( index, index + columns );
+				out.push( {
+					kind: 'posts',
+					key: `posts-${ getPostFieldKey( slice[ 0 ] ) }`,
+					posts: slice,
+				} );
+			}
+			buffer = [];
+		};
+
+		let lastGroup: SpaceFeedDayGroup = '';
+		posts.forEach( ( post, index ) => {
+			const { dayGroup } = getPostFields( post );
+			if ( dayGroup && dayGroup !== lastGroup ) {
+				flush();
+				out.push( {
+					kind: 'header',
+					key: `header-${ dayGroup }-${ index }`,
+					label: labelFor( dayGroup ),
+				} );
+				lastGroup = dayGroup;
+			}
+			buffer.push( post );
+		} );
+		flush();
+		return out;
+	}, [ posts, columns, translate ] );
+
 	const { getListProps, items, measureElement, scrollMargin } = useInfiniteList( {
 		scrollElement,
-		count: posts.length,
-		estimateSize: ROW_SIZE,
+		count: rows.length,
+		estimateSize: ( index ) => ( rows[ index ].kind === 'header' ? HEADER_SIZE : ROW_SIZE ),
 		overscan: 4,
-		lanes: columns,
-		getItemKey: ( index ) => getPostFieldKey( posts[ index ] ),
+		getItemKey: ( index ) => rows[ index ].key,
 		hasMore,
 		isLoadingMore,
 		loadMore,
@@ -109,21 +163,31 @@ export function GalleryLayout( {
 
 	return (
 		<div { ...getListProps( { className: 'space-feed-gallery' } ) }>
-			{ items.map( ( virtualItem ) => (
-				<div
-					key={ virtualItem.key }
-					data-index={ virtualItem.index }
-					ref={ measureElement }
-					className="space-feed-gallery__item"
-					style={ {
-						insetInlineStart: `${ ( virtualItem.lane * 100 ) / columns }%`,
-						inlineSize: `${ 100 / columns }%`,
-						transform: `translateY(${ virtualItem.start - scrollMargin }px)`,
-					} }
-				>
-					<GalleryCard post={ posts[ virtualItem.index ] } />
-				</div>
-			) ) }
+			{ items.map( ( virtualRow ) => {
+				const row = rows[ virtualRow.index ];
+				return (
+					<div
+						key={ virtualRow.key }
+						data-index={ virtualRow.index }
+						ref={ measureElement }
+						className="space-feed-gallery__item"
+						style={ { transform: `translateY(${ virtualRow.start - scrollMargin }px)` } }
+					>
+						{ row.kind === 'header' ? (
+							<h2 className="space-feed-gallery__group">{ row.label }</h2>
+						) : (
+							<div
+								className="space-feed-gallery__row"
+								style={ { gridTemplateColumns: `repeat(${ columns }, 1fr)` } }
+							>
+								{ row.posts.map( ( post ) => (
+									<GalleryCard key={ getPostFieldKey( post ) } post={ post } />
+								) ) }
+							</div>
+						) }
+					</div>
+				);
+			} ) }
 		</div>
 	);
 }

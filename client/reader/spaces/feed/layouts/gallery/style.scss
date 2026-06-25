@@ -6,18 +6,32 @@
 	inline-size: 100%;
 }
 
-// Each post is a lane-width virtual item, absolutely positioned by the
-// virtualizer (`transform`) and by the inline cross-axis `inset-inline-start` /
-// `inline-size`. The padding forms the gutter: 32px between columns (16+16) and
-// 40px between rows (20+20).
+// Full-width virtual row (a day header or a grid row of cards), positioned on
+// the main axis by the virtualizer.
 .space-feed-gallery__item {
 	position: absolute;
 	inset-block-start: 0;
-	// border-box so the lane width (`inline-size: 100/columns %`) already accounts
-	// for the gutter padding — otherwise the padding overflows the lane and the
-	// columns overlap, collapsing the gap.
-	box-sizing: border-box;
-	padding: 20px 16px;
+	inset-inline: 0;
+}
+
+// Day-group header (Today / Yesterday / …) above its grid rows.
+.space-feed-gallery__group {
+	margin: 0;
+	padding-block: 20px 16px;
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--color-text-subtle);
+}
+
+// One row of up to `columns` cards (`grid-template-columns` set inline). 32px
+// column gutter; block-end padding is the row gutter (card 270 + 40 = 310,
+// matching the virtualizer estimate).
+.space-feed-gallery__row {
+	display: grid;
+	column-gap: 32px;
+	padding-block-end: 40px;
 }
 
 .space-feed-gallery__card {
