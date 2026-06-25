@@ -33,6 +33,7 @@
 		"calypso/write-on-flow": true,
 		"catch-js-errors": false,
 		"checkout/stripe-upi": true,
+		"checkout/stripe-wallet": true,
 		"ciab/allow-domain-features": true,
 		"ciab/custom-branding": true,
 		"cookie-banner": true,
