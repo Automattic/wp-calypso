@@ -17,5 +17,8 @@ export const getAllowedPluginActions = ( site: SiteWithPluginData, pluginSlug: s
 		// core plugins (Jetpack/VaultPress/Akismet) stay protected from deletion.
 		canDelete: ! isAutoManagedPlugin && canManagePlugins,
 		isManagedPlugin,
+		// Core plugins WordPress.com manages and keeps active (Jetpack/VaultPress/
+		// Akismet); these are never deletable and warrant an explanatory notice.
+		isAutoManagedPlugin,
 	};
 };

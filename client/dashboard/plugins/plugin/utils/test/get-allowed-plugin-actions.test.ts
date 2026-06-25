@@ -58,4 +58,28 @@ describe( 'getAllowedPluginActions', () => {
 			expect( getAllowedPluginActions( site, 'some-plugin' ).canDelete ).toBe( true );
 		} );
 	} );
+
+	// DOTMSD-1304: flags the core plugins that WordPress.com manages so the UI can
+	// explain why they can't be deleted.
+	describe( 'isAutoManagedPlugin', () => {
+		test( 'flags the core plugins on Atomic', () => {
+			const site = makeSite( { isAtomic: true } );
+
+			expect( getAllowedPluginActions( site, 'jetpack' ).isAutoManagedPlugin ).toBe( true );
+			expect( getAllowedPluginActions( site, 'vaultpress' ).isAutoManagedPlugin ).toBe( true );
+			expect( getAllowedPluginActions( site, 'akismet' ).isAutoManagedPlugin ).toBe( true );
+		} );
+
+		test( 'does not flag a regular plugin on Atomic', () => {
+			const site = makeSite( { isAtomic: true, managed: true } );
+
+			expect( getAllowedPluginActions( site, 'some-plugin' ).isAutoManagedPlugin ).toBe( false );
+		} );
+
+		test( 'does not flag core plugins on a non-Atomic site', () => {
+			const site = makeSite( { isAtomic: false, jetpack: true } );
+
+			expect( getAllowedPluginActions( site, 'jetpack' ).isAutoManagedPlugin ).toBe( false );
+		} );
+	} );
 } );
