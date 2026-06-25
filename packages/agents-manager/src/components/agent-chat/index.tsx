@@ -18,6 +18,7 @@ import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isEditorPage } from '../../utils/is-editor-page';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
+import { isShopperHost } from '../../utils/is-shopper-agent';
 import lazyComponent from '../../utils/lazy-component';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
@@ -139,6 +140,9 @@ function getEmptyViewHeading(): string {
 	if ( isReaderChatHost() ) {
 		return __( 'Ask me anything about this blog.', __i18n_text_domain__ );
 	}
+	if ( isShopperHost() ) {
+		return __( 'Hi! Looking for something?', __i18n_text_domain__ );
+	}
 	return __( 'What should we work on next?', __i18n_text_domain__ );
 }
 
@@ -149,6 +153,12 @@ function getEmptyViewHelp(): string {
 	}
 	if ( isReaderChatHost() ) {
 		return __( 'Or type your own question below.', __i18n_text_domain__ );
+	}
+	if ( isShopperHost() ) {
+		return __(
+			'Ask about products, orders, or shipping — or pick one below.',
+			__i18n_text_domain__
+		);
 	}
 	return __( 'Got a different request? Ask away.', __i18n_text_domain__ );
 }
