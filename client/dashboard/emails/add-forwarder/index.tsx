@@ -303,8 +303,6 @@ function AddEmailForwarder() {
 									__next40pxDefaultSize
 									__nextHasNoMarginBottom
 									label={ __( 'Forward to' ) }
-									// Reject anything that isn't a valid email so a malformed string
-									// can't be tokenized as a forwarding target.
 									__experimentalValidateInput={ ( token ) =>
 										emailValidator.validate( token.trim() )
 									}
