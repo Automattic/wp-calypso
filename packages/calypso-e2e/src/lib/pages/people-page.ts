@@ -168,11 +168,12 @@ export class PeoplePage {
 			throw new Error( 'username is required' );
 		}
 
-		// Trim a trailing slash off baseURL so the joined path doesn't become
-		// `host//people/edit/...` (a double slash breaks page.js route matching).
-		await this.page.goto(
-			`${ baseURL.replace( /\/+$/, '' ) }/people/edit/${ siteURL }/${ username }`
-		);
+		// Join via new URL with a host-absolute path rather than string concatenation:
+		// baseURL often carries a trailing slash (getCalypsoURL( '' ) returns one), and
+		// concatenating would produce `host//people/edit/...`, whose double slash breaks
+		// page.js routing. The leading slash also ignores any path on baseURL, so the
+		// route always resolves against the host root.
+		await this.page.goto( new URL( `/people/edit/${ siteURL }/${ username }`, baseURL ).href );
 		await this.page.getByRole( 'button', { name: 'Remove' } ).waitFor( { state: 'visible' } );
 	}
 }
