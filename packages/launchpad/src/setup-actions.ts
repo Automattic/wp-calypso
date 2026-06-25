@@ -39,10 +39,12 @@ export const setUpActionsForTasks = ( {
 		if ( uiContext === 'calypso' && hasCalypsoPath ) {
 			const { calypso_path } = task;
 			if ( task.id === 'drive_traffic' && ! isMobile() && calypso_path !== undefined ) {
-				const [ path, query ] = calypso_path.split( '?' );
+				// Split off any fragment first so the added query arg stays before the `#`.
+				const [ pathAndQuery, fragment ] = calypso_path.split( /#(.*)/s );
+				const [ path, query ] = pathAndQuery.split( '?' );
 				const params = new URLSearchParams( query );
 				params.set( 'tour', 'marketingConnectionsTour' );
-				task.calypso_path = `${ path }?${ params }`;
+				task.calypso_path = `${ path }?${ params }${ fragment ? `#${ fragment }` : '' }`;
 			}
 
 			// Enable task in 'calypso' context
