@@ -1,10 +1,10 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 
 @import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/variables';
-@import 'calypso/assets/stylesheets/shared/mixins/breakpoints';
 
 /**
  * Styling for '/post' route.
@@ -374,8 +374,16 @@
 				margin: 24px auto !important;
 			}
 
-			@include breakpoint-deprecated( '>660px' ) {
+			.alignleft,
+			.alignright {
+				clear: both;
+				margin-top: 24px;
+				margin-bottom: 24px;
+			}
+
+			@include break-small {
 				.alignleft {
+					clear: none;
 					max-width: 100%;
 					float: left;
 					margin-top: 12px;
@@ -384,21 +392,13 @@
 				}
 
 				.alignright {
+					clear: none;
 					max-width: 100%;
 					float: right;
 					margin-top: 12px;
 					margin-bottom: 12px;
 					margin-left: 32px;
 					display: block !important;
-				}
-			}
-
-			@include breakpoint-deprecated( '<660px' ) {
-				.alignleft,
-				.alignright {
-					clear: both;
-					margin-top: 24px;
-					margin-bottom: 24px;
 				}
 			}
 
@@ -432,7 +432,7 @@
 				&.alignleft {
 					max-width: 100%;
 
-					@include breakpoint-deprecated( '>660px' ) {
+					@include break-small {
 						max-width: 50%;
 					}
 
@@ -472,7 +472,7 @@
 				line-height: 1.4285;
 				animation: appear 0.3s ease-in-out;
 
-				@include breakpoint-deprecated( '>660px' ) {
+				@include break-small {
 					padding: 13px 48px;
 					font-size: inherit;
 				}

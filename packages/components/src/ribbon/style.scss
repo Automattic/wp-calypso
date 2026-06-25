@@ -1,5 +1,3 @@
-@import "calypso/assets/stylesheets/shared/functions/z-index";
-
 @import "../styles/typography";
 
 .ribbon {
@@ -7,7 +5,8 @@
 	position: absolute;
 	right: -5px;
 	top: -5px;
-	z-index: z-index("root", ".ribbon");
+	// See: https://github.com/Automattic/wp-calypso/blob/e788f2d6fdf17243e0b307184d84972f819ce992/client/assets/stylesheets/shared/functions/_z-index.scss#L56
+	z-index: 1;
 	overflow: hidden;
 	width: 75px;
 	height: 75px;

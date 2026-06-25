@@ -1,7 +1,5 @@
 // Text meant only for screen readers
 
-@import "calypso/assets/stylesheets/shared/functions/z-index";
-
 .screen-reader-text {
 	clip: rect(1px, 1px, 1px, 1px);
 	position: absolute !important;
@@ -29,6 +27,7 @@
 		text-decoration: none;
 		top: 5px;
 		width: auto;
-		z-index: z-index("screen-reader-text-parent", ".screen-reader-text:focus"); // Above WP toolbar
+		// See: https://github.com/Automattic/wp-calypso/blob/e788f2d6fdf17243e0b307184d84972f819ce992/client/assets/stylesheets/shared/functions/_z-index.scss#L290
+		z-index: 100000; // Above WP toolbar
 	}
 }

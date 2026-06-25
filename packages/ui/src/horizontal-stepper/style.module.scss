@@ -1,6 +1,18 @@
 // packages/ui/src/horizontal-stepper/style.module.scss
 @use '@wordpress/base-styles/breakpoints';
-@use 'calypso/assets/stylesheets/shared/mixins/hide-content-accessibly' as a11y;
+
+@mixin hide-content-accessibly {
+	border: 0;
+	clip: rect(1px, 1px, 1px, 1px);
+	clip-path: inset(50%);
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute;
+	width: 1px;
+	word-wrap: normal !important;
+}
 
 .root {
 	display: flex;
@@ -46,7 +58,7 @@
 	}
 
 	.text-block {
-		@include a11y.hide-content-accessibly;
+		@include hide-content-accessibly;
 	}
 
 	.step {
