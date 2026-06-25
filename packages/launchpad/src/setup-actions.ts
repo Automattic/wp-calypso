@@ -4,13 +4,6 @@ import { isMobile } from '@automattic/viewport';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { LaunchpadTaskActionsProps, Task } from './types';
 
-// Local helper for the single query-arg append we need, preferred over pulling
-// in a dependency just for this.
-const addQueryArg = ( url: string, key: string, value: string ): string => {
-	const separator = url.includes( '?' ) ? '&' : '?';
-	return `${ url }${ separator }${ encodeURIComponent( key ) }=${ encodeURIComponent( value ) }`;
-};
-
 const TASKS_TO_COMPLETE_ON_CLICK = [
 	'add_about_page',
 	'add_first_subscribers',
@@ -45,7 +38,9 @@ export const setUpActionsForTasks = ( {
 
 		if ( uiContext === 'calypso' && hasCalypsoPath ) {
 			if ( task.id === 'drive_traffic' && ! isMobile() && hasCalypsoPath ) {
-				task.calypso_path = addQueryArg( task.calypso_path, 'tour', 'marketingConnectionsTour' );
+				// Append the tour query arg locally to avoid a dependency just for this.
+				const separator = task.calypso_path.includes( '?' ) ? '&' : '?';
+				task.calypso_path += `${ separator }tour=marketingConnectionsTour`;
 			}
 
 			// Enable task in 'calypso' context
