@@ -12,7 +12,7 @@ import { __ } from '@wordpress/i18n';
 
 /**
  * @param {Array<[string, import('@automattic/api-core').McpAbility]>} tools
- * @param {Array<{name: string, label: string, description: string, order: number}>} groupDescriptors Ordered group descriptors.
+ * @param {Array<{name: string, label: string, description: string, order: number}>} groupDescriptors Group descriptors, already ordered (e.g. via `getGroupDescriptors()`).
  * @returns {Array<{group: {name: string, label: string, description: string, order: number}|null, label: string, tools: Array<[string, import('@automattic/api-core').McpAbility]>}>}
  */
 export function groupToolsByGroup( tools, groupDescriptors ) {
@@ -32,10 +32,8 @@ export function groupToolsByGroup( tools, groupDescriptors ) {
 		byGroupName.get( groupName ).push( entry );
 	}
 
-	const orderedDescriptors = [ ...groupDescriptors ].sort( ( a, b ) => a.order - b.order );
-
 	const groups = [];
-	for ( const descriptor of orderedDescriptors ) {
+	for ( const descriptor of groupDescriptors ) {
 		const groupTools = byGroupName.get( descriptor.name );
 		if ( groupTools && groupTools.length > 0 ) {
 			groups.push( { group: descriptor, label: descriptor.label, tools: groupTools } );

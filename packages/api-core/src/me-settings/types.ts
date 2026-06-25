@@ -22,10 +22,10 @@ export type McpAbility = {
 	enabled: boolean;
 	/** When false, hide this tool from account settings UIs. */
 	visible?: boolean;
-	/** Whether this ability is read-only. Always present (guaranteed boolean) as of AIINT-469. */
-	readonly: boolean;
-	/** The display group this ability belongs to — a clean slug (e.g. `site`), decoupled from any STRAP facade's tool key. `null` for abilities with no resolved group. */
-	group: string | null;
+	/** Whether this ability is read-only. The backend guarantees this as of AIINT-469, but treat it as optional since older/partial payloads may omit it — fall back to `annotations.readonly`. */
+	readonly?: boolean;
+	/** The display group this ability belongs to — a clean slug (e.g. `site`), decoupled from any STRAP facade's tool key. `null`/absent for abilities with no resolved group. */
+	group?: string | null;
 	annotations?: McpAbilityAnnotations;
 };
 
