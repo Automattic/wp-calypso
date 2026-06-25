@@ -27,6 +27,7 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { SectionHeader } from '../../dashboard/components/section-header';
 import { filterVisibleTools } from './categories';
+import { getOverridesToMatch, groupIntentKey } from './group-intents';
 import { groupToolsByGroup } from './groups';
 import { getAccessSummaryBadge, getWriteAccessBadge } from './hub-helpers';
 import { useMcpPageChrome } from './mcp-page-header';
@@ -123,34 +124,23 @@ export default function McpToolsSubpage( {
 		);
 	};
 
-	/**
-	 * A group intent only sets the *default* for abilities with no explicit
-	 * per-op setting — an explicit override (from an earlier individual toggle)
-	 * always wins (see SettingsHelper::is_ability_enabled()). So "Enable all"
-	 * also force-writes an explicit override for any tool in scope that
-	 * disagrees with the new state, otherwise previously-toggled tools would
-	 * silently stay stuck regardless of the group intent.
-	 * @param {Array<[string, import('@automattic/api-core').McpAbility]>} scopedTools
-	 * @param {boolean} enabled
-	 * @returns {Record<string, boolean>|undefined}
-	 */
-	const getOverridesToMatch = ( scopedTools, enabled ) => {
-		const overrides = {};
-		scopedTools.forEach( ( [ toolId, tool ] ) => {
-			if ( tool.enabled !== enabled ) {
-				overrides[ toolId ] = enabled;
-			}
-		} );
-		return Object.keys( overrides ).length > 0 ? overrides : undefined;
-	};
-
 	const handlePageToggle = ( enabled ) => {
 		const overrides = getOverridesToMatch( tools, enabled );
+		const groupIntents = { [ toolCategory ]: enabled };
+		if ( ! enabled ) {
+			// Disabling: also clear this category's per-group intents so a future
+			// newly-added ability in a group that was previously "enabled all"-ed
+			// (from this same Read or Write page) can't be silently re-enabled by a
+			// stale intent left over from before this disable.
+			groupDescriptors.forEach( ( group ) => {
+				groupIntents[ groupIntentKey( toolCategory, group.name ) ] = false;
+			} );
+		}
 		mutation.mutate(
 			{
 				mcp_abilities: {
 					...( overrides && { account: overrides } ),
-					group_intents: { [ toolCategory ]: enabled },
+					group_intents: groupIntents,
 				},
 			},
 			{
@@ -172,7 +162,7 @@ export default function McpToolsSubpage( {
 			{
 				mcp_abilities: {
 					...( overrides && { account: overrides } ),
-					group_intents: { [ groupName ]: enabled },
+					group_intents: { [ groupIntentKey( toolCategory, groupName ) ]: enabled },
 				},
 			},
 			{
