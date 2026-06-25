@@ -9,10 +9,10 @@ export SKIP_TSC=true
 export PLAYWRIGHT_SKIP_DOWNLOAD=true
 export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 export NODE_OPTIONS=--max-old-space-size=5120
+export HOME=/tmp/buildkite-home
 
+mkdir -p "$HOME"
 cd desktop
-sudo apt update
-sudo apt-get install -y libsecret-1-dev
 yarn install --immutable --inline-builds
 yarn run build
 
