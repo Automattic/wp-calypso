@@ -1,6 +1,6 @@
 import { omit } from '@automattic/js-utils';
 import isEqual from 'fast-deep-equal/es6';
-import { merge, reduce } from 'lodash';
+import { merge } from 'lodash';
 import {
 	MEDIA_DELETE,
 	SITE_LEAVE_RECEIVE,
@@ -79,53 +79,45 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 
 			const initialNextState = SITES_RECEIVE === action.type ? {} : state;
 
-			return reduce(
-				sites,
-				( memo, site ) => {
-					// Bypass if site object hasn't changed
-					if ( isEqual( memo[ site.ID ], site ) ) {
-						return memo;
-					}
-
-					// Avoid mutating state
-					if ( memo === state ) {
-						memo = { ...state };
-					}
-
-					memo[ site.ID ] = site;
+			return ( sites ?? [] ).reduce( ( memo, site ) => {
+				// Bypass if site object hasn't changed
+				if ( isEqual( memo[ site.ID ], site ) ) {
 					return memo;
-				},
-				initialNextState || {}
-			);
+				}
+
+				// Avoid mutating state
+				if ( memo === state ) {
+					memo = { ...state };
+				}
+
+				memo[ site.ID ] = site;
+				return memo;
+			}, initialNextState || {} );
 		}
 
 		case ODYSSEY_SITE_RECEIVE: {
 			// Treat the site info from WPCOM as default values for the site, and the info from Odyssey as the source of truth.
 			// This is because the site info from WPCOM is more complete, but the info from Odyssey is more up-to-date.
 			// For example, `options.is_commercial` is not present in the Odyssey site info, but is a remote option value stored in WPCOM.
-			return reduce(
-				[ action.site ],
-				( memo, site ) => {
-					// Bypass if site object hasn't changed
-					if ( isEqual( memo[ site.ID ], site ) ) {
-						return memo;
-					}
-
-					// Avoid mutating state
-					if ( memo === state ) {
-						memo = { ...state };
-					}
-
-					memo[ site.ID ] = {
-						...site,
-						...memo[ site.ID ],
-						options: { ...memo[ site.ID ]?.options, ...site?.options },
-						capabilities: { ...memo[ site.ID ]?.capabilities, ...site?.capabilities },
-					};
+			return [ action.site ].reduce( ( memo, site ) => {
+				// Bypass if site object hasn't changed
+				if ( isEqual( memo[ site.ID ], site ) ) {
 					return memo;
-				},
-				state
-			);
+				}
+
+				// Avoid mutating state
+				if ( memo === state ) {
+					memo = { ...state };
+				}
+
+				memo[ site.ID ] = {
+					...site,
+					...memo[ site.ID ],
+					options: { ...memo[ site.ID ]?.options, ...site?.options },
+					capabilities: { ...memo[ site.ID ]?.capabilities, ...site?.capabilities },
+				};
+				return memo;
+			}, state );
 		}
 
 		case SITE_LEAVE_RECEIVE:
@@ -161,8 +153,7 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 
 			let nextSite = site;
 
-			return reduce(
-				[ 'blog_public', 'wpcom_public_coming_soon', 'wpcom_coming_soon', 'site_icon' ],
+			return [ 'blog_public', 'wpcom_public_coming_soon', 'wpcom_coming_soon', 'site_icon' ].reduce(
 				( memo, key ) => {
 					// A site settings update may or may not include the icon or blog_public property.
 					// If not, we should simply return state unchanged.

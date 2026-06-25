@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
-import { useQueryClient, useIsFetching } from '@tanstack/react-query';
+import { useQueryClient, useIsFetching, useIsMutating } from '@tanstack/react-query';
 import { CatchNotFound, Outlet, useRouterState, useRouter } from '@tanstack/react-router';
 import {
 	Suspense,
@@ -48,6 +48,7 @@ function Root() {
 	);
 	const { name, supports, LoadingLogo = WordPressLogo } = useAppContext();
 	const isFetching = useIsFetching();
+	const isMutating = useIsMutating();
 	const router = useRouter();
 	const queryClient = useQueryClient();
 	const queryCache = queryClient.getQueryCache();
@@ -190,7 +191,7 @@ function Root() {
 
 	return (
 		<div className="dashboard-root__layout">
-			{ ( isFetching > 0 || isSlowNavigation ) && (
+			{ ( isFetching > 0 || isMutating > 0 || isSlowNavigation ) && (
 				<LoadingLine
 					variant={
 						isSlowNavigation || loadingQueryRequestedFullPageLoader ? 'progress' : 'spinner'

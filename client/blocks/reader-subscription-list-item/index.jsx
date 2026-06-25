@@ -39,6 +39,7 @@ function ReaderSubscriptionListItem( {
 	hasFeedError,
 	className = '',
 	followSource,
+	followApiSource,
 	showNotificationSettings,
 	showLastUpdatedDate,
 	showFollowedOnDate,
@@ -246,6 +247,7 @@ function ReaderSubscriptionListItem( {
 				<FollowButton
 					siteUrl={ feedUrl }
 					followSource={ followSource }
+					followApiSource={ followApiSource }
 					feedId={ feedId }
 					siteId={ siteId }
 					railcar={ railcar }

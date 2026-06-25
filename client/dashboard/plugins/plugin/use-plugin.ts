@@ -39,6 +39,8 @@ export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: b
 	const availableIcon = useMarketplaceSearchIcon( pluginSlug );
 	const { queries } = useAppContext();
 	const locale = useLocale();
+	// No slug to look up — resolve immediately to avoid a loading flash.
+	const hasPluginSlug = !! pluginSlug;
 	const {
 		data: sitesPlugins,
 		isLoading: isLoadingSitesPlugins,
@@ -51,13 +53,15 @@ export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: b
 	const isMarketplacePlugin = !! marketplacePlugins?.results[ pluginSlug ];
 	const { data: wpOrgPlugin, isLoading: isLoadingWpOrgPlugin } = useQuery( {
 		...wpOrgPluginQuery( pluginSlug, locale ),
-		enabled: ! availableIcon,
+		enabled: ! availableIcon && hasPluginSlug,
 	} );
 	// Query needed to get the action_links
 	const sitePluginQueryResults = useQueries( {
-		queries: Object.keys( sitesPlugins?.sites || {} ).map( ( id ) =>
-			sitePluginQuery( Number( id ), pluginSlug )
-		),
+		queries: hasPluginSlug
+			? Object.keys( sitesPlugins?.sites || {} ).map( ( id ) =>
+					sitePluginQuery( Number( id ), pluginSlug )
+			  )
+			: [],
 	} );
 	const isLoadingSitePlugins = sitePluginQueryResults.some( ( query ) => query.isLoading );
 
@@ -142,11 +146,12 @@ export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: b
 
 	return {
 		isLoading:
-			isLoadingSitesPlugins ||
-			isLoadingSites ||
-			isLoadingWpOrgPlugin ||
-			isLoadingMarketplacePlugins ||
-			isLoadingSitePlugins,
+			hasPluginSlug &&
+			( isLoadingSitesPlugins ||
+				isLoadingSites ||
+				isLoadingWpOrgPlugin ||
+				isLoadingMarketplacePlugins ||
+				isLoadingSitePlugins ),
 		isFetching: isFetchingSitePlugins,
 		pluginBySiteId,
 		sitesWithThisPlugin,

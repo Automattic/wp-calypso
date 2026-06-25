@@ -1,4 +1,4 @@
-import { find, map, mergeWith, reduce } from 'lodash';
+import { find, map, mergeWith } from 'lodash';
 
 /*
  * Applies a metadata edit operation (either update or delete) to an existing array of
@@ -29,7 +29,7 @@ function applyMetadataEdit( metadata, edit ) {
 }
 
 function applyMetadataEdits( metadata, edits ) {
-	return reduce( edits, applyMetadataEdit, metadata );
+	return ( edits ?? [] ).reduce( applyMetadataEdit, metadata );
 }
 
 /**

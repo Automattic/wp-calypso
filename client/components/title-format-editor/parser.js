@@ -1,5 +1,5 @@
 import { convertFromRaw, convertToRaw } from 'draft-js';
-import { get, map, matchesProperty, reduce } from 'lodash';
+import { get, map, matchesProperty } from 'lodash';
 import { compose } from 'redux';
 
 /*
@@ -169,8 +169,7 @@ const newEntityAt = ( offset, type, tokens, entityGuide ) => ( {
  * @returns {Object} blockMap for use in ContentState
  */
 const buildBlockMap = compose( ( format, tokens ) =>
-	reduce(
-		format,
+	( format ?? [] ).reduce(
 		( [ block, lastIndex, entityGuide ], piece ) => [
 			{
 				...block,

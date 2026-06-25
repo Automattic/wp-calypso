@@ -120,6 +120,7 @@ function AddEmailForwarder() {
 				id: 'localPart',
 				label: __( 'Email address' ),
 				type: 'text',
+				isValid: { required: true },
 			},
 			{
 				elements: [
@@ -132,6 +133,7 @@ function AddEmailForwarder() {
 				id: 'domain',
 				label: __( 'Domain' ),
 				type: 'text',
+				isValid: { required: true },
 			},
 		],
 		[ eligibleDomains ]
@@ -301,6 +303,9 @@ function AddEmailForwarder() {
 									__next40pxDefaultSize
 									__nextHasNoMarginBottom
 									label={ __( 'Forward to' ) }
+									__experimentalValidateInput={ ( token ) =>
+										emailValidator.validate( token.trim() )
+									}
 									onInputChange={ ( val ) => {
 										setUntokenizedInput( val );
 									} }
@@ -321,6 +326,10 @@ function AddEmailForwarder() {
 										} ) );
 									} }
 								/>
+
+								{ untokenizedInput.trim() !== '' && ! isUntokenizedInputValidEmail && (
+									<Text intent="error">{ __( 'Please enter a valid email address.' ) }</Text>
+								) }
 
 								{ newForwardingAddresses.length > 0 && (
 									<Notice>
@@ -406,6 +415,14 @@ function AddEmailForwarder() {
 											/>
 										</VStack>
 									</Notice>
+								) }
+
+								{ ! allFieldsSet && (
+									<Text variant="muted">
+										{ __(
+											'Enter an email address, select a domain, and add at least one forwarding address to continue.'
+										) }
+									</Text>
 								) }
 
 								<ButtonStack justify="flex-start">

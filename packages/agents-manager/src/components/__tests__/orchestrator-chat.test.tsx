@@ -71,9 +71,11 @@ jest.mock( '../agent-chat', () => ( {
 	default: ( {
 		onSuggestionClick,
 		onSubmit,
+		emptyViewSuggestions = [],
 	}: {
 		onSuggestionClick: ( suggestion: Suggestion | string ) => void;
 		onSubmit: ( message: string ) => void;
+		emptyViewSuggestions?: Suggestion[];
 	} ) => (
 		<>
 			<button
@@ -91,6 +93,11 @@ jest.mock( '../agent-chat', () => ( {
 				Click string suggestion
 			</button>
 			<button onClick={ () => onSubmit( 'Describe these images' ) }>Submit with images</button>
+			<ul data-testid="empty-view-suggestions">
+				{ emptyViewSuggestions.map( ( suggestion ) => (
+					<li key={ suggestion.id }>{ suggestion.label }</li>
+				) ) }
+			</ul>
 		</>
 	),
 } ) );
@@ -217,6 +224,80 @@ describe( 'OrchestratorChat', () => {
 		);
 
 		expect( useSuggestions ).toHaveBeenCalledWith( undefined, { suggestionsVisible: true } );
+	} );
+
+	it( 'keeps showing the provider suggestions in the empty view after the store is cleared', () => {
+		// Reproduces the regression where clicking a suggestion calls
+		// clearSuggestions() (emptying the store) and the empty view then falls
+		// back to the static defaults instead of the persistent provider list.
+		const customSuggestions: Suggestion[] = [
+			{ id: 'attention', label: 'What needs my attention today?', prompt: 'attention' },
+		];
+		const staticDefaults: Suggestion[] = [
+			{ id: 'getting-started', label: 'Getting started with WordPress', prompt: 'getting-started' },
+		];
+		const useSuggestions = jest.fn( () => ( { suggestions: customSuggestions } ) );
+
+		// Store is empty (as it is right after clearSuggestions()), no messages,
+		// and the input is empty — the empty-view fallback branch.
+		mockUseAgentChat.mockReturnValue( {
+			addMessage: jest.fn(),
+			messages: [],
+			suggestions: [],
+			isProcessing: false,
+			error: null,
+			loadMessages: jest.fn(),
+			onSubmit: jest.fn(),
+			abortCurrentRequest: jest.fn(),
+			clearSuggestions: jest.fn(),
+			registerSuggestions: jest.fn(),
+			registerMessageActions: jest.fn(),
+			progressMessage: null,
+		} );
+
+		render(
+			<OrchestratorChat
+				emptyViewSuggestions={ staticDefaults }
+				isDocked={ false }
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				useSuggestions={ useSuggestions }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByText( 'What needs my attention today?' ) ).toBeTruthy();
+		expect( screen.queryByText( 'Getting started with WordPress' ) ).toBeNull();
+	} );
+
+	it( 'falls back to the static empty-view suggestions when the provider has none', () => {
+		const staticDefaults: Suggestion[] = [
+			{ id: 'getting-started', label: 'Getting started with WordPress', prompt: 'getting-started' },
+		];
+		const useSuggestions = jest.fn( () => ( { suggestions: [] } ) );
+
+		render(
+			<OrchestratorChat
+				emptyViewSuggestions={ staticDefaults }
+				isDocked={ false }
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				useSuggestions={ useSuggestions }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByText( 'Getting started with WordPress' ) ).toBeTruthy();
 	} );
 
 	it( 'fires file_upload_success after images upload on send, with the uploaded media count', async () => {

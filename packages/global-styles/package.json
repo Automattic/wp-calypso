@@ -51,7 +51,7 @@
 		"@wordpress/block-library": "^9.48.0",
 		"@wordpress/blocks": "^15.21.0",
 		"@wordpress/components": "^35.0.0",
-		"@wordpress/compose": "patch:@wordpress/compose@npm%3A8.1.0#~/.yarn/patches/@wordpress-compose-npm-8.1.0-ea108e3129.patch",
+		"@wordpress/compose": "^8.2.0",
 		"@wordpress/global-styles-engine": "^1.14.1",
 		"@wordpress/global-styles-ui": "^1.14.1",
 		"@wordpress/keycodes": "^4.48.0",
