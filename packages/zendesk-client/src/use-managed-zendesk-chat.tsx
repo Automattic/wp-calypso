@@ -21,6 +21,7 @@ import { AttachmentMessage } from './components/attachment-message';
 import { CSATForm } from './components/csat-form';
 import {
 	SMOOCH_INTEGRATION_ID,
+	SMOOCH_INTEGRATION_ID_CUSTOM,
 	SMOOCH_INTEGRATION_ID_STAGING,
 	ZENDESK_CUSTOM_FIELD_AI_CHAT_SESSION_ID,
 	ZENDESK_CUSTOM_FIELD_AI_MESSAGE_ID,
@@ -64,7 +65,7 @@ function sortMessagesByTimestamp( messages: ZendeskMessage[] ) {
 	} );
 }
 
-function useSmooch( enabled = true ) {
+function useSmooch( enabled = true, integrationKey?: string ) {
 	const queryClient = useQueryClient();
 	const { data: authData, isFetching: isAuthenticatingZendeskMessaging } =
 		useAuthenticateZendeskMessaging( enabled, 'zendesk', false );
@@ -80,9 +81,15 @@ function useSmooch( enabled = true ) {
 				throw new Error( 'Smooch container is unavailable.' );
 			}
 
+			const integrationId = integrationKey
+				? SMOOCH_INTEGRATION_ID_CUSTOM[
+						integrationKey as keyof typeof SMOOCH_INTEGRATION_ID_CUSTOM
+				  ]
+				: SMOOCH_INTEGRATION_ID;
+
 			SmoochLibrary.render( container );
 			return SmoochLibrary.init( {
-				integrationId: isTestMode ? SMOOCH_INTEGRATION_ID_STAGING : SMOOCH_INTEGRATION_ID,
+				integrationId: isTestMode ? SMOOCH_INTEGRATION_ID_STAGING : integrationId,
 				delegate: {
 					async onInvalidAuth() {
 						recordTracksEvent( 'calypso_smooch_messenger_auth_error' );
@@ -170,6 +177,8 @@ function sendMessage(
 
 type ManagedZendeskChatOptions = {
 	conversationTags?: string[];
+	/** Index into `SMOOCH_INTEGRATION_ID_CUSTOM` selecting a dedicated Smooch integration (e.g. `woo`). */
+	smoochIntegrationKey?: string;
 };
 
 /**
@@ -184,6 +193,7 @@ type ManagedZendeskChatOptions = {
  */
 export const useManagedZendeskChat = ( {
 	conversationTags = EMPTY_ARRAY,
+	smoochIntegrationKey,
 }: ManagedZendeskChatOptions = {} ) => {
 	const [ attachmentsNotice, setAttachmentNotice ] = useState< NoticeConfig | undefined >();
 	const { state } = useLocation();
@@ -205,7 +215,7 @@ export const useManagedZendeskChat = ( {
 	const connectionNotice = useConnectionStatusNotice( connectionStatus, true );
 
 	const { data: authData } = useAuthenticateZendeskMessaging( true, 'zendesk', false );
-	const { data: Smooch, isLoading: isSettingUpSmooch } = useSmooch();
+	const { data: Smooch, isLoading: isSettingUpSmooch } = useSmooch( true, smoochIntegrationKey );
 	const { isPending: isAttachingFile, mutateAsync: attachFileToConversation } =
 		useAttachFileToConversation();
 

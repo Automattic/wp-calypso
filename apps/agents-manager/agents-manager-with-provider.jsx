@@ -12,6 +12,7 @@ const EMPTY_ARRAY = [];
 export default function AgentsManagerWithProvider( {
 	useImageUpload,
 	zendeskConversationTags = EMPTY_ARRAY,
+	zendeskSmoochIntegrationKey,
 } ) {
 	return (
 		<QueryClientProvider client={ queryClient }>
@@ -22,6 +23,7 @@ export default function AgentsManagerWithProvider( {
 				currentSiteId={ agentsManagerData.site?.ID }
 				useImageUpload={ useImageUpload }
 				zendeskConversationTags={ zendeskConversationTags }
+				zendeskSmoochIntegrationKey={ zendeskSmoochIntegrationKey }
 			/>
 		</QueryClientProvider>
 	);

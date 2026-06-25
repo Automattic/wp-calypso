@@ -33,7 +33,7 @@ export default function ZendeskChat( {
 	markdownComponents = {},
 	markdownExtensions = {},
 }: Props ) {
-	const { zendeskConversationTags } = useAgentsManagerContext();
+	const { zendeskConversationTags, zendeskSmoochIntegrationKey } = useAgentsManagerContext();
 	const {
 		agentticMessages,
 		onSubmit,
@@ -44,7 +44,10 @@ export default function ZendeskChat( {
 		supportedImageTypes,
 		notice,
 		hasInteractionEnded,
-	} = useManagedZendeskChat( { conversationTags: zendeskConversationTags } );
+	} = useManagedZendeskChat( {
+		conversationTags: zendeskConversationTags,
+		smoochIntegrationKey: zendeskSmoochIntegrationKey,
+	} );
 
 	return (
 		<AgentChat

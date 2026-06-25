@@ -32,6 +32,8 @@ export interface AgentsManagerContextType {
 	isEligibleForChat: boolean;
 	/** Zendesk conversation tags to apply when a new support conversation is created. */
 	zendeskConversationTags: string[];
+	/** Index selecting a dedicated Smooch integration for new support conversations (e.g. `woo`). */
+	zendeskSmoochIntegrationKey?: string;
 	/** The agent configuration created during setup. */
 	agentConfig: UseAgentChatConfig | null;
 	/** Sets the agent configuration (called from `AgentSetup` after initialization). */
@@ -64,7 +66,12 @@ export interface AgentsManagerContextProviderProps {
 	value: Partial<
 		Pick<
 			AgentsManagerContextType,
-			'currentUser' | 'site' | 'currentRoute' | 'isEligibleForChat' | 'zendeskConversationTags'
+			| 'currentUser'
+			| 'site'
+			| 'currentRoute'
+			| 'isEligibleForChat'
+			| 'zendeskConversationTags'
+			| 'zendeskSmoochIntegrationKey'
 		>
 	> & { sectionName: string; siteKey: string };
 }

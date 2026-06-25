@@ -24,6 +24,7 @@ const renderAssistant = () => {
 		<AgentsManagerWithProvider
 			useImageUpload={ useImageUpload }
 			zendeskConversationTags={ ZENDESK_CONVERSATION_TAGS }
+			zendeskSmoochIntegrationKey="woo"
 		/>
 	);
 };

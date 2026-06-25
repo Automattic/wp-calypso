@@ -1,5 +1,8 @@
 export const SMOOCH_INTEGRATION_ID = '6453b7fc45cea5c267e60fed';
 export const SMOOCH_INTEGRATION_ID_STAGING = '63d2ab28dc6b88010e60f38c';
+// Dedicated Smooch integration for the WooCommerce AI plugin entry point, so its
+// conversations land in the Woo-specific messaging integration.
+export const SMOOCH_INTEGRATION_ID_CUSTOM = { woo: '63c7fafe0a65a8010abcacdd' };
 export const SMOOCH_APP_ID = '624dbbd4e6b51f00f3e3864a';
 export const SMOOCH_APP_ID_STAGING = '633dcb21690c2c00f4ca2eb8';
 export const WIDGET_URL = 'https://wpcomsupport.zendesk.com';
