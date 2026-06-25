@@ -122,8 +122,24 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 		skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )( 'Link preview', function () {
 			it( 'Open link preview', async function () {
-				await editorPage.expandSection( 'Link preview' );
-				await editorPage.clickSidebarButton( 'Open link preview' );
+				// Newer Jetpack replaced the standalone "Link preview" panel with a
+				// "View previews" button in the "Optimize SEO" panel (same previews
+				// modal). Older Jetpack still renders the panel. Support both until the
+				// environments converge.
+				const editorParent = await editorPage.getEditorParent();
+				const viewPreviewsButton = editorParent.getByRole( 'button', { name: 'View previews' } );
+				const linkPreviewPanelButton = editorParent.locator(
+					'.components-panel__body-title button:has-text("Link preview")'
+				);
+				// Wait for whichever entry point this Jetpack version renders.
+				await viewPreviewsButton.or( linkPreviewPanelButton ).first().waitFor();
+
+				if ( await viewPreviewsButton.count() ) {
+					await viewPreviewsButton.first().click();
+				} else {
+					await editorPage.expandSection( 'Link preview' );
+					await editorPage.clickSidebarButton( 'Open link preview' );
+				}
 			} );
 
 			it( 'Show link preview for Tumblr', async function () {
