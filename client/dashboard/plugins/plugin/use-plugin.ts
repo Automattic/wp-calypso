@@ -57,9 +57,11 @@ export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: b
 	} );
 	// Query needed to get the action_links
 	const sitePluginQueryResults = useQueries( {
-		queries: Object.keys( sitesPlugins?.sites || {} ).map( ( id ) =>
-			sitePluginQuery( Number( id ), pluginSlug )
-		),
+		queries: hasPluginSlug
+			? Object.keys( sitesPlugins?.sites || {} ).map( ( id ) =>
+					sitePluginQuery( Number( id ), pluginSlug )
+			  )
+			: [],
 	} );
 	const isLoadingSitePlugins = sitePluginQueryResults.some( ( query ) => query.isLoading );
 
