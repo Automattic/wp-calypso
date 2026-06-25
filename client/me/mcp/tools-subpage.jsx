@@ -12,7 +12,7 @@ import {
 } from '@wordpress/components';
 import { chevronDown, chevronUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import HeaderCake from 'calypso/components/header-cake';
@@ -25,7 +25,7 @@ import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { SectionHeader } from '../../dashboard/components/section-header';
 import { filterVisibleTools } from './categories';
 import { getOverridesToMatch, groupIntentKey } from './group-intents';
-import { groupToolsByGroup } from './groups';
+import { groupToolsByGroup, groupToolsBySubCategory } from './groups';
 import { useMcpPageChrome } from './mcp-page-header';
 import { getAccountMcpAbilities, getGroupDescriptors } from './utils';
 
@@ -264,22 +264,37 @@ export default function McpToolsSubpage( {
 													onClick={ () => toggleGroupOpen( groupKey ) }
 												/>
 											</div>
-											{ isOpen && (
-												<div className="mcp-tools-subpage__group-content">
-													{ groupTools.map( ( [ toolId, tool ] ) => (
-														<div key={ toolId } className="mcp-tools-subpage__tool-item">
-															<ToggleControl
-																__nextHasNoMarginBottom
-																checked={ tool.enabled }
-																disabled={ mutation.isPending }
-																label={ tool.title }
-																help={ tool.description }
-																onChange={ ( checked ) => handleToolChange( toolId, checked ) }
-															/>
-														</div>
-													) ) }
-												</div>
-											) }
+											{ isOpen &&
+												groupToolsBySubCategory( groupTools ).map(
+													( { subCategory, tools: subTools }, subIndex ) => (
+														<Fragment key={ subCategory ?? '__ungrouped__' }>
+															{ subIndex > 0 && <div className="mcp-tools-subpage__sub-divider" /> }
+															<div
+																className={
+																	subIndex === 0
+																		? 'mcp-tools-subpage__group-body'
+																		: 'mcp-tools-subpage__sub-group-body'
+																}
+															>
+																<VStack spacing={ 4 }>
+																	{ subTools.map( ( [ toolId, tool ] ) => (
+																		<ToggleControl
+																			key={ toolId }
+																			__nextHasNoMarginBottom
+																			checked={ tool.enabled }
+																			disabled={ mutation.isPending }
+																			label={ tool.title }
+																			help={ tool.description }
+																			onChange={ ( checked ) =>
+																				handleToolChange( toolId, checked )
+																			}
+																		/>
+																	) ) }
+																</VStack>
+															</div>
+														</Fragment>
+													)
+												) }
 										</CardBody>
 									</Card>
 								);

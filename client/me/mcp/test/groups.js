@@ -1,4 +1,4 @@
-import { groupToolsByGroup } from '../groups';
+import { groupToolsByGroup, groupToolsBySubCategory } from '../groups';
 
 const GROUPS = [
 	{ name: 'content-authoring', label: 'Content Authoring', description: 'Create posts.', order: 0 },
@@ -54,6 +54,50 @@ describe( 'client/me/mcp/groups', () => {
 
 		it( 'returns an empty array when there are no tools', () => {
 			expect( groupToolsByGroup( [], GROUPS ) ).toEqual( [] );
+		} );
+	} );
+
+	describe( 'groupToolsBySubCategory', () => {
+		it( 'places tools with no sub-category in a single trailing null bucket', () => {
+			const tools = [
+				[ 'wpcom-mcp/unknown-a', {} ],
+				[ 'wpcom-mcp/unknown-b', {} ],
+			];
+
+			const result = groupToolsBySubCategory( tools );
+
+			expect( result ).toHaveLength( 1 );
+			expect( result[ 0 ].subCategory ).toBeNull();
+			expect( result[ 0 ].tools.map( ( [ id ] ) => id ) ).toEqual( [
+				'wpcom-mcp/unknown-a',
+				'wpcom-mcp/unknown-b',
+			] );
+		} );
+
+		it( 'separates tools into ordered sub-groups by API category', () => {
+			const tools = [
+				[ 'wpcom-mcp/list-comments', { category: 'comments' } ],
+				[ 'wpcom-mcp/list-posts', { category: 'posts' } ],
+				[ 'wpcom-mcp/create-post', { category: 'posts' } ],
+			];
+
+			const result = groupToolsBySubCategory( tools );
+
+			// Posts should appear before Comments per FLAT_SUB_CATEGORY_ORDER
+			expect( result[ 0 ].tools.every( ( [ , t ] ) => t.category === 'posts' ) ).toBe( true );
+			expect( result[ 1 ].tools.every( ( [ , t ] ) => t.category === 'comments' ) ).toBe( true );
+		} );
+
+		it( 'puts unknown sub-categories after known ones, null bucket last', () => {
+			const tools = [
+				[ 'wpcom-mcp/no-category', {} ],
+				[ 'wpcom-mcp/list-posts', { category: 'posts' } ],
+			];
+
+			const result = groupToolsBySubCategory( tools );
+
+			expect( result[ 0 ].tools.map( ( [ id ] ) => id ) ).toEqual( [ 'wpcom-mcp/list-posts' ] );
+			expect( result[ result.length - 1 ].subCategory ).toBeNull();
 		} );
 	} );
 } );

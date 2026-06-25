@@ -131,23 +131,30 @@ body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .main.m
 		}
 	}
 
-	// Expanded content: top border separates from header, tool items have bottom borders
-	.mcp-tools-subpage__group-content {
+	// First sub-group when a group row is expanded: full-bleed border separates
+	// from the group header, then inner padding for the tool list.
+	.mcp-tools-subpage__group-body {
 		border-top: 1px solid var(--color-border-subtle);
-		margin-top: 12px;
-		padding-top: 4px;
+		margin-inline-start: -16px;
+		margin-inline-end: -16px;
+		padding: 16px 16px 4px;
+
+		@include break-mobile {
+			margin-inline-start: -24px;
+			margin-inline-end: -24px;
+			padding: 20px 24px 8px;
+		}
 	}
 
-	.mcp-tools-subpage__tool-item {
-		padding: 12px 0;
+	// Subsequent sub-groups: same horizontal padding, no top border (sub-divider provides it)
+	.mcp-tools-subpage__sub-group-body {
+		padding: 0 0 4px;
+	}
 
-		&:not(:last-child) {
-			border-bottom: 1px solid var(--color-border-subtle);
-		}
-
-		&:last-child {
-			padding-bottom: 0;
-		}
+	// Divider between sub-groups within an expanded group card
+	.mcp-tools-subpage__sub-divider {
+		border-top: 1px solid var(--color-border-subtle);
+		margin: 16px 0 20px;
 	}
 }
 
