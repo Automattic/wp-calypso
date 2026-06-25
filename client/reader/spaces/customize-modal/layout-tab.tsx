@@ -21,8 +21,6 @@ export function getLayoutPresetTitle( view: SpaceFeedLayout, translate: Translat
 			return translate( 'Media gallery' ) as string;
 		case 'board':
 			return translate( 'Airy board' ) as string;
-		case 'magazine':
-			return translate( 'Calm reading' ) as string;
 		case 'legacy':
 		default:
 			return translate( 'Classic' ) as string;
@@ -40,7 +38,6 @@ export function LayoutTab( { value, onChange }: Props ) {
 		{ id: 'standard-list', description: translate( 'Many items, fast scanning' ) },
 		{ id: 'gallery', description: translate( 'Grid of cards with thumbnails' ) },
 		{ id: 'board', description: translate( 'Big roomy cards, casual scroll' ) },
-		{ id: 'magazine', description: translate( 'One comfortable column' ) },
 		{ id: 'legacy', description: translate( 'Classic Reader stream' ) },
 	];
 

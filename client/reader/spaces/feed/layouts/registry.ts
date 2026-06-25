@@ -1,7 +1,6 @@
 import { BoardLayout } from './board';
 import { GalleryLayout } from './gallery';
 import { LegacyLayout } from './legacy';
-import { MagazineLayout } from './magazine';
 import { StandardListLayout } from './standard-list';
 import type { SpaceFeedLayoutProps } from './types';
 import type { SpaceFeedLayout } from '@automattic/api-core';
@@ -9,7 +8,6 @@ import type { ComponentType } from 'react';
 
 const LAYOUTS: Record< SpaceFeedLayout, ComponentType< SpaceFeedLayoutProps > > = {
 	'standard-list': StandardListLayout,
-	magazine: MagazineLayout,
 	gallery: GalleryLayout,
 	board: BoardLayout,
 	legacy: LegacyLayout,
