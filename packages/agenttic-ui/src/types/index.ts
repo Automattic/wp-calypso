@@ -12,6 +12,7 @@ export interface SuggestionOption {
 export interface Suggestion {
 	id: string;
 	label: string;
+	description?: string;
 	prompt?: string;
 	action?: () => boolean | Promise< boolean >;
 	autoSubmit?: boolean; // When true, clicking the suggestion automatically submits it to the LLM

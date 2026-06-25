@@ -83,46 +83,80 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 					onMouseLeave={ onMouseLeave }
 				>
 					{ internalSuggestions.map(
-						( suggestion: Suggestion, index: number ) => (
-							<motion.div
-								key={ suggestion.id }
-								initial={ { opacity: 0, y: 10 } }
-								animate={ { opacity: 1, y: 0 } }
-								exit={ { opacity: 0, y: 10 } }
-								transition={ {
-									...fastSpringWithDelay,
-									delay: index * 0.05,
-								} }
-							>
-								{ suggestion.options &&
-								suggestion.options.length > 0 ? (
-									<SuggestionDropdown
-										suggestion={ suggestion }
-										onSelect={ handleSuggestionClick }
-										availableSuggestions={
-											internalSuggestions
-										}
-										onOpenChange={
-											onDropdownOpenChange
-										}
-									/>
-								) : (
-									<Button
-										onClick={ ( e ) => {
-											e.stopPropagation();
-											handleSuggestionClick(
-												suggestion,
+						( suggestion: Suggestion, index: number ) => {
+							const isEligibleForDescription =
+								!! suggestion.description &&
+								layout !== 'horizontal';
+
+							return (
+								<motion.div
+									key={ suggestion.id }
+									initial={ { opacity: 0, y: 10 } }
+									animate={ { opacity: 1, y: 0 } }
+									exit={ { opacity: 0, y: 10 } }
+									transition={ {
+										...fastSpringWithDelay,
+										delay: index * 0.05,
+									} }
+								>
+									{ suggestion.options &&
+									suggestion.options.length > 0 ? (
+										<SuggestionDropdown
+											suggestion={ suggestion }
+											onSelect={ handleSuggestionClick }
+											availableSuggestions={
 												internalSuggestions
-											);
-										} }
-										variant="outline"
-										className={ styles.button }
-									>
-										{ suggestion.label }
-									</Button>
-								) }
-							</motion.div>
-						)
+											}
+											onOpenChange={
+												onDropdownOpenChange
+											}
+										/>
+									) : (
+										<Button
+											onClick={ ( e ) => {
+												e.stopPropagation();
+												handleSuggestionClick(
+													suggestion,
+													internalSuggestions
+												);
+											} }
+											variant="outline"
+											className={ styles.button }
+										>
+											<div
+												className={ cn(
+													styles[
+														'suggestion-content'
+													],
+													isEligibleForDescription
+														? styles[
+																'suggestion-content--with-description'
+														  ]
+														: ''
+												) }
+											>
+												<span
+													className={ styles.label }
+												>
+													{ suggestion.label }
+												</span>
+												{ isEligibleForDescription && (
+													<span
+														className={
+															styles.description
+														}
+													>
+														{
+															suggestion.description
+														}
+													</span>
+												) }
+											</div>
+										</Button>
+									) }
+								</motion.div>
+							);
+						}
 					) }
 				</motion.div>
 			) }

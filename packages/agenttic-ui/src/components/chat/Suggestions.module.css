@@ -36,6 +36,19 @@
     border-radius: 0;
     box-shadow: none;
 
+    .suggestion-content--with-description {
+      display: flex;
+      flex-direction: column;
+
+      .label {
+        font-weight: var(--font-weight-semibold);
+      }
+
+      .description {
+        color: var(--color-muted-foreground);
+      }
+    }
+
     &:hover {
       box-shadow: none;
       background-color: color-mix(in srgb, var(--color-background) 50%, var(--color-muted));

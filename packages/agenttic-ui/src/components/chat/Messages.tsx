@@ -73,7 +73,13 @@ export function Messages( {
 			return (
 				<div
 					data-slot="messages"
-					className={ `${ styles.container } ${ styles.emptyState }` }
+					className={ cn(
+						styles.container,
+						styles.emptyState,
+						messagesPosition === 'bottom'
+							? styles.bottomMessages
+							: ''
+					) }
 					ref={ scrollAreaRef }
 				>
 					{ emptyView }

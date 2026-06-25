@@ -3,7 +3,6 @@
   flex-direction: column;
   align-items: start;
   justify-content: end;
-  height: 100%;
   gap: var(--spacing-6);
 }
 
