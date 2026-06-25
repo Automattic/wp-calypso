@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/date-range-picker",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"description": "A date-range picker built on top of @automattic/ui's DateRangeCalendar, with timezone-aware site-day handling, preset shortcuts, and accessible inputs.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -46,7 +46,8 @@
 	},
 	"dependencies": {
 		"@automattic/ui": "workspace:^",
-		"date-fns": "^4.1.0"
+		"date-fns": "^4.1.0",
+		"sass": "1.77.8"
 	},
 	"peerDependencies": {
 		"@wordpress/components": ">=35.0.0",
@@ -96,7 +97,6 @@
 		"jest": "^29.7.0",
 		"mockdate": "^2.0.5",
 		"postcss": "^8.5.3",
-		"sass": "1.77.8",
 		"typescript": "^6.0.3",
 		"webpack": "^5.99.8"
 	}
