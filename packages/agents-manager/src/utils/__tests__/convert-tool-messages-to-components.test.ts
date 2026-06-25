@@ -17,9 +17,6 @@ jest.mock(
 	} ),
 	{ virtual: true }
 );
-jest.mock( '@automattic/zendesk-client', () => ( {
-	useGetZendeskConversations: () => ( { conversations: [], isLoading: false } ),
-} ) );
 jest.mock( '../is-editor-page' );
 
 const MockComponent = jest.fn();
@@ -290,6 +287,7 @@ describe( 'convertToolMessagesToComponents', () => {
 
 	it( 'renders `EscalationButton` when `forward_to_human_support` flag is set', () => {
 		const message = createMessage( {
+			message_id: 27406875,
 			content: [
 				{ type: 'text', text: 'Hello' },
 				{
@@ -297,16 +295,32 @@ describe( 'convertToolMessagesToComponents', () => {
 					data: { flags: { forward_to_human_support: true } },
 				},
 			],
-		} );
+		} as unknown as Partial< UIMessage > );
+		const escalationFollowUp = createMessage( {
+			id: 'escalation-follow-up',
+			message_id: 27407960,
+			role: 'escalation',
+			content: [ { type: 'text', text: 'This conversation was transferred to human support' } ],
+			context: {
+				zendesk_ticket_id: 11368863,
+				ai_chat_message_id: 27406875,
+			},
+			created_at: '2026-06-23 11:39:22',
+		} as unknown as Partial< UIMessage > );
 
 		const result = convertWithDefaults( {
-			messages: [ message ],
+			messages: [ message, escalationFollowUp ],
 		} );
 
 		expect( result ).toHaveLength( 1 );
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
 			type: 'component',
 			component: EscalationButton,
+			componentProps: {
+				messageId: message.id,
+				zendeskTicketId: 11368863,
+				escalatedAt: '2026-06-23T11:39:22.000Z',
+			},
 		} );
 	} );
 
