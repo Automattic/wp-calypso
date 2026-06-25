@@ -39,9 +39,7 @@ export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: b
 	const availableIcon = useMarketplaceSearchIcon( pluginSlug );
 	const { queries } = useAppContext();
 	const locale = useLocale();
-	// When the plugin search returns no results, there is no selected plugin to
-	// look up. Skip the queries and resolve immediately so the detail panel shows
-	// its empty state without a loading flash.
+	// No slug to look up — resolve immediately to avoid a loading flash.
 	const hasPluginSlug = !! pluginSlug;
 	const {
 		data: sitesPlugins,
