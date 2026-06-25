@@ -23,6 +23,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
+import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
@@ -525,6 +526,7 @@ class MasterbarLoggedIn extends Component {
 			sitePlanName,
 			site,
 			sitePlanUrl,
+			sidebarType,
 		} = this.props;
 
 		// Only display when a site is selected and is not domain-only site.
@@ -544,18 +546,24 @@ class MasterbarLoggedIn extends Component {
 			},
 		];
 
-		if ( isClassicView ) {
-			menuItems.push( {
-				label: translate( 'Dashboard' ),
-				url: siteAdminUrl,
-				onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_dashboard_clicked' ),
-			} );
-		} else {
-			menuItems.push( {
-				label: translate( 'My Home' ),
-				url: siteHomeUrl,
-				onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_my_home_clicked' ),
-			} );
+		const isWithinSiteContext =
+			sidebarType === SidebarType.UnifiedSiteClassic ||
+			sidebarType === SidebarType.UnifiedSiteDefault;
+
+		if ( ! isWithinSiteContext ) {
+			if ( isClassicView ) {
+				menuItems.push( {
+					label: translate( 'Dashboard' ),
+					url: siteAdminUrl,
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_dashboard_clicked' ),
+				} );
+			} else {
+				menuItems.push( {
+					label: translate( 'My Home' ),
+					url: siteHomeUrl,
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_my_home_clicked' ),
+				} );
+			}
 		}
 
 		if ( ! site?.is_wpcom_staging_site ) {
@@ -991,6 +999,13 @@ const ConnectedMasterbarLoggedIn = connect(
 		const siteCount = getCurrentUserSiteCount( state ) ?? 0;
 		const site = getSite( state, siteId );
 		const isClassicView = site && siteUsesWpAdminInterface( site );
+		const currentRoute = getCurrentRoute( state );
+		const sidebarType = getSidebarType( {
+			state,
+			siteId,
+			section: { group: sectionGroup },
+			route: currentRoute,
+		} );
 
 		return {
 			isManageSiteOptionsEnabled: canCurrentUserManageSiteOptions( state, siteId ),
@@ -1007,6 +1022,7 @@ const ConnectedMasterbarLoggedIn = connect(
 			siteHomeUrl: getSiteHomeUrl( state, siteId ),
 			adminMenu: getAdminMenu( state, siteId ),
 			sectionGroup,
+			sidebarType,
 			sectionName: getSectionName( state ),
 			domainOnlySite: isDomainOnlySite( state, siteId ),
 			hasNoSites: siteCount === 0,
@@ -1020,7 +1036,7 @@ const ConnectedMasterbarLoggedIn = connect(
 			isSimpleSite: isSimpleSite( state, siteId ),
 			isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
-			currentRoute: getCurrentRoute( state ),
+			currentRoute,
 			newPostUrl: getEditorUrl( state, siteId, null, 'post' ),
 			newPageUrl: getEditorUrl( state, siteId, null, 'page' ),
 			isUnlaunchedSite: getIsUnlaunchedSite( state, siteId ),

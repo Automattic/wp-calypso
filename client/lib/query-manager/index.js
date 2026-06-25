@@ -1,6 +1,6 @@
 import { omit } from '@automattic/js-utils';
 import isEqual from 'fast-deep-equal/es6';
-import { get, map, reduce } from 'lodash';
+import { get, map } from 'lodash';
 import QueryKey from './key';
 
 /**
@@ -247,38 +247,34 @@ export default class QueryManager {
 			items = [ items ];
 		}
 
-		const nextItems = reduce(
-			items,
-			( memo, receivedItem ) => {
-				const receivedItemKey = receivedItem[ this.options.itemKey ];
-				const item = this.getItem( receivedItemKey );
-				const mergedItem = this.constructor.mergeItem( item, receivedItem, options.patch );
+		const nextItems = items.reduce( ( memo, receivedItem ) => {
+			const receivedItemKey = receivedItem[ this.options.itemKey ];
+			const item = this.getItem( receivedItemKey );
+			const mergedItem = this.constructor.mergeItem( item, receivedItem, options.patch );
 
-				if ( undefined === mergedItem ) {
-					if ( item ) {
-						// `undefined` item is an intended omission from set
-						return omit( memo, receivedItemKey );
-					}
-
-					// Item never existed in set in the first place, skip and
-					// return same memo
-					return memo;
+			if ( undefined === mergedItem ) {
+				if ( item ) {
+					// `undefined` item is an intended omission from set
+					return omit( memo, receivedItemKey );
 				}
 
-				if ( ! item || ! isEqual( mergedItem, item ) ) {
-					// Did not exist previously or has changed
-					if ( memo === this.data.items ) {
-						// Create a copy of memo, as we don't want to mutate the original items set
-						memo = { ...memo };
-					}
-
-					memo[ receivedItemKey ] = mergedItem;
-				}
-
+				// Item never existed in set in the first place, skip and
+				// return same memo
 				return memo;
-			},
-			this.data.items
-		);
+			}
+
+			if ( ! item || ! isEqual( mergedItem, item ) ) {
+				// Did not exist previously or has changed
+				if ( memo === this.data.items ) {
+					// Create a copy of memo, as we don't want to mutate the original items set
+					memo = { ...memo };
+				}
+
+				memo[ receivedItemKey ] = mergedItem;
+			}
+
+			return memo;
+		}, this.data.items );
 
 		let isModified = nextItems !== this.data.items;
 		let nextQueries = this.data.queries;
@@ -339,87 +335,83 @@ export default class QueryManager {
 			}
 		}
 
-		nextQueries = reduce(
-			nextQueries,
-			( memo, queryDetails, queryKey ) => {
-				memo[ queryKey ] = queryDetails;
+		nextQueries = Object.entries( nextQueries ).reduce( ( memo, [ queryKey, queryDetails ] ) => {
+			memo[ queryKey ] = queryDetails;
 
-				const isReceivedQueryKey = receivedQueryKey && receivedQueryKey === queryKey;
-				if ( isReceivedQueryKey && ( isNewlyReceivedQueryKey || ! options.mergeQuery ) ) {
-					// We can save the effort testing against received items in
-					// the current query, since we know they'll match
-					return memo;
-				}
+			const isReceivedQueryKey = receivedQueryKey && receivedQueryKey === queryKey;
+			if ( isReceivedQueryKey && ( isNewlyReceivedQueryKey || ! options.mergeQuery ) ) {
+				// We can save the effort testing against received items in
+				// the current query, since we know they'll match
+				return memo;
+			}
 
-				if ( ! isReceivedQueryKey && options.dontShareQueryResultsWhenQueriesAreDifferent ) {
-					return memo;
-				}
+			if ( ! isReceivedQueryKey && options.dontShareQueryResultsWhenQueriesAreDifferent ) {
+				return memo;
+			}
 
-				// Found counts should not be adjusted for the received query if
-				// merging into existing items
-				const shouldAdjustFoundCount = ! isReceivedQueryKey;
+			// Found counts should not be adjusted for the received query if
+			// merging into existing items
+			const shouldAdjustFoundCount = ! isReceivedQueryKey;
 
-				const query = this.constructor.QueryKey.parse( queryKey );
-				let needsSort = false;
-				items.forEach( ( receivedItem ) => {
-					// Find item in known data for query
-					const receivedItemKey = receivedItem[ this.options.itemKey ];
-					const updatedItem = nextItems[ receivedItemKey ];
-					const index = memo[ queryKey ].itemKeys.indexOf( receivedItemKey );
+			const query = this.constructor.QueryKey.parse( queryKey );
+			let needsSort = false;
+			items.forEach( ( receivedItem ) => {
+				// Find item in known data for query
+				const receivedItemKey = receivedItem[ this.options.itemKey ];
+				const updatedItem = nextItems[ receivedItemKey ];
+				const index = memo[ queryKey ].itemKeys.indexOf( receivedItemKey );
 
-					if ( -1 !== index ) {
-						// Item already exists in query, check to see whether the
-						// updated item is being removed or no longer matches
-						if ( ! updatedItem || ! this.constructor.matches( query, updatedItem ) ) {
-							// Create a copy of the original details to avoid mutating
-							if ( memo[ queryKey ] === queryDetails ) {
-								memo[ queryKey ] = { ...queryDetails };
-							}
-
-							// Omit item by slicing previous and next
-							memo[ queryKey ].itemKeys = [
-								...memo[ queryKey ].itemKeys.slice( 0, index ),
-								...memo[ queryKey ].itemKeys.slice( index + 1 ),
-							];
-
-							// Decrement found count for query
-							if ( shouldAdjustFoundCount && Number.isFinite( memo[ queryKey ].found ) ) {
-								memo[ queryKey ].found--;
-							}
-						}
-					} else if ( updatedItem && this.constructor.matches( query, updatedItem ) ) {
-						// Item doesn't currently exist in query but is a match, so
-						// insert item into set
-
+				if ( -1 !== index ) {
+					// Item already exists in query, check to see whether the
+					// updated item is being removed or no longer matches
+					if ( ! updatedItem || ! this.constructor.matches( query, updatedItem ) ) {
 						// Create a copy of the original details to avoid mutating
 						if ( memo[ queryKey ] === queryDetails ) {
 							memo[ queryKey ] = { ...queryDetails };
 						}
 
-						// Increment found count for query
+						// Omit item by slicing previous and next
+						memo[ queryKey ].itemKeys = [
+							...memo[ queryKey ].itemKeys.slice( 0, index ),
+							...memo[ queryKey ].itemKeys.slice( index + 1 ),
+						];
+
+						// Decrement found count for query
 						if ( shouldAdjustFoundCount && Number.isFinite( memo[ queryKey ].found ) ) {
-							memo[ queryKey ].found++;
+							memo[ queryKey ].found--;
 						}
-
-						// A matching item should be inserted into the query set
-						memo[ queryKey ].itemKeys = get( memo, [ queryKey, 'itemKeys' ], [] ).concat(
-							receivedItemKey
-						);
-
-						// The itemKeys will need to be re-sorted after all items are processed
-						needsSort = true;
 					}
-				} );
+				} else if ( updatedItem && this.constructor.matches( query, updatedItem ) ) {
+					// Item doesn't currently exist in query but is a match, so
+					// insert item into set
 
-				if ( needsSort ) {
-					this.constructor.sort( memo[ queryKey ].itemKeys, nextItems, query );
+					// Create a copy of the original details to avoid mutating
+					if ( memo[ queryKey ] === queryDetails ) {
+						memo[ queryKey ] = { ...queryDetails };
+					}
+
+					// Increment found count for query
+					if ( shouldAdjustFoundCount && Number.isFinite( memo[ queryKey ].found ) ) {
+						memo[ queryKey ].found++;
+					}
+
+					// A matching item should be inserted into the query set
+					memo[ queryKey ].itemKeys = get( memo, [ queryKey, 'itemKeys' ], [] ).concat(
+						receivedItemKey
+					);
+
+					// The itemKeys will need to be re-sorted after all items are processed
+					needsSort = true;
 				}
+			} );
 
-				isModified = isModified || memo[ queryKey ] !== queryDetails;
-				return memo;
-			},
-			{}
-		);
+			if ( needsSort ) {
+				this.constructor.sort( memo[ queryKey ].itemKeys, nextItems, query );
+			}
+
+			isModified = isModified || memo[ queryKey ] !== queryDetails;
+			return memo;
+		}, {} );
 
 		if ( ! isModified ) {
 			return this;

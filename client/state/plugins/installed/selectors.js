@@ -1,6 +1,6 @@
 import { pick, sortBy } from '@automattic/js-utils';
 import { createSelector } from '@automattic/state-utils';
-import { filter, find, reduce, some } from 'lodash';
+import { filter, find, some } from 'lodash';
 import {
 	getSite,
 	getSiteTitle,
@@ -85,36 +85,32 @@ export function requestPluginsError( state ) {
 }
 
 function getPluginsSelector( state, siteIds, pluginFilter ) {
-	let pluginList = reduce(
-		siteIds,
-		( memo, siteId ) => {
-			if ( isRequesting( state, siteId ) ) {
-				return memo;
-			}
-
-			// We currently support fetching plugins per site and also fetching all plugins
-			// in bulk, aiming to optimize the UX in some flows.
-			if ( isRequestingForAllSites( state ) ) {
-				return memo;
-			}
-
-			const list = state.plugins.installed.plugins[ siteId ] || [];
-			list.forEach( ( item ) => {
-				const sitePluginInfo = pick( item, [ 'active', 'autoupdate', 'update', 'version' ] );
-
-				memo[ item.slug ] = {
-					...memo[ item.slug ],
-					...item,
-					sites: {
-						...memo[ item.slug ]?.sites,
-						[ siteId ]: sitePluginInfo,
-					},
-				};
-			} );
+	let pluginList = ( siteIds ?? [] ).reduce( ( memo, siteId ) => {
+		if ( isRequesting( state, siteId ) ) {
 			return memo;
-		},
-		{}
-	);
+		}
+
+		// We currently support fetching plugins per site and also fetching all plugins
+		// in bulk, aiming to optimize the UX in some flows.
+		if ( isRequestingForAllSites( state ) ) {
+			return memo;
+		}
+
+		const list = state.plugins.installed.plugins[ siteId ] || [];
+		list.forEach( ( item ) => {
+			const sitePluginInfo = pick( item, [ 'active', 'autoupdate', 'update', 'version' ] );
+
+			memo[ item.slug ] = {
+				...memo[ item.slug ],
+				...item,
+				sites: {
+					...memo[ item.slug ]?.sites,
+					[ siteId ]: sitePluginInfo,
+				},
+			};
+		} );
+		return memo;
+	}, {} );
 
 	if ( pluginFilter && _filters[ pluginFilter ] ) {
 		pluginList = filter( pluginList, _filters[ pluginFilter ] );

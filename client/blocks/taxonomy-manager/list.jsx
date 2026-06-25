@@ -1,5 +1,4 @@
 import { CompactCard } from '@automattic/components';
-import { WindowScroller } from '@automattic/react-virtualized';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -147,24 +146,17 @@ export class TaxonomyManagerList extends Component {
 				) ) }
 				{ hasDefaultSetting && <QuerySiteSettings siteId={ siteId } /> }
 
-				<WindowScroller>
-					{ ( { height, scrollTop } ) => (
-						<VirtualList
-							items={ terms }
-							lastPage={ lastPage }
-							loading={ loading }
-							getRowHeight={ this.getRowHeight }
-							renderRow={ this.renderRow }
-							onRequestPages={ this.requestPages }
-							perPage={ DEFAULT_TERMS_PER_PAGE }
-							loadOffset={ LOAD_OFFSET }
-							searching={ query.search && query.search.length }
-							defaultRowHeight={ ITEM_HEIGHT }
-							height={ height }
-							scrollTop={ scrollTop }
-						/>
-					) }
-				</WindowScroller>
+				<VirtualList
+					items={ terms }
+					lastPage={ lastPage }
+					loading={ loading }
+					getRowHeight={ this.getRowHeight }
+					renderRow={ this.renderRow }
+					onRequestPages={ this.requestPages }
+					perPage={ DEFAULT_TERMS_PER_PAGE }
+					loadOffset={ LOAD_OFFSET }
+					defaultRowHeight={ ITEM_HEIGHT }
+				/>
 			</div>
 		);
 	}

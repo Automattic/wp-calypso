@@ -33,9 +33,14 @@ export default function AgencySidebar() {
 					</SidebarMenuItem>
 				</SidebarExpandableMenuItem>
 			) }
-			{ supports.agency && supports.agency.learn && (
-				<SidebarExpandableMenuItem label={ __( 'Resources' ) } icon={ pages } to="/resources/learn">
-					<SidebarMenuItem to="/resources/learn">{ __( 'Learn' ) }</SidebarMenuItem>
+			{ supports.agency && ( supports.agency.learn || supports.agency.mcp ) && (
+				<SidebarExpandableMenuItem label={ __( 'Resources' ) } icon={ pages } to="/resources">
+					{ supports.agency.learn && (
+						<SidebarMenuItem to="/resources/learn">{ __( 'Learn' ) }</SidebarMenuItem>
+					) }
+					{ supports.agency.mcp && (
+						<SidebarMenuItem to="/resources/ai-mcp">{ __( 'MCP' ) }</SidebarMenuItem>
+					) }
 				</SidebarExpandableMenuItem>
 			) }
 		</>

@@ -11,13 +11,10 @@ import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
 import { useReaderInterestTags } from 'calypso/data/reader/use-reader-interest-tags';
-import {
-	getFollowingSource,
-	useSiteSubscriptions,
-	useFollowSite,
-} from 'calypso/reader/data/site-subscriptions';
+import { useSiteSubscriptions, useFollowSite } from 'calypso/reader/data/site-subscriptions';
 import { useFollowedTags } from 'calypso/reader/data/tags';
 import {
+	READER_ONBOARDING_FOLLOW_SOURCE,
 	READER_ONBOARDING_MIN_FOLLOWED_TAGS,
 	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
 } from 'calypso/reader/onboarding-rsm/constants';
@@ -267,7 +264,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 				// follow notices and should not block pack completion.
 				followSite.mutate( {
 					feedUrl: blog.feed_URL,
-					source: getFollowingSource(),
+					source: READER_ONBOARDING_FOLLOW_SOURCE,
 				} );
 				// Mirror how the rest of Reader tracks site follows so pack-blog
 				// follows show up under the standard `calypso_reader_site_followed`

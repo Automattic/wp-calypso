@@ -13,7 +13,10 @@ import { useSite } from 'calypso/reader/data/site';
 import { prefetchInfiniteStream } from 'calypso/reader/data/stream';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getFeedUrl } from 'calypso/reader/get-helpers';
-import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding-rsm/constants';
+import {
+	READER_ONBOARDING_FOLLOW_SOURCE,
+	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
+} from 'calypso/reader/onboarding-rsm/constants';
 import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
 import Stream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
@@ -222,6 +225,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 											showLastUpdatedDate={ false }
 											showNotificationSettings={ false }
 											showFollowedOnDate={ false }
+											followApiSource={ READER_ONBOARDING_FOLLOW_SOURCE }
 											followSource="reader-onboarding-modal"
 											replaceStreamClickWithItemClick
 											onItemClick={ () => handleItemClick( site ) }
@@ -263,6 +267,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 												siteUrl={ selectedFollowUrl }
 												feedId={ selectedSite.feed_ID }
 												siteId={ selectedSite.site_ID }
+												followApiSource={ READER_ONBOARDING_FOLLOW_SOURCE }
 												followSource="reader-onboarding-modal"
 												hasButtonStyle
 												onFollowToggle={ ( isFollowing: boolean ) =>
