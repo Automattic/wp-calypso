@@ -4,7 +4,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import {
 	Button,
 	Modal,
-	Popover,
 	__experimentalInputControl as InputControl,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -158,9 +157,6 @@ const ShareSiteModal = ( { setModalIsOpen, site, task }: ShareSiteModalProps ) =
 	);
 
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
-	// Anchor the "copied" popover to the full-width field wrapper (not the inner input, which is
-	// narrowed by the suffix button). Stored in state so the popover positions reactively on mount.
-	const [ inputAnchor, setInputAnchor ] = useState< HTMLElement | null >( null );
 	const copyHandler = () => {
 		navigator.clipboard.writeText( shareData.url );
 		setClipboardCopied( true );
@@ -206,17 +202,11 @@ const ShareSiteModal = ( { setModalIsOpen, site, task }: ShareSiteModalProps ) =
 		>
 			<VStack className="share-site-modal__modal-content" spacing={ 4 }>
 				<VStack className="share-site-modal__modal-actions" spacing={ 4 }>
-					<div className="share-site-modal__url-field" ref={ setInputAnchor }>
+					<div className="share-site-modal__url-field">
 						{ clipboardCopied && (
-							<Popover
-								className="share-site-modal__popover"
-								anchor={ inputAnchor }
-								placement="top"
-								noArrow
-								focusOnMount={ false }
-							>
+							<span className="share-site-modal__copied-tooltip" role="status">
 								{ __( 'Copied to clipboard!', 'launchpad' ) }
-							</Popover>
+							</span>
 						) }
 						<InputControl
 							className="share-site-modal__modal-input-container"
