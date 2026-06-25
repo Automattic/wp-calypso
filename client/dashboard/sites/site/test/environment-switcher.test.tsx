@@ -169,6 +169,31 @@ describe( 'EnvironmentSwitcher', () => {
 		} );
 	} );
 
+	describe( 'Environment Access', () => {
+		test( 'disables the dropdown when the user cannot manage the other environment', async () => {
+			const unmanageableStagingSite = {
+				...mockStagingSite,
+				capabilities: { manage_options: false },
+			} as Site;
+			setupNock( mockProductionSiteWithStaging, { stagingSite: unmanageableStagingSite } );
+			const queryClient = buildQueryClient( mockProductionSiteWithStaging );
+
+			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } />, { queryClient } );
+
+			expect( screen.getByText( 'Production' ) ).toBeVisible();
+			await waitFor( () => expect( screen.getByRole( 'button' ) ).toBeDisabled() );
+		} );
+
+		test( 'keeps the dropdown enabled when the user can manage the other environment', async () => {
+			setupNock( mockProductionSiteWithStaging, { stagingSite: mockStagingSite } );
+			const queryClient = buildQueryClient( mockProductionSiteWithStaging );
+
+			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } />, { queryClient } );
+
+			await waitFor( () => expect( screen.getByRole( 'button' ) ).toBeEnabled() );
+		} );
+	} );
+
 	describe( 'Staging Site Actions', () => {
 		test( 'displays "Add staging site" button when no staging site exists', async () => {
 			setupNock( mockProductionSiteWithoutStaging );

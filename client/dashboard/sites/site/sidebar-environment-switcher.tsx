@@ -2,8 +2,8 @@ import { __experimentalHStack as HStack, Button, Dropdown } from '@wordpress/com
 import { __ } from '@wordpress/i18n';
 import { chevronUpDown } from '@wordpress/icons';
 import Environment from '../../components/environment';
-import { canManageSite } from '../features';
 import EnvironmentSwitcherDropdown from './environment-switcher-dropdown';
+import useCanSwitchToOtherEnvironment from './use-can-switch-to-other-environment';
 import useStagingSite from './use-staging-site';
 import type { Site } from '@automattic/api-core';
 
@@ -19,48 +19,43 @@ const SidebarEnvironmentSwitcher = ( { site }: { site: Site } ) => {
 		environmentType,
 	} = useStagingSite( site );
 
-	// TODO: Let's make sure to revise these conditions and simplify them once we have the design and the full understanding of how the
-	// deletion in progress should look like and if it should have a loading state during deletion.
-	const canToggle =
-		( productionSite && canManageSite( productionSite ) ) ||
-		( stagingSite && canManageSite( stagingSite ) );
+	const canToggle = useCanSwitchToOtherEnvironment( site );
 
 	return (
 		<HStack expanded={ false } style={ { flexShrink: 0 } } className="sidebar-environment-switcher">
 			<Environment environmentType={ environmentType } />
-			{ canToggle && (
-				<Dropdown
-					renderToggle={ ( { isOpen, onToggle } ) => (
-						<Button
-							className="sidebar-environment-switcher__toggle"
-							variant="tertiary"
-							onClick={ onToggle }
-							onKeyDown={ ( event: React.KeyboardEvent ) => {
-								if ( ! isOpen && event.code === 'ArrowDown' ) {
-									event.preventDefault();
-									onToggle();
-								}
-							} }
-							aria-haspopup="true"
-							aria-expanded={ isOpen }
-							label={ __( 'Switch environment' ) }
-							icon={ chevronUpDown }
-							size="small"
-						/>
-					) }
-					renderContent={ ( { onClose } ) => (
-						<EnvironmentSwitcherDropdown
-							currentSite={ site }
-							productionSite={ productionSite }
-							stagingSite={ stagingSite }
-							onClose={ onClose }
-							onAddStagingSite={ handleAddStagingSite }
-							isStagingSiteDeleting={ isStagingSiteDeleting }
-							isStagingSiteCreating={ isStagingSiteCreating }
-						/>
-					) }
-				/>
-			) }
+			<Dropdown
+				renderToggle={ ( { isOpen, onToggle } ) => (
+					<Button
+						className="sidebar-environment-switcher__toggle"
+						variant="tertiary"
+						disabled={ ! canToggle }
+						onClick={ onToggle }
+						onKeyDown={ ( event: React.KeyboardEvent ) => {
+							if ( ! isOpen && event.code === 'ArrowDown' ) {
+								event.preventDefault();
+								onToggle();
+							}
+						} }
+						aria-haspopup="true"
+						aria-expanded={ isOpen }
+						label={ __( 'Switch environment' ) }
+						icon={ chevronUpDown }
+						size="small"
+					/>
+				) }
+				renderContent={ ( { onClose } ) => (
+					<EnvironmentSwitcherDropdown
+						currentSite={ site }
+						productionSite={ productionSite }
+						stagingSite={ stagingSite }
+						onClose={ onClose }
+						onAddStagingSite={ handleAddStagingSite }
+						isStagingSiteDeleting={ isStagingSiteDeleting }
+						isStagingSiteCreating={ isStagingSiteCreating }
+					/>
+				) }
+			/>
 		</HStack>
 	);
 };
