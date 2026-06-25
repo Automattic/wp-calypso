@@ -127,19 +127,29 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 				// modal). Older Jetpack still renders the panel. Support both until the
 				// environments converge.
 				const editorParent = await editorPage.getEditorParent();
-				const viewPreviewsButton = editorParent.getByRole( 'button', { name: 'View previews' } );
+				const viewPreviewsButton = editorParent.getByRole( 'button', {
+					name: 'View previews',
+					exact: true,
+				} );
 				const linkPreviewPanelButton = editorParent.locator(
 					'.components-panel__body-title button:has-text("Link preview")'
 				);
 				// Wait for whichever entry point this Jetpack version renders.
 				await viewPreviewsButton.or( linkPreviewPanelButton ).first().waitFor();
 
-				if ( await viewPreviewsButton.count() ) {
+				// count() resolves immediately on DOM presence, which is what tells the
+				// two Jetpack variants apart; click() then auto-waits for the button to
+				// become actionable (e.g. while the panel animates open).
+				if ( ( await viewPreviewsButton.count() ) > 0 ) {
 					await viewPreviewsButton.first().click();
 				} else {
 					await editorPage.expandSection( 'Link preview' );
 					await editorPage.clickSidebarButton( 'Open link preview' );
 				}
+
+				// Confirm the previews modal (identified by its per-platform tabs) opened,
+				// so a broken entry point fails here instead of in the next (serial) test.
+				await editorParent.getByRole( 'dialog' ).getByRole( 'tab', { name: 'Tumblr' } ).waitFor();
 			} );
 
 			it( 'Show link preview for Tumblr', async function () {
