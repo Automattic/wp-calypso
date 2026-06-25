@@ -5,7 +5,7 @@ import { debounce } from '@wordpress/compose';
 import clsx from 'clsx';
 import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { filter, map, memoize, reduce } from 'lodash';
+import { filter, map, memoize } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -217,13 +217,9 @@ class TermTreeSelectorList extends Component {
 			return this.itemHeights[ item.ID ];
 		}
 
-		return reduce(
-			this.getTermChildren( item.ID ),
-			( memo, childItem ) => {
-				return memo + this.getItemHeight( childItem, true );
-			},
-			ITEM_HEIGHT
-		);
+		return this.getTermChildren( item.ID ).reduce( ( memo, childItem ) => {
+			return memo + this.getItemHeight( childItem, true );
+		}, ITEM_HEIGHT );
 	};
 
 	getRowHeight = ( { index } ) => {

@@ -1,4 +1,4 @@
-import { find, mergeWith, reduce } from 'lodash';
+import { find, mergeWith } from 'lodash';
 
 function mergeMetadataEdits( edits, nextEdits ) {
 	// remove existing edits that get updated in `nextEdits`
@@ -17,34 +17,30 @@ function mergeMetadataEdits( edits, nextEdits ) {
  * @returns {Object?}                    Merged edits object with changes from all sources
  */
 export const mergePostEdits = ( ...postEditsLog ) =>
-	reduce(
-		postEditsLog,
-		( mergedEdits, nextEdits ) => {
-			// filter out save markers
-			if ( typeof nextEdits === 'string' ) {
-				return mergedEdits;
-			}
+	postEditsLog.reduce( ( mergedEdits, nextEdits ) => {
+		// filter out save markers
+		if ( typeof nextEdits === 'string' ) {
+			return mergedEdits;
+		}
 
-			// return the input object if it's the first one to merge (optimization that avoids cloning)
-			if ( mergedEdits === null ) {
-				return nextEdits;
-			}
+		// return the input object if it's the first one to merge (optimization that avoids cloning)
+		if ( mergedEdits === null ) {
+			return nextEdits;
+		}
 
-			// proceed to do the merge
-			return mergeWith(
-				structuredClone( mergedEdits ),
-				nextEdits,
-				( objValue, srcValue, key, obj, src, stack ) => {
-					if ( key === 'metadata' && stack.size === 0 ) {
-						// merge metadata specially
-						return mergeMetadataEdits( objValue, srcValue );
-					}
-
-					if ( Array.isArray( srcValue ) ) {
-						return srcValue;
-					}
+		// proceed to do the merge
+		return mergeWith(
+			structuredClone( mergedEdits ),
+			nextEdits,
+			( objValue, srcValue, key, obj, src, stack ) => {
+				if ( key === 'metadata' && stack.size === 0 ) {
+					// merge metadata specially
+					return mergeMetadataEdits( objValue, srcValue );
 				}
-			);
-		},
-		null
-	);
+
+				if ( Array.isArray( srcValue ) ) {
+					return srcValue;
+				}
+			}
+		);
+	}, null );
