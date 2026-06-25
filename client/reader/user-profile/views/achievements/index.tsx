@@ -3,7 +3,6 @@ import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useAchievementsQuery } from 'calypso/data/reader/use-achievements-query';
 import useAchievementsVisibility from 'calypso/reader/components/achievements/use-achievements-visibility';
-import UserProfilePrivateTabNotice from 'calypso/reader/user-profile/components/private-tab-notice';
 import AchievementsGrid from './achievements-grid';
 import AchievementsSettings from './achievements-settings';
 import { ActivityStreak } from './activity-streak';
@@ -35,13 +34,6 @@ const UserAchievements = ( { user }: UserAchievementsProps ): JSX.Element | null
 
 	return (
 		<div className="achievements">
-			{ isOwnProfile && (
-				<UserProfilePrivateTabNotice
-					title={ translate( 'Your achievements are private' ) }
-					tab="achievements"
-					userPreferencesKey="achievements-visibility"
-				/>
-			) }
 			<div className="achievements__header">
 				<ActivityStreak streak={ engagementStreak } isOwnProfile={ isOwnProfile } />
 				{ isOwnProfile && (
