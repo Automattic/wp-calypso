@@ -20,6 +20,59 @@ interface Options {
 	onSubmit: UseAgentChatReturn[ 'onSubmit' ];
 }
 
+function isAgentMessage( message: UIMessage ): boolean {
+	// @ts-expect-error -- `assistant` comes from Big Sky messages.
+	return message.role === 'agent' || message.role === 'assistant';
+}
+
+function hasContextOnlyFlag( message: UIMessage ): boolean {
+	return message.content.some(
+		( content ) =>
+			content.type === 'data' &&
+			content.data?.flags &&
+			typeof content.data.flags === 'object' &&
+			'context_only' in content.data.flags &&
+			content.data.flags.context_only === true
+	);
+}
+
+function isJsonToolMessageText( text: string ): boolean {
+	try {
+		const data = JSON.parse( text );
+		return typeof data?.tool_id === 'string';
+	} catch ( _error ) {
+		return false;
+	}
+}
+
+function hasLaterRenderableAgentTextMessage(
+	messages: UIMessage[],
+	currentIndex: number
+): boolean {
+	for ( let index = currentIndex + 1; index < messages.length; index++ ) {
+		const message = messages[ index ];
+
+		if ( message.role === 'user' ) {
+			return false;
+		}
+
+		if ( ! isAgentMessage( message ) || hasContextOnlyFlag( message ) ) {
+			continue;
+		}
+
+		const text = message.content.find(
+			( content ) =>
+				content.type === 'text' && typeof content.text === 'string' && content.text.trim()
+		)?.text;
+
+		if ( typeof text === 'string' && text.trim() && ! isJsonToolMessageText( text ) ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 /**
  * Converts tool-related messages to component messages.
  */
@@ -32,8 +85,7 @@ export default function convertToolMessagesToComponents( {
 	return messages.flatMap( ( message, index, array ) => {
 		const firstContentText = message.content?.[ 0 ]?.text;
 
-		// @ts-expect-error -- `assistant` comes from Big Sky messages
-		if ( ( message.role !== 'agent' && message.role !== 'assistant' ) || ! firstContentText ) {
+		if ( ! isAgentMessage( message ) || ! firstContentText ) {
 			return [ message ];
 		}
 
@@ -157,8 +209,14 @@ export default function convertToolMessagesToComponents( {
 			];
 		}
 
-		// Handle agent-facing Big Sky tool result summaries.
+		// Handle agent-facing Big Sky tool result summaries. If a later renderable
+		// agent text message exists in this turn, suppress the intermediate tool
+		// summary so refresh matches the live final-response view.
 		if ( isDisplayableToolMessageTool( textData.tool_id ) ) {
+			if ( hasLaterRenderableAgentTextMessage( array, index ) ) {
+				return [];
+			}
+
 			const summary = getDisplayMessageFromToolData( textData.data );
 			if ( ! summary ) {
 				return [];
