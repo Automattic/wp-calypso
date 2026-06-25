@@ -50,9 +50,6 @@ import type {
 	UseCheckpointHook,
 	ProviderCapabilities,
 } from '../../utils/load-external-providers';
-import type { UIMessageAction } from '@automattic/agenttic-client';
-
-const REGENERATE_ACTION_ID = 'regenerate';
 
 function getLatestAgentMessageId( messages: UIMessage[] ): string | null {
 	for ( let index = messages.length - 1; index >= 0; index-- ) {
@@ -62,36 +59,6 @@ function getLatestAgentMessageId( messages: UIMessage[] ): string | null {
 	}
 
 	return null;
-}
-
-function disableRegenerateActionForOlderAgentMessages( messages: UIMessage[] ): UIMessage[] {
-	const latestAgentMessageId = getLatestAgentMessageId( messages );
-
-	return messages.map( ( message ) => {
-		if ( message.role !== 'agent' || ! message.actions?.length ) {
-			return message;
-		}
-
-		const shouldDisableRegenerate = message.id !== latestAgentMessageId;
-		let changed = false;
-		const actions = message.actions.map( ( action: UIMessageAction ) => {
-			if ( action.id !== REGENERATE_ACTION_ID || action.type === 'component' ) {
-				return action;
-			}
-
-			if ( action.disabled === shouldDisableRegenerate ) {
-				return action;
-			}
-
-			changed = true;
-			return {
-				...action,
-				disabled: shouldDisableRegenerate,
-			};
-		} );
-
-		return changed ? { ...message, actions } : message;
-	} );
 }
 
 /**
@@ -248,7 +215,6 @@ export default function OrchestratorChat( {
 		clearSuggestions,
 		registerSuggestions,
 		registerMessageActions,
-		unregisterMessageActions,
 		getRegenerateHandler,
 		progressMessage,
 	} = useAgentChat( agentConfig! );
@@ -386,12 +352,11 @@ export default function OrchestratorChat( {
 			messages,
 		} );
 
-	// Register Agenttic's built-in regenerate action for providers that opt in.
-	useRegenerateAction( {
+	// Add Agenttic's built-in regenerate action on agent messages for providers
+	// that opt in. Computed during render alongside copy/feedback so the icon
+	// appears in the same paint rather than a commit later.
+	const getRegenerateActionsForMessage = useRegenerateAction( {
 		enabled: capabilities?.supportsRegenerateAction === true,
-		isProcessing,
-		registerMessageActions,
-		unregisterMessageActions,
 		getRegenerateHandler,
 	} );
 
@@ -699,6 +664,8 @@ export default function OrchestratorChat( {
 			onSubmit: onSubmitWithImages,
 		} );
 
+		const latestAgentMessageId = getLatestAgentMessageId( currentMessages );
+
 		currentMessages = currentMessages.map( ( message ) => {
 			if ( message.id.endsWith( '-next-step' ) ) {
 				return message;
@@ -707,13 +674,20 @@ export default function OrchestratorChat( {
 			const directActions = [
 				...getFeedbackActionsForMessage( message ),
 				...getCopyActionsForMessage( message ),
+				...getRegenerateActionsForMessage( message, {
+					isLatestAgentMessage: message.id === latestAgentMessageId,
+					isStreaming: isProcessing,
+				} ),
 			];
 			if ( directActions.length === 0 ) {
 				return message;
 			}
 
 			const existingActions = message.actions?.filter(
-				( action ) => ! action.id.startsWith( 'feedback-' ) && action.id !== 'copy'
+				( action ) =>
+					! action.id.startsWith( 'feedback-' ) &&
+					action.id !== 'copy' &&
+					action.id !== 'regenerate'
 			);
 
 			return {
@@ -724,8 +698,6 @@ export default function OrchestratorChat( {
 			};
 		} );
 
-		currentMessages = disableRegenerateActionForOlderAgentMessages( currentMessages );
-
 		return currentMessages;
 	}, [
 		currentPostId,
@@ -734,7 +706,9 @@ export default function OrchestratorChat( {
 		getCopyActionsForMessage,
 		getShowComponentOrder,
 		getFeedbackActionsForMessage,
+		getRegenerateActionsForMessage,
 		isBuildingSite,
+		isProcessing,
 		messages,
 		onSubmitWithImages,
 		retainedShowComponentMessages,

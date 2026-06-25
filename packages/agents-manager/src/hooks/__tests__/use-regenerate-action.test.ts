@@ -22,9 +22,9 @@ const createMessage = ( id: string, role: 'user' | 'agent' ): UIMessage => ( {
 	showIcon: true,
 } );
 
+const latestComplete = { isLatestAgentMessage: true, isStreaming: false };
+
 describe( 'useRegenerateAction', () => {
-	const registerMessageActions = jest.fn();
-	const unregisterMessageActions = jest.fn();
 	const onRegenerate = jest.fn();
 	const getRegenerateHandler = jest.fn( () => onRegenerate );
 
@@ -32,46 +32,37 @@ describe( 'useRegenerateAction', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'does not register the action until enabled', () => {
-		renderHook( () =>
-			useRegenerateAction( {
-				enabled: false,
-				isProcessing: false,
-				registerMessageActions,
-				unregisterMessageActions,
-				getRegenerateHandler,
-			} )
+	it( 'returns no action when disabled', () => {
+		const { result } = renderHook( () =>
+			useRegenerateAction( { enabled: false, getRegenerateHandler } )
 		);
 
-		expect( registerMessageActions ).not.toHaveBeenCalled();
-		expect( unregisterMessageActions ).toHaveBeenCalledWith( 'agents-manager-regenerate' );
+		expect( result.current( createMessage( 'agent-1', 'agent' ), latestComplete ) ).toEqual( [] );
+		expect( getRegenerateHandler ).not.toHaveBeenCalled();
 	} );
 
-	it( 'builds the regenerate action spec from the handler', () => {
-		renderHook( () =>
-			useRegenerateAction( {
-				enabled: true,
-				isProcessing: false,
-				registerMessageActions,
-				unregisterMessageActions,
-				getRegenerateHandler,
-			} )
+	it( 'returns no action when the handler getter is unavailable', () => {
+		const { result } = renderHook( () =>
+			useRegenerateAction( { enabled: true, getRegenerateHandler: undefined } )
 		);
 
-		expect( registerMessageActions ).toHaveBeenCalledWith( {
-			id: 'agents-manager-regenerate',
-			actions: expect.any( Function ),
-		} );
+		expect( result.current( createMessage( 'agent-1', 'agent' ), latestComplete ) ).toEqual( [] );
+	} );
 
-		const registration = registerMessageActions.mock.calls[ 0 ][ 0 ];
+	it( 'builds an enabled regenerate action for the latest completed agent message', () => {
+		const { result } = renderHook( () =>
+			useRegenerateAction( { enabled: true, getRegenerateHandler } )
+		);
+
 		const message = createMessage( 'agent-1', 'agent' );
 
-		expect( registration.actions( message ) ).toEqual( [
+		expect( result.current( message, latestComplete ) ).toEqual( [
 			expect.objectContaining( {
 				id: 'regenerate',
 				label: 'Regenerate',
 				tooltip: 'Regenerate response',
 				onClick: onRegenerate,
+				disabled: false,
 				icon: expect.objectContaining( {
 					props: expect.objectContaining( {
 						className: 'agents-manager-message-action-icon',
@@ -83,71 +74,66 @@ describe( 'useRegenerateAction', () => {
 		expect( getRegenerateHandler ).toHaveBeenCalledWith( message );
 	} );
 
-	it( 'returns no action when the message is not regeneratable', () => {
+	it( 'disables the action on older agent messages', () => {
+		const { result } = renderHook( () =>
+			useRegenerateAction( { enabled: true, getRegenerateHandler } )
+		);
+
+		const [ action ] = result.current( createMessage( 'agent-1', 'agent' ), {
+			isLatestAgentMessage: false,
+			isStreaming: false,
+		} );
+
+		expect( action ).toEqual(
+			expect.objectContaining( { id: 'regenerate', disabled: true, onClick: onRegenerate } )
+		);
+	} );
+
+	it( 'shows a disabled placeholder on the latest message while streaming', () => {
+		// Mid-stream the turn is not yet regeneratable, so agenttic returns no handler.
 		getRegenerateHandler.mockReturnValueOnce( null as unknown as typeof onRegenerate );
 
-		renderHook( () =>
-			useRegenerateAction( {
-				enabled: true,
-				isProcessing: false,
-				registerMessageActions,
-				unregisterMessageActions,
-				getRegenerateHandler,
+		const { result } = renderHook( () =>
+			useRegenerateAction( { enabled: true, getRegenerateHandler } )
+		);
+
+		const [ action ] = result.current( createMessage( 'agent-1', 'agent' ), {
+			isLatestAgentMessage: true,
+			isStreaming: true,
+		} );
+
+		expect( action ).toEqual(
+			expect.objectContaining( {
+				id: 'regenerate',
+				disabled: true,
+				onClick: expect.any( Function ),
 			} )
 		);
-
-		const registration = registerMessageActions.mock.calls[ 0 ][ 0 ];
-		const message = createMessage( 'user-1', 'user' );
-
-		expect( registration.actions( message ) ).toEqual( [] );
 	} );
 
-	it( 'does not register the action when the handler getter is unavailable', () => {
-		renderHook( () =>
-			useRegenerateAction( {
-				enabled: true,
-				isProcessing: false,
-				registerMessageActions,
-				unregisterMessageActions,
-				getRegenerateHandler: undefined,
+	it( 'returns no action for a non-latest message with no handler', () => {
+		getRegenerateHandler.mockReturnValueOnce( null as unknown as typeof onRegenerate );
+
+		const { result } = renderHook( () =>
+			useRegenerateAction( { enabled: true, getRegenerateHandler } )
+		);
+
+		expect(
+			result.current( createMessage( 'agent-1', 'agent' ), {
+				isLatestAgentMessage: false,
+				isStreaming: true,
 			} )
-		);
-
-		expect( registerMessageActions ).not.toHaveBeenCalled();
-		expect( unregisterMessageActions ).toHaveBeenCalledWith( 'agents-manager-regenerate' );
+		).toEqual( [] );
 	} );
 
-	it( 'refreshes registration when processing state changes', () => {
-		const { rerender } = renderHook(
-			( { isProcessing } ) =>
-				useRegenerateAction( {
-					enabled: true,
-					isProcessing,
-					registerMessageActions,
-					unregisterMessageActions,
-					getRegenerateHandler,
-				} ),
-			{ initialProps: { isProcessing: true } }
+	it( 'keeps the getter stable while its inputs are unchanged', () => {
+		const { result, rerender } = renderHook( () =>
+			useRegenerateAction( { enabled: true, getRegenerateHandler } )
 		);
 
-		rerender( { isProcessing: false } );
+		const firstGetter = result.current;
+		rerender();
 
-		expect( registerMessageActions ).toHaveBeenCalledTimes( 2 );
-	} );
-
-	it( 'unregisters the action on unmount', () => {
-		const { unmount } = renderHook( () =>
-			useRegenerateAction( {
-				enabled: true,
-				isProcessing: false,
-				registerMessageActions,
-				unregisterMessageActions,
-				getRegenerateHandler,
-			} )
-		);
-
-		unmount();
-
-		expect( unregisterMessageActions ).toHaveBeenCalledWith( 'agents-manager-regenerate' );
+		expect( result.current ).toBe( firstGetter );
 	} );
 } );

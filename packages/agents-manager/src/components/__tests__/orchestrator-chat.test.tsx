@@ -118,6 +118,9 @@ import OrchestratorChat from '../orchestrator-chat';
 describe( 'OrchestratorChat', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		// useRegenerateAction now returns a per-message action getter (like the
+		// copy action). Default to one that contributes nothing.
+		mockUseRegenerateAction.mockReturnValue( () => [] );
 		mockUseAgentChat.mockReturnValue( {
 			addMessage: jest.fn(),
 			messages: [],
@@ -397,6 +400,21 @@ describe( 'OrchestratorChat', () => {
 
 	it( 'disables stale regenerate actions on older agent messages before render', () => {
 		const onRegenerate = jest.fn();
+		// Mirror production: the getter enables regenerate only on the latest
+		// agent message and disables it on older ones.
+		mockUseRegenerateAction.mockReturnValue(
+			( message: { role: string }, options: { isLatestAgentMessage: boolean } ) =>
+				message.role === 'agent'
+					? [
+							{
+								id: 'regenerate',
+								label: 'Regenerate',
+								onClick: onRegenerate,
+								disabled: ! options.isLatestAgentMessage,
+							},
+					  ]
+					: []
+		);
 		mockUseAgentChat.mockReturnValue( {
 			addMessage: jest.fn(),
 			messages: [
@@ -407,14 +425,6 @@ describe( 'OrchestratorChat', () => {
 					timestamp: 1,
 					archived: false,
 					showIcon: true,
-					actions: [
-						{
-							id: 'regenerate',
-							label: 'Regenerate',
-							onClick: onRegenerate,
-							disabled: false,
-						},
-					],
 				},
 				{
 					id: 'agent-2',
@@ -423,14 +433,6 @@ describe( 'OrchestratorChat', () => {
 					timestamp: 2,
 					archived: false,
 					showIcon: true,
-					actions: [
-						{
-							id: 'regenerate',
-							label: 'Regenerate',
-							onClick: onRegenerate,
-							disabled: false,
-						},
-					],
 				},
 			],
 			suggestions: [],
@@ -442,7 +444,6 @@ describe( 'OrchestratorChat', () => {
 			clearSuggestions: jest.fn(),
 			registerSuggestions: jest.fn(),
 			registerMessageActions: jest.fn(),
-			unregisterMessageActions: jest.fn(),
 			getRegenerateHandler: jest.fn(),
 			progressMessage: null,
 		} );
@@ -478,6 +479,68 @@ describe( 'OrchestratorChat', () => {
 				id: 'regenerate',
 				disabled: false,
 			} )
+		);
+	} );
+
+	it( 'tells the regenerate getter which message is latest and whether it is streaming', () => {
+		const getRegenerateActions = jest.fn( () => [] );
+		mockUseRegenerateAction.mockReturnValue( getRegenerateActions );
+		mockUseAgentChat.mockReturnValue( {
+			addMessage: jest.fn(),
+			messages: [
+				{
+					id: 'agent-1',
+					role: 'agent',
+					content: [ { type: 'text', text: 'First response' } ],
+					timestamp: 1,
+					archived: false,
+					showIcon: true,
+				},
+				{
+					id: 'agent-2',
+					role: 'agent',
+					content: [ { type: 'text', text: 'Streaming response' } ],
+					timestamp: 2,
+					archived: false,
+					showIcon: true,
+				},
+			],
+			suggestions: [],
+			isProcessing: true,
+			error: null,
+			loadMessages: jest.fn(),
+			onSubmit: jest.fn(),
+			abortCurrentRequest: jest.fn(),
+			clearSuggestions: jest.fn(),
+			registerSuggestions: jest.fn(),
+			registerMessageActions: jest.fn(),
+			getRegenerateHandler: jest.fn(),
+			progressMessage: null,
+		} );
+
+		render(
+			<OrchestratorChat
+				emptyViewSuggestions={ [] }
+				isDocked={ false }
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				capabilities={ { supportsRegenerateAction: true } }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		expect( getRegenerateActions ).toHaveBeenCalledWith(
+			expect.objectContaining( { id: 'agent-1' } ),
+			{ isLatestAgentMessage: false, isStreaming: true }
+		);
+		expect( getRegenerateActions ).toHaveBeenCalledWith(
+			expect.objectContaining( { id: 'agent-2' } ),
+			{ isLatestAgentMessage: true, isStreaming: true }
 		);
 	} );
 } );
