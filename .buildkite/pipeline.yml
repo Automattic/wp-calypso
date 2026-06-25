@@ -60,6 +60,7 @@ steps:
       - docker#v5.13.0:
           image: cimg/node:24.15.0-browsers
           propagate-uid-gid: true
+          userns: host
     command: .buildkite/commands/build-desktop-linux.sh
     artifact_paths:
       - desktop/release/*
