@@ -27,7 +27,6 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { SectionHeader } from '../../dashboard/components/section-header';
 import { filterVisibleTools } from './categories';
-import { getOverridesToMatch } from './group-intents';
 import { groupToolsByGroup } from './groups';
 import { getAccessSummaryBadge, getWriteAccessBadge } from './hub-helpers';
 import { useMcpPageChrome } from './mcp-page-header';
@@ -124,6 +123,27 @@ export default function McpToolsSubpage( {
 		);
 	};
 
+	/**
+	 * A group intent only sets the *default* for abilities with no explicit
+	 * per-op setting — an explicit override (from an earlier individual toggle)
+	 * always wins (see SettingsHelper::is_ability_enabled()). So "Enable all"
+	 * also force-writes an explicit override for any tool in scope that
+	 * disagrees with the new state, otherwise previously-toggled tools would
+	 * silently stay stuck regardless of the group intent.
+	 * @param {Array<[string, import('@automattic/api-core').McpAbility]>} scopedTools
+	 * @param {boolean} enabled
+	 * @returns {Record<string, boolean>|undefined}
+	 */
+	const getOverridesToMatch = ( scopedTools, enabled ) => {
+		const overrides = {};
+		scopedTools.forEach( ( [ toolId, tool ] ) => {
+			if ( tool.enabled !== enabled ) {
+				overrides[ toolId ] = enabled;
+			}
+		} );
+		return Object.keys( overrides ).length > 0 ? overrides : undefined;
+	};
+
 	const handlePageToggle = ( enabled ) => {
 		const overrides = getOverridesToMatch( tools, enabled );
 		mutation.mutate(
@@ -142,26 +162,19 @@ export default function McpToolsSubpage( {
 	};
 
 	/**
-	 * Unlike the page-level Read/Write toggle, this never writes a bare
-	 * `group_intents` entry. On the backend a group's intent flag isn't
-	 * read/write-aware — it defaults every ability in the group, in both
-	 * categories — so setting it from a single-category (Read or Write) page
-	 * would leak into the other category, and clearing it later could
-	 * incorrectly turn off abilities the user never touched. Writing only
-	 * explicit per-op overrides keeps this control strictly scoped to the
-	 * tools actually shown on this page; only the page-level toggle persists
-	 * as a forward-looking intent for abilities added later.
 	 * @param {string} groupName
 	 * @param {Array<[string, import('@automattic/api-core').McpAbility]>} groupTools
 	 * @param {boolean} enabled
 	 */
 	const handleGroupEnableAll = ( groupName, groupTools, enabled ) => {
 		const overrides = getOverridesToMatch( groupTools, enabled );
-		if ( ! overrides ) {
-			return;
-		}
 		mutation.mutate(
-			{ mcp_abilities: { account: overrides } },
+			{
+				mcp_abilities: {
+					...( overrides && { account: overrides } ),
+					group_intents: { [ groupName ]: enabled },
+				},
+			},
 			{
 				onSuccess: () => {
 					recordTracksEvent( `${ eventPrefix }_enable_all_toggled`, {
