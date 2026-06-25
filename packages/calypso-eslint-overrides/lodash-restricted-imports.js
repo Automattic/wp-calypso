@@ -66,6 +66,9 @@ const FINDINDEX_MESSAGE =
 	'Please use native `array.findIndex( ( item ) => … )` instead of lodash `findIndex`.';
 const CLONE_MESSAGE =
 	'Please use a spread copy (`{ ...obj }` / `[ ...arr ]`) instead of lodash `clone`.';
+const CLONE_DEEP_MESSAGE =
+	'Please use native `structuredClone` for plain serializable data instead of lodash `cloneDeep`. ' +
+	'For object graphs that contain functions, class instances, or symbol keys, write a small local clone.';
 const PROPERTY_MESSAGE =
 	'Please use an arrow function (`( obj ) => obj.key`) instead of lodash `property`.';
 // The js-utils maxBy/minBy rank by numeric iteratee values only — not lodash's
@@ -108,6 +111,7 @@ const paths = [
 	{ name: 'lodash', importNames: [ 'findKey' ], message: FINDKEY_MESSAGE },
 	{ name: 'lodash', importNames: [ 'findIndex' ], message: FINDINDEX_MESSAGE },
 	{ name: 'lodash', importNames: [ 'clone' ], message: CLONE_MESSAGE },
+	{ name: 'lodash', importNames: [ 'cloneDeep' ], message: CLONE_DEEP_MESSAGE },
 	{ name: 'lodash', importNames: [ 'property' ], message: PROPERTY_MESSAGE },
 	{ name: 'lodash', importNames: [ 'maxBy', 'minBy' ], message: EXTREMUM_MESSAGE },
 	{ name: 'lodash', importNames: [ 'partition' ], message: PARTITION_MESSAGE },
@@ -135,6 +139,7 @@ const patterns = [
 	{ group: [ 'lodash/findKey' ], message: FINDKEY_MESSAGE },
 	{ group: [ 'lodash/findIndex' ], message: FINDINDEX_MESSAGE },
 	{ group: [ 'lodash/clone' ], message: CLONE_MESSAGE },
+	{ group: [ 'lodash/cloneDeep' ], message: CLONE_DEEP_MESSAGE },
 	{ group: [ 'lodash/property' ], message: PROPERTY_MESSAGE },
 	{ group: [ 'lodash/maxBy', 'lodash/minBy' ], message: EXTREMUM_MESSAGE },
 	{ group: [ 'lodash/partition' ], message: PARTITION_MESSAGE },

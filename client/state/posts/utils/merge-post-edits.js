@@ -1,4 +1,4 @@
-import { cloneDeep, find, mergeWith, reduce } from 'lodash';
+import { find, mergeWith, reduce } from 'lodash';
 
 function mergeMetadataEdits( edits, nextEdits ) {
 	// remove existing edits that get updated in `nextEdits`
@@ -32,7 +32,7 @@ export const mergePostEdits = ( ...postEditsLog ) =>
 
 			// proceed to do the merge
 			return mergeWith(
-				cloneDeep( mergedEdits ),
+				structuredClone( mergedEdits ),
 				nextEdits,
 				( objValue, srcValue, key, obj, src, stack ) => {
 					if ( key === 'metadata' && stack.size === 0 ) {

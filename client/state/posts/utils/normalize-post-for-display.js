@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { flow } from '@automattic/js-utils';
-import { cloneDeep } from 'lodash';
 import detectMedia from 'calypso/lib/post-normalizer/rule-content-detect-media';
 import decodeEntities from 'calypso/lib/post-normalizer/rule-decode-entities';
 import pickCanonicalImage from 'calypso/lib/post-normalizer/rule-pick-canonical-image';
@@ -34,7 +33,7 @@ export function normalizePostForDisplay( post ) {
 	let normalizedPost = normalizePostCache.get( post );
 	if ( ! normalizedPost ) {
 		// `normalizeDisplayFlow` mutates its argument properties -- hence deep clone is needed
-		normalizedPost = normalizeDisplayFlow( cloneDeep( post ) );
+		normalizedPost = normalizeDisplayFlow( structuredClone( post ) );
 		if ( config.isEnabled( 'page/export' ) ) {
 			// we need the original content from the API to be able to export a page
 			normalizedPost.rawContent = post.content;
