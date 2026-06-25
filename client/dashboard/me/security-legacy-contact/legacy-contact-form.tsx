@@ -1,15 +1,11 @@
 import { addLegacyContactMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import {
-	__experimentalInputControl as InputControl,
-	__experimentalVStack as VStack,
-	Button,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { DataForm } from '@wordpress/dataviews';
+import { DataForm, useFormValidity } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import type { Field } from '@wordpress/dataviews';
@@ -18,6 +14,22 @@ interface LegacyContactFormData {
 	email: string;
 }
 
+const fields: Field< LegacyContactFormData >[] = [
+	{
+		id: 'email',
+		label: __( 'Email address' ),
+		type: 'email' as const,
+		isValid: {
+			required: true,
+		},
+	},
+];
+
+const form = {
+	layout: { type: 'regular' as const },
+	fields: [ 'email' ],
+};
+
 export default function LegacyContactForm() {
 	const { recordTracksEvent } = useAnalytics();
 	const { mutate: addContact, isPending } = useMutation( addLegacyContactMutation() );
@@ -25,32 +37,13 @@ export default function LegacyContactForm() {
 
 	const [ formData, setFormData ] = useState< LegacyContactFormData >( { email: '' } );
 
-	const fields: Field< LegacyContactFormData >[] = useMemo(
-		() => [
-			{
-				id: 'email',
-				label: __( 'Email address' ),
-				type: 'email',
-				Edit: ( { field, data, onChange } ) => {
-					const { id, getValue } = field;
-					return (
-						<InputControl
-							__next40pxDefaultSize
-							type="email"
-							label={ field.label }
-							value={ getValue( { item: data } ) }
-							onChange={ ( value ) => onChange( { [ id ]: value ?? '' } ) }
-							disabled={ isPending }
-						/>
-					);
-				},
-			},
-		],
-		[ isPending ]
-	);
+	const { validity, isValid } = useFormValidity( formData, fields, form );
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
+		if ( ! isValid ) {
+			return;
+		}
 		recordTracksEvent( 'calypso_dashboard_security_legacy_contact_add_click' );
 		addContact( formData.email, {
 			onSuccess: () => {
@@ -70,10 +63,8 @@ export default function LegacyContactForm() {
 				<DataForm< LegacyContactFormData >
 					data={ formData }
 					fields={ fields }
-					form={ {
-						layout: { type: 'regular' as const },
-						fields: fields.map( ( field ) => field.id ),
-					} }
+					form={ form }
+					validity={ validity }
 					onChange={ ( edits: Partial< LegacyContactFormData > ) =>
 						setFormData( ( data ) => ( { ...data, ...edits } ) )
 					}
@@ -83,7 +74,7 @@ export default function LegacyContactForm() {
 						variant="primary"
 						type="submit"
 						isBusy={ isPending }
-						disabled={ isPending || ! formData.email }
+						disabled={ isPending || ! isValid }
 					>
 						{ __( 'Set up legacy contact' ) }
 					</Button>
