@@ -253,12 +253,6 @@ export function generateAdminSections(
 			icon: 'cog',
 		},
 		{
-			title: __( 'Manage post categories', __i18n_text_domain__ ),
-			link: `/settings/taxonomies/category/${ siteSlug }`,
-			synonyms: [ 'post', 'category' ],
-			icon: 'cog',
-		},
-		{
 			title: __( 'Edit my site title, tagline, or logo', __i18n_text_domain__ ),
 			link: `/settings/general/${ siteSlug }`,
 			synonyms: [ 'title', 'logo' ],
