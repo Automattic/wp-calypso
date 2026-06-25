@@ -31,7 +31,7 @@ steps:
   # while the CircleCI -> Buildkite port is still in development.
   # Gate it on `ainfra-*` branches until the port is stabilized.
   - label: ":desktop_computer: Build desktop (mac)"
-    branches: ainfra-*
+    branches: ainfra-* desktop-v*
     notify:
       - github_commit_status:
           context: Desktop / Build (mac)
@@ -50,7 +50,7 @@ steps:
       - desktop/test/e2e/results/**/*
 
   - label: ":desktop_computer: Build desktop (linux, unsigned)"
-    branches: ainfra-*
+    branches: ainfra-* desktop-v*
     notify:
       - github_commit_status:
           context: Desktop / Build (linux, unsigned)
