@@ -20,6 +20,44 @@ interface Options {
 	onSubmit: UseAgentChatReturn[ 'onSubmit' ];
 }
 
+const isRecord = ( value: unknown ): value is Record< string, unknown > =>
+	typeof value === 'object' && value !== null;
+
+const isHumanSupportHandoff = ( value: unknown ): boolean => {
+	if ( ! isRecord( value ) ) {
+		return false;
+	}
+
+	const flags = value.flags;
+	if ( isRecord( flags ) && 'forward_to_human_support' in flags ) {
+		return true;
+	}
+
+	const outcome = value.outcome;
+	if (
+		isRecord( outcome ) &&
+		outcome.type === 'handoff_required' &&
+		outcome.handoff_target === 'human_support'
+	) {
+		return true;
+	}
+
+	return isHumanSupportHandoff( value.data ) || isHumanSupportHandoff( value.context );
+};
+
+const createEscalationMessage = ( message: UIMessage ): AgentsManagerUIMessage => ( {
+	...message,
+	content: [
+		{
+			type: 'component',
+			component: EscalationButton as React.ComponentType,
+			componentProps: {
+				messageId: message.id,
+			},
+		},
+	],
+} );
+
 /**
  * Converts tool-related messages to component messages.
  */
@@ -30,35 +68,23 @@ export default function convertToolMessagesToComponents( {
 	onSubmit,
 }: Options ): AgentsManagerUIMessage[] {
 	return messages.flatMap( ( message, index, array ) => {
-		const firstContentText = message.content?.[ 0 ]?.text;
-
 		// @ts-expect-error -- `assistant` comes from Big Sky messages
-		if ( ( message.role !== 'agent' && message.role !== 'assistant' ) || ! firstContentText ) {
+		if ( message.role !== 'agent' && message.role !== 'assistant' ) {
 			return [ message ];
 		}
 
 		// The user asked for human support
 		if (
 			message.content.find(
-				( content ) =>
-					content.type === 'data' &&
-					content.data?.flags &&
-					typeof content.data.flags === 'object' &&
-					'forward_to_human_support' in content.data.flags
+				( content ) => content.type === 'data' && isHumanSupportHandoff( content.data )
 			)
 		) {
-			return {
-				...message,
-				content: [
-					{
-						type: 'component',
-						component: EscalationButton as React.ComponentType,
-						componentProps: {
-							messageId: message.id,
-						},
-					},
-				],
-			};
+			return createEscalationMessage( message );
+		}
+
+		const firstContentText = message.content?.[ 0 ]?.text;
+		if ( ! firstContentText ) {
+			return [ message ];
 		}
 
 		// The tool message is a JSON string. Try to parse it, falling back to the original if invalid
@@ -67,6 +93,10 @@ export default function convertToolMessagesToComponents( {
 			textData = JSON.parse( firstContentText );
 		} catch ( _error ) {
 			return [ message ];
+		}
+
+		if ( isHumanSupportHandoff( textData ) ) {
+			return createEscalationMessage( message );
 		}
 
 		// Handle `show-component` tool message

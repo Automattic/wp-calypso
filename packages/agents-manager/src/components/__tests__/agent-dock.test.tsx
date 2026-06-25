@@ -40,13 +40,72 @@ jest.mock( '@wordpress/data', () => ( {
 	} ),
 	useSelect: () => mockAgentsManagerState,
 } ) );
+jest.mock( '@wordpress/components', () => ( {
+	Button: ( {
+		className,
+		id,
+		label,
+		onClick,
+		'data-agents-manager-react-handler': reactHandler,
+	}: {
+		className?: string;
+		id?: string;
+		label?: string;
+		onClick?: () => void;
+		'data-agents-manager-react-handler'?: string;
+	} ) => (
+		<button
+			className={ className }
+			data-agents-manager-react-handler={ reactHandler }
+			id={ id }
+			onClick={ onClick }
+		>
+			{ label }
+		</button>
+	),
+	DropdownMenu: ( {
+		controls = [],
+		label,
+		onToggle,
+		toggleProps,
+	}: {
+		controls?:
+			| { title?: string; onClick?: () => void }[]
+			| { title?: string; onClick?: () => void }[][];
+		label?: string;
+		onToggle?: () => void;
+		toggleProps?: { id?: string };
+	} ) => {
+		const flattenedControls = controls.flat();
+		return (
+			<div data-testid="editor-help-entry">
+				<button id={ toggleProps?.id } onClick={ onToggle }>
+					{ label }
+				</button>
+				{ flattenedControls.map( ( control ) =>
+					control.title ? (
+						<button key={ control.title } onClick={ control.onClick }>
+							{ control.title }
+						</button>
+					) : null
+				) }
+			</div>
+		);
+	},
+	Fill: ( { children }: { children: React.ReactNode } ) => <>{ children }</>,
+} ) );
 jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
 jest.mock( '@wordpress/icons', () => ( {
+	backup: 'backup',
 	columns: 'columns',
 	comment: 'comment',
 	drawerRight: 'drawerRight',
+	help: 'help',
 	lineSolid: 'lineSolid',
 	login: 'login',
+	page: 'page',
+	rss: 'rss',
+	video: 'video',
 } ) );
 jest.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: () => mockContext,
@@ -57,6 +116,8 @@ jest.mock( '../../utils/tracks', () => ( {
 } ) );
 jest.mock( '../../hooks/use-admin-bar-integration', () => ( {
 	__esModule: true,
+	AI_CHAT_ENTRY_BUTTON_ID: 'wp-admin-bar-agents-manager-ai-chat',
+	EDITOR_HELP_ENTRY_BUTTON_ID: 'agents-manager-editor-help',
 	default: () => mockHasAdminBar,
 } ) );
 jest.mock( '../../hooks/use-agent-layout-manager', () => ( options: unknown ) => {
@@ -71,6 +132,7 @@ jest.mock( '../../hooks/use-agent-layout-manager', () => ( options: unknown ) =>
 		createAgentPortal: ( children: React.ReactNode ) => children,
 	};
 } );
+jest.mock( '../icons', () => ( { AI: () => null } ) );
 jest.mock( '../../hooks/custom-actions', () => ( {
 	useSetupCustomActions: () => {},
 } ) );
@@ -160,6 +222,18 @@ function useWpAdminAgent() {
 		sectionName: 'wp-admin',
 		agentConfig: {
 			agentId: 'wp-orchestrator',
+		},
+		getActiveSessionId: () => 'session-123',
+		resumeActiveChat: mockResumeActiveChat,
+	} as unknown as Partial< AgentsManagerContextType >;
+}
+
+function useDollySiteEditorAgent() {
+	mockContext = {
+		siteKey: 'site-1',
+		sectionName: 'site-editor',
+		agentConfig: {
+			agentId: 'dolly',
 		},
 		getActiveSessionId: () => 'session-123',
 		resumeActiveChat: mockResumeActiveChat,
@@ -268,6 +342,39 @@ describe( 'AgentDock', () => {
 
 		expect( mockResumeActiveChat ).not.toHaveBeenCalled();
 		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/support-guides' );
+	} );
+
+	it( 'keeps support guides available for Dolly site-editor opt-in', () => {
+		useDollySiteEditorAgent();
+
+		renderAgentDock( '/support-guides' );
+
+		expect( screen.getByTestId( 'support-guides' ) ).toBeInTheDocument();
+		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/support-guides' );
+	} );
+
+	it( 'renders the editor Help entry point for Dolly site-editor opt-in', () => {
+		useDollySiteEditorAgent();
+		mockAgentsManagerState = { isOpen: false, isDocked: false };
+
+		renderAgentDock();
+		fireEvent.click( screen.getByText( 'Support guides' ) );
+
+		expect( screen.getByText( 'Help' ) ).toBeInTheDocument();
+		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/support-guides' );
+		expect( mockSetIsOpen ).toHaveBeenCalledWith( true, true );
+	} );
+
+	it( 'renders an editor AI chat entry point for Dolly site-editor opt-in', () => {
+		useDollySiteEditorAgent();
+		mockAgentsManagerState = { isOpen: false, isDocked: false };
+
+		renderAgentDock();
+		fireEvent.click( screen.getByText( 'Ask AI' ) );
+
+		expect( document.getElementById( 'wp-admin-bar-agents-manager-ai-chat' ) ).toBeInTheDocument();
+		expect( mockResumeActiveChat ).toHaveBeenCalledTimes( 1 );
+		expect( mockSetIsOpen ).toHaveBeenCalledWith( true, true );
 	} );
 
 	it( 'hides the support guides list without the WP admin bar trigger', () => {
