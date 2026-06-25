@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/ui",
-	"version": "1.0.3",
+	"version": "2.0.0",
 	"description": "Automattic Design System UI components.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -42,7 +42,6 @@
 	"dependencies": {
 		"@base-ui/react": "^1.5.0",
 		"@wordpress/base-styles": "9.1.0",
-		"@wordpress/compose": "^8.2.0",
 		"@wordpress/element": "^8.0.0",
 		"@wordpress/i18n": "^6.21.0",
 		"@wordpress/icons": "^13.3.0",
