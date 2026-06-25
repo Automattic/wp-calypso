@@ -253,6 +253,228 @@ describe( 'themes selectors', () => {
 
 			expect( theme ).toEqual( jetpackTheme );
 		} );
+
+		test( 'when wpcom record is retired and the site has its own installed theme with the same slug, merges site fields over wpcom and clears retired', () => {
+			const retiredWpcomTheme = {
+				id: 'colliding-slug',
+				name: 'Retired WPCOM Theme',
+				author: 'Automattic',
+				stylesheet: 'premium/colliding-slug',
+				download: 'https://wordpress.com/theme/colliding-slug.zip',
+				descriptionLong: '<p>Canonical long description.</p>',
+				supportDocumentation: '<p>Canonical support docs.</p>',
+				taxonomies: {
+					theme_feature: [ { slug: 'block-editor-styles' } ],
+				},
+				theme_tier: freeThemeTier,
+				retired: true,
+			};
+			const thirdPartyTheme = {
+				id: 'colliding-slug',
+				name: 'Third-Party Theme',
+				author: 'Third-Party Author',
+				author_uri: 'https://example.com/theme-author',
+				stylesheet: undefined,
+				download: undefined,
+				descriptionLong: '<img src=x onerror=alert(1)>',
+				supportDocumentation: '<img src=x onerror=alert(1)>',
+				taxonomies: undefined,
+				theme_tier: undefined,
+			};
+
+			const theme = getCanonicalTheme(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { 'colliding-slug': retiredWpcomTheme },
+							} ),
+							2916284: new ThemeQueryManager( {
+								items: { 'colliding-slug': thirdPartyTheme },
+							} ),
+						},
+					},
+				},
+				2916284,
+				'colliding-slug'
+			);
+
+			expect( theme ).toMatchObject( {
+				name: 'Third-Party Theme',
+				author: 'Third-Party Author',
+				author_uri: 'https://example.com/theme-author',
+				stylesheet: 'premium/colliding-slug',
+				download: 'https://wordpress.com/theme/colliding-slug.zip',
+				descriptionLong: '<p>Canonical long description.</p>',
+				supportDocumentation: '<p>Canonical support docs.</p>',
+				taxonomies: {
+					theme_feature: [ { slug: 'block-editor-styles' } ],
+				},
+				theme_tier: freeThemeTier,
+				retired: false,
+			} );
+		} );
+
+		test( 'when a retired collision site theme has an unsafe author URL, ignores the site author URL', () => {
+			const retiredWpcomTheme = {
+				id: 'colliding-slug',
+				name: 'Retired WPCOM Theme',
+				author: 'Automattic',
+				author_uri: 'https://wordpress.com/themes/',
+				retired: true,
+			};
+			const thirdPartyTheme = {
+				id: 'colliding-slug',
+				name: 'Third-Party Theme',
+				author: 'Third-Party Author',
+				author_uri: 'javascript:alert(1)',
+			};
+
+			const theme = getCanonicalTheme(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { 'colliding-slug': retiredWpcomTheme },
+							} ),
+							2916284: new ThemeQueryManager( {
+								items: { 'colliding-slug': thirdPartyTheme },
+							} ),
+						},
+					},
+				},
+				2916284,
+				'colliding-slug'
+			);
+
+			expect( theme.author_uri ).toBe( 'https://wordpress.com/themes/' );
+		} );
+
+		test( 'when wpcom record is retired and the site has the symlinked wpcom-managed copy (theme_uri starts with https://wordpress.com/theme/), still returns the wpcom record so the retired notice is preserved', () => {
+			const retiredWpcomTheme = {
+				id: 'colliding-slug',
+				name: 'Retired WPCOM Theme',
+				author: 'Automattic',
+				stylesheet: 'premium/colliding-slug',
+				retired: true,
+			};
+			// wpcomsh rewrites theme_uri to https://wordpress.com/theme/<slug> for symlinked themes.
+			const symlinkedSiteTheme = {
+				id: 'colliding-slug',
+				name: 'Retired WPCOM Theme',
+				author: 'Automattic',
+				theme_uri: 'https://wordpress.com/theme/colliding-slug',
+			};
+
+			const theme = getCanonicalTheme(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { 'colliding-slug': retiredWpcomTheme },
+							} ),
+							2916284: new ThemeQueryManager( {
+								items: { 'colliding-slug': symlinkedSiteTheme },
+							} ),
+						},
+					},
+				},
+				2916284,
+				'colliding-slug'
+			);
+
+			// wpcom canonical record returned unchanged — retired notice still fires
+			expect( theme ).toEqual( retiredWpcomTheme );
+			expect( theme.retired ).toBe( true );
+		} );
+
+		test( 'when wpcom record is retired but the site has no installed theme with the same slug, still returns the wpcom record', () => {
+			const retiredWpcomPinboard = {
+				id: 'pinboard',
+				name: 'Pinboard',
+				author: 'Automattic',
+				retired: true,
+			};
+
+			const theme = getCanonicalTheme(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { pinboard: retiredWpcomPinboard },
+							} ),
+						},
+					},
+				},
+				2916284,
+				'pinboard'
+			);
+
+			expect( theme ).toEqual( retiredWpcomPinboard );
+		} );
+
+		test( 'when retired site theme_uri equals the symlink prefix without a slug, treats it as an unmanaged collision', () => {
+			const retiredWpcomTheme = {
+				id: 'colliding-slug',
+				name: 'Retired WPCOM Theme',
+				author: 'Automattic',
+				retired: true,
+			};
+			const thirdPartyTheme = {
+				id: 'colliding-slug',
+				name: 'Third-Party Theme',
+				author: 'Third-Party Author',
+				theme_uri: 'https://wordpress.com/theme/',
+			};
+
+			const theme = getCanonicalTheme(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { 'colliding-slug': retiredWpcomTheme },
+							} ),
+							2916284: new ThemeQueryManager( {
+								items: { 'colliding-slug': thirdPartyTheme },
+							} ),
+						},
+					},
+				},
+				2916284,
+				'colliding-slug'
+			);
+
+			expect( theme.name ).toBe( 'Third-Party Theme' );
+			expect( theme.retired ).toBe( false );
+		} );
+
+		test( 'when wpcom record is not retired, returns the wpcom record even if the site has its own copy', () => {
+			const wpcomTwentySixteen = { ...twentysixteen };
+			const sideloadedTwentySixteen = {
+				id: 'twentysixteen',
+				name: 'Twenty Sixteen (local)',
+				author: 'unrelated',
+			};
+
+			const theme = getCanonicalTheme(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { twentysixteen: wpcomTwentySixteen },
+							} ),
+							2916284: new ThemeQueryManager( {
+								items: { twentysixteen: sideloadedTwentySixteen },
+							} ),
+						},
+					},
+				},
+				2916284,
+				'twentysixteen'
+			);
+
+			expect( theme ).toEqual( wpcomTwentySixteen );
+		} );
 	} );
 
 	describe( '#getThemesRequestError()', () => {

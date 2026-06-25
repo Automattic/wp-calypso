@@ -4,31 +4,96 @@ import { Theme } from 'calypso/types';
 import 'calypso/state/themes/init';
 
 /**
- * knownConflictingThemes: A list of themeIds which we prefer to fetch from the
- * jetpack/atomic site over the wpcom/wporg galleries.
- *
- * In most cases, we want to prefer the theme information found on wpcom or
- * wporg over the information found on a user's jetpack or atomic site, because
- * the info on wpcom or wporg has a longer description, more screenshots, and
- * more fields.
- *
- * However, some themes have a conflicting themeId. For example, let's say I
- * buy the bistro theme off woocommerce.com and install it on my jetpack or
- * atomic site. When I search for information about 'bistro' in the WPCOM ->
- * WPORG -> JP/Atomic order, I will first find information in
- * https://wp-themes.com/bistro/, which is a completely different theme than
- * the one offered on woocommerce.
- *
- * One solution would be to always prefer what's found on a user's
- * jetpack/atomic site over the centralized galleries. However, that results in
- * a notably degraded experience when looking at the theme info for popular
- * bundled themes like twentytwentyone.
- *
- * So it seems somewhat hacky, but keeping a list of themes where we prefer the
- * jetpack/atomic versions is a straightforward way to solve the bistro conflict while
- * keeping the rich theme information for twentytwentyone.
+ * Slugs whose installed copy on a site typically differs from the WP.com
+ * catalog entry with the same slug. Lookup order inverts to site-first for
+ * these so we don't show the wrong theme's metadata. Maintain manually.
  */
 export const knownConflictingThemes = new Set( [ 'bistro' ] );
+
+/**
+ * wpcomsh rewrites `theme_uri` to this prefix only for symlinked WP.com
+ * themes (`wpcomsh_add_wpcom_suffix_to_theme_endpoint_response` filter).
+ * It is the signal that distinguishes a managed WP.com copy of a slug from
+ * a manually uploaded third-party theme that happens to share the slug.
+ */
+const SYMLINKED_THEME_URI_PREFIX = 'https://wordpress.com/theme/';
+const SITE_THEME_OVERRIDE_FIELDS = [ 'name', 'author', 'author_uri', 'theme_uri', 'version' ];
+const URL_OVERRIDE_FIELDS = new Set( [ 'author_uri', 'theme_uri' ] );
+
+function isSafeHttpUrl( url ) {
+	if ( typeof url !== 'string' ) {
+		return false;
+	}
+
+	try {
+		const parsedUrl = new URL( url );
+		return [ 'http:', 'https:' ].includes( parsedUrl.protocol );
+	} catch {
+		return false;
+	}
+}
+
+/**
+ * Whether the site's theme record represents the symlinked WP.com-managed
+ * copy of a slug, as opposed to a manually uploaded third-party theme.
+ * @param  {Object} siteTheme Theme record from the site's `queries[siteId]` subtree.
+ * @returns {boolean}
+ */
+function isSymlinkedManagedTheme( siteTheme ) {
+	const themeUri = siteTheme?.theme_uri;
+	return (
+		typeof themeUri === 'string' &&
+		themeUri.startsWith( SYMLINKED_THEME_URI_PREFIX ) &&
+		themeUri.length > SYMLINKED_THEME_URI_PREFIX.length
+	);
+}
+
+function getSafeSiteOverride( field, siteTheme, wpcomTheme ) {
+	const siteValue = siteTheme[ field ];
+	if ( siteValue == null ) {
+		return wpcomTheme[ field ];
+	}
+
+	if ( URL_OVERRIDE_FIELDS.has( field ) && ! isSafeHttpUrl( siteValue ) ) {
+		return wpcomTheme[ field ];
+	}
+
+	return siteValue;
+}
+
+function mergeRetiredCollisionTheme( wpcomTheme, siteTheme ) {
+	return {
+		...wpcomTheme,
+		...Object.fromEntries(
+			SITE_THEME_OVERRIDE_FIELDS.map( ( field ) => [
+				field,
+				getSafeSiteOverride( field, siteTheme, wpcomTheme ),
+			] )
+		),
+		retired: false,
+	};
+}
+
+/**
+ * Resolves the slug-collision case where the WP.com catalog has a retired
+ * record AND the site has a same-slug unmanaged record. Returns a merged
+ * theme object (site display fields override wpcom, wpcom-shape fields
+ * preserved for downstream consumers, `retired` cleared), or `null` when
+ * the condition does not apply. Symlinked managed copies return `null` so
+ * legitimately-retired premium themes keep their canonical record.
+ * @param  {Object} state   Global state tree
+ * @param  {number} siteId  Site ID
+ * @param  {string} themeId Theme ID
+ * @returns {?Object}        Merged theme object, or `null`.
+ */
+function getRetiredCollisionTheme( state, siteId, themeId ) {
+	const wpcomTheme = getTheme( state, 'wpcom', themeId );
+	const siteTheme = siteId ? getTheme( state, siteId, themeId ) : null;
+	if ( ! wpcomTheme?.retired || ! siteTheme || isSymlinkedManagedTheme( siteTheme ) ) {
+		return null;
+	}
+	return mergeRetiredCollisionTheme( wpcomTheme, siteTheme );
+}
 
 /**
  * Returns a theme object from what is considered the 'canonical' source, i.e.
@@ -44,6 +109,11 @@ export function getCanonicalTheme( state, siteId, themeId ) {
 	let searchOrder = [ 'wpcom', 'wporg', siteId ];
 	if ( knownConflictingThemes.has( themeId ) ) {
 		searchOrder = [ siteId, 'wpcom', 'wporg' ];
+	}
+
+	const collisionMerge = getRetiredCollisionTheme( state, siteId, themeId );
+	if ( collisionMerge ) {
+		return collisionMerge;
 	}
 
 	const source = find( searchOrder, ( s ) => getTheme( state, s, themeId ) );
