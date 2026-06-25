@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { useAgentsManagerContext } from '../contexts';
 import { isPluginCompassHost } from '../utils/is-plugin-compass-agent';
 import { isReaderChatHost } from '../utils/is-reader-chat-agent';
+import { isShopperHost } from '../utils/is-shopper-agent';
 import type { LoadedProviders } from '../utils/load-external-providers';
 
 interface UseEmptyViewSuggestionsOptions {
@@ -102,7 +103,11 @@ function readOverrideSuggestions(): Suggestion[] | null {
 
 	const data = (
 		window as unknown as {
-			agentsManagerData?: { readerSuggestions?: unknown; compassSuggestions?: unknown };
+			agentsManagerData?: {
+				readerSuggestions?: unknown;
+				compassSuggestions?: unknown;
+				shopperSuggestions?: unknown;
+			};
 		}
 	 ).agentsManagerData;
 
@@ -111,6 +116,8 @@ function readOverrideSuggestions(): Suggestion[] | null {
 		override = data?.readerSuggestions;
 	} else if ( isPluginCompassHost() ) {
 		override = data?.compassSuggestions;
+	} else if ( isShopperHost() ) {
+		override = data?.shopperSuggestions;
 	} else {
 		return null;
 	}

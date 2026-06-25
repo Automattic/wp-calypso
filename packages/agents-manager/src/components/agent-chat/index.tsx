@@ -19,6 +19,7 @@ import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inlin
 import isAmAbilitiesDisabled from '../../utils/is-am-abilities-disabled';
 import { isEditorPage } from '../../utils/is-editor-page';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
+import { isShopperHost } from '../../utils/is-shopper-agent';
 import lazyComponent from '../../utils/lazy-component';
 import { isSiteEditorContext } from '../../utils/site-editor-context';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
@@ -149,6 +150,9 @@ function getEmptyViewHeading(): string {
 	if ( isReaderChatHost() ) {
 		return __( 'Ask me anything about this blog.', __i18n_text_domain__ );
 	}
+	if ( isShopperHost() ) {
+		return __( 'Hi! Looking for something?', __i18n_text_domain__ );
+	}
 	return __( 'What should we work on next?', __i18n_text_domain__ );
 }
 
@@ -159,6 +163,12 @@ function getEmptyViewHelp(): string {
 	}
 	if ( isReaderChatHost() ) {
 		return __( 'Or type your own question below.', __i18n_text_domain__ );
+	}
+	if ( isShopperHost() ) {
+		return __(
+			'Ask about products, orders, or shipping — or pick one below.',
+			__i18n_text_domain__
+		);
 	}
 	return __( 'Got a different request? Ask away.', __i18n_text_domain__ );
 }
