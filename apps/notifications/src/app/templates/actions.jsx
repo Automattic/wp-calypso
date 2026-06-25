@@ -12,6 +12,8 @@ import AnswerPromptButton from './button-answer-prompt';
 import ApproveButton from './button-approve';
 import EditButton from './button-edit';
 import LikeButton from './button-like';
+import SpamButton from './button-spam';
+import TrashButton from './button-trash';
 import ReplyInput from './comment-reply-input';
 
 const getType = ( note ) => ( null === getReferenceId( note, 'comment' ) ? 'post' : 'comment' );
@@ -41,14 +43,25 @@ const getInitialReplyValue = ( note ) => {
 	return getType( note ) === 'post' ? __( 'Reply to post…' ) : __( 'Reply to comment…' );
 };
 
-const ActionsPane = ( { isApproved, isLiked, note } ) => {
+const ActionsPane = ( { isApproved, isLiked, note, goBack } ) => {
 	const actions = getActions( note );
 	const hasAction = ( types ) =>
 		[].concat( types ).some( ( type ) => actions.hasOwnProperty( type ) );
 
+	// Destructive actions (Spam/Trash) sit in their own group at the end,
+	// separated from the safe actions to reduce misclicks.
+	const hasSafeAction = hasAction( [
+		'approve-comment',
+		'like-post',
+		'like-comment',
+		'edit-comment',
+		'answer-prompt',
+	] );
+	const hasDestructiveAction = hasAction( [ 'spam-comment', 'trash-comment' ] );
+
 	return (
 		<VStack spacing={ 4 } style={ { width: '100%' } }>
-			<HStack spacing={ 2 } justify="flex-start" wrap>
+			<HStack spacing={ 2 } justify="flex-start">
 				{ hasAction( 'approve-comment' ) && (
 					<ApproveButton note={ note } isApproved={ isApproved } />
 				) }
@@ -57,6 +70,21 @@ const ActionsPane = ( { isApproved, isLiked, note } ) => {
 				) }
 				{ hasAction( 'edit-comment' ) && <EditButton note={ note } /> }
 				{ hasAction( 'answer-prompt' ) && <AnswerPromptButton note={ note } /> }
+				{ hasSafeAction && hasDestructiveAction && (
+					<div
+						aria-hidden="true"
+						style={ {
+							alignSelf: 'center',
+							flex: '0 0 auto',
+							width: '1px',
+							height: '20px',
+							margin: '0 4px',
+							backgroundColor: 'var( --color-neutral-10, #c3c4c7 )',
+						} }
+					/>
+				) }
+				{ hasAction( 'spam-comment' ) && <SpamButton note={ note } goBack={ goBack } /> }
+				{ hasAction( 'trash-comment' ) && <TrashButton note={ note } goBack={ goBack } /> }
 			</HStack>
 			{ !! actions[ 'replyto-comment' ] && (
 				<ReplyInput note={ note } defaultValue={ getInitialReplyValue( note ) } />
@@ -69,6 +97,7 @@ ActionsPane.propTypes = {
 	isApproved: PropTypes.bool.isRequired,
 	isLiked: PropTypes.bool.isRequired,
 	note: PropTypes.object.isRequired,
+	goBack: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ( state, { note } ) => ( {

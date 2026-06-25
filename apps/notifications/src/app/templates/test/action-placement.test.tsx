@@ -2,10 +2,8 @@
  * @jest-environment jsdom
  */
 import { screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { renderWithProvider } from '../../../testing-library';
 import { AppProvider } from '../../context';
-import ActionDropdown from '../action-dropdown';
 import NoteActions from '../actions';
 
 const noop = () => {};
@@ -20,8 +18,9 @@ const note = {
 			text: 'A short reply',
 			actions: {
 				'approve-comment': true,
-				'spam-comment': true,
 				'edit-comment': true,
+				'spam-comment': true,
+				'trash-comment': true,
 			},
 		},
 	],
@@ -29,10 +28,10 @@ const note = {
 } as never;
 
 describe( 'comment action placement', () => {
-	it( 'keeps safe actions inline but does not render Spam in the inline action row', () => {
+	it( 'renders Spam and Trash as inline action buttons alongside the safe actions', () => {
 		renderWithProvider(
 			<AppProvider client={ null } locale="en">
-				<NoteActions note={ note } />
+				<NoteActions note={ note } goBack={ noop } />
 			</AppProvider>
 		);
 
@@ -40,16 +39,7 @@ describe( 'comment action placement', () => {
 		// comment is already approved, so the approve toggle reads "Unapprove comment".
 		expect( screen.getByRole( 'button', { name: 'Unapprove comment' } ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Edit comment' } ) ).toBeInTheDocument();
-		expect(
-			screen.queryByRole( 'button', { name: 'Mark comment as spam' } )
-		).not.toBeInTheDocument();
-	} );
-
-	it( 'offers Spam in the overflow menu when the note can be marked as spam', async () => {
-		renderWithProvider( <ActionDropdown note={ note } goBack={ noop } /> );
-
-		await userEvent.click( screen.getByRole( 'button', { name: 'Actions' } ) );
-
-		expect( await screen.findByRole( 'menuitem', { name: 'Spam' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Mark comment as spam' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Trash comment' } ) ).toBeInTheDocument();
 	} );
 } );

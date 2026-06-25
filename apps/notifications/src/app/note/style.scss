@@ -306,12 +306,18 @@
 	}
 }
 
-// Outweigh WP Button's `.components-button.has-icon.has-text` rule.
-.wpnc__action-link.components-button.has-icon.has-text {
-	// Keep each button at its natural (content) width instead of stretching to
-	// fill the row. Smaller, start-aligned targets leave deliberate empty space
-	// and shrink the surface area for misclicking a neighboring action.
-	flex: 0 0 auto;
+// Outweigh WP Button's `.components-button.has-text` rule.
+.wpnc__action-link.components-button.has-text {
+	// Keep every action on a single row. Buttons sit at their natural width when
+	// they fit, but may shrink and let their label wrap onto a new line when the
+	// row runs out of width — instead of wrapping a whole button below.
+	flex: 0 1 auto;
+	min-width: 0;
+	// Let the button grow taller when its label wraps onto a second line.
+	height: auto;
+	flex-wrap: wrap;
+	justify-content: center;
+	white-space: normal;
 }
 
 /**

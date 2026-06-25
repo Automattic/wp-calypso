@@ -78,7 +78,7 @@ const ReplyBlock = ( { note }: { note: Note } ) => {
 	return null;
 };
 
-export const ActionBlock = ( { note }: { note: Note } ) => {
+export const ActionBlock = ( { note, goBack }: { note: Note; goBack: () => void } ) => {
 	const blocks: BlockWithSignature[] = zipWithSignature( note.body, note );
 	const actionBlock = blocks.findLast(
 		( block ) => block.block.actions && 'user' !== block.signature.type
@@ -93,7 +93,7 @@ export const ActionBlock = ( { note }: { note: Note } ) => {
 		// sibling below it, so it stays visible without sticky positioning. When the
 		// reply is short the body sizes to its content and this sits right beneath it.
 		<CardFooter size="small">
-			<NoteActions note={ note } />
+			<NoteActions note={ note } goBack={ goBack } />
 		</CardFooter>
 	);
 };
