@@ -19,6 +19,74 @@ import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
+// Temporary instrumentation for the flaky "Like post" step. Remove with the
+// probe in the test body once the Like-widget render failure is understood.
+type LikeProbeData = {
+	console: { type: string; text: string }[];
+	pageErrors: string[];
+	responses: { url: string; status: number }[];
+	requestFailures: { url: string; failure: string | null }[];
+};
+
+/**
+ * Dumps the state of the Like widget when `likePost()` fails, so a CI build log
+ * shows whether the iframe is missing, empty, or errored, and what the
+ * widgets.wp.com requests returned. Output is a single `[LIKE_PROBE]` line.
+ */
+async function logLikeWidgetProbe( page: Page, probe: LikeProbeData ): Promise< void > {
+	let dom: unknown;
+	try {
+		dom = await page.evaluate( () => {
+			const trunc = ( html: string | null | undefined ) => ( html ? html.slice( 0, 1200 ) : null );
+			const iframe = document.querySelector(
+				'iframe[title="Like or Reblog"]'
+			) as HTMLIFrameElement | null;
+			const container =
+				document.querySelector( '.jetpack-likes-widget-wrapper' ) ||
+				document.querySelector( '[id^="like-post-wrapper"]' ) ||
+				document.querySelector( '.sharedaddy' );
+			return {
+				hasLikeContainer: !! container,
+				likeContainerHTML: trunc( ( container as HTMLElement | null )?.outerHTML ),
+				iframe: iframe
+					? {
+							src: iframe.getAttribute( 'src' ),
+							width: iframe.clientWidth,
+							height: iframe.clientHeight,
+					  }
+					: null,
+			};
+		} );
+	} catch ( e ) {
+		dom = { evaluateError: String( e ).slice( 0, 200 ) };
+	}
+
+	const frames: { url: string; name: string; bodyText: string }[] = [];
+	for ( const f of page.frames() ) {
+		let bodyText = '';
+		try {
+			bodyText = ( await f.locator( 'body' ).innerText( { timeout: 1000 } ) ).slice( 0, 200 );
+		} catch {
+			// Frame may be empty, cross-origin-blocked, or detached; skip its text.
+		}
+		frames.push( { url: f.url(), name: f.name(), bodyText } );
+	}
+
+	// eslint-disable-next-line no-console
+	console.log(
+		'[LIKE_PROBE] ' +
+			JSON.stringify( {
+				url: page.url(),
+				dom,
+				frames,
+				console: probe.console.slice( -20 ),
+				pageErrors: probe.pageErrors.slice( -20 ),
+				responses: probe.responses.slice( -40 ),
+				requestFailures: probe.requestFailures.slice( -40 ),
+			} )
+	);
+}
+
 describe( 'Likes: Post', function () {
 	const features = envToFeatureKey( envVariables );
 	// @todo Does it make sense to create a `simpleSitePersonalPlanUserEdge` with GB edge?
@@ -72,12 +140,50 @@ describe( 'Likes: Post', function () {
 
 		it( 'Like post', async function () {
 			const siteID = postingUser.credentials.testSites?.primary.id as number;
+
+			// Temporary diagnostics: the Like button (loaded in an iframe from
+			// widgets.wp.com) intermittently fails to render on Atomic, leaving the
+			// "Like this:" section empty and the test timing out. Collect
+			// network/console/DOM/frame state on failure so a CI run shows why.
+			// Remove once the cause is identified.
+			const probe: LikeProbeData = {
+				console: [],
+				pageErrors: [],
+				responses: [],
+				requestFailures: [],
+			};
+			const widgetUrl = /widgets\.wp\.com|\/likes|like\.php/i;
+			page.on( 'console', ( msg ) => {
+				if ( msg.type() === 'error' || msg.type() === 'warning' ) {
+					probe.console.push( { type: msg.type(), text: msg.text().slice( 0, 300 ) } );
+				}
+			} );
+			page.on( 'pageerror', ( err ) => probe.pageErrors.push( String( err ).slice( 0, 300 ) ) );
+			page.on( 'response', ( res ) => {
+				if ( widgetUrl.test( res.url() ) ) {
+					probe.responses.push( { url: res.url(), status: res.status() } );
+				}
+			} );
+			page.on( 'requestfailed', ( req ) => {
+				if ( widgetUrl.test( req.url() ) ) {
+					probe.requestFailures.push( {
+						url: req.url(),
+						failure: req.failure()?.errorText ?? null,
+					} );
+				}
+			} );
+
 			await ElementHelper.reloadAndRetry( page, async () => {
 				// Reset like state via REST API before each attempt.
 				await restAPIClient.postLikeAction( 'unlike', siteID, newPost.ID );
 				await page.reload();
 				publishedPostPage = new PublishedPostPage( page );
-				await publishedPostPage.likePost();
+				try {
+					await publishedPostPage.likePost();
+				} catch ( error ) {
+					await logLikeWidgetProbe( page, probe );
+					throw error;
+				}
 			} );
 		} );
 
