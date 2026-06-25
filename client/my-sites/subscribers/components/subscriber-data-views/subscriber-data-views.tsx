@@ -272,7 +272,11 @@ export default function SubscriberDataViews( {
 	);
 
 	// Fetch subscriber details.
-	const { data: subscriberDetails, isLoading: isLoadingDetails } = useSubscriberDetailsQuery(
+	const {
+		data: subscriberDetails,
+		isLoading: isLoadingDetails,
+		isFetching: isFetchingDetails,
+	} = useSubscriberDetailsQuery(
 		siteId ?? null,
 		// Only pass subscriberId if it's a valid number
 		subscriberId && ! isNaN( parseInt( subscriberId, 10 ) )
@@ -305,9 +309,27 @@ export default function SubscriberDataViews( {
 		if ( subscriberDetails && subscriberId === getSubscriptionIdString( subscriberDetails ) ) {
 			setSelectedSubscriber( subscriberDetails );
 		}
-		// Don't clear selectedSubscriber - let it keep showing the previous subscriber while loading
-		// The SubscriberDetailsSkeleton will show because subscriberDetails won't match subscriberId
+		// Keep the previous selectedSubscriber until the new details load so the
+		// highlighted row in the list doesn't blink off mid-navigation. The detail
+		// pane shows SubscriberDetailsSkeleton meanwhile, since subscriberDetails
+		// won't match subscriberId yet.
 	}, [ subscriberId, subscriberDetails ] );
+
+	// Drive the list + detail layout off the URL and query state rather than the
+	// loaded `selectedSubscriber` (which lags a render). Stay in detail view while
+	// the details request is in flight or has loaded a matching record, so a cold
+	// deep link (e.g. from the Stats Subscribers module) opens straight into the
+	// list + detail view instead of flashing the full-width table first. Use
+	// `isFetching`, not `isLoading`: the query keeps previous data across detail
+	// navigations (placeholderData: keepPreviousData), so on an A->B switch
+	// `isLoading` is false while the stale `subscriberDetails` still points at A.
+	// Fall back to the table only once the request settles without a matching
+	// record (stale or deleted id, or an error), so the user isn't stranded on a
+	// skeleton with no list, since the list is hidden below $break-wide.
+	const isDetailView =
+		!! subscriberId &&
+		( isFetchingDetails ||
+			( !! subscriberDetails && getSubscriptionIdString( subscriberDetails ) === subscriberId ) );
 
 	const { data: subscribersTotals } = useSubscriberCountQuery( siteId ?? null );
 	const grandTotal = subscribersTotals?.total_subscribers ?? 0;
@@ -508,8 +530,8 @@ export default function SubscriberDataViews( {
 	);
 
 	const actions = useMemo< Action< Subscriber >[] >( () => {
-		// If we're in list view (when a subscriber is selected), return empty actions array.
-		if ( selectedSubscriber ) {
+		// In detail view the list collapses to a narrow selector, so hide row actions.
+		if ( isDetailView ) {
 			return [];
 		}
 
@@ -586,7 +608,7 @@ export default function SubscriberDataViews( {
 
 		return baseActions;
 	}, [
-		selectedSubscriber,
+		isDetailView,
 		handleSubscriberSelection,
 		handleUnsubscribe,
 		onCompSubscription,
@@ -659,8 +681,8 @@ export default function SubscriberDataViews( {
 				showMedia: false,
 				fields: [],
 			} ) );
-		} else if ( selectedSubscriber ) {
-			// If we're on subscribers page, we want to show the list view (name & media).
+		} else if ( isDetailView ) {
+			// In detail view, show the list as a compact name + avatar selector.
 			setCurrentView( ( prevView ) => ( {
 				...prevView,
 				type: 'list',
@@ -677,7 +699,7 @@ export default function SubscriberDataViews( {
 				layout: defaultView.layout,
 			} ) );
 		}
-	}, [ isMobile, selectedSubscriber ] );
+	}, [ isMobile, isDetailView ] );
 
 	useEffect( () => {
 		// Handle search term from the view.
@@ -708,14 +730,12 @@ export default function SubscriberDataViews( {
 	}, [ subscribers, total, pages ] );
 
 	return (
-		<div
-			className={ `subscriber-data-views ${ selectedSubscriber ? 'has-selected-subscriber' : '' }` }
-		>
+		<div className={ `subscriber-data-views ${ isDetailView ? 'has-selected-subscriber' : '' }` }>
 			<section className="subscriber-data-views__list">
 				<Page
 					title={ <JetpackTitle title={ translate( 'Subscribers' ) } /> }
 					subTitle={
-						! selectedSubscriber &&
+						! isDetailView &&
 						translate(
 							'Add subscribers to your site and filter your audience list. {{link}}Learn more{{/link}}.',
 							{
@@ -746,8 +766,7 @@ export default function SubscriberDataViews( {
 								size="compact"
 								icon={ <Icon icon={ plus } size={ 18 } /> }
 								{ ...{
-									[ isMobile || !! selectedSubscriber ? 'label' : 'text' ]:
-										translate( 'Add subscribers' ),
+									[ isMobile || isDetailView ? 'label' : 'text' ]: translate( 'Add subscribers' ),
 								} }
 							/>
 							<SubscribersHeaderPopover
@@ -809,7 +828,7 @@ export default function SubscriberDataViews( {
 								isLoading={ isLoading }
 								paginationInfo={ paginationInfo }
 								getItemId={ ( item: Subscriber ) => getSubscriptionIdString( item ) }
-								defaultLayouts={ selectedSubscriber ? { list: {} } : { table: {} } }
+								defaultLayouts={ isDetailView ? { list: {} } : { table: {} } }
 								actions={ actions }
 								search
 								searchLabel={ translate( 'Search subscribers…' ) }
