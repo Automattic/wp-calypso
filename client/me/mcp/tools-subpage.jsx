@@ -235,7 +235,7 @@ export default function McpToolsSubpage( {
 									<Card key={ groupKey }>
 										<CardBody>
 											<div className="mcp-tools-subpage__group-header">
-												<div className="mcp-tools-subpage__group-info">
+												<VStack spacing={ 1 } className="mcp-tools-subpage__group-info">
 													<Text truncate weight={ 600 } size={ 14 }>
 														{ label }
 													</Text>
@@ -244,7 +244,7 @@ export default function McpToolsSubpage( {
 															{ descriptor.description }
 														</Text>
 													) }
-												</div>
+												</VStack>
 												<div className="mcp-tools-subpage__group-toggle">
 													<ToggleControl
 														__nextHasNoMarginBottom
