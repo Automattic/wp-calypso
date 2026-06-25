@@ -11,8 +11,9 @@ export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 
 cd desktop
 corepack enable
+sudo apt update
+sudo apt-get install -y libsecret-1-dev
 yarn install --immutable --inline-builds
-yarn playwright install-deps chromium
 yarn run build
 
 # `-c.linux.target=dir` produces an unpacked `linux-unpacked/` tree. Assert

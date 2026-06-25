@@ -56,8 +56,11 @@ steps:
           context: Desktop / Build (linux, unsigned)
     agents:
       queue: default
+    env:
+      NODE_OPTIONS: --max-old-space-size=5120
     plugins:
-      - automattic/nvm#0.6.0
+      - docker#v5.13.0:
+          image: cimg/node:24.15.0-browsers
     command: .buildkite/commands/build-desktop-linux.sh
     artifact_paths:
       - desktop/release/*
