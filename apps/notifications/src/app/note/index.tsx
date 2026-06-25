@@ -158,7 +158,7 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 					</div>
 				</VStack>
 			</CardBody>
-			<ActionBlock note={ note } goBack={ goBack } />
+			<ActionBlock note={ note } />
 		</>
 	);
 };

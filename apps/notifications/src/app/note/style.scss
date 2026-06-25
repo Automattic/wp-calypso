@@ -308,11 +308,10 @@
 
 // Outweigh WP Button's `.components-button.has-icon.has-text` rule.
 .wpnc__action-link.components-button.has-icon.has-text {
-	// Start each button at its natural (content) width and share the remaining
-	// space from there. This keeps labels centered regardless of which one is
-	// longest, so it stays correct across languages.
-	flex: 1 1 auto;
-	justify-content: center;
+	// Keep each button at its natural (content) width instead of stretching to
+	// fill the row. Smaller, start-aligned targets leave deliberate empty space
+	// and shrink the surface area for misclicking a neighboring action.
+	flex: 0 0 auto;
 }
 
 /**

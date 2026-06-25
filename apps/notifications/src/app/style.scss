@@ -117,10 +117,12 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 		transform: translateX(0);
 	}
 
-	// Sticky header + action block sandwich the body. Make the body the
-	// scroll region so its content stays inside the pane.
+	// Sticky header on top, action block below; the body between them is the
+	// scroll region. It sizes to its content (flex-grow: 0) so the action block
+	// sits directly under short replies instead of being stranded at the pane
+	// bottom, and it shrinks to scroll (min-height: 0) when content is tall.
 	> .components-card-body {
-		flex: 1;
+		flex: 0 1 auto;
 		min-height: 0;
 		overflow-y: auto;
 	}

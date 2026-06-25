@@ -78,7 +78,7 @@ const ReplyBlock = ( { note }: { note: Note } ) => {
 	return null;
 };
 
-export const ActionBlock = ( { note, goBack }: { note: Note; goBack: () => void } ) => {
+export const ActionBlock = ( { note }: { note: Note } ) => {
 	const blocks: BlockWithSignature[] = zipWithSignature( note.body, note );
 	const actionBlock = blocks.findLast(
 		( block ) => block.block.actions && 'user' !== block.signature.type
@@ -89,16 +89,11 @@ export const ActionBlock = ( { note, goBack }: { note: Note; goBack: () => void 
 	}
 
 	return (
-		<CardFooter
-			size="small"
-			style={ {
-				position: 'sticky',
-				bottom: 0,
-				background: 'var( --color-surface, #fff )',
-				zIndex: 1,
-			} }
-		>
-			<NoteActions note={ note } goBack={ goBack } />
+		// The body above is the scroll region; this footer is a non-scrolling
+		// sibling below it, so it stays visible without sticky positioning. When the
+		// reply is short the body sizes to its content and this sits right beneath it.
+		<CardFooter size="small">
+			<NoteActions note={ note } />
 		</CardFooter>
 	);
 };
