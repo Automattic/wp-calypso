@@ -6,7 +6,12 @@
 .space-feed-board__item {
 	position: absolute;
 	inset-block-start: 0;
-	padding: 8px;
+	// border-box so the lane width (50%) already accounts for the gutter padding —
+	// otherwise it overflows the lane and the columns overlap. 16px inline padding
+	// gives a 32px gutter between columns; 20px block padding a 40px row gutter.
+	box-sizing: border-box;
+	padding-block: 20px;
+	padding-inline: 16px;
 }
 
 .space-feed-board__card {
