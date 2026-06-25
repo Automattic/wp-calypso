@@ -296,6 +296,7 @@ function WPNonProductLineItem( {
 	const actualAmountDisplay = lineItem.formattedAmount;
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
+	const isCartUpdating = formStatus === FormStatus.VALIDATING;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const translate = useTranslate();
 	const modalCopy = returnModalCopy(
@@ -315,7 +316,11 @@ function WPNonProductLineItem( {
 			<LineItemTitle isSummary={ isSummary }>{ label }</LineItemTitle>
 
 			<span className="checkout-line-item__price">
-				<LineItemPrice actualAmount={ actualAmountDisplay } />
+				{ isCartUpdating ? (
+					<LoadingCopy width="60px" height="16px" noMargin />
+				) : (
+					<LineItemPrice actualAmount={ actualAmountDisplay } />
+				) }
 			</span>
 
 			{ hasDeleteButton && removeProductFromCart && (
