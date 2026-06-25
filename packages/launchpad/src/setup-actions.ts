@@ -1,9 +1,13 @@
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isMobile } from '@automattic/viewport';
-import { addQueryArgs } from '@wordpress/url';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { LaunchpadTaskActionsProps, Task } from './types';
+
+const addQueryArg = ( url: string, key: string, value: string ): string => {
+	const separator = url.includes( '?' ) ? '&' : '?';
+	return `${ url }${ separator }${ encodeURIComponent( key ) }=${ encodeURIComponent( value ) }`;
+};
 
 const TASKS_TO_COMPLETE_ON_CLICK = [
 	'add_about_page',
@@ -39,7 +43,7 @@ export const setUpActionsForTasks = ( {
 
 		if ( uiContext === 'calypso' && hasCalypsoPath ) {
 			if ( task.id === 'drive_traffic' && ! isMobile() && hasCalypsoPath ) {
-				task.calypso_path = addQueryArgs( task.calypso_path, { tour: 'marketingConnectionsTour' } );
+				task.calypso_path = addQueryArg( task.calypso_path, 'tour', 'marketingConnectionsTour' );
 			}
 
 			// Enable task in 'calypso' context
