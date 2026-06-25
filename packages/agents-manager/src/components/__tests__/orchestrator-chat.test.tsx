@@ -82,12 +82,13 @@ jest.mock( '../../hooks/use-feedback-action', () => () => ( {
 	showFeedbackInput: false,
 	submitFeedbackText: jest.fn(),
 	resetFeedback: jest.fn(),
+	getFeedbackActionsForMessage: () => [],
 } ) );
 jest.mock( '../../hooks/use-regenerate-action', () => ( {
 	__esModule: true,
 	default: ( config: unknown ) => mockUseRegenerateAction( config ),
 } ) );
-jest.mock( '../../hooks/use-copy-action', () => () => {} );
+jest.mock( '../../hooks/use-copy-action', () => () => () => [] );
 jest.mock( '../../hooks/use-sources-action', () => () => {} );
 jest.mock( '../../hooks/use-zoom-action', () => () => {} );
 jest.mock( '../../utils/agent-session', () => ( { markSessionUsed: jest.fn() } ) );
