@@ -17,6 +17,7 @@ import type { ReactNode } from 'react';
 
 const BASE = 'https://public-api.wordpress.com';
 const LIKES_PATH = '/rest/v1.2/read/liked';
+const RECOMMENDATIONS_SITES_PATH = '/rest/v1.2/read/recommendations/sites';
 
 afterEach( () => {
 	nock.cleanAll();
@@ -49,9 +50,17 @@ interface ApiPost {
 	ID: number;
 	site_ID: number;
 	URL?: string;
+	date?: string;
 	date_liked?: string;
 	content?: string;
 	railcar?: Record< string, unknown >;
+}
+
+interface ApiSite {
+	name: string;
+	feed_ID: number;
+	URL: string;
+	posts: ApiPost[];
 }
 
 function apiPost( id: number, overrides: Partial< ApiPost > = {} ): ApiPost {
@@ -67,6 +76,16 @@ function apiPost( id: number, overrides: Partial< ApiPost > = {} ): ApiPost {
 
 function postKey( id: number, siteId = 100 ): StreamItem {
 	return { blogId: siteId, postId: id };
+}
+
+function apiSite( siteId: number, postId: number, overrides: Partial< ApiSite > = {} ): ApiSite {
+	return {
+		name: `Recommended site ${ siteId }`,
+		feed_ID: siteId,
+		URL: `https://site-${ siteId }.example.com`,
+		posts: [ apiPost( postId, { site_ID: siteId, date: '2026-04-01T00:00:00Z' } ) ],
+		...overrides,
+	};
 }
 
 describe( 'useStreamPendingPosts', () => {
@@ -326,6 +345,60 @@ describe( 'useStreamPendingPosts', () => {
 			pages: Array< { posts?: ApiPost[] } >;
 		} >( streamQueryKey );
 		expect( streamData?.pages[ 0 ].posts?.map( ( post ) => post.ID ) ).toEqual( [ 1, 2, 3 ] );
+		await waitFor( () => expect( result.current.pendingCount ).toBe( 0 ) );
+	} );
+
+	it( 'consume() merges sites-shaped pending pages into the first rendered page', async () => {
+		nock( BASE )
+			.get( RECOMMENDATIONS_SITES_PATH )
+			.query( true )
+			.reply( 200, {
+				sites: [ apiSite( 100, 1 ), apiSite( 200, 2 ), apiSite( 300, 3 ) ],
+			} );
+
+		const queryClient = makeQueryClient();
+		const streamQueryKey = getStreamInfiniteQueryKey( {
+			streamKey: 'custom_recs_sites_with_images',
+			feedId: null,
+			localeSlug: null,
+			startDate: null,
+		} );
+		queryClient.setQueryData( streamQueryKey, {
+			pageParams: [ null ],
+			pages: [
+				{
+					sites: [ apiSite( 200, 2 ), apiSite( 300, 3 ) ],
+				},
+			],
+		} );
+
+		const { Wrapper } = makeWrapper( queryClient );
+		const items = [ postKey( 2, 200 ), postKey( 3, 300 ) ];
+		const { result } = renderHook(
+			() =>
+				useStreamPendingPosts( {
+					streamKey: 'custom_recs_sites_with_images',
+					items,
+					shouldPoll: true,
+				} ),
+			{ wrapper: Wrapper }
+		);
+
+		await waitFor( () => expect( result.current.pendingCount ).toBe( 1 ) );
+
+		act( () => {
+			result.current.consume();
+		} );
+
+		const streamData = queryClient.getQueryData< {
+			pageParams: unknown[];
+			pages: Array< { sites?: ApiSite[] } >;
+		} >( streamQueryKey );
+		expect( streamData?.pageParams ).toEqual( [ null ] );
+		expect( streamData?.pages ).toHaveLength( 1 );
+		expect( streamData?.pages[ 0 ].sites?.map( ( site ) => site.posts[ 0 ].ID ) ).toEqual( [
+			1, 2, 3,
+		] );
 		await waitFor( () => expect( result.current.pendingCount ).toBe( 0 ) );
 	} );
 

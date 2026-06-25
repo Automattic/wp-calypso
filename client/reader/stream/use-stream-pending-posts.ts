@@ -94,6 +94,14 @@ const countPendingItems = (
 const streamItemsFromPages = ( pages: ReadStreamResponse[], streamType: string ): StreamItem[] =>
 	pages.flatMap( ( page ) => normalizeStreamPage( page, streamType ).streamItems );
 
+const siteHasPost = ( site: unknown ): boolean => {
+	if ( ! site || typeof site !== 'object' ) {
+		return false;
+	}
+	const posts = ( site as { posts?: unknown } ).posts;
+	return Array.isArray( posts ) && posts.length > 0;
+};
+
 const takePendingFromPage = (
 	page: ReadStreamResponse,
 	pendingCount: number
@@ -122,7 +130,18 @@ const takePendingFromPage = (
 	}
 
 	if ( Array.isArray( page.sites ) ) {
-		return { ...page, sites: page.sites.slice( 0, pendingCount ) };
+		let remaining = pendingCount;
+		const sites: unknown[] = [];
+		for ( const site of page.sites ) {
+			if ( remaining <= 0 ) {
+				break;
+			}
+			sites.push( site );
+			if ( siteHasPost( site ) ) {
+				remaining -= 1;
+			}
+		}
+		return { ...page, sites };
 	}
 
 	return page;
@@ -156,6 +175,16 @@ const prependPendingPage = (
 			...current,
 			pages: [
 				{ ...firstPage, cards: [ ...pendingOnlyPage.cards, ...firstPage.cards ] },
+				...remainingPages,
+			],
+		};
+	}
+
+	if ( Array.isArray( pendingOnlyPage.sites ) && Array.isArray( firstPage.sites ) ) {
+		return {
+			...current,
+			pages: [
+				{ ...firstPage, sites: [ ...pendingOnlyPage.sites, ...firstPage.sites ] },
 				...remainingPages,
 			],
 		};
