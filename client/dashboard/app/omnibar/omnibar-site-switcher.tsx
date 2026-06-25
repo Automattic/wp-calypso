@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	Dropdown,
+	ExternalLink,
 	Icon,
 	MenuGroup,
 	MenuItem,
@@ -117,9 +118,22 @@ export default function OmnibarSiteSwitcher() {
 									</Text>
 								}
 								description={
-									<Text variant="muted" truncate numberOfLines={ 1 }>
+									<ExternalLink
+										href={ item.URL }
+										onClick={ ( e ) => {
+											e.stopPropagation();
+											recordTracksEvent(
+												'calypso_dashboard_omnibar_site_switcher_site_url_click'
+											);
+										} }
+										style={ {
+											overflow: 'hidden',
+											textOverflow: 'ellipsis',
+											whiteSpace: 'nowrap',
+										} }
+									>
 										{ getSiteDisplayUrl( item ) }
-									</Text>
+									</ExternalLink>
 								}
 							/>
 						) }

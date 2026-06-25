@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { ExternalLink } from '@wordpress/components';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAppContext } from '../../app/context';
@@ -54,9 +55,22 @@ export const SiteSwitcherBase = (
 					}
 					description={
 						context === 'list' ? (
-							<Text variant="muted" truncate numberOfLines={ 1 }>
+							<ExternalLink
+								href={ item.URL }
+								onClick={ ( e ) => {
+									e.stopPropagation();
+									recordTracksEvent(
+										'calypso_dashboard_site_switcher_site_url_click'
+									);
+								} }
+								style={ {
+									overflow: 'hidden',
+									textOverflow: 'ellipsis',
+									whiteSpace: 'nowrap',
+								} }
+							>
 								{ getSiteDisplayUrl( item ) }
-							</Text>
+							</ExternalLink>
 						) : undefined
 					}
 				/>
