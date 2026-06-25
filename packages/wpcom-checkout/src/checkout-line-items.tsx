@@ -489,6 +489,7 @@ export function BundleLineItem( {
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
+	const isCartUpdating = formStatus === FormStatus.VALIDATING;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 
 	const { products } = bundle;
@@ -538,10 +539,14 @@ export function BundleLineItem( {
 			<LineItemTitle isSummary={ isSummary }>{ bundleLabel }</LineItemTitle>
 
 			<span className="checkout-line-item__price">
-				<LineItemPrice
-					actualAmount={ bundleTotalDisplay }
-					crossedOutAmount={ isBundleDiscounted ? bundleOriginalDisplay : undefined }
-				/>
+				{ isCartUpdating ? (
+					<LoadingCopy width="60px" height="16px" noMargin />
+				) : (
+					<LineItemPrice
+						actualAmount={ bundleTotalDisplay }
+						crossedOutAmount={ isBundleDiscounted ? bundleOriginalDisplay : undefined }
+					/>
+				) }
 			</span>
 
 			<LineItemMeta>
@@ -1639,6 +1644,7 @@ function CheckoutLineItem( {
 		isPwpoUser || false
 	);
 	const isDisabled = formStatus !== FormStatus.READY;
+	const isCartUpdating = formStatus === FormStatus.VALIDATING;
 
 	const isRenewal = isWpComProductRenewal( product );
 
@@ -1774,7 +1780,9 @@ function CheckoutLineItem( {
 			</LineItemTitle>
 
 			<span className="checkout-line-item__price">
-				{ shouldShowComparison ? (
+				{ isCartUpdating ? (
+					<LoadingCopy width="60px" height="16px" noMargin />
+				) : shouldShowComparison ? (
 					<>
 						<LineItemPrice
 							actualAmount={ monthlyAmountDisplay }
