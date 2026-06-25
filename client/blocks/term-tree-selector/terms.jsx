@@ -1,13 +1,12 @@
 import { FormLabel } from '@automattic/components';
 import { range } from '@automattic/js-utils';
-import { AutoSizer, List } from '@automattic/react-virtualized';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { debounce } from '@wordpress/compose';
 import clsx from 'clsx';
-import isEqual from 'fast-deep-equal/es6';
-import { localize } from 'i18n-calypso';
-import { filter, map, memoize } from 'lodash';
+import { useTranslate } from 'i18n-calypso';
+import { filter, map } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import QueryTerms from 'calypso/components/data/query-terms';
@@ -35,257 +34,242 @@ const SEARCH_DEBOUNCE_TIME_MS = 500;
 const DEFAULT_TERMS_PER_PAGE = 100;
 const LOAD_OFFSET = 10;
 const ITEM_HEIGHT = 25;
+const OVERSCAN_ROW_COUNT = 5;
 
-class TermTreeSelectorList extends Component {
-	static propTypes = {
-		hideTermAndChildren: PropTypes.number,
-		terms: PropTypes.array,
-		taxonomy: PropTypes.string,
-		multiple: PropTypes.bool,
-		selected: PropTypes.array,
-		search: PropTypes.string,
-		siteId: PropTypes.number,
-		translate: PropTypes.func,
-		defaultTermId: PropTypes.number,
-		lastPage: PropTypes.number,
-		onSearch: PropTypes.func,
-		onChange: PropTypes.func,
-		isError: PropTypes.bool,
-		height: PropTypes.number,
-	};
+const EMPTY_TERMS = Object.freeze( [] );
 
-	static defaultProps = {
-		analyticsPrefix: 'Category Selector',
-		searchThreshold: 8,
-		loading: true,
-		terms: Object.freeze( [] ),
-		onSearch: () => {},
-		onChange: () => {},
-		onNextPage: () => {},
-		height: 300,
-	};
+function TermTreeSelectorList( {
+	hideTermAndChildren,
+	terms = EMPTY_TERMS,
+	taxonomy,
+	multiple,
+	selected = [],
+	siteId,
+	defaultTermId,
+	lastPage,
+	query,
+	onSearch = () => {},
+	onChange = () => {},
+	isError,
+	height = 300,
+	className,
+	compact,
+	loading = true,
+	emptyMessage,
+	createLink,
+	searchThreshold = 8,
+	podcastingCategoryId,
+	analyticsPrefix = 'Category Selector',
+} ) {
+	const translate = useTranslate();
 
-	state = {
-		searchTerm: '',
-		requestedPages: Object.freeze( [ 1 ] ),
-	};
+	const [ searchTerm, setSearchTerm ] = useState( '' );
+	const [ requestedPages, setRequestedPages ] = useState( () => Object.freeze( [ 1 ] ) );
 
-	constructor( props ) {
-		super( props );
+	const scrollElementRef = useRef( null );
+	// Cache of measured row heights keyed by term ID, mirroring the previous
+	// `itemHeights` map populated from each row's `clientHeight`.
+	const itemHeightsRef = useRef( {} );
+	const hasPerformedSearchRef = useRef( false );
 
-		this.itemHeights = {};
-		this.hasPerformedSearch = false;
-		this.list = null;
+	const termIds = useMemo( () => map( terms, 'ID' ), [ terms ] );
 
-		this.termIds = map( this.props.terms, 'ID' );
-		this.getTermChildren = memoize( this.getTermChildren );
-		this.queueRecomputeRowHeights = debounce( this.recomputeRowHeights, 0 );
-		this.debouncedSearch = debounce( () => {
-			this.props.onSearch( this.state.searchTerm );
-		}, SEARCH_DEBOUNCE_TIME_MS );
-	}
+	// Memoize children lookups for the lifetime of a given `terms` array.
+	const getTermChildren = useMemo( () => {
+		const cache = new Map();
+		return ( termId ) => {
+			if ( cache.has( termId ) ) {
+				return cache.get( termId );
+			}
+			const children = filter( terms, ( { parent } ) => parent === termId );
+			cache.set( termId, children );
+			return children;
+		};
+	}, [ terms ] );
 
-	componentDidUpdate( prevProps ) {
-		if ( prevProps.terms !== this.props.terms ) {
-			this.getTermChildren.cache.clear();
-			this.termIds = map( this.props.terms, 'ID' );
-		}
+	const debouncedSearch = useMemo(
+		() =>
+			debounce( ( value ) => {
+				onSearch( value );
+			}, SEARCH_DEBOUNCE_TIME_MS ),
+		[ onSearch ]
+	);
 
-		const forceUpdate =
-			! isEqual( prevProps.selected, this.props.selected ) ||
-			( prevProps.loading && ! this.props.loading ) ||
-			( ! prevProps.terms && this.props.terms );
+	const hasNoSearchResults = ! loading && terms && ! terms.length && !! searchTerm.length;
+	const hasNoTerms = ! loading && terms && ! terms.length;
 
-		if ( forceUpdate ) {
-			this.list.forceUpdateGrid();
-		}
+	const getItem = useCallback(
+		( index ) => {
+			if ( terms ) {
+				return terms[ index ];
+			}
+		},
+		[ terms ]
+	);
 
-		if ( this.props.terms !== prevProps.terms ) {
-			this.recomputeRowHeights();
-		}
-	}
-
-	recomputeRowHeights = () => {
-		if ( ! this.list ) {
-			return;
-		}
-
-		this.list.recomputeRowHeights();
-
-		// Small mode passes the height of the scrollable region as a derived
-		// number, and will not be updated unless our component re-renders
-		if ( this.isSmall() ) {
-			this.forceUpdate();
-		}
-	};
-
-	getPageForIndex = ( index ) => {
-		const { query, lastPage } = this.props;
-		const perPage = query.number || DEFAULT_TERMS_PER_PAGE;
-		const page = Math.ceil( index / perPage );
-
-		return Math.max( Math.min( page, lastPage || Infinity ), 1 );
-	};
-
-	setRequestedPages = ( { startIndex, stopIndex } ) => {
-		const { requestedPages } = this.state;
-		const pagesToRequest = range(
-			this.getPageForIndex( startIndex - LOAD_OFFSET ),
-			this.getPageForIndex( stopIndex + LOAD_OFFSET ) + 1
-		).filter( ( page ) => ! requestedPages.includes( page ) );
-
-		if ( ! pagesToRequest.length ) {
-			return;
-		}
-
-		this.setState( {
-			requestedPages: requestedPages.concat( pagesToRequest ),
-		} );
-	};
-
-	setItemRef = ( item, itemRef ) => {
-		if ( ! itemRef || ! item ) {
-			return;
-		}
-
-		// By falling back to the item height constant, we avoid an unnecessary
-		// forced update if all of the items match our guessed height
-		const height = this.itemHeights[ item.ID ] || ITEM_HEIGHT;
-
-		const nextHeight = itemRef.clientHeight;
-		this.itemHeights[ item.ID ] = nextHeight;
-
-		// If height changes, wait until the end of the current call stack and
-		// fire a single forced update to recompute the row heights
-		if ( height !== nextHeight ) {
-			this.queueRecomputeRowHeights();
-		}
-	};
-
-	hasNoSearchResults = () => {
-		return (
-			! this.props.loading &&
-			this.props.terms &&
-			! this.props.terms.length &&
-			!! this.state.searchTerm.length
-		);
-	};
-
-	hasNoTerms = () => {
-		return ! this.props.loading && this.props.terms && ! this.props.terms.length;
-	};
-
-	getItem = ( index ) => {
-		if ( this.props.terms ) {
-			return this.props.terms[ index ];
-		}
-	};
-
-	isSmall = () => {
-		if ( ! this.props.terms || this.state.searchTerm ) {
+	const isSmall = ( () => {
+		if ( ! terms || searchTerm ) {
 			return false;
 		}
+		return terms.length < searchThreshold;
+	} )();
 
-		return this.props.terms.length < this.props.searchThreshold;
-	};
+	// Recursive measured-height estimate, preserving the original 0-height
+	// returns (nested children whose parent is in the payload, and the excluded
+	// subtree) so a real measured 0 survives the `typeof` check below.
+	const getItemHeight = useCallback(
+		( item, _recurse = false ) => {
+			if ( ! item ) {
+				return ITEM_HEIGHT;
+			}
 
-	isRowLoaded = ( { index } ) => {
-		return this.props.lastPage || !! this.getItem( index );
-	};
+			// if item has a parent, and parent is in payload, height is already part of parent
+			if ( item.parent && ! _recurse && termIds.includes( item.parent ) ) {
+				return 0;
+			}
 
-	getTermChildren = ( termId ) => {
-		const { terms } = this.props;
-		return filter( terms, ( { parent } ) => parent === termId );
-	};
+			// If this subtree is excluded, do not render
+			if ( item.ID === hideTermAndChildren ) {
+				return 0;
+			}
 
-	getItemHeight = ( item, _recurse = false ) => {
-		if ( ! item ) {
-			return ITEM_HEIGHT;
-		}
+			const measured = itemHeightsRef.current[ item.ID ];
+			if ( typeof measured === 'number' && measured ) {
+				return measured;
+			}
 
-		// if item has a parent, and parent is in payload, height is already part of parent
-		if ( item.parent && ! _recurse && this.termIds.includes( item.parent ) ) {
-			return 0;
-		}
+			return filter( terms, ( { parent } ) => parent === item.ID ).reduce(
+				( memo, childItem ) => memo + getItemHeight( childItem, true ),
+				ITEM_HEIGHT
+			);
+		},
+		[ terms, termIds, hideTermAndChildren ]
+	);
 
-		// If this subtree is excluded, do not render
-		if ( item.ID === this.props.hideTermAndChildren ) {
-			return 0;
-		}
-
-		if ( this.itemHeights[ item.ID ] ) {
-			return this.itemHeights[ item.ID ];
-		}
-
-		return this.getTermChildren( item.ID ).reduce( ( memo, childItem ) => {
-			return memo + this.getItemHeight( childItem, true );
-		}, ITEM_HEIGHT );
-	};
-
-	getRowHeight = ( { index } ) => {
-		return this.getItemHeight( this.getItem( index ) );
-	};
-
-	getCompactContainerHeight = () => {
-		return range( 0, this.getRowCount() ).reduce( ( memo, index ) => {
-			return memo + this.getRowHeight( { index } );
-		}, 0 );
-	};
-
-	getRowCount = () => {
+	const getRowCount = ( () => {
 		let count = 0;
-
-		if ( this.props.terms ) {
-			count += this.props.terms.length;
+		if ( terms ) {
+			count += terms.length;
 		}
-
-		if ( this.props.loading || ! this.props.terms ) {
+		if ( loading || ! terms ) {
 			count += 1;
 		}
-
 		return count;
-	};
+	} )();
 
-	onSearch = ( event ) => {
-		const searchTerm = event.target.value;
-		if ( this.state.searchTerm && ! searchTerm ) {
-			this.props.onSearch( '' );
+	const estimateSize = useCallback(
+		( index ) => {
+			const measured = getItemHeight( getItem( index ) );
+			return typeof measured === 'number' ? measured : ITEM_HEIGHT;
+		},
+		[ getItemHeight, getItem ]
+	);
+
+	const virtualizer = useVirtualizer( {
+		count: getRowCount,
+		getScrollElement: () => scrollElementRef.current,
+		estimateSize,
+		overscan: OVERSCAN_ROW_COUNT,
+	} );
+
+	// A prop change re-renders automatically, but measured heights are cached in
+	// the virtualizer; re-measure on `terms`/`selected` changes so stale heights
+	// (e.g. after a new search or a selection toggle) are not reused.
+	useEffect( () => {
+		virtualizer.measure();
+	}, [ terms, selected, virtualizer ] );
+
+	const virtualItems = virtualizer.getVirtualItems();
+	const firstIndex = virtualItems[ 0 ]?.index;
+	const lastIndex = virtualItems[ virtualItems.length - 1 ]?.index;
+
+	// Request the pages covering the visible range (plus a lookahead offset),
+	// mirroring the previous `onRowsRendered` + page math.
+	useEffect( () => {
+		if ( firstIndex === undefined || lastIndex === undefined ) {
+			return;
+		}
+		const perPage = query?.number || DEFAULT_TERMS_PER_PAGE;
+		const getPageForIndex = ( index ) => {
+			const page = Math.ceil( index / perPage );
+			return Math.max( Math.min( page, lastPage || Infinity ), 1 );
+		};
+		setRequestedPages( ( current ) => {
+			const pagesToRequest = range(
+				getPageForIndex( firstIndex - LOAD_OFFSET ),
+				getPageForIndex( lastIndex + LOAD_OFFSET ) + 1
+			).filter( ( page ) => ! current.includes( page ) );
+
+			if ( ! pagesToRequest.length ) {
+				return current;
+			}
+			return current.concat( pagesToRequest );
+		} );
+	}, [ firstIndex, lastIndex, query?.number, lastPage ] );
+
+	// Measure each rendered row and cache its height keyed by term ID. When a
+	// height changes, ask the virtualizer to re-measure on the next tick.
+	const queueRecomputeRowHeights = useMemo(
+		() =>
+			debounce( () => {
+				virtualizer.measure();
+			}, 0 ),
+		[ virtualizer ]
+	);
+
+	const setItemRef = useCallback(
+		( item, itemRef ) => {
+			if ( ! itemRef || ! item ) {
+				return;
+			}
+
+			// By falling back to the item height constant, we avoid an unnecessary
+			// forced update if all of the items match our guessed height
+			const previousHeight = itemHeightsRef.current[ item.ID ] || ITEM_HEIGHT;
+			const nextHeight = itemRef.clientHeight;
+			itemHeightsRef.current[ item.ID ] = nextHeight;
+
+			if ( previousHeight !== nextHeight ) {
+				queueRecomputeRowHeights();
+			}
+		},
+		[ queueRecomputeRowHeights ]
+	);
+
+	const handleSearch = ( event ) => {
+		const nextSearchTerm = event.target.value;
+		if ( searchTerm && ! nextSearchTerm ) {
+			onSearch( '' );
 		}
 
-		if ( searchTerm === this.state.searchTerm ) {
+		if ( nextSearchTerm === searchTerm ) {
 			return;
 		}
 
-		if ( ! this.hasPerformedSearch ) {
-			this.hasPerformedSearch = true;
-			gaRecordEvent( this.props.analyticsPrefix, 'Performed Term Search' );
+		if ( ! hasPerformedSearchRef.current ) {
+			hasPerformedSearchRef.current = true;
+			gaRecordEvent( analyticsPrefix, 'Performed Term Search' );
 		}
 
-		this.setState( { searchTerm } );
-		this.debouncedSearch();
+		setSearchTerm( nextSearchTerm );
+		debouncedSearch( nextSearchTerm );
 	};
 
-	setListRef = ( ref ) => {
-		this.list = ref;
-	};
-
-	renderItem = ( item, _recurse = false ) => {
+	const renderItem = ( item, _recurse = false ) => {
 		// if item has a parent and it is in current props.terms, do not render
-		if ( item.parent && ! _recurse && this.termIds.includes( item.parent ) ) {
+		if ( item.parent && ! _recurse && termIds.includes( item.parent ) ) {
 			return;
 		}
 
 		// If this subtree is excluded, do not render
-		if ( item.ID === this.props.hideTermAndChildren ) {
+		if ( item.ID === hideTermAndChildren ) {
 			return;
 		}
 
-		const onChange = ( ...args ) => this.props.onChange( item, ...args );
-		const setItemRef = ( ...args ) => this.setItemRef( item, ...args );
-		const children = this.getTermChildren( item.ID );
+		const handleChange = ( ...args ) => onChange( item, ...args );
+		const setRef = ( ...args ) => setItemRef( item, ...args );
+		const children = getTermChildren( item.ID );
 
-		const { multiple, defaultTermId, translate, selected, taxonomy, podcastingCategoryId } =
-			this.props;
 		const itemId = item.ID;
 		const isPodcastingCategory = taxonomy === 'category' && podcastingCategoryId === itemId;
 		const name = decodeEntities( item.name ) || translate( 'Untitled' );
@@ -297,14 +281,14 @@ class TermTreeSelectorList extends Component {
 		const input = (
 			<InputComponent
 				value={ itemId }
-				onChange={ onChange }
+				onChange={ handleChange }
 				disabled={ disabled }
 				checked={ checked }
 			/>
 		);
 
 		return (
-			<div key={ itemId } ref={ setItemRef } className="term-tree-selector__list-item">
+			<div key={ itemId } ref={ setRef } className="term-tree-selector__list-item">
 				<FormLabel>
 					{ input }
 					<span className="term-tree-selector__label">
@@ -314,100 +298,130 @@ class TermTreeSelectorList extends Component {
 				</FormLabel>
 				{ children.length > 0 && (
 					<div className="term-tree-selector__nested-list">
-						{ children.map( ( child ) => this.renderItem( child, true ) ) }
+						{ children.map( ( child ) => renderItem( child, true ) ) }
 					</div>
 				) }
 			</div>
 		);
 	};
 
-	renderNoResults = () => {
-		if ( this.hasNoSearchResults() || this.hasNoTerms() ) {
+	const renderNoResults = () => {
+		if ( hasNoSearchResults || hasNoTerms ) {
 			return (
 				<div key="no-results" className="term-tree-selector__list-item is-empty">
-					{ ( this.hasNoSearchResults() || ! this.props.emptyMessage ) && (
-						<NoResults createLink={ this.props.createLink } />
-					) }
-					{ this.hasNoTerms() && this.props.emptyMessage }
+					{ ( hasNoSearchResults || ! emptyMessage ) && <NoResults createLink={ createLink } /> }
+					{ hasNoTerms && emptyMessage }
 				</div>
 			);
 		}
 	};
 
-	renderRow = ( { index } ) => {
-		const item = this.getItem( index );
+	const renderRow = ( index ) => {
+		const item = getItem( index );
 		if ( item ) {
-			return this.renderItem( item );
+			return renderItem( item );
 		}
 
-		const InputComponent = this.props.multiple ? FormCheckbox : FormRadio;
+		const InputComponent = multiple ? FormCheckbox : FormRadio;
 
 		return (
 			<div key="placeholder" className="term-tree-selector__list-item is-placeholder">
 				<FormLabel>
 					<InputComponent disabled className="term-tree-selector__input" />
-					<span className="term-tree-selector__label">{ this.props.translate( 'Loading…' ) }</span>
+					<span className="term-tree-selector__label">{ translate( 'Loading…' ) }</span>
 				</FormLabel>
 			</div>
 		);
 	};
 
-	cellRendererWrapper = ( { key, style, ...rest } ) => {
-		return (
-			<div key={ key } style={ style }>
-				{ this.renderRow( rest ) }
+	const searchLength = searchTerm.length;
+	const showSearch =
+		( searchLength > 0 || ! isSmall ) && ( terms || ( ! terms && searchLength > 0 ) );
+	const classes = clsx( 'term-tree-selector', className, {
+		'is-loading': loading,
+		'is-small': isSmall,
+		'is-error': isError,
+		'is-compact': compact,
+	} );
+
+	const totalSize = virtualizer.getTotalSize();
+	// "Small" mode renders at full content height with no inner scrollbar; the
+	// non-small case is a fixed-height scroll container with `overflow-y: auto`.
+	const scrollStyle = isSmall
+		? { blockSize: totalSize, overflowY: 'visible' }
+		: { blockSize: height, overflowY: 'auto' };
+
+	return (
+		<div className={ classes }>
+			{ requestedPages.map( ( page ) => (
+				<QueryTerms
+					key={ `query-${ page }` }
+					siteId={ siteId }
+					taxonomy={ taxonomy }
+					query={ { ...query, page } }
+				/>
+			) ) }
+			{ taxonomy === 'category' && siteId && <QuerySiteSettings siteId={ siteId } /> }
+
+			{ showSearch && <Search searchTerm={ searchTerm } onSearch={ handleSearch } /> }
+			<div ref={ scrollElementRef } className="term-tree-selector__results" style={ scrollStyle }>
+				{ getRowCount === 0 ? (
+					renderNoResults()
+				) : (
+					<div
+						style={ {
+							position: 'relative',
+							inlineSize: '100%',
+							blockSize: totalSize,
+						} }
+					>
+						{ virtualItems.map( ( virtualRow ) => (
+							<div
+								key={ virtualRow.key }
+								data-index={ virtualRow.index }
+								ref={ virtualizer.measureElement }
+								style={ {
+									position: 'absolute',
+									insetBlockStart: 0,
+									insetInlineStart: 0,
+									inlineSize: '100%',
+									transform: `translateY(${ virtualRow.start }px)`,
+								} }
+							>
+								{ renderRow( virtualRow.index ) }
+							</div>
+						) ) }
+					</div>
+				) }
 			</div>
-		);
-	};
-
-	render() {
-		const rowCount = this.getRowCount();
-		const isSmall = this.isSmall();
-		const searchLength = this.state.searchTerm.length;
-		const showSearch =
-			( searchLength > 0 || ! isSmall ) &&
-			( this.props.terms || ( ! this.props.terms && searchLength > 0 ) );
-		const { className, isError, loading, siteId, taxonomy, query, height } = this.props;
-		const classes = clsx( 'term-tree-selector', className, {
-			'is-loading': loading,
-			'is-small': isSmall,
-			'is-error': isError,
-			'is-compact': this.props.compact,
-		} );
-
-		return (
-			<div className={ classes }>
-				{ this.state.requestedPages.map( ( page ) => (
-					<QueryTerms
-						key={ `query-${ page }` }
-						siteId={ siteId }
-						taxonomy={ taxonomy }
-						query={ { ...query, page } }
-					/>
-				) ) }
-				{ taxonomy === 'category' && siteId && <QuerySiteSettings siteId={ siteId } /> }
-
-				{ showSearch && <Search searchTerm={ this.state.searchTerm } onSearch={ this.onSearch } /> }
-				<AutoSizer disableHeight>
-					{ ( { width } ) => (
-						<List
-							ref={ this.setListRef }
-							width={ width - 2 } // -2 for border
-							height={ isSmall ? this.getCompactContainerHeight() : height }
-							onRowsRendered={ this.setRequestedPages }
-							rowCount={ rowCount }
-							estimatedRowSize={ ITEM_HEIGHT }
-							rowHeight={ this.getRowHeight }
-							rowRenderer={ this.cellRendererWrapper }
-							noRowsRenderer={ this.renderNoResults }
-							className="term-tree-selector__results"
-						/>
-					) }
-				</AutoSizer>
-			</div>
-		);
-	}
+		</div>
+	);
 }
+
+TermTreeSelectorList.propTypes = {
+	hideTermAndChildren: PropTypes.number,
+	terms: PropTypes.array,
+	taxonomy: PropTypes.string,
+	multiple: PropTypes.bool,
+	selected: PropTypes.array,
+	search: PropTypes.string,
+	siteId: PropTypes.number,
+	defaultTermId: PropTypes.number,
+	lastPage: PropTypes.number,
+	onSearch: PropTypes.func,
+	onChange: PropTypes.func,
+	isError: PropTypes.bool,
+	height: PropTypes.number,
+	className: PropTypes.string,
+	compact: PropTypes.bool,
+	loading: PropTypes.bool,
+	emptyMessage: PropTypes.node,
+	createLink: PropTypes.string,
+	searchThreshold: PropTypes.number,
+	query: PropTypes.object,
+	podcastingCategoryId: PropTypes.number,
+	analyticsPrefix: PropTypes.string,
+};
 
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
@@ -429,4 +443,4 @@ export default connect( ( state, ownProps ) => {
 		query,
 		podcastingCategoryId,
 	};
-} )( localize( TermTreeSelectorList ) );
+} )( TermTreeSelectorList );
