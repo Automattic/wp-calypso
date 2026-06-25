@@ -69,7 +69,7 @@ export class SiteAddressChanger extends Component {
 	onConfirm = async () => {
 		const { domainFieldValue, newDomainSuffix } = this.state;
 		const { currentDomain, currentDomainSuffix, siteId } = this.props;
-		const oldDomain = get( currentDomain, 'name', null );
+		const oldDomain = currentDomain?.name ?? null;
 		const type =
 			'.wordpress.com' === currentDomainSuffix
 				? freeSiteAddressType.BLOG

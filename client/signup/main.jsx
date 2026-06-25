@@ -803,7 +803,7 @@ class Signup extends Component {
 		const { steps: flowSteps } = flows.getFlow( nextFlowName, this.props.isLoggedIn );
 		const currentStepIndex = flowSteps.indexOf( this.props.stepName );
 		const nextStepName = flowSteps[ currentStepIndex + 1 ];
-		const nextProgressItem = get( this.props.progress, nextStepName );
+		const nextProgressItem = this.props.progress?.[ nextStepName ];
 		const nextStepSection = ( nextProgressItem && nextProgressItem.stepSectionName ) || '';
 
 		if ( nextFlowName !== this.props.flowName ) {

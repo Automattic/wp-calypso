@@ -25,10 +25,12 @@ interface ReadSpace {
 	layout: SpaceLayout;
 }
 
-// Presentation settings, grouped so they can grow beyond color/icon.
+// Presentation settings, grouped so they can grow beyond color/icon. The palette
+// is client-owned (the server only sanitizes), so these unions are widened freely;
+// the picker constrains the choices. See `colors.ts`/`colors.scss` and `icons.ts`.
 interface SpaceLayout {
-	color: SpaceColor; // 'blue'|'purple'|'red'|'orange'|'gray'|'green'|'celadon'
-	icon: SpaceIcon; // 'inbox'|'box'|'video'|'comment'|'cart'|'star'|'pages'|'category'
+	color: SpaceColor; // 'blue'|'purple'|'red'|'orange'|'gray'|'green'|'celadon'|'pink'
+	icon: SpaceIcon; // 'inbox'|'box'|'video'|'comment'|'cart'|'star'|'pages'|'category'|'globe'|'tag'|'rss'|'people'|'home'|'gallery'|'chart'|'palette'
 }
 
 // Detail — summary + followed feeds + tags. Returned by every endpoint but list.
@@ -55,30 +57,34 @@ early if it shouldn't drift between fetches.
 
 All paths are under `https://public-api.wordpress.com/wpcom/v2/reader/spaces`.
 Every mutation returns the **full updated detail**, so the client writes that
-straight to the caches — no follow-up GET.
+straight to the caches for an immediate UI update, then invalidates the affected
+queries for a canonical refresh.
 
-| #   | Method & path                                | Body                                                           | Returns               | Wired as                  |
-| --- | -------------------------------------------- | -------------------------------------------------------------- | --------------------- | ------------------------- |
-| 1   | `GET /reader/spaces`                         | —                                                              | `200` summary[]       | `fetchReadSpaces()`       |
-| 2   | `GET /reader/spaces/{id}`                    | —                                                              | `200` detail          | `fetchReadSpace(id)`      |
-| 3   | `POST /reader/spaces`                        | `{ title*, feeds?, tags?, layout? }`                           | `201` detail          | `createReadSpace()`       |
-| 4   | `PUT /reader/spaces/{id}`                    | `{ title?, tags?, layout? }` (≥1; `layout` is a partial merge) | `200` detail          | `updateReadSpace()`       |
-| 5   | `DELETE /reader/spaces/{id}`                 | —                                                              | `200 { deleted, id }` | `deleteReadSpace()`       |
-| 6   | `POST /reader/spaces/{id}/feeds`             | `{ feed* }` (feed id or url)                                   | `200` detail          | `addReadSpaceSource()`    |
-| 7   | `DELETE /reader/spaces/{id}/feeds/{feed_id}` | —                                                              | `200` detail          | `deleteReadSpaceSource()` |
-| 8   | `GET /reader/spaces/{id}/posts`              | query: `count?` (≤15), `tag_limit?`, `page_handle?`            | `200` stream          | `space:{id}` stream       |
+| #   | Method & path                                | Body                                                                   | Returns               | Wired as                  |
+| --- | -------------------------------------------- | ---------------------------------------------------------------------- | --------------------- | ------------------------- |
+| 1   | `GET /reader/spaces`                         | —                                                                      | `200` summary[]       | `fetchReadSpaces()`       |
+| 2   | `GET /reader/spaces/{id}`                    | —                                                                      | `200` detail          | `fetchReadSpace(id)`      |
+| 3   | `POST /reader/spaces`                        | `{ title*, feeds?, tags?, layout? }`                                   | `201` detail          | `createReadSpace()`       |
+| 4   | `PUT /reader/spaces/{id}`                    | `{ title?, feeds?, tags?, layout? }` (≥1; `layout` is a partial merge) | `200` detail          | `updateReadSpace()`       |
+| 5   | `DELETE /reader/spaces/{id}`                 | —                                                                      | `200 { deleted, id }` | `deleteReadSpace()`       |
+| 6   | `POST /reader/spaces/{id}/feeds`             | `{ feed* }` (feed id or url)                                           | `200` detail          | `addReadSpaceSource()`    |
+| 7   | `DELETE /reader/spaces/{id}/feeds/{feed_id}` | —                                                                      | `200` detail          | `deleteReadSpaceSource()` |
+| 8   | `GET /reader/spaces/{id}/posts`              | query: `count?` (≤15), `tag_limit?`, `page_handle?`                    | `200` stream          | `space:{id}` stream       |
 
 Notes:
 
 - **Feeds** must already exist (a feed id or url the backend can resolve); the
-  client only offers feeds the user already follows. Add/remove are one feed at a
-  time (endpoints 6 & 7); removal is keyed by the numeric `feed_id`.
+  client only offers feeds the user already follows. Create/update send the
+  complete desired feed set as `feeds`; the per-feed endpoints remain available
+  for consumers that need immediate add/remove behavior.
 - **Tags** are a full replace via `update` (endpoint 4) — there are no per-tag
   endpoints. Pass the complete desired set; `[]` clears them.
-- **Create** sends only `title` unless the caller supplies the optionals; the
-  create form sends `{ title, tags }` today.
-- **Delete** is a permanent hard delete (no trash/undo) — gate UI behind a
-  confirm. No UI consumer yet; `useDeleteSpace()` / `useUpdateSpace()` are ready.
+- **Create** sends `title`, selected `feeds`, `tags`, and the persisted layout
+  fields (`color`/`icon`/`view`) from the shared upsert modal.
+- **Delete** is a permanent hard delete (no trash/undo) — the upsert modal gates
+  it behind a confirm dialog (`customize-modal/confirm-delete.tsx`) in edit mode.
+  `useCreateSpace()`, `useUpdateSpace()` (Save), and `useDeleteSpace()` (Delete
+  space) are all consumed by `customize-modal/`.
 - **Feed** (endpoint 8) returns the standard Reader stream shape
   (`{ cards, next_page_handle }`), built server-side from the space's followed
   feeds and tags. It is wired as a normal Reader stream keyed `space:{id}` (see
@@ -111,19 +117,25 @@ surfaces should map the relevant codes as they adopt the mutations.
 
 ## Caching
 
-Both `readSpacesQuery` and `readSpaceQuery` use `staleTime: Infinity` +
-`meta: { persist: false }`. Every mutation returns the full detail and writes it
-back (the detail cache gets the returned space; the list gets its summary), so
-the caches stay authoritative without refetch churn — `staleTime: Infinity` only
-suppresses refetching already-cached data, so a space's detail still loads the
-first time its modal opens. `persist: false` keeps the layout (random-until-set)
-out of the persisted cache, so a reload refetches fresh rather than rehydrating
-stale colours.
+Both `readSpacesQuery` and `readSpaceQuery` use `staleTime: Infinity`,
+`refetchOnMount: 'always'`, and `meta: { persist: true }`. The persisted cache
+lets the sidebar and space views render immediately after reload, while
+mount-time refetch refreshes the canonical server state in the background. The
+list query (`readSpacesQuery`) also sets `placeholderData: keepPreviousData`
+because its key is stable; the detail query (`readSpaceQuery`) deliberately omits
+it so a `spaceId` change never flashes the previous space's name/sources. Every
+mutation returns the full detail
+and writes it back (the detail cache gets the returned space; the list gets its
+summary), then invalidates the affected queries so active consumers refetch and
+inactive consumers refresh the next time they mount.
 
-The sources modal stays mounted with `isOpen` toggling, so its queries — the
-space detail (`useSpace`) and site subscriptions (`useSiteSubscriptions`, which
-paginates all pages) — are gated on `isOpen` (`enabled: isOpen`) and only fetch
-while the modal is shown.
+The Sources tab (`customize-modal/sources-tab.tsx`) only mounts while it is the
+active `TabPanel` tab, so its `useSiteSubscriptions` query (which paginates all
+pages) doesn't run until the user opens Sources. Source choices in create and
+edit are held in local draft state and sent as the final `feeds` list when the
+user submits the upsert modal. The modal reads
+the space detail via `useSpace`, which is already cached by the time the edit
+modal opens.
 
 ## Related
 

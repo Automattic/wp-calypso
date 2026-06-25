@@ -1,5 +1,6 @@
+import { orderBy } from '@automattic/js-utils';
 import { createSelector } from '@automattic/state-utils';
-import { filter, orderBy } from 'lodash';
+import { filter } from 'lodash';
 
 import 'calypso/state/comments/init';
 

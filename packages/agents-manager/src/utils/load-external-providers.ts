@@ -144,6 +144,10 @@ export function mergeCapabilitiesInto( merged: ProviderCapabilities, capabilitie
 }
 
 export interface LoadedProviders {
+	/** Optional stable provider identifier exported by a provider module. */
+	providerId?: string;
+	/** Stable IDs for the provider modules that were successfully loaded. */
+	providerIds?: string[];
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
 	/** Function to get empty view suggestions. Called when component is ready. */
@@ -159,6 +163,18 @@ export interface LoadedProviders {
 	useCheckpoint?: UseCheckpointHook;
 	capabilities?: ProviderCapabilities;
 }
+
+export interface ProviderUrlEntry {
+	url: string;
+	providerId?: string;
+}
+
+export type AgentProviderEntry = string | ProviderUrlEntry | LoadedProviders;
+
+type LoadedProviderModule = {
+	module: LoadedProviders;
+	providerId?: string;
+};
 
 export function mergeUseSuggestionsHooks(
 	hooks: UseSuggestionsHook[]
@@ -189,6 +205,45 @@ export function mergeUseSuggestionsHooks(
 
 function isRecord( value: unknown ): value is Record< string, unknown > {
 	return typeof value === 'object' && value !== null;
+}
+
+function getProviderUrl( providerEntry: AgentProviderEntry ): string | undefined {
+	if ( typeof providerEntry === 'string' ) {
+		return providerEntry;
+	}
+
+	if ( ! isRecord( providerEntry ) ) {
+		return undefined;
+	}
+
+	return typeof providerEntry.url === 'string' ? providerEntry.url : undefined;
+}
+
+function getValidProviderId( providerId: unknown ): string | undefined {
+	if ( typeof providerId !== 'string' ) {
+		return undefined;
+	}
+
+	const trimmedProviderId = providerId.trim();
+	return trimmedProviderId ? trimmedProviderId : undefined;
+}
+
+function getProviderEntryId(
+	providerEntry: AgentProviderEntry | LoadedProviders
+): string | undefined {
+	if ( ! isRecord( providerEntry ) ) {
+		return undefined;
+	}
+
+	return getValidProviderId( providerEntry.providerId );
+}
+
+function addProviderId( providerIds: string[], providerId?: string ): void {
+	if ( ! providerId || providerIds.includes( providerId ) ) {
+		return;
+	}
+
+	providerIds.push( providerId );
 }
 
 function mergeContextEntries(
@@ -376,7 +431,8 @@ export function mergeMarkdownExtensionsFromProviders(
  * @returns Promise resolving to merged providers or empty object if none found.
  */
 export async function loadExternalProviders(): Promise< LoadedProviders > {
-	const agentProviders = getAgentsManagerInlineData()?.agentProviders ?? [];
+	const rawAgentProviders = getAgentsManagerInlineData()?.agentProviders;
+	const agentProviders = Array.isArray( rawAgentProviders ) ? rawAgentProviders : [];
 
 	// Only the public reader-chat entry registers the follow-up chip globals
 	// (`window.__jetpackReaderFollowupChips` / `reader-chat-followups-updated`).
@@ -414,34 +470,48 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	const allAbilitiesSetups: AbilitiesSetupHook[] = [];
 	const allUseSuggestions: UseSuggestionsHook[] = [];
 	const allGetEmptyViewSuggestions: ( () => Suggestion[] )[] = [];
+	const allProviderIds: string[] = [];
 
 	// Load all providers in parallel to avoid serializing network/module fetches.
 	// Results are processed in registration order to preserve first-write-wins semantics.
-	const loadedModules = await Promise.all(
+	const loadedModules = ( await Promise.all(
 		agentProviders.map( async ( providerEntry ) => {
-			if ( typeof providerEntry === 'object' && providerEntry !== null ) {
-				return providerEntry;
+			const providerEntryId = getProviderEntryId( providerEntry );
+			const providerUrl = getProviderUrl( providerEntry );
+
+			if ( typeof providerEntry === 'object' && providerEntry !== null && ! providerUrl ) {
+				return { module: providerEntry as LoadedProviders, providerId: providerEntryId };
+			}
+
+			if ( ! providerUrl ) {
+				return null;
 			}
 
 			try {
 				// Dynamic import of registered script module
 				// The webpackIgnore comment tells webpack not to bundle this - it's loaded at runtime
-				const module = await import( /* webpackIgnore: true */ providerEntry );
+				const module = ( await import( /* webpackIgnore: true */ providerUrl ) ) as LoadedProviders;
 				// eslint-disable-next-line no-console
-				console.log( `[AgentsManager] Loaded provider "${ providerEntry }"` );
-				return module;
+				console.log( `[AgentsManager] Loaded provider "${ providerUrl }"` );
+				return {
+					module,
+					providerId: getProviderEntryId( module ) || providerEntryId,
+				};
 			} catch ( error ) {
 				// eslint-disable-next-line no-console
-				console.warn( `[AgentsManager] Failed to load provider "${ providerEntry }":`, error );
+				console.warn( `[AgentsManager] Failed to load provider "${ providerUrl }":`, error );
 				return null;
 			}
 		} )
-	);
+	) ) as ( LoadedProviderModule | null )[];
 
-	for ( const module of loadedModules ) {
-		if ( ! module ) {
+	for ( const loadedModule of loadedModules ) {
+		if ( ! loadedModule ) {
 			continue;
 		}
+
+		const { module, providerId } = loadedModule;
+		addProviderId( allProviderIds, providerId );
 
 		// These exports are merged across all providers.
 		if ( module.toolProvider ) {
@@ -604,6 +674,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		getEmptyViewSuggestions: mergedGetEmptyViewSuggestions,
 		markdownComponents: mergedMarkdownComponents,
 		markdownExtensions: mergedMarkdownExtensions,
+		providerIds: allProviderIds.length ? allProviderIds : undefined,
 		useNavigationContinuation: mergedNavigationContinuation,
 		useAbilitiesSetup: mergedAbilitiesSetup,
 		useSuggestions: mergedUseSuggestions,

@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/ui/init';
 
 /**
@@ -8,5 +6,5 @@ import 'calypso/state/ui/init';
  * @returns {string?} current state value
  */
 export default function getCurrentLocaleVariant( state ) {
-	return get( state, 'ui.language.localeVariant', null );
+	return state?.ui?.language?.localeVariant ?? null;
 }

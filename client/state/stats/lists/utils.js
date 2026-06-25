@@ -1,6 +1,6 @@
-import { camelCase, capitalize } from '@automattic/js-utils';
+import { camelCase, capitalize, sortBy } from '@automattic/js-utils';
 import { translate, getLocaleSlug } from 'i18n-calypso';
-import { sortBy, get, filter, map } from 'lodash';
+import { get, filter, map } from 'lodash';
 import moment from 'moment';
 import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
 

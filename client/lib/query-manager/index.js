@@ -190,7 +190,7 @@ export default class QueryManager {
 	 */
 	getFound( query ) {
 		const queryKey = this.constructor.QueryKey.stringify( query );
-		return get( this.data.queries, [ queryKey, 'found' ], null );
+		return this.data.queries?.[ queryKey ]?.found ?? null;
 	}
 
 	/**

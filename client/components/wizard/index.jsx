@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { cloneElement, Component } from 'react';
 import NavigationLink from './navigation-link';
@@ -82,7 +81,7 @@ class Wizard extends Component {
 			stepName,
 			...otherProps
 		} = this.props;
-		const component = get( components, stepName );
+		const component = components?.[ stepName ];
 		const stepIndex = this.getStepIndex();
 		const totalSteps = steps.length;
 		const backUrl = this.getBackUrl() || '';

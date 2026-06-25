@@ -55,6 +55,7 @@ export default function HeadlessAgentInitializer( {
 				currentRoute,
 				toolProvider: providers.toolProvider,
 				contextProvider: providers.contextProvider,
+				providerIds: providers.providerIds,
 				environment: 'wp-admin',
 			} );
 

@@ -1,5 +1,4 @@
 import { createSelector } from '@automattic/state-utils';
-import { get } from 'lodash';
 
 import 'calypso/state/jetpack/init';
 
@@ -12,7 +11,7 @@ import 'calypso/state/jetpack/init';
  */
 const getJetpackModulesRequiringConnection = createSelector(
 	( state, siteId ) => {
-		const modules = get( state.jetpack.modules.items, [ siteId ], null );
+		const modules = state.jetpack.modules.items?.[ siteId ] ?? null;
 		if ( ! modules ) {
 			return null;
 		}

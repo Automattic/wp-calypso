@@ -1,0 +1,55 @@
+@use 'calypso/reader/spaces/colors' as space-colors;
+
+.space-color-picker {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+}
+
+.space-color-picker__swatch {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: 36px;
+	block-size: 36px;
+	border-radius: 8px;
+	background: var( --space-color );
+	cursor: pointer;
+
+	&[data-selected='true'] {
+		box-shadow:
+			0 0 0 2px var( --color-surface ),
+			0 0 0 4px var( --space-color );
+	}
+}
+
+// Each swatch fills with its own accent foreground colour.
+@each $color in space-colors.$space-colors {
+	.space-color-picker__swatch--#{$color} {
+		@include space-colors.space-accent-color( $color );
+	}
+}
+
+.space-color-picker__check {
+	fill: var( --color-surface );
+	pointer-events: none;
+}
+
+// Visually hidden, but still focusable so the swatches keep native radio
+// keyboard behaviour (arrow keys move between options, single tab stop).
+.space-color-picker__radio {
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline-start: 0;
+	inline-size: 100%;
+	block-size: 100%;
+	margin: 0;
+	opacity: 0;
+	cursor: pointer;
+}
+
+.space-color-picker__radio:focus-visible {
+	outline: 2px solid var( --color-primary );
+	outline-offset: 2px;
+}

@@ -431,7 +431,7 @@ body.post-new-php.agents-manager-sidebar-container {
 	padding: $layout-spacing;
 	width: $sidebar-width;
 	box-sizing: border-box;
-	z-index: $agents-manager-z-index-docked;
+	z-index: $agents-manager-z-index-sidebar;
 
 	.agents-manager-sidebar-fab {
 		visibility: visible;
@@ -703,10 +703,15 @@ body.post-new-php.agents-manager-sidebar-container {
 	}
 }
 
+.agents-manager-chat--undocked.is-focused .agenttic.Chat-module_container.Chat-module_floating {
+	z-index: $agents-manager-z-index-focused;
+}
+
 /* Agenttic UI: Styles for the undocked chat */
 .agents-manager-chat--undocked .agenttic.Chat-module_container.Chat-module_floating {
-	// Fix the undocked chat overlapping with the nav menu
-	z-index: 9999;
+	// Shared overlay base keeps the floating chat above the nav menu and lets it
+	// trade stacking with the Help Center panel via the focused offset above.
+	z-index: $agents-manager-z-index-docked;
 
 	.big-sky__dock__menu__variation-picker .edit-site-global-styles-variations_item {
 		&:not( .is-active ):hover {

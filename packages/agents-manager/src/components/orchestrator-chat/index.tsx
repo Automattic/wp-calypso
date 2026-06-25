@@ -213,13 +213,14 @@ export default function OrchestratorChat( {
 	useCheckpointAction( registerMessageActions, checkpoint );
 
 	// Register thumbs-up/down feedback actions on agent messages.
-	const { showFeedbackInput, submitFeedbackText, resetFeedback } = useFeedbackAction( {
-		registerMessageActions,
-		messages,
-	} );
+	const { showFeedbackInput, submitFeedbackText, resetFeedback, getFeedbackActionsForMessage } =
+		useFeedbackAction( {
+			registerMessageActions,
+			messages,
+		} );
 
-	// Register a "Copy" action on plain-text agent messages.
-	useCopyAction( registerMessageActions );
+	// Add a "Copy" action on plain-text agent messages.
+	const getCopyActionsForMessage = useCopyAction();
 
 	// Register zoom-in/zoom-out actions on agent messages.
 	useZoomAction( registerMessageActions );
@@ -479,11 +480,38 @@ export default function OrchestratorChat( {
 			onSubmit: onSubmitWithImages,
 		} );
 
+		currentMessages = currentMessages.map( ( message ) => {
+			if ( message.id.endsWith( '-next-step' ) ) {
+				return message;
+			}
+
+			const directActions = [
+				...getFeedbackActionsForMessage( message ),
+				...getCopyActionsForMessage( message ),
+			];
+			if ( directActions.length === 0 ) {
+				return message;
+			}
+
+			const existingActions = message.actions?.filter(
+				( action ) => ! action.id.startsWith( 'feedback-' ) && action.id !== 'copy'
+			);
+
+			return {
+				...message,
+				actions: [ ...( existingActions ?? [] ), ...directActions ].sort(
+					( actionA, actionB ) => ( actionA.order ?? Infinity ) - ( actionB.order ?? Infinity )
+				),
+			};
+		} );
+
 		return currentMessages;
 	}, [
 		currentPostId,
 		deletedMessageIds,
 		getChatComponent,
+		getCopyActionsForMessage,
+		getFeedbackActionsForMessage,
 		isBuildingSite,
 		messages,
 		onSubmitWithImages,

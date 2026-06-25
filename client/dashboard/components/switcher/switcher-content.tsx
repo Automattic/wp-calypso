@@ -8,8 +8,11 @@ import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, type JSX, type PropsWithChildren } from 'react';
 import RouterLinkMenuItem from '../router-link-menu-item';
+import { Text } from '../text';
 import { RenderItem } from './types';
 import type { View, Field } from '@wordpress/dataviews';
+
+import './switcher-content.scss';
 
 export default function SwitcherContent< T >( {
 	itemClassName,
@@ -27,6 +30,7 @@ export default function SwitcherContent< T >( {
 	onItemClick,
 	filter,
 	filterField,
+	noResultsText = __( 'No results found.' ),
 }: PropsWithChildren< {
 	itemClassName?: string | ( ( item: T ) => string );
 	items?: T[];
@@ -42,6 +46,7 @@ export default function SwitcherContent< T >( {
 	onItemClick?: () => void;
 	filter?: JSX.Element;
 	filterField?: Field< T >;
+	noResultsText?: string;
 } > ) {
 	const fields = useMemo( () => {
 		const allFields = searchableFields.map( ( searchableField ) => ( {
@@ -89,26 +94,32 @@ export default function SwitcherContent< T >( {
 				) }
 			</MenuGroup>
 			<MenuGroup hideSeparator>
-				{ filteredData.map( ( item ) => {
-					const itemUrl = getItemUrl( item );
-					const className =
-						typeof itemClassName === 'function' ? itemClassName( item ) : itemClassName;
-					return (
-						<RouterLinkMenuItem
-							className={ className }
-							key={ itemUrl }
-							to={ itemUrl }
-							style={ { height: 'fit-content', minHeight: '40px' } }
-							onClick={ () => {
-								onClose();
-								onItemClick?.();
-							} }
-							resetScroll={ resetScroll }
-						>
-							{ renderItem( { item, context: 'list' } ) }
-						</RouterLinkMenuItem>
-					);
-				} ) }
+				{ filteredData.length === 0 ? (
+					<Text variant="muted" className="switcher-content__no-results">
+						{ noResultsText }
+					</Text>
+				) : (
+					filteredData.map( ( item ) => {
+						const itemUrl = getItemUrl( item );
+						const className =
+							typeof itemClassName === 'function' ? itemClassName( item ) : itemClassName;
+						return (
+							<RouterLinkMenuItem
+								className={ className }
+								key={ itemUrl }
+								to={ itemUrl }
+								style={ { height: 'fit-content', minHeight: '40px' } }
+								onClick={ () => {
+									onClose();
+									onItemClick?.();
+								} }
+								resetScroll={ resetScroll }
+							>
+								{ renderItem( { item, context: 'list' } ) }
+							</RouterLinkMenuItem>
+						);
+					} )
+				) }
 			</MenuGroup>
 			{ children }
 		</NavigableMenu>

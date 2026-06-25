@@ -9,7 +9,12 @@ const selectors = {
 	listTitle: ( section: string ) => `.plugins-results-header__title:text("${ section }")`,
 	listSubtitle: ( section: string ) => `.plugins-results-header__subtitle:text("${ section }")`,
 	headerTitle: ( section: string ) => `.plugins-results-header__title:text("${ section }")`,
-	pluginTitle: ( plugin: string ) => `.plugins-browser-item__title:text("${ plugin }")`,
+	// A real (non-placeholder) plugin tile title within a given section's list.
+	// Scope to that list so a stale or unrelated list elsewhere on the page can't
+	// satisfy the wait. Placeholders also render `.plugins-browser-item__title`
+	// (with an ellipsis) but carry `.is-placeholder`, so exclude them.
+	categoryPluginResult: ( section: string ) =>
+		`.plugins-browser-list:has(.plugins-results-header__title:text("${ section }")) .plugins-browser-item:not(.is-placeholder) .plugins-browser-item__title`,
 	pluginTitleOnSection: ( section: string, plugin: string ) =>
 		`.plugins-browser-list:has(.plugins-results-header__title:text("${ section }")) :text-is("${ plugin }")`,
 	sectionTitles: '.plugins-results-header__title',
@@ -154,11 +159,16 @@ export class PluginsPage {
 	}
 
 	/**
-	 * Validate category has the plugin
+	 * Validate a category page loads and lists plugin results.
+	 *
+	 * Asserts the category renders its header and at least one real (non-placeholder)
+	 * plugin tile. It deliberately does not assert a specific plugin: which plugins
+	 * appear in a category is driven by the marketplace search ranking, controlled
+	 * server-side, and changes over time.
 	 */
-	async validateHasPluginInCategory( section: string, plugin: string ): Promise< void > {
+	async validateCategoryHasPlugins( section: string ): Promise< void > {
 		await this.page.waitForSelector( selectors.headerTitle( section ) );
-		await this.page.waitForSelector( selectors.pluginTitle( plugin ) );
+		await this.page.waitForSelector( selectors.categoryPluginResult( section ) );
 	}
 
 	/**
