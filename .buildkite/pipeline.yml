@@ -56,8 +56,6 @@ steps:
           context: Desktop / Build (linux, unsigned)
     agents:
       queue: default
-    env:
-      NODE_OPTIONS: --max-old-space-size=5120
     plugins:
       - docker#v5.13.0:
           image: cimg/node:24.15.0-browsers
