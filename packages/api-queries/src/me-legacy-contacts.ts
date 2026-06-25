@@ -24,6 +24,6 @@ export const addLegacyContactMutation = () =>
 	mutationOptions( {
 		mutationFn: ( email: string ) => addLegacyContact( email ),
 		onSuccess: () => {
-			queryClient.invalidateQueries( { queryKey: [ 'me', 'legacy-contacts' ] } );
+			queryClient.invalidateQueries( legacyContactsQuery() );
 		},
 	} );
