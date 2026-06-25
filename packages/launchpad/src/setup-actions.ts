@@ -39,10 +39,12 @@ export const setUpActionsForTasks = ( {
 		if ( uiContext === 'calypso' && hasCalypsoPath ) {
 			const { calypso_path } = task;
 			if ( task.id === 'drive_traffic' && ! isMobile() && calypso_path !== undefined ) {
-				// Base is a throwaway just to parse the relative path; only the path/query/fragment are kept.
-				const url = new URL( calypso_path, 'http://example.com' );
-				url.searchParams.set( 'tour', 'marketingConnectionsTour' );
-				task.calypso_path = url.pathname + url.search + url.hash;
+				// Merge the query via a throwaway base, but keep the original string as the base so
+				// absolute origins survive, then re-append any fragment.
+				const params = new URL( calypso_path, 'http://example.com' ).searchParams;
+				params.set( 'tour', 'marketingConnectionsTour' );
+				const [ baseAndQuery, fragment = '' ] = calypso_path.split( /(#.*)/s );
+				task.calypso_path = `${ baseAndQuery.split( '?' )[ 0 ] }?${ params }${ fragment }`;
 			}
 
 			// Enable task in 'calypso' context
