@@ -571,11 +571,17 @@ body.is-section-reader {
 		}
 	}
 
-	// Resting over the dark hero: white nav ink. Logo, CTA border and the chevron
-	// triangle all read currentcolor, so colouring .x-nav-item carries them — and
-	// staying on currentcolor lets the component's blue hover/open chevron win.
+	// Resting over the dark hero: white nav ink. Logo fill and CTA border read
+	// currentcolor, so colouring .x-nav-item carries them. The chevron glyph has
+	// its own hardcoded blue `color`, so override it explicitly (it's the glyph's
+	// `color`, not the triangle's `border-color`, so the blue hover/open state —
+	// which sets `border-color` — still wins).
 	.lpc-header-nav-container .x-nav--2026-redesign .x-nav-item {
 		color: var( --studio-white );
+
+		.x-nav-link-chevron::before {
+			color: var( --studio-white );
+		}
 
 		// Hover flips the CTA to a white fill with dark ink.
 		--x-nav-2026-cta-hover-fill: var( --studio-white );
@@ -589,6 +595,10 @@ body.is-section-reader {
 	.lpc-header-nav-container:has( .x-dropdown--2026.is-dropdown-open ) {
 		.x-nav--2026-redesign .x-nav-item {
 			color: var( --studio-gray-100 );
+
+			.x-nav-link-chevron::before {
+				color: var( --studio-gray-100 );
+			}
 		}
 	}
 }
