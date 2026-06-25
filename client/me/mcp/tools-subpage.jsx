@@ -257,7 +257,7 @@ export default function McpToolsSubpage( {
 											<VStack spacing={ isOpen ? 4 : 0 }>
 												<HStack justify="space-between" alignment="center" spacing={ 4 }>
 													<FlexItem isBlock>
-														<VStack spacing={ 0 }>
+														<VStack>
 															<Text truncate weight={ 600 } size={ 14 }>
 																{ label }
 															</Text>
