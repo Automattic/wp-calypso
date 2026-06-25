@@ -4,6 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import {
 	Button,
 	Modal,
+	Popover,
 	__experimentalInputControl as InputControl,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -11,7 +12,7 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { copy, share, check } from '@wordpress/icons';
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useRef, useMemo, useCallback } from 'react';
 import { SocialLogo } from 'social-logos';
 import type { Task } from '../../types';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -157,6 +158,9 @@ const ShareSiteModal = ( { setModalIsOpen, site, task }: ShareSiteModalProps ) =
 	);
 
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
+	// Anchor for the "copied" popover: the full-width field wrapper, so the popover centers over
+	// the whole field rather than the inner input (which is narrowed by the suffix copy button).
+	const fieldRef = useRef< HTMLDivElement >( null );
 	const copyHandler = () => {
 		navigator.clipboard.writeText( shareData.url );
 		setClipboardCopied( true );
@@ -202,11 +206,17 @@ const ShareSiteModal = ( { setModalIsOpen, site, task }: ShareSiteModalProps ) =
 		>
 			<VStack className="share-site-modal__modal-content" spacing={ 4 }>
 				<VStack className="share-site-modal__modal-actions" spacing={ 4 }>
-					<div className="share-site-modal__url-field">
+					<div className="share-site-modal__url-field" ref={ fieldRef }>
 						{ clipboardCopied && (
-							<span className="share-site-modal__copied-tooltip" role="status">
+							<Popover
+								className="share-site-modal__popover"
+								anchor={ fieldRef.current }
+								placement="top"
+								noArrow
+								focusOnMount={ false }
+							>
 								{ __( 'Copied to clipboard!', 'launchpad' ) }
-							</span>
+							</Popover>
 						) }
 						<InputControl
 							className="share-site-modal__modal-input-container"

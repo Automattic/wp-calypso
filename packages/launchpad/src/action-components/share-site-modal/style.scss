@@ -47,21 +47,21 @@
 }
 
 .share-site-modal__url-field {
-	position: relative;
+	width: 100%;
 }
 
-.share-site-modal__copied-tooltip {
-	position: absolute;
-	bottom: 100%;
-	inset-inline-start: 50%;
-	transform: translateX(-50%);
-	margin-block-end: 8px;
+.share-site-modal__popover {
+	outline: none;
 	z-index: 100000;
-	border-radius: 2px;
-	color: var(--color-text-inverted);
-	background: var(--color-neutral-60);
-	font-size: $font-body-extra-small;
-	padding: 6px 10px;
-	white-space: nowrap;
-	pointer-events: none;
+	.components-popover__content {
+		border: 0;
+		box-shadow: none;
+		border-radius: 2px;
+		color: var(--color-text-inverted);
+		background: var(--color-neutral-60);
+		font-size: $font-body-extra-small;
+		padding: 6px 10px;
+		text-align: start;
+		white-space: nowrap;
+	}
 }
