@@ -12595,16 +12595,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/undo-manager@npm:^1.48.0":
-  version: 1.48.0
-  resolution: "@wordpress/undo-manager@npm:1.48.0"
-  dependencies:
-    "@wordpress/is-shallow-equal": "npm:^5.48.0"
-  checksum: 34b63312facf51acfa20cd61577bae24e5b010e98e8cba28f08b89143ab37f0d22b89882809b40fca685413646f73098f99c59d66dc68f1c86c08dabc278a334
-  languageName: node
-  linkType: hard
-
-"@wordpress/undo-manager@npm:^1.49.0":
+"@wordpress/undo-manager@npm:^1.48.0, @wordpress/undo-manager@npm:^1.49.0":
   version: 1.49.0
   resolution: "@wordpress/undo-manager@npm:1.49.0"
   dependencies:
