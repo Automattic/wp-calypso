@@ -38,9 +38,10 @@ export const setUpActionsForTasks = ( {
 
 		if ( uiContext === 'calypso' && hasCalypsoPath ) {
 			if ( task.id === 'drive_traffic' && ! isMobile() && hasCalypsoPath ) {
-				// Append the tour query arg locally to avoid a dependency just for this.
-				const separator = task.calypso_path.includes( '?' ) ? '&' : '?';
-				task.calypso_path += `${ separator }tour=marketingConnectionsTour`;
+				const [ path, query ] = task.calypso_path.split( '?' );
+				const params = new URLSearchParams( query );
+				params.set( 'tour', 'marketingConnectionsTour' );
+				task.calypso_path = `${ path }?${ params }`;
 			}
 
 			// Enable task in 'calypso' context
