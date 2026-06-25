@@ -4,6 +4,8 @@ import { isMobile } from '@automattic/viewport';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { LaunchpadTaskActionsProps, Task } from './types';
 
+// Local helper for the single query-arg append we need, preferred over pulling
+// in a dependency just for this.
 const addQueryArg = ( url: string, key: string, value: string ): string => {
 	const separator = url.includes( '?' ) ? '&' : '?';
 	return `${ url }${ separator }${ encodeURIComponent( key ) }=${ encodeURIComponent( value ) }`;
