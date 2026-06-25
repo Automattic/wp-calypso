@@ -380,6 +380,11 @@ body.site-editor-php.agents-manager-sidebar-container {
 	&.agents-manager-sidebar-container--sidebar-open {
 		@include sidebar-open-base( '.edit-site-layout__canvas' );
 		@include editor-save-panel-open();
+		// Under the omnibar, square off the canvas top (the admin bar above owns the top rounding).
+		&.has-admin-bar-in-editor .edit-site-layout__canvas {
+			border-top-left-radius: 0;
+			border-top-right-radius: 0;
+		}
 
 		// Override canvas styles when the site editor navigation menu is open
 		.edit-site-layout:not( .is-full-canvas ) .edit-site-layout__canvas {
@@ -389,7 +394,7 @@ body.site-editor-php.agents-manager-sidebar-container {
 	}
 }
 
-/* Page editor */
+/* Post editor (posts and pages) */
 body.post-php.agents-manager-sidebar-container,
 body.post-new-php.agents-manager-sidebar-container {
 	@include sidebar-base( '.edit-post-layout' );
@@ -401,6 +406,11 @@ body.post-new-php.agents-manager-sidebar-container {
 	&.agents-manager-sidebar-container--sidebar-open {
 		@include sidebar-open-base( '.edit-post-layout' );
 		@include editor-save-panel-open();
+		// Under the omnibar, square off the canvas top (the admin bar above owns the top rounding).
+		&.has-admin-bar-in-editor .edit-post-layout {
+			border-top-left-radius: 0;
+			border-top-right-radius: 0;
+		}
 
 		// Split-screen clips the editor shell for rounded corners. Gutenberg's
 		// desktop header grid can otherwise push the settings group past that
