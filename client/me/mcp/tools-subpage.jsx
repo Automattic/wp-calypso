@@ -1,14 +1,11 @@
 import { sitesQuery, userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { Badge } from '@automattic/ui';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Button,
-	FlexItem,
 	ToggleControl,
 	Card,
 	CardBody,
@@ -29,7 +26,6 @@ import { SectionHeader } from '../../dashboard/components/section-header';
 import { filterVisibleTools } from './categories';
 import { getOverridesToMatch, groupIntentKey } from './group-intents';
 import { groupToolsByGroup } from './groups';
-import { getAccessSummaryBadge, getWriteAccessBadge } from './hub-helpers';
 import { useMcpPageChrome } from './mcp-page-header';
 import { getAccountMcpAbilities, getGroupDescriptors } from './utils';
 
@@ -102,7 +98,6 @@ export default function McpToolsSubpage( {
 	);
 	const groupDescriptors = getGroupDescriptors( userSettings || {} );
 	const groups = groupToolsByGroup( tools, groupDescriptors );
-	const getBadge = toolCategory === 'write' ? getWriteAccessBadge : getAccessSummaryBadge;
 
 	const eventPrefix =
 		toolCategory === 'write' ? 'calypso_dashboard_mcp_write' : 'calypso_dashboard_mcp_read';
@@ -152,17 +147,27 @@ export default function McpToolsSubpage( {
 	};
 
 	/**
-	 * @param {string} groupName
+	 * @param {string|null} groupName  null for the "Other" bucket (no group intent key)
 	 * @param {Array<[string, import('@automattic/api-core').McpAbility]>} groupTools
 	 * @param {boolean} enabled
 	 */
 	const handleGroupEnableAll = ( groupName, groupTools, enabled ) => {
 		const overrides = getOverridesToMatch( groupTools, enabled );
+		// The "Other" bucket has no group name, so there's no group intent key to write —
+		// explicit per-op overrides are the only way to change its tools' state.
+		const groupIntents = groupName
+			? { [ groupIntentKey( toolCategory, groupName ) ]: enabled }
+			: undefined;
+
+		if ( ! overrides && ! groupIntents ) {
+			return;
+		}
+
 		mutation.mutate(
 			{
 				mcp_abilities: {
 					...( overrides && { account: overrides } ),
-					group_intents: { [ groupIntentKey( toolCategory, groupName ) ]: enabled },
+					...( groupIntents && { group_intents: groupIntents } ),
 				},
 			},
 			{
@@ -170,7 +175,7 @@ export default function McpToolsSubpage( {
 					recordTracksEvent( `${ eventPrefix }_enable_all_toggled`, {
 						enabled,
 						scope: 'group',
-						group: groupName,
+						group: groupName ?? 'other',
 					} );
 				},
 			}
@@ -184,19 +189,6 @@ export default function McpToolsSubpage( {
 	if ( ! config.isEnabled( 'mcp-settings' ) ) {
 		return null;
 	}
-
-	const renderToolToggles = ( toolList ) =>
-		toolList.map( ( [ toolId, tool ] ) => (
-			<ToggleControl
-				key={ toolId }
-				__nextHasNoMarginBottom
-				checked={ tool.enabled }
-				disabled={ mutation.isPending }
-				label={ tool.title }
-				help={ tool.description }
-				onChange={ ( checked ) => handleToolChange( toolId, checked ) }
-			/>
-		) );
 
 	const pageAllEnabled = tools.length > 0 && tools.every( ( [ , tool ] ) => tool.enabled );
 
@@ -225,7 +217,7 @@ export default function McpToolsSubpage( {
 									__nextHasNoMarginBottom
 									checked={ pageAllEnabled }
 									disabled={ mutation.isPending || tools.length === 0 }
-									label={ translate( 'Enable all' ) }
+									label={ <Text weight="600">{ translate( 'Enable all' ) }</Text> }
 									onChange={ handlePageToggle }
 								/>
 							</VStack>
@@ -233,61 +225,66 @@ export default function McpToolsSubpage( {
 					</Card>
 
 					{ groups.length > 0 ? (
-						<VStack spacing={ 3 }>
+						<Card>
 							{ groups.map( ( { group: descriptor, label, tools: groupTools } ) => {
 								const groupKey = descriptor?.name ?? '__other__';
-								const enabledCount = groupTools.filter( ( [ , t ] ) => t.enabled ).length;
-								const badge = getBadge( enabledCount, groupTools.length, translate );
 								const allGroupEnabled = groupTools.every( ( [ , t ] ) => t.enabled );
 								const isOpen = openGroups.has( groupKey );
 
 								return (
-									<Card key={ groupKey }>
+									<div key={ groupKey } className="mcp-tools-subpage__group">
 										<CardBody>
-											<VStack spacing={ isOpen ? 4 : 0 }>
-												<HStack justify="space-between" alignment="center" spacing={ 4 }>
-													<FlexItem isBlock>
-														<VStack>
-															<Text truncate weight={ 600 } size={ 14 }>
-																{ label }
-															</Text>
-															{ descriptor?.description && (
-																<Text truncate variant="muted" size={ 12 }>
-																	{ descriptor.description }
-																</Text>
-															) }
-														</VStack>
-													</FlexItem>
-													<HStack expanded={ false } alignment="center" spacing={ 3 }>
-														<Badge intent={ badge.intent }>{ badge.text }</Badge>
-														{ descriptor && (
+											<div className="mcp-tools-subpage__group-header">
+												<div className="mcp-tools-subpage__group-info">
+													<Text truncate weight={ 600 } size={ 14 }>
+														{ label }
+													</Text>
+													{ descriptor?.description && (
+														<Text truncate variant="muted" size={ 12 }>
+															{ descriptor.description }
+														</Text>
+													) }
+												</div>
+												<div className="mcp-tools-subpage__group-toggle">
+													<ToggleControl
+														__nextHasNoMarginBottom
+														checked={ allGroupEnabled }
+														disabled={ mutation.isPending }
+														label={ translate( 'Enable all' ) }
+														onChange={ ( checked ) =>
+															handleGroupEnableAll( descriptor?.name ?? null, groupTools, checked )
+														}
+													/>
+												</div>
+												<Button
+													className="mcp-tools-subpage__group-chevron"
+													icon={ isOpen ? chevronUp : chevronDown }
+													label={ translate( 'Show operations' ) }
+													aria-expanded={ isOpen }
+													onClick={ () => toggleGroupOpen( groupKey ) }
+												/>
+											</div>
+											{ isOpen && (
+												<div className="mcp-tools-subpage__group-content">
+													{ groupTools.map( ( [ toolId, tool ] ) => (
+														<div key={ toolId } className="mcp-tools-subpage__tool-item">
 															<ToggleControl
 																__nextHasNoMarginBottom
-																checked={ allGroupEnabled }
+																checked={ tool.enabled }
 																disabled={ mutation.isPending }
-																label={ translate( 'Enable all' ) }
-																onChange={ ( checked ) =>
-																	handleGroupEnableAll( descriptor.name, groupTools, checked )
-																}
+																label={ tool.title }
+																help={ tool.description }
+																onChange={ ( checked ) => handleToolChange( toolId, checked ) }
 															/>
-														) }
-														<Button
-															icon={ isOpen ? chevronUp : chevronDown }
-															label={ translate( 'Show operations' ) }
-															aria-expanded={ isOpen }
-															onClick={ () => toggleGroupOpen( groupKey ) }
-														/>
-													</HStack>
-												</HStack>
-												{ isOpen && (
-													<VStack spacing={ 6 }>{ renderToolToggles( groupTools ) }</VStack>
-												) }
-											</VStack>
+														</div>
+													) ) }
+												</div>
+											) }
 										</CardBody>
-									</Card>
+									</div>
 								);
 							} ) }
-						</VStack>
+						</Card>
 					) : (
 						<Card>
 							<CardBody>

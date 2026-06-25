@@ -94,8 +94,68 @@ body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .main.m
 		border-radius: 0;
 	}
 
-	// STRAP groups: a Card per group with a header row (Text + Badge + ToggleControl +
-	// expand Button, all native `@wordpress/components`) — no overrides needed here.
+	// Unified groups card: each group row separated by a border
+	.mcp-tools-subpage__group {
+		&:not(:first-child) {
+			border-top: 1px solid var(--color-border-subtle);
+		}
+	}
+
+	// Group header: [info (flex:1)] [toggle] [chevron] on desktop
+	// Mobile: [info (flex:1)] [chevron] on row 1, [toggle (full-width)] on row 2
+	.mcp-tools-subpage__group-header {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 8px 12px;
+	}
+
+	.mcp-tools-subpage__group-info {
+		flex: 1;
+		min-width: 0; // allow text-overflow: ellipsis inside flex children
+		order: 1;
+	}
+
+	// On mobile: toggle wraps below the title row (full width, order after chevron).
+	// On desktop: toggle sits between info and chevron.
+	.mcp-tools-subpage__group-toggle {
+		order: 3;
+		width: 100%;
+
+		@include break-mobile {
+			order: 2;
+			width: auto;
+			flex-shrink: 0;
+		}
+	}
+
+	.mcp-tools-subpage__group-chevron {
+		order: 2; // Mobile: stays inline with title
+		flex-shrink: 0;
+
+		@include break-mobile {
+			order: 3; // Desktop: after toggle
+		}
+	}
+
+	// Expanded content: top border separates from header, tool items have bottom borders
+	.mcp-tools-subpage__group-content {
+		border-top: 1px solid var(--color-border-subtle);
+		margin-top: 12px;
+		padding-top: 4px;
+	}
+
+	.mcp-tools-subpage__tool-item {
+		padding: 12px 0;
+
+		&:not(:last-child) {
+			border-bottom: 1px solid var(--color-border-subtle);
+		}
+
+		&:last-child {
+			padding-bottom: 0;
+		}
+	}
 }
 
 // Setup page — zero out card-heading margins so CardBody padding is the only spacing
