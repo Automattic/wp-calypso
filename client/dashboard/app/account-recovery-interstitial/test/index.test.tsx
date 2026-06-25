@@ -52,7 +52,33 @@ function mockPreferences( calypso_preferences: Partial< UserPreferences > = {} )
 		.reply( 200, { calypso_preferences } );
 }
 
+const EXPERIMENT_NAME = 'account_recovery_nudge_interstitial_experiment';
+
+// The interstitial only renders for users assigned to the experiment's `treatment` variation.
+// Seed a live assignment into the storage ExPlat reads from, so the real `useExperiment` hook
+// resolves to the given variation through its normal code path — no network call, no mocking.
+// `loadExperimentAssignment` returns a stored, still-alive assignment before hitting the server.
+function assignExperiment( variationName: string | null = 'treatment' ) {
+	window.localStorage.setItem(
+		`explat-experiment--${ EXPERIMENT_NAME }`,
+		JSON.stringify( {
+			experimentName: EXPERIMENT_NAME,
+			variationName,
+			retrievedTimestamp: Date.now(),
+			ttl: 3600,
+		} )
+	);
+}
+
 describe( '<AccountRecoveryInterstitial>', () => {
+	beforeEach( () => {
+		assignExperiment();
+	} );
+
+	afterEach( () => {
+		window.localStorage.clear();
+	} );
+
 	test( 'shows the modal and records an impression for a user with no recovery method', async () => {
 		mockAccountRecovery( NONE_RECOVERY );
 		mockUserSettings( { two_step_enabled: false } );
@@ -220,6 +246,24 @@ describe( '<AccountRecoveryInterstitial>', () => {
 				has_backup_codes: false,
 				snooze_period: 14,
 			}
+		);
+	} );
+
+	test( 'does not show for a user in the experiment control group, even when eligible', async () => {
+		// Otherwise-eligible user (no recovery method, not snoozed) assigned to control.
+		assignExperiment( null );
+		mockAccountRecovery( NONE_RECOVERY );
+		mockUserSettings( { two_step_enabled: false } );
+		mockPreferences();
+
+		const { recordTracksEvent } = render( <AccountRecoveryInterstitial /> );
+
+		await waitFor( () => {
+			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+		} );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_account_recovery_nudge_interstitial_impression',
+			expect.anything()
 		);
 	} );
 } );
