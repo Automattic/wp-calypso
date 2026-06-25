@@ -571,11 +571,18 @@ body.is-section-reader {
 		}
 	}
 
-	// Resting over the dark hero: white nav ink. Logo, CTA border and the chevron
-	// triangle all read currentcolor, so colouring .x-nav-item carries them — and
-	// staying on currentcolor lets the component's blue hover/open chevron win.
+	// Resting over the dark hero: white nav ink. Logo and CTA border read
+	// currentcolor from .x-nav-item, but the chevron has its own hardcoded blue
+	// `color` ($studio-blue-90). The component only whitens it under
+	// `.is-style-monochrome`, which is gated on the `site-profiler/metrics` flag
+	// (on in dev, off in production) — so on wordpress.com the chevron stayed
+	// blue and vanished into the hero. Whiten it here, flag-independently.
 	.lpc-header-nav-container .x-nav--2026-redesign .x-nav-item {
 		color: var( --studio-white );
+
+		.x-nav-link-chevron::before {
+			color: var( --studio-white );
+		}
 
 		// Hover flips the CTA to a white fill with dark ink.
 		--x-nav-2026-cta-hover-fill: var( --studio-white );
@@ -589,6 +596,10 @@ body.is-section-reader {
 	.lpc-header-nav-container:has( .x-dropdown--2026.is-dropdown-open ) {
 		.x-nav--2026-redesign .x-nav-item {
 			color: var( --studio-gray-100 );
+
+			.x-nav-link-chevron::before {
+				color: var( --studio-gray-100 );
+			}
 		}
 	}
 }
