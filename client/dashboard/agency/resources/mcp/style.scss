@@ -1,0 +1,25 @@
+.mcp-connect-agent ol {
+	padding-inline-start: 20px;
+	margin: 0;
+}
+
+.mcp-connect-agent ol li,
+.mcp-connect-agent ol li > span {
+	color: var( --color-neutral-60 );
+	font-size: 13px;
+}
+
+.mcp-connect-agent code {
+	padding: 2px 6px;
+	border-radius: 3px;
+	background: var( --color-neutral-0 );
+	font-family: monospace;
+	font-size: inherit;
+	overflow-wrap: anywhere;
+}
+
+.mcp-config-textarea .components-textarea-control__input {
+	field-sizing: content;
+	min-height: 80px;
+	max-height: 400px;
+}

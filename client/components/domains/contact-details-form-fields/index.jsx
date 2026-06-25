@@ -206,7 +206,7 @@ export class ContactDetailsFormFields extends Component {
 				if ( fieldName === 'postalCode' ) {
 					sanitizedFieldValues[ fieldName ] = tryToGuessPostalCodeFormat(
 						sanitizedFieldValues[ fieldName ].toUpperCase(),
-						get( sanitizedFieldValues, 'countryCode', null )
+						sanitizedFieldValues?.countryCode ?? null
 					);
 				}
 			}

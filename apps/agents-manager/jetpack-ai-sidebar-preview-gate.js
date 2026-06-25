@@ -17,6 +17,18 @@
 
 const JETPACK_AI_SIDEBAR_PROVIDER_FILE = 'jetpack-ai-sidebar.provider.mjs';
 
+function getProviderUrl( provider ) {
+	if ( typeof provider === 'string' ) {
+		return provider;
+	}
+
+	if ( provider && typeof provider === 'object' && typeof provider.url === 'string' ) {
+		return provider.url;
+	}
+
+	return '';
+}
+
 /**
  * @returns {boolean} True when Agents Manager should not mount at all — the legacy
  *                    Jetpack sidebar was the only provider.
@@ -33,8 +45,7 @@ export function shouldSuppressJetpackAiSidebarPreview() {
 	// Legacy Jetpack: drop only its provider, keep the rest.
 	const providers = Array.isArray( data.agentProviders ) ? data.agentProviders : [];
 	const remaining = providers.filter(
-		( provider ) =>
-			! ( typeof provider === 'string' && provider.includes( JETPACK_AI_SIDEBAR_PROVIDER_FILE ) )
+		( provider ) => ! getProviderUrl( provider ).includes( JETPACK_AI_SIDEBAR_PROVIDER_FILE )
 	);
 	data.agentProviders = remaining;
 

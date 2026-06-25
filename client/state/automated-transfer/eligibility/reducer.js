@@ -1,4 +1,4 @@
-import { sortBy } from 'lodash';
+import { sortBy } from '@automattic/js-utils';
 import { AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE } from 'calypso/state/action-types';
 import { withPersistence } from 'calypso/state/utils';
 

@@ -1,8 +1,91 @@
-.customize-space-modal__subtitle {
-	margin: 0;
-	color: var( --color-text-subtle );
+@use 'calypso/reader/spaces/colors' as space-colors;
+
+// The modal is a fixed-height flex column: a static header (title + subtitle) and
+// tablist, a scrolling tab panel, and a pinned footer with the Save actions.
+.customize-space-modal {
+	&.components-modal__frame {
+		block-size: min( 760px, calc( 100% - 96px ) );
+	}
+
+	.components-modal__content {
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		padding-block-end: 0;
+	}
+
+	.components-modal__children-container {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		min-block-size: 0;
+	}
 }
 
+.customize-space-modal__header {
+	padding-block-end: 12px;
+	&-heading {
+		font-size: 20px;
+		font-weight: 600;
+	}
+}
+
+.customize-space-modal__subtitle {
+	color: var( --color-text-subtle );
+	font-size: 0.875rem;
+	margin-block-end: 0;
+}
+
+.customize-space-modal__tabs {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-block-size: 0;
+	padding-block-end: 12px;
+	.components-tab-panel__tabs {
+		border-block-end: 1px solid var( --color-neutral-5 );
+		border-block-start: 1px solid var( --color-neutral-5 );
+	}
+
+	.components-tab-panel__tab-content {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		min-block-size: 0;
+	}
+}
+
+.customize-space-modal__panel {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-block-size: 0;
+	overflow-y: auto;
+	padding-block: 16px 8px;
+	padding-inline: 8px;
+}
+
+.customize-space-modal__loading {
+	margin: 24px 0;
+	color: var( --color-text-subtle );
+	text-align: center;
+}
+
+.customize-space-modal__field-label {
+	color: var( --color-text-subtle );
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.5px;
+	text-transform: uppercase;
+}
+
+.customize-space-modal__error {
+	margin: 8px 0 0;
+	color: var( --color-error );
+	font-size: 0.875rem;
+}
+
+// Layout-preset cards.
 .customize-space-modal__grid {
 	display: grid;
 	grid-template-columns: repeat( 2, 1fr );
@@ -29,8 +112,8 @@
 // behaviour (arrow keys move between options, single tab stop).
 .customize-space-modal__radio {
 	position: absolute;
-	width: 1px;
-	height: 1px;
+	inline-size: 1px;
+	block-size: 1px;
 	margin: -1px;
 	padding: 0;
 	overflow: hidden;
@@ -52,4 +135,139 @@
 .customize-space-modal__card-description {
 	font-size: 0.875rem;
 	color: var( --color-text-subtle );
+}
+
+// Pinned footer.
+.customize-space-modal__footer {
+	flex-shrink: 0;
+	padding-block: 16px;
+	border-block-start: 1px solid var( --color-border-subtle );
+	background: var( --color-surface );
+}
+
+.customize-space-modal__footer-space {
+	min-inline-size: 0;
+}
+
+.customize-space-modal__footer-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	inline-size: 32px;
+	block-size: 32px;
+	border-radius: 8px;
+	background: var( --space-color-bg );
+	color: var( --space-color );
+}
+
+@each $color in space-colors.$space-colors {
+	.customize-space-modal__footer-icon--#{$color} {
+		@include space-colors.space-accent-color( $color );
+	}
+}
+
+.customize-space-modal__footer-text {
+	min-inline-size: 0;
+}
+
+.customize-space-modal__footer-name {
+	color: var( --color-text );
+	font-weight: 600;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.customize-space-modal__footer-summary {
+	color: var( --color-text-subtle );
+	font-size: 0.875rem;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+// Sources tab.
+.space-sources {
+	flex: 1;
+	min-block-size: 0;
+	overflow: hidden;
+}
+
+.space-sources__description {
+	margin: 0;
+	color: var( --color-text-subtle );
+	font-size: 0.875rem;
+}
+
+.space-sources__filters {
+	button {
+		border-radius: 16px;
+	}
+}
+
+.space-sources__list {
+	box-sizing: border-box;
+	flex: 1;
+	min-block-size: 0;
+	margin: 0;
+	padding: 0;
+	overflow-y: auto;
+}
+
+.space-sources__virtual-row {
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline: 0;
+	padding-inline-end: 12px;
+}
+
+.space-sources__row-main {
+	flex: 1;
+	min-inline-size: 0;
+}
+
+.space-sources__row-content {
+	min-inline-size: 0;
+}
+
+.space-sources__row-name,
+.space-sources__row-url {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.space-sources__row-name {
+	color: var( --color-text );
+	font-weight: 600;
+}
+
+.space-sources__row-url {
+	color: var( --color-text-subtle );
+	font-size: 0.875rem;
+}
+
+.space-sources__empty {
+	margin: 24px 0;
+	color: var( --color-text-subtle );
+	text-align: center;
+}
+
+.space-sources__skeleton-text {
+	flex: 1;
+	min-inline-size: 0;
+}
+
+// Delete tab.
+.customize-space-modal__delete-tab {
+	align-items: flex-start;
+	max-inline-size: 520px;
+}
+
+.customize-space-modal__delete-description {
+	margin: 0;
+	color: var( --color-text-subtle );
+	font-size: 0.875rem;
+	line-height: 1.5;
 }

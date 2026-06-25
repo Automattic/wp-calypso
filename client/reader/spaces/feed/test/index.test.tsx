@@ -50,6 +50,21 @@ function makeSpace( id: string, name: string, view: SpaceFeedLayout ): ReadSpace
 	return { id, name, tags: [], layout: { color: 'blue', icon: 'inbox', view }, sources: [] };
 }
 
+function makePost( overrides: Partial< ReadStreamPost > = {} ): ReadStreamPost {
+	return {
+		ID: 1,
+		site_ID: 2,
+		feed_ID: 3,
+		feed_item_ID: 4,
+		site_name: 'Work blog',
+		title: 'A layout-sensitive post',
+		URL: 'https://example.com/post',
+		feed_URL: 'https://example.com/feed',
+		date: '2026-06-23T12:00:00Z',
+		...overrides,
+	} as unknown as ReadStreamPost;
+}
+
 const WORK = makeSpace( 'work-id', 'Work', 'standard-list' );
 const BASE = 'https://public-api.wordpress.com';
 
@@ -58,6 +73,16 @@ function render( space: ReadSpaceDetails ) {
 	queryClient.setQueryData( readSpaceQuery( space.id ).queryKey, space );
 
 	return renderWithProvider( <SpaceFeed spaceId={ space.id } />, {
+		queryClient,
+		initialState: { currentUser: { id: 1 } },
+	} );
+}
+
+function renderWithLayoutViewFallback( space: ReadSpaceDetails, layoutView: SpaceFeedLayout ) {
+	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	queryClient.setQueryData( readSpaceQuery( space.id ).queryKey, space );
+
+	return renderWithProvider( <SpaceFeed spaceId={ space.id } layoutView={ layoutView } />, {
 		queryClient,
 		initialState: { currentUser: { id: 1 } },
 	} );
@@ -91,31 +116,55 @@ describe( 'SpaceFeed', () => {
 		expect( refetch ).toHaveBeenCalled();
 	} );
 
-	it( 'shows an error with a retry when the space detail fails to load', async () => {
-		const user = userEvent.setup();
+	it( 'requests the posts stream in parallel with the space detail', async () => {
+		// No detail seeded. The stream must be enabled immediately (not gated on the
+		// detail) AND the detail request must also fire — both in flight together.
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
-		nock( BASE ).get( `/wpcom/v2/reader/spaces/${ WORK.id }` ).reply( 500, {} );
-		nock( BASE ).get( `/wpcom/v2/reader/spaces/${ WORK.id }` ).reply( 200, {
-			id: WORK.id,
-			title: WORK.name,
-			layout: WORK.layout,
-			follows: [],
-			tags: [],
-		} );
+		let detailRequested = false;
+		nock( BASE )
+			.get( `/wpcom/v2/reader/spaces/${ WORK.id }` )
+			.reply( () => {
+				detailRequested = true;
+				return [
+					200,
+					{ id: WORK.id, title: WORK.name, layout: WORK.layout, follows: [], tags: [] },
+				];
+			} );
 
 		renderWithProvider( <SpaceFeed spaceId={ WORK.id } />, {
 			queryClient,
 			initialState: { currentUser: { id: 1 } },
 		} );
 
-		expect( await screen.findByText( 'Couldn’t load this feed' ) ).toBeVisible();
+		// Stream is enabled on first render, with no detail in the cache.
+		expect( mockUseInfiniteStream ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				streamKey: `space:${ WORK.id }`,
+				options: expect.objectContaining( { enabled: true } ),
+			} )
+		);
+		// The detail request is also initiated, confirming the two load in parallel.
+		await waitFor( () => expect( detailRequested ).toBe( true ) );
+	} );
 
-		await user.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+	it( 'renders the feed from the layout-view fallback when the detail fails to load', async () => {
+		// The detail fails, but the feed must still render from `layoutView` + the
+		// stream rather than blocking on the detail.
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		nock( BASE ).get( `/wpcom/v2/reader/spaces/${ WORK.id }` ).reply( 500, {} );
+		mockUseInfiniteStream.mockReturnValue(
+			streamResult( { pages: [ { posts: [ makePost() ] } as unknown as ReadStreamResponse ] } )
+		);
+
+		const { container } = renderWithProvider(
+			<SpaceFeed spaceId={ WORK.id } layoutView="gallery" />,
+			{ queryClient, initialState: { currentUser: { id: 1 } } }
+		);
 
 		await waitFor( () =>
-			expect( screen.queryByText( 'Couldn’t load this feed' ) ).not.toBeInTheDocument()
+			expect( container.querySelector( '.space-feed-gallery' ) ).toBeInTheDocument()
 		);
-		expect( await screen.findByText( 'Nothing here yet' ) ).toBeVisible();
+		expect( screen.queryByText( 'Couldn’t load this feed' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'shows the empty state when the stream has no posts', () => {
@@ -130,6 +179,30 @@ describe( 'SpaceFeed', () => {
 		expect( mockUseInfiniteStream ).toHaveBeenCalledWith(
 			expect.objectContaining( { streamKey: `space:${ WORK.id }` } )
 		);
+	} );
+
+	it( 'renders the layout selected by the space layout view', () => {
+		mockUseInfiniteStream.mockReturnValue(
+			streamResult( { pages: [ { posts: [ makePost() ] } as unknown as ReadStreamResponse ] } )
+		);
+		const { container } = render( makeSpace( 'work-id', 'Work', 'gallery' ) );
+
+		expect( container.querySelector( '.space-feed-gallery' ) ).toBeInTheDocument();
+		expect( container.querySelector( '.space-feed-standard-list' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'uses the provided layout view when the space detail has no view', () => {
+		mockUseInfiniteStream.mockReturnValue(
+			streamResult( { pages: [ { posts: [ makePost() ] } as unknown as ReadStreamResponse ] } )
+		);
+		const { layout, ...spaceWithoutView } = WORK;
+		const { container } = renderWithLayoutViewFallback(
+			{ ...spaceWithoutView, layout: { color: layout.color, icon: layout.icon } },
+			'gallery'
+		);
+
+		expect( container.querySelector( '.space-feed-gallery' ) ).toBeInTheDocument();
+		expect( container.querySelector( '.space-feed-standard-list' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'shows the empty state for the legacy layout when the legacy stream has no posts', () => {

@@ -1,6 +1,6 @@
 import { uniqBy } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { map, get, filter } from 'lodash';
+import { map, filter } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { isAncestor } from 'calypso/blocks/comments/utils';
@@ -54,7 +54,7 @@ class ConversationCaterpillarComponent extends Component {
 		this.props.expandComments( {
 			siteId: blogId,
 			postId,
-			commentIds: map( commentsToExpand, ( c ) => get( c, 'parent.ID', null ) ).filter( Boolean ),
+			commentIds: map( commentsToExpand, ( c ) => c?.parent?.ID ?? null ).filter( Boolean ),
 			displayType: POST_COMMENT_DISPLAY_TYPES.excerpt,
 		} );
 		recordAction( 'comment_caterpillar_click' );

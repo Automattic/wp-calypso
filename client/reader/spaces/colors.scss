@@ -1,0 +1,16 @@
+// Shared accent-color definitions for Spaces. A space exposes its accent as two
+// custom properties — `--space-color` (foreground: the icon glyph, the active
+// row's name, a selected swatch) and `--space-color-bg` (the icon's surface
+// tint) — both derived from the matching color-studio ramp. Consumers (the
+// sidebar item, the color picker) `@use` this partial and emit the variables on
+// their own selectors, so the palette lives in one place.
+
+// The accent palette, in display order. Mirror `SPACE_COLORS` in `colors.ts`.
+// Quoted so stylelint doesn't read the bare words as CSS named colors; they
+// interpolate into the studio token names and modifier class suffixes all the same.
+$space-colors: 'blue', 'purple', 'red', 'orange', 'green', 'celadon', 'pink', 'gray';
+
+@mixin space-accent-color( $color ) {
+	--space-color: var( --studio-#{$color}-50 );
+	--space-color-bg: var( --studio-#{$color}-5 );
+}

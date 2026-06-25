@@ -1,7 +1,7 @@
 import { Button, CompactCard } from '@automattic/components';
 import { TRADE_MARK_CLAIMS_MODAL_COPY } from '@automattic/domain-search';
 import { localize } from 'i18n-calypso';
-import { get, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -70,12 +70,12 @@ class TrademarkClaimsNotice extends Component {
 			checkDomainAvailability(
 				{
 					domainName: domain,
-					blogId: get( this.props, 'selectedSite.ID', null ),
+					blogId: this.props?.selectedSite?.ID ?? null,
 					isCartPreCheck: false,
 				},
 				( error, result ) => {
 					resolve( {
-						trademarkClaimsNoticeInfo: get( result, 'trademark_claims_notice_info', null ),
+						trademarkClaimsNoticeInfo: result?.trademark_claims_notice_info ?? null,
 					} );
 				}
 			);

@@ -1,5 +1,5 @@
 import { mapValues } from '@automattic/js-utils';
-import { isEmpty, map, reduce } from 'lodash';
+import { isEmpty, map } from 'lodash';
 
 /**
  * Takes existing term post edits and updates the `terms_by_id` attribute
@@ -13,9 +13,8 @@ export function getTermIdsFromEdits( post ) {
 
 	// Filter taxonomies that are set as arrays ( i.e. tags )
 	// This can be detected by an array of strings vs an array of objects
-	const taxonomies = reduce(
-		post.terms,
-		( prev, taxonomyTerms, taxonomyName ) => {
+	const taxonomies = Object.entries( post.terms ).reduce(
+		( prev, [ taxonomyName, taxonomyTerms ] ) => {
 			// Ensures we are working with an array
 			const termsArray = Object.values( taxonomyTerms );
 			if (

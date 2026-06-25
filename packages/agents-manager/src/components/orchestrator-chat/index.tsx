@@ -213,13 +213,14 @@ export default function OrchestratorChat( {
 	useCheckpointAction( registerMessageActions, checkpoint );
 
 	// Register thumbs-up/down feedback actions on agent messages.
-	const { showFeedbackInput, submitFeedbackText, resetFeedback } = useFeedbackAction( {
-		registerMessageActions,
-		messages,
-	} );
+	const { showFeedbackInput, submitFeedbackText, resetFeedback, getFeedbackActionsForMessage } =
+		useFeedbackAction( {
+			registerMessageActions,
+			messages,
+		} );
 
-	// Register a "Copy" action on plain-text agent messages.
-	useCopyAction( registerMessageActions );
+	// Add a "Copy" action on plain-text agent messages.
+	const getCopyActionsForMessage = useCopyAction();
 
 	// Register zoom-in/zoom-out actions on agent messages.
 	useZoomAction( registerMessageActions );
@@ -479,11 +480,38 @@ export default function OrchestratorChat( {
 			onSubmit: onSubmitWithImages,
 		} );
 
+		currentMessages = currentMessages.map( ( message ) => {
+			if ( message.id.endsWith( '-next-step' ) ) {
+				return message;
+			}
+
+			const directActions = [
+				...getFeedbackActionsForMessage( message ),
+				...getCopyActionsForMessage( message ),
+			];
+			if ( directActions.length === 0 ) {
+				return message;
+			}
+
+			const existingActions = message.actions?.filter(
+				( action ) => ! action.id.startsWith( 'feedback-' ) && action.id !== 'copy'
+			);
+
+			return {
+				...message,
+				actions: [ ...( existingActions ?? [] ), ...directActions ].sort(
+					( actionA, actionB ) => ( actionA.order ?? Infinity ) - ( actionB.order ?? Infinity )
+				),
+			};
+		} );
+
 		return currentMessages;
 	}, [
 		currentPostId,
 		deletedMessageIds,
 		getChatComponent,
+		getCopyActionsForMessage,
+		getFeedbackActionsForMessage,
 		isBuildingSite,
 		messages,
 		onSubmitWithImages,
@@ -515,7 +543,14 @@ export default function OrchestratorChat( {
 	if ( suggestions.length > 0 ) {
 		displayedEmptyViewSuggestions = suggestions;
 	} else if ( displayedMessages.length === 0 && inputValue.length === 0 ) {
-		displayedEmptyViewSuggestions = emptyViewSuggestions;
+		// Read straight from the live `useSuggestions` output rather than the
+		// registered store. Clicking a suggestion calls `clearSuggestions()`,
+		// which empties the store, and the re-registration effect is keyed on
+		// the (unchanged) hook output so it won't restore it. Persistent
+		// empty-view chips must survive that clear; fall back to the static
+		// defaults only when the hook genuinely has none.
+		displayedEmptyViewSuggestions =
+			dynamicSuggestionsList.length > 0 ? dynamicSuggestionsList : emptyViewSuggestions;
 	}
 
 	return (

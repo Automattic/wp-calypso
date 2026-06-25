@@ -1,6 +1,6 @@
 import { pick } from '@automattic/js-utils';
 import update from 'immutability-helper';
-import { filter, find, matches, reject, some } from 'lodash';
+import { filter, find, matches, some } from 'lodash';
 import {
 	DOMAINS_DNS_ADD,
 	DOMAINS_DNS_ADD_COMPLETED,
@@ -122,9 +122,7 @@ function deleteDns( state, domainName, record ) {
 		[ domainName ]: {
 			records: {
 				$apply: ( records ) => {
-					const deleted = reject( records, ( _, current ) => {
-						return index === current;
-					} );
+					const deleted = records.filter( ( _, current ) => index !== current );
 
 					return addMissingWpcomRecords( domainName, deleted );
 				},

@@ -1,6 +1,6 @@
 import { createSelector } from '@automattic/state-utils';
 import treeSelect from '@automattic/tree-select';
-import { get, map } from 'lodash';
+import { map } from 'lodash';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSerializedStatsQuery, normalizers, buildExportArray } from './utils';
@@ -66,7 +66,7 @@ export function hasSiteStatsQueryFailed( state, siteId, statType, query ) {
  */
 export function getSiteStatsForQuery( state, siteId, statType, query ) {
 	const serializedQuery = getSerializedStatsQuery( query );
-	return get( state.stats.lists.items, [ siteId, statType, serializedQuery ], null );
+	return state.stats.lists.items?.[ siteId ]?.[ statType ]?.[ serializedQuery ] ?? null;
 }
 
 /**

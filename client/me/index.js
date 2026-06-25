@@ -16,7 +16,7 @@ export default function () {
 		'/me',
 		controller.maybeRedirectToDashboard,
 		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/profile' ),
+		maybeRedirectToMultiSiteDashboard( '/me' ),
 		controller.sidebar,
 		setSelectedSiteIdByOrigin,
 		controller.profile,

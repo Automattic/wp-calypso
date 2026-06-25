@@ -1,7 +1,8 @@
 import config from '@automattic/calypso-config';
 import { FormLabel } from '@automattic/components';
+import { sortBy } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { isEmpty, sortBy } from 'lodash';
+import { isEmpty } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';

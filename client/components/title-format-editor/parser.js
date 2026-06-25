@@ -1,5 +1,5 @@
 import { convertFromRaw, convertToRaw } from 'draft-js';
-import { get, map, matchesProperty, reduce } from 'lodash';
+import { get, map, matchesProperty } from 'lodash';
 import { compose } from 'redux';
 
 /*
@@ -81,7 +81,7 @@ export const fromEditor = ( content ) => {
 	// [ output, index, text ]
 	const [ o, i, t ] = ranges.reduce(
 		( [ output, lastIndex, remainingText ], next ) => {
-			const tokenName = get( entities, [ next.key, 'data', 'name' ], null );
+			const tokenName = entities?.[ next.key ]?.data?.name ?? null;
 			const textBlock =
 				next.offset > lastIndex
 					? { type: 'string', value: remainingText.slice( lastIndex, next.offset ) }
@@ -169,8 +169,7 @@ const newEntityAt = ( offset, type, tokens, entityGuide ) => ( {
  * @returns {Object} blockMap for use in ContentState
  */
 const buildBlockMap = compose( ( format, tokens ) =>
-	reduce(
-		format,
+	( format ?? [] ).reduce(
 		( [ block, lastIndex, entityGuide ], piece ) => [
 			{
 				...block,

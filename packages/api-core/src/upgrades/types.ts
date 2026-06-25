@@ -360,6 +360,16 @@ export interface Purchase {
 	refund_period_in_days: number;
 	regular_price_text: string;
 	regular_price_integer: number;
+
+	/**
+	 * The date this subscription will next attempt to auto-renew (ISO 8601).
+	 *
+	 * For active/auto-renewing subscriptions this is the next *renewal attempt*
+	 * date, NOT the expiry date: WordPress.com begins attempting renewals before
+	 * a subscription expires (e.g. non-monthly WordPress.com plans first attempt
+	 * ~30 days before `expiry_date`). For subscriptions that are not renewing
+	 * (expiring, manual-renew, etc.) it falls back to the expiry date.
+	 */
 	renew_date: string;
 
 	sale_amount?: number;
@@ -485,6 +495,19 @@ export interface Purchase {
 	 * number.
 	 */
 	cancellation_offer_notice_discount_percentage: number | null;
+
+	/**
+	 * True when a delayed downgrade has been scheduled for this subscription.
+	 * The plan will be downgraded at the next renewal rather than immediately.
+	 * See `delayed_downgrade_to_product_slug` for the target plan.
+	 */
+	is_delayed_downgrade_pending: boolean;
+
+	/**
+	 * The product slug of the plan this subscription will downgrade to at
+	 * renewal, or null when no delayed downgrade is scheduled.
+	 */
+	delayed_downgrade_to_product_slug: string | null;
 }
 
 export type RawPurchase = Purchase & {

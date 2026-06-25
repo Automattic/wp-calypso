@@ -1,6 +1,6 @@
 import debugFactory from 'debug';
 import validatorFactory from 'is-my-json-valid';
-import { isEmpty, reduce, update } from 'lodash';
+import { isEmpty, update } from 'lodash';
 import validationSchema from './fr-schema';
 
 const validate = validatorFactory( validationSchema, { greedy: true } );
@@ -89,27 +89,20 @@ export default function validateContactDetails( contactDetails ) {
 	const errors = validateWithSirenSiretChecksum( contactDetails );
 	errors && debug( errors );
 
-	return reduce(
-		errors,
-		( accumulatedErrors, { field, message } ) => {
-			// Drop 'data.' prefix
-			const path = String( field ).split( '.' ).slice( 1 );
+	return ( errors ?? [] ).reduce( ( accumulatedErrors, { field, message } ) => {
+		// Drop 'data.' prefix
+		const path = String( field ).split( '.' ).slice( 1 );
 
-			// In order to capture the relationship between the organization
-			// and extra.fr.individualType fields, the rule ends up in the root
-			// path.
-			// We've only got one such case at the moment, so we can insert this
-			// hack, but if we need to tell multiple such rules apart, we're
-			// going to need to add a some magic to map schemas to fields
-			const correctedPath = isEmpty( path ) ? [ 'organization' ] : path;
+		// In order to capture the relationship between the organization
+		// and extra.fr.individualType fields, the rule ends up in the root
+		// path.
+		// We've only got one such case at the moment, so we can insert this
+		// hack, but if we need to tell multiple such rules apart, we're
+		// going to need to add a some magic to map schemas to fields
+		const correctedPath = isEmpty( path ) ? [ 'organization' ] : path;
 
-			const appendThisMessage = ( before ) => [
-				...( before || [] ),
-				ruleNameFromMessage( message ),
-			];
+		const appendThisMessage = ( before ) => [ ...( before || [] ), ruleNameFromMessage( message ) ];
 
-			return update( accumulatedErrors, correctedPath, appendThisMessage );
-		},
-		{}
-	);
+		return update( accumulatedErrors, correctedPath, appendThisMessage );
+	}, {} );
 }

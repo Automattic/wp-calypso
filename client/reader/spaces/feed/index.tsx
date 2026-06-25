@@ -10,12 +10,13 @@ import {
 	SpaceFeedLoadingMore,
 } from './components/states';
 import { DEFAULT_SPACE_FEED_LAYOUT, getLayout } from './layouts/registry';
-import type { ReadStreamPost, ReadStreamResponse } from '@automattic/api-core';
+import type { ReadStreamPost, ReadStreamResponse, SpaceFeedLayout } from '@automattic/api-core';
 
 import './style.scss';
 
 interface Props {
 	spaceId: string;
+	layoutView?: SpaceFeedLayout;
 }
 
 export function collectPosts( pages: ReadStreamResponse[] ): ReadStreamPost[] {
@@ -35,32 +36,29 @@ export function collectPosts( pages: ReadStreamResponse[] ): ReadStreamPost[] {
 }
 
 /**
- * The space feed. Loads the space detail first, then derives the feed from it:
- * the layout from `space.layout.view` (chosen via the Customize modal) and the
- * stream from the space's own posts endpoint (`/reader/spaces/<id>/posts`,
- * keyed `space:<id>`), which the backend builds from the space's followed feeds
- * and tags. Every layout reads that same per-space query.
+ * The space feed. The posts stream (`/reader/spaces/<id>/posts`, keyed
+ * `space:<id>`, built server-side from the space's followed feeds and tags) is
+ * keyed by the route's `spaceId`, so it loads in parallel with the space detail
+ * rather than waiting for it. The detail only refines the layout
+ * (`space.layout.view`, chosen via the Customize modal); `layoutView` — the
+ * summary value from the spaces list — is the layout while the detail is still
+ * loading or missing that field. Every layout reads that same per-space query.
  */
-export function SpaceFeed( { spaceId }: Props ) {
-	const {
-		data: space,
-		error: spaceError,
-		isLoading: isSpaceLoading,
-		refetch: refetchSpace,
-	} = useSpace( spaceId );
-	const layout = space?.layout.view ?? DEFAULT_SPACE_FEED_LAYOUT;
+export function SpaceFeed( { spaceId, layoutView }: Props ) {
+	// The detail loads in parallel with the stream and only refines the layout, so
+	// the feed never blocks on it. `refetchSpace` backs the stream's retry.
+	const { data: space, refetch: refetchSpace } = useSpace( spaceId );
+	const layout = space?.layout.view ?? layoutView ?? DEFAULT_SPACE_FEED_LAYOUT;
 
-	// The stream is the Space's own posts feed (`/reader/spaces/<id>/posts`),
-	// built server-side from the space's followed feeds and tags. We only request
-	// it once the detail has loaded, since the layout is read from the detail too.
-	// The legacy layout (ReaderStreamV2) fetches the same key itself; React Query
-	// dedupes, so we skip the shell's fetch there to avoid recomputing `items` it
-	// never uses — same query, fetched once.
-	const streamKey = space ? `space:${ spaceId }` : '';
+	// The Space's own posts feed. Keyed by the route's `spaceId` (not gated on the
+	// detail), so it fetches immediately, in parallel with the detail. The legacy
+	// layout (ReaderStreamV2) fetches the same key itself; React Query dedupes, so
+	// the shell skips its fetch there to avoid recomputing `items` it never uses.
+	const streamKey = `space:${ spaceId }`;
 	const isLegacy = layout === 'legacy';
 	const stream = useInfiniteStream( {
 		streamKey,
-		options: { enabled: Boolean( space ) && ! isLegacy },
+		options: { enabled: ! isLegacy },
 	} );
 	const posts = useMemo( () => collectPosts( stream.pages ), [ stream.pages ] );
 
@@ -86,14 +84,6 @@ export function SpaceFeed( { spaceId }: Props ) {
 	const showLoadingMore = posts.length > 0 && ! stream.error && stream.isFetchingNextPage;
 
 	const renderBody = () => {
-		// Load the space detail before anything else — the feed layout is read
-		// from its `view`, and the posts stream is only requested once it has loaded.
-		if ( ! space && spaceError ) {
-			return <SpaceFeedError onRetry={ refetchSpace } />;
-		}
-		if ( isSpaceLoading || ! space ) {
-			return <SpaceFeedLoading />;
-		}
 		// Legacy renders ReaderStreamV2, which fetches its own data; it only needs
 		// the stream key, scroll container, and restoreKey from the shell.
 		if ( isLegacy ) {
@@ -109,11 +99,21 @@ export function SpaceFeed( { spaceId }: Props ) {
 				/>
 			);
 		}
+		// The feed is driven by the posts stream, which loads in parallel with the
+		// space detail — it never waits on the detail to show posts.
 		if ( stream.isLoading ) {
 			return <SpaceFeedLoading />;
 		}
 		if ( stream.error ) {
-			return <SpaceFeedError onRetry={ stream.refetch } />;
+			// A stream failure can also stem from a stale/broken detail, so retry both.
+			return (
+				<SpaceFeedError
+					onRetry={ () => {
+						refetchSpace();
+						stream.refetch();
+					} }
+				/>
+			);
 		}
 		if ( posts.length === 0 ) {
 			return <SpaceFeedEmpty />;

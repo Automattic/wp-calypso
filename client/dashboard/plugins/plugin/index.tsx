@@ -65,7 +65,15 @@ export function PluginTabs( {
 			selectedTabId={ activeTab }
 			onSelect={ ( tabId: 'installed' | 'available' ) => setActiveTab( tabId ) }
 		>
-			<Tabs.TabList className="plugin-tabs-list">
+			{ /*
+			 * The "Installed on N sites" label changes width when the selected
+			 * plugin changes, which shifts the sibling "Available on" tab. The
+			 * WordPress Tabs indicator only re-measures on a selected-tab resize
+			 * or tab-index change — not when a sibling reflows — so its underline
+			 * gets left behind. Keying the tab list on the label remounts it,
+			 * forcing a fresh measurement so the indicator stays aligned.
+			 */ }
+			<Tabs.TabList key={ sitesWithThisPluginExcludingDeleted.length } className="plugin-tabs-list">
 				<Tabs.Tab tabId="installed">
 					<SectionHeader
 						level={ 3 }

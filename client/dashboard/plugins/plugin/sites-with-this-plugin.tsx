@@ -469,9 +469,9 @@ export const SitesWithThisPlugin = ( {
 							);
 						},
 						isEligible: ( item ) => {
-							const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
+							const { canDelete } = getAllowedPluginActions( item, pluginSlug );
 
-							return !! autoupdate;
+							return canDelete;
 						},
 						supportsBulk: true,
 						icon: <Icon icon={ trash } />,
