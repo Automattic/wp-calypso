@@ -15,7 +15,8 @@ import type { ReadStreamPost } from '@automattic/api-core';
 
 import './style.scss';
 
-const ROW_SIZE = 380;
+// Card is a fixed 270px; the item adds 40px of block padding (20px top + bottom).
+const ROW_SIZE = 310;
 
 function GalleryCard( { post }: { post: ReadStreamPost } ) {
 	const fields = getPostFields( post );
