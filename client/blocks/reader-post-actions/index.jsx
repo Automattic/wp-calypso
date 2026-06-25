@@ -21,7 +21,7 @@ import { ReaderFreshlyPressedButton } from '../reader-freshly-pressed-button';
 import './style.scss';
 
 /**
- * @param {{ post: Object; site?: Object; onCommentClick?: Function; iconSize?: number; className?: string; fullPost?: boolean; commentsApiDisabled?: boolean; variant?: 'default' | 'discreet'; }} props
+ * @param {{ post: Object; site?: Object; onCommentClick?: Function; iconSize?: number; className?: string; fullPost?: boolean; commentsApiDisabled?: boolean; variant?: 'default' | 'discreet'; split?: boolean; }} props
  */
 const ReaderPostActions = ( {
 	post,
@@ -32,6 +32,7 @@ const ReaderPostActions = ( {
 	fullPost,
 	commentsApiDisabled = false,
 	variant = 'default',
+	split = false,
 } ) => {
 	const hasSites = !! useSelector( getPrimarySiteId );
 	const showShare = isSharable( post );
@@ -40,6 +41,7 @@ const ReaderPostActions = ( {
 	const showLikes = isLikeable( post );
 	const listClassnames = clsx( 'reader-post-actions', className, {
 		'is-discreet': variant === 'discreet',
+		'is-split': split,
 	} );
 	const { data } = useQuery( readTeamsQuery() );
 	const isAutomattician = isAutomatticTeamMember( data?.teams ?? [] );
@@ -118,6 +120,7 @@ ReaderPostActions.propTypes = {
 	fullPost: PropTypes.bool,
 	commentsApiDisabled: PropTypes.bool,
 	variant: PropTypes.oneOf( [ 'default', 'discreet' ] ),
+	split: PropTypes.bool,
 };
 
 export default ReaderPostActions;

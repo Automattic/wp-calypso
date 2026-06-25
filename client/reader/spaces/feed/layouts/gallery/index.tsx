@@ -1,4 +1,8 @@
 import page from '@automattic/calypso-router';
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { useMemo } from 'react';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import { SiteIcon } from 'calypso/blocks/site-icon';
@@ -17,8 +21,8 @@ const ROW_SIZE = 248;
 function GalleryCard( { post }: { post: ReadStreamPost } ) {
 	const fields = getPostFields( post );
 	return (
-		<div className="space-feed-gallery__card">
-			<div className="space-feed-gallery__thumb">
+		<VStack className="space-feed-gallery__card" spacing={ 1.5 } alignment="stretch">
+			<a className="space-feed-gallery__thumb" href={ fields.postHref } aria-label={ fields.title }>
 				{ fields.imageUrl ? (
 					<img
 						className="space-feed-gallery__image"
@@ -29,32 +33,43 @@ function GalleryCard( { post }: { post: ReadStreamPost } ) {
 				) : (
 					<SiteIcon iconUrl={ fields.siteIconUrl } size={ 40 } />
 				) }
-			</div>
-			<h3 className="space-feed-gallery__title">
-				<a className="space-feed-gallery__title-link" href={ fields.postHref }>
-					{ fields.title }
-				</a>
-			</h3>
-			<div className="space-feed-gallery__meta">
-				<SiteIcon iconUrl={ fields.siteIconUrl } size={ 20 } />
-				<span>
-					{ fields.sourceName }
-					{ fields.authorName ? ` · ${ fields.authorName }` : '' }
-				</span>
-				{ fields.publishedDate && (
-					<span className="space-feed-gallery__time">
-						<SpaceFeedTimeSince date={ fields.publishedDate } />
-					</span>
-				) }
-			</div>
-			<div className="space-feed-gallery__actions">
+			</a>
+			<VStack spacing={ 4 }>
+				<VStack spacing={ 1 }>
+					<HStack
+						className="space-feed-gallery__meta"
+						spacing={ 2 }
+						alignment="center"
+						justify="flex-start"
+					>
+						<SiteIcon iconUrl={ fields.siteIconUrl } size={ 20 } />
+						<span>
+							{ fields.sourceName }
+							{ fields.authorName ? ` · ${ fields.authorName }` : '' }
+						</span>
+						{ fields.publishedDate && (
+							<>
+								<span>-</span>
+								<SpaceFeedTimeSince date={ fields.publishedDate } />
+								<span className="space-feed-gallery__time"></span>
+							</>
+						) }
+					</HStack>
+					<h3 className="space-feed-gallery__title">
+						<a className="space-feed-gallery__title-link" href={ fields.postHref }>
+							{ fields.title }
+						</a>
+					</h3>
+				</VStack>
 				<ReaderPostActions
+					variant="discreet"
+					split
 					post={ post }
 					onCommentClick={ () => page( getPostUrl( post ) ) }
 					iconSize={ 18 }
 				/>
-			</div>
-		</div>
+			</VStack>
+		</VStack>
 	);
 }
 

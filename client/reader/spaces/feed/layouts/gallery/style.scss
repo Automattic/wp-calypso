@@ -1,3 +1,6 @@
+.reader-spaces {
+	max-width: unset;
+}
 .space-feed-gallery {
 	position: relative;
 	inline-size: 100%;
@@ -14,13 +17,8 @@
 }
 
 .space-feed-gallery__card {
-	display: block;
 	min-inline-size: 0;
 	color: inherit;
-}
-
-.space-feed-gallery__actions {
-	margin-block-start: 8px;
 }
 
 .space-feed-gallery__thumb {
@@ -41,7 +39,7 @@
 }
 
 .space-feed-gallery__title {
-	margin: 10px 0 0;
+	margin: 0;
 	font-size: 0.875rem;
 	font-weight: 600;
 	line-height: 1.35;
@@ -62,10 +60,6 @@
 }
 
 .space-feed-gallery__meta {
-	display: flex;
-	align-items: center;
-	gap: 6px;
-	margin: 6px 0 0;
 	font-size: 0.75rem;
 	color: var(--color-text-subtle);
 }

@@ -52,7 +52,7 @@ export function SpacesView( { id, tab = 'feed' }: Props ) {
 	}
 
 	return (
-		<ReaderMain className="reader-spaces">
+		<ReaderMain className="reader-spaces" wideLayout>
 			<DocumentHead
 				title={ translate( '%s ‹ Reader', {
 					args: title,
