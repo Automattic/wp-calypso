@@ -37,8 +37,9 @@ export const setUpActionsForTasks = ( {
 		const hasCalypsoPath = task.calypso_path !== undefined;
 
 		if ( uiContext === 'calypso' && hasCalypsoPath ) {
-			if ( task.id === 'drive_traffic' && ! isMobile() && task.calypso_path !== undefined ) {
-				const [ path, query ] = task.calypso_path.split( '?' );
+			const { calypso_path } = task;
+			if ( task.id === 'drive_traffic' && ! isMobile() && calypso_path !== undefined ) {
+				const [ path, query ] = calypso_path.split( '?' );
 				const params = new URLSearchParams( query );
 				params.set( 'tour', 'marketingConnectionsTour' );
 				task.calypso_path = `${ path }?${ params }`;
