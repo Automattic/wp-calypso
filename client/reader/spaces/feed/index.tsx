@@ -17,6 +17,10 @@ import './style.scss';
 interface Props {
 	spaceId: string;
 	layoutView?: SpaceFeedLayout;
+	// Which per-space stream to render: the posts feed (`space:<id>`, followed
+	// feeds + tags) or Discover (`space_discover:<id>`, recommended on-topic posts
+	// the user doesn't follow). Both share this shell and the same layouts.
+	variant?: 'feed' | 'discover';
 }
 
 export function collectPosts( pages: ReadStreamResponse[] ): ReadStreamPost[] {
@@ -36,25 +40,29 @@ export function collectPosts( pages: ReadStreamResponse[] ): ReadStreamPost[] {
 }
 
 /**
- * The space feed. The posts stream (`/reader/spaces/<id>/posts`, keyed
- * `space:<id>`, built server-side from the space's followed feeds and tags) is
- * keyed by the route's `spaceId`, so it loads in parallel with the space detail
- * rather than waiting for it. The detail only refines the layout
- * (`space.layout.view`, chosen via the Customize modal); `layoutView` — the
- * summary value from the spaces list — is the layout while the detail is still
- * loading or missing that field. Every layout reads that same per-space query.
+ * A space's stream surface, shared by both tabs. The `variant` selects the
+ * per-space stream — the posts feed (`/reader/spaces/<id>/posts`, keyed
+ * `space:<id>`, built server-side from the space's followed feeds and tags) or
+ * Discover (`/reader/spaces/<id>/discover`, keyed `space_discover:<id>`,
+ * recommended on-topic posts the user doesn't follow). The stream is keyed by the
+ * route's `spaceId`, so it loads in parallel with the space detail rather than
+ * waiting for it. The detail only refines the layout (`space.layout.view`, chosen
+ * via the Customize modal); `layoutView` — the summary value from the spaces list
+ * — is the layout while the detail is still loading or missing that field. Both
+ * variants share the same layouts.
  */
-export function SpaceFeed( { spaceId, layoutView }: Props ) {
+export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
 	// The detail loads in parallel with the stream and only refines the layout, so
 	// the feed never blocks on it. `refetchSpace` backs the stream's retry.
 	const { data: space, refetch: refetchSpace } = useSpace( spaceId );
 	const layout = space?.layout.view ?? layoutView ?? DEFAULT_SPACE_FEED_LAYOUT;
 
-	// The Space's own posts feed. Keyed by the route's `spaceId` (not gated on the
+	// The Space's own stream. Keyed by the route's `spaceId` (not gated on the
 	// detail), so it fetches immediately, in parallel with the detail. The legacy
 	// layout (ReaderStreamV2) fetches the same key itself; React Query dedupes, so
 	// the shell skips its fetch there to avoid recomputing `items` it never uses.
-	const streamKey = `space:${ spaceId }`;
+	const isDiscover = variant === 'discover';
+	const streamKey = isDiscover ? `space_discover:${ spaceId }` : `space:${ spaceId }`;
 	const isLegacy = layout === 'legacy';
 	const stream = useInfiniteStream( {
 		streamKey,
@@ -95,7 +103,7 @@ export function SpaceFeed( { spaceId, layoutView }: Props ) {
 					hasMore={ false }
 					isLoadingMore={ false }
 					loadMore={ () => {} }
-					restoreKey={ `${ spaceId }:${ layout }` }
+					restoreKey={ `${ spaceId }:${ variant }:${ layout }` }
 				/>
 			);
 		}
@@ -116,7 +124,7 @@ export function SpaceFeed( { spaceId, layoutView }: Props ) {
 			);
 		}
 		if ( posts.length === 0 ) {
-			return <SpaceFeedEmpty />;
+			return <SpaceFeedEmpty variant={ variant } />;
 		}
 		return (
 			<Layout
@@ -133,7 +141,9 @@ export function SpaceFeed( { spaceId, layoutView }: Props ) {
 
 	return (
 		<div className="space-feed">
-			<SpaceFeedSourceNotice failedCount={ 0 } />
+			{ /* The source notice reports followed-feed failures; Discover isn't built
+			     from followed feeds, so it only applies to the posts feed. */ }
+			{ ! isDiscover && <SpaceFeedSourceNotice failedCount={ 0 } /> }
 			<div className="space-feed__viewport" ref={ setViewport }>
 				{ renderBody() }
 				{ showLoadingMore && <SpaceFeedLoadingMore /> }

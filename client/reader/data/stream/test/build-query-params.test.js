@@ -44,3 +44,36 @@ describe( 'buildStreamQueryParams — space stream', () => {
 		expect( params.count ).toBe( 15 );
 	} );
 } );
+
+describe( 'buildStreamQueryParams — space_discover stream', () => {
+	const discoverArgs = { ...baseArgs, streamKey: 'space_discover:6' };
+
+	it( 'sends `count` and omits `page_handle` on the first page', () => {
+		const params = buildStreamQueryParams( { ...discoverArgs, pageHandle: null } );
+
+		// INITIAL_FETCH (4) on the first page, locale as `_locale`, no cursor yet.
+		expect( params ).toEqual( { count: 4, _locale: 'en' } );
+	} );
+
+	it( 'threads the `page_handle` cursor through on subsequent pages', () => {
+		const params = buildStreamQueryParams( {
+			...discoverArgs,
+			pageHandle: { page_handle: 'NEXT' },
+		} );
+
+		// PER_FETCH (7) once paginating.
+		expect( params ).toEqual( { count: 7, page_handle: 'NEXT', _locale: 'en' } );
+	} );
+
+	it( 'clamps `count` to the tighter 7-post discover cap', () => {
+		// Discover caps at 7 (not 15) — a tighter Elasticsearch query-size limit on
+		// the recommendation query. A gap fetch (PER_GAP = 40) must clamp to 7.
+		const params = buildStreamQueryParams( {
+			...discoverArgs,
+			pageHandle: { page_handle: 'X' },
+			gap: true,
+		} );
+
+		expect( params.count ).toBe( 7 );
+	} );
+} );

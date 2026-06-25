@@ -69,16 +69,18 @@ function buildListQueryParams( extras ) {
 }
 
 /**
- * `space` (`/reader/spaces/<id>/posts`) takes `count` (the per-page size, capped
- * at 15 server-side — Elasticsearch query limit) and a `page_handle` cursor,
- * rather than the `number`/offset shape the other streams use. The normalized
- * fetch size (`INITIAL_FETCH` / `PER_FETCH`) is well under the cap, but clamp
- * defensively so an oversized page can't silently break end-of-stream detection.
- * Locale is passed as `_locale`, the param the endpoint reads to build the stream.
+ * Shared shape for the Space streams (`/reader/spaces/<id>/posts` and
+ * `/reader/spaces/<id>/discover`): `count` (the per-page size) plus a
+ * `page_handle` cursor and `_locale`, rather than the `number`/offset shape the
+ * other streams use. The normalized fetch size (`INITIAL_FETCH` / `PER_FETCH`) is
+ * well under either cap, but clamp defensively so an oversized page can't silently
+ * break end-of-stream detection. `cap` is the server-side per-page limit, which
+ * differs per endpoint (posts 15, discover 7 — both Elasticsearch query-size
+ * limits). Locale is passed as `_locale`, the param the endpoints read.
  */
-function buildSpaceQueryParams( extras ) {
+function buildSpaceStreamParams( extras, cap ) {
 	const { number, page_handle: pageHandle, lang } = extras;
-	const queryParams = { count: Math.min( number || INITIAL_FETCH, 15 ) };
+	const queryParams = { count: Math.min( number || INITIAL_FETCH, cap ) };
 	if ( pageHandle ) {
 		queryParams.page_handle = pageHandle;
 	}
@@ -86,6 +88,17 @@ function buildSpaceQueryParams( extras ) {
 		queryParams._locale = lang;
 	}
 	return queryParams;
+}
+
+// `space` — the posts feed (`/reader/spaces/<id>/posts`), followed feeds + tags.
+function buildSpaceQueryParams( extras ) {
+	return buildSpaceStreamParams( extras, 15 );
+}
+
+// `space_discover` — recommended on-topic posts the user doesn't follow
+// (`/reader/spaces/<id>/discover`). Tighter cap (7) than the posts feed.
+function buildSpaceDiscoverQueryParams( extras ) {
+	return buildSpaceStreamParams( extras, 7 );
 }
 
 /**
@@ -234,6 +247,8 @@ export function buildStreamQueryParams( {
 			return buildOnThisDayQueryParams( extras, streamKey );
 		case 'space':
 			return buildSpaceQueryParams( extras );
+		case 'space_discover':
+			return buildSpaceDiscoverQueryParams( extras );
 		case 'conversations':
 			return getQueryString( { ...extras, comments_per_post: 20 } );
 		case 'conversations-a8c':

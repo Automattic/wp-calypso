@@ -139,14 +139,18 @@ describe( 'SpacesView', () => {
 	it( 'renders the feed on the default (feed) tab', () => {
 		render( <SpacesView id={ WORK.id } /> );
 
-		expect( mockSpaceFeed ).toHaveBeenCalled();
-		expect( screen.queryByText( 'Discover is coming soon' ) ).not.toBeInTheDocument();
+		expect( mockSpaceFeed ).toHaveBeenCalledTimes( 1 );
+		// The feed tab uses the default variant, not Discover.
+		expect( mockSpaceFeed ).not.toHaveBeenCalledWith(
+			expect.objectContaining( { variant: 'discover' } )
+		);
 	} );
 
-	it( 'renders the Discover placeholder instead of the feed on the discover tab', () => {
+	it( 'renders the Discover variant of the feed on the discover tab', () => {
 		render( <SpacesView id={ WORK.id } tab="discover" /> );
 
-		expect( screen.getByText( 'Discover is coming soon' ) ).toBeVisible();
-		expect( mockSpaceFeed ).not.toHaveBeenCalled();
+		expect( mockSpaceFeed ).toHaveBeenCalledWith(
+			expect.objectContaining( { spaceId: WORK.id, variant: 'discover' } )
+		);
 	} );
 } );

@@ -181,6 +181,34 @@ describe( 'SpaceFeed', () => {
 		);
 	} );
 
+	it( 'requests the discover stream keyed by the space id for the discover variant', () => {
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		queryClient.setQueryData( readSpaceQuery( WORK.id ).queryKey, WORK );
+
+		renderWithProvider( <SpaceFeed spaceId={ WORK.id } variant="discover" />, {
+			queryClient,
+			initialState: { currentUser: { id: 1 } },
+		} );
+
+		expect( mockUseInfiniteStream ).toHaveBeenCalledWith(
+			expect.objectContaining( { streamKey: `space_discover:${ WORK.id }` } )
+		);
+	} );
+
+	it( 'shows the discover-specific empty copy for the discover variant', () => {
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		queryClient.setQueryData( readSpaceQuery( WORK.id ).queryKey, WORK );
+
+		renderWithProvider( <SpaceFeed spaceId={ WORK.id } variant="discover" />, {
+			queryClient,
+			initialState: { currentUser: { id: 1 } },
+		} );
+
+		expect(
+			screen.getByText( 'On-topic posts you don’t already follow will show up here.' )
+		).toBeVisible();
+	} );
+
 	it( 'renders the layout selected by the space layout view', () => {
 		mockUseInfiniteStream.mockReturnValue(
 			streamResult( { pages: [ { posts: [ makePost() ] } as unknown as ReadStreamResponse ] } )
