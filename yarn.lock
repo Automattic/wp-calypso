@@ -1708,7 +1708,6 @@ __metadata:
     "@automattic/data-stores": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/typography": "workspace:^"
-    "@automattic/viewport": "workspace:^"
     "@storybook/addon-a11y": "npm:^9.1.20"
     "@tanstack/react-query": "npm:^5.83.0"
     "@wordpress/base-styles": "npm:^9.1.0"

@@ -1,8 +1,13 @@
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { isMobile } from '@automattic/viewport';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { LaunchpadTaskActionsProps, Task } from './types';
+
+// Matches the mobile breakpoint ( max-width: 480px ); resolves to false during SSR.
+const isMobile = () =>
+	typeof window !== 'undefined' &&
+	typeof window.matchMedia === 'function' &&
+	window.matchMedia( '(max-width: 480px)' ).matches;
 
 const TASKS_TO_COMPLETE_ON_CLICK = [
 	'add_about_page',
