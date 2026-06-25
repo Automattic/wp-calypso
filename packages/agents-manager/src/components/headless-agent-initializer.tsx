@@ -15,8 +15,6 @@ import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 import type { HelpCenterSite } from '@automattic/data-stores';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 export interface HeadlessAgentInitializerProps {
 	/** The selected site object. */
 	site?: HelpCenterSite | null;

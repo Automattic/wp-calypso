@@ -14,7 +14,6 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import HeadingLogo from './heading-logo';
-import type { JSX } from 'react';
 import './one-login-layout.scss';
 
 export const ensureHeadingProvided = (

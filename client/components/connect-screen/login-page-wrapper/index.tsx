@@ -4,7 +4,7 @@ import { Step } from '@automattic/onboarding';
 import { createInterpolateElement, isValidElement } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useState, type JSX } from 'react';
+import { useState } from 'react';
 import { FormDivider } from 'calypso/blocks/authentication';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { ActionButtons } from '../action-buttons';

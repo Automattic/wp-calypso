@@ -3,7 +3,6 @@ import { useTranslate } from 'i18n-calypso';
 import { type JSX } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { ResponseDomain } from '../domains/types';
-import type { JSX } from 'react';
 
 export type Purchase = Purchases.Purchase;
 export type PurchasePriceTier = Purchases.PurchasePriceTier;

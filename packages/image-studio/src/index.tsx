@@ -19,8 +19,6 @@ import {
 } from './utils/tracking';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 /**
  * Type definitions
  */

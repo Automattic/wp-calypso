@@ -3,8 +3,6 @@ import { __ } from '@wordpress/i18n';
 import { ConfirmationDialog } from '../confirmation-dialog';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 interface ReelShareConfirmationDialogProps {
 	isOpen: boolean;
 	igDisplayName: string | null;

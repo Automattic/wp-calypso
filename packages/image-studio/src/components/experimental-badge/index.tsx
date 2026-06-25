@@ -2,8 +2,6 @@ import { __ } from '@wordpress/i18n';
 import type { JSX } from 'react';
 import './style.scss';
 
-import type { JSX } from 'react';
-
 interface ExperimentalBadgeProps {
 	variant?: 'light' | 'dark';
 }

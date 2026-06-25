@@ -5,8 +5,6 @@ import type { HelpCenterFeatureConfig, HelpCenterProduct } from '../feature-conf
 import type { CurrentUser, HelpCenterSite } from '@automattic/data-stores';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 export type HelpCenterRequiredInformation = {
 	newInteractionsBotSlug: string;
 	newInteractionsBotVersion?: string;

@@ -24,8 +24,6 @@ import AgentDock from './agent-dock';
 import { PersistentRouter } from './persistent-router';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 export interface AgentsManagerProps {
 	/** The name of the current section (e.g., 'wp-admin', 'gutenberg'). */
 	sectionName: string;

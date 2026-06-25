@@ -39,8 +39,6 @@ import { FEATURE_CLIP_META_KEY } from './feature-clip-meta';
 import type { JSX } from 'react';
 import './feature-clip-sidebar.scss';
 
-import type { JSX } from 'react';
-
 const PLUGIN_NAME = 'image-studio-feature-clip';
 const PANEL_NAME = 'image-studio-feature-clip-panel';
 

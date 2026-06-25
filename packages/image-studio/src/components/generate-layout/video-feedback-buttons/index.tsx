@@ -8,8 +8,6 @@ import { trackImageStudioImageFeedback } from '../../../utils/tracking';
 import type { JSX } from 'react';
 import './style.scss';
 
-import type { JSX } from 'react';
-
 interface VideoFeedbackButtonsProps {
 	videoUrl: string;
 	onFeedback?: ( feedback: 'up' | 'down' ) => void;
