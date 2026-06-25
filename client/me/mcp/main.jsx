@@ -89,44 +89,34 @@ function McpComponent( { path } ) {
 	const anyToolsEnabled = hasTools && visibleTools.some( ( [ , tool ] ) => tool.enabled );
 
 	const handleToggleAll = ( enabled ) => {
-		// Enabling: rely on the backend's default-on resolution (read AND write ops
-		// default enabled once a covering group intent is set) rather than
-		// materializing every ability — this also means newly-added abilities
-		// inherit the "on" state automatically.
-		if ( enabled ) {
-			mutation.mutate(
-				{
-					mcp_abilities: {
-						group_intents: { read: true, write: true },
-					},
-				},
-				{
-					onSuccess: () => {
-						recordTracksEvent( 'calypso_dashboard_mcp_account_toggled', { enabled } );
-					},
-				}
-			);
-			return;
-		}
-
-		// Disabling: explicitly turn every known ability off (an explicit `false`
-		// always wins, guaranteeing a clean kill switch) and clear every group
-		// intent so a future newly-added ability can't be silently re-enabled by a
-		// stale "enable all" intent left over from before this disable.
+		// A group intent only sets the *default* for abilities with no explicit
+		// per-op setting — an explicit override (from an earlier individual toggle)
+		// always wins (see SettingsHelper::is_ability_enabled()). So this also
+		// force-writes an explicit override for any currently-known ability that
+		// disagrees with the new state, in addition to the read/write group
+		// intents (so abilities added later still inherit the "on" state
+		// automatically without a future settings write).
 		const accountAbilities = {};
 		Object.keys( mcpAbilities ).forEach( ( toolId ) => {
-			accountAbilities[ toolId ] = false;
+			if ( mcpAbilities[ toolId ].enabled !== enabled ) {
+				accountAbilities[ toolId ] = enabled;
+			}
 		} );
 
-		const groupIntents = { read: false, write: false };
-		getGroupDescriptors( userSettings || {} ).forEach( ( group ) => {
-			groupIntents[ group.name ] = false;
-		} );
+		const groupIntents = { read: enabled, write: enabled };
+		if ( ! enabled ) {
+			// Disabling: also clear every group intent so a future newly-added
+			// ability can't be silently re-enabled by a stale "enable all" intent
+			// left over from before this disable.
+			getGroupDescriptors( userSettings || {} ).forEach( ( group ) => {
+				groupIntents[ group.name ] = false;
+			} );
+		}
 
 		mutation.mutate(
 			{
 				mcp_abilities: {
-					account: accountAbilities,
+					...( Object.keys( accountAbilities ).length > 0 && { account: accountAbilities } ),
 					group_intents: groupIntents,
 				},
 			},

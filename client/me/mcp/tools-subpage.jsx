@@ -123,10 +123,33 @@ export default function McpToolsSubpage( {
 		);
 	};
 
+	/**
+	 * A group intent only sets the *default* for abilities with no explicit
+	 * per-op setting — an explicit override (from an earlier individual toggle)
+	 * always wins (see SettingsHelper::is_ability_enabled()). So "Enable all"
+	 * also force-writes an explicit override for any tool in scope that
+	 * disagrees with the new state, otherwise previously-toggled tools would
+	 * silently stay stuck regardless of the group intent.
+	 * @param {Array<[string, import('@automattic/api-core').McpAbility]>} scopedTools
+	 * @param {boolean} enabled
+	 * @returns {Record<string, boolean>|undefined}
+	 */
+	const getOverridesToMatch = ( scopedTools, enabled ) => {
+		const overrides = {};
+		scopedTools.forEach( ( [ toolId, tool ] ) => {
+			if ( tool.enabled !== enabled ) {
+				overrides[ toolId ] = enabled;
+			}
+		} );
+		return Object.keys( overrides ).length > 0 ? overrides : undefined;
+	};
+
 	const handlePageToggle = ( enabled ) => {
+		const overrides = getOverridesToMatch( tools, enabled );
 		mutation.mutate(
 			{
 				mcp_abilities: {
+					...( overrides && { account: overrides } ),
 					group_intents: { [ toolCategory ]: enabled },
 				},
 			},
@@ -140,12 +163,15 @@ export default function McpToolsSubpage( {
 
 	/**
 	 * @param {string} groupName
+	 * @param {Array<[string, import('@automattic/api-core').McpAbility]>} groupTools
 	 * @param {boolean} enabled
 	 */
-	const handleGroupEnableAll = ( groupName, enabled ) => {
+	const handleGroupEnableAll = ( groupName, groupTools, enabled ) => {
+		const overrides = getOverridesToMatch( groupTools, enabled );
 		mutation.mutate(
 			{
 				mcp_abilities: {
+					...( overrides && { account: overrides } ),
 					group_intents: { [ groupName ]: enabled },
 				},
 			},
@@ -251,7 +277,7 @@ export default function McpToolsSubpage( {
 																disabled={ mutation.isPending }
 																label={ translate( 'Enable all' ) }
 																onChange={ ( checked ) =>
-																	handleGroupEnableAll( descriptor.name, checked )
+																	handleGroupEnableAll( descriptor.name, groupTools, checked )
 																}
 															/>
 														) }
