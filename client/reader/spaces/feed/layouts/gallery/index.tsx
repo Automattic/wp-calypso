@@ -10,9 +10,10 @@ import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { useInfiniteList } from 'calypso/reader/hooks/use-infinite-list';
 import { getPostUrl } from 'calypso/reader/route';
+import { Shimmer } from '../../components/skeleton';
 import { SpaceFeedTimeSince } from '../../components/time-since';
 import { getPostFieldKey, getPostFields, type SpaceFeedDayGroup } from '../../post-fields';
-import type { SpaceFeedLayoutProps } from '../types';
+import type { SpaceFeedLayoutProps, SpaceFeedSkeletonProps } from '../types';
 import type { ReadStreamPost } from '@automattic/api-core';
 
 import './style.scss';
@@ -24,6 +25,20 @@ const ROW_SIZE = 310;
 type GalleryRow =
 	| { kind: 'header'; key: string; label: string }
 	| { kind: 'posts'; key: string; posts: ReadStreamPost[] };
+
+// Responsive column count shared by the layout and its skeleton: 3 on desktop,
+// 2 on tablet, 1 on mobile.
+function useGalleryColumns(): number {
+	const isDesktop = useBreakpoint( '>960px' );
+	const isTablet = useBreakpoint( '>660px' );
+	if ( isDesktop ) {
+		return 3;
+	}
+	if ( isTablet ) {
+		return 2;
+	}
+	return 1;
+}
 
 function GalleryCard( { post }: { post: ReadStreamPost } ) {
 	const fields = getPostFields( post );
@@ -89,15 +104,7 @@ export function GalleryLayout( {
 	restoreKey,
 }: SpaceFeedLayoutProps ) {
 	const translate = useTranslate();
-	// Responsive column count: 3 on desktop, 2 on tablet, 1 on mobile.
-	const isDesktop = useBreakpoint( '>960px' );
-	const isTablet = useBreakpoint( '>660px' );
-	let columns = 1;
-	if ( isDesktop ) {
-		columns = 3;
-	} else if ( isTablet ) {
-		columns = 2;
-	}
+	const columns = useGalleryColumns();
 
 	// Build virtual rows: a full-width day header (Today / Yesterday / …) followed
 	// by CSS-grid rows of up to `columns` cards from that same day — the day
@@ -188,6 +195,36 @@ export function GalleryLayout( {
 					</div>
 				);
 			} ) }
+		</div>
+	);
+}
+
+/** Loading placeholder: a responsive grid of card-shaped shimmers. */
+export function GallerySkeleton( { count }: SpaceFeedSkeletonProps ) {
+	const columns = useGalleryColumns();
+	return (
+		<div
+			className="space-feed-gallery__skeleton"
+			style={ { gridTemplateColumns: `repeat(${ columns }, 1fr)` } }
+			aria-hidden="true"
+		>
+			{ Array.from( { length: count }, ( _value, index ) => (
+				<VStack
+					key={ index }
+					className="space-feed-gallery__card"
+					spacing={ 1.5 }
+					alignment="stretch"
+				>
+					<span className="space-feed-gallery__thumb">
+						<Shimmer className="space-feed-gallery__image" />
+					</span>
+					<VStack spacing={ 1 }>
+						<Shimmer className="space-feed-gallery__skeleton-line is-meta" />
+						<Shimmer className="space-feed-gallery__skeleton-line" />
+						<Shimmer className="space-feed-gallery__skeleton-line is-short" />
+					</VStack>
+				</VStack>
+			) ) }
 		</div>
 	);
 }

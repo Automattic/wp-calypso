@@ -94,3 +94,29 @@
 .space-feed-board__time {
 	color: var(--color-text-subtle);
 }
+
+// Loading skeleton: a two-lane grid of card-shaped shimmers.
+.space-feed-board__skeleton {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 16px;
+	padding: 8px;
+}
+
+.space-feed-board__skeleton-hero {
+	block-size: 120px;
+	border-radius: 0;
+}
+
+.space-feed-board__skeleton-line {
+	block-size: 14px;
+	margin-block-start: 10px;
+}
+
+.space-feed-board__skeleton-line.is-title {
+	block-size: 18px;
+}
+
+.space-feed-board__skeleton-line.is-short {
+	inline-size: 60%;
+}

@@ -1,8 +1,8 @@
-import { BoardLayout } from './board';
-import { GalleryLayout } from './gallery';
+import { BoardLayout, BoardSkeleton } from './board';
+import { GalleryLayout, GallerySkeleton } from './gallery';
 import { LegacyLayout } from './legacy';
-import { StandardListLayout } from './standard-list';
-import type { SpaceFeedLayoutProps } from './types';
+import { StandardListLayout, StandardListSkeleton } from './standard-list';
+import type { SpaceFeedLayoutProps, SpaceFeedSkeletonProps } from './types';
 import type { SpaceFeedLayout } from '@automattic/api-core';
 import type { ComponentType } from 'react';
 
@@ -36,4 +36,23 @@ const LAYOUT_PAGE_SIZE: Partial< Record< SpaceFeedLayout, number > > = {
 
 export function getLayoutPageSize( layout: SpaceFeedLayout | undefined ): number | undefined {
 	return layout ? LAYOUT_PAGE_SIZE[ layout ] : undefined;
+}
+
+/**
+ * Per-layout loading skeleton. Each curated layout renders placeholder cards in
+ * its own shape; the legacy layout has none (it owns its own loading via
+ * `ReaderStreamV2`), so it falls back to the shell's generic loading state.
+ */
+const LAYOUT_SKELETONS: Partial<
+	Record< SpaceFeedLayout, ComponentType< SpaceFeedSkeletonProps > >
+> = {
+	'standard-list': StandardListSkeleton,
+	gallery: GallerySkeleton,
+	board: BoardSkeleton,
+};
+
+export function getLayoutSkeleton(
+	layout: SpaceFeedLayout | undefined
+): ComponentType< SpaceFeedSkeletonProps > | undefined {
+	return layout ? LAYOUT_SKELETONS[ layout ] : undefined;
 }

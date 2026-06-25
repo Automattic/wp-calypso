@@ -88,3 +88,23 @@
 	font-size: 0.75rem;
 	color: var(--color-text-subtle);
 }
+
+// Loading skeleton: a static grid of card-shaped shimmers (`grid-template-columns`
+// set inline from the responsive column count).
+.space-feed-gallery__skeleton {
+	display: grid;
+	gap: 40px 32px;
+	padding-block: 8px;
+}
+
+.space-feed-gallery__skeleton-line {
+	block-size: 12px;
+}
+
+.space-feed-gallery__skeleton-line.is-meta {
+	inline-size: 50%;
+}
+
+.space-feed-gallery__skeleton-line.is-short {
+	inline-size: 70%;
+}

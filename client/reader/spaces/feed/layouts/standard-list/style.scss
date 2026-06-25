@@ -96,3 +96,25 @@
 	color: var(--color-text-subtle);
 	font-size: 0.75rem;
 }
+
+// Loading skeleton: one stacked block of shimmer lines per row.
+.space-feed-standard-list__skeleton-row {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding-block: 24px;
+	border-block-end: 1px solid var(--color-border-subtle);
+}
+
+.space-feed-standard-list__skeleton-line {
+	block-size: 14px;
+}
+
+.space-feed-standard-list__skeleton-line.is-title {
+	block-size: 18px;
+	inline-size: 70%;
+}
+
+.space-feed-standard-list__skeleton-line.is-meta {
+	inline-size: 40%;
+}

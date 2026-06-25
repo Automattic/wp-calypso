@@ -9,9 +9,10 @@ import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { useInfiniteList } from 'calypso/reader/hooks/use-infinite-list';
 import { getPostUrl } from 'calypso/reader/route';
+import { Shimmer } from '../../components/skeleton';
 import { SpaceFeedTimeSince } from '../../components/time-since';
 import { getPostFields, type SpaceFeedDayGroup, type SpaceFeedPostFields } from '../../post-fields';
-import type { SpaceFeedLayoutProps } from '../types';
+import type { SpaceFeedLayoutProps, SpaceFeedSkeletonProps } from '../types';
 import type { ReadStreamPost } from '@automattic/api-core';
 
 import './style.scss';
@@ -153,6 +154,21 @@ export function StandardListLayout( {
 					</div>
 				);
 			} ) }
+		</div>
+	);
+}
+
+/** Loading placeholder: stacked rows of shimmer lines matching the list rows. */
+export function StandardListSkeleton( { count }: SpaceFeedSkeletonProps ) {
+	return (
+		<div aria-hidden="true">
+			{ Array.from( { length: count }, ( _value, index ) => (
+				<div className="space-feed-standard-list__skeleton-row" key={ index }>
+					<Shimmer className="space-feed-standard-list__skeleton-line is-title" />
+					<Shimmer className="space-feed-standard-list__skeleton-line" />
+					<Shimmer className="space-feed-standard-list__skeleton-line is-meta" />
+				</div>
+			) ) }
 		</div>
 	);
 }

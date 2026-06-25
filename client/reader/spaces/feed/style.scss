@@ -88,8 +88,15 @@
 	inline-size: 40%;
 }
 
+// Shared shimmer block used by the per-layout skeletons (see `Shimmer`).
+.space-feed__shimmer {
+	display: block;
+	border-radius: 4px;
+}
+
 .space-feed__skeleton-avatar,
-.space-feed__skeleton-line {
+.space-feed__skeleton-line,
+.space-feed__shimmer {
 	background: linear-gradient(
 		90deg,
 		var(--color-surface-backdrop) 0%,
@@ -112,7 +119,8 @@
 
 @media (prefers-reduced-motion: reduce) {
 	.space-feed__skeleton-avatar,
-	.space-feed__skeleton-line {
+	.space-feed__skeleton-line,
+	.space-feed__shimmer {
 		animation: none;
 	}
 }
