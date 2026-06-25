@@ -44,10 +44,6 @@ function Root() {
 		isEnabled( 'dashboard/omnibar' ) || isEnabled( 'dashboard/omnibar-radical' );
 	const { name, supports, LoadingLogo = WordPressLogo } = useAppContext();
 	const isFetching = useIsFetching();
-	// Track in-flight mutations too, so actions like toggling DNSSEC or the
-	// domain transfer lock surface the global loading bar while the request is
-	// pending. Queries already drive the bar via `isFetching`, but mutations
-	// (which can take several seconds) previously showed no progress indicator.
 	const isMutating = useIsMutating();
 	const router = useRouter();
 	const queryClient = useQueryClient();
