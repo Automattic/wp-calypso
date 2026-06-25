@@ -536,37 +536,45 @@ body.is-section-reader {
 		}
 	}
 
-	// logged out master bar
-	.masterbar-menu .masterbar {
+	// Legacy logged-out nav layout — the 2026 nav sets its own (e.g. its 64px
+	// bar must match its 64px white surface, not this 78px), so keep it off.
+	.masterbar-menu .masterbar:not( :has( .x-nav--2026-redesign ) ) {
 		height: 78px;
-		.x-nav-link__logo svg path {
-			fill: var( --studio-white );
-		}
+
 		.x-nav {
 			padding-top: 10px;
 			padding-left: 16px;
 			padding-right: 16px;
-			.x-nav-item {
-				color: var( --studio-white );
-				&:hover {
-					color: var( --studio-white );
-				}
-				.cta-btn-nav {
-					margin-top: 9px;
-				}
-				.x-nav-link-chevron {
-					opacity: 1;
-					&::after,
-					&::before {
-						color: var( --studio-white );
-					}
-				}
-			}
+		}
+		.cta-btn-nav {
+			margin-top: 9px;
+		}
+		.x-nav-link-chevron {
+			opacity: 1;
+		}
+		.x-nav-link__primary {
+			border: 2px solid var( --studio-white );
+			background: transparent !important;
+		}
+	}
 
-			.x-nav-link__primary {
-				border: 2px solid var( --studio-white );
-				background: transparent !important;
-			}
+	// Resting over the dark hero: white nav ink. Logo fill, chevron border and
+	// CTA border all read currentcolor, so colouring .x-nav-item carries them.
+	.lpc-header-nav-container .x-nav--2026-redesign .x-nav-item {
+		color: var( --studio-white );
+
+		// Hover flips the CTA to a white fill with dark ink.
+		--x-nav-2026-cta-hover-fill: var( --studio-white );
+		--x-nav-2026-cta-hover-ink: var( --studio-gray-100 );
+	}
+
+	// White surface up (scrolled, a trigger hovered, or a dropdown open): the
+	// nav paints its own white band, so the ink flips back to dark.
+	.lpc-header-nav-container.is-scrolled,
+	.lpc-header-nav-container:has( .x-nav-item__wide:hover .x-nav-link-chevron ),
+	.lpc-header-nav-container:has( .x-dropdown--2026.is-dropdown-open ) {
+		.x-nav--2026-redesign .x-nav-item {
+			color: var( --studio-gray-100 );
 		}
 	}
 }
