@@ -9,6 +9,7 @@ import { getProductsList } from 'calypso/state/products-list/selectors';
 import CommissionsInfo from '../../commissions-info';
 import { MarketplaceTypeContext, TermPricingContext } from '../../context';
 import { useTotalInvoiceValue } from '../../hooks/use-marketplace';
+import { groupCartItems } from '../../lib/cart-items';
 import ShoppingCartMenuItem from './item';
 import type { ShoppingCartItem } from '../../types';
 
@@ -17,11 +18,20 @@ import './style.scss';
 type Props = {
 	onClose: () => void;
 	onRemoveItem: ( item: ShoppingCartItem ) => void;
+	onIncrementItem?: ( item: ShoppingCartItem ) => void;
+	onDecrementItem?: ( item: ShoppingCartItem ) => void;
 	onCheckout: () => void;
 	items: ShoppingCartItem[];
 };
 
-export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, items }: Props ) {
+export default function ShoppingCartMenu( {
+	onClose,
+	onCheckout,
+	onRemoveItem,
+	onIncrementItem,
+	onDecrementItem,
+	items,
+}: Props ) {
 	const translate = useTranslate();
 
 	const isAgencyApproved = useSelector( hasApprovedAgencyStatus );
@@ -59,11 +69,16 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 				</div>
 
 				<ul className="shopping-cart__menu-list">
-					{ items.map( ( item ) => (
+					{ groupCartItems( items ).map( ( { item, count } ) => (
 						<ShoppingCartMenuItem
-							key={ `shopping-cart-item-${ item.product_id }-${ item.quantity }` }
+							key={ `shopping-cart-item-${ item.product_id }-${ item.quantity }-${
+								item.site_domain ?? ''
+							}` }
 							item={ item }
+							count={ count }
 							onRemoveItem={ onRemoveItem }
+							onIncrementItem={ onIncrementItem }
+							onDecrementItem={ onDecrementItem }
 							termPricing={ termPricing }
 						/>
 					) ) }
