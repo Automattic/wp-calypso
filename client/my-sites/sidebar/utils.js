@@ -117,6 +117,18 @@ export const itemLinkMatches = ( path, currentPath ) => {
 		return fragmentIsEqual( path, currentPath, 2 );
 	}
 
+	// For `/subscribers/*` paths, show the Newsletter menu as selected. Subscribers
+	// is folding into Newsletter, so its pages live under that menu. On Simple sites
+	// the Subscribers and Newsletter items are wp-admin links (e.g.
+	// `admin.php?page=jetpack-newsletter`) whose first path fragment is empty, so the
+	// default fragment match below never selects them. Match any Newsletter menu URL
+	// (wp-admin link, `/newsletter`, or `/settings/newsletter`) so it highlights on
+	// Simple, Atomic, and Jetpack Cloud; the Subscribers item has no `newsletter` in
+	// its URL, so the highlight moves off it.
+	if ( pathIncludes( currentPath, 'subscribers', 1 ) ) {
+		return path.includes( 'newsletter' );
+	}
+
 	return fragmentIsEqual( path, currentPath, 1 );
 };
 

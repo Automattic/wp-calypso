@@ -70,6 +70,46 @@ describe( 'MySitesSidebar', () => {
 		} );
 	} );
 
+	describe( '#itemLinkMatches() subscribers pages highlight Newsletter', () => {
+		const subscriberDetailPath = '/subscribers/example.wordpress.com/123';
+
+		test( 'selects the Newsletter wp-admin link on Simple sites', () => {
+			expect(
+				itemLinkMatches(
+					'https://example.wordpress.com/wp-admin/admin.php?page=jetpack-newsletter',
+					subscriberDetailPath
+				)
+			).toBe( true );
+		} );
+
+		test( 'selects the relative Newsletter route on Atomic sites', () => {
+			expect( itemLinkMatches( '/newsletter/example.wordpress.com', subscriberDetailPath ) ).toBe(
+				true
+			);
+		} );
+
+		test( 'selects a /settings/newsletter Newsletter menu URL', () => {
+			expect(
+				itemLinkMatches( '/settings/newsletter/example.wordpress.com', subscriberDetailPath )
+			).toBe( true );
+		} );
+
+		test( 'does not select the Subscribers wp-admin link on Simple sites', () => {
+			expect(
+				itemLinkMatches(
+					'https://example.wordpress.com/wp-admin/admin.php?page=jetpack-subscribers',
+					subscriberDetailPath
+				)
+			).toBe( false );
+		} );
+
+		test( 'does not select the relative Subscribers route, so the highlight moves to Newsletter', () => {
+			expect( itemLinkMatches( '/subscribers/example.wordpress.com', subscriberDetailPath ) ).toBe(
+				false
+			);
+		} );
+	} );
+
 	describe( '#isItemSelected()', () => {
 		const site = { ID: 1234 };
 
