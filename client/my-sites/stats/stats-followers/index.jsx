@@ -85,6 +85,10 @@ const StatModuleFollowers = ( { className } ) => {
 	const subscriberManagementUrl = useJetpackCloudLinks
 		? `https://cloud.jetpack.com/subscribers/${ summaryPageSlug }`
 		: `https://wordpress.com/subscribers/${ summaryPageSlug }`;
+	// The new in-admin Newsletter > Subscribers page ships on WordPress.com (Simple
+	// and Atomic). Self-hosted Jetpack doesn't have it yet, so keep those sites on
+	// the existing subscribers link until it deploys there.
+	const isWpcomHosted = isAtomic || ! isJetpack;
 
 	return (
 		<StatsListCard
@@ -92,13 +96,13 @@ const StatModuleFollowers = ( { className } ) => {
 			data={ subTotals.subscribers.map( ( dataPoint ) => {
 				// Link the subscriber name to its individual details page. `link` is kept
 				// for the right-side icon that opens the subscriber's own site. In wp-admin
-				// (Odyssey) send them to the new Newsletter > Subscribers inspector; in
-				// Calypso navigate in-app to the subscriber details page.
+				// (Odyssey) on WordPress.com send them to the new Newsletter > Subscribers
+				// inspector; in Calypso navigate in-app to the subscriber details page.
 				let detailPage;
 				if ( dataPoint.subscription_id ) {
 					if ( ! isOdysseyStats ) {
 						detailPage = `/subscribers/${ summaryPageSlug }/${ dataPoint.subscription_id }`;
-					} else if ( adminPhpUrl ) {
+					} else if ( isWpcomHosted && adminPhpUrl ) {
 						detailPage = getNewsletterSubscriberDetailUrl(
 							adminPhpUrl,
 							dataPoint.subscription_id,
