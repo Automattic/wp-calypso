@@ -158,8 +158,8 @@ const ShareSiteModal = ( { setModalIsOpen, site, task }: ShareSiteModalProps ) =
 	);
 
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
-	// The popover anchor is stored in state (rather than a ref) so the popover positions
-	// reactively once the input element mounts.
+	// Anchor the "copied" popover to the full-width field wrapper (not the inner input, which is
+	// narrowed by the suffix button). Stored in state so the popover positions reactively on mount.
 	const [ inputAnchor, setInputAnchor ] = useState< HTMLElement | null >( null );
 	const copyHandler = () => {
 		navigator.clipboard.writeText( shareData.url );
@@ -206,35 +206,36 @@ const ShareSiteModal = ( { setModalIsOpen, site, task }: ShareSiteModalProps ) =
 		>
 			<VStack className="share-site-modal__modal-content" spacing={ 4 }>
 				<VStack className="share-site-modal__modal-actions" spacing={ 4 }>
-					{ clipboardCopied && (
-						<Popover
-							className="share-site-modal__popover"
-							anchor={ inputAnchor }
-							placement="top"
-							noArrow
-							focusOnMount={ false }
-						>
-							{ __( 'Copied to clipboard!', 'launchpad' ) }
-						</Popover>
-					) }
-					<InputControl
-						className="share-site-modal__modal-input-container"
-						__next40pxDefaultSize
-						value={ shareData.title }
-						label={ __( 'Site URL', 'launchpad' ) }
-						ref={ setInputAnchor }
-						readOnly
-						hideLabelFromVision
-						suffix={
-							<Button
-								onClick={ copyHandler }
-								className="share-site-modal__modal-copy-link"
-								disabled={ ! shareData.title || clipboardCopied }
-								icon={ clipboardCopied ? check : copy }
-								label={ __( 'Copy Site URL', 'launchpad' ) }
-							/>
-						}
-					/>
+					<div className="share-site-modal__url-field" ref={ setInputAnchor }>
+						{ clipboardCopied && (
+							<Popover
+								className="share-site-modal__popover"
+								anchor={ inputAnchor }
+								placement="top"
+								noArrow
+								focusOnMount={ false }
+							>
+								{ __( 'Copied to clipboard!', 'launchpad' ) }
+							</Popover>
+						) }
+						<InputControl
+							className="share-site-modal__modal-input-container"
+							__next40pxDefaultSize
+							value={ shareData.title }
+							label={ __( 'Site URL', 'launchpad' ) }
+							readOnly
+							hideLabelFromVision
+							suffix={
+								<Button
+									onClick={ copyHandler }
+									className="share-site-modal__modal-copy-link"
+									disabled={ ! shareData.title || clipboardCopied }
+									icon={ clipboardCopied ? check : copy }
+									label={ __( 'Copy Site URL', 'launchpad' ) }
+								/>
+							}
+						/>
+					</div>
 					<HStack className="share-site-modal__modal-social" as="ul" justify="start">
 						{ shareLinks.map( ( link, index ) => (
 							<li key={ index }>
