@@ -61,7 +61,12 @@ const StatsListCard = ( {
 			// same-origin absolute URLs, which can still use the in-app router.
 			try {
 				const parsedUrl = new URL( listItemData.page );
-				if ( parsedUrl.origin !== window.location.origin ) {
+				// wp-admin destinations are same-origin in Odyssey but live outside the
+				// SPA, so they need a full page load rather than the in-app router.
+				if (
+					parsedUrl.origin !== window.location.origin ||
+					parsedUrl.pathname.includes( '/wp-admin/' )
+				) {
 					window.location.href = listItemData.page;
 				} else {
 					page( parsedUrl.pathname + parsedUrl.search + parsedUrl.hash );

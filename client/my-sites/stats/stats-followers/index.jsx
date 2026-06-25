@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteAdminUrl, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SUBSCRIBERS_SUPPORT_URL } from '../const';
 import useSubscribersTotalsQueries from '../hooks/use-subscribers-totals-query';
@@ -15,6 +15,23 @@ import StatsModulePlaceholder from '../stats-module/placeholder';
 
 import './style.scss';
 
+/**
+ * Build the wp-admin URL that opens a single subscriber in the new Newsletter > Subscribers
+ * inspector. That page is a router mounted on `admin.php?page=jetpack-newsletter`, and it
+ * reads its route from the `p` query param, so the subscriber and user ids are nested inside
+ * an encoded `/?subscriber=…&u=…` search string. `userId` is omitted for email-only subscribers.
+ * @param {string} adminPhpUrl Absolute URL to the site's wp-admin `admin.php` (no query).
+ * @param {number} subscriptionId The subscriber's subscription id.
+ * @param {number} [userId] The subscriber's WordPress.com user id, when present.
+ * @returns {string} Absolute wp-admin URL opening the subscriber inspector.
+ */
+export const getNewsletterSubscriberDetailUrl = ( adminPhpUrl, subscriptionId, userId ) => {
+	const inspectorRoute = userId
+		? `/?subscriber=${ subscriptionId }&u=${ userId }`
+		: `/?subscriber=${ subscriptionId }`;
+	return `${ adminPhpUrl }?page=jetpack-newsletter&p=${ encodeURIComponent( inspectorRoute ) }`;
+};
+
 const StatModuleFollowers = ( { className } ) => {
 	const translate = useTranslate();
 
@@ -23,6 +40,7 @@ const StatModuleFollowers = ( { className } ) => {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const adminPhpUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId, 'admin.php' ) );
 
 	const { data: subTotals, isLoading, isError: hasError } = useSubscribersTotalsQueries( siteId );
 
@@ -60,9 +78,8 @@ const StatModuleFollowers = ( { className } ) => {
 
 	const noData = ! subTotals.subscribers.length;
 	const summaryPageSlug = siteSlug || '';
-	// Odyssey Stats (wp-admin) can't route to the individual subscriber details
-	// page internally, so the name links out to the full wordpress.com /
-	// cloud.jetpack.com URL there and navigates in-app in Calypso.
+	// `subscriberManagementUrl` is the subscribers list link used by "Manage subscribers"
+	// and as the Odyssey fallback when the site's admin URL isn't known.
 	const isOdysseyStats = config.isEnabled( 'is_odyssey' );
 	const useJetpackCloudLinks = isAtomic || isJetpack;
 	const subscriberManagementUrl = useJetpackCloudLinks
@@ -74,14 +91,22 @@ const StatModuleFollowers = ( { className } ) => {
 			moduleType="followers"
 			data={ subTotals.subscribers.map( ( dataPoint ) => {
 				// Link the subscriber name to its individual details page. `link` is kept
-				// for the right-side icon that opens the subscriber's own site. Odyssey
-				// (wp-admin) can't route there internally, so use the full URL; Calypso
-				// navigates in-app.
+				// for the right-side icon that opens the subscriber's own site. In wp-admin
+				// (Odyssey) send them to the new Newsletter > Subscribers inspector; in
+				// Calypso navigate in-app to the subscriber details page.
 				let detailPage;
 				if ( dataPoint.subscription_id ) {
-					detailPage = isOdysseyStats
-						? `${ subscriberManagementUrl }/${ dataPoint.subscription_id }`
-						: `/subscribers/${ summaryPageSlug }/${ dataPoint.subscription_id }`;
+					if ( ! isOdysseyStats ) {
+						detailPage = `/subscribers/${ summaryPageSlug }/${ dataPoint.subscription_id }`;
+					} else if ( adminPhpUrl ) {
+						detailPage = getNewsletterSubscriberDetailUrl(
+							adminPhpUrl,
+							dataPoint.subscription_id,
+							dataPoint.user_id
+						);
+					} else {
+						detailPage = `${ subscriberManagementUrl }/${ dataPoint.subscription_id }`;
+					}
 				}
 				return {
 					...dataPoint,

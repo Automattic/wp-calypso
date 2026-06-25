@@ -83,6 +83,10 @@ const selectSubscribers = ( payload: {
 		total_wpcom: payload.total_wpcom,
 		is_owner_subscribed: payload.is_owner_subscribed,
 		subscribers: ( payload.subscribers ?? [] ).map( ( item ) => {
+			// Truthy fallback (not `??`) so a `0` placeholder id falls through to the
+			// next field, matching getSubscriptionIdFromSubscriber.
+			const subscriptionId =
+				item.email_subscription_id || item.subscription_id || item.wpcom_subscription_id || item.ID;
 			return {
 				label: item.label ?? item.display_name,
 				iconClassName: 'avatar-user',
@@ -100,16 +104,13 @@ const selectSubscribers = ( payload: {
 				],
 				date_subscribed: item.date_subscribed,
 				// Preserve the subscription id so the Subscribers module can link each
-				// name to its individual subscriber details page. Mirrors the precedence
-				// used by the Subscribers DataViews list, then falls back to `ID`, which is
-				// the field the `stats/followers` endpoint returns.
-				// Truthy fallback (not `??`) so a `0` placeholder id falls through to the
-				// next field, matching getSubscriptionIdFromSubscriber.
-				subscription_id:
-					item.email_subscription_id ||
-					item.subscription_id ||
-					item.wpcom_subscription_id ||
-					item.ID,
+				// name to its individual subscriber details page.
+				subscription_id: subscriptionId,
+				// `ID` is the wpcom user id for wpcom subscribers but the subscription id
+				// for email-only subscribers (per the stats/followers endpoint). Treat it
+				// as a user id only when it differs from the subscription id, so the
+				// Newsletter inspector gets `u` for wpcom rows and omits it for email rows.
+				user_id: item.ID && item.ID !== subscriptionId ? item.ID : undefined,
 			};
 		} ),
 	};
