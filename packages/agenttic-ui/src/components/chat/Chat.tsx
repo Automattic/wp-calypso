@@ -51,6 +51,7 @@ export function Chat( {
 	freeDrag = false,
 	initialFreeDragPosition,
 	onFreeDragEnd,
+	onChatPositionChange,
 }: ChatProps ) {
 	// Local input state for controlled component pattern
 	const [ inputValue, setInputValue ] = useState( '' );
@@ -275,6 +276,20 @@ export function Chat( {
 	// Handle drag end with snap functionality
 	const handleDragEnd = useCallback(
 		( _event: any, info: PanInfo ) => {
+			// Determine which side based on drop position
+			// For true 50/50 split, account for the chat widget's width
+			const dropX = x.get();
+			const chatWidth = STYLE_CONSTANTS.COMPACT_WIDTH;
+			const viewportMidpointX = ( window.innerWidth - chatWidth ) / 2;
+			const isLeft = dropX < viewportMidpointX;
+			const newSide = isLeft ? 'left' : 'right';
+
+			if ( currentSide === newSide ) {
+				setCurrentSide( newSide );
+				setChatPosition( newSide );
+				onChatPositionChange?.( newSide );
+			}
+
 			// In free drag mode the panel stays where dropped. dragElastic={ 0 }
 			// hard-clamps the drag to the constraint box, so skip the corner-snap
 			// and report the dropped pixel position so consumers can persist it.
@@ -282,16 +297,6 @@ export function Chat( {
 				onFreeDragEnd?.( { x: x.get(), y: y.get() } );
 				return;
 			}
-
-			// Determine which side based on drop position
-			// For true 50/50 split, account for the chat widget's width
-			const dropX = info.point.x;
-			const chatWidth = STYLE_CONSTANTS.COMPACT_WIDTH;
-			const viewportMidpointX = ( window.innerWidth - chatWidth ) / 2;
-			const isLeft = dropX < viewportMidpointX;
-			const newSide = isLeft ? 'left' : 'right';
-			setCurrentSide( newSide );
-			setChatPosition( newSide );
 
 			// Calculate snap position using the new side immediately
 			const position = calculateSnapPosition( newSide );

@@ -447,17 +447,9 @@ export function AgentUIContainer( {
 		( _event: any, info: PanInfo ) => {
 			setIsDragging( false );
 
-			// In free drag mode the panel stays where dropped. dragElastic={ 0 }
-			// hard-clamps the drag to the constraint box, so skip the corner-snap
-			// and report the dropped pixel position so consumers can persist it.
-			if ( freeDrag ) {
-				onFreeDragEnd?.( { x: x.get(), y: y.get() } );
-				return;
-			}
-
 			// Determine which side based on drop position
 			// For true 50/50 split, account for the chat widget's width
-			const dropX = info.point.x;
+			const dropX = x.get();
 			const chatWidth = STYLE_CONSTANTS.COMPACT_WIDTH;
 			const viewportMidpointX = ( window.innerWidth - chatWidth ) / 2;
 			const isLeft = dropX < viewportMidpointX;
@@ -467,6 +459,14 @@ export function AgentUIContainer( {
 				setCurrentSide( newSide );
 				setChatPosition( newSide );
 				onChatPositionChange?.( newSide );
+			}
+
+			// In free drag mode the panel stays where dropped. dragElastic={ 0 }
+			// hard-clamps the drag to the constraint box, so skip the corner-snap
+			// and report the dropped pixel position so consumers can persist it.
+			if ( freeDrag ) {
+				onFreeDragEnd?.( { x: x.get(), y: y.get() } );
+				return;
 			}
 
 			// Calculate snap position using the new side immediately
