@@ -48,7 +48,6 @@ export const TRACKING_IDS = {
 	facebookInit: '823166884443641',
 	facebookJetpackInit: '919484458159593',
 	facebookAkismetInit: '485349158311379',
-	logRocket: 'fsw5w8/jetpack-logrocket-trial',
 	outbrainAdvId: '00f0f5287433c2851cc0cb917c7ff0465e',
 	pinterestInit: '2613194105266',
 	quantcast: 'p-3Ma3jHaQMB_bS',

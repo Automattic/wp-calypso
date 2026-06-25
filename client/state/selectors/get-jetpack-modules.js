@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/jetpack/init';
 
 /**
@@ -10,5 +8,5 @@ import 'calypso/state/jetpack/init';
  * @returns {?Object}         Modules data
  */
 export default function getJetpackModules( state, siteId ) {
-	return get( state.jetpack.modules.items, [ siteId ], null );
+	return state.jetpack.modules.items?.[ siteId ] ?? null;
 }

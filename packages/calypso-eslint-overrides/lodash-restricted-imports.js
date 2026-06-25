@@ -26,6 +26,9 @@ const JS_UTILS_NAMES = [
 	'random',
 	'range',
 	'truncate',
+	'flow',
+	'defaults',
+	'set',
 ];
 
 // The js-utils case converters cover ASCII identifiers/keys, not lodash's full
@@ -63,6 +66,9 @@ const FINDINDEX_MESSAGE =
 	'Please use native `array.findIndex( ( item ) => … )` instead of lodash `findIndex`.';
 const CLONE_MESSAGE =
 	'Please use a spread copy (`{ ...obj }` / `[ ...arr ]`) instead of lodash `clone`.';
+const CLONE_DEEP_MESSAGE =
+	'Please use native `structuredClone` for plain serializable data instead of lodash `cloneDeep`. ' +
+	'For object graphs that contain functions, class instances, or symbol keys, write a small local clone.';
 const PROPERTY_MESSAGE =
 	'Please use an arrow function (`( obj ) => obj.key`) instead of lodash `property`.';
 // The js-utils maxBy/minBy rank by numeric iteratee values only — not lodash's
@@ -75,6 +81,17 @@ const EXTREMUM_MESSAGE =
 const PARTITION_MESSAGE =
 	'Please use `partition` from `@automattic/js-utils` with a function predicate. ' +
 	'It does not support lodash iteratee shorthands — expand those to a predicate function.';
+// The js-utils sortBy/orderBy support function and property-path iteratees
+// (names, indices, dotted/bracket paths, path arrays) but not lodash's
+// object-match shorthand.
+const SORT_MESSAGE =
+	'Please use `sortBy`/`orderBy` from `@automattic/js-utils`. They support function and ' +
+	'property-path iteratees (and arrays of those) but not lodash object-match shorthands.';
+const REJECT_MESSAGE =
+	'Please use native `array.filter( ( item ) => ! … )` instead of lodash `reject` ' +
+	'(expand object-match shorthands to a predicate, and guard nullable collections with `?? []`).';
+const CONCAT_MESSAGE =
+	'Please use native `array.concat( … )` (or `[].concat( ...arrays )`) instead of lodash `concat`.';
 
 const paths = [
 	{ name: 'lodash', importNames: JS_UTILS_NAMES, message: JS_UTILS_MESSAGE },
@@ -94,9 +111,13 @@ const paths = [
 	{ name: 'lodash', importNames: [ 'findKey' ], message: FINDKEY_MESSAGE },
 	{ name: 'lodash', importNames: [ 'findIndex' ], message: FINDINDEX_MESSAGE },
 	{ name: 'lodash', importNames: [ 'clone' ], message: CLONE_MESSAGE },
+	{ name: 'lodash', importNames: [ 'cloneDeep' ], message: CLONE_DEEP_MESSAGE },
 	{ name: 'lodash', importNames: [ 'property' ], message: PROPERTY_MESSAGE },
 	{ name: 'lodash', importNames: [ 'maxBy', 'minBy' ], message: EXTREMUM_MESSAGE },
 	{ name: 'lodash', importNames: [ 'partition' ], message: PARTITION_MESSAGE },
+	{ name: 'lodash', importNames: [ 'sortBy', 'orderBy' ], message: SORT_MESSAGE },
+	{ name: 'lodash', importNames: [ 'reject' ], message: REJECT_MESSAGE },
+	{ name: 'lodash', importNames: [ 'concat' ], message: CONCAT_MESSAGE },
 ];
 
 // Deep `lodash/<fn>` imports bypass the named-import paths above.
@@ -118,9 +139,13 @@ const patterns = [
 	{ group: [ 'lodash/findKey' ], message: FINDKEY_MESSAGE },
 	{ group: [ 'lodash/findIndex' ], message: FINDINDEX_MESSAGE },
 	{ group: [ 'lodash/clone' ], message: CLONE_MESSAGE },
+	{ group: [ 'lodash/cloneDeep' ], message: CLONE_DEEP_MESSAGE },
 	{ group: [ 'lodash/property' ], message: PROPERTY_MESSAGE },
 	{ group: [ 'lodash/maxBy', 'lodash/minBy' ], message: EXTREMUM_MESSAGE },
 	{ group: [ 'lodash/partition' ], message: PARTITION_MESSAGE },
+	{ group: [ 'lodash/sortBy', 'lodash/orderBy' ], message: SORT_MESSAGE },
+	{ group: [ 'lodash/reject' ], message: REJECT_MESSAGE },
+	{ group: [ 'lodash/concat' ], message: CONCAT_MESSAGE },
 ];
 
 module.exports = { paths, patterns };

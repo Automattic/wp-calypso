@@ -1,6 +1,5 @@
 import { TimeSince } from '@automattic/components';
 import { debounce } from '@wordpress/compose';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
@@ -117,7 +116,7 @@ class PostByline extends Component {
 		const siteSlug = site?.slug;
 		const siteUrl = site?.URL;
 		const siteName = getSiteName( { site, feed, post } );
-		const hasAuthorName = !! get( post, 'author.name', null );
+		const hasAuthorName = !! ( post?.author?.name ?? null );
 		const shouldDisplayAuthor = hasAuthorName && ! isAuthorNameBlocked( post.author.name );
 		const streamUrl = getStreamUrl( feedId, siteId );
 		const siteIcon = site?.icon?.img;

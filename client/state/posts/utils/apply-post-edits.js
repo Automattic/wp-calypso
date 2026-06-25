@@ -1,4 +1,4 @@
-import { cloneDeep, find, map, mergeWith, reduce, reject } from 'lodash';
+import { find, map, mergeWith, reduce } from 'lodash';
 
 /*
  * Applies a metadata edit operation (either update or delete) to an existing array of
@@ -19,7 +19,7 @@ function applyMetadataEdit( metadata, edit ) {
 			// return unmodified original value.
 			const { key } = edit;
 			if ( find( metadata, { key } ) ) {
-				return reject( metadata, { key } );
+				return ( Array.isArray( metadata ) ? metadata : [] ).filter( ( m ) => m.key !== key );
 			}
 			return metadata;
 		}
@@ -41,15 +41,19 @@ function applyMetadataEdits( metadata, edits ) {
  * @returns {Object}       Merged post with applied edits
  */
 export function applyPostEdits( post, edits ) {
-	return mergeWith( cloneDeep( post ), edits, ( objValue, srcValue, key, obj, src, stack ) => {
-		// Merge metadata specially. Only a `metadata` key at top level gets special treatment,
-		// keys with the same name in nested objects do not.
-		if ( key === 'metadata' && stack.size === 0 ) {
-			return applyMetadataEdits( objValue, srcValue );
-		}
+	return mergeWith(
+		structuredClone( post ),
+		edits,
+		( objValue, srcValue, key, obj, src, stack ) => {
+			// Merge metadata specially. Only a `metadata` key at top level gets special treatment,
+			// keys with the same name in nested objects do not.
+			if ( key === 'metadata' && stack.size === 0 ) {
+				return applyMetadataEdits( objValue, srcValue );
+			}
 
-		if ( Array.isArray( srcValue ) ) {
-			return srcValue;
+			if ( Array.isArray( srcValue ) ) {
+				return srcValue;
+			}
 		}
-	} );
+	);
 }

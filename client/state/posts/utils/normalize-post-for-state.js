@@ -1,4 +1,4 @@
-import { cloneDeep, map, reduce } from 'lodash';
+import { map, reduce } from 'lodash';
 
 /**
  * Recursively unset a value in an object by its path, represented by an array.
@@ -25,7 +25,7 @@ const recursiveUnset = ( object, path ) => {
  * @returns {Object}      Normalized post object
  */
 export function normalizePostForState( post ) {
-	const normalizedPost = cloneDeep( post );
+	const normalizedPost = structuredClone( post );
 	return reduce(
 		[
 			[],

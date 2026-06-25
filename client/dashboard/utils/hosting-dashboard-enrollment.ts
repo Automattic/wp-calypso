@@ -30,12 +30,12 @@ export function getHostingDashboardEnrollment(
 		return { enrolled: false };
 	}
 
-	if ( preference?.value === 'opt-in' ) {
-		return { enrolled: true, reason: 'opt-in' };
-	}
-
 	if ( preference?.value === 'forced-opt-in' || isInRolloutCohort( userId ) ) {
 		return { enrolled: true, reason: 'forced' };
+	}
+
+	if ( preference?.value === 'opt-in' ) {
+		return { enrolled: true, reason: 'opt-in' };
 	}
 
 	return { enrolled: false };

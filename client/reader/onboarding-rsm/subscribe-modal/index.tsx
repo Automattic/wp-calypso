@@ -255,6 +255,11 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 												</span>
 											</div>
 											<ReaderFollowButton
+												// Remount per previewed site so the follow mutation's
+												// pending state (which lingers while follow-sensitive
+												// caches refetch) can't disable the button for the next
+												// site the user previews.
+												key={ selectedSite.feed_ID }
 												siteUrl={ selectedFollowUrl }
 												feedId={ selectedSite.feed_ID }
 												siteId={ selectedSite.site_ID }

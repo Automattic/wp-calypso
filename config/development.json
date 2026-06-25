@@ -173,6 +173,7 @@
 		"p2/p2-plus": true,
 		"page/export": true,
 		"performance/apm": true,
+		"plans/delayed-downgrade": true,
 		"plans/expired-downgrade": true,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,

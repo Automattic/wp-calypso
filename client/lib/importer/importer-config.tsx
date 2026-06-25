@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
+import { orderBy } from '@automattic/js-utils';
 import { TranslateResult, translate } from 'i18n-calypso';
-import { filter, orderBy } from 'lodash';
+import { filter } from 'lodash';
 import { type ImporterOption } from 'calypso/blocks/import/list';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { appStates } from 'calypso/state/imports/constants';
