@@ -1,6 +1,6 @@
 {
 	"name": "i18n-calypso",
-	"version": "7.4.1",
+	"version": "8.0.0",
 	"description": "I18n JavaScript library on top of Tannin originally used in Calypso.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
@@ -28,6 +28,7 @@
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepare": "yarn run clean && yarn run build",
+		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch",
 		"test": "yarn jest"
 	},
