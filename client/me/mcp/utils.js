@@ -141,8 +141,8 @@ export function getGroupDescriptors( userSettings ) {
 
 /**
  * Get the account-level group "enable all" intents (AIINT-471).
- * Keys are `read`, `write`, or a bare group name (e.g. `wpcom-mcp/site`) —
- * matching a getGroupDescriptors() entry's `name`.
+ * Keys are `read`, `write`, or a bare group slug (e.g. `site`) — matching a
+ * getGroupDescriptors() entry's `name`.
  * @param {Object} userSettings - The user settings object
  * @returns {Record<string, boolean>}
  */

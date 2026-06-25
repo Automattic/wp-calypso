@@ -6,9 +6,9 @@ describe( 'client/me/mcp/utils', () => {
 			const userSettings = {
 				mcp_abilities: {
 					groups: [
-						{ name: 'wpcom-mcp/site', label: 'Site', description: 'Manage sites.', order: 1 },
+						{ name: 'site', label: 'Site', description: 'Manage sites.', order: 1 },
 						{
-							name: 'wpcom-mcp/content-authoring',
+							name: 'content-authoring',
 							label: 'Content Authoring',
 							description: 'Create posts.',
 							order: 0,
@@ -18,8 +18,8 @@ describe( 'client/me/mcp/utils', () => {
 			};
 
 			expect( getGroupDescriptors( userSettings ).map( ( s ) => s.name ) ).toEqual( [
-				'wpcom-mcp/content-authoring',
-				'wpcom-mcp/site',
+				'content-authoring',
+				'site',
 			] );
 		} );
 

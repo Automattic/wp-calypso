@@ -1,10 +1,11 @@
 /**
  * Read / Write MCP tools pages — group tools by display group (AIINT-469/472):
- * Content Authoring, Site, Account, etc. A group defaults to a STRAP facade, but
- * some facades are merged into another group (e.g. Create Site into Site). Each
- * settings-visible ability carries a `group` field matching the `name` of one of
- * the ordered group descriptors returned by the API (`mcp_abilities.groups`, see
- * utils.js `getGroupDescriptors()`).
+ * Content Authoring, Site, Account, etc. A group's members usually come from one
+ * STRAP facade, but multiple facades can resolve to the same group (e.g. Create
+ * Site into Site), and standalone abilities can declare a group directly in
+ * config. Each settings-visible ability carries a `group` field (a clean slug,
+ * e.g. `site`) matching the `name` of one of the ordered group descriptors
+ * returned by the API (`mcp_abilities.groups`, see utils.js `getGroupDescriptors()`).
  */
 
 import { __ } from '@wordpress/i18n';

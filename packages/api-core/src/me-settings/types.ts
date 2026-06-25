@@ -24,12 +24,12 @@ export type McpAbility = {
 	visible?: boolean;
 	/** Whether this ability is read-only. Always present (guaranteed boolean) as of AIINT-469. */
 	readonly: boolean;
-	/** The display group this ability belongs to (e.g. `wpcom-mcp/site`), or `null` for standalone abilities not behind a group. */
+	/** The display group this ability belongs to — a clean slug (e.g. `site`), decoupled from any STRAP facade's tool key. `null` for abilities with no resolved group. */
 	group: string | null;
 	annotations?: McpAbilityAnnotations;
 };
 
-/** Ordered display-group descriptor for the settings UI's middle grouping layer (AIINT-469). A group defaults to a STRAP facade, but some facades are merged into another group (e.g. Create Site into Site). */
+/** Ordered display-group descriptor for the settings UI's middle grouping layer (AIINT-469). A group's members usually come from one STRAP facade, but multiple facades can resolve to the same group (e.g. Create Site into Site), and standalone abilities can declare a group directly in config. */
 export type McpGroupDescriptor = {
 	name: string;
 	label: string;
@@ -42,7 +42,7 @@ export type McpSiteOverride = {
 	account_tools_enabled?: boolean;
 	site_level_enabled?: boolean;
 	abilities?: Record< string, unknown >;
-	/** Site-level group "enable all" intents (AIINT-471): keys are `read`, `write`, or a bare group name (e.g. `wpcom-mcp/site`). */
+	/** Site-level group "enable all" intents (AIINT-471): keys are `read`, `write`, or a bare group slug (e.g. `site`). */
 	group_intents?: Record< string, boolean >;
 };
 
@@ -53,7 +53,7 @@ export type McpAbilities = {
 	site_level_enabled_default?: boolean;
 	/** Ordered display-group descriptors (AIINT-469). */
 	groups?: McpGroupDescriptor[];
-	/** Account-level group "enable all" intents (AIINT-471): keys are `read`, `write`, or a bare group name (e.g. `wpcom-mcp/site`). */
+	/** Account-level group "enable all" intents (AIINT-471): keys are `read`, `write`, or a bare group slug (e.g. `site`). */
 	group_intents?: Record< string, boolean >;
 };
 
