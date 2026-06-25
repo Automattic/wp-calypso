@@ -64,6 +64,7 @@
 		"checkout/checkout-version": true,
 		"checkout/google-pay": true,
 		"checkout/stripe-upi": true,
+		"checkout/stripe-wallet": true,
 		"ciab/allow-domain-features": true,
 		"ciab/custom-branding": true,
 		"comments/filters-in-posts": true,

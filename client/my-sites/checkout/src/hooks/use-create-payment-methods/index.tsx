@@ -30,6 +30,7 @@ import {
 	createPixPaymentMethod,
 	createPixAutomaticoPaymentMethod,
 } from '../../payment-methods/pix';
+import { createStripeWalletMethod } from '../../payment-methods/stripe-wallet';
 import { createWeChatMethod } from '../../payment-methods/wechat';
 import useCreateExistingCards from './use-create-existing-cards';
 import useCreateExistingPayPalPPCP from './use-create-existing-paypal-ppcp';
@@ -368,6 +369,33 @@ function useCreateStripeUpi( {
 	);
 }
 
+function useCreateStripeWallet( {
+	isStripeLoading,
+	stripeLoadingError,
+	stripeConfiguration,
+	stripe,
+	responseCart,
+}: {
+	isStripeLoading: boolean;
+	stripeLoadingError: StripeLoadingError;
+	stripeConfiguration: StripeConfiguration | null;
+	stripe: Stripe | null;
+	responseCart: ReturnType< typeof useShoppingCart >[ 'responseCart' ];
+} ): PaymentMethod | null {
+	const isReady =
+		! isStripeLoading &&
+		! stripeLoadingError &&
+		stripe &&
+		stripeConfiguration &&
+		isEnabled( 'checkout/stripe-wallet' );
+
+	return useMemo( () => {
+		return isReady && stripe && stripeConfiguration
+			? createStripeWalletMethod( { stripe, stripeConfiguration, responseCart } )
+			: null;
+	}, [ isReady, stripe, stripeConfiguration, responseCart ] );
+}
+
 /**
  * Create all possible payment methods.
  *
@@ -505,6 +533,14 @@ export default function useCreatePaymentMethods( {
 		stripeLoadingError,
 	} );
 
+	const stripeWalletMethod = useCreateStripeWallet( {
+		isStripeLoading,
+		stripeLoadingError,
+		stripeConfiguration,
+		stripe,
+		responseCart,
+	} );
+
 	// The order of this array is the order that Payment Methods will be
 	// displayed in Checkout, although not all payment methods here will be
 	// listed; the list of allowed payment methods is returned by the shopping
@@ -513,6 +549,7 @@ export default function useCreatePaymentMethods( {
 	let paymentMethods = [
 		...existingCardMethods,
 		...existingPayPalPPCPMethods,
+		stripeWalletMethod,
 		applePayMethod,
 		googlePayMethod,
 		stripeMethod,
@@ -538,6 +575,7 @@ export default function useCreatePaymentMethods( {
 		paymentMethods = [
 			...existingCardMethods,
 			...existingPayPalPPCPMethods,
+			stripeWalletMethod,
 			applePayMethod,
 			googlePayMethod,
 			paypalExpressMethod,
