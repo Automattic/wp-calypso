@@ -94,13 +94,6 @@ body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .main.m
 		border-radius: 0;
 	}
 
-	// Unified groups card: each group row separated by a border
-	.mcp-tools-subpage__group {
-		&:not(:first-child) {
-			border-top: 1px solid var(--color-border-subtle);
-		}
-	}
-
 	// Group header: [info (flex:1)] [toggle] [chevron] on desktop
 	// Mobile: [info (flex:1)] [chevron] on row 1, [toggle (full-width)] on row 2
 	.mcp-tools-subpage__group-header {

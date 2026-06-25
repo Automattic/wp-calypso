@@ -225,14 +225,14 @@ export default function McpToolsSubpage( {
 					</Card>
 
 					{ groups.length > 0 ? (
-						<Card>
+						<VStack spacing={ 3 }>
 							{ groups.map( ( { group: descriptor, label, tools: groupTools } ) => {
 								const groupKey = descriptor?.name ?? '__other__';
 								const allGroupEnabled = groupTools.every( ( [ , t ] ) => t.enabled );
 								const isOpen = openGroups.has( groupKey );
 
 								return (
-									<div key={ groupKey } className="mcp-tools-subpage__group">
+									<Card key={ groupKey }>
 										<CardBody>
 											<div className="mcp-tools-subpage__group-header">
 												<div className="mcp-tools-subpage__group-info">
@@ -281,10 +281,10 @@ export default function McpToolsSubpage( {
 												</div>
 											) }
 										</CardBody>
-									</div>
+									</Card>
 								);
 							} ) }
-						</Card>
+						</VStack>
 					) : (
 						<Card>
 							<CardBody>
