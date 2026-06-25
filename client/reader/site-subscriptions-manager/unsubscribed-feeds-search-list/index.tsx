@@ -11,11 +11,7 @@ import { SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST } from 'calypso/landing
 const { useSiteSubscriptionsQuery, useSiteUnsubscribeMutation, useSiteSubscriptionsQueryProps } =
 	SubscriptionManager;
 
-interface Props {
-	hideTitle?: boolean;
-}
-export const UnsubscribedFeedsSearchList = ( props: Props ) => {
-	const { hideTitle = false } = props;
+export const UnsubscribedFeedsSearchList = () => {
 	const { searchTerm } = useSiteSubscriptionsQueryProps();
 	const { isPending: isUnsubscribing } = useSiteUnsubscribeMutation();
 	const translate = useTranslate();
@@ -53,16 +49,22 @@ export const UnsubscribedFeedsSearchList = ( props: Props ) => {
 		}
 	);
 
-	if ( filteredUnsubscribedFeedItems.length === 1 ) {
-		const feed = filteredUnsubscribedFeedItems[ 0 ];
-		return (
-			<FeedPreview
-				key={ `feed-preview-${ feed.blog_ID }-${ feed.feed_ID }` }
-				url={ feed.subscribe_URL }
-				source="manage_subscriptions_single_result_feed_preview"
-			/>
-		);
-	}
+	const shouldShowUnsubcribedFeedsListLoader =
+		isFetchingSubscriptions || // If site subscriptions are still fetching.
+		isFetchingUnsubscribedFeeds || // If unsubscribed feeds are still fetching.
+		isUnsubscribing; // If user is unsubscribing from subscriptions table.
+
+	const getTitle = (): string | null => {
+		if ( noFeedsFound || filteredUnsubscribedFeedItems.length === 0 ) {
+			return null;
+		}
+
+		if ( filteredUnsubscribedFeedItems.length === 1 ) {
+			return translate( 'Here is one result related to your search.' );
+		}
+
+		return translate( 'Here are some other sites related to your search.' );
+	};
 
 	if ( noFeedsFound ) {
 		return (
@@ -72,11 +74,6 @@ export const UnsubscribedFeedsSearchList = ( props: Props ) => {
 		);
 	}
 
-	const shouldShowUnsubcribedFeedsListLoader =
-		isFetchingSubscriptions || // If site subscriptions are still fetching.
-		isFetchingUnsubscribedFeeds || // If unsubscribed feeds are still fetching.
-		isUnsubscribing; // If user is unsubscribing from subscriptions table.
-
 	if ( shouldShowUnsubcribedFeedsListLoader ) {
 		return (
 			<div className="reader-unsubscribed-feeds-search-list-loader" role="status" aria-busy="true">
@@ -85,17 +82,21 @@ export const UnsubscribedFeedsSearchList = ( props: Props ) => {
 		);
 	}
 
-	const getTitle = () => {
-		if ( noFeedsFound || hideTitle ) {
-			return null;
-		}
-
-		if ( filteredUnsubscribedFeedItems.length === 1 ) {
-			return translate( 'Here is one result that matches your search:' );
-		}
-		return translate( 'Here are some other sites that match your search:' );
-	};
 	const title = getTitle();
+
+	if ( filteredUnsubscribedFeedItems.length === 1 ) {
+		const feed = filteredUnsubscribedFeedItems[ 0 ];
+		return (
+			<VStack spacing={ 4 }>
+				{ title && <h2 className="reader-unsubscribed-feeds-search-list-title">{ title }</h2> }
+				<FeedPreview
+					key={ `feed-preview-${ feed.blog_ID }-${ feed.feed_ID }` }
+					url={ feed.subscribe_URL }
+					source="manage_subscriptions_single_result_feed_preview"
+				/>
+			</VStack>
+		);
+	}
 
 	return (
 		<VStack spacing={ 4 }>

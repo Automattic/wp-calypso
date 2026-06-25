@@ -24,6 +24,12 @@ const ListActionsBar = () => {
 
 	const filterOptions = useSiteSubscriptionsFilterOptions();
 	const sortOptions = useMemo( () => getSortOptions( translate ), [ translate ] );
+	const { data, isLoading } = SubscriptionManager.useSiteSubscriptionsQuery();
+	const visibleCount = data.subscriptions.filter(
+		( subscription ) => ! subscription.isDeleted
+	).length;
+	const isSortDisabled = ! isLoading && visibleCount === 0;
+	const isFilterDisabled = ! isLoading && ! data.hasSearchMatchesWithAllFilter;
 
 	return (
 		<div className="site-subscriptions-list-actions-bar">
@@ -38,6 +44,7 @@ const ListActionsBar = () => {
 			<SelectDropdown
 				className="list-actions-bar__filter-control list-actions-bar__spacer"
 				options={ filterOptions }
+				disabled={ isFilterDisabled }
 				onSelect={ ( selectedOption: Option< Reader.SiteSubscriptionsFilterBy > ) =>
 					setFilterOption( selectedOption.value )
 				}
@@ -46,7 +53,12 @@ const ListActionsBar = () => {
 				} ) }
 			/>
 
-			<SortControls options={ sortOptions } value={ sortTerm } onChange={ setSortTerm } />
+			<SortControls
+				options={ sortOptions }
+				value={ sortTerm }
+				onChange={ setSortTerm }
+				disabled={ isSortDisabled }
+			/>
 		</div>
 	);
 };

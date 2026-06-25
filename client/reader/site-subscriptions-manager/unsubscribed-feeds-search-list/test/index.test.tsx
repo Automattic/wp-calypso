@@ -146,6 +146,12 @@ describe( 'UnsubscribedFeedsSearchList', () => {
 				'subscriptions-search-recommendation-list'
 			);
 		} );
+
+		expect(
+			screen.getByRole( 'heading', {
+				name: 'Here are some other sites related to your search.',
+			} )
+		).toBeVisible();
 	} );
 
 	it( 'renders a feed preview when there is a single feed item', async () => {
@@ -161,5 +167,10 @@ describe( 'UnsubscribedFeedsSearchList', () => {
 
 		expect( await screen.findByTestId( 'mock-feed-preview' ) ).toBeVisible();
 		expect( screen.queryByTestId( 'mock-reader-feed-item' ) ).not.toBeInTheDocument();
+		expect(
+			screen.getByRole( 'heading', {
+				name: 'Here is one result related to your search.',
+			} )
+		).toBeVisible();
 	} );
 } );

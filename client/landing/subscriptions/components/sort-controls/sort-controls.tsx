@@ -16,12 +16,14 @@ type SortControlsProps< T > = {
 	options: Option< T >[];
 	value: T;
 	onChange: ( sortOrder: T ) => void;
+	disabled?: boolean;
 };
 
 const SortControls: < T extends string >( props: SortControlsProps< T > ) => ReactElement = ( {
 	options,
 	value,
 	onChange,
+	disabled = false,
 } ) => {
 	const translate = useTranslate();
 	const sortingLabel = useMemo(
@@ -42,13 +44,15 @@ const SortControls: < T extends string >( props: SortControlsProps< T > ) => Rea
 					className="subscription-manager-sort-controls__button"
 					icon={ <Gridicon icon={ isOpen ? 'chevron-up' : 'chevron-down' } /> }
 					iconSize={ 16 }
-					onClick={ onToggle }
+					disabled={ disabled }
+					onClick={ disabled ? undefined : onToggle }
 					aria-expanded={ isOpen }
 					onKeyDown={ ( event: React.KeyboardEvent ) => {
-						if ( ! isOpen && event.code === 'ArrowDown' ) {
-							event.preventDefault();
-							onToggle();
+						if ( disabled || isOpen || event.code !== 'ArrowDown' ) {
+							return;
 						}
+						event.preventDefault();
+						onToggle();
 					} }
 				>
 					{
