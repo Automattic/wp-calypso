@@ -3,7 +3,7 @@
  */
 
 import '@testing-library/jest-dom';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import { withJetpackAiToolbarButton } from './block-toolbar-extension';
 
@@ -55,10 +55,7 @@ declare global {
 	interface Window {
 		__agentsManagerActions?: {
 			isReady?: boolean;
-			getChatState?: () => Promise< { isOpen: boolean; isDocked: boolean } >;
 			setChatOpen?: ( isOpen: boolean ) => void;
-			setChatDocked?: ( isDocked: boolean ) => void;
-			setChatCompactMode?: ( isCompact: boolean ) => void;
 			submitChatMessage?: ( message?: string ) => Promise< void >;
 			setChatInput?: ( value: string ) => void;
 		};
@@ -156,94 +153,7 @@ describe( 'withJetpackAiToolbarButton', () => {
 		}
 	);
 
-	it( 'opens Agents Manager in compact mode when actions are ready', async () => {
-		const setChatOpen = jest.fn();
-		const setChatDocked = jest.fn();
-		const setChatCompactMode = jest.fn();
-		window.__agentsManagerActions = {
-			isReady: true,
-			setChatOpen,
-			setChatDocked,
-			setChatCompactMode,
-		};
-
-		enableToolbarButton();
-		renderToolbar();
-		fireEvent.click( screen.getByRole( 'button', { name: 'Ask Jetpack AI' } ) );
-
-		await waitFor( () => expect( setChatCompactMode ).toHaveBeenCalledWith( true ) );
-		expect( setChatDocked ).toHaveBeenCalledWith( false );
-		expect( setChatOpen ).toHaveBeenCalledWith( false );
-	} );
-
-	it( 'opens Agents Manager docked when the chat is already docked', async () => {
-		const setChatOpen = jest.fn();
-		const setChatDocked = jest.fn();
-		const setChatCompactMode = jest.fn();
-		window.__agentsManagerActions = {
-			isReady: true,
-			getChatState: jest.fn().mockResolvedValue( { isOpen: false, isDocked: true } ),
-			setChatOpen,
-			setChatDocked,
-			setChatCompactMode,
-		};
-
-		enableToolbarButton();
-		renderToolbar();
-		fireEvent.click( screen.getByRole( 'button', { name: 'Ask Jetpack AI' } ) );
-
-		await waitFor( () => expect( setChatOpen ).toHaveBeenCalledWith( true ) );
-		// The docked preference is respected: compact mode is not forced on.
-		expect( setChatCompactMode ).not.toHaveBeenCalled();
-		expect( setChatDocked ).not.toHaveBeenCalled();
-	} );
-
-	it( 'opens Agents Manager in compact mode when the chat is minimized', async () => {
-		const setChatOpen = jest.fn();
-		const setChatDocked = jest.fn();
-		const setChatCompactMode = jest.fn();
-		window.__agentsManagerActions = {
-			isReady: true,
-			getChatState: jest.fn().mockResolvedValue( { isOpen: false, isDocked: false } ),
-			setChatOpen,
-			setChatDocked,
-			setChatCompactMode,
-		};
-
-		enableToolbarButton();
-		renderToolbar();
-		fireEvent.click( screen.getByRole( 'button', { name: 'Ask Jetpack AI' } ) );
-
-		await waitFor( () => expect( setChatCompactMode ).toHaveBeenCalledWith( true ) );
-		expect( setChatDocked ).toHaveBeenCalledWith( false );
-		expect( setChatOpen ).toHaveBeenCalledWith( false );
-	} );
-
-	it( 'leaves the chat untouched when it is already open in the floating view', async () => {
-		const setChatOpen = jest.fn();
-		const setChatDocked = jest.fn();
-		const setChatCompactMode = jest.fn();
-		const getChatState = jest.fn().mockResolvedValue( { isOpen: true, isDocked: false } );
-		window.__agentsManagerActions = {
-			isReady: true,
-			getChatState,
-			setChatOpen,
-			setChatDocked,
-			setChatCompactMode,
-		};
-
-		enableToolbarButton();
-		renderToolbar();
-		fireEvent.click( screen.getByRole( 'button', { name: 'Ask Jetpack AI' } ) );
-
-		// The open chat must not be collapsed back to compact, docked, or closed.
-		await waitFor( () => expect( getChatState ).toHaveBeenCalled() );
-		expect( setChatCompactMode ).not.toHaveBeenCalled();
-		expect( setChatDocked ).not.toHaveBeenCalled();
-		expect( setChatOpen ).not.toHaveBeenCalled();
-	} );
-
-	it( 'falls back to opening Agents Manager when compact mode is unavailable', async () => {
+	it( 'opens Agents Manager in its current state when actions are ready', () => {
 		const setChatOpen = jest.fn();
 		window.__agentsManagerActions = {
 			isReady: true,
@@ -254,13 +164,12 @@ describe( 'withJetpackAiToolbarButton', () => {
 		renderToolbar();
 		fireEvent.click( screen.getByRole( 'button', { name: 'Ask Jetpack AI' } ) );
 
-		await waitFor( () => expect( setChatOpen ).toHaveBeenCalledWith( true ) );
+		// The toolbar entry only opens the chat — it does not reshape its layout.
+		expect( setChatOpen ).toHaveBeenCalledWith( true );
 	} );
 
-	it( 'opens Agents Manager once the ready event fires', async () => {
+	it( 'opens Agents Manager once the ready event fires', () => {
 		const setChatOpen = jest.fn();
-		const setChatDocked = jest.fn();
-		const setChatCompactMode = jest.fn();
 		const addEventListenerSpy = jest.spyOn( window, 'addEventListener' );
 
 		enableToolbarButton();
@@ -277,27 +186,19 @@ describe( 'withJetpackAiToolbarButton', () => {
 		window.__agentsManagerActions = {
 			isReady: true,
 			setChatOpen,
-			setChatDocked,
-			setChatCompactMode,
 		};
 		window.dispatchEvent( new CustomEvent( 'agents-manager-ready' ) );
 
-		await waitFor( () => expect( setChatCompactMode ).toHaveBeenCalledWith( true ) );
-		expect( setChatDocked ).toHaveBeenCalledWith( false );
-		expect( setChatOpen ).toHaveBeenCalledWith( false );
+		expect( setChatOpen ).toHaveBeenCalledWith( true );
 	} );
 
-	it( 'does not submit or prefill chat when clicked', async () => {
+	it( 'does not submit or prefill chat when clicked', () => {
 		const setChatOpen = jest.fn();
-		const setChatDocked = jest.fn();
-		const setChatCompactMode = jest.fn();
 		const submitChatMessage = jest.fn();
 		const setChatInput = jest.fn();
 		window.__agentsManagerActions = {
 			isReady: true,
 			setChatOpen,
-			setChatDocked,
-			setChatCompactMode,
 			submitChatMessage,
 			setChatInput,
 		};
@@ -306,9 +207,7 @@ describe( 'withJetpackAiToolbarButton', () => {
 		renderToolbar();
 		fireEvent.click( screen.getByRole( 'button', { name: 'Ask Jetpack AI' } ) );
 
-		await waitFor( () => expect( setChatCompactMode ).toHaveBeenCalledWith( true ) );
-		expect( setChatOpen ).toHaveBeenCalledWith( false );
-		expect( setChatDocked ).toHaveBeenCalledWith( false );
+		expect( setChatOpen ).toHaveBeenCalledWith( true );
 		expect( submitChatMessage ).not.toHaveBeenCalled();
 		expect( setChatInput ).not.toHaveBeenCalled();
 	} );
