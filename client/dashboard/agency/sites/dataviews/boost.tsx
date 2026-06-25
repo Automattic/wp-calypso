@@ -30,7 +30,8 @@ export function getBoostField(): Field< AgencySite > {
 		getValue: ( { item } ) => item.jetpack_boost_scores?.overall ?? 0,
 		render: ( { item } ) => {
 			const score = item.jetpack_boost_scores?.overall;
-			return score ? (
+			// A score of 0 is a valid rating (F), so check for presence, not truthiness.
+			return typeof score === 'number' ? (
 				<>{ getBoostRating( score ) }</>
 			) : (
 				// TODO: wire up the Boost setup flow; this button is inert for now.
