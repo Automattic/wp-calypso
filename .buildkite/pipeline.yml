@@ -61,6 +61,9 @@ steps:
           image: cimg/node:24.15.0-browsers
           propagate-uid-gid: true
           userns: host
+          environment:
+            - E2EGUTENBERGUSER
+            - E2EPASSWORD
     command: .buildkite/commands/build-desktop-linux.sh
     artifact_paths:
       - desktop/release/*
