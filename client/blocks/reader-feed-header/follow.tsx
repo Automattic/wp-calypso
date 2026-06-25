@@ -1,4 +1,6 @@
-import { Gridicon } from '@automattic/components';
+import { isAutomatticianQuery } from '@automattic/api-queries';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { Icon, seen } from '@wordpress/icons';
 import { filterURLForDisplay } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useState, type JSX } from 'react';
@@ -8,18 +10,14 @@ import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follow
 import { useFeedRecommendationsMutation } from 'calypso/data/reader/use-feed-recommendations-mutation';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import { useMarkAllAsSeenMutation } from 'calypso/reader/data/seen-posts';
-import {
-	useHasSiteSubscriptionOrganization,
-	useIsSubscribed,
-} from 'calypso/reader/data/site-subscriptions';
+import { useIsSubscribed } from 'calypso/reader/data/site-subscriptions';
 import ReaderFollowButton from 'calypso/reader/follow-button';
-import { getFeedUrl, getSiteUrl, isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import { getFeedUrl, getSiteUrl } from 'calypso/reader/get-helpers';
 import { RecommendButton } from 'calypso/reader/recommend-button';
 import { useDispatch, useSelector } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import type { AppState } from 'calypso/types';
 
 interface ReaderFeedHeaderFollowProps {
@@ -55,35 +53,26 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 	const siteId = site?.ID;
 	const feedId = feed?.feed_ID ?? site?.feed_ID;
 	const { data: fetchedFeed } = useFeedQuery( feedId );
+	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
 	const resolvedFeed = feed ?? fetchedFeed;
 	const siteUrl = getSiteUrl( { feed: resolvedFeed, site } );
 	const followFeedUrl = getFeedUrl( { feed: resolvedFeed, site } ) || undefined;
-	const resolvedSiteId = siteId ?? resolvedFeed?.blog_ID;
-	const followFeedId = resolvedFeed?.feed_ID;
 	const reduxFollowing = useIsSubscribed( { feedUrl: followFeedUrl } );
-	const hasOrganization = useHasSiteSubscriptionOrganization( followFeedId, resolvedSiteId );
 	const {
 		isRecommended,
 		isUpdating: isRecommendationPending,
 		toggleRecommended,
 	} = useFeedRecommendationsMutation( feedId as number );
 
-	const { isEmailBlocked, isWPForTeamsItem, subscriptionId, blogOwner } = useSelector(
-		( state: AppState ) => {
-			const _feed: ReaderFeed | undefined = resolvedFeed;
+	const { isEmailBlocked, subscriptionId, blogOwner } = useSelector( ( state: AppState ) => {
+		const _feed: ReaderFeed | undefined = resolvedFeed;
 
-			return {
-				isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
-				isWPForTeamsItem: Boolean(
-					( resolvedSiteId ? isSiteWPForTeams( state, resolvedSiteId ) : false ) ||
-						( _feed?.blog_ID ? isSiteWPForTeams( state, _feed.blog_ID ) : false )
-				),
-				subscriptionId: _feed?.subscription_id,
-				blogOwner: _feed?.blog_owner,
-			};
-		},
-		shallowEqual
-	);
+		return {
+			isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
+			subscriptionId: _feed?.subscription_id,
+			blogOwner: _feed?.blog_owner,
+		};
+	}, shallowEqual );
 	const following = reduxFollowing || !! site?.is_following;
 
 	const openSuggestedFollowsModal = ( followClicked: boolean ) => {
@@ -125,6 +114,8 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 		} );
 	};
 
+	const allSeen: boolean = resolvedFeed?.unseen_count === 0;
+	const seenBtnMsg: string = translate( 'Mark all as seen' );
 	return (
 		<div className="reader-feed-header__follow">
 			<div className="reader-feed-header__follow-and-settings">
@@ -161,18 +152,15 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 					</div>
 				) }
 			</div>
-			{ isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) && resolvedFeed && (
+			{ isAutomattician && resolvedFeed && (
 				<button
 					onClick={ markAllAsSeen }
 					className="reader-feed-header__seen-button"
-					disabled={ resolvedFeed.unseen_count === 0 }
+					disabled={ allSeen }
 				>
-					<Gridicon icon="visible" size={ 24 } />
-					<span
-						className="reader-feed-header__visibility"
-						title={ translate( 'Mark all as seen' ) }
-					>
-						{ translate( 'Mark all as seen' ) }
+					<Icon icon={ seen } size={ 24 } />
+					<span className="reader-feed-header__visibility" title={ seenBtnMsg }>
+						{ seenBtnMsg }
 					</span>
 				</button>
 			) }

@@ -9,10 +9,8 @@ import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
 import { withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
-import { useHasSiteSubscriptionOrganization } from 'calypso/reader/data/site-subscriptions';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_POST_OPTIONS_MENU } from 'calypso/reader/follow-sources';
-import { canBeMarkedAsSeen, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { isConversationFollowable } from 'calypso/reader/post/capabilities';
 import * as stats from 'calypso/reader/stats';
@@ -21,7 +19,6 @@ import * as PostUtils from 'calypso/state/posts/utils';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { blockSite } from 'calypso/state/reader/site-blocks/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
 
 const noop = () => {};
@@ -240,19 +237,7 @@ class ReaderPostEllipsisMenu extends Component {
 	stopPropagation = ( event ) => event.stopPropagation();
 
 	render() {
-		const {
-			post,
-			site,
-			teams,
-			translate,
-			position,
-			posts,
-			isWPForTeamsItem,
-			currentRoute,
-			hasOrganization,
-			isLoggedIn,
-			followSource,
-		} = this.props;
+		const { post, site, teams, translate, position, posts, isLoggedIn, followSource } = this.props;
 
 		const { ID: postId, site_ID: siteId, feed_ID: feedId } = post;
 
@@ -269,7 +254,8 @@ class ReaderPostEllipsisMenu extends Component {
 			isBlockPossible = true;
 		}
 
-		const isTeamMember = isAutomatticTeamMember( teams );
+		const isSeen = post?.is_seen;
+		const isAutomattician = isAutomatticTeamMember( teams );
 		const showConversationFollowButton =
 			this.props.showConversationFollow && isConversationFollowable( post );
 
@@ -307,33 +293,19 @@ class ReaderPostEllipsisMenu extends Component {
 					/>
 				) }
 
-				{ isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) &&
-					canBeMarkedAsSeen( { post, posts } ) &&
-					post.is_seen && (
-						<PopoverMenuItem
-							onClick={ this.markAsUnSeen }
-							icon={ unseen }
-							useWordPressIcon
-							iconSize={ 24 }
-						>
-							{ posts.length > 0 && translate( 'Mark all as unseen' ) }
-							{ posts.length === 0 && translate( 'Mark as unseen' ) }
-						</PopoverMenuItem>
-					) }
-
-				{ isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) &&
-					canBeMarkedAsSeen( { post, posts } ) &&
-					! post.is_seen && (
-						<PopoverMenuItem
-							onClick={ this.markAsSeen }
-							icon={ seen }
-							useWordPressIcon
-							iconSize={ 24 }
-						>
-							{ posts.length > 0 && translate( 'Mark all as seen' ) }
-							{ posts.length === 0 && translate( 'Mark as seen' ) }
-						</PopoverMenuItem>
-					) }
+				{ isAutomattician && (
+					<PopoverMenuItem
+						onClick={ isSeen ? this.markAsUnSeen : this.markAsSeen }
+						icon={ isSeen ? unseen : seen }
+						useWordPressIcon
+						iconSize={ 24 }
+					>
+						{ isSeen && posts.length === 0 && translate( 'Mark as unseen' ) }
+						{ isSeen && posts.length > 0 && translate( 'Mark all as unseen' ) }
+						{ ! isSeen && posts.length === 0 && translate( 'Mark as seen' ) }
+						{ ! isSeen && posts.length > 0 && translate( 'Mark all as seen' ) }
+					</PopoverMenuItem>
+				) }
 
 				{ this.props.showVisitPost && post.URL && (
 					<PopoverMenuItem
@@ -352,8 +324,8 @@ class ReaderPostEllipsisMenu extends Component {
 					</PopoverMenuItem>
 				) }
 
-				{ isTeamMember && site && <hr className="popover__menu-separator" /> }
-				{ isTeamMember && site && <ReaderPostOptionsMenuBlogStickers blogId={ +site.ID } /> }
+				{ isAutomattician && site && <hr className="popover__menu-separator" /> }
+				{ isAutomattician && site && <ReaderPostOptionsMenuBlogStickers blogId={ +site.ID } /> }
 
 				{ ( this.props.showFollow || isEditPossible || post.URL ) && isBlockPossible && (
 					<hr className="popover__menu-separator" />
@@ -382,16 +354,9 @@ class ReaderPostEllipsisMenu extends Component {
 }
 
 const ConnectedPostEllipsisMenu = connect(
-	( state, { feed, post: { is_external, site_ID } = {} } ) => {
-		const siteId = is_external ? null : site_ID;
-
+	( state = {} ) => {
 		return Object.assign(
 			{ currentRoute: getCurrentRoute( state ) },
-			{
-				isWPForTeamsItem:
-					isSiteWPForTeams( state, siteId ) ||
-					( feed?.blog_ID ? isSiteWPForTeams( state, feed.blog_ID ) : false ),
-			},
 			{ isLoggedIn: isUserLoggedIn( state ) }
 		);
 	},
@@ -402,8 +367,5 @@ const ConnectedPostEllipsisMenu = connect(
 )( localize( withSeenPostsMutations( ReaderPostEllipsisMenu ) ) );
 
 export default function PostEllipsisMenuContainer( props ) {
-	const { feed_ID: feedId, is_external: isExternal, site_ID: siteId } = props.post ?? {};
-	const hasOrganization = useHasSiteSubscriptionOrganization( feedId, isExternal ? null : siteId );
-
-	return <ConnectedPostEllipsisMenu { ...props } hasOrganization={ hasOrganization } />;
+	return <ConnectedPostEllipsisMenu { ...props } />;
 }
