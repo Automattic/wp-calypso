@@ -53,9 +53,10 @@ const VARIATION_TO_VARIANT: Partial< Record< string, 1 | 2 > > = {
  *    follows the existing `nav-redesign/2026-variant-2` flag.
  * 3. The NAV_2026_EXPERIMENT assignment — `showcase_products`/`showcase_products_and_ai`
  *    map to variants 1/2; everything else (control, null) → old nav.
- *    While the assignment is still loading, return a temporary className that
- *    hides the old nav until the assignment resolves, avoiding the old-nav→new-nav
- *    flash on navigation.
+ *    Until the variant is resolved — from the server render through the client
+ *    loading window — return a temporary className that hides the nav, then reveal
+ *    it once resolved. Hiding from SSR (not just after hydration) is what prevents
+ *    the old-nav→new-nav flash.
  */
 export function useNav2026Props( options: Nav2026Options = {} ): Nav2026Props {
 	const isHeaderEligible = options.variant !== 'minimal';
@@ -79,12 +80,18 @@ export function useNav2026Props( options: Nav2026Options = {} ): Nav2026Props {
 		variant = VARIATION_TO_VARIANT[ experimentAssignment.variationName ];
 	}
 
-	// Hide the old nav while the client-side assignment is still pending, then let
-	// it render once we know the variant. This avoids the brief old-nav→new-nav
-	// flash when navigating between logged-out marketing surfaces. The nav stays in
-	// the server HTML (only `visibility` is toggled), so crawlers still see it and
-	// its links — the hide is purely client-side and visual.
-	if ( isLoadingExperiment && ! forcedOn ) {
+	// Hide the nav until the variant is resolved, then reveal it. The assignment is
+	// only available client-side, so we hide from the server render onwards (SSR:
+	// `window` is undefined; client: until the experiment finishes loading) and let
+	// the client reveal the resolved nav once known. Hiding from SSR — rather than
+	// only after hydration — is what actually prevents the old-nav→new-nav flash, and
+	// keeps the server and first client render in sync (no hydration mismatch).
+	//
+	// The nav markup and its links stay in the DOM; only `visibility` is toggled. A
+	// no-JS client (including crawlers) never runs the reveal, so it keeps the nav
+	// hidden — an accepted trade-off, pending SEO sign-off.
+	const isVariantResolved = forcedOn || ( typeof window !== 'undefined' && ! isLoadingExperiment );
+	if ( isHeaderEligible && ! forcedOn && ! isVariantResolved ) {
 		return { className: 'is-nav-2026-assignment-loading' };
 	}
 
