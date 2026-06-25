@@ -54,16 +54,10 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 
 		await test.step( 'When I navigate to Users > All Users', async function () {
 			await componentSidebar.navigate( 'Users', 'All Users' );
-			// Capture the slug of the site authenticate() landed on, which is the site
-			// the invite below is sent to (not necessarily testSites.primary on the
-			// shared pre-release account). Reading it from the All Users URL now, before
-			// the invite and signup round-trip, makes the later removal act on the exact
-			// site we invited the user to. Fail loudly if the URL is not the expected
-			// `/people/team/<slug>` list route.
+			// Capture the site authenticate() landed on (not necessarily testSites.primary
+			// on the shared pre-release account) so the later removal targets the invited
+			// site. site_id accepts any non-slash value, so dotless/mapped slugs are valid.
 			const peopleUrl = new URL( page.url() );
-			// Capture the first path segment after /people/team/. The route is
-			// /people/team/:site_id and :site_id accepts any non-slash value, so do not
-			// require a dot: mapped/dotless slugs are valid and must not throw here.
 			const slugMatch = peopleUrl.pathname.match( /^\/people\/team\/([^/?#]+)/ );
 			if ( ! slugMatch ) {
 				throw new Error(

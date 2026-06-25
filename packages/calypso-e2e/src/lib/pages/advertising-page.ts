@@ -42,10 +42,8 @@ export class AdvertisingPage {
 	 * @returns The heading element for the Advertising page.
 	 */
 	get advertisingHeading(): Locator {
-		// On WordPress.com the Tools > Advertising page heading is "Blaze". Only the
-		// standalone Blaze Ads Jetpack plugin (is_running_in_blaze_plugin) renders
-		// "Blaze Ads", and Calypso E2E never runs in that build, so assert the exact
-		// WordPress.com label.
+		// Only the standalone Blaze Ads Jetpack plugin renders "Blaze Ads"; WordPress.com,
+		// where E2E runs, uses the exact label "Blaze".
 		return this.page.getByRole( 'heading', { name: 'Blaze', exact: true } );
 	}
 
