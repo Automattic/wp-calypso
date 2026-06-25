@@ -23,5 +23,7 @@ if [[ ! -d release/linux-unpacked ]]; then
   exit 1
 fi
 
+yarn run test:e2e
+
 tar -zcf release/linux-unpacked.tar.gz -C release linux-unpacked
 rm -rf release/linux-unpacked
