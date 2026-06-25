@@ -6,14 +6,18 @@
 	inline-size: 100%;
 }
 
-.space-feed-gallery__row {
+// Each post is a lane-width virtual item, absolutely positioned by the
+// virtualizer (`transform`) and by the inline cross-axis `inset-inline-start` /
+// `inline-size`. The padding forms the gutter: 32px between columns (16+16) and
+// 40px between rows (20+20).
+.space-feed-gallery__item {
 	position: absolute;
 	inset-block-start: 0;
-	inset-inline: 0;
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	gap: 40px 16px;
-	padding-block-end: 16px;
+	// border-box so the lane width (`inline-size: 100/columns %`) already accounts
+	// for the gutter padding — otherwise the padding overflows the lane and the
+	// columns overlap, collapsing the gap.
+	box-sizing: border-box;
+	padding: 20px 16px;
 }
 
 .space-feed-gallery__card {

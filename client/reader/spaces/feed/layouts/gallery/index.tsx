@@ -1,9 +1,9 @@
 import page from '@automattic/calypso-router';
+import { useBreakpoint } from '@automattic/viewport-react';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { useMemo } from 'react';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { useInfiniteList } from 'calypso/reader/hooks/use-infinite-list';
@@ -15,8 +15,7 @@ import type { ReadStreamPost } from '@automattic/api-core';
 
 import './style.scss';
 
-const COLUMNS = 3;
-const ROW_SIZE = 248;
+const ROW_SIZE = 380;
 
 function GalleryCard( { post }: { post: ReadStreamPost } ) {
 	const fields = getPostFields( post );
@@ -81,20 +80,26 @@ export function GalleryLayout( {
 	loadMore,
 	restoreKey,
 }: SpaceFeedLayoutProps ) {
-	const rows = useMemo< ReadStreamPost[][] >( () => {
-		const out: ReadStreamPost[][] = [];
-		for ( let index = 0; index < posts.length; index += COLUMNS ) {
-			out.push( posts.slice( index, index + COLUMNS ) );
-		}
-		return out;
-	}, [ posts ] );
+	// Responsive column count: 3 on desktop, 2 on tablet, 1 on mobile. Each post is
+	// its own virtual item spread across `columns` lanes — the virtualizer handles
+	// the main-axis (vertical) position; the cross-axis (left/width) is stable per
+	// item and set in JSX, per TanStack Virtual's multi-lane guidance.
+	const isDesktop = useBreakpoint( '>960px' );
+	const isTablet = useBreakpoint( '>660px' );
+	let columns = 1;
+	if ( isDesktop ) {
+		columns = 3;
+	} else if ( isTablet ) {
+		columns = 2;
+	}
 
 	const { getListProps, items, measureElement, scrollMargin } = useInfiniteList( {
 		scrollElement,
-		count: rows.length,
+		count: posts.length,
 		estimateSize: ROW_SIZE,
 		overscan: 4,
-		getItemKey: ( index ) => ( rows[ index ][ 0 ] ? getPostFieldKey( rows[ index ][ 0 ] ) : index ),
+		lanes: columns,
+		getItemKey: ( index ) => getPostFieldKey( posts[ index ] ),
 		hasMore,
 		isLoadingMore,
 		loadMore,
@@ -103,17 +108,19 @@ export function GalleryLayout( {
 
 	return (
 		<div { ...getListProps( { className: 'space-feed-gallery' } ) }>
-			{ items.map( ( virtualRow ) => (
+			{ items.map( ( virtualItem ) => (
 				<div
-					key={ virtualRow.key }
-					data-index={ virtualRow.index }
+					key={ virtualItem.key }
+					data-index={ virtualItem.index }
 					ref={ measureElement }
-					className="space-feed-gallery__row"
-					style={ { transform: `translateY(${ virtualRow.start - scrollMargin }px)` } }
+					className="space-feed-gallery__item"
+					style={ {
+						insetInlineStart: `${ ( virtualItem.lane * 100 ) / columns }%`,
+						inlineSize: `${ 100 / columns }%`,
+						transform: `translateY(${ virtualItem.start - scrollMargin }px)`,
+					} }
 				>
-					{ rows[ virtualRow.index ].map( ( post ) => (
-						<GalleryCard key={ getPostFieldKey( post ) } post={ post } />
-					) ) }
+					<GalleryCard post={ posts[ virtualItem.index ] } />
 				</div>
 			) ) }
 		</div>

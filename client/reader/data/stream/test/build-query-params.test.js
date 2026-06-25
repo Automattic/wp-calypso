@@ -31,6 +31,12 @@ describe( 'buildStreamQueryParams — space stream', () => {
 		expect( params ).toEqual( { count: 10, page_handle: 'NEXT', _locale: 'en' } );
 	} );
 
+	it( 'honors a caller-provided `perPage` for the page size', () => {
+		const params = buildStreamQueryParams( { ...baseArgs, pageHandle: null, perPage: 9 } );
+
+		expect( params ).toEqual( { count: 9, _locale: 'en' } );
+	} );
+
 	it( 'pins its own page size, ignoring the larger shared gap-fetch size', () => {
 		// A gap fetch would ask for PER_GAP (40) posts on other streams; the space
 		// ignores that and pins SPACE_PER_PAGE (10), which is already under the

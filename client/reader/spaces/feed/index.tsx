@@ -10,7 +10,7 @@ import {
 	SpaceFeedLoading,
 	SpaceFeedLoadingMore,
 } from './components/states';
-import { DEFAULT_SPACE_FEED_LAYOUT, getLayout } from './layouts/registry';
+import { DEFAULT_SPACE_FEED_LAYOUT, getLayout, getLayoutPageSize } from './layouts/registry';
 import type { ReadStreamPost, ReadStreamResponse, SpaceFeedLayout } from '@automattic/api-core';
 
 import './style.scss';
@@ -59,6 +59,7 @@ export function SpaceFeed( { spaceId, layoutView }: Props ) {
 	const isLegacy = layout === 'legacy';
 	const stream = useInfiniteStream( {
 		streamKey,
+		perPage: getLayoutPageSize( layout ),
 		options: { enabled: ! isLegacy },
 	} );
 	const posts = useMemo( () => collectPosts( stream.pages ), [ stream.pages ] );

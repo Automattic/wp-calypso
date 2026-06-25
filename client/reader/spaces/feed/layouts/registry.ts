@@ -26,3 +26,16 @@ export function getLayout(
 ): ComponentType< SpaceFeedLayoutProps > {
 	return ( layout && LAYOUTS[ layout ] ) || LAYOUTS[ DEFAULT_SPACE_FEED_LAYOUT ];
 }
+
+/**
+ * Per-layout page size for the space posts stream. Layouts not listed here fall
+ * back to the stream's default; the gallery asks for 9 to fill its 3-column grid
+ * evenly (3 rows of 3 per page).
+ */
+const LAYOUT_PAGE_SIZE: Partial< Record< SpaceFeedLayout, number > > = {
+	gallery: 9,
+};
+
+export function getLayoutPageSize( layout: SpaceFeedLayout | undefined ): number | undefined {
+	return layout ? LAYOUT_PAGE_SIZE[ layout ] : undefined;
+}

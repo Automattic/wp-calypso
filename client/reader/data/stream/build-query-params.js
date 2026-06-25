@@ -68,22 +68,23 @@ function buildListQueryParams( extras ) {
 	return getQueryString( { ...extras, number: 40 } );
 }
 
-// Posts per page for the space feed. The space pins its own page size rather
-// than the shared `INITIAL_FETCH`/`PER_FETCH` sizes the other streams use; kept
-// at or under the 15-post server cap (Elasticsearch query limit).
+// Default posts per page for the space feed. The space uses its own page size
+// rather than the shared `INITIAL_FETCH`/`PER_FETCH` sizes the other streams
+// use; consumers can override it via `perPage` (e.g. the gallery layout asks for
+// 9 to fill its 3×3 grid). Always kept at or under the 15-post server cap.
 const SPACE_PER_PAGE = 10;
 
 /**
  * `space` (`/reader/spaces/<id>/posts`) takes `count` (the per-page size, capped
  * at 15 server-side — Elasticsearch query limit) and a `page_handle` cursor,
- * rather than the `number`/offset shape the other streams use. It pins
- * `SPACE_PER_PAGE` for every page, clamped to the cap so an oversized page can't
- * silently break end-of-stream detection. Locale is passed as `_locale`, the
- * param the endpoint reads to build the stream.
+ * rather than the `number`/offset shape the other streams use. It uses the
+ * caller's `perPage` when provided (else `SPACE_PER_PAGE`), clamped to the cap so
+ * an oversized page can't silently break end-of-stream detection. Locale is
+ * passed as `_locale`, the param the endpoint reads to build the stream.
  */
-function buildSpaceQueryParams( extras ) {
+function buildSpaceQueryParams( extras, perPage ) {
 	const { page_handle: pageHandle, lang } = extras;
-	const queryParams = { count: Math.min( SPACE_PER_PAGE, 15 ) };
+	const queryParams = { count: Math.min( perPage || SPACE_PER_PAGE, 15 ) };
 	if ( pageHandle ) {
 		queryParams.page_handle = pageHandle;
 	}
@@ -238,7 +239,7 @@ export function buildStreamQueryParams( {
 		case 'on_this_day':
 			return buildOnThisDayQueryParams( extras, streamKey );
 		case 'space':
-			return buildSpaceQueryParams( extras );
+			return buildSpaceQueryParams( extras, perPage );
 		case 'conversations':
 			return getQueryString( { ...extras, comments_per_post: 20 } );
 		case 'conversations-a8c':
