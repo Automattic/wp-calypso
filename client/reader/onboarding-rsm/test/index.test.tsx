@@ -612,7 +612,7 @@ describe( 'ReaderOnboardingRsm – welcome digest flush', () => {
 		expect( flushOnboardingWelcomeDigest ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'does not call flushWelcomeDigest when the discover step is dismissed', async () => {
+	it( 'does not call flushOnboardingWelcomeDigest when the discover step is dismissed', async () => {
 		const user = userEvent.setup();
 		renderWithProvider( <ReaderOnboardingRsm /> );
 
@@ -622,7 +622,7 @@ describe( 'ReaderOnboardingRsm – welcome digest flush', () => {
 		expect( flushOnboardingWelcomeDigest ).not.toHaveBeenCalled();
 	} );
 
-	it( 'does not call flushWelcomeDigest when the welcome step is dismissed', async () => {
+	it( 'does not call flushOnboardingWelcomeDigest when the welcome step is dismissed', async () => {
 		const user = userEvent.setup();
 		renderWithProvider( <ReaderOnboardingRsm /> );
 
@@ -632,7 +632,7 @@ describe( 'ReaderOnboardingRsm – welcome digest flush', () => {
 		expect( flushOnboardingWelcomeDigest ).not.toHaveBeenCalled();
 	} );
 
-	it( 'does not call flushWelcomeDigest when the interests step is dismissed', async () => {
+	it( 'does not call flushOnboardingWelcomeDigest when the interests step is dismissed', async () => {
 		const user = userEvent.setup();
 		renderWithProvider( <ReaderOnboardingRsm /> );
 
@@ -644,7 +644,7 @@ describe( 'ReaderOnboardingRsm – welcome digest flush', () => {
 		expect( flushOnboardingWelcomeDigest ).not.toHaveBeenCalled();
 	} );
 
-	it( 'does not call flushWelcomeDigest when navigating with Continue or Back', async () => {
+	it( 'does not call flushOnboardingWelcomeDigest when navigating with Continue or Back', async () => {
 		const user = userEvent.setup();
 		renderWithProvider( <ReaderOnboardingRsm /> );
 
