@@ -30,7 +30,9 @@ interface Props {
 function useSitePlans( { coupon, siteId }: Props ): UseQueryResult< SitePlansIndex > {
 	const queryKeys = useQueryKeysFactory();
 	const params = new URLSearchParams();
-	coupon && params.append( 'coupon_code', coupon );
+	if ( coupon ) {
+		params.append( 'coupon_code', coupon );
+	}
 
 	return useQuery( {
 		queryKey: queryKeys.sitePlans( coupon, siteId ),
@@ -85,6 +87,10 @@ function useSitePlans( { coupon, siteId }: Props ): UseQueryResult< SitePlansInd
 			);
 		},
 		enabled: !! siteId,
+		// Matches use-plans: site plan pricing is static within a session, so cache
+		// it to stop the grid's many pricing hooks from each refetching on mount and
+		// starving the query of a settled result (which leaves the grid spinning).
+		staleTime: 5 * 60 * 1000,
 	} );
 }
 

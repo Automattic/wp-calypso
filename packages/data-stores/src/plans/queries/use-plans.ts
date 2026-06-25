@@ -47,7 +47,9 @@ function usePlans( {
 	const queryKeys = useQueryKeysFactory();
 	const locale = useLocale();
 	const params = new URLSearchParams();
-	coupon && params.append( 'coupon_code', coupon );
+	if ( coupon ) {
+		params.append( 'coupon_code', coupon );
+	}
 	params.append( 'locale', locale );
 
 	// Auto-detect Jetpack context and use appropriate request function
@@ -101,6 +103,11 @@ function usePlans( {
 				} )
 			);
 		},
+		// Plan pricing is effectively static within a session. Keeping it fresh for
+		// 5 minutes prevents the many grid hooks that read this query from each
+		// re-triggering a fetch on mount; without it those refetches can supersede
+		// one another and leave the plans grid stuck on its loading spinner.
+		staleTime: 5 * 60 * 1000,
 	} );
 }
 
