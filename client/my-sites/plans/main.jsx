@@ -66,7 +66,6 @@ import WooExpressPlansPage from './woo-express-plans-page';
 import './style.scss';
 
 // Plan tiers from lowest to highest, used to filter the visible plans list
-// for the de-emphasized current plan card experiment.
 const PLAN_TIERS = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 
 class PlansComponent extends Component {
