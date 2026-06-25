@@ -200,6 +200,37 @@
 	li {
 		margin: auto;
 	}
+
+	// Monospaced, boxed styling for inline code and code blocks.
+	code,
+	pre {
+		font-family: $font-family-mono;
+		font-size: 90%;
+		background: var( --wpnc-code__background-color, #{$gray-100} );
+		border: 1px solid var( --wpnc-code__border-color, #{$gray-300} );
+		border-radius: 4px;
+	}
+
+	code {
+		padding: 0 4px;
+		color: var( --wpnc-code__text-color, #{$gray-700} );
+	}
+
+	pre {
+		padding: 8px;
+		// Preserve the source's line breaks/indentation while still wrapping
+		// long lines so code can't overflow the narrow panel horizontally.
+		white-space: pre-wrap;
+		overflow-wrap: break-word;
+
+		// A <code> nested inside <pre> shouldn't double up the box.
+		code {
+			padding: 0;
+			border: none;
+			background: none;
+			color: inherit;
+		}
+	}
 }
 
 .comment-reply-input__textarea {
@@ -340,6 +371,12 @@
 		--wpnc-quote__border-color: var( --wp-components-color-gray-600, #758095 );
 		--wpnc-quote__text-color: var( --wp-components-color-gray-700, #9aa2b1 );
 		--wpnc-divider__color: var( --wp-components-color-gray-400, #424855 );
+
+		// Code blocks: a subtly raised surface against the dark panel, with a
+		// neutral border and light text that keeps AA contrast.
+		--wpnc-code__background-color: var( --wp-components-color-gray-800, #2c3338 );
+		--wpnc-code__border-color: var( --wp-components-color-gray-600, #758095 );
+		--wpnc-code__text-color: var( --wp-components-color-gray-100, #f0f0f1 );
 
 		// Two frame-level dividers miss the dashboard's border handling:
 		//   - the action-block CardFooter (above Like/Reply) — the dark card
