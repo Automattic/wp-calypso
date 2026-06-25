@@ -24,38 +24,39 @@ const SidebarEnvironmentSwitcher = ( { site }: { site: Site } ) => {
 	return (
 		<HStack expanded={ false } style={ { flexShrink: 0 } } className="sidebar-environment-switcher">
 			<Environment environmentType={ environmentType } />
-			<Dropdown
-				renderToggle={ ( { isOpen, onToggle } ) => (
-					<Button
-						className="sidebar-environment-switcher__toggle"
-						variant="tertiary"
-						disabled={ ! canToggle }
-						onClick={ onToggle }
-						onKeyDown={ ( event: React.KeyboardEvent ) => {
-							if ( ! isOpen && event.code === 'ArrowDown' ) {
-								event.preventDefault();
-								onToggle();
-							}
-						} }
-						aria-haspopup="true"
-						aria-expanded={ isOpen }
-						label={ __( 'Switch environment' ) }
-						icon={ chevronUpDown }
-						size="small"
-					/>
-				) }
-				renderContent={ ( { onClose } ) => (
-					<EnvironmentSwitcherDropdown
-						currentSite={ site }
-						productionSite={ productionSite }
-						stagingSite={ stagingSite }
-						onClose={ onClose }
-						onAddStagingSite={ handleAddStagingSite }
-						isStagingSiteDeleting={ isStagingSiteDeleting }
-						isStagingSiteCreating={ isStagingSiteCreating }
-					/>
-				) }
-			/>
+			{ canToggle && (
+				<Dropdown
+					renderToggle={ ( { isOpen, onToggle } ) => (
+						<Button
+							className="sidebar-environment-switcher__toggle"
+							variant="tertiary"
+							onClick={ onToggle }
+							onKeyDown={ ( event: React.KeyboardEvent ) => {
+								if ( ! isOpen && event.code === 'ArrowDown' ) {
+									event.preventDefault();
+									onToggle();
+								}
+							} }
+							aria-haspopup="true"
+							aria-expanded={ isOpen }
+							label={ __( 'Switch environment' ) }
+							icon={ chevronUpDown }
+							size="small"
+						/>
+					) }
+					renderContent={ ( { onClose } ) => (
+						<EnvironmentSwitcherDropdown
+							currentSite={ site }
+							productionSite={ productionSite }
+							stagingSite={ stagingSite }
+							onClose={ onClose }
+							onAddStagingSite={ handleAddStagingSite }
+							isStagingSiteDeleting={ isStagingSiteDeleting }
+							isStagingSiteCreating={ isStagingSiteCreating }
+						/>
+					) }
+				/>
+			) }
 		</HStack>
 	);
 };

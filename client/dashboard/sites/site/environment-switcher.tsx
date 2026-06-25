@@ -18,6 +18,14 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 
 	const canToggle = useCanSwitchToOtherEnvironment( site );
 
+	if ( ! canToggle ) {
+		return (
+			<HStack expanded={ false } style={ { flexShrink: 0 } }>
+				<Environment environmentType={ environmentType } />
+			</HStack>
+		);
+	}
+
 	return (
 		<HStack expanded={ false } style={ { flexShrink: 0 } }>
 			<Dropdown
@@ -26,7 +34,6 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 						className="dashboard-menu__item active"
 						icon={ chevronDownSmall }
 						iconPosition="right"
-						disabled={ ! canToggle }
 						onClick={ onToggle }
 						onKeyDown={ ( event: React.KeyboardEvent ) => {
 							if ( ! isOpen && event.code === 'ArrowDown' ) {

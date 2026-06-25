@@ -170,7 +170,7 @@ describe( 'EnvironmentSwitcher', () => {
 	} );
 
 	describe( 'Environment Access', () => {
-		test( 'disables the dropdown when the user cannot manage the other environment', async () => {
+		test( 'hides the dropdown but keeps the badge when the user cannot manage the other environment', async () => {
 			const unmanageableStagingSite = {
 				...mockStagingSite,
 				capabilities: { manage_options: false },
@@ -181,16 +181,16 @@ describe( 'EnvironmentSwitcher', () => {
 			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } />, { queryClient } );
 
 			expect( screen.getByText( 'Production' ) ).toBeVisible();
-			await waitFor( () => expect( screen.getByRole( 'button' ) ).toBeDisabled() );
+			await waitFor( () => expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument() );
 		} );
 
-		test( 'keeps the dropdown enabled when the user can manage the other environment', async () => {
+		test( 'shows the dropdown when the user can manage the other environment', async () => {
 			setupNock( mockProductionSiteWithStaging, { stagingSite: mockStagingSite } );
 			const queryClient = buildQueryClient( mockProductionSiteWithStaging );
 
 			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } />, { queryClient } );
 
-			await waitFor( () => expect( screen.getByRole( 'button' ) ).toBeEnabled() );
+			await waitFor( () => expect( screen.getByRole( 'button' ) ).toBeVisible() );
 		} );
 	} );
 
