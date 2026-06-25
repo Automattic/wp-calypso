@@ -61,7 +61,10 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 			// site we invited the user to. Fail loudly if the URL is not the expected
 			// `/people/team/<slug>` list route.
 			const peopleUrl = new URL( page.url() );
-			const slugMatch = peopleUrl.pathname.match( /^\/people\/team\/([^/?#]+\.[^/?#]+)/ );
+			// Capture the first path segment after /people/team/. The route is
+			// /people/team/:site_id and :site_id accepts any non-slash value, so do not
+			// require a dot: mapped/dotless slugs are valid and must not throw here.
+			const slugMatch = peopleUrl.pathname.match( /^\/people\/team\/([^/?#]+)/ );
 			if ( ! slugMatch ) {
 				throw new Error(
 					`Could not determine the invited site slug from the people URL: ${ peopleUrl.href }`
