@@ -58,7 +58,23 @@ describe( '<AddEmailForwarder>', () => {
 		expect(
 			screen.queryByText( /set up an email forwarder to notanemail/i )
 		).not.toBeInTheDocument();
+		// Instead, an inline error explains the input is invalid.
+		expect( screen.getByText( 'Please enter a valid email address.' ) ).toBeVisible();
 		// The Save button stays disabled because there is no valid forwarding address.
 		expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeDisabled();
+	} );
+
+	// DOTMSD-1342
+	test( 'accepts multiple valid forwarding addresses', async () => {
+		mockApi();
+		const user = userEvent.setup();
+		render( <AddEmailForwarder /> );
+
+		const forwardTo = await screen.findByLabelText( 'Forward to' );
+		await user.type( forwardTo, 'first@example.com{Enter}second@example.com{Enter}' );
+
+		expect( screen.getByText( 'first@example.com' ) ).toBeVisible();
+		expect( screen.getByText( 'second@example.com' ) ).toBeVisible();
+		expect( screen.queryByText( 'Please enter a valid email address.' ) ).not.toBeInTheDocument();
 	} );
 } );

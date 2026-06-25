@@ -329,6 +329,10 @@ function AddEmailForwarder() {
 									} }
 								/>
 
+								{ untokenizedInput.trim() !== '' && ! isUntokenizedInputValidEmail && (
+									<Text intent="error">{ __( 'Please enter a valid email address.' ) }</Text>
+								) }
+
 								{ newForwardingAddresses.length > 0 && (
 									<Notice>
 										{ sprintf(
