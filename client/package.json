@@ -107,7 +107,7 @@
 		"@wordpress/blocks": "^15.21.0",
 		"@wordpress/commands": "^1.48.0",
 		"@wordpress/components": "^35.0.0",
-		"@wordpress/compose": "patch:@wordpress/compose@npm%3A8.1.0#~/.yarn/patches/@wordpress-compose-npm-8.1.0-ea108e3129.patch",
+		"@wordpress/compose": "^8.2.0",
 		"@wordpress/data": "^10.48.0",
 		"@wordpress/dataviews": "^16.0.0",
 		"@wordpress/date": "^5.48.0",

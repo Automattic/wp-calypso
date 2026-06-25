@@ -59,7 +59,7 @@
 		"@wordpress/api-fetch": "^7.48.0",
 		"@wordpress/base-styles": "^9.1.0",
 		"@wordpress/components": "^35.0.0",
-		"@wordpress/compose": "patch:@wordpress/compose@npm%3A8.1.0#~/.yarn/patches/@wordpress-compose-npm-8.1.0-ea108e3129.patch",
+		"@wordpress/compose": "^8.2.0",
 		"@wordpress/core-data": "^7.48.0",
 		"@wordpress/editor": "^14.48.0",
 		"@wordpress/hooks": "^4.48.0",

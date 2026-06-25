@@ -58,7 +58,7 @@
 		"@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.20.0#~/.yarn/patches/@wordpress-block-editor-npm-15.20.0-2d52fc5cc4.patch",
 		"@wordpress/blocks": "^15.21.0",
 		"@wordpress/components": "^35.0.0",
-		"@wordpress/compose": "patch:@wordpress/compose@npm%3A8.1.0#~/.yarn/patches/@wordpress-compose-npm-8.1.0-ea108e3129.patch",
+		"@wordpress/compose": "^8.2.0",
 		"@wordpress/html-entities": "^4.48.0",
 		"@wordpress/i18n": "^6.21.0",
 		"@wordpress/icons": "^13.3.0",
