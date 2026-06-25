@@ -75,7 +75,14 @@ describe( 'SiteSubscriptionsListActionsBar', () => {
 	it( 'disables sort when the subscribed table has no visible rows', () => {
 		renderActionsBar( { subscriptions: [] } );
 
-		expect( screen.getByRole( 'button', { name: /Sort:/i } ) ).toBeDisabled();
+		const sortButton = screen.getByRole( 'button', {
+			name: /Sort: Recently updated\. No subscribed sites match your search in the table above\./i,
+		} );
+		expect( sortButton ).toBeDisabled();
+		expect( sortButton ).toHaveAttribute(
+			'title',
+			'No subscribed sites match your search in the table above.'
+		);
 	} );
 
 	it( 'disables filter when search matches no subscriptions with filter set to All', () => {
@@ -84,6 +91,11 @@ describe( 'SiteSubscriptionsListActionsBar', () => {
 			hasSearchMatchesWithAllFilter: false,
 		} );
 
+		expect(
+			screen.getByLabelText(
+				'View: All. No subscribed sites match your search in the table above.'
+			)
+		).toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: /View:/i } ) ).toHaveAttribute(
 			'aria-disabled',
 			'true'
@@ -119,6 +131,8 @@ describe( 'SiteSubscriptionsListActionsBar', () => {
 	it( 'enables sort when the subscribed table has visible rows', () => {
 		renderActionsBar( { subscriptions: [ { isDeleted: false } ] } );
 
-		expect( screen.getByRole( 'button', { name: /Sort:/i } ) ).not.toBeDisabled();
+		const sortButton = screen.getByRole( 'button', { name: /Sort: Recently updated/i } );
+		expect( sortButton ).not.toBeDisabled();
+		expect( sortButton ).not.toHaveAttribute( 'aria-label' );
 	} );
 } );

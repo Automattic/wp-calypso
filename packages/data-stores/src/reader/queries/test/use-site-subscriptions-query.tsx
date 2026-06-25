@@ -345,4 +345,32 @@ describe( 'useSiteSubscriptionsQuery hook', () => {
 		await waitFor( () => expect( result.current.data.subscriptions ).toHaveLength( 0 ) );
 		expect( result.current.data.hasSearchMatchesWithAllFilter ).toBe( true );
 	} );
+
+	it( 'returns hasSearchMatchesWithAllFilter false when only deleted subscriptions match search', async () => {
+		seedSiteSubscriptions( [
+			[
+				makeFollow( {
+					ID: '1',
+					name: 'Deleted Site',
+					URL: 'https://deleted.example.com',
+					isDeleted: true,
+				} ),
+			],
+		] );
+
+		const { result } = renderHook(
+			() => {
+				const { setSearchTerm } = useSiteSubscriptionsQueryProps();
+				const { data, isLoading } = useSiteSubscriptionsQuery();
+				return { setSearchTerm, data, isLoading };
+			},
+			{ wrapper }
+		);
+
+		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+
+		act( () => result.current.setSearchTerm( 'Deleted' ) );
+		await waitFor( () => expect( result.current.data.subscriptions ).toHaveLength( 0 ) );
+		expect( result.current.data.hasSearchMatchesWithAllFilter ).toBe( false );
+	} );
 } );

@@ -17,6 +17,8 @@ type SortControlsProps< T > = {
 	value: T;
 	onChange: ( sortOrder: T ) => void;
 	disabled?: boolean;
+	ariaLabel?: string;
+	title?: string;
 };
 
 const SortControls: < T extends string >( props: SortControlsProps< T > ) => ReactElement = ( {
@@ -24,6 +26,8 @@ const SortControls: < T extends string >( props: SortControlsProps< T > ) => Rea
 	value,
 	onChange,
 	disabled = false,
+	ariaLabel,
+	title,
 } ) => {
 	const translate = useTranslate();
 	const sortingLabel = useMemo(
@@ -47,6 +51,8 @@ const SortControls: < T extends string >( props: SortControlsProps< T > ) => Rea
 					disabled={ disabled }
 					onClick={ disabled ? undefined : onToggle }
 					aria-expanded={ isOpen }
+					aria-label={ ariaLabel }
+					title={ title }
 					onKeyDown={ ( event: React.KeyboardEvent ) => {
 						if ( disabled || isOpen || event.code !== 'ArrowDown' ) {
 							return;

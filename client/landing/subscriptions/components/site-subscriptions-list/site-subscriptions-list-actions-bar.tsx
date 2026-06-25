@@ -30,6 +30,11 @@ const ListActionsBar = () => {
 	).length;
 	const isSortDisabled = ! isLoading && visibleCount === 0;
 	const isFilterDisabled = ! isLoading && ! data.hasSearchMatchesWithAllFilter;
+	const disabledReasonText = translate(
+		'No subscribed sites match your search in the table above.'
+	);
+	const filterLabel = getOptionLabel( filterOptions, filterOption ) || '';
+	const sortLabel = getOptionLabel( sortOptions, sortTerm ) || '';
 
 	return (
 		<div className="site-subscriptions-list-actions-bar">
@@ -49,8 +54,18 @@ const ListActionsBar = () => {
 					setFilterOption( selectedOption.value )
 				}
 				selectedText={ translate( 'View: %s', {
-					args: getOptionLabel( filterOptions, filterOption ) || '',
+					args: filterLabel,
 				} ) }
+				ariaLabel={
+					isFilterDisabled
+						? translate( 'View: %(filter)s. %(reason)s', {
+								args: {
+									filter: filterLabel,
+									reason: disabledReasonText,
+								},
+						  } )
+						: undefined
+				}
 			/>
 
 			<SortControls
@@ -58,6 +73,17 @@ const ListActionsBar = () => {
 				value={ sortTerm }
 				onChange={ setSortTerm }
 				disabled={ isSortDisabled }
+				ariaLabel={
+					isSortDisabled
+						? translate( 'Sort: %(sortingLabel)s. %(reason)s', {
+								args: {
+									sortingLabel: sortLabel,
+									reason: disabledReasonText,
+								},
+						  } )
+						: undefined
+				}
+				title={ isSortDisabled ? disabledReasonText : undefined }
 			/>
 		</div>
 	);

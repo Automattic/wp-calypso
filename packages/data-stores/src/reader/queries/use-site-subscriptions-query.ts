@@ -121,8 +121,11 @@ const useSiteSubscriptionsQuery = () => {
 			);
 		};
 		const sort = getSortFunction( sortTerm );
+		const isVisibleSubscription = ( item: SiteSubscriptionItem ) => ! item.isDeleted;
 		const searchMatchesWithAllFilter =
-			flattenedData?.filter( ( item ) => item !== null && searchFilter( item ) ) ?? [];
+			flattenedData?.filter(
+				( item ) => item !== null && isVisibleSubscription( item ) && searchFilter( item )
+			) ?? [];
 
 		return {
 			subscriptions: searchMatchesWithAllFilter.filter( filterFunction ).sort( sort ),
