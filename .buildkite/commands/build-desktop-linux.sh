@@ -12,6 +12,7 @@ export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 cd desktop
 corepack enable
 yarn install --immutable --inline-builds
+yarn playwright install-deps chromium
 yarn run build
 
 # `-c.linux.target=dir` produces an unpacked `linux-unpacked/` tree. Assert
