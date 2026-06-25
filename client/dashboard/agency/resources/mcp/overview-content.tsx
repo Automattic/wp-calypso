@@ -116,9 +116,9 @@ export default function McpOverview( {
 								</VStack>
 							</HStack>
 							<ToggleControl
-								className="mcp-overview__step-toggle"
 								__nextHasNoMarginBottom
-								label={ __( 'Enable MCP access' ) }
+								label=""
+								aria-label={ __( 'Enable MCP access' ) }
 								checked={ mainEnabled }
 								onChange={ onMainToggle }
 								disabled={ isLoading || isSaving }
