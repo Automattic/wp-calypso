@@ -39,7 +39,6 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
-		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/typography": "workspace:^",
@@ -48,6 +47,7 @@
 		"@wordpress/base-styles": "^9.1.0",
 		"@wordpress/components": "^35.0.0",
 		"@wordpress/icons": "^13.3.0",
+		"@wordpress/ui": "^0.15.0",
 		"clsx": "^2.1.1",
 		"social-logos": "^3.1.18",
 		"tslib": "^2.8.1",
