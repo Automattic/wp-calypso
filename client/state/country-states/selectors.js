@@ -10,7 +10,7 @@ import 'calypso/state/country-states/init';
  */
 
 export function getCountryStates( state, countryCode ) {
-	return get( state.countryStates, [ 'items', countryCode.toLowerCase() ], null );
+	return state.countryStates?.items?.[ countryCode.toLowerCase() ] ?? null;
 }
 
 /**

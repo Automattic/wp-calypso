@@ -1,6 +1,6 @@
 import { flow } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { get, isEmpty, some } from 'lodash';
+import { isEmpty, some } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -496,7 +496,7 @@ export class EditorMediaModal extends Component {
 			case ModalViews.IMAGE_EDITOR: {
 				const { site, imageEditorProps, selectedItems: items } = this.props;
 				const selectedIndex = this.getDetailSelectedIndex();
-				const media = get( items, selectedIndex, null );
+				const media = items?.[ selectedIndex ] ?? null;
 
 				content = (
 					<ImageEditor

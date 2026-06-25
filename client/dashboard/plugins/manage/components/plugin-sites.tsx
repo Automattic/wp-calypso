@@ -3,12 +3,14 @@ import { createInterpolateElement } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __, sprintf } from '@wordpress/i18n';
 import { Card, CardBody } from '../../../components/card';
+import { Notice } from '../../../components/notice';
 import { SectionHeader } from '../../../components/section-header';
 import { Text } from '../../../components/text';
 import { TextBlur } from '../../../components/text-blur';
 import { isWebUrl } from '../../../utils/is-web-url';
 import { PluginTabs } from '../../plugin';
 import { usePlugin } from '../../plugin/use-plugin';
+import { getAllowedPluginActions } from '../../plugin/utils/get-allowed-plugin-actions';
 import { PluginIcon } from './plugin-icon';
 
 import './plugin-sites.scss';
@@ -22,6 +24,12 @@ export const PluginSites = ( { selectedPluginSlug }: { selectedPluginSlug: strin
 		sitesWithThisPlugin,
 		sitesWithoutThisPlugin,
 	} = usePlugin( selectedPluginSlug );
+
+	// Core plugins WordPress.com manages (Jetpack/VaultPress/Akismet) can't be
+	// deleted; surface a notice explaining why instead of leaving the user guessing.
+	const isCoreManagedPlugin = sitesWithThisPlugin.some(
+		( site ) => getAllowedPluginActions( site, selectedPluginSlug ).isAutoManagedPlugin
+	);
 
 	const decoration = () => {
 		if ( icon ) {
@@ -82,6 +90,16 @@ export const PluginSites = ( { selectedPluginSlug }: { selectedPluginSlug: strin
 					title={ title() }
 					description={ description() }
 				/>
+
+				{ isCoreManagedPlugin && (
+					<div className="plugin-sites-card-managed-notice">
+						<Notice variant="info">
+							{ __(
+								'This plugin is managed by WordPress.com and is required for your site to work properly, so it can’t be removed.'
+							) }
+						</Notice>
+					</div>
+				) }
 
 				<PluginTabs
 					pluginSlug={ selectedPluginSlug }

@@ -1,4 +1,3 @@
-import { cloneDeep } from 'lodash';
 import isRequestingBillingTransaction from 'calypso/state/selectors/is-requesting-billing-transaction';
 
 describe( 'isRequestingBillingTransaction()', () => {
@@ -13,7 +12,7 @@ describe( 'isRequestingBillingTransaction()', () => {
 	};
 
 	test( 'returns true if the transactions batch is being requested', () => {
-		const testState = cloneDeep( state );
+		const testState = structuredClone( state );
 		testState.billingTransactions.requesting = true;
 
 		const output = isRequestingBillingTransaction( testState, '123' );

@@ -1,4 +1,4 @@
-import { cloneDeep, map, reduce } from 'lodash';
+import { map } from 'lodash';
 
 /**
  * Recursively unset a value in an object by its path, represented by an array.
@@ -25,24 +25,19 @@ const recursiveUnset = ( object, path ) => {
  * @returns {Object}      Normalized post object
  */
 export function normalizePostForState( post ) {
-	const normalizedPost = cloneDeep( post );
-	return reduce(
-		[
-			[],
-			...reduce(
-				post.terms,
-				( memo, terms, taxonomy ) =>
-					memo.concat( map( terms, ( term, slug ) => [ 'terms', taxonomy, slug ] ) ),
-				[]
-			),
-			...map( post.categories, ( category, slug ) => [ 'categories', slug ] ),
-			...map( post.tags, ( tag, slug ) => [ 'tags', slug ] ),
-			...map( post.attachments, ( attachment, id ) => [ 'attachments', id ] ),
-		],
-		( memo, path ) => {
-			recursiveUnset( memo, path.concat( 'meta', 'links' ) );
-			return memo;
-		},
-		normalizedPost
-	);
+	const normalizedPost = structuredClone( post );
+	return [
+		[],
+		...Object.entries( post.terms ?? {} ).reduce(
+			( memo, [ taxonomy, terms ] ) =>
+				memo.concat( map( terms, ( term, slug ) => [ 'terms', taxonomy, slug ] ) ),
+			[]
+		),
+		...map( post.categories, ( category, slug ) => [ 'categories', slug ] ),
+		...map( post.tags, ( tag, slug ) => [ 'tags', slug ] ),
+		...map( post.attachments, ( attachment, id ) => [ 'attachments', id ] ),
+	].reduce( ( memo, path ) => {
+		recursiveUnset( memo, path.concat( 'meta', 'links' ) );
+		return memo;
+	}, normalizedPost );
 }

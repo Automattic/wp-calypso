@@ -14,7 +14,7 @@
 	"dependencies": {
 		"@automattic/accessible-focus": "workspace:^",
 		"@automattic/agents-manager": "workspace:^",
-		"@automattic/agenttic-ui": "^0.1.69",
+		"@automattic/agenttic-ui": "^0.1.71",
 		"@automattic/api-core": "workspace:^",
 		"@automattic/api-queries": "workspace:^",
 		"@automattic/block-renderer": "workspace:^",
@@ -155,7 +155,7 @@
 		"deepmerge": "^4.3.1",
 		"diff": "^4.0.2",
 		"dom-helpers": "^5.1.3",
-		"dompurify": "3.4.9",
+		"dompurify": "3.4.11",
 		"draft-js": "^0.11.7",
 		"duplicate-package-checker-webpack-plugin": "^3.0.0",
 		"email-validator": "^2.0.4",

@@ -7,30 +7,22 @@ export function getIsConnectedForSiteId( state, siteId ) {
 }
 
 export function getConnectedAccountDescriptionForSiteId( state, siteId ) {
-	return get( state, [ 'memberships', 'settings', siteId, 'connectedAccountDescription' ], null );
+	return state?.memberships?.settings?.[ siteId ]?.connectedAccountDescription ?? null;
 }
 
 export function getconnectedAccountDefaultCurrencyForSiteId( state, siteId ) {
-	return get(
-		state,
-		[ 'memberships', 'settings', siteId, 'connectedAccountDefaultCurrency' ],
-		null
-	);
+	return state?.memberships?.settings?.[ siteId ]?.connectedAccountDefaultCurrency ?? null;
 }
 export function getconnectedAccountMinimumCurrencyForSiteId( state, siteId ) {
-	return get(
-		state,
-		[ 'memberships', 'settings', siteId, 'connectedAccountMinimumCurrency' ],
-		null
-	);
+	return state?.memberships?.settings?.[ siteId ]?.connectedAccountMinimumCurrency ?? null;
 }
 export function getMembershipsSandboxStatusForSiteId( state, siteId ) {
-	return get( state, [ 'memberships', 'settings', siteId, 'membershipsSandboxStatus' ], null );
+	return state?.memberships?.settings?.[ siteId ]?.membershipsSandboxStatus ?? null;
 }
 export function getConnectUrlForSiteId( state, siteId ) {
 	return get( state, [ 'memberships', 'settings', siteId, 'connectUrl' ], '' );
 }
 
 export function getCouponsAndGiftsEnabledForSiteId( state, siteId ) {
-	return get( state, [ 'memberships', 'settings', siteId, 'couponsAndGiftsEnabled' ], null );
+	return state?.memberships?.settings?.[ siteId ]?.couponsAndGiftsEnabled ?? null;
 }
