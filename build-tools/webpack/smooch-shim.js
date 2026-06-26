@@ -10,6 +10,9 @@
  * it loads the real library and caches it on `window`; later bundles reuse that same
  * instance instead of loading their own. Consumers keep using `import Smooch from 'smooch'`.
  */
+
+// TODO: Remove this shim and the `smooch$` webpack aliases once Agents Manager takes over
+// the Help Center — they'll no longer load together, so only one Smooch copy will exist.
 const SHARED_KEY = '__sharedSmoochInstance__';
 
 let instance;
