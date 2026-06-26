@@ -1,4 +1,11 @@
-import { MarketplaceSearch, PluginItem, Site, SitePlugin } from '@automattic/api-core';
+import {
+	MarketplacePlugin,
+	MarketplaceSearch,
+	PluginItem,
+	Site,
+	SitePlugin,
+	WpOrgPlugin,
+} from '@automattic/api-core';
 import {
 	pluginsQuery,
 	wpOrgPluginQuery,
@@ -19,6 +26,11 @@ const stripAuthorMarkup = ( author = '' ) =>
 	decodeEntities( author.replace( /<[^>]*>/g, '' ) ).trim();
 
 const toAuthorUrl = ( url?: string | null ) => ( url && isWebUrl( url ) ? url : null );
+
+export type NormalizedPlugin = ( PluginItem | MarketplacePlugin | WpOrgPlugin ) & {
+	author: string;
+	authorUrl: string | null;
+};
 
 export interface SiteWithPluginData extends Site {
 	actionLinks?: SitePlugin[ 'action_links' ];
@@ -99,7 +111,7 @@ export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: b
 	const siteIdsWithThisPlugin = Array.from( pluginBySiteId.keys() );
 
 	// Normalize the author per source so consumers get one shape
-	const plugin = useMemo( () => {
+	const plugin = useMemo< NormalizedPlugin | undefined >( () => {
 		const raw =
 			pluginBySiteId.values().next().value ??
 			( isMarketplacePlugin ? marketplacePlugins?.results[ pluginSlug ] : undefined ) ??
