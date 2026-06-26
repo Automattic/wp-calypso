@@ -738,7 +738,10 @@ export const useManagedZendeskChat = ( {
 	};
 };
 
-export const useGetZendeskConversations = ( enabled: boolean ) => {
-	const { data: Smooch, isLoading: isSettingUpSmooch } = useSmooch( enabled );
+export const useGetZendeskConversations = ( enabled: boolean, smoochIntegrationKey?: string ) => {
+	// Forward the integration key so this shares the same Smooch init as the chat
+	// (Smooch is a singleton): listing conversations must target the same integration
+	// the chat created them on.
+	const { data: Smooch, isLoading: isSettingUpSmooch } = useSmooch( enabled, smoochIntegrationKey );
 	return { conversations: Smooch?.getConversations() ?? [], isLoading: isSettingUpSmooch };
 };

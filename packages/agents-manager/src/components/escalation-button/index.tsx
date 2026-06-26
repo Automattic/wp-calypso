@@ -76,10 +76,14 @@ function getExistingConversationButtonDescription( startedAt?: string ) {
 }
 
 export function EscalationButton( { messageId }: { messageId: string } ) {
-	const { getActiveSessionId } = useAgentsManagerContext();
+	const { getActiveSessionId, zendeskSmoochIntegrationKey } = useAgentsManagerContext();
 	const navigate = useNavigate();
 	const activeSessionId = getActiveSessionId();
-	const { conversations, isLoading } = useGetZendeskConversations( !! activeSessionId );
+
+	const { conversations, isLoading } = useGetZendeskConversations(
+		!! activeSessionId,
+		zendeskSmoochIntegrationKey
+	);
 	const existingConversation = useMemo(
 		() => findConversationByChatSessionId( conversations, activeSessionId ),
 		[ conversations, activeSessionId ]
