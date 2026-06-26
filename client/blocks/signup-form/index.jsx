@@ -5,7 +5,7 @@ import { Spinner } from '@wordpress/components';
 import clsx from 'clsx';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
-import { find, filter, forEach, map, merge, isEmpty } from 'lodash';
+import { filter, forEach, map, merge, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -181,7 +181,7 @@ class SignupForm extends Component {
 			return null;
 		}
 
-		const userExistsError = find( step.errors, ( error ) => error.error === 'user_exists' );
+		const userExistsError = step.errors?.find( ( error ) => error.error === 'user_exists' );
 
 		return userExistsError;
 	}

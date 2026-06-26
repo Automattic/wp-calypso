@@ -1,26 +1,31 @@
+.reader-spaces {
+	max-width: unset;
+}
 .space-feed-gallery {
 	position: relative;
 	inline-size: 100%;
 }
 
-.space-feed-gallery__row {
+// Full-width virtual row of cards, positioned on the main axis by the virtualizer.
+.space-feed-gallery__item {
 	position: absolute;
 	inset-block-start: 0;
 	inset-inline: 0;
+}
+
+// One row of up to `columns` cards (`grid-template-columns` set inline). 32px
+// column gutter; block-end padding is the row gutter (card 270 + 40 = 310,
+// matching the virtualizer estimate).
+.space-feed-gallery__row {
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	gap: 16px;
-	padding-block-end: 16px;
+	column-gap: 32px;
+	padding-block-end: 40px;
 }
 
 .space-feed-gallery__card {
-	display: block;
 	min-inline-size: 0;
+	block-size: 270px;
 	color: inherit;
-}
-
-.space-feed-gallery__actions {
-	margin-block-start: 8px;
 }
 
 .space-feed-gallery__thumb {
@@ -28,7 +33,10 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	aspect-ratio: 16 / 9;
+	// Fill the space left over after the meta/title/actions so the card stays a
+	// fixed height; `min-block-size: 0` lets it shrink inside the flex column.
+	flex: 1;
+	min-block-size: 0;
 	border-radius: 8px;
 	background: var(--color-surface-backdrop);
 	overflow: hidden;
@@ -41,7 +49,7 @@
 }
 
 .space-feed-gallery__title {
-	margin: 10px 0 0;
+	margin: 0;
 	font-size: 0.875rem;
 	font-weight: 600;
 	line-height: 1.35;
@@ -50,6 +58,9 @@
 	display: -webkit-box;
 	-webkit-line-clamp: 2;
 	-webkit-box-orient: vertical;
+	// Always reserve two lines so a 1-line title doesn't shrink the card — keeps
+	// every gallery card the same height (2 × line-height).
+	min-block-size: 2.7em;
 }
 
 .space-feed-gallery__title-link {
@@ -62,10 +73,26 @@
 }
 
 .space-feed-gallery__meta {
-	display: flex;
-	align-items: center;
-	gap: 6px;
-	margin: 6px 0 0;
 	font-size: 0.75rem;
 	color: var(--color-text-subtle);
+}
+
+// Loading skeleton: a static grid of card-shaped shimmers (`grid-template-columns`
+// set inline from the responsive column count).
+.space-feed-gallery__skeleton {
+	display: grid;
+	gap: 40px 32px;
+	padding-block: 8px;
+}
+
+.space-feed-gallery__skeleton-line {
+	block-size: 12px;
+}
+
+.space-feed-gallery__skeleton-line.is-meta {
+	inline-size: 50%;
+}
+
+.space-feed-gallery__skeleton-line.is-short {
+	inline-size: 70%;
 }

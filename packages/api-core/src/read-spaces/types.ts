@@ -39,11 +39,11 @@ export type SpaceIcon =
 
 /**
  * How a space renders its feed. Each value selects a distinct list geometry —
- * `standard-list` (dense vertical list), `magazine` (large vertical cards),
- * `gallery` (grid), `board` (masonry), `legacy` (the classic Reader stream:
- * InfiniteList + post cards). Unset falls back to `standard-list`.
+ * `standard-list` (dense vertical list), `gallery` (grid), `board` (masonry),
+ * `legacy` (the classic Reader stream: InfiniteList + post cards). Unset falls
+ * back to `standard-list`.
  */
-export type SpaceFeedLayout = 'standard-list' | 'magazine' | 'gallery' | 'board' | 'legacy';
+export type SpaceFeedLayout = 'standard-list' | 'gallery' | 'board' | 'legacy';
 
 /**
  * Presentation settings for a space, grouped so they can grow beyond color and

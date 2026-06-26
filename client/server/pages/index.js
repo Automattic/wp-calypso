@@ -1013,14 +1013,14 @@ function wpcomPages( app ) {
 	// Redirect legacy `/menus` routes to the corresponding Customizer panel
 	// TODO: Move to `my-sites/customize` route defs once that section is isomorphic
 	app.get( [ '/menus', '/menus/:site?' ], ( req, res ) => {
-		const siteSlug = get( req.params, 'site', '' );
+		const siteSlug = req.params?.site ?? '';
 		const newRoute = '/customize/menus/' + siteSlug;
 		res.redirect( 301, newRoute );
 	} );
 
 	app.get( [ '/start/domain-first' ], function ( req, res ) {
 		let redirectUrl = '/start/domain';
-		const domain = get( req, 'query.new', false );
+		const domain = req?.query?.new ?? false;
 		if ( domain ) {
 			redirectUrl += '?new=' + encodeURIComponent( domain );
 		}
@@ -1041,7 +1041,7 @@ function wpcomPages( app ) {
 			ctx.clientData = config.clientData;
 			ctx.domainsLandingData = {
 				action: get( req, [ 'params', 'action' ], 'unknown-action' ),
-				query: get( req, 'query', {} ),
+				query: req?.query ?? {},
 			};
 
 			const pageHtml = renderJsx( 'domains-landing', ctx );
@@ -1086,7 +1086,7 @@ function wpcomPages( app ) {
 		debug( 'Issuing API call to fetch user object' );
 		getBootstrappedUser( req )
 			.then( ( data ) => {
-				const activeFlags = get( data, 'meta.data.flags.active_flags', [] );
+				const activeFlags = data?.meta?.data?.flags?.active_flags ?? [];
 
 				// A8C check
 				if (

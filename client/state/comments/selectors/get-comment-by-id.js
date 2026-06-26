@@ -1,4 +1,4 @@
-import { filter, find } from 'lodash';
+import { filter } from 'lodash';
 import { deconstructStateKey, getErrorKey } from 'calypso/state/comments/utils';
 
 import 'calypso/state/comments/init';
@@ -12,5 +12,5 @@ export function getCommentById( { state, commentId, siteId } ) {
 	const commentsForSite = filter( state.comments.items, ( comment, key ) => {
 		return deconstructStateKey( key ).siteId === siteId;
 	} ).flat();
-	return find( commentsForSite, ( comment ) => commentId === comment.ID );
+	return commentsForSite.find( ( comment ) => commentId === comment.ID );
 }

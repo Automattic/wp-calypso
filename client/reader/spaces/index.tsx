@@ -8,7 +8,6 @@ import { spaces } from './controller';
 // Default export required: the section loader invokes `module.default`
 // (see `client/sections-middleware.js`).
 export default function initSpaces() {
-	page( '/reader/spaces', sidebar, setBeforePrimary, spaces, makeLayout, clientRender );
 	page( '/reader/spaces/:id', sidebar, setBeforePrimary, spaces, makeLayout, clientRender );
 	page( '/reader/spaces/:id/:tab', sidebar, setBeforePrimary, spaces, makeLayout, clientRender );
 }

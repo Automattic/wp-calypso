@@ -797,14 +797,12 @@ describe( 'useSuggestions', () => {
 			'Change tone',
 			'Check grammar',
 			'Simplify text',
-			'Generate Feedback',
-			'AI Editorial Review',
 		] );
 		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
 		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [] );
 	} );
 
-	it( 'appends AI Editorial Review to block-specific suggestions', () => {
+	it( 'shows only block-specific suggestions when a block is selected', () => {
 		installAiEditorialReviewData();
 		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
 		const onSuggestions = jest.fn();
@@ -818,13 +816,8 @@ describe( 'useSuggestions', () => {
 			'Change tone',
 			'Check grammar',
 			'Simplify text',
-			'Generate Feedback',
-			'AI Editorial Review',
 		] );
-		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
-			'jetpack_ai_editorial_review_suggestion_rendered',
-			{}
-		);
+		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
 		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
 			[
 				'jetpack_ai_block_transformation_suggestion_rendered',
@@ -865,7 +858,7 @@ describe( 'useSuggestions', () => {
 		] );
 	} );
 
-	it( 'keeps AI Editorial Review visible when block suggestions are limited', () => {
+	it( 'limits block-specific suggestions to maxSuggestions', () => {
 		installAiEditorialReviewData();
 		mockSelectedBlock = { clientId: 'b-limited', name: 'core/heading' };
 		const onSuggestions = jest.fn();
@@ -881,14 +874,32 @@ describe( 'useSuggestions', () => {
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
 			'Translate content',
-			'Generate Feedback',
-			'AI Editorial Review',
+			'Change tone',
+			'Check grammar',
 		] );
 		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
 			[
 				'jetpack_ai_block_transformation_suggestion_rendered',
 				{
 					suggestion_id: 'translate',
+					suggestion_type: 'text',
+					block_type: 'core/heading',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'change-tone',
+					suggestion_type: 'text',
+					block_type: 'core/heading',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'check-grammar',
 					suggestion_type: 'text',
 					block_type: 'core/heading',
 					surface: 'jetpack_ai_sidebar',
@@ -937,8 +948,6 @@ describe( 'useSuggestions', () => {
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
 			'Generate alt text',
-			'Generate Feedback',
-			'AI Editorial Review',
 		] );
 		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
 			[
@@ -953,7 +962,7 @@ describe( 'useSuggestions', () => {
 		] );
 	} );
 
-	it( 'keeps AI Editorial Review when the feature disables block transformations', () => {
+	it( 'hides review suggestions when a block is selected and block transformations are disabled', () => {
 		installAiEditorialReviewData( { blockTransformations: false } );
 		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
 		const onSuggestions = jest.fn();
@@ -962,20 +971,17 @@ describe( 'useSuggestions', () => {
 
 		const latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
-		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
-			'Generate Feedback',
-			'AI Editorial Review',
-		] );
+		expect( latestSuggestions ).toEqual( [] );
 	} );
 
-	it( 'keeps AI Editorial Review when the block transformations feature is missing', () => {
+	it( 'shows review suggestions at post level regardless of the block transformations feature', () => {
 		( globalThis as any ).agentsManagerData = {
 			jetpackAiSidebar: {
 				enabled: true,
 				features: { aiEditorialReview: true },
 			},
 		};
-		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
+		mockSelectedBlock = null;
 		const onSuggestions = jest.fn();
 
 		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
@@ -1192,8 +1198,6 @@ describe( 'useSuggestions', () => {
 			'Change tone',
 			'Check grammar',
 			'Simplify text',
-			'Generate Feedback',
-			'AI Editorial Review',
 		] );
 	} );
 

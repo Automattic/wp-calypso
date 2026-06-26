@@ -24,15 +24,6 @@ jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
 	useSiteSubscriptions: () => ( { subscriptions: [], isLoading: false, isError: false } ),
 } ) );
 
-jest.mock( '@automattic/react-virtualized', () => ( {
-	AutoSizer: ( {
-		children,
-	}: {
-		children: ( size: { width: number; height: number } ) => React.ReactNode;
-	} ) => children( { width: 480, height: 360 } ),
-	List: () => null,
-} ) );
-
 const SPACES: ReadSpace[] = [
 	{
 		id: '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21',

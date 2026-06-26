@@ -82,7 +82,7 @@ class TransferDomainStep extends Component {
 	state = this.getDefaultState();
 
 	getDefaultState() {
-		const forcePrecheck = get( this.props, 'forcePrecheck', false );
+		const forcePrecheck = this.props?.forcePrecheck ?? false;
 		return {
 			authCodeValid: null,
 			domain: null,
@@ -553,7 +553,7 @@ class TransferDomainStep extends Component {
 							this.setState( {
 								domain,
 								isTransferable: true,
-								supportsPrivacy: get( result, 'supports_privacy', false ),
+								supportsPrivacy: result?.supports_privacy ?? false,
 							} );
 							break;
 						case domainAvailability.TLD_NOT_SUPPORTED: {

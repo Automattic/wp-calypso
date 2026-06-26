@@ -1,4 +1,4 @@
-import { filter, find } from 'lodash';
+import { filter } from 'lodash';
 import { getSitePosts } from 'calypso/state/posts/selectors/get-site-posts';
 
 import 'calypso/state/posts/init';
@@ -8,7 +8,7 @@ export function getSitePostsByTerm( state, siteId, taxonomy, termId ) {
 		return (
 			post.terms &&
 			post.terms[ taxonomy ] &&
-			find( post.terms[ taxonomy ], ( postTerm ) => postTerm.ID === termId )
+			Object.values( post.terms[ taxonomy ] ).find( ( postTerm ) => postTerm.ID === termId )
 		);
 	} );
 }

@@ -139,20 +139,6 @@ export default function buildFallbackResponse( {
 					type: 'submenu-item',
 					url: `/post/${ siteDomain }`,
 				},
-				{
-					parent: 'edit.php',
-					slug: 'edit-tags-phptaxonomycategory',
-					title: translate( 'Categories' ),
-					type: 'submenu-item',
-					url: `/settings/taxonomies/category/${ siteDomain }`,
-				},
-				{
-					parent: 'edit.php',
-					slug: 'edit-tags-phptaxonomypost_tag',
-					title: translate( 'Tags' ),
-					type: 'submenu-item',
-					url: `/settings/taxonomies/post_tag/${ siteDomain }`,
-				},
 			],
 		},
 		{

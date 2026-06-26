@@ -3,7 +3,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { filter, find } from 'lodash';
+import { filter } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import SortableList from 'calypso/components/forms/sortable-list';
@@ -122,7 +122,7 @@ class SharingButtonsTray extends Component {
 
 	onButtonClick = ( button ) => {
 		const buttons = this.props.buttons.slice( 0 );
-		const currentButton = find( buttons, { ID: button.ID } );
+		const currentButton = buttons.find( ( b ) => b.ID === button.ID );
 		let isEnabled;
 
 		if ( button.visibility === this.props.visibility ) {

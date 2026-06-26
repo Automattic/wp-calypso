@@ -2113,20 +2113,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/react-virtualized@npm:^9.22.4":
-  version: 9.22.4
-  resolution: "@automattic/react-virtualized@npm:9.22.4"
-  dependencies:
-    clsx: "npm:^1.0.4"
-    loose-envify: "npm:^1.4.0"
-    react-lifecycles-compat: "npm:^3.0.4"
-  peerDependencies:
-    react: ^15.3.0 || ^16.0.0-alpha || ^17.0.0 || ^18.0.0
-    react-dom: ^15.3.0 || ^16.0.0-alpha || ^17.0.0 || ^18.0.0
-  checksum: 06079435a6ac66876d181edaabedaeda10638a40ed6f0a7b863af4635265894bece28050079a575abd6f7ae465ba5508bf733f4cbc539ef422d513513d4d32ea
-  languageName: node
-  linkType: hard
-
 "@automattic/request-external-access@workspace:^, @automattic/request-external-access@workspace:packages/request-external-access":
   version: 0.0.0-use.local
   resolution: "@automattic/request-external-access@workspace:packages/request-external-access"
@@ -14369,7 +14355,6 @@ __metadata:
     "@automattic/onboarding": "workspace:^"
     "@automattic/plans-grid-next": "workspace:^"
     "@automattic/posthog": "workspace:^"
-    "@automattic/react-virtualized": "npm:^9.22.4"
     "@automattic/request-external-access": "workspace:^"
     "@automattic/search": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
@@ -15119,7 +15104,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clsx@npm:^1.0.4, clsx@npm:^1.1.1":
+"clsx@npm:^1.1.1":
   version: 1.2.1
   resolution: "clsx@npm:1.2.1"
   checksum: 34dead8bee24f5e96f6e7937d711978380647e936a22e76380290e35486afd8634966ce300fc4b74a32f3762c7d4c0303f442c3e259f4ce02374eb0c82834f27
@@ -27504,7 +27489,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-lifecycles-compat@npm:^3.0.0, react-lifecycles-compat@npm:^3.0.4":
+"react-lifecycles-compat@npm:^3.0.0":
   version: 3.0.4
   resolution: "react-lifecycles-compat@npm:3.0.4"
   checksum: 1d0df3c85af79df720524780f00c064d53a9dd1899d785eddb7264b378026979acbddb58a4b7e06e7d0d12aa1494fd5754562ee55d32907b15601068dae82c27

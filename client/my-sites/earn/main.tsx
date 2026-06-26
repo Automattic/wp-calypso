@@ -1,7 +1,6 @@
 import { capitalize } from '@automattic/js-utils';
 import { Page } from '@wordpress/admin-ui';
 import { useTranslate } from 'i18n-calypso';
-import { find } from 'lodash';
 import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
@@ -111,7 +110,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	};
 
 	const getAdSelectedText = () => {
-		const selected = find( getAdTabs(), { path: path } );
+		const selected = getAdTabs().find( ( tab ) => tab.path === path );
 		if ( selected ) {
 			return selected.title;
 		}

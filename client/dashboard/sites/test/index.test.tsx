@@ -123,18 +123,24 @@ describe( '<Sites>', () => {
 		} );
 		startSiteCollisionListener( queryClient );
 
-		// The collision listener (started by test-utils) should auto-detect the
-		// Jetpack site and fix the wpcom site's slug without manual intervention.
-		const links = await screen.findAllByRole( 'link', { name: /WPcom Site/ } );
-		for ( const link of links ) {
-			expect( link ).toHaveAttribute(
-				'href',
-				expect.stringMatching( /\/sites\/wpcomsite.wordpress\.com$/ )
-			);
-		}
+		// Slug rewrite is async; poll until it lands. Re-query the table each pass
+		// to avoid a stale node after a re-render.
+		await waitFor( () => {
+			const links = within( screen.getByRole( 'table' ) ).getAllByRole( 'link', {
+				name: /WPcom Site/,
+			} );
+			for ( const link of links ) {
+				expect( link ).toHaveAttribute(
+					'href',
+					expect.stringMatching( /\/sites\/wpcomsite\.wordpress\.com$/ )
+				);
+			}
+		} );
 
-		// The Jetpack site's links should remain unchanged.
-		const jpLinks = await screen.findAllByRole( 'link', { name: /Jetpack Site/ } );
+		// The Jetpack site's links are never rewritten; the table is settled now.
+		const jpLinks = within( screen.getByRole( 'table' ) ).getAllByRole( 'link', {
+			name: /Jetpack Site/,
+		} );
 		for ( const jpLink of jpLinks ) {
 			expect( jpLink ).toHaveAttribute(
 				'href',

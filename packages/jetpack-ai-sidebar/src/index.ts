@@ -951,10 +951,6 @@ export function useSuggestions(
 	}, [ editorContext.selectedBlock?.clientId ] );
 
 	const selectedBlock = editorContext.selectedBlock;
-	const aiEditorialReviewSuggestions = useMemo(
-		() => getAiEditorialReviewSuggestions( editorContext.postType ),
-		[ editorContext.postType ]
-	);
 	const postLevelSuggestions = useMemo(
 		() => getPostLevelSuggestions( editorContext.postType, editorContext.postId ),
 		[ editorContext.postId, editorContext.postType ]
@@ -971,43 +967,18 @@ export function useSuggestions(
 		() => applicable.map( ( { id, label, prompt } ) => ( { id, label, prompt } ) ),
 		[ applicable ]
 	);
+	// Post-level reviews (Optimize Title, Generate Feedback, AI Editorial Review)
+	// show only with no block selected; a selected block shows block transforms.
 	const visibleSuggestions = useMemo( () => {
 		if ( hidden ) {
 			return [];
 		}
-
-		if ( ! selectedBlock ) {
-			return applySuggestionLimit( postLevelSuggestions, maxSuggestions );
-		}
-
-		if ( ! blockTransformationsEnabled ) {
-			return applySuggestionLimit(
-				[
-					...( isGenerateFeedbackAvailable( editorContext.postType, editorContext.postId )
-						? [ POST_FEEDBACK_SUGGESTION ]
-						: [] ),
-					...aiEditorialReviewSuggestions,
-				],
-				maxSuggestions
-			);
-		}
-
 		return applySuggestionLimit(
-			[
-				...blockTransformationSuggestions,
-				...( isGenerateFeedbackAvailable( editorContext.postType, editorContext.postId )
-					? [ POST_FEEDBACK_SUGGESTION ]
-					: [] ),
-				...aiEditorialReviewSuggestions,
-			],
+			selectedBlock ? blockTransformationSuggestions : postLevelSuggestions,
 			maxSuggestions
 		);
 	}, [
-		aiEditorialReviewSuggestions,
 		blockTransformationSuggestions,
-		blockTransformationsEnabled,
-		editorContext.postId,
-		editorContext.postType,
 		hidden,
 		maxSuggestions,
 		postLevelSuggestions,

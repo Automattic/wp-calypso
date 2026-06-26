@@ -82,6 +82,14 @@ jest.mock( '../../utils/persist-last-activity', () => ( {
 	persistLastActivity: jest.fn(),
 } ) );
 jest.mock( '../agent-dock/style.scss', () => ( {} ) );
+jest.mock( '../editor-ai-chat-button', () => ( {
+	__esModule: true,
+	default: () => null,
+} ) );
+jest.mock( '../editor-help-center-button', () => ( {
+	__esModule: true,
+	default: () => null,
+} ) );
 jest.mock( '../orchestrator-chat', () => ( {
 	__esModule: true,
 	default: ( {

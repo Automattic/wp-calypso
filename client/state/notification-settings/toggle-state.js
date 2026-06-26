@@ -1,4 +1,4 @@
-import { find, get } from 'lodash';
+import { get } from 'lodash';
 
 const replaceAtIndex = ( array, index, newItem ) =>
 	array.map( ( item, idx ) => ( idx === index ? newItem : item ) );
@@ -16,7 +16,7 @@ const toggleInStream = ( streamName, stream, setting ) => ( {
 } );
 
 const toggleInDevice = ( devices, deviceId, setting ) => {
-	const device = find( devices, { device_id: parseInt( deviceId, 10 ) } );
+	const device = devices?.find( ( item ) => item.device_id === parseInt( deviceId, 10 ) );
 	const deviceSetting = device?.[ setting ];
 
 	return {
@@ -47,7 +47,7 @@ export default {
 
 	blog( state, source, stream, setting ) {
 		const blogs = state?.dirty?.blogs;
-		const blog = find( blogs, { blog_id: parseInt( source, 10 ) } );
+		const blog = blogs?.find( ( item ) => item.blog_id === parseInt( source, 10 ) );
 		const devices = get( blog, 'devices', [] );
 
 		return {
