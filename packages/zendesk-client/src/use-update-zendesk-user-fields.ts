@@ -9,9 +9,15 @@ import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
  */
 import type { UserFields } from './types';
 
-export function useUpdateZendeskUserFields() {
+interface UseUpdateZendeskUserFieldsOptions {
+	throwOnError?: boolean;
+}
+
+export function useUpdateZendeskUserFields( {
+	throwOnError = true,
+}: UseUpdateZendeskUserFieldsOptions = {} ) {
 	return useMutation( {
-		throwOnError: true,
+		throwOnError,
 		mutationFn: ( userFields: UserFields ) => {
 			return canAccessWpcomApis()
 				? wpcomRequest( {

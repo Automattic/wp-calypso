@@ -45,6 +45,8 @@ export interface AgentsManagerProps {
 	zendeskConversationTags?: string[];
 	/** Index selecting a dedicated Smooch integration for new support conversations. */
 	zendeskSmoochIntegrationKey?: string;
+	/** Zendesk Product ticket-field value to apply to new support conversations. */
+	zendeskTicketProductFieldValue?: string;
 }
 
 const queryClient = new QueryClient();
@@ -63,6 +65,7 @@ export default function AgentsManager( {
 	useImageUpload,
 	zendeskConversationTags = EMPTY_ARRAY,
 	zendeskSmoochIntegrationKey,
+	zendeskTicketProductFieldValue,
 }: AgentsManagerProps ): JSX.Element | null {
 	// Wait for the store to load before rendering PersistentRouter
 	// This ensures router history is restored from persisted state
@@ -89,6 +92,7 @@ export default function AgentsManager( {
 						currentRoute,
 						zendeskConversationTags,
 						zendeskSmoochIntegrationKey,
+						zendeskTicketProductFieldValue,
 					} }
 				>
 					<AgentSetup agentId={ agentId } useImageUpload={ useImageUpload } />
