@@ -3,6 +3,7 @@ import {
 	SelectControl,
 	TextareaControl,
 	ExternalLink,
+	__experimentalHStack as HStack,
 	__experimentalSpacer as Spacer,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -31,29 +32,31 @@ function ConfigSnippet( {
 } ) {
 	return (
 		<>
-			<Text variant="muted">
-				{ file
-					? sprintf(
-							/* translators: %(file)s is the config file name */
-							__( 'Copy this configuration into %(file)s.' ),
-							{ file }
-					  )
-					: __( 'Copy this configuration into your client’s MCP settings.' ) }
-			</Text>
+			<HStack alignment="center" justify="space-between" spacing={ 2 }>
+				<Text variant="muted">
+					{ file
+						? sprintf(
+								/* translators: %(file)s is the config file name */
+								__( 'Copy this configuration into %(file)s.' ),
+								{ file }
+						  )
+						: __( 'Copy this configuration into your client’s MCP settings.' ) }
+				</Text>
+				<Button
+					style={ { flexShrink: 0 } }
+					variant="tertiary"
+					icon={ copied ? check : copy }
+					label={ copied ? __( 'Copied' ) : __( 'Copy configuration' ) }
+					showTooltip
+					onClick={ onCopy }
+				/>
+			</HStack>
 			<TextareaControl
 				__nextHasNoMarginBottom
 				className="mcp-config-textarea"
 				value={ snippet }
 				onChange={ () => {} }
 				readOnly
-			/>
-			<Button
-				style={ { width: 'fit-content' } }
-				variant="tertiary"
-				icon={ copied ? check : copy }
-				label={ copied ? __( 'Copied' ) : __( 'Copy configuration' ) }
-				showTooltip
-				onClick={ onCopy }
 			/>
 		</>
 	);
@@ -189,7 +192,6 @@ export default function McpConnectAgent( {
 										)
 									}
 								/>
-								<ExternalLink href={ selectedAgent.docsUrl } children={ selectedAgent.docsLabel } />
 							</VStack>
 						</CardBody>
 					</Card>
@@ -207,6 +209,15 @@ export default function McpConnectAgent( {
 					>
 						<VStack spacing={ 3 }>
 							<Text variant="muted">{ selectedAgent.fallbackSetup.description }</Text>
+							{ selectedAgent.fallbackSetup.steps && (
+								<ol>
+									{ selectedAgent.fallbackSetup.steps.map( ( step, index ) => (
+										<li key={ index }>
+											<Text>{ step }</Text>
+										</li>
+									) ) }
+								</ol>
+							) }
 							<ConfigSnippet
 								snippet={ selectedAgent.fallbackSetup.snippet }
 								file={ selectedAgent.fallbackSetup.file }
@@ -222,6 +233,8 @@ export default function McpConnectAgent( {
 						</VStack>
 					</CollapsibleCard>
 				) }
+
+				<ExternalLink href={ selectedAgent.docsUrl } children={ selectedAgent.docsLabel } />
 			</VStack>
 		</>
 	);

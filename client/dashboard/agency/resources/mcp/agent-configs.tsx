@@ -16,7 +16,7 @@ const MCP_SERVER_NAME = 'automattic-agencies-mcp';
 export interface FallbackSetup {
 	description: string;
 	file?: string;
-	language: 'json' | 'toml';
+	steps?: ReactNode[];
 	snippet: string;
 }
 
@@ -30,22 +30,25 @@ export interface AgentConfig {
 		deepLink: string;
 	};
 	manualSetupFile?: string;
-	manualSetupLanguage?: 'json' | 'toml';
 	manualSetupSnippet?: string;
 	fallbackSetup?: FallbackSetup;
 	docsUrl: string;
 	docsLabel: string;
 }
 
-// One-click install deep links point at the native remote server URL — no local
-// Node bridge. Cursor expects a base64-encoded server object; VS Code expects a
-// URL-encoded server object that includes the server name.
+// The `@automattic/mcp-remote` stdio bridge (requires Node), used by clients that
+// don't support a native remote HTTP connection yet.
+const bridgeArgs = [ '-y', MCP_REMOTE_PACKAGE, A4A_MCP_URL ];
+
+// One-click install deep links. Cursor and VS Code don't support native remote
+// HTTP yet, so their deep links install the `@automattic/mcp-remote` bridge.
+// Cursor expects a base64-encoded server object; VS Code a URL-encoded one.
 const cursorInstallDeepLink = `cursor://anysphere.cursor-deeplink/mcp/install?name=${ MCP_SERVER_NAME }&config=${ encodeURIComponent(
-	btoa( JSON.stringify( { url: A4A_MCP_URL } ) )
+	btoa( JSON.stringify( { command: `npx -y ${ MCP_REMOTE_PACKAGE } ${ A4A_MCP_URL }` } ) )
 ) }`;
 
 const vscodeInstallDeepLink = `vscode:mcp/install?${ encodeURIComponent(
-	JSON.stringify( { name: MCP_SERVER_NAME, type: 'http', url: A4A_MCP_URL } )
+	JSON.stringify( { name: MCP_SERVER_NAME, command: 'npx', args: bridgeArgs } )
 ) }`;
 
 // Native, Node-free remote configurations (URL + browser OAuth).
@@ -61,22 +64,13 @@ const urlServerSnippet = JSON.stringify(
 	2
 );
 
-const vscodeNativeSnippet = JSON.stringify(
-	{ servers: { [ MCP_SERVER_NAME ]: { type: 'http', url: A4A_MCP_URL } } },
-	null,
-	2
-);
-
 const codexNativeSnippet = [
 	`[mcp_servers.${ MCP_SERVER_NAME }]`,
 	`url = "${ A4A_MCP_URL }"`,
 	`oauth_resource = "${ A4A_MCP_URL }"`,
 ].join( '\n' );
 
-// Legacy fallback: route the connection through the `@automattic/mcp-remote`
-// stdio bridge (requires Node). Only for older clients or when native OAuth fails.
-const bridgeArgs = [ '-y', MCP_REMOTE_PACKAGE, A4A_MCP_URL ];
-
+// Bridge configurations for the manual setup guide.
 const mcpServersBridgeSnippet = JSON.stringify(
 	{ mcpServers: { [ MCP_SERVER_NAME ]: { command: 'npx', args: bridgeArgs } } },
 	null,
@@ -89,6 +83,16 @@ const serversBridgeSnippet = JSON.stringify(
 	2
 );
 
+// Shared first step for the Node bridge guides.
+const installNodeStep = createInterpolateElement(
+	sprintf(
+		/* translators: %s: npm package name, kept inside <code> */
+		__( 'Install Node 20 or later (required by <code>%s</code>).' ),
+		MCP_REMOTE_PACKAGE
+	),
+	{ code: <code /> }
+);
+
 const fallbackDescription = ( clientNote: string ) =>
 	sprintf(
 		/* translators: %s: short note about when to use the fallback, e.g. "older Cursor versions" */
@@ -97,6 +101,56 @@ const fallbackDescription = ( clientNote: string ) =>
 		),
 		clientNote
 	);
+
+// Cursor and VS Code only work through the bridge, so the manual guide in the
+// troubleshooting section is the fallback to the one-click install.
+const bridgeTroubleshootingDescription = __(
+	'If the one-click install doesn’t work, follow the steps below to connect through a local Node bridge. You’ll need Node 20 or later installed.'
+);
+
+const claudeDesktopBridgeSteps: ReactNode[] = [
+	installNodeStep,
+	__(
+		'Open Claude Desktop → Settings → Developer, then click “Edit Config” under Local MCP servers.'
+	),
+	createInterpolateElement(
+		__(
+			'Add the configuration below to <code>claude_desktop_config.json</code> (typically at <code>~/Library/Application Support/Claude/claude_desktop_config.json</code>).'
+		),
+		{ code: <code /> }
+	),
+	__( 'Restart Claude Desktop.' ),
+	__(
+		'If you haven’t authenticated yet, Claude Desktop will prompt you in your browser as soon as it reopens.'
+	),
+];
+
+const cursorBridgeSteps: ReactNode[] = [
+	installNodeStep,
+	createInterpolateElement( __( 'Open <code>~/.cursor/mcp.json</code>.' ), { code: <code /> } ),
+	createInterpolateElement( __( 'Add the block below under <code>mcpServers</code>.' ), {
+		code: <code />,
+	} ),
+	__( 'Fully quit Cursor (Cmd+Q) and relaunch.' ),
+	__(
+		'If you haven’t authenticated yet, Cursor will prompt you in your browser as soon as it reopens.'
+	),
+];
+
+const vscodeBridgeSteps: ReactNode[] = [
+	installNodeStep,
+	createInterpolateElement(
+		__( 'Open <code>~/Library/Application Support/Code/User/mcp.json</code> (create if missing).' ),
+		{ code: <code /> }
+	),
+	createInterpolateElement( __( 'Add the block below under <code>servers</code>.' ), {
+		code: <code />,
+	} ),
+	__( 'Restart VS Code.' ),
+	__(
+		'If you haven’t authenticated yet, VS Code will prompt you in your browser as soon as it reopens.'
+	),
+];
 
 export const AGENT_CONFIGS: AgentConfig[] = [
 	{
@@ -123,7 +177,7 @@ export const AGENT_CONFIGS: AgentConfig[] = [
 		fallbackSetup: {
 			description: fallbackDescription( __( 'older Claude Desktop versions without Connectors' ) ),
 			file: 'claude_desktop_config.json',
-			language: 'json',
+			steps: claudeDesktopBridgeSteps,
 			snippet: mcpServersBridgeSnippet,
 		},
 		docsUrl: 'https://modelcontextprotocol.io/docs/develop/connect-remote-servers',
@@ -163,7 +217,6 @@ export const AGENT_CONFIGS: AgentConfig[] = [
 			),
 		],
 		manualSetupFile: '~/.claude.json',
-		manualSetupLanguage: 'json',
 		manualSetupSnippet: claudeCodeNativeSnippet,
 		docsUrl: 'https://code.claude.com/docs/en/mcp',
 		docsLabel: __( 'Claude Code documentation' ),
@@ -176,13 +229,10 @@ export const AGENT_CONFIGS: AgentConfig[] = [
 			label: __( 'Install in Cursor' ),
 			deepLink: cursorInstallDeepLink,
 		},
-		manualSetupFile: '~/.cursor/mcp.json',
-		manualSetupLanguage: 'json',
-		manualSetupSnippet: urlServerSnippet,
 		fallbackSetup: {
-			description: fallbackDescription( __( 'older Cursor versions without remote MCP support' ) ),
+			description: bridgeTroubleshootingDescription,
 			file: '~/.cursor/mcp.json',
-			language: 'json',
+			steps: cursorBridgeSteps,
 			snippet: mcpServersBridgeSnippet,
 		},
 		docsUrl: 'https://cursor.com/docs/mcp',
@@ -196,13 +246,10 @@ export const AGENT_CONFIGS: AgentConfig[] = [
 			label: __( 'Install in VS Code' ),
 			deepLink: vscodeInstallDeepLink,
 		},
-		manualSetupFile: '~/Library/Application Support/Code/User/mcp.json',
-		manualSetupLanguage: 'json',
-		manualSetupSnippet: vscodeNativeSnippet,
 		fallbackSetup: {
-			description: fallbackDescription( __( 'older VS Code versions without remote MCP support' ) ),
+			description: bridgeTroubleshootingDescription,
 			file: '~/Library/Application Support/Code/User/mcp.json',
-			language: 'json',
+			steps: vscodeBridgeSteps,
 			snippet: serversBridgeSnippet,
 		},
 		docsUrl: 'https://code.visualstudio.com/docs/copilot/customization/mcp-servers',
@@ -240,7 +287,6 @@ export const AGENT_CONFIGS: AgentConfig[] = [
 			),
 		],
 		manualSetupFile: '~/.codex/config.toml',
-		manualSetupLanguage: 'toml',
 		manualSetupSnippet: codexNativeSnippet,
 		docsUrl: 'https://github.com/openai/codex',
 		docsLabel: __( 'Codex documentation' ),
@@ -248,14 +294,9 @@ export const AGENT_CONFIGS: AgentConfig[] = [
 	{
 		id: 'other',
 		label: __( 'Other MCP client' ),
-		quickSetupDescription: __(
-			'Most MCP clients connect to a remote server with just its URL and a browser sign-in.'
-		),
-		manualSetupLanguage: 'json',
 		manualSetupSnippet: urlServerSnippet,
 		fallbackSetup: {
 			description: fallbackDescription( __( 'clients that don’t support remote MCP servers' ) ),
-			language: 'json',
 			snippet: mcpServersBridgeSnippet,
 		},
 		docsUrl: 'https://modelcontextprotocol.io/docs/develop/connect-remote-servers',
