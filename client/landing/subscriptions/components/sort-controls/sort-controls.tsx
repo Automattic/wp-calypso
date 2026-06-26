@@ -49,6 +49,7 @@ const SortControls: < T extends string >( props: SortControlsProps< T > ) => Rea
 					icon={ <Gridicon icon={ isOpen ? 'chevron-up' : 'chevron-down' } /> }
 					iconSize={ 16 }
 					disabled={ disabled }
+					accessibleWhenDisabled
 					onClick={ disabled ? undefined : onToggle }
 					aria-expanded={ isOpen }
 					aria-label={ ariaLabel }

@@ -78,7 +78,7 @@ describe( 'SiteSubscriptionsListActionsBar', () => {
 		const sortButton = screen.getByRole( 'button', {
 			name: /Sort: Recently updated\. No subscribed sites match your search\./i,
 		} );
-		expect( sortButton ).toBeDisabled();
+		expect( sortButton ).toHaveAttribute( 'aria-disabled', 'true' );
 		expect( sortButton ).toHaveAttribute( 'title', 'No subscribed sites match your search.' );
 	} );
 
