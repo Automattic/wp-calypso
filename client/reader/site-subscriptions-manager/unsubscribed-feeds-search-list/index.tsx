@@ -54,8 +54,16 @@ export const UnsubscribedFeedsSearchList = () => {
 		isFetchingUnsubscribedFeeds || // If unsubscribed feeds are still fetching.
 		isUnsubscribing; // If user is unsubscribing from subscriptions table.
 
+	const hasSubscribedTableResults = subscriptions.some(
+		( subscription ) => ! subscription.isDeleted
+	);
+
 	const getTitle = (): string | null => {
-		if ( noFeedsFound || filteredUnsubscribedFeedItems.length === 0 ) {
+		if (
+			! hasSubscribedTableResults ||
+			noFeedsFound ||
+			filteredUnsubscribedFeedItems.length === 0
+		) {
 			return null;
 		}
 
