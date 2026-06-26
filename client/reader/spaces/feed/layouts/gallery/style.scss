@@ -6,23 +6,11 @@
 	inline-size: 100%;
 }
 
-// Full-width virtual row (a day header or a grid row of cards), positioned on
-// the main axis by the virtualizer.
+// Full-width virtual row of cards, positioned on the main axis by the virtualizer.
 .space-feed-gallery__item {
 	position: absolute;
 	inset-block-start: 0;
 	inset-inline: 0;
-}
-
-// Day-group header (Today / Yesterday / …) above its grid rows.
-.space-feed-gallery__group {
-	margin: 0;
-	padding-block: 20px 16px;
-	font-size: 0.75rem;
-	font-weight: 600;
-	letter-spacing: 0.08em;
-	text-transform: uppercase;
-	color: var(--color-text-subtle);
 }
 
 // One row of up to `columns` cards (`grid-template-columns` set inline). 32px
