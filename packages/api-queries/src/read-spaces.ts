@@ -68,9 +68,10 @@ export const readSpaceQuery = ( spaceId: string ) =>
 		meta: { persist: true },
 	} );
 
-// The summary (list) shape is the detail minus its `sources` and `tags`.
+// The summary (list) shape is the detail minus its `sources`, `tags`, and
+// `languages` (the detail-only fields).
 const toSummary = ( space: ReadSpaceDetails ): ReadSpace => {
-	const { sources, tags, ...summary } = space;
+	const { sources, tags, languages, ...summary } = space;
 	return summary;
 };
 

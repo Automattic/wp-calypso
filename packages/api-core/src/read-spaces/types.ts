@@ -85,6 +85,12 @@ export interface ReadSpace {
 export interface ReadSpaceDetails extends ReadSpace {
 	sources: SpaceSource[];
 	tags: string[];
+	// Base ES language codes (e.g. `en`, `pt`) the space's tag results are
+	// filtered to. The server normalizes whatever it's sent to base codes (region
+	// stripped, lowercased, validated, de-duped) and echoes the canonical list
+	// back here, so it may differ from what was submitted. Empty means unset (the
+	// server falls back to the viewer's interface locale).
+	languages: string[];
 }
 
 export interface CreateReadSpaceParams {
@@ -94,6 +100,9 @@ export interface CreateReadSpaceParams {
 	// if unresolvable.
 	tags?: string[];
 	feeds?: Array< number | string >;
+	// Base ES language codes (e.g. `en`, `pt`). The server normalizes to base
+	// codes and silently drops unknown ones, so the persisted set may be a subset.
+	languages?: string[];
 	layout?: Partial< SpaceLayout >;
 }
 
@@ -107,6 +116,10 @@ export interface UpdateReadSpaceParams {
 	name?: string;
 	tags?: string[];
 	feeds?: Array< number | string >;
+	// Full replace of the space's base language codes (pass `[]` to clear). The
+	// server normalizes to base codes and drops unknown ones; see
+	// `CreateReadSpaceParams.languages`.
+	languages?: string[];
 	layout?: Partial< SpaceLayout >;
 }
 

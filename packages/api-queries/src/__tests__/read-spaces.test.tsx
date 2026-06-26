@@ -119,6 +119,7 @@ describe( 'read spaces mutations', () => {
 					layout: { color: 'blue', icon: 'inbox' },
 					sources: [],
 					tags: [],
+					languages: [],
 				}
 			);
 			expect( invalidateQueries ).toHaveBeenCalledWith( {
@@ -286,6 +287,7 @@ describe( 'read spaces mutations', () => {
 				layout: { color: 'blue', icon: 'inbox' },
 				sources: [],
 				tags: [],
+				languages: [],
 			};
 			client.setQueryData( readSpaceQuery( '3' ).queryKey, seeded );
 			nock( BASE )

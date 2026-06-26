@@ -66,6 +66,7 @@ describe( 'read spaces mutators', () => {
 				name: 'Design',
 				feeds: [ 'https://en.blog/feed/', 9982 ],
 				tags: [ 'design' ],
+				languages: [ 'en', 'pt' ],
 				layout: { color: 'purple', icon: 'pages', view: 'legacy' },
 			} );
 
@@ -73,6 +74,7 @@ describe( 'read spaces mutators', () => {
 				title: 'Design',
 				feeds: [ 'https://en.blog/feed/', 9982 ],
 				tags: [ 'design' ],
+				languages: [ 'en', 'pt' ],
 				layout: { color: 'purple', icon: 'pages', view: 'legacy' },
 			} );
 		} );
@@ -102,6 +104,7 @@ describe( 'read spaces mutators', () => {
 				name: 'Work',
 				layout: { color: 'celadon', icon: 'star' },
 				tags: [ 'business' ],
+				languages: [],
 				sources: [
 					{ feedId: 9981, feedUrl: 'https://en.blog/feed/', blogId: 1, name: 'B', siteIcon: null },
 				],
@@ -136,6 +139,7 @@ describe( 'read spaces mutators', () => {
 			const space = await updateReadSpace( '3', {
 				name: 'Renamed',
 				tags: [ 'a', 'b' ],
+				languages: [ 'en' ],
 				feeds: [ 456, 'https://example.com/feed' ],
 				layout: { color: 'green', view: 'gallery' },
 			} );
@@ -144,6 +148,7 @@ describe( 'read spaces mutators', () => {
 			expect( body ).toEqual( {
 				title: 'Renamed',
 				tags: [ 'a', 'b' ],
+				languages: [ 'en' ],
 				feeds: [ 456, 'https://example.com/feed' ],
 				layout: { color: 'green', view: 'gallery' },
 			} );
