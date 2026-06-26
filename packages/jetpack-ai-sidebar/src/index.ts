@@ -77,6 +77,7 @@ let lastBlockTransformationSuggestionContext: {
 const OPTIMIZE_TITLE_SUGGESTION = {
 	id: 'optimize-title',
 	label: __( 'Optimize Title', 'jetpack' ),
+	description: __( 'Refine your title using SEO best practices.', 'jetpack' ),
 	prompt: __( 'Optimize the title of this post', 'jetpack' ),
 };
 
@@ -88,7 +89,8 @@ const OPTIMIZE_TITLE_SUGGESTION = {
  */
 const AI_EDITORIAL_REVIEW_SUGGESTION = {
 	id: 'mediate-review-notes',
-	label: __( 'AI Editorial Review', 'jetpack' ),
+	label: __( 'Editorial Review', 'jetpack' ),
+	description: __( 'In-depth review against your content guidelines.', 'jetpack' ),
 	prompt: __(
 		'Run an AI Editorial Review for this post. Check the content, reviewer notes, and site guidelines, then surface conflicts, implications, guideline issues, and suggested edits.',
 		'jetpack'
@@ -97,7 +99,8 @@ const AI_EDITORIAL_REVIEW_SUGGESTION = {
 
 const POST_FEEDBACK_SUGGESTION = {
 	id: 'generate-feedback',
-	label: __( 'Generate Feedback', 'jetpack' ),
+	label: __( 'Simple Review', 'jetpack' ),
+	description: __( 'Quick feedback on your content’s structure.', 'jetpack' ),
 	prompt: __(
 		'Generate feedback for this saved post. Review the saved title and saved block content for content structure, reader clarity, completeness, media/caption/link issues, and obvious publishability concerns. Return practical feedback with one-click suggestions when safe.',
 		'jetpack'
@@ -705,6 +708,7 @@ export function useCheckpoint(): any {
 export function getEmptyViewSuggestions(): Array< {
 	id: string;
 	label: string;
+	description?: string;
 	prompt?: string;
 } > {
 	return getPostLevelSuggestions();
@@ -866,7 +870,7 @@ export function useSuggestions(
 	maxSuggestions?: number,
 	{ suggestionsVisible = true }: { suggestionsVisible?: boolean } = {}
 ): {
-	suggestions: Array< { id: string; label: string; prompt?: string } >;
+	suggestions: Array< { id: string; label: string; description?: string; prompt?: string } >;
 } {
 	const [ hidden, setHidden ] = useState( false );
 
