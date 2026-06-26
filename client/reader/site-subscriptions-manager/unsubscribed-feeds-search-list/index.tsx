@@ -73,10 +73,10 @@ export const UnsubscribedFeedsSearchList = ( { hideTitle = false }: Props ) => {
 		}
 
 		if ( filteredUnsubscribedFeedItems.length === 1 ) {
-			return translate( 'Here is one result related to your search.' );
+			return translate( 'Here is one result that matches your search:' );
 		}
 
-		return translate( 'Here are some other sites related to your search.' );
+		return translate( 'Here are some other sites that match your search:' );
 	};
 
 	if ( noFeedsFound ) {

@@ -188,7 +188,7 @@ describe( 'UnsubscribedFeedsSearchList', () => {
 
 		expect(
 			screen.getByRole( 'heading', {
-				name: 'Here are some other sites related to your search.',
+				name: 'Here are some other sites that match your search:',
 			} )
 		).toBeVisible();
 	} );
@@ -216,7 +216,7 @@ describe( 'UnsubscribedFeedsSearchList', () => {
 
 		expect(
 			screen.queryByRole( 'heading', {
-				name: 'Here are some other sites related to your search.',
+				name: 'Here are some other sites that match your search:',
 			} )
 		).not.toBeInTheDocument();
 	} );
@@ -241,7 +241,7 @@ describe( 'UnsubscribedFeedsSearchList', () => {
 
 		expect(
 			screen.queryByRole( 'heading', {
-				name: 'Here are some other sites related to your search.',
+				name: 'Here are some other sites that match your search:',
 			} )
 		).not.toBeInTheDocument();
 	} );
@@ -264,7 +264,7 @@ describe( 'UnsubscribedFeedsSearchList', () => {
 		expect( screen.queryByTestId( 'mock-reader-feed-item' ) ).not.toBeInTheDocument();
 		expect(
 			screen.getByRole( 'heading', {
-				name: 'Here is one result related to your search.',
+				name: 'Here is one result that matches your search:',
 			} )
 		).toBeVisible();
 	} );
@@ -283,7 +283,7 @@ describe( 'UnsubscribedFeedsSearchList', () => {
 		expect( await screen.findByTestId( 'mock-feed-preview' ) ).toBeVisible();
 		expect(
 			screen.queryByRole( 'heading', {
-				name: 'Here is one result related to your search.',
+				name: 'Here is one result that matches your search:',
 			} )
 		).not.toBeInTheDocument();
 	} );
