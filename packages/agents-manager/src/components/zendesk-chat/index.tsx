@@ -63,11 +63,14 @@ export default function ZendeskChat( {
 	} = useAgentsManagerContext();
 	const siteUrl = getSiteUrl( site );
 	const conversationTicketFields = useMemo(
-		() => ( {
-			[ ZENDESK_CUSTOM_FIELD_WEBSITE_URL ]: siteUrl,
-			[ ZENDESK_SOURCE_URL_TICKET_FIELD_ID ]: window.location.href,
-			[ ZENDESK_CUSTOM_FIELD_PRODUCT ]: zendeskTicketProductFieldValue,
-		} ),
+		() =>
+			zendeskTicketProductFieldValue
+				? {
+						[ ZENDESK_CUSTOM_FIELD_WEBSITE_URL ]: siteUrl,
+						[ ZENDESK_SOURCE_URL_TICKET_FIELD_ID ]: window.location.href,
+						[ ZENDESK_CUSTOM_FIELD_PRODUCT ]: zendeskTicketProductFieldValue,
+				  }
+				: {},
 		[ siteUrl, zendeskTicketProductFieldValue ]
 	);
 	const {

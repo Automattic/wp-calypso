@@ -5,6 +5,7 @@
 import { render } from '@testing-library/react';
 
 const mockUseManagedZendeskChat = jest.fn();
+let mockZendeskTicketProductFieldValue: string | undefined = 'woocommerce_core_product';
 
 jest.mock( '@automattic/zendesk-client', () => ( {
 	useManagedZendeskChat: ( props: unknown ) => mockUseManagedZendeskChat( props ),
@@ -18,7 +19,7 @@ jest.mock( '../../contexts', () => ( {
 		site: { ID: 123, URL: 'https://example.com' },
 		zendeskConversationTags: [ 'woo_support_flow_ai_plugin' ],
 		zendeskSmoochIntegrationKey: 'woo',
-		zendeskTicketProductFieldValue: 'woocommerce_core_product',
+		zendeskTicketProductFieldValue: mockZendeskTicketProductFieldValue,
 	} ),
 } ) );
 
@@ -37,6 +38,7 @@ import ZendeskChat from '../zendesk-chat';
 describe( 'ZendeskChat', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockZendeskTicketProductFieldValue = 'woocommerce_core_product';
 		mockUseManagedZendeskChat.mockReturnValue( {
 			agentticMessages: [],
 			onSubmit: jest.fn(),
@@ -70,6 +72,26 @@ describe( 'ZendeskChat', () => {
 					23752099174548: window.location.href,
 					25254766: 'woocommerce_core_product',
 				} ),
+			} )
+		);
+	} );
+
+	it( 'does not pass Woo ticket fields when no product field value is configured', () => {
+		mockZendeskTicketProductFieldValue = undefined;
+
+		render(
+			<ZendeskChat
+				chatHeaderOptions={ [] }
+				isDocked={ false }
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+			/>
+		);
+
+		expect( mockUseManagedZendeskChat ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				conversationTicketFields: {},
 			} )
 		);
 	} );
