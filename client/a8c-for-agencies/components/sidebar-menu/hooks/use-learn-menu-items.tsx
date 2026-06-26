@@ -19,7 +19,7 @@ const useLearnMenuItems = ( path: string ) => {
 	const translate = useTranslate();
 	const agency = useSelector( getActiveAgency );
 	const isAgentStudioEnabled = isEnabled( 'a4a-agent-studio' );
-	const isAiMcpEnabled = isEnabled( 'a4a-ai-mcp' ) && !! agency?.mcp?.allowed;
+	const isAiMcpEnabled = !! agency?.mcp?.allowed;
 	const isBenchmarksEnabled = isEnabled( 'a4a-benchmarks' );
 
 	const menuItems = useMemo( () => {

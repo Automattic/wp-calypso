@@ -19,7 +19,10 @@ const agencyRoute = createRoute( {
 			return; // Don't redirect on hover/intent preloads.
 		}
 
-		const agency = await queryClient.ensureQueryData( agencyQuery() );
+		const [ agency ] = await Promise.all( [
+			queryClient.ensureQueryData( agencyQuery() ),
+			queryClient.ensureQueryData( activeAgencyQuery() ),
+		] );
 		if ( agency.isClientUser ) {
 			throw redirectAsNotAllowed( { to: '/client/subscriptions' } );
 		}

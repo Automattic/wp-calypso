@@ -13,7 +13,7 @@ export default function AgencySidebar() {
 		return null;
 	}
 
-	const canAccessMcp = !! ( supports.agency?.mcp && activeAgency?.mcp?.allowed );
+	const canAccessMcp = !! ( supports.agency && supports.agency.mcp && activeAgency?.mcp?.allowed );
 
 	return (
 		<>
