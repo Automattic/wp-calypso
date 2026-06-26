@@ -99,7 +99,7 @@ const ReaderPost = ( site, post, frontPageMetaDescription ) => {
 			site={ site }
 			post={ post }
 			postExcerpt={ formatExcerpt(
-				frontPageMetaDescription || get( post, 'excerpt', false ) || get( post, 'content', false )
+				frontPageMetaDescription || ( post?.excerpt ?? false ) || ( post?.content ?? false )
 			) }
 			postImage={ getPostImage( post ) }
 		/>
@@ -117,8 +117,8 @@ const GoogleSite = ( site, frontPageMetaDescription ) => (
 
 const GooglePost = ( site, post, frontPageMetaDescription ) => (
 	<GoogleSearchPreview
-		title={ get( post, 'seoTitle', '' ) }
-		url={ get( post, 'URL', '' ) }
+		title={ post?.seoTitle ?? '' }
+		url={ post?.URL ?? '' }
 		description={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
 		siteTitle={ site.title }
 	/>
@@ -136,11 +136,11 @@ const FacebookSite = ( site, frontPageMetaDescription ) => (
 
 const FacebookPost = ( site, post, frontPageMetaDescription ) => (
 	<FacebookPostPreview
-		title={ get( post, 'seoTitle', '' ) }
-		url={ get( post, 'URL', '' ) }
+		title={ post?.seoTitle ?? '' }
+		url={ post?.URL ?? '' }
 		description={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
 		image={ getPostImage( post ) }
-		user={ { displayName: get( post, 'author.name', '' ) } }
+		user={ { displayName: post?.author?.name ?? '' } }
 		type={ TYPE_ARTICLE }
 	/>
 );
@@ -157,8 +157,8 @@ const TwitterSite = ( site, frontPageMetaDescription ) => (
 
 const TwitterPost = ( site, post, frontPageMetaDescription ) => (
 	<TwitterLinkPreview
-		title={ get( post, 'seoTitle', '' ) }
-		url={ get( post, 'URL', '' ) }
+		title={ post?.seoTitle ?? '' }
+		url={ post?.URL ?? '' }
 		type="large_image_summary"
 		description={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
 		image={ getPostImage( post ) }

@@ -2,7 +2,6 @@ import page from '@automattic/calypso-router';
 import { Count, Dialog, Gridicon, Tooltip } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
@@ -94,7 +93,7 @@ class TaxonomyManagerListItem extends Component {
 	tooltipText = () => {
 		const { term, translate } = this.props;
 		const name = this.getName();
-		const postCount = get( term, 'post_count', 0 );
+		const postCount = term?.post_count ?? 0;
 		return translate( "%(postCount)d '%(name)s' post", "%(postCount)d '%(name)s' posts", {
 			count: postCount,
 			args: {
@@ -121,7 +120,7 @@ class TaxonomyManagerListItem extends Component {
 		const { canSetAsDefault, isDefault, onClick, term, isPodcastingCategory, translate } =
 			this.props;
 		const name = this.getName();
-		const hasPosts = get( term, 'post_count', 0 ) > 0;
+		const hasPosts = ( term?.post_count ?? 0 ) > 0;
 		const className = clsx( 'taxonomy-manager__item', {
 			'is-default': isDefault,
 		} );

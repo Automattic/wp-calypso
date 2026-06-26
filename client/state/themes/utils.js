@@ -32,7 +32,7 @@ const DELISTED_WPORG_THEMES = [ 'shopline', 'store-shopline' ];
  * @returns {boolean}      True if the theme is premium
  */
 export function isPremium( theme ) {
-	const themeStylesheet = get( theme, 'stylesheet', false );
+	const themeStylesheet = theme?.stylesheet ?? false;
 	return themeStylesheet && themeStylesheet.startsWith( 'premium/' );
 }
 

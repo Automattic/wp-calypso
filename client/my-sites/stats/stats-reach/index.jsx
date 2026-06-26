@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
@@ -27,8 +26,8 @@ export const StatsReach = ( props ) => {
 	} = props;
 
 	const isLoadingFollowData = ! followData;
-	const wpcomFollowCount = get( followData, 'total_wpcom', 0 );
-	const emailFollowCount = get( followData, 'total_email', 0 );
+	const wpcomFollowCount = followData?.total_wpcom ?? 0;
+	const emailFollowCount = followData?.total_email ?? 0;
 	const publicizeFollowCount = ( publicizeData ?? [] ).reduce( ( sum, item ) => {
 		return sum + item.value;
 	}, 0 );

@@ -74,8 +74,8 @@ import { compose } from 'redux';
  */
 export const fromEditor = ( content ) => {
 	const rawContent = convertToRaw( content );
-	const text = get( rawContent, 'blocks[0].text', '' );
-	const ranges = get( rawContent, 'blocks[0].entityRanges', [] );
+	const text = rawContent?.blocks?.[ 0 ]?.text ?? '';
+	const ranges = rawContent?.blocks?.[ 0 ]?.entityRanges ?? [];
 	const entities = rawContent?.entityMap;
 
 	// [ output, index, text ]

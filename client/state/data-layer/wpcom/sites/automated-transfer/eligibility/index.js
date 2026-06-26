@@ -86,9 +86,9 @@ const fromApi = ( data, options = {} ) => ( {
  * @returns {Object} An analytics event object
  */
 const trackEligibility = ( data ) => {
-	const isEligible = get( data, 'is_eligible', false );
-	const pluginWarnings = get( data, 'warnings.plugins', [] );
-	const widgetWarnings = get( data, 'warnings.widgets', [] );
+	const isEligible = data?.is_eligible ?? false;
+	const pluginWarnings = data?.warnings?.plugins ?? [];
+	const widgetWarnings = data?.warnings?.widgets ?? [];
 	const hasEligibilityWarnings = ! ( isEmpty( pluginWarnings ) && isEmpty( widgetWarnings ) );
 
 	const eventProps = {
