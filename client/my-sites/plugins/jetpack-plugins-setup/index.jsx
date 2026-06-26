@@ -9,7 +9,7 @@ import {
 	JETPACK_SUPPORT,
 } from '@automattic/urls';
 import { localize, fixMe } from 'i18n-calypso';
-import { filter, get } from 'lodash';
+import { filter } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
@@ -346,7 +346,7 @@ class PlansSetup extends Component {
 			</NoticeAction>
 		);
 
-		const errorMessage = get( plugin, 'error.message', '' );
+		const errorMessage = plugin?.error?.message ?? '';
 
 		switch ( plugin.status ) {
 			case 'install':

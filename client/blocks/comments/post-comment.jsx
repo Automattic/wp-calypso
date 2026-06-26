@@ -312,7 +312,7 @@ class PostComment extends PureComponent {
 
 	getAuthorDetails = ( commentId ) => {
 		const comment = get( this.props.commentsTree, [ commentId, 'data' ], {} );
-		const commentAuthor = get( comment, 'author', {} );
+		const commentAuthor = comment?.author ?? {};
 		const commentAuthorName = decodeEntities( commentAuthor.name );
 
 		let commentAuthorUrl;

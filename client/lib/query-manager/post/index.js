@@ -123,8 +123,7 @@ export default class PostQueryManager extends PaginatedQueryManager {
 				break;
 
 			case 'comment_count':
-				order =
-					get( postA.discussion, 'comment_count', 0 ) - get( postB.discussion, 'comment_count', 0 );
+				order = ( postA.discussion?.comment_count ?? 0 ) - ( postB.discussion?.comment_count ?? 0 );
 				break;
 
 			case 'title':

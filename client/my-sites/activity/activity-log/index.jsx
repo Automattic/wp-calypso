@@ -600,7 +600,7 @@ class ActivityLog extends Component {
 
 		const { context, rewindState } = this.props;
 
-		const rewindNoThanks = get( context, 'query.rewind-redirect', '' );
+		const rewindNoThanks = context?.query?.[ 'rewind-redirect' ] ?? '';
 		const rewindIsNotReady =
 			[ 'uninitialized', 'awaitingCredentials' ].includes( rewindState.state ) ||
 			'vp_can_transfer' === rewindState.reason;
