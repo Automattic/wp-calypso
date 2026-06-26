@@ -56,3 +56,16 @@ export function getLayoutSkeleton(
 ): ComponentType< SpaceFeedSkeletonProps > | undefined {
 	return layout ? LAYOUT_SKELETONS[ layout ] : undefined;
 }
+
+/**
+ * Layouts that render their own load-more placeholders inline (so they continue
+ * the grid/list flow rather than appending a separate skeleton block at the
+ * foot). The shell suppresses its foot skeleton for these while loading more.
+ */
+const LAYOUTS_WITH_INLINE_LOAD_MORE: Partial< Record< SpaceFeedLayout, boolean > > = {
+	gallery: true,
+};
+
+export function getLayoutInlineLoadMore( layout: SpaceFeedLayout | undefined ): boolean {
+	return !! ( layout && LAYOUTS_WITH_INLINE_LOAD_MORE[ layout ] );
+}

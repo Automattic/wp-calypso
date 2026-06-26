@@ -14,6 +14,7 @@ import {
 import {
 	DEFAULT_SPACE_FEED_LAYOUT,
 	getLayout,
+	getLayoutInlineLoadMore,
 	getLayoutPageSize,
 	getLayoutSkeleton,
 } from './layouts/registry';
@@ -94,6 +95,9 @@ export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
 	}, [] );
 	const Layout = getLayout( layout );
 	const Skeleton = getLayoutSkeleton( layout );
+	// Some layouts (the gallery) render their own load-more placeholders inline, so
+	// the shell skips the foot skeleton for them while still announcing the load.
+	const inlineLoadMore = getLayoutInlineLoadMore( layout );
 	const translate = useTranslate();
 	// A page's worth of placeholder cards for the first load; a few at the foot
 	// while the next page loads.
@@ -172,7 +176,7 @@ export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
 					( Skeleton ? (
 						<div className="space-feed__loading-more" role="status" aria-busy="true">
 							<span className="screen-reader-text">{ translate( 'Loading more posts…' ) }</span>
-							<Skeleton count={ loadMoreSkeletonCount } />
+							{ ! inlineLoadMore && <Skeleton count={ loadMoreSkeletonCount } /> }
 						</div>
 					) : (
 						<SpaceFeedLoadingMore />
