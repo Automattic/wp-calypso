@@ -30,7 +30,7 @@ const ListActionsBar = () => {
 	).length;
 	const isSortDisabled = ! isLoading && visibleCount === 0;
 	const isFilterDisabled = ! isLoading && ! data.hasSearchMatchesWithAllFilter;
-	const disabledReasonText = translate( 'No subscribed sites match your search.' );
+	const disabledReasonText = translate( 'No subscribed sites match your search.' ) as string;
 	const filterLabel = getOptionLabel( filterOptions, filterOption ) || '';
 	const sortLabel = getOptionLabel( sortOptions, sortTerm ) || '';
 
@@ -73,12 +73,12 @@ const ListActionsBar = () => {
 				disabled={ isSortDisabled }
 				ariaLabel={
 					isSortDisabled
-						? translate( 'Sort: %(sortingLabel)s. %(reason)s', {
+						? ( translate( 'Sort: %(sortingLabel)s. %(reason)s', {
 								args: {
 									sortingLabel: sortLabel,
 									reason: disabledReasonText,
 								},
-						  } )
+						  } ) as string )
 						: undefined
 				}
 				title={ isSortDisabled ? disabledReasonText : undefined }
