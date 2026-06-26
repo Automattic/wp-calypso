@@ -28,10 +28,16 @@ function getHoldMessages( {
 	isMarketplace?: boolean;
 	hasEnTranslation: ( arg: string ) => boolean;
 } ) {
+	// Plugin upload is available on the Personal plan and up, so upsell the
+	// lowest eligible plan for that context instead of Business.
+	const upsellPersonalPlan =
+		context === 'plugins-upload' ||
+		( isMarketplace && isEnabled( 'marketplace-personal-premium' ) );
+
 	return {
 		NO_BUSINESS_PLAN: {
 			title: ( function () {
-				if ( isMarketplace && isEnabled( 'marketplace-personal-premium' ) ) {
+				if ( upsellPersonalPlan ) {
 					return translate( 'Upgrade to a %(personalPlanName)s plan', {
 						args: { personalPlanName: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
 					} );
@@ -54,7 +60,7 @@ function getHoldMessages( {
 						  );
 				}
 
-				if ( isMarketplace && isEnabled( 'marketplace-personal-premium' ) ) {
+				if ( upsellPersonalPlan ) {
 					return hasEnTranslation(
 						"You'll also get a free domain for one year, and access fast support."
 					)
