@@ -315,7 +315,7 @@ function ProductsList() {
 						) }
 						<sub className="memberships__products-product-price">{ translate( 'Free' ) }</sub>
 						<div className="memberships__products-product-badge">
-							<HStack spacing={ 2 }>
+							<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
 								<Badge type="info">{ translate( 'Newsletter tier' ) }</Badge>
 								{ isFreeTierHidden && (
 									<Badge type="warning">{ translate( 'Hidden from subscribers' ) }</Badge>
