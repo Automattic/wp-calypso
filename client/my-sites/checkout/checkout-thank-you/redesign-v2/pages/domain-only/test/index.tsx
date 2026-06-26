@@ -122,6 +122,13 @@ describe( 'DomainOnly', () => {
 			expect( screen.queryByRole( 'link', { name: /Start a new site/ } ) ).not.toBeInTheDocument();
 		} );
 
+		it( 'is not visible while the site plan status is loading', () => {
+			jest.mocked( isCurrentPlanPaid ).mockReturnValue( null );
+			renderComponent();
+
+			expect( screen.queryByRole( 'link', { name: /Start a new site/ } ) ).not.toBeInTheDocument();
+		} );
+
 		it( 'records a tracks event when the user clicks the "Start a new site" link', async () => {
 			const user = userEvent.setup();
 			renderComponent();

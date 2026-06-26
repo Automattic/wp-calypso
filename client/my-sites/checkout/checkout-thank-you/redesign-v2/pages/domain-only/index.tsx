@@ -82,7 +82,7 @@ export default function DomainOnly( {
 				}
 				verticalAlign="center"
 			>
-				{ ! siteHasPaidPlan && (
+				{ false === siteHasPaidPlan && (
 					<OptionContent
 						illustration={ <img src={ startSite } alt="" aria-hidden /> }
 						titleText={ translate( 'Start a new site' ) }
