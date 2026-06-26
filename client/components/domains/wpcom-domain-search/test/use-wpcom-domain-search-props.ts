@@ -135,6 +135,7 @@ const defaultProps = {
 		onContinue: jest.fn(),
 	},
 };
+const loggedInOptions = { initialState: { currentUser: { id: 1234 } } };
 
 describe( 'useWPCOMDomainSearchProps', () => {
 	beforeEach( () => {
@@ -1292,15 +1293,26 @@ describe( 'useWPCOMDomainSearchProps', () => {
 	} );
 
 	describe( 'showBundleSuggestions (fetch gate)', () => {
-		it( 'is enabled for a regular flow even when the domain-bundling flag is off, so both arms fetch', () => {
+		it( 'is enabled for a logged-in regular flow even when the domain-bundling flag is off, so both arms fetch', () => {
 			mockConfig.isEnabled.mockReturnValue( false );
+			mockUseShoppingCart.mockReturnValue( buildShoppingCart() );
+
+			const { result } = renderHookWithProvider(
+				() => useWPCOMDomainSearchProps( defaultProps ),
+				loggedInOptions
+			);
+
+			// Fetch is gated on logged-in flow eligibility only — never on the flag
+			// or experiment — so control and treatment both reach the decision point.
+			expect( result.current.config.showBundleSuggestions ).toBe( true );
+		} );
+
+		it( 'is disabled for logged-out users', () => {
 			mockUseShoppingCart.mockReturnValue( buildShoppingCart() );
 
 			const { result } = renderHookWithProvider( () => useWPCOMDomainSearchProps( defaultProps ) );
 
-			// Fetch is gated on flow eligibility only — never on the flag or the
-			// experiment — so control and treatment both reach the decision point.
-			expect( result.current.config.showBundleSuggestions ).toBe( true );
+			expect( result.current.config.showBundleSuggestions ).toBe( false );
 		} );
 
 		it.each( [ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW, DOMAIN_FOR_GRAVATAR_FLOW ] )(
@@ -1308,8 +1320,9 @@ describe( 'useWPCOMDomainSearchProps', () => {
 			( flowName ) => {
 				mockUseShoppingCart.mockReturnValue( buildShoppingCart() );
 
-				const { result } = renderHookWithProvider( () =>
-					useWPCOMDomainSearchProps( { ...defaultProps, flowName } )
+				const { result } = renderHookWithProvider(
+					() => useWPCOMDomainSearchProps( { ...defaultProps, flowName } ),
+					loggedInOptions
 				);
 
 				expect( result.current.config.showBundleSuggestions ).toBe( false );
@@ -1321,7 +1334,10 @@ describe( 'useWPCOMDomainSearchProps', () => {
 		it( 'is enabled when the domain-bundling flag is on, without an experiment assignment', () => {
 			mockUseShoppingCart.mockReturnValue( buildShoppingCart() );
 
-			const { result } = renderHookWithProvider( () => useWPCOMDomainSearchProps( defaultProps ) );
+			const { result } = renderHookWithProvider(
+				() => useWPCOMDomainSearchProps( defaultProps ),
+				loggedInOptions
+			);
 
 			expect( result.current.config.showBundleCard ).toBe( true );
 		} );
@@ -1330,7 +1346,10 @@ describe( 'useWPCOMDomainSearchProps', () => {
 			mockConfig.isEnabled.mockReturnValue( false );
 			mockUseShoppingCart.mockReturnValue( buildShoppingCart() );
 
-			const { result } = renderHookWithProvider( () => useWPCOMDomainSearchProps( defaultProps ) );
+			const { result } = renderHookWithProvider(
+				() => useWPCOMDomainSearchProps( defaultProps ),
+				loggedInOptions
+			);
 
 			expect( result.current.config.showBundleCard ).toBe( false );
 		} );
@@ -1340,7 +1359,10 @@ describe( 'useWPCOMDomainSearchProps', () => {
 			mockLoadExperimentAssignment.mockResolvedValue( buildAssignment( 'treatment' ) );
 			mockUseShoppingCart.mockReturnValue( buildShoppingCart() );
 
-			const { result } = renderHookWithProvider( () => useWPCOMDomainSearchProps( defaultProps ) );
+			const { result } = renderHookWithProvider(
+				() => useWPCOMDomainSearchProps( defaultProps ),
+				loggedInOptions
+			);
 
 			expect( result.current.config.showBundleCard ).toBe( false );
 
@@ -1356,7 +1378,10 @@ describe( 'useWPCOMDomainSearchProps', () => {
 			mockLoadExperimentAssignment.mockResolvedValue( buildAssignment( 'control' ) );
 			mockUseShoppingCart.mockReturnValue( buildShoppingCart() );
 
-			const { result } = renderHookWithProvider( () => useWPCOMDomainSearchProps( defaultProps ) );
+			const { result } = renderHookWithProvider(
+				() => useWPCOMDomainSearchProps( defaultProps ),
+				loggedInOptions
+			);
 
 			result.current.events.onBundleWouldShow?.( {} as never );
 
@@ -1371,8 +1396,9 @@ describe( 'useWPCOMDomainSearchProps', () => {
 			( flowName ) => {
 				mockUseShoppingCart.mockReturnValue( buildShoppingCart() );
 
-				const { result } = renderHookWithProvider( () =>
-					useWPCOMDomainSearchProps( { ...defaultProps, flowName } )
+				const { result } = renderHookWithProvider(
+					() => useWPCOMDomainSearchProps( { ...defaultProps, flowName } ),
+					loggedInOptions
 				);
 
 				expect( result.current.config.showBundleCard ).toBe( false );
@@ -1385,7 +1411,10 @@ describe( 'useWPCOMDomainSearchProps', () => {
 			mockConfig.isEnabled.mockReturnValue( false );
 			mockUseShoppingCart.mockReturnValue( buildShoppingCart() );
 
-			const { result } = renderHookWithProvider( () => useWPCOMDomainSearchProps( defaultProps ) );
+			const { result } = renderHookWithProvider(
+				() => useWPCOMDomainSearchProps( defaultProps ),
+				loggedInOptions
+			);
 
 			result.current.events.onBundleWouldShow?.( {} as never );
 
@@ -1394,6 +1423,17 @@ describe( 'useWPCOMDomainSearchProps', () => {
 					DOMAIN_BUNDLE_EXPERIMENT_NAME
 				);
 			} );
+		} );
+
+		it( 'does not load the bundle experiment assignment for logged-out users', () => {
+			mockConfig.isEnabled.mockReturnValue( false );
+			mockUseShoppingCart.mockReturnValue( buildShoppingCart() );
+
+			const { result } = renderHookWithProvider( () => useWPCOMDomainSearchProps( defaultProps ) );
+
+			result.current.events.onBundleWouldShow?.( {} as never );
+
+			expect( mockLoadExperimentAssignment ).not.toHaveBeenCalled();
 		} );
 	} );
 

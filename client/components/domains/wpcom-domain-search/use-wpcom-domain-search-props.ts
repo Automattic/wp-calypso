@@ -96,12 +96,16 @@ export const useWPCOMDomainSearchProps = ( {
 	// bundle. It dedupes internally, so calling it again on a later search is
 	// harmless. Only treatment flips the render gate on.
 	const onBundleWouldShow = useCallback( () => {
+		if ( ! isLoggedIn ) {
+			return;
+		}
+
 		loadExperimentAssignment( DOMAIN_BUNDLE_EXPERIMENT_NAME ).then( ( assignment ) => {
 			if ( assignment.variationName === DOMAIN_BUNDLE_EXPERIMENT_TREATMENT ) {
 				setIsBundleTreatment( true );
 			}
 		} );
-	}, [] );
+	}, [ isLoggedIn ] );
 
 	const config = useMemo( () => {
 		// Bundles are fixed one-year registrations of multiple TLDs, so they
@@ -109,16 +113,17 @@ export const useWPCOMDomainSearchProps = ( {
 		// and those flows' beforeAddDomainToCart transforms (100-year term,
 		// Gravatar extras) are not applied to bundle members.
 		const flowSupportsBundles =
+			isLoggedIn &&
 			! isHundredYearPlanFlow( flowName ) &&
 			! isHundredYearDomainFlow( flowName ) &&
 			! isDomainForGravatarFlow( flowName );
 
 		return {
 			...externalConfig,
-			// Fetch for BOTH arms wherever the flow is eligible — never gated on the
-			// experiment — so control and treatment both reach the would-show
-			// decision point. The server bundle kill switch still returns nothing
-			// when bundles are off, so this fetches only when bundles can exist.
+			// Fetch for BOTH arms wherever the logged-in flow is eligible — never
+			// gated on the experiment — so control and treatment both reach the
+			// would-show decision point. The server bundle kill switch still returns
+			// nothing when bundles are off, so this fetches only when bundles can exist.
 			showBundleSuggestions: flowSupportsBundles,
 			// Render the card only for the dev/staging flag (force-on) or the
 			// experiment treatment arm. Control fetches the suggestion but renders
@@ -133,7 +138,14 @@ export const useWPCOMDomainSearchProps = ( {
 				freeForFirstYearDomains: freeDomainName ? [ freeDomainName ] : undefined,
 			},
 		};
-	}, [ externalConfig, isNextDomainFree, freeDomainName, flowName, isBundleTreatment ] );
+	}, [
+		externalConfig,
+		isNextDomainFree,
+		freeDomainName,
+		flowName,
+		isBundleTreatment,
+		isLoggedIn,
+	] );
 
 	const analyticsEvents = useWPCOMDomainSearchEvents( {
 		vendor: config.vendor,
