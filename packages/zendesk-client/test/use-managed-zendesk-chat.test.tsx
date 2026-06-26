@@ -205,7 +205,7 @@ describe( 'useManagedZendeskChat', () => {
 					'zen:ticket_field:22054927': 'https://example.com',
 					'zen:ticket_field:25254766': 'woocommerce_core_product',
 					'zen:ticket_field:48091595802388': 'message-123',
-					'zen:ticket_field:48093986828052': 5587242,
+					'zen:ticket_field:33538949515668': '5587242',
 					ai_chat_id: 5587242,
 					chat_session_id: 'session-123',
 				} ),
@@ -227,7 +227,7 @@ describe( 'useManagedZendeskChat', () => {
 		expect( smooch.createConversation ).toHaveBeenCalledWith(
 			expect.objectContaining( {
 				metadata: expect.not.objectContaining( {
-					'zen:ticket_field:48093986828052': expect.anything(),
+					'zen:ticket_field:33538949515668': expect.anything(),
 				} ),
 			} )
 		);
