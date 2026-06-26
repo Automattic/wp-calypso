@@ -4,6 +4,7 @@ import { useEffect, useState, type TransitionEvent } from 'react';
 import { Provider } from 'react-redux';
 import repliesCache from '../panel/comment-replies-cache';
 import { modifierKeyIsActive } from '../panel/helpers/input';
+import { logError } from '../panel/helpers/log-error';
 import RestClient from '../panel/rest-client';
 import { init as initAPI } from '../panel/rest-client/wpcom';
 import { init as initStore } from '../panel/state';
@@ -13,7 +14,7 @@ import { addListeners, removeListeners } from '../panel/state/create-listener-mi
 import getIsPanelOpen from '../panel/state/selectors/get-is-panel-open';
 import getKeyboardShortcutsEnabled from '../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import { AppProvider } from './context';
-import ErrorBoundary, { logError } from './error-boundary';
+import ErrorBoundary from './error-boundary';
 import Note from './note';
 import { useNoteNavigation } from './note/hooks';
 import NotePanel from './note-panel';

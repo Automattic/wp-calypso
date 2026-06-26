@@ -1,5 +1,6 @@
 import debugFactory from 'debug';
 import repliesCache from '../comment-replies-cache';
+import { logError } from '../helpers/log-error';
 import { store } from '../state';
 import actions from '../state/actions';
 import getAllNotes from '../state/selectors/get-all-notes';
@@ -166,6 +167,7 @@ function getNote( note_id ) {
 
 	fetchNote( note_id, parameters, ( error, data ) => {
 		if ( error ) {
+			logError( error, { request: 'getNote', note_id, status: error.status, code: error.error } );
 			return;
 		}
 		store.dispatch( actions.notes.addNotes( data.notes ) );
@@ -216,6 +218,13 @@ function getNotes( before ) {
 		this.gettingNotes = false;
 
 		if ( error ) {
+			logError( error, {
+				request: 'getNotes',
+				before: before ?? null,
+				retries: this.retries,
+				status: error.status,
+				code: error.error,
+			} );
 			// Load-more: clear the spinner, leave state untouched; scrolling retries.
 			if ( before ) {
 				store.dispatch( actions.ui.loadedNotes() );
@@ -333,6 +342,12 @@ function getNotesList() {
 		debug( 'getNotesList callback:', error, data );
 		this.gettingNotes = false;
 		if ( error ) {
+			logError( error, {
+				request: 'getNotesList',
+				retries: this.retries,
+				status: error.status,
+				code: error.error,
+			} );
 			this.retries = this.retries + 1;
 			const backoff_ms = Math.min(
 				settings.refresh_ms * ( this.retries + 1 ),
@@ -463,6 +478,12 @@ function getFilteredNotes( before ) {
 		this.gettingFilteredNotes = false;
 
 		if ( error ) {
+			logError( error, {
+				request: 'getFilteredNotes',
+				before: before ?? null,
+				status: error.status,
+				code: error.error,
+			} );
 			// Leave the polling path's state untouched; it will recover on its
 			// own schedule. A retry happens when the user re-enters the tab.
 			store.dispatch( actions.ui.loadedNotes( { filter } ) );

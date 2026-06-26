@@ -1,28 +1,6 @@
-import { logToLogstash } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
 import { Component, type ErrorInfo, type ReactNode } from 'react';
-
-/**
- * Send an error to logstash. Fire-and-forget: logging must never throw and
- * take down the surface it is trying to report on.
- */
-export function logError( error: unknown, extra?: Record< string, unknown > ) {
-	const err = error instanceof Error ? error : new Error( String( error ) );
-
-	try {
-		logToLogstash( {
-			feature: 'calypso_client',
-			message: err.message || 'Unknown error',
-			tags: [ 'notifications' ],
-			extra: {
-				stack: err.stack,
-				...extra,
-			},
-		} ).catch( () => {} );
-	} catch {
-		// Never let logging crash the app.
-	}
-}
+import { logError } from '../panel/helpers/log-error';
 
 interface Props {
 	children: ReactNode;
