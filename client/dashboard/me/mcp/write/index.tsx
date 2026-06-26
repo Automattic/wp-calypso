@@ -16,7 +16,7 @@ import { groupToolsByGroup, groupToolsBySubCategory } from '../../../../me/mcp/g
 import { getGroupDescriptors, getAccountMcpAbilities } from '../../../../me/mcp/utils';
 import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
-import { Card, CardBody, CardDivider } from '../../../components/card';
+import { Card, CardBody } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
@@ -253,7 +253,17 @@ export default function McpWrite() {
 										( groupToolsBySubCategory( groupTools ) as SubGroup[] ).map(
 											( { subCategory, tools: subTools }, subIndex ) => (
 												<Fragment key={ subCategory ?? '__ungrouped__' }>
-													{ subIndex > 0 && <CardDivider /> }
+													{ subIndex > 0 && (
+														<CardBody style={ { padding: 'calc(4px * 2) calc(4px * 6)' } }>
+															<hr
+																style={ {
+																	border: 'none',
+																	borderTop: '1px solid var(--color-border-subtle, #dcdcde)',
+																	margin: 0,
+																} }
+															/>
+														</CardBody>
+													) }
 													<CardBody>
 														<VStack spacing={ 4 }>
 															{ subTools.map( ( [ toolId, tool ] ) => (
