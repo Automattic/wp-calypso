@@ -235,9 +235,7 @@ export const useManagedZendeskChat = ( {
 	const [ attachmentsNotice, setAttachmentNotice ] = useState< NoticeConfig | undefined >();
 	const { state } = useLocation();
 	const conversationId = state?.conversationId;
-	const startedFromChatSessionId = getStringStateValue(
-		state?.startedFromChatSessionId ?? state?.startedFromChatId
-	);
+	const startedFromChatSessionId = getStringStateValue( state?.startedFromChatSessionId );
 	const startedFromAiChatId = getNumericStateValue( state?.startedFromAiChatId );
 	const startedFromMessageId = getStringStateValue( state?.startedFromMessageId );
 	const [ conversation, setConversation ] = useState< ZendeskConversation | undefined >();
