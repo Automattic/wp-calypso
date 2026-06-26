@@ -417,7 +417,7 @@
 		"@wordpress/edit-site": "6.48.0",
 		"@wordpress/edit-widgets": "6.48.0",
 		"@wordpress/editor": "14.48.0",
-		"@wordpress/element": "^8.0.0",
+		"@wordpress/element": "patch:@wordpress/element@npm%3A8.0.0#~/.yarn/patches/@wordpress-element-npm-8.0.0-edeb0f6c73.patch",
 		"@wordpress/escape-html": "3.48.0",
 		"@wordpress/eslint-plugin": "^25.4.0",
 		"@wordpress/experiments": "0.8.0",
