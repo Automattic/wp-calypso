@@ -1,3 +1,4 @@
+import { isPlan } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import { Icon } from '@wordpress/components';
 import { reusableBlock, shield } from '@wordpress/icons';
@@ -66,19 +67,28 @@ const TrustCardBody = styled.div`
 
 export default function CheckoutTrustCards( { cart }: { cart: ResponseCart } ) {
 	const translate = useTranslate();
-	const refundDays = getRefundWindowSummary( cart )?.days ?? null;
+	const refundSummary = getRefundWindowSummary( cart );
+	const refundPlanProduct = refundSummary?.usePlanProductName
+		? cart.products.find( isPlan )
+		: undefined;
 
 	return (
 		<TrustCardsRow className="checkout-trust-cards">
-			{ refundDays !== null && (
+			{ refundSummary !== null && (
 				<TrustCard>
 					<TrustCardHeader>
 						<Icon icon={ reusableBlock } size={ 20 } />
 						{ translate( '%(days)d-day money back', {
-							args: { days: refundDays },
+							args: { days: refundSummary.days },
 						} ) }
 					</TrustCardHeader>
-					<TrustCardBody>{ translate( 'Full refund, no questions asked.' ) }</TrustCardBody>
+					<TrustCardBody>
+						{ refundPlanProduct
+							? translate( 'Full refund for %(product)s, no questions asked.', {
+									args: { product: refundPlanProduct.product_name },
+							  } )
+							: translate( 'Full refund, no questions asked.' ) }
+					</TrustCardBody>
 				</TrustCard>
 			) }
 
