@@ -64,6 +64,9 @@ steps:
           propagate-uid-gid: true
           userns: host
           environment:
+            - BUILDKITE_BRANCH
+            - BUILDKITE_TAG
+            - PR_DEBUG_RELEASE
             - E2EGUTENBERGUSER
             - E2EPASSWORD
     command: .buildkite/commands/build-desktop-linux.sh

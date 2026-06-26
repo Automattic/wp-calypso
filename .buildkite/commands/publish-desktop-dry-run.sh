@@ -7,18 +7,38 @@ changelog_path="desktop/CHANGELOG.md"
 
 download_step_artifacts() {
 	local step="$1"
+	shift
+	local query
 
-	echo "--- :buildkite: Downloading artifacts from $step"
-	buildkite-agent artifact download "desktop/release/*" . --step "$step"
+	for query in "$@"; do
+		echo "--- :buildkite: Downloading artifacts from $step"
+		if buildkite-agent artifact download "$query" . --step "$step"; then
+			normalize_windows_artifact_paths
+			return
+		fi
+	done
+
+	echo "Failed to download artifacts from $step." >&2
+	exit 1
+}
+
+normalize_windows_artifact_paths() {
+	local artifact
+	local filename
+
+	while IFS= read -r -d '' artifact; do
+		filename="${artifact##*\\}"
+		mv "$artifact" "$release_dir/$filename"
+	done < <(find . -maxdepth 1 -type f -name 'desktop\\release\\*' -print0)
 }
 
 rm -rf "$release_dir" "$changelog_path"
 mkdir -p "$release_dir"
 
-download_step_artifacts desktop-build-mac
-download_step_artifacts desktop-build-linux
-download_step_artifacts desktop-build-windows-store
-download_step_artifacts desktop-build-windows-nsis
+download_step_artifacts desktop-build-mac 'desktop/release/*'
+download_step_artifacts desktop-build-linux 'desktop/release/*'
+download_step_artifacts desktop-build-windows-store 'desktop\release\*'
+download_step_artifacts desktop-build-windows-nsis 'desktop\release\*'
 
 echo "--- :mag: Validating combined desktop release payload"
 .buildkite/commands/validate-desktop-artifacts.sh all "$release_dir"
