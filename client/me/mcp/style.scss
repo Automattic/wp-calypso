@@ -136,12 +136,12 @@ body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .main.m
 	.mcp-tools-subpage__group-body {
 		margin-inline-start: -16px;
 		margin-inline-end: -16px;
-		padding: 16px 16px 16px;
+		padding: 20px 16px 16px;
 
 		@include break-mobile {
 			margin-inline-start: -24px;
 			margin-inline-end: -24px;
-			padding: 20px 24px 20px;
+			padding: 24px 24px 20px;
 		}
 	}
 
@@ -153,7 +153,7 @@ body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .main.m
 	// Divider between sub-groups within an expanded group card
 	.mcp-tools-subpage__sub-divider {
 		border-top: 1px solid var(--color-border-subtle);
-		margin: 16px 0 20px;
+		margin: 0 0 16px;
 	}
 }
 
