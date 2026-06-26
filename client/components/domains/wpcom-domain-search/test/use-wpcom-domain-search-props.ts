@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import config from '@automattic/calypso-config';
 import {
 	DOMAIN_FOR_GRAVATAR_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
@@ -14,6 +15,9 @@ import {
 	UseShoppingCart,
 	useShoppingCart,
 } from '@automattic/shopping-cart';
+import { waitFor } from '@testing-library/react';
+import { DOMAIN_BUNDLE_EXPERIMENT_NAME } from 'calypso/lib/domains/bundle-experiment';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { renderHookWithProvider } from '../../../../test-helpers/testing-library';
 import {
 	recordDomainSearchStepSubmit,
@@ -21,16 +25,31 @@ import {
 	recordSearchFormSubmitButtonClick,
 } from '../analytics';
 import { getCartKey, useWPCOMDomainSearchProps } from '../use-wpcom-domain-search-props';
+import type { ExperimentAssignment } from '@automattic/explat-client';
 
 jest.mock( '@automattic/shopping-cart', () => ( {
 	...jest.requireActual( '@automattic/shopping-cart' ),
 	useShoppingCart: jest.fn(),
 } ) );
 
+const mockConfig = config as unknown as { isEnabled: jest.Mock };
 jest.mock( '@automattic/calypso-config', () => {
-	const config = () => 'development';
-	config.isEnabled = ( flag: string ) => flag === 'domain-bundling';
-	return config;
+	const mock = () => 'development';
+	mock.isEnabled = jest.fn();
+	return mock;
+} );
+
+jest.mock( 'calypso/lib/explat' );
+
+const mockLoadExperimentAssignment = loadExperimentAssignment as jest.MockedFunction<
+	typeof loadExperimentAssignment
+>;
+
+const buildAssignment = ( variationName: string | null ): ExperimentAssignment => ( {
+	experimentName: DOMAIN_BUNDLE_EXPERIMENT_NAME,
+	variationName,
+	retrievedTimestamp: Date.now(),
+	ttl: 60,
 } );
 
 jest.mock( '../analytics', () => ( {
@@ -120,6 +139,12 @@ const defaultProps = {
 describe( 'useWPCOMDomainSearchProps', () => {
 	beforeEach( () => {
 		mockUseShoppingCart.mockReturnValue( buildShoppingCart() );
+		mockConfig.isEnabled.mockImplementation( ( flag: string ) => flag === 'domain-bundling' );
+		mockLoadExperimentAssignment.mockResolvedValue( buildAssignment( 'control' ) );
+	} );
+
+	afterEach( () => {
+		jest.clearAllMocks();
 	} );
 
 	it( 'returns the expected structure for the items in the domain search cart', () => {
@@ -1266,12 +1291,15 @@ describe( 'useWPCOMDomainSearchProps', () => {
 		} );
 	} );
 
-	describe( 'showBundleSuggestions', () => {
-		it( 'is enabled for a regular flow when the domain-bundling flag is on', () => {
+	describe( 'showBundleSuggestions (fetch gate)', () => {
+		it( 'is enabled for a regular flow even when the domain-bundling flag is off, so both arms fetch', () => {
+			mockConfig.isEnabled.mockReturnValue( false );
 			mockUseShoppingCart.mockReturnValue( buildShoppingCart() );
 
 			const { result } = renderHookWithProvider( () => useWPCOMDomainSearchProps( defaultProps ) );
 
+			// Fetch is gated on flow eligibility only — never on the flag or the
+			// experiment — so control and treatment both reach the decision point.
 			expect( result.current.config.showBundleSuggestions ).toBe( true );
 		} );
 
@@ -1287,6 +1315,86 @@ describe( 'useWPCOMDomainSearchProps', () => {
 				expect( result.current.config.showBundleSuggestions ).toBe( false );
 			}
 		);
+	} );
+
+	describe( 'showBundleCard (render gate)', () => {
+		it( 'is enabled when the domain-bundling flag is on, without an experiment assignment', () => {
+			mockUseShoppingCart.mockReturnValue( buildShoppingCart() );
+
+			const { result } = renderHookWithProvider( () => useWPCOMDomainSearchProps( defaultProps ) );
+
+			expect( result.current.config.showBundleCard ).toBe( true );
+		} );
+
+		it( 'is disabled when the flag is off and the user has not been assigned treatment', () => {
+			mockConfig.isEnabled.mockReturnValue( false );
+			mockUseShoppingCart.mockReturnValue( buildShoppingCart() );
+
+			const { result } = renderHookWithProvider( () => useWPCOMDomainSearchProps( defaultProps ) );
+
+			expect( result.current.config.showBundleCard ).toBe( false );
+		} );
+
+		it( 'turns on once the would-show exposure resolves the treatment arm', async () => {
+			mockConfig.isEnabled.mockReturnValue( false );
+			mockLoadExperimentAssignment.mockResolvedValue( buildAssignment( 'treatment' ) );
+			mockUseShoppingCart.mockReturnValue( buildShoppingCart() );
+
+			const { result } = renderHookWithProvider( () => useWPCOMDomainSearchProps( defaultProps ) );
+
+			expect( result.current.config.showBundleCard ).toBe( false );
+
+			result.current.events.onBundleWouldShow?.( {} as never );
+
+			await waitFor( () => {
+				expect( result.current.config.showBundleCard ).toBe( true );
+			} );
+		} );
+
+		it( 'stays off when the would-show exposure resolves the control arm', async () => {
+			mockConfig.isEnabled.mockReturnValue( false );
+			mockLoadExperimentAssignment.mockResolvedValue( buildAssignment( 'control' ) );
+			mockUseShoppingCart.mockReturnValue( buildShoppingCart() );
+
+			const { result } = renderHookWithProvider( () => useWPCOMDomainSearchProps( defaultProps ) );
+
+			result.current.events.onBundleWouldShow?.( {} as never );
+
+			await waitFor( () => {
+				expect( mockLoadExperimentAssignment ).toHaveBeenCalled();
+			} );
+			expect( result.current.config.showBundleCard ).toBe( false );
+		} );
+
+		it.each( [ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW, DOMAIN_FOR_GRAVATAR_FLOW ] )(
+			'is disabled for the %s flow even when the flag is on',
+			( flowName ) => {
+				mockUseShoppingCart.mockReturnValue( buildShoppingCart() );
+
+				const { result } = renderHookWithProvider( () =>
+					useWPCOMDomainSearchProps( { ...defaultProps, flowName } )
+				);
+
+				expect( result.current.config.showBundleCard ).toBe( false );
+			}
+		);
+	} );
+
+	describe( 'onBundleWouldShow (experiment exposure)', () => {
+		it( 'loads the bundle experiment assignment, exposing both arms symmetrically', async () => {
+			mockConfig.isEnabled.mockReturnValue( false );
+			mockUseShoppingCart.mockReturnValue( buildShoppingCart() );
+
+			const { result } = renderHookWithProvider( () => useWPCOMDomainSearchProps( defaultProps ) );
+
+			result.current.events.onBundleWouldShow?.( {} as never );
+
+			await waitFor( () => {
+				expect( mockLoadExperimentAssignment ).toHaveBeenCalledWith(
+					DOMAIN_BUNDLE_EXPERIMENT_NAME
+				);
+			} );
+		} );
 	} );
 
 	it( 'prepends products in the cart when adding a new domain', async () => {

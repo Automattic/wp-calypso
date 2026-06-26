@@ -901,7 +901,7 @@ describe( 'ResultsPage', () => {
 			render(
 				<TestDomainSearch
 					cart={ buildCart( { onAddBundle } ) }
-					config={ { showBundleSuggestions: true } }
+					config={ { showBundleSuggestions: true, showBundleCard: true } }
 					query="test"
 				>
 					<ResultsPage />
@@ -954,7 +954,7 @@ describe( 'ResultsPage', () => {
 			const { container } = render(
 				<TestDomainSearch
 					cart={ buildCart( { onAddBundle } ) }
-					config={ { showBundleSuggestions: true } }
+					config={ { showBundleSuggestions: true, showBundleCard: true } }
 					query="test-bundle-error"
 				>
 					<ResultsPage />
@@ -989,7 +989,7 @@ describe( 'ResultsPage', () => {
 			const { container } = render(
 				<TestDomainSearch
 					cart={ buildCart( { onAddBundle } ) }
-					config={ { showBundleSuggestions: true } }
+					config={ { showBundleSuggestions: true, showBundleCard: true } }
 					query="test-bundle-fallback"
 				>
 					<ResultsPage />
@@ -1032,7 +1032,7 @@ describe( 'ResultsPage', () => {
 			render(
 				<TestDomainSearch
 					cart={ buildCart( { onAddBundle } ) }
-					config={ { showBundleSuggestions: true } }
+					config={ { showBundleSuggestions: true, showBundleCard: true } }
 					query="test-bundle-permanent"
 				>
 					<ResultsPage />
@@ -1078,7 +1078,7 @@ describe( 'ResultsPage', () => {
 			render(
 				<TestDomainSearch
 					cart={ buildCart( { onAddBundle } ) }
-					config={ { showBundleSuggestions: true } }
+					config={ { showBundleSuggestions: true, showBundleCard: true } }
 					query="test-bundle-same-group"
 				>
 					<ResultsPage />
@@ -1139,7 +1139,7 @@ describe( 'ResultsPage', () => {
 			const { rerender } = render(
 				<TestDomainSearch
 					cart={ buildCart( { onAddBundle } ) }
-					config={ { showBundleSuggestions: true } }
+					config={ { showBundleSuggestions: true, showBundleCard: true } }
 					query="test-bundle-late-stale"
 				>
 					<ResultsPage />
@@ -1153,7 +1153,7 @@ describe( 'ResultsPage', () => {
 			rerender(
 				<TestDomainSearch
 					cart={ buildCart( { onAddBundle } ) }
-					config={ { showBundleSuggestions: true } }
+					config={ { showBundleSuggestions: true, showBundleCard: true } }
 					query="test-bundle-late-fresh"
 				>
 					<ResultsPage />
@@ -1194,7 +1194,7 @@ describe( 'ResultsPage', () => {
 			const { container } = render(
 				<TestDomainSearch
 					cart={ buildCart( { onAddBundle } ) }
-					config={ { showBundleSuggestions: true } }
+					config={ { showBundleSuggestions: true, showBundleCard: true } }
 					query="test-bundle-retry"
 				>
 					<ResultsPage />
@@ -1241,7 +1241,7 @@ describe( 'ResultsPage', () => {
 			const { container, rerender } = render(
 				<TestDomainSearch
 					cart={ cart }
-					config={ { showBundleSuggestions: true } }
+					config={ { showBundleSuggestions: true, showBundleCard: true } }
 					query="test-bundle-stale"
 				>
 					<ResultsPage />
@@ -1259,7 +1259,7 @@ describe( 'ResultsPage', () => {
 			rerender(
 				<TestDomainSearch
 					cart={ cart }
-					config={ { showBundleSuggestions: true } }
+					config={ { showBundleSuggestions: true, showBundleCard: true } }
 					query="test-bundle-fresh"
 				>
 					<ResultsPage />
@@ -1295,7 +1295,7 @@ describe( 'ResultsPage', () => {
 			render(
 				<TestDomainSearch
 					cart={ buildCart( { onAddBundle } ) }
-					config={ { showBundleSuggestions: true } }
+					config={ { showBundleSuggestions: true, showBundleCard: true } }
 					query="test-bundle-pending"
 				>
 					<ResultsPage />
@@ -1340,7 +1340,7 @@ describe( 'ResultsPage', () => {
 			const { container } = render(
 				<TestDomainSearch
 					cart={ buildCart( { onAddBundle } ) }
-					config={ { showBundleSuggestions: true } }
+					config={ { showBundleSuggestions: true, showBundleCard: true } }
 					query="test-bundle-supersede"
 				>
 					<ResultsPage />
@@ -1380,7 +1380,7 @@ describe( 'ResultsPage', () => {
 			const { container } = render(
 				<TestDomainSearch
 					cart={ buildCart( { hasItem: ( domain ) => domain.startsWith( 'bundle-added.' ) } ) }
-					config={ { showBundleSuggestions: true } }
+					config={ { showBundleSuggestions: true, showBundleCard: true } }
 					events={ { onContinue } }
 					query="bundle-added"
 				>
@@ -1413,7 +1413,7 @@ describe( 'ResultsPage', () => {
 			render(
 				<TestDomainSearch
 					cart={ buildCart( { hasItem: ( domain ) => domain === 'bundle-partial.com' } ) }
-					config={ { showBundleSuggestions: true } }
+					config={ { showBundleSuggestions: true, showBundleCard: true } }
 					query="bundle-partial"
 				>
 					<ResultsPage />
@@ -1501,7 +1501,7 @@ describe( 'ResultsPage', () => {
 			render(
 				<TestDomainSearch
 					events={ { onBundleShown } }
-					config={ { showBundleSuggestions: true } }
+					config={ { showBundleSuggestions: true, showBundleCard: true } }
 					query="bundle-shown"
 				>
 					<ResultsPage />
@@ -1540,6 +1540,120 @@ describe( 'ResultsPage', () => {
 			expect( onBundleShown ).not.toHaveBeenCalled();
 		} );
 
+		it( 'does not fire the onBundleShown event for the control arm (fetched but no card)', async () => {
+			const onBundleShown = jest.fn();
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'bundle-control' },
+				suggestions: [ buildSuggestion( { domain_name: 'bundle-control.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'bundle-control' },
+				bundleSuggestion: buildBundleSuggestion( 'bundle-control' ),
+			} );
+
+			render(
+				<TestDomainSearch
+					events={ { onBundleShown } }
+					config={ { showBundleSuggestions: true, showBundleCard: false } }
+					query="bundle-control"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByTitle( 'bundle-control.com' ) ).toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: 'Get bundle' } ) ).not.toBeInTheDocument();
+			expect( onBundleShown ).not.toHaveBeenCalled();
+		} );
+
+		it( 'fires onBundleWouldShow once for the control arm even though no card renders', async () => {
+			const onBundleWouldShow = jest.fn();
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'would-show-control' },
+				suggestions: [ buildSuggestion( { domain_name: 'would-show-control.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'would-show-control' },
+				bundleSuggestion: buildBundleSuggestion( 'would-show-control' ),
+			} );
+
+			render(
+				<TestDomainSearch
+					events={ { onBundleWouldShow } }
+					config={ { showBundleSuggestions: true, showBundleCard: false } }
+					query="would-show-control"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await waitFor( () => {
+				expect( onBundleWouldShow ).toHaveBeenCalledTimes( 1 );
+			} );
+			expect( onBundleWouldShow ).toHaveBeenCalledWith(
+				expect.objectContaining( { bundle_group_id: 'mock-would-show-control-group' } )
+			);
+			expect( screen.queryByRole( 'button', { name: 'Get bundle' } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'fires onBundleWouldShow once for the treatment arm alongside onBundleShown', async () => {
+			const onBundleWouldShow = jest.fn();
+			const onBundleShown = jest.fn();
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'would-show-treatment' },
+				suggestions: [ buildSuggestion( { domain_name: 'would-show-treatment.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'would-show-treatment' },
+				bundleSuggestion: buildBundleSuggestion( 'would-show-treatment' ),
+			} );
+
+			render(
+				<TestDomainSearch
+					events={ { onBundleWouldShow, onBundleShown } }
+					config={ { showBundleSuggestions: true, showBundleCard: true } }
+					query="would-show-treatment"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByRole( 'button', { name: 'Get bundle' } ) ).toBeInTheDocument();
+			await waitFor( () => {
+				expect( onBundleWouldShow ).toHaveBeenCalledTimes( 1 );
+			} );
+			expect( onBundleShown ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'does not fire onBundleWouldShow when no bundle suggestion is returned', async () => {
+			const onBundleWouldShow = jest.fn();
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'would-show-empty' },
+				suggestions: [ buildSuggestion( { domain_name: 'would-show-empty.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'would-show-empty' },
+				bundleSuggestion: null,
+			} );
+
+			render(
+				<TestDomainSearch
+					events={ { onBundleWouldShow } }
+					config={ { showBundleSuggestions: true, showBundleCard: true } }
+					query="would-show-empty"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByTitle( 'would-show-empty.com' ) ).toBeInTheDocument();
+			expect( onBundleWouldShow ).not.toHaveBeenCalled();
+		} );
+
 		it( 'fires the onBundleAddToCart event after the bundle add succeeds', async () => {
 			const user = userEvent.setup();
 			let resolveAddBundle: () => void = () => {};
@@ -1564,7 +1678,7 @@ describe( 'ResultsPage', () => {
 				<TestDomainSearch
 					cart={ buildCart( { onAddBundle } ) }
 					events={ { onBundleAddToCart } }
-					config={ { showBundleSuggestions: true } }
+					config={ { showBundleSuggestions: true, showBundleCard: true } }
 					query="bundle-accept"
 				>
 					<ResultsPage />
@@ -1606,7 +1720,7 @@ describe( 'ResultsPage', () => {
 				<TestDomainSearch
 					cart={ buildCart( { onAddBundle } ) }
 					events={ { onBundleAddToCart } }
-					config={ { showBundleSuggestions: true } }
+					config={ { showBundleSuggestions: true, showBundleCard: true } }
 					query="bundle-reject"
 				>
 					<ResultsPage />
@@ -1641,7 +1755,7 @@ describe( 'ResultsPage', () => {
 				<TestDomainSearch
 					cart={ buildCart( { onAddBundle: undefined } ) }
 					events={ { onBundleAddToCart } }
-					config={ { showBundleSuggestions: true } }
+					config={ { showBundleSuggestions: true, showBundleCard: true } }
 					query="bundle-no-handler"
 				>
 					<ResultsPage />

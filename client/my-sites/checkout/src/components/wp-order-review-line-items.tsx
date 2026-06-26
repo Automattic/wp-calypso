@@ -21,6 +21,7 @@ import styled from '@emotion/styled';
 import { getQueryArg } from '@wordpress/url';
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { has100YearPlan, getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
+import { isDomainBundleExperienceEnabled } from 'calypso/lib/domains/bundle-experiment';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/product-variants';
 import {
@@ -126,9 +127,10 @@ export function WPOrderReviewLineItems( {
 	const [ initialProducts ] = useState( () => responseCart.products );
 	const [ forceShowAkQuantityDropdown, setForceShowAkQuantityDropdown ] = useState( false );
 
-	// Bundle grouping is gated behind the `domain-bundling` feature flag. When off,
-	// every product renders on its own line exactly as before.
-	const groupedLineItems: GroupedCartLineItem[] = config.isEnabled( 'domain-bundling' )
+	// Bundle grouping is gated behind the dev `domain-bundling` flag or the bundle
+	// ExPlat treatment arm. When off, every product renders on its own line exactly
+	// as before.
+	const groupedLineItems: GroupedCartLineItem[] = isDomainBundleExperienceEnabled()
 		? groupBundleLineItems( responseCart.products )
 		: responseCart.products.map( ( product ) => ( { type: 'product' as const, product } ) );
 

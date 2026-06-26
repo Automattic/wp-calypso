@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	isBiennially,
 	isDIFMProduct,
@@ -26,6 +25,7 @@ import {
 import styled from '@emotion/styled';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import { isDomainBundleExperienceEnabled } from 'calypso/lib/domains/bundle-experiment';
 import useEquivalentMonthlyTotals, {
 	getSimulatedCostBeforeDiscounts,
 } from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
@@ -671,9 +671,10 @@ export function BundleProductAndCostOverridesList( { bundle }: { bundle: CartBun
 }
 
 export function ProductsAndCostOverridesList( { responseCart }: { responseCart: ResponseCart } ) {
-	// Bundle grouping is gated behind the `domain-bundling` feature flag. When off,
-	// every product renders on its own line exactly as before.
-	const groupedLineItems = config.isEnabled( 'domain-bundling' )
+	// Bundle grouping is gated behind the dev `domain-bundling` flag or the bundle
+	// ExPlat treatment arm. When off, every product renders on its own line exactly
+	// as before.
+	const groupedLineItems = isDomainBundleExperienceEnabled()
 		? groupBundleLineItems( responseCart.products )
 		: responseCart.products.map( ( product ) => ( { type: 'product' as const, product } ) );
 

@@ -6,8 +6,13 @@ import {
 	isHundredYearPlanFlow,
 } from '@automattic/onboarding';
 import { ResponseCartProduct } from '@automattic/shopping-cart';
-import { useMemo, type ComponentProps, useCallback } from 'react';
+import { useMemo, type ComponentProps, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import {
+	DOMAIN_BUNDLE_EXPERIMENT_NAME,
+	DOMAIN_BUNDLE_EXPERIMENT_TREATMENT,
+} from 'calypso/lib/domains/bundle-experiment';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { mergeObjectFunctions } from '../../../lib/merge-object-functions';
 import { recordDomainSearchStepSubmit } from './analytics';
@@ -78,6 +83,26 @@ export const useWPCOMDomainSearchProps = ( {
 		beforeAddDomainToCart: externalBeforeAddDomainToCart,
 	} );
 
+	// Resolved once the user is assigned the bundle experiment's treatment arm at
+	// the search would-show decision point (see onBundleWouldShow). The dev/staging
+	// `domain-bundling` flag is OR'd in below, so this strictly tracks the
+	// experiment. Sticky once true: a user who is shown a bundle stays in the
+	// treatment experience for the rest of the session.
+	const [ isBundleTreatment, setIsBundleTreatment ] = useState( false );
+
+	// Fired by the package the moment a bundle card would render, for BOTH arms.
+	// This is the experiment exposure: loadExperimentAssignment assigns/exposes
+	// control and treatment identically, scoped to users who would have seen a
+	// bundle. It dedupes internally, so calling it again on a later search is
+	// harmless. Only treatment flips the render gate on.
+	const onBundleWouldShow = useCallback( () => {
+		loadExperimentAssignment( DOMAIN_BUNDLE_EXPERIMENT_NAME ).then( ( assignment ) => {
+			if ( assignment.variationName === DOMAIN_BUNDLE_EXPERIMENT_TREATMENT ) {
+				setIsBundleTreatment( true );
+			}
+		} );
+	}, [] );
+
 	const config = useMemo( () => {
 		// Bundles are fixed one-year registrations of multiple TLDs, so they
 		// don't fit flows that sell a single special-purpose registration —
@@ -90,7 +115,16 @@ export const useWPCOMDomainSearchProps = ( {
 
 		return {
 			...externalConfig,
-			showBundleSuggestions: isEnabled( 'domain-bundling' ) && flowSupportsBundles,
+			// Fetch for BOTH arms wherever the flow is eligible — never gated on the
+			// experiment — so control and treatment both reach the would-show
+			// decision point. The server bundle kill switch still returns nothing
+			// when bundles are off, so this fetches only when bundles can exist.
+			showBundleSuggestions: flowSupportsBundles,
+			// Render the card only for the dev/staging flag (force-on) or the
+			// experiment treatment arm. Control fetches the suggestion but renders
+			// nothing.
+			showBundleCard:
+				( isEnabled( 'domain-bundling' ) || isBundleTreatment ) && flowSupportsBundles,
 			priceRules: {
 				...externalConfig?.priceRules,
 				freeForFirstYear: isNextDomainFree,
@@ -99,7 +133,7 @@ export const useWPCOMDomainSearchProps = ( {
 				freeForFirstYearDomains: freeDomainName ? [ freeDomainName ] : undefined,
 			},
 		};
-	}, [ externalConfig, isNextDomainFree, freeDomainName, flowName ] );
+	}, [ externalConfig, isNextDomainFree, freeDomainName, flowName, isBundleTreatment ] );
 
 	const analyticsEvents = useWPCOMDomainSearchEvents( {
 		vendor: config.vendor,
@@ -111,9 +145,10 @@ export const useWPCOMDomainSearchProps = ( {
 	const events: ComponentProps< typeof DomainSearch >[ 'events' ] = useMemo( () => {
 		return {
 			...mergeObjectFunctions( analyticsEvents, otherExternalEvents ),
+			onBundleWouldShow,
 			onContinue,
 		};
-	}, [ analyticsEvents, otherExternalEvents, onContinue ] );
+	}, [ analyticsEvents, otherExternalEvents, onBundleWouldShow, onContinue ] );
 
 	return {
 		config,

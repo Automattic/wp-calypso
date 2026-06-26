@@ -156,22 +156,36 @@ export const ResultsPage = () => {
 
 	useRequestTracking();
 
-	// Fire `onBundleShown` once per distinct bundle that actually renders. Keyed on
-	// the group id so a new bundle (different query/experiment arm) re-fires, but
-	// re-renders of the same bundle do not.
+	// The would-show decision point: a non-null bundle suggestion is available for
+	// the current search. Keyed on the group id so a new bundle (different
+	// query/experiment arm) re-fires, but re-renders of the same bundle do not.
 	const shownBundleGroupId =
 		! isLoadingSuggestions && visibleBundleSuggestion && visibleBundleSuggestion.domains.length > 0
 			? visibleBundleSuggestion.bundle_group_id
 			: undefined;
 
+	// Fire `onBundleWouldShow` once per distinct bundle, for BOTH arms, the moment
+	// the card would render. This is the experiment exposure point — it must run
+	// regardless of whether the card actually shows, so control and treatment are
+	// assigned symmetrically.
 	useEffect( () => {
 		if ( shownBundleGroupId && visibleBundleSuggestion ) {
-			events.onBundleShown( visibleBundleSuggestion );
+			events.onBundleWouldShow( visibleBundleSuggestion );
 		}
-		// Intentionally keyed only on the group id: we want exactly one event per
-		// bundle that appears, not one per render or per `events`/object identity change.
+		// Intentionally keyed only on the group id: exactly one exposure per bundle
+		// that reaches the decision point, not one per render or per `events` identity.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ shownBundleGroupId ] );
+
+	// Fire `onBundleShown` once per distinct bundle that actually renders (treatment
+	// only). Keyed on the group id and `showBundleCard` so it fires after the
+	// assignment resolves and the card becomes visible, never for control.
+	useEffect( () => {
+		if ( shownBundleGroupId && visibleBundleSuggestion && config.showBundleCard ) {
+			events.onBundleShown( visibleBundleSuggestion );
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ shownBundleGroupId, config.showBundleCard ] );
 
 	const showCompactBanner = !! slots?.BeforeResults;
 
@@ -213,7 +227,7 @@ export const ResultsPage = () => {
 				) : (
 					<FeaturedSearchResults suggestions={ featuredSuggestions } />
 				) }
-				{ ! isLoadingSuggestions && visibleBundleSuggestion && (
+				{ ! isLoadingSuggestions && config.showBundleCard && visibleBundleSuggestion && (
 					<BundleCard
 						suggestion={ visibleBundleSuggestion }
 						onAddToCart={ ( bundle ) => {

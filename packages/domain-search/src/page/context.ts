@@ -39,6 +39,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		onTrademarkClaimsNoticeAccepted: noop,
 		onTrademarkClaimsNoticeClosed: noop,
 		onPageView: noop,
+		onBundleWouldShow: noop,
 		onBundleShown: noop,
 		onBundleAddToCart: noop,
 	},
@@ -72,6 +73,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		allowedTlds: [],
 		numberOfDomainsResultsPerPage: 10,
 		showBundleSuggestions: false,
+		showBundleCard: false,
 		priceRules: {
 			hidePrice: false,
 			oneTimePrice: false,

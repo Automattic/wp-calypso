@@ -49,9 +49,11 @@ export const useSuggestionsList = () => {
 		enabled: config.skippable && ! isFqdnQuery,
 	} );
 
-	// Bundle suggestions are gated behind the frontend `domain-bundling` flag
-	// (surfaced as config.showBundleSuggestions). When off, the query never runs
-	// and bundleSuggestion stays undefined, leaving the rest of the flow unchanged.
+	// The fetch is gated on flow eligibility only (config.showBundleSuggestions),
+	// never on the experiment, so both arms fetch and reach the would-show decision
+	// point. When off, the query never runs and bundleSuggestion stays undefined,
+	// leaving the rest of the flow unchanged. Rendering the result is a separate
+	// gate (config.showBundleCard).
 	const { data: bundleSuggestion } = useQuery( {
 		...queries.bundleSuggestion( query ),
 		enabled: config.showBundleSuggestions,

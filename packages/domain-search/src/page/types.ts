@@ -106,6 +106,15 @@ export interface DomainSearchEvents {
 	onTrademarkClaimsNoticeAccepted: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
 	onTrademarkClaimsNoticeClosed: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
 	onPageView: () => void;
+	/**
+	 * Fired once per distinct bundle at the moment its card would render — i.e.
+	 * a non-null bundle suggestion is available for the current search. Fires for
+	 * BOTH experiment arms, before any render decision, so the app layer can use
+	 * it as the experiment exposure point and assign control and treatment
+	 * symmetrically (scoped to users who would have seen a bundle). Distinct from
+	 * `onBundleShown`, which only fires for the card that actually renders.
+	 */
+	onBundleWouldShow: ( bundle: BundleSuggestion ) => void;
 	onBundleShown: ( bundle: BundleSuggestion ) => void;
 	onBundleAddToCart: ( bundle: BundleSuggestion ) => void;
 }
@@ -121,11 +130,19 @@ export interface DomainSearchConfig {
 	includeOwnedDomainInSuggestions: boolean;
 	numberOfDomainsResultsPerPage: number;
 	/**
-	 * Show domain bundle suggestions in the search flow. Frontend dev/Storybook
-	 * gate, set from the `domain-bundling` feature flag at the app layer. Default
-	 * false, so bundles stay hidden unless a consumer opts in.
+	 * Fetch bundle suggestions for the current search. Gates only the bundle
+	 * suggestion query — never rendering. Set from flow eligibility at the app
+	 * layer and true for BOTH experiment arms, so control and treatment alike
+	 * reach the would-show decision point (`onBundleWouldShow`). Default false.
 	 */
 	showBundleSuggestions: boolean;
+	/**
+	 * Render the bundle suggestion card once a suggestion is available. Set at the
+	 * app layer from the dev `domain-bundling` flag OR the ExPlat treatment
+	 * assignment, so control fetches the suggestion but renders nothing. Default
+	 * false.
+	 */
+	showBundleCard: boolean;
 }
 
 export interface DomainSearchProps {

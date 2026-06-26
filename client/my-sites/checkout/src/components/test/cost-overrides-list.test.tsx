@@ -17,6 +17,7 @@ import { useState } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import { thunk } from 'redux-thunk';
+import { dangerouslyGetExperimentAssignment } from 'calypso/lib/explat';
 import {
 	mockGetCartEndpointWith,
 	mockSetCartEndpointWith,
@@ -39,6 +40,13 @@ jest.mock( '@automattic/calypso-config', () => {
 	mock.isEnabled = jest.fn();
 	return mock;
 } );
+
+jest.mock( 'calypso/lib/explat' );
+
+const mockDangerouslyGetExperimentAssignment =
+	dangerouslyGetExperimentAssignment as jest.MockedFunction<
+		typeof dangerouslyGetExperimentAssignment
+	>;
 
 function buildDomainProduct( overrides: {
 	uuid: string;
@@ -203,6 +211,16 @@ function TestWrapper( {
 }
 
 describe( 'ProductsAndCostOverridesList', () => {
+	beforeEach( () => {
+		// Default: no experiment assignment, so grouping is driven by the flag alone.
+		mockDangerouslyGetExperimentAssignment.mockReturnValue( {
+			experimentName: 'calypso_domains_search_bundle_suggestions_202606',
+			variationName: null,
+			retrievedTimestamp: Date.now(),
+			ttl: 60,
+		} );
+	} );
+
 	afterEach( () => {
 		mockConfig.isEnabled.mockRestore();
 	} );
@@ -222,7 +240,26 @@ describe( 'ProductsAndCostOverridesList', () => {
 		expect( screen.getByText( 'example.net' ) ).toBeVisible();
 	} );
 
-	it( 'renders each product on its own line when the flag is off', () => {
+	it( 'groups bundle-tagged products when the flag is off but the user is in the experiment treatment arm', () => {
+		mockConfig.isEnabled.mockImplementation( () => false );
+		mockDangerouslyGetExperimentAssignment.mockReturnValue( {
+			experimentName: 'calypso_domains_search_bundle_suggestions_202606',
+			variationName: 'treatment',
+			retrievedTimestamp: Date.now(),
+			ttl: 60,
+		} );
+		const responseCart = buildCartWithBundle();
+
+		render(
+			<TestWrapper initialCart={ responseCart }>
+				<ProductsAndCostOverridesList responseCart={ responseCart } />
+			</TestWrapper>
+		);
+
+		expect( screen.getByText( 'Domain Bundle' ) ).toBeVisible();
+	} );
+
+	it( 'renders each product on its own line when the flag is off and the user is not in treatment', () => {
 		mockConfig.isEnabled.mockImplementation( () => false );
 		const responseCart = buildCartWithBundle();
 

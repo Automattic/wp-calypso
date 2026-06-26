@@ -1,10 +1,10 @@
-import config from '@automattic/calypso-config';
 import { Popover } from '@automattic/components';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { MiniCart } from '@automattic/mini-cart';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
+import { isDomainBundleExperienceEnabled } from 'calypso/lib/domains/bundle-experiment';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MasterbarItem from '../item';
@@ -128,7 +128,7 @@ export function MasterbarCartButton( {
 						onRemoveCoupon={ onRemoveCoupon }
 						checkoutLabel={ checkoutLabel }
 						emptyCart={ emptyCart }
-						showBundleGrouping={ config.isEnabled( 'domain-bundling' ) }
+						showBundleGrouping={ isDomainBundleExperienceEnabled() }
 					/>
 				</CheckoutErrorBoundary>
 			</Popover>
