@@ -13,6 +13,7 @@ import { addListeners, removeListeners } from '../panel/state/create-listener-mi
 import getIsPanelOpen from '../panel/state/selectors/get-is-panel-open';
 import getKeyboardShortcutsEnabled from '../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import { AppProvider } from './context';
+import ErrorBoundary, { logError } from './error-boundary';
 import Note from './note';
 import { useNoteNavigation } from './note/hooks';
 import NotePanel from './note-panel';
@@ -180,6 +181,22 @@ const NotificationApp = ( {
 	}, [] );
 
 	useEffect( () => {
+		const handleError = ( event: ErrorEvent ) => {
+			logError( event.error ?? event.message );
+		};
+		const handleRejection = ( event: PromiseRejectionEvent ) => {
+			logError( event.reason );
+		};
+
+		window.addEventListener( 'error', handleError );
+		window.addEventListener( 'unhandledrejection', handleRejection );
+		return () => {
+			window.removeEventListener( 'error', handleError );
+			window.removeEventListener( 'unhandledrejection', handleRejection );
+		};
+	}, [] );
+
+	useEffect( () => {
 		const stopEvent = ( event: KeyboardEvent ) => {
 			event.stopPropagation();
 			event.preventDefault();
@@ -215,11 +232,13 @@ const NotificationApp = ( {
 	}
 
 	return (
-		<Provider store={ store }>
-			<AppProvider client={ client } locale={ locale }>
-				<NotificationContent isDismissible={ isDismissible } />
-			</AppProvider>
-		</Provider>
+		<ErrorBoundary>
+			<Provider store={ store }>
+				<AppProvider client={ client } locale={ locale }>
+					<NotificationContent isDismissible={ isDismissible } />
+				</AppProvider>
+			</Provider>
+		</ErrorBoundary>
 	);
 };
 
