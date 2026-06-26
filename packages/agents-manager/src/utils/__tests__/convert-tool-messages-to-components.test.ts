@@ -367,6 +367,9 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
 			type: 'component',
 			component: mockEscalationButton,
+			componentProps: {
+				messageId: 'msg-1',
+			},
 		} );
 	} );
 

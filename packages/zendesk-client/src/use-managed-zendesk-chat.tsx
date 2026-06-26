@@ -24,6 +24,7 @@ import {
 	SMOOCH_INTEGRATION_ID_CUSTOM,
 	SMOOCH_INTEGRATION_ID_STAGING,
 	ZENDESK_CUSTOM_FIELD_AI_CHAT_ID,
+	ZENDESK_CUSTOM_FIELD_AI_MESSAGE_ID,
 } from './constants';
 import {
 	ConversationData,
@@ -230,6 +231,7 @@ export const useManagedZendeskChat = ( {
 	const startedFromChatSessionId = getStringStateValue( state?.startedFromChatSessionId );
 	const startedFromAiChatId = getNumericStateValue( state?.startedFromAiChatId );
 	const startedFromAiChatIdTicketValue = startedFromAiChatId?.toString();
+	const startedFromMessageId = getStringStateValue( state?.startedFromMessageId );
 	const [ conversation, setConversation ] = useState< ZendeskConversation | undefined >();
 	const [ typingStatus, setTypingStatus ] = useState< Record< string, boolean > >( {} );
 	const [ connectionStatus, setConnectionStatus ] = useState<
@@ -325,13 +327,15 @@ export const useManagedZendeskChat = ( {
 			const createConversation = async () => {
 				const ticketFieldMetadata = getTicketFieldMetadata( {
 					...conversationTicketFields,
+					[ ZENDESK_CUSTOM_FIELD_AI_MESSAGE_ID ]: startedFromMessageId,
 					[ ZENDESK_CUSTOM_FIELD_AI_CHAT_ID ]: startedFromAiChatIdTicketValue,
 				} );
 				const conversationMetadata = {
 					createdAt: Date.now(),
 					started_from: 'chat',
-					...( conversationTags.length ? { 'zen:ticket:tags': conversationTags.join() } : {} ),
+					'zen:ticket:tags': conversationTags.join(),
 					...( startedFromChatSessionId ? { chat_session_id: startedFromChatSessionId } : {} ),
+					...( startedFromMessageId ? { message_id: startedFromMessageId } : {} ),
 					...ticketFieldMetadata,
 				};
 
@@ -355,6 +359,7 @@ export const useManagedZendeskChat = ( {
 		startedFromChatSessionId,
 		startedFromAiChatId,
 		startedFromAiChatIdTicketValue,
+		startedFromMessageId,
 		conversationTags,
 		conversationTicketFields,
 	] );

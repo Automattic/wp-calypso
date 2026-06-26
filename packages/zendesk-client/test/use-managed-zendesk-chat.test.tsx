@@ -106,6 +106,7 @@ function renderUseManagedZendeskChat( {
 	conversationTicketFields,
 	startedFromAiChatId,
 	startedFromChatSessionId,
+	startedFromMessageId,
 }: {
 	conversationId?: string;
 	conversationTags?: string[];
@@ -115,6 +116,7 @@ function renderUseManagedZendeskChat( {
 	>;
 	startedFromAiChatId?: number;
 	startedFromChatSessionId?: string;
+	startedFromMessageId?: string;
 } ) {
 	const queryClient = new QueryClient( {
 		defaultOptions: {
@@ -129,6 +131,7 @@ function renderUseManagedZendeskChat( {
 			: {
 					startedFromAiChatId,
 					startedFromChatSessionId,
+					startedFromMessageId,
 			  },
 	};
 
@@ -176,6 +179,7 @@ describe( 'useManagedZendeskChat', () => {
 			},
 			startedFromAiChatId: 5587242,
 			startedFromChatSessionId: 'session-123',
+			startedFromMessageId: 'message-123',
 		} );
 
 		await waitFor( () => expect( smooch.createConversation ).toHaveBeenCalled() );
@@ -185,8 +189,10 @@ describe( 'useManagedZendeskChat', () => {
 				metadata: expect.objectContaining( {
 					'zen:ticket_field:22054927': 'https://example.com',
 					'zen:ticket_field:25254766': 'woocommerce_core_product',
+					'zen:ticket_field:48091595802388': 'message-123',
 					'zen:ticket_field:33538949515668': '5587242',
 					chat_session_id: 'session-123',
+					message_id: 'message-123',
 				} ),
 			} )
 		);
@@ -198,6 +204,7 @@ describe( 'useManagedZendeskChat', () => {
 				22054927: 'https://example.com',
 			},
 			startedFromChatSessionId: 'session-123',
+			startedFromMessageId: 'message-123',
 		} );
 
 		await waitFor( () => expect( smooch.createConversation ).toHaveBeenCalled() );

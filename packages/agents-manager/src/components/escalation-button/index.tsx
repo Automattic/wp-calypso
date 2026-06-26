@@ -106,7 +106,7 @@ async function getAiChatIdFromSession(
 	}
 }
 
-export function EscalationButton() {
+export function EscalationButton( { messageId }: { messageId: string } ) {
 	const { agentConfig, getActiveSessionId, zendeskSmoochIntegrationKey } =
 		useAgentsManagerContext();
 	const navigate = useNavigate();
@@ -158,6 +158,7 @@ export function EscalationButton() {
 					state: {
 						startedFromChatSessionId: currentChatSessionId,
 						...( aiChatId ? { startedFromAiChatId: aiChatId } : {} ),
+						startedFromMessageId: messageId,
 					},
 				} );
 			} }
