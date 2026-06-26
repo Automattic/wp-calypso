@@ -1,18 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import Smooch from 'smooch';
 import { useManagedZendeskChat } from '../src/use-managed-zendesk-chat';
-import type { UserFields } from '../src/types';
-
-const mockSubmitUserFields = jest.fn();
-const mockUseUpdateZendeskUserFields = jest.fn( () => ( {
-	mutateAsync: mockSubmitUserFields,
-} ) );
 
 jest.mock(
 	'@automattic/agenttic-ui',
@@ -82,10 +75,6 @@ jest.mock( '../src/use-connection-status-notice', () => ( {
 	useConnectionStatusNotice: () => undefined,
 } ) );
 
-jest.mock( '../src/use-update-zendesk-user-fields', () => ( {
-	useUpdateZendeskUserFields: ( ...args: unknown[] ) => mockUseUpdateZendeskUserFields( ...args ),
-} ) );
-
 jest.mock( '../src/util', () => ( {
 	SUPPORTED_IMAGE_TYPES: [ 'image/jpeg', 'image/jpg', 'image/png', 'image/gif' ],
 	MAX_ATTACHMENTS: 5,
@@ -117,8 +106,6 @@ function renderUseManagedZendeskChat( {
 	conversationTicketFields,
 	startedFromAiChatId,
 	startedFromChatSessionId,
-	startedFromMessageId,
-	userFields,
 }: {
 	conversationId?: string;
 	conversationTags?: string[];
@@ -128,8 +115,6 @@ function renderUseManagedZendeskChat( {
 	>;
 	startedFromAiChatId?: number;
 	startedFromChatSessionId?: string;
-	startedFromMessageId?: string;
-	userFields?: UserFields;
 } ) {
 	const queryClient = new QueryClient( {
 		defaultOptions: {
@@ -144,12 +129,11 @@ function renderUseManagedZendeskChat( {
 			: {
 					startedFromAiChatId,
 					startedFromChatSessionId,
-					startedFromMessageId,
 			  },
 	};
 
 	return renderHook(
-		() => useManagedZendeskChat( { conversationTags, conversationTicketFields, userFields } ),
+		() => useManagedZendeskChat( { conversationTags, conversationTicketFields } ),
 		{
 			wrapper: ( { children } ) => (
 				<QueryClientProvider client={ queryClient }>
@@ -166,8 +150,6 @@ describe( 'useManagedZendeskChat', () => {
 		smooch.init.mockResolvedValue( undefined );
 		smooch.createConversation.mockResolvedValue( mockConversation );
 		smooch.getConversationById.mockResolvedValue( mockConversation );
-		mockSubmitUserFields.mockResolvedValue( undefined );
-		mockUseUpdateZendeskUserFields.mockClear();
 	} );
 
 	it( 'passes the conversation tags as metadata when creating a new conversation', async () => {
@@ -194,7 +176,6 @@ describe( 'useManagedZendeskChat', () => {
 			},
 			startedFromAiChatId: 5587242,
 			startedFromChatSessionId: 'session-123',
-			startedFromMessageId: 'message-123',
 		} );
 
 		await waitFor( () => expect( smooch.createConversation ).toHaveBeenCalled() );
@@ -204,9 +185,7 @@ describe( 'useManagedZendeskChat', () => {
 				metadata: expect.objectContaining( {
 					'zen:ticket_field:22054927': 'https://example.com',
 					'zen:ticket_field:25254766': 'woocommerce_core_product',
-					'zen:ticket_field:48091595802388': 'message-123',
 					'zen:ticket_field:33538949515668': '5587242',
-					ai_chat_id: 5587242,
 					chat_session_id: 'session-123',
 				} ),
 			} )
@@ -219,7 +198,6 @@ describe( 'useManagedZendeskChat', () => {
 				22054927: 'https://example.com',
 			},
 			startedFromChatSessionId: 'session-123',
-			startedFromMessageId: 'message-123',
 		} );
 
 		await waitFor( () => expect( smooch.createConversation ).toHaveBeenCalled() );
@@ -240,63 +218,10 @@ describe( 'useManagedZendeskChat', () => {
 		);
 	} );
 
-	it( 'submits user fields before creating a new conversation', async () => {
-		renderUseManagedZendeskChat( {
-			userFields: {
-				messaging_ai_chat_id: 'session-123',
-				messaging_product: 'Core WooCommerce Plugin',
-				messaging_site_id: 123,
-				messaging_source: 'https://example.com/wp-admin/admin.php?page=wc-admin',
-				messaging_url: 'https://example.com',
-			},
-		} );
-
-		await waitFor( () => expect( smooch.createConversation ).toHaveBeenCalled() );
-
-		expect( mockSubmitUserFields ).toHaveBeenCalledWith( {
-			messaging_ai_chat_id: 'session-123',
-			messaging_product: 'Core WooCommerce Plugin',
-			messaging_site_id: 123,
-			messaging_source: 'https://example.com/wp-admin/admin.php?page=wc-admin',
-			messaging_url: 'https://example.com',
-		} );
-		expect( mockSubmitUserFields.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
-			smooch.createConversation.mock.invocationCallOrder[ 0 ]
-		);
-		expect( mockUseUpdateZendeskUserFields ).toHaveBeenCalledWith( { throwOnError: false } );
-	} );
-
-	it( 'still creates a new conversation when user field submission fails', async () => {
-		mockSubmitUserFields.mockRejectedValueOnce( new Error( 'missing route' ) );
-
-		renderUseManagedZendeskChat( {
-			userFields: {
-				messaging_product: 'Core WooCommerce Plugin',
-				messaging_url: 'https://example.com',
-			},
-			conversationTicketFields: {
-				22054927: 'https://example.com',
-			},
-		} );
-
-		await waitFor( () => expect( smooch.createConversation ).toHaveBeenCalled() );
-
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_smooch_messenger_user_fields_error',
-			expect.objectContaining( {
-				error_message: 'missing route',
-			} )
-		);
-	} );
-
 	it( 'does not set new conversation tags when loading an existing conversation', async () => {
 		renderUseManagedZendeskChat( {
 			conversationId: 'conversation-1',
 			conversationTags: [ 'woo_support_flow_ai_plugin' ],
-			userFields: {
-				messaging_product: 'Core WooCommerce Plugin',
-				messaging_site_id: 123,
-			},
 		} );
 
 		await waitFor( () =>
@@ -304,6 +229,5 @@ describe( 'useManagedZendeskChat', () => {
 		);
 
 		expect( smooch.createConversation ).not.toHaveBeenCalled();
-		expect( mockSubmitUserFields ).not.toHaveBeenCalled();
 	} );
 } );

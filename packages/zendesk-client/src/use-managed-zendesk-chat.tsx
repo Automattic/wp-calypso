@@ -23,8 +23,7 @@ import {
 	SMOOCH_INTEGRATION_ID,
 	SMOOCH_INTEGRATION_ID_CUSTOM,
 	SMOOCH_INTEGRATION_ID_STAGING,
-	ZENDESK_CUSTOM_FIELD_AI_CHAT_SESSION_ID,
-	ZENDESK_CUSTOM_FIELD_AI_MESSAGE_ID,
+	ZENDESK_CUSTOM_FIELD_AI_CHAT_ID,
 } from './constants';
 import {
 	ConversationData,
@@ -39,7 +38,6 @@ import {
 	fetchMessagingAuth,
 } from './use-authenticate-zendesk-messaging';
 import { useConnectionStatusNotice } from './use-connection-status-notice';
-import { useUpdateZendeskUserFields } from './use-update-zendesk-user-fields';
 import {
 	convertZendeskMessageToAgentticFormat,
 	getSmoochContainer,
@@ -49,7 +47,7 @@ import {
 	playNotificationSound,
 	SUPPORTED_IMAGE_TYPES,
 } from './util';
-import type { AgentticMessage, ZendeskMessage, ZendeskContentType, UserFields } from './types';
+import type { AgentticMessage, ZendeskMessage, ZendeskContentType } from './types';
 
 type ZendeskTicketFields = Record< string | number, string | number | boolean | null | undefined >;
 
@@ -64,10 +62,6 @@ function getTicketFieldMetadata( ticketFields: ZendeskTicketFields ) {
 			.filter( ( [ , value ] ) => value !== undefined && value !== null && value !== '' )
 			.map( ( [ id, value ] ) => [ `zen:ticket_field:${ id }`, value ] )
 	);
-}
-
-function hasUserFields( userFields?: UserFields ): userFields is UserFields {
-	return !! userFields && Object.keys( userFields ).length > 0;
 }
 
 function getStringStateValue( value: unknown ) {
@@ -211,7 +205,6 @@ function sendMessage(
 type ManagedZendeskChatOptions = {
 	conversationTags?: string[];
 	conversationTicketFields?: ZendeskTicketFields;
-	userFields?: UserFields;
 	/** Index into `SMOOCH_INTEGRATION_ID_CUSTOM` selecting a dedicated Smooch integration (e.g. `woo`). */
 	smoochIntegrationKey?: string;
 };
@@ -229,7 +222,6 @@ type ManagedZendeskChatOptions = {
 export const useManagedZendeskChat = ( {
 	conversationTags = EMPTY_ARRAY,
 	conversationTicketFields = EMPTY_TICKET_FIELDS,
-	userFields,
 	smoochIntegrationKey,
 }: ManagedZendeskChatOptions = {} ) => {
 	const [ attachmentsNotice, setAttachmentNotice ] = useState< NoticeConfig | undefined >();
@@ -238,7 +230,6 @@ export const useManagedZendeskChat = ( {
 	const startedFromChatSessionId = getStringStateValue( state?.startedFromChatSessionId );
 	const startedFromAiChatId = getNumericStateValue( state?.startedFromAiChatId );
 	const startedFromAiChatIdTicketValue = startedFromAiChatId?.toString();
-	const startedFromMessageId = getStringStateValue( state?.startedFromMessageId );
 	const [ conversation, setConversation ] = useState< ZendeskConversation | undefined >();
 	const [ typingStatus, setTypingStatus ] = useState< Record< string, boolean > >( {} );
 	const [ connectionStatus, setConnectionStatus ] = useState<
@@ -255,9 +246,6 @@ export const useManagedZendeskChat = ( {
 
 	const { data: authData } = useAuthenticateZendeskMessaging( true, 'zendesk', false );
 	const { data: Smooch, isLoading: isSettingUpSmooch } = useSmooch( true, smoochIntegrationKey );
-	const { mutateAsync: submitUserFields } = useUpdateZendeskUserFields( {
-		throwOnError: false,
-	} );
 	const { isPending: isAttachingFile, mutateAsync: attachFileToConversation } =
 		useAttachFileToConversation();
 
@@ -337,28 +325,15 @@ export const useManagedZendeskChat = ( {
 			const createConversation = async () => {
 				const ticketFieldMetadata = getTicketFieldMetadata( {
 					...conversationTicketFields,
-					[ ZENDESK_CUSTOM_FIELD_AI_MESSAGE_ID ]: startedFromMessageId,
-					[ ZENDESK_CUSTOM_FIELD_AI_CHAT_SESSION_ID ]: startedFromAiChatIdTicketValue,
+					[ ZENDESK_CUSTOM_FIELD_AI_CHAT_ID ]: startedFromAiChatIdTicketValue,
 				} );
 				const conversationMetadata = {
 					createdAt: Date.now(),
 					started_from: 'chat',
-					'zen:ticket:tags': conversationTags.join(),
+					...( conversationTags.length ? { 'zen:ticket:tags': conversationTags.join() } : {} ),
 					...( startedFromChatSessionId ? { chat_session_id: startedFromChatSessionId } : {} ),
-					...( startedFromAiChatId ? { ai_chat_id: startedFromAiChatId } : {} ),
-					...( startedFromMessageId ? { message_id: startedFromMessageId } : {} ),
 					...ticketFieldMetadata,
 				};
-
-				if ( hasUserFields( userFields ) ) {
-					try {
-						await submitUserFields( userFields );
-					} catch ( error ) {
-						recordTracksEvent( 'calypso_smooch_messenger_user_fields_error', {
-							error_message: error instanceof Error ? error.message : String( error ),
-						} );
-					}
-				}
 
 				const conversation = await Smooch.createConversation( {
 					metadata: conversationMetadata,
@@ -380,11 +355,8 @@ export const useManagedZendeskChat = ( {
 		startedFromChatSessionId,
 		startedFromAiChatId,
 		startedFromAiChatIdTicketValue,
-		startedFromMessageId,
 		conversationTags,
 		conversationTicketFields,
-		userFields,
-		submitUserFields,
 	] );
 
 	const currentTypingStatus = typingStatus[ conversation?.id ?? '' ];

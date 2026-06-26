@@ -100,7 +100,7 @@ describe( 'EscalationButton', () => {
 			isLoading: false,
 		} );
 
-		render( <EscalationButton messageId="message-1" /> );
+		render( <EscalationButton /> );
 
 		expect( screen.getByText( 'Continue existing chat' ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'button' ) ).toHaveTextContent( 'Continue chat started 2h ago' );
@@ -118,7 +118,7 @@ describe( 'EscalationButton', () => {
 			isLoading: false,
 		} );
 
-		render( <EscalationButton messageId="message-1" /> );
+		render( <EscalationButton /> );
 
 		expect( screen.getByText( 'Switch to Happiness Engineer' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'A new chat will start' ) ).toBeInTheDocument();
@@ -130,7 +130,6 @@ describe( 'EscalationButton', () => {
 				state: {
 					startedFromChatSessionId: 'ai-chat-123',
 					startedFromAiChatId: 5587242,
-					startedFromMessageId: 'message-1',
 				},
 			} )
 		);
@@ -149,7 +148,7 @@ describe( 'EscalationButton', () => {
 	it( 'still starts a new Zendesk conversation when the numeric AI chat id cannot be loaded', async () => {
 		mockLoadAllMessagesFromServer.mockRejectedValueOnce( new Error( 'missing chat' ) );
 
-		render( <EscalationButton messageId="message-1" /> );
+		render( <EscalationButton /> );
 
 		fireEvent.click( screen.getByRole( 'button' ) );
 
@@ -157,7 +156,6 @@ describe( 'EscalationButton', () => {
 			expect( mockNavigate ).toHaveBeenCalledWith( '/zendesk', {
 				state: {
 					startedFromChatSessionId: 'ai-chat-123',
-					startedFromMessageId: 'message-1',
 				},
 			} )
 		);
@@ -169,7 +167,7 @@ describe( 'EscalationButton', () => {
 			isLoading: true,
 		} );
 
-		render( <EscalationButton messageId="message-1" /> );
+		render( <EscalationButton /> );
 
 		expect( screen.getByRole( 'button' ) ).toBeDisabled();
 	} );
