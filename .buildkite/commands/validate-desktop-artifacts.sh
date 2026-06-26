@@ -20,24 +20,47 @@ require_artifact() {
 	fi
 }
 
+validate_mac_artifacts() {
+	require_artifact "macOS x64 app zip" "$release_dir/wordpress.com-macOS-app-*-x64.zip"
+	require_artifact "macOS arm64 app zip" "$release_dir/wordpress.com-macOS-app-*-arm64.zip"
+	require_artifact "macOS x64 app blockmap" "$release_dir/wordpress.com-macOS-app-*-x64.zip.blockmap"
+	require_artifact "macOS arm64 app blockmap" "$release_dir/wordpress.com-macOS-app-*-arm64.zip.blockmap"
+	require_artifact "macOS x64 dmg" "$release_dir/wordpress.com-macOS-dmg-*-x64.dmg"
+	require_artifact "macOS arm64 dmg" "$release_dir/wordpress.com-macOS-dmg-*-arm64.dmg"
+	require_artifact "macOS x64 dmg blockmap" "$release_dir/wordpress.com-macOS-dmg-*-x64.dmg.blockmap"
+	require_artifact "macOS arm64 dmg blockmap" "$release_dir/wordpress.com-macOS-dmg-*-arm64.dmg.blockmap"
+	require_artifact "macOS updater manifest" "$release_dir/latest-mac.yml"
+}
+
+validate_linux_artifacts() {
+	require_artifact "Linux deb package" "$release_dir/wordpress.com-linux-deb-*.deb"
+	require_artifact "Linux tarball" "$release_dir/wordpress.com-linux-x64-*.tar.gz"
+}
+
+validate_windows_artifacts() {
+	require_artifact "Windows Store appx" "$release_dir/*.appx"
+	require_artifact "Windows NSIS installer" "$release_dir/*.exe"
+	require_artifact "Windows NSIS blockmap" "$release_dir/*.exe.blockmap"
+	require_artifact "Windows updater manifest" "$release_dir/latest.yml"
+}
+
 case "$platform" in
 	mac)
-		require_artifact "macOS x64 app zip" "$release_dir/wordpress.com-macOS-app-*-x64.zip"
-		require_artifact "macOS arm64 app zip" "$release_dir/wordpress.com-macOS-app-*-arm64.zip"
-		require_artifact "macOS x64 app blockmap" "$release_dir/wordpress.com-macOS-app-*-x64.zip.blockmap"
-		require_artifact "macOS arm64 app blockmap" "$release_dir/wordpress.com-macOS-app-*-arm64.zip.blockmap"
-		require_artifact "macOS x64 dmg" "$release_dir/wordpress.com-macOS-dmg-*-x64.dmg"
-		require_artifact "macOS arm64 dmg" "$release_dir/wordpress.com-macOS-dmg-*-arm64.dmg"
-		require_artifact "macOS x64 dmg blockmap" "$release_dir/wordpress.com-macOS-dmg-*-x64.dmg.blockmap"
-		require_artifact "macOS arm64 dmg blockmap" "$release_dir/wordpress.com-macOS-dmg-*-arm64.dmg.blockmap"
-		require_artifact "macOS updater manifest" "$release_dir/latest-mac.yml"
+		validate_mac_artifacts
 		;;
 	linux)
-		require_artifact "Linux deb package" "$release_dir/wordpress.com-linux-deb-*.deb"
-		require_artifact "Linux tarball" "$release_dir/wordpress.com-linux-x64-*.tar.gz"
+		validate_linux_artifacts
+		;;
+	windows)
+		validate_windows_artifacts
+		;;
+	all)
+		validate_mac_artifacts
+		validate_linux_artifacts
+		validate_windows_artifacts
 		;;
 	*)
-		echo "Unknown desktop platform '$platform'. Expected 'mac' or 'linux'." >&2
+		echo "Unknown desktop platform '$platform'. Expected 'mac', 'linux', 'windows', or 'all'." >&2
 		exit 2
 		;;
 esac
