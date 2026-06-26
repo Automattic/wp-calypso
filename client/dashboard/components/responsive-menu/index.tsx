@@ -167,7 +167,7 @@ function ResponsiveMenu( {
 			<Menu>
 				{ React.Children.map( children, ( child ) => {
 					if ( React.isValidElement( child ) && child.type === ResponsiveMenu.Item ) {
-						const item = child as React.ReactElement< ComponentProps< typeof RouterLinkMenuItem > >;
+						const item = child as React.ReactElement< ResponsiveMenuItemProps >;
 						if ( item.props.target === '_blank' ) {
 							return (
 								<Button
@@ -267,9 +267,7 @@ function ResponsiveMenu( {
 				<>
 					{ React.Children.map( children, ( child ) => {
 						if ( React.isValidElement( child ) && child.type === ResponsiveMenu.Item ) {
-							const item = child as React.ReactElement<
-								ComponentProps< typeof RouterLinkMenuItem >
-							>;
+							const item = child as React.ReactElement< ResponsiveMenuItemProps >;
 							if ( item.props.target === '_blank' ) {
 								return (
 									<Menu.ItemLink

@@ -22,6 +22,18 @@ function makePrivacyLink( privacyLink = true, link = '' ) {
 	return null;
 }
 
+/**
+ * @param {{
+ *   children?: import('react').ReactNode;
+ *   text?: import('react').ReactNode;
+ *   link?: string;
+ *   position?: string;
+ *   privacyLink?: string | boolean;
+ *   popoverClassName?: string;
+ *   supportPostId?: number;
+ *   supportBlogId?: number;
+ * }} props
+ */
 function SupportInfo( {
 	children,
 	text,
