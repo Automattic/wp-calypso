@@ -61,10 +61,10 @@ const DomainUpsellCardContent = ( {
 		if ( suggestedDomain ) {
 			setIsSubmitting( true );
 
-			const { shoppingCartManagerClient } = await import(
-				/* webpackChunkName: "async-load-shopping-cart" */ '../../app/shopping-cart'
-			);
 			try {
+				const { shoppingCartManagerClient } = await import(
+					/* webpackChunkName: "async-load-shopping-cart" */ '../../app/shopping-cart'
+				);
 				await shoppingCartManagerClient.forCartKey( site.ID ).actions.replaceProductsInCart( [
 					{
 						product_slug: suggestedDomain?.product_slug ?? '',

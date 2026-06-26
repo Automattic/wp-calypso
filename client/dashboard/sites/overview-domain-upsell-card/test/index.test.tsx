@@ -14,6 +14,7 @@ const mockFetchSitePlans = jest.fn();
 const mockFetchDomainSuggestions = jest.fn();
 const mockReplaceProductsInCart = jest.fn();
 const mockCreateErrorNotice = jest.fn();
+let mockShoppingCartImportError: Error | null = null;
 
 jest.mock( '@automattic/api-core', () => ( {
 	...jest.requireActual( '@automattic/api-core' ),
@@ -21,15 +22,21 @@ jest.mock( '@automattic/api-core', () => ( {
 	fetchDomainSuggestions: ( ...args: unknown[] ) => mockFetchDomainSuggestions( ...args ),
 } ) );
 
-jest.mock( '../../../app/shopping-cart', () => ( {
-	shoppingCartManagerClient: {
-		forCartKey: () => ( {
-			actions: {
-				replaceProductsInCart: ( ...args: unknown[] ) => mockReplaceProductsInCart( ...args ),
-			},
-		} ),
-	},
-} ) );
+jest.mock( '../../../app/shopping-cart', () => {
+	if ( mockShoppingCartImportError ) {
+		throw mockShoppingCartImportError;
+	}
+
+	return {
+		shoppingCartManagerClient: {
+			forCartKey: () => ( {
+				actions: {
+					replaceProductsInCart: ( ...args: unknown[] ) => mockReplaceProductsInCart( ...args ),
+				},
+			} ),
+		},
+	};
+} );
 
 // eslint-disable-next-line no-restricted-imports
 jest.mock( 'calypso/lib/domains', () => ( {
@@ -61,6 +68,7 @@ const mockSite: Site = {
 
 beforeEach( () => {
 	jest.clearAllMocks();
+	mockShoppingCartImportError = null;
 	mockFetchSitePlans.mockResolvedValue( {
 		plans: [ { current_plan: true, has_domain_credit: true } ],
 	} );
@@ -70,6 +78,24 @@ beforeEach( () => {
 } );
 
 describe( 'DomainUpsellCard', () => {
+	test( 'shows an error notice when the shopping cart chunk fails to load', async () => {
+		const user = userEvent.setup();
+		mockShoppingCartImportError = new Error( 'Loading chunk failed' );
+
+		render( <DomainUpsellCard site={ mockSite } /> );
+
+		const button = await screen.findByRole( 'button', { name: 'Claim this domain' } );
+		await user.click( button );
+
+		await waitFor( () => {
+			expect( mockCreateErrorNotice ).toHaveBeenCalledWith( 'Loading chunk failed', {
+				type: 'snackbar',
+			} );
+		} );
+
+		expect( button ).not.toHaveClass( 'is-busy' );
+	} );
+
 	test( 'shows an error notice when adding an unavailable domain to the cart fails', async () => {
 		const user = userEvent.setup();
 		const errorMessage = 'Sorry, the domain you are trying to add is no longer available.';
