@@ -22,6 +22,8 @@ const queryClient = new QueryClient();
 
 function HelpCenterContent() {
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
+	// Gutenberg's PinnedItems/core slot is CSS-hidden under 600px.
+	const canRenderPinnedItem = useMediaQuery( '(min-width: 600px)' );
 	const [ showHelpIcon, setShowHelpIcon ] = useState( false );
 	const [ helpCenterPage, setHelpCenterPage ] = useState( null );
 	const { setShowHelpCenter, setNavigateToRoute } = useDispatch( 'automattic/help-center' );
@@ -30,6 +32,7 @@ function HelpCenterContent() {
 	const isShown = useSelect( ( s ) => s( 'automattic/help-center' ).isHelpCenterShown(), [] );
 
 	const canvasMode = useCanvasMode();
+	const isPostEditor = useSelect( ( select ) => !! select( 'core/edit-post' ), [] );
 
 	const trackIconInteraction = useCallback( () => {
 		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
@@ -103,6 +106,7 @@ function HelpCenterContent() {
 	);
 
 	const sidebarActionsContainer = document.querySelector( '.edit-site-site-hub__actions' );
+	const postEditorMobileContainer = document.querySelector( '.editor-header__settings' );
 
 	const hasInitialized = useRef( false );
 	// On mobile the SlotFill button is hidden by Gutenberg's own CSS, so wire up the
@@ -241,7 +245,12 @@ function HelpCenterContent() {
 				canvasMode === 'view' &&
 				sidebarActionsContainer &&
 				ReactDOM.createPortal( content, sidebarActionsContainer ) }
-			{ isDesktop && showHelpIcon && <Fill name="PinnedItems/core">{ content }</Fill> }
+			{ ! canRenderPinnedItem &&
+				isPostEditor &&
+				showHelpIcon &&
+				postEditorMobileContainer &&
+				ReactDOM.createPortal( content, postEditorMobileContainer ) }
+			{ canRenderPinnedItem && showHelpIcon && <Fill name="PinnedItems/core">{ content }</Fill> }
 			<HelpCenter
 				locale={ helpCenterData.locale }
 				sectionName={ helpCenterData.sectionName || 'gutenberg-editor' }
