@@ -65,6 +65,12 @@ const TrustCardBody = styled.div`
 	font-size: 13px;
 `;
 
+const TrustCardNote = styled.div`
+	color: ${ ( props ) => props.theme.colors.textColorLight };
+	font-size: 12px;
+	font-style: italic;
+`;
+
 export default function CheckoutTrustCards( { cart }: { cart: ResponseCart } ) {
 	const translate = useTranslate();
 	const refundSummary = getRefundWindowSummary( cart );
@@ -89,6 +95,11 @@ export default function CheckoutTrustCards( { cart }: { cart: ResponseCart } ) {
 							  } )
 							: translate( 'Full refund, no questions asked.' ) }
 					</TrustCardBody>
+					{ refundSummary.hasMultipleWindows && (
+						<TrustCardNote>
+							{ translate( 'Other products in your cart may have different refund windows.' ) }
+						</TrustCardNote>
+					) }
 				</TrustCard>
 			) }
 

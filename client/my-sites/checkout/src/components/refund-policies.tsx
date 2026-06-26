@@ -239,6 +239,7 @@ export function getRefundWindows( refundPolicies: RefundPolicy[] ): RefundWindow
 export type RefundWindowSummary = {
 	days: number;
 	usePlanProductName: boolean;
+	hasMultipleWindows: boolean;
 };
 
 /**
@@ -266,7 +267,7 @@ export function getRefundWindowSummary( cart: ResponseCart ): RefundWindowSummar
 				refundPolicy === RefundPolicy.PlanBiennialBundle ||
 				refundPolicy === RefundPolicy.PlanYearlyBundle
 		);
-		return { days: refundWindows[ 0 ], usePlanProductName };
+		return { days: refundWindows[ 0 ], usePlanProductName, hasMultipleWindows: false };
 	}
 
 	const allCartItemsAreMonthlyPlanBundle = refundPolicies.every(
@@ -282,10 +283,18 @@ export function getRefundWindowSummary( cart: ResponseCart ): RefundWindowSummar
 			refundPolicy === RefundPolicy.PlanBiennialRenewal
 	);
 	if ( allCartItemsAreMonthlyPlanBundle || allCartItemsArePlanOrDomainRenewals ) {
-		return { days: Math.max( ...refundWindows ), usePlanProductName: true };
+		return {
+			days: Math.max( ...refundWindows ),
+			usePlanProductName: true,
+			hasMultipleWindows: true,
+		};
 	}
 
-	return { days: Math.min( ...refundWindows ), usePlanProductName: false };
+	return {
+		days: Math.min( ...refundWindows ),
+		usePlanProductName: false,
+		hasMultipleWindows: true,
+	};
 }
 
 /**
