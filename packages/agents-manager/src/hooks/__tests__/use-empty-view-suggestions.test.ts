@@ -7,6 +7,7 @@ let mockContext = {
 	sectionName: 'gutenberg',
 	currentRoute: undefined as string | undefined,
 };
+let mockCurrentPostType: string | undefined;
 
 jest.mock( '@wordpress/data', () => ( {
 	useSelect: (
@@ -47,9 +48,17 @@ const siteEditorSuggestion = {
 
 function mockCoreStoreReady( isReady: boolean ) {
 	mockUseSelect.mockImplementation( ( mapSelect ) =>
-		mapSelect( () => ( {
-			getCurrentTheme: () => ( isReady ? { stylesheet: 'pub/theme' } : null ),
-		} ) )
+		mapSelect( ( storeName: string ) => {
+			if ( storeName === 'core/editor' ) {
+				return {
+					getCurrentPostType: () => mockCurrentPostType,
+				};
+			}
+
+			return {
+				getCurrentTheme: () => ( isReady ? { stylesheet: 'pub/theme' } : null ),
+			};
+		} )
 	);
 }
 
@@ -68,6 +77,7 @@ describe( 'useEmptyViewSuggestions', () => {
 			sectionName: 'gutenberg',
 			currentRoute: undefined,
 		};
+		mockCurrentPostType = undefined;
 		mockCoreStoreReady( true );
 	} );
 
@@ -135,6 +145,7 @@ describe( 'useEmptyViewSuggestions', () => {
 	} );
 
 	it( 'filters site-editor-only provider suggestions in the post editor even if section is misreported', async () => {
+		mockCurrentPostType = 'post';
 		mockContext = {
 			sectionName: 'site-editor',
 			currentRoute: '/wp-admin/post.php?post=1&action=edit',
@@ -167,6 +178,56 @@ describe( 'useEmptyViewSuggestions', () => {
 		await waitFor( () => expect( result.current ).toEqual( [] ) );
 	} );
 
+	it( 'keeps site-editor-only provider suggestions in the page editor', async () => {
+		mockCurrentPostType = 'page';
+		mockContext = {
+			sectionName: 'gutenberg',
+			currentRoute: '/wp-admin/post.php?post=1&action=edit',
+		};
+		const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
+		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
+
+		const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
+
+		await waitFor( () =>
+			expect( result.current ).toEqual( [ siteEditorSuggestion, bigSkySuggestion ] )
+		);
+	} );
+
+	it( 'filters site-editor-only provider suggestions for non-page post types', async () => {
+		mockCurrentPostType = 'product';
+		mockContext = {
+			sectionName: 'gutenberg',
+			currentRoute: '/wp-admin/post.php?post=1&action=edit',
+		};
+		const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
+		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
+
+		const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
+
+		await waitFor( () => expect( result.current ).toEqual( [ bigSkySuggestion ] ) );
+	} );
+
+	it( 'updates site-editor-only provider suggestions when the page editor post type resolves', async () => {
+		mockContext = {
+			sectionName: 'gutenberg',
+			currentRoute: '/wp-admin/post.php?post=1&action=edit',
+		};
+		const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
+		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
+
+		const { result, rerender } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
+
+		await waitFor( () => expect( result.current ).toEqual( [ bigSkySuggestion ] ) );
+
+		mockCurrentPostType = 'page';
+		rerender();
+
+		await waitFor( () =>
+			expect( result.current ).toEqual( [ siteEditorSuggestion, bigSkySuggestion ] )
+		);
+	} );
+
 	it( 'keeps site-editor-only provider suggestions in Site Editor', async () => {
 		mockContext = {
 			sectionName: 'site-editor',
@@ -187,6 +248,22 @@ describe( 'useEmptyViewSuggestions', () => {
 		mockContext = {
 			sectionName: 'gutenberg',
 			currentRoute: undefined,
+		};
+		const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
+		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
+
+		const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
+
+		await waitFor( () =>
+			expect( result.current ).toEqual( [ siteEditorSuggestion, bigSkySuggestion ] )
+		);
+	} );
+
+	it( 'keeps site-editor-only provider suggestions for Site Editor template post types', async () => {
+		mockCurrentPostType = 'wp_template';
+		mockContext = {
+			sectionName: 'site-editor',
+			currentRoute: '/wp-admin/site-editor.php?postType=wp_template',
 		};
 		const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
 		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
