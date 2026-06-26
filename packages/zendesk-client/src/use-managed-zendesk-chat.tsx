@@ -70,6 +70,23 @@ function hasUserFields( userFields?: UserFields ): userFields is UserFields {
 	return !! userFields && Object.keys( userFields ).length > 0;
 }
 
+function getStringStateValue( value: unknown ) {
+	return typeof value === 'string' && value !== '' ? value : undefined;
+}
+
+function getNumericStateValue( value: unknown ) {
+	if ( typeof value === 'number' && Number.isFinite( value ) && value > 0 ) {
+		return value;
+	}
+
+	if ( typeof value === 'string' ) {
+		const parsedValue = Number( value );
+		return Number.isInteger( parsedValue ) && parsedValue > 0 ? parsedValue : undefined;
+	}
+
+	return undefined;
+}
+
 function sortMessagesByTimestamp( messages: ZendeskMessage[] ) {
 	return messages.slice( 0 ).sort( ( a, b ) => {
 		// Give precedence to the local timestamp, if it exists.
@@ -218,8 +235,11 @@ export const useManagedZendeskChat = ( {
 	const [ attachmentsNotice, setAttachmentNotice ] = useState< NoticeConfig | undefined >();
 	const { state } = useLocation();
 	const conversationId = state?.conversationId;
-	const startedFromChatId = state?.startedFromChatId;
-	const startedFromMessageId = state?.startedFromMessageId;
+	const startedFromChatSessionId = getStringStateValue(
+		state?.startedFromChatSessionId ?? state?.startedFromChatId
+	);
+	const startedFromAiChatId = getNumericStateValue( state?.startedFromAiChatId );
+	const startedFromMessageId = getStringStateValue( state?.startedFromMessageId );
 	const [ conversation, setConversation ] = useState< ZendeskConversation | undefined >();
 	const [ typingStatus, setTypingStatus ] = useState< Record< string, boolean > >( {} );
 	const [ connectionStatus, setConnectionStatus ] = useState<
@@ -329,16 +349,17 @@ export const useManagedZendeskChat = ( {
 				const ticketFieldMetadata = getTicketFieldMetadata( {
 					...conversationTicketFields,
 					[ ZENDESK_CUSTOM_FIELD_AI_MESSAGE_ID ]: startedFromMessageId,
-					[ ZENDESK_CUSTOM_FIELD_AI_CHAT_SESSION_ID ]: startedFromChatId,
+					[ ZENDESK_CUSTOM_FIELD_AI_CHAT_SESSION_ID ]: startedFromAiChatId,
 				} );
 
 				const conversation = await Smooch.createConversation( {
 					metadata: {
 						createdAt: Date.now(),
 						started_from: 'chat',
-						chat_session_id: startedFromChatId,
-						message_id: startedFromMessageId,
 						'zen:ticket:tags': conversationTags.join(),
+						...( startedFromChatSessionId ? { chat_session_id: startedFromChatSessionId } : {} ),
+						...( startedFromAiChatId ? { ai_chat_id: startedFromAiChatId } : {} ),
+						...( startedFromMessageId ? { message_id: startedFromMessageId } : {} ),
 						...ticketFieldMetadata,
 					},
 				} );
@@ -356,7 +377,8 @@ export const useManagedZendeskChat = ( {
 		navigate,
 		conversation,
 		Smooch?.render,
-		startedFromChatId,
+		startedFromChatSessionId,
+		startedFromAiChatId,
 		startedFromMessageId,
 		conversationTags,
 		conversationTicketFields,

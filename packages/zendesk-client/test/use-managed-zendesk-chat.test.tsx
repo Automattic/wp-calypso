@@ -115,7 +115,8 @@ function renderUseManagedZendeskChat( {
 	conversationId,
 	conversationTags = [],
 	conversationTicketFields,
-	startedFromChatId,
+	startedFromAiChatId,
+	startedFromChatSessionId,
 	startedFromMessageId,
 	userFields,
 }: {
@@ -125,7 +126,8 @@ function renderUseManagedZendeskChat( {
 		string | number,
 		string | number | boolean | null | undefined
 	>;
-	startedFromChatId?: string;
+	startedFromAiChatId?: number;
+	startedFromChatSessionId?: string;
 	startedFromMessageId?: string;
 	userFields?: UserFields;
 } ) {
@@ -140,7 +142,8 @@ function renderUseManagedZendeskChat( {
 		state: conversationId
 			? { conversationId }
 			: {
-					startedFromChatId,
+					startedFromAiChatId,
+					startedFromChatSessionId,
 					startedFromMessageId,
 			  },
 	};
@@ -189,7 +192,8 @@ describe( 'useManagedZendeskChat', () => {
 				22054927: 'https://example.com',
 				25254766: 'woocommerce_core_product',
 			},
-			startedFromChatId: 'session-123',
+			startedFromAiChatId: 5587242,
+			startedFromChatSessionId: 'session-123',
 			startedFromMessageId: 'message-123',
 		} );
 
@@ -201,7 +205,36 @@ describe( 'useManagedZendeskChat', () => {
 					'zen:ticket_field:22054927': 'https://example.com',
 					'zen:ticket_field:25254766': 'woocommerce_core_product',
 					'zen:ticket_field:48091595802388': 'message-123',
-					'zen:ticket_field:48093986828052': 'session-123',
+					'zen:ticket_field:48093986828052': 5587242,
+					ai_chat_id: 5587242,
+					chat_session_id: 'session-123',
+				} ),
+			} )
+		);
+	} );
+
+	it( 'does not pass the AI chat ticket field when no numeric AI chat id is available', async () => {
+		renderUseManagedZendeskChat( {
+			conversationTicketFields: {
+				22054927: 'https://example.com',
+			},
+			startedFromChatSessionId: 'session-123',
+			startedFromMessageId: 'message-123',
+		} );
+
+		await waitFor( () => expect( smooch.createConversation ).toHaveBeenCalled() );
+
+		expect( smooch.createConversation ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				metadata: expect.not.objectContaining( {
+					'zen:ticket_field:48093986828052': expect.anything(),
+				} ),
+			} )
+		);
+		expect( smooch.createConversation ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				metadata: expect.objectContaining( {
+					chat_session_id: 'session-123',
 				} ),
 			} )
 		);
