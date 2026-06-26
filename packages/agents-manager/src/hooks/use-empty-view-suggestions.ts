@@ -3,6 +3,7 @@ import { useSelect } from '@wordpress/data';
 import { useEffect, useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAgentsManagerContext } from '../contexts';
+import { getAgentsManagerInlineData } from '../utils/get-agents-manager-inline-data';
 import { isPluginCompassHost } from '../utils/is-plugin-compass-agent';
 import { isReaderChatHost } from '../utils/is-reader-chat-agent';
 import { isShopperHost } from '../utils/is-shopper-agent';
@@ -101,15 +102,17 @@ function readOverrideSuggestions(): Suggestion[] | null {
 		return null;
 	}
 
-	const data = (
-		window as unknown as {
-			agentsManagerData?: {
+	// Read via the shared accessor, not `window.agentsManagerData` directly:
+	// Jetpack injects a bare `const agentsManagerData` (not a window property) for
+	// the shopper host, so a window-only read misses it and falls through to the
+	// generic defaults. The accessor reads the bare global first, then window.
+	const data = getAgentsManagerInlineData() as unknown as
+		| {
 				readerSuggestions?: unknown;
 				compassSuggestions?: unknown;
 				shopperSuggestions?: unknown;
-			};
-		}
-	 ).agentsManagerData;
+		  }
+		| undefined;
 
 	let override: unknown;
 	if ( isReaderChatHost() ) {
