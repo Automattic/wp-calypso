@@ -64,7 +64,7 @@ export interface SiteSubscriptionItem {
 	is_owner?: boolean;
 	organization_id?: number | null;
 	name?: string;
-	unseen_count?: number;
+	unseen_count: number;
 	site_icon?: string | null;
 	is_following: boolean;
 	alias_feed_URLs?: string[];
