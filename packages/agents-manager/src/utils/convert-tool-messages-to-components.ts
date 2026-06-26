@@ -28,7 +28,18 @@ type MessageWithContextFlags = UIMessage & {
 };
 
 function isContextOnlyMessage( message: UIMessage ): boolean {
-	return ( message as MessageWithContextFlags ).context?.flags?.context_only === true;
+	return (
+		( message as MessageWithContextFlags ).context?.flags?.context_only === true ||
+		message.content?.some( ( content ) => {
+			if ( content.type === 'context' ) {
+				return true;
+			}
+
+			const flags =
+				content.type === 'data' ? ( content.data?.flags as { context_only?: boolean } ) : undefined;
+			return flags?.context_only === true;
+		} )
+	);
 }
 
 function getShowComponentSummary( message: UIMessage ): string | undefined {
