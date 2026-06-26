@@ -1,8 +1,10 @@
 import { domainSuggestionsQuery, siteCurrentPlanQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalText as Text } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 // eslint-disable-next-line no-restricted-imports
@@ -52,6 +54,7 @@ const DomainUpsellCardContent = ( {
 } ) => {
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const { search, suggestedDomain } = useDomainSuggestion( site );
+	const { createErrorNotice } = useDispatch( noticesStore );
 
 	const backUrl = redirectToDashboardLink( { supportBackport: true } );
 	const handleUpsell = async () => {
@@ -61,12 +64,22 @@ const DomainUpsellCardContent = ( {
 			const { shoppingCartManagerClient } = await import(
 				/* webpackChunkName: "async-load-shopping-cart" */ '../../app/shopping-cart'
 			);
-			await shoppingCartManagerClient.forCartKey( site.ID ).actions.replaceProductsInCart( [
-				{
-					product_slug: suggestedDomain?.product_slug ?? '',
-					meta: suggestedDomain?.domain_name,
-				},
-			] );
+			try {
+				await shoppingCartManagerClient.forCartKey( site.ID ).actions.replaceProductsInCart( [
+					{
+						product_slug: suggestedDomain?.product_slug ?? '',
+						meta: suggestedDomain?.domain_name,
+					},
+				] );
+			} catch ( error ) {
+				createErrorNotice(
+					( error as Error ).message ||
+						__( 'Sorry, we had a problem adding that domain. Please try again.' ),
+					{ type: 'snackbar' }
+				);
+				setIsSubmitting( false );
+				return;
+			}
 		}
 
 		if ( requiresPlanUpgrade( site ) ) {
