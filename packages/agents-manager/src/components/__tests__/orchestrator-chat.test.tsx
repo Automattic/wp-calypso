@@ -543,4 +543,100 @@ describe( 'OrchestratorChat', () => {
 			{ isLatestAgentMessage: true, isStreaming: true }
 		);
 	} );
+
+	it( 'does not stack retained show-component messages across repeated regenerations', () => {
+		// A "show component" payload (e.g. a title picker). Its identity —
+		// tool_call_id|type|summary — is stable across regenerations even though
+		// each regenerated agent turn gets a fresh message id.
+		const showComponentContent = JSON.stringify( {
+			tool_id: 'big_sky__show_component',
+			tool_call_id: 'title-picker-call',
+			data: { type: 'titlePicker', summary: 'Optimize title' },
+		} );
+		const userMessage = {
+			id: 'user-1',
+			role: 'user',
+			content: [ { type: 'text', text: 'Optimize the title' } ],
+			timestamp: 0,
+			archived: false,
+			showIcon: true,
+		};
+		const showComponentMessage = ( id: string ) => ( {
+			id,
+			role: 'agent',
+			content: [ { type: 'text', text: showComponentContent } ],
+			timestamp: 1,
+			archived: false,
+			showIcon: true,
+		} );
+		const agentChatReturn = ( messages: unknown[], isProcessing: boolean ) => ( {
+			addMessage: jest.fn(),
+			messages,
+			suggestions: [],
+			isProcessing,
+			error: null,
+			loadMessages: jest.fn(),
+			onSubmit: jest.fn(),
+			abortCurrentRequest: jest.fn(),
+			clearSuggestions: jest.fn(),
+			registerSuggestions: jest.fn(),
+			registerMessageActions: jest.fn(),
+			getRegenerateHandler: jest.fn(),
+			progressMessage: null,
+		} );
+		const countShowComponentMessages = (
+			messages: Array< { content?: Array< { text?: string } > } >
+		) =>
+			messages.filter( ( message ) => {
+				const text = message?.content?.[ 0 ]?.text;
+				if ( typeof text !== 'string' ) {
+					return false;
+				}
+				try {
+					return JSON.parse( text )?.tool_id === 'big_sky__show_component';
+				} catch ( _error ) {
+					return false;
+				}
+			} ).length;
+		const chat = () => (
+			<OrchestratorChat
+				emptyViewSuggestions={ [] }
+				isDocked={ false }
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				capabilities={ { supportsRegenerateAction: true } }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		// Steady state: the title picker is showing.
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( [ userMessage, showComponentMessage( 'agent-1' ) ], false )
+		);
+		const { rerender } = render( chat() );
+
+		// Regenerate: the picker briefly disappears while the new turn streams.
+		mockUseAgentChat.mockReturnValue( agentChatReturn( [ userMessage ], true ) );
+		rerender( chat() );
+
+		// New picker arrives — same identity, fresh agent message id.
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( [ userMessage, showComponentMessage( 'agent-2' ) ], false )
+		);
+		rerender( chat() );
+
+		// Regenerate again: the picker disappears once more while streaming.
+		mockUseAgentChat.mockReturnValue( agentChatReturn( [ userMessage ], true ) );
+		rerender( chat() );
+
+		const lastMessages = mockAgentChat.mock.calls.at( -1 )![ 0 ].messages as Array< {
+			content?: Array< { text?: string } >;
+		} >;
+		expect( countShowComponentMessages( lastMessages ) ).toBe( 1 );
+	} );
 } );

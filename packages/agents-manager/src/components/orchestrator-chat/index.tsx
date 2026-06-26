@@ -259,7 +259,9 @@ export default function OrchestratorChat( {
 
 				for ( const message of retainedCandidates ) {
 					const identity = getShowComponentIdentity( message );
-					const retainedId = `${ message.id }-retained-${ identity }`;
+					// One placeholder per identity, so regenerating a component
+					// refreshes it in place instead of stacking another copy.
+					const retainedId = `retained-${ identity }`;
 					if ( ! nextRetainedMessages.has( retainedId ) ) {
 						nextRetainedMessages.set( retainedId, { ...message, id: retainedId } );
 						changed = true;
