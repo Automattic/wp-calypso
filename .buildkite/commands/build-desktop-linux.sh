@@ -9,6 +9,7 @@ export SKIP_TSC=true
 export PLAYWRIGHT_SKIP_DOWNLOAD=true
 export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 export NODE_OPTIONS=--max-old-space-size=5120
+# Playwright and Electron use HOME for caches; keep it writable under the propagated UID.
 export HOME=/tmp/buildkite-home
 
 mkdir -p "$HOME"
