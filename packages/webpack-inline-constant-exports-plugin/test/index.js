@@ -47,7 +47,10 @@ describe( 'webpack-inline-constant-exports-plugin', () => {
 
 		// promisify rejects on webpack's error-first callback arg; assertions run
 		// in the async body, so a failure fails fast instead of hanging.
-		await promisify( webpack )( config );
+		const stats = await promisify( webpack )( config );
+		// Compilation errors surface via stats, not the callback err arg, so a
+		// broken build would otherwise snapshot silently.
+		expect( stats.hasErrors() ).toBe( false );
 
 		const outputFile = path.join( outputDirectory, 'main.js' );
 		const outputFileContent = fs.readFileSync( outputFile, 'utf8' );
