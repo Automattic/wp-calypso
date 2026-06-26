@@ -11,7 +11,11 @@ import { SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST } from 'calypso/landing
 const { useSiteSubscriptionsQuery, useSiteUnsubscribeMutation, useSiteSubscriptionsQueryProps } =
 	SubscriptionManager;
 
-export const UnsubscribedFeedsSearchList = () => {
+interface Props {
+	hideTitle?: boolean;
+}
+
+export const UnsubscribedFeedsSearchList = ( { hideTitle = false }: Props ) => {
 	const { searchTerm } = useSiteSubscriptionsQueryProps();
 	const { isPending: isUnsubscribing } = useSiteUnsubscribeMutation();
 	const translate = useTranslate();
@@ -60,6 +64,7 @@ export const UnsubscribedFeedsSearchList = () => {
 
 	const getTitle = (): string | null => {
 		if (
+			hideTitle ||
 			! hasSubscribedTableResults ||
 			noFeedsFound ||
 			filteredUnsubscribedFeedItems.length === 0

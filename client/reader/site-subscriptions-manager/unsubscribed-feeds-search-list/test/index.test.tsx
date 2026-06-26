@@ -193,6 +193,34 @@ describe( 'UnsubscribedFeedsSearchList', () => {
 		).toBeVisible();
 	} );
 
+	it( 'omits the recommendation list heading when hideTitle is set', async () => {
+		const feedItems = [
+			createMockFeedItem( { feed_ID: '1', blog_ID: '1' } ),
+			createMockFeedItem( { feed_ID: '2', blog_ID: '2' } ),
+		];
+
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/read/feed' )
+			.query( () => true )
+			.once()
+			.reply( 200, {
+				feeds: feedItems,
+			} );
+
+		render( <UnsubscribedFeedsSearchList hideTitle />, {
+			searchTerm: 'test',
+			subscriptions: [ createMockSubscription() ],
+		} );
+
+		await screen.findAllByTestId( 'mock-reader-feed-item' );
+
+		expect(
+			screen.queryByRole( 'heading', {
+				name: 'Here are some other sites related to your search.',
+			} )
+		).not.toBeInTheDocument();
+	} );
+
 	it( 'does not render a heading when the subscribed table is empty', async () => {
 		const feedItems = [
 			createMockFeedItem( { feed_ID: '1', blog_ID: '1' } ),
