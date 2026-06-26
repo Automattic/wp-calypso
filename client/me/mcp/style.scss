@@ -131,10 +131,9 @@ body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .main.m
 		}
 	}
 
-	// First sub-group when a group row is expanded: full-bleed border separates
-	// from the group header, then inner padding for the tool list.
+	// First sub-group when a group row is expanded: negative margins bleed to the
+	// card edge, inner padding aligns the tool list with the group header content.
 	.mcp-tools-subpage__group-body {
-		border-top: 1px solid var(--color-border-subtle);
 		margin-inline-start: -16px;
 		margin-inline-end: -16px;
 		padding: 16px 16px 16px;
