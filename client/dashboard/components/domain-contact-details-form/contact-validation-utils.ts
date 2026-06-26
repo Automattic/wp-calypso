@@ -2,6 +2,7 @@ import type {
 	ContactValidationResponseMessages,
 	DomainContactDetails,
 	DomainContactValidationResponse,
+	SMSCountryCode,
 } from '@automattic/api-core';
 import type { NormalizedField } from '@wordpress/dataviews';
 
@@ -142,4 +143,26 @@ export function splitPhoneNumber( phoneNumber: string ): string[] {
 
 export function combinePhoneNumber( countryNumericCode: string, phoneNumber: string ): string {
 	return `${ countryNumericCode }.${ phoneNumber }`;
+}
+
+/**
+ * Resolves the SMS country entry for a phone number's numeric dialing code.
+ *
+ * A single dialing code can be shared by several countries (for example +1 is
+ * used by the US, Canada, and a number of Caribbean nations). Matching on the
+ * numeric code alone returns the first entry (the Bahamas for +1), which showed
+ * the wrong country for US and Canadian numbers (DOMENG-635). When the dialing
+ * code is shared, prefer the entry that matches the contact's own country code.
+ */
+export function resolveSmsCountry(
+	smsCountryCodes: SMSCountryCode[] | undefined,
+	numericCode: string,
+	preferredCountryCode: string
+): SMSCountryCode | undefined {
+	const countriesForCode =
+		smsCountryCodes?.filter( ( country ) => country.numeric_code === numericCode ) ?? [];
+	return (
+		countriesForCode.find( ( country ) => country.code === preferredCountryCode ) ??
+		countriesForCode[ 0 ]
+	);
 }

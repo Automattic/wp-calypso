@@ -18,6 +18,7 @@ import {
 	sanitizePhoneNumber,
 	splitPhoneNumber,
 	combinePhoneNumber,
+	resolveSmsCountry,
 } from './contact-validation-utils';
 import { RegionAddressFieldsets } from './region-address-fieldsets';
 import type { CountryListItem } from './custom-form-fieldsets/types';
@@ -93,9 +94,12 @@ export const getContactFormFields = (
 
 				const phoneValue = combinePhoneNumber( countryNumericCode, phoneNumber );
 
-				// Find country code from the numeric code using SMS country codes
-				const smsCountry = smsCountryCodes?.find(
-					( country ) => country.numeric_code === countryNumericCode
+				// Resolve the country from the numeric dialing code, disambiguating
+				// shared codes (e.g. +1) using the contact's own country (DOMENG-635).
+				const smsCountry = resolveSmsCountry(
+					smsCountryCodes,
+					countryNumericCode,
+					countryCode
 				);
 
 				// Handle both sync and async validators
