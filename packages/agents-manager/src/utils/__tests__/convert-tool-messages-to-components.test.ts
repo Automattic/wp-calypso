@@ -9,6 +9,15 @@ import {
 import type { UIMessage } from '@automattic/agenttic-client';
 
 jest.mock(
+	'@automattic/agenttic-client',
+	() => ( {
+		createOdieBotId: ( agentId: string ) => `odie-${ agentId }`,
+		isOdieBotId: () => false,
+		loadAllMessagesFromServer: jest.fn(),
+	} ),
+	{ virtual: true }
+);
+jest.mock(
 	'@automattic/components',
 	() => ( {
 		SummaryButton: () => null,
