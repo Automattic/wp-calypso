@@ -102,7 +102,7 @@ export function generateAdminSections(
 			icon: 'plans',
 		},
 		{
-			/* translators: %(googleMailService)s can be either "G Suite" or "Google Workspace */
+			/* translators: %s can be either "G Suite" or "Google Workspace" */
 			title: sprintf( __( 'Cancel %s', __i18n_text_domain__ ), googleMailService ),
 			link: '/me/purchases',
 			synonyms: [ 'upgrade', 'business', 'professional', 'personal', 'google' ],
