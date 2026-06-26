@@ -37,6 +37,7 @@ const WP_DEBUG_LOG = path.resolve( __dirname, '../results/app.log' );
 const BASE_URL = process.env.WP_DESKTOP_BASE_URL?.replace( /\/$/, '' ) ?? 'https://wordpress.com';
 const LAUNCH_ARGS = [ '--disable-http-cache', '--start-maximized' ];
 
+// Linux CI lacks Electron's SUID sandbox setup.
 if ( process.platform === 'linux' ) {
 	LAUNCH_ARGS.push( '--no-sandbox' );
 }
