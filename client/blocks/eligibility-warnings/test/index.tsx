@@ -186,6 +186,24 @@ describe( '<EligibilityWarnings>', () => {
 		);
 	} );
 
+	it( 'upsells the Personal plan when uploading a plugin', async () => {
+		const state = createState( {
+			holds: [ 'NO_BUSINESS_PLAN' ],
+			siteUrl: 'https://example.wordpress.com',
+		} );
+
+		const { getByText } = renderWithStore(
+			<EligibilityWarnings backUrl="/plugins/example.wordpress.com" onProceed={ noop } />,
+			state
+		);
+
+		await userEvent.click( getByText( 'Upgrade and continue' ) );
+
+		expect( page.redirect ).toHaveBeenCalledWith(
+			expect.stringContaining( '/checkout/example.wordpress.com/personal-bundle' )
+		);
+	} );
+
 	it( 'disables the "Continue" button if holds can\'t be handled automatically', async () => {
 		const state = createState( {
 			holds: [ 'NON_ADMIN_USER', 'SITE_PRIVATE' ],

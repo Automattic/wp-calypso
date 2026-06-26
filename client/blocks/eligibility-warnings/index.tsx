@@ -5,6 +5,7 @@ import {
 	FEATURE_SFTP,
 	FEATURE_INSTALL_PLUGINS,
 	PLAN_BUSINESS,
+	PLAN_PERSONAL,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
@@ -117,7 +118,9 @@ export const EligibilityWarnings = ( {
 		}
 		if ( siteRequiresUpgrade( listHolds ) ) {
 			recordUpgradeClick( ctaName, feature );
-			const planSlug = PLAN_BUSINESS;
+			// Plugin upload is available on the Personal plan and up, so upsell the
+			// lowest eligible plan for that context instead of Business.
+			const planSlug = context === 'plugins-upload' ? PLAN_PERSONAL : PLAN_BUSINESS;
 			let redirectUrl = `/checkout/${ siteSlug }/${ planSlug }`;
 			if ( context === 'plugins-upload' ) {
 				redirectUrl = `${ redirectUrl }?redirect_to=${ encodeURIComponent(

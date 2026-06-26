@@ -471,14 +471,13 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
  *   - active downgradable plan (delayed downgrade) — `plans/delayed-downgrade`
  */
 function shouldShowChangePlan( purchase: Purchase ): boolean {
+	if ( ! purchase.is_plan || ! purchase.is_plan_type_downgradable ) {
+		return false;
+	}
 	const expiredOrRefundDowngrade =
 		config.isEnabled( 'plans/expired-downgrade' ) &&
-		( ( purchase.is_past_expiry_date && purchase.is_plan ) ||
-			isWithinRefundWindowDowngradeEligible( purchase ) );
-	const delayedDowngrade =
-		config.isEnabled( 'plans/delayed-downgrade' ) &&
-		purchase.is_plan &&
-		purchase.is_plan_type_downgradable;
+		( purchase.is_past_expiry_date || isWithinRefundWindowDowngradeEligible( purchase ) );
+	const delayedDowngrade = config.isEnabled( 'plans/delayed-downgrade' );
 	return expiredOrRefundDowngrade || delayedDowngrade;
 }
 
@@ -659,6 +658,15 @@ function ChangePlanActionItem( { purchase }: { purchase: Purchase } ) {
 	}
 
 	const isPastExpiryDowngrade = purchase.is_past_expiry_date && purchase.is_plan;
+	const mode = ( () => {
+		if ( isPastExpiryDowngrade ) {
+			return 'expired';
+		}
+		if ( isWithinRefundWindowDowngradeEligible( purchase ) ) {
+			return 'refund-window';
+		}
+		return 'delayed-downgrade';
+	} )();
 
 	return (
 		<ActionList.ActionItem
@@ -671,7 +679,7 @@ function ChangePlanActionItem( { purchase }: { purchase: Purchase } ) {
 					onClick={ () => {
 						recordTracksEvent( 'calypso_purchases_change_plan_click', {
 							product_slug: purchase.product_slug,
-							mode: isPastExpiryDowngrade ? 'expired' : 'refund-window',
+							mode,
 						} );
 						window.location.href = getExpiredNewPlanUrl( purchase );
 					} }

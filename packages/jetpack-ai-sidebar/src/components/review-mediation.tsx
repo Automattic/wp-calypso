@@ -22,6 +22,7 @@ import {
 	toggleBlockReferenceFocus,
 	undoBlockEdit,
 } from '../utils/block-actions';
+import { countOccurrences, flattenBlocks } from '../utils/blocks';
 import {
 	trackAiEditorialReviewItemAction,
 	trackAiEditorialReviewResultRendered,
@@ -218,39 +219,6 @@ function getAiButtonLabel( status: EditStatus ): string {
 			return __( 'Retry AI resolution', 'jetpack' );
 		default:
 			return __( 'Accept AI resolution', 'jetpack' );
-	}
-}
-
-function flattenBlocks( blocks: BlockSnapshot[] ): BlockSnapshot[] {
-	const out: BlockSnapshot[] = [];
-	const walk = ( items: BlockSnapshot[] ) => {
-		items.forEach( ( block ) => {
-			if ( ! block.name ) {
-				return;
-			}
-			out.push( block );
-			if ( Array.isArray( block.innerBlocks ) && block.innerBlocks.length > 0 ) {
-				walk( block.innerBlocks );
-			}
-		} );
-	};
-	walk( blocks );
-	return out;
-}
-
-function countOccurrences( source: string, needle: string ): number {
-	if ( needle === '' ) {
-		return 0;
-	}
-	let count = 0;
-	let pos = 0;
-	while ( true ) {
-		const found = source.indexOf( needle, pos );
-		if ( found === -1 ) {
-			return count;
-		}
-		count++;
-		pos = found + 1;
 	}
 }
 

@@ -1,4 +1,4 @@
-import { find, get } from 'lodash';
+import { get } from 'lodash';
 
 import 'calypso/state/post-types/init';
 
@@ -23,7 +23,7 @@ export function isRequestingPostTypeTaxonomies( state, siteId, postType ) {
  * @returns {Array?}           Post type taxonomies
  */
 export function getPostTypeTaxonomies( state, siteId, postType ) {
-	return get( state.postTypes.taxonomies.items, [ siteId, postType ], null );
+	return state.postTypes.taxonomies.items?.[ siteId ]?.[ postType ] ?? null;
 }
 
 /**
@@ -37,5 +37,7 @@ export function getPostTypeTaxonomies( state, siteId, postType ) {
  */
 export function getPostTypeTaxonomy( state, siteId, postType, taxonomyName ) {
 	const taxonomies = getPostTypeTaxonomies( state, siteId, postType );
-	return find( taxonomies, { name: taxonomyName } ) || null;
+	return (
+		Object.values( taxonomies ?? {} ).find( ( taxonomy ) => taxonomy.name === taxonomyName ) || null
+	);
 }

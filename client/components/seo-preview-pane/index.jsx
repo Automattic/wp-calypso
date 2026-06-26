@@ -8,7 +8,7 @@ import {
 	TYPE_ARTICLE,
 } from '@automattic/social-previews';
 import { localize } from 'i18n-calypso';
-import { find, get } from 'lodash';
+import { get } from 'lodash';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import SeoPreviewUpgradeNudge from 'calypso/components/seo/preview-upgrade-nudge';
@@ -55,7 +55,7 @@ const getPostImage = ( post ) => {
 
 	const imgElements = parseHtml( content ).querySelectorAll( 'img' );
 	const imageUrl = get(
-		find( imgElements, ( { width } ) => width >= PREVIEW_IMAGE_WIDTH ),
+		Array.from( imgElements ).find( ( { width } ) => width >= PREVIEW_IMAGE_WIDTH ),
 		'src',
 		null
 	);
@@ -63,20 +63,19 @@ const getPostImage = ( post ) => {
 	return imageUrl ? `${ imageUrl }?s=${ PREVIEW_IMAGE_WIDTH }` : null;
 };
 
-const getSeoExcerptForPost = ( post ) => {
+export const getSeoExcerptForPost = ( post ) => {
 	if ( ! post ) {
 		return null;
 	}
 
 	return formatExcerpt(
-		find(
-			[
-				post.metadata?.find( ( { key } ) => key === 'advanced_seo_description' )?.value,
-				post.excerpt,
-				post.content,
-			],
-			Boolean
-		)
+		[
+			( Array.isArray( post.metadata ) ? post.metadata : [] ).find(
+				( { key } ) => key === 'advanced_seo_description'
+			)?.value,
+			post.excerpt,
+			post.content,
+		].find( Boolean )
 	);
 };
 
@@ -86,7 +85,7 @@ const getSeoExcerptForSite = ( site ) => {
 	}
 
 	return formatExcerpt(
-		find( [ site.options?.advanced_seo_front_page_description, site.description ], Boolean )
+		[ site.options?.advanced_seo_front_page_description, site.description ].find( Boolean )
 	);
 };
 
@@ -100,7 +99,7 @@ const ReaderPost = ( site, post, frontPageMetaDescription ) => {
 			site={ site }
 			post={ post }
 			postExcerpt={ formatExcerpt(
-				frontPageMetaDescription || get( post, 'excerpt', false ) || get( post, 'content', false )
+				frontPageMetaDescription || ( post?.excerpt ?? false ) || ( post?.content ?? false )
 			) }
 			postImage={ getPostImage( post ) }
 		/>
@@ -118,8 +117,8 @@ const GoogleSite = ( site, frontPageMetaDescription ) => (
 
 const GooglePost = ( site, post, frontPageMetaDescription ) => (
 	<GoogleSearchPreview
-		title={ get( post, 'seoTitle', '' ) }
-		url={ get( post, 'URL', '' ) }
+		title={ post?.seoTitle ?? '' }
+		url={ post?.URL ?? '' }
 		description={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
 		siteTitle={ site.title }
 	/>
@@ -137,11 +136,11 @@ const FacebookSite = ( site, frontPageMetaDescription ) => (
 
 const FacebookPost = ( site, post, frontPageMetaDescription ) => (
 	<FacebookPostPreview
-		title={ get( post, 'seoTitle', '' ) }
-		url={ get( post, 'URL', '' ) }
+		title={ post?.seoTitle ?? '' }
+		url={ post?.URL ?? '' }
 		description={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
 		image={ getPostImage( post ) }
-		user={ { displayName: get( post, 'author.name', '' ) } }
+		user={ { displayName: post?.author?.name ?? '' } }
 		type={ TYPE_ARTICLE }
 	/>
 );
@@ -158,8 +157,8 @@ const TwitterSite = ( site, frontPageMetaDescription ) => (
 
 const TwitterPost = ( site, post, frontPageMetaDescription ) => (
 	<TwitterLinkPreview
-		title={ get( post, 'seoTitle', '' ) }
-		url={ get( post, 'URL', '' ) }
+		title={ post?.seoTitle ?? '' }
+		url={ post?.URL ?? '' }
 		type="large_image_summary"
 		description={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
 		image={ getPostImage( post ) }

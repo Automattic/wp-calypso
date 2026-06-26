@@ -1,7 +1,9 @@
-import { filter, find } from 'lodash';
+import { filter } from 'lodash';
 
 function isUnappliedMetadataEdit( edit, savedMetadata ) {
-	const savedRecord = find( savedMetadata, { key: edit.key } );
+	const savedRecord = ( Array.isArray( savedMetadata ) ? savedMetadata : [] ).find(
+		( record ) => record.key === edit.key
+	);
 
 	// is an update already performed?
 	if ( edit.operation === 'update' ) {

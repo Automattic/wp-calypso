@@ -5,7 +5,6 @@ import { Icon, video } from '@wordpress/icons';
 import clsx from 'clsx';
 import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -35,7 +34,7 @@ class StatsSummaryChart extends Component {
 	};
 
 	barClick = ( bar ) => {
-		const selectedBar = find( this.props.data, ( data ) => isEqual( data, bar.data ) );
+		const selectedBar = this.props.data?.find( ( data ) => isEqual( data, bar.data ) );
 		this.props.recordGoogleEvent( 'Stats', 'Clicked Summary Chart Bar' );
 		this.props.onClick( selectedBar );
 	};

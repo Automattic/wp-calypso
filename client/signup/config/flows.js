@@ -6,7 +6,6 @@ import {
 } from '@automattic/design-picker';
 import { DOMAIN_FOR_GRAVATAR_FLOW, isDomainForGravatarFlow } from '@automattic/onboarding';
 import { isURL } from '@wordpress/url';
-import { get } from 'lodash';
 import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { getOnboardingPostCheckoutDestination } from 'calypso/landing/stepper/declarative-flow/helpers/get-onboarding-post-checkout-destination';
@@ -299,7 +298,7 @@ const Flows = {
 		const flowSteps = flow.steps;
 		const currentStepIndex = flowSteps.indexOf( currentStepName );
 		const nextIndex = currentStepIndex + 1;
-		const nextStepName = get( flowSteps, nextIndex );
+		const nextStepName = flowSteps?.[ nextIndex ];
 
 		return nextStepName;
 	},

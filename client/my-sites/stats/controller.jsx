@@ -1,7 +1,6 @@
 import page from '@automattic/calypso-router';
 import { pick } from '@automattic/js-utils';
 import i18n from 'i18n-calypso';
-import { find } from 'lodash';
 import moment from 'moment';
 import AsyncLoad from 'calypso/components/async-load';
 import { bumpStat } from 'calypso/lib/analytics/mc';
@@ -147,7 +146,7 @@ export function overview( context, next ) {
 
 	window.scrollTo( 0, 0 );
 
-	const activeFilter = find( filters(), ( filter ) => {
+	const activeFilter = filters().find( ( filter ) => {
 		return context.params.period === filter.period || context.path.includes( filter.path );
 	} );
 
@@ -195,7 +194,7 @@ export function site( context, next ) {
 	const currentSite = getSite( state, givenSiteId );
 	const siteId = currentSite ? currentSite.ID || 0 : 0;
 
-	const activeFilter = find( filters, ( filter ) => {
+	const activeFilter = filters.find( ( filter ) => {
 		return context.path.includes( filter.path );
 	} );
 
@@ -282,7 +281,7 @@ export function summary( context, next ) {
 	const selectedSite = getSite( context.store.getState(), siteId );
 	siteId = selectedSite ? selectedSite.ID || 0 : 0;
 
-	const activeFilter = find( filters, ( filter ) => {
+	const activeFilter = filters.find( ( filter ) => {
 		return context.path.includes( filter.path );
 	} );
 
@@ -413,7 +412,7 @@ export function wordAds( context, next ) {
 	const siteId = getSelectedSiteId( state );
 	const filters = getWordAdsFilters( siteId );
 
-	const activeFilter = find( filters, ( filter ) => context.params.period === filter.period );
+	const activeFilter = filters.find( ( filter ) => context.params.period === filter.period );
 
 	if ( ! activeFilter ) {
 		return next();
@@ -461,7 +460,7 @@ export function emailStats( context, next ) {
 
 	const momentSiteZone = getMomentSiteZone( state, siteId );
 	const filters = getSiteFilters( givenSiteId );
-	const activeFilter = find( filters, ( filter ) => {
+	const activeFilter = filters.find( ( filter ) => {
 		return (
 			context.path.indexOf( filter.path ) >= 0 ||
 			( filter.altPaths && context.path.indexOf( filter.altPaths ) >= 0 )
@@ -512,7 +511,7 @@ export function emailSummary( context, next ) {
 	}
 
 	const filters = getSiteFilters( givenSiteId );
-	const activeFilter = find( filters, ( filter ) => {
+	const activeFilter = filters.find( ( filter ) => {
 		return (
 			context.path.indexOf( filter.path ) >= 0 ||
 			( filter.altPaths && context.path.indexOf( filter.altPaths ) >= 0 )

@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import PostCommentForm from './form';
@@ -13,7 +12,7 @@ function PostCommentWithError( {
 	post,
 	repliesList,
 } ) {
-	const commentParentId = get( commentsTree, [ commentId, 'data', 'parent', 'ID' ], null );
+	const commentParentId = commentsTree?.[ commentId ]?.data?.parent?.ID ?? null;
 	const commentText = commentsTree?.[ commentId ]?.data?.content;
 	const placeholderError = commentsTree?.[ commentId ]?.data?.placeholderError;
 	const placeholderErrorType = commentsTree?.[ commentId ]?.data?.placeholderErrorType;

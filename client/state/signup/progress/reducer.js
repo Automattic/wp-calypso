@@ -1,6 +1,5 @@
 import { keyBy, omit } from '@automattic/js-utils';
 import debugFactory from 'debug';
-import { get } from 'lodash';
 import stepsConfig from 'calypso/signup/config/steps-pure';
 import {
 	SIGNUP_COMPLETE_RESET,
@@ -31,7 +30,7 @@ const addStep = ( state, step ) => {
 
 const updateStep = ( state, newStepState ) => {
 	const { stepName, status } = newStepState;
-	const stepState = get( state, stepName );
+	const stepState = state?.[ stepName ];
 
 	if ( ! stepState ) {
 		return state;

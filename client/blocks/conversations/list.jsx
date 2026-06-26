@@ -1,5 +1,5 @@
 import { keyBy, partition, pickBy } from '@automattic/js-utils';
-import { map, filter, get } from 'lodash';
+import { map, filter } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, useCallback, useMemo, useRef, useState } from 'react';
 import { connect } from 'react-redux';
@@ -159,7 +159,7 @@ export class ConversationCommentList extends Component {
 
 	getParentId = ( commentsTree, childId ) => commentsTree?.[ childId ]?.data?.parent?.ID;
 	commentHasParent = ( commentsTree, childId ) => !! this.getParentId( commentsTree, childId );
-	commentIsLoaded = ( commentsTree, commentId ) => !! get( commentsTree, commentId );
+	commentIsLoaded = ( commentsTree, commentId ) => !! commentsTree?.[ commentId ];
 
 	getInaccessibleParentsIds = ( commentsTree, commentIds ) => {
 		// base case

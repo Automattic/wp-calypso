@@ -19,6 +19,7 @@ export type AgencySupports = {
 	tiers: boolean;
 	exclusiveOffers: boolean;
 	learn: boolean;
+	mcp: boolean;
 };
 
 export type AgencyClientSupports = {

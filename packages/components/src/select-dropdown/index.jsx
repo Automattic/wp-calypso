@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { filter, find } from 'lodash';
+import { filter } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Children, cloneElement, Component, forwardRef } from 'react';
 import Count from '../count';
@@ -108,7 +108,7 @@ class SelectDropdown extends Component {
 		}
 
 		// Otherwise find the first option that is an item, i.e., not label or separator
-		return find( this.props.options, ( item ) => item && ! item.isLabel )?.value;
+		return this.props.options.find( ( item ) => item && ! item.isLabel )?.value;
 	}
 
 	getSelectedText() {
@@ -120,7 +120,7 @@ class SelectDropdown extends Component {
 		}
 
 		// return currently selected text
-		return find( options, { value: selected } )?.label;
+		return options.find( ( item ) => item?.value === selected )?.label;
 	}
 
 	getSelectedIcon() {
@@ -132,7 +132,7 @@ class SelectDropdown extends Component {
 		}
 
 		// return currently selected icon
-		return find( options, { value: selected } )?.icon;
+		return options.find( ( item ) => item?.value === selected )?.icon;
 	}
 
 	getSelectedSecondaryIcon() {
@@ -143,7 +143,7 @@ class SelectDropdown extends Component {
 			return selectedSecondaryIcon;
 		}
 
-		return find( options, { value: selected } )?.secondaryIcon;
+		return options.find( ( item ) => item?.value === selected )?.secondaryIcon;
 	}
 
 	dropdownOptions() {

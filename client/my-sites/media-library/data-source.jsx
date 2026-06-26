@@ -1,7 +1,6 @@
 import { Button, ScreenReaderText, Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -72,7 +71,7 @@ export class MediaLibraryDataSource extends Component {
 	render() {
 		const { translate, source } = this.props;
 		const sources = this.getSources();
-		const currentSelected = find( sources, ( item ) => item.value === source );
+		const currentSelected = sources.find( ( item ) => item.value === source );
 		const classes = clsx( 'media-library__datasource', {
 			'is-single-source': 1 === sources.length,
 		} );

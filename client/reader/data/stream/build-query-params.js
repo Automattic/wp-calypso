@@ -75,16 +75,19 @@ function buildListQueryParams( extras ) {
 const SPACE_PER_PAGE = 10;
 
 /**
- * `space` (`/reader/spaces/<id>/posts`) takes `count` (the per-page size, capped
- * at 15 server-side — Elasticsearch query limit) and a `page_handle` cursor,
- * rather than the `number`/offset shape the other streams use. It uses the
- * caller's `perPage` when provided (else `SPACE_PER_PAGE`), clamped to the cap so
- * an oversized page can't silently break end-of-stream detection. Locale is
- * passed as `_locale`, the param the endpoint reads to build the stream.
+ * Shared shape for the Space streams (`/reader/spaces/<id>/posts` and
+ * `/reader/spaces/<id>/discover`): `count` (the per-page size) plus a
+ * `page_handle` cursor and `_locale`, rather than the `number`/offset shape the
+ * other streams use. `cap` is the server-side per-page limit per endpoint (posts
+ * 15, discover 7 — both Elasticsearch query-size limits). `perPage`, when given,
+ * pins the page size (the posts feed passes its own — e.g. the gallery layout
+ * asks for 9); otherwise it falls back to the shared `INITIAL_FETCH`/`PER_FETCH`
+ * sizes. Always clamped to the cap so an oversized page can't silently break
+ * end-of-stream detection. Locale is passed as `_locale`, the param the endpoints read.
  */
-function buildSpaceQueryParams( extras, perPage ) {
-	const { page_handle: pageHandle, lang } = extras;
-	const queryParams = { count: Math.min( perPage || SPACE_PER_PAGE, 15 ) };
+function buildSpaceStreamParams( extras, cap, perPage ) {
+	const { number, page_handle: pageHandle, lang } = extras;
+	const queryParams = { count: Math.min( perPage || number || INITIAL_FETCH, cap ) };
 	if ( pageHandle ) {
 		queryParams.page_handle = pageHandle;
 	}
@@ -92,6 +95,19 @@ function buildSpaceQueryParams( extras, perPage ) {
 		queryParams._locale = lang;
 	}
 	return queryParams;
+}
+
+// `space` — the posts feed (`/reader/spaces/<id>/posts`), followed feeds + tags.
+// Pins the layout's page size (`perPage`, e.g. the gallery's 9) or the default
+// `SPACE_PER_PAGE`, rather than the shared fetch sizes.
+function buildSpaceQueryParams( extras, perPage ) {
+	return buildSpaceStreamParams( extras, 15, perPage ?? SPACE_PER_PAGE );
+}
+
+// `space_discover` — recommended on-topic posts the user doesn't follow
+// (`/reader/spaces/<id>/discover`). Tighter cap (7) than the posts feed.
+function buildSpaceDiscoverQueryParams( extras ) {
+	return buildSpaceStreamParams( extras, 7 );
 }
 
 /**
@@ -240,6 +256,8 @@ export function buildStreamQueryParams( {
 			return buildOnThisDayQueryParams( extras, streamKey );
 		case 'space':
 			return buildSpaceQueryParams( extras, perPage );
+		case 'space_discover':
+			return buildSpaceDiscoverQueryParams( extras );
 		case 'conversations':
 			return getQueryString( { ...extras, comments_per_post: 20 } );
 		case 'conversations-a8c':

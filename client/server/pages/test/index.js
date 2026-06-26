@@ -1,5 +1,4 @@
 import { IncomingMessage } from 'http';
-import cloneDeep from 'lodash/cloneDeep';
 import mockFs from 'mock-fs';
 import sections from 'calypso/sections';
 
@@ -315,28 +314,26 @@ const buildApp = ( environment ) => {
 					...request,
 				} );
 
-				// Using cloneDeep to capture the state of the request/response objects right now, in case
-				// an async middleware changes them _after_ the request handler has been executed
 				const mockResponse = {
 					setHeader: jest.fn(),
 					getHeader: jest.fn(),
 					clearCookie: jest.fn(),
 					send: jest.fn( () => {
 						resolve( {
-							request: cloneDeep( mockRequest ),
-							response: cloneDeep( mockResponse ),
+							request: mockRequest,
+							response: mockResponse,
 						} );
 					} ),
 					end: jest.fn( () => {
 						resolve( {
-							request: cloneDeep( mockRequest ),
-							response: cloneDeep( mockResponse ),
+							request: mockRequest,
+							response: mockResponse,
 						} );
 					} ),
 					redirect: jest.fn( () => {
 						resolve( {
-							request: cloneDeep( mockRequest ),
-							response: cloneDeep( mockResponse ),
+							request: mockRequest,
+							response: mockResponse,
 						} );
 					} ),
 					...response,

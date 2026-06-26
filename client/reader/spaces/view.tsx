@@ -7,7 +7,6 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { useSpaces } from 'calypso/reader/data/spaces';
 import { CustomizeModal, type CustomizeTab } from 'calypso/reader/spaces/customize-modal';
-import { SpaceDiscoverPlaceholder } from 'calypso/reader/spaces/discover/placeholder';
 import { SpaceFeed } from 'calypso/reader/spaces/feed';
 import { SpaceNavigation } from 'calypso/reader/spaces/space-navigation';
 import type { SpaceFeedLayout } from '@automattic/api-core';
@@ -45,7 +44,7 @@ export function SpacesView( { id, tab = 'feed' }: Props ) {
 	if ( id && space ) {
 		activePanel =
 			tab === 'discover' ? (
-				<SpaceDiscoverPlaceholder />
+				<SpaceFeed spaceId={ id } layoutView={ layoutView } variant="discover" />
 			) : (
 				<SpaceFeed spaceId={ id } layoutView={ layoutView } />
 			);

@@ -1,9 +1,12 @@
+import { readSpaceQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
+import { useQueryClient } from '@tanstack/react-query';
 import { Icon, category } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import { useSpaces } from 'calypso/reader/data/spaces';
+import { prefetchInfiniteStream } from 'calypso/reader/data/stream';
 import { AddMenuItem } from 'calypso/reader/sidebar/menu';
 import { CreateSpaceModal } from 'calypso/reader/spaces/create-modal';
 import { getSpacePath, SPACES_BASE_PATH } from 'calypso/reader/spaces/routes';
@@ -29,6 +32,7 @@ function getActiveSpaceId( path: string ): string | null {
 export function ReaderSidebarSpaces( { path }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 	const spaces = useSpaces();
 
 	const activeId = getActiveSpaceId( path );
@@ -45,6 +49,20 @@ export function ReaderSidebarSpaces( { path }: Props ) {
 
 	const recordSpaceClick = ( id: string ) => {
 		dispatch( recordReaderTracksEvent( 'calypso_reader_sidebar_space_clicked', { space: id } ) );
+	};
+
+	// Warm the feed on hover/focus so the view paints from cache on click. The
+	// stream query's 5-minute staleTime makes repeated hovers cheap no-ops.
+	const prefetchSpace = ( id: string ) => {
+		// Skip the space we're already viewing — its data is loaded (or loading).
+		if ( id === activeId ) {
+			return;
+		}
+		void prefetchInfiniteStream( queryClient, dispatch, {
+			streamKey: `space:${ id }`,
+			enabled: true,
+		} );
+		void queryClient.prefetchQuery( readSpaceQuery( id ) );
 	};
 
 	const handleAddSpaceClick = () => {
@@ -76,6 +94,7 @@ export function ReaderSidebarSpaces( { path }: Props ) {
 						space={ space }
 						isSelected={ activeId === space.id }
 						onClick={ () => recordSpaceClick( space.id ) }
+						onPrefetch={ () => prefetchSpace( space.id ) }
 					/>
 				) ) }
 				<AddMenuItem label={ translate( 'Add a space' ) } onClick={ handleAddSpaceClick } />

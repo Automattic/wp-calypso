@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { pick } from '@automattic/js-utils';
 import debugModule from 'debug';
 import { translate } from 'i18n-calypso';
-import { filter, find, forEach, isEmpty, reduce } from 'lodash';
+import { filter, forEach, isEmpty } from 'lodash';
 import { Store, Unsubscribe as ReduxUnsubscribe, AnyAction } from 'redux';
 import { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -156,7 +156,11 @@ export default class SignupFlowController {
 	}
 
 	_resetStoresIfProcessing() {
-		if ( find( getSignupProgress( this._reduxStore.getState() ), { status: 'processing' } ) ) {
+		if (
+			Object.values( getSignupProgress( this._reduxStore.getState() ) ?? {} ).find(
+				( step ) => step.status === 'processing'
+			)
+		) {
 			this.reset();
 		}
 	}
@@ -164,7 +168,9 @@ export default class SignupFlowController {
 	_resetStoresIfUserHasLoggedIn() {
 		if (
 			isUserLoggedIn( this._reduxStore.getState() ) &&
-			find( getSignupProgress( this._reduxStore.getState() ), { stepName: 'user' } )
+			Object.values( getSignupProgress( this._reduxStore.getState() ) ?? {} ).find(
+				( step ) => step.stepName === 'user'
+			)
 		) {
 			this.reset();
 		}
@@ -497,9 +503,8 @@ export default class SignupFlowController {
 			( stepName ) => ( steps && steps[ stepName ] && steps[ stepName ].providesDependencies ) || []
 		);
 
-		return reduce(
-			getSignupProgress( this._reduxStore.getState() ),
-			( current, step ) => ( {
+		return Object.entries( getSignupProgress( this._reduxStore.getState() ) ?? {} ).reduce(
+			( current, [ , step ] ) => ( {
 				...current,
 				...pick( step.providedDependencies, requiredDependencies ),
 			} ),

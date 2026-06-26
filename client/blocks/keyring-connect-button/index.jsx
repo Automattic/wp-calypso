@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import requestExternalAccess from '@automattic/request-external-access';
 import { localize } from 'i18n-calypso';
-import { find, some } from 'lodash';
+import { some } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -127,9 +127,9 @@ class KeyringConnectButton extends Component {
 			} );
 
 			if ( this.didKeyringConnectionSucceed( nextProps.keyringConnections ) ) {
-				const newKeyringConnection = find( nextProps.keyringConnections, {
-					ID: this.state.keyringId,
-				} );
+				const newKeyringConnection = nextProps.keyringConnections?.find(
+					( connection ) => connection.ID === this.state.keyringId
+				);
 				if ( newKeyringConnection ) {
 					this.props.onConnect( newKeyringConnection );
 				}

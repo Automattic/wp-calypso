@@ -29,12 +29,12 @@ export function processItem( item ) {
 	const activityMeta = {};
 	switch ( item.name ) {
 		case 'rewind__backup_error':
-			if ( '2' === get( item.object, 'error_code', '' ) ) {
+			if ( '2' === ( item.object?.error_code ?? '' ) ) {
 				activityMeta.errorCode = 'bad_credentials';
 			}
 			break;
 		case 'rewind__backup_only_error':
-			if ( '3' === get( item.object, 'error_code', '' ) ) {
+			if ( '3' === ( item.object?.error_code ?? '' ) ) {
 				activityMeta.errorCode = 'not_accessible';
 			}
 			break;
@@ -44,13 +44,13 @@ export function processItem( item ) {
 		{
 			/* activity actor */
 			actorAvatarUrl: get( actor, 'icon.url', DEFAULT_GRAVATAR_URL ),
-			actorName: get( actor, 'name', '' ),
-			actorRemoteId: get( actor, 'external_user_id', 0 ),
-			actorRole: get( actor, 'role', '' ),
-			actorType: get( actor, 'type', '' ),
-			actorWpcomId: get( actor, 'wpcom_user_id', 0 ),
-			actorIsMcpAgent: get( actor, 'is_mcp_agent', false ),
-			actorMcpClient: get( actor, 'mcp_client', '' ),
+			actorName: actor?.name ?? '',
+			actorRemoteId: actor?.external_user_id ?? 0,
+			actorRole: actor?.role ?? '',
+			actorType: actor?.type ?? '',
+			actorWpcomId: actor?.wpcom_user_id ?? 0,
+			actorIsMcpAgent: actor?.is_mcp_agent ?? false,
+			actorMcpClient: actor?.mcp_client ?? '',
 
 			/* base activity info */
 			activityDate,
