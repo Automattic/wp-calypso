@@ -1496,8 +1496,11 @@ describe( 'contextProvider', () => {
 			);
 		} );
 
-		expect( contextProvider.getClientContext().currentPageContent ).toEqual( [] );
+		const proofreadContext = contextProvider.getClientContext();
+		expect( proofreadContext.currentPageContent ).toEqual( [] );
+		expect( proofreadContext.jetpackAi ).toBeUndefined();
 		expect( contextProvider.getClientContext().currentPageContent ).toHaveLength( 1 );
+		expect( contextProvider.getClientContext().jetpackAi ).toBeUndefined();
 	} );
 
 	it( 'clears pending Generate Feedback content suppression when another suggestion is clicked', () => {
