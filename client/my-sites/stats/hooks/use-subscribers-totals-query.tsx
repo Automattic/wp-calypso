@@ -97,9 +97,13 @@ const selectSubscribers = ( payload: {
 		is_owner_subscribed: payload.is_owner_subscribed,
 		subscribers: ( payload.subscribers ?? [] ).map( ( item ) => {
 			// Truthy fallback (not `??`) so a `0` placeholder id falls through to the
-			// next field, the same approach getSubscriptionIdFromSubscriber takes.
+			// next field, the same approach getSubscriptionIdFromSubscriber takes. Do not
+			// fall back to `item.ID`: for wpcom subscribers that is the user id, not a
+			// subscription id, so linking by it would open the wrong subscriber. The
+			// `stats/followers` endpoint returns a real `subscription_id` (wpcom#224796);
+			// a row without one simply doesn't link rather than mis-linking.
 			const subscriptionId =
-				item.email_subscription_id || item.subscription_id || item.wpcom_subscription_id || item.ID;
+				item.email_subscription_id || item.subscription_id || item.wpcom_subscription_id;
 			return {
 				label: item.label ?? item.display_name,
 				iconClassName: 'avatar-user',
