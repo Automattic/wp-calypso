@@ -25,3 +25,12 @@ export interface SpaceFeedLayoutProps {
 	/** Stable key (`${spaceId}:${layout}`) for saving/restoring scroll on Back. */
 	restoreKey: string;
 }
+
+/**
+ * The contract for a layout's loading skeleton. Each layout renders placeholder
+ * cards in its own card shape so the loading state matches the populated feed.
+ * `count` is the number of placeholder cards to render.
+ */
+export interface SpaceFeedSkeletonProps {
+	count: number;
+}

@@ -1,7 +1,7 @@
 import { FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
-import { filter, get, some, xor } from 'lodash';
+import { filter, get, some } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -57,7 +57,14 @@ class SharingButtonsOptions extends Component {
 
 	handleMultiCheckboxChange = ( name, event ) => {
 		const { path } = this.props;
-		const delta = xor( this.props.settings.sharing_show, event.value );
+		const previous = Array.isArray( this.props.settings.sharing_show )
+			? this.props.settings.sharing_show
+			: [];
+		const next = Array.isArray( event.value ) ? event.value : [];
+		// Symmetric difference: the services toggled on or off by this change.
+		const delta = [ ...previous, ...next ].filter(
+			( service ) => previous.includes( service ) !== next.includes( service )
+		);
 		this.props.onChange( name, event.value );
 		if ( delta.length ) {
 			const checked = -1 !== event.value.indexOf( delta[ 0 ] ) ? 1 : 0;

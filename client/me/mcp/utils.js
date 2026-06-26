@@ -127,6 +127,30 @@ export function getDisabledSiteIds( userSettings ) {
 }
 
 /**
+ * Get the ordered display-group descriptors for the settings UI's middle
+ * grouping layer (AIINT-469), sorted by their `order` field. A group defaults
+ * to a STRAP facade, but some facades are merged into another group (e.g.
+ * Create Site into Site).
+ * @param {Object} userSettings - The user settings object
+ * @returns {Array<{name: string, label: string, description: string, order: number}>}
+ */
+export function getGroupDescriptors( userSettings ) {
+	const groups = userSettings?.mcp_abilities?.groups ?? [];
+	return [ ...groups ].sort( ( a, b ) => a.order - b.order );
+}
+
+/**
+ * Get the account-level group "enable all" intents (AIINT-471).
+ * Keys are `read`, `write`, or a bare group slug (e.g. `site`) — matching a
+ * getGroupDescriptors() entry's `name`.
+ * @param {Object} userSettings - The user settings object
+ * @returns {Record<string, boolean>}
+ */
+export function getGroupIntents( userSettings ) {
+	return userSettings?.mcp_abilities?.group_intents ?? {};
+}
+
+/**
  * Check if the site-level MCP server is enabled for a specific site.
  * Uses site_level_enabled from the site's entry if present, otherwise
  * falls back to mcp_abilities.site_level_enabled_default.

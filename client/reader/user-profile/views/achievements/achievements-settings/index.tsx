@@ -4,6 +4,7 @@ import { Button, Dropdown, ToggleControl } from '@wordpress/components';
 import { settings } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
+import useSetAchievementsVisibility from 'calypso/reader/components/achievements/use-set-achievements-visibility';
 import { recordAction } from 'calypso/reader/stats';
 import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -16,20 +17,30 @@ export default function AchievementsSettings() {
 	const translate = useTranslate();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 
+	const { data: savedVisibility } = useQuery( userPreferenceQuery( 'achievements-visibility' ) );
 	const { data: savedNotifications } = useQuery(
 		userPreferenceQuery( 'achievements-global-notifications' )
 	);
 
 	// Local state for immediate toggle feedback. Synced from query data on load.
+	const [ visibility, setLocalVisibility ] = useState( savedVisibility ?? 'private' );
 	const [ notifications, setLocalNotifications ] = useState( savedNotifications ?? 'enabled' );
+	useEffect( () => setLocalVisibility( savedVisibility ?? 'private' ), [ savedVisibility ] );
 	useEffect(
 		() => setLocalNotifications( savedNotifications ?? 'enabled' ),
 		[ savedNotifications ]
 	);
 
+	const { setVisibility } = useSetAchievementsVisibility();
 	const { mutate: setNotifications } = useMutation(
 		userPreferenceOptimisticMutation( 'achievements-global-notifications' )
 	);
+
+	const handleSetVisibility = ( checked: boolean ) => {
+		const newVisibility = checked ? 'public' : 'private';
+		setLocalVisibility( newVisibility );
+		setVisibility( newVisibility );
+	};
 
 	const handleSetNotifications = ( checked: boolean ) => {
 		const newNotifications = checked ? 'enabled' : 'disabled';
@@ -85,6 +96,12 @@ export default function AchievementsSettings() {
 			) }
 			renderContent={ () => (
 				<div className="achievements-settings__content">
+					<ToggleControl
+						checked={ visibility === 'public' }
+						onChange={ handleSetVisibility }
+						label={ translate( 'Public achievements' ) }
+						help={ translate( 'When enabled, your achievements page is visible to other users.' ) }
+					/>
 					<ToggleControl
 						checked={ notifications !== 'disabled' }
 						onChange={ handleSetNotifications }

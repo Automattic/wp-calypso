@@ -24,6 +24,7 @@ import {
 	toggleBlockReferenceFocus,
 	undoBlockEdit,
 } from '../utils/block-actions';
+import { countOccurrences, flattenBlocks } from '../utils/blocks';
 import BlockRef, { type BlockSnapshot } from './block-ref';
 
 interface PostFeedbackItem {
@@ -76,39 +77,6 @@ function getCurrentEditorPostIdFromStore(): number | undefined {
 		return typeof postId === 'number' && postId > 0 ? postId : undefined;
 	} catch {
 		return undefined;
-	}
-}
-
-function flattenBlocks( blocks: BlockSnapshot[] ): BlockSnapshot[] {
-	const out: BlockSnapshot[] = [];
-	const walk = ( items: BlockSnapshot[] ) => {
-		items.forEach( ( block ) => {
-			if ( ! block.name ) {
-				return;
-			}
-			out.push( block );
-			if ( Array.isArray( block.innerBlocks ) && block.innerBlocks.length > 0 ) {
-				walk( block.innerBlocks );
-			}
-		} );
-	};
-	walk( blocks );
-	return out;
-}
-
-function countOccurrences( source: string, needle: string ): number {
-	if ( needle === '' ) {
-		return 0;
-	}
-	let count = 0;
-	let pos = 0;
-	while ( true ) {
-		const found = source.indexOf( needle, pos );
-		if ( found === -1 ) {
-			return count;
-		}
-		count++;
-		pos = found + 1;
 	}
 }
 
@@ -192,7 +160,7 @@ function getUnavailableMessage( item: PostFeedbackItem, reason: string ): string
 }
 
 /**
- * Render the post feedback prototype component.
+ * Render the post feedback component.
  * @param {PostFeedbackProps} props Component props.
  * @returns React element.
  */

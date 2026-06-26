@@ -1,8 +1,10 @@
-import { find, mergeWith } from 'lodash';
+import { mergeWith } from 'lodash';
 
 function mergeMetadataEdits( edits, nextEdits ) {
 	// remove existing edits that get updated in `nextEdits`
-	const newEdits = ( edits ?? [] ).filter( ( edit ) => ! find( nextEdits, { key: edit.key } ) );
+	const newEdits = ( edits ?? [] ).filter(
+		( edit ) => ! ( nextEdits ?? [] ).find( ( e ) => e.key === edit.key )
+	);
 	// append the new edits at the end
 	return newEdits.concat( nextEdits );
 }

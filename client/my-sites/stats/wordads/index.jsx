@@ -5,7 +5,6 @@ import { formatNumber } from '@automattic/number-formatters';
 import { Icon, chartBar, trendingUp } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
-import { find } from 'lodash';
 import moment from 'moment';
 import { stringify as stringifyQs } from 'qs';
 import { Component, Fragment } from 'react';
@@ -80,7 +79,8 @@ Object.defineProperty( CHARTS[ 2 ], 'label', {
 	get: () => translate( 'Revenue' ),
 } );
 
-const getActiveTab = ( chartTab ) => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
+const getActiveTab = ( chartTab ) =>
+	CHARTS.find( ( chart ) => chart.attr === chartTab ) || CHARTS[ 0 ];
 
 class WordAds extends Component {
 	static defaultProps = {

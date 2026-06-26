@@ -1,4 +1,4 @@
-import { filter, find, some } from 'lodash';
+import { filter, some } from 'lodash';
 
 import 'calypso/state/plugins/init';
 
@@ -71,7 +71,7 @@ export const isInstalling = function ( state, siteId, forPlugin = false ) {
 
 export const getActivePlugin = function ( state, siteId, forPlugin = false ) {
 	const pluginList = getPluginsForSite( state, siteId, forPlugin );
-	const plugin = find( pluginList, ( item ) => {
+	const plugin = pluginList.find( ( item ) => {
 		return ! [ 'done', 'wait' ].includes( item.status ) && item.error === null;
 	} );
 	if ( typeof plugin === 'undefined' ) {
@@ -82,7 +82,7 @@ export const getActivePlugin = function ( state, siteId, forPlugin = false ) {
 
 export const getNextPlugin = function ( state, siteId, forPlugin = false ) {
 	const pluginList = getPluginsForSite( state, siteId, forPlugin );
-	const plugin = find( pluginList, ( item ) => {
+	const plugin = pluginList.find( ( item ) => {
 		return 'wait' === item.status && item.error === null;
 	} );
 	if ( typeof plugin === 'undefined' ) {

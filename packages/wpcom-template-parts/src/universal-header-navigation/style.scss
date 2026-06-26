@@ -1405,8 +1405,10 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		opacity $x-nav-2026-transition,
 		visibility $x-nav-2026-transition;
 
-	// At >= 1025px, align the content under the first nav item via the JS-set var.
-	@media ( min-width: 1025px ) {
+	// Align the content under the first nav item via the JS-set var. Gated at
+	// the wide breakpoint, not 1025px: on tablet the offset eats column width
+	// and wraps the columns.
+	@media ( min-width: $x-nav-breakpoint-wide ) {
 		padding-inline-start: calc( var( --dropdown-trigger-inline-start, 188px ) + 7px );
 	}
 

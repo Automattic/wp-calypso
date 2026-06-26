@@ -100,7 +100,7 @@ export class RegistrantExtraInfoUkForm extends PureComponent< FormProps & Locali
 
 	renderTradingNameField() {
 		const { ccTldDetails, translate } = this.props;
-		const tradingName = get( ccTldDetails, 'tradingName', '' );
+		const tradingName = ccTldDetails?.tradingName ?? '';
 		const tradingNameErrors = get(
 			this.props.contactDetailsValidationErrors,
 			[ 'extra', 'uk', 'tradingName' ],
@@ -132,7 +132,7 @@ export class RegistrantExtraInfoUkForm extends PureComponent< FormProps & Locali
 
 	renderRegistrationNumberField() {
 		const { ccTldDetails, translate } = this.props;
-		const registrationNumber = get( ccTldDetails, 'registrationNumber', '' );
+		const registrationNumber = ccTldDetails?.registrationNumber ?? '';
 		const registrationNumberErrors = get(
 			this.props.contactDetailsValidationErrors,
 			[ 'extra', 'uk', 'registrationNumber' ],

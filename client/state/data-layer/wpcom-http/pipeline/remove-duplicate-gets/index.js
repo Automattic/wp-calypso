@@ -1,7 +1,6 @@
 import { sortBy } from '@automattic/js-utils';
 import debugFactory from 'debug';
 import isEqual from 'fast-deep-equal/es6';
-import { get } from 'lodash';
 const debug = debugFactory( 'calypso:data-layer:remove-duplicate-gets' );
 
 /**
@@ -35,7 +34,7 @@ export const clearQueue = () => {
  * @param {Object} request the HTTP request action
  * @returns {boolean} whether or not the method is GET
  */
-const isGetRequest = ( request ) => 'GET' === get( request, 'method', '' ).toUpperCase();
+const isGetRequest = ( request ) => 'GET' === ( request?.method ?? '' ).toUpperCase();
 
 /**
  * Returns all elements that exist in any of the two arrays at least once,
@@ -91,7 +90,7 @@ export const removeDuplicateGets = ( outboundData ) => {
 	}
 
 	// don't block automatic retries
-	if ( get( nextRequest, 'meta.dataLayer.retryCount', 0 ) > 0 ) {
+	if ( ( nextRequest?.meta?.dataLayer?.retryCount ?? 0 ) > 0 ) {
 		return outboundData;
 	}
 

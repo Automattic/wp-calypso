@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import { find, get } from 'lodash';
+import { get } from 'lodash';
 import { Component } from 'react';
 import * as React from 'react';
 import SectionNav from 'calypso/components/section-nav';
@@ -119,7 +119,7 @@ class PeopleSectionNav extends Component {
 			search = <PeopleSearch { ...this.props } />;
 		}
 
-		const selectedText = find( this.getFilters(), { id: this.props.filter } ).title;
+		const selectedText = this.getFilters().find( ( item ) => item.id === this.props.filter ).title;
 		return (
 			<SectionNav selectedText={ selectedText } hasPinnedItems={ hasPinnedItems }>
 				<PeopleNavTabs

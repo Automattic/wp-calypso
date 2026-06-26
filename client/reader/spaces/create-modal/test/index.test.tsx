@@ -174,7 +174,7 @@ describe( 'CreateSpaceModal', () => {
 		await user.click( screen.getByRole( 'radio', { name: 'Green' } ) );
 		await user.click( screen.getByRole( 'radio', { name: 'Star' } ) );
 		await user.click( screen.getByRole( 'tab', { name: 'Layout' } ) );
-		await user.click( screen.getByRole( 'radio', { name: /Legacy/ } ) );
+		await user.click( screen.getByRole( 'radio', { name: /Classic/ } ) );
 		await user.click( screen.getByRole( 'tab', { name: 'Sources' } ) );
 		await user.click( screen.getByRole( 'button', { name: 'Add Example Blog' } ) );
 		await user.click( screen.getByRole( 'button', { name: 'Create' } ) );

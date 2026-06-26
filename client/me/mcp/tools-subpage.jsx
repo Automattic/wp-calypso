@@ -3,13 +3,14 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
+	Button,
 	ToggleControl,
 	Card,
 	CardBody,
 } from '@wordpress/components';
+import { chevronDown, chevronUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -23,15 +24,10 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { SectionHeader } from '../../dashboard/components/section-header';
 import { filterVisibleTools } from './categories';
+import { getOverridesToMatch, groupIntentKey } from './group-intents';
+import { groupToolsByGroup, groupToolsBySubCategory } from './groups';
 import { useMcpPageChrome } from './mcp-page-header';
-import {
-	CATEGORY_ORDER,
-	SUB_CATEGORY_ORDER,
-	getSubCategory,
-	groupToolsByDisplayCategory,
-	sortTools,
-} from './read-groups';
-import { getAccountMcpAbilities } from './utils';
+import { getAccountMcpAbilities, getGroupDescriptors } from './utils';
 
 import './style.scss';
 
@@ -42,7 +38,6 @@ import './style.scss';
  * @param {string} props.headerTitle
  * @param {(tool: import('@automattic/api-core').McpAbility) => boolean} props.filterTool
  * @param {'read'|'write'} props.toolCategory
- * @param {'categories'|undefined} [props.groupingMode] When `"categories"`, tools are grouped by Dashboard MCP display category (`getDisplayCategory` + `CATEGORY_ORDER`).
  */
 export default function McpToolsSubpage( {
 	path,
@@ -50,7 +45,6 @@ export default function McpToolsSubpage( {
 	headerTitle,
 	filterTool,
 	toolCategory,
-	groupingMode,
 } ) {
 	const translate = useTranslate();
 	const { documentTitle, navigationHeaderProps } = useMcpPageChrome();
@@ -64,6 +58,19 @@ export default function McpToolsSubpage( {
 	useQuery( sitesQuery( 'all', { site_visibility: 'visible' } ) );
 
 	const [ reauthRequired, setReauthRequired ] = useState( false );
+	const [ openGroups, setOpenGroups ] = useState( () => new Set() );
+
+	const toggleGroupOpen = ( groupKey ) => {
+		setOpenGroups( ( current ) => {
+			const next = new Set( current );
+			if ( next.has( groupKey ) ) {
+				next.delete( groupKey );
+			} else {
+				next.add( groupKey );
+			}
+			return next;
+		} );
+	};
 
 	useEffect( () => {
 		const checkReauth = () => setReauthRequired( twoStepAuthorization.isReauthRequired() );
@@ -89,12 +96,13 @@ export default function McpToolsSubpage( {
 	const tools = filterVisibleTools( Object.entries( mcpAbilities ) ).filter( ( [ , tool ] ) =>
 		filterTool( tool )
 	);
+	const groupDescriptors = getGroupDescriptors( userSettings || {} );
+	const groups = groupToolsByGroup( tools, groupDescriptors );
+
+	const eventPrefix =
+		toolCategory === 'write' ? 'calypso_dashboard_mcp_write' : 'calypso_dashboard_mcp_read';
 
 	const handleToolChange = ( toolId, enabled ) => {
-		const eventName =
-			toolCategory === 'write'
-				? 'calypso_dashboard_mcp_write_tool_toggled'
-				: 'calypso_dashboard_mcp_read_tool_toggled';
 		mutation.mutate(
 			{
 				mcp_abilities: {
@@ -105,34 +113,70 @@ export default function McpToolsSubpage( {
 			},
 			{
 				onSuccess: () => {
-					recordTracksEvent( eventName, { tool_id: toolId, enabled } );
+					recordTracksEvent( `${ eventPrefix }_tool_toggled`, { tool_id: toolId, enabled } );
+				},
+			}
+		);
+	};
+
+	const handlePageToggle = ( enabled ) => {
+		const overrides = getOverridesToMatch( tools, enabled );
+		const groupIntents = { [ toolCategory ]: enabled };
+		if ( ! enabled ) {
+			// Disabling: also clear this category's per-group intents so a future
+			// newly-added ability in a group that was previously "enabled all"-ed
+			// (from this same Read or Write page) can't be silently re-enabled by a
+			// stale intent left over from before this disable.
+			groupDescriptors.forEach( ( group ) => {
+				groupIntents[ groupIntentKey( toolCategory, group.name ) ] = false;
+			} );
+		}
+		mutation.mutate(
+			{
+				mcp_abilities: {
+					...( overrides && { account: overrides } ),
+					group_intents: groupIntents,
+				},
+			},
+			{
+				onSuccess: () => {
+					recordTracksEvent( `${ eventPrefix }_enable_all_toggled`, { enabled, scope: 'page' } );
 				},
 			}
 		);
 	};
 
 	/**
+	 * @param {string|null} groupName  null for the "Other" bucket (no group intent key)
 	 * @param {Array<[string, import('@automattic/api-core').McpAbility]>} groupTools
 	 * @param {boolean} enabled
 	 */
-	const handleGroupEnableAll = ( groupTools, enabled, category ) => {
-		if ( groupTools.length === 0 ) {
+	const handleGroupEnableAll = ( groupName, groupTools, enabled ) => {
+		const overrides = getOverridesToMatch( groupTools, enabled );
+		// The "Other" bucket has no group name, so there's no group intent key to write —
+		// explicit per-op overrides are the only way to change its tools' state.
+		const groupIntents = groupName
+			? { [ groupIntentKey( toolCategory, groupName ) ]: enabled }
+			: undefined;
+
+		if ( ! overrides && ! groupIntents ) {
 			return;
 		}
-		const account = Object.fromEntries( groupTools.map( ( [ toolId ] ) => [ toolId, enabled ] ) );
-		const eventName =
-			toolCategory === 'write'
-				? 'calypso_dashboard_mcp_write_enable_all_toggled'
-				: 'calypso_dashboard_mcp_read_enable_all_toggled';
+
 		mutation.mutate(
 			{
 				mcp_abilities: {
-					account,
+					...( overrides && { account: overrides } ),
+					...( groupIntents && { group_intents: groupIntents } ),
 				},
 			},
 			{
 				onSuccess: () => {
-					recordTracksEvent( eventName, { enabled, category } );
+					recordTracksEvent( `${ eventPrefix }_enable_all_toggled`, {
+						enabled,
+						scope: 'group',
+						group: groupName ?? 'other',
+					} );
 				},
 			}
 		);
@@ -146,144 +190,7 @@ export default function McpToolsSubpage( {
 		return null;
 	}
 
-	const renderToolToggles = ( toolList ) =>
-		toolList.map( ( [ toolId, tool ] ) => (
-			<ToggleControl
-				key={ toolId }
-				__nextHasNoMarginBottom
-				checked={ tool.enabled }
-				disabled={ mutation.isPending }
-				label={ tool.title }
-				help={ tool.description }
-				onChange={ ( checked ) => handleToolChange( toolId, checked ) }
-			/>
-		) );
-
-	const renderSubGroupedTools = ( categoryTools, categoryName ) => {
-		const subGrouped = {};
-		categoryTools.forEach( ( [ toolId, tool ] ) => {
-			const sub = getSubCategory( toolId, tool ) ?? '';
-			if ( ! subGrouped[ sub ] ) {
-				subGrouped[ sub ] = [];
-			}
-			subGrouped[ sub ].push( [ toolId, tool ] );
-		} );
-
-		const order = SUB_CATEGORY_ORDER[ categoryName ] ?? [];
-		const subGroups = order.filter( ( sub ) => subGrouped[ sub ] && subGrouped[ sub ].length > 0 );
-		// Tools with no sub-category are appended at the end so they are never silently dropped.
-		const ungrouped = subGrouped[ '' ] ?? [];
-		const allGroups = ungrouped.length > 0 ? [ ...subGroups, '' ] : subGroups;
-
-		return allGroups.map( ( subName, index ) => (
-			<Fragment key={ subName || '__ungrouped__' }>
-				{ index > 0 && <div className="mcp-tools-subpage__sub-divider" /> }
-				<div
-					className={
-						index === 0 ? 'mcp-tools-subpage__group-body' : 'mcp-tools-subpage__sub-group-body'
-					}
-				>
-					<VStack spacing={ 6 }>{ renderToolToggles( sortTools( subGrouped[ subName ] ) ) }</VStack>
-				</div>
-			</Fragment>
-		) );
-	};
-
-	const renderGroupedToolsByCategory = () => {
-		const grouped = groupToolsByDisplayCategory( tools );
-
-		return (
-			<VStack spacing={ 4 }>
-				{ CATEGORY_ORDER.map( ( categoryName ) => {
-					const groupTools = grouped[ categoryName ];
-					if ( ! groupTools || groupTools.length === 0 ) {
-						return null;
-					}
-					const allEnabled = groupTools.every( ( [ , t ] ) => t.enabled );
-					const subOrder = SUB_CATEGORY_ORDER[ categoryName ];
-
-					return (
-						<Card key={ categoryName }>
-							<CardBody className="mcp-tools-subpage__group-card-body">
-								<HStack
-									className="mcp-tools-subpage__group-header"
-									justify="space-between"
-									alignment="center"
-									spacing={ 4 }
-								>
-									<Text
-										as="h4"
-										className="mcp-tools-subpage__group-title"
-										weight={ 600 }
-										size={ 16 }
-									>
-										{ categoryName }
-									</Text>
-									<div className="mcp-tools-subpage__group-toggle">
-										<ToggleControl
-											__nextHasNoMarginBottom
-											checked={ allEnabled }
-											disabled={ mutation.isPending }
-											label={ translate( 'Enable all' ) }
-											onChange={ ( checked ) =>
-												handleGroupEnableAll( groupTools, checked, categoryName )
-											}
-										/>
-									</div>
-								</HStack>
-								{ subOrder ? (
-									renderSubGroupedTools( groupTools, categoryName )
-								) : (
-									<div className="mcp-tools-subpage__group-body">
-										<VStack spacing={ 6 }>{ renderToolToggles( groupTools ) }</VStack>
-									</div>
-								) }
-							</CardBody>
-						</Card>
-					);
-				} ) }
-				{ tools.length === 0 && (
-					<Card>
-						<CardBody>
-							<p>{ translate( 'No tools are available in this category yet.' ) }</p>
-						</CardBody>
-					</Card>
-				) }
-			</VStack>
-		);
-	};
-
-	const renderFlatToolList = () => (
-		<Card>
-			<CardBody>
-				<VStack spacing={ 4 }>
-					<SectionHeader
-						level={ 3 }
-						title={ headerTitle }
-						description={ translate(
-							'Turn individual tools on or off. Changes save automatically.'
-						) }
-					/>
-					<VStack spacing={ 4 }>
-						{ tools.map( ( [ toolId, tool ] ) => (
-							<ToggleControl
-								key={ toolId }
-								__nextHasNoMarginBottom
-								checked={ tool.enabled }
-								disabled={ mutation.isPending }
-								label={ tool.title }
-								help={ tool.description }
-								onChange={ ( checked ) => handleToolChange( toolId, checked ) }
-							/>
-						) ) }
-						{ tools.length === 0 && (
-							<p>{ translate( 'No tools are available in this category yet.' ) }</p>
-						) }
-					</VStack>
-				</VStack>
-			</CardBody>
-		</Card>
-	);
+	const pageAllEnabled = tools.length > 0 && tools.every( ( [ , tool ] ) => tool.enabled );
 
 	return (
 		<Main wideLayout className="mcp mcp-tools-subpage">
@@ -294,9 +201,114 @@ export default function McpToolsSubpage( {
 				{ headerTitle }
 			</HeaderCake>
 			<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-			{ ! isLoadingUserSettings &&
-				! reauthRequired &&
-				( groupingMode === 'categories' ? renderGroupedToolsByCategory() : renderFlatToolList() ) }
+			{ ! isLoadingUserSettings && ! reauthRequired && (
+				<VStack spacing={ 4 }>
+					<Card>
+						<CardBody>
+							<VStack spacing={ 4 }>
+								<SectionHeader
+									level={ 3 }
+									title={ headerTitle }
+									description={ translate(
+										'Turn individual tools on or off. Changes save automatically.'
+									) }
+								/>
+								<ToggleControl
+									__nextHasNoMarginBottom
+									checked={ pageAllEnabled }
+									disabled={ mutation.isPending || tools.length === 0 }
+									label={ <Text weight="600">{ translate( 'Enable all' ) }</Text> }
+									onChange={ handlePageToggle }
+								/>
+							</VStack>
+						</CardBody>
+					</Card>
+
+					{ groups.length > 0 ? (
+						<VStack spacing={ 3 }>
+							{ groups.map( ( { group: descriptor, label, tools: groupTools } ) => {
+								const groupKey = descriptor?.name ?? '__other__';
+								const allGroupEnabled = groupTools.every( ( [ , t ] ) => t.enabled );
+								const isOpen = openGroups.has( groupKey );
+
+								return (
+									<Card key={ groupKey }>
+										<CardBody>
+											<div className="mcp-tools-subpage__group-header">
+												<VStack spacing={ 1 } className="mcp-tools-subpage__group-info">
+													<Text truncate weight={ 600 } size={ 14 }>
+														{ label }
+													</Text>
+													{ descriptor?.description && (
+														<Text truncate variant="muted" size={ 12 }>
+															{ descriptor.description }
+														</Text>
+													) }
+												</VStack>
+												<div className="mcp-tools-subpage__group-toggle">
+													<ToggleControl
+														__nextHasNoMarginBottom
+														checked={ allGroupEnabled }
+														disabled={ mutation.isPending }
+														label={ translate( 'Enable all' ) }
+														onChange={ ( checked ) =>
+															handleGroupEnableAll( descriptor?.name ?? null, groupTools, checked )
+														}
+													/>
+												</div>
+												<Button
+													className="mcp-tools-subpage__group-chevron"
+													icon={ isOpen ? chevronUp : chevronDown }
+													label={ translate( 'Show operations' ) }
+													aria-expanded={ isOpen }
+													onClick={ () => toggleGroupOpen( groupKey ) }
+												/>
+											</div>
+											{ isOpen &&
+												groupToolsBySubCategory( groupTools ).map(
+													( { subCategory, tools: subTools }, subIndex ) => (
+														<Fragment key={ subCategory ?? '__ungrouped__' }>
+															{ subIndex > 0 && <div className="mcp-tools-subpage__sub-divider" /> }
+															<div
+																className={
+																	subIndex === 0
+																		? 'mcp-tools-subpage__group-body'
+																		: 'mcp-tools-subpage__sub-group-body'
+																}
+															>
+																<VStack spacing={ 4 }>
+																	{ subTools.map( ( [ toolId, tool ] ) => (
+																		<ToggleControl
+																			key={ toolId }
+																			__nextHasNoMarginBottom
+																			checked={ tool.enabled }
+																			disabled={ mutation.isPending }
+																			label={ tool.title }
+																			help={ tool.description }
+																			onChange={ ( checked ) =>
+																				handleToolChange( toolId, checked )
+																			}
+																		/>
+																	) ) }
+																</VStack>
+															</div>
+														</Fragment>
+													)
+												) }
+										</CardBody>
+									</Card>
+								);
+							} ) }
+						</VStack>
+					) : (
+						<Card>
+							<CardBody>
+								<p>{ translate( 'No tools are available in this category yet.' ) }</p>
+							</CardBody>
+						</Card>
+					) }
+				</VStack>
+			) }
 		</Main>
 	);
 }

@@ -111,7 +111,9 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 	const renderMessage = () => {
 		if ( ! canUserSetPrimaryDomainOnThisSite ) {
 			const message = createInterpolateElement(
-				'Your site plan doesn’t allow you to set a custom domain as a primary site address.<br/><upgradeLink>Upgrade to an annual paid plan</upgradeLink> and get a free one-year domain name registration or transfer. <learnMoreLink/>',
+				__(
+					'Your site plan doesn’t allow you to set a custom domain as a primary site address.<br/><upgradeLink>Upgrade to an annual paid plan</upgradeLink> and get a free one-year domain name registration or transfer. <learnMoreLink/>'
+				),
 				{
 					upgradeLink: (
 						<UpsellCTAButton
@@ -131,7 +133,9 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 
 		if ( domainsList.length === 0 ) {
 			return createInterpolateElement(
-				'Before changing your primary site address you must register or connect a new custom domain. <learnMoreLink />',
+				__(
+					'Before changing your primary site address you must register or connect a new custom domain. <learnMoreLink />'
+				),
 				{
 					learnMoreLink: <InlineSupportLink supportContext="primary-site-address" />,
 				}
@@ -139,7 +143,9 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 		}
 
 		return createInterpolateElement(
-			'The current primary site address for this site is: <currentPrimaryDomain />. This is the site address your visitors will see while browsing your site. <learnMoreLink />',
+			__(
+				'The current primary site address for this site is: <currentPrimaryDomain />. This is the site address your visitors will see while browsing your site. <learnMoreLink />'
+			),
 			{
 				currentPrimaryDomain: <strong>{ currentPrimaryDomain }</strong>,
 				learnMoreLink: <InlineSupportLink supportContext="primary-site-address" />,

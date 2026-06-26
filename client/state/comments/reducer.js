@@ -1,7 +1,7 @@
 import { omit, orderBy } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
 import isEqual from 'fast-deep-equal/es6';
-import { filter, has, map, get } from 'lodash';
+import { filter, map, get } from 'lodash';
 import {
 	COMMENT_COUNTS_UPDATE,
 	COMMENTS_CHANGE_STATUS,
@@ -36,16 +36,16 @@ const unionById = ( a = [], b = [] ) => [
 ];
 
 const isCommentManagementEdit = ( newProperties ) =>
-	has( newProperties, 'commentContent' ) &&
-	has( newProperties, 'authorDisplayName' ) &&
-	has( newProperties, 'authorUrl' );
+	Object.hasOwn( newProperties, 'commentContent' ) &&
+	Object.hasOwn( newProperties, 'authorDisplayName' ) &&
+	Object.hasOwn( newProperties, 'authorUrl' );
 
 const updateComment = ( commentId, newProperties ) => ( comment ) => {
 	if ( comment.ID !== commentId ) {
 		return comment;
 	}
 	const updateLikeCount =
-		has( newProperties, 'i_like' ) && typeof newProperties.like_count === 'undefined';
+		Object.hasOwn( newProperties, 'i_like' ) && typeof newProperties.like_count === 'undefined';
 
 	// Comment Management allows for modifying nested fields, such as `author.name` and `author.url`.
 	// Though, there is no direct match between the GET response (which feeds the state) and the POST request.
@@ -265,7 +265,7 @@ export const expansions = ( state = {}, action ) => {
 			const newVal = Object.fromEntries(
 				commentIds.map( ( id ) => {
 					if (
-						! has( currentExpansions, id ) ||
+						! Object.hasOwn( currentExpansions, id ) ||
 						expansionValue( displayType ) > expansionValue( currentExpansions[ id ] )
 					) {
 						return [ id, displayType ];

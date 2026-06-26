@@ -61,9 +61,9 @@ class StepSourceSelect extends Component {
 					this.props.recordTracksEvent( 'calypso_importer_wordpress_enter_url', {
 						url: result.site_url,
 						engine: result.site_engine,
-						has_jetpack: !! get( result, 'site_meta.jetpack_version', false ),
+						has_jetpack: !! ( result?.site_meta?.jetpack_version ?? false ),
 						jetpack_version: get( result, 'site_meta.jetpack_version', 'no jetpack' ),
-						is_wpcom: get( result, 'site_meta.wpcom_site', false ),
+						is_wpcom: result?.site_meta?.wpcom_site ?? false,
 					} );
 
 					switch ( result.site_engine ) {

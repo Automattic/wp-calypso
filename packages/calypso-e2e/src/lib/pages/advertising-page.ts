@@ -42,7 +42,9 @@ export class AdvertisingPage {
 	 * @returns The heading element for the Advertising page.
 	 */
 	get advertisingHeading(): Locator {
-		return this.page.getByRole( 'heading', { name: 'Dashboard' } );
+		// Only the standalone Blaze Ads Jetpack plugin renders "Blaze Ads"; WordPress.com,
+		// where E2E runs, uses the exact label "Blaze".
+		return this.page.getByRole( 'heading', { name: 'Blaze', exact: true } );
 	}
 
 	/**

@@ -197,12 +197,12 @@ class JetpackSsoForm extends Component {
 		if ( blogDetails ) {
 			const siteObject = {
 				ID: null,
-				url: get( this.props, 'blogDetails.URL', '' ),
-				admin_url: get( this.props, 'blogDetails.admin_url', '' ),
-				domain: get( this.props, 'blogDetails.domain', '' ),
+				url: this.props?.blogDetails?.URL ?? '',
+				admin_url: this.props?.blogDetails?.admin_url ?? '',
+				domain: this.props?.blogDetails?.domain ?? '',
 				icon: get( this.props, 'blogDetails.icon', { img: '', ico: '' } ),
 				is_vip: false,
-				title: decodeEntities( get( this.props, 'blogDetails.title', '' ) ),
+				title: decodeEntities( this.props?.blogDetails?.title ?? '' ),
 			};
 			site = <Site site={ siteObject } />;
 		}

@@ -12,8 +12,8 @@ const list = ( state = {}, action ) => {
 				...state,
 
 				[ action.siteId ]: {
-					total: get( action, 'subscribers.total', 0 ),
-					ownerships: get( action, 'subscribers.ownerships', [] ).reduce(
+					total: action?.subscribers?.total ?? 0,
+					ownerships: ( action?.subscribers?.ownerships ?? [] ).reduce(
 						( prev, item ) => {
 							prev[ item.id ] = item;
 							return prev;

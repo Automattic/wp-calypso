@@ -1,7 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Icon, currencyDollar } from '@wordpress/icons';
 import clsx from 'clsx';
-import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ElementChart from 'calypso/components/chart';
@@ -107,7 +106,7 @@ class StoreStatsChart extends Component {
 		activeCharts.forEach( ( attr ) => {
 			data.push( {
 				value: formatValue( item[ attr ], selectedTab.type, item.currency ),
-				label: find( tabs, ( tab ) => tab.attr === attr ).label,
+				label: tabs.find( ( tab ) => tab.attr === attr ).label,
 				icon: <Icon className="gridicon" icon={ currencyDollar } />,
 			} );
 		} );
