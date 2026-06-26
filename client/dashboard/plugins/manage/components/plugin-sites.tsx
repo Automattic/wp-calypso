@@ -57,7 +57,6 @@ export const PluginSites = ( { selectedPluginSlug }: { selectedPluginSlug: strin
 			return null;
 		}
 
-		// `author` and `authorUrl` are already normalized by `usePlugin`.
 		return plugin.authorUrl
 			? createInterpolateElement(
 					sprintf(
