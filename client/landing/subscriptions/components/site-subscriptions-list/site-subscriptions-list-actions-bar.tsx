@@ -30,9 +30,7 @@ const ListActionsBar = () => {
 	).length;
 	const isSortDisabled = ! isLoading && visibleCount === 0;
 	const isFilterDisabled = ! isLoading && ! data.hasSearchMatchesWithAllFilter;
-	const disabledReasonText = translate(
-		'No subscribed sites match your search in the table above.'
-	);
+	const disabledReasonText = translate( 'No subscribed sites match your search.' );
 	const filterLabel = getOptionLabel( filterOptions, filterOption ) || '';
 	const sortLabel = getOptionLabel( sortOptions, sortTerm ) || '';
 

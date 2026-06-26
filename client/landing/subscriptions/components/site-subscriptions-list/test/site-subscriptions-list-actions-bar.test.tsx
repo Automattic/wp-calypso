@@ -76,13 +76,10 @@ describe( 'SiteSubscriptionsListActionsBar', () => {
 		renderActionsBar( { subscriptions: [] } );
 
 		const sortButton = screen.getByRole( 'button', {
-			name: /Sort: Recently updated\. No subscribed sites match your search in the table above\./i,
+			name: /Sort: Recently updated\. No subscribed sites match your search\./i,
 		} );
 		expect( sortButton ).toBeDisabled();
-		expect( sortButton ).toHaveAttribute(
-			'title',
-			'No subscribed sites match your search in the table above.'
-		);
+		expect( sortButton ).toHaveAttribute( 'title', 'No subscribed sites match your search.' );
 	} );
 
 	it( 'disables filter when search matches no subscriptions with filter set to All', () => {
@@ -92,9 +89,7 @@ describe( 'SiteSubscriptionsListActionsBar', () => {
 		} );
 
 		expect(
-			screen.getByLabelText(
-				'View: All. No subscribed sites match your search in the table above.'
-			)
+			screen.getByLabelText( 'View: All. No subscribed sites match your search.' )
 		).toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: /View:/i } ) ).toHaveAttribute(
 			'aria-disabled',
