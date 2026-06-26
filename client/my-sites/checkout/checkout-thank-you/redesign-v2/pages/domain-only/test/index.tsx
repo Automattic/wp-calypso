@@ -16,11 +16,14 @@ import {
 import { useDomainToPlanCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-domain-to-plan-credits-applicable';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { canAnySiteConnectDomains } from 'calypso/state/selectors/can-any-site-connect-domains';
+import isCurrentPlanPaid from 'calypso/state/sites/selectors/is-current-plan-paid';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import DomainOnly from '../index';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
 jest.mock( '@automattic/calypso-analytics' );
+
+jest.mock( 'calypso/components/data/query-sites', () => () => null );
 
 jest.mock( 'calypso/state/dashboard/selectors', () => ( {
 	hasDashboardOptIn: jest.fn(),
@@ -28,6 +31,11 @@ jest.mock( 'calypso/state/dashboard/selectors', () => ( {
 
 jest.mock( 'calypso/state/selectors/can-any-site-connect-domains', () => ( {
 	canAnySiteConnectDomains: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/state/sites/selectors/is-current-plan-paid', () => ( {
+	__esModule: true,
+	default: jest.fn(),
 } ) );
 
 jest.mock(
@@ -83,6 +91,7 @@ describe( 'DomainOnly', () => {
 		jest.mocked( hasDashboardOptIn ).mockReturnValue( false );
 		jest.mocked( canAnySiteConnectDomains ).mockReturnValue( false );
 		jest.mocked( useDomainToPlanCreditsApplicable ).mockReturnValue( null );
+		jest.mocked( isCurrentPlanPaid ).mockReturnValue( false );
 	} );
 
 	afterEach( () => {
@@ -97,6 +106,20 @@ describe( 'DomainOnly', () => {
 				'href',
 				createSiteFromDomainOnly( mockDomainPurchase.meta, mockDomainPurchase.blogId )
 			);
+		} );
+
+		it( 'is visible when the domain’s site does not have a paid plan', () => {
+			jest.mocked( isCurrentPlanPaid ).mockReturnValue( false );
+			renderComponent();
+
+			expect( screen.getByRole( 'link', { name: /Start a new site/ } ) ).toBeVisible();
+		} );
+
+		it( 'is not visible when the domain’s site already has a paid plan', () => {
+			jest.mocked( isCurrentPlanPaid ).mockReturnValue( true );
+			renderComponent();
+
+			expect( screen.queryByRole( 'link', { name: /Start a new site/ } ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'records a tracks event when the user clicks the "Start a new site" link', async () => {
