@@ -12,8 +12,9 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import InlineSupportLink from '../inline-support-link';
 import PhoneNumberInput from '../phone-number-input';
-import { createFieldAsyncValidator, type AsyncValidator } from './contact-validation-utils';
 import {
+	createFieldAsyncValidator,
+	type AsyncValidator,
 	sanitizePhoneCountryCode,
 	sanitizePhoneNumber,
 	splitPhoneNumber,
@@ -96,11 +97,7 @@ export const getContactFormFields = (
 
 				// Resolve the country from the numeric dialing code, disambiguating
 				// shared codes (e.g. +1) using the contact's own country (DOMENG-635).
-				const smsCountry = resolveSmsCountry(
-					smsCountryCodes,
-					countryNumericCode,
-					countryCode
-				);
+				const smsCountry = resolveSmsCountry( smsCountryCodes, countryNumericCode, countryCode );
 
 				// Handle both sync and async validators
 				const [ validationMessage, setValidationMessage ] = useState< string | null >( null );
