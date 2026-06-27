@@ -11,7 +11,7 @@ export const hasExpiredSecretError = function ( state ) {
 	const authorizeData = getAuthorizationData( state );
 
 	return (
-		!! ( authorizeData?.authorizationCode ?? false ) &&
+		!! authorizeData?.authorizationCode &&
 		( authorizeData?.authorizeError?.message ?? '' ).includes( 'verify_secrets_expired' )
 	);
 };

@@ -14,7 +14,7 @@ export const hasXmlrpcError = function ( state ) {
 	const authorizeData = getAuthorizationData( state );
 
 	return (
-		!! ( authorizeData?.authorizationCode ?? false ) &&
+		!! authorizeData?.authorizationCode &&
 		( authorizeData?.authorizeError?.message ?? '' ).includes( 'error' )
 	);
 };

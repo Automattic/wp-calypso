@@ -8,5 +8,5 @@ import 'calypso/state/jetpack-remote-install/init';
  * @returns {boolean} True if installation and activation was successful
  */
 export default function isJetpackRemoteInstallComplete( state, url ) {
-	return !! ( state.jetpackRemoteInstall.isComplete?.[ url ] ?? false );
+	return !! state.jetpackRemoteInstall.isComplete?.[ url ];
 }

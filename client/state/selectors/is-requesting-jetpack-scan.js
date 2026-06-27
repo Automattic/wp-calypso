@@ -8,5 +8,5 @@ import 'calypso/state/data-layer/wpcom/sites/scan';
  * @returns {?boolean}          Whether the connection data is being requested
  */
 export default function isRequestingJetpackScan( state, siteId ) {
-	return ( state.jetpackScan.requestStatus?.[ siteId ] ?? false ) === 'pending';
+	return state.jetpackScan.requestStatus?.[ siteId ] === 'pending';
 }

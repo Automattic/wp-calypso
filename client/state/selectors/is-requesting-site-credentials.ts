@@ -8,5 +8,5 @@ import type { AppState } from 'calypso/types';
  * @returns {boolean}             Whether credentials are currently being requested for that site.
  */
 export default function isRequestingSiteCredentials( state: AppState, siteId: number ): boolean {
-	return ( state.jetpack.credentials.getRequestStatus?.[ siteId ] ?? false ) === 'pending';
+	return state.jetpack.credentials.getRequestStatus?.[ siteId ] === 'pending';
 }
