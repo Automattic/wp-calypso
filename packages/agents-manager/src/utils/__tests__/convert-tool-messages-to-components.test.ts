@@ -310,6 +310,19 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 	} );
 
+	it( 'filters out unsuccessful apply-block-edits tool summaries', () => {
+		const message = createToolMessage( 'big_sky__apply_block_edits', {
+			success: false,
+			summary: 'Tried to update the header, but it did not stick.',
+		} );
+
+		const result = convertWithDefaults( {
+			messages: [ message ],
+		} );
+
+		expect( result ).toEqual( [] );
+	} );
+
 	it( 'suppresses transient thinking for converted apply-block-edits messages', () => {
 		const message = createToolMessage( 'big_sky__apply_block_edits', {
 			followUpTasks: true,
