@@ -9,8 +9,11 @@ import 'calypso/state/sync/init';
  * @param {Object} state sync ub-tree for a site
  * @returns {string} string site that is syncing
  */
-export const getSyncSiteLastRestoreIdData = ( state: AppState ): string =>
-	state?.lastRestoreId ?? '';
+export const getSyncSiteLastRestoreIdData = ( state: AppState ): string => {
+	// Default only when the field is absent; a reducer-set `null` is preserved.
+	const lastRestoreId = state?.lastRestoreId;
+	return lastRestoreId === undefined ? '' : lastRestoreId;
+};
 
 /**
  * Returns status info for sync progress

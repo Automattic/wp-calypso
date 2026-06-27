@@ -10,7 +10,7 @@ import 'calypso/state/sync/init';
  * @returns {('production' | 'staging' | null)} string site that is syncing
  */
 export const getSyncTargetSiteData = ( state: AppState ): 'staging' | 'production' | null =>
-	state?.syncingTargetSite ?? '';
+	state?.syncingTargetSite ?? null;
 
 /**
  * Returns status info for sync progress
