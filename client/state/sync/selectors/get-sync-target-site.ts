@@ -10,6 +10,9 @@ import 'calypso/state/sync/init';
  * @returns {('production' | 'staging' | null)} string site that is syncing
  */
 export const getSyncTargetSiteData = ( state: AppState ): 'staging' | 'production' | null =>
+	// `null` when no site is syncing: both the reducer's reset value and the
+	// absent-data case (getSiteSync returns `{}`), since `''` is not a valid
+	// value of the declared return type.
 	state?.syncingTargetSite ?? null;
 
 /**
