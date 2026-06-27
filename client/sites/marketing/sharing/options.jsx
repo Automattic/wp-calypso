@@ -1,7 +1,7 @@
 import { FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
-import { filter, get, some } from 'lodash';
+import { filter, some } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -207,7 +207,7 @@ class SharingButtonsOptions extends Component {
 			return;
 		}
 
-		const checked = get( settings, 'jetpack_comment_likes_enabled', false );
+		const checked = settings?.jetpack_comment_likes_enabled ?? false;
 
 		return (
 			<FormFieldset className="sharing-buttons__fieldset">

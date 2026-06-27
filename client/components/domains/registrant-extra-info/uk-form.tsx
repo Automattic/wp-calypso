@@ -3,7 +3,7 @@ import { camelCase, pick } from '@automattic/js-utils';
 import { DomainContactDetails } from '@automattic/shopping-cart';
 import { DomainContactDetailsErrors } from '@automattic/wpcom-checkout';
 import { LocalizeProps, localize } from 'i18n-calypso';
-import { get, isEmpty, map } from 'lodash';
+import { isEmpty, map } from 'lodash';
 import { PureComponent, ReactNode } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
@@ -101,11 +101,8 @@ export class RegistrantExtraInfoUkForm extends PureComponent< FormProps & Locali
 	renderTradingNameField() {
 		const { ccTldDetails, translate } = this.props;
 		const tradingName = ccTldDetails?.tradingName ?? '';
-		const tradingNameErrors = get(
-			this.props.contactDetailsValidationErrors,
-			[ 'extra', 'uk', 'tradingName' ],
-			[]
-		);
+		const tradingNameErrors =
+			this.props.contactDetailsValidationErrors?.extra?.uk?.tradingName ?? [];
 		const isError = ! isEmpty( tradingNameErrors );
 
 		return (
@@ -133,11 +130,8 @@ export class RegistrantExtraInfoUkForm extends PureComponent< FormProps & Locali
 	renderRegistrationNumberField() {
 		const { ccTldDetails, translate } = this.props;
 		const registrationNumber = ccTldDetails?.registrationNumber ?? '';
-		const registrationNumberErrors = get(
-			this.props.contactDetailsValidationErrors,
-			[ 'extra', 'uk', 'registrationNumber' ],
-			[]
-		);
+		const registrationNumberErrors =
+			this.props.contactDetailsValidationErrors?.extra?.uk?.registrationNumber ?? [];
 
 		const isError = ! isEmpty( registrationNumberErrors );
 

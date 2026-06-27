@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import { isEmpty, get } from 'lodash';
+import { isEmpty } from 'lodash';
 import {
 	REWIND_BACKUP_PROGRESS_REQUEST,
 	REWIND_BACKUP_DISMISS_PROGRESS,
@@ -84,7 +84,7 @@ export const updateProgress = ( { siteId }, apiData ) => {
 	}
 
 	const data = fromApi( latestDownloadableBackup );
-	return get( data, [ 'error' ], false )
+	return data?.error ?? false
 		? rewindBackupUpdateError( siteId, data.downloadId, data )
 		: updateRewindBackupProgress( siteId, data.downloadId, data );
 };

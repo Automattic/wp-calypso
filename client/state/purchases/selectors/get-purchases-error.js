@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/purchases/init';
 
 /**
@@ -7,4 +5,4 @@ import 'calypso/state/purchases/init';
  * @param   {Object} state - current state object
  * @returns {Object} an error object from the server
  */
-export const getPurchasesError = ( state ) => get( state, 'purchases.error', '' );
+export const getPurchasesError = ( state ) => state?.purchases?.error ?? '';

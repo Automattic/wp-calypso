@@ -1,6 +1,6 @@
 import { omit } from '@automattic/js-utils';
 import isEqual from 'fast-deep-equal/es6';
-import { get, map } from 'lodash';
+import { map } from 'lodash';
 import QueryKey from './key';
 
 /**
@@ -396,7 +396,7 @@ export default class QueryManager {
 					}
 
 					// A matching item should be inserted into the query set
-					memo[ queryKey ].itemKeys = get( memo, [ queryKey, 'itemKeys' ], [] ).concat(
+					memo[ queryKey ].itemKeys = ( memo?.[ queryKey ]?.itemKeys ?? [] ).concat(
 						receivedItemKey
 					);
 

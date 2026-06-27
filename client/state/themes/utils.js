@@ -1,5 +1,5 @@
 import { omit, omitBy } from '@automattic/js-utils';
-import { get, map, some } from 'lodash';
+import { map, some } from 'lodash';
 import { DEFAULT_THEME_QUERY } from './constants';
 
 /**
@@ -243,7 +243,7 @@ export function isThemeMatchingQuery( query, theme ) {
  * @returns {Array}           An array of theme taxonomy slugs.
  */
 export function getThemeTaxonomySlugs( theme, taxonomy ) {
-	const items = get( theme, [ 'taxonomies', taxonomy ], [] );
+	const items = theme?.taxonomies?.[ taxonomy ] ?? [];
 	return items.map( ( { slug } ) => slug );
 }
 

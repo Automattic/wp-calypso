@@ -1,5 +1,5 @@
 import { createSelector } from '@automattic/state-utils';
-import { filter, get } from 'lodash';
+import { filter } from 'lodash';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -98,7 +98,7 @@ export function getRemovableConnections( state, service ) {
  * @returns {Array}         Site connections
  */
 export function hasFetchedConnections( state, siteId ) {
-	return get( state.sharing.publicize.fetchedConnections, [ siteId ], false );
+	return state.sharing.publicize.fetchedConnections?.[ siteId ] ?? false;
 }
 
 /**
@@ -108,5 +108,5 @@ export function hasFetchedConnections( state, siteId ) {
  * @returns {Array}         Site connections
  */
 export function isFetchingConnections( state, siteId ) {
-	return get( state.sharing.publicize.fetchingConnections, [ siteId ], false );
+	return state.sharing.publicize.fetchingConnections?.[ siteId ] ?? false;
 }

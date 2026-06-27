@@ -1,5 +1,5 @@
 import { omit } from '@automattic/js-utils';
-import { forEach, get } from 'lodash';
+import { forEach } from 'lodash';
 
 /**
  * Normalize settings for use in Redux.
@@ -19,7 +19,7 @@ export const normalizeSettings = ( settings ) => {
 			case 'jetpack_portfolio_posts_per_page':
 				break;
 			case 'jetpack_protect_global_whitelist': {
-				const explicitlyAllowedIps = get( settings[ key ], [ 'local' ], [] );
+				const explicitlyAllowedIps = settings[ key ]?.local ?? [];
 				memo[ key ] = explicitlyAllowedIps.join( '\n' );
 				break;
 			}

@@ -25,7 +25,7 @@ import page from '@automattic/calypso-router';
 import { getLocaleFromPath, removeLocaleFromPath } from '@automattic/i18n-utils';
 import { JETPACK_PRICING_PAGE } from '@automattic/urls';
 import Debug from 'debug';
-import { get, some } from 'lodash';
+import { some } from 'lodash';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { navigate } from 'calypso/lib/navigate';
 import { login } from 'calypso/lib/paths';
@@ -250,7 +250,7 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 		},
 	};
 
-	return get( planSlugs, [ interval, type ], '' );
+	return planSlugs?.[ interval ]?.[ type ] ?? '';
 };
 
 export function redirectWithoutLocaleIfLoggedIn( context, next ) {

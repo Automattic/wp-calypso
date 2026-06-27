@@ -1,7 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -101,11 +100,8 @@ export class NavigationLink extends Component {
 		} = this.props;
 		const previousStep = this.getPreviousStep( flowName, signupProgress, stepName );
 
-		const stepSectionName = get(
-			this.props.signupProgress,
-			[ previousStep.stepName, 'stepSectionName' ],
-			''
-		);
+		const stepSectionName =
+			this.props.signupProgress?.[ previousStep.stepName ]?.stepSectionName ?? '';
 
 		const locale = ! userLoggedIn ? getLocaleSlug() : '';
 

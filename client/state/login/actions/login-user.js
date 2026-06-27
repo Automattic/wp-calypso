@@ -1,6 +1,5 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { get } from 'lodash';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import {
@@ -59,7 +58,7 @@ export const loginUser =
 
 				// if the user has 2FA, in this stage he's not yet logged in.
 				if ( ! response?.body?.data?.two_step_notification_sent ) {
-					return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
+					return remoteLoginUser( response?.body?.data?.token_links ?? [] ).then( () => {
 						dispatch( {
 							type: LOGIN_REQUEST_SUCCESS,
 							data: response.body && response.body.data,
