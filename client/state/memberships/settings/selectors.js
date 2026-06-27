@@ -18,7 +18,7 @@ export function getMembershipsSandboxStatusForSiteId( state, siteId ) {
 	return state?.memberships?.settings?.[ siteId ]?.membershipsSandboxStatus ?? null;
 }
 export function getConnectUrlForSiteId( state, siteId ) {
-	return state?.memberships?.settings?.[ siteId ]?.connectUrl ?? '';
+	return state?.memberships?.settings?.[ siteId ]?.connectUrl ?? null;
 }
 
 export function getCouponsAndGiftsEnabledForSiteId( state, siteId ) {
