@@ -8,6 +8,13 @@ export { QuestionCard } from './question';
 export type { QuestionCardProps } from './question';
 export { SourcesCard } from './sources';
 export type { SourcesCardProps } from './sources';
+export { DiffCard } from './diff';
+export type {
+	DiffCardProps,
+	DiffCardChange,
+	DiffCardContent,
+	DiffDecision,
+} from './diff';
 
 // Feature components
 export { Suggestions } from './chat/Suggestions';

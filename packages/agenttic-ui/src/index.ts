@@ -50,6 +50,13 @@ export { QuestionCard } from './components/question';
 export type { QuestionCardProps } from './components/question';
 export { SourcesCard } from './components/sources';
 export type { SourcesCardProps } from './components/sources';
+export { DiffCard } from './components/diff';
+export type {
+	DiffCardProps,
+	DiffCardChange,
+	DiffCardContent,
+	DiffDecision,
+} from './components/diff';
 
 // Hooks
 export { useChat } from './hooks/useChat';
