@@ -9,7 +9,7 @@ export function SidebarBackButton( { to, children }: { to: string; children: Rea
 	const { recordTracksEvent } = useAnalytics();
 
 	const handleClick = () => {
-		recordTracksEvent( 'calypso_dashboard_back_to_sites_click' );
+		recordTracksEvent( 'calypso_dashboard_sidebar_back_button_click', { to } );
 	};
 
 	return (
