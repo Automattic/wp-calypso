@@ -18,6 +18,14 @@ export type AgentsApiMediaUpload = (
 	file: File
 ) => Promise< AgentsApiAttachment >;
 
+export interface AgentsApiSource {
+	id?: string;
+	title?: string;
+	url?: string;
+	label?: string;
+	metadata?: Record< string, unknown >;
+}
+
 export interface AgentsApiMessage {
 	id: string;
 	role: 'user' | 'agent';
@@ -35,6 +43,7 @@ export interface AgentsApiMessage {
 	disabled?: boolean;
 	reactKey?: string;
 	attachments?: AgentsApiAttachment[];
+	sources?: AgentsApiSource[];
 	metadata?: Record< string, unknown >;
 	raw?: Record< string, unknown >;
 }

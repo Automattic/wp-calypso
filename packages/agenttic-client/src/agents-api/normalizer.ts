@@ -2,6 +2,7 @@ import type {
 	AgentsApiMessage,
 	AgentsApiRunEvent,
 	AgentsApiSession,
+	AgentsApiSource,
 	AgentsApiToolGroup,
 	AgentsApiToolRenderers,
 } from './types';
@@ -37,6 +38,61 @@ function normalizeTimestamp( value: unknown ): number {
 		return Date.parse( value ) || now();
 	}
 	return now();
+}
+
+function normalizeSource( input: unknown ): AgentsApiSource | null {
+	if ( typeof input === 'string' ) {
+		const url = input.trim();
+		return url ? { url } : null;
+	}
+	const raw = asRecord( input );
+	const id =
+		asString( raw.id ) ||
+		asString( raw.source_id ) ||
+		asString( raw.sourceId ) ||
+		asString( raw.document_id );
+	const title = asString( raw.title ) || asString( raw.name );
+	const url =
+		asString( raw.url ) || asString( raw.href ) || asString( raw.link );
+	const label =
+		asString( raw.label ) ||
+		asString( raw.container ) ||
+		asString( raw.provider );
+	const metadata = asRecord( raw.metadata );
+	const source: AgentsApiSource = {};
+	if ( id ) {
+		source.id = id;
+	}
+	if ( title ) {
+		source.title = title;
+	}
+	if ( url ) {
+		source.url = url;
+	}
+	if ( label ) {
+		source.label = label;
+	}
+	if ( Object.keys( metadata ).length ) {
+		source.metadata = metadata;
+	}
+	return Object.keys( source ).length ? source : null;
+}
+
+export function normalizeSources(
+	...candidates: unknown[]
+): AgentsApiSource[] {
+	for ( const candidate of candidates ) {
+		if ( ! Array.isArray( candidate ) || candidate.length === 0 ) {
+			continue;
+		}
+		const sources = candidate
+			.map( normalizeSource )
+			.filter( ( source ): source is AgentsApiSource => source !== null );
+		if ( sources.length ) {
+			return sources;
+		}
+	}
+	return [];
 }
 
 function getConversationItems( value: Record< string, unknown > ): unknown[] {
@@ -88,6 +144,12 @@ export function normalizeAgentsApiMessage(
 	const content = Array.isArray( raw.content )
 		? raw.content
 		: [ { type: 'text' as const, text } ];
+	const metadata = asRecord( raw.metadata );
+	const sources = normalizeSources(
+		metadata.sources,
+		metadata.citations,
+		raw.sources
+	);
 
 	return {
 		id,
@@ -101,7 +163,8 @@ export function normalizeAgentsApiMessage(
 		attachments: Array.isArray( raw.attachments )
 			? raw.attachments
 			: undefined,
-		metadata: asRecord( raw.metadata ),
+		sources: sources.length ? sources : undefined,
+		metadata,
 		raw,
 	};
 }

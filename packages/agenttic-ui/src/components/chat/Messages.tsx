@@ -5,6 +5,7 @@ import type { Message as MessageType } from '../../types';
 import { cn } from '../../utils/classNames';
 import { useAutoScroll } from '../../hooks/useAutoScroll';
 import { Message } from './Message';
+import { SourcesCard } from '../sources';
 import styles from './Messages.module.css';
 import { ThinkingMessage } from './ThinkingMessage';
 import { getVisibleMessages } from '../../utils/message-helpers';
@@ -114,14 +115,30 @@ export function Messages( {
 				ref={ scrollAreaRef }
 			>
 				<AnimatePresence mode="popLayout">
-					{ visibleMessages.map( ( message ) => (
-						<Message
-							key={ message.reactKey || message.id }
-							message={ message }
-							messageRenderer={ messageRenderer }
-							showAgentIcon={ showAgentIcon }
-						/>
-					) ) }
+					{ visibleMessages.flatMap( ( message ) => {
+						const nodes = [
+							<Message
+								key={ message.reactKey || message.id }
+								message={ message }
+								messageRenderer={ messageRenderer }
+								showAgentIcon={ showAgentIcon }
+							/>,
+						];
+						if (
+							message.role === 'agent' &&
+							message.sources?.length
+						) {
+							nodes.push(
+								<SourcesCard
+									key={ `${
+										message.reactKey || message.id
+									}-sources` }
+									sources={ message.sources }
+								/>
+							);
+						}
+						return nodes;
+					} ) }
 					{ isProcessing && ! isAgentTextStreaming && (
 						<ThinkingMessage content={ thinkingMessage } />
 					) }

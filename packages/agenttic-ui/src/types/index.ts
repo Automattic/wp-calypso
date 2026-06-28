@@ -31,6 +31,17 @@ export interface QuestionPrompt {
 	choices: QuestionChoice[];
 }
 
+// Agent message source/citation. Mirrors AgentsApiSource from
+// @automattic/agenttic-client so the UI package stays free of agent
+// communication imports.
+export interface AgentSource {
+	id?: string;
+	title?: string;
+	url?: string;
+	label?: string;
+	metadata?: Record< string, unknown >;
+}
+
 export interface Message {
 	id: string;
 	role: 'user' | 'agent';
@@ -48,6 +59,7 @@ export interface Message {
 	actions?: MessageAction[];
 	disabled?: boolean;
 	reactKey?: string; // Stable key for React rendering (prevents unmount/remount during updates)
+	sources?: AgentSource[]; // Agent message sources/citations rendered beneath the body
 }
 
 export interface MessageActionButton {

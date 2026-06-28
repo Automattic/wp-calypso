@@ -6,6 +6,7 @@ import {
 	normalizeRunEvent,
 	normalizeSendResponse,
 	normalizeSessions,
+	normalizeSources,
 	renderToolGroups,
 } from './normalizer';
 
@@ -71,6 +72,85 @@ describe( 'Agents API normalizers', () => {
 			role: 'agent',
 			content: [ { type: 'text', text: 'Fixture reply' } ],
 		} );
+	} );
+
+	it( 'extracts sources from metadata.sources with field aliases', () => {
+		const message = normalizeAgentsApiMessage( {
+			id: 'msg-sources',
+			role: 'agent',
+			content: 'Answer with citations',
+			metadata: {
+				sources: [
+					{
+						source_id: 'doc-1',
+						name: 'First doc',
+						href: 'https://example.com/1',
+						provider: 'Wiki',
+						metadata: { score: 0.9 },
+					},
+				],
+			},
+		} );
+
+		expect( message.sources ).toEqual( [
+			{
+				id: 'doc-1',
+				title: 'First doc',
+				url: 'https://example.com/1',
+				label: 'Wiki',
+				metadata: { score: 0.9 },
+			},
+		] );
+	} );
+
+	it( 'falls back to metadata.citations and treats bare strings as urls', () => {
+		const message = normalizeAgentsApiMessage( {
+			id: 'msg-citations',
+			role: 'agent',
+			content: 'Answer',
+			metadata: {
+				citations: [
+					'https://example.com/bare',
+					{
+						document_id: 'doc-2',
+						title: 'Second',
+						link: 'https://example.com/2',
+					},
+					'',
+				],
+			},
+		} );
+
+		expect( message.sources ).toEqual( [
+			{ url: 'https://example.com/bare' },
+			{ id: 'doc-2', title: 'Second', url: 'https://example.com/2' },
+		] );
+	} );
+
+	it( 'reads top-level raw.sources and omits sources when none present', () => {
+		const withSources = normalizeAgentsApiMessage( {
+			id: 'msg-raw',
+			role: 'agent',
+			content: 'Answer',
+			sources: [ { url: 'https://example.com/raw', label: 'Source' } ],
+		} );
+		expect( withSources.sources ).toEqual( [
+			{ url: 'https://example.com/raw', label: 'Source' },
+		] );
+
+		const withoutSources = normalizeAgentsApiMessage( {
+			id: 'msg-none',
+			role: 'agent',
+			content: 'Answer',
+		} );
+		expect( withoutSources.sources ).toBeUndefined();
+	} );
+
+	it( 'normalizeSources returns the first non-empty array candidate', () => {
+		expect(
+			normalizeSources( [], undefined, [ 'https://example.com/x' ] )
+		).toEqual( [ { url: 'https://example.com/x' } ] );
+		expect( normalizeSources( undefined, null ) ).toEqual( [] );
 	} );
 
 	it( 'groups tool messages from generic metadata envelopes', () => {

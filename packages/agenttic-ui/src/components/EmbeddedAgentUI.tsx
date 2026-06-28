@@ -8,6 +8,7 @@ import React, {
 import { __ } from '@wordpress/i18n';
 import type { AgentUIProps, Message, NoticeConfig, Suggestion } from '../types';
 import { LightweightMarkdownRenderer } from './LightweightMarkdownRenderer';
+import { SourcesCard } from './sources';
 
 interface EmbeddedAgentUIContextValue extends AgentUIProps {
 	inputValue: string;
@@ -111,6 +112,9 @@ function EmbeddedMessage( { message }: { message: Message } ) {
 
 				return null;
 			} ) }
+			{ message.role === 'agent' && message.sources?.length ? (
+				<SourcesCard sources={ message.sources } />
+			) : null }
 		</div>
 	);
 }

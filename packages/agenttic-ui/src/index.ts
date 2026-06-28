@@ -48,6 +48,8 @@ export { MinimizedView } from './components/views/MinimizedView';
 export { ImageRenderer } from './components/chat/ImageRenderer';
 export { QuestionCard } from './components/question';
 export type { QuestionCardProps } from './components/question';
+export { SourcesCard } from './components/sources';
+export type { SourcesCardProps } from './components/sources';
 
 // Hooks
 export { useChat } from './hooks/useChat';

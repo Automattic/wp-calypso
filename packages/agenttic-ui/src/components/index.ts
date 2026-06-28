@@ -6,6 +6,8 @@ export { Button } from './ui/button';
 export { Textarea } from './ui/textarea';
 export { QuestionCard } from './question';
 export type { QuestionCardProps } from './question';
+export { SourcesCard } from './sources';
+export type { SourcesCardProps } from './sources';
 
 // Feature components
 export { Suggestions } from './chat/Suggestions';
