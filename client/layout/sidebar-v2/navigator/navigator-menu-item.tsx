@@ -7,7 +7,6 @@ import {
 import { Icon, chevronRightSmall, external } from '@wordpress/icons';
 import clsx from 'clsx';
 import { TranslateResult } from 'i18n-calypso';
-import type { JSX } from 'react';
 
 import './style.scss';
 

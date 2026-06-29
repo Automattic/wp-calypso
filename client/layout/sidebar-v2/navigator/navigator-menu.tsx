@@ -5,7 +5,6 @@ import {
 	Card,
 	CardBody,
 } from '@wordpress/components';
-import type { JSX } from 'react';
 
 import './style.scss';
 
