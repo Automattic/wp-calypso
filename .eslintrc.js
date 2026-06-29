@@ -599,6 +599,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/flatten': 'error',
 		'you-dont-need-lodash-underscore/foldl': 'error',
 		'you-dont-need-lodash-underscore/foldr': 'error',
+		'you-dont-need-lodash-underscore/for-each': 'error',
 		'you-dont-need-lodash-underscore/index-of': 'error',
 		'you-dont-need-lodash-underscore/inject': 'error',
 		'you-dont-need-lodash-underscore/is-array': 'error',

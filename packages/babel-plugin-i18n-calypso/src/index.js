@@ -359,3 +359,6 @@ module.exports = function () {
 		},
 	};
 };
+
+// Exported for unit testing of the translator-comment extraction logic.
+module.exports.getExtractedComment = getExtractedComment;

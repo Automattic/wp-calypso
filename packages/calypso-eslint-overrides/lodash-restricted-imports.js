@@ -6,9 +6,12 @@
  * guard stays identical everywhere. Replacements live in `@automattic/js-utils`,
  * or are native array methods.
  *
- * Note: `no-restricted-imports` only covers ES `import`/deep-import syntax. It
- * does NOT catch CommonJS `const { x } = require( 'lodash' )` in `.js` build
- * tooling, so check those by hand when migrating a restricted function.
+ * Note: `no-restricted-imports` only covers ES `import`/deep-import syntax — not
+ * namespace member calls (`_.forEach`) or CommonJS `require( 'lodash' )`. The
+ * `eslint-plugin-you-dont-need-lodash-underscore` rules in the root config catch
+ * those member-call/namespace shapes for the functions they cover, so enable the
+ * matching rule there when a function's migration is complete (these detailed
+ * messages still guide the named-import case mid-migration).
  */
 
 const JS_UTILS_NAMES = [
