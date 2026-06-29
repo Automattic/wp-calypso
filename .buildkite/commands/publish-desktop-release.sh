@@ -4,7 +4,7 @@ set -euo pipefail
 
 release_dir="desktop/release"
 changelog_path="desktop/CHANGELOG.md"
-version="${BUILDKITE_TAG:-}"
+version_from_git_tag="${BUILDKITE_TAG:-}"
 
 download_step_artifacts() {
 	local step="$1"
@@ -36,16 +36,16 @@ normalize_windows_artifact_paths() {
 rm -rf "$release_dir" "$changelog_path"
 mkdir -p "$release_dir"
 
-if [[ -n "$version" && "$version" != desktop-v* ]]; then
-	echo "Expected BUILDKITE_TAG to match desktop-v*, got '$version'." >&2
+if [[ -n "$version_from_git_tag" && "$version_from_git_tag" != desktop-v* ]]; then
+	echo "Expected BUILDKITE_TAG to match desktop-v*, got '$version_from_git_tag'." >&2
 	exit 1
 fi
 
-if [[ -n "$version" ]]; then
+if [[ -n "$version_from_git_tag" ]]; then
 	echo "--- :desktop_computer: Validating desktop release tag"
 	(
 		cd desktop/bin
-		node validate_tag.js "$version"
+		node validate_tag.js "$version_from_git_tag"
 	)
 fi
 
@@ -64,7 +64,7 @@ if [[ "${SKIP_DESKTOP_TAG_FETCH:-}" != "true" ]]; then
 fi
 
 echo "--- :memo: Generating desktop changelog"
-VERSION="$version" desktop/bin/make-changelog.sh > "$changelog_path"
+VERSION="$version_from_git_tag" desktop/bin/make-changelog.sh > "$changelog_path"
 
 if [[ ! -s "$changelog_path" ]]; then
 	echo "Expected $changelog_path to be generated." >&2
@@ -73,14 +73,14 @@ fi
 
 sed -n '1,40p' "$changelog_path"
 
-if [[ -z "$version" ]]; then
+if [[ -z "$version_from_git_tag" ]]; then
 	echo "--- :github: Skipping desktop release publish"
 	echo "No BUILDKITE_TAG was provided; artifact validation completed without publishing."
 	exit 0
 fi
 
 echo "--- :github: Updating wp-desktop README"
-VERSION="$version" node desktop/bin/github/update-desktop-repo-readme.js
+VERSION="$version_from_git_tag" node desktop/bin/github/update-desktop-repo-readme.js
 
 echo "--- :github: Publishing desktop release"
-VERSION="$version" node desktop/bin/github/publish-desktop-release.js
+VERSION="$version_from_git_tag" node desktop/bin/github/publish-desktop-release.js
