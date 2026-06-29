@@ -19,10 +19,6 @@ export async function fetchOdieAssistantPerformanceProfiler( {
 	locale?: string;
 	device?: string;
 } ) {
-	// The performance-audits assistant is a code agent reached through the standard
-	// A2A endpoint. The audit data is passed via clientContext.constructorArguments,
-	// which the agent reads in its permission check (hash) and prompt building.
-	const response = await wpcom.req.post(
 		{
 			path: '/ai/agent/performance-audits',
 			apiNamespace: 'wpcom/v2',
