@@ -953,6 +953,7 @@ class MasterbarLoggedIn extends Component {
 			loadHelpCenterIcon,
 			loadAgentsManager,
 			useUnifiedAgent,
+			dashboardOptIn,
 		} = this.props;
 
 		// Checkout flow uses it's own version of the masterbar
@@ -961,7 +962,7 @@ class MasterbarLoggedIn extends Component {
 		}
 
 		return (
-			<Masterbar>
+			<Masterbar className={ dashboardOptIn ? 'is-dashboard-opt-in' : undefined }>
 				<div className="masterbar__section masterbar__section--left">
 					{ this.renderSidebarMobileMenu() }
 					{ this.renderMySites() }
