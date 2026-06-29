@@ -30,6 +30,14 @@ export const useAddToCart = () => {
 		mailboxOperations: MailboxOperations;
 		onFinally: () => void;
 	} ) => {
+		// The cart item reads product_slug off the product, so bail if it hasn't
+		// resolved (e.g. a tier whose product isn't available).
+		const product = emailProduct.product;
+		if ( ! product ) {
+			onFinally();
+			return;
+		}
+
 		const { shoppingCartManagerClient } = await import(
 			/* webpackChunkName: "async-load-shopping-cart" */ '../../app/shopping-cart'
 		);
@@ -39,7 +47,7 @@ export const useAddToCart = () => {
 		const emailProperties = getEmailProductProperties(
 			provider,
 			domain,
-			emailProduct.product,
+			product,
 			numberOfMailboxes
 		);
 

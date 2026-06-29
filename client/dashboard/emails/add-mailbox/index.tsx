@@ -139,7 +139,7 @@ const AddProfessionalEmail = () => {
 
 	const showEmailPurchaseDisabledMessage = ! userCanAddEmail && ! isDomainInCart;
 	const disabled = isAddMailboxRoute
-		? isSubmitting || showEmailPurchaseDisabledMessage
+		? isSubmitting || showEmailPurchaseDisabledMessage || ! product
 		: isSubmitting || isPending;
 
 	let mailboxCost;
@@ -262,7 +262,7 @@ const AddProfessionalEmail = () => {
 					</ButtonStack>
 
 					{ isAddMailboxRoute && (
-						<Cart totalItems={ totalItems } totalPrice={ totalPrice } isCartBusy={ isSubmitting } />
+						<Cart totalItems={ totalItems } totalPrice={ totalPrice } disabled={ disabled } />
 					) }
 				</VStack>
 			</form>

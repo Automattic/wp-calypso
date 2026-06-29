@@ -29,7 +29,7 @@ export const useEmailProduct = (
 		provider === MailboxProvider.Titan
 			? TITAN_TIER_SLUGS[ tier ]?.[ interval ]
 			: GOOGLE_PRODUCTS[ interval ];
-	const product = ( siteId ? siteProducts : products )?.[ productSlug ] as Product;
+	const product = ( siteId ? siteProducts : products )?.[ productSlug ] as Product | undefined;
 
 	return {
 		product,
