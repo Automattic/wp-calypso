@@ -853,7 +853,8 @@ function trackBlockTransformationSuggestionClickForValue( value: string ): void 
  */
 export const capabilities = {
 	supportsSplitScreen: true,
-	supportsRegenerateAction: true,
+	// Flip to `true` to enable regenerate in the Jetpack AI sidebar.
+	supportsRegenerateAction: false,
 };
 
 /**
