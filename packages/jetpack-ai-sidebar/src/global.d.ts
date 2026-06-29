@@ -6,6 +6,12 @@ declare module '@wordpress/block-editor' {
 }
 
 /**
+ * Text domain placeholder replaced at build time by the Agents Manager
+ * webpack DefinePlugin (resolves to 'default').
+ */
+declare const __i18n_text_domain__: string;
+
+/**
  * Global data injected by the Agents Manager host script.
  */
 declare const agentsManagerData:

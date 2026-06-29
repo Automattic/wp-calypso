@@ -1,4 +1,4 @@
-import { BigSkyLogo } from '@automattic/components/src/logos/big-sky-logo';
+import { BigSkyLogo } from '@automattic/components';
 import { BlockControls } from '@wordpress/block-editor';
 import { ToolbarButton, ToolbarGroup } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
@@ -71,7 +71,7 @@ export const withJetpackAiToolbarButton = createHigherOrderComponent(
 						<ToolbarGroup>
 							<ToolbarButton
 								icon={ <BigSkyLogo.CentralLogo fill="currentColor" heartless size={ 20 } /> }
-								label={ __( 'Ask Jetpack AI', 'jetpack' ) }
+								label={ __( 'Ask AI', __i18n_text_domain__ ) }
 								onClick={ openJetpackAiSidebarChat }
 							/>
 						</ToolbarGroup>

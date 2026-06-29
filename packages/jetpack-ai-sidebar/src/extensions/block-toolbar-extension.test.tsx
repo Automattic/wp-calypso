@@ -7,7 +7,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import { withJetpackAiToolbarButton } from './block-toolbar-extension';
 
-jest.mock( '@automattic/components/src/logos/big-sky-logo', () => ( {
+jest.mock( '@automattic/components', () => ( {
 	BigSkyLogo: {
 		CentralLogo: () => <svg data-testid="big-sky-logo" />,
 	},
@@ -50,6 +50,8 @@ jest.mock( '@wordpress/element', () => ( {
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 } ) );
+
+( globalThis as Record< string, unknown > ).__i18n_text_domain__ = 'default';
 
 declare global {
 	interface Window {
@@ -110,7 +112,7 @@ describe( 'withJetpackAiToolbarButton', () => {
 
 			expect( screen.getByTestId( 'block-edit' ) ).toHaveTextContent( name );
 			expect( screen.getByTestId( 'block-controls' ) ).toHaveAttribute( 'data-group', 'default' );
-			expect( screen.getByRole( 'button', { name: 'Ask Jetpack AI' } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Ask AI' } ) ).toBeInTheDocument();
 			expect( screen.getByTestId( 'big-sky-logo' ) ).toBeInTheDocument();
 		}
 	);
@@ -120,13 +122,13 @@ describe( 'withJetpackAiToolbarButton', () => {
 
 		renderToolbar();
 
-		expect( screen.getByRole( 'button', { name: 'Ask Jetpack AI' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Ask AI' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'hides the toolbar button when preview data is unavailable', () => {
 		renderToolbar();
 
-		expect( screen.queryByRole( 'button', { name: 'Ask Jetpack AI' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Ask AI' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByTestId( 'block-controls' ) ).not.toBeInTheDocument();
 	} );
 
@@ -147,7 +149,7 @@ describe( 'withJetpackAiToolbarButton', () => {
 			renderToolbar();
 
 			expect( screen.getByTestId( 'block-edit' ) ).toHaveTextContent( 'core/paragraph' );
-			expect( screen.queryByRole( 'button', { name: 'Ask Jetpack AI' } ) ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: 'Ask AI' } ) ).not.toBeInTheDocument();
 			expect( screen.queryByTestId( 'block-controls' ) ).not.toBeInTheDocument();
 		}
 	);
@@ -161,7 +163,7 @@ describe( 'withJetpackAiToolbarButton', () => {
 
 		enableToolbarButton();
 		renderToolbar();
-		fireEvent.click( screen.getByRole( 'button', { name: 'Ask Jetpack AI' } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Ask AI' } ) );
 
 		// The toolbar entry only opens the chat — it does not reshape its layout.
 		expect( setChatOpen ).toHaveBeenCalledWith( true );
@@ -173,7 +175,7 @@ describe( 'withJetpackAiToolbarButton', () => {
 
 		enableToolbarButton();
 		renderToolbar();
-		fireEvent.click( screen.getByRole( 'button', { name: 'Ask Jetpack AI' } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Ask AI' } ) );
 
 		expect( addEventListenerSpy ).toHaveBeenCalledWith(
 			'agents-manager-ready',
@@ -204,7 +206,7 @@ describe( 'withJetpackAiToolbarButton', () => {
 
 		enableToolbarButton();
 		renderToolbar();
-		fireEvent.click( screen.getByRole( 'button', { name: 'Ask Jetpack AI' } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Ask AI' } ) );
 
 		expect( setChatOpen ).toHaveBeenCalledWith( true );
 		expect( submitChatMessage ).not.toHaveBeenCalled();
