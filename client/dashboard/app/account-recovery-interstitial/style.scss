@@ -32,12 +32,5 @@
 	.components-button {
 		width: 100%;
 		justify-content: center;
-
-		// Let long CTA labels wrap onto multiple lines instead of overflowing the fixed-width modal.
-		height: auto;
-		min-height: $grid-unit-50;
-		white-space: normal;
-		text-align: center;
-		padding-block: $grid-unit-15;
 	}
 }
