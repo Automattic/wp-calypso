@@ -1,5 +1,4 @@
 import { followReadTagMutation } from '@automattic/api-queries';
-import page from '@automattic/calypso-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { localize, translate as i18nTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -45,14 +44,9 @@ export class ReaderSidebarTags extends Component {
 	};
 
 	selectMenu = () => {
-		const { onClick, tags, isOpen, path } = this.props;
-		if ( ! isOpen ) {
-			onClick();
-		}
-		const defaultSelection = tags?.length ? `/tag/${ tags[ 0 ]?.slug }` : '/tags';
-		if ( path !== defaultSelection ) {
-			page( defaultSelection );
-		}
+		const { onClick } = this.props;
+
+		onClick();
 	};
 
 	render() {
