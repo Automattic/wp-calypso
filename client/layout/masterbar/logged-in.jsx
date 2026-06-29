@@ -271,6 +271,7 @@ class MasterbarLoggedIn extends Component {
 			currentRoute,
 			siteAdminUrl,
 			dashboardOptIn,
+			sidebarType,
 		} = this.props;
 
 		let mySitesUrl = domainOnlySite
@@ -286,9 +287,14 @@ class MasterbarLoggedIn extends Component {
 			return <Item icon={ icon } className="masterbar__item-no-sites" disabled />;
 		}
 
-		// Hide the dropdown wherever the My Sites view is already active (the sites
-		// dashboard and its site pages); a second menu there is redundant.
-		const subItems = this.isMySitesActive()
+		// Hide the dropdown across the My Sites view — the sites dashboard and its
+		// site pages (including HD v1 screens, where the global sidebar can be hidden,
+		// so this keys off the sidebar type rather than its visibility). The W icon is
+		// already the active item there, so a second menu is redundant.
+		const isMySitesView =
+			( sidebarType === SidebarType.Global || sidebarType === SidebarType.GlobalCollapsed ) &&
+			( section === 'sites' || section === 'sites-dashboard' );
+		const subItems = isMySitesView
 			? null
 			: [
 					[
