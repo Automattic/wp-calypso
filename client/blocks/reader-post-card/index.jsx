@@ -1,11 +1,12 @@
 import { Card } from '@automattic/components';
 import { localeRegexString } from '@automattic/i18n-utils';
+import { truncate } from '@automattic/js-utils';
 import clsx from 'clsx';
 import closest from 'component-closest';
-import { flowRight as compose, truncate } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import CompactPostCard from 'calypso/blocks/reader-post-card/compact';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
@@ -62,7 +63,8 @@ class ReaderPostCard extends Component {
 
 	cardRef = createRef();
 
-	// Forward the node to an optional itemRef from InfiniteList so the list can measure it.
+	// Merge the internal card ref with an optional `itemRef` from InfiniteList so the
+	// parent list can measure this item's DOM node without `findDOMNode`.
 	setCardRef = ( node ) => {
 		this.cardRef.current = node;
 		const { itemRef } = this.props;

@@ -5,9 +5,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
-let mockIsDocked = false;
 const mockSetIsMinimized = jest.fn();
-const mockHasAdminBarTrigger = jest.fn();
 
 jest.mock( '@wordpress/components', () => ( {
 	Button: ( {
@@ -39,16 +37,26 @@ jest.mock( '@wordpress/icons', () => ( {
 } ) );
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( { setIsMinimized: mockSetIsMinimized } ),
-	useSelect: ( mapSelect: ( select: () => unknown ) => unknown ) =>
-		mapSelect( () => ( { getIsDocked: () => mockIsDocked } ) ),
 } ) );
 jest.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'agents-manager' } ) );
+jest.mock( '../../utils/tracks', () => ( {
+	recordBigSkyTracksEvent: jest.fn(),
+	recordAgentsManagerTracksEvent: jest.fn(),
+} ) );
 jest.mock( '../../hooks/use-admin-bar-integration', () => ( {
-	hasAdminBarTrigger: () => mockHasAdminBarTrigger(),
+	hasAiChatEntryButton: () =>
+		!! globalThis.document.getElementById( 'wp-admin-bar-agents-manager-ai-chat' ) ||
+		!! globalThis.document.querySelector( '.masterbar__item-agents-manager-ai-chat' ),
 } ) );
 jest.mock( '../chat-header/style.scss', () => ( {} ) );
 
 import ChatHeader from '../chat-header';
+
+function installAdminBarTrigger() {
+	const el = document.createElement( 'div' );
+	el.id = 'wp-admin-bar-agents-manager-ai-chat';
+	document.body.appendChild( el );
+}
 
 // `isReaderChatHost()` reads the agent ID from this global.
 function installReaderChatHost() {
@@ -57,23 +65,26 @@ function installReaderChatHost() {
 	};
 }
 
-function renderChatHeader( title?: string ) {
+function installMasterbarTrigger() {
+	const el = document.createElement( 'div' );
+	el.className = 'masterbar__item-agents-manager-ai-chat';
+	document.body.appendChild( el );
+}
+
+function renderChatHeader( title?: string, isDocked = false ) {
 	return render(
 		<MemoryRouter>
-			<ChatHeader onClose={ jest.fn() } options={ [] } title={ title } />
+			<ChatHeader onClose={ jest.fn() } options={ [] } title={ title } isDocked={ isDocked } />
 		</MemoryRouter>
 	);
 }
 
 describe( 'ChatHeader', () => {
-	beforeEach( () => {
-		mockHasAdminBarTrigger.mockReturnValue( false );
-	} );
-
 	afterEach( () => {
-		mockIsDocked = false;
 		mockSetIsMinimized.mockClear();
+		document.getElementById( 'wp-admin-bar-agents-manager-ai-chat' )?.remove();
 		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
+		document.querySelector( '.masterbar__item-agents-manager-ai-chat' )?.remove();
 	} );
 
 	it( 'renders the title with a matching title attribute so the full text shows on hover when truncated', () => {
@@ -104,7 +115,7 @@ describe( 'ChatHeader', () => {
 	} );
 
 	it( 'minimizes the chat when the Minimize button is clicked', () => {
-		mockHasAdminBarTrigger.mockReturnValue( true );
+		installAdminBarTrigger();
 
 		renderChatHeader();
 		fireEvent.click( screen.getByText( 'Minimize' ) );
@@ -112,18 +123,35 @@ describe( 'ChatHeader', () => {
 		expect( mockSetIsMinimized ).toHaveBeenCalledWith( true );
 	} );
 
-	it( 'hides the Minimize button without the WP admin bar trigger', () => {
+	it( 'shows the Minimize button with the Calypso masterbar trigger', () => {
+		installMasterbarTrigger();
+
+		renderChatHeader();
+
+		expect( screen.getByText( 'Minimize' ) ).toBeInTheDocument();
+	} );
+
+	it( 'hides the Minimize button without an entry-point trigger', () => {
 		renderChatHeader();
 
 		expect( screen.queryByText( 'Minimize' ) ).toBeNull();
 	} );
 
 	it( 'hides the Minimize button when docked', () => {
-		mockHasAdminBarTrigger.mockReturnValue( true );
-		mockIsDocked = true;
+		installAdminBarTrigger();
 
-		renderChatHeader();
+		renderChatHeader( undefined, true );
 
 		expect( screen.queryByText( 'Minimize' ) ).toBeNull();
+	} );
+
+	it( 'shows the Minimize button when floating even if the docked preference is set', () => {
+		// `isDocked` is the effective state: a docked preference that can't
+		// dock (e.g. a too-narrow viewport) arrives here as `false`, so minimize shows.
+		installAdminBarTrigger();
+
+		renderChatHeader( undefined, false );
+
+		expect( screen.getByText( 'Minimize' ) ).toBeInTheDocument();
 	} );
 } );

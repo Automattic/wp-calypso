@@ -5,11 +5,27 @@ import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-prod
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { MarketplaceTypeContext, TermPricingContext } from '../context';
+import { getPressableMemoryTarget, isPressablePhpMemoryAddon } from '../lib/pressable-memory-addon';
 import { CART_URL_HASH_FRAGMENT } from '../shopping-cart';
 import { type ShoppingCartItem } from '../types';
 
 const SELECTED_ITEMS_SESSION_STORAGE_KEY = 'shopping-card-selected-items';
 const SELECTED_ITEMS_SESSION_STORAGE_KEY_REFERRAL = 'referrals-shopping-card-selected-items';
+
+function serializeCartItem( item: ShoppingCartItem ) {
+	const siteUrls = encodeURIComponent( item.siteUrls?.join( ',' ) ?? '' );
+	const siteDomain = encodeURIComponent( getPressableMemoryTarget( item ) );
+
+	if ( item.licenseId ) {
+		const cachedItem = `${ item.slug }:${ item.quantity }:${ item.licenseId }:${ siteUrls }`;
+
+		return item.site_domain ? `${ cachedItem }:${ siteDomain }` : cachedItem;
+	}
+
+	return isPressablePhpMemoryAddon( item )
+		? `${ item.slug }:${ item.quantity }::${ siteUrls }:${ siteDomain }`
+		: `${ item.slug }:${ item.quantity }`;
+}
 
 export default function useShoppingCart() {
 	const dispatch = useDispatch();
@@ -74,16 +90,23 @@ export default function useShoppingCart() {
 						...( cacheData[ 3 ]
 							? { siteUrls: decodeURIComponent( cacheData[ 3 ] ).split( ',' ) }
 							: {} ),
+						...( cacheData[ 4 ] ? { site_domain: decodeURIComponent( cacheData[ 4 ] ) } : {} ),
 					};
 				} ) ?? [];
 
 		if ( data && !! selectedItemsCache.length ) {
 			const loadedItems: ShoppingCartItem[] = [];
 
-			selectedItemsCache.forEach( ( { slug, quantity, licenseId, siteUrls } ) => {
+			selectedItemsCache.forEach( ( { slug, quantity, licenseId, siteUrls, site_domain } ) => {
+				const cachedPressableMemoryTarget = getPressableMemoryTarget( { site_domain } );
 				const match =
 					quantity === 1 || slug.startsWith( 'wpcom-hosting' )
-						? data.find( ( product ) => product.slug === slug )
+						? data.find(
+								( product ) =>
+									product.slug === slug &&
+									( ! isPressablePhpMemoryAddon( product ) ||
+										getPressableMemoryTarget( product ) === cachedPressableMemoryTarget )
+						  )
 						: data.find(
 								( product ) =>
 									product.slug === slug &&
@@ -91,7 +114,7 @@ export default function useShoppingCart() {
 						  );
 
 				if ( match ) {
-					loadedItems.push( { ...match, quantity, licenseId, siteUrls } );
+					loadedItems.push( { ...match, quantity, licenseId, siteUrls, site_domain } );
 				}
 			} );
 
@@ -105,15 +128,7 @@ export default function useShoppingCart() {
 		( items: ShoppingCartItem[] ) => {
 			sessionStorage.setItem(
 				storageKey,
-				items
-					.map( ( item ) =>
-						item.licenseId
-							? `${ item.slug }:${ item.quantity }:${ item.licenseId }:${ encodeURIComponent(
-									item.siteUrls?.join( ',' ) ?? ''
-							  ) }`
-							: `${ item.slug }:${ item.quantity }`
-					)
-					.join( ',' )
+				items.map( ( item ) => serializeCartItem( item ) ).join( ',' )
 			);
 			setSelectedCartItems( items );
 		},

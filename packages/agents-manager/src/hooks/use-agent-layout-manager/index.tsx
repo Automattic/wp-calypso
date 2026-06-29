@@ -4,6 +4,7 @@ import { useMediaQuery } from '@wordpress/compose';
 import {
 	createPortal,
 	useCallback,
+	useEffect,
 	useLayoutEffect,
 	useRef,
 	useState,
@@ -12,6 +13,7 @@ import {
 } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { AI } from '../../components/icons';
+import observeEditorCanvasPointerDown from '../../utils/observe-editor-canvas-pointerdown';
 
 const SIDEBAR_TRANSITION_DURATION_MS = 200;
 
@@ -19,6 +21,11 @@ const SIDEBAR_TRANSITION_DURATION_MS = 200;
 // otherwise wp-admin's chrome leaves too little room for the editor.
 const FULLSCREEN_GATED_BODY_CLASSES = [ 'post-php', 'post-new-php', 'site-editor-php' ];
 const FULLSCREEN_BODY_CLASS = 'is-fullscreen-mode';
+
+// The Jetpack pre-paint gate watches for this element to know the app has mounted,
+// then hands off docking. Keep in sync with
+// `jetpack/projects/packages/agents-manager/src/js/sidebar-docking-gate.ts`.
+const CHAT_PORTAL_CLASS = 'agents-manager-chat';
 
 function getIsFullscreenGateOpen(): boolean {
 	const { classList } = document.body;
@@ -33,6 +40,37 @@ function subscribeToBodyClasses( notify: () => void ): () => void {
 	observer.observe( document.body, { attributes: true, attributeFilter: [ 'class' ] } );
 	return () => observer.disconnect();
 }
+
+/**
+ * Prevents docking the assistant when the user is browsing with certain conditions.
+ *
+ * IMPORTANT: Keep this logic in sync with
+ * `jetpack/projects/packages/agents-manager/src/js/sidebar-docking-gate.ts`.
+ */
+const useCanDock = ( { desktopMediaQuery }: { desktopMediaQuery: string } ) => {
+	const isDesktop = useMediaQuery( desktopMediaQuery );
+	const { height } = useWindowDimensions();
+	const [ adminMenuHeight, setAdminMenuHeight ] = useState( 0 );
+	const hasEnoughHeight = height >= adminMenuHeight;
+	const isFullscreenGateOpen = useSyncExternalStore(
+		subscribeToBodyClasses,
+		getIsFullscreenGateOpen
+	);
+
+	const calculateAdminMenuHeight = useCallback( () => {
+		const adminMenu = document.getElementById( 'adminmenu' );
+		if ( adminMenu ) {
+			const adminBar = document.getElementById( 'wpadminbar' );
+			const adminBarHeight = adminBar ? adminBar.offsetHeight : 32;
+			setAdminMenuHeight( adminMenu.offsetHeight + adminBarHeight + 20 );
+		}
+	}, [] );
+
+	return {
+		canDock: isDesktop && hasEnoughHeight && isFullscreenGateOpen,
+		calculateAdminMenuHeight,
+	};
+};
 
 interface Options {
 	sidebarContainer?: string | HTMLElement;
@@ -71,18 +109,9 @@ export default function useAgentLayoutManager( {
 	isSplitScreen = false,
 }: Options = {} ): ReturnValue {
 	const portalRef = useRef< HTMLDivElement >();
-	const wasOpenRef = useRef( defaultOpen );
 	const [ isPortalReady, setIsPortalReady ] = useState( false );
-	const isDesktop = useMediaQuery( desktopMediaQuery );
-	const { height } = useWindowDimensions();
 	const [ isDocked, setIsDocked ] = useState< boolean | null >( null );
-	const [ adminMenuHeight, setAdminMenuHeight ] = useState( 0 );
-	const hasEnoughHeight = height >= adminMenuHeight;
-	const isFullscreenGateOpen = useSyncExternalStore(
-		subscribeToBodyClasses,
-		getIsFullscreenGateOpen
-	);
-	const canDock = isDesktop && hasEnoughHeight && isFullscreenGateOpen;
+	const { canDock, calculateAdminMenuHeight } = useCanDock( { desktopMediaQuery } );
 	const shouldRenderSidebar = canDock && isDocked;
 	const openSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > >();
 	const closeSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > >();
@@ -118,13 +147,7 @@ export default function useAgentLayoutManager( {
 			return;
 		}
 
-		// Calculate admin menu height
-		const adminMenu = document.getElementById( 'adminmenu' );
-		if ( adminMenu ) {
-			const menuHeight = adminMenu.offsetHeight;
-			const menuTopOffset = adminMenu.getBoundingClientRect().top + window.scrollY;
-			setAdminMenuHeight( menuHeight + menuTopOffset + 20 );
-		}
+		calculateAdminMenuHeight();
 
 		// Set initial docked state
 		if ( isDocked === null ) {
@@ -134,7 +157,7 @@ export default function useAgentLayoutManager( {
 		// Create portal element if it doesn't exist
 		if ( ! portalRef.current ) {
 			portalRef.current = document.createElement( 'div' );
-			portalRef.current.className = 'agents-manager-chat';
+			portalRef.current.className = CHAT_PORTAL_CLASS;
 			container.appendChild( portalRef.current );
 
 			// Apply initial classes
@@ -160,12 +183,15 @@ export default function useAgentLayoutManager( {
 			portalRef.current.classList.add( 'agents-manager-chat--docked' );
 			portalRef.current.classList.remove( 'agents-manager-chat--undocked' );
 
-			if ( wasOpenRef.current ) {
+			if ( defaultOpenRef.current ) {
 				container.classList.add( 'agents-manager-sidebar-container--sidebar-open' );
 			}
 
 			onDockRef.current();
 		} else {
+			// Cancel the sidebar-open `dock()` scheduled — its closure captured
+			// `canDock` as true, so it would otherwise open the just-undocked sidebar.
+			clearTimeout( openSidebarTimeoutRef.current );
 			clearTimeout( closeSidebarTimeoutRef.current );
 			container.classList.remove(
 				'agents-manager-sidebar-container',
@@ -178,6 +204,47 @@ export default function useAgentLayoutManager( {
 			onUndockRef.current();
 		}
 	}, [ container, isDocked, isReady, shouldRenderSidebar ] );
+
+	// Track focus on the chat panel so the floating chat can raise its z-index. `pointerdown` also
+	// covers clicks on non-focusable regions (e.g. scroll areas) that skip `focusin`
+	useEffect( () => {
+		const node = portalRef.current;
+
+		if ( ! isPortalReady || ! node || shouldRenderSidebar ) {
+			node?.classList.remove( 'is-focused' );
+			return;
+		}
+
+		const setFocused = () => {
+			node.classList.add( 'is-focused' );
+		};
+
+		const handleFocusOut = ( e: FocusEvent ) => {
+			if ( ! node.contains( e.relatedTarget as Node | null ) ) {
+				node.classList.remove( 'is-focused' );
+			}
+		};
+
+		const handleDocumentPointerDown = ( e: PointerEvent ) => {
+			if ( ! node.contains( e.target as Node | null ) ) {
+				node.classList.remove( 'is-focused' );
+			}
+		};
+
+		node.addEventListener( 'focusin', setFocused );
+		node.addEventListener( 'focusout', handleFocusOut );
+		node.addEventListener( 'pointerdown', setFocused );
+		document.addEventListener( 'pointerdown', handleDocumentPointerDown );
+		const stopCanvasObserver = observeEditorCanvasPointerDown( handleDocumentPointerDown );
+
+		return () => {
+			node.removeEventListener( 'focusin', setFocused );
+			node.removeEventListener( 'focusout', handleFocusOut );
+			node.removeEventListener( 'pointerdown', setFocused );
+			document.removeEventListener( 'pointerdown', handleDocumentPointerDown );
+			stopCanvasObserver();
+		};
+	}, [ isPortalReady, shouldRenderSidebar ] );
 
 	// Reflect split-screen state on the container as `is-split-screen`.
 	useLayoutEffect( () => {
@@ -219,7 +286,6 @@ export default function useAgentLayoutManager( {
 			return;
 		}
 
-		wasOpenRef.current = true;
 		clearTimeout( closeSidebarTimeoutRef.current );
 		container.classList.remove( 'agents-manager-sidebar-container--closing' );
 		container.classList.add( 'agents-manager-sidebar-container--sidebar-open' );
@@ -236,7 +302,6 @@ export default function useAgentLayoutManager( {
 			'agents-manager-sidebar-container--sidebar-open'
 		);
 
-		wasOpenRef.current = false;
 		container.classList.remove( 'agents-manager-sidebar-container--sidebar-open' );
 
 		// Only suppress admin bar pointer events during an actual sidebar-close transition.

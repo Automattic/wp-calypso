@@ -1,7 +1,7 @@
-import { flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import connectSite from 'calypso/lib/reader-connect-site';
 import { useIsSubscribed } from 'calypso/reader/data/site-subscriptions';
 import ReaderSubscriptionListItem from '.';
@@ -22,6 +22,7 @@ class ConnectedSubscriptionListItem extends Component {
 		isEmailBlocked: PropTypes.bool,
 		isFollowing: PropTypes.bool,
 		followSource: PropTypes.string,
+		followApiSource: PropTypes.string,
 		railcar: PropTypes.object,
 		disableSuggestedFollows: PropTypes.bool,
 		onItemClick: PropTypes.func,
@@ -67,6 +68,7 @@ class ConnectedSubscriptionListItem extends Component {
 			showFollowedOnDate,
 			isFollowing,
 			followSource,
+			followApiSource,
 			railcar,
 			disableSuggestedFollows,
 			onItemClick,
@@ -87,6 +89,7 @@ class ConnectedSubscriptionListItem extends Component {
 				showFollowedOnDate={ showFollowedOnDate }
 				isFollowing={ isFollowing }
 				followSource={ followSource }
+				followApiSource={ followApiSource }
 				railcar={ railcar }
 				disableSuggestedFollows={ disableSuggestedFollows }
 				replaceStreamClickWithItemClick={ replaceStreamClickWithItemClick }

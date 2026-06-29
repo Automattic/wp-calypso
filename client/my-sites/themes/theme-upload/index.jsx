@@ -10,10 +10,11 @@ import {
 import { Card, ProgressBar, Button } from '@automattic/components';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import { includes, find, isEmpty, flowRight } from 'lodash';
+import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import AsyncLoad from 'calypso/components/async-load';
@@ -160,9 +161,9 @@ class Upload extends Component {
 		};
 
 		const errorString = JSON.stringify( error ).toLowerCase();
-		const cause = find( errorCauses, ( v, key ) => {
-			return includes( errorString, key );
-		} );
+		const cause = Object.entries( errorCauses ).find( ( [ key ] ) =>
+			errorString.includes( key )
+		)?.[ 1 ];
 
 		const unknownCause = error.error ? `: ${ error.error }` : '';
 		this.props.errorNotice( cause || translate( 'Problem installing theme' ) + unknownCause );
@@ -453,4 +454,4 @@ const flowRightArgs = [
 	localize,
 ];
 
-export default flowRight( ...flowRightArgs )( UploadWithOptions );
+export default compose( ...flowRightArgs )( UploadWithOptions );

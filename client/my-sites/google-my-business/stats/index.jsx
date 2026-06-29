@@ -1,7 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -270,7 +269,7 @@ export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const locationData = getGoogleMyBusinessConnectedLocation( state, siteId );
-		const isLocationVerified = get( locationData, 'meta.state.isVerified', false );
+		const isLocationVerified = locationData?.meta?.state?.isVerified ?? false;
 
 		return {
 			isLocationVerified,

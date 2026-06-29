@@ -16,6 +16,11 @@
 	width: fit-content;
 }
 
+// Align the empty-state message with the search box and the plugin rows.
+.plugin-switcher-card-body .switcher-content__no-results {
+	padding: calc(4px * 4) calc(4px * 6);
+}
+
 .plugin-switcher-item {
 	border-top: 1px solid #f0f0f0;
 	border-radius: 0;

@@ -140,6 +140,19 @@ export const WithPremiumDomain = () => (
 	</StoryWrapper>
 );
 
+export const WithError = () => (
+	<StoryWrapper>
+		<BundleCard
+			suggestion={ buildSuggestion( [
+				buildDomain( { domain: 'example.com', cost: '$22.00' } ),
+				buildDomain( { domain: 'example.net', cost: '$18.00' } ),
+			] ) }
+			onAddToCart={ () => {} }
+			errorMessage="Sorry, we can't determine the availability of the domain you're trying to register. Please try again in a few minutes."
+		/>
+	</StoryWrapper>
+);
+
 export const Empty = () => (
 	<StoryWrapper>
 		<BundleCard suggestion={ null } />

@@ -1,11 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { render } from '@testing-library/react';
-import { createElement, Children } from 'react';
-import ReactDom from 'react-dom';
-import TestUtils from 'react-dom/test-utils';
-import ShallowRenderer from 'react-test-renderer/shallow';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import SectionNav from '../';
 import NavItem from '../item';
 import NavTabs from '../tabs';
@@ -24,76 +21,54 @@ window.IntersectionObserver = jest.fn( () => ( {
 	unobserve: jest.fn(),
 } ) );
 
-function createComponent( component, props, children ) {
-	const renderer = new ShallowRenderer();
-
-	renderer.render( createElement( component, props, children ) );
-	return renderer.getRenderOutput();
-}
+// SectionNav clones children with internal props; a component child consumes them instead
+// of leaking unknown attributes onto a DOM element (which React warns about).
+const Panel = ( { children } ) => <div>{ children }</div>;
 
 describe( 'section-nav', () => {
 	describe( 'rendering', () => {
-		let headerElem;
-		let headerTextElem;
-		let panelElem;
-		let sectionNav;
-		let text;
-
-		beforeAll( function () {
-			const selectedText = 'test';
-			const children = <p>mmyellow</p>;
-
-			sectionNav = createComponent(
-				SectionNav,
-				{
-					selectedText: selectedText,
-				},
-				children
+		test( 'should render a header and a panel', () => {
+			const { container } = render(
+				<SectionNav selectedText="test">
+					<Panel>mmyellow</Panel>
+				</SectionNav>
 			);
 
-			panelElem = sectionNav.props.children[ 1 ];
-			headerElem = sectionNav.props.children[ 0 ];
-			headerTextElem = headerElem.props.children[ 0 ];
-			text = headerTextElem.props.children;
-		} );
-
-		test( 'should render a header and a panel', () => {
-			expect( headerElem.props.className ).toEqual( 'section-nav__mobile-header' );
-			expect( panelElem.props.className ).toEqual( 'section-nav__panel' );
-			expect( headerTextElem.props.className ).toEqual( 'section-nav__mobile-header-text' );
+			expect( container.querySelector( '.section-nav__mobile-header' ) ).toBeVisible();
+			expect( container.querySelector( '.section-nav__panel' ) ).toBeVisible();
+			expect( container.querySelector( '.section-nav__mobile-header-text' ) ).toBeVisible();
 		} );
 
 		test( 'should render selectedText within mobile header', () => {
-			expect( text ).toEqual( 'test' );
+			const { container } = render(
+				<SectionNav selectedText="test">
+					<Panel>mmyellow</Panel>
+				</SectionNav>
+			);
+
+			expect( container.querySelector( '.section-nav__mobile-header-text' ) ).toHaveTextContent(
+				'test'
+			);
 		} );
 
 		test( 'should render children', () => {
-			return new Promise( ( done ) => {
-				//React.Children.only should work here but gives an error about not being the only child
-				Children.map(
-					panelElem.props.children.filter( ( o ) => o.type === 'p' ),
-					function ( obj ) {
-						expect( obj.props.children ).toEqual( 'mmyellow' );
-						done();
-					}
-				);
-			} );
+			render(
+				<SectionNav selectedText="test">
+					<Panel>mmyellow</Panel>
+				</SectionNav>
+			);
+
+			expect( screen.getByText( 'mmyellow' ) ).toBeVisible();
 		} );
 
 		test( 'should not render a header if dropdown disabled', () => {
-			const component = createComponent(
-				SectionNav,
-				{
-					selectedText: 'test',
-					allowDropdown: false,
-				},
-				<p>mmyellow</p>
+			const { container } = render(
+				<SectionNav selectedText="test" allowDropdown={ false }>
+					<Panel>mmyellow</Panel>
+				</SectionNav>
 			);
 
-			const header = component.props.children.find(
-				( child ) => child && child.className === 'section-nav__mobile-header'
-			);
-			expect( header ).toBeUndefined();
+			expect( container.querySelector( '.section-nav__mobile-header' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -153,65 +128,25 @@ describe( 'section-nav', () => {
 	} );
 
 	describe( 'interaction', () => {
-		test( 'should call onMobileNavPanelOpen function passed as a prop when tapped', () => {
-			return new Promise( ( done ) => {
-				const elem = createElement(
-					SectionNav,
-					{
-						selectedText: 'placeholder',
-						onMobileNavPanelOpen: function () {
-							done();
-						},
-					},
-					<p>placeholder</p>
-				);
-				const tree = TestUtils.renderIntoDocument( elem );
-				expect( tree.state.mobileOpen ).toBe( false );
-				TestUtils.Simulate.click(
-					ReactDom.findDOMNode(
-						TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
-					)
-				);
-				expect( tree.state.mobileOpen ).toBe( true );
-			} );
-		} );
+		test( 'should toggle the panel and call onMobileNavPanelOpen twice when tapped three times', async () => {
+			const onMobileNavPanelOpen = jest.fn();
+			const { container } = render(
+				<SectionNav selectedText="placeholder" onMobileNavPanelOpen={ onMobileNavPanelOpen }>
+					<Panel>placeholder</Panel>
+				</SectionNav>
+			);
+			const nav = container.querySelector( '.section-nav' );
+			const header = screen.getByRole( 'button' );
 
-		test( 'should call onMobileNavPanelOpen function passed as a prop twice when tapped three times', () => {
-			return new Promise( ( done ) => {
-				const spy = jest.fn();
-				const elem = createElement(
-					SectionNav,
-					{
-						selectedText: 'placeholder',
-						onMobileNavPanelOpen: spy,
-					},
-					<p>placeholder</p>
-				);
-				const tree = TestUtils.renderIntoDocument( elem );
+			expect( nav ).not.toHaveClass( 'is-open' );
+			await userEvent.click( header );
+			expect( nav ).toHaveClass( 'is-open' );
+			await userEvent.click( header );
+			expect( nav ).not.toHaveClass( 'is-open' );
+			await userEvent.click( header );
+			expect( nav ).toHaveClass( 'is-open' );
 
-				expect( tree.state.mobileOpen ).toBe( false );
-				TestUtils.Simulate.click(
-					ReactDom.findDOMNode(
-						TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
-					)
-				);
-				expect( tree.state.mobileOpen ).toBe( true );
-				TestUtils.Simulate.click(
-					ReactDom.findDOMNode(
-						TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
-					)
-				);
-				expect( tree.state.mobileOpen ).toBe( false );
-				TestUtils.Simulate.click(
-					ReactDom.findDOMNode(
-						TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
-					)
-				);
-				expect( tree.state.mobileOpen ).toBe( true );
-
-				expect( spy ).toHaveBeenCalledTimes( 2 );
-				done();
-			} );
+			expect( onMobileNavPanelOpen ).toHaveBeenCalledTimes( 2 );
 		} );
 	} );
 } );

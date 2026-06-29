@@ -3,7 +3,6 @@ import { compose } from '@wordpress/compose';
 import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { localize, withRtl } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -110,7 +109,7 @@ export class AppBanner extends Component {
 
 	isAndroid() {
 		const match = ANDROID_REGEX.exec( this.props.userAgent );
-		const version = get( match, '1', '0' );
+		const version = match?.[ '1' ] ?? '0';
 		//intents are only supported on Android 4.4+
 		return versionCompare( version, '4.4', '>=' );
 	}

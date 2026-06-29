@@ -1,6 +1,9 @@
-@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 @import "calypso/components/jetpack-page-layout/admin-ui-page";
 
 body.is-section-activity {

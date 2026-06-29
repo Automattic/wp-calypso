@@ -4,7 +4,7 @@ for example, it requires a separate deployment to production, avoid
 using the "fixes" keyword. Consider using "part of" instead.
 -->
 
-Part of #
+Fixes #
 
 ## Proposed Changes
 

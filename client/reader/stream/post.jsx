@@ -50,6 +50,7 @@ class ReaderPostCardAdapter extends Component {
 				streamKey={ this.props.streamKey }
 				commentsApiDisabled={ this.props.commentsApiDisabled }
 				showBylineSecondarySiteLink={ this.props.showBylineSecondarySiteLink }
+				itemRef={ this.props.itemRef }
 			>
 				<div ref={ this.props.postRef } />
 			</ReaderPostCard>

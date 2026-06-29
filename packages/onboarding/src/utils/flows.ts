@@ -12,6 +12,7 @@ export const SITE_MIGRATION_FLOW = 'site-migration';
 export const COPY_SITE_FLOW = 'copy-site';
 export const BUILD_FLOW = 'build';
 export const WRITE_FLOW = 'write';
+export const WRITE_ON_FLOW = 'write-on';
 export const START_WRITING_FLOW = 'start-writing';
 export const SITE_SETUP_FLOW = 'site-setup';
 export const WITH_THEME_FLOW = 'with-theme';
@@ -104,6 +105,10 @@ export const isUpdateDesignFlow = ( flowName: string | null ) => {
 
 export const isStartWritingFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ START_WRITING_FLOW ].includes( flowName ) );
+};
+
+export const isWriteOnFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ WRITE_ON_FLOW ].includes( flowName ) );
 };
 
 export const isOnboardingFlow = ( flowName: string | null ) => {

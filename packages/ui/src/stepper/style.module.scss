@@ -7,6 +7,10 @@
 .root {
 	--a8c-ui-stepper-indicator-size: 18px;
 	--a8c-ui-stepper-indicator-size-sm: 16px;
+	// Centers the smaller current/completed bullets against upcoming ones.
+	--a8c-ui-stepper-indicator-offset: calc(
+		( var( --a8c-ui-stepper-indicator-size ) - var( --a8c-ui-stepper-indicator-size-sm ) ) * 0.5
+	);
 }
 
 // ---------------------------------------------------------------------------
@@ -65,12 +69,12 @@
 }
 
 // Current: 16px solid gray-900 ring, transparent background + half-circle dome
-// margin: 1px compensates for the 2px size reduction vs upcoming (18px → 16px)
+// The margin compensates for the size reduction vs upcoming (size → size-sm)
 // so the indicator centres stay aligned vertically across states.
 .indicator.is-current[data-indicator-variant='bullet'] {
 	width: var( --a8c-ui-stepper-indicator-size-sm );
 	height: var( --a8c-ui-stepper-indicator-size-sm );
-	margin: 1px;
+	margin: var( --a8c-ui-stepper-indicator-offset );
 	border-style: solid;
 	border-color: var( --wpds-color-fg-content-neutral );
 	background: transparent;
@@ -81,7 +85,7 @@
 .indicator.is-completed[data-indicator-variant='bullet'] {
 	width: var( --a8c-ui-stepper-indicator-size-sm );
 	height: var( --a8c-ui-stepper-indicator-size-sm );
-	margin: 1px;
+	margin: var( --a8c-ui-stepper-indicator-offset );
 	border-style: solid;
 }
 
@@ -187,9 +191,10 @@
 // Title and Description
 // ---------------------------------------------------------------------------
 
+// Title color is set by the `[data-indicator-variant] … .title` rules above;
+// the root always renders `data-indicator-variant`, so no base color is needed.
 .title {
 	font-weight: inherit;
-	color: var( --wpds-color-fg-content-neutral );
 }
 
 .description {

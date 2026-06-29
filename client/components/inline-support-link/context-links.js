@@ -247,8 +247,7 @@ const contextLinks = {
 		post_id: 219751,
 	},
 	mcp: {
-		link: 'https://wordpress.com/support/model-context-protocol-mcp-settings/',
-		post_id: 418160,
+		link: 'https://wordpress.com/support/mcp/',
 	},
 	media: {
 		link: 'https://wordpress.com/support/media/',

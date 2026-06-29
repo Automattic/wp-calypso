@@ -40,6 +40,10 @@ import {
 	is100Year,
 	isJetpackGrowthPlan,
 	JETPACK_GROWTH_UPGRADE_MAP,
+	PLAN_MONTHLY_PERIOD,
+	PLAN_ANNUAL_PERIOD,
+	PLAN_BIENNIAL_PERIOD,
+	PLAN_TRIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import {
@@ -62,7 +66,7 @@ import { check, column, Icon, payment, reusableBlock, tool, trash, upload } from
 import clsx from 'clsx';
 import { localize, LocalizeProps, useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import { Component, ComponentProps, Fragment, ReactElement } from 'react';
+import { Component, ComponentProps, Fragment, ReactElement, type JSX } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
@@ -269,6 +273,24 @@ interface ManagePurchaseState {
 	isRemoving: boolean;
 	isCancelSurveyVisible: boolean;
 	isReinstalling: boolean;
+}
+
+// Map the purchase's billing term to the plan grid's `intervalType` param so the
+// Stepper grid opens on the same term as the current plan. Downgrades only work
+// within the same term, and the grid hides the term selector in the downgrade flow.
+function getPlanGridIntervalType( billPeriodDays: number ): string | undefined {
+	switch ( billPeriodDays ) {
+		case PLAN_MONTHLY_PERIOD:
+			return 'monthly';
+		case PLAN_ANNUAL_PERIOD:
+			return 'yearly';
+		case PLAN_BIENNIAL_PERIOD:
+			return '2yearly';
+		case PLAN_TRIENNIAL_PERIOD:
+			return '3yearly';
+		default:
+			return undefined;
+	}
 }
 
 class ManagePurchase extends Component<
@@ -592,32 +614,46 @@ class ManagePurchase extends Component<
 
 	shouldRenderDowngradeOption(): boolean {
 		const { purchase } = this.props;
-		if ( ! config.isEnabled( 'plans/expired-downgrade' ) ) {
-			return false;
-		}
 		if ( ! purchase || ! isPlan( purchase ) ) {
 			return false;
 		}
-		if (
-			! isInExpirationGracePeriod( purchase ) &&
-			! isWithinRefundWindowDowngradeEligible( purchase )
-		) {
+		if ( ! purchase.isPlanTypeDowngradable ) {
 			return false;
 		}
-		return true;
+		const expiredOrRefundDowngrade =
+			config.isEnabled( 'plans/expired-downgrade' ) &&
+			( isInExpirationGracePeriod( purchase ) ||
+				isWithinRefundWindowDowngradeEligible( purchase ) );
+		const delayedDowngrade = config.isEnabled( 'plans/delayed-downgrade' );
+		return expiredOrRefundDowngrade || delayedDowngrade;
 	}
 
 	renderChangePlanNavItem() {
-		const { siteSlug, getManagePurchaseUrlFor = managePurchase, translate } = this.props;
-		if ( ! this.shouldRenderDowngradeOption() ) {
+		const { purchase, siteSlug, getManagePurchaseUrlFor = managePurchase, translate } = this.props;
+		if ( ! this.shouldRenderDowngradeOption() || ! purchase ) {
 			return null;
 		}
-		// Land back on the newly-provisioned plan's manage-purchase page after
-		// checkout with a success notice. The `:purchaseId` placeholder is
-		// substituted by the checkout pending page once the new subscription
-		// appears (analogous to `:receiptId`).
+		// Route to the Stepper plan-upgrade flow, whose plan grid and downgrade
+		// dialog are more polished than the classic `/plans` page. The downgrade
+		// logic itself is shared (both pages render `PlansFeaturesMain`), and it
+		// reads `redirect_to`/`cancel_to` straight off the URL, so we still land
+		// back on this manage-purchase page afterwards. The `:purchaseId`
+		// placeholder is substituted with the newly-provisioned plan's purchase by
+		// either the instant-downgrade handler or the checkout pending page
+		// (analogous to `:receiptId`).
 		const redirectTo = getManagePurchaseUrlFor( siteSlug, ':purchaseId' ) + '?plan_changed=true';
-		const href = addQueryArgs( { redirect_to: redirectTo }, `/plans/${ siteSlug }` );
+		const cancelTo = getManagePurchaseUrlFor( siteSlug, purchase.id );
+		const intervalType = getPlanGridIntervalType( purchase.billPeriodDays );
+		const href = addQueryArgs(
+			{
+				siteSlug,
+				allow_downgrade: 'true',
+				redirect_to: redirectTo,
+				cancel_to: cancelTo,
+				...( intervalType && { intervalType } ),
+			},
+			'/setup/plan-upgrade'
+		);
 		return (
 			<CompactCard tagName="a" displayAsLink href={ href }>
 				<Icon icon={ column } className="card__icon" />

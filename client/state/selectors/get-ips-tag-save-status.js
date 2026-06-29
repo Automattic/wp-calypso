@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/domains/init';
 
 /**
@@ -10,5 +8,5 @@ import 'calypso/state/domains/init';
  * @returns {string}         Transfer status
  */
 export default function getIpsTagSaveStatus( state, domain ) {
-	return get( state.domains.transfer, [ 'items', domain, 'saveStatus' ] );
+	return state.domains.transfer?.items?.[ domain ]?.saveStatus;
 }

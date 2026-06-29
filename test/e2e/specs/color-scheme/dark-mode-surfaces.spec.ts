@@ -407,7 +407,7 @@ test.describe( 'Dashboard dark-mode surface', { tag: [ tags.DASHBOARD_PR ] }, ()
 
 		await test.step( 'Then the Sites route renders in dark mode', async () => {
 			await pageDashboard.visitPath( 'sites' );
-			await page.getByRole( 'main' ).waitFor();
+			await expect( page.getByRole( 'main' ) ).toBeVisible( { timeout: 30_000 } );
 			await expectDarkModeRoot( page );
 			await expectSharedDarkTokens( page );
 			await expectNoObviousLightSurface( page.getByRole( 'main' ) );
@@ -422,7 +422,7 @@ test.describe( 'Dashboard dark-mode surface', { tag: [ tags.DASHBOARD_PR ] }, ()
 
 		await test.step( 'And the site overview route renders in dark mode', async () => {
 			await pageDashboard.visitPath( `sites/${ siteSlug }` );
-			await page.getByRole( 'main' ).waitFor();
+			await expect( page.getByRole( 'main' ) ).toBeVisible( { timeout: 30_000 } );
 			await expectDarkModeRoot( page );
 			await expectSharedDarkTokens( page );
 			await expectNoObviousLightSurface( page.getByRole( 'main' ) );
@@ -515,7 +515,9 @@ test.describe( 'Themes dark-mode surfaces', { tag: [ tags.CALYPSO_PR ] }, () => 
 
 		await test.step( 'Then the Themes listing renders in dark mode', async () => {
 			await pageThemes.visitShowcase();
-			await page.getByRole( 'heading', { name: /Find the perfect theme/ } ).waitFor();
+			await expect( page.getByRole( 'heading', { name: /Find the perfect theme/ } ) ).toBeVisible( {
+				timeout: 30_000,
+			} );
 			await expectDarkModeRoot( page, {
 				bodyClasses: [ 'is-themes-dark-mode' ],
 				expectColorSchemeBodyClass: true,

@@ -1,4 +1,5 @@
 import { eye } from '@automattic/components/src/icons';
+import { capitalize } from '@automattic/js-utils';
 import { formatNumber } from '@automattic/number-formatters';
 import {
 	Icon,
@@ -10,7 +11,6 @@ import {
 } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { capitalize } from 'lodash';
 import moment from 'moment';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';

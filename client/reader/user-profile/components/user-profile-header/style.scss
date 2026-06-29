@@ -1,3 +1,4 @@
+@import "@automattic/typography/styles/variables";
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/breakpoints';
 
@@ -61,6 +62,12 @@
 		margin-top: 4px;
 		padding: 0;
 		text-decoration: underline;
+	}
+
+	.section-nav-tab {
+		&.is-private .section-nav-tab__text {
+			color: var( --studio-gray-40 );
+		}
 	}
 
 	.section-nav-tab__link {

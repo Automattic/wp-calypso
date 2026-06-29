@@ -1,4 +1,5 @@
 import { isAutomatticianQuery, siteBySlugQuery, siteByIdQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	useQuery,
@@ -214,7 +215,9 @@ export default function Sites() {
 
 	return (
 		<>
-			{ ! isDashboardBackport() && <OptInWelcomeModal /> }
+			{ ! isDashboardBackport() && isEnabled( 'dashboard/opt-in-welcome-modal' ) && (
+				<OptInWelcomeModal />
+			) }
 			<InviteAcceptedFlashMessage />
 			{ isModalOpen && (
 				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
@@ -229,7 +232,10 @@ export default function Sites() {
 							userHasSites && (
 								<Button
 									variant="primary"
-									onClick={ () => setIsModalOpen( true ) }
+									onClick={ () => {
+										recordTracksEvent( 'calypso_dashboard_sites_add_new_site_clicked' );
+										setIsModalOpen( true );
+									} }
 									__next40pxDefaultSize
 								>
 									{ __( 'Add new site' ) }

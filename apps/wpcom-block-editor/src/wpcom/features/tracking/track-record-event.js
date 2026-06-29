@@ -1,6 +1,5 @@
 import { select } from '@wordpress/data';
 import debug from 'debug';
-import { omitBy } from 'lodash';
 import { isE2ETest } from '../../../utils';
 import { getEditorType } from '../utils';
 
@@ -81,7 +80,9 @@ export default ( eventName, eventProperties ) => {
 
 	// Remove properties that have an undefined value
 	// This allows a caller to easily remove properties from the recorded set by setting them to undefined
-	eventProperties = omitBy( eventProperties, ( prop ) => typeof prop === 'undefined' );
+	eventProperties = Object.fromEntries(
+		Object.entries( eventProperties ).filter( ( [ , prop ] ) => typeof prop !== 'undefined' )
+	);
 
 	// Populate required properties.
 	eventProperties = { ...eventProperties, ...requiredProperties };

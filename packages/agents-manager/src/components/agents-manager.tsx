@@ -22,6 +22,7 @@ import {
 } from '../utils/load-external-providers';
 import AgentDock from './agent-dock';
 import { PersistentRouter } from './persistent-router';
+import type { JSX } from 'react';
 
 export interface AgentsManagerProps {
 	/** The name of the current section (e.g., 'wp-admin', 'gutenberg'). */
@@ -67,15 +68,15 @@ export default function AgentsManager( {
 	const siteKey = currentSiteId ? String( currentSiteId ) : 'no-site';
 
 	return (
-		<AgentsManagerContextProvider
-			value={ { sectionName, currentUser, site, siteKey, currentRoute } }
-		>
-			<QueryClientProvider client={ queryClient }>
-				<PersistentRouter siteKey={ siteKey }>
+		<QueryClientProvider client={ queryClient }>
+			<PersistentRouter siteKey={ siteKey }>
+				<AgentsManagerContextProvider
+					value={ { sectionName, currentUser, site, siteKey, currentRoute } }
+				>
 					<AgentSetup agentId={ agentId } useImageUpload={ useImageUpload } />
-				</PersistentRouter>
-			</QueryClientProvider>
-		</AgentsManagerContextProvider>
+				</AgentsManagerContextProvider>
+			</PersistentRouter>
+		</QueryClientProvider>
 	);
 }
 
@@ -152,6 +153,7 @@ function AgentSetup( {
 				currentRoute,
 				toolProvider: providers.toolProvider,
 				contextProvider: providers.contextProvider,
+				providerIds: providers.providerIds,
 				environment: sectionName || 'calypso',
 				agentId,
 				version,

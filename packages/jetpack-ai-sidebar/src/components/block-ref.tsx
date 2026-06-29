@@ -88,6 +88,12 @@ function getBlockLabel( block: BlockSnapshot ): string {
 			// is not on the list block's own attributes. Skip snippet.
 			return __( 'List', 'jetpack' );
 		}
+		case 'core/list-item': {
+			const snippet = truncate( stripTags( String( attrs.content ?? '' ) ) );
+			return snippet
+				? `${ __( 'List item', 'jetpack' ) } — “${ snippet }”`
+				: __( 'List item', 'jetpack' );
+		}
 		case 'core/quote':
 		case 'core/pullquote': {
 			const snippet = truncate( stripTags( String( attrs.value ?? attrs.content ?? '' ) ) );

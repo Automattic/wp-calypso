@@ -1,4 +1,5 @@
-import { concat, filter, flow, map, sortBy } from 'lodash';
+import { flow, sortBy } from '@automattic/js-utils';
+import { filter, map } from 'lodash';
 import { PureComponent } from 'react';
 import PaymentLogo, { POSSIBLE_TYPES } from '../index';
 
@@ -7,7 +8,7 @@ const genVendors = flow(
 	( arr ) => filter( arr, ( type ) => type !== 'placeholder' ),
 
 	( arr ) => map( arr, ( type ) => ( { type, isCompact: false } ) ),
-	( arr ) => concat( arr, [ { type: 'paypal', isCompact: true } ] ),
+	( arr ) => arr.concat( [ { type: 'paypal', isCompact: true } ] ),
 	( arr ) => sortBy( arr, [ 'type', 'isCompact' ] )
 );
 

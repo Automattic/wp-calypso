@@ -1,8 +1,6 @@
-import { default as apiFetchPromise } from '@wordpress/api-fetch';
 import { GeneratorReturnType } from '../mapped-types';
-import { default as wpcomRequestPromise, canAccessWpcomApis } from '../wpcom-request';
+import { persistAgentsManagerState } from './persist-state';
 import { PerSiteLastActivity, PerSiteRouterHistory } from './types';
-import type { APIFetchOptions } from '../shared-types';
 
 /**
  * Partial state object for saving agents manager preferences
@@ -51,23 +49,7 @@ export function* saveAgentsManagerState( state: AgentsManagerState ) {
 		return;
 	}
 
-	if ( canAccessWpcomApis() ) {
-		// Use the promise version to do that action without waiting for the result.
-		wpcomRequestPromise( {
-			path: '/agents-manager/state',
-			apiNamespace: 'wpcom/v2',
-			method: 'POST',
-			body: { state: saveState },
-		} ).catch( () => {} );
-	} else {
-		// Use the promise version to do that action without waiting for the result.
-		apiFetchPromise( {
-			global: true,
-			path: '/agents-manager/open-state',
-			method: 'PUT',
-			data: saveState,
-		} as APIFetchOptions ).catch( () => {} );
-	}
+	persistAgentsManagerState( saveState );
 }
 
 export function setRouterHistory( history: PerSiteRouterHistory | undefined ) {
@@ -124,6 +106,18 @@ export function* setFloatingPosition(
 	} as const;
 }
 
+/**
+ * Set the free-drag position of the floating panel. Session-scoped —
+ * intentionally not persisted to the backend (unlike floatingPosition); it
+ * survives view switches via the in-memory store but resets on full reload.
+ */
+export function setFreeDragPosition( freeDragPosition: { x: number; y: number } | null ) {
+	return {
+		type: 'AGENTS_MANAGER_SET_FREE_DRAG_POSITION',
+		freeDragPosition,
+	} as const;
+}
+
 export function setLastActivity( lastActivity: PerSiteLastActivity | undefined ) {
 	return {
 		type: 'AGENTS_MANAGER_SET_LAST_ACTIVITY',
@@ -163,6 +157,7 @@ export type AgentsManagerAction =
 	| ReturnType< typeof setIsLoading >
 	| ReturnType< typeof setHasLoaded >
 	| ReturnType< typeof setIsSplitScreen >
+	| ReturnType< typeof setFreeDragPosition >
 	| GeneratorReturnType< typeof setIsOpen >
 	| GeneratorReturnType< typeof setIsDocked >
 	| GeneratorReturnType< typeof setIsMinimized >

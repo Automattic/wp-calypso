@@ -1,5 +1,4 @@
 import { RootChild } from '@automattic/components';
-import { defer } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryPreferences from 'calypso/components/data/query-preferences';
@@ -32,9 +31,9 @@ class GuidedToursComponent extends Component {
 			} );
 		}
 
-		defer( () => {
+		setTimeout( () => {
 			this.props.dispatch( nextGuidedTourStep( { tour, stepName: nextStepName } ) );
-		} );
+		}, 0 );
 	};
 
 	quit = ( { step, tour, tourVersion: tour_version, isLastStep } ) => {

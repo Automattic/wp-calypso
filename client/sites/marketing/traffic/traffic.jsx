@@ -1,6 +1,6 @@
+import { pick } from '@automattic/js-utils';
 import { Page } from '@wordpress/admin-ui';
 import { localize } from 'i18n-calypso';
-import { pick } from 'lodash';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import blazeIllustration from 'calypso/assets/images/customer-home/illustration--blaze.svg';

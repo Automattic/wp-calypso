@@ -1,16 +1,20 @@
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 @import '@wordpress/base-styles/colors';
+
 $autobar-height: 20px;
 $masterbar-font-size: 13px;
 $masterbar-mobile-font-size: 14px;
 $masterbar-color-primary: #23282d;
 $masterbar-color-secondary: #101517;
 
-@import "@wordpress/base-styles/variables";
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
 @import "calypso/assets/stylesheets/shared/animation";
 @import url( //s0.wp.com/wp-includes/css/dashicons.min.css?v=20250127 );
-@import "@automattic/typography/styles/variables";
 
 // Hide the masterbar on WP Mobile App views.
 body.is-mobile-app-view {
@@ -270,7 +274,19 @@ body.is-mobile-app-view {
 			line-height: 2;
 
 			&.masterbar__item-subitems-item--odd {
-				background: var(--color-sidebar-submenu-background, var(--color-masterbar-item-hover-background));
+				background: var(
+					--color-masterbar-submenu-group-background,
+					var(--color-sidebar-submenu-background, var(--color-masterbar-item-hover-background))
+				);
+			}
+
+			&:not(.masterbar__item-subitems-item--odd) + .masterbar__item-subitems-item--odd {
+				margin-top: 6px;
+				padding-top: 6px;
+			}
+
+			&.masterbar__item-subitems-item--odd:last-child {
+				padding-bottom: 6px;
 			}
 
 			a,
@@ -295,8 +311,11 @@ body.is-mobile-app-view {
 				}
 			}
 
-			&:hover {
+			&:not(.masterbar__item-subitems-item--odd):hover {
 				background: var(--color-global-masterbar-submenu-hover-background, var(--color-masterbar-item-hover-background));
+			}
+
+			&:hover {
 				a {
 					color: var(--color-masterbar-submenu-hover-text, var(--color-masterbar-highlight));
 				}
@@ -310,6 +329,10 @@ body.is-mobile-app-view {
 				padding: 8px 16px;
 			}
 		}
+	}
+
+	& + .masterbar__item-subitems:has(> .masterbar__item-subitems-item--odd:last-child) {
+		padding-bottom: 0;
 	}
 
 	.masterbar--is-checkout & {
@@ -961,14 +984,14 @@ body.is-mobile-app-view {
 	min-width: 248px;
 	padding: 12px;
 
-	.masterbar__site-info-label {
-		margin-bottom: 4px;
-	}
-
 	.masterbar__info-badges {
 		display: flex;
+		flex: 1;
 		flex-wrap: wrap;
 		gap: 4px;
+		justify-content: flex-end;
+		margin-left: 16px;
+		min-width: 0;
 	}
 
 	// TODO: Remove this once the new Badge APIs are implemented (DS-203).
@@ -978,10 +1001,14 @@ body.is-mobile-app-view {
 	}
 }
 
-.button > .masterbar__site-info {
+.button > .masterbar__site-info,
+.masterbar__item-subitems-item a > .masterbar__site-info {
 	margin: 0 -6px;
-		padding: 6px;
-	}
+}
+
+.masterbar__site-plan {
+	padding: 0 6px;
+}
 
 .masterbar__site-status {
 	background-color: var(--color-global-masterbar-site-info-background, color-mix(in srgb, var(--color-masterbar-item-hover-background), $white 15%));
@@ -1141,7 +1168,7 @@ a.masterbar__quick-language-switcher {
 		}
 
 		.masterbar--is-wpcom & {
-			transform: translateY(1px);
+			transform: translateY(0.5px);
 			margin-left: 16px;
 		}
 

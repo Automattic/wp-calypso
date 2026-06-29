@@ -1,6 +1,6 @@
+import { pick } from '@automattic/js-utils';
 import clsx from 'clsx';
 import debugModule from 'debug';
-import { pick } from 'lodash';
 import { Component } from 'react';
 import Shortcode from 'calypso/blocks/shortcode';
 import { GalleryDefaultAttrs } from 'calypso/lib/media/constants';

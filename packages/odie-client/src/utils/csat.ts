@@ -15,6 +15,15 @@ export const isZendeskIntroMessage = ( message: Message | ZendeskMessage ) =>
 export const isZendeskChatStartedMessage = ( message: Message ) =>
 	message?.internal_message_id === 'zendesk-chat-started';
 
+/**
+ * A business message is sent by a real Happiness Engineer only when it carries a non-empty
+ * Zendesk agent id in its metadata. Automated/system messages (messaging triggers, CSAT, etc.)
+ * have an empty or missing agent id, so the "Happiness Engineer" name override must not apply to
+ * them — they keep their Zendesk-configured display name instead.
+ */
+export const isHappinessEngineerMessage = ( message: Message | ZendeskMessage ) =>
+	message?.role === 'business' && !! message?.metadata?.[ '__zendesk_msg.agent.id' ];
+
 export const hasCSATMessage = ( chat: Chat ) => {
 	return chat?.messages.some( isCSATMessage );
 };

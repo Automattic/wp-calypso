@@ -31,11 +31,12 @@
 	}
 }
 
-// 2026 nav is `position: fixed`, so the sticky filter bar must stick below it
-// (admin-bar offset + 64px nav) instead of at `top: 0`, where it would hide behind the
-// nav. Scoped to the 2026 path via the `:has()` ancestor on the layout root.
+// Baton-pass: filter sticks at the fixed nav's top and rides above it (beats the
+// nav's closed 177), covering it as it pins. Stays below the nav's open state
+// (179) and the masterbar (180), which is always on top.
 .is-section-themes:has(.x-nav--2026-redesign) .filter-bar-modern {
-	top: var(--nav-2026-sticky-offset);
+	top: var(--nav-2026-admin-offset);
+	z-index: var( --nav-2026-z-sub-nav, 178 );
 }
 
 .filter-bar-modern__content {

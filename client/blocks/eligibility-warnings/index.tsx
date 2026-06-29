@@ -5,6 +5,7 @@ import {
 	FEATURE_SFTP,
 	FEATURE_INSTALL_PLUGINS,
 	PLAN_BUSINESS,
+	PLAN_PERSONAL,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
@@ -12,7 +13,6 @@ import { CompactCard, Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import { includes } from 'lodash';
 import { useState } from 'react';
 import { connect } from 'react-redux';
 import DataCenterPicker from 'calypso/blocks/data-center-picker';
@@ -69,7 +69,7 @@ export const EligibilityWarnings = ( {
 	isMarketplace,
 	isPlaceholder,
 	onDismiss,
-	onProceed,
+	onProceed = noop,
 	standaloneProceed,
 	recordUpgradeClick,
 	showDataCenterPicker,
@@ -118,7 +118,9 @@ export const EligibilityWarnings = ( {
 		}
 		if ( siteRequiresUpgrade( listHolds ) ) {
 			recordUpgradeClick( ctaName, feature );
-			const planSlug = PLAN_BUSINESS;
+			// Plugin upload is available on the Personal plan and up, so upsell the
+			// lowest eligible plan for that context instead of Business.
+			const planSlug = context === 'plugins-upload' ? PLAN_PERSONAL : PLAN_BUSINESS;
 			let redirectUrl = `/checkout/${ siteSlug }/${ planSlug }`;
 			if ( context === 'plugins-upload' ) {
 				redirectUrl = `${ redirectUrl }?redirect_to=${ encodeURIComponent(
@@ -307,10 +309,6 @@ function siteRequiresGoingPublic( holds: string[] ) {
 	return holds.includes( 'SITE_NOT_PUBLIC' );
 }
 
-EligibilityWarnings.defaultProps = {
-	onProceed: noop,
-};
-
 /**
  * processMarketplaceExceptions: Remove 'NO_BUSINESS_PLAN' holds if the
  * INSTALL_PURCHASED_PLUGINS feature is present or is onboarding flow.
@@ -424,19 +422,19 @@ function mergeProps(
 		context = ownProps.currentContext;
 		feature = FEATURE_SFTP;
 		ctaName = 'calypso-hosting-features-eligibility-upgrade-nudge';
-	} else if ( includes( ownProps.backUrl, 'plugins' ) ) {
+	} else if ( ownProps.backUrl?.includes( 'plugins' ) ) {
 		context = 'plugins-upload';
 		feature = FEATURE_UPLOAD_PLUGINS;
 		ctaName = 'calypso-plugin-eligibility-upgrade-nudge';
-	} else if ( includes( ownProps.backUrl, 'themes' ) ) {
+	} else if ( ownProps.backUrl?.includes( 'themes' ) ) {
 		context = 'themes';
 		feature = FEATURE_UPLOAD_THEMES;
 		ctaName = 'calypso-theme-eligibility-upgrade-nudge';
-	} else if ( includes( ownProps.backUrl, 'hosting' ) ) {
+	} else if ( ownProps.backUrl?.includes( 'hosting' ) ) {
 		context = 'hosting';
 		feature = FEATURE_SFTP;
 		ctaName = 'calypso-hosting-eligibility-upgrade-nudge';
-	} else if ( includes( ownProps.backUrl, 'performance' ) ) {
+	} else if ( ownProps.backUrl?.includes( 'performance' ) ) {
 		context = 'performance';
 		feature = FEATURE_PERFORMANCE;
 		ctaName = 'calypso-performance-features-activate-nudge';

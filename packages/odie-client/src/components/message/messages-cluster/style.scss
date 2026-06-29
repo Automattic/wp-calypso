@@ -47,7 +47,8 @@
 		}
 	}
 
-	&.role-business {
+	&.role-business,
+	&.role-business-automated {
 		display: flex;
 		flex-direction: column;
 		align-self: flex-start;

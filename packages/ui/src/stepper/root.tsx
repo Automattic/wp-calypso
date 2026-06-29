@@ -72,21 +72,13 @@ export const StepperRoot = forwardRef< StepperRef, StepperRootProps >( function 
 		},
 	} ) );
 
-	// Dev warnings: missing accessibility label, duplicate values, missing step
+	// Dev warnings: missing accessibility label, missing step.
+	// Duplicate step values are detected at registration time in useStepRegistration.
 	useEffect( () => {
 		if ( ! ariaLabel && ! ariaLabelledBy ) {
 			warning(
 				"[Stepper] Stepper requires either 'aria-label' or 'aria-labelledby' for accessibility."
 			);
-		}
-		const seenValues = new Set< string >();
-		for ( const s of steps ) {
-			if ( seenValues.has( s.value ) ) {
-				warning(
-					`[Stepper] Two steps share value '${ s.value }'. Each step must have a unique value.`
-				);
-			}
-			seenValues.add( s.value );
 		}
 		if ( value && steps.length > 0 && ! steps.some( ( s ) => s.value === value ) ) {
 			warning(

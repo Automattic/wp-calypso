@@ -199,7 +199,7 @@ export function HelpCenterGPT( { onResponseReceived, redirectToArticle }: Props 
 								</p>
 							</>
 						) }
-						{ ! data?.response && LoadingPlaceholders( { loadingMessage } ) }
+						{ ! data?.response && <LoadingPlaceholders loadingMessage={ loadingMessage } /> }
 						{ data?.response && (
 							<>
 								{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions,jsx-a11y/click-events-have-key-events */ }

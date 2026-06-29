@@ -6,6 +6,7 @@ import { ToggleControl, Button } from '@wordpress/components';
 import { throttle } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { View, Filter, Field } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { arrowUp } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
@@ -14,7 +15,7 @@ import { useMemo, useEffect, useCallback, useRef, useLayoutEffect, useState } fr
 import { useAnalytics } from '../../../app/analytics';
 import { usePersistentView } from '../../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../../app/performance-tracking';
-import { DataViews } from '../../../components/dataviews';
+import { DataViews, DataViewsEmptyStateLayout } from '../../../components/dataviews';
 import { LogsDownloader } from '../downloader';
 import {
 	buildTimeRangeInSeconds,
@@ -324,6 +325,26 @@ function SiteLogsDataViews( {
 		totalPages: 1,
 	};
 
+	const emptyState = (
+		<DataViewsEmptyStateLayout
+			isBorderless
+			title={ __( 'No results' ) }
+			description={
+				logType === LogType.PHP
+					? createInterpolateElement(
+							__(
+								'The custom <wpDebugLog>WP_DEBUG_LOG</wpDebugLog> or <errorLog>error_log</errorLog> paths aren’t shown here.'
+							),
+							{
+								wpDebugLog: <code />,
+								errorLog: <code />,
+							}
+					  )
+					: __( 'No server requests were logged for the selected time range.' )
+			}
+		/>
+	);
+
 	return (
 		<>
 			{ logType === LogType.PHP ? (
@@ -340,6 +361,7 @@ function SiteLogsDataViews( {
 					onChangeView={ onChangeView }
 					onReset={ resetView }
 					header={ LogsHeader }
+					empty={ emptyState }
 				/>
 			) : (
 				<DataViews< ServerLog >
@@ -355,6 +377,7 @@ function SiteLogsDataViews( {
 					onChangeView={ onChangeView }
 					onReset={ resetView }
 					header={ LogsHeader }
+					empty={ emptyState }
 				/>
 			) }
 			{ showScrollTop && (

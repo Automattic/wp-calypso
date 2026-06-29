@@ -22,9 +22,12 @@ import {
 	usePaymentMethod,
 	useTransactionStatus,
 	TransactionStatus,
+	useAvailablePaymentMethodIds,
+	useMakeStepActive,
+	useNextIncompleteStepId,
 } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/number-formatters';
-import { Step } from '@automattic/onboarding';
+import { ONBOARDING_FLOW, Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	styled,
@@ -40,9 +43,19 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { pencil } from '@wordpress/icons';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useState } from 'react';
+import {
+	useCallback,
+	useMemo,
+	useRef,
+	useState,
+	type JSX,
+	type PropsWithChildren,
+	type ReactNode,
+} from 'react';
 import { createPortal } from 'react-dom';
 import Loading from 'calypso/components/loading';
+import { OnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress';
+import { useShowOnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import {
@@ -98,6 +111,7 @@ import CheckoutProcessorNotice from './checkout-processor-notice';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import CheckoutTrustCards from './checkout-trust-cards';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
+import { handleProgressStepSelect } from './handle-progress-step-select';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
 import { LeaveCheckoutModal, useCheckoutLeaveModal } from './leave-checkout-modal';
 import BeforeSubmitCheckoutHeader from './payment-method-step';
@@ -122,7 +136,6 @@ import type {
 	ResponseCart,
 } from '@automattic/shopping-cart';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
-import type { PropsWithChildren, ReactNode } from 'react';
 
 const debug = debugFactory( 'calypso:wp-checkout' );
 
@@ -341,6 +354,57 @@ function CheckoutSidebarNudge( {
 	);
 }
 
+const ChangePaymentMethodButton = styled.button`
+	display: block;
+	margin: 12px auto 0;
+	padding: 0;
+	border: none;
+	background: none;
+	color: ${ ( props ) => props.theme.colors.highlight };
+	font-size: 14px;
+	text-align: center;
+	text-decoration: underline;
+	cursor: pointer;
+
+	&:hover {
+		text-decoration: none;
+	}
+`;
+
+// A "Use a different payment method" link rendered below the submit button via
+// CheckoutFormSubmit's generic `submitButtonFooter` slot. This is WP.com-specific
+// UX (the concept of a "payment method step", the count heuristic, the analytics
+// event), so it lives here rather than in the generic composite-checkout package.
+export function ChangePaymentMethodFooter( { stepId }: { stepId: string } ) {
+	const translate = useTranslate();
+	const reduxDispatch = useReduxDispatch();
+	const makeStepActive = useMakeStepActive();
+	const availablePaymentMethodIds = useAvailablePaymentMethodIds();
+	// Hide the link while the submit area is showing "Continue" (i.e. there is an
+	// earlier incomplete step) so it only appears alongside the final Pay button.
+	const nextIncompleteStepId = useNextIncompleteStepId();
+
+	if ( availablePaymentMethodIds.length <= 1 || nextIncompleteStepId ) {
+		return null;
+	}
+
+	const goToChangePaymentMethod = async () => {
+		reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_change_payment_method_click' ) );
+		await makeStepActive( stepId );
+		document.getElementById( stepId )?.scrollIntoView?.( { behavior: 'smooth', block: 'start' } );
+	};
+
+	return (
+		<ChangePaymentMethodButton
+			type="button"
+			className="checkout-steps__change-payment-method-button"
+			onClick={ goToChangePaymentMethod }
+		>
+			{ translate( 'Use a different payment method' ) }
+		</ChangePaymentMethodButton>
+	);
+}
+
 // Renders CheckoutFormSubmit inside CheckoutStepGroup (so it keeps full step-state
 // awareness) while portaling its output into the sidebar slot registered via
 // SubmitButtonSlotContext. The sidebar button IS the active payment-method submit
@@ -355,7 +419,11 @@ function PortaledCheckoutFormSubmit( {
 		return null;
 	}
 	return createPortal(
-		<CheckoutFormSubmit validateForm={ validateForm } continueToNextIncompleteStep />,
+		<CheckoutFormSubmit
+			validateForm={ validateForm }
+			continueToNextIncompleteStep
+			submitButtonFooter={ <ChangePaymentMethodFooter stepId="payment-method-step" /> }
+		/>,
 		slotEl
 	);
 }
@@ -432,6 +500,13 @@ export default function CheckoutMainContent( {
 	);
 
 	const searchParams = new URLSearchParams( window.location.search );
+	const isOnboardingFlowCheckout = searchParams.get( 'flow' ) === ONBOARDING_FLOW;
+	const showProgress = useShowOnboardingProgress( isOnboardingFlowCheckout );
+	const forceCheckoutBackUrlDomains = useValidCheckoutBackUrl(
+		siteUrl ?? '',
+		undefined,
+		'checkoutBackUrlDomains'
+	);
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
 	// The flow that redirected to checkout may pass a step indicator via the
@@ -484,8 +559,24 @@ export default function CheckoutMainContent( {
 
 	const checkoutActions = useDispatch( CHECKOUT_STORE );
 
-	const [ shouldShowContactDetailsValidationErrors, setShouldShowContactDetailsValidationErrors ] =
-		useState( true );
+	const [
+		shouldShowContactDetailsValidationErrors,
+		setShouldShowContactDetailsValidationErrorsState,
+	] = useState( true );
+	// Mirror the flag in a ref so the step-completion validation — which runs
+	// synchronously right after the contact-form autocomplete sets this to
+	// `false` — reads the current value instead of a stale render closure. Under
+	// React 19's update timing the state setter hasn't propagated to the
+	// `isCompleteCallback` closure yet, which would otherwise surface validation
+	// errors for cached details the user never entered.
+	// See `use-prefill-checkout-contact-form`.
+	const shouldShowContactDetailsValidationErrorsRef = useRef(
+		shouldShowContactDetailsValidationErrors
+	);
+	const setShouldShowContactDetailsValidationErrors = useCallback( ( value: boolean ) => {
+		shouldShowContactDetailsValidationErrorsRef.current = value;
+		setShouldShowContactDetailsValidationErrorsState( value );
+	}, [] );
 
 	// The "Summary" view is displayed in the sidebar at desktop (wide) widths
 	// and before the first step at mobile (smaller) widths. At smaller widths it
@@ -800,8 +891,13 @@ export default function CheckoutMainContent( {
 							stepId="contact-form"
 							onPageLoadError={ onPageLoadError }
 							isCompleteCallback={ async () => {
+								// Read from the ref: autocomplete suppresses errors by setting the
+								// flag to `false` immediately before invoking this callback, and the
+								// state update would not yet be visible in this closure.
+								const shouldDisplayValidationErrors =
+									shouldShowContactDetailsValidationErrorsRef.current;
 								// Touch the fields so they display validation errors
-								if ( shouldShowContactDetailsValidationErrors ) {
+								if ( shouldDisplayValidationErrors ) {
 									touchContactFields();
 								}
 								const validationResponse = await validateContactDetails(
@@ -813,7 +909,7 @@ export default function CheckoutMainContent( {
 									clearDomainContactErrorMessages,
 									reduxDispatch,
 									translate,
-									shouldShowContactDetailsValidationErrors
+									shouldDisplayValidationErrors
 								);
 								if ( validationResponse ) {
 									// When the contact details change, update the VAT details on the server.
@@ -827,7 +923,7 @@ export default function CheckoutMainContent( {
 										}
 									} catch ( error ) {
 										reduxDispatch( removeNotice( 'vat_info_notice' ) );
-										if ( shouldShowContactDetailsValidationErrors ) {
+										if ( shouldDisplayValidationErrors ) {
 											reduxDispatch(
 												errorNotice( ( error as Error ).message, { id: 'vat_info_notice' } )
 											);
@@ -1012,10 +1108,29 @@ export default function CheckoutMainContent( {
 				<Step.TwoColumnLayout
 					firstColumnWidth={ 8 }
 					secondColumnWidth={ 4 }
+					heading={
+						showProgress ? (
+							<OnboardingProgress
+								currentStep="checkout"
+								onStepSelect={ ( step ) =>
+									handleProgressStepSelect( step, {
+										forceCheckoutBackUrlDomains,
+										forceCheckoutBackUrl,
+										clickStepBack: leaveModalProps.clickStepBack,
+										clickClose: leaveModalProps.clickClose,
+									} )
+								}
+							/>
+						) : undefined
+					}
 					topBar={ ( { isLargeViewport } ) => {
 						const topBar = (
 							<Step.TopBar
-								leftElement={ <Step.BackButton onClick={ leaveModalProps.clickClose } /> }
+								leftElement={
+									showProgress ? undefined : (
+										<Step.BackButton onClick={ leaveModalProps.clickClose } />
+									)
+								}
 								rightElement={
 									<>
 										{ stepCounter && (

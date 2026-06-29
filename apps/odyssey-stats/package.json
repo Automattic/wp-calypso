@@ -34,6 +34,7 @@
 		"@automattic/calypso-router": "workspace:^",
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/components": "workspace:^",
+		"@automattic/js-utils": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/base-styles": "^9.1.0",
 		"@wordpress/data": "^10.48.0",

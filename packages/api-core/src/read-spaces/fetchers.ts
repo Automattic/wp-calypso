@@ -1,27 +1,32 @@
-import type { ReadSpace } from './types';
+import { wpcom } from '../wpcom-fetcher';
+import { adaptReadSpace, adaptReadSpaceDetails, type ReadSpaceApiItem } from './adapters';
+import type { ReadSpace, ReadSpaceDetails } from './types';
 
 /**
- * Hard-coded placeholder spaces returned while Spaces are dark-shipped behind
- * the `reader/spaces` feature flag. Ids are stable slugs so deep links survive
- * a reload; real spaces will carry server-assigned ids.
- */
-const PLACEHOLDER_SPACES: ReadSpace[] = [
-	{ id: 'work', name: 'Work', tags: [], color: 'blue', icon: 'inbox' },
-	{ id: 'gaming', name: 'Gaming', tags: [], color: 'purple', icon: 'box' },
-	{ id: 'youtube', name: 'YouTube', tags: [], color: 'red', icon: 'video' },
-	{ id: 'humor', name: 'Humor', tags: [], color: 'orange', icon: 'comment' },
-	{ id: 'food', name: 'Food', tags: [], color: 'gray', icon: 'cart' },
-	{ id: 'health', name: 'Health', tags: [], color: 'green', icon: 'star' },
-	{ id: 'cats', name: 'Cats', tags: [], color: 'celadon', icon: 'pages' },
-];
-
-/**
- * Fetch the current user's spaces.
- *
- * TODO(RSM-4145): replace with the real `GET` once the list endpoint exists.
- * Until then it resolves the hard-coded placeholder set; spaces created in the
- * session are appended to the React Query cache by the create mutation.
+ * Fetch the current user's spaces from the wpcom/v2 `GET /reader/spaces`
+ * endpoint. The list is the slim summary shape (no sources or tags), adapted to
+ * the client `ReadSpace` via `adaptReadSpace`.
  */
 export async function fetchReadSpaces(): Promise< ReadSpace[] > {
-	return PLACEHOLDER_SPACES.map( ( space ) => ( { ...space } ) );
+	const response = await wpcom.req.get( {
+		path: '/reader/spaces',
+		apiNamespace: 'wpcom/v2',
+	} );
+
+	const items: ReadSpaceApiItem[] = Array.isArray( response ) ? response : [];
+	return items.map( adaptReadSpace );
+}
+
+/**
+ * Fetch a single space's detail (its followed feeds and tags) from the wpcom/v2
+ * `GET /reader/spaces/{id}` endpoint, adapting the wire `follows` array onto the
+ * client `sources` shape.
+ */
+export async function fetchReadSpace( spaceId: string ): Promise< ReadSpaceDetails > {
+	const item: ReadSpaceApiItem = await wpcom.req.get( {
+		path: `/reader/spaces/${ encodeURIComponent( spaceId ) }`,
+		apiNamespace: 'wpcom/v2',
+	} );
+
+	return adaptReadSpaceDetails( item );
 }

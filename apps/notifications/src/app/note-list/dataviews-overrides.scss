@@ -2,6 +2,8 @@
 
 @import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/variables';
+// Base DataViews styles, so the app is self-contained in any host.
+@import '@wordpress/dataviews/build-style/style.css';
 
 @mixin dark-unread-note-list-item {
 	div[role="article"]:has(.is-unread),
@@ -11,7 +13,7 @@
 		}
 
 		.dataviews-view-list__item-wrapper {
-			background-color: color-mix(in srgb, var(--wp-admin-theme-color) 16%, var(--color-surface));
+			background-color: color-mix(in srgb, var(--wp-admin-theme-color) 10%, var(--color-surface));
 			box-shadow: inset 3px 0 0
 				color-mix(in srgb, var(--wp-admin-theme-color) 72%, transparent);
 		}
@@ -20,29 +22,41 @@
 	div[role="article"]:where(.is-hovered):has(.is-unread),
 	div[role="article"]:where(.is-hovered):has(.is-unread):focus-within {
 		.dataviews-view-list__item-wrapper {
-			background-color: color-mix(in srgb, var(--wp-admin-theme-color) 22%, var(--color-surface));
+			background-color: color-mix(in srgb, var(--wp-admin-theme-color) 16%, var(--color-surface));
 		}
 	}
 }
 
-// Dark-theme selected note: a restrained tint plus accent bar, with toned-down
-// dividers so the row doesn't read as a saturated boxed-in block.
-@mixin dark-selected-note-list-item {
-	div[role="article"].is-selected,
-	div[role="article"].is-selected:focus-within,
-	div[role="article"].is-selected:has(.is-unread),
-	div[role="article"].is-selected:has(.is-unread):focus-within {
-		border-top-color: color-mix(in srgb, var(--wp-admin-theme-color) 28%, var(--color-surface));
+// In grouped mode DataViews nests `@wordpress/ui` Stacks whose inline `gap`
+// over-spaces the list. Collapse the per-group and outer Stack gaps via
+// structural selectors (no build-hashed class); `!important` beats the inline gap.
+.wpnc__note-list div:has(> .dataviews-view-list__group-header),
+.wpnc__note-list .dataviews-view-list__group .dataviews-view-list {
+	gap: 0 !important;
+}
 
-		& + div[role="article"] {
-			border-top-color: color-mix(in srgb, var(--wp-admin-theme-color) 28%, var(--color-surface));
-		}
+// Match the rows' 16px left edge; tighter 8px vertical padding; top border
+// separates sections.
+.wpnc__note-list .dataviews-view-list__group-header {
+	margin: 0;
+	padding: $grid-unit-10 $grid-unit-20;
+	border-top: 1px solid var(--wpds-color-stroke-surface-neutral-weak, #e4e4e4);
+	// Shrink the default 15px heading-sized label, keeping core weight and color.
+	font-size: var(--wpds-typography-font-size-sm, 13px);
+}
 
-		.dataviews-view-list__item-wrapper {
-			background-color: color-mix(in srgb, var(--wp-admin-theme-color) 20%, var(--color-surface));
-			box-shadow: inset 3px 0 0 var(--wp-admin-theme-color);
-		}
-	}
+// Persistent divider under the tabs, even on non-grouped views. The wrapper
+// draws it; the first group header drops its border so they don't stack.
+.wpnc__note-list > .dataviews-wrapper {
+	border-top: 1px solid var(--wpds-color-stroke-surface-neutral-weak, #e4e4e4);
+}
+
+.wpnc__note-list
+	.dataviews-view-list__group
+	> .dataviews-view-list
+	> div:first-child
+	> .dataviews-view-list__group-header {
+	border-top: 0;
 }
 
 .wpnc__note-list .dataviews-view-list {
@@ -58,6 +72,21 @@
 		}
 	}
 
+	// DataViews' default list metrics leave the rows taller than we want, so
+	// tighten the title and field rows to a 20px min-height and line-height.
+	.dataviews-view-list__title-field,
+	.dataviews-view-list__fields .dataviews-view-list__field-value {
+		min-height: calc(var(--wpds-dimension-base, 4px) * 5);
+		line-height: var(--wpds-typography-line-height-sm, 20px);
+	}
+
+	// Notes without an excerpt render an empty description field, but DataViews
+	// still emits its cell as a flex item in the column, which doubles the row
+	// gap. Drop the empty cell so only one gap remains.
+	.dataviews-view-list__field-wrapper > .dataviews-view-list__field:empty {
+		display: none;
+	}
+
 	// We override styles with the selected styles for unread items.
 	div[role="article"]:has(.is-unread),
 	div[role="article"]:has(.is-unread):focus-within {
@@ -66,7 +95,7 @@
 		}
 
 		.dataviews-view-list__item-wrapper {
-			background-color: rgba(var(--wp-admin-theme-color--rgb), 0.04);
+			background-color: rgba(var(--wp-admin-theme-color--rgb), 0.1);
 		}
 	}
 
@@ -74,26 +103,33 @@
 	div[role="article"]:where(.is-hovered):has(.is-unread),
 	div[role="article"]:where(.is-hovered):has(.is-unread):focus-within {
 		.dataviews-view-list__item-wrapper {
-			background-color: rgba(var(--wp-admin-theme-color--rgb), 0.08);
+			background-color: rgba(var(--wp-admin-theme-color--rgb), 0.1);
 		}
 	}
 
-	// Selected note: accent bar + stronger tint. The unread pairing keeps it
-	// winning over the `:has(.is-unread)` rules above, which would otherwise
-	// mask DataViews' faint built-in selection.
-	div[role="article"].is-selected,
-	div[role="article"].is-selected:focus-within,
-	div[role="article"].is-selected:has(.is-unread),
-	div[role="article"].is-selected:has(.is-unread):focus-within {
+	// Open note: a left accent bar marks the row whose detail is showing. Driven
+	// by our own `is-active` marker (see getFields), not DataViews selection, so
+	// the unread tint still shows through on a selected unread row.
+	div[role="article"]:has(.wpnc__subject.is-active) {
 		.dataviews-view-list__item-wrapper {
-			background-color: rgba(var(--wp-admin-theme-color--rgb), 0.12);
 			box-shadow: inset 3px 0 0 var(--wp-admin-theme-color);
 		}
 	}
 
 	@include ui-mixins.when-dark-theme {
 		@include dark-unread-note-list-item;
-		@include dark-selected-note-list-item;
+
+		// The note title reads --wpds-color-fg-content-neutral, whose light-mode
+		// default (#1e1e1e) is near-black and unreadable on the dark surface. Point
+		// it at a light foreground for dark mode.
+		--wpds-color-fg-content-neutral: #f0f0f0;
+
+		// $gray-700 (#757575) is a light-mode literal — it fails WCAG AA on the
+		// dark surface and the accent tints (~1.8–2.7:1). Use a light muted that
+		// clears 4.5:1 on every row state, including the stronger selected tint.
+		div[role="article"] .dataviews-view-list__item-wrapper .dataviews-view-list__fields {
+			color: #c2c5cc;
+		}
 	}
 
 	// We override the media field
@@ -101,6 +137,7 @@
 		width: 32px;
 		height: 32px;
 		margin-inline-end: $grid-unit-05;
+		margin-block-start: 4px;
 		border-radius: 50%;
 		overflow: visible;
 

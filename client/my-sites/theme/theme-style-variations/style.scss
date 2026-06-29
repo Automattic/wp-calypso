@@ -1,6 +1,8 @@
-@import "@automattic/onboarding/styles/mixins";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/long-content-fade";
+@import "@automattic/onboarding/styles/mixins";
 
 .theme__sheet-style-variations {
 	position: relative;

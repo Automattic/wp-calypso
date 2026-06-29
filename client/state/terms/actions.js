@@ -1,4 +1,4 @@
-import { filter, get } from 'lodash';
+import { filter } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import {
 	TERM_REMOVE,
@@ -82,7 +82,7 @@ export function updateTerm( siteId, taxonomy, termId, termSlug, term ) {
 				const siteSettings = getSiteSettings( state, siteId );
 				if (
 					taxonomy === 'category' &&
-					get( siteSettings, [ 'default_category' ] ) === termId &&
+					siteSettings?.default_category === termId &&
 					updatedTerm.ID !== termId
 				) {
 					dispatch( updateSiteSettings( siteId, { default_category: updatedTerm.ID } ) );
@@ -131,7 +131,7 @@ const getTaxonomyRestBase = ( siteId, taxonomy ) => {
 const removeTermFromState = ( { dispatch, getState, siteId, taxonomy, termId } ) => {
 	const state = getState();
 	const deletedTerm = getTerm( state, siteId, taxonomy, termId );
-	const deletedTermPostCount = get( deletedTerm, 'post_count', 0 );
+	const deletedTermPostCount = deletedTerm?.post_count ?? 0;
 
 	// Update the parentId of its children
 	const termsToUpdate = filter( getTerms( state, siteId, taxonomy ), ( term ) => {
@@ -159,12 +159,7 @@ const removeTermFromState = ( { dispatch, getState, siteId, taxonomy, termId } )
 	// update default category post count if applicable
 	if ( taxonomy === 'category' && deletedTermPostCount > 0 ) {
 		const siteSettings = getSiteSettings( state, siteId );
-		const defaultCategory = getTerm(
-			state,
-			siteId,
-			taxonomy,
-			get( siteSettings, [ 'default_category' ] )
-		);
+		const defaultCategory = getTerm( state, siteId, taxonomy, siteSettings?.default_category );
 		if ( defaultCategory ) {
 			dispatch(
 				receiveTerm( siteId, taxonomy, {

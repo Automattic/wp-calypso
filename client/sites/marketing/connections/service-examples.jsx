@@ -1,9 +1,9 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+// eslint-disable-next-line no-restricted-imports
 import googleDriveExample from 'calypso/assets/images/connections/google-drive-screenshot.jpg';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -240,7 +240,7 @@ class SharingServiceExamples extends Component {
 	}
 
 	render() {
-		if ( ! includes( SERVICES_WITH_EXAMPLES, this.props.service.ID ) ) {
+		if ( ! SERVICES_WITH_EXAMPLES.includes( this.props.service.ID ) ) {
 			/**
 			 * TODO: Refactoring this line has to be tackled in a seperate diff.
 			 * Touching this changes services-group.jsx which changes service.jsx

@@ -17,7 +17,7 @@ export default function ConnectDomainStepLogin( {
 	className,
 	pageSlug,
 	domain,
-	isOwnershipVerificationFlow,
+	isOwnershipVerificationFlow = false,
 	mode,
 	onNextStep,
 	progressStepList,
@@ -167,8 +167,4 @@ ConnectDomainStepLogin.propTypes = {
 	mode: PropTypes.oneOf( Object.values( modeType ) ).isRequired,
 	onNextStep: PropTypes.func.isRequired,
 	progressStepList: PropTypes.object.isRequired,
-};
-
-ConnectDomainStepLogin.defaultProps = {
-	isOwnershipVerificationFlow: false,
 };

@@ -1,3 +1,7 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+
 // View Receipt
 .billing-history__app-overview {
 	align-items: center;

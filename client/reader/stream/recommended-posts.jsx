@@ -50,7 +50,7 @@ export class RecommendedPosts extends PureComponent {
 		const { posts } = this.props;
 
 		return (
-			<div className="reader-stream__recommended-posts">
+			<div ref={ this.props.itemRef } className="reader-stream__recommended-posts">
 				<h1 className="reader-stream__recommended-posts-header">
 					<Gridicon icon="thumbs-up" size={ 18 } />
 					&nbsp;

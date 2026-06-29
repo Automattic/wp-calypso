@@ -1,6 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
+import { pick } from '@automattic/js-utils';
 import clsx from 'clsx';
-import { pick } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component, Fragment } from 'react';
 import AsyncLoad from 'calypso/components/async-load';

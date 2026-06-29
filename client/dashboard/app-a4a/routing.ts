@@ -3,6 +3,11 @@ import config from '@automattic/calypso-config';
 const A4A_DASHBOARD_ALLOWED_HOSTNAMES = [ 'my.a4a.localhost' ];
 
 export function isAllowedA4ADashboardHostname( hostname?: string ): boolean {
+	// Calypso Live links
+	if ( hostname?.endsWith( '-a4a.calypso.live' ) ) {
+		return true;
+	}
+
 	return A4A_DASHBOARD_ALLOWED_HOSTNAMES.includes( hostname ?? '' );
 }
 

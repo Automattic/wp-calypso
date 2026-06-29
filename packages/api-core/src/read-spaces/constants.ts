@@ -1,4 +1,4 @@
-import type { SpaceColor, SpaceIcon } from './types';
+import type { SpaceLayout } from './types';
 
 /**
  * Maximum allowed length for a space name, enforced client-side for inline
@@ -7,5 +7,7 @@ import type { SpaceColor, SpaceIcon } from './types';
 export const MAX_SPACE_NAME_LENGTH = 50;
 
 /** Presentation defaults applied to a freshly-created space. */
-export const DEFAULT_SPACE_COLOR: SpaceColor = 'blue';
-export const DEFAULT_SPACE_ICON: SpaceIcon = 'category';
+export const DEFAULT_SPACE_LAYOUT: SpaceLayout = {
+	color: 'blue',
+	icon: 'category',
+};

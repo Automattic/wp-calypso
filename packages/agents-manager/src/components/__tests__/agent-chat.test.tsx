@@ -10,7 +10,7 @@ import type { ComponentProps, ReactNode, Ref } from 'react';
 
 const mockSetFloatingPosition = jest.fn();
 const mockContainerProps = jest.fn();
-const mockHasAdminBarTrigger = jest.fn();
+const mockHasAiChatEntry = jest.fn();
 
 jest.mock(
 	'@automattic/agenttic-ui',
@@ -106,6 +106,10 @@ jest.mock( '@wordpress/data', () => ( {
 } ) );
 
 jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
+jest.mock( '../../utils/tracks', () => ( {
+	recordBigSkyTracksEvent: jest.fn(),
+	recordAgentsManagerTracksEvent: jest.fn(),
+} ) );
 jest.mock( '../../stores', () => ( {
 	AGENTS_MANAGER_STORE: 'automattic/agents-manager',
 } ) );
@@ -135,7 +139,7 @@ jest.mock( '../../utils/is-reader-chat-agent', () => ( {
 	isReaderChatHost: () => false,
 } ) );
 jest.mock( '../../hooks/use-admin-bar-integration', () => ( {
-	hasAdminBarTrigger: () => mockHasAdminBarTrigger(),
+	hasAiChatEntryButton: () => mockHasAiChatEntry(),
 } ) );
 
 import AgentChat from '../agent-chat';
@@ -164,7 +168,7 @@ function renderAgentChat( props: Partial< ComponentProps< typeof AgentChat > > =
 
 describe( 'AgentChat', () => {
 	beforeEach( () => {
-		mockHasAdminBarTrigger.mockReturnValue( false );
+		mockHasAiChatEntry.mockReturnValue( false );
 	} );
 
 	afterEach( () => {
@@ -187,14 +191,14 @@ describe( 'AgentChat', () => {
 		expect( onSuggestionClick ).toHaveBeenCalledWith( suggestion, [ suggestion ] );
 	} );
 
-	it( 'collapses to a button when closed without the WP admin bar trigger', () => {
+	it( 'collapses to a button when closed without the AI chat entry button', () => {
 		renderAgentChat( { isOpen: false } );
 
 		expect( mockContainerProps ).toHaveBeenLastCalledWith( { floatingChatState: 'collapsed' } );
 	} );
 
-	it( 'minimizes to the bar when closed with the WP admin bar trigger present', () => {
-		mockHasAdminBarTrigger.mockReturnValue( true );
+	it( 'minimizes to the bar when closed with the AI chat entry button present', () => {
+		mockHasAiChatEntry.mockReturnValue( true );
 
 		renderAgentChat( { isOpen: false } );
 

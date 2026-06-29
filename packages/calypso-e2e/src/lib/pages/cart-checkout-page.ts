@@ -356,7 +356,9 @@ export class CartCheckoutPage {
 	async purchase( { timeout }: { timeout: number } = { timeout: 60000 } ): Promise< void > {
 		await Promise.all( [
 			this.page.waitForResponse( /.*me\/transactions.*/, { timeout: timeout } ),
-			this.page.getByRole( 'button', { name: 'Pay now' } ).click(),
+			// The submit button reads "Pay now" by default, but "Pay with **** 1234"
+			// when a saved card is selected, so match either label.
+			this.page.getByRole( 'button', { name: /Pay (now|with)/ } ).click(),
 		] );
 	}
 

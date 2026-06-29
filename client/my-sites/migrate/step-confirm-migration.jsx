@@ -36,8 +36,8 @@ class StepConfirmMigration extends Component {
 
 	handleClick = () => {
 		const { sourceSite, startMigration, targetSiteSlug, targetSite } = this.props;
-		const sourceSiteId = get( sourceSite, 'ID' );
-		const targetSiteId = get( targetSite, 'ID' );
+		const sourceSiteId = sourceSite?.ID;
+		const targetSiteId = targetSite?.ID;
 		const sourceSiteSlug = get( sourceSite, 'slug', sourceSiteId );
 		const sourceSiteUrl = get( sourceSite, 'URL', sourceSiteId );
 
@@ -65,14 +65,14 @@ class StepConfirmMigration extends Component {
 
 	isTargetSitePlanCompatible() {
 		const { targetSite } = this.props;
-		const planSlug = get( targetSite, 'plan.product_slug' );
+		const planSlug = targetSite?.plan?.product_slug;
 
 		return planSlug && planHasFeature( planSlug, FEATURE_UPLOAD_THEMES_PLUGINS );
 	}
 
 	getFooterText() {
 		const { translate, targetSite } = this.props;
-		const currentPlanSlug = get( targetSite, 'plan.product_slug' );
+		const currentPlanSlug = targetSite?.plan?.product_slug;
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 		const upsellPlanName = isEcommerceTrial
 			? getPlan( PLAN_WOOEXPRESS_SMALL )?.getTitle()
@@ -110,7 +110,7 @@ class StepConfirmMigration extends Component {
 
 	renderMigrationButton() {
 		const { targetSite, translate } = this.props;
-		const targetSiteDomain = get( targetSite, 'domain' );
+		const targetSiteDomain = targetSite?.domain;
 
 		// TODO: is the following "import everything" behaviour up to date?
 		if ( this.isTargetSitePlanCompatible() ) {
@@ -131,8 +131,8 @@ class StepConfirmMigration extends Component {
 	render() {
 		const { sourceSite, targetSite, targetSiteSlug, translate } = this.props;
 
-		const sourceSiteDomain = get( sourceSite, 'domain' );
-		const targetSiteDomain = get( targetSite, 'domain' );
+		const sourceSiteDomain = sourceSite?.domain;
+		const targetSiteDomain = targetSite?.domain;
 		const backHref = `/migrate/${ targetSiteSlug }`;
 
 		return (

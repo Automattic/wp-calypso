@@ -1,15 +1,19 @@
+import { readSpaceQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
+import { useQueryClient } from '@tanstack/react-query';
 import { Icon, category } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import { useSpaces } from 'calypso/reader/data/spaces';
+import { prefetchInfiniteStream } from 'calypso/reader/data/stream';
 import { AddMenuItem } from 'calypso/reader/sidebar/menu';
 import { CreateSpaceModal } from 'calypso/reader/spaces/create-modal';
-import { SPACES_BASE_PATH } from 'calypso/reader/spaces/routes';
+import { getSpacePath, SPACES_BASE_PATH } from 'calypso/reader/spaces/routes';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { SpaceMenuItem } from './menu-item';
+import type { ReadSpace } from '@automattic/api-core';
 
 import './style.scss';
 
@@ -28,6 +32,7 @@ function getActiveSpaceId( path: string ): string | null {
 export function ReaderSidebarSpaces( { path }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 	const spaces = useSpaces();
 
 	const activeId = getActiveSpaceId( path );
@@ -46,22 +51,27 @@ export function ReaderSidebarSpaces( { path }: Props ) {
 		dispatch( recordReaderTracksEvent( 'calypso_reader_sidebar_space_clicked', { space: id } ) );
 	};
 
+	// Warm the feed on hover/focus so the view paints from cache on click. The
+	// stream query's 5-minute staleTime makes repeated hovers cheap no-ops.
+	const prefetchSpace = ( id: string ) => {
+		// Skip the space we're already viewing — its data is loaded (or loading).
+		if ( id === activeId ) {
+			return;
+		}
+		void prefetchInfiniteStream( queryClient, dispatch, {
+			streamKey: `space:${ id }`,
+			enabled: true,
+		} );
+		void queryClient.prefetchQuery( readSpaceQuery( id ) );
+	};
+
 	const handleAddSpaceClick = () => {
 		dispatch( recordReaderTracksEvent( 'calypso_reader_sidebar_spaces_add_clicked' ) );
 		setIsCreateModalOpen( true );
 	};
 
-	const handleMainClick = () => {
-		dispatch( recordReaderTracksEvent( 'calypso_reader_sidebar_spaces_clicked' ) );
-		if ( ! isOpen ) {
-			setIsOpen( true );
-		}
-		// When the user isn't already viewing a specific space, clicking the
-		// header takes them to the Spaces landing route; otherwise it just
-		// opens the menu without yanking them off the page they're on.
-		if ( activeId === null && path !== SPACES_BASE_PATH ) {
-			page( SPACES_BASE_PATH );
-		}
+	const handleSpaceCreated = ( space: ReadSpace ) => {
+		page( getSpacePath( space.id ) );
 	};
 
 	return (
@@ -70,7 +80,6 @@ export function ReaderSidebarSpaces( { path }: Props ) {
 				expanded={ isOpen }
 				title={ translate( 'Spaces' ) }
 				customIcon={ <Icon className="sidebar__menu-icon" icon={ category } /> }
-				onClick={ handleMainClick }
 				expandableIconClick={ () => setIsOpen( ! isOpen ) }
 				disableFlyout
 				className={ ! isOpen && isOnSpaces ? 'sidebar__menu--selected' : undefined }
@@ -85,6 +94,7 @@ export function ReaderSidebarSpaces( { path }: Props ) {
 						space={ space }
 						isSelected={ activeId === space.id }
 						onClick={ () => recordSpaceClick( space.id ) }
+						onPrefetch={ () => prefetchSpace( space.id ) }
 					/>
 				) ) }
 				<AddMenuItem label={ translate( 'Add a space' ) } onClick={ handleAddSpaceClick } />
@@ -92,6 +102,7 @@ export function ReaderSidebarSpaces( { path }: Props ) {
 			<CreateSpaceModal
 				isOpen={ isCreateModalOpen }
 				onClose={ () => setIsCreateModalOpen( false ) }
+				onCreated={ handleSpaceCreated }
 			/>
 		</li>
 	);
