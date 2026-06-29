@@ -282,6 +282,7 @@ class PlansComponent extends Component {
 				coupon={ this.props.coupon }
 				redirectTo={ this.props.redirectTo }
 				pluginSlug={ this.props.pluginSlug }
+				discountEndDate={ this.props.discountEndDate }
 			/>
 		);
 	}
@@ -354,7 +355,7 @@ class PlansComponent extends Component {
 			PLAN_WOOEXPRESS_SMALL,
 			PLAN_WOOEXPRESS_SMALL_MONTHLY,
 		].includes( currentPlanSlug );
-		const isStudent = isStudentPlan( currentPlanSlug );
+		const isStudent = isStudentPlan( currentPlan.productSlug );
 		const wooExpressSubHeaderText = translate(
 			"Discover what's available in your Woo Express plan."
 		);

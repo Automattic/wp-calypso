@@ -23,6 +23,7 @@ interface StudentPlansPageProps {
 	coupon?: string;
 	redirectTo?: string;
 	pluginSlug?: string;
+	discountEndDate?: Date;
 }
 
 const StudentPlansPage = ( {
@@ -33,6 +34,7 @@ const StudentPlansPage = ( {
 	coupon,
 	redirectTo,
 	pluginSlug,
+	discountEndDate,
 }: StudentPlansPageProps ) => {
 	const translate = useTranslate();
 	const studentPlan = applyTestFiltersToPlansList( PLAN_STUDENT, undefined );
@@ -42,9 +44,11 @@ const StudentPlansPage = ( {
 		: 'yearly';
 
 	// The current plan's pricing comes from the site's plans (it is not a publicly-priced catalog plan).
-	const annualPlanPrice = currentPlan?.pricing?.originalPrice?.full ?? null;
-	const annualPlanMonthlyPrice = currentPlan?.pricing?.originalPrice?.monthly ?? null;
-	const currencyCode = currentPlan?.pricing?.currencyCode ?? '';
+	const pricing = currentPlan?.pricing;
+	const annualPlanPrice = pricing?.discountedPrice?.full ?? pricing?.originalPrice?.full ?? null;
+	const annualPlanMonthlyPrice =
+		pricing?.discountedPrice?.monthly ?? pricing?.originalPrice?.monthly ?? null;
+	const currencyCode = pricing?.currencyCode ?? '';
 
 	// Owners with a linked purchase can manage billing; everyone else views the read-only plan page.
 	const canManagePlan = Boolean( isOwner && currentPlan.purchaseId );
@@ -111,6 +115,7 @@ const StudentPlansPage = ( {
 					coupon={ coupon }
 					redirectTo={ redirectTo }
 					pluginSlug={ pluginSlug }
+					discountEndDate={ discountEndDate }
 				/>
 			</div>
 		</>
