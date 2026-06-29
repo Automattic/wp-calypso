@@ -19,6 +19,7 @@ export async function fetchOdieAssistantPerformanceProfiler( {
 	locale?: string;
 	device?: string;
 } ) {
+	const response = await wpcom.req.post(
 		{
 			path: '/ai/agent/performance-audits',
 			apiNamespace: 'wpcom/v2',
