@@ -110,6 +110,11 @@ const XOR_MESSAGE =
 const SOME_MESSAGE =
 	'Please use native `array.some( ( item ) => … )` (or `Object.values( obj ).some( … )` for objects) ' +
 	'instead of lodash `some`. Expand iteratee shorthands to a predicate and guard nullable collections with `?? []`.';
+const FOREACH_MESSAGE =
+	'Please use native `array.forEach( … )` instead of lodash `forEach`. Use ' +
+	'`Object.values( obj ).forEach( … )` / `Object.entries( obj ).forEach( ( [ key, value ] ) => … )` for objects, ' +
+	'`Array.from( … ).forEach( … )` for DOM collections, guard nullable collections with `?? []`, and convert ' +
+	'early-exit callbacks (those returning `false`) to a `for…of` loop with `break`.';
 
 const paths = [
 	{ name: 'lodash', importNames: JS_UTILS_NAMES, message: JS_UTILS_MESSAGE },
@@ -142,6 +147,7 @@ const paths = [
 	{ name: 'lodash', importNames: [ 'has' ], message: HAS_MESSAGE },
 	{ name: 'lodash', importNames: [ 'xor' ], message: XOR_MESSAGE },
 	{ name: 'lodash', importNames: [ 'some' ], message: SOME_MESSAGE },
+	{ name: 'lodash', importNames: [ 'forEach' ], message: FOREACH_MESSAGE },
 ];
 
 // Deep `lodash/<fn>` imports bypass the named-import paths above.
@@ -176,6 +182,7 @@ const patterns = [
 	{ group: [ 'lodash/has' ], message: HAS_MESSAGE },
 	{ group: [ 'lodash/xor' ], message: XOR_MESSAGE },
 	{ group: [ 'lodash/some' ], message: SOME_MESSAGE },
+	{ group: [ 'lodash/forEach' ], message: FOREACH_MESSAGE },
 ];
 
 module.exports = { paths, patterns };

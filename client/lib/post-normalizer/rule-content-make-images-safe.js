@@ -1,5 +1,5 @@
 import { getUrlParts, getUrlFromParts, safeImageUrl } from '@automattic/calypso-url';
-import { forEach, filter } from 'lodash';
+import { filter } from 'lodash';
 import { resolveRelativePath } from 'calypso/lib/url';
 import { maxWidthPhotonishURL } from './utils';
 
@@ -109,7 +109,7 @@ const makeImagesSafe = ( maxWidth ) => ( post, dom ) => {
 	}
 
 	const images = dom.querySelectorAll( 'img[src]' );
-	forEach( images, ( image ) => makeImageSafe( post, image, maxWidth ) );
+	Array.from( images ).forEach( ( image ) => makeImageSafe( post, image, maxWidth ) );
 
 	return post;
 };
