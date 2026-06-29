@@ -1,20 +1,15 @@
 import page from '@automattic/calypso-router';
-import { Count } from '@automattic/components';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
-import SidebarItem from 'calypso/layout/sidebar/item';
 import ReaderA8cIcon from 'calypso/reader/components/icons/a8c-icon';
 import ReaderP2Icon from 'calypso/reader/components/icons/p2-icon';
 import { useOrganizationSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
-import ReaderSidebarHelper from 'calypso/reader/sidebar/helper';
 import { AUTOMATTIC_ORG_ID } from 'calypso/state/reader/organizations/constants';
 import { toggleReaderSidebarOrganization } from 'calypso/state/reader-ui/sidebar/actions';
 import { isOrganizationOpen } from 'calypso/state/reader-ui/sidebar/selectors';
-import { AllIcon } from '../icons/all';
 import ReaderSidebarOrganizationsListItem from './list-item';
 export class ReaderSidebarOrganizationsList extends Component {
 	static propTypes = {
@@ -29,10 +24,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 	};
 
 	selectMenu = () => {
-		const { organization, isOrganizationOpen: isOpen, path } = this.props;
-		if ( ! isOpen ) {
-			this.toggleMenu();
-		}
+		const { organization, path } = this.props;
 		const defaultSelection = organization.slug && `/reader/${ organization.slug }`;
 		if ( defaultSelection && path !== defaultSelection ) {
 			page( defaultSelection );
@@ -45,25 +37,6 @@ export class ReaderSidebarOrganizationsList extends Component {
 			return <ReaderA8cIcon size={ 24 } viewBox="-3 -2 24 24" />;
 		}
 		return <ReaderP2Icon viewBox="0 0 24 24" />;
-	}
-
-	renderAll( unseenCount ) {
-		const { translate, organization, path } = this.props;
-		return (
-			<>
-				<SidebarItem
-					link={ '/reader/' + organization.slug }
-					key={ translate( 'All' ) }
-					label={ translate( 'All' ) }
-					className={ ReaderSidebarHelper.itemLinkClass( '/reader/' + organization.slug, path, {
-						'sidebar-streams__all': true,
-					} ) }
-					icon={ <AllIcon /> }
-				>
-					{ unseenCount > 0 && <Count count={ unseenCount } compact /> }
-				</SidebarItem>
-			</>
-		);
 	}
 
 	renderSites() {
@@ -98,7 +71,6 @@ export class ReaderSidebarOrganizationsList extends Component {
 						sites.some( ( site ) => `/reader/feeds/${ site.feed_ID }` === path ),
 				} ) }
 			>
-				{ this.renderAll( unseenCount ) }
 				{ this.renderSites() }
 			</ExpandableSidebarMenu>
 		);
@@ -119,4 +91,4 @@ export default connect(
 	{
 		toggleReaderSidebarOrganization,
 	}
-)( localize( OrganizationsListWithFollows ) );
+)( OrganizationsListWithFollows );
