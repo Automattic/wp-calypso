@@ -66,7 +66,7 @@ export function updateTerm( siteId, taxonomy, termId, termSlug, term ) {
 				// We also have to update post terms
 				const postsToUpdate = getSitePostsByTerm( state, siteId, taxonomy, termId );
 				postsToUpdate.forEach( ( post ) => {
-					const newTerms = ( post.terms[ taxonomy ] ?? [] ).filter(
+					const newTerms = Object.values( post.terms[ taxonomy ] ?? {} ).filter(
 						( postTerm ) => postTerm.ID !== termId
 					);
 					newTerms.push( updatedTerm );
@@ -149,7 +149,7 @@ const removeTermFromState = ( { dispatch, getState, siteId, taxonomy, termId } )
 	// Drop the term from posts
 	const postsToUpdate = getSitePostsByTerm( state, siteId, taxonomy, termId );
 	postsToUpdate.forEach( ( post ) => {
-		const newTerms = ( post.terms[ taxonomy ] ?? [] ).filter(
+		const newTerms = Object.values( post.terms[ taxonomy ] ?? {} ).filter(
 			( postTerm ) => postTerm.ID !== termId
 		);
 		dispatch(
