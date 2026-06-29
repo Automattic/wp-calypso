@@ -112,6 +112,14 @@ import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-c
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import AkismetApiKeyCard from './akismet-api-key-card';
 import { classifyPurchaseForCopy } from './classify-purchase-for-copy';
+import {
+	AddMailboxesActionItem,
+	EmailPlanMailboxCard,
+	EmailPlanPriceCard,
+	EmailUpgradePlanActionItem,
+	EmailUpgradePlanButton,
+	isEmailPlanManagementEnabled,
+} from './email-plan';
 import { getCancelButtonCopy, getRemoveButtonCopy } from './get-cancel-remove-copy';
 import JetpackLicenseKeyCard from './jetpack-license-key-card';
 import { PurchaseNotice } from './purchase-notice';
@@ -718,7 +726,14 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 			<ActionList>
 				<ReinstallButton purchase={ purchase } />
 				<JetpackCRMDownloadsButton purchase={ purchase } />
-				<UpgradeActionButton purchase={ purchase } />
+				{ isEmailPlanManagementEnabled( purchase ) ? (
+					<>
+						<EmailUpgradePlanActionItem purchase={ purchase } />
+						<AddMailboxesActionItem purchase={ purchase } />
+					</>
+				) : (
+					<UpgradeActionButton purchase={ purchase } />
+				) }
 				<ReSubscribeActionButton purchase={ purchase } />
 				<ChangePlanActionItem purchase={ purchase } />
 				<RenewActionButton purchase={ purchase } />
@@ -944,6 +959,14 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 
 function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 	const isCentennial = isCentennialPurchase( purchase );
+	// Email plans are billed per mailbox; show the per-mailbox renewal price.
+	if (
+		isEmailPlanManagementEnabled( purchase ) &&
+		! isExpired( purchase ) &&
+		! purchase.is_trial_plan
+	) {
+		return <EmailPlanPriceCard purchase={ purchase } />;
+	}
 	if ( isCentennial ) {
 		return (
 			<OverviewCard
@@ -1480,6 +1503,48 @@ export default function PurchaseSettings() {
 	const columns = isSmallViewport ? 1 : 2;
 	const spacing = isSmallViewport ? SPACING.SMALL : SPACING.DEFAULT;
 
+	// Email plans order the overview cards as Renews, Renewal price, Mailbox, Site;
+	// every other purchase keeps Site, Owner, Renews, Price. Extract the two cards
+	// that move so they can be rendered before or after the price card.
+	const isEmailPlan = isEmailPlanManagementEnabled( purchase );
+	const siteCard =
+		site &&
+		( site.options?.is_domain_only &&
+		purchase.is_domain &&
+		purchase.product_slug !== DomainProductSlugs.TRANSFER_IN &&
+		domain?.can_transfer_to_other_site ? (
+			<OverviewCard
+				icon={ <Icon icon={ layout } /> }
+				title={ __( 'Attach to a site' ) }
+				heading={ __( 'No site attached' ) }
+				description={ __( 'Attach this domain name to an existing site.' ) }
+				link={ `/domains/${ purchase.meta }/transfer/other-site` }
+				intent="upsell"
+			/>
+		) : (
+			<OverviewCard
+				icon={ <SiteIcon site={ site } /> }
+				title={ __( 'Site' ) }
+				heading={ site.name }
+				description={ purchase.site_slug }
+				link={ `/sites/${ purchase.site_slug }` }
+			/>
+		) );
+	const ownerOrMailboxCard = isEmailPlan ? (
+		<EmailPlanMailboxCard purchase={ purchase } />
+	) : (
+		<OverviewCard
+			icon={ commentAuthorAvatar }
+			title={ __( 'Owner' ) }
+			heading={
+				String( user.ID ) === String( purchase.user_id )
+					? user.display_name
+					: __( 'Owned by a different user' )
+			}
+			description={ String( user.ID ) === String( purchase.user_id ) ? user.email : undefined }
+		/>
+	);
+
 	return (
 		<PageLayout
 			size="small"
@@ -1496,14 +1561,23 @@ export default function PurchaseSettings() {
 							site?.options?.admin_url &&
 							! isCentennial && (
 								<HStack justify="space-between">
-									{ purchase.is_upgradable && upgradeUrl && (
-										<Button __next40pxDefaultSize variant="primary" href={ upgradeUrl }>
-											{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
-										</Button>
+									{ isEmailPlanManagementEnabled( purchase ) ? (
+										<EmailUpgradePlanButton purchase={ purchase } />
+									) : (
+										purchase.is_upgradable &&
+										upgradeUrl && (
+											<Button __next40pxDefaultSize variant="primary" href={ upgradeUrl }>
+												{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
+											</Button>
+										)
 									) }
-									<PageHeader.ActionMenu>
-										<PurchaseActionMenu purchase={ purchase } />
-									</PageHeader.ActionMenu>
+									{ /* Email plans surface every action in the list below, so the
+									     quick-actions menu would only duplicate them. */ }
+									{ ! isEmailPlanManagementEnabled( purchase ) && (
+										<PageHeader.ActionMenu>
+											<PurchaseActionMenu purchase={ purchase } />
+										</PageHeader.ActionMenu>
+									) }
 								</HStack>
 							)
 						}
@@ -1527,41 +1601,13 @@ export default function PurchaseSettings() {
 		>
 			<VStack spacing={ 6 }>
 				<PurchaseNotice purchase={ purchase } />
-				<Grid columns={ columns } gap={ spacing }>
-					{ site &&
-						( site.options?.is_domain_only &&
-						purchase.is_domain &&
-						purchase.product_slug !== DomainProductSlugs.TRANSFER_IN &&
-						domain?.can_transfer_to_other_site ? (
-							<OverviewCard
-								icon={ <Icon icon={ layout } /> }
-								title={ __( 'Attach to a site' ) }
-								heading={ __( 'No site attached' ) }
-								description={ __( 'Attach this domain name to an existing site.' ) }
-								link={ `/domains/${ purchase.meta }/transfer/other-site` }
-								intent="upsell"
-							/>
-						) : (
-							<OverviewCard
-								icon={ <SiteIcon site={ site } /> }
-								title={ __( 'Site' ) }
-								heading={ site.name }
-								description={ purchase.site_slug }
-								link={ `/sites/${ purchase.site_slug }` }
-							/>
-						) ) }
-					<OverviewCard
-						icon={ commentAuthorAvatar }
-						title={ __( 'Owner' ) }
-						heading={
-							String( user.ID ) === String( purchase.user_id )
-								? user.display_name
-								: __( 'Owned by a different user' )
-						}
-						description={
-							String( user.ID ) === String( purchase.user_id ) ? user.email : undefined
-						}
-					/>
+				<Grid
+					columns={ columns }
+					gap={ spacing }
+					className={ isEmailPlan ? 'purchase-settings__email-overview-cards' : undefined }
+				>
+					{ ! isEmailPlan && siteCard }
+					{ ! isEmailPlan && ownerOrMailboxCard }
 					{ hasExpiryInfo &&
 						( isExpired( purchase ) ? (
 							<OverviewCard icon={ info } title={ __( 'Status' ) } heading={ __( 'Removed' ) } />
@@ -1620,6 +1666,8 @@ export default function PurchaseSettings() {
 							/>
 						) ) }
 					<PurchasePriceCard purchase={ purchase } />
+					{ isEmailPlan && ownerOrMailboxCard }
+					{ isEmailPlan && siteCard }
 					{ purchase.is_jetpack_plan_or_product && (
 						<JetpackLicenseKeyCard purchaseId={ purchase.ID } />
 					) }
