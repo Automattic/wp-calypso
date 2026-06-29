@@ -60,7 +60,11 @@ export default function McpToolsSubpage( {
 	const [ reauthRequired, setReauthRequired ] = useState( false );
 	const [ openGroups, setOpenGroups ] = useState( () => new Set() );
 
-	const toggleGroupOpen = ( groupKey ) => {
+	const eventPrefix =
+		toolCategory === 'write' ? 'calypso_dashboard_mcp_write' : 'calypso_dashboard_mcp_read';
+
+	const toggleGroupOpen = ( groupKey, groupName ) => {
+		const willBeOpen = ! openGroups.has( groupKey );
 		setOpenGroups( ( current ) => {
 			const next = new Set( current );
 			if ( next.has( groupKey ) ) {
@@ -69,6 +73,10 @@ export default function McpToolsSubpage( {
 				next.add( groupKey );
 			}
 			return next;
+		} );
+		recordTracksEvent( `${ eventPrefix }_group_toggled`, {
+			group: groupName ?? 'other',
+			is_open: willBeOpen,
 		} );
 	};
 
@@ -99,10 +107,7 @@ export default function McpToolsSubpage( {
 	const groupDescriptors = getGroupDescriptors( userSettings || {} );
 	const groups = groupToolsByGroup( tools, groupDescriptors );
 
-	const eventPrefix =
-		toolCategory === 'write' ? 'calypso_dashboard_mcp_write' : 'calypso_dashboard_mcp_read';
-
-	const handleToolChange = ( toolId, enabled ) => {
+	const handleToolChange = ( toolId, enabled, groupName ) => {
 		mutation.mutate(
 			{
 				mcp_abilities: {
@@ -113,7 +118,11 @@ export default function McpToolsSubpage( {
 			},
 			{
 				onSuccess: () => {
-					recordTracksEvent( `${ eventPrefix }_tool_toggled`, { tool_id: toolId, enabled } );
+					recordTracksEvent( `${ eventPrefix }_tool_toggled`, {
+						tool_id: toolId,
+						enabled,
+						group: groupName ?? 'other',
+					} );
 				},
 			}
 		);
@@ -259,9 +268,11 @@ export default function McpToolsSubpage( {
 												<Button
 													className="mcp-tools-subpage__group-chevron"
 													icon={ isOpen ? chevronUp : chevronDown }
-													label={ translate( 'Show operations' ) }
+													label={
+														isOpen ? translate( 'Hide operations' ) : translate( 'Show operations' )
+													}
 													aria-expanded={ isOpen }
-													onClick={ () => toggleGroupOpen( groupKey ) }
+													onClick={ () => toggleGroupOpen( groupKey, descriptor?.name ?? null ) }
 												/>
 											</div>
 											{ isOpen &&
@@ -286,7 +297,11 @@ export default function McpToolsSubpage( {
 																			label={ tool.title }
 																			help={ tool.description }
 																			onChange={ ( checked ) =>
-																				handleToolChange( toolId, checked )
+																				handleToolChange(
+																					toolId,
+																					checked,
+																					descriptor?.name ?? null
+																				)
 																			}
 																		/>
 																	) ) }

@@ -43,7 +43,8 @@ export default function McpWrite() {
 	const isDesktop = useViewportMatch( 'medium' );
 
 	const [ openGroups, setOpenGroups ] = useState( () => new Set< string >() );
-	const toggleGroupOpen = ( groupKey: string ) => {
+	const toggleGroupOpen = ( groupKey: string, groupName: string | null ) => {
+		const willBeOpen = ! openGroups.has( groupKey );
 		setOpenGroups( ( current ) => {
 			const next = new Set( current );
 			if ( next.has( groupKey ) ) {
@@ -52,6 +53,10 @@ export default function McpWrite() {
 				next.add( groupKey );
 			}
 			return next;
+		} );
+		recordTracksEvent( 'calypso_dashboard_mcp_write_group_toggled', {
+			group: groupName ?? 'other',
+			is_open: willBeOpen,
 		} );
 	};
 
@@ -73,7 +78,7 @@ export default function McpWrite() {
 		},
 	} );
 
-	const handleToolChange = ( toolId: string, enabled: boolean ) => {
+	const handleToolChange = ( toolId: string, enabled: boolean, groupName: string | null ) => {
 		mutation.mutate(
 			{
 				mcp_abilities: {
@@ -85,6 +90,7 @@ export default function McpWrite() {
 					recordTracksEvent( 'calypso_dashboard_mcp_write_tool_toggled', {
 						tool_id: toolId,
 						enabled,
+						group: groupName ?? 'other',
 					} );
 				},
 			}
@@ -214,7 +220,7 @@ export default function McpWrite() {
 													icon={ isOpen ? chevronUp : chevronDown }
 													label={ isOpen ? __( 'Hide operations' ) : __( 'Show operations' ) }
 													aria-expanded={ isOpen }
-													onClick={ () => toggleGroupOpen( groupKey ) }
+													onClick={ () => toggleGroupOpen( groupKey, descriptor?.name ?? null ) }
 												/>
 											</HStack>
 										) : (
@@ -234,7 +240,7 @@ export default function McpWrite() {
 														icon={ isOpen ? chevronUp : chevronDown }
 														label={ isOpen ? __( 'Hide operations' ) : __( 'Show operations' ) }
 														aria-expanded={ isOpen }
-														onClick={ () => toggleGroupOpen( groupKey ) }
+														onClick={ () => toggleGroupOpen( groupKey, descriptor?.name ?? null ) }
 													/>
 												</HStack>
 												<ToggleControl
@@ -274,7 +280,9 @@ export default function McpWrite() {
 																	disabled={ mutation.isPending }
 																	label={ tool.title }
 																	help={ tool.description }
-																	onChange={ ( checked ) => handleToolChange( toolId, checked ) }
+																	onChange={ ( checked ) =>
+																		handleToolChange( toolId, checked, descriptor?.name ?? null )
+																	}
 																/>
 															) ) }
 														</VStack>
