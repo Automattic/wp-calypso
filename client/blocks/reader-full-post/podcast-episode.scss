@@ -9,7 +9,7 @@
 		padding: 16px;
 		border: 1px solid #e0e0e0;
 		border-radius: 8px;
-		background-color: #fff;
+		background-color: var(--studio-white);
 
 		@media (max-width: 600px) {
 			flex-direction: column;
@@ -82,7 +82,7 @@
 
 	.jetpack-podcast-episode__badge--explicit {
 		background-color: #1e1e1e;
-		color: #fff;
+		color: var(--studio-white);
 		font-family: monospace;
 	}
 
@@ -173,7 +173,7 @@
 		display: flex;
 		gap: 12px;
 		align-items: baseline;
-		width: 100%;
+		inline-size: 100%;
 		padding: 0;
 		border: 0;
 		background: transparent;
