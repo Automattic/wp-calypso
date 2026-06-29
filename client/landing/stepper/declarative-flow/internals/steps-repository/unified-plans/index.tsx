@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { OnboardSelect } from '@automattic/data-stores';
 import {
 	AI_SITE_BUILDER_FLOW,
@@ -17,7 +18,10 @@ import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useState, useEffect } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import Loading from 'calypso/components/loading';
-import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
+import {
+	AI_SITE_BUILDER_PAID_ONLY_FLAG,
+	WOO_HOSTING_SOLUTIONS_REF,
+} from 'calypso/landing/stepper/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
@@ -62,7 +66,12 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 
 			return 'plans-new-hosted-site';
 		case AI_SITE_BUILDER_FLOW:
-			return 'plans-ai-assembler-free-trial';
+			// The paid-only onboarding shows Personal/Premium/Business/Commerce (no Free, no
+			// Enterprise), which is exactly the `plans-new-hosted-site` plan set. The CIAB garden
+			// re-entry never renders this step, so keying off the flag alone is safe here.
+			return config.isEnabled( AI_SITE_BUILDER_PAID_ONLY_FLAG )
+				? 'plans-new-hosted-site'
+				: 'plans-ai-assembler-free-trial';
 		case ONBOARDING_FLOW:
 			if ( search.has( 'playground' ) ) {
 				return playgroundPlansIntent( search.get( 'playground' )! );

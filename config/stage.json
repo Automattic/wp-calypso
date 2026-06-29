@@ -108,6 +108,7 @@
 		"migration-flow/introductory-offer": true,
 		"migration/ssh-migration": false,
 		"oauth/unified-experience": true,
+		"onboarding/ai-site-builder-paid-only": false,
 		"onboarding/create-course": false,
 		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,
