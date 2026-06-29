@@ -354,7 +354,7 @@ class PlansComponent extends Component {
 			PLAN_WOOEXPRESS_SMALL,
 			PLAN_WOOEXPRESS_SMALL_MONTHLY,
 		].includes( currentPlanSlug );
-		const isStudent = isStudentPlan( currentPlan.productSlug );
+		const isStudent = isStudentPlan( currentPlanSlug );
 		const wooExpressSubHeaderText = translate(
 			"Discover what's available in your Woo Express plan."
 		);

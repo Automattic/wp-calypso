@@ -10,7 +10,8 @@ body.is-section-plans.is-student-plan {
 
 		@media (max-width: $break-mobile) {
 			flex-direction: column;
-			margin: 0 20px 40px;
+			margin-block: 0 40px;
+			margin-inline: 20px;
 			padding: 32px 20px;
 		}
 	}

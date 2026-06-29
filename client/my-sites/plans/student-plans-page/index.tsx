@@ -12,6 +12,8 @@ import './style.scss';
 // Students can only upgrade to yearly terms; the student plan itself is annual-only.
 const UPGRADE_INTERVALS = [ 'yearly', '2yearly', '3yearly' ] as const;
 type UpgradeInterval = ( typeof UPGRADE_INTERVALS )[ number ];
+const DISPLAYED_INTERVALS: UpgradeInterval[] = [ ...UPGRADE_INTERVALS ];
+const BODY_CLASS = [ 'is-student-plan' ];
 
 interface StudentPlansPageProps {
 	currentPlan: SitePlan;
@@ -40,42 +42,45 @@ const StudentPlansPage = ( {
 		: 'yearly';
 
 	// The current plan's pricing comes from the site's plans (it is not a publicly-priced catalog plan).
-	const annualPlanPrice = currentPlan?.pricing?.originalPrice?.full ?? 0;
-	const annualPlanMonthlyPrice = currentPlan?.pricing?.originalPrice?.monthly ?? 0;
+	const annualPlanPrice = currentPlan?.pricing?.originalPrice?.full ?? null;
+	const annualPlanMonthlyPrice = currentPlan?.pricing?.originalPrice?.monthly ?? null;
 	const currencyCode = currentPlan?.pricing?.currencyCode ?? '';
 
-	const goToSubscriptionPage = () => {
-		if ( selectedSite?.slug && currentPlan?.purchaseId ) {
-			page( `/purchases/subscriptions/${ selectedSite.slug }/${ currentPlan.purchaseId }` );
-		}
-	};
+	// Owners with a linked purchase can manage billing; everyone else views the read-only plan page.
+	const canManagePlan = Boolean( isOwner && currentPlan.purchaseId );
+	const planActionHref = canManagePlan
+		? `/purchases/subscriptions/${ selectedSite.slug }/${ currentPlan.purchaseId }`
+		: `/plans/my-plan/${ selectedSite.slug }`;
 
 	const monthlyPriceWrapper = <span className="student-plans-page__price-card-value" />;
 	const priceDescription = <span className="student-plans-page__price-card-interval" />;
 
-	const priceContent = translate(
-		'{{monthlyPriceWrapper}}%(monthlyPrice)s{{/monthlyPriceWrapper}} {{priceDescription}}per month, %(annualPrice)s billed annually{{/priceDescription}}',
-		{
-			args: {
-				monthlyPrice: formatCurrency( annualPlanMonthlyPrice, currencyCode, {
-					stripZeros: true,
-					isSmallestUnit: true,
-				} ),
-				annualPrice: formatCurrency( annualPlanPrice, currencyCode, {
-					stripZeros: true,
-					isSmallestUnit: true,
-				} ),
-			},
-			components: {
-				monthlyPriceWrapper,
-				priceDescription,
-			},
-		}
-	);
+	const priceContent =
+		annualPlanPrice !== null && annualPlanMonthlyPrice !== null && currencyCode
+			? translate(
+					'{{monthlyPriceWrapper}}%(monthlyPrice)s{{/monthlyPriceWrapper}} {{priceDescription}}per month, %(annualPrice)s billed annually{{/priceDescription}}',
+					{
+						args: {
+							monthlyPrice: formatCurrency( annualPlanMonthlyPrice, currencyCode, {
+								stripZeros: true,
+								isSmallestUnit: true,
+							} ),
+							annualPrice: formatCurrency( annualPlanPrice, currencyCode, {
+								stripZeros: true,
+								isSmallestUnit: true,
+							} ),
+						},
+						components: {
+							monthlyPriceWrapper,
+							priceDescription,
+						},
+					}
+			  )
+			: null;
 
 	return (
 		<>
-			<BodySectionCssClass bodyClass={ [ 'is-student-plan' ] } />
+			<BodySectionCssClass bodyClass={ BODY_CLASS } />
 			<Card className="student-plans-page__price-card">
 				<div className="student-plans-page__price-card-text">
 					<span className="student-plans-page__price-card-label">{ translate( 'My Plan' ) }</span>
@@ -86,11 +91,12 @@ const StudentPlansPage = ( {
 				</div>
 				<div className="student-plans-page__price-card-conditions">{ priceContent }</div>
 				<div className="student-plans-page__price-card-cta-wrapper">
-					{ currentPlan && selectedSite && (
-						<Button className="student-plans-page__price-card-cta" onClick={ goToSubscriptionPage }>
-							{ isOwner ? translate( 'Manage my plan' ) : translate( 'View plan' ) }
-						</Button>
-					) }
+					<Button
+						className="student-plans-page__price-card-cta"
+						onClick={ () => page( planActionHref ) }
+					>
+						{ canManagePlan ? translate( 'Manage my plan' ) : translate( 'View plan' ) }
+					</Button>
 				</div>
 			</Card>
 			<div className="student-plans-page__grid is-2023-pricing-grid">
@@ -98,7 +104,7 @@ const StudentPlansPage = ( {
 					siteId={ selectedSite.ID }
 					intervalType={ selectedInterval }
 					intent="plans-student"
-					displayedIntervals={ [ ...UPGRADE_INTERVALS ] }
+					displayedIntervals={ DISPLAYED_INTERVALS }
 					showPlanTypeSelectorDropdown
 					hideUnavailableFeatures
 					hidePlansFeatureComparison
