@@ -4,6 +4,7 @@
 import { screen, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import LostPasswordForm from 'calypso/blocks/login/lost-password-form';
+import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 
 let mockBlackboxSessionId;
 jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
@@ -22,9 +23,11 @@ jest.mock( 'calypso/blocks/login/blackbox-challenge', () => ( {
 	},
 } ) );
 
+jest.mock( '@automattic/calypso-router', () => jest.fn() );
+
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
-	useDispatch: jest.fn().mockImplementation( () => {} ),
+	useDispatch: jest.fn().mockImplementation( () => jest.fn() ),
 } ) );
 
 const mockFetch = jest.fn();
@@ -41,6 +44,7 @@ describe( 'LostPasswordForm', () => {
 		mockFetch.mockClear();
 		mockBlackboxSessionId = undefined;
 		mockBlackboxBlocked = false;
+		getBlackboxSessionId.mockClear();
 	} );
 
 	test( 'displays a lost password form without errors', () => {
@@ -271,6 +275,25 @@ describe( 'LostPasswordForm', () => {
 		);
 
 		expect( screen.getByRole( 'button', { name: /Reset my password/i } ) ).toBeEnabled();
+	} );
+
+	test( 'does not collect a Blackbox session ID on the Woo/JPC passwordless branch', async () => {
+		// First fetch: auth-options lookup reporting a passwordless account.
+		mockFetch.mockResolvedValueOnce( {
+			status: 200,
+			json: jest.fn().mockResolvedValue( { passwordless: true } ),
+		} );
+
+		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" isWooJPC /> );
+
+		await userEvent.type(
+			screen.getByRole( 'textbox', { name: 'Email address or username' } ),
+			'user@example.com'
+		);
+		await userEvent.click( screen.getByRole( 'button', { name: /Reset my password/i } ) );
+
+		await waitFor( () => expect( mockFetch ).toHaveBeenCalled() );
+		expect( getBlackboxSessionId ).not.toHaveBeenCalled();
 	} );
 
 	test( 'handles error messages coming from /wp-login.php?action=lostpassword', async () => {
