@@ -208,7 +208,7 @@ body.is-section-reader {
 	.sidebar__menu .a8c-count {
 		position: relative;
 		flex-shrink: 0;
-		top: 0;
+		top: 1px;
 		font-size: 0.67rem; /* stylelint-disable-line scales/font-sizes */
 		font-weight: normal;
 		box-sizing: border-box;
@@ -222,6 +222,7 @@ body.is-section-reader {
 		color: currentColor;
 		justify-self: end;
 		align-self: self-start;
+		width: fit-content;
 	}
 
 	.sidebar__menu-link {
