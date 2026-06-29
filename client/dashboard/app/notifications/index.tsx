@@ -75,7 +75,7 @@ export default function Notifications( {
 		import( '@automattic/notifications/src/app/unseen-notifications' ).then(
 			( { subscribeUnseenNotifications } ) => {
 				if ( ! cancelled ) {
-					unsubscribe = subscribeUnseenNotifications( wpcom, setHasUnseenNotifications );
+					unsubscribe = subscribeUnseenNotifications( setHasUnseenNotifications );
 				}
 			}
 		);

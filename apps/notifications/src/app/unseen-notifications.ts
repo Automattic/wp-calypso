@@ -1,8 +1,4 @@
-interface WpcomClient {
-	req: {
-		get: ( path: string, query?: Record< string, unknown > ) => Promise< unknown >;
-	};
-}
+import { fetchUser } from '@automattic/api-core';
 
 interface Options {
 	/** Poll cadence in milliseconds. */
@@ -18,17 +14,16 @@ const DEFAULT_INTERVAL_MS = 60 * 1000;
  *
  * The notifications app only polls while it is mounted (i.e. while the panel is
  * open), so consumers that unmount it on close freeze the bell badge. This polls
- * the user's `has_unseen_notes` flag on an interval and reports changes through
- * `onChange`, independently of the panel. It is a plain function (not a hook) so
- * it works from class components and can be dynamically imported by hosts that
- * disallow static imports from this app.
+ * the user's `has_unseen_notes` flag (via api-core's `/me` fetcher) on an
+ * interval and reports changes through `onChange`, independently of the panel.
+ * It is a plain function (not a hook) so it works from class components and can
+ * be dynamically imported by hosts that disallow static imports from this app.
  *
  * Polling pauses while the tab is hidden and runs immediately when it becomes
  * visible again, so a badge that went stale in the background refreshes promptly.
  * @returns An unsubscribe function that stops polling.
  */
 export function subscribeUnseenNotifications(
-	wpcom: WpcomClient,
 	onChange: ( hasUnseen: boolean ) => void,
 	{ intervalMs = DEFAULT_INTERVAL_MS }: Options = {}
 ): () => void {
@@ -38,11 +33,9 @@ export function subscribeUnseenNotifications(
 	const poll = async () => {
 		if ( document.visibilityState === 'visible' ) {
 			try {
-				const me = ( await wpcom.req.get( '/me', { meta: 'flags' } ) ) as {
-					has_unseen_notes?: boolean;
-				};
-				if ( active && typeof me.has_unseen_notes === 'boolean' ) {
-					onChange( me.has_unseen_notes );
+				const { has_unseen_notes } = await fetchUser();
+				if ( active && typeof has_unseen_notes === 'boolean' ) {
+					onChange( has_unseen_notes );
 				}
 			} catch {
 				// Ignore — the next tick retries.

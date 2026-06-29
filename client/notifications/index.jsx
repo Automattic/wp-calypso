@@ -125,9 +125,7 @@ const RedesignedNotifications = ( {
 		if ( isDedicatedReaderPage || isShowing ) {
 			return;
 		}
-		return subscribeUnseenNotifications( wpcom, ( hasUnseen ) =>
-			updateUnseenCount( hasUnseen ? 1 : 0 )
-		);
+		return subscribeUnseenNotifications( ( hasUnseen ) => updateUnseenCount( hasUnseen ? 1 : 0 ) );
 	}, [ isDedicatedReaderPage, isShowing, updateUnseenCount ] );
 
 	// Resolve the bell at measurement time: the masterbar remounts it when
