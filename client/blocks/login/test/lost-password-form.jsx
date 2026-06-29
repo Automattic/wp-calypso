@@ -10,6 +10,18 @@ jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
 	getBlackboxSessionId: jest.fn( () => Promise.resolve( mockBlackboxSessionId ) ),
 } ) );
 
+let mockBlackboxBlocked = false;
+jest.mock( 'calypso/blocks/login/blackbox-challenge', () => ( {
+	__esModule: true,
+	default: function MockBlackboxChallenge( { onSubmitBlockedChange } ) {
+		const { useEffect } = jest.requireActual( 'react' );
+		useEffect( () => {
+			onSubmitBlockedChange( mockBlackboxBlocked );
+		}, [ onSubmitBlockedChange ] );
+		return null;
+	},
+} ) );
+
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useDispatch: jest.fn().mockImplementation( () => {} ),
@@ -28,6 +40,7 @@ describe( 'LostPasswordForm', () => {
 	afterEach( () => {
 		mockFetch.mockClear();
 		mockBlackboxSessionId = undefined;
+		mockBlackboxBlocked = false;
 	} );
 
 	test( 'displays a lost password form without errors', () => {
@@ -234,6 +247,30 @@ describe( 'LostPasswordForm', () => {
 		await waitFor( () => expect( reset ).toHaveBeenCalled() );
 
 		delete window.Blackbox;
+	} );
+
+	test( 'disables the submit button while Blackbox blocks submit', async () => {
+		mockBlackboxBlocked = true;
+		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
+
+		await userEvent.type(
+			screen.getByRole( 'textbox', { name: 'Email address or username' } ),
+			'user@example.com'
+		);
+
+		expect( screen.getByRole( 'button', { name: /Reset my password/i } ) ).toBeDisabled();
+	} );
+
+	test( 'enables the submit button once Blackbox no longer blocks submit', async () => {
+		mockBlackboxBlocked = false;
+		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
+
+		await userEvent.type(
+			screen.getByRole( 'textbox', { name: 'Email address or username' } ),
+			'user@example.com'
+		);
+
+		expect( screen.getByRole( 'button', { name: /Reset my password/i } ) ).toBeEnabled();
 	} );
 
 	test( 'handles error messages coming from /wp-login.php?action=lostpassword', async () => {

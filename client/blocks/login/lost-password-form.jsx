@@ -1,9 +1,11 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { FormInputValidation, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, Spinner, ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useEffect } from 'react';
+import BlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { login } from 'calypso/lib/paths';
@@ -23,6 +25,9 @@ const LostPasswordForm = ( {
 	const [ userLogin, setUserLogin ] = useState( '' );
 	const [ error, setError ] = useState( null );
 	const [ isBusy, setBusy ] = useState( false );
+	const [ isBlackboxSubmitBlocked, setIsBlackboxSubmitBlocked ] = useState(
+		config.isEnabled( 'blackbox-login' ) && !! config( 'blackbox_api_key' )
+	);
 	const dispatch = useDispatch();
 
 	const inputRef = useRef( null );
@@ -209,11 +214,12 @@ const LostPasswordForm = ( {
 				/>
 				{ showError && <FormInputValidation isError text={ error } /> }
 			</div>
+			<BlackboxChallenge onSubmitBlockedChange={ setIsBlackboxSubmitBlocked } />
 			<div className="login__form-action">
 				<Button
 					variant="primary"
 					type="submit"
-					disabled={ userLogin.length === 0 || showError || isBusy }
+					disabled={ userLogin.length === 0 || showError || isBusy || isBlackboxSubmitBlocked }
 					isBusy={ isBusy }
 					__next40pxDefaultSize
 				>
