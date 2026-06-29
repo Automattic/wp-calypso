@@ -5,7 +5,7 @@ import React, { Component, Fragment, forwardRef } from 'react';
 import { navigate } from 'calypso/lib/navigate';
 import type {
 	ComponentPropsWithoutRef,
-	ElementRef,
+	ComponentRef,
 	ElementType,
 	ForwardedRef,
 	LegacyRef,
@@ -308,7 +308,7 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 
 interface MasterbarItemComponent {
 	< C extends ElementType >(
-		props: MasterbarItemProps< C > & { ref?: ForwardedRef< ElementRef< C > > }
+		props: MasterbarItemProps< C > & { ref?: ForwardedRef< ComponentRef< C > > }
 	): ReactElement | null;
 	(
 		props: MasterbarItemProps< undefined > & {
