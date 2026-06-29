@@ -1,12 +1,11 @@
 import { getPlan, PLAN_STUDENT } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Card } from '@automattic/components';
-import { Plans, type SiteDetails, type SitePlan } from '@automattic/data-stores';
+import { type SiteDetails, type SitePlan } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
-import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 
 import './style.scss';
 
@@ -19,23 +18,10 @@ const StudentPlansPage = ( { currentPlan, selectedSite }: StudentPlansPageProps 
 	const translate = useTranslate();
 	const studentPlan = getPlan( PLAN_STUDENT );
 
-	const pricingMeta = Plans.usePricingMetaForGridPlans( {
-		planSlugs: [ PLAN_STUDENT ],
-		siteId: null,
-		coupon: undefined,
-		useCheckPlanAvailabilityForPurchase,
-	} );
-
-	// Using `discountedPrice` below will give us the price with any currency/conversion discounts applied.
-	const annualPlanPrice =
-		pricingMeta?.[ PLAN_STUDENT ]?.discountedPrice?.full ??
-		pricingMeta?.[ PLAN_STUDENT ]?.originalPrice?.full ??
-		0;
-	const annualPlanMonthlyPrice =
-		pricingMeta?.[ PLAN_STUDENT ]?.discountedPrice?.monthly ??
-		pricingMeta?.[ PLAN_STUDENT ]?.originalPrice?.monthly ??
-		0;
-	const currencyCode = pricingMeta?.[ PLAN_STUDENT ]?.currencyCode ?? '';
+	// The current plan's pricing comes from the site's plans (it is not a publicly-priced catalog plan).
+	const annualPlanPrice = currentPlan?.pricing?.originalPrice?.full ?? 0;
+	const annualPlanMonthlyPrice = currentPlan?.pricing?.originalPrice?.monthly ?? 0;
+	const currencyCode = currentPlan?.pricing?.currencyCode ?? '';
 
 	const goToSubscriptionPage = () => {
 		if ( selectedSite?.slug && currentPlan?.purchaseId ) {
