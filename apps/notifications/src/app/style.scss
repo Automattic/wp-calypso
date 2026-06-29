@@ -82,6 +82,32 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	height: 100%;
 }
 
+// Error fallback: a slightly opaque scrim filling the nearest pane (or the
+// whole app when nothing narrower caught the error), so the panel keeps its
+// size and chrome and the user stays in context instead of it collapsing to a
+// bare message.
+.wpnc-app__error {
+	position: absolute;
+	inset: 0;
+	// Above both panes (list/detail use z-index 1–2).
+	z-index: 3;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 24px;
+	box-sizing: border-box;
+	background: color-mix(in srgb, var(--color-surface, #fff) 85%, transparent);
+}
+
+.wpnc-app__error-message {
+	max-width: 240px;
+	margin: 0;
+	text-align: center;
+	font-size: 13px;
+	line-height: 1.5;
+	color: var(--color-text, #1e1e1e);
+}
+
 // Both panes use absolute positioning so they can overlap during the slide.
 .wpnc-app__list-pane,
 .wpnc-app__detail-pane {

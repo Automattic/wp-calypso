@@ -23,9 +23,14 @@ export default class ErrorBoundary extends Component< Props, State > {
 
 	render() {
 		if ( this.state.hasError ) {
+			// A slightly opaque overlay over the panel (rather than replacing it)
+			// so the surrounding chrome stays put and the user keeps their context
+			// instead of the panel collapsing to a bare message.
 			return (
-				<div className="wpnc-app__error">
-					{ __( 'Something went wrong. Please close and reopen notifications.' ) }
+				<div className="wpnc-app__error" role="alert">
+					<p className="wpnc-app__error-message">
+						{ __( 'Something went wrong. Please close and reopen notifications.' ) }
+					</p>
 				</div>
 			);
 		}

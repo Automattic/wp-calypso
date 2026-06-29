@@ -98,12 +98,14 @@ const NotificationContent = ( { isDismissible }: { isDismissible: boolean } ) =>
 				// @ts-expect-error React 18 types don't include `inert`.
 				inert={ displayedNoteId === undefined ? '' : undefined }
 			>
-				<Note
-					isDismissible={ isDismissible }
-					noteId={ displayedNoteId }
-					setSelectedNoteId={ setSelectedNoteId }
-					noteNavigation={ noteNavigation }
-				/>
+				<ErrorBoundary>
+					<Note
+						isDismissible={ isDismissible }
+						noteId={ displayedNoteId }
+						setSelectedNoteId={ setSelectedNoteId }
+						noteNavigation={ noteNavigation }
+					/>
+				</ErrorBoundary>
 			</div>
 			<div className="wpnc-app__list-pane">
 				<NotePanel
