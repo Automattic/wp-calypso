@@ -334,14 +334,15 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							// user doesn't land in wp-admin while the site is still transferring. Simple
 							// plans (Personal/Premium) go straight to the Site Spec.
 							const planSlug = planCartItem?.product_slug ?? '';
-							const redirectAfterCheckout =
-								isBusinessPlan( planSlug ) || isEcommercePlan( planSlug )
-									? addQueryArgs( '/setup/transferring-hosted-site', {
-											siteId: String( siteId ),
-											siteSlug,
-											redirect_to: specDestination,
-									  } )
-									: specDestination;
+							const needsAtomicTransferWait =
+								isBusinessPlan( planSlug ) || isEcommercePlan( planSlug );
+							const redirectAfterCheckout = needsAtomicTransferWait
+								? addQueryArgs( '/setup/transferring-hosted-site', {
+										siteId: String( siteId ),
+										siteSlug,
+										redirect_to: specDestination,
+								  } )
+								: specDestination;
 
 							persistSignupDestination( redirectAfterCheckout );
 							setSignupCompleteSlug( siteSlug );
