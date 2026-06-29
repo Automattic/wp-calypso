@@ -515,6 +515,54 @@ describe( 'actions', () => {
 			} );
 		} );
 
+		test( 'should drop the term from post terms stored as an object map keyed by term ID', async () => {
+			const postObjects = {
+				[ siteId ]: {
+					'0fcb4eb16f493c19b627438fdc18d57c': {
+						ID: 120,
+						site_ID: siteId,
+						global_ID: 'f0cb4eb16f493c19b627438fdc18d57c',
+						title: 'Steak &amp; Eggs',
+						// Post terms can be stored as an object map, not only an array.
+						terms: {
+							[ taxonomyName ]: { 10: { ID: 10, name: 'ribs', slug: 'ribs' } },
+						},
+					},
+				},
+			};
+			const state = {
+				posts: {
+					queries: {
+						[ siteId ]: new PostQueryManager( { items: postObjects[ siteId ] } ),
+					},
+				},
+				terms: {
+					queries: {
+						[ siteId ]: {
+							[ taxonomyName ]: new TermQueryManager( {
+								items: { 10: { ID: 10, name: 'ribs', slug: 'ribs', parent: 0 } },
+								queries: {},
+							} ),
+						},
+					},
+				},
+			};
+
+			const spy = jest.fn();
+			await deleteTerm( siteId, taxonomyName, 10, 'ribs' )( spy, () => state );
+
+			expect( spy ).toHaveBeenCalledWith( {
+				type: POST_EDIT,
+				siteId: siteId,
+				postId: 120,
+				post: {
+					terms: {
+						[ taxonomyName ]: [],
+					},
+				},
+			} );
+		} );
+
 		test( 'should dispatch a TERMS_RECEIVE for default category on Success', async () => {
 			const state = {
 				posts: {
