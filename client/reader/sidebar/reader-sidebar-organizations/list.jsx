@@ -1,17 +1,12 @@
 import page from '@automattic/calypso-router';
-import { Count } from '@automattic/components';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
-import SidebarItem from 'calypso/layout/sidebar/item';
 import { useOrganizationSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
-import ReaderSidebarHelper from 'calypso/reader/sidebar/helper';
 import { toggleReaderSidebarOrganization } from 'calypso/state/reader-ui/sidebar/actions';
 import { isOrganizationOpen } from 'calypso/state/reader-ui/sidebar/selectors';
-import { AllIcon } from '../icons/all';
 import ReaderSidebarOrganizationsListItem from './list-item';
 export class ReaderSidebarOrganizationsList extends Component {
 	static propTypes = {
@@ -26,34 +21,12 @@ export class ReaderSidebarOrganizationsList extends Component {
 	};
 
 	selectMenu = () => {
-		const { organization, isOrganizationOpen: isOpen, path } = this.props;
-		if ( ! isOpen ) {
-			this.toggleMenu();
-		}
+		const { organization, path } = this.props;
 		const defaultSelection = organization.slug && `/reader/${ organization.slug }`;
 		if ( defaultSelection && path !== defaultSelection ) {
 			page( defaultSelection );
 		}
 	};
-
-	renderAll( unseenCount ) {
-		const { translate, organization, path } = this.props;
-		return (
-			<>
-				<SidebarItem
-					link={ '/reader/' + organization.slug }
-					key={ translate( 'All' ) }
-					label={ translate( 'All' ) }
-					className={ ReaderSidebarHelper.itemLinkClass( '/reader/' + organization.slug, path, {
-						'sidebar-streams__all': true,
-					} ) }
-					icon={ <AllIcon /> }
-				>
-					{ unseenCount > 0 && <Count count={ unseenCount } compact /> }
-				</SidebarItem>
-			</>
-		);
-	}
 
 	renderSites() {
 		const { sites, path } = this.props;
@@ -87,7 +60,6 @@ export class ReaderSidebarOrganizationsList extends Component {
 						( ! this.props.isOrganizationOpen && isChildSelected ),
 				} ) }
 			>
-				{ this.renderAll( unseenCount ) }
 				{ this.renderSites() }
 			</ExpandableSidebarMenu>
 		);
@@ -108,4 +80,4 @@ export default connect(
 	{
 		toggleReaderSidebarOrganization,
 	}
-)( localize( OrganizationsListWithFollows ) );
+)( OrganizationsListWithFollows );
