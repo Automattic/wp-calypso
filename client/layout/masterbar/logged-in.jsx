@@ -286,38 +286,42 @@ class MasterbarLoggedIn extends Component {
 			return <Item icon={ icon } className="masterbar__item-no-sites" disabled />;
 		}
 
-		const subItems = [
-			[
-				{
-					label: translate( 'Sites' ),
-					url: dashboardOptIn ? dashboardLink( '/sites' ) : '/sites',
-					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_sites_clicked' ),
-				},
-				{
-					label: translate( 'Domains' ),
-					url: dashboardOptIn ? dashboardLink( '/domains' ) : '/domains/manage',
-					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_domains_clicked' ),
-				},
-			],
-			...( this.props.isSimpleSite
-				? []
+		// The sites dashboard is the My Sites view itself, so the dropdown is redundant there.
+		const subItems =
+			section === 'sites-dashboard'
+				? null
 				: [
 						[
 							{
-								label: translate( 'About WordPress' ),
-								url: `${ siteAdminUrl }about.php`,
-								onClick: () =>
-									this.props.recordTracksEvent( 'calypso_masterbar_about_wordpress_clicked' ),
+								label: translate( 'Sites' ),
+								url: dashboardOptIn ? dashboardLink( '/sites' ) : '/sites',
+								onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_sites_clicked' ),
 							},
 							{
-								label: translate( 'Get Involved' ),
-								url: `${ siteAdminUrl }contribute.php`,
-								onClick: () =>
-									this.props.recordTracksEvent( 'calypso_masterbar_get_involved_clicked' ),
+								label: translate( 'Domains' ),
+								url: dashboardOptIn ? dashboardLink( '/domains' ) : '/domains/manage',
+								onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_domains_clicked' ),
 							},
 						],
-				  ] ),
-		];
+						...( this.props.isSimpleSite
+							? []
+							: [
+									[
+										{
+											label: translate( 'About WordPress' ),
+											url: `${ siteAdminUrl }about.php`,
+											onClick: () =>
+												this.props.recordTracksEvent( 'calypso_masterbar_about_wordpress_clicked' ),
+										},
+										{
+											label: translate( 'Get Involved' ),
+											url: `${ siteAdminUrl }contribute.php`,
+											onClick: () =>
+												this.props.recordTracksEvent( 'calypso_masterbar_get_involved_clicked' ),
+										},
+									],
+							  ] ),
+				  ];
 
 		return (
 			<Item
