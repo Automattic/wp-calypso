@@ -81,7 +81,9 @@ describe( 'reducer', () => {
 			} );
 
 			expect( result[ '1-1' ] ).toHaveLength( commentsNestedTree.length - 1 );
-			Object.values( result ).forEach( ( c ) => expect( c.ID ).not.toEqual( removedCommentId ) );
+			Object.values( result )
+				.flat()
+				.forEach( ( c ) => expect( c.ID ).not.toEqual( removedCommentId ) );
 		} );
 
 		test( 'should increase like counts and set i_like', () => {

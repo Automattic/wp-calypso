@@ -35,7 +35,7 @@
 const { existsSync, mkdirSync, writeFileSync } = require( 'fs' );
 const { relative, sep } = require( 'path' );
 const { po } = require( 'gettext-parser' );
-const { merge, isEmpty, forEach } = require( 'lodash' );
+const { merge, isEmpty } = require( 'lodash' );
 
 /**
  * Default output headers if none specified in plugin options.
@@ -87,7 +87,7 @@ function getExtractedComment( path, _originalNodeLine ) {
 	}
 
 	let comment;
-	forEach( node.leadingComments, ( commentNode ) => {
+	( node.leadingComments ?? [] ).forEach( ( commentNode ) => {
 		if ( ! commentNode.loc ) {
 			return;
 		}
