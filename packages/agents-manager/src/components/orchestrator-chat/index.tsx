@@ -198,6 +198,7 @@ export default function OrchestratorChat( {
 	const [ retainedShowComponentMessages, setRetainedShowComponentMessages ] = useState<
 		Map< string, UIMessage >
 	>( new Map() );
+	const [ isRegenerating, setIsRegenerating ] = useState( false );
 	const [ hasUserSentMessage, setHasUserSentMessage ] = useState( false );
 	const currentPostId = useSelect( ( select ) => {
 		return ( select( 'core/editor' ) as { getCurrentPostId?: () => number } )?.getCurrentPostId?.();
@@ -222,7 +223,44 @@ export default function OrchestratorChat( {
 	const previousMessagesRef = useRef( messages );
 	const showComponentOrderRef = useRef< Map< string, number > >( new Map() );
 	const nextShowComponentOrderRef = useRef( 0 );
+	const wasProcessingRef = useRef( isProcessing );
 	messagesRef.current = messages;
+
+	// A regeneration is finished once its streaming turn settles — either the new
+	// response arrives or an error restores the previous one. Re-enable component
+	// retention then so transient drops on later turns are covered again.
+	useEffect( () => {
+		const wasProcessing = wasProcessingRef.current;
+		wasProcessingRef.current = isProcessing;
+		if ( isRegenerating && wasProcessing && ! isProcessing ) {
+			setIsRegenerating( false );
+		}
+	}, [ isProcessing, isRegenerating ] );
+
+	// Wrap Agenttic's regenerate handler so a click marks a regeneration in
+	// progress. While it runs, the component being regenerated is deliberately
+	// dropped from the live messages (Agenttic sends `preserveUiOnlyMessages:
+	// false`), so retention must not resurrect the old picker as a stale copy.
+	const handleRegenerate = useCallback(
+		( message?: UIMessage ) => {
+			const handler = getRegenerateHandler?.( message );
+			if ( ! handler ) {
+				return handler;
+			}
+
+			return async () => {
+				setIsRegenerating( true );
+				// Drop any retained placeholders up front; the turn is being
+				// rewound, so a leftover picker would otherwise reappear once
+				// regeneration settles if the new response omits the component.
+				setRetainedShowComponentMessages( ( previousRetainedMessages ) =>
+					previousRetainedMessages.size > 0 ? new Map() : previousRetainedMessages
+				);
+				await handler();
+			};
+		},
+		[ getRegenerateHandler ]
+	);
 
 	const getShowComponentOrder = useCallback( ( message: UIMessage ): number | undefined => {
 		const identity = getShowComponentIdentity( message );
@@ -241,6 +279,14 @@ export default function OrchestratorChat( {
 	}, [] );
 
 	useEffect( () => {
+		// While regenerating, the dropped component is being replaced, not lost —
+		// don't retain it. Keep the ref current so the next non-regenerating run
+		// compares against the post-regeneration messages.
+		if ( isRegenerating ) {
+			previousMessagesRef.current = messages;
+			return;
+		}
+
 		const previousMessages = previousMessagesRef.current;
 		messages.filter( isShowComponentMessage ).forEach( getShowComponentOrder );
 
@@ -259,8 +305,8 @@ export default function OrchestratorChat( {
 
 				for ( const message of retainedCandidates ) {
 					const identity = getShowComponentIdentity( message );
-					// One placeholder per identity, so regenerating a component
-					// refreshes it in place instead of stacking another copy.
+					// One placeholder per identity, so a component that drops and
+					// returns refreshes in place instead of stacking another copy.
 					const retainedId = `retained-${ identity }`;
 					if ( ! nextRetainedMessages.has( retainedId ) ) {
 						nextRetainedMessages.set( retainedId, { ...message, id: retainedId } );
@@ -273,7 +319,7 @@ export default function OrchestratorChat( {
 		}
 
 		previousMessagesRef.current = messages;
-	}, [ getShowComponentOrder, messages ] );
+	}, [ getShowComponentOrder, messages, isRegenerating ] );
 
 	// Reader-chat sessions are short (usually < 50 messages) — don't waste
 	// time paginating 10 pages deep. One page covers typical use.
@@ -359,7 +405,7 @@ export default function OrchestratorChat( {
 	// appears in the same paint rather than a commit later.
 	const getRegenerateActionsForMessage = useRegenerateAction( {
 		enabled: capabilities?.supportsRegenerateAction === true,
-		getRegenerateHandler,
+		getRegenerateHandler: handleRegenerate,
 	} );
 
 	// Add a "Copy" action on plain-text agent messages.

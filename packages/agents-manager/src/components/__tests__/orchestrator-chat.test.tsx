@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { Suggestion } from '@automattic/agenttic-ui';
 
 const mockUseAgentChat = jest.fn();
@@ -631,6 +631,202 @@ describe( 'OrchestratorChat', () => {
 		rerender( chat() );
 
 		// Regenerate again: the picker disappears once more while streaming.
+		mockUseAgentChat.mockReturnValue( agentChatReturn( [ userMessage ], true ) );
+		rerender( chat() );
+
+		const lastMessages = mockAgentChat.mock.calls.at( -1 )![ 0 ].messages as Array< {
+			content?: Array< { text?: string } >;
+		} >;
+		expect( countShowComponentMessages( lastMessages ) ).toBe( 1 );
+	} );
+
+	it( 'hides the previous component while a regeneration is processing', async () => {
+		const showComponentContent = JSON.stringify( {
+			tool_id: 'big_sky__show_component',
+			tool_call_id: 'title-picker-call',
+			data: { type: 'titlePicker', summary: 'Optimize title' },
+		} );
+		const userMessage = {
+			id: 'user-1',
+			role: 'user',
+			content: [ { type: 'text', text: 'Optimize the title' } ],
+			timestamp: 0,
+			archived: false,
+			showIcon: true,
+		};
+		const showComponentMessage = ( id: string ) => ( {
+			id,
+			role: 'agent',
+			content: [ { type: 'text', text: showComponentContent } ],
+			timestamp: 1,
+			archived: false,
+			showIcon: true,
+		} );
+		const agentChatReturn = ( messages: unknown[], isProcessing: boolean ) => ( {
+			addMessage: jest.fn(),
+			messages,
+			suggestions: [],
+			isProcessing,
+			error: null,
+			loadMessages: jest.fn(),
+			onSubmit: jest.fn(),
+			abortCurrentRequest: jest.fn(),
+			clearSuggestions: jest.fn(),
+			registerSuggestions: jest.fn(),
+			registerMessageActions: jest.fn(),
+			// Mirror production: agenttic hands back a real regenerate handler for
+			// the completed latest turn.
+			getRegenerateHandler: jest.fn( () => jest.fn() ),
+			progressMessage: null,
+		} );
+		const countShowComponentMessages = (
+			messages: Array< { content?: Array< { text?: string } > } >
+		) =>
+			messages.filter( ( message ) => {
+				const text = message?.content?.[ 0 ]?.text;
+				if ( typeof text !== 'string' ) {
+					return false;
+				}
+				try {
+					return JSON.parse( text )?.tool_id === 'big_sky__show_component';
+				} catch ( _error ) {
+					return false;
+				}
+			} ).length;
+		const chat = () => (
+			<OrchestratorChat
+				emptyViewSuggestions={ [] }
+				isDocked={ false }
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				capabilities={ { supportsRegenerateAction: true } }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		// Steady state: the picker is showing for the completed turn.
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( [ userMessage, showComponentMessage( 'agent-1' ) ], false )
+		);
+		const { rerender } = render( chat() );
+
+		// Click regenerate: invoke the wrapped handler the component hands to the
+		// regenerate-action hook.
+		const config = mockUseRegenerateAction.mock.calls.at( -1 )![ 0 ] as {
+			getRegenerateHandler?: ( message: unknown ) => ( () => Promise< void > ) | null | undefined;
+		};
+		const wrappedHandler = config.getRegenerateHandler?.( showComponentMessage( 'agent-1' ) );
+		await act( async () => {
+			await wrappedHandler?.();
+		} );
+
+		// agenttic rewinds the turn and streams the new response; the old picker is
+		// gone from the live messages while it processes.
+		mockUseAgentChat.mockReturnValue( agentChatReturn( [ userMessage ], true ) );
+		rerender( chat() );
+
+		const lastMessages = mockAgentChat.mock.calls.at( -1 )![ 0 ].messages as Array< {
+			content?: Array< { text?: string } >;
+		} >;
+		expect( countShowComponentMessages( lastMessages ) ).toBe( 0 );
+	} );
+
+	it( 'restores component retention after a regeneration finishes', async () => {
+		const showComponentContent = JSON.stringify( {
+			tool_id: 'big_sky__show_component',
+			tool_call_id: 'title-picker-call',
+			data: { type: 'titlePicker', summary: 'Optimize title' },
+		} );
+		const userMessage = {
+			id: 'user-1',
+			role: 'user',
+			content: [ { type: 'text', text: 'Optimize the title' } ],
+			timestamp: 0,
+			archived: false,
+			showIcon: true,
+		};
+		const showComponentMessage = ( id: string ) => ( {
+			id,
+			role: 'agent',
+			content: [ { type: 'text', text: showComponentContent } ],
+			timestamp: 1,
+			archived: false,
+			showIcon: true,
+		} );
+		const agentChatReturn = ( messages: unknown[], isProcessing: boolean ) => ( {
+			addMessage: jest.fn(),
+			messages,
+			suggestions: [],
+			isProcessing,
+			error: null,
+			loadMessages: jest.fn(),
+			onSubmit: jest.fn(),
+			abortCurrentRequest: jest.fn(),
+			clearSuggestions: jest.fn(),
+			registerSuggestions: jest.fn(),
+			registerMessageActions: jest.fn(),
+			getRegenerateHandler: jest.fn( () => jest.fn() ),
+			progressMessage: null,
+		} );
+		const countShowComponentMessages = (
+			messages: Array< { content?: Array< { text?: string } > } >
+		) =>
+			messages.filter( ( message ) => {
+				const text = message?.content?.[ 0 ]?.text;
+				if ( typeof text !== 'string' ) {
+					return false;
+				}
+				try {
+					return JSON.parse( text )?.tool_id === 'big_sky__show_component';
+				} catch ( _error ) {
+					return false;
+				}
+			} ).length;
+		const chat = () => (
+			<OrchestratorChat
+				emptyViewSuggestions={ [] }
+				isDocked={ false }
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				capabilities={ { supportsRegenerateAction: true } }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		// Steady state, then a full regeneration cycle.
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( [ userMessage, showComponentMessage( 'agent-1' ) ], false )
+		);
+		const { rerender } = render( chat() );
+
+		const config = mockUseRegenerateAction.mock.calls.at( -1 )![ 0 ] as {
+			getRegenerateHandler?: ( message: unknown ) => ( () => Promise< void > ) | null | undefined;
+		};
+		const wrappedHandler = config.getRegenerateHandler?.( showComponentMessage( 'agent-1' ) );
+		await act( async () => {
+			await wrappedHandler?.();
+		} );
+
+		// Regeneration streams, then settles with the fresh component.
+		mockUseAgentChat.mockReturnValue( agentChatReturn( [ userMessage ], true ) );
+		rerender( chat() );
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( [ userMessage, showComponentMessage( 'agent-2' ) ], false )
+		);
+		rerender( chat() );
+
+		// A later turn (not a regeneration) transiently drops the component —
+		// retention should cover it again now the flag has cleared.
 		mockUseAgentChat.mockReturnValue( agentChatReturn( [ userMessage ], true ) );
 		rerender( chat() );
 
