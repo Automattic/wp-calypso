@@ -63,6 +63,28 @@ export default function Notifications( {
 		omnibarEvents.notificationsOpen.emit( isOpen );
 	}, [ isOpen ] );
 
+	// Keep the bell live while the panel is closed; the open panel drives the
+	// value via APP_RENDER_NOTES below. Imported dynamically because the dashboard
+	// disallows static imports from the notifications app.
+	useEffect( () => {
+		if ( isOpen ) {
+			return;
+		}
+		let unsubscribe: ( () => void ) | undefined;
+		let cancelled = false;
+		import( '@automattic/notifications/src/app/unseen-notifications' ).then(
+			( { subscribeUnseenNotifications } ) => {
+				if ( ! cancelled ) {
+					unsubscribe = subscribeUnseenNotifications( wpcom, setHasUnseenNotifications );
+				}
+			}
+		);
+		return () => {
+			cancelled = true;
+			unsubscribe?.();
+		};
+	}, [ isOpen ] );
+
 	const handleClose = () => {
 		handleToggle( false );
 	};

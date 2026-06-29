@@ -12,12 +12,13 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { subscribeUnseenNotifications } from '@automattic/notifications/src/app/unseen-notifications';
 import { Dropdown } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { Component, Suspense, lazy, useMemo } from 'react';
+import { Component, Suspense, lazy, useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
 import localStorageHelper from 'store';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -111,8 +112,23 @@ const RedesignedNotifications = ( {
 	locale,
 	actionHandlers,
 	closePanel,
+	updateUnseenCount,
 } ) => {
 	const isMobile = useViewportMatch( 'small', '<' );
+
+	// The app only polls while the panel is open, so the masterbar bell would
+	// freeze while closed. Subscribe to the unseen flag in the background to keep
+	// it live; while open, the app's APP_RENDER_NOTES drives the exact count. The
+	// dedicated reader page mounts the app inline (always polling), so it opts
+	// out. Boolean-only, so a closed badge reflects presence, not an exact number.
+	useEffect( () => {
+		if ( isDedicatedReaderPage || isShowing ) {
+			return;
+		}
+		return subscribeUnseenNotifications( wpcom, ( hasUnseen ) =>
+			updateUnseenCount( hasUnseen ? 1 : 0 )
+		);
+	}, [ isDedicatedReaderPage, isShowing, updateUnseenCount ] );
 
 	// Resolve the bell at measurement time: the masterbar remounts it when
 	// the unseen count changes, so a captured node can go stale.
@@ -458,6 +474,7 @@ export class Notifications extends Component {
 					locale={ localeSlug }
 					actionHandlers={ this.actionHandlers }
 					closePanel={ this.closePanel }
+					setUnseenCount={ this.props.setUnseenCount }
 				/>
 			);
 
