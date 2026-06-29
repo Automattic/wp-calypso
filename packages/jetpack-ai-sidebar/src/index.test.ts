@@ -10,8 +10,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
+import ImageAltTextPicker from './components/image-alt-text-picker';
 import PostFeedback from './components/post-feedback';
 import ReviewMediation from './components/review-mediation';
+import SeoDescriptionPicker from './components/seo-description-picker';
+import SeoTitlePicker from './components/seo-title-picker';
 import TitlePicker from './components/title-picker';
 import { clearActiveBlockFocus, undoBlockEdit } from './utils/block-actions';
 import {
@@ -266,6 +269,18 @@ describe( 'getChatComponent', () => {
 
 	it( 'returns PostFeedback for type "post-feedback"', () => {
 		expect( getChatComponent( 'post-feedback' ) ).toBe( PostFeedback );
+	} );
+
+	it( 'returns SeoTitlePicker for type "seo-title-picker"', () => {
+		expect( getChatComponent( 'seo-title-picker' ) ).toBe( SeoTitlePicker );
+	} );
+
+	it( 'returns SeoDescriptionPicker for type "seo-description-picker"', () => {
+		expect( getChatComponent( 'seo-description-picker' ) ).toBe( SeoDescriptionPicker );
+	} );
+
+	it( 'returns ImageAltTextPicker for type "image-alt-text-picker"', () => {
+		expect( getChatComponent( 'image-alt-text-picker' ) ).toBe( ImageAltTextPicker );
 	} );
 
 	it( 'returns null for an unknown type', () => {
@@ -765,6 +780,38 @@ describe( 'getEmptyViewSuggestions', () => {
 		expect( labels ).not.toContain( 'Optimize Title' );
 		expect( labels ).toContain( 'AI Editorial Review' );
 		expect( labels ).not.toContain( 'Generate Feedback' );
+	} );
+
+	it( 'shows SEO suggestions when the seoSuggestions feature is enabled', () => {
+		installAiEditorialReviewData( { seoSuggestions: true } );
+		installPostTypeMock( 'post' );
+
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+
+		expect( labels ).toContain( 'SEO Title' );
+		expect( labels ).toContain( 'SEO Description' );
+	} );
+
+	it( 'gates SEO suggestions independently of Optimize Title', () => {
+		// Optimize Title on, SEO off: SEO must not appear.
+		installAiEditorialReviewData( { optimizeTitleSuggestion: true, seoSuggestions: false } );
+		installPostTypeMock( 'post' );
+
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+
+		expect( labels ).toContain( 'Optimize Title' );
+		expect( labels ).not.toContain( 'SEO Title' );
+		expect( labels ).not.toContain( 'SEO Description' );
+	} );
+
+	it( 'hides SEO suggestions when the seoSuggestions feature is disabled', () => {
+		installAiEditorialReviewData( { seoSuggestions: false } );
+		installPostTypeMock( 'post' );
+
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+
+		expect( labels ).not.toContain( 'SEO Title' );
+		expect( labels ).not.toContain( 'SEO Description' );
 	} );
 } );
 
@@ -1472,6 +1519,35 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_test_123' );
 			expect( parsed.data.isCurrent ).toBe( true );
 			expect( parsed.data.hideZoomAction ).toBe( true );
+		} );
+
+		it( 'returns an agentMessage envelope with an Undo checkpoint for a seo-title-picker call', async () => {
+			const titles = [ { title: 'SEO Title', explanation: 'a' } ];
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'seo-title-picker',
+				props: { titles },
+				toolCallId: 'call_seo_title',
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.type ).toBe( 'seo-title-picker' );
+			expect( parsed.data.props ).toEqual( { titles } );
+			// SEO meta pickers snapshot for Undo, like title-picker.
+			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_seo_title' );
+		} );
+
+		it( 'returns an agentMessage envelope with an Undo checkpoint for an image-alt-text-picker call', async () => {
+			const images = [ { clientId: 'img1', url: 'u', currentAlt: '', alt: 'A photo' } ];
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'image-alt-text-picker',
+				props: { images },
+				toolCallId: 'call_alt',
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.type ).toBe( 'image-alt-text-picker' );
+			expect( parsed.data.props ).toEqual( { images } );
+			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_alt' );
 		} );
 
 		it( 'accepts the legacy Big Sky show-component tool during migration', async () => {

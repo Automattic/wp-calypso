@@ -15,12 +15,16 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
+import ImageAltTextPicker from './components/image-alt-text-picker';
+import './components/image-alt-text-picker.scss';
 import PostFeedback from './components/post-feedback';
 import './components/post-feedback.scss';
 import ReviewMediation from './components/review-mediation';
 import './components/review-mediation.scss';
+import SeoDescriptionPicker from './components/seo-description-picker';
+import SeoTitlePicker from './components/seo-title-picker';
+import './components/suggestion-picker.scss';
 import TitlePicker from './components/title-picker';
-import './components/title-picker.scss';
 import './auto-scroll-fix.scss';
 import {
 	type CheckpointApi,
@@ -81,6 +85,25 @@ const OPTIMIZE_TITLE_SUGGESTION = {
 };
 
 /**
+ * Post-level SEO Enhancer suggestions. These target the SEO meta fields (the
+ * HTML <title> and meta description), distinct from OPTIMIZE_TITLE_SUGGESTION
+ * which rewrites the visible post title. The prompts route through the
+ * orchestrator to the jetpack-ai/seo-title and jetpack-ai/seo-description
+ * abilities, which return the seo-title-picker / seo-description-picker.
+ */
+const SEO_TITLE_SUGGESTION = {
+	id: 'seo-title',
+	label: __( 'SEO Title', 'jetpack' ),
+	prompt: __( 'Generate an SEO title (meta title) for this post', 'jetpack' ),
+};
+
+const SEO_DESCRIPTION_SUGGESTION = {
+	id: 'seo-description',
+	label: __( 'SEO Description', 'jetpack' ),
+	prompt: __( 'Generate an SEO meta description for this post', 'jetpack' ),
+};
+
+/**
  * Post-level suggestion to run AI Editorial Review on a draft.
  *
  * The id remains stable because saved chats/tests may still refer to the
@@ -116,7 +139,8 @@ type SidebarFeature =
 	| 'aiEditorialReview'
 	| 'generateFeedback'
 	| 'blockTransformations'
-	| 'optimizeTitleSuggestion';
+	| 'optimizeTitleSuggestion'
+	| 'seoSuggestions';
 
 function getAgentsManagerData() {
 	return typeof agentsManagerData !== 'undefined' ? agentsManagerData : undefined;
@@ -140,6 +164,15 @@ function isAiEditorialReviewEnabled(): boolean {
 
 function isOptimizeTitleSuggestionEnabled(): boolean {
 	return isSidebarFeatureEnabled( 'optimizeTitleSuggestion', false );
+}
+
+/**
+ * SEO Enhancer suggestions (SEO title / meta description) are gated by their own
+ * flag, independent of Optimize Title — they target the SEO meta fields, not the
+ * visible post title. The host (Jetpack) populates `features.seoSuggestions`.
+ */
+function isSeoSuggestionsEnabled(): boolean {
+	return isSidebarFeatureEnabled( 'seoSuggestions', false );
 }
 
 function isBlockTransformationsEnabled(): boolean {
@@ -193,6 +226,7 @@ function getAiEditorialReviewSuggestions( currentPostType?: string ) {
 function getPostLevelSuggestions( currentPostType?: string, currentPostId?: number | null ) {
 	return [
 		...( isOptimizeTitleSuggestionEnabled() ? [ OPTIMIZE_TITLE_SUGGESTION ] : [] ),
+		...( isSeoSuggestionsEnabled() ? [ SEO_TITLE_SUGGESTION, SEO_DESCRIPTION_SUGGESTION ] : [] ),
 		...( isGenerateFeedbackAvailable( currentPostType, currentPostId )
 			? [ POST_FEEDBACK_SUGGESTION ]
 			: [] ),
@@ -335,9 +369,15 @@ function handleShowComponent( input: any ): any {
 		}
 	}
 
-	if ( type === 'title-picker' ) {
-		// Snapshot state for Undo. Tool call id doubles as the checkpoint id so
-		// it matches the identifier AM reads from the rendered message.
+	if (
+		type === 'title-picker' ||
+		type === 'seo-title-picker' ||
+		type === 'seo-description-picker' ||
+		type === 'image-alt-text-picker'
+	) {
+		// Snapshot state for Undo (these pickers mutate post data / block
+		// attributes). Tool call id doubles as the checkpoint id so it matches
+		// the identifier AM reads from the rendered message.
 		const checkpointId: string =
 			input?.toolCallId || input?.calypsoCheckpointId || `show-component-${ type }-${ Date.now() }`;
 		const checkpointApi = getModuleCheckpointApi();
@@ -633,6 +673,15 @@ export const contextProvider = {
 export function getChatComponent( type: string ): ComponentType | null {
 	if ( type === 'title-picker' ) {
 		return TitlePicker as ComponentType;
+	}
+	if ( type === 'seo-title-picker' ) {
+		return SeoTitlePicker as ComponentType;
+	}
+	if ( type === 'seo-description-picker' ) {
+		return SeoDescriptionPicker as ComponentType;
+	}
+	if ( type === 'image-alt-text-picker' ) {
+		return ImageAltTextPicker as ComponentType;
 	}
 	if ( type === 'review-mediation' ) {
 		return ReviewMediation as ComponentType;

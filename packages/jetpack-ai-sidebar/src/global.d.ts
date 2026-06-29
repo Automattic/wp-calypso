@@ -10,6 +10,7 @@ declare const agentsManagerData:
 					generateFeedback?: boolean;
 					blockTransformations?: boolean;
 					optimizeTitleSuggestion?: boolean;
+					seoSuggestions?: boolean;
 				};
 			};
 	  }

@@ -1,0 +1,28 @@
+.jetpack-ai-image-alt-text-picker {
+	padding: 8px 0;
+
+	&__intro {
+		margin: 0 0 12px;
+		font-size: 14px;
+	}
+
+	&__status {
+		margin: 0;
+		font-size: 14px;
+	}
+
+	&__apply-all {
+		padding: 6px 12px;
+		border: 1px solid var( --wp-admin-theme-color, #3858e9 );
+		border-radius: 4px;
+		background: transparent;
+		color: var( --wp-admin-theme-color, #3858e9 );
+		cursor: pointer;
+		font-family: inherit;
+		font-size: 13px;
+
+		&:hover {
+			background: rgba( 56, 88, 233, 0.08 );
+		}
+	}
+}
