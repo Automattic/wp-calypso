@@ -1,5 +1,4 @@
 import i18n from 'i18n-calypso';
-import { forEach } from 'lodash';
 
 export default function detectSurveys( post, dom ) {
 	if ( ! dom ) {
@@ -12,7 +11,7 @@ export default function detectSurveys( post, dom ) {
 		return post;
 	}
 
-	forEach( surveys, ( survey ) => {
+	Array.from( surveys ).forEach( ( survey ) => {
 		// Get survey details
 		let surveyDetails = null;
 

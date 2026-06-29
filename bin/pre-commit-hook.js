@@ -117,7 +117,7 @@ const {
 toPrettify.forEach( ( file ) => console.log( `Prettier formatting staged file: ${ file }` ) );
 if ( toPrettify.length ) {
 	// chunk this up into multiple runs if we have a lot of files to avoid E2BIG
-	_.forEach( _.chunk( toPrettify, 500 ), ( chunk ) => {
+	_.chunk( toPrettify, 500 ).forEach( ( chunk ) => {
 		execSync(
 			`./node_modules/.bin/prettier --ignore-path .eslintignore --write ${ chunk.join( ' ' ) }`
 		);

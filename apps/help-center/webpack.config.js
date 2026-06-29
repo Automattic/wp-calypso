@@ -25,6 +25,16 @@ function getIndividualConfig( options = {} ) {
 			chunkFilename: `[id].[contenthash:8].min.js`,
 			library: 'helpCenter',
 		},
+		resolve: {
+			...webpackConfig.resolve,
+			alias: {
+				...( webpackConfig.resolve?.alias || {} ),
+				// Share one Smooch instance with the Agents Manager bundle when both load
+				// together (e.g. the Site Editor). See smooch-shim.js.
+				// TODO: Remove once Agents Manager takes over the Help Center.
+				smooch$: path.join( __dirname, '../../build-tools/webpack/smooch-shim.js' ),
+			},
+		},
 		optimization: {
 			...webpackConfig.optimization,
 			// disable module concatenation so that instances of `__()` are not renamed

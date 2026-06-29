@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { pick } from '@automattic/js-utils';
 import debugModule from 'debug';
 import { translate } from 'i18n-calypso';
-import { filter, forEach, isEmpty } from 'lodash';
+import { filter, isEmpty } from 'lodash';
 import { Store, Unsubscribe as ReduxUnsubscribe, AnyAction } from 'redux';
 import { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -193,12 +193,14 @@ export default class SignupFlowController {
 		const hasStepThatProvidesSiteSlug = ( flowName: string ) => {
 			let foundStepThatProvidesSiteSlug = false;
 			const userLoggedIn = isUserLoggedIn( this._reduxStore.getState() );
-			forEach( pick( steps, flows.getFlow( flowName, userLoggedIn )?.steps ), ( step ) => {
+			for ( const step of Object.values(
+				pick( steps, flows.getFlow( flowName, userLoggedIn )?.steps )
+			) ) {
 				if ( ( step.providesDependencies || [] ).indexOf( 'siteSlug' ) > -1 ) {
 					foundStepThatProvidesSiteSlug = true;
-					return false;
+					break;
 				}
-			} );
+			}
 			return foundStepThatProvidesSiteSlug;
 		};
 
@@ -230,7 +232,7 @@ export default class SignupFlowController {
 	}
 
 	_assertFlowHasValidDependencies() {
-		forEach( pick( steps, this._getFlowSteps() ), ( step ) => {
+		Object.values( pick( steps, this._getFlowSteps() ) ).forEach( ( step ) => {
 			if ( ! step.dependencies ) {
 				return;
 			}
@@ -264,7 +266,7 @@ export default class SignupFlowController {
 			getSignupDependencyStore( this._reduxStore.getState() )
 		);
 
-		forEach( pick( steps, this._getFlowSteps() ), ( step ) => {
+		Object.values( pick( steps, this._getFlowSteps() ) ).forEach( ( step ) => {
 			if ( ! step.providesDependencies ) {
 				return;
 			}

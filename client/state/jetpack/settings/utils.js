@@ -1,5 +1,4 @@
 import { omit } from '@automattic/js-utils';
-import { forEach } from 'lodash';
 
 /**
  * Normalize settings for use in Redux.
@@ -105,7 +104,7 @@ export const filterSettingsByActiveModules = ( settings ) => {
 	};
 	let filteredSettings = { ...settings };
 
-	forEach( moduleSettingsList, ( moduleSettings, moduleSlug ) => {
+	Object.entries( moduleSettingsList ).forEach( ( [ moduleSlug, moduleSettings ] ) => {
 		if ( ! settings[ moduleSlug ] ) {
 			filteredSettings = omit( filteredSettings, moduleSettings );
 		}
