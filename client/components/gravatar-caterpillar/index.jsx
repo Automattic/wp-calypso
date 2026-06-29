@@ -24,7 +24,7 @@ class GravatarCaterpillar extends Component {
 
 		// Only display authors with a gravatar, and only display each author once
 		const displayedUsers = uniqBy( users, 'avatar_URL' )
-			.filter( ( user ) => user.avatar_URL )
+			.filter( ( user ) => user?.avatar_URL )
 			.slice( -1 * maxGravatarsToDisplay );
 		const displayedUsersCount = displayedUsers.length;
 

@@ -21,7 +21,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-const isPublicPostType = ( postType ) => postType.public;
+const isPublicPostType = ( postType ) => postType?.public;
 
 class SharingButtonsOptions extends Component {
 	static propTypes = {
