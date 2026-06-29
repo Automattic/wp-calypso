@@ -5,23 +5,12 @@ interface Options {
 	intervalMs?: number;
 }
 
-// Background cadence for the unseen flag. Slower than the open panel's note
-// polling: this only keeps the bell indicator live, not the note list.
 const DEFAULT_INTERVAL_MS = 60 * 1000;
 
 /**
- * Subscribe to the user's "has unseen notifications" flag.
- *
- * The notifications app only polls while it is mounted (i.e. while the panel is
- * open), so consumers that unmount it on close freeze the bell badge. This polls
- * the user's `has_unseen_notes` flag (via api-core's `/me` fetcher) on an
- * interval and reports changes through `onChange`, independently of the panel.
- * It is a plain function (not a hook) so it works from class components and can
- * be dynamically imported by hosts that disallow static imports from this app.
- *
- * Polling pauses while the tab is hidden and runs immediately when it becomes
- * visible again, so a badge that went stale in the background refreshes promptly.
- * @returns An unsubscribe function that stops polling.
+ * Poll the user's `has_unseen_notes` flag and report changes, so a consumer's
+ * bell badge stays live while the notifications panel (and its own polling) is
+ * closed. Pauses while the tab is hidden. Returns an unsubscribe function.
  */
 export function subscribeUnseenNotifications(
 	onChange: ( hasUnseen: boolean ) => void,

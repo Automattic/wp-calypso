@@ -63,9 +63,8 @@ export default function Notifications( {
 		omnibarEvents.notificationsOpen.emit( isOpen );
 	}, [ isOpen ] );
 
-	// Keep the bell live while the panel is closed; the open panel drives the
-	// value via APP_RENDER_NOTES below. Imported dynamically because the dashboard
-	// disallows static imports from the notifications app.
+	// Keep the bell live while the panel is closed. Imported dynamically: the
+	// dashboard disallows static imports from the notifications app.
 	useEffect( () => {
 		if ( isOpen ) {
 			return;

@@ -116,11 +116,8 @@ const RedesignedNotifications = ( {
 } ) => {
 	const isMobile = useViewportMatch( 'small', '<' );
 
-	// The app only polls while the panel is open, so the masterbar bell would
-	// freeze while closed. Subscribe to the unseen flag in the background to keep
-	// it live; while open, the app's APP_RENDER_NOTES drives the exact count. The
-	// dedicated reader page mounts the app inline (always polling), so it opts
-	// out. Boolean-only, so a closed badge reflects presence, not an exact number.
+	// Keep the masterbar bell live while the panel is closed. The dedicated
+	// reader page mounts the app inline (already polling), so it opts out.
 	useEffect( () => {
 		if ( isDedicatedReaderPage || isShowing ) {
 			return;
