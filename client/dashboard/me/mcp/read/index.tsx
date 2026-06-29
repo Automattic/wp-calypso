@@ -10,7 +10,7 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { chevronDown, chevronUp } from '@wordpress/icons';
-import { Fragment, useState } from 'react';
+import { Fragment, useRef, useState } from 'react';
 import { groupIntentKey, getOverridesToMatch } from '../../../../me/mcp/group-intents';
 import { groupToolsByGroup, groupToolsBySubCategory } from '../../../../me/mcp/groups';
 import { getGroupDescriptors, getAccountMcpAbilities } from '../../../../me/mcp/utils';
@@ -42,18 +42,16 @@ export default function McpRead() {
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
 	const isDesktop = useViewportMatch( 'medium' );
 
-	const [ openGroups, setOpenGroups ] = useState( () => new Set< string >() );
+	const openGroupsRef = useRef( new Set< string >() );
+	const [ openGroups, setOpenGroups ] = useState( () => openGroupsRef.current );
 	const toggleGroupOpen = ( groupKey: string, groupName: string | null ) => {
-		const willBeOpen = ! openGroups.has( groupKey );
-		setOpenGroups( ( current ) => {
-			const next = new Set( current );
-			if ( next.has( groupKey ) ) {
-				next.delete( groupKey );
-			} else {
-				next.add( groupKey );
-			}
-			return next;
-		} );
+		const willBeOpen = ! openGroupsRef.current.has( groupKey );
+		if ( willBeOpen ) {
+			openGroupsRef.current.add( groupKey );
+		} else {
+			openGroupsRef.current.delete( groupKey );
+		}
+		setOpenGroups( new Set( openGroupsRef.current ) );
 		recordTracksEvent( 'calypso_dashboard_mcp_read_group_toggled', {
 			group: groupName ?? 'other',
 			is_open: willBeOpen,
