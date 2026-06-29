@@ -99,13 +99,11 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	background: color-mix(in srgb, var(--color-surface, #fff) 85%, transparent);
 }
 
-.wpnc-app__error-message {
-	max-width: 240px;
+.wpnc-app__error-notice {
+	max-width: 320px;
+	// Notice ships with asymmetric margins meant for stacked banners; reset them
+	// so it sits centered in the scrim.
 	margin: 0;
-	text-align: center;
-	font-size: 13px;
-	line-height: 1.5;
-	color: var(--color-text, #1e1e1e);
 }
 
 // Both panes use absolute positioning so they can overlap during the slide.

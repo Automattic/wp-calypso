@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import { Notice } from '@wordpress/ui';
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { logError } from '../panel/helpers/log-error';
 
@@ -27,10 +28,13 @@ export default class ErrorBoundary extends Component< Props, State > {
 			// so the surrounding chrome stays put and the user keeps their context
 			// instead of the panel collapsing to a bare message.
 			return (
-				<div className="wpnc-app__error" role="alert">
-					<p className="wpnc-app__error-message">
-						{ __( 'Something went wrong. Please close and reopen notifications.' ) }
-					</p>
+				<div className="wpnc-app__error">
+					<Notice.Root intent="error" className="wpnc-app__error-notice">
+						<Notice.Title>{ __( 'Something went wrong' ) }</Notice.Title>
+						<Notice.Description>
+							{ __( 'Please close and reopen notifications.' ) }
+						</Notice.Description>
+					</Notice.Root>
 				</div>
 			);
 		}
