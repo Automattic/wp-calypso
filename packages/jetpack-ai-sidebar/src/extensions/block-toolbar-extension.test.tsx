@@ -74,7 +74,7 @@ function installPreview( features: Record< string, boolean > = {}, enabled = tru
 }
 
 function enableToolbarButton() {
-	installPreview( { blockTransformations: true, blockToolbarButton: true } );
+	installPreview( { blockToolbarButton: true } );
 }
 
 function renderToolbar( name = 'core/paragraph' ) {
@@ -115,8 +115,8 @@ describe( 'withJetpackAiToolbarButton', () => {
 		}
 	);
 
-	it( 'renders the toolbar button when block transformations and the toolbar button are enabled', () => {
-		enableToolbarButton();
+	it( 'renders the toolbar button from its own flag, independent of block transformations', () => {
+		installPreview( { blockToolbarButton: true, blockTransformations: false } );
 
 		renderToolbar();
 
@@ -133,7 +133,6 @@ describe( 'withJetpackAiToolbarButton', () => {
 	it.each( [
 		[ 'preview is disabled', { blockTransformations: true, blockToolbarButton: true }, false ],
 		[ 'only editorial review is enabled', { aiEditorialReview: true }, true ],
-		[ 'block transformations are missing', { blockToolbarButton: true }, true ],
 		[ 'toolbar button is missing', { blockTransformations: true }, true ],
 		[
 			'toolbar button is disabled',

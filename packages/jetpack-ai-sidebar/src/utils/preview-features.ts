@@ -13,7 +13,7 @@ function getSidebarConfig() {
 	return getAgentsManagerData()?.jetpackAiSidebar;
 }
 
-export function isSidebarFeatureEnabled( feature: SidebarFeature, fallback: boolean ): boolean {
+function isSidebarFeatureEnabled( feature: SidebarFeature, fallback: boolean ): boolean {
 	const config = getSidebarConfig();
 	if ( ! config ) {
 		return fallback;
