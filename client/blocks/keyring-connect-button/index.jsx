@@ -68,7 +68,7 @@ class KeyringConnectButton extends Component {
 			return 'not-connected';
 		}
 
-		if ( ( this.props.keyringConnections ?? [] ).some( ( item ) => item.status === 'broken' ) ) {
+		if ( this.props.keyringConnections.some( ( item ) => item.status === 'broken' ) ) {
 			// A problematic connection exists
 			return 'reconnect';
 		}
@@ -144,7 +144,7 @@ class KeyringConnectButton extends Component {
 	 * @returns {boolean} Whether the Keyring authorization attempt succeeded
 	 */
 	didKeyringConnectionSucceed( keyringConnections ) {
-		const hasAnyConnectionOptions = ( keyringConnections ?? [] ).some(
+		const hasAnyConnectionOptions = keyringConnections.some(
 			( keyringConnection ) =>
 				keyringConnection.isConnected === false || keyringConnection.isConnected === undefined
 		);

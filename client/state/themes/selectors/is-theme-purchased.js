@@ -13,7 +13,5 @@ import 'calypso/state/themes/init';
  */
 export function isThemePurchased( state, themeId, siteId ) {
 	const sitePurchases = getSitePurchases( state, siteId );
-	return ( sitePurchases ?? [] ).some(
-		( item ) => item.productType === 'theme' && item.meta === themeId
-	);
+	return sitePurchases.some( ( item ) => item.productType === 'theme' && item.meta === themeId );
 }
