@@ -7,7 +7,7 @@ import {
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Modal, Button, __experimentalVStack as VStack } from '@wordpress/components';
-import { _n, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { useId, useState } from 'react';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { Text } from '../../components/text';
@@ -149,11 +149,16 @@ export default function AccountRecoveryInterstitial() {
 		}
 	};
 
-	const remindLabel = sprintf(
-		// translators: %d is the number of days until the reminder reappears.
-		_n( 'Remind me in %d day', 'Remind me in %d days', snoozeDays ),
-		snoozeDays
-	);
+	// Fully-secured users are on the yearly check-in; a "remind me in 365 days" nudge reads as
+	// a permanent dismissal, so label it as such.
+	const remindLabel =
+		securityLevel === 'strong'
+			? __( 'Dismiss' )
+			: sprintf(
+					// translators: %d is the number of days until the reminder reappears.
+					_n( 'Remind me in %d day', 'Remind me in %d days', snoozeDays ),
+					snoozeDays
+			  );
 
 	return (
 		<Modal
