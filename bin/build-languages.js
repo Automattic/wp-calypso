@@ -205,7 +205,7 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 			fs.writeFileSync( manifestFilepathJs, manifestJsData );
 
 			// Write language translation chunks
-			_.forEach( languageChunks, ( chunkTranslations, chunkFilename ) => {
+			Object.entries( languageChunks ).forEach( ( [ chunkFilename, chunkTranslations ] ) => {
 				const chunkId = path.basename( chunkFilename, path.extname( chunkFilename ) );
 				const chunkJsonData = JSON.stringify( chunkTranslations );
 				const chunkJsData = `var i18nTranslationChunks = i18nTranslationChunks || {}; i18nTranslationChunks[${ JSON.stringify(
