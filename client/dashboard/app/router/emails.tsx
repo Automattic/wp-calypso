@@ -108,6 +108,11 @@ export const chooseEmailSolutionRoute = createRoute( {
 	} ),
 	getParentRoute: () => emailsRoute,
 	path: 'choose-email-solution/$domain',
+	validateSearch: ( search ): { intent?: 'upgrade' } => {
+		return {
+			intent: search.intent === 'upgrade' ? 'upgrade' : undefined,
+		};
+	},
 	beforeLoad: async ( { params: { domain: domainName } } ) => {
 		await redirectIfInvalidDomain( domainName );
 	},
