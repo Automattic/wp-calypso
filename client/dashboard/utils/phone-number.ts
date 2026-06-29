@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n';
 import phone from 'phone';
 
 export function validatePhone( phoneNumber: string ) {
-	const phoneNumberWithoutPlus = phoneNumber.replace( /\+/, '' );
+	const phoneNumberWithoutPlus = phoneNumber.replace( /\+/g, '' );
 
 	if ( phoneNumberWithoutPlus.length === 0 ) {
 		return {
@@ -11,7 +11,7 @@ export function validatePhone( phoneNumber: string ) {
 		};
 	}
 
-	if ( phoneNumber.search( /[a-z,A-Z]/ ) > -1 ) {
+	if ( /[a-zA-Z]/.test( phoneNumber ) ) {
 		return {
 			error: 'phone_number_contains_letters',
 			message: __( 'Phone numbers cannot contain letters' ),
@@ -25,7 +25,8 @@ export function validatePhone( phoneNumber: string ) {
 		};
 	}
 
-	if ( phoneNumber.search( /[^0-9,+]/ ) > -1 ) {
+	// The phone library silently strips extra plus signs, so reject them before validating.
+	if ( ! /^\+?\d+$/.test( phoneNumber ) ) {
 		return {
 			error: 'phone_number_contains_special_characters',
 			message: __( 'Phone numbers cannot contain special characters' ),
