@@ -237,8 +237,7 @@ export default function OrchestratorChat( {
 		}
 	}, [ isProcessing, isRegenerating ] );
 
-	// Wrap Agenttic's regenerate handler so a click marks a regeneration in
-	// progress. While it runs, the component being regenerated is deliberately
+	// While a regeneration runs, the component being regenerated is deliberately
 	// dropped from the live messages (Agenttic sends `preserveUiOnlyMessages:
 	// false`), so retention must not resurrect the old picker as a stale copy.
 	const handleRegenerate = useCallback(

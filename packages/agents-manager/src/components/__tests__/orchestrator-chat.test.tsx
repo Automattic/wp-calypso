@@ -118,8 +118,7 @@ import OrchestratorChat from '../orchestrator-chat';
 describe( 'OrchestratorChat', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		// useRegenerateAction now returns a per-message action getter (like the
-		// copy action). Default to one that contributes nothing.
+		// Default getter: contributes no actions.
 		mockUseRegenerateAction.mockReturnValue( () => [] );
 		mockUseAgentChat.mockReturnValue( {
 			addMessage: jest.fn(),
