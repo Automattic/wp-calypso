@@ -214,6 +214,28 @@ describe( 'LostPasswordForm', () => {
 		expect( body.get( 'blackbox_session_id' ) ).toBeNull();
 	} );
 
+	test( 'resets the Blackbox session when the reset request fails', async () => {
+		const reset = jest.fn();
+		window.Blackbox = { reset };
+		mockFetch.mockResolvedValueOnce( {
+			ok: false,
+			status: 400,
+			text: jest.fn().mockResolvedValue( '<body><div class="wp-die-message">nope</div></body>' ),
+		} );
+
+		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
+
+		await userEvent.type(
+			screen.getByRole( 'textbox', { name: 'Email address or username' } ),
+			'user@example.com'
+		);
+		await userEvent.click( screen.getByRole( 'button', { name: /Reset my password/i } ) );
+
+		await waitFor( () => expect( reset ).toHaveBeenCalled() );
+
+		delete window.Blackbox;
+	} );
+
 	test( 'handles error messages coming from /wp-login.php?action=lostpassword', async () => {
 		const mockHTMLResponse = `
 			<body id="error-page">
