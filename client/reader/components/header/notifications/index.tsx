@@ -32,8 +32,8 @@ export default function Notifications( { user, className }: { user: User; classN
 		],
 		VIEW_SETTINGS: [
 			() => {
-				handleClose();
-				window.location.assign( dashboardLink( '/me/notifications' ) );
+				// Open in a new tab so the current notification state is preserved.
+				window.open( dashboardLink( '/me/notifications' ), '_blank' );
 			},
 		],
 		EDIT_COMMENT: [

@@ -1,5 +1,6 @@
 export * from './query-client';
 
+export * from './agency';
 export * from './akismet-api-key';
 export * from './big-sky-plugin';
 export * from './cancellation-offers';
@@ -41,6 +42,7 @@ export * from './me-billing-history';
 export * from './me-blocked-sites';
 export * from './me-connected-applications';
 export * from './me-dpa';
+export * from './me-legacy-contacts';
 export * from './me-mailboxes';
 export * from './me-monetize';
 export * from './me-notifications-devices';
@@ -74,9 +76,12 @@ export * from './read-list-items';
 export * from './read-lists';
 export * from './read-organizations';
 export * from './read-post';
+export * from './read-profile-settings';
 export * from './read-related-posts';
+export * from './read-seen-posts';
 export * from './read-site-recommendations';
 export * from './read-site';
+export * from './read-spaces';
 export * from './read-streams';
 export * from './read-tags';
 export * from './read-teams';

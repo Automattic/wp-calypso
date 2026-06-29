@@ -268,10 +268,22 @@ export interface BundleSuggestion {
 	bundle_price: number;
 
 	/**
+	 * Formatted total bundle price
+	 * @example "$60"
+	 */
+	bundle_cost?: string;
+
+	/**
 	 * Combined original price before bundle discount (raw numeric)
 	 * @example 75
 	 */
 	original_price: number;
+
+	/**
+	 * Formatted combined original price before bundle discount
+	 * @example "$75"
+	 */
+	original_cost?: string;
 
 	/**
 	 * Bundle discount as a whole-number percent

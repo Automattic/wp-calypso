@@ -1,5 +1,5 @@
 import { getUrlParts } from '@automattic/calypso-url';
-import { some, forEach, startsWith } from 'lodash';
+import { forEach } from 'lodash';
 import { iframeIsAllowed } from './utils';
 
 /**
@@ -19,7 +19,7 @@ function doesNotNeedSandbox( iframe ) {
 	const hostName = iframe.src && getUrlParts( iframe.src ).hostname;
 	const iframeHost = hostName && hostName.toLowerCase();
 
-	return some( trustedHosts, ( trustedHost ) => `.${ iframeHost }`.endsWith( '.' + trustedHost ) );
+	return trustedHosts.some( ( trustedHost ) => `.${ iframeHost }`.endsWith( '.' + trustedHost ) );
 }
 
 export default function makeEmbedsSafe( post, dom ) {
@@ -30,7 +30,7 @@ export default function makeEmbedsSafe( post, dom ) {
 	const iframes = dom.querySelectorAll( 'iframe' );
 
 	forEach( iframes, function ( iframe ) {
-		if ( ! startsWith( iframe.src, 'http' ) ) {
+		if ( ! ( iframe.src ?? '' ).startsWith( 'http' ) ) {
 			iframe.parentNode.removeChild( iframe );
 			return;
 		}

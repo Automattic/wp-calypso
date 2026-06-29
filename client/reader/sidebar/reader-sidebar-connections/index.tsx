@@ -235,7 +235,7 @@ function ReaderSidebarConnections( { path }: Props ) {
 		<li>
 			<ExpandableSidebarMenu
 				expanded={ isOpen }
-				title={ translate( 'Social Feeds' ) }
+				title={ translate( 'Social feeds' ) }
 				customIcon={ <Icon className="sidebar__menu-icon" icon={ people } /> }
 				onClick={ handleMainClick }
 				expandableIconClick={ () => setIsOpen( ! isOpen ) }
@@ -261,7 +261,7 @@ function ReaderSidebarConnections( { path }: Props ) {
 							href={ BASE_PATH }
 							onClick={ recordViewMoreClick }
 						>
-							<span>{ translate( 'View More' ) }</span>
+							<span>{ translate( 'View more' ) }</span>
 						</MenuItemLink>
 					</MenuItem>
 				) }

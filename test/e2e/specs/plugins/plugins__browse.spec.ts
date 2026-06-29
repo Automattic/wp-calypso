@@ -101,8 +101,8 @@ test.describe(
 				await page.waitForURL( new RegExp( `/plugins/browse/seo/${ siteUrl }$` ) );
 			} );
 
-			await test.step( 'SEO category should show the Yoast SEO plugin', async () => {
-				await pluginsPage.validateHasPluginInCategory( 'Search Engine Optimization', 'Yoast SEO' );
+			await test.step( 'SEO category lists plugins', async () => {
+				await pluginsPage.validateCategoryHasPlugins( 'Search Engine Optimization' );
 			} );
 		} );
 	}

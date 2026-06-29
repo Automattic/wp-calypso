@@ -1,0 +1,15 @@
+// Order our entry points first in the editor's pinned items — Help Center "?" then Ask AI —
+// ahead of other plugins (default `order: 0`), without affecting them. `.help-center` is the
+// legacy Help button and `.agents-manager-help-center` our unified one (only one shows at a
+// time). `:has()` limits this to when our entry points are present.
+.interface-pinned-items:has( .agents-manager-ai-chat ),
+.interface-pinned-items:has( .agents-manager-help-center ) {
+	> .help-center,
+	> .agents-manager-help-center {
+		order: -2;
+	}
+
+	> .agents-manager-ai-chat {
+		order: -1;
+	}
+}

@@ -1,4 +1,4 @@
-import { set } from 'lodash';
+import { set } from '@automattic/js-utils';
 import { ANALYTICS_EVENT_RECORD } from 'calypso/state/action-types';
 import { getCurrentOAuth2ClientId } from 'calypso/state/oauth2-clients/ui/selectors';
 import { withEnhancers } from 'calypso/state/utils';

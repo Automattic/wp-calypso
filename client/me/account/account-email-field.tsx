@@ -184,7 +184,7 @@ const AccountEmailCustomDomainNotice = ( { email }: { email: string } ) => {
 const EmailFieldExplanationText = ( {
 	unlockRef,
 }: {
-	unlockRef: React.RefObject< HTMLButtonElement >;
+	unlockRef: React.RefObject< HTMLButtonElement | null >;
 } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();

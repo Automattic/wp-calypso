@@ -1,4 +1,4 @@
-import { get, merge } from 'lodash';
+import { merge } from 'lodash';
 import getGoogleMyBusinessLocations from 'calypso/state/selectors/get-google-my-business-locations';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -16,8 +16,8 @@ export const enhanceWithLocationCounts = ( action, getState ) => {
 	if ( siteId !== null ) {
 		const locations = getGoogleMyBusinessLocations( getState(), siteId );
 
-		const verifiedLocationCount = locations.filter( ( location ) =>
-			get( location, 'meta.state.isVerified', false )
+		const verifiedLocationCount = locations.filter(
+			( location ) => location?.meta?.state?.isVerified ?? false
 		).length;
 
 		return merge( action, {

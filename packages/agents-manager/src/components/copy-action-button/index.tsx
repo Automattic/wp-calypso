@@ -10,7 +10,7 @@ interface Props {
 
 export default function CopyActionButton( { text }: Props ) {
 	const [ isCopied, setIsCopied ] = useState( false );
-	const timerRef = useRef< ReturnType< typeof setTimeout > >();
+	const timerRef = useRef< ReturnType< typeof setTimeout > >( undefined );
 
 	const handleClick = async () => {
 		try {

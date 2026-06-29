@@ -1,5 +1,9 @@
 import { groupBundleLineItems } from '../src/group-bundle-line-items';
-import { buildBundleResponseCart, buildDomainProduct } from './fixtures/bundle-cart';
+import {
+	buildBundleResponseCart,
+	buildDomainProduct,
+	buildMultiBundleResponseCart,
+} from './fixtures/bundle-cart';
 
 describe( 'groupBundleLineItems', () => {
 	test( 'returns ungrouped products as plain product entries in order', () => {
@@ -112,5 +116,92 @@ describe( 'groupBundleLineItems', () => {
 			bundleEntry.type === 'bundle' ? bundleEntry.products.map( ( p ) => p.uuid ) : [];
 
 		expect( memberUuids ).toEqual( [ 'primary', 'companion-net', 'companion-org' ] );
+	} );
+
+	describe( 'multi-bundle carts', () => {
+		test( 'folds each distinct group into its own bundle entry around the standalone product', () => {
+			const result = groupBundleLineItems( buildMultiBundleResponseCart().products );
+
+			expect(
+				result.map( ( entry ) => ( entry.type === 'bundle' ? entry.groupId : entry.product.uuid ) )
+			).toEqual( [ 'bundle-thalasso', 'standalone', 'bundle-brimnir' ] );
+		} );
+
+		test( 'positions each bundle at its first member and keeps the standalone product in place', () => {
+			const result = groupBundleLineItems( buildMultiBundleResponseCart().products );
+
+			// The standalone domain sits at index 3 in the source cart, after the
+			// three thalasso members; once those fold into one entry it lands at
+			// index 1, between the two grouped bundles.
+			expect( result ).toHaveLength( 3 );
+			expect( result[ 0 ] ).toMatchObject( { type: 'bundle', groupId: 'bundle-thalasso' } );
+			expect( result[ 1 ] ).toMatchObject( {
+				type: 'product',
+				product: { uuid: 'standalone' },
+			} );
+			expect( result[ 2 ] ).toMatchObject( { type: 'bundle', groupId: 'bundle-brimnir' } );
+		} );
+
+		test( 'orders members primary-first within each group independently', () => {
+			const result = groupBundleLineItems( buildMultiBundleResponseCart().products );
+
+			const membersByGroup = Object.fromEntries(
+				result
+					.filter( ( entry ) => entry.type === 'bundle' )
+					.map( ( entry ) => [ entry.groupId, entry.products.map( ( product ) => product.uuid ) ] )
+			);
+
+			expect( membersByGroup[ 'bundle-thalasso' ] ).toEqual( [
+				'thalasso-com',
+				'thalasso-org',
+				'thalasso-net',
+			] );
+			expect( membersByGroup[ 'bundle-brimnir' ] ).toEqual( [
+				'brimnir-info',
+				'brimnir-co',
+				'brimnir-vip',
+			] );
+		} );
+
+		test( "each group's total sums only its own members, with no cross-contamination", () => {
+			const result = groupBundleLineItems( buildMultiBundleResponseCart().products );
+
+			const totalByGroup = Object.fromEntries(
+				result
+					.filter( ( entry ) => entry.type === 'bundle' )
+					.map( ( entry ) => [
+						entry.groupId,
+						entry.products.reduce( ( sum, product ) => sum + product.item_subtotal_integer, 0 ),
+					] )
+			);
+
+			// thalasso: 2200 + 2000 + 1800
+			expect( totalByGroup[ 'bundle-thalasso' ] ).toBe( 6000 );
+			// brimnir: 1500 + 2500 + 4200
+			expect( totalByGroup[ 'bundle-brimnir' ] ).toBe( 8200 );
+		} );
+
+		test( 'leaves the standalone product untouched', () => {
+			const sourceProducts = buildMultiBundleResponseCart().products;
+			const standalone = sourceProducts.find( ( product ) => product.uuid === 'standalone' );
+
+			const result = groupBundleLineItems( sourceProducts );
+			const standaloneEntry = result.find(
+				( entry ) => entry.type === 'product' && entry.product.uuid === 'standalone'
+			);
+
+			expect( standaloneEntry ).toEqual( { type: 'product', product: standalone } );
+		} );
+
+		test( 'produces unique, stable group ids usable as render keys', () => {
+			const result = groupBundleLineItems( buildMultiBundleResponseCart().products );
+
+			const keys = result
+				.filter( ( entry ) => entry.type === 'bundle' )
+				.map( ( entry ) => `bundle-${ entry.groupId }` );
+
+			expect( keys ).toEqual( [ 'bundle-bundle-thalasso', 'bundle-bundle-brimnir' ] );
+			expect( new Set( keys ).size ).toBe( keys.length );
+		} );
 	} );
 } );

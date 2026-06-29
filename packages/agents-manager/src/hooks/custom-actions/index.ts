@@ -1,6 +1,6 @@
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import {
@@ -10,6 +10,7 @@ import {
 	setExternalContextEntry,
 } from '../../utils/external-context';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
+import { setSiteEditorAction } from '../../utils/site-editor-context';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 /**
@@ -66,13 +67,18 @@ export function useSetupCustomActions( {
 	setShouldRenderChat,
 	setDesktopMediaQuery,
 }: SetupProps ): void {
-	const { hasLoaded, isOpen, isDocked, floatingPosition } = useSelect( ( select ) => {
+	const { hasLoaded, isOpen, isDocked, isMinimized, floatingPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
-	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
-	const { agentConfig, getActiveSessionId } = useAgentsManagerContext();
+	const { setIsOpen, setIsDocked, setIsMinimized } = useDispatch( AGENTS_MANAGER_STORE );
+	const { agentConfig, getActiveSessionId, resumeActiveChat } = useAgentsManagerContext();
 	const navigate = useNavigate();
+	const location = useLocation();
+	// Keep the latest location in a ref so `getCurrentRoute` stays a stable
+	// reference while always reporting the chat's current route.
+	const locationRef = useRef( location );
+	locationRef.current = location;
 	const resolveRef = useRef< ( ( state: AgentsManagerChatState ) => void ) | null >( null );
 	const shouldPersistOpenState = ! isReaderChatAgent( agentConfig?.agentId );
 
@@ -82,19 +88,38 @@ export function useSetupCustomActions( {
 				return;
 			}
 
+			// Persist only what changes — a redundant save can race with a
+			// concurrent one and clobber it.
+			if ( shouldOpen && isMinimized ) {
+				setIsMinimized( false );
+			}
+
+			// Open state is unchanged; nothing more to persist.
+			if ( shouldOpen === isOpen ) {
+				return;
+			}
+
 			if ( ! isDocked || ! canDock ) {
 				return setIsOpen( shouldOpen, shouldPersistOpenState );
 			}
 
 			if ( shouldOpen ) {
 				openSidebar();
-			}
-
-			if ( ! shouldOpen ) {
+			} else {
 				closeSidebar();
 			}
 		},
-		[ canDock, closeSidebar, isDocked, openSidebar, setIsOpen, shouldPersistOpenState ]
+		[
+			canDock,
+			closeSidebar,
+			isDocked,
+			isMinimized,
+			isOpen,
+			openSidebar,
+			setIsMinimized,
+			setIsOpen,
+			shouldPersistOpenState,
+		]
 	);
 
 	const setChatDocked = useCallback(
@@ -150,9 +175,9 @@ export function useSetupCustomActions( {
 	const getChatState = useCallback( (): Promise< AgentsManagerChatState > => {
 		if ( hasLoaded ) {
 			return Promise.resolve( {
-				isOpen: !! isOpen,
-				isDocked: !! isDocked,
-				floatingPosition: floatingPosition || '',
+				isOpen,
+				isDocked,
+				floatingPosition,
 			} );
 		}
 
@@ -165,16 +190,25 @@ export function useSetupCustomActions( {
 	useEffect( () => {
 		if ( hasLoaded && resolveRef.current ) {
 			resolveRef.current( {
-				isOpen: !! isOpen,
-				isDocked: !! isDocked,
-				floatingPosition: floatingPosition || '',
+				isOpen,
+				isDocked,
+				floatingPosition,
 			} );
 			resolveRef.current = null;
 		}
 	}, [ hasLoaded, isOpen, isDocked, floatingPosition ] );
 
+	// Whether the chat is visible (open and not minimized). Entry points outside
+	// the bundle (e.g. the Calypso masterbar) read this to toggle.
+	const isChatVisible = useCallback( () => isOpen && ! isMinimized, [ isOpen, isMinimized ] );
+
+	// The chat's current route (e.g. `/chat`), so callers can detect a same-route re-click.
+	const getCurrentRoute = useCallback( () => locationRef.current.pathname, [] );
+
 	useRegisterCustomActions( {
 		getChatState,
+		isChatVisible,
+		getCurrentRoute,
 		getSessionId: getActiveSessionId,
 		setChatOpen,
 		setChatDocked,
@@ -185,7 +219,9 @@ export function useSetupCustomActions( {
 		removeContextEntry: removeExternalContextEntry,
 		setContextCard: setExternalContextCard,
 		removeContextCard: removeExternalContextCard,
+		setSiteEditorAction,
 		chatNavigate: navigate,
+		resumeChat: resumeActiveChat,
 		isReady: true,
 	} );
 

@@ -60,7 +60,7 @@ export default function DomainDiagnostics() {
 			message = record.error_message;
 		} else if ( record.status === 'incorrect' ) {
 			message = sprintf(
-				/* translators: dnsRecordType is a DNS record type, e.g. SPF, DKIM or DMARC */
+				/* translators: %(dnsRecordType)s: a DNS record type, e.g. SPF, DKIM or DMARC */
 				__( 'Your %(dnsRecordType)s record is incorrect. The correct record should be:' ),
 				{
 					dnsRecordType: uppercaseRecord,
@@ -68,7 +68,7 @@ export default function DomainDiagnostics() {
 			);
 		} else if ( record.status === 'not_found' ) {
 			message = sprintf(
-				/* translators: dnsRecordType is a DNS record type, e.g. SPF, DKIM or DMARC */
+				/* translators: %(dnsRecordType)s: a DNS record type, e.g. SPF, DKIM or DMARC */
 				__( 'There is no %(dnsRecordType)s record. The correct record should be:' ),
 				{
 					dnsRecordType: uppercaseRecord,

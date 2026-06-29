@@ -1,8 +1,9 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
+import { camelCase, pick } from '@automattic/js-utils';
 import { DomainContactDetails } from '@automattic/shopping-cart';
 import { DomainContactDetailsErrors } from '@automattic/wpcom-checkout';
 import { LocalizeProps, localize } from 'i18n-calypso';
-import { camelCase, difference, get, isEmpty, keys, map, pick } from 'lodash';
+import { isEmpty, map } from 'lodash';
 import { PureComponent, ReactNode } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
@@ -58,9 +59,9 @@ export class RegistrantExtraInfoUkForm extends PureComponent< FormProps & Locali
 
 	componentDidMount() {
 		// Add defaults to redux state to make accepting default values work.
-		const neededRequiredDetails = difference(
-			[ 'registrantType' ],
-			keys( this.props.ccTldDetails )
+		const providedDetails = Object.keys( this.props.ccTldDetails );
+		const neededRequiredDetails = [ 'registrantType' ].filter(
+			( key ) => ! providedDetails.includes( key )
 		);
 
 		// Bail early as we already have the details from a previous purchase.
@@ -99,12 +100,9 @@ export class RegistrantExtraInfoUkForm extends PureComponent< FormProps & Locali
 
 	renderTradingNameField() {
 		const { ccTldDetails, translate } = this.props;
-		const tradingName = get( ccTldDetails, 'tradingName', '' );
-		const tradingNameErrors = get(
-			this.props.contactDetailsValidationErrors,
-			[ 'extra', 'uk', 'tradingName' ],
-			[]
-		);
+		const tradingName = ccTldDetails?.tradingName ?? '';
+		const tradingNameErrors =
+			this.props.contactDetailsValidationErrors?.extra?.uk?.tradingName ?? [];
 		const isError = ! isEmpty( tradingNameErrors );
 
 		return (
@@ -131,12 +129,9 @@ export class RegistrantExtraInfoUkForm extends PureComponent< FormProps & Locali
 
 	renderRegistrationNumberField() {
 		const { ccTldDetails, translate } = this.props;
-		const registrationNumber = get( ccTldDetails, 'registrationNumber', '' );
-		const registrationNumberErrors = get(
-			this.props.contactDetailsValidationErrors,
-			[ 'extra', 'uk', 'registrationNumber' ],
-			[]
-		);
+		const registrationNumber = ccTldDetails?.registrationNumber ?? '';
+		const registrationNumberErrors =
+			this.props.contactDetailsValidationErrors?.extra?.uk?.registrationNumber ?? [];
 
 		const isError = ! isEmpty( registrationNumberErrors );
 

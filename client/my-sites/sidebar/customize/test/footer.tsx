@@ -7,6 +7,7 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { CustomizeFooter } from '../footer';
 import { CustomizeProvider, useCustomizeContext } from '../index';
+import type { JSX } from 'react';
 
 function renderInProvider( ui: JSX.Element, state: object = {} ) {
 	const store = configureStore()( {

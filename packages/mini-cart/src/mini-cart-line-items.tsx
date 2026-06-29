@@ -42,6 +42,7 @@ export function MiniCartLineItems( {
 	createUserAndSiteBeforeTransaction,
 	responseCart,
 	showBundleGrouping = false,
+	onRemoveBundle,
 }: {
 	removeProductFromCart: RemoveProductFromCart;
 	addProductsToCart: AddProductsToCart;
@@ -49,6 +50,7 @@ export function MiniCartLineItems( {
 	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
 	showBundleGrouping?: boolean;
+	onRemoveBundle?: ( groupId: string, memberCount: number ) => void;
 } ) {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
@@ -73,6 +75,7 @@ export function MiniCartLineItems( {
 									canItemBeRemovedFromCart( product, responseCart )
 								) }
 								removeProductFromCart={ removeProductFromCart }
+								onRemoveBundle={ onRemoveBundle }
 							/>
 						</MiniCartLineItemWrapper>
 					);

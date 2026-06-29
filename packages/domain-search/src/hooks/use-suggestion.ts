@@ -16,6 +16,12 @@ export interface PriceRulesConfig {
 	hidePrice?: boolean;
 	oneTimePrice?: boolean;
 	freeForFirstYear?: boolean;
+	/**
+	 * List of specific domain names that should always show $0 pricing (free for first year),
+	 * regardless of the global freeForFirstYear flag. Used to keep a domain showing as $0 in
+	 * the suggestion list after it has been added to the cart with a free-domain promotion.
+	 */
+	freeForFirstYearDomains?: string[];
 }
 
 const getPriceRuleForSuggestion = ( {
@@ -41,7 +47,10 @@ const getPriceRuleForSuggestion = ( {
 		return DomainPriceRule.PRICE;
 	}
 
-	if ( priceRules.freeForFirstYear ) {
+	if (
+		priceRules.freeForFirstYear ||
+		priceRules.freeForFirstYearDomains?.includes( suggestion.domain_name )
+	) {
 		return DomainPriceRule.FREE_FOR_FIRST_YEAR;
 	}
 

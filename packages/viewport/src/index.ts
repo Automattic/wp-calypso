@@ -35,8 +35,20 @@
 //
 // [1] https://github.com/Automattic/wp-calypso/blob/HEAD/docs/coding-guidelines/css.md#media-queries
 //
-import { debounce } from 'lodash';
 import { useState, useEffect } from 'react';
+
+// Minimal trailing debounce. viewport is a leaf utility, so we keep it
+// dependency-free rather than pull in a debounce library for one resize handler.
+function debounce< Args extends unknown[] >(
+	fn: ( ...args: Args ) => void,
+	wait: number
+): ( ...args: Args ) => void {
+	let timer: ReturnType< typeof setTimeout >;
+	return ( ...args: Args ) => {
+		clearTimeout( timer );
+		timer = setTimeout( () => fn( ...args ), wait );
+	};
+}
 
 // FIXME: We can't detect window size on the server, so until we have more intelligent detection,
 // use 769, which is just above the general maximum mobile screen width.

@@ -1,6 +1,6 @@
 {
 	"name": "i18n-calypso",
-	"version": "7.4.0",
+	"version": "8.0.0",
 	"description": "I18n JavaScript library on top of Tannin originally used in Calypso.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
@@ -28,6 +28,7 @@
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepare": "yarn run clean && yarn run build",
+		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch",
 		"test": "yarn jest"
 	},
@@ -35,7 +36,7 @@
 		"@automattic/interpolate-components": "workspace:^",
 		"@babel/runtime": "^7.27.1",
 		"@tannin/sprintf": "^1.1.0",
-		"@wordpress/compose": "patch:@wordpress/compose@npm%3A8.0.0#~/.yarn/patches/@wordpress-compose-npm-8.0.0-14fd3b56ad.patch",
+		"@wordpress/compose": "^8.2.0",
 		"debug": "^4.4.1",
 		"hash.js": "^1.1.7",
 		"lru": "^3.1.0",
@@ -50,9 +51,9 @@
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"react-test-renderer": "^18.3.1",
-		"typescript": "^5.9.3"
+		"typescript": "^6.0.3"
 	},
 	"peerDependencies": {
-		"react": "^18.3.1"
+		"react": "^18.3.1 || ^19.0.0"
 	}
 }

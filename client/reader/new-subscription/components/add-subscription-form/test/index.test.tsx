@@ -86,9 +86,10 @@ describe( 'AddSubscriptionForm', () => {
 			expect(
 				screen.getByRole( 'region', { name: 'Site subscriptions list' } )
 			).toBeInTheDocument();
-			expect( SiteSubscriptionsList ).toHaveBeenCalledWith(
-				expect.objectContaining( { layout: 'compact' } ),
-				expect.anything()
+			// Only assert on the props argument: React 18 calls function components
+			// with `( props, {} )` while React 19 passes `( props, undefined )`.
+			expect( SiteSubscriptionsList.mock.calls[ 0 ][ 0 ] ).toEqual(
+				expect.objectContaining( { layout: 'compact' } )
 			);
 		} );
 

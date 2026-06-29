@@ -1,5 +1,5 @@
+import { omitBy } from '@automattic/js-utils';
 import { useTranslate } from 'i18n-calypso';
-import { omitBy } from 'lodash';
 import {
 	getFollowingSource,
 	useFollowSite,
@@ -12,6 +12,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import { useResendEmailVerification } from '../../landing/stepper/hooks/use-resend-email-verification';
 import FollowButton from './button';
+import type { JSX } from 'react';
 
 interface FollowButtonContainerProps {
 	siteUrl: string;
@@ -27,6 +28,7 @@ interface FollowButtonContainerProps {
 	followingIcon?: JSX.Element;
 	hasButtonStyle?: boolean;
 	isButtonOnly?: boolean;
+	followApiSource?: string;
 	onFollowToggle: ( following: boolean ) => void;
 }
 
@@ -44,6 +46,7 @@ function FollowButtonContainer( {
 	followingIcon,
 	hasButtonStyle,
 	isButtonOnly,
+	followApiSource,
 	onFollowToggle,
 }: FollowButtonContainerProps ): JSX.Element {
 	const isLoggedIn = useSelector( isUserLoggedIn );
@@ -59,6 +62,8 @@ function FollowButtonContainer( {
 	const dispatch = useDispatch();
 	const resendEmailVerification = useResendEmailVerification( { from: 'wpcom-reader' } );
 	const translate = useTranslate();
+
+	const followSource = followApiSource ?? getFollowingSource();
 
 	const handleFollowToggle = ( followingSite: boolean ) => {
 		const followData = omitBy(
@@ -92,9 +97,9 @@ function FollowButtonContainer( {
 		}
 
 		if ( followingSite ) {
-			followSite( { feedUrl: siteUrl, source: getFollowingSource() } );
+			followSite( { feedUrl: siteUrl, source: followSource } );
 		} else {
-			unfollowSite( { feedUrl: siteUrl, source: getFollowingSource() } );
+			unfollowSite( { feedUrl: siteUrl, source: followSource } );
 		}
 
 		onFollowToggle( followingSite );

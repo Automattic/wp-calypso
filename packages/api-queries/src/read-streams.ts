@@ -18,6 +18,8 @@ import {
 	fetchReadSearch,
 	fetchReadSiteFeatured,
 	fetchReadSitePosts,
+	fetchReadSpaceDiscover,
+	fetchReadSpacePosts,
 	fetchReadTagPopular,
 	fetchReadTagPosts,
 	fetchReadUserPosts,
@@ -80,6 +82,10 @@ export const fetchReadStream = (
 			return fetchReadFeedPosts( suffix, queryParams );
 		case 'site':
 			return fetchReadSitePosts( suffix, queryParams );
+		case 'space':
+			return fetchReadSpacePosts( suffix, queryParams );
+		case 'space_discover':
+			return fetchReadSpaceDiscover( suffix, queryParams );
 		case 'notifications':
 			return fetchReadNotifications( queryParams );
 		case 'featured':

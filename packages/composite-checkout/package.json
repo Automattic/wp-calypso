@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/composite-checkout",
-	"version": "2.0.1",
+	"version": "2.0.2",
 	"description": "A set of React components and helpers that can be used to create a checkout flow.",
 	"main": "dist/cjs/public-api.js",
 	"module": "dist/esm/public-api.js",
@@ -47,8 +47,8 @@
 		"@automattic/color-studio": "^4.1.0",
 		"@emotion/react": "^11.11.1",
 		"@emotion/styled": "^11.11.0",
-		"@wordpress/i18n": "^6.19.0",
-		"@wordpress/react-i18n": "^4.46.0",
+		"@wordpress/i18n": "^6.21.0",
+		"@wordpress/react-i18n": "^4.48.0",
 		"debug": "^4.4.1",
 		"prop-types": "^15.8.1"
 	},
@@ -62,10 +62,10 @@
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"storybook": "^9.1.20",
-		"typescript": "^5.9.3"
+		"typescript": "^6.0.3"
 	},
 	"peerDependencies": {
-		"react": "^18.3.1",
-		"react-dom": "^18.3.1"
+		"react": "^18.3.1 || ^19.0.0",
+		"react-dom": "^18.3.1 || ^19.0.0"
 	}
 }

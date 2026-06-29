@@ -1,4 +1,4 @@
-import { get, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import { getSiteSync } from 'calypso/state/sync/selectors/get-site-sync';
 
 import 'calypso/state/automated-transfer/init';
@@ -20,5 +20,5 @@ export default ( state, siteId ) => {
 		return null;
 	}
 
-	return get( siteSync, 'fetchingStatus', false );
+	return siteSync?.fetchingStatus ?? false;
 };

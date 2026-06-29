@@ -4,7 +4,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useMemo, useState, type ComponentType, type ReactElement } from 'react';
-import { useExperiment } from 'calypso/lib/explat';
+import { useSiteLaunchGatingVariant } from 'calypso/lib/use-site-launch-gating-variant';
 import { getCurrentDashboard } from '../../app/routing';
 import { dashboardLinkWithBackport, redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import {
@@ -44,8 +44,6 @@ export interface UseSiteLaunchResult {
 	modal: ReactElement | null;
 }
 
-const EXPERIMENT_NAME = 'calypso_standardized_site_launch_gating_202603_v1';
-
 export function useSiteLaunch(
 	site: Site,
 	{
@@ -75,8 +73,7 @@ export function useSiteLaunch(
 	} );
 
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
-	const [ isExperimentLoading, experiment ] = useExperiment( EXPERIMENT_NAME );
-	const variant = experiment?.variationName;
+	const [ isExperimentLoading, variant ] = useSiteLaunchGatingVariant();
 
 	const isSitePlanHostingTrial = site.plan?.product_slug === DotcomPlans.HOSTING_TRIAL_MONTHLY;
 	const isSitePlanPaidWithDomains = isSitePlanPaid( site ) && domains.length > 1;
@@ -123,18 +120,6 @@ export function useSiteLaunch(
 		window.history.replaceState( null, '', targetUrl );
 	};
 
-	// The ungated experiment is the only path that triggers celebration.
-	const handleUngatedLaunch = () => {
-		track();
-		launchMutation.mutate( undefined, {
-			onSuccess: () => {
-				// Add a query param to trigger the celebration modal in the parent.
-				redirectAfterLaunch( { celebrate: true } );
-			},
-			onError: onLaunchError,
-		} );
-	};
-
 	const launchForModal = () => {
 		track();
 		launchMutation.mutate( undefined, {
@@ -179,23 +164,6 @@ export function useSiteLaunch(
 		return { ...baseResult, isHidden: true, onClick: () => {} };
 	}
 
-	if ( variant === 'semi_gated_site_launch' ) {
-		return {
-			...baseResult,
-			isHidden: false,
-			href: launchUrl,
-			onClick: track,
-		};
-	}
-
-	if ( variant === 'ungated_site_launch' ) {
-		return {
-			...baseResult,
-			isHidden: false,
-			onClick: handleUngatedLaunch,
-		};
-	}
-
 	if ( shouldImmediatelyLaunch ) {
 		return {
 			...baseResult,
@@ -210,10 +178,18 @@ export function useSiteLaunch(
 		};
 	}
 
-	return {
-		...baseResult,
-		isHidden: false,
-		href: launchUrl,
-		onClick: track,
-	};
+	// Site launch gating: 'semi_gated_site_launch' is the shipped default.
+	// The other branches are scaffolding for future experiments; see
+	// useSiteLaunchGatingVariant().
+	switch ( variant ) {
+		case 'semi_gated_site_launch':
+		case null:
+		default:
+			return {
+				...baseResult,
+				isHidden: false,
+				href: launchUrl,
+				onClick: track,
+			};
+	}
 }

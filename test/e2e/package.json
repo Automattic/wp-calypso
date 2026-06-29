@@ -48,7 +48,7 @@
 		"asana-phrase": "^0.0.8",
 		"dotenv": "^9.0.2",
 		"eslint": "^8.34.0",
-		"form-data": "^4.0.4",
+		"form-data": "^4.0.6",
 		"lodash": "^4.17.20",
 		"mailosaur": "^8.4.0",
 		"playwright": "1.57.0",

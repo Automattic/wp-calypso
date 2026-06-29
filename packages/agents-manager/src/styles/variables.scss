@@ -9,7 +9,14 @@ $chat-header-height: 38px;
 $main-border-radius: 8px;
 $transition-duration: 0.2s;
 $transition-timing: $transition-duration cubic-bezier( 0.4, 0, 0.2, 1 );
-$agents-manager-z-index-docked: 999999;
+// Shared overlay-panel stacking, mirrored in Help Center
+// (packages/help-center/src/components/_variables.scss). A focused panel must
+// always beat an unfocused one, so they share one base + focused offset.
+$overlay-panel-z-index-base: 999990;
+$overlay-panel-z-index-focused: 999995;
+$agents-manager-z-index-docked: $overlay-panel-z-index-base;
+$agents-manager-z-index-focused: $overlay-panel-z-index-focused;
+$agents-manager-z-index-sidebar: $overlay-panel-z-index-base - 1;
 
 /* WP Admin */
 $admin-menu-width-unified: 272px;

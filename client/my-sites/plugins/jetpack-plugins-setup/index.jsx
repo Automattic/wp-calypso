@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { CompactCard, Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { range } from '@automattic/js-utils';
 import {
 	JETPACK_CONTACT_SUPPORT,
 	JETPACK_SERVICE_AKISMET,
@@ -8,7 +9,7 @@ import {
 	JETPACK_SUPPORT,
 } from '@automattic/urls';
 import { localize, fixMe } from 'i18n-calypso';
-import { filter, get, range } from 'lodash';
+import { filter } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
@@ -345,7 +346,7 @@ class PlansSetup extends Component {
 			</NoticeAction>
 		);
 
-		const errorMessage = get( plugin, 'error.message', '' );
+		const errorMessage = plugin?.error?.message ?? '';
 
 		switch ( plugin.status ) {
 			case 'install':
@@ -466,7 +467,7 @@ class PlansSetup extends Component {
 		}
 
 		const pluginsWithErrors = filter( this.props.plugins, ( item ) => {
-			const errorCode = get( item, 'error.code', null );
+			const errorCode = item?.error?.code ?? null;
 			return errorCode && errorCode !== 'already_registered';
 		} );
 

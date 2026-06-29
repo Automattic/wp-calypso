@@ -89,7 +89,11 @@ import {
 	SelectItemsComponent,
 } from '@automattic/calypso-e2e';
 import { test as base, expect } from '@playwright/test';
-import { apiCloseAccount } from '../specs/shared';
+import {
+	apiCloseAccount,
+	apiWaitForBearerTokenAcceptance,
+	apiWaitForEmailVerification,
+} from '../specs/shared';
 import { useBlackboxTestKeyForCollect } from './blackbox-test-key';
 import { getAccount } from './get-account';
 
@@ -635,29 +639,49 @@ export const test = base.extend<
 			{ username: testUser.username, password: testUser.password },
 			newUserDetails.body.bearer_token
 		);
-		const site = await restAPIClient.createSite( {
-			name: siteName,
-			title: siteName,
-		} );
-		const message = await clientEmail.getLastMatchingMessage( {
-			inboxId: testUser.inboxId,
-			sentTo: testUser.email,
-			subject: 'Activate',
-		} );
-		const links = await clientEmail.getLinksFromMessage( message );
-		const activationLink = links.find( ( link: string ) => link.includes( 'activate' ) ) as string;
-		await page.goto( activationLink );
-		await use( site );
-		await restAPIClient.deleteSite( {
-			id: site.blog_details.blogid,
-			domain: site.blog_details.url,
-		} );
-
-		await apiCloseAccount( restAPIClient, {
-			userID: newUserDetails.body.user_id,
-			username: newUserDetails.body.username,
-			email: testUser.email,
-		} );
+		// The account exists from this point on: any throw in the remaining setup
+		// would skip a teardown placed after `use()` and leak the test user (and
+		// the site, once created). The try/finally attempts cleanup either way.
+		let site: NewSiteResponse | undefined;
+		try {
+			await apiWaitForBearerTokenAcceptance( restAPIClient, testUser.email );
+			site = await restAPIClient.createSite( {
+				name: siteName,
+				title: siteName,
+			} );
+			const message = await clientEmail.getLastMatchingMessage( {
+				inboxId: testUser.inboxId,
+				sentTo: testUser.email,
+				subject: 'Activate',
+			} );
+			const links = await clientEmail.getLinksFromMessage( message );
+			const activationLink = links.find( ( link: string ) =>
+				link.includes( 'activate' )
+			) as string;
+			await page.goto( activationLink );
+			await apiWaitForEmailVerification( restAPIClient, testUser.email );
+			await use( site );
+		} finally {
+			if ( site ) {
+				try {
+					await restAPIClient.deleteSite( {
+						id: site.blog_details.blogid,
+						domain: site.blog_details.url,
+					} );
+				} catch ( error ) {
+					// Do not throw from the finally: it would mask the error that
+					// brought us here. `apiCloseAccount` below also deletes any
+					// remaining sites of the user.
+					console.warn( `Failed to delete site ${ site.blog_details.url }: ${ error }` );
+				}
+			}
+			// Never throws: errors are caught and logged internally.
+			await apiCloseAccount( restAPIClient, {
+				userID: newUserDetails.body.user_id,
+				username: newUserDetails.body.username,
+				email: testUser.email,
+			} );
+		}
 	},
 } );
 

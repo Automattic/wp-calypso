@@ -1,12 +1,11 @@
 import './style.scss';
 import { isDefaultLocale } from '@automattic/i18n-utils';
+import { times } from '@automattic/js-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component, Fragment } from 'react';
 import * as React from 'react';
-import ReactDom from 'react-dom';
 import { connect, useDispatch } from 'react-redux';
 import AppPromo from 'calypso/blocks/app-promo';
 import { usePostLikes } from 'calypso/components/data/post-likes';
@@ -17,7 +16,6 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import scrollTo from 'calypso/lib/scroll-to';
 import withDimensions from 'calypso/lib/with-dimensions';
-import { isEditorIframeFocused } from 'calypso/reader/components/quick-post/utils';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { useCachedPost } from 'calypso/reader/data/post/cache';
 import { withPostLikeActions } from 'calypso/reader/data/post/likes';
@@ -203,9 +201,14 @@ class ReaderStream extends Component {
 	};
 
 	focusSelectedPost = ( selectedPostKey ) => {
-		const postRefKey = this.getPostRef( selectedPostKey );
-		const ref = this.listRef.current && this.listRef.current.refs[ postRefKey ];
-		const node = ReactDom.findDOMNode( ref );
+		if ( ! selectedPostKey ) {
+			return;
+		}
+
+		// The selected post is the only card rendered with the `is-selected` class,
+		// so query it from the list's DOM rather than holding a per-item ref.
+		const listNode = this.listRef.current?.getDOMNode();
+		const node = listNode?.querySelector( '.card.is-selected' );
 
 		if ( node ) {
 			// Skip anchors inside .user-avatar to avoid triggering hovercard.
@@ -239,7 +242,7 @@ class ReaderStream extends Component {
 		const containerOffset = scrollContainer.getBoundingClientRect?.().top || 0;
 		const headerOffset = -1 * this.props.fixedHeaderHeight || 0; // a fixed position header means we can't just scroll the element into view.
 		const totalOffset = headerOffset - containerOffset - 20; // 20px of constant offset to ensure the post isnt cramped against the top container or header border.
-		const selectedNode = ReactDom.findDOMNode( this ).querySelector( '.card.is-selected' );
+		const selectedNode = this.listRef.current?.getDOMNode()?.querySelector( '.card.is-selected' );
 		if ( selectedNode ) {
 			selectedNode.focus();
 			const scrollContainerPosition = scrollContainer.scrollTop;
@@ -299,9 +302,7 @@ class ReaderStream extends Component {
 				return;
 			}
 
-			const scrollContainer = this.getScrollContainer(
-				ReactDom.findDOMNode( this.listRef.current )
-			);
+			const scrollContainer = this.getScrollContainer( this.listRef.current.getDOMNode() );
 			if ( scrollContainer !== this.state.listContext ) {
 				this.setState( {
 					listContext: scrollContainer,
@@ -334,11 +335,7 @@ class ReaderStream extends Component {
 		}
 
 		const tagName = ( event.target || event.srcElement ).tagName;
-		if (
-			inputTags.includes( tagName ) ||
-			event.target.isContentEditable ||
-			isEditorIframeFocused() // Disable keyboard shortcuts when quick post editor is focused.
-		) {
+		if ( inputTags.includes( tagName ) || event.target.isContentEditable ) {
 			return;
 		}
 
@@ -438,7 +435,9 @@ class ReaderStream extends Component {
 
 		// If the currently selected item is too far away in scroll position to be rendered by the
 		// infinite list, lets fall back to the magic selection functionality noted below.
-		const selectedItem = this.state.listContext?.querySelector( '.card.is-selected' );
+		// Query the list's own DOM node: `listContext` is `false` when the stream scrolls
+		// with the window, and `false?.querySelector` throws instead of short-circuiting.
+		const selectedItem = this.listRef.current?.getDOMNode()?.querySelector( '.card.is-selected' );
 		// do we have a selected item? if so, just move to the next one
 		if ( this.props.selectedPostKey && selectedItem ) {
 			this.props.selectNextPost();
@@ -586,7 +585,7 @@ class ReaderStream extends Component {
 		return keyToString( postKey );
 	};
 
-	renderPost = ( postKey, index ) => {
+	renderPost = ( postKey, index, registerItemRef ) => {
 		const { selectedPostKey, streamKey, primarySiteId } = this.props;
 		const isSelected = !! ( selectedPostKey && keysAreEqual( selectedPostKey, postKey ) );
 
@@ -612,7 +611,7 @@ class ReaderStream extends Component {
 			<Fragment key={ itemKey }>
 				{ this.renderAppPromo( index ) }
 				<PostLifecycle
-					ref={ itemKey /* The ref is stored into `InfiniteList`'s `this.ref` map */ }
+					itemRef={ registerItemRef }
 					isSelected={ isSelected }
 					handleClick={ showPost }
 					postKey={ postKey }
@@ -644,7 +643,7 @@ class ReaderStream extends Component {
 
 		this.listRef.current = component;
 		this.setState( {
-			listContext: this.getScrollContainer( ReactDom.findDOMNode( component ) ),
+			listContext: this.getScrollContainer( component.getDOMNode() ),
 		} );
 	};
 
@@ -881,13 +880,14 @@ const withStreamPosts = ( WrappedComponent ) =>
 
 		const streamType = getStreamType( props.streamKey ?? '' );
 		const shouldPoll =
-			! [ 'search', 'custom_recs_posts_with_images', 'discover' ].includes( streamType ) &&
-			! props.forcePlaceholders;
+			! [ 'search', 'custom_recs_posts_with_images', 'discover', 'space_discover' ].includes(
+				streamType
+			) && ! props.forcePlaceholders;
 
 		const {
 			pendingCount,
 			hasPendingPosts,
-			reset: resetPending,
+			consume: consumePendingPosts,
 		} = useStreamPendingPosts( {
 			streamKey: props.streamKey,
 			feedId: props.selectedFeedId,
@@ -908,15 +908,13 @@ const withStreamPosts = ( WrappedComponent ) =>
 			}
 		}, [ hasPendingPosts, invalidate ] );
 
-		// Click handler for `<UpdateNotice>`: refetch all loaded pages now and
-		// drop the polled head from cache so the pill clears immediately
-		// (instead of flickering until the next poll tick recomputes against
-		// the freshly refetched items).
-		const { refetch } = streamPostsQuery;
+		// Click handler for `<UpdateNotice>`: prepend the already-polled head to
+		// the rendered infinite stream and clear the poll cache. This keeps the
+		// legacy "show updates" behavior without waiting on a second fetch.
 		const consumePending = React.useCallback( () => {
-			refetch();
-			resetPending();
-		}, [ refetch, resetPending ] );
+			consumePendingPosts();
+		}, [ consumePendingPosts ] );
+		const { refetch } = streamPostsQuery;
 
 		// Selection lives in the React Query cache (not Redux). The hook is
 		// keyed by `[streamKey, localeSlug]`, so switching streams (including

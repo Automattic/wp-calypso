@@ -2,13 +2,12 @@ import { followReadTagMutation } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { localize, translate as i18nTranslate } from 'i18n-calypso';
-import { startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect, useDispatch } from 'react-redux';
-import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderTagIcon from 'calypso/reader/components/icons/tag-icon';
+import { useFollowedTags } from 'calypso/reader/data/tags';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -31,7 +30,7 @@ export class ReaderSidebarTags extends Component {
 	};
 
 	followTag = ( tag ) => {
-		if ( startsWith( tag, '#' ) ) {
+		if ( ( tag ?? '' ).startsWith( '#' ) ) {
 			tag = tag.substring( 1 );
 		}
 
@@ -67,7 +66,7 @@ export class ReaderSidebarTags extends Component {
 					onClick={ this.selectMenu }
 					customIcon={ <ReaderTagIcon viewBox="0 0 24 24" /> }
 					disableFlyout
-					className={ path.startsWith( '/tag' ) && 'sidebar__menu--selected' }
+					className={ path.startsWith( '/tag' ) ? 'sidebar__menu--selected' : '' }
 					expandableIconClick={ onClick }
 				>
 					<ReaderSidebarTagsList { ...this.props } />
@@ -82,7 +81,7 @@ export class ReaderSidebarTags extends Component {
 
 function withFollowedReaderTags( Inner ) {
 	return function WithFollowedReaderTags( props ) {
-		const { data: tags } = useFollowedReaderTags();
+		const { data: tags } = useFollowedTags();
 		return <Inner { ...props } tags={ tags } />;
 	};
 }

@@ -1,7 +1,7 @@
+import { omit } from '@automattic/js-utils';
 import { formatNumber } from '@automattic/number-formatters';
 import { ProgressBar } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
-import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';

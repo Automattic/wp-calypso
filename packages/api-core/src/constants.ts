@@ -282,6 +282,10 @@ export const DomainProductSlugs = {
 export const TitanMailSlugs = {
 	TITAN_MAIL_MONTHLY_SLUG: 'wp_titan_mail_monthly',
 	TITAN_MAIL_YEARLY_SLUG: 'wp_titan_mail_yearly',
+	TITAN_MAIL_PREMIUM_MONTHLY_SLUG: 'wp_titan_mail_premium_monthly',
+	TITAN_MAIL_PREMIUM_YEARLY_SLUG: 'wp_titan_mail_premium_yearly',
+	TITAN_MAIL_ULTRA_MONTHLY_SLUG: 'wp_titan_mail_ultra_monthly',
+	TITAN_MAIL_ULTRA_YEARLY_SLUG: 'wp_titan_mail_ultra_yearly',
 } as const;
 
 export const GoogleWorkspaceSlugs = {
@@ -339,9 +343,10 @@ export const getDataCenterOptions = (): Record< DataCenterOption, string > => ( 
 } );
 
 export const getPlanNames = () => ( {
+	[ DotcomPlans.PERSONAL ]: __( 'Personal' ),
+	[ DotcomPlans.PREMIUM ]: __( 'Premium' ),
 	[ DotcomPlans.BUSINESS ]: __( 'Business' ),
 	[ DotcomPlans.ECOMMERCE ]: __( 'Commerce' ),
-	[ DotcomPlans.PREMIUM ]: __( 'Premium' ),
 } );
 
 export const PaymentPartners = {

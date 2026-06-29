@@ -11,6 +11,7 @@ module.exports = {
 			newRestrictedImports[ 0 ],
 			{
 				paths: filteredRestrictedPaths,
+				patterns: newRestrictedImports[ 1 ].patterns,
 			},
 		],
 	},

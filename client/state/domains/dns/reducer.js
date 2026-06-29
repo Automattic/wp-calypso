@@ -1,5 +1,6 @@
+import { pick } from '@automattic/js-utils';
 import update from 'immutability-helper';
-import { filter, find, findIndex, matches, pick, reject, some, startsWith, without } from 'lodash';
+import { filter, matches } from 'lodash';
 import {
 	DOMAINS_DNS_ADD,
 	DOMAINS_DNS_ADD_COMPLETED,
@@ -17,7 +18,7 @@ import {
 } from 'calypso/state/action-types';
 
 function isWpcomRecord( record ) {
-	return startsWith( record.id, 'wpcom:' );
+	return ( record.id ?? '' ).startsWith( 'wpcom:' );
 }
 
 function isRootARecord( domain ) {
@@ -34,12 +35,12 @@ function isNsRecord( domain ) {
 
 function removeDuplicateWpcomRecords( domain, records ) {
 	const rootARecords = filter( records, isRootARecord( domain ) );
-	const wpcomARecord = find( rootARecords, isWpcomRecord );
-	const customARecord = find( rootARecords, ( record ) => ! isWpcomRecord( record ) );
+	const wpcomARecord = rootARecords.find( isWpcomRecord );
+	const customARecord = rootARecords.find( ( record ) => ! isWpcomRecord( record ) );
 	const customRootAaaaRecords = filter( records, isRootAaaaRecord( domain ) );
 
 	if ( wpcomARecord && ( customARecord || customRootAaaaRecords ) ) {
-		return without( records, wpcomARecord );
+		return records.filter( ( record ) => record !== wpcomARecord );
 	}
 
 	return records;
@@ -48,7 +49,7 @@ function removeDuplicateWpcomRecords( domain, records ) {
 function addMissingWpcomRecords( domain, records ) {
 	let newRecords = records;
 
-	if ( ! some( records, isRootARecord( domain ) ) ) {
+	if ( ! records.some( isRootARecord( domain ) ) ) {
 		const defaultRootARecord = {
 			domain,
 			id: `wpcom:A:${ domain }.:${ domain }`,
@@ -60,7 +61,7 @@ function addMissingWpcomRecords( domain, records ) {
 		newRecords = newRecords.concat( [ defaultRootARecord ] );
 	}
 
-	if ( ! some( records, isNsRecord( domain ) ) ) {
+	if ( ! records.some( isNsRecord( domain ) ) ) {
 		const defaultNsRecord = {
 			domain,
 			id: `wpcom:NS:${ domain }.:${ domain }`,
@@ -121,9 +122,7 @@ function deleteDns( state, domainName, record ) {
 		[ domainName ]: {
 			records: {
 				$apply: ( records ) => {
-					const deleted = reject( records, ( _, current ) => {
-						return index === current;
-					} );
+					const deleted = records.filter( ( _, current ) => index !== current );
 
 					return addMissingWpcomRecords( domainName, deleted );
 				},
@@ -156,8 +155,10 @@ function updateDnsState( state, domainName, record, updatedFields ) {
 }
 
 function findDnsIndex( records, record ) {
-	const matchingFields = pick( record, [ 'id', 'data', 'name', 'type' ] );
-	return findIndex( records, matchingFields );
+	const matchingFields = Object.entries( pick( record, [ 'id', 'data', 'name', 'type' ] ) );
+	return ( records ?? [] ).findIndex( ( r ) =>
+		matchingFields.every( ( [ key, value ] ) => r[ key ] === value )
+	);
 }
 
 export default function reducer( state = {}, action ) {

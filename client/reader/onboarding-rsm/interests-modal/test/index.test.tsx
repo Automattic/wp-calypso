@@ -6,6 +6,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React, { useState } from 'react';
+import { READER_ONBOARDING_FOLLOW_SOURCE } from 'calypso/reader/onboarding-rsm/constants';
 import { recordFollow } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -48,8 +49,8 @@ jest.mock( 'calypso/data/reader/use-reader-interest-tags', () => ( {
 	useReaderInterestTags: () => [],
 } ) );
 
-jest.mock( 'calypso/data/reader/use-reader-tags', () => ( {
-	useFollowedReaderTags: () => ( { data: [] } ),
+jest.mock( 'calypso/reader/data/tags', () => ( {
+	useFollowedTags: () => ( { data: [] } ),
 } ) );
 
 // ── Internal helpers / child components ─────────────────────────────────────
@@ -393,7 +394,7 @@ describe( 'InterestsModal – analytics for pack subscribe', () => {
 		for ( const blog of packBlogs ) {
 			expect( mockFollowMutate ).toHaveBeenCalledWith( {
 				feedUrl: blog.feed_URL,
-				source: 'test-source',
+				source: READER_ONBOARDING_FOLLOW_SOURCE,
 			} );
 			expect( recordFollow ).toHaveBeenCalledWith( blog.feed_URL, undefined, {
 				follow_source: 'reader-onboarding-modal',

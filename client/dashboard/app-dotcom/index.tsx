@@ -22,6 +22,8 @@ boot( {
 	mainRoute: '/sites',
 	Logo,
 	supports: {
+		agency: false,
+		agencyClient: false,
 		sites: true,
 		domains: true,
 		emails: true,

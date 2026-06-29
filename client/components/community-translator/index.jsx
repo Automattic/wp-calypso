@@ -1,7 +1,7 @@
 import languages from '@automattic/languages';
 import debugModule from 'debug';
 import i18n, { localize } from 'i18n-calypso';
-import { find, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
@@ -46,7 +46,7 @@ class CommunityTranslator extends Component {
 		// See https://messageformat.github.io/Jed/
 		const { localeSlug, localeVariant } = this.languageJson[ '' ];
 		this.localeCode = localeVariant || localeSlug;
-		this.currentLocale = find( languages, ( lang ) => lang.langSlug === this.localeCode );
+		this.currentLocale = languages.find( ( lang ) => lang.langSlug === this.localeCode );
 	}
 
 	refresh = () => {

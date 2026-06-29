@@ -3,10 +3,8 @@ import { compose } from '@wordpress/compose';
 import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { localize, withRtl } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import AnimatedIcon from 'calypso/components/animated-icon';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
@@ -98,7 +96,7 @@ export class AppBanner extends Component {
 			return;
 		}
 		if ( appBanner ) {
-			this.appBannerNode = ReactDom.findDOMNode( appBanner );
+			this.appBannerNode = appBanner;
 			this.appBannerNode.addEventListener( 'mousedown', this.stopBubblingEvents, false );
 			this.appBannerNode.addEventListener( 'touchstart', this.stopBubblingEvents, false );
 			document.body.classList.add( 'app-banner-is-visible' );
@@ -111,7 +109,7 @@ export class AppBanner extends Component {
 
 	isAndroid() {
 		const match = ANDROID_REGEX.exec( this.props.userAgent );
-		const version = get( match, '1', '0' );
+		const version = match?.[ '1' ] ?? '0';
 		//intents are only supported on Android 4.4+
 		return versionCompare( version, '4.4', '>=' );
 	}

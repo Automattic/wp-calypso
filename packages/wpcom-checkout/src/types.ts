@@ -140,9 +140,6 @@ export interface TransactionRequest {
 	successUrl?: string | undefined;
 	cancelUrl?: string | undefined;
 	idealBank?: string | undefined;
-	pan?: string | undefined;
-	gstin?: string | undefined;
-	nik?: string | undefined;
 	// 6-digit BLIK code generated in the customer's banking app.
 	code?: string | undefined;
 	useForAllSubscriptions?: boolean;
@@ -196,9 +193,6 @@ export type WPCOMTransactionEndpointPaymentDetails = {
 	successUrl?: string;
 	cancelUrl?: string;
 	idealBank?: string;
-	pan?: string;
-	gstin?: string;
-	nik?: string;
 	// 6-digit BLIK code generated in the customer's banking app.
 	code?: string;
 	useForAllSubscriptions?: boolean;
@@ -328,7 +322,6 @@ export type CheckoutPaymentMethodSlug =
 	| 'bancontact'
 	| 'card'
 	| 'ebanx'
-	| 'netbanking'
 	| 'eps'
 	| 'ideal'
 	| 'p24'
@@ -361,7 +354,6 @@ export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_WPCOM'
 	| 'WPCOM_Billing_MoneyPress_Stored'
 	| 'WPCOM_Billing_Ebanx'
-	| 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking'
 	| 'WPCOM_Billing_PayPal_Direct'
 	| 'WPCOM_Billing_PayPal_Express'
 	| 'WPCOM_Billing_PayPal_PPCP'

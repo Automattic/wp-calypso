@@ -14,16 +14,27 @@ import {
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
 import express from 'express';
-import { get, includes } from 'lodash';
+import { get } from 'lodash';
 import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import { getDashboardFromHostname, isAllowedDashboardRoute } from 'calypso/dashboard/app/routing';
+import { isAllowedA4ADashboardHostname } from 'calypso/dashboard/app-a4a/routing';
+import {
+	A4A_DASHBOARD_SECTION_DEFINITION,
+	A4A_DASHBOARD_SECTION_PATHS,
+} from 'calypso/dashboard/app-a4a/section';
 import { isAllowedCiabDashboardHostname } from 'calypso/dashboard/app-ciab/routing';
-import { CIAB_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-ciab/section';
+import {
+	CIAB_DASHBOARD_SECTION_DEFINITION,
+	CIAB_DASHBOARD_SECTION_PATHS,
+} from 'calypso/dashboard/app-ciab/section';
 import { isAllowedDotcomDashboardHostname } from 'calypso/dashboard/app-dotcom/routing';
-import { DOTCOM_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-dotcom/section';
-import { DASHBOARD_SECTION_PATHS } from 'calypso/dashboard/section';
+import {
+	DOTCOM_DASHBOARD_SECTION_DEFINITION,
+	DOTCOM_DASHBOARD_SECTION_PATHS,
+} from 'calypso/dashboard/app-dotcom/section';
+import { A4A_SIGNUP_PATHS } from 'calypso/dashboard/section';
 import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
@@ -300,6 +311,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	context.app = {
 		// use ipv4 address when is ipv4 mapped address
 		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
+		isFirefox: request.useragent.browser === 'Firefox',
 		isWpMobileApp: isWpMobileApp( request.useragent.source ),
 		isWcMobileApp: isWcMobileApp( request.useragent.source ),
 		isDevelopmentEnv: devEnvironments.includes( calypsoEnv ),
@@ -1001,14 +1013,14 @@ function wpcomPages( app ) {
 	// Redirect legacy `/menus` routes to the corresponding Customizer panel
 	// TODO: Move to `my-sites/customize` route defs once that section is isomorphic
 	app.get( [ '/menus', '/menus/:site?' ], ( req, res ) => {
-		const siteSlug = get( req.params, 'site', '' );
+		const siteSlug = req.params?.site ?? '';
 		const newRoute = '/customize/menus/' + siteSlug;
 		res.redirect( 301, newRoute );
 	} );
 
 	app.get( [ '/start/domain-first' ], function ( req, res ) {
 		let redirectUrl = '/start/domain';
-		const domain = get( req, 'query.new', false );
+		const domain = req?.query?.new ?? false;
 		if ( domain ) {
 			redirectUrl += '?new=' + encodeURIComponent( domain );
 		}
@@ -1029,7 +1041,7 @@ function wpcomPages( app ) {
 			ctx.clientData = config.clientData;
 			ctx.domainsLandingData = {
 				action: get( req, [ 'params', 'action' ], 'unknown-action' ),
-				query: get( req, 'query', {} ),
+				query: req?.query ?? {},
 			};
 
 			const pageHtml = renderJsx( 'domains-landing', ctx );
@@ -1074,10 +1086,12 @@ function wpcomPages( app ) {
 		debug( 'Issuing API call to fetch user object' );
 		getBootstrappedUser( req )
 			.then( ( data ) => {
-				const activeFlags = get( data, 'meta.data.flags.active_flags', [] );
+				const activeFlags = data?.meta?.data?.flags?.active_flags ?? [];
 
 				// A8C check
-				if ( ! includes( activeFlags, 'calypso_support_user' ) ) {
+				if (
+					! ( Array.isArray( activeFlags ) && activeFlags.includes( 'calypso_support_user' ) )
+				) {
 					return res.send( renderJsx( 'support-user' ) );
 				}
 
@@ -1232,7 +1246,7 @@ export default function pages() {
 		handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper', ( req ) =>
 			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
 		);
-		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
+		DOTCOM_DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
 			handleSectionPath(
 				DOTCOM_DASHBOARD_SECTION_DEFINITION,
 				route,
@@ -1241,7 +1255,7 @@ export default function pages() {
 				loadDashboardLocaleData
 			);
 		} );
-		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
+		CIAB_DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
 			handleSectionPath(
 				CIAB_DASHBOARD_SECTION_DEFINITION,
 				route,
@@ -1250,13 +1264,23 @@ export default function pages() {
 				loadDashboardLocaleData
 			);
 		} );
-		handleSectionPath(
-			CIAB_DASHBOARD_SECTION_DEFINITION,
-			'/start-store',
-			'entry-dashboard-ciab',
-			( req ) => isAllowedCiabDashboardHostname( req.hostname ),
-			loadDashboardLocaleData
+	}
+
+	// Multi-site Dashboard (A4A) routing.
+	if ( isDashboardEnv() || calypsoEnv === 'a8c-for-agencies-development' ) {
+		const a4aSignupSectionDefinition = sections.find(
+			( s ) => s.name === 'a8c-for-agencies-signup'
 		);
+		A4A_SIGNUP_PATHS.forEach( ( a4aSignupPath ) => {
+			handleSectionPath( a4aSignupSectionDefinition, a4aSignupPath, undefined, ( req ) =>
+				isAllowedA4ADashboardHostname( req.hostname )
+			);
+		} );
+		A4A_DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
+			handleSectionPath( A4A_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-a4a', ( req ) =>
+				isAllowedA4ADashboardHostname( req.hostname )
+			);
+		} );
 	}
 
 	sections

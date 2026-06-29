@@ -3,10 +3,10 @@ import { readSiteQuery } from '@automattic/api-queries';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { getLocaleSlug } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import wpcom from 'calypso/lib/wp';
 import { useFeedQueries } from 'calypso/reader/data/feed';
 import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
+import { useFollowedTags } from 'calypso/reader/data/tags';
 import { curatedBlogs } from 'calypso/reader/onboarding-rsm/curated-blogs';
 
 /**
@@ -160,7 +160,7 @@ export interface UseSubscribeRecommendationsResult {
 }
 
 export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult {
-	const { data: followedTags, isLoading: tagsLoading } = useFollowedReaderTags();
+	const { data: followedTags, isLoading: tagsLoading } = useFollowedTags();
 	const followedTagSlugs = useMemo(
 		() => followedTags?.map( ( tag ) => tag.slug ) ?? [],
 		[ followedTags ]

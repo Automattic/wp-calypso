@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { useEffect, useState, Fragment } from 'react';
+import { useEffect, useState, Fragment, type JSX } from 'react';
 import { PaymentMethodLogos } from 'calypso/my-sites/checkout/src/components/payment-method-logos';
 import {
 	SummaryLine,

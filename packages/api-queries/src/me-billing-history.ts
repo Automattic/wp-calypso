@@ -7,12 +7,15 @@ export const userReceiptsQuery = () =>
 		queryFn: () => fetchUserReceipts(),
 	} );
 
-export const receiptQueryKey = ( receiptId: number ) => [ 'receipt', receiptId ];
+export const receiptQueryKey = (
+	receiptId: number,
+	options?: { includeFailedPurchases?: boolean }
+) => [ 'receipt', receiptId, options?.includeFailedPurchases ?? false ];
 
-export const receiptQuery = ( receiptId: number ) =>
+export const receiptQuery = ( receiptId: number, options?: { includeFailedPurchases?: boolean } ) =>
 	queryOptions( {
-		queryKey: receiptQueryKey( receiptId ),
-		queryFn: () => fetchReceipt( receiptId ),
+		queryKey: receiptQueryKey( receiptId, options ),
+		queryFn: () => fetchReceipt( receiptId, options ),
 	} );
 
 export const sendReceiptEmailMutation = () =>

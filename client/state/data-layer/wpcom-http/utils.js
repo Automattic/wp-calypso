@@ -1,6 +1,6 @@
 import warn from '@wordpress/warning';
 import deterministicStringify from 'fast-json-stable-stringify';
-import { get, merge } from 'lodash';
+import { merge } from 'lodash';
 import { keyedReducer } from 'calypso/state/utils';
 
 const noop = () => {};
@@ -11,21 +11,21 @@ const identity = ( data ) => data;
  * @param {Object} action may contain HTTP response data
  * @returns {*} response data if available
  */
-export const getData = ( action ) => get( action, 'meta.dataLayer.data', undefined );
+export const getData = ( action ) => action?.meta?.dataLayer?.data;
 
 /**
  * Returns error data from an HTTP request failure action if available
  * @param {Object} action may contain HTTP response error data
  * @returns {*} error data if available
  */
-export const getError = ( action ) => get( action, 'meta.dataLayer.error', undefined );
+export const getError = ( action ) => action?.meta?.dataLayer?.error;
 
 /**
  * Returns (response) headers data from an HTTP request action if available
  * @param   {Object}      action Request action for which to retrieve HTTP response headers
  * @returns {*} Headers data if available
  */
-export const getHeaders = ( action ) => get( action, 'meta.dataLayer.headers', undefined );
+export const getHeaders = ( action ) => action?.meta?.dataLayer?.headers;
 
 /**
  * @typedef {Object} ProgressData
@@ -38,15 +38,14 @@ export const getHeaders = ( action ) => get( action, 'meta.dataLayer.headers', u
  * @param  {Object} action          may contain HTTP progress data
  * @returns {ProgressData|undefined} Progress data if available
  */
-export const getProgress = ( action ) => get( action, 'meta.dataLayer.progress', undefined );
+export const getProgress = ( action ) => action?.meta?.dataLayer?.progress;
 
 /**
  * Returns stream record from an HTTP request action if available
  * @param {Object} action may contain stream record
  * @returns {*} response data if available
  */
-export const getStreamRecord = ( action ) =>
-	get( action, 'meta.dataLayer.streamRecord', undefined );
+export const getStreamRecord = ( action ) => action?.meta?.dataLayer?.streamRecord;
 
 const getRequestStatus = ( action ) => {
 	if ( undefined !== getError( action ) ) {
@@ -62,7 +61,7 @@ const getRequestStatus = ( action ) => {
 
 export const getRequestKey = ( fullAction ) => {
 	const { meta, ...action } = fullAction;
-	const requestKey = get( meta, 'dataLayer.requestKey' );
+	const requestKey = meta?.dataLayer?.requestKey;
 
 	return requestKey ? requestKey : deterministicStringify( action );
 };
@@ -106,7 +105,7 @@ export const reducer = keyedReducer( 'meta.dataLayer.requestKey', requestsReduce
 export const trackRequests = ( next ) => ( store, action ) => {
 	// progress events don't affect
 	// any tracking meta at the moment
-	if ( true !== get( action, 'meta.dataLayer.trackRequest' ) || getProgress( action ) ) {
+	if ( true !== action?.meta?.dataLayer?.trackRequest || getProgress( action ) ) {
 		return next( store, action );
 	}
 

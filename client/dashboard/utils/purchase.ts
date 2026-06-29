@@ -463,10 +463,11 @@ export function isJetpackCrmProduct( keyOrSlug: string ): boolean {
 type ObjectWithProductSlug = { product_slug?: string };
 
 export function isTitanMail( purchase: Purchase | ObjectWithProductSlug ): boolean {
-	return (
-		purchase.product_slug === TitanMailSlugs.TITAN_MAIL_MONTHLY_SLUG ||
-		purchase.product_slug === TitanMailSlugs.TITAN_MAIL_YEARLY_SLUG
-	);
+	if ( ! purchase.product_slug ) {
+		return false;
+	}
+
+	return ( Object.values( TitanMailSlugs ) as readonly string[] ).includes( purchase.product_slug );
 }
 
 export function isGoogleWorkspace( purchase: Purchase | ObjectWithProductSlug ): boolean {
@@ -711,6 +712,28 @@ export const getIncludedDomainPurchase = (
 
 export function hasAmountAvailableToRefund( purchase: Purchase ) {
 	return purchase.refund_amount > 0;
+}
+
+/**
+ * Returns true if the plan is eligible for an instant, self-serve downgrade: the
+ * plan is still within its initial refund window (not a renewal) and has neither
+ * expired nor entered its post-expiry grace period.
+ *
+ * Note: this intentionally does NOT require a refundable amount. Instant
+ * downgrades are also offered for plans that were paid with credits or are
+ * otherwise free, where no money would be refunded.
+ *
+ * This is distinct from {@link isInExpirationGracePeriod}, which gates the
+ * downgrade-to-checkout flow for plans whose expiry date has already passed.
+ */
+export function isWithinRefundWindowDowngradeEligible( purchase: Purchase ): boolean {
+	return (
+		purchase.is_plan_type_downgradable &&
+		purchase.is_plan &&
+		purchase.is_within_initial_refund_window &&
+		! isExpired( purchase ) &&
+		! isInExpirationGracePeriod( purchase )
+	);
 }
 
 /**

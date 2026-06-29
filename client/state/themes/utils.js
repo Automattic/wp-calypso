@@ -1,4 +1,5 @@
-import { get, includes, map, omit, omitBy, some, startsWith } from 'lodash';
+import { omit, omitBy } from '@automattic/js-utils';
+import { map } from 'lodash';
 import { DEFAULT_THEME_QUERY } from './constants';
 
 /**
@@ -31,8 +32,8 @@ const DELISTED_WPORG_THEMES = [ 'shopline', 'store-shopline' ];
  * @returns {boolean}      True if the theme is premium
  */
 export function isPremium( theme ) {
-	const themeStylesheet = get( theme, 'stylesheet', false );
-	return themeStylesheet && startsWith( themeStylesheet, 'premium/' );
+	const themeStylesheet = theme?.stylesheet ?? false;
+	return themeStylesheet && themeStylesheet.startsWith( 'premium/' );
 }
 
 /**
@@ -100,12 +101,12 @@ export function normalizeWporgTheme( theme, tier ) {
 		] )
 	);
 
-	const description = get( theme, [ 'sections', 'description' ] );
+	const description = theme?.sections?.description;
 	if ( description ) {
 		normalizedTheme.description = description;
 	}
 
-	const author = get( theme, [ 'author', 'display_name' ] );
+	const author = theme?.author?.display_name;
 	if ( author ) {
 		normalizedTheme.author = author;
 	}
@@ -199,22 +200,20 @@ export function isThemeMatchingQuery( query, theme ) {
 
 				const search = value.toLowerCase();
 
-				const foundInTaxonomies = some(
-					SEARCH_TAXONOMIES,
+				const foundInTaxonomies = SEARCH_TAXONOMIES.some(
 					( taxonomy ) =>
 						theme.taxonomies &&
-						some(
-							theme.taxonomies[ 'theme_' + taxonomy ],
-							( { name } ) => name && includes( name.toLowerCase(), search )
+						( theme.taxonomies[ 'theme_' + taxonomy ] ?? [] ).some(
+							( { name } ) => name && name.toLowerCase().includes( search )
 						)
 				);
 
 				return (
 					foundInTaxonomies ||
-					( theme.id && includes( theme.id.toLowerCase(), search ) ) ||
-					( theme.name && includes( theme.name.toLowerCase(), search ) ) ||
-					( theme.author && includes( theme.author.toLowerCase(), search ) ) ||
-					( theme.descriptionLong && includes( theme.descriptionLong.toLowerCase(), search ) )
+					( theme.id && theme.id.toLowerCase().includes( search ) ) ||
+					( theme.name && theme.name.toLowerCase().includes( search ) ) ||
+					( theme.author && theme.author.toLowerCase().includes( search ) ) ||
+					( theme.descriptionLong && theme.descriptionLong.toLowerCase().includes( search ) )
 				);
 			}
 			case 'filter': {
@@ -226,7 +225,9 @@ export function isThemeMatchingQuery( query, theme ) {
 				// { color: 'blue,red', feature: 'post-slider' }
 				const filters = value.split( ',' );
 				return filters.every( ( f ) =>
-					some( theme.taxonomies, ( terms ) => some( terms, { slug: f } ) )
+					Object.values( theme.taxonomies ?? {} ).some( ( terms ) =>
+						( terms ?? [] ).some( ( term ) => term.slug === f )
+					)
 				);
 			}
 		}
@@ -242,7 +243,7 @@ export function isThemeMatchingQuery( query, theme ) {
  * @returns {Array}           An array of theme taxonomy slugs.
  */
 export function getThemeTaxonomySlugs( theme, taxonomy ) {
-	const items = get( theme, [ 'taxonomies', taxonomy ], [] );
+	const items = theme?.taxonomies?.[ taxonomy ] ?? [];
 	return items.map( ( { slug } ) => slug );
 }
 

@@ -147,6 +147,7 @@ export const PluginSwitcher = ( {
 					getItemUrl={ ( item ) => pluginRoute.to.replace( '$pluginId', item.slug ) }
 					renderItem={ renderItem }
 					searchableFields={ searchableFields }
+					noResultsText={ __( 'No plugins found.' ) }
 					onClose={ () => {} }
 					width="auto"
 					filter={

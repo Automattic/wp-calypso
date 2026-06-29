@@ -17,19 +17,26 @@ import { tags, test } from '../../lib/pw-base';
 
 test.describe( 'Notifications: General Interactions', { tag: [ tags.CALYPSO_PR ] }, () => {
 	const comment = DataHelper.getRandomPhrase() + ' notification-actions-spec';
+	// Spam and Trash both return to list view in the redesigned panel, so each
+	// terminal action needs its own notification.
+	const commentToTrash = DataHelper.getRandomPhrase() + ' notification-actions-spec';
 
 	let newPost: PostResponse;
 	let newComment: NewCommentResponse;
+	let newCommentToTrash: NewCommentResponse;
 	let notificationsUser: TestAccount;
 	let notificationUserRestAPIClient: RestAPIClient;
 	let commentingUserRestAPIClient: RestAPIClient;
 
 	test.afterAll( async () => {
-		if ( newComment ) {
+		for ( const createdComment of [ newComment, newCommentToTrash ] ) {
+			if ( ! createdComment ) {
+				continue;
+			}
 			try {
 				await notificationUserRestAPIClient.deleteComment(
 					notificationsUser.credentials.testSites?.primary.id as number,
-					newComment.ID
+					createdComment.ID
 				);
 			} catch ( e: unknown ) {
 				console.warn( 'Failed to clean up test comment' );
@@ -71,6 +78,12 @@ test.describe( 'Notifications: General Interactions', { tag: [ tags.CALYPSO_PR ]
 				comment
 			);
 
+			newCommentToTrash = await commentingUserRestAPIClient.createComment(
+				notificationsUser.credentials.testSites?.primary.id as number,
+				newPost.ID,
+				commentToTrash
+			);
+
 			await notificationsUser.authenticate( page, { waitUntilStable: true } );
 		} );
 
@@ -94,11 +107,13 @@ test.describe( 'Notifications: General Interactions', { tag: [ tags.CALYPSO_PR ]
 
 		await test.step( 'Mark comment as spam', async () => {
 			await notificationsComponent.clickNotificationAction( 'Spam' );
-			await notificationsComponent.clickUndo();
 		} );
 
 		await test.step( 'Trash comment', async () => {
-			await notificationsComponent.clickNotificationAction( 'Trash' );
+			// First notification was spammed and returned to list view; use the
+			// dedicated second notification.
+			await notificationsComponent.openNotification( commentToTrash );
+			await notificationsComponent.trashNotification();
 		} );
 	} );
 } );

@@ -36,6 +36,28 @@
 		background: #000;
 		border-radius: 8px;
 		overflow: hidden;
+
+		&--loading {
+			background:
+				linear-gradient(
+					90deg,
+					rgba(255, 255, 255, 0) 0%,
+					rgba(255, 255, 255, 0.06) 50%,
+					rgba(255, 255, 255, 0) 100%
+				),
+				#1a1a1a;
+			background-size: 200% 100%, 100% 100%;
+			background-repeat: no-repeat;
+
+			@media (prefers-reduced-motion: no-preference) {
+				animation: image-studio-feature-clip-shimmer 1.5s ease-in-out infinite;
+			}
+		}
+	}
+
+	// Core Notice has no outer margin; keep the panel's 12px rhythm below it.
+	&__error-notice {
+		margin-bottom: 12px;
 	}
 
 	&__preview-video {
@@ -79,5 +101,14 @@
 	&__bottom-action {
 		flex: 1 1 0;
 		justify-content: center;
+	}
+}
+
+@keyframes image-studio-feature-clip-shimmer {
+	0% {
+		background-position: 200% 0, 0 0;
+	}
+	100% {
+		background-position: -200% 0, 0 0;
 	}
 }

@@ -1,11 +1,13 @@
-import { filter, last } from 'lodash';
+import { filter } from 'lodash';
 import { getAvailableExternalAccounts } from 'calypso/state/sharing/selectors';
 import { getSiteKeyringsForService } from 'calypso/state/site-keyrings/selectors';
 
 export default function getGoogleMyBusinessLocations( state, siteId ) {
-	const googleMyBusinessSiteKeyring = last(
-		getSiteKeyringsForService( state, siteId, 'google_my_business' )
-	);
+	const googleMyBusinessSiteKeyring = getSiteKeyringsForService(
+		state,
+		siteId,
+		'google_my_business'
+	)?.at( -1 );
 
 	if ( ! googleMyBusinessSiteKeyring ) {
 		return [];

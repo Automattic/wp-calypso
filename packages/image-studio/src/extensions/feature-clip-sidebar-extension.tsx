@@ -14,7 +14,7 @@
  * preview, a share row mirroring the modal, and a Regenerate button.
  */
 import { createBlock } from '@wordpress/blocks';
-import { Button, Fill, PanelBody } from '@wordpress/components';
+import { Button, Fill, Notice, PanelBody, VisuallyHidden } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import { dispatch, useSelect } from '@wordpress/data';
 import { PluginDocumentSettingPanel } from '@wordpress/editor';
@@ -36,6 +36,7 @@ import {
 	trackImageStudioOpened,
 } from '../utils/tracking';
 import { FEATURE_CLIP_META_KEY } from './feature-clip-meta';
+import type { JSX } from 'react';
 import './feature-clip-sidebar.scss';
 
 const PLUGIN_NAME = 'image-studio-feature-clip';
@@ -175,14 +176,26 @@ function FeatureClipPreview( {
 	);
 }
 
-function FeatureClipEmptyState(): JSX.Element {
+interface FeatureClipEmptyStateProps {
+	hasLoadError?: boolean;
+}
+
+function FeatureClipEmptyState( {
+	hasLoadError = false,
+}: FeatureClipEmptyStateProps ): JSX.Element {
 	return (
 		<>
+			{ hasLoadError && (
+				<Notice
+					status="error"
+					isDismissible={ false }
+					className="image-studio-feature-clip-panel__error-notice"
+				>
+					{ __( "Couldn't load your saved clip. Generate a new one below.", __i18n_text_domain__ ) }
+				</Notice>
+			) }
 			<p className="image-studio-feature-clip-panel__description">
-				{ __(
-					'Turn this post into a short vertical video. Powered by your site guidelines.',
-					__i18n_text_domain__
-				) }
+				{ __( 'Turn this post into a short vertical video.', __i18n_text_domain__ ) }
 			</p>
 			<Button
 				variant="secondary"
@@ -196,7 +209,34 @@ function FeatureClipEmptyState(): JSX.Element {
 	);
 }
 
-function FeatureClipPanel(): JSX.Element {
+function FeatureClipSkeleton(): JSX.Element {
+	const label = __( 'Loading saved clip preview', __i18n_text_domain__ );
+	return (
+		<div
+			className="image-studio-feature-clip-panel__preview-frame image-studio-feature-clip-panel__preview-frame--loading"
+			role="status"
+			aria-busy="true"
+			aria-label={ label }
+		>
+			<VisuallyHidden>{ label }</VisuallyHidden>
+		</div>
+	);
+}
+
+/**
+ * Post types the Feature Clip panel is offered on. Mirrors the backend, which
+ * registers the `_jetpack_feature_clip_id` meta for `post` only (see Jetpack's
+ * `register_feature_clip_post_meta` in image-studio.php — "pages can be added
+ * later"). The plugin is registered globally, so its render runs in EVERY
+ * block editor, including the standalone Jetpack Form editor
+ * (`post_type=jetpack_form`), where turning the post into a video makes no
+ * sense and the meta isn't even registered. The post-type gate lives in the
+ * panel render rather than at registration because registration happens once,
+ * up front, before the editor's current post type is known.
+ */
+const SUPPORTED_POST_TYPES = [ 'post' ];
+
+function FeatureClipPanel(): JSX.Element | null {
 	const { postType, postId } = useSelect( ( select ) => {
 		const editor = select( 'core/editor' ) as
 			| {
@@ -205,11 +245,32 @@ function FeatureClipPanel(): JSX.Element {
 			  }
 			| undefined;
 		return {
-			postType: editor?.getCurrentPostType?.() ?? 'post',
+			// Leave this null when the editor store is absent or the post type
+			// hasn't loaded yet — do NOT fall back to 'post'. A 'post' fallback
+			// would pass the gate below for an unknown type and flash the panel
+			// (plus fire a phantom impression) until the real type resolves.
+			postType: editor?.getCurrentPostType?.() ?? null,
 			postId: editor?.getCurrentPostId?.() ?? null,
 		};
 	}, [] );
 
+	// Bail until the post type is both known and supported, before any of the
+	// body's hooks run — so the panel never mounts (and never fires a phantom
+	// panel-viewed impression) on editors like the Jetpack Form editor, nor in
+	// the transient window before the current post type is available.
+	if ( ! postType || ! SUPPORTED_POST_TYPES.includes( postType ) ) {
+		return null;
+	}
+
+	return <FeatureClipPanelBody postType={ postType } postId={ postId } />;
+}
+
+interface FeatureClipPanelBodyProps {
+	postType: string;
+	postId: number | null;
+}
+
+function FeatureClipPanelBody( { postType, postId }: FeatureClipPanelBodyProps ): JSX.Element {
 	// Pass the post ID explicitly. Without it `useEntityProp` falls back to
 	// EntityProvider context, which isn't set up for sidebar surfaces in every
 	// editor — meta would silently come back undefined and the panel would
@@ -229,26 +290,27 @@ function FeatureClipPanel(): JSX.Element {
 		return Number.isFinite( n ) && n > 0 ? n : null;
 	} )();
 
-	const { attachment, hasResolvedAttachment } = useSelect(
+	const { attachment, hasResolvedAttachment, resolutionError } = useSelect(
 		( select ) => {
 			if ( ! featureClipId ) {
-				return { attachment: null, hasResolvedAttachment: true };
+				return {
+					attachment: null,
+					hasResolvedAttachment: true,
+					resolutionError: null,
+				};
 			}
 			const core = select( 'core' ) as
 				| {
 						getMedia: ( id: number ) => MediaRecord | undefined;
 						hasFinishedResolution: ( name: string, args: unknown[] ) => boolean;
+						getResolutionError?: ( name: string, args: unknown[] ) => unknown;
 				  }
 				| undefined;
 			return {
 				attachment: core?.getMedia?.( featureClipId ) ?? null,
-				// `getMedia` resolves async on first read. Until resolution
-				// finishes the result is `undefined`, which would otherwise
-				// flicker the panel into the empty CTA on reload before the
-				// preview appears. Defer the empty-state fallback until we
-				// know the lookup is genuinely done.
 				hasResolvedAttachment:
 					core?.hasFinishedResolution?.( 'getMedia', [ featureClipId ] ) ?? false,
+				resolutionError: core?.getResolutionError?.( 'getMedia', [ featureClipId ] ) ?? null,
 			};
 		},
 		[ featureClipId ]
@@ -273,9 +335,9 @@ function FeatureClipPanel(): JSX.Element {
 	const durationSeconds =
 		typeof attachment?.media_details?.length === 'number' ? attachment.media_details.length : null;
 	const hasUsableClip = !! featureClipId && !! videoUrl;
-	// Hold the panel body blank while the clip's attachment is resolving, so
-	// reload doesn't briefly flash the empty CTA before the preview appears.
 	const isResolvingAttachment = !! featureClipId && ! hasResolvedAttachment;
+	const hasLoadError =
+		!! featureClipId && hasResolvedAttachment && ! attachment && !! resolutionError;
 
 	// Body is described once and rendered into both sidebars. Each SlotFill
 	// portal instantiates its own subtree, so FeatureClipPreview's share
@@ -293,9 +355,9 @@ function FeatureClipPanel(): JSX.Element {
 			);
 		}
 		if ( isResolvingAttachment ) {
-			return null;
+			return <FeatureClipSkeleton />;
 		}
-		return <FeatureClipEmptyState />;
+		return <FeatureClipEmptyState hasLoadError={ hasLoadError } />;
 	} )();
 
 	return (
@@ -350,4 +412,11 @@ export function registerFeatureClipSidebar(): void {
 	pluginRegistered = true;
 }
 
-export { FeatureClipPanel, FeatureClipPreview, FeatureClipEmptyState, PLUGIN_NAME, PANEL_NAME };
+export {
+	FeatureClipPanel,
+	FeatureClipPreview,
+	FeatureClipEmptyState,
+	FeatureClipSkeleton,
+	PLUGIN_NAME,
+	PANEL_NAME,
+};

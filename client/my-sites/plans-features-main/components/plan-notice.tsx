@@ -41,7 +41,7 @@ export type PlanNoticeTypes =
 	| typeof CURRENT_PLAN_IN_APP_PURCHASE_NOTICE;
 
 function useResolveNoticeType(
-	{ siteId, isInSignup, visiblePlans = [], discountInformation }: PlanNoticeProps,
+	{ siteId, isInSignup, visiblePlans = [], discountInformation, intent }: PlanNoticeProps,
 	isNoticeDismissed: boolean
 ): PlanNoticeTypes {
 	const canUserPurchasePlan = useSelector(
@@ -70,7 +70,9 @@ function useResolveNoticeType(
 		return CURRENT_PLAN_IN_APP_PURCHASE_NOTICE;
 	} else if ( activeDiscount ) {
 		return ACTIVE_DISCOUNT_NOTICE;
-	} else if ( upgradeCreditsNoticeData ) {
+	} else if ( upgradeCreditsNoticeData && intent !== 'plans-upgrade-or-downgrade' ) {
+		// In the downgrade flow the user isn't upgrading, so the "credit applied at
+		// checkout if you upgrade today" message is misleading — skip it.
 		return UPGRADE_CREDIT_NOTICE;
 	}
 	return MARKETING_NOTICE;

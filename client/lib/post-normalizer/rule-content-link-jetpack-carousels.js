@@ -1,4 +1,4 @@
-import { forEach, get } from 'lodash';
+import { forEach } from 'lodash';
 
 /**
  * The linkJetpackCarousels rule modifies all of the WordPress galleries in the content
@@ -15,7 +15,7 @@ export default function linkJetpackCarousels( post, dom ) {
 	const galleries = dom.querySelectorAll( '.tiled-gallery' );
 
 	forEach( galleries, ( gallery ) => {
-		let extra = get( gallery, [ 'dataset', 'carouselExtra' ], false );
+		let extra = gallery?.dataset?.carouselExtra ?? false;
 		if ( ! extra ) {
 			// this only really exists for jsdom. See https://github.com/tmpvar/jsdom/issues/961
 			extra = gallery.getAttribute( 'data-carousel-extra' );

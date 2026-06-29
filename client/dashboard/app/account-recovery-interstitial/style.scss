@@ -1,0 +1,43 @@
+@import '@wordpress/base-styles/variables';
+
+.account-recovery-interstitial {
+	// Clip the full-bleed hero to the modal's rounded corners.
+	overflow: hidden;
+
+	// Let the hero bleed to the modal edges instead of sitting inside the default padding.
+	// `overflow: visible` (rather than the default `auto`) stops the content box from becoming
+	// its own scroll container: the modal is sized to fit its content, and the sub-pixel rounding
+	// of the full-bleed hero would otherwise surface a phantom scrollbar when the OS/browser is set
+	// to always show scrollbars. The frame still clips to its rounded corners.
+	.components-modal__content {
+		padding: 0;
+		overflow: visible;
+	}
+}
+
+// Full-bleed hero illustration, spanning the modal width at the top.
+.account-recovery-interstitial__hero {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+// The hero override above zeroes the modal content's default padding, so re-apply it on the body.
+// Use $grid-unit-30 to match the standard modal content padding.
+.account-recovery-interstitial__body {
+	padding: $grid-unit-30;
+}
+
+.account-recovery-interstitial__actions {
+	.components-button {
+		width: 100%;
+		justify-content: center;
+
+		// Let long CTA labels wrap onto multiple lines instead of overflowing the fixed-width modal.
+		height: auto;
+		min-height: $grid-unit-50;
+		white-space: normal;
+		text-align: center;
+		padding-block: $grid-unit-15;
+	}
+}

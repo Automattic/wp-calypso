@@ -1,0 +1,75 @@
+// packages/ui/src/horizontal-stepper/style.module.scss
+@use '@wordpress/base-styles/breakpoints';
+@use 'calypso/assets/stylesheets/shared/mixins/hide-content-accessibly' as a11y;
+
+.root {
+	display: flex;
+	flex-direction: column;
+	gap: var( --wpds-dimension-gap-lg );
+	container-type: inline-size;
+}
+
+.list {
+	display: flex;
+	align-items: stretch;
+}
+
+.step {
+	display: flex;
+	flex: 1;
+	justify-content: center;
+}
+
+.trigger {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: var( --wpds-dimension-gap-sm );
+	background: none;
+	border: none;
+	padding: var( --wpds-dimension-padding-md );
+	height: auto;
+	text-align: start;
+}
+
+.panel {
+	padding-block: var( --wpds-dimension-padding-lg );
+}
+
+// ---------------------------------------------------------------------------
+// Mobile: icon-only strip with connector lines
+// ---------------------------------------------------------------------------
+
+@container ( max-width: #{ breakpoints.$break-small - 1 } ) {
+	.list {
+		align-items: center;
+	}
+
+	.text-block {
+		@include a11y.hide-content-accessibly;
+	}
+
+	.step {
+		position: relative;
+
+		// Connector line from this step's center to the next step's center.
+		// The indicator sits above it via z-index so the line appears to run
+		// only between the circles.
+		&:not( :last-child )::after {
+			content: '';
+			position: absolute;
+			top: 50%;
+			transform: translateY( -50% );
+			inset-inline-start: calc( 50% + var( --a8c-ui-stepper-indicator-size ) * 0.5 + var( --wpds-dimension-padding-md ) );
+			inset-inline-end: calc( -50% + var( --a8c-ui-stepper-indicator-size ) * 0.5 + var( --wpds-dimension-padding-md ) );
+			height: var( --wpds-border-width-xs );
+			background-color: var( --wpds-color-stroke-surface-neutral );
+		}
+	}
+
+	.trigger {
+		justify-content: center;
+		position: relative;
+		z-index: 1;
+	}
+}

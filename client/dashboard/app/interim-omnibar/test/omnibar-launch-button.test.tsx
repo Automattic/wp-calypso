@@ -2,17 +2,11 @@
  * @jest-environment jsdom
  */
 
-import { screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { screen } from '@testing-library/react';
 import nock from 'nock';
 import { render } from '../../../test-utils';
-import Snackbars from '../../snackbars';
 import { InterimOmnibar } from '../interim-omnibar';
 import type { Site, User } from '@automattic/api-core';
-
-jest.mock( 'calypso/lib/explat', () => ( {
-	useExperiment: () => [ false, { variationName: 'ungated_site_launch' } ],
-} ) );
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
@@ -54,16 +48,9 @@ const site = {
 } as Site;
 
 describe( '<InterimOmnibar /> launch button on non-site routes', () => {
-	const originalLocation = window.location;
 	const originalScrollTo = window.scrollTo;
-	const assignMock = jest.fn();
 
 	beforeEach( () => {
-		delete ( window as unknown as { location?: Location } ).location;
-		( window as unknown as { location: Partial< Location > } ).location = {
-			...originalLocation,
-			assign: assignMock,
-		};
 		window.history.pushState( {}, '', '/me' );
 		window.scrollTo = jest.fn();
 
@@ -71,62 +58,22 @@ describe( '<InterimOmnibar /> launch button on non-site routes', () => {
 			.get( '/rest/v1.2/all-domains' )
 			.query( true )
 			.reply( 200, { domains: [ { blog_id: 1, domain: 'test-site.wordpress.com' } ] } );
-
-		nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/sites/1/launch' )
-			.reply( 200, { ID: 1, launch_status: 'launched' } );
 	} );
 
 	afterEach( () => {
-		assignMock.mockReset();
-		( window as unknown as { location: Location } ).location = originalLocation;
 		window.scrollTo = originalScrollTo;
 		nock.cleanAll();
 	} );
 
-	test( 'returns to the site overview with the celebration flag', async () => {
-		const testUser = userEvent.setup();
-
+	// Site launch gating: the semi-gated flow renders the button as a link
+	// to /start/launch-site instead of triggering a mutation directly.
+	test( 'links to the semi-gated launch flow', async () => {
 		render( <InterimOmnibar user={ user } site={ site } currentRoute="/me" /> );
 
-		const launchButton = await screen.findByRole( 'button', { name: /launch site/i } );
+		const launchLink = await screen.findByRole( 'link', { name: /launch site/i } );
 
-		await waitFor( () => expect( launchButton ).toBeEnabled() );
-		await testUser.click( launchButton );
-
-		await waitFor( () => {
-			expect( assignMock ).toHaveBeenCalledWith(
-				'/sites/test-site.wordpress.com?celebrateLaunch=true'
-			);
-		} );
-	} );
-
-	test( 'surfaces launch failures through dashboard snackbars', async () => {
-		nock.cleanAll();
-		const testUser = userEvent.setup();
-
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/rest/v1.2/all-domains' )
-			.query( true )
-			.reply( 200, { domains: [ { blog_id: 1, domain: 'test-site.wordpress.com' } ] } );
-
-		const launchScope = nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/sites/1/launch' )
-			.reply( 500, { message: 'Launch failed.' } );
-
-		render(
-			<>
-				<Snackbars />
-				<InterimOmnibar user={ user } site={ site } currentRoute="/me" />
-			</>
-		);
-
-		const launchButton = await screen.findByRole( 'button', { name: /launch site/i } );
-
-		await waitFor( () => expect( launchButton ).toBeEnabled() );
-		await testUser.click( launchButton );
-
-		await waitFor( () => expect( launchScope.isDone() ).toBe( true ) );
-		expect( await screen.findAllByText( 'Failed to launch site.' ) ).not.toHaveLength( 0 );
+		const href = launchLink.getAttribute( 'href' ) ?? '';
+		expect( href ).toContain( '/start/launch-site' );
+		expect( href ).toContain( 'siteSlug=test-site.wordpress.com' );
 	} );
 } );

@@ -51,7 +51,7 @@
 @mixin notice-panel-open( $notice-panel-selector ) {
 	#{$notice-panel-selector} {
 		right: $sidebar-width !important;
-		top: $layout-spacing + $admin-bar-height + 1px !important;
+		top: calc( $admin-content-top + 1px ) !important;
 		bottom: $layout-spacing !important;
 		border-bottom-right-radius: $main-border-radius !important;
 		border: 1px solid $admin-border-color;
@@ -113,7 +113,7 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) 
 		border: 1px solid $admin-border-color;
 		border-bottom: none;
 		box-sizing: border-box;
-		height: calc( var( --masterbar-height ) + 1px );
+		height: calc( var( --masterbar-height, #{$admin-bar-height} ) + 1px );
 	}
 
 	#adminmenuback,
@@ -202,7 +202,7 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 			border: 1px solid $admin-border-color;
 			border-bottom: none;
 			box-sizing: border-box;
-			height: calc( var( --masterbar-height ) + 1px );
+			height: calc( var( --masterbar-height, #{$admin-bar-height} ) + 1px );
 
 			.masterbar__item-wrapper .masterbar__item-my-sites {
 				border-top-left-radius: $main-border-radius;
@@ -242,7 +242,7 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 		}
 
 		#secondary {
-			top: calc( $layout-spacing + $admin-bar-height );
+			top: $admin-content-top;
 			left: $layout-spacing;
 			bottom: $layout-spacing;
 			overflow: hidden;
@@ -338,19 +338,23 @@ body.is-section-stepper.agents-manager-sidebar-container {
 /* Calypso: Fix sticky headers on marketplace pages when the sidebar is open */
 .agents-manager-sidebar-container--sidebar-open .layout__secondary ~ .layout__primary {
 	.plugins-browser--site-view .search-categories.fixed-top {
-		top: calc( $admin-bar-height + $layout-spacing + 1px );
+		top: calc( $admin-content-top + 1px );
 		right: calc( $sidebar-width + 1px );
-		left: calc( var( --sidebar-width-max ) + 17px );
+		left: calc( var( --sidebar-width-max, #{$admin-menu-width-unified} ) + 17px );
 
 		&::after {
-			width: calc( 100vw - var( --sidebar-width-max ) - $sidebar-width - 18px );
+			width: calc(
+				100vw - var( --sidebar-width-max, #{$admin-menu-width-unified} ) - $sidebar-width - 18px
+			);
 		}
 	}
 
 	.themes__content .themes__controls.is-sticky:not( .is-global-sidebar-visible ) {
-		top: calc( $admin-bar-height + $layout-spacing + 1px );
-		left: calc( var( --sidebar-width-max ) + 17px );
-		width: calc( 100vw - var( --sidebar-width-max ) - $sidebar-width - 18px );
+		top: calc( $admin-content-top + 1px );
+		left: calc( var( --sidebar-width-max, #{$admin-menu-width-unified} ) + 17px );
+		width: calc(
+			100vw - var( --sidebar-width-max, #{$admin-menu-width-unified} ) - $sidebar-width - 18px
+		);
 	}
 }
 
@@ -376,6 +380,11 @@ body.site-editor-php.agents-manager-sidebar-container {
 	&.agents-manager-sidebar-container--sidebar-open {
 		@include sidebar-open-base( '.edit-site-layout__canvas' );
 		@include editor-save-panel-open();
+		// Under the omnibar, square off the canvas top (the admin bar above owns the top rounding).
+		&.has-admin-bar-in-editor .edit-site-layout__canvas {
+			border-top-left-radius: 0;
+			border-top-right-radius: 0;
+		}
 
 		// Override canvas styles when the site editor navigation menu is open
 		.edit-site-layout:not( .is-full-canvas ) .edit-site-layout__canvas {
@@ -385,7 +394,7 @@ body.site-editor-php.agents-manager-sidebar-container {
 	}
 }
 
-/* Page editor */
+/* Post editor (posts and pages) */
 body.post-php.agents-manager-sidebar-container,
 body.post-new-php.agents-manager-sidebar-container {
 	@include sidebar-base( '.edit-post-layout' );
@@ -397,6 +406,11 @@ body.post-new-php.agents-manager-sidebar-container {
 	&.agents-manager-sidebar-container--sidebar-open {
 		@include sidebar-open-base( '.edit-post-layout' );
 		@include editor-save-panel-open();
+		// Under the omnibar, square off the canvas top (the admin bar above owns the top rounding).
+		&.has-admin-bar-in-editor .edit-post-layout {
+			border-top-left-radius: 0;
+			border-top-right-radius: 0;
+		}
 
 		// Split-screen clips the editor shell for rounded corners. Gutenberg's
 		// desktop header grid can otherwise push the settings group past that
@@ -427,7 +441,7 @@ body.post-new-php.agents-manager-sidebar-container {
 	padding: $layout-spacing;
 	width: $sidebar-width;
 	box-sizing: border-box;
-	z-index: $agents-manager-z-index-docked;
+	z-index: $agents-manager-z-index-sidebar;
 
 	.agents-manager-sidebar-fab {
 		visibility: visible;
@@ -699,10 +713,15 @@ body.post-new-php.agents-manager-sidebar-container {
 	}
 }
 
+.agents-manager-chat--undocked.is-focused .agenttic.Chat-module_container.Chat-module_floating {
+	z-index: $agents-manager-z-index-focused;
+}
+
 /* Agenttic UI: Styles for the undocked chat */
 .agents-manager-chat--undocked .agenttic.Chat-module_container.Chat-module_floating {
-	// Fix the undocked chat overlapping with the nav menu
-	z-index: 9999;
+	// Shared overlay base keeps the floating chat above the nav menu and lets it
+	// trade stacking with the Help Center panel via the focused offset above.
+	z-index: $agents-manager-z-index-docked;
 
 	.big-sky__dock__menu__variation-picker .edit-site-global-styles-variations_item {
 		&:not( .is-active ):hover {

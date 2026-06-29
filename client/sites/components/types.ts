@@ -2,7 +2,7 @@ import type { SiteExcerptData } from '@automattic/sites';
 
 export type SitePreviewPane = {
 	open: (
-		site: Pick< SiteExcerptData, 'ID' | 'slug' >,
+		site: Pick< SiteExcerptData, 'ID' | 'slug' | 'is_wpcom_staging_site' >,
 		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher',
 		openInNewTab?: boolean
 	) => void;

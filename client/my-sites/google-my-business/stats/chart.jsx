@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { flatten } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -231,7 +230,7 @@ class GoogleMyBusinessStatsChart extends Component {
 			return false;
 		}
 
-		return flatten( transformedData ).reduce( ( sum, { value } ) => sum + value, 0 ) === 0;
+		return transformedData.flat().reduce( ( sum, { value } ) => sum + value, 0 ) === 0;
 	}
 
 	renderChartNotice() {

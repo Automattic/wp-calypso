@@ -1,5 +1,4 @@
 import { translate } from 'i18n-calypso';
-import { trim } from 'lodash';
 import titlecase from 'to-title-case';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -27,11 +26,15 @@ export const tagListing = ( context, next ) => {
 	const basePath = '/tag/:slug';
 	const fullAnalyticsPageTitle = analyticsPageTitle + ' > Tag > ' + context.params.tag;
 	const tagSlug = decodeURIComponent(
-		trim( context.params.tag ).toLowerCase().replace( /\s+/g, '-' ).replace( /-{2,}/g, '-' )
+		( context.params.tag ?? '' )
+			.trim()
+			.toLowerCase()
+			.replace( /\s+/g, '-' )
+			.replace( /-{2,}/g, '-' )
 	);
 	const state = context.store.getState();
 	const tagTitle = capitalPDangit(
-		titlecase( trim( context.params.tag ) ).replace( /[-_]/g, ' ' )
+		titlecase( ( context.params.tag ?? '' ).trim() ).replace( /[-_]/g, ' ' )
 	);
 
 	const encodedTag = encodeURIComponent( tagSlug ).toLowerCase();

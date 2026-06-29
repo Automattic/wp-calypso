@@ -435,8 +435,34 @@ describe( 'useGenerateActionHook', () => {
 	} );
 
 	it( 'should handle downgrade actions', () => {
+		( useSelector as jest.Mock ).mockImplementation( ( selector ) =>
+			selector( {
+				ui: {},
+				sites: {
+					items: [],
+					plans: {
+						[ mockSiteId ]: {
+							data: [
+								{
+									productSlug: PLAN_PERSONAL,
+									availableForDowngrade: true,
+								},
+							],
+						},
+					},
+				},
+				route: {
+					query: {
+						current: {
+							get_domain: null,
+						},
+					},
+				},
+			} )
+		);
+
 		const { result } = renderHook( () =>
-			useGenerateActionHook( { isInSignup: false, isLaunchPage: false } )
+			useGenerateActionHook( { siteId: mockSiteId, isInSignup: false, isLaunchPage: false } )
 		);
 
 		const action = result.current( { planSlug: PLAN_PERSONAL, availableForPurchase: false } );

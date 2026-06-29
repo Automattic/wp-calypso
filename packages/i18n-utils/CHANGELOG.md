@@ -1,10 +1,15 @@
 # Changelog
 
-## Next
+## 1.3.0
 
-Add `getNumericFirstDayOfWeek` method as a wrapper for native (but not yet fully supported) `new Intl.Locale( locale ).getWeekInfo()`
+- Add `getNumericFirstDayOfWeek` method as a wrapper for native (but not yet fully supported) `new Intl.Locale( locale ).getWeekInfo()`.
 
-Get rid of implicit lodash dependency
+- Get rid of implicit lodash dependency.
+- Use an npm-installable `@wordpress/compose` dependency range for package consumers.
+
+## 1.2.4
+
+- Declare React 19 compatibility for package consumers (#111721).
 
 ## 1.2.3
 

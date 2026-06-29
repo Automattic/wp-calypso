@@ -519,6 +519,9 @@ function convertRequestProductToResponseProduct(
 		const { product_slug } = product;
 
 		switch ( product_slug ) {
+			// The cart endpoint accepts a plan's path slug (e.g. `personal`) as
+			// well as its product slug, resolving it server-side.
+			case 'personal':
 			case 'personal-bundle': // WPCOM Personal Bundle
 				return {
 					...getEmptyResponseCartProduct(),

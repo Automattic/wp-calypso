@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/activity-log/init';
 
 /**
@@ -9,5 +7,5 @@ import 'calypso/state/activity-log/init';
  * @returns {?Object} Progress object, null if no data
  */
 export default function getRestoreProgress( state, siteId ) {
-	return get( state, [ 'activityLog', 'restoreProgress', siteId ], null );
+	return state?.activityLog?.restoreProgress?.[ siteId ] ?? null;
 }

@@ -1,6 +1,6 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { isEmpty, trim } from 'lodash';
+import { isEmpty } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
@@ -18,7 +18,7 @@ class EmailProvider extends Component {
 	onChange = ( event ) => {
 		const { value } = event.target;
 
-		this.setState( { token: trim( value ) } );
+		this.setState( { token: value.trim() } );
 	};
 
 	onAddDnsRecords = ( event ) => {

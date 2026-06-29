@@ -5,6 +5,7 @@ import { backup, wordpress } from '@wordpress/icons';
 import { lazy, Suspense } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { siteDomainsRoute } from '../../app/router/sites';
+import ComponentViewTracker from '../../components/component-view-tracker';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { getSiteBlockingStatus } from '../../utils/site-status';
 import { siteTypeSupportsFeature } from '../../utils/site-type-feature-support';
@@ -34,6 +35,7 @@ export function useActions(): Action< Site >[] {
 			label: __( 'WP Admin ↗' ),
 			callback: ( sites: Site[] ) => {
 				const site = sites[ 0 ];
+				recordTracksEvent( 'calypso_dashboard_sites_action_click', { action: 'admin' } );
 				if ( site.options?.admin_url ) {
 					window.open( site.options.admin_url, '_blank' );
 				}
@@ -45,6 +47,7 @@ export function useActions(): Action< Site >[] {
 			label: __( 'Visit site ↗' ),
 			callback: ( sites: Site[] ) => {
 				const site = sites[ 0 ];
+				recordTracksEvent( 'calypso_dashboard_sites_action_click', { action: 'site' } );
 				if ( site.URL ) {
 					window.open( site.URL, '_blank' );
 				}
@@ -56,6 +59,7 @@ export function useActions(): Action< Site >[] {
 			label: isDashboardBackport() ? __( 'Domains ↗' ) : __( 'Domains' ),
 			callback: ( sites: Site[] ) => {
 				const site = sites[ 0 ];
+				recordTracksEvent( 'calypso_dashboard_sites_action_click', { action: 'domains' } );
 				if ( isDashboardBackport() ) {
 					window.open( `/domains/manage/${ site.slug }`, '_blank' );
 					return;
@@ -73,6 +77,7 @@ export function useActions(): Action< Site >[] {
 			label: __( 'Jetpack Cloud ↗' ),
 			callback: ( sites: Site[] ) => {
 				const site = sites[ 0 ];
+				recordTracksEvent( 'calypso_dashboard_sites_action_click', { action: 'jetpack-cloud' } );
 				window.open( `https://cloud.jetpack.com/landing/${ site.slug }` );
 			},
 			isEligible: ( item: Site ) => isSelfHostedJetpackConnected( item ),
@@ -87,6 +92,12 @@ export function useActions(): Action< Site >[] {
 					params: { siteSlug: site.slug },
 				} );
 
+				recordTracksEvent( 'calypso_dashboard_sites_action_click', {
+					action: 'prepare-for-launch',
+				} );
+				// Legacy event, kept for continuity with existing dashboards/queries. Now
+				// redundant with the unified action_click event above; remove once teams
+				// relying on it have migrated. See PR discussion.
 				recordTracksEvent( 'calypso_sites_dashboard_site_action_prepare_for_launch_click' );
 			},
 			isEligible: ( item: Site ) =>
@@ -100,6 +111,7 @@ export function useActions(): Action< Site >[] {
 			label: __( 'Settings' ),
 			callback: ( sites: Site[] ) => {
 				const site = sites[ 0 ];
+				recordTracksEvent( 'calypso_dashboard_sites_action_click', { action: 'settings' } );
 				router.navigate( { to: '/sites/$siteSlug/settings', params: { siteSlug: site.slug } } );
 			},
 			isEligible: ( item: Site ) =>
@@ -118,6 +130,10 @@ export function useActions(): Action< Site >[] {
 			isEligible: ( item: Site ) => canRestoreSite( item ),
 			RenderModal: ( { items, closeModal } ) => (
 				<Suspense fallback={ null }>
+					<ComponentViewTracker
+						eventName="calypso_dashboard_sites_action_click"
+						properties={ { action: 'restore' } }
+					/>
 					<SiteRestoreContentInfo site={ items[ 0 ] } onClose={ closeModal ?? noop } />
 				</Suspense>
 			),
@@ -128,6 +144,10 @@ export function useActions(): Action< Site >[] {
 			isEligible: ( item: Site ) => canDisconnectSite( item ),
 			RenderModal: ( { items, closeModal } ) => (
 				<Suspense fallback={ null }>
+					<ComponentViewTracker
+						eventName="calypso_dashboard_sites_action_click"
+						properties={ { action: 'disconnect' } }
+					/>
 					<JetpackSiteDisconnect site={ items[ 0 ] } onClose={ closeModal ?? noop } />
 				</Suspense>
 			),
@@ -138,6 +158,10 @@ export function useActions(): Action< Site >[] {
 			isEligible: ( item: Site ) => canLeaveSite( item ),
 			RenderModal: ( { items, closeModal } ) => (
 				<Suspense fallback={ null }>
+					<ComponentViewTracker
+						eventName="calypso_dashboard_sites_action_click"
+						properties={ { action: 'leave' } }
+					/>
 					<SiteLeaveContentInfo site={ items[ 0 ] } onClose={ closeModal ?? noop } />
 				</Suspense>
 			),
