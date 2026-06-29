@@ -11,7 +11,7 @@ import type { Site } from '@automattic/api-core';
 const FOUR_DAYS_IN_MILLISECONDS = 4 * 24 * 60 * 60 * 1000;
 
 export default function DIFMUpsellCard( { site }: { site: Site } ) {
-	const { data: agencyBlog } = useQuery( {
+	const { data: agencyBlog, isLoading: isAgencyLoading } = useQuery( {
 		...siteAgencyBlogQuery( site.ID ),
 		enabled: site.is_wpcom_atomic,
 	} );
@@ -20,8 +20,7 @@ export default function DIFMUpsellCard( { site }: { site: Site } ) {
 		return null;
 	}
 
-	// Don't show the card on agency-associated sites (A4A-2861).
-	if ( agencyBlog || site.is_a4a_dev_site ) {
+	if ( isAgencyLoading || agencyBlog || site.is_a4a_dev_site ) {
 		return null;
 	}
 
