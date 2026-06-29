@@ -1,5 +1,5 @@
-import { expect } from 'playwright/test';
 import { getCalypsoURL } from '../../data-helper';
+import { waitForLocatorAttribute } from '../../element-helper';
 import type { Locator, Page } from 'playwright';
 
 const THEME_ACTION_TIMEOUT_MS = 10 * 1000;
@@ -57,7 +57,7 @@ export class LoggedOutThemesPage {
 			timeout: THEME_NAVIGATION_TIMEOUT_MS,
 			waitUntil: 'domcontentloaded',
 		} );
-		await expect( this.viewFilter ).toBeVisible( { timeout: THEME_ACTION_TIMEOUT_MS } );
+		await this.viewFilter.waitFor( { state: 'visible', timeout: THEME_ACTION_TIMEOUT_MS } );
 	}
 
 	/**
@@ -72,20 +72,7 @@ export class LoggedOutThemesPage {
 				? /\/themes(?:[?#].*)?$/
 				: new RegExp( `/themes/${ filterSlug }(?:[?#].*)?$` );
 
-		await expect( async () => {
-			await this.waitUntilLoaded();
-			await this.viewFilter.scrollIntoViewIfNeeded();
-			await this.viewFilter.click();
-			await this.page.getByRole( 'option', { name: filter, exact: true } ).click();
-			await this.page.waitForURL( filterUrlPattern, {
-				waitUntil: 'domcontentloaded',
-			} );
-			await expect( this.viewFilter ).toContainText( filter );
-			await expect( this.firstThemeCard ).toBeVisible();
-		} ).toPass( {
-			timeout: THEME_NAVIGATION_TIMEOUT_MS,
-			intervals: [ 1_000, 2_000, 5_000 ],
-		} );
+		await this.retryFilterSelection( filter, filterUrlPattern );
 	}
 
 	/**
@@ -94,17 +81,16 @@ export class LoggedOutThemesPage {
 	 * @returns {Promise<string>} The slug of the selected theme.
 	 */
 	async startWithFirstTheme(): Promise< string > {
-		await expect( this.firstThemeGetStartedLink ).toBeVisible( {
-			timeout: THEME_ACTION_TIMEOUT_MS,
-		} );
-		await expect( this.firstThemeGetStartedLink ).toHaveAttribute( 'href', /theme=/, {
-			timeout: THEME_ACTION_TIMEOUT_MS,
-		} );
-
-		const getStartedRoute = await this.firstThemeGetStartedLink.getAttribute( 'href' );
-		if ( ! getStartedRoute ) {
-			throw new Error( 'First theme Get started URL not found' );
-		}
+		const getStartedRoute = await waitForLocatorAttribute(
+			this.firstThemeGetStartedLink,
+			'href',
+			/theme=/,
+			{
+				timeout: THEME_ACTION_TIMEOUT_MS,
+				description: 'First theme Get started link',
+				state: 'visible',
+			}
+		);
 
 		const { themeSlug, url: getStartedUrl } = getCalypsoGetStartedUrlFromHref(
 			getStartedRoute,
@@ -117,5 +103,54 @@ export class LoggedOutThemesPage {
 		} );
 
 		return themeSlug;
+	}
+
+	/**
+	 * Retries the filter interaction because the logged-out theme grid can re-render during navigation.
+	 */
+	private async retryFilterSelection( filter: string, filterUrlPattern: RegExp ): Promise< void > {
+		const intervals = [ 1_000, 2_000, 5_000 ];
+		const deadline = Date.now() + THEME_NAVIGATION_TIMEOUT_MS;
+		let attempt = 0;
+		let lastError: unknown;
+
+		while ( Date.now() < deadline ) {
+			try {
+				await this.waitUntilLoaded();
+				await this.viewFilter.scrollIntoViewIfNeeded();
+				await this.viewFilter.click();
+				await this.page.getByRole( 'option', { name: filter, exact: true } ).click();
+				await this.page.waitForURL( filterUrlPattern, {
+					timeout: Math.max( deadline - Date.now(), 500 ),
+					waitUntil: 'domcontentloaded',
+				} );
+				const filterText = await this.viewFilter.textContent( {
+					timeout: THEME_ACTION_TIMEOUT_MS,
+				} );
+				if ( ! filterText?.includes( filter ) ) {
+					throw new Error(
+						`Expected theme filter to contain "${ filter }", got "${ filterText }"`
+					);
+				}
+				await this.firstThemeCard.waitFor( {
+					state: 'visible',
+					timeout: THEME_ACTION_TIMEOUT_MS,
+				} );
+				return;
+			} catch ( error ) {
+				lastError = error;
+				if ( Date.now() >= deadline ) {
+					break;
+				}
+				const wait = Math.min(
+					intervals[ Math.min( attempt, intervals.length - 1 ) ],
+					deadline - Date.now()
+				);
+				attempt += 1;
+				await this.page.waitForTimeout( wait );
+			}
+		}
+
+		throw lastError;
 	}
 }

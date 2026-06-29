@@ -137,7 +137,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		const path = config( 'wpcom_login_url' ) || '/log-in';
 		const loginUrl = `${ path }?redirect_to=${ encodeURIComponent( currentPath ) }`;
 		window.location.href = loginUrl;
-	}, [] );
+	}, [ supports.startStoreRoute ] );
 
 	// Subscribe to network errors and when errors occur due to being logged
 	// out, redirect the user to the log in screen.

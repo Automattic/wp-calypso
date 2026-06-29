@@ -135,4 +135,36 @@ describe( 'SocialNotificationsList', () => {
 		);
 		expect( screen.queryByRole( 'heading', { name: /today/i, level: 3 } ) ).toBeNull();
 	} );
+
+	it( 'does not emit duplicate-key warnings when a bucket re-appears in non-monotonic input', () => {
+		// Some wire orderings (paginated pages re-merged out-of-order, backend
+		// quirks) can interleave buckets — e.g. earlier → this_week → earlier.
+		// The divider key must stay unique across such layouts so React doesn't
+		// drop or duplicate dividers. See the divider-key construction in the
+		// list renderer.
+		const now = Date.now();
+		const days = ( n: number ) => new Date( now - n * 24 * 60 * 60 * 1000 ).toISOString();
+		const items = [
+			makeNotification( { id: 'a', created_at: days( 10 ) } ), // earlier
+			makeNotification( { id: 'b', created_at: days( 3 ) } ), // this_week
+			makeNotification( { id: 'c', created_at: days( 15 ) } ), // earlier (again)
+		];
+		const errorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		try {
+			renderWithProvider(
+				<SocialNotificationsList
+					{ ...defaultProps }
+					items={ items }
+					filter="all"
+					onFilterChange={ jest.fn() }
+				/>
+			);
+			const dupKeyCalls = errorSpy.mock.calls.filter( ( args ) =>
+				args.some( ( arg ) => String( arg ).includes( 'two children with the same key' ) )
+			);
+			expect( dupKeyCalls ).toEqual( [] );
+		} finally {
+			errorSpy.mockRestore();
+		}
+	} );
 } );

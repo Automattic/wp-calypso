@@ -14,7 +14,12 @@ jest.mock( '@automattic/calypso-config', () => ( {
 } ) );
 
 import page from '@automattic/calypso-router';
-import { atmosphereProfile, atmosphereTagFeed, atmosphereThread } from '../controller';
+import {
+	atmosphereLanding,
+	atmosphereProfile,
+	atmosphereTagFeed,
+	atmosphereThread,
+} from '../controller';
 
 const validDid = 'did:plc:abc234567defghi234567jkl';
 const validRkey = '3kabcdefghijk';
@@ -28,6 +33,24 @@ beforeEach( () => {
 	jest.mocked( page.redirect ).mockReset();
 } );
 
+describe( 'atmosphereLanding controller', () => {
+	it( 'redirects to /reader/connections without calling next', () => {
+		atmosphereLanding();
+		expect( page.redirect ).toHaveBeenCalledWith( '/reader/connections' );
+		expect( mockNext ).not.toHaveBeenCalled();
+	} );
+
+	it( 'redirects to /reader when the feature flag is off', () => {
+		const config = jest.requireMock( '@automattic/calypso-config' ) as {
+			isEnabled: jest.Mock;
+		};
+		config.isEnabled.mockReturnValueOnce( false );
+		atmosphereLanding();
+		expect( page.redirect ).toHaveBeenCalledWith( '/reader' );
+		expect( mockNext ).not.toHaveBeenCalled();
+	} );
+} );
+
 describe( 'atmosphereThread controller', () => {
 	it( 'sets context.primary and calls next on valid input', () => {
 		const ctx = makeContext( { id: '7', did: validDid, rkey: validRkey } );
@@ -36,10 +59,10 @@ describe( 'atmosphereThread controller', () => {
 		expect( mockNext ).toHaveBeenCalled();
 	} );
 
-	it( 'redirects to /reader/atmosphere when id is non-finite', () => {
+	it( 'redirects to /reader/connections when id is non-finite', () => {
 		const ctx = makeContext( { id: 'NaN', did: validDid, rkey: validRkey } );
 		atmosphereThread( ctx, mockNext );
-		expect( page.redirect ).toHaveBeenCalledWith( '/reader/atmosphere' );
+		expect( page.redirect ).toHaveBeenCalledWith( '/reader/connections' );
 		expect( mockNext ).not.toHaveBeenCalled();
 	} );
 
@@ -116,17 +139,17 @@ describe( 'atmosphereProfile', () => {
 		expect( mockNext ).not.toHaveBeenCalled();
 	} );
 
-	it( 'redirects to /reader/atmosphere on a non-numeric id', () => {
+	it( 'redirects to /reader/connections on a non-numeric id', () => {
 		const ctx = makeProfileContext( { id: 'NaN', actor: 'alice.bsky.social' } );
 		atmosphereProfile( ctx, mockNext );
-		expect( page.redirect ).toHaveBeenCalledWith( '/reader/atmosphere' );
+		expect( page.redirect ).toHaveBeenCalledWith( '/reader/connections' );
 		expect( mockNext ).not.toHaveBeenCalled();
 	} );
 
-	it( 'redirects to /reader/atmosphere when both id and actor are bad', () => {
+	it( 'redirects to /reader/connections when both id and actor are bad', () => {
 		const ctx = makeProfileContext( { id: '0', actor: 'bad' } );
 		atmosphereProfile( ctx, mockNext );
-		expect( page.redirect ).toHaveBeenCalledWith( '/reader/atmosphere' );
+		expect( page.redirect ).toHaveBeenCalledWith( '/reader/connections' );
 		expect( mockNext ).not.toHaveBeenCalled();
 	} );
 
@@ -182,10 +205,10 @@ describe( 'atmosphereTagFeed', () => {
 		expect( mockNext ).not.toHaveBeenCalled();
 	} );
 
-	it( 'redirects to /reader/atmosphere on a non-numeric id', () => {
+	it( 'redirects to /reader/connections on a non-numeric id', () => {
 		const ctx = makeTagContext( { id: 'NaN', hashtag: 'rust' } );
 		atmosphereTagFeed( ctx, mockNext );
-		expect( page.redirect ).toHaveBeenCalledWith( '/reader/atmosphere' );
+		expect( page.redirect ).toHaveBeenCalledWith( '/reader/connections' );
 		expect( mockNext ).not.toHaveBeenCalled();
 	} );
 

@@ -1,6 +1,22 @@
 /**
+ * The post or comment an achievement was unlocked on. Only present when viewing
+ * your own achievements, and only on achievements the backend can attribute to a
+ * specific post or comment.
+ */
+export interface AchievementContext {
+	blog_id: number;
+	post_id: number;
+	/** Present (and `> 0`) when the achievement was unlocked on a comment. */
+	comment_id?: number;
+	/** Permalink to the post or comment. */
+	url: string;
+}
+
+/**
  * Earned, fully-visible achievement. The shape returned for own-profile reads
- * and for non-secret entries on cross-user reads.
+ * and for non-secret entries on cross-user reads. A self-read of an earned
+ * secret achievement also uses this shape — `is_secret` then reflects the
+ * registry (`true`) but the payload is fully populated.
  */
 export interface Achievement {
 	achievement_id: number;
@@ -9,25 +25,55 @@ export interface Achievement {
 	description: string;
 	badge_prefix: string;
 	level: number;
-	date: string;
+	date_unlocked: string;
+	/** Y-m-d date the achievement was added to the registry. Used for sort order. */
+	date_created: string;
+	/**
+	 * ISO 8601 hire date, exposed only on the `automattician` achievement and
+	 * only to Automattic requesters. Its `date_unlocked` is pinned to the
+	 * achievement's 2012 launch, so for old-timers this carries the real hire
+	 * date instead. Omitted when no date is on record.
+	 */
+	date_hired?: string;
 	image: string;
-	retired: boolean;
-	/** Optional — legacy responses (pre-locked-achievements rollout) omit it. */
-	is_secret?: false;
+	/**
+	 * Y-m-d (or ISO 8601) date string when the achievement was retired, or
+	 * an empty string / omitted when not retired. Truthy ⇒ retired.
+	 */
+	date_retired?: string;
+	/**
+	 * Reflects the registry: `true` if the achievement is secret, even when
+	 * the payload is fully visible (self-read of an earned secret). Optional —
+	 * legacy responses (pre-locked-achievements rollout) omit it.
+	 */
+	is_secret?: boolean;
+	/** Always `false` (or omitted) for full payloads — see {@link MaskedSecretAchievement}. */
+	is_redacted?: false;
+	/** `true` for Automattic-only achievements. */
+	is_a8c_only?: boolean;
 	/** Only present when viewing your own achievements. */
 	site_ID?: number;
 	/** Only present when viewing your own achievements. */
 	url?: string;
+	/**
+	 * The post or comment that unlocked the achievement. Only present when viewing
+	 * your own achievements, and only on achievements the backend can attribute.
+	 */
+	context?: AchievementContext;
 }
 
 /**
  * Earned by the profile owner, masked because the requester has not earned
- * the same secret. Cross-user reads only.
+ * the same secret. Cross-user reads only. Discriminated from {@link Achievement}
+ * by `is_redacted: true`.
  */
 export interface MaskedSecretAchievement {
 	achievement_id: number;
 	is_secret: true;
-	date: string;
+	is_redacted: true;
+	date_unlocked: string;
+	/** Y-m-d date the achievement was added to the registry. Used for sort order. */
+	date_created: string;
 }
 
 /**
@@ -41,6 +87,10 @@ export interface LockedAchievement {
 	description: string;
 	badge_prefix: string;
 	is_secret: false;
+	/** Always `false` (or omitted) for full payloads — see {@link LockedSecretAchievement}. */
+	is_redacted?: false;
+	/** `true` for Automattic-only achievements. */
+	is_a8c_only?: boolean;
 	date_created: string;
 	/** Current progress toward `target`. Present alongside `target` for incremental achievements. */
 	progress?: number;
@@ -49,11 +99,13 @@ export interface LockedAchievement {
 }
 
 /**
- * Locked + secret. Self-reads only.
+ * Locked + secret. Self-reads only. Discriminated from {@link LockedAchievement}
+ * by `is_redacted: true`.
  */
 export interface LockedSecretAchievement {
 	achievement_id: number;
 	is_secret: true;
+	is_redacted: true;
 	date_created: string;
 }
 
@@ -93,6 +145,17 @@ export interface EngagementStreak {
 	days?: EngagementStreakDay[];
 }
 
+/**
+ * A per-site daily-post streak: a contiguous run of days on which the user
+ * published at least one post on the given blog. The endpoint returns only
+ * currently-active streaks. Self-reads only.
+ */
+export interface DailyPostStreak {
+	blog_id: number;
+	url: string;
+	current_streak: number;
+}
+
 export interface AchievementsResponse {
 	found: number;
 	achievements: EarnedAchievementEntry[];
@@ -101,4 +164,6 @@ export interface AchievementsResponse {
 	years_of_service?: number;
 	/** Activity streak data. */
 	engagement_streak?: EngagementStreak;
+	/** Self-reads only. Per-site daily-post streaks. Not paginated. */
+	daily_post_streak?: DailyPostStreak[];
 }

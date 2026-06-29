@@ -32,8 +32,8 @@ export default function Notifications( { user, className }: { user: User; classN
 		],
 		VIEW_SETTINGS: [
 			() => {
-				handleClose();
-				window.location.assign( dashboardLink( '/me/notifications' ) );
+				// Open in a new tab so the current notification state is preserved.
+				window.open( dashboardLink( '/me/notifications' ), '_blank' );
 			},
 		],
 		EDIT_COMMENT: [
@@ -73,10 +73,11 @@ export default function Notifications( { user, className }: { user: User; classN
 	return (
 		<Dropdown
 			popoverProps={ {
-				className: 'dashboard-notifications',
-				placement: 'bottom-end',
+				placement: 'bottom-start',
 				offset: 8,
 				focusOnMount: true,
+				flip: false,
+				shift: true,
 			} }
 			open={ isOpen }
 			expandOnMobile={ isMobileViewport }
@@ -92,24 +93,14 @@ export default function Notifications( { user, className }: { user: User; classN
 				/>
 			) }
 			renderContent={ () => (
-				<div
-					style={ {
-						width: '100vw',
-						height: '100vh',
-						maxWidth: ! isMobileViewport ? '448px' : undefined,
-						maxHeight: 'inherit',
-						margin: '-8px',
-					} }
-				>
-					<Suspense fallback={ null }>
-						<AsyncNotificationApp
-							locale={ user.language }
-							isDismissible={ isMobileViewport }
-							actionHandlers={ actionHandlers }
-							wpcom={ wpcom }
-						/>
-					</Suspense>
-				</div>
+				<Suspense fallback={ null }>
+					<AsyncNotificationApp
+						locale={ user.language }
+						isDismissible={ isMobileViewport }
+						actionHandlers={ actionHandlers }
+						wpcom={ wpcom }
+					/>
+				</Suspense>
 			) }
 		/>
 	);

@@ -1,18 +1,24 @@
 /**
  * "Generate Feature Clip" post-editor sidebar panel.
  *
- * Registers a PluginDocumentSettingPanel (from `@wordpress/editor`) in the
- * Gutenberg post editor. When no clip is linked to the post, shows a short
- * description + Generate clip button. Once a clip exists (via the
- * `_jetpack_feature_clip_id` post meta registered by Jetpack's Image Studio
- * extension), shows a small video preview, a share row mirroring the modal,
- * and a Regenerate button.
+ * Dual-rendered, mirroring Jetpack SEO's pattern: the same body renders into
+ * BOTH the default WordPress document sidebar (via `PluginDocumentSettingPanel`
+ * from `@wordpress/editor`) AND the Jetpack sidebar (via a `Fill` into
+ * Jetpack's `"JetpackPluginSidebar"` SlotFill). The Fill is inert when the
+ * Jetpack editor bundle isn't loaded, so the document-sidebar copy always
+ * shows and the Jetpack-sidebar copy is purely additive.
+ *
+ * When no clip is linked to the post, shows a short description + Generate
+ * clip button. Once a clip exists (via the `_jetpack_feature_clip_id` post
+ * meta registered by Jetpack's Image Studio extension), shows a small video
+ * preview, a share row mirroring the modal, and a Regenerate button.
  */
 import { createBlock } from '@wordpress/blocks';
-import { Button } from '@wordpress/components';
+import { Button, Fill, Notice, PanelBody, VisuallyHidden } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import { dispatch, useSelect } from '@wordpress/data';
 import { PluginDocumentSettingPanel } from '@wordpress/editor';
+import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { share } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
@@ -24,8 +30,13 @@ import { useReelShare } from '../hooks/use-reel-share';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
 import { store as videoStudioStore, type VideoStudioActions } from '../stores/video-studio';
 import { ImageStudioMode } from '../types';
-import { trackImageStudioOpened } from '../utils/tracking';
+import {
+	trackImageStudioFeatureClipAddedToPost,
+	trackImageStudioFeatureClipPanelViewed,
+	trackImageStudioOpened,
+} from '../utils/tracking';
 import { FEATURE_CLIP_META_KEY } from './feature-clip-meta';
+import type { JSX } from 'react';
 import './feature-clip-sidebar.scss';
 
 const PLUGIN_NAME = 'image-studio-feature-clip';
@@ -72,8 +83,8 @@ function FeatureClipPreview( {
 	attachmentId,
 	durationSeconds,
 }: FeatureClipPreviewProps ): JSX.Element {
-	const reel = useReelShare( { url: videoUrl, attachmentId, durationSeconds } );
-	const generic = useGenericShare( { url: videoUrl, attachmentId } );
+	const reel = useReelShare( 'sidebar', { url: videoUrl, attachmentId, durationSeconds } );
+	const generic = useGenericShare( 'sidebar', { url: videoUrl, attachmentId } );
 
 	const reelLabel = reel.isSharing
 		? __( 'Sharing on Instagram…', __i18n_text_domain__ )
@@ -87,7 +98,14 @@ function FeatureClipPreview( {
 		const { insertBlocks } = dispatch( 'core/block-editor' ) as {
 			insertBlocks?: ( blocks: unknown ) => void;
 		};
-		insertBlocks?.( createBlock( 'core/video', { id: attachmentId, src: videoUrl } ) );
+		// Bail before tracking if the block-editor dispatcher is unavailable —
+		// recording the conversion when no block was inserted would log a
+		// phantom add-to-post.
+		if ( ! insertBlocks ) {
+			return;
+		}
+		insertBlocks( createBlock( 'core/video', { id: attachmentId, src: videoUrl } ) );
+		trackImageStudioFeatureClipAddedToPost( { attachmentId } );
 	};
 
 	return (
@@ -158,14 +176,26 @@ function FeatureClipPreview( {
 	);
 }
 
-function FeatureClipEmptyState(): JSX.Element {
+interface FeatureClipEmptyStateProps {
+	hasLoadError?: boolean;
+}
+
+function FeatureClipEmptyState( {
+	hasLoadError = false,
+}: FeatureClipEmptyStateProps ): JSX.Element {
 	return (
 		<>
+			{ hasLoadError && (
+				<Notice
+					status="error"
+					isDismissible={ false }
+					className="image-studio-feature-clip-panel__error-notice"
+				>
+					{ __( "Couldn't load your saved clip. Generate a new one below.", __i18n_text_domain__ ) }
+				</Notice>
+			) }
 			<p className="image-studio-feature-clip-panel__description">
-				{ __(
-					'Turn this post into a short vertical video. Powered by your site guidelines.',
-					__i18n_text_domain__
-				) }
+				{ __( 'Turn this post into a short vertical video.', __i18n_text_domain__ ) }
 			</p>
 			<Button
 				variant="secondary"
@@ -179,7 +209,34 @@ function FeatureClipEmptyState(): JSX.Element {
 	);
 }
 
-function FeatureClipPanel(): JSX.Element {
+function FeatureClipSkeleton(): JSX.Element {
+	const label = __( 'Loading saved clip preview', __i18n_text_domain__ );
+	return (
+		<div
+			className="image-studio-feature-clip-panel__preview-frame image-studio-feature-clip-panel__preview-frame--loading"
+			role="status"
+			aria-busy="true"
+			aria-label={ label }
+		>
+			<VisuallyHidden>{ label }</VisuallyHidden>
+		</div>
+	);
+}
+
+/**
+ * Post types the Feature Clip panel is offered on. Mirrors the backend, which
+ * registers the `_jetpack_feature_clip_id` meta for `post` only (see Jetpack's
+ * `register_feature_clip_post_meta` in image-studio.php — "pages can be added
+ * later"). The plugin is registered globally, so its render runs in EVERY
+ * block editor, including the standalone Jetpack Form editor
+ * (`post_type=jetpack_form`), where turning the post into a video makes no
+ * sense and the meta isn't even registered. The post-type gate lives in the
+ * panel render rather than at registration because registration happens once,
+ * up front, before the editor's current post type is known.
+ */
+const SUPPORTED_POST_TYPES = [ 'post' ];
+
+function FeatureClipPanel(): JSX.Element | null {
 	const { postType, postId } = useSelect( ( select ) => {
 		const editor = select( 'core/editor' ) as
 			| {
@@ -188,11 +245,32 @@ function FeatureClipPanel(): JSX.Element {
 			  }
 			| undefined;
 		return {
-			postType: editor?.getCurrentPostType?.() ?? 'post',
+			// Leave this null when the editor store is absent or the post type
+			// hasn't loaded yet — do NOT fall back to 'post'. A 'post' fallback
+			// would pass the gate below for an unknown type and flash the panel
+			// (plus fire a phantom impression) until the real type resolves.
+			postType: editor?.getCurrentPostType?.() ?? null,
 			postId: editor?.getCurrentPostId?.() ?? null,
 		};
 	}, [] );
 
+	// Bail until the post type is both known and supported, before any of the
+	// body's hooks run — so the panel never mounts (and never fires a phantom
+	// panel-viewed impression) on editors like the Jetpack Form editor, nor in
+	// the transient window before the current post type is available.
+	if ( ! postType || ! SUPPORTED_POST_TYPES.includes( postType ) ) {
+		return null;
+	}
+
+	return <FeatureClipPanelBody postType={ postType } postId={ postId } />;
+}
+
+interface FeatureClipPanelBodyProps {
+	postType: string;
+	postId: number | null;
+}
+
+function FeatureClipPanelBody( { postType, postId }: FeatureClipPanelBodyProps ): JSX.Element {
 	// Pass the post ID explicitly. Without it `useEntityProp` falls back to
 	// EntityProvider context, which isn't set up for sidebar surfaces in every
 	// editor — meta would silently come back undefined and the panel would
@@ -212,30 +290,37 @@ function FeatureClipPanel(): JSX.Element {
 		return Number.isFinite( n ) && n > 0 ? n : null;
 	} )();
 
-	const { attachment, hasResolvedAttachment } = useSelect(
+	const { attachment, hasResolvedAttachment, resolutionError } = useSelect(
 		( select ) => {
 			if ( ! featureClipId ) {
-				return { attachment: null, hasResolvedAttachment: true };
+				return {
+					attachment: null,
+					hasResolvedAttachment: true,
+					resolutionError: null,
+				};
 			}
 			const core = select( 'core' ) as
 				| {
 						getMedia: ( id: number ) => MediaRecord | undefined;
 						hasFinishedResolution: ( name: string, args: unknown[] ) => boolean;
+						getResolutionError?: ( name: string, args: unknown[] ) => unknown;
 				  }
 				| undefined;
 			return {
 				attachment: core?.getMedia?.( featureClipId ) ?? null,
-				// `getMedia` resolves async on first read. Until resolution
-				// finishes the result is `undefined`, which would otherwise
-				// flicker the panel into the empty CTA on reload before the
-				// preview appears. Defer the empty-state fallback until we
-				// know the lookup is genuinely done.
 				hasResolvedAttachment:
 					core?.hasFinishedResolution?.( 'getMedia', [ featureClipId ] ) ?? false,
+				resolutionError: core?.getResolutionError?.( 'getMedia', [ featureClipId ] ) ?? null,
 			};
 		},
 		[ featureClipId ]
 	);
+
+	// Fire one impression per panel mount — the denominator for sidebar
+	// engagement rates. Empty deps: the panel mounts once per editor load.
+	useEffect( () => {
+		trackImageStudioFeatureClipPanelViewed();
+	}, [] );
 
 	const titleNode = (
 		<span className="image-studio-feature-clip-panel__title">
@@ -250,34 +335,53 @@ function FeatureClipPanel(): JSX.Element {
 	const durationSeconds =
 		typeof attachment?.media_details?.length === 'number' ? attachment.media_details.length : null;
 	const hasUsableClip = !! featureClipId && !! videoUrl;
-	// Hold the panel body blank while the clip's attachment is resolving, so
-	// reload doesn't briefly flash the empty CTA before the preview appears.
 	const isResolvingAttachment = !! featureClipId && ! hasResolvedAttachment;
+	const hasLoadError =
+		!! featureClipId && hasResolvedAttachment && ! attachment && !! resolutionError;
+
+	// Body is described once and rendered into both sidebars. Each SlotFill
+	// portal instantiates its own subtree, so FeatureClipPreview's share
+	// hooks get one instance per sidebar — safe: the hooks have no
+	// mount-time side effects and only the visible sidebar is interacted
+	// with (same dual-instance shape as Jetpack SEO's shared panels).
+	const body = ( () => {
+		if ( hasUsableClip ) {
+			return (
+				<FeatureClipPreview
+					videoUrl={ videoUrl }
+					attachmentId={ featureClipId }
+					durationSeconds={ durationSeconds }
+				/>
+			);
+		}
+		if ( isResolvingAttachment ) {
+			return <FeatureClipSkeleton />;
+		}
+		return <FeatureClipEmptyState hasLoadError={ hasLoadError } />;
+	} )();
 
 	return (
-		<PluginDocumentSettingPanel
-			name={ PANEL_NAME }
-			// PluginDocumentSettingPanel.title is typed as string but renders any ReactNode at runtime;
-			// the badge must live in the title row so it stays visible when the panel is collapsed.
-			title={ titleNode as unknown as string }
-			className="image-studio-feature-clip-panel"
-		>
-			{ ( () => {
-				if ( hasUsableClip ) {
-					return (
-						<FeatureClipPreview
-							videoUrl={ videoUrl }
-							attachmentId={ featureClipId }
-							durationSeconds={ durationSeconds }
-						/>
-					);
-				}
-				if ( isResolvingAttachment ) {
-					return null;
-				}
-				return <FeatureClipEmptyState />;
-			} )() }
-		</PluginDocumentSettingPanel>
+		<>
+			<PluginDocumentSettingPanel
+				name={ PANEL_NAME }
+				// PluginDocumentSettingPanel.title is typed as string but renders any ReactNode at runtime;
+				// the badge must live in the title row so it stays visible when the panel is collapsed.
+				title={ titleNode as unknown as string }
+				className="image-studio-feature-clip-panel"
+			>
+				{ body }
+			</PluginDocumentSettingPanel>
+			<Fill name="JetpackPluginSidebar">
+				<PanelBody
+					// PanelBody.title is typed as string but renders any ReactNode
+					// at runtime — same cast rationale as the document panel above.
+					title={ titleNode as unknown as string }
+					className="image-studio-feature-clip-panel"
+				>
+					{ body }
+				</PanelBody>
+			</Fill>
+		</>
 	);
 }
 
@@ -290,11 +394,7 @@ let pluginRegistered = false;
  * editor package isn't loaded on the page (e.g. wp-admin Media Library).
  */
 export function registerFeatureClipSidebar(): void {
-	if ( window.imageStudioData?.canGenerateVideoClips === false ) {
-		return;
-	}
-
-	if ( ! window.imageStudioData?.isDevMode ) {
+	if ( window.imageStudioData?.canGenerateVideoClips !== true ) {
 		return;
 	}
 
@@ -312,4 +412,11 @@ export function registerFeatureClipSidebar(): void {
 	pluginRegistered = true;
 }
 
-export { FeatureClipPanel, FeatureClipPreview, FeatureClipEmptyState, PLUGIN_NAME, PANEL_NAME };
+export {
+	FeatureClipPanel,
+	FeatureClipPreview,
+	FeatureClipEmptyState,
+	FeatureClipSkeleton,
+	PLUGIN_NAME,
+	PANEL_NAME,
+};

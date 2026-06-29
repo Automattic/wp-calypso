@@ -7,6 +7,20 @@ export type FeatureValue =
 	| FeatureValue[]
 	| { [ key: string ]: FeatureValue };
 
+/**
+ * Widen literal primitive types to their base type so caller defaults like
+ * `false` or `'control'` type as `boolean` / `string` on return. Without this,
+ * `getFeatureValue('k', false)` would over-narrow to literal `false` and
+ * exclude `true` as a possible result.
+ */
+export type WidenPrimitives< T > = T extends boolean
+	? boolean
+	: T extends number
+	? number
+	: T extends string
+	? string
+	: T;
+
 export type ValueType = 'string' | 'boolean' | 'number' | 'json';
 
 // Identity slots are explicit per system. There is no generic "user_id" —

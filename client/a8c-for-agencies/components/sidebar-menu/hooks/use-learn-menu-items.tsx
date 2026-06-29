@@ -3,6 +3,8 @@ import { BigSkyLogo } from '@automattic/components/src/logos/big-sky-logo';
 import { brush, chartBar, pages, tool } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import {
 	A4A_AGENT_STUDIO_LINK,
 	A4A_AI_MCP_LINK,
@@ -15,41 +17,28 @@ import { createItem } from '../lib/utils';
 
 const useLearnMenuItems = ( path: string ) => {
 	const translate = useTranslate();
+	const agency = useSelector( getActiveAgency );
 	const isAgentStudioEnabled = isEnabled( 'a4a-agent-studio' );
-	const isAiMcpEnabled = isEnabled( 'a4a-ai-mcp' );
+	const isAiMcpEnabled = !! agency?.mcp?.allowed;
 	const isBenchmarksEnabled = isEnabled( 'a4a-benchmarks' );
 
 	const menuItems = useMemo( () => {
-		const items = [
-			createItem(
-				{
-					icon: pages,
-					path: A4A_RESOURCES_LINK,
-					link: A4A_LEARN_LINK,
-					title: translate( 'Learn' ),
-					trackEventProps: {
-						menu_item: 'Automattic for Agencies / Resources and tools / Learn',
-					},
-				},
-				path
-			),
-			...( isAgentStudioEnabled
-				? [
-						createItem(
-							{
-								icon: brush,
-								path: A4A_AGENT_STUDIO_LINK,
-								link: A4A_AGENT_STUDIO_LINK,
-								title: translate( 'Agent studio' ),
-								trackEventProps: {
-									menu_item: 'Automattic for Agencies / Resources and tools / Agent studio',
-								},
+		const items = isAgentStudioEnabled
+			? [
+					createItem(
+						{
+							icon: brush,
+							path: A4A_AGENT_STUDIO_LINK,
+							link: A4A_AGENT_STUDIO_LINK,
+							title: translate( 'Agent studio' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Resources and tools / Agent studio',
 							},
-							path
-						),
-				  ]
-				: [] ),
-		];
+						},
+						path
+					),
+			  ]
+			: [];
 
 		if ( isBenchmarksEnabled ) {
 			items.push(
@@ -94,6 +83,21 @@ const useLearnMenuItems = ( path: string ) => {
 					title: translate( 'Developer tools' ),
 					trackEventProps: {
 						menu_item: 'Automattic for Agencies / Resources and tools / Developer tools',
+					},
+				},
+				path
+			)
+		);
+
+		items.push(
+			createItem(
+				{
+					icon: pages,
+					path: A4A_RESOURCES_LINK,
+					link: A4A_LEARN_LINK,
+					title: translate( 'Learn' ),
+					trackEventProps: {
+						menu_item: 'Automattic for Agencies / Resources and tools / Learn',
 					},
 				},
 				path

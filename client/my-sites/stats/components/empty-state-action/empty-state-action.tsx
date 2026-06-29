@@ -1,6 +1,7 @@
 import { Card, CardBody, Icon } from '@wordpress/components';
 import { chevronRight } from '@wordpress/icons';
 import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
+import type { JSX } from 'react';
 
 import './styles.scss';
 

@@ -203,7 +203,7 @@ export default function SetupPhoneNumber( { userSettings }: { userSettings: User
 									<DataForm< SMSSetupFormData >
 										data={ formData }
 										fields={ [ field ] }
-										form={ { layout: { type: 'regular' as const }, fields: [ field ] } }
+										form={ { layout: { type: 'regular' as const }, fields: [ field.id ] } }
 										onChange={ ( edits: Partial< SMSSetupFormData > ) => {
 											setFormData( ( data ) => ( { ...data, ...edits } ) );
 										} }

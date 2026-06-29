@@ -1,0 +1,17 @@
+diff --git a/package.json b/package.json
+index a127d31c1fbdc56301fe78f2c0713f135afce2a1..d2121720e3a94873a104f79931c3ccb7dc47fd85 100644
+--- a/package.json
++++ b/package.json
+@@ -39,7 +39,11 @@
+ 			"require": "./build/index.cjs"
+ 		},
+ 		"./package.json": "./package.json",
+-		"./build-style/": "./build-style/"
++		"./build-style/": "./build-style/",
++		"./build-module/components/iframe/get-compatibility-styles": {
++			"import": "./build-module/components/iframe/get-compatibility-styles.mjs",
++			"require": "./build/components/iframe/get-compatibility-styles.cjs"
++		}
+ 	},
+ 	"react-native": "src/index",
+ 	"wpScript": true,

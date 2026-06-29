@@ -1,5 +1,6 @@
+import { pick } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
-import { get, isEmpty, pick, startsWith } from 'lodash';
+import { isEmpty } from 'lodash';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import {
@@ -72,9 +73,9 @@ export const redirectTo = combineReducers( {
 		switch ( action.type ) {
 			case ROUTE_SET: {
 				const { path, query } = action;
-				if ( startsWith( path, '/log-in' ) ) {
+				if ( path.startsWith( '/log-in' ) ) {
 					return query.redirect_to || state;
-				} else if ( startsWith( path, '/start/account' ) ) {
+				} else if ( path.startsWith( '/start/account' ) ) {
 					return query.redirect_to || state;
 				} else if ( '/jetpack/connect/authorize' === path ) {
 					return addQueryArgs( query, path );
@@ -94,7 +95,7 @@ export const redirectTo = combineReducers( {
 				return null;
 			case LOGIN_REQUEST_SUCCESS: {
 				const { data } = action;
-				return get( data, 'redirect_to', null );
+				return data?.redirect_to ?? null;
 			}
 			case SOCIAL_LOGIN_REQUEST:
 				return null;
@@ -102,14 +103,14 @@ export const redirectTo = combineReducers( {
 				return null;
 			case SOCIAL_LOGIN_REQUEST_SUCCESS: {
 				const { data } = action;
-				return get( data, 'redirect_to', null );
+				return data?.redirect_to ?? null;
 			}
 			case SOCIAL_CONNECT_ACCOUNT_REQUEST:
 				return null;
 			case SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE:
 				return null;
 			case SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS:
-				return get( action, 'redirect_to', null );
+				return action?.redirect_to ?? null;
 		}
 
 		return state;

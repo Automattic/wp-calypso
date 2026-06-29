@@ -178,7 +178,7 @@ const sections = [
 	},
 	{
 		name: 'settings-writing',
-		paths: [ '/settings/writing', '/settings/taxonomies', '/settings/podcasting' ],
+		paths: [ '/settings/writing' ],
 		module: 'calypso/my-sites/site-settings/settings-writing',
 		group: 'sites',
 	},
@@ -513,6 +513,22 @@ const sections = [
 		paths: [ '/reader/notifications' ],
 		module: 'calypso/reader/notifications',
 		group: 'reader',
+		trackLoadPerformance: true,
+	},
+	{
+		name: 'reader',
+		paths: [ '/reader/connections', '/reader/connections/new' ],
+		module: 'calypso/reader/connections',
+		group: 'reader',
+		enableLoggedOut: false,
+		trackLoadPerformance: true,
+	},
+	{
+		name: 'reader',
+		paths: [ '/reader/spaces', '/reader/spaces/:id' ],
+		module: 'calypso/reader/spaces',
+		group: 'reader',
+		enableLoggedOut: false,
 		trackLoadPerformance: true,
 	},
 	{

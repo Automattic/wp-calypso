@@ -1,4 +1,4 @@
-import { Button, Card, Tooltip } from '@wordpress/components';
+import { Button, Card, ExternalLink, Tooltip } from '@wordpress/components';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import PageSection from 'calypso/a8c-for-agencies/components/page-section';
@@ -141,11 +141,10 @@ export default function MigrationsHostingOptions() {
 						{
 							components: {
 								a: (
-									<a
+									<ExternalLink
 										href="https://href.li/?https://www.youtube.com/watch?v=GMNQYrp7tkQ"
-										target="_blank"
-										rel="noopener noreferrer"
 										onClick={ onClickPressableDemoLink }
+										children={ null }
 									/>
 								),
 							},
@@ -168,7 +167,7 @@ export default function MigrationsHostingOptions() {
 
 			<div className="migrations-hosting-options__footnote">
 				{ translate(
-					'Need more details? Compare WordPress.com and Pressable plans on the {{a}}hosting marketplace{{/a}}.',
+					'Need more details? Compare WordPress.com and Pressable plans on the {{a}}Hosting Marketplace{{/a}}.',
 					{
 						components: {
 							a: (

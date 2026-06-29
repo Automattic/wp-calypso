@@ -59,7 +59,7 @@ describe( 'SiteMigrationUpgradePlan', () => {
 
 		expect( navigation.submit ).toHaveBeenCalledWith( {
 			goToCheckout: true,
-			plan: 'business-monthly',
+			plan: 'business-bundle-monthly',
 		} );
 	} );
 
@@ -71,7 +71,7 @@ describe( 'SiteMigrationUpgradePlan', () => {
 
 		expect( navigation.submit ).toHaveBeenCalledWith( {
 			goToCheckout: true,
-			plan: 'business',
+			plan: 'business-bundle',
 		} );
 	} );
 

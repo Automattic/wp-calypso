@@ -20,6 +20,9 @@ import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { ReaderFreshlyPressedButton } from '../reader-freshly-pressed-button';
 import './style.scss';
 
+/**
+ * @param {{ post: Object; site?: Object; onCommentClick?: Function; iconSize?: number; className?: string; fullPost?: boolean; commentsApiDisabled?: boolean; variant?: 'default' | 'discreet'; split?: boolean; }} props
+ */
 const ReaderPostActions = ( {
 	post,
 	site,
@@ -28,13 +31,18 @@ const ReaderPostActions = ( {
 	className,
 	fullPost,
 	commentsApiDisabled = false,
+	variant = 'default',
+	split = false,
 } ) => {
 	const hasSites = !! useSelector( getPrimarySiteId );
 	const showShare = isSharable( post );
 	const showReblog = isRebloggable( post, hasSites );
 	const showComments = isCommentsOpen( post ) || post.discussion?.comment_count > 0;
 	const showLikes = isLikeable( post );
-	const listClassnames = clsx( 'reader-post-actions', className );
+	const listClassnames = clsx( 'reader-post-actions', className, {
+		'is-discreet': variant === 'discreet',
+		'is-split': split,
+	} );
 	const { data } = useQuery( readTeamsQuery() );
 	const isAutomattician = isAutomatticTeamMember( data?.teams ?? [] );
 	const shouldShowFreshlyPressed = fullPost && isAutomattician && showShare;
@@ -68,7 +76,6 @@ const ReaderPostActions = ( {
 					<CommentButton
 						key="comment-button"
 						commentCount={ post.discussion.comment_count }
-						post={ post }
 						onClick={ onCommentClick }
 						tagName="button"
 						icon={ ReaderCommentIcon( {
@@ -112,6 +119,8 @@ ReaderPostActions.propTypes = {
 	iconSize: PropTypes.number,
 	fullPost: PropTypes.bool,
 	commentsApiDisabled: PropTypes.bool,
+	variant: PropTypes.oneOf( [ 'default', 'discreet' ] ),
+	split: PropTypes.bool,
 };
 
 export default ReaderPostActions;

@@ -7,6 +7,7 @@ import {
 } from '@wordpress/components';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import { useState, type FormEvent } from 'react';
+import { normalizeInstance } from './utils/normalize-instance';
 import type { MastodonError } from '@automattic/api-core';
 
 interface ConnectFormProps {
@@ -25,7 +26,11 @@ export function ConnectForm( { onSubmit, isSubmitting, error }: ConnectFormProps
 		if ( ! canSubmit ) {
 			return;
 		}
-		onSubmit( { instance: instance.trim() } );
+		const normalized = normalizeInstance( instance );
+		if ( ! normalized ) {
+			return;
+		}
+		onSubmit( { instance: normalized } );
 	};
 
 	return (

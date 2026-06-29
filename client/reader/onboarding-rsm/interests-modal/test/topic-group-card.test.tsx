@@ -2,11 +2,18 @@
  * @jest-environment jsdom
  */
 
-import { screen } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import TopicGroupCard from '../topic-group-card';
 import type { CuratedBlog } from '../../curated-blogs';
+
+// Track every feed query the component actually fires so tests can assert
+// the viewport-gated fetching behavior (no requests until cards enter the viewport).
+// `mock`-prefixed name is required by babel-plugin-jest-hoist to be referenced
+// inside the jest.mock factory below.
+const mockFeedQueryCalls: number[] = [];
 
 jest.mock( '@automattic/api-queries', () => {
 	const actual = jest.requireActual( '@automattic/api-queries' );
@@ -14,9 +21,13 @@ jest.mock( '@automattic/api-queries', () => {
 		...actual,
 		readFeedQuery: ( feedId: number ) => ( {
 			...actual.readFeedQuery( feedId ),
-			queryFn: async () => ( {
-				image: `https://icons.example/${ feedId }.png`,
-			} ),
+			queryFn: async () => {
+				mockFeedQueryCalls.push( feedId );
+				return {
+					image: `https://icons.example/${ feedId }.png`,
+					subscribers_count: 1000 * feedId,
+				};
+			},
 		} ),
 	};
 } );
@@ -82,6 +93,7 @@ const defaultProps = {
 describe( 'TopicGroupCard', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockFeedQueryCalls.length = 0;
 	} );
 
 	it( 'renders the title, description, and image', () => {
@@ -187,5 +199,86 @@ describe( 'TopicGroupCard', () => {
 
 		await user.click( button );
 		expect( onSubscribe ).not.toHaveBeenCalled();
+	} );
+
+	describe( 'subscriber count', () => {
+		it( 'renders the formatted total subscriber count once feed data loads', async () => {
+			// The mock returns subscribers_count: 1000 * feedId for each feed.
+			// With blogs fixture (feed_ID 1–5): 1000+2000+3000+4000+5000 = 15000 → "15K readers".
+			renderWithProvider( <TopicGroupCard { ...defaultProps } /> );
+			// mockAllIsIntersecting must be called after render so the observed elements receive
+			// the callback. This simulates the card entering the viewport.
+			mockAllIsIntersecting( true );
+
+			await waitFor( () => {
+				expect( screen.getByText( /readers/i ) ).toBeVisible();
+			} );
+
+			// formatNumberCompact(15000) → "15K" in the default locale.
+			expect( screen.getByText( /15[,.]?0?K?\s*readers/i ) ).toBeInTheDocument();
+		} );
+
+		it( 'renders no subscriber count when all feeds return 0 subscribers', async () => {
+			// feed_ID: 0 → module-level mock returns subscribers_count: 1000 * 0 = 0.
+			// Flush the async queryFn so allSettled flips to true, then assert absence.
+			const zeroBlog = { ...blogs[ 0 ], feed_ID: 0 };
+			renderWithProvider( <TopicGroupCard { ...defaultProps } blogs={ [ zeroBlog ] } /> );
+			mockAllIsIntersecting( true );
+
+			// Wait for the feed query to actually fire AND settle, so we know we're
+			// asserting the post-load zero-count path rather than the still-loading state.
+			await waitFor( () => {
+				expect( mockFeedQueryCalls ).toContain( 0 );
+			} );
+			await act( async () => {} );
+
+			expect( screen.queryByText( /readers/i ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'renders no subscriber count while feeds are still loading', () => {
+			// After render, queries are pending (async, not yet resolved). Simulate the card
+			// entering the viewport to enable queries, then assert before they resolve.
+			renderWithProvider( <TopicGroupCard { ...defaultProps } /> );
+			mockAllIsIntersecting( true ); // enables queries but they haven't resolved yet
+
+			// Synchronous check — the async queryFns haven't resolved yet.
+			expect( screen.queryByText( /readers/i ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'in-view behavior', () => {
+		it( 'does not fire any feed queries while the card is out of view', async () => {
+			// Render the card, then explicitly report it (and all child avatar refs) as out of view.
+			renderWithProvider( <TopicGroupCard { ...defaultProps } /> );
+			mockAllIsIntersecting( false );
+
+			// Flush async operations to give any (incorrectly enabled) queries a chance to run.
+			await act( async () => {} );
+
+			// The PR's key behavior: no network requests fire for out-of-view cards.
+			expect( mockFeedQueryCalls ).toEqual( [] );
+			expect( screen.queryByText( /readers/i ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'fetches data for all pack blogs and shows the total when the card is in view', async () => {
+			// Render, then simulate the card entering the viewport.
+			renderWithProvider( <TopicGroupCard { ...defaultProps } /> );
+			mockAllIsIntersecting( true );
+
+			await waitFor( () => {
+				expect( screen.getByText( /readers/i ) ).toBeVisible();
+			} );
+
+			// All 5 feeds are requested exactly once (not just the 3 shown as avatars).
+			// BlogAvatar's per-avatar useQuery and the card-level useQueries share the
+			// React Query cache, so each feedId's queryFn runs at most once. Asserting
+			// both the sorted contents and the length catches missing requests, extra
+			// requests, and duplicate requests (which would defeat the cache-sharing).
+			expect( [ ...mockFeedQueryCalls ].sort() ).toEqual( [ 1, 2, 3, 4, 5 ] );
+			expect( mockFeedQueryCalls ).toHaveLength( 5 );
+
+			// 1000+2000+3000+4000+5000 = 15000 → "15K readers".
+			expect( screen.getByText( /15[,.]?0?K?\s*readers/i ) ).toBeInTheDocument();
+		} );
 	} );
 } );

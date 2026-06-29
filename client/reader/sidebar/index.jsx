@@ -4,11 +4,10 @@ import { readSubscribedListsQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useQuery } from '@tanstack/react-query';
-import { Icon, plus } from '@wordpress/icons';
+import { Icon, commentAuthorAvatar, plus } from '@wordpress/icons';
 import clsx from 'clsx';
 import closest from 'component-closest';
 import i18n, { localize } from 'i18n-calypso';
-import { defer, startsWith } from 'lodash';
 import { Component, useMemo } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { withReaderOrganizations } from 'calypso/components/data/with-reader-organizations';
@@ -45,14 +44,13 @@ import {
 import getCurrentIntlCollator from 'calypso/state/selectors/get-current-intl-collator';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import ReaderSidebarHelper from './helper';
-import ReaderSidebarAtmosphere from './reader-sidebar-atmosphere';
-import ReaderSidebarFediverse from './reader-sidebar-fediverse';
+import ReaderSidebarConnections from './reader-sidebar-connections';
 import ReaderSidebarLists from './reader-sidebar-lists';
-import ReaderSidebarMastodon from './reader-sidebar-mastodon';
 import ReaderSidebarNudges from './reader-sidebar-nudges';
 import ReaderSidebarOrganizations from './reader-sidebar-organizations';
 import ReaderSidebarRecent from './reader-sidebar-recent';
 import ReaderSidebarTags from './reader-sidebar-tags';
+import { ReaderSidebarSpaces } from './spaces';
 
 const TrackingKeys = {
 	conversations: {
@@ -109,17 +107,17 @@ export class ReaderSidebar extends Component {
 	highlightNewTag( tagSlug ) {
 		const tagStreamUrl = getTagStreamUrl( tagSlug );
 		if ( tagStreamUrl !== page.current ) {
-			defer( function () {
+			setTimeout( function () {
 				page( tagStreamUrl );
 				window.scrollTo( 0, 0 );
-			} );
+			}, 0 );
 		}
 	}
 
 	openExpandableMenuForCurrentTagOrList = () => {
 		const pathParts = this.props.path.split( '/' );
 
-		if ( startsWith( this.props.path, '/tag/' ) ) {
+		if ( this.props.path.startsWith( '/tag/' ) ) {
 			const tagSlug = pathParts[ 2 ];
 			if ( tagSlug ) {
 				// Open the sidebar
@@ -130,7 +128,7 @@ export class ReaderSidebar extends Component {
 			}
 		}
 
-		if ( startsWith( this.props.path, '/reader/list/' ) ) {
+		if ( this.props.path.startsWith( '/reader/list/' ) ) {
 			const listOwner = pathParts[ 3 ];
 			const listSlug = pathParts[ 4 ];
 			if ( listOwner && listSlug ) {
@@ -174,6 +172,8 @@ export class ReaderSidebar extends Component {
 						/>
 					</li>
 
+					{ isEnabled( 'reader/spaces' ) && <ReaderSidebarSpaces path={ path } /> }
+
 					<SidebarItem
 						className={ clsx( 'sidebar-streams__search', {
 							selected: path.startsWith( '/reader/search' ),
@@ -193,14 +193,7 @@ export class ReaderSidebar extends Component {
 						link="/discover"
 					/>
 
-					{ isEnabled( 'reader/social' ) && (
-						<>
-							<ReaderSidebarAtmosphere path={ path } />
-							<ReaderSidebarMastodon path={ path } />
-						</>
-					) }
-
-					{ isEnabled( 'reader/fediverse' ) && <ReaderSidebarFediverse path={ path } /> }
+					{ isEnabled( 'reader/social' ) && <ReaderSidebarConnections path={ path } /> }
 
 					<SidebarItem
 						label={ translate( 'Likes' ) }
@@ -267,7 +260,7 @@ export class ReaderSidebar extends Component {
 							className={ ReaderSidebarHelper.itemLinkClass( '/reader/conversations/a8c', path, {
 								'sidebar-streams__conversations': true,
 							} ) }
-							label="A8C Conversations"
+							label="A8C conversations"
 							onNavigate={ this.handleSidebarMenuClick( TrackingKeys.a8cConversations ) }
 							link="/reader/conversations/a8c"
 							customIcon={ <ReaderA8cConversationsIcon size={ 24 } viewBox="-2 -2 24 24" /> }
@@ -277,7 +270,7 @@ export class ReaderSidebar extends Component {
 					<SidebarSeparator />
 
 					<SidebarItem
-						label={ translate( 'New Subscription' ) }
+						label={ translate( 'New subscription' ) }
 						onNavigate={ () => recordReaderTracksEvent( 'calypso_reader_sidebar_add_new_clicked' ) }
 						customIcon={ <Icon className="sidebar__menu-icon" icon={ plus } viewBox="2 0 24 24" /> }
 						link="/reader/new"
@@ -287,11 +280,25 @@ export class ReaderSidebar extends Component {
 						className={ ReaderSidebarHelper.itemLinkClass( '/reader/subscriptions', path, {
 							'sidebar-streams__manage-subscriptions': true,
 						} ) }
-						label={ translate( 'Manage Subscriptions' ) }
+						label={ translate( 'Manage subscriptions' ) }
 						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.manageSubscriptions ) }
 						customIcon={ <ReaderManageSubscriptionsIcon size={ 24 } viewBox="0 0 24 24" /> }
 						link="/reader/subscriptions"
 					/>
+
+					<SidebarItem
+						label={ translate( 'Reader profile' ) }
+						onNavigate={ () => recordReaderTracksEvent( 'calypso_reader_sidebar_profile_clicked' ) }
+						customIcon={
+							<Icon
+								className="sidebar__menu-icon"
+								icon={ commentAuthorAvatar }
+								viewBox="2 0 24 24"
+							/>
+						}
+						link="/reader/users/me"
+					/>
+
 					{ /*
 					Keep a separator at the end to avoid having the last item covered by browser breadcrumbs,
 					url links when hovering other items, etc. Otherwise when a user scrolls to the end of the

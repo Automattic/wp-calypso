@@ -231,6 +231,10 @@ export function FollowersView( { connectionId, actor }: Props ) {
 				protocolLabel="ATmosphere"
 				protocolHomeURL="https://bsky.app"
 				protocolHomeLabel="Bluesky"
+				authRequiredCopy={ {
+					title: String( translate( "Couldn't load followers" ) ),
+					line: String( translate( 'Something went wrong with your Bluesky connection.' ) ),
+				} }
 				header={ {
 					displayName: profileQuery.data?.display_name ?? null,
 					handle: profileQuery.data?.handle ?? actor,

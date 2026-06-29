@@ -1,4 +1,3 @@
-import { last } from 'lodash';
 import googleDriveLogo from 'calypso/assets/images/connections/google-drive-logo.svg';
 import { deleteStoredKeyringConnection } from 'calypso/state/sharing/keyring/actions';
 import { SharingService, connectFor } from '../service';
@@ -22,7 +21,7 @@ export class GoogleDrive extends SharingService {
 	 */
 	removeConnection = () => {
 		this.setState( { isDisconnecting: true } );
-		this.props.deleteStoredKeyringConnection( last( this.props.keyringConnections ) );
+		this.props.deleteStoredKeyringConnection( this.props.keyringConnections?.at( -1 ) );
 	};
 
 	didKeyringConnectionSucceed( availableExternalAccounts ) {

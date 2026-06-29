@@ -35,19 +35,19 @@
 	},
 	"private": true,
 	"dependencies": {
-		"@wordpress/components": "^29.0.0",
-		"@wordpress/compose": "^7.23.0",
-		"@wordpress/icons": "^10.23.0",
-		"@wordpress/private-apis": "^1.39.0",
-		"@wordpress/ui": "^0.9.0"
+		"@wordpress/components": "^35.0.0",
+		"@wordpress/compose": "^8.2.0",
+		"@wordpress/icons": "^13.3.0",
+		"@wordpress/private-apis": "^1.48.0",
+		"@wordpress/ui": "^0.15.0"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.23.0",
-		"react": "^18.3.1",
-		"react-dom": "^18.3.1"
+		"@wordpress/data": "^10.48.0",
+		"react": "^18.3.1 || ^19.0.0",
+		"react-dom": "^18.3.1 || ^19.0.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^5.8.3"
+		"typescript": "^6.0.3"
 	}
 }

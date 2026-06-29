@@ -40,8 +40,8 @@
 	inline-size: 5rem;
 	block-size: 5rem;
 	border-radius: 50%;
-	border: 3px solid var( --studio-white, #fff );
-	background: var( --studio-gray-5, #dcdcde );
+	border: 3px solid var( --color-surface, var( --studio-white, #fff ) );
+	background: var( --color-border-subtle, var( --studio-gray-5, #dcdcde ) );
 	object-fit: cover;
 }
 
@@ -93,7 +93,7 @@
 
 .social-profile-card__handle {
 	margin: 0;
-	color: var( --studio-gray-50, #646970 );
+	color: var( --color-text-subtle, var( --studio-gray-50, #646970 ) );
 	font-size: 0.875rem;
 }
 
@@ -134,7 +134,7 @@
 }
 
 .social-profile-card__stat-label {
-	color: var( --studio-gray-50, #646970 );
+	color: var( --color-text-subtle, var( --studio-gray-50, #646970 ) );
 }
 
 // Layout-stable skeleton mirrored on SocialProfileCard. Uses the same sizing
@@ -161,7 +161,7 @@
 .social-profile-card-skeleton__banner {
 	inline-size: 100%;
 	block-size: clamp( 80px, 28vw, 200px );
-	background: var( --studio-gray-5, #dcdcde );
+	background: var( --color-border-subtle, var( --studio-gray-5, #dcdcde ) );
 	border-radius: 4px;
 }
 
@@ -181,21 +181,21 @@
 	inline-size: 5rem;
 	block-size: 5rem;
 	border-radius: 50%;
-	border: 3px solid var( --studio-white, #fff );
-	background: var( --studio-gray-10, #c3c4c7 );
+	border: 3px solid var( --color-surface, var( --studio-white, #fff ) );
+	background: var( --color-neutral-10, var( --studio-gray-10, #c3c4c7 ) );
 }
 
 .social-profile-card-skeleton__name {
 	block-size: 1.5rem;
 	inline-size: 40%;
-	background: var( --studio-gray-5, #dcdcde );
+	background: var( --color-border-subtle, var( --studio-gray-5, #dcdcde ) );
 	border-radius: 4px;
 }
 
 .social-profile-card-skeleton__handle {
 	block-size: 1rem;
 	inline-size: 28%;
-	background: var( --studio-gray-5, #dcdcde );
+	background: var( --color-border-subtle, var( --studio-gray-5, #dcdcde ) );
 	border-radius: 4px;
 }
 
@@ -207,6 +207,6 @@
 .social-profile-card-skeleton__stat {
 	block-size: 1rem;
 	inline-size: 4rem;
-	background: var( --studio-gray-5, #dcdcde );
+	background: var( --color-border-subtle, var( --studio-gray-5, #dcdcde ) );
 	border-radius: 4px;
 }

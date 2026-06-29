@@ -6,15 +6,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import {
-	bell,
-	buttons,
-	commentAuthorAvatar,
-	lock,
-	notAllowed,
-	payment,
-	settings,
-} from '@wordpress/icons';
+import { bell, buttons, commentAuthorAvatar, lock, payment, settings } from '@wordpress/icons';
 import { useAppContext } from '../../app/context';
 import { SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
 import type { AppConfig, MeSupports } from '../../app/context';
@@ -41,11 +33,11 @@ export default function MeSidebar() {
 					</div>
 				</div>
 				<VStack spacing={ 0 } style={ { minWidth: 0 } }>
-					<Text weight={ 500 } size="13px" truncate>
+					<Text weight={ 500 } size="13px" truncate numberOfLines={ 1 }>
 						{ userSettings.display_name }
 					</Text>
-					<Text variant="muted" size="12px" truncate>
-						@{ userSettings.user_login }
+					<Text variant="muted" size="12px" truncate numberOfLines={ 1 }>
+						{ `@${ userSettings.user_login }` }
 					</Text>
 				</VStack>
 			</HStack>
@@ -74,11 +66,6 @@ function MeMenuSidebar() {
 			{ supports.notifications && (
 				<SidebarMenuItem icon={ bell } to="/me/notifications">
 					{ __( 'Notifications' ) }
-				</SidebarMenuItem>
-			) }
-			{ supports.reader && (
-				<SidebarMenuItem icon={ notAllowed } to="/me/blocked-sites">
-					{ __( 'Blocked sites' ) }
 				</SidebarMenuItem>
 			) }
 			{ hasAppSupport( supports, 'apps' ) && (

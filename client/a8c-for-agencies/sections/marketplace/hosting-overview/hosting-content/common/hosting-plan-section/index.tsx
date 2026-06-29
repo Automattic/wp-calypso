@@ -1,7 +1,7 @@
 import { Button, Tooltip } from '@wordpress/components';
 import clsx from 'clsx';
 import { TranslateResult } from 'i18n-calypso';
-import { Children } from 'react';
+import { Children, type JSX } from 'react';
 import PageSection from 'calypso/a8c-for-agencies/components/page-section';
 
 import './style.scss';

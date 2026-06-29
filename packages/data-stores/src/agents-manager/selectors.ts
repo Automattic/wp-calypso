@@ -3,15 +3,18 @@ import type { State } from './reducer';
 export const getAgentsManagerState = ( state: State ) => ( {
 	isOpen: state.isOpen,
 	isDocked: state.isDocked,
+	isMinimized: state.isMinimized,
 	routerHistory: state.routerHistory,
 	lastActivity: state.lastActivity,
 	isLoading: state.isLoading,
 	hasLoaded: state.hasLoaded,
 	floatingPosition: state.floatingPosition,
+	freeDragPosition: state.freeDragPosition,
 	isSplitScreen: state.isSplitScreen,
 } );
 export const getIsOpen = ( state: State ) => state.isOpen;
 export const getIsDocked = ( state: State ) => state.isDocked;
+export const getIsMinimized = ( state: State ) => state.isMinimized;
 export const getIsSplitScreen = ( state: State ) => state.isSplitScreen;
 export const getRouterHistory = ( state: State, siteKey: string ) => {
 	if ( ! state.routerHistory ) {
@@ -28,3 +31,4 @@ export const getLastActivity = ( state: State, siteKey: string ) => {
 export const getIsLoading = ( state: State ) => state.isLoading;
 export const getHasLoaded = ( state: State ) => state.hasLoaded;
 export const getFloatingPosition = ( state: State ) => state.floatingPosition;
+export const getFreeDragPosition = ( state: State ) => state.freeDragPosition;

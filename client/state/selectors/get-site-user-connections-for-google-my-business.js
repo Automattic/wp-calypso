@@ -1,4 +1,4 @@
-import { filter, last } from 'lodash';
+import { filter } from 'lodash';
 import { getKeyringConnectionsByName } from 'calypso/state/sharing/keyring/selectors';
 import { getSiteKeyringsForService } from 'calypso/state/site-keyrings/selectors';
 
@@ -21,9 +21,11 @@ function isConnected( keyringConnection, externalUser, siteKeyring ) {
  */
 export default function getSiteUserConnectionsForGoogleMyBusiness( state, siteId ) {
 	// Google Business Profile can only have one location connected at a time
-	const googleMyBusinessSiteKeyring = last(
-		getSiteKeyringsForService( state, siteId, 'google_my_business' )
-	);
+	const googleMyBusinessSiteKeyring = getSiteKeyringsForService(
+		state,
+		siteId,
+		'google_my_business'
+	)?.at( -1 );
 
 	if ( ! googleMyBusinessSiteKeyring ) {
 		return [];

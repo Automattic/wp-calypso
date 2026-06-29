@@ -5,7 +5,6 @@ import {
 } from '@automattic/sites';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { defer } from 'lodash';
 import React, { useState, useEffect } from 'react';
 import ConfirmModal from 'calypso/blocks/importer/components/confirm-modal';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -98,18 +97,19 @@ const SitePickerStep: Step< {
 				setShowConfirmModal( false );
 			} }
 			onConfirm={ () => {
-				defer( () => destinationSite && selectSite( destinationSite ) );
+				setTimeout( () => destinationSite && selectSite( destinationSite ), 0 );
 			} }
 		>
 			<p>
 				{ sprintf(
-					/* translators: the `sourceSite` and `targetSite` fields could be any site URL (eg: "yourname.com") */
+					/* translators: %(sourceSite)s and %(targetSite)s are site URLs (eg: "yourname.com") */
 					__(
 						'Your site %(sourceSite)s will be migrated to %(targetSite)s, overriding all the content in your destination site.'
 					),
 					{
 						sourceSite: sourceSiteSlug,
-						targetSite: destinationSite?.slug.replace( /\b\.wordpress\.com/, '.wpcomstaging.com' ),
+						targetSite:
+							destinationSite?.slug.replace( /\b\.wordpress\.com/, '.wpcomstaging.com' ) ?? '',
 					}
 				) }
 			</p>

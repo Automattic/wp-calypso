@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 /**
  * Retrieves Google Business Profile stats error for the specified criteria.
  * @param {Object} state - Global state tree
@@ -16,9 +14,8 @@ export default function getGoogleMyBusinessStatsError(
 	interval,
 	aggregation
 ) {
-	return get(
-		state,
-		[ 'googleMyBusiness', siteId, 'statsError', statType, interval, aggregation ],
+	return (
+		state?.googleMyBusiness?.[ siteId ]?.statsError?.[ statType ]?.[ interval ]?.[ aggregation ] ??
 		null
 	);
 }

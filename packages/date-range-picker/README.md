@@ -75,7 +75,7 @@ WordPress plugins, etc. A few things to know:
 The host application must install these alongside the picker:
 
 - `react` and `react-dom` (`^18.3.1`)
-- `@wordpress/components` (`>=32.1.0`)
+- `@wordpress/components` (`>=33.1.0`)
 - `@wordpress/compose` (`>=7.23.0`)
 - `@wordpress/date` (`>=5.23.0`)
 - `@wordpress/i18n` (`>=5.23.0`)

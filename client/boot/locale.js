@@ -8,6 +8,7 @@ import {
 import { setLocale as setLocaleNumberFormatters } from '@automattic/number-formatters';
 import i18n from 'i18n-calypso';
 import { initLanguageEmpathyMode } from 'calypso/lib/i18n-utils/empathy-mode';
+import { loadAndSetCurrencyOverrides } from 'calypso/lib/i18n-utils/load-currency-overrides';
 import { loadUserUndeployedTranslations } from 'calypso/lib/i18n-utils/switch-locale';
 import { LOCALE_SET } from 'calypso/state/action-types';
 import { setLocale } from 'calypso/state/ui/language/actions';
@@ -52,6 +53,7 @@ export const setupLocale = async ( currentUser, reduxStore ) => {
 		await reduxStore.dispatch( { type: LOCALE_SET, localeSlug, localeVariant } );
 		// Propagate the locale to @automattic/number-formatters
 		setLocaleNumberFormatters( localeVariant || localeSlug );
+		loadAndSetCurrencyOverrides();
 
 		if ( localeSlug ) {
 			loadUserUndeployedTranslations( localeSlug );

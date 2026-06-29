@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
+import { pickBy } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
-import { get, startsWith, pickBy, map } from 'lodash';
+import { map } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
 import {
 	COMMENTS_REQUEST,
@@ -35,7 +36,7 @@ export const commentsFromApi = ( comments ) =>
 					...comment,
 					author: {
 						...comment.author,
-						name: decodeEntities( get( comment, [ 'author', 'name' ] ) ),
+						name: decodeEntities( comment?.author?.name ),
 					},
 			  }
 			: comment
@@ -148,7 +149,7 @@ export const announceFailure =
 export const deleteComment = ( action ) => ( dispatch, getState ) => {
 	const { siteId, commentId } = action;
 
-	if ( startsWith( commentId, 'placeholder' ) ) {
+	if ( String( commentId ).startsWith( 'placeholder' ) ) {
 		return;
 	}
 
@@ -170,7 +171,7 @@ export const deleteComment = ( action ) => ( dispatch, getState ) => {
 };
 
 export const handleDeleteSuccess = ( { options, refreshCommentListQuery } ) => {
-	const showSuccessNotice = get( options, 'showSuccessNotice', false );
+	const showSuccessNotice = options?.showSuccessNotice ?? false;
 
 	return [
 		showSuccessNotice &&
@@ -202,7 +203,7 @@ export const announceDeleteFailure = ( action ) => {
 			siteId,
 			postId,
 			comments: [ comment ],
-			skipSort: !! get( comment, 'parent.ID' ),
+			skipSort: !! comment?.parent?.ID,
 			meta: {
 				comment: {
 					context: 'add', //adds a hint for the counts reducer.

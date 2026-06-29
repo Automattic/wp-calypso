@@ -9,3 +9,4 @@ source 'https://rubygems.org'
 # https://github.com/fastlane/fastlane/issues/21794#issuecomment-2021331335
 gem 'rb-readline'
 gem 'fastlane', '~> 2.221'
+gem 'fastlane-plugin-wpmreleasetoolkit', '~> 14.7'

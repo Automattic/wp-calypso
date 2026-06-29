@@ -186,7 +186,7 @@ export const useSiteLogsDownloader = ( {
 				)
 				.then( ( response: LogsAPIResponse ) => {
 					const newLogData = get( response, 'data.logs', [] );
-					scrollId = get( response, 'data.scroll_id', null );
+					scrollId = response?.data?.scroll_id ?? null;
 
 					if ( isEmpty( logs ) ) {
 						if ( isEmpty( newLogData ) ) {

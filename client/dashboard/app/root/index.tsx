@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
-import { useQueryClient, useIsFetching } from '@tanstack/react-query';
+import { useQueryClient, useIsFetching, useIsMutating } from '@tanstack/react-query';
 import { CatchNotFound, Outlet, useRouterState, useRouter } from '@tanstack/react-router';
 import {
 	Suspense,
@@ -14,10 +14,12 @@ import {
 import { LoadingLine } from '../../components/loading-line';
 import { PageViewTracker } from '../../components/page-view-tracker';
 import NotFound from '../404';
+import AccountRecoveryInterstitial from '../account-recovery-interstitial';
 import { bumpStat } from '../analytics';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
 import Header from '../header';
+import OmnibarAgentsManager from '../interim-omnibar/omnibar-agents-manager';
 import OmnibarHelpCenter from '../interim-omnibar/omnibar-help-center';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
 import Notifications from '../notifications';
@@ -41,8 +43,12 @@ const VERY_SLOW_THRESHOLD_MS = 6000;
 function Root() {
 	const isOmnibarEnabled =
 		isEnabled( 'dashboard/omnibar' ) || isEnabled( 'dashboard/omnibar-radical' );
+	const isAccountRecoveryInterstitialEnabled = isEnabled(
+		'dashboard/account-recovery-interstitial'
+	);
 	const { name, supports, LoadingLogo = WordPressLogo } = useAppContext();
 	const isFetching = useIsFetching();
+	const isMutating = useIsMutating();
 	const router = useRouter();
 	const queryClient = useQueryClient();
 	const queryCache = queryClient.getQueryCache();
@@ -185,7 +191,7 @@ function Root() {
 
 	return (
 		<div className="dashboard-root__layout">
-			{ ( isFetching > 0 || isSlowNavigation ) && (
+			{ ( isFetching > 0 || isMutating > 0 || isSlowNavigation ) && (
 				<LoadingLine
 					variant={
 						isSlowNavigation || loadingQueryRequestedFullPageLoader ? 'progress' : 'spinner'
@@ -199,8 +205,10 @@ function Root() {
 			{ supports.commandPalette && <CommandPalette /> }
 			{ isOmnibarEnabled && supports.notifications && <Notifications anchor /> }
 			{ isOmnibarEnabled && supports.help && <OmnibarHelpCenter /> }
+			{ isOmnibarEnabled && supports.help && <OmnibarAgentsManager /> }
 			{ isOmnibarEnabled && <OmnibarSiteSwitcher /> }
 			<Snackbars />
+			{ isAccountRecoveryInterstitialEnabled && <AccountRecoveryInterstitial /> }
 			<PageViewTracker />
 			<NavigationBlockerRegistry />
 			{ 'development' === process.env.NODE_ENV && (

@@ -1,5 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
-import type { WPBreakpoint } from '@wordpress/compose/build-types/hooks/use-viewport-match';
+import type { useViewportMatch } from '@wordpress/compose';
+
+type WPBreakpoint = Parameters< typeof useViewportMatch >[ 0 ];
 
 const isOmnibarEnabled = isEnabled( 'dashboard/omnibar' );
 

@@ -5,8 +5,9 @@ import { WPCOM_FEATURES_FULL_ACTIVITY_LOG } from '@automattic/calypso-products';
 import { isMobile } from '@automattic/viewport';
 import { useQuery } from '@tanstack/react-query';
 import { Page } from '@wordpress/admin-ui';
+import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { get, isEmpty, isEqual } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment, createRef } from 'react';
 import { connect, useSelector } from 'react-redux';
@@ -441,7 +442,7 @@ class ActivityLog extends Component {
 
 		const disableRestore =
 			! enableRewind ||
-			[ 'queued', 'running' ].includes( get( this.props, [ 'restoreProgress', 'status' ] ) ) ||
+			[ 'queued', 'running' ].includes( this.props?.restoreProgress?.status ) ||
 			( ! isAtomic && areCredentialsInvalid ) ||
 			'active' !== rewindState.state;
 		const disableBackup = 0 <= get( this.props, [ 'backupProgress', 'progress' ], -Infinity );
@@ -599,7 +600,7 @@ class ActivityLog extends Component {
 
 		const { context, rewindState } = this.props;
 
-		const rewindNoThanks = get( context, 'query.rewind-redirect', '' );
+		const rewindNoThanks = context?.query?.[ 'rewind-redirect' ] ?? '';
 		const rewindIsNotReady =
 			[ 'uninitialized', 'awaitingCredentials' ].includes( rewindState.state ) ||
 			'vp_can_transfer' === rewindState.reason;

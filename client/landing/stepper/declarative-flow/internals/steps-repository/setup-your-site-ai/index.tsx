@@ -1,9 +1,18 @@
 import { BigSkyLogo, SummaryButton } from '@automattic/components';
 import { Step } from '@automattic/onboarding';
-import { __experimentalVStack as VStack, Icon } from '@wordpress/components';
-import { layout } from '@wordpress/icons';
+import {
+	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
+	Button,
+	Icon,
+	TextareaControl,
+} from '@wordpress/components';
+import { arrowUp, layout } from '@wordpress/icons';
 import i18n, { useTranslate } from 'i18n-calypso';
+import { FormEvent, useState } from 'react';
+import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useQuery } from '../../../../hooks/use-query';
 import { useSiteData } from '../../../../hooks/use-site-data';
 import type { Step as StepType } from '../../types';
 import './style.scss';
@@ -11,17 +20,31 @@ import './style.scss';
 const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 	const { siteSlug, siteId } = useSiteData();
 	const translate = useTranslate();
+	const ref = useQuery().get( 'ref' );
+	const showPromptInput = ref === WOO_HOSTING_SOLUTIONS_REF;
+	const [ prompt, setPrompt ] = useState( '' );
 
-	const handleBuildWithAI = () => {
+	const submitBuildWithAI = ( trimmedPrompt?: string ) => {
 		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
 			selection: 'build-with-ai',
+			has_prompt: Boolean( trimmedPrompt ),
 		} );
 
 		navigation.submit( {
 			setupChoice: 'build-with-ai',
 			siteSlug,
 			siteId,
+			prompt: trimmedPrompt || undefined,
 		} );
+	};
+
+	const handleBuildWithAIClick = () => {
+		submitBuildWithAI();
+	};
+
+	const handleBuildWithAISubmit = ( event: FormEvent ) => {
+		event.preventDefault();
+		submitBuildWithAI( prompt.trim() );
 	};
 
 	const handleBlankSite = () => {
@@ -35,18 +58,65 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		} );
 	};
 
+	const buildWithAIPromptCard = (
+		<form className="setup-your-site-ai-step__build-with-ai" onSubmit={ handleBuildWithAISubmit }>
+			<HStack
+				alignment="left"
+				spacing={ 2 }
+				className="setup-your-site-ai-step__build-with-ai-header"
+			>
+				<span className="setup-your-site-ai-step__build-with-ai-decoration">
+					<BigSkyLogo.CentralLogo heartless />
+				</span>
+				<span className="setup-your-site-ai-step__build-with-ai-title">
+					{ translate( 'Build with AI' ) }
+				</span>
+			</HStack>
+			<div className="setup-your-site-ai-step__prompt-area">
+				<p className="setup-your-site-ai-step__prompt-description">
+					{ translate(
+						'Describe what you want to sell or offer, and the kind of store you want to create. We’ll use this to design your store — whether you take bookings, sell products, or both.'
+					) }
+				</p>
+				<div className="setup-your-site-ai-step__prompt-input">
+					<TextareaControl
+						label={ translate( 'Describe your store' ) }
+						hideLabelFromVision
+						placeholder={ translate( 'Take bookings for a hair salon…' ) }
+						value={ prompt }
+						onChange={ setPrompt }
+						rows={ 3 }
+					/>
+					<Button
+						type="submit"
+						variant="primary"
+						className="setup-your-site-ai-step__prompt-submit"
+						label={ translate( 'Build with AI' ) }
+						icon={ arrowUp }
+						disabled={ ! prompt.trim() }
+						accessibleWhenDisabled
+					/>
+				</div>
+			</div>
+		</form>
+	);
+
+	const buildWithAISummary = (
+		<SummaryButton
+			title={ translate( 'Build with AI' ) }
+			description={ i18n.fixMe( {
+				text: 'Describe your idea and let AI help you refine your site.',
+				newCopy: translate( 'Describe your idea and let AI help you refine your site.' ),
+				oldCopy: translate( 'Prompt, edit, and launch a site in just a few clicks.' ),
+			} ) }
+			decoration={ <BigSkyLogo.CentralLogo heartless /> }
+			onClick={ handleBuildWithAIClick }
+		/>
+	);
+
 	const stepContent = (
 		<VStack alignment="top" spacing={ 3 }>
-			<SummaryButton
-				title={ translate( 'Build with AI' ) }
-				description={ i18n.fixMe( {
-					text: 'Describe your idea and let AI help you refine your site.',
-					newCopy: translate( 'Describe your idea and let AI help you refine your site.' ),
-					oldCopy: translate( 'Prompt, edit, and launch a site in just a few clicks.' ),
-				} ) }
-				decoration={ <BigSkyLogo.CentralLogo heartless /> }
-				onClick={ handleBuildWithAI }
-			/>
+			{ showPromptInput ? buildWithAIPromptCard : buildWithAISummary }
 			<SummaryButton
 				title={ i18n.fixMe( {
 					text: 'Manual setup',

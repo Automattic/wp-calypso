@@ -1,60 +1,36 @@
 import { useAtmosphereNotificationsInfiniteQuery } from '@automattic/api-queries';
-import { useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { UnknownAction } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
-import { SocialNotificationsList } from 'calypso/reader/social';
-import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { useCallback } from 'react';
+import { SocialNotificationsPanel } from 'calypso/reader/social';
+import { getThreadUrl } from './route';
 import type { AtmosphereConnection } from '@automattic/api-core';
-import type { ChipFilter } from 'calypso/reader/social';
-import type { AppState } from 'calypso/types';
+import type { NotificationInAppUrlResolver } from 'calypso/reader/social';
 
 interface Props {
 	connection: AtmosphereConnection;
 }
 
 export function NotificationsPanel( { connection }: Props ) {
-	const [ filter, setFilter ] = useState< ChipFilter >( 'all' );
-	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
-	const { data, isPending, isError, fetchNextPage, hasNextPage, isFetchingNextPage } =
-		useAtmosphereNotificationsInfiniteQuery( connection.id, { filter } );
-
-	const items = useMemo( () => data?.pages.flatMap( ( p ) => p.items ) ?? [], [ data ] );
+	const connectionId = connection.id;
+	// Mention / reply / quote / like / repost notifications all carry an at://
+	// post URI on the target. Route the row to the in-app thread view instead
+	// of letting it bounce the user out to bsky.app via target_url.
+	const getInAppUrl = useCallback< NotificationInAppUrlResolver >(
+		( notification ) => {
+			const target = notification.target;
+			if ( ! target || target.kind !== 'post' ) {
+				return null;
+			}
+			return getThreadUrl( connectionId, target.uri );
+		},
+		[ connectionId ]
+	);
 
 	return (
-		<SocialNotificationsList
-			items={ items }
-			isLoading={ isPending }
-			isLoadingMore={ isFetchingNextPage }
-			isError={ isError }
-			hasMore={ !! hasNextPage }
-			onLoadMore={ () => {
-				fetchNextPage();
-			} }
-			filter={ filter }
-			onFilterChange={ ( next ) => {
-				setFilter( next );
-				dispatch(
-					recordReaderTracksEvent( 'calypso_reader_atmosphere_notifications_filter_changed', {
-						connection_id: connection.id,
-						filter: next,
-					} )
-				);
-			} }
-			onStackExpandedChange={ ( expanded, member_count ) => {
-				dispatch(
-					recordReaderTracksEvent(
-						expanded
-							? 'calypso_reader_atmosphere_notifications_stack_expanded'
-							: 'calypso_reader_atmosphere_notifications_stack_collapsed',
-						{
-							connection_id: connection.id,
-							member_count,
-							canonical_type: 'follow',
-						}
-					)
-				);
-			} }
+		<SocialNotificationsPanel
+			connectionId={ connectionId }
+			source="atmosphere"
+			useNotificationsInfiniteQuery={ useAtmosphereNotificationsInfiniteQuery }
+			getInAppUrl={ getInAppUrl }
 		/>
 	);
 }

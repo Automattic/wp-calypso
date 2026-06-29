@@ -7,7 +7,7 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import Debug from 'debug';
-import { get, some } from 'lodash';
+import { get } from 'lodash';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { login } from 'calypso/lib/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -58,7 +58,7 @@ export function persistMobileAppFlow( context, next ) {
 	const { query } = context;
 	if ( config.isEnabled( 'jetpack/connect/mobile-app-flow' ) ) {
 		if (
-			some( ALLOWED_MOBILE_APP_REDIRECT_URL_LIST, ( pattern ) =>
+			ALLOWED_MOBILE_APP_REDIRECT_URL_LIST.some( ( pattern ) =>
 				pattern.test( query.mobile_redirect )
 			)
 		) {

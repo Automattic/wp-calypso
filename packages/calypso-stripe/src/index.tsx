@@ -717,7 +717,7 @@ function useMemoCompare< A, B >(
 	compare: ( previous: A | B | undefined, next: B ) => boolean
 ): A | B | undefined {
 	// Ref for storing previous value
-	const previousRef = useRef< undefined | A | B >();
+	const previousRef = useRef< undefined | A | B >( undefined );
 	const previous = previousRef.current;
 
 	// Pass previous and next value to compare function

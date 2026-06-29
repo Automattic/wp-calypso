@@ -8,11 +8,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { act, render } from '@testing-library/react';
+import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
+import PostFeedback from './components/post-feedback';
 import ReviewMediation from './components/review-mediation';
 import TitlePicker from './components/title-picker';
-import { undoBlockEdit } from './utils/block-actions';
+import { clearActiveBlockFocus, undoBlockEdit } from './utils/block-actions';
 import {
 	applyReviewEdit,
 	findBlockElement,
@@ -26,22 +27,63 @@ import {
 	useSuggestions,
 } from './index';
 
+Element.prototype.scrollIntoView = jest.fn();
+
 jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
 const mockSetIsSplitScreen = jest.fn();
+let mockSelectedBlockClientId: string | null = null;
+const mockSelectBlock = jest.fn( ( clientId?: string | null ) => {
+	mockSelectedBlockClientId = clientId ?? null;
+} );
+const mockClearSelectedBlock = jest.fn( () => {
+	mockSelectedBlockClientId = null;
+} );
 const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
 	typeof recordTracksEvent
 >;
 let mockSelectedBlock: any = null;
 let mockCurrentPostType: string | undefined = 'post';
+let mockBlocksByClientId: Record< string, any > = {};
+let mockEditorBlocks: any[] = [];
+const SHOW_COMPONENT_TOOL_ID = 'jetpack_ai__show_component';
+const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
+
+function appendRootBlockListLayout( doc: Document = document ): HTMLElement {
+	const layout = doc.createElement( 'div' );
+	layout.className = 'block-editor-block-list__layout is-root-container';
+	doc.body.appendChild( layout );
+	return layout;
+}
+
+function appendBlockInRootLayout(
+	clientId: string,
+	doc: Document = document
+): { layout: HTMLElement; block: HTMLElement } {
+	const layout = appendRootBlockListLayout( doc );
+	const block = doc.createElement( 'div' );
+	block.setAttribute( 'data-block', clientId );
+	layout.appendChild( block );
+	return { layout, block };
+}
+
+jest.mock( '@wordpress/block-editor', () => ( {
+	store: 'core/block-editor',
+} ) );
 
 jest.mock( '@wordpress/components', () => {
-	const React = require( 'react' );
+	const react = jest.requireActual< typeof import('react') >( 'react' );
 	return {
-		Panel: ( { children }: any ) => React.createElement( 'div', null, children ),
-		PanelBody: ( { children }: any ) => React.createElement( 'section', null, children ),
+		Panel: ( { children }: any ) => react.createElement( 'div', null, children ),
+		PanelBody: ( { children, initialOpen, title }: any ) =>
+			react.createElement(
+				'section',
+				{ 'data-initial-open': initialOpen ? 'true' : 'false' },
+				react.createElement( 'h3', null, title ),
+				children
+			),
 	};
 } );
 
@@ -50,22 +92,38 @@ jest.mock( '@wordpress/data', () => ( {
 		if ( store === 'automattic/agents-manager' ) {
 			return { setIsSplitScreen: mockSetIsSplitScreen };
 		}
+		if ( store === 'core/block-editor' ) {
+			return {
+				selectBlock: mockSelectBlock,
+				clearSelectedBlock: mockClearSelectedBlock,
+			};
+		}
+		return {};
+	} ),
+	select: jest.fn( ( store: string ) => {
+		if ( store === 'core/block-editor' ) {
+			return {
+				getSelectedBlockClientId: () => mockSelectedBlockClientId,
+			};
+		}
 		return {};
 	} ),
 	useDispatch: () => ( {
 		editPost: jest.fn(),
-		selectBlock: jest.fn(),
+		selectBlock: mockSelectBlock,
 	} ),
 	useSelect: ( fn: any ) =>
 		fn( ( store: string ) => {
 			if ( store === 'core/block-editor' ) {
 				return {
 					getSelectedBlock: () => mockSelectedBlock,
-					getBlocks: () => [],
+					getBlock: ( clientId: string ) => mockBlocksByClientId[ clientId ],
+					getBlocks: () => mockEditorBlocks,
 				};
 			}
 			if ( store === 'core/editor' ) {
 				return {
+					getCurrentPostId: () => 123,
 					getCurrentPostType: () => mockCurrentPostType,
 				};
 			}
@@ -74,14 +132,15 @@ jest.mock( '@wordpress/data', () => ( {
 } ) );
 
 // Stub @wordpress/data on window so useCheckpoint / handleShowComponent
-// can read/write the post title via the core/editor store.
-function installWpDataMock( initialTitle: string ) {
+// can read/write the post title and current post id via the core/editor store.
+function installWpDataMock( initialTitle: string, postId = 123 ) {
 	const state = { title: initialTitle };
 	( window as any ).wp = {
 		data: {
 			select: ( store: string ) => {
 				if ( store === 'core/editor' ) {
 					return {
+						getCurrentPostId: () => postId,
 						getEditedPostAttribute: ( attr: string ) =>
 							attr === 'title' ? state.title : undefined,
 					};
@@ -105,18 +164,20 @@ function installWpDataMock( initialTitle: string ) {
 	return state;
 }
 
-function installPostTypeMock( postType?: string ) {
+function installPostTypeMock( postType?: string, postId: number | null = 123 ) {
 	( window as any ).wp = {
 		data: {
 			select: ( store: string ) => {
 				if ( store === 'core/editor' ) {
 					return {
+						getCurrentPostId: () => postId,
 						getCurrentPostType: () => postType,
 					};
 				}
 				if ( store === 'core/block-editor' ) {
 					return {
 						getSelectedBlock: () => mockSelectedBlock,
+						getBlock: ( clientId: string ) => mockBlocksByClientId[ clientId ],
 						getBlocks: () => [],
 					};
 				}
@@ -126,12 +187,72 @@ function installPostTypeMock( postType?: string ) {
 	};
 }
 
-function SuggestionsProbe( { onSuggestions }: { onSuggestions: ( suggestions: any[] ) => void } ) {
-	const { suggestions } = useSuggestions();
+function installContextProviderMock( postType = 'post', postId: number | null = 123 ) {
+	const blocks = [
+		{
+			name: 'core/paragraph',
+			clientId: 'context-block',
+			attributes: { content: 'Unsaved editor text' },
+			innerBlocks: [],
+		},
+	];
+	( window as any ).wp = {
+		data: {
+			select: ( store: string ) => {
+				if ( store === 'core/editor' ) {
+					return {
+						getCurrentPostId: () => postId,
+						getCurrentPostType: () => postType,
+					};
+				}
+				if ( store === 'core/block-editor' ) {
+					return {
+						getSelectedBlock: () => null,
+						getBlock: ( clientId: string ) =>
+							blocks.find( ( block ) => block.clientId === clientId ),
+						getBlocks: () => blocks,
+					};
+				}
+				return undefined;
+			},
+		},
+	};
+	return blocks;
+}
+
+function installAiEditorialReviewData( features: Record< string, boolean > = {} ) {
+	( globalThis as any ).agentsManagerData = {
+		jetpackAiSidebar: {
+			enabled: true,
+			features: {
+				aiEditorialReview: true,
+				generateFeedback: true,
+				blockTransformations: true,
+				optimizeTitleSuggestion: false,
+				...features,
+			},
+		},
+	};
+}
+
+function SuggestionsProbe( {
+	onSuggestions,
+	maxSuggestions,
+	suggestionsVisible = true,
+}: {
+	onSuggestions: ( suggestions: any[] ) => void;
+	maxSuggestions?: number;
+	suggestionsVisible?: boolean;
+} ) {
+	const { suggestions } = useSuggestions( maxSuggestions, { suggestionsVisible } );
 	React.useEffect( () => {
 		onSuggestions( suggestions );
 	}, [ onSuggestions, suggestions ] );
 	return null;
+}
+
+function getTracksCalls( eventName: string ) {
+	return mockedRecordTracksEvent.mock.calls.filter( ( [ name ] ) => name === eventName );
 }
 
 describe( 'getChatComponent', () => {
@@ -143,10 +264,415 @@ describe( 'getChatComponent', () => {
 		expect( getChatComponent( 'review-mediation' ) ).toBe( ReviewMediation );
 	} );
 
+	it( 'returns PostFeedback for type "post-feedback"', () => {
+		expect( getChatComponent( 'post-feedback' ) ).toBe( PostFeedback );
+	} );
+
 	it( 'returns null for an unknown type', () => {
 		expect( getChatComponent( 'font-picker' ) ).toBeNull();
 		expect( getChatComponent( '' ) ).toBeNull();
 		expect( getChatComponent( 'anything-else' ) ).toBeNull();
+	} );
+} );
+
+describe( 'PostFeedback', () => {
+	beforeEach( () => {
+		mockEditorBlocks = [];
+		mockSelectedBlockClientId = null;
+		mockSelectBlock.mockClear();
+		mockClearSelectedBlock.mockClear();
+		document.body.innerHTML = '';
+		clearActiveBlockFocus();
+		mockClearSelectedBlock.mockClear();
+		delete ( window as any ).wp;
+	} );
+
+	it( 'renders backend flat feedback items', () => {
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'The post needs a clearer activity line before publishing.',
+				postId: 123,
+				items: [
+					{
+						title: 'Fix duplicated punctuation',
+						feedback: 'The activity sentence has duplicated punctuation.',
+						action: 'Replace the sentence with cleaner wording.',
+						block_index: 0,
+						current_text: 'There will be a lot of activities for children..',
+						suggested_text: 'There will be activities for children.',
+					},
+					{
+						title: 'Add missing event details',
+						feedback: 'The announcement would be more useful with confirmed event details.',
+						action: 'Add the time, venue, and registration details once confirmed.',
+						block_index: null,
+						requires_manual: true,
+						manual_reason: 'Needs confirmed event details from the author.',
+					},
+				],
+			} )
+		);
+
+		expect( container.textContent ).toContain( 'The post needs a clearer activity line' );
+		expect( container.textContent ).toContain( 'Summary' );
+		expect( container.textContent ).toContain( 'Feedback' );
+		expect( container.textContent ).toContain( 'Fix duplicated punctuation' );
+		expect( container.textContent ).toContain( 'Suggested rewrite' );
+		expect( container.textContent ).toContain(
+			'Needs manual edit: Needs confirmed event details from the author.'
+		);
+		const manualReasons = container.querySelectorAll( '.jetpack-ai-post-feedback__manual-reason' );
+		const acceptButtons = container.querySelectorAll(
+			'.jetpack-ai-post-feedback__action-button.is-primary'
+		);
+		expect( acceptButtons[ 1 ].hasAttribute( 'disabled' ) ).toBe( true );
+		expect( acceptButtons[ 1 ].getAttribute( 'aria-describedby' ) ).toBe(
+			manualReasons[ 1 ]?.getAttribute( 'id' )
+		);
+	} );
+
+	it( 'does not duplicate the manual edit label when no manual reason is provided', () => {
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Manual item',
+						feedback: 'Feedback.',
+						action: 'Action.',
+						block_index: null,
+						requires_manual: true,
+					},
+				],
+			} )
+		);
+
+		expect( container.textContent ).toContain(
+			'Needs manual edit: This item cannot be applied automatically.'
+		);
+		expect( container.textContent ).not.toContain( 'Needs manual edit: Needs manual edit.' );
+	} );
+
+	it( 'marks the item failed when the block editor store cannot apply the edit', async () => {
+		mockEditorBlocks = [
+			{
+				clientId: 'block-1',
+				name: 'core/paragraph',
+				attributes: { content: 'Original paragraph text.' },
+			},
+		];
+		( window as any ).wp = {
+			data: {
+				select: ( store: string ) =>
+					store === 'core/editor' ? { getCurrentPostId: () => 123 } : undefined,
+				dispatch: ( store: string ) => {
+					if ( store === 'core/block-editor' ) {
+						throw new Error( 'missing block editor store' );
+					}
+					return undefined;
+				},
+			},
+		};
+
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Apply item',
+						feedback: 'Feedback.',
+						action: 'Action.',
+						block_index: 0,
+						current_text: 'Original paragraph text.',
+						suggested_text: 'Updated paragraph text.',
+					},
+				],
+			} )
+		);
+		const acceptButton = Array.from( container.querySelectorAll( 'button' ) ).find(
+			( button ) => button.textContent === 'Accept'
+		);
+		expect( acceptButton ).toBeDefined();
+
+		await act( async () => {
+			fireEvent.click( acceptButton as HTMLButtonElement );
+			await Promise.resolve();
+		} );
+
+		expect( container.textContent ).toContain( 'Retry' );
+		expect( container.textContent ).toContain( 'Could not apply this rewrite.' );
+	} );
+
+	it( 'explains when a referenced block has no editable text target', () => {
+		mockEditorBlocks = [
+			{
+				clientId: 'block-1',
+				name: 'core/query',
+				attributes: { queryId: 1 },
+			},
+		];
+
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Unsupported block item',
+						feedback: 'Feedback.',
+						action: 'Action.',
+						block_index: 0,
+						current_text: 'Original list content.',
+						suggested_text: 'Updated list content.',
+					},
+				],
+			} )
+		);
+
+		expect( container.textContent ).toContain( 'Needs manual edit - unsupported edit target.' );
+		const acceptButton = Array.from( container.querySelectorAll( 'button' ) ).find(
+			( button ) => button.textContent === 'Accept'
+		);
+		expect( acceptButton?.hasAttribute( 'disabled' ) ).toBe( true );
+	} );
+
+	it( 'toggles sidebar-owned block focus from the referenced block', () => {
+		mockEditorBlocks = [
+			{
+				clientId: 'block-1',
+				name: 'core/paragraph',
+				attributes: { content: 'The paragraph to focus.' },
+			},
+		];
+		const unrelatedLayout = appendRootBlockListLayout();
+		const { layout: layoutElement, block: blockElement } = appendBlockInRootLayout( 'block-1' );
+
+		const { unmount } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Focus item',
+						feedback: 'Feedback.',
+						action: 'Action.',
+						block_index: 0,
+						current_text: '',
+						suggested_text: '',
+						requires_manual: true,
+						manual_reason: 'Needs manual edit.',
+					},
+				],
+			} )
+		);
+
+		const blockRef = document.querySelector( '.jetpack-ai-post-feedback__block-ref' );
+		expect( blockRef ).toBeTruthy();
+		( blockRef as HTMLButtonElement ).click();
+
+		expect( mockSelectBlock ).toHaveBeenCalledWith( 'block-1' );
+		expect( blockElement.scrollIntoView ).toHaveBeenCalledWith( {
+			behavior: 'smooth',
+			block: 'center',
+		} );
+		expect( layoutElement.classList.contains( 'is-focus-mode' ) ).toBe( true );
+		expect( unrelatedLayout.classList.contains( 'is-focus-mode' ) ).toBe( false );
+
+		( blockRef as HTMLButtonElement ).click();
+
+		expect( mockClearSelectedBlock ).toHaveBeenCalled();
+		expect( layoutElement.classList.contains( 'is-focus-mode' ) ).toBe( false );
+
+		unmount();
+
+		expect( mockClearSelectedBlock ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'moves sidebar-owned block focus between referenced blocks', () => {
+		mockEditorBlocks = [
+			{
+				clientId: 'block-1',
+				name: 'core/paragraph',
+				attributes: { content: 'The first paragraph to focus.' },
+			},
+			{
+				clientId: 'block-2',
+				name: 'core/paragraph',
+				attributes: { content: 'The second paragraph to focus.' },
+			},
+		];
+		const { layout: firstLayout } = appendBlockInRootLayout( 'block-1' );
+		const { layout: secondLayout } = appendBlockInRootLayout( 'block-2' );
+
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'First focus item',
+						feedback: 'Feedback.',
+						action: 'Action.',
+						block_index: 0,
+						current_text: '',
+						suggested_text: '',
+					},
+					{
+						title: 'Second focus item',
+						feedback: 'Feedback.',
+						action: 'Action.',
+						block_index: 1,
+						current_text: '',
+						suggested_text: '',
+					},
+				],
+			} )
+		);
+
+		const blockRefs = container.querySelectorAll( '.jetpack-ai-post-feedback__block-ref' );
+		( blockRefs[ 0 ] as HTMLButtonElement ).click();
+		expect( firstLayout.classList.contains( 'is-focus-mode' ) ).toBe( true );
+		expect( secondLayout.classList.contains( 'is-focus-mode' ) ).toBe( false );
+		mockClearSelectedBlock.mockClear();
+
+		( blockRefs[ 1 ] as HTMLButtonElement ).click();
+
+		expect( mockClearSelectedBlock ).toHaveBeenCalled();
+		expect( mockSelectBlock ).toHaveBeenLastCalledWith( 'block-2' );
+		expect( firstLayout.classList.contains( 'is-focus-mode' ) ).toBe( false );
+		expect( secondLayout.classList.contains( 'is-focus-mode' ) ).toBe( true );
+	} );
+
+	it( 'clears sidebar-owned block focus on unmount', () => {
+		mockEditorBlocks = [
+			{
+				clientId: 'block-1',
+				name: 'core/paragraph',
+				attributes: { content: 'The paragraph to focus.' },
+			},
+		];
+		const { layout: layoutElement } = appendBlockInRootLayout( 'block-1' );
+
+		const { container, unmount } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Focus item',
+						feedback: 'Feedback.',
+						action: 'Action.',
+						block_index: 0,
+						current_text: '',
+						suggested_text: '',
+						requires_manual: true,
+						manual_reason: 'Needs manual edit.',
+					},
+				],
+			} )
+		);
+
+		(
+			container.querySelector( '.jetpack-ai-post-feedback__block-ref' ) as HTMLButtonElement
+		 ).click();
+		expect( layoutElement.classList.contains( 'is-focus-mode' ) ).toBe( true );
+
+		unmount();
+
+		expect( mockClearSelectedBlock ).toHaveBeenCalled();
+		expect( layoutElement.classList.contains( 'is-focus-mode' ) ).toBe( false );
+	} );
+
+	it( 'clears sidebar-owned block focus on non-block-reference sidebar clicks', () => {
+		mockEditorBlocks = [
+			{
+				clientId: 'block-1',
+				name: 'core/paragraph',
+				attributes: { content: 'The paragraph to focus.' },
+			},
+		];
+		const layoutElement = appendRootBlockListLayout();
+
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Focus item',
+						feedback: 'Feedback.',
+						action: 'Action.',
+						block_index: 0,
+						current_text: '',
+						suggested_text: '',
+						requires_manual: true,
+						manual_reason: 'Needs manual edit.',
+					},
+				],
+			} )
+		);
+
+		(
+			container.querySelector( '.jetpack-ai-post-feedback__block-ref' ) as HTMLButtonElement
+		 ).click();
+		expect( layoutElement.classList.contains( 'is-focus-mode' ) ).toBe( true );
+		mockClearSelectedBlock.mockClear();
+
+		const dismissButton = container.querySelectorAll(
+			'.jetpack-ai-post-feedback__action-button'
+		)[ 1 ] as HTMLButtonElement;
+		fireEvent.mouseDown( dismissButton );
+		act( () => {
+			dismissButton.click();
+		} );
+
+		expect( mockClearSelectedBlock ).toHaveBeenCalled();
+		expect( layoutElement.classList.contains( 'is-focus-mode' ) ).toBe( false );
+	} );
+
+	it( 'opens every section by default when sectioned feedback is provided', () => {
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				sections: [
+					{
+						title: 'First section',
+						items: [
+							{
+								title: 'First item',
+								feedback: 'Feedback.',
+								action: 'Action.',
+								block_index: null,
+								requires_manual: true,
+								manual_reason: 'Needs manual edit.',
+							},
+						],
+					},
+					{
+						title: 'Second section',
+						items: [
+							{
+								title: 'Second item',
+								feedback: 'Feedback.',
+								action: 'Action.',
+								block_index: null,
+								requires_manual: true,
+								manual_reason: 'Needs manual edit.',
+							},
+						],
+					},
+				],
+			} )
+		);
+
+		expect(
+			Array.from( container.querySelectorAll( 'section' ) ).map( ( section ) =>
+				section.getAttribute( 'data-initial-open' )
+			)
+		).toEqual( [ 'true', 'true', 'true' ] );
 	} );
 } );
 
@@ -160,48 +686,92 @@ describe( 'getEmptyViewSuggestions', () => {
 		delete ( window as any ).wp;
 	} );
 
-	it( 'hides AI Editorial Review by default', () => {
+	it( 'hides post suggestions without a sidebar config', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
-		expect( labels ).toContain( 'Optimize Title' );
+		expect( labels ).not.toContain( 'Optimize Title' );
 		expect( labels ).not.toContain( 'AI Editorial Review' );
 	} );
 
 	it( 'shows AI Editorial Review when enabled by agentsManagerData', () => {
-		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		installAiEditorialReviewData();
 		installPostTypeMock( 'post' );
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
-		expect( labels ).toContain( 'Optimize Title' );
+		expect( labels ).not.toContain( 'Optimize Title' );
 		expect( labels ).toContain( 'AI Editorial Review' );
-		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
-			'jetpack_ai_editorial_review_suggestion_rendered',
-			{}
-		);
+		expect( labels ).toContain( 'Generate Feedback' );
 	} );
 
 	it( 'hides AI Editorial Review on page editors', () => {
-		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		installAiEditorialReviewData();
 		installPostTypeMock( 'page' );
 
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
-		expect( labels ).toContain( 'Optimize Title' );
+		expect( labels ).not.toContain( 'Optimize Title' );
 		expect( labels ).not.toContain( 'AI Editorial Review' );
 	} );
 
 	it( 'hides AI Editorial Review until the post type is known', () => {
-		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		installAiEditorialReviewData();
 		installPostTypeMock();
 
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
-		expect( labels ).toContain( 'Optimize Title' );
+		expect( labels ).not.toContain( 'Optimize Title' );
 		expect( labels ).not.toContain( 'AI Editorial Review' );
+	} );
+
+	it( 'hides Generate Feedback until the post has a saved post ID', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post', null );
+
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+
+		expect( labels ).not.toContain( 'Generate Feedback' );
+		expect( labels ).toContain( 'AI Editorial Review' );
+	} );
+
+	it( 'hides Generate Feedback when the preview feature disables it', () => {
+		installAiEditorialReviewData( { generateFeedback: false } );
+		installPostTypeMock( 'post' );
+
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+
+		expect( labels ).not.toContain( 'Generate Feedback' );
+		expect( labels ).toContain( 'AI Editorial Review' );
+	} );
+
+	it( 'hides Optimize Title when the feature disables it', () => {
+		installAiEditorialReviewData( { aiEditorialReview: false, optimizeTitleSuggestion: false } );
+		installPostTypeMock( 'post' );
+
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+
+		expect( labels ).not.toContain( 'Optimize Title' );
+		expect( labels ).not.toContain( 'AI Editorial Review' );
+	} );
+
+	it( 'treats missing features as disabled', () => {
+		( globalThis as any ).agentsManagerData = {
+			jetpackAiSidebar: {
+				enabled: true,
+				features: { aiEditorialReview: true },
+			},
+		};
+		installPostTypeMock( 'post' );
+
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+
+		expect( labels ).not.toContain( 'Optimize Title' );
+		expect( labels ).toContain( 'AI Editorial Review' );
+		expect( labels ).not.toContain( 'Generate Feedback' );
 	} );
 } );
 
 describe( 'useSuggestions', () => {
 	beforeEach( () => {
 		mockSelectedBlock = null;
+		mockBlocksByClientId = {};
 		mockCurrentPostType = 'post';
 		mockSetIsSplitScreen.mockReset();
 		mockedRecordTracksEvent.mockClear();
@@ -213,8 +783,27 @@ describe( 'useSuggestions', () => {
 		delete ( window as any ).wp;
 	} );
 
-	it( 'does not append AI Editorial Review to block-specific suggestions', () => {
-		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+	it( 'does not track rendered suggestions when the suggestions are not visible', () => {
+		installAiEditorialReviewData();
+		mockSelectedBlock = { clientId: 'b-hidden', name: 'core/paragraph' };
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions, suggestionsVisible: false } ) );
+
+		const latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'Translate content',
+			'Change tone',
+			'Check grammar',
+			'Simplify text',
+		] );
+		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
+		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [] );
+	} );
+
+	it( 'shows only block-specific suggestions when a block is selected', () => {
+		installAiEditorialReviewData();
 		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
 		const onSuggestions = jest.fn();
 
@@ -222,13 +811,221 @@ describe( 'useSuggestions', () => {
 
 		const latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
-		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).not.toContain(
-			'AI Editorial Review'
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'Translate content',
+			'Change tone',
+			'Check grammar',
+			'Simplify text',
+		] );
+		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
+		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'translate',
+					suggestion_type: 'text',
+					block_type: 'core/paragraph',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'change-tone',
+					suggestion_type: 'text',
+					block_type: 'core/paragraph',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'check-grammar',
+					suggestion_type: 'text',
+					block_type: 'core/paragraph',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'simplify-text',
+					suggestion_type: 'text',
+					block_type: 'core/paragraph',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+		] );
+	} );
+
+	it( 'limits block-specific suggestions to maxSuggestions', () => {
+		installAiEditorialReviewData();
+		mockSelectedBlock = { clientId: 'b-limited', name: 'core/heading' };
+		const onSuggestions = jest.fn();
+
+		render(
+			React.createElement( SuggestionsProbe, {
+				onSuggestions,
+				maxSuggestions: 3,
+			} )
 		);
+
+		const latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'Translate content',
+			'Change tone',
+			'Check grammar',
+		] );
+		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'translate',
+					suggestion_type: 'text',
+					block_type: 'core/heading',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'change-tone',
+					suggestion_type: 'text',
+					block_type: 'core/heading',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'check-grammar',
+					suggestion_type: 'text',
+					block_type: 'core/heading',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+		] );
+	} );
+
+	it( 'shows post-level suggestions after the selected-block chip is cleared', () => {
+		installAiEditorialReviewData();
+		const block = { clientId: 'b-clear', name: 'core/paragraph' };
+		mockSelectedBlock = block;
+		mockBlocksByClientId[ block.clientId ] = block;
+		const onSuggestions = jest.fn();
+
+		const { rerender } = render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		let latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toContain(
+			'Translate content'
+		);
+
+		mockSelectedBlock = null;
+		act( () => {
+			window.dispatchEvent( new Event( 'agents-manager-selected-block-cleared' ) );
+		} );
+		rerender( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'Generate Feedback',
+			'AI Editorial Review',
+		] );
+	} );
+
+	it( 'tracks rendered image block transformation suggestions', () => {
+		installAiEditorialReviewData();
+		mockSelectedBlock = { clientId: 'b2', name: 'core/image' };
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		const latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'Generate alt text',
+		] );
+		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'generate-alt-text',
+					suggestion_type: 'image',
+					block_type: 'core/image',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+		] );
+	} );
+
+	it( 'hides review suggestions when a block is selected and block transformations are disabled', () => {
+		installAiEditorialReviewData( { blockTransformations: false } );
+		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		const latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions ).toEqual( [] );
+	} );
+
+	it( 'shows review suggestions at post level regardless of the block transformations feature', () => {
+		( globalThis as any ).agentsManagerData = {
+			jetpackAiSidebar: {
+				enabled: true,
+				features: { aiEditorialReview: true },
+			},
+		};
+		mockSelectedBlock = null;
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		const latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'AI Editorial Review',
+		] );
+	} );
+
+	it( 'keeps Generate Feedback on the backend path when clicked', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post' );
+		const addMessage = jest.fn();
+		const clearSuggestions = jest.fn();
+		const feedbackPrompt = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'generate-feedback'
+		)?.prompt;
+
+		expect( feedbackPrompt ).toContain( 'saved title and saved block content' );
+		expect( feedbackPrompt ).toContain( 'one-click suggestions when safe' );
+
+		useAbilitiesSetup( {
+			addMessage,
+			clearSuggestions,
+		} as any );
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: feedbackPrompt },
+				} )
+			);
+		} );
+
+		expect( mockSetIsSplitScreen ).toHaveBeenCalledWith( true );
+		expect( clearSuggestions ).toHaveBeenCalled();
+		expect( addMessage ).not.toHaveBeenCalled();
 	} );
 
 	it( 'opens split-screen when the AI Editorial Review suggestion is clicked', () => {
-		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		installAiEditorialReviewData();
 		installPostTypeMock( 'post' );
 		const mediationPrompt = getEmptyViewSuggestions().find(
 			( suggestion ) => suggestion.id === 'mediate-review-notes'
@@ -249,10 +1046,112 @@ describe( 'useSuggestions', () => {
 			'jetpack_ai_editorial_review_suggestion_click',
 			{}
 		);
+		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_click' ) ).toEqual( [] );
+	} );
+
+	it( 'tracks block transformation suggestion clicks', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post' );
+		mockSelectedBlock = { clientId: 'b3', name: 'core/heading' };
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+		mockedRecordTracksEvent.mockClear();
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: 'Simplify this text to make it easier to read' },
+				} )
+			);
+		} );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_block_transformation_suggestion_click',
+			{
+				suggestion_id: 'simplify-text',
+				suggestion_type: 'text',
+				block_type: 'core/heading',
+				surface: 'jetpack_ai_sidebar',
+			}
+		);
+	} );
+
+	it( 'tracks block transformation suggestion clicks by label', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post' );
+		mockSelectedBlock = { clientId: 'b4', name: 'core/paragraph' };
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+		mockedRecordTracksEvent.mockClear();
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: 'Check grammar' },
+				} )
+			);
+		} );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_block_transformation_suggestion_click',
+			{
+				suggestion_id: 'check-grammar',
+				suggestion_type: 'text',
+				block_type: 'core/paragraph',
+				surface: 'jetpack_ai_sidebar',
+			}
+		);
+	} );
+
+	it( 'tracks block transformation suggestion clicks after block selection is cleared', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post' );
+		mockSelectedBlock = { clientId: 'b5', name: 'core/paragraph' };
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+		mockedRecordTracksEvent.mockClear();
+		mockSelectedBlock = null;
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: 'Check the grammar and spelling of this text' },
+				} )
+			);
+		} );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_block_transformation_suggestion_click',
+			{
+				suggestion_id: 'check-grammar',
+				suggestion_type: 'text',
+				block_type: 'core/paragraph',
+				surface: 'jetpack_ai_sidebar',
+			}
+		);
+	} );
+
+	it( 'does not track block transformation clicks for unknown prompt values', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post' );
+		mockSelectedBlock = { clientId: 'b6', name: 'core/heading' };
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+		mockedRecordTracksEvent.mockClear();
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: 'Write an unrelated prompt' },
+				} )
+			);
+		} );
+
+		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_click' ) ).toEqual( [] );
 	} );
 
 	it( 'does not open split-screen when AI Editorial Review is unavailable', () => {
-		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		installAiEditorialReviewData();
 		mockCurrentPostType = 'page';
 		installPostTypeMock( 'page' );
 
@@ -268,10 +1167,98 @@ describe( 'useSuggestions', () => {
 
 		expect( mockSetIsSplitScreen ).not.toHaveBeenCalled();
 	} );
+
+	it( 're-shows block suggestions when a block action completes', () => {
+		installAiEditorialReviewData();
+		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: 'Check the grammar and spelling of this text' },
+				} )
+			);
+		} );
+
+		let latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions ).toEqual( [] );
+
+		act( () => {
+			window.dispatchEvent( new Event( 'jetpack-ai-sidebar-block-action-complete' ) );
+		} );
+
+		latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'Translate content',
+			'Change tone',
+			'Check grammar',
+			'Simplify text',
+		] );
+	} );
+
+	it( 'does not start the selected block shimmer when a suggestion is only selected', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post' );
+		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
+		const blockEl = document.createElement( 'div' );
+		blockEl.setAttribute( 'data-block', 'b1' );
+		document.body.appendChild( blockEl );
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: 'Check the grammar and spelling of this text' },
+				} )
+			);
+		} );
+
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing' ) ).toBe( false );
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing-content' ) ).toBe( false );
+	} );
+
+	it( 'starts the selected block shimmer when AM starts processing', () => {
+		jest.useFakeTimers();
+		installPostTypeMock( 'post' );
+		mockSelectedBlock = { clientId: 'lQ0k', name: 'core/paragraph' };
+		const blockEl = document.createElement( 'div' );
+		blockEl.setAttribute( 'data-block', 'lQ0k' );
+		document.body.appendChild( blockEl );
+
+		useAbilitiesSetup( {
+			addMessage: () => undefined,
+			clearSuggestions: () => undefined,
+			isProcessing: false,
+		} as any );
+		useAbilitiesSetup( {
+			addMessage: () => undefined,
+			clearSuggestions: () => undefined,
+			isProcessing: true,
+		} as any );
+
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing' ) ).toBe( true );
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing-content' ) ).toBe( true );
+		useAbilitiesSetup( {
+			addMessage: () => undefined,
+			clearSuggestions: () => undefined,
+			isProcessing: false,
+		} as any );
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing' ) ).toBe( false );
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing-content' ) ).toBe( false );
+		jest.runOnlyPendingTimers();
+		jest.useRealTimers();
+	} );
 } );
 
 describe( 'contextProvider', () => {
 	afterEach( () => {
+		delete ( globalThis as any ).agentsManagerData;
 		delete ( window as any ).wp;
 	} );
 
@@ -283,6 +1270,61 @@ describe( 'contextProvider', () => {
 			postType: 'post',
 		} );
 	} );
+
+	it( 'suppresses full page content for the next Generate Feedback chip request', () => {
+		installAiEditorialReviewData();
+		installContextProviderMock();
+		const feedbackPrompt = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'generate-feedback'
+		)?.prompt;
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: feedbackPrompt },
+				} )
+			);
+		} );
+
+		const feedbackContext = contextProvider.getClientContext();
+		expect( feedbackContext.currentPageContent ).toEqual( [] );
+		expect( feedbackContext.jetpackAi ).toBeUndefined();
+		expect( contextProvider.getClientContext().currentPageContent ).toHaveLength( 1 );
+		expect( contextProvider.getClientContext().jetpackAi ).toBeUndefined();
+	} );
+
+	it( 'clears pending Generate Feedback content suppression when another suggestion is clicked', () => {
+		installAiEditorialReviewData();
+		installContextProviderMock();
+		const suggestions = getEmptyViewSuggestions();
+		const feedbackPrompt = suggestions.find(
+			( suggestion ) => suggestion.id === 'generate-feedback'
+		)?.prompt;
+		const mediationPrompt = suggestions.find(
+			( suggestion ) => suggestion.id === 'mediate-review-notes'
+		)?.prompt;
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: feedbackPrompt },
+				} )
+			);
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: mediationPrompt },
+				} )
+			);
+		} );
+
+		const context = contextProvider.getClientContext();
+		expect( context.currentPageContent ).toHaveLength( 1 );
+		expect( context.jetpackAi ).toBeUndefined();
+	} );
 } );
 
 describe( 'toolProvider', () => {
@@ -292,38 +1334,110 @@ describe( 'toolProvider', () => {
 		( window as any ).wp = {};
 	} );
 
+	afterEach( () => {
+		delete ( globalThis as any ).agentsManagerData;
+		delete ( window as any ).wp;
+	} );
+
 	describe( 'getAbilities', () => {
-		it( 'includes update-block-content and big_sky__show_component', async () => {
+		it( 'includes update-block-content and show-component abilities', async () => {
 			const abilities = await toolProvider.getAbilities();
 			const names = abilities.map( ( a: any ) => a.name );
 
 			expect( names ).toContain( 'wpcom/update-block-content' );
-			expect( names ).toContain( 'big_sky__show_component' );
+			expect( names ).toContain( SHOW_COMPONENT_TOOL_ID );
+			expect( names ).toContain( LEGACY_SHOW_COMPONENT_TOOL_ID );
 		} );
 
 		it( 'wires a callback on each provided ability', async () => {
 			const abilities = await toolProvider.getAbilities();
-			const showComponent = abilities.find( ( a: any ) => a.name === 'big_sky__show_component' );
+			const showComponent = abilities.find( ( a: any ) => a.name === SHOW_COMPONENT_TOOL_ID );
+			const legacyShowComponent = abilities.find(
+				( a: any ) => a.name === LEGACY_SHOW_COMPONENT_TOOL_ID
+			);
 			const updateBlock = abilities.find( ( a: any ) => a.name === 'wpcom/update-block-content' );
 
 			expect( typeof showComponent?.callback ).toBe( 'function' );
+			expect( typeof legacyShowComponent?.callback ).toBe( 'function' );
 			expect( typeof updateBlock?.callback ).toBe( 'function' );
+		} );
+
+		it( 'delegates non-Jetpack legacy show-component callbacks to Big Sky', async () => {
+			const args = {
+				type: 'color-picker',
+				props: { colors: [] },
+			};
+			const executeAbility = jest.fn().mockResolvedValue( {
+				result: 'Big Sky component displayed successfully',
+				returnToAgent: false,
+			} );
+			( window as any ).wp.abilities = {
+				getAbilities: jest.fn().mockResolvedValue( [] ),
+				executeAbility,
+			};
+
+			const abilities = await toolProvider.getAbilities();
+			const legacyShowComponent = abilities.find(
+				( a: any ) => a.name === LEGACY_SHOW_COMPONENT_TOOL_ID
+			);
+			const result = await legacyShowComponent.callback( args );
+
+			expect( executeAbility ).toHaveBeenCalledWith( 'big-sky/show-component', args );
+			expect( result ).toEqual( {
+				result: 'Big Sky component displayed successfully',
+				returnToAgent: false,
+			} );
+		} );
+
+		it.each( [
+			[ 'empty', '' ],
+			[ 'whitespace-only', '   ' ],
+		] )( 'does not delegate %s legacy show-component callbacks', async ( _label, type ) => {
+			const executeAbility = jest.fn();
+			( window as any ).wp.abilities = {
+				getAbilities: jest.fn().mockResolvedValue( [] ),
+				executeAbility,
+			};
+
+			const abilities = await toolProvider.getAbilities();
+			const legacyShowComponent = abilities.find(
+				( a: any ) => a.name === LEGACY_SHOW_COMPONENT_TOOL_ID
+			);
+			const result = await legacyShowComponent.callback( {
+				type,
+				props: {},
+			} );
+
+			expect( executeAbility ).not.toHaveBeenCalled();
+			expect( result ).toMatchObject( { success: false } );
+			expect( result.error ).toMatch( /missing type/ );
+		} );
+
+		it( 'omits update-block-content when block transformations are disabled', async () => {
+			installAiEditorialReviewData( { blockTransformations: false } );
+
+			const abilities = await toolProvider.getAbilities();
+			const names = abilities.map( ( a: any ) => a.name );
+
+			expect( names ).not.toContain( 'wpcom/update-block-content' );
+			expect( names ).toContain( SHOW_COMPONENT_TOOL_ID );
+			expect( names ).toContain( LEGACY_SHOW_COMPONENT_TOOL_ID );
 		} );
 	} );
 
-	describe( 'executeAbility for big_sky__show_component', () => {
+	describe( 'executeAbility for show-component tools', () => {
 		beforeEach( () => {
 			installWpDataMock( 'Original Title' );
 		} );
 
 		it( 'returns an error when type is missing', async () => {
-			const { result } = await toolProvider.executeAbility( 'big_sky__show_component', {} );
+			const { result } = await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {} );
 			expect( result ).toMatchObject( { success: false } );
 			expect( ( result as any ).error ).toMatch( /missing type/ );
 		} );
 
 		it( 'returns an error for an unknown component type', async () => {
-			const { result } = await toolProvider.executeAbility( 'big_sky__show_component', {
+			const { result } = await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
 				type: 'nonexistent-picker',
 				props: {},
 			} );
@@ -338,7 +1452,7 @@ describe( 'toolProvider', () => {
 				{ title: 'Title 3', explanation: 'c' },
 			];
 			const { result, returnToAgent } = ( await toolProvider.executeAbility(
-				'big_sky__show_component',
+				SHOW_COMPONENT_TOOL_ID,
 				{
 					type: 'title-picker',
 					props: { titles },
@@ -351,16 +1465,71 @@ describe( 'toolProvider', () => {
 			expect( typeof result.agentMessage ).toBe( 'string' );
 
 			const parsed = JSON.parse( result.agentMessage );
-			expect( parsed.tool_id ).toBe( 'big_sky__show_component' );
+			expect( parsed.tool_id ).toBe( SHOW_COMPONENT_TOOL_ID );
 			expect( parsed.data.type ).toBe( 'title-picker' );
 			expect( parsed.data.props ).toEqual( { titles } );
+			expect( parsed.data.postId ).toBeUndefined();
 			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_test_123' );
 			expect( parsed.data.isCurrent ).toBe( true );
 			expect( parsed.data.hideZoomAction ).toBe( true );
 		} );
 
+		it( 'accepts the legacy Big Sky show-component tool during migration', async () => {
+			const { result } = ( await toolProvider.executeAbility( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+				type: 'review-mediation',
+				props: {
+					summary: 'Summary.',
+					conflicts: [],
+					implications: [],
+					suggested_edits: [],
+					guideline_violations: [],
+				},
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.tool_id ).toBe( SHOW_COMPONENT_TOOL_ID );
+			expect( parsed.data.type ).toBe( 'review-mediation' );
+		} );
+
+		it( 'delegates non-Jetpack legacy show-component calls to Big Sky', async () => {
+			const args = {
+				type: 'color-picker',
+				props: { colors: [] },
+			};
+			const executeAbility = jest.fn().mockResolvedValue( {
+				result: 'Big Sky component displayed successfully',
+				returnToAgent: false,
+			} );
+			( window as any ).wp.abilities = { executeAbility };
+
+			const result = await toolProvider.executeAbility( LEGACY_SHOW_COMPONENT_TOOL_ID, args );
+
+			expect( executeAbility ).toHaveBeenCalledWith( 'big-sky/show-component', args );
+			expect( result ).toEqual( {
+				result: 'Big Sky component displayed successfully',
+				returnToAgent: false,
+			} );
+		} );
+
+		it.each( [
+			[ 'empty', '' ],
+			[ 'whitespace-only', '   ' ],
+		] )( 'does not delegate %s legacy show-component calls to Big Sky', async ( _label, type ) => {
+			const executeAbility = jest.fn();
+			( window as any ).wp.abilities = { executeAbility };
+
+			const { result } = await toolProvider.executeAbility( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+				type,
+				props: {},
+			} );
+
+			expect( executeAbility ).not.toHaveBeenCalled();
+			expect( result ).toMatchObject( { success: false } );
+			expect( result.error ).toMatch( /missing type/ );
+		} );
+
 		it( 'does not attach a title checkpoint to review-mediation components', async () => {
-			const { result } = ( await toolProvider.executeAbility( 'big_sky__show_component', {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
 				type: 'review-mediation',
 				props: {
 					summary: 'Summary.',
@@ -377,10 +1546,68 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.calypsoCheckpointId ).toBeUndefined();
 			expect( parsed.data.isCurrent ).toBe( true );
 			expect( parsed.data.hideZoomAction ).toBe( true );
+			expect( parsed.data.postId ).toBe( 123 );
+			expect( parsed.data.props.postId ).toBe( 123 );
+		} );
+
+		it( 'stamps post-feedback components with the current post ID', async () => {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'post-feedback',
+				props: {
+					summary: 'Summary.',
+					items: [],
+				},
+				toolCallId: 'call_post_feedback_123',
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.type ).toBe( 'post-feedback' );
+			expect( parsed.data.calypsoCheckpointId ).toBeUndefined();
+			expect( parsed.data.isCurrent ).toBe( true );
+			expect( parsed.data.hideZoomAction ).toBe( true );
+			expect( parsed.data.postId ).toBe( 123 );
+			expect( parsed.data.props.postId ).toBe( 123 );
+		} );
+
+		it( 'preserves the reviewed post ID on post-feedback components', async () => {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'post-feedback',
+				props: {
+					summary: 'Summary.',
+					items: [],
+					postId: 77,
+				},
+				toolCallId: 'call_post_feedback_456',
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.type ).toBe( 'post-feedback' );
+			expect( parsed.data.postId ).toBe( 77 );
+			expect( parsed.data.props.postId ).toBe( 77 );
+		} );
+
+		it( 'does not stamp review-mediation components without a saved editor post ID', async () => {
+			installWpDataMock( 'Original Title', 0 );
+
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'review-mediation',
+				props: {
+					summary: 'Summary.',
+					conflicts: [],
+					implications: [],
+					suggested_edits: [],
+					guideline_violations: [],
+				},
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.type ).toBe( 'review-mediation' );
+			expect( parsed.data.postId ).toBeUndefined();
+			expect( parsed.data.props.postId ).toBeUndefined();
 		} );
 
 		it( 'generates a checkpointId fallback when toolCallId is missing', async () => {
-			const { result } = ( await toolProvider.executeAbility( 'big_sky__show_component', {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
 				type: 'title-picker',
 				props: { titles: [ { title: 'x' } ] },
 			} ) ) as any;
@@ -450,7 +1677,10 @@ describe( 'useCheckpoint', () => {
 // core/block-editor (for updateBlockAttributes / getBlock). Tracks calls so
 // tests can assert exact dispatches.
 function installWpDataMockWithBlockEditor(
-	blocks: Record< string, { name: string; attributes: { content?: string } } > = {
+	blocks: Record<
+		string,
+		{ name: string; attributes: Record< string, any >; innerBlocks?: any[] }
+	> = {
 		'550e8400-e29b-41d4-a716-446655440000': {
 			name: 'core/paragraph',
 			attributes: { content: 'original block content' },
@@ -459,6 +1689,7 @@ function installWpDataMockWithBlockEditor(
 ) {
 	const editorState: { title: string } = { title: 'original' };
 	const blockUpdates: Array< { clientId: string; attrs: Record< string, unknown > } > = [];
+	const selectedClientIds: string[] = [];
 	( window as any ).wp = {
 		data: {
 			select: ( store: string ) => {
@@ -470,7 +1701,13 @@ function installWpDataMockWithBlockEditor(
 				}
 				if ( store === 'core/block-editor' ) {
 					return {
-						getBlock: ( clientId: string ) => blocks[ clientId ] ?? null,
+						getBlock: ( clientId: string ) =>
+							blocks[ clientId ] ? { clientId, ...blocks[ clientId ] } : null,
+						getBlocks: () =>
+							Object.entries( blocks ).map( ( [ clientId, block ] ) => ( {
+								clientId,
+								...block,
+							} ) ),
 					};
 				}
 				return undefined;
@@ -489,6 +1726,15 @@ function installWpDataMockWithBlockEditor(
 					return {
 						updateBlockAttributes: ( clientId: string, attrs: Record< string, unknown > ) => {
 							blockUpdates.push( { clientId, attrs } );
+							if ( blocks[ clientId ] ) {
+								blocks[ clientId ].attributes = {
+									...blocks[ clientId ].attributes,
+									...attrs,
+								};
+							}
+						},
+						selectBlock: ( clientId: string ) => {
+							selectedClientIds.push( clientId );
 						},
 					};
 				}
@@ -496,7 +1742,7 @@ function installWpDataMockWithBlockEditor(
 			},
 		},
 	};
-	return { editorState, blockUpdates, blocks };
+	return { editorState, blockUpdates, blocks, selectedClientIds };
 }
 
 describe( 'applyReviewEdit', () => {
@@ -506,6 +1752,8 @@ describe( 'applyReviewEdit', () => {
 
 	afterEach( () => {
 		jest.useRealTimers();
+		document.body.innerHTML = '';
+		delete ( window as any ).wp;
 	} );
 
 	it( 'dispatches updateBlockAttributes with the suggested content', async () => {
@@ -534,7 +1782,154 @@ describe( 'applyReviewEdit', () => {
 		] );
 	} );
 
-	it( 'posts the rationale as an assistant message to the chat when a summary is provided', async () => {
+	it( 'updates list item content with one-click edits', async () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor( {
+			'550e8400-e29b-41d4-a716-446655440000': {
+				name: 'core/list-item',
+				attributes: { content: 'Register online by 1 May.' },
+			},
+		} );
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+
+		const promise = applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'online by 1 June',
+			undefined,
+			'online by 1 May'
+		);
+		jest.advanceTimersByTime( 1000 );
+		const result = await promise;
+
+		expect( result ).toMatchObject( {
+			success: true,
+			contentBefore: 'Register online by 1 May.',
+			contentAfter: 'Register online by 1 June.',
+		} );
+		expect( blockUpdates ).toEqual( [
+			{
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				attrs: { content: 'Register online by 1 June.' },
+			},
+		] );
+	} );
+
+	it( 'updates image captions with the caption attribute', async () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor( {
+			'550e8400-e29b-41d4-a716-446655440000': {
+				name: 'core/image',
+				attributes: { caption: 'Outdoor map activity' },
+			},
+		} );
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+
+		const promise = applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'Children exploring an outdoor map',
+			undefined,
+			'Outdoor map activity'
+		);
+		jest.advanceTimersByTime( 1000 );
+		const result = await promise;
+
+		expect( result ).toMatchObject( {
+			success: true,
+			contentBefore: 'Outdoor map activity',
+			contentAfter: 'Children exploring an outdoor map',
+		} );
+		expect( blockUpdates ).toEqual( [
+			{
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				attrs: { caption: 'Children exploring an outdoor map' },
+			},
+		] );
+	} );
+
+	it( 'updates explicitly targeted string attributes', async () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor( {
+			'550e8400-e29b-41d4-a716-446655440000': {
+				name: 'core/quote',
+				attributes: {
+					value: '<p>Useful quoted text.</p>',
+					citation: 'Old citation',
+				},
+			},
+		} );
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+
+		const promise = applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'Updated citation',
+			undefined,
+			'Old citation',
+			undefined,
+			'citation'
+		);
+		jest.advanceTimersByTime( 1000 );
+		const result = await promise;
+
+		expect( result ).toMatchObject( {
+			success: true,
+			editableAttribute: 'citation',
+			contentBefore: 'Old citation',
+			contentAfter: 'Updated citation',
+		} );
+		expect( blockUpdates ).toEqual( [
+			{
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				attrs: { citation: 'Updated citation' },
+			},
+		] );
+	} );
+
+	it( 'does not snapshot or write when shouldApply is already false', async () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor();
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+
+		const result = await applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'new text',
+			undefined,
+			undefined,
+			() => false
+		);
+
+		expect( result ).toMatchObject( {
+			success: false,
+			error: 'context changed',
+		} );
+		expect( blockUpdates ).toEqual( [] );
+	} );
+
+	it( 'does not write and clears processing state when shouldApply turns false before the delayed write', async () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor();
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+		const blockEl = document.createElement( 'div' );
+		blockEl.setAttribute( 'data-block', '550e8400-e29b-41d4-a716-446655440000' );
+		document.body.appendChild( blockEl );
+		let shouldApply = true;
+
+		const promise = applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'new text',
+			undefined,
+			undefined,
+			() => shouldApply
+		);
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing' ) ).toBe( true );
+
+		shouldApply = false;
+		jest.advanceTimersByTime( 1000 );
+		const result = await promise;
+
+		expect( result ).toMatchObject( {
+			success: false,
+			error: 'context changed',
+		} );
+		expect( blockUpdates ).toEqual( [] );
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing' ) ).toBe( false );
+	} );
+
+	it( 'returns the rationale as an agent message so AM can attach feedback actions', async () => {
 		installWpDataMockWithBlockEditor();
 		const addMessage = jest.fn();
 		useAbilitiesSetup( {
@@ -548,15 +1943,10 @@ describe( 'applyReviewEdit', () => {
 			'Follows Copy guideline on specific dates.'
 		);
 		jest.advanceTimersByTime( 1000 );
-		await promise;
+		const result = await promise;
 
-		expect( addMessage ).toHaveBeenCalledTimes( 1 );
-		const message = addMessage.mock.calls[ 0 ][ 0 ];
-		expect( message.role ).toBe( 'assistant' );
-		expect( message.content[ 0 ] ).toEqual( {
-			type: 'text',
-			text: 'Follows Copy guideline on specific dates.',
-		} );
+		expect( addMessage ).not.toHaveBeenCalled();
+		expect( result.agentMessage ).toBe( 'Follows Copy guideline on specific dates.' );
 	} );
 
 	it( 'does not emit a chat message when summary is omitted', async () => {
@@ -572,6 +1962,54 @@ describe( 'applyReviewEdit', () => {
 		await promise;
 
 		expect( addMessage ).not.toHaveBeenCalled();
+	} );
+
+	it( 'supports repeated edits against the updated selected block content', async () => {
+		const { blockUpdates, selectedClientIds } = installWpDataMockWithBlockEditor( {
+			'550e8400-e29b-41d4-a716-446655440000': {
+				name: 'core/paragraph',
+				attributes: { content: 'hello world this is my firsst post' },
+			},
+		} );
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+
+		const first = applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'Hello world, this is my first post.',
+			undefined,
+			'hello world this is my firsst post'
+		);
+		jest.advanceTimersByTime( 1000 );
+		await first;
+
+		const second = applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'Hello world, this is my first post!',
+			undefined,
+			'Hello world, this is my first post.'
+		);
+		jest.advanceTimersByTime( 1000 );
+		const result = await second;
+
+		expect( result ).toMatchObject( {
+			success: true,
+			contentBefore: 'Hello world, this is my first post.',
+			contentAfter: 'Hello world, this is my first post!',
+		} );
+		expect( blockUpdates ).toEqual( [
+			{
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				attrs: { content: 'Hello world, this is my first post.' },
+			},
+			{
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				attrs: { content: 'Hello world, this is my first post!' },
+			},
+		] );
+		expect( selectedClientIds ).toEqual( [
+			'550e8400-e29b-41d4-a716-446655440000',
+			'550e8400-e29b-41d4-a716-446655440000',
+		] );
 	} );
 
 	// Intentionally no direct unit test for the `setCheckpoint` call inside
@@ -610,6 +2048,40 @@ describe( 'applyReviewEdit', () => {
 				attrs: { content: 'The board voted on Tuesday on the proposal.' },
 			},
 		] );
+	} );
+
+	it( 'falls back to a unique currentText match when the clientId is stale', async () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor( {
+			'live-client-id': {
+				name: 'core/paragraph',
+				attributes: { content: 'hello world this is my firsst post' },
+			},
+		} );
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+
+		const promise = applyReviewEdit(
+			'stale-client-id',
+			'Hello world, this is my first post.',
+			undefined,
+			'hello world this is my firsst post'
+		);
+		jest.advanceTimersByTime( 1000 );
+		const result = await promise;
+
+		expect( result ).toMatchObject( {
+			success: true,
+			clientId: 'live-client-id',
+			contentBefore: 'hello world this is my firsst post',
+			contentAfter: 'Hello world, this is my first post.',
+		} );
+		expect( blockUpdates ).toEqual( [
+			{
+				clientId: 'live-client-id',
+				attrs: { content: 'Hello world, this is my first post.' },
+			},
+		] );
+		warn.mockRestore();
 	} );
 
 	it( 'revalidates currentText against the latest block content before writing', async () => {
@@ -749,11 +2221,11 @@ describe( 'applyReviewEdit', () => {
 		}
 	);
 
-	it( 'fails safely on unsupported block types', async () => {
+	it( 'fails safely when the block has no editable string-like attribute', async () => {
 		const { blockUpdates } = installWpDataMockWithBlockEditor( {
 			'550e8400-e29b-41d4-a716-446655440000': {
-				name: 'core/list',
-				attributes: { content: 'A list item.' },
+				name: 'core/query',
+				attributes: { queryId: 1 },
 			},
 		} );
 		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
@@ -778,6 +2250,95 @@ describe( 'applyReviewEdit', () => {
 		const result = await promise;
 
 		expect( result ).toMatchObject( { success: false } );
+	} );
+
+	it( 'returns a failed result when block editor dispatch throws', async () => {
+		const select = jest.fn();
+		( window as any ).wp = {
+			data: {
+				select,
+				dispatch: ( store: string ) => {
+					if ( store === 'core/block-editor' ) {
+						throw new Error( 'store missing' );
+					}
+					return undefined;
+				},
+			},
+		};
+
+		const result = await applyReviewEdit( '550e8400-e29b-41d4-a716-446655440000', 'new text' );
+
+		expect( result ).toMatchObject( {
+			success: false,
+			error: 'Block editor not available',
+			returnToAgent: false,
+		} );
+		expect( select ).not.toHaveBeenCalled();
+	} );
+
+	it( 'returns a failed result when block editor select throws during snapshot lookup', async () => {
+		const updateBlockAttributes = jest.fn();
+		( window as any ).wp = {
+			data: {
+				select: ( store: string ) => {
+					if ( store === 'core/block-editor' ) {
+						throw new Error( 'store missing' );
+					}
+					return undefined;
+				},
+				dispatch: ( store: string ) =>
+					store === 'core/block-editor' ? { updateBlockAttributes } : undefined,
+			},
+		};
+
+		const result = await applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'new text',
+			undefined,
+			'original text'
+		);
+
+		expect( result ).toMatchObject( {
+			success: false,
+			error: 'block not found',
+			returnToAgent: false,
+		} );
+		expect( updateBlockAttributes ).not.toHaveBeenCalled();
+	} );
+
+	it( 'returns a failed result when block editor mutation throws', async () => {
+		const updateBlockAttributes = jest.fn( () => {
+			throw new Error( 'mutation failed' );
+		} );
+		( window as any ).wp = {
+			data: {
+				select: ( store: string ) => {
+					if ( store === 'core/block-editor' ) {
+						return {
+							getBlock: ( clientId: string ) => ( {
+								clientId,
+								name: 'core/paragraph',
+								attributes: { content: 'original block content' },
+							} ),
+						};
+					}
+					return undefined;
+				},
+				dispatch: ( store: string ) =>
+					store === 'core/block-editor' ? { updateBlockAttributes } : undefined,
+			},
+		};
+
+		const promise = applyReviewEdit( '550e8400-e29b-41d4-a716-446655440000', 'new text' );
+		jest.advanceTimersByTime( 1000 );
+		const result = await promise;
+
+		expect( result ).toMatchObject( {
+			success: false,
+			error: 'Block editor not available',
+			returnToAgent: false,
+		} );
+		expect( updateBlockAttributes ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'undoBlockEdit restores only when the expected content still matches', () => {
@@ -814,6 +2375,29 @@ describe( 'applyReviewEdit', () => {
 		expect( blocked ).toBe( false );
 		expect( blockUpdates ).toHaveLength( 1 );
 	} );
+
+	it( 'undoBlockEdit restores image captions through the caption attribute', () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor( {
+			'550e8400-e29b-41d4-a716-446655440000': {
+				name: 'core/image',
+				attributes: { caption: 'Children exploring an outdoor map' },
+			},
+		} );
+
+		const restored = undoBlockEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'Outdoor map activity',
+			'Children exploring an outdoor map'
+		);
+
+		expect( restored ).toBe( true );
+		expect( blockUpdates ).toEqual( [
+			{
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				attrs: { caption: 'Outdoor map activity' },
+			},
+		] );
+	} );
 } );
 
 describe( 'findBlockElement', () => {
@@ -828,17 +2412,35 @@ describe( 'findBlockElement', () => {
 		expect( findBlockElement( '550e8400-e29b-41d4-a716-446655440000' ) ).toBe( el );
 	} );
 
+	it( 'supports short mixed-case Gutenberg clientIds', () => {
+		const el = document.createElement( 'div' );
+		el.setAttribute( 'data-block', 'lQ0k' );
+		document.body.appendChild( el );
+		expect( findBlockElement( 'lQ0k' ) ).toBe( el );
+	} );
+
 	it( 'returns null when the clientId is not in the DOM', () => {
 		// Returns null from the regex guard, the main-doc querySelector miss,
 		// or the optional editor-canvas iframe lookup chain (coerced via ?? null).
 		expect( findBlockElement( '550e8400-e29b-41d4-a716-446655440001' ) ).toBeNull();
 	} );
 
-	it( 'rejects malformed clientIds to prevent selector injection', () => {
+	it( 'escapes clientIds to prevent selector injection', () => {
+		const el = document.createElement( 'div' );
+		el.setAttribute( 'data-block', 'client.id' );
+		document.body.appendChild( el );
+		expect( findBlockElement( 'client.id' ) ).toBe( el );
 		expect( findBlockElement( '"][onerror="alert(1)"]' ) ).toBeNull();
 		expect( findBlockElement( 'contains space' ) ).toBeNull();
-		// Non-hex characters fail the regex guard.
-		expect( findBlockElement( 'not-a-real-clientid-g' ) ).toBeNull();
+	} );
+
+	it( 'finds blocks in accessible editor iframes', () => {
+		const iframe = document.createElement( 'iframe' );
+		document.body.appendChild( iframe );
+		const el = iframe.contentDocument?.createElement( 'div' );
+		el?.setAttribute( 'data-block', 'lQ0k' );
+		iframe.contentDocument?.body.appendChild( el as HTMLElement );
+		expect( findBlockElement( 'lQ0k' ) ).toBe( el );
 	} );
 } );
 
@@ -848,10 +2450,29 @@ describe( 'findBlockListLayout', () => {
 	} );
 
 	it( 'finds the root block-list layout element in the main document', () => {
-		const el = document.createElement( 'div' );
-		el.className = 'block-editor-block-list__layout is-root-container';
-		document.body.appendChild( el );
+		const el = appendRootBlockListLayout();
 		expect( findBlockListLayout() ).toBe( el );
+	} );
+
+	it( 'prefers the root block-list layout containing a reference block', () => {
+		appendRootBlockListLayout();
+		const { layout: root, block } = appendBlockInRootLayout( 'block-1' );
+
+		expect( findBlockListLayout( block ) ).toBe( root );
+	} );
+
+	it( 'finds the root block-list layout in the reference block owner document', () => {
+		appendRootBlockListLayout();
+
+		const iframe = document.createElement( 'iframe' );
+		document.body.appendChild( iframe );
+		const frameDocument = iframe.contentDocument as Document;
+		const root = appendRootBlockListLayout( frameDocument );
+		const block = frameDocument.createElement( 'div' );
+		block.setAttribute( 'data-block', 'block-1' );
+		frameDocument.body.appendChild( block );
+
+		expect( findBlockListLayout( block ) ).toBe( root );
 	} );
 
 	it( 'returns null when the root layout is not in the DOM', () => {

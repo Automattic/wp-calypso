@@ -1,6 +1,7 @@
+import { debounce } from '@wordpress/compose';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { merge, map, filter, get, debounce } from 'lodash';
+import { merge, map, filter, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import DayPicker from 'react-day-picker';

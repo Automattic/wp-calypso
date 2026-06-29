@@ -88,8 +88,10 @@ menuItems.push(
 		visible: true,
 		click: function () {
 			const window = BrowserWindow.getFocusedWindow();
-			const view = window.getBrowserView();
-			view.webContents.reload();
+			const view = window && window.getBrowserView();
+			if ( view ) {
+				view.webContents.reload();
+			}
 		},
 	},
 	{
@@ -103,22 +105,28 @@ menuItems.push(
 
 function zoomIn() {
 	const window = BrowserWindow.getFocusedWindow();
-	const view = window.getBrowserView();
-	const zoom = view.webContents.getZoomLevel();
-	view.webContents.setZoomLevel( Math.min( zoom + ZOOMFACTOR, 3 ) );
+	const view = window && window.getBrowserView();
+	if ( view ) {
+		const zoom = view.webContents.getZoomLevel();
+		view.webContents.setZoomLevel( Math.min( zoom + ZOOMFACTOR, 3 ) );
+	}
 }
 
 function zoomOut() {
 	const window = BrowserWindow.getFocusedWindow();
-	const view = window.getBrowserView();
-	const zoom = view.webContents.getZoomLevel();
-	view.webContents.setZoomLevel( Math.max( zoom - ZOOMFACTOR, -1.0 ) );
+	const view = window && window.getBrowserView();
+	if ( view ) {
+		const zoom = view.webContents.getZoomLevel();
+		view.webContents.setZoomLevel( Math.max( zoom - ZOOMFACTOR, -1.0 ) );
+	}
 }
 
 function resetZoom() {
 	const window = BrowserWindow.getFocusedWindow();
-	const view = window.getBrowserView();
-	view.webContents.setZoomLevel( 0 );
+	const view = window && window.getBrowserView();
+	if ( view ) {
+		view.webContents.setZoomLevel( 0 );
+	}
 }
 
 module.exports = menuItems;

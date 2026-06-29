@@ -1,3 +1,4 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 @import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/mixins';
@@ -8,6 +9,9 @@
 	margin: 0;
 	line-height: 20px;
 	text-wrap: balance;
+	// Break long unbroken strings (e.g. URLs) so they wrap instead of
+	// overflowing horizontally, which is especially visible on mobile.
+	overflow-wrap: break-word;
 
 	.has-text-align-center {
 		text-align: center;
@@ -101,7 +105,7 @@
 		&:has(.wpnc__button) {
 			margin: 0 -#{$grid-unit-20};
 			padding: 16px;
-			border-top: 1px solid $gray-100;
+			border-top: 1px solid var( --wpnc-divider__color, #{$gray-100} );
 		}
 	}
 
@@ -134,7 +138,7 @@
 
 	.wpnc__hr-separator {
 		border: none;
-		border-top: 1px solid $gray-100;
+		border-top: 1px solid var( --wpnc-divider__color, #{$gray-100} );
 	}
 
 	// Links
@@ -166,10 +170,10 @@
 	blockquote {
 		padding: 0 $grid-unit-20;
 		margin: 0 0 $grid-unit-20 0;
-		box-shadow: inset 3px 0 0 #f0f0f0;
+		box-shadow: inset 3px 0 0 var( --wpnc-quote__border-color, #f0f0f0 );
 		font-weight: 400;
 		font-style: italic;
-		color: #646970;
+		color: var( --wpnc-quote__text-color, #646970 );
 		background: transparent;
 	}
 
@@ -196,6 +200,37 @@
 	li {
 		margin: auto;
 	}
+
+	// Monospaced, boxed styling for inline code and code blocks.
+	code,
+	pre {
+		font-family: $font-family-mono;
+		font-size: 90%;
+		background: var( --wpnc-code__background-color, #{$gray-100} );
+		border: 1px solid var( --wpnc-code__border-color, #{$gray-300} );
+		border-radius: 4px;
+	}
+
+	code {
+		padding: 0 4px;
+		color: var( --wpnc-code__text-color, #{$gray-700} );
+	}
+
+	pre {
+		padding: 8px;
+		// Preserve the source's line breaks/indentation while still wrapping
+		// long lines so code can't overflow the narrow panel horizontally.
+		white-space: pre-wrap;
+		overflow-wrap: break-word;
+
+		// A <code> nested inside <pre> shouldn't double up the box.
+		code {
+			padding: 0;
+			border: none;
+			background: none;
+			color: inherit;
+		}
+	}
 }
 
 .comment-reply-input__textarea {
@@ -214,12 +249,31 @@
 }
 
 .wpnc__text-summary {
+	// Allow this flex child to shrink below its content width so the snippet
+	// can truncate instead of overflowing horizontally, especially on mobile.
+	min-width: 0;
+
 	.components-external-link:not(:hover) {
 		color: inherit;
 	}
 
+	// Keep the snippet on a single line, truncating long unbroken strings
+	// (e.g. URLs) with an ellipsis while keeping the trailing link icon visible.
+	.components-external-link {
+		display: flex;
+		align-items: center;
+		max-width: 100%;
+	}
+
 	.components-external-link__contents {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 		text-decoration: none;
+	}
+
+	.components-external-link__icon {
+		flex-shrink: 0;
 	}
 }
 
@@ -243,11 +297,6 @@
 
 	.wpnc__user-description-separator {
 		color: $gray-700;
-
-		&:first-child,
-		&:last-child {
-			display: none;
-		}
 	}
 
 	a {
@@ -260,7 +309,7 @@
  */
 .wpnc__note.wpnc__comment .wpnc__body .wpnc__body-content {
 	padding: 0 0 0 $grid-unit-20;
-	box-shadow: inset 3px 0 0 #f0f0f0;
+	box-shadow: inset 3px 0 0 var( --wpnc-quote__border-color, #f0f0f0 );
 
 	.wpnc__user {
 		padding: 0 0 $grid-unit-20 0;
@@ -275,7 +324,7 @@
 .wpnc__note.wpnc__follow .wpnc__body .wpnc__body-content {
 	.wpnc__user {
 		padding: 12px 0;
-		border-bottom: 1px solid $gray-100;
+		border-bottom: 1px solid var( --wpnc-divider__color, #{$gray-100} );
 
 		&:first-child {
 			padding-top: 0;
@@ -288,16 +337,25 @@
 	}
 }
 
-.wpnc__action-link.has-icon.has-text {
-	flex: 1;
+// Outweigh WP Button's `.components-button.has-text` rule.
+.wpnc__action-link.components-button.has-text {
+	// Keep every action on a single row. Buttons sit at their natural width when
+	// they fit, but may shrink and let their label wrap onto a new line when the
+	// row runs out of width — instead of wrapping a whole button below.
+	flex: 0 1 auto;
+	min-width: 0;
+	// Let the button grow taller when its label wraps onto a second line.
+	height: auto;
+	flex-wrap: wrap;
 	justify-content: center;
+	white-space: normal;
 }
 
 /**
  * Reply
  */
 .wpnc__reply {
-	color: #646970;
+	color: var( --wpnc-quote__text-color, #646970 );
 
 	.wpnc__gridicon {
 		fill: currentColor;
@@ -306,5 +364,38 @@
 	a {
 		font-weight: 600;
 		color: inherit;
+	}
+}
+
+// Dark mode: the detail-pane literals above (quote bars/text, dividers) ship
+// light-mode values that don't adapt. Point their tokens at dashboard colors —
+// readable muted quote text (passes AA on the overlay panel), a neutral quote
+// bar, and the gray-400 divider used across the dark overlays (Help Center).
+.wpnc-app {
+	@include ui-mixins.when-dark-theme {
+		--wpnc-quote__border-color: var( --wp-components-color-gray-600, #758095 );
+		--wpnc-quote__text-color: var( --wp-components-color-gray-700, #9aa2b1 );
+		--wpnc-divider__color: var( --wp-components-color-gray-400, #424855 );
+
+		// Code blocks: a subtly raised surface against the dark panel, with a
+		// neutral border and light text that keeps AA contrast.
+		--wpnc-code__background-color: var( --wp-components-color-gray-800, #2c3338 );
+		--wpnc-code__border-color: var( --wp-components-color-gray-600, #758095 );
+		--wpnc-code__text-color: var( --wp-components-color-gray-100, #f0f0f1 );
+
+		// Two frame-level dividers miss the dashboard's border handling:
+		//   - the action-block CardFooter (above Like/Reply) — the dark card
+		//     mixin themes card header/divider but not the footer, so its
+		//     border falls back to a near-invisible rgba(0,0,0,0.1).
+		//   - the list/detail pane separator — $wpnc-pane-border.
+		// Route both to the same gray-400 divider as the rest of the panel.
+		.components-card__footer {
+			border-top-color: var( --wpnc-divider__color );
+		}
+
+		.wpnc-app__list-pane,
+		.wpnc-app__detail-pane {
+			border-color: var( --wpnc-divider__color );
+		}
 	}
 }

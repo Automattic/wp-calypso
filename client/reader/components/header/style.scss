@@ -1,3 +1,5 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/mixins';
 @import '../../../dashboard/app-dotcom/style.scss';
@@ -19,6 +21,7 @@ $component-icon-padding: 6px;
 	background-color: var( --dashboard-header__background-color );
 	backdrop-filter: blur(4px);
 	color: var( --dashboard-header__color );
+	--text-color: var( --dashboard-header__color );
 	min-height: 65px;
 
 
@@ -36,6 +39,12 @@ $component-icon-padding: 6px;
 
 	.dashboard-secondary-menu__item:not(.is-active) {
 		color: var(--dashboard-secondary-menu-item__color);
+	}
+
+	.dashboard-secondary-menu__item.is-active {
+		@include ui-mixins.when-dark-theme {
+			color: var( --color-link );
+		}
 	}
 
 	.dashboard-secondary-menu__avatar {

@@ -22,20 +22,22 @@ describe( 'FediverseNavigation', () => {
 	} );
 
 	beforeEach( () => {
-		// recordReaderTracksEvent is a thunk reading state.reader.follows.
+		// recordReaderTracksEvent is a thunk reading the follows query cache.
 		jest
 			.spyOn( analytics, 'recordReaderTracksEvent' )
 			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
 	} );
 	afterEach( () => jest.restoreAllMocks() );
 
-	it( 'renders the Timeline and Profile tabs with paths scoped to the connection id', () => {
+	it( 'renders the Timeline, Notifications, and Profile tabs with paths scoped to the connection id', () => {
 		renderWithProvider( <FediverseNavigation connectionId={ 7 } selectedTab="timeline" /> );
 
 		const timeline = screen.getByRole( 'menuitem', { name: 'Timeline' } );
+		const notifications = screen.getByRole( 'menuitem', { name: 'Notifications' } );
 		const profile = screen.getByRole( 'menuitem', { name: 'Profile' } );
 
 		expect( timeline ).toHaveAttribute( 'href', '/reader/fediverse/7/timeline' );
+		expect( notifications ).toHaveAttribute( 'href', '/reader/fediverse/7/notifications' );
 		expect( profile ).toHaveAttribute( 'href', '/reader/fediverse/7/profile' );
 		// Settings tab was removed alongside the Mastodon / ATmosphere drop —
 		// no dead nav item leaks through.

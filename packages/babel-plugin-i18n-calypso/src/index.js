@@ -35,7 +35,7 @@
 const { existsSync, mkdirSync, writeFileSync } = require( 'fs' );
 const { relative, sep } = require( 'path' );
 const { po } = require( 'gettext-parser' );
-const { merge, isEmpty, forEach } = require( 'lodash' );
+const { merge, isEmpty } = require( 'lodash' );
 
 /**
  * Default output headers if none specified in plugin options.
@@ -87,14 +87,14 @@ function getExtractedComment( path, _originalNodeLine ) {
 	}
 
 	let comment;
-	forEach( node.leadingComments, ( commentNode ) => {
+	for ( const commentNode of node.leadingComments ?? [] ) {
 		if ( ! commentNode.loc ) {
-			return;
+			continue;
 		}
 
 		const { line } = commentNode.loc.end;
 		if ( line < _originalNodeLine - 1 || line > _originalNodeLine ) {
-			return;
+			continue;
 		}
 
 		const match = commentNode.value.match( REGEXP_TRANSLATOR_COMMENT );
@@ -105,10 +105,10 @@ function getExtractedComment( path, _originalNodeLine ) {
 				.map( ( text ) => text.trim() )
 				.join( ' ' );
 
-			// False return indicates to Lodash to break iteration
-			return false;
+			// Keep the first matching translator comment.
+			break;
 		}
-	} );
+	}
 
 	if ( comment ) {
 		return comment;
@@ -359,3 +359,6 @@ module.exports = function () {
 		},
 	};
 };
+
+// Exported for unit testing of the translator-comment extraction logic.
+module.exports.getExtractedComment = getExtractedComment;

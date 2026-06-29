@@ -52,10 +52,8 @@ export default function MigrationPlansGrid( {
 		isInSignup: true,
 		isLaunchPage: false,
 		coupon,
-		useCheckPlanAvailabilityForPurchase,
 		showBillingDescriptionForIncreasedRenewalPrice: null,
 		enableCategorisedFeatures: true,
-		reflectStorageSelectionInPlanPrices: true,
 	} );
 
 	// Subdomain is not needed for migration - use empty response

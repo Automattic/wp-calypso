@@ -1,3 +1,5 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 .reader-full-post-navigation {
 	margin-block-start: 32px;
 	margin-block-end: 32px;
@@ -29,6 +31,12 @@
 	&:focus {
 		box-shadow: 0 0 0 2px var( --color-primary );
 		outline: none;
+	}
+
+	@include ui-mixins.when-dark-theme {
+		svg {
+			fill: currentColor;
+		}
 	}
 }
 

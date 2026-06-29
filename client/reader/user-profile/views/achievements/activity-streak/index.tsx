@@ -107,15 +107,15 @@ function getModeContent(
 		case 'pending':
 			return {
 				badgeState: 'inactive',
-				badgeLabel: translate( 'Don’t break it!' ) as string,
-				description: translate( 'Like, comment, follow, or post every day to build your streak.' ),
+				badgeLabel: translate( 'Keep it going!' ) as string,
+				description: translate( 'Like, comment, follow, or post today to keep your streak going.' ),
 			};
 		case 'pending-frozen':
 			return {
 				badgeState: 'frozen',
-				badgeLabel: translate( 'Streak frozen' ) as string,
+				badgeLabel: translate( 'Close call!' ) as string,
 				description: translate(
-					'A {{term}}streak freeze{{/term}} protected your streak yesterday.{{br/}}Like, comment, follow, or post every day to build your streak.',
+					'A {{term}}streak freeze{{/term}} protected your streak yesterday.{{br/}}Like, comment, follow, or post today to keep it going.',
 					{ components: { term: <StreakFreezeTerm />, br: <br /> } }
 				),
 			};
@@ -124,7 +124,7 @@ function getModeContent(
 				badgeState: 'active',
 				badgeLabel: translate( 'You’re on a streak!' ) as string,
 				description: translate(
-					'Like, comment, follow, or post every day to keep building your streak.'
+					'Today counted! Like, comment, follow, or post every day to keep building your streak.'
 				),
 			};
 		case 'engaged-record':

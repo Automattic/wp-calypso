@@ -6,6 +6,14 @@ export interface AtmosphereConnection {
 	// The list endpoint always returns null. Real avatars come from
 	// getConnection(id).
 	avatar: string | null;
+	// Hostname of the PDS this connection's token resolves to (e.g.
+	// `bsky.social`, `pds.example.com`). Optional during the rollout
+	// window: older serializer revisions (pre-CM-740) don't emit the
+	// field at all. Once CM-740 is in production the key is always
+	// present — `string` when resolvable, `null` when the fallback
+	// chain fails.
+	// TODO(post-CM-740): drop the `?` and keep `string | null`.
+	pds_hostname?: string | null;
 }
 
 export interface AtmosphereConnectionsResponse {
@@ -30,6 +38,10 @@ export interface AtmosphereConnectionDetails {
 	avatar: string | null;
 	banner: string | null;
 	counts: AtmosphereProfileCounts;
+	// Same caveat as `AtmosphereConnection.pds_hostname` — optional during
+	// the rollout window. TODO(post-CM-740): drop the `?` alongside the
+	// one on `AtmosphereConnection`.
+	pds_hostname?: string | null;
 }
 
 export interface AtmosphereAuthor {
@@ -83,12 +95,55 @@ export interface AtmosphereEmbedVideo {
 	aspect_ratio: { width: number; height: number } | null;
 }
 
+export interface AtmosphereLongFormDocument {
+	title: string;
+	description: string;
+	/** Site-relative path; expected to start with `/`. */
+	path: string;
+	/** ISO-8601 timestamp, or empty string when unknown. */
+	published_at: string;
+	/**
+	 * Bluesky CDN URL for the document's cover image (the AppView's
+	 * `thumb`), or null when the post carries none.
+	 */
+	cover_image: string | null;
+	/**
+	 * Reading time in minutes, computed by Bluesky's AppView. Null when
+	 * the AppView omits it.
+	 */
+	reading_time: number | null;
+}
+
+export interface AtmosphereLongFormPublication {
+	name: string;
+	display_name: string;
+	description: string;
+	url: string;
+	/**
+	 * Publisher's bsky handle, taken from the AppView view's
+	 * `associatedProfiles`. Empty string when the AppView omits it or
+	 * returns an unresolvable (`handle.invalid`) profile.
+	 */
+	handle: string;
+	/**
+	 * Bluesky CDN URL for the publication's avatar (the AppView source's
+	 * `icon`), or null when absent.
+	 */
+	avatar: string | null;
+}
+
+export interface AtmosphereLongForm {
+	document: AtmosphereLongFormDocument;
+	publication: AtmosphereLongFormPublication;
+}
+
 export interface AtmosphereEmbedExternal {
 	type: 'external';
 	uri: string;
 	title: string;
 	description: string;
 	thumb: string | null;
+	long_form?: AtmosphereLongForm;
 }
 
 export interface AtmosphereActorRef {
@@ -386,12 +441,35 @@ export interface UploadBlobResult {
 	blob: AtmosphereBlobRef;
 }
 
+export interface CreatePostInteractionSettings {
+	/**
+	 * Reply gating. Omit field entirely → backend writes no threadgate
+	 * (= anyone can reply). `{ kind: 'nobody' }` disables replies altogether.
+	 * `{ kind: 'combo', ... }` enables one or more of the follower / following /
+	 * mention rules.
+	 */
+	reply_allow?:
+		| { kind: 'nobody' }
+		| {
+				kind: 'combo';
+				follower?: boolean;
+				following?: boolean;
+				mention?: boolean;
+		  };
+	/**
+	 * Omit field → backend writes no postgate (= quotes allowed). Only `false`
+	 * is meaningful; the backend rejects an explicit `true`.
+	 */
+	allow_quotes?: false;
+}
+
 export interface CreatePostParams {
 	connectionId: number;
 	text: string;
 	reply?: { root: AtUriRef; parent: AtUriRef };
 	quote?: AtUriRef;
 	media?: { images: AtmosphereImageEmbed[] };
+	interaction_settings?: CreatePostInteractionSettings;
 }
 
 export interface CreatePostResult {

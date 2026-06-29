@@ -99,11 +99,25 @@
 }
 
 .jetpack-ai-review-mediation {
+	--jetpack-ai-review-action-border: color-mix(in srgb, currentColor 25%, transparent);
+	--jetpack-ai-review-action-border-hover: color-mix(in srgb, currentColor 45%, transparent);
+	--jetpack-ai-review-action-bg-hover: color-mix(in srgb, currentColor 6%, transparent);
+	--jetpack-ai-review-primary: var(--color-primary, var(--wp-admin-theme-color, #3858e9));
+	--jetpack-ai-review-primary-foreground: var(--color-primary-foreground, #fff);
+
 	display: flex;
 	flex-direction: column;
 	font-size: 13px;
 	line-height: 1.5;
 	color: inherit;
+
+	&.is-post-stale {
+		.jetpack-ai-review-mediation__stats,
+		.jetpack-ai-review-mediation__panel,
+		.jetpack-ai-review-mediation__footer {
+			opacity: 0.5;
+		}
+	}
 
 	// ---------- Panel / PanelBody overrides ----------
 	// Strip Gutenberg's white bg + bottom divider; replace with a translucent
@@ -160,8 +174,12 @@
 		fill: currentColor;
 	}
 
-	// Content region indent — flush left looks naked in a chat bubble.
-	.components-panel__body.is-opened > :not(.components-panel__body-title) {
+	// Content region bottom spacing. Keep cards out of this broad PanelBody
+	// rule so their own internal padding is not overwritten.
+	.components-panel__body.is-opened
+		> :not(.components-panel__body-title):not(.jetpack-ai-review-mediation__card):not(
+			.jetpack-ai-review-mediation__conflict-card
+		) {
 		padding: 0 0 0.75rem;
 	}
 
@@ -214,6 +232,15 @@
 		&.is-manual {
 			color: #f0b849;
 		}
+	}
+
+	&__stale-warning {
+		margin: 0 0 0.75rem;
+		padding: 0.5rem 0.75rem;
+		font-size: 12px;
+		font-weight: 600;
+		border-left: 3px solid #d63638;
+		background: rgba(214, 54, 56, 0.08);
 	}
 
 	// ---------- Suggested edit cards ----------
@@ -466,11 +493,16 @@
 			border-color 0.15s ease,
 			background 0.15s ease;
 
-		&:hover,
-		&:focus-visible {
+		&:hover:not(:disabled),
+		&:focus-visible:not(:disabled) {
 			border-color: rgba(255, 255, 255, 0.5);
 			background: rgba(255, 255, 255, 0.06);
 			outline: none;
+		}
+
+		&:disabled {
+			cursor: default;
+			opacity: 0.55;
 		}
 	}
 
@@ -490,7 +522,7 @@
 		line-height: 1.35;
 		cursor: pointer;
 		border-radius: 4px;
-		border: 1px solid rgba(255, 255, 255, 0.25);
+		border: 1px solid var(--jetpack-ai-review-action-border);
 		background: transparent;
 		color: inherit;
 		text-align: center;
@@ -499,23 +531,25 @@
 			background 0.15s ease;
 
 		&:hover:not(:disabled) {
-			border-color: rgba(255, 255, 255, 0.45);
-			background: rgba(255, 255, 255, 0.06);
+			border-color: var(--jetpack-ai-review-action-border-hover);
+			background: var(--jetpack-ai-review-action-bg-hover);
 		}
 
 		&.is-accept {
-			background: var(--wp-admin-theme-color, #3858e9);
-			color: #fff;
-			border-color: var(--wp-admin-theme-color, #3858e9);
+			background: var(--jetpack-ai-review-primary);
+			color: var(--jetpack-ai-review-primary-foreground);
+			border-color: var(--jetpack-ai-review-primary);
 
 			&:hover:not(:disabled) {
-				filter: brightness(1.1);
+				background: color-mix(in srgb, var(--jetpack-ai-review-primary) 88%, #000);
+				border-color: color-mix(in srgb, var(--jetpack-ai-review-primary) 88%, #000);
+				filter: none;
 			}
 		}
 
 		&:disabled {
 			cursor: default;
-			opacity: 0.5;
+			opacity: 0.65;
 		}
 	}
 
@@ -600,7 +634,7 @@
 				border-color 0.15s ease,
 				background 0.15s ease;
 
-			&:hover {
+			&:hover:not(:disabled) {
 				border-color: rgba(255, 255, 255, 0.4);
 				background: rgba(255, 255, 255, 0.06);
 			}
@@ -611,12 +645,17 @@
 			}
 		}
 
+		&:disabled {
+			cursor: default;
+			opacity: 0.55;
+		}
+
 		&.is-conflicts {
 			color: #e8a520;
 			border-color: rgba(232, 165, 32, 0.45);
 			background: rgba(232, 165, 32, 0.08);
 
-			&.is-clickable:hover {
+			&.is-clickable:hover:not(:disabled) {
 				border-color: rgba(232, 165, 32, 0.7);
 				background: rgba(232, 165, 32, 0.14);
 			}
@@ -670,6 +709,16 @@
 		&.is-failed {
 			border-color: rgba(214, 54, 56, 0.7);
 		}
+	}
+
+	// Keep the intended card padding anchored to this component root without
+	// changing collapsed rows or reaching for `!important`.
+	& &__card:not(.is-collapsed) {
+		padding: 1rem 1.25rem;
+	}
+
+	& &__conflict-card:not(.is-collapsed) {
+		padding: 1.25rem 1.5rem;
 	}
 
 	&__conflict-header {
@@ -764,12 +813,17 @@
 	}
 
 	&__ai-badge {
-		background: var(--wp-admin-theme-color, #3858e9);
-		color: #fff;
+		display: inline-flex;
+		flex: 0 0 auto;
+		background: var(--jetpack-ai-review-primary);
+		color: var(--jetpack-ai-review-primary-foreground);
 		font-size: 10px;
 		padding: 2px 6px;
 		border-radius: 3px;
 		letter-spacing: 0.06em;
+		white-space: nowrap;
+		word-break: normal;
+		overflow-wrap: normal;
 	}
 
 	&__ai-text {
@@ -805,11 +859,11 @@
 	&__action.is-reviewer {
 		background: transparent;
 		color: inherit;
-		border-color: rgba(255, 255, 255, 0.35);
+		border-color: var(--jetpack-ai-review-action-border);
 
 		&:hover:not(:disabled) {
-			border-color: rgba(255, 255, 255, 0.55);
-			background: rgba(255, 255, 255, 0.06);
+			border-color: var(--jetpack-ai-review-action-border-hover);
+			background: var(--jetpack-ai-review-action-bg-hover);
 		}
 	}
 
@@ -826,18 +880,19 @@
 		font-size: 13px;
 		font-weight: 600;
 		cursor: pointer;
-		border: 1px solid var(--wp-admin-theme-color, #3858e9);
-		background: var(--wp-admin-theme-color, #3858e9);
-		color: #fff;
-		transition: filter 0.15s ease, opacity 0.15s ease;
+		border: 1px solid var(--jetpack-ai-review-primary);
+		background: var(--jetpack-ai-review-primary);
+		color: var(--jetpack-ai-review-primary-foreground);
+		transition: background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
 
 		&:hover:not(:disabled) {
-			filter: brightness(1.1);
+			background: color-mix(in srgb, var(--jetpack-ai-review-primary) 88%, #000);
+			border-color: color-mix(in srgb, var(--jetpack-ai-review-primary) 88%, #000);
 		}
 
 		&:disabled {
 			cursor: default;
-			opacity: 0.5;
+			opacity: 0.65;
 		}
 	}
 }

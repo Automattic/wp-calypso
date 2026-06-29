@@ -51,13 +51,9 @@ export function errorMessage(
 ): TranslateResult {
 	switch ( error.kind ) {
 		case 'auth_required':
-			return translate(
-				'Your Fediverse connection needs to be re-authorized. Disconnect and reconnect.'
-			);
+			return translate( 'Something went wrong with your Fediverse connection.' );
 		case 'connection_not_found':
-			return translate(
-				'Your Fediverse connection is no longer available. Disconnect and reconnect.'
-			);
+			return translate( 'This Fediverse connection is no longer available.' );
 		case 'rate_limited':
 			return translate( 'The Fediverse is asking us to slow down. Try again in a moment.' );
 		case 'upstream_unavailable':

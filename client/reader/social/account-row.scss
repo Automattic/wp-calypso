@@ -4,7 +4,7 @@
 	gap: 0.75rem;
 	padding: 0.75rem 1rem;
 	color: inherit;
-	border-block-end: 1px solid var( --studio-gray-5, #f0f0f0 );
+	border-block-end: 1px solid var( --color-border-subtle, var( --studio-gray-5, #f0f0f0 ) );
 
 	&:hover {
 		background: var( --studio-gray-0, #fafafa );
@@ -17,7 +17,7 @@
 	block-size: 48px;
 	border-radius: 50%;
 	overflow: hidden;
-	background: var( --studio-gray-5, #f0f0f0 );
+	background: var( --color-border-subtle, var( --studio-gray-5, #f0f0f0 ) );
 }
 
 .social-account-row__avatar img {
@@ -60,7 +60,7 @@ a.social-account-row__display-name {
 }
 
 .social-account-row__handle {
-	color: var( --studio-gray-50, #646970 );
+	color: var( --color-text-subtle, var( --studio-gray-50, #646970 ) );
 }
 
 .social-account-row__followed-by-badge {
@@ -68,7 +68,7 @@ a.social-account-row__display-name {
 	padding: 0 0.375rem;
 	background: var( --studio-gray-5, #f0f0f0 );
 	border-radius: 2px;
-	color: var( --studio-gray-50, #646970 );
+	color: var( --color-text-subtle, var( --studio-gray-50, #646970 ) );
 }
 
 .social-account-row__bio {

@@ -358,3 +358,79 @@ export interface FediverseCreatePostParams {
 export interface FediverseCreatePostResult {
 	post: FediverseFeedItem;
 }
+
+/**
+ * Normalized cross-protocol notification kind. Identical to
+ * `AtmosphereNotificationCanonicalType` / `MastodonNotificationCanonicalType`
+ * by design — the wpcom backend commits to a byte-compatible envelope across
+ * protocols so the shared frontend renderer doesn't have to branch on
+ * `source`. `'other'` is the forward-compat bucket for upstream AP activity
+ * kinds we don't yet render with bespoke templates. The shared renderer
+ * falls through to a generic phrase that humanizes `protocol_type` for the
+ * label.
+ */
+export type FediverseNotificationCanonicalType =
+	| 'like'
+	| 'repost'
+	| 'follow'
+	| 'mention'
+	| 'reply'
+	| 'quote'
+	| 'other';
+
+export interface FediverseNotificationActor {
+	handle: string;
+	display_name: string | null;
+	avatar_url: string | null;
+	profile_uri: string;
+}
+
+export interface FediverseNotificationTarget {
+	kind: 'post' | 'profile';
+	uri: string;
+	excerpt: string;
+}
+
+/**
+ * Envelope shape returned by
+ * `/wpcom/v2/reader/fediverse/connections/:id/notifications`. Byte-compatible
+ * with `AtmosphereNotification` and `MastodonNotification` — the wpcom backend
+ * normalizes all three protocols to the same shape so the shared frontend
+ * renderer takes any of them.
+ *
+ * `protocol_type` is the raw upstream AP activity kind (verbatim, lossless:
+ * `Like`, `Announce`, `Follow`, `Create`, …); `canonical_type` is the
+ * normalized enum. There is no `raw` passthrough — `protocol_type` is the
+ * long-tail escape hatch for upstream kinds we don't yet render with
+ * bespoke templates. `target.excerpt` is `''` for `like`/`repost` (the
+ * subject post text isn't fetched for these — only mention/reply/quote
+ * shapes populate it). `target_url` is best-effort: the post URL when
+ * buildable, otherwise the actor profile URL, otherwise the empty string
+ * (the frontend skips linkification when empty). `created_at` is normalized
+ * to `YYYY-MM-DDTHH:MM:SSZ` (UTC, no fractional seconds) and is nullable
+ * when the upstream timestamp is missing or unparseable. `is_read` is
+ * server-computed against the user's `last_read_id` watermark.
+ */
+export interface FediverseNotification {
+	id: string;
+	/** Raw upstream type string, e.g. AP activity kind (`Like`, `Announce`, …). */
+	protocol_type: string;
+	canonical_type: FediverseNotificationCanonicalType;
+	actor: FediverseNotificationActor;
+	target: FediverseNotificationTarget | null;
+	target_url: string;
+	created_at: string | null;
+	is_read: boolean;
+}
+
+/**
+ * Single page from the cursor-paginated notifications endpoint.
+ * `next_cursor: null` means end-of-list. `seen_at` is the server's watermark
+ * timestamp, exposed at the page level (not per-item) so subsequent "Load
+ * more" pages can classify items without re-fetching.
+ */
+export interface FediverseNotificationsPage {
+	items: FediverseNotification[];
+	next_cursor: string | null;
+	seen_at: string | null;
+}

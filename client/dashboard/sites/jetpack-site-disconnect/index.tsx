@@ -148,7 +148,7 @@ function ContentConfirmDisconnect( {
 					{ createInterpolateElement(
 						/* translators: <siteDomain />: site domain */
 						__(
-							'Disconnecting <siteDomain /> will remove the Jetpack connection between this site and WordPress.com. You will lose access to Jetpack features like <link>backups, security, and stats</link>.'
+							'Disconnecting <siteDomain/> will remove the Jetpack connection between this site and WordPress.com. You will lose access to Jetpack features like <link>backups, security, and stats</link>.'
 						),
 						{
 							siteDomain: <strong>{ site.slug }</strong>,

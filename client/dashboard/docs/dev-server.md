@@ -22,3 +22,4 @@ Runs only the multi-site dashboard. This command is faster than the above comman
 
 - `my.localhost:3000`
 - `my.woo.localhost:3000`
+- `my.a4a.localhost:3000`

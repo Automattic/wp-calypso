@@ -2,6 +2,12 @@
  * @jest-environment jsdom
  */
 
+/* eslint-disable @typescript-eslint/no-require-imports --
+   Every test re-`require()`s the module after `jest.resetModules()` (see
+   `beforeEach`) so module-level state — the `pluginRegistered` idempotency
+   flag, and the React instance `mockUseEffect` binds to — is fresh per test.
+   Static `import` would defeat that isolation, so `require()` is intentional. */
+
 // eslint-disable-next-line import/order
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
@@ -11,6 +17,10 @@ import React from 'react';
 const mockOpenImageStudio = jest.fn();
 const mockRegisterPlugin = jest.fn();
 const mockTrackOpened = jest.fn();
+const mockTrackAddedToPost = jest.fn();
+const mockTrackPanelViewed = jest.fn();
+const mockFill = jest.fn();
+const mockNotice = jest.fn();
 const mockSetCurrentVideoUrl = jest.fn().mockResolvedValue( undefined );
 const mockSetCurrentAttachmentId = jest.fn().mockResolvedValue( undefined );
 const mockSetCurrentDurationSeconds = jest.fn().mockResolvedValue( undefined );
@@ -20,9 +30,12 @@ const mockCreateBlock = jest.fn( ( name: string, attributes: Record< string, unk
 	attributes,
 } ) );
 
+let mockPostType: string | null = 'post';
 let mockMeta: Record< string, unknown > = {};
 let mockMedia: Record< string, unknown > | null = null;
 let mockHasResolvedMedia = true;
+let mockResolutionError: unknown = null;
+let mockHasBlockEditor = true;
 let mockReelVisible = false;
 let mockGenericVisible = false;
 let mockReelIsConfirming = false;
@@ -31,6 +44,8 @@ const mockReelRequestShare = jest.fn();
 const mockReelConfirmShare = jest.fn();
 const mockReelCancelShare = jest.fn();
 const mockGenericHandleShare = jest.fn();
+const mockUseReelShare = jest.fn();
+const mockUseGenericShare = jest.fn();
 
 jest.mock( '@wordpress/components', () => ( {
 	Button: ( {
@@ -50,6 +65,30 @@ jest.mock( '@wordpress/components', () => ( {
 			{ children ?? icon }
 		</button>
 	),
+	// Faithful to real SlotFill semantics: a Fill with no matching Slot
+	// mounted (none in jsdom) renders nothing. Recording the name lets us
+	// assert the Jetpack-sidebar wiring without duplicating the body in the
+	// DOM (which would break every single-match query below).
+	Fill: ( { name }: { name: string } ) => {
+		mockFill( name );
+		return null;
+	},
+	PanelBody: ( { children }: { children: React.ReactNode } ) => <>{ children }</>,
+	VisuallyHidden: ( { children }: { children: React.ReactNode } ) => <span>{ children }</span>,
+	// Like the real Notice: no ARIA role on the wrapper (announcement happens
+	// via wp.a11y speak()), so tests assert on text + recorded status.
+	Notice: ( {
+		children,
+		status,
+		className,
+	}: {
+		children: React.ReactNode;
+		status?: string;
+		className?: string;
+	} ) => {
+		mockNotice( status );
+		return <div className={ className }>{ children }</div>;
+	},
 } ) );
 
 jest.mock( '@wordpress/core-data', () => ( {
@@ -71,24 +110,35 @@ jest.mock( '@wordpress/data', () => ( {
 			};
 		}
 		if ( store === 'core/block-editor' ) {
-			return { insertBlocks: mockInsertBlocks };
+			return mockHasBlockEditor ? { insertBlocks: mockInsertBlocks } : {};
 		}
 		return { openImageStudio: mockOpenImageStudio };
 	} ),
 	useSelect: ( selector: ( s: ( name: string ) => unknown ) => unknown ) => {
 		return selector( ( name: string ) => {
 			if ( name === 'core/editor' ) {
-				return { getCurrentPostType: () => 'post', getCurrentPostId: () => 7 };
+				return { getCurrentPostType: () => mockPostType, getCurrentPostId: () => 7 };
 			}
 			if ( name === 'core' ) {
 				return {
 					getMedia: () => mockMedia,
 					hasFinishedResolution: () => mockHasResolvedMedia,
+					getResolutionError: () => mockResolutionError,
 				};
 			}
 			return undefined;
 		} );
 	},
+} ) );
+
+// Capture React's useEffect once, at module-load time, bound to the same
+// React instance @testing-library/react holds. The suite calls
+// jest.resetModules() per test, which would otherwise hand the component a
+// freshly-required React whose hook dispatcher react-dom never populates.
+const mockUseEffect = jest.requireActual< typeof import('react') >( 'react' ).useEffect;
+
+jest.mock( '@wordpress/element', () => ( {
+	useEffect: mockUseEffect,
 } ) );
 
 jest.mock( '@wordpress/editor', () => ( {
@@ -118,15 +168,18 @@ jest.mock( 'social-logos', () => ( {
 } ) );
 
 jest.mock( '../hooks/use-reel-share', () => ( {
-	useReelShare: () => ( {
-		isVisible: mockReelVisible,
-		isSharing: false,
-		isConfirming: mockReelIsConfirming,
-		igDisplayName: mockReelIgDisplayName,
-		requestShare: mockReelRequestShare,
-		confirmShare: mockReelConfirmShare,
-		cancelShare: mockReelCancelShare,
-	} ),
+	useReelShare: ( ...args: unknown[] ) => {
+		mockUseReelShare( ...args );
+		return {
+			isVisible: mockReelVisible,
+			isSharing: false,
+			isConfirming: mockReelIsConfirming,
+			igDisplayName: mockReelIgDisplayName,
+			requestShare: mockReelRequestShare,
+			confirmShare: mockReelConfirmShare,
+			cancelShare: mockReelCancelShare,
+		};
+	},
 } ) );
 
 const mockDialogProps = jest.fn();
@@ -139,11 +192,14 @@ jest.mock( '../components/reel-share-confirmation-dialog', () => ( {
 } ) );
 
 jest.mock( '../hooks/use-generic-share', () => ( {
-	useGenericShare: () => ( {
-		isVisible: mockGenericVisible,
-		isSharing: false,
-		handleShare: mockGenericHandleShare,
-	} ),
+	useGenericShare: ( ...args: unknown[] ) => {
+		mockUseGenericShare( ...args );
+		return {
+			isVisible: mockGenericVisible,
+			isSharing: false,
+			handleShare: mockGenericHandleShare,
+		};
+	},
 } ) );
 
 jest.mock( '../store', () => ( {
@@ -157,6 +213,8 @@ jest.mock( '../stores/video-studio', () => ( {
 
 jest.mock( '../utils/tracking', () => ( {
 	trackImageStudioOpened: ( ...args: unknown[] ) => mockTrackOpened( ...args ),
+	trackImageStudioFeatureClipAddedToPost: ( ...args: unknown[] ) => mockTrackAddedToPost( ...args ),
+	trackImageStudioFeatureClipPanelViewed: ( ...args: unknown[] ) => mockTrackPanelViewed( ...args ),
 } ) );
 
 jest.mock( './feature-clip-sidebar.scss', () => ( {} ), { virtual: true } );
@@ -167,6 +225,10 @@ describe( 'feature-clip-sidebar-extension', () => {
 		mockOpenImageStudio.mockClear();
 		mockRegisterPlugin.mockClear();
 		mockTrackOpened.mockClear();
+		mockTrackAddedToPost.mockClear();
+		mockTrackPanelViewed.mockClear();
+		mockFill.mockClear();
+		mockNotice.mockClear();
 		mockSetCurrentVideoUrl.mockClear();
 		mockSetCurrentAttachmentId.mockClear();
 		mockSetCurrentDurationSeconds.mockClear();
@@ -174,17 +236,22 @@ describe( 'feature-clip-sidebar-extension', () => {
 		mockReelConfirmShare.mockClear();
 		mockReelCancelShare.mockClear();
 		mockGenericHandleShare.mockClear();
+		mockUseReelShare.mockClear();
+		mockUseGenericShare.mockClear();
 		mockDialogProps.mockClear();
 		mockInsertBlocks.mockClear();
 		mockCreateBlock.mockClear();
+		mockPostType = 'post';
 		mockMeta = {};
 		mockMedia = null;
 		mockHasResolvedMedia = true;
+		mockResolutionError = null;
+		mockHasBlockEditor = true;
 		mockReelVisible = false;
 		mockGenericVisible = false;
 		mockReelIsConfirming = false;
 		mockReelIgDisplayName = null;
-		( window as Record< string, unknown > ).imageStudioData = { isDevMode: true };
+		( window as Record< string, unknown > ).imageStudioData = { canGenerateVideoClips: true };
 		jest.resetModules();
 	} );
 
@@ -192,18 +259,17 @@ describe( 'feature-clip-sidebar-extension', () => {
 		delete ( window as Record< string, unknown > ).imageStudioData;
 	} );
 
-	it( 'does not register the plugin when isDevMode is false', () => {
-		( window as Record< string, unknown > ).imageStudioData = { isDevMode: false };
+	it( 'does not register the plugin when canGenerateVideoClips is false', () => {
+		( window as Record< string, unknown > ).imageStudioData = {
+			canGenerateVideoClips: false,
+		};
 		const { registerFeatureClipSidebar } = require( './feature-clip-sidebar-extension' );
 		registerFeatureClipSidebar();
 		expect( mockRegisterPlugin ).not.toHaveBeenCalled();
 	} );
 
-	it( 'does not register the plugin when canGenerateVideoClips is false', () => {
-		( window as Record< string, unknown > ).imageStudioData = {
-			isDevMode: true,
-			canGenerateVideoClips: false,
-		};
+	it( 'does not register the plugin when canGenerateVideoClips is missing', () => {
+		( window as Record< string, unknown > ).imageStudioData = {};
 		const { registerFeatureClipSidebar } = require( './feature-clip-sidebar-extension' );
 		registerFeatureClipSidebar();
 		expect( mockRegisterPlugin ).not.toHaveBeenCalled();
@@ -217,6 +283,83 @@ describe( 'feature-clip-sidebar-extension', () => {
 
 		expect( mockRegisterPlugin ).toHaveBeenCalledTimes( 1 );
 		expect( mockRegisterPlugin.mock.calls[ 0 ][ 0 ] ).toBe( 'image-studio-feature-clip' );
+	} );
+
+	describe( 'dual-render (document + Jetpack sidebars)', () => {
+		it( 'also fills the Jetpack sidebar SlotFill', () => {
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			// The document-sidebar copy is asserted by every other test; this
+			// confirms the second render target — Jetpack's sidebar slot.
+			expect( mockFill ).toHaveBeenCalledWith( 'JetpackPluginSidebar' );
+		} );
+
+		it( 'fills the Jetpack sidebar regardless of clip state', () => {
+			mockMeta = { _jetpack_feature_clip_id: 42 };
+			mockMedia = {
+				id: 42,
+				source_url: 'https://example.com/clip.mp4',
+				mime_type: 'video/mp4',
+				media_details: { length: 8 },
+			};
+			mockHasResolvedMedia = true;
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			expect( mockFill ).toHaveBeenCalledWith( 'JetpackPluginSidebar' );
+		} );
+
+		it( 'fires the panel-viewed impression only once despite dual-render', () => {
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			// Both wrappers share one FeatureClipPanel mount, so the
+			// impression must not double-count.
+			expect( mockTrackPanelViewed ).toHaveBeenCalledTimes( 1 );
+		} );
+	} );
+
+	describe( 'post-type gating', () => {
+		it( 'renders nothing on an unsupported post type (jetpack_form)', () => {
+			mockPostType = 'jetpack_form';
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			const { container } = render( <FeatureClipPanel /> );
+			expect( container ).toBeEmptyDOMElement();
+			// Neither sidebar surface is wired up on an unsupported editor.
+			expect( mockFill ).not.toHaveBeenCalled();
+		} );
+
+		it( 'does not fire the panel-viewed impression on an unsupported post type', () => {
+			mockPostType = 'jetpack_form';
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			expect( mockTrackPanelViewed ).not.toHaveBeenCalled();
+		} );
+
+		it( 'renders nothing while the post type is unknown (null) and does not fall back to post', () => {
+			// getCurrentPostType() returns null transiently before the post
+			// loads (and the editor store may be absent entirely). Treat that
+			// as unsupported — a 'post' fallback would flash the panel and fire
+			// a phantom impression until the real type resolves.
+			mockPostType = null;
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			const { container } = render( <FeatureClipPanel /> );
+			expect( container ).toBeEmptyDOMElement();
+			expect( mockFill ).not.toHaveBeenCalled();
+			expect( mockTrackPanelViewed ).not.toHaveBeenCalled();
+		} );
+
+		it( 'renders nothing on a page (pages are unsupported for now)', () => {
+			mockPostType = 'page';
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			const { container } = render( <FeatureClipPanel /> );
+			expect( container ).toBeEmptyDOMElement();
+		} );
+
+		it( 'renders the panel on the post post type', () => {
+			mockPostType = 'post';
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			expect( screen.getByRole( 'button', { name: 'Generate clip' } ) ).toBeInTheDocument();
+		} );
 	} );
 
 	describe( 'empty state (no clip linked)', () => {
@@ -236,14 +379,44 @@ describe( 'feature-clip-sidebar-extension', () => {
 			expect( screen.getByRole( 'button', { name: 'Generate clip' } ) ).toBeInTheDocument();
 		} );
 
-		it( 'holds the panel body blank while the attachment is still resolving', () => {
+		it( 'renders a loading skeleton while the attachment is still resolving', () => {
 			mockMeta = { _jetpack_feature_clip_id: 42 };
 			mockMedia = null;
 			mockHasResolvedMedia = false; // first render — getMedia hasn't completed
 			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
-			render( <FeatureClipPanel /> );
+			const { container } = render( <FeatureClipPanel /> );
 			expect( screen.queryByRole( 'button', { name: 'Generate clip' } ) ).not.toBeInTheDocument();
 			expect( screen.queryByRole( 'button', { name: 'Regenerate' } ) ).not.toBeInTheDocument();
+			// Skeleton is a status live region so screen readers announce the loading label.
+			const skeleton = screen.getByRole( 'status', { name: 'Loading saved clip preview' } );
+			expect( skeleton ).toBeInTheDocument();
+			expect( skeleton ).toHaveAttribute( 'aria-busy', 'true' );
+			expect(
+				container.querySelector( '.image-studio-feature-clip-panel__preview-frame--loading' )
+			).not.toBeNull();
+		} );
+
+		it( 'renders the empty state with an error notice when the resolver failed', () => {
+			mockMeta = { _jetpack_feature_clip_id: 42 };
+			mockMedia = null;
+			mockHasResolvedMedia = true;
+			mockResolutionError = new Error( 'REST failure' );
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			expect( screen.getByRole( 'button', { name: 'Generate clip' } ) ).toBeInTheDocument();
+			expect(
+				screen.getByText( "Couldn't load your saved clip. Generate a new one below." )
+			).toBeInTheDocument();
+			// status=error makes core Notice announce assertively via speak().
+			expect( mockNotice ).toHaveBeenCalledWith( 'error' );
+		} );
+
+		it( 'does not show the error notice on a normal empty post', () => {
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			expect(
+				screen.queryByText( "Couldn't load your saved clip. Generate a new one below." )
+			).not.toBeInTheDocument();
 		} );
 
 		it( 'opens Image Studio with the post-editor entry point on click', async () => {
@@ -259,13 +432,19 @@ describe( 'feature-clip-sidebar-extension', () => {
 			expect( mockSetCurrentAttachmentId ).toHaveBeenCalledWith( null );
 			expect( mockSetCurrentDurationSeconds ).toHaveBeenCalledWith( null );
 			expect( mockTrackOpened ).toHaveBeenCalledWith(
-				expect.objectContaining( { entryPoint: 'post_editor_feature_clip' } )
+				expect.objectContaining( { entryPoint: 'post_editor_feature_clip', mode: 'generate' } )
 			);
 			expect( mockOpenImageStudio ).toHaveBeenCalledWith(
 				undefined,
 				undefined,
 				'post_editor_feature_clip'
 			);
+		} );
+
+		it( 'fires the panel-viewed impression event on mount', () => {
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			expect( mockTrackPanelViewed ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 
@@ -290,6 +469,22 @@ describe( 'feature-clip-sidebar-extension', () => {
 			expect( screen.getByRole( 'button', { name: 'Add to post' } ) ).toBeInTheDocument();
 			expect( screen.getByRole( 'button', { name: 'Regenerate' } ) ).toBeInTheDocument();
 			expect( screen.queryByRole( 'button', { name: 'Generate clip' } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'labels both share hooks with the sidebar surface and the meta clip', () => {
+			setupClip();
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+
+			expect( mockUseReelShare ).toHaveBeenCalledWith( 'sidebar', {
+				url: 'https://files.wordpress.com/clip.mp4',
+				attachmentId: 42,
+				durationSeconds: 8,
+			} );
+			expect( mockUseGenericShare ).toHaveBeenCalledWith( 'sidebar', {
+				url: 'https://files.wordpress.com/clip.mp4',
+				attachmentId: 42,
+			} );
 		} );
 
 		it( 'hides share buttons when neither hook reports isVisible', () => {
@@ -377,7 +572,7 @@ describe( 'feature-clip-sidebar-extension', () => {
 			);
 		} );
 
-		it( 'inserts a core/video block when Add to post is clicked', () => {
+		it( 'inserts a core/video block and tracks the add-to-post conversion', () => {
 			setupClip();
 			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
 			render( <FeatureClipPanel /> );
@@ -389,6 +584,19 @@ describe( 'feature-clip-sidebar-extension', () => {
 				src: 'https://files.wordpress.com/clip.mp4',
 			} );
 			expect( mockInsertBlocks ).toHaveBeenCalledTimes( 1 );
+			expect( mockTrackAddedToPost ).toHaveBeenCalledWith( { attachmentId: 42 } );
+		} );
+
+		it( 'does not track add-to-post when the block-editor dispatcher is unavailable', () => {
+			setupClip();
+			mockHasBlockEditor = false;
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+
+			fireEvent.click( screen.getByRole( 'button', { name: 'Add to post' } ) );
+
+			expect( mockInsertBlocks ).not.toHaveBeenCalled();
+			expect( mockTrackAddedToPost ).not.toHaveBeenCalled();
 		} );
 	} );
 } );

@@ -5,6 +5,8 @@ export type GetPackBlogsOptions = {
 	count?: number;
 	curatedBlogs?: CuratedBlogsList;
 	random?: () => number;
+	/** When set, resolve blogs from `curatedBlogs[ directKey ]` (e.g. tagless pack id). Ignores `tags`. */
+	directKey?: string;
 };
 
 const pickRandom = < T >( items: T[], count: number, random: () => number ): T[] => {
@@ -65,12 +67,31 @@ const distributeSlots = ( tagCount: number, count: number ): number[] => {
  * - The returned pack is ordered with `has_icon` blogs first so the interests
  *   card can show icon-backed avatars in its first slots without excluding
  *   non-icon feeds from packs.
+ * - When `directKey` is set, returns up to `count` blogs from `curatedBlogs[ directKey ]`
+ *   with the same icon-first ordering (for tagless packs keyed by pack id).
  */
 export const getPackBlogs = (
 	tags: string[],
-	{ count = 5, curatedBlogs = defaultCuratedBlogs, random = Math.random }: GetPackBlogsOptions = {}
+	{
+		count = 5,
+		curatedBlogs = defaultCuratedBlogs,
+		random = Math.random,
+		directKey,
+	}: GetPackBlogsOptions = {}
 ): CuratedBlog[] => {
-	if ( ! tags?.length || count <= 0 ) {
+	if ( count <= 0 ) {
+		return [];
+	}
+
+	if ( directKey !== undefined && directKey !== '' ) {
+		const directList = curatedBlogs[ directKey ];
+		if ( Array.isArray( directList ) && directList.length > 0 ) {
+			return orderPackWithIconsFirst( directList.slice( 0, count ) );
+		}
+		return [];
+	}
+
+	if ( ! tags?.length ) {
 		return [];
 	}
 

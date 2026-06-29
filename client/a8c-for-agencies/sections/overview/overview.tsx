@@ -3,6 +3,7 @@ import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-age
 import ContentSidebar from 'calypso/a8c-for-agencies/components/content-sidebar';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
+import PaymentRiskNoticeBanner from 'calypso/a8c-for-agencies/components/payment-risk-notice-banner';
 import PressableUsageLimitNotice from 'calypso/a8c-for-agencies/components/pressable-usage-limit-notice';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
@@ -31,6 +32,7 @@ export default function Overview() {
 				{ ! isLoadingActivity && hasActivity && <MissingPaymentSettingsNotice /> }
 				<A4AAgencyApprovalNotice />
 				<PressableUsageLimitNotice />
+				<PaymentRiskNoticeBanner source="overview" />
 
 				<LayoutHeader className="a4a-overview-header">
 					<Title>{ title }</Title>

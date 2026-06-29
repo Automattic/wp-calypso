@@ -5,7 +5,8 @@ import { CircularProgressBar } from '@automattic/components';
 import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
 import { translate } from 'i18n-calypso';
 import React, { useState, useEffect } from 'react';
-import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
+import { useSiteSubscriptions as useCachedSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
+import { useFollowedTags } from 'calypso/reader/data/tags';
 import {
 	READER_ONBOARDING_SEEN_PREFERENCE_KEY,
 	READER_ONBOARDING_PREFERENCE_KEY,
@@ -19,7 +20,6 @@ import { requestGravatarDetails } from 'calypso/state/gravatar-status/actions';
 import { hasGravatar } from 'calypso/state/gravatar-status/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
-import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import hasCompletedReaderProfile from 'calypso/state/reader/onboarding/selectors/has-completed-reader-profile';
 import { useSiteSubscriptions } from '../following/use-site-subscriptions';
 import './style.scss';
@@ -39,8 +39,8 @@ const ReaderOnboarding = ( {
 	const userRegistrationDate: string | null = useSelector( getCurrentUserDate );
 	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
 
-	const { data: followedTags } = useFollowedReaderTags();
-	const follows = useSelector( getReaderFollows );
+	const { data: followedTags } = useFollowedTags();
+	const { subscriptions } = useCachedSiteSubscriptions();
 	const profileCompleted = useSelector( hasCompletedReaderProfile );
 	const hasUserGravatar = useSelector( hasGravatar );
 
@@ -52,13 +52,16 @@ const ReaderOnboarding = ( {
 	);
 
 	const hasFollowedTags = ( followedTags?.length ?? 0 ) > 2;
-	const hasFollowedSites = follows?.filter( ( follow ) => ! follow.is_owner )?.length > 2;
+	const hasFollowedSites =
+		subscriptions?.filter( ( subscription ) => ! subscription.is_owner )?.length > 2;
 
 	// If the user has completed the onboarding, save the preference and track the event.
-	if ( ! hasCompletedOnboarding && hasFollowedTags && hasFollowedSites && profileCompleted ) {
-		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
-		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
-	}
+	useEffect( () => {
+		if ( ! hasCompletedOnboarding && hasFollowedTags && hasFollowedSites && profileCompleted ) {
+			dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
+		}
+	}, [ dispatch, hasCompletedOnboarding, hasFollowedTags, hasFollowedSites, profileCompleted ] );
 
 	const meetsEligibility =
 		preferencesLoaded &&

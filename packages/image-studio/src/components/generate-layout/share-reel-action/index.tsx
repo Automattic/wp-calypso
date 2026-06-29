@@ -5,11 +5,12 @@ import { SocialLogo } from 'social-logos';
 import { useGenericShare } from '../../../hooks/use-generic-share';
 import { useReelShare } from '../../../hooks/use-reel-share';
 import { ReelShareConfirmationDialog } from '../../reel-share-confirmation-dialog';
+import type { JSX } from 'react';
 import './style.scss';
 
 export function ShareReelAction(): JSX.Element | null {
-	const reel = useReelShare();
-	const generic = useGenericShare();
+	const reel = useReelShare( 'modal' );
+	const generic = useGenericShare( 'modal' );
 
 	if ( ! reel.isVisible && ! generic.isVisible ) {
 		return null;

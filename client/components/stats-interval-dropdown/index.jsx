@@ -1,9 +1,9 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { capitalize } from '@automattic/js-utils';
 import { Button, Dropdown } from '@wordpress/components';
 import { check, Icon, chevronDown, lock } from '@wordpress/icons';
 import clsx from 'clsx';
-import { capitalize } from 'lodash';
 import qs from 'qs';
 import { useRef } from 'react';
 import useOutsideClickCallback from 'calypso/lib/use-outside-click-callback';

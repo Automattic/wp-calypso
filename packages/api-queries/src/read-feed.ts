@@ -2,12 +2,22 @@ import { fetchReadFeedSearch, fetchReadFeed, ReadFeedSearchSort } from '@automat
 import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
 import type { ReadFeedSearchResponse } from '@automattic/api-core';
 
+const FEED_STALE_TIME = 1000 * 60; // 1 minute
+const FEED_SEARCH_STALE_TIME = 1000 * 60; // 1 minute
+
+const isValidFeedId = ( feedId?: number | string | null ) =>
+	feedId != null && Number.isInteger( Number( feedId ) ) && Number( feedId ) >= 0;
+
+export const readFeedQueryKey = ( feedId?: number | string | null ) =>
+	[ 'read', 'feed', Number( feedId ) ] as const;
+
 export const readFeedQuery = ( feedId?: number | string | null ) => {
 	return queryOptions( {
-		queryKey: [ 'read', 'feed', Number( feedId ) ],
-		staleTime: 1000 * 60, // 1 minute
+		queryKey: readFeedQueryKey( feedId ),
+		staleTime: FEED_STALE_TIME,
 		queryFn: () => fetchReadFeed( feedId! ),
-		enabled: feedId != null && Number.isInteger( Number( feedId ) ) && Number( feedId ) >= 0,
+		enabled: isValidFeedId( feedId ),
+		meta: { persist: true },
 	} );
 };
 
@@ -24,13 +34,26 @@ const FEED_SEARCH_MAX_QUERY_LENGTH = 500;
 const truncateQuery = ( query?: string ): string | undefined =>
 	query == null ? query : query.slice( 0, FEED_SEARCH_MAX_QUERY_LENGTH );
 
+export const readFeedSearchQueryKey = ( options: Options ) => {
+	const { excludeFollowed, sort } = options;
+	const query = truncateQuery( options.query );
+	return [ 'read', 'feeds', 'search', query, excludeFollowed, sort ] as const;
+};
+
 export const readFeedSearchQuery = ( options: Options ) => {
 	const { excludeFollowed, sort } = options;
 	const query = truncateQuery( options.query );
 	return queryOptions( {
-		queryKey: [ 'read', 'feeds', 'search', query, excludeFollowed, sort ],
-		queryFn: () => fetchReadFeedSearch( { query, excludeFollowed, sort } ),
+		queryKey: [ 'read', 'feeds', 'search', query, excludeFollowed, sort ] as const,
+		staleTime: FEED_SEARCH_STALE_TIME,
+		queryFn: () =>
+			fetchReadFeedSearch( {
+				query,
+				excludeFollowed,
+				sort,
+			} ),
 		enabled: Boolean( query ),
+		meta: { persist: false },
 	} );
 };
 
@@ -39,11 +62,18 @@ export const readFeedSearchQuery = ( options: Options ) => {
 // boundary the UI used to enforce.
 const FEED_SEARCH_MAX_RESULTS = 200;
 
+export const readFeedSearchInfiniteQueryKey = ( options: Options ) => {
+	const { excludeFollowed, sort } = options;
+	const query = truncateQuery( options.query );
+	return [ 'read', 'feeds', 'search', 'infinite', query, excludeFollowed, sort ] as const;
+};
+
 export const readFeedSearchInfiniteQuery = ( options: Options ) => {
 	const { excludeFollowed, sort } = options;
 	const query = truncateQuery( options.query );
 	return infiniteQueryOptions( {
-		queryKey: [ 'read', 'feeds', 'search', 'infinite', query, excludeFollowed, sort ],
+		queryKey: [ 'read', 'feeds', 'search', 'infinite', query, excludeFollowed, sort ] as const,
+		staleTime: FEED_SEARCH_STALE_TIME,
 		queryFn: ( { pageParam }: { pageParam: number } ) =>
 			fetchReadFeedSearch( { query, excludeFollowed, sort, offset: pageParam } ),
 		initialPageParam: 0,
@@ -57,5 +87,6 @@ export const readFeedSearchInfiniteQuery = ( options: Options ) => {
 			return next < max ? next : undefined;
 		},
 		enabled: Boolean( query ),
+		meta: { persist: false },
 	} );
 };

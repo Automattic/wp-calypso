@@ -305,6 +305,18 @@ describe( 'ProductPurchaseFeaturesList feature functions', () => {
 		expect( audioPosts ).toBeVisible();
 		expect( JSON.parse( audioPosts.textContent ) ).toMatchObject( { plan } );
 	} );
+
+	test.each( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] )(
+		`should pass legacy storage flag to VideoAudioPosts child component`,
+		( plan ) => {
+			render( <ProductPurchaseFeaturesList { ...props } hasLegacyStorage plan={ plan } /> );
+			const audioPosts = screen.getByTestId( 'video-audio-posts' );
+			expect( JSON.parse( audioPosts.textContent ) ).toMatchObject( {
+				hasLegacyStorage: true,
+				plan,
+			} );
+		}
+	);
 } );
 
 describe( '<HappinessSupportCard isJetpackFreePlan', () => {

@@ -8,6 +8,16 @@ jest.mock( '../activate', () => ( {
 	activateArcadeMode: jest.fn(),
 } ) );
 
+const mockUnlockAchievement = jest.fn();
+
+jest.mock( '@automattic/api-core', () => ( {
+	unlockAchievement: ( ...args: unknown[] ) => mockUnlockAchievement( ...args ),
+} ) );
+
+jest.mock( 'calypso/state/query-client', () => ( {
+	getCalypsoQueryClient: () => null,
+} ) );
+
 const realActivate = jest.requireActual< typeof import('../activate') >( '../activate' );
 
 const KONAMI_KEYS = [
@@ -107,6 +117,8 @@ describe( 'activateArcadeMode', () => {
 
 	beforeEach( () => {
 		masterbar = mountFakeMasterbar();
+		mockUnlockAchievement.mockReset();
+		mockUnlockAchievement.mockResolvedValue( { granted: false } );
 	} );
 
 	afterEach( () => {
@@ -172,6 +184,14 @@ describe( 'activateArcadeMode', () => {
 		realActivate.activateArcadeMode();
 		dispatchKey( 'Escape' );
 		realActivate.activateArcadeMode();
+		expect( document.body.classList.contains( 'is-arcade-mode' ) ).toBe( true );
+	} );
+
+	it( 'activates normally even when the achievement unlock rejects', async () => {
+		mockUnlockAchievement.mockRejectedValue( new Error( 'network down' ) );
+		realActivate.activateArcadeMode();
+		await Promise.resolve();
+		await Promise.resolve();
 		expect( document.body.classList.contains( 'is-arcade-mode' ) ).toBe( true );
 	} );
 } );

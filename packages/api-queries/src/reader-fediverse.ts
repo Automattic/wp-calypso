@@ -8,7 +8,9 @@ import {
 	getFediverseAuthorProfile,
 	getFediverseConnection,
 	getFediverseConnections,
+	getFediverseNotifications,
 	getFediverseTimeline,
+	mapNotificationsFilter,
 	PENDING_FEDIVERSE_POST_URI,
 	readerFediverseKeys,
 } from '@automattic/api-core';
@@ -33,9 +35,11 @@ import type {
 	FediverseError,
 	FediverseFeedItem,
 	FediverseFollowResponse,
+	FediverseNotificationsPage,
 	FediverseTimelinePage,
 	GetFediverseAuthorFeedParams,
 	GetFediverseTimelineParams,
+	NotificationsFilter,
 } from '@automattic/api-core';
 
 export const fediverseConnectionsQueryOptions = () =>
@@ -118,6 +122,58 @@ export const fediverseTimelineInfiniteQuery = ( connectionId: number ) =>
 
 export function useFediverseTimelineInfiniteQuery( connectionId: number ) {
 	return useInfiniteQuery( fediverseTimelineInfiniteQuery( connectionId ) );
+}
+
+export interface UseFediverseNotificationsOptions {
+	filter?: NotificationsFilter;
+}
+
+export const fediverseNotificationsInfiniteQuery = (
+	connectionId: number,
+	filter: NotificationsFilter = 'all'
+) =>
+	infiniteQueryOptions<
+		FediverseNotificationsPage,
+		FediverseError,
+		InfiniteData< FediverseNotificationsPage >,
+		QueryKey,
+		string | undefined
+	>( {
+		queryKey: readerFediverseKeys.notifications( connectionId, filter ),
+		queryFn: ( { pageParam } ) =>
+			getFediverseNotifications( {
+				connectionId,
+				cursor: pageParam,
+				types: mapNotificationsFilter( filter ),
+			} ),
+		initialPageParam: undefined,
+		getNextPageParam: ( lastPage ) => lastPage.next_cursor ?? undefined,
+		enabled: connectionId > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+		// Same retry posture as the Fediverse timeline / author-profile queries:
+		// terminal errors fail fast; transient errors (rate_limited,
+		// upstream_unavailable) retry once with retry_after-aware backoff.
+		retry: ( failureCount, error ) => {
+			if ( error.kind === 'rate_limited' || error.kind === 'upstream_unavailable' ) {
+				return failureCount < 2;
+			}
+			return false;
+		},
+		retryDelay: ( _attempt, error ) => {
+			if ( error.kind === 'rate_limited' && error.retry_after !== undefined ) {
+				return Math.min( error.retry_after * 1000, 30_000 );
+			}
+			return 2_000;
+		},
+	} );
+
+export function useFediverseNotificationsInfiniteQuery(
+	connectionId: number,
+	options: UseFediverseNotificationsOptions = {}
+) {
+	const { filter = 'all' } = options;
+	return useInfiniteQuery( fediverseNotificationsInfiniteQuery( connectionId, filter ) );
 }
 
 // Normalise an actor string for cache keying.

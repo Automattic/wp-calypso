@@ -1,5 +1,4 @@
 @import "@automattic/typography/styles/variables";
-@import "@automattic/color-studio/dist/color-variables";
 
 .subscription-management {
 	&__notice {
@@ -9,7 +8,7 @@
 		padding: 12px 12px 12px 20px;
 		gap: 16px;
 		margin-bottom: 20px;
-		background: $studio-gray-0;
+		background: var( --studio-gray-0 );
 
 		&-icon {
 			height: 20px;
@@ -21,7 +20,7 @@
 			font-size: $font-body-small;
 			line-height: $font-title-small;
 			letter-spacing: -0.15px;
-			color: $studio-gray-80;
+			color: var( --studio-gray-80 );
 			padding-block: 4px;
 		}
 

@@ -1,6 +1,6 @@
+import { mapValues } from '@automattic/js-utils';
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
-import { mapValues } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import {
 	SITE_PRODUCTS_FETCH,

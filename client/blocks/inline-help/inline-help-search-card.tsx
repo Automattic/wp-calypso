@@ -31,7 +31,7 @@ const InlineHelpSearchCard = ( {
 	sectionName,
 	useSearchControl,
 }: Props ) => {
-	const cardRef = useRef< { searchInput: HTMLInputElement } >();
+	const cardRef = useRef< { searchInput: HTMLInputElement } >( undefined );
 	const translate = useTranslate();
 
 	// Focus in the input element.

@@ -12,11 +12,12 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 import { ComposeFab, ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
 import { fediverseComposerConfig } from './composer-config';
 import { FediverseNavigation } from './fediverse-navigation';
-import { PROFILE_TAB, TIMELINE_TAB } from './helper';
+import { NOTIFICATIONS_TAB, PROFILE_TAB, TIMELINE_TAB } from './helper';
+import { NotificationsPanel } from './notifications-panel';
 import { ProfilePanel } from './profile-panel';
 import { TimelinePanel } from './timeline-panel';
 
-const VALID_TABS = new Set< string >( [ TIMELINE_TAB, PROFILE_TAB ] );
+const VALID_TABS = new Set< string >( [ TIMELINE_TAB, PROFILE_TAB, NOTIFICATIONS_TAB ] );
 
 interface Props {
 	connectionId: number;
@@ -101,6 +102,7 @@ export function FediverseAccountView( { connectionId, tab }: Props ) {
 				<VStack spacing={ 4 } className="fediverse-view__body">
 					{ tab === TIMELINE_TAB && <TimelinePanel connection={ connection } /> }
 					{ tab === PROFILE_TAB && <ProfilePanel connection={ connection } /> }
+					{ tab === NOTIFICATIONS_TAB && <NotificationsPanel connection={ connection } /> }
 				</VStack>
 			</ReaderMain>
 			<ComposeFab />

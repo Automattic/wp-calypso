@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import actions from '../state/actions';
 import getSiteSuggestions from '../state/selectors/get-site-suggestions';
 import Suggestion from './suggestion';
+import './styles.scss';
 
 const KEY_ENTER = 13;
 const KEY_ESC = 27;

@@ -10,6 +10,7 @@ const defaultValues: Required< UserPreferences > = {
 	'hosting-dashboard-opt-in': { value: 'unset', updated_at: '' },
 	'hosting-dashboard-opt-in-welcome-modal-dismissed': '',
 	'hosting-dashboard-welcome-notice-dismissed': '',
+	'account-recovery-interstitial-snoozed-until': 0,
 	'reader-landing-page': {
 		useReaderAsLandingPage: false,
 		updatedAt: 0,
@@ -20,6 +21,9 @@ const defaultValues: Required< UserPreferences > = {
 	},
 	'achievements-visibility': 'private',
 	'achievements-global-notifications': 'enabled',
+	'reader-profile-posts-visibility': 'public',
+	'reader-profile-sites-visibility': 'public',
+	'reader-profile-hidden-sites': [],
 };
 
 // Returns all user preferences, without applying any defaults.

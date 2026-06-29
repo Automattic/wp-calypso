@@ -1,9 +1,8 @@
 import { loadScript, loadjQueryDependentScript } from '@automattic/load-script';
 import clsx from 'clsx';
 import debugFactory from 'debug';
-import { filter, forEach } from 'lodash';
-import { PureComponent } from 'react';
-import ReactDom from 'react-dom';
+import { filter } from 'lodash';
+import { createRef, PureComponent } from 'react';
 import { createRoot } from 'react-dom/client';
 import DotPager from '../dot-pager';
 import { addImageCarousel } from '../image-carousel';
@@ -41,7 +40,7 @@ const SLIDESHOW_URLS = {
 function processEmbeds( domNode ) {
 	Object.entries( embedsToLookFor ).forEach( ( [ embedSelector, fn ] ) => {
 		const nodes = domNode.querySelectorAll( embedSelector );
-		forEach( filter( nodes, nodeNeedsProcessing ), fn );
+		filter( nodes, nodeNeedsProcessing ).forEach( fn );
 	} );
 }
 
@@ -168,12 +167,11 @@ function embedTumblr( domNode ) {
 	tumblrLoader = true;
 
 	function removeScript() {
-		forEach(
-			document.querySelectorAll( 'script[src="https://secure.assets.tumblr.com/post.js"]' ),
-			function ( el ) {
-				el.parentNode.removeChild( el );
-			}
-		);
+		Array.from(
+			document.querySelectorAll( 'script[src="https://secure.assets.tumblr.com/post.js"]' )
+		).forEach( function ( el ) {
+			el.parentNode.removeChild( el );
+		} );
 		tumblrLoader = false;
 	}
 
@@ -213,7 +211,7 @@ function embedSlideshow( domNode ) {
 
 	// Remove no JS warning so user doesn't have to look at it while several scripts load
 	const warningElements = domNode.parentNode.getElementsByClassName( 'jetpack-slideshow-noscript' );
-	forEach( warningElements, ( el ) => {
+	Array.from( warningElements ).forEach( ( el ) => {
 		el.classList.add( 'hidden' );
 	} );
 
@@ -330,21 +328,49 @@ function embedGallery( domNode ) {
  * A component that notices when the content has embeds that require outside JS. Load the outside JS and process the embeds
  */
 export default class EmbedContainer extends PureComponent {
+	startMarkerRef = createRef();
+	endMarkerRef = createRef();
+
+	getContentNodes = () => {
+		const nodes = [];
+		const endMarker = this.endMarkerRef.current;
+		let node = this.startMarkerRef.current?.nextSibling;
+
+		while ( node && node !== endMarker ) {
+			if ( node.nodeType === 1 ) {
+				nodes.push( node );
+			}
+			node = node.nextSibling;
+		}
+
+		return nodes;
+	};
+
+	processEmbeds = () => {
+		this.getContentNodes().forEach( processEmbeds );
+	};
+
 	componentDidMount() {
-		processEmbeds( ReactDom.findDOMNode( this ) );
+		this.processEmbeds();
 	}
 	componentDidUpdate() {
-		processEmbeds( ReactDom.findDOMNode( this ) );
+		this.processEmbeds();
 	}
 	componentWillUnmount() {
 		// Unmark the contents as done because they may not be on the following re-render.
-		ReactDom.findDOMNode( this )
-			.querySelectorAll( '[data-wpcom-embed-processed]' )
-			.forEach( ( node ) => {
+		this.getContentNodes().forEach( ( domNode ) => {
+			domNode.querySelectorAll( '[data-wpcom-embed-processed]' ).forEach( ( node ) => {
 				node.removeAttribute( 'data-wpcom-embed-processed' );
 			} );
+		} );
 	}
 	render() {
-		return this.props.children;
+		return (
+			<>
+				<template ref={ this.startMarkerRef } />
+				{ this.props.children }
+				<template ref={ this.endMarkerRef } />
+			</>
+		);
 	}
 }

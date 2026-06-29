@@ -5,7 +5,6 @@ import {
 	type PlanSlug,
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
-	getPlanPath,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { AddOns, Plans } from '@automattic/data-stores';
@@ -59,9 +58,7 @@ function useUpgradeHandler( {
 				return;
 			}
 
-			const planPath = cartItemForPlan?.product_slug
-				? getPlanPath( cartItemForPlan.product_slug )
-				: '';
+			const planPath = cartItemForPlan?.product_slug ?? '';
 
 			let checkoutUrl = cartItemForStorageAddOn
 				? `/checkout/${ siteSlug }/${ planPath },${ cartItemForStorageAddOn.product_slug }:-q-${ cartItemForStorageAddOn.quantity }`
@@ -169,7 +166,6 @@ function useGenerateActionCallback( {
 	sitePlanSlug,
 	siteId,
 	coupon,
-	isGatingBusinessQ1,
 	redirectTo,
 	pluginSlug,
 }: {
@@ -178,15 +174,10 @@ function useGenerateActionCallback( {
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 	flowName?: string | null;
 	intent?: PlansIntent | null;
-	showModalAndExit?: ( planSlug: PlanSlug ) => boolean;
+	showModalAndExit?: ( planSlug: PlanSlug ) => boolean | Promise< boolean >;
 	sitePlanSlug?: PlanSlug | null;
 	siteId?: number | null;
 	coupon?: string;
-	/**
-	 * When true, adds `is_gating_business_q1` to the plan cart item extra data
-	 * for the rolled-out pricing differentiation cohort.
-	 */
-	isGatingBusinessQ1?: boolean;
 	redirectTo?: string;
 	pluginSlug?: string;
 } ): UseActionCallback {
@@ -221,7 +212,7 @@ function useGenerateActionCallback( {
 			const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
 			const freeTrialPlanSlug = freeTrialPlanSlugs?.[ planConstantObj.type ];
 
-			const earlyReturn = showModalAndExit?.( planSlug );
+			const earlyReturn = await showModalAndExit?.( planSlug );
 			if ( earlyReturn ) {
 				return;
 			}
@@ -266,7 +257,9 @@ function useGenerateActionCallback( {
 			/* 3. In the logged-in plans dashboard, handle plan downgrades and plan downgrade tracks events */
 			if (
 				sitePlanSlug &&
-				( ! flowName || flowName === WOO_HOSTED_PLANS_FLOW ) &&
+				( ! flowName ||
+					flowName === WOO_HOSTED_PLANS_FLOW ||
+					intent === 'plans-upgrade-or-downgrade' ) &&
 				intent !== 'plans-p2' &&
 				intent !== 'plans-blog-onboarding' &&
 				! availableForPurchase
@@ -290,21 +283,8 @@ function useGenerateActionCallback( {
 				} );
 			}
 
-			// Augment the cart item with pricing differentiation experiment data if applicable.
-			let augmentedCartItemForPlan = cartItemForPlan;
-
-			if ( cartItemForPlan && isGatingBusinessQ1 ) {
-				augmentedCartItemForPlan = {
-					...cartItemForPlan,
-					extra: {
-						...cartItemForPlan.extra,
-						is_gating_business_q1: true,
-					},
-				};
-			}
-
 			handleUpgradeClick( {
-				cartItemForPlan: augmentedCartItemForPlan,
+				cartItemForPlan,
 				selectedStorageAddOn,
 			} );
 			return;

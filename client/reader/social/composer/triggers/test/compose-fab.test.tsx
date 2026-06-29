@@ -42,6 +42,28 @@ describe( '<ComposeFab>', () => {
 		);
 	} );
 
+	it( 'forwards initialText into the standalone mode payload', async () => {
+		const user = userEvent.setup();
+		const onMode = jest.fn();
+		render(
+			<ComposerProvider connectionId={ 7 } config={ testComposerConfig }>
+				<ComposeFab initialText="@alice.bsky.social " />
+				<Spy onMode={ onMode } />
+			</ComposerProvider>
+		);
+
+		await user.click( screen.getByRole( 'button', { name: 'Compose' } ) );
+
+		expect( onMode ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				kind: 'standalone',
+				entry_point: 'fab',
+				initialText: '@alice.bsky.social ',
+				connectionId: 7,
+			} )
+		);
+	} );
+
 	it( 'is removed from the accessibility tree while a mode is active', async () => {
 		let openFn: ( ( m: ComposerMode ) => void ) | null = null;
 		function Trigger() {

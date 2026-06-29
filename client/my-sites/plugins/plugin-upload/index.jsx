@@ -2,9 +2,10 @@ import { FEATURE_SFTP, FEATURE_UPLOAD_PLUGINS } from '@automattic/calypso-produc
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { isEmpty, flowRight } from 'lodash';
+import { isEmpty } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import UploadDropZone from 'calypso/blocks/upload-drop-zone';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
@@ -248,4 +249,4 @@ const flowRightArgs = [
 	localize,
 ];
 
-export default flowRight( ...flowRightArgs )( PluginUpload );
+export default compose( ...flowRightArgs )( PluginUpload );

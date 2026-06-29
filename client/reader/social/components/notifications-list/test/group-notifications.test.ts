@@ -74,13 +74,15 @@ describe( 'groupNotifications', () => {
 		expect( out.map( ( r ) => r.kind ) ).toEqual( [ 'single', 'single' ] );
 	} );
 
-	it( 'stacks all follows together (no target)', () => {
+	it( 'stacks follows that fall in the same date bucket', () => {
+		const now = new Date( '2026-05-19T12:00:00Z' );
 		const f1 = makeItem( {
 			id: 'f1',
 			canonical_type: 'follow',
 			protocol_type: 'follow',
 			target: null,
 			target_url: 'https://bsky.app/profile/a',
+			created_at: '2026-05-19T10:00:00Z', // today
 		} );
 		const f2 = makeItem( {
 			id: 'f2',
@@ -88,12 +90,60 @@ describe( 'groupNotifications', () => {
 			protocol_type: 'follow',
 			target: null,
 			target_url: 'https://bsky.app/profile/b',
+			created_at: '2026-05-19T11:00:00Z', // today
 		} );
-		const out = groupNotifications( [ f1, f2 ] );
+		const out = groupNotifications( [ f1, f2 ], now );
 		expect( out ).toHaveLength( 1 );
 		assertStack( out[ 0 ] );
 		expect( out[ 0 ].canonicalType ).toBe( 'follow' );
 		expect( out[ 0 ].members ).toHaveLength( 2 );
+	} );
+
+	it( 'splits follow rows into separate stacks per date bucket', () => {
+		// Long-tailed follower histories used to collapse into one mega-stack
+		// because `keyFor` returned the literal `'follow'` for every follow.
+		// Bucketing the follow key by date instead means each of today /
+		// yesterday / this_week / earlier renders as its own stack, sitting
+		// under the matching date divider.
+		const now = new Date( '2026-05-19T12:00:00Z' );
+		const today1 = makeItem( {
+			id: 't1',
+			canonical_type: 'follow',
+			protocol_type: 'follow',
+			target: null,
+			target_url: 'https://bsky.app/profile/t1',
+			created_at: '2026-05-19T10:00:00Z',
+		} );
+		const today2 = makeItem( {
+			id: 't2',
+			canonical_type: 'follow',
+			protocol_type: 'follow',
+			target: null,
+			target_url: 'https://bsky.app/profile/t2',
+			created_at: '2026-05-19T11:00:00Z',
+		} );
+		const earlier1 = makeItem( {
+			id: 'e1',
+			canonical_type: 'follow',
+			protocol_type: 'follow',
+			target: null,
+			target_url: 'https://bsky.app/profile/e1',
+			created_at: '2026-03-01T12:00:00Z',
+		} );
+		const earlier2 = makeItem( {
+			id: 'e2',
+			canonical_type: 'follow',
+			protocol_type: 'follow',
+			target: null,
+			target_url: 'https://bsky.app/profile/e2',
+			created_at: '2026-03-02T12:00:00Z',
+		} );
+		const out = groupNotifications( [ today1, today2, earlier1, earlier2 ], now );
+		expect( out ).toHaveLength( 2 );
+		assertStack( out[ 0 ] );
+		assertStack( out[ 1 ] );
+		expect( out[ 0 ].members ).toHaveLength( 2 );
+		expect( out[ 1 ].members ).toHaveLength( 2 );
 	} );
 
 	it( 'never stacks "other" items', () => {

@@ -2,8 +2,6 @@ import { Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { getPostTotalCommentsCount } from 'calypso/state/comments/selectors';
 
 import './style.scss';
 
@@ -49,7 +47,6 @@ CommentButton.propTypes = {
 	commentCount: PropTypes.number,
 	href: PropTypes.string,
 	onClick: PropTypes.func,
-	post: PropTypes.object,
 	tagName: PropTypes.string,
 	target: PropTypes.string,
 	icon: PropTypes.object,
@@ -57,12 +54,4 @@ CommentButton.propTypes = {
 	alwaysShowTooltip: PropTypes.bool,
 };
 
-const mapStateToProps = ( state, ownProps ) => {
-	const { post: { site_ID: siteId, ID: postId } = {}, commentCount } = ownProps;
-
-	return {
-		commentCount: getPostTotalCommentsCount( state, siteId, postId ) || commentCount,
-	};
-};
-
-export default connect( mapStateToProps )( CommentButton );
+export default CommentButton;

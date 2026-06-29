@@ -1,4 +1,5 @@
-import { get, merge, omit, pick } from 'lodash';
+import { omit, pick } from '@automattic/js-utils';
+import { merge } from 'lodash';
 import {
 	CURRENT_USER_RECEIVE,
 	POST_COUNTS_RECEIVE,
@@ -82,7 +83,7 @@ export const counts = ( () => {
 		}
 
 		const revisions = subKeys.reduce( ( memo, subKey ) => {
-			const subKeyCounts = get( state, [ siteId, postStatus.type, subKey ], {} );
+			const subKeyCounts = state?.[ siteId ]?.[ postStatus.type ]?.[ subKey ] ?? {};
 
 			memo[ subKey ] = {};
 
@@ -147,7 +148,7 @@ export const counts = ( () => {
 					}
 
 					postStatuses[ postStatusKey ] = pick( post, 'type', 'status' );
-					postStatuses[ postStatusKey ].authorId = get( post.author, 'ID' );
+					postStatuses[ postStatusKey ].authorId = post.author?.ID;
 				} );
 
 				return state;

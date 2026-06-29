@@ -4,7 +4,7 @@
 	font-weight: 600;
 	font-size: $font-code;
 	line-height: 22px;
-	color: $studio-gray-100;
+	color: var( --studio-gray-100 );
 	letter-spacing: -0.24px;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -12,7 +12,7 @@
 	padding-right: 10px;
 
 	&:visited {
-		color: $studio-gray-100;
+		color: var( --studio-gray-100 );
 	}
 
 	&:hover {
@@ -24,13 +24,13 @@
 	font-weight: 400;
 	font-size: $font-body-extra-small;
 	line-height: 18px;
-	color: $studio-gray-40;
+	color: var( --studio-gray-40 );
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	overflow: hidden;
 
 	&:visited {
-		color: $studio-gray-40;
+		color: var( --studio-gray-40 );
 	}
 
 	&:hover {
@@ -43,5 +43,5 @@
 	font-size: $font-body-small;
 	line-height: 20px;
 	letter-spacing: -0.15px;
-	color: $studio-gray-60;
+	color: var( --studio-gray-60 );
 }

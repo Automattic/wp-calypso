@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { get, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
 import SectionHeader from 'calypso/components/section-header';
@@ -47,7 +47,7 @@ const ThemeFeaturesCard = ( { isWpcomTheme, siteSlug, features, translate, onCli
 };
 
 export default connect( ( state, { taxonomies } ) => {
-	const features = get( taxonomies, 'theme_feature', [] )
+	const features = ( taxonomies?.theme_feature ?? [] )
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 		.filter( ( { slug } ) => ! isDelistedTaxonomyTermSlug( slug ) )
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors

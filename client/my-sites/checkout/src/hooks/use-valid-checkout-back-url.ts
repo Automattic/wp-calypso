@@ -26,9 +26,11 @@ const getAllowedHosts = ( siteSlug?: string ): string[] => {
 
 const useValidCheckoutBackUrl = (
 	siteSlug: string | undefined,
-	siteId?: number
+	siteId?: number,
+	queryArgName = 'checkoutBackUrl'
 ): string | undefined => {
-	const { checkoutBackUrl } = useSelector( getInitialQueryArguments ) ?? {};
+	const queryArgs = useSelector( getInitialQueryArguments ) ?? {};
+	const backUrl = queryArgs[ queryArgName ] as string | undefined;
 	const selectedSiteId = useSelector(
 		( state ) => siteId ?? getSiteId( state, siteSlug as string | null )
 	);
@@ -40,7 +42,10 @@ const useValidCheckoutBackUrl = (
 	);
 
 	return useMemo( () => {
-		if ( ! checkoutBackUrl ) {
+		if ( ! backUrl ) {
+			if ( queryArgName !== 'checkoutBackUrl' ) {
+				return undefined;
+			}
 			// For akismet specific checkout, if navigated with direct link
 			// We shouldn't be navigated to `start\domain` but to `akismet\plans`
 			const isAkismetCheckout = window.location.pathname.startsWith( '/checkout/akismet' );
@@ -57,12 +62,12 @@ const useValidCheckoutBackUrl = (
 
 		const allowedHosts = getAllowedHosts( siteSlug );
 
-		if ( isAllowedRedirectUrl( checkoutBackUrl, allowedHosts ) ) {
-			return checkoutBackUrl;
+		if ( isAllowedRedirectUrl( backUrl, allowedHosts ) ) {
+			return backUrl;
 		}
 
 		return undefined;
-	}, [ checkoutBackUrl, isCommerce, jetpackSite, siteSlug ] );
+	}, [ backUrl, queryArgName, isCommerce, jetpackSite, siteSlug ] );
 };
 
 export default useValidCheckoutBackUrl;

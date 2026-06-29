@@ -180,4 +180,92 @@ describe( 'getPackBlogs', () => {
 		} );
 		expect( a ).toEqual( b );
 	} );
+
+	describe( 'directKey', () => {
+		it( 'returns the curated list when directKey is provided and tags are empty', () => {
+			const curated: CuratedBlogsList = {
+				'most-subscribed': makeBlogs( '8', 5 ),
+			};
+			const blogs = getPackBlogs( [], {
+				curatedBlogs: curated,
+				directKey: 'most-subscribed',
+			} );
+
+			expect( blogs ).toHaveLength( 5 );
+			expect( blogs.every( ( b ) => b.site_name.startsWith( '8-' ) ) ).toBe( true );
+		} );
+
+		it( 'respects count when using directKey', () => {
+			const curated: CuratedBlogsList = {
+				'most-subscribed': makeBlogs( '9', 10 ),
+			};
+			const blogs = getPackBlogs( [], {
+				curatedBlogs: curated,
+				directKey: 'most-subscribed',
+				count: 2,
+			} );
+
+			expect( blogs ).toHaveLength( 2 );
+		} );
+
+		it( 'orders the returned pack with has_icon blogs first when using directKey', () => {
+			const curated: CuratedBlogsList = {
+				'most-subscribed': [
+					{
+						feed_ID: 601,
+						site_ID: 601,
+						site_URL: 'https://no-icon.example',
+						site_name: 'No icon',
+						feed_URL: 'https://no-icon.example/feed',
+						has_icon: false,
+					},
+					{
+						feed_ID: 602,
+						site_ID: 602,
+						site_URL: 'https://has-icon-b.example',
+						site_name: 'Has icon B',
+						feed_URL: 'https://has-icon-b.example/feed',
+						has_icon: true,
+					},
+					{
+						feed_ID: 603,
+						site_ID: 603,
+						site_URL: 'https://has-icon-c.example',
+						site_name: 'Has icon C',
+						feed_URL: 'https://has-icon-c.example/feed',
+						has_icon: true,
+					},
+				],
+			};
+			const blogs = getPackBlogs( [], {
+				curatedBlogs: curated,
+				directKey: 'most-subscribed',
+				count: 3,
+			} );
+
+			expect( blogs.map( ( b ) => b.site_name ) ).toEqual( [
+				'Has icon B',
+				'Has icon C',
+				'No icon',
+			] );
+		} );
+
+		it( 'returns an empty array when directKey is not present in curatedBlogs', () => {
+			expect(
+				getPackBlogs( [], {
+					curatedBlogs: fixture,
+					directKey: 'missing-pack-id',
+				} )
+			).toEqual( [] );
+		} );
+
+		it( 'returns an empty array when directKey points to an empty list', () => {
+			expect(
+				getPackBlogs( [], {
+					curatedBlogs: { 'most-subscribed': [] },
+					directKey: 'most-subscribed',
+				} )
+			).toEqual( [] );
+		} );
+	} );
 } );

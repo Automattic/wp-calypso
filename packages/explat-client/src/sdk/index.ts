@@ -15,6 +15,7 @@ export type {
 	Feature,
 	Attributes,
 	Result,
+	WidenPrimitives,
 } from './types';
 
 export { hashFnv32a, hash } from './hash';

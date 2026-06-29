@@ -186,6 +186,7 @@ function BillingDragonCheckoutContent( {
 						isA4ASitelessCheckout: true,
 						agency_id: agency.id,
 						cart_item_index: cartItemIndex++,
+						...( product.site_domain ? { a4a_pressable_site_domain: product.site_domain } : {} ),
 					},
 				};
 				debug( '[A4A Checkout] Processing product to add: ', product_cart );
