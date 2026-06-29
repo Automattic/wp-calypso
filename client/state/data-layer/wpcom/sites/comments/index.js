@@ -160,7 +160,7 @@ export const addComments = ( { query }, { comments } ) => {
 
 	const byPost = groupBy( comments, ( { post: { ID } } ) => ID );
 
-	Object.entries( byPost ?? {} ).forEach( ( [ post, postComments ] ) =>
+	Object.entries( byPost ).forEach( ( [ post, postComments ] ) =>
 		actions.push(
 			receiveComments( {
 				siteId,

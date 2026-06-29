@@ -288,7 +288,7 @@ class SignupForm extends Component {
 					messages = this.filterUntouchedFieldErrors( messages );
 				}
 
-				Object.entries( messages ?? {} ).forEach( ( [ field, fieldError ] ) => {
+				Object.entries( messages ).forEach( ( [ field, fieldError ] ) => {
 					if ( ! formState.isFieldInvalid( this.state.form, field ) ) {
 						return;
 					}

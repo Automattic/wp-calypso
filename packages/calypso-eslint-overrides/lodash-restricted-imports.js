@@ -12,6 +12,11 @@
  * those member-call/namespace shapes for the functions they cover, so enable the
  * matching rule there when a function's migration is complete (these detailed
  * messages still guide the named-import case mid-migration).
+ *
+ * Both entries are intended to coexist permanently: this one stays as the
+ * primary, more-actionable message for the named-import path, and the plugin
+ * rule is the enforcement backstop for the namespace/`require` shapes it alone
+ * can see. There is overlap on the named-import call site by design.
  */
 
 const JS_UTILS_NAMES = [

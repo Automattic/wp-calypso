@@ -33,7 +33,7 @@ export class SerializationResult {
 		result: Json | SerializationResult
 	): void {
 		if ( result instanceof SerializationResult ) {
-			Object.entries( result.results ?? {} ).forEach( ( [ resultKey, resultState ] ) => {
+			Object.entries( result.results ).forEach( ( [ resultKey, resultState ] ) => {
 				if ( resultKey === 'root' ) {
 					this.addResult( storageKey, reducerKey, resultState );
 				} else {

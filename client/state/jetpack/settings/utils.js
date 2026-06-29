@@ -104,7 +104,7 @@ export const filterSettingsByActiveModules = ( settings ) => {
 	};
 	let filteredSettings = { ...settings };
 
-	Object.entries( moduleSettingsList ?? {} ).forEach( ( [ moduleSlug, moduleSettings ] ) => {
+	Object.entries( moduleSettingsList ).forEach( ( [ moduleSlug, moduleSettings ] ) => {
 		if ( ! settings[ moduleSlug ] ) {
 			filteredSettings = omit( filteredSettings, moduleSettings );
 		}

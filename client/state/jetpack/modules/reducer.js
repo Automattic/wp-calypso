@@ -63,7 +63,7 @@ const createSettingsItemsReducer = () => {
 			return state?.[ siteId ]?.[ settingName ] !== undefined;
 		} );
 
-		Object.entries( moduleActivationState ?? {} ).forEach( ( [ moduleSlug, active ] ) => {
+		Object.entries( moduleActivationState ).forEach( ( [ moduleSlug, active ] ) => {
 			updatedState = Object.assign( {}, updatedState, {
 				[ siteId ]: {
 					...updatedState[ siteId ],
