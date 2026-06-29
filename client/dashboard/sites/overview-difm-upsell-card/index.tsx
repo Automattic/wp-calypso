@@ -1,3 +1,5 @@
+import { siteAgencyBlogQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Callout } from '../../components/callout';
@@ -9,7 +11,17 @@ import type { Site } from '@automattic/api-core';
 const FOUR_DAYS_IN_MILLISECONDS = 4 * 24 * 60 * 60 * 1000;
 
 export default function DIFMUpsellCard( { site }: { site: Site } ) {
+	const { data: agencyBlog } = useQuery( {
+		...siteAgencyBlogQuery( site.ID ),
+		enabled: site.is_wpcom_atomic,
+	} );
+
 	if ( site.launch_status !== 'unlaunched' ) {
+		return null;
+	}
+
+	// Don't show the card on agency-associated sites (A4A-2861).
+	if ( agencyBlog || site.is_a4a_dev_site ) {
 		return null;
 	}
 
