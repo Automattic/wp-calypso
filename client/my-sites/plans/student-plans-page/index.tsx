@@ -17,9 +17,21 @@ interface StudentPlansPageProps {
 	currentPlan: SitePlan;
 	selectedSite: SiteDetails;
 	intervalType?: string;
+	isOwner?: boolean;
+	coupon?: string;
+	redirectTo?: string;
+	pluginSlug?: string;
 }
 
-const StudentPlansPage = ( { currentPlan, selectedSite, intervalType }: StudentPlansPageProps ) => {
+const StudentPlansPage = ( {
+	currentPlan,
+	selectedSite,
+	intervalType,
+	isOwner,
+	coupon,
+	redirectTo,
+	pluginSlug,
+}: StudentPlansPageProps ) => {
 	const translate = useTranslate();
 	const studentPlan = getPlan( PLAN_STUDENT );
 
@@ -76,7 +88,7 @@ const StudentPlansPage = ( { currentPlan, selectedSite, intervalType }: StudentP
 				<div className="student-plans-page__price-card-cta-wrapper">
 					{ currentPlan && selectedSite && (
 						<Button className="student-plans-page__price-card-cta" onClick={ goToSubscriptionPage }>
-							{ translate( 'Manage my plan' ) }
+							{ isOwner ? translate( 'Manage my plan' ) : translate( 'View plan' ) }
 						</Button>
 					) }
 				</div>
@@ -90,6 +102,9 @@ const StudentPlansPage = ( { currentPlan, selectedSite, intervalType }: StudentP
 					showPlanTypeSelectorDropdown
 					hideUnavailableFeatures
 					hidePlansFeatureComparison
+					coupon={ coupon }
+					redirectTo={ redirectTo }
+					pluginSlug={ pluginSlug }
 				/>
 			</div>
 		</>
