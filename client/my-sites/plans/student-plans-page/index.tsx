@@ -1,4 +1,4 @@
-import { getPlan, PLAN_STUDENT } from '@automattic/calypso-products';
+import { applyTestFiltersToPlansList, PLAN_STUDENT } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Card } from '@automattic/components';
 import { type SiteDetails, type SitePlan } from '@automattic/data-stores';
@@ -33,7 +33,7 @@ const StudentPlansPage = ( {
 	pluginSlug,
 }: StudentPlansPageProps ) => {
 	const translate = useTranslate();
-	const studentPlan = getPlan( PLAN_STUDENT );
+	const studentPlan = applyTestFiltersToPlansList( PLAN_STUDENT, undefined );
 
 	const selectedInterval = UPGRADE_INTERVALS.includes( intervalType as UpgradeInterval )
 		? ( intervalType as UpgradeInterval )
@@ -79,9 +79,9 @@ const StudentPlansPage = ( {
 			<Card className="student-plans-page__price-card">
 				<div className="student-plans-page__price-card-text">
 					<span className="student-plans-page__price-card-label">{ translate( 'My Plan' ) }</span>
-					<span className="student-plans-page__price-card-title">{ studentPlan?.getTitle() }</span>
+					<span className="student-plans-page__price-card-title">{ studentPlan.getTitle() }</span>
 					<span className="student-plans-page__price-card-subtitle">
-						{ studentPlan?.getPlanTagline?.() }
+						{ studentPlan.getPlanTagline?.() }
 					</span>
 				</div>
 				<div className="student-plans-page__price-card-conditions">{ priceContent }</div>
