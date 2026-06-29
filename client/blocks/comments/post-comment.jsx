@@ -6,7 +6,6 @@ import { Icon, external } from '@wordpress/icons';
 import { isURL, getAuthority, getProtocol } from '@wordpress/url';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { some } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -186,9 +185,7 @@ class PostComment extends PureComponent {
 		const { enableCaterpillar, commentsToShow, commentId } = this.props;
 		const childIds = this.getAllChildrenIds( commentId );
 
-		return (
-			enableCaterpillar && commentsToShow && some( childIds, ( id ) => ! commentsToShow[ id ] )
-		);
+		return enableCaterpillar && commentsToShow && childIds.some( ( id ) => ! commentsToShow[ id ] );
 	};
 
 	// has visisble child --> true
@@ -196,7 +193,7 @@ class PostComment extends PureComponent {
 		const { commentsToShow, commentId } = this.props;
 		const childIds = this.getAllChildrenIds( commentId );
 
-		return commentsToShow && some( childIds, ( id ) => commentsToShow[ id ] );
+		return commentsToShow && childIds.some( ( id ) => commentsToShow[ id ] );
 	};
 
 	renderRepliesList() {
@@ -417,8 +414,7 @@ class PostComment extends PureComponent {
 				: commentsToShow[ commentId ];
 
 		// todo: connect this constants to the state (new selector)
-		const haveReplyWithError = some(
-			commentsTree?.[ this.props.commentId ]?.children,
+		const haveReplyWithError = ( commentsTree?.[ this.props.commentId ]?.children ?? [] ).some(
 			( childId ) => commentsTree?.[ childId ]?.data?.placeholderState === PLACEHOLDER_STATE.ERROR
 		);
 

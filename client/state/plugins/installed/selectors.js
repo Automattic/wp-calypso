@@ -1,6 +1,6 @@
 import { pick, sortBy } from '@automattic/js-utils';
 import { createSelector } from '@automattic/state-utils';
-import { filter, some } from 'lodash';
+import { filter } from 'lodash';
 import {
 	getSite,
 	getSiteTitle,
@@ -22,35 +22,35 @@ const _filters = {
 	},
 	active: function ( plugin ) {
 		return (
-			some( plugin.sites, function ( site ) {
+			Object.values( plugin.sites ?? {} ).some( function ( site ) {
 				return site.active;
 			} ) || plugin.statusRecentlyChanged
 		);
 	},
 	inactive: function ( plugin ) {
 		return (
-			some( plugin.sites, function ( site ) {
+			Object.values( plugin.sites ?? {} ).some( function ( site ) {
 				return ! site.active;
 			} ) || plugin.statusRecentlyChanged
 		);
 	},
 	updates: function ( plugin ) {
 		return (
-			some( plugin.sites, function ( site ) {
+			Object.values( plugin.sites ?? {} ).some( function ( site ) {
 				return site.update && ! site.update.recentlyUpdated;
 			} ) || plugin.statusRecentlyChanged
 		);
 	},
 	autoupdates: function ( plugin ) {
 		return (
-			some( plugin.sites, function ( site ) {
+			Object.values( plugin.sites ?? {} ).some( function ( site ) {
 				return site.autoupdate;
 			} ) || plugin.statusRecentlyChanged
 		);
 	},
 	autoupdates_disabled: function ( plugin ) {
 		return (
-			some( plugin.sites, function ( site ) {
+			Object.values( plugin.sites ?? {} ).some( function ( site ) {
 				return ! site.autoupdate;
 			} ) || plugin.statusRecentlyChanged
 		);
@@ -73,7 +73,7 @@ export function isRequesting( state, siteId ) {
 
 export function isRequestingForSites( state, sites ) {
 	// As long as any sites have isRequesting true, we consider this group requesting
-	return some( sites, ( siteId ) => isRequesting( state, siteId ) );
+	return ( sites ?? [] ).some( ( siteId ) => isRequesting( state, siteId ) );
 }
 
 export function isRequestingForAllSites( state ) {

@@ -1,7 +1,7 @@
 import { FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
-import { filter, some } from 'lodash';
+import { filter } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -154,11 +154,15 @@ class SharingButtonsOptions extends Component {
 	}
 
 	isTwitterButtonEnabled() {
-		return some( this.props.buttons, { ID: 'twitter', enabled: true } );
+		return ( this.props.buttons ?? [] ).some(
+			( button ) => button.ID === 'twitter' && button.enabled === true
+		);
 	}
 
 	isXButtonEnabled() {
-		return some( this.props.buttons, { ID: 'x', enabled: true } );
+		return ( this.props.buttons ?? [] ).some(
+			( button ) => button.ID === 'x' && button.enabled === true
+		);
 	}
 
 	getTwitterViaOptionElement() {

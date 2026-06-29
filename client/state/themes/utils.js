@@ -1,5 +1,5 @@
 import { omit, omitBy } from '@automattic/js-utils';
-import { map, some } from 'lodash';
+import { map } from 'lodash';
 import { DEFAULT_THEME_QUERY } from './constants';
 
 /**
@@ -200,12 +200,10 @@ export function isThemeMatchingQuery( query, theme ) {
 
 				const search = value.toLowerCase();
 
-				const foundInTaxonomies = some(
-					SEARCH_TAXONOMIES,
+				const foundInTaxonomies = SEARCH_TAXONOMIES.some(
 					( taxonomy ) =>
 						theme.taxonomies &&
-						some(
-							theme.taxonomies[ 'theme_' + taxonomy ],
+						( theme.taxonomies[ 'theme_' + taxonomy ] ?? [] ).some(
 							( { name } ) => name && name.toLowerCase().includes( search )
 						)
 				);
@@ -227,7 +225,9 @@ export function isThemeMatchingQuery( query, theme ) {
 				// { color: 'blue,red', feature: 'post-slider' }
 				const filters = value.split( ',' );
 				return filters.every( ( f ) =>
-					some( theme.taxonomies, ( terms ) => some( terms, { slug: f } ) )
+					Object.values( theme.taxonomies ?? {} ).some( ( terms ) =>
+						( terms ?? [] ).some( ( term ) => term.slug === f )
+					)
 				);
 			}
 		}

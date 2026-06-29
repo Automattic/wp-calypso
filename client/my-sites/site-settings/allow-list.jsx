@@ -1,7 +1,6 @@
 import { Button, Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
-import { some } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -68,7 +67,7 @@ class AllowList extends Component {
 
 		return (
 			allowedIps.includes( ipAddress ) ||
-			some( allowedIps, ( entry ) => {
+			allowedIps.some( ( entry ) => {
 				if ( entry.indexOf( '-' ) < 0 ) {
 					return false;
 				}

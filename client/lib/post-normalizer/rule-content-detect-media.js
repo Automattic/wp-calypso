@@ -1,6 +1,6 @@
 /* eslint-disable jsdoc/no-undefined-types */
 
-import { map, some, filter } from 'lodash';
+import { map, filter } from 'lodash';
 import getEmbedMetadata from 'calypso/lib/get-video-id';
 import { READER_CONTENT_WIDTH } from 'calypso/reader/data/post/sizes';
 import { iframeIsAllowed, maxWidthPhotonishURL, deduceImageWidthAndHeight } from './utils';
@@ -33,7 +33,7 @@ function isCandidateForContentImage( image ) {
 
 	const imageUrl = image.getAttribute( 'src' );
 
-	const imageShouldBeExcludedFromCandidacy = some( ineligibleCandidateUrlParts, ( urlPart ) =>
+	const imageShouldBeExcludedFromCandidacy = ineligibleCandidateUrlParts.some( ( urlPart ) =>
 		imageUrl.toLowerCase().includes( urlPart )
 	);
 

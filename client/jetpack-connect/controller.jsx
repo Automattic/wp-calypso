@@ -25,7 +25,6 @@ import page from '@automattic/calypso-router';
 import { getLocaleFromPath, removeLocaleFromPath } from '@automattic/i18n-utils';
 import { JETPACK_PRICING_PAGE } from '@automattic/urls';
 import Debug from 'debug';
-import { some } from 'lodash';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { navigate } from 'calypso/lib/navigate';
 import { login } from 'calypso/lib/paths';
@@ -270,7 +269,7 @@ export function persistMobileAppFlow( context, next ) {
 	const { query } = context;
 	if ( config.isEnabled( 'jetpack/connect/mobile-app-flow' ) ) {
 		if (
-			some( ALLOWED_MOBILE_APP_REDIRECT_URL_LIST, ( pattern ) =>
+			ALLOWED_MOBILE_APP_REDIRECT_URL_LIST.some( ( pattern ) =>
 				pattern.test( query.mobile_redirect )
 			)
 		) {

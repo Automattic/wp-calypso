@@ -107,6 +107,9 @@ const XOR_MESSAGE =
 	'Please compute the symmetric difference natively, e.g. ' +
 	'`Array.from( new Set( [ ...a, ...b ] ) ).filter( ( item ) => a.includes( item ) !== b.includes( item ) )`, ' +
 	'instead of lodash `xor` (the Set dedupes to match lodash; you can drop it when the inputs are known unique).';
+const SOME_MESSAGE =
+	'Please use native `array.some( ( item ) => … )` (or `Object.values( obj ).some( … )` for objects) ' +
+	'instead of lodash `some`. Expand iteratee shorthands to a predicate and guard nullable collections with `?? []`.';
 
 const paths = [
 	{ name: 'lodash', importNames: JS_UTILS_NAMES, message: JS_UTILS_MESSAGE },
@@ -138,6 +141,7 @@ const paths = [
 	{ name: 'lodash', importNames: [ 'findLast' ], message: FINDLAST_MESSAGE },
 	{ name: 'lodash', importNames: [ 'has' ], message: HAS_MESSAGE },
 	{ name: 'lodash', importNames: [ 'xor' ], message: XOR_MESSAGE },
+	{ name: 'lodash', importNames: [ 'some' ], message: SOME_MESSAGE },
 ];
 
 // Deep `lodash/<fn>` imports bypass the named-import paths above.
@@ -171,6 +175,7 @@ const patterns = [
 	{ group: [ 'lodash/findLast' ], message: FINDLAST_MESSAGE },
 	{ group: [ 'lodash/has' ], message: HAS_MESSAGE },
 	{ group: [ 'lodash/xor' ], message: XOR_MESSAGE },
+	{ group: [ 'lodash/some' ], message: SOME_MESSAGE },
 ];
 
 module.exports = { paths, patterns };

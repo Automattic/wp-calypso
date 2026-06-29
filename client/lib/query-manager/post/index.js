@@ -1,4 +1,4 @@
-import { some, get } from 'lodash';
+import { get } from 'lodash';
 import moment from 'moment';
 import PaginatedQueryManager from '../paginated';
 import { DEFAULT_POST_QUERY } from './constants';
@@ -46,7 +46,9 @@ export default class PostQueryManager extends PaginatedQueryManager {
 				case 'term':
 					return Object.entries( value ).every( ( [ taxonomy, slugs ] ) => {
 						slugs = slugs.split( ',' );
-						return some( post.terms[ taxonomy ], ( { slug } ) => slugs.includes( slug ) );
+						return Object.values( post.terms[ taxonomy ] ?? {} ).some( ( { slug } ) =>
+							slugs.includes( slug )
+						);
 					} );
 
 				case 'tag':
@@ -57,7 +59,7 @@ export default class PostQueryManager extends PaginatedQueryManager {
 
 					const valueLowercase = value.toLowerCase();
 					const field = 'tag' === key ? 'tags' : 'categories';
-					return some( post[ field ], ( { name, slug } ) => {
+					return Object.values( post[ field ] ?? {} ).some( ( { name, slug } ) => {
 						return (
 							( name && name.toLowerCase() === valueLowercase ) ||
 							( slug && slug.toLowerCase() === valueLowercase )
