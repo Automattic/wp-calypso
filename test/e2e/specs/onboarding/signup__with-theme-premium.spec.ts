@@ -7,6 +7,7 @@ import {
 	CartCheckoutPage,
 	DataHelper,
 	DomainSearchComponent,
+	LoggedOutThemesPage,
 	MeSidebarComponent,
 	MyProfilePage,
 	NewSiteResponse,
@@ -16,7 +17,6 @@ import {
 	RestAPIClient,
 	SecretsManager,
 	SignupPickPlanPage,
-	ThemesDetailPage,
 	ThemesPage,
 	UserSignupPage,
 	cancelAtomicPurchaseFlow,
@@ -66,15 +66,10 @@ test.describe(
 				await themesPage.visitShowcase();
 			} );
 
-			await test.step( 'Select a Premium theme', async () => {
-				await page.locator( 'div.theme-card:has(div.theme-tier-badge--premium)' ).first().click();
-			} );
-
-			await test.step( 'Navigate to Signup page', async () => {
-				const themeDetailsPage = new ThemesDetailPage( page );
-				const pageMatch = new URL( page.url() ).pathname.match( 'theme/(.*)/?' );
-				themeSlug = pageMatch?.[ 1 ] || null;
-				await themeDetailsPage.pickThisDesign();
+			await test.step( 'Select a Premium theme and start signup', async () => {
+				const loggedOutThemesPage = new LoggedOutThemesPage( page );
+				await loggedOutThemesPage.filterBy( 'Premium' );
+				themeSlug = await loggedOutThemesPage.startWithFirstTheme();
 			} );
 
 			await test.step( 'Sign up as new user', async () => {
