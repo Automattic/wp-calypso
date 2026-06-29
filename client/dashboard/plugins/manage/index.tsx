@@ -4,7 +4,6 @@ import {
 	marketplaceSearchQuery,
 	pluginsQuery,
 } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
 import { __experimentalGrid as Grid } from '@wordpress/components';
@@ -45,8 +44,7 @@ const searchableFields = [
 
 export default function PluginsList() {
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
-	const isOmnibarEnabled = isEnabled( 'dashboard/omnibar' );
-	const isSmallViewport = useViewportMatch( isOmnibarEnabled ? 'xlarge' : 'medium', '<' );
+	const isSmallViewport = useViewportMatch( 'xlarge', '<' );
 	const { data: sitesPlugins, isLoading: sitesPluginsLoading } = useQuery( pluginsQuery() );
 	const { sitesById } = useSitesById();
 	const { pluginId: pluginSlug } = useParams( { strict: false } );

@@ -103,7 +103,7 @@ export const accountRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: isEnabled( 'dashboard/omnibar' ) ? __( 'Account' ) : __( 'Profile' ),
+				title: __( 'Account' ),
 			},
 		],
 	} ),

@@ -184,19 +184,17 @@ class Document extends Component {
 							<InitialOmnibar user={ user } />
 						</div>
 					) }
-					{ isDashboardOmnibarPage &&
-						config.isEnabled( 'dashboard/omnibar' ) &&
-						! config.isEnabled( 'dashboard/omnibar-radical' ) && (
-							<div id="wpcom-omnibar">
-								<I18NContext.Provider value={ this.props.i18nCalypso || defaultCalypsoI18n }>
-									<InterimOmnibar
-										user={ user || null }
-										site={ null }
-										currentRoute={ this.props.path ?? '/' }
-									/>
-								</I18NContext.Provider>
-							</div>
-						) }
+					{ isDashboardOmnibarPage && ! config.isEnabled( 'dashboard/omnibar-radical' ) && (
+						<div id="wpcom-omnibar">
+							<I18NContext.Provider value={ this.props.i18nCalypso || defaultCalypsoI18n }>
+								<InterimOmnibar
+									user={ user || null }
+									site={ null }
+									currentRoute={ this.props.path ?? '/' }
+								/>
+							</I18NContext.Provider>
+						</div>
+					) }
 					{ renderedLayout ? (
 						<div
 							id="wpcom"

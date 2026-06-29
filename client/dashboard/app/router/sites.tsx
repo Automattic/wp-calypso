@@ -314,7 +314,7 @@ export const siteLogsPhpRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: isEnabled( 'dashboard/omnibar' ) ? __( 'PHP errors' ) : undefined,
+				title: __( 'PHP errors' ),
 			},
 		],
 	} ),
@@ -338,7 +338,7 @@ export const siteLogsServerRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: isEnabled( 'dashboard/omnibar' ) ? __( 'Web server' ) : undefined,
+				title: __( 'Web server' ),
 			},
 		],
 	} ),
@@ -359,7 +359,7 @@ export const siteLogsActivityRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: isEnabled( 'dashboard/omnibar' ) ? __( 'Activity' ) : undefined,
+				title: __( 'Activity' ),
 			},
 		],
 	} ),
@@ -409,7 +409,7 @@ export const siteScanActiveThreatsRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: isEnabled( 'dashboard/omnibar' ) ? __( 'Active threats' ) : undefined,
+				title: __( 'Active threats' ),
 			},
 		],
 	} ),
@@ -427,7 +427,7 @@ export const siteScanHistoryRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: isEnabled( 'dashboard/omnibar' ) ? __( 'History' ) : undefined,
+				title: __( 'History' ),
 			},
 		],
 	} ),
@@ -609,7 +609,7 @@ export const sitePerformanceFrontendRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: isEnabled( 'dashboard/omnibar' ) ? __( 'Frontend' ) : undefined,
+				title: __( 'Frontend' ),
 			},
 		],
 	} ),
@@ -627,7 +627,7 @@ export const sitePerformanceBackendRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: isEnabled( 'dashboard/omnibar' ) ? __( 'Backend' ) : undefined,
+				title: __( 'Backend' ),
 			},
 		],
 	} ),
@@ -662,7 +662,7 @@ export const sitePerformanceBackendTransactionsRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: isEnabled( 'dashboard/omnibar' ) ? __( 'Transactions' ) : undefined,
+				title: __( 'Transactions' ),
 			},
 		],
 	} ),
@@ -681,7 +681,7 @@ export const sitePerformanceBackendDatabaseRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: isEnabled( 'dashboard/omnibar' ) ? __( 'Database' ) : undefined,
+				title: __( 'Database' ),
 			},
 		],
 	} ),
@@ -700,7 +700,7 @@ export const sitePerformanceBackendExternalRequestsRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: isEnabled( 'dashboard/omnibar' ) ? __( 'External requests' ) : undefined,
+				title: __( 'External requests' ),
 			},
 		],
 	} ),
@@ -721,7 +721,7 @@ export const sitePerformanceBackendWordPressRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: isEnabled( 'dashboard/omnibar' ) ? __( 'WordPress' ) : undefined,
+				title: __( 'WordPress' ),
 			},
 		],
 	} ),
@@ -740,7 +740,7 @@ export const sitePerformanceBackendRequestDetailRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: isEnabled( 'dashboard/omnibar' ) ? __( 'Request' ) : undefined,
+				title: __( 'Request' ),
 			},
 		],
 	} ),

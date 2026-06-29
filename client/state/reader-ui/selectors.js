@@ -1,6 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
-
 /**
  * Get reader last path selected
  * @param state redux state
@@ -38,12 +35,11 @@ export function getPersistedLastActionPriorToLogin( state ) {
 
 /**
  * Selector to check if the reader multi-site version of the reader dashboard is enabled
+ *
+ * The dashboard omnibar replaced the Reader multi-site dashboard, which is now
+ * disabled. The remaining MSD wiring is unused and tracked for removal separately.
  * @returns {boolean} Whether the user is enabled for the reader multi-site dashboard
  */
-export function isReaderMSDEnabled( state ) {
-	return (
-		isEnabled( 'reader/msd-enabled' ) &&
-		hasDashboardOptIn( state ) &&
-		! isEnabled( 'dashboard/omnibar' )
-	);
+export function isReaderMSDEnabled() {
+	return false;
 }

@@ -1,9 +1,7 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
-import { Button, Modal, TabPanel } from '@wordpress/components';
+import { Button, Modal } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { shield } from '@wordpress/icons';
 import { useState } from 'react';
@@ -11,7 +9,7 @@ import { useAnalytics } from '../../app/analytics';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { siteRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
-import { Card, CardHeader, CardBody } from '../../components/card';
+import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import TimeMismatchNotice, {
@@ -31,14 +29,8 @@ import { useScanState } from './use-scan-state';
 
 import './style.scss';
 
-const SCAN_TABS = [
-	{ name: 'active', title: __( 'Active threats' ) },
-	{ name: 'history', title: __( 'History' ) },
-];
-
 function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 	const { siteSlug } = siteRoute.useParams();
-	const router = useRouter();
 
 	const { recordTracksEvent } = useAnalytics();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
@@ -82,18 +74,6 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 		}
 
 		return null;
-	};
-
-	const handleTabChange = ( tab: 'active' | 'history' ) => {
-		if ( scanTab === tab ) {
-			return;
-		}
-
-		if ( tab === 'active' ) {
-			router.navigate( { to: `/sites/${ siteSlug }/scan/active` } );
-		} else {
-			router.navigate( { to: `/sites/${ siteSlug }/scan/history` } );
-		}
 	};
 
 	const renderActiveTab = () => {
@@ -180,22 +160,6 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 				}
 			>
 				<Card>
-					{ ! isEnabled( 'dashboard/omnibar' ) && (
-						<CardHeader style={ { paddingBottom: '0' } }>
-							<TabPanel
-								activeClass="is-active"
-								tabs={ SCAN_TABS }
-								onSelect={ ( tabName ) => {
-									if ( tabName === 'active' || tabName === 'history' ) {
-										handleTabChange( tabName );
-									}
-								} }
-								initialTabName={ scanTab }
-							>
-								{ () => null }
-							</TabPanel>
-						</CardHeader>
-					) }
 					<CardBody>
 						{ scanTab === 'active' && renderActiveTab() }
 						{ scanTab === 'history' && (

@@ -71,7 +71,6 @@
 		"dark-mode": false,
 		"dashboard/enable-percentage-rollout": false,
 		"dashboard/force-opt-in-visibility": true,
-		"dashboard/omnibar": true,
 		"dashboard/omnibar-radical": false,
 		"dashboard/opt-in-banners": false,
 		"dashboard/opt-in-welcome-modal": false,
