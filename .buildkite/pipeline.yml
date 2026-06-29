@@ -2,11 +2,10 @@
 ---
 
 steps:
-  # Skip on `ainfra-*` branches: the gated build steps below already
-  # run `yarn install` as part of their build script, so running it
-  # again here would just duplicate the work.
+  # Skip on branches and tags where the build steps below already run
+  # `yarn install` as part of their build script.
   - label: ":desktop_computer: Desktop yarn install"
-    branches: "!ainfra-*"
+    branches: "!ainfra-* !trunk !release/* !desktop/* !desktop-v*"
     notify:
       - github_commit_status:
           context: Desktop / yarn install
@@ -26,13 +25,11 @@ steps:
       corepack enable
       yarn install --immutable --inline-builds
 
-  # The desktop build is resource-intensive and this repo runs many
-  # builds; we don't want to pay for it on every commit, especially
-  # while the CircleCI -> Buildkite port is still in development.
-  # Gate it on `ainfra-*` branches until the port is stabilized.
+  # The desktop build is resource-intensive and this repo runs many builds,
+  # so keep it scoped to the same branch families the CircleCI workflow used.
   - label: ":desktop_computer: Build desktop (mac)"
     key: desktop-build-mac
-    branches: ainfra-* desktop-v*
+    branches: ainfra-* trunk release/* desktop/* desktop-v*
     notify:
       - github_commit_status:
           context: Desktop / Build (mac)
@@ -52,7 +49,7 @@ steps:
 
   - label: ":desktop_computer: Build desktop (linux, unsigned)"
     key: desktop-build-linux
-    branches: ainfra-* desktop-v*
+    branches: ainfra-* release/* desktop/* desktop-v*
     notify:
       - github_commit_status:
           context: Desktop / Build (linux, unsigned)
@@ -76,7 +73,7 @@ steps:
 
   - label: ":windows: Build desktop (windows store, unsigned)"
     key: desktop-build-windows-store
-    branches: ainfra-* desktop-v*
+    branches: ainfra-* release/* desktop/* desktop-v*
     notify:
       - github_commit_status:
           context: Desktop / Build (windows store, unsigned)
@@ -91,7 +88,7 @@ steps:
   # org Sectigo PFX as a fallback behind FORCE_PFX_SIGNING (AINFRA-2237).
   - label: ":windows: Build desktop (windows nsis, signed)"
     key: desktop-build-windows-nsis
-    branches: ainfra-* desktop-v*
+    branches: ainfra-* release/* desktop/* desktop-v*
     notify:
       - github_commit_status:
           context: Desktop / Build (windows nsis, signed)
@@ -105,7 +102,7 @@ steps:
       - desktop/release/*.exe.blockmap
       - desktop/release/latest.yml
 
-  - label: ":desktop_computer: Desktop publish dry-run"
+  - label: ":desktop_computer: Desktop publish"
     branches: ainfra-2274-* desktop-v*
     depends_on:
       - desktop-build-mac
@@ -114,10 +111,12 @@ steps:
       - desktop-build-windows-nsis
     notify:
       - github_commit_status:
-          context: Desktop / Publish dry-run
+          context: Desktop / Publish
     agents:
       queue: default
-    command: .buildkite/commands/publish-desktop-dry-run.sh
+    plugins:
+      - automattic/nvm#0.6.0
+    command: .buildkite/commands/publish-desktop-release.sh
     artifact_paths:
       - desktop/release/*
       - desktop/CHANGELOG.md
