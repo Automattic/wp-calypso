@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
 import { Onboard } from '@automattic/data-stores';
 import {
 	addProductsToCart,
@@ -20,6 +21,8 @@ import {
 	clearSignupCompleteSiteID,
 	clearSignupCompleteSlug,
 	clearSignupDestinationCookie,
+	getSignupCompleteSiteID,
+	getSignupCompleteSlug,
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 	setSignupCompleteSiteID,
@@ -33,7 +36,7 @@ import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
-import type { OnboardActions } from '@automattic/data-stores';
+import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 
 const SiteIntent = Onboard.SiteIntent;
 const deletePage = async ( siteId: string | number, pageId: number ): Promise< boolean > => {
@@ -146,10 +149,11 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 			setSiteUrl,
 			setSignupDomainOrigin,
 		} = useWpDataDispatch( ONBOARD_STORE ) as OnboardActions;
-		const { gardenName } = useSelect(
+		const { gardenName, planCartItem } = useSelect(
 			( select ) => ( {
 				gardenName: ( select( ONBOARD_STORE ) as any ).getGardenName(),
 				gardenPartnerName: ( select( ONBOARD_STORE ) as any ).getGardenPartnerName(),
+				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 			} ),
 			[]
 		);
@@ -284,7 +288,10 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 					}
 
 					if ( providedDependencies.siteCreated ) {
-						const { siteSlug, siteId } = providedDependencies;
+						// The "manage site" re-entry path (browser back from checkout) returns siteSlug
+						// but not siteId, so fall back to the values persisted at checkout setup.
+						const siteId = providedDependencies.siteId || getSignupCompleteSiteID();
+						const siteSlug = providedDependencies.siteSlug || getSignupCompleteSlug();
 						// We are setting up big sky now.
 						if ( ! siteId || ! siteSlug ) {
 							return;
@@ -322,14 +329,28 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 								checkout: 'cancel',
 							} );
 
-							persistSignupDestination( specDestination );
+							// Business and Commerce purchases trigger an Atomic transfer. Wait for it to
+							// finish (via transferring-hosted-site) before handing off to Big Sky, so the
+							// user doesn't land in wp-admin while the site is still transferring. Simple
+							// plans (Personal/Premium) go straight to the Site Spec.
+							const planSlug = planCartItem?.product_slug ?? '';
+							const redirectAfterCheckout =
+								isBusinessPlan( planSlug ) || isEcommercePlan( planSlug )
+									? addQueryArgs( '/setup/transferring-hosted-site', {
+											siteId: String( siteId ),
+											siteSlug,
+											redirect_to: specDestination,
+									  } )
+									: specDestination;
+
+							persistSignupDestination( redirectAfterCheckout );
 							setSignupCompleteSlug( siteSlug );
 							setSignupCompleteSiteID( String( siteId ) );
 							setSignupCompleteFlowName( AI_SITE_BUILDER_FLOW );
 
 							window.location.assign(
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-									redirect_to: specDestination,
+									redirect_to: redirectAfterCheckout,
 									checkoutBackUrl,
 									signup: 1,
 									'big-sky-checkout': 1,
