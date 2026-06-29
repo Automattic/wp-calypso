@@ -69,7 +69,7 @@ export default function SecurityLegacyContactPrint() {
 						<LegacyContactDetails legacyContactId={ contact.legacy_contact_id } />
 					) : (
 						<VStack spacing={ 4 } alignment="flex-start">
-							<Text>{ __( "You don't have a legacy contact set up yet." ) }</Text>
+							<Text>{ __( 'You don’t have a legacy contact set up yet.' ) }</Text>
 							<ButtonStack justify="flex-start">
 								<RouterLinkButton variant="primary" to="/me/security/legacy-contact">
 									{ __( 'Back to legacy contact' ) }
