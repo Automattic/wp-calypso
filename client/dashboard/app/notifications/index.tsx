@@ -72,9 +72,11 @@ export default function Notifications( {
 		let unsubscribe: ( () => void ) | undefined;
 		let cancelled = false;
 		import( '@automattic/notifications/src/app/unseen-notifications' ).then(
-			( { subscribeUnseenNotifications } ) => {
+			( { subscribeUnseenCount } ) => {
 				if ( ! cancelled ) {
-					unsubscribe = subscribeUnseenNotifications( setHasUnseenNotifications );
+					unsubscribe = subscribeUnseenCount( wpcom, ( count ) =>
+						setHasUnseenNotifications( count > 0 )
+					);
 				}
 			}
 		);

@@ -12,7 +12,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { subscribeUnseenNotifications } from '@automattic/notifications/src/app/unseen-notifications';
+import { subscribeUnseenCount } from '@automattic/notifications/src/app/unseen-notifications';
 import { Dropdown } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import clsx from 'clsx';
@@ -122,7 +122,7 @@ const RedesignedNotifications = ( {
 		if ( isDedicatedReaderPage || isShowing ) {
 			return;
 		}
-		return subscribeUnseenNotifications( ( hasUnseen ) => updateUnseenCount( hasUnseen ? 1 : 0 ) );
+		return subscribeUnseenCount( wpcom, ( count ) => updateUnseenCount( count ) );
 	}, [ isDedicatedReaderPage, isShowing, updateUnseenCount ] );
 
 	// Resolve the bell at measurement time: the masterbar remounts it when
