@@ -5,7 +5,7 @@ const path = require( 'path' );
 
 // Module Constants
 const gitHubRepository = 'Automattic/wp-desktop';
-const gitHubToken = process.env.WP_DESKTOP_SECRET;
+const gitHubToken = process.env.GITHUB_TOKEN;
 const version = process.env.VERSION
 	? process.env.VERSION.replace( /^desktop-/, '' )
 	: ( function () {
@@ -17,7 +17,7 @@ const changelogPath = path.resolve( __dirname, '..', '..', 'CHANGELOG.md' );
 
 function assertToken() {
 	if ( ! gitHubToken ) {
-		throw new Error( 'Error: no WP_DESKTOP_SECRET' );
+		throw new Error( 'Error: no GITHUB_TOKEN' );
 	}
 }
 

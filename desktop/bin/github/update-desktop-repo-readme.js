@@ -23,7 +23,7 @@ async function request( method = 'GET', postData ) {
 		headers: {
 			'User-Agent': 'wp-desktop',
 			Accept: 'application/json',
-			Authorization: 'token ' + process.env.WP_DESKTOP_SECRET,
+			Authorization: 'token ' + process.env.GITHUB_TOKEN,
 		},
 	};
 
