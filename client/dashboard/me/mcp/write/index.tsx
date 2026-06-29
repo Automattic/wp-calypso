@@ -212,7 +212,7 @@ export default function McpWrite() {
 												/>
 												<Button
 													icon={ isOpen ? chevronUp : chevronDown }
-													label={ __( 'Show operations' ) }
+													label={ isOpen ? __( 'Hide operations' ) : __( 'Show operations' ) }
 													aria-expanded={ isOpen }
 													onClick={ () => toggleGroupOpen( groupKey ) }
 												/>
@@ -232,7 +232,7 @@ export default function McpWrite() {
 													</VStack>
 													<Button
 														icon={ isOpen ? chevronUp : chevronDown }
-														label={ __( 'Show operations' ) }
+														label={ isOpen ? __( 'Hide operations' ) : __( 'Show operations' ) }
 														aria-expanded={ isOpen }
 														onClick={ () => toggleGroupOpen( groupKey ) }
 													/>

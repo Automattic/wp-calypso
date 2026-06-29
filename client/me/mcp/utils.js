@@ -72,23 +72,11 @@ export function getSiteAccountToolsEnabled( userSettings, siteId ) {
 	return true;
 }
 
-/**
- * Get the ordered group descriptors from user settings (AIINT-469/472).
- * Each ability carries a `group` slug matching one of these descriptor `name` values.
- * @param {Object} userSettings - The user settings object
- * @returns {Array<{name: string, label: string, description: string, order: number}>}
- */
 export function getGroupDescriptors( userSettings ) {
 	const groups = userSettings?.mcp_abilities?.groups ?? [];
 	return [ ...groups ].sort( ( a, b ) => a.order - b.order );
 }
 
-/**
- * Get the account-level group "enable all" intents (AIINT-471).
- * Keys are `read`, `write`, or a compound `"{read|write}:{groupName}"` slug.
- * @param {Object} userSettings - The user settings object
- * @returns {Record<string, boolean>}
- */
 export function getGroupIntents( userSettings ) {
 	return userSettings?.mcp_abilities?.group_intents ?? {};
 }
