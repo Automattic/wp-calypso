@@ -82,9 +82,9 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	// never bound and scroll-driven loading stays dead until the list
 	// remounts (e.g. on a tab switch). Defer mounting DataViews until the
 	// first load settles so it always mounts with the container present.
-	const hasRenderedDataViews = useRef( false );
+	const hasInitiallyLoaded = useRef( false );
 	if ( ! isLoading ) {
-		hasRenderedDataViews.current = true;
+		hasInitiallyLoaded.current = true;
 	}
 
 	// Drive the client's server-side filter from the active tab. Only "unread"
@@ -177,57 +177,72 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	useNoteListFocusToLastSelectedNote( { noteListRef, notes } );
 	useNoteListNavigationKeyboardShortcuts( { noteListRef, visibleNotes } );
 
-	// Loader only until DataViews first mounts, then never again: it binds its
-	// scroll listener once, on mount, only if the container exists, so a remount
-	// mid-load leaves scrolling dead. In-flight loading uses the `empty` slot.
-	const showInitialLoader = ! hasRenderedDataViews.current;
-
 	// Spinner instead of an empty message while the view may still be filling: more
 	// cache pages to search, or the Unread fetch in flight. Unread keys off the
 	// in-flight filter, not the shared `isLoading` the background poll also toggles.
 	const showEmptyLoader = hasMoreNotes || ( filterName === 'unread' && !! filteredLoading?.unread );
 
-	return (
-		<div ref={ noteListRef } className="wpnc__note-list">
-			{ ! showInitialLoader ? (
-				<DataViews< Note >
-					data={ data }
-					fields={ fields }
-					view={ view }
-					isLoading={ isLoading }
-					defaultLayouts={ DEFAULT_LAYOUTS }
-					paginationInfo={ effectivePaginationInfo }
-					empty={
-						// Spinner while still filling; the real message once settled.
-						showEmptyLoader ? (
-							<VStack alignment="center" style={ { padding: '40px 0' } }>
-								<Spinner />
-							</VStack>
-						) : (
-							<VStack alignment="center">
-								<Text size={ 15 } weight={ 500 }>
-									{ filter.emptyMessage }
-								</Text>
-								<ExternalLink href={ filter.emptyLink }>{ filter.emptyLinkMessage }</ExternalLink>
-							</VStack>
-						)
-					}
-					getItemId={ ( item ) => item.id.toString() }
-					// Keep selection empty so DataViews applies none of its own selected-row
-					// styling; the open note is highlighted via our `is-active` marker
-					// instead. `onChangeSelection` is still the list layout's only row-click
-					// hook, so it stays — it's what opens the note.
-					selection={ NO_SELECTION }
-					onChangeView={ handleChangeView }
-					onChangeSelection={ onChangeSelection }
-				>
-					<DataViews.Layout />
-				</DataViews>
-			) : (
+	// `groupBy` forces DataViews' list layout off its infinite-scroll path, which
+	// is the only path that renders its built-in load-more spinner — so we render
+	// our own at the foot of the list while a page is in flight over an
+	// already-populated list. An empty list uses the `empty` slot above instead.
+	const showLoadMore = isLoading && data.length > 0;
+
+	// Loader only until DataViews first mounts, then never again: it binds its
+	// scroll listener once, on mount, only if the container exists, so a remount
+	// mid-load leaves scrolling dead. In-flight loading uses the `empty` slot.
+	if ( ! hasInitiallyLoaded.current ) {
+		return (
+			<div ref={ noteListRef } className="wpnc__note-list">
 				<VStack alignment="center" style={ { padding: '40px 0' } }>
 					<Spinner />
 				</VStack>
-			) }
+			</div>
+		);
+	}
+
+	return (
+		<div ref={ noteListRef } className="wpnc__note-list">
+			<DataViews< Note >
+				data={ data }
+				fields={ fields }
+				view={ view }
+				isLoading={ isLoading }
+				defaultLayouts={ DEFAULT_LAYOUTS }
+				paginationInfo={ effectivePaginationInfo }
+				empty={
+					// Spinner while still filling; the real message once settled.
+					showEmptyLoader ? (
+						<VStack alignment="center" style={ { padding: '40px 0' } }>
+							<Spinner />
+						</VStack>
+					) : (
+						<VStack alignment="center">
+							<Text size={ 15 } weight={ 500 }>
+								{ filter.emptyMessage }
+							</Text>
+							<ExternalLink href={ filter.emptyLink }>{ filter.emptyLinkMessage }</ExternalLink>
+						</VStack>
+					)
+				}
+				getItemId={ ( item ) => item.id.toString() }
+				// Keep selection empty so DataViews applies none of its own selected-row
+				// styling; the open note is highlighted via our `is-active` marker
+				// instead. `onChangeSelection` is still the list layout's only row-click
+				// hook, so it stays — it's what opens the note.
+				selection={ NO_SELECTION }
+				onChangeView={ handleChangeView }
+				onChangeSelection={ onChangeSelection }
+			>
+				<DataViews.Layout />
+				{ showLoadMore && (
+					// DataViews suppresses its own load-more spinner when notes are
+					// grouped, so this stands in for it, pinned below the list rows.
+					<VStack alignment="center" style={ { flexShrink: 0, padding: '12px 0' } }>
+						<Spinner />
+					</VStack>
+				) }
+			</DataViews>
 		</div>
 	);
 };
