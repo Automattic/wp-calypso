@@ -5,6 +5,11 @@ import { screen, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import LostPasswordForm from 'calypso/blocks/login/lost-password-form';
 
+let mockBlackboxSessionId;
+jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
+	getBlackboxSessionId: jest.fn( () => Promise.resolve( mockBlackboxSessionId ) ),
+} ) );
+
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useDispatch: jest.fn().mockImplementation( () => {} ),
@@ -22,6 +27,7 @@ Object.defineProperty( window, 'location', {
 describe( 'LostPasswordForm', () => {
 	afterEach( () => {
 		mockFetch.mockClear();
+		mockBlackboxSessionId = undefined;
 	} );
 
 	test( 'displays a lost password form without errors', () => {
@@ -164,6 +170,48 @@ describe( 'LostPasswordForm', () => {
 		// eslint-disable-next-line no-bitwise
 		const isFollowing = btn.compareDocumentPosition( helpLink ) & Node.DOCUMENT_POSITION_FOLLOWING;
 		expect( isFollowing ).toBeTruthy();
+	} );
+
+	test( 'attaches blackbox_session_id to the reset request when an ID is available', async () => {
+		mockBlackboxSessionId = 'session-123';
+		mockFetch.mockResolvedValueOnce( {
+			ok: true,
+			status: 200,
+			text: jest.fn().mockResolvedValue( 'ok' ),
+		} );
+
+		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
+
+		await userEvent.type(
+			screen.getByRole( 'textbox', { name: 'Email address or username' } ),
+			'user@example.com'
+		);
+		await userEvent.click( screen.getByRole( 'button', { name: /Reset my password/i } ) );
+
+		await waitFor( () => expect( mockFetch ).toHaveBeenCalled() );
+		const body = mockFetch.mock.calls[ 0 ][ 1 ].body;
+		expect( body.get( 'blackbox_session_id' ) ).toBe( 'session-123' );
+	} );
+
+	test( 'omits blackbox_session_id when no ID is available', async () => {
+		mockBlackboxSessionId = undefined;
+		mockFetch.mockResolvedValueOnce( {
+			ok: true,
+			status: 200,
+			text: jest.fn().mockResolvedValue( 'ok' ),
+		} );
+
+		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
+
+		await userEvent.type(
+			screen.getByRole( 'textbox', { name: 'Email address or username' } ),
+			'user@example.com'
+		);
+		await userEvent.click( screen.getByRole( 'button', { name: /Reset my password/i } ) );
+
+		await waitFor( () => expect( mockFetch ).toHaveBeenCalled() );
+		const body = mockFetch.mock.calls[ 0 ][ 1 ].body;
+		expect( body.get( 'blackbox_session_id' ) ).toBeNull();
 	} );
 
 	test( 'handles error messages coming from /wp-login.php?action=lostpassword', async () => {

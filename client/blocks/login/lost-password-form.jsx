@@ -4,6 +4,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, Spinner, ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useEffect } from 'react';
+import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { login } from 'calypso/lib/paths';
 import { useDispatch } from 'calypso/state';
@@ -63,6 +64,11 @@ const LostPasswordForm = ( {
 	const lostPasswordRequest = async () => {
 		const formData = new FormData();
 		formData.set( 'user_login', userLogin );
+
+		const blackboxSessionId = await getBlackboxSessionId();
+		if ( blackboxSessionId ) {
+			formData.set( 'blackbox_session_id', blackboxSessionId );
+		}
 
 		const origin = typeof window !== 'undefined' ? window.location.origin : '';
 		const resp = await window.fetch( `${ origin }/wp-login.php?action=lostpassword`, {
