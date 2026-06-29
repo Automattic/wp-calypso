@@ -28,8 +28,10 @@ body.is-mobile-app-view {
 	--masterbar-height: 0px;
 }
 
-// MSD cohort: recolor the masterbar to match the dashboard omnibar palette.
-.masterbar.is-dashboard-opt-in {
+// In the Reader, recolor the masterbar to the dashboard omnibar palette for
+// opted-in users. Scoped to the Reader so the old Calypso /sites dashboard stays
+// untouched for everyone during the MSD rollout.
+.is-group-reader .masterbar.is-dashboard-opt-in {
 	--color-masterbar-background: #1e1e1e;
 	--color-masterbar-border: #1e1e1e;
 	--color-masterbar-text: var(--studio-white);
@@ -39,11 +41,11 @@ body.is-mobile-app-view {
 	--color-masterbar-item-active-background: #0c0c0c;
 	--color-masterbar-submenu-group-background: #1e1e1e;
 	--color-masterbar-submenu-text: #bcbcbc;
-	--color-masterbar-submenu-hover-text: var(--studio-white);
+	--color-masterbar-submenu-hover-text: var(--color-masterbar-highlight);
 	// The global-sidebar context defines these submenu vars (to white), so the
 	// fallbacks above never apply — override them directly.
 	--color-global-masterbar-submenu-background: #0c0c0c;
-	--color-global-masterbar-submenu-hover-background: #2c2c2c;
+	--color-global-masterbar-submenu-hover-background: transparent;
 	--color-global-masterbar-site-info-background: #0c0c0c;
 	--color-global-masterbar-site-info-badge-background: rgba(255, 255, 255, 0.1);
 	--color-global-masterbar-site-info-badge-color: var(--studio-white);
