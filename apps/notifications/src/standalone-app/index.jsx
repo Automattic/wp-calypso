@@ -191,6 +191,14 @@ const NotesWrapper = ( { wpcom } ) => {
 		sendMessage( { action: 'widescreen', widescreen: true } );
 	}, [] );
 
+	// Don't render the app while the panel is closed: unmounting and remounting
+	// on reopen mounts a fresh tree, which clears any error caught by the app's
+	// boundary. NotesWrapper stays mounted so it keeps handling host messages and
+	// can render the app again on the next open.
+	if ( ! isShowing ) {
+		return null;
+	}
+
 	return (
 		<NotificationApp
 			customEnhancer={ customEnhancer }
