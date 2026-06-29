@@ -15,7 +15,7 @@ import {
 	RestAPIClient,
 	PostResponse,
 } from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
+import { Page, Browser, Frame } from 'playwright';
 
 declare const browser: Browser;
 
@@ -24,8 +24,20 @@ declare const browser: Browser;
 type LikeProbeData = {
 	console: { type: string; text: string }[];
 	pageErrors: string[];
-	responses: { url: string; status: number }[];
-	requestFailures: { url: string; failure: string | null }[];
+	responses: { url: string; status: number; frame: string }[];
+	requestFailures: {
+		url: string;
+		failure: string | null;
+		frame: string;
+		method: string;
+		resourceType: string;
+		origin: string | undefined;
+		hasCookie: boolean;
+	}[];
+	// Low-level network failures from CDP, including the cross-origin rest-proxy
+	// iframe (an OOPIF), which page-level events report only as net::ERR_FAILED.
+	// Carries blockedReason / corsErrorStatus that name the real transport block.
+	cdp: Record< string, unknown >[];
 };
 
 /**
@@ -83,6 +95,7 @@ async function logLikeWidgetProbe( page: Page, probe: LikeProbeData ): Promise< 
 				pageErrors: probe.pageErrors.slice( -20 ),
 				responses: probe.responses.slice( -40 ),
 				requestFailures: probe.requestFailures.slice( -40 ),
+				cdp: probe.cdp.slice( -40 ),
 			} )
 	);
 }
@@ -151,8 +164,16 @@ describe( 'Likes: Post', function () {
 				pageErrors: [],
 				responses: [],
 				requestFailures: [],
+				cdp: [],
 			};
-			const widgetUrl = /widgets\.wp\.com|\/likes|like\.php/i;
+			const widgetUrl = /widgets\.wp\.com|\/likes|like\.php|\/rest\/v1\/batch/i;
+			const frameUrl = ( r: { frame: () => Frame } ) => {
+				try {
+					return r.frame().url();
+				} catch {
+					return '(detached)';
+				}
+			};
 			page.on( 'console', ( msg ) => {
 				if ( msg.type() === 'error' || msg.type() === 'warning' ) {
 					probe.console.push( { type: msg.type(), text: msg.text().slice( 0, 300 ) } );
@@ -161,17 +182,96 @@ describe( 'Likes: Post', function () {
 			page.on( 'pageerror', ( err ) => probe.pageErrors.push( String( err ).slice( 0, 300 ) ) );
 			page.on( 'response', ( res ) => {
 				if ( widgetUrl.test( res.url() ) ) {
-					probe.responses.push( { url: res.url(), status: res.status() } );
+					probe.responses.push( {
+						url: res.url(),
+						status: res.status(),
+						frame: frameUrl( res.request() ),
+					} );
 				}
 			} );
 			page.on( 'requestfailed', ( req ) => {
 				if ( widgetUrl.test( req.url() ) ) {
+					const headers = req.headers();
 					probe.requestFailures.push( {
 						url: req.url(),
 						failure: req.failure()?.errorText ?? null,
+						frame: frameUrl( req ),
+						method: req.method(),
+						resourceType: req.resourceType(),
+						origin: headers.origin,
+						hasCookie: Boolean( headers.cookie ),
 					} );
 				}
 			} );
+
+			// Attach a CDP Network probe per frame to recover the transport-level
+			// block reason behind net::ERR_FAILED. Needed because the authenticated
+			// batch travels through the cross-origin public-api.wordpress.com proxy
+			// iframe, an OOPIF whose network events page-level listeners do not see.
+			// Fully guarded: any CDP failure is swallowed and never affects the test.
+			// ponytail: first-request-per-frame may race the attach; reloadAndRetry
+			// reloads several times, so a later attempt catches it.
+			const cdpReqUrl = new Map< string, string >();
+			const attachNetworkProbe = async ( target: Page | Frame ) => {
+				try {
+					const cdp = await page.context().newCDPSession( target );
+					await cdp.send( 'Network.enable' );
+					cdp.on(
+						'Network.requestWillBeSent',
+						( e: { requestId: string; request: { url: string } } ) => {
+							if ( widgetUrl.test( e.request.url ) ) {
+								cdpReqUrl.set( e.requestId, e.request.url );
+							}
+						}
+					);
+					cdp.on(
+						'Network.loadingFailed',
+						( e: {
+							requestId: string;
+							type?: string;
+							errorText?: string;
+							blockedReason?: string;
+							corsErrorStatus?: { corsError?: string };
+						} ) => {
+							const url = cdpReqUrl.get( e.requestId );
+							if ( ! url ) {
+								return;
+							}
+							probe.cdp.push( {
+								event: 'loadingFailed',
+								url,
+								type: e.type,
+								errorText: e.errorText,
+								blockedReason: e.blockedReason,
+								corsError: e.corsErrorStatus?.corsError,
+							} );
+						}
+					);
+					cdp.on(
+						'Network.responseReceivedExtraInfo',
+						( e: { requestId: string; blockedCookies?: unknown[] } ) => {
+							const url = cdpReqUrl.get( e.requestId );
+							if ( url && e.blockedCookies?.length ) {
+								probe.cdp.push( {
+									event: 'blockedCookies',
+									url,
+									blockedCookies: e.blockedCookies,
+								} );
+							}
+						}
+					);
+				} catch {
+					// Non-Chromium, or frame detached/cross-process at attach time; skip.
+				}
+			};
+			await attachNetworkProbe( page );
+			page.on( 'frameattached', ( frame ) => void attachNetworkProbe( frame ) );
+			await Promise.all(
+				page
+					.frames()
+					.filter( ( frame ) => frame !== page.mainFrame() )
+					.map( ( frame ) => attachNetworkProbe( frame ) )
+			);
 
 			await ElementHelper.reloadAndRetry( page, async () => {
 				// Reset like state via REST API before each attempt.
