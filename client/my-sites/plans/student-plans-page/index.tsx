@@ -9,14 +9,23 @@ import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 
 import './style.scss';
 
+// Students can only upgrade to yearly terms; the student plan itself is annual-only.
+const UPGRADE_INTERVALS = [ 'yearly', '2yearly', '3yearly' ] as const;
+type UpgradeInterval = ( typeof UPGRADE_INTERVALS )[ number ];
+
 interface StudentPlansPageProps {
 	currentPlan: SitePlan;
 	selectedSite: SiteDetails;
+	intervalType?: string;
 }
 
-const StudentPlansPage = ( { currentPlan, selectedSite }: StudentPlansPageProps ) => {
+const StudentPlansPage = ( { currentPlan, selectedSite, intervalType }: StudentPlansPageProps ) => {
 	const translate = useTranslate();
 	const studentPlan = getPlan( PLAN_STUDENT );
+
+	const selectedInterval = UPGRADE_INTERVALS.includes( intervalType as UpgradeInterval )
+		? ( intervalType as UpgradeInterval )
+		: 'yearly';
 
 	// The current plan's pricing comes from the site's plans (it is not a publicly-priced catalog plan).
 	const annualPlanPrice = currentPlan?.pricing?.originalPrice?.full ?? 0;
@@ -75,9 +84,10 @@ const StudentPlansPage = ( { currentPlan, selectedSite }: StudentPlansPageProps 
 			<div className="student-plans-page__grid is-2023-pricing-grid">
 				<PlansFeaturesMain
 					siteId={ selectedSite.ID }
-					intervalType="yearly"
+					intervalType={ selectedInterval }
 					intent="plans-student"
-					hidePlanTypeSelector
+					displayedIntervals={ [ ...UPGRADE_INTERVALS ] }
+					showPlanTypeSelectorDropdown
 					hideUnavailableFeatures
 					hidePlansFeatureComparison
 				/>

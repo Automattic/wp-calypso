@@ -267,13 +267,19 @@ class PlansComponent extends Component {
 	}
 
 	renderStudentPlansPage() {
-		const { currentPlan, selectedSite } = this.props;
+		const { currentPlan, selectedSite, intervalType } = this.props;
 
 		if ( ! selectedSite ) {
 			return this.renderPlaceholder();
 		}
 
-		return <StudentPlansPage currentPlan={ currentPlan } selectedSite={ selectedSite } />;
+		return (
+			<StudentPlansPage
+				currentPlan={ currentPlan }
+				selectedSite={ selectedSite }
+				intervalType={ intervalType }
+			/>
+		);
 	}
 
 	renderMainContent( {
