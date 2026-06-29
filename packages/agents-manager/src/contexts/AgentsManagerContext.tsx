@@ -34,6 +34,8 @@ export interface AgentsManagerContextType {
 	zendeskConversationTags: string[];
 	/** Index selecting a dedicated Smooch integration for new support conversations (e.g. `woo`). */
 	zendeskSmoochIntegrationKey?: string;
+	/** Zendesk Product ticket-field value to apply to new support conversations. */
+	zendeskTicketProductFieldValue?: string;
 	/** The agent configuration created during setup. */
 	agentConfig: UseAgentChatConfig | null;
 	/** Sets the agent configuration (called from `AgentSetup` after initialization). */
@@ -72,6 +74,7 @@ export interface AgentsManagerContextProviderProps {
 			| 'isEligibleForChat'
 			| 'zendeskConversationTags'
 			| 'zendeskSmoochIntegrationKey'
+			| 'zendeskTicketProductFieldValue'
 		>
 	> & { sectionName: string; siteKey: string };
 }

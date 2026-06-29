@@ -13,6 +13,7 @@ export default function AgentsManagerWithProvider( {
 	useImageUpload,
 	zendeskConversationTags = EMPTY_ARRAY,
 	zendeskSmoochIntegrationKey,
+	zendeskTicketProductFieldValue,
 } ) {
 	return (
 		<QueryClientProvider client={ queryClient }>
@@ -24,6 +25,7 @@ export default function AgentsManagerWithProvider( {
 				useImageUpload={ useImageUpload }
 				zendeskConversationTags={ zendeskConversationTags }
 				zendeskSmoochIntegrationKey={ zendeskSmoochIntegrationKey }
+				zendeskTicketProductFieldValue={ zendeskTicketProductFieldValue }
 			/>
 		</QueryClientProvider>
 	);

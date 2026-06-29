@@ -103,9 +103,20 @@ const smooch = Smooch as unknown as {
 function renderUseManagedZendeskChat( {
 	conversationId,
 	conversationTags = [],
+	conversationTicketFields,
+	startedFromAiChatId,
+	startedFromChatSessionId,
+	startedFromMessageId,
 }: {
 	conversationId?: string;
 	conversationTags?: string[];
+	conversationTicketFields?: Record<
+		string | number,
+		string | number | boolean | null | undefined
+	>;
+	startedFromAiChatId?: number;
+	startedFromChatSessionId?: string;
+	startedFromMessageId?: string;
 } ) {
 	const queryClient = new QueryClient( {
 		defaultOptions: {
@@ -115,16 +126,25 @@ function renderUseManagedZendeskChat( {
 
 	const initialEntry = {
 		pathname: '/zendesk',
-		state: conversationId ? { conversationId } : undefined,
+		state: conversationId
+			? { conversationId }
+			: {
+					startedFromAiChatId,
+					startedFromChatSessionId,
+					startedFromMessageId,
+			  },
 	};
 
-	return renderHook( () => useManagedZendeskChat( { conversationTags } ), {
-		wrapper: ( { children } ) => (
-			<QueryClientProvider client={ queryClient }>
-				<MemoryRouter initialEntries={ [ initialEntry ] }>{ children }</MemoryRouter>
-			</QueryClientProvider>
-		),
-	} );
+	return renderHook(
+		() => useManagedZendeskChat( { conversationTags, conversationTicketFields } ),
+		{
+			wrapper: ( { children } ) => (
+				<QueryClientProvider client={ queryClient }>
+					<MemoryRouter initialEntries={ [ initialEntry ] }>{ children }</MemoryRouter>
+				</QueryClientProvider>
+			),
+		}
+	);
 }
 
 describe( 'useManagedZendeskChat', () => {
@@ -146,6 +166,60 @@ describe( 'useManagedZendeskChat', () => {
 			expect.objectContaining( {
 				metadata: expect.objectContaining( {
 					'zen:ticket:tags': 'woo_support_flow_ai_plugin',
+				} ),
+			} )
+		);
+	} );
+
+	it( 'passes ticket fields as metadata when creating a new conversation', async () => {
+		renderUseManagedZendeskChat( {
+			conversationTicketFields: {
+				22054927: 'https://example.com',
+				25254766: 'woocommerce_core_product',
+			},
+			startedFromAiChatId: 5587242,
+			startedFromChatSessionId: 'session-123',
+			startedFromMessageId: 'message-123',
+		} );
+
+		await waitFor( () => expect( smooch.createConversation ).toHaveBeenCalled() );
+
+		expect( smooch.createConversation ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				metadata: expect.objectContaining( {
+					'zen:ticket_field:22054927': 'https://example.com',
+					'zen:ticket_field:25254766': 'woocommerce_core_product',
+					'zen:ticket_field:48091595802388': 'message-123',
+					'zen:ticket_field:33538949515668': '5587242',
+					chat_session_id: 'session-123',
+					message_id: 'message-123',
+				} ),
+			} )
+		);
+	} );
+
+	it( 'does not pass the AI chat ticket field when no numeric AI chat id is available', async () => {
+		renderUseManagedZendeskChat( {
+			conversationTicketFields: {
+				22054927: 'https://example.com',
+			},
+			startedFromChatSessionId: 'session-123',
+			startedFromMessageId: 'message-123',
+		} );
+
+		await waitFor( () => expect( smooch.createConversation ).toHaveBeenCalled() );
+
+		expect( smooch.createConversation ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				metadata: expect.not.objectContaining( {
+					'zen:ticket_field:33538949515668': expect.anything(),
+				} ),
+			} )
+		);
+		expect( smooch.createConversation ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				metadata: expect.objectContaining( {
+					chat_session_id: 'session-123',
 				} ),
 			} )
 		);
