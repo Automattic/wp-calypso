@@ -469,7 +469,7 @@ export class Notifications extends Component {
 					locale={ localeSlug }
 					actionHandlers={ this.actionHandlers }
 					closePanel={ this.closePanel }
-					setUnseenCount={ this.props.setUnseenCount }
+					updateUnseenCount={ this.props.setUnseenCount }
 				/>
 			);
 
