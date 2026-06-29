@@ -133,6 +133,13 @@ body.is-section-reader {
 
 :root .theme-default .is-section-reader .global-sidebar {
 	.sidebar__menu {
+
+		.sidebar__expandable-title {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
 		.sidebar__expandable-content {
 			padding: 0;
 			margin: 0;
@@ -195,7 +202,7 @@ body.is-section-reader {
 	.sidebar__menu .a8c-count {
 		position: relative;
 		flex-shrink: 0;
-		top: 0;
+		top: 1px;
 		font-size: 0.67rem; /* stylelint-disable-line scales/font-sizes */
 		font-weight: normal;
 		box-sizing: border-box;
@@ -209,6 +216,7 @@ body.is-section-reader {
 		color: currentColor;
 		justify-self: end;
 		align-self: self-start;
+		width: fit-content;
 	}
 
 	.sidebar__menu-link:hover .a8c-count {
@@ -344,7 +352,7 @@ body.is-section-reader {
 			align-items: center;
 			gap: 6px;
 			line-height: 1.5;
-			padding: 12px 10px 12px 18px;
+			padding: 12px 18px;
 			box-sizing: content-box;
 
 			&.view-more-link {
