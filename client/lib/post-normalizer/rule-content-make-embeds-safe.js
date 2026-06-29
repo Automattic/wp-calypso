@@ -1,5 +1,4 @@
 import { getUrlParts } from '@automattic/calypso-url';
-import { forEach } from 'lodash';
 import { iframeIsAllowed } from './utils';
 
 /**
@@ -29,7 +28,7 @@ export default function makeEmbedsSafe( post, dom ) {
 
 	const iframes = dom.querySelectorAll( 'iframe' );
 
-	forEach( iframes, function ( iframe ) {
+	Array.from( iframes ).forEach( function ( iframe ) {
 		if ( ! ( iframe.src ?? '' ).startsWith( 'http' ) ) {
 			iframe.parentNode.removeChild( iframe );
 			return;
@@ -49,7 +48,7 @@ export default function makeEmbedsSafe( post, dom ) {
 	if ( post.is_external || post.is_jetpack ) {
 		const embeds = dom.querySelectorAll( 'embed,object' );
 
-		forEach( embeds, function ( embed ) {
+		Array.from( embeds ).forEach( function ( embed ) {
 			embed.parentNode.removeChild( embed );
 		} );
 	}

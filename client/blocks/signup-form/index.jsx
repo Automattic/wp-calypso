@@ -5,7 +5,7 @@ import { Spinner } from '@wordpress/components';
 import clsx from 'clsx';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
-import { filter, forEach, map, merge, isEmpty } from 'lodash';
+import { filter, map, merge, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -288,7 +288,7 @@ class SignupForm extends Component {
 					messages = this.filterUntouchedFieldErrors( messages );
 				}
 
-				forEach( messages, ( fieldError, field ) => {
+				Object.entries( messages ).forEach( ( [ field, fieldError ] ) => {
 					if ( ! formState.isFieldInvalid( this.state.form, field ) ) {
 						return;
 					}

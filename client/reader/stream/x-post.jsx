@@ -4,7 +4,6 @@ import { uniqBy } from '@automattic/js-utils';
 import clsx from 'clsx';
 import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
-import { forEach } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -135,7 +134,7 @@ class CrossPost extends PureComponent {
 
 		// Add any other x-post URLs we know about
 		if ( postKey.xPostUrls ) {
-			forEach( postKey.xPostUrls, ( xPostUrl ) => {
+			postKey.xPostUrls.forEach( ( xPostUrl ) => {
 				xPostedToList.push( {
 					siteURL: xPostUrl,
 					siteName: this.getSiteNameFromURL( xPostUrl ),

@@ -1,13 +1,11 @@
 import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { decodeEntities } from '@wordpress/html-entities';
 import { __, sprintf } from '@wordpress/i18n';
 import { Card, CardBody } from '../../../components/card';
 import { Notice } from '../../../components/notice';
 import { SectionHeader } from '../../../components/section-header';
 import { Text } from '../../../components/text';
 import { TextBlur } from '../../../components/text-blur';
-import { isWebUrl } from '../../../utils/is-web-url';
 import { PluginTabs } from '../../plugin';
 import { usePlugin } from '../../plugin/use-plugin';
 import { getAllowedPluginActions } from '../../plugin/utils/get-allowed-plugin-actions';
@@ -59,24 +57,21 @@ export const PluginSites = ( { selectedPluginSlug }: { selectedPluginSlug: strin
 			return null;
 		}
 
-		const authorUrl =
-			'author_url' in plugin && isWebUrl( plugin.author_url ) ? plugin.author_url : null;
-
-		return authorUrl
+		return plugin.authorUrl
 			? createInterpolateElement(
 					sprintf(
 						// translators: author is the plugin author.
 						__( 'By <link>%(author)s</link>' ),
-						{ author: decodeEntities( plugin.author ) }
+						{ author: plugin.author }
 					),
 					{
-						link: <ExternalLink href={ authorUrl } children={ null } />,
+						link: <ExternalLink href={ plugin.authorUrl } children={ null } />,
 					}
 			  )
 			: sprintf(
 					// translators: author is the plugin author.
 					__( 'By %(author)s' ),
-					{ author: decodeEntities( plugin.author ) }
+					{ author: plugin.author }
 			  );
 	};
 

@@ -1,5 +1,5 @@
 import debugFactory from 'debug';
-import { forEach, map } from 'lodash';
+import { map } from 'lodash';
 import { deduceImageWidthAndHeight, thumbIsLikelyImage } from './utils';
 
 const debug = debugFactory( 'calypso:post-normalizer:wait-for-images-to-load' );
@@ -97,7 +97,9 @@ export default function waitForImagesToLoad( post ) {
 			checkAndRememberDimensions( null, post.featured_image );
 		}
 
-		forEach( post.content_images, ( image ) => checkAndRememberDimensions( image, image.src ) );
+		( post.content_images ?? [] ).forEach( ( image ) =>
+			checkAndRememberDimensions( image, image.src )
+		);
 
 		if ( imagesToCheck.length === 0 ) {
 			resolve( post );
