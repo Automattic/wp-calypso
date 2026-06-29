@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { AI_SITE_BUILDER_PAID_ONLY_FLAG } from 'calypso/landing/stepper/constants';
 
 /**
  * The Site Spec step (CIAB mode) re-enters the AI Site Builder flow with `create_garden_site` /
@@ -14,5 +13,5 @@ export function isCiabReentry( params: URLSearchParams ): boolean {
  * Whether this request should use the paid-only checkout flow rather than the legacy free flow.
  */
 export function isPaidOnlyEntry( params: URLSearchParams ): boolean {
-	return config.isEnabled( AI_SITE_BUILDER_PAID_ONLY_FLAG ) && ! isCiabReentry( params );
+	return config.isEnabled( 'onboarding/ai-site-builder-paid-only' ) && ! isCiabReentry( params );
 }

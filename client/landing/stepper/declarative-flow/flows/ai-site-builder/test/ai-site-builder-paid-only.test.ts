@@ -56,10 +56,6 @@ jest.mock( 'calypso/blocks/blog-stickers/use-add-blog-sticker-mutation', () => (
 	useAddBlogStickerMutation: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/constants', () => ( {
-	AI_SITE_BUILDER_PAID_ONLY_FLAG: 'onboarding/ai-site-builder-paid-only',
-} ) );
-
 jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
 	useQuery: jest.fn(),
 } ) );

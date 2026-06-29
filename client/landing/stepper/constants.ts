@@ -13,8 +13,6 @@ export const SITE_PICKER_FILTER_CONFIG = [ 'wpcom', 'atomic' ];
 
 export const WOO_HOSTING_SOLUTIONS_REF = 'woo-hosting-solutions-flow';
 
-export const AI_SITE_BUILDER_PAID_ONLY_FLAG = 'onboarding/ai-site-builder-paid-only';
-
 export const HOW_TO_MIGRATE_OPTIONS = {
 	DO_IT_FOR_ME: 'difm',
 	DO_IT_MYSELF: 'myself',
