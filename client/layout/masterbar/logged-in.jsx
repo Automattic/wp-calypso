@@ -269,7 +269,6 @@ class MasterbarLoggedIn extends Component {
 			translate,
 			section,
 			currentRoute,
-			isGlobalSidebarVisible,
 			siteAdminUrl,
 			dashboardOptIn,
 		} = this.props;
@@ -287,43 +286,38 @@ class MasterbarLoggedIn extends Component {
 			return <Item icon={ icon } className="masterbar__item-no-sites" disabled />;
 		}
 
-		// The global sidebar normally replaces the W-icon dropdown, so it's hidden
-		// there — except in the Reader, which keeps it to match the dashboard.
-		const subItems =
-			isGlobalSidebarVisible && section !== 'reader'
-				? null
+		const subItems = [
+			[
+				{
+					label: translate( 'Sites' ),
+					url: dashboardOptIn ? dashboardLink( '/sites' ) : '/sites',
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_sites_clicked' ),
+				},
+				{
+					label: translate( 'Domains' ),
+					url: dashboardOptIn ? dashboardLink( '/domains' ) : '/domains/manage',
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_domains_clicked' ),
+				},
+			],
+			...( this.props.isSimpleSite
+				? []
 				: [
 						[
 							{
-								label: translate( 'Sites' ),
-								url: dashboardOptIn ? dashboardLink( '/sites' ) : '/sites',
-								onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_sites_clicked' ),
+								label: translate( 'About WordPress' ),
+								url: `${ siteAdminUrl }about.php`,
+								onClick: () =>
+									this.props.recordTracksEvent( 'calypso_masterbar_about_wordpress_clicked' ),
 							},
 							{
-								label: translate( 'Domains' ),
-								url: dashboardOptIn ? dashboardLink( '/domains' ) : '/domains/manage',
-								onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_domains_clicked' ),
+								label: translate( 'Get Involved' ),
+								url: `${ siteAdminUrl }contribute.php`,
+								onClick: () =>
+									this.props.recordTracksEvent( 'calypso_masterbar_get_involved_clicked' ),
 							},
 						],
-						...( this.props.isSimpleSite
-							? []
-							: [
-									[
-										{
-											label: translate( 'About WordPress' ),
-											url: `${ siteAdminUrl }about.php`,
-											onClick: () =>
-												this.props.recordTracksEvent( 'calypso_masterbar_about_wordpress_clicked' ),
-										},
-										{
-											label: translate( 'Get Involved' ),
-											url: `${ siteAdminUrl }contribute.php`,
-											onClick: () =>
-												this.props.recordTracksEvent( 'calypso_masterbar_get_involved_clicked' ),
-										},
-									],
-							  ] ),
-				  ];
+				  ] ),
+		];
 
 		return (
 			<Item
