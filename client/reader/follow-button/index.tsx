@@ -14,6 +14,7 @@ import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 interface ReaderFollowButtonProps {
 	className?: string;
 	feedId?: number;
+	followApiSource?: string;
 	followSource?: string;
 	followIcon?: JSX.Element;
 	followingIcon?: JSX.Element;

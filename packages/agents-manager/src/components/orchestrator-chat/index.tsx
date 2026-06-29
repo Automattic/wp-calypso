@@ -1,11 +1,11 @@
-import { getAgentManager, useAgentChat } from '@automattic/agenttic-client';
+import { getAgentManager, useAgentChat, type UIMessage } from '@automattic/agenttic-client';
 import {
 	type Suggestion,
 	type MarkdownComponents,
 	type MarkdownExtensions,
 } from '@automattic/agenttic-ui';
 import { useSelect } from '@wordpress/data';
-import { useState, useCallback, useMemo, useEffect } from '@wordpress/element';
+import { useState, useCallback, useMemo, useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useNavigate } from 'react-router-dom';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
@@ -16,6 +16,7 @@ import useCheckpointAction from '../../hooks/use-checkpoint-action';
 import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
 import useFeedbackAction from '../../hooks/use-feedback-action';
+import useRegenerateAction from '../../hooks/use-regenerate-action';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
 import useSourcesAction from '../../hooks/use-sources-action';
 import useZoomAction from '../../hooks/use-zoom-action';
@@ -34,6 +35,7 @@ import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { getOrchestratorErrorMessage } from '../../utils/orchestrator-error-message';
 import { persistLastActivity } from '../../utils/persist-last-activity';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
+import { isShowComponentTool } from '../../utils/show-component-tools';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
@@ -46,7 +48,18 @@ import type {
 	SiteBuildUtils,
 	ImageUploadHook,
 	UseCheckpointHook,
+	ProviderCapabilities,
 } from '../../utils/load-external-providers';
+
+function getLatestAgentMessageId( messages: UIMessage[] ): string | null {
+	for ( let index = messages.length - 1; index >= 0; index-- ) {
+		if ( messages[ index ].role === 'agent' ) {
+			return messages[ index ].id;
+		}
+	}
+
+	return null;
+}
 
 /**
  * Pipe-delimited list of suggestion ids (e.g. `|id1|id2|`), matching Big Sky's
@@ -54,6 +67,65 @@ import type {
  */
 function formatSuggestionIds( suggestions: Suggestion[] ): string {
 	return '|' + suggestions.map( ( s ) => s.id ).join( '|' ) + '|';
+}
+
+function getToolMessageData( message: Pick< UIMessage, 'content' > ):
+	| {
+			toolId?: string;
+			toolCallId?: string;
+			componentType?: string;
+			summary?: string;
+	  }
+	| undefined {
+	const firstText = message.content?.[ 0 ]?.text;
+	if ( ! firstText ) {
+		return undefined;
+	}
+
+	try {
+		const parsed = JSON.parse( firstText );
+		return {
+			toolId: parsed?.tool_id,
+			toolCallId: parsed?.tool_call_id,
+			componentType: parsed?.data?.type,
+			summary: parsed?.data?.summary,
+		};
+	} catch ( _error ) {
+		return undefined;
+	}
+}
+
+function isShowComponentMessage( message: Pick< UIMessage, 'content' > ): boolean {
+	const toolData = getToolMessageData( message );
+	return isShowComponentTool( toolData?.toolId );
+}
+
+function getShowComponentIdentity( message: Pick< UIMessage, 'content' > ): string | undefined {
+	const toolData = getToolMessageData( message );
+	if ( ! toolData || ! isShowComponentTool( toolData.toolId ) ) {
+		return undefined;
+	}
+
+	return [ toolData.toolCallId, toolData.componentType, toolData.summary ]
+		.filter( Boolean )
+		.join( '|' );
+}
+
+function convertBigSkyMessageToUIMessage( message: BigSkyMessage ): UIMessage {
+	const uiMessage = {
+		// Keep Big Sky message properties without explicit mapping to keep linter happy.
+		// Big Sky messages sometimes have a `context` field used by the site build to
+		// show the progress indicator.
+		...message,
+		id: message.id,
+		role: message.role === 'assistant' ? 'agent' : 'user',
+		content: message.content,
+		timestamp: message.created_at ? message.created_at * 1000 : Date.now(),
+		archived: message.archived ?? false,
+		showIcon: message.showIcon ?? true,
+	} as UIMessage;
+
+	return uiMessage;
 }
 
 interface Props {
@@ -89,6 +161,8 @@ interface Props {
 	useImageUpload?: ImageUploadHook;
 	/** Hook for saving and restoring editor state so that AI actions can be undone. */
 	useCheckpoint?: UseCheckpointHook;
+	/** Optional capability flags declared by one or more loaded providers. */
+	capabilities?: ProviderCapabilities;
 	/** Called when the has-messages state changes. */
 	onHasMessagesChange: ( hasMessages: boolean ) => void;
 }
@@ -110,6 +184,7 @@ export default function OrchestratorChat( {
 	siteBuildUtils,
 	useImageUpload,
 	useCheckpoint,
+	capabilities,
 	onHasMessagesChange,
 }: Props ) {
 	const { agentConfig, getActiveSessionId, siteKey } = useAgentsManagerContext();
@@ -120,6 +195,10 @@ export default function OrchestratorChat( {
 	const [ thinkingMessage, setThinkingMessage ] = useState< string | null >( null );
 	const [ isBuildingSite, setIsBuildingSite ] = useState( false );
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
+	const [ retainedShowComponentMessages, setRetainedShowComponentMessages ] = useState<
+		Map< string, UIMessage >
+	>( new Map() );
+	const [ isRegenerating, setIsRegenerating ] = useState( false );
 	const [ hasUserSentMessage, setHasUserSentMessage ] = useState( false );
 	const currentPostId = useSelect( ( select ) => {
 		return ( select( 'core/editor' ) as { getCurrentPostId?: () => number } )?.getCurrentPostId?.();
@@ -137,8 +216,109 @@ export default function OrchestratorChat( {
 		clearSuggestions,
 		registerSuggestions,
 		registerMessageActions,
+		getRegenerateHandler,
 		progressMessage,
 	} = useAgentChat( agentConfig! );
+	const messagesRef = useRef( messages );
+	const previousMessagesRef = useRef( messages );
+	const showComponentOrderRef = useRef< Map< string, number > >( new Map() );
+	const nextShowComponentOrderRef = useRef( 0 );
+	const wasProcessingRef = useRef( isProcessing );
+	messagesRef.current = messages;
+
+	// A regeneration is finished once its streaming turn settles — either the new
+	// response arrives or an error restores the previous one. Re-enable component
+	// retention then so transient drops on later turns are covered again.
+	useEffect( () => {
+		const wasProcessing = wasProcessingRef.current;
+		wasProcessingRef.current = isProcessing;
+		if ( isRegenerating && wasProcessing && ! isProcessing ) {
+			setIsRegenerating( false );
+		}
+	}, [ isProcessing, isRegenerating ] );
+
+	// While a regeneration runs, the component being regenerated is deliberately
+	// dropped from the live messages (Agenttic sends `preserveUiOnlyMessages:
+	// false`), so retention must not resurrect the old picker as a stale copy.
+	const handleRegenerate = useCallback(
+		( message?: UIMessage ) => {
+			const handler = getRegenerateHandler?.( message );
+			if ( ! handler ) {
+				return handler;
+			}
+
+			return async () => {
+				setIsRegenerating( true );
+				// Drop any retained placeholders up front; the turn is being
+				// rewound, so a leftover picker would otherwise reappear once
+				// regeneration settles if the new response omits the component.
+				setRetainedShowComponentMessages( ( previousRetainedMessages ) =>
+					previousRetainedMessages.size > 0 ? new Map() : previousRetainedMessages
+				);
+				await handler();
+			};
+		},
+		[ getRegenerateHandler ]
+	);
+
+	const getShowComponentOrder = useCallback( ( message: UIMessage ): number | undefined => {
+		const identity = getShowComponentIdentity( message );
+		if ( ! identity ) {
+			return undefined;
+		}
+
+		const existingOrder = showComponentOrderRef.current.get( identity );
+		if ( existingOrder !== undefined ) {
+			return existingOrder;
+		}
+
+		const nextOrder = nextShowComponentOrderRef.current++;
+		showComponentOrderRef.current.set( identity, nextOrder );
+		return nextOrder;
+	}, [] );
+
+	useEffect( () => {
+		// While regenerating, the dropped component is being replaced, not lost —
+		// don't retain it. Keep the ref current so the next non-regenerating run
+		// compares against the post-regeneration messages.
+		if ( isRegenerating ) {
+			previousMessagesRef.current = messages;
+			return;
+		}
+
+		const previousMessages = previousMessagesRef.current;
+		messages.filter( isShowComponentMessage ).forEach( getShowComponentOrder );
+
+		const currentShowComponentIdentities = new Set(
+			messages.filter( isShowComponentMessage ).map( getShowComponentIdentity ).filter( Boolean )
+		);
+		const retainedCandidates = previousMessages.filter( ( previousMessage ) => {
+			const identity = getShowComponentIdentity( previousMessage );
+			return !! identity && ! currentShowComponentIdentities.has( identity );
+		} );
+
+		if ( retainedCandidates.length > 0 ) {
+			setRetainedShowComponentMessages( ( previousRetainedMessages ) => {
+				const nextRetainedMessages = new Map( previousRetainedMessages );
+				let changed = false;
+
+				for ( const message of retainedCandidates ) {
+					const identity = getShowComponentIdentity( message );
+					// One placeholder per identity, so a component that drops and
+					// returns refreshes in place instead of stacking another copy.
+					const retainedId = `retained-${ identity }`;
+					if ( ! nextRetainedMessages.has( retainedId ) ) {
+						nextRetainedMessages.set( retainedId, { ...message, id: retainedId } );
+						changed = true;
+					}
+				}
+
+				return changed ? nextRetainedMessages : previousRetainedMessages;
+			} );
+		}
+
+		previousMessagesRef.current = messages;
+	}, [ getShowComponentOrder, messages, isRegenerating ] );
 
 	// Reader-chat sessions are short (usually < 50 messages) — don't waste
 	// time paginating 10 pages deep. One page covers typical use.
@@ -218,6 +398,14 @@ export default function OrchestratorChat( {
 			registerMessageActions,
 			messages,
 		} );
+
+	// Add Agenttic's built-in regenerate action on agent messages for providers
+	// that opt in. Computed during render alongside copy/feedback so the icon
+	// appears in the same paint rather than a commit later.
+	const getRegenerateActionsForMessage = useRegenerateAction( {
+		enabled: capabilities?.supportsRegenerateAction === true,
+		getRegenerateHandler: handleRegenerate,
+	} );
 
 	// Add a "Copy" action on plain-text agent messages.
 	const getCopyActionsForMessage = useCopyAction();
@@ -421,19 +609,8 @@ export default function OrchestratorChat( {
 	// The hook is stable as `OrchestratorChat` only renders after external providers have been loaded.
 	useAbilitiesSetup?.( {
 		addMessage: ( message: BigSkyMessage ) => {
-			// Transform Big Sky message format to `UIMessage` format and add to chat
-			addMessage( {
-				// Keep Big Sky message properties without explicit mapping to keep linter happy
-				// Big Sky messages sometimes have a `context` field used by the
-				// site build to show the progress indicator
-				...message,
-				id: message.id,
-				role: message.role === 'assistant' ? 'agent' : 'user',
-				content: message.content,
-				timestamp: message.created_at ? message.created_at * 1000 : Date.now(),
-				archived: message.archived ?? false,
-				showIcon: message.showIcon ?? true,
-			} );
+			// Transform Big Sky message format to `UIMessage` format and add to chat.
+			addMessage( convertBigSkyMessageToUIMessage( message ) );
 		},
 		clearMessages: () => loadMessages( [] ),
 		clearSuggestions,
@@ -441,8 +618,32 @@ export default function OrchestratorChat( {
 		isProcessing,
 		setIsThinking,
 		deleteMarkedMessages: ( msgs ) => {
+			const deleteDecisions = msgs.map( ( msg ) => {
+				const messageFromRequest = msg as Pick< UIMessage, 'id' > &
+					Partial< Pick< UIMessage, 'content' > >;
+				const fullMessage = messageFromRequest.content
+					? ( messageFromRequest as UIMessage )
+					: messagesRef.current.find( ( message ) => message.id === msg.id );
+				const isShowComponent = !! fullMessage && isShowComponentMessage( fullMessage );
+
+				return {
+					id: msg.id,
+					foundMessage: !! fullMessage,
+					isShowComponent,
+					tool: fullMessage ? getToolMessageData( fullMessage ) : undefined,
+					shouldDelete: fullMessage ? ! isShowComponent : false,
+				};
+			} );
+
+			const deletableMessages = msgs.filter(
+				( msg ) => deleteDecisions.find( ( decision ) => decision.id === msg.id )?.shouldDelete
+			);
+			if ( deletableMessages.length === 0 ) {
+				return;
+			}
+
 			setDeletedMessageIds(
-				( prevIds ) => new Set( [ ...prevIds, ...msgs.map( ( msg ) => msg.id ) ] )
+				( prevIds ) => new Set( [ ...prevIds, ...deletableMessages.map( ( msg ) => msg.id ) ] )
 			);
 		},
 		// This ensures the same session ID is used between Big Sky and Calypso agents,
@@ -460,6 +661,36 @@ export default function OrchestratorChat( {
 				! deletedMessageIds.has( message.id ) &&
 				! message.content?.some( ( content ) => content?.text === LOCAL_TOOL_RUNNING_MESSAGE )
 		);
+
+		currentMessages.filter( isShowComponentMessage ).forEach( getShowComponentOrder );
+
+		const currentShowComponentIdentities = new Set(
+			currentMessages
+				.filter( isShowComponentMessage )
+				.map( getShowComponentIdentity )
+				.filter( Boolean )
+		);
+		const retainedMessagesToDisplay = [ ...retainedShowComponentMessages.values() ].filter(
+			( message ) => {
+				const identity = getShowComponentIdentity( message );
+				return !! identity && ! currentShowComponentIdentities.has( identity );
+			}
+		);
+		if ( retainedMessagesToDisplay.length > 0 ) {
+			retainedMessagesToDisplay.forEach( getShowComponentOrder );
+			currentMessages = [ ...currentMessages, ...retainedMessagesToDisplay ].sort(
+				( messageA, messageB ) => {
+					const orderA = getShowComponentOrder( messageA );
+					const orderB = getShowComponentOrder( messageB );
+
+					if ( orderA !== undefined && orderB !== undefined && orderA !== orderB ) {
+						return orderA - orderB;
+					}
+
+					return ( messageA.timestamp ?? 0 ) - ( messageB.timestamp ?? 0 );
+				}
+			);
+		}
 
 		// Group site-build messages only when needed
 		const hasBuildMessages = siteBuildUtils?.hasSiteBuildMessages( currentMessages );
@@ -480,6 +711,8 @@ export default function OrchestratorChat( {
 			onSubmit: onSubmitWithImages,
 		} );
 
+		const latestAgentMessageId = getLatestAgentMessageId( currentMessages );
+
 		currentMessages = currentMessages.map( ( message ) => {
 			if ( message.id.endsWith( '-next-step' ) ) {
 				return message;
@@ -488,13 +721,20 @@ export default function OrchestratorChat( {
 			const directActions = [
 				...getFeedbackActionsForMessage( message ),
 				...getCopyActionsForMessage( message ),
+				...getRegenerateActionsForMessage( message, {
+					isLatestAgentMessage: message.id === latestAgentMessageId,
+					isStreaming: isProcessing,
+				} ),
 			];
 			if ( directActions.length === 0 ) {
 				return message;
 			}
 
 			const existingActions = message.actions?.filter(
-				( action ) => ! action.id.startsWith( 'feedback-' ) && action.id !== 'copy'
+				( action ) =>
+					! action.id.startsWith( 'feedback-' ) &&
+					action.id !== 'copy' &&
+					action.id !== 'regenerate'
 			);
 
 			return {
@@ -511,10 +751,14 @@ export default function OrchestratorChat( {
 		deletedMessageIds,
 		getChatComponent,
 		getCopyActionsForMessage,
+		getShowComponentOrder,
 		getFeedbackActionsForMessage,
+		getRegenerateActionsForMessage,
 		isBuildingSite,
+		isProcessing,
 		messages,
 		onSubmitWithImages,
+		retainedShowComponentMessages,
 		siteBuildUtils,
 		thinkingMessage,
 	] );
@@ -543,7 +787,14 @@ export default function OrchestratorChat( {
 	if ( suggestions.length > 0 ) {
 		displayedEmptyViewSuggestions = suggestions;
 	} else if ( displayedMessages.length === 0 && inputValue.length === 0 ) {
-		displayedEmptyViewSuggestions = emptyViewSuggestions;
+		// Read straight from the live `useSuggestions` output rather than the
+		// registered store. Clicking a suggestion calls `clearSuggestions()`,
+		// which empties the store, and the re-registration effect is keyed on
+		// the (unchanged) hook output so it won't restore it. Persistent
+		// empty-view chips must survive that clear; fall back to the static
+		// defaults only when the hook genuinely has none.
+		displayedEmptyViewSuggestions =
+			dynamicSuggestionsList.length > 0 ? dynamicSuggestionsList : emptyViewSuggestions;
 	}
 
 	return (

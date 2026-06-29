@@ -20,30 +20,29 @@
 }
 
 .space-feed-standard-list__row {
-	display: flex;
-	align-items: flex-start;
-	gap: 12px;
-	padding-block: 16px;
+	padding-block: 18px;
 	border-block-end: 1px solid var(--color-border-subtle);
+}
+
+.space-feed-standard-list__item[data-first='true'] .space-feed-standard-list__row {
+	padding-block-start: 8px;
+}
+
+.space-feed-standard-list__title-link {
 	color: inherit;
 	text-decoration: none;
 }
 
-.space-feed-standard-list__row:hover .space-feed-standard-list__title {
+// Already-read posts fade to a lighter shade of the space accent. Ordered
+// before :hover (LVHA). Recoloring the anchor itself is the one styling the
+// browser reliably honors on :visited.
+.space-feed-standard-list__title-link:visited {
+	color: var(--space-color-visited, var(--color-text-subtle));
+}
+
+.space-feed-standard-list__title-link:hover {
 	text-decoration: underline;
-}
-
-.space-feed-standard-list__unread {
-	flex: 0 0 auto;
-	inline-size: 8px;
-	block-size: 8px;
-	margin-block-start: 6px;
-	border-radius: 50%;
-	background: transparent;
-}
-
-.space-feed-standard-list__unread[data-unread='true'] {
-	background: var(--color-accent, var(--color-primary));
+	color: var(--space-color-hover, var(--color-link));
 }
 
 .space-feed-standard-list__body {
@@ -53,20 +52,21 @@
 
 .space-feed-standard-list__title {
 	margin: 0;
-	font-size: 0.875rem;
+	font-size: 1rem;
 	font-weight: 600;
-	line-height: 1.35;
-	color: var(--color-text);
+	line-height: 1.3;
+	// Use the space's accent color (set as `--space-color` on `.space-feed`),
+	// falling back to the default text color when no space accent is present.
+	color: var(--space-color, var(--color-text));
 }
 
 .space-feed-standard-list__excerpt {
-	margin: 4px 0 0;
 	font-size: 0.875rem;
 	line-height: 1.4;
 	color: var(--color-text-subtle);
 	overflow: hidden;
 	display: -webkit-box;
-	-webkit-line-clamp: 1;
+	-webkit-line-clamp: 2;
 	-webkit-box-orient: vertical;
 }
 
@@ -76,10 +76,6 @@
 }
 
 .space-feed-standard-list__source-row {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	margin-block-start: 8px;
 	font-size: 0.75rem;
 	color: var(--color-text-subtle);
 }
@@ -97,13 +93,28 @@
 
 .space-feed-standard-list__aside {
 	flex: 0 0 auto;
-	display: flex;
-	align-items: center;
-	gap: 12px;
 	color: var(--color-text-subtle);
 	font-size: 0.75rem;
 }
 
-.space-feed-standard-list__bookmark {
-	color: var(--color-text-subtle);
+// Loading skeleton: one stacked block of shimmer lines per row.
+.space-feed-standard-list__skeleton-row {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding-block: 24px;
+	border-block-end: 1px solid var(--color-border-subtle);
+}
+
+.space-feed-standard-list__skeleton-line {
+	block-size: 14px;
+}
+
+.space-feed-standard-list__skeleton-line.is-title {
+	block-size: 18px;
+	inline-size: 70%;
+}
+
+.space-feed-standard-list__skeleton-line.is-meta {
+	inline-size: 40%;
 }

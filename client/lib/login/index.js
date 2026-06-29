@@ -52,7 +52,7 @@ export function pathWithLeadingSlash( path ) {
 }
 
 export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname ) {
-	const redirectTo = get( currentQuery, 'redirect_to', '' );
+	const redirectTo = currentQuery?.redirect_to ?? '';
 
 	if (
 		// Match locales like `/log-in/jetpack/es`

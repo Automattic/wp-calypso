@@ -1,20 +1,35 @@
 import {
 	Icon,
 	ToggleControl,
+	__experimentalHStack as HStack,
 	__experimentalSpacer as Spacer,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { plugins, tool } from '@wordpress/icons';
-import { Card, CardBody, CardDivider } from '../../../components/card';
+import { check } from '@wordpress/icons';
+import clsx from 'clsx';
+import { Card, CardBody } from '../../../components/card';
 import SummaryButton from '../../../components/summary-button';
 import type { RecordTracksEvent } from './types';
 import type { McpSettings, McpSettingsUpdate } from '@automattic/api-core';
 import type { MouseEvent } from 'react';
 
+import './style.scss';
+
 const MCP_TOOLS_PATH = '/resources/ai-mcp/tools';
 const MCP_CONNECT_PATH = '/resources/ai-mcp/connect';
+
+function StepNumber( { n, completed }: { n: number; completed?: boolean } ) {
+	return (
+		<span
+			className={ clsx( 'mcp-overview__step-number', { 'is-completed': completed } ) }
+			aria-hidden="true"
+		>
+			{ completed ? <Icon icon={ check } size={ 18 } /> : n }
+		</span>
+	);
+}
 
 interface McpOverviewProps {
 	settings: McpSettings | undefined;
@@ -72,55 +87,66 @@ export default function McpOverview( {
 		<>
 			<Spacer marginBottom={ 8 } style={ { maxWidth: '650px' } }>
 				<Text size={ 15 }>
-					{ __( 'Control how AI assistants interact with your Automattic for Agencies account.' ) }
+					{ __(
+						'Set up AI agent access in three steps. Access won’t work until you complete all three.'
+					) }
 				</Text>
 			</Spacer>
 
 			<VStack spacing={ 4 }>
 				<Card>
 					<CardBody>
-						<VStack spacing={ 3 }>
-							<Text weight={ 600 } size={ 15 }>
-								{ __( 'External AI agent access' ) }
-							</Text>
-							<Text variant="muted">
-								{ __(
-									'Allow external AI agents to access your Automattic for Agencies account via MCP.'
-								) }
-							</Text>
+						<HStack alignment="flex-start" justify="space-between" spacing={ 4 }>
+							<HStack
+								className="mcp-overview__step-heading"
+								alignment="flex-start"
+								justify="flex-start"
+								spacing={ 3 }
+							>
+								<StepNumber n={ 1 } completed={ mainEnabled } />
+								<VStack spacing={ 1 }>
+									<Text weight={ 600 } size={ 15 }>
+										{ __( 'Enable MCP access' ) }
+									</Text>
+									<Text variant="muted">
+										{ __(
+											'Allow external AI agents to access your Automattic for Agencies account via MCP.'
+										) }
+									</Text>
+								</VStack>
+							</HStack>
 							<ToggleControl
 								__nextHasNoMarginBottom
-								label={ __( 'Enable MCP access' ) }
+								label=""
+								aria-label={ __( 'Enable MCP access' ) }
 								checked={ mainEnabled }
 								onChange={ onMainToggle }
 								disabled={ isLoading || isSaving }
 							/>
-						</VStack>
+						</HStack>
 					</CardBody>
-					{ mainEnabled && (
-						<>
-							<CardDivider style={ { borderColor: 'var(--color-neutral-5)' } } />
-							<SummaryButton
-								density="medium"
-								title={ __( 'Available tools' ) }
-								decoration={ <Icon icon={ tool } size={ 24 } /> }
-								badges={ [ availableToolsBadge ] }
-								href={ toolsPath }
-								onClick={ handleNavClick( toolsPath, 'calypso_a4a_ai_mcp_available_tools_click' ) }
-							/>
-						</>
-					) }
 				</Card>
 
-				{ mainEnabled && (
-					<SummaryButton
-						title={ __( 'Connect external AI assistant' ) }
-						description={ __( 'Get instructions for connecting your external AI assistant.' ) }
-						decoration={ <Icon icon={ plugins } size={ 24 } /> }
-						href={ connectPath }
-						onClick={ handleNavClick( connectPath, 'calypso_a4a_ai_mcp_connect_click' ) }
-					/>
-				) }
+				<SummaryButton
+					title={ __( 'Select tools' ) }
+					description={ __( 'Choose what AI agents can do in your account.' ) }
+					decoration={ <StepNumber n={ 2 } /> }
+					badges={ [ availableToolsBadge ] }
+					href={ toolsPath }
+					disabled={ ! mainEnabled }
+					onClick={ handleNavClick( toolsPath, 'calypso_a4a_ai_mcp_available_tools_click' ) }
+				/>
+
+				<SummaryButton
+					title={ __( 'Connect your AI agent' ) }
+					description={ __(
+						'Required — add the MCP connection to your AI agent to finish setup.'
+					) }
+					decoration={ <StepNumber n={ 3 } /> }
+					href={ connectPath }
+					disabled={ ! mainEnabled }
+					onClick={ handleNavClick( connectPath, 'calypso_a4a_ai_mcp_connect_click' ) }
+				/>
 			</VStack>
 		</>
 	);

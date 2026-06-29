@@ -1,6 +1,5 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -74,7 +73,7 @@ class Security2faKey extends Component {
 			this.setState( {
 				isEnabled: true,
 				addingKey: false,
-				security2faKeys: get( data, 'registrations', [] ),
+				security2faKeys: data?.registrations ?? [],
 			} );
 		}
 	};

@@ -1,4 +1,4 @@
-import { filter, get } from 'lodash';
+import { filter } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import {
 	TERM_REMOVE,
@@ -131,7 +131,7 @@ const getTaxonomyRestBase = ( siteId, taxonomy ) => {
 const removeTermFromState = ( { dispatch, getState, siteId, taxonomy, termId } ) => {
 	const state = getState();
 	const deletedTerm = getTerm( state, siteId, taxonomy, termId );
-	const deletedTermPostCount = get( deletedTerm, 'post_count', 0 );
+	const deletedTermPostCount = deletedTerm?.post_count ?? 0;
 
 	// Update the parentId of its children
 	const termsToUpdate = filter( getTerms( state, siteId, taxonomy ), ( term ) => {

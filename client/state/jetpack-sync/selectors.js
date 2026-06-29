@@ -1,5 +1,3 @@
-import { reduce } from 'lodash';
-
 import 'calypso/state/jetpack-sync/init';
 
 /**
@@ -79,20 +77,12 @@ function getImmediateSyncProgressPercentage( state, siteId ) {
 	if ( ! progress ) {
 		return 0;
 	}
-	const totalItems = reduce(
-		Object.values( progress ),
-		( sum, syncItem ) => {
-			return syncItem.total ? ( sum += parseInt( syncItem.total ) ) : sum;
-		},
-		0
-	);
-	const totalSent = reduce(
-		Object.values( progress ),
-		( sum, syncItem ) => {
-			return syncItem.sent ? ( sum += parseInt( syncItem.sent ) ) : sum;
-		},
-		0
-	);
+	const totalItems = Object.values( progress ).reduce( ( sum, syncItem ) => {
+		return syncItem.total ? ( sum += parseInt( syncItem.total ) ) : sum;
+	}, 0 );
+	const totalSent = Object.values( progress ).reduce( ( sum, syncItem ) => {
+		return syncItem.sent ? ( sum += parseInt( syncItem.sent ) ) : sum;
+	}, 0 );
 	return Math.ceil( ( totalSent / totalItems ) * 100 );
 }
 
@@ -136,29 +126,17 @@ function getSyncProgressPercentage( state, siteId ) {
 		return 0;
 	}
 
-	const countQueued = reduce(
-		queued,
-		( sum, value ) => {
-			return ( sum += value );
-		},
-		0
-	);
+	const countQueued = Object.values( queued ).reduce( ( sum, value ) => {
+		return ( sum += value );
+	}, 0 );
 
-	const countSent = reduce(
-		sent,
-		( sum, value ) => {
-			return ( sum += value );
-		},
-		0
-	);
+	const countSent = Object.values( sent ).reduce( ( sum, value ) => {
+		return ( sum += value );
+	}, 0 );
 
-	const countTotal = reduce(
-		total,
-		( sum, value ) => {
-			return ( sum += value );
-		},
-		0
-	);
+	const countTotal = Object.values( total ).reduce( ( sum, value ) => {
+		return ( sum += value );
+	}, 0 );
 
 	const percentQueued = ( countQueued / countTotal ) * queuedMultiplier * 100;
 	const percentSent = ( countSent / countTotal ) * sentMultiplier * 100;

@@ -337,13 +337,18 @@
 	}
 }
 
-// Outweigh WP Button's `.components-button.has-icon.has-text` rule.
-.wpnc__action-link.components-button.has-icon.has-text {
-	// Start each button at its natural (content) width and share the remaining
-	// space from there. This keeps labels centered regardless of which one is
-	// longest, so it stays correct across languages.
-	flex: 1 1 auto;
+// Outweigh WP Button's `.components-button.has-text` rule.
+.wpnc__action-link.components-button.has-text {
+	// Keep every action on a single row. Buttons sit at their natural width when
+	// they fit, but may shrink and let their label wrap onto a new line when the
+	// row runs out of width — instead of wrapping a whole button below.
+	flex: 0 1 auto;
+	min-width: 0;
+	// Let the button grow taller when its label wraps onto a second line.
+	height: auto;
+	flex-wrap: wrap;
 	justify-content: center;
+	white-space: normal;
 }
 
 /**

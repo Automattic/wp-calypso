@@ -92,6 +92,24 @@ const REJECT_MESSAGE =
 	'(expand object-match shorthands to a predicate, and guard nullable collections with `?? []`).';
 const CONCAT_MESSAGE =
 	'Please use native `array.concat( … )` (or `[].concat( ...arrays )`) instead of lodash `concat`.';
+const REDUCE_MESSAGE =
+	'Please use native `array.reduce()` (or `Object.entries( obj ).reduce()` to fold an object) ' +
+	'instead of lodash `reduce`. Guard nullable collections with `?? []` / `?? {}`.';
+const FIND_MESSAGE =
+	'Please use native `array.find( ( item ) => … )` (or `Object.values( obj ).find( … )` for objects) ' +
+	'instead of lodash `find`. Expand iteratee shorthands to a predicate and guard nullable collections with `?? []`.';
+const FINDLAST_MESSAGE =
+	'Please use native `array.findLast( ( item ) => … )` instead of lodash `findLast`.';
+const HAS_MESSAGE =
+	'Please use native `Object.hasOwn( obj, key )` instead of lodash `has` for single-key checks ' +
+	'(expand dotted-path checks manually with optional chaining).';
+const XOR_MESSAGE =
+	'Please compute the symmetric difference natively, e.g. ' +
+	'`Array.from( new Set( [ ...a, ...b ] ) ).filter( ( item ) => a.includes( item ) !== b.includes( item ) )`, ' +
+	'instead of lodash `xor` (the Set dedupes to match lodash; you can drop it when the inputs are known unique).';
+const SOME_MESSAGE =
+	'Please use native `array.some( ( item ) => … )` (or `Object.values( obj ).some( … )` for objects) ' +
+	'instead of lodash `some`. Expand iteratee shorthands to a predicate and guard nullable collections with `?? []`.';
 
 const paths = [
 	{ name: 'lodash', importNames: JS_UTILS_NAMES, message: JS_UTILS_MESSAGE },
@@ -118,6 +136,12 @@ const paths = [
 	{ name: 'lodash', importNames: [ 'sortBy', 'orderBy' ], message: SORT_MESSAGE },
 	{ name: 'lodash', importNames: [ 'reject' ], message: REJECT_MESSAGE },
 	{ name: 'lodash', importNames: [ 'concat' ], message: CONCAT_MESSAGE },
+	{ name: 'lodash', importNames: [ 'reduce' ], message: REDUCE_MESSAGE },
+	{ name: 'lodash', importNames: [ 'find' ], message: FIND_MESSAGE },
+	{ name: 'lodash', importNames: [ 'findLast' ], message: FINDLAST_MESSAGE },
+	{ name: 'lodash', importNames: [ 'has' ], message: HAS_MESSAGE },
+	{ name: 'lodash', importNames: [ 'xor' ], message: XOR_MESSAGE },
+	{ name: 'lodash', importNames: [ 'some' ], message: SOME_MESSAGE },
 ];
 
 // Deep `lodash/<fn>` imports bypass the named-import paths above.
@@ -146,6 +170,12 @@ const patterns = [
 	{ group: [ 'lodash/sortBy', 'lodash/orderBy' ], message: SORT_MESSAGE },
 	{ group: [ 'lodash/reject' ], message: REJECT_MESSAGE },
 	{ group: [ 'lodash/concat' ], message: CONCAT_MESSAGE },
+	{ group: [ 'lodash/reduce' ], message: REDUCE_MESSAGE },
+	{ group: [ 'lodash/find' ], message: FIND_MESSAGE },
+	{ group: [ 'lodash/findLast' ], message: FINDLAST_MESSAGE },
+	{ group: [ 'lodash/has' ], message: HAS_MESSAGE },
+	{ group: [ 'lodash/xor' ], message: XOR_MESSAGE },
+	{ group: [ 'lodash/some' ], message: SOME_MESSAGE },
 ];
 
 module.exports = { paths, patterns };

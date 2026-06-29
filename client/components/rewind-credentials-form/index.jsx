@@ -181,7 +181,7 @@ export class RewindCredentialsForm extends Component {
 							name="host"
 							id="host-address"
 							placeholder={ translate( 'YourGroovyDomain.com' ) }
-							value={ get( this.state.form, 'host', '' ) }
+							value={ this.state.form?.host ?? '' }
 							onChange={ this.handleFieldChange }
 							disabled={ formIsSubmitting }
 							isError={ !! formErrors.host }
@@ -197,7 +197,7 @@ export class RewindCredentialsForm extends Component {
 							name="port"
 							id="server-port"
 							placeholder="22"
-							value={ get( this.state.form, 'port', '' ) }
+							value={ this.state.form?.port ?? '' }
 							onChange={ this.handleFieldChange }
 							disabled={ formIsSubmitting }
 							isError={ !! formErrors.port }
@@ -215,7 +215,7 @@ export class RewindCredentialsForm extends Component {
 							name="user"
 							id="server-username"
 							placeholder={ translate( 'username' ) }
-							value={ get( this.state.form, 'user', '' ) }
+							value={ this.state.form?.user ?? '' }
 							onChange={ this.handleFieldChange }
 							disabled={ formIsSubmitting }
 							isError={ !! formErrors.user }
@@ -233,7 +233,7 @@ export class RewindCredentialsForm extends Component {
 							name="pass"
 							id="server-password"
 							placeholder={ translate( 'password' ) }
-							value={ get( this.state.form, 'pass', '' ) }
+							value={ this.state.form?.pass ?? '' }
 							onChange={ this.handleFieldChange }
 							disabled={ formIsSubmitting }
 							isError={ !! formErrors.pass }
@@ -272,7 +272,7 @@ export class RewindCredentialsForm extends Component {
 									name="path"
 									id="wordpress-path"
 									placeholder="/public_html/wordpress-site/"
-									value={ get( this.state.form, 'path', '' ) }
+									value={ this.state.form?.path ?? '' }
 									onChange={ this.handleFieldChange }
 									disabled={ formIsSubmitting }
 									isError={ !! formErrors.path }
@@ -287,7 +287,7 @@ export class RewindCredentialsForm extends Component {
 								<FormTextArea
 									name="kpri"
 									id="private-key"
-									value={ get( this.state.form, 'kpri', '' ) }
+									value={ this.state.form?.kpri ?? '' }
 									onChange={ this.handleFieldChange }
 									disabled={ formIsSubmitting }
 									className="rewind-credentials-form__private-key"

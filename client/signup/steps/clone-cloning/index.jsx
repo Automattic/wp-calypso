@@ -1,7 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Card, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -148,7 +147,7 @@ class CloneCloningStep extends Component {
 
 export default connect( ( state, ownProps ) => {
 	return {
-		originSiteName: get( ownProps, [ 'signupDependencies', 'originSiteName' ], '' ),
-		originSiteSlug: get( ownProps, [ 'signupDependencies', 'originSiteSlug' ], '' ),
+		originSiteName: ownProps?.signupDependencies?.originSiteName ?? '',
+		originSiteSlug: ownProps?.signupDependencies?.originSiteSlug ?? '',
 	};
 } )( localize( CloneCloningStep ) );

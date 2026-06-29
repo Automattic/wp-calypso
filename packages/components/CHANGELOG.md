@@ -1,8 +1,9 @@
-## Unreleased
+## 4.0.0
 
 ### Breaking Changes
 
 - `Icon`: Remove component. Use `Icon` from `@wordpress/ui` instead.
+- Use an npm-installable `@wordpress/compose` dependency range for package consumers.
 
 ## 3.0.5
 

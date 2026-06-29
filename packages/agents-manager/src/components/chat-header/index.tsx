@@ -27,8 +27,8 @@ export default function ChatHeader( { onClose, options, title, onBack, isDocked 
 	const { setIsMinimized } = useDispatch( AGENTS_MANAGER_STORE );
 	const [ hasAiChatEntry ] = useState( hasAiChatEntryButton );
 
-	// Minimize only applies to the floating chat reachable from the AI chat button
-	// (WP admin bar or Calypso masterbar).
+	// Minimize only applies to the floating chat reachable from an AI chat entry button
+	// (wp-admin bar, Calypso masterbar, or editor toolbar).
 	const showMinimize = hasAiChatEntry && ! isDocked;
 
 	return (

@@ -1,7 +1,6 @@
 import { followReadTagMutation, unfollowReadTagMutation } from '@automattic/api-queries';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { localize, translate as i18nTranslate } from 'i18n-calypso';
-import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect, useDispatch } from 'react-redux';
@@ -65,7 +64,7 @@ class TagStream extends Component {
 	}
 
 	isSubscribed = () => {
-		const tag = find( this.props.tags, { slug: this.props.encodedTagSlug } );
+		const tag = this.props.tags?.find( ( t ) => t.slug === this.props.encodedTagSlug );
 		return !! ( tag && tag.isFollowing );
 	};
 
@@ -97,7 +96,7 @@ class TagStream extends Component {
 
 	render() {
 		const emptyContent = () => <EmptyContent decodedTagSlug={ this.props.decodedTagSlug } />;
-		const tag = find( this.props.tags, { slug: this.props.encodedTagSlug } );
+		const tag = this.props.tags?.find( ( t ) => t.slug === this.props.encodedTagSlug );
 		const titleText =
 			tag?.title ||
 			this.props.initialTitle ||

@@ -9,7 +9,7 @@ import { Card, __experimentalElevation as Elevation } from '@wordpress/component
 import { useFocusReturn, useMergeRefs } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
 import clsx from 'clsx';
-import { useRef, useEffect, useCallback, FC, useState } from 'react';
+import { useRef, useEffect, useCallback, FC, useState, type RefObject } from 'react';
 import Draggable, { DraggableProps } from 'react-draggable';
 /**
  * Internal Dependencies
@@ -163,7 +163,8 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 		<PersistentRouter>
 			<OptionalDraggable
 				draggable={ ! isMobile && ! isMinimized }
-				nodeRef={ nodeRef }
+				// react-draggable's nodeRef type predates React 19's nullable ref objects.
+				nodeRef={ nodeRef as RefObject< HTMLElement > }
 				handle=".help-center-header__text"
 				bounds="body"
 			>

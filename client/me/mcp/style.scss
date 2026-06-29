@@ -94,59 +94,67 @@ body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .main.m
 		border-radius: 0;
 	}
 
-	.mcp-tools-subpage__group-card-body {
+	// Group header: [info (flex:1)] [toggle] [chevron] on desktop
+	// Mobile: [info (flex:1)] [chevron] on row 1, [toggle (full-width)] on row 2
+	.mcp-tools-subpage__group-header {
 		display: flex;
-		flex-direction: column;
-		gap: 0;
-		// WP CardBody defaults can leave titles flush to the card edge — set explicit inset
-		padding: 24px;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 8px 12px;
+	}
+
+	.mcp-tools-subpage__group-info {
+		flex: 1;
+		min-width: 0; // allow text-overflow: ellipsis inside flex children
+		order: 1;
+	}
+
+	// On mobile: toggle wraps below the title row (full width, order after chevron).
+	// On desktop: toggle sits between info and chevron.
+	.mcp-tools-subpage__group-toggle {
+		order: 3;
+		width: 100%;
 
 		@include break-mobile {
-			padding: 24px 32px;
+			order: 2;
+			width: auto;
+			flex-shrink: 0;
 		}
 	}
 
-	.mcp-tools-subpage__group-header {
-		width: 100%;
-		gap: 16px;
-		// Space above the divider so the title row isn’t cramped against the rule
-		padding-bottom: 20px;
+	.mcp-tools-subpage__group-chevron {
+		order: 2; // Mobile: stays inline with title
+		flex-shrink: 0;
 
-		.mcp-tools-subpage__group-title {
-			flex: 1 1 auto;
-			margin: 0 !important;
-			line-height: 1.35;
-			color: var(--color-neutral-100);
-		}
-
-		.mcp-tools-subpage__group-toggle {
-			flex: 0 0 auto;
+		@include break-mobile {
+			order: 3; // Desktop: after toggle
 		}
 	}
 
-	// Divider + tool list — negative margins match CardBody horizontal padding (full-bleed rule)
+	// First sub-group when a group row is expanded: full-bleed border separates
+	// from the group header, then inner padding for the tool list.
 	.mcp-tools-subpage__group-body {
 		border-top: 1px solid var(--color-border-subtle);
-		margin-left: -24px;
-		margin-right: -24px;
-		padding: 20px 24px 4px;
+		margin-inline-start: -16px;
+		margin-inline-end: -16px;
+		padding: 16px 16px 16px;
 
 		@include break-mobile {
-			margin-left: -32px;
-			margin-right: -32px;
-			padding: 24px 32px 8px;
+			margin-inline-start: -24px;
+			margin-inline-end: -24px;
+			padding: 20px 24px 20px;
 		}
 	}
 
-	// Sub-group tool list — same padding as group-body but no top border
+	// Subsequent sub-groups: same horizontal padding, no top border (sub-divider provides it)
 	.mcp-tools-subpage__sub-group-body {
-		padding: 0 0 4px;
+		padding: 0 0 16px;
 	}
 
-	// Sub-group divider within merged cards (e.g. Posts) — content-width, equal spacing
+	// Divider between sub-groups within an expanded group card
 	.mcp-tools-subpage__sub-divider {
 		border-top: 1px solid var(--color-border-subtle);
-		margin: 16px 0 24px;
+		margin: 16px 0 20px;
 	}
 }
 

@@ -1,7 +1,7 @@
 import { isTitanMail, WPCOM_DIFM_LITE } from '@automattic/calypso-products';
 import { snakeCase } from '@automattic/js-utils';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
-import { isEmpty, reduce } from 'lodash';
+import { isEmpty } from 'lodash';
 import { assertValidDependencies } from 'calypso/lib/signup/asserts';
 import {
 	SIGNUP_PROGRESS_SAVE_STEP,
@@ -38,9 +38,8 @@ const EXCLUDED_DEPENDENCIES = [
 function recordSubmitStep( flow, stepName, providedDependencies, optionalProps ) {
 	// Transform the keys since tracks events only accept snaked prop names.
 	// And anonymize personally identifiable information.
-	const inputs = reduce(
-		providedDependencies,
-		( props, propValue, propName ) => {
+	const inputs = Object.entries( providedDependencies ?? {} ).reduce(
+		( props, [ propName, propValue ] ) => {
 			if ( EXCLUDED_DEPENDENCIES.includes( propName ) ) {
 				return props;
 			}

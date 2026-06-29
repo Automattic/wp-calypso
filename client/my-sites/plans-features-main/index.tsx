@@ -431,11 +431,15 @@ const PlansFeaturesMain = ( {
 					}
 
 					// Fallback: deep-link to the new plan's settings page (or the plans
-					// page) with a notice.
+					// page) with a notice. Use `plan_changed` (not `downgraded`) so the
+					// accurate "Your plan has been updated to X" notice shows: this is a
+					// generic plan downgrade that may stay on annual billing, whereas
+					// `downgraded=true` is reserved for the monthly-switch flow and reads
+					// "You've switched to monthly billing."
 					window.location.href =
 						newPurchase && siteSlug
-							? `${ managePurchase( siteSlug, newPurchase.ID ) }?downgraded=true`
-							: `/plans/${ siteSlug }?downgraded=true`;
+							? `${ managePurchase( siteSlug, newPurchase.ID ) }?plan_changed=true`
+							: `/plans/${ siteSlug }?plan_changed=true`;
 				},
 				onError: ( error: Error ) => {
 					setIsDowngrading( false );

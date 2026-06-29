@@ -9,7 +9,7 @@ import { Notice } from '@wordpress/components';
 import clsx from 'clsx';
 import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { get, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createElement } from 'react';
 import { connect } from 'react-redux';
@@ -365,7 +365,7 @@ export class ContactDetailsFormFields extends Component {
 	};
 
 	getCountryCode() {
-		return get( this.state.form, 'countryCode.value', '' );
+		return this.state.form?.countryCode?.value ?? '';
 	}
 
 	getCountryPostalCodeSupport = ( countryCode ) =>

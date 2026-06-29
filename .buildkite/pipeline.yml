@@ -73,10 +73,8 @@ steps:
       - desktop/release/*.appx
 
   # Signed NSIS direct-download installer — the auto-update path (electron-
-  # updater stays enabled). Signed with the org cert the CI Toolkit plugin
-  # pulls from AWS Secrets Manager (setup_windows_code_signing.ps1) using
-  # WINDOWS_CODE_SIGNING_CERT_PASSWORD. This is the PFX→Azure handover bridge
-  # build.
+  # updater stays enabled). Signs via Azure Artifact Signing by default, with the
+  # org Sectigo PFX as a fallback behind FORCE_PFX_SIGNING (AINFRA-2237).
   - label: ":windows: Build desktop (windows nsis, signed)"
     branches: ainfra-*
     notify:

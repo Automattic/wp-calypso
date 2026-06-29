@@ -1,5 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { useNavigate } from '@tanstack/react-router';
 import { Button, Dropdown } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
@@ -7,6 +6,7 @@ import { bellUnread, bell } from '@wordpress/icons';
 import clsx from 'clsx';
 import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
+import { dashboardLink } from '../../utils/link';
 import { useAuth } from '../auth';
 import { useHelpCenter } from '../help-center';
 import { useLocale } from '../locale';
@@ -23,7 +23,6 @@ export default function Notifications( {
 	/** When true, hides the built-in toggle button (the omnibar provides its own). */
 	anchor?: boolean;
 } ) {
-	const navigate = useNavigate();
 	const { user } = useAuth();
 	const locale = useLocale();
 	const isMobileViewport = useViewportMatch( 'small', '<' );
@@ -78,8 +77,8 @@ export default function Notifications( {
 		],
 		VIEW_SETTINGS: [
 			() => {
-				handleClose();
-				navigate( { to: '/me/notifications' } );
+				// Open in a new tab so the current notification state is preserved.
+				window.open( dashboardLink( '/me/notifications' ), '_blank' );
 			},
 		],
 		EDIT_COMMENT: [

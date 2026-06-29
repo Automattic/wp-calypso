@@ -12,7 +12,7 @@ import {
 } from '@automattic/urls';
 import _debug from 'debug';
 import { localize } from 'i18n-calypso';
-import { map, find } from 'lodash';
+import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -894,7 +894,7 @@ export class DomainWarnings extends PureComponent {
 	};
 
 	pendingTransfer = () => {
-		const domain = find( this.getDomains(), 'pendingTransfer' );
+		const domain = this.getDomains().find( ( domainItem ) => domainItem.pendingTransfer );
 		if ( ! domain ) {
 			return null;
 		}
@@ -928,8 +928,7 @@ export class DomainWarnings extends PureComponent {
 	};
 
 	transferStatus = () => {
-		const domainInTransfer = find(
-			this.getDomains(),
+		const domainInTransfer = this.getDomains().find(
 			( domain ) => domain.type === domainTypes.TRANSFER
 		);
 

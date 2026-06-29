@@ -21,11 +21,9 @@ export function getLayoutPresetTitle( view: SpaceFeedLayout, translate: Translat
 			return translate( 'Media gallery' ) as string;
 		case 'board':
 			return translate( 'Airy board' ) as string;
-		case 'magazine':
-			return translate( 'Calm reading' ) as string;
 		case 'legacy':
 		default:
-			return translate( 'Legacy' ) as string;
+			return translate( 'Classic' ) as string;
 	}
 }
 
@@ -36,12 +34,11 @@ export function getLayoutPresetTitle( view: SpaceFeedLayout, translate: Translat
 export function LayoutTab( { value, onChange }: Props ) {
 	const translate = useTranslate();
 
-	const presets: { id: SpaceFeedLayout; description: string }[] = [
-		{ id: 'standard-list', description: translate( 'Many items, fast scanning' ) },
-		{ id: 'gallery', description: translate( 'Grid of cards with thumbnails' ) },
-		{ id: 'board', description: translate( 'Big roomy cards, casual scroll' ) },
-		{ id: 'magazine', description: translate( 'One comfortable column' ) },
+	const presets: { id: SpaceFeedLayout; description: string; beta?: boolean }[] = [
 		{ id: 'legacy', description: translate( 'Classic Reader stream' ) },
+		{ id: 'standard-list', description: translate( 'Many items, fast scanning' ), beta: true },
+		{ id: 'gallery', description: translate( 'Grid of cards with thumbnails' ), beta: true },
+		{ id: 'board', description: translate( 'Big roomy cards, casual scroll' ), beta: true },
 	];
 
 	return (
@@ -70,6 +67,9 @@ export function LayoutTab( { value, onChange }: Props ) {
 						/>
 						<span className="customize-space-modal__card-title">
 							{ getLayoutPresetTitle( preset.id, translate ) }
+							{ preset.beta && (
+								<span className="customize-space-modal__card-beta">{ translate( 'Beta' ) }</span>
+							) }
 						</span>
 						<span className="customize-space-modal__card-description">{ preset.description }</span>
 					</label>

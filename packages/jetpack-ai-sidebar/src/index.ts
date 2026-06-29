@@ -848,11 +848,13 @@ function trackBlockTransformationSuggestionClickForValue( value: string ): void 
 
 /**
  * Provider capability flags (OR-merged across providers by AM's
- * loadExternalProviders). `supportsSplitScreen` exposes the 50vw chat-header
- * toggle here only — block-notes / image-studio / Big Sky don't opt in.
+ * loadExternalProviders). These opt the Jetpack AI sidebar into AM features
+ * that are not enabled globally.
  */
 export const capabilities = {
 	supportsSplitScreen: true,
+	// Flip to `true` to enable regenerate in the Jetpack AI sidebar.
+	supportsRegenerateAction: false,
 };
 
 /**
@@ -951,10 +953,6 @@ export function useSuggestions(
 	}, [ editorContext.selectedBlock?.clientId ] );
 
 	const selectedBlock = editorContext.selectedBlock;
-	const aiEditorialReviewSuggestions = useMemo(
-		() => getAiEditorialReviewSuggestions( editorContext.postType ),
-		[ editorContext.postType ]
-	);
 	const postLevelSuggestions = useMemo(
 		() => getPostLevelSuggestions( editorContext.postType, editorContext.postId ),
 		[ editorContext.postId, editorContext.postType ]
@@ -971,43 +969,18 @@ export function useSuggestions(
 		() => applicable.map( ( { id, label, prompt } ) => ( { id, label, prompt } ) ),
 		[ applicable ]
 	);
+	// Post-level reviews (Optimize Title, Generate Feedback, AI Editorial Review)
+	// show only with no block selected; a selected block shows block transforms.
 	const visibleSuggestions = useMemo( () => {
 		if ( hidden ) {
 			return [];
 		}
-
-		if ( ! selectedBlock ) {
-			return applySuggestionLimit( postLevelSuggestions, maxSuggestions );
-		}
-
-		if ( ! blockTransformationsEnabled ) {
-			return applySuggestionLimit(
-				[
-					...( isGenerateFeedbackAvailable( editorContext.postType, editorContext.postId )
-						? [ POST_FEEDBACK_SUGGESTION ]
-						: [] ),
-					...aiEditorialReviewSuggestions,
-				],
-				maxSuggestions
-			);
-		}
-
 		return applySuggestionLimit(
-			[
-				...blockTransformationSuggestions,
-				...( isGenerateFeedbackAvailable( editorContext.postType, editorContext.postId )
-					? [ POST_FEEDBACK_SUGGESTION ]
-					: [] ),
-				...aiEditorialReviewSuggestions,
-			],
+			selectedBlock ? blockTransformationSuggestions : postLevelSuggestions,
 			maxSuggestions
 		);
 	}, [
-		aiEditorialReviewSuggestions,
 		blockTransformationSuggestions,
-		blockTransformationsEnabled,
-		editorContext.postId,
-		editorContext.postType,
 		hidden,
 		maxSuggestions,
 		postLevelSuggestions,

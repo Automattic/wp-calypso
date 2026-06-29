@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.5
+
+- Packaging: declare `sass` as a runtime dependency for the package build script.
+
 ## 1.0.4
 
 - Declare React 19 compatibility for package consumers (#111721).

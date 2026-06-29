@@ -8,9 +8,11 @@
     direct-download path: it is code-signed and keeps the in-app
     electron-updater enabled, so existing users auto-update to it.
 
-    This is the PFX-signed "bridge" build of the PFX -> Azure Trusted Signing
-    migration (AINFRA-2237): it must stay PFX-signed and ship while the Sectigo
-    cert is still valid (before 2026-07-05) so existing installs accept it.
+    Signs via Azure Artifact Signing by default (AINFRA-2237). The org Sectigo
+    PFX is retained as a fallback, selected by setting FORCE_PFX_SIGNING, until
+    the Azure-signed build is confirmed in distribution. The signer choice here
+    only decides which env vars are populated; electron-builder's `win.sign`
+    callback (bin/windows-sign.js) routes on them.
 #>
 
 # PowerShell does not abort on a failed *native* command, only on failed cmdlets.
@@ -53,29 +55,72 @@ $env:PLAYWRIGHT_SKIP_DOWNLOAD = 'true'
 Write-Output "--- :yarn: Installing desktop dependencies"
 Invoke-Checked { yarn install --immutable --inline-builds }
 
-# Materialize the org Windows signing certificate from AWS Secrets Manager
-# (writes certificate.pfx). Provided by the CI Toolkit Buildkite plugin and used
-# by every a8c Windows-signing app; WINDOWS_CODE_SIGNING_CERT_PASSWORD is the
-# matching cert password, already on the windows queue.
-Write-Output "--- :lock: Configuring Windows code signing (CI Toolkit cert)"
-Invoke-Checked { & 'setup_windows_code_signing.ps1' }
+if ($env:FORCE_PFX_SIGNING) {
+    # Fallback: materialize the org Sectigo cert from AWS Secrets Manager (writes
+    # certificate.pfx; WINDOWS_CODE_SIGNING_CERT_PASSWORD is the matching
+    # password, already on the windows queue). bin/windows-sign.js signs with
+    # signtool /f /p, so locate signtool from the Windows 10 SDK on the AMI.
+    Write-Output "--- :lock: Configuring Windows code signing (PFX fallback)"
+    Invoke-Checked { & 'setup_windows_code_signing.ps1' }
 
-if ([string]::IsNullOrEmpty($env:WINDOWS_CODE_SIGNING_CERT_PASSWORD)) {
-    throw "WINDOWS_CODE_SIGNING_CERT_PASSWORD is not set on this agent."
+    if ([string]::IsNullOrEmpty($env:WINDOWS_CODE_SIGNING_CERT_PASSWORD)) {
+        throw "WINDOWS_CODE_SIGNING_CERT_PASSWORD is not set on this agent."
+    }
+    $env:WIN_CSC_LINK = (Convert-Path '.\certificate.pfx')
+    $env:WIN_CSC_KEY_PASSWORD = $env:WINDOWS_CODE_SIGNING_CERT_PASSWORD
+
+    $signtool = Get-ChildItem 'C:\Program Files (x86)\Windows Kits\10\bin' -Recurse -Filter 'signtool.exe' -ErrorAction SilentlyContinue |
+        Where-Object { $_.FullName -match '\\x64\\signtool\.exe$' } |
+        Sort-Object FullName | Select-Object -Last 1
+    if (-not $signtool) {
+        throw "signtool.exe not found under the Windows 10 SDK - cannot PFX-sign."
+    }
+    $env:SIGNTOOL_PATH = $signtool.FullName
+} else {
+    # Sets AZURE_CODE_SIGNING_DLIB, AZURE_METADATA_JSON,
+    # and SIGNTOOL_PATH for bin/windows-sign.js.
+    Write-Output "--- :lock: Configuring Windows code signing (Azure Artifact Signing)"
+    Invoke-Checked { & 'setup_azure_trusted_signing.ps1' }
 }
-$certPath = (Convert-Path '.\certificate.pfx')
-$env:WIN_CSC_LINK = $certPath
-$env:WIN_CSC_KEY_PASSWORD = $env:WINDOWS_CODE_SIGNING_CERT_PASSWORD
+
 # electron-builder skips signing on CI PR builds unless this is set - needed to
 # exercise signing here. Gate to trunk/release before production.
 $env:CSC_FOR_PULL_REQUEST = 'true'
-# Workaround (per simplenote-electron): import the cert so the signer finds it.
-Import-PfxCertificate -FilePath $certPath -CertStoreLocation Cert:\LocalMachine\Root `
-    -Password (ConvertTo-SecureString -String $env:WINDOWS_CODE_SIGNING_CERT_PASSWORD -AsPlainText -Force) | Out-Null
 
 Write-Output "--- :windows: Building signed NSIS installer"
 Invoke-Checked { yarn run build:main }
 Invoke-Checked { yarn electron-builder --config electron-builder.json build --publish never }
+
+# Fail loud on any unsigned binary rather than shipping it.
+function Assert-Signed {
+    param([Parameter(Mandatory)][System.IO.FileInfo[]]$Binaries, [Parameter(Mandatory)][string]$Label)
+    if ($Binaries.Count -eq 0) {
+        throw "No binaries to verify for ${Label} - did the packaged layout change?"
+    }
+    $failures = @()
+    foreach ($binary in $Binaries) {
+        & $env:SIGNTOOL_PATH verify /pa /q $binary.FullName
+        if ($LASTEXITCODE -ne 0) {
+            # Re-run without /q so the reason lands in the log instead of forcing
+            # an operator to RDP into the worker.
+            Write-Output "[!] Not signed: $($binary.FullName)"
+            & $env:SIGNTOOL_PATH verify /pa /v $binary.FullName
+            $failures += $binary.FullName
+        }
+    }
+    if ($failures.Count -gt 0) {
+        Write-Output "^^^ +++"
+        throw "$($failures.Count) of $($Binaries.Count) ${Label} binaries are NOT signed."
+    }
+    Write-Output "Verified all $($Binaries.Count) ${Label} binaries are signed."
+}
+
+Write-Output "--- :mag: Verifying signatures on packed binaries"
+$unpacked = @(Get-ChildItem -Path release -Directory -Filter 'win*-unpacked')
+foreach ($dir in $unpacked) {
+    $binaries = @(Get-ChildItem -Path $dir.FullName -Recurse -Include '*.exe', '*.node', '*.dll' -File)
+    Assert-Signed -Binaries $binaries -Label $dir.Name
+}
 
 # Drop the unpacked trees so the artifact upload doesn't ferry thousands of
 # loose files; keep the installer, its blockmap, and the electron-updater feed.
@@ -85,5 +130,7 @@ $exe = @(Get-ChildItem -Path release -Filter '*.exe' -ErrorAction SilentlyContin
 if (-not $exe) {
     throw "No .exe produced in desktop/release - the NSIS build did not emit an installer."
 }
+Assert-Signed -Binaries $exe -Label 'installer'
+
 Write-Output "--- :white_check_mark: Built $($exe.Count) installer(s):"
 $exe | ForEach-Object { Write-Output "  $($_.Name)" }

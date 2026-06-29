@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { REASONS_FOR_MANUAL_RENEWAL } from './constants';
 
 import 'calypso/state/immediate-login/init';
@@ -11,7 +10,7 @@ import 'calypso/state/immediate-login/init';
  *                  login attempt was made
  */
 export const wasImmediateLoginAttempted = ( state ) => {
-	return get( state, 'immediateLogin.attempt', false );
+	return state?.immediateLogin?.attempt ?? false;
 };
 
 /**
@@ -28,7 +27,7 @@ export const wasImmediateLoginAttempted = ( state ) => {
  *                      login attempt was successful
  */
 export const wasImmediateLoginSuccessfulAccordingToClient = ( state ) => {
-	return get( state, 'immediateLogin.success', false );
+	return state?.immediateLogin?.success ?? false;
 };
 
 /**

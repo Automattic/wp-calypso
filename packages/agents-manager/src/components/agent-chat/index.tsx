@@ -30,6 +30,7 @@ import type { UseImageUploadResult } from '../../hooks/use-image-upload';
 import type { ExternalContextCard, ExternalContextCardAction } from '../../utils/external-context';
 import type { Message, NoticeConfig } from '@automattic/agenttic-ui/dist/types';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
+import type { ComponentProps, RefObject } from 'react';
 
 interface Props {
 	/** Chat messages to display. */
@@ -53,7 +54,7 @@ interface Props {
 	/** Indicates if the chat is expanded (floating mode). */
 	isOpen: boolean;
 	/** Called when the user submits a message. */
-	onSubmit: ( message: string, files?: File[] ) => Promise< void > | void;
+	onSubmit: ComponentProps< typeof AgentUI.Container >[ 'onSubmit' ];
 	/** Called when the user aborts the current request. */
 	onAbort: () => void;
 	/** Called when the chat is closed. */
@@ -329,12 +330,14 @@ export default function AgentChat( {
 								acceptedFileTypes={ acceptedImageFileTypes }
 								showFileMetadata
 								allowDragToInsert={ false }
-								dropZoneRef={ conversationViewRef }
+								dropZoneRef={ conversationViewRef as RefObject< HTMLElement > }
 							/>
 						) }
 						<SelectedBlock />
 						<AgentUI.Input
-							imageUploaderRef={ imageUpload ? imageUploaderRef : undefined }
+							imageUploaderRef={
+								imageUpload ? ( imageUploaderRef as RefObject< ImageUploaderHandle > ) : undefined
+							}
 							disabled={ imageUpload?.pendingImages?.length ? false : undefined }
 						/>
 					</AgentUI.Footer>

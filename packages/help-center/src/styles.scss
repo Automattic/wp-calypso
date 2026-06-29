@@ -8,6 +8,13 @@
  *
  * THIS FILE SHOULD NOT CONTAIN ANY COMPONENT SPECIFIC STYLES.
  */
+
+// Hide Smooch's crawler-SEO fallback link, which leaks an unstyled "Powered by
+// Zendesk Sunshine" anchor into the host page for crawler-matching UAs. DOTCOM-17693.
+a[href^='https://smooch.io/live-web-chat'] {
+	display: none !important;
+}
+
 .help-center > div.help-center__container {
 	background-color: var(--color-surface);
 	z-index: $help-center-z-index;

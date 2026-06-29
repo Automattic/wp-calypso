@@ -7,7 +7,6 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { useSpaces } from 'calypso/reader/data/spaces';
 import { CustomizeModal, type CustomizeTab } from 'calypso/reader/spaces/customize-modal';
-import { SpaceDiscoverPlaceholder } from 'calypso/reader/spaces/discover/placeholder';
 import { SpaceFeed } from 'calypso/reader/spaces/feed';
 import { SpaceNavigation } from 'calypso/reader/spaces/space-navigation';
 import type { SpaceFeedLayout } from '@automattic/api-core';
@@ -45,14 +44,14 @@ export function SpacesView( { id, tab = 'feed' }: Props ) {
 	if ( id && space ) {
 		activePanel =
 			tab === 'discover' ? (
-				<SpaceDiscoverPlaceholder />
+				<SpaceFeed spaceId={ id } layoutView={ layoutView } variant="discover" />
 			) : (
 				<SpaceFeed spaceId={ id } layoutView={ layoutView } />
 			);
 	}
 
 	return (
-		<ReaderMain className="reader-spaces">
+		<ReaderMain className="reader-spaces" wideLayout>
 			<DocumentHead
 				title={ translate( '%s ‹ Reader', {
 					args: title,
@@ -68,7 +67,7 @@ export function SpacesView( { id, tab = 'feed' }: Props ) {
 					<HStack spacing={ 2 } justify="flex-end" expanded={ false }>
 						<Button
 							__next40pxDefaultSize
-							variant="secondary"
+							variant="tertiary"
 							icon={ settings }
 							onClick={ () => setCustomizeTab( 'identity' ) }
 						>

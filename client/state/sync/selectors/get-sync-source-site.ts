@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { compose } from 'redux';
 import { getSiteSync } from 'calypso/state/sync/selectors/get-site-sync';
 import type { AppState } from 'calypso/types';
@@ -11,7 +10,10 @@ import 'calypso/state/sync/init';
  * @returns {('production' | 'staging' | null)} string site that is syncing
  */
 export const getSyncSourceSiteData = ( state: AppState ): 'staging' | 'production' | null =>
-	get( state, 'syncingSourceSite', '' );
+	// `null` when no site is syncing: both the reducer's reset value and the
+	// absent-data case (getSiteSync returns `{}`), since `''` is not a valid
+	// value of the declared return type.
+	state?.syncingSourceSite ?? null;
 
 /**
  * Returns status info for sync progress

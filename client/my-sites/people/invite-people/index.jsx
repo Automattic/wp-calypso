@@ -5,7 +5,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { groupBy, pickBy } from '@automattic/js-utils';
 import debugModule from 'debug';
 import { localize, fixMe } from 'i18n-calypso';
-import { filter, some } from 'lodash';
+import { filter } from 'lodash';
 import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
@@ -362,7 +362,7 @@ class InvitePeople extends Component {
 
 		// If there are invitees, and there are no errors, let's check
 		// if there are any pending validations.
-		return some( usernamesOrEmails, ( value ) => {
+		return usernamesOrEmails.some( ( value ) => {
 			return ! success.includes( value );
 		} );
 	};

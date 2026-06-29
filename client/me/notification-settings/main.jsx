@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
@@ -47,7 +46,7 @@ class NotificationSettings extends Component {
 	render() {
 		// TODO: We should avoid creating functions in the render method
 		const findSettingsForBlog = ( blogId ) =>
-			find( this.props.settings, { blog_id: parseInt( blogId, 10 ) } );
+			this.props.settings?.find( ( setting ) => setting.blog_id === parseInt( blogId, 10 ) );
 		const onSave = ( blogId ) => this.props.saveSettings( 'blogs', findSettingsForBlog( blogId ) );
 		const onSaveToAll = ( blogId ) =>
 			this.props.saveSettings( 'blogs', findSettingsForBlog( blogId ), true );

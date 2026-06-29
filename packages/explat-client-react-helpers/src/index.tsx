@@ -1,4 +1,4 @@
-import { useRef, useEffect, useReducer } from 'react';
+import { useRef, useEffect, useReducer, type JSX } from 'react';
 import * as React from 'react';
 import type { ExPlatClient, ExperimentAssignment } from '@automattic/explat-client';
 

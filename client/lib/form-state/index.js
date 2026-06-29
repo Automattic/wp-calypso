@@ -1,7 +1,7 @@
 import { camelCase, mapValues, pickBy } from '@automattic/js-utils';
 import { debounce } from '@wordpress/compose';
 import update from 'immutability-helper';
-import { filter, isEmpty, map, some } from 'lodash';
+import { filter, isEmpty, map } from 'lodash';
 
 function Controller( options ) {
 	if ( ! ( this instanceof Controller ) ) {
@@ -225,7 +225,7 @@ function hasErrors( formState ) {
 }
 
 function needsValidation( formState ) {
-	return some( formState, function ( field ) {
+	return Object.values( formState ?? {} ).some( function ( field ) {
 		return field.errors === null || ! field.isShowingErrors || field.isPendingValidation;
 	} );
 }

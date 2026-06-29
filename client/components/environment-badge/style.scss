@@ -6,8 +6,8 @@ $z-index: 999;
 .environment-badge {
 	padding: 0;
 	position: fixed;
-	bottom: 27px;
-	right: 86px;
+	bottom: 5px;
+	right: 5px;
 	z-index: $z-index;
 
 	// The hovered class is toggled in load-dev-helpers/index.js
@@ -128,8 +128,6 @@ html[dir="rtl"] .environment-badge,
 
 @include breakpoint-deprecated( "<960px" ) {
 	.environment-badge {
-		right: 20px;
-
 		&.hovered {
 			display: flex;
 			flex-wrap: wrap-reverse;

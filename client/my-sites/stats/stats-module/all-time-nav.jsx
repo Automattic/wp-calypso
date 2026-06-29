@@ -2,7 +2,7 @@ import { ComponentSwapper, SegmentedControl, SelectDropdown } from '@automattic/
 import { Icon, lock } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { find, get } from 'lodash';
+import { get } from 'lodash';
 import { useMemo } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import { compose } from 'redux';
@@ -173,7 +173,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 	];
 
 	const numberDays = get( query, 'num', '0' );
-	let selected = find( options, { value: numberDays } );
+	let selected = options.find( ( option ) => option.value === numberDays );
 	selected = selected || options[ 0 ];
 
 	const tabs = (

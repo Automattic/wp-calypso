@@ -178,7 +178,7 @@ const sections = [
 	},
 	{
 		name: 'settings-writing',
-		paths: [ '/settings/writing', '/settings/taxonomies' ],
+		paths: [ '/settings/writing' ],
 		module: 'calypso/my-sites/site-settings/settings-writing',
 		group: 'sites',
 	},

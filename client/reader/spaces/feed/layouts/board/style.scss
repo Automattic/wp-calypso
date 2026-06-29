@@ -6,7 +6,12 @@
 .space-feed-board__item {
 	position: absolute;
 	inset-block-start: 0;
-	padding: 8px;
+	// border-box so the lane width (50%) already accounts for the gutter padding —
+	// otherwise it overflows the lane and the columns overlap. 16px inline padding
+	// gives a 32px gutter between columns; 20px block padding a 40px row gutter.
+	box-sizing: border-box;
+	padding-block: 20px;
+	padding-inline: 16px;
 }
 
 .space-feed-board__card {
@@ -93,4 +98,30 @@
 
 .space-feed-board__time {
 	color: var(--color-text-subtle);
+}
+
+// Loading skeleton: a two-lane grid of card-shaped shimmers.
+.space-feed-board__skeleton {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 16px;
+	padding: 8px;
+}
+
+.space-feed-board__skeleton-hero {
+	block-size: 120px;
+	border-radius: 0;
+}
+
+.space-feed-board__skeleton-line {
+	block-size: 14px;
+	margin-block-start: 10px;
+}
+
+.space-feed-board__skeleton-line.is-title {
+	block-size: 18px;
+}
+
+.space-feed-board__skeleton-line.is-short {
+	inline-size: 60%;
 }

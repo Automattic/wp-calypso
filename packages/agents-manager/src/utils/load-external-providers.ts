@@ -125,6 +125,8 @@ export type { ImageUploadHook };
 export interface ProviderCapabilities {
 	/** Adds the "Split screen sidebar" chat-header menu item when true. */
 	supportsSplitScreen?: boolean;
+	/** Adds Agenttic's built-in regenerate action to agent messages when true. */
+	supportsRegenerateAction?: boolean;
 }
 
 /**
@@ -140,6 +142,9 @@ export function mergeCapabilitiesInto( merged: ProviderCapabilities, capabilitie
 	// runtime-imported modules; a stray `'false'` string would otherwise opt in.
 	if ( caps.supportsSplitScreen === true ) {
 		merged.supportsSplitScreen = true;
+	}
+	if ( caps.supportsRegenerateAction === true ) {
+		merged.supportsRegenerateAction = true;
 	}
 }
 
