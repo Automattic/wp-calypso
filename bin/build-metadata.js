@@ -184,7 +184,7 @@ function generateDeepRemoveEmptyArraysFromObject( allowedKeys ) {
 		for ( const key in obj ) {
 			if ( obj.hasOwnProperty( key ) ) {
 				if (
-					_.includes( allowedKeys, key ) &&
+					allowedKeys.includes( key ) &&
 					Array.isArray( obj[ key ] ) &&
 					obj[ key ].length === 0
 				) {
@@ -254,7 +254,7 @@ function processLibPhoneNumberMetadata( libPhoneNumberData ) {
 	);
 	_.forIn( noPattern, function ( country ) {
 		country.patternRegion = (
-			_.maxBy( _.values( _.filter( data, { dialCode: country.dialCode } ) ), 'priority' ) || {}
+			_.maxBy( Object.values( _.filter( data, { dialCode: country.dialCode } ) ), 'priority' ) || {}
 		).isoCode;
 		console.log(
 			'Info: ' +
@@ -361,7 +361,7 @@ function generateDialCodeMap( metadata ) {
 			return;
 		}
 		res[ key ] = res[ key ] || [];
-		if ( ! _.includes( res[ key ], value ) ) {
+		if ( ! res[ key ].includes( value ) ) {
 			res[ key ].push( value );
 		}
 	}
