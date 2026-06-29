@@ -5,6 +5,7 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 import { Component } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { isBlockToolbarButtonEnabled } from '../utils/preview-features';
+import type { ComponentType } from 'react';
 
 type BlockEditProps = {
 	name: string;
@@ -57,7 +58,7 @@ export function openJetpackAiSidebarChat(): void {
  * Add Jetpack AI button to block toolbars.
  */
 export const withJetpackAiToolbarButton = createHigherOrderComponent(
-	( BlockEdit: React.ComponentType< BlockEditProps > ) => {
+	( BlockEdit: ComponentType< BlockEditProps > ) => {
 		const JetpackAiToolbarButtonInner = ( props: BlockEditProps ) => {
 			if ( ! isBlockToolbarButtonEnabled() ) {
 				return <BlockEdit { ...props } />;
