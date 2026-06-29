@@ -5,6 +5,10 @@
  * root config and the overrides that replace, rather than merge with, it) so the
  * guard stays identical everywhere. Replacements live in `@automattic/js-utils`,
  * or are native array methods.
+ *
+ * Note: `no-restricted-imports` only covers ES `import`/deep-import syntax. It
+ * does NOT catch CommonJS `const { x } = require( 'lodash' )` in `.js` build
+ * tooling, so check those by hand when migrating a restricted function.
  */
 
 const JS_UTILS_NAMES = [

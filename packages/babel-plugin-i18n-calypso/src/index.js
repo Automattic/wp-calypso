@@ -87,14 +87,14 @@ function getExtractedComment( path, _originalNodeLine ) {
 	}
 
 	let comment;
-	( node.leadingComments ?? [] ).forEach( ( commentNode ) => {
+	for ( const commentNode of node.leadingComments ?? [] ) {
 		if ( ! commentNode.loc ) {
-			return;
+			continue;
 		}
 
 		const { line } = commentNode.loc.end;
 		if ( line < _originalNodeLine - 1 || line > _originalNodeLine ) {
-			return;
+			continue;
 		}
 
 		const match = commentNode.value.match( REGEXP_TRANSLATOR_COMMENT );
@@ -105,10 +105,10 @@ function getExtractedComment( path, _originalNodeLine ) {
 				.map( ( text ) => text.trim() )
 				.join( ' ' );
 
-			// False return indicates to Lodash to break iteration
-			return false;
+			// Keep the first matching translator comment.
+			break;
 		}
-	} );
+	}
 
 	if ( comment ) {
 		return comment;
