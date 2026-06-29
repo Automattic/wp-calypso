@@ -2,29 +2,6 @@
 ---
 
 steps:
-  # Skip on branches and tags where the build steps below already run
-  # `yarn install` as part of their build script.
-  - label: ":desktop_computer: Desktop yarn install"
-    branches: "!ainfra-* !trunk !release/* !desktop/* !desktop-v*"
-    notify:
-      - github_commit_status:
-          context: Desktop / yarn install
-    agents:
-      queue: mac
-    env:
-      IMAGE_ID: xcode-26.4.1
-      PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
-      SKIP_TSC: 'true'
-      COREPACK_ENABLE_DOWNLOAD_PROMPT: 0
-    plugins:
-      - automattic/nvm#0.6.0
-    command: |
-      set -euo pipefail
-
-      cd desktop
-      corepack enable
-      yarn install --immutable --inline-builds
-
   # The desktop build is resource-intensive and this repo runs many builds,
   # so keep it scoped to the same branch families the CircleCI workflow used.
   - label: ":desktop_computer: Build desktop (mac)"
