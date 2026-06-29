@@ -78,14 +78,14 @@ jest.mock( '@wordpress/block-editor', () => ( {
 } ) );
 
 jest.mock( '@wordpress/components', () => {
-	const ReactActual: typeof React = jest.requireActual( 'react' );
+	const react = jest.requireActual< typeof import('react') >( 'react' );
 	return {
-		Panel: ( { children }: any ) => ReactActual.createElement( 'div', null, children ),
+		Panel: ( { children }: any ) => react.createElement( 'div', null, children ),
 		PanelBody: ( { children, initialOpen, title }: any ) =>
-			ReactActual.createElement(
+			react.createElement(
 				'section',
 				{ 'data-initial-open': initialOpen ? 'true' : 'false' },
-				ReactActual.createElement( 'h3', null, title ),
+				react.createElement( 'h3', null, title ),
 				children
 			),
 	};
