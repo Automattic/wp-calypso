@@ -5,7 +5,7 @@
 	"client_slug": "browser",
 	"survicate_enabled": true,
 	"hostname": "my.wordpress.com",
-	"hostname_allowlist": [ "my.wordpress.com", "my.woo.ai" ],
+	"hostname_allowlist": [ "my.wordpress.com", "my.woo.ai", "agencies-beta.automattic.com" ],
 	"hostname_overrides": {
 		"my.woo.ai": {
 			"oauth_client_id": 134405,
