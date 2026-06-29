@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { pick } from '@automattic/js-utils';
 import debugModule from 'debug';
 import { translate } from 'i18n-calypso';
-import { filter, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import { Store, Unsubscribe as ReduxUnsubscribe, AnyAction } from 'redux';
 import { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -350,11 +350,11 @@ export default class SignupFlowController {
 
 	_process() {
 		const currentSteps = this._getFlowSteps();
-		const signupProgress = filter( getSignupProgress( this._reduxStore.getState() ), ( step ) =>
-			currentSteps.includes( step.stepName )
-		);
-		const pendingSteps = filter( signupProgress, { status: 'pending' } );
-		const completedSteps = filter( signupProgress, { status: 'completed' } );
+		const signupProgress = Object.values(
+			getSignupProgress( this._reduxStore.getState() ) ?? {}
+		).filter( ( step ) => currentSteps.includes( step.stepName ) );
+		const pendingSteps = signupProgress.filter( ( step ) => step.status === 'pending' );
+		const completedSteps = signupProgress.filter( ( step ) => step.status === 'completed' );
 		const dependencies = getSignupDependencyStore( this._reduxStore.getState() );
 
 		if ( dependencies.bearer_token && ! wpcom.isTokenLoaded() ) {
@@ -383,10 +383,9 @@ export default class SignupFlowController {
 		const dependenciesFound = this._findDependencies( step.stepName, 'dependencies' );
 		const dependenciesSatisfied = dependencies.length === Object.keys( dependenciesFound ).length;
 		const currentSteps = this._getFlowSteps();
-		const signupProgress = filter(
-			getSignupProgress( this._reduxStore.getState() ),
-			( { stepName } ) => currentSteps.includes( stepName )
-		);
+		const signupProgress = Object.values(
+			getSignupProgress( this._reduxStore.getState() ) ?? {}
+		).filter( ( { stepName } ) => currentSteps.includes( stepName ) );
 		const allStepsSubmitted =
 			signupProgress.filter( ( step ) => step.status !== 'in-progress' ).length ===
 			currentSteps.length;

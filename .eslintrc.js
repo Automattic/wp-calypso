@@ -596,6 +596,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/every': 'error',
 		'you-dont-need-lodash-underscore/extend-own': 'error',
 		'you-dont-need-lodash-underscore/fill': 'error',
+		'you-dont-need-lodash-underscore/filter': 'error',
 		'you-dont-need-lodash-underscore/find': 'error',
 		'you-dont-need-lodash-underscore/find-index': 'error',
 		'you-dont-need-lodash-underscore/first': 'error',

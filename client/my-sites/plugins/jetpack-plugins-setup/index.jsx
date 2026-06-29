@@ -9,7 +9,6 @@ import {
 	JETPACK_SUPPORT,
 } from '@automattic/urls';
 import { localize, fixMe } from 'i18n-calypso';
-import { filter } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
@@ -88,7 +87,7 @@ class PlansSetup extends Component {
 
 	allPluginsHaveWporgData = () => {
 		const plugins = this.addWporgDataToPlugins( this.props.plugins );
-		return plugins.length === filter( plugins, { wporg: true } ).length;
+		return plugins.every( ( plugin ) => plugin.wporg === true );
 	};
 
 	componentDidMount() {
@@ -466,7 +465,7 @@ class PlansSetup extends Component {
 			return null;
 		}
 
-		const pluginsWithErrors = filter( this.props.plugins, ( item ) => {
+		const pluginsWithErrors = ( this.props.plugins ?? [] ).filter( ( item ) => {
 			const errorCode = item?.error?.code ?? null;
 			return errorCode && errorCode !== 'already_registered';
 		} );

@@ -1,6 +1,6 @@
 import { groupBy, keyBy, mapValues, partition } from '@automattic/js-utils';
 import treeSelect from '@automattic/tree-select';
-import { filter, map } from 'lodash';
+import { map } from 'lodash';
 import { getPostCommentItems } from 'calypso/state/comments/selectors/get-post-comment-items';
 
 import 'calypso/state/comments/init';
@@ -17,7 +17,7 @@ import 'calypso/state/comments/init';
 export const getPostCommentsTree = treeSelect(
 	( state, siteId, postId ) => [ getPostCommentItems( state, siteId, postId ) ],
 	( [ allItems ], siteId, postId, status = 'approved', authorId ) => {
-		const items = filter( allItems, ( item ) => {
+		const items = ( allItems ?? [] ).filter( ( item ) => {
 			//only return pending comments that match the comment author
 			const commentAuthorId = item?.author?.ID;
 			if (

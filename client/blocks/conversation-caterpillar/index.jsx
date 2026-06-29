@@ -1,6 +1,6 @@
 import { uniqBy } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { map, filter } from 'lodash';
+import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { isAncestor } from 'calypso/blocks/comments/utils';
@@ -32,9 +32,9 @@ class ConversationCaterpillarComponent extends Component {
 
 		const childComments = isRoot
 			? comments
-			: filter( comments, ( child ) => isAncestor( parentComment, child, commentsTree ) );
+			: comments.filter( ( child ) => isAncestor( parentComment, child, commentsTree ) );
 
-		const commentsToExpand = filter( childComments, ( comment ) => ! commentsToShow[ comment.ID ] );
+		const commentsToExpand = childComments.filter( ( comment ) => ! commentsToShow[ comment.ID ] );
 
 		return commentsToExpand;
 	};

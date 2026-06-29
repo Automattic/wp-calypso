@@ -5,7 +5,7 @@ import { Spinner } from '@wordpress/components';
 import clsx from 'clsx';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
-import { filter, map, merge, isEmpty } from 'lodash';
+import { map, merge, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -253,13 +253,13 @@ class SignupForm extends Component {
 	};
 
 	validate = ( fields, onComplete ) => {
-		const fieldsForValidation = filter( [
+		const fieldsForValidation = [
 			'email',
 			this.props.isPasswordless === false && 'password', // Remove password from validation if passwordless
 			this.displayUsernameInput() && 'username',
 			this.props.displayNameInput && 'firstName',
 			this.props.displayNameInput && 'lastName',
-		] );
+		].filter( Boolean );
 
 		const data = mapKeys( pick( fields, fieldsForValidation ), ( value, key ) => snakeCase( key ) );
 		wpcom.req.post(

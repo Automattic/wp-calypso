@@ -1,7 +1,7 @@
 import { debounce } from '@wordpress/compose';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { merge, map, filter, get } from 'lodash';
+import { merge, map, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import DayPicker from 'react-day-picker';
@@ -216,7 +216,7 @@ class DatePicker extends PureComponent {
 
 		if ( this.props.events && this.props.events.length ) {
 			modifiers.events = map(
-				filter( this.props.events, ( event ) => event.date ),
+				this.props.events.filter( ( event ) => event.date ),
 				( event ) => this.getDateInstance( event.date )
 			);
 		}

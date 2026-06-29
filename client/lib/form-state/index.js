@@ -1,7 +1,7 @@
 import { camelCase, mapValues, pickBy } from '@automattic/js-utils';
 import { debounce } from '@wordpress/compose';
 import update from 'immutability-helper';
-import { filter, isEmpty, map } from 'lodash';
+import { isEmpty, map } from 'lodash';
 
 function Controller( options ) {
 	if ( ! ( this instanceof Controller ) ) {
@@ -299,9 +299,9 @@ function isFieldValidating( formState, fieldName ) {
 }
 
 function getInvalidFields( formState ) {
-	return filter( formState, function ( field, fieldName ) {
-		return isFieldInvalid( formState, fieldName );
-	} );
+	return Object.values(
+		pickBy( formState, ( field, fieldName ) => isFieldInvalid( formState, fieldName ) )
+	);
 }
 function getErrorMessages( formState ) {
 	const invalidFields = getInvalidFields( formState );
