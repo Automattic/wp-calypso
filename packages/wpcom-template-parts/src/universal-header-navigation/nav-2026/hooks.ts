@@ -104,7 +104,7 @@ interface UseFooterHeightArgs {
 	isMobileMenuOpen: boolean;
 	isLoggedIn: boolean;
 	mobilePlatform: 'ios' | 'android' | null;
-	footerRef: React.RefObject< HTMLDivElement >;
+	footerRef: React.RefObject< HTMLDivElement | null >;
 }
 
 // Publish the overlaid footer's height so the scroller can clear it.
@@ -147,7 +147,7 @@ interface UseDropdownFlipArgs {
 export function useDropdownFlip( {
 	nav2026,
 	activeDropdown,
-}: UseDropdownFlipArgs ): React.RefObject< HTMLDivElement > {
+}: UseDropdownFlipArgs ): React.RefObject< HTMLDivElement | null > {
 	const dropdownRef = useRef< HTMLDivElement >( null );
 	const prevDropdownRef = useRef< string | null >( null );
 	// React has already rendered the next panel, so cache previous panel heights.
