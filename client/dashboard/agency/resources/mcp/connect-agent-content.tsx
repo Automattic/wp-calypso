@@ -146,19 +146,6 @@ export default function McpConnectAgent( {
 								{ selectedAgent.quickSetupDescription && (
 									<Text variant="muted">{ selectedAgent.quickSetupDescription }</Text>
 								) }
-								{ selectedAgent.installAction && (
-									<Button
-										style={ { width: 'fit-content' } }
-										variant="primary"
-										href={ selectedAgent.installAction.deepLink }
-										onClick={ onInstallActionClick }
-									>
-										{ selectedAgent.installAction.label }
-									</Button>
-								) }
-								{ selectedAgent.installAction && hasSteps && (
-									<Text variant="muted">{ __( 'Or set it up manually:' ) }</Text>
-								) }
 								{ hasSteps && (
 									<ol>
 										{ selectedAgent.quickSetup!.map( ( step, index ) => (
@@ -167,6 +154,23 @@ export default function McpConnectAgent( {
 											</li>
 										) ) }
 									</ol>
+								) }
+								{ selectedAgent.installAction && (
+									<>
+										<Text>
+											{ __(
+												'Or use the one-click install to add the Automattic for Agencies MCP app.'
+											) }
+										</Text>
+										<Button
+											style={ { width: 'fit-content' } }
+											variant="primary"
+											href={ selectedAgent.installAction.deepLink }
+											onClick={ onInstallActionClick }
+										>
+											{ selectedAgent.installAction.label }
+										</Button>
+									</>
 								) }
 							</VStack>
 						</CardBody>

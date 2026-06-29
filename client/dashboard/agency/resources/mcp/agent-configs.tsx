@@ -1,3 +1,4 @@
+import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import type { ReactNode } from 'react';
@@ -102,12 +103,8 @@ const fallbackDescription = ( clientNote: string ) =>
 		clientNote
 	);
 
-// Cursor and VS Code only work through the bridge, so the manual guide in the
-// troubleshooting section is the fallback to the one-click install.
-const bridgeTroubleshootingDescription = __(
-	'If the one-click install doesn’t work, follow the steps below to connect through a local Node bridge. You’ll need Node 20 or later installed.'
-);
-
+// Node bridge setup steps. Cursor and VS Code connect only through the bridge, so
+// these are their primary guide; Claude Desktop uses them as a fallback.
 const claudeDesktopBridgeSteps: ReactNode[] = [
 	installNodeStep,
 	__(
@@ -191,6 +188,20 @@ export const AGENT_CONFIGS: AgentConfig[] = [
 		),
 		quickSetup: [
 			createInterpolateElement(
+				__(
+					'Install Claude Code: run <code>npm install -g @anthropic-ai/claude-code</code> or see <a>the setup guide</a>.'
+				),
+				{
+					code: <code />,
+					a: (
+						<ExternalLink
+							href="https://docs.anthropic.com/en/docs/claude-code/setup"
+							children={ __( 'the setup guide' ) }
+						/>
+					),
+				}
+			),
+			createInterpolateElement(
 				sprintf(
 					/* translators: %1$s: MCP server name, kept inside <code>; %2$s: MCP server URL, kept inside <code> */
 					__( 'Run in your terminal: <code>claude mcp add --transport http %1$s %2$s</code>' ),
@@ -224,67 +235,39 @@ export const AGENT_CONFIGS: AgentConfig[] = [
 	{
 		id: 'cursor',
 		label: 'Cursor',
-		quickSetupDescription: __( 'Install with one click, then sign in when your browser opens.' ),
+		quickSetup: cursorBridgeSteps,
 		installAction: {
 			label: __( 'Install in Cursor' ),
 			deepLink: cursorInstallDeepLink,
 		},
-		fallbackSetup: {
-			description: bridgeTroubleshootingDescription,
-			file: '~/.cursor/mcp.json',
-			steps: cursorBridgeSteps,
-			snippet: mcpServersBridgeSnippet,
-		},
+		manualSetupFile: '~/.cursor/mcp.json',
+		manualSetupSnippet: mcpServersBridgeSnippet,
 		docsUrl: 'https://cursor.com/docs/mcp',
 		docsLabel: __( 'Cursor documentation' ),
 	},
 	{
 		id: 'vscode',
 		label: 'VS Code',
-		quickSetupDescription: __( 'Install with one click, then sign in when your browser opens.' ),
+		quickSetup: vscodeBridgeSteps,
 		installAction: {
 			label: __( 'Install in VS Code' ),
 			deepLink: vscodeInstallDeepLink,
 		},
-		fallbackSetup: {
-			description: bridgeTroubleshootingDescription,
-			file: '~/Library/Application Support/Code/User/mcp.json',
-			steps: vscodeBridgeSteps,
-			snippet: serversBridgeSnippet,
-		},
+		manualSetupFile: '~/Library/Application Support/Code/User/mcp.json',
+		manualSetupSnippet: serversBridgeSnippet,
 		docsUrl: 'https://code.visualstudio.com/docs/copilot/customization/mcp-servers',
 		docsLabel: __( 'VS Code MCP documentation' ),
 	},
 	{
 		id: 'codex',
 		label: 'Codex',
-		quickSetupDescription: __( 'Codex connects directly over HTTP — no Node bridge required.' ),
 		quickSetup: [
-			createInterpolateElement(
-				sprintf(
-					/* translators: %1$s: MCP server name, kept inside <code>; %2$s: MCP server URL, kept inside <code> */
-					__( 'Add the server: <code>codex mcp add %1$s --url %2$s</code>' ),
-					MCP_SERVER_NAME,
-					A4A_MCP_URL
-				),
-				{ code: <code /> }
-			),
-			createInterpolateElement(
-				sprintf(
-					/* translators: %s: MCP server name, kept inside <code> */
-					__(
-						'Authenticate: <code>codex mcp login %s</code>. Your browser opens to complete sign-in.'
-					),
-					MCP_SERVER_NAME
-				),
-				{ code: <code /> }
-			),
-			createInterpolateElement(
-				__(
-					'Prefer to edit config? Append the block below to <code>~/.codex/config.toml</code>, restart Codex, then go to Codex → MCP servers → Authenticate.'
-				),
-				{ code: <code /> }
-			),
+			createInterpolateElement( __( 'Open <code>~/.codex/config.toml</code> in your editor.' ), {
+				code: <code />,
+			} ),
+			__( 'Append the block below to the file.' ),
+			__( 'Restart Codex.' ),
+			__( 'Go to Codex → MCP servers → Authenticate.' ),
 		],
 		manualSetupFile: '~/.codex/config.toml',
 		manualSetupSnippet: codexNativeSnippet,
