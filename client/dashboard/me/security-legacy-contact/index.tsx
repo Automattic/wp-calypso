@@ -37,15 +37,13 @@ export default function SecurityLegacyContact() {
 						{ contact ? (
 							<>
 								<Text>
-									{ /* TODO: translate this string once the legacy contact UI is finalized. */ }
-									{ createInterpolateElement( 'Your legacy contact is <contactEmail />.', {
+									{ createInterpolateElement( __( 'Your legacy contact is <contactEmail />.' ), {
 										contactEmail: <strong>{ contact.contact_email }</strong>,
 									} ) }
 								</Text>
 								<ButtonStack justify="flex-start">
 									<RouterLinkButton variant="secondary" to="/me/security/legacy-contact/print">
-										{ /* TODO: translate this string once the legacy contact UI is finalized. */ }
-										View printable details
+										{ __( 'View printable details' ) }
 									</RouterLinkButton>
 									<Button
 										variant="secondary"
