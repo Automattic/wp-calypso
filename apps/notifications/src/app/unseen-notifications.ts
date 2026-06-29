@@ -28,9 +28,9 @@ const NOTE_STREAM_PATH = '/wpcom/me/newest-note-data';
 const POLL_INTERVAL_MS = 30 * 1000;
 const SUBSCRIBE_TRIES = 3;
 const SUBSCRIBE_COOLDOWN_MS = 120 * 1000;
-// Cap matches the panel's max page; the badge only needs "many", not an exact
-// tally beyond this.
-const NOTE_LIMIT = 100;
+// We only need to know whether there are unseen notes (and a small count for
+// the badge), not an exact tally — so request a small page.
+const NOTE_LIMIT = 10;
 
 /**
  * Subscribe to the unseen-notifications count via the notifications note stream.
