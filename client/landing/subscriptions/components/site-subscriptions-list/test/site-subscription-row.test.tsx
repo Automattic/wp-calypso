@@ -221,7 +221,7 @@ describe( 'SiteSubscriptionRow', () => {
 	it( 'shows the delivery frequency in the email frequency column when email delivery is enabled', () => {
 		const queryClient = makeQueryClient();
 
-		const { container } = renderRow( queryClient, {
+		renderRow( queryClient, {
 			delivery_methods: {
 				email: {
 					post_delivery_frequency: Reader.EmailDeliveryFrequency.Instantly,
@@ -230,13 +230,13 @@ describe( 'SiteSubscriptionRow', () => {
 			},
 		} );
 
-		expect( container.querySelector( '.email-frequency-cell' ) ).toHaveTextContent( 'Instantly' );
+		expect( screen.getByText( 'Instantly' ) ).toBeVisible();
 	} );
 
 	it( 'shows Paused in the email frequency column when email delivery is disabled', () => {
 		const queryClient = makeQueryClient();
 
-		const { container } = renderRow( queryClient, {
+		renderRow( queryClient, {
 			delivery_methods: {
 				email: {
 					post_delivery_frequency: Reader.EmailDeliveryFrequency.Instantly,
@@ -245,6 +245,6 @@ describe( 'SiteSubscriptionRow', () => {
 			},
 		} );
 
-		expect( container.querySelector( '.email-frequency-cell' ) ).toHaveTextContent( 'Paused' );
+		expect( screen.getByText( 'Paused' ) ).toBeVisible();
 	} );
 } );
