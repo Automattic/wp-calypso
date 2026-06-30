@@ -23,7 +23,7 @@ function LegacyContactDetails( { legacyContactId }: { legacyContactId: number } 
 	return (
 		<VStack spacing={ 6 }>
 			<VStack spacing={ 4 }>
-				<Text>
+				<Text className="legacy-contact-print__note">
 					{ __(
 						'The printable copy contains the access key your legacy contact will need. We recommend printing it and storing it with your estate planning documents, or saving it securely in a password manager.'
 					) }
