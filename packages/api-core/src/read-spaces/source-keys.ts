@@ -1,5 +1,4 @@
 import type { SiteSubscriptionItem } from '../read-follows';
-import type { SpaceSource } from './types';
 
 export const normalizeReadSpaceSourceUrl = ( url?: string | null ): string =>
 	( url ?? '' ).trim().toLowerCase().replace( /\/+$/, '' );
@@ -33,9 +32,14 @@ const buildReadSpaceSourceKey = (
 	return `url:${ normalizeReadSpaceSourceUrl( url ) }`;
 };
 
-export const getReadSpaceSourceKey = (
-	source: Pick< SpaceSource, 'feedId' | 'blogId' | 'feedUrl' >
-): string => buildReadSpaceSourceKey( source.feedId, source.blogId, source.feedUrl );
+// Loosely typed (not `Pick<SpaceSource>`): the real `SpaceSource.feedId` is now
+// always a number, but this helper also keys partial/edge inputs (null/string
+// ids), so it accepts the lenient shape `buildReadSpaceSourceKey` already handles.
+export const getReadSpaceSourceKey = ( source: {
+	feedId?: number | string | null;
+	blogId?: number | string | null;
+	feedUrl?: string | null;
+} ): string => buildReadSpaceSourceKey( source.feedId, source.blogId, source.feedUrl );
 
 export const getSiteSubscriptionSourceKey = (
 	subscription: Pick< SiteSubscriptionItem, 'feed_ID' | 'blog_ID' | 'feed_URL' >

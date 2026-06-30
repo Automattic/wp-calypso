@@ -1,5 +1,5 @@
 import { convertFromRaw, convertToRaw } from 'draft-js';
-import { get, map, matchesProperty, reduce } from 'lodash';
+import { get, matchesProperty } from 'lodash';
 import { compose } from 'redux';
 
 /*
@@ -74,14 +74,14 @@ import { compose } from 'redux';
  */
 export const fromEditor = ( content ) => {
 	const rawContent = convertToRaw( content );
-	const text = get( rawContent, 'blocks[0].text', '' );
-	const ranges = get( rawContent, 'blocks[0].entityRanges', [] );
-	const entities = get( rawContent, 'entityMap' );
+	const text = rawContent?.blocks?.[ 0 ]?.text ?? '';
+	const ranges = rawContent?.blocks?.[ 0 ]?.entityRanges ?? [];
+	const entities = rawContent?.entityMap;
 
 	// [ output, index, text ]
 	const [ o, i, t ] = ranges.reduce(
 		( [ output, lastIndex, remainingText ], next ) => {
-			const tokenName = get( entities, [ next.key, 'data', 'name' ], null );
+			const tokenName = entities?.[ next.key ]?.data?.name ?? null;
 			const textBlock =
 				next.offset > lastIndex
 					? { type: 'string', value: remainingText.slice( lastIndex, next.offset ) }
@@ -169,8 +169,7 @@ const newEntityAt = ( offset, type, tokens, entityGuide ) => ( {
  * @returns {Object} blockMap for use in ContentState
  */
 const buildBlockMap = compose( ( format, tokens ) =>
-	reduce(
-		format,
+	( format ?? [] ).reduce(
 		( [ block, lastIndex, entityGuide ], piece ) => [
 			{
 				...block,
@@ -199,7 +198,7 @@ export const toEditor = ( format, tokens ) => {
 	return convertFromRaw( {
 		blocks: [ blocks ],
 		entityMap: Object.fromEntries(
-			map( entityGuide, ( name, key ) => [
+			entityGuide.map( ( name, key ) => [
 				key, // entity key is position in list
 				{
 					type: 'TOKEN',

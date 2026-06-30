@@ -1,4 +1,4 @@
-import { get, includes, reduce } from 'lodash';
+import { get } from 'lodash';
 
 export const APP_BANNER_DISMISS_TIMES_PREFERENCE = 'appBannerDismissTimes';
 export const GUTENBERG = 'gutenberg-editor';
@@ -66,7 +66,7 @@ export function getCurrentSection( currentSection, isNotesOpen ) {
 		return NOTES;
 	}
 
-	if ( includes( ALLOWED_SECTIONS, currentSection ) ) {
+	if ( ALLOWED_SECTIONS.includes( currentSection ) ) {
 		return currentSection;
 	}
 
@@ -87,25 +87,21 @@ function getDismissTimes() {
 export function getNewDismissTimes( dismissedSection, currentDismissTimes ) {
 	const dismissTimes = getDismissTimes();
 
-	return reduce(
-		ALLOWED_SECTIONS,
-		( result, section ) => {
-			if ( section === dismissedSection ) {
-				// Dismiss selected section for a longer period.
-				result[ section ] = dismissTimes.longerDuration;
-			} else {
-				// Dismiss all other sections for a shorter period, but make sure that we preserve previous dismiss time
-				// if it was longer than that (e.g. if other section was also dismissed for a month).
-				result[ section ] =
-					get( currentDismissTimes, section, -Infinity ) > dismissTimes.shorterDuration
-						? get( currentDismissTimes, section )
-						: dismissTimes.shorterDuration;
-			}
+	return ALLOWED_SECTIONS.reduce( ( result, section ) => {
+		if ( section === dismissedSection ) {
+			// Dismiss selected section for a longer period.
+			result[ section ] = dismissTimes.longerDuration;
+		} else {
+			// Dismiss all other sections for a shorter period, but make sure that we preserve previous dismiss time
+			// if it was longer than that (e.g. if other section was also dismissed for a month).
+			result[ section ] =
+				get( currentDismissTimes, section, -Infinity ) > dismissTimes.shorterDuration
+					? currentDismissTimes?.[ section ]
+					: dismissTimes.shorterDuration;
+		}
 
-			return result;
-		},
-		{}
-	);
+		return result;
+	}, {} );
 }
 
 export const isDismissed = ( dismissedUntil, section ) =>

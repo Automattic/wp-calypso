@@ -1,6 +1,8 @@
 package _self
 
 import _self.lib.utils.mergeTrunk
+import _self.lib.utils.passMergeQueueBranchesEarly
+import _self.lib.utils.skipOnMergeQueueBranch
 
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
@@ -54,7 +56,8 @@ object CalypsoE2ETestsBuildTemplate : Template({
 	}
 
   	steps {
-		mergeTrunk( skipIfConflict = true )
+		passMergeQueueBranchesEarly()
+		mergeTrunk( skipIfConflict = true ).skipOnMergeQueueBranch()
 
     	bashNodeScript {
 			name = "Prepare environment"
@@ -70,7 +73,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				yarn workspace @automattic/calypso-e2e build
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-		}
+		}.skipOnMergeQueueBranch()
 
 		bashNodeScript {
 			name = "Determine Calypso URL"
@@ -109,7 +112,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				echo "##teamcity[setParameter name='CALYPSO_BASE_URL' value='${'$'}FINAL_URL']"
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-		}
+		}.skipOnMergeQueueBranch()
 
 		bashNodeScript {
 			name = "Determine Dashboard URL"
@@ -151,7 +154,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				echo "##teamcity[setParameter name='DASHBOARD_BASE_URL' value='${'$'}FINAL_URL']"
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-		}
+		}.skipOnMergeQueueBranch()
 
 		bashNodeScript {
 			name = "Determine test group"
@@ -174,7 +177,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				fi
 				"""
 			dockerImage = "%docker_image_e2e%"
-		}
+		}.skipOnMergeQueueBranch()
 
 		bashNodeScript {
 			name = "Set extra environment variables"
@@ -191,7 +194,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				fi
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-		}
+		}.skipOnMergeQueueBranch()
 
 		bashNodeScript {
 			name = "Run e2e tests"
@@ -208,6 +211,10 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				fi
 
 				cd test/e2e
+				# Clear any stale teardown-leak markers from a reused checkout before this run.
+				# Recursive over output/: markers should land in output/teardown-leaks, but a
+				# path drift must not leave a stale marker that fails a later run.
+				find output -name 'account-*.json' -delete 2>/dev/null || true
 				echo "CALYPSO_BASE_URL=%CALYPSO_BASE_URL%"
 				export CALYPSO_BASE_URL="%CALYPSO_BASE_URL%"
 				echo "DASHBOARD_BASE_URL=%DASHBOARD_BASE_URL%"
@@ -216,7 +223,30 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				yarn test:pw:%PROJECT% ${'$'}GREP_FLAG
 				"""
 			dockerImage = "%docker_image_e2e%"
-		}
+		}.skipOnMergeQueueBranch()
+
+		bashNodeScript {
+			name = "Check for E2E teardown leaks"
+			id = "check_teardown_leaks"
+			// Runs even when tests passed or failed: a leaked test user can occur on a green run.
+			executionMode = BuildStep.ExecutionMode.ALWAYS
+			scriptContent = """
+				# Recursive over output/ rather than only output/teardown-leaks: if the
+				# marker path ever drifts from the spec-side LEAK_DIR, a hardcoded subdir
+				# check would find nothing and pass a leaking run green. Markers are named
+				# account-*.json wherever they land.
+				MARKERS=${'$'}( find test/e2e/output -name 'account-*.json' 2>/dev/null || true )
+				if [ -n "${'$'}MARKERS" ]; then
+					COUNT=${'$'}( printf '%s\n' "${'$'}MARKERS" | wc -l | tr -d ' ' )
+					echo "E2E TEARDOWN LEAK - the following test users were not closed (their blogs leak with them):"
+					printf '%s\n' "${'$'}MARKERS" | while IFS= read -r marker; do cat "${'$'}marker" 2>/dev/null || true; done
+					# A buildProblem service message fails the build regardless of the runner exit code
+					# (nonZeroExitCode = false). Do NOT add 'exit 1': this ALWAYS step must leave green runs green.
+					echo "##teamcity[buildProblem description='E2E teardown leak: ${'$'}COUNT test user(s) not closed - see %PROJECT%/output' identity='e2e_teardown_leak']"
+				fi
+				""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}.skipOnMergeQueueBranch()
 
 		bashNodeScript {
 			name = "Upload CTRF report"
@@ -239,7 +269,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-		}
+		}.skipOnMergeQueueBranch()
   }
 
   	artifactRules = """

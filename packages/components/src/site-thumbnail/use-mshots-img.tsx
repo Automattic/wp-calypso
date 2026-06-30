@@ -66,7 +66,7 @@ export const useMshotsImg = (
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ isError, setIsError ] = useState( false );
 
-	const timeout = useRef< ReturnType< typeof setTimeout > >();
+	const timeout = useRef< ReturnType< typeof setTimeout > >( undefined );
 
 	const onError = useCallback( () => {
 		setIsError( true );

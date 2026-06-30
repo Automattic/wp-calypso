@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import { useMemo } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
@@ -191,7 +190,7 @@ function StatsDateLabel( {
 		);
 	}
 
-	const isSummarizeQuery = get( query, 'summarize' );
+	const isSummarizeQuery = query?.summarize;
 	const { selectedShortcut } = getShortcuts( reduxState, dateRange, translate );
 	const shortDisplayDate = isShort ? dateForDisplay( selectedShortcut ) : null;
 	const summarizeDisplayDate = isSummarizeQuery ? dateForSummarize() : null;

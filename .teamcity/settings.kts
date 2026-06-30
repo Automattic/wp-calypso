@@ -2,6 +2,9 @@
 import _self.bashNodeScript
 import _self.yarn_install_cmd
 import _self.CalypsoE2ETestsBuildTemplate
+import _self.lib.utils.MERGE_QUEUE_BRANCH_SKIP_PARAM
+import _self.lib.utils.passMergeQueueBranchesEarly
+import _self.lib.utils.skipOnMergeQueueBranch
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.ParameterDisplay
@@ -66,6 +69,7 @@ project {
 
 	params {
 		param("env.CI", "true")
+		param(MERGE_QUEUE_BRANCH_SKIP_PARAM, "false")
 		// Force color support in chalk. For some reason it doesn't detect TeamCity
 		// as supported (even though both TeamCity and chalk support that.)
 		param("env.FORCE_COLOR", "1")
@@ -129,13 +133,14 @@ object YarnInstall : BuildType({
 		cleanCheckout = true
 	}
 	steps {
+		passMergeQueueBranchesEarly()
 		bashNodeScript {
 			name = "Yarn Install"
 			scriptContent = """
 				# Install modules
 				${_self.yarn_install_cmd}
 			""".trimIndent()
-		}
+		}.skipOnMergeQueueBranch()
 	}
 	features {
 		perfmon {
@@ -168,6 +173,7 @@ object BuildBaseImages : BuildType({
 	}
 
 	steps {
+		passMergeQueueBranchesEarly()
 		dockerCommand {
 			name = "Build base image"
 			commandType = build {
@@ -178,7 +184,7 @@ object BuildBaseImages : BuildType({
 				commandArgs = "--no-cache --target base --build-arg workers=32 --build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber} --build-arg profile=%PROFILE%"
 			}
 			param("dockerImage.platform", "linux")
-		}
+		}.skipOnMergeQueueBranch()
 		dockerCommand {
 			name = "Build CI e2e image"
 			commandType = build {
@@ -189,7 +195,7 @@ object BuildBaseImages : BuildType({
 				commandArgs = "--target ci-e2e --build-arg workers=32 --build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber} --build-arg profile=%PROFILE%"
 			}
 			param("dockerImage.platform", "linux")
-		}
+		}.skipOnMergeQueueBranch()
 		dockerCommand {
 			name = "Build CI wpcom image"
 			commandType = build {
@@ -200,7 +206,7 @@ object BuildBaseImages : BuildType({
 				commandArgs = "--target ci-wpcom --build-arg workers=32 --build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber} --build-arg profile=%PROFILE%"
 			}
 			param("dockerImage.platform", "linux")
-		}
+		}.skipOnMergeQueueBranch()
 		script {
 			name = "Retag images for publish"
 			scriptContent = """
@@ -232,7 +238,7 @@ object BuildBaseImages : BuildType({
 				retag_image registry.a8c.com/calypso/ci-e2e
 				retag_image registry.a8c.com/calypso/ci-wpcom
 			""".trimIndent()
-		}
+		}.skipOnMergeQueueBranch()
 		dockerCommand {
 			name = "Push images"
 			commandType = push {
@@ -241,7 +247,7 @@ object BuildBaseImages : BuildType({
 					registry.a8c.com/calypso/base:%build.number%
 				""".trimIndent()
 			}
-		}
+		}.skipOnMergeQueueBranch()
 	}
 
 	triggers {
@@ -306,6 +312,7 @@ object BuildToolchainPreviewImages : BuildType({
 	}
 
 	steps {
+		passMergeQueueBranchesEarly()
 		val commonArgs = "--pull --build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}"
 
 		dockerCommand {
@@ -318,7 +325,7 @@ object BuildToolchainPreviewImages : BuildType({
 				commandArgs = "--target toolchain $commonArgs"
 			}
 			param("dockerImage.platform", "linux")
-		}
+		}.skipOnMergeQueueBranch()
 		dockerCommand {
 			name = "Build CI e2e image"
 			commandType = build {
@@ -329,7 +336,7 @@ object BuildToolchainPreviewImages : BuildType({
 				commandArgs = "--target ci-e2e $commonArgs"
 			}
 			param("dockerImage.platform", "linux")
-		}
+		}.skipOnMergeQueueBranch()
 		dockerCommand {
 			name = "Build CI wpcom image"
 			commandType = build {
@@ -340,7 +347,7 @@ object BuildToolchainPreviewImages : BuildType({
 				commandArgs = "--target ci-wpcom $commonArgs"
 			}
 			param("dockerImage.platform", "linux")
-		}
+		}.skipOnMergeQueueBranch()
 		script {
 			name = "Smoke test toolchain image"
 			scriptContent = """
@@ -350,7 +357,7 @@ object BuildToolchainPreviewImages : BuildType({
 				docker run --rm --entrypoint /bin/bash registry.a8c.com/calypso/toolchain:%build.number% -lc \
 					'node --version && yarn --version && git --version && jq --version'
 			""".trimIndent()
-		}
+		}.skipOnMergeQueueBranch()
 		script {
 			name = "Smoke test CI e2e image"
 			scriptContent = """
@@ -363,7 +370,7 @@ object BuildToolchainPreviewImages : BuildType({
 					dpkg -s fonts-noto-cjk fonts-noto-core libgtk-3-0 libgbm1 libnss3 >/dev/null
 				'
 			""".trimIndent()
-		}
+		}.skipOnMergeQueueBranch()
 		script {
 			name = "Smoke test CI wpcom image"
 			scriptContent = """
@@ -373,7 +380,7 @@ object BuildToolchainPreviewImages : BuildType({
 				docker run --rm --entrypoint /bin/bash registry.a8c.com/calypso/ci-wpcom:%build.number% -lc \
 					'php -v && composer --version && docker-compose version && sentry-cli --version'
 			""".trimIndent()
-		}
+		}.skipOnMergeQueueBranch()
 		script {
 			name = "Retag images for publish"
 			scriptContent = """
@@ -405,7 +412,7 @@ object BuildToolchainPreviewImages : BuildType({
 				retag_image registry.a8c.com/calypso/ci-e2e
 				retag_image registry.a8c.com/calypso/ci-wpcom
 			""".trimIndent()
-		}
+		}.skipOnMergeQueueBranch()
 		dockerCommand {
 			name = "Push images"
 			commandType = push {
@@ -418,7 +425,7 @@ object BuildToolchainPreviewImages : BuildType({
 					registry.a8c.com/calypso/ci-wpcom:%build.number%
 				""".trimIndent()
 			}
-		}
+		}.skipOnMergeQueueBranch()
 	}
 
 	triggers {
@@ -486,6 +493,7 @@ object BuildCacheSeedImages : BuildType({
 	}
 
 	steps {
+		passMergeQueueBranchesEarly()
 		val commonArgs = "--pull --build-arg workers=32 --build-arg node_memory=16384 --build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber} --build-arg profile=%PROFILE%"
 
 		dockerCommand {
@@ -498,7 +506,7 @@ object BuildCacheSeedImages : BuildType({
 				commandArgs = "--target cache-seed $commonArgs"
 			}
 			param("dockerImage.platform", "linux")
-		}
+		}.skipOnMergeQueueBranch()
 		dockerCommand {
 			name = "Build cache-seed debug smoke image"
 			commandType = build {
@@ -509,7 +517,7 @@ object BuildCacheSeedImages : BuildType({
 				commandArgs = "--target cache-seed-debug $commonArgs"
 			}
 			param("dockerImage.platform", "linux")
-		}
+		}.skipOnMergeQueueBranch()
 		script {
 			name = "Smoke test cache-seed debug image"
 			scriptContent = """
@@ -521,7 +529,7 @@ object BuildCacheSeedImages : BuildType({
 				docker run --rm --entrypoint /bin/bash calypso/cache-seed-smoke:%build.number% -lc \
 					'du -sh /calypso/.cache /calypso/.yarn'
 			""".trimIndent()
-		}
+		}.skipOnMergeQueueBranch()
 		script {
 			name = "Retag image for publish"
 			scriptContent = """
@@ -541,7 +549,7 @@ object BuildCacheSeedImages : BuildType({
 					exit 1
 				fi
 			""".trimIndent()
-		}
+		}.skipOnMergeQueueBranch()
 		dockerCommand {
 			name = "Push images"
 			commandType = push {
@@ -550,7 +558,7 @@ object BuildCacheSeedImages : BuildType({
 					registry.a8c.com/calypso/cache-seed:%build.number%
 				""".trimIndent()
 			}
-		}
+		}.skipOnMergeQueueBranch()
 	}
 
 	triggers {
@@ -614,6 +622,7 @@ object BuildCacheSeedPreviewImage : BuildType({
 	}
 
 	steps {
+		passMergeQueueBranchesEarly()
 		val commonArgs = "--pull --build-arg workers=32 --build-arg node_memory=16384 --build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber} --build-arg profile=%PROFILE%"
 
 		dockerCommand {
@@ -626,7 +635,7 @@ object BuildCacheSeedPreviewImage : BuildType({
 				commandArgs = "--target cache-seed $commonArgs"
 			}
 			param("dockerImage.platform", "linux")
-		}
+		}.skipOnMergeQueueBranch()
 		dockerCommand {
 			name = "Build cache-seed debug smoke image"
 			commandType = build {
@@ -637,7 +646,7 @@ object BuildCacheSeedPreviewImage : BuildType({
 				commandArgs = "--target cache-seed-debug $commonArgs"
 			}
 			param("dockerImage.platform", "linux")
-		}
+		}.skipOnMergeQueueBranch()
 		script {
 			name = "Smoke test cache-seed debug image"
 			scriptContent = """
@@ -649,13 +658,13 @@ object BuildCacheSeedPreviewImage : BuildType({
 				docker run --rm --entrypoint /bin/bash calypso/cache-seed-smoke:%build.number% -lc \
 					'du -sh /calypso/.cache /calypso/.yarn'
 			""".trimIndent()
-		}
+		}.skipOnMergeQueueBranch()
 		dockerCommand {
 			name = "Push preview image"
 			commandType = push {
 				namesAndTags = "registry.a8c.com/calypso/cache-seed:%build.number%"
 			}
-		}
+		}.skipOnMergeQueueBranch()
 	}
 
 	failureConditions {
@@ -690,13 +699,14 @@ object CheckCodeStyle : BuildType({
 	}
 
 	steps {
+		passMergeQueueBranchesEarly()
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
 				# Install modules
 				${_self.yarn_install_cmd}
 			"""
-		}
+		}.skipOnMergeQueueBranch()
 		bashNodeScript {
 			name = "Run linters"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
@@ -704,7 +714,7 @@ object CheckCodeStyle : BuildType({
 				# Lint files
 				yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" .
 			"""
-		}
+		}.skipOnMergeQueueBranch()
 	}
 
 	triggers {
@@ -802,19 +812,20 @@ object SmartBuildLauncher : BuildType({
 	}
 
 	steps {
+		passMergeQueueBranchesEarly()
 		bashNodeScript {
 			name = "Install and build dependencies"
 			scriptContent = """
 				$yarn_install_cmd
 				yarn workspace @automattic/dependency-finder build
 			"""
-		}
+		}.skipOnMergeQueueBranch()
 		bashNodeScript {
 			name = "Launch relevant builds"
 			scriptContent = """
 				node ./packages/dependency-finder/dist/esm/index.js
 			"""
-		}
+		}.skipOnMergeQueueBranch()
 	}
 })
 

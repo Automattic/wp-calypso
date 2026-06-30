@@ -1,5 +1,5 @@
 import imjv from 'is-my-json-valid';
-import { forEach, get, isEmpty } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import jsonSchemaDraft04 from './lib/json-schema-draft-04.json';
 
 const validateSchema = imjv( jsonSchemaDraft04, { verbose: true, greedy: true } );
@@ -23,7 +23,7 @@ function throwOnInvalidSchema( schema ) {
 			msg.push( JSON.stringify( schema, undefined, 2 ), '' );
 		}
 
-		forEach( validateSchema.errors, ( { field, message, schemaPath, value } ) => {
+		( validateSchema.errors ?? [] ).forEach( ( { field, message, schemaPath, value } ) => {
 			// data.myField is required
 			msg.push( `${ field } ${ message }` );
 

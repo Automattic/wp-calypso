@@ -1,6 +1,6 @@
 {
 	"name": "WordPressDesktop",
-	"version": "8.2.1",
+	"version": "8.2.2",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/Automattic/wp-calypso/",
@@ -31,7 +31,8 @@
 		"build:secrets": "node bin/build-desktop-secrets.js",
 		"ci:github:add-review": "node bin/github/add-review.js",
 		"ci:github:dismiss-review": "node bin/github/dismiss-review.js",
-		"test:e2e": "jest -c test/e2e/config/jest.config.js"
+		"test:e2e": "jest -c test/e2e/config/jest.config.js",
+		"test:unit": "jest -c test/unit/jest.config.js"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
@@ -57,7 +58,7 @@
 		"electron-fetch": "^1.7.4",
 		"electron-store": "^8.1.0",
 		"electron-updater": "6.3.0",
-		"js-yaml": "^4.1.0",
+		"js-yaml": "4.2.0",
 		"semver": "^7.7.2",
 		"superagent": "^3.8.3",
 		"winston": "^3.3.3",

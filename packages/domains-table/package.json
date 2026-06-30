@@ -44,6 +44,7 @@
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
+		"@automattic/js-utils": "workspace:^",
 		"@automattic/search": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@automattic/urls": "workspace:^",
@@ -73,8 +74,8 @@
 		"@automattic/calypso-router": "workspace:^",
 		"@wordpress/data": "^10.48.0",
 		"@wordpress/i18n": "^6.21.0",
-		"react": "^18.3.1",
-		"react-dom": "^18.3.1"
+		"react": "^18.3.1 || ^19.0.0",
+		"react-dom": "^18.3.1 || ^19.0.0"
 	},
 	"private": true
 }

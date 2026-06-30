@@ -8,6 +8,7 @@ import {
 	domainQuery,
 	geoLocationQuery,
 	isAutomatticianQuery,
+	legacyContactQuery,
 	legacyContactsQuery,
 	monetizeSubscriptionsQuery,
 	plansQuery,
@@ -298,6 +299,7 @@ export const purchaseSettingsRoute = createRoute( {
 		cancelled?: true;
 		downgraded?: true;
 		plan_changed?: true;
+		delayed_downgrade_scheduled?: true;
 		intent?: 'auto-renew';
 	} => {
 		const isRefunded = search.refunded === true || search.refunded === 'true';
@@ -305,6 +307,8 @@ export const purchaseSettingsRoute = createRoute( {
 		const isCancelled = search.cancelled === true || search.cancelled === 'true';
 		const isDowngraded = search.downgraded === true || search.downgraded === 'true';
 		const isPlanChanged = search.plan_changed === true || search.plan_changed === 'true';
+		const isDelayedDowngradeScheduled =
+			search.delayed_downgrade_scheduled === true || search.delayed_downgrade_scheduled === 'true';
 		const intent = search.intent === 'auto-renew' ? ( 'auto-renew' as const ) : undefined;
 		return {
 			...( isRefunded ? { refunded: true } : {} ),
@@ -312,6 +316,7 @@ export const purchaseSettingsRoute = createRoute( {
 			...( isCancelled ? { cancelled: true } : {} ),
 			...( isDowngraded ? { downgraded: true } : {} ),
 			...( isPlanChanged ? { plan_changed: true } : {} ),
+			...( isDelayedDowngradeScheduled ? { delayed_downgrade_scheduled: true } : {} ),
 			...( intent ? { intent } : {} ),
 		};
 	},
@@ -633,6 +638,9 @@ export const securityIndexRoute = createRoute( {
 			queryClient.ensureQueryData( accountRecoveryQuery() ),
 			queryClient.ensureQueryData( connectedApplicationsQuery() ),
 			queryClient.ensureQueryData( sshKeysQuery() ),
+			...( isEnabled( 'me/legacy-contact' )
+				? [ queryClient.ensureQueryData( legacyContactsQuery() ) ]
+				: [] ),
 		] );
 	},
 } ).lazy( () =>
@@ -858,9 +866,40 @@ export const securityLegacyContactRoute = createRoute( {
 	getParentRoute: () => securityRoute,
 	path: '/legacy-contact',
 	loader: () => queryClient.ensureQueryData( legacyContactsQuery() ),
+} );
+
+export const securityLegacyContactIndexRoute = createRoute( {
+	getParentRoute: () => securityLegacyContactRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../me/security-legacy-contact' ).then( ( d ) =>
 		createLazyRoute( 'security-legacy-contact' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const securityLegacyContactPrintRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Legacy contact' ),
+			},
+		],
+	} ),
+	getParentRoute: () => securityLegacyContactRoute,
+	path: '/print',
+	loader: async () => {
+		const [ contact ] = await queryClient.ensureQueryData( legacyContactsQuery() );
+		if ( contact ) {
+			// The access key shown on this page is only returned by the
+			// single-contact endpoint, so prefetch it here.
+			await queryClient.ensureQueryData( legacyContactQuery( contact.legacy_contact_id ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../../me/security-legacy-contact/print' ).then( ( d ) =>
+		createLazyRoute( 'security-legacy-contact-print' )( {
 			component: d.default,
 		} )
 	)
@@ -1348,7 +1387,14 @@ export const createMeRoutes = ( config: AppConfig ) => {
 				: [] ),
 			securityConnectedAppsRoute,
 			securitySocialLoginsRoute,
-			...( isEnabled( 'me/legacy-contact' ) ? [ securityLegacyContactRoute ] : [] ),
+			...( isEnabled( 'me/legacy-contact' )
+				? [
+						securityLegacyContactRoute.addChildren( [
+							securityLegacyContactIndexRoute,
+							securityLegacyContactPrintRoute,
+						] ),
+				  ]
+				: [] ),
 		] )
 	);
 

@@ -1,5 +1,5 @@
 import { DomainAvailabilityStatus, type BundleSuggestion } from '@automattic/api-core';
-import { getByText, queryByText, render, screen, waitFor } from '@testing-library/react';
+import { act, getByText, queryByText, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { buildAvailability } from '../../test-helpers/factories/availability';
 import { buildCart, buildCartItem } from '../../test-helpers/factories/cart';
@@ -1008,6 +1008,173 @@ describe( 'ResultsPage', () => {
 			} );
 		} );
 
+		it( 'clears the bundle card and refetches the bundle suggestion when the bundle is permanently unavailable', async () => {
+			const user = userEvent.setup();
+			const onAddBundle = jest.fn().mockRejectedValue(
+				Object.assign( new Error( 'The domain bundle could not be added to the cart.' ), {
+					code: 'domain_bundle_unavailable',
+				} )
+			);
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-bundle-permanent' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-permanent.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'test-bundle-permanent' },
+				bundleSuggestion: buildBundleSuggestion( 'test-bundle-permanent' ),
+			} );
+			const refetchRequest = mockGetBundleSuggestionQuery( {
+				params: { query: 'test-bundle-permanent' },
+				bundleSuggestion: null,
+			} );
+
+			render(
+				<TestDomainSearch
+					cart={ buildCart( { onAddBundle } ) }
+					config={ { showBundleSuggestions: true } }
+					query="test-bundle-permanent"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByText( 'test-bundle-permanent.net' ) ).toBeInTheDocument();
+
+			await user.click( screen.getByRole( 'button', { name: 'Get bundle' } ) );
+
+			await waitFor( () => {
+				expect( refetchRequest.isDone() ).toBe( true );
+			} );
+
+			await waitFor( () => {
+				expect( screen.queryByRole( 'button', { name: 'Get bundle' } ) ).not.toBeInTheDocument();
+			} );
+			expect( screen.queryByText( 'test-bundle-permanent.net' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'keeps the stale bundle hidden when the permanent-failure refetch returns the same bundle group', async () => {
+			const user = userEvent.setup();
+			const unavailableBundle = buildBundleSuggestion( 'test-bundle-same-group' );
+			const onAddBundle = jest.fn().mockRejectedValue(
+				Object.assign( new Error( 'The domain bundle could not be added to the cart.' ), {
+					code: 'domain_bundle_unavailable',
+				} )
+			);
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-bundle-same-group' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-same-group.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'test-bundle-same-group' },
+				bundleSuggestion: unavailableBundle,
+			} );
+			const refetchRequest = mockGetBundleSuggestionQuery( {
+				params: { query: 'test-bundle-same-group' },
+				bundleSuggestion: unavailableBundle,
+			} );
+
+			render(
+				<TestDomainSearch
+					cart={ buildCart( { onAddBundle } ) }
+					config={ { showBundleSuggestions: true } }
+					query="test-bundle-same-group"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByText( 'test-bundle-same-group.net' ) ).toBeInTheDocument();
+
+			await user.click( screen.getByRole( 'button', { name: 'Get bundle' } ) );
+
+			await waitFor( () => {
+				expect( refetchRequest.isDone() ).toBe( true );
+			} );
+
+			await waitFor( () => {
+				expect( screen.queryByRole( 'button', { name: 'Get bundle' } ) ).not.toBeInTheDocument();
+			} );
+			expect( screen.queryByText( 'test-bundle-same-group.net' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'does not hide or refetch the next query when an old bundle add fails permanently', async () => {
+			const user = userEvent.setup();
+			let rejectAddBundle: ( error: Error ) => void = () => {};
+			const staleBundle = buildBundleSuggestion( 'test-bundle-late-stale' );
+			const freshBundle = {
+				...buildBundleSuggestion( 'test-bundle-late-fresh' ),
+				bundle_group_id: staleBundle.bundle_group_id,
+			};
+			const onAddBundle = jest.fn(
+				() =>
+					new Promise< void >( ( _resolve, reject ) => {
+						rejectAddBundle = reject;
+					} )
+			);
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-bundle-late-stale' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-late-stale.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'test-bundle-late-stale' },
+				bundleSuggestion: staleBundle,
+			} );
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-bundle-late-fresh' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-late-fresh.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'test-bundle-late-fresh' },
+				bundleSuggestion: freshBundle,
+			} );
+			const freshRefetchRequest = mockGetBundleSuggestionQuery( {
+				params: { query: 'test-bundle-late-fresh' },
+				bundleSuggestion: null,
+			} );
+
+			const { rerender } = render(
+				<TestDomainSearch
+					cart={ buildCart( { onAddBundle } ) }
+					config={ { showBundleSuggestions: true } }
+					query="test-bundle-late-stale"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByText( 'test-bundle-late-stale.net' ) ).toBeInTheDocument();
+
+			await user.click( screen.getByRole( 'button', { name: 'Get bundle' } ) );
+
+			rerender(
+				<TestDomainSearch
+					cart={ buildCart( { onAddBundle } ) }
+					config={ { showBundleSuggestions: true } }
+					query="test-bundle-late-fresh"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByText( 'test-bundle-late-fresh.net' ) ).toBeInTheDocument();
+
+			await act( async () => {
+				rejectAddBundle(
+					Object.assign( new Error( 'The domain bundle could not be added to the cart.' ), {
+						code: 'domain_bundle_unavailable',
+					} )
+				);
+			} );
+
+			expect( freshRefetchRequest.isDone() ).toBe( false );
+			expect( screen.getByText( 'test-bundle-late-fresh.net' ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Get bundle' } ) ).toBeEnabled();
+		} );
+
 		it( 'clears the error when retrying succeeds', async () => {
 			const user = userEvent.setup();
 			const onAddBundle = jest
@@ -1373,8 +1540,15 @@ describe( 'ResultsPage', () => {
 			expect( onBundleShown ).not.toHaveBeenCalled();
 		} );
 
-		it( 'fires the onBundleAddToCart event when the bundle CTA is clicked', async () => {
+		it( 'fires the onBundleAddToCart event after the bundle add succeeds', async () => {
 			const user = userEvent.setup();
+			let resolveAddBundle: () => void = () => {};
+			const onAddBundle = jest.fn(
+				() =>
+					new Promise< void >( ( resolve ) => {
+						resolveAddBundle = resolve;
+					} )
+			);
 			const onBundleAddToCart = jest.fn();
 
 			mockGetSuggestionsQuery( {
@@ -1388,6 +1562,7 @@ describe( 'ResultsPage', () => {
 
 			render(
 				<TestDomainSearch
+					cart={ buildCart( { onAddBundle } ) }
 					events={ { onBundleAddToCart } }
 					config={ { showBundleSuggestions: true } }
 					query="bundle-accept"
@@ -1398,10 +1573,87 @@ describe( 'ResultsPage', () => {
 
 			await user.click( await screen.findByRole( 'button', { name: 'Get bundle' } ) );
 
-			expect( onBundleAddToCart ).toHaveBeenCalledTimes( 1 );
+			expect( onAddBundle ).toHaveBeenCalledTimes( 1 );
+			expect( onBundleAddToCart ).not.toHaveBeenCalled();
+
+			await act( async () => {
+				resolveAddBundle();
+			} );
+
+			await waitFor( () => {
+				expect( onBundleAddToCart ).toHaveBeenCalledTimes( 1 );
+			} );
 			expect( onBundleAddToCart ).toHaveBeenCalledWith(
 				expect.objectContaining( { bundle_group_id: 'mock-bundle-accept-group' } )
 			);
+		} );
+
+		it( 'does not fire the onBundleAddToCart event when the bundle add fails', async () => {
+			const user = userEvent.setup();
+			const onAddBundle = jest.fn().mockRejectedValue( new Error( 'Bundle add failed' ) );
+			const onBundleAddToCart = jest.fn();
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'bundle-reject' },
+				suggestions: [ buildSuggestion( { domain_name: 'bundle-reject.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'bundle-reject' },
+				bundleSuggestion: buildBundleSuggestion( 'bundle-reject' ),
+			} );
+
+			const { container } = render(
+				<TestDomainSearch
+					cart={ buildCart( { onAddBundle } ) }
+					events={ { onBundleAddToCart } }
+					config={ { showBundleSuggestions: true } }
+					query="bundle-reject"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Get bundle' } ) );
+
+			await waitFor( () => {
+				expect( onAddBundle ).toHaveBeenCalledTimes( 1 );
+			} );
+			await waitFor( () => {
+				expect( getByText( container, 'Bundle add failed' ) ).toBeInTheDocument();
+			} );
+			expect( onBundleAddToCart ).not.toHaveBeenCalled();
+		} );
+
+		it( 'does not fire the onBundleAddToCart event when no bundle add handler exists', async () => {
+			const user = userEvent.setup();
+			const onBundleAddToCart = jest.fn();
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'bundle-no-handler' },
+				suggestions: [ buildSuggestion( { domain_name: 'bundle-no-handler.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'bundle-no-handler' },
+				bundleSuggestion: buildBundleSuggestion( 'bundle-no-handler' ),
+			} );
+
+			render(
+				<TestDomainSearch
+					cart={ buildCart( { onAddBundle: undefined } ) }
+					events={ { onBundleAddToCart } }
+					config={ { showBundleSuggestions: true } }
+					query="bundle-no-handler"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Get bundle' } ) );
+			await act( async () => {
+				await Promise.resolve();
+			} );
+
+			expect( onBundleAddToCart ).not.toHaveBeenCalled();
 		} );
 
 		it( 'fires the onQueryAvailabilityCheck event when the availability is checked', async () => {

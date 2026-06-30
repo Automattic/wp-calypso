@@ -1,4 +1,4 @@
-import { get, isEmpty, map } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST } from 'calypso/state/action-types';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { updateEligibility } from 'calypso/state/automated-transfer/actions';
@@ -86,15 +86,15 @@ const fromApi = ( data, options = {} ) => ( {
  * @returns {Object} An analytics event object
  */
 const trackEligibility = ( data ) => {
-	const isEligible = get( data, 'is_eligible', false );
-	const pluginWarnings = get( data, 'warnings.plugins', [] );
-	const widgetWarnings = get( data, 'warnings.widgets', [] );
+	const isEligible = data?.is_eligible ?? false;
+	const pluginWarnings = data?.warnings?.plugins ?? [];
+	const widgetWarnings = data?.warnings?.widgets ?? [];
 	const hasEligibilityWarnings = ! ( isEmpty( pluginWarnings ) && isEmpty( widgetWarnings ) );
 
 	const eventProps = {
 		has_warnings: hasEligibilityWarnings,
-		plugins: map( pluginWarnings, 'id' ).join( ',' ),
-		widgets: map( widgetWarnings, 'id' ).join( ',' ),
+		plugins: pluginWarnings.map( ( warning ) => warning?.id ).join( ',' ),
+		widgets: widgetWarnings.map( ( warning ) => warning?.id ).join( ',' ),
 	};
 
 	if ( isEligible ) {

@@ -272,7 +272,15 @@ function UnifiedPlansStep( {
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
 		[]
 	);
-	const toggleHelpCenter = () => setShowHelpCenter( ! isHelpCenterShown );
+	const toggleHelpCenter = () => {
+		if ( ! isHelpCenterShown ) {
+			recordTracksEvent( 'calypso_onboarding_help_center_click', {
+				flow: flowName,
+				step: 'plans',
+			} );
+		}
+		setShowHelpCenter( ! isHelpCenterShown );
+	};
 	const stepCounter = useOnboardingStepCounter( flowName, 'plans' );
 	const showProgress = useShowOnboardingProgress( isOnboardingFlow( flowName ) );
 	const initializedSitesBackUrl = useSelector( ( state ) => {

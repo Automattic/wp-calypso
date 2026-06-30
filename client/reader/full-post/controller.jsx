@@ -1,4 +1,3 @@
-import { defer } from 'lodash';
 import AsyncLoad from 'calypso/components/async-load';
 import { trackPageLoad } from 'calypso/reader/controller-helper';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -13,11 +12,11 @@ const loadSidebar = () =>
 const analyticsPageTitle = 'Reader';
 
 const scrollTopIfNoHash = () =>
-	defer( () => {
+	setTimeout( () => {
 		if ( typeof window !== 'undefined' && ! window.location.hash ) {
 			window.scrollTo( 0, 0 );
 		}
-	} );
+	}, 0 );
 
 export function blogPost( context, next ) {
 	const state = context.store.getState();

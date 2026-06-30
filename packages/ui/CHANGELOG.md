@@ -1,4 +1,4 @@
-## Unreleased
+## 2.0.0
 
 ### Breaking Changes
 
@@ -7,6 +7,11 @@
 ### Enhancements
 
 - `Stepper`, `VerticalStepper`, `HorizontalStepper`: Add Stepper component suite with vertical and horizontal orientations, step indicators, linear flow support, and accessible ARIA semantics ([#111036](https://github.com/Automattic/wp-calypso/pull/111036)).
+- Remove the unused `@wordpress/compose` dependency from the published package metadata.
+
+## 1.0.3
+
+- Declare React 19 compatibility for package consumers (#111721).
 
 ## 1.0.2
 

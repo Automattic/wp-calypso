@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isJetpackModuleActiveViaSiteOption from 'calypso/state/sites/selectors/is-jetpack-module-active';
@@ -25,7 +24,7 @@ export default function isJetpackModuleActive( state, siteId, moduleSlug, useFal
 			return false;
 		}
 	}
-	const moduleResult = get( state.jetpack.modules.items, [ siteId, moduleSlug, 'active' ], null );
+	const moduleResult = state.jetpack.modules.items?.[ siteId ]?.[ moduleSlug ]?.active ?? null;
 
 	return moduleResult || ! useFallback
 		? moduleResult

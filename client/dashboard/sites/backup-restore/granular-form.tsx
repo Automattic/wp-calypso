@@ -2,6 +2,7 @@ import { siteBackupGranularRestoreMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { Button, __experimentalVStack as VStack, Panel } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, _n } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
@@ -13,9 +14,11 @@ import FileSectionPanelBody from './file-section-panel-body';
 
 function SiteBackupGranularRestoreForm( {
 	siteId,
+	restorePointDate,
 	onRestoreInitiate,
 }: {
 	siteId: number;
+	restorePointDate: string;
 	onRestoreInitiate: ( restoreId: number ) => void;
 } ) {
 	const { rewindId } = siteBackupRestoreRoute.useParams();
@@ -78,10 +81,13 @@ function SiteBackupGranularRestoreForm( {
 		<form onSubmit={ handleSubmit }>
 			<VStack spacing={ 4 }>
 				<Text>
-					{ _n(
-						'The following item will be restored:',
-						'All the following selected items will be restored:',
-						browserCheckList.totalItems
+					{ createInterpolateElement(
+						_n(
+							'Restoring the following item from your <restorePointDate /> backup:',
+							'Restoring the following items from your <restorePointDate /> backup:',
+							browserCheckList.totalItems
+						),
+						{ restorePointDate: <strong>{ restorePointDate }</strong> }
 					) }
 				</Text>
 				<Panel>

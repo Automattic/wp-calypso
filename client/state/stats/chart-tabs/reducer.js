@@ -1,5 +1,5 @@
-import { pick } from '@automattic/js-utils';
-import { set, isEqual } from 'lodash';
+import { pick, set } from '@automattic/js-utils';
+import isEqual from 'fast-deep-equal/es6';
 import { STATS_CHART_COUNTS_REQUEST, STATS_CHART_COUNTS_RECEIVE } from 'calypso/state/action-types';
 import {
 	combineReducers,

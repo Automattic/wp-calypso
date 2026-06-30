@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
 import clsx from 'clsx';
-import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -75,7 +74,7 @@ class SiteImporter extends PureComponent {
 		const { title, icon, description, uploadDescription, engine } = this.props.importerData;
 		const { importerStatus } = this.props;
 		const isEnabled = appStates.DISABLED !== importerStatus.importerState;
-		const showStart = includes( compactStates, importerStatus.importerState );
+		const showStart = compactStates.includes( importerStatus.importerState );
 		const cardClasses = clsx( 'importer__site-importer-card', {
 			'is-compact': showStart,
 			'is-disabled': ! isEnabled,
@@ -94,7 +93,7 @@ class SiteImporter extends PureComponent {
 					title={ title }
 					description={ description }
 				/>
-				{ includes( importingStates, importerStatus.importerState ) && (
+				{ importingStates.includes( importerStatus.importerState ) && (
 					<ImportingPane
 						{ ...this.props }
 						importerStatus={ importerStatus }
@@ -102,7 +101,7 @@ class SiteImporter extends PureComponent {
 						site={ this.props.site }
 					/>
 				) }
-				{ includes( uploadingStates, importerStatus.importerState ) && (
+				{ uploadingStates.includes( importerStatus.importerState ) && (
 					<SiteImporterInputPane
 						{ ...this.props }
 						description={ uploadDescription }

@@ -3,8 +3,8 @@ import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button as CoreButton, Spinner } from '@wordpress/components';
 import clsx from 'clsx';
+import isEqual from 'fast-deep-equal/es6';
 import { localize, translate } from 'i18n-calypso';
-import { find, isEqual } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -58,7 +58,7 @@ const pageTitles = {
 
 const getActiveTab = ( chartTab, statType ) => {
 	const charts = getCharts( statType );
-	return find( charts, { attr: chartTab } ) || charts[ 0 ];
+	return charts.find( ( chart ) => chart.attr === chartTab ) || charts[ 0 ];
 };
 
 const memoizedQuery = memoizeLast( ( period, endOf ) => ( {

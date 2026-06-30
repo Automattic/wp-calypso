@@ -88,6 +88,7 @@ If it fails, fix the type errors at the source — do not silence them with `// 
 
 ## Creating Pull Requests
 
+- Before pushing the changes, remove any verbose code comments that narrate what the change does or why it was made (e.g. `// Added this to fix X`, `// Changed from Y to Z`, restating the code in prose). Such explanation belongs in the PR description, not the source. Only keep comments that a future reader genuinely needs — non-obvious rationale, gotchas, links to context — and match the comment density and style of the surrounding code.
 - Create PRs as draft. Follow the template in .github/PULL_REQUEST_TEMPLATE.md.
 - Follow the branch naming conventions in docs/git-workflow.md.
 - In the PR description:

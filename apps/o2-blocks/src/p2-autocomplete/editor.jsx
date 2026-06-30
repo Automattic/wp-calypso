@@ -1,6 +1,6 @@
 import apiFetch from '@wordpress/api-fetch';
 import { addFilter } from '@wordpress/hooks';
-import { map, unescape } from 'lodash';
+import { unescape } from 'lodash';
 
 import './editor.scss';
 
@@ -15,7 +15,7 @@ const stripCommonWords = ( str ) => str.replace( COMMON_PREFIXES, ' ' );
 const p2s = apiFetch( {
 	path: '/internal/P2s?skip_description=true',
 } ).then( ( result ) =>
-	map( result.list, ( p2, subdomain ) => {
+	Object.entries( result.list ?? {} ).map( ( [ subdomain, p2 ] ) => {
 		const keywords = [ subdomain ];
 		const stripped = stripCommonWords( subdomain );
 		if ( subdomain !== stripped ) {

@@ -1,8 +1,9 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
 import { generatePassword } from '@automattic/generate-password';
+import { debounce } from '@wordpress/compose';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { debounce, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';

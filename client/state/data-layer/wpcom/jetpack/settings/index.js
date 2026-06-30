@@ -1,6 +1,5 @@
 import { omit } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
-import { get } from 'lodash';
 import { trailingslashit } from 'calypso/lib/route';
 import { JETPACK_SETTINGS_REQUEST, JETPACK_SETTINGS_SAVE } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
@@ -134,7 +133,7 @@ export const retryOrAnnounceSaveFailure = ( action, { message: errorMessage } ) 
 	// since it might just be a slow server that actually ends up installing it
 	// properly, in which case a subsequent request will return 'success'.
 	if (
-		get( settings, [ 'onboarding', 'installWooCommerce' ] ) !== true ||
+		settings?.onboarding?.installWooCommerce !== true ||
 		! ( errorMessage ?? '' ).startsWith( 'cURL error 28' ) || // cURL timeout
 		retryCount > MAX_WOOCOMMERCE_INSTALL_RETRIES
 	) {

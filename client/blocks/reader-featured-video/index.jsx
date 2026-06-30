@@ -2,9 +2,9 @@ import { POCKETCAST_DEFAULT_HEIGHT, POCKETCAST_DEFAULT_WIDTH } from '@automattic
 import { readerThumbnailQuery } from '@automattic/api-queries';
 import { getUrlParts } from '@automattic/calypso-url';
 import { useQuery } from '@tanstack/react-query';
+import { throttle } from '@wordpress/compose';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { throttle } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import playIconImage from 'calypso/assets/images/reader/play-icon.webp';

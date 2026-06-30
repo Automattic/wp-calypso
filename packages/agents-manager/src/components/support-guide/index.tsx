@@ -38,8 +38,8 @@ export default function SupportGuide( {
 	const { site, sectionName, isEligibleForChat } = useAgentsManagerContext();
 	const navigate = useNavigate();
 	const { state } = useLocation();
-	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
-	const { floatingPosition } = useSelect( ( select ) => {
+	const { setFloatingPosition, setFreeDragPosition } = useDispatch( AGENTS_MANAGER_STORE );
+	const { floatingPosition, freeDragPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
@@ -47,6 +47,7 @@ export default function SupportGuide( {
 	// Without the AI chat entry button, use `collapsed` (a FAB) instead of `minimized`.
 	const closedChatState = hasAiChatEntryButton() ? 'minimized' : 'collapsed';
 	const isFromChat = !! ( state?.sessionId || state?.conversationId );
+	const title = __( 'Support Guides', '__i18n_text_domain__' );
 
 	// Navigate back to the source route, preserving relevant state.
 	const handleBack = () => {
@@ -63,13 +64,17 @@ export default function SupportGuide( {
 		<AgentUI.Container
 			initialChatPosition={ floatingPosition }
 			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
+			initialFreeDragPosition={ freeDragPosition ?? undefined }
+			onFreeDragEnd={ setFreeDragPosition }
 			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ [] }
 			isProcessing={ false }
 			error={ null }
 			onSubmit={ () => {} }
 			variant={ isDocked ? 'embedded' : 'floating' }
+			freeDrag={ ! isDocked }
 			floatingChatState={ isOpen ? 'expanded' : closedChatState }
+			triggerTitle={ title }
 			onClose={ onClose }
 			onExpand={ onExpand }
 			onStop={ onAbort }
@@ -80,7 +85,8 @@ export default function SupportGuide( {
 					onClose={ onClose }
 					onBack={ handleBack }
 					options={ chatHeaderOptions }
-					title={ __( 'Support Guides', '__i18n_text_domain__' ) }
+					title={ title }
+					isDocked={ isDocked }
 				/>
 				<div className="agent-manager-support-guide-wrapper">
 					<div className="agent-manager-support-guide-content help-center__container-content">

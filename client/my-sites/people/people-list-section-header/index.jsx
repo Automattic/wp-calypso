@@ -2,7 +2,6 @@ import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -32,8 +31,8 @@ class PeopleListSectionHeader extends Component {
 	};
 
 	getAddLink() {
-		const siteSlug = get( this.props, 'site.slug' );
-		const isJetpack = get( this.props, 'site.jetpack' );
+		const siteSlug = this.props?.site?.slug;
+		const isJetpack = this.props?.site?.jetpack;
 
 		if ( ! siteSlug || ( isJetpack && this.props.isFollower ) ) {
 			return false;
@@ -47,7 +46,7 @@ class PeopleListSectionHeader extends Component {
 	}
 
 	getAddSubscriberLink() {
-		const siteSlug = get( this.props, 'site.slug' );
+		const siteSlug = this.props?.site?.slug;
 
 		return '/people/add-subscribers/' + siteSlug;
 	}

@@ -19,3 +19,13 @@ export const DOTCOM_DASHBOARD_SECTION_DEFINITION = {
 		},
 	],
 };
+
+export const DOTCOM_DASHBOARD_SECTION_PATHS = [
+	'/',
+	'/sites',
+	'/domains',
+	'/emails',
+	'/plugins',
+	'/me',
+	'/oauth/token',
+];

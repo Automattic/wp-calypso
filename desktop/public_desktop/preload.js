@@ -53,7 +53,7 @@ function fflagOverrides() {
 		'signup/social': true,
 	};
 
-	// Override feature flags from enviroment variables at run time
+	// Override feature flags from environment variables at run time
 	const fflags = process.env.WP_DESKTOP_DEBUG_FEATURES
 		? process.env.WP_DESKTOP_DEBUG_FEATURES.split( ',' )
 		: [];

@@ -238,7 +238,12 @@ const ActionButton = ( {
 
 	return (
 		<div className="plans-grid-next-action-button">
-			<div className="plans-grid-next-action-button__content">{ actionButton }</div>
+			<div
+				className="plans-grid-next-action-button__content"
+				style={ ! text ? { visibility: 'hidden' } : undefined }
+			>
+				{ actionButton }
+			</div>
 		</div>
 	);
 };

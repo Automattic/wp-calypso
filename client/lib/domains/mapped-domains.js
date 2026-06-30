@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { type as domainTypes } from './constants';
 
 export function isMappedDomain( domain ) {
@@ -19,5 +18,5 @@ export function hasMappedDomain( domains ) {
  * @returns {boolean} - true if the domain is mapped and has WordPress.com name servers, false otherwise
  */
 export function isMappedDomainWithWpcomNameservers( domain ) {
-	return isMappedDomain( domain ) && get( domain, 'hasWpcomNameservers', false );
+	return isMappedDomain( domain ) && ( domain?.hasWpcomNameservers ?? false );
 }

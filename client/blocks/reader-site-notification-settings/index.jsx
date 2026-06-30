@@ -3,7 +3,6 @@ import { Reader } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { Icon, settings } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { useRef, useState } from 'react';
 import Settings from 'calypso/assets/images/icons/settings.svg';
@@ -35,15 +34,12 @@ function SiteNotificationSettings( {
 	const spanRef = useRef( null );
 	const { subscriptions } = useSiteSubscriptions( { fetchAllPages: showPopover } );
 	const subscription = subscriptions.find( ( item ) => item.blog_ID === siteId );
-	const deliveryMethodsEmail = get( subscription, [ 'delivery_methods', 'email' ], {} );
+	const deliveryMethodsEmail = subscription?.delivery_methods?.email ?? {};
 	const sendNewCommentsByEmail = !! deliveryMethodsEmail.send_comments;
 	const sendNewPostsByEmail = !! deliveryMethodsEmail.send_posts;
 	const emailDeliveryFrequency = deliveryMethodsEmail.post_delivery_frequency;
-	const sendNewPostsByNotification = get(
-		subscription,
-		[ 'delivery_methods', 'notification', 'send_posts' ],
-		false
-	);
+	const sendNewPostsByNotification =
+		subscription?.delivery_methods?.notification?.send_posts ?? false;
 	const { updatePostEmail, updateCommentEmail, updateDeliveryFrequency, updatePostNotifications } =
 		useFollowDeliveryMutations();
 	const isEmailBlocked = useSelector( ( state ) =>

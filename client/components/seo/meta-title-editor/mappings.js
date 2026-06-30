@@ -29,8 +29,8 @@
 //   ]
 //
 
-import { mapKeys, mapValues } from '@automattic/js-utils';
-import { camelCase, get, map, reduce, snakeCase } from 'lodash';
+import { camelCase, mapKeys, mapValues, snakeCase } from '@automattic/js-utils';
+import { get } from 'lodash';
 
 // Right-to-left composition of unary functions. Kept local so this pure mapping
 // module doesn't take on a dependency it otherwise has no need for.
@@ -52,7 +52,7 @@ const mergeStringPieces = ( a, b ) => ( {
  * @returns {Array} List of native format pieces
  */
 export const rawToNative = ( list ) =>
-	map( list, ( p ) =>
+	list.map( ( p ) =>
 		'string' === p.type ? { type: 'string', value: p.value } : { type: camelCase( p.value ) }
 	);
 
@@ -66,21 +66,17 @@ export const rawToNative = ( list ) =>
 export const nativeToRaw = compose(
 	// combine adjacent strings
 	( list ) =>
-		reduce(
-			list,
-			( format, piece ) => {
-				const lastPiece = format.at( -1 );
+		list.reduce( ( format, piece ) => {
+			const lastPiece = format.at( -1 );
 
-				if ( lastPiece && 'string' === lastPiece.type && 'string' === piece.type ) {
-					return [ ...format.slice( 0, -1 ), mergeStringPieces( lastPiece, piece ) ];
-				}
+			if ( lastPiece && 'string' === lastPiece.type && 'string' === piece.type ) {
+				return [ ...format.slice( 0, -1 ), mergeStringPieces( lastPiece, piece ) ];
+			}
 
-				return [ ...format, piece ];
-			},
-			[]
-		),
+			return [ ...format, piece ];
+		}, [] ),
 	( list ) =>
-		map( list, ( p ) => ( {
+		list.map( ( p ) => ( {
 			type: p.type === 'string' ? 'string' : 'token',
 			value: get( p, 'value', snakeCase( p.type ) ),
 		} ) )

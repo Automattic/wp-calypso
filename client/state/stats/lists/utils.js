@@ -1,5 +1,6 @@
+import { camelCase, capitalize, sortBy } from '@automattic/js-utils';
 import { translate, getLocaleSlug } from 'i18n-calypso';
-import { sortBy, camelCase, get, filter, map, capitalize } from 'lodash';
+import { get } from 'lodash';
 import moment from 'moment';
 import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
 
@@ -136,7 +137,7 @@ export function buildExportArray( data, parent = null, modifierFn = null ) {
 	}
 
 	if ( data.children ) {
-		const childData = map( data.children, ( child ) => {
+		const childData = data.children.map( ( child ) => {
 			return buildExportArray( child, label, modifierFn );
 		} );
 
@@ -210,7 +211,7 @@ export function getChartLabels( unit, date, localizedDate ) {
 	if ( validDate && validLocalizedDate && unit ) {
 		const dayOfWeek = date.toDate().getDay();
 		const isWeekend = 'day' === unit && ( 6 === dayOfWeek || 0 === dayOfWeek );
-		const labelName = `label${ unit.charAt( 0 ).toUpperCase() + unit.slice( 1 ) }`;
+		const labelName = `label${ capitalize( unit ) }`;
 		return {
 			[ labelName ]: localizedDate.format( chartLabelformats[ unit ] ),
 			classNames: isWeekend ? [ 'is-weekend' ] : [],
@@ -390,7 +391,7 @@ export const normalizers = {
 			: [ 'days', startOf, 'postviews' ];
 		const viewData = get( data, dataPath, [] );
 
-		return map( viewData, ( item ) => {
+		return viewData.map( ( item ) => {
 			// To avoid showing a detail page for the Homepage set as latest posts.
 			const detailPage = site && item.href ? `/stats/post/${ item.id }/${ site.slug }` : null;
 			let inPeriod = false;
@@ -547,7 +548,7 @@ export const normalizers = {
 		const dataPath = query.summarize ? [ 'summary', 'views' ] : [ 'days', startOf, 'views' ];
 
 		// filter out country views that have no legitimate country data associated with them
-		const countryData = filter( get( data, dataPath, [] ), ( viewData ) => {
+		const countryData = get( data, dataPath, [] ).filter( ( viewData ) => {
 			// Ignore the unknown location of sources from the legacy stats geoviews table.
 			if ( [ 'A1', 'A2', 'ZZ' ].includes( viewData.country_code ) ) {
 				return false;
@@ -564,7 +565,7 @@ export const normalizers = {
 			return countryInfo[ viewData.country_code ];
 		} );
 
-		return map( countryData, ( viewData ) => {
+		return countryData.map( ( viewData ) => {
 			const country = countryInfo[ viewData.country_code ];
 
 			// ’ in country names causes google's geo viz to break

@@ -17,7 +17,7 @@ cd packages/calypso-analytics
 yarn add ...
 ```
 
-**Option 2**: Run `yarn` commands in teh root of the project, but prepend `workspace <packageName>`. Example
+**Option 2**: Run `yarn` commands in the root of the project, but prepend `workspace <packageName>`. Example
 
 ```
 yarn workspace @automattic/calypso-analytics add...

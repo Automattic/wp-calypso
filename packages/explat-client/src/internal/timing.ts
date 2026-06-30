@@ -2,7 +2,7 @@ export const MILLISECONDS_PER_SECOND = 1000;
 
 let lastNow = Date.now();
 /**
- * Returns the time in miliseconds.
+ * Returns the time in milliseconds.
  * A strictly increasing version of Date.now()
  *
  * Gives us some minimimal guarentees about user clocks.

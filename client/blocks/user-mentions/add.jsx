@@ -1,5 +1,5 @@
-import { pick } from '@automattic/js-utils';
-import { escapeRegExp, findIndex, get, throttle } from 'lodash';
+import { pick, escapeRegExp } from '@automattic/js-utils';
+import { throttle } from '@wordpress/compose';
 import { createRef, Component, Fragment } from 'react';
 import getCaretCoordinates from 'textarea-caret';
 import UserMentionSuggestionList from './suggestion-list';
@@ -207,8 +207,7 @@ export default ( WrappedComponent ) =>
 				return 0;
 			}
 
-			return findIndex(
-				this.matchingSuggestions,
+			return this.matchingSuggestions.findIndex(
 				( { ID: id } ) => id === this.state.selectedSuggestionId
 			);
 		}
@@ -280,7 +279,7 @@ export default ( WrappedComponent ) =>
 
 			this.matchingSuggestions = this.getMatchingSuggestions( suggestions, query );
 			const selectedSuggestionId =
-				this.state.selectedSuggestionId || get( this.matchingSuggestions[ 0 ], 'ID' );
+				this.state.selectedSuggestionId || this.matchingSuggestions[ 0 ]?.ID;
 
 			const popoverPosition = pick( this.state.popoverPosition, [ 'top', 'left' ] );
 
