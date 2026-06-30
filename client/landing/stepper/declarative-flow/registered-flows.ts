@@ -14,6 +14,7 @@ import {
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	EXAMPLE_FLOW,
 	AI_SITE_BUILDER_FLOW,
+	AI_SITE_BUILDER_ONBOARDING_FLOW,
 	AI_SITE_BUILDER_SPEC_FLOW,
 	ONBOARDING_UNIFIED_FLOW,
 	DOMAIN_AND_PLAN_FLOW,
@@ -24,7 +25,6 @@ import {
 	DIRECT_TO_CART_FLOW,
 	WRITE_ON_FLOW,
 } from '@automattic/onboarding';
-import { getCurrentQueryParams } from '../utils/get-current-query-params';
 import type { Flow, FlowV2 } from '../declarative-flow/internals/types';
 
 const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } > > = {
@@ -151,16 +151,17 @@ export const deprecatedV1Flows: Record< string, () => Promise< { default: Flow }
 const aiSiteBuilderFlows: Record< string, () => Promise< { default: FlowV2< any > } > > =
 	config.isEnabled( 'calypso/ai-site-builder-flow' )
 		? {
-				[ AI_SITE_BUILDER_FLOW ]: () => {
-					// The paid-only flow can't finish a CIAB garden site, so route those re-entries
-					// (create_garden_site / early_created_site) to the legacy flow even when the flag is on.
-					const params = getCurrentQueryParams();
-					const isGardenReentry =
-						params.has( 'create_garden_site' ) || params.has( 'early_created_site' );
-					return config.isEnabled( 'onboarding/ai-site-builder-paid-only' ) && ! isGardenReentry
-						? import( './flows/ai-site-builder/ai-site-builder-paid-only' )
-						: import( './flows/ai-site-builder/ai-site-builder' );
-				},
+				[ AI_SITE_BUILDER_FLOW ]: () => import( './flows/ai-site-builder/ai-site-builder' ),
+		  }
+		: {};
+
+// The paid-only onboarding lives at its own slug so the legacy ai-site-builder slug (fresh
+// onboarding, CIAB garden re-entry, trial launch/upsell) is left untouched.
+const aiSiteBuilderOnboardingFlows: Record< string, () => Promise< { default: FlowV2< any > } > > =
+	config.isEnabled( 'onboarding/ai-site-builder-paid-only' )
+		? {
+				[ AI_SITE_BUILDER_ONBOARDING_FLOW ]: () =>
+					import( './flows/ai-site-builder-onboarding/ai-site-builder-onboarding' ),
 		  }
 		: {};
 
@@ -180,4 +181,5 @@ export default {
 	...deprecatedV1Flows,
 	...hundredYearDomainFlow,
 	...aiSiteBuilderFlows,
+	...aiSiteBuilderOnboardingFlows,
 };

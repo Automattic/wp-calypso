@@ -1,6 +1,10 @@
 import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
 import { Onboard } from '@automattic/data-stores';
-import { AI_SITE_BUILDER_FLOW, clearStepPersistedState } from '@automattic/onboarding';
+import {
+	AI_SITE_BUILDER_FLOW,
+	AI_SITE_BUILDER_ONBOARDING_FLOW,
+	clearStepPersistedState,
+} from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { resolveSelect, useDispatch as useWpDataDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -57,11 +61,11 @@ function initialize() {
 	const isCheckoutReEntry = Boolean(
 		wasSignupCheckoutPageUnloaded() &&
 			retrieveSignupDestination() &&
-			getSignupCompleteFlowName() === AI_SITE_BUILDER_FLOW
+			getSignupCompleteFlowName() === AI_SITE_BUILDER_ONBOARDING_FLOW
 	);
 
 	if ( ! isCheckoutReEntry ) {
-		clearStepPersistedState( AI_SITE_BUILDER_FLOW );
+		clearStepPersistedState( AI_SITE_BUILDER_ONBOARDING_FLOW );
 		clearSignupDestinationCookie();
 		clearSignupCompleteFlowName();
 		clearSignupCompleteSlug();
@@ -77,8 +81,8 @@ function initialize() {
 	] as const );
 }
 
-const aiSiteBuilderPaidOnly: FlowV2< typeof initialize > = {
-	name: AI_SITE_BUILDER_FLOW,
+const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
+	name: AI_SITE_BUILDER_ONBOARDING_FLOW,
 	/**
 	 * Should it fire calypso_signup_start event?
 	 */
@@ -222,7 +226,7 @@ const aiSiteBuilderPaidOnly: FlowV2< typeof initialize > = {
 
 					setPlanCartItem( pickedPlan );
 					setProductCartItems( extraProducts.filter( ( product ) => product !== null ) );
-					setSignupCompleteFlowName( AI_SITE_BUILDER_FLOW );
+					setSignupCompleteFlowName( AI_SITE_BUILDER_ONBOARDING_FLOW );
 
 					return navigate( 'create-site' );
 				}
@@ -302,7 +306,7 @@ const aiSiteBuilderPaidOnly: FlowV2< typeof initialize > = {
 					persistSignupDestination( redirectAfterCheckout );
 					setSignupCompleteSlug( siteSlug );
 					setSignupCompleteSiteID( String( siteId ) );
-					setSignupCompleteFlowName( AI_SITE_BUILDER_FLOW );
+					setSignupCompleteFlowName( AI_SITE_BUILDER_ONBOARDING_FLOW );
 
 					// Intentionally no checkoutBackUrl: it is allowlisted against the site's own host, so
 					// pointing it at the editor would let a user cancel checkout and land in Big Sky
@@ -328,4 +332,4 @@ const aiSiteBuilderPaidOnly: FlowV2< typeof initialize > = {
 	},
 };
 
-export default aiSiteBuilderPaidOnly;
+export default aiSiteBuilderOnboarding;
