@@ -95,7 +95,6 @@ export default function AmplifySiteSelector( { onChange, disabled }: Props ) {
 				<Disabled isDisabled={ disabled }>
 					<ComboboxControl
 						__next40pxDefaultSize
-						__nextHasNoMarginBottom
 						label={ __( 'Pick a connected site' ) }
 						hideLabelFromVision
 						value={ selectedSiteUrl }
