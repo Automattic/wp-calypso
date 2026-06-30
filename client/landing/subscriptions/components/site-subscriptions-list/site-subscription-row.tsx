@@ -140,7 +140,11 @@ const SiteSubscriptionRow = ( {
 	}, [ url ] );
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 	const deliveryFrequencyLabel = useDeliveryFrequencyLabel(
-		delivery_methods.email?.post_delivery_frequency as Reader.EmailDeliveryFrequency | undefined
+		delivery_methods.email?.send_posts
+			? ( delivery_methods.email?.post_delivery_frequency as
+					| Reader.EmailDeliveryFrequency
+					| undefined )
+			: undefined
 	);
 	const sanitizedBlogId = Reader.isValidId( blogId ) ? Number( blogId ) : undefined;
 
