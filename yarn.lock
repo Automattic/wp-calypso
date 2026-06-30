@@ -11615,7 +11615,7 @@ __metadata:
 
 "@wordpress/block-editor@patch:@wordpress/block-editor@^15.21.0#~/.yarn/patches/@wordpress-block-editor-npm-15.20.0-2d52fc5cc4.patch":
   version: 15.21.0
-  resolution: "@wordpress/block-editor@patch:@wordpress/block-editor@npm%3A15.21.0#~/.yarn/patches/@wordpress-block-editor-npm-15.20.0-2d52fc5cc4.patch::version=15.21.0&hash=ae8e93"
+  resolution: "@wordpress/block-editor@patch:@wordpress/block-editor@npm%3A15.21.0#~/.yarn/patches/@wordpress-block-editor-npm-15.20.0-2d52fc5cc4.patch::version=15.21.0&hash=78fee8"
   dependencies:
     "@react-spring/web": "npm:^9.4.5"
     "@wordpress/a11y": "npm:^4.48.0"
@@ -11672,7 +11672,7 @@ __metadata:
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: 7c59c682d878b67db6545d5d9d8bebd9f575e12cf9a0144ded0bcc1f91cec0861db2f97e043108951fc074202fa952183e980f4479baa6a3068a4f49403259af
+  checksum: 6e90a5410de78b312f763def5f34aedd00d7db906e6165e602694799cff4ce3900a84632b68301a7ec1d163fe1d07f1ae17813b8c448c76fc24bd1e2655d1f8a
   languageName: node
   linkType: hard
 
