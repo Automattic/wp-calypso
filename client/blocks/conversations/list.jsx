@@ -1,5 +1,4 @@
 import { keyBy, partition, pickBy } from '@automattic/js-utils';
-import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, useCallback, useMemo, useRef, useState } from 'react';
 import { connect } from 'react-redux';
@@ -168,7 +167,7 @@ export class ConversationCommentList extends Component {
 		}
 
 		const withParents = commentIds.filter( ( id ) => this.commentHasParent( commentsTree, id ) );
-		const parentIds = map( withParents, ( id ) => this.getParentId( commentsTree, id ) );
+		const parentIds = withParents.map( ( id ) => this.getParentId( commentsTree, id ) );
 
 		const [ accessible, inaccessible ] = partition( parentIds, ( id ) =>
 			this.commentIsLoaded( commentsTree, id )
@@ -288,7 +287,7 @@ export class ConversationCommentList extends Component {
 							recordReaderTracksEvent={ this.props.recordReaderTracksEvent }
 						/>
 					) }
-					{ map( commentsTree.children, ( commentId ) => {
+					{ commentsTree.children.map( ( commentId ) => {
 						return (
 							<PostComment
 								showNestingReplyArrow

@@ -12,7 +12,6 @@ import {
 	PLAN_PERSONAL_2_YEARS,
 } from '@automattic/calypso-products';
 import { pick, sortBy } from '@automattic/js-utils';
-import { map } from 'lodash';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { decodeEntities, parseHtml } from 'calypso/lib/formatting';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -152,7 +151,7 @@ export function extractScreenshots( screenshotsHtml ) {
 	if ( ! list ) {
 		return null;
 	}
-	let screenshots = map( list, function ( li ) {
+	let screenshots = Array.from( list ).map( function ( li ) {
 		const img = li.querySelectorAll( 'img' );
 		const captionP = li.querySelectorAll( 'p' );
 
@@ -272,7 +271,7 @@ export function normalizePluginsList( pluginsList ) {
 	if ( ! pluginsList ) {
 		return [];
 	}
-	return map( pluginsList, ( pluginData ) => normalizePluginData( pluginData ) );
+	return Object.values( pluginsList ).map( ( pluginData ) => normalizePluginData( pluginData ) );
 }
 
 /**

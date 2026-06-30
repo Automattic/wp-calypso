@@ -1,5 +1,4 @@
 import debugFactory from 'debug';
-import { map } from 'lodash';
 import { deduceImageWidthAndHeight, thumbIsLikelyImage } from './utils';
 
 const debug = debugFactory( 'calypso:post-normalizer:wait-for-images-to-load' );
@@ -47,12 +46,12 @@ export default function waitForImagesToLoad( post ) {
 
 			post.images = images.map( convertImageToObject );
 
-			post.content_images = map( post.content_images, ( image ) =>
-				post.images.find( ( img ) => img.src === image.src )
-			).filter( Boolean );
+			post.content_images = ( post.content_images ?? [] )
+				.map( ( image ) => post.images.find( ( img ) => img.src === image.src ) )
+				.filter( Boolean );
 
 			// this adds adds height/width to images
-			post.content_media = map( post.content_media, ( media ) => {
+			post.content_media = ( post.content_media ?? [] ).map( ( media ) => {
 				if ( media.mediaType === 'image' ) {
 					const img = post.images.find( ( image ) => image.src === media.src );
 					return { ...media, ...img };

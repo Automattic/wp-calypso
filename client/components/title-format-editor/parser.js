@@ -1,5 +1,5 @@
 import { convertFromRaw, convertToRaw } from 'draft-js';
-import { get, map, matchesProperty } from 'lodash';
+import { get, matchesProperty } from 'lodash';
 import { compose } from 'redux';
 
 /*
@@ -198,7 +198,7 @@ export const toEditor = ( format, tokens ) => {
 	return convertFromRaw( {
 		blocks: [ blocks ],
 		entityMap: Object.fromEntries(
-			map( entityGuide, ( name, key ) => [
+			entityGuide.map( ( name, key ) => [
 				key, // entity key is position in list
 				{
 					type: 'TOKEN',

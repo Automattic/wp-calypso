@@ -1,5 +1,4 @@
 import { omit, omitBy } from '@automattic/js-utils';
-import { map } from 'lodash';
 import { DEFAULT_THEME_QUERY } from './constants';
 
 /**
@@ -50,7 +49,7 @@ export function normalizeJetpackTheme( theme = {} ) {
 		...omit( theme, 'tags' ),
 		taxonomies: {
 			// Map slugs only since JP sites give us no names
-			theme_feature: map( theme.tags, ( slug ) => ( { slug } ) ),
+			theme_feature: theme.tags.map( ( slug ) => ( { slug } ) ),
 		},
 	};
 }
@@ -120,7 +119,10 @@ export function normalizeWporgTheme( theme, tier ) {
 	return {
 		...omit( normalizedTheme, 'tags' ),
 		taxonomies: {
-			theme_feature: map( normalizedTheme.tags, ( name, slug ) => ( { name, slug } ) ),
+			theme_feature: Object.entries( normalizedTheme.tags ?? {} ).map( ( [ slug, name ] ) => ( {
+				name,
+				slug,
+			} ) ),
 		},
 	};
 }
