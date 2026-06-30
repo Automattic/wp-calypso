@@ -121,9 +121,9 @@ function getEmptyViewHeading(): string {
 		return override;
 	}
 	if ( isReaderChatHost() ) {
-		return __( 'Ask me anything about this blog.', '__i18n_text_domain__' );
+		return __( 'Ask me anything about this blog.', __i18n_text_domain__ );
 	}
-	return __( 'Howdy! How can I help you today?', '__i18n_text_domain__' );
+	return __( 'Howdy! How can I help you today?', __i18n_text_domain__ );
 }
 
 function getEmptyViewHelp(): string {
@@ -132,9 +132,9 @@ function getEmptyViewHelp(): string {
 		return override;
 	}
 	if ( isReaderChatHost() ) {
-		return __( 'Or type your own question below.', '__i18n_text_domain__' );
+		return __( 'Or type your own question below.', __i18n_text_domain__ );
 	}
-	return __( 'Got a different request? Ask away.', '__i18n_text_domain__' );
+	return __( 'Got a different request? Ask away.', __i18n_text_domain__ );
 }
 
 export default function AgentChat( {

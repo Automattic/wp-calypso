@@ -170,14 +170,14 @@ export function getReaderChatErrorMessage( error: unknown ): string | null {
 	if ( hasSearchLimitCode || hasSearchLimitMessage ) {
 		return __(
 			'Reader Chat is temporarily unavailable because this site has reached its Jetpack Search usage limit.',
-			'__i18n_text_domain__'
+			__i18n_text_domain__
 		);
 	}
 
 	const hasUnavailableCode = code && UNAVAILABLE_ERROR_CODES.has( code );
 	const hasUnavailableMessage = isUnavailableMessage( message );
 	if ( hasUnavailableCode || hasUnavailableMessage ) {
-		return __( 'Reader Chat is not available for this site.', '__i18n_text_domain__' );
+		return __( 'Reader Chat is not available for this site.', __i18n_text_domain__ );
 	}
 
 	if (
@@ -185,8 +185,8 @@ export function getReaderChatErrorMessage( error: unknown ): string | null {
 		429 === getErrorStatus( error ) ||
 		isRateLimitMessage( message )
 	) {
-		return __( 'Too many requests. Please try again later.', '__i18n_text_domain__' );
+		return __( 'Too many requests. Please try again later.', __i18n_text_domain__ );
 	}
 
-	return __( 'Reader Chat is unavailable. Please try again later.', '__i18n_text_domain__' );
+	return __( 'Reader Chat is unavailable. Please try again later.', __i18n_text_domain__ );
 }

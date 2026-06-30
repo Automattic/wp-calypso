@@ -60,7 +60,7 @@ export default function useCheckpointAction(
 				return [
 					{
 						id: 'checkpoint',
-						label: __( 'Undo', '__i18n_text_domain__' ),
+						label: __( 'Undo', __i18n_text_domain__ ),
 						icon: createElement( Icon, {
 							icon: undo,
 							className: 'agents-manager-message-action-icon',

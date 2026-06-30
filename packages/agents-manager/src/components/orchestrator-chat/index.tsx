@@ -460,7 +460,7 @@ export default function OrchestratorChat( {
 					await onSubmit( message, { imageUrls: imageData } );
 				} catch ( uploadError ) {
 					throw new Error(
-						__( 'Failed to upload images. Please try again.', '__i18n_text_domain__' )
+						__( 'Failed to upload images. Please try again.', __i18n_text_domain__ )
 					);
 				}
 			} else {

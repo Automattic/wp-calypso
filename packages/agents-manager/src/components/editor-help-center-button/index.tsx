@@ -66,12 +66,12 @@ export default function EditorHelpCenterButton( { onClose, onOpenChat }: Props )
 	const controls = [
 		[
 			{
-				title: __( 'Chat support', '__i18n_text_domain__' ),
+				title: __( 'Chat support', __i18n_text_domain__ ),
 				icon: comment,
 				onClick: () => selectChatRoute( 'agents-manager-chat', '/chat', resumeActiveChat ),
 			},
 			{
-				title: __( 'Chat history', '__i18n_text_domain__' ),
+				title: __( 'Chat history', __i18n_text_domain__ ),
 				icon: backup,
 				onClick: () =>
 					selectChatRoute( 'agents-manager-history', '/history', () => navigate( '/history' ) ),
@@ -79,7 +79,7 @@ export default function EditorHelpCenterButton( { onClose, onOpenChat }: Props )
 		],
 		[
 			{
-				title: __( 'Support guides', '__i18n_text_domain__' ),
+				title: __( 'Support guides', __i18n_text_domain__ ),
 				icon: page,
 				onClick: () =>
 					selectChatRoute( 'agents-manager-support-guides', '/support-guides', () =>
@@ -87,12 +87,12 @@ export default function EditorHelpCenterButton( { onClose, onOpenChat }: Props )
 					),
 			},
 			{
-				title: __( 'Courses', '__i18n_text_domain__' ),
+				title: __( 'Courses', __i18n_text_domain__ ),
 				icon: video,
 				onClick: () => openExternalLink( localizeUrl( 'https://wordpress.com/support/courses/' ) ),
 			},
 			{
-				title: __( 'Product updates', '__i18n_text_domain__' ),
+				title: __( 'Product updates', __i18n_text_domain__ ),
 				icon: rss,
 				onClick: () =>
 					openExternalLink(
@@ -107,7 +107,7 @@ export default function EditorHelpCenterButton( { onClose, onOpenChat }: Props )
 			<DropdownMenu
 				className="entry-point-button agents-manager-help-center"
 				icon={ help }
-				label={ __( 'Help Center', '__i18n_text_domain__' ) }
+				label={ __( 'Help Center', __i18n_text_domain__ ) }
 				controls={ controls }
 				popoverProps={ { position: 'bottom left' } }
 				// Match the Ask AI button (and editor-header convention) so the icon/button size lines up.
