@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { calculateMonthlyPriceForPlan } from '@automattic/calypso-products';
+import { calculateMonthlyPriceForPlan, getPlan } from '@automattic/calypso-products';
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import wpcomRequest from '../../wpcom-request';
@@ -47,6 +47,7 @@ function usePlans( {
 	const queryKeys = useQueryKeysFactory();
 	const locale = useLocale();
 	const params = new URLSearchParams();
+	// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 	coupon && params.append( 'coupon_code', coupon );
 	params.append( 'locale', locale );
 
@@ -63,9 +64,10 @@ function usePlans( {
 				apiVersion: '1.5',
 				query: params.toString(),
 			} );
+			const knownPlans = data.filter( ( plan ) => getPlan( plan.product_slug ) );
 
 			return Object.fromEntries(
-				data.map( ( plan ) => {
+				knownPlans.map( ( plan ) => {
 					const discountedPriceFull =
 						plan.orig_cost_integer !== plan.raw_price_integer ? plan.raw_price_integer : null;
 

@@ -1,4 +1,4 @@
-import { calculateMonthlyPriceForPlan } from '@automattic/calypso-products';
+import { calculateMonthlyPriceForPlan, getPlan } from '@automattic/calypso-products';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import wpcomRequest from '../../wpcom-request';
 import unpackCostOverrides from './lib/unpack-cost-overrides';
@@ -30,6 +30,7 @@ interface Props {
 function useSitePlans( { coupon, siteId }: Props ): UseQueryResult< SitePlansIndex > {
 	const queryKeys = useQueryKeysFactory();
 	const params = new URLSearchParams();
+	// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 	coupon && params.append( 'coupon_code', coupon );
 
 	return useQuery( {
@@ -40,9 +41,12 @@ function useSitePlans( { coupon, siteId }: Props ): UseQueryResult< SitePlansInd
 				apiVersion: '1.3',
 				query: params.toString(),
 			} );
+			const knownProductIds = Object.keys( data ).filter( ( productId ) =>
+				getPlan( data[ Number( productId ) ].product_slug )
+			);
 
 			return Object.fromEntries(
-				Object.keys( data ).map( ( productId ) => {
+				knownProductIds.map( ( productId ) => {
 					const plan = data[ Number( productId ) ];
 					const originalPriceFull = plan.raw_discount_integer
 						? plan.raw_price_integer + plan.raw_discount_integer
