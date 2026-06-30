@@ -233,6 +233,20 @@ describe( 'SiteSubscriptionRow', () => {
 		expect( screen.getByText( 'Instantly' ) ).toBeVisible();
 	} );
 
+	it( 'defaults the email frequency column to Instantly when enabled without a stored frequency', () => {
+		const queryClient = makeQueryClient();
+
+		renderRow( queryClient, {
+			delivery_methods: {
+				email: {
+					send_posts: true,
+				},
+			},
+		} );
+
+		expect( screen.getByText( 'Instantly' ) ).toBeVisible();
+	} );
+
 	it( 'shows Paused in the email frequency column when email delivery is disabled', () => {
 		const queryClient = makeQueryClient();
 
