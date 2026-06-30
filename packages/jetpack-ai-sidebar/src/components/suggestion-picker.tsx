@@ -69,7 +69,11 @@ export default function SuggestionPicker( {
 				} ) }
 			</div>
 			{ appliedValue !== null && appliedMessage && (
-				<p className="jetpack-ai-suggestion-picker__status">{ appliedMessage }</p>
+				// A div (not a <p>) so AM's `.Message-module_message p` reset can't
+				// override the margin that positions this confirmation.
+				<div className="jetpack-ai-suggestion-picker__status" role="status">
+					{ appliedMessage }
+				</div>
 			) }
 		</div>
 	);
