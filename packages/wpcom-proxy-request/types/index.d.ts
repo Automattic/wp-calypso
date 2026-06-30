@@ -9,7 +9,6 @@ export interface WpcomRequestParams {
 	path?: string;
 	method?: string;
 	apiVersion?: string;
-	// eslint-disable-next-line @typescript-eslint/ban-types
 	body?: object;
 	token?: string;
 	query?: string | Record< string, string | number >;
