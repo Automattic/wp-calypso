@@ -212,4 +212,14 @@ const patterns = [
 	{ group: [ 'lodash/map' ], message: MAP_MESSAGE },
 ];
 
-module.exports = { paths, patterns };
+// `no-restricted-properties` entries for lodash namespace member access
+// (`_.isEmpty( … )` / `lodash.isEmpty( … )`) — the CommonJS/namespace shape that
+// `no-restricted-imports` cannot see. Most migrated functions are backstopped
+// here by the `eslint-plugin-you-dont-need-lodash-underscore` rules, but that
+// plugin ships no `is-empty` rule, so this is `isEmpty`'s namespace guard.
+const properties = [
+	{ object: '_', property: 'isEmpty', message: JS_UTILS_MESSAGE },
+	{ object: 'lodash', property: 'isEmpty', message: JS_UTILS_MESSAGE },
+];
+
+module.exports = { paths, patterns, properties };

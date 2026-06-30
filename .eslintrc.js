@@ -451,6 +451,7 @@ module.exports = {
 				],
 			},
 		],
+		'no-restricted-properties': [ 2, ...lodashRestrictedImports.properties ],
 		'no-restricted-modules': [
 			2,
 			{
