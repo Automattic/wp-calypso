@@ -123,7 +123,7 @@ export default function ChooseEmailSolution() {
 		redirectTo = {
 			to: addMailboxRoute.to,
 			params: {
-				domainName: domainName,
+				domain: domainName,
 				provider: MailboxProvider.Google,
 				interval: isMonthlyEmailProduct( googleEmailSubscription )
 					? IntervalLength.Monthly
@@ -355,7 +355,7 @@ export default function ChooseEmailSolution() {
 									navigate( {
 										to: addMailboxRoute.to,
 										params: {
-											domainName: domainName,
+											domain: domainName,
 											provider: providerId,
 											interval: billingInterval,
 										},
