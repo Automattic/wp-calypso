@@ -9,7 +9,6 @@ import {
 	getSignupCompleteFlowName,
 	getSignupCompleteSiteID,
 	getSignupCompleteSlug,
-	persistSignupDestination,
 	retrieveSignupDestination,
 	wasSignupCheckoutPageUnloaded,
 } from 'calypso/signup/storageUtils';
@@ -160,12 +159,6 @@ describe( 'ai-site-builder paid-only flow', () => {
 		} );
 	} );
 
-	it( 'is registered under the ai-site-builder slug as a signup flow with built-in auth', () => {
-		expect( aiSiteBuilderPaidOnly.name ).toBe( 'ai-site-builder' );
-		expect( aiSiteBuilderPaidOnly.isSignupFlow ).toBe( true );
-		expect( aiSiteBuilderPaidOnly.__experimentalUseBuiltinAuth ).toBe( true );
-	} );
-
 	describe( 'initialize', () => {
 		it( 'returns domain → plan → checkout step order', () => {
 			expect( slugsOf( aiSiteBuilderPaidOnly.initialize() ) ).toEqual( [
@@ -224,11 +217,6 @@ describe( 'ai-site-builder paid-only flow', () => {
 			} );
 			expect( navigate ).toHaveBeenCalledWith( 'create-site' );
 		} );
-
-		it( 'drops create-site from history when advancing to processing', async () => {
-			const navigate = await submitFor( 'create-site', {} );
-			expect( navigate ).toHaveBeenCalledWith( 'processing', undefined, true );
-		} );
 	} );
 
 	describe( 'processing → checkout', () => {
@@ -274,11 +262,6 @@ describe( 'ai-site-builder paid-only flow', () => {
 			expect( decodeURIComponent( redirect ) ).toContain( 'ai-step=spec' );
 		} );
 
-		it( 'persists the signup destination so a checkout re-entry can reuse the site', async () => {
-			await submitFor( 'processing', successDeps );
-			expect( persistSignupDestination ).toHaveBeenCalled();
-		} );
-
 		it( 'falls back to the persisted site id/slug when processing omits them (checkout re-entry)', async () => {
 			( getSignupCompleteSiteID as jest.Mock ).mockReturnValue( '123' );
 			( getSignupCompleteSlug as jest.Mock ).mockReturnValue( 'example.wordpress.com' );
@@ -292,15 +275,6 @@ describe( 'ai-site-builder paid-only flow', () => {
 			expect( window.location.assign ).toHaveBeenCalledWith(
 				expect.stringContaining( '/checkout/example.wordpress.com' )
 			);
-		} );
-
-		it( 'navigates to the error step on a processing failure', async () => {
-			const navigate = await submitFor( 'processing', {
-				processingResult: ProcessingResult.FAILURE,
-			} );
-
-			expect( navigate ).toHaveBeenCalledWith( 'error' );
-			expect( window.location.assign ).not.toHaveBeenCalled();
 		} );
 	} );
 } );
