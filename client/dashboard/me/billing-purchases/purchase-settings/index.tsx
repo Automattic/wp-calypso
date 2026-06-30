@@ -723,10 +723,20 @@ function ChangePlanActionItem( { purchase }: { purchase: Purchase } ) {
 }
 
 function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
+	const { user } = useAuth();
+	const isOwner = String( user.ID ) === String( purchase.user_id );
+	const hasProductAction =
+		( isMarketplacePlugin( purchase ) && ! isMarketplaceHoldingSitePurchase( purchase ) ) ||
+		isJetpackCrmProduct( purchase.product_slug );
+
 	// 100-year plans and domains have no self-serve actions (no upgrade, no
 	// renew, no cancel/remove). Skip the card entirely so we don't render an
 	// empty shell.
 	if ( isCentennialPurchase( purchase ) ) {
+		return null;
+	}
+
+	if ( ! isOwner && ! isExpired( purchase ) && ! hasProductAction ) {
 		return null;
 	}
 
@@ -943,7 +953,7 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 	const navigate = useNavigate();
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 
-	if ( isIncludedWithPlan( purchase ) ) {
+	if ( String( user.ID ) !== String( purchase.user_id ) || isIncludedWithPlan( purchase ) ) {
 		return null;
 	}
 
@@ -1524,6 +1534,16 @@ export default function PurchaseSettings() {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const columns = isSmallViewport ? 1 : 2;
 	const spacing = isSmallViewport ? SPACING.SMALL : SPACING.DEFAULT;
+	const isCurrentPurchaseOwner = String( user.ID ) === String( purchase.user_id );
+	const shouldShowHeaderUpgradeAction =
+		purchase.is_upgradable && Boolean( upgradeUrl ) && isCurrentPurchaseOwner;
+	const shouldShowHeaderActionMenu =
+		isCurrentPurchaseOwner &&
+		( ( purchase.is_upgradable && Boolean( upgradeUrl ) ) || purchase.can_explicit_renew );
+	const shouldShowHeaderActions =
+		site?.options?.admin_url &&
+		! isCentennial &&
+		( shouldShowHeaderUpgradeAction || shouldShowHeaderActionMenu );
 
 	// Email plans order the overview cards as Renews, Renewal price, Mailbox, Site;
 	// every other purchase keeps Site, Owner, Renews, Price. Extract the two cards
@@ -1580,19 +1600,16 @@ export default function PurchaseSettings() {
 								: getTitleForDisplay( purchase )
 						}
 						actions={
-							site?.options?.admin_url &&
-							! isCentennial && (
+							shouldShowHeaderActions && (
 								<HStack justify="space-between">
-									{ canUpgradePurchase( purchase ) &&
-										upgradeUrl &&
-										String( user.ID ) === String( purchase.user_id ) && (
-											<Button __next40pxDefaultSize variant="primary" href={ upgradeUrl }>
-												{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
-											</Button>
-										) }
+									{ shouldShowHeaderUpgradeAction && upgradeUrl && (
+										<Button __next40pxDefaultSize variant="primary" href={ upgradeUrl }>
+											{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
+										</Button>
+									) }
 									{ /* Email plans surface every action in the list below, so the
 									     quick-actions menu would only duplicate them. */ }
-									{ ! isEmailPlanManagementEnabled( purchase ) && (
+									{ shouldShowHeaderActionMenu && ! isEmailPlanManagementEnabled( purchase ) && (
 										<PageHeader.ActionMenu>
 											<PurchaseActionMenu purchase={ purchase } />
 										</PageHeader.ActionMenu>
@@ -1706,7 +1723,7 @@ export default function PurchaseSettings() {
 					purchase.subscription_status === 'active' && (
 						<ManageSubscriptionCard purchase={ purchase } />
 					) }
-				{ ! isCentennial && <PurchaseSettingsActions purchase={ purchase } /> }
+				<PurchaseSettingsActions purchase={ purchase } />
 			</VStack>
 		</PageLayout>
 	);
