@@ -1,7 +1,13 @@
 import { legacyContactsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, Button } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	Button,
+	Icon,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { people } from '@wordpress/icons';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { ButtonStack } from '../../components/button-stack';
@@ -13,6 +19,7 @@ import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
 import LegacyContactForm from './legacy-contact-form';
 import RemoveContactDialog from './remove-contact-dialog';
+import './style.scss';
 
 export default function SecurityLegacyContact() {
 	const { data: [ contact ] = [] } = useSuspenseQuery( legacyContactsQuery() );
@@ -37,12 +44,23 @@ export default function SecurityLegacyContact() {
 						{ contact ? (
 							<>
 								<SectionHeader title={ __( 'Your legacy contact' ) } level={ 3 } />
-								<VStack spacing={ 1 } alignment="flex-start">
-									<Text upperCase variant="muted" size={ 11 }>
-										{ __( 'Legacy contact email' ) }
-									</Text>
-									<Text size={ 15 }>{ contact.contact_email }</Text>
-								</VStack>
+								<HStack
+									className="legacy-contact-card"
+									spacing={ 3 }
+									justify="flex-start"
+									alignment="center"
+									expanded={ false }
+								>
+									<div className="legacy-contact-card__avatar">
+										<Icon icon={ people } size={ 28 } />
+									</div>
+									<VStack spacing={ 0 } alignment="flex-start">
+										<Text upperCase variant="muted" size={ 11 }>
+											{ __( 'Legacy contact email' ) }
+										</Text>
+										<Text size={ 15 }>{ contact.contact_email }</Text>
+									</VStack>
+								</HStack>
 								<Text>
 									{ __(
 										'The printable copy contains the access key your legacy contact will need. We recommend printing it and storing it with your estate planning documents, or saving it securely in a password manager.'
