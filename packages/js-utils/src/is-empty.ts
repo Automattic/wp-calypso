@@ -1,11 +1,21 @@
 import getTag from './get-tag';
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
+const objectProto = Object.prototype;
 
 // Mirrors lodash's `isLength`: a valid array-like length is a non-negative
 // integer no greater than the maximum safe integer.
 const isLength = ( value: unknown ): value is number =>
 	typeof value === 'number' && value > -1 && value % 1 === 0 && value <= Number.MAX_SAFE_INTEGER;
+
+// Mirrors lodash's `isPrototype`: whether the value is the `prototype` object of
+// its own constructor (or `Object.prototype`).
+const isPrototype = ( value: unknown ): boolean => {
+	const Ctor = ( value as { constructor?: unknown } ).constructor;
+	const proto =
+		( typeof Ctor === 'function' && ( Ctor as { prototype?: unknown } ).prototype ) || objectProto;
+	return value === proto;
+};
 
 /**
  * Checks whether a value is an empty object, collection, map, or set, matching
@@ -56,9 +66,11 @@ const isEmpty = ( value: unknown ): boolean => {
 
 	// Everything else (plain objects, class instances, and primitives) is empty
 	// when it has no own enumerable string-keyed properties. `for…in` skips
-	// symbol keys, matching lodash.
+	// symbol keys, matching lodash. For a prototype object lodash ignores the
+	// own `constructor` key, so `Foo.prototype = { constructor: Foo }` is empty.
+	const skipConstructor = isPrototype( value );
 	for ( const key in value as object ) {
-		if ( hasOwnProperty.call( value, key ) ) {
+		if ( hasOwnProperty.call( value, key ) && ! ( skipConstructor && key === 'constructor' ) ) {
 			return false;
 		}
 	}

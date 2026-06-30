@@ -1,4 +1,6 @@
 import { runInNewContext } from 'vm';
+// eslint-disable-next-line no-restricted-imports -- parity test against the lodash function being replaced
+import lodashIsEmpty from 'lodash/isEmpty';
 import isEmpty from '../is-empty';
 
 describe( 'isEmpty', () => {
@@ -69,6 +71,20 @@ describe( 'isEmpty', () => {
 		expect( isEmpty( { length: 1.5, splice() {} } ) ).toBe( false );
 	} );
 
+	it( 'treats a bare prototype object as empty (ignores own constructor key)', () => {
+		function Bar() {}
+		Bar.prototype = { constructor: Bar };
+		expect( isEmpty( Bar.prototype ) ).toBe( true );
+		expect( isEmpty( Object.prototype ) ).toBe( true );
+
+		function Baz() {}
+		Baz.prototype = { constructor: Baz, x: 1 };
+		expect( isEmpty( Baz.prototype ) ).toBe( false );
+
+		// A plain object that merely owns a `constructor` key is not a prototype.
+		expect( isEmpty( { constructor() {} } ) ).toBe( false );
+	} );
+
 	it( 'ignores a spoofed Symbol.toStringTag', () => {
 		// A plain object masquerading as a Map is measured by its own keys, not size.
 		expect( isEmpty( { [ Symbol.toStringTag ]: 'Map', size: 0, a: 1 } ) ).toBe( false );
@@ -97,5 +113,54 @@ describe( 'isEmpty', () => {
 		/* eslint-enable prefer-rest-params */
 		expect( isEmpty( empty ) ).toBe( true );
 		expect( isEmpty( filled ) ).toBe( false );
+	} );
+
+	describe( 'matches lodash isEmpty', () => {
+		function Bar() {}
+		Bar.prototype = { constructor: Bar };
+		function Baz() {}
+		Baz.prototype = { constructor: Baz, x: 1 };
+
+		const cases: [ string, unknown ][] = [
+			[ 'null', null ],
+			[ 'undefined', undefined ],
+			[ 'empty string', '' ],
+			[ 'string', 'a' ],
+			[ 'empty array', [] ],
+			[ 'array', [ 1 ] ],
+			[ 'empty object', {} ],
+			[ 'object', { a: 1 } ],
+			[ 'object with length key', { length: 0 } ],
+			[ 'zero', 0 ],
+			[ 'number', 1 ],
+			[ 'NaN', NaN ],
+			[ 'true', true ],
+			[ 'false', false ],
+			[ 'symbol', Symbol( 'x' ) ],
+			[ 'empty Map', new Map() ],
+			[ 'Map', new Map( [ [ 1, 2 ] ] ) ],
+			[ 'empty Set', new Set() ],
+			[ 'Set', new Set( [ 1 ] ) ],
+			[ 'empty typed array', new Uint8Array( 0 ) ],
+			[ 'typed array', new Uint8Array( 2 ) ],
+			[ 'DataView', new DataView( new ArrayBuffer( 8 ) ) ],
+			[ 'function', () => {} ],
+			[ 'regexp', /re/ ],
+			[ 'date', new Date() ],
+			[ 'null-proto object', Object.create( null ) ],
+			[ 'inherited-only object', Object.create( { a: 1 } ) ],
+			[ 'empty jQuery-like', { length: 0, splice() {} } ],
+			[ 'jQuery-like', { length: 2, splice() {} } ],
+			[ 'splice without length', { splice() {} } ],
+			[ 'spoofed toStringTag with keys', { [ Symbol.toStringTag ]: 'Map', size: 0, a: 1 } ],
+			[ 'spoofed toStringTag only', { [ Symbol.toStringTag ]: 'Map' } ],
+			[ 'bare prototype object', Bar.prototype ],
+			[ 'Object.prototype', Object.prototype ],
+			[ 'prototype with extra key', Baz.prototype ],
+		];
+
+		it.each( cases )( 'matches for %s', ( _label, value ) => {
+			expect( isEmpty( value ) ).toBe( lodashIsEmpty( value ) );
+		} );
 	} );
 } );
