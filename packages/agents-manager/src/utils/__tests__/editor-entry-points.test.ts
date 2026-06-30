@@ -62,43 +62,31 @@ describe( 'isEditorAiEntryEnabled', () => {
 	}
 
 	afterEach( () => {
-		mockInlineData.mockReset();
 		mockIsEditorPage.mockReset();
 		delete ( window as TestWindow ).__experimentalAdminBarInEditor;
 		window.matchMedia = originalMatchMedia;
 	} );
 
-	it( 'returns true on an editor page, in a dev context, on desktop, with the omnibar off', () => {
+	it( 'returns true on an editor page, on desktop, with the omnibar off', () => {
 		mockIsEditorPage.mockReturnValue( true );
-		mockInlineData.mockReturnValue( { isDevMode: true } );
 		setDesktop( true );
 		expect( isEditorAiEntryEnabled() ).toBe( true );
 	} );
 
 	it( 'returns false outside an editor page', () => {
 		mockIsEditorPage.mockReturnValue( false );
-		mockInlineData.mockReturnValue( { isDevMode: true } );
-		setDesktop( true );
-		expect( isEditorAiEntryEnabled() ).toBe( false );
-	} );
-
-	it( 'returns false outside dev mode', () => {
-		mockIsEditorPage.mockReturnValue( true );
-		mockInlineData.mockReturnValue( { isDevMode: false } );
 		setDesktop( true );
 		expect( isEditorAiEntryEnabled() ).toBe( false );
 	} );
 
 	it( 'returns false on mobile', () => {
 		mockIsEditorPage.mockReturnValue( true );
-		mockInlineData.mockReturnValue( { isDevMode: true } );
 		setDesktop( false );
 		expect( isEditorAiEntryEnabled() ).toBe( false );
 	} );
 
 	it( 'returns false when the omnibar experiment is active', () => {
 		mockIsEditorPage.mockReturnValue( true );
-		mockInlineData.mockReturnValue( { isDevMode: true } );
 		setDesktop( true );
 		setOmnibarActive( true );
 		expect( isEditorAiEntryEnabled() ).toBe( false );
