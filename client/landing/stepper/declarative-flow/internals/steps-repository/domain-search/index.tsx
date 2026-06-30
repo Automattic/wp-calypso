@@ -622,9 +622,6 @@ const DomainSearchStep: StepType< {
 	};
 
 	const getSkipButton = () => {
-		// Mirror the V2 top-bar polarity (`getTopBarRightElement`): express the
-		// CTA as a positive "should show" boolean so `hideUseMyDomainLink` reads
-		// the same way in both render paths.
 		const showUseMyDomain = ! hideUseMyDomainLink && !! query && config.allowsUsingOwnDomain;
 
 		if ( ! showUseMyDomain ) {
