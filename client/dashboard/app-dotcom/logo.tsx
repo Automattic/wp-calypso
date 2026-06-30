@@ -1,4 +1,4 @@
-function WordmarkLogo() {
+export default function WordmarkLogo() {
 	return (
 		<svg
 			style={ { display: 'block', translate: '0 2px' } }
@@ -14,9 +14,3 @@ function WordmarkLogo() {
 		</svg>
 	);
 }
-
-function Logo() {
-	return <WordmarkLogo />;
-}
-
-export default Logo;

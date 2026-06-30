@@ -32,14 +32,3 @@ export function getPersistedLastActionPriorToLogin( state ) {
 	}
 	return state.readerUi?.persistedLastActionPriorToLogin;
 }
-
-/**
- * Selector to check if the reader multi-site version of the reader dashboard is enabled
- *
- * The dashboard omnibar replaced the Reader multi-site dashboard, which is now
- * disabled. The remaining MSD wiring is unused and tracked for removal separately.
- * @returns {boolean} Whether the user is enabled for the reader multi-site dashboard
- */
-export function isReaderMSDEnabled() {
-	return false;
-}
