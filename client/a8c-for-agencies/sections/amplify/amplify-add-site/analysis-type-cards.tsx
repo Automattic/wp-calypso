@@ -6,7 +6,9 @@ import {
 import { __ } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
+import { useRef } from 'react';
 import type { AmplifyMode } from 'calypso/a8c-for-agencies/data/amplify/types';
+import type { KeyboardEvent } from 'react';
 
 const ICON_PERSON = (
 	<svg
@@ -94,20 +96,54 @@ export default function AnalysisTypeCards( {
 	value: AmplifyMode | null;
 	onChange: ( mode: AmplifyMode ) => void;
 } ) {
+	const items = options();
+	const buttonRefs = useRef< ( HTMLButtonElement | null )[] >( [] );
+
+	// Roving tabindex: a single card is reachable via Tab. Fall back to the first
+	// card when nothing is selected yet, per the ARIA radio group pattern.
+	const selectedIndex = items.findIndex( ( option ) => option.value === value );
+	const focusableIndex = selectedIndex === -1 ? 0 : selectedIndex;
+
+	const moveSelection = ( fromIndex: number, delta: number ) => {
+		const nextIndex = ( fromIndex + delta + items.length ) % items.length;
+		onChange( items[ nextIndex ].value );
+		buttonRefs.current[ nextIndex ]?.focus();
+	};
+
+	const handleKeyDown = ( event: KeyboardEvent< HTMLButtonElement >, index: number ) => {
+		switch ( event.key ) {
+			case 'ArrowDown':
+			case 'ArrowRight':
+				event.preventDefault();
+				moveSelection( index, 1 );
+				break;
+			case 'ArrowUp':
+			case 'ArrowLeft':
+				event.preventDefault();
+				moveSelection( index, -1 );
+				break;
+		}
+	};
+
 	return (
 		<VStack spacing={ 3 }>
 			<Text weight={ 500 }>{ __( 'Choose your analysis type' ) }</Text>
 			<VStack spacing={ 2 } role="radiogroup" aria-label={ __( 'Analysis type' ) }>
-				{ options().map( ( option ) => {
+				{ items.map( ( option, index ) => {
 					const isSelected = value === option.value;
 					return (
 						<button
 							key={ option.value }
+							ref={ ( element ) => {
+								buttonRefs.current[ index ] = element;
+							} }
 							type="button"
 							role="radio"
 							aria-checked={ isSelected }
+							tabIndex={ index === focusableIndex ? 0 : -1 }
 							className={ clsx( 'amplify-analysis-card', { 'is-selected': isSelected } ) }
 							onClick={ () => onChange( option.value ) }
+							onKeyDown={ ( event ) => handleKeyDown( event, index ) }
 						>
 							<HStack spacing={ 4 } alignment="center" justify="flex-start">
 								<span
