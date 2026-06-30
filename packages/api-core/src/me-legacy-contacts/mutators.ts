@@ -7,7 +7,7 @@ export async function addLegacyContact( email: string, notes?: string ): Promise
 			path: '/me/legacy-contacts',
 			apiNamespace: 'wpcom/v2',
 		},
-		{ email, notes }
+		{ email, ...( notes && { notes } ) }
 	);
 }
 
