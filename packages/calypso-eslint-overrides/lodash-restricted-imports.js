@@ -244,4 +244,12 @@ const syntax = [
 	},
 ];
 
+// Residual gap: an aliased lodash namespace bound to an arbitrary name
+// (`const l = require( 'lodash' ); l.isEmpty( … )`) is not caught. These are all
+// name-based rules; resolving an arbitrary alias needs binding/scope tracking,
+// which only a custom rule provides (the alias-aware
+// `eslint-plugin-you-dont-need-lodash-underscore` ships no `is-empty` rule).
+// Left unguarded deliberately: app code is ESM (covered by the import rules
+// above), and CommonJS lodash exists only in build tooling.
+
 module.exports = { paths, patterns, properties, modules, syntax };
