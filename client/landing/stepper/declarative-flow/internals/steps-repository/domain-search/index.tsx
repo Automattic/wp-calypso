@@ -545,9 +545,7 @@ const DomainSearchStep: StepType< {
 
 	const getBackButton = () => {
 		if ( isAIBuilderFlow( flow ) ) {
-			// Once a site exists (the legacy flow reaches this step after creating one), offer to jump
-			// back into the Big Sky editor. The paid onboarding reaches the domain step before a site
-			// exists, so it falls back to standard back navigation.
+			// Offer to jump back into the editor only when a site exists; otherwise just go back.
 			if ( site?.URL ) {
 				return {
 					backUrl: `${ site.URL }/wp-admin/site-editor.php?canvas=edit&referrer=${ flow }&p=%2F&ai-step=edit`,
