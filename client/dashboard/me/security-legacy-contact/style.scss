@@ -14,6 +14,11 @@
 	}
 }
 
+.legacy-contact-card__notes {
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+
 .legacy-contact-card__avatar {
 	display: flex;
 	flex-shrink: 0;

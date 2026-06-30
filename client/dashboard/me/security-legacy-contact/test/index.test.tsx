@@ -5,9 +5,10 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import SecurityLegacyContact from '../index';
+import type { LegacyContact } from '@automattic/api-core';
 
 const API = 'https://public-api.wordpress.com';
-const CONTACT = {
+const CONTACT: LegacyContact = {
 	legacy_contact_id: 123,
 	contact_email: 'trusted@example.com',
 	created_at: '2026-01-01T00:00:00+00:00',
@@ -38,6 +39,14 @@ describe( '<SecurityLegacyContact />', () => {
 
 		expect( await screen.findByText( CONTACT.contact_email ) ).toBeVisible();
 		expect( await removeButton() ).toBeVisible();
+	} );
+
+	test( 'shows the contact notes when present', async () => {
+		interceptContacts( [ { ...CONTACT, notes: 'Please transfer my-blog.com to my sister.' } ] );
+
+		renderScreen();
+
+		expect( await screen.findByText( 'Please transfer my-blog.com to my sister.' ) ).toBeVisible();
 	} );
 
 	test( 'opens a confirmation dialog when removing', async () => {
