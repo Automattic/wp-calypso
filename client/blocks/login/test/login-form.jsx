@@ -2,10 +2,11 @@
  * @jest-environment jsdom
  */
 import config from '@automattic/calypso-config';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import cookie from 'cookie';
 import LoginForm from 'calypso/blocks/login/login-form';
+import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 import loginReducer from 'calypso/state/login/reducer';
 import routeReducer from 'calypso/state/route/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -14,6 +15,18 @@ jest.mock( 'cookie', () => ( {
 	parse: jest.fn( () => ( { last_used_authentication_method: '' } ) ),
 	serialize: jest.fn(),
 } ) );
+
+jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
+	getBlackboxSessionId: jest.fn().mockResolvedValue( undefined ),
+} ) );
+
+jest.mock( 'calypso/blocks/login/blackbox-challenge', () => {
+	const { useEffect } = require( 'react' );
+	return ( { onSubmitBlockedChange } ) => {
+		useEffect( () => onSubmitBlockedChange?.( false ), [ onSubmitBlockedChange ] );
+		return null;
+	};
+} );
 
 const render = ( el, options ) =>
 	renderWithProvider( el, { ...options, reducers: { login: loginReducer, route: routeReducer } } );
@@ -220,5 +233,79 @@ describe( 'LoginForm', () => {
 		} );
 
 		expect( screen.getByText( 'Your username' ) ).toBeInTheDocument();
+	} );
+
+	describe( 'Blackbox integration', () => {
+		const mockFetch = jest.fn();
+
+		// authAccountType 'regular' puts the form in password view so submitting
+		// dispatches loginUser() directly (no account-type round-trip).
+		const renderRegularLoginForm = () =>
+			render( <LoginForm isSocialFirst onSuccess={ jest.fn() } redirectTo="" />, {
+				initialState: { login: { authAccountType: 'regular' } },
+			} );
+
+		beforeEach( () => {
+			config.enable( 'blackbox' );
+			config.enable( 'blackbox-login' );
+			window.fetch = mockFetch;
+		} );
+
+		afterEach( () => {
+			// Restore the suite-wide baseline (Blackbox off).
+			config.disable( 'blackbox' );
+			mockFetch.mockReset();
+			getBlackboxSessionId.mockReset();
+			getBlackboxSessionId.mockResolvedValue( undefined );
+			delete window.Blackbox;
+		} );
+
+		test( 'attaches blackbox_session_id to the login request when available', async () => {
+			getBlackboxSessionId.mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				json: jest.fn().mockResolvedValue( { data: { two_step_notification_sent: 'app' } } ),
+			} );
+
+			renderRegularLoginForm();
+			await userEvent.click( screen.getByRole( 'button', { name: /Log In/i } ) );
+
+			await waitFor( () => expect( mockFetch ).toHaveBeenCalled() );
+
+			const body = new URLSearchParams( mockFetch.mock.calls[ 0 ][ 1 ].body );
+			expect( body.get( 'blackbox_session_id' ) ).toBe( 'ABCDEFGHIJKLMNOPQRSTuv' );
+		} );
+
+		test( 'omits blackbox_session_id when the login feature flag is off', async () => {
+			config.disable( 'blackbox-login' );
+			getBlackboxSessionId.mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				json: jest.fn().mockResolvedValue( { data: { two_step_notification_sent: 'app' } } ),
+			} );
+
+			renderRegularLoginForm();
+			await userEvent.click( screen.getByRole( 'button', { name: /Log In/i } ) );
+
+			await waitFor( () => expect( mockFetch ).toHaveBeenCalled() );
+
+			const body = new URLSearchParams( mockFetch.mock.calls[ 0 ][ 1 ].body );
+			expect( body.has( 'blackbox_session_id' ) ).toBe( false );
+			expect( getBlackboxSessionId ).not.toHaveBeenCalled();
+		} );
+
+		test( 'resets Blackbox when the login request fails', async () => {
+			window.Blackbox = { reset: jest.fn() };
+			mockFetch.mockResolvedValueOnce( {
+				ok: false,
+				status: 400,
+				text: jest.fn().mockResolvedValue( '' ),
+			} );
+
+			renderRegularLoginForm();
+			await userEvent.click( screen.getByRole( 'button', { name: /Log In/i } ) );
+
+			await waitFor( () => expect( window.Blackbox.reset ).toHaveBeenCalledTimes( 1 ) );
+		} );
 	} );
 } );

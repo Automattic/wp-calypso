@@ -17,6 +17,7 @@ import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
 import LoginSubmitButton from 'calypso/blocks/login/login-submit-button';
+import { blackboxProtectionPropType } from 'calypso/blocks/login/use-blackbox-protection';
 import { withBlackboxProtection } from 'calypso/blocks/login/with-blackbox-protection';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -76,6 +77,7 @@ import './login-form.scss';
 export class LoginForm extends Component {
 	static propTypes = {
 		accountType: PropTypes.string,
+		blackbox: blackboxProtectionPropType,
 		disableAutoFocus: PropTypes.bool,
 		sendEmailLogin: PropTypes.func.isRequired,
 		formUpdate: PropTypes.func.isRequired,
@@ -316,7 +318,7 @@ export class LoginForm extends Component {
 
 		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
 		this.props
-			.loginUser( usernameOrEmail, password, redirectTo, domain )
+			.loginUser( usernameOrEmail, password, redirectTo, domain, this.props.blackbox )
 			.then( () => {
 				this.props.recordTracksEvent( 'calypso_login_block_login_form_success' );
 				onSuccess( redirectTo );

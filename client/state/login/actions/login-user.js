@@ -1,7 +1,5 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
-import { resetBlackbox } from 'calypso/blocks/login/utils/use-blackbox';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import {
 	LOGIN_REQUEST,
@@ -19,19 +17,20 @@ import 'calypso/state/login/init';
 
 /**
  * Logs a user in.
- * @param  {string}   usernameOrEmail Username or email of the user
- * @param  {string}   password        Password of the user
- * @param  {string}   redirectTo      Url to redirect the user to upon successful login
- * @param  {string}   domain          A domain to reverse login to
- * @returns {Function}                 A thunk that can be dispatched
+ * @param  {string}   usernameOrEmail 		Username or email of the user
+ * @param  {string}   password        		Password of the user
+ * @param  {string}   redirectTo      		Url to redirect the user to upon successful login
+ * @param  {string}   domain          		A domain to reverse login to
+ * @param  {Object}   blackbox        		Blackbox protection helpers from `useBlackboxProtection`.
+ * @returns {Function}                 		A thunk that can be dispatched
  */
 export const loginUser =
-	( usernameOrEmail, password, redirectTo, domain ) => async ( dispatch ) => {
+	( usernameOrEmail, password, redirectTo, domain, blackbox ) => async ( dispatch ) => {
 		dispatch( {
 			type: LOGIN_REQUEST,
 		} );
 
-		const blackboxSessionId = await getBlackboxSessionId();
+		const blackboxSessionId = await blackbox.getSessionId();
 
 		return postLoginRequest( 'login-endpoint', {
 			username: usernameOrEmail,
@@ -81,7 +80,7 @@ export const loginUser =
 				} );
 
 				// Reset Blackbox so the next login attempt gets a fresh session.
-				resetBlackbox();
+				blackbox.reset();
 
 				return Promise.reject( error );
 			} );

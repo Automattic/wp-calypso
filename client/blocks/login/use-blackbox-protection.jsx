@@ -1,29 +1,33 @@
 import config from '@automattic/calypso-config';
+import PropTypes from 'prop-types';
 import { useCallback, useState } from 'react';
 import BlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
-import { resetBlackbox } from 'calypso/blocks/login/utils/use-blackbox';
 
 const noopGetSessionId = () => Promise.resolve( undefined );
 
 /**
- * Wire Blackbox into a form. Returns the four pieces a protected form needs:
- *
- * - `challenge`: the challenge container element to render in the form.
- * - `isSubmitBlocked`: fold into the submit button's `disabled` prop.
- * - `getSessionId`: await at submit time to attach `blackbox_session_id` to the
- *   request payload.
- * - `reset` — call on a failed request so the retry gets a fresh session.
+ * @typedef {Object} BlackboxProtection
+ * @property {boolean} isSubmitBlocked Whether the submit button should be disabled.
+ * @property {import('react').ReactElement} challenge Challenge container element to render in the form.
+ * @property {() => Promise<string|undefined>} getSessionId Resolves the Blackbox session ID (no-op when disabled).
+ * @property {() => void} reset Resets the Blackbox session so a retry starts fresh.
+ */
+
+export const blackboxProtectionPropType = PropTypes.shape( {
+	isSubmitBlocked: PropTypes.bool.isRequired,
+	challenge: PropTypes.node.isRequired,
+	getSessionId: PropTypes.func.isRequired,
+	reset: PropTypes.func.isRequired,
+} ).isRequired;
+
+/**
+ * Wire Blackbox into a form
  * @param {Object} options
  * @param {string} options.feature Feature flag gating Blackbox for this surface.
  *   Form is only protected when this flag is enabled and a `blackbox_api_key` is
  *   configured. When disabled, `getSessionId` is a no-op so no SDK load/collect happens.
- * @returns {{
- *   isSubmitBlocked: boolean,
- *   challenge: import('react').ReactElement,
- *   getSessionId: () => Promise<string|undefined>,
- *   reset: () => void,
- * }}
+ * @returns {BlackboxProtection}
  */
 export function useBlackboxProtection( { feature } ) {
 	const enabled =
@@ -42,6 +46,12 @@ export function useBlackboxProtection( { feature } ) {
 			<BlackboxChallenge enabled={ enabled } onSubmitBlockedChange={ handleSubmitBlockedChange } />
 		),
 		getSessionId: enabled ? getBlackboxSessionId : noopGetSessionId,
-		reset: resetBlackbox,
+		reset: () => {
+			try {
+				window.Blackbox?.reset();
+			} catch {
+				// Intentionally ignored — Blackbox must never block the host form.
+			}
+		},
 	};
 }

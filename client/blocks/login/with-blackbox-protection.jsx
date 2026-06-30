@@ -3,7 +3,7 @@ import { useBlackboxProtection } from 'calypso/blocks/login/use-blackbox-protect
 /**
  * HOC that injects useBlackboxProtection() as a `blackbox` prop, for class
  * components that can't call the hook directly.
- * @param {import('react').ComponentType} WrappedComponent Component to wrap.
+ * @param {import('react').ComponentType<{ blackbox: import('calypso/blocks/login/use-blackbox-protection').BlackboxProtection }>} WrappedComponent Component to wrap.
  * @param {Object} options Options forwarded to `useBlackboxProtection` (e.g. `feature`).
  * @returns {import('react').FunctionComponent} Component receiving a `blackbox` prop.
  */

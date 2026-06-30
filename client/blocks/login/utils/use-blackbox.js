@@ -136,14 +136,3 @@ export function useBlackbox( { containerRef, enabled } ) {
 
 	return { isChallengeActive, isLoading, hasChallengeContent };
 }
-
-/**
- * Reset the Blackbox session so the next auth attempt starts fresh.
- */
-export function resetBlackbox() {
-	try {
-		window.Blackbox?.reset();
-	} catch {
-		// Intentionally ignored — Blackbox must never block login.
-	}
-}
