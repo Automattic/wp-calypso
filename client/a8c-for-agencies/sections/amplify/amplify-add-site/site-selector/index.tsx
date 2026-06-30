@@ -101,6 +101,7 @@ export default function AmplifySiteSelector( { onChange, disabled }: Props ) {
 					options={ options }
 					onChange={ handleSiteChange }
 					placeholder={ isLoading ? __( 'Loading sites…' ) : __( 'Choose a site' ) }
+					disabled={ disabled }
 				/>
 			) : (
 				<TextControl
