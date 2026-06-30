@@ -281,11 +281,12 @@ export class PlansPage {
 	 */
 	async validateActivePlan( expectedPlan: Plans ): Promise< void > {
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			// Mobile stacks the plans and surfaces the owned plan under a "Your
-			// plan" header with a "Manage plan" control, not the desktop spotlight
-			// card. Confirm both the plan name and that owned-plan control.
-			await this.page.getByRole( 'heading', { name: expectedPlan, exact: true } ).first().waitFor();
-			await this.page.getByRole( 'button', { name: 'Manage plan' } ).first().waitFor();
+			// Mobile stacks the plans and surfaces the owned plan in the "My Plan"
+			// card, not the desktop spotlight card. Confirm both the plan name
+			// (scoped to the card title) and the owned-plan "Manage plan" control,
+			// which renders as an anchor rather than a button.
+			await this.page.locator( selectors.myPlanTitle( expectedPlan ) ).first().waitFor();
+			await this.page.locator( selectors.managePlanButton ).first().waitFor();
 			return;
 		}
 		await this.page.locator( selectors.spotlightPlan ).getByText( expectedPlan ).waitFor();
