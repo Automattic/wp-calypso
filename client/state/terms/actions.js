@@ -1,4 +1,3 @@
-import { filter } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import {
 	TERM_REMOVE,
@@ -58,16 +57,18 @@ export function updateTerm( siteId, taxonomy, termId, termSlug, term ) {
 				// When updating a term, we receive a newId and a new Slug
 				// We have to remove the old term and add the new one
 				// We also have to update the parent ID of its children
-				const children = filter( getTerms( state, siteId, taxonomy ), {
-					parent: termId,
-				} ).map( ( child ) => ( { ...child, parent: updatedTerm.ID } ) );
+				const children = ( getTerms( state, siteId, taxonomy ) ?? [] )
+					.filter( ( child ) => child.parent === termId )
+					.map( ( child ) => ( { ...child, parent: updatedTerm.ID } ) );
 				dispatch( removeTerm( siteId, taxonomy, termId ) );
 				dispatch( receiveTerms( siteId, taxonomy, children.concat( [ updatedTerm ] ) ) );
 
 				// We also have to update post terms
 				const postsToUpdate = getSitePostsByTerm( state, siteId, taxonomy, termId );
 				postsToUpdate.forEach( ( post ) => {
-					const newTerms = filter( post.terms[ taxonomy ], ( postTerm ) => postTerm.ID !== termId );
+					const newTerms = Object.values( post.terms[ taxonomy ] ?? {} ).filter(
+						( postTerm ) => postTerm.ID !== termId
+					);
 					newTerms.push( updatedTerm );
 					dispatch(
 						editPost( siteId, post.ID, {
@@ -134,11 +135,13 @@ const removeTermFromState = ( { dispatch, getState, siteId, taxonomy, termId } )
 	const deletedTermPostCount = deletedTerm?.post_count ?? 0;
 
 	// Update the parentId of its children
-	const termsToUpdate = filter( getTerms( state, siteId, taxonomy ), ( term ) => {
-		return term.parent === termId;
-	} ).map( ( term ) => {
-		return { ...term, parent: deletedTerm.parent };
-	} );
+	const termsToUpdate = ( getTerms( state, siteId, taxonomy ) ?? [] )
+		.filter( ( term ) => {
+			return term.parent === termId;
+		} )
+		.map( ( term ) => {
+			return { ...term, parent: deletedTerm.parent };
+		} );
 	if ( termsToUpdate.length ) {
 		dispatch( receiveTerms( siteId, taxonomy, termsToUpdate ) );
 	}
@@ -146,7 +149,9 @@ const removeTermFromState = ( { dispatch, getState, siteId, taxonomy, termId } )
 	// Drop the term from posts
 	const postsToUpdate = getSitePostsByTerm( state, siteId, taxonomy, termId );
 	postsToUpdate.forEach( ( post ) => {
-		const newTerms = filter( post.terms[ taxonomy ], ( postTerm ) => postTerm.ID !== termId );
+		const newTerms = Object.values( post.terms[ taxonomy ] ?? {} ).filter(
+			( postTerm ) => postTerm.ID !== termId
+		);
 		dispatch(
 			editPost( siteId, post.ID, {
 				terms: {

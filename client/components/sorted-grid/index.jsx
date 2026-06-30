@@ -1,5 +1,5 @@
 import { omit } from '@automattic/js-utils';
-import { get, map } from 'lodash';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, PureComponent } from 'react';
 import InfiniteList from 'calypso/components/infinite-list';
@@ -26,7 +26,7 @@ class SortedGrid extends PureComponent {
 
 		for ( let i = 0; i < this.props.items.length; i += this.props.itemsPerRow ) {
 			const row = this.props.items.slice( i, i + this.props.itemsPerRow );
-			const groups = map( row, this.props.getItemGroup ).reduce( ( results, group ) => {
+			const groups = row.map( this.props.getItemGroup ).reduce( ( results, group ) => {
 				results[ group ] = get( results, group, 0 ) + 1;
 				return results;
 			}, {} );
@@ -40,7 +40,7 @@ class SortedGrid extends PureComponent {
 	renderLabels( row ) {
 		return (
 			<div key={ `header_${ row.id }` } className="sorted-grid__header">
-				{ map( row.groups, ( count, group ) => {
+				{ Object.entries( row.groups ).map( ( [ group, count ] ) => {
 					const labelText = this.props.getGroupLabel( group );
 					return (
 						'' !== labelText && (

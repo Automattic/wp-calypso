@@ -130,9 +130,7 @@ export interface Client {
 	isVisible: boolean;
 	isShowing: boolean;
 	lastSeenTime: number;
-	noteRequestLimit: number;
 	filter: Record< string, unknown > | null;
-	filteredRequestLimit: number;
 	filteredHasMore: boolean;
 	gettingFilteredNotes: boolean;
 	retries: number;

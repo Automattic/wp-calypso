@@ -52,7 +52,10 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger, initialData }
 	};
 
 	const triggerNode = trigger ? (
-		React.cloneElement( trigger, { onClick: handleClick } )
+		React.cloneElement(
+			trigger as React.ReactElement< { onClick?: React.MouseEventHandler< HTMLElement > } >,
+			{ onClick: handleClick }
+		)
 	) : (
 		<Button
 			icon={ link }

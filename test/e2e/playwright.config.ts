@@ -26,7 +26,7 @@ const reporter: ReporterDescription[] = [
 			outputFile: `ctrf-report-${ Date.now() }.json`,
 			branchName: process.env.BRANCH_NAME || '',
 			commit: process.env.BUILD_VCS_NUMBER || '',
-			appName: 'calypso',
+			appName: process.env.E2E_CTRF_APP_NAME || 'calypso',
 			repositoryName: 'Automattic/wp-calypso',
 		},
 	],

@@ -2,7 +2,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { Icon } from '@wordpress/components';
 import { lock } from '@wordpress/icons';
-import i18n, { useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { CheckoutSummaryRefundWindows } from './checkout-summary-refund-windows';
 import CheckoutTermsModal from './checkout-terms-modal';
@@ -91,53 +91,28 @@ export default function CheckoutPayButtonFooter( { cart }: { cart: ResponseCart 
 			<Divider />
 
 			<LegalNotice>
-				{ i18n.fixMe( {
-					text: 'By purchasing, you accept the {{tos}}Terms of Service{{/tos}} and {{pp}}Privacy Policy{{/pp}}. {{readmore}}View billing and renewal details{{/readmore}}',
-					newCopy: translate(
-						'By purchasing, you accept the {{tos}}Terms of Service{{/tos}} and {{pp}}Privacy Policy{{/pp}}. {{readmore}}View billing and renewal details{{/readmore}}',
-						{
-							components: {
-								tos: (
-									<a
-										href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-								pp: (
-									<a
-										href={ localizeUrl( 'https://automattic.com/privacy/' ) }
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-								readmore: <button type="button" onClick={ () => setIsTermsModalOpen( true ) } />,
-							},
-						}
-					),
-					oldCopy: translate(
-						'By purchasing, you accept the {{tos}}Terms of Service{{/tos}} and {{pp}}Privacy Policy{{/pp}}. {{readmore}}Read more{{/readmore}}',
-						{
-							components: {
-								tos: (
-									<a
-										href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-								pp: (
-									<a
-										href={ localizeUrl( 'https://automattic.com/privacy/' ) }
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-								readmore: <button type="button" onClick={ () => setIsTermsModalOpen( true ) } />,
-							},
-						}
-					),
-				} ) }
+				{ translate(
+					'By purchasing, you accept the {{tos}}Terms of Service{{/tos}} and {{pp}}Privacy Policy{{/pp}}. {{readmore}}View billing and renewal details{{/readmore}}',
+					{
+						components: {
+							tos: (
+								<a
+									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+							pp: (
+								<a
+									href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+							readmore: <button type="button" onClick={ () => setIsTermsModalOpen( true ) } />,
+						},
+					}
+				) }
 			</LegalNotice>
 
 			<CheckoutTermsModal

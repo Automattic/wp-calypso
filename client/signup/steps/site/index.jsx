@@ -3,7 +3,7 @@ import { FormLabel } from '@automattic/components';
 import { getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import { isEmpty, map } from 'lodash';
+import { isEmpty } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
@@ -205,10 +205,10 @@ class Site extends Component {
 			return;
 		}
 
-		return map( messages, ( message, error_code ) => {
+		return Object.entries( messages ).map( ( [ error_code, message ] ) => {
 			if ( error_code === 'blog_name_reserved' ) {
 				return (
-					<span>
+					<span key={ error_code }>
 						<p>
 							{ message }
 							&nbsp;

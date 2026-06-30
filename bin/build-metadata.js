@@ -248,13 +248,15 @@ function processLibPhoneNumberMetadata( libPhoneNumberData ) {
 		}
 	}
 
-	const noPattern = _.filter(
-		data,
+	const noPattern = Object.values( data ).filter(
 		_.conforms( { patterns: ( patterns ) => patterns.length === 0 } )
 	);
 	_.forIn( noPattern, function ( country ) {
 		country.patternRegion = (
-			_.maxBy( Object.values( _.filter( data, { dialCode: country.dialCode } ) ), 'priority' ) || {}
+			_.maxBy(
+				Object.values( data ).filter( ( c ) => c.dialCode === country.dialCode ),
+				'priority'
+			) || {}
 		).isoCode;
 		console.log(
 			'Info: ' +

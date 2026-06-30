@@ -157,6 +157,15 @@ export interface LoadedProviders {
 	contextProvider?: ContextProvider;
 	/** Function to get empty view suggestions. Called when component is ready. */
 	getEmptyViewSuggestions?: () => Suggestion[];
+	/**
+	 * Opt out of the built-in empty-view default suggestions ("Getting started
+	 * with WordPress" etc.) for this provider's surfaces. When any loaded
+	 * provider sets this to `true`, `useEmptyViewSuggestions` returns `[]`
+	 * instead of the defaults whenever it would otherwise fall back to them.
+	 * Provider-specific `getEmptyViewSuggestions` still wins when it returns
+	 * non-empty filtered suggestions.
+	 */
+	suppressEmptyViewDefaults?: boolean;
 	markdownComponents?: MarkdownComponents;
 	markdownExtensions?: MarkdownExtensions;
 	useNavigationContinuation?: NavigationContinuationHook;
@@ -465,6 +474,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedUseCheckpoint: UseCheckpointHook | undefined;
 	// OR-merged across all providers.
 	const mergedCapabilities: ProviderCapabilities = {};
+	let mergedSuppressEmptyViewDefaults = false;
 
 	// Collect exports that need to be merged across all providers.
 	const allToolProviders: ToolProvider[] = [];
@@ -559,6 +569,12 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		}
 
 		mergeCapabilitiesInto( mergedCapabilities, module.capabilities );
+
+		// Strict `=== true` because `module` arrives untyped from runtime
+		// imports; a stray `'false'` string would otherwise opt in.
+		if ( module.suppressEmptyViewDefaults === true ) {
+			mergedSuppressEmptyViewDefaults = true;
+		}
 	}
 
 	const mergedContextProvider = mergeContextProviders( allContextProviders );
@@ -689,5 +705,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		useCheckpoint: mergedUseCheckpoint,
 		// Match peer fields: undefined when no provider opted in.
 		capabilities: Object.keys( mergedCapabilities ).length ? mergedCapabilities : undefined,
+		suppressEmptyViewDefaults: mergedSuppressEmptyViewDefaults ? true : undefined,
 	};
 }

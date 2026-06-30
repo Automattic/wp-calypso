@@ -108,13 +108,13 @@ export default function useAgentLayoutManager( {
 	onUndock = () => {},
 	isSplitScreen = false,
 }: Options = {} ): ReturnValue {
-	const portalRef = useRef< HTMLDivElement >();
+	const portalRef = useRef< HTMLDivElement | undefined >( undefined );
 	const [ isPortalReady, setIsPortalReady ] = useState( false );
 	const [ isDocked, setIsDocked ] = useState< boolean | null >( null );
 	const { canDock, calculateAdminMenuHeight } = useCanDock( { desktopMediaQuery } );
 	const shouldRenderSidebar = canDock && isDocked;
-	const openSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > >();
-	const closeSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > >();
+	const openSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > | undefined >( undefined );
+	const closeSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > | undefined >( undefined );
 
 	// Store default state refs to avoid stale closures and prevent unnecessary re-renders
 	const defaultDockedRef = useRef( defaultDocked );

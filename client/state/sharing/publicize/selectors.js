@@ -1,5 +1,4 @@
 import { createSelector } from '@automattic/state-utils';
-import { filter } from 'lodash';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -13,7 +12,9 @@ import 'calypso/state/sharing/init';
  * @returns {Array}         Site connections
  */
 export function getConnectionsBySiteId( state, siteId ) {
-	return filter( state.sharing.publicize.connections, { site_ID: siteId } );
+	return Object.values( state.sharing.publicize.connections ?? {} ).filter(
+		( connection ) => connection.site_ID === siteId
+	);
 }
 
 /**
@@ -26,8 +27,7 @@ export function getConnectionsBySiteId( state, siteId ) {
  */
 export const getSiteUserConnections = createSelector(
 	( state, siteId, userId ) =>
-		filter(
-			state.sharing.publicize.connections,
+		Object.values( state.sharing.publicize.connections ?? {} ).filter(
 			( connection ) =>
 				connection.site_ID === siteId &&
 				( connection.shared || connection.keyring_connection_user_ID === userId )
@@ -45,7 +45,9 @@ export const getSiteUserConnections = createSelector(
  * @returns {Array}          User connections
  */
 export function getSiteUserConnectionsForService( state, siteId, userId, service ) {
-	return filter( getSiteUserConnections( state, siteId, userId ), { service } );
+	return getSiteUserConnections( state, siteId, userId ).filter(
+		( connection ) => connection.service === service
+	);
 }
 
 /**
@@ -57,9 +59,9 @@ export function getSiteUserConnectionsForService( state, siteId, userId, service
  * @returns {Array}          Broken user connections.
  */
 export function getBrokenSiteUserConnectionsForService( state, siteId, userId, service ) {
-	return filter( getSiteUserConnectionsForService( state, siteId, userId, service ), {
-		status: 'broken',
-	} );
+	return getSiteUserConnectionsForService( state, siteId, userId, service ).filter(
+		( connection ) => connection.status === 'broken'
+	);
 }
 
 /**
@@ -88,7 +90,7 @@ export function getRemovableConnections( state, service ) {
 		return siteUserConnectionsForService;
 	}
 
-	return filter( siteUserConnectionsForService, { user_ID: userId } );
+	return siteUserConnectionsForService.filter( ( connection ) => connection.user_ID === userId );
 }
 
 /**

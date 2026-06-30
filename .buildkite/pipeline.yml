@@ -47,6 +47,7 @@ steps:
       - desktop/release/*.dmg
       - desktop/release/*.blockmap
       - desktop/release/*.yml
+      - desktop/test/e2e/results/**/*
 
   - label: ":desktop_computer: Build desktop (linux, unsigned)"
     branches: ainfra-*
@@ -56,10 +57,17 @@ steps:
     agents:
       queue: default
     plugins:
-      - automattic/nvm#0.6.0
+      - docker#v5.13.0:
+          image: cimg/node:24.15.0-browsers
+          propagate-uid-gid: true
+          userns: host
+          environment:
+            - E2EGUTENBERGUSER
+            - E2EPASSWORD
     command: .buildkite/commands/build-desktop-linux.sh
     artifact_paths:
       - desktop/release/*
+      - desktop/test/e2e/results/**/*
 
   - label: ":windows: Build desktop (windows store, unsigned)"
     branches: ainfra-*

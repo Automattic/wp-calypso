@@ -1,6 +1,6 @@
 import { pick } from '@automattic/js-utils';
 import update from 'immutability-helper';
-import { filter, matches } from 'lodash';
+import { matches } from 'lodash';
 import {
 	DOMAINS_DNS_ADD,
 	DOMAINS_DNS_ADD_COMPLETED,
@@ -34,10 +34,10 @@ function isNsRecord( domain ) {
 }
 
 function removeDuplicateWpcomRecords( domain, records ) {
-	const rootARecords = filter( records, isRootARecord( domain ) );
+	const rootARecords = records.filter( isRootARecord( domain ) );
 	const wpcomARecord = rootARecords.find( isWpcomRecord );
 	const customARecord = rootARecords.find( ( record ) => ! isWpcomRecord( record ) );
-	const customRootAaaaRecords = filter( records, isRootAaaaRecord( domain ) );
+	const customRootAaaaRecords = records.filter( isRootAaaaRecord( domain ) );
 
 	if ( wpcomARecord && ( customARecord || customRootAaaaRecords ) ) {
 		return records.filter( ( record ) => record !== wpcomARecord );

@@ -1,7 +1,7 @@
 import { createTitanMailboxMutation, mailboxAccountsQuery } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
-import { useMatch, useParams } from '@tanstack/react-router';
+import { useMatch, useParams, useSearch } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, Notice } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
@@ -41,10 +41,11 @@ const AddProfessionalEmail = () => {
 	const isAddMailboxRoute = match.routeId === addMailboxRoute.id;
 
 	const { provider, interval } = useParams( { shouldThrow: false, strict: false } );
+	const { tier } = useSearch( { strict: false } );
 
 	const { domain, domainName } = useDomainFromUrlParam();
 	const userCanAddEmail = domain?.current_user_can_add_email;
-	const { product } = useEmailProduct( provider, interval, domain );
+	const { product } = useEmailProduct( provider, interval, domain, tier );
 	const { data: existingMailboxes } = useSuspenseQuery(
 		mailboxAccountsQuery( domain.blog_id, domainName )
 	);
@@ -138,7 +139,7 @@ const AddProfessionalEmail = () => {
 
 	const showEmailPurchaseDisabledMessage = ! userCanAddEmail && ! isDomainInCart;
 	const disabled = isAddMailboxRoute
-		? isSubmitting || showEmailPurchaseDisabledMessage
+		? isSubmitting || showEmailPurchaseDisabledMessage || ! product
 		: isSubmitting || isPending;
 
 	let mailboxCost;
@@ -261,7 +262,7 @@ const AddProfessionalEmail = () => {
 					</ButtonStack>
 
 					{ isAddMailboxRoute && (
-						<Cart totalItems={ totalItems } totalPrice={ totalPrice } isCartBusy={ isSubmitting } />
+						<Cart totalItems={ totalItems } totalPrice={ totalPrice } disabled={ disabled } />
 					) }
 				</VStack>
 			</form>

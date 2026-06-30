@@ -30,7 +30,7 @@
 //
 
 import { camelCase, mapKeys, mapValues, snakeCase } from '@automattic/js-utils';
-import { get, map } from 'lodash';
+import { get } from 'lodash';
 
 // Right-to-left composition of unary functions. Kept local so this pure mapping
 // module doesn't take on a dependency it otherwise has no need for.
@@ -52,7 +52,7 @@ const mergeStringPieces = ( a, b ) => ( {
  * @returns {Array} List of native format pieces
  */
 export const rawToNative = ( list ) =>
-	map( list, ( p ) =>
+	list.map( ( p ) =>
 		'string' === p.type ? { type: 'string', value: p.value } : { type: camelCase( p.value ) }
 	);
 
@@ -76,7 +76,7 @@ export const nativeToRaw = compose(
 			return [ ...format, piece ];
 		}, [] ),
 	( list ) =>
-		map( list, ( p ) => ( {
+		list.map( ( p ) => ( {
 			type: p.type === 'string' ? 'string' : 'token',
 			value: get( p, 'value', snakeCase( p.type ) ),
 		} ) )

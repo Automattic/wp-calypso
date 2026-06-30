@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import { isEmpty, map } from 'lodash';
+import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Fragment } from 'react';
 
@@ -11,7 +11,7 @@ const SiteImporterImportableContent = ( { translate, importData = {} } ) => (
 			<Fragment>
 				<p>{ translate( 'We will import:' ) }</p>
 				<ul>
-					{ map( importData.supported, ( supportedApp, index ) => (
+					{ importData.supported.map( ( supportedApp, index ) => (
 						<li key={ index + supportedApp }>{ supportedApp }</li>
 					) ) }
 				</ul>
