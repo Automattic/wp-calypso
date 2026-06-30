@@ -25,7 +25,7 @@ type ResponsiveMenuItemProps = Omit<
 	'children' | 'onClick' | 'ref'
 > & {
 	children: React.ReactNode;
-	onClick?: ( event?: React.MouseEvent< HTMLButtonElement > ) => void;
+	onClick?: ( event?: React.MouseEvent< Element > ) => void;
 };
 
 // The children of ResponsiveMenu can be any usual ReactNode, but if it _is_ an element
@@ -174,8 +174,8 @@ function ResponsiveMenu( {
 									className="dashboard-menu__item"
 									variant="tertiary"
 									{ ...item.props }
-									onClick={ () => {
-										item.props.onClick?.();
+									onClick={ ( event: React.MouseEvent< Element > ) => {
+										item.props.onClick?.( event );
 										recordTracksEvent( 'calypso_dashboard_menu_item_click', {
 											to: item.props.href ?? '',
 										} );
@@ -192,8 +192,8 @@ function ResponsiveMenu( {
 						return (
 							<Menu.Item
 								{ ...item.props }
-								onClick={ () => {
-									item.props.onClick?.();
+								onClick={ ( event: React.MouseEvent< Element > ) => {
+									item.props.onClick?.( event );
 									recordTracksEvent( 'calypso_dashboard_menu_item_click', {
 										to: item.props.to ?? '',
 									} );
@@ -272,8 +272,8 @@ function ResponsiveMenu( {
 								return (
 									<Menu.ItemLink
 										{ ...item.props }
-										onClick={ () => {
-											item.props.onClick?.();
+										onClick={ ( event ) => {
+											item.props.onClick?.( event );
 											recordTracksEvent( 'calypso_dashboard_menu_item_click', {
 												to: item.props.href ?? '',
 											} );
@@ -290,9 +290,9 @@ function ResponsiveMenu( {
 							return (
 								<RouterLinkMenuItem
 									{ ...item.props }
-									onClick={ () => {
+									onClick={ ( event ) => {
 										onClose();
-										item.props.onClick?.();
+										item.props.onClick?.( event );
 										recordTracksEvent( 'calypso_dashboard_menu_item_click', {
 											to: item.props.to ?? '',
 										} );
