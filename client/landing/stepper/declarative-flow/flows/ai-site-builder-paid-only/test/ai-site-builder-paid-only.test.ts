@@ -296,5 +296,29 @@ describe( 'ai-site-builder-paid-only flow', () => {
 
 			expect( window.location.assign ).toHaveBeenCalledWith( '/plans/example.wordpress.com' );
 		} );
+
+		it( 'still sends the user to checkout when Big Sky setup fails', async () => {
+			// Site lookup and intent both fail; checkout must not be blocked.
+			( resolveSelect as jest.Mock ).mockReturnValue( {
+				getSite: jest.fn().mockRejectedValue( new Error( 'boom' ) ),
+			} );
+			( useDispatch as jest.Mock ).mockImplementation( ( store: string ) =>
+				store === 'SITE_STORE'
+					? {
+							setStaticHomepageOnSite: jest.fn().mockResolvedValue( undefined ),
+							setIntentOnSite: jest.fn().mockRejectedValue( new Error( 'boom' ) ),
+					  }
+					: onboardActions
+			);
+
+			await submitFor( 'processing', successDeps );
+
+			const checkoutUrl = ( window.location.assign as jest.Mock ).mock.calls[ 0 ][ 0 ];
+			expect( checkoutUrl ).toContain( '/checkout/example.wordpress.com' );
+			// Falls back to the slug-based host for the editor destination.
+			expect( decodeURIComponent( checkoutUrl ) ).toContain(
+				'https://example.wordpress.com/wp-admin/site-editor.php'
+			);
+		} );
 	} );
 } );

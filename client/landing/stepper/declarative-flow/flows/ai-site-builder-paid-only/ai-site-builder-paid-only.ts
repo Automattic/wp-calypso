@@ -156,54 +156,53 @@ const aiSiteBuilderPaidOnly: FlowV2< typeof initialize > = {
 			return null;
 		};
 
-		// Prepares the newly created site for Big Sky (intent + home page) and returns its URL.
+		// Best-effort Big Sky prep (intent + home page) that returns the site URL to hand off to.
+		// None of this should block checkout, so each step is allowed to fail independently and the
+		// URL falls back to the site slug if the site lookup fails.
 		const setupBigSkySite = async (
 			siteId: string | number,
 			siteSlug: string
-		): Promise< string | null > => {
+		): Promise< string > => {
 			// Runs independently; errors are handled by the mutation's onError callback.
 			addBlogSticker( siteId, 'big-sky-free-trial' );
 
-			const pendingActions = [
-				resolveSelect( SITE_STORE ).getSite( siteId ), // To get the URL.
-				wpcom.req.post(
-					{
-						path: '/sites/' + siteId + '/pages',
-						apiNamespace: 'wp/v2',
-					},
+			let siteURL = `https://${ siteSlug }`;
+			try {
+				const site = await resolveSelect( SITE_STORE ).getSite( siteId );
+				if ( site?.URL ) {
+					siteURL = site.URL;
+				}
+			} catch {
+				// Keep the slug-based fallback URL.
+			}
+
+			try {
+				const page = ( await wpcom.req.post(
+					{ path: '/sites/' + siteId + '/pages', apiNamespace: 'wp/v2' },
 					{},
 					{
 						title: 'Home',
 						status: 'publish',
 						content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
 					}
-				),
-				deletePage( siteId, 1 ),
-				setIntentOnSite( siteSlug, SiteIntent.AIAssembler ),
-			];
-
-			// Execute operations individually to identify which one fails.
-			const results = [];
-			try {
-				for ( let i = 0; i < pendingActions.length; i++ ) {
-					const result = await pendingActions[ i ];
-					results.push( result );
+				) ) as { id?: number };
+				if ( page?.id ) {
+					await setStaticHomepageOnSite( siteId, page.id );
 				}
-			} catch ( error ) {
-				return null;
+			} catch {
+				// Home page setup is best-effort; Big Sky still launches without it.
 			}
 
-			const siteData = results[ 0 ];
-			if ( ! siteData || ! siteData.URL ) {
-				return null;
+			// deletePage already fails silently.
+			await deletePage( siteId, 1 );
+
+			try {
+				await setIntentOnSite( siteSlug, SiteIntent.AIAssembler );
+			} catch {
+				// Intent is best-effort.
 			}
 
-			const pageCreationResult = results[ 1 ];
-			if ( pageCreationResult && pageCreationResult.id ) {
-				await setStaticHomepageOnSite( siteId, pageCreationResult.id );
-			}
-
-			return siteData.URL;
+			return siteURL;
 		};
 
 		const submit: SubmitHandler< typeof initialize > = async function ( submittedStep ) {
@@ -281,9 +280,6 @@ const aiSiteBuilderPaidOnly: FlowV2< typeof initialize > = {
 					}
 
 					const siteURL = await setupBigSkySite( siteId, siteSlug );
-					if ( ! siteURL ) {
-						return;
-					}
 
 					const prompt = resolvePrompt();
 					const source = queryParams.get( 'source' );

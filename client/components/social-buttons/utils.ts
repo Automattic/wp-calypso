@@ -1,3 +1,4 @@
+import { isAIBuilderFlow } from '@automattic/onboarding';
 import { login } from 'calypso/lib/paths';
 import { isWpccFlow } from 'calypso/signup/is-flow';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -52,7 +53,7 @@ export const getRedirectUri = (
 
 	let flow = 'start';
 	// TODO: I am restricting this to certain flows for testing sake, but I think this should be the default behavior.
-	if ( flowName === 'ai-site-builder' && [ 'github', 'paypal' ].indexOf( socialService ) !== -1 ) {
+	if ( isAIBuilderFlow( flowName ) && [ 'github', 'paypal' ].indexOf( socialService ) !== -1 ) {
 		flow = `setup/${ flowName }`;
 	}
 
