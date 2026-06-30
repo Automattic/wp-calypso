@@ -1770,6 +1770,34 @@ function CheckoutLineItem( {
 		);
 	}
 
+	let priceContent;
+	if ( isCartUpdating ) {
+		priceContent = <LoadingCopy width="60px" height="16px" noMargin />;
+	} else if ( shouldShowComparison ) {
+		priceContent = (
+			<>
+				<LineItemPrice
+					actualAmount={ monthlyAmountDisplay }
+					crossedOutAmount={
+						isDiscounted && ! isRenewalPricingExperiment ? originalMonthlyAmountDisplay : undefined
+					}
+				/>{ ' ' }
+				{ translate( '/month' ) }
+			</>
+		);
+	} else {
+		priceContent = (
+			<>
+				<LineItemPrice
+					actualAmount={ actualAmountDisplay }
+					crossedOutAmount={
+						stackedCrossedOutDisplay ?? ( isDiscounted ? originalAmountDisplay : undefined )
+					}
+				/>
+			</>
+		);
+	}
+
 	return (
 		<div
 			className={ joinClasses( [ className, 'checkout-line-item' ] ) }
@@ -1790,32 +1818,7 @@ function CheckoutLineItem( {
 				) }
 			</LineItemTitle>
 
-			<span className="checkout-line-item__price">
-				{ isCartUpdating ? (
-					<LoadingCopy width="60px" height="16px" noMargin />
-				) : shouldShowComparison ? (
-					<>
-						<LineItemPrice
-							actualAmount={ monthlyAmountDisplay }
-							crossedOutAmount={
-								isDiscounted && ! isRenewalPricingExperiment
-									? originalMonthlyAmountDisplay
-									: undefined
-							}
-						/>{ ' ' }
-						{ translate( '/month' ) }
-					</>
-				) : (
-					<>
-						<LineItemPrice
-							actualAmount={ actualAmountDisplay }
-							crossedOutAmount={
-								stackedCrossedOutDisplay ?? ( isDiscounted ? originalAmountDisplay : undefined )
-							}
-						/>
-					</>
-				) }
-			</span>
+			<span className="checkout-line-item__price">{ priceContent }</span>
 
 			{ ! containsPartnerCoupon && (
 				<>
