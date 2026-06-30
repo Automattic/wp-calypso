@@ -235,8 +235,10 @@ describe( 'ai-site-builder paid-only flow', () => {
 
 			const checkoutUrl = ( window.location.assign as jest.Mock ).mock.calls[ 0 ][ 0 ];
 			expect( checkoutUrl ).toContain( '/checkout/example.wordpress.com' );
-			// Cancelling must not drop the user into the editor — no checkoutBackUrl is set.
+			// Cancelling must not drop the user into the editor: no checkoutBackUrl, and an explicit
+			// cancel_to back to the site's plans page.
 			expect( checkoutUrl ).not.toContain( 'checkoutBackUrl' );
+			expect( checkoutUrl ).toContain( 'cancel_to=%2Fplans%2Fexample.wordpress.com' );
 
 			const redirect = decodeURIComponent( checkoutUrl );
 			expect( redirect ).toContain( '/wp-admin/site-editor.php' );

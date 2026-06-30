@@ -30,14 +30,22 @@ export const isSitePlanBigSkyTrial = ( site: Site ) => {
 	}
 
 	return isSitePlanNotOneOf( site, [
-		DotcomPlans.BUSINESS,
-		DotcomPlans.BUSINESS_MONTHLY,
-		DotcomPlans.BUSINESS_2_YEARS,
-		DotcomPlans.BUSINESS_3_YEARS,
+		DotcomPlans.PERSONAL,
+		DotcomPlans.PERSONAL_MONTHLY,
+		DotcomPlans.PERSONAL_2_YEARS,
+		DotcomPlans.PERSONAL_3_YEARS,
 		DotcomPlans.PREMIUM,
 		DotcomPlans.PREMIUM_MONTHLY,
 		DotcomPlans.PREMIUM_2_YEARS,
 		DotcomPlans.PREMIUM_3_YEARS,
+		DotcomPlans.BUSINESS,
+		DotcomPlans.BUSINESS_MONTHLY,
+		DotcomPlans.BUSINESS_2_YEARS,
+		DotcomPlans.BUSINESS_3_YEARS,
+		DotcomPlans.ECOMMERCE,
+		DotcomPlans.ECOMMERCE_MONTHLY,
+		DotcomPlans.ECOMMERCE_2_YEARS,
+		DotcomPlans.ECOMMERCE_3_YEARS,
 	] );
 };
 

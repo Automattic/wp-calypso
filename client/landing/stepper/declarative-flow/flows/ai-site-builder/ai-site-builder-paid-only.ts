@@ -295,11 +295,12 @@ const aiSiteBuilderPaidOnly: FlowV2< typeof initialize > = {
 
 					// Intentionally no checkoutBackUrl: it is allowlisted against the site's own host, so
 					// pointing it at the editor would let a user cancel checkout and land in Big Sky
-					// without paying. Checkout's default close destination (/plans/<slug>) keeps them in
+					// without paying. An explicit cancel_to to the plans page keeps them in
 					// the paid funnel instead.
 					window.location.assign(
 						addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 							redirect_to: redirectAfterCheckout,
+							cancel_to: `/plans/${ siteSlug }`,
 							signup: 1,
 							'big-sky-checkout': 1,
 						} )
