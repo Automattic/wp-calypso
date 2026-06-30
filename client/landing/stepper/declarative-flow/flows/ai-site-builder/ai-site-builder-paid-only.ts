@@ -68,8 +68,6 @@ function initialize() {
 		clearSignupCompleteSiteID();
 	}
 
-	// stepsWithRequiredLogin prepends account creation / log in. Then: domain, paid plan, site
-	// creation, and processing (which sends the user through checkout).
 	return stepsWithRequiredLogin( [
 		STEPS.DOMAIN_SEARCH,
 		STEPS.UNIFIED_PLANS,
@@ -154,7 +152,6 @@ const aiSiteBuilderPaidOnly: FlowV2< typeof initialize > = {
 
 			const pendingActions = [
 				resolveSelect( SITE_STORE ).getSite( siteId ), // To get the URL.
-				// Create a new home page if one is not set yet.
 				wpcom.req.post(
 					{
 						path: '/sites/' + siteId + '/pages',
@@ -182,13 +179,11 @@ const aiSiteBuilderPaidOnly: FlowV2< typeof initialize > = {
 				return null;
 			}
 
-			// Defensive check for site data (always first).
 			const siteData = results[ 0 ];
 			if ( ! siteData || ! siteData.URL ) {
 				return null;
 			}
 
-			// Set the created Home page as the static homepage.
 			const pageCreationResult = results[ 1 ];
 			if ( pageCreationResult && pageCreationResult.id ) {
 				await setStaticHomepageOnSite( siteId, pageCreationResult.id );
@@ -269,7 +264,6 @@ const aiSiteBuilderPaidOnly: FlowV2< typeof initialize > = {
 					const source = queryParams.get( 'source' );
 					const specId = queryParams.get( 'spec_id' );
 
-					// Big Sky Site Spec editor URL the user lands on after a successful checkout.
 					const specDestination = addQueryArgs( `${ siteURL }/wp-admin/site-editor.php`, {
 						canvas: 'edit',
 						'ai-step': 'spec',

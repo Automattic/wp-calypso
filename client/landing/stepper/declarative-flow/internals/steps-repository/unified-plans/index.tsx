@@ -63,9 +63,8 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 
 			return 'plans-new-hosted-site';
 		case AI_SITE_BUILDER_FLOW:
-			// The paid-only onboarding shows Personal/Premium/Business/Commerce (no Free, no
-			// Enterprise), which is exactly the `plans-new-hosted-site` plan set. The CIAB garden
-			// re-entry never renders this step, so keying off the flag alone is safe here.
+			// `plans-new-hosted-site` is exactly Personal/Premium/Business/Commerce (no Free, no
+			// Enterprise) — the set the paid-only onboarding offers.
 			return config.isEnabled( 'onboarding/ai-site-builder-paid-only' )
 				? 'plans-new-hosted-site'
 				: 'plans-ai-assembler-free-trial';

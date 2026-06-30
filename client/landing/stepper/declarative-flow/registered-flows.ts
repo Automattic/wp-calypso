@@ -150,8 +150,7 @@ export const deprecatedV1Flows: Record< string, () => Promise< { default: Flow }
 const aiSiteBuilderFlows: Record< string, () => Promise< { default: FlowV2< any > } > > =
 	config.isEnabled( 'calypso/ai-site-builder-flow' )
 		? {
-				// The paid-only checkout flow and the legacy free flow share the same slug. Pick the
-				// implementation by the flag: paid-only when on, otherwise the legacy free flow.
+				// Two implementations behind one slug, chosen by the paid-only flag.
 				[ AI_SITE_BUILDER_FLOW ]: () =>
 					config.isEnabled( 'onboarding/ai-site-builder-paid-only' )
 						? import( './flows/ai-site-builder/ai-site-builder-paid-only' )
