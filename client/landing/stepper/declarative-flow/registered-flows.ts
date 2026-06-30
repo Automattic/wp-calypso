@@ -158,7 +158,7 @@ const aiSiteBuilderFlows: Record< string, () => Promise< { default: FlowV2< any 
 // The paid-only onboarding lives at its own slug so the legacy ai-site-builder slug (fresh
 // onboarding, CIAB garden re-entry, trial launch/upsell) is left untouched.
 const aiSiteBuilderOnboardingFlows: Record< string, () => Promise< { default: FlowV2< any > } > > =
-	config.isEnabled( 'onboarding/ai-site-builder-paid-only' )
+	config.isEnabled( 'calypso/ai-site-builder-paid-only-flow' )
 		? {
 				[ AI_SITE_BUILDER_ONBOARDING_FLOW ]: () =>
 					import( './flows/ai-site-builder-onboarding/ai-site-builder-onboarding' ),
