@@ -19,6 +19,7 @@ import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
 import LegacyContactForm from './legacy-contact-form';
 import RemoveContactDialog from './remove-contact-dialog';
+
 import './style.scss';
 
 export default function SecurityLegacyContact() {
