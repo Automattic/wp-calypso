@@ -38,10 +38,12 @@ function GalleryCard( {
 	post,
 	isSelected,
 	onOpen,
+	showTimestamp,
 }: {
 	post: ReadStreamPost;
 	isSelected: boolean;
 	onOpen: () => void;
+	showTimestamp: boolean;
 } ) {
 	const fields = getPostFields( post );
 	return (
@@ -81,7 +83,7 @@ function GalleryCard( {
 							{ fields.sourceName }
 							{ fields.authorName ? ` · ${ fields.authorName }` : '' }
 						</span>
-						{ fields.publishedDate && (
+						{ showTimestamp && fields.publishedDate && (
 							<>
 								<span>-</span>
 								<SpaceFeedTimeSince date={ fields.publishedDate } />
@@ -139,6 +141,7 @@ export function GalleryLayout( {
 	restoreKey,
 	isPostSelected,
 	selectPost,
+	showTimestamp,
 }: SpaceFeedLayoutProps ) {
 	const columns = useGalleryColumns();
 
@@ -197,6 +200,7 @@ export function GalleryLayout( {
 									post={ cell }
 									isSelected={ isPostSelected( cell ) }
 									onOpen={ () => selectPost( cell ) }
+									showTimestamp={ showTimestamp }
 								/>
 							) : (
 								// eslint-disable-next-line react/no-array-index-key

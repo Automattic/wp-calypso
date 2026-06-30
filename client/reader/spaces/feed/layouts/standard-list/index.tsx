@@ -29,11 +29,13 @@ function PostRow( {
 	post,
 	isSelected,
 	onOpen,
+	showTimestamp,
 }: {
 	fields: SpaceFeedPostFields;
 	post: ReadStreamPost;
 	isSelected: boolean;
 	onOpen: () => void;
+	showTimestamp: boolean;
 } ) {
 	return (
 		<HStack
@@ -87,7 +89,7 @@ function PostRow( {
 				/>
 			</VStack>
 			<div className="space-feed-standard-list__aside">
-				{ fields.publishedDate && (
+				{ showTimestamp && fields.publishedDate && (
 					<span className="space-feed-standard-list__time">
 						<SpaceFeedTimeSince date={ fields.publishedDate } />
 					</span>
@@ -106,6 +108,7 @@ export function StandardListLayout( {
 	restoreKey,
 	isPostSelected,
 	selectPost,
+	showTimestamp,
 }: SpaceFeedLayoutProps ) {
 	const translate = useTranslate();
 
@@ -178,6 +181,7 @@ export function StandardListLayout( {
 								post={ row.post }
 								isSelected={ isPostSelected( row.post ) }
 								onOpen={ () => selectPost( row.post ) }
+								showTimestamp={ showTimestamp }
 							/>
 						) }
 					</div>

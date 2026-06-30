@@ -151,6 +151,7 @@ export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
 					restoreKey={ `${ spaceId }:${ variant }:${ layout }` }
 					isPostSelected={ isPostSelected }
 					selectPost={ selectPost }
+					showTimestamp={ ! isDiscover }
 				/>
 			);
 		}
@@ -192,6 +193,7 @@ export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
 				restoreKey={ `${ spaceId }:${ variant }:${ layout }` }
 				isPostSelected={ isPostSelected }
 				selectPost={ selectPost }
+				showTimestamp={ ! isDiscover }
 			/>
 		);
 	};
