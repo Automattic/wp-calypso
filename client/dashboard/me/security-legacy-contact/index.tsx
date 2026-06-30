@@ -10,6 +10,7 @@ import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
+import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
 import LegacyContactForm from './legacy-contact-form';
 import RemoveContactDialog from './remove-contact-dialog';
@@ -36,11 +37,16 @@ export default function SecurityLegacyContact() {
 					<VStack spacing={ 4 }>
 						{ contact ? (
 							<>
-								<Text>
-									{ createInterpolateElement( __( 'Your legacy contact is <contactEmail />.' ), {
-										contactEmail: <strong>{ contact.contact_email }</strong>,
-									} ) }
-								</Text>
+								<SectionHeader
+									title={ __( 'Your legacy contact' ) }
+									level={ 3 }
+									description={ createInterpolateElement(
+										__( 'Your legacy contact is <contactEmail />.' ),
+										{
+											contactEmail: <strong>{ contact.contact_email }</strong>,
+										}
+									) }
+								/>
 								<Text>
 									{ __(
 										'The printable copy contains the access key your legacy contact will need. We recommend printing it and storing it with your estate planning documents, or saving it securely in a password manager.'
