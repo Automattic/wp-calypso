@@ -189,4 +189,8 @@ async function publishRelease() {
 	console.log( 'Publish complete' );
 }
 
-publishRelease();
+publishRelease().catch( ( error ) => {
+	console.error( 'Failed to publish desktop release.' );
+	console.error( error && error.stack ? error.stack : error );
+	process.exitCode = 1;
+} );
