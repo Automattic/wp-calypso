@@ -8,6 +8,7 @@ import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
+import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
 import './style.scss';
 
@@ -22,6 +23,7 @@ function LegacyContactDetails( { legacyContactId }: { legacyContactId: number } 
 
 	return (
 		<VStack spacing={ 6 }>
+			<SectionHeader title={ __( 'Your legacy contact' ) } level={ 3 } />
 			<VStack spacing={ 2 }>
 				<Text>
 					{ __(
