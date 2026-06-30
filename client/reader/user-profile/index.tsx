@@ -11,7 +11,7 @@ import { useProfileTabVisibility } from 'calypso/reader/data/user-profile';
 import UserProfileHeader from 'calypso/reader/user-profile/components/user-profile-header';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
 import UserAchievements from 'calypso/reader/user-profile/views/achievements';
-import UserLists from 'calypso/reader/user-profile/views/lists';
+import UserProfileLists from 'calypso/reader/user-profile/views/lists';
 import UserPosts from 'calypso/reader/user-profile/views/posts';
 import UserRecommendedBlogs from 'calypso/reader/user-profile/views/recommended-blogs';
 import UserProfileSettings from 'calypso/reader/user-profile/views/settings';
@@ -100,7 +100,7 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 			case 'sites':
 				return <UserSites user={ user } />;
 			case 'lists':
-				return <UserLists user={ user } />;
+				return <UserProfileLists user={ user } />;
 			case 'recommended-blogs':
 				return <UserRecommendedBlogs user={ user } />;
 			case 'achievements':

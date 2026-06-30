@@ -4,7 +4,6 @@
 import page from '@automattic/calypso-router';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { renderWithProvider as render } from 'calypso/test-helpers/testing-library';
 import { ReaderSidebarTags } from '../index';
 
@@ -62,9 +61,9 @@ describe( 'ReaderSidebarTags', () => {
 		);
 		await user.click( screen.getByText( 'Tags' ) );
 
-		expect( recordAction ).toHaveBeenCalledWith( 'clicked_reader_sidebar_tags' );
-		expect( recordGaEvent ).toHaveBeenCalledWith( 'Clicked Reader Sidebar Tags' );
-		expect( recordReaderTracksEvent ).toHaveBeenCalledWith( 'calypso_reader_sidebar_tags_clicked' );
+		expect( recordReaderTracksEvent ).toHaveBeenCalledWith(
+			'calypso_reader_sidebar_tags_dropdown_title_clicked'
+		);
 	} );
 
 	it( 'opens or closes the menu only via the chevron icon, without navigating', async () => {

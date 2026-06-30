@@ -1,21 +1,15 @@
-import './lists.scss';
 import { readUserListsQuery } from '@automattic/api-queries';
-import { SummaryButton } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
-import { Spinner } from '@wordpress/components';
-import { formatListBullets, Icon } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
-import EmptyContent from 'calypso/components/empty-content';
+import { UserLists } from 'calypso/reader/list/components/user-lists';
 import { List } from 'calypso/reader/list-manage/types';
 import type { ReaderUser } from '@automattic/api-core';
 import type { JSX } from 'react';
 
-interface UserListsProps {
+interface UserProfileListsProps {
 	user: ReaderUser;
 }
 
-export const UserLists = ( { user }: UserListsProps ): JSX.Element => {
-	const translate = useTranslate();
+export const UserProfileLists = ( { user }: UserProfileListsProps ): JSX.Element => {
 	const userLogin = user.user_login ?? '';
 	const { data, isLoading, isFetched } = useQuery( readUserListsQuery( userLogin ) );
 	const lists = data?.lists ?? [];
@@ -23,48 +17,7 @@ export const UserLists = ( { user }: UserListsProps ): JSX.Element => {
 		( list: List ) => ! ( list.slug === 'recommended-blogs' && list.is_owner )
 	);
 
-	if ( isLoading || ! isFetched ) {
-		return (
-			<div className="user-profile__loader">
-				<Spinner /> { translate( 'Loading lists' ) }...
-			</div>
-		);
-	}
-
-	if ( visibleLists.length === 0 ) {
-		return (
-			<div className="user-profile__lists">
-				<EmptyContent
-					illustration={ null }
-					icon={ <Icon icon={ formatListBullets } size={ 48 } /> }
-					title={ null }
-					line={ translate( 'No lists yet.' ) }
-				/>
-			</div>
-		);
-	}
-
-	return (
-		<div className="user-profile__lists">
-			{ visibleLists.map( ( list: List ) => {
-				let description: React.ReactNode = list.description;
-				if ( list.slug === 'recommended-blogs' ) {
-					description = translate( 'A list of blogs recommended by %s.', {
-						args: `@${ list.owner }`,
-					} );
-				}
-
-				return (
-					<SummaryButton
-						key={ `user-list-${ list.ID }` }
-						href={ `/reader/list/${ list.owner }/${ list.slug }` }
-						title={ list.title }
-						description={ description || translate( 'No description.' ) }
-					/>
-				);
-			} ) }
-		</div>
-	);
+	return <UserLists lists={ visibleLists } isLoading={ isLoading || ! isFetched } />;
 };
 
-export default UserLists;
+export default UserProfileLists;
