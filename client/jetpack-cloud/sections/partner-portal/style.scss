@@ -17,3 +17,38 @@
 		display: none;
 	}
 }
+
+.is-group-jetpack-cloud {
+	.partner-portal-layout {
+		.card,
+		.card.is-compact,
+		.info-popover,
+		.form-fieldset,
+		.form-input-validation,
+		.payment-method-list__content,
+		.payment-method-add-v2__content {
+			border-radius: var(--jetpack-cloud-radius);
+		}
+
+		.card,
+		.card.is-compact {
+			border-color: var(--jetpack-cloud-border-color);
+			box-shadow: none;
+		}
+
+		.button {
+			min-height: var(--jetpack-cloud-control-height);
+		}
+
+		input[type="text"],
+		input[type="email"],
+		input[type="number"],
+		input[type="tel"],
+		select,
+		textarea,
+		.components-text-control__input,
+		.components-select-control__input {
+			border-radius: var(--jetpack-cloud-radius-small);
+		}
+	}
+}

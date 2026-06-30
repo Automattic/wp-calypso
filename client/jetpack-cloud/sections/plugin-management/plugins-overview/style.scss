@@ -8,6 +8,7 @@
 	flex-direction: column;
 	// The -64px is to undo the padding of layout.has-no-masterbar (32px) & .layout__content (32px)
 	min-height: calc(100vh - 64px);
+	background: var(--jetpack-cloud-app-background);
 
 	.current-section {
 		padding: 0 16px;
@@ -38,5 +39,6 @@
 
 .plugins__page-title {
 	font-weight: 600;
-	margin-block-end: 8px;
+	margin-block-end: 6px;
+	color: var(--jetpack-cloud-text-color);
 }

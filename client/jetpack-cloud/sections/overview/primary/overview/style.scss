@@ -3,9 +3,13 @@
 
 .overview {
 	> .card {
-		margin-bottom: 32px;
+		margin-bottom: 18px;
+		border: 1px solid var(--jetpack-cloud-border-color);
+		border-radius: var(--jetpack-cloud-radius);
+		box-shadow: none;
+
 		@include break-xlarge {
-			margin-bottom: 16px;
+			margin-bottom: 18px;
 		}
 	}
 

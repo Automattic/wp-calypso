@@ -12,6 +12,7 @@ $grid-wide: 0.5fr 0.5fr 128px 128px 128px 74px;
 .license-list-item {
 	display: grid;
 	grid-template-columns: 1fr 74px;
+	align-items: center;
 
 	> * {
 		display: none;
@@ -109,7 +110,7 @@ $grid-wide: 0.5fr 0.5fr 128px 128px 128px 74px;
 			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			line-height: 1.25rem;
 			white-space: nowrap;
-			color: var(--studio-gray-70);
+			color: var(--jetpack-cloud-muted-text-color);
 		}
 
 		h2 {
@@ -146,7 +147,7 @@ $grid-wide: 0.5fr 0.5fr 128px 128px 128px 74px;
 		font-size: 0.65rem; /* stylelint-disable-line */
 		padding: 0 10px;
 		font-weight: 400;
-		border-radius: 0;
+		border-radius: var(--jetpack-cloud-radius);
 	}
 
 	.badge--success {

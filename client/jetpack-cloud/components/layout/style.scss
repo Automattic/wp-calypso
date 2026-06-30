@@ -26,6 +26,7 @@
 	flex-direction: column;
 	margin: auto;
 	padding: 0;
+	background: var(--jetpack-cloud-app-background);
 }
 
 .jetpack-cloud-layout__body {
@@ -43,23 +44,27 @@
 
 .jetpack-cloud-layout__top-wrapper,
 .jetpack-cloud-layout__body-wrapper {
-	margin-inline: 0;
+	margin-inline: var(--jetpack-cloud-page-gutter-small);
 
 	> * {
 		max-width: 1500px;
 		margin-inline: auto !important;
+	}
+
+	@include breakpoint-deprecated( ">960px" ) {
+		margin-inline: var(--jetpack-cloud-page-gutter);
 	}
 }
 
 .main.jetpack-cloud-layout.is-with-border {
 	@include breakpoint-deprecated( ">660px" ) {
 		.jetpack-cloud-layout__top {
-			border-block-end: 1px solid var(--color-primary-5);
+			border-block-end: 1px solid var(--jetpack-cloud-border-subtle-color);
 		}
 
 		.jetpack-cloud-layout__body {
-			background: rgba(255, 255, 255, 0.5);
-			padding-block: 16px;
+			background: var(--jetpack-cloud-app-background);
+			padding-block: 18px 32px;
 		}
 	}
 }
@@ -69,10 +74,13 @@
 	align-items: center;
 	justify-content: space-between;
 	margin: auto;
-	height: 100%;
+	min-height: 64px;
+	height: auto;
+	padding-block: 12px;
+	gap: 16px;
 
 	> * + * {
-		margin-inline-start: 24px;
+		margin-inline-start: 0;
 	}
 
 	@include breakpoint-deprecated( "<1280px" ) {
@@ -90,7 +98,7 @@
 
 .jetpack-cloud-layout__header.has-actions > .jetpack-cloud-layout__header-main {
 	@include breakpoint-deprecated( "660px-1280px" ) {
-		margin-block-end: 16px;
+		margin-block-end: 8px;
 	}
 }
 
@@ -149,18 +157,32 @@
 }
 
 .jetpack-cloud-layout__header-title {
-	font-size: 2.25rem;
-	margin-block-end: 8px;
+	font-size: 2rem;
+	margin-block-end: 6px;
 	font-weight: 600;
-	line-height: 1.2;
+	line-height: 1.15;
 }
 
 .jetpack-cloud-layout__header-subtitle {
 	font-size: 1rem;
-	color: var(--studio-gray-60);
+	color: var(--jetpack-cloud-muted-text-color);
 	margin: 0;
 	font-weight: 400;
 	line-height: 1.2;
+}
+
+.jetpack-cloud-layout__header-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 8px;
+	margin-inline-start: auto;
+
+	@include breakpoint-deprecated( "<1280px" ) {
+		justify-content: flex-start;
+		margin-inline-start: 0;
+	}
 }
 
 .section-nav.jetpack-cloud-layout__navigation {

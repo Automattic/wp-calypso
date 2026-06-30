@@ -3,7 +3,7 @@
 .payment-method-form {
 	display: flex;
 	flex-direction: column;
-	gap: 24px;
+	gap: 20px;
 }
 
 .payment-method-form__title {
@@ -14,7 +14,8 @@
 
 .payment-method-form__footer {
 	display: flex;
-	gap: 16px;
+	flex-wrap: wrap;
+	gap: 8px;
 }
 
 .payment-method-form__submit-button {
@@ -37,7 +38,7 @@
 }
 
 .payment-method-form__notice {
-	color: var(--studio-gray-50);
+	color: var(--jetpack-cloud-muted-text-color);
 	font-weight: 400;
 	margin-block-start: 24px;
 	display: flex;

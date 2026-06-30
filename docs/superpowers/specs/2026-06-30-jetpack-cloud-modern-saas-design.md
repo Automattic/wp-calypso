@@ -75,7 +75,7 @@ Keep the current Jetpack Cloud sidebar component and navigation model. Improve:
 
 Common surfaces should share:
 
-- `6px` default radius for buttons, cards, filter bars, table containers, form fields, and modal sections.
+- `8px` default radius for buttons, cards, filter bars, table containers, form fields, and modal sections, matching Calypso's allowed radius scale.
 - Consistent 1px borders using Studio gray tokens.
 - Restrained shadows only for elevated or active states.
 - Predictable spacing between top bar, metrics, filters, tables, cards, and pagination.

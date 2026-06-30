@@ -12,6 +12,8 @@
 				display: block;
 				padding-top: 0;
 				padding-bottom: 0;
+				background: var(--studio-gray-0);
+				border-color: var(--jetpack-cloud-border-color);
 			}
 		}
 	}
@@ -62,7 +64,7 @@
 	}
 
 	&__pagination {
-		margin: 64px 0;
+		margin: 48px 0;
 	}
 }
 

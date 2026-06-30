@@ -6,9 +6,11 @@
 .billing-summary {
 	display: flex;
 	flex-direction: column;
+	gap: 16px;
 
 	@include break-xlarge() {
 		flex-direction: row;
+		gap: 0;
 	}
 
 	&__stat {
@@ -66,9 +68,9 @@
 	&__label {
 		display: block;
 		margin-bottom: 8px;
-		font-size: 1.25rem;
-		line-height: 28px;
-		color: var(--studio-gray-80);
+		font-size: 1rem;
+		line-height: 1.3;
+		color: var(--jetpack-cloud-muted-text-color);
 
 		@include break-wide() {
 			white-space: nowrap;
@@ -79,7 +81,7 @@
 		display: block;
 		font-weight: 700;
 		font-size: 1.75rem;
-		line-height: 36px;
+		line-height: 1.2;
 
 		@media (min-width: 661px) and (max-width: 781px) {
 			// Accounts for unbreakable long cost numbers breaking the layout due to the sidebar taking up
@@ -97,8 +99,8 @@
 			padding: 16px 58px 16px 16px;
 			color: var(--studio-gray-70);
 			background: #fff;
-			border-radius: 2px;
-			box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
+			border-radius: var(--jetpack-cloud-radius);
+			box-shadow: var(--jetpack-cloud-surface-shadow);
 
 			p {
 				font-size: 1rem;

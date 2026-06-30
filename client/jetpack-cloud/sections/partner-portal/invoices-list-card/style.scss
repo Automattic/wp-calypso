@@ -4,8 +4,12 @@
 .invoices-list-card {
 	&__actions {
 		text-align: left;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
 
 		@include break-xlarge() {
+			justify-content: flex-end;
 			text-align: right;
 		}
 
@@ -15,7 +19,7 @@
 			}
 
 			+ .button {
-				margin-left: 12px;
+				margin-left: 0;
 			}
 		}
 	}
