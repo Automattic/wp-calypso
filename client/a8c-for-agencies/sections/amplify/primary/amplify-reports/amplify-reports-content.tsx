@@ -79,22 +79,6 @@ function ScoreBadge( { score, label }: { score: number | null; label: string } )
 	);
 }
 
-// Validate protocol before opening so a tampered payload can't smuggle a
-// javascript:/data: URI through the download button.
-function openPdf( pdfUrl: string | null ): void {
-	if ( ! pdfUrl ) {
-		return;
-	}
-	try {
-		const parsed = new URL( pdfUrl );
-		if ( parsed.protocol === 'https:' ) {
-			window.open( pdfUrl, '_blank', 'noopener,noreferrer' );
-		}
-	} catch {
-		// Invalid URL — do nothing.
-	}
-}
-
 export default function AmplifyReportsContent() {
 	const dispatch = useDispatch();
 	const { rows, isLoading, error } = useAmplifyReportRows();
@@ -221,6 +205,9 @@ export default function AmplifyReportsContent() {
 							size="compact"
 							icon={ download }
 							iconSize={ 16 }
+							href={ item.pdfUrl ?? undefined }
+							target="_blank"
+							rel="noopener noreferrer"
 							disabled={ ! item.pdfUrl }
 							onClick={ () => {
 								dispatch(
@@ -229,7 +216,6 @@ export default function AmplifyReportsContent() {
 										mode: item.mode,
 									} )
 								);
-								openPdf( item.pdfUrl );
 							} }
 						>
 							{ __( 'Download PDF' ) }
