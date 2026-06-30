@@ -6,6 +6,9 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 
 const val MERGE_QUEUE_BRANCH_SKIP_PARAM = "mergeQueueBranch.skipBuild"
+const val MERGE_QUEUE_BRANCH_SKIP_MESSAGE =
+	"This check was skipped because this is a merge queue and the check has already been run " +
+		"in the pull request. See: p4TIVU-b5I-p2#comment-12211"
 
 fun BuildSteps.passMergeQueueBranchesEarly(): ScriptBuildStep {
 	return script {
@@ -25,9 +28,9 @@ fun BuildSteps.passMergeQueueBranchesEarly(): ScriptBuildStep {
 			esac
 
 			echo "Merge queue branch detected: ${'$'}branch"
-			echo "Skipping TeamCity work for merge queue validation."
+			echo "$MERGE_QUEUE_BRANCH_SKIP_MESSAGE"
 			echo "##teamcity[setParameter name='$MERGE_QUEUE_BRANCH_SKIP_PARAM' value='true']"
-			echo "##teamcity[buildStatus status='SUCCESS' text='Passed early for GitHub merge queue branch']"
+			echo "##teamcity[buildStatus status='SUCCESS' text='$MERGE_QUEUE_BRANCH_SKIP_MESSAGE']"
 		""".trimIndent()
 	}
 }
