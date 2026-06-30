@@ -1,6 +1,9 @@
 name: Calculate ICFY stats
 
-on: [push]
+on:
+  push:
+    branches-ignore:
+      - 'gh-readonly-queue/**'
 
 jobs:
   build:

@@ -1,6 +1,8 @@
 package _self
 
 import _self.lib.utils.mergeTrunk
+import _self.lib.utils.passMergeQueueBranchesEarly
+import _self.lib.utils.skipOnMergeQueueBranch
 
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
@@ -54,7 +56,8 @@ object CalypsoE2ETestsBuildTemplate : Template({
 	}
 
   	steps {
-		mergeTrunk( skipIfConflict = true )
+		passMergeQueueBranchesEarly()
+		mergeTrunk( skipIfConflict = true ).skipOnMergeQueueBranch()
 
     	bashNodeScript {
 			name = "Prepare environment"
@@ -70,7 +73,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				yarn workspace @automattic/calypso-e2e build
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-		}
+		}.skipOnMergeQueueBranch()
 
 		bashNodeScript {
 			name = "Determine Calypso URL"
@@ -109,7 +112,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				echo "##teamcity[setParameter name='CALYPSO_BASE_URL' value='${'$'}FINAL_URL']"
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-		}
+		}.skipOnMergeQueueBranch()
 
 		bashNodeScript {
 			name = "Determine Dashboard URL"
@@ -151,7 +154,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				echo "##teamcity[setParameter name='DASHBOARD_BASE_URL' value='${'$'}FINAL_URL']"
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-		}
+		}.skipOnMergeQueueBranch()
 
 		bashNodeScript {
 			name = "Determine test group"
@@ -174,7 +177,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				fi
 				"""
 			dockerImage = "%docker_image_e2e%"
-		}
+		}.skipOnMergeQueueBranch()
 
 		bashNodeScript {
 			name = "Set extra environment variables"
@@ -191,7 +194,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				fi
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-		}
+		}.skipOnMergeQueueBranch()
 
 		bashNodeScript {
 			name = "Run e2e tests"
@@ -220,7 +223,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				yarn test:pw:%PROJECT% ${'$'}GREP_FLAG
 				"""
 			dockerImage = "%docker_image_e2e%"
-		}
+		}.skipOnMergeQueueBranch()
 
 		bashNodeScript {
 			name = "Check for E2E teardown leaks"
@@ -243,7 +246,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				fi
 				""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-		}
+		}.skipOnMergeQueueBranch()
 
 		bashNodeScript {
 			name = "Upload CTRF report"
@@ -266,7 +269,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-		}
+		}.skipOnMergeQueueBranch()
   }
 
   	artifactRules = """
