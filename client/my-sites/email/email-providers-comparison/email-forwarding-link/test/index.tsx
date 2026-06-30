@@ -52,12 +52,22 @@ describe( 'EmailForwardingLink', () => {
 		expect( screen.getByText( promoMatcher ) ).toBeVisible();
 	} );
 
+	// Regression: DOMENG-453 — Gravatar domains cannot use free email forwarding.
 	it( 'renders nothing for a Gravatar domain', () => {
 		( getSelectedDomain as jest.Mock ).mockReturnValue( { isGravatarDomain: true } );
 
-		render( <EmailForwardingLink selectedDomainName="example.com" /> );
+		const { container } = render( <EmailForwardingLink selectedDomainName="example.com" /> );
 
 		expect( screen.queryByText( promoMatcher ) ).not.toBeInTheDocument();
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
+	it( 'renders nothing when there is no selected domain', () => {
+		( getSelectedDomain as jest.Mock ).mockReturnValue( undefined );
+
+		const { container } = render( <EmailForwardingLink selectedDomainName="example.com" /> );
+
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	it( 'renders nothing when the domain already has email forwards', () => {
