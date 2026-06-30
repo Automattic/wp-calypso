@@ -222,4 +222,26 @@ const properties = [
 	{ object: 'lodash', property: 'isEmpty', message: JS_UTILS_MESSAGE },
 ];
 
-module.exports = { paths, patterns, properties };
+// `no-restricted-modules` entry for the deep CommonJS require
+// (`require( 'lodash/isEmpty' )`); `no-restricted-modules` matches by path only.
+const modules = [ { name: 'lodash/isEmpty', message: JS_UTILS_MESSAGE } ];
+
+// `no-restricted-syntax` selectors for the CommonJS forms that match by path
+// can't catch: a destructured `const { isEmpty } = require( 'lodash' )` and a
+// member access `require( 'lodash' ).isEmpty`.
+const REQUIRE_MESSAGE =
+	'Please use `isEmpty` from `@automattic/js-utils` instead of requiring it from lodash.';
+const syntax = [
+	{
+		selector:
+			"VariableDeclarator[init.callee.name='require'][init.arguments.0.value='lodash'] ObjectPattern > Property[key.name='isEmpty']",
+		message: REQUIRE_MESSAGE,
+	},
+	{
+		selector:
+			"MemberExpression[object.callee.name='require'][object.arguments.0.value='lodash'][property.name='isEmpty']",
+		message: REQUIRE_MESSAGE,
+	},
+];
+
+module.exports = { paths, patterns, properties, modules, syntax };

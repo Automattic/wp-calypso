@@ -91,6 +91,12 @@ describe( 'isEmpty', () => {
 		expect( isEmpty( { [ Symbol.toStringTag ]: 'Map' } ) ).toBe( true );
 	} );
 
+	it( 'matches lodash for a frozen object with an un-unmaskable spoofed tag', () => {
+		// Frozen, so the spoofed tag can't be cleared: the Map branch sees no
+		// `size`, and `! undefined` is `true` (as lodash does), not `0 === …`.
+		expect( isEmpty( Object.freeze( { [ Symbol.toStringTag ]: 'Map' } ) ) ).toBe( true );
+	} );
+
 	it( 'measures Map and Set created in another realm (tag-based, not instanceof)', () => {
 		const emptyMap = runInNewContext( 'new Map()' );
 		const filledMap = runInNewContext( 'new Map( [ [ 1, 2 ] ] )' );
@@ -154,6 +160,7 @@ describe( 'isEmpty', () => {
 			[ 'splice without length', { splice() {} } ],
 			[ 'spoofed toStringTag with keys', { [ Symbol.toStringTag ]: 'Map', size: 0, a: 1 } ],
 			[ 'spoofed toStringTag only', { [ Symbol.toStringTag ]: 'Map' } ],
+			[ 'frozen spoofed toStringTag', Object.freeze( { [ Symbol.toStringTag ]: 'Map' } ) ],
 			[ 'bare prototype object', Bar.prototype ],
 			[ 'Object.prototype', Object.prototype ],
 			[ 'prototype with extra key', Baz.prototype ],

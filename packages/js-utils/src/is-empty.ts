@@ -61,7 +61,9 @@ const isEmpty = ( value: unknown ): boolean => {
 	}
 
 	if ( tag === '[object Map]' || tag === '[object Set]' ) {
-		return ( value as Map< unknown, unknown > | Set< unknown > ).size === 0;
+		// `! size` (not `size === 0`) matches lodash for a frozen object whose
+		// spoofed `Symbol.toStringTag` can't be unmasked and so has no `size`.
+		return ! ( value as Map< unknown, unknown > | Set< unknown > ).size;
 	}
 
 	// Everything else (plain objects, class instances, and primitives) is empty

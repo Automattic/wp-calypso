@@ -452,6 +452,7 @@ module.exports = {
 			},
 		],
 		'no-restricted-properties': [ 2, ...lodashRestrictedImports.properties ],
+		'no-restricted-syntax': [ 'error', ...lodashRestrictedImports.syntax ],
 		'no-restricted-modules': [
 			2,
 			{
@@ -466,6 +467,7 @@ module.exports = {
 						name: 'superagent',
 						message: 'Please use native `fetch` instead.',
 					},
+					...lodashRestrictedImports.modules,
 				],
 			},
 		],
