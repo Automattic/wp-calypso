@@ -58,6 +58,11 @@ test.describe(
 			page,
 			browser,
 		} ) => {
+			test.skip(
+				true,
+				'simpleSiteFreePlanUser is currently blocked from creating sites (user_get_blocked). The block is temporary and the account will be unblocked; unskip then.'
+			);
+
 			// API site/content setup (createSite + 2 posts + media) plus a 75s
 			// purchase wait and the post-upgrade validations exceed the 120s
 			// default.
