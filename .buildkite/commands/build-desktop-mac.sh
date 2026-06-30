@@ -8,8 +8,7 @@ export SKIP_TSC=true
 export PLAYWRIGHT_SKIP_DOWNLOAD=true
 export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 
-# TODO: Remove once work is confirmed and just before merging - AINFRA-2274
-if [[ "${BUILDKITE_TAG:-}" == desktop-v* || "${BUILDKITE_BRANCH:-}" == ainfra-2274-* ]]; then
+if [[ "${BUILDKITE_TAG:-}" == desktop-v* ]]; then
 	export RELEASE_BUILD=true
 else
 	export RELEASE_BUILD=false
