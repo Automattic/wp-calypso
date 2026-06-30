@@ -24,7 +24,7 @@ import {
 } from '../../domains/dataviews';
 import { isPendingPrimaryDomain } from '../../utils/domain';
 import { SitesNoticeArbiter } from '../notice-arbiter';
-import PrimaryDomainSelector from './primary-domain-selector';
+import PrimaryDomainSelectorNotice from './primary-domain-selector-notice';
 import type { DomainSummary } from '@automattic/api-core';
 
 function getDomainId( domain: DomainSummary ) {
@@ -86,6 +86,9 @@ function SiteDomains() {
 								onComplete={ () => queryClient.invalidateQueries( queries.domainsQuery() ) }
 							/>
 						) }
+						{ ! hasRedirect && ! pendingDomain && (
+							<PrimaryDomainSelectorNotice domains={ siteDomains } site={ site } user={ user } />
+						) }
 						{ hasRedirect && (
 							<Notice variant="warning">
 								{ createInterpolateElement(
@@ -109,9 +112,6 @@ function SiteDomains() {
 				</>
 			}
 		>
-			{ ! hasRedirect && ! pendingDomain && (
-				<PrimaryDomainSelector domains={ siteDomains } site={ site } user={ user } />
-			) }
 			<DataViewsCard>
 				<DataViews< DomainSummary >
 					data={ filteredData || [] }

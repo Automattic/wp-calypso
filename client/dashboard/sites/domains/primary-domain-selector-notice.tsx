@@ -25,13 +25,17 @@ import { getSitePlanUpgradeUrl } from '../../utils/site-url';
 import { userHasFlag } from '../../utils/user';
 import type { Field } from '@wordpress/dataviews';
 
-interface PrimaryDomainSelectorProps {
+interface PrimaryDomainSelectorNoticeProps {
 	domains: DomainSummary[];
 	site: Site;
 	user: User;
 }
 
-const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorProps ) => {
+const PrimaryDomainSelectorNotice = ( {
+	domains,
+	site,
+	user,
+}: PrimaryDomainSelectorNoticeProps ) => {
 	const { recordTracksEvent } = useAnalytics();
 	const [ formData, setFormData ] = useState< { primaryDomain: string } >( {
 		primaryDomain: '',
@@ -212,4 +216,4 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 	);
 };
 
-export default PrimaryDomainSelector;
+export default PrimaryDomainSelectorNotice;
