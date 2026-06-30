@@ -14,10 +14,7 @@
 .card.is-compact.settings__disconnected {
 	display: flex;
 	align-items: center;
-	margin-bottom: 18px;
-	border: 1px solid var(--jetpack-cloud-border-color);
-	border-radius: var(--jetpack-cloud-radius);
-	box-shadow: none;
+	margin-bottom: 32px;
 }
 
 .settings__status-uninitialized {
@@ -28,9 +25,7 @@
 
 .settings__form-card {
 	margin-top: 8px;
-	background: var(--jetpack-cloud-panel-background);
-	border: 1px solid var(--jetpack-cloud-border-color);
-	border-radius: var(--jetpack-cloud-radius);
+	background: none;
 	box-shadow: none;
 }
 
@@ -55,12 +50,11 @@
 .settings__title {
 	font-size: $font-title-small;
 	font-weight: 600;
-	margin: 16px 0 18px;
-	color: var(--jetpack-cloud-text-color);
+	margin: 16px 0 24px;
 
 	@include breakpoint-deprecated( ">660px" ) {
 		font-size: $font-headline-small;
-		margin: 24px 0;
+		margin: 32px 0;
 	}
 }
 

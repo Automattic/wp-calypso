@@ -45,7 +45,7 @@ Add authenticated Jetpack Cloud design tokens under `.theme-jetpack-cloud, .colo
 --jetpack-cloud-border-subtle-color: rgba(220, 220, 222, 0.65);
 --jetpack-cloud-text-color: var(--studio-gray-100);
 --jetpack-cloud-muted-text-color: var(--studio-gray-60);
---jetpack-cloud-radius: 8px;
+--jetpack-cloud-radius: 6px;
 --jetpack-cloud-radius-small: 4px;
 --jetpack-cloud-control-height: 36px;
 --jetpack-cloud-page-gutter: 48px;

@@ -38,9 +38,9 @@
 		display: none;
 
 		* {
-			font-weight: 600;
+			font-weight: 400;
 			font-size: 0.875rem;
-			color: var(--jetpack-cloud-muted-text-color);
+			color: var(--studio-gray-70);
 		}
 
 		@include break-xlarge() {
@@ -91,7 +91,7 @@
 	&__line-item-meta {
 		display: block;
 		font-size: 0.875rem;
-		color: var(--jetpack-cloud-muted-text-color);
+		color: var(--studio-gray-70);
 
 		&--is-mobile {
 			@include break-xlarge() {

@@ -3,24 +3,19 @@
 
 
 .site-table__table {
-	border: 1px solid var(--jetpack-cloud-border-color);
-	border-collapse: separate;
-	border-spacing: 0;
-	border-radius: var(--jetpack-cloud-radius);
-	overflow: hidden;
-	background: var(--jetpack-cloud-panel-background);
+	border: 1px solid var(--studio-gray-5);
+	border-collapse: collapse;
 
 	tr {
 		height: 1px;
-		background: var(--jetpack-cloud-panel-background);
+		background: var(--studio-white);
 	}
 
 	th {
 		font-size: 0.75rem;
-		color: var(--jetpack-cloud-muted-text-color);
-		font-weight: 600;
-		height: 44px;
-		background: var(--studio-gray-0);
+		color: var(--studio-gray-50);
+		font-weight: 400;
+		height: 50px;
 
 		&:hover,
 		&:focus-within {
@@ -32,7 +27,7 @@
 
 	td {
 		font-size: 0.875rem;
-		height: 52px;
+		height: 50px;
 		width: 162px;
 		box-sizing: border-box;
 
@@ -61,9 +56,9 @@
 
 	td,
 	th {
-		border: 0;
-		border-block-start: 1px solid var(--jetpack-cloud-border-subtle-color);
+		border: 1px solid rgba(220, 220, 222, 0.5);
 		text-align: left;
+		border-collapse: collapse;
 		vertical-align: middle;
 
 		@include break-xlarge {
@@ -73,10 +68,6 @@
 		@include break-wide {
 			padding: 0 16px;
 		}
-	}
-
-	thead tr:first-child th {
-		border-block-start: 0;
 	}
 }
 

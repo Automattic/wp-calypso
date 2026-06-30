@@ -6,11 +6,8 @@
 // sidebar will implement by default.
 
 .jetpack-cloud-sidebar {
-	background: var(--jetpack-cloud-panel-background);
-
 	.jetpack-cloud-sidebar__site-selector {
 		background-color: var(--color-sidebar-background);
-
 		.components-button {
 			border: none;
 		}
@@ -19,10 +16,11 @@
 			border: 2px solid var(--studio-jetpack-green-50);
 			box-shadow: none; // Use border instead of box-shadow to avoid hiding the shadow at 100% width
 		}
-		.search-component__input {
+		.search-component__input{
 			width: 100%;
 		}
 	}
+
 
 	.split-button {
 		display: flex;
@@ -37,24 +35,14 @@
 		}
 	}
 
-	.sidebar-v2__menu-item {
-		min-height: 36px;
-		margin-block: 2px;
-		border-radius: var(--jetpack-cloud-radius);
-		font-weight: 500;
 
+	.sidebar-v2__menu-item {
 		svg {
 			color: #6f6f6f;
 		}
-
-		&:hover {
-			background: var(--studio-gray-0);
-		}
-
 		&.is-active {
-			background: var(--studio-jetpack-green-0);
+			background: var(--studio-green-0);
 			color: var(--studio-green-50);
-			font-weight: 600;
 
 			svg {
 				color: var(--studio-green-50);
@@ -70,9 +58,8 @@
 .jetpack-cloud-sidebar__header {
 	display: flex;
 	align-items: center;
-	padding: 14px 8px 16px;
+	padding: 16px 8px;
 	gap: 12px;
-	border-block-end: 1px solid var(--jetpack-cloud-border-subtle-color);
 
 	.all-sites:hover {
 		background-color: unset;
@@ -87,7 +74,7 @@
 
 		.all-sites__icon-container,
 		.site-icon {
-			border-radius: var(--jetpack-cloud-radius-small);
+			border-radius: 2px;
 			margin-inline-end: 12px;
 		}
 	}
@@ -114,9 +101,4 @@
 .jetpack-cloud-sidebar__footer ul {
 	list-style: none;
 	margin: 0;
-	padding-block-start: 8px;
-
-	.sidebar-v2__menu-item {
-		min-height: 34px;
-	}
 }
