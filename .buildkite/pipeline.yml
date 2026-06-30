@@ -6,6 +6,7 @@ steps:
   # so keep it scoped to the same branch families the CircleCI workflow used.
   - label: ":desktop_computer: Build desktop (mac)"
     key: desktop-build-mac
+    # TODO: Remove once work is confirmed and just before merging - AINFRA-2274
     branches: ainfra-* trunk release/* desktop/* desktop-v*
     notify:
       - github_commit_status:
@@ -26,6 +27,7 @@ steps:
 
   - label: ":desktop_computer: Build desktop (linux, unsigned)"
     key: desktop-build-linux
+    # TODO: Remove once work is confirmed and just before merging - AINFRA-2274
     branches: ainfra-* release/* desktop/* desktop-v*
     notify:
       - github_commit_status:
@@ -38,6 +40,7 @@ steps:
           propagate-uid-gid: true
           userns: host
           environment:
+            # TODO: Remove once work is confirmed and just before merging - AINFRA-2274
             - BUILDKITE_BRANCH
             - BUILDKITE_TAG
             - E2EGUTENBERGUSER
@@ -49,6 +52,7 @@ steps:
 
   - label: ":windows: Build desktop (windows store, unsigned)"
     key: desktop-build-windows-store
+    # TODO: Remove once work is confirmed and just before merging - AINFRA-2274
     branches: ainfra-* release/* desktop/* desktop-v*
     notify:
       - github_commit_status:
@@ -64,6 +68,7 @@ steps:
   # org Sectigo PFX as a fallback behind FORCE_PFX_SIGNING (AINFRA-2237).
   - label: ":windows: Build desktop (windows nsis, signed)"
     key: desktop-build-windows-nsis
+    # TODO: Remove once work is confirmed and just before merging - AINFRA-2274
     branches: ainfra-* release/* desktop/* desktop-v*
     notify:
       - github_commit_status:
@@ -79,6 +84,7 @@ steps:
       - desktop/release/latest.yml
 
   - label: ":desktop_computer: Desktop publish"
+    # TODO: Remove once work is confirmed and just before merging - AINFRA-2274
     branches: ainfra-2274-* desktop-v*
     depends_on:
       - desktop-build-mac
