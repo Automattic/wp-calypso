@@ -40,8 +40,7 @@ steps:
           propagate-uid-gid: true
           userns: host
           environment:
-            # TODO: Remove once work is confirmed and just before merging - AINFRA-2274
-            - BUILDKITE_BRANCH
+            - BUILDKITE_BRANCH # TODO: Remove once work is confirmed and just before merging - AINFRA-2274
             - BUILDKITE_TAG
             - E2EGUTENBERGUSER
             - E2EPASSWORD
