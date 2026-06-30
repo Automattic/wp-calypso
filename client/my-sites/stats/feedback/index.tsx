@@ -85,7 +85,7 @@ function FeedbackContent( { onLeaveReview, onSendFeedback }: FeedbackContentProp
 
 	const ctaText = translate( 'How would you rate your overall experience with Jetpack?' );
 	const primaryButtonText = translate( 'Love it? Leave a review ↗' );
-	const secondaryButtonText = translate( 'Not a fan? Help us improve' );
+	const secondaryButtonText = translate( 'Not a fan? Help us improve ↗' );
 
 	return (
 		<div className="stats-feedback-content">
