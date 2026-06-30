@@ -116,8 +116,6 @@ import {
 	AddMailboxesActionItem,
 	EmailPlanMailboxCard,
 	EmailPlanPriceCard,
-	EmailUpgradePlanActionItem,
-	EmailUpgradePlanButton,
 	isEmailPlanManagementEnabled,
 } from './email-plan';
 import { getCancelButtonCopy, getRemoveButtonCopy } from './get-cancel-remove-copy';
@@ -273,7 +271,7 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() );
 	const { recordTracksEvent } = useAnalytics();
 	const menuItems = [
-		purchase.is_upgradable && upgradeUrl && (
+		canUpgradePurchase( purchase ) && upgradeUrl && (
 			<MenuItem
 				onClick={ () => {
 					recordTracksEvent( 'calypso_purchases_upgrade_plan', {
@@ -489,9 +487,21 @@ function shouldShowChangePlan( purchase: Purchase ): boolean {
 	return expiredOrRefundDowngrade || delayedDowngrade;
 }
 
+// Titan email upgrades route through the flag-gated tier grid; without the flag the
+// upgrade URL would fall through to the wrong (site plan) page, so hide the action.
+function canUpgradePurchase( purchase: Purchase ): boolean {
+	if ( ! purchase.is_upgradable ) {
+		return false;
+	}
+	if ( isTitanMail( purchase ) && ! config.isEnabled( 'emails/titan-tiers' ) ) {
+		return false;
+	}
+	return true;
+}
+
 function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 	const { recordTracksEvent } = useAnalytics();
-	if ( ! purchase.is_upgradable ) {
+	if ( ! canUpgradePurchase( purchase ) ) {
 		return null;
 	}
 	// When "Change plan" is offered (downgrade-eligible), it supersedes the
@@ -726,13 +736,9 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 			<ActionList>
 				<ReinstallButton purchase={ purchase } />
 				<JetpackCRMDownloadsButton purchase={ purchase } />
-				{ isEmailPlanManagementEnabled( purchase ) ? (
-					<>
-						<EmailUpgradePlanActionItem purchase={ purchase } />
-						<AddMailboxesActionItem purchase={ purchase } />
-					</>
-				) : (
-					<UpgradeActionButton purchase={ purchase } />
+				<UpgradeActionButton purchase={ purchase } />
+				{ isEmailPlanManagementEnabled( purchase ) && (
+					<AddMailboxesActionItem purchase={ purchase } />
 				) }
 				<ReSubscribeActionButton purchase={ purchase } />
 				<ChangePlanActionItem purchase={ purchase } />
@@ -1561,15 +1567,10 @@ export default function PurchaseSettings() {
 							site?.options?.admin_url &&
 							! isCentennial && (
 								<HStack justify="space-between">
-									{ isEmailPlanManagementEnabled( purchase ) ? (
-										<EmailUpgradePlanButton purchase={ purchase } />
-									) : (
-										purchase.is_upgradable &&
-										upgradeUrl && (
-											<Button __next40pxDefaultSize variant="primary" href={ upgradeUrl }>
-												{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
-											</Button>
-										)
+									{ canUpgradePurchase( purchase ) && upgradeUrl && (
+										<Button __next40pxDefaultSize variant="primary" href={ upgradeUrl }>
+											{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
+										</Button>
 									) }
 									{ /* Email plans surface every action in the list below, so the
 									     quick-actions menu would only duplicate them. */ }

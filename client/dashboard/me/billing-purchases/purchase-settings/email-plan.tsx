@@ -8,7 +8,7 @@ import { Button } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { currencyDollar, envelope } from '@wordpress/icons';
 import { useAnalytics } from '../../../app/analytics';
-import { addMailboxRoute, chooseEmailSolutionRoute } from '../../../app/router/emails';
+import { addMailboxRoute } from '../../../app/router/emails';
 import { ActionList } from '../../../components/action-list';
 import OverviewCard from '../../../components/overview-card';
 import { IntervalLength, MailboxProvider, TitanPlanTier } from '../../../emails/types';
@@ -18,10 +18,8 @@ import { isTitanMail } from '../../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
 
 /**
- * Whether the Titan-tier email plan management UI (tier upgrade, add mailboxes,
- * redesigned overview cards) should be shown for this purchase. Gated behind the
- * same flag as the MSD plan-selection grid it links to (DOTEMP-111), since the
- * upgrade path is meaningless without that grid.
+ * Gated behind the same flag as the tier-selection grid (DOTEMP-111), since the
+ * upgrade path is meaningless without it.
  */
 export function isEmailPlanManagementEnabled( purchase: Purchase ): boolean {
 	return config.isEnabled( 'emails/titan-tiers' ) && isTitanMail( purchase );
@@ -38,22 +36,6 @@ function getEmailPlanInterval( purchase: Purchase ): IntervalLength {
 function getPerMailboxPriceInteger( purchase: Purchase ): number {
 	const quantity = purchase.renewal_price_tier_usage_quantity || 1;
 	return Math.round( purchase.price_integer / quantity );
-}
-
-function useEmailUpgradeNavigation( purchase: Purchase ) {
-	const navigate = useNavigate();
-	const { recordTracksEvent } = useAnalytics();
-
-	return () => {
-		recordTracksEvent( 'calypso_purchases_email_upgrade_plan_click', {
-			product_slug: purchase.product_slug,
-		} );
-		navigate( {
-			to: chooseEmailSolutionRoute.to,
-			params: { domain: purchase.meta ?? '' },
-			search: { intent: 'upgrade' },
-		} );
-	};
 }
 
 function useAddMailboxesNavigation( purchase: Purchase ) {
@@ -76,35 +58,6 @@ function useAddMailboxesNavigation( purchase: Purchase ) {
 			search: { tier: tier === TitanPlanTier.Pro ? undefined : tier },
 		} );
 	};
-}
-
-/**
- * Primary "Upgrade plan" button shown next to the product title in the page header.
- */
-export function EmailUpgradePlanButton( { purchase }: { purchase: Purchase } ) {
-	const onUpgrade = useEmailUpgradeNavigation( purchase );
-
-	return (
-		<Button __next40pxDefaultSize variant="primary" onClick={ onUpgrade }>
-			{ __( 'Upgrade plan' ) }
-		</Button>
-	);
-}
-
-export function EmailUpgradePlanActionItem( { purchase }: { purchase: Purchase } ) {
-	const onUpgrade = useEmailUpgradeNavigation( purchase );
-
-	return (
-		<ActionList.ActionItem
-			title={ __( 'Upgrade plan' ) }
-			description={ __( 'Find the best fit for your business.' ) }
-			actions={
-				<Button variant="secondary" size="compact" onClick={ onUpgrade }>
-					{ __( 'Upgrade plan' ) }
-				</Button>
-			}
-		/>
-	);
 }
 
 export function AddMailboxesActionItem( { purchase }: { purchase: Purchase } ) {
@@ -136,9 +89,6 @@ export function AddMailboxesActionItem( { purchase }: { purchase: Purchase } ) {
 	);
 }
 
-/**
- * Overview card showing the per-mailbox renewal price for an email plan.
- */
 export function EmailPlanPriceCard( { purchase }: { purchase: Purchase } ) {
 	return (
 		<OverviewCard
@@ -156,10 +106,6 @@ export function EmailPlanPriceCard( { purchase }: { purchase: Purchase } ) {
 	);
 }
 
-/**
- * Overview card summarizing the mailboxes covered by an email plan. Replaces the
- * generic "Owner" card for email purchases and links to the email management page.
- */
 export function EmailPlanMailboxCard( { purchase }: { purchase: Purchase } ) {
 	const { data: accounts, isLoading } = useQuery( {
 		...mailboxAccountsQuery( purchase.blog_id, purchase.meta ?? '' ),

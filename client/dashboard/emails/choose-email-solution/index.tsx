@@ -195,9 +195,10 @@ export default function ChooseEmailSolution() {
 	const pageHeader = (
 		<PageHeader
 			prefix={ <Breadcrumbs length={ 2 } /> }
+			title={ isUpgradeIntent ? __( 'Professional Email plans' ) : undefined }
 			description={
 				isUpgradeIntent
-					? __( 'Choose a Professional Email plan that fits your needs.' )
+					? __( 'Explore our plans to find the right fit for your needs.' )
 					: __( 'Choose between Professional Email and Google Workspace for your domain.' )
 			}
 		/>
