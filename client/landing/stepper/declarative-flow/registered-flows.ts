@@ -24,8 +24,6 @@ import {
 	DIRECT_TO_CART_FLOW,
 	WRITE_ON_FLOW,
 } from '@automattic/onboarding';
-import { getCurrentQueryParams } from '../utils/get-current-query-params';
-import { isPaidOnlyEntry } from './flows/ai-site-builder/is-paid-only-entry';
 import type { Flow, FlowV2 } from '../declarative-flow/internals/types';
 
 const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } > > = {
@@ -153,10 +151,9 @@ const aiSiteBuilderFlows: Record< string, () => Promise< { default: FlowV2< any 
 	config.isEnabled( 'calypso/ai-site-builder-flow' )
 		? {
 				// The paid-only checkout flow and the legacy free flow share the same slug. Pick the
-				// implementation per request: paid-only when the flag is on (and not a CIAB garden
-				// re-entry), otherwise the legacy free flow.
+				// implementation by the flag: paid-only when on, otherwise the legacy free flow.
 				[ AI_SITE_BUILDER_FLOW ]: () =>
-					isPaidOnlyEntry( getCurrentQueryParams() )
+					config.isEnabled( 'onboarding/ai-site-builder-paid-only' )
 						? import( './flows/ai-site-builder/ai-site-builder-paid-only' )
 						: import( './flows/ai-site-builder/ai-site-builder' ),
 		  }

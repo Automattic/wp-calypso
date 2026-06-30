@@ -15,18 +15,6 @@ import {
 } from 'calypso/signup/storageUtils';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import aiSiteBuilderPaidOnly from '../ai-site-builder-paid-only';
-import { isCiabReentry, isPaidOnlyEntry } from '../is-paid-only-entry';
-
-const PAID_FLAG = 'onboarding/ai-site-builder-paid-only';
-
-const mockIsEnabled = jest.fn( ( flag: string ) => flag === PAID_FLAG );
-
-jest.mock( '@automattic/calypso-config', () => {
-	const fn = Object.assign( ( key: string ) => key, {
-		isEnabled: ( flag: string ) => mockIsEnabled( flag ),
-	} );
-	return { __esModule: true, default: fn };
-} );
 
 const mockIsBusinessPlan = jest.fn< boolean, [ string ] >( () => false );
 const mockIsEcommercePlan = jest.fn< boolean, [ string ] >( () => false );
@@ -138,32 +126,6 @@ const submitFor = async (
 
 const slugsOf = ( steps: unknown ) =>
 	( steps as Array< { slug: string } > ).map( ( step ) => step.slug );
-
-describe( 'isPaidOnlyEntry', () => {
-	beforeEach( () => {
-		mockIsEnabled.mockImplementation( ( flag: string ) => flag === PAID_FLAG );
-	} );
-
-	it( 'is true for a fresh entry when the flag is on', () => {
-		expect( isPaidOnlyEntry( new URLSearchParams() ) ).toBe( true );
-	} );
-
-	it( 'is false when the flag is off', () => {
-		mockIsEnabled.mockReturnValue( false );
-		expect( isPaidOnlyEntry( new URLSearchParams() ) ).toBe( false );
-	} );
-
-	it( 'is false for a CIAB garden re-entry even when the flag is on', () => {
-		expect( isPaidOnlyEntry( new URLSearchParams( { create_garden_site: '1' } ) ) ).toBe( false );
-		expect( isPaidOnlyEntry( new URLSearchParams( { early_created_site: '99' } ) ) ).toBe( false );
-	} );
-
-	it( 'detects CIAB re-entry from either garden parameter', () => {
-		expect( isCiabReentry( new URLSearchParams() ) ).toBe( false );
-		expect( isCiabReentry( new URLSearchParams( { create_garden_site: '1' } ) ) ).toBe( true );
-		expect( isCiabReentry( new URLSearchParams( { early_created_site: '99' } ) ) ).toBe( true );
-	} );
-} );
 
 describe( 'ai-site-builder paid-only flow', () => {
 	const originalLocation = window.location;
