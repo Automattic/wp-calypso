@@ -22,15 +22,15 @@ function LegacyContactDetails( { legacyContactId }: { legacyContactId: number } 
 
 	return (
 		<VStack spacing={ 6 }>
-			<VStack spacing={ 2 }>
+			<VStack spacing={ 4 }>
 				<Text>
 					{ __(
-						'Keep this information somewhere safe. After your death, your legacy contact can give this key to WordPress.com to request access to your account.'
+						'The printable copy contains the access key your legacy contact will need. We recommend printing it and storing it with your estate planning documents, or saving it securely in a password manager.'
 					) }
 				</Text>
-				<Text>
+				<Text className="legacy-contact-print__note">
 					{ __(
-						'We recommend printing this page or storing it somewhere secure, like a password manager.'
+						'Treat the access key like a password and only share it with your legacy contact when you’re ready. We won’t contact them or send them the key on your behalf.'
 					) }
 				</Text>
 			</VStack>
