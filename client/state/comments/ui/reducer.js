@@ -1,4 +1,4 @@
-import { get, map } from 'lodash';
+import { get } from 'lodash';
 import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_DELETE,
@@ -91,7 +91,11 @@ export const queries = ( state = {}, action ) => {
 		case COMMENTS_QUERY_UPDATE:
 			return typeof action?.query?.page === 'undefined'
 				? state
-				: deepUpdateComments( state, map( action.comments, 'ID' ), action.query );
+				: deepUpdateComments(
+						state,
+						action.comments.map( ( comment ) => comment?.ID ),
+						action.query
+				  );
 		default:
 			return state;
 	}

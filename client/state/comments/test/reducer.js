@@ -1,5 +1,4 @@
 import deepFreeze from 'deep-freeze';
-import { map } from 'lodash';
 import {
 	COMMENT_COUNTS_UPDATE,
 	COMMENTS_LIKE,
@@ -49,7 +48,7 @@ describe( 'reducer', () => {
 				postId: 1,
 				comments: [ ...commentsNestedTree ].sort( () => ( ( Math.random() * 2 ) % 2 ? -1 : 1 ) ),
 			} );
-			const ids = map( response[ '1-1' ], 'ID' );
+			const ids = response[ '1-1' ].map( ( comment ) => comment?.ID );
 
 			expect( response[ '1-1' ] ).toHaveLength( 6 );
 			expect( ids ).toEqual( [ 11, 10, 9, 8, 7, 6 ] );
@@ -223,7 +222,7 @@ describe( 'reducer', () => {
 				postId: 1,
 				comments: [ ...commentsNestedTree ].sort( () => ( ( Math.random() * 2 ) % 2 ? -1 : 1 ) ),
 			} );
-			const ids = map( response[ '1-1' ], 'ID' );
+			const ids = response[ '1-1' ].map( ( comment ) => comment?.ID );
 
 			expect( response[ '1-1' ] ).toHaveLength( 6 );
 			expect( ids ).toEqual( [ 11, 10, 9, 8, 7, 6 ] );

@@ -2,7 +2,6 @@
 import { Gridicon } from '@automattic/components';
 import { Icon, starEmpty } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
-import { filter } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -169,7 +168,9 @@ class SharingButtonsPreview extends Component {
 	};
 
 	getPreviewButtonsElement = () => {
-		const enabledButtons = filter( this.props.buttons, { enabled: true } );
+		const enabledButtons = ( this.props.buttons ?? [] ).filter(
+			( button ) => button.enabled === true
+		);
 
 		if ( enabledButtons.length ) {
 			return (

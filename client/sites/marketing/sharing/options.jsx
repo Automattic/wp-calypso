@@ -1,7 +1,6 @@
 import { FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
-import { filter } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -21,6 +20,8 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+
+const isPublicPostType = ( postType ) => postType?.public;
 
 class SharingButtonsOptions extends Component {
 	static propTypes = {
@@ -299,7 +300,9 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 		const path = getCurrentRouteParameterized( state, siteId );
 
-		const postTypes = filter( Object.values( getPostTypes( state, siteId ) || {} ), 'public' );
+		const postTypes = Object.values( getPostTypes( state, siteId ) || {} ).filter(
+			isPublicPostType
+		);
 
 		return {
 			initialized: !! postTypes || !! getSiteSettings( state, siteId ),

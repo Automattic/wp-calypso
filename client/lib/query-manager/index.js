@@ -1,6 +1,5 @@
 import { omit } from '@automattic/js-utils';
 import isEqual from 'fast-deep-equal/es6';
-import { map } from 'lodash';
 import QueryKey from './key';
 
 /**
@@ -288,7 +287,7 @@ export default class QueryManager {
 		}
 
 		if ( options.query ) {
-			const receivedItemKeys = map( items, this.options.itemKey );
+			const receivedItemKeys = items.map( ( item ) => item?.[ this.options.itemKey ] );
 			receivedQueryKey = this.constructor.QueryKey.stringify( options.query );
 			isNewlyReceivedQueryKey = ! this.data.queries[ receivedQueryKey ];
 

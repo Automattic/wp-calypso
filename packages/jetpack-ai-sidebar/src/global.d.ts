@@ -1,3 +1,16 @@
+declare module '@wordpress/block-editor' {
+	export const BlockControls: import('react').ComponentType< {
+		children?: import('react').ReactNode;
+		group?: string;
+	} >;
+}
+
+/**
+ * Text domain placeholder replaced at build time by the Agents Manager
+ * webpack DefinePlugin (resolves to 'default').
+ */
+declare const __i18n_text_domain__: string;
+
 /**
  * Global data injected by the Agents Manager host script.
  */
@@ -9,6 +22,7 @@ declare const agentsManagerData:
 					aiEditorialReview?: boolean;
 					generateFeedback?: boolean;
 					blockTransformations?: boolean;
+					blockToolbarButton?: boolean;
 					optimizeTitleSuggestion?: boolean;
 				};
 			};

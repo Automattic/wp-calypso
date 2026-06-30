@@ -1,5 +1,5 @@
 import { times } from '@automattic/js-utils';
-import { map, sampleSize } from 'lodash';
+import { sampleSize } from 'lodash';
 import { Component } from 'react';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { useFollowedTags } from 'calypso/reader/data/tags';
@@ -31,7 +31,7 @@ function suggestionsFromTags( count, tags ) {
 		if ( tags.length <= count ) {
 			return [];
 		}
-		return map( sampleSize( tags, count ), ( tag, i ) => {
+		return sampleSize( tags, count ).map( ( tag, i ) => {
 			const text = ( tag.displayName || tag.slug ).replace( /-/g, ' ' );
 			const ui_algo = 'read:search-suggestions:tags/1';
 			return suggestionWithRailcar( text, ui_algo, i );
@@ -46,7 +46,7 @@ function suggestionsFromTags( count, tags ) {
  * @returns {Array} An array of tag objects
  */
 function trendingTagsToTags( trendingTags ) {
-	return map( trendingTags, ( tag ) => ( {
+	return ( trendingTags ?? [] ).map( ( tag ) => ( {
 		displayName: tag.tag.display_name,
 		slug: tag.tag.slug,
 	} ) );
@@ -55,7 +55,7 @@ function trendingTagsToTags( trendingTags ) {
 function suggestionsFromPicks( count ) {
 	const lang = getLocaleSlug().split( '-' )[ 0 ];
 	if ( suggestions[ lang ] ) {
-		return map( sampleSize( suggestions[ lang ], count ), ( tag, i ) => {
+		return sampleSize( suggestions[ lang ], count ).map( ( tag, i ) => {
 			const ui_algo = 'read:search-suggestions:picks/1';
 			return suggestionWithRailcar( tag, ui_algo, i );
 		} );

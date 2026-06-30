@@ -6,7 +6,7 @@ import {
 	getPlanPriceForDuration,
 } from '@automattic/plans-grid-next';
 import { styled } from '@automattic/wpcom-checkout';
-import i18n, { useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useCheckoutUiRedesignExperiment } from 'calypso/my-sites/checkout/src/hooks/use-checkout-ui-redesign-experiment';
 import type { WPCOMProductVariant } from './types';
@@ -109,18 +109,10 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 
 	const priceDisplay = ( () => {
 		if ( isCheckoutUiRedesignV1 ) {
-			return i18n.fixMe( {
-				text: '%(pricePerMonth)s/mo',
-				newCopy: translate( '%(pricePerMonth)s/mo', {
-					args: {
-						pricePerMonth: pricePerMonthFormatted,
-					},
-				} ),
-				oldCopy: translate( '%(pricePerMonth)s /mo', {
-					args: {
-						pricePerMonth: pricePerMonthFormatted,
-					},
-				} ),
+			return translate( '%(pricePerMonth)s/mo', {
+				args: {
+					pricePerMonth: pricePerMonthFormatted,
+				},
 			} );
 		}
 		return translate( '%(pricePerMonth)s /mo', {

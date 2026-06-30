@@ -11,7 +11,6 @@ import {
 } from '../hooks/use-notice-visibility-query';
 import useSiteTypes from '../hooks/use-site-types';
 import useStatsPurchases from '../hooks/use-stats-purchases';
-import FeedbackModal from './modal';
 import useHighlightsQuery from './use-highlights-query';
 import useOnScreen from './use-on-screen';
 
@@ -35,6 +34,8 @@ const TRACKS_EVENT_VIEW_FLOATING_PANEL = 'stats_feedback_action_view_floating_pa
 
 const FEEDBACK_PANEL_PRESENTATION_DELAY = 3000;
 const FEEDBACK_LEAVE_REVIEW_URL = 'https://wordpress.org/support/plugin/jetpack/reviews/';
+const FEEDBACK_SEND_FEEDBACK_URL =
+	'https://jetpack.com/?logmein=1&redirect_to=https%3A%2F%2Fjetpack.com%2Fcontact-support%2F%3Fcontact-form';
 
 const FEEDBACK_SHOULD_SHOW_PANEL_API_KEY = NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL;
 const FEEDBACK_SHOULD_SHOW_PANEL_API_HIBERNATION_DELAY = 3600 * 24 * 30 * 6; // 6 months
@@ -84,7 +85,7 @@ function FeedbackContent( { onLeaveReview, onSendFeedback }: FeedbackContentProp
 
 	const ctaText = translate( 'How would you rate your overall experience with Jetpack?' );
 	const primaryButtonText = translate( 'Love it? Leave a review ↗' );
-	const secondaryButtonText = translate( 'Not a fan? Help us improve' );
+	const secondaryButtonText = translate( 'Not a fan? Help us improve ↗' );
 
 	return (
 		<div className="stats-feedback-content">
@@ -205,7 +206,6 @@ function FeedbackCard( { onLeaveReview, onSendFeedback }: FeedbackCardProps ) {
 }
 
 function StatsFeedbackController( { siteId }: FeedbackProps ) {
-	const [ isFeedbackModalOpen, setIsFeedbackModalOpen ] = useState( false );
 	const [ isFloatingPanelOpen, setIsFloatingPanelOpen ] = useState( false );
 
 	const { isPending, isError, shouldShowFeedbackPanel, updateFeedbackPanelHibernationDelay } =
@@ -239,11 +239,7 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 
 	const handleSendFeedback = () => {
 		setIsFloatingPanelOpen( false );
-		setIsFeedbackModalOpen( true );
-	};
-
-	const handleCloseModalDialog = () => {
-		setIsFeedbackModalOpen( false );
+		window.open( FEEDBACK_SEND_FEEDBACK_URL );
 	};
 
 	return (
@@ -255,9 +251,6 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 				onLeaveReview={ handleLeaveReview }
 				onSendFeedback={ handleSendFeedback }
 			/>
-			{ isFeedbackModalOpen && (
-				<FeedbackModal siteId={ siteId } onClose={ handleCloseModalDialog } />
-			) }
 		</div>
 	);
 }

@@ -21,9 +21,16 @@ boot( {
 	mainRoute: '/overview',
 	Logo,
 	supports: {
-		agency: { overview: true, tiers: true, exclusiveOffers: true, learn: true, mcp: true },
+		agency: {
+			overview: true,
+			tiers: true,
+			exclusiveOffers: true,
+			learn: true,
+			mcp: true,
+			sites: true,
+		},
 		agencyClient: { subscriptions: true },
-		sites: true,
+		sites: false,
 		domains: false,
 		emails: false,
 		themes: false,
@@ -42,12 +49,10 @@ boot( {
 	},
 	optIn: false,
 	components: {
-		// Temporary: reuse generic sites components until A4A-specific ones are built.
-		sites: () => import( '../sites' ),
+		// Temporary: reuse the generic site switcher until it's agency-scoped.
 		siteSwitcher: () => import( '../sites/site-switcher' ),
 	},
 	queries: {
-		// Temporary: reuse "all sites" filters; these will be tightened to agency sites later.
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
 		paginatedSitesQuery: ( fetchSiteOptions?: FetchPaginatedSitesOptions ) =>
 			paginatedSitesQuery( 'all', fetchSiteOptions ),

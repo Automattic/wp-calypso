@@ -1,7 +1,6 @@
 import { loadScript, loadjQueryDependentScript } from '@automattic/load-script';
 import clsx from 'clsx';
 import debugFactory from 'debug';
-import { filter } from 'lodash';
 import { createRef, PureComponent } from 'react';
 import { createRoot } from 'react-dom/client';
 import DotPager from '../dot-pager';
@@ -40,7 +39,7 @@ const SLIDESHOW_URLS = {
 function processEmbeds( domNode ) {
 	Object.entries( embedsToLookFor ).forEach( ( [ embedSelector, fn ] ) => {
 		const nodes = domNode.querySelectorAll( embedSelector );
-		filter( nodes, nodeNeedsProcessing ).forEach( fn );
+		Array.from( nodes ).filter( nodeNeedsProcessing ).forEach( fn );
 	} );
 }
 

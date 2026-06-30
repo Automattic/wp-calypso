@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { Button, Card, Dialog, Gridicon } from '@automattic/components';
 import debugModule from 'debug';
 import { localize, fixMe } from 'i18n-calypso';
-import { get, map } from 'lodash';
+import { get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
@@ -341,7 +341,7 @@ class JetpackSsoForm extends Component {
 		return (
 			<table className="jetpack-connect__sso-shared-details-table">
 				<tbody>
-					{ map( sharedDetails, ( value, key ) => {
+					{ Object.entries( sharedDetails ).map( ( [ key, value ] ) => {
 						return (
 							<tr key={ key } className="jetpack-connect__sso-shared-detail-row">
 								<td className="jetpack-connect__sso-shared-detail-label">

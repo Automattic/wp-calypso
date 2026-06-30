@@ -1,7 +1,6 @@
 import page from '@automattic/calypso-router';
 import { pencil as edit, external, Icon, seen, published, unseen } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
-import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -169,9 +168,9 @@ class ReaderPostEllipsisMenu extends Component {
 		let globalIds = [ post.global_ID ];
 
 		if ( posts.length ) {
-			postIds = map( posts, 'ID' );
-			feedItemIds = map( posts, 'feed_item_ID' );
-			globalIds = map( posts, 'global_ID' );
+			postIds = posts.map( ( item ) => item?.ID );
+			feedItemIds = posts.map( ( item ) => item?.feed_item_ID );
+			globalIds = posts.map( ( item ) => item?.global_ID );
 		}
 
 		if ( post.feed_item_ID ) {
@@ -211,9 +210,9 @@ class ReaderPostEllipsisMenu extends Component {
 		let globalIds = [ post.global_ID ];
 
 		if ( posts.length ) {
-			postIds = map( posts, 'ID' );
-			feedItemIds = map( posts, 'feed_item_ID' );
-			globalIds = map( posts, 'global_ID' );
+			postIds = posts.map( ( item ) => item?.ID );
+			feedItemIds = posts.map( ( item ) => item?.feed_item_ID );
+			globalIds = posts.map( ( item ) => item?.global_ID );
 		}
 
 		if ( post.feed_item_ID ) {

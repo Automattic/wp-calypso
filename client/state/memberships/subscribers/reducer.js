@@ -1,4 +1,3 @@
-import { filter } from 'lodash';
 import { combineReducers } from 'calypso/state/utils';
 import {
 	MEMBERSHIPS_SUBSCRIBERS_RECEIVE,
@@ -24,8 +23,7 @@ const list = ( state = {}, action ) => {
 			};
 			break;
 		case MEMBERSHIPS_SUBSCRIPTION_STOP_SUCCESS: {
-			const ownerships = filter(
-				state?.[ action.siteId ]?.ownerships ?? {},
+			const ownerships = Object.values( state?.[ action.siteId ]?.ownerships ?? {} ).filter(
 				( { id } ) => id !== action.subscriptionId
 			);
 			state = {
