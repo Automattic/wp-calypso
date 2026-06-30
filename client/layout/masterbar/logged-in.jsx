@@ -271,7 +271,6 @@ class MasterbarLoggedIn extends Component {
 			currentRoute,
 			siteAdminUrl,
 			dashboardOptIn,
-			sidebarType,
 		} = this.props;
 
 		let mySitesUrl = domainOnlySite
@@ -289,10 +288,7 @@ class MasterbarLoggedIn extends Component {
 
 		// Hidden across the My Sites view. Keys off the sidebar type, not its
 		// visibility, to also cover HD v1 site screens where the sidebar is hidden.
-		const isMySitesView =
-			( sidebarType === SidebarType.Global || sidebarType === SidebarType.GlobalCollapsed ) &&
-			( section === 'sites' || section === 'sites-dashboard' );
-		const subItems = isMySitesView
+		const subItems = this.isMySitesActive()
 			? null
 			: [
 					[
