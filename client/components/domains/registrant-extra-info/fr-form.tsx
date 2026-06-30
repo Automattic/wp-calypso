@@ -7,7 +7,7 @@ import {
 } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { LocalizeProps, TranslateResult, localize } from 'i18n-calypso';
-import { get, isEmpty, map } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { PureComponent } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLegend from 'calypso/components/forms/form-legend';
@@ -168,7 +168,7 @@ class RegistrantExtraInfoFrForm extends PureComponent< FormProps & LocalizeProps
 			if ( registrantVatIdIsNotEmpty ) {
 				return validationErrors.registrantVatId?.length === 0
 					? null
-					: map( [ ...new Set( validationErrors.registrantVatId ) ], renderValidationError );
+					: [ ...new Set( validationErrors.registrantVatId ) ].map( renderValidationError );
 			}
 
 			return null;
@@ -191,7 +191,7 @@ class RegistrantExtraInfoFrForm extends PureComponent< FormProps & LocalizeProps
 		);
 
 		const sirenSiretValidationMessage = () => {
-			return map( [ ...new Set( validationErrors.sirenSiret ) ], renderValidationError );
+			return [ ...new Set( validationErrors.sirenSiret ) ].map( renderValidationError );
 		};
 
 		const sirenSiretIsError = () => {
@@ -210,9 +210,7 @@ class RegistrantExtraInfoFrForm extends PureComponent< FormProps & LocalizeProps
 		);
 
 		const trademarkNumberValidationMessage = () => {
-			return map( [ ...new Set( validationErrors.trademarkNumber ) ], ( error: string ) =>
-				renderValidationError( error )
-			);
+			return [ ...new Set( validationErrors.trademarkNumber ) ].map( renderValidationError );
 		};
 
 		const trademarkNumberIsError = () => {

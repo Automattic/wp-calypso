@@ -1,7 +1,7 @@
 import { omit, orderBy } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
 import isEqual from 'fast-deep-equal/es6';
-import { map, get } from 'lodash';
+import { get } from 'lodash';
 import {
 	COMMENT_COUNTS_UPDATE,
 	COMMENTS_CHANGE_STATUS,
@@ -96,19 +96,19 @@ export function items( state = {}, action ) {
 			const { status } = action;
 			return {
 				...state,
-				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { status } ) ),
+				[ stateKey ]: ( state[ stateKey ] ?? [] ).map( updateComment( commentId, { status } ) ),
 			};
 		}
 		case COMMENTS_EDIT: {
 			const { comment } = action;
 			return {
 				...state,
-				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, comment ) ),
+				[ stateKey ]: ( state[ stateKey ] ?? [] ).map( updateComment( commentId, comment ) ),
 			};
 		}
 		case COMMENTS_RECEIVE: {
 			const { skipSort } = action;
-			const comments = map( action.comments, ( _comment ) => ( {
+			const comments = action.comments.map( ( _comment ) => ( {
 				..._comment,
 				contiguous: ! action.commentById,
 				has_link: commentHasLink( _comment.content, _comment.has_link ),
@@ -127,16 +127,14 @@ export function items( state = {}, action ) {
 		case COMMENTS_LIKE:
 			return {
 				...state,
-				[ stateKey ]: map(
-					state[ stateKey ],
+				[ stateKey ]: ( state[ stateKey ] ?? [] ).map(
 					updateComment( commentId, { i_like: true, like_count } )
 				),
 			};
 		case COMMENTS_UNLIKE:
 			return {
 				...state,
-				[ stateKey ]: map(
-					state[ stateKey ],
+				[ stateKey ]: ( state[ stateKey ] ?? [] ).map(
 					updateComment( commentId, { i_like: false, like_count } )
 				),
 			};
@@ -145,8 +143,7 @@ export function items( state = {}, action ) {
 			const { error, errorType } = action;
 			return {
 				...state,
-				[ stateKey ]: map(
-					state[ stateKey ],
+				[ stateKey ]: ( state[ stateKey ] ?? [] ).map(
 					updateComment( commentId, {
 						placeholderState: PLACEHOLDER_STATE.ERROR,
 						placeholderError: error,
@@ -193,7 +190,7 @@ export function pendingItems( state = {}, action ) {
 
 	switch ( type ) {
 		case COMMENTS_UPDATES_RECEIVE: {
-			const comments = map( action.comments, ( _comment ) => ( {
+			const comments = action.comments.map( ( _comment ) => ( {
 				..._comment,
 				contiguous: ! action.commentById,
 				has_link: commentHasLink( _comment.content, _comment.has_link ),
@@ -206,7 +203,7 @@ export function pendingItems( state = {}, action ) {
 		}
 
 		case COMMENTS_RECEIVE: {
-			const receivedCommentIds = map( action.comments, 'ID' );
+			const receivedCommentIds = action.comments.map( ( comment ) => comment?.ID );
 			return {
 				...state,
 				[ stateKey ]: ( state[ stateKey ] ?? [] ).filter(

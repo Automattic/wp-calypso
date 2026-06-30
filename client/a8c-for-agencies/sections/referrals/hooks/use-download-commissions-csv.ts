@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { generateCommissionsCsv } from '../lib/generate-commissions-csv';
 import type { Referral, ReferralCommissionPayoutResponse } from '../types';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 export function useDownloadCommissionsCsv( isSingleClient?: boolean ) {
 	const dispatch = useDispatch();

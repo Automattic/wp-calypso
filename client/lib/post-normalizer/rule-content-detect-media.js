@@ -1,6 +1,5 @@
 /* eslint-disable jsdoc/no-undefined-types */
 
-import { map } from 'lodash';
 import getEmbedMetadata from 'calypso/lib/get-video-id';
 import { READER_CONTENT_WIDTH } from 'calypso/reader/data/post/sizes';
 import { iframeIsAllowed, maxWidthPhotonishURL, deduceImageWidthAndHeight } from './utils';
@@ -147,7 +146,7 @@ export default function detectMedia( post, dom ) {
 	const embedSelector = 'iframe';
 	const media = dom.querySelectorAll( `${ imageSelector }, ${ embedSelector }` );
 
-	const contentMedia = map( media, ( element ) => {
+	const contentMedia = Array.from( media ).map( ( element ) => {
 		const nodeName = element.nodeName.toLowerCase();
 
 		if ( nodeName === 'iframe' ) {
