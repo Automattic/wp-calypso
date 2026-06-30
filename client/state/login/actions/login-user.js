@@ -1,6 +1,7 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
+import { resetBlackbox } from 'calypso/blocks/login/utils/use-blackbox';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import {
 	LOGIN_REQUEST,
@@ -80,11 +81,7 @@ export const loginUser =
 				} );
 
 				// Reset Blackbox so the next login attempt gets a fresh session.
-				try {
-					window.Blackbox?.reset();
-				} catch {
-					// Intentionally ignored — Blackbox must never interfere with login.
-				}
+				resetBlackbox();
 
 				return Promise.reject( error );
 			} );

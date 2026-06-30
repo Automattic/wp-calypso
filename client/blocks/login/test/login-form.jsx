@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import config from '@automattic/calypso-config';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import cookie from 'cookie';
@@ -18,6 +19,9 @@ const render = ( el, options ) =>
 	renderWithProvider( el, { ...options, reducers: { login: loginReducer, route: routeReducer } } );
 
 describe( 'LoginForm', () => {
+	// Blackbox is enabled in the test config; turn it off so these tests don't load the SDK.
+	beforeAll( () => config.disable( 'blackbox' ) );
+
 	test( 'displays a login form', async () => {
 		render( <LoginForm socialAccountLink={ { isLinking: false } } /> );
 

@@ -16,8 +16,8 @@ import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
-import BlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
 import LoginSubmitButton from 'calypso/blocks/login/login-submit-button';
+import { withBlackboxProtection } from 'calypso/blocks/login/with-blackbox-protection';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/dashboard/components/notice';
@@ -115,12 +115,6 @@ export class LoginForm extends Component {
 		emailSuggestionError: false,
 		password: '',
 		lastUsedAuthenticationMethod: this.getLastUsedAuthenticationMethod(),
-		isBlackboxSubmitBlocked:
-			config.isEnabled( 'blackbox-login' ) && !! config( 'blackbox_api_key' ),
-	};
-
-	handleBlackboxSubmitBlockedChange = ( isBlocked ) => {
-		this.setState( { isBlackboxSubmitBlocked: isBlocked } );
 	};
 
 	componentDidMount() {
@@ -707,7 +701,7 @@ export class LoginForm extends Component {
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 		const isEmailOrUsernameInputDisabled =
 			isFormDisabled || this.isPasswordView() || isGravatarFixedAccountLogin;
-		const isSubmitButtonDisabled = isFormDisabled || this.state.isBlackboxSubmitBlocked;
+		const isSubmitButtonDisabled = isFormDisabled || this.props.blackbox.isSubmitBlocked;
 		const isPasswordHidden = this.isUsernameOrEmailView();
 		const signupUrl = this.getSignupUrl();
 		const shouldRenderForgotPasswordLink = ! isPasswordHidden && isWoo;
@@ -902,7 +896,7 @@ export class LoginForm extends Component {
 
 				{ shouldRenderForgotPasswordLink && this.renderLostPasswordLink() }
 
-				<BlackboxChallenge onSubmitBlockedChange={ this.handleBlackboxSubmitBlockedChange } />
+				{ this.props.blackbox.challenge }
 
 				<div className="login__form-action">
 					<LoginSubmitButton
@@ -1066,4 +1060,4 @@ export default connect(
 		createSocialUserFailed,
 		loginSocialUser,
 	}
-)( localize( LoginForm ) );
+)( localize( withBlackboxProtection( LoginForm, { feature: 'blackbox-login' } ) ) );
