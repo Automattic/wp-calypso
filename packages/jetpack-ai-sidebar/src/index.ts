@@ -186,11 +186,13 @@ function getAiEditorialReviewSuggestions( currentPostType?: string ) {
 function getPostLevelSuggestions( currentPostType?: string, currentPostId?: number | null ) {
 	return [
 		...( isOptimizeTitleSuggestionEnabled() ? [ OPTIMIZE_TITLE_SUGGESTION ] : [] ),
-		...( isSeoSuggestionsEnabled() ? [ SEO_TITLE_SUGGESTION, SEO_DESCRIPTION_SUGGESTION ] : [] ),
+		...( isSeoSuggestionsEnabled() ? [ SEO_TITLE_SUGGESTION ] : [] ),
 		...( isGenerateFeedbackAvailable( currentPostType, currentPostId )
 			? [ POST_FEEDBACK_SUGGESTION ]
 			: [] ),
 		...getAiEditorialReviewSuggestions( currentPostType ),
+		// SEO description is a less-common action, so keep it last in the list.
+		...( isSeoSuggestionsEnabled() ? [ SEO_DESCRIPTION_SUGGESTION ] : [] ),
 	];
 }
 
