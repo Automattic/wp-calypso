@@ -54,7 +54,7 @@ global.fetch = jest.fn( () =>
 jest.mock( 'wpcom-proxy-request', () => ( {
 	__esModule: true,
 	canAccessWpcomApis: jest.fn(),
-	isCookieAuthMissing: jest.fn(),
+	isCookieAuthMissing: jest.fn( () => false ),
 	reloadProxy: jest.fn(),
 	requestAllBlogsAccess: jest.fn(),
 } ) );

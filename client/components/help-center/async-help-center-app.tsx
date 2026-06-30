@@ -8,9 +8,14 @@ const loadHelpCenterApp = () =>
 		/* webpackChunkName: "async-load-calypso-components-help-center-help-center-app" */ './help-center-app'
 	);
 
-type AsyncHelpCenterAppProps = Omit< HelpCenterAppProps, 'currentUser' > & {
-	currentUser?: HelpCenterAppProps[ 'currentUser' ];
-};
+// When requireLogin is set, currentUser is derived from the store and the prop is optional;
+// otherwise the caller must supply it, as the underlying Help Center requires one.
+type AsyncHelpCenterAppProps =
+	| ( Omit< HelpCenterAppProps, 'currentUser' | 'requireLogin' > & {
+			requireLogin: true;
+			currentUser?: HelpCenterAppProps[ 'currentUser' ];
+	  } )
+	| ( HelpCenterAppProps & { requireLogin?: false } );
 
 const AsyncHelpCenterApp = ( {
 	currentUser: currentUserProp,
