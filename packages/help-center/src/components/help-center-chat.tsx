@@ -36,6 +36,8 @@ export function HelpCenterChat( {
 	const userFieldMessage = params.get( 'userFieldMessage' );
 	const siteUrl = params.get( 'siteUrl' );
 	const siteId = params.get( 'siteId' );
+	const externalChatProvider = params.get( 'externalChatProvider' );
+	const externalIdProvider = params.get( 'externalIdProvider' );
 
 	const userFieldFlowName = featureConfig.chat.flowName || data?.eligibility?.user_field_flow_name;
 
@@ -62,6 +64,8 @@ export function HelpCenterChat( {
 			selectedSiteURL={ siteUrl || ( site?.URL as string ) }
 			userFieldMessage={ userFieldMessage }
 			userFieldFlowName={ userFieldFlowName ?? params.get( 'userFieldFlowName' ) }
+			externalChatProvider={ externalChatProvider }
+			externalIdProvider={ externalIdProvider }
 			isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
 			forceEmailSupport={ Boolean( forceEmailSupport ) }
 			isChatRestricted={ Boolean( isChatRestricted ) }

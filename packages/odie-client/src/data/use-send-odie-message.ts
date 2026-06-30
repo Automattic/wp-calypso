@@ -129,6 +129,8 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		forceEmailSupport,
 		trackEvent,
 		newInteractionsBotSlug,
+		externalChatProvider,
+		externalIdProvider,
 	} = useOdieAssistantContext();
 
 	const botSlug = getBotSlug(
@@ -276,6 +278,8 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 							message: message.content,
 							...( version && { version } ),
 							...( sessionId && { session_id: sessionId } ),
+							...( externalChatProvider && { external_chat_provider: externalChatProvider } ),
+							...( externalIdProvider && { external_id_provider: externalIdProvider } ),
 							context: { selectedSiteId, currentScreen, pathname },
 						},
 				  } )
@@ -287,6 +291,8 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 							message: message.content,
 							...( version && { version } ),
 							...( sessionId && { session_id: sessionId } ),
+							...( externalChatProvider && { external_chat_provider: externalChatProvider } ),
+							...( externalIdProvider && { external_id_provider: externalIdProvider } ),
 							context: { selectedSiteId, currentScreen, pathname },
 						},
 				  } );
