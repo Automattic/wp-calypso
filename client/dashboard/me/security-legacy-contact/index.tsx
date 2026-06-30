@@ -1,7 +1,6 @@
 import { legacyContactsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
@@ -37,16 +36,13 @@ export default function SecurityLegacyContact() {
 					<VStack spacing={ 4 }>
 						{ contact ? (
 							<>
-								<SectionHeader
-									title={ __( 'Your legacy contact' ) }
-									level={ 3 }
-									description={ createInterpolateElement(
-										__( 'Your legacy contact is <contactEmail />.' ),
-										{
-											contactEmail: <strong>{ contact.contact_email }</strong>,
-										}
-									) }
-								/>
+								<SectionHeader title={ __( 'Your legacy contact' ) } level={ 3 } />
+								<VStack spacing={ 1 } alignment="flex-start">
+									<Text upperCase variant="muted" size={ 11 }>
+										{ __( 'Legacy contact email' ) }
+									</Text>
+									<Text size={ 15 }>{ contact.contact_email }</Text>
+								</VStack>
 								<Text>
 									{ __(
 										'The printable copy contains the access key your legacy contact will need. We recommend printing it and storing it with your estate planning documents, or saving it securely in a password manager.'
