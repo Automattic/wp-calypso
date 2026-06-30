@@ -64,6 +64,7 @@ function usePlans( {
 				apiVersion: '1.5',
 				query: params.toString(),
 			} );
+			// Filter out unknown products in case the API returns products not hardcoded in calypso-products.
 			const knownPlans = data.filter( ( plan ) => getPlan( plan.product_slug ) );
 
 			return Object.fromEntries(

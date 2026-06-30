@@ -41,6 +41,7 @@ function useSitePlans( { coupon, siteId }: Props ): UseQueryResult< SitePlansInd
 				apiVersion: '1.3',
 				query: params.toString(),
 			} );
+			// Filter out unknown products in case the API returns products not hardcoded in calypso-products.
 			const knownProductIds = Object.keys( data ).filter( ( productId ) =>
 				getPlan( data[ Number( productId ) ].product_slug )
 			);
