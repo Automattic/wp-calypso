@@ -247,7 +247,7 @@ const useMainMenuItems = ( path: string ) => {
 				? [
 						{
 							icon: megaphone,
-							path: '/',
+							path: A4A_AMPLIFY_LINK,
 							link: A4A_AMPLIFY_LINK,
 							title: (
 								<div className="sidebar-menu-item__title-with-badge">
