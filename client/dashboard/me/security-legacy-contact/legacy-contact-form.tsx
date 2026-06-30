@@ -39,7 +39,7 @@ const fields: Field< LegacyContactFormData >[] = [
 					onChange={ ( value ) => onChange( { [ id ]: value } ) }
 					label={ hideLabelFromVision ? undefined : field.label }
 					help={ __(
-						'Only you can see these notes — we won’t share them with your legacy contact. Use them to record any wishes, such as which sites to transfer.'
+						'Only you can see these notes. We won’t share them with your legacy contact. Use them to record any wishes, such as which sites to transfer.'
 					) }
 					rows={ 3 }
 				/>
