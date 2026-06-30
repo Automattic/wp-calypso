@@ -57,6 +57,14 @@ export type WPCOMTransactionEndpointResponse =
 	| WPCOMTransactionEndpointResponsePayPal
 	| WPCOMTransactionEndpointResponseRedirect;
 
+export interface TaxBreakdownEntry {
+	label: string;
+	rate: number;
+	rate_display: string;
+	local_tax_collected: number;
+	local_tax_collected_integer: number;
+}
+
 export interface TaxVendorInfo {
 	/**
 	 * The country code for this info.
