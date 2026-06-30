@@ -2,6 +2,8 @@ package _self.projects
 
 import Settings
 import _self.bashNodeScript
+import _self.lib.utils.passMergeQueueBranchesEarly
+import _self.lib.utils.skipOnMergeQueueBranch
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
@@ -48,6 +50,7 @@ object ToSAcceptanceTracking: BuildType ({
 	}
 
 	steps {
+		passMergeQueueBranchesEarly()
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
@@ -62,7 +65,7 @@ object ToSAcceptanceTracking: BuildType ({
 				yarn workspace @automattic/calypso-e2e build
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-		}
+		}.skipOnMergeQueueBranch()
 
 		bashNodeScript {
 			name = "Capture screenshots"
@@ -79,7 +82,7 @@ object ToSAcceptanceTracking: BuildType ({
 				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --workerIdleMemoryLimit=1GB --group=legal
 			"""
 			dockerImage = "%docker_image_e2e%"
-		}
+		}.skipOnMergeQueueBranch()
 
 		bashNodeScript {
 			name = "Collect results"
@@ -99,7 +102,7 @@ object ToSAcceptanceTracking: BuildType ({
 				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-		}
+		}.skipOnMergeQueueBranch()
 	}
 
 	features {

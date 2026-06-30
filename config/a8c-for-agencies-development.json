@@ -29,7 +29,6 @@
 	"oauth_client_id": 95928,
 	"features": {
 		"a4a-agent-studio": true,
-		"a4a-ai-mcp": true,
 		"a4a-benchmarks": true,
 		"a4a-bd-checkout": false,
 		"a4a-bd-term-pricing": true,

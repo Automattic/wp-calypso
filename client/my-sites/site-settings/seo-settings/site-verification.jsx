@@ -104,7 +104,7 @@ class SiteVerification extends Component {
 				''
 			);
 		} );
-		stateItems.isFetchingSettings = get( site, 'fetchingSettings', false );
+		stateItems.isFetchingSettings = site?.fetchingSettings ?? false;
 
 		return stateItems;
 	}

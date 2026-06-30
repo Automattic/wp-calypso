@@ -1,9 +1,12 @@
+import { loadAllMessagesFromServer, type UseAgentChatConfig } from '@automattic/agenttic-client';
 import { SummaryButton, TimeSince } from '@automattic/components';
 import { useGetZendeskConversations } from '@automattic/zendesk-client';
-import { createInterpolateElement, useMemo } from '@wordpress/element';
+import { createInterpolateElement, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
+import { getConversationBotId } from '../../utils/conversation-bot-id';
 import type { ZendeskConversation } from '../../types';
 import './style.scss';
 
@@ -75,11 +78,45 @@ function getExistingConversationButtonDescription( startedAt?: string ) {
 	} );
 }
 
+async function getAiChatIdFromSession(
+	agentConfig: UseAgentChatConfig | null,
+	chatSessionId: string
+) {
+	if ( ! agentConfig || ! chatSessionId ) {
+		return undefined;
+	}
+
+	try {
+		const urlSearchParams = new URLSearchParams( window.location.search );
+		const botId = getConversationBotId( agentConfig.agentId, urlSearchParams.has( 'agent' ) );
+		const { chatId } = await loadAllMessagesFromServer(
+			chatSessionId,
+			{
+				botId,
+				apiBaseUrl: API_BASE_URL,
+				authProvider: agentConfig.authProvider,
+			},
+			1,
+			true
+		);
+
+		return Number.isFinite( chatId ) && chatId > 0 ? chatId : undefined;
+	} catch {
+		return undefined;
+	}
+}
+
 export function EscalationButton( { messageId }: { messageId: string } ) {
-	const { getActiveSessionId } = useAgentsManagerContext();
+	const { agentConfig, getActiveSessionId, zendeskSmoochIntegrationKey } =
+		useAgentsManagerContext();
 	const navigate = useNavigate();
 	const activeSessionId = getActiveSessionId();
-	const { conversations, isLoading } = useGetZendeskConversations( !! activeSessionId );
+	const [ isStartingNewConversation, setIsStartingNewConversation ] = useState( false );
+
+	const { conversations, isLoading } = useGetZendeskConversations(
+		!! activeSessionId,
+		zendeskSmoochIntegrationKey
+	);
 	const existingConversation = useMemo(
 		() => findConversationByChatSessionId( conversations, activeSessionId ),
 		[ conversations, activeSessionId ]
@@ -99,18 +136,30 @@ export function EscalationButton( { messageId }: { messageId: string } ) {
 					? getExistingConversationButtonDescription( existingConversationStartedAt )
 					: __( 'A new chat will start' )
 			}
-			disabled={ isLoading }
-			onClick={ () => {
+			disabled={ isLoading || isStartingNewConversation }
+			onClick={ async () => {
 				const currentChatSessionId = getActiveSessionId();
 				const currentExistingConversation = findConversationByChatSessionId(
 					conversations,
 					currentChatSessionId
 				);
 
+				if ( currentExistingConversation ) {
+					navigate( '/zendesk', {
+						state: { conversationId: currentExistingConversation.id },
+					} );
+					return;
+				}
+
+				setIsStartingNewConversation( true );
+				const aiChatId = await getAiChatIdFromSession( agentConfig, currentChatSessionId );
+
 				navigate( '/zendesk', {
-					state: currentExistingConversation
-						? { conversationId: currentExistingConversation.id }
-						: { startedFromChatId: currentChatSessionId, startedFromMessageId: messageId },
+					state: {
+						startedFromChatSessionId: currentChatSessionId,
+						...( aiChatId ? { startedFromAiChatId: aiChatId } : {} ),
+						startedFromMessageId: messageId,
+					},
 				} );
 			} }
 		/>

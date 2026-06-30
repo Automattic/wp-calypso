@@ -1,6 +1,6 @@
 import { pick, sortBy } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
-import { filter, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import { addQueryArgs } from 'calypso/lib/url';
 import flows from 'calypso/signup/config/flows';
 import { getStepModuleName } from 'calypso/signup/config/step-components';
@@ -146,7 +146,7 @@ export function getFilteredSteps( flowName, progress, isUserLoggedIn ) {
 
 	return sortBy(
 		// filter steps...
-		filter( progress, ( step ) => flow.steps.includes( step.stepName ) ),
+		Object.values( progress ?? {} ).filter( ( step ) => flow.steps.includes( step.stepName ) ),
 		// then order according to the flow definition...
 		( { stepName } ) => flow.steps.indexOf( stepName )
 	);
@@ -163,13 +163,11 @@ export function getCompletedSteps( flowName, progress, options = {}, isUserLogge
 	// This is to ensure that when resuming progress, we only do so if
 	// the last known flow matches the one that the user is returning to.
 	if ( options.shouldMatchFlowName ) {
-		return filter(
-			getFilteredSteps( flowName, progress, isUserLoggedIn ),
+		return getFilteredSteps( flowName, progress, isUserLoggedIn ).filter(
 			( step ) => 'in-progress' !== step.status && step.lastKnownFlow === flowName
 		);
 	}
-	return filter(
-		getFilteredSteps( flowName, progress, isUserLoggedIn ),
+	return getFilteredSteps( flowName, progress, isUserLoggedIn ).filter(
 		( step ) => 'in-progress' !== step.status
 	);
 }

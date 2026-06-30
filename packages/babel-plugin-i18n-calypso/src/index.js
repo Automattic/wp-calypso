@@ -35,7 +35,7 @@
 const { existsSync, mkdirSync, writeFileSync } = require( 'fs' );
 const { relative, sep } = require( 'path' );
 const { po } = require( 'gettext-parser' );
-const { merge, isEmpty, forEach } = require( 'lodash' );
+const { merge, isEmpty } = require( 'lodash' );
 
 /**
  * Default output headers if none specified in plugin options.
@@ -87,14 +87,14 @@ function getExtractedComment( path, _originalNodeLine ) {
 	}
 
 	let comment;
-	forEach( node.leadingComments, ( commentNode ) => {
+	for ( const commentNode of node.leadingComments ?? [] ) {
 		if ( ! commentNode.loc ) {
-			return;
+			continue;
 		}
 
 		const { line } = commentNode.loc.end;
 		if ( line < _originalNodeLine - 1 || line > _originalNodeLine ) {
-			return;
+			continue;
 		}
 
 		const match = commentNode.value.match( REGEXP_TRANSLATOR_COMMENT );
@@ -105,10 +105,10 @@ function getExtractedComment( path, _originalNodeLine ) {
 				.map( ( text ) => text.trim() )
 				.join( ' ' );
 
-			// False return indicates to Lodash to break iteration
-			return false;
+			// Keep the first matching translator comment.
+			break;
 		}
-	} );
+	}
 
 	if ( comment ) {
 		return comment;
@@ -127,7 +127,7 @@ function getExtractedComment( path, _originalNodeLine ) {
 
 /**
  * Given an argument node (or recursed node), attempts to return a string
- * represenation of that node's value.
+ * representation of that node's value.
  * @param {Object} node AST node.
  * @returns {string} String value.
  */
@@ -154,7 +154,7 @@ function getNodeAsString( node ) {
 }
 
 /**
- * Returns true if the specified funciton name is valid translate function name
+ * Returns true if the specified function name is valid translate function name
  * @param {string} name Function name to test.
  * @returns {boolean} Whether function name is valid translate function name.
  */
@@ -359,3 +359,6 @@ module.exports = function () {
 		},
 	};
 };
+
+// Exported for unit testing of the translator-comment extraction logic.
+module.exports.getExtractedComment = getExtractedComment;

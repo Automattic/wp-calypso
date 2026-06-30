@@ -1,4 +1,22 @@
-import { EscalationButton } from '../../components/escalation-button';
+/* eslint-disable import/order -- mocks must be registered before importing the converter */
+function mockEscalationButton() {
+	return null;
+}
+
+jest.mock(
+	'@automattic/agenttic-client',
+	() => ( {
+		createOdieBotId: ( agentId: string ) => `odie-${ agentId }`,
+		isOdieBotId: () => false,
+		loadAllMessagesFromServer: jest.fn(),
+	} ),
+	{ virtual: true }
+);
+jest.mock( '../../components/escalation-button', () => ( {
+	EscalationButton: mockEscalationButton,
+} ) );
+jest.mock( '../is-editor-page' );
+
 import UnavailableToolMessage from '../../components/unavailable-tool-message';
 import convertToolMessagesToComponents from '../convert-tool-messages-to-components';
 import { isEditorPage } from '../is-editor-page';
@@ -7,19 +25,6 @@ import {
 	JETPACK_AI_SHOW_COMPONENT_TOOL_ID,
 } from '../show-component-tools';
 import type { UIMessage } from '@automattic/agenttic-client';
-
-jest.mock(
-	'@automattic/components',
-	() => ( {
-		SummaryButton: () => null,
-		FoldableCard: () => null,
-	} ),
-	{ virtual: true }
-);
-jest.mock( '@automattic/zendesk-client', () => ( {
-	useGetZendeskConversations: () => ( { conversations: [], isLoading: false } ),
-} ) );
-jest.mock( '../is-editor-page' );
 
 const MockComponent = jest.fn();
 const mockOnSubmit = jest.fn();
@@ -361,7 +366,10 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result ).toHaveLength( 1 );
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
 			type: 'component',
-			component: EscalationButton,
+			component: mockEscalationButton,
+			componentProps: {
+				messageId: 'msg-1',
+			},
 		} );
 	} );
 

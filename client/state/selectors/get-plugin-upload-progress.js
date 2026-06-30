@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/plugins/init';
 
 /**
@@ -9,5 +7,5 @@ import 'calypso/state/plugins/init';
  * @returns {number} % of file uploaded so far
  */
 export default function getPluginUploadProgress( state, siteId ) {
-	return get( state.plugins.upload.progressPercent, siteId, 0 );
+	return state.plugins.upload.progressPercent?.[ siteId ] ?? 0;
 }

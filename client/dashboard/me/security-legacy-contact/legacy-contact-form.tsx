@@ -8,6 +8,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
+import { SectionHeader } from '../../components/section-header';
 import type { Field } from '@wordpress/dataviews';
 
 interface LegacyContactFormData {
@@ -18,6 +19,7 @@ const fields: Field< LegacyContactFormData >[] = [
 	{
 		id: 'email',
 		label: __( 'Email address' ),
+		description: __( 'We won’t notify this person that you’ve nominated them.' ),
 		type: 'email' as const,
 		isValid: {
 			required: true,
@@ -60,6 +62,13 @@ export default function LegacyContactForm() {
 	return (
 		<form onSubmit={ handleSubmit }>
 			<VStack spacing={ 4 }>
+				<SectionHeader
+					title={ __( 'Add legacy contact' ) }
+					level={ 3 }
+					description={ __(
+						'Nominate a trusted person to be your legacy contact. Once nominated, we’ll generate a secure key for you to keep safe.'
+					) }
+				/>
 				<DataForm< LegacyContactFormData >
 					data={ formData }
 					fields={ fields }
@@ -76,7 +85,7 @@ export default function LegacyContactForm() {
 						isBusy={ isPending }
 						disabled={ isPending || ! isValid }
 					>
-						{ __( 'Set up legacy contact' ) }
+						{ __( 'Add legacy contact' ) }
 					</Button>
 				</ButtonStack>
 			</VStack>

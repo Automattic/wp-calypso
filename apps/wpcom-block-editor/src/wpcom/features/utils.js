@@ -1,6 +1,5 @@
 import { select } from '@wordpress/data';
 import isEqual from 'fast-deep-equal/es6';
-import { some } from 'lodash';
 import tracksRecordEvent from './tracking/track-record-event';
 
 /**
@@ -118,7 +117,9 @@ const compareObjects = ( newObject, oldObject, keyMap = [] ) => {
 		// If an array, key/value association may not be maintained.
 		// So we must check against the entire collection instead of by key.
 		if ( Array.isArray( newObject ) ) {
-			if ( ! some( oldObject, ( item ) => isEqual( item, newObject[ key ] ) ) ) {
+			if (
+				! Object.values( oldObject ?? {} ).some( ( item ) => isEqual( item, newObject[ key ] ) )
+			) {
 				changedItems.push( { keyMap: [ ...keyMap ], value: newObject[ key ] || 'reset' } );
 			}
 		} else if ( ! isEqual( newObject[ key ], oldObject?.[ key ] ) ) {
@@ -148,7 +149,7 @@ const findUpdates = ( newContent, oldContent ) => {
 	const newItems = compareObjects( newContent, oldContent );
 
 	const removedItems = compareObjects( oldContent, newContent ).filter(
-		( update ) => ! some( newItems, ( { keyMap } ) => isEqual( update.keyMap, keyMap ) )
+		( update ) => ! newItems.some( ( { keyMap } ) => isEqual( update.keyMap, keyMap ) )
 	);
 	removedItems.forEach( ( item ) => {
 		if ( item.value?.color ) {

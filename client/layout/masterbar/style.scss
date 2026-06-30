@@ -406,7 +406,8 @@ body.is-mobile-app-view {
 
 	// The hover colors are supposed to be the same as those in wp-admin.
 	&:hover,
-	&.is-open {
+	&.is-open,
+	&:has(+ .masterbar__item-subitems:hover) {
 		svg path,
 		.gridicon {
 			fill: var(--color-masterbar-highlight);

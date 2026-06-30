@@ -3,6 +3,8 @@ import { BigSkyLogo } from '@automattic/components/src/logos/big-sky-logo';
 import { brush, chartBar, pages, tool } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import {
 	A4A_AGENT_STUDIO_LINK,
 	A4A_AI_MCP_LINK,
@@ -15,8 +17,9 @@ import { createItem } from '../lib/utils';
 
 const useLearnMenuItems = ( path: string ) => {
 	const translate = useTranslate();
+	const agency = useSelector( getActiveAgency );
 	const isAgentStudioEnabled = isEnabled( 'a4a-agent-studio' );
-	const isAiMcpEnabled = isEnabled( 'a4a-ai-mcp' );
+	const isAiMcpEnabled = !! agency?.mcp?.allowed;
 	const isBenchmarksEnabled = isEnabled( 'a4a-benchmarks' );
 
 	const menuItems = useMemo( () => {

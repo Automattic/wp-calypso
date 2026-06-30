@@ -276,7 +276,7 @@ export default {
 		// Set referral parameter in signup dependency store so we can retrieve it in getSignupDestination().
 		const refParameter = query && query.ref;
 		const localeSlug = context.params.lang;
-		// Set design parameters in signup depencency store so we can retrieve it in getChecklistThemeDestination().
+		// Set design parameters in signup dependency store so we can retrieve it in getChecklistThemeDestination().
 		const themeParameter = query && query.theme;
 		const themeType = query && query.theme_type;
 		const styleVariation = query && query.style_variation;

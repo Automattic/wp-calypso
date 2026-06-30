@@ -8,9 +8,12 @@ export ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
 export SKIP_TSC=true
 export PLAYWRIGHT_SKIP_DOWNLOAD=true
 export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+export NODE_OPTIONS=--max-old-space-size=5120
+# Playwright and Electron use HOME for caches; keep it writable under the propagated UID.
+export HOME=/tmp/buildkite-home
 
+mkdir -p "$HOME"
 cd desktop
-corepack enable
 yarn install --immutable --inline-builds
 yarn run build
 
@@ -22,6 +25,8 @@ if [[ ! -d release/linux-unpacked ]]; then
   echo "Expected Linux build output directory 'release/linux-unpacked' was not produced." >&2
   exit 1
 fi
+
+yarn run test:e2e
 
 tar -zcf release/linux-unpacked.tar.gz -C release linux-unpacked
 rm -rf release/linux-unpacked

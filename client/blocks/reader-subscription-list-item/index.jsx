@@ -3,7 +3,7 @@ import { commonFeedExtensions } from '@automattic/api-core';
 import { ExternalLink } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { isEmpty, get } from 'lodash';
+import { isEmpty } from 'lodash';
 import { useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
@@ -60,7 +60,7 @@ function ReaderSubscriptionListItem( {
 	let streamUrl = getStreamUrl( feedId, siteId );
 	const feedUrl = url || getFeedUrl( { feed, site } );
 	let siteUrl = getSiteUrl( { feed, site } );
-	const isMultiAuthor = get( site, 'is_multi_author', false );
+	const isMultiAuthor = site?.is_multi_author ?? false;
 	const hasSiteError = site?.is_error || hasFeedError;
 
 	const recordEvent = useCallback(

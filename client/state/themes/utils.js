@@ -1,5 +1,4 @@
 import { omit, omitBy } from '@automattic/js-utils';
-import { get, map, some } from 'lodash';
 import { DEFAULT_THEME_QUERY } from './constants';
 
 /**
@@ -50,7 +49,7 @@ export function normalizeJetpackTheme( theme = {} ) {
 		...omit( theme, 'tags' ),
 		taxonomies: {
 			// Map slugs only since JP sites give us no names
-			theme_feature: map( theme.tags, ( slug ) => ( { slug } ) ),
+			theme_feature: theme.tags.map( ( slug ) => ( { slug } ) ),
 		},
 	};
 }
@@ -120,7 +119,10 @@ export function normalizeWporgTheme( theme, tier ) {
 	return {
 		...omit( normalizedTheme, 'tags' ),
 		taxonomies: {
-			theme_feature: map( normalizedTheme.tags, ( name, slug ) => ( { name, slug } ) ),
+			theme_feature: Object.entries( normalizedTheme.tags ?? {} ).map( ( [ slug, name ] ) => ( {
+				name,
+				slug,
+			} ) ),
 		},
 	};
 }
@@ -200,12 +202,10 @@ export function isThemeMatchingQuery( query, theme ) {
 
 				const search = value.toLowerCase();
 
-				const foundInTaxonomies = some(
-					SEARCH_TAXONOMIES,
+				const foundInTaxonomies = SEARCH_TAXONOMIES.some(
 					( taxonomy ) =>
 						theme.taxonomies &&
-						some(
-							theme.taxonomies[ 'theme_' + taxonomy ],
+						( theme.taxonomies[ 'theme_' + taxonomy ] ?? [] ).some(
 							( { name } ) => name && name.toLowerCase().includes( search )
 						)
 				);
@@ -227,7 +227,9 @@ export function isThemeMatchingQuery( query, theme ) {
 				// { color: 'blue,red', feature: 'post-slider' }
 				const filters = value.split( ',' );
 				return filters.every( ( f ) =>
-					some( theme.taxonomies, ( terms ) => some( terms, { slug: f } ) )
+					Object.values( theme.taxonomies ?? {} ).some( ( terms ) =>
+						( terms ?? [] ).some( ( term ) => term.slug === f )
+					)
 				);
 			}
 		}
@@ -243,7 +245,7 @@ export function isThemeMatchingQuery( query, theme ) {
  * @returns {Array}           An array of theme taxonomy slugs.
  */
 export function getThemeTaxonomySlugs( theme, taxonomy ) {
-	const items = get( theme, [ 'taxonomies', taxonomy ], [] );
+	const items = theme?.taxonomies?.[ taxonomy ] ?? [];
 	return items.map( ( { slug } ) => slug );
 }
 

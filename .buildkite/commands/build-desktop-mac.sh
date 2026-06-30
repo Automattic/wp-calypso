@@ -49,6 +49,7 @@ fi
 export APP_STORE_CONNECT_API_KEY_PATH="$ASC_KEY_PATH"
 
 yarn run ci:build-mac
+yarn run test:e2e
 
 # The afterSign hook already notarized and stapled the app; this notarizes and
 # staples the `.dmg` wrapper for offline Gatekeeper checks on first mount.

@@ -26,7 +26,6 @@
 	],
 	"features": {
 		"a4a-agent-studio": false,
-		"a4a-ai-mcp": true,
 		"a4a-benchmarks": false,
 		"a4a-bd-checkout": false,
 		"a4a-bd-term-pricing": true,

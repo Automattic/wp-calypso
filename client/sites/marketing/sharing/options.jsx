@@ -1,7 +1,6 @@
 import { FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
-import { filter, get, some } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -21,6 +20,8 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+
+const isPublicPostType = ( postType ) => postType?.public;
 
 class SharingButtonsOptions extends Component {
 	static propTypes = {
@@ -154,11 +155,15 @@ class SharingButtonsOptions extends Component {
 	}
 
 	isTwitterButtonEnabled() {
-		return some( this.props.buttons, { ID: 'twitter', enabled: true } );
+		return ( this.props.buttons ?? [] ).some(
+			( button ) => button.ID === 'twitter' && button.enabled === true
+		);
 	}
 
 	isXButtonEnabled() {
-		return some( this.props.buttons, { ID: 'x', enabled: true } );
+		return ( this.props.buttons ?? [] ).some(
+			( button ) => button.ID === 'x' && button.enabled === true
+		);
 	}
 
 	getTwitterViaOptionElement() {
@@ -207,7 +212,7 @@ class SharingButtonsOptions extends Component {
 			return;
 		}
 
-		const checked = get( settings, 'jetpack_comment_likes_enabled', false );
+		const checked = settings?.jetpack_comment_likes_enabled ?? false;
 
 		return (
 			<FormFieldset className="sharing-buttons__fieldset">
@@ -295,7 +300,9 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 		const path = getCurrentRouteParameterized( state, siteId );
 
-		const postTypes = filter( Object.values( getPostTypes( state, siteId ) || {} ), 'public' );
+		const postTypes = Object.values( getPostTypes( state, siteId ) || {} ).filter(
+			isPublicPostType
+		);
 
 		return {
 			initialized: !! postTypes || !! getSiteSettings( state, siteId ),

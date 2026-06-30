@@ -163,7 +163,7 @@ export function getInterstitialCopy(
 			},
 			secondaryCta: {
 				id: 'review_two_factor',
-				label: __( 'Review two-step authentication and add backup codes' ),
+				label: __( 'Download backup codes' ),
 				route: securityTwoStepAuthRoute.fullPath,
 			},
 		},
@@ -176,7 +176,7 @@ export function getInterstitialCopy(
 			),
 			primaryCta: {
 				id: 'download_backup_codes',
-				label: __( 'Review two-step authentication and download backup codes' ),
+				label: __( 'Download backup codes' ),
 				route: securityTwoStepAuthRoute.fullPath,
 			},
 			secondaryCta: {

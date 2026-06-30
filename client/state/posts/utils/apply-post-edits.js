@@ -1,4 +1,4 @@
-import { map, mergeWith } from 'lodash';
+import { mergeWith } from 'lodash';
 
 /*
  * Applies a metadata edit operation (either update or delete) to an existing array of
@@ -10,7 +10,7 @@ function applyMetadataEdit( metadata, edit ) {
 			// Either update existing key's value or append a new one at the end
 			const { key, value } = edit;
 			if ( ( Array.isArray( metadata ) ? metadata : [] ).find( ( m ) => m.key === key ) ) {
-				return map( metadata, ( m ) => ( m.key === key ? { key, value } : m ) );
+				return metadata.map( ( m ) => ( m.key === key ? { key, value } : m ) );
 			}
 			return ( Array.isArray( metadata ) ? metadata : [] ).concat( { key, value } );
 		}

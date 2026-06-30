@@ -57,10 +57,34 @@ describe( 'NoteList loading state', () => {
 
 		// A filtered fetch begins: loading is true while the data is still empty.
 		act( () => {
-			store.dispatch( actions.ui.loadNotes() );
+			store.dispatch( actions.ui.loadNotes( { filter: { unread: 1 } } ) );
 		} );
 
 		// The "all caught up" message must not show until the fetch settles.
+		expect( screen.queryByText( "You're all caught up!" ) ).not.toBeInTheDocument();
+		expect( container.querySelector( '.components-spinner' ) ).toBeTruthy();
+	} );
+
+	// Regression: the always-running unfiltered background poll clears the shared
+	// loading flag, but it must not expose the Unread empty message while a
+	// filtered fetch is still in flight (the "loading → empty → list" flash).
+	it( 'keeps the loader when the background poll clears shared loading mid-fetch', () => {
+		const store = initStore();
+		store.dispatch( actions.ui.loadedNotes() );
+		const { container } = renderUnread( store );
+		expect( screen.getByText( "You're all caught up!" ) ).toBeVisible();
+
+		// The Unread fetch begins.
+		act( () => {
+			store.dispatch( actions.ui.loadNotes( { filter: { unread: 1 } } ) );
+		} );
+		expect( screen.queryByText( "You're all caught up!" ) ).not.toBeInTheDocument();
+
+		// A background all-notes poll completes and clears the shared loading flag
+		// while the filtered fetch is still in flight: the message must stay hidden.
+		act( () => {
+			store.dispatch( actions.ui.loadedNotes() );
+		} );
 		expect( screen.queryByText( "You're all caught up!" ) ).not.toBeInTheDocument();
 		expect( container.querySelector( '.components-spinner' ) ).toBeTruthy();
 	} );
@@ -81,7 +105,7 @@ describe( 'NoteList loading state', () => {
 		// the request is in flight.
 		act( () => {
 			store.dispatch( actions.notes.setUnreadNoteIds( [] ) );
-			store.dispatch( actions.ui.loadNotes() );
+			store.dispatch( actions.ui.loadNotes( { filter: { unread: 1 } } ) );
 		} );
 
 		// The same DataViews node is still mounted — it was not swapped for the

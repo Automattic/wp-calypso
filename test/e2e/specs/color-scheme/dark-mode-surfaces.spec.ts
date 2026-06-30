@@ -168,6 +168,20 @@ async function expectDarkModeRoot(
 	}
 }
 
+// The themes dark-mode body class is applied only after remote preferences
+// (dark scheme + dashboard opt-in) load and re-render the page. On a cold
+// `visitTheme` navigation that can take longer than the default expect
+// timeout, so wait on the gated class explicitly before asserting downstream
+// surfaces, matching the readiness waits used elsewhere in this suite.
+async function waitForThemesDarkModeReady( page: Page ) {
+	await expect( page.locator( 'html' ) ).toHaveAttribute( 'data-theme', 'dark', {
+		timeout: 30_000,
+	} );
+	await expect( page.locator( 'body' ) ).toHaveClass( /(^|\s)is-themes-dark-mode(\s|$)/, {
+		timeout: 30_000,
+	} );
+}
+
 async function resolveCssColorToken( page: Page, tokenName: TokenName ) {
 	return await page.evaluate( ( token ) => {
 		const probe = document.createElement( 'span' );
@@ -557,7 +571,8 @@ test.describe( 'Themes dark-mode surfaces', { tag: [ tags.CALYPSO_PR ] }, () => 
 
 		await test.step( 'Then the Primarium detail route renders download and support cards in dark mode', async () => {
 			await pageThemeDetails.visitTheme( 'primarium' );
-			await page.locator( '.theme-download-card' ).waitFor();
+			await waitForThemesDarkModeReady( page );
+			await page.locator( '.theme-download-card' ).waitFor( { timeout: 30_000 } );
 			await expectDarkModeRoot( page, {
 				bodyClasses: [ 'is-themes-dark-mode' ],
 				expectColorSchemeBodyClass: true,
@@ -582,7 +597,8 @@ test.describe( 'Themes dark-mode surfaces', { tag: [ tags.CALYPSO_PR ] }, () => 
 
 		await test.step( 'And the Lente detail route keeps premium badge colors dark-compatible', async () => {
 			await pageThemeDetails.visitTheme( 'lente' );
-			await page.locator( '.premium-badge' ).first().waitFor();
+			await waitForThemesDarkModeReady( page );
+			await page.locator( '.premium-badge' ).first().waitFor( { timeout: 30_000 } );
 			await expectDarkModeRoot( page, {
 				bodyClasses: [ 'is-themes-dark-mode' ],
 				expectColorSchemeBodyClass: true,

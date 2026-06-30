@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import { Component } from 'react';
 import * as React from 'react';
 import SectionNav from 'calypso/components/section-nav';
@@ -47,7 +46,7 @@ class PeopleSectionNav extends Component {
 	}
 
 	getFilters() {
-		const siteFilter = get( this.props.site, 'slug', '' );
+		const siteFilter = this.props.site?.slug ?? '';
 		const { translate, includeSubscriberImporter } = this.props;
 		const filters = [
 			{

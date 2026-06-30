@@ -221,7 +221,7 @@ GEM
     nanaimo (0.4.0)
     naturally (2.3.0)
     nkf (0.2.0)
-    nokogiri (1.19.3)
+    nokogiri (1.19.4)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     octokit (6.1.1)

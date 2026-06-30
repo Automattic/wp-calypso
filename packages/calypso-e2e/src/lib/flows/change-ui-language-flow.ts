@@ -19,7 +19,7 @@ export class ChangeUILanguageFlow {
 	}
 
 	/**
-	 * Changes the UI langauge.
+	 * Changes the UI language.
 	 *
 	 * This method will navigate from the navbar to the /me page,
 	 * then onto Account Settings.

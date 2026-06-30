@@ -1,6 +1,6 @@
 import { groupBy, omit } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
-import { forEach, get } from 'lodash';
+import { get } from 'lodash';
 import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_LIST_REQUEST,
@@ -160,7 +160,7 @@ export const addComments = ( { query }, { comments } ) => {
 
 	const byPost = groupBy( comments, ( { post: { ID } } ) => ID );
 
-	forEach( byPost, ( postComments, post ) =>
+	Object.entries( byPost ).forEach( ( [ post, postComments ] ) =>
 		actions.push(
 			receiveComments( {
 				siteId,
