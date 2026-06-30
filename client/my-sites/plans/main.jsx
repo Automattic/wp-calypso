@@ -6,6 +6,7 @@ import {
 	is100Year,
 	isFreePlanProduct,
 	isStudentPlan,
+	isPlan,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
@@ -33,18 +34,20 @@ import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { isPlansPageUntangled } from 'calypso/lib/plans/untangling-plans-experiment';
-import { isPartnerPurchase } from 'calypso/lib/purchases';
+import { isExpired, isInExpirationGracePeriod, isPartnerPurchase } from 'calypso/lib/purchases';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { FeatureBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-feature-breadcrumb';
 import CurrentPlanPanel from 'calypso/sites/plan/components/current-plan-panel';
 import { useSelector } from 'calypso/state';
-import { getByPurchaseId } from 'calypso/state/purchases/selectors';
+import { getByPurchaseId, getSitePurchases } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
@@ -69,6 +72,10 @@ import './style.scss';
 
 // Plan tiers from lowest to highest, used to filter the visible plans list
 const PLAN_TIERS = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
+
+const getExpiredPlanPurchase = ( purchases ) =>
+	purchases?.find( ( p ) => isPlan( p ) && ( isExpired( p ) || isInExpirationGracePeriod( p ) ) ) ??
+	null;
 
 class PlansComponent extends Component {
 	static propTypes = {
@@ -315,12 +322,24 @@ class PlansComponent extends Component {
 	}
 
 	render() {
-		const { isUntangled, selectedSite, translate } = this.props;
+		const { isUntangled, selectedSite, translate, expiredPlanPurchase } = this.props;
 		return (
 			<>
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
+				{ selectedSite?.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				{ isUntangled && (
 					<FeatureBreadcrumb siteId={ selectedSite.ID } title={ translate( 'Plan' ) } />
+				) }
+				{ expiredPlanPurchase && selectedSite && (
+					<Notice
+						status="is-error"
+						text={ translate( 'Your plan has expired.' ) }
+						showDismiss={ false }
+					>
+						<NoticeAction href={ `/purchases/subscriptions/${ selectedSite.slug }` }>
+							{ translate( 'Renew now' ) }
+						</NoticeAction>
+					</Notice>
 				) }
 				{ this.renderContent() }
 			</>
@@ -439,6 +458,9 @@ const ConnectedPlans = connect(
 		return {
 			currentPlan,
 			purchase: currentPlan ? getByPurchaseId( state, currentPlan.purchaseId ) : null,
+			expiredPlanPurchase: getExpiredPlanPurchase(
+				getSitePurchases( state, props.selectedSiteId )
+			),
 			selectedSite: getSelectedSite( state ),
 			canAccessPlans: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 			isUntangled: isPlansPageUntangled( state ),
