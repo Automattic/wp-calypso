@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { clearStepPersistedState } from '@automattic/onboarding';
-import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
+import { dispatch, resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useAddBlogStickerMutation } from 'calypso/blocks/blog-stickers/use-add-blog-sticker-mutation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import {
@@ -12,6 +12,7 @@ import {
 	retrieveSignupDestination,
 	wasSignupCheckoutPageUnloaded,
 } from 'calypso/signup/storageUtils';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import aiSiteBuilderPaidOnly from '../ai-site-builder-paid-only';
 
@@ -35,6 +36,7 @@ jest.mock( '@automattic/onboarding', () => ( {
 jest.mock( '@automattic/shopping-cart', () => ( {} ) );
 
 jest.mock( '@wordpress/data', () => ( {
+	dispatch: jest.fn(),
 	useDispatch: jest.fn(),
 	useSelect: jest.fn(),
 	resolveSelect: jest.fn(),
@@ -144,6 +146,9 @@ describe( 'ai-site-builder-paid-only flow', () => {
 		( resolveSelect as jest.Mock ).mockReturnValue( {
 			getSite: jest.fn().mockResolvedValue( { URL: 'https://example.wordpress.com' } ),
 		} );
+		( dispatch as jest.Mock ).mockReturnValue( {
+			resetOnboardStore: jest.fn().mockResolvedValue( undefined ),
+		} );
 
 		Object.defineProperty( window, 'location', {
 			value: { assign: jest.fn(), replace: jest.fn() },
@@ -160,9 +165,11 @@ describe( 'ai-site-builder-paid-only flow', () => {
 		} );
 	} );
 
+	const reduxStore = { dispatch: jest.fn() } as never;
+
 	describe( 'initialize', () => {
-		it( 'returns domain → plan → checkout step order', () => {
-			expect( slugsOf( aiSiteBuilderPaidOnly.initialize() ) ).toEqual( [
+		it( 'returns domain → plan → checkout step order', async () => {
+			expect( slugsOf( await aiSiteBuilderPaidOnly.initialize( reduxStore ) ) ).toEqual( [
 				'domains',
 				'plans',
 				'create-site',
@@ -171,24 +178,26 @@ describe( 'ai-site-builder-paid-only flow', () => {
 			] );
 		} );
 
-		it( 'clears stale signup state on a fresh entry', () => {
+		it( 'resets onboarding state and clears stale signup state on a fresh entry', async () => {
 			( wasSignupCheckoutPageUnloaded as jest.Mock ).mockReturnValue( null );
 
-			aiSiteBuilderPaidOnly.initialize();
+			await aiSiteBuilderPaidOnly.initialize( reduxStore );
 
 			expect( clearStepPersistedState ).toHaveBeenCalledWith( 'ai-site-builder-paid-only' );
+			expect( setSelectedSiteId ).toHaveBeenCalledWith( null );
 		} );
 
-		it( 'preserves signup state on a checkout re-entry so create-site reuses the site', () => {
+		it( 'preserves signup state on a checkout re-entry so create-site reuses the site', async () => {
 			( wasSignupCheckoutPageUnloaded as jest.Mock ).mockReturnValue( 'true' );
 			( retrieveSignupDestination as jest.Mock ).mockReturnValue(
 				'/setup/transferring-hosted-site'
 			);
 			( getSignupCompleteFlowName as jest.Mock ).mockReturnValue( 'ai-site-builder-paid-only' );
 
-			aiSiteBuilderPaidOnly.initialize();
+			await aiSiteBuilderPaidOnly.initialize( reduxStore );
 
 			expect( clearStepPersistedState ).not.toHaveBeenCalled();
+			expect( setSelectedSiteId ).not.toHaveBeenCalled();
 		} );
 	} );
 

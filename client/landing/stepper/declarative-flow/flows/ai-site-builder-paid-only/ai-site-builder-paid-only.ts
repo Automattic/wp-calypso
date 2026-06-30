@@ -6,7 +6,12 @@ import {
 	clearStepPersistedState,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { resolveSelect, useDispatch as useWpDataDispatch, useSelect } from '@wordpress/data';
+import {
+	dispatch,
+	resolveSelect,
+	useDispatch as useWpDataDispatch,
+	useSelect,
+} from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import { useAddBlogStickerMutation } from 'calypso/blocks/blog-stickers/use-add-blog-sticker-mutation';
@@ -36,6 +41,7 @@ import { ProcessingResult } from '../../internals/steps-repository/processing-st
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
+import type { Store } from 'redux';
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -53,18 +59,22 @@ const deletePage = async ( siteId: string | number, pageId: number ): Promise< b
 	}
 };
 
-function initialize() {
-	// On a fresh start, clear stale signup-complete values so the create-site step doesn't
-	// mistake them for an existing site. On a checkout re-entry (browser back from checkout), keep
-	// them so create-site reuses the already-created site instead of creating a duplicate — see
-	// `isManageSiteFlow` in the create-site step.
+async function initialize( reduxStore: Store ) {
 	const isCheckoutReEntry = Boolean(
 		wasSignupCheckoutPageUnloaded() &&
 			retrieveSignupDestination() &&
 			getSignupCompleteFlowName() === AI_SITE_BUILDER_PAID_ONLY_FLOW
 	);
 
+	// On a fresh start, reset onboarding state and clear stale signup-complete values so the
+	// create-site step doesn't treat a previously selected site as this flow's site. On a checkout
+	// re-entry (browser back from checkout), keep everything so create-site reuses the
+	// already-created site instead of creating a duplicate — see `isManageSiteFlow` in create-site.
 	if ( ! isCheckoutReEntry ) {
+		const { resetOnboardStore } = dispatch( ONBOARD_STORE ) as OnboardActions;
+		await resetOnboardStore();
+		// @ts-expect-error We're using the thunk middleware but TS doesn't know that.
+		reduxStore.dispatch( setSelectedSiteId( null ) );
 		clearStepPersistedState( AI_SITE_BUILDER_PAID_ONLY_FLOW );
 		clearSignupDestinationCookie();
 		clearSignupCompleteFlowName();

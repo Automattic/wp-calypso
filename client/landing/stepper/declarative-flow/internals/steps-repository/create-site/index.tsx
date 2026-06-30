@@ -5,6 +5,7 @@ import {
 	StepContainer,
 	addProductsToCart,
 	createSite,
+	isAIBuilderFlow,
 	isCopySiteFlow,
 	isEntrepreneurFlow,
 	isNewHostedSiteCreationFlow,
@@ -169,7 +170,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		isNewHostedSiteCreationFlow( flow ) ||
 		isReadymadeFlow( flow ) ||
 		wooFlows.includes( flow || '' ) ||
-		flow === AI_SITE_BUILDER_FLOW
+		isAIBuilderFlow( flow )
 	) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
 	}
