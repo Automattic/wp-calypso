@@ -218,7 +218,7 @@ function SiteLogsContent( {
 								) }
 							</Notice>
 						) }
-						{ ! site.__inaccessible_jetpack_error && showTimeMismatchNotice && (
+						{ showTimeMismatchNotice && (
 							<TimeMismatchNotice
 								settingsUrl={ settingsUrl }
 								siteTime={ gmtOffset }
