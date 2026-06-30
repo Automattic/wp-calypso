@@ -8,6 +8,8 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 	setSignupCompleteSiteID,
+	getSignupCompleteSiteID,
+	getSignupCompleteSlug,
 	clearSignupDestinationCookie,
 	clearSignupCompleteFlowName,
 	clearSignupCompleteSlug,
@@ -125,8 +127,8 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 						return navigate( STEPS.UNIFIED_PLANS.slug );
 					}
 
-					const siteId = providedDependencies.siteId;
-					const siteSlug = providedDependencies.siteSlug as string;
+					const siteId = providedDependencies.siteId || getSignupCompleteSiteID();
+					const siteSlug = ( providedDependencies.siteSlug || getSignupCompleteSlug() ) as string;
 
 					if ( ! siteId || ! siteSlug ) {
 						return navigate( STEPS.ERROR.slug );
