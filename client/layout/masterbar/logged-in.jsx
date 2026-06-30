@@ -287,10 +287,8 @@ class MasterbarLoggedIn extends Component {
 			return <Item icon={ icon } className="masterbar__item-no-sites" disabled />;
 		}
 
-		// Hide the dropdown across the My Sites view — the sites dashboard and its
-		// site pages (including HD v1 screens, where the global sidebar can be hidden,
-		// so this keys off the sidebar type rather than its visibility). The W icon is
-		// already the active item there, so a second menu is redundant.
+		// Hidden across the My Sites view. Keys off the sidebar type, not its
+		// visibility, to also cover HD v1 site screens where the sidebar is hidden.
 		const isMySitesView =
 			( sidebarType === SidebarType.Global || sidebarType === SidebarType.GlobalCollapsed ) &&
 			( section === 'sites' || section === 'sites-dashboard' );
