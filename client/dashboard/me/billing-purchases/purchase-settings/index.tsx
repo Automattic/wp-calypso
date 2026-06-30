@@ -1535,11 +1535,10 @@ export default function PurchaseSettings() {
 	const columns = isSmallViewport ? 1 : 2;
 	const spacing = isSmallViewport ? SPACING.SMALL : SPACING.DEFAULT;
 	const isCurrentPurchaseOwner = String( user.ID ) === String( purchase.user_id );
-	const shouldShowHeaderUpgradeAction =
-		purchase.is_upgradable && Boolean( upgradeUrl ) && isCurrentPurchaseOwner;
+	const canHeaderUpgrade = purchase.is_upgradable && Boolean( upgradeUrl );
+	const shouldShowHeaderUpgradeAction = canHeaderUpgrade && isCurrentPurchaseOwner;
 	const shouldShowHeaderActionMenu =
-		isCurrentPurchaseOwner &&
-		( ( purchase.is_upgradable && Boolean( upgradeUrl ) ) || purchase.can_explicit_renew );
+		isCurrentPurchaseOwner && ( canHeaderUpgrade || purchase.can_explicit_renew );
 	const shouldShowHeaderActions =
 		site?.options?.admin_url &&
 		! isCentennial &&
