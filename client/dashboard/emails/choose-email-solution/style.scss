@@ -73,6 +73,17 @@
 	min-height: 3rem;
 }
 
+// The card stacks its sections with a 1rem (spacing={ 4 }) gap; the pricing block
+// adds another 1rem so it sits 2rem below the title and description.
+.email-titan-plan-pricing {
+	margin-block-start: 1rem;
+}
+
+// Match the price to the plan header typeface.
+.email-titan-plan-price {
+	font-family: Recoleta, sans-serif;
+}
+
 .email-provider-features {
 	padding: 0;
 	margin: 0;

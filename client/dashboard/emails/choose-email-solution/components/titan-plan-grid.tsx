@@ -198,17 +198,24 @@ export function TitanPlanGrid( {
 						key={ `titan-plan-${ plan.tier }` }
 						spacing={ 4 }
 					>
-						<Text
-							as="h2"
-							size={ 28 }
-							lineHeight="36px"
-							className="email-provider-name email-titan-plan-name"
-						>
-							{ planName }
-						</Text>
-						<Text className="email-titan-plan-description">{ details.description }</Text>
-						<VStack spacing={ 2 } justify="flex-start">
-							<HStack alignment="bottomLeft" spacing={ 1 } expanded={ false }>
+						<VStack spacing={ 2 }>
+							<Text
+								as="h2"
+								size={ 28 }
+								lineHeight="36px"
+								className="email-provider-name email-titan-plan-name"
+							>
+								{ planName }
+							</Text>
+							<Text className="email-titan-plan-description">{ details.description }</Text>
+						</VStack>
+						<VStack spacing={ 2 } justify="flex-start" className="email-titan-plan-pricing">
+							<HStack
+								alignment="topLeft"
+								spacing={ 1 }
+								expanded={ false }
+								className="email-titan-plan-price"
+							>
 								<PriceDisplay
 									price={ plan.hasFreeTrial ? 0 : getMonthlyPrice( plan.product ) }
 									currency={ plan.product?.currency_code ?? 'USD' }
