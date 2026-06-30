@@ -5,7 +5,7 @@ import { groupBy } from '@automattic/js-utils';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { isEmpty, map } from 'lodash';
+import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -141,125 +141,127 @@ export class MediaLibraryContent extends Component {
 
 	renderErrors() {
 		const { isJetpack, mediaValidationErrorTypes, site, siteSlug, translate } = this.props;
-		return map( groupBy( mediaValidationErrorTypes ), ( occurrences, errorType ) => {
-			let message;
-			let onDismiss;
-			const i18nOptions = {
-				count: occurrences.length,
-				args: {
-					occurrences: occurrences.length,
-					planName: getPlan( PLAN_PREMIUM )?.getTitle(),
-				},
-			};
+		return Object.entries( groupBy( mediaValidationErrorTypes ) ).map(
+			( [ errorType, occurrences ] ) => {
+				let message;
+				let onDismiss;
+				const i18nOptions = {
+					count: occurrences.length,
+					args: {
+						occurrences: occurrences.length,
+						planName: getPlan( PLAN_PREMIUM )?.getTitle(),
+					},
+				};
 
-			if ( site ) {
-				onDismiss = () => this.props.clearMediaErrors( site.ID, errorType );
-			}
+				if ( site ) {
+					onDismiss = () => this.props.clearMediaErrors( site.ID, errorType );
+				}
 
-			let status = 'is-error';
-			let upgradeNudgeName = undefined;
-			let upgradeNudgeFeature = undefined;
-			let actionText = undefined;
-			let actionLink = undefined;
-			let tryAgain = false;
-			let externalAction = false;
+				let status = 'is-error';
+				let upgradeNudgeName = undefined;
+				let upgradeNudgeFeature = undefined;
+				let actionText = undefined;
+				let actionLink = undefined;
+				let tryAgain = false;
+				let externalAction = false;
 
-			switch ( errorType ) {
-				case MediaValidationErrors.FILE_TYPE_NOT_IN_PLAN:
-					status = 'is-warning';
-					upgradeNudgeName = 'plan-media-storage-error-video';
-					upgradeNudgeFeature = 'video-upload';
-					message = translate(
-						'%(occurrences)d file could not be uploaded because your site does not support video files. Upgrade to the %(planName)s plan for video support.',
-						'%(occurrences)d files could not be uploaded because your site does not support video files. Upgrade to the %(planName)s plan for video support.',
-						i18nOptions
-					);
-					break;
-				case MediaValidationErrors.FILE_TYPE_UNSUPPORTED:
-					message = translate(
-						'%(occurrences)d file could not be uploaded because the file type is not supported.',
-						'%(occurrences)d files could not be uploaded because their file types are unsupported.',
-						i18nOptions
-					);
-					actionText = translate( 'See supported file types' );
-					actionLink = localizeUrl( 'https://wordpress.com/support/accepted-filetypes/' );
-					externalAction = true;
-					break;
-				case MediaValidationErrors.UPLOAD_VIA_URL_404:
-					message = translate(
-						'%(occurrences)d file could not be uploaded because no image exists at the specified URL.',
-						'%(occurrences)d files could not be uploaded because no images exist at the specified URLs',
-						i18nOptions
-					);
-					break;
-				case MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE:
-					message = translate(
-						'%(occurrences)d file could not be uploaded because it exceeds the maximum upload size.',
-						'%(occurrences)d files could not be uploaded because they exceed the maximum upload size.',
-						i18nOptions
-					);
-					break;
-				case MediaValidationErrors.NOT_ENOUGH_SPACE:
-					upgradeNudgeName = 'plan-media-storage-error';
-					upgradeNudgeFeature = 'extra-storage';
-					message = translate(
-						'%(occurrences)d file could not be uploaded because there is not enough space left.',
-						'%(occurrences)d files could not be uploaded because there is not enough space left.',
-						i18nOptions
-					);
-					break;
-				case MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT:
-					if ( isJetpack ) {
-						actionText = translate( 'Upgrade Plan' );
-						actionLink = `/checkout/${ siteSlug }/jetpack_videopress`;
+				switch ( errorType ) {
+					case MediaValidationErrors.FILE_TYPE_NOT_IN_PLAN:
+						status = 'is-warning';
+						upgradeNudgeName = 'plan-media-storage-error-video';
+						upgradeNudgeFeature = 'video-upload';
+						message = translate(
+							'%(occurrences)d file could not be uploaded because your site does not support video files. Upgrade to the %(planName)s plan for video support.',
+							'%(occurrences)d files could not be uploaded because your site does not support video files. Upgrade to the %(planName)s plan for video support.',
+							i18nOptions
+						);
+						break;
+					case MediaValidationErrors.FILE_TYPE_UNSUPPORTED:
+						message = translate(
+							'%(occurrences)d file could not be uploaded because the file type is not supported.',
+							'%(occurrences)d files could not be uploaded because their file types are unsupported.',
+							i18nOptions
+						);
+						actionText = translate( 'See supported file types' );
+						actionLink = localizeUrl( 'https://wordpress.com/support/accepted-filetypes/' );
 						externalAction = true;
-					} else {
+						break;
+					case MediaValidationErrors.UPLOAD_VIA_URL_404:
+						message = translate(
+							'%(occurrences)d file could not be uploaded because no image exists at the specified URL.',
+							'%(occurrences)d files could not be uploaded because no images exist at the specified URLs',
+							i18nOptions
+						);
+						break;
+					case MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE:
+						message = translate(
+							'%(occurrences)d file could not be uploaded because it exceeds the maximum upload size.',
+							'%(occurrences)d files could not be uploaded because they exceed the maximum upload size.',
+							i18nOptions
+						);
+						break;
+					case MediaValidationErrors.NOT_ENOUGH_SPACE:
 						upgradeNudgeName = 'plan-media-storage-error';
 						upgradeNudgeFeature = 'extra-storage';
-					}
-					message = translate(
-						'%(occurrences)d file could not be uploaded because you have reached your plan storage limit.',
-						'%(occurrences)d files could not be uploaded because you have reached your plan storage limit.',
-						i18nOptions
-					);
-					break;
-				case MediaValidationErrors.SERVICE_AUTH_FAILED:
-					message = this.getAuthFailMessageForSource();
-					status = 'is-warning';
-					tryAgain = false;
-					break;
+						message = translate(
+							'%(occurrences)d file could not be uploaded because there is not enough space left.',
+							'%(occurrences)d files could not be uploaded because there is not enough space left.',
+							i18nOptions
+						);
+						break;
+					case MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT:
+						if ( isJetpack ) {
+							actionText = translate( 'Upgrade Plan' );
+							actionLink = `/checkout/${ siteSlug }/jetpack_videopress`;
+							externalAction = true;
+						} else {
+							upgradeNudgeName = 'plan-media-storage-error';
+							upgradeNudgeFeature = 'extra-storage';
+						}
+						message = translate(
+							'%(occurrences)d file could not be uploaded because you have reached your plan storage limit.',
+							'%(occurrences)d files could not be uploaded because you have reached your plan storage limit.',
+							i18nOptions
+						);
+						break;
+					case MediaValidationErrors.SERVICE_AUTH_FAILED:
+						message = this.getAuthFailMessageForSource();
+						status = 'is-warning';
+						tryAgain = false;
+						break;
 
-				case MediaValidationErrors.SERVICE_FAILED:
-					message = translate( 'We are unable to retrieve your full media library.' );
-					tryAgain = true;
-					break;
+					case MediaValidationErrors.SERVICE_FAILED:
+						message = translate( 'We are unable to retrieve your full media library.' );
+						tryAgain = true;
+						break;
 
-				case MediaValidationErrors.SERVICE_UNAVAILABLE:
-					message = this.getServiceUnavailableMessageForSource();
-					tryAgain = true;
-					break;
+					case MediaValidationErrors.SERVICE_UNAVAILABLE:
+						message = this.getServiceUnavailableMessageForSource();
+						tryAgain = true;
+						break;
 
-				default:
-					message = translate(
-						'%(occurrences)d file could not be uploaded because an error occurred while uploading.',
-						'%(occurrences)d files could not be uploaded because errors occurred while uploading.',
-						i18nOptions
-					);
-					break;
+					default:
+						message = translate(
+							'%(occurrences)d file could not be uploaded because an error occurred while uploading.',
+							'%(occurrences)d files could not be uploaded because errors occurred while uploading.',
+							i18nOptions
+						);
+						break;
+				}
+
+				return (
+					<Notice key={ errorType } status={ status } text={ message } onDismissClick={ onDismiss }>
+						{ this.renderNoticeAction( upgradeNudgeName, upgradeNudgeFeature ) }
+						{ actionText && (
+							<NoticeAction href={ actionLink } external={ externalAction }>
+								{ actionText }
+							</NoticeAction>
+						) }
+						{ tryAgain && this.renderTryAgain() }
+					</Notice>
+				);
 			}
-
-			return (
-				<Notice key={ errorType } status={ status } text={ message } onDismissClick={ onDismiss }>
-					{ this.renderNoticeAction( upgradeNudgeName, upgradeNudgeFeature ) }
-					{ actionText && (
-						<NoticeAction href={ actionLink } external={ externalAction }>
-							{ actionText }
-						</NoticeAction>
-					) }
-					{ tryAgain && this.renderTryAgain() }
-				</Notice>
-			);
-		} );
+		);
 	}
 
 	getAuthFailMessageForSource() {

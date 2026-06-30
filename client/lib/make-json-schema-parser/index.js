@@ -23,7 +23,7 @@ const defaultTransformer = ( data ) => data;
  * @param   {*}        data   Input data
  * @returns {*}                Transformed data
  * @throws {SchemaError}      Error describing failed schema validation
- * @throws {TransformerError} Error ocurred during transformation
+ * @throws {TransformerError} Error occurred during transformation
  */
 
 /**

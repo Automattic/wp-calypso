@@ -30,9 +30,10 @@ import { useAnnualSavings } from '../hooks/use-annual-savings';
 import { useDomainFromUrlParam } from '../hooks/use-domain-from-url-param';
 import { useEmailProduct } from '../hooks/use-email-product';
 import poweredByTitanLogo from '../resources/powered-by-titan-caps.svg';
-import { IntervalLength, MailboxProvider } from '../types';
+import { IntervalLength, MailboxProvider, TitanPlanTier } from '../types';
 import { isEligibleForIntroductoryOffer } from '../utils/is-eligible-for-introductory-offer';
 import { isMonthlyEmailProduct } from '../utils/is-monthly-email-product';
+import { getTitanTierFromSlug } from '../utils/titan-tiers';
 import { ExistingForwardsNotice } from './components/existing-forwards-notice';
 
 import './style.scss';
@@ -87,6 +88,7 @@ export default function ChooseEmailSolution() {
 	const navigate = useNavigate();
 	let redirectTo = null;
 	if ( hasTitanMailWithUs( domain ) && isTitanAvailable ) {
+		const subscriptionTier = getTitanTierFromSlug( titanEmailSubscription?.product_slug );
 		redirectTo = {
 			to: addMailboxRoute.to,
 			params: {
@@ -95,6 +97,10 @@ export default function ChooseEmailSolution() {
 				interval: isMonthlyEmailProduct( titanEmailSubscription )
 					? IntervalLength.Monthly
 					: IntervalLength.Annually,
+			},
+			search: {
+				// Omit the default tier so existing Pro URLs stay unchanged.
+				tier: subscriptionTier === TitanPlanTier.Pro ? undefined : subscriptionTier,
 			},
 		};
 	} else if ( hasGSuiteWithUs( domain ) && isGoogleAvailable ) {

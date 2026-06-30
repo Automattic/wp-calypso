@@ -10,7 +10,7 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { chevronDown, chevronUp } from '@wordpress/icons';
-import { Fragment, useState } from 'react';
+import { Fragment, useRef, useState } from 'react';
 import { groupIntentKey, getOverridesToMatch } from '../../../../me/mcp/group-intents';
 import { groupToolsByGroup, groupToolsBySubCategory } from '../../../../me/mcp/groups';
 import { getGroupDescriptors, getAccountMcpAbilities } from '../../../../me/mcp/utils';
@@ -42,16 +42,19 @@ export default function McpRead() {
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
 	const isDesktop = useViewportMatch( 'medium' );
 
-	const [ openGroups, setOpenGroups ] = useState( () => new Set< string >() );
-	const toggleGroupOpen = ( groupKey: string ) => {
-		setOpenGroups( ( current ) => {
-			const next = new Set( current );
-			if ( next.has( groupKey ) ) {
-				next.delete( groupKey );
-			} else {
-				next.add( groupKey );
-			}
-			return next;
+	const openGroupsRef = useRef( new Set< string >() );
+	const [ openGroups, setOpenGroups ] = useState( () => openGroupsRef.current );
+	const toggleGroupOpen = ( groupKey: string, groupName: string | null ) => {
+		const willBeOpen = ! openGroupsRef.current.has( groupKey );
+		if ( willBeOpen ) {
+			openGroupsRef.current.add( groupKey );
+		} else {
+			openGroupsRef.current.delete( groupKey );
+		}
+		setOpenGroups( new Set( openGroupsRef.current ) );
+		recordTracksEvent( 'calypso_dashboard_mcp_read_group_toggled', {
+			group: groupName ?? 'other',
+			is_open: willBeOpen,
 		} );
 	};
 
@@ -73,7 +76,7 @@ export default function McpRead() {
 		},
 	} );
 
-	const handleToolChange = ( toolId: string, enabled: boolean ) => {
+	const handleToolChange = ( toolId: string, enabled: boolean, groupName: string | null ) => {
 		mutation.mutate(
 			{
 				mcp_abilities: {
@@ -85,6 +88,7 @@ export default function McpRead() {
 					recordTracksEvent( 'calypso_dashboard_mcp_read_tool_toggled', {
 						tool_id: toolId,
 						enabled,
+						group: groupName ?? 'other',
 					} );
 				},
 			}
@@ -214,7 +218,7 @@ export default function McpRead() {
 													icon={ isOpen ? chevronUp : chevronDown }
 													label={ isOpen ? __( 'Hide operations' ) : __( 'Show operations' ) }
 													aria-expanded={ isOpen }
-													onClick={ () => toggleGroupOpen( groupKey ) }
+													onClick={ () => toggleGroupOpen( groupKey, descriptor?.name ?? null ) }
 												/>
 											</HStack>
 										) : (
@@ -234,7 +238,7 @@ export default function McpRead() {
 														icon={ isOpen ? chevronUp : chevronDown }
 														label={ isOpen ? __( 'Hide operations' ) : __( 'Show operations' ) }
 														aria-expanded={ isOpen }
-														onClick={ () => toggleGroupOpen( groupKey ) }
+														onClick={ () => toggleGroupOpen( groupKey, descriptor?.name ?? null ) }
 													/>
 												</HStack>
 												<ToggleControl
@@ -274,7 +278,9 @@ export default function McpRead() {
 																	disabled={ mutation.isPending }
 																	label={ tool.title }
 																	help={ tool.description }
-																	onChange={ ( checked ) => handleToolChange( toolId, checked ) }
+																	onChange={ ( checked ) =>
+																		handleToolChange( toolId, checked, descriptor?.name ?? null )
+																	}
 																/>
 															) ) }
 														</VStack>

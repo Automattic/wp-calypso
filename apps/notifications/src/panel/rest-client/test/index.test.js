@@ -4,6 +4,8 @@
 import { store } from '../../state';
 import actions from '../../state/actions';
 import getAllNotes from '../../state/selectors/get-all-notes';
+import getFilteredLoading from '../../state/selectors/get-filtered-loading';
+import getIsLoading from '../../state/selectors/get-is-loading';
 import getUnreadNoteIds from '../../state/selectors/get-unread-note-ids';
 import Client from '../index';
 import { init } from '../wpcom';
@@ -203,6 +205,55 @@ describe( 'RestClient', () => {
 				number: 10,
 				before: Math.floor( Date.parse( makeNote( 91 ).timestamp ) / 1000 ),
 			} );
+		} );
+	} );
+
+	describe( 'polling window', () => {
+		// Load-more pages with `before`; the poll/refresh must keep requesting a small
+		// fixed head window instead of growing to cover everything paged in (which
+		// ballooned the request to number=100 with no `before`).
+		it( 'keeps the poll window fixed after paging many notes in', () => {
+			seedFirstWindow(); // ids 100..91
+
+			// Page two more windows in (ids 90..71), growing the loaded list to 30.
+			client.loadMore();
+			getCalls[ 0 ].callback( null, { notes: fullPage( 20, 90 ), last_seen_time: 0 } );
+			getCalls.length = 0;
+
+			client.getNotesList();
+			expect( getCalls ).toHaveLength( 1 );
+			// Small fixed window, not the 30 (or eventual 100) notes loaded.
+			expect( getCalls[ 0 ].query.number ).toBe( 10 );
+			expect( getCalls[ 0 ].query ).not.toHaveProperty( 'before' );
+		} );
+
+		it( 'does not prune older paged-in notes when the poll only returns the head', () => {
+			seedFirstWindow(); // ids 100..91
+			client.loadMore();
+			getCalls[ 0 ].callback( null, { notes: fullPage( 20, 90 ), last_seen_time: 0 } ); // 90..71
+			getCalls.length = 0;
+
+			// A poll returns only the authoritative top window (ids 100..91).
+			client.getNotesList();
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 100 ), last_seen_time: 0 } );
+
+			// The older paged-in notes are outside the head window, not deleted.
+			const ids = getAllNotes( store.getState() ).map( ( note ) => note.id );
+			expect( ids ).toContain( 71 );
+			expect( ids ).toContain( 90 );
+		} );
+
+		it( 'still prunes a note dropped from within the head window', () => {
+			seedFirstWindow(); // ids 100..91
+
+			// The poll's top window no longer includes 95 (read/deleted elsewhere); the
+			// freed slot is filled by an older note (90), so 95 fell out of the head.
+			client.getNotesList();
+			const polled = [ 100, 99, 98, 97, 96, 94, 93, 92, 91, 90 ].map( makeNote );
+			getCalls[ 0 ].callback( null, { notes: polled, last_seen_time: 0 } );
+
+			const ids = getAllNotes( store.getState() ).map( ( note ) => note.id );
+			expect( ids ).not.toContain( 95 );
 		} );
 	} );
 
@@ -435,6 +486,128 @@ describe( 'RestClient', () => {
 
 			// 99 stays in the store so the Unread view can still resolve it.
 			expect( getAllNotes( store.getState() ).map( ( note ) => note.id ) ).toContain( 99 );
+		} );
+
+		// The filtered refresh/poll must keep a small fixed window too, instead of
+		// growing to cover everything paged into the Unread tab.
+		it( 'keeps the filtered poll window fixed after paging unread notes in', () => {
+			client.setFilter( { unread: 1 } );
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 209 ), last_seen_time: 0 } ); // 209..200
+			getCalls.length = 0;
+			client.loadMore();
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 199 ), last_seen_time: 0 } ); // 199..190
+			getCalls.length = 0;
+
+			// A poll-driven refresh (no `before`) requests the small fixed window, not
+			// the 20 unread notes loaded.
+			client.getFilteredNotes();
+			expect( getCalls ).toHaveLength( 1 );
+			expect( getCalls[ 0 ].query.number ).toBe( 10 );
+			expect( getCalls[ 0 ].query ).not.toHaveProperty( 'before' );
+			expect( getCalls[ 0 ].query.unread ).toBe( 1 );
+		} );
+
+		it( 'keeps older paged-in unread notes on a head-only refresh', () => {
+			client.setFilter( { unread: 1 } );
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 209 ), last_seen_time: 0 } ); // 209..200
+			getCalls.length = 0;
+			client.loadMore();
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 199 ), last_seen_time: 0 } ); // 199..190
+			expect( getUnreadNoteIds( store.getState() ) ).toHaveLength( 20 );
+			getCalls.length = 0;
+
+			// The refresh returns only the head window (209..200); the older paged-in
+			// ids (199..190) are outside it and must survive.
+			client.getFilteredNotes();
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 209 ), last_seen_time: 0 } );
+
+			const unread = getUnreadNoteIds( store.getState() );
+			expect( unread ).toHaveLength( 20 );
+			expect( unread ).toContain( 209 ); // head kept
+			expect( unread ).toContain( 190 ); // older paged-in id kept
+		} );
+	} );
+
+	describe( 'loading state', () => {
+		// Regression: with the fixed head window, paging older notes must still flip
+		// the loading state on, so the UI shows its load-more indicator.
+		it( 'flips loading on while paging older notes and off when the page lands', () => {
+			seedFirstWindow(); // 10 notes loaded; settles loading to false
+			expect( getIsLoading( store.getState() ) ).toBe( false );
+
+			client.loadMore();
+			expect( getIsLoading( store.getState() ) ).toBe( true );
+
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 90 ), last_seen_time: 0 } );
+			expect( getIsLoading( store.getState() ) ).toBe( false );
+		} );
+
+		// A steady-state poll (no `before`, a full window already loaded) must not
+		// flash the loading state.
+		it( 'stays silent on a steady-state refresh once a full window is loaded', () => {
+			seedFirstWindow(); // 10 notes loaded, loading false
+			client.getNotes();
+			expect( getIsLoading( store.getState() ) ).toBe( false );
+		} );
+
+		// The filtered (Unread) tab gets the same load-more indicator as the others.
+		it( 'flips loading on while paging older unread notes', () => {
+			client.setFilter( { unread: 1 } );
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 209 ), last_seen_time: 0 } );
+			getCalls.length = 0;
+			expect( getIsLoading( store.getState() ) ).toBe( false );
+
+			client.loadMore();
+			expect( getIsLoading( store.getState() ) ).toBe( true );
+
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 199 ), last_seen_time: 0 } );
+			expect( getIsLoading( store.getState() ) ).toBe( false );
+		} );
+
+		// Regression: clearing the loading state before the unread ids land makes
+		// the list render an empty frame between "loaded" and the ids ("small
+		// loading → empty → list"). Loading must clear only once the ids are set.
+		it( 'sets the unread ids before clearing the loading state', () => {
+			client.setFilter( { unread: 1 } );
+			expect( getIsLoading( store.getState() ) ).toBe( true );
+
+			const frames = [];
+			const unsubscribe = store.subscribe( () =>
+				frames.push( {
+					isLoading: getIsLoading( store.getState() ),
+					unreadCount: getUnreadNoteIds( store.getState() ).length,
+				} )
+			);
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 50 ), last_seen_time: 0 } );
+			unsubscribe();
+
+			// No frame may show "done loading" over a still-empty list.
+			expect( frames.some( ( f ) => ! f.isLoading && f.unreadCount === 0 ) ).toBe( false );
+			expect( getIsLoading( store.getState() ) ).toBe( false );
+			expect( getUnreadNoteIds( store.getState() ) ).toHaveLength( 10 );
+		} );
+
+		// Regression: the always-running unfiltered poll shares the global loading
+		// flag. When it lands while a filtered (Unread) fetch is still in flight, it
+		// clears the shared flag — but the filtered loading state must hold its
+		// filter, or the Unread tab flashes its empty message before the ids land.
+		it( 'keeps the filtered loading state set when a background poll lands mid-fetch', () => {
+			// A full head window is already loaded, so the poll stays silent on start
+			// yet still clears the shared loading flag when it lands.
+			store.dispatch( actions.notes.addNotes( fullPage( 10, 100 ) ) );
+			client.noteList = fullPage( 10, 100 ).map( ( { id, note_hash } ) => ( { id, note_hash } ) );
+
+			client.setFilter( { unread: 1 } ); // filtered fetch A in flight
+			expect( getFilteredLoading( store.getState() ) ).toEqual( { unread: 1 } );
+			getCalls.length = 0;
+
+			client.getNotes(); // background poll B
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 100 ), last_seen_time: 0 } );
+
+			// B cleared the shared flag, but A is still in flight — the filter holds.
+			expect( getIsLoading( store.getState() ) ).toBe( false );
+			expect( getFilteredLoading( store.getState() ) ).toEqual( { unread: 1 } );
+			expect( client.gettingFilteredNotes ).toBe( true );
 		} );
 	} );
 } );

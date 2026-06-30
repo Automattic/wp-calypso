@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import { filter } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Children, cloneElement, Component, forwardRef } from 'react';
 import Count from '../count';
@@ -365,7 +364,7 @@ class SelectDropdown extends Component {
 		let focusedIndex;
 
 		if ( this.props.options.length ) {
-			items = filter( this.props.options, ( item ) => {
+			items = this.props.options.filter( ( item ) => {
 				if ( ! item || item.isLabel ) {
 					return false;
 				}
@@ -382,7 +381,9 @@ class SelectDropdown extends Component {
 					? this.focused
 					: items.findIndex( ( item ) => item.value === this.state.selected );
 		} else {
-			items = filter( this.props.children, ( item ) => item.type === DropdownItem );
+			items = Children.toArray( this.props.children ).filter(
+				( item ) => item.type === DropdownItem
+			);
 
 			focusedIndex =
 				typeof this.focused === 'number'

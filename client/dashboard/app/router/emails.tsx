@@ -11,7 +11,8 @@ import {
 } from '@automattic/api-queries';
 import { createLazyRoute, createRoute, Outlet } from '@tanstack/react-router';
 import { __, _n } from '@wordpress/i18n';
-import { IntervalLength, MailboxProvider } from '../../emails/types';
+import { IntervalLength, MailboxProvider, TitanPlanTier } from '../../emails/types';
+import { isTitanPlanTier } from '../../emails/utils/titan-tiers';
 import { accountHasWarningWithSlug } from '../../utils/email-utils';
 import { dashboardRedirect } from './redirect';
 import { rootRoute } from './root';
@@ -144,6 +145,11 @@ export const addMailboxRoute = createRoute( {
 	} ),
 	getParentRoute: () => emailsRoute,
 	path: 'add-mailbox/$domain/$provider/$interval',
+	validateSearch: ( search ): { tier?: TitanPlanTier } => {
+		return {
+			tier: isTitanPlanTier( search.tier ) ? search.tier : undefined,
+		};
+	},
 	beforeLoad: async ( { params: { domain: domainName, provider, interval } } ) => {
 		await redirectIfInvalidDomain( domainName );
 

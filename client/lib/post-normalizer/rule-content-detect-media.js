@@ -1,6 +1,5 @@
 /* eslint-disable jsdoc/no-undefined-types */
 
-import { map, filter } from 'lodash';
 import getEmbedMetadata from 'calypso/lib/get-video-id';
 import { READER_CONTENT_WIDTH } from 'calypso/reader/data/post/sizes';
 import { iframeIsAllowed, maxWidthPhotonishURL, deduceImageWidthAndHeight } from './utils';
@@ -147,7 +146,7 @@ export default function detectMedia( post, dom ) {
 	const embedSelector = 'iframe';
 	const media = dom.querySelectorAll( `${ imageSelector }, ${ embedSelector }` );
 
-	const contentMedia = map( media, ( element ) => {
+	const contentMedia = Array.from( media ).map( ( element ) => {
 		const nodeName = element.nodeName.toLowerCase();
 
 		if ( nodeName === 'iframe' ) {
@@ -159,8 +158,8 @@ export default function detectMedia( post, dom ) {
 	} );
 
 	post.content_media = contentMedia.filter( Boolean );
-	post.content_embeds = filter( post.content_media, ( m ) => m.mediaType === 'video' );
-	post.content_images = filter( post.content_media, ( m ) => m.mediaType === 'image' );
+	post.content_embeds = post.content_media.filter( ( m ) => m.mediaType === 'video' );
+	post.content_images = post.content_media.filter( ( m ) => m.mediaType === 'image' );
 
 	// TODO: figure out a more sane way of combining featured_image + content media
 	// so that changes to logic don't need to exist in multiple places

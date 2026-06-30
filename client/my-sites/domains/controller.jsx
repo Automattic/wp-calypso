@@ -1,7 +1,6 @@
 import page from '@automattic/calypso-router';
 import { removeQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
-import { map } from 'lodash';
 import DocumentHead from 'calypso/components/data/document-head';
 import ConnectDomainStep from 'calypso/components/domains/connect-domain-step';
 import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
@@ -282,7 +281,7 @@ const redirectIfNoSite = ( redirectTo ) => {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
 		const sites = getSites( state );
-		const siteIds = map( sites, 'ID' );
+		const siteIds = sites.map( ( site ) => site?.ID );
 
 		if ( ! siteIds.includes( siteId ) ) {
 			const user = getCurrentUser( state );

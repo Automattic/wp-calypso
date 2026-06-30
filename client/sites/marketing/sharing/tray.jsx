@@ -3,7 +3,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { filter } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import SortableList from 'calypso/components/forms/sortable-list';
@@ -101,7 +100,9 @@ class SharingButtonsTray extends Component {
 	};
 
 	getButtonsOfCurrentVisibility = () => {
-		return filter( this.props.buttons, { visibility: this.props.visibility } );
+		return ( this.props.buttons ?? [] ).filter(
+			( button ) => button.visibility === this.props.visibility
+		);
 	};
 
 	onButtonsReordered = ( order ) => {

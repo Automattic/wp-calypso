@@ -20,6 +20,7 @@ export type AgencySupports = {
 	exclusiveOffers: boolean;
 	learn: boolean;
 	mcp: boolean;
+	sites: boolean;
 };
 
 export type AgencyClientSupports = {
@@ -75,7 +76,7 @@ export type AppConfig = {
 	};
 	optIn: boolean;
 	components: {
-		sites: () => Promise< { default: React.FC } >;
+		sites?: () => Promise< { default: React.FC } >;
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		siteSwitcher: () => Promise< { default: React.FC< any > } >;
 	};

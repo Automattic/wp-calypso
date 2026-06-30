@@ -4,6 +4,7 @@ import {
 	agencyResourcesQuery,
 	mcpSettingsQuery,
 	queryClient,
+	rawUserPreferencesQuery,
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
@@ -163,6 +164,22 @@ const mcpConnectRoute = createRoute( {
 	)
 );
 
+// `/sites` – agency-managed sites
+export const agencySitesRoute = createRoute( {
+	head: () => ( {
+		meta: [ { title: __( 'Sites' ) } ],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'sites',
+	loader: () => queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+} ).lazy( () =>
+	import( '../../agency/sites' ).then( ( d ) =>
+		createLazyRoute( 'agency-sites' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createAgencyRoutes = () => [
 	agencyRoute.addChildren( [
 		agencyOverviewRoute,
@@ -170,5 +187,6 @@ export const createAgencyRoutes = () => [
 		exclusiveOffersRoute,
 		learnRoute,
 		mcpRoute.addChildren( [ mcpOverviewRoute, mcpAvailableToolsRoute, mcpConnectRoute ] ),
+		agencySitesRoute,
 	] ),
 ];

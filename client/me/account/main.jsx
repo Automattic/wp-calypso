@@ -6,7 +6,7 @@ import { ExternalLink } from '@wordpress/components';
 import { debounce } from '@wordpress/compose';
 import debugFactory from 'debug';
 import { fixMe, localize } from 'i18n-calypso';
-import { get, map } from 'lodash';
+import { get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import CSSTransition from 'react-transition-group/CSSTransition';
@@ -716,7 +716,7 @@ class Account extends Component {
 				<FormLabel>{ translate( 'Would you like a matching blog address too?' ) }</FormLabel>
 				{
 					// message is translated in the API
-					map( actions, ( message, key ) => (
+					Object.entries( actions ?? {} ).map( ( [ key, message ] ) => (
 						<FormLabel key={ key }>
 							<FormRadio
 								name="usernameAction"

@@ -40,6 +40,12 @@ import {
 	SELECTED_BLOCK_CLEAR_EVENT,
 } from './utils/block-actions';
 import {
+	isAiEditorialReviewEnabled,
+	isBlockTransformationsEnabled,
+	isGenerateFeedbackEnabled,
+	isOptimizeTitleSuggestionEnabled,
+} from './utils/preview-features';
+import {
 	UPDATE_BLOCK_CONTENT_TOOL_ID,
 	UPDATE_BLOCK_CONTENT_ABILITY,
 	isUpdateBlockContentTool,
@@ -55,6 +61,7 @@ import type { ComponentType } from 'react';
 
 // Re-export block-action helpers as part of the package's public surface.
 export { applyReviewEdit, findBlockElement, findBlockListLayout };
+export { registerBlockEditorFilters } from './extensions';
 
 // ---------- Module state ----------
 
@@ -111,44 +118,6 @@ const LIMITED_BLOCK_SUGGESTION_PRIORITY = [
 	'simplify-text',
 	'generate-alt-text',
 ];
-
-type SidebarFeature =
-	| 'aiEditorialReview'
-	| 'generateFeedback'
-	| 'blockTransformations'
-	| 'optimizeTitleSuggestion';
-
-function getAgentsManagerData() {
-	return typeof agentsManagerData !== 'undefined' ? agentsManagerData : undefined;
-}
-
-function getSidebarConfig() {
-	return getAgentsManagerData()?.jetpackAiSidebar;
-}
-
-function isSidebarFeatureEnabled( feature: SidebarFeature, fallback: boolean ): boolean {
-	const config = getSidebarConfig();
-	if ( ! config ) {
-		return fallback;
-	}
-	return config.enabled ? config.features?.[ feature ] === true : false;
-}
-
-function isAiEditorialReviewEnabled(): boolean {
-	return isSidebarFeatureEnabled( 'aiEditorialReview', false );
-}
-
-function isOptimizeTitleSuggestionEnabled(): boolean {
-	return isSidebarFeatureEnabled( 'optimizeTitleSuggestion', false );
-}
-
-function isBlockTransformationsEnabled(): boolean {
-	return isSidebarFeatureEnabled( 'blockTransformations', true );
-}
-
-function isGenerateFeedbackEnabled(): boolean {
-	return isSidebarFeatureEnabled( 'generateFeedback', false );
-}
 
 function getCurrentEditorPostType(): string | undefined {
 	const postType = ( window as any ).wp?.data?.select?.( 'core/editor' )?.getCurrentPostType?.();

@@ -30,6 +30,7 @@ export * from './emails';
 export * from './geo';
 export * from './github';
 export * from './hosting-update-schedules';
+export * from './jetpack-agency-sites';
 export * from './jetpack-site-collisions';
 export * from './jetpack-user-license';
 export * from './marketplace-search';
