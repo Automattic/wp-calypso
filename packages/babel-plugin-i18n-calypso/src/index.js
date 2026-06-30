@@ -35,7 +35,7 @@
 const { existsSync, mkdirSync, writeFileSync } = require( 'fs' );
 const { relative, sep } = require( 'path' );
 const { po } = require( 'gettext-parser' );
-const { merge, isEmpty } = require( 'lodash' );
+const { merge } = require( 'lodash' );
 
 /**
  * Default output headers if none specified in plugin options.
@@ -339,7 +339,7 @@ module.exports = function () {
 					functions = { ...DEFAULT_FUNCTIONS_ARGUMENTS_ORDER };
 				},
 				exit( path, state ) {
-					if ( isEmpty( strings ) ) {
+					if ( Object.keys( strings ).length === 0 ) {
 						return;
 					}
 
