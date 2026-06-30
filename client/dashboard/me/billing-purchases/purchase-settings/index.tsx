@@ -266,12 +266,12 @@ function ProductLink( { purchase }: { purchase: Purchase } ) {
 
 function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
-	const canBeRenewed =
-		purchase.can_explicit_renew && String( user.ID ) === String( purchase.user_id );
+	const isOwner = String( user.ID ) === String( purchase.user_id );
+	const canBeRenewed = purchase.can_explicit_renew && isOwner;
 	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() );
 	const { recordTracksEvent } = useAnalytics();
 	const menuItems = [
-		canUpgradePurchase( purchase ) && upgradeUrl && (
+		canUpgradePurchase( purchase ) && upgradeUrl && isOwner && (
 			<MenuItem
 				onClick={ () => {
 					recordTracksEvent( 'calypso_purchases_upgrade_plan', {
@@ -313,9 +313,14 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 }
 
 function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
+	const { user } = useAuth();
 	const navigate = useNavigate();
 	const locale = useLocale();
 	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
+
+	if ( String( user.ID ) !== String( purchase.user_id ) ) {
+		return null;
+	}
 
 	// WordAds and non-primary domain warnings are shown inline on the confirmation screen
 	// under purchases/split-cancel-remove (see cancellation-main-content.tsx).
@@ -500,7 +505,11 @@ function canUpgradePurchase( purchase: Purchase ): boolean {
 }
 
 function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
+	const { user } = useAuth();
 	const { recordTracksEvent } = useAnalytics();
+	if ( String( user.ID ) !== String( purchase.user_id ) ) {
+		return null;
+	}
 	if ( ! canUpgradePurchase( purchase ) ) {
 		return null;
 	}
@@ -669,8 +678,12 @@ function ReinstallButton( { purchase }: { purchase: Purchase } ) {
 }
 
 function ChangePlanActionItem( { purchase }: { purchase: Purchase } ) {
+	const { user } = useAuth();
 	const { recordTracksEvent } = useAnalytics();
 
+	if ( String( user.ID ) !== String( purchase.user_id ) ) {
+		return null;
+	}
 	if ( ! shouldShowChangePlan( purchase ) ) {
 		return null;
 	}
@@ -849,6 +862,9 @@ function getFields( {
 					return undefined;
 				} )();
 				if ( purchase.is_auto_renew_enabled && ! purchase.is_rechargeable ) {
+					if ( String( user.ID ) !== String( purchase.user_id ) ) {
+						return null;
+					}
 					return (
 						<div className="purchase-settings__action-item-standalone">
 							<ActionList.ActionItem
@@ -1567,11 +1583,13 @@ export default function PurchaseSettings() {
 							site?.options?.admin_url &&
 							! isCentennial && (
 								<HStack justify="space-between">
-									{ canUpgradePurchase( purchase ) && upgradeUrl && (
-										<Button __next40pxDefaultSize variant="primary" href={ upgradeUrl }>
-											{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
-										</Button>
-									) }
+									{ canUpgradePurchase( purchase ) &&
+										upgradeUrl &&
+										String( user.ID ) === String( purchase.user_id ) && (
+											<Button __next40pxDefaultSize variant="primary" href={ upgradeUrl }>
+												{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
+											</Button>
+										) }
 									{ /* Email plans surface every action in the list below, so the
 									     quick-actions menu would only duplicate them. */ }
 									{ ! isEmailPlanManagementEnabled( purchase ) && (

@@ -72,9 +72,16 @@ function SiteDomains() {
 		actions.some( ( action ) => action.isEligible === undefined || action.isEligible( item ) )
 	);
 
+	const isSiteOwner = user.ID === site.site_owner;
+
 	return (
 		<PageLayout
-			header={ <PageHeader title={ __( 'Domains' ) } actions={ <AddDomainButton /> } /> }
+			header={
+				<PageHeader
+					title={ __( 'Domains' ) }
+					actions={ isSiteOwner ? <AddDomainButton /> : null }
+				/>
+			}
 			notices={
 				<>
 					{ /* Action feedback, not an on-load banner: rendered outside the arbiter. */ }

@@ -17,6 +17,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { check, chevronLeft, lineSolid } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import React, { Fragment, useState } from 'react';
+import { useAuth } from '../../app/auth';
 import { useHelpCenter } from '../../app/help-center';
 import { siteRoute, sitePlansRoute } from '../../app/router/sites';
 import { Card, CardBody } from '../../components/card';
@@ -391,6 +392,7 @@ function PlanCardCTA( {
 	tierRank,
 	currentTierRank,
 	redirectAfterPurchase,
+	isSiteOwner,
 }: {
 	site: Site;
 	sitePlan: SiteContextualPlan;
@@ -398,6 +400,7 @@ function PlanCardCTA( {
 	tierRank: number;
 	currentTierRank: number;
 	redirectAfterPurchase: string;
+	isSiteOwner: boolean;
 } ) {
 	const { setNewMessagingChat } = useHelpCenter();
 	const isCurrentPlan =
@@ -409,6 +412,10 @@ function PlanCardCTA( {
 				{ __( 'Your plan' ) }
 			</Button>
 		);
+	}
+
+	if ( ! isSiteOwner ) {
+		return null;
 	}
 
 	if ( tierRank > currentTierRank ) {
@@ -459,6 +466,7 @@ function PlanCard( {
 	currentTierRank,
 	redirectAfterPurchase,
 	totalPlanCount,
+	isSiteOwner,
 }: {
 	site: Site;
 	sitePlan: SiteContextualPlan;
@@ -468,6 +476,7 @@ function PlanCard( {
 	currentTierRank: number;
 	redirectAfterPurchase: string;
 	totalPlanCount: number;
+	isSiteOwner: boolean;
 } ) {
 	const isCurrentPlan =
 		sitePlan.current_plan === true || ( currentTierRank >= 0 && tierRank === currentTierRank );
@@ -532,6 +541,7 @@ function PlanCard( {
 						tierRank={ tierRank }
 						currentTierRank={ currentTierRank }
 						redirectAfterPurchase={ redirectAfterPurchase }
+						isSiteOwner={ isSiteOwner }
 					/>
 
 					{ sitePlan.plan_card_features && sitePlan.plan_card_features.length > 0 && (
@@ -705,6 +715,8 @@ export default function SitePlans() {
 	const { siteSlug } = siteRoute.useParams();
 	const { redirect_to } = useSearch( { from: sitePlansRoute.fullPath } );
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { user } = useAuth();
+	const isSiteOwner = user.ID === site.site_owner;
 
 	const [ billingInterval, setBillingInterval ] = useState< SubscriptionBillPeriodValue >(
 		SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD
@@ -837,6 +849,7 @@ export default function SitePlans() {
 						currentTierRank={ currentTierRank }
 						redirectAfterPurchase={ redirectAfterPurchase }
 						totalPlanCount={ shownPlans.length }
+						isSiteOwner={ isSiteOwner }
 					/>
 				) ) }
 			</div>
