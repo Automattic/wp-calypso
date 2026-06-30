@@ -1795,11 +1795,10 @@ export const sitePlansRoute = createRoute( {
 );
 
 export const createSitesRoutes = ( config: AppConfig ) => {
-	if ( ! config.supports.sites || ! config.components.sites ) {
+	const sitesComponent = config.components.sites;
+	if ( ! config.supports.sites || ! sitesComponent ) {
 		return [];
 	}
-
-	const sitesComponent = config.components.sites;
 
 	const siteRoutes: AnyRoute[] = [
 		siteOverviewRoute,
