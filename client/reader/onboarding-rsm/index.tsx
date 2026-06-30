@@ -10,10 +10,11 @@ import { Button, Modal } from '@wordpress/components';
 import { chevronLeft, close } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ConfirmDialog, DialogContent, DialogFooter } from 'calypso/components/confirm-dialog';
 import { useSiteSubscriptions as useCachedSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import { useFollowedTags } from 'calypso/reader/data/tags';
+import { useNonSelfSubscriptionsCount } from 'calypso/reader/following/hooks/use-non-self-subscriptions-counts';
 import {
 	READER_ONBOARDING_ELIGIBLE_REGISTRATION_DATE,
 	READER_ONBOARDING_MIN_FOLLOWED_SITES,
@@ -35,7 +36,6 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
-import { useSiteSubscriptions } from '../following/use-site-subscriptions';
 import { getReloadStep } from './get-reload-step';
 import { useRefreshFollowingStreams } from './use-refresh-following-streams';
 import type { CuratedBlog } from 'calypso/reader/onboarding-rsm/curated-blogs';
@@ -65,11 +65,8 @@ const ReaderOnboardingRsm = ( {
 	const refreshFollowingStreams = useRefreshFollowingStreams();
 
 	const preferencesLoaded = useSelector( hasReceivedRemotePreferences );
-	const {
-		isLoading: subscriptionsLoading,
-		hasNonSelfSubscriptions,
-		nonSelfSubscriptionsCount,
-	} = useSiteSubscriptions();
+	const { isLoading: subscriptionsLoading, nonSelfSubscriptionsCount } =
+		useNonSelfSubscriptionsCount();
 
 	const { data: followedTags, isPending: tagsPending } = useFollowedTags();
 	// Used in the `completed` event for an instant in-session site-follow
@@ -196,16 +193,16 @@ const ReaderOnboardingRsm = ( {
 
 	// Snapshot the "no non-self subscriptions" forceShow signal the first time
 	// the subscriptions query loads. Subscribing to a site inside the discover
-	// step (or any later step) would otherwise flip `hasNonSelfSubscriptions` to
-	// true and drop the modal mid-flow.
+	// step (or any later step) would update `nonSelfSubscriptionsCount` to
+	// a non-zero value and drop the modal mid-flow.
 	const [ startingForceShow, setStartingForceShow ] = useState< boolean | null >( null );
 
 	useEffect( () => {
 		if ( startingForceShow !== null || subscriptionsLoading ) {
 			return;
 		}
-		setStartingForceShow( ! hasNonSelfSubscriptions );
-	}, [ startingForceShow, subscriptionsLoading, hasNonSelfSubscriptions ] );
+		setStartingForceShow( nonSelfSubscriptionsCount === 0 );
+	}, [ startingForceShow, subscriptionsLoading, nonSelfSubscriptionsCount ] );
 
 	const forceShow = ! hasHiddenOnboardingThisSession && startingForceShow === true;
 

@@ -21,7 +21,7 @@ import { hasGravatar } from 'calypso/state/gravatar-status/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import hasCompletedReaderProfile from 'calypso/state/reader/onboarding/selectors/has-completed-reader-profile';
-import { useSiteSubscriptions } from '../following/use-site-subscriptions';
+import { useNonSelfSubscriptionsCount } from '../following/hooks/use-non-self-subscriptions-counts';
 import './style.scss';
 
 const ReaderOnboarding = ( {
@@ -37,7 +37,7 @@ const ReaderOnboarding = ( {
 
 	const preferencesLoaded = useSelector( hasReceivedRemotePreferences );
 	const userRegistrationDate: string | null = useSelector( getCurrentUserDate );
-	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
+	const { isLoading, nonSelfSubscriptionsCount } = useNonSelfSubscriptionsCount();
 
 	const { data: followedTags } = useFollowedTags();
 	const { subscriptions } = useCachedSiteSubscriptions();
@@ -69,7 +69,7 @@ const ReaderOnboarding = ( {
 		userRegistrationDate !== null &&
 		new Date( userRegistrationDate ) >= new Date( '2024-10-01T00:00:00Z' );
 
-	const forceShow = ! isLoading && ! hasNonSelfSubscriptions;
+	const forceShow = ! isLoading && nonSelfSubscriptionsCount === 0;
 
 	const shouldShowOnboarding =
 		forceShow || isEnabled( 'reader/force-onboarding' ) || !! meetsEligibility;

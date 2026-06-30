@@ -179,10 +179,9 @@ jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
 	useSiteSubscriptions: jest.fn( () => ( { subscriptions: [] } ) ),
 } ) );
 
-jest.mock( '../../following/use-site-subscriptions', () => ( {
-	useSiteSubscriptions: jest.fn( () => ( {
+jest.mock( 'calypso/reader/following/hooks/use-non-self-subscriptions-counts', () => ( {
+	useNonSelfSubscriptionsCount: jest.fn( () => ( {
 		isLoading: false,
-		hasNonSelfSubscriptions: false,
 		nonSelfSubscriptionsCount: 0,
 	} ) ),
 } ) );
@@ -229,17 +228,18 @@ beforeEach( () => {
 	) as {
 		useSiteSubscriptions: jest.Mock;
 	};
-	const { useSiteSubscriptions } = jest.requireMock( '../../following/use-site-subscriptions' ) as {
-		useSiteSubscriptions: jest.Mock;
+	const { useNonSelfSubscriptionsCount } = jest.requireMock(
+		'calypso/reader/following/hooks/use-non-self-subscriptions-counts'
+	) as {
+		useNonSelfSubscriptionsCount: jest.Mock;
 	};
 	const { getCurrentUserDate } = jest.requireMock( 'calypso/state/current-user/selectors' ) as {
 		getCurrentUserDate: jest.Mock;
 	};
 	useFollowedTags.mockImplementation( () => ( { data: [], isPending: false } ) );
 	useCachedSiteSubscriptions.mockReturnValue( { subscriptions: [] } );
-	useSiteSubscriptions.mockImplementation( () => ( {
+	useNonSelfSubscriptionsCount.mockImplementation( () => ( {
 		isLoading: false,
-		hasNonSelfSubscriptions: false,
 		nonSelfSubscriptionsCount: 0,
 	} ) );
 	getCurrentUserDate.mockReturnValue( '2020-01-01T00:00:00Z' );
@@ -748,14 +748,13 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 	it( 'falls back to nonSelfSubscriptionsCount when the follows query has not hydrated yet', async () => {
 		// Guards the `Math.max( nonSelfSubscriptionsCount, queryCount )` merge:
 		// if the follows query is empty (e.g. slow network, lazy load)
-		// but `useSiteSubscriptions` is already populated, the completion event
-		// should report the TanStack-query count rather than 0.
-		const { useSiteSubscriptions } = jest.requireMock(
-			'../../following/use-site-subscriptions'
-		) as { useSiteSubscriptions: jest.Mock };
-		useSiteSubscriptions.mockImplementation( () => ( {
+		// but the non-self subscriptions count hook is already populated, the
+		// completion event should report that count rather than 0.
+		const { useNonSelfSubscriptionsCount } = jest.requireMock(
+			'calypso/reader/following/hooks/use-non-self-subscriptions-counts'
+		) as { useNonSelfSubscriptionsCount: jest.Mock };
+		useNonSelfSubscriptionsCount.mockImplementation( () => ( {
 			isLoading: false,
-			hasNonSelfSubscriptions: true,
 			nonSelfSubscriptionsCount: 5,
 		} ) );
 		// Follows query intentionally empty — default mock returns [].
@@ -800,21 +799,19 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 	} );
 
 	it( 'does not auto-save completion when the user has enough follows without clicking Finish', async () => {
-		const { useSiteSubscriptions } = jest.requireMock(
-			'../../following/use-site-subscriptions'
-		) as { useSiteSubscriptions: jest.Mock };
+		const { useNonSelfSubscriptionsCount } = jest.requireMock(
+			'calypso/reader/following/hooks/use-non-self-subscriptions-counts'
+		) as { useNonSelfSubscriptionsCount: jest.Mock };
 		const { useFollowedTags } = jest.requireMock( 'calypso/reader/data/tags' ) as {
 			useFollowedTags: jest.Mock;
 		};
 
-		// Counts above both thresholds; rely on forceShow (default mock has
-		// hasNonSelfSubscriptions=false) to surface the welcome step so we can
+		// Counts above both thresholds; rely on forceShow to surface the welcome step so we can
 		// assert that completion is not auto-saved just because the counts
 		// happen to be above the thresholds.
-		useSiteSubscriptions.mockImplementation( () => ( {
+		useNonSelfSubscriptionsCount.mockImplementation( () => ( {
 			isLoading: false,
-			hasNonSelfSubscriptions: false,
-			nonSelfSubscriptionsCount: 4,
+			nonSelfSubscriptionsCount: 0,
 		} ) );
 		useFollowedTags.mockReturnValue( {
 			data: [ { slug: 'a' }, { slug: 'b' }, { slug: 'c' } ],
@@ -847,21 +844,19 @@ describe( 'ReaderOnboardingRsm – eligibility', () => {
 		nonSelfSubscriptionsCount = 0,
 		tags = { data: [] as Array< { slug: string } >, isPending: false },
 		subscriptionsLoading = false,
-		hasNonSelfSubscriptions = true,
 		userRegistrationDate,
 	}: {
 		nonSelfSubscriptionsCount?: number;
 		tags?: { data?: Array< { slug: string } >; isPending?: boolean };
 		subscriptionsLoading?: boolean;
-		hasNonSelfSubscriptions?: boolean;
 		userRegistrationDate?: string | null;
 	} = {} ) => {
 		const { useFollowedTags } = jest.requireMock( 'calypso/reader/data/tags' ) as {
 			useFollowedTags: jest.Mock;
 		};
-		const { useSiteSubscriptions } = jest.requireMock(
-			'../../following/use-site-subscriptions'
-		) as { useSiteSubscriptions: jest.Mock };
+		const { useNonSelfSubscriptionsCount } = jest.requireMock(
+			'calypso/reader/following/hooks/use-non-self-subscriptions-counts'
+		) as { useNonSelfSubscriptionsCount: jest.Mock };
 		const { getCurrentUserDate } = jest.requireMock( 'calypso/state/current-user/selectors' ) as {
 			getCurrentUserDate: jest.Mock;
 		};
@@ -870,16 +865,15 @@ describe( 'ReaderOnboardingRsm – eligibility', () => {
 			data: tags.data ?? [],
 			isPending: tags.isPending ?? false,
 		} ) );
-		useSiteSubscriptions.mockImplementation( () => ( {
+		useNonSelfSubscriptionsCount.mockImplementation( () => ( {
 			isLoading: subscriptionsLoading,
-			hasNonSelfSubscriptions,
 			nonSelfSubscriptionsCount,
 		} ) );
 		if ( userRegistrationDate !== undefined ) {
 			getCurrentUserDate.mockReturnValue( userRegistrationDate );
 		}
 
-		return { useSiteSubscriptions };
+		return { useNonSelfSubscriptionsCount };
 	};
 
 	it( 'renders when starting counts are below both thresholds (0 sites / 0 tags)', async () => {
@@ -920,7 +914,10 @@ describe( 'ReaderOnboardingRsm – eligibility', () => {
 	} );
 
 	it( 'does not render while the followed tags query is still pending', async () => {
-		overrideMocks( { tags: { data: [], isPending: true } } );
+		overrideMocks( {
+			nonSelfSubscriptionsCount: 4,
+			tags: { data: [], isPending: true },
+		} );
 		const onRender = jest.fn();
 
 		renderWithProvider( <ReaderOnboardingRsm onRender={ onRender } /> );
@@ -946,7 +943,7 @@ describe( 'ReaderOnboardingRsm – eligibility', () => {
 	} );
 
 	it( 'keeps the modal open mid-flow even after the user crosses the thresholds', async () => {
-		const { useSiteSubscriptions } = overrideMocks( {
+		const { useNonSelfSubscriptionsCount } = overrideMocks( {
 			nonSelfSubscriptionsCount: 0,
 			tags: { data: [] },
 		} );
@@ -955,9 +952,8 @@ describe( 'ReaderOnboardingRsm – eligibility', () => {
 
 		expect( await screen.findByTestId( 'welcome-modal-content' ) ).toBeVisible();
 
-		useSiteSubscriptions.mockImplementation( () => ( {
+		useNonSelfSubscriptionsCount.mockImplementation( () => ( {
 			isLoading: false,
-			hasNonSelfSubscriptions: true,
 			nonSelfSubscriptionsCount: 10,
 		} ) );
 		rerender( <ReaderOnboardingRsm /> );
@@ -1012,12 +1008,12 @@ describe( 'ReaderOnboardingRsm – eligibility', () => {
 	} );
 } );
 
-describe( 'ReaderOnboardingRsm – forceShow snapshot', () => {
-	const getUseSiteSubscriptionsMock = () => {
-		const { useSiteSubscriptions } = jest.requireMock(
-			'../../following/use-site-subscriptions'
-		) as { useSiteSubscriptions: jest.Mock };
-		return useSiteSubscriptions;
+describe( 'ReaderOnboardingRsm - forceShow snapshot', () => {
+	const getUseNonSelfSubscriptionsCountMock = () => {
+		const { useNonSelfSubscriptionsCount } = jest.requireMock(
+			'calypso/reader/following/hooks/use-non-self-subscriptions-counts'
+		) as { useNonSelfSubscriptionsCount: jest.Mock };
+		return useNonSelfSubscriptionsCount;
 	};
 
 	const getPreferenceMock = () => {
@@ -1029,7 +1025,7 @@ describe( 'ReaderOnboardingRsm – forceShow snapshot', () => {
 
 	// Suppress meetsEligibility entirely so this suite only exercises forceShow.
 	// Tag count >= 3 makes the tag side of meetsEligibility false; the site side
-	// is controlled per-test via the `useSiteSubscriptions` mock's
+	// is controlled per-test via the `useNonSelfSubscriptionsCount` mock's
 	// `nonSelfSubscriptionsCount` (always seeded >= 4 here).
 	const seedAboveEligibilityThresholds = () => {
 		const { useFollowedTags } = jest.requireMock( 'calypso/reader/data/tags' ) as {
@@ -1041,13 +1037,12 @@ describe( 'ReaderOnboardingRsm – forceShow snapshot', () => {
 		} ) );
 	};
 
-	it( 'keeps the checklist visible mid-flow even when hasNonSelfSubscriptions flips to true', async () => {
+	it( 'keeps the checklist visible mid-flow even when nonSelfSubscriptionsCount becomes non-zero', async () => {
 		seedAboveEligibilityThresholds();
-		const useSiteSubscriptions = getUseSiteSubscriptionsMock();
-		useSiteSubscriptions.mockImplementation( () => ( {
+		const useNonSelfSubscriptionsCount = getUseNonSelfSubscriptionsCountMock();
+		useNonSelfSubscriptionsCount.mockImplementation( () => ( {
 			isLoading: false,
-			hasNonSelfSubscriptions: false,
-			nonSelfSubscriptionsCount: 4,
+			nonSelfSubscriptionsCount: 0,
 		} ) );
 
 		const { rerender } = renderWithProvider( <ReaderOnboardingRsm /> );
@@ -1055,9 +1050,8 @@ describe( 'ReaderOnboardingRsm – forceShow snapshot', () => {
 		expect( await screen.findByTestId( 'welcome-modal-content' ) ).toBeVisible();
 
 		// Simulate the user subscribing to a site mid-flow.
-		useSiteSubscriptions.mockImplementation( () => ( {
+		useNonSelfSubscriptionsCount.mockImplementation( () => ( {
 			isLoading: false,
-			hasNonSelfSubscriptions: true,
 			nonSelfSubscriptionsCount: 5,
 		} ) );
 		rerender( <ReaderOnboardingRsm /> );
@@ -1067,11 +1061,10 @@ describe( 'ReaderOnboardingRsm – forceShow snapshot', () => {
 
 	it( 'hides onboarding for the session after the user clicks Finish on the subscribe step', async () => {
 		seedAboveEligibilityThresholds();
-		const useSiteSubscriptions = getUseSiteSubscriptionsMock();
-		useSiteSubscriptions.mockImplementation( () => ( {
+		const useNonSelfSubscriptionsCount = getUseNonSelfSubscriptionsCountMock();
+		useNonSelfSubscriptionsCount.mockImplementation( () => ( {
 			isLoading: false,
-			hasNonSelfSubscriptions: false,
-			nonSelfSubscriptionsCount: 4,
+			nonSelfSubscriptionsCount: 0,
 		} ) );
 
 		// Flip the completion preference to true once the user clicks Finish so
@@ -1100,7 +1093,7 @@ describe( 'ReaderOnboardingRsm – forceShow snapshot', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
 
 		// Modal is closed, and the session hide latch is set — onRender should
-		// report false even though hasNonSelfSubscriptions is still false.
+		// report false even though the non-self subscription count is still zero.
 		await waitFor( () => {
 			expect( onRender ).toHaveBeenLastCalledWith( false );
 		} );
@@ -1217,17 +1210,16 @@ describe( 'ReaderOnboardingRsm – permanent checklist dismiss', () => {
 		const { useFollowedTags } = jest.requireMock( 'calypso/reader/data/tags' ) as {
 			useFollowedTags: jest.Mock;
 		};
-		const { useSiteSubscriptions } = jest.requireMock(
-			'../../following/use-site-subscriptions'
-		) as { useSiteSubscriptions: jest.Mock };
+		const { useNonSelfSubscriptionsCount } = jest.requireMock(
+			'calypso/reader/following/hooks/use-non-self-subscriptions-counts'
+		) as { useNonSelfSubscriptionsCount: jest.Mock };
 
 		useFollowedTags.mockImplementation( () => ( {
 			data: tags.data ?? [],
 			isPending: tags.isPending ?? false,
 		} ) );
-		useSiteSubscriptions.mockImplementation( () => ( {
+		useNonSelfSubscriptionsCount.mockImplementation( () => ( {
 			isLoading: false,
-			hasNonSelfSubscriptions: nonSelfSubscriptionsCount > 0,
 			nonSelfSubscriptionsCount,
 		} ) );
 		getPreferenceMock().mockImplementation( ( _state: unknown, key: string ) => {
