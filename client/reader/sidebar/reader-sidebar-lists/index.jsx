@@ -1,8 +1,11 @@
+import page from '@automattic/calypso-router';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import { connect } from 'react-redux';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderListIcon from 'calypso/reader/components/icons/list-icon';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import ReaderSidebarListsList from './list';
 
 import './style.scss';
@@ -15,12 +18,14 @@ export class ReaderSidebarLists extends Component {
 		onClick: PropTypes.func,
 		currentListOwner: PropTypes.string,
 		currentListSlug: PropTypes.string,
+		recordReaderTracksEvent: PropTypes.func,
 		translate: PropTypes.func,
 	};
 
-	selectMenu = () => {
-		const { onClick } = this.props;
-		onClick();
+	navigateToLists = () => {
+		page( '/reader/lists' );
+
+		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_lists_dropdown_title_clicked' );
 	};
 
 	render() {
@@ -31,7 +36,7 @@ export class ReaderSidebarLists extends Component {
 				<ExpandableSidebarMenu
 					expanded={ isOpen }
 					title={ translate( 'Lists' ) }
-					onClick={ this.selectMenu }
+					onClick={ this.navigateToLists }
 					customIcon={ <ReaderListIcon viewBox="0 0 24 24" /> }
 					disableFlyout
 					className={ path.startsWith( '/reader/list' ) ? 'sidebar__menu--selected' : '' }
@@ -44,4 +49,6 @@ export class ReaderSidebarLists extends Component {
 	}
 }
 
-export default localize( ReaderSidebarLists );
+export default connect( null, {
+	recordReaderTracksEvent,
+} )( localize( ReaderSidebarLists ) );
