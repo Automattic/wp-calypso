@@ -53,7 +53,7 @@ export default function SecurityLegacyContact() {
 								</Text>
 								<ButtonStack justify="flex-start">
 									<RouterLinkButton variant="secondary" to="/me/security/legacy-contact/print">
-										{ __( 'View printable details' ) }
+										{ __( 'View printable copy' ) }
 									</RouterLinkButton>
 									<Button
 										variant="secondary"
