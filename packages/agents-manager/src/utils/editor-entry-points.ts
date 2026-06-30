@@ -33,10 +33,11 @@ function isEditorEntryVisible(): boolean {
 }
 
 /**
- * Whether the editor toolbar Ask AI button should show — only in a dev/internal context.
+ * Whether the editor toolbar Ask AI button should show. The bundle only loads when `is_enabled()`
+ * is true server-side, so editor-entry visibility is the only gate left to check here.
  */
 export function isEditorAiEntryEnabled(): boolean {
-	return isEditorEntryVisible() && !! getAgentsManagerInlineData()?.isDevMode;
+	return isEditorEntryVisible();
 }
 
 /**
