@@ -22,15 +22,10 @@ function LegacyContactDetails( { legacyContactId }: { legacyContactId: number } 
 
 	return (
 		<VStack spacing={ 6 }>
-			<VStack spacing={ 4 }>
-				<Text className="legacy-contact-print__note">
+			<VStack spacing={ 2 }>
+				<Text>
 					{ __(
-						'The printable copy contains the access key your legacy contact will need. We recommend printing it and storing it with your estate planning documents, or saving it securely in a password manager.'
-					) }
-				</Text>
-				<Text className="legacy-contact-print__note">
-					{ __(
-						'Treat the access key like a password and only share it with your legacy contact when you’re ready. We won’t contact them or send them the key on your behalf.'
+						'Keep this information somewhere safe. After your death, your legacy contact can give this key to WordPress.com to request access to your account.'
 					) }
 				</Text>
 			</VStack>
@@ -47,9 +42,6 @@ function LegacyContactDetails( { legacyContactId }: { legacyContactId: number } 
 					{ __( 'Access key' ) }
 				</Text>
 				<div className="legacy-contact-print__key">{ contact.access_key }</div>
-				<Text variant="muted">
-					{ __( 'Treat your access key like a password and keep it private.' ) }
-				</Text>
 			</VStack>
 
 			<ButtonStack justify="flex-start" className="legacy-contact-print__actions">

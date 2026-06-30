@@ -41,6 +41,16 @@ export default function SecurityLegacyContact() {
 										contactEmail: <strong>{ contact.contact_email }</strong>,
 									} ) }
 								</Text>
+								<Text>
+									{ __(
+										'The printable copy contains the access key your legacy contact will need. We recommend printing it and storing it with your estate planning documents, or saving it securely in a password manager.'
+									) }
+								</Text>
+								<Text>
+									{ __(
+										'Treat the access key like a password and only share it with your legacy contact when you’re ready. We won’t contact them or send them the key on your behalf.'
+									) }
+								</Text>
 								<ButtonStack justify="flex-start">
 									<RouterLinkButton variant="secondary" to="/me/security/legacy-contact/print">
 										{ __( 'View printable details' ) }

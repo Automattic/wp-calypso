@@ -40,12 +40,6 @@
 			display: none;
 		}
 
-		// Hide the on-screen guidance; it's instructions for the account owner,
-		// not part of the printed record.
-		.legacy-contact-print__note {
-			display: none;
-		}
-
 		// Hide the breadcrumbs; keep the page title as the document heading.
 		.dashboard-section-header__prefix {
 			display: none;
