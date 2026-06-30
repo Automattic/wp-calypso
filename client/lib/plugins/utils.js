@@ -271,7 +271,7 @@ export function normalizePluginsList( pluginsList ) {
 	if ( ! pluginsList ) {
 		return [];
 	}
-	return pluginsList.map( ( pluginData ) => normalizePluginData( pluginData ) );
+	return Object.values( pluginsList ).map( ( pluginData ) => normalizePluginData( pluginData ) );
 }
 
 /**
