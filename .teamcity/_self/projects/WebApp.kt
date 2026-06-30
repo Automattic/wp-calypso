@@ -3,6 +3,7 @@ package _self.projects
 import Settings
 import _self.bashNodeScript
 import _self.lib.customBuildType.E2EBuildType
+import _self.lib.utils.excludeMergeQueueBranches
 import _self.lib.utils.mergeTrunk
 import _self.lib.utils.passMergeQueueBranchesEarly
 import _self.lib.utils.skipOnMergeQueueBranch
@@ -881,7 +882,7 @@ object Translate : BuildType({
 			branchFilter = """
 				+:*
 				-:pull*
-			""".trimIndent()
+			""".excludeMergeQueueBranches()
 		}
 	}
 
@@ -948,7 +949,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 					+:*
 					-:pull*
 					-:trunk
-				""".trimIndent()
+				""".excludeMergeQueueBranches()
 				triggerRules = """
 					-:**.md
 				""".trimIndent()
@@ -999,7 +1000,7 @@ object PlaywrightTestPRMatrix : BuildType({
 				+:*
 				-:pull*
 				-:trunk
-			""".trimIndent()
+			""".excludeMergeQueueBranches()
 			triggerRules = """
 				-:**.md
 			""".trimIndent()
@@ -1087,7 +1088,7 @@ object PlaywrightTestDashboardPRMatrix : BuildType({
 				+:*
 				-:pull*
 				-:trunk
-			""".trimIndent()
+			""".excludeMergeQueueBranches()
 			triggerRules = """
 				-:**.md
 				+:client/dashboard/**
@@ -1141,7 +1142,7 @@ object PlaywrightTestA4APRMatrix : BuildType({
 				+:*
 				-:pull*
 				-:trunk
-			""".trimIndent()
+			""".excludeMergeQueueBranches()
 			triggerRules = """
 				-:**.md
 				+:client/a8c-for-agencies/**
