@@ -545,15 +545,17 @@ const DomainSearchStep: StepType< {
 
 	const getBackButton = () => {
 		if ( isAIBuilderFlow( flow ) ) {
-			// The paid onboarding reaches the domain step before a site exists, so there is
-			// nothing to "keep editing" — fall back to the standard back navigation.
-			if ( ! site?.URL ) {
-				return { goBack: navigation.goBack };
+			// Once a site exists (the legacy flow reaches this step after creating one), offer to jump
+			// back into the Big Sky editor. The paid onboarding reaches the domain step before a site
+			// exists, so it falls back to standard back navigation.
+			if ( site?.URL ) {
+				return {
+					backUrl: `${ site.URL }/wp-admin/site-editor.php?canvas=edit&referrer=${ flow }&p=%2F&ai-step=edit`,
+					backLabelText: __( 'Keep Editing' ),
+				};
 			}
-			return {
-				backUrl: `${ site.URL }/wp-admin/site-editor.php?canvas=edit&referrer=${ flow }&p=%2F&ai-step=edit`,
-				backLabelText: __( 'Keep Editing' ),
-			};
+
+			return { goBack: navigation.goBack };
 		}
 
 		if ( isCopySiteFlow( flow ) ) {
