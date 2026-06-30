@@ -1540,6 +1540,20 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_seo_title' );
 		} );
 
+		it( 'returns an agentMessage envelope with an Undo checkpoint for a seo-description-picker call', async () => {
+			const descriptions = [ { description: 'An SEO description', explanation: 'a' } ];
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'seo-description-picker',
+				props: { descriptions },
+				toolCallId: 'call_seo_desc',
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.type ).toBe( 'seo-description-picker' );
+			expect( parsed.data.props ).toEqual( { descriptions } );
+			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_seo_desc' );
+		} );
+
 		it( 'returns an agentMessage envelope with an Undo checkpoint for an image-alt-text-picker call', async () => {
 			const images = [ { clientId: 'img1', url: 'u', currentAlt: '', alt: 'A photo' } ];
 			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {

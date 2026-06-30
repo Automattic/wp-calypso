@@ -2,7 +2,7 @@
  * SeoDescriptionPicker — renders SEO meta-description suggestions in the chat sidebar.
  *
  * Displayed when the orchestrator renders a show-component response with
- * data.type set to 'seo-description-picker' (from the wpcom/seo-description
+ * data.type set to 'seo-description-picker' (from the jetpack-ai/seo-description
  * ability). Clicking a card applies it to the post's SEO meta description
  * (Jetpack post meta `advanced_seo_description`). Thin wrapper over the shared
  * SuggestionPicker.
