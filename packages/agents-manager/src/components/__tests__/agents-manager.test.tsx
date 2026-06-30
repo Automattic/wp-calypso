@@ -63,6 +63,7 @@ describe( 'AgentsManager', () => {
 				site={ mockSite }
 				currentRoute="/sites/fulltest.com"
 				currentSiteId={ 999 }
+				zendeskTicketProductFieldValue="woocommerce_core_product"
 			/>
 		);
 
@@ -73,6 +74,7 @@ describe( 'AgentsManager', () => {
 				site: mockSite,
 				currentRoute: '/sites/fulltest.com',
 				siteKey: '999',
+				zendeskTicketProductFieldValue: 'woocommerce_core_product',
 			} )
 		);
 	} );

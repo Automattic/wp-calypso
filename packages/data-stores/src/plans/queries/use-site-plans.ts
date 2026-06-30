@@ -1,4 +1,4 @@
-import { calculateMonthlyPriceForPlan } from '@automattic/calypso-products';
+import { calculateMonthlyPriceForPlan, getPlan } from '@automattic/calypso-products';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import wpcomRequest from '../../wpcom-request';
 import unpackCostOverrides from './lib/unpack-cost-overrides';
@@ -10,7 +10,7 @@ interface SitePlansIndex {
 	[ planSlug: string ]: SitePlan;
 }
 interface PricedAPISitePlansIndex {
-	[ productId: number ]: PricedAPISitePlan;
+	[ productId: string ]: PricedAPISitePlan;
 }
 
 interface Props {
@@ -30,20 +30,27 @@ interface Props {
 function useSitePlans( { coupon, siteId }: Props ): UseQueryResult< SitePlansIndex > {
 	const queryKeys = useQueryKeysFactory();
 	const params = new URLSearchParams();
-	coupon && params.append( 'coupon_code', coupon );
+	if ( coupon ) {
+		params.append( 'coupon_code', coupon );
+	}
 
 	return useQuery( {
 		queryKey: queryKeys.sitePlans( coupon, siteId ),
-		queryFn: async (): Promise< SitePlansIndex > => {
-			const data: PricedAPISitePlansIndex = await wpcomRequest( {
+		queryFn: async (): Promise< PricedAPISitePlansIndex > =>
+			wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId as string ) }/plans`,
 				apiVersion: '1.3',
 				query: params.toString(),
-			} );
+			} ),
+		select: ( data ): SitePlansIndex => {
+			// Filter out unknown products in case the API returns products not hardcoded in calypso-products.
+			const knownProductIds = Object.keys( data ).filter( ( productId ) =>
+				getPlan( data[ productId ].product_slug )
+			);
 
 			return Object.fromEntries(
-				Object.keys( data ).map( ( productId ) => {
-					const plan = data[ Number( productId ) ];
+				knownProductIds.map( ( productId ) => {
+					const plan = data[ productId ];
 					const originalPriceFull = plan.raw_discount_integer
 						? plan.raw_price_integer + plan.raw_discount_integer
 						: plan.raw_price_integer;

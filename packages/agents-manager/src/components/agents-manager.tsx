@@ -41,9 +41,19 @@ export interface AgentsManagerProps {
 	handleClose?: () => void;
 	/** The hook for handling image uploads. */
 	useImageUpload?: ImageUploadHook;
+	/** Zendesk conversation tags to apply when a new support conversation is created. */
+	zendeskConversationTags?: string[];
+	/** Index selecting a dedicated Smooch integration for new support conversations. */
+	zendeskSmoochIntegrationKey?: string;
+	/** Zendesk Product ticket-field value to apply to new support conversations. */
+	zendeskTicketProductFieldValue?: string;
 }
 
 const queryClient = new QueryClient();
+
+// Stable empty-array reference so the default prop doesn't change identity on
+// every render and retrigger downstream conversation effects.
+const EMPTY_ARRAY: string[] = [];
 
 export default function AgentsManager( {
 	sectionName,
@@ -53,6 +63,9 @@ export default function AgentsManager( {
 	currentSiteId,
 	agentId,
 	useImageUpload,
+	zendeskConversationTags = EMPTY_ARRAY,
+	zendeskSmoochIntegrationKey,
+	zendeskTicketProductFieldValue,
 }: AgentsManagerProps ): JSX.Element | null {
 	// Wait for the store to load before rendering PersistentRouter
 	// This ensures router history is restored from persisted state
@@ -71,7 +84,16 @@ export default function AgentsManager( {
 		<QueryClientProvider client={ queryClient }>
 			<PersistentRouter siteKey={ siteKey }>
 				<AgentsManagerContextProvider
-					value={ { sectionName, currentUser, site, siteKey, currentRoute } }
+					value={ {
+						sectionName,
+						currentUser,
+						site,
+						siteKey,
+						currentRoute,
+						zendeskConversationTags,
+						zendeskSmoochIntegrationKey,
+						zendeskTicketProductFieldValue,
+					} }
 				>
 					<AgentSetup agentId={ agentId } useImageUpload={ useImageUpload } />
 				</AgentsManagerContextProvider>

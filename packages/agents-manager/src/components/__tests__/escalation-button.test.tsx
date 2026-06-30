@@ -2,13 +2,24 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { MouseEventHandler, ReactNode } from 'react';
 import type { ZendeskConversation } from '../../types';
 
 const mockGetActiveSessionId = jest.fn();
+const mockLoadAllMessagesFromServer = jest.fn();
 const mockNavigate = jest.fn();
 const mockUseGetZendeskConversations = jest.fn();
+
+jest.mock(
+	'@automattic/agenttic-client',
+	() => ( {
+		createOdieBotId: ( agentId: string ) => `odie-${ agentId }`,
+		isOdieBotId: () => false,
+		loadAllMessagesFromServer: ( ...args: unknown[] ) => mockLoadAllMessagesFromServer( ...args ),
+	} ),
+	{ virtual: true }
+);
 
 jest.mock( '@automattic/components', () => ( {
 	SummaryButton: ( {
@@ -42,7 +53,13 @@ jest.mock( 'react-router-dom', () => ( {
 
 jest.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: () => ( {
+		agentConfig: {
+			agentId: 'woo-workflow-orchestrator',
+			agentUrl: 'https://public-api.wordpress.com/wpcom/v2/ai/agent',
+			sessionId: 'ai-chat-123',
+		},
 		getActiveSessionId: mockGetActiveSessionId,
+		zendeskSmoochIntegrationKey: 'woo',
 	} ),
 } ) );
 
@@ -69,6 +86,12 @@ describe( 'EscalationButton', () => {
 			conversations: [],
 			isLoading: false,
 		} );
+		mockLoadAllMessagesFromServer.mockResolvedValue( {
+			chatId: 5587242,
+			messages: [],
+			pagination: {},
+			sessionId: 'ai-chat-123',
+		} );
 	} );
 
 	it( 'continues an existing Zendesk conversation for the active AI chat', () => {
@@ -89,7 +112,7 @@ describe( 'EscalationButton', () => {
 		} );
 	} );
 
-	it( 'starts a new Zendesk conversation when no active AI chat match exists', () => {
+	it( 'starts a new Zendesk conversation when no active AI chat match exists', async () => {
 		mockUseGetZendeskConversations.mockReturnValue( {
 			conversations: [ createConversation( 'conversation-1', 'other-ai-chat' ) ],
 			isLoading: false,
@@ -102,9 +125,42 @@ describe( 'EscalationButton', () => {
 
 		fireEvent.click( screen.getByRole( 'button' ) );
 
-		expect( mockNavigate ).toHaveBeenCalledWith( '/zendesk', {
-			state: { startedFromChatId: 'ai-chat-123', startedFromMessageId: 'message-1' },
-		} );
+		await waitFor( () =>
+			expect( mockNavigate ).toHaveBeenCalledWith( '/zendesk', {
+				state: {
+					startedFromChatSessionId: 'ai-chat-123',
+					startedFromAiChatId: 5587242,
+					startedFromMessageId: 'message-1',
+				},
+			} )
+		);
+
+		expect( mockLoadAllMessagesFromServer ).toHaveBeenCalledWith(
+			'ai-chat-123',
+			expect.objectContaining( {
+				apiBaseUrl: 'https://public-api.wordpress.com',
+				botId: expect.any( String ),
+			} ),
+			1,
+			true
+		);
+	} );
+
+	it( 'still starts a new Zendesk conversation when the numeric AI chat id cannot be loaded', async () => {
+		mockLoadAllMessagesFromServer.mockRejectedValueOnce( new Error( 'missing chat' ) );
+
+		render( <EscalationButton messageId="message-1" /> );
+
+		fireEvent.click( screen.getByRole( 'button' ) );
+
+		await waitFor( () =>
+			expect( mockNavigate ).toHaveBeenCalledWith( '/zendesk', {
+				state: {
+					startedFromChatSessionId: 'ai-chat-123',
+					startedFromMessageId: 'message-1',
+				},
+			} )
+		);
 	} );
 
 	it( 'disables the button while Zendesk conversations are loading', () => {
