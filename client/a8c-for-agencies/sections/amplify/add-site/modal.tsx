@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import {
 	Button,
 	__experimentalSpacer as Spacer,
@@ -6,6 +7,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useCallback, useState } from 'react';
 import A4AModal from 'calypso/a8c-for-agencies/components/a4a-modal';
+import { A4A_AMPLIFY_REPORTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useStartAmplifyAnalysis from 'calypso/a8c-for-agencies/data/amplify/use-start-amplify-analysis';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -41,6 +43,10 @@ export default function AmplifyAddSiteModal( { onClose }: { onClose: () => void 
 		},
 	} );
 
+	const handleViewReports = () => {
+		page.redirect( A4A_AMPLIFY_REPORTS_LINK );
+	};
+
 	const handleSubmit = () => {
 		if ( ! targetUrl || ! mode ) {
 			return;
@@ -57,7 +63,7 @@ export default function AmplifyAddSiteModal( { onClose }: { onClose: () => void 
 				onClose={ onClose }
 				showCloseButton={ false }
 				extraActions={
-					<Button variant="primary" onClick={ onClose }>
+					<Button variant="primary" onClick={ handleViewReports }>
 						{ __( 'View reports' ) }
 					</Button>
 				}
