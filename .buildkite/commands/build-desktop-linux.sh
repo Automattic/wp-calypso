@@ -11,7 +11,7 @@ export NODE_OPTIONS=--max-old-space-size=5120
 # Playwright and Electron use HOME for caches; keep it writable under the propagated UID.
 export HOME=/tmp/buildkite-home
 
-if [[ "${PR_DEBUG_RELEASE:-}" == "true" || "${BUILDKITE_TAG:-}" == desktop-v* || "${BUILDKITE_BRANCH:-}" == ainfra-2274-* ]]; then
+if [[ "${BUILDKITE_TAG:-}" == desktop-v* || "${BUILDKITE_BRANCH:-}" == ainfra-2274-* ]]; then
 	export RELEASE_BUILD=true
 	unset ELECTRON_BUILDER_ARGS
 else

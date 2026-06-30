@@ -8,7 +8,7 @@ export SKIP_TSC=true
 export PLAYWRIGHT_SKIP_DOWNLOAD=true
 export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 
-if [[ "${PR_DEBUG_RELEASE:-}" == "true" || "${BUILDKITE_TAG:-}" == desktop-v* || "${BUILDKITE_BRANCH:-}" == ainfra-2274-* ]]; then
+if [[ "${BUILDKITE_TAG:-}" == desktop-v* || "${BUILDKITE_BRANCH:-}" == ainfra-2274-* ]]; then
 	export RELEASE_BUILD=true
 else
 	export RELEASE_BUILD=false

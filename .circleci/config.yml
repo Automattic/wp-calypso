@@ -182,9 +182,6 @@ jobs:
       CONFIG_ENV: release
       PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
       SKIP_TSC: 'true'
-      # If, for testing purposes, you want to generate all artifacts in the CI of a PR, uncomment the following line,
-      # and push a commit to your branch. Make sure to remove the commit before merging to trunk!
-      #PR_DEBUG_RELEASE: 'true'
     steps:
       - checkout
       - attach_workspace:
@@ -192,12 +189,6 @@ jobs:
       - run:
           name: Set environment variables
           command: |
-            if [[ "$PR_DEBUG_RELEASE" == "true" ]]; then
-              echo "export RELEASE_BUILD=true" >> "$BASH_ENV"
-              echo "export CSC_FOR_PULL_REQUEST=true" >> "$BASH_ENV"
-              source "$BASH_ENV"
-            fi
-
             if [[ $CIRCLE_TAG == desktop-v* ]]; then
               echo "export RELEASE_BUILD=true" >> "$BASH_ENV"
               source "$BASH_ENV"
@@ -281,9 +272,6 @@ jobs:
       NODE_OPTIONS: --max-old-space-size=5120
       CONFIG_ENV: release
       PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
-      # If, for testing purposes, you want to generate all artifacts in the CI of a PR, uncomment the following line,
-      # and push a commit to your branch. Make sure to remove the commit before merging to trunk!
-      #PR_DEBUG_RELEASE: 'true'
     steps:
       - checkout
       - attach_workspace:
@@ -291,12 +279,6 @@ jobs:
       - run:
           name: Set environment variables
           command: |
-            if [[ "$PR_DEBUG_RELEASE" == "true" ]]; then
-              echo "export RELEASE_BUILD=true" >> "$BASH_ENV"
-              echo "export CSC_FOR_PULL_REQUEST=true" >> "$BASH_ENV"
-              source "$BASH_ENV"
-            fi
-
             if [[ $CIRCLE_TAG == desktop-v* ]]; then
               echo "export RELEASE_BUILD=true" >> "$BASH_ENV"
               source "$BASH_ENV"
@@ -371,9 +353,6 @@ jobs:
     environment:
       CONFIG_ENV: release
       PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
-      # If, for testing purposes, you want to generate all artifacts in the CI of a PR, uncomment the following line,
-      # and push a commit to your branch. Make sure to remove the commit before merging to trunk!
-      #PR_DEBUG_RELEASE: 'true'
     steps:
       - checkout
       - attach_workspace:
@@ -444,7 +423,7 @@ jobs:
       - run:
           name: Build NSIS
           command: |
-            If ( $env:CIRCLE_TAG -or $env:PR_DEBUG_RELEASE ) { $env:RELEASE_BUILD='true' }
+            If ( $env:CIRCLE_TAG ) { $env:RELEASE_BUILD='true' }
 
             # If this is not a release build, only build the executable required for end-to-end testing.
             If ( -Not $env:RELEASE_BUILD ) {
