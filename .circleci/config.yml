@@ -501,7 +501,7 @@ jobs:
             ./desktop/bin/make-changelog.sh > desktop/CHANGELOG.md
 
             ghr \
-              --token "${GITHUB_TOKEN}" \
+              --token "${WP_DESKTOP_SECRET}" \
               --username "${CIRCLE_PROJECT_USERNAME}" \
               --repository "wp-desktop" \
               --commitish "trunk" \
