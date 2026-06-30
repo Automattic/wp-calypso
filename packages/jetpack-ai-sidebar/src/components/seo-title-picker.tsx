@@ -60,6 +60,7 @@ export default function SeoTitlePicker( { titles, onComplete }: SeoTitlePickerPr
 			intro={ __( 'Choose an SEO title for your post:', 'jetpack' ) }
 			options={ titles.map( ( option ) => option.title ) }
 			onApply={ handleApply }
+			appliedMessage={ __( 'SEO title updated.', 'jetpack' ) }
 		/>
 	);
 }

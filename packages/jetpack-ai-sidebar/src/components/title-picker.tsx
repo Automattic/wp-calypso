@@ -51,6 +51,7 @@ export default function TitlePicker( { titles, onComplete }: TitlePickerProps ) 
 			intro={ __( 'Choose a title for your post:', 'jetpack' ) }
 			options={ titles.map( ( option ) => option.title ) }
 			onApply={ handleApply }
+			appliedMessage={ __( 'Title updated.', 'jetpack' ) }
 		/>
 	);
 }

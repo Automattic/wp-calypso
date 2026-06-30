@@ -34,4 +34,18 @@ describe( 'SuggestionPicker', () => {
 		expect( first ).toHaveAttribute( 'aria-pressed', 'true' );
 		expect( second ).toHaveAttribute( 'aria-pressed', 'false' );
 	} );
+
+	it( 'shows the inline confirmation only after a value is applied', () => {
+		render(
+			<SuggestionPicker
+				intro="Pick one:"
+				options={ options }
+				onApply={ jest.fn() }
+				appliedMessage="SEO title updated."
+			/>
+		);
+		expect( screen.queryByText( 'SEO title updated.' ) ).not.toBeInTheDocument();
+		fireEvent.click( screen.getByText( 'First option' ) );
+		expect( screen.getByText( 'SEO title updated.' ) ).toBeInTheDocument();
+	} );
 } );
