@@ -1,5 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Badge } from '@automattic/components';
 import { BigSkyLogo } from '@automattic/components/src/logos/big-sky-logo';
 import { brush, chartBar, pages, tool } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -57,12 +56,8 @@ const useLearnMenuItems = ( path: string ) => {
 							icon: <BigSkyLogo.CentralLogo heartless size={ 24 } />,
 							path: A4A_AI_MCP_LINK,
 							link: A4A_AI_MCP_LINK,
-							title: (
-								<div className="sidebar-menu-item__title-with-badge">
-									<span>{ translate( 'AI and MCP' ) }</span>
-									<Badge type="info">{ translate( 'Beta' ) }</Badge>
-								</div>
-							),
+							title: translate( 'AI and MCP' ),
+							badge: translate( 'Beta' ),
 							trackEventProps: {
 								menu_item: 'Automattic for Agencies / Resources and tools / AI and MCP',
 							},

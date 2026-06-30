@@ -1,5 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Badge } from '@automattic/components';
 import {
 	category,
 	currencyDollar,
@@ -155,12 +154,8 @@ const useMainMenuItems = ( path: string ) => {
 				icon: chartBar,
 				path: A4A_REPORTS_LINK,
 				link: A4A_REPORTS_LINK,
-				title: (
-					<div className="sidebar-menu-item__title-with-badge">
-						<span>{ translate( 'Reports' ) }</span>
-						<Badge type="info">{ translate( 'Beta' ) }</Badge>
-					</div>
-				),
+				title: translate( 'Reports' ),
+				badge: translate( 'Beta' ),
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / Reports',
 				},

@@ -1,3 +1,4 @@
+import { Badge } from '@automattic/components';
 import {
 	__experimentalNavigatorButton as NavigatorButton,
 	__experimentalItem as Item,
@@ -18,6 +19,7 @@ interface Props {
 	path: string;
 	link: string;
 	title: TranslateResult;
+	badge?: string;
 	onClickMenuItem: ( path: string ) => void;
 	withChevron?: boolean;
 	isExternalLink?: boolean;
@@ -32,6 +34,7 @@ export const SidebarNavigatorMenuItem = ( {
 	path,
 	link,
 	title,
+	badge,
 	onClickMenuItem,
 	withChevron = false,
 	isExternalLink = false,
@@ -74,7 +77,9 @@ export const SidebarNavigatorMenuItem = ( {
 	return (
 		<li>
 			<NavigatorButton as={ SidebarItem } path={ path }>
-				{ title }
+				<div className="sidebar-menu-item__title-with-badge">
+					{ title } { badge && <Badge type="info">{ badge }</Badge> }
+				</div>
 			</NavigatorButton>
 		</li>
 	);
