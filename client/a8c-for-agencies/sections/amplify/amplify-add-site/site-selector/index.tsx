@@ -1,5 +1,6 @@
 import {
 	ComboboxControl,
+	Disabled,
 	TextControl,
 	__experimentalText as Text,
 	__experimentalToggleGroupControl as ToggleGroupControl,
@@ -92,17 +93,18 @@ export default function AmplifySiteSelector( { onChange, disabled }: Props ) {
 			</ToggleGroupControl>
 
 			{ source === 'site' ? (
-				<ComboboxControl
-					__next40pxDefaultSize
-					__nextHasNoMarginBottom
-					label={ __( 'Pick a connected site' ) }
-					hideLabelFromVision
-					value={ selectedSiteUrl }
-					options={ options }
-					onChange={ handleSiteChange }
-					placeholder={ isLoading ? __( 'Loading sites…' ) : __( 'Choose a site' ) }
-					disabled={ disabled }
-				/>
+				<Disabled isDisabled={ disabled }>
+					<ComboboxControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom
+						label={ __( 'Pick a connected site' ) }
+						hideLabelFromVision
+						value={ selectedSiteUrl }
+						options={ options }
+						onChange={ handleSiteChange }
+						placeholder={ isLoading ? __( 'Loading sites…' ) : __( 'Choose a site' ) }
+					/>
+				</Disabled>
 			) : (
 				<TextControl
 					__next40pxDefaultSize
