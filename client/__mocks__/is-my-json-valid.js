@@ -1,5 +1,6 @@
+import { isEmpty } from '@automattic/js-utils';
 import imjv from 'is-my-json-valid';
-import { get, isEmpty } from 'lodash';
+import { get } from 'lodash';
 import jsonSchemaDraft04 from './lib/json-schema-draft-04.json';
 
 const validateSchema = imjv( jsonSchemaDraft04, { verbose: true, greedy: true } );

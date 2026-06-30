@@ -7,9 +7,9 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Card, CompactCard, ProgressBar, Gridicon, Spinner } from '@automattic/components';
-import { omit } from '@automattic/js-utils';
+import { omit, isEmpty } from '@automattic/js-utils';
 import { getLocaleSlug, localize } from 'i18n-calypso';
-import { get, isEmpty } from 'lodash';
+import { get } from 'lodash';
 import moment from 'moment';
 import { Component } from 'react';
 import { connect } from 'react-redux';

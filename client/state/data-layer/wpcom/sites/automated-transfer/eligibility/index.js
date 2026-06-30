@@ -1,4 +1,5 @@
-import { get, isEmpty } from 'lodash';
+import { isEmpty } from '@automattic/js-utils';
+import { get } from 'lodash';
 import { AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST } from 'calypso/state/action-types';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { updateEligibility } from 'calypso/state/automated-transfer/actions';

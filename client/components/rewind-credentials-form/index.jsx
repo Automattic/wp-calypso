@@ -2,9 +2,10 @@
  * External dependendies
  */
 import { Button, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
+import { isEmpty } from '@automattic/js-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { get, isEmpty } from 'lodash';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';

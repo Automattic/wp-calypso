@@ -2,12 +2,13 @@
 
 import { siteByIdQuery, stagingSiteSyncStateQuery } from '@automattic/api-queries';
 import { WPCOM_FEATURES_FULL_ACTIVITY_LOG } from '@automattic/calypso-products';
+import { isEmpty } from '@automattic/js-utils';
 import { isMobile } from '@automattic/viewport';
 import { useQuery } from '@tanstack/react-query';
 import { Page } from '@wordpress/admin-ui';
 import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { get, isEmpty } from 'lodash';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment, createRef } from 'react';
 import { connect, useSelector } from 'react-redux';

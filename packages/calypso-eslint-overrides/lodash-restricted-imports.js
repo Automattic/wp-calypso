@@ -20,6 +20,7 @@
  */
 
 const JS_UTILS_NAMES = [
+	'isEmpty',
 	'keyBy',
 	'shuffle',
 	'uniqBy',

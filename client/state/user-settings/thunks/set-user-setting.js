@@ -1,5 +1,6 @@
+import { isEmpty } from '@automattic/js-utils';
 import debugFactory from 'debug';
-import { get, isEmpty } from 'lodash';
+import { get } from 'lodash';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import {
 	removeUnsavedUserSetting,

@@ -5,6 +5,7 @@ export { default as defaults } from './defaults';
 export { default as escapeRegExp } from './escape-reg-exp';
 export { default as flow } from './flow';
 export { default as groupBy } from './group-by';
+export { default as isEmpty } from './is-empty';
 export { default as isError } from './is-error';
 export { default as kebabCase } from './kebab-case';
 export { default as keyBy } from './key-by';

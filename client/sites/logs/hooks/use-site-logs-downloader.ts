@@ -1,5 +1,6 @@
+import { isEmpty } from '@automattic/js-utils';
 import { useTranslate } from 'i18n-calypso';
-import { get, isEmpty } from 'lodash';
+import { get } from 'lodash';
 import { useReducer } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { FilterType, LogType } from 'calypso/data/hosting/use-site-logs-query';
