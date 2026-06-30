@@ -29,8 +29,8 @@ export interface AmplifyReportRow {
 	failureReason?: string;
 }
 
-// Pure so it stays testable in isolation from react-query. Jobs come first so a
-// freshly-submitted run reads at the top before the table's timestamp sort runs.
+// Pure so it stays testable in isolation from react-query. The returned order
+// doesn't matter for display — the table sorts every row by timestamp.
 export function mergeAmplifyRows(
 	reports: AmplifyReport[] = [],
 	jobs: AmplifyJob[] = []
