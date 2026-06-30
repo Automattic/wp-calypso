@@ -2,17 +2,22 @@
 
 ## Single-notice invariant
 
-**At most one notice (banner) is visible at the top of any `/sites/*` page.** All top-of-page notices MUST be rendered through `<SitesNoticeArbiter>` (`client/dashboard/sites/notice-arbiter.tsx`) inside the `notices` prop of `<PageLayout>`. Never render a banner as a content child of `<PageLayout>`.
+**At most one *on-load* notice (banner) is visible at the top of any `/sites/*` page.** All on-load notices — banners whose eligibility is settled when the page mounts — MUST be rendered through `<SitesNoticeArbiter>` (`client/dashboard/sites/notice-arbiter.tsx`) inside the `notices` prop of `<PageLayout>`. Never render a banner as a content child of `<PageLayout>`.
+
+**Action-feedback notices are a different category and MUST NOT be arbiter children.** A notice that appears in response to a user action mid-session (progress of a job the user just started, an error caused by their input) may appear, disappear, and reappear — that breaks the arbiter's on-mount latch (its disappearance would summon a shared engagement banner). Render these directly in the `notices` prop as a sibling of the arbiter, with the visibility condition at the call site. They may stack with the arbiter's banner; if the user causes several at once, showing several is fine. Place them above the arbiter.
 
 ### How it works
 
 ```tsx
 <PageLayout
 	notices={
-		<SitesNoticeArbiter>
-			{ isUrgent && <UrgentNotice /> }
-			{ isRelevant && <RelevantNotice /> }
-		</SitesNoticeArbiter>
+		<>
+			{ jobIsRunning && <JobProgressNotice /> /* action feedback: outside the arbiter */ }
+			<SitesNoticeArbiter>
+				{ isUrgent && <UrgentNotice /> }
+				{ isRelevant && <RelevantNotice /> }
+			</SitesNoticeArbiter>
+		</>
 	}
 />
 ```
@@ -29,10 +34,11 @@
 
 ### Adding a new notice
 
-1. Put the visibility condition in a hook or at the call site — not inside the component's render.
-2. Add it as a child of `<SitesNoticeArbiter>` in the page's `notices` prop, positioned by priority relative to the page's other candidates.
-3. Ensure the data the condition reads is prefetched in the page's route loader.
-4. If the notice should appear on *many* pages, add it to the arbiter's shared candidates instead and place it in the shared priority order.
+1. Decide the category first: is eligibility settled on page load (arbiter candidate), or does it appear in response to a user action mid-session (action feedback — render it as a sibling of the arbiter and stop here)?
+2. Put the visibility condition in a hook or at the call site — not inside the component's render.
+3. Add it as a child of `<SitesNoticeArbiter>` in the page's `notices` prop, positioned by priority relative to the page's other candidates.
+4. Ensure the data the condition reads is prefetched in the page's route loader.
+5. If the notice should appear on *many* pages, add it to the arbiter's shared candidates instead and place it in the shared priority order.
 
 ### Exceptions
 
@@ -42,5 +48,6 @@
 ### Reference implementations
 
 - `client/dashboard/sites/overview/index.tsx` — `InaccessibleJetpackNotice` vs `StorageWarningBanner`
-- `client/dashboard/sites/domains/index.tsx` — bulk update progress vs `PendingPrimaryDomainNotice` vs the redirect warning, with eligibility settled in the `siteDomainsRoute` loader
-- `client/dashboard/sites/logs/index.tsx` — operational warning vs `TimeMismatchNotice`
+- `client/dashboard/sites/domains/index.tsx` — `PendingPrimaryDomainNotice` vs the redirect warning, with eligibility settled in the `siteDomainsRoute` loader; the bulk-update progress notice is action feedback rendered beside the arbiter
+- `client/dashboard/sites/logs/index.tsx` — Jetpack-error UTC notice vs `TimeMismatchNotice`; the auto-refresh warning is action feedback rendered beside the arbiter
+- `client/dashboard/sites/backups/index.tsx` — `BackupNotices` (backup progress/result) is action feedback rendered beside the arbiter

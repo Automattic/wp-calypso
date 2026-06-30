@@ -62,6 +62,11 @@ function useSharedCandidate(): ReactNode {
  * the only sanctioned internal `return null` is an in-session dismissal,
  * which deliberately leaves the slot empty rather than showing the next
  * notice. See client/dashboard/sites/AGENTS.md.
+ *
+ * Candidates must be on-load banners: eligibility settled when the page
+ * mounts. Notices that appear in response to a user action mid-session
+ * (progress, action errors) break the on-mount latch below — render those as
+ * siblings of the arbiter instead; they may stack with the arbiter's banner.
  */
 export function SitesNoticeArbiter( { children }: { children?: ReactNode } ) {
 	const sharedCandidate = useSharedCandidate();

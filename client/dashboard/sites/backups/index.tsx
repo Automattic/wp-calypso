@@ -230,7 +230,8 @@ export function BackupsListPage() {
 				/>
 			}
 			notices={
-				<SitesNoticeArbiter>
+				<>
+					{ /* Action feedback, not an on-load banner: rendered outside the arbiter. */ }
 					{ ! isMobileDetailsView && backupState.status !== 'idle' && (
 						<BackupNotices
 							backupState={ backupState }
@@ -239,7 +240,8 @@ export function BackupsListPage() {
 							gmtOffset={ gmtOffset }
 						/>
 					) }
-				</SitesNoticeArbiter>
+					<SitesNoticeArbiter />
+				</>
 			}
 		>
 			{ hasBackups && (

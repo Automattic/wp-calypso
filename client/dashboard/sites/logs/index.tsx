@@ -205,25 +205,28 @@ function SiteLogsContent( {
 				/>
 			}
 			notices={
-				<SitesNoticeArbiter>
+				<>
+					{ /* Action feedback, not an on-load banner: rendered outside the arbiter. */ }
 					{ autoRefreshDisabledReason && (
 						<Notice variant="warning">{ autoRefreshDisabledReason }</Notice>
 					) }
-					{ site.__inaccessible_jetpack_error && (
-						<Notice variant="warning">
-							{ __(
-								'Your site’s time zone setting is currently unavailable. Dates and times on this page are displayed in UTC instead.'
-							) }
-						</Notice>
-					) }
-					{ ! site.__inaccessible_jetpack_error && showTimeMismatchNotice && (
-						<TimeMismatchNotice
-							settingsUrl={ settingsUrl }
-							siteTime={ gmtOffset }
-							siteId={ siteId }
-						/>
-					) }
-				</SitesNoticeArbiter>
+					<SitesNoticeArbiter>
+						{ site.__inaccessible_jetpack_error && (
+							<Notice variant="warning">
+								{ __(
+									'Your site’s time zone setting is currently unavailable. Dates and times on this page are displayed in UTC instead.'
+								) }
+							</Notice>
+						) }
+						{ ! site.__inaccessible_jetpack_error && showTimeMismatchNotice && (
+							<TimeMismatchNotice
+								settingsUrl={ settingsUrl }
+								siteTime={ gmtOffset }
+								siteId={ siteId }
+							/>
+						) }
+					</SitesNoticeArbiter>
+				</>
 			}
 		>
 			<Card className={ `site-logs-card site-logs-card--${ logType }` }>

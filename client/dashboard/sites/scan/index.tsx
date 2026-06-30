@@ -164,16 +164,19 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 					/>
 				}
 				notices={
-					<SitesNoticeArbiter>
+					<>
+						{ /* Action feedback, not an on-load banner: rendered outside the arbiter. */ }
 						{ showScanNotices && <ScanNotices status={ status } threatCount={ threatCount } /> }
-						{ showTimeMismatchNotice && (
-							<TimeMismatchNotice
-								settingsUrl={ settingsUrl }
-								siteTime={ gmtOffset }
-								siteId={ site.ID }
-							/>
-						) }
-					</SitesNoticeArbiter>
+						<SitesNoticeArbiter>
+							{ showTimeMismatchNotice && (
+								<TimeMismatchNotice
+									settingsUrl={ settingsUrl }
+									siteTime={ gmtOffset }
+									siteId={ site.ID }
+								/>
+							) }
+						</SitesNoticeArbiter>
+					</>
 				}
 			>
 				<Card>

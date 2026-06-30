@@ -80,34 +80,41 @@ function SiteDomains() {
 		<PageLayout
 			header={ <PageHeader title={ __( 'Domains' ) } actions={ <AddDomainButton /> } /> }
 			notices={
-				<SitesNoticeArbiter>
+				<>
+					{ /* Action feedback, not an on-load banner: rendered outside the arbiter. */ }
 					{ bulkActionsNotice }
-					{ ! isLoading && ! isRedirectLoading && siteDomains && ! hasRedirect && pendingDomain && (
-						<PendingPrimaryDomainNotice
-							domainName={ pendingDomain.domain }
-							onComplete={ () => queryClient.invalidateQueries( queries.domainsQuery() ) }
-						/>
-					) }
-					{ ! isRedirectLoading && hasRedirect && (
-						<Notice variant="warning">
-							{ createInterpolateElement(
-								__(
-									'This site <site/> and all domains attached to it will redirect to <redirect/>. If you want to change that <link>click here</link>.'
-								),
-								{
-									site: <b>{ site.slug }</b>,
-									redirect: <b>{ redirect.location }</b>,
-									link: (
-										<Link
-											to={ siteSettingsRedirectRoute.fullPath }
-											params={ { siteSlug: site.slug } }
-										/>
-									),
-								}
+					<SitesNoticeArbiter>
+						{ ! isLoading &&
+							! isRedirectLoading &&
+							siteDomains &&
+							! hasRedirect &&
+							pendingDomain && (
+								<PendingPrimaryDomainNotice
+									domainName={ pendingDomain.domain }
+									onComplete={ () => queryClient.invalidateQueries( queries.domainsQuery() ) }
+								/>
 							) }
-						</Notice>
-					) }
-				</SitesNoticeArbiter>
+						{ ! isRedirectLoading && hasRedirect && (
+							<Notice variant="warning">
+								{ createInterpolateElement(
+									__(
+										'This site <site/> and all domains attached to it will redirect to <redirect/>. If you want to change that <link>click here</link>.'
+									),
+									{
+										site: <b>{ site.slug }</b>,
+										redirect: <b>{ redirect.location }</b>,
+										link: (
+											<Link
+												to={ siteSettingsRedirectRoute.fullPath }
+												params={ { siteSlug: site.slug } }
+											/>
+										),
+									}
+								) }
+							</Notice>
+						) }
+					</SitesNoticeArbiter>
+				</>
 			}
 		>
 			{ ! isLoading && ! isRedirectLoading && siteDomains && ! hasRedirect && ! pendingDomain && (
