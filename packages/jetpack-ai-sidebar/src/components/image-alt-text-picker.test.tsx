@@ -40,11 +40,18 @@ describe( 'ImageAltTextPicker', () => {
 		},
 	];
 
-	it( 'does not surface the generated alt text or thumbnails for review', () => {
+	it( 'shows each image alongside its suggested alt text', () => {
 		const { container } = render( <ImageAltTextPicker images={ images } /> );
-		expect( container.querySelectorAll( 'img' ) ).toHaveLength( 0 );
-		expect( screen.queryByText( 'A cat on a sofa' ) ).not.toBeInTheDocument();
-		expect( screen.getByText( 'Generated alt text for 2 images.' ) ).toBeInTheDocument();
+		expect( container.querySelectorAll( 'img' ) ).toHaveLength( 2 );
+		expect( screen.getByText( 'A cat on a sofa' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'A dog in a park' ) ).toBeInTheDocument();
+	} );
+
+	it( 'has a single common Apply button (no per-image apply)', () => {
+		render( <ImageAltTextPicker images={ images } /> );
+		const buttons = screen.getAllByRole( 'button' );
+		expect( buttons ).toHaveLength( 1 );
+		expect( buttons[ 0 ] ).toHaveTextContent( 'Apply to all 2 images' );
 	} );
 
 	it( 'applies alt text to every image in one click and confirms', () => {
@@ -59,8 +66,9 @@ describe( 'ImageAltTextPicker', () => {
 			alt: 'A dog in a park',
 		} );
 		expect( screen.getByText( 'Updated alt text for 2 images.' ) ).toBeInTheDocument();
-		// The apply control is gone once applied.
+		// The button is replaced by the confirmation, and the images stay visible.
 		expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'A cat on a sofa' ) ).toBeInTheDocument();
 	} );
 
 	it( 'calls onComplete after applying', () => {
@@ -72,7 +80,6 @@ describe( 'ImageAltTextPicker', () => {
 
 	it( 'uses singular copy for a single image', () => {
 		render( <ImageAltTextPicker images={ [ images[ 0 ] ] } /> );
-		expect( screen.getByText( 'Generated alt text for 1 image.' ) ).toBeInTheDocument();
 		fireEvent.click( screen.getByRole( 'button', { name: 'Apply to 1 image' } ) );
 		expect( mockUpdateBlockAttributes ).toHaveBeenCalledTimes( 1 );
 		expect( screen.getByText( 'Updated alt text for 1 image.' ) ).toBeInTheDocument();

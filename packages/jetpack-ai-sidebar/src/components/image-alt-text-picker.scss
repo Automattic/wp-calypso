@@ -6,9 +6,36 @@
 		font-size: 14px;
 	}
 
-	&__status {
-		margin: 0;
-		font-size: 14px;
+	&__list {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		margin: 0 0 12px;
+		padding: 0;
+		list-style: none;
+	}
+
+	&__row {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding: 8px;
+		border: 1px solid rgba( 255, 255, 255, 0.12 );
+		border-radius: 8px;
+	}
+
+	&__thumb {
+		flex-shrink: 0;
+		width: 48px;
+		height: 48px;
+		object-fit: cover;
+		border-radius: 4px;
+	}
+
+	&__alt {
+		min-width: 0;
+		font-size: 13px;
+		line-height: 18px;
 	}
 
 	&__apply-all {
@@ -24,5 +51,10 @@
 		&:hover {
 			background: rgba( 56, 88, 233, 0.08 );
 		}
+	}
+
+	&__status {
+		margin: 0;
+		font-size: 14px;
 	}
 }

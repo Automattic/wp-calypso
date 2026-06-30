@@ -1,13 +1,13 @@
 /**
- * ImageAltTextPicker — applies AI-generated alt text to the post's images.
+ * ImageAltTextPicker — reviews and applies AI-generated alt text to the post's images.
  *
  * Displayed when the orchestrator renders a show-component response with
  * data.type set to 'image-alt-text-picker' (from the jetpack-ai/image-alt-text
- * ability). The generated alt text is not surfaced for per-image review (parity
- * with the existing SEO Enhancer, which applies alt text directly). Instead the
- * user applies it to every image in one click, writing the alt attribute back to
- * each image block (matched by clientId) via core/block-editor. Applying is
- * reversible via the chat's Undo checkpoint.
+ * ability). Shows each image alongside its suggested alt text for a quick visual
+ * check, then applies all of them in one click — writing the alt attribute back
+ * to each image block (matched by clientId) via core/block-editor. There is a
+ * single common Apply action (not per image). Applying is reversible via the
+ * chat's Undo checkpoint.
  */
 
 /**
@@ -15,12 +15,11 @@
  */
 import { useDispatch } from '@wordpress/data';
 import { useState, useCallback } from '@wordpress/element';
-import { _n, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 
 /**
- * One generated alt-text suggestion. `url`/`currentAlt` are carried in the
- * payload but unused here — the picker applies by clientId without showing the
- * image.
+ * One generated alt-text suggestion: the target block, its image URL (for the
+ * preview thumbnail), the existing alt, and the suggested alt to apply.
  */
 interface AltTextSuggestion {
 	clientId: string;
@@ -37,8 +36,9 @@ interface ImageAltTextPickerProps {
 /**
  * ImageAltTextPicker component for the chat sidebar.
  *
- * Applies the generated alt text to every image in one action and shows a
- * confirmation. No per-image review UI is rendered.
+ * Renders each image next to its suggested alt text, then applies every
+ * suggestion in one action via a single common Apply button and shows a
+ * confirmation.
  * @param {ImageAltTextPickerProps} props - Component props.
  * @returns {import('react').ReactElement|null} The rendered component.
  */
@@ -60,9 +60,27 @@ export default function ImageAltTextPicker( { images, onComplete }: ImageAltText
 
 	const count = images.length;
 
-	if ( applied ) {
-		return (
-			<div className="jetpack-ai-image-alt-text-picker">
+	return (
+		<div className="jetpack-ai-image-alt-text-picker">
+			<p className="jetpack-ai-image-alt-text-picker__intro">
+				{ __( 'Suggested alt text for your images:', 'jetpack' ) }
+			</p>
+			<ul className="jetpack-ai-image-alt-text-picker__list">
+				{ images.map( ( image ) => (
+					<li key={ image.clientId } className="jetpack-ai-image-alt-text-picker__row">
+						{ image.url && (
+							<img
+								className="jetpack-ai-image-alt-text-picker__thumb"
+								src={ image.url }
+								alt={ image.currentAlt || '' }
+								loading="lazy"
+							/>
+						) }
+						<span className="jetpack-ai-image-alt-text-picker__alt">{ image.alt }</span>
+					</li>
+				) ) }
+			</ul>
+			{ applied ? (
 				<p className="jetpack-ai-image-alt-text-picker__status">
 					{ sprintf(
 						/* translators: %d: number of images updated. */
@@ -75,35 +93,19 @@ export default function ImageAltTextPicker( { images, onComplete }: ImageAltText
 						count
 					) }
 				</p>
-			</div>
-		);
-	}
-
-	return (
-		<div className="jetpack-ai-image-alt-text-picker">
-			<p className="jetpack-ai-image-alt-text-picker__intro">
-				{ sprintf(
-					/* translators: %d: number of images with generated alt text. */
-					_n(
-						'Generated alt text for %d image.',
-						'Generated alt text for %d images.',
-						count,
-						'jetpack'
-					),
-					count
-				) }
-			</p>
-			<button
-				type="button"
-				className="jetpack-ai-image-alt-text-picker__apply-all"
-				onClick={ handleApplyAll }
-			>
-				{ sprintf(
-					/* translators: %d: number of images to apply alt text to. */
-					_n( 'Apply to %d image', 'Apply to all %d images', count, 'jetpack' ),
-					count
-				) }
-			</button>
+			) : (
+				<button
+					type="button"
+					className="jetpack-ai-image-alt-text-picker__apply-all"
+					onClick={ handleApplyAll }
+				>
+					{ sprintf(
+						/* translators: %d: number of images to apply alt text to. */
+						_n( 'Apply to %d image', 'Apply to all %d images', count, 'jetpack' ),
+						count
+					) }
+				</button>
+			) }
 		</div>
 	);
 }
