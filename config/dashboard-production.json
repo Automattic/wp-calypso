@@ -21,6 +21,7 @@
 	"features": {
 		"bilmur-script": true,
 		"calypso/ai-site-builder-flow": true,
+		"calypso/ai-site-builder-onboarding-flow": false,
 		"catch-js-errors": true,
 		"ciab/allow-domain-features": true,
 		"ciab/custom-branding": true,
