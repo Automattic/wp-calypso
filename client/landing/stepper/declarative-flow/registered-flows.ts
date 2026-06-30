@@ -14,7 +14,7 @@ import {
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	EXAMPLE_FLOW,
 	AI_SITE_BUILDER_FLOW,
-	AI_SITE_BUILDER_ONBOARDING_FLOW,
+	AI_SITE_BUILDER_PAID_ONLY_FLOW,
 	AI_SITE_BUILDER_SPEC_FLOW,
 	ONBOARDING_UNIFIED_FLOW,
 	DOMAIN_AND_PLAN_FLOW,
@@ -157,11 +157,11 @@ const aiSiteBuilderFlows: Record< string, () => Promise< { default: FlowV2< any 
 
 // The paid-only onboarding lives at its own slug so the legacy ai-site-builder slug (fresh
 // onboarding, CIAB garden re-entry, trial launch/upsell) is left untouched.
-const aiSiteBuilderOnboardingFlows: Record< string, () => Promise< { default: FlowV2< any > } > > =
-	config.isEnabled( 'calypso/ai-site-builder-paid-only-flow' )
+const aiSiteBuilderPaidOnlyFlows: Record< string, () => Promise< { default: FlowV2< any > } > > =
+	config.isEnabled( 'onboarding/ai-site-builder-paid-only-flow' )
 		? {
-				[ AI_SITE_BUILDER_ONBOARDING_FLOW ]: () =>
-					import( './flows/ai-site-builder-onboarding/ai-site-builder-onboarding' ),
+				[ AI_SITE_BUILDER_PAID_ONLY_FLOW ]: () =>
+					import( './flows/ai-site-builder-paid-only/ai-site-builder-paid-only' ),
 		  }
 		: {};
 
@@ -181,5 +181,5 @@ export default {
 	...deprecatedV1Flows,
 	...hundredYearDomainFlow,
 	...aiSiteBuilderFlows,
-	...aiSiteBuilderOnboardingFlows,
+	...aiSiteBuilderPaidOnlyFlows,
 };

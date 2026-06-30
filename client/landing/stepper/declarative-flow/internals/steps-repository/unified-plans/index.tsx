@@ -1,7 +1,7 @@
 import { OnboardSelect } from '@automattic/data-stores';
 import {
 	AI_SITE_BUILDER_FLOW,
-	AI_SITE_BUILDER_ONBOARDING_FLOW,
+	AI_SITE_BUILDER_PAID_ONLY_FLOW,
 	DOMAIN_FLOW,
 	EXAMPLE_FLOW,
 	NEW_HOSTED_SITE_FLOW,
@@ -64,7 +64,7 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 			return 'plans-new-hosted-site';
 		case AI_SITE_BUILDER_FLOW:
 			return 'plans-ai-assembler-free-trial';
-		case AI_SITE_BUILDER_ONBOARDING_FLOW:
+		case AI_SITE_BUILDER_PAID_ONLY_FLOW:
 			// `plans-ai-site-builder` offers Personal/Premium/Business/Commerce (no Free, no
 			// Enterprise) and, unlike `plans-new-hosted-site`, never substitutes a free hosting trial.
 			return 'plans-ai-site-builder';

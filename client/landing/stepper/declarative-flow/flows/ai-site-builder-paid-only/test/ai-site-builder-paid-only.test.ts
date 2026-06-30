@@ -13,7 +13,7 @@ import {
 	wasSignupCheckoutPageUnloaded,
 } from 'calypso/signup/storageUtils';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
-import aiSiteBuilderOnboarding from '../ai-site-builder-onboarding';
+import aiSiteBuilderPaidOnly from '../ai-site-builder-paid-only';
 
 const mockIsBusinessPlan = jest.fn< boolean, [ string ] >( () => false );
 const mockIsEcommercePlan = jest.fn< boolean, [ string ] >( () => false );
@@ -28,7 +28,7 @@ jest.mock( '@automattic/data-stores', () => ( {
 
 jest.mock( '@automattic/onboarding', () => ( {
 	AI_SITE_BUILDER_FLOW: 'ai-site-builder',
-	AI_SITE_BUILDER_ONBOARDING_FLOW: 'ai-site-builder-onboarding',
+	AI_SITE_BUILDER_PAID_ONLY_FLOW: 'ai-site-builder-paid-only',
 	clearStepPersistedState: jest.fn(),
 } ) );
 
@@ -116,7 +116,7 @@ const submitFor = async (
 	providedDependencies: object,
 	navigate: jest.Mock = jest.fn()
 ) => {
-	const navigation = aiSiteBuilderOnboarding.useStepNavigation( slug as never, navigate );
+	const navigation = aiSiteBuilderPaidOnly.useStepNavigation( slug as never, navigate );
 	await navigation.submit?.( {
 		slug,
 		providedDependencies,
@@ -127,7 +127,7 @@ const submitFor = async (
 const slugsOf = ( steps: unknown ) =>
 	( steps as Array< { slug: string } > ).map( ( step ) => step.slug );
 
-describe( 'ai-site-builder-onboarding flow', () => {
+describe( 'ai-site-builder-paid-only flow', () => {
 	const originalLocation = window.location;
 
 	beforeEach( () => {
@@ -162,7 +162,7 @@ describe( 'ai-site-builder-onboarding flow', () => {
 
 	describe( 'initialize', () => {
 		it( 'returns domain → plan → checkout step order', () => {
-			expect( slugsOf( aiSiteBuilderOnboarding.initialize() ) ).toEqual( [
+			expect( slugsOf( aiSiteBuilderPaidOnly.initialize() ) ).toEqual( [
 				'domains',
 				'plans',
 				'create-site',
@@ -174,9 +174,9 @@ describe( 'ai-site-builder-onboarding flow', () => {
 		it( 'clears stale signup state on a fresh entry', () => {
 			( wasSignupCheckoutPageUnloaded as jest.Mock ).mockReturnValue( null );
 
-			aiSiteBuilderOnboarding.initialize();
+			aiSiteBuilderPaidOnly.initialize();
 
-			expect( clearStepPersistedState ).toHaveBeenCalledWith( 'ai-site-builder-onboarding' );
+			expect( clearStepPersistedState ).toHaveBeenCalledWith( 'ai-site-builder-paid-only' );
 		} );
 
 		it( 'preserves signup state on a checkout re-entry so create-site reuses the site', () => {
@@ -184,9 +184,9 @@ describe( 'ai-site-builder-onboarding flow', () => {
 			( retrieveSignupDestination as jest.Mock ).mockReturnValue(
 				'/setup/transferring-hosted-site'
 			);
-			( getSignupCompleteFlowName as jest.Mock ).mockReturnValue( 'ai-site-builder-onboarding' );
+			( getSignupCompleteFlowName as jest.Mock ).mockReturnValue( 'ai-site-builder-paid-only' );
 
-			aiSiteBuilderOnboarding.initialize();
+			aiSiteBuilderPaidOnly.initialize();
 
 			expect( clearStepPersistedState ).not.toHaveBeenCalled();
 		} );

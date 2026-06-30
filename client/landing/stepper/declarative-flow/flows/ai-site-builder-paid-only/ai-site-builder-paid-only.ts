@@ -2,7 +2,7 @@ import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
 import { Onboard } from '@automattic/data-stores';
 import {
 	AI_SITE_BUILDER_FLOW,
-	AI_SITE_BUILDER_ONBOARDING_FLOW,
+	AI_SITE_BUILDER_PAID_ONLY_FLOW,
 	clearStepPersistedState,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -61,11 +61,11 @@ function initialize() {
 	const isCheckoutReEntry = Boolean(
 		wasSignupCheckoutPageUnloaded() &&
 			retrieveSignupDestination() &&
-			getSignupCompleteFlowName() === AI_SITE_BUILDER_ONBOARDING_FLOW
+			getSignupCompleteFlowName() === AI_SITE_BUILDER_PAID_ONLY_FLOW
 	);
 
 	if ( ! isCheckoutReEntry ) {
-		clearStepPersistedState( AI_SITE_BUILDER_ONBOARDING_FLOW );
+		clearStepPersistedState( AI_SITE_BUILDER_PAID_ONLY_FLOW );
 		clearSignupDestinationCookie();
 		clearSignupCompleteFlowName();
 		clearSignupCompleteSlug();
@@ -81,8 +81,8 @@ function initialize() {
 	] as const );
 }
 
-const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
-	name: AI_SITE_BUILDER_ONBOARDING_FLOW,
+const aiSiteBuilderPaidOnly: FlowV2< typeof initialize > = {
+	name: AI_SITE_BUILDER_PAID_ONLY_FLOW,
 	/**
 	 * Should it fire calypso_signup_start event?
 	 */
@@ -226,7 +226,7 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 
 					setPlanCartItem( pickedPlan );
 					setProductCartItems( extraProducts.filter( ( product ) => product !== null ) );
-					setSignupCompleteFlowName( AI_SITE_BUILDER_ONBOARDING_FLOW );
+					setSignupCompleteFlowName( AI_SITE_BUILDER_PAID_ONLY_FLOW );
 
 					return navigate( 'create-site' );
 				}
@@ -306,7 +306,7 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 					persistSignupDestination( redirectAfterCheckout );
 					setSignupCompleteSlug( siteSlug );
 					setSignupCompleteSiteID( String( siteId ) );
-					setSignupCompleteFlowName( AI_SITE_BUILDER_ONBOARDING_FLOW );
+					setSignupCompleteFlowName( AI_SITE_BUILDER_PAID_ONLY_FLOW );
 
 					// Intentionally no checkoutBackUrl: it is allowlisted against the site's own host, so
 					// pointing it at the editor would let a user cancel checkout and land in Big Sky
@@ -332,4 +332,4 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 	},
 };
 
-export default aiSiteBuilderOnboarding;
+export default aiSiteBuilderPaidOnly;
