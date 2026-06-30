@@ -1,5 +1,5 @@
 import { siteBySlugQuery, siteRedirectQuery } from '@automattic/api-queries';
-import { useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -37,16 +37,16 @@ function SiteDomains() {
 	const { siteSlug } = siteRoute.useParams();
 	const { user } = useAuth();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { data: siteDomains, isLoading } = useQuery( {
+	const { data: siteDomains } = useSuspenseQuery( {
 		...queries.domainsQuery(),
 		select: ( data ) => {
 			return data.filter( ( domain ) => domain.blog_id === site.ID );
 		},
 	} );
 
-	const pendingDomain = siteDomains?.find( isPendingPrimaryDomain );
+	const pendingDomain = siteDomains.find( isPendingPrimaryDomain );
 
-	const { data: redirect, isLoading: isRedirectLoading } = useQuery( siteRedirectQuery( site.ID ) );
+	const { data: redirect } = useSuspenseQuery( siteRedirectQuery( site.ID ) );
 	const hasRedirect = redirect && Object.keys( redirect ).length > 0;
 
 	const bulkActionsNotice = useBulkActionsProgressNotice();
@@ -65,14 +65,10 @@ function SiteDomains() {
 		queryParams: searchParams,
 	} );
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
-		siteDomains ?? [],
-		view,
-		fields
-	);
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate( siteDomains, view, fields );
 
 	// Hide actions column when no domain has eligible actions.
-	const hasEligibleActions = siteDomains?.some( ( item ) =>
+	const hasEligibleActions = siteDomains.some( ( item ) =>
 		actions.some( ( action ) => action.isEligible === undefined || action.isEligible( item ) )
 	);
 
@@ -84,17 +80,13 @@ function SiteDomains() {
 					{ /* Action feedback, not an on-load banner: rendered outside the arbiter. */ }
 					{ bulkActionsNotice }
 					<SitesNoticeArbiter>
-						{ ! isLoading &&
-							! isRedirectLoading &&
-							siteDomains &&
-							! hasRedirect &&
-							pendingDomain && (
-								<PendingPrimaryDomainNotice
-									domainName={ pendingDomain.domain }
-									onComplete={ () => queryClient.invalidateQueries( queries.domainsQuery() ) }
-								/>
-							) }
-						{ ! isRedirectLoading && hasRedirect && (
+						{ ! hasRedirect && pendingDomain && (
+							<PendingPrimaryDomainNotice
+								domainName={ pendingDomain.domain }
+								onComplete={ () => queryClient.invalidateQueries( queries.domainsQuery() ) }
+							/>
+						) }
+						{ hasRedirect && (
 							<Notice variant="warning">
 								{ createInterpolateElement(
 									__(
@@ -117,7 +109,7 @@ function SiteDomains() {
 				</>
 			}
 		>
-			{ ! isLoading && ! isRedirectLoading && siteDomains && ! hasRedirect && ! pendingDomain && (
+			{ ! hasRedirect && ! pendingDomain && (
 				<PrimaryDomainSelector domains={ siteDomains } site={ site } user={ user } />
 			) }
 			<DataViewsCard>
@@ -131,11 +123,10 @@ function SiteDomains() {
 					search
 					paginationInfo={ paginationInfo }
 					getItemId={ getDomainId }
-					isLoading={ isLoading }
 					defaultLayouts={ DEFAULT_LAYOUTS }
 				/>
 			</DataViewsCard>
-			{ ! isLoading && <PerformanceTrackerStop /> }
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }
