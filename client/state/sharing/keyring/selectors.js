@@ -1,5 +1,4 @@
 import { createSelector } from '@automattic/state-utils';
-import { filter } from 'lodash';
 
 import 'calypso/state/sharing/init';
 
@@ -29,7 +28,8 @@ export function getKeyringConnectionById( state, keyringConnectionId ) {
  * @returns {Array}         Keyring connections, if known.
  */
 export const getKeyringConnectionsByName = createSelector(
-	( state, service ) => filter( getKeyringConnections( state ), { service } ),
+	( state, service ) =>
+		getKeyringConnections( state ).filter( ( connection ) => connection.service === service ),
 	( state ) => [ state.sharing.keyring.items ]
 );
 
@@ -40,9 +40,9 @@ export const getKeyringConnectionsByName = createSelector(
  * @returns {Array}         Keyring connections, if known.
  */
 export function getBrokenKeyringConnectionsByName( state, service ) {
-	return filter( getKeyringConnectionsByName( state, service ), {
-		status: 'broken',
-	} );
+	return getKeyringConnectionsByName( state, service ).filter(
+		( connection ) => connection.status === 'broken'
+	);
 }
 
 /**
@@ -53,8 +53,7 @@ export function getBrokenKeyringConnectionsByName( state, service ) {
  * @returns {Array}         Keyring connections, if any.
  */
 export function getRefreshableKeyringConnections( state, service ) {
-	return filter(
-		getKeyringConnectionsByName( state, service ),
+	return getKeyringConnectionsByName( state, service ).filter(
 		( conn ) => 'broken' === conn.status || 'refresh-failed' === conn.status
 	);
 }
@@ -66,8 +65,7 @@ export function getRefreshableKeyringConnections( state, service ) {
  * @returns {Array}         Site connections, if known.
  */
 export function getUserConnections( state, userId ) {
-	return filter(
-		state.sharing.keyring.items,
+	return Object.values( state.sharing.keyring.items ?? {} ).filter(
 		( connection ) => connection.shared || connection.keyring_connection_user_ID === userId
 	);
 }

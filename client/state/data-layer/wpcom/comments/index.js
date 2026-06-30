@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { pickBy } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
-import { get, map } from 'lodash';
+import { map } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
 import {
 	COMMENTS_REQUEST,
@@ -171,7 +171,7 @@ export const deleteComment = ( action ) => ( dispatch, getState ) => {
 };
 
 export const handleDeleteSuccess = ( { options, refreshCommentListQuery } ) => {
-	const showSuccessNotice = get( options, 'showSuccessNotice', false );
+	const showSuccessNotice = options?.showSuccessNotice ?? false;
 
 	return [
 		showSuccessNotice &&

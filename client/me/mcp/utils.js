@@ -72,6 +72,15 @@ export function getSiteAccountToolsEnabled( userSettings, siteId ) {
 	return true;
 }
 
+export function getGroupDescriptors( userSettings ) {
+	const groups = userSettings?.mcp_abilities?.groups ?? [];
+	return [ ...groups ].sort( ( a, b ) => a.order - b.order );
+}
+
+export function getGroupIntents( userSettings ) {
+	return userSettings?.mcp_abilities?.group_intents ?? {};
+}
+
 /**
  * Get the set of tool IDs that are relevant in a site context.
  * Uses mcp_abilities.site as the authoritative list of site-applicable tools.
@@ -124,30 +133,6 @@ export function getDisabledSiteIds( userSettings ) {
 	return mcpSites
 		.filter( ( site ) => site.site_level_enabled === false )
 		.map( ( site ) => site.blog_id );
-}
-
-/**
- * Get the ordered display-group descriptors for the settings UI's middle
- * grouping layer (AIINT-469), sorted by their `order` field. A group defaults
- * to a STRAP facade, but some facades are merged into another group (e.g.
- * Create Site into Site).
- * @param {Object} userSettings - The user settings object
- * @returns {Array<{name: string, label: string, description: string, order: number}>}
- */
-export function getGroupDescriptors( userSettings ) {
-	const groups = userSettings?.mcp_abilities?.groups ?? [];
-	return [ ...groups ].sort( ( a, b ) => a.order - b.order );
-}
-
-/**
- * Get the account-level group "enable all" intents (AIINT-471).
- * Keys are `read`, `write`, or a bare group slug (e.g. `site`) — matching a
- * getGroupDescriptors() entry's `name`.
- * @param {Object} userSettings - The user settings object
- * @returns {Record<string, boolean>}
- */
-export function getGroupIntents( userSettings ) {
-	return userSettings?.mcp_abilities?.group_intents ?? {};
 }
 
 /**

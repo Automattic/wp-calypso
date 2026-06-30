@@ -1,7 +1,7 @@
 import { omit, orderBy } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
 import isEqual from 'fast-deep-equal/es6';
-import { filter, map, get } from 'lodash';
+import { map, get } from 'lodash';
 import {
 	COMMENT_COUNTS_UPDATE,
 	COMMENTS_CHANGE_STATUS,
@@ -209,8 +209,7 @@ export function pendingItems( state = {}, action ) {
 			const receivedCommentIds = map( action.comments, 'ID' );
 			return {
 				...state,
-				[ stateKey ]: filter(
-					state[ stateKey ],
+				[ stateKey ]: ( state[ stateKey ] ?? [] ).filter(
 					( _comment ) => ! receivedCommentIds.includes( _comment.ID )
 				),
 			};

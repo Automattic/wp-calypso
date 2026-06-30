@@ -5,7 +5,6 @@ import requestExternalAccess from '@automattic/request-external-access';
 import clsx from 'clsx';
 import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { some } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, cloneElement } from 'react';
 import { connect } from 'react-redux';
@@ -410,16 +409,24 @@ export class SharingService extends Component {
 		if ( this.props.isFetching ) {
 			// When connections are still loading, we don't know the status
 			status = 'unknown';
-		} else if ( ! some( this.getConnections(), { service } ) ) {
+		} else if (
+			! ( this.getConnections() ?? [] ).some( ( connection ) => connection.service === service )
+		) {
 			// If no connections exist, the service isn't connected
 			status = 'not-connected';
-		} else if ( some( this.getConnections(), { status: 'broken' } ) ) {
+		} else if (
+			( this.getConnections() ?? [] ).some( ( connection ) => connection.status === 'broken' )
+		) {
 			// A problematic connection exists
 			status = 'reconnect';
-		} else if ( some( this.getConnections(), { status: 'refresh-failed' } ) ) {
+		} else if (
+			( this.getConnections() ?? [] ).some(
+				( connection ) => connection.status === 'refresh-failed'
+			)
+		) {
 			// We need to manually refresh a token
 			status = 'refresh-failed';
-		} else if ( some( this.getConnections(), isConnectionInvalidOrMustReauth ) ) {
+		} else if ( ( this.getConnections() ?? [] ).some( isConnectionInvalidOrMustReauth ) ) {
 			// A valid connection is not available anymore, user must reconnect
 			status = 'must-disconnect';
 		} else {
@@ -444,7 +451,9 @@ export class SharingService extends Component {
 	 * @returns {boolean} Whether the Keyring authorization attempt succeeded
 	 */
 	didKeyringConnectionSucceed( externalAccounts ) {
-		const hasAnyConnectionOptions = some( externalAccounts, { isConnected: false } );
+		const hasAnyConnectionOptions = ( externalAccounts ?? [] ).some(
+			( externalAccount ) => externalAccount.isConnected === false
+		);
 
 		if ( ! externalAccounts.length ) {
 			// At this point, if there are no available accounts to
@@ -547,7 +556,8 @@ export class SharingService extends Component {
 		} );
 		const accounts = this.state.isSelectingAccount ? this.props.availableExternalAccounts : [];
 		const showLinkedInNotice =
-			'linkedin' === this.props.service.ID && some( connections, { status: 'must_reauth' } );
+			'linkedin' === this.props.service.ID &&
+			( connections ?? [] ).some( ( connection ) => connection.status === 'must_reauth' );
 
 		const header = (
 			<div>

@@ -12,7 +12,7 @@ import {
 	PLAN_PERSONAL_2_YEARS,
 } from '@automattic/calypso-products';
 import { pick, sortBy } from '@automattic/js-utils';
-import { filter, map } from 'lodash';
+import { map } from 'lodash';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { decodeEntities, parseHtml } from 'calypso/lib/formatting';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -283,7 +283,7 @@ export function normalizePluginsList( pluginsList ) {
  * @returns {Array} Array of filtered logs that match the criteria
  */
 export function filterNotices( logs, siteId, pluginId ) {
-	return filter( logs, filterNoticesBy.bind( this, siteId, pluginId ) );
+	return ( logs ?? [] ).filter( filterNoticesBy.bind( this, siteId, pluginId ) );
 }
 
 /**

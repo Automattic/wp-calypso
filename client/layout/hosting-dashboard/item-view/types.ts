@@ -53,7 +53,7 @@ export interface ItemViewHeaderExtraProps {
 	externalIconSize?: number;
 	siteIconFallback?: SiteFaviconFallback;
 	headerButtons?: React.ComponentType< {
-		focusRef: React.RefObject< HTMLButtonElement >;
+		focusRef: React.RefObject< HTMLButtonElement | null >;
 		itemData: ItemData;
 		closeSitePreviewPane: () => void;
 	} >;

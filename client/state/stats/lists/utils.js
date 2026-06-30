@@ -1,6 +1,6 @@
 import { camelCase, capitalize, sortBy } from '@automattic/js-utils';
 import { translate, getLocaleSlug } from 'i18n-calypso';
-import { get, filter, map } from 'lodash';
+import { get, map } from 'lodash';
 import moment from 'moment';
 import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
 
@@ -548,7 +548,7 @@ export const normalizers = {
 		const dataPath = query.summarize ? [ 'summary', 'views' ] : [ 'days', startOf, 'views' ];
 
 		// filter out country views that have no legitimate country data associated with them
-		const countryData = filter( get( data, dataPath, [] ), ( viewData ) => {
+		const countryData = get( data, dataPath, [] ).filter( ( viewData ) => {
 			// Ignore the unknown location of sources from the legacy stats geoviews table.
 			if ( [ 'A1', 'A2', 'ZZ' ].includes( viewData.country_code ) ) {
 				return false;

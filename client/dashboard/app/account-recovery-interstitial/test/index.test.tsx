@@ -126,9 +126,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		expect(
 			screen.getByRole( 'button', { name: 'Set up recovery email or phone' } )
 		).toBeVisible();
-		expect(
-			screen.getByRole( 'button', { name: 'Review two-step authentication and add backup codes' } )
-		).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Download backup codes' } ) ).toBeVisible();
 	} );
 
 	test( 'shows the "download backup codes" copy when 2FA + recovery are set but backup codes are not', async () => {
@@ -143,7 +141,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		).toBeVisible();
 		expect(
 			screen.getByRole( 'button', {
-				name: 'Review two-step authentication and download backup codes',
+				name: 'Download backup codes',
 			} )
 		).toBeVisible();
 		expect(
@@ -176,6 +174,9 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		expect( screen.getByText( /r••••@example\.com/ ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Yes, all good' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Update recovery information' } ) ).toBeVisible();
+		// The fully-secured tier offers a plain "Dismiss" instead of a long "remind me" reminder.
+		expect( screen.getByRole( 'button', { name: 'Dismiss' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: /Remind me/ } ) ).not.toBeInTheDocument();
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_account_recovery_nudge_interstitial_impression',

@@ -1,11 +1,11 @@
 import { flow, sortBy } from '@automattic/js-utils';
-import { filter, map } from 'lodash';
+import { map } from 'lodash';
 import { PureComponent } from 'react';
 import PaymentLogo, { POSSIBLE_TYPES } from '../index';
 
 const genVendors = flow(
 	// 'placeholder' is a special case that needs to be demonstrated separately
-	( arr ) => filter( arr, ( type ) => type !== 'placeholder' ),
+	( arr ) => arr.filter( ( type ) => type !== 'placeholder' ),
 
 	( arr ) => map( arr, ( type ) => ( { type, isCompact: false } ) ),
 	( arr ) => arr.concat( [ { type: 'paypal', isCompact: true } ] ),

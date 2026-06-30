@@ -1,5 +1,5 @@
 import deepFreeze from 'deep-freeze';
-import { map, forEach } from 'lodash';
+import { map } from 'lodash';
 import {
 	COMMENT_COUNTS_UPDATE,
 	COMMENTS_LIKE,
@@ -81,7 +81,9 @@ describe( 'reducer', () => {
 			} );
 
 			expect( result[ '1-1' ] ).toHaveLength( commentsNestedTree.length - 1 );
-			forEach( result, ( c ) => expect( c.ID ).not.toEqual( removedCommentId ) );
+			Object.values( result )
+				.flat()
+				.forEach( ( c ) => expect( c.ID ).not.toEqual( removedCommentId ) );
 		} );
 
 		test( 'should increase like counts and set i_like', () => {

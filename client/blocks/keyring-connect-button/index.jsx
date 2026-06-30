@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
 import requestExternalAccess from '@automattic/request-external-access';
 import { localize } from 'i18n-calypso';
-import { some } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -69,7 +68,7 @@ class KeyringConnectButton extends Component {
 			return 'not-connected';
 		}
 
-		if ( some( this.props.keyringConnections, { status: 'broken' } ) ) {
+		if ( this.props.keyringConnections.some( ( item ) => item.status === 'broken' ) ) {
 			// A problematic connection exists
 			return 'reconnect';
 		}
@@ -145,8 +144,7 @@ class KeyringConnectButton extends Component {
 	 * @returns {boolean} Whether the Keyring authorization attempt succeeded
 	 */
 	didKeyringConnectionSucceed( keyringConnections ) {
-		const hasAnyConnectionOptions = some(
-			keyringConnections,
+		const hasAnyConnectionOptions = keyringConnections.some(
 			( keyringConnection ) =>
 				keyringConnection.isConnected === false || keyringConnection.isConnected === undefined
 		);

@@ -226,9 +226,15 @@ export function useEmptyViewSuggestions( {
 			return;
 		}
 
+		// Opt-out: a loaded provider can suppress the built-in defaults for
+		// its surfaces (e.g. WooCommerce AI doesn't want WordPress-flavored
+		// chips like "Create a blog post" on a Woo admin chat).
+		const suppressDefaults = loadedProviders.suppressEmptyViewDefaults === true;
+		const fallbackSuggestions = suppressDefaults ? [] : defaultSuggestions;
+
 		if ( ! hasBigSkySuggestions ) {
 			// No Big Sky suggestions provider, use defaults immediately
-			setEmptyViewSuggestions( defaultSuggestions );
+			setEmptyViewSuggestions( fallbackSuggestions );
 		} else {
 			// Big Sky provides suggestions and store is ready - get filtered suggestions
 			const providerSuggestions = loadedProviders.getEmptyViewSuggestions?.() ?? [];
@@ -248,7 +254,7 @@ export function useEmptyViewSuggestions( {
 				// Provider exists but returned empty/undefined (e.g. lazy proxy
 				// race where the IIFE hasn't set window globals yet). Fall back
 				// to defaults so the AM still renders.
-				setEmptyViewSuggestions( defaultSuggestions );
+				setEmptyViewSuggestions( fallbackSuggestions );
 			}
 		}
 	}, [

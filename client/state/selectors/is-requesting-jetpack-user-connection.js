@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/jetpack/init';
 
 /**
@@ -10,5 +8,5 @@ import 'calypso/state/jetpack/init';
  * @returns {?boolean}          Whether the connection data is being requested
  */
 export default function isRequestingJetpackUserConnection( state, siteId ) {
-	return get( state.jetpack.connection.dataRequests, [ siteId ], false );
+	return state.jetpack.connection.dataRequests?.[ siteId ] ?? false;
 }

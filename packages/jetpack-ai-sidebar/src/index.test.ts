@@ -33,6 +33,10 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
+jest.mock( './extensions', () => ( {
+	registerBlockEditorFilters: jest.fn(),
+} ) );
+
 const mockSetIsSplitScreen = jest.fn();
 let mockSelectedBlockClientId: string | null = null;
 const mockSelectBlock = jest.fn( ( clientId?: string | null ) => {

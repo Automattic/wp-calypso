@@ -1,5 +1,3 @@
-import { filter, some } from 'lodash';
-
 import 'calypso/state/plugins/init';
 
 export const isRequesting = function ( state, siteId ) {
@@ -37,7 +35,7 @@ export const getPluginsForSite = function ( state, siteId, forPlugin = false ) {
 		forPlugin = 'vaultpress';
 	}
 
-	return filter( pluginList, ( plugin ) => {
+	return pluginList.filter( ( plugin ) => {
 		// eslint-disable-next-line no-extra-boolean-cast
 		if ( !! forPlugin ) {
 			return forPlugin === plugin.slug;
@@ -52,7 +50,7 @@ export const isFinished = function ( state, siteId, forPlugin = false ) {
 		return true;
 	}
 
-	return ! some( pluginList, ( item ) => {
+	return ! pluginList.some( ( item ) => {
 		return 'done' !== item.status && item.error === null;
 	} );
 };
@@ -64,7 +62,7 @@ export const isInstalling = function ( state, siteId, forPlugin = false ) {
 	}
 
 	// If any plugin is not done/waiting/error'd, it's in an installing state.
-	return some( pluginList, ( item ) => {
+	return pluginList.some( ( item ) => {
 		return ! [ 'done', 'wait' ].includes( item.status ) && item.error === null;
 	} );
 };

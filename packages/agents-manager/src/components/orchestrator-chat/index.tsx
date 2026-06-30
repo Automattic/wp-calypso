@@ -16,6 +16,7 @@ import useCheckpointAction from '../../hooks/use-checkpoint-action';
 import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
 import useFeedbackAction from '../../hooks/use-feedback-action';
+import useRegenerateAction from '../../hooks/use-regenerate-action';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
 import useSourcesAction from '../../hooks/use-sources-action';
 import useZoomAction from '../../hooks/use-zoom-action';
@@ -47,7 +48,18 @@ import type {
 	SiteBuildUtils,
 	ImageUploadHook,
 	UseCheckpointHook,
+	ProviderCapabilities,
 } from '../../utils/load-external-providers';
+
+function getLatestAgentMessageId( messages: UIMessage[] ): string | null {
+	for ( let index = messages.length - 1; index >= 0; index-- ) {
+		if ( messages[ index ].role === 'agent' ) {
+			return messages[ index ].id;
+		}
+	}
+
+	return null;
+}
 
 /**
  * Pipe-delimited list of suggestion ids (e.g. `|id1|id2|`), matching Big Sky's
@@ -149,6 +161,8 @@ interface Props {
 	useImageUpload?: ImageUploadHook;
 	/** Hook for saving and restoring editor state so that AI actions can be undone. */
 	useCheckpoint?: UseCheckpointHook;
+	/** Optional capability flags declared by one or more loaded providers. */
+	capabilities?: ProviderCapabilities;
 	/** Called when the has-messages state changes. */
 	onHasMessagesChange: ( hasMessages: boolean ) => void;
 }
@@ -170,6 +184,7 @@ export default function OrchestratorChat( {
 	siteBuildUtils,
 	useImageUpload,
 	useCheckpoint,
+	capabilities,
 	onHasMessagesChange,
 }: Props ) {
 	const { agentConfig, getActiveSessionId, siteKey } = useAgentsManagerContext();
@@ -183,6 +198,7 @@ export default function OrchestratorChat( {
 	const [ retainedShowComponentMessages, setRetainedShowComponentMessages ] = useState<
 		Map< string, UIMessage >
 	>( new Map() );
+	const [ isRegenerating, setIsRegenerating ] = useState( false );
 	const [ hasUserSentMessage, setHasUserSentMessage ] = useState( false );
 	const currentPostId = useSelect( ( select ) => {
 		return ( select( 'core/editor' ) as { getCurrentPostId?: () => number } )?.getCurrentPostId?.();
@@ -200,13 +216,50 @@ export default function OrchestratorChat( {
 		clearSuggestions,
 		registerSuggestions,
 		registerMessageActions,
+		getRegenerateHandler,
 		progressMessage,
 	} = useAgentChat( agentConfig! );
 	const messagesRef = useRef( messages );
 	const previousMessagesRef = useRef( messages );
 	const showComponentOrderRef = useRef< Map< string, number > >( new Map() );
 	const nextShowComponentOrderRef = useRef( 0 );
+	const wasProcessingRef = useRef( isProcessing );
 	messagesRef.current = messages;
+
+	// A regeneration is finished once its streaming turn settles — either the new
+	// response arrives or an error restores the previous one. Re-enable component
+	// retention then so transient drops on later turns are covered again.
+	useEffect( () => {
+		const wasProcessing = wasProcessingRef.current;
+		wasProcessingRef.current = isProcessing;
+		if ( isRegenerating && wasProcessing && ! isProcessing ) {
+			setIsRegenerating( false );
+		}
+	}, [ isProcessing, isRegenerating ] );
+
+	// While a regeneration runs, the component being regenerated is deliberately
+	// dropped from the live messages (Agenttic sends `preserveUiOnlyMessages:
+	// false`), so retention must not resurrect the old picker as a stale copy.
+	const handleRegenerate = useCallback(
+		( message?: UIMessage ) => {
+			const handler = getRegenerateHandler?.( message );
+			if ( ! handler ) {
+				return handler;
+			}
+
+			return async () => {
+				setIsRegenerating( true );
+				// Drop any retained placeholders up front; the turn is being
+				// rewound, so a leftover picker would otherwise reappear once
+				// regeneration settles if the new response omits the component.
+				setRetainedShowComponentMessages( ( previousRetainedMessages ) =>
+					previousRetainedMessages.size > 0 ? new Map() : previousRetainedMessages
+				);
+				await handler();
+			};
+		},
+		[ getRegenerateHandler ]
+	);
 
 	const getShowComponentOrder = useCallback( ( message: UIMessage ): number | undefined => {
 		const identity = getShowComponentIdentity( message );
@@ -225,6 +278,14 @@ export default function OrchestratorChat( {
 	}, [] );
 
 	useEffect( () => {
+		// While regenerating, the dropped component is being replaced, not lost —
+		// don't retain it. Keep the ref current so the next non-regenerating run
+		// compares against the post-regeneration messages.
+		if ( isRegenerating ) {
+			previousMessagesRef.current = messages;
+			return;
+		}
+
 		const previousMessages = previousMessagesRef.current;
 		messages.filter( isShowComponentMessage ).forEach( getShowComponentOrder );
 
@@ -243,7 +304,9 @@ export default function OrchestratorChat( {
 
 				for ( const message of retainedCandidates ) {
 					const identity = getShowComponentIdentity( message );
-					const retainedId = `${ message.id }-retained-${ identity }`;
+					// One placeholder per identity, so a component that drops and
+					// returns refreshes in place instead of stacking another copy.
+					const retainedId = `retained-${ identity }`;
 					if ( ! nextRetainedMessages.has( retainedId ) ) {
 						nextRetainedMessages.set( retainedId, { ...message, id: retainedId } );
 						changed = true;
@@ -255,7 +318,7 @@ export default function OrchestratorChat( {
 		}
 
 		previousMessagesRef.current = messages;
-	}, [ getShowComponentOrder, messages ] );
+	}, [ getShowComponentOrder, messages, isRegenerating ] );
 
 	// Reader-chat sessions are short (usually < 50 messages) — don't waste
 	// time paginating 10 pages deep. One page covers typical use.
@@ -335,6 +398,14 @@ export default function OrchestratorChat( {
 			registerMessageActions,
 			messages,
 		} );
+
+	// Add Agenttic's built-in regenerate action on agent messages for providers
+	// that opt in. Computed during render alongside copy/feedback so the icon
+	// appears in the same paint rather than a commit later.
+	const getRegenerateActionsForMessage = useRegenerateAction( {
+		enabled: capabilities?.supportsRegenerateAction === true,
+		getRegenerateHandler: handleRegenerate,
+	} );
 
 	// Add a "Copy" action on plain-text agent messages.
 	const getCopyActionsForMessage = useCopyAction();
@@ -640,6 +711,8 @@ export default function OrchestratorChat( {
 			onSubmit: onSubmitWithImages,
 		} );
 
+		const latestAgentMessageId = getLatestAgentMessageId( currentMessages );
+
 		currentMessages = currentMessages.map( ( message ) => {
 			if ( message.id.endsWith( '-next-step' ) ) {
 				return message;
@@ -648,13 +721,20 @@ export default function OrchestratorChat( {
 			const directActions = [
 				...getFeedbackActionsForMessage( message ),
 				...getCopyActionsForMessage( message ),
+				...getRegenerateActionsForMessage( message, {
+					isLatestAgentMessage: message.id === latestAgentMessageId,
+					isStreaming: isProcessing,
+				} ),
 			];
 			if ( directActions.length === 0 ) {
 				return message;
 			}
 
 			const existingActions = message.actions?.filter(
-				( action ) => ! action.id.startsWith( 'feedback-' ) && action.id !== 'copy'
+				( action ) =>
+					! action.id.startsWith( 'feedback-' ) &&
+					action.id !== 'copy' &&
+					action.id !== 'regenerate'
 			);
 
 			return {
@@ -673,7 +753,9 @@ export default function OrchestratorChat( {
 		getCopyActionsForMessage,
 		getShowComponentOrder,
 		getFeedbackActionsForMessage,
+		getRegenerateActionsForMessage,
 		isBuildingSite,
+		isProcessing,
 		messages,
 		onSubmitWithImages,
 		retainedShowComponentMessages,

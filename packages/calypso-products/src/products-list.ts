@@ -540,7 +540,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getProductId: () => 2107,
 		getStoreSlug: () => PRODUCT_JETPACK_SCAN_MONTHLY,
 	},
-	// SCAN_REALTIME is not publically offered as an individual add-on product at this time
+	// SCAN_REALTIME is not publicly offered as an individual add-on product at this time
 	[ PRODUCT_JETPACK_SCAN_REALTIME ]: {
 		product_name: PRODUCT_SHORT_NAMES[ PRODUCT_JETPACK_SCAN_REALTIME ],
 		product_slug: PRODUCT_JETPACK_SCAN_REALTIME,

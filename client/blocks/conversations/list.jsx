@@ -1,5 +1,5 @@
 import { keyBy, partition, pickBy } from '@automattic/js-utils';
-import { map, filter } from 'lodash';
+import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, useCallback, useMemo, useRef, useState } from 'react';
 import { connect } from 'react-redux';
@@ -167,7 +167,7 @@ export class ConversationCommentList extends Component {
 			return [];
 		}
 
-		const withParents = filter( commentIds, ( id ) => this.commentHasParent( commentsTree, id ) );
+		const withParents = commentIds.filter( ( id ) => this.commentHasParent( commentsTree, id ) );
 		const parentIds = map( withParents, ( id ) => this.getParentId( commentsTree, id ) );
 
 		const [ accessible, inaccessible ] = partition( parentIds, ( id ) =>
@@ -265,7 +265,9 @@ export class ConversationCommentList extends Component {
 		// if you have finished loading comments, then lets use the comments we have as the final comment count
 		// if we are still loading comments, then assume what the server initially told us is right
 		const commentCount = isDoneLoadingComments
-			? filter( commentsTree, ( comment ) => comment?.data?.type === 'comment' ).length // filter out pingbacks/trackbacks
+			? Object.values( commentsTree ?? {} ).filter(
+					( comment ) => comment?.data?.type === 'comment'
+			  ).length // filter out pingbacks/trackbacks
 			: post.discussion.comment_count;
 
 		const showCaterpillar =

@@ -147,6 +147,26 @@ describe( 'useEmptyViewSuggestions', () => {
 		await waitFor( () => expect( result.current ).toEqual( [] ) );
 	} );
 
+	it( 'suppresses default suggestions when provider opts in and exposes no getEmptyViewSuggestions', async () => {
+		const loadedProviders = { suppressEmptyViewDefaults: true } as unknown as LoadedProviders;
+
+		const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
+
+		await waitFor( () => expect( result.current ).toEqual( [] ) );
+	} );
+
+	it( 'suppresses default suggestions when provider opts in and getEmptyViewSuggestions returns empty', async () => {
+		const getEmptyViewSuggestions = jest.fn( () => [] );
+		const loadedProviders = {
+			getEmptyViewSuggestions,
+			suppressEmptyViewDefaults: true,
+		} as unknown as LoadedProviders;
+
+		const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
+
+		await waitFor( () => expect( result.current ).toEqual( [] ) );
+	} );
+
 	it( 'keeps site-editor-only provider suggestions in Site Editor', async () => {
 		mockContext = {
 			sectionName: 'site-editor',

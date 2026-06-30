@@ -24,28 +24,29 @@ function LegacyContactDetails( { legacyContactId }: { legacyContactId: number } 
 		<VStack spacing={ 6 }>
 			<VStack spacing={ 2 }>
 				<Text>
-					Keep this information somewhere safe. After your death, your legacy contact can give this
-					key to WordPress.com to request access to your account.
+					{ __(
+						'Keep this information somewhere safe. After your death, your legacy contact can give this key to WordPress.com to request access to your account.'
+					) }
 				</Text>
 			</VStack>
 
 			<VStack spacing={ 1 } alignment="flex-start">
 				<Text upperCase variant="muted" size={ 11 }>
-					Legacy contact email
+					{ __( 'Legacy contact email' ) }
 				</Text>
 				<Text size={ 15 }>{ contact.contact_email }</Text>
 			</VStack>
 
 			<VStack spacing={ 1 } alignment="flex-start">
 				<Text upperCase variant="muted" size={ 11 }>
-					Access key
+					{ __( 'Access key' ) }
 				</Text>
 				<div className="legacy-contact-print__key">{ contact.access_key }</div>
 			</VStack>
 
 			<ButtonStack justify="flex-start" className="legacy-contact-print__actions">
 				<Button variant="primary" onClick={ handlePrint }>
-					Print
+					{ __( 'Print' ) }
 				</Button>
 			</ButtonStack>
 		</VStack>
@@ -64,15 +65,14 @@ export default function SecurityLegacyContactPrint() {
 		>
 			<Card>
 				<CardBody>
-					{ /* TODO: translate these strings once the legacy contact UI is finalized. */ }
 					{ contact ? (
 						<LegacyContactDetails legacyContactId={ contact.legacy_contact_id } />
 					) : (
 						<VStack spacing={ 4 } alignment="flex-start">
-							<Text>You don’t have a legacy contact set up yet.</Text>
+							<Text>{ __( 'You don’t have a legacy contact set up yet.' ) }</Text>
 							<ButtonStack justify="flex-start">
 								<RouterLinkButton variant="primary" to="/me/security/legacy-contact">
-									Back to legacy contact
+									{ __( 'Back to legacy contact' ) }
 								</RouterLinkButton>
 							</ButtonStack>
 						</VStack>
