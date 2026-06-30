@@ -10,7 +10,7 @@ Paid-only onboarding for the AI Site Builder (Big Sky). Replaces the free-trial
 3. Choose a domain.
 4. Confirm the plan picker shows only Personal, Premium, Business, and Commerce — no Free, no Enterprise.
 5. Complete checkout.
-6. Confirm you land in the Big Sky Site Spec editor (`site-editor.php?ai-step=spec`).
+6. Confirm you land in the Big Sky Site Spec editor (`site-editor.php?canvas=edit&ai-step=spec`).
 7. Confirm a `?prompt=` query param passed at entry is forwarded to the Site Spec editor.
 
 ## Owned by

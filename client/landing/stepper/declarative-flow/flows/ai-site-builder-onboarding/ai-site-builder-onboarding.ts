@@ -171,6 +171,7 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 							redirect_to: specUrl,
 							checkoutBackUrl,
 							signup: 1,
+							'big-sky-checkout': 1,
 						} )
 					);
 				}
