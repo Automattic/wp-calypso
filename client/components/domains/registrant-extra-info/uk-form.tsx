@@ -2,8 +2,8 @@ import { FormInputValidation, FormLabel } from '@automattic/components';
 import { camelCase, pick } from '@automattic/js-utils';
 import { DomainContactDetails } from '@automattic/shopping-cart';
 import { DomainContactDetailsErrors } from '@automattic/wpcom-checkout';
-import { LocalizeProps, localize } from 'i18n-calypso';
-import { isEmpty, map } from 'lodash';
+import { LocalizeProps, TranslateResult, localize } from 'i18n-calypso';
+import { isEmpty } from 'lodash';
 import { PureComponent, ReactNode } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
@@ -50,11 +50,13 @@ export class RegistrantExtraInfoUkForm extends PureComponent< FormProps & Locali
 			OTHER: translate( 'UK Entity that does not fit another category' ),
 			FOTHER: translate( 'Non-UK Entity that does not fit another category' ),
 		};
-		this.registrantTypeOptions = map( registrantTypes, ( text, optionValue ) => (
-			<option value={ optionValue } key={ optionValue }>
-				{ text }
-			</option>
-		) );
+		this.registrantTypeOptions = Object.entries( registrantTypes ).map(
+			( [ optionValue, text ] ) => (
+				<option value={ optionValue } key={ optionValue }>
+					{ text }
+				</option>
+			)
+		);
 	}
 
 	componentDidMount() {
@@ -121,7 +123,7 @@ export class RegistrantExtraInfoUkForm extends PureComponent< FormProps & Locali
 						onChange={ this.handleChangeEvent }
 						isError={ isError }
 					/>
-					{ map( tradingNameErrors, this.renderValidationError ) }
+					{ tradingNameErrors.map( this.renderValidationError ) }
 				</FormFieldset>
 			</div>
 		);
@@ -154,7 +156,7 @@ export class RegistrantExtraInfoUkForm extends PureComponent< FormProps & Locali
 						onChange={ this.handleChangeEvent }
 						isError={ isError }
 					/>
-					{ map( registrationNumberErrors, this.renderValidationError ) }
+					{ registrationNumberErrors.map( this.renderValidationError ) }
 				</FormFieldset>
 			</div>
 		);
@@ -165,7 +167,7 @@ export class RegistrantExtraInfoUkForm extends PureComponent< FormProps & Locali
 		errorMessage,
 	}: {
 		errorCode: string;
-		errorMessage: string;
+		errorMessage: string | TranslateResult;
 	} ) => {
 		const { translate } = this.props;
 		return (

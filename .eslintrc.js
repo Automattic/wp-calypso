@@ -620,6 +620,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/keys': 'error',
 		'you-dont-need-lodash-underscore/last': 'error',
 		'you-dont-need-lodash-underscore/last-index-of': 'error',
+		'you-dont-need-lodash-underscore/map': 'error',
 		'you-dont-need-lodash-underscore/pad-end': 'error',
 		'you-dont-need-lodash-underscore/pad-start': 'error',
 		'you-dont-need-lodash-underscore/reduce': 'error',

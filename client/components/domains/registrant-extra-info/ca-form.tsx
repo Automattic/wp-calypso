@@ -1,7 +1,7 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
 import { camelCase, pick } from '@automattic/js-utils';
 import { LocalizeProps, localize } from 'i18n-calypso';
-import { isEmpty, map } from 'lodash';
+import { isEmpty } from 'lodash';
 import { PureComponent, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
@@ -80,7 +80,7 @@ export class RegistrantExtraInfoCaForm extends PureComponent<
 			} ),
 			MAJ: translate( 'His Majesty the King' ),
 		};
-		const legalTypeOptions = map( legalTypes, ( text, optionValue ) => (
+		const legalTypeOptions = Object.entries( legalTypes ).map( ( [ optionValue, text ] ) => (
 			<option value={ optionValue } key={ optionValue }>
 				{ text }
 			</option>

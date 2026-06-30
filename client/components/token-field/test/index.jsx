@@ -5,7 +5,6 @@
 /* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["testOnBlur", "expect.*"] }] */
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { map } from 'lodash';
 import fixtures from './lib/fixtures';
 import TokenFieldWrapper, { suggestions } from './lib/token-field-wrapper';
 
@@ -77,12 +76,9 @@ describe( 'TokenField', () => {
 		const div = document.createElement( 'div' );
 		div.innerHTML = node.querySelector( 'span' ).outerHTML;
 
-		return map(
-			Array.from( div.firstChild.childNodes ).filter(
-				( childNode ) => childNode.nodeType !== window.Node.COMMENT_NODE
-			),
-			( childNode ) => childNode.textContent
-		);
+		return Array.from( div.firstChild.childNodes )
+			.filter( ( childNode ) => childNode.nodeType !== window.Node.COMMENT_NODE )
+			.map( ( childNode ) => childNode.textContent );
 	}
 
 	function getSelectedSuggestion( container ) {

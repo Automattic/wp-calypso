@@ -131,6 +131,12 @@ const FILTER_MESSAGE =
 	'Please use native `array.filter( ( item ) => … )` (or `Object.values( obj ).filter( … )` for objects) ' +
 	'instead of lodash `filter`. Expand iteratee shorthands to a predicate, use `Array.from( … )` for DOM ' +
 	'collections (a NodeList has no native `.filter`), and guard nullable collections with `?? []`.';
+const MAP_MESSAGE =
+	'Please use native `array.map( ( item ) => … )` instead of lodash `map`. For objects use ' +
+	'`Object.values( obj ).map( … )`, or `Object.entries( obj ).map( ( [ key, value ] ) => … )` when the ' +
+	'callback uses the key (lodash passes `( value, key )`). Expand pluck shorthands with optional chaining ' +
+	'(a property-name iteratee becomes `( item ) => item?.prop`), use `Array.from( … )` for DOM collections, ' +
+	'and guard nullable collections with `?? []`.';
 
 const paths = [
 	{ name: 'lodash', importNames: JS_UTILS_NAMES, message: JS_UTILS_MESSAGE },
@@ -165,6 +171,7 @@ const paths = [
 	{ name: 'lodash', importNames: [ 'some' ], message: SOME_MESSAGE },
 	{ name: 'lodash', importNames: [ 'forEach' ], message: FOREACH_MESSAGE },
 	{ name: 'lodash', importNames: [ 'filter' ], message: FILTER_MESSAGE },
+	{ name: 'lodash', importNames: [ 'map' ], message: MAP_MESSAGE },
 ];
 
 // Deep `lodash/<fn>` imports bypass the named-import paths above.
@@ -201,6 +208,7 @@ const patterns = [
 	{ group: [ 'lodash/some' ], message: SOME_MESSAGE },
 	{ group: [ 'lodash/forEach' ], message: FOREACH_MESSAGE },
 	{ group: [ 'lodash/filter' ], message: FILTER_MESSAGE },
+	{ group: [ 'lodash/map' ], message: MAP_MESSAGE },
 ];
 
 module.exports = { paths, patterns };

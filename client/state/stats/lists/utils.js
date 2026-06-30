@@ -1,6 +1,6 @@
 import { camelCase, capitalize, sortBy } from '@automattic/js-utils';
 import { translate, getLocaleSlug } from 'i18n-calypso';
-import { get, map } from 'lodash';
+import { get } from 'lodash';
 import moment from 'moment';
 import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
 
@@ -137,7 +137,7 @@ export function buildExportArray( data, parent = null, modifierFn = null ) {
 	}
 
 	if ( data.children ) {
-		const childData = map( data.children, ( child ) => {
+		const childData = data.children.map( ( child ) => {
 			return buildExportArray( child, label, modifierFn );
 		} );
 
@@ -391,7 +391,7 @@ export const normalizers = {
 			: [ 'days', startOf, 'postviews' ];
 		const viewData = get( data, dataPath, [] );
 
-		return map( viewData, ( item ) => {
+		return viewData.map( ( item ) => {
 			// To avoid showing a detail page for the Homepage set as latest posts.
 			const detailPage = site && item.href ? `/stats/post/${ item.id }/${ site.slug }` : null;
 			let inPeriod = false;
@@ -565,7 +565,7 @@ export const normalizers = {
 			return countryInfo[ viewData.country_code ];
 		} );
 
-		return map( countryData, ( viewData ) => {
+		return countryData.map( ( viewData ) => {
 			const country = countryInfo[ viewData.country_code ];
 
 			// ’ in country names causes google's geo viz to break

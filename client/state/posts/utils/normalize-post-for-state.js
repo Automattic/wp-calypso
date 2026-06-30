@@ -1,5 +1,3 @@
-import { map } from 'lodash';
-
 /**
  * Recursively unset a value in an object by its path, represented by an array.
  * Intentionally mutates `object` to mirror native `delete` operator's behavior.
@@ -30,12 +28,12 @@ export function normalizePostForState( post ) {
 		[],
 		...Object.entries( post.terms ?? {} ).reduce(
 			( memo, [ taxonomy, terms ] ) =>
-				memo.concat( map( terms, ( term, slug ) => [ 'terms', taxonomy, slug ] ) ),
+				memo.concat( Object.keys( terms ?? {} ).map( ( slug ) => [ 'terms', taxonomy, slug ] ) ),
 			[]
 		),
-		...map( post.categories, ( category, slug ) => [ 'categories', slug ] ),
-		...map( post.tags, ( tag, slug ) => [ 'tags', slug ] ),
-		...map( post.attachments, ( attachment, id ) => [ 'attachments', id ] ),
+		...Object.keys( post.categories ?? {} ).map( ( slug ) => [ 'categories', slug ] ),
+		...Object.keys( post.tags ?? {} ).map( ( slug ) => [ 'tags', slug ] ),
+		...Object.keys( post.attachments ?? {} ).map( ( id ) => [ 'attachments', id ] ),
 	].reduce( ( memo, path ) => {
 		recursiveUnset( memo, path.concat( 'meta', 'links' ) );
 		return memo;

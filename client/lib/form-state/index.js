@@ -1,7 +1,7 @@
 import { camelCase, mapValues, pickBy } from '@automattic/js-utils';
 import { debounce } from '@wordpress/compose';
 import update from 'immutability-helper';
-import { isEmpty, map } from 'lodash';
+import { isEmpty } from 'lodash';
 
 function Controller( options ) {
 	if ( ! ( this instanceof Controller ) ) {
@@ -306,7 +306,7 @@ function getInvalidFields( formState ) {
 function getErrorMessages( formState ) {
 	const invalidFields = getInvalidFields( formState );
 
-	return map( invalidFields, 'errors' ).flat();
+	return invalidFields.flatMap( ( field ) => field?.errors );
 }
 
 function isSubmitButtonDisabled( formState ) {

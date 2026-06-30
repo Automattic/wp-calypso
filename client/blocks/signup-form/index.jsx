@@ -5,7 +5,7 @@ import { Spinner } from '@wordpress/components';
 import clsx from 'clsx';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
-import { map, merge, isEmpty } from 'lodash';
+import { merge, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -532,7 +532,7 @@ class SignupForm extends Component {
 			return;
 		}
 
-		return map( messages, ( message, error_code ) => {
+		return Object.entries( messages ).map( ( [ error_code, message ] ) => {
 			if ( error_code === 'taken' ) {
 				const fieldValue = formState.getFieldValue( this.state.form, fieldName );
 				const link = addQueryArgs( { email_address: fieldValue }, this.getLoginLink() );

@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
@@ -18,7 +17,7 @@ export class ReaderSidebarTagsList extends Component {
 
 	renderItems() {
 		const { path, currentTag, tags } = this.props;
-		return map( tags, ( tag ) => (
+		return ( tags ?? [] ).map( ( tag ) => (
 			<ReaderSidebarTagsListItem
 				key={ tag.id }
 				tag={ tag }

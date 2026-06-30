@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { get, isEmpty, map } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { useReducer } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { FilterType, LogType } from 'calypso/data/hosting/use-site-logs-query';
@@ -204,7 +204,7 @@ export const useSiteLogsDownloader = ( {
 
 					logs = [
 						...logs,
-						...map( newLogData, ( entry ) => {
+						...newLogData.map( ( entry ) => {
 							const cleanedEntry = Object.fromEntries(
 								Object.entries( entry ).filter( ( [ key ] ) => key !== 'atomic_site_id' )
 							);
