@@ -65,6 +65,7 @@ export type GridSize = 'small' | 'smedium' | 'medium' | 'large' | 'xlarge';
 export type PlansIntent =
 	| 'plans-affiliate'
 	| 'plans-ai-assembler-free-trial'
+	| 'plans-ai-site-builder'
 	| 'plans-blog-onboarding'
 	| 'plans-newsletter'
 	| 'plans-new-hosted-site'

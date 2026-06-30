@@ -278,5 +278,13 @@ describe( 'ai-site-builder paid-only flow', () => {
 				expect.stringContaining( '/checkout/example.wordpress.com' )
 			);
 		} );
+
+		it( 'resumes on the plans page when a checkout re-entry reports NO_ACTION', async () => {
+			( getSignupCompleteSlug as jest.Mock ).mockReturnValue( 'example.wordpress.com' );
+
+			await submitFor( 'processing', { processingResult: ProcessingResult.NO_ACTION } );
+
+			expect( window.location.assign ).toHaveBeenCalledWith( '/plans/example.wordpress.com' );
+		} );
 	} );
 } );

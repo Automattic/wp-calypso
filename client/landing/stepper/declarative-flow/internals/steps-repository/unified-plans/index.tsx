@@ -63,10 +63,10 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 
 			return 'plans-new-hosted-site';
 		case AI_SITE_BUILDER_FLOW:
-			// `plans-new-hosted-site` is exactly Personal/Premium/Business/Commerce (no Free, no
-			// Enterprise) — the set the paid-only onboarding offers.
+			// `plans-ai-site-builder` offers Personal/Premium/Business/Commerce (no Free, no
+			// Enterprise) and, unlike `plans-new-hosted-site`, never substitutes a free hosting trial.
 			return config.isEnabled( 'onboarding/ai-site-builder-paid-only' )
-				? 'plans-new-hosted-site'
+				? 'plans-ai-site-builder'
 				: 'plans-ai-assembler-free-trial';
 		case ONBOARDING_FLOW:
 			if ( search.has( 'playground' ) ) {

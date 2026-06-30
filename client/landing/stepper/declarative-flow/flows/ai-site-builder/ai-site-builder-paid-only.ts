@@ -239,6 +239,17 @@ const aiSiteBuilderPaidOnly: FlowV2< typeof initialize > = {
 						return navigate( 'error' );
 					}
 
+					// Browser-back to processing after the checkout page unloaded leaves no in-memory
+					// pending action, so the step reports NO_ACTION. Resume on the site's plans page
+					// rather than stalling on an empty processing screen.
+					if ( providedDependencies.processingResult === ProcessingResult.NO_ACTION ) {
+						const reentrySiteSlug = getSignupCompleteSlug();
+						if ( reentrySiteSlug ) {
+							window.location.assign( `/plans/${ reentrySiteSlug }` );
+						}
+						return;
+					}
+
 					if (
 						providedDependencies.processingResult !== ProcessingResult.SUCCESS ||
 						! providedDependencies.siteCreated ||

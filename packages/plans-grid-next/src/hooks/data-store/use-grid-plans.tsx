@@ -175,6 +175,7 @@ export const usePlanTypesWithIntent = ( {
 		case 'plans-newsletter':
 			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
 			break;
+		case 'plans-ai-site-builder':
 		case 'plans-new-hosted-site':
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
