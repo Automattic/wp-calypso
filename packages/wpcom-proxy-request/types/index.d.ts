@@ -33,6 +33,8 @@ export function reloadProxy(): void;
 
 export function canAccessWpcomApis(): boolean;
 
+export function isCookieAuthMissing(): boolean;
+
 export function requestAllBlogsAccess(): ReturnType< typeof request >;
 
 export function setCrossOriginStorageItem(

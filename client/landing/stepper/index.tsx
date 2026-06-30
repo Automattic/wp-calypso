@@ -284,11 +284,22 @@ async function main() {
 							<LazyHelpCenter currentUser={ user as UserStore.CurrentUser } />
 						) : (
 							<>
-								<AsyncHelpCenterApp
-									requireLogin
-									currentUser={ user as UserStore.CurrentUser }
-									sectionName="stepper"
-								/>
+								{ /* Boot-authed users (auth cookie present) get the full Help Center.
+								   New users who sign up mid-flow have a bearer token but no cookie yet,
+								   so authed requests would 401 — give them the logged-out Help Center
+								   (docs/search/AI) until a full page load (e.g. checkout) sets the cookie. */ }
+								{ user ? (
+									<AsyncHelpCenterApp
+										requireLogin
+										currentUser={ user as UserStore.CurrentUser }
+										sectionName="stepper"
+									/>
+								) : (
+									<AsyncHelpCenterApp
+										locale={ defaultCalypsoI18n.getLocaleSlug() ?? undefined }
+										sectionName="stepper"
+									/>
+								) }
 								<AsyncLoad
 									require={ loadAgentsManagerLoader }
 									placeholder={ null }
