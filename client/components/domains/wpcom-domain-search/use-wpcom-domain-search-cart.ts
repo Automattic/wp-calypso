@@ -55,6 +55,7 @@ interface UseWPCOMDomainSearchCartOptions {
 	flowName?: string;
 	flowAllowsMultipleDomainsInCart: boolean;
 	isFirstDomainFreeForFirstYear: boolean;
+	freeForFirstYearTlds?: string[];
 	onContinue( cartItems: ResponseCartProduct[] ): void;
 	beforeAddDomainToCart?: ( domain: MinimalRequestCartProduct ) => MinimalRequestCartProduct;
 }
@@ -64,6 +65,7 @@ export const useWPCOMDomainSearchCart = ( {
 	flowName,
 	flowAllowsMultipleDomainsInCart,
 	isFirstDomainFreeForFirstYear,
+	freeForFirstYearTlds,
 	onContinue,
 	beforeAddDomainToCart = ( domain ) => domain,
 }: UseWPCOMDomainSearchCartOptions ) => {
@@ -104,9 +106,13 @@ export const useWPCOMDomainSearchCart = ( {
 				! item.extra?.premium &&
 				! item.extra?.domain_bundle_group_id
 		);
-		const freeDomainName = forceFirstNonPremiumDomainToBeFree
-			? firstNonPremiumDomain?.meta
-			: undefined;
+		let freeDomainName: string | undefined;
+		if ( forceFirstNonPremiumDomainToBeFree && firstNonPremiumDomain?.meta ) {
+			const isBundledTld =
+				! freeForFirstYearTlds ||
+				freeForFirstYearTlds.some( ( tld ) => firstNonPremiumDomain.meta.endsWith( '.' + tld ) );
+			freeDomainName = isBundledTld ? firstNonPremiumDomain.meta : undefined;
+		}
 
 		const rawTotal = domainItems.reduce(
 			( acc, item ) => acc + ( freeDomainName === item.meta ? 0 : item.item_subtotal_integer ),

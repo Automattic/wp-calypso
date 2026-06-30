@@ -73,6 +73,7 @@ export const useWPCOMDomainSearchProps = ( {
 		cartKey: getCartKey( { isLoggedIn, currentSiteId } ),
 		flowName,
 		isFirstDomainFreeForFirstYear,
+		freeForFirstYearTlds: externalConfig?.priceRules?.freeForFirstYearTlds,
 		flowAllowsMultipleDomainsInCart,
 		onContinue: onContinueWithStepSubmissionTracking,
 		beforeAddDomainToCart: externalBeforeAddDomainToCart,
