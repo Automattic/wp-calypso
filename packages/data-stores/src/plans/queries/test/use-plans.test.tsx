@@ -84,6 +84,9 @@ describe( 'plans query hooks', () => {
 		expect( result.current.isError ).toBe( false );
 		expect( Object.keys( result.current.data ?? {} ) ).toEqual( [ PLAN_PERSONAL ] );
 		expect( result.current.data?.[ PLAN_PERSONAL ].pricing.originalPrice.monthly ).toBe( 1000 );
+		expect( queryClient.getQueryData< PricedAPIPlan[] >( [ 'plans', undefined ] ) ).toHaveLength(
+			2
+		);
 	} );
 
 	it( 'ignores API site plans that are not defined in calypso-products', async () => {
@@ -104,5 +107,14 @@ describe( 'plans query hooks', () => {
 		expect( result.current.isError ).toBe( false );
 		expect( Object.keys( result.current.data ?? {} ) ).toEqual( [ PLAN_BUSINESS ] );
 		expect( result.current.data?.[ PLAN_BUSINESS ].pricing.originalPrice.monthly ).toBe( 2500 );
+		expect(
+			Object.keys(
+				queryClient.getQueryData< Record< string, PricedAPISitePlan > >( [
+					'site-plans',
+					123,
+					undefined,
+				] ) ?? {}
+			)
+		).toEqual( [ '1001', '9999' ] );
 	} );
 } );

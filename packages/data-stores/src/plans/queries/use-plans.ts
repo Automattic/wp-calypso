@@ -47,8 +47,9 @@ function usePlans( {
 	const queryKeys = useQueryKeysFactory();
 	const locale = useLocale();
 	const params = new URLSearchParams();
-	// eslint-disable-next-line @typescript-eslint/no-unused-expressions
-	coupon && params.append( 'coupon_code', coupon );
+	if ( coupon ) {
+		params.append( 'coupon_code', coupon );
+	}
 	params.append( 'locale', locale );
 
 	// Auto-detect Jetpack context and use appropriate request function
@@ -58,12 +59,13 @@ function usePlans( {
 
 	return useQuery( {
 		queryKey: queryKeys.plans( coupon ),
-		queryFn: async (): Promise< PlansIndex > => {
-			const data: PricedAPIPlan[] = await requestFn( {
+		queryFn: async (): Promise< PricedAPIPlan[] > =>
+			requestFn( {
 				path: '/plans',
 				apiVersion: '1.5',
 				query: params.toString(),
-			} );
+			} ),
+		select: ( data ): PlansIndex => {
 			// Filter out unknown products in case the API returns products not hardcoded in calypso-products.
 			const knownPlans = data.filter( ( plan ) => getPlan( plan.product_slug ) );
 
