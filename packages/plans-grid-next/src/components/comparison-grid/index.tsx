@@ -5,6 +5,8 @@ import {
 	getPlans,
 	FEATURE_AI_WRITER_DESIGNER,
 	FEATURE_AI_WRITER_DESIGNER_LIMITED,
+	FEATURE_GUIDED_WEBSITE_BUILDER,
+	FEATURE_GUIDED_WEBSITE_BUILDER_LIMITED,
 	FEATURE_REALTIME_BACKUPS_JP,
 } from '@automattic/calypso-products';
 import { Gridicon, JetpackLogo } from '@automattic/components';
@@ -63,6 +65,7 @@ import './style.scss';
 // Plans Differentiators Experiment: treat feature variants (e.g., _LIMITED) as the same row
 const FEATURE_ALIASES: Record< string, string[] > = {
 	[ FEATURE_AI_WRITER_DESIGNER ]: [ FEATURE_AI_WRITER_DESIGNER_LIMITED ],
+	[ FEATURE_GUIDED_WEBSITE_BUILDER ]: [ FEATURE_GUIDED_WEBSITE_BUILDER_LIMITED ],
 };
 
 // Finds a matching feature, checking both the base slug and any aliases
@@ -621,10 +624,14 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	}
 
 	const featureSlug = feature?.getSlug();
-	const comparisonGridTitle =
+	let comparisonGridTitle =
 		featureSlug === FEATURE_REALTIME_BACKUPS_JP
 			? translate( 'Real-time backups', { textOnly: true } )
 			: feature?.getAlternativeTitle?.() || feature?.getTitle();
+	if ( featureSlug === FEATURE_GUIDED_WEBSITE_BUILDER ) {
+		// Use the short title for the guided website builder in the comparison grid.
+		comparisonGridTitle = translate( 'Guided website builder', { textOnly: true } );
+	}
 
 	const planFeatures = [
 		...gridPlan.features.wpcomFeatures,
@@ -783,11 +790,15 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	const featureSlug = feature?.getSlug() ?? '';
 	const footnote = planFeatureFootnotes?.footnotesByFeature?.[ featureSlug ];
 	const tooltipId = `${ featureGroupSlug }-${ feature?.getSlug() }-comparison-grid`;
-	const title =
+	let title =
 		featureSlug === FEATURE_REALTIME_BACKUPS_JP
 			? // Always display the short title for backups in comparison grid.
 			  translate( 'Real-time backups', { textOnly: true } )
 			: feature?.getTitle?.();
+	if ( featureSlug === FEATURE_GUIDED_WEBSITE_BUILDER ) {
+		// Use the short title for the guided website builder in the comparison grid.
+		title = translate( 'Guided website builder', { textOnly: true } );
+	}
 	const headerAriaLabel: string = typeof title === 'string' ? title : '';
 
 	const { enableFeatureTooltips } = usePlansGridContext();

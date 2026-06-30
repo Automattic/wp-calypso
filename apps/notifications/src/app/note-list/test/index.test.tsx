@@ -25,14 +25,15 @@ const makeNote = ( id: number, label: string, type = 'comment' ) => ( {
 const renderTab = (
 	store: ReturnType< typeof initStore >,
 	filterName: FilterName,
-	clientOverride: Partial< typeof client > = {}
+	clientOverride: Partial< typeof client > = {},
+	selectedNoteId: string | undefined = undefined
 ) =>
 	render(
 		<Provider store={ store }>
 			<AppProvider client={ { ...client, ...clientOverride } as never } locale="en">
 				<NoteList
 					filterName={ filterName }
-					selectedNoteId={ undefined }
+					selectedNoteId={ selectedNoteId }
 					setSelectedNoteId={ noop }
 				/>
 			</AppProvider>
@@ -56,10 +57,34 @@ describe( 'NoteList loading state', () => {
 
 		// A filtered fetch begins: loading is true while the data is still empty.
 		act( () => {
-			store.dispatch( actions.ui.loadNotes() );
+			store.dispatch( actions.ui.loadNotes( { filter: { unread: 1 } } ) );
 		} );
 
 		// The "all caught up" message must not show until the fetch settles.
+		expect( screen.queryByText( "You're all caught up!" ) ).not.toBeInTheDocument();
+		expect( container.querySelector( '.components-spinner' ) ).toBeTruthy();
+	} );
+
+	// Regression: the always-running unfiltered background poll clears the shared
+	// loading flag, but it must not expose the Unread empty message while a
+	// filtered fetch is still in flight (the "loading → empty → list" flash).
+	it( 'keeps the loader when the background poll clears shared loading mid-fetch', () => {
+		const store = initStore();
+		store.dispatch( actions.ui.loadedNotes() );
+		const { container } = renderUnread( store );
+		expect( screen.getByText( "You're all caught up!" ) ).toBeVisible();
+
+		// The Unread fetch begins.
+		act( () => {
+			store.dispatch( actions.ui.loadNotes( { filter: { unread: 1 } } ) );
+		} );
+		expect( screen.queryByText( "You're all caught up!" ) ).not.toBeInTheDocument();
+
+		// A background all-notes poll completes and clears the shared loading flag
+		// while the filtered fetch is still in flight: the message must stay hidden.
+		act( () => {
+			store.dispatch( actions.ui.loadedNotes() );
+		} );
 		expect( screen.queryByText( "You're all caught up!" ) ).not.toBeInTheDocument();
 		expect( container.querySelector( '.components-spinner' ) ).toBeTruthy();
 	} );
@@ -80,7 +105,7 @@ describe( 'NoteList loading state', () => {
 		// the request is in flight.
 		act( () => {
 			store.dispatch( actions.notes.setUnreadNoteIds( [] ) );
-			store.dispatch( actions.ui.loadNotes() );
+			store.dispatch( actions.ui.loadNotes( { filter: { unread: 1 } } ) );
 		} );
 
 		// The same DataViews node is still mounted — it was not swapped for the
@@ -159,6 +184,25 @@ describe( 'NoteList loading state', () => {
 		expect( getRow()?.querySelector( '.is-unread' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'renders time-grouped section headers in newest-first order', () => {
+		const store = initStore();
+		const today = new Date().toISOString();
+		store.dispatch(
+			actions.notes.addNotes( [
+				{ ...makeNote( 700, 'Fresh note' ), timestamp: today },
+				{ ...makeNote( 701, 'Ancient note' ), timestamp: '2020-01-01T00:00:00+00:00' },
+			] )
+		);
+		store.dispatch( actions.ui.loadedNotes() );
+
+		const { container } = renderTab( store, 'all' as FilterName );
+
+		const headers = Array.from(
+			container.querySelectorAll( '.dataviews-view-list__group-header' )
+		).map( ( el ) => el.textContent );
+		expect( headers ).toEqual( [ 'Today', 'Older than a month' ] );
+	} );
+
 	it( 'client-filters the Comments tab from the shared cache', () => {
 		const store = initStore();
 		store.dispatch(
@@ -201,5 +245,19 @@ describe( 'NoteList loading state', () => {
 
 		expect( screen.queryByText( 'No new comments yet!' ) ).not.toBeInTheDocument();
 		expect( container.querySelector( '.components-spinner' ) ).toBeTruthy();
+	} );
+
+	it( 'marks only the open note row with the active highlight', () => {
+		const store = initStore();
+		store.dispatch(
+			actions.notes.addNotes( [ makeNote( 300, 'Open me' ), makeNote( 301, 'Other note' ) ] )
+		);
+		store.dispatch( actions.ui.loadedNotes() );
+
+		const { container } = renderTab( store, 'all' as FilterName, {}, '300' );
+
+		const active = container.querySelectorAll( '.wpnc__subject.is-active' );
+		expect( active ).toHaveLength( 1 );
+		expect( active[ 0 ].textContent ).toContain( 'Open me' );
 	} );
 } );

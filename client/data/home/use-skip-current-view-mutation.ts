@@ -49,7 +49,7 @@ function useSkipCurrentViewMutation< TData, TError >( siteId: number ): Result< 
 				{
 					// Single card views are skipped by skipping the "view".
 					view: isSingleCardView ? view_name : undefined,
-					// Prevents single card views from returning themself after skipping
+					// Prevents single card views from returning themselves after skipping
 					card: isSingleCardView ? undefined : card,
 					...( reminder && { reminder } ),
 				}

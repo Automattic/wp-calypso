@@ -26,13 +26,11 @@ export function Client() {
 	this.isVisible = false;
 	this.isShowing = false;
 	this.lastSeenTime = 0;
-	this.noteRequestLimit = settings.initial_limit;
 	// Latches once the server has no older notes left, so load-more stops paging.
 	this.allNotesLoaded = false;
 	// Active tab's server-side filter (e.g. `{ unread: 1 }`), or null for the
 	// unfiltered "all" list. When set, getFilteredNotes fetches matching notes.
 	this.filter = null;
-	this.filteredRequestLimit = settings.initial_limit;
 	this.filteredHasMore = false;
 	this.gettingFilteredNotes = false;
 	// Bumped on every setFilter so an in-flight fetch whose filter was reset
@@ -197,18 +195,20 @@ function getNotes( before ) {
 
 	const parameters = {
 		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash,variant',
-		// Older pages only request what's left under max_limit, so an additive
-		// page can't push the loaded count past the cap.
+		// Older pages request what's left under the cap; the no-`before` refresh
+		// requests a small fixed head window.
 		number: before
 			? Math.min( settings.increment_limit, settings.max_limit - loaded )
-			: this.noteRequestLimit,
+			: settings.initial_limit,
 		locale: this.locale,
 	};
 	if ( before ) {
 		parameters.before = before;
 	}
 
-	if ( ! notes.length || this.noteRequestLimit > notes.length ) {
+	// Show the loading state while paging older notes (`before`) and until the
+	// first head window has filled; a steady-state background poll stays silent.
+	if ( before || notes.length < settings.initial_limit ) {
 		store.dispatch( actions.ui.loadNotes() );
 	}
 
@@ -245,6 +245,7 @@ function getNotes( before ) {
 			this.allNotesLoaded = true;
 		}
 
+		let removedIds = [];
 		if ( before ) {
 			// Stop when an older page adds nothing new (an inclusive `before` can
 			// echo back just the anchor). Compare against the view's own window so
@@ -255,30 +256,42 @@ function getNotes( before ) {
 				this.allNotesLoaded = true;
 			}
 		} else {
-			// Authoritative top window: prune notes the server dropped. A prune
-			// means newer notes pushed older ones below the window, so let
-			// load-more re-fetch them. The additive `before` path never prunes.
-			const oldIds = getAllNotes( store.getState() ).map( ( { id } ) => id );
-			const newIds = data.notes.map( ( n ) => n.id );
-			const notesToRemove = oldIds.filter( ( id ) => ! newIds.includes( id ) );
+			// Prune only within the head window: drop notes missing from it that
+			// are newer than the oldest one returned; keep older paged-in notes.
+			const headFloor = data.notes.length
+				? Date.parse( data.notes[ data.notes.length - 1 ].timestamp )
+				: -Infinity;
+			const newIds = new Set( data.notes.map( ( n ) => n.id ) );
+			const stale = getAllNotes( store.getState() )
+				.filter( ( n ) => Date.parse( n.timestamp ) >= headFloor && ! newIds.has( n.id ) )
+				.map( ( n ) => n.id );
 			// Skip pruning while a server-side filter is active: the filtered fetch
 			// loads notes outside this top window, and pruning would remove them
 			// from under the filtered view. Pruning resumes on the unfiltered tab.
-			if ( notesToRemove.length && ! this.filter ) {
+			if ( stale.length && ! this.filter ) {
 				this.allNotesLoaded = false;
-				store.dispatch( actions.notes.removeNotes( notesToRemove ) );
+				store.dispatch( actions.notes.removeNotes( stale ) );
+				removedIds = stale;
 			}
 		}
 
-		// The lightweight id/hash list the polling diff compares against: a fresh
-		// top window replaces it; an older page appends to it.
+		// The lightweight id/hash list the polling diff compares against.
 		const pageList = data.notes.map( ( { id, note_hash } ) => ( { id, note_hash } ) );
-		this.noteList = before ? this.noteList.concat( pageList ) : pageList;
+		if ( before ) {
+			// An older page appends to the window.
+			this.noteList = this.noteList.concat( pageList );
+		} else {
+			// Merge the head over the window, keeping the older paged-in tail.
+			const headIds = new Set( pageList.map( ( n ) => n.id ) );
+			const removed = new Set( removedIds );
+			const tail = this.noteList.filter( ( n ) => ! headIds.has( n.id ) && ! removed.has( n.id ) );
+			this.noteList = pageList.concat( tail );
+		}
 
 		store.dispatch( actions.notes.addNotes( data.notes ) );
 		this.updateLastSeenTime( Number( data.last_seen_time ) );
 
-		if ( parameters.number === settings.max_limit ) {
+		if ( this.allNotesLoaded ) {
 			/*
 			 * Since we store note data in a local cache, we want to purge the
 			 * data if the notes no longer exist, but only once we've loaded all
@@ -313,7 +326,7 @@ function getNotesList() {
 
 	const parameters = {
 		fields: 'id,note_hash',
-		number: this.noteRequestLimit,
+		number: settings.initial_limit,
 	};
 
 	listNotes( parameters, ( error, data ) => {
@@ -344,8 +357,19 @@ function getNotesList() {
 			serverIds.some( ( sId ) => ! localIds.includes( sId ) ) ||
 			serverHashes.some( ( sHash ) => ! localHashes.includes( sHash ) );
 
-		/* Actually remove the notes from the local copy */
-		const notesToRemove = localIds.filter( ( local ) => ! serverIds.includes( local ) );
+		// Prune only within the polled head window: a local note is stale only if
+		// it sits at or above the oldest returned id yet is missing. Older paged-in
+		// notes are kept. (No timestamps here, so the edge is by id position.)
+		const serverIdSet = new Set( serverIds );
+		const oldestServerId = serverIds[ serverIds.length - 1 ];
+		const boundary = this.noteList.findIndex( ( note ) => note.id === oldestServerId );
+		const headLocal =
+			boundary >= 0
+				? this.noteList.slice( 0, boundary + 1 )
+				: this.noteList.slice( 0, serverIds.length );
+		const notesToRemove = headLocal
+			.map( ( note ) => note.id )
+			.filter( ( id ) => ! serverIdSet.has( id ) );
 
 		// Don't prune while a filter is active: the filtered view shares this cache,
 		// and a note that fell out of the unfiltered window could be dropped from it
@@ -356,8 +380,12 @@ function getNotesList() {
 			store.dispatch( actions.notes.removeNotes( notesToRemove ) );
 		}
 
-		/* Update our local copy of the note list */
-		this.noteList = data.notes;
+		// Merge the head over the window, keeping the older paged-in tail.
+		const removed = new Set( this.filter ? [] : notesToRemove );
+		const tail = this.noteList.filter(
+			( note ) => ! serverIdSet.has( note.id ) && ! removed.has( note.id )
+		);
+		this.noteList = data.notes.concat( tail );
 		this.updateLastSeenTime( Number( data.last_seen_time ) );
 
 		// Clean out stored reply texts that are older than a day
@@ -379,7 +407,6 @@ function getNotesList() {
  */
 function setFilter( filter ) {
 	this.filter = filter ?? null;
-	this.filteredRequestLimit = settings.initial_limit;
 	this.filteredHasMore = false;
 	this.filterGeneration++;
 
@@ -405,35 +432,40 @@ function getFilteredNotes( before ) {
 	}
 	this.gettingFilteredNotes = true;
 	const generation = this.filterGeneration;
+	// Tag this fetch's loading dispatches with its filter, stable even if the
+	// active filter changes mid-flight.
+	const filter = this.filter;
 
 	const unreadIds = getUnreadNoteIds( store.getState() );
 
 	const parameters = {
 		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash,variant',
-		// No `before`: re-request the authoritative top window. With it: page an
-		// older slice, capped to what's left under max_limit.
+		// No `before`: re-request a small fixed head window. With it: page an older
+		// slice, capped to what's left under max_limit.
 		number: before
 			? Math.min( settings.increment_limit, settings.max_limit - unreadIds.length )
-			: this.filteredRequestLimit,
+			: settings.initial_limit,
 		locale: this.locale,
-		...this.filter,
+		...filter,
 	};
 	if ( before ) {
 		parameters.before = before;
 	}
 
-	// Only show the full-panel spinner for the first page; later pages stream in.
-	if ( ! before && this.filteredRequestLimit === settings.initial_limit ) {
-		store.dispatch( actions.ui.loadNotes() );
+	// Loading state on the first page (the full-panel spinner shows while the list
+	// is empty) and while paging older notes (`before` → the list's load-more
+	// indicator); a steady-state refresh of a non-empty list stays silent.
+	if ( before || unreadIds.length === 0 ) {
+		store.dispatch( actions.ui.loadNotes( { filter } ) );
 	}
 
 	listNotes( parameters, ( error, data ) => {
 		this.gettingFilteredNotes = false;
-		store.dispatch( actions.ui.loadedNotes() );
 
 		if ( error ) {
 			// Leave the polling path's state untouched; it will recover on its
 			// own schedule. A retry happens when the user re-enters the tab.
+			store.dispatch( actions.ui.loadedNotes( { filter } ) );
 			return;
 		}
 
@@ -442,7 +474,10 @@ function getFilteredNotes( before ) {
 		// setFilter's own fetch was skipped while this request held the lock.
 		if ( generation !== this.filterGeneration ) {
 			if ( this.filter && this.isVisible ) {
+				// The refetch keeps the loading state; don't clear it here.
 				this.getFilteredNotes();
+			} else {
+				store.dispatch( actions.ui.loadedNotes( { filter } ) );
 			}
 			return;
 		}
@@ -469,15 +504,30 @@ function getFilteredNotes( before ) {
 					data.notes.length >= parameters.number &&
 					appended.length < settings.max_limit;
 			} else {
-				// The top window is authoritative, so replace the id list — notes the
-				// server no longer returns (read/deleted elsewhere) drop from the view.
-				store.dispatch( actions.notes.setUnreadNoteIds( pageIds ) );
+				// Merge the head over the list, keeping the older paged-in tail. Drop
+				// within-head ids the server no longer returns (read/deleted elsewhere).
+				const current = getUnreadNoteIds( store.getState() );
+				const serverIdSet = new Set( pageIds );
+				const oldestServerId = pageIds[ pageIds.length - 1 ];
+				const boundary = current.findIndex( ( id ) => id === oldestServerId );
+				const tail = (
+					boundary >= 0 ? current.slice( boundary + 1 ) : current.slice( pageIds.length )
+				).filter( ( id ) => ! serverIdSet.has( id ) );
+				const merged = pageIds.concat( tail );
+				store.dispatch( actions.notes.setUnreadNoteIds( merged ) );
 
-				// A full page back implies the server may have more matching notes.
+				// First page: a full head implies more older notes. Later refreshes keep
+				// the load-more exhaustion state instead of resetting it from the head.
 				this.filteredHasMore =
-					data.notes.length >= parameters.number && this.filteredRequestLimit < settings.max_limit;
+					( current.length === 0
+						? data.notes.length >= parameters.number
+						: this.filteredHasMore ) && merged.length < settings.max_limit;
 			}
 		}
+
+		// Clear loading only after the notes and ids are in the store, so the list
+		// never flashes empty between "loaded" and the ids landing.
+		store.dispatch( actions.ui.loadedNotes( { filter } ) );
 	} );
 }
 
@@ -647,11 +697,6 @@ function loadMore() {
 		if ( this.gettingFilteredNotes || ! this.filteredHasMore ) {
 			return;
 		}
-		// Grow the refresh window so the poll keeps covering paged-in notes.
-		this.filteredRequestLimit = Math.min(
-			this.filteredRequestLimit + settings.increment_limit,
-			settings.max_limit
-		);
 		// Page older notes additively, anchored on the view's oldest. `before` is
 		// epoch seconds, not the ISO timestamp.
 		const unreadIds = getUnreadNoteIds( store.getState() );
@@ -679,14 +724,6 @@ function loadMore() {
 	if ( ! oldest ) {
 		return;
 	}
-
-	// Grow the polling window so getNotes()/getNotesList() keep covering every
-	// note we've paged in; their diff treats the response as the full set, so a
-	// shorter window would prune the older notes back out.
-	this.noteRequestLimit = Math.min(
-		this.noteRequestLimit + settings.increment_limit,
-		settings.max_limit
-	);
 
 	// The endpoint's `before` cursor is UNIX epoch seconds, not the note's ISO
 	// timestamp; a raw string is ignored and load-more would refetch page one.

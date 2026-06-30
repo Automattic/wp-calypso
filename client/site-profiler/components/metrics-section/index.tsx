@@ -99,3 +99,5 @@ export const MetricsSection = forwardRef< HTMLObjectElement, MetricsSectionProps
 		);
 	}
 );
+
+MetricsSection.displayName = 'MetricsSection';

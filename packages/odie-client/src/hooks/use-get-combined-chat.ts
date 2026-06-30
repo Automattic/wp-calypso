@@ -60,8 +60,8 @@ export const useGetCombinedChat = (
 			connectionStatus: store.getZendeskConnectionStatus(),
 		};
 	}, [] );
-	const previousUuidRef = useRef< string | undefined >();
-	const previousOdieIdRef = useRef< string | null | undefined >();
+	const previousUuidRef = useRef< string | undefined >( undefined );
+	const previousOdieIdRef = useRef< string | null | undefined >( undefined );
 	const wasChatLoadedRef = useRef( isChatLoaded );
 	const [ mainChatState, setMainChatState ] = useState< Chat >( emptyChat );
 	const conversationId = getConversationIdFromInteraction( currentSupportInteraction );

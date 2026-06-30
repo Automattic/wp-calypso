@@ -1,6 +1,5 @@
 import { uniqBy } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { map, get, filter } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { isAncestor } from 'calypso/blocks/comments/utils';
@@ -32,9 +31,9 @@ class ConversationCaterpillarComponent extends Component {
 
 		const childComments = isRoot
 			? comments
-			: filter( comments, ( child ) => isAncestor( parentComment, child, commentsTree ) );
+			: comments.filter( ( child ) => isAncestor( parentComment, child, commentsTree ) );
 
-		const commentsToExpand = filter( childComments, ( comment ) => ! commentsToShow[ comment.ID ] );
+		const commentsToExpand = childComments.filter( ( comment ) => ! commentsToShow[ comment.ID ] );
 
 		return commentsToExpand;
 	};
@@ -47,14 +46,14 @@ class ConversationCaterpillarComponent extends Component {
 		this.props.expandComments( {
 			siteId: blogId,
 			postId,
-			commentIds: map( commentsToExpand, 'ID' ),
+			commentIds: commentsToExpand.map( ( c ) => c?.ID ),
 			displayType: POST_COMMENT_DISPLAY_TYPES.excerpt,
 		} );
 		// for each of those comments, expand the comment's parent to singleLine
 		this.props.expandComments( {
 			siteId: blogId,
 			postId,
-			commentIds: map( commentsToExpand, ( c ) => get( c, 'parent.ID', null ) ).filter( Boolean ),
+			commentIds: commentsToExpand.map( ( c ) => c?.parent?.ID ?? null ).filter( Boolean ),
 			displayType: POST_COMMENT_DISPLAY_TYPES.excerpt,
 		} );
 		recordAction( 'comment_caterpillar_click' );
@@ -76,7 +75,10 @@ class ConversationCaterpillarComponent extends Component {
 			: allExpandableComments.length;
 
 		// Only display each author once
-		const uniqueAuthors = uniqBy( map( expandableComments, 'author' ), 'avatar_URL' );
+		const uniqueAuthors = uniqBy(
+			expandableComments.map( ( c ) => c?.author ),
+			'avatar_URL'
+		);
 		const uniqueAuthorsCount = uniqueAuthors.length;
 		const lastAuthorName = uniqueAuthors.at( -1 )?.name;
 

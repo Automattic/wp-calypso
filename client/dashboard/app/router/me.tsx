@@ -8,6 +8,7 @@ import {
 	domainQuery,
 	geoLocationQuery,
 	isAutomatticianQuery,
+	legacyContactQuery,
 	legacyContactsQuery,
 	monetizeSubscriptionsQuery,
 	plansQuery,
@@ -888,6 +889,14 @@ export const securityLegacyContactPrintRoute = createRoute( {
 	} ),
 	getParentRoute: () => securityLegacyContactRoute,
 	path: '/print',
+	loader: async () => {
+		const [ contact ] = await queryClient.ensureQueryData( legacyContactsQuery() );
+		if ( contact ) {
+			// The access key shown on this page is only returned by the
+			// single-contact endpoint, so prefetch it here.
+			await queryClient.ensureQueryData( legacyContactQuery( contact.legacy_contact_id ) );
+		}
+	},
 } ).lazy( () =>
 	import( '../../me/security-legacy-contact/print' ).then( ( d ) =>
 		createLazyRoute( 'security-legacy-contact-print' )( {

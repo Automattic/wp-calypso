@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { Button, Card, Dialog, Gridicon } from '@automattic/components';
 import debugModule from 'debug';
 import { localize, fixMe } from 'i18n-calypso';
-import { get, map } from 'lodash';
+import { get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
@@ -197,12 +197,12 @@ class JetpackSsoForm extends Component {
 		if ( blogDetails ) {
 			const siteObject = {
 				ID: null,
-				url: get( this.props, 'blogDetails.URL', '' ),
-				admin_url: get( this.props, 'blogDetails.admin_url', '' ),
-				domain: get( this.props, 'blogDetails.domain', '' ),
+				url: this.props?.blogDetails?.URL ?? '',
+				admin_url: this.props?.blogDetails?.admin_url ?? '',
+				domain: this.props?.blogDetails?.domain ?? '',
 				icon: get( this.props, 'blogDetails.icon', { img: '', ico: '' } ),
 				is_vip: false,
-				title: decodeEntities( get( this.props, 'blogDetails.title', '' ) ),
+				title: decodeEntities( this.props?.blogDetails?.title ?? '' ),
 			};
 			site = <Site site={ siteObject } />;
 		}
@@ -341,7 +341,7 @@ class JetpackSsoForm extends Component {
 		return (
 			<table className="jetpack-connect__sso-shared-details-table">
 				<tbody>
-					{ map( sharedDetails, ( value, key ) => {
+					{ Object.entries( sharedDetails ).map( ( [ key, value ] ) => {
 						return (
 							<tr key={ key } className="jetpack-connect__sso-shared-detail-row">
 								<td className="jetpack-connect__sso-shared-detail-label">

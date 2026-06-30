@@ -1,7 +1,9 @@
 export { default as camelCase } from './camel-case';
 export { default as camelToSnakeCase } from './camel-to-snake-case';
 export { default as capitalize } from './capitalize';
+export { default as defaults } from './defaults';
 export { default as escapeRegExp } from './escape-reg-exp';
+export { default as flow } from './flow';
 export { default as groupBy } from './group-by';
 export { default as isError } from './is-error';
 export { default as kebabCase } from './kebab-case';
@@ -20,6 +22,7 @@ export { default as pick } from './pick';
 export { default as pickBy } from './pick-by';
 export { default as random } from './random';
 export { default as range } from './range';
+export { default as set } from './set';
 export { default as shuffle } from './shuffle';
 export { default as snakeCase } from './snake-case';
 export { default as snakeToCamelCase } from './snake-to-camel-case';

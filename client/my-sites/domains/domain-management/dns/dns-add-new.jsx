@@ -1,7 +1,6 @@
 import page from '@automattic/calypso-router';
 import { FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -163,7 +162,7 @@ class DnsAddNew extends React.Component {
 
 	getFieldsForType( type ) {
 		const dnsRecord =
-			find( this.dnsRecords, ( record ) => {
+			this.dnsRecords.find( ( record ) => {
 				return record.types.includes( type );
 			} ) ?? this.dnsRecords[ 0 ];
 

@@ -153,7 +153,7 @@ describe( 'CustomizeModal', () => {
 
 		await user.click( screen.getByRole( 'tab', { name: 'Layout' } ) );
 		expect( screen.getByRole( 'radio', { name: /Compact list/ } ) ).toBeChecked();
-		expect( screen.getByRole( 'radio', { name: /Legacy/ } ) ).toBeVisible();
+		expect( screen.getByRole( 'radio', { name: /Classic/ } ) ).toBeVisible();
 
 		await user.click( screen.getByRole( 'tab', { name: 'Sources' } ) );
 		expect(
@@ -176,7 +176,7 @@ describe( 'CustomizeModal', () => {
 		await user.click( screen.getByRole( 'radio', { name: 'Green' } ) );
 
 		await user.click( screen.getByRole( 'tab', { name: 'Layout' } ) );
-		await user.click( screen.getByRole( 'radio', { name: /Legacy/ } ) );
+		await user.click( screen.getByRole( 'radio', { name: /Classic/ } ) );
 
 		await user.click( screen.getByRole( 'button', { name: 'Save changes' } ) );
 
@@ -300,7 +300,7 @@ describe( 'CustomizeModal', () => {
 
 		await waitFor( () => expect( onClose ).toHaveBeenCalled() );
 
-		expect( page ).toHaveBeenCalledWith( '/reader/spaces' );
+		expect( page ).toHaveBeenCalledWith( '/reader' );
 		const list = queryClient.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey );
 		expect( list ).toEqual( [] );
 	} );

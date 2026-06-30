@@ -5,6 +5,7 @@ import {
 } from '@automattic/calypso-products';
 import { Badge, Button, Card, CompactCard, Gridicon } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -314,10 +315,12 @@ function ProductsList() {
 						) }
 						<sub className="memberships__products-product-price">{ translate( 'Free' ) }</sub>
 						<div className="memberships__products-product-badge">
-							<Badge type="info">{ translate( 'Newsletter tier' ) }</Badge>
-							{ isFreeTierHidden && (
-								<Badge type="warning">{ translate( 'Hidden from subscribers' ) }</Badge>
-							) }
+							<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
+								<Badge type="info">{ translate( 'Newsletter tier' ) }</Badge>
+								{ isFreeTierHidden && (
+									<Badge type="warning">{ translate( 'Hidden from subscribers' ) }</Badge>
+								) }
+							</HStack>
 						</div>
 					</div>
 					<EllipsisMenu position="bottom left">

@@ -16,7 +16,6 @@ jest.mock( 'calypso/state/site-settings/actions', () => ( {
 
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { unmountComponentAtNode } from 'react-dom';
 import Modal from 'react-modal';
 import { requestSiteSettings, saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';
@@ -43,7 +42,6 @@ describe( 'FreePlanModal', () => {
 	} );
 
 	afterEach( () => {
-		unmountComponentAtNode( modalRoot );
 		document.body.removeChild( modalRoot );
 		[ ...document.getElementsByClassName( 'ReactModalPortal' ) ].forEach( ( el ) =>
 			document.body.removeChild( el )

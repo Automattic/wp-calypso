@@ -4,7 +4,6 @@ import { eye } from '@automattic/components/src/icons';
 import { Icon, people, starEmpty, commentContent, settings } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
-import { find } from 'lodash';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import titlecase from 'to-title-case';
@@ -144,7 +143,8 @@ Object.defineProperty( CHART_COMMENTS, 'label', {
 	get: () => translate( 'Comments', { context: 'noun' } ),
 } );
 
-const getActiveTab = ( chartTab ) => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
+const getActiveTab = ( chartTab ) =>
+	CHARTS.find( ( chart ) => chart.attr === chartTab ) || CHARTS[ 0 ];
 
 // Return a default amount of days to subtracts from the present day depending on the period selected.
 // Used in case no starting date is present in the URL.

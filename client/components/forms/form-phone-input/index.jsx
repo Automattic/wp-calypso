@@ -1,7 +1,6 @@
 import { FormLabel } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormCountrySelect from 'calypso/components/forms/form-country-select';
@@ -79,9 +78,7 @@ export class FormPhoneInput extends Component {
 
 	getCountryData() {
 		// TODO: move this to country-list or FormCountrySelect
-		return find( this.props.countriesList, {
-			code: this.state.countryCode,
-		} );
+		return this.props.countriesList?.find( ( country ) => country.code === this.state.countryCode );
 	}
 
 	handleCountryChange = ( event ) => {

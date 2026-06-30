@@ -12,7 +12,9 @@ export function useIsMenuSectionVisible( ref: React.RefObject< HTMLObjectElement
 			{ rootMargin: `-${ calculateMetricsSectionScrollOffset() + 1 }px` } // the additional pixel triggers the tab change
 		);
 
-		ref?.current && observer.observe( ref.current );
+		if ( ref?.current ) {
+			observer.observe( ref.current );
+		}
 
 		return () => {
 			observer.disconnect();

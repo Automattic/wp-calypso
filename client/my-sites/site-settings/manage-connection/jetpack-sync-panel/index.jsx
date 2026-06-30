@@ -1,7 +1,6 @@
 import { CompactCard, ProgressBar } from '@automattic/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -38,7 +37,7 @@ class JetpackSyncPanel extends Component {
 
 	isErrored = () => {
 		const syncRequestError = this.props?.fullSyncRequest?.error;
-		const syncStatusErrorCount = get( this.props, 'syncStatus.errorCounter', 0 );
+		const syncStatusErrorCount = this.props?.syncStatus?.errorCounter ?? 0;
 		return !! ( syncRequestError || syncStatusErrorCount >= SYNC_STATUS_ERROR_NOTICE_THRESHOLD );
 	};
 
@@ -57,8 +56,8 @@ class JetpackSyncPanel extends Component {
 		event.preventDefault();
 		debug( 'Try again button clicked' );
 		recordTracksEvent( 'calypso_jetpack_sync_panel_try_again_button_clicked', {
-			errorCode: get( this.props, 'fullSyncRequest.error.error', '' ),
-			errorMsg: get( this.props, 'fullSyncRequest.error.message', '' ),
+			errorCode: this.props?.fullSyncRequest?.error?.error ?? '',
+			errorMsg: this.props?.fullSyncRequest?.error?.message ?? '',
 		} );
 		this.props.scheduleJetpackFullysync( this.props.siteId );
 	};
@@ -66,14 +65,14 @@ class JetpackSyncPanel extends Component {
 	onClickDebug = () => {
 		debug( 'Clicked check connection button' );
 		recordTracksEvent( 'calypso_jetpack_sync_panel_check_connection_button_clicked', {
-			error_code: get( this.props, 'syncStatus.error.error', '' ),
-			error_msg: get( this.props, 'syncStatus.error.message', '' ),
+			error_code: this.props?.syncStatus?.error?.error ?? '',
+			error_msg: this.props?.syncStatus?.error?.message ?? '',
 		} );
 	};
 
 	renderErrorNotice = () => {
 		const syncRequestError = this.props?.fullSyncRequest?.error;
-		const syncStatusErrorCount = get( this.props, 'syncStatus.errorCounter', 0 );
+		const syncStatusErrorCount = this.props?.syncStatus?.errorCounter ?? 0;
 		const { translate } = this.props;
 
 		let errorNotice = null;

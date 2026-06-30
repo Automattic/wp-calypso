@@ -1,7 +1,6 @@
 import { omitBy } from '@automattic/js-utils';
 import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { some } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -64,11 +63,11 @@ class EditorMediaModalGallery extends Component {
 		// Finally, make sure that all items are the latest version
 		const newItems = settings.items
 			.filter( ( item ) => {
-				return some( items, { ID: item.ID } );
+				return ( items ?? [] ).some( ( i ) => i.ID === item.ID );
 			} )
 			.concat(
 				items.filter( ( item ) => {
-					return ! some( settings.items, { ID: item.ID } );
+					return ! ( settings.items ?? [] ).some( ( i ) => i.ID === item.ID );
 				} )
 			)
 			.map( ( item ) => {

@@ -39,7 +39,7 @@ export function hasUploadFailed( state, siteId ) {
  * @returns {?string} -- Uploaded theme ID
  */
 export function getUploadedThemeId( state, siteId ) {
-	const themeId = get( state.themes.uploadTheme.uploadedThemeId, siteId );
+	const themeId = state.themes.uploadTheme.uploadedThemeId?.[ siteId ];
 	// When wpcom themes are uploaded, we will not be able to retrieve details
 	// from the site, since we filter out all wpcom themes. Remove the suffix
 	// so we can use details from wpcom.
@@ -56,7 +56,7 @@ export function getUploadedThemeId( state, siteId ) {
  * @returns {?Object} -- Error details
  */
 export function getUploadError( state, siteId ) {
-	return get( state.themes.uploadTheme.uploadError, siteId );
+	return state.themes.uploadTheme.uploadError?.[ siteId ];
 }
 
 /**
@@ -66,7 +66,7 @@ export function getUploadError( state, siteId ) {
  * @returns {?number} -- Total
  */
 export function getUploadProgressTotal( state, siteId ) {
-	return get( state.themes.uploadTheme.progressTotal, siteId );
+	return state.themes.uploadTheme.progressTotal?.[ siteId ];
 }
 
 /**
@@ -77,7 +77,7 @@ export function getUploadProgressTotal( state, siteId ) {
  * @returns {?number} -- Loaded
  */
 export function getUploadProgressLoaded( state, siteId ) {
-	return get( state.themes.uploadTheme.progressLoaded, siteId );
+	return state.themes.uploadTheme.progressLoaded?.[ siteId ];
 }
 
 /**

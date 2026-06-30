@@ -44,6 +44,12 @@ describe( 'mergeCapabilitiesInto', () => {
 		expect( merged.supportsSplitScreen ).toBe( true );
 	} );
 
+	it( 'sets supportsRegenerateAction when the provider declares it', () => {
+		const merged: ProviderCapabilities = {};
+		mergeCapabilitiesInto( merged, { supportsRegenerateAction: true } );
+		expect( merged.supportsRegenerateAction ).toBe( true );
+	} );
+
 	it( 'leaves supportsSplitScreen unset when the provider declares false', () => {
 		const merged: ProviderCapabilities = {};
 		mergeCapabilitiesInto( merged, { supportsSplitScreen: false } );
@@ -56,8 +62,10 @@ describe( 'mergeCapabilitiesInto', () => {
 		// silently opt in via JavaScript truthiness.
 		mergeCapabilitiesInto( merged, { supportsSplitScreen: 'false' } );
 		mergeCapabilitiesInto( merged, { supportsSplitScreen: 'true' } );
+		mergeCapabilitiesInto( merged, { supportsRegenerateAction: 'true' } );
 		mergeCapabilitiesInto( merged, { supportsSplitScreen: 1 } );
 		expect( merged.supportsSplitScreen ).toBeUndefined();
+		expect( merged.supportsRegenerateAction ).toBeUndefined();
 	} );
 
 	it( 'OR-merges across providers — any true wins', () => {
@@ -75,11 +83,15 @@ describe( 'mergeCapabilitiesInto', () => {
 		// probe each known key by direct access to hit the get trap.
 		const lazyCapabilities = new Proxy(
 			{},
-			{ get: ( _target, prop ) => ( prop === 'supportsSplitScreen' ? true : undefined ) }
+			{
+				get: ( _target, prop ) =>
+					prop === 'supportsSplitScreen' || prop === 'supportsRegenerateAction' ? true : undefined,
+			}
 		);
 		const merged: ProviderCapabilities = {};
 		mergeCapabilitiesInto( merged, lazyCapabilities );
 		expect( merged.supportsSplitScreen ).toBe( true );
+		expect( merged.supportsRegenerateAction ).toBe( true );
 	} );
 } );
 
@@ -101,6 +113,14 @@ describe( 'loadExternalProviders', () => {
 		expect( providers.toolProvider ).toBeUndefined();
 		expect( providers.contextProvider ).toBeUndefined();
 		expect( providers.useSuggestions ).toEqual( expect.any( Function ) );
+	} );
+
+	it( 'treats malformed agentProviders data as no providers', async () => {
+		setAgentsManagerData( {
+			agentProviders: 'not-an-array',
+		} );
+
+		await expect( loadExternalProviders() ).resolves.toEqual( {} );
 	} );
 
 	it( 'merges abilities from multiple tool providers and dispatches execution to the owner', async () => {
@@ -158,6 +178,23 @@ describe( 'loadExternalProviders', () => {
 		);
 		expect( firstProvider.executeAbility ).toHaveBeenCalled();
 		expect( secondProvider.executeAbility ).not.toHaveBeenCalled();
+	} );
+
+	it( 'returns valid IDs for loaded providers and ignores missing, empty, and duplicate IDs', async () => {
+		setAgentsManagerData( {
+			agentProviders: [
+				{ providerId: 'jetpack-ai-sidebar', getEmptyViewSuggestions: () => [] },
+				{ providerId: '', getEmptyViewSuggestions: () => [] },
+				{ providerId: 'woocommerce-ai', getEmptyViewSuggestions: () => [] },
+				{ getEmptyViewSuggestions: () => [] },
+				{ providerId: 'jetpack-ai-sidebar', getEmptyViewSuggestions: () => [] },
+				{ providerId: 123, getEmptyViewSuggestions: () => [] },
+			],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.providerIds ).toEqual( [ 'jetpack-ai-sidebar', 'woocommerce-ai' ] );
 	} );
 
 	it( 'merges context from multiple context providers', async () => {

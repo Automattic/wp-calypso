@@ -728,6 +728,7 @@ export function hasAmountAvailableToRefund( purchase: Purchase ) {
  */
 export function isWithinRefundWindowDowngradeEligible( purchase: Purchase ): boolean {
 	return (
+		purchase.is_plan_type_downgradable &&
 		purchase.is_plan &&
 		purchase.is_within_initial_refund_window &&
 		! isExpired( purchase ) &&

@@ -397,7 +397,7 @@ export class SectionMigrate extends Component {
 					/**
 					 * Renew the site if the backend upgraded do Atomic, but Calypso still has old data
 					 */
-					if ( isBackendAtomic && ! get( targetSite, 'options.is_wpcom_atomic', false ) ) {
+					if ( isBackendAtomic && ! ( targetSite?.options?.is_wpcom_atomic ?? false ) ) {
 						this.props.requestSite( targetSiteId );
 					}
 

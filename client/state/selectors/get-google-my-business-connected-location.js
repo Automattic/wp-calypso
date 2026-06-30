@@ -1,4 +1,3 @@
-import { filter } from 'lodash';
 import getGoogleMyBusinessLocations from 'calypso/state/selectors/get-google-my-business-locations';
 
 /**
@@ -9,7 +8,7 @@ import getGoogleMyBusinessLocations from 'calypso/state/selectors/get-google-my-
  * @returns {Object[]}        A connected GMB location
  */
 export default function getGoogleMyBusinessConnectedLocation( state, siteId ) {
-	return filter( getGoogleMyBusinessLocations( state, siteId ), {
-		isConnected: true,
-	} ).at( -1 );
+	return getGoogleMyBusinessLocations( state, siteId ).findLast(
+		( location ) => location.isConnected === true
+	);
 }

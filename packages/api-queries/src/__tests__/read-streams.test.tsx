@@ -170,6 +170,33 @@ describe( 'readStreamQuery', () => {
 		expect( result.current.data?.next_page_handle ).toBe( 'NEXT' );
 	} );
 
+	it( 'fetches a space Discover feed from /wpcom/v2/reader/spaces/<id>/discover', async () => {
+		const scope = nock( BASE )
+			.get( '/wpcom/v2/reader/spaces/6/discover' )
+			.query( true )
+			.reply( 200, {
+				cards: [
+					{
+						type: 'post',
+						date: 1718000000,
+						data: { ID: 9, site_ID: 900, date: '2026-06-10', URL: 'https://example.com/discover' },
+					},
+				],
+				next_page_handle: 'NEXT',
+			} );
+
+		const client = newClient();
+		const { result } = renderHook(
+			() => useQuery( readStreamQuery( 'space_discover:6', { count: 4 }, null ) ),
+			{ wrapper: makeWrapper( client ) }
+		);
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( scope.isDone() ).toBe( true );
+		expect( result.current.data?.cards ).toHaveLength( 1 );
+		expect( result.current.data?.next_page_handle ).toBe( 'NEXT' );
+	} );
+
 	it( 'throws when called for an unsupported streamType', () => {
 		const opts = readStreamQuery( 'unknown_stream', { number: 4 }, null );
 		expect( () => opts.queryFn!( {} as never ) ).toThrow(

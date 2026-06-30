@@ -1,5 +1,4 @@
 import { getUrlParts, getUrlFromParts, safeImageUrl } from '@automattic/calypso-url';
-import { forEach, some, filter } from 'lodash';
 import { resolveRelativePath } from 'calypso/lib/url';
 import { maxWidthPhotonishURL } from './utils';
 
@@ -14,7 +13,7 @@ const removeUnwantedAttributes = ( node ) => {
 		return;
 	}
 
-	const inlineEventHandlerAttributes = filter( node.attributes, ( attr ) =>
+	const inlineEventHandlerAttributes = Array.from( node.attributes ).filter( ( attr ) =>
 		attr.name.startsWith( 'on' )
 	);
 	inlineEventHandlerAttributes.forEach( ( a ) => node.removeAttribute( a.name ) );
@@ -44,7 +43,7 @@ const imageShouldBeRemovedFromContent = ( imageUrl ) => {
 		'pixel.wp.com',
 	];
 
-	return some( bannedUrlParts, ( part ) => imageUrl.toLowerCase().includes( part ) );
+	return bannedUrlParts.some( ( part ) => imageUrl.toLowerCase().includes( part ) );
 };
 
 function provideProtocol( post, url ) {
@@ -109,7 +108,7 @@ const makeImagesSafe = ( maxWidth ) => ( post, dom ) => {
 	}
 
 	const images = dom.querySelectorAll( 'img[src]' );
-	forEach( images, ( image ) => makeImageSafe( post, image, maxWidth ) );
+	Array.from( images ).forEach( ( image ) => makeImageSafe( post, image, maxWidth ) );
 
 	return post;
 };

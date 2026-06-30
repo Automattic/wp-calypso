@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { pick } from '@automattic/js-utils';
 import debugModule from 'debug';
 import { translate } from 'i18n-calypso';
-import { filter, find, forEach, isEmpty, reject, reduce } from 'lodash';
+import { isEmpty } from 'lodash';
 import { Store, Unsubscribe as ReduxUnsubscribe, AnyAction } from 'redux';
 import { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -156,7 +156,11 @@ export default class SignupFlowController {
 	}
 
 	_resetStoresIfProcessing() {
-		if ( find( getSignupProgress( this._reduxStore.getState() ), { status: 'processing' } ) ) {
+		if (
+			Object.values( getSignupProgress( this._reduxStore.getState() ) ?? {} ).find(
+				( step ) => step.status === 'processing'
+			)
+		) {
 			this.reset();
 		}
 	}
@@ -164,7 +168,9 @@ export default class SignupFlowController {
 	_resetStoresIfUserHasLoggedIn() {
 		if (
 			isUserLoggedIn( this._reduxStore.getState() ) &&
-			find( getSignupProgress( this._reduxStore.getState() ), { stepName: 'user' } )
+			Object.values( getSignupProgress( this._reduxStore.getState() ) ?? {} ).find(
+				( step ) => step.stepName === 'user'
+			)
 		) {
 			this.reset();
 		}
@@ -187,12 +193,14 @@ export default class SignupFlowController {
 		const hasStepThatProvidesSiteSlug = ( flowName: string ) => {
 			let foundStepThatProvidesSiteSlug = false;
 			const userLoggedIn = isUserLoggedIn( this._reduxStore.getState() );
-			forEach( pick( steps, flows.getFlow( flowName, userLoggedIn )?.steps ), ( step ) => {
+			for ( const step of Object.values(
+				pick( steps, flows.getFlow( flowName, userLoggedIn )?.steps )
+			) ) {
 				if ( ( step.providesDependencies || [] ).indexOf( 'siteSlug' ) > -1 ) {
 					foundStepThatProvidesSiteSlug = true;
-					return false;
+					break;
 				}
-			} );
+			}
 			return foundStepThatProvidesSiteSlug;
 		};
 
@@ -224,7 +232,7 @@ export default class SignupFlowController {
 	}
 
 	_assertFlowHasValidDependencies() {
-		forEach( pick( steps, this._getFlowSteps() ), ( step ) => {
+		Object.values( pick( steps, this._getFlowSteps() ) ).forEach( ( step ) => {
 			if ( ! step.dependencies ) {
 				return;
 			}
@@ -258,7 +266,7 @@ export default class SignupFlowController {
 			getSignupDependencyStore( this._reduxStore.getState() )
 		);
 
-		forEach( pick( steps, this._getFlowSteps() ), ( step ) => {
+		Object.values( pick( steps, this._getFlowSteps() ) ).forEach( ( step ) => {
 			if ( ! step.providesDependencies ) {
 				return;
 			}
@@ -342,11 +350,11 @@ export default class SignupFlowController {
 
 	_process() {
 		const currentSteps = this._getFlowSteps();
-		const signupProgress = filter( getSignupProgress( this._reduxStore.getState() ), ( step ) =>
-			currentSteps.includes( step.stepName )
-		);
-		const pendingSteps = filter( signupProgress, { status: 'pending' } );
-		const completedSteps = filter( signupProgress, { status: 'completed' } );
+		const signupProgress = Object.values(
+			getSignupProgress( this._reduxStore.getState() ) ?? {}
+		).filter( ( step ) => currentSteps.includes( step.stepName ) );
+		const pendingSteps = signupProgress.filter( ( step ) => step.status === 'pending' );
+		const completedSteps = signupProgress.filter( ( step ) => step.status === 'completed' );
 		const dependencies = getSignupDependencyStore( this._reduxStore.getState() );
 
 		if ( dependencies.bearer_token && ! wpcom.isTokenLoaded() ) {
@@ -375,12 +383,12 @@ export default class SignupFlowController {
 		const dependenciesFound = this._findDependencies( step.stepName, 'dependencies' );
 		const dependenciesSatisfied = dependencies.length === Object.keys( dependenciesFound ).length;
 		const currentSteps = this._getFlowSteps();
-		const signupProgress = filter(
-			getSignupProgress( this._reduxStore.getState() ),
-			( { stepName } ) => currentSteps.includes( stepName )
-		);
+		const signupProgress = Object.values(
+			getSignupProgress( this._reduxStore.getState() ) ?? {}
+		).filter( ( { stepName } ) => currentSteps.includes( stepName ) );
 		const allStepsSubmitted =
-			reject( signupProgress, { status: 'in-progress' } ).length === currentSteps.length;
+			signupProgress.filter( ( step ) => step.status !== 'in-progress' ).length ===
+			currentSteps.length;
 		const allowUnauthenticated =
 			getSignupDependencyStore( this._reduxStore.getState() )?.allowUnauthenticated ?? false;
 
@@ -496,9 +504,8 @@ export default class SignupFlowController {
 			( stepName ) => ( steps && steps[ stepName ] && steps[ stepName ].providesDependencies ) || []
 		);
 
-		return reduce(
-			getSignupProgress( this._reduxStore.getState() ),
-			( current, step ) => ( {
+		return Object.entries( getSignupProgress( this._reduxStore.getState() ) ?? {} ).reduce(
+			( current, [ , step ] ) => ( {
 				...current,
 				...pick( step.providedDependencies, requiredDependencies ),
 			} ),

@@ -1,4 +1,4 @@
-import { agencyQuery } from '@automattic/api-queries';
+import { agencyQuery, activeAgencyQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { home, globe, pages, tag } from '@wordpress/icons';
@@ -8,9 +8,12 @@ import { useAppContext } from '../context';
 export default function AgencySidebar() {
 	const { supports } = useAppContext();
 	const { data: agency } = useSuspenseQuery( agencyQuery() );
+	const { data: activeAgency } = useSuspenseQuery( activeAgencyQuery() );
 	if ( agency.isClientUser ) {
 		return null;
 	}
+
+	const canAccessMcp = !! ( supports.agency && supports.agency.mcp && activeAgency?.mcp?.allowed );
 
 	return (
 		<>
@@ -33,9 +36,14 @@ export default function AgencySidebar() {
 					</SidebarMenuItem>
 				</SidebarExpandableMenuItem>
 			) }
-			{ supports.agency && supports.agency.learn && (
-				<SidebarExpandableMenuItem label={ __( 'Resources' ) } icon={ pages } to="/resources/learn">
-					<SidebarMenuItem to="/resources/learn">{ __( 'Learn' ) }</SidebarMenuItem>
+			{ supports.agency && ( supports.agency.learn || canAccessMcp ) && (
+				<SidebarExpandableMenuItem label={ __( 'Resources' ) } icon={ pages } to="/resources">
+					{ supports.agency.learn && (
+						<SidebarMenuItem to="/resources/learn">{ __( 'Learn' ) }</SidebarMenuItem>
+					) }
+					{ canAccessMcp && (
+						<SidebarMenuItem to="/resources/ai-mcp">{ __( 'MCP' ) }</SidebarMenuItem>
+					) }
 				</SidebarExpandableMenuItem>
 			) }
 		</>

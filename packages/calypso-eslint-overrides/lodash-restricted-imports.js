@@ -5,6 +5,18 @@
  * root config and the overrides that replace, rather than merge with, it) so the
  * guard stays identical everywhere. Replacements live in `@automattic/js-utils`,
  * or are native array methods.
+ *
+ * Note: `no-restricted-imports` only covers ES `import`/deep-import syntax — not
+ * namespace member calls (`_.forEach`) or CommonJS `require( 'lodash' )`. The
+ * `eslint-plugin-you-dont-need-lodash-underscore` rules in the root config catch
+ * those member-call/namespace shapes for the functions they cover, so enable the
+ * matching rule there when a function's migration is complete (these detailed
+ * messages still guide the named-import case mid-migration).
+ *
+ * Both entries are intended to coexist permanently: this one stays as the
+ * primary, more-actionable message for the named-import path, and the plugin
+ * rule is the enforcement backstop for the namespace/`require` shapes it alone
+ * can see. There is overlap on the named-import call site by design.
  */
 
 const JS_UTILS_NAMES = [
@@ -26,6 +38,9 @@ const JS_UTILS_NAMES = [
 	'random',
 	'range',
 	'truncate',
+	'flow',
+	'defaults',
+	'set',
 ];
 
 // The js-utils case converters cover ASCII identifiers/keys, not lodash's full
@@ -63,6 +78,9 @@ const FINDINDEX_MESSAGE =
 	'Please use native `array.findIndex( ( item ) => … )` instead of lodash `findIndex`.';
 const CLONE_MESSAGE =
 	'Please use a spread copy (`{ ...obj }` / `[ ...arr ]`) instead of lodash `clone`.';
+const CLONE_DEEP_MESSAGE =
+	'Please use native `structuredClone` for plain serializable data instead of lodash `cloneDeep`. ' +
+	'For object graphs that contain functions, class instances, or symbol keys, write a small local clone.';
 const PROPERTY_MESSAGE =
 	'Please use an arrow function (`( obj ) => obj.key`) instead of lodash `property`.';
 // The js-utils maxBy/minBy rank by numeric iteratee values only — not lodash's
@@ -81,6 +99,44 @@ const PARTITION_MESSAGE =
 const SORT_MESSAGE =
 	'Please use `sortBy`/`orderBy` from `@automattic/js-utils`. They support function and ' +
 	'property-path iteratees (and arrays of those) but not lodash object-match shorthands.';
+const REJECT_MESSAGE =
+	'Please use native `array.filter( ( item ) => ! … )` instead of lodash `reject` ' +
+	'(expand object-match shorthands to a predicate, and guard nullable collections with `?? []`).';
+const CONCAT_MESSAGE =
+	'Please use native `array.concat( … )` (or `[].concat( ...arrays )`) instead of lodash `concat`.';
+const REDUCE_MESSAGE =
+	'Please use native `array.reduce()` (or `Object.entries( obj ).reduce()` to fold an object) ' +
+	'instead of lodash `reduce`. Guard nullable collections with `?? []` / `?? {}`.';
+const FIND_MESSAGE =
+	'Please use native `array.find( ( item ) => … )` (or `Object.values( obj ).find( … )` for objects) ' +
+	'instead of lodash `find`. Expand iteratee shorthands to a predicate and guard nullable collections with `?? []`.';
+const FINDLAST_MESSAGE =
+	'Please use native `array.findLast( ( item ) => … )` instead of lodash `findLast`.';
+const HAS_MESSAGE =
+	'Please use native `Object.hasOwn( obj, key )` instead of lodash `has` for single-key checks ' +
+	'(expand dotted-path checks manually with optional chaining).';
+const XOR_MESSAGE =
+	'Please compute the symmetric difference natively, e.g. ' +
+	'`Array.from( new Set( [ ...a, ...b ] ) ).filter( ( item ) => a.includes( item ) !== b.includes( item ) )`, ' +
+	'instead of lodash `xor` (the Set dedupes to match lodash; you can drop it when the inputs are known unique).';
+const SOME_MESSAGE =
+	'Please use native `array.some( ( item ) => … )` (or `Object.values( obj ).some( … )` for objects) ' +
+	'instead of lodash `some`. Expand iteratee shorthands to a predicate and guard nullable collections with `?? []`.';
+const FOREACH_MESSAGE =
+	'Please use native `array.forEach( … )` instead of lodash `forEach`. Use ' +
+	'`Object.values( obj ).forEach( … )` / `Object.entries( obj ).forEach( ( [ key, value ] ) => … )` for objects, ' +
+	'`Array.from( … ).forEach( … )` for DOM collections, guard nullable collections with `?? []`, and convert ' +
+	'early-exit callbacks (those returning `false`) to a `for…of` loop with `break`.';
+const FILTER_MESSAGE =
+	'Please use native `array.filter( ( item ) => … )` (or `Object.values( obj ).filter( … )` for objects) ' +
+	'instead of lodash `filter`. Expand iteratee shorthands to a predicate, use `Array.from( … )` for DOM ' +
+	'collections (a NodeList has no native `.filter`), and guard nullable collections with `?? []`.';
+const MAP_MESSAGE =
+	'Please use native `array.map( ( item ) => … )` instead of lodash `map`. For objects use ' +
+	'`Object.values( obj ).map( … )`, or `Object.entries( obj ).map( ( [ key, value ] ) => … )` when the ' +
+	'callback uses the key (lodash passes `( value, key )`). Expand pluck shorthands with optional chaining ' +
+	'(a property-name iteratee becomes `( item ) => item?.prop`), use `Array.from( … )` for DOM collections, ' +
+	'and guard nullable collections with `?? []`.';
 
 const paths = [
 	{ name: 'lodash', importNames: JS_UTILS_NAMES, message: JS_UTILS_MESSAGE },
@@ -100,10 +156,22 @@ const paths = [
 	{ name: 'lodash', importNames: [ 'findKey' ], message: FINDKEY_MESSAGE },
 	{ name: 'lodash', importNames: [ 'findIndex' ], message: FINDINDEX_MESSAGE },
 	{ name: 'lodash', importNames: [ 'clone' ], message: CLONE_MESSAGE },
+	{ name: 'lodash', importNames: [ 'cloneDeep' ], message: CLONE_DEEP_MESSAGE },
 	{ name: 'lodash', importNames: [ 'property' ], message: PROPERTY_MESSAGE },
 	{ name: 'lodash', importNames: [ 'maxBy', 'minBy' ], message: EXTREMUM_MESSAGE },
 	{ name: 'lodash', importNames: [ 'partition' ], message: PARTITION_MESSAGE },
 	{ name: 'lodash', importNames: [ 'sortBy', 'orderBy' ], message: SORT_MESSAGE },
+	{ name: 'lodash', importNames: [ 'reject' ], message: REJECT_MESSAGE },
+	{ name: 'lodash', importNames: [ 'concat' ], message: CONCAT_MESSAGE },
+	{ name: 'lodash', importNames: [ 'reduce' ], message: REDUCE_MESSAGE },
+	{ name: 'lodash', importNames: [ 'find' ], message: FIND_MESSAGE },
+	{ name: 'lodash', importNames: [ 'findLast' ], message: FINDLAST_MESSAGE },
+	{ name: 'lodash', importNames: [ 'has' ], message: HAS_MESSAGE },
+	{ name: 'lodash', importNames: [ 'xor' ], message: XOR_MESSAGE },
+	{ name: 'lodash', importNames: [ 'some' ], message: SOME_MESSAGE },
+	{ name: 'lodash', importNames: [ 'forEach' ], message: FOREACH_MESSAGE },
+	{ name: 'lodash', importNames: [ 'filter' ], message: FILTER_MESSAGE },
+	{ name: 'lodash', importNames: [ 'map' ], message: MAP_MESSAGE },
 ];
 
 // Deep `lodash/<fn>` imports bypass the named-import paths above.
@@ -125,10 +193,22 @@ const patterns = [
 	{ group: [ 'lodash/findKey' ], message: FINDKEY_MESSAGE },
 	{ group: [ 'lodash/findIndex' ], message: FINDINDEX_MESSAGE },
 	{ group: [ 'lodash/clone' ], message: CLONE_MESSAGE },
+	{ group: [ 'lodash/cloneDeep' ], message: CLONE_DEEP_MESSAGE },
 	{ group: [ 'lodash/property' ], message: PROPERTY_MESSAGE },
 	{ group: [ 'lodash/maxBy', 'lodash/minBy' ], message: EXTREMUM_MESSAGE },
 	{ group: [ 'lodash/partition' ], message: PARTITION_MESSAGE },
 	{ group: [ 'lodash/sortBy', 'lodash/orderBy' ], message: SORT_MESSAGE },
+	{ group: [ 'lodash/reject' ], message: REJECT_MESSAGE },
+	{ group: [ 'lodash/concat' ], message: CONCAT_MESSAGE },
+	{ group: [ 'lodash/reduce' ], message: REDUCE_MESSAGE },
+	{ group: [ 'lodash/find' ], message: FIND_MESSAGE },
+	{ group: [ 'lodash/findLast' ], message: FINDLAST_MESSAGE },
+	{ group: [ 'lodash/has' ], message: HAS_MESSAGE },
+	{ group: [ 'lodash/xor' ], message: XOR_MESSAGE },
+	{ group: [ 'lodash/some' ], message: SOME_MESSAGE },
+	{ group: [ 'lodash/forEach' ], message: FOREACH_MESSAGE },
+	{ group: [ 'lodash/filter' ], message: FILTER_MESSAGE },
+	{ group: [ 'lodash/map' ], message: MAP_MESSAGE },
 ];
 
 module.exports = { paths, patterns };

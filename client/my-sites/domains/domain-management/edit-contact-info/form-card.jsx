@@ -8,7 +8,7 @@ import {
 } from '@automattic/js-utils';
 import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { get, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -431,11 +431,7 @@ class EditContactInfoFormCard extends Component {
 		if ( this.props.bulkEdit && ! this.state.formSubmitting ) {
 			return false;
 		}
-		const unmodifiableFields = get(
-			this.props,
-			[ 'selectedDomain', 'whoisUpdateUnmodifiableFields' ],
-			[]
-		);
+		const unmodifiableFields = this.props?.selectedDomain?.whoisUpdateUnmodifiableFields ?? [];
 		return this.state.formSubmitting || unmodifiableFields.includes( snakeCase( name ) );
 	};
 

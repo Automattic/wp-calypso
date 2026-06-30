@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import { AGENTS_MANAGER_STORE } from '../../stores';
+import { isEditorAiEntryEnabled } from '../../utils/editor-entry-points';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 import './style.scss';
 
@@ -19,11 +20,12 @@ const ADMIN_BAR_AI_CHAT_BUTTON_ID = 'wp-admin-bar-agents-manager-ai-chat';
 const MASTERBAR_AI_CHAT_BUTTON_SELECTOR = '.masterbar__item-agents-manager-ai-chat';
 
 /**
- * Whether the AI chat button (wp-admin bar or Calypso masterbar) is present.
- * If so, the chat hides on close and reopens from it instead of a floating bubble.
+ * Whether an AI chat entry button (wp-admin bar, Calypso masterbar, or editor toolbar) is
+ * present. If so, the chat hides on close and reopens from it instead of a floating bubble.
  */
 export function hasAiChatEntryButton(): boolean {
 	return (
+		isEditorAiEntryEnabled() ||
 		!! document.getElementById( ADMIN_BAR_AI_CHAT_BUTTON_ID ) ||
 		!! document.querySelector( MASTERBAR_AI_CHAT_BUTTON_SELECTOR )
 	);
@@ -38,7 +40,7 @@ const DESTINATION_HISTORY = 'agents-manager-history';
 const DESTINATION_GUIDES = 'agents-manager-support-guides';
 
 interface UseAdminBarIntegrationOptions {
-	maybeOpenChat: () => void;
+	openChat: () => void;
 	closeChat: () => void;
 }
 
@@ -53,7 +55,7 @@ interface UseAdminBarIntegrationOptions {
  * Returns whether the AI chat entry button is present on the page.
  */
 export default function useAdminBarIntegration( {
-	maybeOpenChat,
+	openChat,
 	closeChat,
 }: UseAdminBarIntegrationOptions ): boolean {
 	const navigate = useNavigate();
@@ -65,8 +67,8 @@ export default function useAdminBarIntegration( {
 	);
 
 	// Refs keep the latest callbacks without re-attaching DOM listeners each render.
-	const maybeOpenChatRef = useRef( maybeOpenChat );
-	maybeOpenChatRef.current = maybeOpenChat;
+	const openChatRef = useRef( openChat );
+	openChatRef.current = openChat;
 	const closeChatRef = useRef( closeChat );
 	closeChatRef.current = closeChat;
 	const resumeActiveChatRef = useRef( resumeActiveChat );
@@ -148,7 +150,7 @@ export default function useAdminBarIntegration( {
 				return;
 			}
 			resumeActiveChatRef.current();
-			maybeOpenChatRef.current();
+			openChatRef.current();
 		};
 
 		aiChatButton.addEventListener( 'click', handleClick );
@@ -196,7 +198,7 @@ export default function useAdminBarIntegration( {
 					return;
 				}
 				onSelect();
-				maybeOpenChatRef.current();
+				openChatRef.current();
 			};
 
 			element?.addEventListener( 'click', handleClick );

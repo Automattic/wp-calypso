@@ -1,6 +1,6 @@
 import { pick, sortBy } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
-import { filter, find, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import { addQueryArgs } from 'calypso/lib/url';
 import flows from 'calypso/signup/config/flows';
 import { getStepModuleName } from 'calypso/signup/config/step-components';
@@ -23,7 +23,7 @@ function isFlowName( pathFragment, isUserLoggedIn ) {
 }
 
 export function getStepName( parameters ) {
-	return find( pick( parameters, [ 'flowName', 'stepName' ] ), isStepName );
+	return Object.values( pick( parameters, [ 'flowName', 'stepName' ] ) ).find( isStepName );
 }
 
 export function isFirstStepInFlow( flowName, stepName, isUserLoggedIn ) {
@@ -36,7 +36,9 @@ function isStepName( pathFragment ) {
 }
 
 export function getStepSectionName( parameters ) {
-	return find( pick( parameters, [ 'stepName', 'stepSectionName' ] ), isStepSectionName );
+	return Object.values( pick( parameters, [ 'stepName', 'stepSectionName' ] ) ).find(
+		isStepSectionName
+	);
 }
 
 function isStepSectionName( pathFragment ) {
@@ -144,14 +146,16 @@ export function getFilteredSteps( flowName, progress, isUserLoggedIn ) {
 
 	return sortBy(
 		// filter steps...
-		filter( progress, ( step ) => flow.steps.includes( step.stepName ) ),
+		Object.values( progress ?? {} ).filter( ( step ) => flow.steps.includes( step.stepName ) ),
 		// then order according to the flow definition...
 		( { stepName } ) => flow.steps.indexOf( stepName )
 	);
 }
 
 export function getFirstInvalidStep( flowName, progress, isUserLoggedIn ) {
-	return find( getFilteredSteps( flowName, progress, isUserLoggedIn ), { status: 'invalid' } );
+	return getFilteredSteps( flowName, progress, isUserLoggedIn ).find(
+		( step ) => step.status === 'invalid'
+	);
 }
 
 export function getCompletedSteps( flowName, progress, options = {}, isUserLoggedIn ) {
@@ -159,13 +163,11 @@ export function getCompletedSteps( flowName, progress, options = {}, isUserLogge
 	// This is to ensure that when resuming progress, we only do so if
 	// the last known flow matches the one that the user is returning to.
 	if ( options.shouldMatchFlowName ) {
-		return filter(
-			getFilteredSteps( flowName, progress, isUserLoggedIn ),
+		return getFilteredSteps( flowName, progress, isUserLoggedIn ).filter(
 			( step ) => 'in-progress' !== step.status && step.lastKnownFlow === flowName
 		);
 	}
-	return filter(
-		getFilteredSteps( flowName, progress, isUserLoggedIn ),
+	return getFilteredSteps( flowName, progress, isUserLoggedIn ).filter(
 		( step ) => 'in-progress' !== step.status
 	);
 }

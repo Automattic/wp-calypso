@@ -1,7 +1,18 @@
+@use 'calypso/reader/spaces/colors' as space-colors;
+
 .space-feed {
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
+}
+
+// Each space exposes its accent as `--space-color` / `--space-color-bg`. Emit
+// them on the feed root from the space's chosen color so any layout inside can
+// consume the accent (e.g. the compact list colors post titles with it).
+@each $color in space-colors.$space-colors {
+	.space-feed--#{$color} {
+		@include space-colors.space-accent-color( $color );
+	}
 }
 
 .space-feed__toolbar {
@@ -77,8 +88,15 @@
 	inline-size: 40%;
 }
 
+// Shared shimmer block used by the per-layout skeletons (see `Shimmer`).
+.space-feed__shimmer {
+	display: block;
+	border-radius: 4px;
+}
+
 .space-feed__skeleton-avatar,
-.space-feed__skeleton-line {
+.space-feed__skeleton-line,
+.space-feed__shimmer {
 	background: linear-gradient(
 		90deg,
 		var(--color-surface-backdrop) 0%,
@@ -101,7 +119,8 @@
 
 @media (prefers-reduced-motion: reduce) {
 	.space-feed__skeleton-avatar,
-	.space-feed__skeleton-line {
+	.space-feed__skeleton-line,
+	.space-feed__shimmer {
 		animation: none;
 	}
 }

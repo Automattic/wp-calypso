@@ -1,12 +1,10 @@
-import { get } from 'lodash';
-
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
 export default function enrichedSurveyData( surveyData, purchase, timestamp = new Date() ) {
-	const purchaseStartDate = get( purchase, 'subscribedDate', null );
-	const siteStartDate = get( purchase, 'blogCreatedDate', null );
-	const purchaseId = get( purchase, 'id', null );
-	const productSlug = get( purchase, 'productSlug', null );
+	const purchaseStartDate = purchase?.subscribedDate ?? null;
+	const siteStartDate = purchase?.blogCreatedDate ?? null;
+	const purchaseId = purchase?.id ?? null;
+	const productSlug = purchase?.productSlug ?? null;
 
 	return {
 		purchase: productSlug,

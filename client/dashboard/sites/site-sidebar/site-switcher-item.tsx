@@ -7,6 +7,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { chevronUpDown } from '@wordpress/icons';
 import { Suspense, lazy, useMemo } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { useAppContext } from '../../app/context';
 import { SidebarMenuSwitcherItem } from '../../components/sidebar';
 import SiteIcon from '../../components/site-icon';
@@ -18,6 +19,7 @@ import type { Site } from '@automattic/api-core';
 
 export default function SiteSwitcherItem( { site }: { site: Site } ) {
 	const { components } = useAppContext();
+	const { recordTracksEvent } = useAnalytics();
 	const SiteSwitcher = useMemo(
 		() =>
 			lazy( components.siteSwitcher ) as React.LazyExoticComponent< React.FC< SiteSwitcherProps > >,
@@ -60,6 +62,9 @@ export default function SiteSwitcherItem( { site }: { site: Site } ) {
 					<ExternalLink
 						href={ site.URL }
 						style={ { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }
+						onClick={ () => {
+							recordTracksEvent( 'calypso_dashboard_site_switcher_site_url_click' );
+						} }
 					>
 						{ getSiteDisplayUrl( site ) }
 					</ExternalLink>

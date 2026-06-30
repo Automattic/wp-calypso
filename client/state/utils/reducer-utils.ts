@@ -1,5 +1,5 @@
 import { mapValues } from '@automattic/js-utils';
-import { get, reduce } from 'lodash';
+import { get } from 'lodash';
 import { combineReducers as combine } from 'redux'; // eslint-disable-line no-restricted-imports
 import { APPLY_STORED_STATE } from 'calypso/state/action-types';
 import { SerializationResult } from 'calypso/state/serialization-result';
@@ -219,9 +219,8 @@ function serializeState< TState = any >(
 		return undefined;
 	}
 
-	return reduce(
-		reducers,
-		( result, reducer, reducerKey ) => {
+	return Object.entries( reducers ).reduce(
+		( result, [ reducerKey, reducer ] ) => {
 			const serialized = serialize( reducer, state[ reducerKey ] );
 			if ( serialized !== undefined ) {
 				if ( ! result ) {

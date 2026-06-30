@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { get } from 'lodash';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { postLoginRequest, getErrorFromHTTPError } from 'calypso/state/login/utils';
 
@@ -19,6 +18,6 @@ export const logoutUser = ( redirectTo ) => ( dispatch, getState ) => {
 		client_secret: config( 'wpcom_signup_key' ),
 		logout_nonce: logoutNonce,
 	} )
-		.then( ( response ) => get( response, 'body.data', {} ) )
+		.then( ( response ) => response?.body?.data ?? {} )
 		.catch( ( httpError ) => Promise.reject( getErrorFromHTTPError( httpError ) ) );
 };

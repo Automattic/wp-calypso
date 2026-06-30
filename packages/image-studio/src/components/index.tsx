@@ -368,7 +368,7 @@ const ImageStudioContent = withInstanceId(
 		} );
 
 		// Track the last modal key to detect when modal reopens
-		const lastModalOpenKey = useRef< number | undefined >();
+		const lastModalOpenKey = useRef< number | undefined >( undefined );
 		// Track attachment ID to detect navigation
 		const prevAttachmentIdRef = useRef< number | null >( null );
 		// Track activeToolbarOption to detect user interaction (vs. programmatic changes)
