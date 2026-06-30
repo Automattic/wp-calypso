@@ -9,6 +9,14 @@ jest.mock( '@automattic/onboarding', () => ( {
 	clearStepPersistedState: jest.fn(),
 } ) );
 
+jest.mock( '@automattic/data-stores', () => ( {
+	Onboard: { SiteIntent: { AIAssembler: 'ai-assembler' } },
+} ) );
+
+jest.mock( 'calypso/lib/wp', () => ( {
+	req: { post: jest.fn() },
+} ) );
+
 jest.mock( '@wordpress/data', () => ( {
 	dispatch: () => ( { resetOnboardStore: jest.fn() } ),
 	useDispatch: jest.fn(),

@@ -1,8 +1,10 @@
+import { Onboard } from '@automattic/data-stores';
 import { AI_SITE_BUILDER_ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, dispatch, resolveSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
+import wpcom from 'calypso/lib/wp';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
@@ -25,6 +27,22 @@ import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { OnboardActions } from '@automattic/data-stores';
 import type { Store } from 'redux';
+
+const SiteIntent = Onboard.SiteIntent;
+
+const deletePage = async ( siteId: string | number, pageId: number ): Promise< boolean > => {
+	try {
+		await wpcom.req.post( {
+			path: '/sites/' + siteId + '/pages/' + pageId,
+			method: 'DELETE',
+			apiNamespace: 'wp/v2',
+		} );
+		return true;
+	} catch ( error ) {
+		// Fail silently — deleting the boilerplate page is not essential.
+		return false;
+	}
+};
 
 async function initialize( reduxStore: Store ) {
 	const { resetOnboardStore } = dispatch( ONBOARD_STORE ) as OnboardActions;
@@ -70,6 +88,7 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 			setSiteUrl,
 			setSignupDomainOrigin,
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
+		const { setStaticHomepageOnSite, setIntentOnSite } = useDispatch( SITE_STORE );
 
 		const query = useQuery();
 		const flowName = this.name;
@@ -138,6 +157,29 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 
 					if ( ! site || ! site.URL ) {
 						return navigate( STEPS.ERROR.slug );
+					}
+
+					// Prepare the freshly created site for Big Sky: publish a Home page,
+					// set it as the static homepage, and set the AI Assembler intent so the
+					// editor launches the Site Spec experience on a real page rather than
+					// the index template.
+					try {
+						const homePage = await wpcom.req.post(
+							{ path: '/sites/' + siteId + '/pages', apiNamespace: 'wp/v2' },
+							{},
+							{
+								title: 'Home',
+								status: 'publish',
+								content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
+							}
+						);
+						await deletePage( siteId, 1 );
+						await setIntentOnSite( siteSlug, SiteIntent.AIAssembler );
+						if ( homePage?.id ) {
+							await setStaticHomepageOnSite( siteId, homePage.id );
+						}
+					} catch ( error ) {
+						// Fail silently — Big Sky can still launch without the prepared page.
 					}
 
 					const prompt =
