@@ -78,7 +78,10 @@ module.exports = {
 						patterns: [ { group: [ 'calypso/*' ] }, ...lodashRestrictedImports.patterns ],
 					},
 				],
-				'no-restricted-modules': [ 'error', { patterns: [ 'calypso/*' ] } ],
+				'no-restricted-modules': [
+					'error',
+					{ paths: lodashRestrictedImports.modules, patterns: [ 'calypso/*' ] },
+				],
 			},
 		},
 		{
