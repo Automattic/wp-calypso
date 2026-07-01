@@ -24,7 +24,7 @@ function LegacyContactDetails( { legacyContactId }: { legacyContactId: number } 
 	};
 
 	return (
-		<VStack spacing={ 8 }>
+		<VStack spacing={ 6 }>
 			<SectionHeader title={ __( 'Your legacy contact' ) } level={ 3 } />
 			<Text as="p" size={ 15 } lineHeight={ 1.5 }>
 				{ __(
