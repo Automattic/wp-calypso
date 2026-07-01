@@ -26,14 +26,14 @@ import './style.scss';
 
 const ALL_ENTERPRISE_LOGO_SLUGS = [
 	'slack',
-	'samsung',
-	'techcrunch',
 	'usa-today',
 	'salesforce',
-	'vox-media',
 	'meta',
 	'intuit',
-	'siriusxm',
+	'capgemini',
+	'news-corp',
+	'samsung',
+	'nasa',
 ];
 
 interface HeaderPriceProps {
