@@ -411,10 +411,10 @@ export class RestAPIClient {
 	/**
 	 *
 	 * @param siteID
-	 * @param number Page size. The endpoint defaults to 25; pass a higher value
-	 * (up to the 100 pending-invite cap) to fetch more in one request.
+	 * @param pageSize Page size. The endpoint defaults to 25 and paginates; pass a
+	 * higher value (100 is the max page size) to fetch more in one request.
 	 */
-	async getInvites( siteID: number, number?: number ): Promise< AllInvitesResponse > {
+	async getInvites( siteID: number, pageSize?: number ): Promise< AllInvitesResponse > {
 		const params: RequestParams = {
 			method: 'get',
 			headers: {
@@ -424,8 +424,8 @@ export class RestAPIClient {
 		};
 
 		const url = this.getRequestURL( '1.1', `/sites/${ siteID }/invites` );
-		if ( number !== undefined ) {
-			url.searchParams.set( 'number', String( number ) );
+		if ( pageSize !== undefined ) {
+			url.searchParams.set( 'number', String( pageSize ) );
 		}
 
 		const response = await this.sendRequest( url, params );
@@ -447,48 +447,19 @@ export class RestAPIClient {
 	async deleteInvite( siteID: number, email: string ): Promise< boolean > {
 		const invites = await this.getInvites( siteID );
 
-		let inviteID = undefined;
+		const invite = Object.values( invites ).find(
+			( invite: Invite ) =>
+				invite.invited_by.site_ID === siteID && invite.is_pending && invite.user.email === email
+		);
 
-		Object.values( invites ).forEach( ( invite: Invite ) => {
-			if (
-				invite.invited_by.site_ID === siteID &&
-				invite.is_pending &&
-				invite.user.email === email
-			) {
-				inviteID = invite.invite_key;
-			}
-		} );
-
-		if ( inviteID === undefined ) {
+		if ( invite === undefined ) {
 			throw new Error(
 				`Aborting invite deletion: inviteID not found for email: ${ email } and siteID: ${ siteID }}`
 			);
 		}
 
-		const params: RequestParams = {
-			method: 'post',
-			headers: {
-				Authorization: await this.getAuthorizationHeader( 'bearer' ),
-				'Content-Type': this.getContentTypeHeader( 'json' ),
-			},
-			body: JSON.stringify( {
-				invite_ids: [ inviteID ],
-			} ),
-		};
-
-		const response: DeleteInvitesResponse = await this.sendRequest(
-			this.getRequestURL( '2', `/sites/${ siteID }/invites/delete`, 'wpcom' ),
-			params
-		);
-
-		// This call does not return a traditional error that's in the
-		// format of ErrorResponse, instead returning a
-		// DeleteInvitesResponse which always has the `deleted` and
-		// `invalid` fields.
-		if ( response.deleted.includes( inviteID ) ) {
-			return true;
-		}
-		return false;
+		const response = await this.deleteInvites( siteID, [ invite.invite_key ] );
+		return response.deleted.includes( invite.invite_key );
 	}
 
 	/**
@@ -510,10 +481,18 @@ export class RestAPIClient {
 			} ),
 		};
 
-		return this.sendRequest(
+		const response = await this.sendRequest(
 			this.getRequestURL( '2', `/sites/${ siteID }/invites/delete`, 'wpcom' ),
 			params
 		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
 	}
 
 	/* Me */

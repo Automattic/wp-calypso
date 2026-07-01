@@ -33,29 +33,50 @@ test.describe(
 			// and fail waitForInvitation. Log how many pending invites (from any run)
 			// exist at start. The list endpoint returns at most 100 per page, so this
 			// is a floor, not an exact count.
-			const restAPIClient = new RestAPIClient( credentials );
-			const firstPage = await restAPIClient.getInvites( siteID, 100 );
-			const pending = firstPage.filter( ( invite ) => invite.is_pending ).length;
-			process.stderr.write(
-				`[invite__revoke] pending invites on site ${ siteID } at start: ${ pending }${
-					firstPage.length >= 100 ? '+ (list truncated at 100)' : ''
-				}\n`
-			);
+			// Never let a diagnostic read fail the suite: swallow and log.
+			try {
+				const restAPIClient = new RestAPIClient( credentials );
+				const firstPage = await restAPIClient.getInvites( siteID, 100 );
+				const pending = firstPage.filter( ( invite ) => invite.is_pending ).length;
+				process.stderr.write(
+					`[invite__revoke] pending invites on site ${ siteID } at start: ${ pending }${
+						firstPage.length >= 100 ? '+ (list truncated at 100)' : ''
+					}\n`
+				);
+			} catch ( error ) {
+				process.stderr.write( `[invite__revoke] start diagnostic failed: ${ error }\n` );
+			}
 		} );
 
 		test.afterAll( async function () {
 			if ( ! createdInviteEmails.length ) {
 				return;
 			}
-			const restAPIClient = new RestAPIClient( credentials );
-			const staleKeys = ( await restAPIClient.getInvites( siteID, 100 ) )
-				.filter(
-					( invite ) => invite.is_pending && createdInviteEmails.includes( invite.user.email )
-				)
-				.map( ( invite ) => invite.invite_key );
+			// Best-effort cleanup: a failure here must not fail an otherwise-passing
+			// run, so swallow errors and log them instead.
+			try {
+				const restAPIClient = new RestAPIClient( credentials );
+				// Scans only the first page (100). Enough while every run cleans up
+				// after itself; if the site holds >100 pending invites and the endpoint
+				// is not newest-first, follow the response's pagination links instead.
+				const staleKeys = ( await restAPIClient.getInvites( siteID, 100 ) )
+					.filter(
+						( invite ) => invite.is_pending && createdInviteEmails.includes( invite.user.email )
+					)
+					.map( ( invite ) => invite.invite_key );
 
-			if ( staleKeys.length ) {
-				await restAPIClient.deleteInvites( siteID, staleKeys );
+				if ( staleKeys.length ) {
+					const { invalid } = await restAPIClient.deleteInvites( siteID, staleKeys );
+					if ( invalid.length ) {
+						process.stderr.write(
+							`[invite__revoke] teardown could not delete ${
+								invalid.length
+							} invite(s): ${ invalid.join( ', ' ) }\n`
+						);
+					}
+				}
+			} catch ( error ) {
+				process.stderr.write( `[invite__revoke] teardown failed: ${ error }\n` );
 			}
 		} );
 
