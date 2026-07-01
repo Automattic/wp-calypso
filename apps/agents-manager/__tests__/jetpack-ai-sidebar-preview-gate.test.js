@@ -5,7 +5,6 @@
 import { shouldSuppressJetpackAiSidebarPreview } from '../jetpack-ai-sidebar-preview-gate';
 
 const JETPACK_PROVIDER = 'https://widgets.wp.com/agents-manager/jetpack-ai-sidebar.provider.mjs';
-const JETPACK_PROVIDER_ENTRY = { providerId: 'jetpack-ai-sidebar', url: JETPACK_PROVIDER };
 const BIG_SKY_PROVIDER =
 	'https://example.com/wp-content/plugins/big-sky/build/calypso-agent-provider/index.js';
 const BLOCK_NOTES_PROVIDER = 'block-notes/headless-agent-provider';
@@ -68,16 +67,6 @@ describe( 'shouldSuppressJetpackAiSidebarPreview', () => {
 		expect( globalThis.agentsManagerData.agentProviders ).toEqual( [] );
 	} );
 
-	it( 'suppresses metadata provider entries on self-hosted sites', () => {
-		setAgentsManagerData( {
-			sectionName: 'gutenberg',
-			agentProviders: [ JETPACK_PROVIDER_ENTRY ],
-		} );
-
-		expect( shouldSuppressJetpackAiSidebarPreview() ).toBe( true );
-		expect( globalThis.agentsManagerData.agentProviders ).toEqual( [] );
-	} );
-
 	it( 'suppresses on Atomic when no providers remain', () => {
 		window._currentSiteType = 'atomic';
 		setAgentsManagerData( {
@@ -93,7 +82,7 @@ describe( 'shouldSuppressJetpackAiSidebarPreview', () => {
 		const objectProvider = { toolProvider: {} };
 		setAgentsManagerData( {
 			sectionName: 'gutenberg',
-			agentProviders: [ objectProvider, BIG_SKY_PROVIDER, JETPACK_PROVIDER_ENTRY ],
+			agentProviders: [ objectProvider, BIG_SKY_PROVIDER, JETPACK_PROVIDER ],
 		} );
 
 		expect( shouldSuppressJetpackAiSidebarPreview() ).toBe( false );

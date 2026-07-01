@@ -178,13 +178,6 @@ export interface LoadedProviders {
 	capabilities?: ProviderCapabilities;
 }
 
-export interface ProviderUrlEntry {
-	url: string;
-	providerId?: string;
-}
-
-export type AgentProviderEntry = string | ProviderUrlEntry | LoadedProviders;
-
 type LoadedProviderModule = {
 	module: LoadedProviders;
 	providerId?: string;
@@ -221,18 +214,6 @@ function isRecord( value: unknown ): value is Record< string, unknown > {
 	return typeof value === 'object' && value !== null;
 }
 
-function getProviderUrl( providerEntry: AgentProviderEntry ): string | undefined {
-	if ( typeof providerEntry === 'string' ) {
-		return providerEntry;
-	}
-
-	if ( ! isRecord( providerEntry ) ) {
-		return undefined;
-	}
-
-	return typeof providerEntry.url === 'string' ? providerEntry.url : undefined;
-}
-
 function getValidProviderId( providerId: unknown ): string | undefined {
 	if ( typeof providerId !== 'string' ) {
 		return undefined;
@@ -242,9 +223,7 @@ function getValidProviderId( providerId: unknown ): string | undefined {
 	return trimmedProviderId ? trimmedProviderId : undefined;
 }
 
-function getProviderEntryId(
-	providerEntry: AgentProviderEntry | LoadedProviders
-): string | undefined {
+function getProviderEntryId( providerEntry: string | LoadedProviders ): string | undefined {
 	if ( ! isRecord( providerEntry ) ) {
 		return undefined;
 	}
@@ -491,30 +470,27 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	// Results are processed in registration order to preserve first-write-wins semantics.
 	const loadedModules = ( await Promise.all(
 		agentProviders.map( async ( providerEntry ) => {
-			const providerEntryId = getProviderEntryId( providerEntry );
-			const providerUrl = getProviderUrl( providerEntry );
-
-			if ( typeof providerEntry === 'object' && providerEntry !== null && ! providerUrl ) {
-				return { module: providerEntry as LoadedProviders, providerId: providerEntryId };
-			}
-
-			if ( ! providerUrl ) {
-				return null;
+			// Already-loaded provider object: use it directly and read its own ID.
+			if ( typeof providerEntry === 'object' && providerEntry !== null ) {
+				return {
+					module: providerEntry as LoadedProviders,
+					providerId: getProviderEntryId( providerEntry ),
+				};
 			}
 
 			try {
 				// Dynamic import of registered script module
 				// The webpackIgnore comment tells webpack not to bundle this - it's loaded at runtime
-				const module = ( await import( /* webpackIgnore: true */ providerUrl ) ) as LoadedProviders;
+				const module = ( await import(
+					/* webpackIgnore: true */ providerEntry
+				) ) as LoadedProviders;
 				// eslint-disable-next-line no-console
-				console.log( `[AgentsManager] Loaded provider "${ providerUrl }"` );
-				return {
-					module,
-					providerId: getProviderEntryId( module ) || providerEntryId,
-				};
+				console.log( `[AgentsManager] Loaded provider "${ providerEntry }"` );
+				// The provider module is the source of truth for its own stable ID.
+				return { module, providerId: getProviderEntryId( module ) };
 			} catch ( error ) {
 				// eslint-disable-next-line no-console
-				console.warn( `[AgentsManager] Failed to load provider "${ providerUrl }":`, error );
+				console.warn( `[AgentsManager] Failed to load provider "${ providerEntry }":`, error );
 				return null;
 			}
 		} )

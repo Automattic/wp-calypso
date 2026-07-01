@@ -1,4 +1,3 @@
-import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
@@ -9,12 +8,14 @@ import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
+import AmplifyAddSite from '../../amplify-add-site';
+import AmplifyReportsContent from './amplify-reports-content';
 
 const AmplifyReports = () => {
 	const title = __( 'Reports' );
 
 	return (
-		<Layout className="amplify-reports" title={ title } wide>
+		<Layout className="amplify-reports-page full-width-layout-with-table" title={ title } wide>
 			<LayoutTop>
 				<LayoutHeader>
 					<Breadcrumb
@@ -25,11 +26,12 @@ const AmplifyReports = () => {
 					/>
 					<Actions>
 						<MobileSidebarNavigation />
+						<AmplifyAddSite />
 					</Actions>
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody>
-				<Text>{ __( 'Placeholder content for Amplify > Reports.' ) }</Text>
+				<AmplifyReportsContent />
 			</LayoutBody>
 		</Layout>
 	);

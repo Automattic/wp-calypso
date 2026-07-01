@@ -1,9 +1,14 @@
+import { isDefaultLocale } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useSpace } from 'calypso/reader/data/spaces';
 import { useInfiniteStream } from 'calypso/reader/data/stream';
 import { ScrollDebugOverlay } from 'calypso/reader/hooks/use-infinite-list';
+import { keyForPost, keysAreEqual } from 'calypso/reader/post-key';
+import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post-key-selection';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import { SpaceFeedSourceNotice } from './components/source-notice';
 import {
 	SpaceFeedEmpty,
@@ -72,12 +77,34 @@ export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
 	const isDiscover = variant === 'discover';
 	const streamKey = isDiscover ? `space_discover:${ spaceId }` : `space:${ spaceId }`;
 	const isLegacy = layout === 'legacy';
+	const rawLocale = useSelector( getCurrentLocaleSlug );
+	const localeSlug = rawLocale && ! isDefaultLocale( rawLocale ) ? rawLocale : null;
 	const stream = useInfiniteStream( {
 		streamKey,
+		localeSlug,
 		perPage: getLayoutPageSize( layout ),
 		options: { enabled: ! isLegacy },
 	} );
 	const posts = useMemo( () => collectPosts( stream.pages ), [ stream.pages ] );
+
+	const { selectedPostKey, selectPostKey } = useStreamPostKeySelection( { streamKey, localeSlug } );
+	const isPostSelected = useCallback(
+		( post: ReadStreamPost ) =>
+			selectedPostKey != null && keysAreEqual( keyForPost( post ), selectedPostKey ),
+		[ selectedPostKey ]
+	);
+	const selectPost = useCallback(
+		( post: ReadStreamPost ) => {
+			const postKey = keyForPost( post );
+			if ( postKey ) {
+				const streamItem = stream.items.find(
+					( item ) => keysAreEqual( item, postKey ) || keysAreEqual( item.xPostMetadata, postKey )
+				);
+				selectPostKey( streamItem ?? postKey );
+			}
+		},
+		[ selectPostKey, stream.items ]
+	);
 
 	// Scroll on the Reader's main bounded container (`.layout__primary > div`, which
 	// has a fixed height) — the same scrollbar the rest of the Reader uses — instead
@@ -122,6 +149,8 @@ export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
 					isLoadingMore={ false }
 					loadMore={ () => {} }
 					restoreKey={ `${ spaceId }:${ variant }:${ layout }` }
+					isPostSelected={ isPostSelected }
+					selectPost={ selectPost }
 				/>
 			);
 		}
@@ -161,6 +190,8 @@ export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
 				isLoadingMore={ stream.isFetchingNextPage }
 				loadMore={ stream.fetchNextPage }
 				restoreKey={ `${ spaceId }:${ variant }:${ layout }` }
+				isPostSelected={ isPostSelected }
+				selectPost={ selectPost }
 			/>
 		);
 	};

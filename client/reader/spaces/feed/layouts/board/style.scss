@@ -23,6 +23,15 @@
 	color: inherit;
 }
 
+.space-feed-board__item[data-selected]::before {
+	content: '';
+	position: absolute;
+	inset-block: 20px;
+	inset-inline-start: 8px;
+	inline-size: 2px;
+	background: var(--color-primary);
+}
+
 .space-feed-board__actions {
 	margin-block-start: 12px;
 }

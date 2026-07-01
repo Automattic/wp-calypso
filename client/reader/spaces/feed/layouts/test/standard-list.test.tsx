@@ -61,6 +61,8 @@ describe( 'StandardListLayout', () => {
 				isLoadingMore={ false }
 				loadMore={ jest.fn() }
 				restoreKey="work-id:standard-list"
+				isPostSelected={ () => false }
+				selectPost={ jest.fn() }
 			/>
 		);
 
@@ -87,6 +89,8 @@ describe( 'StandardListLayout', () => {
 				isLoadingMore={ false }
 				loadMore={ jest.fn() }
 				restoreKey="work-id:standard-list"
+				isPostSelected={ () => false }
+				selectPost={ jest.fn() }
 			/>
 		);
 
@@ -113,6 +117,8 @@ describe( 'StandardListLayout', () => {
 				isLoadingMore={ false }
 				loadMore={ jest.fn() }
 				restoreKey="work-id:standard-list"
+				isPostSelected={ () => false }
+				selectPost={ jest.fn() }
 			/>
 		);
 

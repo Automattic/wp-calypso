@@ -24,13 +24,32 @@ type Row =
 const HEADER_SIZE = 44;
 const ROW_SIZE = 170;
 
-function PostRow( { fields, post }: { fields: SpaceFeedPostFields; post: ReadStreamPost } ) {
+function PostRow( {
+	fields,
+	post,
+	isSelected,
+	onOpen,
+}: {
+	fields: SpaceFeedPostFields;
+	post: ReadStreamPost;
+	isSelected: boolean;
+	onOpen: () => void;
+} ) {
 	return (
-		<HStack className="space-feed-standard-list__row" spacing={ 3 } alignment="flex-start">
+		<HStack
+			className="space-feed-standard-list__row"
+			spacing={ 3 }
+			alignment="flex-start"
+			data-selected={ isSelected || undefined }
+		>
 			<VStack className="space-feed-standard-list__body" spacing={ 3 } alignment="stretch">
 				<VStack className="space-feed-standard-list__headline" spacing={ 1 } alignment="stretch">
 					<h3 className="space-feed-standard-list__title">
-						<a className="space-feed-standard-list__title-link" href={ fields.postHref }>
+						<a
+							className="space-feed-standard-list__title-link"
+							href={ fields.postHref }
+							onClick={ onOpen }
+						>
 							{ fields.title }
 						</a>
 					</h3>
@@ -59,7 +78,10 @@ function PostRow( { fields, post }: { fields: SpaceFeedPostFields; post: ReadStr
 				</HStack>
 				<ReaderPostActions
 					post={ post }
-					onCommentClick={ () => page( getPostUrl( post ) ) }
+					onCommentClick={ () => {
+						onOpen();
+						page( getPostUrl( post ) );
+					} }
 					iconSize={ 18 }
 					variant="discreet"
 				/>
@@ -82,6 +104,8 @@ export function StandardListLayout( {
 	isLoadingMore,
 	loadMore,
 	restoreKey,
+	isPostSelected,
+	selectPost,
 }: SpaceFeedLayoutProps ) {
 	const translate = useTranslate();
 
@@ -149,7 +173,12 @@ export function StandardListLayout( {
 						{ row.kind === 'header' ? (
 							<h2 className="space-feed-standard-list__group">{ row.label }</h2>
 						) : (
-							<PostRow fields={ row.fields } post={ row.post } />
+							<PostRow
+								fields={ row.fields }
+								post={ row.post }
+								isSelected={ isPostSelected( row.post ) }
+								onOpen={ () => selectPost( row.post ) }
+							/>
 						) }
 					</div>
 				);
