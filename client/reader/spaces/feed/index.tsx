@@ -7,7 +7,7 @@ import { useSpace } from 'calypso/reader/data/spaces';
 import { useInfiniteStream } from 'calypso/reader/data/stream';
 import { ScrollDebugOverlay } from 'calypso/reader/hooks/use-infinite-list';
 import { keyForPost, keysAreEqual } from 'calypso/reader/post-key';
-import { useSelectedPostActions } from 'calypso/reader/stream/use-selected-post-actions';
+import { useSelectedPostCommands } from 'calypso/reader/stream/use-selected-post-commands';
 import { useStreamKeyboardShortcuts } from 'calypso/reader/stream/use-stream-keyboard-shortcuts';
 import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post-key-selection';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
@@ -112,7 +112,7 @@ export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
 
 	const notificationsOpen = useSelector( isNotificationsOpen );
 	const { openSelected, openSelectedInNewTab, toggleSelectedLike } =
-		useSelectedPostActions( selectedPostKey );
+		useSelectedPostCommands( selectedPostKey );
 
 	// Reading shortcuts for the curated layouts (the shell owns their selection).
 	// The legacy layout's ReaderStreamV2 registers its own set, so gate on

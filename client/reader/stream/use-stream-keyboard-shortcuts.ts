@@ -19,12 +19,11 @@ export interface UseStreamKeyboardShortcutsOptions {
 const INTERACTIVE_TAGS = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
 
 /**
- * Registers the Reader stream's global reading shortcuts so the Spaces feed
- * reaches parity with the legacy `<ReaderStream>` (`client/reader/stream/index.jsx`):
- * `j`/`ArrowRight` next, `k`/`ArrowLeft` previous, `Enter` open, `v` open in a new
- * tab, `l` like/unlike. Guards follow the legacy stream (skip inputs/contentEditable,
- * ignore ⌘/Ctrl) plus the full-post view's `.components-popover` filter, and also
- * ignore Alt; navigation/open keys call `preventDefault`.
+ * Registers the Reader stream's global reading shortcuts: `j`/`ArrowRight`
+ * next, `k`/`ArrowLeft` previous, `Enter` open, `v` open in a new tab, and
+ * `l` like/unlike. The shortcuts use the legacy stream's input/contentEditable
+ * and ⌘/Ctrl guards, plus the full-post view's `.components-popover` filter and
+ * an Alt guard; navigation/open keys call `preventDefault`.
  *
  * The listener is registered once (keyed only on `enabled`) and reads the latest
  * callbacks through a ref, so consumer callbacks that are recreated each render

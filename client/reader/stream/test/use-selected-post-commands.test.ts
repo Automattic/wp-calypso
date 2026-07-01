@@ -7,7 +7,7 @@ import { usePostLikeActions } from 'calypso/reader/data/post/likes';
 import { isLikeable } from 'calypso/reader/post/capabilities';
 import { showSelectedPost } from 'calypso/reader/utils';
 import { getXPostMetadata } from 'calypso/reader/xpost-helper';
-import { useSelectedPostActions } from '../use-selected-post-actions';
+import { useSelectedPostCommands } from '../use-selected-post-commands';
 import type { StreamItem } from 'calypso/reader/data/stream/types';
 
 jest.mock( 'calypso/reader/data/post/cache', () => ( { useCachedPost: jest.fn() } ) );
@@ -42,7 +42,7 @@ function setup( {
 	};
 	mockUseCachedPost.mockReturnValue( post );
 	mockUsePostLikeActions.mockReturnValue( actions );
-	const { result } = renderHook( () => useSelectedPostActions( selectedPostKey ) );
+	const { result } = renderHook( () => useSelectedPostCommands( selectedPostKey ) );
 	return { result, actions };
 }
 
@@ -53,7 +53,7 @@ beforeEach( () => {
 	mockShowSelectedPost.mockReturnValue( jest.fn() );
 } );
 
-describe( 'useSelectedPostActions', () => {
+describe( 'useSelectedPostCommands', () => {
 	describe( 'openSelected', () => {
 		it( 'navigates to the selected post via showSelectedPost', () => {
 			const navigate = jest.fn();
@@ -117,6 +117,15 @@ describe( 'useSelectedPostActions', () => {
 
 		it( 'unlikes a liked post', () => {
 			const { result, actions } = setup( { post: { ...LIKEABLE_POST, i_like: true } } );
+
+			result.current.toggleSelectedLike();
+
+			expect( actions.unlike ).toHaveBeenCalledWith( 5, 9, { source: 'reader' } );
+			expect( actions.like ).not.toHaveBeenCalled();
+		} );
+
+		it( 'normalizes numeric liked state before toggling', () => {
+			const { result, actions } = setup( { post: { ...LIKEABLE_POST, i_like: 1 } } );
 
 			result.current.toggleSelectedLike();
 

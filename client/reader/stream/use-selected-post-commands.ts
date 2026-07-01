@@ -6,7 +6,7 @@ import { showSelectedPost } from 'calypso/reader/utils';
 import { getXPostMetadata } from 'calypso/reader/xpost-helper';
 import type { StreamItem } from 'calypso/reader/data/stream/types';
 
-export interface SelectedPostActions {
+export interface SelectedPostCommands {
 	/** Open the selected post in the full-post view (`Enter`). No-op without a selection. */
 	openSelected: () => void;
 	/** Open the selected post's original URL in a new tab (`v`). No-op without a URL. */
@@ -16,12 +16,12 @@ export interface SelectedPostActions {
 }
 
 /**
- * Actions that operate on the currently selected post, shared by the stream
+ * Commands that operate on the currently selected post, shared by the stream
  * reading shortcuts across every surface (Stream V2 and the Spaces feed
  * layouts). Reads the post cache-only (no request waterfall) and toggles likes
  * through the same React Query mechanism the post-card like button uses.
  */
-export function useSelectedPostActions( selectedPostKey: StreamItem | null ): SelectedPostActions {
+export function useSelectedPostCommands( selectedPostKey: StreamItem | null ): SelectedPostCommands {
 	const selectedPost = useCachedPost( selectedPostKey );
 	const { like, unlike, isLikePending, isUnlikePending } = usePostLikeActions();
 
@@ -64,7 +64,7 @@ export function useSelectedPostActions( selectedPostKey: StreamItem | null ): Se
 		if ( ! siteId || ! postId ) {
 			return;
 		}
-		const toggle = selectedPost.i_like ? unlike : like;
+		const toggle = Boolean( selectedPost.i_like ) ? unlike : like;
 		toggle( siteId, postId, { source: 'reader' } );
 	}, [ selectedPost, isLikePending, isUnlikePending, like, unlike ] );
 

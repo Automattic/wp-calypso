@@ -12,7 +12,7 @@ import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slu
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import PostLifecycleUntyped from './post-lifecycle';
 import PostPlaceholderUntyped from './post-placeholder';
-import { useSelectedPostActions } from './use-selected-post-actions';
+import { useSelectedPostCommands } from './use-selected-post-commands';
 import { useStreamKeyboardShortcuts } from './use-stream-keyboard-shortcuts';
 import { useStreamPostKeySelection } from './use-stream-post-key-selection';
 import type { StreamItem } from 'calypso/reader/data/stream/types';
@@ -123,7 +123,7 @@ export function ReaderStreamV2( {
 
 	const notificationsOpen = useSelector( isNotificationsOpen );
 	const { openSelected, openSelectedInNewTab, toggleSelectedLike } =
-		useSelectedPostActions( selectedPostKey );
+		useSelectedPostCommands( selectedPostKey );
 
 	useStreamKeyboardShortcuts( {
 		enabled: ! notificationsOpen,
