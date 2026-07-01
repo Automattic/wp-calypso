@@ -1,4 +1,4 @@
-import sortBy from 'lodash/sortBy';
+import { sortBy } from '@automattic/js-utils';
 import { APIProductFamily, APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 function selectProductOptions( families: APIProductFamily[] ): APIProductFamilyProduct[] {

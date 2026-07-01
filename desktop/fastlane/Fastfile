@@ -75,7 +75,11 @@ before_all do
 end
 
 platform :mac do
-  desc 'Download and configure code signing certificates and provisioning profiles .'
+  # Download and configure code signing certificates and provisioning profiles.
+  #
+  # @param readonly [Boolean] Use `true` to only fetch existing certificates and profiles from
+  #   our S3 bucket via `match`. Use `false` to create or update them on App Store Connect.
+  #
   lane :configure_code_signing do |readonly: true|
     EnvManager.require_env_vars!(*CODE_SIGNING_ENV_VARS)
 
@@ -97,11 +101,13 @@ platform :mac do
     )
   end
 
-  desc 'Notarize and staple the .dmg artifacts produced by electron-builder.'
+  # Notarize and staple the .dmg artifacts produced by electron-builder.
+  #
   # The `.app` is notarized and stapled earlier, in electron-builder's
   # afterSign hook (`bin/after_sign_hook.js`), so that the `.zip` packaged from
   # it carries a stapled app. This lane handles the `.dmg` wrapper, which only
   # exists after the build completes.
+  #
   lane :notarize_app do
     EnvManager.require_env_vars!(*ASC_API_KEY_ENV_VARS)
 

@@ -97,9 +97,8 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 
 	if ( fs.existsSync( CALYPSO_STRINGS ) ) {
 		const { translations } = parse( fs.readFileSync( CALYPSO_STRINGS ) );
-		const translationsFlatten = _.reduce(
-			translations,
-			( result, contextTranslations, context ) => {
+		const translationsFlatten = Object.entries( translations ).reduce(
+			( result, [ context, contextTranslations ] ) => {
 				const mappedTranslations = _.mapKeys( contextTranslations, ( value, key ) => {
 					let mappedKey = key.replace( /\\u([0-9a-fA-F]{4})/g, ( match, matchedGroup ) =>
 						String.fromCharCode( parseInt( matchedGroup, 16 ) )
@@ -164,7 +163,7 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 		successfullyDownloadedLanguages.forEach( ( { langSlug, languageTranslations } ) => {
 			const languageChunks = _.chain( chunks )
 				.mapValues( ( stringIds ) => _.pick( languageTranslations, stringIds ) )
-				.omitBy( _.isEmpty )
+				.omitBy( ( chunk ) => Object.keys( chunk ).length === 0 )
 				.value();
 
 			// Write language translated chunks map
@@ -205,7 +204,7 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 			fs.writeFileSync( manifestFilepathJs, manifestJsData );
 
 			// Write language translation chunks
-			_.forEach( languageChunks, ( chunkTranslations, chunkFilename ) => {
+			Object.entries( languageChunks ).forEach( ( [ chunkFilename, chunkTranslations ] ) => {
 				const chunkId = path.basename( chunkFilename, path.extname( chunkFilename ) );
 				const chunkJsonData = JSON.stringify( chunkTranslations );
 				const chunkJsData = `var i18nTranslationChunks = i18nTranslationChunks || {}; i18nTranslationChunks[${ JSON.stringify(

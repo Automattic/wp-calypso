@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { addLocaleToPath, isDefaultLocale } from '@automattic/i18n-utils';
 import { getLocaleSlug } from 'i18n-calypso';
-import { get, includes } from 'lodash';
 import {
 	isAkismetOAuth2Client,
 	isCrowdsignalOAuth2Client,
@@ -52,7 +51,7 @@ export function pathWithLeadingSlash( path ) {
 }
 
 export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname ) {
-	const redirectTo = get( currentQuery, 'redirect_to', '' );
+	const redirectTo = currentQuery?.redirect_to ?? '';
 
 	if (
 		// Match locales like `/log-in/jetpack/es`
@@ -60,11 +59,11 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 	) {
 		// Basic validation that we're in a valid Jetpack Authorization flow
 		if (
-			includes( redirectTo, '/jetpack/connect/authorize' ) &&
-			includes( redirectTo, '_wp_nonce' )
+			redirectTo.includes( '/jetpack/connect/authorize' ) &&
+			redirectTo.includes( '_wp_nonce' )
 		) {
 			// If the current query has plugin_name param, but redirect_to doesn't, add it to the redirect_to
-			const pluginName = get( currentQuery, 'plugin_name' );
+			const pluginName = currentQuery?.plugin_name;
 			try {
 				const urlObj = new URL( redirectTo );
 				if ( ! urlObj.searchParams.has( 'plugin_name' ) && pluginName ) {
@@ -97,7 +96,7 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 	}
 
 	if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
-		const gravatarFrom = get( currentQuery, 'gravatar_from', 'signup' );
+		const gravatarFrom = currentQuery?.gravatar_from ?? 'signup';
 
 		// Gravatar powered clients signup via the magic login page
 		return login( {
@@ -124,7 +123,7 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 			oauth2_redirect: redirectTo,
 		} );
 
-		const wccomFrom = get( currentQuery, 'wccom-from' );
+		const wccomFrom = currentQuery?.[ 'wccom-from' ];
 		if ( wccomFrom ) {
 			oauth2Params.set( 'wccom-from', wccomFrom );
 		}
@@ -139,7 +138,7 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 		return `/start/wpcc?${ oauth2Params.toString() }`;
 	}
 
-	const signupFlow = get( currentQuery, 'signup_flow' );
+	const signupFlow = currentQuery?.signup_flow;
 	if ( signupFlow ) {
 		if ( redirectTo ) {
 			const params = new URLSearchParams( {

@@ -1,6 +1,5 @@
-import { omit } from '@automattic/js-utils';
+import { groupBy, omit } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
-import { forEach, get, groupBy } from 'lodash';
 import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_LIST_REQUEST,
@@ -54,7 +53,7 @@ export const handleChangeCommentStatusSuccess = ( { commentId, refreshCommentLis
 
 const announceStatusChangeFailure = ( action ) => ( dispatch ) => {
 	const { siteId, postId, commentId, status, refreshCommentListQuery } = action;
-	const previousStatus = get( action, 'meta.comment.previousStatus' );
+	const previousStatus = action?.meta?.comment?.previousStatus;
 
 	dispatch( removeNotice( `comment-notice-${ commentId }` ) );
 
@@ -73,7 +72,7 @@ const announceStatusChangeFailure = ( action ) => ( dispatch ) => {
 	const defaultErrorMessage = translate( "We couldn't update this comment." );
 
 	dispatch(
-		errorNotice( get( errorMessage, status, defaultErrorMessage ), {
+		errorNotice( errorMessage?.[ status ] ?? defaultErrorMessage, {
 			button: translate( 'Try again' ),
 			id: `comment-notice-error-${ commentId }`,
 			onClick: () =>
@@ -119,7 +118,7 @@ export const receiveCommentError = ( { siteId, commentId, query = {} } ) => {
 
 // @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/comments/
 export const fetchCommentsList = ( action ) => {
-	if ( 'site' !== get( action, 'query.listType' ) ) {
+	if ( 'site' !== action?.query?.listType ) {
 		return;
 	}
 
@@ -160,7 +159,7 @@ export const addComments = ( { query }, { comments } ) => {
 
 	const byPost = groupBy( comments, ( { post: { ID } } ) => ID );
 
-	forEach( byPost, ( postComments, post ) =>
+	Object.entries( byPost ).forEach( ( [ post, postComments ] ) =>
 		actions.push(
 			receiveComments( {
 				siteId,

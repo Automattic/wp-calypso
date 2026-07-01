@@ -2,14 +2,16 @@ import {
 	FEATURE_ADVANCED_SEO,
 	FEATURE_SEO_PREVIEW_TOOLS,
 	PLAN_BUSINESS,
+	PLAN_PREMIUM,
 	TYPE_BUSINESS,
+	TYPE_PREMIUM,
 	findFirstSimilarPlanKey,
 	getPlan,
 } from '@automattic/calypso-products';
 import { Button, FormInputValidation, FormLabel } from '@automattic/components';
 import { mapValues, pickBy } from '@automattic/js-utils';
+import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { get, isEqual } from 'lodash';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import pageTitleImage from 'calypso/assets/images/illustrations/seo-page-title.svg';
@@ -52,6 +54,7 @@ import {
 	isJetpackSite,
 	isRequestingSite,
 } from 'calypso/state/sites/selectors';
+import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -217,6 +220,7 @@ export class SiteSettingsFormSEO extends Component {
 	render() {
 		const {
 			conflictedSeoPlugin,
+			hasGatingFlag,
 			isFetchingSite,
 			siteId,
 			siteIsJetpack,
@@ -248,6 +252,9 @@ export class SiteSettingsFormSEO extends Component {
 
 		const generalTabUrl = getGeneralTabUrl( slug );
 
+		const upsellPlan = hasGatingFlag ? PLAN_PREMIUM : PLAN_BUSINESS;
+		const upsellPlanType = hasGatingFlag ? TYPE_PREMIUM : TYPE_BUSINESS;
+
 		const upsellProps =
 			siteIsJetpack && ! isAtomic
 				? {
@@ -257,14 +264,14 @@ export class SiteSettingsFormSEO extends Component {
 				  }
 				: {
 						title: translate(
-							'Boost your search engine ranking with the powerful SEO tools in the %(businessPlanName)s plan',
-							{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
+							'Boost your search engine ranking with the powerful SEO tools in the %(planName)s plan',
+							{ args: { planName: getPlan( upsellPlan ).getTitle() } }
 						),
 						feature: FEATURE_ADVANCED_SEO,
 						plan:
 							selectedSite.plan &&
 							findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
-								type: TYPE_BUSINESS,
+								type: upsellPlanType,
 							} ),
 				  };
 
@@ -458,6 +465,7 @@ const mapStateToProps = ( state ) => {
 		: null;
 	return {
 		conflictedSeoPlugin,
+		hasGatingFlag: !! getSiteOption( state, siteId, 'is_gating_business_q1' ),
 		isFetchingSite: isRequestingSite( state, siteId ),
 		siteId,
 		siteIsJetpack,
@@ -465,7 +473,7 @@ const mapStateToProps = ( state ) => {
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
 		showAdvancedSeo: siteHasFeature( state, siteId, FEATURE_ADVANCED_SEO ),
 		isAtomic: isAtomicSite( state, siteId ),
-		showWebsiteMeta: !! get( selectedSite, 'options.advanced_seo_front_page_description', '' ),
+		showWebsiteMeta: !! ( selectedSite?.options?.advanced_seo_front_page_description ?? '' ),
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 		isSiteHidden: isHiddenSite( state, siteId ),
 		isSitePrivate: isPrivateSite( state, siteId ),

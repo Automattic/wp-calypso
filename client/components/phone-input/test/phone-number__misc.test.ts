@@ -1,6 +1,5 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
-import { pickBy } from '@automattic/js-utils';
-import { groupBy } from 'lodash';
+import { groupBy, pickBy } from '@automattic/js-utils';
 import { countries } from '../data';
 import {
 	indexOfLongestCommonSuffix,

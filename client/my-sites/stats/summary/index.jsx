@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
+import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { isEqual, merge } from 'lodash';
+import { merge } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';

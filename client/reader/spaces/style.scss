@@ -1,3 +1,8 @@
 // Placeholder stylesheet for the Spaces entry point. The full layout arrives
 // with the v0 Spaces work that builds on this foundation; no rules are needed
 // yet, but the file (and its import) stay so styles have a home to land in.
+
+.reader-spaces__section-label {
+	color: var( --color-text-subtle );
+	font-weight: 400;
+}

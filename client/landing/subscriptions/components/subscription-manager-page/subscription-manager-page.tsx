@@ -1,6 +1,5 @@
 import { SubscriptionManager } from '@automattic/data-stores';
 import { useLocalizeUrl, useLocale } from '@automattic/i18n-utils';
-import { UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -8,7 +7,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import { TabsSwitcher } from 'calypso/landing/subscriptions/components/tabs-switcher';
 import { useSubheaderText } from 'calypso/landing/subscriptions/hooks';
-import { useNav2026Props } from 'calypso/layout/use-nav-2026-props';
+import { Nav2026UniversalHeader } from 'calypso/layout/nav-2026-universal-header';
 import {
 	SubscriptionManagerContextProvider,
 	SubscriptionsPortal,
@@ -21,7 +20,6 @@ const SubscriptionManagementPage = () => {
 	const translate = useTranslate();
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 	const emailAddress = SubscriptionManager.useSubscriberEmailAddress();
-	const nav2026Props = useNav2026Props();
 
 	const startUrl = addQueryArgs(
 		localizeUrl( '//wordpress.com/start/account/user', locale, isLoggedIn ),
@@ -41,15 +39,14 @@ const SubscriptionManagementPage = () => {
 
 	return (
 		<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Subscriptions }>
-			<UniversalNavbarHeader
-				className={ clsx( 'subscription-manager-header', {
-					'is-logged-in': isLoggedIn,
-				} ) }
+			<Nav2026UniversalHeader
 				variant="minimal"
 				isLoggedIn={ isLoggedIn }
 				startUrl={ startUrl }
 				loginUrl={ loginUrl }
-				{ ...nav2026Props }
+				className={ clsx( 'subscription-manager-header', {
+					'is-logged-in': isLoggedIn,
+				} ) }
 			/>
 			<Main className="subscription-manager__container">
 				<FormattedHeader

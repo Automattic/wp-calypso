@@ -181,9 +181,8 @@ function buildLanguages( downloadedLanguages, languageRevisions ) {
 
 	if ( fs.existsSync( stringsFilePath ) ) {
 		const { translations } = parse( fs.readFileSync( stringsFilePath ) );
-		const translationsFlatten = _.reduce(
-			translations,
-			( result, contextTranslations, context ) => {
+		const translationsFlatten = Object.entries( translations ).reduce(
+			( result, [ context, contextTranslations ] ) => {
 				const mappedTranslations = _.mapKeys( contextTranslations, ( value, key ) => {
 					let mappedKey = key.replace( /\\u([0-9a-fA-F]{4})/g, ( match, matchedGroup ) =>
 						String.fromCharCode( parseInt( matchedGroup, 16 ) )

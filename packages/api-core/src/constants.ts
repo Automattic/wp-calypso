@@ -343,9 +343,10 @@ export const getDataCenterOptions = (): Record< DataCenterOption, string > => ( 
 } );
 
 export const getPlanNames = () => ( {
+	[ DotcomPlans.PERSONAL ]: __( 'Personal' ),
+	[ DotcomPlans.PREMIUM ]: __( 'Premium' ),
 	[ DotcomPlans.BUSINESS ]: __( 'Business' ),
 	[ DotcomPlans.ECOMMERCE ]: __( 'Commerce' ),
-	[ DotcomPlans.PREMIUM ]: __( 'Premium' ),
 } );
 
 export const PaymentPartners = {

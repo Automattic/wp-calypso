@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 const PlanDivOrTdContainer = (
 	props: (
 		| React.HTMLAttributes< HTMLDivElement >

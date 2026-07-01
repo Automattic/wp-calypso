@@ -4,9 +4,10 @@ import {
 	isDomainMoveInternal,
 	isPlan,
 } from '@automattic/calypso-products';
-import { DomainSearch } from '@automattic/domain-search';
+import { DOMAIN_BUNDLE_UNAVAILABLE_ERROR_CODE, DomainSearch } from '@automattic/domain-search';
 import { formatCurrency } from '@automattic/number-formatters';
 import {
+	CartActionError,
 	type CartKey,
 	type MinimalRequestCartProduct,
 	type ResponseCartProduct,
@@ -236,7 +237,10 @@ export const useWPCOMDomainSearchCart = ( {
 				);
 
 				if ( bundleItemsInCart.length < bundle.domains.length ) {
-					throw new Error( 'The domain bundle could not be added to the cart.' );
+					throw new CartActionError(
+						'The domain bundle could not be added to the cart.',
+						DOMAIN_BUNDLE_UNAVAILABLE_ERROR_CODE
+					);
 				}
 
 				if ( ! flowAllowsMultipleDomainsInCart ) {

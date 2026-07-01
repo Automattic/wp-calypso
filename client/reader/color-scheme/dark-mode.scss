@@ -45,6 +45,7 @@
 
 	&.theme-default .is-global-sidebar-visible {
 		// The shared sidebar sets these variables at this scope, so keep Reader dark overrides here too.
+		--color-masterbar-submenu-group-background: var( --dashboard__background-color );
 		--color-sidebar-menu-selected-background: var( --dashboard-item-selected__background-color );
 		--color-sidebar-menu-hover-background: var( --dashboard-item-selected-hover__background-color );
 		--color-sidebar-menu-hover-text: var( --color-text );
@@ -54,6 +55,12 @@
 		--color-sidebar-submenu-selected-hover-text: var( --color-sidebar-menu-selected-text );
 		--color-sidebar-gridicon-hover-fill: currentColor;
 		--color-sidebar-gridicon-selected-fill: var( --color-sidebar-menu-selected-text );
+
+		// The W-icon dropdown's second group hardcodes a light grey for the white
+		// menu; match the surrounding dark groups instead of that grey.
+		.masterbar__item-my-sites + .masterbar__item-subitems {
+			--color-masterbar-submenu-group-background: inherit;
+		}
 	}
 
 	.reader-onboarding-modal__footer {

@@ -8,6 +8,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { MasterbarLoggedIn } from 'calypso/layout/masterbar/logged-in';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSiteDisplayName } from '../../utils/site-name';
+import { isSimple } from '../../utils/site-types';
 import { getSitePlanUrl } from '../../utils/site-url';
 import { logout } from '../auth';
 import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
@@ -50,6 +51,7 @@ export function InterimOmnibar( {
 	const siteSlug = site?.slug ?? null;
 	const siteAdminUrl = site?.options?.admin_url ?? null;
 	const isUnlaunchedSite = !! site && site.launch_status === 'unlaunched' && ! site.is_a4a_dev_site;
+	const isSimpleSite = !! site && isSimple( site );
 
 	const { data: currentPlan } = useQuery(
 		{
@@ -122,8 +124,7 @@ export function InterimOmnibar( {
 					isEcommerce={ isEcommercePlan( site?.plan?.product_slug ?? '' ) }
 					// isClassicView={ !! site && siteUsesWpAdminInterface( site ) }
 					isClassicView
-					// TODO: Causes hydration mismatch unless client and server both have the same site object
-					isSimpleSite={ false }
+					isSimpleSite={ isSimpleSite }
 					isJetpackNotAtomic={ !! site && site.jetpack && ! site.is_wpcom_atomic }
 					domainOnlySite={ !! site?.options?.is_domain_only }
 					isUnlaunchedSite={ isUnlaunchedSite }

@@ -27,6 +27,7 @@ import {
 	FREE_HOSTING_TRIAL_ENABLED,
 	isUserEligibleForFreeHostingTrial,
 } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
+import { getSitePlan } from 'calypso/state/sites/plans/selectors';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors/is-current-user-current-plan-owner';
 import isCurrentPlanPaid from 'calypso/state/sites/selectors/is-current-plan-paid';
 import { IAppState } from 'calypso/state/types';
@@ -75,6 +76,9 @@ export default function useGenerateActionHook( {
 	enableCategorisedFeatures,
 	redirectTo,
 	pluginSlug,
+	isDelayedDowngradePending,
+	delayedDowngradeToProductSlug,
+	onRenewCurrentPlan,
 }: {
 	siteId?: number | null;
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
@@ -88,6 +92,12 @@ export default function useGenerateActionHook( {
 	enableCategorisedFeatures?: boolean;
 	redirectTo?: string;
 	pluginSlug?: string;
+	/** True when a downgrade has been scheduled for the current plan's renewal. */
+	isDelayedDowngradePending?: boolean;
+	/** The product slug the scheduled downgrade will land on, if any. */
+	delayedDowngradeToProductSlug?: string | null;
+	/** Routes the current plan's CTA to a renewal checkout when a downgrade is pending. */
+	onRenewCurrentPlan?: () => void;
 } ): UseAction {
 	const translate = useTranslate();
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
@@ -136,6 +146,12 @@ export default function useGenerateActionHook( {
 		planTitle,
 		pricing,
 	}: UseActionHookProps ): GridAction => {
+		const availableForDowngrade = useSelector( ( state: IAppState ) =>
+			siteId
+				? ( getSitePlan( state, siteId, planSlug ) as { availableForDowngrade?: boolean } | null )
+						?.availableForDowngrade
+				: undefined
+		);
 		// Get renewal pricing text - this will be used as postButtonText if available
 		const renewalPricingText = useRenewalPricingPostButtonText( {
 			planSlug,
@@ -213,6 +229,7 @@ export default function useGenerateActionHook( {
 			priceString,
 			sitePlanSlug,
 			availableForPurchase,
+			availableForDowngrade,
 			domainFromHomeUpsellFlow,
 			canUserManageCurrentPlan,
 			isPlanExpired,
@@ -221,6 +238,9 @@ export default function useGenerateActionHook( {
 			setIsLoading,
 			isLoading,
 			plansIntent,
+			isDelayedDowngradePending,
+			delayedDowngradeToProductSlug,
+			onRenewCurrentPlan,
 		} );
 		return {
 			...action,
@@ -413,6 +433,7 @@ function getLoggedInPlansAction( {
 	priceString,
 	sitePlanSlug,
 	availableForPurchase,
+	availableForDowngrade,
 	domainFromHomeUpsellFlow,
 	canUserManageCurrentPlan,
 	isPlanExpired,
@@ -421,6 +442,9 @@ function getLoggedInPlansAction( {
 	isLoading,
 	setIsLoading,
 	plansIntent,
+	isDelayedDowngradePending,
+	delayedDowngradeToProductSlug,
+	onRenewCurrentPlan,
 }: {
 	getActionCallback: UseActionCallback;
 	planSlug: PlanSlug;
@@ -432,6 +456,10 @@ function getLoggedInPlansAction( {
 	isLoading: boolean;
 	setIsLoading: ( value: boolean ) => void;
 	plansIntent?: PlansIntent | null;
+	availableForDowngrade?: boolean;
+	isDelayedDowngradePending?: boolean;
+	delayedDowngradeToProductSlug?: string | null;
+	onRenewCurrentPlan?: () => void;
 } & UseActionHookProps ): GridAction {
 	// Use plan type matching instead of exact slug matching for the 'plans-upgrade' intent.
 	// This allows monthly/yearly versions of the same plan to be considered "current"
@@ -480,8 +508,23 @@ function getLoggedInPlansAction( {
 
 	// All actions for the current plan
 	if ( current ) {
-		// For the plans-upgrade intent, show "Your plan" as a non-clickable indicator
+		// For the plans-upgrade intent, show "Your plan" as a non-clickable indicator,
+		// unless a downgrade is scheduled — then offer to renew the current plan so
+		// the user is reminded they can keep it instead of letting the downgrade apply.
 		if ( isUpgradeFlow ) {
+			if ( isDelayedDowngradePending && onRenewCurrentPlan ) {
+				return {
+					primary: {
+						callback: onRenewCurrentPlan,
+						status: 'enabled',
+						text: translate( 'Renew %(plan)s', {
+							args: { plan: planTitle ?? '' },
+							comment: '%(plan)s is the name of the current plan, e.g. "Renew Premium"',
+						} ),
+						variant: 'primary',
+					},
+				};
+			}
 			return {
 				primary: {
 					callback: () => {},
@@ -493,13 +536,19 @@ function getLoggedInPlansAction( {
 		}
 
 		if ( isFreePlan( planSlug ) ) {
-			return createLoggedInPlansAction( translate( 'Manage add-ons', { context: 'verb' } ) );
+			return createLoggedInPlansAction(
+				translate( 'Manage add-ons', { context: 'verb' } ),
+				'secondary'
+			);
 		}
 		if ( domainFromHomeUpsellFlow ) {
-			return createLoggedInPlansAction( translate( 'Keep my plan', { context: 'verb' } ) );
+			return createLoggedInPlansAction(
+				translate( 'Keep my plan', { context: 'verb' } ),
+				'secondary'
+			);
 		}
 		if ( canUserManageCurrentPlan && isPlanExpired ) {
-			return createLoggedInPlansAction( translate( 'Renew plan' ) );
+			return createLoggedInPlansAction( translate( 'Renew plan' ), 'secondary' );
 		}
 
 		if ( canUserManageCurrentPlan ) {
@@ -509,14 +558,34 @@ function getLoggedInPlansAction( {
 		return createLoggedInPlansAction( translate( 'View plan' ), 'secondary' );
 	}
 
-	// Downgrade action if the plan is not available for purchase
+	// Downgrade action if the plan is not available for purchase and is available for downgrade
 	if ( ! availableForPurchase ) {
-		return createLoggedInPlansAction(
-			translate( 'Downgrade', { context: 'verb' } ),
-			'secondary',
-			undefined,
-			canUserManageCurrentPlan ? undefined : 'disabled'
-		);
+		if ( availableForDowngrade ) {
+			// When this is the plan a scheduled downgrade will land on, surface that it
+			// is already queued rather than offering to downgrade again.
+			const isDelayedDowngradeTarget =
+				isUpgradeFlow &&
+				isDelayedDowngradePending &&
+				delayedDowngradeToProductSlug &&
+				getPlanClass( planSlug ) === getPlanClass( delayedDowngradeToProductSlug as PlanSlug );
+			if ( isDelayedDowngradeTarget ) {
+				return createLoggedInPlansAction(
+					translate( 'Downgrade at renewal' ),
+					'secondary',
+					undefined,
+					'disabled'
+				);
+			}
+			return createLoggedInPlansAction(
+				translate( 'Downgrade', { context: 'verb' } ),
+				'secondary',
+				undefined,
+				canUserManageCurrentPlan ? undefined : 'disabled'
+			);
+		}
+		// Not purchasable and not downgradeable — return a disabled no-op to avoid
+		// falling through to the upgrade button path.
+		return createLoggedInPlansAction( '', 'secondary', undefined, 'disabled' );
 	}
 
 	/**

@@ -949,6 +949,12 @@ export interface ResponseCartProductExtra {
 	agency_id?: number;
 
 	/**
+	 * A4A Pressable PHP Memory add-on target domain.
+	 * Sent with checkout cart items so WPCOM can provision the add-on for the selected Pressable site.
+	 */
+	a4a_pressable_site_domain?: string;
+
+	/**
 	 * Marketplace properties
 	 *
 	 * These extra properties are always set for marketplace products.

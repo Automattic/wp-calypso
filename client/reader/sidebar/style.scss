@@ -14,49 +14,26 @@
 		}
 	}
 }
-:root:has(.is-reader-msd-enabled) {
-	.sidebar-header {
-		display: flex;
-		justify-content: space-between;
-		@media only screen and (max-width: 781px) {
-			display: none;
-		}
-		h3 {
-			font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
-			font-size: 32px;
-			font-style: normal;
-			font-weight: 400;
-			line-height: normal;
-		}
-		p {
-			display: none;
-		}
+.sidebar-header {
+	display: flex;
+
+	justify-content: space-between;
+	padding: 24px 8px;
+
+	h3 {
+		font-weight: 500;
+		font-size: 20px;
+		line-height: 26px;
 	}
-}
 
-//TODO: Remove this once the new reader MSD is enabled for all users (reader/enable-msd)
-:root:not(:has(.is-reader-msd-enabled)) {
-	.sidebar-header {
-		display: flex;
+	p {
+		color: var(--studio-gray-50);
+		font-size: $font-body-small;
+		margin: 0;
+	}
 
-		justify-content: space-between;
-		padding: 24px 8px;
-
-		h3 {
-			font-weight: 500;
-			font-size: 20px;
-			line-height: 26px;
-		}
-
-		p {
-			color: var(--studio-gray-50);
-			font-size: $font-body-small;
-			margin: 0;
-		}
-
-		.sidebar_svg-search {
-			margin: 0;
-		}
+	.sidebar_svg-search {
+		margin: 0;
 	}
 }
 
@@ -202,11 +179,12 @@ body.is-section-reader {
 		padding: 4px 6px;
 		line-height: 1;
 		min-width: 22px;
+		white-space: nowrap;
 		background-color: transparent;
 		border-color: currentColor;
 		outline-color: currentColor;
 		color: currentColor;
-		margin: 0 auto;
+		justify-self: end;
 		align-self: self-start;
 	}
 
@@ -334,7 +312,7 @@ body.is-section-reader {
 		}
 
 		&.has-counts .sidebar__menu-link {
-			grid-template-columns: 24px 1fr 36px;
+			grid-template-columns: 24px 1fr 48px;
 		}
 
 		.sidebar__menu-link {

@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { pick } from '@automattic/js-utils';
+import { throttle } from '@wordpress/compose';
 import debugModule from 'debug';
-import { map, throttle } from 'lodash';
 import { setStoredItem } from 'calypso/lib/browser-storage';
 import { isSupportSession } from 'calypso/lib/user/support-user-interop';
 import { APPLY_STORED_STATE } from './action-types';
@@ -106,7 +106,7 @@ export function persistOnChange( reduxStore, currentUserId ) {
 			const _timestamp = Date.now();
 			const reduxStateKey = getPersistenceKey( currentUserId );
 
-			const storeTasks = map( serializedState.get(), ( data, storageKey ) =>
+			const storeTasks = Object.entries( serializedState.get() ).map( ( [ storageKey, data ] ) =>
 				persistentStoreState( reduxStateKey, storageKey, data, _timestamp )
 			);
 

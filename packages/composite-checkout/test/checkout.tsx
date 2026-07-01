@@ -22,6 +22,7 @@ import {
 	useTogglePaymentMethod,
 	makeErrorResponse,
 	useMakeStepActive,
+	useNextIncompleteStepId,
 } from '../src/public-api';
 import { PaymentProcessorFunction, PaymentProcessorResponseType } from '../src/types';
 import { DefaultCheckoutSteps } from './utils/default-checkout-steps';
@@ -118,13 +119,16 @@ describe( 'Checkout', () => {
 				expect( getAllByText( mockMethod.inactiveContent )[ 0 ] ).toBeVisible();
 			} );
 
-			it( 'renders the second payment method label as selected if the first is disabled', async () => {
-				const { getByText, getAllByText, findByLabelText } = render( <MyCheckout /> );
+			it( 'renders the second payment method as the selected single method if the first is disabled', async () => {
+				const { getByText, getAllByText, queryByText, findByText } = render( <MyCheckout /> );
 				const user = userEvent.setup();
 				await user.click( getAllByText( 'Continue' )[ 0 ] );
 				await user.click( getByText( 'Disable Payment Method' ) );
-				const paymentMethod = await findByLabelText( mockMethod2.inactiveContent );
-				expect( paymentMethod ).toBeChecked();
+				// Only one payment method remains available, so it is rendered as a
+				// plain selected container (not a radio button): its label is visible
+				// while the disabled method is hidden.
+				expect( await findByText( mockMethod2.inactiveContent ) ).toBeVisible();
+				expect( queryByText( mockMethod.inactiveContent ) ).not.toBeVisible();
 			} );
 
 			it( 'renders the payment method activeContent', () => {
@@ -988,6 +992,57 @@ describe( 'Checkout', () => {
 				expect( getByTextInNode( submitArea, 'Pay Please' ) ).toBeInTheDocument();
 			} );
 			expect( queryByTextInNode( submitArea, 'Continue' ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'useNextIncompleteStepId', function () {
+		const mockMethod = createMockMethod();
+		const steps = createMockStepObjects();
+
+		// steps[0] = 'custom-summary-step'   (no step number)
+		// steps[1] = 'custom-contact-step'   (numbered, isCompleteCallback () => true)
+		// steps[3] = 'custom-incomplete-step' (numbered, isCompleteCallback () => false)
+
+		// Renders the hook's value (or the string 'none' when undefined) so tests can
+		// assert on it. This is the generic primitive consumers use to tell whether the
+		// submit area is showing "Continue" (a step remains) versus the final Pay button.
+		function NextIncompleteStepIdProbe() {
+			const nextIncompleteStepId = useNextIncompleteStepId();
+			return <div data-testid="next-incomplete-step-id">{ nextIncompleteStepId ?? 'none' }</div>;
+		}
+
+		function ProbeCheckout( props ) {
+			const [ paymentData, setPaymentData ] = useState( {} );
+			const { stepObjectsWithStepNumber, stepObjectsWithoutStepNumber } =
+				createStepsFromStepObjects( props.steps || steps );
+			const createStepFromStepObject = createStepObjectConverter( paymentData );
+			return (
+				<myContext.Provider value={ [ paymentData, setPaymentData ] }>
+					<CheckoutProvider
+						paymentMethods={ [ mockMethod ] }
+						paymentProcessors={ getMockPaymentProcessors() }
+						selectFirstAvailablePaymentMethod
+					>
+						<CheckoutStepGroup>
+							{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
+							{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }
+							<NextIncompleteStepIdProbe />
+						</CheckoutStepGroup>
+					</CheckoutProvider>
+				</myContext.Provider>
+			);
+		}
+
+		it( 'returns undefined when the active step is the last numbered step (Pay button state)', () => {
+			render( <ProbeCheckout steps={ [ steps[ 0 ], steps[ 1 ] ] } /> );
+			expect( screen.getByTestId( 'next-incomplete-step-id' ) ).toHaveTextContent( 'none' );
+		} );
+
+		it( 'returns the next incomplete step id when there is a later numbered step (Continue state)', () => {
+			render( <ProbeCheckout steps={ [ steps[ 0 ], steps[ 1 ], steps[ 3 ] ] } /> );
+			expect( screen.getByTestId( 'next-incomplete-step-id' ) ).toHaveTextContent(
+				'custom-contact-step'
+			);
 		} );
 	} );
 

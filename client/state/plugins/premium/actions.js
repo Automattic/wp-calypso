@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import versionCompare from 'calypso/lib/version-compare';
 import wpcom from 'calypso/lib/wp';
@@ -257,7 +256,7 @@ function configure( site, plugin, dispatch ) {
 		`/sites/${ site.ID }/option`,
 		{ option_name: option },
 		( getError, getData ) => {
-			if ( get( getData, 'option_value' ) === optionValue ) {
+			if ( getData?.option_value === optionValue ) {
 				// Already registered with this key
 				dispatch( {
 					type: PLUGIN_SETUP_FINISH,

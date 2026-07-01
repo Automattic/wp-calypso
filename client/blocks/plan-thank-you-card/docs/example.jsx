@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { connect } from 'react-redux';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import PlanThankYouCard from '../';
@@ -8,7 +7,7 @@ function PlanThankYouCardExample( { primarySiteId } ) {
 }
 
 const ConnectedPlanThankYouCard = connect( ( state ) => {
-	const primarySiteId = get( getCurrentUser( state ), 'primary_blog', null );
+	const primarySiteId = getCurrentUser( state )?.primary_blog ?? null;
 
 	return {
 		primarySiteId,

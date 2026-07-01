@@ -1,6 +1,5 @@
 import { extendAction } from '@automattic/state-utils';
 import debugModule from 'debug';
-import { get } from 'lodash';
 import wpcom, { wpcomJetpackLicensing } from 'calypso/lib/wp';
 import { WPCOM_HTTP_REQUEST } from 'calypso/state/action-types';
 import {
@@ -21,13 +20,11 @@ const debug = debugModule( 'calypso:data-layer:wpcom-http' );
 const fetcherMap = function ( method, fetcher = 'wpcom' ) {
 	const req = 'wpcomJetpackLicensing' === fetcher ? wpcomJetpackLicensing.req : wpcom.req;
 
-	return get(
+	return (
 		{
 			GET: req.get.bind( req ),
 			POST: req.post.bind( req ),
-		},
-		method,
-		null
+		}[ method ] ?? null
 	);
 };
 
@@ -58,7 +55,7 @@ export const queueRequest =
 			query = {},
 		} = action;
 		const { responseType, isLocalApiCall } = options || {};
-		const fetcher = get( options, 'options.fetcher', 'wpcom' );
+		const fetcher = options?.options?.fetcher ?? 'wpcom';
 
 		const onStreamRecord =
 			rawOnStreamRecord &&

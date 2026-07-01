@@ -2,13 +2,13 @@ package _self.projects
 
 import _self.bashNodeScript
 import _self.lib.utils.mergeTrunk
+import _self.lib.utils.passMergeQueueBranchesEarly
+import _self.lib.utils.skipOnMergeQueueBranch
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
@@ -77,15 +77,6 @@ object CalypsoApps: BuildType({
 	features {
 		perfmon {
 		}
-		pullRequests {
-			vcsRootExtId = "${Settings.WpCalypso.id}"
-			provider = github {
-				authType = token {
-					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-				}
-				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
-			}
-		}
 		commitStatusPublisher {
 			vcsRootExtId = "${Settings.WpCalypso.id}"
 			publisher = github {
@@ -99,10 +90,7 @@ object CalypsoApps: BuildType({
 
 	triggers {
 		vcs {
-			branchFilter = """
-				+:*
-				-:pull*
-			""".trimIndent()
+			branchFilter = "+:<default>"
 			triggerRules = """
 				-:test/e2e/**
 				-:docs/**.md
@@ -132,14 +120,15 @@ object CalypsoApps: BuildType({
 	""".trimIndent()
 
 	steps {
-		mergeTrunk()
+		passMergeQueueBranchesEarly()
+		mergeTrunk().skipOnMergeQueueBranch()
 		bashNodeScript {
 			name = "Install dependencies"
 			scriptContent = """
 				composer install
 				yarn install
 			"""
-		}
+		}.skipOnMergeQueueBranch()
 
 		// Automatically generate a list of apps to build by scanning the directories,
 		// then build every app in parallel using xargs for proper error handling.
@@ -168,7 +157,7 @@ object CalypsoApps: BuildType({
 					yarn workspace "{}" run teamcity:build-app || exit 1
 				'
 			"""
-		}
+		}.skipOnMergeQueueBranch()
 
 		// After the artifacts are built, we process them. This includes comparing
 		// with each previous release (to determine if a new release is needed),
@@ -190,7 +179,7 @@ object CalypsoApps: BuildType({
 
 				node ./bin/process-calypso-app-artifacts.mjs
 			"""
-		}
+		}.skipOnMergeQueueBranch()
 	}
 
 	failureConditions {
@@ -232,6 +221,7 @@ private object GutenbergUploadSourceMapsToSentry: BuildType() {
 		}
 
 		steps {
+			passMergeQueueBranchesEarly()
 			bashNodeScript {
 				name = "Upload Gutenberg source maps to Sentry"
 				scriptContent = """
@@ -248,17 +238,17 @@ private object GutenbergUploadSourceMapsToSentry: BuildType() {
 							--project wpcom-gutenberg-wp-admin \
 							--url-prefix "~/wp-content/plugins/gutenberg-core/%GUTENBERG_VERSION%/"
 				"""
-			}
+			}.skipOnMergeQueueBranch()
 
 			uploadPluginSourceMaps(
 				slug = "wpcom-block-editor",
 				wpcomURL = "~/wpcom-block-editor"
-			)
+			).skipOnMergeQueueBranch()
 
 			uploadPluginSourceMaps(
 				slug = "notifications",
 				wpcomURL = "~/notifications"
-			)
+			).skipOnMergeQueueBranch()
 		}
 	}
 }

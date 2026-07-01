@@ -3,7 +3,10 @@ package _self.projects
 import Settings
 import _self.bashNodeScript
 import _self.lib.customBuildType.E2EBuildType
+import _self.lib.utils.excludeMergeQueueBranches
 import _self.lib.utils.mergeTrunk
+import _self.lib.utils.passMergeQueueBranchesEarly
+import _self.lib.utils.skipOnMergeQueueBranch
 import _self.CalypsoE2ETestsBuildTemplate
 
 import jetbrains.buildServer.configs.kotlin.*
@@ -149,6 +152,7 @@ object BuildDockerImage : BuildType({
 	}
 
 	steps {
+		passMergeQueueBranchesEarly()
 		script {
 			name = "Webhook Start"
 			conditions {
@@ -167,7 +171,7 @@ object BuildDockerImage : BuildType({
 
 				curl -s -X POST -d "${'$'}payload" -H "TEAMCITY-SIGNATURE: ${'$'}signature" "%mc_teamcity_webhook%calypso/?build_id=%teamcity.build.id%"
 			"""
-		}
+		}.skipOnMergeQueueBranch()
 
 		script {
 			name = "Post PR comment"
@@ -184,13 +188,13 @@ object BuildDockerImage : BuildType({
 				Please wait a few minutes and refresh this page.
 				EOF
 			"""
-		}
+		}.skipOnMergeQueueBranch()
 
 		// We want calypso.live and Calypso e2e tests to run even if there's a merge conflict,
 		// just to keep things going. However, if we can merge, the webpack cache
 		// can be better utilized, since it's kept up-to-date for trunk commits.
 		// Note that this only happens on non-trunk
-		mergeTrunk( skipIfConflict = true )
+		mergeTrunk( skipIfConflict = true ).skipOnMergeQueueBranch()
 
 		script {
 			name = "Check Docker workspace COPY globs"
@@ -201,7 +205,7 @@ object BuildDockerImage : BuildType({
 			dockerImage = "%docker_image_e2e%"
 			dockerRunParameters = "-u %env.UID%"
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-		}
+		}.skipOnMergeQueueBranch()
 
 		val commonArgs = """
 			--label com.a8c.image-builder=teamcity
@@ -233,7 +237,7 @@ object BuildDockerImage : BuildType({
 				commandArgs = "--pull --label com.a8c.target=calypso-live $commonArgs"
 			}
 			param("dockerImage.platform", "linux")
-		}
+		}.skipOnMergeQueueBranch()
 
 		dockerCommand {
 			commandType = push {
@@ -242,7 +246,7 @@ object BuildDockerImage : BuildType({
 					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
 				""".trimIndent()
 			}
-		}
+		}.skipOnMergeQueueBranch()
 
 		script {
 			name = "Webhook fail OR webhook done and push trunk tag for deploy"
@@ -270,7 +274,7 @@ object BuildDockerImage : BuildType({
 
 				curl -s -X POST -d "${'$'}payload" -H "TEAMCITY-SIGNATURE: ${'$'}signature" "%mc_teamcity_webhook%calypso/?build_id=%teamcity.build.id%"
 			"""
-		}
+		}.skipOnMergeQueueBranch()
 
 		script {
 			name = "Post PR comment with link"
@@ -286,7 +290,7 @@ object BuildDockerImage : BuildType({
 				$htmlBlock
 				EOF
 			""".trimIndent()
-		}
+		}.skipOnMergeQueueBranch()
 
 		// TODO: Cache rebuilding is currently disabled. It takes a long time and
 		// causes timeouts on trunk. It needs to run more quickly to be worth it.
@@ -333,7 +337,7 @@ object BuildDockerImage : BuildType({
 				""".trimIndent().replace("\n"," ")
 			}
 			param("dockerImage.platform", "linux")
-		}
+		}.skipOnMergeQueueBranch()
 
 		dockerCommand {
 			name = "Push cache image"
@@ -345,7 +349,7 @@ object BuildDockerImage : BuildType({
 			commandType = push {
 				namesAndTags = "registry.a8c.com/calypso/base:%base_image_publish_tag%"
 			}
-		}
+		}.skipOnMergeQueueBranch()
 	}
 
 	failureConditions {
@@ -418,7 +422,6 @@ object RunAllUnitTests : BuildType({
 	}
 
 	steps {
-		mergeTrunk()
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
@@ -523,18 +526,6 @@ object RunAllUnitTests : BuildType({
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = "./bin/unit-test-suite.mjs"
 		}
-		bashNodeScript {
-			name = "Tag build"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
-			conditions {
-				equals("teamcity.build.branch.is_default", "true")
-			}
-			scriptContent = """
-				set -x
-
-				curl -s -X POST -H "Content-Type: text/plain" --data "release-candidate" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" "%teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/"
-			""".trimIndent()
-		}
 	}
 
 	triggers {
@@ -542,6 +533,7 @@ object RunAllUnitTests : BuildType({
 			branchFilter = """
 				+:*
 				-:pull*
+				-:trunk
 			""".trimIndent()
 		}
 	}
@@ -582,7 +574,7 @@ object RunAllUnitTests : BuildType({
 				messageFormat = simpleMessageFormat()
 			}
 			branchFilter = """
-				+:trunk
+				+:gh-readonly-queue/*
 			""".trimIndent()
 			buildFailedToStart = true
 			buildFailed = true
@@ -624,6 +616,7 @@ object CheckCodeStyleBranch : BuildType({
 	}
 
 	steps {
+		passMergeQueueBranchesEarly()
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
@@ -632,7 +625,7 @@ object CheckCodeStyleBranch : BuildType({
 				# Install modules
 				${_self.yarn_install_cmd}
 			"""
-		}
+		}.skipOnMergeQueueBranch()
 		bashNodeScript {
 			name = "Run eslint"
 			scriptContent = """
@@ -723,14 +716,14 @@ object CheckCodeStyleBranch : BuildType({
 						' yarn-batch # Arbitrary name to be used as each batch's progname
 				fi
 			"""
-		}
+		}.skipOnMergeQueueBranch()
 		bashNodeScript {
 			name = "Run code quality linters"
 			scriptContent = """
 				yarn run lint:unused-state-action-types
 				yarn run lint:config-defaults
 			"""
-		}
+		}.skipOnMergeQueueBranch()
 		bashNodeScript {
 			name = "Run stylelint"
 			scriptContent = """
@@ -738,7 +731,7 @@ object CheckCodeStyleBranch : BuildType({
 				yarn run lint:css
 				yarn run lint:mixedindent
 			"""
-		}
+		}.skipOnMergeQueueBranch()
 	}
 
 	triggers {
@@ -803,6 +796,7 @@ object Translate : BuildType({
 	}
 
 	steps {
+		passMergeQueueBranchesEarly()
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
@@ -810,7 +804,7 @@ object Translate : BuildType({
 				${_self.yarn_install_cmd}
 			"""
 			dockerImage = "%docker_image_e2e%"
-		}
+		}.skipOnMergeQueueBranch()
 		bashNodeScript {
 			name = "Extract strings"
 			scriptContent = """
@@ -825,7 +819,7 @@ object Translate : BuildType({
 				echo "##teamcity[publishArtifacts './translate/calypso-strings.pot']"
 			"""
 			dockerImage = "%docker_image_e2e%"
-		}
+		}.skipOnMergeQueueBranch()
 		bashNodeScript {
 			name = "Build New Strings .pot"
 			scriptContent = """
@@ -846,7 +840,7 @@ object Translate : BuildType({
 				echo "##teamcity[publishArtifacts './translate/localci-new-strings.pot']"
 			"""
 			dockerImage = "%docker_image_e2e%"
-		}
+		}.skipOnMergeQueueBranch()
 		bashNodeScript {
 			name = "Notify GlotPress Translate build is ready"
 			scriptContent = """
@@ -867,7 +861,7 @@ object Translate : BuildType({
 							}
 						}'
 			"""
-		}
+		}.skipOnMergeQueueBranch()
 	}
 
 	triggers {
@@ -875,7 +869,7 @@ object Translate : BuildType({
 			branchFilter = """
 				+:*
 				-:pull*
-			""".trimIndent()
+			""".excludeMergeQueueBranches()
 		}
 	}
 
@@ -942,7 +936,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 					+:*
 					-:pull*
 					-:trunk
-				""".trimIndent()
+				""".excludeMergeQueueBranches()
 				triggerRules = """
 					-:**.md
 				""".trimIndent()
@@ -993,7 +987,7 @@ object PlaywrightTestPRMatrix : BuildType({
 				+:*
 				-:pull*
 				-:trunk
-			""".trimIndent()
+			""".excludeMergeQueueBranches()
 			triggerRules = """
 				-:**.md
 			""".trimIndent()
@@ -1081,7 +1075,7 @@ object PlaywrightTestDashboardPRMatrix : BuildType({
 				+:*
 				-:pull*
 				-:trunk
-			""".trimIndent()
+			""".excludeMergeQueueBranches()
 			triggerRules = """
 				-:**.md
 				+:client/dashboard/**
@@ -1135,7 +1129,7 @@ object PlaywrightTestA4APRMatrix : BuildType({
 				+:*
 				-:pull*
 				-:trunk
-			""".trimIndent()
+			""".excludeMergeQueueBranches()
 			triggerRules = """
 				-:**.md
 				+:client/a8c-for-agencies/**
@@ -1214,6 +1208,7 @@ object JestPreReleaseE2ETests : BuildType({
 	}
 
 	steps {
+		passMergeQueueBranchesEarly()
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
@@ -1228,7 +1223,7 @@ object JestPreReleaseE2ETests : BuildType({
 				yarn workspace @automattic/calypso-e2e build
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-		}
+		}.skipOnMergeQueueBranch()
 
 		bashNodeScript {
 			name = "Run tests"
@@ -1254,7 +1249,7 @@ object JestPreReleaseE2ETests : BuildType({
 				RETRY_COUNT=1 xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --workerIdleMemoryLimit=1GB --group=calypso-release --onlyFailures --json --outputFile=pre-release-test-results.json
 			"""
 			dockerImage = "%docker_image_e2e%"
-		}
+		}.skipOnMergeQueueBranch()
 
 		bashNodeScript {
 			name = "Collect results"
@@ -1275,7 +1270,7 @@ object JestPreReleaseE2ETests : BuildType({
 				find test/e2e/allure-results -name '*.json' -print0 | xargs -r -0 mv -t allure-results
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-		}
+		}.skipOnMergeQueueBranch()
 	}
 
 	failureConditions {

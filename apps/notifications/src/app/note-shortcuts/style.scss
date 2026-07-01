@@ -1,6 +1,12 @@
 .wpnc__keyboard-shortcuts-popover {
 	width: min-content;
 
+	// The panel is focused on mount to anchor the popover's focus trap, but
+	// it's just an informational list — don't show a focus outline on it.
+	&:focus {
+		outline: none;
+	}
+
 	.shortcut {
 		border: 1px solid #ccc;
 		border-radius: 4px;

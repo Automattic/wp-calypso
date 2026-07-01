@@ -4,6 +4,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, Spinner, ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useEffect } from 'react';
+import { useBlackboxProtection } from 'calypso/blocks/login/use-blackbox-protection';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { login } from 'calypso/lib/paths';
 import { useDispatch } from 'calypso/state';
@@ -23,6 +24,7 @@ const LostPasswordForm = ( {
 	const [ error, setError ] = useState( null );
 	const [ isBusy, setBusy ] = useState( false );
 	const dispatch = useDispatch();
+	const blackbox = useBlackboxProtection( { feature: 'blackbox-lost-password' } );
 
 	const inputRef = useRef( null );
 	useEffect( () => {
@@ -63,6 +65,11 @@ const LostPasswordForm = ( {
 	const lostPasswordRequest = async () => {
 		const formData = new FormData();
 		formData.set( 'user_login', userLogin );
+
+		const blackboxSessionId = await blackbox.getSessionId();
+		if ( blackboxSessionId ) {
+			formData.set( 'blackbox_session_id', blackboxSessionId );
+		}
 
 		const origin = typeof window !== 'undefined' ? window.location.origin : '';
 		const resp = await window.fetch( `${ origin }/wp-login.php?action=lostpassword`, {
@@ -129,6 +136,8 @@ const LostPasswordForm = ( {
 			);
 		} catch ( response ) {
 			setBusy( false );
+			blackbox.reset();
+
 			const defaultError = translate(
 				'There was an error sending the password reset email. Please try again.'
 			);
@@ -196,11 +205,12 @@ const LostPasswordForm = ( {
 				/>
 				{ showError && <FormInputValidation isError text={ error } /> }
 			</div>
+			{ blackbox.challenge }
 			<div className="login__form-action">
 				<Button
 					variant="primary"
 					type="submit"
-					disabled={ userLogin.length === 0 || showError || isBusy }
+					disabled={ userLogin.length === 0 || showError || isBusy || blackbox.isSubmitBlocked }
 					isBusy={ isBusy }
 					__next40pxDefaultSize
 				>

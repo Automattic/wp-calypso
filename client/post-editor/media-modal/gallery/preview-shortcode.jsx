@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import { some } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import GalleryShortcode from 'calypso/components/gallery-shortcode';
@@ -47,7 +46,7 @@ export default class EditorMediaModalGalleryPreviewShortcode extends Component {
 		const { siteId, settings } = this.props;
 		const { isLoading, shortcode } = this.state;
 		const classes = clsx( 'editor-media-modal-gallery__preview-shortcode', {
-			'is-loading': isLoading || some( settings.items, 'transient' ),
+			'is-loading': isLoading || ( settings.items ?? [] ).some( ( item ) => item.transient ),
 		} );
 
 		return (

@@ -88,7 +88,7 @@ type InquiryType =
 	| 'unrelated-to-wordpress'
 	| 'request-for-human-support';
 
-type InteractionStatus = 'open' | 'closed' | 'solved';
+export type InteractionStatus = 'open' | 'closed' | 'solved';
 
 type ClassificationResults = {
 	inquiry_type?: InquiryType;
@@ -145,6 +145,7 @@ export type ChatFeedbackActions = {
 export type Message = {
 	content: ReactNode;
 	context?: Context;
+	displayName?: string;
 	internal_message_id?: string;
 	message_id?: number;
 	meta?: Record< string, string >;

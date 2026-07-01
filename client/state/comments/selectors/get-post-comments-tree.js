@@ -1,6 +1,5 @@
-import { keyBy, mapValues } from '@automattic/js-utils';
+import { groupBy, keyBy, mapValues, partition } from '@automattic/js-utils';
 import treeSelect from '@automattic/tree-select';
-import { filter, groupBy, map, partition } from 'lodash';
 import { getPostCommentItems } from 'calypso/state/comments/selectors/get-post-comment-items';
 
 import 'calypso/state/comments/init';
@@ -17,7 +16,7 @@ import 'calypso/state/comments/init';
 export const getPostCommentsTree = treeSelect(
 	( state, siteId, postId ) => [ getPostCommentItems( state, siteId, postId ) ],
 	( [ allItems ], siteId, postId, status = 'approved', authorId ) => {
-		const items = filter( allItems, ( item ) => {
+		const items = ( allItems ?? [] ).filter( ( item ) => {
 			//only return pending comments that match the comment author
 			const commentAuthorId = item?.author?.ID;
 			if (
@@ -38,12 +37,12 @@ export const getPostCommentsTree = treeSelect(
 		const [ roots, children ] = partition( items, ( item ) => item.parent === false );
 
 		// group children by their parent ID
-		const childrenGroupedByParent = groupBy( children, 'parent.ID' );
+		const childrenGroupedByParent = groupBy( children, ( child ) => child.parent?.ID );
 
 		// Generate a new map of parent ID to an array of chilren IDs
 		// Reverse the order to keep it in chrono order
 		const parentToChildIdMap = mapValues( childrenGroupedByParent, ( _children ) =>
-			map( _children, 'ID' ).reverse()
+			_children.map( ( child ) => child?.ID ).reverse()
 		);
 
 		// convert all of the comments to comment nodes for our tree structure
@@ -52,11 +51,11 @@ export const getPostCommentsTree = treeSelect(
 			children: parentToChildIdMap[ item.ID ] || [],
 		} );
 
-		const commentsByIdMap = keyBy( map( items, transformItemToNode ), ( node ) => node.data.ID );
+		const commentsByIdMap = keyBy( items.map( transformItemToNode ), ( node ) => node.data.ID );
 
 		return {
 			...commentsByIdMap,
-			children: map( roots, ( root ) => root.ID ).reverse(),
+			children: roots.map( ( root ) => root.ID ).reverse(),
 		};
 	}
 );

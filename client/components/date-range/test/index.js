@@ -9,8 +9,8 @@ import MockDate from 'mockdate';
 import moment from 'moment';
 import { DateRange } from '../index.jsx';
 
-jest.mock( 'lodash', () => ( {
-	...jest.requireActual( 'lodash' ),
+jest.mock( '@wordpress/compose', () => ( {
+	...jest.requireActual( '@wordpress/compose' ),
 	debounce: ( fn ) => fn,
 } ) );
 

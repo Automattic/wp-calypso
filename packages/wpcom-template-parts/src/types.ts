@@ -53,6 +53,8 @@ export interface ClickableItemProps extends MenuItemProps {
 	tabIndex?: number;
 	/** Reading-order position, published as `--stagger-index` for the dropdown slide-in. */
 	index?: number;
+	/** Stable label for click tracking when the visible content includes badges. */
+	trackingText?: string;
 	/** Fires when the pointer enters the item's `<li>` (2026 nav hover tracking). */
 	onItemMouseEnter?: () => void;
 	/** Fires when the item's link gains keyboard focus (2026 nav dropdown dismissal parity). */

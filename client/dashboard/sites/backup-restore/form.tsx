@@ -3,6 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
@@ -51,9 +52,11 @@ const fields: Field< RestoreConfig >[] = [
 
 function SiteBackupRestoreForm( {
 	siteId,
+	restorePointDate,
 	onRestoreInitiate,
 }: {
 	siteId: number;
+	restorePointDate: string;
 	onRestoreInitiate: ( restoreId: number ) => void;
 } ) {
 	const { rewindId } = siteBackupRestoreRoute.useParams();
@@ -117,7 +120,12 @@ function SiteBackupRestoreForm( {
 	return (
 		<form onSubmit={ handleSubmit }>
 			<VStack spacing={ 4 }>
-				<p>{ __( 'Choose the items you wish to restore:' ) }</p>
+				<p>
+					{ createInterpolateElement(
+						__( 'Choose what to restore from your <restorePointDate /> backup:' ),
+						{ restorePointDate: <strong>{ restorePointDate }</strong> }
+					) }
+				</p>
 				<DataForm< RestoreConfig >
 					data={ formData }
 					fields={ fields }

@@ -451,7 +451,7 @@ export function getFields( {
 				// Allows sorting by card number or payment partner (eg: `type === 'paypal'`).
 				return item.expiry_status === 'expired'
 					? // Do not return card number for expired purchases because it
-					  // will not be displayed so it will look wierd if we sort
+					  // will not be displayed so it will look weird if we sort
 					  // expired purchases with active ones that have the same card.
 					  'expired'
 					: item.payment_details ?? item.payment_card_type ?? 'no-payment-method';

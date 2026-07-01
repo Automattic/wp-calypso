@@ -23,6 +23,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
+import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
@@ -56,11 +57,15 @@ import isSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
-import { getSectionGroup } from 'calypso/state/ui/selectors';
+import { getSectionGroup, getSectionName } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
 import BigSkyIcon from './masterbar-agents-manager/big-sky-icon';
-import { openAgentsManagerChat } from './masterbar-agents-manager/chat-actions';
+import {
+	closeAgentsManagerChat,
+	isAgentsManagerChatVisible,
+	openAgentsManagerChat,
+} from './masterbar-agents-manager/chat-actions';
 import HelpIcon from './masterbar-agents-manager/help-icon';
 import { HelpCenterIcon } from './masterbar-help-center/help-center-icon';
 import { MasterbarLaunchButton } from './masterbar-launch-button';
@@ -90,6 +95,7 @@ class MasterbarLoggedIn extends Component {
 		user: PropTypes.object.isRequired,
 		domainOnlySite: PropTypes.bool,
 		section: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
+		sectionName: PropTypes.string,
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		currentLayoutFocus: PropTypes.string,
 		siteSlug: PropTypes.string,
@@ -263,7 +269,6 @@ class MasterbarLoggedIn extends Component {
 			translate,
 			section,
 			currentRoute,
-			isGlobalSidebarVisible,
 			siteAdminUrl,
 			dashboardOptIn,
 		} = this.props;
@@ -281,7 +286,9 @@ class MasterbarLoggedIn extends Component {
 			return <Item icon={ icon } className="masterbar__item-no-sites" disabled />;
 		}
 
-		const subItems = isGlobalSidebarVisible
+		// Hidden across the My Sites view. Keys off the sidebar type, not its
+		// visibility, to also cover HD v1 site screens where the sidebar is hidden.
+		const subItems = this.isMySitesActive()
 			? null
 			: [
 					[
@@ -520,6 +527,7 @@ class MasterbarLoggedIn extends Component {
 			sitePlanName,
 			site,
 			sitePlanUrl,
+			sidebarType,
 		} = this.props;
 
 		// Only display when a site is selected and is not domain-only site.
@@ -539,18 +547,24 @@ class MasterbarLoggedIn extends Component {
 			},
 		];
 
-		if ( isClassicView ) {
-			menuItems.push( {
-				label: translate( 'Dashboard' ),
-				url: siteAdminUrl,
-				onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_dashboard_clicked' ),
-			} );
-		} else {
-			menuItems.push( {
-				label: translate( 'My Home' ),
-				url: siteHomeUrl,
-				onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_my_home_clicked' ),
-			} );
+		const isWithinSiteContext =
+			sidebarType === SidebarType.UnifiedSiteClassic ||
+			sidebarType === SidebarType.UnifiedSiteDefault;
+
+		if ( ! isWithinSiteContext ) {
+			if ( isClassicView ) {
+				menuItems.push( {
+					label: translate( 'Dashboard' ),
+					url: siteAdminUrl,
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_dashboard_clicked' ),
+				} );
+			} else {
+				menuItems.push( {
+					label: translate( 'My Home' ),
+					url: siteHomeUrl,
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_my_home_clicked' ),
+				} );
+			}
 		}
 
 		if ( ! site?.is_wpcom_staging_site ) {
@@ -904,9 +918,18 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	clickAgentsManagerAiChat = () => {
-		this.props.recordTracksEvent( 'calypso_masterbar_agents_manager_ai_chat_clicked' );
-		// Reopen and resume the active conversation rather than start a new one.
-		openAgentsManagerChat();
+		// Toggle: close the chat if it's already showing, otherwise resume the active
+		// conversation and open it.
+		const isVisible = isAgentsManagerChatVisible();
+		this.props.recordTracksEvent( 'calypso_masterbar_agents_manager_ai_chat_clicked', {
+			section: this.props.sectionName,
+			action: isVisible ? 'close' : 'open',
+		} );
+		if ( isVisible ) {
+			closeAgentsManagerChat();
+		} else {
+			openAgentsManagerChat();
+		}
 	};
 
 	renderAgentsManagerAiChat() {
@@ -977,6 +1000,13 @@ const ConnectedMasterbarLoggedIn = connect(
 		const siteCount = getCurrentUserSiteCount( state ) ?? 0;
 		const site = getSite( state, siteId );
 		const isClassicView = site && siteUsesWpAdminInterface( site );
+		const currentRoute = getCurrentRoute( state );
+		const sidebarType = getSidebarType( {
+			state,
+			siteId,
+			section: { group: sectionGroup },
+			route: currentRoute,
+		} );
 
 		return {
 			isManageSiteOptionsEnabled: canCurrentUserManageSiteOptions( state, siteId ),
@@ -993,6 +1023,8 @@ const ConnectedMasterbarLoggedIn = connect(
 			siteHomeUrl: getSiteHomeUrl( state, siteId ),
 			adminMenu: getAdminMenu( state, siteId ),
 			sectionGroup,
+			sidebarType,
+			sectionName: getSectionName( state ),
 			domainOnlySite: isDomainOnlySite( state, siteId ),
 			hasNoSites: siteCount === 0,
 			user: getCurrentUser( state ),
@@ -1005,7 +1037,7 @@ const ConnectedMasterbarLoggedIn = connect(
 			isSimpleSite: isSimpleSite( state, siteId ),
 			isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
-			currentRoute: getCurrentRoute( state ),
+			currentRoute,
 			newPostUrl: getEditorUrl( state, siteId, null, 'post' ),
 			newPageUrl: getEditorUrl( state, siteId, null, 'page' ),
 			isUnlaunchedSite: getIsUnlaunchedSite( state, siteId ),

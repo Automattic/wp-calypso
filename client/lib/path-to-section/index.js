@@ -1,4 +1,4 @@
-import { filter, get, maxBy } from 'lodash';
+import { maxBy } from '@automattic/js-utils';
 import { getSections } from 'calypso/sections-helper';
 
 export default function pathToSection( path ) {
@@ -12,7 +12,7 @@ export default function pathToSection( path ) {
 	);
 
 	// sort out special case we don't want to match: matching on '/' but path isn't exactly '/'
-	const matchingPaths = filter( bestMatch.paths, ( sectionPath ) =>
+	const matchingPaths = bestMatch.paths.filter( ( sectionPath ) =>
 		( path ?? '' ).startsWith( sectionPath )
 	);
 	if ( matchingPaths.length === 1 && matchingPaths[ 0 ] === '/' && path !== '/' ) {
@@ -20,7 +20,7 @@ export default function pathToSection( path ) {
 	}
 	// make sure the best match is actually a match (in case nothing matches)
 	if ( bestMatch.paths.some( ( sectionPath ) => ( path ?? '' ).startsWith( sectionPath ) ) ) {
-		return get( bestMatch, 'name' );
+		return bestMatch?.name;
 	}
 	return null;
 }

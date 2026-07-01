@@ -1,4 +1,5 @@
 import { isAutomatticianQuery, siteBySlugQuery, siteByIdQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	useQuery,
@@ -20,7 +21,6 @@ import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyStateLayout } from '../components/dataviews';
 import InlineSupportLink from '../components/inline-support-link';
-import OptInSurvey, { useShouldShowOptInSurvey } from '../components/opt-in-survey';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { isDashboardBackport } from '../utils/is-dashboard-backport';
@@ -35,7 +35,8 @@ import {
 } from './dataviews';
 import { EmptySitesStateContent, EmptySitesSearchStateContent } from './empty-sites-state';
 import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
-import { SitesNotices } from './notices';
+import { SitesNoticeArbiter } from './notice-arbiter';
+import { RestoringSitesNotices } from './restoring-sites-notice';
 import { OptInWelcomeModal } from './welcome-modal';
 import type { FetchPaginatedSitesOptions, Site, DashboardFilters } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
@@ -196,7 +197,6 @@ export default function Sites() {
 	};
 
 	const userHasSites = user.site_count > 0;
-	const shouldShowOptInSurvey = useShouldShowOptInSurvey();
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginateSites(
 		sites ?? [],
@@ -214,7 +214,9 @@ export default function Sites() {
 
 	return (
 		<>
-			{ ! isDashboardBackport() && <OptInWelcomeModal /> }
+			{ ! isDashboardBackport() && isEnabled( 'dashboard/opt-in-welcome-modal' ) && (
+				<OptInWelcomeModal />
+			) }
 			<InviteAcceptedFlashMessage />
 			{ isModalOpen && (
 				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
@@ -242,10 +244,9 @@ export default function Sites() {
 					/>
 				}
 				notices={
-					<>
-						<SitesNotices />
-						{ ! isDashboardBackport() && shouldShowOptInSurvey && <OptInSurvey /> }
-					</>
+					<SitesNoticeArbiter>
+						{ ! isDashboardBackport() && isRestoringAccount && <RestoringSitesNotices /> }
+					</SitesNoticeArbiter>
 				}
 			>
 				{ userHasSites || hasActiveQuery ? (

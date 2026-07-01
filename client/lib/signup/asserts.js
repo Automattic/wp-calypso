@@ -1,11 +1,9 @@
-import { get, difference } from 'lodash';
 import steps from 'calypso/signup/config/steps-pure';
 
 export function assertValidDependencies( stepName, providedDependencies ) {
-	const providesDependencies = get( steps, [ stepName, 'providesDependencies' ], [] );
-	const extraDependencies = difference(
-		Object.keys( providedDependencies || {} ),
-		providesDependencies
+	const providesDependencies = steps?.[ stepName ]?.providesDependencies ?? [];
+	const extraDependencies = Object.keys( providedDependencies || {} ).filter(
+		( dependency ) => ! providesDependencies.includes( dependency )
 	);
 
 	if ( extraDependencies.length > 0 ) {

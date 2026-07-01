@@ -103,11 +103,13 @@ $search-categories-height: 40px;
 		top: 0;
 		z-index: 20;
 
-		// Baton-pass: filter sticks at the fixed nav's top and rides above it,
-		// covering it as it pins (opaque bg via the parent's white background).
+		// Baton-pass: filter sticks at the fixed nav's top and rides above it
+		// (beats the nav's closed 177), covering it as it pins (opaque bg via the
+		// parent's white background). Stays below the nav's open state (179) and
+		// the masterbar (180), which is always on top.
 		.is-section-plugins:has(.x-nav--2026-redesign) & {
 			top: var(--nav-2026-admin-offset);
-			z-index: 1000;
+			z-index: var(--nav-2026-z-sub-nav, 178);
 			background-color: var(--studio-white);
 		}
 

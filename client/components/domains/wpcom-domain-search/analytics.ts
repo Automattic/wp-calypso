@@ -1,6 +1,5 @@
 import { DomainAvailabilityStatus, FreeDomainSuggestion } from '@automattic/api-core';
-import { mapValues } from '@automattic/js-utils';
-import { mapKeys, snakeCase } from 'lodash';
+import { mapKeys, mapValues, snakeCase } from '@automattic/js-utils';
 import {
 	composeAnalytics,
 	recordGoogleEvent,

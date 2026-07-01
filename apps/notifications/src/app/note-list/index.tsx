@@ -8,8 +8,12 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
+import getFilteredLoading from '../../panel/state/selectors/get-filtered-loading';
 import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
+import { getIsNoteRead } from '../../panel/state/selectors/get-is-note-read';
+import getNotes from '../../panel/state/selectors/get-notes';
+import getUnreadNoteIds from '../../panel/state/selectors/get-unread-note-ids';
 import { getFilters } from '../../panel/templates/filters';
 import { useAppContext } from '../context';
 import { getFields } from './dataviews';
@@ -27,6 +31,10 @@ const DEFAULT_LAYOUTS = {
 	list: {},
 };
 
+// Stable empty selection: DataViews' selection styling is left unused (the open
+// note is highlighted via our own `is-active` marker), so this never changes.
+const NO_SELECTION: string[] = [];
+
 // DataViews 14 only loads more in response to scroll events, so the rendered
 // window (`perPage` rows) must be tall enough to overflow the panel and produce
 // a scrollbar. The REST client may fetch smaller network pages
@@ -43,12 +51,27 @@ type NoteListProps = {
 const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListProps ) => {
 	const filter = getFilters()[ filterName ];
 	const allNotes = useSelector( ( state ) => getAllNotes( state ) || [] ) as Note[];
-	const notes = allNotes.filter( ( note ) => filter.filter( note ) );
+	const unreadNoteIds = useSelector( ( state ) => getUnreadNoteIds( state ) ) as number[];
+
+	// "Unread" renders the server's id list; other tabs client-filter the cache.
+	// `filter.filter` still runs on top so an in-app read drops out before a refetch.
+	let notes: Note[];
+	if ( filterName === 'unread' ) {
+		const notesById = new Map( allNotes.map( ( note ) => [ note.id, note ] ) );
+		notes = unreadNoteIds
+			.map( ( id ) => notesById.get( id ) )
+			.filter( ( note ): note is Note => !! note )
+			.filter( ( note ) => filter.filter( note ) );
+	} else {
+		notes = allNotes.filter( ( note ) => filter.filter( note ) );
+	}
+
 	// Filter out hidden notes, i.e. notes that have been just marked as spam or moved to the trash.
 	const hiddenNoteIds = useSelector( ( state ) => getHiddenNoteIds( state ) );
 	const visibleNotes = notes.filter( ( note ) => hiddenNoteIds[ note.id ] !== true );
 
 	const isLoading = useSelector( ( state ) => getIsLoading( state ) );
+	const filteredLoading = useSelector( ( state ) => getFilteredLoading( state ) );
 	const { client } = useAppContext();
 
 	// DataViews 14 binds its infinite-scroll listener in an effect that runs
@@ -59,10 +82,16 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	// never bound and scroll-driven loading stays dead until the list
 	// remounts (e.g. on a tab switch). Defer mounting DataViews until the
 	// first load settles so it always mounts with the container present.
-	const hasRenderedDataViews = useRef( false );
+	const hasInitiallyLoaded = useRef( false );
 	if ( ! isLoading ) {
-		hasRenderedDataViews.current = true;
+		hasInitiallyLoaded.current = true;
 	}
+
+	// Drive the client's server-side filter from the active tab. Only "unread"
+	// maps to a filter today; other tabs stay client-filtered.
+	useEffect( () => {
+		client?.setFilter( filterName === 'unread' ? { unread: 1 } : null );
+	}, [ client, filterName ] );
 
 	const onChangeSelection = ( selection: string[] ) => {
 		const noteId = selection[ 0 ];
@@ -73,11 +102,15 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	const [ initialView, setView ] = useState< View >( {
 		type: 'list',
 		titleField: 'title',
+		descriptionField: 'description',
 		mediaField: 'icon',
-		fields: [ 'info' ],
+		fields: [],
 		page: 1,
 		infiniteScrollEnabled: true,
 		startPosition: 1,
+		// Group notes into time sections ("Today", "Yesterday", …). `direction` is
+		// required by the type but inert, since `timeGroup` opts out of sorting.
+		groupBy: { field: 'timeGroup', direction: 'asc', showLabel: false },
 	} );
 
 	const view = { ...initialView, perPage: NOTES_PER_PAGE };
@@ -91,6 +124,20 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 		view,
 		fields
 	);
+
+	// DataViews shows the unread dot from `note.read`, which an in-app read leaves
+	// stale. Swap in the effective read state, and tag the open note so its row
+	// can render the active highlight. Reuse the note object when neither changed
+	// so only the affected rows re-render.
+	const notesState = useSelector( getNotes );
+	const data = filteredData.map( ( note ) => {
+		const isRead = getIsNoteRead( notesState, note );
+		const isActive = note.id.toString() === selectedNoteId;
+		if ( !! note.read === isRead && ! isActive ) {
+			return note;
+		}
+		return { ...note, read: isRead ? 1 : 0, isActive };
+	} );
 
 	// `filterSortAndPaginate` reports `totalItems` as the count of notes loaded
 	// so far. DataViews advances its infinite-scroll window only while
@@ -130,36 +177,72 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	useNoteListFocusToLastSelectedNote( { noteListRef, notes } );
 	useNoteListNavigationKeyboardShortcuts( { noteListRef, visibleNotes } );
 
+	// Spinner instead of an empty message while the view may still be filling: more
+	// cache pages to search, or the Unread fetch in flight. Unread keys off the
+	// in-flight filter, not the shared `isLoading` the background poll also toggles.
+	const showEmptyLoader = hasMoreNotes || ( filterName === 'unread' && !! filteredLoading?.unread );
+
+	// `groupBy` forces DataViews' list layout off its infinite-scroll path, which
+	// is the only path that renders its built-in load-more spinner — so we render
+	// our own at the foot of the list while a page is in flight over an
+	// already-populated list. An empty list uses the `empty` slot above instead.
+	const showLoadMore = isLoading && data.length > 0;
+
+	// Loader only until DataViews first mounts, then never again: it binds its
+	// scroll listener once, on mount, only if the container exists, so a remount
+	// mid-load leaves scrolling dead. In-flight loading uses the `empty` slot.
+	if ( ! hasInitiallyLoaded.current ) {
+		return (
+			<div ref={ noteListRef } className="wpnc__note-list">
+				<VStack alignment="center" style={ { padding: '40px 0' } }>
+					<Spinner />
+				</VStack>
+			</div>
+		);
+	}
+
 	return (
 		<div ref={ noteListRef } className="wpnc__note-list">
-			{ hasRenderedDataViews.current ? (
-				<DataViews< Note >
-					data={ filteredData }
-					fields={ fields }
-					view={ view }
-					isLoading={ isLoading }
-					defaultLayouts={ DEFAULT_LAYOUTS }
-					paginationInfo={ effectivePaginationInfo }
-					empty={
+			<DataViews< Note >
+				data={ data }
+				fields={ fields }
+				view={ view }
+				isLoading={ isLoading }
+				defaultLayouts={ DEFAULT_LAYOUTS }
+				paginationInfo={ effectivePaginationInfo }
+				empty={
+					// Spinner while still filling; the real message once settled.
+					showEmptyLoader ? (
+						<VStack alignment="center" style={ { padding: '40px 0' } }>
+							<Spinner />
+						</VStack>
+					) : (
 						<VStack alignment="center">
 							<Text size={ 15 } weight={ 500 }>
 								{ filter.emptyMessage }
 							</Text>
 							<ExternalLink href={ filter.emptyLink }>{ filter.emptyLinkMessage }</ExternalLink>
 						</VStack>
-					}
-					getItemId={ ( item ) => item.id.toString() }
-					selection={ selectedNoteId ? [ selectedNoteId ] : [] }
-					onChangeView={ handleChangeView }
-					onChangeSelection={ onChangeSelection }
-				>
-					<DataViews.Layout />
-				</DataViews>
-			) : (
-				<VStack alignment="center" style={ { padding: '40px 0' } }>
-					<Spinner />
-				</VStack>
-			) }
+					)
+				}
+				getItemId={ ( item ) => item.id.toString() }
+				// Keep selection empty so DataViews applies none of its own selected-row
+				// styling; the open note is highlighted via our `is-active` marker
+				// instead. `onChangeSelection` is still the list layout's only row-click
+				// hook, so it stays — it's what opens the note.
+				selection={ NO_SELECTION }
+				onChangeView={ handleChangeView }
+				onChangeSelection={ onChangeSelection }
+			>
+				<DataViews.Layout />
+				{ showLoadMore && (
+					// DataViews suppresses its own load-more spinner when notes are
+					// grouped, so this stands in for it, pinned below the list rows.
+					<VStack alignment="center" style={ { flexShrink: 0, padding: '12px 0' } }>
+						<Spinner />
+					</VStack>
+				) }
+			</DataViews>
 		</div>
 	);
 };

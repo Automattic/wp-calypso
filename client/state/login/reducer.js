@@ -1,6 +1,5 @@
-import { pick } from '@automattic/js-utils';
+import { pick, isEmpty } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
-import { get, isEmpty } from 'lodash';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import {
@@ -95,7 +94,7 @@ export const redirectTo = combineReducers( {
 				return null;
 			case LOGIN_REQUEST_SUCCESS: {
 				const { data } = action;
-				return get( data, 'redirect_to', null );
+				return data?.redirect_to ?? null;
 			}
 			case SOCIAL_LOGIN_REQUEST:
 				return null;
@@ -103,14 +102,14 @@ export const redirectTo = combineReducers( {
 				return null;
 			case SOCIAL_LOGIN_REQUEST_SUCCESS: {
 				const { data } = action;
-				return get( data, 'redirect_to', null );
+				return data?.redirect_to ?? null;
 			}
 			case SOCIAL_CONNECT_ACCOUNT_REQUEST:
 				return null;
 			case SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE:
 				return null;
 			case SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS:
-				return get( action, 'redirect_to', null );
+				return action?.redirect_to ?? null;
 		}
 
 		return state;

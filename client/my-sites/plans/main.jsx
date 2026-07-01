@@ -5,6 +5,7 @@ import {
 	getPlan,
 	is100Year,
 	isFreePlanProduct,
+	isStudentPlan,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
@@ -23,7 +24,6 @@ import page from '@automattic/calypso-router';
 import { Plans } from '@automattic/data-stores';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { addQueryArgs } from '@wordpress/url';
-import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -38,7 +38,6 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { isPlansPageUntangled } from 'calypso/lib/plans/untangling-plans-experiment';
 import { isPartnerPurchase } from 'calypso/lib/purchases';
-import { useDeEmphasizedPlanCardExperiment } from 'calypso/my-sites/plans/hooks/use-de-emphasized-plan-card-experiment';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
@@ -62,13 +61,13 @@ import DomainUpsellDialog from './components/domain-upsell-dialog';
 import PlansHeader from './components/plans-header';
 import ECommerceTrialPlansPage from './ecommerce-trial';
 import ModernizedLayout from './modernized-layout';
+import StudentPlansPage from './student-plans-page';
 import BusinessTrialPlansPage from './trials/business-trial-plans-page';
 import WooExpressPlansPage from './woo-express-plans-page';
 
 import './style.scss';
 
 // Plan tiers from lowest to highest, used to filter the visible plans list
-// for the de-emphasized current plan card experiment.
 const PLAN_TIERS = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 
 class PlansComponent extends Component {
@@ -82,7 +81,6 @@ class PlansComponent extends Component {
 		redirectTo: PropTypes.string,
 		pluginSlug: PropTypes.string,
 		selectedSite: PropTypes.object,
-		deEmphasizedExperiment: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -152,14 +150,7 @@ class PlansComponent extends Component {
 	};
 
 	renderPlansMain() {
-		const {
-			selectedSite,
-			isUntangled,
-			isWPForTeamsSite,
-			deEmphasizedExperiment,
-			isFreePlan,
-			currentPlan,
-		} = this.props;
+		const { selectedSite, isUntangled, isWPForTeamsSite, isFreePlan, currentPlan } = this.props;
 
 		if ( isEnabled( 'p2/p2-plus' ) && isWPForTeamsSite ) {
 			return (
@@ -184,21 +175,15 @@ class PlansComponent extends Component {
 			plansIntent = intentFromQuery;
 		}
 
-		// Experiment: de-emphasized current plan card
-		const showSpotlight = deEmphasizedExperiment?.isControl ? ! isUntangled : false;
-		const hideEnterprise = deEmphasizedExperiment?.isVariantB && isFreePlan;
-		const hideEcommerce = deEmphasizedExperiment?.isVariantB && isFreePlan;
+		// De-emphasize the current plan card: relabel it instead of spotlighting it.
+		const highlightLabelOverrides = currentPlan?.productSlug
+			? { [ currentPlan.productSlug ]: this.props.translate( 'Current plan' ) }
+			: undefined;
 
-		const isExperimentVariant = deEmphasizedExperiment && ! deEmphasizedExperiment.isControl;
-		const highlightLabelOverrides =
-			isExperimentVariant && currentPlan?.productSlug
-				? { [ currentPlan.productSlug ]: this.props.translate( 'Current plan' ) }
-				: undefined;
-
-		// Experiment: filter the visible plan tiers to those at or above the current plan.
+		// Filter the visible plan tiers to those at or above the current plan.
 		const currentTier = getPlan( currentPlan?.productSlug )?.type;
 		const visiblePlanTiers =
-			isExperimentVariant && currentTier && PLAN_TIERS.includes( currentTier )
+			currentTier && PLAN_TIERS.includes( currentTier )
 				? PLAN_TIERS.slice( PLAN_TIERS.indexOf( currentTier ) )
 				: PLAN_TIERS;
 
@@ -218,14 +203,13 @@ class PlansComponent extends Component {
 				plansWithScroll={ false }
 				showLegacyStorageFeature={ this.props.siteHasLegacyStorage }
 				intent={ plansIntent }
-				isSpotlightOnCurrentPlan={ showSpotlight }
 				highlightLabelOverrides={ highlightLabelOverrides }
 				hideFreePlan={ ! visiblePlanTiers.includes( TYPE_FREE ) || undefined }
 				hidePersonalPlan={ ! visiblePlanTiers.includes( TYPE_PERSONAL ) || undefined }
 				hidePremiumPlan={ ! visiblePlanTiers.includes( TYPE_PREMIUM ) || undefined }
 				hideBusinessPlan={ ! visiblePlanTiers.includes( TYPE_BUSINESS ) || undefined }
-				hideEnterprisePlan={ hideEnterprise }
-				hideEcommercePlan={ hideEcommerce }
+				hideEnterprisePlan={ isFreePlan }
+				hideEcommercePlan={ isFreePlan }
 				showPlanTypeSelectorDropdown={ isEnabled( 'onboarding/interval-dropdown' ) }
 			/>
 		);
@@ -288,10 +272,32 @@ class PlansComponent extends Component {
 		);
 	}
 
+	renderStudentPlansPage() {
+		const { currentPlan, selectedSite, intervalType } = this.props;
+
+		if ( ! selectedSite ) {
+			return this.renderPlaceholder();
+		}
+
+		return (
+			<StudentPlansPage
+				currentPlan={ currentPlan }
+				selectedSite={ selectedSite }
+				intervalType={ intervalType }
+				isOwner={ selectedSite.plan?.user_is_owner }
+				coupon={ this.props.coupon }
+				redirectTo={ this.props.redirectTo }
+				pluginSlug={ this.props.pluginSlug }
+				discountEndDate={ this.props.discountEndDate }
+			/>
+		);
+	}
+
 	renderMainContent( {
 		isEcommerceTrial,
 		isBusinessTrial,
 		isWooExpressPlan,
+		isStudent,
 		isA4APlan,
 		is100YearPlan,
 	} ) {
@@ -303,6 +309,9 @@ class PlansComponent extends Component {
 		}
 		if ( isBusinessTrial ) {
 			return this.renderBusinessTrialPage();
+		}
+		if ( isStudent ) {
+			return this.renderStudentPlansPage();
 		}
 		if ( isA4APlan || is100YearPlan ) {
 			return null;
@@ -335,15 +344,9 @@ class PlansComponent extends Component {
 			isFreePlan,
 			domainFromHomeUpsellFlow,
 			purchase,
-			deEmphasizedExperiment,
 		} = this.props;
 
-		if (
-			! selectedSite ||
-			this.isInvalidPlanInterval() ||
-			! currentPlan ||
-			deEmphasizedExperiment?.isLoading
-		) {
+		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
 			return this.renderPlaceholder();
 		}
 
@@ -358,6 +361,7 @@ class PlansComponent extends Component {
 			PLAN_WOOEXPRESS_SMALL,
 			PLAN_WOOEXPRESS_SMALL_MONTHLY,
 		].includes( currentPlanSlug );
+		const isStudent = isStudentPlan( currentPlan.productSlug );
 		const wooExpressSubHeaderText = translate(
 			"Discover what's available in your Woo Express plan."
 		);
@@ -409,10 +413,7 @@ class PlansComponent extends Component {
 						) }
 						<div
 							id={ isUntangled ? 'site-plans' : 'plans' }
-							className={ clsx( 'plans', 'plans__has-sidebar', {
-								'is-de-emphasized-current-plan':
-									deEmphasizedExperiment && ! deEmphasizedExperiment.isControl,
-							} ) }
+							className="plans plans__has-sidebar is-de-emphasized-current-plan"
 						>
 							{ showPlansNavigation && <PlansNavigation path={ this.props.context.path } /> }
 							<Main fullWidthLayout={ ! isWooExpressTrial } wideLayout={ isWooExpressTrial }>
@@ -420,6 +421,7 @@ class PlansComponent extends Component {
 									isEcommerceTrial,
 									isBusinessTrial,
 									isWooExpressPlan,
+									isStudent,
 									isA4APlan,
 									is100YearPlan,
 								} ) }
@@ -467,14 +469,6 @@ export default function PlansWrapper( props ) {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const currentPlan = Plans.useCurrentPlan( { siteId: selectedSiteId } );
 
-	// De-emphasized plan card experiment
-	const {
-		isLoading: isExperimentLoading,
-		isControl,
-		isVariantA,
-		isVariantB,
-	} = useDeEmphasizedPlanCardExperiment();
-
 	/**
 	 * For WP.com plans page, if intervalType is not explicitly specified in the URL,
 	 * we want to show plans of the same term as plan that is currently active
@@ -491,12 +485,6 @@ export default function PlansWrapper( props ) {
 				currentPlan={ currentPlan }
 				selectedSiteId={ selectedSiteId }
 				intervalType={ intervalTypeFromProps ?? intervalTypeForCurrentPlanTerm }
-				deEmphasizedExperiment={ {
-					isLoading: isExperimentLoading,
-					isControl,
-					isVariantA,
-					isVariantB,
-				} }
 			/>
 		</CalypsoShoppingCartProvider>
 	);

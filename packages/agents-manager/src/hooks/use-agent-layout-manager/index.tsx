@@ -4,6 +4,7 @@ import { useMediaQuery } from '@wordpress/compose';
 import {
 	createPortal,
 	useCallback,
+	useEffect,
 	useLayoutEffect,
 	useRef,
 	useState,
@@ -12,6 +13,7 @@ import {
 } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { AI } from '../../components/icons';
+import observeEditorCanvasPointerDown from '../../utils/observe-editor-canvas-pointerdown';
 
 const SIDEBAR_TRANSITION_DURATION_MS = 200;
 
@@ -106,14 +108,13 @@ export default function useAgentLayoutManager( {
 	onUndock = () => {},
 	isSplitScreen = false,
 }: Options = {} ): ReturnValue {
-	const portalRef = useRef< HTMLDivElement >();
-	const wasOpenRef = useRef( defaultOpen );
+	const portalRef = useRef< HTMLDivElement | undefined >( undefined );
 	const [ isPortalReady, setIsPortalReady ] = useState( false );
 	const [ isDocked, setIsDocked ] = useState< boolean | null >( null );
 	const { canDock, calculateAdminMenuHeight } = useCanDock( { desktopMediaQuery } );
 	const shouldRenderSidebar = canDock && isDocked;
-	const openSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > >();
-	const closeSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > >();
+	const openSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > | undefined >( undefined );
+	const closeSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > | undefined >( undefined );
 
 	// Store default state refs to avoid stale closures and prevent unnecessary re-renders
 	const defaultDockedRef = useRef( defaultDocked );
@@ -182,12 +183,15 @@ export default function useAgentLayoutManager( {
 			portalRef.current.classList.add( 'agents-manager-chat--docked' );
 			portalRef.current.classList.remove( 'agents-manager-chat--undocked' );
 
-			if ( wasOpenRef.current ) {
+			if ( defaultOpenRef.current ) {
 				container.classList.add( 'agents-manager-sidebar-container--sidebar-open' );
 			}
 
 			onDockRef.current();
 		} else {
+			// Cancel the sidebar-open `dock()` scheduled — its closure captured
+			// `canDock` as true, so it would otherwise open the just-undocked sidebar.
+			clearTimeout( openSidebarTimeoutRef.current );
 			clearTimeout( closeSidebarTimeoutRef.current );
 			container.classList.remove(
 				'agents-manager-sidebar-container',
@@ -200,6 +204,47 @@ export default function useAgentLayoutManager( {
 			onUndockRef.current();
 		}
 	}, [ container, isDocked, isReady, shouldRenderSidebar ] );
+
+	// Track focus on the chat panel so the floating chat can raise its z-index. `pointerdown` also
+	// covers clicks on non-focusable regions (e.g. scroll areas) that skip `focusin`
+	useEffect( () => {
+		const node = portalRef.current;
+
+		if ( ! isPortalReady || ! node || shouldRenderSidebar ) {
+			node?.classList.remove( 'is-focused' );
+			return;
+		}
+
+		const setFocused = () => {
+			node.classList.add( 'is-focused' );
+		};
+
+		const handleFocusOut = ( e: FocusEvent ) => {
+			if ( ! node.contains( e.relatedTarget as Node | null ) ) {
+				node.classList.remove( 'is-focused' );
+			}
+		};
+
+		const handleDocumentPointerDown = ( e: PointerEvent ) => {
+			if ( ! node.contains( e.target as Node | null ) ) {
+				node.classList.remove( 'is-focused' );
+			}
+		};
+
+		node.addEventListener( 'focusin', setFocused );
+		node.addEventListener( 'focusout', handleFocusOut );
+		node.addEventListener( 'pointerdown', setFocused );
+		document.addEventListener( 'pointerdown', handleDocumentPointerDown );
+		const stopCanvasObserver = observeEditorCanvasPointerDown( handleDocumentPointerDown );
+
+		return () => {
+			node.removeEventListener( 'focusin', setFocused );
+			node.removeEventListener( 'focusout', handleFocusOut );
+			node.removeEventListener( 'pointerdown', setFocused );
+			document.removeEventListener( 'pointerdown', handleDocumentPointerDown );
+			stopCanvasObserver();
+		};
+	}, [ isPortalReady, shouldRenderSidebar ] );
 
 	// Reflect split-screen state on the container as `is-split-screen`.
 	useLayoutEffect( () => {
@@ -241,7 +286,6 @@ export default function useAgentLayoutManager( {
 			return;
 		}
 
-		wasOpenRef.current = true;
 		clearTimeout( closeSidebarTimeoutRef.current );
 		container.classList.remove( 'agents-manager-sidebar-container--closing' );
 		container.classList.add( 'agents-manager-sidebar-container--sidebar-open' );
@@ -258,7 +302,6 @@ export default function useAgentLayoutManager( {
 			'agents-manager-sidebar-container--sidebar-open'
 		);
 
-		wasOpenRef.current = false;
 		container.classList.remove( 'agents-manager-sidebar-container--sidebar-open' );
 
 		// Only suppress admin bar pointer events during an actual sidebar-close transition.

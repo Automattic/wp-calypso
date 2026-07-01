@@ -2,13 +2,16 @@
  * @jest-environment jsdom
  */
 
+import { flushOnboardingWelcomeDigest } from '@automattic/api-core';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isEnabled } from '@automattic/calypso-config';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import {
+	READER_ONBOARDING_DISMISSED_PREFERENCE_KEY,
 	READER_ONBOARDING_ELIGIBLE_REGISTRATION_DATE,
 	READER_ONBOARDING_PREFERENCE_KEY,
 	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
@@ -141,7 +144,7 @@ jest.mock( 'calypso/state/preferences/selectors', () => ( {
 } ) );
 
 jest.mock( 'calypso/state/preferences/actions', () => ( {
-	savePreference: jest.fn( () => ( { type: 'PREFERENCES_SAVE' } ) ),
+	savePreference: jest.fn( () => () => Promise.resolve() ),
 } ) );
 
 jest.mock( 'calypso/state/current-user/selectors', () => ( {
@@ -155,6 +158,15 @@ jest.mock( 'calypso/state/current-user/selectors', () => ( {
 const mockRefreshFollowingStreams = jest.fn();
 jest.mock( '../use-refresh-following-streams', () => ( {
 	useRefreshFollowingStreams: () => mockRefreshFollowingStreams,
+} ) );
+
+jest.mock( '@automattic/api-core', () => ( {
+	...jest.requireActual( '@automattic/api-core' ),
+	flushOnboardingWelcomeDigest: jest.fn().mockResolvedValue( {
+		success: true,
+		sent: false,
+		blog_count: 0,
+	} ),
 } ) );
 
 // ── Data hooks ────────────────────────────────────────────────────────────────
@@ -185,12 +197,29 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
+jest.mock( '@automattic/calypso-config', () => {
+	const config = jest.fn();
+	const isEnabledMock = jest.fn( () => false );
+	return {
+		__esModule: true,
+		default: Object.assign( config, { isEnabled: isEnabledMock } ),
+		isEnabled: isEnabledMock,
+	};
+} );
+
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
 beforeEach( () => {
 	mockRefreshFollowingStreams.mockClear();
+	jest.mocked( flushOnboardingWelcomeDigest ).mockClear();
 	jest.mocked( savePreference ).mockClear();
 	jest.mocked( recordTracksEvent ).mockClear();
+	jest.mocked( isEnabled ).mockReturnValue( false );
+
+	const { getPreference } = jest.requireMock( 'calypso/state/preferences/selectors' ) as {
+		getPreference: jest.Mock;
+	};
+	getPreference.mockReturnValue( null );
 
 	const { useFollowedTags } = jest.requireMock( 'calypso/reader/data/tags' ) as {
 		useFollowedTags: jest.Mock;
@@ -561,6 +590,75 @@ describe( 'ReaderOnboardingRsm – step close vs navigation analytics', () => {
 			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
 			expect.anything()
 		);
+	} );
+} );
+
+describe( 'ReaderOnboardingRsm – welcome digest flush', () => {
+	const navigateToDiscoverStep = async ( user: ReturnType< typeof userEvent.setup > ) => {
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		await screen.findByTestId( 'subscribe-modal-content' );
+	};
+
+	it( 'calls flushOnboardingWelcomeDigest when the user clicks Finish on the discover step', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToDiscoverStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+
+		expect( flushOnboardingWelcomeDigest ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'does not call flushOnboardingWelcomeDigest when the discover step is dismissed', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToDiscoverStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Close modal' } ) );
+
+		expect( flushOnboardingWelcomeDigest ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not call flushOnboardingWelcomeDigest when the welcome step is dismissed', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Close modal' } ) );
+
+		expect( flushOnboardingWelcomeDigest ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not call flushOnboardingWelcomeDigest when the interests step is dismissed', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Close modal' } ) );
+
+		expect( flushOnboardingWelcomeDigest ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not call flushOnboardingWelcomeDigest when navigating with Continue or Back', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		await screen.findByTestId( 'subscribe-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
+		await screen.findByTestId( 'welcome-modal-content' );
+
+		expect( flushOnboardingWelcomeDigest ).not.toHaveBeenCalled();
 	} );
 } );
 
@@ -967,7 +1065,7 @@ describe( 'ReaderOnboardingRsm – forceShow snapshot', () => {
 		expect( screen.getByTestId( 'welcome-modal-content' ) ).toBeVisible();
 	} );
 
-	it( 'disables forceShow after the user clicks Finish on the subscribe step', async () => {
+	it( 'hides onboarding for the session after the user clicks Finish on the subscribe step', async () => {
 		seedAboveEligibilityThresholds();
 		const useSiteSubscriptions = getUseSiteSubscriptionsMock();
 		useSiteSubscriptions.mockImplementation( () => ( {
@@ -1001,8 +1099,8 @@ describe( 'ReaderOnboardingRsm – forceShow snapshot', () => {
 
 		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
 
-		// Modal is closed, and forceShow is now off — onRender should report false
-		// even though hasNonSelfSubscriptions is still false.
+		// Modal is closed, and the session hide latch is set — onRender should
+		// report false even though hasNonSelfSubscriptions is still false.
 		await waitFor( () => {
 			expect( onRender ).toHaveBeenLastCalledWith( false );
 		} );
@@ -1096,5 +1194,202 @@ describe( 'ReaderOnboardingRsm – interests-step "has followed" state lifted to
 			'data-disabled',
 			'true'
 		);
+	} );
+} );
+
+describe( 'ReaderOnboardingRsm – permanent checklist dismiss', () => {
+	const getPreferenceMock = () => {
+		const { getPreference } = jest.requireMock( 'calypso/state/preferences/selectors' ) as {
+			getPreference: jest.Mock;
+		};
+		return getPreference;
+	};
+
+	const overrideMocks = ( {
+		nonSelfSubscriptionsCount = 0,
+		tags = { data: [] as Array< { slug: string } >, isPending: false },
+		hasDismissedOnboarding = false,
+	}: {
+		nonSelfSubscriptionsCount?: number;
+		tags?: { data?: Array< { slug: string } >; isPending?: boolean };
+		hasDismissedOnboarding?: boolean;
+	} = {} ) => {
+		const { useFollowedTags } = jest.requireMock( 'calypso/reader/data/tags' ) as {
+			useFollowedTags: jest.Mock;
+		};
+		const { useSiteSubscriptions } = jest.requireMock(
+			'../../following/use-site-subscriptions'
+		) as { useSiteSubscriptions: jest.Mock };
+
+		useFollowedTags.mockImplementation( () => ( {
+			data: tags.data ?? [],
+			isPending: tags.isPending ?? false,
+		} ) );
+		useSiteSubscriptions.mockImplementation( () => ( {
+			isLoading: false,
+			hasNonSelfSubscriptions: nonSelfSubscriptionsCount > 0,
+			nonSelfSubscriptionsCount,
+		} ) );
+		getPreferenceMock().mockImplementation( ( _state: unknown, key: string ) => {
+			if ( key === READER_ONBOARDING_DISMISSED_PREFERENCE_KEY ) {
+				return hasDismissedOnboarding;
+			}
+			return null;
+		} );
+	};
+
+	it( 'renders the dismiss button when onboarding is visible', async () => {
+		overrideMocks();
+
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		expect(
+			await screen.findByRole( 'button', { name: 'Dismiss onboarding checklist' } )
+		).toBeVisible();
+	} );
+
+	it( 'opens the confirm modal and records dismiss_click when the dismiss button is clicked', async () => {
+		overrideMocks();
+		const user = userEvent.setup();
+
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await user.click(
+			await screen.findByRole( 'button', { name: 'Dismiss onboarding checklist' } )
+		);
+
+		expect(
+			screen.getByText(
+				'You will not be able to access the Reader onboarding flow again. Are you sure you want to dismiss it?'
+			)
+		).toBeVisible();
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }checklist_dismiss_click`
+		);
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }checklist_dismiss_confirm`
+		);
+	} );
+
+	it( 'closes the confirm modal on cancel without saving and records dismiss_cancel', async () => {
+		overrideMocks();
+		const user = userEvent.setup();
+
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await user.click(
+			await screen.findByRole( 'button', { name: 'Dismiss onboarding checklist' } )
+		);
+		await user.click( screen.getByRole( 'button', { name: 'Cancel' } ) );
+
+		expect(
+			screen.queryByText(
+				'You will not be able to access the Reader onboarding flow again. Are you sure you want to dismiss it?'
+			)
+		).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Dismiss onboarding checklist' } ) ).toBeVisible();
+		expect( savePreference ).not.toHaveBeenCalledWith(
+			READER_ONBOARDING_DISMISSED_PREFERENCE_KEY,
+			true
+		);
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }checklist_dismiss_cancel`
+		);
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }checklist_dismiss_confirm`
+		);
+	} );
+
+	it( 'permanently dismisses onboarding on confirm, closes open step modals, and records dismiss_confirm', async () => {
+		overrideMocks();
+		const getPreference = getPreferenceMock();
+		jest.mocked( savePreference ).mockImplementation( ( key, value ) => {
+			if ( key === READER_ONBOARDING_DISMISSED_PREFERENCE_KEY ) {
+				getPreference.mockImplementation( ( _state: unknown, prefKey: string ) =>
+					prefKey === READER_ONBOARDING_DISMISSED_PREFERENCE_KEY ? value : null
+				);
+			}
+			return () => Promise.resolve();
+		} );
+
+		const onRender = jest.fn();
+		const user = userEvent.setup();
+		const { rerender } = renderWithProvider( <ReaderOnboardingRsm onRender={ onRender } /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Dismiss onboarding checklist' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );
+
+		expect( savePreference ).toHaveBeenCalledWith(
+			READER_ONBOARDING_DISMISSED_PREFERENCE_KEY,
+			true
+		);
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }checklist_dismiss_confirm`
+		);
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }welcome_modal_close`
+		);
+		expect( screen.queryByTestId( 'welcome-modal-content' ) ).not.toBeInTheDocument();
+
+		rerender( <ReaderOnboardingRsm onRender={ onRender } /> );
+
+		await waitFor( () => {
+			expect( onRender ).toHaveBeenLastCalledWith( false );
+		} );
+		expect(
+			screen.queryByRole( 'button', { name: 'Dismiss onboarding checklist' } )
+		).not.toBeInTheDocument();
+	} );
+
+	it( 'does not render onboarding when the dismissed preference is set, even if otherwise eligible', async () => {
+		overrideMocks( { hasDismissedOnboarding: true } );
+		const onRender = jest.fn();
+
+		renderWithProvider( <ReaderOnboardingRsm onRender={ onRender } /> );
+
+		await waitFor( () => {
+			expect( onRender ).toHaveBeenCalled();
+		} );
+		expect( onRender ).toHaveBeenLastCalledWith( false );
+		expect( screen.queryByTestId( 'welcome-modal-content' ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'button', { name: 'Dismiss onboarding checklist' } )
+		).not.toBeInTheDocument();
+	} );
+
+	it( 'still renders onboarding when reader/force-onboarding is enabled even if permanently dismissed', async () => {
+		overrideMocks( { hasDismissedOnboarding: true } );
+		jest
+			.mocked( isEnabled )
+			.mockImplementation( ( flag: string ) => flag === 'reader/force-onboarding' );
+
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		expect( await screen.findByTestId( 'welcome-modal-content' ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Dismiss onboarding checklist' } ) ).toBeVisible();
+	} );
+
+	it( 'hides onboarding for the session when dismissed under reader/force-onboarding', async () => {
+		overrideMocks( { hasDismissedOnboarding: true } );
+		jest
+			.mocked( isEnabled )
+			.mockImplementation( ( flag: string ) => flag === 'reader/force-onboarding' );
+
+		const onRender = jest.fn();
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm onRender={ onRender } /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Dismiss onboarding checklist' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );
+
+		await waitFor( () => {
+			expect( onRender ).toHaveBeenLastCalledWith( false );
+		} );
+		expect( screen.queryByTestId( 'welcome-modal-content' ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'button', { name: 'Dismiss onboarding checklist' } )
+		).not.toBeInTheDocument();
 	} );
 } );

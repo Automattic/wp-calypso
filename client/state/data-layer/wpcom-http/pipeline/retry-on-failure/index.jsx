@@ -1,8 +1,8 @@
-import { get, merge } from 'lodash';
+import { merge } from 'lodash';
 import { decorrelatedJitter as defaultDelay } from './delays';
 import { default as defaultPolicy } from './policies';
 
-const isGetRequest = ( request ) => 'GET' === get( request, 'method', '' ).toUpperCase();
+const isGetRequest = ( request ) => 'GET' === ( request?.method ?? '' ).toUpperCase();
 
 export const retryOnFailure =
 	( getDelay = defaultDelay ) =>
@@ -27,7 +27,7 @@ export const retryOnFailure =
 
 		const { options: { retryPolicy: policy = defaultPolicy } = {} } = originalRequest;
 		const { delay, maxAttempts, name } = policy;
-		const retryCount = get( originalRequest, 'meta.dataLayer.retryCount', 0 ) + 1;
+		const retryCount = ( originalRequest?.meta?.dataLayer?.retryCount ?? 0 ) + 1;
 
 		if ( 'NO_RETRY' === name || retryCount > maxAttempts ) {
 			return inboundData;
