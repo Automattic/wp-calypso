@@ -1,14 +1,18 @@
-import { useProcessPayment } from '@automattic/composite-checkout';
+import {
+	useProcessPayment,
+	useRegisterPaymentMethodLoading,
+	useTogglePaymentMethod,
+} from '@automattic/composite-checkout';
 import { Elements, ExpressCheckoutElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import type { StripeConfiguration } from '@automattic/calypso-stripe';
 import type { PaymentMethod } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type {
 	Stripe,
+	StripeExpressCheckoutElementAvailablePaymentMethodsChangeEvent,
 	StripeExpressCheckoutElementConfirmEvent,
-	StripeExpressCheckoutElementReadyEvent,
 } from '@stripe/stripe-js';
 
 type StripeWalletMethodProps = {
@@ -35,6 +39,18 @@ function StripeWalletContent( {
 	const stripe = useStripe();
 	const elements = useElements();
 	const processPayment = useProcessPayment( 'stripe-wallet' );
+	const togglePaymentMethod = useTogglePaymentMethod();
+	const [ isLoading, setIsLoading ] = useState( true );
+
+	useRegisterPaymentMethodLoading( 'stripe-wallet', isLoading );
+
+	const onAvailablePaymentMethodsChange = useCallback(
+		( { paymentMethods }: StripeExpressCheckoutElementAvailablePaymentMethodsChangeEvent ) => {
+			setIsLoading( false );
+			togglePaymentMethod( 'stripe-wallet', Boolean( paymentMethods ) );
+		},
+		[ togglePaymentMethod ]
+	);
 
 	const onConfirm = useCallback(
 		async ( event: StripeExpressCheckoutElementConfirmEvent ) => {
@@ -60,19 +76,10 @@ function StripeWalletContent( {
 		[ processPayment, stripe, stripeConfiguration, elements ]
 	);
 
-	const onReady = useCallback(
-		( { availablePaymentMethods }: StripeExpressCheckoutElementReadyEvent ) => {
-			// No-op: the payment method row is always shown if it's in the cart's
-			// allowed_payment_methods. ECE itself hides buttons when they aren't available.
-			void availablePaymentMethods;
-		},
-		[]
-	);
-
 	return (
 		<ExpressCheckoutElement
 			onConfirm={ onConfirm }
-			onReady={ onReady }
+			onAvailablePaymentMethodsChange={ onAvailablePaymentMethodsChange }
 			options={ {
 				paymentMethods: {
 					link: 'auto',
@@ -120,6 +127,7 @@ export function createStripeWalletMethod( {
 		paymentProcessorId: 'stripe-wallet',
 		label: <StripeWalletLabel />,
 		hasRequiredFields: false,
+		isInitiallyDisabled: true,
 		activeContent: (
 			<StripeWalletFields
 				stripe={ stripe }
