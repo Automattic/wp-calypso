@@ -5,6 +5,13 @@ import type { AccountClosureResponse, AccountDetails } from './types';
 
 const MAX_ERROR_LENGTH = 300;
 
+// Deleting an Atomic site deprovisions it asynchronously, so an account close
+// issued right after can keep returning `atomic-site` for a short window after
+// the site is actually gone. Keep retrying the close over this window before
+// treating the failure as a leak.
+const ATOMIC_DEPROVISION_TIMEOUT_MS = 90 * 1000;
+const ATOMIC_DEPROVISION_POLL_MS = 10 * 1000;
+
 export interface AccountLeak {
 	/**
 	 * Numeric user ID; absent when a signup response created an account but did
@@ -64,6 +71,26 @@ function errorMessage( error: unknown ): string {
 		message = String( error ?? '' );
 	}
 	return message.slice( 0, MAX_ERROR_LENGTH );
+}
+
+/**
+ * Whether a failed account close was rejected because the account still owns an
+ * active Atomic site (WordPress.com error code `atomic-site`). `closeAccount`
+ * returns the raw API response, so the code arrives as `{ error: 'atomic-site' }`;
+ * the serialized-message fallback covers a thrown error carrying the same code.
+ *
+ * @param {unknown} error The close error or response value.
+ * @returns {boolean} True when the close was blocked by an active Atomic site.
+ */
+function isActiveAtomicSiteError( error: unknown ): boolean {
+	if (
+		error &&
+		typeof error === 'object' &&
+		( error as { error?: unknown } ).error === 'atomic-site'
+	) {
+		return true;
+	}
+	return /atomic-site|active atomic sites/i.test( errorMessage( error ) );
 }
 
 /**
@@ -159,22 +186,66 @@ export async function closeAccountAndRecordLeak(
 ): Promise< void > {
 	console.log( `Closing account ${ accountDetails.userID }.` );
 
+	// TEMPORARY timing probes (prefix `[atomic-teardown]`) to calibrate the Atomic
+	// deprovision wait from a CI run; remove once the window is tuned.
+	const startedAt = Date.now();
+	const deadline = startedAt + ATOMIC_DEPROVISION_TIMEOUT_MS;
 	let closeError: unknown;
-	try {
-		const response: AccountClosureResponse = await client.closeAccount( accountDetails );
+	let attempts = 0;
+	let sawAtomicSite = false;
+	for (;;) {
+		closeError = undefined;
+		attempts += 1;
+		try {
+			const response: AccountClosureResponse = await client.closeAccount( accountDetails );
 
-		if ( response.success === true ) {
-			console.log( `Successfully deleted user ID ${ accountDetails.userID }` );
-			clearAccountLeak( leakDir, accountDetails.userID );
-			return;
+			if ( response.success === true ) {
+				if ( sawAtomicSite ) {
+					console.log(
+						`[atomic-teardown] user ${
+							accountDetails.userID
+						} closed after ${ attempts } attempt(s) over ${
+							Date.now() - startedAt
+						}ms of Atomic deprovision wait.`
+					);
+				}
+				console.log( `Successfully deleted user ID ${ accountDetails.userID }` );
+				clearAccountLeak( leakDir, accountDetails.userID );
+				return;
+			}
+
+			console.warn( `Failed to delete user ID ${ accountDetails.userID }` );
+			console.warn( response );
+			closeError = response;
+		} catch ( error ) {
+			console.warn( `Error closing account ${ accountDetails.userID }: ${ error }` );
+			closeError = error;
 		}
 
-		console.warn( `Failed to delete user ID ${ accountDetails.userID }` );
-		console.warn( response );
-		closeError = response;
-	} catch ( error ) {
-		console.warn( `Error closing account ${ accountDetails.userID }: ${ error }` );
-		closeError = error;
+		// Only an active-Atomic-site rejection is worth waiting on; every other
+		// failure is terminal and falls through to the leak probe immediately.
+		if ( ! isActiveAtomicSiteError( closeError ) || Date.now() >= deadline ) {
+			break;
+		}
+		sawAtomicSite = true;
+		console.log(
+			`[atomic-teardown] user ${
+				accountDetails.userID
+			} still has an active Atomic site at attempt ${ attempts } (${
+				Date.now() - startedAt
+			}ms elapsed); retrying in ${ ATOMIC_DEPROVISION_POLL_MS / 1000 }s.`
+		);
+		await new Promise( ( resolve ) => setTimeout( resolve, ATOMIC_DEPROVISION_POLL_MS ) );
+	}
+
+	if ( sawAtomicSite ) {
+		console.log(
+			`[atomic-teardown] user ${
+				accountDetails.userID
+			} still blocked by an Atomic site after ${ attempts } attempt(s) over ${
+				Date.now() - startedAt
+			}ms; recording leak.`
+		);
 	}
 
 	try {

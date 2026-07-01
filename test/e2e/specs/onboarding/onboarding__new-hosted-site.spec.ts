@@ -29,10 +29,44 @@ test.describe(
 			if ( ! newUserDetails ) {
 				return;
 			}
+			// Deleting the Atomic site and waiting out its asynchronous deprovision
+			// can exceed the default hook timeout.
+			test.setTimeout( 150 * 1000 );
+
 			const restAPIClient = new RestAPIClient(
 				{ username: testUser.username, password: testUser.password },
 				newUserDetails.body.bearer_token
 			);
+
+			// Cancelling the Business plan refunds it but does not revert the Atomic
+			// transfer, and an account with an active Atomic site cannot be closed
+			// ( "atomic-site" ). Delete the site first; apiCloseAccount then polls
+			// past the asynchronous deprovision before giving up.
+			if ( siteSlug ) {
+				const { domains } = await restAPIClient.getAllDomains();
+				const site = domains.find(
+					( domain ) => domain.domain.toLowerCase() === siteSlug.toLowerCase()
+				);
+				if ( site ) {
+					// TEMPORARY probe ([atomic-teardown]): time the Atomic site deletion
+					// for CI calibration of the deprovision wait. Remove once tuned.
+					const deleteStartedAt = Date.now();
+					const deletion = await restAPIClient.deleteSite( {
+						id: site.blog_id,
+						domain: site.domain,
+					} );
+					console.log(
+						`[atomic-teardown] deleteSite ${ site.domain } (blog ${ site.blog_id }) returned ${
+							deletion ? 'a response' : 'null'
+						} in ${ Date.now() - deleteStartedAt }ms.`
+					);
+				} else {
+					console.log(
+						`[atomic-teardown] no owned site matched siteSlug "${ siteSlug }"; skipping deletion.`
+					);
+				}
+			}
+
 			await apiCloseAccount( restAPIClient, {
 				userID: newUserDetails.body.user_id,
 				username: newUserDetails.body.username,
