@@ -81,7 +81,7 @@ class ConfirmDisconnection extends Component {
 
 				<DisconnectJetpack
 					disconnectHref={ disconnectHref ?? '/sites' }
-					isBroken={ false }
+					isBroken={ type === 'down' }
 					onDisconnectClick={ this.submitSurvey }
 					showTitle={ false }
 					siteId={ siteId }

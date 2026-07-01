@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
@@ -15,17 +15,28 @@ describe( '<SiteErrorContent>', () => {
 	const mockStore = configureStore();
 	const store = mockStore( initialState );
 
-	const { container } = render(
-		<Provider store={ store }>
-			<SiteErrorContent siteUrl={ siteUrl } />
-		</Provider>
-	);
+	const renderSiteErrorContent = () =>
+		render(
+			<Provider store={ store }>
+				<SiteErrorContent siteUrl={ siteUrl } />
+			</Provider>
+		);
 
 	test( 'should render correctly and have href for Fix Now', () => {
+		const { container } = renderSiteErrorContent();
 		const [ fixNow ] = container.getElementsByClassName( 'sites-overview__error-message-link' );
 		expect( fixNow ).toHaveProperty(
 			'href',
 			`https://example.com/settings/disconnect-site/${ urlToSlug( siteUrl ) }?type=down`
+		);
+	} );
+
+	test( 'should render a direct link to remove the disconnected site', () => {
+		renderSiteErrorContent();
+		const removeSite = screen.getByRole( 'link', { name: 'Remove site' } );
+		expect( removeSite ).toHaveProperty(
+			'href',
+			`https://example.com/settings/disconnect-site/confirm/${ urlToSlug( siteUrl ) }?type=down`
 		);
 	} );
 } );

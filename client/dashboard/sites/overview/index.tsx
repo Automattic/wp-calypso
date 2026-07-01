@@ -257,7 +257,7 @@ function SiteOverview( {
 			notices={
 				<SitesNoticeArbiter>
 					{ site.__inaccessible_jetpack_error && (
-						<InaccessibleJetpackNotice error={ site.__inaccessible_jetpack_error } />
+						<InaccessibleJetpackNotice error={ site.__inaccessible_jetpack_error } site={ site } />
 					) }
 					{ isStorageWarningVisible && <StorageWarningBanner site={ site } /> }
 				</SitesNoticeArbiter>

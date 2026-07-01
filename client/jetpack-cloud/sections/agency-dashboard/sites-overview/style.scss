@@ -333,6 +333,11 @@
 	color: var(--studio-white);
 	padding: 0.5em;
 	margin: auto 0;
+	flex: 1;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 .sites-overview__error-message-large-screen {
 	display: none;
@@ -346,12 +351,17 @@
 		display: none;
 	}
 }
+.sites-overview__error-actions {
+	display: flex;
+	gap: 12px;
+	margin-inline-start: auto;
+	padding-inline: 12px;
+	white-space: nowrap;
+}
+
 .sites-overview__error-message-link {
 	font-size: 0.75rem;
 	color: var(--studio-white) !important;
-	padding: 6px;
-	position: absolute;
-	inset-inline-end: 16px;
 	text-decoration: underline;
 	font-weight: 500;
 }
