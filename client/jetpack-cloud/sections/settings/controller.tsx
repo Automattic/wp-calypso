@@ -11,6 +11,7 @@ import JetpackStagingSitesManagement from 'calypso/components/jetpack-staging-si
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import { dashboardPath } from 'calypso/lib/jetpack/paths';
+import { addQueryArgs } from 'calypso/lib/url';
 import DisconnectSite from 'calypso/my-sites/site-settings/disconnect-site';
 import ConfirmDisconnection from 'calypso/my-sites/site-settings/disconnect-site/confirm';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -20,6 +21,22 @@ import HasSiteCredentialsSwitch from './has-site-credentials-switch';
 import AdvancedCredentialsLoadingPlaceholder from './loading';
 import SettingsPage from './main';
 import type { Callback } from '@automattic/calypso-router';
+
+const getAgencyDisconnectSiteContext = ( context: Parameters< Callback >[ 0 ] ) => {
+	const { site_id, site_url } = context.query;
+	const siteId = Number( site_id );
+	const hasAgencySiteId = Number.isFinite( siteId );
+	const siteSlug = typeof site_url === 'string' ? site_url : context.params.site;
+	const siteUrl = /^https?:\/\//.test( siteSlug ) ? siteSlug : `https://${ siteSlug }`;
+
+	return {
+		hasAgencySiteId,
+		siteId: hasAgencySiteId ? siteId : undefined,
+		siteSlug,
+		siteTitle: siteSlug,
+		siteUrl,
+	};
+};
 
 export const settings: Callback = ( context, next ) => {
 	context.primary = <SettingsPage />;
@@ -102,12 +119,20 @@ export const showNotAuthorizedForNonAdmins: Callback = ( context, next ) => {
 };
 
 export const disconnectSite: Callback = ( context, next ) => {
+	const { hasAgencySiteId, siteId, siteSlug, siteTitle, siteUrl } =
+		getAgencyDisconnectSiteContext( context );
+
 	context.primary = (
 		<DisconnectSite
 			// Ignore type checking because TypeScript is incorrectly inferring the prop type due to the redirectNonJetpack HOC.
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			//@ts-ignore
 			reason={ context.params.reason }
+			siteId={ siteId }
+			siteSlug={ siteSlug }
+			siteTitle={ siteTitle }
+			siteUrl={ siteUrl }
+			skipRedirectNonJetpack={ hasAgencySiteId }
 			type={ context.query.type }
 			backHref={ dashboardPath() }
 		/>
@@ -116,21 +141,31 @@ export const disconnectSite: Callback = ( context, next ) => {
 };
 
 export const disconnectSiteConfirm: Callback = ( context, next ) => {
-	const { reason, site_id, site_url, type, text } = context.query;
+	const { reason, type, text } = context.query;
 	const dashboardHref = dashboardPath();
-	const siteId = Number( site_id );
-	const siteUrl = typeof site_url === 'string' ? site_url : context.params.site;
+	const { hasAgencySiteId, siteId, siteSlug } = getAgencyDisconnectSiteContext( context );
+	const backHref = hasAgencySiteId
+		? addQueryArgs(
+				{
+					site_id: siteId,
+					site_url: siteSlug,
+					type,
+				},
+				`/settings/disconnect-site/${ siteSlug }`
+		  )
+		: undefined;
 
 	context.primary = (
 		<ConfirmDisconnection
 			// Ignore type checking because TypeScript is incorrectly inferring the prop type due to the redirectNonJetpack HOC.
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			//@ts-ignore
+			backHref={ backHref }
 			reason={ reason }
-			siteId={ Number.isFinite( siteId ) ? siteId : undefined }
-			siteSlug={ siteUrl }
-			siteTitle={ siteUrl }
-			skipRedirectNonJetpack={ Number.isFinite( siteId ) }
+			siteId={ siteId }
+			siteSlug={ siteSlug }
+			siteTitle={ siteSlug }
+			skipRedirectNonJetpack={ hasAgencySiteId }
 			type={ type }
 			text={ text }
 			disconnectHref={ dashboardHref }

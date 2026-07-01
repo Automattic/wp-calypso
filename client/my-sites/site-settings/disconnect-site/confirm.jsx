@@ -22,6 +22,7 @@ class ConfirmDisconnection extends Component {
 		reason: PropTypes.string,
 		type: PropTypes.string,
 		text: PropTypes.oneOfType( [ PropTypes.string, PropTypes.arrayOf( PropTypes.string ) ] ),
+		backHref: PropTypes.string,
 		disconnectHref: PropTypes.string,
 		stayConnectedHref: PropTypes.string,
 		// Provided by HOCs
@@ -63,12 +64,21 @@ class ConfirmDisconnection extends Component {
 	};
 
 	render() {
-		const { disconnectHref, siteId, siteSlug, siteTitle, stayConnectedHref, translate, type } =
-			this.props;
+		const {
+			backHref: suppliedBackHref,
+			disconnectHref,
+			siteId,
+			siteSlug,
+			siteTitle,
+			stayConnectedHref,
+			translate,
+			type,
+		} = this.props;
 
 		const backHref =
+			suppliedBackHref ??
 			`/settings/disconnect-site/${ siteSlug }` +
-			( type ? `?type=${ encodeURIComponent( type ) }` : '' );
+				( type ? `?type=${ encodeURIComponent( type ) }` : '' );
 
 		return (
 			<Main className="disconnect-site__confirm">

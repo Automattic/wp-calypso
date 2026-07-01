@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
 import { compose } from 'redux';
+import { addQueryArgs } from 'calypso/lib/url';
 import redirectNonJetpack from 'calypso/my-sites/site-settings/redirect-non-jetpack';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import DownFlow from './down-flow';
@@ -7,8 +8,24 @@ import SurveyFlow from './survey-flow';
 
 import './style.scss';
 
-const DisconnectSite = ( { backHref, reason, site, type } ) => {
-	const confirmHref = `/settings/disconnect-site/confirm/${ site.slug }`;
+const getAgencySite = ( { siteId, siteSlug, siteTitle, siteUrl } ) =>
+	siteId && siteSlug
+		? {
+				ID: siteId,
+				URL: siteUrl,
+				name: siteTitle || siteSlug,
+				slug: siteSlug,
+		  }
+		: null;
+
+const DisconnectSite = ( { backHref, reason, site, siteId, siteSlug, type } ) => {
+	const confirmHref = addQueryArgs(
+		{
+			site_id: siteId,
+			site_url: siteSlug,
+		},
+		`/settings/disconnect-site/confirm/${ site.slug }`
+	);
 
 	if ( reason ) {
 		// If a reason is given then this is being rendered on the confirm screen,
@@ -27,8 +44,8 @@ const DisconnectSite = ( { backHref, reason, site, type } ) => {
 	return <SurveyFlow confirmHref={ confirmHref } backHref={ backHref } />;
 };
 
-const connectComponent = connect( ( state ) => ( {
-	site: getSelectedSite( state ),
+const connectComponent = connect( ( state, ownProps ) => ( {
+	site: getAgencySite( ownProps ) ?? getSelectedSite( state ),
 } ) );
 
 export default compose( connectComponent, redirectNonJetpack() )( DisconnectSite );

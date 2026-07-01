@@ -25,7 +25,13 @@ const siteSelectionUnlessAgencySiteIdProvided = ( context, next ) => {
 export default function () {
 	if ( isJetpackCloud() ) {
 		page( settingsPath(), siteSelection, sites, makeLayout, clientRender );
-		page( disconnectPath( ':site' ), disconnectSite, siteSelection, makeLayout, clientRender );
+		page(
+			disconnectPath( ':site' ),
+			disconnectSite,
+			siteSelectionUnlessAgencySiteIdProvided,
+			makeLayout,
+			clientRender
+		);
 		page(
 			confirmDisconnectPath( ':site' ),
 			disconnectSiteConfirm,

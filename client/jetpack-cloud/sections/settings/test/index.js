@@ -65,6 +65,21 @@ describe( 'Jetpack Cloud settings routes', () => {
 		expect( next ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	test( 'skips normal site selection for disconnected-site troubleshooting routes with an agency site id', () => {
+		settingsRoutes();
+
+		const disconnectRoute = page.mock.calls.find(
+			( [ path ] ) => path === '/settings/disconnect-site/:site'
+		);
+		const maybeSiteSelection = disconnectRoute[ 2 ];
+		const next = jest.fn();
+
+		maybeSiteSelection( { query: { site_id: '12345678' } }, next );
+
+		expect( siteSelection ).not.toHaveBeenCalled();
+		expect( next ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	test( 'uses normal site selection for confirm routes without an agency site id', () => {
 		settingsRoutes();
 
