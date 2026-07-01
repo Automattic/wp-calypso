@@ -19,6 +19,11 @@ export const SPACE_COLORS: SpaceColor[] = [
 ];
 
 /**
+ * The default accent color for a new space: the first color in the picker.
+ */
+export const DEFAULT_SPACE_COLOR: SpaceColor = SPACE_COLORS[ 0 ];
+
+/**
  * Translated, human-readable labels for each accent color, used as accessible
  * names on the swatches (the swatches are color-only, so they need a text label
  * for screen readers).

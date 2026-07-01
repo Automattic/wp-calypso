@@ -26,6 +26,7 @@ import {
 	useSpaces,
 	useUpdateSpace,
 } from 'calypso/reader/data/spaces';
+import { DEFAULT_SPACE_COLOR } from 'calypso/reader/spaces/colors';
 import { getSpaceErrorMessage, validateName } from 'calypso/reader/spaces/form-helpers';
 import { SPACE_ICONS } from 'calypso/reader/spaces/icons';
 import { useDispatch } from 'calypso/state';
@@ -154,7 +155,7 @@ function SpaceUpsertModalContent( {
 	const [ isSeeded, setIsSeeded ] = useState( isCreate );
 	const [ name, setName ] = useState( '' );
 	const [ tags, setTags ] = useState< string[] >( [] );
-	const [ color, setColor ] = useState< SpaceColor >( 'blue' );
+	const [ color, setColor ] = useState< SpaceColor >( DEFAULT_SPACE_COLOR );
 	const [ icon, setIcon ] = useState< SpaceIcon >( 'inbox' );
 	const [ view, setView ] = useState< SpaceFeedLayout >( DEFAULT_SPACE_FEED_LAYOUT );
 	const [ selectedSources, setSelectedSources ] = useState< SourceDraftItem[] >( [] );
