@@ -29,9 +29,6 @@
 	color: inherit;
 }
 
-// The post opened last stays highlighted with an accent bar just outside the
-// card's leading edge (matching the classic post card), so it's easy to spot on
-// return from the full-post view.
 .space-feed-gallery__card[data-selected]::before {
 	content: '';
 	position: absolute;

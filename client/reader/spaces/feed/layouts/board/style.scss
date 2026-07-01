@@ -23,10 +23,6 @@
 	color: inherit;
 }
 
-// The post opened last stays highlighted with an accent bar just outside the
-// card's leading edge (matching the classic post card), so it's easy to spot on
-// return from the full-post view. Anchored on the item wrapper because the card
-// clips its own overflow.
 .space-feed-board__item[data-selected]::before {
 	content: '';
 	position: absolute;

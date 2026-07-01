@@ -60,9 +60,6 @@ export function ReaderStreamV2( {
 }: ReaderStreamV2Props ) {
 	const translate = useTranslate();
 	const blockedSites = useSelector( getBlockedSites );
-	// Normalize the default locale to `null` (mirroring `<Stream>` and full-post navigation) and
-	// thread it into the fetch and the selection key, so all Reader consumers share the same
-	// cache entries for a given stream variant.
 	const rawLocale = useSelector( getCurrentLocaleSlug );
 	const localeSlug = rawLocale && ! isDefaultLocale( rawLocale ) ? rawLocale : null;
 	const { items, isLoading, error, refetch, hasNextPage, isFetchingNextPage, fetchNextPage } =
@@ -71,9 +68,6 @@ export function ReaderStreamV2( {
 			localeSlug,
 		} );
 
-	// Selection lives in the React Query cache (not Redux or the URL), keyed by
-	// `[streamKey, localeSlug]` with a long gcTime — so the post the user opened stays
-	// highlighted when they return from the full-post view. Mirrors the classic stream.
 	const { selectedPostKey, selectPostKey } = useStreamPostKeySelection( {
 		streamKey,
 		localeSlug,
@@ -85,8 +79,6 @@ export function ReaderStreamV2( {
 	// invoke it directly with the clicked item's post key.
 	const openPost = useCallback(
 		( postKey: StreamItem, comments?: boolean ) => {
-			// Mark the opened post as selected so it stays highlighted when the user returns
-			// from the full-post view (the selection persists in the React Query cache).
 			selectPostKey( postKey );
 			showSelectedPost( {
 				postKey: {
