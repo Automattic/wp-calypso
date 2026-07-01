@@ -32,7 +32,11 @@ const getAdditionlMailboxesLabel = ( count: number ) => {
 		  );
 };
 
-const getDescription = ( mailboxes: Mailbox[] ) => {
+const getDescription = ( mailboxes: Mailbox[], disabled: boolean ) => {
+	if ( disabled ) {
+		return __( 'Only the domain owner can add email.' );
+	}
+
 	const additionalMailboxes = mailboxes.length - 1;
 
 	if ( mailboxes.length === 0 ) {
@@ -56,6 +60,8 @@ export default function FeaturedCardEmails( { domain }: Props ) {
 		return <OverviewCard icon={ <Icon icon={ envelope } /> } title={ __( 'Emails' ) } isLoading />;
 	}
 
+	const disabled = ! domain.current_user_is_owner;
+
 	const email = mailboxes.length
 		? `${ mailboxes[ 0 ].mailbox }@${ domain.domain }`
 		: // translators: %s is the mailbox name: youremail@example.com
@@ -63,7 +69,7 @@ export default function FeaturedCardEmails( { domain }: Props ) {
 
 	return (
 		<OverviewCard
-			disabled={ ! domain.current_user_is_owner }
+			disabled={ disabled }
 			title={ mailboxes.length > 0 ? __( 'Emails' ) : __( 'Add mailbox' ) }
 			heading={
 				<Truncate tooltip={ email } numberOfLines={ 1 }>
@@ -82,7 +88,7 @@ export default function FeaturedCardEmails( { domain }: Props ) {
 					  } ).href
 			}
 			icon={ <Icon icon={ envelope } /> }
-			description={ getDescription( mailboxes ) }
+			description={ getDescription( mailboxes, disabled ) }
 			intent={ mailboxes.length > 0 ? 'success' : 'upsell' }
 		/>
 	);
