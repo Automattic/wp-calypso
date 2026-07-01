@@ -231,10 +231,9 @@ class CurrentPlan extends Component {
 		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;
 
 		let showExpiryNotice = false;
-		let purchase = null;
 		const isJetpackLegacy = JETPACK_LEGACY_PLANS.includes( currentPlanSlug );
+		const purchase = getPurchaseByProductSlug( purchases, currentPlanSlug );
 
-		purchase = getPurchaseByProductSlug( purchases, currentPlanSlug );
 		if ( isJetpackLegacy ) {
 			showExpiryNotice = purchase && isCloseToExpiration( purchase );
 		} else {
