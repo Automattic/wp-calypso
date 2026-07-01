@@ -26,33 +26,35 @@ function LegacyContactDetails( { legacyContactId }: { legacyContactId: number } 
 	return (
 		<VStack spacing={ 6 }>
 			<SectionHeader title={ __( 'Your legacy contact' ) } level={ 3 } />
-			<VStack spacing={ 2 }>
-				<Text>
-					{ __(
-						'Keep this information somewhere safe. After your death, your legacy contact can give this key to WordPress.com to request access to your account.'
-					) }
-				</Text>
-			</VStack>
+			<Text as="p">
+				{ __(
+					'Keep this information somewhere safe. After your death, your legacy contact can give this key to WordPress.com to request access to your account.'
+				) }
+			</Text>
+
+			<dl className="legacy-contact-print__fields">
+				<VStack spacing={ 1 } alignment="flex-start">
+					<Text as="dt" upperCase variant="muted" size={ 11 }>
+						{ __( 'Legacy contact email' ) }
+					</Text>
+					<Text as="dd" size={ 15 }>
+						{ contact.contact_email }
+					</Text>
+				</VStack>
+
+				<VStack spacing={ 1 } alignment="flex-start">
+					<Text as="dt" upperCase variant="muted" size={ 11 }>
+						{ __( 'Access key' ) }
+					</Text>
+					<dd className="legacy-contact-print__key">{ contact.access_key }</dd>
+				</VStack>
+			</dl>
 
 			<VStack spacing={ 1 } alignment="flex-start">
-				<Text upperCase variant="muted" size={ 11 }>
-					{ __( 'Legacy contact email' ) }
-				</Text>
-				<Text size={ 15 }>{ contact.contact_email }</Text>
-			</VStack>
-
-			<VStack spacing={ 1 } alignment="flex-start">
-				<Text upperCase variant="muted" size={ 11 }>
-					{ __( 'Access key' ) }
-				</Text>
-				<div className="legacy-contact-print__key">{ contact.access_key }</div>
-			</VStack>
-
-			<VStack spacing={ 1 } alignment="flex-start">
-				<Text upperCase variant="muted" size={ 11 }>
+				<Text as="h4" upperCase variant="muted" size={ 11 }>
 					{ __( 'How to claim access' ) }
 				</Text>
-				<Text size={ 15 }>
+				<Text as="p" size={ 15 }>
 					{ createInterpolateElement(
 						__(
 							'To request access, your legacy contact should visit <link>wordpress.com/digital-legacy</link> and follow the instructions there. They’ll need the access key above.'

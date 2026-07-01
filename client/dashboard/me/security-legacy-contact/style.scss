@@ -19,6 +19,17 @@
 	}
 }
 
+.legacy-contact-print__fields {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	margin: 0;
+
+	dd {
+		margin: 0;
+	}
+}
+
 .legacy-contact-print__key {
 	font-family: monospace;
 	font-size: 1.5rem;
