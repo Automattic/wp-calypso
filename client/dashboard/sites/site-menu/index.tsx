@@ -34,11 +34,27 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 	}
 
 	if ( site.options?.is_difm_lite_in_progress && ! isSupportSession() ) {
+		const shouldShowContentCollectionLinks =
+			site.options?.difm_lite_site_options?.is_website_content_submitted === false;
+
 		return (
 			<ResponsiveMenu label={ __( 'Site Menu' ) } prefix={ <MenuDivider /> }>
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/site-building-in-progress` }>
 					{ __( 'Site building' ) }
 				</ResponsiveMenu.Item>
+				{ shouldShowContentCollectionLinks && (
+					<>
+						<ResponsiveMenu.Item to={ `/posts/${ siteSlug }` }>
+							{ __( 'Posts' ) }
+						</ResponsiveMenu.Item>
+						<ResponsiveMenu.Item to={ `/media/${ siteSlug }` }>
+							{ __( 'Media' ) }
+						</ResponsiveMenu.Item>
+						<ResponsiveMenu.Item to={ `/pages/${ siteSlug }` }>
+							{ __( 'Pages' ) }
+						</ResponsiveMenu.Item>
+					</>
+				) }
 				{ siteTypeSupports.domains && (
 					<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/domains` }>
 						{ __( 'Domains' ) }
