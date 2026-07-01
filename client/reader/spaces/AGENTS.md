@@ -82,10 +82,17 @@ without an action hash.
 ### Model & presentation
 
 - `ReadSpace` is serializable. Presentation settings live grouped under
-  `layout` (a `SpaceLayout`) so they can grow beyond color/icon; `layout.color`
-  and `layout.icon` are **string keys**, never rendered glyphs. Map
-  `layout.icon` → a `@wordpress/icons` element via `SPACE_ICONS` in `icons.ts`;
-  `layout.color` selects a CSS variant.
+  `layout` (a `SpaceLayout`) so they can grow beyond color/icon; `layout.color`,
+  `layout.iconColor` and `layout.icon` are **string keys**, never rendered
+  glyphs. Map `layout.icon` → a `@wordpress/icons` element via `SPACE_ICONS` in
+  `icons.ts`; the color keys select CSS variants.
+- Color is split in two: `layout.color` is the **text accent** (post titles +
+  actions) and can be `'none'` to keep the text neutral like the rest of the
+  Reader; `layout.iconColor` colors the **icon** (sidebar chrome). Resolve the
+  icon color with `resolveSpaceIconColor( layout )` in `colors.ts` — it falls
+  back to `color` (then the default) so spaces created before the split keep a
+  colored icon. The feed only emits the `space-feed--{color}` accent modifier
+  when `color !== 'none'`.
 - Build Spaces URLs with `routes.ts` (`SPACES_BASE_PATH`, `getSpacePath`) —
   never hand-concatenate paths.
 

@@ -9,5 +9,6 @@ export const MAX_SPACE_NAME_LENGTH = 50;
 /** Presentation defaults applied to a freshly-created space. */
 export const DEFAULT_SPACE_LAYOUT: SpaceLayout = {
 	color: 'blue',
+	iconColor: 'blue',
 	icon: 'category',
 };

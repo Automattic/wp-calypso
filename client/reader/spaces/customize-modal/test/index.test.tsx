@@ -140,7 +140,11 @@ describe( 'CustomizeModal', () => {
 		render();
 
 		expect( screen.getByLabelText( 'Name' ) ).toHaveValue( 'Work' );
-		expect( screen.getByRole( 'radio', { name: 'Blue' } ) ).toBeChecked();
+		expect(
+			within( screen.getByRole( 'radiogroup', { name: 'Accent color' } ) ).getByRole( 'radio', {
+				name: 'Blue',
+			} )
+		).toBeChecked();
 		expect( screen.getByRole( 'radio', { name: 'Inbox' } ) ).toBeChecked();
 	} );
 
@@ -173,7 +177,11 @@ describe( 'CustomizeModal', () => {
 		const name = screen.getByLabelText( 'Name' );
 		await user.clear( name );
 		await user.type( name, 'Reading' );
-		await user.click( screen.getByRole( 'radio', { name: 'Green' } ) );
+		await user.click(
+			within( screen.getByRole( 'radiogroup', { name: 'Accent color' } ) ).getByRole( 'radio', {
+				name: 'Green',
+			} )
+		);
 
 		await user.click( screen.getByRole( 'tab', { name: 'Layout' } ) );
 		await user.click( screen.getByRole( 'radio', { name: /Classic/ } ) );
@@ -186,7 +194,7 @@ describe( 'CustomizeModal', () => {
 			expect.objectContaining( {
 				title: 'Reading',
 				tags: [ 'tech' ],
-				layout: { color: 'green', icon: 'inbox', view: 'legacy' },
+				layout: { color: 'green', iconColor: 'blue', icon: 'inbox', view: 'legacy' },
 			} )
 		);
 		const cached = queryClient.getQueryData< ReadSpaceDetails >(
