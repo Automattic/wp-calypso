@@ -1,3 +1,5 @@
+import { isAutomatticianQuery, rawUserPreferencesQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { styles } from '@wordpress/icons';
@@ -18,14 +20,20 @@ function getColorSchemeLabel( colorScheme: ColorScheme ) {
 	}
 }
 
-function PreferencesAppearanceSummary( { density }: { density?: Density } ) {
+function PreferencesAppearanceSummary( {
+	density,
+	isAutomattician,
+}: {
+	density?: Density;
+	isAutomattician: boolean;
+} ) {
 	const { colorScheme } = useColorScheme();
 
 	return (
 		<RouterLinkSummaryButton
 			density={ density }
 			to="/me/preferences/appearance"
-			title={ __( 'Appearance' ) }
+			title={ isAutomattician ? __( 'Appearance (a8c only)' ) : __( 'Appearance (Beta)' ) }
 			description={ __( 'Choose how the dashboard looks.' ) }
 			decoration={ <Icon icon={ styles } size={ 24 } /> }
 			badges={ [ { text: getColorSchemeLabel( colorScheme ) } ] }
@@ -35,10 +43,21 @@ function PreferencesAppearanceSummary( { density }: { density?: Density } ) {
 
 export default function PreferencesAppearance( { density }: { density?: Density } ) {
 	const config = useAppContext();
+	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
+	const { data: preferences } = useQuery( rawUserPreferencesQuery() );
+	const hasUsedColorScheme = preferences?.[ 'hosting-dashboard-color-scheme' ] !== undefined;
 
 	if ( ! config.supports.darkMode || ! config.supports.colorScheme || isDashboardBackport() ) {
 		return null;
 	}
 
-	return <PreferencesAppearanceSummary density={ density } />;
+	// "Used before" is inferred from the presence of the color scheme preference; Automatticians
+	// always get access as an a8c-only preview.
+	if ( ! isAutomattician && ! hasUsedColorScheme ) {
+		return null;
+	}
+
+	return (
+		<PreferencesAppearanceSummary density={ density } isAutomattician={ !! isAutomattician } />
+	);
 }

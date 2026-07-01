@@ -1078,12 +1078,30 @@ export const appearanceRoute = createRoute( {
 	} ),
 	getParentRoute: () => preferencesRoute,
 	path: 'appearance',
-	beforeLoad: ( { context } ) => {
+	beforeLoad: async ( { context } ) => {
 		if (
 			! context.config.supports.darkMode ||
 			! context.config.supports.colorScheme ||
 			isDashboardBackport()
 		) {
+			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
+		}
+
+		// Mirror the rollout gating of the Appearance summary button so the page can't be reached
+		// by direct URL: hidden unless the user has used it before (color scheme preference present)
+		// or is an Automattician.
+		const preferences = await queryClient.ensureQueryData( rawUserPreferencesQuery() );
+		const hasUsedColorScheme = preferences[ 'hosting-dashboard-color-scheme' ] !== undefined;
+
+		// `select` is not applied by ensureQueryData, so read the raw cached teams to derive the flag.
+		// Fall back to treating the user as a non-Automattician if the teams request fails.
+		await queryClient.ensureQueryData( isAutomatticianQuery() ).catch( () => undefined );
+		const teams = queryClient.getQueryData< { teams: Array< { slug: string } > } >(
+			isAutomatticianQuery().queryKey
+		);
+		const isAutomattician = Boolean( teams?.teams.some( ( team ) => team.slug === 'a8c' ) );
+
+		if ( ! isAutomattician && ! hasUsedColorScheme ) {
 			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
 		}
 	},
