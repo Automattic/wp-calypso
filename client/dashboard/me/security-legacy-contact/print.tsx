@@ -26,7 +26,7 @@ function LegacyContactDetails( { legacyContactId }: { legacyContactId: number } 
 	return (
 		<VStack spacing={ 6 }>
 			<SectionHeader title={ __( 'Your legacy contact' ) } level={ 3 } />
-			<Text as="p">
+			<Text as="p" size={ 15 }>
 				{ __(
 					'Keep this information somewhere safe. After your death, your legacy contact can give this key to WordPress.com to request access to your account.'
 				) }
