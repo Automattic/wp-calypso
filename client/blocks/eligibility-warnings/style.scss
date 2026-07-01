@@ -179,8 +179,8 @@
 
 .eligibility-warnings__message {
 	flex-grow: 1;
-	// Let the message shrink below its content so a long address inside can
-	// truncate with an ellipsis instead of overflowing the flex row.
+	// Allow this flex column to shrink below its content width so a long
+	// address inside can truncate instead of forcing the modal to scroll.
 	min-width: 0;
 	line-height: 24px;
 	padding: 0;
@@ -252,8 +252,9 @@
 	.eligibility-warnings__address {
 		display: flex;
 		align-items: baseline;
+		flex: 1;
 		min-width: 0;
-		margin-inline-end: auto;
+		overflow: hidden;
 	}
 
 	.eligibility-warnings__address-first {
@@ -269,6 +270,9 @@
 	}
 
 	.badge {
+		// Keep the badge on the same line at its full width; the address
+		// truncates to make room rather than pushing the badge to a new line.
+		flex-shrink: 0;
 		border-radius: 4px;
 		font-weight: 500;
 		font-size: $font-body-extra-small;
@@ -280,16 +284,6 @@
 		&.badge--success {
 			background: var(--studio-green-5);
 			color: var(--studio-green-80);
-		}
-	}
-
-	@media (max-width: 660px) {
-		// Let the badge wrap below the address only when they can't share the
-		// line. Short addresses keep the badge inline; a long address gets the
-		// full line to itself and reads left to right.
-		.card.card {
-			flex-wrap: wrap;
-			row-gap: 4px;
 		}
 	}
 }
