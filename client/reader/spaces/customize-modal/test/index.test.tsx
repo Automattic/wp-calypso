@@ -145,7 +145,27 @@ describe( 'CustomizeModal', () => {
 				name: 'Blue',
 			} )
 		).toBeChecked();
+		expect(
+			screen.getByText(
+				'Changes the color of post titles and actions in this space. Choose None to keep the feed neutral.'
+			)
+		).toBeVisible();
 		expect( screen.getByRole( 'radio', { name: 'Inbox' } ) ).toBeChecked();
+	} );
+
+	it( 'shows the accent color picker after the icon controls', () => {
+		render();
+
+		const iconLabel = screen.getByText( 'Icon' );
+		const iconColorLabel = screen.getByText( 'Icon color' );
+		const accentColorLabel = screen.getByText( 'Accent color' );
+
+		expect(
+			iconLabel.compareDocumentPosition( iconColorLabel ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
+		expect(
+			iconColorLabel.compareDocumentPosition( accentColorLabel ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
 	} );
 
 	it( 'switches between the Identity, Layout and Sources tabs', async () => {

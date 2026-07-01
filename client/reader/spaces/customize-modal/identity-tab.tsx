@@ -69,14 +69,8 @@ export function IdentityTab( {
 			</VStack>
 
 			<VStack spacing={ 2 }>
-				<span className="customize-space-modal__field-label">{ translate( 'Accent color' ) }</span>
-				<SpaceColorPicker
-					value={ color }
-					onChange={ onColorChange }
-					allowNone
-					name="space-accent-color"
-					label={ translate( 'Accent color' ) }
-				/>
+				<span className="customize-space-modal__field-label">{ translate( 'Icon' ) }</span>
+				<SpaceIconPicker value={ icon } onChange={ onIconChange } />
 			</VStack>
 
 			<VStack spacing={ 2 }>
@@ -90,8 +84,19 @@ export function IdentityTab( {
 			</VStack>
 
 			<VStack spacing={ 2 }>
-				<span className="customize-space-modal__field-label">{ translate( 'Icon' ) }</span>
-				<SpaceIconPicker value={ icon } onChange={ onIconChange } />
+				<span className="customize-space-modal__field-label">{ translate( 'Accent color' ) }</span>
+				<p className="customize-space-modal__field-help">
+					{ translate(
+						'Changes the color of post titles and actions in this space. Choose None to keep the feed neutral.'
+					) }
+				</p>
+				<SpaceColorPicker
+					value={ color }
+					onChange={ onColorChange }
+					allowNone
+					name="space-accent-color"
+					label={ translate( 'Accent color' ) }
+				/>
 			</VStack>
 		</VStack>
 	);
