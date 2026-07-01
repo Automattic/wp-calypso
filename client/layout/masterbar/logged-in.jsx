@@ -269,7 +269,6 @@ class MasterbarLoggedIn extends Component {
 			translate,
 			section,
 			currentRoute,
-			isGlobalSidebarVisible,
 			siteAdminUrl,
 			dashboardOptIn,
 		} = this.props;
@@ -287,7 +286,9 @@ class MasterbarLoggedIn extends Component {
 			return <Item icon={ icon } className="masterbar__item-no-sites" disabled />;
 		}
 
-		const subItems = isGlobalSidebarVisible
+		// Hidden across the My Sites view. Keys off the sidebar type, not its
+		// visibility, to also cover HD v1 site screens where the sidebar is hidden.
+		const subItems = this.isMySitesActive()
 			? null
 			: [
 					[

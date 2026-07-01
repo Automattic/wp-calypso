@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 export const APP_BANNER_DISMISS_TIMES_PREFERENCE = 'appBannerDismissTimes';
 export const GUTENBERG = 'gutenberg-editor';
 export const NOTES = 'notifications';
@@ -95,7 +93,7 @@ export function getNewDismissTimes( dismissedSection, currentDismissTimes ) {
 			// Dismiss all other sections for a shorter period, but make sure that we preserve previous dismiss time
 			// if it was longer than that (e.g. if other section was also dismissed for a month).
 			result[ section ] =
-				get( currentDismissTimes, section, -Infinity ) > dismissTimes.shorterDuration
+				( currentDismissTimes?.[ section ] ?? -Infinity ) > dismissTimes.shorterDuration
 					? currentDismissTimes?.[ section ]
 					: dismissTimes.shorterDuration;
 		}
@@ -105,4 +103,4 @@ export function getNewDismissTimes( dismissedSection, currentDismissTimes ) {
 }
 
 export const isDismissed = ( dismissedUntil, section ) =>
-	get( dismissedUntil, section, -Infinity ) > Date.now();
+	( dismissedUntil?.[ section ] ?? -Infinity ) > Date.now();

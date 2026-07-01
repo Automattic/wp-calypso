@@ -10,6 +10,22 @@ import { useAppContext } from '../../app/context';
 import Notice from '../../components/notice';
 import ComponentViewTracker from '../component-view-tracker';
 
+/**
+ * Whether the welcome notice is initially eligible to show. In-session
+ * dismissal is handled inside the component itself.
+ */
+export function useShouldShowOptInWelcome() {
+	const { optIn } = useAppContext();
+	const { data: dashboardOptIn } = useSuspenseQuery(
+		userPreferenceQuery( 'hosting-dashboard-opt-in' )
+	);
+	const { data: isDismissedPersisted } = useSuspenseQuery(
+		userPreferenceQuery( 'hosting-dashboard-welcome-notice-dismissed' )
+	);
+
+	return !! optIn && dashboardOptIn?.value !== 'forced-opt-in' && ! isDismissedPersisted;
+}
+
 export function OptInWelcome( { tracksContext }: { tracksContext: string } ) {
 	const { optIn } = useAppContext();
 	const { data: dashboardOptIn } = useSuspenseQuery(

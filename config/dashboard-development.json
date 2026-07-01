@@ -31,7 +31,6 @@
 		"dark-mode": true,
 		"dashboard/account-recovery-interstitial": false,
 		"dashboard/enable-percentage-rollout": false,
-		"dashboard/omnibar": true,
 		"dashboard/omnibar-radical": false,
 		"dashboard/opt-in-welcome-modal": false,
 		"dashboard/plans": true,

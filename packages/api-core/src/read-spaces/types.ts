@@ -19,6 +19,13 @@ export type SpaceColor =
 	| 'celadon'
 	| 'pink';
 
+/**
+ * Accent applied to a space's post text (titles + actions). `'none'` keeps the
+ * text neutral — the same reading experience as the rest of the Reader — while
+ * the space icon can still carry its own color via `iconColor`.
+ */
+export type SpaceTextColor = SpaceColor | 'none';
+
 export type SpaceIcon =
 	| 'inbox'
 	| 'box'
@@ -50,7 +57,11 @@ export type SpaceFeedLayout = 'standard-list' | 'gallery' | 'board' | 'legacy';
  * icon (e.g. cover image, sort order) without widening `ReadSpace` itself.
  */
 export interface SpaceLayout {
-	color: SpaceColor;
+	// Accent for the space's post text (titles + actions); `'none'` = neutral.
+	color: SpaceTextColor;
+	// Color for the space's icon. Falls back to `color` when absent, so spaces
+	// created before the icon and text colors were split keep a colored icon.
+	iconColor?: SpaceColor;
 	icon: SpaceIcon;
 	// Which feed layout to render.
 	view?: SpaceFeedLayout;

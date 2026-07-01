@@ -14,7 +14,6 @@ import {
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
 import express from 'express';
-import { get } from 'lodash';
 import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
@@ -1040,7 +1039,7 @@ function wpcomPages( app ) {
 
 			ctx.clientData = config.clientData;
 			ctx.domainsLandingData = {
-				action: get( req, [ 'params', 'action' ], 'unknown-action' ),
+				action: req?.params?.action ?? 'unknown-action',
 				query: req?.query ?? {},
 			};
 

@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { addLocaleToPath, isDefaultLocale } from '@automattic/i18n-utils';
 import { getLocaleSlug } from 'i18n-calypso';
-import { get } from 'lodash';
 import {
 	isAkismetOAuth2Client,
 	isCrowdsignalOAuth2Client,
@@ -97,7 +96,7 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 	}
 
 	if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
-		const gravatarFrom = get( currentQuery, 'gravatar_from', 'signup' );
+		const gravatarFrom = currentQuery?.gravatar_from ?? 'signup';
 
 		// Gravatar powered clients signup via the magic login page
 		return login( {

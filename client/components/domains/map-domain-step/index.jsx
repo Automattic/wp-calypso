@@ -4,7 +4,6 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { MAP_EXISTING_DOMAIN, INCOMING_DOMAIN_TRANSFER } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -233,8 +232,8 @@ class MapDomainStep extends Component {
 		checkDomainAvailability(
 			{ domainName: domain, blogId: this.props?.selectedSite?.ID ?? null },
 			( error, result ) => {
-				const mappableStatus = get( result, 'mappable', error );
-				const status = get( result, 'status', error );
+				const mappableStatus = result?.mappable ?? error;
+				const status = result?.status ?? error;
 				const { AVAILABLE, AVAILABILITY_CHECK_ERROR, MAPPABLE, MAPPED, NOT_REGISTRABLE, UNKNOWN } =
 					domainAvailability;
 

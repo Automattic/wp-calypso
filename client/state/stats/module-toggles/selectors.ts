@@ -1,5 +1,4 @@
-import { get } from 'lodash';
-
+import type { AppState } from 'calypso/types';
 import 'calypso/state/stats/init';
 
 const EMPTY_RESULT = {};
@@ -10,8 +9,8 @@ const EMPTY_RESULT = {};
  * @param   {number}  siteId   Site ID
  * @returns {Object}           Highlights object; see schema.
  */
-export function getModuleToggles( state: object, siteId: number, pageName: string ) {
-	return get( state, [ 'stats', 'moduleToggles', 'data', siteId, pageName ], EMPTY_RESULT );
+export function getModuleToggles( state: AppState, siteId: number, pageName: string ) {
+	return state?.stats?.moduleToggles?.data?.[ siteId ]?.[ pageName ] ?? EMPTY_RESULT;
 }
 
 /**
@@ -20,6 +19,6 @@ export function getModuleToggles( state: object, siteId: number, pageName: strin
  * @param   {number}  siteId   Site ID
  * @returns {boolean}          	 Array of stat types as strings
  */
-export function isLoading( state: object, siteId: number ) {
-	return get( state, [ 'stats', 'moduleToggles', 'isLoading', siteId ] );
+export function isLoading( state: AppState, siteId: number ) {
+	return state?.stats?.moduleToggles?.isLoading?.[ siteId ];
 }

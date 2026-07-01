@@ -1,7 +1,6 @@
 import { Button, FormInputValidation, ExternalLink } from '@automattic/components';
 import { omit } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
@@ -98,11 +97,8 @@ class SiteVerification extends Component {
 		const stateItems = {};
 
 		supportedServices.forEach( ( service ) => {
-			stateItems[ service.slug ] = get(
-				site,
-				`options.verification_services_codes.${ service.slug }`,
-				''
-			);
+			stateItems[ service.slug ] =
+				site?.options?.verification_services_codes?.[ service.slug ] ?? '';
 		} );
 		stateItems.isFetchingSettings = site?.fetchingSettings ?? false;
 

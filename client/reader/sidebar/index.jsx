@@ -31,7 +31,6 @@ import { getTagStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { isReaderMSDEnabled } from 'calypso/state/reader-ui/selectors';
 import {
 	toggleReaderSidebarLists,
 	toggleReaderSidebarFollowing,
@@ -359,7 +358,6 @@ export default withSubscribedLists(
 							isListsOpen: isListsOpen( state ),
 							isFollowingOpen: isFollowingOpen( state ),
 							isTagsOpen: isTagsOpen( state ),
-							isMSDEnabled: isReaderMSDEnabled( state ),
 						};
 					},
 					{

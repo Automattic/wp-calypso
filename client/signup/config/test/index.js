@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash';
+import { isEmpty } from '@automattic/js-utils';
 import flows from '../flows';
 import { generateFlows } from '../flows-pure';
 import { getStepModuleMap } from '../step-components';

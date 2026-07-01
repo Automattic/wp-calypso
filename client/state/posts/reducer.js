@@ -1,8 +1,8 @@
 /* eslint-disable no-case-declarations */
 
-import { mapValues, omit, omitBy, set } from '@automattic/js-utils';
+import { mapValues, omit, omitBy, set, isEmpty } from '@automattic/js-utils';
 import isEqual from 'fast-deep-equal/es6';
-import { isEmpty, merge } from 'lodash';
+import { merge } from 'lodash';
 import PostQueryManager from 'calypso/lib/query-manager/post';
 import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
 import {

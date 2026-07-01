@@ -1,6 +1,7 @@
+import { isEmpty } from '@automattic/js-utils';
 import debugFactory from 'debug';
 import validatorFactory from 'is-my-json-valid';
-import { isEmpty, update } from 'lodash';
+import { update } from 'lodash';
 import validationSchema from './fr-schema';
 
 const validate = validatorFactory( validationSchema, { greedy: true } );

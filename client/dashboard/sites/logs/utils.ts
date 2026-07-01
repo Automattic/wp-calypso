@@ -106,12 +106,6 @@ export function getInitialDateRangeFromSearch( search: string ): DateRange | nul
 	return start && end && start <= end ? { start, end } : null;
 }
 
-export const LOG_TABS = [
-	{ name: 'activity', title: __( 'Activity' ) },
-	{ name: 'php', title: __( 'PHP errors' ) },
-	{ name: 'server', title: __( 'Web server' ) },
-];
-
 export function formatDateCell( {
 	timezoneString,
 	gmtOffset,

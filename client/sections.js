@@ -1006,6 +1006,12 @@ const sections = [
 		module: 'calypso/a8c-for-agencies/sections/exclusive-offers',
 		group: 'a8c-for-agencies',
 	},
+	{
+		name: 'a8c-for-agencies-amplify',
+		paths: [ '/amplify' ],
+		module: 'calypso/a8c-for-agencies/sections/amplify',
+		group: 'a8c-for-agencies',
+	},
 ];
 
 module.exports = sections;

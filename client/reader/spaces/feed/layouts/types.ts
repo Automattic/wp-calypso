@@ -24,6 +24,10 @@ export interface SpaceFeedLayoutProps {
 	loadMore: () => void;
 	/** Stable key (`${spaceId}:${layout}`) for saving/restoring scroll on Back. */
 	restoreKey: string;
+	/** Whether a post is the currently selected one. */
+	isPostSelected: ( post: ReadStreamPost ) => boolean;
+	/** Mark a post as selected. */
+	selectPost: ( post: ReadStreamPost ) => void;
 }
 
 /**

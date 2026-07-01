@@ -27,7 +27,6 @@
 		"cookie-banner": true,
 		"dark-mode": true,
 		"dashboard/enable-percentage-rollout": false,
-		"dashboard/omnibar": true,
 		"dashboard/opt-in-welcome-modal": false,
 		"dashboard/wp-beta-program": true,
 		"domain-transfer-redesign": true,

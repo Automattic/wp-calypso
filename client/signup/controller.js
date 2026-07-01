@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { isEmpty } from '@automattic/js-utils';
 import { isOnboardingFlow } from '@automattic/onboarding';
-import { isEmpty } from 'lodash';
 import { createElement } from 'react';
 import store from 'store';
 import { notFound } from 'calypso/controller';

@@ -83,7 +83,7 @@ export function useShouldShowOptInSurvey() {
 	return optIn && isEligible;
 }
 
-export default function OptInSurvey() {
+export default function OptInSurvey( { tracksContext }: { tracksContext?: string } = {} ) {
 	const shouldShow = useShouldShowOptInSurvey();
 	const { recordTracksEvent } = useAnalytics();
 	const [ isDismissed, setIsDismissed ] = useState( false );
@@ -109,13 +109,15 @@ export default function OptInSurvey() {
 		dismissSurvey();
 	};
 
+	const eventProps = tracksContext ? { context: tracksContext } : undefined;
+
 	const dismiss = () => {
-		recordTracksEvent( 'calypso_dashboard_opt_in_survey_dismiss_click' );
+		recordTracksEvent( 'calypso_dashboard_opt_in_survey_dismiss_click', eventProps );
 		setDismissedNow();
 	};
 
 	const confirm = () => {
-		recordTracksEvent( 'calypso_dashboard_opt_in_survey_take_click' );
+		recordTracksEvent( 'calypso_dashboard_opt_in_survey_take_click', eventProps );
 		setDismissedNow();
 	};
 

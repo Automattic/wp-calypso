@@ -13,6 +13,8 @@ const VERSION = process.env.VERSION
 	: ( function () {
 			throw new Error( 'Error: no version' );
 	  } )();
+// TODO: Remove WP_DESKTOP_SECRET fallback once CircleCI desktop jobs are removed - AINFRA-2274.
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN || process.env.WP_DESKTOP_SECRET;
 
 async function request( method = 'GET', postData ) {
 	const params = {
@@ -23,7 +25,7 @@ async function request( method = 'GET', postData ) {
 		headers: {
 			'User-Agent': 'wp-desktop',
 			Accept: 'application/json',
-			Authorization: 'token ' + process.env.WP_DESKTOP_SECRET,
+			Authorization: 'token ' + GITHUB_TOKEN,
 		},
 	};
 

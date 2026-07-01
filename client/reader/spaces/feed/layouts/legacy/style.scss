@@ -1,0 +1,24 @@
+// The classic (legacy) layout renders the shared Reader post cards via
+// `ReaderStreamV2`. Those cards color their titles with a neutral token, so the
+// space accent — exposed as `--space-color*` on `.space-feed` — never reaches
+// them on its own. Recolor the card titles here, scoped to `.space-feed-legacy`
+// so the shared cards elsewhere (Reader, Discover) stay untouched. The extra
+// `.space-feed` in the selector keeps the specificity above the shared
+// `.reader__content .reader-post-card__title-link` rule. Each color falls back
+// to the card's default neutral when no space accent is present.
+.space-feed .space-feed-legacy {
+	.reader-post-card__title,
+	.reader-post-card__title-link {
+		color: var(--space-color, var(--color-neutral-100));
+	}
+
+	// Already-read posts fade to a lighter shade of the space accent. Ordered
+	// before :hover (LVHA).
+	.reader-post-card__title-link:visited {
+		color: var(--space-color-visited, var(--color-neutral-100));
+	}
+
+	.reader-post-card__title-link:hover {
+		color: var(--space-color-hover, var(--color-neutral-70));
+	}
+}

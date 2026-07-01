@@ -21,6 +21,7 @@ import { PriceDisplay } from '../../components/price-display';
 import { Text } from '../../components/text';
 import GoogleLogo from '../../images/google-logo.svg';
 import {
+	getMaxTitanMailboxCount,
 	hasEmailForwards,
 	hasGSuiteWithUs,
 	hasTitanMailWithUs,
@@ -32,6 +33,7 @@ import { useDomainFromUrlParam } from '../hooks/use-domain-from-url-param';
 import { useEmailProduct } from '../hooks/use-email-product';
 import poweredByTitanLogo from '../resources/powered-by-titan-caps.svg';
 import { IntervalLength, MailboxProvider, TitanPlanTier } from '../types';
+import { getTitanTierUpgradeUrl } from '../utils/get-tier-upgrade-url';
 import { isEligibleForIntroductoryOffer } from '../utils/is-eligible-for-introductory-offer';
 import { isMonthlyEmailProduct } from '../utils/is-monthly-email-product';
 import { getTitanTierFromSlug } from '../utils/titan-tiers';
@@ -45,7 +47,7 @@ const getTrialMonths = ( product?: Product ) =>
 	product?.introductory_offer?.interval_unit === 'year' ? 12 : 3;
 
 export default function ChooseEmailSolution() {
-	const { domain, domainName } = useDomainFromUrlParam();
+	const { domain, domainName, site } = useDomainFromUrlParam();
 	const { user } = useAuth();
 
 	const isTitanPlanSelectionEnabled = config.isEnabled( 'emails/titan-tiers' );
@@ -142,6 +144,23 @@ export default function ChooseEmailSolution() {
 		return null;
 	}
 
+	// In upgrade mode, picking a higher tier goes straight to checkout with the
+	// target product, keeping the existing domain, billing interval, and mailbox
+	// count so the backend upgrades the current subscription in place.
+	const handleTierUpgrade = ( tier: TitanPlanTier ) => {
+		if ( ! site ) {
+			return;
+		}
+
+		window.location.href = getTitanTierUpgradeUrl( {
+			siteSlug: site.slug,
+			domain: domainName,
+			tier,
+			interval: billingInterval,
+			quantity: getMaxTitanMailboxCount( domain ),
+		} );
+	};
+
 	const providers = {
 		[ MailboxProvider.Titan ]: {
 			logo: wordpress,
@@ -195,9 +214,10 @@ export default function ChooseEmailSolution() {
 	const pageHeader = (
 		<PageHeader
 			prefix={ <Breadcrumbs length={ 2 } /> }
+			title={ isUpgradeIntent ? __( 'Professional Email plans' ) : undefined }
 			description={
 				isUpgradeIntent
-					? __( 'Choose a Professional Email plan that fits your needs.' )
+					? __( 'Explore our plans to find the right fit for your needs.' )
 					: __( 'Choose between Professional Email and Google Workspace for your domain.' )
 			}
 		/>
@@ -272,6 +292,7 @@ export default function ChooseEmailSolution() {
 								? getTitanTierFromSlug( titanEmailSubscription?.product_slug )
 								: undefined
 						}
+						onUpgrade={ handleTierUpgrade }
 					/>
 					{ ! isUpgradeIntent && (
 						<GoogleWorkspaceCard

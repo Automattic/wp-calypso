@@ -18,7 +18,6 @@ import AccountRecoveryInterstitial from '../account-recovery-interstitial';
 import { bumpStat } from '../analytics';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
-import Header from '../header';
 import OmnibarAgentsManager from '../interim-omnibar/omnibar-agents-manager';
 import OmnibarHelpCenter from '../interim-omnibar/omnibar-help-center';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
@@ -41,8 +40,6 @@ const SLOW_THRESHOLD_MS = 100;
 const VERY_SLOW_THRESHOLD_MS = 6000;
 
 function Root() {
-	const isOmnibarEnabled =
-		isEnabled( 'dashboard/omnibar' ) || isEnabled( 'dashboard/omnibar-radical' );
 	const isAccountRecoveryInterstitialEnabled = isEnabled(
 		'dashboard/account-recovery-interstitial'
 	);
@@ -144,31 +141,9 @@ function Root() {
 			.join( ' ‹ ' );
 	}, [ routeMeta ] );
 
-	const renderHeader = () => {
-		if ( isInitialLoad ) {
-			return null;
-		}
-
-		if ( ! isOmnibarEnabled ) {
-			return <Header />;
-		}
-
-		return null;
-	};
-
 	const renderBody = () => {
 		if ( isVerySlowNavigation ) {
 			return null;
-		}
-
-		if ( ! isOmnibarEnabled ) {
-			return (
-				<main>
-					<CatchNotFound fallback={ NotFound }>
-						<Outlet />
-					</CatchNotFound>
-				</main>
-			);
 		}
 
 		return (
@@ -200,13 +175,12 @@ function Root() {
 				/>
 			) }
 			{ ( isInitialLoad || isVerySlowNavigation ) && <LoadingLogo className="wpcom-site__logo" /> }
-			{ renderHeader() }
 			{ renderBody() }
 			{ supports.commandPalette && <CommandPalette /> }
-			{ isOmnibarEnabled && supports.notifications && <Notifications anchor /> }
-			{ isOmnibarEnabled && supports.help && <OmnibarHelpCenter /> }
-			{ isOmnibarEnabled && supports.help && <OmnibarAgentsManager /> }
-			{ isOmnibarEnabled && <OmnibarSiteSwitcher /> }
+			{ supports.notifications && <Notifications anchor /> }
+			{ supports.help && <OmnibarHelpCenter /> }
+			{ supports.help && <OmnibarAgentsManager /> }
+			<OmnibarSiteSwitcher />
 			<Snackbars />
 			{ isAccountRecoveryInterstitialEnabled && <AccountRecoveryInterstitial /> }
 			<PageViewTracker />

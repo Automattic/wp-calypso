@@ -768,6 +768,39 @@ const PlansFeaturesMain = ( {
 		return false;
 	};
 
+	const isUpgradeOrDowngradeFlow =
+		intent === 'plans-upgrade' || intent === 'plans-upgrade-or-downgrade';
+	const isDelayedDowngradePending =
+		isUpgradeOrDowngradeFlow && !! currentPurchase?.is_delayed_downgrade_pending;
+	const delayedDowngradeToProductSlug = isDelayedDowngradePending
+		? currentPurchase?.delayed_downgrade_to_product_slug ?? null
+		: null;
+
+	// When a delayed downgrade is scheduled, the current plan's CTA renews the
+	// existing plan (rather than passively reading "Your plan") so the user is
+	// reminded they can keep their plan instead of letting the downgrade apply.
+	const renewCurrentPlanWithPendingDowngrade = () => {
+		if ( ! siteSlug || ! currentPlanPurchaseId || ! currentPurchase?.product_slug ) {
+			return;
+		}
+		recordTracksEvent( 'calypso_plan_features_renew_pending_downgrade_click', {
+			current_plan: sitePlanSlug,
+		} );
+		const redirectTarget = redirectTo ?? getQueryArg( window.location.href, 'redirect_to' );
+		const cancelTarget = getQueryArg( window.location.href, 'cancel_to' );
+		const checkoutQuery: Record< string, string > = {};
+		if ( typeof redirectTarget === 'string' ) {
+			checkoutQuery.redirect_to = redirectTarget;
+		}
+		if ( typeof cancelTarget === 'string' ) {
+			checkoutQuery.cancel_to = cancelTarget;
+		}
+		window.location.href = addQueryArgs(
+			checkoutQuery,
+			`/checkout/${ currentPurchase.product_slug }/renew/${ currentPlanPurchaseId }/${ siteSlug }`
+		);
+	};
+
 	const useAction = useGenerateActionHook( {
 		siteId,
 		cartHandler: onUpgradeClick,
@@ -781,6 +814,9 @@ const PlansFeaturesMain = ( {
 		enableCategorisedFeatures: showSimplifiedFeatures,
 		redirectTo,
 		pluginSlug,
+		isDelayedDowngradePending,
+		delayedDowngradeToProductSlug,
+		onRenewCurrentPlan: renewCurrentPlanWithPendingDowngrade,
 	} );
 
 	const isDomainOnlySite = useSelector( ( state: IAppState ) =>
@@ -796,6 +832,19 @@ const PlansFeaturesMain = ( {
 		hideEnterprisePlan,
 	};
 
+	// Badge the plan a scheduled downgrade will land on so the user remembers it
+	// is queued. The term selector is hidden while a downgrade is pending, so the
+	// target product slug always matches the displayed plan slug.
+	const highlightLabelOverridesWithDowngrade = useMemo( () => {
+		if ( ! delayedDowngradeToProductSlug ) {
+			return highlightLabelOverrides;
+		}
+		return {
+			...highlightLabelOverrides,
+			[ delayedDowngradeToProductSlug as PlanSlug ]: translate( 'Downgrade scheduled' ),
+		};
+	}, [ highlightLabelOverrides, delayedDowngradeToProductSlug, translate ] );
+
 	// we need all the plans that are available to pick for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid( {
 		allFeaturesList: getFeaturesList(),
@@ -803,7 +852,7 @@ const PlansFeaturesMain = ( {
 		eligibleForFreeHostingTrial,
 		hasRedeemedDomainCredit: currentPlan?.hasRedeemedDomainCredit,
 		hiddenPlans,
-		highlightLabelOverrides,
+		highlightLabelOverrides: highlightLabelOverridesWithDowngrade,
 		intent: shouldForceDefaultPlansBasedOnIntent( intent ) ? defaultWpcomPlansIntent : intent,
 		isDisplayingPlansNeededForFeature,
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
@@ -830,7 +879,7 @@ const PlansFeaturesMain = ( {
 		coupon,
 		eligibleForFreeHostingTrial,
 		hasRedeemedDomainCredit: currentPlan?.hasRedeemedDomainCredit,
-		highlightLabelOverrides,
+		highlightLabelOverrides: highlightLabelOverridesWithDowngrade,
 		hiddenPlans,
 		hideCurrentPlan: isInSiteDashboard,
 		intent,

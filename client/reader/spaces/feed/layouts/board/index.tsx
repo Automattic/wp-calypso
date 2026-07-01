@@ -14,7 +14,7 @@ import './style.scss';
 const LANES = 2;
 const ESTIMATED_SIZE = 260;
 
-function BoardCard( { post }: { post: ReadStreamPost } ) {
+function BoardCard( { post, onOpen }: { post: ReadStreamPost; onOpen: () => void } ) {
 	const fields = getPostFields( post );
 	return (
 		<div className="space-feed-board__card">
@@ -27,7 +27,7 @@ function BoardCard( { post }: { post: ReadStreamPost } ) {
 			</div>
 			<div className="space-feed-board__body">
 				<h3 className="space-feed-board__title">
-					<a className="space-feed-board__title-link" href={ fields.postHref }>
+					<a className="space-feed-board__title-link" href={ fields.postHref } onClick={ onOpen }>
 						{ fields.title }
 					</a>
 				</h3>
@@ -52,7 +52,10 @@ function BoardCard( { post }: { post: ReadStreamPost } ) {
 				<div className="space-feed-board__actions">
 					<ReaderPostActions
 						post={ post }
-						onCommentClick={ () => page( getPostUrl( post ) ) }
+						onCommentClick={ () => {
+							onOpen();
+							page( getPostUrl( post ) );
+						} }
 						iconSize={ 18 }
 					/>
 				</div>
@@ -68,6 +71,8 @@ export function BoardLayout( {
 	isLoadingMore,
 	loadMore,
 	restoreKey,
+	isPostSelected,
+	selectPost,
 }: SpaceFeedLayoutProps ) {
 	const { getListProps, items, measureElement, scrollMargin } = useInfiniteList( {
 		scrollElement,
@@ -88,6 +93,7 @@ export function BoardLayout( {
 				<div
 					key={ virtualItem.key }
 					data-index={ virtualItem.index }
+					data-selected={ isPostSelected( posts[ virtualItem.index ] ) || undefined }
 					ref={ measureElement }
 					className="space-feed-board__item"
 					style={ {
@@ -96,7 +102,10 @@ export function BoardLayout( {
 						transform: `translateY(${ virtualItem.start - scrollMargin }px)`,
 					} }
 				>
-					<BoardCard post={ posts[ virtualItem.index ] } />
+					<BoardCard
+						post={ posts[ virtualItem.index ] }
+						onOpen={ () => selectPost( posts[ virtualItem.index ] ) }
+					/>
 				</div>
 			) ) }
 		</div>

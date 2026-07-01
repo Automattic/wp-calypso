@@ -562,8 +562,10 @@ export default function OrchestratorChat( {
 	// Listen for inline suggestion clicks dispatched by external providers or the Agenttic bridge below.
 	useEffect( () => {
 		const handleInlineSuggestionClick = ( event: Event ) => {
-			const { value } = ( event as CustomEvent ).detail;
-			if ( value ) {
+			const { value, autoSubmit } = ( event as CustomEvent ).detail;
+			// Auto-submit suggestions are already sent and the input cleared by the
+			// AgentUI; repopulating it here would leave the prompt stuck in the composer.
+			if ( value && ! autoSubmit ) {
 				const inputValue = value.endsWith( ' ' ) ? value : `${ value } `;
 				setInputValue( inputValue );
 
@@ -589,6 +591,8 @@ export default function OrchestratorChat( {
 			const value =
 				typeof suggestion === 'string' ? suggestion : suggestion.prompt ?? suggestion.label;
 
+			const autoSubmit = typeof suggestion !== 'string' && !! suggestion.autoSubmit;
+
 			if ( typeof suggestion !== 'string' ) {
 				recordBigSkyTracksEvent( 'chat_suggestion_click', {
 					suggestion_text: suggestion.prompt || '',
@@ -597,8 +601,11 @@ export default function OrchestratorChat( {
 				} );
 			}
 
+			// Always dispatch so click listeners (e.g. the Jetpack sidebar hiding the
+			// clicked chip) still fire. `autoSubmit` tells the input listener to skip
+			// repopulating the composer, which the AgentUI already submitted and cleared.
 			window.dispatchEvent(
-				new CustomEvent( 'big-sky-inline-suggestion-click', { detail: { value } } )
+				new CustomEvent( 'big-sky-inline-suggestion-click', { detail: { value, autoSubmit } } )
 			);
 		},
 		[]

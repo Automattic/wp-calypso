@@ -1787,6 +1787,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/notifications@workspace:apps/notifications"
   dependencies:
+    "@automattic/api-core": "workspace:^"
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
@@ -1805,6 +1806,7 @@ __metadata:
     "@wordpress/element": "npm:^8.0.0"
     "@wordpress/i18n": "npm:^6.21.0"
     "@wordpress/icons": "npm:^13.3.0"
+    "@wordpress/ui": "npm:^0.15.0"
     autoprefixer: "npm:^10.4.21"
     calypso: "workspace:^"
     clsx: "npm:^2.1.1"

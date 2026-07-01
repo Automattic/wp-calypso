@@ -422,8 +422,6 @@ object RunAllUnitTests : BuildType({
 	}
 
 	steps {
-		passMergeQueueBranchesEarly()
-		mergeTrunk().skipOnMergeQueueBranch()
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
@@ -468,7 +466,7 @@ object RunAllUnitTests : BuildType({
 					exit 1
 				fi
 			"""
-		}.skipOnMergeQueueBranch()
+		}
 		bashNodeScript {
 			name = "Check for yarn.lock changes and duplicated packages"
 			scriptContent = """
@@ -502,7 +500,7 @@ object RunAllUnitTests : BuildType({
 				prevent_uncommitted_changes & prevent_duplicated_packages
 				wait
 			""".trimIndent()
-		}.skipOnMergeQueueBranch()
+		}
 		bashNodeScript {
 			name = "Check DataViews changelog"
 			scriptContent = """
@@ -522,24 +520,12 @@ object RunAllUnitTests : BuildType({
 					fi
 				fi
 			""".trimIndent()
-		}.skipOnMergeQueueBranch()
+		}
 		bashNodeScript {
 			name = "Run parallelized tests"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = "./bin/unit-test-suite.mjs"
-		}.skipOnMergeQueueBranch()
-		bashNodeScript {
-			name = "Tag build"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
-			conditions {
-				equals("teamcity.build.branch.is_default", "true")
-			}
-			scriptContent = """
-				set -x
-
-				curl -s -X POST -H "Content-Type: text/plain" --data "release-candidate" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" "%teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/"
-			""".trimIndent()
-		}.skipOnMergeQueueBranch()
+		}
 	}
 
 	triggers {
@@ -547,6 +533,7 @@ object RunAllUnitTests : BuildType({
 			branchFilter = """
 				+:*
 				-:pull*
+				-:trunk
 			""".trimIndent()
 		}
 	}
@@ -587,7 +574,7 @@ object RunAllUnitTests : BuildType({
 				messageFormat = simpleMessageFormat()
 			}
 			branchFilter = """
-				+:trunk
+				+:gh-readonly-queue/*
 			""".trimIndent()
 			buildFailedToStart = true
 			buildFailed = true

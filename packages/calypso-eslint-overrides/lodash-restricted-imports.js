@@ -20,6 +20,7 @@
  */
 
 const JS_UTILS_NAMES = [
+	'isEmpty',
 	'keyBy',
 	'shuffle',
 	'uniqBy',
@@ -211,4 +212,44 @@ const patterns = [
 	{ group: [ 'lodash/map' ], message: MAP_MESSAGE },
 ];
 
-module.exports = { paths, patterns };
+// `no-restricted-properties` entries for lodash namespace member access
+// (`_.isEmpty( … )` / `lodash.isEmpty( … )`) — the CommonJS/namespace shape that
+// `no-restricted-imports` cannot see. Most migrated functions are backstopped
+// here by the `eslint-plugin-you-dont-need-lodash-underscore` rules, but that
+// plugin ships no `is-empty` rule, so this is `isEmpty`'s namespace guard.
+const properties = [
+	{ object: '_', property: 'isEmpty', message: JS_UTILS_MESSAGE },
+	{ object: 'lodash', property: 'isEmpty', message: JS_UTILS_MESSAGE },
+];
+
+// `no-restricted-modules` entry for the deep CommonJS require
+// (`require( 'lodash/isEmpty' )`); `no-restricted-modules` matches by path only.
+const modules = [ { name: 'lodash/isEmpty', message: JS_UTILS_MESSAGE } ];
+
+// `no-restricted-syntax` selectors for the CommonJS forms that match by path
+// can't catch: a destructured `const { isEmpty } = require( 'lodash' )` and a
+// member access `require( 'lodash' ).isEmpty`.
+const REQUIRE_MESSAGE =
+	'Please use `isEmpty` from `@automattic/js-utils` instead of requiring it from lodash.';
+const syntax = [
+	{
+		selector:
+			"VariableDeclarator[init.callee.name='require'][init.arguments.0.value='lodash'] ObjectPattern > Property[key.name='isEmpty']",
+		message: REQUIRE_MESSAGE,
+	},
+	{
+		selector:
+			"MemberExpression[object.callee.name='require'][object.arguments.0.value='lodash'][property.name='isEmpty']",
+		message: REQUIRE_MESSAGE,
+	},
+];
+
+// Residual gap: an aliased lodash namespace bound to an arbitrary name
+// (`const l = require( 'lodash' ); l.isEmpty( … )`) is not caught. These are all
+// name-based rules; resolving an arbitrary alias needs binding/scope tracking,
+// which only a custom rule provides (the alias-aware
+// `eslint-plugin-you-dont-need-lodash-underscore` ships no `is-empty` rule).
+// Left unguarded deliberately: app code is ESM (covered by the import rules
+// above), and CommonJS lodash exists only in build tooling.
+
+module.exports = { paths, patterns, properties, modules, syntax };

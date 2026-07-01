@@ -1,7 +1,6 @@
 import { omit, orderBy } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
 import isEqual from 'fast-deep-equal/es6';
-import { get } from 'lodash';
 import {
 	COMMENT_COUNTS_UPDATE,
 	COMMENTS_CHANGE_STATUS,
@@ -311,7 +310,7 @@ export const fetchStatus = ( state = {}, action ) => {
 				direction === 'before' ? 'hasReceivedBefore' : 'hasReceivedAfter';
 
 			const nextState = {
-				...get( state, stateKey, fetchStatusInitialState ),
+				...( state?.[ stateKey ] ?? fetchStatusInitialState ),
 				[ direction ]: action.comments.length === NUMBER_OF_COMMENTS_PER_FETCH,
 				[ hasReceivedDirection ]: true,
 			};

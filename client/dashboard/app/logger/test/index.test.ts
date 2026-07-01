@@ -4,6 +4,7 @@
 
 import { captureException } from '@automattic/calypso-sentry';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { maybeReloadForChunkError } from '../chunk-reload';
 import { handleOnCatch } from '../index';
 import type { AnyRouter } from '@tanstack/react-router';
 import type { ErrorInfo } from 'react';
@@ -15,9 +16,18 @@ jest.mock( '@automattic/calypso-sentry', () => ( {
 jest.mock( 'calypso/lib/logstash', () => ( {
 	logToLogstash: jest.fn(),
 } ) );
+jest.mock( '../chunk-reload', () => ( {
+	maybeReloadForChunkError: jest.fn(),
+} ) );
 
 const mockedLogToLogstash = jest.mocked( logToLogstash );
 const mockedCaptureException = jest.mocked( captureException );
+const mockedMaybeReloadForChunkError = jest.mocked( maybeReloadForChunkError );
+
+beforeEach( () => {
+	jest.clearAllMocks();
+	mockedMaybeReloadForChunkError.mockReturnValue( false );
+} );
 
 const createRouter = ( params: Record< string, string > ): AnyRouter =>
 	( {
@@ -86,6 +96,22 @@ describe( 'handleOnCatch', () => {
 				some_id: '123',
 			},
 		} );
+	} );
+
+	it( 'does not log or capture when a chunk load error triggers a reload', () => {
+		mockedMaybeReloadForChunkError.mockReturnValue( true );
+
+		const error = new Error( 'Loading chunk emails failed.' );
+		error.name = 'ChunkLoadError';
+
+		handleOnCatch( error, createErrorInfo(), createRouter( { siteSlug: 'my-site' } ), {
+			severity: 'error',
+			dashboard_backport: false,
+			calypso_section: 'dashboard',
+		} );
+
+		expect( mockedLogToLogstash ).not.toHaveBeenCalled();
+		expect( mockedCaptureException ).not.toHaveBeenCalled();
 	} );
 
 	it( 'logs but does not capture when dashboard_backport is true', () => {

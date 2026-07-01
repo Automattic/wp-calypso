@@ -1,5 +1,5 @@
 import { convertFromRaw, convertToRaw } from 'draft-js';
-import { get, matchesProperty } from 'lodash';
+import { matchesProperty } from 'lodash';
 import { compose } from 'redux';
 
 /*
@@ -131,7 +131,7 @@ export const mapTokenTitleForEditor = ( title ) => `\u205f\u205f${ title }\u205f
  * @param {Object} tokens available tokens, e.g. { siteName: 'Site Name', tagline: 'Tagline' }
  * @returns {string} translated chip name
  */
-const tokenTitle = ( type, tokens ) => mapTokenTitleForEditor( get( tokens, type, '' ).trim() );
+const tokenTitle = ( type, tokens ) => mapTokenTitleForEditor( ( tokens?.[ type ] ?? '' ).trim() );
 
 /**
  * Creates a new entity reference for a blockMap

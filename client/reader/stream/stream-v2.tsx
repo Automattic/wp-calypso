@@ -1,14 +1,17 @@
+import { isDefaultLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { INITIAL_FETCH, PER_FETCH, useInfiniteStream } from 'calypso/reader/data/stream';
 import { useInfiniteList } from 'calypso/reader/hooks/use-infinite-list';
-import { keyToString } from 'calypso/reader/post-key';
+import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
 import { showSelectedPost } from 'calypso/reader/utils';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import PostLifecycleUntyped from './post-lifecycle';
 import PostPlaceholderUntyped from './post-placeholder';
+import { useStreamPostKeySelection } from './use-stream-post-key-selection';
 import type { StreamItem } from 'calypso/reader/data/stream/types';
 import type { ComponentType } from 'react';
 
@@ -24,6 +27,7 @@ const PostLifecycle = PostLifecycleUntyped as ComponentType< {
 	blockedSites: number[];
 	index: number;
 	handleClick: ( args?: PostClickArgs ) => void;
+	isSelected?: boolean;
 } >;
 const PostPlaceholder = PostPlaceholderUntyped as ComponentType;
 
@@ -56,24 +60,37 @@ export function ReaderStreamV2( {
 }: ReaderStreamV2Props ) {
 	const translate = useTranslate();
 	const blockedSites = useSelector( getBlockedSites );
+	const rawLocale = useSelector( getCurrentLocaleSlug );
+	const localeSlug = rawLocale && ! isDefaultLocale( rawLocale ) ? rawLocale : null;
 	const { items, isLoading, error, refetch, hasNextPage, isFetchingNextPage, fetchNextPage } =
 		useInfiniteStream( {
 			streamKey,
+			localeSlug,
 		} );
+
+	const { selectedPostKey, selectPostKey } = useStreamPostKeySelection( {
+		streamKey,
+		localeSlug,
+		items,
+	} );
 
 	// Open the full-post view on click, mirroring the classic stream. `showSelectedPost`
 	// returns a thunk that navigates via the router (no Redux dispatch needed), so we
 	// invoke it directly with the clicked item's post key.
-	const openPost = useCallback( ( postKey: StreamItem, comments?: boolean ) => {
-		showSelectedPost( {
-			postKey: {
-				blogId: postKey.blogId ? Number( postKey.blogId ) : undefined,
-				feedId: postKey.feedId ? Number( postKey.feedId ) : undefined,
-				postId: Number( postKey.postId ),
-			},
-			comments,
-		} )();
-	}, [] );
+	const openPost = useCallback(
+		( postKey: StreamItem, comments?: boolean ) => {
+			selectPostKey( postKey );
+			showSelectedPost( {
+				postKey: {
+					blogId: postKey.blogId ? Number( postKey.blogId ) : undefined,
+					feedId: postKey.feedId ? Number( postKey.feedId ) : undefined,
+					postId: Number( postKey.postId ),
+				},
+				comments,
+			} )();
+		},
+		[ selectPostKey ]
+	);
 
 	// While a next page loads, append PER_FETCH skeleton rows at the tail (v1 showed
 	// these via InfiniteList's renderLoadingPlaceholders). Indices past the real
@@ -153,6 +170,10 @@ export function ReaderStreamV2( {
 							index={ virtualItem.index }
 							handleClick={ ( args?: PostClickArgs ) =>
 								openPost( items[ virtualItem.index ], args?.comments )
+							}
+							isSelected={
+								selectedPostKey != null &&
+								keysAreEqual( items[ virtualItem.index ], selectedPostKey )
 							}
 						/>
 					) : (

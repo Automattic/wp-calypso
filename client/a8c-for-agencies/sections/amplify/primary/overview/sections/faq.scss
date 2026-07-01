@@ -1,0 +1,9 @@
+// PageSectionColumns styles every .components-button inside its content for hero
+// CTAs (`width: fit-content` at large, centered). The FAQ accordion toggles are
+// also .components-button and get caught. The toggle is a flex container (base
+// .components-button is inline-flex, justify-content: center), so restore full
+// width and left-align the title with `justify-content: flex-start`.
+.amplify-faq .components-panel__body-toggle.components-button {
+	inline-size: 100%;
+	justify-content: flex-start;
+}
