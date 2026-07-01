@@ -1,5 +1,5 @@
 import { isAutomatticianQuery, rawUserPreferencesQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { styles } from '@wordpress/icons';
@@ -43,9 +43,9 @@ function PreferencesAppearanceSummary( {
 
 export default function PreferencesAppearance( { density }: { density?: Density } ) {
 	const config = useAppContext();
-	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
-	const { data: preferences } = useQuery( rawUserPreferencesQuery() );
-	const hasUsedColorScheme = preferences?.[ 'hosting-dashboard-color-scheme' ] !== undefined;
+	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
+	const { data: preferences } = useSuspenseQuery( rawUserPreferencesQuery() );
+	const hasUsedColorScheme = preferences[ 'hosting-dashboard-color-scheme' ] !== undefined;
 
 	if ( ! config.supports.darkMode || ! config.supports.colorScheme || isDashboardBackport() ) {
 		return null;
@@ -57,7 +57,5 @@ export default function PreferencesAppearance( { density }: { density?: Density 
 		return null;
 	}
 
-	return (
-		<PreferencesAppearanceSummary density={ density } isAutomattician={ !! isAutomattician } />
-	);
+	return <PreferencesAppearanceSummary density={ density } isAutomattician={ isAutomattician } />;
 }
