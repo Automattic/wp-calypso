@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { Badge } from '@automattic/components';
 import {
 	category,
 	currencyDollar,
