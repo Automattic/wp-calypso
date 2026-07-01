@@ -1,6 +1,8 @@
 import { ReaderStreamV2 } from 'calypso/reader/stream/stream-v2';
 import type { SpaceFeedLayoutProps } from '../types';
 
+import './style.scss';
+
 /**
  * Legacy layout: the classic vertical reading experience — a single column of
  * post cards — now on the `useInfiniteList` engine via {@link ReaderStreamV2},

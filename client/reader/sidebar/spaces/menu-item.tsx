@@ -1,5 +1,6 @@
 import { Icon, rss } from '@wordpress/icons';
 import { MenuItem, MenuItemLink } from 'calypso/reader/sidebar/menu';
+import { resolveSpaceIconColor } from 'calypso/reader/spaces/colors';
 import { SPACE_ICONS } from 'calypso/reader/spaces/icons';
 import { getSpacePath } from 'calypso/reader/spaces/routes';
 import type { ReadSpace } from '@automattic/api-core';
@@ -20,7 +21,9 @@ export function SpaceMenuItem( { space, isSelected, onClick, onPrefetch }: Props
 	return (
 		<MenuItem
 			selected={ isSelected }
-			className={ `sidebar-spaces__item sidebar-spaces__item--${ space.layout.color }` }
+			className={ `sidebar-spaces__item sidebar-spaces__item--${ resolveSpaceIconColor(
+				space.layout
+			) }` }
 		>
 			<MenuItemLink
 				className="sidebar__menu-link sidebar-spaces__link"

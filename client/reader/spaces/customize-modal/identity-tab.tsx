@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { SpaceColorPicker } from 'calypso/reader/spaces/color-picker';
 import { SpaceIconPicker } from 'calypso/reader/spaces/icon-picker';
-import type { SpaceColor, SpaceIcon } from '@automattic/api-core';
+import type { SpaceColor, SpaceIcon, SpaceTextColor } from '@automattic/api-core';
 
 interface Props {
 	name: string;
@@ -11,8 +11,10 @@ interface Props {
 	nameError: string | null;
 	tags: string[];
 	onTagsChange: ( tags: string[] ) => void;
-	color: SpaceColor;
-	onColorChange: ( color: SpaceColor ) => void;
+	color: SpaceTextColor;
+	onColorChange: ( color: SpaceTextColor ) => void;
+	iconColor: SpaceColor;
+	onIconColorChange: ( color: SpaceColor ) => void;
 	icon: SpaceIcon;
 	onIconChange: ( icon: SpaceIcon ) => void;
 }
@@ -25,6 +27,8 @@ export function IdentityTab( {
 	onTagsChange,
 	color,
 	onColorChange,
+	iconColor,
+	onIconColorChange,
 	icon,
 	onIconChange,
 }: Props ) {
@@ -65,13 +69,34 @@ export function IdentityTab( {
 			</VStack>
 
 			<VStack spacing={ 2 }>
-				<span className="customize-space-modal__field-label">{ translate( 'Accent color' ) }</span>
-				<SpaceColorPicker value={ color } onChange={ onColorChange } />
+				<span className="customize-space-modal__field-label">{ translate( 'Icon' ) }</span>
+				<SpaceIconPicker value={ icon } onChange={ onIconChange } />
 			</VStack>
 
 			<VStack spacing={ 2 }>
-				<span className="customize-space-modal__field-label">{ translate( 'Icon' ) }</span>
-				<SpaceIconPicker value={ icon } onChange={ onIconChange } />
+				<span className="customize-space-modal__field-label">{ translate( 'Icon color' ) }</span>
+				<SpaceColorPicker
+					value={ iconColor }
+					onChange={ ( value ) => value !== 'none' && onIconColorChange( value ) }
+					name="space-icon-color"
+					label={ translate( 'Icon color' ) }
+				/>
+			</VStack>
+
+			<VStack spacing={ 2 }>
+				<span className="customize-space-modal__field-label">{ translate( 'Accent color' ) }</span>
+				<p className="customize-space-modal__field-help">
+					{ translate(
+						'Changes the color of post titles and actions in this space. Choose None to keep the feed neutral.'
+					) }
+				</p>
+				<SpaceColorPicker
+					value={ color }
+					onChange={ onColorChange }
+					allowNone
+					name="space-accent-color"
+					label={ translate( 'Accent color' ) }
+				/>
 			</VStack>
 		</VStack>
 	);
