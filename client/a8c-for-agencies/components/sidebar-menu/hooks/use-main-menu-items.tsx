@@ -244,12 +244,8 @@ const useMainMenuItems = ( path: string ) => {
 							icon: megaphone,
 							path: A4A_AMPLIFY_LINK,
 							link: A4A_AMPLIFY_LINK,
-							title: (
-								<div className="sidebar-menu-item__title-with-badge">
-									<span>{ translate( 'Amplify' ) }</span>
-									<Badge type="info">{ translate( 'Alpha' ) }</Badge>
-								</div>
-							),
+							title: translate( 'Amplify' ),
+							badge: translate( 'Alpha' ),
 							trackEventProps: {
 								menu_item: 'Automattic for Agencies / Amplify',
 							},
