@@ -795,7 +795,11 @@ describe( 'getEmptyViewSuggestions', () => {
 		);
 
 		expect( seo?.label ).toBe( 'SEO Enhancer' );
-		expect( seo?.options?.map( ( option ) => option.label ) ).toEqual( [ 'Title', 'Description' ] );
+		expect( seo?.options?.map( ( option ) => option.label ) ).toEqual( [
+			'Title',
+			'Description',
+			'Image Alt Text',
+		] );
 	} );
 
 	it( 'submits the exact ability prompt as each dropdown option value', () => {
@@ -819,6 +823,11 @@ describe( 'getEmptyViewSuggestions', () => {
 				id: 'seo-description',
 				label: 'Description',
 				value: 'Generate an SEO meta description for this post',
+			},
+			{
+				id: 'image-alt-text',
+				label: 'Image Alt Text',
+				value: 'Generate descriptive alt text for the images in this post',
 			},
 		] );
 	} );

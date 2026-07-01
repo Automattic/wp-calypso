@@ -94,12 +94,15 @@ const OPTIMIZE_TITLE_SUGGESTION = {
 };
 
 /**
- * Post-level SEO Enhancer suggestion. Targets the SEO meta fields (the HTML
- * <title> and meta description), distinct from OPTIMIZE_TITLE_SUGGESTION which
- * rewrites the visible post title. Rendered as a dropdown (via the `options`
- * field): picking Title or Description submits that option's `value`, which
- * routes through the orchestrator to the jetpack-ai/seo-title or
- * jetpack-ai/seo-description ability and returns the matching picker.
+ * Post-level SEO Enhancer suggestion. Targets the post's SEO surfaces (the HTML
+ * <title>, meta description, and image alt text), distinct from
+ * OPTIMIZE_TITLE_SUGGESTION which rewrites the visible post title. Rendered as a
+ * dropdown (via the `options` field): picking Title, Description or Image Alt
+ * Text submits that option's `value`, which routes through the orchestrator to
+ * the jetpack-ai/seo-title, jetpack-ai/seo-description or jetpack-ai/image-alt-text
+ * ability and returns the matching picker. Alt text is post-level here (every
+ * image in the post); the block-level `generate-alt-text` suggestion still
+ * targets a single selected image.
  *
  * `prompt` is intentionally empty: the dropdown combines `prompt` with the
  * selected option's `value`, so an empty prompt makes the submitted text equal
@@ -120,6 +123,11 @@ const SEO_ENHANCER_SUGGESTION = {
 			id: 'seo-description',
 			label: _x( 'Description', 'SEO Enhancer dropdown option', 'jetpack' ),
 			value: __( 'Generate an SEO meta description for this post', 'jetpack' ),
+		},
+		{
+			id: 'image-alt-text',
+			label: _x( 'Image Alt Text', 'SEO Enhancer dropdown option', 'jetpack' ),
+			value: __( 'Generate descriptive alt text for the images in this post', 'jetpack' ),
 		},
 	],
 };
