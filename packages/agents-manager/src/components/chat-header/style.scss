@@ -49,8 +49,15 @@
 		// from @wordpress/components, which makes SVGs invisible in dark mode.
 		// Descendant selector handles DropdownMenu (class on wrapper div),
 		// compound selector handles Button (class directly on element).
+		//
+		// Exclude the DropdownMenu popover items: with `inline: true` the popover
+		// renders inside the docked (dark) panel, so its menu-item buttons become
+		// descendants here and inherit --color-foreground (#FFF in dark mode). But
+		// the popover surface stays WP-default white, so forcing the fill paints the
+		// icons white-on-white and they vanish (WOOAI-698). Menu-item icons keep the
+		// default currentColor and track their own (dark) label instead.
 		&.components-button,
-		.components-button {
+		.components-button:not( .components-dropdown-menu__menu-item ) {
 			svg {
 				fill: var( --color-foreground );
 			}
