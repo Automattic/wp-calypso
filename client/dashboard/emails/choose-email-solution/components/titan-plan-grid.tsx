@@ -97,6 +97,7 @@ export function TitanPlanGrid( {
 	hasProFreeTrial,
 	proTrialMonths,
 	currentTier,
+	onUpgrade,
 }: {
 	domain?: Domain;
 	domainName: string;
@@ -108,6 +109,8 @@ export function TitanPlanGrid( {
 	// upgrade mode: lower tiers are hidden, the current tier is labeled, and higher
 	// tiers offer an upgrade.
 	currentTier?: TitanPlanTier;
+	// Called when a higher tier is selected in upgrade mode (currentTier set).
+	onUpgrade?: ( tier: TitanPlanTier ) => void;
 } ) {
 	const navigate = useNavigate();
 
@@ -254,7 +257,13 @@ export function TitanPlanGrid( {
 							className="email-provider-action"
 							variant={ plan.isPopular ? 'primary' : 'secondary' }
 							disabled={ ! available || isCurrentPlan }
-							onClick={ () =>
+							onClick={ () => {
+								// Upgrade mode goes to checkout for the picked tier; otherwise the
+								// grid is buying a new plan, so collect mailboxes first.
+								if ( currentTier ) {
+									onUpgrade?.( plan.tier );
+									return;
+								}
 								navigate( {
 									to: addMailboxRoute.to,
 									params: {
@@ -263,8 +272,8 @@ export function TitanPlanGrid( {
 										interval,
 									},
 									search: { tier: plan.tier },
-								} )
-							}
+								} );
+							} }
 						>
 							{ actionLabel }
 						</Button>

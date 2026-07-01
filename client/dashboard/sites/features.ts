@@ -85,6 +85,21 @@ export function canTransferSite( site: Site, user: User ) {
 	return ! site.is_wpcom_staging_site && isSiteOwner && ! isSelfHostedJetpackConnected( site );
 }
 
+// Mirrors the eligibility checks the Copy Site stepper flow enforces in
+// `useSiteCopy` (client/landing/stepper/hooks/use-site-copy.tsx). Keep these in
+// sync: if the menu shows "Duplicate" but any of these are false, the flow
+// silently redirects back to the sites list with no error (DOTDEV-421).
+export function canDuplicateSite( site: Site, user: User ) {
+	const isSiteOwner = site.site_owner === user.ID;
+
+	return (
+		hasPlanFeature( site, DotcomFeatures.COPY_SITE ) &&
+		isSiteOwner &&
+		!! site.plan &&
+		site.is_wpcom_atomic
+	);
+}
+
 export function canLeaveSite( site: Site ) {
 	return (
 		! site.is_wpcom_staging_site &&
