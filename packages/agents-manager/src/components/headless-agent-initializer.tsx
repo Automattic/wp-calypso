@@ -57,6 +57,7 @@ export default function HeadlessAgentInitializer( {
 				contextProvider: providers.contextProvider,
 				providerIds: providers.providerIds,
 				environment: 'wp-admin',
+				onTaskUpdate: providers.onTaskUpdate,
 			} );
 
 			setAgentConfig( config );
