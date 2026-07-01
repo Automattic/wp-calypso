@@ -4,21 +4,10 @@
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import nock from 'nock';
 import { useState } from 'react';
 import Notice from '../../components/notice';
 import { render } from '../../test-utils';
 import { SitesNoticeArbiter } from '../notice-arbiter';
-
-function mockPreferences() {
-	nock( 'https://public-api.wordpress.com' )
-		.get( '/rest/v1.1/me/preferences' )
-		.reply( 200, { calypso_preferences: {} } );
-}
-
-beforeEach( () => {
-	mockPreferences();
-} );
 
 describe( '<SitesNoticeArbiter>', () => {
 	test( 'renders only the first page candidate when several are eligible', async () => {

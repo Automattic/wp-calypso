@@ -1,8 +1,4 @@
-import { useRouterState } from '@tanstack/react-router';
 import { Children, useState } from 'react';
-import OptInSurvey, { useShouldShowOptInSurvey } from '../components/opt-in-survey';
-import { OptInWelcome, useShouldShowOptInWelcome } from '../components/opt-in-welcome';
-import { isDashboardBackport } from '../utils/is-dashboard-backport';
 import type { ReactNode } from 'react';
 
 /**
@@ -11,33 +7,7 @@ import type { ReactNode } from 'react';
  * the welcome notice) empties the slot instead of promoting the next notice.
  */
 function useSharedCandidate(): ReactNode {
-	// The deepest matched route id, e.g. '/sites/$siteSlug/logs/php'.
-	const tracksContext = useRouterState( {
-		select: ( state ) => String( state.matches.at( -1 )?.routeId ?? '' ),
-	} );
-	const shouldShowOptInWelcome = useShouldShowOptInWelcome();
-	const shouldShowOptInSurvey = useShouldShowOptInSurvey();
-
-	// State is used here solely to latch the pick on mount. The pick itself is derived.
-	const [ pick ] = useState( () => {
-		if ( isDashboardBackport() ) {
-			return null;
-		}
-		if ( shouldShowOptInWelcome ) {
-			return 'welcome';
-		}
-		if ( shouldShowOptInSurvey ) {
-			return 'survey';
-		}
-		return null;
-	} );
-
-	if ( pick === 'welcome' ) {
-		return <OptInWelcome tracksContext={ tracksContext } />;
-	}
-	if ( pick === 'survey' ) {
-		return <OptInSurvey tracksContext={ tracksContext } />;
-	}
+	// If there were shared notices across all site pages, this is where they'd go.
 	return null;
 }
 
