@@ -24,9 +24,9 @@ function LegacyContactDetails( { legacyContactId }: { legacyContactId: number } 
 	};
 
 	return (
-		<VStack spacing={ 6 }>
+		<VStack spacing={ 8 }>
 			<SectionHeader title={ __( 'Your legacy contact' ) } level={ 3 } />
-			<Text as="p" size={ 15 }>
+			<Text as="p" size={ 15 } lineHeight={ 1.5 }>
 				{ __(
 					'Keep this information somewhere safe. After your death, your legacy contact can give this key to WordPress.com to request access to your account.'
 				) }
@@ -51,10 +51,10 @@ function LegacyContactDetails( { legacyContactId }: { legacyContactId: number } 
 			</dl>
 
 			<VStack spacing={ 1 } alignment="flex-start">
-				<Text as="h4" upperCase variant="muted" size={ 11 }>
+				<Text as="h4" size={ 15 } weight={ 600 } className="legacy-contact-print__heading">
 					{ __( 'How to claim access' ) }
 				</Text>
-				<Text as="p" size={ 15 }>
+				<Text as="p" size={ 15 } lineHeight={ 1.5 }>
 					{ createInterpolateElement(
 						__(
 							'To request access, your legacy contact should visit <link>wordpress.com/digital-legacy</link> and follow the instructions there. They’ll need the access key above.'
