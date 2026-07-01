@@ -1,8 +1,8 @@
 diff --git a/build/react-platform.cjs b/build/react-platform.cjs
-index e89836d76d547ee68fd5592a8f070ffaea8ee610..1bdb8672700d31f77d7ef16675db1ae2a95c93ff 100644
+index e89836d76d547ee68fd5592a8f070ffaea8ee610..a96a4c6cf35b6d749e4369576b1bf818a98e6fca 100644
 --- a/build/react-platform.cjs
 +++ b/build/react-platform.cjs
-@@ -22,25 +22,45 @@ var react_platform_exports = {};
+@@ -22,25 +22,150 @@ var react_platform_exports = {};
  __export(react_platform_exports, {
    createPortal: () => import_react_dom.createPortal,
    createRoot: () => import_client.createRoot,
@@ -33,41 +33,146 @@ index e89836d76d547ee68fd5592a8f070ffaea8ee610..1bdb8672700d31f77d7ef16675db1ae2
 -});
 +
 +// React 19 removed `findDOMNode` and moved `render`/`hydrate`/
-+// `unmountComponentAtNode` out of `react-dom`. Provide React-19-safe
-+// implementations so the re-export surface stays intact.
-+var rootsByContainer = new WeakMap();
-+function findDOMNode() {
-+  throw new Error("findDOMNode was removed in React 19 and is no longer supported.");
++// `unmountComponentAtNode` off of `react-dom`. `@wordpress/element` still
++// re-exports those names, so we emulate them here to keep the export surface
++// intact for downstream consumers. Ported from Gutenberg's
++// `tools/react-19/react-polyfill.js` so the behaviour matches upstream.
++var warned = /* @__PURE__ */ new Set();
++function warnCompat(key, message) {
++  if (warned.has(key)) {
++    return;
++  }
++  warned.add(key);
++  if (typeof console !== "undefined" && console.warn) {
++    console.warn(`[wordpress-react-19] ${message}`);
++  }
 +}
-+function render(element, container) {
-+  let root = rootsByContainer.get(container);
++
++var internalsKey = "_reactInternals";
++// HostComponent fiber tag, represents a DOM element like <div>.
++var HostComponent = 5;
++var HostText = 6;
++
++function findCurrentFiber(fiber) {
++  if (!fiber.alternate) {
++    return fiber;
++  }
++  let node = fiber;
++  while (node.return) {
++    node = node.return;
++  }
++  if (node.stateNode.current === node) {
++    return fiber;
++  }
++  return fiber.alternate;
++}
++
++function findHostFiberImpl(fiber) {
++  if (fiber.tag === HostComponent || fiber.tag === HostText) {
++    return fiber;
++  }
++  let child = fiber.child;
++  while (child) {
++    const hostFiber = findHostFiberImpl(child);
++    if (hostFiber) {
++      return hostFiber;
++    }
++    child = child.sibling;
++  }
++  return null;
++}
++
++function findHostFiber(fiber) {
++  const current = findCurrentFiber(fiber);
++  if (!current) {
++    return null;
++  }
++  return findHostFiberImpl(current);
++}
++
++function findDOMNode(instance) {
++  warnCompat(
++    "findDOMNode",
++    "`ReactDOM.findDOMNode` was removed in React 19 and is emulated by a compatibility polyfill. Use refs instead."
++  );
++  if (instance === null || instance === undefined) {
++    return null;
++  }
++  if (instance.nodeType !== undefined) {
++    return instance;
++  }
++  const fiber = instance[internalsKey];
++  if (fiber === undefined) {
++    if (typeof instance.render === "function") {
++      throw new Error("Unable to find node on an unmounted component.");
++    }
++    const keys = Object.keys(instance).join(",");
++    throw new Error(
++      `Argument appears to not be a ReactComponent. Keys: ${keys}`
++    );
++  }
++  const hostFiber = findHostFiber(fiber);
++  return hostFiber?.stateNode ?? null;
++}
++
++var roots = /* @__PURE__ */ new WeakMap();
++
++function render(element, container, callback) {
++  warnCompat(
++    "render",
++    "`ReactDOM.render` was removed in React 19 and is emulated by a compatibility polyfill. Use `createRoot` instead."
++  );
++  let root = roots.get(container);
 +  if (!root) {
 +    root = import_client.createRoot(container);
-+    rootsByContainer.set(container, root);
++    roots.set(container, root);
 +  }
-+  root.render(element);
-+  return null;
++  import_react_dom.flushSync(() => {
++    root.render(element);
++  });
++  if (typeof callback === "function") {
++    callback();
++  }
 +}
-+function hydrate(element, container) {
-+  const root = import_client.hydrateRoot(container, element);
-+  rootsByContainer.set(container, root);
-+  return null;
++
++function hydrate(element, container, callback) {
++  warnCompat(
++    "hydrate",
++    "`ReactDOM.hydrate` was removed in React 19 and is emulated by a compatibility polyfill. Use `hydrateRoot` instead."
++  );
++  let root = roots.get(container);
++  if (!root) {
++    root = import_client.hydrateRoot(container, element);
++    roots.set(container, root);
++  } else {
++    root.render(element);
++  }
++  if (typeof callback === "function") {
++    callback();
++  }
 +}
++
 +function unmountComponentAtNode(container) {
-+  const root = rootsByContainer.get(container);
-+  if (root) {
-+    root.unmount();
-+    rootsByContainer.delete(container);
-+    return true;
++  warnCompat(
++    "unmountComponentAtNode",
++    "`ReactDOM.unmountComponentAtNode` was removed in React 19 and is emulated by a compatibility polyfill. Use `root.unmount` instead."
++  );
++  const root = roots.get(container);
++  if (!root) {
++    return false;
 +  }
-+  return false;
++  import_react_dom.flushSync(() => {
++    root.unmount();
++  });
++  roots.delete(container);
++  return true;
 +}
  //# sourceMappingURL=react-platform.cjs.map
 diff --git a/build-module/react-platform.mjs b/build-module/react-platform.mjs
-index 8ed5aef770524fe83d1a0264e00f2d2f932d4f8b..6bd50432f637bff7290d216ea26a57f7ca3351e2 100644
+index 8ed5aef770524fe83d1a0264e00f2d2f932d4f8b..e624da558e969fdfa9b57ea3db5bbfec9c1e40e1 100644
 --- a/build-module/react-platform.mjs
 +++ b/build-module/react-platform.mjs
-@@ -1,13 +1,43 @@
+@@ -1,13 +1,143 @@
  // packages/element/src/react-platform.ts
 -import {
 -  createPortal,
@@ -81,46 +186,141 @@ index 8ed5aef770524fe83d1a0264e00f2d2f932d4f8b..6bd50432f637bff7290d216ea26a57f7
  import { createRoot, hydrateRoot } from "react-dom/client";
 +
 +// React 19 removed `findDOMNode` and moved `render`/`hydrate`/
-+// `unmountComponentAtNode` out of `react-dom`. `@wordpress/element` still
-+// re-exports those names, so provide React-19-safe implementations here to
-+// keep the export surface intact for downstream consumers.
-+const rootsByContainer = new WeakMap();
-+
-+function findDOMNode() {
-+  throw new Error( "findDOMNode was removed in React 19 and is no longer supported." );
++// `unmountComponentAtNode` off of `react-dom`. `@wordpress/element` still
++// re-exports those names, so we emulate them here to keep the export surface
++// intact for downstream consumers. Ported from Gutenberg's
++// `tools/react-19/react-polyfill.js` so the behaviour matches upstream.
++const warned = new Set();
++function warnCompat( key, message ) {
++  if ( warned.has( key ) ) {
++    return;
++  }
++  warned.add( key );
++  if ( typeof console !== "undefined" && console.warn ) {
++    console.warn( `[wordpress-react-19] ${ message }` );
++  }
 +}
 +
-+function render( element, container ) {
-+  let root = rootsByContainer.get( container );
++const internalsKey = "_reactInternals";
++// HostComponent fiber tag, represents a DOM element like <div>.
++const HostComponent = 5;
++const HostText = 6;
++
++function findCurrentFiber( fiber ) {
++  if ( ! fiber.alternate ) {
++    return fiber;
++  }
++  let node = fiber;
++  while ( node.return ) {
++    node = node.return;
++  }
++  if ( node.stateNode.current === node ) {
++    return fiber;
++  }
++  return fiber.alternate;
++}
++
++function findHostFiberImpl( fiber ) {
++  if ( fiber.tag === HostComponent || fiber.tag === HostText ) {
++    return fiber;
++  }
++  let child = fiber.child;
++  while ( child ) {
++    const hostFiber = findHostFiberImpl( child );
++    if ( hostFiber ) {
++      return hostFiber;
++    }
++    child = child.sibling;
++  }
++  return null;
++}
++
++function findHostFiber( fiber ) {
++  const current = findCurrentFiber( fiber );
++  if ( ! current ) {
++    return null;
++  }
++  return findHostFiberImpl( current );
++}
++
++function findDOMNode( instance ) {
++  warnCompat(
++    "findDOMNode",
++    "`ReactDOM.findDOMNode` was removed in React 19 and is emulated by a compatibility polyfill. Use refs instead."
++  );
++  if ( instance === null || instance === undefined ) {
++    return null;
++  }
++  if ( instance.nodeType !== undefined ) {
++    return instance;
++  }
++  const fiber = instance[ internalsKey ];
++  if ( fiber === undefined ) {
++    if ( typeof instance.render === "function" ) {
++      throw new Error( "Unable to find node on an unmounted component." );
++    }
++    const keys = Object.keys( instance ).join( "," );
++    throw new Error(
++      `Argument appears to not be a ReactComponent. Keys: ${ keys }`
++    );
++  }
++  const hostFiber = findHostFiber( fiber );
++  return hostFiber?.stateNode ?? null;
++}
++
++const roots = new WeakMap();
++
++function render( element, container, callback ) {
++  warnCompat(
++    "render",
++    "`ReactDOM.render` was removed in React 19 and is emulated by a compatibility polyfill. Use `createRoot` instead."
++  );
++  let root = roots.get( container );
 +  if ( ! root ) {
 +    root = createRoot( container );
-+    rootsByContainer.set( container, root );
++    roots.set( container, root );
 +  }
-+  root.render( element );
-+  return null;
++  flushSync( () => {
++    root.render( element );
++  } );
++  if ( typeof callback === "function" ) {
++    callback();
++  }
 +}
 +
-+function hydrate( element, container ) {
-+  const root = hydrateRoot( container, element );
-+  rootsByContainer.set( container, root );
-+  return null;
++function hydrate( element, container, callback ) {
++  warnCompat(
++    "hydrate",
++    "`ReactDOM.hydrate` was removed in React 19 and is emulated by a compatibility polyfill. Use `hydrateRoot` instead."
++  );
++  let root = roots.get( container );
++  if ( ! root ) {
++    root = hydrateRoot( container, element );
++    roots.set( container, root );
++  } else {
++    root.render( element );
++  }
++  if ( typeof callback === "function" ) {
++    callback();
++  }
 +}
 +
 +function unmountComponentAtNode( container ) {
-+  const root = rootsByContainer.get( container );
-+  if ( root ) {
-+    root.unmount();
-+    rootsByContainer.delete( container );
-+    return true;
++  warnCompat(
++    "unmountComponentAtNode",
++    "`ReactDOM.unmountComponentAtNode` was removed in React 19 and is emulated by a compatibility polyfill. Use `root.unmount` instead."
++  );
++  const root = roots.get( container );
++  if ( ! root ) {
++    return false;
 +  }
-+  return false;
++  flushSync( () => {
++    root.unmount();
++  } );
++  roots.delete( container );
++  return true;
 +}
 +
  export {
    createPortal,
    createRoot,
-@@ -18,4 +48,3 @@ export {
-   render,
-   unmountComponentAtNode
- };
--//# sourceMappingURL=react-platform.mjs.map
