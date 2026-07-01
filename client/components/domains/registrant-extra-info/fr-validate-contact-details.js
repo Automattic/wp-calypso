@@ -6,14 +6,20 @@ import validationSchema from './fr-schema';
 const validate = validatorFactory( validationSchema, { greedy: true } );
 const debug = debugFactory( 'calypso:components:domains:registrant-extra-info:validation' );
 
+// Whether a path segment is a non-negative integer index (so the container it
+// addresses should be an array rather than a plain object).
+const isArrayIndex = ( key ) => /^(?:0|[1-9]\d*)$/.test( key );
+
 // Applies `updater` to the value at `path` (an array of keys) in `object`,
-// creating intermediate objects as needed, and returns the mutated `object`.
+// creating each missing intermediate container as needed — an array when the
+// next segment is a numeric index, otherwise a plain object — and returns the
+// mutated `object`.
 function updateAtPath( object, path, updater ) {
 	let node = object;
 	for ( let i = 0; i < path.length - 1; i++ ) {
 		const key = path[ i ];
 		if ( node[ key ] == null || typeof node[ key ] !== 'object' ) {
-			node[ key ] = {};
+			node[ key ] = isArrayIndex( path[ i + 1 ] ) ? [] : {};
 		}
 		node = node[ key ];
 	}

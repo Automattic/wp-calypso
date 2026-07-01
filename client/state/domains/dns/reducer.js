@@ -21,15 +21,18 @@ function isWpcomRecord( record ) {
 }
 
 function isRootARecord( domain ) {
-	return ( record ) => record?.type === 'A' && record?.name === `${ domain }.`;
+	const name = `${ domain }.`;
+	return ( record ) => record?.type === 'A' && record?.name === name;
 }
 
 function isRootAaaaRecord( domain ) {
-	return ( record ) => record?.type === 'AAAA' && record?.name === `${ domain }.`;
+	const name = `${ domain }.`;
+	return ( record ) => record?.type === 'AAAA' && record?.name === name;
 }
 
 function isNsRecord( domain ) {
-	return ( record ) => record?.type === 'NS' && record?.name === `${ domain }.`;
+	const name = `${ domain }.`;
+	return ( record ) => record?.type === 'NS' && record?.name === name;
 }
 
 function removeDuplicateWpcomRecords( domain, records ) {
