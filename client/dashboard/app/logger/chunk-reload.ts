@@ -13,10 +13,6 @@ const RETRY_PARAM = 'retry';
  * typically because a deploy replaced the chunk the running app is asking for.
  */
 export function isChunkLoadError( error: Error ): boolean {
-	if ( ! error ) {
-		return false;
-	}
-
 	// Webpack tags these failures with structured properties, which are more
 	// stable than matching the error message: `name` is set on JS, ESM, and
 	// native CSS chunk failures, while mini-css-extract uses `code` instead.
