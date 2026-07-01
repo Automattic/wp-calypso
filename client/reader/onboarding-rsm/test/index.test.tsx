@@ -806,9 +806,7 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 			useFollowedTags: jest.Mock;
 		};
 
-		// Counts above both thresholds; rely on forceShow to surface the welcome step so we can
-		// assert that completion is not auto-saved just because the counts
-		// happen to be above the thresholds.
+		// Rely on forceShow to surface the welcome step so we can assert that completion is not auto-saved
 		useNonSelfSubscriptionsCount.mockImplementation( () => ( {
 			isLoading: false,
 			nonSelfSubscriptionsCount: 0,
