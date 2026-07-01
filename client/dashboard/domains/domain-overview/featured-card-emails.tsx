@@ -63,6 +63,7 @@ export default function FeaturedCardEmails( { domain }: Props ) {
 
 	return (
 		<OverviewCard
+			disabled={ ! domain.current_user_is_owner }
 			title={ mailboxes.length > 0 ? __( 'Emails' ) : __( 'Add mailbox' ) }
 			heading={
 				<Truncate tooltip={ email } numberOfLines={ 1 }>

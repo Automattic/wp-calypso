@@ -11,6 +11,7 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
+import { useAuth } from '../../app/auth';
 import { commerceGardenPlan } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
 import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
@@ -55,10 +56,12 @@ function JetpackPlanCard( {
 	site,
 	purchase,
 	isLoading,
+	disabled,
 }: {
 	site: Site;
 	purchase?: Purchase;
 	isLoading: boolean;
+	disabled?: boolean;
 } ) {
 	const products = getJetpackProductsForSite( site );
 	const productsToDisplay = products.length > 0 ? products : JETPACK_PRODUCTS;
@@ -68,10 +71,11 @@ function JetpackPlanCard( {
 			title={ __( 'Subscriptions' ) }
 			icon={ <JetpackLogo /> }
 			heading={ getSitePlanDisplayName( site ) }
-			description={ getCardDescription( site, purchase ) }
+			description={ getCardDescription( site, purchase, disabled ) }
 			link={ getSitePlanUrl( site ) }
 			tracksId="site-overview-plan"
 			isLoading={ isLoading }
+			disabled={ disabled }
 			bottom={
 				<VStack spacing={ 3 }>
 					<Grid
@@ -101,20 +105,23 @@ function WpcomPlanCard( {
 	site,
 	purchase,
 	isLoading,
+	disabled,
 }: {
 	site: Site;
 	purchase?: Purchase;
 	isLoading: boolean;
+	disabled?: boolean;
 } ) {
 	return (
 		<OverviewCard
 			title={ __( 'Plan' ) }
 			icon={ wordpress }
 			heading={ getSitePlanDisplayName( site ) }
-			description={ getCardDescription( site, purchase ) }
+			description={ getCardDescription( site, purchase, disabled ) }
 			link={ getSitePlanUrl( site, purchase ) }
 			tracksId="site-overview-plan"
 			isLoading={ isLoading }
+			disabled={ disabled }
 			bottom={ <SitePlanStats site={ site } /> }
 		/>
 	);
@@ -144,7 +151,15 @@ function WpcomStagingSitePlanCard( { site }: { site: Site } ) {
 	);
 }
 
-function AgencyPlanCard( { site, isLoading }: { site: Site; isLoading: boolean } ) {
+function AgencyPlanCard( {
+	site,
+	isLoading,
+	disabled,
+}: {
+	site: Site;
+	isLoading: boolean;
+	disabled?: boolean;
+} ) {
 	return (
 		<OverviewCard
 			title={ __( 'Development license' ) }
@@ -154,6 +169,7 @@ function AgencyPlanCard( { site, isLoading }: { site: Site; isLoading: boolean }
 			link={ getSitePlanUrl( site ) }
 			tracksId="site-overview-plan"
 			isLoading={ isLoading }
+			disabled={ disabled }
 			bottom={ <SitePlanStats site={ site } /> }
 		/>
 	);
@@ -163,25 +179,29 @@ function CommerceGardenPlanCard( {
 	site,
 	purchase,
 	isLoading,
+	disabled,
 }: {
 	site: Site;
 	purchase?: Purchase;
 	isLoading: boolean;
+	disabled?: boolean;
 } ) {
 	return (
 		<OverviewCard
 			title={ __( 'Plan' ) }
 			icon={ commerceGardenPlan }
 			heading={ getSitePlanDisplayName( site ) }
-			description={ getCardDescription( site, purchase ) }
+			description={ getCardDescription( site, purchase, disabled ) }
 			link={ getSitePlanUrl( site, purchase ) }
 			tracksId="plan"
 			isLoading={ isLoading }
+			disabled={ disabled }
 		/>
 	);
 }
 
 export default function PlanCard( { site }: { site: Site } ) {
+	const { user } = useAuth();
 	const { data: plan, isLoading: isLoadingPlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
 	const { data: purchase, isLoading: isLoadingPurchase } = useQuery( {
 		...purchaseQuery( plan?.id ?? 0 ),
@@ -189,27 +209,53 @@ export default function PlanCard( { site }: { site: Site } ) {
 	} );
 
 	const isLoading = isLoadingPlan || isLoadingPurchase;
+	const disabled = site.site_owner !== user.ID && !! site.plan?.is_free;
 
 	if ( site.is_a4a_dev_site ) {
-		return <AgencyPlanCard site={ site } isLoading={ isLoading } />;
+		return <AgencyPlanCard site={ site } isLoading={ isLoading } disabled={ disabled } />;
 	}
 
 	if ( isCommerceGarden( site ) ) {
-		return <CommerceGardenPlanCard site={ site } purchase={ purchase } isLoading={ isLoading } />;
+		return (
+			<CommerceGardenPlanCard
+				site={ site }
+				purchase={ purchase }
+				isLoading={ isLoading }
+				disabled={ disabled }
+			/>
+		);
 	}
 
 	if ( isSelfHostedJetpackConnected( site ) ) {
-		return <JetpackPlanCard site={ site } purchase={ purchase } isLoading={ isLoading } />;
+		return (
+			<JetpackPlanCard
+				site={ site }
+				purchase={ purchase }
+				isLoading={ isLoading }
+				disabled={ disabled }
+			/>
+		);
 	}
 
 	if ( site.is_wpcom_staging_site ) {
 		return <WpcomStagingSitePlanCard site={ site } />;
 	}
 
-	return <WpcomPlanCard site={ site } purchase={ purchase } isLoading={ isLoading } />;
+	return (
+		<WpcomPlanCard
+			site={ site }
+			purchase={ purchase }
+			isLoading={ isLoading }
+			disabled={ disabled }
+		/>
+	);
 }
 
-function getCardDescription( site: Site, purchase?: Purchase ) {
+function getCardDescription( site: Site, purchase?: Purchase, disabled?: boolean ) {
+	if ( disabled ) {
+		return __( 'Only the site owner can upgrade this plan.' );
+	}
+
 	switch ( site.plan?.product_slug ) {
 		case DotcomPlans.FREE_PLAN:
 			return __( 'Upgrade to access all hosting features.' );

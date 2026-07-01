@@ -127,13 +127,13 @@ export default function OverviewCard( {
 							{ title }
 						</Text>
 					</HStack>
-					{ ( relativeLink || onboardingLink ) && ! progress && (
+					{ ( relativeLink || onboardingLink ) && ! progress && ! disabled && (
 						<Icon
 							className="dashboard-overview-card__link-icon"
 							icon={ isRTL() ? chevronLeft : chevronRight }
 						/>
 					) }
-					{ externalLink && ! progress && (
+					{ externalLink && ! progress && ! disabled && (
 						<span
 							className="dashboard-overview-card__link-icon components-external-link__icon"
 							aria-label={
@@ -203,6 +203,10 @@ export default function OverviewCard( {
 	};
 
 	const renderContent = () => {
+		if ( disabled ) {
+			return topContent;
+		}
+
 		if ( relativeLink ) {
 			return (
 				<Link to={ relativeLink } className="dashboard-overview-card__link" onClick={ handleClick }>
