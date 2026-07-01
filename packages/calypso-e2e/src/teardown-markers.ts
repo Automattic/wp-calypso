@@ -6,10 +6,9 @@ import type { AccountClosureResponse, AccountDetails } from './types';
 const MAX_ERROR_LENGTH = 300;
 
 // An account with an active Atomic site cannot be closed. Cancelling the plan
-// (done by the spec) is expected to deprovision the site asynchronously, so the
-// close keeps returning `atomic-site` until that completes. Retry over this
-// window before treating the failure as a leak. Window/interval are provisional
-// pending the `[atomic-teardown]` timing measured in CI.
+// (done by the spec) deprovisions the site asynchronously, so the close keeps
+// returning `atomic-site` until that completes (~80s in CI). Retry over this
+// window before treating the failure as a leak; the margin absorbs variance.
 const ATOMIC_DEPROVISION_TIMEOUT_MS = 180 * 1000;
 const ATOMIC_DEPROVISION_POLL_MS = 15 * 1000;
 
@@ -187,8 +186,8 @@ export async function closeAccountAndRecordLeak(
 ): Promise< void > {
 	console.log( `Closing account ${ accountDetails.userID }.` );
 
-	// TEMPORARY timing probes (prefix `[atomic-teardown]`) to calibrate the Atomic
-	// deprovision wait from a CI run; remove once the window is tuned.
+	// Track the wait so the terminal `[atomic-teardown]` breadcrumb reports how
+	// long the Atomic deprovision took, surfacing drift if that timing changes.
 	const startedAt = Date.now();
 	const deadline = startedAt + ATOMIC_DEPROVISION_TIMEOUT_MS;
 	let closeError: unknown;
@@ -229,13 +228,6 @@ export async function closeAccountAndRecordLeak(
 			break;
 		}
 		sawAtomicSite = true;
-		console.log(
-			`[atomic-teardown] user ${
-				accountDetails.userID
-			} still has an active Atomic site at attempt ${ attempts } (${
-				Date.now() - startedAt
-			}ms elapsed); retrying in ${ ATOMIC_DEPROVISION_POLL_MS / 1000 }s.`
-		);
 		await new Promise( ( resolve ) => setTimeout( resolve, ATOMIC_DEPROVISION_POLL_MS ) );
 	}
 
