@@ -1,6 +1,7 @@
 import { makeSuccessResponse, makeErrorResponse } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
-import { recordTransactionBeginAnalytics } from '../lib/analytics';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { logStashEvent, recordTransactionBeginAnalytics } from './analytics';
 import getDomainDetails from './get-domain-details';
 import getPostalCode from './get-postal-code';
 import { addUrlToPendingPageRedirect } from './pending-page';
@@ -48,7 +49,7 @@ export default async function stripeWalletProcessor(
 
 	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'stripe-wallet' } ) );
 
-	const { elements } = submitData;
+	const { elements, expressPaymentType } = submitData;
 
 	// Build the pending-page URL used as return_url for stripe.confirmPayment and
 	// as the success landing URL after an inline confirm.
@@ -103,7 +104,19 @@ export default async function stripeWalletProcessor(
 		orderId = ( response as { order_id?: number | '' } ).order_id ?? '';
 	} catch ( error ) {
 		debug( 'transaction submission failed', error );
-		return makeErrorResponse( ( error as Error ).message );
+		const errorMessage = ( error as Error ).message;
+		reduxDispatch(
+			recordTracksEvent( 'calypso_checkout_stripe_wallet_transaction_failed', {
+				express_payment_type: expressPaymentType,
+				error: errorMessage,
+			} )
+		);
+		logStashEvent( 'calypso_checkout_stripe_wallet_transaction_failed', {
+			express_payment_type: expressPaymentType,
+			tags: [ `express_payment_type:${ expressPaymentType }` ],
+			error: errorMessage,
+		} );
+		return makeErrorResponse( errorMessage );
 	}
 
 	// Confirm the PaymentIntent client-side. redirect:'if_required' means Stripe.js
@@ -119,7 +132,19 @@ export default async function stripeWalletProcessor(
 
 	if ( confirmError ) {
 		debug( 'stripe.confirmPayment failed', confirmError );
-		return makeErrorResponse( confirmError.message ?? 'Payment confirmation failed' );
+		const errorMessage = confirmError.message ?? 'Payment confirmation failed';
+		reduxDispatch(
+			recordTracksEvent( 'calypso_checkout_stripe_wallet_transaction_failed', {
+				express_payment_type: expressPaymentType,
+				error: errorMessage,
+			} )
+		);
+		logStashEvent( 'calypso_checkout_stripe_wallet_transaction_failed', {
+			express_payment_type: expressPaymentType,
+			tags: [ `express_payment_type:${ expressPaymentType }` ],
+			error: errorMessage,
+		} );
+		return makeErrorResponse( errorMessage );
 	}
 
 	// Inline confirm succeeded — return success so composite-checkout routes to the
