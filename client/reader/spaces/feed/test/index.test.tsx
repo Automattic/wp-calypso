@@ -16,12 +16,16 @@ import type {
 	SpaceFeedLayout,
 } from '@automattic/api-core';
 
+let mockCurrentLocaleSlug: string | null = null;
+
 jest.mock( 'calypso/reader/data/stream', () => ( {
 	useInfiniteStream: jest.fn(),
-	// The shell derives the shared post selection via `useStreamPostKeySelection`,
-	// which reads cached stream items from this module.
 	getCachedStreamItems: jest.fn( () => [] ),
 } ) );
+
+jest.mock( 'calypso/state/selectors/get-current-locale-slug', () =>
+	jest.fn( () => mockCurrentLocaleSlug )
+);
 
 jest.mock( 'calypso/state/reader/site-blocks/selectors', () => {
 	const blockedSites: number[] = [];
@@ -94,6 +98,7 @@ function renderWithLayoutViewFallback( space: ReadSpaceDetails, layoutView: Spac
 describe( 'SpaceFeed', () => {
 	beforeEach( () => {
 		window.history.replaceState( {}, '', '/reader/spaces/work-id' );
+		mockCurrentLocaleSlug = null;
 		mockUseInfiniteStream.mockReturnValue( streamResult() );
 	} );
 
@@ -181,6 +186,24 @@ describe( 'SpaceFeed', () => {
 
 		expect( mockUseInfiniteStream ).toHaveBeenCalledWith(
 			expect.objectContaining( { streamKey: `space:${ WORK.id }` } )
+		);
+	} );
+
+	it( 'passes the non-default locale to the stream request', () => {
+		mockCurrentLocaleSlug = 'pt-br';
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		queryClient.setQueryData( readSpaceQuery( WORK.id ).queryKey, WORK );
+
+		renderWithProvider( <SpaceFeed spaceId={ WORK.id } />, {
+			queryClient,
+			initialState: { currentUser: { id: 1 } },
+		} );
+
+		expect( mockUseInfiniteStream ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				streamKey: `space:${ WORK.id }`,
+				localeSlug: 'pt-br',
+			} )
 		);
 	} );
 

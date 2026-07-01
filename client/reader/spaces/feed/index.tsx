@@ -77,19 +77,16 @@ export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
 	const isDiscover = variant === 'discover';
 	const streamKey = isDiscover ? `space_discover:${ spaceId }` : `space:${ spaceId }`;
 	const isLegacy = layout === 'legacy';
+	const rawLocale = useSelector( getCurrentLocaleSlug );
+	const localeSlug = rawLocale && ! isDefaultLocale( rawLocale ) ? rawLocale : null;
 	const stream = useInfiniteStream( {
 		streamKey,
+		localeSlug,
 		perPage: getLayoutPageSize( layout ),
 		options: { enabled: ! isLegacy },
 	} );
 	const posts = useMemo( () => collectPosts( stream.pages ), [ stream.pages ] );
 
-	// Post selection is shared across layouts via the stream selection cache (keyed by
-	// stream + normalized locale, matching `<Stream>`/full-post navigation). The legacy
-	// layout wires this itself through `ReaderStreamV2`; the curated layouts get these
-	// helpers so the post the user opened stays highlighted when they return.
-	const rawLocale = useSelector( getCurrentLocaleSlug );
-	const localeSlug = rawLocale && ! isDefaultLocale( rawLocale ) ? rawLocale : null;
 	const { selectedPostKey, selectPostKey } = useStreamPostKeySelection( { streamKey, localeSlug } );
 	const isPostSelected = useCallback(
 		( post: ReadStreamPost ) =>
