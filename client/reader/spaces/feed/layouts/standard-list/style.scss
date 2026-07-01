@@ -20,8 +20,21 @@
 }
 
 .space-feed-standard-list__row {
+	position: relative;
 	padding-block: 18px;
 	border-block-end: 1px solid var(--color-border-subtle);
+}
+
+// The post opened last stays highlighted with an accent bar just outside the
+// leading edge (matching the classic post card), so it's easy to spot on return
+// from the full-post view.
+.space-feed-standard-list__row[data-selected]::before {
+	content: '';
+	position: absolute;
+	inset-block: 0;
+	inset-inline-start: -16px;
+	inline-size: 2px;
+	background: var(--color-primary);
 }
 
 .space-feed-standard-list__item[data-first='true'] .space-feed-standard-list__row {

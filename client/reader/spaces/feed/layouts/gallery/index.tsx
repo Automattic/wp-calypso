@@ -34,11 +34,29 @@ function useGalleryColumns(): number {
 	return 1;
 }
 
-function GalleryCard( { post }: { post: ReadStreamPost } ) {
+function GalleryCard( {
+	post,
+	isSelected,
+	onOpen,
+}: {
+	post: ReadStreamPost;
+	isSelected: boolean;
+	onOpen: () => void;
+} ) {
 	const fields = getPostFields( post );
 	return (
-		<VStack className="space-feed-gallery__card" spacing={ 1.5 } alignment="stretch">
-			<a className="space-feed-gallery__thumb" href={ fields.postHref } aria-label={ fields.title }>
+		<VStack
+			className="space-feed-gallery__card"
+			spacing={ 1.5 }
+			alignment="stretch"
+			data-selected={ isSelected || undefined }
+		>
+			<a
+				className="space-feed-gallery__thumb"
+				href={ fields.postHref }
+				aria-label={ fields.title }
+				onClick={ onOpen }
+			>
 				{ fields.imageUrl ? (
 					<img
 						className="space-feed-gallery__image"
@@ -72,7 +90,11 @@ function GalleryCard( { post }: { post: ReadStreamPost } ) {
 						) }
 					</HStack>
 					<h3 className="space-feed-gallery__title">
-						<a className="space-feed-gallery__title-link" href={ fields.postHref }>
+						<a
+							className="space-feed-gallery__title-link"
+							href={ fields.postHref }
+							onClick={ onOpen }
+						>
 							{ fields.title }
 						</a>
 					</h3>
@@ -81,7 +103,10 @@ function GalleryCard( { post }: { post: ReadStreamPost } ) {
 					variant="discreet"
 					split
 					post={ post }
-					onCommentClick={ () => page( getPostUrl( post ) ) }
+					onCommentClick={ () => {
+						onOpen();
+						page( getPostUrl( post ) );
+					} }
 					iconSize={ 18 }
 				/>
 			</VStack>
@@ -112,6 +137,8 @@ export function GalleryLayout( {
 	isLoadingMore,
 	loadMore,
 	restoreKey,
+	isPostSelected,
+	selectPost,
 }: SpaceFeedLayoutProps ) {
 	const columns = useGalleryColumns();
 
@@ -165,7 +192,12 @@ export function GalleryLayout( {
 					>
 						{ rows[ virtualRow.index ].map( ( cell, cellIndex ) =>
 							cell ? (
-								<GalleryCard key={ getPostFieldKey( cell ) } post={ cell } />
+								<GalleryCard
+									key={ getPostFieldKey( cell ) }
+									post={ cell }
+									isSelected={ isPostSelected( cell ) }
+									onOpen={ () => selectPost( cell ) }
+								/>
 							) : (
 								// eslint-disable-next-line react/no-array-index-key
 								<GallerySkeletonCard key={ `skeleton-${ cellIndex }` } />

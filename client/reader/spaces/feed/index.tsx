@@ -1,9 +1,14 @@
+import { isDefaultLocale } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useSpace } from 'calypso/reader/data/spaces';
 import { useInfiniteStream } from 'calypso/reader/data/stream';
 import { ScrollDebugOverlay } from 'calypso/reader/hooks/use-infinite-list';
+import { keyForPost, keysAreEqual } from 'calypso/reader/post-key';
+import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post-key-selection';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import { SpaceFeedSourceNotice } from './components/source-notice';
 import {
 	SpaceFeedEmpty,
@@ -79,6 +84,28 @@ export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
 	} );
 	const posts = useMemo( () => collectPosts( stream.pages ), [ stream.pages ] );
 
+	// Post selection is shared across layouts via the stream selection cache (keyed by
+	// stream + normalized locale, matching `<Stream>`/full-post navigation). The legacy
+	// layout wires this itself through `ReaderStreamV2`; the curated layouts get these
+	// helpers so the post the user opened stays highlighted when they return.
+	const rawLocale = useSelector( getCurrentLocaleSlug );
+	const localeSlug = rawLocale && ! isDefaultLocale( rawLocale ) ? rawLocale : null;
+	const { selectedPostKey, selectPostKey } = useStreamPostKeySelection( { streamKey, localeSlug } );
+	const isPostSelected = useCallback(
+		( post: ReadStreamPost ) =>
+			selectedPostKey != null && keysAreEqual( keyForPost( post ), selectedPostKey ),
+		[ selectedPostKey ]
+	);
+	const selectPost = useCallback(
+		( post: ReadStreamPost ) => {
+			const postKey = keyForPost( post );
+			if ( postKey ) {
+				selectPostKey( postKey );
+			}
+		},
+		[ selectPostKey ]
+	);
+
 	// Scroll on the Reader's main bounded container (`.layout__primary > div`, which
 	// has a fixed height) — the same scrollbar the rest of the Reader uses — instead
 	// of a nested viewport. The virtualizer needs a height-bounded element here: an
@@ -122,6 +149,8 @@ export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
 					isLoadingMore={ false }
 					loadMore={ () => {} }
 					restoreKey={ `${ spaceId }:${ variant }:${ layout }` }
+					isPostSelected={ isPostSelected }
+					selectPost={ selectPost }
 				/>
 			);
 		}
@@ -161,6 +190,8 @@ export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
 				isLoadingMore={ stream.isFetchingNextPage }
 				loadMore={ stream.fetchNextPage }
 				restoreKey={ `${ spaceId }:${ variant }:${ layout }` }
+				isPostSelected={ isPostSelected }
+				selectPost={ selectPost }
 			/>
 		);
 	};

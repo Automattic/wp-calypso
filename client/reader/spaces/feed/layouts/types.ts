@@ -24,6 +24,14 @@ export interface SpaceFeedLayoutProps {
 	loadMore: () => void;
 	/** Stable key (`${spaceId}:${layout}`) for saving/restoring scroll on Back. */
 	restoreKey: string;
+	/**
+	 * Whether a post is the currently selected one. The shell derives this from the
+	 * shared stream selection cache, so the post the user opened stays highlighted
+	 * when they return from the full-post view.
+	 */
+	isPostSelected: ( post: ReadStreamPost ) => boolean;
+	/** Mark a post as selected; call it when opening a post so the highlight persists on Back. */
+	selectPost: ( post: ReadStreamPost ) => void;
 }
 
 /**

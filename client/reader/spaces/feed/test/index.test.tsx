@@ -18,6 +18,9 @@ import type {
 
 jest.mock( 'calypso/reader/data/stream', () => ( {
 	useInfiniteStream: jest.fn(),
+	// The shell derives the shared post selection via `useStreamPostKeySelection`,
+	// which reads cached stream items from this module.
+	getCachedStreamItems: jest.fn( () => [] ),
 } ) );
 
 jest.mock( 'calypso/state/reader/site-blocks/selectors', () => {
