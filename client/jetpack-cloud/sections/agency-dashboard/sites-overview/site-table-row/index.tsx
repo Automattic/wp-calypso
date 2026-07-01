@@ -134,7 +134,7 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 						// If there is an error, we need to span the whole row because we don't show any column.
 						colSpan={ columns.length - 1 }
 					>
-						<SiteErrorContent siteUrl={ site.value.url } />
+						<SiteErrorContent siteId={ site.value.blog_id } siteUrl={ site.value.url } />
 					</td>
 				) }
 				<td

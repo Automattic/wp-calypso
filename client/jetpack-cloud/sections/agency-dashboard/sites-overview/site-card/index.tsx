@@ -124,7 +124,7 @@ export default function SiteCard( { rows, columns }: Props ) {
 
 			{ isExpanded && (
 				<div className="site-card__expanded-content">
-					{ ! isSiteConnected && <SiteErrorContent siteUrl={ siteUrl } /> }
+					{ ! isSiteConnected && <SiteErrorContent siteId={ blogId } siteUrl={ siteUrl } /> }
 					{ columns
 						.filter( ( column ) => column.key !== 'site' )
 						.map( ( column, index ) => {

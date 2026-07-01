@@ -139,7 +139,7 @@ describe( '<SiteTableRow>', () => {
 	const queryClient = new QueryClient();
 
 	test( 'should render correctly and have the error message and the link to fix the issue', async () => {
-		const { getByText } = render(
+		const { getByRole, getByText } = render(
 			<Provider store={ store }>
 				<QueryClientProvider client={ queryClient }>
 					<table>
@@ -155,5 +155,10 @@ describe( '<SiteTableRow>', () => {
 			expect( getByText( 'Jetpack is unable to connect to this site' ) ).toBeVisible();
 			expect( getByText( /fix now/i ) ).toBeVisible();
 		} );
+
+		expect( getByRole( 'link', { name: 'Remove site' } ) ).toHaveProperty(
+			'href',
+			`https://example.com/settings/disconnect-site/confirm/test.jurassic.ninja?site_id=${ blogId }&site_url=test.jurassic.ninja&type=down`
+		);
 	} );
 } );

@@ -116,14 +116,20 @@ export const disconnectSite: Callback = ( context, next ) => {
 };
 
 export const disconnectSiteConfirm: Callback = ( context, next ) => {
-	const { reason, type, text } = context.query;
+	const { reason, site_id, site_url, type, text } = context.query;
 	const dashboardHref = dashboardPath();
+	const siteId = Number( site_id );
+	const siteUrl = typeof site_url === 'string' ? site_url : context.params.site;
+
 	context.primary = (
 		<ConfirmDisconnection
 			// Ignore type checking because TypeScript is incorrectly inferring the prop type due to the redirectNonJetpack HOC.
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			//@ts-ignore
 			reason={ reason }
+			siteId={ Number.isFinite( siteId ) ? siteId : undefined }
+			siteSlug={ siteUrl }
+			siteTitle={ siteUrl }
 			type={ type }
 			text={ text }
 			disconnectHref={ dashboardHref }

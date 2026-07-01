@@ -13,9 +13,26 @@ import { confirmDisconnectPath, disconnectPath, settingsPath } from 'calypso/lib
 import wrapInSiteOffsetProvider from 'calypso/lib/wrap-in-site-offset';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 
+const siteSelectionUnlessAgencySiteIdProvided = ( context, next ) => {
+	if ( context.query.site_id ) {
+		next();
+		return;
+	}
+
+	siteSelection( context, next );
+};
+
 export default function () {
 	if ( isJetpackCloud() ) {
 		page( settingsPath(), siteSelection, sites, makeLayout, clientRender );
+		page( disconnectPath( ':site' ), disconnectSite, siteSelection, makeLayout, clientRender );
+		page(
+			confirmDisconnectPath( ':site' ),
+			disconnectSiteConfirm,
+			siteSelectionUnlessAgencySiteIdProvided,
+			makeLayout,
+			clientRender
+		);
 		page(
 			settingsPath( ':site' ),
 			siteSelection,
@@ -23,14 +40,6 @@ export default function () {
 			isEnabled( 'jetpack/server-credentials-advanced-flow' ) ? advancedCredentials : settings,
 			wrapInSiteOffsetProvider,
 			showNotAuthorizedForNonAdmins,
-			makeLayout,
-			clientRender
-		);
-		page( disconnectPath( ':site' ), disconnectSite, siteSelection, makeLayout, clientRender );
-		page(
-			confirmDisconnectPath( ':site' ),
-			disconnectSiteConfirm,
-			siteSelection,
 			makeLayout,
 			clientRender
 		);

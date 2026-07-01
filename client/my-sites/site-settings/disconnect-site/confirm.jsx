@@ -28,6 +28,7 @@ class ConfirmDisconnection extends Component {
 		purchase: PropTypes.object,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
+		siteTitle: PropTypes.string,
 		translate: PropTypes.func,
 	};
 
@@ -62,7 +63,8 @@ class ConfirmDisconnection extends Component {
 	};
 
 	render() {
-		const { disconnectHref, siteId, siteSlug, stayConnectedHref, translate, type } = this.props;
+		const { disconnectHref, siteId, siteSlug, siteTitle, stayConnectedHref, translate, type } =
+			this.props;
 
 		const backHref =
 			`/settings/disconnect-site/${ siteSlug }` +
@@ -85,6 +87,8 @@ class ConfirmDisconnection extends Component {
 					onDisconnectClick={ this.submitSurvey }
 					showTitle={ false }
 					siteId={ siteId }
+					siteSlug={ siteSlug }
+					siteTitle={ siteTitle || siteSlug }
 					stayConnectedHref={ stayConnectedHref ?? '/settings/manage-connection/' + siteSlug }
 				/>
 				<div className="disconnect-site__navigation-links">
@@ -96,13 +100,14 @@ class ConfirmDisconnection extends Component {
 }
 
 const connectComponent = connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+	( state, ownProps ) => {
+		const siteId = ownProps.siteId ?? getSelectedSiteId( state );
 		return {
 			purchase: getCurrentPlan( state, siteId ),
 			site: getSelectedSite( state ),
 			siteId,
-			siteSlug: getSelectedSiteSlug( state ),
+			siteSlug: ownProps.siteSlug ?? getSelectedSiteSlug( state ),
+			siteTitle: ownProps.siteTitle,
 		};
 	},
 	{ submitSurvey }

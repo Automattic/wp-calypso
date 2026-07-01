@@ -10,6 +10,7 @@ import SiteErrorContent from '../site-error-content';
 
 describe( '<SiteErrorContent>', () => {
 	const siteUrl = 'test.jurassic.ninja';
+	const siteId = 12345678;
 
 	const initialState = {};
 	const mockStore = configureStore();
@@ -18,7 +19,7 @@ describe( '<SiteErrorContent>', () => {
 	const renderSiteErrorContent = () =>
 		render(
 			<Provider store={ store }>
-				<SiteErrorContent siteUrl={ siteUrl } />
+				<SiteErrorContent siteId={ siteId } siteUrl={ siteUrl } />
 			</Provider>
 		);
 
@@ -27,7 +28,9 @@ describe( '<SiteErrorContent>', () => {
 		const [ fixNow ] = container.getElementsByClassName( 'sites-overview__error-message-link' );
 		expect( fixNow ).toHaveProperty(
 			'href',
-			`https://example.com/settings/disconnect-site/${ urlToSlug( siteUrl ) }?type=down`
+			`https://example.com/settings/disconnect-site/${ urlToSlug(
+				siteUrl
+			) }?site_id=${ siteId }&site_url=${ encodeURIComponent( urlToSlug( siteUrl ) ) }&type=down`
 		);
 	} );
 
@@ -36,7 +39,9 @@ describe( '<SiteErrorContent>', () => {
 		const removeSite = screen.getByRole( 'link', { name: 'Remove site' } );
 		expect( removeSite ).toHaveProperty(
 			'href',
-			`https://example.com/settings/disconnect-site/confirm/${ urlToSlug( siteUrl ) }?type=down`
+			`https://example.com/settings/disconnect-site/confirm/${ urlToSlug(
+				siteUrl
+			) }?site_id=${ siteId }&site_url=${ encodeURIComponent( urlToSlug( siteUrl ) ) }&type=down`
 		);
 	} );
 } );

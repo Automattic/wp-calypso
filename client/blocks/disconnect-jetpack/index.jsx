@@ -288,7 +288,7 @@ class DisconnectJetpack extends PureComponent {
 }
 
 export default connect(
-	( state, { siteId } ) => {
+	( state, { siteId, siteSlug, siteTitle } ) => {
 		const rewindState = getRewindState( state, siteId );
 		return {
 			hasAntiSpam: siteHasFeature( state, siteId, WPCOM_FEATURES_ANTISPAM ),
@@ -303,8 +303,8 @@ export default connect(
 				siteId,
 				WPCOM_FEATURES_VIDEOPRESS_UNLIMITED_STORAGE
 			),
-			siteSlug: getSiteSlug( state, siteId ),
-			siteTitle: getSiteTitle( state, siteId ),
+			siteSlug: getSiteSlug( state, siteId ) || siteSlug,
+			siteTitle: getSiteTitle( state, siteId ) || siteTitle || siteSlug,
 			rewindState: rewindState.state,
 		};
 	},

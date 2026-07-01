@@ -46,13 +46,13 @@ const redirectNonJetpack = ( redirectRoute ) => ( WrappedComponent ) => {
 		}
 	}
 
-	return connect( ( state ) => {
-		const siteId = getSelectedSiteId( state );
+	return connect( ( state, ownProps ) => {
+		const siteId = ownProps.siteId ?? getSelectedSiteId( state );
 
 		return {
 			siteIsAtomic: isSiteAutomatedTransfer( state, siteId ),
 			siteIsJetpack: isJetpackSite( state, siteId ),
-			siteSlug: getSelectedSiteSlug( state ),
+			siteSlug: ownProps.siteSlug ?? getSelectedSiteSlug( state ),
 		};
 	} )( RedirectNonJetpack );
 };
