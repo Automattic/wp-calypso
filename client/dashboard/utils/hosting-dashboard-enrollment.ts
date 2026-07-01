@@ -1,16 +1,32 @@
 import config from '@automattic/calypso-config';
 import type { HostingDashboardOptIn } from '@automattic/api-core';
 
+export const ROLLOUT_TESTER_USER_IDS = [
+	27056099, // p-jackson
+];
+
+// When rollout begins, users registered after this ID (i.e. new users) are enrolled.
+// TODO update on release day DOTMSD-1357
+const NEW_USER_ID_THRESHOLD = Infinity;
+
 /**
  * Whether the user belongs to the percentage-rollout cohort. Membership is
  * derived from the user ID so it is stable across sessions and reproducible
  * in analytics queries; nothing is ever persisted.
  */
 function isInRolloutCohort( userId: number | undefined ): boolean {
+	if ( userId === undefined ) {
+		return false;
+	}
+
+	// Allow-listed testers bypass the rollout flag entirely.
+	if ( ROLLOUT_TESTER_USER_IDS.includes( userId ) ) {
+		return true;
+	}
+
 	return (
 		config.isEnabled( 'dashboard/enable-percentage-rollout' ) &&
-		userId !== undefined &&
-		userId % 100 < 50
+		( userId % 100 < 50 || userId > NEW_USER_ID_THRESHOLD )
 	);
 }
 
