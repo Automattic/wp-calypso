@@ -1,10 +1,11 @@
 import { useI18n } from '@wordpress/react-i18n';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useInterval } from 'calypso/lib/interval';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../../lib/constants';
 import { useImportBlueprint } from '../../lib/import-blueprint';
@@ -30,6 +31,23 @@ export const PlaygroundSetupStep: Step< {
 	const { siteId, siteSlug } = useSiteData();
 	const [ query ] = useSearchParams();
 	const { mutateAsync: importBlueprint } = useImportBlueprint();
+
+	const importMessages = [
+		{ title: __( 'Packing up your products and settings' ), duration: 8000 },
+		{ title: __( 'Uploading to WordPress.com' ), duration: 12000 },
+		{ title: __( 'Restoring your store' ), duration: 15000 },
+		{ title: __( 'This usually takes about a minute, hang tight' ), duration: 15000 },
+		{ title: __( 'Applying your store configuration' ), duration: 12000 },
+		{ title: __( 'Almost there' ), duration: null as number | null },
+	];
+	const [ messageIndex, setMessageIndex ] = useState( 0 );
+	const [ fakeProgress, setFakeProgress ] = useState( 0 );
+
+	useInterval(
+		() => setMessageIndex( ( i ) => i + 1 ),
+		messageIndex < importMessages.length - 1 ? importMessages[ messageIndex ].duration : null
+	);
+	useInterval( () => setFakeProgress( ( p ) => Math.min( p + 1, 95 ) ), 1000 );
 
 	useEffect( () => {
 		// If blueprint exists, import it and then submit
@@ -122,7 +140,7 @@ export const PlaygroundSetupStep: Step< {
 
 		return (
 			<>
-				<Loading title={ __( 'Preparing your site for import' ) } />
+				<Loading title={ importMessages[ messageIndex ].title } progress={ fakeProgress } />
 				{ ! hasBlueprint && (
 					<PlaygroundIframe
 						className="playground__onboarding-iframe"
