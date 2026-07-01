@@ -10,12 +10,12 @@ import {
 	Guide,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useAnalytics } from '../../app/analytics';
-import { useAuth } from '../../app/auth';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { getHostingDashboardEnrollment } from '../../utils/hosting-dashboard-enrollment';
+import { useAnalytics } from '../analytics';
+import { useAuth } from '../auth';
 import patternUrl from './welcome-modal-background-pattern.png';
-import './opt-in-welcome-modal.scss';
+import './style.scss';
 
 const preferenceName = 'hosting-dashboard-opt-in-welcome-modal-dismissed' as const;
 
