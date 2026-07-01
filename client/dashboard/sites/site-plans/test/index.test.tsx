@@ -12,10 +12,10 @@ jest.mock( '../../../app/router/sites', () => {
 	const actual = jest.requireActual( '../../../app/router/sites' );
 	return {
 		...actual,
-		siteRoute: Object.setPrototypeOf(
-			{ useParams: () => ( { siteSlug: 'test-site.wordpress.com' } ) },
-			actual.siteRoute
-		),
+		siteRoute: {
+			useParams: () => ( { siteSlug: 'test-site.wordpress.com' } ),
+			fullPath: '/sites/$siteSlug',
+		},
 	};
 } );
 

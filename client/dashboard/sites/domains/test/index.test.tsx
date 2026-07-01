@@ -8,6 +8,17 @@ import { render } from '../../../test-utils';
 import SiteDomains from '../index';
 import type { Site, User } from '@automattic/api-core';
 
+jest.mock( '../../../app/router/sites', () => {
+	const actual = jest.requireActual( '../../../app/router/sites' );
+	return {
+		...actual,
+		siteRoute: {
+			useParams: () => ( { siteSlug: 'test-site.wordpress.com' } ),
+			fullPath: '/sites/$siteSlug',
+		},
+	};
+} );
+
 const SITE_ID = 1;
 const OWNER_USER_ID = 10;
 const NON_OWNER_USER_ID = 99;
@@ -87,9 +98,7 @@ describe( '<SiteDomains>', () => {
 
 		await screen.findByRole( 'heading', { name: 'Domains' } );
 
-		expect(
-			screen.getByRole( 'button', { name: 'Add domain name' } )
-		).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Add domain name' } ) ).toBeVisible();
 	} );
 
 	test( 'hides "Add domain name" button for non-owner', async () => {
@@ -97,8 +106,6 @@ describe( '<SiteDomains>', () => {
 
 		await screen.findByRole( 'heading', { name: 'Domains' } );
 
-		expect(
-			screen.queryByRole( 'button', { name: 'Add domain name' } )
-		).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Add domain name' } ) ).not.toBeInTheDocument();
 	} );
 } );
