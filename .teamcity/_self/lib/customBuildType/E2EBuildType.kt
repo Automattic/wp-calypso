@@ -3,8 +3,6 @@ package _self.lib.customBuildType
 import Settings
 import _self.bashNodeScript
 import _self.lib.utils.mergeTrunk
-import _self.lib.utils.passMergeQueueBranchesEarly
-import _self.lib.utils.skipOnMergeQueueBranch
 import jetbrains.buildServer.configs.kotlin.v2019_2.AbsoluteId
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
@@ -107,12 +105,11 @@ open class E2EBuildType(
 		}
 
 		steps {
-			passMergeQueueBranchesEarly()
 			// IMPORTANT! This step MUST match what the docker image does. If trunk
 			// is merged when building the docker image, it must also be merged
 			// to run the tests, or they may not be compatible. See the "mergeTrunk"
 			// step in BuildDockerImage in WebApp.kt.
-			mergeTrunk( skipIfConflict = true ).skipOnMergeQueueBranch()
+			mergeTrunk( skipIfConflict = true )
 
 			bashNodeScript {
 				name = "Prepare environment"
@@ -128,7 +125,7 @@ open class E2EBuildType(
 					yarn workspace @automattic/calypso-e2e build
 				""".trimIndent()
 				dockerImage = "%docker_image_e2e%"
-			}.skipOnMergeQueueBranch()
+			}
 
 			bashNodeScript {
 				name = "Run tests"
@@ -168,7 +165,7 @@ open class E2EBuildType(
 				"""
 				dockerImage = "%docker_image_e2e%"
 				dockerRunParameters = "-u %env.UID% --shm-size=4g"
-			}.skipOnMergeQueueBranch()
+			}
 
 			bashNodeScript {
 				name = "Collect results"
@@ -186,7 +183,7 @@ open class E2EBuildType(
 					find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
 				""".trimIndent()
 				dockerImage = "%docker_image_e2e%"
-			}.skipOnMergeQueueBranch()
+			}
 			buildSteps()
 		}
 
