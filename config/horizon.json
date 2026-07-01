@@ -15,7 +15,7 @@
 		"ad-tracking": false,
 		"blackbox": true,
 		"blackbox-login": true,
-		"blackbox-lost-password": false,
+		"blackbox-lost-password": true,
 		"calypso/ai-blogging-prompts": false,
 		"calypso/all-domain-management": false,
 		"calypso/big-sky": true,

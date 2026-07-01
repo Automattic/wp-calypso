@@ -23,7 +23,7 @@
 		"akismet/checkout-quantity-dropdown": true,
 		"blackbox": true,
 		"blackbox-login": true,
-		"blackbox-lost-password": false,
+		"blackbox-lost-password": true,
 		"calypso/ai-blogging-prompts": true,
 		"calypso/ai-site-builder-flow": true,
 		"calypso/all-domain-management": true,
