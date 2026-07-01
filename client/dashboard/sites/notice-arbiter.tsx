@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 /**
  * Shared candidates compete on every page that renders the arbiter. The pick
  * is latched on mount so that a preference change mid-session (e.g. dismissing
- * the welcome notice) empties the slot instead of promoting the next notice.
+ * a welcome notice) empties the slot instead of promoting the next notice.
  */
 function useSharedCandidate(): ReactNode {
 	// If there were shared notices across all site pages, this is where they'd go.

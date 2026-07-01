@@ -28,7 +28,7 @@
 
 ### Rules for notice candidates
 
-1. **No self-nulling.** A candidate component must not decide its own visibility by returning `null` from render. The arbiter only sees the child *elements* — a self-nulling component still wins the slot, renders nothing, and silently suppresses an eligible lower-priority notice. Hoist visibility conditions into a `useShouldShow*` hook (see `useShouldShowOptInWelcome`, `useShouldShowTimeMismatchNotice`) or a call-site condition.
+1. **No self-nulling.** A candidate component must not decide its own visibility by returning `null` from render. The arbiter only sees the child *elements* — a self-nulling component still wins the slot, renders nothing, and silently suppresses an eligible lower-priority notice. Hoist visibility conditions into a `useShouldShow*` hook (see `useShouldShowTimeMismatchNotice`) or a call-site condition.
 2. **The one sanctioned self-null: in-session dismissal.** After the user clicks a notice's close button, the component may render `null` for the rest of the mount. The slot deliberately stays empty — dismissing one banner must not summon the next. *Persisted* dismissal preferences still belong in the eligibility hook so the slot is reassigned on the next page load.
 3. **Eligibility must be settled before first paint.** Fetch eligibility data in the route loader (`queryClient.ensureQueryData(...)`) and read it with suspense queries, so a lower-priority notice never appears first and then gets displaced ("pop-in"). The dashboard already loads layout-shifting data in the router; notice eligibility is layout-shifting data.
 
