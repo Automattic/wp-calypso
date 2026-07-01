@@ -4,6 +4,16 @@
 	border-radius: 8px;
 }
 
+.legacy-contact-card__details {
+	display: flex;
+	flex-direction: column;
+	margin: 0;
+
+	dd {
+		margin: 0;
+	}
+}
+
 .legacy-contact-card__avatar {
 	display: flex;
 	flex-shrink: 0;
