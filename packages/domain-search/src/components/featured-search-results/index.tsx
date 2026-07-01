@@ -5,10 +5,14 @@ import { FeaturedSearchResultsPlaceholder } from './placeholder';
 
 const FeaturedSearchResults = ( {
 	suggestions,
+	additionalItem,
 }: {
 	suggestions: FeaturedSuggestionWithReason[];
+	additionalItem?: React.ReactNode;
 } ) => {
-	const isSingleFeaturedSuggestion = suggestions.length === 1;
+	// When a bundle card shares the row, the sole suggestion is no longer alone,
+	// so it uses the compact (paired) layout rather than the wide single layout.
+	const isSingleFeaturedSuggestion = suggestions.length === 1 && ! additionalItem;
 
 	return (
 		<FeaturedDomainSuggestionsList>
@@ -20,6 +24,7 @@ const FeaturedSearchResults = ( {
 					isSingleFeaturedSuggestion={ isSingleFeaturedSuggestion }
 				/>
 			) ) }
+			{ additionalItem }
 		</FeaturedDomainSuggestionsList>
 	);
 };

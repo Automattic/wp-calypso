@@ -175,6 +175,30 @@ export const ResultsPage = () => {
 
 	const showCompactBanner = !! slots?.BeforeResults;
 
+	const hasBundle = ! isLoadingSuggestions && !! visibleBundleSuggestion;
+
+	// Beside the exact-match card only when it's the lone featured card; with two
+	// featured cards the bundle falls back to its own full-width row below.
+	const renderBundleInline = hasBundle && featuredSuggestions.length === 1;
+
+	const bundleCard =
+		hasBundle && visibleBundleSuggestion ? (
+			<BundleCard
+				suggestion={ visibleBundleSuggestion }
+				onAddToCart={ ( bundle ) => {
+					addBundleToCart( { bundle, query } );
+				} }
+				isAddedToCart={ visibleBundleSuggestion.domains.every( ( { domain } ) =>
+					cart.hasItem( domain )
+				) }
+				onContinue={ events.onContinue }
+				isBusy={ isAddingBundle }
+				disabled={ isMutating }
+				errorMessage={ bundleErrorMessage }
+				isListItem={ renderBundleInline }
+			/>
+		) : null;
+
 	return (
 		<VStack spacing={ 8 } className="domain-search--results">
 			{ /* Desktop in-flow SearchBar. CSS-hidden on mobile (the persistent
@@ -211,23 +235,12 @@ export const ResultsPage = () => {
 				{ isLoadingSuggestions ? (
 					<FeaturedSearchResults.Placeholder />
 				) : (
-					<FeaturedSearchResults suggestions={ featuredSuggestions } />
-				) }
-				{ ! isLoadingSuggestions && visibleBundleSuggestion && (
-					<BundleCard
-						suggestion={ visibleBundleSuggestion }
-						onAddToCart={ ( bundle ) => {
-							addBundleToCart( { bundle, query } );
-						} }
-						isAddedToCart={ visibleBundleSuggestion.domains.every( ( { domain } ) =>
-							cart.hasItem( domain )
-						) }
-						onContinue={ events.onContinue }
-						isBusy={ isAddingBundle }
-						disabled={ isMutating }
-						errorMessage={ bundleErrorMessage }
+					<FeaturedSearchResults
+						suggestions={ featuredSuggestions }
+						additionalItem={ renderBundleInline ? bundleCard : undefined }
 					/>
 				) }
+				{ ! renderBundleInline && bundleCard }
 				{ isLoadingSuggestions ? (
 					<SearchResults.Placeholder />
 				) : (

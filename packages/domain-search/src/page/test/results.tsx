@@ -1039,7 +1039,7 @@ describe( 'ResultsPage', () => {
 				</TestDomainSearch>
 			);
 
-			expect( await screen.findByText( 'test-bundle-permanent.net' ) ).toBeInTheDocument();
+			expect( await screen.findByText( 'Protect your brand' ) ).toBeInTheDocument();
 
 			await user.click( screen.getByRole( 'button', { name: 'Get bundle' } ) );
 
@@ -1050,7 +1050,7 @@ describe( 'ResultsPage', () => {
 			await waitFor( () => {
 				expect( screen.queryByRole( 'button', { name: 'Get bundle' } ) ).not.toBeInTheDocument();
 			} );
-			expect( screen.queryByText( 'test-bundle-permanent.net' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Protect your brand' ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'keeps the stale bundle hidden when the permanent-failure refetch returns the same bundle group', async () => {
@@ -1085,7 +1085,7 @@ describe( 'ResultsPage', () => {
 				</TestDomainSearch>
 			);
 
-			expect( await screen.findByText( 'test-bundle-same-group.net' ) ).toBeInTheDocument();
+			expect( await screen.findByText( 'Protect your brand' ) ).toBeInTheDocument();
 
 			await user.click( screen.getByRole( 'button', { name: 'Get bundle' } ) );
 
@@ -1096,7 +1096,7 @@ describe( 'ResultsPage', () => {
 			await waitFor( () => {
 				expect( screen.queryByRole( 'button', { name: 'Get bundle' } ) ).not.toBeInTheDocument();
 			} );
-			expect( screen.queryByText( 'test-bundle-same-group.net' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Protect your brand' ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'does not hide or refetch the next query when an old bundle add fails permanently', async () => {
@@ -1146,7 +1146,7 @@ describe( 'ResultsPage', () => {
 				</TestDomainSearch>
 			);
 
-			expect( await screen.findByText( 'test-bundle-late-stale.net' ) ).toBeInTheDocument();
+			expect( await screen.findByText( /test-bundle-late-stale\.net/ ) ).toBeInTheDocument();
 
 			await user.click( screen.getByRole( 'button', { name: 'Get bundle' } ) );
 
@@ -1160,7 +1160,7 @@ describe( 'ResultsPage', () => {
 				</TestDomainSearch>
 			);
 
-			expect( await screen.findByText( 'test-bundle-late-fresh.net' ) ).toBeInTheDocument();
+			expect( await screen.findByText( /test-bundle-late-fresh\.net/ ) ).toBeInTheDocument();
 
 			await act( async () => {
 				rejectAddBundle(
@@ -1171,7 +1171,7 @@ describe( 'ResultsPage', () => {
 			} );
 
 			expect( freshRefetchRequest.isDone() ).toBe( false );
-			expect( screen.getByText( 'test-bundle-late-fresh.net' ) ).toBeInTheDocument();
+			expect( screen.getByText( /test-bundle-late-fresh\.net/ ) ).toBeInTheDocument();
 			expect( screen.getByRole( 'button', { name: 'Get bundle' } ) ).toBeEnabled();
 		} );
 
