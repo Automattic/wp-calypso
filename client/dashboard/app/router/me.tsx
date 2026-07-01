@@ -17,7 +17,6 @@ import {
 	purchaseQuery,
 	queryClient,
 	rawUserPreferencesQuery,
-	readTeamsQuery,
 	receiptQuery,
 	siteBySlugQuery,
 	siteFeaturesQuery,
@@ -1089,13 +1088,12 @@ export const appearanceRoute = createRoute( {
 		}
 
 		// Gate the page like the Appearance summary button so it can't be reached by direct URL.
-		const [ preferences, teams ] = await Promise.all( [
+		const [ preferences, isAutomattician ] = await Promise.all( [
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
-			queryClient.ensureQueryData( readTeamsQuery() ),
+			queryClient.ensureQueryData( isAutomatticianQuery() ),
 		] );
 
 		const hasUsedColorScheme = preferences[ 'hosting-dashboard-color-scheme' ] !== undefined;
-		const isAutomattician = teams.teams.some( ( team ) => team.slug === 'a8c' );
 
 		if ( ! isAutomattician && ! hasUsedColorScheme ) {
 			throw dashboardRedirect( { to: '/me/preferences', replace: true } );

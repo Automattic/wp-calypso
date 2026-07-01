@@ -51,9 +51,7 @@ function renderPreferencesAppearance( {
 		preferences[ 'hosting-dashboard-color-scheme' ] = colorScheme;
 	}
 	queryClient.setQueryData( rawUserPreferencesQuery().queryKey, preferences );
-	queryClient.setQueryData( isAutomatticianQuery().queryKey, {
-		teams: isAutomattician ? [ { slug: 'a8c' } ] : [],
-	} );
+	queryClient.setQueryData( isAutomatticianQuery().queryKey, isAutomattician );
 
 	return render(
 		<AppProvider config={ config }>

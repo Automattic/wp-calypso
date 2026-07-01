@@ -42,6 +42,7 @@ export * from './marketplace-products';
 export * from './marketplace-search';
 export * from './marketing-survey';
 export * from './me';
+export * from './me-a8c';
 export * from './me-account';
 export * from './me-achieve';
 export * from './me-allowed-payment-methods';
