@@ -736,7 +736,7 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 		return null;
 	}
 
-	if ( ! isOwner && ! isExpired( purchase ) && ! hasProductAction ) {
+	if ( ! isOwner && ( isExpired( purchase ) || ! hasProductAction ) ) {
 		return null;
 	}
 
