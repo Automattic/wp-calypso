@@ -50,8 +50,7 @@ boot( {
 	},
 	optIn: false,
 	components: {
-		// Temporary: reuse the generic site switcher until it's agency-scoped.
-		siteSwitcher: () => import( '../sites/site-switcher' ),
+		siteSwitcher: () => import( '../agency/sites/site-switcher' ),
 	},
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),

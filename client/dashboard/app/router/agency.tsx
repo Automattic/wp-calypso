@@ -2,6 +2,7 @@ import {
 	activeAgencyQuery,
 	agencyQuery,
 	agencyResourcesQuery,
+	agencySiteQuery,
 	mcpSettingsQuery,
 	queryClient,
 	rawUserPreferencesQuery,
@@ -235,6 +236,31 @@ const earnPayoutSettingsRoute = createRoute( {
 	)
 );
 
+// `/sites/$siteId` – agency site detail (a layout that hosts the section routes)
+export const agencySiteRoute = createRoute( {
+	getParentRoute: () => agencyRoute,
+	path: 'sites/$siteId',
+	loader: ( { params: { siteId } } ) =>
+		queryClient.ensureQueryData( agencySiteQuery( Number( siteId ) ) ),
+} ).lazy( () =>
+	import( '../../agency/sites/site' ).then( ( d ) =>
+		createLazyRoute( 'agency-site' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const agencySiteOverviewRoute = createRoute( {
+	getParentRoute: () => agencySiteRoute,
+	path: '/',
+} ).lazy( () =>
+	import( '../../agency/sites/site/overview' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-overview' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createAgencyRoutes = () => [
 	agencyRoute.addChildren( [
 		agencyOverviewRoute,
@@ -248,5 +274,6 @@ export const createAgencyRoutes = () => [
 		earnWooPaymentsRoute,
 		earnMigrationsRoute,
 		earnPayoutSettingsRoute,
+		agencySiteRoute.addChildren( [ agencySiteOverviewRoute ] ),
 	] ),
 ];

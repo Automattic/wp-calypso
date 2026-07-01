@@ -25,3 +25,14 @@ export const agencySitesQuery = ( options: FetchAgencySitesOptions = {} ) =>
 		queryKey: [ ...agencySitesQueryKey, options ],
 		queryFn: async () => ( await fetchAgencySites( await resolveAgencyId(), options ) ).sites,
 	} );
+
+// The endpoint has no single-site lookup, so we fetch the agency's sites and
+// select by blog_id. TODO: replace with a dedicated single-site endpoint.
+export const agencySiteQuery = ( blogId: number ) =>
+	queryOptions( {
+		queryKey: [ ...agencySitesQueryKey, 'site', blogId ],
+		queryFn: async () => {
+			const { sites } = await fetchAgencySites( await resolveAgencyId(), { per_page: 100 } );
+			return sites.find( ( site ) => site.blog_id === blogId ) ?? null;
+		},
+	} );
