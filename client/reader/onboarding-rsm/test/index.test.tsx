@@ -179,7 +179,7 @@ jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
 	useSiteSubscriptions: jest.fn( () => ( { subscriptions: [] } ) ),
 } ) );
 
-jest.mock( 'calypso/reader/following/hooks/use-non-self-subscriptions-counts', () => ( {
+jest.mock( 'calypso/reader/following/hooks/use-non-self-subscriptions-count', () => ( {
 	useNonSelfSubscriptionsCount: jest.fn( () => ( {
 		isLoading: false,
 		nonSelfSubscriptionsCount: 0,
@@ -229,7 +229,7 @@ beforeEach( () => {
 		useSiteSubscriptions: jest.Mock;
 	};
 	const { useNonSelfSubscriptionsCount } = jest.requireMock(
-		'calypso/reader/following/hooks/use-non-self-subscriptions-counts'
+		'calypso/reader/following/hooks/use-non-self-subscriptions-count'
 	) as {
 		useNonSelfSubscriptionsCount: jest.Mock;
 	};
@@ -751,7 +751,7 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 		// but the non-self subscriptions count hook is already populated, the
 		// completion event should report that count rather than 0.
 		const { useNonSelfSubscriptionsCount } = jest.requireMock(
-			'calypso/reader/following/hooks/use-non-self-subscriptions-counts'
+			'calypso/reader/following/hooks/use-non-self-subscriptions-count'
 		) as { useNonSelfSubscriptionsCount: jest.Mock };
 		useNonSelfSubscriptionsCount.mockImplementation( () => ( {
 			isLoading: false,
@@ -800,7 +800,7 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 
 	it( 'does not auto-save completion when the user has enough follows without clicking Finish', async () => {
 		const { useNonSelfSubscriptionsCount } = jest.requireMock(
-			'calypso/reader/following/hooks/use-non-self-subscriptions-counts'
+			'calypso/reader/following/hooks/use-non-self-subscriptions-count'
 		) as { useNonSelfSubscriptionsCount: jest.Mock };
 		const { useFollowedTags } = jest.requireMock( 'calypso/reader/data/tags' ) as {
 			useFollowedTags: jest.Mock;
@@ -853,7 +853,7 @@ describe( 'ReaderOnboardingRsm – eligibility', () => {
 			useFollowedTags: jest.Mock;
 		};
 		const { useNonSelfSubscriptionsCount } = jest.requireMock(
-			'calypso/reader/following/hooks/use-non-self-subscriptions-counts'
+			'calypso/reader/following/hooks/use-non-self-subscriptions-count'
 		) as { useNonSelfSubscriptionsCount: jest.Mock };
 		const { getCurrentUserDate } = jest.requireMock( 'calypso/state/current-user/selectors' ) as {
 			getCurrentUserDate: jest.Mock;
@@ -1009,7 +1009,7 @@ describe( 'ReaderOnboardingRsm – eligibility', () => {
 describe( 'ReaderOnboardingRsm - forceShow snapshot', () => {
 	const getUseNonSelfSubscriptionsCountMock = () => {
 		const { useNonSelfSubscriptionsCount } = jest.requireMock(
-			'calypso/reader/following/hooks/use-non-self-subscriptions-counts'
+			'calypso/reader/following/hooks/use-non-self-subscriptions-count'
 		) as { useNonSelfSubscriptionsCount: jest.Mock };
 		return useNonSelfSubscriptionsCount;
 	};
@@ -1209,7 +1209,7 @@ describe( 'ReaderOnboardingRsm – permanent checklist dismiss', () => {
 			useFollowedTags: jest.Mock;
 		};
 		const { useNonSelfSubscriptionsCount } = jest.requireMock(
-			'calypso/reader/following/hooks/use-non-self-subscriptions-counts'
+			'calypso/reader/following/hooks/use-non-self-subscriptions-count'
 		) as { useNonSelfSubscriptionsCount: jest.Mock };
 
 		useFollowedTags.mockImplementation( () => ( {

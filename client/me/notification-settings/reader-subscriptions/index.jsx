@@ -32,7 +32,7 @@ import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import withFormBase from 'calypso/me/form-base/with-form-base';
 import Navigation from 'calypso/me/notification-settings/navigation';
 import ReauthRequired from 'calypso/me/reauth-required';
-import { useNonSelfSubscriptionsCount } from 'calypso/reader/following/hooks/use-non-self-subscriptions-counts';
+import { useNonSelfSubscriptionsCount } from 'calypso/reader/following/hooks/use-non-self-subscriptions-count';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import SubscriptionManagementBackButton from '../subscription-management-back-button';

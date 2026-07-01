@@ -3,7 +3,7 @@
  */
 import { renderHook } from '@testing-library/react';
 import { useSiteSubscriptions as useReaderSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
-import { useNonSelfSubscriptionsCount } from '../use-non-self-subscriptions-counts';
+import { useNonSelfSubscriptionsCount } from '../use-non-self-subscriptions-count';
 
 jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
 	useSiteSubscriptions: jest.fn(),
@@ -42,7 +42,7 @@ describe( 'useNonSelfSubscriptionsCount', () => {
 		expect( result.current.isLoading ).toBe( true );
 	} );
 
-	it( 'should filter out self-owned blogs when calculating hasNonSelfSubscriptions', () => {
+	it( 'should filter out self-owned blogs', () => {
 		mockReaderSiteSubscriptions( {
 			count: 2,
 			subscriptions: [ { is_owner: true }, { is_owner: false } ],
