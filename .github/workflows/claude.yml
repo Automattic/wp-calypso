@@ -38,7 +38,11 @@ jobs:
           fi
 
           pr_number="${PULL_REQUEST_NUMBER:-$ISSUE_NUMBER}"
-          head_repo="$(gh api "repos/${REPOSITORY}/pulls/${pr_number}" --jq '.head.repo.full_name' 2>/dev/null || true)"
+          if ! head_repo="$(gh api "repos/${REPOSITORY}/pulls/${pr_number}" --jq '.head.repo.full_name')"; then
+            echo "Unable to determine PR head repository for #${pr_number}; skipping Claude."
+            echo "is_internal=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
 
           if [ "$head_repo" = "$REPOSITORY" ]; then
             echo "is_internal=true" >> "$GITHUB_OUTPUT"
