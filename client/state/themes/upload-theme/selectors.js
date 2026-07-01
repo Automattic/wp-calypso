@@ -27,7 +27,7 @@ export function isUploadComplete( state, siteId ) {
  * @returns {boolean} -- True if upload has failed
  */
 export function hasUploadFailed( state, siteId ) {
-	return !! ( state.themes.uploadTheme.uploadError?.[ siteId ] ?? false );
+	return !! state.themes.uploadTheme.uploadError?.[ siteId ];
 }
 
 /**

@@ -83,19 +83,18 @@ export const keyedReducer = < TState, TAction extends AnyAction = Action >(
 
 	const initialState = reducer( undefined, { type: '@@calypso/INIT' } );
 
+	// Parse the dot-separated `keyPath` once, rather than on every dispatched action.
+	const keyPathSegments = keyPath.split( '.' );
+
 	const combinedReducer = (
 		state: Record< string | number, TState > = {},
 		action: KeyedReducerAction< TAction >
 	) => {
-		// don't allow coercion of key name: null => 0
-		// `keyPath` is a lodash-style path (e.g. `meta.dataLayer.requestKey`), so
-		// walk each `.`-separated segment.
-		const itemKey = keyPath
-			.split( '.' )
-			.reduce< unknown >(
-				( value, key ) => ( value as Record< string, unknown > )?.[ key ],
-				action
-			) as string | number | undefined | null;
+		// don't allow coercion of key name: null => 0; walk each path segment.
+		const itemKey = keyPathSegments.reduce< unknown >(
+			( value, key ) => ( value as Record< string, unknown > )?.[ key ],
+			action
+		) as string | number | undefined | null;
 
 		// if the action doesn't contain a valid reference
 		// then return without any updates

@@ -3,6 +3,14 @@ import { translate, getLocaleSlug } from 'i18n-calypso';
 import moment from 'moment';
 import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
 
+/**
+ * Reads the value at a path (array of keys) in an object, or `undefined` if any
+ * segment along the way is missing.
+ * @param {Object} object Object to read from
+ * @param {Array}  path   Array of keys to walk
+ */
+const getFromPath = ( object, path ) => path.reduce( ( value, key ) => value?.[ key ], object );
+
 /** @type ( key: string ) => string */
 function getArchiveKeyLabel( key ) {
 	const archiveKeyLabelMap = {
@@ -388,7 +396,7 @@ export const normalizers = {
 		const dataPath = query.summarize
 			? [ 'summary', 'postviews' ]
 			: [ 'days', startOf, 'postviews' ];
-		const viewData = dataPath.reduce( ( value, key ) => value?.[ key ], data ) ?? [];
+		const viewData = getFromPath( data, dataPath ) ?? [];
 
 		return viewData.map( ( item ) => {
 			// To avoid showing a detail page for the Homepage set as latest posts.
@@ -439,7 +447,7 @@ export const normalizers = {
 
 		const { startOf } = rangeOfPeriod( query.period, query.date );
 		const dataPath = query.summarize ? [ 'summary' ] : [ 'days', startOf ];
-		const archivesData = dataPath.reduce( ( value, key ) => value?.[ key ], data ) ?? {};
+		const archivesData = getFromPath( data, dataPath ) ?? {};
 
 		// Add null check for archivesData
 		// TODO: ensure API always returns an object here. Now it return an empty array when there's no items.
@@ -547,24 +555,22 @@ export const normalizers = {
 		const dataPath = query.summarize ? [ 'summary', 'views' ] : [ 'days', startOf, 'views' ];
 
 		// filter out country views that have no legitimate country data associated with them
-		const countryData = ( dataPath.reduce( ( value, key ) => value?.[ key ], data ) ?? [] ).filter(
-			( viewData ) => {
-				// Ignore the unknown location of sources from the legacy stats geoviews table.
-				if ( [ 'A1', 'A2', 'ZZ' ].includes( viewData.country_code ) ) {
-					return false;
-				}
-
-				// TODO: Investigate ignored countries that have `false` as the country_full data.
-				if (
-					countryInfo[ viewData.country_code ] &&
-					! countryInfo[ viewData.country_code ].country_full
-				) {
-					return false;
-				}
-
-				return countryInfo[ viewData.country_code ];
+		const countryData = ( getFromPath( data, dataPath ) ?? [] ).filter( ( viewData ) => {
+			// Ignore the unknown location of sources from the legacy stats geoviews table.
+			if ( [ 'A1', 'A2', 'ZZ' ].includes( viewData.country_code ) ) {
+				return false;
 			}
-		);
+
+			// TODO: Investigate ignored countries that have `false` as the country_full data.
+			if (
+				countryInfo[ viewData.country_code ] &&
+				! countryInfo[ viewData.country_code ].country_full
+			) {
+				return false;
+			}
+
+			return countryInfo[ viewData.country_code ];
+		} );
 
 		return countryData.map( ( viewData ) => {
 			const country = countryInfo[ viewData.country_code ];
@@ -611,9 +617,9 @@ export const normalizers = {
 
 		const { startOf } = rangeOfPeriod( query.period, query.date );
 		const videoPlaysData =
-			( query.summarize ? [ 'days', 'summary', 'data' ] : [ 'days', startOf, 'data' ] ).reduce(
-				( value, key ) => value?.[ key ],
-				data
+			getFromPath(
+				data,
+				query.summarize ? [ 'days', 'summary', 'data' ] : [ 'days', startOf, 'data' ]
 			) ?? [];
 
 		const normalizedData = videoPlaysData.map( ( item ) => {
@@ -653,9 +659,9 @@ export const normalizers = {
 		}
 
 		const videoPlaysData =
-			( query.summarize ? [ 'days', 'summary', 'plays' ] : [ 'days', startOf, 'plays' ] ).reduce(
-				( value, key ) => value?.[ key ],
-				data
+			getFromPath(
+				data,
+				query.summarize ? [ 'days', 'summary', 'plays' ] : [ 'days', startOf, 'plays' ]
 			) ?? [];
 
 		return videoPlaysData.map( ( item ) => {
@@ -861,7 +867,7 @@ export const normalizers = {
 		}
 		const { startOf } = rangeOfPeriod( query.period, query.date );
 		const dataPath = query.summarize ? [ 'summary', 'authors' ] : [ 'days', startOf, 'authors' ];
-		const authorsData = dataPath.reduce( ( value, key ) => value?.[ key ], data ) ?? [];
+		const authorsData = getFromPath( data, dataPath ) ?? [];
 
 		return authorsData.map( ( item ) => {
 			const record = {
@@ -954,7 +960,7 @@ export const normalizers = {
 
 		const { startOf } = rangeOfPeriod( query.period, query.date );
 		const dataPath = query.summarize ? [ 'summary', 'clicks' ] : [ 'days', startOf, 'clicks' ];
-		const statsData = dataPath.reduce( ( value, key ) => value?.[ key ], data ) ?? [];
+		const statsData = getFromPath( data, dataPath ) ?? [];
 
 		const output = statsData.map( ( item ) => {
 			const hasChildren = item.children && item.children.length > 0;
@@ -1001,7 +1007,7 @@ export const normalizers = {
 
 		const { startOf } = rangeOfPeriod( query.period, query.date );
 		const dataPath = query.summarize ? [ 'summary', 'groups' ] : [ 'days', startOf, 'groups' ];
-		let statsData = dataPath.reduce( ( value, key ) => value?.[ key ], data ) ?? [];
+		let statsData = getFromPath( data, dataPath ) ?? [];
 
 		const parseItem = ( item ) => {
 			let children;
@@ -1128,8 +1134,7 @@ export const normalizers = {
 
 		const { startOf } = rangeOfPeriod( query.period, query.date );
 		const dataPath = query.summarize ? [ 'summary' ] : [ 'days', startOf ];
-		const searchTerms =
-			dataPath.concat( [ 'search_terms' ] ).reduce( ( value, key ) => value?.[ key ], data ) ?? [];
+		const searchTerms = getFromPath( data, dataPath.concat( [ 'search_terms' ] ) ) ?? [];
 
 		return searchTerms.map( ( day ) => {
 			return {
@@ -1154,7 +1159,7 @@ export const normalizers = {
 
 		const { startOf } = rangeOfPeriod( query.period, query.date );
 		const dataPath = query.summarize ? [ 'summary', 'files' ] : [ 'days', startOf, 'files' ];
-		const statsData = dataPath.reduce( ( value, key ) => value?.[ key ], data ) ?? [];
+		const statsData = getFromPath( data, dataPath ) ?? [];
 
 		return statsData.map( ( item ) => {
 			return {

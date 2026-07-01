@@ -226,14 +226,14 @@ export class SeoPreviewPane extends PureComponent {
 								facebook: FacebookPost( site, post, frontPageMetaDescription ),
 								google: GooglePost( site, post, frontPageMetaDescription ),
 								x: TwitterPost( site, post, frontPageMetaDescription ),
-							}?.[ selectedService ] ??
+							}[ selectedService ] ??
 								ComingSoonMessage( translate ) ) }
 						{ ! post &&
 							( {
 								facebook: FacebookSite( site, frontPageMetaDescription ),
 								google: GoogleSite( site, frontPageMetaDescription ),
 								x: TwitterSite( site, frontPageMetaDescription ),
-							}?.[ selectedService ] ??
+							}[ selectedService ] ??
 								ComingSoonMessage( translate ) ) }
 					</div>
 				</div>

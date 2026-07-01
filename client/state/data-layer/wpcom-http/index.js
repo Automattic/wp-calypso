@@ -24,7 +24,7 @@ const fetcherMap = function ( method, fetcher = 'wpcom' ) {
 		{
 			GET: req.get.bind( req ),
 			POST: req.post.bind( req ),
-		}?.[ method ] ?? null
+		}[ method ] ?? null
 	);
 };
 

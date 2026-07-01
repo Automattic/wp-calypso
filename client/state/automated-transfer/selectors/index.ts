@@ -55,7 +55,7 @@ export const getEligibility = ( state: AppState, siteId: number | null ) =>
  * @returns {boolean} eligibility status for site
  */
 export const getEligibilityStatus = ( state: AppState ): boolean =>
-	!! ( state?.lastUpdate ?? 0 ) && ! ( state?.eligibilityHolds ?? [] ).length;
+	!! state?.lastUpdate && ! state?.eligibilityHolds?.length;
 
 /**
  * Returns eligibility status for transfer

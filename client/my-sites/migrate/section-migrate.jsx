@@ -785,7 +785,7 @@ export const connector = connect(
 			isTargetSiteAtomic: !! isSiteAutomatedTransfer( state, targetSiteId ),
 			isTargetSiteJetpack: !! isJetpackSite( state, targetSiteId ),
 			sourceSite: ownProps.sourceSiteId && getSite( state, ownProps.sourceSiteId ),
-			startMigration: !! ( getCurrentQueryArguments( state )?.start ?? false ),
+			startMigration: !! getCurrentQueryArguments( state )?.start,
 			sourceSiteHasJetpack: false,
 			targetSite: getSelectedSite( state ),
 			targetSiteId,
