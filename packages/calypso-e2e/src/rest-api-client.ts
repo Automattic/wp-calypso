@@ -411,8 +411,10 @@ export class RestAPIClient {
 	/**
 	 *
 	 * @param siteID
+	 * @param number Page size. The endpoint defaults to 25; pass a higher value
+	 * (up to the 100 pending-invite cap) to fetch more in one request.
 	 */
-	async getInvites( siteID: number ): Promise< AllInvitesResponse > {
+	async getInvites( siteID: number, number?: number ): Promise< AllInvitesResponse > {
 		const params: RequestParams = {
 			method: 'get',
 			headers: {
@@ -421,10 +423,12 @@ export class RestAPIClient {
 			},
 		};
 
-		const response = await this.sendRequest(
-			this.getRequestURL( '1.1', `/sites/${ siteID }/invites` ),
-			params
-		);
+		const url = this.getRequestURL( '1.1', `/sites/${ siteID }/invites` );
+		if ( number !== undefined ) {
+			url.searchParams.set( 'number', String( number ) );
+		}
+
+		const response = await this.sendRequest( url, params );
 
 		if ( response.hasOwnProperty( 'error' ) ) {
 			throw new Error(
@@ -485,6 +489,31 @@ export class RestAPIClient {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Bulk-deletes pending invites by their invite keys in a single request.
+	 *
+	 * @param siteID Target site ID.
+	 * @param inviteKeys Invite keys to delete.
+	 * @returns The list of deleted and invalid invite keys.
+	 */
+	async deleteInvites( siteID: number, inviteKeys: string[] ): Promise< DeleteInvitesResponse > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+			body: JSON.stringify( {
+				invite_ids: inviteKeys,
+			} ),
+		};
+
+		return this.sendRequest(
+			this.getRequestURL( '2', `/sites/${ siteID }/invites/delete`, 'wpcom' ),
+			params
+		);
 	}
 
 	/* Me */
