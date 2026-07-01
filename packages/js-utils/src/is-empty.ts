@@ -46,12 +46,14 @@ const isEmpty = ( value: unknown ): boolean => {
 	// Array-like values lodash measures by `length`: arrays, strings, typed
 	// arrays (and Node buffers, which subclass `Uint8Array`), `arguments`, and
 	// jQuery-like collections (an object with a `splice` method). Lodash gates
-	// this whole branch behind `isArrayLike` — a valid `length` — so a bare
-	// object that merely owns a `length`, or an `arguments`/spoofed value whose
-	// `length` has been removed, falls through to the own-key check below.
+	// this whole branch behind `isArrayLike` — a valid `length` on a non-function
+	// — so a bare object that merely owns a `length`, a function (whose `length`
+	// is its arity), or an `arguments`/spoofed value whose `length` has been
+	// removed, falls through to the own-key check below.
 	const length = ( value as { length?: unknown } ).length;
 	if (
 		isLength( length ) &&
+		typeof value !== 'function' &&
 		( Array.isArray( value ) ||
 			typeof value === 'string' ||
 			( ArrayBuffer.isView( value ) && tag !== '[object DataView]' ) ||

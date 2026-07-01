@@ -140,6 +140,15 @@ describe( 'isEmpty', () => {
 		/* eslint-enable prefer-rest-params */
 		delete ( lengthlessArgs as { length?: unknown } ).length;
 
+		// A function is never array-like in lodash (its `length` is arity), so it
+		// is measured by own keys. Only a function whose spoofed `Arguments` tag
+		// can't be unmasked (frozen) would otherwise reach the length branch.
+		const spliceFn = Object.assign( function () {}, { splice() {} } );
+		const taggedFn = function () {};
+		( taggedFn as Record< symbol, unknown > )[ Symbol.toStringTag ] = 'Arguments';
+		( taggedFn as { key?: number } ).key = 1;
+		Object.freeze( taggedFn );
+
 		const cases: [ string, unknown ][] = [
 			[ 'null', null ],
 			[ 'undefined', undefined ],
@@ -181,6 +190,8 @@ describe( 'isEmpty', () => {
 			[ 'filled arguments', filledArgs ],
 			[ 'arguments with length deleted', lengthlessArgs ],
 			[ 'frozen spoofed Arguments tag', Object.freeze( { [ Symbol.toStringTag ]: 'Arguments' } ) ],
+			[ 'function with own splice', spliceFn ],
+			[ 'frozen function spoofing Arguments with own key', taggedFn ],
 		];
 
 		it.each( cases )( 'matches for %s', ( _label, value ) => {
