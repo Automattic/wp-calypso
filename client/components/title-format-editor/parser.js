@@ -1,5 +1,4 @@
 import { convertFromRaw, convertToRaw } from 'draft-js';
-import { matchesProperty } from 'lodash';
 import { compose } from 'redux';
 
 /*
@@ -100,7 +99,7 @@ export const fromEditor = ( content ) => {
 	return [ ...o, i < t.length && { type: 'string', value: t.slice( i ) } ].filter( Boolean );
 };
 
-const isTextPiece = matchesProperty( 'type', 'string' );
+const isTextPiece = ( piece ) => piece?.type === 'string';
 
 const emptyBlockMap = {
 	text: '',

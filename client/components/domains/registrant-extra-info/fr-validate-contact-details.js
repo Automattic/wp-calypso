@@ -1,11 +1,26 @@
 import { isEmpty } from '@automattic/js-utils';
 import debugFactory from 'debug';
 import validatorFactory from 'is-my-json-valid';
-import { update } from 'lodash';
 import validationSchema from './fr-schema';
 
 const validate = validatorFactory( validationSchema, { greedy: true } );
 const debug = debugFactory( 'calypso:components:domains:registrant-extra-info:validation' );
+
+// Applies `updater` to the value at `path` (an array of keys) in `object`,
+// creating intermediate objects as needed, and returns the mutated `object`.
+function updateAtPath( object, path, updater ) {
+	let node = object;
+	for ( let i = 0; i < path.length - 1; i++ ) {
+		const key = path[ i ];
+		if ( node[ key ] == null || typeof node[ key ] !== 'object' ) {
+			node[ key ] = {};
+		}
+		node = node[ key ];
+	}
+	const lastKey = path[ path.length - 1 ];
+	node[ lastKey ] = updater( node[ lastKey ] );
+	return object;
+}
 
 // is-my-json-valid uses customized messages, but the actual rule name seems
 // more intuitive
@@ -104,6 +119,6 @@ export default function validateContactDetails( contactDetails ) {
 
 		const appendThisMessage = ( before ) => [ ...( before || [] ), ruleNameFromMessage( message ) ];
 
-		return update( accumulatedErrors, correctedPath, appendThisMessage );
+		return updateAtPath( accumulatedErrors, correctedPath, appendThisMessage );
 	}, {} );
 }

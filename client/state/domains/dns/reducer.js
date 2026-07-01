@@ -1,6 +1,5 @@
 import { pick } from '@automattic/js-utils';
 import update from 'immutability-helper';
-import { matches } from 'lodash';
 import {
 	DOMAINS_DNS_ADD,
 	DOMAINS_DNS_ADD_COMPLETED,
@@ -22,15 +21,15 @@ function isWpcomRecord( record ) {
 }
 
 function isRootARecord( domain ) {
-	return matches( { type: 'A', name: `${ domain }.` } );
+	return ( record ) => record?.type === 'A' && record?.name === `${ domain }.`;
 }
 
 function isRootAaaaRecord( domain ) {
-	return matches( { type: 'AAAA', name: `${ domain }.` } );
+	return ( record ) => record?.type === 'AAAA' && record?.name === `${ domain }.`;
 }
 
 function isNsRecord( domain ) {
-	return matches( { type: 'NS', name: `${ domain }.` } );
+	return ( record ) => record?.type === 'NS' && record?.name === `${ domain }.`;
 }
 
 function removeDuplicateWpcomRecords( domain, records ) {

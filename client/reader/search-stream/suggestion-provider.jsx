@@ -1,9 +1,19 @@
 import { times } from '@automattic/js-utils';
-import { sampleSize } from 'lodash';
 import { Component } from 'react';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { useFollowedTags } from 'calypso/reader/data/tags';
 import { suggestions } from 'calypso/reader/search-stream/suggestions';
+
+// Returns up to `n` unique random elements from `array` via a partial Fisher–Yates shuffle.
+function sampleSize( array, n ) {
+	const copy = [ ...array ];
+	const size = Math.min( n, copy.length );
+	for ( let i = 0; i < size; i++ ) {
+		const rand = i + Math.floor( Math.random() * ( copy.length - i ) );
+		[ copy[ i ], copy[ rand ] ] = [ copy[ rand ], copy[ i ] ];
+	}
+	return copy.slice( 0, size );
+}
 
 function createRandomId( randomBytesLength = 9 ) {
 	// 9 * 4/3 = 12

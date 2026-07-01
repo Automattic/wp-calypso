@@ -139,6 +139,19 @@ const MAP_MESSAGE =
 	'(a property-name iteratee becomes `( item ) => item?.prop`), use `Array.from( … )` for DOM collections, ' +
 	'and guard nullable collections with `?? []`.';
 
+const UNESCAPE_MESSAGE =
+	'Please decode the basic HTML entities with a small `string.replace` (over `&amp;`/`&lt;`/`&gt;`/`&quot;`/`&#39;`) instead of lodash `unescape`.';
+const SAMPLESIZE_MESSAGE =
+	'Please write a small Fisher–Yates sampler instead of lodash `sampleSize`.';
+const MATCHES_MESSAGE =
+	'Please use an explicit predicate (`( item ) => item?.key === value && …`) instead of lodash `matches`.';
+const MATCHESPROPERTY_MESSAGE =
+	'Please use an explicit predicate (`( item ) => item?.key === value`) instead of lodash `matchesProperty`.';
+const UPDATE_MESSAGE =
+	'Please write an explicit path update (walk/create the path, then apply the updater) instead of lodash `update`.';
+const CLONEDEEPWITH_MESSAGE =
+	'Please use `structuredClone` plus a targeted override, or a small recursive clone, instead of lodash `cloneDeepWith`.';
+
 const paths = [
 	{ name: 'lodash', importNames: JS_UTILS_NAMES, message: JS_UTILS_MESSAGE },
 	{ name: 'lodash', importNames: CASE_NAMES, message: CASE_MESSAGE },
@@ -173,6 +186,12 @@ const paths = [
 	{ name: 'lodash', importNames: [ 'forEach' ], message: FOREACH_MESSAGE },
 	{ name: 'lodash', importNames: [ 'filter' ], message: FILTER_MESSAGE },
 	{ name: 'lodash', importNames: [ 'map' ], message: MAP_MESSAGE },
+	{ name: 'lodash', importNames: [ 'unescape' ], message: UNESCAPE_MESSAGE },
+	{ name: 'lodash', importNames: [ 'sampleSize' ], message: SAMPLESIZE_MESSAGE },
+	{ name: 'lodash', importNames: [ 'matches' ], message: MATCHES_MESSAGE },
+	{ name: 'lodash', importNames: [ 'matchesProperty' ], message: MATCHESPROPERTY_MESSAGE },
+	{ name: 'lodash', importNames: [ 'update' ], message: UPDATE_MESSAGE },
+	{ name: 'lodash', importNames: [ 'cloneDeepWith' ], message: CLONEDEEPWITH_MESSAGE },
 ];
 
 // Deep `lodash/<fn>` imports bypass the named-import paths above.
@@ -210,46 +229,61 @@ const patterns = [
 	{ group: [ 'lodash/forEach' ], message: FOREACH_MESSAGE },
 	{ group: [ 'lodash/filter' ], message: FILTER_MESSAGE },
 	{ group: [ 'lodash/map' ], message: MAP_MESSAGE },
+	{ group: [ 'lodash/unescape' ], message: UNESCAPE_MESSAGE },
+	{ group: [ 'lodash/sampleSize' ], message: SAMPLESIZE_MESSAGE },
+	{ group: [ 'lodash/matches' ], message: MATCHES_MESSAGE },
+	{ group: [ 'lodash/matchesProperty' ], message: MATCHESPROPERTY_MESSAGE },
+	{ group: [ 'lodash/update' ], message: UPDATE_MESSAGE },
+	{ group: [ 'lodash/cloneDeepWith' ], message: CLONEDEEPWITH_MESSAGE },
 ];
 
-// `no-restricted-properties` entries for lodash namespace member access
-// (`_.isEmpty( … )` / `lodash.isEmpty( … )`) — the CommonJS/namespace shape that
-// `no-restricted-imports` cannot see. Most migrated functions are backstopped
-// here by the `eslint-plugin-you-dont-need-lodash-underscore` rules, but that
-// plugin ships no `is-empty` rule, so this is `isEmpty`'s namespace guard.
-const properties = [
-	{ object: '_', property: 'isEmpty', message: JS_UTILS_MESSAGE },
-	{ object: 'lodash', property: 'isEmpty', message: JS_UTILS_MESSAGE },
+// Functions whose namespace-member (`_.fn( … )` / `lodash.fn( … )`) and CommonJS
+// shapes `no-restricted-imports` cannot see. Most migrated functions are
+// backstopped by the `eslint-plugin-you-dont-need-lodash-underscore` rules in
+// the root config, but that plugin ships no rule for these, so they get their
+// own namespace/CommonJS guards below.
+const NAMESPACE_GUARDED = [
+	{ name: 'isEmpty', message: JS_UTILS_MESSAGE },
+	{ name: 'unescape', message: UNESCAPE_MESSAGE },
+	{ name: 'sampleSize', message: SAMPLESIZE_MESSAGE },
+	{ name: 'matches', message: MATCHES_MESSAGE },
+	{ name: 'matchesProperty', message: MATCHESPROPERTY_MESSAGE },
+	{ name: 'update', message: UPDATE_MESSAGE },
+	{ name: 'cloneDeepWith', message: CLONEDEEPWITH_MESSAGE },
 ];
 
-// `no-restricted-modules` entry for the deep CommonJS require
-// (`require( 'lodash/isEmpty' )`); `no-restricted-modules` matches by path only.
-const modules = [ { name: 'lodash/isEmpty', message: JS_UTILS_MESSAGE } ];
+// `no-restricted-properties`: namespace member access (`_.fn( … )` / `lodash.fn( … )`).
+const properties = NAMESPACE_GUARDED.flatMap( ( { name, message } ) => [
+	{ object: '_', property: name, message },
+	{ object: 'lodash', property: name, message },
+] );
 
-// `no-restricted-syntax` selectors for the CommonJS forms that match by path
-// can't catch: a destructured `const { isEmpty } = require( 'lodash' )` and a
-// member access `require( 'lodash' ).isEmpty`.
-const REQUIRE_MESSAGE =
-	'Please use `isEmpty` from `@automattic/js-utils` instead of requiring it from lodash.';
-const syntax = [
+// `no-restricted-modules`: the deep CommonJS require (`require( 'lodash/fn' )`),
+// which matches by path only.
+const modules = NAMESPACE_GUARDED.map( ( { name, message } ) => ( {
+	name: `lodash/${ name }`,
+	message,
+} ) );
+
+// `no-restricted-syntax`: the CommonJS forms path-matching can't catch — a
+// destructured `const { fn } = require( 'lodash' )` and a member access
+// `require( 'lodash' ).fn`.
+const syntax = NAMESPACE_GUARDED.flatMap( ( { name, message } ) => [
 	{
-		selector:
-			"VariableDeclarator[init.callee.name='require'][init.arguments.0.value='lodash'] ObjectPattern > Property[key.name='isEmpty']",
-		message: REQUIRE_MESSAGE,
+		selector: `VariableDeclarator[init.callee.name='require'][init.arguments.0.value='lodash'] ObjectPattern > Property[key.name='${ name }']`,
+		message,
 	},
 	{
-		selector:
-			"MemberExpression[object.callee.name='require'][object.arguments.0.value='lodash'][property.name='isEmpty']",
-		message: REQUIRE_MESSAGE,
+		selector: `MemberExpression[object.callee.name='require'][object.arguments.0.value='lodash'][property.name='${ name }']`,
+		message,
 	},
-];
+] );
 
 // Residual gap: an aliased lodash namespace bound to an arbitrary name
-// (`const l = require( 'lodash' ); l.isEmpty( … )`) is not caught. These are all
-// name-based rules; resolving an arbitrary alias needs binding/scope tracking,
-// which only a custom rule provides (the alias-aware
-// `eslint-plugin-you-dont-need-lodash-underscore` ships no `is-empty` rule).
-// Left unguarded deliberately: app code is ESM (covered by the import rules
-// above), and CommonJS lodash exists only in build tooling.
+// (`const l = require( 'lodash' ); l.isEmpty( … )`) is not caught for any of
+// the `NAMESPACE_GUARDED` functions. These are all name-based rules; resolving
+// an arbitrary alias needs binding/scope tracking, which only a custom rule
+// provides. Left unguarded deliberately: app code is ESM (covered by the import
+// rules above), and CommonJS lodash exists only in build tooling.
 
 module.exports = { paths, patterns, properties, modules, syntax };
