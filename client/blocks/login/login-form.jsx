@@ -17,7 +17,6 @@ import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
 import LoginSubmitButton from 'calypso/blocks/login/login-submit-button';
-import { blackboxProtectionPropType } from 'calypso/blocks/login/use-blackbox-protection';
 import { withBlackboxProtection } from 'calypso/blocks/login/with-blackbox-protection';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -77,7 +76,12 @@ import './login-form.scss';
 export class LoginForm extends Component {
 	static propTypes = {
 		accountType: PropTypes.string,
-		blackbox: blackboxProtectionPropType,
+		blackbox: PropTypes.shape( {
+			isSubmitBlocked: PropTypes.bool.isRequired,
+			challenge: PropTypes.node.isRequired,
+			getSessionId: PropTypes.func.isRequired,
+			reset: PropTypes.func.isRequired,
+		} ).isRequired,
 		disableAutoFocus: PropTypes.bool,
 		sendEmailLogin: PropTypes.func.isRequired,
 		formUpdate: PropTypes.func.isRequired,
