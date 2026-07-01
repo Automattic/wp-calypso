@@ -15,6 +15,18 @@
 	}
 }
 
+// The shared post-action buttons (like, comment, share, save) color their icons
+// and labels from `--color-text-subtle` at rest and `--color-link` on hover /
+// when active. Remap just those two tokens within the actions scope so every
+// button follows the space accent, without reaching into each button's styles.
+// A space feed always sets `--space-color*`, so no fallback is needed; the
+// remap is confined to `.reader-post-actions`, so the rest of the feed (excerpts,
+// meta) keeps the neutral subtle color.
+.space-feed .reader-post-actions {
+	--color-text-subtle: var(--space-color);
+	--color-link: var(--space-color-hover);
+}
+
 .space-feed__toolbar {
 	display: flex;
 	flex-wrap: wrap;

@@ -51,7 +51,9 @@
 	font-size: 1rem;
 	font-weight: 700;
 	line-height: 1.3;
-	color: var(--color-text);
+	// Use the space's accent color (set as `--space-color` on `.space-feed`),
+	// falling back to the default text color when no space accent is present.
+	color: var(--space-color, var(--color-text));
 }
 
 .space-feed-board__title-link {
@@ -59,8 +61,16 @@
 	text-decoration: none;
 }
 
+// Already-read posts fade to a lighter shade of the space accent. Ordered
+// before :hover (LVHA). Recoloring the anchor itself is the one styling the
+// browser reliably honors on :visited.
+.space-feed-board__title-link:visited {
+	color: var(--space-color-visited, var(--color-text-subtle));
+}
+
 .space-feed-board__title-link:hover {
 	text-decoration: underline;
+	color: var(--space-color-hover, var(--color-link));
 }
 
 .space-feed-board__excerpt {
