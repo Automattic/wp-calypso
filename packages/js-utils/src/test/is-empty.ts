@@ -149,6 +149,16 @@ describe( 'isEmpty', () => {
 		( taggedFn as { key?: number } ).key = 1;
 		Object.freeze( taggedFn );
 
+		// A frozen object spoofing a function-family tag: lodash's `isArrayLike`
+		// excludes it (tag-based `isFunction`), so it is measured by own keys, not
+		// its `length`. Each is non-empty (owns `length`/`splice`).
+		const functionTagSpoofs = [ 'Function', 'AsyncFunction', 'GeneratorFunction', 'Proxy' ].map(
+			( tag ): [ string, unknown ] => [
+				`frozen splice object tagged ${ tag }`,
+				Object.freeze( { length: 0, splice() {}, [ Symbol.toStringTag ]: tag } ),
+			]
+		);
+
 		const cases: [ string, unknown ][] = [
 			[ 'null', null ],
 			[ 'undefined', undefined ],
@@ -192,6 +202,7 @@ describe( 'isEmpty', () => {
 			[ 'frozen spoofed Arguments tag', Object.freeze( { [ Symbol.toStringTag ]: 'Arguments' } ) ],
 			[ 'function with own splice', spliceFn ],
 			[ 'frozen function spoofing Arguments with own key', taggedFn ],
+			...functionTagSpoofs,
 		];
 
 		it.each( cases )( 'matches for %s', ( _label, value ) => {

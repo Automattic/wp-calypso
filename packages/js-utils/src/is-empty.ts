@@ -3,6 +3,17 @@ import getTag from './get-tag';
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 const objectProto = Object.prototype;
 
+// The tags lodash's `isFunction` treats as callable. Matching against the tag
+// (rather than `typeof`) excludes a frozen object whose spoofed
+// `Symbol.toStringTag` can't be unmasked from the array-like branch, as lodash
+// does — its `isArrayLike` gate is `!isFunction`, and `isFunction` is tag-based.
+const FUNCTION_TAGS = new Set( [
+	'[object Function]',
+	'[object GeneratorFunction]',
+	'[object AsyncFunction]',
+	'[object Proxy]',
+] );
+
 // Mirrors lodash's `isLength`: a valid array-like length is a non-negative
 // integer no greater than the maximum safe integer.
 const isLength = ( value: unknown ): value is number =>
@@ -53,11 +64,13 @@ const isEmpty = ( value: unknown ): boolean => {
 	const length = ( value as { length?: unknown } ).length;
 	if (
 		isLength( length ) &&
-		typeof value !== 'function' &&
+		! FUNCTION_TAGS.has( tag ) &&
 		( Array.isArray( value ) ||
 			typeof value === 'string' ||
 			( ArrayBuffer.isView( value ) && tag !== '[object DataView]' ) ||
-			tag === '[object Arguments]' ||
+			// Lodash's `isArguments` is gated by `isObjectLike`, so a function
+			// spoofing an `Arguments` tag is not measured by its arity.
+			( typeof value === 'object' && tag === '[object Arguments]' ) ||
 			( typeof value === 'object' &&
 				typeof ( value as { splice?: unknown } ).splice === 'function' ) )
 	) {
