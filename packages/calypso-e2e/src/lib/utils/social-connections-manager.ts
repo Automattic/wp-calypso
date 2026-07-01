@@ -140,12 +140,18 @@ export class SocialConnectionsManager {
 
 	/**
 	 * Wait for the connection test results response.
+	 *
+	 * The connections resolver fires the request during editor load, so callers arm
+	 * this before navigating; the timeout must cover navigation + hydration + fetch.
 	 */
-	async waitForConnectionTests() {
-		await this.page.waitForResponse( ( response ) => {
-			const url = new URL( response.url() );
+	async waitForConnectionTests( { timeout = 60 * 1000 }: { timeout?: number } = {} ) {
+		await this.page.waitForResponse(
+			( response ) => {
+				const url = new URL( response.url() );
 
-			return this.isSimpleConnectionTestUrl( url ) || this.isAtomicConnectionTestUrl( url );
-		} );
+				return this.isSimpleConnectionTestUrl( url ) || this.isAtomicConnectionTestUrl( url );
+			},
+			{ timeout }
+		);
 	}
 }

@@ -166,7 +166,12 @@ export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
 	};
 
 	return (
-		<div className={ clsx( 'space-feed', space && `space-feed--${ space.layout.color }` ) }>
+		<div
+			className={ clsx(
+				'space-feed',
+				space && space.layout.color !== 'none' && `space-feed--${ space.layout.color }`
+			) }
+		>
 			{ /* The source notice reports followed-feed failures; Discover isn't built
 			     from followed feeds, so it only applies to the posts feed. */ }
 			{ ! isDiscover && <SpaceFeedSourceNotice failedCount={ 0 } /> }

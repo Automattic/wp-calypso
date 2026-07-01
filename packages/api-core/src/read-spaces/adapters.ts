@@ -31,14 +31,18 @@ export interface ReadSpaceApiItem {
 /** Map a wpcom/v2 summary item onto the client `ReadSpace` (list) shape. */
 export function adaptReadSpace( item: ReadSpaceApiItem ): ReadSpace {
 	const layout: SpaceLayout = { color: item.layout.color, icon: item.layout.icon };
+	if ( item.layout.iconColor ) {
+		layout.iconColor = item.layout.iconColor;
+	}
 	if ( item.layout.view ) {
 		layout.view = item.layout.view;
 	}
 	return {
 		id: String( item.id ),
 		name: item.title,
-		// `view` is forward-looking: the API does not return it yet (stays
-		// `undefined`), but mapping it now means it flows through once it does.
+		// `iconColor` and `view` are forward-looking: the API does not return them
+		// yet (they stay `undefined`), but mapping them now means they flow through
+		// once it does.
 		layout,
 	};
 }
