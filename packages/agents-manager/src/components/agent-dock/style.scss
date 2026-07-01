@@ -113,7 +113,7 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) 
 		border: 1px solid $admin-border-color;
 		border-bottom: none;
 		box-sizing: border-box;
-		height: calc( var( --masterbar-height, #{$admin-bar-height} ) + 1px );
+		height: calc( #{$admin-bar-height} + 1px );
 	}
 
 	#adminmenuback,

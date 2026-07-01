@@ -11,6 +11,18 @@ export function isSiteEditorContext( environment?: string, currentRoute?: string
 	);
 }
 
+/**
+ * True when the Site Editor shows its editing canvas (`?canvas=edit`) rather
+ * than the navigation view. Scoped to the Site Editor so other admin pages that
+ * happen to carry `?canvas=edit` aren't treated as canvas edit mode.
+ */
+export function isSiteEditorCanvasEditMode(): boolean {
+	return (
+		isSiteEditorContext() &&
+		new URLSearchParams( window.location.search ).get( 'canvas' ) === 'edit'
+	);
+}
+
 export function getClientConstructorArguments(
 	environment?: string,
 	currentRoute?: string

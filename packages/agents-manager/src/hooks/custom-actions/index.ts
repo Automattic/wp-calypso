@@ -48,7 +48,7 @@ interface SetupProps {
 	closeSidebar: () => void;
 	canDock: boolean;
 	setIsCompactMode: ( isCompact: boolean ) => void;
-	setShouldRenderChat: ( shouldRender: boolean ) => void;
+	setIsChatEnabled: ( isEnabled: boolean ) => void;
 	setDesktopMediaQuery: ( query: string ) => void;
 }
 
@@ -64,7 +64,7 @@ export function useSetupCustomActions( {
 	closeSidebar,
 	canDock,
 	setIsCompactMode,
-	setShouldRenderChat,
+	setIsChatEnabled,
 	setDesktopMediaQuery,
 }: SetupProps ): void {
 	const { hasLoaded, isOpen, isDocked, isMinimized, floatingPosition } = useSelect( ( select ) => {
@@ -156,9 +156,9 @@ export function useSetupCustomActions( {
 				return;
 			}
 
-			setShouldRenderChat( isEnabled );
+			setIsChatEnabled( isEnabled );
 		},
-		[ setShouldRenderChat ]
+		[ setIsChatEnabled ]
 	);
 
 	const setChatDesktopMediaQuery = useCallback(
