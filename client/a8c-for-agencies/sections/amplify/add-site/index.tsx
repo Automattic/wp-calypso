@@ -5,7 +5,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import AmplifyAddSiteModal from './modal';
 
-export default function AmplifyAddSite() {
+export default function AmplifyAddSite( { className }: { className?: string } = {} ) {
 	const dispatch = useDispatch();
 	const [ isOpen, setIsOpen ] = useState( false );
 
@@ -16,7 +16,12 @@ export default function AmplifyAddSite() {
 
 	return (
 		<>
-			<Button __next40pxDefaultSize variant="primary" onClick={ handleOpen }>
+			<Button
+				__next40pxDefaultSize
+				variant="primary"
+				className={ className }
+				onClick={ handleOpen }
+			>
 				{ __( 'Amplify a site' ) }
 			</Button>
 			{ isOpen && <AmplifyAddSiteModal onClose={ () => setIsOpen( false ) } /> }

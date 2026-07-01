@@ -1,5 +1,6 @@
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
@@ -19,9 +20,15 @@ import './style.scss';
 function ClientCheckoutContent() {
 	const translate = useTranslate();
 
-	const { isReady, error, emailMismatchWithReferralClient, referral } = useClientCheckout( {
-		expressMode: false,
-	} );
+	const { isReady, error, emailMismatchWithReferralClient, referral, wpcomHostingProductSlug } =
+		useClientCheckout( {
+			expressMode: false,
+		} );
+
+	const subscriptionsUrl = window.location.origin + '/client/subscriptions';
+	const redirectTo = wpcomHostingProductSlug
+		? addQueryArgs( subscriptionsUrl, { wpcom_plan_purchased: wpcomHostingProductSlug } )
+		: subscriptionsUrl;
 
 	if ( ! isReady ) {
 		return <ClientCheckoutV2Placeholder />;
@@ -60,7 +67,7 @@ function ClientCheckoutContent() {
 			</div>
 			<CheckoutMain
 				sitelessCheckoutType="a4a"
-				redirectTo={ window.location.origin + '/client/subscriptions' }
+				redirectTo={ redirectTo }
 				customizedPreviousPath="/client/subscriptions"
 				siteSlug=""
 				siteId={ 0 }
