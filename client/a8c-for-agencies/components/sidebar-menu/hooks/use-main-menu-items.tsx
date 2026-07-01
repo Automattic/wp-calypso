@@ -238,7 +238,7 @@ const useMainMenuItems = ( path: string ) => {
 						},
 				  ]
 				: [] ),
-			...( isSectionNameEnabled( 'a8c-for-agencies-amplify' )
+			...( agency?.amplify?.allowed
 				? [
 						{
 							icon: megaphone,
