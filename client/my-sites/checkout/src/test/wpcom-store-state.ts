@@ -6,7 +6,7 @@ import {
 } from '../types/wpcom-store-state';
 import type { ManagedContactDetailsShape } from '@automattic/wpcom-checkout';
 
-// Reads a value at a lodash-style dotted path (e.g. `extra.ca.lang`).
+// Reads a value at a dotted path (e.g. `extra.ca.lang`).
 const getPath = ( object, accessor ) =>
 	accessor.split( '.' ).reduce( ( value, key ) => value?.[ key ], object );
 

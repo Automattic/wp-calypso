@@ -54,7 +54,7 @@ export type KeyedReducerAction< TAction extends Action > = TAction | CalypsoInit
  *         title: 'grunt',
  *     }
  * }
- * @param {string} keyPath dot-separated path to the key in action referencing item in state map (e.g. `meta.dataLayer.requestKey`); bracket/quoted lodash path syntax is not supported
+ * @param {string} keyPath dot-separated path to the key in action referencing item in state map (e.g. `meta.dataLayer.requestKey`); bracket or quoted path syntax (e.g. `a[0].b`) is not supported
  * @param {Function} reducer applied to referenced item in state map
  * @returns {Function} super-reducer applying reducer over map of keyed items
  */
