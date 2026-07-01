@@ -98,12 +98,6 @@
 	&.eligibility-warnings--without-title {
 		padding: 24px;
 		box-shadow: 0 0 0 1px var(--color-border-subtle);
-
-		.eligibility-warnings__address-first {
-			// The width of the parent element is much greater for the without title format
-			// so we don't need an ellipsis text-overflow here.
-			max-width: none;
-		}
 	}
 }
 
@@ -245,21 +239,30 @@
 		margin-bottom: 4px;
 		display: flex;
 		align-items: center;
+		gap: 8px;
 
 		&::after {
 			content: none;
 		}
 	}
 
+	.eligibility-warnings__address {
+		display: flex;
+		align-items: baseline;
+		min-width: 0;
+		margin-inline-end: auto;
+	}
+
 	.eligibility-warnings__address-first {
 		text-overflow: ellipsis;
-		max-width: 240px;
+		min-width: 0;
 		overflow: hidden;
 		white-space: nowrap;
 	}
 
 	.eligibility-warnings__address-second {
-		margin-right: auto;
+		flex-shrink: 0;
+		white-space: nowrap;
 	}
 
 	.badge {
@@ -278,18 +281,12 @@
 	}
 
 	@media (max-width: 660px) {
-		.card {
-			display: flex;
-			flex-direction: column-reverse;
+		// Let the badge wrap below the address only when they can't share the
+		// line. Short addresses keep the badge inline; a long address gets the
+		// full line to itself and reads left to right.
+		.card.card {
 			flex-wrap: wrap;
-			gap: 4px;
-
-			.badge {
-				position: relative;
-				right: unset;
-				width: fit-content;
-				align-self: flex-start;
-			}
+			row-gap: 4px;
 		}
 	}
 }
