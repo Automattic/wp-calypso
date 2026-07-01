@@ -10,7 +10,6 @@ import { keyForPost, keysAreEqual } from 'calypso/reader/post-key';
 import { useSelectedPostActions } from 'calypso/reader/stream/use-selected-post-actions';
 import { useStreamKeyboardShortcuts } from 'calypso/reader/stream/use-stream-keyboard-shortcuts';
 import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post-key-selection';
-import { showSelectedPost } from 'calypso/reader/utils';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { SpaceFeedSourceNotice } from './components/source-notice';
@@ -112,19 +111,8 @@ export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
 	);
 
 	const notificationsOpen = useSelector( isNotificationsOpen );
-	const { openSelectedInNewTab, toggleSelectedLike } = useSelectedPostActions( selectedPostKey );
-	const openSelectedPost = useCallback( () => {
-		if ( ! selectedPostKey ) {
-			return;
-		}
-		showSelectedPost( {
-			postKey: {
-				blogId: selectedPostKey.blogId ? Number( selectedPostKey.blogId ) : undefined,
-				feedId: selectedPostKey.feedId ? Number( selectedPostKey.feedId ) : undefined,
-				postId: Number( selectedPostKey.postId ),
-			},
-		} )();
-	}, [ selectedPostKey ] );
+	const { openSelected, openSelectedInNewTab, toggleSelectedLike } =
+		useSelectedPostActions( selectedPostKey );
 
 	// Reading shortcuts for the curated layouts (the shell owns their selection).
 	// The legacy layout's ReaderStreamV2 registers its own set, so gate on
@@ -133,7 +121,7 @@ export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
 		enabled: ! isLegacy && ! notificationsOpen,
 		onNext: selectNextPost,
 		onPrevious: selectPreviousPost,
-		onOpen: openSelectedPost,
+		onOpen: openSelected,
 		onOpenInNewTab: openSelectedInNewTab,
 		onToggleLike: toggleSelectedLike,
 	} );

@@ -1,9 +1,7 @@
 import { useEffect } from 'react';
+import type { UseInfiniteListResult } from 'calypso/reader/hooks/use-infinite-list';
 
-type ScrollToIndex = (
-	index: number,
-	options?: { align?: 'auto' | 'start' | 'center' | 'end' }
-) => void;
+type ScrollToIndex = UseInfiniteListResult[ 'scrollToIndex' ];
 
 /**
  * Scrolls a layout's own virtualizer so the keyboard-selected row is on screen.

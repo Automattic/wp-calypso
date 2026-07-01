@@ -122,19 +122,14 @@ export function ReaderStreamV2( {
 	} );
 
 	const notificationsOpen = useSelector( isNotificationsOpen );
-	const { openSelectedInNewTab, toggleSelectedLike } = useSelectedPostActions( selectedPostKey );
-
-	const handleOpenSelection = useCallback( () => {
-		if ( selectedPostKey ) {
-			openPost( selectedPostKey );
-		}
-	}, [ openPost, selectedPostKey ] );
+	const { openSelected, openSelectedInNewTab, toggleSelectedLike } =
+		useSelectedPostActions( selectedPostKey );
 
 	useStreamKeyboardShortcuts( {
 		enabled: ! notificationsOpen,
 		onNext: selectNextPost,
 		onPrevious: selectPreviousPost,
-		onOpen: handleOpenSelection,
+		onOpen: openSelected,
 		onOpenInNewTab: openSelectedInNewTab,
 		onToggleLike: toggleSelectedLike,
 	} );

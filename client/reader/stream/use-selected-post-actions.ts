@@ -2,10 +2,13 @@ import { useCallback } from 'react';
 import { useCachedPost } from 'calypso/reader/data/post/cache';
 import { usePostLikeActions } from 'calypso/reader/data/post/likes';
 import { isLikeable } from 'calypso/reader/post/capabilities';
+import { showSelectedPost } from 'calypso/reader/utils';
 import { getXPostMetadata } from 'calypso/reader/xpost-helper';
 import type { StreamItem } from 'calypso/reader/data/stream/types';
 
 export interface SelectedPostActions {
+	/** Open the selected post in the full-post view (`Enter`). No-op without a selection. */
+	openSelected: () => void;
 	/** Open the selected post's original URL in a new tab (`v`). No-op without a URL. */
 	openSelectedInNewTab: () => void;
 	/** Like/unlike the selected post (`l`), mirroring the legacy stream's guards. */
@@ -21,6 +24,21 @@ export interface SelectedPostActions {
 export function useSelectedPostActions( selectedPostKey: StreamItem | null ): SelectedPostActions {
 	const selectedPost = useCachedPost( selectedPostKey );
 	const { like, unlike, isLikePending, isUnlikePending } = usePostLikeActions();
+
+	const openSelected = useCallback( () => {
+		if ( ! selectedPostKey ) {
+			return;
+		}
+		// `showSelectedPost` returns a thunk that navigates via the router; it routes
+		// x-posts to the original post from the cached post body, so no extra guard here.
+		showSelectedPost( {
+			postKey: {
+				blogId: selectedPostKey.blogId ? Number( selectedPostKey.blogId ) : undefined,
+				feedId: selectedPostKey.feedId ? Number( selectedPostKey.feedId ) : undefined,
+				postId: Number( selectedPostKey.postId ),
+			},
+		} )();
+	}, [ selectedPostKey ] );
 
 	const openSelectedInNewTab = useCallback( () => {
 		const url = selectedPost?.URL;
@@ -50,5 +68,5 @@ export function useSelectedPostActions( selectedPostKey: StreamItem | null ): Se
 		toggle( siteId, postId, { source: 'reader' } );
 	}, [ selectedPost, isLikePending, isUnlikePending, like, unlike ] );
 
-	return { openSelectedInNewTab, toggleSelectedLike };
+	return { openSelected, openSelectedInNewTab, toggleSelectedLike };
 }
