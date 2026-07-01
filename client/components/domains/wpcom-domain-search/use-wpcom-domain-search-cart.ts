@@ -86,6 +86,14 @@ export const useWPCOMDomainSearchCart = ( {
 		// when they start a domain search flow.
 		const forceFirstNonPremiumDomainToBeFree = isFirstDomainFreeForFirstYear && ! isPlanInCart;
 
+		// Stepper: use flow config. Checkout (plan in real cart): derive from next_domain_condition.
+		let effectiveFreeForFirstYearTlds: string[] | undefined;
+		if ( forceFirstNonPremiumDomainToBeFree ) {
+			effectiveFreeForFirstYearTlds = freeForFirstYearTlds;
+		} else if ( responseCart.next_domain_condition ) {
+			effectiveFreeForFirstYearTlds = responseCart.next_domain_condition.split( ',' );
+		}
+
 		// Order domains from most expensive to least expensive
 		domainItems.sort( ( a, b ) => {
 			// Put the bundled domain at the top, if there's one
@@ -109,8 +117,10 @@ export const useWPCOMDomainSearchCart = ( {
 		let freeDomainName: string | undefined;
 		if ( forceFirstNonPremiumDomainToBeFree && firstNonPremiumDomain?.meta ) {
 			const isBundledTld =
-				! freeForFirstYearTlds ||
-				freeForFirstYearTlds.some( ( tld ) => firstNonPremiumDomain.meta.endsWith( '.' + tld ) );
+				! effectiveFreeForFirstYearTlds ||
+				effectiveFreeForFirstYearTlds.some( ( tld ) =>
+					firstNonPremiumDomain.meta.endsWith( '.' + tld )
+				);
 			freeDomainName = isBundledTld ? firstNonPremiumDomain.meta : undefined;
 		}
 
@@ -275,6 +285,7 @@ export const useWPCOMDomainSearchCart = ( {
 				? freeDomainName === undefined
 				: responseCart.next_domain_is_free,
 			freeDomainName,
+			freeForFirstYearTlds: effectiveFreeForFirstYearTlds,
 			onContinue: () => onContinue( domainItems ),
 		};
 	}, [

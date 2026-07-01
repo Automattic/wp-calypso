@@ -708,8 +708,9 @@ export function isNextDomainFree( cart?: ResponseCart, domain = '' ): boolean {
 		return false;
 	}
 
-	if ( cart.next_domain_condition === 'blog' ) {
-		if ( getTld( domain ) !== 'blog' ) {
+	if ( cart.next_domain_condition ) {
+		const eligibleTlds = cart.next_domain_condition.split( ',' );
+		if ( ! eligibleTlds.includes( getTld( domain ) ) ) {
 			return false;
 		}
 	}

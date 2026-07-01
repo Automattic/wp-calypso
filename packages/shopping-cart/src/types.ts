@@ -493,7 +493,7 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	cart_generated_at_timestamp: number;
 	tax: ResponseCartTaxData;
 	next_domain_is_free: boolean;
-	next_domain_condition: '' | 'blog';
+	next_domain_condition: '' | 'blog' | 'blog,art' | ( string & {} );
 	bundled_domain?: string;
 
 	/**
