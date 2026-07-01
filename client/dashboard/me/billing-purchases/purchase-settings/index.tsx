@@ -1535,7 +1535,7 @@ export default function PurchaseSettings() {
 	const columns = isSmallViewport ? 1 : 2;
 	const spacing = isSmallViewport ? SPACING.SMALL : SPACING.DEFAULT;
 	const isCurrentPurchaseOwner = String( user.ID ) === String( purchase.user_id );
-	const canHeaderUpgrade = purchase.is_upgradable && Boolean( upgradeUrl );
+	const canHeaderUpgrade = canUpgradePurchase( purchase ) && Boolean( upgradeUrl );
 	const shouldShowHeaderUpgradeAction = canHeaderUpgrade && isCurrentPurchaseOwner;
 	const shouldShowHeaderActionMenu =
 		isCurrentPurchaseOwner && ( canHeaderUpgrade || purchase.can_explicit_renew );

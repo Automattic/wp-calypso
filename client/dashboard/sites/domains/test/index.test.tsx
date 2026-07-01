@@ -53,14 +53,16 @@ const ownerUser = {
 	username: 'owner',
 	email: 'owner@example.com',
 	language: 'en',
-} as User;
+	meta: { data: { flags: { active_flags: [] } } },
+} as unknown as User;
 
 const nonOwnerUser = {
 	ID: NON_OWNER_USER_ID,
 	username: 'non-owner',
 	email: 'nonowner@example.com',
 	language: 'en',
-} as User;
+	meta: { data: { flags: { active_flags: [] } } },
+} as unknown as User;
 
 function mockApis() {
 	nock( 'https://public-api.wordpress.com' )
