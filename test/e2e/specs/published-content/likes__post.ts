@@ -273,18 +273,21 @@ describe( 'Likes: Post', function () {
 					.map( ( frame ) => attachNetworkProbe( frame ) )
 			);
 
-			await ElementHelper.reloadAndRetry( page, async () => {
-				// Reset like state via REST API before each attempt.
-				await restAPIClient.postLikeAction( 'unlike', siteID, newPost.ID );
-				await page.reload();
-				publishedPostPage = new PublishedPostPage( page );
-				try {
+			// Log the probe only when the whole step fails (all retries exhausted),
+			// not on individual attempts that reloadAndRetry recovers from, so
+			// green runs stay clean.
+			try {
+				await ElementHelper.reloadAndRetry( page, async () => {
+					// Reset like state via REST API before each attempt.
+					await restAPIClient.postLikeAction( 'unlike', siteID, newPost.ID );
+					await page.reload();
+					publishedPostPage = new PublishedPostPage( page );
 					await publishedPostPage.likePost();
-				} catch ( error ) {
-					await logLikeWidgetProbe( page, probe );
-					throw error;
-				}
-			} );
+				} );
+			} catch ( error ) {
+				await logLikeWidgetProbe( page, probe );
+				throw error;
+			}
 		} );
 
 		it( 'Unlike post', async function () {
