@@ -97,10 +97,13 @@ export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
 		( post: ReadStreamPost ) => {
 			const postKey = keyForPost( post );
 			if ( postKey ) {
-				selectPostKey( postKey );
+				const streamItem = stream.items.find(
+					( item ) => keysAreEqual( item, postKey ) || keysAreEqual( item.xPostMetadata, postKey )
+				);
+				selectPostKey( streamItem ?? postKey );
 			}
 		},
-		[ selectPostKey ]
+		[ selectPostKey, stream.items ]
 	);
 
 	// Scroll on the Reader's main bounded container (`.layout__primary > div`, which

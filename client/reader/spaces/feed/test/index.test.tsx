@@ -23,6 +23,21 @@ jest.mock( 'calypso/reader/data/stream', () => ( {
 	getCachedStreamItems: jest.fn( () => [] ),
 } ) );
 
+jest.mock( 'calypso/reader/hooks/use-infinite-list', () => ( {
+	ScrollDebugOverlay: () => null,
+	useInfiniteList: jest.fn( ( { count } ) => ( {
+		getListProps: ( props = {} ) => props,
+		items: Array.from( { length: count }, ( _value, index ) => ( {
+			index,
+			key: `item-${ index }`,
+			start: index * 100,
+			lane: 0,
+		} ) ),
+		measureElement: jest.fn(),
+		scrollMargin: 0,
+	} ) ),
+} ) );
+
 jest.mock( 'calypso/state/selectors/get-current-locale-slug', () =>
 	jest.fn( () => mockCurrentLocaleSlug )
 );
@@ -205,6 +220,38 @@ describe( 'SpaceFeed', () => {
 				localeSlug: 'pt-br',
 			} )
 		);
+	} );
+
+	it( 'stores the full stream item when selecting a post', async () => {
+		const user = userEvent.setup();
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		queryClient.setQueryData( readSpaceQuery( WORK.id ).queryKey, WORK );
+		const post = makePost();
+		const streamItem = {
+			feedId: post.feed_ID,
+			postId: post.feed_item_ID,
+			url: post.URL,
+			site_name: post.site_name,
+		};
+		mockUseInfiniteStream.mockReturnValue(
+			streamResult( {
+				items: [ streamItem ],
+				pages: [ { posts: [ post ] } as unknown as ReadStreamResponse ],
+			} )
+		);
+
+		renderWithProvider( <SpaceFeed spaceId={ WORK.id } />, {
+			queryClient,
+			initialState: { currentUser: { id: 1 } },
+		} );
+
+		const link = screen.getByRole( 'link', { name: 'A layout-sensitive post' } );
+		link.addEventListener( 'click', ( event ) => event.preventDefault() );
+		await user.click( link );
+
+		expect(
+			queryClient.getQueryData( [ 'read', 'stream', 'selected', `space:${ WORK.id }`, null ] )
+		).toEqual( streamItem );
 	} );
 
 	it( 'requests the discover stream keyed by the space id for the discover variant', () => {
