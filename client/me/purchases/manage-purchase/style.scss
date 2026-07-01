@@ -375,6 +375,11 @@
 		align-items: center;
 		gap: 4px;
 
+		@include breakpoint-deprecated( '<660px' ) {
+			clear: left;
+			text-align: left;
+		}
+
 		svg {
 			flex-shrink: 0;
 			fill: var( --color-warning-30 );
