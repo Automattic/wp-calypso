@@ -3,7 +3,6 @@ import isEqual from 'fast-deep-equal/es6';
 import { SerializationResult } from 'calypso/state/serialization-result';
 import { serialize, deserialize, SerializableReducer } from './serialize';
 import { withPersistence } from './with-persistence';
-import type { PropertyPath } from 'lodash';
 import type { Action, AnyAction } from 'redux';
 
 type CalypsoInitAction = Action< '@@calypso/INIT' >;
@@ -22,7 +21,7 @@ export type KeyedReducerAction< TAction extends Action > = TAction | CalypsoInit
  * Note! This will only apply the supplied reducer to
  * the item referenced by the supplied key in the action.
  *
- * If no key exists whose name matches the given lodash style keyPath
+ * If no key exists whose name matches the given dot-separated keyPath
  * then this super-reducer will abort and return the
  * previous state.
  *
@@ -55,12 +54,12 @@ export type KeyedReducerAction< TAction extends Action > = TAction | CalypsoInit
  *         title: 'grunt',
  *     }
  * }
- * @param {string} keyPath lodash-style path to the key in action referencing item in state map
+ * @param {string} keyPath dot-separated path to the key in action referencing item in state map (e.g. `meta.dataLayer.requestKey`); bracket/quoted lodash path syntax is not supported
  * @param {Function} reducer applied to referenced item in state map
  * @returns {Function} super-reducer applying reducer over map of keyed items
  */
 export const keyedReducer = < TState, TAction extends AnyAction = Action >(
-	keyPath: PropertyPath,
+	keyPath: string,
 	reducer: SerializableReducer< TState, Action >
 ): SerializableReducer< Record< string | number, TState >, TAction > => {
 	// some keys are invalid
