@@ -179,6 +179,9 @@
 
 .eligibility-warnings__message {
 	flex-grow: 1;
+	// Let the message shrink below its content so a long address inside can
+	// truncate with an ellipsis instead of overflowing the flex row.
+	min-width: 0;
 	line-height: 24px;
 	padding: 0;
 	margin-bottom: 10px;
