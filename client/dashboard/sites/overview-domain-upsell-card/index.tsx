@@ -73,8 +73,7 @@ const DomainUpsellCardContent = ( {
 				] );
 			} catch ( error ) {
 				createErrorNotice(
-					( error as Error ).message ||
-						__( 'Failed to claim domain. Please try again.' ),
+					( error as Error ).message || __( 'Failed to claim domain. Please try again.' ),
 					{ type: 'snackbar' }
 				);
 				setIsSubmitting( false );
