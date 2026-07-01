@@ -14,7 +14,7 @@ const isArrayIndex = ( key ) => /^(?:0|[1-9]\d*)$/.test( key );
 // creating each missing intermediate container as needed — an array when the
 // next segment is a numeric index, otherwise a plain object — and returns the
 // mutated `object`.
-function updateAtPath( object, path, updater ) {
+export function updateAtPath( object, path, updater ) {
 	let node = object;
 	for ( let i = 0; i < path.length - 1; i++ ) {
 		const key = path[ i ];

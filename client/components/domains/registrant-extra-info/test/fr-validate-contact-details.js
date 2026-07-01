@@ -1,5 +1,29 @@
 import { omit } from '@automattic/js-utils';
-import validateContactDetails from '../fr-validate-contact-details';
+import validateContactDetails, { updateAtPath } from '../fr-validate-contact-details';
+
+describe( 'updateAtPath', () => {
+	const append = ( before ) => [ ...( before || [] ), 'x' ];
+
+	test( 'creates plain objects for string path segments', () => {
+		expect( updateAtPath( {}, [ 'extra', 'fr', 'registrantType' ], append ) ).toEqual( {
+			extra: { fr: { registrantType: [ 'x' ] } },
+		} );
+	} );
+
+	test( 'creates an array when the next path segment is a numeric index', () => {
+		// JSON-schema `items` errors produce numeric path segments (e.g. data.even.1),
+		// which must build an array container, not an object with a "1" key.
+		const result = updateAtPath( {}, [ 'even', '1' ], append );
+		expect( Array.isArray( result.even ) ).toBe( true );
+		expect( result.even[ 1 ] ).toEqual( [ 'x' ] );
+	} );
+
+	test( 'appends to the existing value at the path', () => {
+		expect( updateAtPath( { a: { b: [ 'y' ] } }, [ 'a', 'b' ], append ) ).toEqual( {
+			a: { b: [ 'y', 'x' ] },
+		} );
+	} );
+} );
 
 describe( 'validateContactDetails', () => {
 	const contactDetails = {
