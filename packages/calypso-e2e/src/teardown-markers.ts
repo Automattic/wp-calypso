@@ -5,12 +5,13 @@ import type { AccountClosureResponse, AccountDetails } from './types';
 
 const MAX_ERROR_LENGTH = 300;
 
-// Deleting an Atomic site deprovisions it asynchronously, so an account close
-// issued right after can keep returning `atomic-site` for a short window after
-// the site is actually gone. Keep retrying the close over this window before
-// treating the failure as a leak.
-const ATOMIC_DEPROVISION_TIMEOUT_MS = 90 * 1000;
-const ATOMIC_DEPROVISION_POLL_MS = 10 * 1000;
+// An account with an active Atomic site cannot be closed. Cancelling the plan
+// (done by the spec) is expected to deprovision the site asynchronously, so the
+// close keeps returning `atomic-site` until that completes. Retry over this
+// window before treating the failure as a leak. Window/interval are provisional
+// pending the `[atomic-teardown]` timing measured in CI.
+const ATOMIC_DEPROVISION_TIMEOUT_MS = 180 * 1000;
+const ATOMIC_DEPROVISION_POLL_MS = 15 * 1000;
 
 export interface AccountLeak {
 	/**

@@ -249,7 +249,8 @@ describe( 'closeAccountAndRecordLeak', () => {
 				details,
 				leakDir
 			);
-			await jest.advanceTimersByTimeAsync( 120 * 1000 );
+			// Advance past the full retry window so the loop reaches its deadline.
+			await jest.advanceTimersByTimeAsync( 200 * 1000 );
 			await promise;
 
 			expect( existsSync( markerFile( details.userID ) ) ).toBe( true );
