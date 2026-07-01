@@ -45,19 +45,21 @@ const isEmpty = ( value: unknown ): boolean => {
 
 	// Array-like values lodash measures by `length`: arrays, strings, typed
 	// arrays (and Node buffers, which subclass `Uint8Array`), `arguments`, and
-	// jQuery-like collections (an object with a `splice` method and a valid
-	// `length`). A bare object that merely owns a `length` property is *not*
-	// array-like — it falls through to the own-key check below.
+	// jQuery-like collections (an object with a `splice` method). Lodash gates
+	// this whole branch behind `isArrayLike` — a valid `length` — so a bare
+	// object that merely owns a `length`, or an `arguments`/spoofed value whose
+	// `length` has been removed, falls through to the own-key check below.
+	const length = ( value as { length?: unknown } ).length;
 	if (
-		Array.isArray( value ) ||
-		typeof value === 'string' ||
-		( ArrayBuffer.isView( value ) && tag !== '[object DataView]' ) ||
-		tag === '[object Arguments]' ||
-		( typeof value === 'object' &&
-			typeof ( value as { splice?: unknown } ).splice === 'function' &&
-			isLength( ( value as { length?: unknown } ).length ) )
+		isLength( length ) &&
+		( Array.isArray( value ) ||
+			typeof value === 'string' ||
+			( ArrayBuffer.isView( value ) && tag !== '[object DataView]' ) ||
+			tag === '[object Arguments]' ||
+			( typeof value === 'object' &&
+				typeof ( value as { splice?: unknown } ).splice === 'function' ) )
 	) {
-		return ( value as ArrayLike< unknown > ).length === 0;
+		return length === 0;
 	}
 
 	if ( tag === '[object Map]' || tag === '[object Set]' ) {

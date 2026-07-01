@@ -127,6 +127,19 @@ describe( 'isEmpty', () => {
 		function Baz() {}
 		Baz.prototype = { constructor: Baz, x: 1 };
 
+		/* eslint-disable prefer-rest-params -- exercising the `arguments`-object branch */
+		const emptyArgs = ( function () {
+			return arguments;
+		} )();
+		const filledArgs = ( function () {
+			return arguments;
+		} )( 1, 2 );
+		const lengthlessArgs = ( function () {
+			return arguments;
+		} )();
+		/* eslint-enable prefer-rest-params */
+		delete ( lengthlessArgs as { length?: unknown } ).length;
+
 		const cases: [ string, unknown ][] = [
 			[ 'null', null ],
 			[ 'undefined', undefined ],
@@ -164,6 +177,10 @@ describe( 'isEmpty', () => {
 			[ 'bare prototype object', Bar.prototype ],
 			[ 'Object.prototype', Object.prototype ],
 			[ 'prototype with extra key', Baz.prototype ],
+			[ 'empty arguments', emptyArgs ],
+			[ 'filled arguments', filledArgs ],
+			[ 'arguments with length deleted', lengthlessArgs ],
+			[ 'frozen spoofed Arguments tag', Object.freeze( { [ Symbol.toStringTag ]: 'Arguments' } ) ],
 		];
 
 		it.each( cases )( 'matches for %s', ( _label, value ) => {
