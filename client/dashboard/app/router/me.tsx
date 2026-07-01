@@ -17,6 +17,7 @@ import {
 	purchaseQuery,
 	queryClient,
 	rawUserPreferencesQuery,
+	readTeamsQuery,
 	receiptQuery,
 	siteBySlugQuery,
 	siteFeaturesQuery,
@@ -1087,19 +1088,14 @@ export const appearanceRoute = createRoute( {
 			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
 		}
 
-		// Mirror the rollout gating of the Appearance summary button so the page can't be reached
-		// by direct URL: hidden unless the user has used it before (color scheme preference present)
-		// or is an Automattician.
-		const preferences = await queryClient.ensureQueryData( rawUserPreferencesQuery() );
-		const hasUsedColorScheme = preferences[ 'hosting-dashboard-color-scheme' ] !== undefined;
+		// Gate the page like the Appearance summary button so it can't be reached by direct URL.
+		const [ preferences, teams ] = await Promise.all( [
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+			queryClient.ensureQueryData( readTeamsQuery() ),
+		] );
 
-		// `select` is not applied by ensureQueryData, so read the raw cached teams to derive the flag.
-		// Fall back to treating the user as a non-Automattician if the teams request fails.
-		await queryClient.ensureQueryData( isAutomatticianQuery() ).catch( () => undefined );
-		const teams = queryClient.getQueryData< { teams: Array< { slug: string } > } >(
-			isAutomatticianQuery().queryKey
-		);
-		const isAutomattician = Boolean( teams?.teams.some( ( team ) => team.slug === 'a8c' ) );
+		const hasUsedColorScheme = preferences[ 'hosting-dashboard-color-scheme' ] !== undefined;
+		const isAutomattician = teams.teams.some( ( team ) => team.slug === 'a8c' );
 
 		if ( ! isAutomattician && ! hasUsedColorScheme ) {
 			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
