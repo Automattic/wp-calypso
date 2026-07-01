@@ -11,9 +11,16 @@ export default function loadHelpCenter() {
 	const container = document.createElement( 'div' );
 	container.id = 'jetpack-help-center';
 	document.body.appendChild( container );
-	const botProps = helpCenterData.isCommerceGarden
-		? { newInteractionsBotSlug: 'ciab-workflow-support_chat' }
-		: {};
+	let product;
+	let botProps = {};
+	if ( helpCenterData.isCommerceGarden ) {
+		product = 'commerce-garden';
+		botProps = { newInteractionsBotSlug: 'ciab-workflow-support_chat' };
+	} else if ( helpCenterData.isWooCommerceCom ) {
+		product = 'woocommerce-com';
+		// Slug injected Woo-side so Ceres can iterate the agent without a Calypso PR.
+		botProps = { newInteractionsBotSlug: helpCenterData.botSlug };
+	}
 
 	return import( '@automattic/help-center' ).then( ( { default: HelpCenter } ) =>
 		createRoot( container ).render(
@@ -26,7 +33,7 @@ export default function loadHelpCenter() {
 					hasPurchases={ false }
 					onboardingUrl="https://wordpress.com/start"
 					handleClose={ () => dispatch( 'automattic/help-center' ).setShowHelpCenter( false ) }
-					product={ helpCenterData.isCommerceGarden ? 'commerce-garden' : undefined }
+					product={ product }
 					{ ...botProps }
 				/>
 			</QueryClientProvider>

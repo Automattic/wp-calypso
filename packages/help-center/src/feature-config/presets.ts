@@ -81,8 +81,37 @@ const commerceGardenPreset: HelpCenterFeatureConfig = {
 	},
 };
 
+/** WooCommerce.com: chat enabled with bot-slug-filtered history; slug injected via helpCenterData. */
+const woocommerceComPreset: HelpCenterFeatureConfig = {
+	header: {
+		ellipsisMenu: true,
+	},
+	chat: {
+		enabled: true,
+		filterByBotSlug: true,
+		flowName: null,
+		// Testing: open to all in sandbox. Production will gate on WordPress.com connection.
+		hasPremiumSupport: true,
+		skipSupportStatus: true,
+	},
+	home: {
+		recentConversations: true,
+	},
+	moreResources: {
+		visible: true,
+		supportHistory: true,
+		courses: false,
+		productUpdates: false,
+		supportGuidesUrl: null,
+	},
+	contactForm: {
+		variant: 'standard',
+	},
+};
+
 export const PRODUCT_PRESETS: Record< HelpCenterProduct, HelpCenterFeatureConfig > = {
 	wpcom: wpcomPreset,
 	a4a: a4aPreset,
 	'commerce-garden': commerceGardenPreset,
+	'woocommerce-com': woocommerceComPreset,
 };
