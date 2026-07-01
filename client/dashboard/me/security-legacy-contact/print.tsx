@@ -1,6 +1,8 @@
 import { legacyContactQuery, legacyContactsQuery } from '@automattic/api-queries';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { ButtonStack } from '../../components/button-stack';
@@ -44,6 +46,26 @@ function LegacyContactDetails( { legacyContactId }: { legacyContactId: number } 
 					{ __( 'Access key' ) }
 				</Text>
 				<div className="legacy-contact-print__key">{ contact.access_key }</div>
+			</VStack>
+
+			<VStack spacing={ 1 } alignment="flex-start">
+				<Text upperCase variant="muted" size={ 11 }>
+					{ __( 'How to claim access' ) }
+				</Text>
+				<Text size={ 15 }>
+					{ createInterpolateElement(
+						__(
+							'To request access, your legacy contact should visit <link>wordpress.com/digital-legacy</link> and follow the instructions there. They’ll need the access key above.'
+						),
+						{
+							link: (
+								<a href={ localizeUrl( 'https://wordpress.com/digital-legacy' ) }>
+									wordpress.com/digital-legacy
+								</a>
+							),
+						}
+					) }
+				</Text>
 			</VStack>
 
 			<ButtonStack justify="flex-start" className="legacy-contact-print__actions">
