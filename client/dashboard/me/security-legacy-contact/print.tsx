@@ -51,7 +51,13 @@ function LegacyContactDetails( { legacyContactId }: { legacyContactId: number } 
 			</dl>
 
 			<VStack spacing={ 1 } alignment="flex-start">
-				<Text as="h4" size={ 15 } weight={ 600 } className="legacy-contact-print__heading">
+				<Text
+					as="h4"
+					upperCase
+					variant="muted"
+					size={ 11 }
+					className="legacy-contact-print__heading"
+				>
 					{ __( 'How to claim access' ) }
 				</Text>
 				<Text as="p" size={ 15 } lineHeight={ 1.5 }>
