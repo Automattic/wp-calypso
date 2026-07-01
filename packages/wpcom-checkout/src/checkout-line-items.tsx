@@ -1585,6 +1585,57 @@ const DesktopGiftWrapper = styled.div`
 	}
 `;
 
+function LineItemPriceContent( {
+	isCartUpdating,
+	shouldShowComparison,
+	isDiscounted,
+	isRenewalPricingExperiment,
+	monthlyAmountDisplay,
+	originalMonthlyAmountDisplay,
+	actualAmountDisplay,
+	originalAmountDisplay,
+	stackedCrossedOutDisplay,
+}: {
+	isCartUpdating: boolean;
+	shouldShowComparison?: boolean;
+	isDiscounted: boolean;
+	isRenewalPricingExperiment?: boolean;
+	monthlyAmountDisplay: string;
+	originalMonthlyAmountDisplay: string;
+	actualAmountDisplay: string;
+	originalAmountDisplay: string;
+	stackedCrossedOutDisplay?: string;
+} ) {
+	const translate = useTranslate();
+
+	if ( isCartUpdating ) {
+		return <LoadingCopy width="60px" height="16px" noMargin />;
+	}
+
+	if ( shouldShowComparison ) {
+		return (
+			<>
+				<LineItemPrice
+					actualAmount={ monthlyAmountDisplay }
+					crossedOutAmount={
+						isDiscounted && ! isRenewalPricingExperiment ? originalMonthlyAmountDisplay : undefined
+					}
+				/>{ ' ' }
+				{ translate( '/month' ) }
+			</>
+		);
+	}
+
+	return (
+		<LineItemPrice
+			actualAmount={ actualAmountDisplay }
+			crossedOutAmount={
+				stackedCrossedOutDisplay ?? ( isDiscounted ? originalAmountDisplay : undefined )
+			}
+		/>
+	);
+}
+
 function CheckoutLineItem( {
 	children,
 	product,
@@ -1770,34 +1821,6 @@ function CheckoutLineItem( {
 		);
 	}
 
-	let priceContent;
-	if ( isCartUpdating ) {
-		priceContent = <LoadingCopy width="60px" height="16px" noMargin />;
-	} else if ( shouldShowComparison ) {
-		priceContent = (
-			<>
-				<LineItemPrice
-					actualAmount={ monthlyAmountDisplay }
-					crossedOutAmount={
-						isDiscounted && ! isRenewalPricingExperiment ? originalMonthlyAmountDisplay : undefined
-					}
-				/>{ ' ' }
-				{ translate( '/month' ) }
-			</>
-		);
-	} else {
-		priceContent = (
-			<>
-				<LineItemPrice
-					actualAmount={ actualAmountDisplay }
-					crossedOutAmount={
-						stackedCrossedOutDisplay ?? ( isDiscounted ? originalAmountDisplay : undefined )
-					}
-				/>
-			</>
-		);
-	}
-
 	return (
 		<div
 			className={ joinClasses( [ className, 'checkout-line-item' ] ) }
@@ -1818,7 +1841,19 @@ function CheckoutLineItem( {
 				) }
 			</LineItemTitle>
 
-			<span className="checkout-line-item__price">{ priceContent }</span>
+			<span className="checkout-line-item__price">
+				<LineItemPriceContent
+					isCartUpdating={ isCartUpdating }
+					shouldShowComparison={ shouldShowComparison }
+					isDiscounted={ isDiscounted }
+					isRenewalPricingExperiment={ isRenewalPricingExperiment }
+					monthlyAmountDisplay={ monthlyAmountDisplay }
+					originalMonthlyAmountDisplay={ originalMonthlyAmountDisplay }
+					actualAmountDisplay={ actualAmountDisplay }
+					originalAmountDisplay={ originalAmountDisplay }
+					stackedCrossedOutDisplay={ stackedCrossedOutDisplay }
+				/>
+			</span>
 
 			{ ! containsPartnerCoupon && (
 				<>
