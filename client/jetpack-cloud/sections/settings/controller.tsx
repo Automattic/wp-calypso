@@ -130,6 +130,7 @@ export const disconnectSiteConfirm: Callback = ( context, next ) => {
 			siteId={ Number.isFinite( siteId ) ? siteId : undefined }
 			siteSlug={ siteUrl }
 			siteTitle={ siteUrl }
+			skipRedirectNonJetpack={ Number.isFinite( siteId ) }
 			type={ type }
 			text={ text }
 			disconnectHref={ dashboardHref }

@@ -13,6 +13,7 @@ const redirectNonJetpack = ( redirectRoute ) => ( WrappedComponent ) => {
 			siteIsAtomic: PropTypes.bool,
 			siteIsJetpack: PropTypes.bool,
 			siteSlug: PropTypes.string,
+			skipRedirectNonJetpack: PropTypes.bool,
 		};
 
 		componentDidMount() {
@@ -24,6 +25,10 @@ const redirectNonJetpack = ( redirectRoute ) => ( WrappedComponent ) => {
 		}
 
 		redirectIfNoAccess() {
+			if ( this.props.skipRedirectNonJetpack ) {
+				return;
+			}
+
 			if ( this.props.siteIsJetpack === false || this.props.siteIsAtomic ) {
 				this.redirect();
 			}
