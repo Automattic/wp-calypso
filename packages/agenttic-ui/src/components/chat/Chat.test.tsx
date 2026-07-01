@@ -15,15 +15,49 @@ import {
 // than the resting value. Everything else (useMotionValue, motion components)
 // stays real so the component renders and the effect runs against live values.
 // animate() returns playback controls; the effect's cleanup calls .stop().
-const { animateMock } = vi.hoisted( () => ( {
+const { animateMock, floatingDragProps } = vi.hoisted( () => ( {
 	animateMock: vi.fn( () => ( { stop: () => {} } ) ),
+	// Holds the live props of the draggable floating panel so a test can read its
+	// `x` motion value and invoke `onDragEnd` directly. Framer's pan gesture can't
+	// be driven deterministically in jsdom, so we exercise the drag-end callback.
+	floatingDragProps: { current: null } as {
+		current: {
+			onDragEnd: ( event: unknown, info: unknown ) => void;
+			style: { x: { set( v: number ): void } };
+		} | null;
+	},
 } ) );
 vi.mock( 'framer-motion', async () => {
 	const actual =
 		await vi.importActual< typeof import('framer-motion') >(
 			'framer-motion'
 		);
-	return { ...actual, animate: animateMock };
+	const { createElement } = await import( 'react' );
+	return {
+		...actual,
+		animate: animateMock,
+		// Capture the floating panel's drag props so a test can fire onDragEnd
+		// against a controlled `x`. Everything else renders through the real motion.
+		// The wrapper identity must be stable ( cached ) so React doesn't remount
+		// the subtree each render.
+		motion: ( () => {
+			const RealDiv = actual.motion.div;
+			const WrappedDiv = ( props: Record< string, unknown > ) => {
+				if ( props[ 'data-slot' ] === 'chat-floating' ) {
+					floatingDragProps.current = props as never;
+				}
+				return createElement( RealDiv, props );
+			};
+			return new Proxy( actual.motion, {
+				get( target, key ) {
+					if ( key === 'div' ) {
+						return WrappedDiv;
+					}
+					return Reflect.get( target, key );
+				},
+			} );
+		} )(),
+	};
 } );
 
 import { Chat } from './Chat';
@@ -126,5 +160,88 @@ describe( 'Chat free-drag minimize docking', () => {
 		const restored = lastAnimate();
 		expect( restored.value ).toBe( yValue );
 		expect( restored.target ).toBe( SEED_Y );
+	} );
+} );
+
+// The drag-end side guard: persisting / firing onChatPositionChange must happen
+// only when the dropped side differs from the current side. Framer's pan gesture
+// can't be driven deterministically in jsdom, so we set the captured `x` motion
+// value to a clearly-left/right drop and invoke the captured onDragEnd directly.
+// Trunk Chat had this guard inverted ( currentSide === newSide ); the shared drag
+// hook fixes it, so these tests pin the corrected behavior.
+const PAN_INFO = { velocity: { x: 0, y: 0 } };
+
+describe( 'Chat drag-end side persistence', () => {
+	let container: HTMLDivElement;
+	let root: Root;
+
+	beforeEach( () => {
+		// currentSide seeds from localStorage; start each test from a known 'left'.
+		localStorage.clear();
+		container = document.createElement( 'div' );
+		document.body.appendChild( container );
+		root = createRoot( container );
+	} );
+
+	afterEach( async () => {
+		await act( async () => {
+			root.unmount();
+		} );
+		container.remove();
+		floatingDragProps.current = null;
+		localStorage.clear();
+	} );
+
+	// Renders expanded ( the only state with drag wired ) so onDragEnd is captured.
+	const renderExpanded = async (
+		onChatPositionChange: ( side: 'left' | 'right' ) => void
+	) => {
+		await act( async () => {
+			root.render(
+				<AgentUIProvider value={ contextValue }>
+					<Chat
+						messages={ [] }
+						isProcessing={ false }
+						onSubmit={ () => {} }
+						variant="floating"
+						floatingChatState="expanded"
+						onChatPositionChange={ onChatPositionChange }
+					/>
+				</AgentUIProvider>
+			);
+		} );
+	};
+
+	// Drops the panel at an x that resolves to `side`, then fires onDragEnd.
+	const dragTo = async ( side: 'left' | 'right' ) => {
+		const props = floatingDragProps.current;
+		if ( ! props ) {
+			throw new Error( 'floating drag props not captured' );
+		}
+		await act( async () => {
+			props.style.x.set( side === 'left' ? 0 : window.innerWidth );
+			props.onDragEnd( null, PAN_INFO );
+		} );
+	};
+
+	it( 'fires onChatPositionChange once with the new side when dropped on the opposite side', async () => {
+		const onChatPositionChange = vi.fn();
+		await renderExpanded( onChatPositionChange );
+
+		// Seeds 'left'; drop on the right.
+		await dragTo( 'right' );
+
+		expect( onChatPositionChange ).toHaveBeenCalledTimes( 1 );
+		expect( onChatPositionChange ).toHaveBeenCalledWith( 'right' );
+	} );
+
+	it( 'does not fire onChatPositionChange when dropped on the same side', async () => {
+		const onChatPositionChange = vi.fn();
+		await renderExpanded( onChatPositionChange );
+
+		// Seeds 'left'; drop on the left again.
+		await dragTo( 'left' );
+
+		expect( onChatPositionChange ).not.toHaveBeenCalled();
 	} );
 } );

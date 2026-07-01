@@ -63,6 +63,30 @@ export function clampFreeDragPosition(
 }
 
 /**
+ * Analytic corner-snap transform offset for a docked panel. The panel is
+ * CSS-anchored at `left: VIEWPORT_OFFSET`, `bottom: VIEWPORT_OFFSET`, so the
+ * bottom edge is docked by CSS and needs no measurement — the docked `y`
+ * transform is always 0. The right corner's x matches the `maxX` in
+ * clampFreeDragPosition and the `cornerX` in getInitialChatPosition.
+ *
+ * @param side       - The corner side to dock to
+ * @param panelWidth - Panel width
+ * @return The docked { x, y } transform offset
+ */
+export function getCornerSnapPosition(
+	side: 'left' | 'right',
+	panelWidth: number
+): { x: number; y: number } {
+	const x =
+		side === 'right'
+			? window.innerWidth -
+			  panelWidth -
+			  STYLE_CONSTANTS.VIEWPORT_OFFSET * 2
+			: 0;
+	return { x, y: 0 };
+}
+
+/**
  * Compute the initial { x, y } pixel seed for the chat panel's motion values.
  *
  * In free drag mode with a persisted position, the saved pixel position is
