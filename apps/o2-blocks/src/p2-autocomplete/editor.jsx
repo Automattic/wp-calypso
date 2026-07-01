@@ -13,7 +13,10 @@ const HTML_UNESCAPES = {
 
 // Decodes the basic HTML entities (`&` `<` `>` `"` `'`).
 const unescape = ( string ) =>
-	( string ?? '' ).replace( /&(?:amp|lt|gt|quot|#39);/g, ( entity ) => HTML_UNESCAPES[ entity ] );
+	String( string ?? '' ).replace(
+		/&(?:amp|lt|gt|quot|#39);/g,
+		( entity ) => HTML_UNESCAPES[ entity ]
+	);
 
 /*
  * This is a workaround for the way Gutenberg autocomplete works. It only looks for
