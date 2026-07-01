@@ -8,6 +8,17 @@ import { render } from '../../../test-utils';
 import SitePlans from '../index';
 import type { Site, User } from '@automattic/api-core';
 
+jest.mock( '../../../app/router/sites', () => {
+	const actual = jest.requireActual( '../../../app/router/sites' );
+	return {
+		...actual,
+		siteRoute: Object.setPrototypeOf(
+			{ useParams: () => ( { siteSlug: 'test-site.wordpress.com' } ) },
+			actual.siteRoute
+		),
+	};
+} );
+
 const SITE_ID = 1;
 const OWNER_USER_ID = 10;
 const NON_OWNER_USER_ID = 99;
