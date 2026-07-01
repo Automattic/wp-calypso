@@ -8,7 +8,6 @@ import { withShoppingCart } from '@automattic/shopping-cart';
 import { INCOMING_DOMAIN_TRANSFER } from '@automattic/urls';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
 import { Component } from 'react';
@@ -343,11 +342,8 @@ class TransferDomainStep extends Component {
 	transferIsRestricted = () => {
 		const { submittingAvailability, submittingWhois } = this.state;
 		const submitting = submittingAvailability || submittingWhois;
-		const transferRestrictionStatus = get(
-			this.state,
-			'inboundTransferStatus.transferRestrictionStatus',
-			false
-		);
+		const transferRestrictionStatus =
+			this.state?.inboundTransferStatus?.transferRestrictionStatus ?? false;
 
 		return (
 			! submitting && transferRestrictionStatus && 'not_restricted' !== transferRestrictionStatus
@@ -543,7 +539,7 @@ class TransferDomainStep extends Component {
 			checkDomainAvailability(
 				{ domainName: domain, blogId: this.props?.selectedSite?.ID ?? null },
 				( error, result ) => {
-					const status = get( result, 'status', error );
+					const status = result?.status ?? error;
 					const tld = result.tld || getTld( domain );
 					switch ( status ) {
 						case domainAvailability.AVAILABLE:
@@ -610,7 +606,7 @@ class TransferDomainStep extends Component {
 							} );
 							break;
 						case domainAvailability.UNKNOWN: {
-							const mappableStatus = get( result, 'mappable', error );
+							const mappableStatus = result?.mappable ?? error;
 
 							if ( domainAvailability.MAPPABLE === mappableStatus ) {
 								this.setState( {

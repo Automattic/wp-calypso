@@ -1,6 +1,5 @@
 import { groupBy, omit } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
-import { get } from 'lodash';
 import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_LIST_REQUEST,
@@ -73,7 +72,7 @@ const announceStatusChangeFailure = ( action ) => ( dispatch ) => {
 	const defaultErrorMessage = translate( "We couldn't update this comment." );
 
 	dispatch(
-		errorNotice( get( errorMessage, status, defaultErrorMessage ), {
+		errorNotice( errorMessage?.[ status ] ?? defaultErrorMessage, {
 			button: translate( 'Try again' ),
 			id: `comment-notice-error-${ commentId }`,
 			onClick: () =>

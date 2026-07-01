@@ -1,6 +1,5 @@
 import { mapValues, omit, omitBy } from '@automattic/js-utils';
 import isEqual from 'fast-deep-equal/es6';
-import { get } from 'lodash';
 import { SerializationResult } from 'calypso/state/serialization-result';
 import { serialize, deserialize, SerializableReducer } from './serialize';
 import { withPersistence } from './with-persistence';
@@ -90,7 +89,14 @@ export const keyedReducer = < TState, TAction extends AnyAction = Action >(
 		action: KeyedReducerAction< TAction >
 	) => {
 		// don't allow coercion of key name: null => 0
-		const itemKey = get( action, keyPath, undefined );
+		// `keyPath` is a lodash-style path (e.g. `meta.dataLayer.requestKey`), so
+		// walk each `.`-separated segment.
+		const itemKey = keyPath
+			.split( '.' )
+			.reduce< unknown >(
+				( value, key ) => ( value as Record< string, unknown > )?.[ key ],
+				action
+			) as string | number | undefined | null;
 
 		// if the action doesn't contain a valid reference
 		// then return without any updates
@@ -124,7 +130,7 @@ export const keyedReducer = < TState, TAction extends AnyAction = Action >(
 
 	return withPersistence( combinedReducer, {
 		serialize: ( state ) =>
-			Object.entries( state ?? {} ).reduce(
+			Object.entries< TState >( state ?? {} ).reduce(
 				( result, [ itemKey, itemValue ] ) => {
 					const serializedValue = serialize( reducer, itemValue );
 					if ( serializedValue !== undefined && ! isEqual( serializedValue, initialState ) ) {

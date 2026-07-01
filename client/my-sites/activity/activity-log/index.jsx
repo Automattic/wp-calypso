@@ -8,7 +8,6 @@ import { useQuery } from '@tanstack/react-query';
 import { Page } from '@wordpress/admin-ui';
 import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment, createRef } from 'react';
 import { connect, useSelector } from 'react-redux';
@@ -446,7 +445,7 @@ class ActivityLog extends Component {
 			[ 'queued', 'running' ].includes( this.props?.restoreProgress?.status ) ||
 			( ! isAtomic && areCredentialsInvalid ) ||
 			'active' !== rewindState.state;
-		const disableBackup = 0 <= get( this.props, [ 'backupProgress', 'progress' ], -Infinity );
+		const disableBackup = 0 <= ( this.props?.backupProgress?.progress ?? -Infinity );
 
 		const pageCount = Math.ceil( logs.length / PAGE_SIZE );
 		const actualPage = Math.max( 1, Math.min( requestedPage, pageCount ) );

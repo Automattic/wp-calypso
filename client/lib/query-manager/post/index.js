@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import moment from 'moment';
 import PaginatedQueryManager from '../paginated';
 import { DEFAULT_POST_QUERY } from './constants';
@@ -90,7 +89,7 @@ export default class PostQueryManager extends PaginatedQueryManager {
 					return true;
 
 				case 'author':
-					return get( post, 'author.ID', post.author ) === value;
+					return ( post?.author?.ID ?? post.author ) === value;
 
 				case 'status':
 					return (

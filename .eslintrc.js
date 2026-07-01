@@ -610,6 +610,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/foldl': 'error',
 		'you-dont-need-lodash-underscore/foldr': 'error',
 		'you-dont-need-lodash-underscore/for-each': 'error',
+		'you-dont-need-lodash-underscore/get': 'error',
 		'you-dont-need-lodash-underscore/includes': 'error',
 		'you-dont-need-lodash-underscore/index-of': 'error',
 		'you-dont-need-lodash-underscore/inject': 'error',

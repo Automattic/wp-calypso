@@ -1,6 +1,5 @@
 import { isEmpty } from '@automattic/js-utils';
 import debugFactory from 'debug';
-import { get } from 'lodash';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import {
 	removeUnsavedUserSetting,
@@ -57,7 +56,7 @@ export default function setUserSetting( settingName, value ) {
 		const settings = getUserSettings( getState() );
 		const settingPath = castPath( settingName );
 
-		const originalSetting = get( settings, settingPath );
+		const originalSetting = settingPath.reduce( ( node, key ) => node?.[ key ], settings );
 
 		if ( originalSetting === undefined ) {
 			debug( settingName + ' does not exist in user-settings data module.' );
