@@ -7,8 +7,12 @@ import { useSpace } from 'calypso/reader/data/spaces';
 import { useInfiniteStream } from 'calypso/reader/data/stream';
 import { ScrollDebugOverlay } from 'calypso/reader/hooks/use-infinite-list';
 import { keyForPost, keysAreEqual } from 'calypso/reader/post-key';
+import { useSelectedPostActions } from 'calypso/reader/stream/use-selected-post-actions';
+import { useStreamKeyboardShortcuts } from 'calypso/reader/stream/use-stream-keyboard-shortcuts';
 import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post-key-selection';
+import { showSelectedPost } from 'calypso/reader/utils';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { SpaceFeedSourceNotice } from './components/source-notice';
 import {
 	SpaceFeedEmpty,
@@ -87,7 +91,8 @@ export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
 	} );
 	const posts = useMemo( () => collectPosts( stream.pages ), [ stream.pages ] );
 
-	const { selectedPostKey, selectPostKey } = useStreamPostKeySelection( { streamKey, localeSlug } );
+	const { selectedPostKey, selectPostKey, selectNextPost, selectPreviousPost } =
+		useStreamPostKeySelection( { streamKey, localeSlug, items: stream.items } );
 	const isPostSelected = useCallback(
 		( post: ReadStreamPost ) =>
 			selectedPostKey != null && keysAreEqual( keyForPost( post ), selectedPostKey ),
@@ -105,6 +110,33 @@ export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
 		},
 		[ selectPostKey, stream.items ]
 	);
+
+	const notificationsOpen = useSelector( isNotificationsOpen );
+	const { openSelectedInNewTab, toggleSelectedLike } = useSelectedPostActions( selectedPostKey );
+	const openSelectedPost = useCallback( () => {
+		if ( ! selectedPostKey ) {
+			return;
+		}
+		showSelectedPost( {
+			postKey: {
+				blogId: selectedPostKey.blogId ? Number( selectedPostKey.blogId ) : undefined,
+				feedId: selectedPostKey.feedId ? Number( selectedPostKey.feedId ) : undefined,
+				postId: Number( selectedPostKey.postId ),
+			},
+		} )();
+	}, [ selectedPostKey ] );
+
+	// Reading shortcuts for the curated layouts (the shell owns their selection).
+	// The legacy layout's ReaderStreamV2 registers its own set, so gate on
+	// `! isLegacy` to avoid a double handler on the same keys.
+	useStreamKeyboardShortcuts( {
+		enabled: ! isLegacy && ! notificationsOpen,
+		onNext: selectNextPost,
+		onPrevious: selectPreviousPost,
+		onOpen: openSelectedPost,
+		onOpenInNewTab: openSelectedInNewTab,
+		onToggleLike: toggleSelectedLike,
+	} );
 
 	// Scroll on the Reader's main bounded container (`.layout__primary > div`, which
 	// has a fixed height) — the same scrollbar the rest of the Reader uses — instead
