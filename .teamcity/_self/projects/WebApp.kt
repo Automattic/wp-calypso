@@ -792,6 +792,7 @@ object Translate : BuildType({
 
 	vcs {
 		root(Settings.WpCalypso)
+		branchFilter = "+:*".excludeMergeQueueBranches()
 		cleanCheckout = true
 	}
 
@@ -929,6 +930,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 				}
 			}
 		},
+		vcsBranchFilter = "+:*".excludeMergeQueueBranches(),
 		enableCommitStatusPublisher = true,
 		buildTriggers = {
 			vcs {

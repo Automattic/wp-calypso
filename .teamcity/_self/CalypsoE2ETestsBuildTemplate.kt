@@ -1,6 +1,7 @@
 package _self
 
 import _self.lib.utils.mergeTrunk
+import _self.lib.utils.excludeMergeQueueBranches
 import _self.lib.utils.passMergeQueueBranchesEarly
 import _self.lib.utils.skipOnMergeQueueBranch
 
@@ -16,6 +17,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 
 	vcs {
 		root(Settings.WpCalypso)
+		branchFilter = "+:*".excludeMergeQueueBranches()
 		cleanCheckout = true
 	}
 
