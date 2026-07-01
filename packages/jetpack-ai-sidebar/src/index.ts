@@ -11,7 +11,7 @@
  */
 import { dispatch, useSelect } from '@wordpress/data';
 import { useState, useEffect, useMemo } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, _x } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
@@ -62,6 +62,7 @@ import {
 	trackBlockTransformationSuggestionClick,
 	trackBlockTransformationSuggestionRendered,
 } from './utils/tracking';
+import type { SuggestionOption } from '@automattic/agenttic-client';
 import type { ComponentType } from 'react';
 
 // Re-export block-action helpers as part of the package's public surface.
@@ -93,22 +94,34 @@ const OPTIMIZE_TITLE_SUGGESTION = {
 };
 
 /**
- * Post-level SEO Enhancer suggestions. These target the SEO meta fields (the
- * HTML <title> and meta description), distinct from OPTIMIZE_TITLE_SUGGESTION
- * which rewrites the visible post title. The prompts route through the
- * orchestrator to the jetpack-ai/seo-title and jetpack-ai/seo-description
- * abilities, which return the seo-title-picker / seo-description-picker.
+ * Post-level SEO Enhancer suggestion. Targets the SEO meta fields (the HTML
+ * <title> and meta description), distinct from OPTIMIZE_TITLE_SUGGESTION which
+ * rewrites the visible post title. Rendered as a dropdown (via the `options`
+ * field): picking Title or Description submits that option's `value`, which
+ * routes through the orchestrator to the jetpack-ai/seo-title or
+ * jetpack-ai/seo-description ability and returns the matching picker.
+ *
+ * `prompt` is intentionally empty: the dropdown combines `prompt` with the
+ * selected option's `value`, so an empty prompt makes the submitted text equal
+ * the option value verbatim (a missing prompt would fall back to the label and
+ * prepend "SEO Enhancer", breaking routing).
  */
-const SEO_TITLE_SUGGESTION = {
-	id: 'seo-title',
-	label: __( 'SEO Title', 'jetpack' ),
-	prompt: __( 'Generate an SEO title (meta title) for this post', 'jetpack' ),
-};
-
-const SEO_DESCRIPTION_SUGGESTION = {
-	id: 'seo-description',
-	label: __( 'SEO Description', 'jetpack' ),
-	prompt: __( 'Generate an SEO meta description for this post', 'jetpack' ),
+const SEO_ENHANCER_SUGGESTION = {
+	id: 'seo-enhancer',
+	label: __( 'SEO Enhancer', 'jetpack' ),
+	prompt: '',
+	options: [
+		{
+			id: 'seo-title',
+			label: _x( 'Title', 'SEO Enhancer dropdown option', 'jetpack' ),
+			value: __( 'Generate an SEO title (meta title) for this post', 'jetpack' ),
+		},
+		{
+			id: 'seo-description',
+			label: _x( 'Description', 'SEO Enhancer dropdown option', 'jetpack' ),
+			value: __( 'Generate an SEO meta description for this post', 'jetpack' ),
+		},
+	],
 };
 
 /**
@@ -190,8 +203,8 @@ function getPostLevelSuggestions( currentPostType?: string, currentPostId?: numb
 			? [ POST_FEEDBACK_SUGGESTION ]
 			: [] ),
 		...getAiEditorialReviewSuggestions( currentPostType ),
-		// Surface the SEO suggestions last (Title before Description).
-		...( isSeoSuggestionsEnabled() ? [ SEO_TITLE_SUGGESTION, SEO_DESCRIPTION_SUGGESTION ] : [] ),
+		// Surface the SEO Enhancer dropdown last.
+		...( isSeoSuggestionsEnabled() ? [ SEO_ENHANCER_SUGGESTION ] : [] ),
 	];
 }
 
@@ -716,6 +729,7 @@ export function getEmptyViewSuggestions(): Array< {
 	id: string;
 	label: string;
 	prompt?: string;
+	options?: SuggestionOption[];
 } > {
 	return getPostLevelSuggestions();
 }
@@ -878,7 +892,12 @@ export function useSuggestions(
 	maxSuggestions?: number,
 	{ suggestionsVisible = true }: { suggestionsVisible?: boolean } = {}
 ): {
-	suggestions: Array< { id: string; label: string; prompt?: string } >;
+	suggestions: Array< {
+		id: string;
+		label: string;
+		prompt?: string;
+		options?: SuggestionOption[];
+	} >;
 } {
 	const [ hidden, setHidden ] = useState( false );
 

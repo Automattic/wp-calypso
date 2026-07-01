@@ -786,36 +786,61 @@ describe( 'getEmptyViewSuggestions', () => {
 		expect( labels ).not.toContain( 'Generate Feedback' );
 	} );
 
-	it( 'shows SEO suggestions when the seoSuggestions feature is enabled', () => {
+	it( 'shows the SEO Enhancer dropdown when the seoSuggestions feature is enabled', () => {
 		installAiEditorialReviewData( { seoSuggestions: true } );
 		installPostTypeMock( 'post' );
 
-		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+		const seo = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'seo-enhancer'
+		);
 
-		expect( labels ).toContain( 'SEO Title' );
-		expect( labels ).toContain( 'SEO Description' );
+		expect( seo?.label ).toBe( 'SEO Enhancer' );
+		expect( seo?.options?.map( ( option ) => option.label ) ).toEqual( [ 'Title', 'Description' ] );
 	} );
 
-	it( 'gates SEO suggestions independently of Optimize Title', () => {
+	it( 'submits the exact ability prompt as each dropdown option value', () => {
+		installAiEditorialReviewData( { seoSuggestions: true } );
+		installPostTypeMock( 'post' );
+
+		const seo = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'seo-enhancer'
+		);
+
+		// An empty parent prompt makes the submitted text equal the option value
+		// verbatim, so these must match the prompts the abilities route on.
+		expect( seo?.prompt ).toBe( '' );
+		expect( seo?.options ).toEqual( [
+			{
+				id: 'seo-title',
+				label: 'Title',
+				value: 'Generate an SEO title (meta title) for this post',
+			},
+			{
+				id: 'seo-description',
+				label: 'Description',
+				value: 'Generate an SEO meta description for this post',
+			},
+		] );
+	} );
+
+	it( 'gates the SEO Enhancer dropdown independently of Optimize Title', () => {
 		// Optimize Title on, SEO off: SEO must not appear.
 		installAiEditorialReviewData( { optimizeTitleSuggestion: true, seoSuggestions: false } );
 		installPostTypeMock( 'post' );
 
-		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
-		expect( labels ).toContain( 'Optimize Title' );
-		expect( labels ).not.toContain( 'SEO Title' );
-		expect( labels ).not.toContain( 'SEO Description' );
+		expect( ids ).toContain( 'optimize-title' );
+		expect( ids ).not.toContain( 'seo-enhancer' );
 	} );
 
-	it( 'hides SEO suggestions when the seoSuggestions feature is disabled', () => {
+	it( 'hides the SEO Enhancer dropdown when the seoSuggestions feature is disabled', () => {
 		installAiEditorialReviewData( { seoSuggestions: false } );
 		installPostTypeMock( 'post' );
 
-		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
-		expect( labels ).not.toContain( 'SEO Title' );
-		expect( labels ).not.toContain( 'SEO Description' );
+		expect( ids ).not.toContain( 'seo-enhancer' );
 	} );
 } );
 
