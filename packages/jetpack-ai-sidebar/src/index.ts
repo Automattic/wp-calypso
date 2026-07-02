@@ -634,6 +634,11 @@ export const contextProvider = {
 			},
 			currentPageContent,
 			selectedBlockClientId,
+			// Forward the host's SEO Enhancer verdict (plan + Jetpack SEO Tools
+			// module + kill switches) so the orchestrator can drop the SEO
+			// suggestion abilities when they aren't usable on this site — e.g. a
+			// free-text query on a self-hosted site with the SEO module disabled.
+			jetpackSEOSuggestionsEnabled: isSeoSuggestionsEnabled(),
 			contextEntries: [
 				{
 					id: 'selected-block-content',

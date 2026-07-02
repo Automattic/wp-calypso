@@ -262,6 +262,26 @@ function getTracksCalls( eventName: string ) {
 	return mockedRecordTracksEvent.mock.calls.filter( ( [ name ] ) => name === eventName );
 }
 
+describe( 'contextProvider.getClientContext', () => {
+	afterEach( () => {
+		delete ( globalThis as any ).agentsManagerData;
+	} );
+
+	it( 'forwards jetpackSEOSuggestionsEnabled = true when the host enables SEO suggestions', () => {
+		installAiEditorialReviewData( { seoSuggestions: true } );
+		expect( contextProvider.getClientContext().jetpackSEOSuggestionsEnabled ).toBe( true );
+	} );
+
+	it( 'forwards jetpackSEOSuggestionsEnabled = false when the host disables SEO suggestions', () => {
+		installAiEditorialReviewData( { seoSuggestions: false } );
+		expect( contextProvider.getClientContext().jetpackSEOSuggestionsEnabled ).toBe( false );
+	} );
+
+	it( 'defaults jetpackSEOSuggestionsEnabled to false when no sidebar config is present', () => {
+		expect( contextProvider.getClientContext().jetpackSEOSuggestionsEnabled ).toBe( false );
+	} );
+} );
+
 describe( 'getChatComponent', () => {
 	it( 'returns TitlePicker for type "title-picker"', () => {
 		expect( getChatComponent( 'title-picker' ) ).toBe( TitlePicker );
