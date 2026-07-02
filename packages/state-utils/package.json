@@ -38,6 +38,7 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
+		"@automattic/js-utils": "workspace:^",
 		"@wordpress/is-shallow-equal": "^5.48.0",
 		"@wordpress/warning": "^3.48.0",
 		"lodash": "^4.17.21",

@@ -18,6 +18,7 @@ jest.mock( 'calypso/reader/hooks/use-infinite-list', () => ( {
 		items: [],
 		measureElement: jest.fn(),
 		scrollMargin: 0,
+		scrollToIndex: jest.fn(),
 	} ) ),
 } ) );
 
@@ -77,6 +78,7 @@ describe( 'StandardListLayout', () => {
 			items: [ { index: 1, key: 'post-blog-1-2', start: 44 } ],
 			measureElement: jest.fn(),
 			scrollMargin: 0,
+			scrollToIndex: jest.fn(),
 		} );
 
 		const post = { ID: 1, site_ID: 2 } as ReadStreamPost;
@@ -105,6 +107,7 @@ describe( 'StandardListLayout', () => {
 			items: [ { index: 1, key: 'post-blog-1-2', start: 44 } ],
 			measureElement: jest.fn(),
 			scrollMargin: 0,
+			scrollToIndex: jest.fn(),
 		} );
 
 		const post = { ID: 1, site_ID: 2 } as ReadStreamPost;

@@ -12,6 +12,7 @@ import { getPostUrl } from 'calypso/reader/route';
 import { Shimmer } from '../../components/skeleton';
 import { SpaceFeedTimeSince } from '../../components/time-since';
 import { getPostFields, type SpaceFeedDayGroup, type SpaceFeedPostFields } from '../../post-fields';
+import { useScrollSelectedIntoView } from '../use-scroll-selected-into-view';
 import type { SpaceFeedLayoutProps, SpaceFeedSkeletonProps } from '../types';
 import type { ReadStreamPost } from '@automattic/api-core';
 
@@ -141,16 +142,24 @@ export function StandardListLayout( {
 		return out;
 	}, [ posts, translate ] );
 
-	const { getListProps, items, measureElement, scrollMargin } = useInfiniteList( {
+	const { getListProps, items, measureElement, scrollMargin, scrollToIndex } = useInfiniteList( {
 		scrollElement,
 		count: rows.length,
 		estimateSize: ( index ) => ( rows[ index ].kind === 'header' ? HEADER_SIZE : ROW_SIZE ),
+		overscan: 4,
 		getItemKey: ( index ) => rows[ index ].key,
 		hasMore,
 		isLoadingMore,
 		loadMore,
 		restoreKey,
 	} );
+
+	// Row index of the selected post (headers shift it off the post index).
+	const selectedRowIndex = useMemo(
+		() => rows.findIndex( ( row ) => row.kind === 'post' && isPostSelected( row.post ) ),
+		[ rows, isPostSelected ]
+	);
+	useScrollSelectedIntoView( scrollToIndex, selectedRowIndex );
 
 	// The first post row tightens its top padding (the day-group header above it
 	// already supplies the gap). Detect it by index so it stays correct under

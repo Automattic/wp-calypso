@@ -35,6 +35,7 @@ jest.mock( 'calypso/reader/hooks/use-infinite-list', () => ( {
 		} ) ),
 		measureElement: jest.fn(),
 		scrollMargin: 0,
+		scrollToIndex: jest.fn(),
 	} ) ),
 } ) );
 

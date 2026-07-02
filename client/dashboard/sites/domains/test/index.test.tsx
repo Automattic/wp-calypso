@@ -103,11 +103,11 @@ describe( '<SiteDomains>', () => {
 		expect( screen.getByRole( 'button', { name: 'Add domain name' } ) ).toBeVisible();
 	} );
 
-	test( 'hides "Add domain name" button for non-owner', async () => {
+	test( 'shows "Add domain name" button for non-owner', async () => {
 		render( <SiteDomains />, { user: nonOwnerUser } );
 
 		await screen.findByRole( 'heading', { name: 'Domains' } );
 
-		expect( screen.queryByRole( 'button', { name: 'Add domain name' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Add domain name' } ) ).toBeVisible();
 	} );
 } );

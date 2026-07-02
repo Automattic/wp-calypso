@@ -1,11 +1,40 @@
 import { isEmpty } from '@automattic/js-utils';
 import debugFactory from 'debug';
 import validatorFactory from 'is-my-json-valid';
-import { update } from 'lodash';
 import validationSchema from './fr-schema';
 
 const validate = validatorFactory( validationSchema, { greedy: true } );
 const debug = debugFactory( 'calypso:components:domains:registrant-extra-info:validation' );
+
+// Path segments that could reach Object.prototype; descending through them is refused.
+const BLOCKED_PATH_KEYS = new Set( [ '__proto__', 'constructor', 'prototype' ] );
+
+// Whether a path segment is a non-negative integer index (so the container it
+// addresses should be an array rather than a plain object).
+const isArrayIndex = ( key ) => /^(?:0|[1-9]\d*)$/.test( key );
+
+export function updateAtPath( object, path, updater ) {
+	let node = object;
+
+	for ( const [ index, key ] of path.entries() ) {
+		if ( BLOCKED_PATH_KEYS.has( key ) ) {
+			return object;
+		}
+
+		if ( index === path.length - 1 ) {
+			node[ key ] = updater( node[ key ] );
+			return object;
+		}
+
+		if ( node[ key ] == null || typeof node[ key ] !== 'object' ) {
+			node[ key ] = isArrayIndex( path[ index + 1 ] ) ? [] : {};
+		}
+
+		node = node[ key ];
+	}
+
+	return object;
+}
 
 // is-my-json-valid uses customized messages, but the actual rule name seems
 // more intuitive
@@ -104,6 +133,6 @@ export default function validateContactDetails( contactDetails ) {
 
 		const appendThisMessage = ( before ) => [ ...( before || [] ), ruleNameFromMessage( message ) ];
 
-		return update( accumulatedErrors, correctedPath, appendThisMessage );
+		return updateAtPath( accumulatedErrors, correctedPath, appendThisMessage );
 	}, {} );
 }

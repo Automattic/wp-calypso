@@ -54,9 +54,9 @@ export default function SourcesDisplay( { sources }: Props ) {
 	return (
 		<FoldableCard
 			className="agents-manager-sources-display"
-			summary={ __( 'Sources', '__i18n_text_domain__' ) }
-			expandedSummary={ __( 'Sources', '__i18n_text_domain__' ) }
-			screenReaderText={ __( 'More', '__i18n_text_domain__' ) }
+			summary={ __( 'Sources', __i18n_text_domain__ ) }
+			expandedSummary={ __( 'Sources', __i18n_text_domain__ ) }
+			screenReaderText={ __( 'More', __i18n_text_domain__ ) }
 			iconSize={ 16 }
 			clickableHeader
 			useInert
