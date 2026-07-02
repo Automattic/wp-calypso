@@ -38,7 +38,7 @@
 		"current-site/notice": true,
 		"dashboard/enable-percentage-rollout": false,
 		"dashboard/force-opt-in-visibility": true,
-		"dashboard/opt-in-banners": false,
+		"dashboard/opt-in-banners": true,
 		"dashboard/opt-in-welcome-modal": false,
 		"dashboard/simulate-full-rollout": false,
 		"emails/titan-tiers": false,

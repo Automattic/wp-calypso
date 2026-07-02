@@ -81,3 +81,23 @@ export function isOptInToggleVisible(
 
 	return true;
 }
+
+/**
+ * Whether the user will be moved to the hosting dashboard by the staggered
+ * rollout, regardless of whether the rollout has started yet.
+ */
+export function willBeRolledOut( userId: number | undefined ): boolean {
+	if ( ! config.isEnabled( 'dashboard/opt-in-banners' ) ) {
+		return false;
+	}
+
+	if ( userId === undefined ) {
+		return false;
+	}
+
+	if ( isInRolloutCohort( userId ) ) {
+		return false;
+	}
+
+	return userId % 100 < 50 || userId > NEW_USER_ID_THRESHOLD;
+}

@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import {
 	getHostingDashboardEnrollment,
 	isOptInToggleVisible,
+	willBeRolledOut,
 } from '../hosting-dashboard-enrollment';
 import type { HostingDashboardOptIn } from '@automattic/api-core';
 
@@ -103,5 +104,30 @@ describe( 'isOptInToggleVisible', () => {
 			expect( isOptInToggleVisible( undefined, IN_COHORT ) ).toBe( true );
 			expect( isOptInToggleVisible( preference( 'forced-opt-out' ), OUT_OF_COHORT ) ).toBe( true );
 		} );
+	} );
+} );
+
+describe( 'willBeRolledOut', () => {
+	const TESTER = 27056099; // allow-listed in ROLLOUT_TESTER_USER_IDS
+
+	it( 'includes cohort-range users even while the rollout flag is off', () => {
+		expect( willBeRolledOut( IN_COHORT ) ).toBe( true );
+	} );
+
+	it( 'excludes out-of-cohort users', () => {
+		expect( willBeRolledOut( OUT_OF_COHORT ) ).toBe( false );
+	} );
+
+	it( 'excludes anonymous (no user id) visitors', () => {
+		expect( willBeRolledOut( undefined ) ).toBe( false );
+	} );
+
+	it( 'includes allow-listed testers regardless of cohort math', () => {
+		expect( willBeRolledOut( TESTER ) ).toBe( true );
+	} );
+
+	it( 'includes everyone when full-rollout simulation is on', () => {
+		enableFlags( 'dashboard/simulate-full-rollout' );
+		expect( willBeRolledOut( OUT_OF_COHORT ) ).toBe( true );
 	} );
 } );

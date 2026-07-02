@@ -33,7 +33,7 @@
 		"dark-mode": false,
 		"dashboard/enable-percentage-rollout": false,
 		"dashboard/force-opt-in-visibility": true,
-		"dashboard/opt-in-banners": false,
+		"dashboard/opt-in-banners": true,
 		"dashboard/opt-in-welcome-modal": false,
 		"dashboard/plans": true,
 		"dashboard/simulate-full-rollout": true,
