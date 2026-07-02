@@ -161,74 +161,17 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		);
 	} );
 
-	test( 'shows the strong-tier modal with masked recovery details for a fully-covered user', async () => {
+	test( 'does not show for a fully-secured user (recovery method, 2FA, and backup codes)', async () => {
 		mockAccountRecovery( STRONG_RECOVERY );
 		mockUserSettings( { two_step_enabled: true, two_step_backup_codes_printed: true } );
 		mockPreferences();
 
 		const { recordTracksEvent } = render( <AccountRecoveryInterstitial /> );
-
-		const dialog = await screen.findByRole( 'dialog', { name: 'Still have access to these?' } );
-		expect( dialog ).toBeVisible();
-		// Recovery email is masked in the body copy.
-		expect( screen.getByText( /r••••@example\.com/ ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Yes, all good' } ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Update recovery information' } ) ).toBeVisible();
-		// The fully-secured tier offers a plain "Dismiss" instead of a long "remind me" reminder.
-		expect( screen.getByRole( 'button', { name: 'Dismiss' } ) ).toBeVisible();
-		expect( screen.queryByRole( 'button', { name: /Remind me/ } ) ).not.toBeInTheDocument();
-
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_account_recovery_nudge_interstitial_impression',
-			{
-				security_level: 'strong',
-				recovery_status: 'strong',
-				has_recovery_email: true,
-				has_recovery_phone: false,
-				has_two_factor: true,
-				has_backup_codes: true,
-			}
-		);
-	} );
-
-	test( 'confirming "Yes, all good" snoozes for the strong window and records a cta_click', async () => {
-		const user = userEvent.setup();
-		mockAccountRecovery( STRONG_RECOVERY );
-		mockUserSettings( { two_step_enabled: true, two_step_backup_codes_printed: true } );
-		mockPreferences();
-
-		let snoozedValue: number | undefined;
-		const savePost = nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/me/preferences', ( body ) => {
-				snoozedValue = body.calypso_preferences?.[ 'account-recovery-interstitial-snoozed-until' ];
-				return typeof snoozedValue === 'number';
-			} )
-			.query( true )
-			.reply( 200, {} );
-
-		const { recordTracksEvent } = render( <AccountRecoveryInterstitial /> );
-
-		await screen.findByRole( 'dialog', { name: 'Still have access to these?' } );
-		await user.click( screen.getByRole( 'button', { name: 'Yes, all good' } ) );
 
 		await waitFor( () => {
 			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 		} );
-		expect( savePost.isDone() ).toBe( true );
-		// strong-tier window is 365 days into the future.
-		expect( snoozedValue ).toBeGreaterThan( Math.floor( Date.now() / 1000 ) + 300 * 86400 );
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_account_recovery_nudge_interstitial_cta_click',
-			{
-				security_level: 'strong',
-				recovery_status: 'strong',
-				has_recovery_email: true,
-				has_recovery_phone: false,
-				has_two_factor: true,
-				has_backup_codes: true,
-				cta_id: 'confirm_recovery',
-			}
-		);
+		expect( recordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
 	test( 'does not show when the user is currently snoozed', async () => {

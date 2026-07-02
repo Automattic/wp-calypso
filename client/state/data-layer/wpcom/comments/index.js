@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { pickBy } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
-import { map } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
 import {
 	COMMENTS_REQUEST,
@@ -30,7 +29,7 @@ import { getSitePost } from 'calypso/state/posts/selectors';
 const isDate = ( date ) => date instanceof Date && ! isNaN( date );
 
 export const commentsFromApi = ( comments ) =>
-	map( comments, ( comment ) =>
+	( comments ?? [] ).map( ( comment ) =>
 		comment.author
 			? {
 					...comment,

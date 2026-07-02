@@ -7,7 +7,6 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import Debug from 'debug';
-import { get } from 'lodash';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { login } from 'calypso/lib/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -40,7 +39,7 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 		},
 	};
 
-	return get( planSlugs, [ interval, type ], '' );
+	return planSlugs?.[ interval ]?.[ type ] ?? '';
 };
 
 export function redirectToLogin( context, next ) {
@@ -83,7 +82,7 @@ export function setMasterbar( context, next ) {
 export function purchase( context, next ) {
 	const { path, pathname, params, query } = context;
 	const { type = false, interval } = params;
-	const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
+	const analyticsPageTitle = analyticsPageTitleByType?.[ type ] ?? 'Jetpack Connect';
 	const planSlug = getPlanSlugFromFlowType( type, interval );
 
 	planSlug && storePlan( planSlug );

@@ -1,5 +1,3 @@
-import { filter } from 'lodash';
-
 import 'calypso/state/plugins/init';
 
 export const isRequesting = function ( state, siteId ) {
@@ -37,7 +35,7 @@ export const getPluginsForSite = function ( state, siteId, forPlugin = false ) {
 		forPlugin = 'vaultpress';
 	}
 
-	return filter( pluginList, ( plugin ) => {
+	return pluginList.filter( ( plugin ) => {
 		// eslint-disable-next-line no-extra-boolean-cast
 		if ( !! forPlugin ) {
 			return forPlugin === plugin.slug;

@@ -163,7 +163,7 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 		successfullyDownloadedLanguages.forEach( ( { langSlug, languageTranslations } ) => {
 			const languageChunks = _.chain( chunks )
 				.mapValues( ( stringIds ) => _.pick( languageTranslations, stringIds ) )
-				.omitBy( _.isEmpty )
+				.omitBy( ( chunk ) => Object.keys( chunk ).length === 0 )
 				.value();
 
 			// Write language translated chunks map

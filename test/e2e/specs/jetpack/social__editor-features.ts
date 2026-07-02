@@ -116,23 +116,24 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				await testAccount.authenticate( page );
 			} );
 
-			beforeEach( async () => {
+			// Connections load via a resolver that fetches on editor load, so mock before
+			// navigating. Used by tests asserting on connection-dependent UI.
+			async function visitPostWithMockedConnections() {
+				await socialConnectionsManager.mockSocialConnections();
+				const connectionTestsReceived = socialConnectionsManager.waitForConnectionTests();
 				await editorPage.visit( 'post', { siteSlug } );
-			} );
+				await connectionTestsReceived;
+			}
 
 			afterEach( async () => {
 				await socialConnectionsManager.clearIntercepts();
 			} );
 
 			it( 'Should verify that auto-sharing is available for new posts', async function () {
-				await socialConnectionsManager.mockSocialConnections();
+				await visitPostWithMockedConnections();
 
-				await Promise.all( [
-					// Open the Jetpack sidebar.
-					editorPage.openSettings( 'Jetpack' ),
-					// Wait for the connection test results to finish
-					socialConnectionsManager.waitForConnectionTests(),
-				] );
+				// Open the Jetpack sidebar.
+				await editorPage.openSettings( 'Jetpack' );
 
 				// Expand the Publicize panel.
 				const section = await editorPage.expandSection( 'Share to social media' );
@@ -153,15 +154,10 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 			it( `Should verify that resharing ${
 				features.resharing ? 'IS' : 'is NOT'
 			} available`, async function () {
-				let connectionTestPromise = Promise.resolve();
-				await socialConnectionsManager.mockSocialConnections();
-
-				connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
+				await visitPostWithMockedConnections();
 
 				// Open the Jetpack sidebar.
 				await editorPage.openSettings( 'Jetpack' );
-
-				await connectionTestPromise;
 
 				// Expand the Publicize panel.
 				let section = await editorPage.expandSection( 'Share to social media' );
@@ -195,7 +191,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 
 				// Publish the post.
 				await editorPage.publish();
-				connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
+				const connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
 				await dismissPodcastPostPublishPromo( editorPage );
 				await editorPage.closeAllPanels();
 
@@ -256,6 +252,8 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 			it( `Should verify that manual sharing ${
 				features.manualSharing ? 'IS' : 'is NOT'
 			} available`, async function () {
+				await editorPage.visit( 'post', { siteSlug } );
+
 				// Open the Jetpack sidebar.
 				await editorPage.openSettings( 'Jetpack' );
 
@@ -304,14 +302,10 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 			skipItIf( ! features.socialImageGenerator )(
 				'Should verify that Social Image Generator is available',
 				async function () {
-					await socialConnectionsManager.mockSocialConnections();
-
-					const connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
+					await visitPostWithMockedConnections();
 
 					// Open the Jetpack sidebar.
 					await editorPage.openSettings( 'Jetpack' );
-
-					await connectionTestPromise;
 
 					// Expand the Publicize panel.
 					const section = await editorPage.expandSection( 'Share to social media' );

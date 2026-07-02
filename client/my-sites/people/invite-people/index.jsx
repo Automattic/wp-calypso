@@ -5,7 +5,6 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { groupBy, pickBy } from '@automattic/js-utils';
 import debugModule from 'debug';
 import { localize, fixMe } from 'i18n-calypso';
-import { filter } from 'lodash';
 import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
@@ -162,7 +161,7 @@ class InvitePeople extends Component {
 			return filteredTokens.includes( key );
 		} );
 
-		const filteredSuccess = filter( success, ( successfulValidation ) => {
+		const filteredSuccess = success.filter( ( successfulValidation ) => {
 			return filteredTokens.includes( successfulValidation );
 		} );
 

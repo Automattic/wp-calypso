@@ -1,5 +1,4 @@
 import { withRtl } from 'i18n-calypso';
-import { filter } from 'lodash';
 import PropTypes from 'prop-types';
 import { createElement, Component } from 'react';
 import { connect } from 'react-redux';
@@ -95,7 +94,7 @@ export class MediaLibraryList extends Component {
 		// seeking to select a single item
 		let selectedItems;
 		if ( this.props.single ) {
-			selectedItems = filter( this.props.selectedItems, { ID: item.ID } );
+			selectedItems = ( this.props.selectedItems ?? [] ).filter( ( i ) => i.ID === item.ID );
 		} else {
 			selectedItems = [ ...this.props.selectedItems ];
 		}

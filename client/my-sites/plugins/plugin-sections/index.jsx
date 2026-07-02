@@ -1,7 +1,6 @@
 import { ExternalLink } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { filter } from 'lodash';
 import { createRef, Component } from 'react';
 import titleCase from 'to-title-case';
 import SectionNav from 'calypso/components/section-nav';
@@ -168,7 +167,7 @@ class PluginSections extends Component {
 
 	getAvailableSections = () => {
 		const sections = this.props.plugin.sections;
-		return filter( this.getFilteredSections(), function ( section ) {
+		return this.getFilteredSections().filter( function ( section ) {
 			return sections?.[ section.key ];
 		} );
 	};

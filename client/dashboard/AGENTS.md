@@ -15,6 +15,10 @@ This is the new hosting dashboard for WordPress.com.
   2. If the behavior genuinely differs per dashboard variant, add a property to `AppConfig` that each variant provides, and branch on that property instead of the name.
   3. Before doing either, ask: if this UX is better for one variant, wouldn't it be better for all users? Prefer a single code path when possible.
 
+### Internationalization
+
+- When calling locale-aware formatting functions (`toLocaleDateString`, `toLocaleString`, `Intl.*`, etc.), prefer passing the user's locale from `useLocale()` (`app/locale`) rather than `undefined`. Passing `undefined` falls back to the browser/OS locale, so output silently drifts from the user's WordPress.com language setting.
+
 ### Testing
 
 - Read [docs/testing.md](./docs/testing.md) before writing or modifying tests.

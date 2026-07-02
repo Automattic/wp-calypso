@@ -16,6 +16,11 @@ $space-colors: 'blue', 'purple', 'red', 'orange', 'green', 'celadon', 'pink', 'g
 	// so the accent reads as a sober default rather than a bright hue.
 	--space-color: var( --studio-#{$color}-80 );
 	--space-color-bg: var( --studio-#{$color}-5 );
+	// Vivid brand step (`-50`) for decorative *fills* like the picker swatches,
+	// where the sober `-80` foreground darkens every hue toward near-black and
+	// makes distinct colors (green/celadon, red/orange) read as similar. Not for
+	// text: `-50` does not guarantee AA contrast on the page surface.
+	--space-color-vivid: var( --studio-#{$color}-50 );
 	// Interaction variants off the same accent: a lighter, more saturated step so
 	// the hue surfaces on hover, and — for the visited / “already read” state —
 	// the accent muted toward the subtle text color so it reads as faded.

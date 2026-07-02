@@ -4,7 +4,6 @@ import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import { map } from 'lodash';
 import ExcessiveDiskSpace from 'calypso/blocks/eligibility-warnings/excessive-disk-space';
 import CardHeading from 'calypso/components/card-heading';
 import Notice, { NoticeStatus } from 'calypso/components/notice';
@@ -306,7 +305,7 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 					</div>
 				) }
 				{ ! isPlaceholder &&
-					map( holds, ( hold ) =>
+					holds.map( ( hold ) =>
 						! isKnownHoldType( hold, holdMessages ) ? null : (
 							<div className="eligibility-warnings__hold" key={ hold }>
 								<div className="eligibility-warnings__message">

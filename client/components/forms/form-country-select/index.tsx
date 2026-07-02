@@ -1,7 +1,6 @@
-import { omit } from '@automattic/js-utils';
+import { omit, isEmpty } from '@automattic/js-utils';
 import clsx from 'clsx';
 import { useTranslate, localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import { Component } from 'react';
 import FormSelect from 'calypso/components/forms/form-select';
 import type { CountryListItem } from '@automattic/wpcom-checkout';

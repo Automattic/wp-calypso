@@ -177,13 +177,8 @@ export const domainRoute = createRoute( {
 
 		return domain;
 	},
-} ).lazy( () =>
-	import( '../../domains/domain' ).then( ( d ) =>
-		createLazyRoute( 'domain' )( {
-			component: d.default,
-		} )
-	)
-);
+	component: Outlet,
+} );
 
 export const domainOverviewRoute = createRoute( {
 	getParentRoute: () => domainRoute,

@@ -3,6 +3,7 @@ import calypsoConfig from '@automattic/calypso-config';
 import { captureException } from '@automattic/calypso-sentry';
 import { camelToSnakeCase } from '@automattic/js-utils';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { maybeReloadForChunkError } from './chunk-reload';
 import type { AnyRouter } from '@tanstack/react-router';
 import type { ErrorInfo } from 'react';
 
@@ -35,6 +36,12 @@ export function handleOnCatch(
 		calypso_section?: string;
 	}
 ) {
+	// A failed chunk load is usually a stale deploy, not a real error. Reload
+	// once to fetch fresh chunks instead of logging and showing an error page.
+	if ( maybeReloadForChunkError( error ) ) {
+		return;
+	}
+
 	if ( isBenignError( error ) ) {
 		return;
 	}

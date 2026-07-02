@@ -17,10 +17,11 @@ let hasConfiguredOnce = false;
  * ref and challenge callbacks, and tracks whether a challenge is active.
  * @param {Object}  options
  * @param {import('react').RefObject<HTMLDivElement>} options.containerRef Ref to the challenge container element.
+ * @param {boolean} options.enabled Whether Blackbox is active for this surface.
  * @returns {{ isChallengeActive: boolean, isLoading: boolean, hasChallengeContent: boolean }}
  */
-export function useBlackbox( { containerRef } ) {
-	const isEnabled = config.isEnabled( 'blackbox-login' ) && !! config( 'blackbox_api_key' );
+export function useBlackbox( { containerRef, enabled } ) {
+	const isEnabled = enabled;
 	const [ isChallengeActive, setIsChallengeActive ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( isEnabled );
 	const [ hasChallengeContent, setHasChallengeContent ] = useState( false );

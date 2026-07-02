@@ -12,6 +12,7 @@ import { getPostUrl } from 'calypso/reader/route';
 import { Shimmer } from '../../components/skeleton';
 import { SpaceFeedTimeSince } from '../../components/time-since';
 import { getPostFieldKey, getPostFields } from '../../post-fields';
+import { useScrollSelectedIntoView } from '../use-scroll-selected-into-view';
 import type { SpaceFeedLayoutProps, SpaceFeedSkeletonProps } from '../types';
 import type { ReadStreamPost } from '@automattic/api-core';
 
@@ -34,11 +35,29 @@ function useGalleryColumns(): number {
 	return 1;
 }
 
-function GalleryCard( { post }: { post: ReadStreamPost } ) {
+function GalleryCard( {
+	post,
+	isSelected,
+	onOpen,
+}: {
+	post: ReadStreamPost;
+	isSelected: boolean;
+	onOpen: () => void;
+} ) {
 	const fields = getPostFields( post );
 	return (
-		<VStack className="space-feed-gallery__card" spacing={ 1.5 } alignment="stretch">
-			<a className="space-feed-gallery__thumb" href={ fields.postHref } aria-label={ fields.title }>
+		<VStack
+			className="space-feed-gallery__card"
+			spacing={ 1.5 }
+			alignment="stretch"
+			data-selected={ isSelected || undefined }
+		>
+			<a
+				className="space-feed-gallery__thumb"
+				href={ fields.postHref }
+				aria-label={ fields.title }
+				onClick={ onOpen }
+			>
 				{ fields.imageUrl ? (
 					<img
 						className="space-feed-gallery__image"
@@ -72,7 +91,11 @@ function GalleryCard( { post }: { post: ReadStreamPost } ) {
 						) }
 					</HStack>
 					<h3 className="space-feed-gallery__title">
-						<a className="space-feed-gallery__title-link" href={ fields.postHref }>
+						<a
+							className="space-feed-gallery__title-link"
+							href={ fields.postHref }
+							onClick={ onOpen }
+						>
 							{ fields.title }
 						</a>
 					</h3>
@@ -81,7 +104,10 @@ function GalleryCard( { post }: { post: ReadStreamPost } ) {
 					variant="discreet"
 					split
 					post={ post }
-					onCommentClick={ () => page( getPostUrl( post ) ) }
+					onCommentClick={ () => {
+						onOpen();
+						page( getPostUrl( post ) );
+					} }
 					iconSize={ 18 }
 				/>
 			</VStack>
@@ -112,6 +138,8 @@ export function GalleryLayout( {
 	isLoadingMore,
 	loadMore,
 	restoreKey,
+	isPostSelected,
+	selectPost,
 }: SpaceFeedLayoutProps ) {
 	const columns = useGalleryColumns();
 
@@ -134,11 +162,11 @@ export function GalleryLayout( {
 		return out;
 	}, [ posts, columns, isLoadingMore ] );
 
-	const { getListProps, items, measureElement, scrollMargin } = useInfiniteList( {
+	const { getListProps, items, measureElement, scrollMargin, scrollToIndex } = useInfiniteList( {
 		scrollElement,
 		count: rows.length,
 		estimateSize: ROW_SIZE,
-		overscan: 4,
+		overscan: 12,
 		getItemKey: ( index ) => {
 			const first = rows[ index ][ 0 ];
 			return first ? getPostFieldKey( first ) : `skeleton-${ index }`;
@@ -148,6 +176,14 @@ export function GalleryLayout( {
 		loadMore,
 		restoreKey,
 	} );
+
+	// Grid row holding the selected post.
+	const selectedRowIndex = useMemo(
+		() =>
+			rows.findIndex( ( row ) => row.some( ( cell ) => cell != null && isPostSelected( cell ) ) ),
+		[ rows, isPostSelected ]
+	);
+	useScrollSelectedIntoView( scrollToIndex, selectedRowIndex );
 
 	return (
 		<div { ...getListProps( { className: 'space-feed-gallery' } ) }>
@@ -165,7 +201,12 @@ export function GalleryLayout( {
 					>
 						{ rows[ virtualRow.index ].map( ( cell, cellIndex ) =>
 							cell ? (
-								<GalleryCard key={ getPostFieldKey( cell ) } post={ cell } />
+								<GalleryCard
+									key={ getPostFieldKey( cell ) }
+									post={ cell }
+									isSelected={ isPostSelected( cell ) }
+									onOpen={ () => selectPost( cell ) }
+								/>
 							) : (
 								// eslint-disable-next-line react/no-array-index-key
 								<GallerySkeletonCard key={ `skeleton-${ cellIndex }` } />

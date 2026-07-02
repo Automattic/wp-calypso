@@ -24,6 +24,7 @@ function applyMcpUpdate( previous: McpSettings, update: McpSettingsUpdate ): Mcp
 }
 
 type AgencyQueryResult = {
+	id?: number;
 	isClientUser: boolean;
 	hasAgency: boolean;
 };
@@ -36,7 +37,7 @@ export const agencyQuery = () =>
 			let agency: AgencyQueryResult;
 
 			if ( Array.isArray( data ) ) {
-				agency = { isClientUser: false, hasAgency: data.length > 0 };
+				agency = { id: data[ 0 ]?.id, isClientUser: false, hasAgency: data.length > 0 };
 			} else {
 				agency = {
 					isClientUser: !! data.is_client_user,

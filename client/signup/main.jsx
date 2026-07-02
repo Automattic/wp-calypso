@@ -8,12 +8,11 @@ import {
 import page from '@automattic/calypso-router';
 import { GravatarTextLogo } from '@automattic/components';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
-import { camelToSnakeCase, kebabCase, omit } from '@automattic/js-utils';
+import { camelToSnakeCase, kebabCase, omit, isEmpty } from '@automattic/js-utils';
 import * as oauthToken from '@automattic/oauth-token';
 import { isDomainForGravatarFlow } from '@automattic/onboarding';
 import debugModule from 'debug';
 import isEqual from 'fast-deep-equal/es6';
-import { isEmpty, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -558,12 +557,12 @@ class Signup extends Component {
 		const stepsToProcess =
 			currentStepIndex >= 0 ? flowSteps.slice( 0, currentStepIndex + 1 ) : flowSteps;
 		const previouslyExcludedSteps = [ ...flows.excludedSteps ];
-		map( previouslyExcludedSteps, ( flowStepName ) => {
+		previouslyExcludedSteps.forEach( ( flowStepName ) => {
 			if ( stepsToProcess.includes( flowStepName ) ) {
 				this.processFulfilledSteps( flowStepName, nextProps );
 			}
 		} );
-		map( stepsToProcess, ( flowStepName ) =>
+		stepsToProcess.forEach( ( flowStepName ) =>
 			this.processFulfilledSteps( flowStepName, nextProps )
 		);
 

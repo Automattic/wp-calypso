@@ -71,7 +71,7 @@ describe( '<SecurityLegacyContact />', () => {
 		await waitFor( () => expect( removeScope.isDone() ).toBe( true ) );
 
 		// The empty state renders the set-up form.
-		expect( await screen.findByRole( 'button', { name: 'Set up legacy contact' } ) ).toBeVisible();
+		expect( await screen.findByRole( 'button', { name: 'Add legacy contact' } ) ).toBeVisible();
 	} );
 
 	test( 'does not remove the contact when the dialog is cancelled', async () => {

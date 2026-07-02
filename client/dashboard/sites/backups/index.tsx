@@ -1,6 +1,5 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { DateRangePicker } from '@automattic/date-range-picker';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, useParams, useRouter } from '@tanstack/react-router';
@@ -22,6 +21,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
+import { SitesNoticeArbiter } from '../notice-arbiter';
 import { BackupDetails } from './backup-details';
 import { BackupDetailsSkeleton } from './backup-details-skeleton';
 import { BackupNotices } from './backup-notices';
@@ -101,8 +101,7 @@ export function BackupsListPage() {
 		[ router, siteSlug ]
 	);
 
-	const isOmnibarEnabled = isEnabled( 'dashboard/omnibar' );
-	const isSmallViewport = useViewportMatch( isOmnibarEnabled ? 'xlarge' : 'medium', '<' );
+	const isSmallViewport = useViewportMatch( 'xlarge', '<' );
 
 	// Auto-select backup based on rewindId parameter
 	useEffect( () => {
@@ -197,7 +196,6 @@ export function BackupsListPage() {
 
 	const isMobileDetailsView = isSmallViewport && selectedBackup;
 	const shouldShowActions = hasBackups && ! isMobileDetailsView;
-	const shouldShowNotices = ! isMobileDetailsView;
 
 	const actions = (
 		<>
@@ -230,14 +228,18 @@ export function BackupsListPage() {
 				/>
 			}
 			notices={
-				shouldShowNotices ? (
-					<BackupNotices
-						backupState={ backupState }
-						site={ site }
-						timezoneString={ timezoneString }
-						gmtOffset={ gmtOffset }
-					/>
-				) : undefined
+				<>
+					{ /* Action feedback, not an on-load banner: rendered outside the arbiter. */ }
+					{ ! isMobileDetailsView && backupState.status !== 'idle' && (
+						<BackupNotices
+							backupState={ backupState }
+							site={ site }
+							timezoneString={ timezoneString }
+							gmtOffset={ gmtOffset }
+						/>
+					) }
+					<SitesNoticeArbiter />
+				</>
 			}
 		>
 			{ hasBackups && (

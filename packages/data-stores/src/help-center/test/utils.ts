@@ -14,6 +14,11 @@ jest.mock( '../../wpcom-request', () => ( {
 	canAccessWpcomApis: jest.fn(),
 } ) );
 
+jest.mock( 'wpcom-proxy-request', () => ( {
+	__esModule: true,
+	isCookieAuthMissing: jest.fn( () => false ),
+} ) );
+
 describe( 'help-center utils — localStorage persistence (logged out)', () => {
 	let utils: typeof import('../utils');
 
@@ -95,5 +100,41 @@ describe( 'getPersistedPreference — server preferences (logged in)', () => {
 		utils.setHelpCenterAppId( undefined );
 
 		await expect( utils.getPersistedPreference( 'help_center_open' ) ).resolves.toBe( true );
+	} );
+
+	it( 'falls back to localStorage and skips the network when the auth cookie is missing', async () => {
+		const utils = await setup( { help_center_open: false } );
+		window.localStorage.clear();
+		window.localStorage.setItem( PREFERENCES_KEY + 'help_center_open', 'true' );
+
+		const { isCookieAuthMissing } = await import( 'wpcom-proxy-request' );
+		( isCookieAuthMissing as jest.Mock ).mockReturnValue( true );
+		const wpcomRequest = await import( '../../wpcom-request' );
+
+		await expect( utils.getPersistedPreference( 'help_center_open' ) ).resolves.toBe( true );
+		expect( wpcomRequest.default ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not cache a failed preferences request — a later read retries', async () => {
+		jest.resetModules();
+
+		const { select } = await import( '@wordpress/data' );
+		( select as jest.Mock ).mockReturnValue( { getIsLoggedIn: () => true } );
+
+		const { isCookieAuthMissing } = await import( 'wpcom-proxy-request' );
+		( isCookieAuthMissing as jest.Mock ).mockReturnValue( false );
+
+		const wpcomRequest = await import( '../../wpcom-request' );
+		( wpcomRequest.canAccessWpcomApis as jest.Mock ).mockReturnValue( true );
+		( wpcomRequest.default as jest.Mock )
+			.mockRejectedValueOnce( new Error( '401' ) )
+			.mockResolvedValueOnce( { calypso_preferences: { help_center_open: true } } );
+
+		const utils = await import( '../utils' );
+
+		await expect( utils.getPersistedPreference( 'help_center_open' ) ).rejects.toThrow();
+		// The first failure must not be cached, so the next read issues a fresh request.
+		await expect( utils.getPersistedPreference( 'help_center_open' ) ).resolves.toBe( true );
+		expect( wpcomRequest.default ).toHaveBeenCalledTimes( 2 );
 	} );
 } );

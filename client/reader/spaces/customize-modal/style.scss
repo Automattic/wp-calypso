@@ -79,6 +79,13 @@
 	text-transform: uppercase;
 }
 
+.customize-space-modal__field-help {
+	margin: 0;
+	color: var( --color-text-subtle );
+	font-size: 0.875rem;
+	line-height: 1.4;
+}
+
 .customize-space-modal__error {
 	margin: 8px 0 0;
 	color: var( --color-error );
