@@ -59,6 +59,14 @@ describe( 'merge', () => {
 		expect( probe.polluted2 ).toBeUndefined();
 	} );
 
+	it( 'merges only own enumerable source properties, not inherited ones', () => {
+		// Intentionally narrower than lodash, which also copies inherited
+		// enumerable properties (it iterates with `for…in`).
+		const source = Object.create( { inherited: 1 } ) as Record< string, unknown >;
+		source.own = 2;
+		expect( merge( {}, source ) ).toEqual( { own: 2 } );
+	} );
+
 	it( 'assigns Date and class instances by reference (does not deep-clone)', () => {
 		const date = new Date( 0 );
 		const result = merge( {} as { d?: Date }, { d: date } );

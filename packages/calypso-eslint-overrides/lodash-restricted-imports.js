@@ -243,11 +243,13 @@ const patterns = [
 // shapes `no-restricted-imports` cannot see. Most migrated functions are
 // backstopped by the `eslint-plugin-you-dont-need-lodash-underscore` rules in
 // the root config, but that plugin ships no rule for these, so they get their
-// own namespace/CommonJS guards below.
+// own namespace/CommonJS guards below. Only add a function here once its
+// namespace/CommonJS usages are also gone — e.g. `merge` is guarded for ES
+// imports above but still used as `_.merge` in build tooling, so it stays out
+// until that is migrated.
 const NAMESPACE_GUARDED = [
 	{ name: 'isEmpty', message: JS_UTILS_MESSAGE },
 	{ name: 'memoize', message: JS_UTILS_MESSAGE },
-	{ name: 'merge', message: JS_UTILS_MESSAGE },
 	{ name: 'unescape', message: UNESCAPE_MESSAGE },
 	{ name: 'sampleSize', message: SAMPLESIZE_MESSAGE },
 	{ name: 'matches', message: MATCHES_MESSAGE },

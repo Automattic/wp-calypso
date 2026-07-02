@@ -67,13 +67,17 @@ function baseMerge( target: PlainObject, source: PlainObject ): void {
 }
 
 /**
- * Recursively merges own enumerable properties of the source objects into the
- * destination object, mutating and returning it. Later sources override earlier
- * ones; arrays and plain objects are merged deeply while other values are
- * assigned by reference. Source properties resolving to `undefined` are skipped
- * when the destination already has the key. Mirrors lodash's `merge` for plain
- * JSON-like data; it does not special-case typed arrays, buffers, or circular
- * references.
+ * Recursively merges own enumerable string-keyed properties of the source
+ * objects into the destination object, mutating and returning it. Later sources
+ * override earlier ones; arrays and plain objects are merged deeply while other
+ * values are assigned by reference. Source properties resolving to `undefined`
+ * are skipped when the destination already has the key, and prototype-polluting
+ * keys (`__proto__`, function `constructor`) are ignored.
+ *
+ * This targets plain JSON-like data and is intentionally narrower than lodash's
+ * `merge`: it merges only own (not inherited) enumerable properties, treats
+ * arrays as dense (sparse holes are not materialized), and does not special-case
+ * typed arrays, buffers, or circular references.
  * @param object The destination object (mutated in place).
  * @param source The source object to merge in (additional sources are merged left to right).
  * @returns The mutated destination object.
