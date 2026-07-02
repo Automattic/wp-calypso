@@ -3,6 +3,7 @@ package _self.projects
 import Settings
 import _self.bashNodeScript
 import _self.lib.customBuildType.E2EBuildType
+import _self.lib.utils.allBranchesExceptMergeQueue
 import _self.lib.utils.excludeMergeQueueBranches
 import _self.lib.utils.mergeTrunk
 import _self.lib.utils.passMergeQueueBranchesEarly
@@ -792,11 +793,11 @@ object Translate : BuildType({
 
 	vcs {
 		root(Settings.WpCalypso)
+		branchFilter = allBranchesExceptMergeQueue()
 		cleanCheckout = true
 	}
 
 	steps {
-		passMergeQueueBranchesEarly()
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
@@ -804,7 +805,7 @@ object Translate : BuildType({
 				${_self.yarn_install_cmd}
 			"""
 			dockerImage = "%docker_image_e2e%"
-		}.skipOnMergeQueueBranch()
+		}
 		bashNodeScript {
 			name = "Extract strings"
 			scriptContent = """
@@ -819,7 +820,7 @@ object Translate : BuildType({
 				echo "##teamcity[publishArtifacts './translate/calypso-strings.pot']"
 			"""
 			dockerImage = "%docker_image_e2e%"
-		}.skipOnMergeQueueBranch()
+		}
 		bashNodeScript {
 			name = "Build New Strings .pot"
 			scriptContent = """
@@ -840,7 +841,7 @@ object Translate : BuildType({
 				echo "##teamcity[publishArtifacts './translate/localci-new-strings.pot']"
 			"""
 			dockerImage = "%docker_image_e2e%"
-		}.skipOnMergeQueueBranch()
+		}
 		bashNodeScript {
 			name = "Notify GlotPress Translate build is ready"
 			scriptContent = """
@@ -861,7 +862,7 @@ object Translate : BuildType({
 							}
 						}'
 			"""
-		}.skipOnMergeQueueBranch()
+		}
 	}
 
 	triggers {
@@ -929,6 +930,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 				}
 			}
 		},
+		vcsBranchFilter = allBranchesExceptMergeQueue(),
 		enableCommitStatusPublisher = true,
 		buildTriggers = {
 			vcs {
