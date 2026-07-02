@@ -1,6 +1,7 @@
 import { userPreferenceQuery, userPreferenceMutation } from '@automattic/api-queries';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { useRouterState } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
@@ -31,12 +32,22 @@ export function OptInWelcomeModal() {
 		userPreferenceMutation( preferenceName )
 	);
 
+	const isOnOptInPreferences = useRouterState( {
+		select: ( state ) => state.location.pathname.startsWith( '/me/preferences/hosting-dashboard' ),
+	} );
+
 	const isDismissed = isDismissedPersisted || isDismissing;
 
 	const handleStartNow = () => {
 		recordTracksEvent( 'calypso_dashboard_opt_in_welcome_modal_dismiss_click' );
 		updateDismissed( new Date().toISOString() );
 	};
+
+	// Toggling opt-in from the preferences page would otherwise flip enrollment and pop the modal
+	// open on top of that page, as if in response to the toggle.
+	if ( isOnOptInPreferences ) {
+		return null;
+	}
 
 	// Only users whose default experience is the dashboard should see the welcome pitch.
 	const dashboardEnrollment = getHostingDashboardEnrollment( dashboardOptIn, user.ID );
