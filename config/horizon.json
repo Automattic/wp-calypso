@@ -89,7 +89,7 @@
 		"marketplace-reviews-notification": false,
 		"marketplace-test": false,
 		"me/account/color-scheme-picker": true,
-		"me/legacy-contact": false,
+		"me/legacy-contact": true,
 		"migration-flow/introductory-offer": true,
 		"migration/ssh-migration": false,
 		"oauth/unified-experience": false,
