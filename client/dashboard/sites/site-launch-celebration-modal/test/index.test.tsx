@@ -6,6 +6,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
+import { getAddSiteDomainUrl } from '../../../utils/domain-url';
 import SiteLaunchCelebrationModal from '../index';
 import type { DomainSummary, Site } from '@automattic/api-core';
 
@@ -229,11 +230,12 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 			// Wait for modal to render first
 			await screen.findByRole( 'dialog' );
 
-			// Upsell button should appear for free plan without custom domain
+			// Upsell button should appear for free plan without custom domain, pointing at the
+			// environment-aware add-domain URL rather than a bare relative path.
 			await screen.findByRole( 'link', { name: 'Get your domain' } );
 			expect( screen.getByRole( 'link', { name: 'Get your domain' } ) ).toHaveAttribute(
 				'href',
-				expect.stringContaining( '/domains/add/' )
+				getAddSiteDomainUrl( mockSite.slug )
 			);
 		} );
 
