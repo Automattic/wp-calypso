@@ -26,6 +26,9 @@ export interface ReadSpaceApiItem {
 	// Detail-only — absent on the list (summary) response.
 	follows?: ReadSpaceFollowApiItem[];
 	tags?: string[];
+	// Detail-only. Base ES language codes the server persisted (already
+	// normalized server-side); absent on older responses before the field shipped.
+	languages?: string[];
 }
 
 /** Map a wpcom/v2 summary item onto the client `ReadSpace` (list) shape. */
@@ -67,5 +70,6 @@ export function adaptReadSpaceDetails( item: ReadSpaceApiItem ): ReadSpaceDetail
 		...adaptReadSpace( item ),
 		sources: ( item.follows ?? [] ).map( adaptSpaceSource ),
 		tags: item.tags ?? [],
+		languages: item.languages ?? [],
 	};
 }
