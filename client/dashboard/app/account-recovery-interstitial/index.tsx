@@ -21,11 +21,11 @@ import './style.scss';
 const DAY_IN_SECONDS = 86400;
 
 /**
- * ExPlat A/B experiment gating the interstitial. Users in the `treatment` variation see the
- * modal; everyone else (control / unassigned) does not. Update this to the registered
- * experiment name when it changes.
+ * ExPlat A/B experiment gating the interstitial. Users in the `email_recovery_modal` variation see the
+ * modal; everyone else (control / unassigned) does not.
  */
-const EXPERIMENT_NAME = 'account_recovery_nudge_interstitial_experiment';
+const EXPERIMENT_NAME = 'calypso_onboarding_account_recovery_modal_202606';
+const EXPERIMENT_TREATMENT_VARIATION = 'email_recovery_modal';
 
 /**
  * How secure the user's account already is. Single source of truth for the tiers;
@@ -124,7 +124,8 @@ export default function AccountRecoveryInterstitial() {
 		isEligible,
 	} );
 	const isInExperimentTreatment =
-		! isLoadingExperimentAssignment && experimentAssignment?.variationName === 'treatment';
+		! isLoadingExperimentAssignment &&
+		experimentAssignment?.variationName === EXPERIMENT_TREATMENT_VARIATION;
 
 	// Fully-secured users (variant === 'strong') are left alone — we only nudge people who are still
 	// missing a recovery method, 2FA, or backup codes. The modal is also not shown to users who are
