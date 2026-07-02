@@ -37,6 +37,26 @@
 	}
 }
 
+.reader-sidebar__section-header {
+	padding: 8px 0 4px;
+	margin-top: 24px;
+	pointer-events: none;
+
+	&:first-of-type {
+		margin-top: 0;
+	}
+
+	span {
+		display: block;
+		font-size: 11px;
+		font-weight: 500;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--studio-gray-20);
+		line-height: 1;
+	}
+}
+
 body.is-section-reader {
 	.is-global-sidebar-visible {
 		--content-padding-top: 32px;
@@ -205,10 +225,6 @@ body.is-section-reader {
 		font-size: 0.67rem; /* stylelint-disable-line scales/font-sizes */
 		font-style: italic;
 		color: var( --color-sidebar-text-alternative );
-	}
-
-	.sidebar__separator {
-		height: 0;
 	}
 
 	.sidebar__menu-item-sitename {
