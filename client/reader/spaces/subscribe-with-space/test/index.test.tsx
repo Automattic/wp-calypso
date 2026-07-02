@@ -78,7 +78,7 @@ beforeEach( () => {
 	mockIsSubscribedLoading = false;
 	mockFollowPending = false;
 	mockSpaces = [ space ];
-	mockDetailsById = { [ space.id ]: { ...space, sources: [], tags: [] } };
+	mockDetailsById = { [ space.id ]: { ...space, sources: [], tags: [], languages: [] } };
 	mockDetailsLoading = false;
 	mockDetailsError = false;
 	mockFollowSite.mockClear();
@@ -194,6 +194,7 @@ it( 'removes the feed from a space on Save by replacing its feed list', async ()
 		[ space.id ]: {
 			...space,
 			tags: [],
+			languages: [],
 			sources: [
 				{
 					feedId: 456,
