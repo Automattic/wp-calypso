@@ -1,0 +1,8 @@
+// Constrain the empty state to a readable column. The MSD app bounds page width via
+// PageLayout, but the classic A4A host does not, so without this the content stretches the
+// full browser width and the call-to-action card is left with a large empty gutter.
+.woopayments-empty-state {
+	max-width: 720px;
+	margin-inline: auto;
+	padding-block-start: 48px;
+}

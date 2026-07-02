@@ -11,6 +11,8 @@ import { Card, CardBody } from '../../../components/card';
 import { Text } from '../../../components/text';
 import type { RecordTracksEvent } from './types';
 
+import './empty-state.scss';
+
 // Inlined from client/a8c-for-agencies so the dashboard has no dependency on the classic A4A app.
 const WOOPAYMENTS_LEARN_MORE_LINK =
 	'https://agencieshelp.automattic.com/knowledge-base/earn-revenue-share-when-clients-use-woopayments/';
@@ -34,9 +36,9 @@ export default function WooPaymentsEmptyState( {
 	recordTracksEvent?: RecordTracksEvent;
 } ) {
 	return (
-		<VStack spacing={ 6 }>
-			<HStack alignment="flex-start" spacing={ 4 } wrap>
-				<img src={ wooPaymentsLogo } alt="WooPayments" width={ 96 } />
+		<VStack className="woopayments-empty-state" spacing={ 6 }>
+			<HStack alignment="topLeft" spacing={ 4 } wrap>
+				<img src={ wooPaymentsLogo } alt="WooPayments" width={ 180 } />
 				<VStack spacing={ 2 }>
 					<Text size={ 21 } weight={ 500 } as="h1">
 						{ __( 'Earn Revenue Share when clients use WooPayments' ) }
@@ -51,7 +53,7 @@ export default function WooPaymentsEmptyState( {
 			<StepSection heading={ __( 'How do I start?' ) }>
 				<Card>
 					<CardBody>
-						<HStack alignment="center" spacing={ 4 } wrap>
+						<HStack alignment="edge" spacing={ 4 } wrap>
 							<VStack spacing={ 1 }>
 								<Text weight={ 500 }>{ __( 'Add WooPayments to a site for free' ) }</Text>
 								<Text variant="muted">{ __( 'Start by picking the site' ) }</Text>
