@@ -6,7 +6,9 @@
 .reader-space-picker {
 	&.components-modal__frame {
 		min-inline-size: 480px;
-		block-size: min( 680px, calc( 100% - 96px ) );
+		// Size to content, but cap the height so a long list scrolls instead of
+		// growing the whole modal.
+		max-block-size: min( 680px, calc( 100% - 96px ) );
 	}
 
 	.components-modal__content {
@@ -99,8 +101,10 @@
 }
 
 // Only the list scrolls; the header, feed preview, search and footer stay put.
+// Rows stay top-aligned (VStack would otherwise distribute them).
 .reader-space-picker__list {
-	flex: 1;
+	flex: 0 1 auto;
+	justify-content: flex-start;
 	min-block-size: 0;
 	overflow-y: auto;
 }
