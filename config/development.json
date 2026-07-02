@@ -204,6 +204,7 @@
 		"seller-experience": true,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
+		"sidebar/purchases-dashboard-link": true,
 		"sign-in-with-apple": true,
 		"sign-in-with-apple/redirect": true,
 		"sign-in-with-paypal": false,
