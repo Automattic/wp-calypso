@@ -32,28 +32,18 @@ describe( '<SecurityLegacyContactPrint />', () => {
 		queryClient.clear();
 	} );
 
-	test( 'shows the "How to claim access" section with the digital-legacy link', async () => {
-		interceptContacts( [ CONTACT ] );
-		interceptContact( CONTACT_WITH_KEY );
-
-		renderScreen();
-
-		expect( await screen.findByText( 'How to claim access' ) ).toBeVisible();
-
-		const link = await screen.findByRole( 'link', {
-			name: 'wordpress.com/digital-legacy',
-		} );
-		expect( link ).toHaveAttribute( 'href', 'https://wordpress.com/digital-legacy' );
-	} );
-
-	test( 'shows the contact email and access key', async () => {
+	test( 'shows the contact details and how to claim access', async () => {
 		interceptContacts( [ CONTACT ] );
 		interceptContact( CONTACT_WITH_KEY );
 
 		renderScreen();
 
 		expect( await screen.findByText( CONTACT.contact_email ) ).toBeVisible();
-		expect( await screen.findByText( CONTACT_WITH_KEY.access_key ) ).toBeVisible();
+		expect( screen.getByText( CONTACT_WITH_KEY.access_key ) ).toBeVisible();
+		expect( screen.getByText( 'How to claim access' ) ).toBeVisible();
+
+		const link = screen.getByRole( 'link', { name: 'wordpress.com/digital-legacy' } );
+		expect( link ).toHaveAttribute( 'href', 'https://wordpress.com/digital-legacy' );
 	} );
 
 	test( 'shows the empty state when no contact is set up', async () => {
@@ -62,10 +52,8 @@ describe( '<SecurityLegacyContactPrint />', () => {
 		renderScreen();
 
 		expect(
-			await screen.findByText( 'You don\u2019t have a legacy contact set up yet.' )
+			await screen.findByText( 'You don’t have a legacy contact set up yet.' )
 		).toBeVisible();
-		expect(
-			await screen.findByRole( 'link', { name: 'Back to legacy contact' } )
-		).toBeVisible();
+		expect( await screen.findByRole( 'link', { name: 'Back to legacy contact' } ) ).toBeVisible();
 	} );
 } );
