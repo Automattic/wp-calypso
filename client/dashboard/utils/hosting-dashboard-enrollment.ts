@@ -9,8 +9,6 @@ export const ROLLOUT_TESTER_USER_IDS = [
 // TODO update on release day DOTMSD-1357
 const NEW_USER_ID_THRESHOLD = Infinity;
 
-const ROLLOUT_PERCENTAGE = 50;
-
 /**
  * Whether the user belongs to the percentage-rollout cohort. Membership is
  * derived from the user ID so it is stable across sessions and reproducible
@@ -32,7 +30,7 @@ function isInRolloutCohort( userId: number | undefined ): boolean {
 
 	return (
 		config.isEnabled( 'dashboard/enable-percentage-rollout' ) &&
-		( userId % 100 < ROLLOUT_PERCENTAGE || userId > NEW_USER_ID_THRESHOLD )
+		( userId % 100 < 50 || userId > NEW_USER_ID_THRESHOLD )
 	);
 }
 
@@ -88,18 +86,13 @@ export function isOptInToggleVisible(
  * Whether the user will be moved to the hosting dashboard by the staggered
  * rollout, regardless of whether the rollout has started yet.
  */
-export function willBeRolledOut( userId: number | undefined ): boolean {
+export function willBeRolledOut(
+	preference: HostingDashboardOptIn | undefined,
+	userId: number | undefined
+): boolean {
 	if ( ! config.isEnabled( 'dashboard/opt-in-banners' ) ) {
 		return false;
 	}
 
-	if ( userId === undefined ) {
-		return false;
-	}
-
-	if ( isInRolloutCohort( userId ) ) {
-		return false;
-	}
-
-	return userId % 100 < ROLLOUT_PERCENTAGE || config.isEnabled( 'dashboard/forced-opt-in-banners' );
+	return isOptInToggleVisible( preference, userId );
 }
