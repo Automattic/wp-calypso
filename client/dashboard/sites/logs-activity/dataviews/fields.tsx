@@ -119,6 +119,7 @@ export function useActivityFields( {
 				label: __( 'Event' ),
 				enableSorting: false,
 				enableHiding: false,
+				enableGlobalSearch: true,
 				getValue: ( { item } ) => {
 					return `${ item.activityTitle }: ${ item.activityDescription.textDescription }`;
 				},
@@ -133,6 +134,7 @@ export function useActivityFields( {
 				label: __( 'User' ),
 				enableSorting: false,
 				enableHiding: false,
+				enableGlobalSearch: true,
 				getValue: ( { item } ) => item.activityActor?.actorName || __( 'Unknown' ),
 				render: ( { item } ) => <ActivityActor actor={ item.activityActor } />,
 				filterBy: { operators: [] },
