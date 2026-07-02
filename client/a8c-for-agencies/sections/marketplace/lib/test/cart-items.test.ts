@@ -4,6 +4,7 @@ import {
 	groupCartItems,
 	isSameCartItem,
 	removeCartItemGroup,
+	setCartItemCount,
 } from '../cart-items';
 import type { ShoppingCartItem } from '../../types';
 
@@ -99,6 +100,57 @@ describe( 'cart-items', () => {
 			const scan = buildItem( { slug: 'jetpack-scan' } );
 			const result = removeCartItemGroup( [ backup, scan, backup ], backup );
 			expect( result ).toEqual( [ scan ] );
+		} );
+	} );
+
+	describe( 'setCartItemCount', () => {
+		it( 'appends copies to reach the target count', () => {
+			const item = buildItem();
+			const result = setCartItemCount( [ item ], item, 3 );
+			expect( result ).toEqual( [ item, item, item ] );
+		} );
+
+		it( 'adds copies to an empty cart', () => {
+			const item = buildItem();
+			const result = setCartItemCount( [], item, 2 );
+			expect( result ).toEqual( [ item, item ] );
+		} );
+
+		it( 'drops extra copies to reach a smaller target count', () => {
+			const item = buildItem();
+			const result = setCartItemCount( [ item, item, item ], item, 1 );
+			expect( result ).toEqual( [ item ] );
+		} );
+
+		it( 'removes the group when the target count is zero', () => {
+			const item = buildItem();
+			const result = setCartItemCount( [ item, item ], item, 0 );
+			expect( result ).toEqual( [] );
+		} );
+
+		it( 'returns the same array reference when the count is unchanged', () => {
+			const cart = [ buildItem(), buildItem() ];
+			expect( setCartItemCount( cart, buildItem(), 2 ) ).toBe( cart );
+		} );
+
+		it( 'leaves other items untouched when growing', () => {
+			const backup = buildItem();
+			const scan = buildItem( { slug: 'jetpack-scan' } );
+			const result = setCartItemCount( [ backup, scan ], backup, 2 );
+			expect( result ).toEqual( [ backup, scan, backup ] );
+		} );
+
+		it( 'leaves other items untouched when shrinking', () => {
+			const backup = buildItem();
+			const scan = buildItem( { slug: 'jetpack-scan' } );
+			const result = setCartItemCount( [ backup, scan, backup ], backup, 1 );
+			expect( result ).toEqual( [ scan, backup ] );
+		} );
+
+		it( 'does not mutate the original cart array', () => {
+			const cart = [ buildItem() ];
+			setCartItemCount( cart, buildItem(), 3 );
+			expect( cart ).toHaveLength( 1 );
 		} );
 	} );
 } );

@@ -2,7 +2,8 @@ import { Button } from '@wordpress/components';
 import { check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import A4ANumberInputV2 from 'calypso/a8c-for-agencies/components/a4a-number-input-v2';
 import {
 	withTooltip,
 	WithTooltipProps,
@@ -35,9 +36,14 @@ type Props = WithProductLightboxProps &
 		hideDiscount?: boolean;
 		onVariantChange?: ( value: APIProductFamilyProduct ) => void;
 		withCustomCard?: boolean;
+		count?: number;
+		maxQuantity?: number;
+		onAddToCart?: ( product: APIProductFamilyProduct, quantity: number ) => void;
+		onUpdateCartItemCount?: ( product: APIProductFamilyProduct, count: number ) => void;
+		onRemoveFromCart?: ( product: APIProductFamilyProduct ) => void;
 	};
 
-function ProductCard( props: Props ) {
+export function ProductCard( props: Props ) {
 	const {
 		asReferral,
 		termPricing,
@@ -53,8 +59,21 @@ function ProductCard( props: Props ) {
 		setCurrentProduct,
 		onShowLightbox,
 		withCustomCard,
+		count = 0,
+		maxQuantity = 99,
+		onAddToCart,
+		onUpdateCartItemCount,
+		onRemoveFromCart,
 	} = props;
 	const translate = useTranslate();
+
+	const inCart = count > 0;
+	const showQuantityStepper = ! asReferral;
+
+	// Before anything is in the cart the stepper is a local pending quantity; once
+	// copies exist it reflects (and edits) the live cart count.
+	const [ pendingQuantity, setPendingQuantity ] = useState( 1 );
+	const stepperValue = inCart ? count : pendingQuantity;
 
 	const pressableMemoryTarget = getPressableMemoryTarget( currentProduct );
 	const isPressableMemoryAddon = isPressablePhpMemoryAddon( currentProduct );
@@ -70,13 +89,77 @@ function ProductCard( props: Props ) {
 		answerText: getProductVariantShortTitle( option.name ),
 	} ) );
 
+	// The primary action: referral toggles, agency mode adds the pending quantity.
+	// A body/keyboard tap is a no-op once the product is already in the cart —
+	// the stepper and the "Remove from cart" button take over from there.
 	const onSelect = useCallback( () => {
 		if ( isDisabled ) {
 			return;
 		}
 
-		onSelectProduct?.( currentProduct );
-	}, [ isDisabled, onSelectProduct, currentProduct ] );
+		if ( asReferral ) {
+			onSelectProduct?.( currentProduct );
+			return;
+		}
+
+		if ( inCart ) {
+			return;
+		}
+
+		onAddToCart?.( currentProduct, pendingQuantity );
+	}, [
+		isDisabled,
+		asReferral,
+		inCart,
+		onSelectProduct,
+		onAddToCart,
+		currentProduct,
+		pendingQuantity,
+	] );
+
+	const onClickPrimaryButton = useCallback(
+		( event: React.MouseEvent ) => {
+			event.stopPropagation();
+
+			if ( isDisabled ) {
+				return;
+			}
+
+			if ( asReferral ) {
+				onSelectProduct?.( currentProduct );
+				return;
+			}
+
+			if ( inCart ) {
+				onRemoveFromCart?.( currentProduct );
+				return;
+			}
+
+			onAddToCart?.( currentProduct, pendingQuantity );
+		},
+		[
+			isDisabled,
+			asReferral,
+			inCart,
+			onSelectProduct,
+			onRemoveFromCart,
+			onAddToCart,
+			currentProduct,
+			pendingQuantity,
+		]
+	);
+
+	const onChangeQuantity = useCallback(
+		( value: number ) => {
+			if ( inCart ) {
+				onUpdateCartItemCount?.( currentProduct, value );
+				return;
+			}
+
+			setPendingQuantity( value );
+		},
+		[ inCart, onUpdateCartItemCount, currentProduct ]
+	);
 
 	const onKeyDown = useCallback(
 		( e: React.KeyboardEvent< HTMLDivElement > ) => {
@@ -130,20 +213,22 @@ function ProductCard( props: Props ) {
 	);
 
 	const ctaLabel = useMemo( () => {
-		const selectedQuantity = quantity ?? 1;
-
 		if ( asReferral ) {
 			return isSelected ? translate( 'Added to referral' ) : translate( 'Add to referral' );
 		}
 
-		if ( selectedQuantity > 1 ) {
-			return isSelected
-				? translate( 'Added %(quantity)s to cart', { args: { quantity: selectedQuantity } } )
-				: translate( 'Add %(quantity)s to cart', { args: { quantity: selectedQuantity } } );
+		if ( inCart ) {
+			return translate( 'Remove from cart' );
 		}
 
-		return isSelected ? translate( 'Added to cart' ) : translate( 'Add to cart' );
-	}, [ asReferral, isSelected, quantity, translate ] );
+		if ( stepperValue > 1 ) {
+			return translate( 'Add %(quantity)s to cart', { args: { quantity: stepperValue } } );
+		}
+
+		return translate( 'Add to cart' );
+	}, [ asReferral, isSelected, inCart, stepperValue, translate ] );
+
+	const showSelectedState = asReferral ? isSelected : inCart;
 
 	const hasMultipleProducts = products.length > 1;
 
@@ -218,24 +303,41 @@ function ProductCard( props: Props ) {
 					</div>
 				</div>
 				<div className="product-card__buttons">
-					<Button
-						className={ clsx( 'product-card__select-button', {
-							'is-selected': isSelected,
-						} ) }
-						variant={ ! isSelected || customProductCard ? 'primary' : 'secondary' }
-						tabIndex={ -1 }
-						icon={ isSelected ? check : undefined }
-					>
-						{ ctaLabel }
-					</Button>
-					{ ! /^jetpack-backup-addon-storage-/.test( currentProduct.slug ) && (
-						<LicenseLightboxLink
-							customText={ translate( 'View details' ) }
-							productName={ getProductShortTitle( currentProduct ) }
-							onClick={ onShowLightbox }
-							showIcon={ false }
-						/>
-					) }
+					<div className="product-card__primary-action">
+						<Button
+							className={ clsx( 'product-card__select-button', {
+								'is-selected': showSelectedState,
+							} ) }
+							variant={ ! showSelectedState || customProductCard ? 'primary' : 'secondary' }
+							onClick={ onClickPrimaryButton }
+							icon={ asReferral && isSelected ? check : undefined }
+						>
+							{ ctaLabel }
+						</Button>
+						{ showQuantityStepper && (
+							// eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
+							<div
+								className="product-card__quantity"
+								onClick={ ( event ) => event.stopPropagation() }
+							>
+								<A4ANumberInputV2
+									value={ stepperValue }
+									onChange={ onChangeQuantity }
+									maximum={ maxQuantity }
+								/>
+							</div>
+						) }
+						{ ! /^jetpack-backup-addon-storage-/.test( currentProduct.slug ) && (
+							<div className="product-card__view-details">
+								<LicenseLightboxLink
+									customText={ translate( 'View details' ) }
+									productName={ getProductShortTitle( currentProduct ) }
+									onClick={ onShowLightbox }
+									showIcon={ false }
+								/>
+							</div>
+						) }
+					</div>
 				</div>
 			</div>
 		</div>

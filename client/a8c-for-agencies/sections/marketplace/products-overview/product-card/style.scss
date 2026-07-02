@@ -103,9 +103,10 @@ $woocommerce-purple-50: #720eec;
 }
 
 .product-card__buttons {
-	display: inline-flex;
-	gap: 1rem;
-	justify-content: center;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	align-items: flex-start;
 	align-self: flex-start;
 	margin-block-start: auto;
 	padding-block-start: 1rem;
@@ -117,10 +118,38 @@ $woocommerce-purple-50: #720eec;
 	}
 }
 
-.product-card__select-button {
+.product-card__view-details {
+	flex: 0 0 auto;
+	white-space: nowrap;
+}
+
+.product-card__primary-action {
 	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+	width: 100%;
+}
+
+.product-card__quantity {
+	flex: 0 0 auto;
+	inline-size: 6rem;
+
+	.a4a-number-input-v2 {
+		inline-size: 100%;
+	}
+}
+
+.product-card__select-button {
+	flex: 0 0 auto;
+	// Fixed so the row does not reflow as the label changes between "Add to cart",
+	// "Add 99 to cart", and "Remove from cart".
+	inline-size: 10.5rem;
+	display: block;
 	justify-content: center;
 	text-align: center;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 	@include body-large;
 
 	@include breakpoint-deprecated( '>660px' ) {

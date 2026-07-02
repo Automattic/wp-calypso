@@ -70,3 +70,34 @@ export function removeCartItemGroup(
 ): ShoppingCartItem[] {
 	return items.filter( ( cartItem ) => ! isSameCartItem( cartItem, item ) );
 }
+
+/**
+ * Add or remove copies of the item matching `item` so the cart holds exactly
+ * `count` of them, leaving other items in place. A count of zero removes the
+ * group entirely. Returns the same array reference when the count is unchanged.
+ */
+export function setCartItemCount(
+	items: ShoppingCartItem[],
+	item: ShoppingCartItem,
+	count: number
+): ShoppingCartItem[] {
+	const current = items.filter( ( cartItem ) => isSameCartItem( cartItem, item ) ).length;
+
+	if ( count === current ) {
+		return items;
+	}
+
+	if ( count < current ) {
+		let toRemove = current - count;
+		return items.filter( ( cartItem ) => {
+			if ( toRemove > 0 && isSameCartItem( cartItem, item ) ) {
+				toRemove -= 1;
+				return false;
+			}
+			return true;
+		} );
+	}
+
+	const copies = Array.from( { length: count - current }, () => item );
+	return [ ...items, ...copies ];
+}
