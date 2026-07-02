@@ -66,6 +66,7 @@ function SiteActivityLogsDataViews( {
 	const notGroup = getActivityLogHiddenGroups( site );
 
 	const activityLogQueryParams: ActivityLogParams = {
+		aggregate: true,
 		sort_order: view.sort?.direction,
 		number: view.perPage || ACTIVITY_LOGS_DEFAULT_PAGE_SIZE,
 		page: view.page,
