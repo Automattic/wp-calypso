@@ -3,16 +3,19 @@ import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useMatch } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
 	__experimentalText as Text,
+	Button,
 	Guide,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, isRTL } from '@wordpress/i18n';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { getHostingDashboardEnrollment } from '../../utils/hosting-dashboard-enrollment';
 import { useAnalytics } from '../analytics';
 import { useAuth } from '../auth';
 import { hostingDashboardRoute as hostingDashboardPreferencesRoute } from '../router/me';
 import patternUrl from './welcome-modal-background-pattern.png';
+import illustrationRtlUrl from './welcome-modal-illustration-rtl.png';
 import illustrationUrl from './welcome-modal-illustration.png';
 import './style.scss';
 
@@ -36,7 +39,7 @@ export function OptInWelcomeModal() {
 
 	const isDismissed = isDismissedPersisted || isDismissing;
 
-	const handleStartNow = () => {
+	const handleDismiss = () => {
 		recordTracksEvent( 'calypso_dashboard_opt_in_welcome_modal_dismiss_click' );
 		updateDismissed( new Date().toISOString() );
 	};
@@ -63,8 +66,7 @@ export function OptInWelcomeModal() {
 		<Guide
 			className="dashboard-opt-in-welcome-modal"
 			contentLabel={ title }
-			onFinish={ handleStartNow }
-			finishButtonText={ __( 'Explore your dashboard' ) }
+			onFinish={ handleDismiss }
 			pages={ [
 				{
 					image: (
@@ -75,22 +77,29 @@ export function OptInWelcomeModal() {
 							/>
 							<img
 								className="dashboard-opt-in-welcome-modal__screenshot"
-								src={ illustrationUrl }
+								src={ isRTL() ? illustrationRtlUrl : illustrationUrl }
 								alt=""
 							/>
 						</div>
 					),
 					content: (
-						<VStack className="dashboard-opt-in-welcome-modal__content" spacing={ 4 }>
+						<VStack className="dashboard-opt-in-welcome-modal__content" spacing={ 6 }>
 							<ComponentViewTracker eventName="calypso_dashboard_opt_in_welcome_modal_impression" />
-							<Text className="dashboard-opt-in-welcome-modal__title" as="h1">
-								{ title }
-							</Text>
-							<Text>
-								{ __(
-									'It’s built to make everyday management tasks faster and easier across your sites, domains, plugins and account.'
-								) }
-							</Text>
+							<VStack spacing={ 3 }>
+								<Text className="dashboard-opt-in-welcome-modal__title" as="h1">
+									{ title }
+								</Text>
+								<Text>
+									{ __(
+										'It’s built to make everyday management tasks faster and easier across your sites, domains, plugins and account.'
+									) }
+								</Text>
+							</VStack>
+							<HStack justify="end">
+								<Button variant="primary" __next40pxDefaultSize onClick={ handleDismiss }>
+									{ __( 'Explore your dashboard' ) }
+								</Button>
+							</HStack>
 						</VStack>
 					),
 				},

@@ -6,6 +6,11 @@
 		width: 409px;
 	}
 
+	// We hide the usual footer in order to properly handle RTL
+	.components-guide__footer {
+		display: none;
+	}
+
 	.dashboard-opt-in-welcome-modal__illustration {
 		position: relative;
 		block-size: 257px;
@@ -29,7 +34,7 @@
 	}
 
 	.dashboard-opt-in-welcome-modal__content {
-		padding: $grid-unit-30;
+		padding: $grid-unit-40;
 	}
 
 	.dashboard-opt-in-welcome-modal__title {
