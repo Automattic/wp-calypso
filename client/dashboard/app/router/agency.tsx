@@ -266,6 +266,78 @@ const agencySiteOverviewRoute = createRoute( {
 	)
 );
 
+// `/sites/$siteId/backups` – layout that hosts the backups list/detail views
+const agencySiteBackupsRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Backups' ) } ] } ),
+	getParentRoute: () => agencySiteRoute,
+	path: 'backups',
+} ).lazy( () =>
+	import( '../../agency/sites/site/backups' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-backups' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const agencySiteBackupsIndexRoute = createRoute( {
+	getParentRoute: () => agencySiteBackupsRoute,
+	path: '/',
+} ).lazy( () =>
+	import( '../../agency/sites/site/backups-list-page' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-backups-index' )( {
+			component: d.default,
+		} )
+	)
+);
+
+// `/sites/$siteId/backups/$rewindId` – layout hosting the detail view + restore/download flows
+export const agencySiteBackupDetailRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Backups' ) } ] } ),
+	getParentRoute: () => agencySiteBackupsRoute,
+	path: '$rewindId',
+} );
+
+const agencySiteBackupDetailIndexRoute = createRoute( {
+	getParentRoute: () => agencySiteBackupDetailRoute,
+	path: '/',
+} ).lazy( () =>
+	import( '../../agency/sites/site/backups-list-page' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-backup-detail' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const agencySiteBackupRestoreRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Site restore' ) } ] } ),
+	getParentRoute: () => agencySiteBackupDetailRoute,
+	path: 'restore',
+} ).lazy( () =>
+	import( '../../agency/sites/site/backup-restore' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-backup-restore' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const agencySiteBackupDownloadRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Download backup' ) } ] } ),
+	getParentRoute: () => agencySiteBackupDetailRoute,
+	path: 'download',
+	validateSearch: ( search ) => {
+		const downloadId = Number( search.downloadId );
+		return {
+			downloadId: downloadId > 0 ? downloadId : undefined,
+		};
+	},
+} ).lazy( () =>
+	import( '../../agency/sites/site/backup-download' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-backup-download' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createAgencyRoutes = () => [
 	agencyRoute.addChildren( [
 		agencyOverviewRoute,
@@ -279,6 +351,16 @@ export const createAgencyRoutes = () => [
 		earnWooPaymentsRoute,
 		earnMigrationsRoute,
 		earnPayoutSettingsRoute,
-		agencySiteRoute.addChildren( [ agencySiteOverviewRoute ] ),
+		agencySiteRoute.addChildren( [
+			agencySiteOverviewRoute,
+			agencySiteBackupsRoute.addChildren( [
+				agencySiteBackupsIndexRoute,
+				agencySiteBackupDetailRoute.addChildren( [
+					agencySiteBackupDetailIndexRoute,
+					agencySiteBackupRestoreRoute,
+					agencySiteBackupDownloadRoute,
+				] ),
+			] ),
+		] ),
 	] ),
 ];
