@@ -153,7 +153,6 @@ object BuildDockerImage : BuildType({
 	}
 
 	steps {
-		passMergeQueueBranchesEarly()
 		script {
 			name = "Webhook Start"
 			conditions {
@@ -172,7 +171,7 @@ object BuildDockerImage : BuildType({
 
 				curl -s -X POST -d "${'$'}payload" -H "TEAMCITY-SIGNATURE: ${'$'}signature" "%mc_teamcity_webhook%calypso/?build_id=%teamcity.build.id%"
 			"""
-		}.skipOnMergeQueueBranch()
+		}
 
 		script {
 			name = "Post PR comment"
@@ -189,13 +188,13 @@ object BuildDockerImage : BuildType({
 				Please wait a few minutes and refresh this page.
 				EOF
 			"""
-		}.skipOnMergeQueueBranch()
+		}
 
 		// We want calypso.live and Calypso e2e tests to run even if there's a merge conflict,
 		// just to keep things going. However, if we can merge, the webpack cache
 		// can be better utilized, since it's kept up-to-date for trunk commits.
 		// Note that this only happens on non-trunk
-		mergeTrunk( skipIfConflict = true ).skipOnMergeQueueBranch()
+		mergeTrunk( skipIfConflict = true )
 
 		script {
 			name = "Check Docker workspace COPY globs"
@@ -206,7 +205,7 @@ object BuildDockerImage : BuildType({
 			dockerImage = "%docker_image_e2e%"
 			dockerRunParameters = "-u %env.UID%"
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-		}.skipOnMergeQueueBranch()
+		}
 
 		val commonArgs = """
 			--label com.a8c.image-builder=teamcity
@@ -238,7 +237,7 @@ object BuildDockerImage : BuildType({
 				commandArgs = "--pull --label com.a8c.target=calypso-live $commonArgs"
 			}
 			param("dockerImage.platform", "linux")
-		}.skipOnMergeQueueBranch()
+		}
 
 		dockerCommand {
 			commandType = push {
@@ -247,7 +246,7 @@ object BuildDockerImage : BuildType({
 					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
 				""".trimIndent()
 			}
-		}.skipOnMergeQueueBranch()
+		}
 
 		script {
 			name = "Webhook fail OR webhook done and push trunk tag for deploy"
@@ -275,7 +274,7 @@ object BuildDockerImage : BuildType({
 
 				curl -s -X POST -d "${'$'}payload" -H "TEAMCITY-SIGNATURE: ${'$'}signature" "%mc_teamcity_webhook%calypso/?build_id=%teamcity.build.id%"
 			"""
-		}.skipOnMergeQueueBranch()
+		}
 
 		script {
 			name = "Post PR comment with link"
@@ -291,7 +290,7 @@ object BuildDockerImage : BuildType({
 				$htmlBlock
 				EOF
 			""".trimIndent()
-		}.skipOnMergeQueueBranch()
+		}
 
 		// TODO: Cache rebuilding is currently disabled. It takes a long time and
 		// causes timeouts on trunk. It needs to run more quickly to be worth it.
@@ -338,7 +337,7 @@ object BuildDockerImage : BuildType({
 				""".trimIndent().replace("\n"," ")
 			}
 			param("dockerImage.platform", "linux")
-		}.skipOnMergeQueueBranch()
+		}
 
 		dockerCommand {
 			name = "Push cache image"
@@ -350,7 +349,7 @@ object BuildDockerImage : BuildType({
 			commandType = push {
 				namesAndTags = "registry.a8c.com/calypso/base:%base_image_publish_tag%"
 			}
-		}.skipOnMergeQueueBranch()
+		}
 	}
 
 	failureConditions {
