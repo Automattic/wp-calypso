@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { usePostLikes } from 'calypso/components/data/post-likes';
 import { useCachedPost } from 'calypso/reader/data/post/cache';
 import { usePostLikeActions } from 'calypso/reader/data/post/likes';
 import { isLikeable } from 'calypso/reader/post/capabilities';
@@ -18,6 +19,9 @@ export interface SelectedPostCommands {
 const isLiked = ( value: unknown ): boolean =>
 	value === true || value === 1 || value === '1' || value === 'true';
 
+const likeId = ( value: unknown ): number | string | null =>
+	typeof value === 'number' || typeof value === 'string' ? value : null;
+
 /**
  * Commands that operate on the currently selected post, shared by the stream
  * reading shortcuts across every surface (Stream V2 and the Spaces feed
@@ -28,6 +32,8 @@ export function useSelectedPostCommands(
 	selectedPostKey: StreamItem | null
 ): SelectedPostCommands {
 	const selectedPost = useCachedPost( selectedPostKey );
+	const { postLikes } = usePostLikes( likeId( selectedPost?.site_ID ), likeId( selectedPost?.ID ) );
+	const likedPost = postLikes?.iLike;
 	const { like, unlike, isLikePending, isUnlikePending } = usePostLikeActions();
 
 	const openSelected = useCallback( () => {
@@ -61,7 +67,7 @@ export function useSelectedPostCommands(
 		if ( xPostMetadata?.postURL ) {
 			return;
 		}
-		if ( ! isLikeable( selectedPost ) || isLikePending || isUnlikePending ) {
+		if ( ! isLikeable( selectedPost ) ) {
 			return;
 		}
 		const siteId = Number( selectedPost.site_ID );
@@ -69,9 +75,13 @@ export function useSelectedPostCommands(
 		if ( ! siteId || ! postId ) {
 			return;
 		}
-		const toggle = isLiked( selectedPost.i_like ) ? unlike : like;
+		const liked = likedPost ?? isLiked( selectedPost.i_like );
+		if ( liked ? isUnlikePending : isLikePending ) {
+			return;
+		}
+		const toggle = liked ? unlike : like;
 		toggle( siteId, postId, { source: 'reader' } );
-	}, [ selectedPost, isLikePending, isUnlikePending, like, unlike ] );
+	}, [ selectedPost, likedPost, isLikePending, isUnlikePending, like, unlike ] );
 
 	return { openSelected, openSelectedInNewTab, toggleSelectedLike };
 }

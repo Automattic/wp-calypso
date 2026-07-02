@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { usePostLikes } from 'calypso/components/data/post-likes';
 import { useCachedPost } from 'calypso/reader/data/post/cache';
 import { usePostLikeActions } from 'calypso/reader/data/post/likes';
 import { isLikeable } from 'calypso/reader/post/capabilities';
@@ -11,6 +12,9 @@ import { useSelectedPostCommands } from '../use-selected-post-commands';
 import type { StreamItem } from 'calypso/reader/data/stream/types';
 
 jest.mock( 'calypso/reader/data/post/cache', () => ( { useCachedPost: jest.fn() } ) );
+jest.mock( 'calypso/components/data/post-likes', () => ( {
+	usePostLikes: jest.fn(),
+} ) );
 jest.mock( 'calypso/reader/data/post/likes', () => ( { usePostLikeActions: jest.fn() } ) );
 jest.mock( 'calypso/reader/post/capabilities', () => ( { isLikeable: jest.fn() } ) );
 jest.mock( 'calypso/reader/utils', () => ( { showSelectedPost: jest.fn() } ) );
@@ -18,6 +22,7 @@ jest.mock( 'calypso/reader/xpost-helper', () => ( { getXPostMetadata: jest.fn() 
 
 const mockUseCachedPost = useCachedPost as jest.Mock;
 const mockUsePostLikeActions = usePostLikeActions as jest.Mock;
+const mockUsePostLikes = usePostLikes as jest.Mock;
 const mockIsLikeable = isLikeable as jest.Mock;
 const mockShowSelectedPost = showSelectedPost as jest.Mock;
 const mockGetXPostMetadata = getXPostMetadata as jest.Mock;
@@ -26,10 +31,12 @@ const LIKEABLE_POST = { site_ID: 5, ID: 9, URL: 'https://example.com/hello', i_l
 
 function setup( {
 	post = LIKEABLE_POST as unknown,
+	postLikes = null,
 	likeActions = {},
 	selectedPostKey = null,
 }: {
 	post?: unknown;
+	postLikes?: unknown;
 	likeActions?: Record< string, unknown >;
 	selectedPostKey?: StreamItem | null;
 } = {} ) {
@@ -42,6 +49,7 @@ function setup( {
 	};
 	mockUseCachedPost.mockReturnValue( post );
 	mockUsePostLikeActions.mockReturnValue( actions );
+	mockUsePostLikes.mockReturnValue( { postLikes } );
 	const { result } = renderHook( () => useSelectedPostCommands( selectedPostKey ) );
 	return { result, actions };
 }
@@ -140,6 +148,31 @@ describe( 'useSelectedPostCommands', () => {
 
 			expect( actions.like ).toHaveBeenCalledWith( 5, 9, { source: 'reader' } );
 			expect( actions.unlike ).not.toHaveBeenCalled();
+		} );
+
+		it( 'uses the post likes query state when it is available', () => {
+			const { result, actions } = setup( {
+				post: { ...LIKEABLE_POST, i_like: false },
+				postLikes: { iLike: true },
+			} );
+
+			result.current.toggleSelectedLike();
+
+			expect( actions.unlike ).toHaveBeenCalledWith( 5, 9, { source: 'reader' } );
+			expect( actions.like ).not.toHaveBeenCalled();
+		} );
+
+		it( 'allows the opposite toggle while the previous mutation is pending', () => {
+			const { result, actions } = setup( {
+				post: { ...LIKEABLE_POST, i_like: false },
+				postLikes: { iLike: true },
+				likeActions: { isLikePending: true },
+			} );
+
+			result.current.toggleSelectedLike();
+
+			expect( actions.unlike ).toHaveBeenCalledWith( 5, 9, { source: 'reader' } );
+			expect( actions.like ).not.toHaveBeenCalled();
 		} );
 
 		it( 'skips x-posts', () => {
