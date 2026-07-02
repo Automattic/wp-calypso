@@ -6,6 +6,9 @@ import {
 	mcpSettingsQuery,
 	queryClient,
 	rawUserPreferencesQuery,
+	siteBackupsQuery,
+	siteBySlugQuery,
+	siteSettingsQuery,
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute, notFound } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
@@ -266,11 +269,26 @@ const agencySiteOverviewRoute = createRoute( {
 	)
 );
 
-// `/sites/$siteId/backups` – layout that hosts the backups list/detail views
-const agencySiteBackupsRoute = createRoute( {
+// `/sites/$siteSlug/backups` – layout that hosts the backups list/detail views
+export const agencySiteBackupsRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'Backups' ) } ] } ),
 	getParentRoute: () => agencySiteRoute,
 	path: 'backups',
+	loader: async ( { params: { siteSlug } } ) => {
+		const [ agencySite, site ] = await Promise.all( [
+			queryClient.ensureQueryData( agencySiteQuery( siteSlug ) ),
+			queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) ),
+		] );
+
+		if ( ! agencySite?.has_backup ) {
+			return;
+		}
+
+		await Promise.all( [
+			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
+			queryClient.ensureQueryData( siteBackupsQuery( site.ID ) ),
+		] );
+	},
 } ).lazy( () =>
 	import( '../../agency/sites/site/backups' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-backups' )( {
@@ -290,7 +308,7 @@ export const agencySiteBackupsIndexRoute = createRoute( {
 	)
 );
 
-// `/sites/$siteId/backups/$rewindId` – layout hosting the detail view + restore/download flows
+// `/sites/$siteSlug/backups/$rewindId` – layout hosting the detail view + restore/download flows
 export const agencySiteBackupDetailRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'Backups' ) } ] } ),
 	getParentRoute: () => agencySiteBackupsRoute,

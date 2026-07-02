@@ -9,6 +9,7 @@ import { useDateRange } from '../../../app/hooks/use-date-range';
 import { useLocale } from '../../../app/locale';
 import {
 	agencySiteRoute,
+	agencySiteBackupsRoute,
 	agencySiteBackupsIndexRoute,
 	agencySiteBackupDetailRoute,
 	agencySiteBackupRestoreRoute,
@@ -16,7 +17,10 @@ import {
 } from '../../../app/router/agency';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
+import { BackupNotices } from '../../../sites/backups/backup-notices';
+import { BackupNowButton } from '../../../sites/backups/backup-now-button';
 import { BackupsBrowser, useIsBackupsSmallViewport } from '../../../sites/backups/backups-browser';
+import { useBackupState } from '../../../sites/backups/use-backup-state';
 import type { ActivityLogEntry } from '@automattic/api-core';
 
 export default function AgencySiteBackupsListPage() {
@@ -28,6 +32,7 @@ export default function AgencySiteBackupsListPage() {
 		| { rewindId?: string }
 		| undefined;
 	const rewindId = routeParams?.rewindId;
+	const searchParams = agencySiteBackupsRoute.useSearch();
 
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
@@ -39,6 +44,8 @@ export default function AgencySiteBackupsListPage() {
 		} ),
 	} );
 	const { gmtOffset, timezoneString } = siteSettings;
+
+	const backupState = useBackupState( site.ID );
 
 	const { dateRange, handleDateRangeChange } = useDateRange( {
 		timezoneString,
@@ -95,15 +102,21 @@ export default function AgencySiteBackupsListPage() {
 	const isMobileDetailsView = useIsBackupsSmallViewport() && !! rewindId;
 
 	const actions = (
-		<DateRangePicker
-			start={ dateRange.start }
-			end={ dateRange.end }
-			gmtOffset={ gmtOffset }
-			timezoneString={ timezoneString }
-			locale={ locale }
-			defaultFallbackPreset="last-30-days"
-			onChange={ handleDateRangeChangeWrapper }
-		/>
+		<>
+			{ /* This div is required to fix a layout width issue when the DateRangePicker is placed together with the BackupNowButton. */ }
+			<div>
+				<DateRangePicker
+					start={ dateRange.start }
+					end={ dateRange.end }
+					gmtOffset={ gmtOffset }
+					timezoneString={ timezoneString }
+					locale={ locale }
+					defaultFallbackPreset="last-30-days"
+					onChange={ handleDateRangeChangeWrapper }
+				/>
+			</div>
+			<BackupNowButton site={ site } backupState={ backupState } />
+		</>
 	);
 
 	return (
@@ -118,6 +131,16 @@ export default function AgencySiteBackupsListPage() {
 					actions={ isMobileDetailsView ? undefined : actions }
 				/>
 			}
+			notices={
+				! isMobileDetailsView && backupState.status !== 'idle' ? (
+					<BackupNotices
+						backupState={ backupState }
+						site={ site }
+						timezoneString={ timezoneString }
+						gmtOffset={ gmtOffset }
+					/>
+				) : undefined
+			}
 		>
 			<BackupsBrowser
 				site={ site }
@@ -125,6 +148,7 @@ export default function AgencySiteBackupsListPage() {
 				dateRange={ dateRange }
 				timezoneString={ timezoneString }
 				gmtOffset={ gmtOffset }
+				searchParams={ searchParams }
 				onSelectBackup={ navigateToBackup }
 				onRequestRestore={ handleRequestRestore }
 				onRequestDownload={ handleRequestDownload }
