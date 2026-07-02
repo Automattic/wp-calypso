@@ -14,6 +14,7 @@ import { getHostingDashboardEnrollment } from '../../utils/hosting-dashboard-enr
 import { useAnalytics } from '../analytics';
 import { useAuth } from '../auth';
 import patternUrl from './welcome-modal-background-pattern.png';
+import illustrationUrl from './welcome-modal-illustration.png';
 import './style.scss';
 
 const preferenceName = 'hosting-dashboard-opt-in-welcome-modal-dismissed' as const;
@@ -70,10 +71,15 @@ export function OptInWelcomeModal() {
 			pages={ [
 				{
 					image: (
-						<div className="dashboard-opt-in-welcome-modal__illustration">
+						<div className="dashboard-opt-in-welcome-modal__illustration" aria-hidden="true">
 							<div
 								className="dashboard-opt-in-welcome-modal__pattern"
 								style={ { backgroundImage: `url(${ patternUrl })` } }
+							/>
+							<img
+								className="dashboard-opt-in-welcome-modal__screenshot"
+								src={ illustrationUrl }
+								alt=""
 							/>
 						</div>
 					),
