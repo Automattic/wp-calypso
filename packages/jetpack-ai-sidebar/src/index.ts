@@ -99,7 +99,7 @@ const OPTIMIZE_TITLE_SUGGESTION = {
  * OPTIMIZE_TITLE_SUGGESTION which rewrites the visible post title. Rendered as a
  * dropdown (via the `options` field): picking Title, Description or Image Alt
  * Text submits that option's `value`, which routes through the orchestrator to
- * the jetpack-ai/seo-title, jetpack-ai/seo-description or jetpack-ai/image-alt-text
+ * the jetpack-ai/generate-seo-title, jetpack-ai/generate-seo-description or jetpack-ai/generate-seo-image-alt-text
  * ability and returns the matching picker. Alt text is post-level here (every
  * image in the post); the block-level `generate-alt-text` suggestion still
  * targets a single selected image.

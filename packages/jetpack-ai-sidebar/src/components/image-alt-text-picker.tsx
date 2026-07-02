@@ -2,7 +2,7 @@
  * ImageAltTextPicker — reviews and applies AI-generated alt text to the post's images.
  *
  * Displayed when the orchestrator renders a show-component response with
- * data.type set to 'image-alt-text-picker' (from the jetpack-ai/image-alt-text
+ * data.type set to 'image-alt-text-picker' (from the jetpack-ai/generate-seo-image-alt-text
  * ability). Shows each image alongside its suggested alt text for a quick visual
  * check, then applies all of them in one click — writing the alt attribute back
  * to each image block (matched by clientId) via core/block-editor. There is a

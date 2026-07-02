@@ -2,7 +2,7 @@
  * SeoTitlePicker — renders SEO meta-title suggestions in the chat sidebar.
  *
  * Displayed when the orchestrator renders a show-component response with
- * data.type set to 'seo-title-picker' (from the jetpack-ai/seo-title ability).
+ * data.type set to 'seo-title-picker' (from the jetpack-ai/generate-seo-title ability).
  * Clicking a card applies it to the post's SEO title (the HTML <title>
  * override, Jetpack post meta `jetpack_seo_html_title`) — distinct from the
  * editorial post title set by the title-picker. Thin wrapper over the shared
