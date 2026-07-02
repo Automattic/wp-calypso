@@ -2257,7 +2257,6 @@ __metadata:
     "@automattic/js-utils": "workspace:^"
     "@wordpress/is-shallow-equal": "npm:^5.48.0"
     "@wordpress/warning": "npm:^3.48.0"
-    lodash: "npm:^4.17.21"
     redux: "npm:^5.0.1"
     redux-thunk: "npm:^3.1.0"
     tslib: "npm:^2.8.1"

@@ -29,6 +29,7 @@ const JS_UTILS_NAMES = [
 	'omit',
 	'mapValues',
 	'memoize',
+	'merge',
 	'pickBy',
 	'omitBy',
 	'groupBy',
@@ -246,6 +247,7 @@ const patterns = [
 const NAMESPACE_GUARDED = [
 	{ name: 'isEmpty', message: JS_UTILS_MESSAGE },
 	{ name: 'memoize', message: JS_UTILS_MESSAGE },
+	{ name: 'merge', message: JS_UTILS_MESSAGE },
 	{ name: 'unescape', message: UNESCAPE_MESSAGE },
 	{ name: 'sampleSize', message: SAMPLESIZE_MESSAGE },
 	{ name: 'matches', message: MATCHES_MESSAGE },

@@ -14,6 +14,7 @@ export { default as mapRecordKeysRecursively } from './map-record-keys-recursive
 export { default as mapValues } from './map-values';
 export { default as maxBy } from './max-by';
 export { default as memoize } from './memoize';
+export { default as merge } from './merge';
 export { default as minBy } from './min-by';
 export { default as omit } from './omit';
 export { default as omitBy } from './omit-by';
