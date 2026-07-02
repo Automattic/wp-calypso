@@ -23,6 +23,12 @@ import TitlePicker from './components/title-picker';
 import './components/title-picker.scss';
 import './auto-scroll-fix.scss';
 import {
+	APPLY_BLOCK_EDITS_ABILITY,
+	APPLY_BLOCK_EDITS_NORMALIZED_ID,
+	isApplyBlockEditsTool,
+} from './utils/apply-block-edits/ability';
+import { handleApplyBlockEdits } from './utils/apply-block-edits/handle-apply-block-edits';
+import {
 	type CheckpointApi,
 	applyReviewEdit,
 	findBlockElement,
@@ -449,12 +455,29 @@ export const toolProvider = {
 		for ( const toolId of SHOW_COMPONENT_TOOL_IDS ) {
 			abilities = filterAbility( abilities, toolId );
 		}
+
+		// Add-if-absent (the opposite of the filter-then-replace above): only
+		// bundle the `big-sky/apply-block-edits` fallback when the Big Sky
+		// provider has not already registered it. When Big Sky is loaded it owns
+		// block editing, so its registered ability is left untouched here.
+		const hasApplyBlockEdits = abilities.some(
+			( a: any ) => normalizeAbilityName( a.name ?? '' ) === APPLY_BLOCK_EDITS_NORMALIZED_ID
+		);
+
 		const jetpackAbilities = [
 			...( isBlockTransformationsEnabled()
 				? [
 						{
 							...UPDATE_BLOCK_CONTENT_ABILITY,
 							callback: handleUpdateBlockContent,
+						},
+				  ]
+				: [] ),
+			...( ! hasApplyBlockEdits
+				? [
+						{
+							...APPLY_BLOCK_EDITS_ABILITY,
+							callback: handleApplyBlockEdits,
 						},
 				  ]
 				: [] ),
@@ -481,6 +504,10 @@ export const toolProvider = {
 		if ( isUpdateBlockContentTool( name ) ) {
 			const result = await handleUpdateBlockContent( args );
 			return { result, returnToAgent: false };
+		}
+
+		if ( isApplyBlockEditsTool( name ) ) {
+			return handleApplyBlockEdits( args );
 		}
 
 		if ( name === LEGACY_SHOW_COMPONENT_TOOL_ID && shouldDelegateLegacyShowComponent( args ) ) {

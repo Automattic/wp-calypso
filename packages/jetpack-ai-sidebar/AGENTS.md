@@ -41,6 +41,17 @@ All exports live in `src/index.ts`. This is intentionally a single-file provider
 | `jetpack_ai__show_component` | `handleShowComponent`       | via `getChatComponent` | Renders Jetpack AI chat components                       |
 | `big_sky__show_component`    | `handleLegacyShowComponent` | Jetpack or Big Sky     | Temporary migration support; delegates non-Jetpack types |
 | `wpcom/update-block-content` | `handleUpdateBlockContent`  | _(chat text)_          | Updates block content with shimmer effect                |
+| `big-sky/apply-block-edits`  | `handleApplyBlockEdits`     | _(chat text)_          | Batch block updates/inserts/deletes; bundled fallback    |
+
+### `big-sky/apply-block-edits` fallback
+
+The wpcom block-editing agent emits a client-executed call by the fixed name `big_sky__apply_block_edits`. When the Big Sky provider is loaded it registers and handles this ability; on surfaces without Big Sky, this package bundles a fallback so the call still resolves.
+
+- Same name is deliberate — see `src/utils/apply-block-edits/`. The engine is a trimmed port of Big Sky's Easy Site Editor implementation (block content editing only: no custom-CSS / global-styles staging, no contentOnly-section unlocking).
+- **Add-if-absent** (not filter-then-replace): `getAbilities()` bundles the fallback only when the host abilities list does not already contain `big_sky__apply_block_edits`. Big Sky registers into `window.wp.abilities`, so when it is loaded its ability is left in place and this fallback is skipped.
+- Returns `returnToAgent: true` (unlike `update-block-content`) because the backend agent needs the result to continue its workflow.
+- Custom CSS is refused with an explicit failure rather than silently dropped.
+- Eventual fix: abilities move into Agents Manager, removing the need for this duplicate.
 
 ### Show-component pattern
 
