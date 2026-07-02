@@ -2,6 +2,7 @@ import {
 	activeAgencyQuery,
 	agencyQuery,
 	agencyResourcesQuery,
+	agencyWooPaymentsCommissionsQuery,
 	mcpSettingsQuery,
 	queryClient,
 	rawUserPreferencesQuery,
@@ -207,6 +208,12 @@ const earnWooPaymentsRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'WooPayments' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'earn/woopayments',
+	loader: async () => {
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		if ( agency?.id ) {
+			await queryClient.ensureQueryData( agencyWooPaymentsCommissionsQuery( agency.id, true ) );
+		}
+	},
 } ).lazy( () =>
 	import( '../../agency/earn/woopayments' ).then( ( d ) =>
 		createLazyRoute( 'earn-woopayments' )( { component: d.default } )
