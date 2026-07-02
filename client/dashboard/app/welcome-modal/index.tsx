@@ -2,10 +2,8 @@ import { userPreferenceQuery, userPreferenceMutation } from '@automattic/api-que
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
-	Button,
 	ExternalLink,
 	Guide,
 } from '@wordpress/components';
@@ -79,21 +77,16 @@ export function OptInWelcomeModal() {
 									'It’s built to make everyday management tasks faster and easier across your sites, domains, plugins, and account.'
 								) }
 							</Text>
-							<HStack justify="flex-end" spacing={ 4 }>
-								<ExternalLink
-									href={ localizeUrl( BLOG_POST_URL ) }
-									onClick={ () => {
-										recordTracksEvent(
-											'calypso_dashboard_opt_in_welcome_modal_blog_post_link_click'
-										);
-									} }
-								>
-									{ __( 'Read the blog post' ) }
-								</ExternalLink>
-								<Button variant="primary" isBusy={ isDismissing } onClick={ handleStartNow }>
-									{ __( 'Start now' ) }
-								</Button>
-							</HStack>
+							<ExternalLink
+								href={ localizeUrl( BLOG_POST_URL ) }
+								onClick={ () => {
+									recordTracksEvent(
+										'calypso_dashboard_opt_in_welcome_modal_blog_post_link_click'
+									);
+								} }
+							>
+								{ __( 'Read the blog post' ) }
+							</ExternalLink>
 						</VStack>
 					),
 				},

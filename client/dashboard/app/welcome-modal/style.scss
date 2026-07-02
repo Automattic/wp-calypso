@@ -6,12 +6,6 @@
 		width: 409px;
 	}
 
-	// The modal renders its own actions inside the page content, so the built-in
-	// single-page footer (a lone "Finish" button) is redundant.
-	.components-guide__footer {
-		display: none;
-	}
-
 	.dashboard-opt-in-welcome-modal__illustration {
 		position: relative;
 		block-size: 257px;
