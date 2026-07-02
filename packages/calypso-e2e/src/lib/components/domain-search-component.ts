@@ -255,20 +255,10 @@ export class DomainSearchComponent {
 	): Promise< string | null > {
 		await row.waitFor();
 
-		// Poll the row's `title` until two consecutive reads agree. The
-		// suggestions list shows previous results until the new API response
-		// lands (TanStack Query's `isLoading` stays false on refetch while
-		// prior data is cached), so a one-shot read can capture a stale title
-		// that no longer matches what the upcoming click will add to the cart.
-		let selectedDomain: string | null = null;
-		for ( let attempt = 0; attempt < 20; attempt++ ) {
-			const current = await row.getAttribute( 'title' );
-			if ( current && current === selectedDomain ) {
-				break;
-			}
-			selectedDomain = current;
-			await this.page.waitForTimeout( 200 );
-		}
+		// List freshness is guaranteed by search(), which waits for the
+		// suggestions response and for the DOM to reflect it before returning,
+		// so a single read of the row title is reliable here.
+		const selectedDomain = await row.getAttribute( 'title' );
 
 		if ( ! selectedDomain ) {
 			return null;

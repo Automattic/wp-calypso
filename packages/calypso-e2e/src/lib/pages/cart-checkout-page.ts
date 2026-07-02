@@ -1,6 +1,5 @@
 import { getCalypsoURL } from '../../data-helper';
 import { waitForElementEnabled } from '../../element-helper';
-import envVariables from '../../env-variables';
 import type { PaymentDetails, RegistrarDetails } from '../../types/data-helper.types';
 import type { Page } from 'playwright';
 
@@ -64,10 +63,10 @@ const selectors = {
 	couponCodeApplyButton: 'button:text("Apply")',
 	disabledButton: 'button[disabled]:has-text("Processing")',
 	paymentButton: '.checkout-submit-button button',
-	totalAmount:
-		envVariables.VIEWPORT_NAME === 'mobile'
-			? '.wp-checkout__total-price'
-			: '.wp-checkout-order-summary__total-price',
+	// The mobile and desktop checkouts render the total in different elements;
+	// match whichever variant is visible so the check stays a user-visible-price
+	// assertion on both viewports.
+	totalAmount: '.wp-checkout__total-price:visible, .wp-checkout-order-summary__total-price:visible',
 	thirdPartyDeveloperCheckboxLabel:
 		'You agree that an account may be created on a third party developer’s site related to the products you have purchased.',
 
@@ -157,25 +156,6 @@ export class CartCheckoutPage {
 	}
 
 	/**
-	 * Asserts that the cart contains no WordPress.com plan line item.
-	 *
-	 * Checkout tags plan rows with `data-product-type="plan"`
-	 * (see `packages/wpcom-checkout/src/checkout-line-items.tsx`), which lets us
-	 * express the "plan was skipped" contract directly instead of relying on a
-	 * strict cart count: a count check can fail on unrelated entries such as
-	 * free-domain entitlement rows auto-added for the site slug.
-	 */
-	async validateNoPlanInCart(): Promise< void > {
-		const cartItemsLocator = this.page.locator( selectors.cartItems );
-		await cartItemsLocator.first().waitFor( { state: 'visible', timeout: 30 * 1000 } );
-		const planItem = this.page.locator( `${ selectors.cartItems }[data-product-type="plan"]` );
-		if ( await planItem.count() ) {
-			const planLabel = ( await planItem.first().innerText() ).split( '\n' )[ 0 ];
-			throw new Error( `Expected no plan in cart, but found: ${ planLabel }` );
-		}
-	}
-
-	/**
 	 * Obtains the text content of the payment button.
 	 *
 	 * @returns {string} Content of the payment button.
@@ -244,16 +224,7 @@ export class CartCheckoutPage {
 	async getCheckoutTotalAmount( { rawString = false }: { rawString?: boolean } = {} ): Promise<
 		number | string
 	> {
-		// The mobile and desktop checkouts render the total in different elements,
-		// and `selectors.totalAmount` resolves its VIEWPORT_NAME ternary at module
-		// load, before Playwright Test sets the per-project viewport name. Match
-		// whichever variant is visible so the check stays a user-visible-price
-		// assertion on both viewports.
-		const totalAmountLocator = this.page
-			.locator(
-				'.wp-checkout__total-price:visible, .wp-checkout-order-summary__total-price:visible'
-			)
-			.first();
+		const totalAmountLocator = this.page.locator( selectors.totalAmount ).first();
 		await totalAmountLocator.waitFor( { timeout: 20 * 1000 } );
 
 		const stringAmount = await totalAmountLocator.innerText();

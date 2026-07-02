@@ -1004,7 +1004,11 @@ export class RestAPIClient {
 		}
 
 		// `/sites/$site/media/new` wraps the uploaded item(s) in a `media` array;
-		// return the single uploaded object to match NewMediaResponse.
+		// per-file rejections come back as `{ media: [], errors: [...] }` with no
+		// top-level `error` key.
+		if ( ! response.media?.length ) {
+			throw new Error( `Media upload failed: ${ JSON.stringify( response.errors ?? response ) }` );
+		}
 		return response.media[ 0 ];
 	}
 
