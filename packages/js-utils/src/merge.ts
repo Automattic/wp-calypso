@@ -26,15 +26,23 @@ const safeGet = ( object: PlainObject, key: string ): unknown => {
 	return object[ key ];
 };
 
+// Assigns like a sloppy-mode write: if the target rejects it — a frozen or
+// sealed object, a non-extensible object gaining a new key, or a non-writable
+// property — the write is silently dropped rather than throwing, matching
+// lodash (which runs non-strict). A strict-mode ES module would otherwise throw
+// and abort the whole merge.
+const trySet = ( target: PlainObject, key: string, value: unknown ): void => {
+	try {
+		target[ key ] = value;
+	} catch {
+		// Target rejected the write — drop it, as lodash does, and keep merging.
+	}
+};
+
 function baseMerge( target: PlainObject, source: PlainObject ): void {
 	if ( target === source ) {
 		return;
 	}
-	// Writes to a frozen target are silently dropped, matching lodash's
-	// non-strict behavior (a strict-mode ES module would otherwise throw).
-	// `isFrozen` fast-returns for the common extensible target, so guarding
-	// here — rather than wrapping every write in try/catch — stays cheap.
-	const frozen = Object.isFrozen( target );
 	for ( const key of Object.keys( source ) ) {
 		const srcValue = safeGet( source, key );
 		const objValue = safeGet( target, key );
@@ -51,17 +59,16 @@ function baseMerge( target: PlainObject, source: PlainObject ): void {
 				newValue = {};
 			}
 			baseMerge( newValue as PlainObject, srcValue as PlainObject );
-			// Skip the write when the container was reused (no-op) or the target
-			// is frozen.
-			if ( ! frozen && newValue !== objValue ) {
-				target[ key ] = newValue;
+			// Skip the write when the container was reused (already in place).
+			if ( newValue !== objValue ) {
+				trySet( target, key, newValue );
 			}
-		} else if ( ! frozen && srcValue !== undefined ) {
-			target[ key ] = srcValue;
-		} else if ( ! frozen && ! ( key in target ) ) {
+		} else if ( srcValue !== undefined ) {
+			trySet( target, key, srcValue );
+		} else if ( ! ( key in target ) ) {
 			// A source `undefined` creates an absent key but never overwrites an
 			// existing value.
-			target[ key ] = undefined;
+			trySet( target, key, undefined );
 		}
 	}
 }

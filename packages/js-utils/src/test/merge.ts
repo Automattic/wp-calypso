@@ -41,6 +41,19 @@ describe( 'merge', () => {
 			'mixed __proto__ payload',
 			() => [ {}, JSON.parse( '{ "a": 1, "__proto__": { "x": 1 } }' ) ],
 		],
+		[ 'sealed target drops new keys', () => [ Object.seal( { a: 1 } ), { a: 2, b: 3 } ] ],
+		[
+			'non-writable property is skipped',
+			() => [
+				Object.defineProperty( {}, 'a', {
+					value: 1,
+					writable: false,
+					enumerable: true,
+					configurable: true,
+				} ),
+				{ a: 2, b: 3 },
+			],
+		],
 	];
 
 	it.each( cases )( 'matches lodash: %s', ( _label, make ) => {
@@ -67,10 +80,33 @@ describe( 'merge', () => {
 		expect( merge( {}, source ) ).toEqual( { own: 2 } );
 	} );
 
+	it( 'treats arrays as dense — sparse holes are not materialized', () => {
+		// Intentionally narrower than lodash, which fills the hole (index 1 is
+		// present as `null` in its result).
+		const sparse: number[] = [ 1 ];
+		sparse[ 2 ] = 3; // leaves a hole at index 1
+		const result = merge( {} as { a?: unknown[] }, { a: sparse } );
+		expect( result.a?.[ 0 ] ).toBe( 1 );
+		expect( result.a?.[ 2 ] ).toBe( 3 );
+		expect( 1 in ( result.a as unknown[] ) ).toBe( false );
+	} );
+
+	it( 'throws on a circular source (circular references are unsupported)', () => {
+		const circular: Record< string, unknown > = {};
+		circular.self = circular;
+		expect( () => merge( {}, circular ) ).toThrow();
+	} );
+
 	it( 'assigns Date and class instances by reference (does not deep-clone)', () => {
+		class Widget {
+			value = 1;
+		}
+		const widget = new Widget();
 		const date = new Date( 0 );
-		const result = merge( {} as { d?: Date }, { d: date } );
+		const result = merge( {} as { d?: Date; w?: Widget }, { d: date, w: widget } );
 		expect( result.d ).toBe( date );
+		expect( result.w ).toBe( widget );
+		expect( result.w ).toBeInstanceOf( Widget );
 	} );
 
 	it( 'mutates and returns the destination', () => {
