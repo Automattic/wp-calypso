@@ -217,7 +217,12 @@ export function SpacePickerModal( { feedUrl, feedId, blogId, followApiSource, on
 		return spaces.filter( ( space ) => space.name.toLowerCase().includes( q ) );
 	}, [ spaces, query ] );
 
-	const rowsDisabled = isSubscribing || isLoading || isError || isSaving;
+	// The picker subscribes the feed on open, so keep space edits disabled until the
+	// feed is actually subscribed. `! isSubscribed` covers the whole window: before
+	// the follow fires, while the subscription check or the follow is in flight, and
+	// after a follow that failed and rolled back the optimistic subscription.
+	const isSubscriptionNotReady = isSubscriptionLoading || isSubscribing || ! isSubscribed;
+	const rowsDisabled = isSubscriptionNotReady || isLoading || isError || isSaving;
 
 	let spacesContent;
 	if ( spaces.length === 0 ) {
@@ -328,7 +333,7 @@ export function SpacePickerModal( { feedUrl, feedId, blogId, followApiSource, on
 						variant="primary"
 						isBusy={ isSaving }
 						disabled={
-							isSubscribing ||
+							isSubscriptionNotReady ||
 							isLoading ||
 							isError ||
 							isSaving ||

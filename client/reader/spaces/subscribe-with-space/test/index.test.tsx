@@ -170,6 +170,7 @@ it( 'waits for subscription state before subscribing from the picker', async () 
 } );
 
 it( 'only applies the added space on Save (not while toggling), via the update endpoint', async () => {
+	mockIsSubscribed = true;
 	const user = userEvent.setup();
 	renderWithProvider( <SubscribeWithSpaceButton { ...props } /> );
 
@@ -188,6 +189,7 @@ it( 'only applies the added space on Save (not while toggling), via the update e
 } );
 
 it( 'removes the feed from a space on Save by replacing its feed list', async () => {
+	mockIsSubscribed = true;
 	mockDetailsById = {
 		[ space.id ]: {
 			...space,
@@ -217,6 +219,7 @@ it( 'removes the feed from a space on Save by replacing its feed list', async ()
 } );
 
 it( 'discards the draft on Cancel without writing anything', async () => {
+	mockIsSubscribed = true;
 	const user = userEvent.setup();
 	renderWithProvider( <SubscribeWithSpaceButton { ...props } /> );
 
@@ -231,6 +234,7 @@ it( 'discards the draft on Cancel without writing anything', async () => {
 } );
 
 it( 'disables Save until a change is made', async () => {
+	mockIsSubscribed = true;
 	const user = userEvent.setup();
 	renderWithProvider( <SubscribeWithSpaceButton { ...props } /> );
 
@@ -243,7 +247,20 @@ it( 'disables Save until a change is made', async () => {
 	expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeEnabled();
 } );
 
+it( 'keeps the space rows and Save disabled until the feed is subscribed', async () => {
+	// The feed is not subscribed yet (the open-time follow hasn't resolved).
+	mockIsSubscribed = false;
+	const user = userEvent.setup();
+	renderWithProvider( <SubscribeWithSpaceButton { ...props } /> );
+
+	await openPicker( user );
+
+	expect( await screen.findByRole( 'button', { name: 'Add to Work' } ) ).toBeDisabled();
+	expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeDisabled();
+} );
+
 it( 'does not allow editing when space details fail to load', async () => {
+	mockIsSubscribed = true;
 	mockDetailsById = { [ space.id ]: undefined };
 	mockDetailsError = true;
 	const user = userEvent.setup();
