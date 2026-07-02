@@ -35,8 +35,8 @@ export function getSiteNameField(
 		getValue: ( { item } ) => getSiteName( item ),
 		render: ( { item } ) => (
 			<Link
-				to="/sites/$siteId"
-				params={ { siteId: String( item.blog_id ) } }
+				to="/sites/$siteSlug"
+				params={ { siteSlug: item.url } }
 				style={ { color: 'inherit', textDecoration: 'none' } }
 				onClick={ () => onSiteClick?.( item ) }
 			>

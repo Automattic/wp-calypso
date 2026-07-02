@@ -7,8 +7,8 @@ import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 
 export default function AgencySite() {
-	const { siteId } = agencySiteRoute.useParams();
-	const { data: site } = useSuspenseQuery( agencySiteQuery( Number( siteId ) ) );
+	const { siteSlug } = agencySiteRoute.useParams();
+	const { data: site } = useSuspenseQuery( agencySiteQuery( siteSlug ) );
 
 	if ( ! site ) {
 		return (

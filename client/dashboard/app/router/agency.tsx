@@ -236,12 +236,12 @@ const earnPayoutSettingsRoute = createRoute( {
 	)
 );
 
-// `/sites/$siteId` – agency site detail (a layout that hosts the section routes)
+// `/sites/$siteSlug` – agency site detail (a layout that hosts the section routes)
 export const agencySiteRoute = createRoute( {
 	getParentRoute: () => agencyRoute,
-	path: 'sites/$siteId',
-	loader: ( { params: { siteId } } ) =>
-		queryClient.ensureQueryData( agencySiteQuery( Number( siteId ) ) ),
+	path: 'sites/$siteSlug',
+	loader: ( { params: { siteSlug } } ) =>
+		queryClient.ensureQueryData( agencySiteQuery( siteSlug ) ),
 } ).lazy( () =>
 	import( '../../agency/sites/site' ).then( ( d ) =>
 		createLazyRoute( 'agency-site' )( {

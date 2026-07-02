@@ -8,8 +8,8 @@ import { SidebarBackButton, SidebarMenu, SidebarMenuItem } from '../../../compon
 import AgencySiteSwitcherItem from './site-switcher-item';
 
 export default function AgencySiteSidebar() {
-	const { siteId } = agencySiteRoute.useParams();
-	const { data: site } = useQuery( agencySiteQuery( Number( siteId ) ) );
+	const { siteSlug } = agencySiteRoute.useParams();
+	const { data: site } = useQuery( agencySiteQuery( siteSlug ) );
 
 	if ( ! site ) {
 		return null;
@@ -25,7 +25,7 @@ export default function AgencySiteSidebar() {
 				<SidebarMenu>
 					<SidebarMenuItem
 						icon={ category }
-						to={ `/sites/${ siteId }` }
+						to={ `/sites/${ siteSlug }` }
 						activeOptions={ { exact: true } }
 					>
 						{ __( 'Overview' ) }

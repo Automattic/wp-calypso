@@ -27,12 +27,12 @@ export const agencySitesQuery = ( options: FetchAgencySitesOptions = {} ) =>
 	} );
 
 // The endpoint has no single-site lookup, so we fetch the agency's sites and
-// select by blog_id. TODO: replace with a dedicated single-site endpoint.
-export const agencySiteQuery = ( blogId: number ) =>
+// select by URL. TODO: replace with a dedicated single-site endpoint.
+export const agencySiteQuery = ( siteUrl: string ) =>
 	queryOptions( {
-		queryKey: [ ...agencySitesQueryKey, 'site', blogId ],
+		queryKey: [ ...agencySitesQueryKey, 'site', siteUrl ],
 		queryFn: async () => {
 			const { sites } = await fetchAgencySites( await resolveAgencyId(), { per_page: 100 } );
-			return sites.find( ( site ) => site.blog_id === blogId ) ?? null;
+			return sites.find( ( site ) => site.url === siteUrl ) ?? null;
 		},
 	} );

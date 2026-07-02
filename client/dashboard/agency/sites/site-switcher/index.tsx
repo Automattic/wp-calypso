@@ -56,9 +56,7 @@ export default function AgencySiteSwitcher( props: AgencySiteSwitcherProps ) {
 			items={ sites }
 			value={ site }
 			searchableFields={ searchableFields }
-			getItemUrl={ ( item ) =>
-				buildCurrentRouteLink( { params: { siteId: String( item.blog_id ) } } )
-			}
+			getItemUrl={ ( item ) => buildCurrentRouteLink( { params: { siteSlug: item.url } } ) }
 			open={ isOpen }
 			onToggle={ setIsOpen }
 		/>

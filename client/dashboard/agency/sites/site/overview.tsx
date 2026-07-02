@@ -6,8 +6,8 @@ import PageLayout from '../../../components/page-layout';
 import { getDisplayUrl, getSiteName } from '../dataviews/site-data';
 
 export default function AgencySiteOverview() {
-	const { siteId } = agencySiteRoute.useParams();
-	const { data: site } = useSuspenseQuery( agencySiteQuery( Number( siteId ) ) );
+	const { siteSlug } = agencySiteRoute.useParams();
+	const { data: site } = useSuspenseQuery( agencySiteQuery( siteSlug ) );
 
 	if ( ! site ) {
 		return null;
