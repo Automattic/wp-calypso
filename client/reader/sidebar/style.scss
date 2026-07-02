@@ -1,4 +1,4 @@
-@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+@use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
 
 @import '@automattic/typography/styles/variables';
 
@@ -27,7 +27,7 @@
 	}
 
 	p {
-		color: var(--studio-gray-50);
+		color: var( --studio-gray-50 );
 		font-size: $font-body-small;
 		margin: 0;
 	}
@@ -38,7 +38,7 @@
 }
 
 .reader-sidebar__section-header {
-	padding: 8px 0 4px;
+	padding: 8px 0 5px;
 	margin-top: 24px;
 	pointer-events: none;
 
@@ -52,7 +52,7 @@
 		font-weight: 500;
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
-		color: var(--studio-gray-20);
+		color: var( --studio-gray-20 );
 		line-height: 1;
 	}
 }
@@ -93,14 +93,14 @@ body.is-section-reader {
 	}
 
 	.sidebar__body {
-		padding-top: var(--content-padding-top);
+		padding-top: var( --content-padding-top );
 	}
 
 	.sidebar-menu-container {
 		display: flex;
 		flex-direction: column;
 		gap: 24px;
-		padding: 0 16px;
+		padding-left: 16px;
 
 		.app-title {
 			padding: 0;
@@ -130,25 +130,39 @@ body.is-section-reader {
 
 :root .theme-default .is-section-reader .global-sidebar {
 	.sidebar__menu {
+		.sidebar__expandable-arrow {
+			background: none;
+			fill: var( --studio-gray-20 );
+			transition: transform 0.15s ease;
+			transform: rotate( -90deg );
+		}
+
 		.sidebar__expandable-content {
-			padding: 0;
+			padding: 0 0 0 20px;
 			margin: 0;
 		}
+
 		.sidebar__heading {
+			background-color: initial;
 			margin: 0;
 		}
+
 		&:not( .is-togglable ) {
 			gap: 3px;
 		}
-		.sidebar__menu-link {
-			margin: 0;
+
+		.sidebar__menu-item {
+			&.sidebar__menu-item--reader-tag .sidebar__menu-link,
+			&.sidebar__menu-item--reader-list .sidebar__menu-link {
+				display: flex;
+			}
 		}
+
 		.sidebar__menu--selected {
 			.sidebar__heading {
 				color: var( --color-sidebar-menu-selected-text );
-				background-color: var( --color-sidebar-menu-hover-background );
+
 				&:hover {
-					background-color: var( --color-sidebar-menu-hover-background );
 					color: var( --color-sidebar-menu-selected-text );
 
 					.sidebar__expandable-arrow {
@@ -206,6 +220,10 @@ body.is-section-reader {
 		color: currentColor;
 		justify-self: end;
 		align-self: self-start;
+	}
+
+	.sidebar__menu-link {
+		margin: 0;
 	}
 
 	.sidebar__menu-link:hover .a8c-count {
@@ -281,22 +299,24 @@ body.is-section-reader {
 			}
 		}
 
+		.sidebar__heading > .sidebar__expandable-button {
+			order: -1;
+			margin-inline-end: 8px;
+			margin-inline-start: 0;
+			padding: 0;
+			min-width: initial;
+		}
+
 		&.is-toggle-open {
-			outline: 1px solid #e0e0e0;
-			border-radius: 4px;
-			.sidebar__heading {
-				background-color: var( --color-surface );
-			}
 			margin-bottom: 16px;
+
+			.sidebar__expandable-arrow {
+				transform: rotate( 0deg );
+			}
 
 			@include ui-mixins.when-dark-theme {
 				background-color: var( --color-surface );
 				outline-color: var( --color-border-subtle );
-
-				.sidebar__heading,
-				.sidebar__expandable-content {
-					background-color: var( --color-surface );
-				}
 
 				.sidebar__expandable-content {
 					.selected .sidebar__menu-link,
@@ -325,6 +345,10 @@ body.is-section-reader {
 					color: var( --color-text-subtle );
 				}
 			}
+		}
+
+		&:not( .is-toggle-open ):dir( rtl ) .sidebar__expandable-arrow {
+			transform: rotate( 90deg );
 		}
 
 		&.has-counts .sidebar__menu-link {

@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
-import ReaderTagIcon from 'calypso/reader/components/icons/tag-icon';
 import { useFollowedTags } from 'calypso/reader/data/tags';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -64,13 +63,12 @@ export class ReaderSidebarTags extends Component {
 					expanded={ isOpen }
 					title={ translate( 'Tags' ) }
 					onClick={ this.selectMenu }
-					customIcon={ <ReaderTagIcon viewBox="0 0 24 24" /> }
 					disableFlyout
 					className={ path.startsWith( '/tag' ) ? 'sidebar__menu--selected' : '' }
 					expandableIconClick={ onClick }
 				>
 					<ReaderSidebarTagsList { ...this.props } />
-					<li className="sidebar-menu__item add-tag-form">
+					<li className="sidebar__menu-item sidebar__menu-item--reader-tag add-tag-form">
 						<AddTagForm onAction={ this.followTag } />
 					</li>
 				</ExpandableSidebarMenu>
