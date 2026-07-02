@@ -1,4 +1,4 @@
-import { useBreakpoint } from '@automattic/viewport-react';
+import { useViewportMatch } from '@wordpress/compose';
 import { helpFilled } from '@wordpress/icons';
 import { cloneElement } from 'react';
 
@@ -8,7 +8,7 @@ interface HelpCenterIconProps {
 export const HelpCenterIcon: React.FC< HelpCenterIconProps > = ( { hasUnread } ) => {
 	// The help icon SVGs have some internal padding, and custom viewBox
 	// tweaks are needed to make sure they line up perfectly.
-	const isDesktop = useBreakpoint( '>782px' );
+	const isDesktop = useViewportMatch( 'medium' );
 
 	if ( hasUnread ) {
 		return (
