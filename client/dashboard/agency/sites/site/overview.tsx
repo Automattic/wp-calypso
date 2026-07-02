@@ -4,6 +4,7 @@ import { agencySiteRoute } from '../../../app/router/agency';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { getDisplayUrl, getSiteName } from '../dataviews/site-data';
+import ActivityCard from './activity-card';
 import BackupCard from './backup-card';
 import ScanCard from './scan-card';
 
@@ -20,6 +21,7 @@ export default function AgencySiteOverview() {
 				<BackupCard site={ site } />
 				<ScanCard site={ site } siteSlug={ siteSlug } />
 			</Grid>
+			<ActivityCard />
 		</PageLayout>
 	);
 }

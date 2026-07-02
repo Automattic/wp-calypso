@@ -381,6 +381,40 @@ const agencySiteScanRoute = createRoute( {
 	)
 );
 
+// `/sites/$siteSlug/logs` – logs parent, redirects to the activity log
+export const agencySiteLogsRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Logs' ) } ] } ),
+	getParentRoute: () => agencySiteRoute,
+	path: 'logs',
+} );
+
+const agencySiteLogsIndexRoute = createRoute( {
+	getParentRoute: () => agencySiteLogsRoute,
+	path: '/',
+	beforeLoad: ( { params: { siteSlug } } ) => {
+		throw dashboardRedirect( { to: `/sites/${ siteSlug }/logs/activity` } );
+	},
+} );
+
+// `/sites/$siteSlug/logs/activity` – activity log detailed view
+export const agencySiteActivityRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Activity' ) } ] } ),
+	getParentRoute: () => agencySiteLogsRoute,
+	path: 'activity',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! site.__inaccessible_jetpack_error ) {
+			await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../../agency/sites/site/activity' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-activity' )( {
+			component: d.default,
+		} )
+	)
+);
+
 const agencySiteScanIndexRoute = createRoute( {
 	getParentRoute: () => agencySiteScanRoute,
 	path: '/',
@@ -439,6 +473,7 @@ export const createAgencyRoutes = () => [
 				agencySiteScanActiveRoute,
 				agencySiteScanHistoryRoute,
 			] ),
+			agencySiteLogsRoute.addChildren( [ agencySiteLogsIndexRoute, agencySiteActivityRoute ] ),
 		] ),
 	] ),
 ];

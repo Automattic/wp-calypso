@@ -2,7 +2,7 @@ import { agencySiteQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { category, backup, shield } from '@wordpress/icons';
+import { backup, category, formatListBullets, shield } from '@wordpress/icons';
 import { agencySiteRoute } from '../../../app/router/agency';
 import {
 	SidebarBackButton,
@@ -51,6 +51,15 @@ export default function AgencySiteSidebar() {
 								</SidebarMenuItem>
 							</SidebarExpandableMenuItem>
 						) }
+						<SidebarExpandableMenuItem
+							label={ __( 'Logs' ) }
+							icon={ formatListBullets }
+							to={ `/sites/${ siteSlug }/logs/activity` }
+						>
+							<SidebarMenuItem to={ `/sites/${ siteSlug }/logs/activity` }>
+								{ __( 'Activity' ) }
+							</SidebarMenuItem>
+						</SidebarExpandableMenuItem>
 					</SidebarMenu>
 				</VStack>
 			) }
