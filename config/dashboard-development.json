@@ -34,6 +34,7 @@
 		"dashboard/omnibar-radical": false,
 		"dashboard/opt-in-welcome-modal": false,
 		"dashboard/plans": true,
+		"dashboard/simulate-full-rollout": false,
 		"dashboard/wp-beta-program": true,
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,

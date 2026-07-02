@@ -28,6 +28,7 @@
 		"dark-mode": true,
 		"dashboard/enable-percentage-rollout": false,
 		"dashboard/opt-in-welcome-modal": false,
+		"dashboard/simulate-full-rollout": false,
 		"dashboard/wp-beta-program": true,
 		"domain-transfer-redesign": true,
 		"emails/titan-tiers": false,

@@ -15,6 +15,10 @@ const NEW_USER_ID_THRESHOLD = Infinity;
  * in analytics queries; nothing is ever persisted.
  */
 function isInRolloutCohort( userId: number | undefined ): boolean {
+	if ( config.isEnabled( 'dashboard/simulate-full-rollout' ) ) {
+		return true;
+	}
+
 	if ( userId === undefined ) {
 		return false;
 	}

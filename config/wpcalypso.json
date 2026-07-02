@@ -45,6 +45,7 @@
 		"dashboard/opt-in-banners": false,
 		"dashboard/opt-in-welcome-modal": false,
 		"dashboard/plans": true,
+		"dashboard/simulate-full-rollout": false,
 		"dashboard/wp-beta-program": true,
 		"design-picker/use-assembler-styles": true,
 		"dev/account-settings-helper": true,
