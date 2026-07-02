@@ -122,6 +122,29 @@ describe( 'SpacesView', () => {
 		);
 	} );
 
+	it( 'renders the wide layout by default when the space has no stored width', () => {
+		render( <SpacesView id={ WORK.id } /> );
+
+		expect( screen.getByRole( 'main' ) ).toHaveClass( 'is-wide-layout' );
+	} );
+
+	it( 'renders the regular (non-wide) layout when the space width is regular', () => {
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		const regularSpace: ReadSpaceDetails = {
+			...WORK,
+			layout: { ...WORK.layout, width: 'regular' },
+		};
+		queryClient.setQueryData( readSpacesQuery().queryKey, [ regularSpace ] );
+		queryClient.setQueryData( readSpaceQuery( regularSpace.id ).queryKey, regularSpace );
+
+		renderWithProvider( <SpacesView id={ regularSpace.id } />, {
+			queryClient,
+			initialState: { currentUser: { id: 1 } },
+		} );
+
+		expect( screen.getByRole( 'main' ) ).not.toHaveClass( 'is-wide-layout' );
+	} );
+
 	it( 'records a page view event with the selected space appearance', async () => {
 		render( <SpacesView id={ WORK.id } /> );
 

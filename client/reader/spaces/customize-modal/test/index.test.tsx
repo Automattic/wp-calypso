@@ -229,7 +229,7 @@ describe( 'CustomizeModal', () => {
 				tags: [ 'tech' ],
 				// The seeded language is carried through unchanged on save.
 				languages: [ 'en' ],
-				layout: { color: 'green', iconColor: 'blue', icon: 'inbox', view: 'legacy' },
+				layout: { color: 'green', iconColor: 'blue', icon: 'inbox', view: 'legacy', width: 'wide' },
 			} )
 		);
 		const cached = queryClient.getQueryData< ReadSpaceDetails >(
@@ -246,6 +246,41 @@ describe( 'CustomizeModal', () => {
 			'calypso_reader_spaces_layout_changed',
 			{ layout: 'legacy' }
 		);
+	} );
+
+	it( 'defaults an unset width to Wide and lets the user switch to Regular', async () => {
+		const user = userEvent.setup();
+		const { onClose } = render();
+		const onBody = jest.fn();
+		mockUpdateEndpoint( onBody );
+
+		await user.click( screen.getByRole( 'tab', { name: 'Layout' } ) );
+
+		const widthGroup = screen.getByRole( 'radiogroup', { name: 'Width' } );
+		// The space has no stored width, so it seeds to the Wide default.
+		expect( within( widthGroup ).getByRole( 'radio', { name: /Wide/ } ) ).toBeChecked();
+		expect( within( widthGroup ).getByRole( 'radio', { name: /Regular/ } ) ).not.toBeChecked();
+
+		await user.click( within( widthGroup ).getByRole( 'radio', { name: /Regular/ } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Save changes' } ) );
+
+		await waitFor( () => expect( onClose ).toHaveBeenCalled() );
+
+		expect( onBody ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				layout: expect.objectContaining( { width: 'regular' } ),
+			} )
+		);
+	} );
+
+	it( 'seeds the width control from the stored layout width', async () => {
+		const user = userEvent.setup();
+		render( { space: { ...SPACE, layout: { ...SPACE.layout, width: 'regular' } } } );
+
+		await user.click( screen.getByRole( 'tab', { name: 'Layout' } ) );
+
+		const widthGroup = screen.getByRole( 'radiogroup', { name: 'Width' } );
+		expect( within( widthGroup ).getByRole( 'radio', { name: /Regular/ } ) ).toBeChecked();
 	} );
 
 	it( 'saves source changes with the rest of the edit draft', async () => {
