@@ -171,7 +171,7 @@ const CLIENT_LIST: Client[] = [
 		Logo: ( { title } ) => (
 			<svg xmlns="http://www.w3.org/2000/svg" width="108" height="90" viewBox="0 0 108 90">
 				<title>{ title }</title>
-				<circle cx="50.05" cy="45" r="40.14" fill="none" stroke="currentColor" stroke-width="2.5" />
+				<circle cx="50.05" cy="45" r="40.14" fill="none" stroke="currentColor" strokeWidth="2.5" />
 				<g fill="currentColor">
 					<circle cx="47.68" cy="12.57" r=".45" />
 					<circle cx="52.3" cy="13.17" r=".45" />
