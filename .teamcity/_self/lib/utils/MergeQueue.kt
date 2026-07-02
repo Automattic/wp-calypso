@@ -52,3 +52,10 @@ fun String.excludeMergeQueueBranches(): String {
 		${MERGE_QUEUE_BRANCH_FILTER_EXCLUSIONS.trim()}
 	""".trimIndent()
 }
+
+fun allBranchesExceptMergeQueue(): String {
+	return """
+		+:<default>
+		+:*
+	""".excludeMergeQueueBranches()
+}

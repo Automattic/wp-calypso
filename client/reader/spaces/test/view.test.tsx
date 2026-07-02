@@ -40,6 +40,7 @@ const WORK: ReadSpaceDetails = {
 	id: '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21',
 	name: 'Work',
 	tags: [],
+	languages: [],
 	layout: { color: 'blue', icon: 'inbox', view: 'gallery' },
 	sources: [],
 };

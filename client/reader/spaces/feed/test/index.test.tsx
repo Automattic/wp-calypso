@@ -78,7 +78,14 @@ function streamResult( overrides: Partial< ReturnType< typeof useInfiniteStream 
 }
 
 function makeSpace( id: string, name: string, view: SpaceFeedLayout ): ReadSpaceDetails {
-	return { id, name, tags: [], layout: { color: 'blue', icon: 'inbox', view }, sources: [] };
+	return {
+		id,
+		name,
+		tags: [],
+		languages: [],
+		layout: { color: 'blue', icon: 'inbox', view },
+		sources: [],
+	};
 }
 
 function makePost( overrides: Partial< ReadStreamPost > = {} ): ReadStreamPost {

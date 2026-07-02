@@ -34,7 +34,9 @@ import {
 } from 'calypso/reader/spaces/colors';
 import { getSpaceErrorMessage, validateName } from 'calypso/reader/spaces/form-helpers';
 import { SPACE_ICONS } from 'calypso/reader/spaces/icons';
-import { useDispatch } from 'calypso/state';
+import { isKnownLanguageCode, toBaseLanguageCode } from 'calypso/reader/spaces/languages';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { DEFAULT_SPACE_FEED_LAYOUT } from '../feed/layouts/registry';
@@ -147,6 +149,7 @@ function SpaceUpsertModalContent( {
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const userLocale = useSelector( getCurrentUserLocale );
 	const isCreate = mode === 'create';
 	const editSpaceId = isCreate ? null : spaceId;
 	const { data: space } = useSpace( editSpaceId, { enabled: ! isCreate } );
@@ -162,6 +165,15 @@ function SpaceUpsertModalContent( {
 	const [ tags, setTags ] = useState< string[] >( [] );
 	const [ color, setColor ] = useState< SpaceTextColor >( DEFAULT_SPACE_TEXT_COLOR );
 	const [ iconColor, setIconColor ] = useState< SpaceColor >( DEFAULT_SPACE_COLOR );
+	// New spaces pre-fill the user's account language (as a base code) so Discover
+	// is on-language out of the box; edit mode seeds the saved set below.
+	const [ languages, setLanguages ] = useState< string[] >( () => {
+		if ( ! isCreate || ! userLocale ) {
+			return [];
+		}
+		const base = toBaseLanguageCode( userLocale );
+		return isKnownLanguageCode( base ) ? [ base ] : [];
+	} );
 	const [ icon, setIcon ] = useState< SpaceIcon >( 'inbox' );
 	const [ view, setView ] = useState< SpaceFeedLayout >( DEFAULT_SPACE_FEED_LAYOUT );
 	const [ selectedSources, setSelectedSources ] = useState< SourceDraftItem[] >( [] );
@@ -171,6 +183,9 @@ function SpaceUpsertModalContent( {
 		if ( ! isCreate && space && ! isSeeded ) {
 			setName( space.name );
 			setTags( space.tags );
+			// `?? []` guards a persisted React Query cache written before `languages`
+			// shipped — the adapter always provides an array for fresh responses.
+			setLanguages( space.languages ?? [] );
 			setColor( space.layout.color );
 			setIconColor( resolveSpaceIconColor( space.layout ) );
 			setIcon( space.layout.icon );
@@ -211,6 +226,7 @@ function SpaceUpsertModalContent( {
 				{
 					name: name.trim(),
 					tags,
+					languages,
 					layout: { color, iconColor, icon, view },
 					feeds: selectedFeeds,
 				},
@@ -219,6 +235,7 @@ function SpaceUpsertModalContent( {
 						dispatch(
 							recordReaderTracksEvent( 'calypso_reader_spaces_space_created', {
 								tag_count: createdSpace.tags.length,
+								language_count: createdSpace.languages.length,
 								source_count: selectedFeeds.length,
 								layout: view,
 								icon,
@@ -250,6 +267,7 @@ function SpaceUpsertModalContent( {
 				params: {
 					name: name.trim(),
 					tags,
+					languages,
 					feeds: selectedFeeds,
 					layout: { color, iconColor, icon, view },
 				},
@@ -265,6 +283,7 @@ function SpaceUpsertModalContent( {
 					dispatch(
 						recordReaderTracksEvent( 'calypso_reader_spaces_space_updated', {
 							tag_count: tags.length,
+							language_count: languages.length,
 							source_count: selectedFeeds.length,
 							layout: view,
 						} )
@@ -340,6 +359,8 @@ function SpaceUpsertModalContent( {
 				nameError={ nameError }
 				tags={ tags }
 				onTagsChange={ setTags }
+				languages={ languages }
+				onLanguagesChange={ setLanguages }
 				color={ color }
 				onColorChange={ setColor }
 				iconColor={ iconColor }

@@ -83,18 +83,24 @@ function mockCreateEndpoint( name: string, onBody?: ( body: Record< string, unkn
 				title: name,
 				follows: [],
 				tags: body.tags ?? [],
+				languages: body.languages ?? [],
 				layout: body.layout ?? { color: 'blue', icon: 'inbox' },
 			};
 		} );
 }
 
-function setup( { existing = [] as ReadSpace[], onCreated = jest.fn() } = {} ) {
+function setup( {
+	existing = [] as ReadSpace[],
+	onCreated = jest.fn(),
+	localeSlug,
+}: { existing?: ReadSpace[]; onCreated?: jest.Mock; localeSlug?: string } = {} ) {
 	const queryClient = new QueryClient();
 	queryClient.setQueryData( readSpacesQuery().queryKey, existing );
 	const onClose = jest.fn();
 	const user = userEvent.setup();
 	renderWithProvider( <CreateSpaceModal isOpen onClose={ onClose } onCreated={ onCreated } />, {
 		queryClient,
+		initialState: localeSlug ? { currentUser: { user: { localeSlug } } } : undefined,
 	} );
 	return { queryClient, onClose, onCreated, user };
 }
@@ -219,6 +225,7 @@ describe( 'CreateSpaceModal', () => {
 			'calypso_reader_spaces_space_created',
 			{
 				tag_count: 0,
+				language_count: 0,
 				source_count: 1,
 				layout: 'legacy',
 				icon: 'star',
@@ -226,6 +233,36 @@ describe( 'CreateSpaceModal', () => {
 				icon_color: 'blue',
 			}
 		);
+	} );
+
+	it( 'pre-fills the account language as a base code and sends it on create', async () => {
+		// pt-br is a regional locale; the field should pre-fill the base "Português".
+		const { user, onClose } = setup( { localeSlug: 'pt-br' } );
+		const onBody = jest.fn();
+		mockCreateEndpoint( 'Leitura', onBody );
+
+		const dialog = screen.getByRole( 'dialog', { name: 'Create a new space' } );
+		expect( within( dialog ).getByText( 'Português' ) ).toBeVisible();
+
+		await user.type( screen.getByLabelText( 'Name' ), 'Leitura' );
+		await user.click( screen.getByRole( 'button', { name: 'Create' } ) );
+
+		await waitFor( () => expect( onClose ).toHaveBeenCalled() );
+		expect( onBody ).toHaveBeenCalledWith(
+			expect.objectContaining( { title: 'Leitura', languages: [ 'pt' ] } )
+		);
+	} );
+
+	it( 'sends no languages when the account has no locale', async () => {
+		const { user, onClose } = setup();
+		const onBody = jest.fn();
+		mockCreateEndpoint( 'Reading', onBody );
+
+		await user.type( screen.getByLabelText( 'Name' ), 'Reading' );
+		await user.click( screen.getByRole( 'button', { name: 'Create' } ) );
+
+		await waitFor( () => expect( onClose ).toHaveBeenCalled() );
+		expect( onBody ).toHaveBeenCalledWith( expect.objectContaining( { languages: [] } ) );
 	} );
 
 	it( 'notifies the parent with the created space', async () => {

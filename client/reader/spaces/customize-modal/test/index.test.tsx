@@ -87,6 +87,7 @@ const SPACE: ReadSpaceDetails = {
 	id: '7',
 	name: 'Work',
 	tags: [ 'tech' ],
+	languages: [ 'en' ],
 	layout: { color: 'blue', icon: 'inbox', view: 'standard-list' },
 	sources: [],
 };
@@ -103,6 +104,7 @@ function mockUpdateEndpoint( onBody?: ( body: Record< string, unknown > ) => voi
 				layout: body.layout ?? SPACE.layout,
 				follows: [],
 				tags: body.tags ?? SPACE.tags,
+				languages: body.languages ?? SPACE.languages,
 			};
 		} );
 }
@@ -149,6 +151,8 @@ describe( 'CustomizeModal', () => {
 		render();
 
 		expect( screen.getByLabelText( 'Name' ) ).toHaveValue( 'Work' );
+		// The saved language base code is shown by its display name.
+		expect( screen.getByText( 'English' ) ).toBeVisible();
 		expect(
 			within( screen.getByRole( 'radiogroup', { name: 'Accent color' } ) ).getByRole( 'radio', {
 				name: 'Blue',
@@ -223,6 +227,8 @@ describe( 'CustomizeModal', () => {
 			expect.objectContaining( {
 				title: 'Reading',
 				tags: [ 'tech' ],
+				// The seeded language is carried through unchanged on save.
+				languages: [ 'en' ],
 				layout: { color: 'green', iconColor: 'blue', icon: 'inbox', view: 'legacy' },
 			} )
 		);
@@ -234,7 +240,7 @@ describe( 'CustomizeModal', () => {
 		expect( cached?.layout.view ).toBe( 'legacy' );
 		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
 			'calypso_reader_spaces_space_updated',
-			{ tag_count: 1, source_count: 0, layout: 'legacy' }
+			{ tag_count: 1, language_count: 1, source_count: 0, layout: 'legacy' }
 		);
 		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
 			'calypso_reader_spaces_layout_changed',

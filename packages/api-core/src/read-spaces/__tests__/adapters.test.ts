@@ -57,13 +57,18 @@ describe( 'read spaces adapters', () => {
 		it( 'maps the wire follows array onto sources and carries tags', () => {
 			expect(
 				adaptReadSpaceDetails(
-					wireSpace( { follows: [ wireFollow ], tags: [ 'photography', 'travel' ] } )
+					wireSpace( {
+						follows: [ wireFollow ],
+						tags: [ 'photography', 'travel' ],
+						languages: [ 'en', 'pt' ],
+					} )
 				)
 			).toEqual( {
 				id: '3',
 				name: 'Work',
 				layout: { color: 'blue', icon: 'inbox' },
 				tags: [ 'photography', 'travel' ],
+				languages: [ 'en', 'pt' ],
 				sources: [
 					{
 						feedId: 9981,
@@ -100,13 +105,14 @@ describe( 'read spaces adapters', () => {
 			} );
 		} );
 
-		it( 'defaults sources and tags to empty arrays when absent', () => {
+		it( 'defaults sources, tags, and languages to empty arrays when absent', () => {
 			expect( adaptReadSpaceDetails( wireSpace() ) ).toEqual( {
 				id: '3',
 				name: 'Work',
 				layout: { color: 'blue', icon: 'inbox' },
 				sources: [],
 				tags: [],
+				languages: [],
 			} );
 		} );
 	} );

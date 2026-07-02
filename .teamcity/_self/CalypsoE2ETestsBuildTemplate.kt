@@ -1,7 +1,7 @@
 package _self
 
 import _self.lib.utils.mergeTrunk
-import _self.lib.utils.excludeMergeQueueBranches
+import _self.lib.utils.allBranchesExceptMergeQueue
 
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
@@ -15,7 +15,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 
 	vcs {
 		root(Settings.WpCalypso)
-		branchFilter = "+:*".excludeMergeQueueBranches()
+		branchFilter = allBranchesExceptMergeQueue()
 		cleanCheckout = true
 	}
 
