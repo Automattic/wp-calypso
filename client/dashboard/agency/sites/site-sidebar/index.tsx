@@ -2,9 +2,14 @@ import { agencySiteQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { category, backup } from '@wordpress/icons';
+import { category, backup, shield } from '@wordpress/icons';
 import { agencySiteRoute } from '../../../app/router/agency';
-import { SidebarBackButton, SidebarMenu, SidebarMenuItem } from '../../../components/sidebar';
+import {
+	SidebarBackButton,
+	SidebarExpandableMenuItem,
+	SidebarMenu,
+	SidebarMenuItem,
+} from '../../../components/sidebar';
 import AgencySiteSwitcherItem from './site-switcher-item';
 
 export default function AgencySiteSidebar() {
@@ -31,6 +36,20 @@ export default function AgencySiteSidebar() {
 							<SidebarMenuItem icon={ backup } to={ `/sites/${ siteSlug }/backups` }>
 								{ __( 'Backups' ) }
 							</SidebarMenuItem>
+						) }
+						{ site.has_scan && (
+							<SidebarExpandableMenuItem
+								label={ __( 'Scan' ) }
+								icon={ shield }
+								to={ `/sites/${ siteSlug }/scan` }
+							>
+								<SidebarMenuItem to={ `/sites/${ siteSlug }/scan/active` }>
+									{ __( 'Active threats' ) }
+								</SidebarMenuItem>
+								<SidebarMenuItem to={ `/sites/${ siteSlug }/scan/history` }>
+									{ __( 'History' ) }
+								</SidebarMenuItem>
+							</SidebarExpandableMenuItem>
 						) }
 					</SidebarMenu>
 				</VStack>

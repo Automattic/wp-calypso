@@ -8,11 +8,12 @@ import {
 	rawUserPreferencesQuery,
 	siteBackupsQuery,
 	siteBySlugQuery,
+	siteScanQuery,
 	siteSettingsQuery,
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute, notFound } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import { redirectAsNotAllowed } from './redirect';
+import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
 
 // Pathless layout route that guards every agency route (blocks client users).
@@ -356,6 +357,60 @@ export const agencySiteBackupDownloadRoute = createRoute( {
 	)
 );
 
+// `/sites/$siteSlug/scan` – layout that gates on the agency site's has_scan flag
+const agencySiteScanRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Scan' ) } ] } ),
+	getParentRoute: () => agencySiteRoute,
+	path: 'scan',
+	loader: async ( { params: { siteSlug } } ) => {
+		const agencySite = await queryClient.ensureQueryData( agencySiteQuery( siteSlug ) );
+		if ( ! agencySite?.has_scan ) {
+			return;
+		}
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await Promise.all( [
+			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
+			queryClient.ensureQueryData( siteScanQuery( site.ID ) ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../agency/sites/site/scan' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-scan' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const agencySiteScanIndexRoute = createRoute( {
+	getParentRoute: () => agencySiteScanRoute,
+	path: '/',
+	beforeLoad: ( { params: { siteSlug } } ) => {
+		throw dashboardRedirect( { to: `/sites/${ siteSlug }/scan/active` } );
+	},
+} );
+
+export const agencySiteScanActiveRoute = createRoute( {
+	getParentRoute: () => agencySiteScanRoute,
+	path: 'active',
+} ).lazy( () =>
+	import( '../../agency/sites/site/scan-page' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-scan-active' )( {
+			component: () => <d.default scanTab="active" />,
+		} )
+	)
+);
+
+export const agencySiteScanHistoryRoute = createRoute( {
+	getParentRoute: () => agencySiteScanRoute,
+	path: 'history',
+} ).lazy( () =>
+	import( '../../agency/sites/site/scan-page' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-scan-history' )( {
+			component: () => <d.default scanTab="history" />,
+		} )
+	)
+);
+
 export const createAgencyRoutes = () => [
 	agencyRoute.addChildren( [
 		agencyOverviewRoute,
@@ -378,6 +433,11 @@ export const createAgencyRoutes = () => [
 					agencySiteBackupRestoreRoute,
 					agencySiteBackupDownloadRoute,
 				] ),
+			] ),
+			agencySiteScanRoute.addChildren( [
+				agencySiteScanIndexRoute,
+				agencySiteScanActiveRoute,
+				agencySiteScanHistoryRoute,
 			] ),
 		] ),
 	] ),
