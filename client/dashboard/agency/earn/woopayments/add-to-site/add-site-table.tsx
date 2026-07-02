@@ -9,6 +9,8 @@ import type { RecordTracksEvent } from '../types';
 import type { AgencySite } from '@automattic/api-core';
 import type { Field, View } from '@wordpress/dataviews';
 
+import './add-site-table.scss';
+
 const PER_PAGE = 10;
 // Probe request used only to learn the total number of agency sites. This mirrors the
 // classic table's two-phase `useFetchAllManagedSites` fetch: read the total first, then
@@ -81,7 +83,7 @@ export default function AddWooPaymentsToSiteTable( {
 	};
 
 	return (
-		<VStack spacing={ 4 }>
+		<VStack className="woopayments-add-site-table" spacing={ 4 }>
 			<SearchControl
 				__nextHasNoMarginBottom
 				size="compact"

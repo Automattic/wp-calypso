@@ -1,0 +1,19 @@
+@import '@wordpress/base-styles/breakpoints';
+
+.woopayments-add-site-table {
+	.dataviews-wrapper {
+		max-height: 430px;
+		overflow: auto;
+
+		@media ( max-width: $break-small ) {
+			max-height: 330px;
+		}
+	}
+
+	// The list layout reserves a 52px row height for a media thumbnail. This picker
+	// only shows a single-line site URL (no media), so drop the reserved height to
+	// keep the rows compact instead of leaving large empty space beneath each site.
+	.dataviews-view-list__field-wrapper {
+		min-height: 0;
+	}
+}

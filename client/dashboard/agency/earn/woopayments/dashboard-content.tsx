@@ -1,5 +1,6 @@
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useState } from 'react';
-import { DataViews } from '../../../components/dataviews';
+import { DataViews, DataViewsCard } from '../../../components/dataviews';
 import { TextSkeleton } from '../../../components/text-skeleton';
 import WooPaymentsConsolidatedStats from './consolidated-stats';
 import { getWooPaymentsActions } from './dataviews/actions';
@@ -53,24 +54,26 @@ export default function WooPaymentsDashboardContent( {
 	}
 
 	return (
-		<>
+		<VStack spacing={ 6 }>
 			<WooPaymentsConsolidatedStats
 				commissions={ data.commissions }
 				isLoading={ data.isLoadingCommissions }
 				recordTracksEvent={ recordTracksEvent }
 			/>
-			<DataViews< AgencyWooPaymentsSiteState >
-				data={ data.sites }
-				fields={ getWooPaymentsFields( { commissions: data.commissions, recordTracksEvent } ) }
-				actions={ getWooPaymentsActions( { agencyId, recordTracksEvent } ) }
-				getItemId={ ( item ) => String( item.blogId ) }
-				isLoading={ data.isLoading }
-				view={ view }
-				onChangeView={ setView }
-				search={ false }
-				defaultLayouts={ { table: {} } }
-				paginationInfo={ { totalItems: data.sites.length, totalPages: 1 } }
-			/>
-		</>
+			<DataViewsCard>
+				<DataViews< AgencyWooPaymentsSiteState >
+					data={ data.sites }
+					fields={ getWooPaymentsFields( { commissions: data.commissions, recordTracksEvent } ) }
+					actions={ getWooPaymentsActions( { agencyId, recordTracksEvent } ) }
+					getItemId={ ( item ) => String( item.blogId ) }
+					isLoading={ data.isLoading }
+					view={ view }
+					onChangeView={ setView }
+					search={ false }
+					defaultLayouts={ { table: {} } }
+					paginationInfo={ { totalItems: data.sites.length, totalPages: 1 } }
+				/>
+			</DataViewsCard>
+		</VStack>
 	);
 }
