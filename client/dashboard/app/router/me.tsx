@@ -137,7 +137,6 @@ export const preferencesIndexRoute = createRoute( {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
-			queryClient.ensureQueryData( isAutomatticianQuery() ),
 		] );
 	},
 } ).lazy( () =>
@@ -1089,14 +1088,10 @@ export const appearanceRoute = createRoute( {
 		}
 
 		// Gate the page like the Appearance summary button so it can't be reached by direct URL.
-		const [ preferences, isAutomattician ] = await Promise.all( [
-			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
-			queryClient.ensureQueryData( isAutomatticianQuery() ),
-		] );
-
+		const preferences = await queryClient.ensureQueryData( rawUserPreferencesQuery() );
 		const hasUsedColorScheme = preferences[ 'hosting-dashboard-color-scheme' ] !== undefined;
 
-		if ( ! isAutomattician && ! hasUsedColorScheme ) {
+		if ( ! isEnabled( 'dashboard/dark-mode-rollout' ) && ! hasUsedColorScheme ) {
 			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
 		}
 	},

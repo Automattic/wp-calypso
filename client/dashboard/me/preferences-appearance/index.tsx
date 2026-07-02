@@ -1,4 +1,5 @@
-import { isAutomatticianQuery, rawUserPreferencesQuery } from '@automattic/api-queries';
+import { rawUserPreferencesQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -20,20 +21,14 @@ function getColorSchemeLabel( colorScheme: ColorScheme ) {
 	}
 }
 
-function PreferencesAppearanceSummary( {
-	density,
-	isAutomattician,
-}: {
-	density?: Density;
-	isAutomattician: boolean;
-} ) {
+function PreferencesAppearanceSummary( { density }: { density?: Density } ) {
 	const { colorScheme } = useColorScheme();
 
 	return (
 		<RouterLinkSummaryButton
 			density={ density }
 			to="/me/preferences/appearance"
-			title={ isAutomattician ? __( 'Appearance (a8c only)' ) : __( 'Appearance (Beta)' ) }
+			title={ __( 'Appearance (Beta)' ) }
 			description={ __( 'Choose how the dashboard looks.' ) }
 			decoration={ <Icon icon={ styles } size={ 24 } /> }
 			badges={ [ { text: getColorSchemeLabel( colorScheme ) } ] }
@@ -43,7 +38,7 @@ function PreferencesAppearanceSummary( {
 
 export default function PreferencesAppearance( { density }: { density?: Density } ) {
 	const config = useAppContext();
-	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
+	const isDarkModeRollout = isEnabled( 'dashboard/dark-mode-rollout' );
 	const { data: preferences } = useSuspenseQuery( rawUserPreferencesQuery() );
 	const hasUsedColorScheme = preferences[ 'hosting-dashboard-color-scheme' ] !== undefined;
 
@@ -51,11 +46,11 @@ export default function PreferencesAppearance( { density }: { density?: Density 
 		return null;
 	}
 
-	// "Used before" is inferred from the presence of the color scheme preference; Automatticians
-	// always get access as an a8c-only preview.
-	if ( ! isAutomattician && ! hasUsedColorScheme ) {
+	// "Used before" is inferred from the presence of the color scheme preference. The rollout
+	// flag (off in production) keeps the setting available to everyone in non-production envs.
+	if ( ! isDarkModeRollout && ! hasUsedColorScheme ) {
 		return null;
 	}
 
-	return <PreferencesAppearanceSummary density={ density } isAutomattician={ isAutomattician } />;
+	return <PreferencesAppearanceSummary density={ density } />;
 }
