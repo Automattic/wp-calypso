@@ -220,6 +220,31 @@ describe( '<PersonalDetailsSection>', () => {
 			} );
 		} );
 
+		test( 'warns when the account email uses a custom domain', async () => {
+			mockUserSettings( {
+				...settings,
+				user_email: 'jane@mycustomdomain.com',
+			} as unknown as UserSettings );
+			mockIsAutomattician( false );
+
+			render( <PersonalDetailsSection /> );
+
+			expect( await screen.findByText( /lose access to account recovery/i ) ).toBeVisible();
+		} );
+
+		test( 'does not warn for a free email provider', async () => {
+			mockUserSettings( {
+				...settings,
+				user_email: 'jane@gmail.com',
+			} as unknown as UserSettings );
+			mockIsAutomattician( false );
+
+			render( <PersonalDetailsSection /> );
+
+			await screen.findByRole( 'textbox', { name: 'Email address' } );
+			expect( screen.queryByText( /lose access to account recovery/i ) ).not.toBeInTheDocument();
+		} );
+
 		test( 'disables save when email is invalid', async () => {
 			const user = userEvent.setup();
 			mockUserSettings( settings );

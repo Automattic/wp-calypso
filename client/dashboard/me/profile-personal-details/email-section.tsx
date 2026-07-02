@@ -1,11 +1,17 @@
 import { cancelPendingEmailChangeMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { __experimentalInputControl as InputControl, Button } from '@wordpress/components';
+import {
+	__experimentalInputControl as InputControl,
+	__experimentalVStack as VStack,
+	Button,
+} from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon, info, check } from '@wordpress/icons';
 import emailValidator from 'email-validator';
 import { useState, useEffect, useCallback } from 'react';
+import Notice from '../../components/notice';
+import { isCustomDomainEmail } from './email-utils';
 import type { UserSettings } from '@automattic/api-core';
 import './style.scss';
 
@@ -168,19 +174,34 @@ export default function EmailSection( {
 		isCancelPending,
 	] );
 
+	const showCustomDomainWarning =
+		! isEmailPending &&
+		!! value &&
+		emailValidator.validate( value ) &&
+		isCustomDomainEmail( value );
+
 	return (
-		<InputControl
-			__next40pxDefaultSize
-			id="email-input"
-			type="text"
-			label={ __( 'Email address' ) }
-			value={ value }
-			onChange={ ( newValue ) => onChange( newValue ?? '' ) }
-			autoComplete="email"
-			disabled={ disabled || isEmailPending }
-			className={ getValidationClass() }
-			help={ getHelpText() }
-			aria-describedby={ getHelpText() ? 'email-help' : undefined }
-		/>
+		<VStack spacing={ 3 }>
+			<InputControl
+				__next40pxDefaultSize
+				id="email-input"
+				type="text"
+				label={ __( 'Email address' ) }
+				value={ value }
+				onChange={ ( newValue ) => onChange( newValue ?? '' ) }
+				autoComplete="email"
+				disabled={ disabled || isEmailPending }
+				className={ getValidationClass() }
+				help={ getHelpText() }
+				aria-describedby={ getHelpText() ? 'email-help' : undefined }
+			/>
+			{ showCustomDomainWarning && (
+				<Notice variant="warning">
+					{ __(
+						"This email uses a custom domain. If your domain expires, you'd lose access to account recovery. Consider an email from a service like Gmail or Outlook instead."
+					) }
+				</Notice>
+			) }
+		</VStack>
 	);
 }
