@@ -1,4 +1,4 @@
-import { SubscriptionBillPeriod } from '@automattic/api-core';
+import { SubscriptionBillPeriod, getPlanNames } from '@automattic/api-core';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Button, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -236,6 +236,38 @@ export function PurchaseExpiryStatus( {
 					}
 				) }
 			</Text>
+		);
+	}
+
+	// When a downgrade is scheduled for the next renewal, the plan won't simply
+	// renew at its current price — it changes to a lower-tier plan. Say so instead
+	// of the usual "Renews ... on <date>" line.
+	if ( isRenewingOnDate && purchase.is_delayed_downgrade_pending ) {
+		const slug = purchase.delayed_downgrade_to_product_slug;
+		const planNames = getPlanNames() as Record< string, string | undefined >;
+		const targetPlanName = slug ? planNames[ slug ] ?? null : null;
+		const renewalDate = formatDate( new Date( purchase.renew_date ), locale, {
+			dateStyle: 'long',
+		} );
+		if ( targetPlanName ) {
+			return (
+				<span>
+					{ sprintf(
+						// translators: %(plan)s is the plan being downgraded to (e.g. "Personal"); %(date)s is a formatted date
+						__( 'Changing to %(plan)s on %(date)s' ),
+						{ plan: targetPlanName, date: renewalDate }
+					) }
+				</span>
+			);
+		}
+		return (
+			<span>
+				{ sprintf(
+					// translators: %(date)s is a formatted date
+					__( 'Changing plan on %(date)s' ),
+					{ date: renewalDate }
+				) }
+			</span>
 		);
 	}
 

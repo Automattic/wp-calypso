@@ -18,6 +18,14 @@ references:
   desktop_defaults: &desktop_defaults
     working_directory: ~/wp-calypso
 
+  # Buildkite owns WordPress Desktop builds and releases now. Keep the
+  # CircleCI jobs as a rollback reference, but match no branch or tag.
+  desktop_disabled_filters: &desktop_disabled_filters
+    branches:
+      only: /.^/
+    tags:
+      only: /.^/
+
   setup-results-and-artifacts: &setup-results-and-artifacts
     name: Create Directories for Results and Artifacts
     command: |
@@ -174,9 +182,6 @@ jobs:
       CONFIG_ENV: release
       PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
       SKIP_TSC: 'true'
-      # If, for testing purposes, you want to generate all artifacts in the CI of a PR, uncomment the following line,
-      # and push a commit to your branch. Make sure to remove the commit before merging to trunk!
-      #PR_DEBUG_RELEASE: 'true'
     steps:
       - checkout
       - attach_workspace:
@@ -184,12 +189,6 @@ jobs:
       - run:
           name: Set environment variables
           command: |
-            if [[ "$PR_DEBUG_RELEASE" == "true" ]]; then
-              echo "export RELEASE_BUILD=true" >> "$BASH_ENV"
-              echo "export CSC_FOR_PULL_REQUEST=true" >> "$BASH_ENV"
-              source "$BASH_ENV"
-            fi
-
             if [[ $CIRCLE_TAG == desktop-v* ]]; then
               echo "export RELEASE_BUILD=true" >> "$BASH_ENV"
               source "$BASH_ENV"
@@ -273,9 +272,6 @@ jobs:
       NODE_OPTIONS: --max-old-space-size=5120
       CONFIG_ENV: release
       PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
-      # If, for testing purposes, you want to generate all artifacts in the CI of a PR, uncomment the following line,
-      # and push a commit to your branch. Make sure to remove the commit before merging to trunk!
-      #PR_DEBUG_RELEASE: 'true'
     steps:
       - checkout
       - attach_workspace:
@@ -283,12 +279,6 @@ jobs:
       - run:
           name: Set environment variables
           command: |
-            if [[ "$PR_DEBUG_RELEASE" == "true" ]]; then
-              echo "export RELEASE_BUILD=true" >> "$BASH_ENV"
-              echo "export CSC_FOR_PULL_REQUEST=true" >> "$BASH_ENV"
-              source "$BASH_ENV"
-            fi
-
             if [[ $CIRCLE_TAG == desktop-v* ]]; then
               echo "export RELEASE_BUILD=true" >> "$BASH_ENV"
               source "$BASH_ENV"
@@ -363,9 +353,6 @@ jobs:
     environment:
       CONFIG_ENV: release
       PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
-      # If, for testing purposes, you want to generate all artifacts in the CI of a PR, uncomment the following line,
-      # and push a commit to your branch. Make sure to remove the commit before merging to trunk!
-      #PR_DEBUG_RELEASE: 'true'
     steps:
       - checkout
       - attach_workspace:
@@ -436,7 +423,7 @@ jobs:
       - run:
           name: Build NSIS
           command: |
-            If ( $env:CIRCLE_TAG -or $env:PR_DEBUG_RELEASE ) { $env:RELEASE_BUILD='true' }
+            If ( $env:CIRCLE_TAG ) { $env:RELEASE_BUILD='true' }
 
             # If this is not a release build, only build the executable required for end-to-end testing.
             If ( -Not $env:RELEASE_BUILD ) {
@@ -531,74 +518,39 @@ workflows:
   wp-desktop:
     jobs:
       - wp-desktop-assets:
-          filters:
-            branches:
-              only:
-                - trunk
-                - /circleci.*/
-                - /release\/.*/
-                - /desktop\/.*/
+          filters: *desktop_disabled_filters
       - wp-desktop-mac:
           requires:
             - wp-desktop-assets
-          filters:
-            branches:
-              only:
-                - trunk
-                - /release\/.*/
-                - /desktop\/.*/
-      # Unlike wp-desktop-mac, the linux and windows jobs are excluded from
-      # trunk on purpose: building them on every trunk commit is what #103588
-      # set out to stop. They still run on desktop/release/circleci branches
-      # and on desktop-v* tags (see the wp-desktop-release workflow below).
+          filters: *desktop_disabled_filters
       - wp-desktop-linux:
           requires:
             - wp-desktop-assets
-          filters:
-            branches:
-              only:
-                - /circleci.*/
-                - /release\/.*/
-                - /desktop\/.*/
+          filters: *desktop_disabled_filters
       - wp-desktop-windows:
           requires:
             - wp-desktop-assets
-          filters:
-            branches:
-              only:
-                - /circleci.*/
-                - /release\/.*/
-                - /desktop\/.*/
+          filters: *desktop_disabled_filters
   wp-desktop-release:
     when: << pipeline.git.tag >>
     jobs:
       - wp-desktop-assets:
-          filters:
-            tags:
-              only: /desktop-v.*/
+          filters: *desktop_disabled_filters
       - wp-desktop-mac:
           requires:
             - wp-desktop-assets
-          filters:
-            tags:
-              only: /desktop-v.*/
+          filters: *desktop_disabled_filters
       - wp-desktop-linux:
           requires:
             - wp-desktop-assets
-          filters:
-            tags:
-              only: /desktop-v.*/
+          filters: *desktop_disabled_filters
       - wp-desktop-windows:
           requires:
             - wp-desktop-assets
-          filters:
-            tags:
-              only: /desktop-v.*/
+          filters: *desktop_disabled_filters
       - wp-desktop-publish:
           requires:
             - wp-desktop-mac
             - wp-desktop-linux
             - wp-desktop-windows
-          filters:
-            tags:
-              only: /desktop-v.*/
+          filters: *desktop_disabled_filters

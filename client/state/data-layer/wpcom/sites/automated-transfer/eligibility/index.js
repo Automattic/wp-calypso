@@ -1,4 +1,4 @@
-import { get, isEmpty } from 'lodash';
+import { isEmpty } from '@automattic/js-utils';
 import { AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST } from 'calypso/state/action-types';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { updateEligibility } from 'calypso/state/automated-transfer/actions';
@@ -46,7 +46,7 @@ export const eligibilityHoldsFromApi = ( { errors = [] }, options = {} ) =>
 			if ( options.sitePrivateUnlaunched && code === 'site_private' ) {
 				return eligibilityHolds.SITE_UNLAUNCHED;
 			}
-			return get( statusMapping, code, '' );
+			return statusMapping?.[ code ] ?? '';
 		} )
 		.filter( Boolean );
 

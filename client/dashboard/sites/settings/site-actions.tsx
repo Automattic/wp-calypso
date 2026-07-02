@@ -1,14 +1,13 @@
-import { DotcomFeatures } from '@automattic/api-core';
 import { sitePlanSoftwareRestoreMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
+import { useAuth } from '../../app/auth';
 import { ActionList } from '../../components/action-list';
 import { SectionHeader } from '../../components/section-header';
 import { wpcomLink } from '../../utils/link';
-import { hasPlanFeature } from '../../utils/site-features';
-import { canViewSiteActions } from '../features';
+import { canViewSiteActions, canDuplicateSite } from '../features';
 import type { Site } from '@automattic/api-core';
 
 const RestorePlanSoftware = ( { site }: { site: Site } ) => {
@@ -67,15 +66,15 @@ const DuplicateSite = ( { site }: { site: Site } ) => {
 };
 
 export default function SiteActions( { site }: { site: Site } ) {
+	const { user } = useAuth();
+
 	if ( ! canViewSiteActions( site ) ) {
 		return null;
 	}
 
 	const actions = [
 		site.is_wpcom_atomic && <RestorePlanSoftware key="restore-plan-software" site={ site } />,
-		hasPlanFeature( site, DotcomFeatures.COPY_SITE ) && (
-			<DuplicateSite key="duplicate-site" site={ site } />
-		),
+		canDuplicateSite( site, user ) && <DuplicateSite key="duplicate-site" site={ site } />,
 	].filter( Boolean );
 
 	if ( ! actions.length ) {

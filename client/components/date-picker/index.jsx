@@ -1,7 +1,7 @@
 import { debounce } from '@wordpress/compose';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { merge, get } from 'lodash';
+import { merge } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import DayPicker from 'react-day-picker';
@@ -123,7 +123,7 @@ class DatePicker extends PureComponent {
 			},
 
 			formatWeekdayShort: function ( day ) {
-				return get( weekdaysMin, day, ' ' )[ 0 ];
+				return ( weekdaysMin?.[ day ] ?? ' ' )[ 0 ];
 			},
 
 			formatWeekdayLong: function ( day ) {

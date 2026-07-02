@@ -1,11 +1,11 @@
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { camelCase, mapKeys, omitBy, pick, snakeCase } from '@automattic/js-utils';
+import { camelCase, mapKeys, omitBy, pick, snakeCase, isEmpty } from '@automattic/js-utils';
 import { Spinner } from '@wordpress/components';
 import clsx from 'clsx';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
-import { merge, isEmpty } from 'lodash';
+import { merge } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';

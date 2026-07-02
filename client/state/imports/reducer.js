@@ -1,6 +1,5 @@
-import { omit, omitBy } from '@automattic/js-utils';
+import { omit, omitBy, isEmpty } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
-import { isEmpty } from 'lodash';
 import {
 	IMPORTS_AUTHORS_SET_MAPPING,
 	IMPORTS_AUTHORS_START_MAPPING,

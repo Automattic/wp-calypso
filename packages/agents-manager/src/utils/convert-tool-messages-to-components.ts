@@ -28,7 +28,18 @@ type MessageWithContextFlags = UIMessage & {
 };
 
 function isContextOnlyMessage( message: UIMessage ): boolean {
-	return ( message as MessageWithContextFlags ).context?.flags?.context_only === true;
+	return (
+		( message as MessageWithContextFlags ).context?.flags?.context_only === true ||
+		message.content?.some( ( content ) => {
+			if ( content.type === 'context' ) {
+				return true;
+			}
+
+			const flags =
+				content.type === 'data' ? ( content.data?.flags as { context_only?: boolean } ) : undefined;
+			return flags?.context_only === true;
+		} )
+	);
 }
 
 function getShowComponentSummary( message: UIMessage ): string | undefined {
@@ -53,6 +64,12 @@ function getShowComponentSummary( message: UIMessage ): string | undefined {
 function hasAgentRole( message: UIMessage ): boolean {
 	const role = message.role as string;
 	return role === 'agent' || role === 'assistant';
+}
+
+function isUnsuccessfulToolData( data: unknown ): boolean {
+	return (
+		typeof data === 'object' && data !== null && ( data as { success?: unknown } ).success === false
+	);
 }
 
 function isDuplicateAdjacentShowComponentSummary(
@@ -221,6 +238,10 @@ export default function convertToolMessagesToComponents( {
 
 		// Handle agent-facing Big Sky tool result summaries.
 		if ( isDisplayableToolMessageTool( textData.tool_id ) ) {
+			if ( isUnsuccessfulToolData( textData.data ) ) {
+				return [];
+			}
+
 			const summary = getDisplayMessageFromToolData( textData.data );
 			if ( ! summary ) {
 				return [];

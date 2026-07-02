@@ -2,7 +2,7 @@ import './style.scss';
 
 import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { sidebar, setBeforePrimary } from 'calypso/reader/controller';
+import { sidebar } from 'calypso/reader/controller';
 import {
 	mastodonLanding,
 	mastodonConnect,
@@ -17,19 +17,11 @@ import {
 } from './controller';
 
 export default function () {
-	page( '/reader/mastodon', sidebar, setBeforePrimary, mastodonLanding, makeLayout, clientRender );
-	page(
-		'/reader/mastodon/connect',
-		sidebar,
-		setBeforePrimary,
-		mastodonConnect,
-		makeLayout,
-		clientRender
-	);
+	page( '/reader/mastodon', sidebar, mastodonLanding, makeLayout, clientRender );
+	page( '/reader/mastodon/connect', sidebar, mastodonConnect, makeLayout, clientRender );
 	page(
 		'/reader/mastodon/oauth-callback',
 		sidebar,
-		setBeforePrimary,
 		mastodonOauthCallback,
 		makeLayout,
 		clientRender
@@ -38,7 +30,6 @@ export default function () {
 	page(
 		'/reader/mastodon/:id(\\d+)/thread/:status_id',
 		sidebar,
-		setBeforePrimary,
 		mastodonThread,
 		makeLayout,
 		clientRender
@@ -46,7 +37,6 @@ export default function () {
 	page(
 		'/reader/mastodon/:id(\\d+)/profile/:actor',
 		sidebar,
-		setBeforePrimary,
 		mastodonProfile,
 		makeLayout,
 		clientRender
@@ -54,7 +44,6 @@ export default function () {
 	page(
 		'/reader/mastodon/:id(\\d+)/profile/:actor/followers',
 		sidebar,
-		setBeforePrimary,
 		mastodonProfileFollowers,
 		makeLayout,
 		clientRender
@@ -62,7 +51,6 @@ export default function () {
 	page(
 		'/reader/mastodon/:id(\\d+)/profile/:actor/following',
 		sidebar,
-		setBeforePrimary,
 		mastodonProfileFollowing,
 		makeLayout,
 		clientRender
@@ -70,17 +58,9 @@ export default function () {
 	page(
 		'/reader/mastodon/:id(\\d+)/tag/:hashtag',
 		sidebar,
-		setBeforePrimary,
 		mastodonTagFeed,
 		makeLayout,
 		clientRender
 	);
-	page(
-		'/reader/mastodon/:id(\\d+)/:tab',
-		sidebar,
-		setBeforePrimary,
-		mastodonAccount,
-		makeLayout,
-		clientRender
-	);
+	page( '/reader/mastodon/:id(\\d+)/:tab', sidebar, mastodonAccount, makeLayout, clientRender );
 }

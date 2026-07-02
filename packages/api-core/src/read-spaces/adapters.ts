@@ -26,19 +26,26 @@ export interface ReadSpaceApiItem {
 	// Detail-only — absent on the list (summary) response.
 	follows?: ReadSpaceFollowApiItem[];
 	tags?: string[];
+	// Detail-only. Base ES language codes the server persisted (already
+	// normalized server-side); absent on older responses before the field shipped.
+	languages?: string[];
 }
 
 /** Map a wpcom/v2 summary item onto the client `ReadSpace` (list) shape. */
 export function adaptReadSpace( item: ReadSpaceApiItem ): ReadSpace {
 	const layout: SpaceLayout = { color: item.layout.color, icon: item.layout.icon };
+	if ( item.layout.iconColor ) {
+		layout.iconColor = item.layout.iconColor;
+	}
 	if ( item.layout.view ) {
 		layout.view = item.layout.view;
 	}
 	return {
 		id: String( item.id ),
 		name: item.title,
-		// `view` is forward-looking: the API does not return it yet (stays
-		// `undefined`), but mapping it now means it flows through once it does.
+		// `iconColor` and `view` are forward-looking: the API does not return them
+		// yet (they stay `undefined`), but mapping them now means they flow through
+		// once it does.
 		layout,
 	};
 }
@@ -63,5 +70,6 @@ export function adaptReadSpaceDetails( item: ReadSpaceApiItem ): ReadSpaceDetail
 		...adaptReadSpace( item ),
 		sources: ( item.follows ?? [] ).map( adaptSpaceSource ),
 		tags: item.tags ?? [],
+		languages: item.languages ?? [],
 	};
 }

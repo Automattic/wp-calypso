@@ -12,6 +12,7 @@ import { getPostUrl } from 'calypso/reader/route';
 import { Shimmer } from '../../components/skeleton';
 import { SpaceFeedTimeSince } from '../../components/time-since';
 import { getPostFields, type SpaceFeedDayGroup, type SpaceFeedPostFields } from '../../post-fields';
+import { useScrollSelectedIntoView } from '../use-scroll-selected-into-view';
 import type { SpaceFeedLayoutProps, SpaceFeedSkeletonProps } from '../types';
 import type { ReadStreamPost } from '@automattic/api-core';
 
@@ -24,13 +25,32 @@ type Row =
 const HEADER_SIZE = 44;
 const ROW_SIZE = 170;
 
-function PostRow( { fields, post }: { fields: SpaceFeedPostFields; post: ReadStreamPost } ) {
+function PostRow( {
+	fields,
+	post,
+	isSelected,
+	onOpen,
+}: {
+	fields: SpaceFeedPostFields;
+	post: ReadStreamPost;
+	isSelected: boolean;
+	onOpen: () => void;
+} ) {
 	return (
-		<HStack className="space-feed-standard-list__row" spacing={ 3 } alignment="flex-start">
+		<HStack
+			className="space-feed-standard-list__row"
+			spacing={ 3 }
+			alignment="flex-start"
+			data-selected={ isSelected || undefined }
+		>
 			<VStack className="space-feed-standard-list__body" spacing={ 3 } alignment="stretch">
 				<VStack className="space-feed-standard-list__headline" spacing={ 1 } alignment="stretch">
 					<h3 className="space-feed-standard-list__title">
-						<a className="space-feed-standard-list__title-link" href={ fields.postHref }>
+						<a
+							className="space-feed-standard-list__title-link"
+							href={ fields.postHref }
+							onClick={ onOpen }
+						>
 							{ fields.title }
 						</a>
 					</h3>
@@ -59,7 +79,10 @@ function PostRow( { fields, post }: { fields: SpaceFeedPostFields; post: ReadStr
 				</HStack>
 				<ReaderPostActions
 					post={ post }
-					onCommentClick={ () => page( getPostUrl( post ) ) }
+					onCommentClick={ () => {
+						onOpen();
+						page( getPostUrl( post ) );
+					} }
 					iconSize={ 18 }
 					variant="discreet"
 				/>
@@ -82,6 +105,8 @@ export function StandardListLayout( {
 	isLoadingMore,
 	loadMore,
 	restoreKey,
+	isPostSelected,
+	selectPost,
 }: SpaceFeedLayoutProps ) {
 	const translate = useTranslate();
 
@@ -117,16 +142,24 @@ export function StandardListLayout( {
 		return out;
 	}, [ posts, translate ] );
 
-	const { getListProps, items, measureElement, scrollMargin } = useInfiniteList( {
+	const { getListProps, items, measureElement, scrollMargin, scrollToIndex } = useInfiniteList( {
 		scrollElement,
 		count: rows.length,
 		estimateSize: ( index ) => ( rows[ index ].kind === 'header' ? HEADER_SIZE : ROW_SIZE ),
+		overscan: 4,
 		getItemKey: ( index ) => rows[ index ].key,
 		hasMore,
 		isLoadingMore,
 		loadMore,
 		restoreKey,
 	} );
+
+	// Row index of the selected post (headers shift it off the post index).
+	const selectedRowIndex = useMemo(
+		() => rows.findIndex( ( row ) => row.kind === 'post' && isPostSelected( row.post ) ),
+		[ rows, isPostSelected ]
+	);
+	useScrollSelectedIntoView( scrollToIndex, selectedRowIndex );
 
 	// The first post row tightens its top padding (the day-group header above it
 	// already supplies the gap). Detect it by index so it stays correct under
@@ -149,7 +182,12 @@ export function StandardListLayout( {
 						{ row.kind === 'header' ? (
 							<h2 className="space-feed-standard-list__group">{ row.label }</h2>
 						) : (
-							<PostRow fields={ row.fields } post={ row.post } />
+							<PostRow
+								fields={ row.fields }
+								post={ row.post }
+								isSelected={ isPostSelected( row.post ) }
+								onOpen={ () => selectPost( row.post ) }
+							/>
 						) }
 					</div>
 				);

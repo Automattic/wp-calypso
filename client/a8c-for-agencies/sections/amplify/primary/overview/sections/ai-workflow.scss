@@ -1,0 +1,36 @@
+/* AI workflow */
+// The card itself is a core Card (header / per-prompt CardBody / CardDivider).
+// The only bespoke bits are the severity dot — a small status indicator with no
+// core equivalent — and keeping the mode toggle from shrinking in the header.
+
+.amplify-landing-workflow-mode-toggle {
+	flex-shrink: 0;
+}
+
+// Calypso's global `hr` reset (client/assets/stylesheets/_main.scss) paints
+// every <hr> with `background: var(--color-neutral-10)`. CardDivider renders as
+// an <hr>, so that background bleeds through and makes the dividers read darker
+// than the Card's own border. Clearing it lets the divider fall back to the
+// component's own border color, which matches the card border.
+.amplify-landing-workflow-card .components-card__divider {
+	background: none;
+}
+
+.amplify-landing-workflow-prompt-item-dot {
+	inline-size: 8px;
+	block-size: 8px;
+	border-radius: 16px;
+	flex-shrink: 0;
+}
+
+.amplify-landing-workflow-prompt-item-dot.good {
+	background: var(--color-success);
+}
+
+.amplify-landing-workflow-prompt-item-dot.warn {
+	background: var(--color-warning-50);
+}
+
+.amplify-landing-workflow-prompt-item-dot.danger {
+	background: var(--color-error);
+}

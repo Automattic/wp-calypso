@@ -58,7 +58,7 @@ export default function EditorAiChatButton( { onClose, onOpenChat }: Props ) {
 				} ) }
 				onClick={ handleToggle }
 				icon={ <AI /> }
-				label={ __( 'Ask AI', '__i18n_text_domain__' ) }
+				label={ __( 'Ask AI', __i18n_text_domain__ ) }
 				aria-pressed={ isChatVisible }
 				aria-expanded={ isChatVisible }
 				size="compact"

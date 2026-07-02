@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { MEMBERSHIPS_SETTINGS_RECEIVE } from '../../action-types';
 
 export default ( state = {}, action ) => {
@@ -8,11 +7,8 @@ export default ( state = {}, action ) => {
 				...state,
 
 				[ action.siteId ]: {
-					isConnected: get(
-						action,
-						'data.is_connected',
-						( action?.data?.connected_account_id ?? null ) > 0
-					),
+					isConnected:
+						action?.data?.is_connected ?? ( action?.data?.connected_account_id ?? null ) > 0,
 					connectedAccountDescription: action?.data?.connected_account_description ?? null,
 					connectedAccountDefaultCurrency: action?.data?.connected_account_default_currency ?? null,
 					connectedAccountMinimumCurrency: action?.data?.connected_account_minimum_currency ?? null,

@@ -1,5 +1,4 @@
 import { createSelector } from '@automattic/state-utils';
-import { get } from 'lodash';
 import { PERIOD_ALL_TIME } from 'calypso/state/stats/emails/constants';
 import 'calypso/state/stats/init';
 
@@ -33,11 +32,10 @@ function getDataPath( siteId, postId, period, statType, date = null ) {
  */
 export function isRequestingEmailStats( state, siteId, postId, period, statType, date ) {
 	return state.stats.emails
-		? get(
-				state.stats.emails.requests,
-				[ ...getDataPath( siteId, postId, period, statType, date ), 'requesting' ],
-				false
-		  )
+		? [ ...getDataPath( siteId, postId, period, statType, date ), 'requesting' ].reduce(
+				( value, key ) => value?.[ key ],
+				state.stats.emails.requests
+		  ) ?? false
 		: false;
 }
 
@@ -54,11 +52,11 @@ export function isRequestingEmailStats( state, siteId, postId, period, statType,
  * @returns {boolean}        Whether email stat is being requested
  */
 export function shouldShowLoadingIndicator( state, siteId, postId, period, statType, date, path ) {
-	const stats = get(
-		state.stats.emails.items,
-		getDataPath( siteId, postId, period, statType, date, path ),
-		null
-	);
+	const stats =
+		getDataPath( siteId, postId, period, statType, date, path ).reduce(
+			( value, key ) => value?.[ key ],
+			state.stats.emails.items
+		) ?? null;
 	// if we have redux stats ready return false
 	if ( stats ) {
 		return false;
@@ -145,10 +143,9 @@ export function getEmailStat( state, siteId, postId, period, statType ) {
  */
 export function getEmailStatsNormalizedData( state, siteId, postId, period, statType, date, path ) {
 	return state.stats.emails.items
-		? get(
-				state.stats.emails.items,
-				[ ...getDataPath( siteId, postId, period, statType ), path ],
-				null
-		  )
+		? [ ...getDataPath( siteId, postId, period, statType ), path ].reduce(
+				( value, key ) => value?.[ key ],
+				state.stats.emails.items
+		  ) ?? null
 		: null;
 }

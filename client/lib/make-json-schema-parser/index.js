@@ -1,5 +1,4 @@
 import schemaValidator from 'is-my-json-valid';
-import { get } from 'lodash';
 
 export class SchemaError extends Error {
 	constructor( errors ) {
@@ -70,7 +69,7 @@ export function makeJsonSchemaParser(
 							message: error.message,
 							value: error.value,
 							actualType: error.type,
-							expectedType: get( schema, error.schemaPath ),
+							expectedType: error.schemaPath?.reduce( ( node, key ) => node?.[ key ], schema ),
 						} )
 					);
 

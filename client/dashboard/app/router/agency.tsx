@@ -180,6 +180,61 @@ export const agencySitesRoute = createRoute( {
 	)
 );
 
+// `/earn` – summary of the agency's earning programs (default Earn screen)
+const earnOverviewRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Overview' ) } ] } ),
+	getParentRoute: () => agencyRoute,
+	path: 'earn',
+} ).lazy( () =>
+	import( '../../agency/earn/overview' ).then( ( d ) =>
+		createLazyRoute( 'earn-overview' )( { component: d.default } )
+	)
+);
+
+// `/earn/referrals` – referral commissions
+const earnReferralsRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Referrals' ) } ] } ),
+	getParentRoute: () => agencyRoute,
+	path: 'earn/referrals',
+} ).lazy( () =>
+	import( '../../agency/earn/referrals' ).then( ( d ) =>
+		createLazyRoute( 'earn-referrals' )( { component: d.default } )
+	)
+);
+
+// `/earn/woopayments` – WooPayments revenue share
+const earnWooPaymentsRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'WooPayments' ) } ] } ),
+	getParentRoute: () => agencyRoute,
+	path: 'earn/woopayments',
+} ).lazy( () =>
+	import( '../../agency/earn/woopayments' ).then( ( d ) =>
+		createLazyRoute( 'earn-woopayments' )( { component: d.default } )
+	)
+);
+
+// `/earn/migrations` – migration commissions
+const earnMigrationsRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Migrations' ) } ] } ),
+	getParentRoute: () => agencyRoute,
+	path: 'earn/migrations',
+} ).lazy( () =>
+	import( '../../agency/earn/migrations' ).then( ( d ) =>
+		createLazyRoute( 'earn-migrations' )( { component: d.default } )
+	)
+);
+
+// `/earn/payout-settings` – where and how the agency gets paid
+const earnPayoutSettingsRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Payout settings' ) } ] } ),
+	getParentRoute: () => agencyRoute,
+	path: 'earn/payout-settings',
+} ).lazy( () =>
+	import( '../../agency/earn/payout-settings' ).then( ( d ) =>
+		createLazyRoute( 'earn-payout-settings' )( { component: d.default } )
+	)
+);
+
 export const createAgencyRoutes = () => [
 	agencyRoute.addChildren( [
 		agencyOverviewRoute,
@@ -188,5 +243,10 @@ export const createAgencyRoutes = () => [
 		learnRoute,
 		mcpRoute.addChildren( [ mcpOverviewRoute, mcpAvailableToolsRoute, mcpConnectRoute ] ),
 		agencySitesRoute,
+		earnOverviewRoute,
+		earnReferralsRoute,
+		earnWooPaymentsRoute,
+		earnMigrationsRoute,
+		earnPayoutSettingsRoute,
 	] ),
 ];

@@ -320,6 +320,8 @@ function handleShowComponent( input: any ): any {
 		data.calypsoCheckpointId = checkpointId;
 	}
 
+	data.followUpTasks = input?.followUpTasks ?? false;
+
 	const agentMessage = JSON.stringify( {
 		tool_id: SHOW_COMPONENT_TOOL_ID,
 		data,
@@ -327,7 +329,7 @@ function handleShowComponent( input: any ): any {
 
 	return {
 		result: 'Component displayed successfully',
-		returnToAgent: false,
+		returnToAgent: data.followUpTasks,
 		agentMessage,
 	};
 }

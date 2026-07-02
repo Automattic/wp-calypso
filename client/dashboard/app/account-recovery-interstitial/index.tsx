@@ -31,7 +31,7 @@ type SecurityLevel = 'none' | 'partial' | 'strong';
 const SNOOZE_DAYS: Record< SecurityLevel, number > = {
 	none: 14, // no recovery method or 2FA set up
 	partial: 30, // a recovery method but no 2FA or vice-versa
-	strong: 365, // fully set up -> yearly periodic check
+	strong: 365, // recovery method and 2FA in place (the only nudge left is backup codes)
 };
 
 /** Maps the user's account-recovery setup to a SecurityLevel. */
@@ -85,19 +85,25 @@ export default function AccountRecoveryInterstitial() {
 	const hasRecoveryPhone = !! accountRecovery?.phone_validated;
 	const hasTwoFactor = !! userSettings?.two_step_enabled;
 	const hasBackupCodes = !! userSettings?.two_step_backup_codes_printed;
+	const hasRecoveryMethod = hasRecoveryEmail || hasRecoveryPhone;
 
 	const securityLevel = getSecurityLevel( hasRecoveryEmail, hasRecoveryPhone, hasTwoFactor );
 	const snoozeDays = SNOOZE_DAYS[ securityLevel ];
 
 	const isSnoozed = !! snoozeUntilPersisted && now < snoozeUntilPersisted;
 
-	// Every user is nudged once their snooze (if any) has elapsed and the data has loaded
+	// Selects the copy variant depending on the user's account recovery settings.
+	const variant = getInterstitialVariant( hasRecoveryMethod, hasTwoFactor, hasBackupCodes );
+
+	// Eligible once the data has loaded and the snooze (if any) has elapsed.
 	const isEligible =
 		isAccountRecoveryLoaded && isUserSettingsLoaded && isSnoozeLoaded && ! isSnoozed;
 
-	const hasRecoveryMethod = hasRecoveryEmail || hasRecoveryPhone;
-	// Selects the copy variant depending on the user's account recovery settings
-	const variant = getInterstitialVariant( hasRecoveryMethod, hasTwoFactor, hasBackupCodes );
+	// Fully-secured users (variant === 'strong') are left alone — we only nudge people who are still
+	// missing a recovery method, 2FA, or backup codes.
+	if ( isDismissed || ! isEligible || variant === 'strong' ) {
+		return null;
+	}
 
 	// Shared Tracks properties for every interstitial event. The coarse `security_level` and 5-way
 	// `recovery_status` summarize the setup; the `has_*` booleans expose exactly which methods are
@@ -110,12 +116,6 @@ export default function AccountRecoveryInterstitial() {
 		has_two_factor: hasTwoFactor,
 		has_backup_codes: hasBackupCodes,
 	};
-
-	const shouldDisplay = ! isDismissed && isEligible;
-
-	if ( ! shouldDisplay ) {
-		return null;
-	}
 
 	const copy = getInterstitialCopy( {
 		recoveryEmail: accountRecovery?.email_validated ? accountRecovery.email : undefined,
@@ -140,17 +140,16 @@ export default function AccountRecoveryInterstitial() {
 			...tracksProperties,
 			cta_id: cta.id,
 		} );
-		// Snooze for this security level's window in all cases, so the user isn't re-prompted
-		// on their next page load — whether they head off to set up a recovery method or positively
-		// confirm ("Yes, all good").
+		// Snooze for this security level's window so the user isn't re-prompted on their next
+		// page load while they head off to set up the missing recovery method.
 		snooze();
 		if ( cta.route ) {
 			router.navigate( { to: cta.route } );
 		}
 	};
 
-	// Fully-secured users are on the yearly check-in; a "remind me in 365 days" nudge reads as
-	// a permanent dismissal, so label it as such.
+	// Users who already have a recovery method and 2FA in place get a year-long snooze, so a
+	// "remind me in 365 days" nudge would read as a permanent dismissal — label it as such.
 	const remindLabel =
 		securityLevel === 'strong'
 			? __( 'Dismiss' )

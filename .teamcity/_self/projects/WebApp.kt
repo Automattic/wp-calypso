@@ -3,6 +3,7 @@ package _self.projects
 import Settings
 import _self.bashNodeScript
 import _self.lib.customBuildType.E2EBuildType
+import _self.lib.utils.allBranchesExceptMergeQueue
 import _self.lib.utils.excludeMergeQueueBranches
 import _self.lib.utils.mergeTrunk
 import _self.lib.utils.passMergeQueueBranchesEarly
@@ -422,8 +423,6 @@ object RunAllUnitTests : BuildType({
 	}
 
 	steps {
-		passMergeQueueBranchesEarly()
-		mergeTrunk().skipOnMergeQueueBranch()
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
@@ -468,7 +467,7 @@ object RunAllUnitTests : BuildType({
 					exit 1
 				fi
 			"""
-		}.skipOnMergeQueueBranch()
+		}
 		bashNodeScript {
 			name = "Check for yarn.lock changes and duplicated packages"
 			scriptContent = """
@@ -502,7 +501,7 @@ object RunAllUnitTests : BuildType({
 				prevent_uncommitted_changes & prevent_duplicated_packages
 				wait
 			""".trimIndent()
-		}.skipOnMergeQueueBranch()
+		}
 		bashNodeScript {
 			name = "Check DataViews changelog"
 			scriptContent = """
@@ -522,24 +521,12 @@ object RunAllUnitTests : BuildType({
 					fi
 				fi
 			""".trimIndent()
-		}.skipOnMergeQueueBranch()
+		}
 		bashNodeScript {
 			name = "Run parallelized tests"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = "./bin/unit-test-suite.mjs"
-		}.skipOnMergeQueueBranch()
-		bashNodeScript {
-			name = "Tag build"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
-			conditions {
-				equals("teamcity.build.branch.is_default", "true")
-			}
-			scriptContent = """
-				set -x
-
-				curl -s -X POST -H "Content-Type: text/plain" --data "release-candidate" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" "%teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/"
-			""".trimIndent()
-		}.skipOnMergeQueueBranch()
+		}
 	}
 
 	triggers {
@@ -547,6 +534,7 @@ object RunAllUnitTests : BuildType({
 			branchFilter = """
 				+:*
 				-:pull*
+				-:trunk
 			""".trimIndent()
 		}
 	}
@@ -587,7 +575,7 @@ object RunAllUnitTests : BuildType({
 				messageFormat = simpleMessageFormat()
 			}
 			branchFilter = """
-				+:trunk
+				+:gh-readonly-queue/*
 			""".trimIndent()
 			buildFailedToStart = true
 			buildFailed = true
@@ -805,11 +793,11 @@ object Translate : BuildType({
 
 	vcs {
 		root(Settings.WpCalypso)
+		branchFilter = allBranchesExceptMergeQueue()
 		cleanCheckout = true
 	}
 
 	steps {
-		passMergeQueueBranchesEarly()
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
@@ -817,7 +805,7 @@ object Translate : BuildType({
 				${_self.yarn_install_cmd}
 			"""
 			dockerImage = "%docker_image_e2e%"
-		}.skipOnMergeQueueBranch()
+		}
 		bashNodeScript {
 			name = "Extract strings"
 			scriptContent = """
@@ -832,7 +820,7 @@ object Translate : BuildType({
 				echo "##teamcity[publishArtifacts './translate/calypso-strings.pot']"
 			"""
 			dockerImage = "%docker_image_e2e%"
-		}.skipOnMergeQueueBranch()
+		}
 		bashNodeScript {
 			name = "Build New Strings .pot"
 			scriptContent = """
@@ -853,7 +841,7 @@ object Translate : BuildType({
 				echo "##teamcity[publishArtifacts './translate/localci-new-strings.pot']"
 			"""
 			dockerImage = "%docker_image_e2e%"
-		}.skipOnMergeQueueBranch()
+		}
 		bashNodeScript {
 			name = "Notify GlotPress Translate build is ready"
 			scriptContent = """
@@ -874,7 +862,7 @@ object Translate : BuildType({
 							}
 						}'
 			"""
-		}.skipOnMergeQueueBranch()
+		}
 	}
 
 	triggers {
@@ -942,6 +930,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 				}
 			}
 		},
+		vcsBranchFilter = allBranchesExceptMergeQueue(),
 		enableCommitStatusPublisher = true,
 		buildTriggers = {
 			vcs {

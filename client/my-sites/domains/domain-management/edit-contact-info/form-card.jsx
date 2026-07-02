@@ -5,10 +5,10 @@ import {
 	mapRecordKeysRecursively,
 	snakeCase,
 	snakeToCamelCase,
+	isEmpty,
 } from '@automattic/js-utils';
 import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';

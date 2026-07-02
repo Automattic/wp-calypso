@@ -30,7 +30,7 @@ export default function ConversationListItem( { conversation, onClick }: Props )
 			disabled={ disabled }
 			aria-label={ sprintf(
 				/* translators: %1$s: conversation title, %2$s: conversation subtitle */
-				__( 'Load conversation: %1$s, %2$s', '__i18n_text_domain__' ),
+				__( 'Load conversation: %1$s, %2$s', __i18n_text_domain__ ),
 				title,
 				subtitle
 			) }

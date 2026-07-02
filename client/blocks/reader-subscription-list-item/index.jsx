@@ -1,9 +1,9 @@
 import './style.scss';
 import { commonFeedExtensions } from '@automattic/api-core';
 import { ExternalLink } from '@automattic/components';
+import { isEmpty } from '@automattic/js-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import { useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';

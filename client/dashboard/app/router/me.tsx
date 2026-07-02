@@ -35,7 +35,7 @@ import {
 	userTransferredPurchasesQuery,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
-import { createRoute, createLazyRoute } from '@tanstack/react-router';
+import { createRoute, createLazyRoute, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/title';
 import {
@@ -83,13 +83,8 @@ export const meRoute = createRoute( {
 			window.location.href = reauthRequiredLink();
 		}
 	},
-} ).lazy( () =>
-	import( '../../me' ).then( ( d ) =>
-		createLazyRoute( 'me' )( {
-			component: d.default,
-		} )
-	)
-);
+	component: Outlet,
+} );
 
 export const meIndexRoute = createRoute( {
 	getParentRoute: () => meRoute,
@@ -103,7 +98,7 @@ export const accountRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: isEnabled( 'dashboard/omnibar' ) ? __( 'Account' ) : __( 'Profile' ),
+				title: __( 'Account' ),
 			},
 		],
 	} ),

@@ -82,6 +82,24 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	height: 100%;
 }
 
+.wpnc-app__error {
+	position: absolute;
+	inset: 0;
+	z-index: 3;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 24px;
+	box-sizing: border-box;
+	background: color-mix(in srgb, var(--color-surface, #fff) 85%, transparent);
+}
+
+.wpnc-app__error-notice {
+	width: 100%;
+	margin: 0;
+}
+
 // Both panes use absolute positioning so they can overlap during the slide.
 .wpnc-app__list-pane,
 .wpnc-app__detail-pane {

@@ -16,6 +16,14 @@ jest.mock( '@automattic/calypso-router', () => ( {
 	default: Object.assign( jest.fn(), { replace: jest.fn() } ),
 } ) );
 
+const mockRecordReaderTracksEvent: jest.Mock = jest.fn( () => ( {
+	type: 'TEST_TRACKS_EVENT',
+} ) );
+
+jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
+	recordReaderTracksEvent: ( ...args: unknown[] ) => mockRecordReaderTracksEvent( ...args ),
+} ) );
+
 const existingSubscription: SiteSubscriptionItem = {
 	ID: 1,
 	URL: 'https://existing.example',
@@ -79,6 +87,7 @@ const SPACE: ReadSpaceDetails = {
 	id: '7',
 	name: 'Work',
 	tags: [ 'tech' ],
+	languages: [ 'en' ],
 	layout: { color: 'blue', icon: 'inbox', view: 'standard-list' },
 	sources: [],
 };
@@ -95,6 +104,7 @@ function mockUpdateEndpoint( onBody?: ( body: Record< string, unknown > ) => voi
 				layout: body.layout ?? SPACE.layout,
 				follows: [],
 				tags: body.tags ?? SPACE.tags,
+				languages: body.languages ?? SPACE.languages,
 			};
 		} );
 }
@@ -132,6 +142,7 @@ function render( {
 describe( 'CustomizeModal', () => {
 	beforeEach( () => {
 		mockSubscriptions = [];
+		mockRecordReaderTracksEvent.mockClear();
 	} );
 
 	afterEach( () => nock.cleanAll() );
@@ -140,8 +151,34 @@ describe( 'CustomizeModal', () => {
 		render();
 
 		expect( screen.getByLabelText( 'Name' ) ).toHaveValue( 'Work' );
-		expect( screen.getByRole( 'radio', { name: 'Blue' } ) ).toBeChecked();
+		// The saved language base code is shown by its display name.
+		expect( screen.getByText( 'English' ) ).toBeVisible();
+		expect(
+			within( screen.getByRole( 'radiogroup', { name: 'Accent color' } ) ).getByRole( 'radio', {
+				name: 'Blue',
+			} )
+		).toBeChecked();
+		expect(
+			screen.getByText(
+				'Changes the color of post titles and actions in this space. Choose None to keep the feed neutral.'
+			)
+		).toBeVisible();
 		expect( screen.getByRole( 'radio', { name: 'Inbox' } ) ).toBeChecked();
+	} );
+
+	it( 'shows the accent color picker after the icon controls', () => {
+		render();
+
+		const iconLabel = screen.getByText( 'Icon' );
+		const iconColorLabel = screen.getByText( 'Icon color' );
+		const accentColorLabel = screen.getByText( 'Accent color' );
+
+		expect(
+			iconLabel.compareDocumentPosition( iconColorLabel ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
+		expect(
+			iconColorLabel.compareDocumentPosition( accentColorLabel ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
 	} );
 
 	it( 'switches between the Identity, Layout and Sources tabs', async () => {
@@ -173,7 +210,11 @@ describe( 'CustomizeModal', () => {
 		const name = screen.getByLabelText( 'Name' );
 		await user.clear( name );
 		await user.type( name, 'Reading' );
-		await user.click( screen.getByRole( 'radio', { name: 'Green' } ) );
+		await user.click(
+			within( screen.getByRole( 'radiogroup', { name: 'Accent color' } ) ).getByRole( 'radio', {
+				name: 'Green',
+			} )
+		);
 
 		await user.click( screen.getByRole( 'tab', { name: 'Layout' } ) );
 		await user.click( screen.getByRole( 'radio', { name: /Classic/ } ) );
@@ -186,7 +227,9 @@ describe( 'CustomizeModal', () => {
 			expect.objectContaining( {
 				title: 'Reading',
 				tags: [ 'tech' ],
-				layout: { color: 'green', icon: 'inbox', view: 'legacy' },
+				// The seeded language is carried through unchanged on save.
+				languages: [ 'en' ],
+				layout: { color: 'green', iconColor: 'blue', icon: 'inbox', view: 'legacy' },
 			} )
 		);
 		const cached = queryClient.getQueryData< ReadSpaceDetails >(
@@ -195,6 +238,14 @@ describe( 'CustomizeModal', () => {
 		expect( cached?.name ).toBe( 'Reading' );
 		expect( cached?.layout.color ).toBe( 'green' );
 		expect( cached?.layout.view ).toBe( 'legacy' );
+		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+			'calypso_reader_spaces_space_updated',
+			{ tag_count: 1, language_count: 1, source_count: 0, layout: 'legacy' }
+		);
+		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+			'calypso_reader_spaces_layout_changed',
+			{ layout: 'legacy' }
+		);
 	} );
 
 	it( 'saves source changes with the rest of the edit draft', async () => {
