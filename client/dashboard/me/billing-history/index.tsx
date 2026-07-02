@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
+import { useLocale } from '../../app/locale';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { billingHistoryRoute } from '../../app/router/me';
 import { DataViews, DataViewsCard } from '../../components/dataviews';
@@ -28,6 +29,7 @@ export default function BillingHistory() {
 	const { data: receipts = emptyReceipts, isLoading } = useQuery( userReceiptsQuery() );
 	const { data: countryList = [] } = useQuery( countryListQuery() );
 
+	const locale = useLocale();
 	const searchParams = billingHistoryRoute.useSearch();
 	const [ defaultView, setDefaultView ] = useState( DEFAULT_VIEW );
 	const { view, updateView, resetView } = usePersistentView( {
@@ -50,8 +52,8 @@ export default function BillingHistory() {
 	} );
 
 	const fields = useMemo(
-		() => getFields( receipts, countryList, view.fields ?? WIDE_FIELDS ),
-		[ receipts, countryList, view.fields ]
+		() => getFields( receipts, countryList, view.fields ?? WIDE_FIELDS, locale ),
+		[ receipts, countryList, view.fields, locale ]
 	);
 
 	const { data: filteredReceipts, paginationInfo } = useMemo( () => {

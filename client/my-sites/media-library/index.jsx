@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import isEqual from 'fast-deep-equal/es6';
-import { some } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -32,14 +31,20 @@ const sourceNeedsKeyring = ( source ) => source !== '' && ! noConnectionNeeded.i
 
 const isConnected = ( state, source ) =>
 	! sourceNeedsKeyring( source ) ||
-	some( getKeyringConnections( state ), { type: 'other', status: 'ok', service: source } );
+	( getKeyringConnections( state ) ?? [] ).some(
+		( item ) => item.type === 'other' && item.status === 'ok' && item.service === source
+	);
 
 const needsKeyring = ( state, source ) => {
 	return (
 		sourceNeedsKeyring( source ) &&
 		! isKeyringConnectionsFetching( state ) &&
-		( ! some( getKeyringConnections( state ), { type: 'other', status: 'ok' } ) ||
-			! some( getKeyringConnections( state ), { type: 'other', status: 'invalid' } ) )
+		( ! ( getKeyringConnections( state ) ?? [] ).some(
+			( item ) => item.type === 'other' && item.status === 'ok'
+		) ||
+			! ( getKeyringConnections( state ) ?? [] ).some(
+				( item ) => item.type === 'other' && item.status === 'invalid'
+			) )
 	);
 };
 

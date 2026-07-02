@@ -1,4 +1,4 @@
-import { get, merge } from 'lodash';
+import { merge } from 'lodash';
 import {
 	POST_STATS_RECEIVE,
 	POST_STATS_REQUEST,
@@ -45,9 +45,9 @@ export const items = withSchemaValidation( itemSchemas, ( state = {}, action ) =
 			return {
 				...state,
 				[ action.siteId ]: {
-					...get( state, [ action.siteId ], {} ),
+					...( state?.[ action.siteId ] ?? {} ),
 					[ action.postId ]: {
-						...get( state, [ action.siteId, action.postId ], {} ),
+						...( state?.[ action.siteId ]?.[ action.postId ] ?? {} ),
 						...action.stats,
 					},
 				},

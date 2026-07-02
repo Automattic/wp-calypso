@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { createFeedbackActions } from '@automattic/agenttic-ui';
 import { renderHook, act } from '@testing-library/react';
 import { useAgentsManagerContext } from '../../contexts';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
@@ -43,6 +44,7 @@ const mockUseAgentsManagerContext = useAgentsManagerContext as jest.MockedFuncti
 const mockFetch = jest.fn().mockResolvedValue( { ok: true } );
 globalThis.fetch = mockFetch;
 
+const mockCreateFeedbackActions = createFeedbackActions as jest.Mock;
 const mockRegisterMessageActions = jest.fn();
 const mockRecordBigSkyTracksEvent = recordBigSkyTracksEvent as jest.MockedFunction<
 	typeof recordBigSkyTracksEvent
@@ -101,18 +103,18 @@ describe( 'useFeedbackAction', () => {
 	};
 
 	describe( 'initialization', () => {
-		it( 'registers feedback actions on mount', () => {
+		it( 'creates feedback actions on mount', () => {
 			renderHook( () => useFeedbackAction( defaultConfig ) );
 
-			expect( mockRegisterMessageActions ).toHaveBeenCalledWith(
+			expect( mockCreateFeedbackActions ).toHaveBeenCalledWith(
 				expect.objectContaining( {
-					id: 'agents-manager-feedback',
-					actions: expect.any( Function ),
+					onFeedback: expect.any( Function ),
+					condition: expect.any( Function ),
 				} )
 			);
 		} );
 
-		it( 'does not register feedback actions when user is not logged in', () => {
+		it( 'does not create feedback actions when user is not logged in', () => {
 			mockUseAgentsManagerContext.mockReturnValue( {
 				agentConfig: defaultAgentConfig,
 				isLoggedIn: false,
@@ -121,17 +123,17 @@ describe( 'useFeedbackAction', () => {
 
 			renderHook( () => useFeedbackAction( defaultConfig ) );
 
-			expect( mockRegisterMessageActions ).not.toHaveBeenCalled();
+			expect( mockCreateFeedbackActions ).not.toHaveBeenCalled();
 		} );
 
-		it( 'only registers once across rerenders', () => {
+		it( 'only creates feedback actions once across rerenders', () => {
 			const { rerender } = renderHook( () => useFeedbackAction( defaultConfig ) );
 			rerender();
 
-			expect( mockRegisterMessageActions ).toHaveBeenCalledTimes( 1 );
+			expect( mockCreateFeedbackActions ).toHaveBeenCalledTimes( 1 );
 		} );
 
-		it( 'resets registration when session changes', () => {
+		it( 'recreates feedback actions when session changes', () => {
 			const { rerender } = renderHook( ( props ) => useFeedbackAction( props ), {
 				initialProps: defaultConfig,
 			} );
@@ -147,7 +149,7 @@ describe( 'useFeedbackAction', () => {
 
 			rerender( defaultConfig );
 
-			expect( mockRegisterMessageActions ).toHaveBeenCalledTimes( 2 );
+			expect( mockCreateFeedbackActions ).toHaveBeenCalledTimes( 2 );
 		} );
 
 		it( 'passes condition that filters to agent messages only', () => {

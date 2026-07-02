@@ -25,12 +25,12 @@ import ReaderLikesIcon from 'calypso/reader/components/icons/likes-icon';
 import ReaderManageSubscriptionsIcon from 'calypso/reader/components/icons/manage-subscriptions-icon';
 import ReaderSavedIcon from 'calypso/reader/components/icons/saved-icon';
 import ReaderSearchIcon from 'calypso/reader/components/icons/search-icon';
+import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { getTagStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { isReaderMSDEnabled } from 'calypso/state/reader-ui/selectors';
 import {
 	toggleReaderSidebarLists,
 	toggleReaderSidebarFollowing,
@@ -89,6 +89,14 @@ const TrackingKeys = {
 		tracksEvent: 'calypso_reader_sidebar_saved_clicked',
 	},
 };
+
+/**
+ * Loads every page of the shared site-subscriptions query once for the whole sidebar.
+ */
+function SyncAllSiteSubscriptions() {
+	useSiteSubscriptions( { fetchAllPages: true } );
+	return null;
+}
 
 export class ReaderSidebar extends Component {
 	state = {};
@@ -260,7 +268,7 @@ export class ReaderSidebar extends Component {
 							className={ ReaderSidebarHelper.itemLinkClass( '/reader/conversations/a8c', path, {
 								'sidebar-streams__conversations': true,
 							} ) }
-							label="A8C Conversations"
+							label="A8C conversations"
 							onNavigate={ this.handleSidebarMenuClick( TrackingKeys.a8cConversations ) }
 							link="/reader/conversations/a8c"
 							customIcon={ <ReaderA8cConversationsIcon size={ 24 } viewBox="-2 -2 24 24" /> }
@@ -270,7 +278,7 @@ export class ReaderSidebar extends Component {
 					<SidebarSeparator />
 
 					<SidebarItem
-						label={ translate( 'New Subscription' ) }
+						label={ translate( 'New subscription' ) }
 						onNavigate={ () => recordReaderTracksEvent( 'calypso_reader_sidebar_add_new_clicked' ) }
 						customIcon={ <Icon className="sidebar__menu-icon" icon={ plus } viewBox="2 0 24 24" /> }
 						link="/reader/new"
@@ -280,14 +288,14 @@ export class ReaderSidebar extends Component {
 						className={ ReaderSidebarHelper.itemLinkClass( '/reader/subscriptions', path, {
 							'sidebar-streams__manage-subscriptions': true,
 						} ) }
-						label={ translate( 'Manage Subscriptions' ) }
+						label={ translate( 'Manage subscriptions' ) }
 						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.manageSubscriptions ) }
 						customIcon={ <ReaderManageSubscriptionsIcon size={ 24 } viewBox="0 0 24 24" /> }
 						link="/reader/subscriptions"
 					/>
 
 					<SidebarItem
-						label={ translate( 'Reader Profile' ) }
+						label={ translate( 'Reader profile' ) }
 						onNavigate={ () => recordReaderTracksEvent( 'calypso_reader_sidebar_profile_clicked' ) }
 						customIcon={
 							<Icon
@@ -318,6 +326,7 @@ export class ReaderSidebar extends Component {
 				onClick={ this.handleClick }
 				siteTitle={ i18n.translate( 'Reader' ) }
 			>
+				<SyncAllSiteSubscriptions />
 				{ this.renderSidebarMenu() }
 				<ReaderSidebarNudges />
 			</GlobalSidebar>
@@ -349,7 +358,6 @@ export default withSubscribedLists(
 							isListsOpen: isListsOpen( state ),
 							isFollowingOpen: isFollowingOpen( state ),
 							isTagsOpen: isTagsOpen( state ),
-							isMSDEnabled: isReaderMSDEnabled( state ),
 						};
 					},
 					{

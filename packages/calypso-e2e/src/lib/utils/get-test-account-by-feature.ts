@@ -115,7 +115,7 @@ export function getTestAccountByFeature(
  * function will come from env variables, so it makes sense to provide a helper
  * to DRY things up.
  *
- * This helper doesn't attempt to be generic and is very dependant on the current
+ * This helper doesn't attempt to be generic and is very dependent on the current
  * feature "layout" (types and criteria definition). Though it shouldn't happen
  * often, changes to the former might require the logic here to be updated, so
  * beware :)

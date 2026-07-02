@@ -38,7 +38,7 @@ const ReaderSiteSubscriptions = (): JSX.Element => {
 			<SiteSubscriptionsListActionsBar />
 			<SiteSubscriptionsList notFoundComponent={ NotFoundSiteSubscriptions } />
 			{ ! searchTerm && <RecommendedSites /> }
-			<UnsubscribedFeedsSearchList hideTitle />
+			<UnsubscribedFeedsSearchList />
 		</VStack>
 	);
 };

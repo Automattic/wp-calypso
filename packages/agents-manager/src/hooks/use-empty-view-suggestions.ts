@@ -144,18 +144,18 @@ export function useEmptyViewSuggestions( {
 		() => [
 			{
 				id: 'getting-started',
-				label: __( 'Getting started with WordPress', '__i18n_text_domain__' ),
-				prompt: __( 'How do I get started with WordPress?', '__i18n_text_domain__' ),
+				label: __( 'Getting started with WordPress', __i18n_text_domain__ ),
+				prompt: __( 'How do I get started with WordPress?', __i18n_text_domain__ ),
 			},
 			{
 				id: 'create-post',
-				label: __( 'Create a blog post', '__i18n_text_domain__' ),
-				prompt: __( 'How do I create a blog post?', '__i18n_text_domain__' ),
+				label: __( 'Create a blog post', __i18n_text_domain__ ),
+				prompt: __( 'How do I create a blog post?', __i18n_text_domain__ ),
 			},
 			{
 				id: 'customize-site',
-				label: __( 'Customize my site', '__i18n_text_domain__' ),
-				prompt: __( 'How can I customize my site?', '__i18n_text_domain__' ),
+				label: __( 'Customize my site', __i18n_text_domain__ ),
+				prompt: __( 'How can I customize my site?', __i18n_text_domain__ ),
 			},
 		],
 		[]
@@ -226,9 +226,15 @@ export function useEmptyViewSuggestions( {
 			return;
 		}
 
+		// Opt-out: a loaded provider can suppress the built-in defaults for
+		// its surfaces (e.g. WooCommerce AI doesn't want WordPress-flavored
+		// chips like "Create a blog post" on a Woo admin chat).
+		const suppressDefaults = loadedProviders.suppressEmptyViewDefaults === true;
+		const fallbackSuggestions = suppressDefaults ? [] : defaultSuggestions;
+
 		if ( ! hasBigSkySuggestions ) {
 			// No Big Sky suggestions provider, use defaults immediately
-			setEmptyViewSuggestions( defaultSuggestions );
+			setEmptyViewSuggestions( fallbackSuggestions );
 		} else {
 			// Big Sky provides suggestions and store is ready - get filtered suggestions
 			const providerSuggestions = loadedProviders.getEmptyViewSuggestions?.() ?? [];
@@ -248,7 +254,7 @@ export function useEmptyViewSuggestions( {
 				// Provider exists but returned empty/undefined (e.g. lazy proxy
 				// race where the IIFE hasn't set window globals yet). Fall back
 				// to defaults so the AM still renders.
-				setEmptyViewSuggestions( defaultSuggestions );
+				setEmptyViewSuggestions( fallbackSuggestions );
 			}
 		}
 	}, [

@@ -102,3 +102,5 @@ export const BasicMetrics = forwardRef(
 		);
 	}
 );
+
+BasicMetrics.displayName = 'BasicMetrics';

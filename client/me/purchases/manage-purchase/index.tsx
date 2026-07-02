@@ -617,12 +617,14 @@ class ManagePurchase extends Component<
 		if ( ! purchase || ! isPlan( purchase ) ) {
 			return false;
 		}
+		if ( ! purchase.isPlanTypeDowngradable ) {
+			return false;
+		}
 		const expiredOrRefundDowngrade =
 			config.isEnabled( 'plans/expired-downgrade' ) &&
 			( isInExpirationGracePeriod( purchase ) ||
 				isWithinRefundWindowDowngradeEligible( purchase ) );
-		const delayedDowngrade =
-			config.isEnabled( 'plans/delayed-downgrade' ) && purchase.isPlanTypeDowngradable;
+		const delayedDowngrade = config.isEnabled( 'plans/delayed-downgrade' );
 		return expiredOrRefundDowngrade || delayedDowngrade;
 	}
 

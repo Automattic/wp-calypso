@@ -171,10 +171,14 @@ describe( 'CreateSpaceModal', () => {
 		mockCreateEndpoint( 'Reading', onBody );
 
 		await user.type( screen.getByLabelText( 'Name' ), 'Reading' );
-		await user.click( screen.getByRole( 'radio', { name: 'Green' } ) );
+		await user.click(
+			within( screen.getByRole( 'radiogroup', { name: 'Accent color' } ) ).getByRole( 'radio', {
+				name: 'Green',
+			} )
+		);
 		await user.click( screen.getByRole( 'radio', { name: 'Star' } ) );
 		await user.click( screen.getByRole( 'tab', { name: 'Layout' } ) );
-		await user.click( screen.getByRole( 'radio', { name: /Legacy/ } ) );
+		await user.click( screen.getByRole( 'radio', { name: /Classic/ } ) );
 		await user.click( screen.getByRole( 'tab', { name: 'Sources' } ) );
 		await user.click( screen.getByRole( 'button', { name: 'Add Example Blog' } ) );
 		await user.click( screen.getByRole( 'button', { name: 'Create' } ) );
@@ -186,7 +190,7 @@ describe( 'CreateSpaceModal', () => {
 				title: 'Reading',
 				feeds: [ 456 ],
 				tags: [],
-				layout: { color: 'green', icon: 'star', view: 'legacy' },
+				layout: { color: 'green', iconColor: 'blue', icon: 'star', view: 'legacy' },
 			} )
 		);
 		const spaces = queryClient.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey );

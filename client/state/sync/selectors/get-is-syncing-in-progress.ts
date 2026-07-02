@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { compose } from 'redux';
 import { getSiteSync } from 'calypso/state/sync/selectors/get-site-sync';
 import type { AppState } from 'calypso/types';
@@ -11,7 +10,7 @@ import 'calypso/state/sync/init';
  * @returns {boolean} if syncing is in progress or not
  */
 export const getIsSyncingInProgressData = ( state: AppState ): boolean =>
-	get( state, 'isSyncingInProgress', false );
+	state?.isSyncingInProgress ?? false;
 
 /**
  * Returns if syncing is in progress or not

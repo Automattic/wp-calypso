@@ -828,7 +828,7 @@ export default function CheckoutMain( {
 				translate( 'An error occurred during your purchase.' )
 			);
 
-			reduxDispatch( errorNotice( errorNoticeText ) );
+			reduxDispatch( errorNotice( errorNoticeText, { id: 'checkout-payment-error' } ) );
 
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_payment_error', {

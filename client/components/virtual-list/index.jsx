@@ -1,11 +1,19 @@
-import { AutoSizer, List } from '@automattic/react-virtualized';
-import { debounce } from '@wordpress/compose';
+import { useWindowVirtualizer } from '@tanstack/react-virtual';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { cloneElement, createRef, Component } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 const noop = () => {};
+
+// Used only as a last-resort estimate when a consumer provides neither a
+// `getRowHeight` value nor a `defaultRowHeight`. Real heights are measured from
+// the DOM once each row renders, so this just seeds the initial layout.
+const FALLBACK_ROW_HEIGHT = 100;
+
+// Rows rendered above and below the visible range, mirroring the prefetch feel
+// of react-virtualized's default overscan.
+const OVERSCAN_ROW_COUNT = 5;
 
 function range( start, end ) {
 	if ( end < start ) {
@@ -15,180 +23,163 @@ function range( start, end ) {
 	return Array.from( { length }, ( _, i ) => i + start );
 }
 
-class VirtualList extends Component {
-	static propTypes = {
-		items: PropTypes.array,
-		lastPage: PropTypes.number,
-		loading: PropTypes.bool,
-		getRowHeight: PropTypes.func,
-		renderRow: PropTypes.func,
-		renderQuery: PropTypes.func,
-		perPage: PropTypes.number,
-		loadOffset: PropTypes.number,
-		query: PropTypes.object,
-		defaultRowHeight: PropTypes.number,
-		height: PropTypes.number,
-		scrollTop: PropTypes.number,
-		translate: PropTypes.func,
-	};
+/**
+ * A window-scrolled, dynamically-measured virtualized list built on TanStack
+ * Virtual. The list lays out at its full content height within the page flow
+ * and the window itself is the scroll container, so no surrounding scroll
+ * wrapper is required. Row heights are estimated from `getRowHeight` and then
+ * measured from the DOM, and pages are requested as the visible range moves.
+ * @param {Object} props
+ * @param {Array} [props.items] The items backing the list.
+ * @param {number} [props.lastPage] The last page available; caps page requests.
+ * @param {boolean} [props.loading] Whether a page is currently loading.
+ * @param {Function} [props.getRowHeight] `({ index }) => number` height estimate.
+ * @param {Function} [props.renderRow] `({ index }) => ReactNode` row renderer.
+ * @param {number} [props.perPage] Items per page, used to map indexes to pages.
+ * @param {number} [props.loadOffset] Rows of lookahead when requesting pages.
+ * @param {Object} [props.query] Active query; `query.number` overrides perPage.
+ * @param {number} [props.defaultRowHeight] Estimate used before measurement.
+ * @param {Function} [props.onRequestPages] `( pages ) => void` page requester.
+ * @param {string} [props.className] Extra class on the list container.
+ */
+function VirtualList( {
+	items = [],
+	lastPage = 0,
+	loading = false,
+	getRowHeight = noop,
+	renderRow = noop,
+	perPage = 100,
+	loadOffset = 10,
+	query = {},
+	defaultRowHeight,
+	onRequestPages = noop,
+	className,
+} ) {
+	const translate = useTranslate();
 
-	static defaultProps = {
-		items: [],
-		lastPage: 0,
-		loading: false,
-		getRowHeight: noop,
-		renderRow: noop,
-		perPage: 100,
-		loadOffset: 10,
-		query: {},
-	};
+	// State (not a ref) so the scroll margin recomputes once the list attaches.
+	const [ listElement, setListElement ] = useState( null );
+	const [ scrollMargin, setScrollMargin ] = useState( 0 );
 
-	rowHeights = {};
-	listRef = createRef();
-
-	queueRecomputeRowHeights = debounce( this.recomputeRowHeights, 0 );
-
-	componentDidUpdate( prevProps ) {
-		const forceUpdate =
-			( prevProps.loading && ! this.props.loading ) || ( ! prevProps.items && this.props.items );
-
-		if ( forceUpdate ) {
-			this.listRef.current.forceUpdateGrid();
+	useEffect( () => {
+		if ( ! listElement ) {
+			return;
 		}
+		const measure = () => {
+			const next = listElement.getBoundingClientRect().top + window.scrollY;
+			setScrollMargin( ( current ) => ( current === next ? current : next ) );
+		};
+		measure();
+		const observer = new ResizeObserver( measure );
+		observer.observe( listElement );
+		observer.observe( document.body );
+		return () => observer.disconnect();
+	}, [ listElement ] );
 
-		if ( this.props.items !== prevProps.items ) {
-			this.recomputeRowHeights();
+	// An extra trailing row stands in as a loading placeholder while a page is in
+	// flight or before the first page resolves; the consumer's `renderRow`
+	// renders it from an out-of-range index.
+	const showPlaceholderRow = loading || ! items;
+	const rowCount = ( items?.length ?? 0 ) + ( showPlaceholderRow ? 1 : 0 );
+
+	const estimateSize = useCallback(
+		( index ) => {
+			const measured = getRowHeight( { index } );
+			return typeof measured === 'number' ? measured : defaultRowHeight ?? FALLBACK_ROW_HEIGHT;
+		},
+		[ getRowHeight, defaultRowHeight ]
+	);
+
+	const virtualizer = useWindowVirtualizer( {
+		count: rowCount,
+		estimateSize,
+		overscan: OVERSCAN_ROW_COUNT,
+		scrollMargin,
+	} );
+
+	// Re-measure when the backing items change so stale heights are not reused
+	// for indexes whose content changed (e.g. a new search).
+	useEffect( () => {
+		virtualizer.measure();
+	}, [ items, virtualizer ] );
+
+	const virtualItems = virtualizer.getVirtualItems();
+	const firstIndex = virtualItems[ 0 ]?.index;
+	const lastIndex = virtualItems[ virtualItems.length - 1 ]?.index;
+
+	// Request the pages covering the visible range (plus a lookahead offset),
+	// mirroring react-virtualized's onRowsRendered + InfiniteLoader behaviour.
+	useEffect( () => {
+		if ( firstIndex === undefined || lastIndex === undefined ) {
+			return;
 		}
-	}
-
-	recomputeRowHeights() {
-		this.listRef.current?.recomputeRowHeights();
-	}
-
-	getPageForIndex( index ) {
-		const { query, lastPage, perPage } = this.props;
 		const rowsPerPage = query.number || perPage;
-		const page = Math.ceil( index / rowsPerPage );
-
-		return Math.max( Math.min( page, lastPage || Infinity ), 1 );
-	}
-
-	setRequestedPages = ( { startIndex, stopIndex } ) => {
-		const { loadOffset, onRequestPages } = this.props;
+		const getPageForIndex = ( index ) => {
+			const page = Math.ceil( index / rowsPerPage );
+			return Math.max( Math.min( page, lastPage || Infinity ), 1 );
+		};
 		const pagesToRequest = range(
-			this.getPageForIndex( startIndex - loadOffset ),
-			this.getPageForIndex( stopIndex + loadOffset )
+			getPageForIndex( firstIndex - loadOffset ),
+			getPageForIndex( lastIndex + loadOffset )
 		);
-
-		if ( ! pagesToRequest.length ) {
-			return;
+		if ( pagesToRequest.length ) {
+			onRequestPages( pagesToRequest );
 		}
+	}, [ firstIndex, lastIndex, query.number, perPage, lastPage, loadOffset, onRequestPages ] );
 
-		onRequestPages( pagesToRequest );
-	};
+	const classes = clsx( 'virtual-list', className, { 'is-loading': loading } );
 
-	hasNoSearchResults() {
+	// Loaded with no items to show.
+	if ( rowCount === 0 ) {
 		return (
-			! this.props.loading &&
-			this.props.items &&
-			! this.props.items.length &&
-			this.props.query.search &&
-			!! this.props.query.search.length
-		);
-	}
-
-	hasNoRows() {
-		return ! this.props.loading && this.props.items && ! this.props.items.length;
-	}
-
-	getRowCount() {
-		let count = 0;
-
-		if ( this.props.items ) {
-			count += this.props.items.length;
-		}
-
-		if ( this.props.loading || ! this.props.items ) {
-			count += 1;
-		}
-
-		return count;
-	}
-
-	renderNoResults = () => {
-		if ( this.hasNoRows() ) {
-			return (
-				<div key="no-results" className="virtual-list__list-row is-empty">
-					{ this.props.translate( 'No results found.' ) }
-				</div>
-			);
-		}
-	};
-
-	setRowRef = ( index ) => ( rowRef ) => {
-		if ( ! rowRef ) {
-			return;
-		}
-
-		// By falling back to the row height constant, we avoid an unnecessary
-		// forced update if all of the rows match our guessed height
-		const height = this.rowHeights[ index ] || this.props.defaultRowHeight;
-		const nextHeight = rowRef.clientHeight;
-		this.rowHeights[ index ] = nextHeight;
-
-		// If height changes, wait until the end of the current call stack and
-		// fire a single forced update to recompute the row heights
-		if ( height !== nextHeight ) {
-			this.queueRecomputeRowHeights();
-		}
-	};
-
-	renderRow = ( props ) => {
-		const element = this.props.renderRow( props );
-		if ( ! element ) {
-			return element;
-		}
-		return cloneElement( element, { ref: this.setRowRef( props.index ) } );
-	};
-
-	cellRendererWrapper = ( { key, style, ...rest } ) => {
-		return (
-			<div key={ key } style={ style }>
-				{ this.renderRow( rest ) }
+			<div className={ classes }>
+				<div className="virtual-list__list-row is-empty">{ translate( 'No results found.' ) }</div>
 			</div>
 		);
-	};
-
-	render() {
-		const rowCount = this.getRowCount();
-		const { className, loading, defaultRowHeight, getRowHeight, height, scrollTop } = this.props;
-		const classes = clsx( 'virtual-list', className, {
-			'is-loading': loading,
-		} );
-
-		return (
-			<AutoSizer disableHeight>
-				{ ( { width } ) => (
-					<div className={ classes }>
-						<List
-							ref={ this.listRef }
-							onRowsRendered={ this.setRequestedPages }
-							rowCount={ rowCount }
-							estimatedRowSize={ defaultRowHeight }
-							rowHeight={ getRowHeight }
-							rowRenderer={ this.cellRendererWrapper }
-							noRowsRenderer={ this.renderNoResults }
-							className={ className }
-							width={ width }
-							height={ height }
-							scrollTop={ scrollTop }
-							autoHeight
-						/>
-					</div>
-				) }
-			</AutoSizer>
-		);
 	}
+
+	return (
+		<div ref={ setListElement } className={ classes }>
+			<div
+				style={ {
+					position: 'relative',
+					inlineSize: '100%',
+					blockSize: virtualizer.getTotalSize(),
+				} }
+			>
+				{ virtualItems.map( ( virtualRow ) => (
+					<div
+						key={ virtualRow.key }
+						data-index={ virtualRow.index }
+						ref={ virtualizer.measureElement }
+						style={ {
+							position: 'absolute',
+							insetBlockStart: 0,
+							insetInlineStart: 0,
+							inlineSize: '100%',
+							transform: `translateY(${ virtualRow.start - scrollMargin }px)`,
+						} }
+					>
+						{ renderRow( { index: virtualRow.index } ) }
+					</div>
+				) ) }
+			</div>
+		</div>
+	);
 }
 
-export default localize( VirtualList );
+VirtualList.propTypes = {
+	items: PropTypes.array,
+	lastPage: PropTypes.number,
+	loading: PropTypes.bool,
+	getRowHeight: PropTypes.func,
+	renderRow: PropTypes.func,
+	perPage: PropTypes.number,
+	loadOffset: PropTypes.number,
+	query: PropTypes.object,
+	defaultRowHeight: PropTypes.number,
+	onRequestPages: PropTypes.func,
+	className: PropTypes.string,
+};
+
+export default VirtualList;

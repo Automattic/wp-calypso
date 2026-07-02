@@ -2,7 +2,9 @@ import {
 	activeAgencyQuery,
 	agencyQuery,
 	agencyResourcesQuery,
+	mcpSettingsQuery,
 	queryClient,
+	rawUserPreferencesQuery,
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
@@ -18,7 +20,10 @@ const agencyRoute = createRoute( {
 			return; // Don't redirect on hover/intent preloads.
 		}
 
-		const agency = await queryClient.ensureQueryData( agencyQuery() );
+		const [ agency ] = await Promise.all( [
+			queryClient.ensureQueryData( agencyQuery() ),
+			queryClient.ensureQueryData( activeAgencyQuery() ),
+		] );
 		if ( agency.isClientUser ) {
 			throw redirectAsNotAllowed( { to: '/client/subscriptions' } );
 		}
@@ -103,11 +108,85 @@ const learnRoute = createRoute( {
 	)
 );
 
+// Prefetch MCP settings for the screens that read them. The connect screen is
+// static, so it intentionally doesn't depend on this request.
+const ensureMcpSettings = async () => {
+	const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+	if ( agency?.id ) {
+		await queryClient.ensureQueryData( mcpSettingsQuery( agency.id ) );
+	}
+};
+
+const mcpRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'MCP' ) } ] } ),
+	getParentRoute: () => agencyRoute,
+	path: 'resources/ai-mcp',
+	beforeLoad: async ( { cause } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		if ( ! agency?.mcp?.allowed ) {
+			throw redirectAsNotAllowed( { to: '/overview' } );
+		}
+	},
+} );
+
+const mcpOverviewRoute = createRoute( {
+	getParentRoute: () => mcpRoute,
+	path: '/',
+	loader: ensureMcpSettings,
+} ).lazy( () =>
+	import( '../../agency/resources/mcp' ).then( ( d ) =>
+		createLazyRoute( 'resources-mcp' )( { component: d.default } )
+	)
+);
+
+const mcpAvailableToolsRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Available tools' ) } ] } ),
+	getParentRoute: () => mcpRoute,
+	path: 'tools',
+	loader: ensureMcpSettings,
+} ).lazy( () =>
+	import( '../../agency/resources/mcp/available-tools' ).then( ( d ) =>
+		createLazyRoute( 'resources-mcp-tools' )( { component: d.default } )
+	)
+);
+
+const mcpConnectRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Connect external AI assistant' ) } ] } ),
+	getParentRoute: () => mcpRoute,
+	path: 'connect',
+} ).lazy( () =>
+	import( '../../agency/resources/mcp/connect-agent' ).then( ( d ) =>
+		createLazyRoute( 'resources-mcp-connect' )( { component: d.default } )
+	)
+);
+
+// `/sites` – agency-managed sites
+export const agencySitesRoute = createRoute( {
+	head: () => ( {
+		meta: [ { title: __( 'Sites' ) } ],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'sites',
+	loader: () => queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+} ).lazy( () =>
+	import( '../../agency/sites' ).then( ( d ) =>
+		createLazyRoute( 'agency-sites' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createAgencyRoutes = () => [
 	agencyRoute.addChildren( [
 		agencyOverviewRoute,
 		agencyTiersRoute,
 		exclusiveOffersRoute,
 		learnRoute,
+		mcpRoute.addChildren( [ mcpOverviewRoute, mcpAvailableToolsRoute, mcpConnectRoute ] ),
+		agencySitesRoute,
 	] ),
 ];

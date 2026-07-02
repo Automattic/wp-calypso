@@ -5,9 +5,22 @@
  * root config and the overrides that replace, rather than merge with, it) so the
  * guard stays identical everywhere. Replacements live in `@automattic/js-utils`,
  * or are native array methods.
+ *
+ * Note: `no-restricted-imports` only covers ES `import`/deep-import syntax — not
+ * namespace member calls (`_.forEach`) or CommonJS `require( 'lodash' )`. The
+ * `eslint-plugin-you-dont-need-lodash-underscore` rules in the root config catch
+ * those member-call/namespace shapes for the functions they cover, so enable the
+ * matching rule there when a function's migration is complete (these detailed
+ * messages still guide the named-import case mid-migration).
+ *
+ * Both entries are intended to coexist permanently: this one stays as the
+ * primary, more-actionable message for the named-import path, and the plugin
+ * rule is the enforcement backstop for the namespace/`require` shapes it alone
+ * can see. There is overlap on the named-import call site by design.
  */
 
 const JS_UTILS_NAMES = [
+	'isEmpty',
 	'keyBy',
 	'shuffle',
 	'uniqBy',
@@ -15,6 +28,7 @@ const JS_UTILS_NAMES = [
 	'pick',
 	'omit',
 	'mapValues',
+	'memoize',
 	'pickBy',
 	'omitBy',
 	'groupBy',
@@ -66,6 +80,9 @@ const FINDINDEX_MESSAGE =
 	'Please use native `array.findIndex( ( item ) => … )` instead of lodash `findIndex`.';
 const CLONE_MESSAGE =
 	'Please use a spread copy (`{ ...obj }` / `[ ...arr ]`) instead of lodash `clone`.';
+const CLONE_DEEP_MESSAGE =
+	'Please use native `structuredClone` for plain serializable data instead of lodash `cloneDeep`. ' +
+	'For object graphs that contain functions, class instances, or symbol keys, write a small local clone.';
 const PROPERTY_MESSAGE =
 	'Please use an arrow function (`( obj ) => obj.key`) instead of lodash `property`.';
 // The js-utils maxBy/minBy rank by numeric iteratee values only — not lodash's
@@ -89,6 +106,52 @@ const REJECT_MESSAGE =
 	'(expand object-match shorthands to a predicate, and guard nullable collections with `?? []`).';
 const CONCAT_MESSAGE =
 	'Please use native `array.concat( … )` (or `[].concat( ...arrays )`) instead of lodash `concat`.';
+const REDUCE_MESSAGE =
+	'Please use native `array.reduce()` (or `Object.entries( obj ).reduce()` to fold an object) ' +
+	'instead of lodash `reduce`. Guard nullable collections with `?? []` / `?? {}`.';
+const FIND_MESSAGE =
+	'Please use native `array.find( ( item ) => … )` (or `Object.values( obj ).find( … )` for objects) ' +
+	'instead of lodash `find`. Expand iteratee shorthands to a predicate and guard nullable collections with `?? []`.';
+const FINDLAST_MESSAGE =
+	'Please use native `array.findLast( ( item ) => … )` instead of lodash `findLast`.';
+const HAS_MESSAGE =
+	'Please use native `Object.hasOwn( obj, key )` instead of lodash `has` for single-key checks ' +
+	'(expand dotted-path checks manually with optional chaining).';
+const XOR_MESSAGE =
+	'Please compute the symmetric difference natively, e.g. ' +
+	'`Array.from( new Set( [ ...a, ...b ] ) ).filter( ( item ) => a.includes( item ) !== b.includes( item ) )`, ' +
+	'instead of lodash `xor` (the Set dedupes to match lodash; you can drop it when the inputs are known unique).';
+const SOME_MESSAGE =
+	'Please use native `array.some( ( item ) => … )` (or `Object.values( obj ).some( … )` for objects) ' +
+	'instead of lodash `some`. Expand iteratee shorthands to a predicate and guard nullable collections with `?? []`.';
+const FOREACH_MESSAGE =
+	'Please use native `array.forEach( … )` instead of lodash `forEach`. Use ' +
+	'`Object.values( obj ).forEach( … )` / `Object.entries( obj ).forEach( ( [ key, value ] ) => … )` for objects, ' +
+	'`Array.from( … ).forEach( … )` for DOM collections, guard nullable collections with `?? []`, and convert ' +
+	'early-exit callbacks (those returning `false`) to a `for…of` loop with `break`.';
+const FILTER_MESSAGE =
+	'Please use native `array.filter( ( item ) => … )` (or `Object.values( obj ).filter( … )` for objects) ' +
+	'instead of lodash `filter`. Expand iteratee shorthands to a predicate, use `Array.from( … )` for DOM ' +
+	'collections (a NodeList has no native `.filter`), and guard nullable collections with `?? []`.';
+const MAP_MESSAGE =
+	'Please use native `array.map( ( item ) => … )` instead of lodash `map`. For objects use ' +
+	'`Object.values( obj ).map( … )`, or `Object.entries( obj ).map( ( [ key, value ] ) => … )` when the ' +
+	'callback uses the key (lodash passes `( value, key )`). Expand pluck shorthands with optional chaining ' +
+	'(a property-name iteratee becomes `( item ) => item?.prop`), use `Array.from( … )` for DOM collections, ' +
+	'and guard nullable collections with `?? []`.';
+
+const UNESCAPE_MESSAGE =
+	'Please decode the basic HTML entities with a small `string.replace` (over `&amp;`/`&lt;`/`&gt;`/`&quot;`/`&#39;`) instead of lodash `unescape`.';
+const SAMPLESIZE_MESSAGE =
+	'Please write a small Fisher–Yates sampler instead of lodash `sampleSize`.';
+const MATCHES_MESSAGE =
+	'Please use an explicit predicate (`( item ) => item?.key === value && …`) instead of lodash `matches`.';
+const MATCHESPROPERTY_MESSAGE =
+	'Please use an explicit predicate (`( item ) => item?.key === value`) instead of lodash `matchesProperty`.';
+const UPDATE_MESSAGE =
+	'Please write an explicit path update (walk/create the path, then apply the updater) instead of lodash `update`.';
+const CLONEDEEPWITH_MESSAGE =
+	'Please use `structuredClone` plus a targeted override, or a small recursive clone, instead of lodash `cloneDeepWith`.';
 
 const paths = [
 	{ name: 'lodash', importNames: JS_UTILS_NAMES, message: JS_UTILS_MESSAGE },
@@ -108,12 +171,28 @@ const paths = [
 	{ name: 'lodash', importNames: [ 'findKey' ], message: FINDKEY_MESSAGE },
 	{ name: 'lodash', importNames: [ 'findIndex' ], message: FINDINDEX_MESSAGE },
 	{ name: 'lodash', importNames: [ 'clone' ], message: CLONE_MESSAGE },
+	{ name: 'lodash', importNames: [ 'cloneDeep' ], message: CLONE_DEEP_MESSAGE },
 	{ name: 'lodash', importNames: [ 'property' ], message: PROPERTY_MESSAGE },
 	{ name: 'lodash', importNames: [ 'maxBy', 'minBy' ], message: EXTREMUM_MESSAGE },
 	{ name: 'lodash', importNames: [ 'partition' ], message: PARTITION_MESSAGE },
 	{ name: 'lodash', importNames: [ 'sortBy', 'orderBy' ], message: SORT_MESSAGE },
 	{ name: 'lodash', importNames: [ 'reject' ], message: REJECT_MESSAGE },
 	{ name: 'lodash', importNames: [ 'concat' ], message: CONCAT_MESSAGE },
+	{ name: 'lodash', importNames: [ 'reduce' ], message: REDUCE_MESSAGE },
+	{ name: 'lodash', importNames: [ 'find' ], message: FIND_MESSAGE },
+	{ name: 'lodash', importNames: [ 'findLast' ], message: FINDLAST_MESSAGE },
+	{ name: 'lodash', importNames: [ 'has' ], message: HAS_MESSAGE },
+	{ name: 'lodash', importNames: [ 'xor' ], message: XOR_MESSAGE },
+	{ name: 'lodash', importNames: [ 'some' ], message: SOME_MESSAGE },
+	{ name: 'lodash', importNames: [ 'forEach' ], message: FOREACH_MESSAGE },
+	{ name: 'lodash', importNames: [ 'filter' ], message: FILTER_MESSAGE },
+	{ name: 'lodash', importNames: [ 'map' ], message: MAP_MESSAGE },
+	{ name: 'lodash', importNames: [ 'unescape' ], message: UNESCAPE_MESSAGE },
+	{ name: 'lodash', importNames: [ 'sampleSize' ], message: SAMPLESIZE_MESSAGE },
+	{ name: 'lodash', importNames: [ 'matches' ], message: MATCHES_MESSAGE },
+	{ name: 'lodash', importNames: [ 'matchesProperty' ], message: MATCHESPROPERTY_MESSAGE },
+	{ name: 'lodash', importNames: [ 'update' ], message: UPDATE_MESSAGE },
+	{ name: 'lodash', importNames: [ 'cloneDeepWith' ], message: CLONEDEEPWITH_MESSAGE },
 ];
 
 // Deep `lodash/<fn>` imports bypass the named-import paths above.
@@ -135,12 +214,78 @@ const patterns = [
 	{ group: [ 'lodash/findKey' ], message: FINDKEY_MESSAGE },
 	{ group: [ 'lodash/findIndex' ], message: FINDINDEX_MESSAGE },
 	{ group: [ 'lodash/clone' ], message: CLONE_MESSAGE },
+	{ group: [ 'lodash/cloneDeep' ], message: CLONE_DEEP_MESSAGE },
 	{ group: [ 'lodash/property' ], message: PROPERTY_MESSAGE },
 	{ group: [ 'lodash/maxBy', 'lodash/minBy' ], message: EXTREMUM_MESSAGE },
 	{ group: [ 'lodash/partition' ], message: PARTITION_MESSAGE },
 	{ group: [ 'lodash/sortBy', 'lodash/orderBy' ], message: SORT_MESSAGE },
 	{ group: [ 'lodash/reject' ], message: REJECT_MESSAGE },
 	{ group: [ 'lodash/concat' ], message: CONCAT_MESSAGE },
+	{ group: [ 'lodash/reduce' ], message: REDUCE_MESSAGE },
+	{ group: [ 'lodash/find' ], message: FIND_MESSAGE },
+	{ group: [ 'lodash/findLast' ], message: FINDLAST_MESSAGE },
+	{ group: [ 'lodash/has' ], message: HAS_MESSAGE },
+	{ group: [ 'lodash/xor' ], message: XOR_MESSAGE },
+	{ group: [ 'lodash/some' ], message: SOME_MESSAGE },
+	{ group: [ 'lodash/forEach' ], message: FOREACH_MESSAGE },
+	{ group: [ 'lodash/filter' ], message: FILTER_MESSAGE },
+	{ group: [ 'lodash/map' ], message: MAP_MESSAGE },
+	{ group: [ 'lodash/unescape' ], message: UNESCAPE_MESSAGE },
+	{ group: [ 'lodash/sampleSize' ], message: SAMPLESIZE_MESSAGE },
+	{ group: [ 'lodash/matches' ], message: MATCHES_MESSAGE },
+	{ group: [ 'lodash/matchesProperty' ], message: MATCHESPROPERTY_MESSAGE },
+	{ group: [ 'lodash/update' ], message: UPDATE_MESSAGE },
+	{ group: [ 'lodash/cloneDeepWith' ], message: CLONEDEEPWITH_MESSAGE },
 ];
 
-module.exports = { paths, patterns };
+// Functions whose namespace-member (`_.fn( … )` / `lodash.fn( … )`) and CommonJS
+// shapes `no-restricted-imports` cannot see. Most migrated functions are
+// backstopped by the `eslint-plugin-you-dont-need-lodash-underscore` rules in
+// the root config, but that plugin ships no rule for these, so they get their
+// own namespace/CommonJS guards below.
+const NAMESPACE_GUARDED = [
+	{ name: 'isEmpty', message: JS_UTILS_MESSAGE },
+	{ name: 'memoize', message: JS_UTILS_MESSAGE },
+	{ name: 'unescape', message: UNESCAPE_MESSAGE },
+	{ name: 'sampleSize', message: SAMPLESIZE_MESSAGE },
+	{ name: 'matches', message: MATCHES_MESSAGE },
+	{ name: 'matchesProperty', message: MATCHESPROPERTY_MESSAGE },
+	{ name: 'update', message: UPDATE_MESSAGE },
+	{ name: 'cloneDeepWith', message: CLONEDEEPWITH_MESSAGE },
+];
+
+// `no-restricted-properties`: namespace member access (`_.fn( … )` / `lodash.fn( … )`).
+const properties = NAMESPACE_GUARDED.flatMap( ( { name, message } ) => [
+	{ object: '_', property: name, message },
+	{ object: 'lodash', property: name, message },
+] );
+
+// `no-restricted-modules`: the deep CommonJS require (`require( 'lodash/fn' )`),
+// which matches by path only.
+const modules = NAMESPACE_GUARDED.map( ( { name, message } ) => ( {
+	name: `lodash/${ name }`,
+	message,
+} ) );
+
+// `no-restricted-syntax`: the CommonJS forms path-matching can't catch — a
+// destructured `const { fn } = require( 'lodash' )` and a member access
+// `require( 'lodash' ).fn`.
+const syntax = NAMESPACE_GUARDED.flatMap( ( { name, message } ) => [
+	{
+		selector: `VariableDeclarator[init.callee.name='require'][init.arguments.0.value='lodash'] ObjectPattern > Property[key.name='${ name }']`,
+		message,
+	},
+	{
+		selector: `MemberExpression[object.callee.name='require'][object.arguments.0.value='lodash'][property.name='${ name }']`,
+		message,
+	},
+] );
+
+// Residual gap: an aliased lodash namespace bound to an arbitrary name
+// (`const l = require( 'lodash' ); l.isEmpty( … )`) is not caught for any of
+// the `NAMESPACE_GUARDED` functions. These are all name-based rules; resolving
+// an arbitrary alias needs binding/scope tracking, which only a custom rule
+// provides. Left unguarded deliberately: app code is ESM (covered by the import
+// rules above), and CommonJS lodash exists only in build tooling.
+
+module.exports = { paths, patterns, properties, modules, syntax };

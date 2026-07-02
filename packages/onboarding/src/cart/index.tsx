@@ -6,7 +6,6 @@ import { getTld, isFreeSubdomainQuery } from '@automattic/domain-search';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import {
 	setupSiteAfterCreation,
 	isTailoredSignupFlow,
@@ -310,7 +309,7 @@ export async function setThemeOnSite(
 	themeSlugWithRepo: string,
 	themeStyleVariation?: string
 ) {
-	if ( isEmpty( themeSlugWithRepo ) ) {
+	if ( ! themeSlugWithRepo ) {
 		return;
 	}
 

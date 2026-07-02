@@ -23,6 +23,9 @@ export interface Agency {
 	name: string;
 	url: string;
 	tier?: AgencyTier;
+	mcp?: {
+		allowed: boolean;
+	};
 	influenced_revenue?: number;
 	created_at: string;
 	billing_system?: 'billingdragon' | 'legacy';
@@ -33,6 +36,30 @@ export interface Agency {
  * Either an array of agencies (agency user) or a client-user payload.
  */
 export type AgencyApiResponse = Agency[] | { is_client_user: boolean; billing_type?: string };
+
+export interface McpAvailableAbility {
+	name: string;
+	title: string;
+	description: string;
+	category: string;
+	enabled: boolean;
+}
+
+export interface McpAvailableCategory {
+	slug: string;
+	label: string;
+}
+
+export interface McpSettings {
+	enabled: boolean;
+	available_categories: McpAvailableCategory[];
+	available_abilities: McpAvailableAbility[];
+}
+
+export interface McpSettingsUpdate {
+	enabled?: boolean;
+	abilities?: Record< string, boolean >;
+}
 
 export interface AgencyBlog {
 	name: string;

@@ -18,6 +18,7 @@ jest.mock( 'calypso/reader/hooks/use-infinite-list', () => ( {
 		items: [],
 		measureElement: jest.fn(),
 		scrollMargin: 0,
+		scrollToIndex: jest.fn(),
 	} ) ),
 } ) );
 
@@ -32,6 +33,15 @@ jest.mock( '../../post-fields', () => ( {
 		postHref: '/reader/blogs/2/posts/1',
 		isUnread: false,
 	} ) ),
+} ) );
+
+// ReaderPostActions is a Redux/React-Query-connected block tested on its own and
+// exercised through the real layout in `../../test/index.test.tsx`; stub it here
+// so this unit test stays focused on the list structure and field wiring.
+const mockReaderPostActions = jest.fn().mockReturnValue( null );
+jest.mock( 'calypso/blocks/reader-post-actions', () => ( {
+	__esModule: true,
+	default: ( props: Record< string, unknown > ) => mockReaderPostActions( props ),
 } ) );
 
 const mockUseInfiniteList = useInfiniteList as jest.Mock;
@@ -52,6 +62,8 @@ describe( 'StandardListLayout', () => {
 				isLoadingMore={ false }
 				loadMore={ jest.fn() }
 				restoreKey="work-id:standard-list"
+				isPostSelected={ () => false }
+				selectPost={ jest.fn() }
 			/>
 		);
 
@@ -60,26 +72,61 @@ describe( 'StandardListLayout', () => {
 		);
 	} );
 
-	it( 'reuses extracted post fields when rendering a post row', () => {
+	it( 'extracts post fields centrally and hands them to the row', () => {
 		mockUseInfiniteList.mockReturnValueOnce( {
 			getListProps: ( props: ListProps = {} ) => ( { ...props, style: props.style ?? {} } ),
 			items: [ { index: 1, key: 'post-blog-1-2', start: 44 } ],
 			measureElement: jest.fn(),
 			scrollMargin: 0,
+			scrollToIndex: jest.fn(),
 		} );
 
+		const post = { ID: 1, site_ID: 2 } as ReadStreamPost;
 		render(
 			<StandardListLayout
-				posts={ [ { ID: 1, site_ID: 2 } as ReadStreamPost ] }
+				posts={ [ post ] }
 				streamKey="space:tags"
 				scrollElement={ null }
 				hasMore={ false }
 				isLoadingMore={ false }
 				loadMore={ jest.fn() }
 				restoreKey="work-id:standard-list"
+				isPostSelected={ () => false }
+				selectPost={ jest.fn() }
 			/>
 		);
 
-		expect( mockGetPostFields ).toHaveBeenCalledTimes( 1 );
+		// Fields are extracted once per post while building the rows and passed to
+		// the row as props — the row never re-extracts them itself.
+		expect( mockGetPostFields ).toHaveBeenCalledWith( post );
+	} );
+
+	it( 'renders post actions for the post row, wired to the post', () => {
+		mockUseInfiniteList.mockReturnValueOnce( {
+			getListProps: ( props: ListProps = {} ) => ( { ...props, style: props.style ?? {} } ),
+			items: [ { index: 1, key: 'post-blog-1-2', start: 44 } ],
+			measureElement: jest.fn(),
+			scrollMargin: 0,
+			scrollToIndex: jest.fn(),
+		} );
+
+		const post = { ID: 1, site_ID: 2 } as ReadStreamPost;
+		render(
+			<StandardListLayout
+				posts={ [ post ] }
+				streamKey="space:tags"
+				scrollElement={ null }
+				hasMore={ false }
+				isLoadingMore={ false }
+				loadMore={ jest.fn() }
+				restoreKey="work-id:standard-list"
+				isPostSelected={ () => false }
+				selectPost={ jest.fn() }
+			/>
+		);
+
+		expect( mockReaderPostActions ).toHaveBeenCalledWith(
+			expect.objectContaining( { post, onCommentClick: expect.any( Function ) } )
+		);
 	} );
 } );

@@ -7,6 +7,7 @@ import {
 	type SpaceFeedLayout,
 	type SpaceIcon,
 	type SpaceSource,
+	type SpaceTextColor,
 } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
 import {
@@ -26,6 +27,11 @@ import {
 	useSpaces,
 	useUpdateSpace,
 } from 'calypso/reader/data/spaces';
+import {
+	DEFAULT_SPACE_COLOR,
+	DEFAULT_SPACE_TEXT_COLOR,
+	resolveSpaceIconColor,
+} from 'calypso/reader/spaces/colors';
 import { getSpaceErrorMessage, validateName } from 'calypso/reader/spaces/form-helpers';
 import { SPACE_ICONS } from 'calypso/reader/spaces/icons';
 import { useDispatch } from 'calypso/state';
@@ -154,7 +160,8 @@ function SpaceUpsertModalContent( {
 	const [ isSeeded, setIsSeeded ] = useState( isCreate );
 	const [ name, setName ] = useState( '' );
 	const [ tags, setTags ] = useState< string[] >( [] );
-	const [ color, setColor ] = useState< SpaceColor >( 'blue' );
+	const [ color, setColor ] = useState< SpaceTextColor >( DEFAULT_SPACE_TEXT_COLOR );
+	const [ iconColor, setIconColor ] = useState< SpaceColor >( DEFAULT_SPACE_COLOR );
 	const [ icon, setIcon ] = useState< SpaceIcon >( 'inbox' );
 	const [ view, setView ] = useState< SpaceFeedLayout >( DEFAULT_SPACE_FEED_LAYOUT );
 	const [ selectedSources, setSelectedSources ] = useState< SourceDraftItem[] >( [] );
@@ -165,6 +172,7 @@ function SpaceUpsertModalContent( {
 			setName( space.name );
 			setTags( space.tags );
 			setColor( space.layout.color );
+			setIconColor( resolveSpaceIconColor( space.layout ) );
 			setIcon( space.layout.icon );
 			setView( space.layout.view ?? DEFAULT_SPACE_FEED_LAYOUT );
 			setSelectedSources( space.sources.map( getSpaceSourceDraftItem ) );
@@ -203,7 +211,7 @@ function SpaceUpsertModalContent( {
 				{
 					name: name.trim(),
 					tags,
-					layout: { color, icon, view },
+					layout: { color, iconColor, icon, view },
 					feeds: selectedFeeds,
 				},
 				{
@@ -234,7 +242,12 @@ function SpaceUpsertModalContent( {
 		updateSpace.mutate(
 			{
 				spaceId: editSpaceId,
-				params: { name: name.trim(), tags, feeds: selectedFeeds, layout: { color, icon, view } },
+				params: {
+					name: name.trim(),
+					tags,
+					feeds: selectedFeeds,
+					layout: { color, iconColor, icon, view },
+				},
 			},
 			{
 				onSuccess: () => {
@@ -322,6 +335,8 @@ function SpaceUpsertModalContent( {
 				onTagsChange={ setTags }
 				color={ color }
 				onColorChange={ setColor }
+				iconColor={ iconColor }
+				onIconColorChange={ setIconColor }
 				icon={ icon }
 				onIconChange={ setIcon }
 			/>
@@ -389,7 +404,7 @@ function SpaceUpsertModalContent( {
 					expanded={ false }
 				>
 					<span
-						className={ `customize-space-modal__footer-icon customize-space-modal__footer-icon--${ color }` }
+						className={ `customize-space-modal__footer-icon customize-space-modal__footer-icon--${ iconColor }` }
 						aria-hidden="true"
 					>
 						<Icon icon={ SPACE_ICONS[ icon ] } size={ 18 } />

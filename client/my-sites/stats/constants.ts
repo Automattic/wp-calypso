@@ -82,7 +82,7 @@ export const STATS_FEATURE_SUMMARY_LINKS_30_DAYS = 'StatsModuleSummaryLinks/30_d
 export const STATS_FEATURE_SUMMARY_LINKS_QUARTER = 'StatsModuleSummaryLinks/quarter';
 export const STATS_FEATURE_SUMMARY_LINKS_YEAR = 'StatsModuleSummaryLinks/year';
 export const STATS_FEATURE_SUMMARY_LINKS_ALL = 'StatsModuleSummaryLinks/all';
-// UTM Stats which is already in use, so didn't align with the naming convertion.
+// UTM Stats which is already in use, so didn't align with the naming convention.
 export const STATS_FEATURE_UTM_STATS = 'stats_utm';
 
 // other

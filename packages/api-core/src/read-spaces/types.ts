@@ -19,6 +19,13 @@ export type SpaceColor =
 	| 'celadon'
 	| 'pink';
 
+/**
+ * Accent applied to a space's post text (titles + actions). `'none'` keeps the
+ * text neutral — the same reading experience as the rest of the Reader — while
+ * the space icon can still carry its own color via `iconColor`.
+ */
+export type SpaceTextColor = SpaceColor | 'none';
+
 export type SpaceIcon =
 	| 'inbox'
 	| 'box'
@@ -39,18 +46,22 @@ export type SpaceIcon =
 
 /**
  * How a space renders its feed. Each value selects a distinct list geometry —
- * `standard-list` (dense vertical list), `magazine` (large vertical cards),
- * `gallery` (grid), `board` (masonry), `legacy` (the classic Reader stream:
- * InfiniteList + post cards). Unset falls back to `standard-list`.
+ * `standard-list` (dense vertical list), `gallery` (grid), `board` (masonry),
+ * `legacy` (the classic Reader stream: InfiniteList + post cards). Unset falls
+ * back to `standard-list`.
  */
-export type SpaceFeedLayout = 'standard-list' | 'magazine' | 'gallery' | 'board' | 'legacy';
+export type SpaceFeedLayout = 'standard-list' | 'gallery' | 'board' | 'legacy';
 
 /**
  * Presentation settings for a space, grouped so they can grow beyond color and
  * icon (e.g. cover image, sort order) without widening `ReadSpace` itself.
  */
 export interface SpaceLayout {
-	color: SpaceColor;
+	// Accent for the space's post text (titles + actions); `'none'` = neutral.
+	color: SpaceTextColor;
+	// Color for the space's icon. Falls back to `color` when absent, so spaces
+	// created before the icon and text colors were split keep a colored icon.
+	iconColor?: SpaceColor;
 	icon: SpaceIcon;
 	// Which feed layout to render.
 	view?: SpaceFeedLayout;

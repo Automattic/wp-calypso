@@ -31,14 +31,16 @@ export function SpaceFeedLoadingMore() {
 	);
 }
 
-/** Shown when the stream has loaded but holds no posts. */
-export function SpaceFeedEmpty() {
+/** Shown when the stream has loaded but holds no posts. Copy differs per variant. */
+export function SpaceFeedEmpty( { variant = 'feed' }: { variant?: 'feed' | 'discover' } ) {
 	const translate = useTranslate();
 	return (
 		<div className="space-feed__status">
 			<p className="space-feed__status-title">{ translate( 'Nothing here yet' ) }</p>
 			<p className="space-feed__status-line">
-				{ translate( 'Posts from this space’s sources will show up here.' ) }
+				{ variant === 'discover'
+					? translate( 'On-topic posts you don’t already follow will show up here.' )
+					: translate( 'Posts from this space’s sources will show up here.' ) }
 			</p>
 		</div>
 	);

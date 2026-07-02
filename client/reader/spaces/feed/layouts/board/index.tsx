@@ -1,11 +1,14 @@
 import page from '@automattic/calypso-router';
+import { useMemo } from 'react';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { useInfiniteList } from 'calypso/reader/hooks/use-infinite-list';
 import { getPostUrl } from 'calypso/reader/route';
+import { Shimmer } from '../../components/skeleton';
 import { SpaceFeedTimeSince } from '../../components/time-since';
 import { getPostFieldKey, getPostFields } from '../../post-fields';
-import type { SpaceFeedLayoutProps } from '../types';
+import { useScrollSelectedIntoView } from '../use-scroll-selected-into-view';
+import type { SpaceFeedLayoutProps, SpaceFeedSkeletonProps } from '../types';
 import type { ReadStreamPost } from '@automattic/api-core';
 
 import './style.scss';
@@ -13,7 +16,7 @@ import './style.scss';
 const LANES = 2;
 const ESTIMATED_SIZE = 260;
 
-function BoardCard( { post }: { post: ReadStreamPost } ) {
+function BoardCard( { post, onOpen }: { post: ReadStreamPost; onOpen: () => void } ) {
 	const fields = getPostFields( post );
 	return (
 		<div className="space-feed-board__card">
@@ -26,7 +29,7 @@ function BoardCard( { post }: { post: ReadStreamPost } ) {
 			</div>
 			<div className="space-feed-board__body">
 				<h3 className="space-feed-board__title">
-					<a className="space-feed-board__title-link" href={ fields.postHref }>
+					<a className="space-feed-board__title-link" href={ fields.postHref } onClick={ onOpen }>
 						{ fields.title }
 					</a>
 				</h3>
@@ -51,7 +54,10 @@ function BoardCard( { post }: { post: ReadStreamPost } ) {
 				<div className="space-feed-board__actions">
 					<ReaderPostActions
 						post={ post }
-						onCommentClick={ () => page( getPostUrl( post ) ) }
+						onCommentClick={ () => {
+							onOpen();
+							page( getPostUrl( post ) );
+						} }
 						iconSize={ 18 }
 					/>
 				</div>
@@ -67,8 +73,10 @@ export function BoardLayout( {
 	isLoadingMore,
 	loadMore,
 	restoreKey,
+	isPostSelected,
+	selectPost,
 }: SpaceFeedLayoutProps ) {
-	const { getListProps, items, measureElement, scrollMargin } = useInfiniteList( {
+	const { getListProps, items, measureElement, scrollMargin, scrollToIndex } = useInfiniteList( {
 		scrollElement,
 		count: posts.length,
 		estimateSize: ESTIMATED_SIZE,
@@ -81,12 +89,19 @@ export function BoardLayout( {
 		restoreKey,
 	} );
 
+	const selectedIndex = useMemo(
+		() => posts.findIndex( ( post ) => isPostSelected( post ) ),
+		[ posts, isPostSelected ]
+	);
+	useScrollSelectedIntoView( scrollToIndex, selectedIndex );
+
 	return (
 		<div { ...getListProps( { className: 'space-feed-board' } ) }>
 			{ items.map( ( virtualItem ) => (
 				<div
 					key={ virtualItem.key }
 					data-index={ virtualItem.index }
+					data-selected={ isPostSelected( posts[ virtualItem.index ] ) || undefined }
 					ref={ measureElement }
 					className="space-feed-board__item"
 					style={ {
@@ -95,7 +110,28 @@ export function BoardLayout( {
 						transform: `translateY(${ virtualItem.start - scrollMargin }px)`,
 					} }
 				>
-					<BoardCard post={ posts[ virtualItem.index ] } />
+					<BoardCard
+						post={ posts[ virtualItem.index ] }
+						onOpen={ () => selectPost( posts[ virtualItem.index ] ) }
+					/>
+				</div>
+			) ) }
+		</div>
+	);
+}
+
+/** Loading placeholder: a two-lane grid of card-shaped shimmers. */
+export function BoardSkeleton( { count }: SpaceFeedSkeletonProps ) {
+	return (
+		<div className="space-feed-board__skeleton" aria-hidden="true">
+			{ Array.from( { length: count }, ( _value, index ) => (
+				<div className="space-feed-board__card" key={ index }>
+					<Shimmer className="space-feed-board__skeleton-hero" />
+					<div className="space-feed-board__body">
+						<Shimmer className="space-feed-board__skeleton-line is-title" />
+						<Shimmer className="space-feed-board__skeleton-line" />
+						<Shimmer className="space-feed-board__skeleton-line is-short" />
+					</div>
 				</div>
 			) ) }
 		</div>

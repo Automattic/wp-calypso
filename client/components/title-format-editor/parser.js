@@ -1,5 +1,4 @@
 import { convertFromRaw, convertToRaw } from 'draft-js';
-import { get, map, matchesProperty, reduce } from 'lodash';
 import { compose } from 'redux';
 
 /*
@@ -74,14 +73,14 @@ import { compose } from 'redux';
  */
 export const fromEditor = ( content ) => {
 	const rawContent = convertToRaw( content );
-	const text = get( rawContent, 'blocks[0].text', '' );
-	const ranges = get( rawContent, 'blocks[0].entityRanges', [] );
+	const text = rawContent?.blocks?.[ 0 ]?.text ?? '';
+	const ranges = rawContent?.blocks?.[ 0 ]?.entityRanges ?? [];
 	const entities = rawContent?.entityMap;
 
 	// [ output, index, text ]
 	const [ o, i, t ] = ranges.reduce(
 		( [ output, lastIndex, remainingText ], next ) => {
-			const tokenName = get( entities, [ next.key, 'data', 'name' ], null );
+			const tokenName = entities?.[ next.key ]?.data?.name ?? null;
 			const textBlock =
 				next.offset > lastIndex
 					? { type: 'string', value: remainingText.slice( lastIndex, next.offset ) }
@@ -100,7 +99,7 @@ export const fromEditor = ( content ) => {
 	return [ ...o, i < t.length && { type: 'string', value: t.slice( i ) } ].filter( Boolean );
 };
 
-const isTextPiece = matchesProperty( 'type', 'string' );
+const isTextPiece = ( piece ) => piece?.type === 'string';
 
 const emptyBlockMap = {
 	text: '',
@@ -131,7 +130,7 @@ export const mapTokenTitleForEditor = ( title ) => `\u205f\u205f${ title }\u205f
  * @param {Object} tokens available tokens, e.g. { siteName: 'Site Name', tagline: 'Tagline' }
  * @returns {string} translated chip name
  */
-const tokenTitle = ( type, tokens ) => mapTokenTitleForEditor( get( tokens, type, '' ).trim() );
+const tokenTitle = ( type, tokens ) => mapTokenTitleForEditor( ( tokens?.[ type ] ?? '' ).trim() );
 
 /**
  * Creates a new entity reference for a blockMap
@@ -169,8 +168,7 @@ const newEntityAt = ( offset, type, tokens, entityGuide ) => ( {
  * @returns {Object} blockMap for use in ContentState
  */
 const buildBlockMap = compose( ( format, tokens ) =>
-	reduce(
-		format,
+	( format ?? [] ).reduce(
 		( [ block, lastIndex, entityGuide ], piece ) => [
 			{
 				...block,
@@ -199,7 +197,7 @@ export const toEditor = ( format, tokens ) => {
 	return convertFromRaw( {
 		blocks: [ blocks ],
 		entityMap: Object.fromEntries(
-			map( entityGuide, ( name, key ) => [
+			entityGuide.map( ( name, key ) => [
 				key, // entity key is position in list
 				{
 					type: 'TOKEN',

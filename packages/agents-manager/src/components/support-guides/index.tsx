@@ -42,20 +42,20 @@ function SearchResults( { searchInput }: SearchResultsProps ) {
 		if ( isRecommended ) {
 			return (
 				<div className="agent-manager-support-guides__status">
-					{ __( 'Search guides to find answers to your questions.', '__i18n_text_domain__' ) }
+					{ __( 'Search guides to find answers to your questions.', __i18n_text_domain__ ) }
 				</div>
 			);
 		}
 
 		return (
 			<div className="agent-manager-support-guides__status">
-				{ __( 'Something went wrong.', '__i18n_text_domain__' ) }{ ' ' }
+				{ __( 'Something went wrong.', __i18n_text_domain__ ) }{ ' ' }
 				<Button
 					className="agent-manager-support-guides__retry"
 					variant="link"
 					onClick={ () => refetch() }
 				>
-					{ __( 'Try again', '__i18n_text_domain__' ) }
+					{ __( 'Try again', __i18n_text_domain__ ) }
 				</Button>
 			</div>
 		);
@@ -64,7 +64,7 @@ function SearchResults( { searchInput }: SearchResultsProps ) {
 	if ( ! data?.length ) {
 		return (
 			<div className="agent-manager-support-guides__status">
-				{ __( 'No results found.', '__i18n_text_domain__' ) }
+				{ __( 'No results found.', __i18n_text_domain__ ) }
 			</div>
 		);
 	}
@@ -73,8 +73,8 @@ function SearchResults( { searchInput }: SearchResultsProps ) {
 		<>
 			<h3 className="agent-manager-support-guides__title">
 				{ isRecommended
-					? __( 'Recommended Guides', '__i18n_text_domain__' )
-					: __( 'Search Results', '__i18n_text_domain__' ) }
+					? __( 'Recommended Guides', __i18n_text_domain__ )
+					: __( 'Search Results', __i18n_text_domain__ ) }
 			</h3>
 			<ItemGroup isSeparated isBordered isRounded>
 				{ data?.map( ( item ) => (
@@ -120,26 +120,29 @@ export default function SupportGuides( {
 	const [ searchInput, setSearchInput, debouncedSearchInput ] = useDebouncedInput(
 		state?.searchQuery ?? ''
 	);
-	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
-	const { floatingPosition } = useSelect( ( select ) => {
+	const { setFloatingPosition, setFreeDragPosition } = useDispatch( AGENTS_MANAGER_STORE );
+	const { floatingPosition, freeDragPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
 
 	// Without the AI chat entry button, use `collapsed` (a FAB) instead of `minimized`.
 	const closedChatState = hasAiChatEntryButton() ? 'minimized' : 'collapsed';
-	const title = __( 'Support Guides', '__i18n_text_domain__' );
+	const title = __( 'Support Guides', __i18n_text_domain__ );
 
 	return (
 		<AgentUI.Container
 			initialChatPosition={ floatingPosition }
 			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
+			initialFreeDragPosition={ freeDragPosition ?? undefined }
+			onFreeDragEnd={ setFreeDragPosition }
 			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ [] }
 			isProcessing={ false }
 			error={ null }
 			onSubmit={ () => {} }
 			variant={ isDocked ? 'embedded' : 'floating' }
+			freeDrag={ ! isDocked }
 			floatingChatState={ isOpen ? 'expanded' : closedChatState }
 			triggerTitle={ title }
 			onClose={ onClose }
@@ -160,7 +163,7 @@ export default function SupportGuides( {
 					justify="stretch"
 				>
 					<SearchControl
-						placeholder={ __( 'Search guides…', '__i18n_text_domain__' ) }
+						placeholder={ __( 'Search guides…', __i18n_text_domain__ ) }
 						onChange={ setSearchInput }
 						// The click event is highjacked by the drag-handlers of the floating chat container.
 						onClick={ ( e ) => e.currentTarget.focus() }

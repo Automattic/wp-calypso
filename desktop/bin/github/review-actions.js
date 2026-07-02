@@ -4,7 +4,7 @@ const https = require( 'https' );
 // Module Constants
 const buildName = process.env.CIRCLE_JOB;
 const buildUrl = process.env.CIRCLE_BUILD_URL;
-const pullRequestUserName = `@${ process.env.CIRCLE_USERNAME }` || '';
+const pullRequestUserName = process.env.CIRCLE_USERNAME ? `@${ process.env.CIRCLE_USERNAME }` : '';
 const pullRequestNum = process.env.CIRCLE_PULL_REQUEST
 	? getPullNumber( process.env.CIRCLE_PULL_REQUEST )
 	: null;
@@ -22,7 +22,7 @@ async function request( method = 'GET', postData, path ) {
 		path: path ? path : githubReviewsBaseUrl,
 		headers: {
 			'User-Agent': 'wp-desktop',
-			Authorization: 'token ' + process.env.WP_DESKTOP_SECRET,
+			Authorization: 'token ' + process.env.GITHUB_TOKEN,
 		},
 	};
 

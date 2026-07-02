@@ -19,7 +19,10 @@ import {
 	useSuggestions,
 	useCheckpoint,
 	capabilities,
+	registerBlockEditorFilters,
 } from '@automattic/jetpack-ai-sidebar';
+
+registerBlockEditorFilters();
 
 const providerId = 'jetpack-ai-sidebar';
 

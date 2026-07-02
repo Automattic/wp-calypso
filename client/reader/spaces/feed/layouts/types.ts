@@ -24,4 +24,17 @@ export interface SpaceFeedLayoutProps {
 	loadMore: () => void;
 	/** Stable key (`${spaceId}:${layout}`) for saving/restoring scroll on Back. */
 	restoreKey: string;
+	/** Whether a post is the currently selected one. */
+	isPostSelected: ( post: ReadStreamPost ) => boolean;
+	/** Mark a post as selected. */
+	selectPost: ( post: ReadStreamPost ) => void;
+}
+
+/**
+ * The contract for a layout's loading skeleton. Each layout renders placeholder
+ * cards in its own card shape so the loading state matches the populated feed.
+ * `count` is the number of placeholder cards to render.
+ */
+export interface SpaceFeedSkeletonProps {
+	count: number;
 }

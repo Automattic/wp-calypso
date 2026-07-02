@@ -42,6 +42,10 @@ export interface PaymentNotice {
 	content?: string;
 	action_label?: string;
 	action_url?: string;
+	primary_action_label?: string;
+	primary_action_url?: string;
+	secondary_action_label?: string;
+	secondary_action_url?: string;
 	failed_at?: string;
 	grace_period_ends_at?: string;
 	affected_subscription_ids?: number[];
@@ -114,6 +118,9 @@ export interface Agency {
 	partner_directory: {
 		allowed: boolean;
 		directories: DirectoryApplicationType[];
+	};
+	mcp?: {
+		allowed: boolean;
 	};
 	lead_matching?: {
 		allowed?: boolean;

@@ -6,6 +6,7 @@ import { ToggleControl, Button } from '@wordpress/components';
 import { throttle } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { View, Filter, Field } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { arrowUp } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
@@ -330,7 +331,15 @@ function SiteLogsDataViews( {
 			title={ __( 'No results' ) }
 			description={
 				logType === LogType.PHP
-					? __( 'No PHP errors were logged for the selected time range.' )
+					? createInterpolateElement(
+							__(
+								'The custom <wpDebugLog>WP_DEBUG_LOG</wpDebugLog> or <errorLog>error_log</errorLog> paths aren’t shown here.'
+							),
+							{
+								wpDebugLog: <code />,
+								errorLog: <code />,
+							}
+					  )
 					: __( 'No server requests were logged for the selected time range.' )
 			}
 		/>

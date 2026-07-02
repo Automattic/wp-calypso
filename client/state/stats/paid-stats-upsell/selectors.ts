@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import type { AppState } from 'calypso/types';
 
 import 'calypso/state/stats/init';
 
@@ -6,9 +6,9 @@ import 'calypso/state/stats/init';
  * Returns the current view state of the upsell modal.
  */
 export function getUpsellModalView( state: object, siteId: number ) {
-	return get( state, [ 'stats', 'paidStatsUpsell', 'data', siteId, 'view' ], false );
+	return ( state as AppState )?.stats?.paidStatsUpsell?.data?.[ siteId ]?.view ?? false;
 }
 
 export function getUpsellModalStatType( state: object, siteId: number ) {
-	return get( state, [ 'stats', 'paidStatsUpsell', 'data', siteId, 'statType' ], null );
+	return ( state as AppState )?.stats?.paidStatsUpsell?.data?.[ siteId ]?.statType ?? null;
 }

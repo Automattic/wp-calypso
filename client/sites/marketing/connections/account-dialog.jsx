@@ -2,7 +2,6 @@ import { Dialog } from '@automattic/components';
 import clsx from 'clsx';
 import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { filter, find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -77,11 +76,13 @@ class AccountDialog extends Component {
 
 		// If no selection has been made, find the first unconnected account
 		// from the set of available accounts
-		return find( this.props.accounts, { isConnected: false } );
+		return this.props.accounts.find( ( account ) => account.isConnected === false );
 	}
 
 	getAccountsByConnectedStatus( isConnected ) {
-		return filter( this.props.accounts, { isConnected } );
+		return ( this.props.accounts ?? [] ).filter(
+			( account ) => account.isConnected === isConnected
+		);
 	}
 
 	getAccountToConnect() {

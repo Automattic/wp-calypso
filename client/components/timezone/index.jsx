@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -18,12 +17,12 @@ class Timezone extends Component {
 	renderOptionsByContinent() {
 		const { timezones } = this.props;
 
-		return map( timezones, ( timezoneContinent ) => {
+		return timezones.map( ( timezoneContinent ) => {
 			const [ continent, countries ] = timezoneContinent;
 
 			return (
 				<optgroup label={ continent } key={ continent }>
-					{ map( countries, ( timezone, index ) => {
+					{ countries.map( ( timezone, index ) => {
 						const [ value, label ] = timezone;
 
 						return (
@@ -42,7 +41,7 @@ class Timezone extends Component {
 
 		return (
 			<optgroup label={ translate( 'Manual Offsets' ) }>
-				{ map( rawOffsets, ( label, value ) => {
+				{ Object.entries( rawOffsets ?? {} ).map( ( [ value, label ] ) => {
 					return (
 						<option value={ value } key={ value }>
 							{ label }

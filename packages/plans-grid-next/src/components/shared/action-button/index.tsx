@@ -200,7 +200,10 @@ const ActionButton = ( {
 						disabled={ ! callback || 'disabled' === status }
 						busy={ busy }
 						onClick={ callback }
-						current={ current }
+						// A primary variant on the current plan (e.g. renewing when a downgrade
+						// is scheduled) should render as a plan-colored CTA, not the muted
+						// current-plan style.
+						current={ current && variant !== 'primary' }
 						ariaLabel={ String( ariaLabel || '' ) }
 					>
 						{ text }
@@ -238,7 +241,12 @@ const ActionButton = ( {
 
 	return (
 		<div className="plans-grid-next-action-button">
-			<div className="plans-grid-next-action-button__content">{ actionButton }</div>
+			<div
+				className="plans-grid-next-action-button__content"
+				style={ ! text ? { visibility: 'hidden' } : undefined }
+			>
+				{ actionButton }
+			</div>
 		</div>
 	);
 };

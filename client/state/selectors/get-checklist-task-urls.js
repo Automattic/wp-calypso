@@ -1,5 +1,4 @@
 import { createSelector } from '@automattic/state-utils';
-import { find, get, some } from 'lodash';
 import { getPostsForQuery } from 'calypso/state/posts/selectors';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getFrontPageEditorUrl from 'calypso/state/selectors/get-front-page-editor-url';
@@ -8,16 +7,15 @@ import { getSiteUrl } from 'calypso/state/sites/selectors';
 export const FIRST_TEN_SITE_POSTS_QUERY = { type: 'any', number: 10, order_by: 'ID', order: 'ASC' };
 
 function getContactPage( posts ) {
-	return get(
-		find(
-			posts,
+	return (
+		posts?.find(
 			( post ) =>
 				post.type === 'page' &&
-				( some( post.metadata, { key: '_headstart_post', value: '_hs_contact_page' } ) ||
+				( ( post.metadata ?? [] ).some(
+					( item ) => item.key === '_headstart_post' && item.value === '_hs_contact_page'
+				) ||
 					post.slug === 'contact' )
-		),
-		'ID',
-		null
+		)?.ID ?? null
 	);
 }
 
@@ -32,7 +30,7 @@ function getPageEditorUrl( state, siteId, pageId ) {
 export default createSelector(
 	( state, siteId ) => {
 		const posts = getPostsForQuery( state, siteId, FIRST_TEN_SITE_POSTS_QUERY );
-		const firstPostID = find( posts, { type: 'post' } )?.[ 0 ]?.ID;
+		const firstPostID = posts?.find( ( post ) => post.type === 'post' )?.ID;
 		const contactPageUrl = getPageEditorUrl( state, siteId, getContactPage( posts ) );
 		const frontPageUrl = getFrontPageEditorUrl( state, siteId );
 

@@ -22,6 +22,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { type ReactNode, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { useLocale } from '../../app/locale';
 import { receiptRoute, taxDetailsRoute } from '../../app/router/me';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
@@ -76,11 +77,13 @@ export default function Receipt() {
 		tax_state: receipt.tax_state || historyReceipt?.tax_state,
 	};
 
+	const locale = useLocale();
+
 	const handlePrint = () => {
 		window.print();
 	};
 
-	const formattedDate = new Date( displayReceipt.date ).toLocaleDateString( undefined, {
+	const formattedDate = new Date( displayReceipt.date ).toLocaleDateString( locale, {
 		year: 'numeric',
 		month: 'long',
 		day: 'numeric',

@@ -38,15 +38,15 @@ export default function AgentHistory( {
 }: Props ) {
 	const { resumeActiveChat } = useAgentsManagerContext();
 
-	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
-	const { floatingPosition } = useSelect( ( select ) => {
+	const { setFloatingPosition, setFreeDragPosition } = useDispatch( AGENTS_MANAGER_STORE );
+	const { floatingPosition, freeDragPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
 
 	// Without the AI chat entry button, use `collapsed` (a FAB) instead of `minimized`.
 	const closedChatState = hasAiChatEntryButton() ? 'minimized' : 'collapsed';
-	const title = __( 'Past chats', '__i18n_text_domain__' );
+	const title = __( 'Past chats', __i18n_text_domain__ );
 
 	const handleBack = () => resumeActiveChat();
 
@@ -54,12 +54,15 @@ export default function AgentHistory( {
 		<AgentUI.Container
 			initialChatPosition={ floatingPosition }
 			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
+			initialFreeDragPosition={ freeDragPosition ?? undefined }
+			onFreeDragEnd={ setFreeDragPosition }
 			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ [] }
 			isProcessing={ false }
 			error={ null }
 			onSubmit={ () => {} }
 			variant={ isDocked ? 'embedded' : 'floating' }
+			freeDrag={ ! isDocked }
 			floatingChatState={ isOpen ? 'expanded' : closedChatState }
 			triggerTitle={ title }
 			onClose={ onClose }

@@ -1,7 +1,7 @@
 import { FormLabel } from '@automattic/components';
+import { isEmpty } from '@automattic/js-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Fragment } from 'react';
 import FormRadio from 'calypso/components/forms/form-radio';

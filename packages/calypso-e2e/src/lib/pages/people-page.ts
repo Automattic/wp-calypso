@@ -168,7 +168,9 @@ export class PeoplePage {
 			throw new Error( 'username is required' );
 		}
 
-		await this.page.goto( `${ baseURL }/people/edit/${ siteURL }/${ username }` );
+		// baseURL may carry a trailing slash; new URL with a leading-slash path avoids the
+		// `host//people/...` double slash that breaks page.js routing.
+		await this.page.goto( new URL( `/people/edit/${ siteURL }/${ username }`, baseURL ).href );
 		await this.page.getByRole( 'button', { name: 'Remove' } ).waitFor( { state: 'visible' } );
 	}
 }

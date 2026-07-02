@@ -1,5 +1,3 @@
-import { some } from 'lodash';
-
 import 'calypso/state/comments/init';
 
 /**
@@ -9,7 +7,7 @@ import 'calypso/state/comments/init';
  */
 export default ( state ) => {
 	const pendingActions = state?.comments?.ui?.pendingActions;
-	return some( pendingActions, ( requestKey ) => {
+	return ( pendingActions ?? [] ).some( ( requestKey ) => {
 		return state?.dataRequests?.[ requestKey ]?.status === 'pending';
 	} );
 };

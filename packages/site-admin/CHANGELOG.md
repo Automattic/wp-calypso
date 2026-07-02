@@ -1,3 +1,7 @@
+## 0.1.5
+
+- Use an npm-installable `@wordpress/compose` dependency range for package consumers.
+
 ## 0.1.4
 
 - Declare React 19 compatibility for package consumers (#111721).

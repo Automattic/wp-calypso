@@ -1,8 +1,8 @@
 import page from '@automattic/calypso-router';
+import { isEmpty } from '@automattic/js-utils';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';

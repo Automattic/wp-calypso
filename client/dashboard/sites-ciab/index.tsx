@@ -22,7 +22,8 @@ import {
 	sanitizeFields,
 } from '../sites/dataviews';
 import noSitesIllustration from '../sites/no-sites-illustration.svg';
-import { SitesNotices } from '../sites/notices';
+import { SitesNoticeArbiter } from '../sites/notice-arbiter';
+import { RestoringSitesNotices } from '../sites/restoring-sites-notice';
 import { wpcomLink } from '../utils/link';
 import type { View } from '@wordpress/dataviews';
 
@@ -150,7 +151,11 @@ export default function CIABSites() {
 						}
 					/>
 				}
-				notices={ <SitesNotices /> }
+				notices={
+					<SitesNoticeArbiter>
+						{ isRestoringAccount && <RestoringSitesNotices /> }
+					</SitesNoticeArbiter>
+				}
 			>
 				<SitesDataViews
 					view={ view }
