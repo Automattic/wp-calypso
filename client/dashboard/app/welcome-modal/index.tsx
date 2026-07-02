@@ -1,11 +1,9 @@
 import { userPreferenceQuery, userPreferenceMutation } from '@automattic/api-queries';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useRouterState } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
-	ExternalLink,
 	Guide,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -18,9 +16,6 @@ import illustrationUrl from './welcome-modal-illustration.png';
 import './style.scss';
 
 const preferenceName = 'hosting-dashboard-opt-in-welcome-modal-dismissed' as const;
-
-// TODO(DES-547): set the published post URL before enabling the dashboard/opt-in-welcome-modal flag.
-const BLOG_POST_URL = 'https://wordpress.com/blog/';
 
 export function OptInWelcomeModal() {
 	const { user } = useAuth();
@@ -94,16 +89,6 @@ export function OptInWelcomeModal() {
 									'It’s built to make everyday management tasks faster and easier across your sites, domains, plugins and account.'
 								) }
 							</Text>
-							<ExternalLink
-								href={ localizeUrl( BLOG_POST_URL ) }
-								onClick={ () => {
-									recordTracksEvent(
-										'calypso_dashboard_opt_in_welcome_modal_blog_post_link_click'
-									);
-								} }
-							>
-								{ __( 'Read the blog post' ) }
-							</ExternalLink>
 						</VStack>
 					),
 				},
