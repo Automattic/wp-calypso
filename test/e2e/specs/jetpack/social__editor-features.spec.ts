@@ -92,10 +92,9 @@ test.describe(
 	() => {
 		for ( const { plan, platform, testAccountName, features, isPrivate } of testCases ) {
 			test.describe( `For ${ platform } sites with ${ plan } plan`, () => {
-				// Replaces the legacy beforeAll/beforeEach pair: authenticates and
-				// opens a fresh post editor for each test. Connections load via a
-				// resolver that fetches on editor load, so tests asserting on
-				// connection-dependent UI must mock before navigating.
+				// Connections load via a resolver that fetches on editor load, so
+				// tests asserting on connection-dependent UI must mock before
+				// navigating.
 				async function setupEditor(
 					page: Page,
 					{ mockConnections = false } = {}

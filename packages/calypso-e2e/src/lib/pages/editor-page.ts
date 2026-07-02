@@ -797,8 +797,7 @@ export class EditorPage {
 		// Wait for either the insertion confirmation toast or the inserted block
 		// to appear. The click uses noWaitAfter for patterns, resolving
 		// immediately after firing, so we race the toast against the block
-		// actually landing in the canvas to avoid missing a fast toast. The
-		// precomputed toast locator already handles exact and partial matches.
+		// actually landing in the canvas to avoid missing a fast toast.
 		const insertedBlockLocator = editorCanvas
 			.locator( selectors.editorBlock )
 			.nth( editorBlockCountBefore );
