@@ -5,9 +5,10 @@
  * See: https://stackoverflow.com/questions/66209119/automation-google-login-with-python-and-selenium-shows-this-browser-or-app-may
  *
  * The legacy Jest runner honored the `@browser firefox` docblock pragma;
- * Playwright Test does not, so this spec launches Firefox explicitly and is
- * tagged desktop-only (the mobile projects would otherwise run it under
- * emulated Chromium, where the Google popup never opens).
+ * Playwright Test does not, so this spec launches Firefox explicitly. The
+ * mobile projects' Chromium device emulation cannot apply to that browser
+ * (and Firefox does not support `isMobile`), so mobile coverage is kept by
+ * sizing the Firefox viewport to match instead.
  */
 
 import {
@@ -23,7 +24,7 @@ import type { Page } from 'playwright';
 
 test.describe(
 	DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC > WooCommerce via Google' ),
-	{ tag: [ tags.CALYPSO_RELEASE, tags.DESKTOP_ONLY ] },
+	{ tag: [ tags.CALYPSO_RELEASE ] },
 	() => {
 		const credentials = SecretsManager.secrets.testAccounts.googleLoginUser;
 
@@ -39,7 +40,16 @@ test.describe(
 			const browser = await firefox.launch();
 
 			try {
-				const page = await browser.newPage();
+				// Playwright Test injects the active project's context options even
+				// into browsers launched via the library, and Firefox rejects the
+				// mobile projects' isMobile flag: neutralize it and set the mobile
+				// size (Pixel 7 dimensions) directly.
+				const page = await browser.newPage( {
+					isMobile: false,
+					...( envVariables.VIEWPORT_NAME === 'mobile'
+						? { viewport: { width: 412, height: 915 } }
+						: {} ),
+				} );
 
 				let googlePopupPage: Page;
 				let googleLoginPage: GoogleLoginPage;
