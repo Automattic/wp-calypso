@@ -132,8 +132,26 @@ module.exports = {
 		new DependencyExtractionWebpackPlugin( {
 			injectPolyfill: true,
 			useDefaults: false,
-			requestToHandle: defaultRequestToHandle,
+			requestToHandle: ( request ) => {
+				// Map the `react-dom/client` subpath to WordPress's `react-dom` script
+				// handle (its `ReactDOM` global carries `createRoot`/`hydrateRoot`). The
+				// installed plugin version does not yet map this subpath itself.
+				if ( request === 'react-dom/client' ) {
+					return 'react-dom';
+				}
+				return defaultRequestToHandle( request );
+			},
 			requestToExternal: ( request ) => {
+				// Externalize `react-dom/client` to the same `ReactDOM` global as
+				// `react-dom` so `createRoot`/`hydrateRoot` come from the React that
+				// WordPress provides. Otherwise this subpath is bundled from
+				// node_modules and its `createRoot` reaches into the externalized
+				// react-dom internals of a different React major, returning a root
+				// whose `.render` is missing ("createRoot(...).render is not a
+				// function") against React 19.
+				if ( request === 'react-dom/client' ) {
+					return 'ReactDOM';
+				}
 				if (
 					! [
 						'lodash',
