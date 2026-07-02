@@ -57,6 +57,14 @@ jest.mock( 'calypso/reader/hooks/use-infinite-list', () => ( {
 	} ),
 } ) );
 
+const mockRecordReaderTracksEvent: jest.Mock = jest.fn( () => ( {
+	type: 'TEST_TRACKS_EVENT',
+} ) );
+
+jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
+	recordReaderTracksEvent: ( ...args: unknown[] ) => mockRecordReaderTracksEvent( ...args ),
+} ) );
+
 const WORK: ReadSpace = {
 	id: '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21',
 	name: 'Work',
@@ -100,6 +108,7 @@ function setup( {
 describe( 'CreateSpaceModal', () => {
 	beforeEach( () => {
 		mockSubscriptions = [];
+		mockRecordReaderTracksEvent.mockClear();
 	} );
 
 	afterEach( () => nock.cleanAll() );
@@ -212,6 +221,18 @@ describe( 'CreateSpaceModal', () => {
 		const detail = queryClient.getQueryData< ReadSpaceDetails >( readSpaceQuery( '7' ).queryKey );
 		expect( detail?.layout.view ).toBe( 'legacy' );
 		expect( onClose ).toHaveBeenCalled();
+		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+			'calypso_reader_spaces_space_created',
+			{
+				tag_count: 0,
+				language_count: 0,
+				source_count: 1,
+				layout: 'legacy',
+				icon: 'star',
+				color: 'green',
+				icon_color: 'blue',
+			}
+		);
 	} );
 
 	it( 'pre-fills the account language as a base code and sends it on create', async () => {
