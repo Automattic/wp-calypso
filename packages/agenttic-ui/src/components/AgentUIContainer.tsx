@@ -4,7 +4,7 @@ import { STYLE_CONSTANTS } from '../utils/constants';
 import { loadAgentticTranslations } from '../utils/translation-loader';
 import { useChat } from '../hooks/useChat';
 import { useInput } from '../hooks/useInput';
-import { useFloatingPanelDrag } from '../hooks/useFloatingPanelDrag';
+import { useFloatingPanelPosition } from '../hooks/useFloatingPanelPosition';
 import { useWindowFocusStatus } from '../hooks/useWindowFocusStatus';
 import type { AgentUIProps, Suggestion } from '../types';
 import { cn } from '../utils/classNames';
@@ -190,7 +190,7 @@ export function AgentUIContainer( {
 		handlePointerDown,
 		handleDragStart,
 		handleDragEnd,
-	} = useFloatingPanelDrag( {
+	} = useFloatingPanelPosition( {
 		freeDrag,
 		initialFreeDragPosition,
 		initialChatPosition,

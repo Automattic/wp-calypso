@@ -17,7 +17,7 @@ import {
 } from '../utils/chatStorage';
 import type { ChatState } from '../types';
 
-export interface UseFloatingPanelDragArgs {
+export interface UseFloatingPanelPositionArgs {
 	freeDrag: boolean;
 	initialFreeDragPosition: { x: number; y: number } | undefined;
 	initialChatPosition?: ChatPosition;
@@ -27,7 +27,7 @@ export interface UseFloatingPanelDragArgs {
 	onFreeDragEnd?: ( position: { x: number; y: number } ) => void;
 }
 
-export interface UseFloatingPanelDragResult {
+export interface UseFloatingPanelPositionResult {
 	x: MotionValue< number >;
 	y: MotionValue< number >;
 	currentSide: ChatPosition;
@@ -47,7 +47,7 @@ export interface UseFloatingPanelDragResult {
 // Owns the drag/snap/free-drag concern of the floating panel: the x/y position
 // motion values, the snapped-corner side, the active-gesture state, the pointer
 // gate, the corner-snap math, and the free-drag/minimize position effects.
-export function useFloatingPanelDrag( {
+export function useFloatingPanelPosition( {
 	freeDrag,
 	initialFreeDragPosition,
 	initialChatPosition,
@@ -55,7 +55,7 @@ export function useFloatingPanelDrag( {
 	defaultSize,
 	onChatPositionChange,
 	onFreeDragEnd,
-}: UseFloatingPanelDragArgs ): UseFloatingPanelDragResult {
+}: UseFloatingPanelPositionArgs ): UseFloatingPanelPositionResult {
 	const [ isDragging, setIsDragging ] = useState( false );
 	const [ currentSide, setCurrentSide ] = useState< ChatPosition >( () =>
 		getChatPosition( initialChatPosition )

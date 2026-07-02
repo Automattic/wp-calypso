@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { useChat } from '../../hooks/useChat';
 import { useInput } from '../../hooks/useInput';
-import { useFloatingPanelDrag } from '../../hooks/useFloatingPanelDrag';
+import { useFloatingPanelPosition } from '../../hooks/useFloatingPanelPosition';
 import type { ChatProps } from '../../types';
 import { cn } from '../../utils/classNames';
 import { STYLE_CONSTANTS } from '../../utils/constants';
@@ -100,7 +100,7 @@ export function Chat( {
 		handlePointerDown,
 		handleDragStart,
 		handleDragEnd,
-	} = useFloatingPanelDrag( {
+	} = useFloatingPanelPosition( {
 		freeDrag,
 		initialFreeDragPosition,
 		initialChatPosition,

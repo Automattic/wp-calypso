@@ -12,10 +12,10 @@ vi.mock( 'framer-motion', async ( importOriginal ) => {
 const animateSpy = vi.mocked( animate );
 import { STYLE_CONSTANTS } from '../utils/constants';
 import {
-	useFloatingPanelDrag,
-	type UseFloatingPanelDragArgs,
-	type UseFloatingPanelDragResult,
-} from './useFloatingPanelDrag';
+	useFloatingPanelPosition,
+	type UseFloatingPanelPositionArgs,
+	type UseFloatingPanelPositionResult,
+} from './useFloatingPanelPosition';
 
 // Opt into React's act environment so state updates don't warn (matches the
 // component test suites).
@@ -23,9 +23,9 @@ import {
 	globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
  ).IS_REACT_ACT_ENVIRONMENT = true;
 
-type Args = Partial< UseFloatingPanelDragArgs >;
+type Args = Partial< UseFloatingPanelPositionArgs >;
 
-function buildArgs( overrides: Args ): UseFloatingPanelDragArgs {
+function buildArgs( overrides: Args ): UseFloatingPanelPositionArgs {
 	return {
 		freeDrag: false,
 		initialFreeDragPosition: undefined,
@@ -35,7 +35,7 @@ function buildArgs( overrides: Args ): UseFloatingPanelDragArgs {
 }
 
 function renderHook( initialArgs: Args ) {
-	const captured: { current: UseFloatingPanelDragResult | null } = {
+	const captured: { current: UseFloatingPanelPositionResult | null } = {
 		current: null,
 	};
 	let currentArgs = buildArgs( initialArgs );
@@ -44,7 +44,7 @@ function renderHook( initialArgs: Args ) {
 	const root = createRoot( container );
 
 	function Probe() {
-		captured.current = useFloatingPanelDrag( currentArgs );
+		captured.current = useFloatingPanelPosition( currentArgs );
 		return null;
 	}
 
@@ -71,7 +71,7 @@ function renderHook( initialArgs: Args ) {
 
 const PAN_INFO = { velocity: { x: 0, y: 0 } } as PanInfo;
 
-describe( 'useFloatingPanelDrag', () => {
+describe( 'useFloatingPanelPosition', () => {
 	let harness: ReturnType< typeof renderHook >;
 
 	beforeEach( () => {
