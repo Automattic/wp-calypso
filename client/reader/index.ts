@@ -31,6 +31,7 @@ import {
 } from './controller';
 import postCacheMiddleware from './data/post/middleware';
 import {
+	allLists,
 	createList,
 	deleteList,
 	editList,
@@ -144,6 +145,7 @@ export default async function (): Promise< void > {
 	page( '/reader/feeds/lookup/*', redirectLoggedOutToSignup, feedLookup );
 
 	// Lists
+	page( '/reader/lists', redirectLoggedOut, sidebar, allLists, makeLayout, clientRender );
 	page( '/reader/list/:user/:list/edit/items', sidebar, editListItems, makeLayout, clientRender );
 	page( '/reader/list/:user/:list/edit', sidebar, editList, makeLayout, clientRender );
 

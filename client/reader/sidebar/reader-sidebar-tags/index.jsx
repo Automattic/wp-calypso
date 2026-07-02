@@ -44,15 +44,10 @@ export class ReaderSidebarTags extends Component {
 		this.setState( ( state ) => ( { addTagCounter: state.addTagCounter + 1 } ) );
 	};
 
-	selectMenu = () => {
-		const { onClick, tags, isOpen, path } = this.props;
-		if ( ! isOpen ) {
-			onClick();
-		}
-		const defaultSelection = tags?.length ? `/tag/${ tags[ 0 ]?.slug }` : '/tags';
-		if ( path !== defaultSelection ) {
-			page( defaultSelection );
-		}
+	navigateToTags = () => {
+		page( '/tags' );
+
+		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_tags_dropdown_title_clicked' );
 	};
 
 	render() {
@@ -63,7 +58,7 @@ export class ReaderSidebarTags extends Component {
 				<ExpandableSidebarMenu
 					expanded={ isOpen }
 					title={ translate( 'Tags' ) }
-					onClick={ this.selectMenu }
+					onClick={ this.navigateToTags }
 					customIcon={ <ReaderTagIcon viewBox="0 0 24 24" /> }
 					disableFlyout
 					className={ path.startsWith( '/tag' ) ? 'sidebar__menu--selected' : '' }
