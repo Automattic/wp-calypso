@@ -43,11 +43,42 @@ export default function SelectedBlock() {
 		};
 	}, [] );
 
-	const { clearSelectedBlock } = useDispatch( blockEditorStore );
+	// The unified post/site editor normalizes the legacy `core/edit-post` and
+	// `core/edit-site` scopes to `core`, and exposes the block inspector under
+	// the `edit-post/block` identifier.
+	const isBlockSettingsOpen = useSelect(
+		( select ) =>
+			(
+				select( 'core/interface' ) as {
+					getActiveComplementaryArea?: ( scope: string ) => string | null;
+				}
+			 ).getActiveComplementaryArea?.( 'core' ) === 'edit-post/block',
+		[]
+	);
+
+	const { clearSelectedBlock, selectBlock } = useDispatch( blockEditorStore );
+	// The block settings sidebar is a complementary area of the interface store,
+	// registered at runtime by the host post/site editor.
+	const { enableComplementaryArea, disableComplementaryArea } = useDispatch( 'core/interface' ) as {
+		enableComplementaryArea?: ( scope: string, area: string ) => void;
+		disableComplementaryArea?: ( scope: string ) => void;
+	};
 
 	const handleClearSelectedBlock = () => {
 		clearSelectedBlock();
 		window.dispatchEvent( new Event( SELECTED_BLOCK_CLEAR_EVENT ) );
+	};
+
+	const handleToggleBlockSettings = () => {
+		if ( ! block ) {
+			return;
+		}
+		if ( isBlockSettingsOpen ) {
+			disableComplementaryArea?.( 'core' );
+			return;
+		}
+		selectBlock( block.clientId );
+		enableComplementaryArea?.( 'core', 'edit-post/block' );
 	};
 
 	if ( ! block ) {
@@ -62,8 +93,19 @@ export default function SelectedBlock() {
 			animate={ animations.visible }
 			exit={ animations.hidden }
 		>
-			<BlockIcon icon={ icon } />
-			<span className="agents-manager-selected-block__name">{ name }</span>
+			<Button
+				className="agents-manager-selected-block__info"
+				onClick={ handleToggleBlockSettings }
+				label={
+					isBlockSettingsOpen
+						? __( 'Close block settings', __i18n_text_domain__ )
+						: __( 'Open block settings', __i18n_text_domain__ )
+				}
+				showTooltip
+			>
+				<BlockIcon icon={ icon } />
+				<span className="agents-manager-selected-block__name">{ name }</span>
+			</Button>
 			<hr className="agents-manager-selected-block__divider" />
 			<Button
 				className="agents-manager-selected-block__remove"

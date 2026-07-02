@@ -26,6 +26,27 @@
 		}
 	}
 
+	&__info {
+		&.components-button {
+			display: flex;
+			align-items: center;
+			gap: 4px;
+			min-width: 0;
+			height: auto;
+			padding: 0;
+			color: var( --color-foreground );
+
+			&:hover,
+			&:focus,
+			&:active,
+			&:focus:not( :disabled ) {
+				color: currentColor;
+				box-shadow: none;
+				outline: none;
+			}
+		}
+	}
+
 	&__name {
 		font-size: $font-size-x-small;
 		overflow: hidden;
