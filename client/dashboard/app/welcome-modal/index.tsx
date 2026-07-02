@@ -55,7 +55,7 @@ export function OptInWelcomeModal() {
 			className="dashboard-opt-in-welcome-modal"
 			contentLabel={ title }
 			onFinish={ handleStartNow }
-			finishButtonText={ __( 'Start now' ) }
+			finishButtonText={ __( 'Explore your dashboard' ) }
 			pages={ [
 				{
 					image: (
@@ -74,7 +74,7 @@ export function OptInWelcomeModal() {
 							</Text>
 							<Text>
 								{ __(
-									'It’s built to make everyday management tasks faster and easier across your sites, domains, plugins, and account.'
+									'It’s built to make everyday management tasks faster and easier across your sites, domains, plugins and account.'
 								) }
 							</Text>
 							<ExternalLink
