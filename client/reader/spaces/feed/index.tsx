@@ -8,6 +8,8 @@ import { useInfiniteStream } from 'calypso/reader/data/stream';
 import { ScrollDebugOverlay } from 'calypso/reader/hooks/use-infinite-list';
 import { keyForPost, keysAreEqual } from 'calypso/reader/post-key';
 import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post-key-selection';
+import { useDispatch } from 'calypso/state';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import { SpaceFeedSourceNotice } from './components/source-notice';
 import {
@@ -77,6 +79,7 @@ export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
 	const isDiscover = variant === 'discover';
 	const streamKey = isDiscover ? `space_discover:${ spaceId }` : `space:${ spaceId }`;
 	const isLegacy = layout === 'legacy';
+	const dispatch = useDispatch();
 	const rawLocale = useSelector( getCurrentLocaleSlug );
 	const localeSlug = rawLocale && ! isDefaultLocale( rawLocale ) ? rawLocale : null;
 	const stream = useInfiniteStream( {
@@ -102,8 +105,15 @@ export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
 				);
 				selectPostKey( streamItem ?? postKey );
 			}
+			dispatch(
+				recordReaderTracksEvent(
+					'calypso_reader_spaces_post_opened',
+					{ space_id: spaceId, layout, variant },
+					{ post }
+				)
+			);
 		},
-		[ selectPostKey, stream.items ]
+		[ dispatch, selectPostKey, stream.items, spaceId, layout, variant ]
 	);
 
 	// Scroll on the Reader's main bounded container (`.layout__primary > div`, which

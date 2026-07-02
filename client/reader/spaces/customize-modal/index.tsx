@@ -219,6 +219,11 @@ function SpaceUpsertModalContent( {
 						dispatch(
 							recordReaderTracksEvent( 'calypso_reader_spaces_space_created', {
 								tag_count: createdSpace.tags.length,
+								source_count: selectedFeeds.length,
+								layout: view,
+								icon,
+								color,
+								icon_color: iconColor,
 							} )
 						);
 						dispatch(
@@ -260,6 +265,8 @@ function SpaceUpsertModalContent( {
 					dispatch(
 						recordReaderTracksEvent( 'calypso_reader_spaces_space_updated', {
 							tag_count: tags.length,
+							source_count: selectedFeeds.length,
+							layout: view,
 						} )
 					);
 					dispatch( successNotice( translate( 'Changes saved.' ), { duration: 5000 } ) );

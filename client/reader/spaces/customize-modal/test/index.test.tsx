@@ -16,6 +16,14 @@ jest.mock( '@automattic/calypso-router', () => ( {
 	default: Object.assign( jest.fn(), { replace: jest.fn() } ),
 } ) );
 
+const mockRecordReaderTracksEvent: jest.Mock = jest.fn( () => ( {
+	type: 'TEST_TRACKS_EVENT',
+} ) );
+
+jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
+	recordReaderTracksEvent: ( ...args: unknown[] ) => mockRecordReaderTracksEvent( ...args ),
+} ) );
+
 const existingSubscription: SiteSubscriptionItem = {
 	ID: 1,
 	URL: 'https://existing.example',
@@ -132,6 +140,7 @@ function render( {
 describe( 'CustomizeModal', () => {
 	beforeEach( () => {
 		mockSubscriptions = [];
+		mockRecordReaderTracksEvent.mockClear();
 	} );
 
 	afterEach( () => nock.cleanAll() );
@@ -223,6 +232,14 @@ describe( 'CustomizeModal', () => {
 		expect( cached?.name ).toBe( 'Reading' );
 		expect( cached?.layout.color ).toBe( 'green' );
 		expect( cached?.layout.view ).toBe( 'legacy' );
+		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+			'calypso_reader_spaces_space_updated',
+			{ tag_count: 1, source_count: 0, layout: 'legacy' }
+		);
+		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+			'calypso_reader_spaces_layout_changed',
+			{ layout: 'legacy' }
+		);
 	} );
 
 	it( 'saves source changes with the rest of the edit draft', async () => {

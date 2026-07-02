@@ -3,13 +3,16 @@
  */
 import { readSpaceQuery, readSpacesQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
-import { screen, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SpacesView } from '../view';
 import type { ReadSpaceDetails } from '@automattic/api-core';
 
 const mockSpaceFeed = jest.fn< null, [ unknown ] >( () => null );
+const mockRecordReaderTracksEvent: jest.Mock = jest.fn( () => ( {
+	type: 'TEST_TRACKS_EVENT',
+} ) );
 
 jest.mock( 'calypso/components/data/document-head', () => ( {
 	__esModule: true,
@@ -20,6 +23,10 @@ jest.mock( 'calypso/components/data/document-head', () => ( {
 // the unified Customize modal, so stub it out to keep the test off the network.
 jest.mock( 'calypso/reader/spaces/feed', () => ( {
 	SpaceFeed: ( props: unknown ) => mockSpaceFeed( props ),
+} ) );
+
+jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
+	recordReaderTracksEvent: ( ...args: unknown[] ) => mockRecordReaderTracksEvent( ...args ),
 } ) );
 
 // Keep the rest of the module real (ReaderMain's global handlers use `useFollowSite`);
@@ -66,6 +73,7 @@ describe( 'SpacesView', () => {
 	beforeEach( () => {
 		window.history.replaceState( {}, '', '/reader/spaces' );
 		mockSpaceFeed.mockClear();
+		mockRecordReaderTracksEvent.mockClear();
 	} );
 
 	it( 'shows the Customize button on a space detail page', () => {
@@ -110,6 +118,23 @@ describe( 'SpacesView', () => {
 				spaceId: WORK.id,
 				layoutView: 'gallery',
 			} )
+		);
+	} );
+
+	it( 'records a page view event with the selected space appearance', async () => {
+		render( <SpacesView id={ WORK.id } /> );
+
+		await waitFor( () =>
+			expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+				'calypso_reader_spaces_page_viewed',
+				{
+					space_id: WORK.id,
+					layout: 'gallery',
+					icon: 'inbox',
+					color: 'blue',
+					tab: 'feed',
+				}
+			)
 		);
 	} );
 
