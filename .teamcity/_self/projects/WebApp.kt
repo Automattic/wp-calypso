@@ -3,7 +3,6 @@ package _self.projects
 import Settings
 import _self.bashNodeScript
 import _self.lib.customBuildType.E2EBuildType
-import _self.lib.utils.allBranchesExceptMergeQueue
 import _self.lib.utils.excludeMergeQueueBranches
 import _self.lib.utils.mergeTrunk
 import _self.lib.utils.passMergeQueueBranchesEarly
@@ -793,7 +792,6 @@ object Translate : BuildType({
 
 	vcs {
 		root(Settings.WpCalypso)
-		branchFilter = allBranchesExceptMergeQueue()
 		cleanCheckout = true
 	}
 
@@ -930,7 +928,6 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 				}
 			}
 		},
-		vcsBranchFilter = allBranchesExceptMergeQueue(),
 		enableCommitStatusPublisher = true,
 		buildTriggers = {
 			vcs {
