@@ -223,6 +223,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 				has_recovery_phone: false,
 				has_two_factor: false,
 				has_backup_codes: false,
+				snooze_period: 14,
 			}
 		);
 	} );

@@ -131,7 +131,10 @@ export default function AccountRecoveryInterstitial() {
 	};
 
 	const handleSnooze = () => {
-		recordTracksEvent( 'calypso_account_recovery_nudge_interstitial_dismiss', tracksProperties );
+		recordTracksEvent( 'calypso_account_recovery_nudge_interstitial_dismiss', {
+			...tracksProperties,
+			snooze_period: snoozeDays,
+		} );
 		snooze();
 	};
 
