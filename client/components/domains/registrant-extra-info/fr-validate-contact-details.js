@@ -13,18 +13,25 @@ const isArrayIndex = ( key ) => /^(?:0|[1-9]\d*)$/.test( key );
 // Applies `updater` to the value at `path` (an array of keys) in `object`,
 // creating each missing intermediate container as needed — an array when the
 // next segment is a numeric index, otherwise a plain object — and returns the
-// mutated `object`.
+// mutated `object`. Descending through `__proto__`, `constructor`, or
+// `prototype` is refused (the update aborts) to avoid prototype pollution.
 export function updateAtPath( object, path, updater ) {
 	let node = object;
-	for ( let i = 0; i < path.length - 1; i++ ) {
+	const lastIndex = path.length - 1;
+	for ( let i = 0; i <= lastIndex; i++ ) {
 		const key = path[ i ];
-		if ( node[ key ] == null || typeof node[ key ] !== 'object' ) {
-			node[ key ] = isArrayIndex( path[ i + 1 ] ) ? [] : {};
+		if ( key === '__proto__' || key === 'constructor' || key === 'prototype' ) {
+			return object;
 		}
-		node = node[ key ];
+		if ( i === lastIndex ) {
+			node[ key ] = updater( node[ key ] );
+		} else {
+			if ( node[ key ] == null || typeof node[ key ] !== 'object' ) {
+				node[ key ] = isArrayIndex( path[ i + 1 ] ) ? [] : {};
+			}
+			node = node[ key ];
+		}
 	}
-	const lastKey = path[ path.length - 1 ];
-	node[ lastKey ] = updater( node[ lastKey ] );
 	return object;
 }
 

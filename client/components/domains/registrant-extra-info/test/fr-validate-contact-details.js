@@ -23,6 +23,15 @@ describe( 'updateAtPath', () => {
 			a: { b: [ 'y', 'x' ] },
 		} );
 	} );
+
+	test( 'refuses prototype-polluting path segments', () => {
+		const before = {}.polluted;
+		expect( updateAtPath( {}, [ '__proto__', 'polluted' ], () => 'yes' ) ).toEqual( {} );
+		expect( updateAtPath( {}, [ 'constructor', 'prototype', 'polluted' ], () => 'yes' ) ).toEqual(
+			{}
+		);
+		expect( {}.polluted ).toBe( before );
+	} );
 } );
 
 describe( 'validateContactDetails', () => {
