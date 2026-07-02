@@ -617,7 +617,6 @@ object CheckCodeStyleBranch : BuildType({
 	}
 
 	steps {
-		passMergeQueueBranchesEarly()
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
@@ -626,7 +625,7 @@ object CheckCodeStyleBranch : BuildType({
 				# Install modules
 				${_self.yarn_install_cmd}
 			"""
-		}.skipOnMergeQueueBranch()
+		}
 		bashNodeScript {
 			name = "Run eslint"
 			scriptContent = """
@@ -717,14 +716,14 @@ object CheckCodeStyleBranch : BuildType({
 						' yarn-batch # Arbitrary name to be used as each batch's progname
 				fi
 			"""
-		}.skipOnMergeQueueBranch()
+		}
 		bashNodeScript {
 			name = "Run code quality linters"
 			scriptContent = """
 				yarn run lint:unused-state-action-types
 				yarn run lint:config-defaults
 			"""
-		}.skipOnMergeQueueBranch()
+		}
 		bashNodeScript {
 			name = "Run stylelint"
 			scriptContent = """
@@ -732,7 +731,7 @@ object CheckCodeStyleBranch : BuildType({
 				yarn run lint:css
 				yarn run lint:mixedindent
 			"""
-		}.skipOnMergeQueueBranch()
+		}
 	}
 
 	triggers {
