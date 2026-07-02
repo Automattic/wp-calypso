@@ -83,10 +83,10 @@ export default function ImageAltTextPicker( { images, onComplete }: ImageAltText
 			{ applied ? (
 				<p className="jetpack-ai-image-alt-text-picker__status">
 					{ sprintf(
-						/* translators: %d: number of images updated. */
+						/* translators: %d: number of images whose alt attribute was updated. */
 						_n(
-							'Updated alt text for %d image.',
-							'Updated alt text for %d images.',
+							'Updated the alt attribute for %d image.',
+							'Updated the alt attribute for %d images.',
 							count,
 							'jetpack'
 						),

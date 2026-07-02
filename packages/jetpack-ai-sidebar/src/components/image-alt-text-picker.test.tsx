@@ -65,7 +65,7 @@ describe( 'ImageAltTextPicker', () => {
 		expect( mockUpdateBlockAttributes ).toHaveBeenCalledWith( 'block-b', {
 			alt: 'A dog in a park',
 		} );
-		expect( screen.getByText( 'Updated alt text for 2 images.' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Updated the alt attribute for 2 images.' ) ).toBeInTheDocument();
 		// The button is replaced by the confirmation, and the images stay visible.
 		expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'A cat on a sofa' ) ).toBeInTheDocument();
@@ -82,7 +82,7 @@ describe( 'ImageAltTextPicker', () => {
 		render( <ImageAltTextPicker images={ [ images[ 0 ] ] } /> );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Apply to 1 image' } ) );
 		expect( mockUpdateBlockAttributes ).toHaveBeenCalledTimes( 1 );
-		expect( screen.getByText( 'Updated alt text for 1 image.' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Updated the alt attribute for 1 image.' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders nothing when there are no images', () => {

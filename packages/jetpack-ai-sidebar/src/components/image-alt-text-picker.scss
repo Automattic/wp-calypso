@@ -6,20 +6,28 @@
 		font-size: 14px;
 	}
 
-	&__list {
+	// The agentic `.Message-module_message ol, ul` selector (0,1,1) outranks a
+	// single BEM class, so scope the list under the block (0,2,0) to keep our
+	// padding, and reset list-style on the <li> since the disc marker is inherited.
+	& &__list {
 		display: flex;
 		flex-direction: column;
 		gap: 8px;
 		margin: 0 0 12px;
 		padding: 0;
 		list-style: none;
+
+		> li {
+			list-style: none;
+		}
 	}
 
 	&__row {
 		display: flex;
 		align-items: center;
 		gap: 12px;
-		padding: 8px;
+		margin-bottom: 0;
+		padding: 0;
 		border: 1px solid rgba( 255, 255, 255, 0.12 );
 		border-radius: 8px;
 	}
