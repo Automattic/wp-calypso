@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
-import ReaderListIcon from 'calypso/reader/components/icons/list-icon';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import ReaderSidebarListsList from './list';
 
@@ -37,7 +36,6 @@ export class ReaderSidebarLists extends Component {
 					expanded={ isOpen }
 					title={ translate( 'Lists' ) }
 					onClick={ this.navigateToLists }
-					customIcon={ <ReaderListIcon viewBox="0 0 24 24" /> }
 					disableFlyout
 					className={ path.startsWith( '/reader/list' ) ? 'sidebar__menu--selected' : '' }
 					expandableIconClick={ onClick }

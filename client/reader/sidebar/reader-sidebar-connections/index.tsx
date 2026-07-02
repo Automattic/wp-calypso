@@ -4,7 +4,6 @@ import {
 	useMastodonConnectionsQuery,
 } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
-import { Icon, people } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
@@ -224,7 +223,6 @@ function ReaderSidebarConnections( { path }: Props ) {
 			<ExpandableSidebarMenu
 				expanded={ isOpen }
 				title={ translate( 'Social feeds' ) }
-				customIcon={ <Icon className="sidebar__menu-icon" icon={ people } /> }
 				onClick={ handleMainClick }
 				expandableIconClick={ () => setIsOpen( ! isOpen ) }
 				disableFlyout

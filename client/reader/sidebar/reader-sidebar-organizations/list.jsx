@@ -4,10 +4,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
-import ReaderA8cIcon from 'calypso/reader/components/icons/a8c-icon';
-import ReaderP2Icon from 'calypso/reader/components/icons/p2-icon';
 import { useOrganizationSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
-import { AUTOMATTIC_ORG_ID } from 'calypso/state/reader/organizations/constants';
 import { toggleReaderSidebarOrganization } from 'calypso/state/reader-ui/sidebar/actions';
 import { isOrganizationOpen } from 'calypso/state/reader-ui/sidebar/selectors';
 import ReaderSidebarOrganizationsListItem from './list-item';
@@ -30,14 +27,6 @@ export class ReaderSidebarOrganizationsList extends Component {
 			page( defaultSelection );
 		}
 	};
-
-	renderIcon() {
-		const { organization } = this.props;
-		if ( organization.id === AUTOMATTIC_ORG_ID ) {
-			return <ReaderA8cIcon size={ 24 } viewBox="-3 -2 24 24" />;
-		}
-		return <ReaderP2Icon viewBox="0 0 24 24" />;
-	}
 
 	renderSites() {
 		const { sites, path } = this.props;
@@ -63,7 +52,6 @@ export class ReaderSidebarOrganizationsList extends Component {
 				count={ unseenCount > 0 ? unseenCount : undefined }
 				onClick={ this.selectMenu }
 				expandableIconClick={ this.toggleMenu }
-				customIcon={ this.renderIcon() }
 				disableFlyout
 				className={ clsx( 'has-counts', {
 					'sidebar__menu--selected':
