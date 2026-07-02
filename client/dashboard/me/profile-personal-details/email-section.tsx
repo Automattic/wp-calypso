@@ -152,7 +152,7 @@ export default function EmailSection( {
 				<>
 					<Icon icon={ info } size={ 16 } />
 					{ __(
-						"This email uses a custom domain. If your domain expires, you'd lose access to account recovery. Consider an email from a service like Gmail or Outlook instead."
+						"This email uses a custom domain. If your domain expires, you’d lose access to account recovery. Consider an email from a service like Gmail or Outlook instead."
 					) }
 				</>
 			);
