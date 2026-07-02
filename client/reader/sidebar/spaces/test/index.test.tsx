@@ -17,6 +17,14 @@ jest.mock( '@automattic/calypso-router', () => ( {
 	default: Object.assign( jest.fn(), { replace: jest.fn() } ),
 } ) );
 
+// Drives the "space a post was opened from" fallback. Mutable so each test can
+// set the route the user navigated from before opening the current post.
+let mockPreviousRoute = '';
+jest.mock( 'calypso/state/selectors/get-previous-route', () => ( {
+	__esModule: true,
+	default: () => mockPreviousRoute,
+} ) );
+
 // The create modal is backed by the shared upsert modal, which imports the
 // Sources tab. Sidebar tests never exercise the sources list, so stub its heavy
 // dependencies here.
@@ -53,6 +61,7 @@ describe( 'ReaderSidebarSpaces', () => {
 	beforeEach( () => {
 		jest.mocked( page ).mockClear();
 		jest.mocked( page.replace ).mockClear();
+		mockPreviousRoute = '';
 	} );
 
 	afterEach( () => nock.cleanAll() );
@@ -75,6 +84,25 @@ describe( 'ReaderSidebarSpaces', () => {
 		// The active row carries the space's colour class, which drives the
 		// active link colour via the `--space-color` custom property.
 		expect( selected[ 0 ] ).toHaveClass( `sidebar-spaces__item--${ FIRST_SPACE.layout.color }` );
+	} );
+
+	it( 'keeps the originating space highlighted while reading a post opened from it', () => {
+		// On a post route the URL carries no space; the highlight falls back to the
+		// previous route (the space we came from).
+		mockPreviousRoute = OPEN_PATH;
+		const { container } = render( <ReaderSidebarSpaces path="/reader/feeds/123/posts/456" /> );
+
+		const selected = container.querySelectorAll( 'li.sidebar__menu-item.selected' );
+		expect( selected ).toHaveLength( 1 );
+		expect( selected[ 0 ].textContent ).toContain( FIRST_SPACE.name );
+	} );
+
+	it( 'does not highlight a space on a post route not reached from a space', () => {
+		// Came from Following, opened a post: no space should read as active.
+		mockPreviousRoute = '/reader';
+		const { container } = render( <ReaderSidebarSpaces path="/reader/feeds/123/posts/456" /> );
+
+		expect( container.querySelector( 'li.sidebar__menu-item.selected' ) ).toBeNull();
 	} );
 
 	it( 'does not crash or falsely select on an unexpected space id in the path', () => {

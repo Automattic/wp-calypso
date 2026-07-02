@@ -93,6 +93,33 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result ).toEqual( [] );
 	} );
 
+	it( 'filters out messages transformed to context content', () => {
+		const message = createMessage( {
+			content: [ { type: 'context', text: 'This is only context for the model.' } ],
+		} );
+
+		const result = convertWithDefaults( {
+			messages: [ message ],
+		} );
+
+		expect( result ).toEqual( [] );
+	} );
+
+	it( 'filters out messages with context-only data flags', () => {
+		const message = createMessage( {
+			content: [
+				{ type: 'text', text: 'This is only context for the model.' },
+				{ type: 'data', data: { flags: { context_only: true } } },
+			],
+		} );
+
+		const result = convertWithDefaults( {
+			messages: [ message ],
+		} );
+
+		expect( result ).toEqual( [] );
+	} );
+
 	it( 'renders tool messages as components', () => {
 		const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
 			type: 'my-component',
@@ -281,6 +308,19 @@ describe( 'convertToolMessagesToComponents', () => {
 			type: 'text',
 			text: 'Updated the header and footer.',
 		} );
+	} );
+
+	it( 'filters out unsuccessful apply-block-edits tool summaries', () => {
+		const message = createToolMessage( 'big_sky__apply_block_edits', {
+			success: false,
+			summary: 'Tried to update the header, but it did not stick.',
+		} );
+
+		const result = convertWithDefaults( {
+			messages: [ message ],
+		} );
+
+		expect( result ).toEqual( [] );
 	} );
 
 	it( 'suppresses transient thinking for converted apply-block-edits messages', () => {

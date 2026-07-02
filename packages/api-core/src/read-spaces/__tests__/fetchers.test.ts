@@ -53,6 +53,7 @@ describe( 'read spaces fetchers', () => {
 					title: 'Work',
 					layout: { color: 'blue', icon: 'inbox' },
 					tags: [ 'photography' ],
+					languages: [ 'en' ],
 					follows: [
 						{
 							feed_id: 9981,
@@ -72,6 +73,7 @@ describe( 'read spaces fetchers', () => {
 				name: 'Work',
 				layout: { color: 'blue', icon: 'inbox' },
 				tags: [ 'photography' ],
+				languages: [ 'en' ],
 				sources: [
 					{
 						feedId: 9981,

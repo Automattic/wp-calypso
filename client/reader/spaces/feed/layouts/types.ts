@@ -28,6 +28,12 @@ export interface SpaceFeedLayoutProps {
 	isPostSelected: ( post: ReadStreamPost ) => boolean;
 	/** Mark a post as selected. */
 	selectPost: ( post: ReadStreamPost ) => void;
+	/**
+	 * Whether to show each post's published-time stamp. False for Discover, whose
+	 * results are recommendation-ranked rather than chronological, so a "time ago"
+	 * label would misrepresent the ordering.
+	 */
+	showTimestamp: boolean;
 }
 
 /**

@@ -12,6 +12,7 @@ import { getPostUrl } from 'calypso/reader/route';
 import { Shimmer } from '../../components/skeleton';
 import { SpaceFeedTimeSince } from '../../components/time-since';
 import { getPostFieldKey, getPostFields } from '../../post-fields';
+import { useScrollSelectedIntoView } from '../use-scroll-selected-into-view';
 import type { SpaceFeedLayoutProps, SpaceFeedSkeletonProps } from '../types';
 import type { ReadStreamPost } from '@automattic/api-core';
 
@@ -38,10 +39,12 @@ function GalleryCard( {
 	post,
 	isSelected,
 	onOpen,
+	showTimestamp,
 }: {
 	post: ReadStreamPost;
 	isSelected: boolean;
 	onOpen: () => void;
+	showTimestamp: boolean;
 } ) {
 	const fields = getPostFields( post );
 	return (
@@ -81,7 +84,7 @@ function GalleryCard( {
 							{ fields.sourceName }
 							{ fields.authorName ? ` · ${ fields.authorName }` : '' }
 						</span>
-						{ fields.publishedDate && (
+						{ showTimestamp && fields.publishedDate && (
 							<>
 								<span>-</span>
 								<SpaceFeedTimeSince date={ fields.publishedDate } />
@@ -139,6 +142,7 @@ export function GalleryLayout( {
 	restoreKey,
 	isPostSelected,
 	selectPost,
+	showTimestamp,
 }: SpaceFeedLayoutProps ) {
 	const columns = useGalleryColumns();
 
@@ -161,11 +165,11 @@ export function GalleryLayout( {
 		return out;
 	}, [ posts, columns, isLoadingMore ] );
 
-	const { getListProps, items, measureElement, scrollMargin } = useInfiniteList( {
+	const { getListProps, items, measureElement, scrollMargin, scrollToIndex } = useInfiniteList( {
 		scrollElement,
 		count: rows.length,
 		estimateSize: ROW_SIZE,
-		overscan: 4,
+		overscan: 12,
 		getItemKey: ( index ) => {
 			const first = rows[ index ][ 0 ];
 			return first ? getPostFieldKey( first ) : `skeleton-${ index }`;
@@ -175,6 +179,14 @@ export function GalleryLayout( {
 		loadMore,
 		restoreKey,
 	} );
+
+	// Grid row holding the selected post.
+	const selectedRowIndex = useMemo(
+		() =>
+			rows.findIndex( ( row ) => row.some( ( cell ) => cell != null && isPostSelected( cell ) ) ),
+		[ rows, isPostSelected ]
+	);
+	useScrollSelectedIntoView( scrollToIndex, selectedRowIndex );
 
 	return (
 		<div { ...getListProps( { className: 'space-feed-gallery' } ) }>
@@ -197,6 +209,7 @@ export function GalleryLayout( {
 									post={ cell }
 									isSelected={ isPostSelected( cell ) }
 									onOpen={ () => selectPost( cell ) }
+									showTimestamp={ showTimestamp }
 								/>
 							) : (
 								// eslint-disable-next-line react/no-array-index-key

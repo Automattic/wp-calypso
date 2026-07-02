@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { useMemo } from 'react';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { useInfiniteList } from 'calypso/reader/hooks/use-infinite-list';
@@ -6,6 +7,7 @@ import { getPostUrl } from 'calypso/reader/route';
 import { Shimmer } from '../../components/skeleton';
 import { SpaceFeedTimeSince } from '../../components/time-since';
 import { getPostFieldKey, getPostFields } from '../../post-fields';
+import { useScrollSelectedIntoView } from '../use-scroll-selected-into-view';
 import type { SpaceFeedLayoutProps, SpaceFeedSkeletonProps } from '../types';
 import type { ReadStreamPost } from '@automattic/api-core';
 
@@ -14,7 +16,15 @@ import './style.scss';
 const LANES = 2;
 const ESTIMATED_SIZE = 260;
 
-function BoardCard( { post, onOpen }: { post: ReadStreamPost; onOpen: () => void } ) {
+function BoardCard( {
+	post,
+	onOpen,
+	showTimestamp,
+}: {
+	post: ReadStreamPost;
+	onOpen: () => void;
+	showTimestamp: boolean;
+} ) {
 	const fields = getPostFields( post );
 	return (
 		<div className="space-feed-board__card">
@@ -43,7 +53,7 @@ function BoardCard( { post, onOpen }: { post: ReadStreamPost; onOpen: () => void
 						<SiteIcon iconUrl={ fields.siteIconUrl } size={ 18 } />
 						<span className="space-feed-board__source">{ fields.sourceName }</span>
 					</span>
-					{ fields.publishedDate && (
+					{ showTimestamp && fields.publishedDate && (
 						<span className="space-feed-board__time">
 							<SpaceFeedTimeSince date={ fields.publishedDate } />
 						</span>
@@ -73,8 +83,9 @@ export function BoardLayout( {
 	restoreKey,
 	isPostSelected,
 	selectPost,
+	showTimestamp,
 }: SpaceFeedLayoutProps ) {
-	const { getListProps, items, measureElement, scrollMargin } = useInfiniteList( {
+	const { getListProps, items, measureElement, scrollMargin, scrollToIndex } = useInfiniteList( {
 		scrollElement,
 		count: posts.length,
 		estimateSize: ESTIMATED_SIZE,
@@ -86,6 +97,12 @@ export function BoardLayout( {
 		loadMore,
 		restoreKey,
 	} );
+
+	const selectedIndex = useMemo(
+		() => posts.findIndex( ( post ) => isPostSelected( post ) ),
+		[ posts, isPostSelected ]
+	);
+	useScrollSelectedIntoView( scrollToIndex, selectedIndex );
 
 	return (
 		<div { ...getListProps( { className: 'space-feed-board' } ) }>
@@ -105,6 +122,7 @@ export function BoardLayout( {
 					<BoardCard
 						post={ posts[ virtualItem.index ] }
 						onOpen={ () => selectPost( posts[ virtualItem.index ] ) }
+						showTimestamp={ showTimestamp }
 					/>
 				</div>
 			) ) }

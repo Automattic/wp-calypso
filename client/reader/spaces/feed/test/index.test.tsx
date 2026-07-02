@@ -35,6 +35,7 @@ jest.mock( 'calypso/reader/hooks/use-infinite-list', () => ( {
 		} ) ),
 		measureElement: jest.fn(),
 		scrollMargin: 0,
+		scrollToIndex: jest.fn(),
 	} ) ),
 } ) );
 
@@ -47,6 +48,14 @@ jest.mock( 'calypso/state/reader/site-blocks/selectors', () => {
 	const getBlockedSites = jest.fn( () => blockedSites );
 	return { getBlockedSites };
 } );
+
+const mockRecordReaderTracksEvent: jest.Mock = jest.fn( () => ( {
+	type: 'TEST_TRACKS_EVENT',
+} ) );
+
+jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
+	recordReaderTracksEvent: ( ...args: unknown[] ) => mockRecordReaderTracksEvent( ...args ),
+} ) );
 
 const mockUseInfiniteStream = useInfiniteStream as jest.Mock;
 
@@ -69,7 +78,14 @@ function streamResult( overrides: Partial< ReturnType< typeof useInfiniteStream 
 }
 
 function makeSpace( id: string, name: string, view: SpaceFeedLayout ): ReadSpaceDetails {
-	return { id, name, tags: [], layout: { color: 'blue', icon: 'inbox', view }, sources: [] };
+	return {
+		id,
+		name,
+		tags: [],
+		languages: [],
+		layout: { color: 'blue', icon: 'inbox', view },
+		sources: [],
+	};
 }
 
 function makePost( overrides: Partial< ReadStreamPost > = {} ): ReadStreamPost {
@@ -114,6 +130,7 @@ describe( 'SpaceFeed', () => {
 	beforeEach( () => {
 		window.history.replaceState( {}, '', '/reader/spaces/work-id' );
 		mockCurrentLocaleSlug = null;
+		mockRecordReaderTracksEvent.mockClear();
 		mockUseInfiniteStream.mockReturnValue( streamResult() );
 	} );
 
@@ -252,6 +269,31 @@ describe( 'SpaceFeed', () => {
 		expect(
 			queryClient.getQueryData( [ 'read', 'stream', 'selected', `space:${ WORK.id }`, null ] )
 		).toEqual( streamItem );
+	} );
+
+	it( 'records a tracks event when a post is opened', async () => {
+		const user = userEvent.setup();
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		queryClient.setQueryData( readSpaceQuery( WORK.id ).queryKey, WORK );
+		const post = makePost();
+		mockUseInfiniteStream.mockReturnValue(
+			streamResult( { pages: [ { posts: [ post ] } as unknown as ReadStreamResponse ] } )
+		);
+
+		renderWithProvider( <SpaceFeed spaceId={ WORK.id } />, {
+			queryClient,
+			initialState: { currentUser: { id: 1 } },
+		} );
+
+		const link = screen.getByRole( 'link', { name: 'A layout-sensitive post' } );
+		link.addEventListener( 'click', ( event ) => event.preventDefault() );
+		await user.click( link );
+
+		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+			'calypso_reader_spaces_post_opened',
+			{ space_id: WORK.id, layout: 'standard-list', variant: 'feed' },
+			{ post }
+		);
 	} );
 
 	it( 'requests the discover stream keyed by the space id for the discover variant', () => {

@@ -46,7 +46,7 @@ export default function AgentHistory( {
 
 	// Without the AI chat entry button, use `collapsed` (a FAB) instead of `minimized`.
 	const closedChatState = hasAiChatEntryButton() ? 'minimized' : 'collapsed';
-	const title = __( 'Past chats', '__i18n_text_domain__' );
+	const title = __( 'Past chats', __i18n_text_domain__ );
 
 	const handleBack = () => resumeActiveChat();
 

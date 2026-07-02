@@ -299,4 +299,29 @@ describe( 'LostPasswordForm', () => {
 			expect( window.Blackbox.reset ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
+
+	test( 'resets Blackbox when the lost password request cannot find a user', async () => {
+		window.Blackbox = { reset: jest.fn() };
+
+		mockFetch.mockResolvedValueOnce( {
+			ok: true,
+			status: 200,
+			text: jest
+				.fn()
+				.mockResolvedValue( 'Lost Password [...] Unable to reset password [...] More help' ),
+		} );
+
+		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
+
+		await userEvent.type(
+			screen.getByRole( 'textbox', { name: 'Email address or username' } ),
+			'user@example.com'
+		);
+
+		await userEvent.click( screen.getByRole( 'button', { name: /Reset my password/i } ) );
+
+		await waitFor( () => {
+			expect( window.Blackbox.reset ).toHaveBeenCalledTimes( 1 );
+		} );
+	} );
 } );
