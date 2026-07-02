@@ -1,6 +1,6 @@
 import { userPreferenceQuery, userPreferenceMutation } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
-import { useRouterState } from '@tanstack/react-router';
+import { useMatch } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
@@ -11,6 +11,7 @@ import ComponentViewTracker from '../../components/component-view-tracker';
 import { getHostingDashboardEnrollment } from '../../utils/hosting-dashboard-enrollment';
 import { useAnalytics } from '../analytics';
 import { useAuth } from '../auth';
+import { hostingDashboardRoute as hostingDashboardPreferencesRoute } from '../router/me';
 import patternUrl from './welcome-modal-background-pattern.png';
 import illustrationUrl from './welcome-modal-illustration.png';
 import './style.scss';
@@ -28,8 +29,9 @@ export function OptInWelcomeModal() {
 		userPreferenceMutation( preferenceName )
 	);
 
-	const isOnOptInPreferences = useRouterState( {
-		select: ( state ) => state.location.pathname.startsWith( '/me/preferences/hosting-dashboard' ),
+	const isOnOptInPreferences = !! useMatch( {
+		from: hostingDashboardPreferencesRoute.id,
+		shouldThrow: false,
 	} );
 
 	const isDismissed = isDismissedPersisted || isDismissing;
