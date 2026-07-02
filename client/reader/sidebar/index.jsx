@@ -172,15 +172,9 @@ export class ReaderSidebar extends Component {
 			<div className="sidebar-menu-container">
 				<AppTitle />
 				<SidebarMenu>
-					<li className="sidebar-streams__following">
-						<ReaderSidebarRecent
-							onClick={ this.props.toggleFollowingVisibility }
-							isOpen={ this.props.isFollowingOpen }
-							path={ path }
-						/>
+					<li className="reader-sidebar__section-header" role="presentation">
+						<span>{ translate( 'Explore' ) }</span>
 					</li>
-
-					{ isEnabled( 'reader/spaces' ) && <ReaderSidebarSpaces path={ path } /> }
 
 					<SidebarItem
 						className={ clsx( 'sidebar-streams__search', {
@@ -201,17 +195,47 @@ export class ReaderSidebar extends Component {
 						link="/discover"
 					/>
 
+					<li className="reader-sidebar__section-header" role="presentation">
+						<span>{ translate( 'Feeds' ) }</span>
+					</li>
+
+					<li className="sidebar-streams__following">
+						<ReaderSidebarRecent
+							onClick={ this.props.toggleFollowingVisibility }
+							isOpen={ this.props.isFollowingOpen }
+							path={ path }
+						/>
+					</li>
+
+					<ReaderSidebarLists
+						lists={ this.props.subscribedLists }
+						path={ path }
+						isOpen={ this.props.isListsOpen }
+						onClick={ this.props.toggleListsVisibility }
+						currentListOwner={ this.state.currentListOwner }
+						currentListSlug={ this.state.currentListSlug }
+					/>
+
 					{ isEnabled( 'reader/social' ) && <ReaderSidebarConnections path={ path } /> }
 
-					<SidebarItem
-						label={ translate( 'Likes' ) }
-						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.likeActivity ) }
-						customIcon={ <ReaderLikesIcon viewBox="0 0 24 24" /> }
-						link="/activities/likes"
-						className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', path, {
-							'sidebar-activity__likes': true,
-						} ) }
+					{ this.props.organizations && (
+						<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />
+					) }
+
+					{ isEnabled( 'reader/spaces' ) && <ReaderSidebarSpaces path={ path } /> }
+
+					<ReaderSidebarTags
+						tags={ this.props.followedTags }
+						path={ path }
+						isOpen={ this.props.isTagsOpen }
+						onClick={ this.props.toggleTagsVisibility }
+						onFollowTag={ this.highlightNewTag }
+						currentTag={ this.state.currentTag }
 					/>
+
+					<li className="reader-sidebar__section-header" role="presentation">
+						<span>{ translate( 'Library' ) }</span>
+					</li>
 
 					{ isEnabled( 'reader/saved-posts' ) && (
 						<SidebarItem
@@ -226,6 +250,16 @@ export class ReaderSidebar extends Component {
 					) }
 
 					<SidebarItem
+						label={ translate( 'Likes' ) }
+						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.likeActivity ) }
+						customIcon={ <ReaderLikesIcon viewBox="0 0 24 24" /> }
+						link="/activities/likes"
+						className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', path, {
+							'sidebar-activity__likes': true,
+						} ) }
+					/>
+
+					<SidebarItem
 						className={ ReaderSidebarHelper.itemLinkClass( '/reader/conversations', path, {
 							'sidebar-streams__conversations': true,
 						} ) }
@@ -234,34 +268,6 @@ export class ReaderSidebar extends Component {
 						customIcon={ <ReaderConversationsIcon iconSize={ 24 } viewBox="0 0 24 24" /> }
 						link="/reader/conversations"
 					/>
-
-					<ReaderSidebarLists
-						lists={ this.props.subscribedLists }
-						path={ path }
-						isOpen={ this.props.isListsOpen }
-						onClick={ this.props.toggleListsVisibility }
-						currentListOwner={ this.state.currentListOwner }
-						currentListSlug={ this.state.currentListSlug }
-					/>
-
-					<ReaderSidebarTags
-						tags={ this.props.followedTags }
-						path={ path }
-						isOpen={ this.props.isTagsOpen }
-						onClick={ this.props.toggleTagsVisibility }
-						onFollowTag={ this.highlightNewTag }
-						currentTag={ this.state.currentTag }
-					/>
-
-					{ this.props.organizations && (
-						<>
-							<SidebarSeparator />
-							<ReaderSidebarOrganizations
-								organizations={ this.props.organizations }
-								path={ path }
-							/>
-						</>
-					) }
 
 					{ isAutomatticTeamMember( teams ) && (
 						<SidebarItem
@@ -275,7 +281,9 @@ export class ReaderSidebar extends Component {
 						/>
 					) }
 
-					<SidebarSeparator />
+					<li className="reader-sidebar__section-header" role="presentation">
+						<span>{ translate( 'Account' ) }</span>
+					</li>
 
 					<SidebarItem
 						label={ translate( 'New subscription' ) }
