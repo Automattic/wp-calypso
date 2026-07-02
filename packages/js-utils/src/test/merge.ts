@@ -72,6 +72,16 @@ describe( 'merge', () => {
 		expect( probe.polluted2 ).toBeUndefined();
 	} );
 
+	it( 'ignores a __proto__ source key even for a null-prototype target', () => {
+		// A null-prototype target has no inherited `__proto__`, so a naive
+		// implementation would write an own `__proto__` key. It must not.
+		const target = Object.create( null ) as Record< string, unknown >;
+		const result = merge( target, JSON.parse( '{ "__proto__": { "x": 1 }, "a": 1 }' ) );
+		expect( Object.getPrototypeOf( result ) ).toBeNull();
+		expect( Object.prototype.hasOwnProperty.call( result, '__proto__' ) ).toBe( false );
+		expect( result.a ).toBe( 1 );
+	} );
+
 	it( 'merges only own enumerable source properties, not inherited ones', () => {
 		// Intentionally narrower than lodash, which also copies inherited
 		// enumerable properties (it iterates with `for…in`).

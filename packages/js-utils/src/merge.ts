@@ -13,13 +13,10 @@ const isPlainObject = ( value: unknown ): value is PlainObject => {
 // arrays, …) is copied by reference.
 const isMergeable = ( value: unknown ): boolean => Array.isArray( value ) || isPlainObject( value );
 
-// Reads a property while refusing the keys that could reach a prototype, so a
-// crafted source (e.g. `JSON.parse( '{ "__proto__": … }' )`) can't pollute
-// `Object.prototype`. Mirrors lodash's `safeGet`.
+// Reads `constructor` as absent when it holds the built-in function, so a source
+// `constructor` merges into a fresh own property instead of the real constructor
+// (matching lodash). `__proto__` is skipped entirely in `baseMerge`.
 const safeGet = ( object: PlainObject, key: string ): unknown => {
-	if ( key === '__proto__' ) {
-		return undefined;
-	}
 	if ( key === 'constructor' && typeof object[ key ] === 'function' ) {
 		return undefined;
 	}
@@ -42,6 +39,12 @@ function baseMerge( target: PlainObject, source: PlainObject ): void {
 		return;
 	}
 	for ( const key of Object.keys( source ) ) {
+		// Never read or write through `__proto__`; it can only reach a prototype.
+		// Skipping outright also avoids writing an own `__proto__` key onto a
+		// null-prototype target.
+		if ( key === '__proto__' ) {
+			continue;
+		}
 		const srcValue = safeGet( source, key );
 		const objValue = safeGet( target, key );
 
@@ -76,8 +79,9 @@ function baseMerge( target: PlainObject, source: PlainObject ): void {
  * objects into the destination object, mutating and returning it. Later sources
  * override earlier ones; arrays and plain objects are merged deeply while other
  * values are assigned by reference. Source properties resolving to `undefined`
- * are skipped when the destination already has the key, and prototype-polluting
- * keys (`__proto__`, function `constructor`) are ignored.
+ * are skipped when the destination already has the key. A source `__proto__`
+ * key is ignored entirely and a `constructor` key is merged as a plain own
+ * property, so neither can pollute a prototype.
  *
  * This targets plain JSON-like data and is intentionally narrower than lodash's
  * `merge`: it merges only own (not inherited) enumerable properties, treats
