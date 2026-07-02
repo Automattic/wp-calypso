@@ -75,7 +75,6 @@ describe( '<AccountRecoveryInterstitial>', () => {
 			'calypso_account_recovery_nudge_interstitial_impression',
 			{
 				security_level: 'none',
-				recovery_status: 'none',
 				has_recovery_email: false,
 				has_recovery_phone: false,
 				has_two_factor: false,
@@ -103,8 +102,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_account_recovery_nudge_interstitial_impression',
 			{
-				security_level: 'partial',
-				recovery_status: 'add-two-factor',
+				security_level: 'partial-has-recovery',
 				has_recovery_email: true,
 				has_recovery_phone: false,
 				has_two_factor: false,
@@ -147,12 +145,10 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		expect(
 			screen.getByRole( 'button', { name: 'Review recovery email or phone' } )
 		).toBeVisible();
-		// Coarse tier stays 'strong'; the fine-grained dimension captures the missing backup codes.
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_account_recovery_nudge_interstitial_impression',
 			{
-				security_level: 'strong',
-				recovery_status: 'add-backup-codes',
+				security_level: 'strong-no-backup-codes',
 				has_recovery_email: true,
 				has_recovery_phone: false,
 				has_two_factor: true,
@@ -218,11 +214,11 @@ describe( '<AccountRecoveryInterstitial>', () => {
 			'calypso_account_recovery_nudge_interstitial_dismiss',
 			{
 				security_level: 'none',
-				recovery_status: 'none',
 				has_recovery_email: false,
 				has_recovery_phone: false,
 				has_two_factor: false,
 				has_backup_codes: false,
+				snooze_period: 14,
 			}
 		);
 	} );
