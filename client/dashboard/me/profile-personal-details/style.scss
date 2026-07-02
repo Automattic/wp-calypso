@@ -23,6 +23,12 @@
 	}
 }
 
+.components-input-control.has-warning {
+	.components-base-control__help {
+		color: var( --dashboard__foreground-color-warning );
+	}
+}
+
 .components-input-control.has-success {
 	.components-input-control__backdrop {
 		border-color: var( --dashboard__background-color-success );

@@ -107,6 +107,9 @@ export default function EmailSection( {
 		if ( isEmailPending ) {
 			return '';
 		}
+		if ( showCustomDomainWarning ) {
+			return 'has-warning';
+		}
 		if ( emailValidationState === 'valid' ) {
 			return 'has-success';
 		}
