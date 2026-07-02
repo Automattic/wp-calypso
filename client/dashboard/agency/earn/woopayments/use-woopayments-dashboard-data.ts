@@ -66,9 +66,10 @@ export function useWooPaymentsDashboardData(): WooPaymentsDashboardData {
 	const isLoading = isLoadingLicensed || isLoadingPlugins;
 	const hasSites = sites.length > 0;
 
-	const { data: commissions, isLoading: isLoadingCommissions } = useQuery(
-		agencyWooPaymentsCommissionsQuery( agencyId, hasSites )
-	);
+	const { data: commissions, isLoading: isLoadingCommissions } = useQuery( {
+		...agencyWooPaymentsCommissionsQuery( agencyId ),
+		enabled: !! agencyId && hasSites,
+	} );
 
 	return {
 		sites,

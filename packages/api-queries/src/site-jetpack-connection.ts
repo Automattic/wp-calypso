@@ -2,6 +2,7 @@ import {
 	disconnectJetpackSite,
 	fetchJetpackConnection,
 	fetchJetpackConnectionHealth,
+	fetchSiteTestConnection,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
@@ -17,6 +18,14 @@ export const jetpackConnectionHealthQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'jetpack-connection-health' ],
 		queryFn: () => fetchJetpackConnectionHealth( siteId ),
+	} );
+
+export const siteTestConnectionQuery = ( blogId: number ) =>
+	queryOptions( {
+		queryKey: [ 'site', blogId, 'test-connection' ] as const,
+		queryFn: () => fetchSiteTestConnection( blogId ),
+		enabled: !! blogId,
+		refetchOnWindowFocus: false,
 	} );
 
 export const siteJetpackDisconnectMutation = ( siteId: number ) =>

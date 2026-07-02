@@ -1,5 +1,5 @@
 import { localizeUrl } from '@automattic/i18n-utils';
-import { formatCurrency } from '@automattic/number-formatters';
+import { createNumberFormatters } from '@automattic/number-formatters';
 import {
 	Button,
 	ExternalLink,
@@ -29,8 +29,15 @@ const WOOPAYMENTS_LEARN_MORE_LINK =
 const AGENCY_EARNINGS_LEARN_MORE_LINK =
 	'https://agencieshelp.automattic.com/knowledge-base/automattic-for-agencies-earnings/';
 
+// A4A is English-only for now, so format currency and dates with a fixed English locale
+// rather than letting them drift to the viewer's WordPress.com or browser locale.
+const A4A_LOCALE = 'en-US';
+const numberFormatters = createNumberFormatters();
+numberFormatters.setLocale( A4A_LOCALE );
+const { formatCurrency } = numberFormatters;
+
 function formatDateWithYear( date: Date ) {
-	return date.toLocaleString( 'default', { month: 'short', day: 'numeric', year: 'numeric' } );
+	return date.toLocaleString( A4A_LOCALE, { month: 'short', day: 'numeric', year: 'numeric' } );
 }
 
 function formatDateRange( start: Date, finish: Date ) {
@@ -192,7 +199,7 @@ export default function WooPaymentsConsolidatedStats( {
 		? __( 'Estimated current quarter earnings to date' )
 		: __( 'Estimated earnings in current quarter' );
 	const previousQuarterLabel = __( 'Estimated earnings in previous quarter' );
-	const today = new Date().toLocaleString( 'default', { month: 'short', day: 'numeric' } );
+	const today = new Date().toLocaleString( A4A_LOCALE, { month: 'short', day: 'numeric' } );
 
 	return (
 		<HStack wrap spacing={ 4 } alignment="stretch" justify="flex-start">

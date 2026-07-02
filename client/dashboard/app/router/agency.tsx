@@ -211,7 +211,7 @@ const earnWooPaymentsRoute = createRoute( {
 	loader: async () => {
 		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
 		if ( agency?.id ) {
-			await queryClient.ensureQueryData( agencyWooPaymentsCommissionsQuery( agency.id, true ) );
+			await queryClient.ensureQueryData( agencyWooPaymentsCommissionsQuery( agency.id ) );
 		}
 	},
 } ).lazy( () =>

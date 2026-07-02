@@ -73,11 +73,3 @@ export async function fetchAgencyWooPaymentsPluginSites(
 		state: site.state,
 	} ) );
 }
-
-export async function fetchSiteTestConnection( blogId: number ): Promise< boolean > {
-	const response = await wpcom.req.get( {
-		apiNamespace: 'rest/v1.1',
-		path: `/jetpack-blogs/${ blogId }/test-connection`,
-	} );
-	return response?.connected !== false;
-}

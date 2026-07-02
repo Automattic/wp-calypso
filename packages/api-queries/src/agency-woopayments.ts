@@ -2,17 +2,14 @@ import {
 	fetchAgencyWooPaymentsCommissions,
 	fetchAgencyWooPaymentsLicensedSites,
 	fetchAgencyWooPaymentsPluginSites,
-	fetchSiteTestConnection,
 } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
 
-export const agencyWooPaymentsCommissionsQuery = ( agencyId: number, enabled = true ) =>
+export const agencyWooPaymentsCommissionsQuery = ( agencyId: number ) =>
 	queryOptions( {
 		queryKey: [ 'woopayments', 'commissions', agencyId ] as const,
 		queryFn: () => fetchAgencyWooPaymentsCommissions( agencyId ),
-		enabled: !! agencyId && enabled,
-		staleTime: 0,
-		refetchOnWindowFocus: true,
+		enabled: !! agencyId,
 	} );
 
 export const agencyWooPaymentsLicensedSitesQuery = ( agencyId: number ) =>
@@ -30,12 +27,4 @@ export const agencyWooPaymentsPluginSitesQuery = ( agencyId: number ) =>
 		enabled: !! agencyId,
 		refetchOnWindowFocus: false,
 		staleTime: 0,
-	} );
-
-export const siteTestConnectionQuery = ( blogId: number ) =>
-	queryOptions( {
-		queryKey: [ 'site', blogId, 'test-connection' ] as const,
-		queryFn: () => fetchSiteTestConnection( blogId ),
-		enabled: !! blogId,
-		refetchOnWindowFocus: false,
 	} );

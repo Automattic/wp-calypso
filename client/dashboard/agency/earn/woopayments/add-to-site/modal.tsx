@@ -4,6 +4,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
@@ -46,17 +47,24 @@ export default function AddWooPaymentsToSiteModal( {
 		>
 			<VStack spacing={ 4 }>
 				<Text>
-					{ __( 'If you don’t see the site in the list, connect it first via the' ) }{ ' ' }
-					<Button
-						variant="link"
-						href={ A4A_SITES_LINK }
-						onClick={ () =>
-							recordTracksEvent( 'calypso_a4a_woopayments_add_site_modal_sites_dashboard_click' )
+					{ createInterpolateElement(
+						__(
+							'If you don’t see the site in the list, connect it first via the <link>Sites Dashboard</link>.'
+						),
+						{
+							link: (
+								<Button
+									variant="link"
+									href={ A4A_SITES_LINK }
+									onClick={ () =>
+										recordTracksEvent(
+											'calypso_a4a_woopayments_add_site_modal_sites_dashboard_click'
+										)
+									}
+								/>
+							),
 						}
-					>
-						{ __( 'Sites Dashboard' ) }
-					</Button>
-					.
+					) }
 				</Text>
 				<AddWooPaymentsToSiteTable
 					selectedSite={ selectedSite }
