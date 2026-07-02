@@ -26,17 +26,15 @@ const safeGet = ( object: PlainObject, key: string ): unknown => {
 	return object[ key ];
 };
 
-// Assigns like a sloppy-mode write: if the target rejects it — a frozen or
-// sealed object, a non-extensible object gaining a new key, or a non-writable
-// property — the write is silently dropped rather than throwing, matching
-// lodash (which runs non-strict). A strict-mode ES module would otherwise throw
-// and abort the whole merge.
-const trySet = ( target: PlainObject, key: string, value: unknown ): void => {
-	try {
-		target[ key ] = value;
-	} catch {
-		// Target rejected the write — drop it, as lodash does, and keep merging.
-	}
+// Assigns like a sloppy-mode write. `Reflect.set` reports a rejected data-
+// property write — a frozen or sealed object, a non-extensible object gaining a
+// new key, or a non-writable property — as a `false` return rather than
+// throwing, so the merge keeps going, matching lodash (which runs non-strict).
+// Exceptions thrown by a userland setter still propagate, as they do in lodash.
+// A plain strict-mode assignment would instead throw on the rejected write and
+// abort the whole merge.
+const assign = ( target: PlainObject, key: string, value: unknown ): void => {
+	Reflect.set( target, key, value );
 };
 
 function baseMerge( target: PlainObject, source: PlainObject ): void {
@@ -61,14 +59,14 @@ function baseMerge( target: PlainObject, source: PlainObject ): void {
 			baseMerge( newValue as PlainObject, srcValue as PlainObject );
 			// Skip the write when the container was reused (already in place).
 			if ( newValue !== objValue ) {
-				trySet( target, key, newValue );
+				assign( target, key, newValue );
 			}
 		} else if ( srcValue !== undefined ) {
-			trySet( target, key, srcValue );
+			assign( target, key, srcValue );
 		} else if ( ! ( key in target ) ) {
 			// A source `undefined` creates an absent key but never overwrites an
 			// existing value.
-			trySet( target, key, undefined );
+			assign( target, key, undefined );
 		}
 	}
 }

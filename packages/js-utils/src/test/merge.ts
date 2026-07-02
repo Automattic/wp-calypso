@@ -97,6 +97,21 @@ describe( 'merge', () => {
 		expect( () => merge( {}, circular ) ).toThrow();
 	} );
 
+	it( 'propagates exceptions from a throwing setter, like lodash', () => {
+		const makeTarget = () =>
+			Object.defineProperty( {}, 'x', {
+				set() {
+					throw new Error( 'setter boom' );
+				},
+				enumerable: true,
+				configurable: true,
+			} );
+		expect( () => merge( makeTarget() as Record< string, unknown >, { x: 1 } ) ).toThrow(
+			'setter boom'
+		);
+		expect( () => lodashMerge( makeTarget(), { x: 1 } ) ).toThrow( 'setter boom' );
+	} );
+
 	it( 'assigns Date and class instances by reference (does not deep-clone)', () => {
 		class Widget {
 			value = 1;
