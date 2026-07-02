@@ -6,7 +6,6 @@ import { category } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
 import CommentButton from 'calypso/blocks/comment-button';
 import ReaderSaveButton from 'calypso/blocks/reader-save-button';
 import ShareButton from 'calypso/blocks/reader-share';
@@ -19,9 +18,8 @@ import {
 	isRebloggable,
 	isLikeable,
 } from 'calypso/reader/post/capabilities';
-import { SpacePickerModal } from 'calypso/reader/spaces/subscribe-with-space/space-picker-modal';
-import { useDispatch, useSelector } from 'calypso/state';
-import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { useSpacePicker } from 'calypso/reader/spaces/subscribe-with-space/use-space-picker';
+import { useSelector } from 'calypso/state';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { ReaderFreshlyPressedButton } from '../reader-freshly-pressed-button';
 import './style.scss';
@@ -41,9 +39,13 @@ const ReaderPostActions = ( {
 	split = false,
 } ) => {
 	const translate = useTranslate();
-	const [ isSpacePickerOpen, setIsSpacePickerOpen ] = useState( false );
 	const showSpaces = isEnabled( 'reader/spaces' );
-	const dispatch = useDispatch();
+	const { openSpacePicker, spacePickerModal } = useSpacePicker( {
+		feedId: post.feed_ID,
+		blogId: post.site_ID,
+		feedUrl: post.feed_URL || post.site_URL,
+		source: 'post_actions',
+	} );
 	const hasSites = !! useSelector( getPrimarySiteId );
 	const showShare = isSharable( post );
 	const showReblog = isRebloggable( post, hasSites );
@@ -56,17 +58,6 @@ const ReaderPostActions = ( {
 	const { data } = useQuery( readTeamsQuery() );
 	const isAutomattician = isAutomatticTeamMember( data?.teams ?? [] );
 	const shouldShowFreshlyPressed = fullPost && isAutomattician && showShare;
-
-	const openSpacePicker = () => {
-		dispatch(
-			recordReaderTracksEvent( 'calypso_reader_subscribe_space_button_clicked', {
-				feed_id: post.feed_ID,
-				blog_id: post.site_ID,
-				source: 'post_actions',
-			} )
-		);
-		setIsSpacePickerOpen( true );
-	};
 
 	return (
 		<>
@@ -142,14 +133,7 @@ const ReaderPostActions = ( {
 					</li>
 				) }
 			</ul>
-			{ showSpaces && isSpacePickerOpen && (
-				<SpacePickerModal
-					feedId={ post.feed_ID }
-					blogId={ post.site_ID }
-					feedUrl={ post.feed_URL || post.site_URL }
-					onClose={ () => setIsSpacePickerOpen( false ) }
-				/>
-			) }
+			{ showSpaces && spacePickerModal }
 		</>
 	);
 };

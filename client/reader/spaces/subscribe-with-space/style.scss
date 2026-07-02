@@ -27,8 +27,9 @@
 
 // "What you're adding" — the feed the subscribe action just followed.
 .reader-space-picker__feed {
-	margin-bottom: 16px;
-	padding: 10px 12px;
+	margin-block-end: 16px;
+	padding-block: 10px;
+	padding-inline: 12px;
 	border-radius: 8px;
 	background: var( --color-neutral-0 );
 }
@@ -60,17 +61,19 @@
 }
 
 .reader-space-picker__search {
-	margin-bottom: 12px;
+	margin-block-end: 12px;
 }
 
 .reader-space-picker__empty {
 	color: var( --color-text-subtle );
-	margin: 8px 0;
+	margin-block: 8px;
+	margin-inline: 0;
 }
 
 .reader-space-picker__row {
 	min-height: 56px;
-	padding: 6px 8px;
+	padding-block: 6px;
+	padding-inline: 8px;
 	border-radius: 8px;
 	transition: background 0.12s ease;
 

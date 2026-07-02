@@ -7,7 +7,7 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SubscribeWithSpaceButton } from '../index';
 import type { ReadSpace, ReadSpaceDetails } from '@automattic/api-core';
 
-const mockRecordReaderTracksEvent = jest.fn( () => ( { type: 'MOCK_TRACKS_EVENT' } ) );
+const mockRecordReaderTracksEvent = jest.fn().mockReturnValue( { type: 'MOCK_TRACKS_EVENT' } );
 jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
 	recordReaderTracksEvent: ( ...args: unknown[] ) => mockRecordReaderTracksEvent( ...args ),
 } ) );
@@ -90,6 +90,18 @@ const openPicker = async ( user: ReturnType< typeof userEvent.setup > ) => {
 	await user.click( screen.getByRole( 'button', { name: 'Move site to a space' } ) );
 	return screen.findByRole( 'dialog', { name: 'Move site to a space' } );
 };
+
+it( 'shows a loading skeleton while the space details are loading', async () => {
+	mockDetailsLoading = true;
+	const user = userEvent.setup();
+	renderWithProvider( <SubscribeWithSpaceButton { ...props } /> );
+
+	await openPicker( user );
+
+	expect( screen.getByRole( 'status', { name: 'Loading your spaces' } ) ).toBeVisible();
+	// The interactive space rows are not rendered while loading.
+	expect( screen.queryByRole( 'button', { name: 'Add to Work' } ) ).not.toBeInTheDocument();
+} );
 
 it( 'renders only the plain follow button when the flag is off', () => {
 	mockFlagEnabled = false;

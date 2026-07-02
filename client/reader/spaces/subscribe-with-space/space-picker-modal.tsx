@@ -11,6 +11,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { SiteIcon } from 'calypso/blocks/site-icon';
+import Skeleton from 'calypso/reader/components/skeleton';
 import {
 	getFollowingSource,
 	useFollowSite,
@@ -43,7 +44,10 @@ interface Props {
 }
 
 /** Strip the scheme and a leading `www.` so the feed reads as a plain domain. */
-function feedHostLabel( feedUrl: string ): string {
+function feedHostLabel( feedUrl: string | undefined ): string {
+	if ( ! feedUrl ) {
+		return '';
+	}
 	try {
 		return new URL( feedUrl ).hostname.replace( /^www\./, '' );
 	} catch {
@@ -215,6 +219,54 @@ export function SpacePickerModal( { feedUrl, feedId, blogId, followApiSource, on
 
 	const rowsDisabled = isSubscribing || isLoading || isError || isSaving;
 
+	let spacesContent;
+	if ( spaces.length === 0 ) {
+		spacesContent = (
+			<p className="reader-space-picker__empty">
+				{ translate( 'You don’t have any spaces yet.' ) }
+			</p>
+		);
+	} else if ( isLoading ) {
+		spacesContent = (
+			<SpacePickerSkeleton
+				count={ Math.min( spaces.length, 6 ) }
+				label={ translate( 'Loading your spaces' ) as string }
+			/>
+		);
+	} else {
+		spacesContent = (
+			<>
+				{ showSearch && (
+					<SearchControl
+						__nextHasNoMarginBottom
+						className="reader-space-picker__search"
+						value={ query }
+						onChange={ setQuery }
+						placeholder={ translate( 'Search your spaces…' ) }
+					/>
+				) }
+				{ filteredSpaces.length === 0 ? (
+					<p className="reader-space-picker__empty">
+						{ translate( 'No spaces match “%(query)s”.', { args: { query } } ) }
+					</p>
+				) : (
+					<VStack spacing={ 1 } role="list" className="reader-space-picker__list">
+						{ filteredSpaces.map( ( space ) => (
+							<SpacePickerRow
+								key={ space.id }
+								space={ space }
+								detail={ byId[ space.id ] }
+								isSelected={ selected.has( space.id ) }
+								disabled={ rowsDisabled }
+								onToggle={ () => toggleSpace( space.id ) }
+							/>
+						) ) }
+					</VStack>
+				) }
+			</>
+		);
+	}
+
 	return (
 		// The Modal renders through a portal, but React events still bubble up the
 		// component tree. This picker can be opened from inside a clickable post card,
@@ -260,41 +312,7 @@ export function SpacePickerModal( { feedUrl, feedId, blogId, followApiSource, on
 					</span>
 				</HStack>
 
-				{ spaces.length === 0 ? (
-					<p className="reader-space-picker__empty">
-						{ translate( 'You don’t have any spaces yet.' ) }
-					</p>
-				) : (
-					<>
-						{ showSearch && (
-							<SearchControl
-								__nextHasNoMarginBottom
-								className="reader-space-picker__search"
-								value={ query }
-								onChange={ setQuery }
-								placeholder={ translate( 'Search your spaces…' ) }
-							/>
-						) }
-						{ filteredSpaces.length === 0 ? (
-							<p className="reader-space-picker__empty">
-								{ translate( 'No spaces match “%(query)s”.', { args: { query } } ) }
-							</p>
-						) : (
-							<VStack spacing={ 1 } role="list" className="reader-space-picker__list">
-								{ filteredSpaces.map( ( space ) => (
-									<SpacePickerRow
-										key={ space.id }
-										space={ space }
-										detail={ byId[ space.id ] }
-										isSelected={ selected.has( space.id ) }
-										disabled={ rowsDisabled }
-										onToggle={ () => toggleSpace( space.id ) }
-									/>
-								) ) }
-							</VStack>
-						) }
-					</>
-				) }
+				{ spacesContent }
 
 				<HStack className="reader-space-picker__footer" justify="flex-end" spacing={ 2 }>
 					<Button
@@ -391,5 +409,36 @@ function SpacePickerRow( { space, detail, isSelected, disabled, onToggle }: RowP
 				onClick={ onToggle }
 			/>
 		</HStack>
+	);
+}
+
+function SpacePickerSkeleton( { count, label }: { count: number; label: string } ) {
+	return (
+		<VStack
+			spacing={ 1 }
+			className="reader-space-picker__list"
+			role="status"
+			aria-label={ label }
+			aria-live="polite"
+		>
+			{ Array.from( { length: count }, ( _value, index ) => (
+				<HStack
+					key={ index }
+					spacing={ 3 }
+					alignment="center"
+					justify="space-between"
+					className="reader-space-picker__row"
+				>
+					<HStack spacing={ 3 } alignment="center" justify="flex-start">
+						<Skeleton shape="circle" width="40px" height="40px" />
+						<VStack spacing={ 2 }>
+							<Skeleton width="140px" height="16px" />
+							<Skeleton width="72px" height="12px" />
+						</VStack>
+					</HStack>
+					<Skeleton width="40px" height="40px" />
+				</HStack>
+			) ) }
+		</VStack>
 	);
 }

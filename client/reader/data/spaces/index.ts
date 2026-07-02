@@ -35,8 +35,10 @@ export function useSpace(
 
 /**
  * Details (sources + tags) for several spaces at once, keyed by space id. Used by
- * the subscribe-with-space picker to know which spaces already contain the feed
- * without mounting a query per row. Backed by the same detail cache as `useSpace`.
+ * the subscribe-with-space picker to know which spaces already contain the feed.
+ * Batches the per-space detail queries in a single hook at the modal level (rather
+ * than each row mounting its own `useSpace`), sharing the same detail cache as
+ * `useSpace`. Note this still runs one query per space id.
  */
 export function useSpacesDetails( spaceIds: string[] ): {
 	byId: Record< string, ReadSpaceDetails | undefined >;
