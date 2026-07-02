@@ -9,6 +9,8 @@ export const ROLLOUT_TESTER_USER_IDS = [
 // TODO update on release day DOTMSD-1357
 const NEW_USER_ID_THRESHOLD = Infinity;
 
+const ROLLOUT_PERCENTAGE = 50;
+
 /**
  * Whether the user belongs to the percentage-rollout cohort. Membership is
  * derived from the user ID so it is stable across sessions and reproducible
@@ -30,7 +32,7 @@ function isInRolloutCohort( userId: number | undefined ): boolean {
 
 	return (
 		config.isEnabled( 'dashboard/enable-percentage-rollout' ) &&
-		( userId % 100 < 50 || userId > NEW_USER_ID_THRESHOLD )
+		( userId % 100 < ROLLOUT_PERCENTAGE || userId > NEW_USER_ID_THRESHOLD )
 	);
 }
 
@@ -99,5 +101,5 @@ export function willBeRolledOut( userId: number | undefined ): boolean {
 		return false;
 	}
 
-	return userId % 100 < 50 || userId > NEW_USER_ID_THRESHOLD;
+	return userId % 100 < ROLLOUT_PERCENTAGE || config.isEnabled( 'dashboard/forced-opt-in-banners' );
 }

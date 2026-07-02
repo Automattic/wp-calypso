@@ -91,13 +91,13 @@ export default function HostingDashboardOptInBanner( {
 		<Text as="p" weight={ 500 } size={ isMobile ? 12 : 13 }>
 			{ hasOptedIn && ! isSubmitting
 				? translate( 'Looking for your new dashboard?' )
-				: translate( 'Your dashboard is changing soon' ) }
+				: translate( 'A new dashboard is on the way' ) }
 		</Text>
 	);
 
 	const description = (
 		<Text as="p" variant="muted" size={ isMobile ? 12 : 13 }>
-			{ translate( 'A new dashboard is on the way. Try it now if you’d like.' ) }
+			{ translate( 'Try an easier way to manage your sites and hosting features.' ) }
 		</Text>
 	);
 

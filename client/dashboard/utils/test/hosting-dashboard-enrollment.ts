@@ -110,24 +110,32 @@ describe( 'isOptInToggleVisible', () => {
 describe( 'willBeRolledOut', () => {
 	const TESTER = 27056099; // allow-listed in ROLLOUT_TESTER_USER_IDS
 
-	it( 'includes cohort-range users even while the rollout flag is off', () => {
-		expect( willBeRolledOut( IN_COHORT ) ).toBe( true );
+	it( 'shows nothing while the opt-in-banners flag is off', () => {
+		expect( willBeRolledOut( IN_COHORT ) ).toBe( false );
 	} );
 
-	it( 'excludes out-of-cohort users', () => {
-		expect( willBeRolledOut( OUT_OF_COHORT ) ).toBe( false );
-	} );
+	describe( 'with the opt-in-banners flag on', () => {
+		beforeEach( () => enableFlags( 'dashboard/opt-in-banners' ) );
 
-	it( 'excludes anonymous (no user id) visitors', () => {
-		expect( willBeRolledOut( undefined ) ).toBe( false );
-	} );
+		it( 'warns cohort-range users before the rollout reaches them', () => {
+			expect( willBeRolledOut( IN_COHORT ) ).toBe( true );
+		} );
 
-	it( 'includes allow-listed testers regardless of cohort math', () => {
-		expect( willBeRolledOut( TESTER ) ).toBe( true );
-	} );
+		it( 'excludes out-of-cohort users', () => {
+			expect( willBeRolledOut( OUT_OF_COHORT ) ).toBe( false );
+		} );
 
-	it( 'includes everyone when full-rollout simulation is on', () => {
-		enableFlags( 'dashboard/simulate-full-rollout' );
-		expect( willBeRolledOut( OUT_OF_COHORT ) ).toBe( true );
+		it( 'excludes anonymous (no user id) visitors', () => {
+			expect( willBeRolledOut( undefined ) ).toBe( false );
+		} );
+
+		it( 'stops warning once the rollout has already enrolled the user', () => {
+			enableFlags( 'dashboard/opt-in-banners', 'dashboard/enable-percentage-rollout' );
+			expect( willBeRolledOut( IN_COHORT ) ).toBe( false );
+		} );
+
+		it( 'excludes allow-listed testers, who are already enrolled', () => {
+			expect( willBeRolledOut( TESTER ) ).toBe( false );
+		} );
 	} );
 } );

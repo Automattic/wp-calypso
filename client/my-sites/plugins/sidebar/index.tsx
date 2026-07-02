@@ -10,7 +10,7 @@ import GlobalSidebar from 'calypso/layout/global-sidebar';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import HostingDashboardOptInBanner from 'calypso/my-sites/hosting-dashboard-opt-in-banner';
-import { hasDashboardOptIn, isInDashboardRolloutCohort } from 'calypso/state/dashboard/selectors';
+import { hasDashboardOptIn, willBeRolledOut } from 'calypso/state/dashboard/selectors';
 import { getShouldShowCollapsedGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
 import { AppState } from 'calypso/types';
 import { SidebarIconPlugins } from '../../sidebar/static-data/global-sidebar-menu';
@@ -120,7 +120,7 @@ export default withCurrentRoute(
 		return {
 			isCollapsed: shouldShowCollapsedGlobalSidebar,
 			hasOptIn: hasDashboardOptIn( state ),
-			showOptInBanner: isInDashboardRolloutCohort( state ),
+			showOptInBanner: willBeRolledOut( state ),
 		};
 	} )( PluginsSidebar )
 );
