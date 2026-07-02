@@ -7,7 +7,7 @@ import { Elements, ExpressCheckoutElement, useElements, useStripe } from '@strip
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useMemo, useState } from 'react';
 import type { StripeConfiguration } from '@automattic/calypso-stripe';
-import type { PaymentMethod } from '@automattic/composite-checkout';
+import type { PaymentMethod, PaymentMethodSubmitButtonProps } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type {
 	Stripe,
@@ -24,11 +24,6 @@ type StripeWalletMethodProps = {
 function StripeWalletLabel() {
 	const { __ } = useI18n();
 	return <span>{ __( 'Express checkout' ) }</span>;
-}
-
-function StripeWalletSubmitButton() {
-	// ECE renders its own payment buttons; this submit button is unused.
-	return null;
 }
 
 function StripeWalletContent( {
@@ -93,11 +88,15 @@ function StripeWalletContent( {
 	);
 }
 
-function StripeWalletFields( {
+// Rendered as the payment method's submitButton (like apple-pay/google-pay) so the
+// wallet buttons appear in the sidebar next to the total, not inline in the payment
+// method list. The framework's injected `disabled`/`onClick` are unused: ECE's own
+// onConfirm event calls processPayment directly once the shopper taps a wallet button.
+function StripeWalletSubmitButton( {
 	stripe,
 	stripeConfiguration,
 	responseCart,
-}: StripeWalletMethodProps ) {
+}: StripeWalletMethodProps & PaymentMethodSubmitButtonProps ) {
 	const { total_cost_integer: amount, currency } = responseCart;
 
 	const elementsOptions = useMemo(
@@ -128,14 +127,13 @@ export function createStripeWalletMethod( {
 		label: <StripeWalletLabel />,
 		hasRequiredFields: false,
 		isInitiallyDisabled: true,
-		activeContent: (
-			<StripeWalletFields
+		submitButton: (
+			<StripeWalletSubmitButton
 				stripe={ stripe }
 				stripeConfiguration={ stripeConfiguration }
 				responseCart={ responseCart }
 			/>
 		),
-		submitButton: <StripeWalletSubmitButton />,
 		inactiveContent: <StripeWalletLabel />,
 		getAriaLabel: ( __: ( text: string ) => string ) => __( 'Express checkout' ),
 	};
