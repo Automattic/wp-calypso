@@ -1,4 +1,5 @@
 @import "@automattic/typography/styles/fonts";
+@import "../../../mixins";
 
 .plans-grid-next-header-price {
 	padding: 0 20px;
@@ -129,4 +130,7 @@
 	row-gap: 8px;
 	align-items: center;
 
+	@include plans-grid-large {
+		justify-content: space-between;
+	}
 }
