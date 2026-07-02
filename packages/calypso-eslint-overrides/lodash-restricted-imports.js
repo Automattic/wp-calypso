@@ -29,7 +29,6 @@ const JS_UTILS_NAMES = [
 	'omit',
 	'mapValues',
 	'memoize',
-	'merge',
 	'pickBy',
 	'omitBy',
 	'groupBy',
@@ -57,6 +56,13 @@ const JS_UTILS_MESSAGE = 'Please use the equivalent from `@automattic/js-utils` 
 const CASE_MESSAGE =
 	'Please use the equivalent from `@automattic/js-utils` instead — it covers ASCII identifiers/keys, not free-form Unicode text.';
 const COMPOSE_MESSAGE = 'Please use the equivalent from `@wordpress/compose` instead.';
+// The js-utils merge is a JSON-oriented deep merge, intentionally narrower than
+// lodash: it merges own enumerable properties only, treats arrays as dense, and
+// does not handle circular references — so the swap is not always transparent.
+const MERGE_MESSAGE =
+	'Please use `merge` from `@automattic/js-utils` instead of lodash `merge`. It deep-merges ' +
+	'plain JSON-like data (own enumerable properties, dense arrays) and does not merge inherited ' +
+	'properties, materialize sparse-array holes, or handle circular references.';
 const COMPACT_MESSAGE = 'Please use `array.filter( Boolean )` instead of lodash `compact`.';
 const FLATTEN_MESSAGE = 'Please use native `array.flatMap()` / `array.flat()` instead.';
 const DEFER_MESSAGE = 'Please use native `setTimeout( fn, 0 )` instead of lodash `defer`.';
@@ -173,6 +179,7 @@ const paths = [
 	{ name: 'lodash', importNames: [ 'findIndex' ], message: FINDINDEX_MESSAGE },
 	{ name: 'lodash', importNames: [ 'clone' ], message: CLONE_MESSAGE },
 	{ name: 'lodash', importNames: [ 'cloneDeep' ], message: CLONE_DEEP_MESSAGE },
+	{ name: 'lodash', importNames: [ 'merge' ], message: MERGE_MESSAGE },
 	{ name: 'lodash', importNames: [ 'property' ], message: PROPERTY_MESSAGE },
 	{ name: 'lodash', importNames: [ 'maxBy', 'minBy' ], message: EXTREMUM_MESSAGE },
 	{ name: 'lodash', importNames: [ 'partition' ], message: PARTITION_MESSAGE },
@@ -216,6 +223,7 @@ const patterns = [
 	{ group: [ 'lodash/findIndex' ], message: FINDINDEX_MESSAGE },
 	{ group: [ 'lodash/clone' ], message: CLONE_MESSAGE },
 	{ group: [ 'lodash/cloneDeep' ], message: CLONE_DEEP_MESSAGE },
+	{ group: [ 'lodash/merge' ], message: MERGE_MESSAGE },
 	{ group: [ 'lodash/property' ], message: PROPERTY_MESSAGE },
 	{ group: [ 'lodash/maxBy', 'lodash/minBy' ], message: EXTREMUM_MESSAGE },
 	{ group: [ 'lodash/partition' ], message: PARTITION_MESSAGE },
