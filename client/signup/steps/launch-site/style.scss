@@ -1,0 +1,29 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.launch-site__verify-email {
+	max-width: 480px;
+	margin-block: 0;
+	margin-inline: auto;
+	text-align: center;
+}
+
+.launch-site__verify-email-title {
+	font-size: 1.5rem;
+	margin-block-end: 8px;
+}
+
+.launch-site__verify-email-description {
+	color: var( --color-text-subtle );
+	margin-block-end: 24px;
+}
+
+.launch-site__verify-email-actions {
+	display: flex;
+	justify-content: center;
+	gap: 12px;
+
+	@include break-mobile {
+		flex-direction: column-reverse;
+	}
+}
