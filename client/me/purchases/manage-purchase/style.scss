@@ -418,10 +418,25 @@
 
 .manage-purchase__expiring-credit-card-notice.calypso-notice,
 .manage-purchase__purchase-expiring-notice.calypso-notice {
+	// Inset the notice to match its neighbors. width:auto is required: the base
+	// .calypso-notice is width:100% border-box, so margin-inline alone overflows.
+	width: auto;
 	margin-bottom: 10px;
+	margin-inline: 16px;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		margin-bottom: 16px;
+		margin-inline: 24px;
+	}
+
+	// On mobile, drop the action onto its own full-width row instead of cramming
+	// it inline beside the notice text (same idiom as step-wrapper's header).
+	@include breakpoint-deprecated( '<660px' ) {
+		flex-wrap: wrap;
+
+		.calypso-notice__action {
+			flex-basis: 100%;
+		}
 	}
 }
 
