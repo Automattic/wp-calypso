@@ -157,7 +157,7 @@ describe( 'Post blocks', () => {
 		} );
 
 		const link = screen.getByRole( 'link' );
-		expect( link ).toHaveAttribute( 'href', '/posts/1/trash' );
+		expect( link ).toHaveAttribute( 'href', 'https://wordpress.com/posts/1/trash' );
 		expect( link ).toHaveTextContent( 'Trashed post' );
 	} );
 
@@ -171,7 +171,7 @@ describe( 'Post blocks', () => {
 		} );
 
 		const link = screen.getByRole( 'link' );
-		expect( link ).toHaveAttribute( 'href', '/reader/blogs/1/posts/10' );
+		expect( link ).toHaveAttribute( 'href', 'https://wordpress.com/reader/blogs/1/posts/10' );
 	} );
 
 	test.each( [
@@ -209,7 +209,10 @@ describe( 'Comment blocks', () => {
 		} );
 
 		const link = screen.getByRole( 'link' );
-		expect( link ).toHaveAttribute( 'href', '/reader/blogs/site/posts/post#comment-comment' );
+		expect( link ).toHaveAttribute(
+			'href',
+			'https://wordpress.com/reader/blogs/site/posts/post#comment-comment'
+		);
 	} );
 
 	test.each( [
@@ -344,7 +347,7 @@ describe( 'Theme blocks', () => {
 		mockedIsA8CForAgencies.mockReturnValue( false );
 	} );
 
-	test( 'renders relative link for wordpress.com themes', () => {
+	test( 'renders wrapped Calypso link for wordpress.com themes', () => {
 		renderFormatted( {
 			type: 'theme',
 			themeUri: 'https://wordpress.com/themes/example',
@@ -354,7 +357,7 @@ describe( 'Theme blocks', () => {
 		} );
 
 		const link = screen.getByRole( 'link' );
-		expect( link ).toHaveAttribute( 'href', '/theme/example/site-slug' );
+		expect( link ).toHaveAttribute( 'href', 'https://wordpress.com/theme/example/site-slug' );
 	} );
 
 	test.each( [

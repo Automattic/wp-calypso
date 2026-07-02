@@ -15,7 +15,7 @@
  * // 	' updated',
  * // ]
  * // Rendered by FormattedBlock as:
- * // Site <a href="/sites/987">Example</a> updated
+ * // Site <a href="https://wordpress.com/sites/987">Example</a> updated
  */
 import type { ActivityBlockContent, ActivityBlockNode } from './types';
 import type { ActivityNotificationRange, ActivityLogEntry } from '@automattic/api-core';

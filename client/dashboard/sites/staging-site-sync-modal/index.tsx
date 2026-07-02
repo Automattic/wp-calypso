@@ -36,6 +36,7 @@ import { CardDivider } from '../../components/card';
 import Environment, { EnvironmentType } from '../../components/environment';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Notice } from '../../components/notice';
+import { wpcomLink } from '../../utils/link';
 import type { FileBrowserConfig } from '../../../my-sites/backup/backup-contents-page/file-browser';
 import type { Field } from '@wordpress/dataviews';
 
@@ -403,7 +404,12 @@ function StagingSiteSyncModalInner( {
 			<VStack spacing={ 5 }>
 				<Text>
 					{ createInterpolateElement( syncConfig[ environment ].description, {
-						a: <ExternalLink href={ `/activity-log/${ targetSiteSlug }` } children={ null } />,
+						a: (
+							<ExternalLink
+								href={ wpcomLink( `/activity-log/${ targetSiteSlug }` ) }
+								children={ null }
+							/>
+						),
 					} ) }
 				</Text>
 				<HStack
@@ -512,7 +518,7 @@ function StagingSiteSyncModalInner( {
 													}
 												) }{ ' ' }
 												<ExternalLink
-													href={ `/backup/${ querySiteSlug as string }` }
+													href={ wpcomLink( `/backup/${ querySiteSlug as string }` ) }
 													children={ __( 'Create new backup' ) }
 												/>
 											</Text>
