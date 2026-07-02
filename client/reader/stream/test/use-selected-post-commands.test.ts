@@ -133,6 +133,15 @@ describe( 'useSelectedPostCommands', () => {
 			expect( actions.like ).not.toHaveBeenCalled();
 		} );
 
+		it( 'normalizes string unliked state before toggling', () => {
+			const { result, actions } = setup( { post: { ...LIKEABLE_POST, i_like: '0' } } );
+
+			result.current.toggleSelectedLike();
+
+			expect( actions.like ).toHaveBeenCalledWith( 5, 9, { source: 'reader' } );
+			expect( actions.unlike ).not.toHaveBeenCalled();
+		} );
+
 		it( 'skips x-posts', () => {
 			mockGetXPostMetadata.mockReturnValue( { postURL: 'https://example.com/original' } );
 			const { result, actions } = setup();

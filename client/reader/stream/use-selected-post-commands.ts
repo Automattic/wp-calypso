@@ -15,13 +15,18 @@ export interface SelectedPostCommands {
 	toggleSelectedLike: () => void;
 }
 
+const isLiked = ( value: unknown ): boolean =>
+	value === true || value === 1 || value === '1' || value === 'true';
+
 /**
  * Commands that operate on the currently selected post, shared by the stream
  * reading shortcuts across every surface (Stream V2 and the Spaces feed
  * layouts). Reads the post cache-only (no request waterfall) and toggles likes
  * through the same React Query mechanism the post-card like button uses.
  */
-export function useSelectedPostCommands( selectedPostKey: StreamItem | null ): SelectedPostCommands {
+export function useSelectedPostCommands(
+	selectedPostKey: StreamItem | null
+): SelectedPostCommands {
 	const selectedPost = useCachedPost( selectedPostKey );
 	const { like, unlike, isLikePending, isUnlikePending } = usePostLikeActions();
 
@@ -64,7 +69,7 @@ export function useSelectedPostCommands( selectedPostKey: StreamItem | null ): S
 		if ( ! siteId || ! postId ) {
 			return;
 		}
-		const toggle = Boolean( selectedPost.i_like ) ? unlike : like;
+		const toggle = isLiked( selectedPost.i_like ) ? unlike : like;
 		toggle( siteId, postId, { source: 'reader' } );
 	}, [ selectedPost, isLikePending, isUnlikePending, like, unlike ] );
 
