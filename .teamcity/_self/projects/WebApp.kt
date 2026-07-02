@@ -50,6 +50,7 @@ object BuildDockerImage : BuildType({
     )
 
     val imageBase = "registry.a8c.com/calypso/app"
+	val commitImageExistsParam = "dockerImage.commitImageExists"
 	val baseUrl = "https://calypso.live"
 
     val environments = listOf(
@@ -174,6 +175,36 @@ object BuildDockerImage : BuildType({
 		}
 
 		script {
+			name = "Reuse existing commit image"
+			conditions {
+				equals("teamcity.build.branch.is_default", "true")
+			}
+			scriptContent = """
+				#!/usr/bin/env bash
+				set -euo pipefail
+
+				commit_image="$imageBase:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}"
+				build_image="$imageBase:build-%build.number%"
+				latest_image="$imageBase:latest"
+
+				if ! docker manifest inspect "${'$'}commit_image" > /dev/null 2>&1; then
+					echo "No existing Docker image found for ${'$'}commit_image."
+					exit 0
+				fi
+
+				echo "Reusing existing Docker image for ${Settings.WpCalypso.paramRefs.buildVcsNumber}: ${'$'}commit_image"
+
+				docker pull "${'$'}commit_image"
+				docker tag "${'$'}commit_image" "${'$'}build_image"
+				docker tag "${'$'}commit_image" "${'$'}latest_image"
+				docker push "${'$'}build_image"
+
+				echo "##teamcity[setParameter name='$commitImageExistsParam' value='true']"
+				echo "##teamcity[buildStatus status='SUCCESS' text='Reused existing Docker image for this commit']"
+			"""
+		}
+
+		script {
 			name = "Post PR comment"
 			conditions {
 				doesNotEqual("teamcity.build.branch.is_default", "true")
@@ -198,6 +229,9 @@ object BuildDockerImage : BuildType({
 
 		script {
 			name = "Check Docker workspace COPY globs"
+			conditions {
+				doesNotEqual(commitImageExistsParam, "true")
+			}
 			scriptContent = """
 				#!/usr/bin/env bash
 				node ./bin/check-docker-workspace-copy-globs.mjs
@@ -225,6 +259,9 @@ object BuildDockerImage : BuildType({
 
 		dockerCommand {
 			name = "Build docker image"
+			conditions {
+				doesNotEqual(commitImageExistsParam, "true")
+			}
 			commandType = build {
 				source = file {
 					path = "Dockerfile"
@@ -240,6 +277,9 @@ object BuildDockerImage : BuildType({
 		}
 
 		dockerCommand {
+			conditions {
+				doesNotEqual(commitImageExistsParam, "true")
+			}
 			commandType = push {
 				namesAndTags = """
 					registry.a8c.com/calypso/app:build-%build.number%
@@ -321,6 +361,7 @@ object BuildDockerImage : BuildType({
 		dockerCommand {
 			name = "Rebuild cache image"
 			conditions {
+				doesNotEqual(commitImageExistsParam, "true")
 				equals("cache_mode", "base")
 				equals("UPDATE_BASE_IMAGE_CACHE", "true")
 				equals("teamcity.build.branch.is_default", "true")
@@ -342,6 +383,7 @@ object BuildDockerImage : BuildType({
 		dockerCommand {
 			name = "Push cache image"
 			conditions {
+				doesNotEqual(commitImageExistsParam, "true")
 				equals("cache_mode", "base")
 				equals("UPDATE_BASE_IMAGE_CACHE", "true")
 				equals("teamcity.build.branch.is_default", "true")
