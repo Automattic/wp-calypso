@@ -1,5 +1,4 @@
 import { legacyContactQuery, legacyContactsQuery } from '@automattic/api-queries';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -66,7 +65,7 @@ function LegacyContactDetails( { legacyContactId }: { legacyContactId: number } 
 							'To request access, your legacy contact should visit <link>wordpress.com/digital-legacy</link> and follow the instructions there. They’ll need the access key above.'
 						),
 						{
-							link: <a href={ localizeUrl( 'https://wordpress.com/digital-legacy' ) } />,
+							link: <a href="https://wordpress.com/digital-legacy" />,
 						}
 					) }
 				</Text>
