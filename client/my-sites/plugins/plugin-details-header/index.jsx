@@ -24,6 +24,7 @@ const PluginDetailsHeader = ( {
 	isJetpackCloud,
 	onReviewsClick = () => {},
 	isMarketplaceProduct,
+	cta = null,
 } ) => {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
@@ -138,6 +139,7 @@ const PluginDetailsHeader = ( {
 					</div>
 				</div>
 			</div>
+			{ cta }
 			<div className="plugin-details-header__description">
 				{ preventWidows( plugin.short_description || plugin.description ) }
 			</div>

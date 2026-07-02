@@ -376,6 +376,11 @@ function PluginDetails( props ) {
 		/>
 	);
 
+	// On mobile the actions column (CTA, sidebar details, download) renders
+	// inside the header, above the description; on desktop (and while loading)
+	// it stays in the right rail. Exactly one placement renders at a time.
+	const showActionsInHeader = ! isWide && ! showPlaceholder;
+
 	const pluginDownload = ! showPlaceholder &&
 		! requestingPluginsForSites &&
 		isWporgPluginFetched && (
@@ -397,6 +402,22 @@ function PluginDetails( props ) {
 				<script type="application/ld+json">{ structuredData }</script>
 			</div>
 		);
+
+	const pluginActions = (
+		<div className="plugin-details__actions">
+			<div className="plugin-details__sidebar">
+				<PluginDetailsCTA plugin={ fullPlugin } isPlaceholder={ showPlaceholder } />
+
+				{ ! showPlaceholder && ! requestingPluginsForSites && (
+					<PluginDetailsSidebar plugin={ fullPlugin } />
+				) }
+
+				{ isMarketplaceRedesignEnabled && pluginDownload }
+			</div>
+
+			{ ! isMarketplaceRedesignEnabled && pluginDownload }
+		</div>
+	);
 
 	return (
 		<MainComponent
@@ -486,6 +507,7 @@ function PluginDetails( props ) {
 								isPlaceholder={ showPlaceholder }
 								onReviewsClick={ () => setIsReviewsModalVisible( true ) }
 								isMarketplaceProduct={ isMarketplaceProduct }
+								cta={ showActionsInHeader ? pluginActions : null }
 							/>
 						</div>
 						<div className="plugin-details__content">
@@ -549,19 +571,7 @@ function PluginDetails( props ) {
 							) }
 						</div>
 
-						<div className="plugin-details__actions">
-							<div className="plugin-details__sidebar">
-								<PluginDetailsCTA plugin={ fullPlugin } isPlaceholder={ showPlaceholder } />
-
-								{ ! showPlaceholder && ! requestingPluginsForSites && (
-									<PluginDetailsSidebar plugin={ fullPlugin } />
-								) }
-
-								{ isMarketplaceRedesignEnabled && pluginDownload }
-							</div>
-
-							{ ! isMarketplaceRedesignEnabled && pluginDownload }
-						</div>
+						{ ! showActionsInHeader && pluginActions }
 					</div>
 				</div>
 			</FullWidthSection>
