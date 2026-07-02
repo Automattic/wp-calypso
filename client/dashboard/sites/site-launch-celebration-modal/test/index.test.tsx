@@ -230,8 +230,7 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 			// Wait for modal to render first
 			await screen.findByRole( 'dialog' );
 
-			// Upsell button should appear for free plan without custom domain, pointing at the
-			// environment-aware add-domain URL rather than a bare relative path.
+			// Upsell button should appear for free plan without custom domain
 			await screen.findByRole( 'link', { name: 'Get your domain' } );
 			expect( screen.getByRole( 'link', { name: 'Get your domain' } ) ).toHaveAttribute(
 				'href',
