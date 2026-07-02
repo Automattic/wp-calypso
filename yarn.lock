@@ -2254,6 +2254,7 @@ __metadata:
   resolution: "@automattic/state-utils@workspace:packages/state-utils"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/js-utils": "workspace:^"
     "@wordpress/is-shallow-equal": "npm:^5.48.0"
     "@wordpress/warning": "npm:^3.48.0"
     lodash: "npm:^4.17.21"

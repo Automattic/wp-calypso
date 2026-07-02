@@ -17,7 +17,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import { check, chevronLeft, lineSolid } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import React, { Fragment, useState } from 'react';
-import { useAuth } from '../../app/auth';
 import { useHelpCenter } from '../../app/help-center';
 import { siteRoute, sitePlansRoute } from '../../app/router/sites';
 import { Card, CardBody } from '../../components/card';
@@ -392,7 +391,7 @@ function PlanCardCTA( {
 	tierRank,
 	currentTierRank,
 	redirectAfterPurchase,
-	isSiteOwner,
+	canPurchasePlan,
 }: {
 	site: Site;
 	sitePlan: SiteContextualPlan;
@@ -400,7 +399,7 @@ function PlanCardCTA( {
 	tierRank: number;
 	currentTierRank: number;
 	redirectAfterPurchase: string;
-	isSiteOwner: boolean;
+	canPurchasePlan: boolean;
 } ) {
 	const { setNewMessagingChat } = useHelpCenter();
 	const isCurrentPlan =
@@ -414,7 +413,7 @@ function PlanCardCTA( {
 		);
 	}
 
-	if ( ! isSiteOwner ) {
+	if ( ! canPurchasePlan ) {
 		return null;
 	}
 
@@ -466,7 +465,7 @@ function PlanCard( {
 	currentTierRank,
 	redirectAfterPurchase,
 	totalPlanCount,
-	isSiteOwner,
+	canPurchasePlan,
 }: {
 	site: Site;
 	sitePlan: SiteContextualPlan;
@@ -476,7 +475,7 @@ function PlanCard( {
 	currentTierRank: number;
 	redirectAfterPurchase: string;
 	totalPlanCount: number;
-	isSiteOwner: boolean;
+	canPurchasePlan: boolean;
 } ) {
 	const isCurrentPlan =
 		sitePlan.current_plan === true || ( currentTierRank >= 0 && tierRank === currentTierRank );
@@ -541,7 +540,7 @@ function PlanCard( {
 						tierRank={ tierRank }
 						currentTierRank={ currentTierRank }
 						redirectAfterPurchase={ redirectAfterPurchase }
-						isSiteOwner={ isSiteOwner }
+						canPurchasePlan={ canPurchasePlan }
 					/>
 
 					{ sitePlan.plan_card_features && sitePlan.plan_card_features.length > 0 && (
@@ -715,8 +714,6 @@ export default function SitePlans() {
 	const { siteSlug } = siteRoute.useParams();
 	const { redirect_to } = useSearch( { from: sitePlansRoute.fullPath } );
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { user } = useAuth();
-	const isSiteOwner = user.ID === site.site_owner;
 
 	const [ billingInterval, setBillingInterval ] = useState< SubscriptionBillPeriodValue >(
 		SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD
@@ -730,6 +727,12 @@ export default function SitePlans() {
 		enabled: !! site.ID,
 	} );
 	const sitePlans = sitePlansData?.plans;
+
+	// A paid plan can only be changed by the account that owns it; a free or plan-less
+	// site can be upgraded by anyone with access.
+	const currentPlan = sitePlans?.find( ( p ) => p.current_plan );
+	const isPaidPlan = !! site.plan && ! site.plan.is_free;
+	const canPurchasePlan = ! isPaidPlan || !! currentPlan?.user_is_owner;
 	const pageContext = sitePlansData?.pageContext;
 	// Index sitePlans by product_id for O(1) sibling lookups
 	const plansByProductId = new Map< number, SiteContextualPlan >(
@@ -849,7 +852,7 @@ export default function SitePlans() {
 						currentTierRank={ currentTierRank }
 						redirectAfterPurchase={ redirectAfterPurchase }
 						totalPlanCount={ shownPlans.length }
-						isSiteOwner={ isSiteOwner }
+						canPurchasePlan={ canPurchasePlan }
 					/>
 				) ) }
 			</div>

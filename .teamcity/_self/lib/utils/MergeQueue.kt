@@ -6,7 +6,10 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 
 const val MERGE_QUEUE_BRANCH_SKIP_PARAM = "mergeQueueBranch.skipBuild"
-const val MERGE_QUEUE_BRANCH_TRIGGER_EXCLUSION = "-:gh-readonly-queue/*"
+const val MERGE_QUEUE_BRANCH_FILTER_EXCLUSIONS = """
+-:gh-readonly-queue/*
+-:refs/heads/gh-readonly-queue/*
+"""
 const val MERGE_QUEUE_BRANCH_SKIP_MESSAGE =
 	"This check was skipped because this is a merge queue and the check has already been run " +
 		"in the pull request. See: p4TIVU-b5I-p2#comment-12211"
@@ -46,6 +49,6 @@ fun <T : BuildStep> T.skipOnMergeQueueBranch(): T {
 fun String.excludeMergeQueueBranches(): String {
 	return """
 		${this.trimIndent()}
-		$MERGE_QUEUE_BRANCH_TRIGGER_EXCLUSION
+		${MERGE_QUEUE_BRANCH_FILTER_EXCLUSIONS.trim()}
 	""".trimIndent()
 }
