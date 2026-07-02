@@ -66,11 +66,7 @@ function LegacyContactDetails( { legacyContactId }: { legacyContactId: number } 
 							'To request access, your legacy contact should visit <link>wordpress.com/digital-legacy</link> and follow the instructions there. They’ll need the access key above.'
 						),
 						{
-							link: (
-								<a href={ localizeUrl( 'https://wordpress.com/digital-legacy' ) }>
-									wordpress.com/digital-legacy
-								</a>
-							),
+							link: <a href={ localizeUrl( 'https://wordpress.com/digital-legacy' ) } />,
 						}
 					) }
 				</Text>
