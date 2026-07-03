@@ -11,7 +11,7 @@
  * 	],
  * 	meta: { activity: 'activity-log', intent: 'view' },
  * });
- * // Renders: Updated <a href="https://wordpress.com/reader/blogs/123/posts/456">Hello World</a>
+ * // Renders: Updated <a href="/reader/blogs/123/posts/456">Hello World</a>
  */
 import { ExternalLink } from '@wordpress/components';
 import { Fragment, type MouseEvent, type ReactNode } from 'react';
