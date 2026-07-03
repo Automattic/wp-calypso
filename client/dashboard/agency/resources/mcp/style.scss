@@ -47,3 +47,25 @@
 	min-height: 80px;
 	max-height: 400px;
 }
+
+.mcp-starter-prompt {
+	position: relative;
+	padding: 12px 16px;
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 4px;
+	background: var( --color-neutral-0 );
+}
+
+.mcp-starter-prompt__copy.components-button {
+	position: absolute;
+	inset-block-start: 4px;
+	inset-inline-end: 4px;
+}
+
+.mcp-starter-prompt__text {
+	display: block;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+	// Reserve room so the text never runs under the copy button.
+	padding-inline-end: 32px;
+}
