@@ -115,7 +115,7 @@ The block editor may run inside an iframe (`editor-canvas`). `findBlockElement` 
 ## Conventions
 
 - **`any` types**: Used at WordPress API boundaries (`wp.data`, `wp.abilities`) where no upstream types exist. This is intentional — don't add `@ts-ignore` or overly specific types for untyped APIs.
-- **`@wordpress/i18n`**: All user-facing strings use `__()` with `'jetpack'` text domain.
+- **`@wordpress/i18n`**: All user-facing strings use `__()` with the `__i18n_text_domain__` text domain placeholder, which the Agents Manager webpack `DefinePlugin` replaces with `'default'` at build time. Do not hardcode a literal domain like `'jetpack'`.
 - **`@wordpress/components`**: Use for standard UI (Button, etc.).
 - **Styling**: Component styles in `.scss` files alongside the component.
 - **Tests must be TypeScript**: `.test.ts` / `.test.tsx`.
