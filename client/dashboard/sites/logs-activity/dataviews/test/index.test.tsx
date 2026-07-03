@@ -191,6 +191,20 @@ test( 'clicking backup action navigates to backup detail page', async () => {
 	} );
 } );
 
+test( 'shows the Activity type column by default and hides the search box', async () => {
+	renderActivityLogsDataViews();
+
+	await waitFor(
+		() => {
+			expect( screen.getByText( 'Backup completed' ) ).toBeInTheDocument();
+		},
+		{ timeout: 5000 }
+	);
+
+	expect( screen.getByRole( 'columnheader', { name: 'Activity type' } ) ).toBeInTheDocument();
+	expect( screen.queryByRole( 'searchbox' ) ).not.toBeInTheDocument();
+} );
+
 test( 'data is properly displayed', async () => {
 	renderActivityLogsDataViews();
 
