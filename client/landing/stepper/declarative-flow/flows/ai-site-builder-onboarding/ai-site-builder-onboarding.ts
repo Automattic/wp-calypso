@@ -4,6 +4,7 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, dispatch, resolveSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
+import { pathToUrl } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import {
 	setSignupCompleteSlug,
@@ -194,15 +195,29 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 						...( specId && { spec_id: specId } ),
 						checkout: 'success',
 					} );
-					const checkoutBackUrl = addQueryArgs( specEditorUrl, {
-						canvas: 'edit',
-						'ai-step': 'spec',
-						referrer: AI_SITE_BUILDER_ONBOARDING_FLOW,
+					// On checkout exit we must not drop the user into Big Sky (the
+					// success destination) before they've paid. Send them back into
+					// the flow instead: keeping the cart returns to the plan step,
+					// while emptying the cart returns to the domain step (handled by
+					// the leave-checkout modal via checkoutBackUrlDomains).
+					const backStepQueryArgs = {
+						siteSlug,
 						...( prompt && { prompt } ),
 						...( source && { source } ),
 						...( specId && { spec_id: specId } ),
-						checkout: 'cancel',
-					} );
+					};
+					const checkoutBackUrl = pathToUrl(
+						addQueryArgs(
+							`/setup/${ AI_SITE_BUILDER_ONBOARDING_FLOW }/${ STEPS.UNIFIED_PLANS.slug }`,
+							backStepQueryArgs
+						)
+					);
+					const checkoutBackUrlDomains = pathToUrl(
+						addQueryArgs(
+							`/setup/${ AI_SITE_BUILDER_ONBOARDING_FLOW }/${ STEPS.DOMAIN_SEARCH.slug }`,
+							backStepQueryArgs
+						)
+					);
 
 					persistSignupDestination( specUrl );
 					setSignupCompleteSlug( siteSlug );
@@ -213,6 +228,7 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 						addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 							redirect_to: specUrl,
 							checkoutBackUrl,
+							checkoutBackUrlDomains,
 							signup: 1,
 							'big-sky-checkout': 1,
 						} )

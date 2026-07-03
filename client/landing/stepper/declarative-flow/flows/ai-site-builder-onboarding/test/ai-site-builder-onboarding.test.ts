@@ -127,7 +127,7 @@ describe( 'ai-site-builder-onboarding flow', () => {
 			expect( setStaticHomepageOnSite ).toHaveBeenCalledWith( 123, 7 );
 		} );
 
-		it( 'forwards the prompt to both the success and cancel checkout destinations', async () => {
+		it( 'routes checkout exit back into the flow instead of Big Sky', async () => {
 			( wpcom.req.get as jest.Mock ).mockResolvedValue( [ { id: 7 } ] );
 			window.sessionStorage.setItem( 'stored_ai_prompt', 'a bakery website' );
 
@@ -138,12 +138,27 @@ describe( 'ai-site-builder-onboarding flow', () => {
 
 			const redirectTo = new URL( checkoutParams.get( 'redirect_to' ) as string );
 			const checkoutBackUrl = new URL( checkoutParams.get( 'checkoutBackUrl' ) as string );
+			const checkoutBackUrlDomains = new URL(
+				checkoutParams.get( 'checkoutBackUrlDomains' ) as string
+			);
 
+			// Success still lands in Big Sky.
 			expect( redirectTo.searchParams.get( 'checkout' ) ).toBe( 'success' );
 			expect( redirectTo.searchParams.get( 'prompt' ) ).toBe( 'a bakery website' );
 
-			expect( checkoutBackUrl.searchParams.get( 'checkout' ) ).toBe( 'cancel' );
+			// Keeping the cart returns to the plan step; emptying it returns to
+			// the domain step. Neither must point at Big Sky's site editor.
+			expect( checkoutBackUrl.pathname ).toBe(
+				`/setup/ai-site-builder-onboarding/${ STEPS.UNIFIED_PLANS.slug }`
+			);
 			expect( checkoutBackUrl.searchParams.get( 'prompt' ) ).toBe( 'a bakery website' );
+			expect( checkoutBackUrl.pathname ).not.toContain( 'site-editor.php' );
+
+			expect( checkoutBackUrlDomains.pathname ).toBe(
+				`/setup/ai-site-builder-onboarding/${ STEPS.DOMAIN_SEARCH.slug }`
+			);
+			expect( checkoutBackUrlDomains.searchParams.get( 'prompt' ) ).toBe( 'a bakery website' );
+			expect( checkoutBackUrlDomains.pathname ).not.toContain( 'site-editor.php' );
 		} );
 	} );
 } );
