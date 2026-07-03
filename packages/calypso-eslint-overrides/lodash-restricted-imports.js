@@ -70,6 +70,9 @@ const MERGEWITH_MESSAGE =
 	'same trailing customizer but deep-merges only plain JSON-like data (own enumerable properties, ' +
 	'dense arrays) and does not merge inherited properties or materialize sparse-array holes.';
 const COMPACT_MESSAGE = 'Please use `array.filter( Boolean )` instead of lodash `compact`.';
+const CHUNK_MESSAGE =
+	'Please split with a small loop (`for ( let i = 0; i < array.length; i += size ) ' +
+	'chunks.push( array.slice( i, i + size ) )`) instead of lodash `chunk`.';
 const FLATTEN_MESSAGE = 'Please use native `array.flatMap()` / `array.flat()` instead.';
 const DEFER_MESSAGE = 'Please use native `setTimeout( fn, 0 )` instead of lodash `defer`.';
 const DELAY_MESSAGE = 'Please use native `setTimeout( fn, wait )` instead of lodash `delay`.';
@@ -174,6 +177,7 @@ const paths = [
 	{ name: 'lodash', importNames: CASE_NAMES, message: CASE_MESSAGE },
 	{ name: 'lodash', importNames: COMPOSE_NAMES, message: COMPOSE_MESSAGE },
 	{ name: 'lodash', importNames: [ 'compact' ], message: COMPACT_MESSAGE },
+	{ name: 'lodash', importNames: [ 'chunk' ], message: CHUNK_MESSAGE },
 	{ name: 'lodash', importNames: [ 'flatMap', 'flatten' ], message: FLATTEN_MESSAGE },
 	{ name: 'lodash', importNames: [ 'defer' ], message: DEFER_MESSAGE },
 	{ name: 'lodash', importNames: [ 'delay' ], message: DELAY_MESSAGE },
@@ -220,6 +224,7 @@ const patterns = [
 	{ group: CASE_NAMES.map( ( name ) => `lodash/${ name }` ), message: CASE_MESSAGE },
 	{ group: COMPOSE_NAMES.map( ( name ) => `lodash/${ name }` ), message: COMPOSE_MESSAGE },
 	{ group: [ 'lodash/compact' ], message: COMPACT_MESSAGE },
+	{ group: [ 'lodash/chunk' ], message: CHUNK_MESSAGE },
 	{ group: [ 'lodash/flatMap', 'lodash/flatten' ], message: FLATTEN_MESSAGE },
 	{ group: [ 'lodash/defer' ], message: DEFER_MESSAGE },
 	{ group: [ 'lodash/delay' ], message: DELAY_MESSAGE },
@@ -279,6 +284,9 @@ const NAMESPACE_GUARDED = [
 	{ name: 'update', message: UPDATE_MESSAGE },
 	{ name: 'cloneDeepWith', message: CLONEDEEPWITH_MESSAGE },
 	{ name: 'assignWith', message: ASSIGNWITH_MESSAGE },
+	{ name: 'compact', message: COMPACT_MESSAGE },
+	{ name: 'groupBy', message: JS_UTILS_MESSAGE },
+	{ name: 'chunk', message: CHUNK_MESSAGE },
 ];
 
 // `no-restricted-properties`: namespace member access (`_.fn( … )` / `lodash.fn( … )`).
