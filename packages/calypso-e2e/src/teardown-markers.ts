@@ -88,7 +88,12 @@ function errorMessage( error: unknown ): string {
  */
 export function isAccountClosedError( error: unknown ): boolean {
 	const message = error instanceof Error ? error.message : String( error ?? '' );
-	return /invalid_token|authorization_required|unauthorized|user_not_found/i.test( message );
+	// `invalid_username` is included because it means the account never existed
+	// (a rejected/throttled signup, surfaced via the bearer-token login fallback),
+	// so like the auth codes above it is a "nothing to leak" signal, not a bug.
+	return /invalid_token|authorization_required|unauthorized|user_not_found|invalid_username/i.test(
+		message
+	);
 }
 
 /**

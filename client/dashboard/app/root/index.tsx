@@ -13,6 +13,7 @@ import {
 } from 'react';
 import { LoadingLine } from '../../components/loading-line';
 import { PageViewTracker } from '../../components/page-view-tracker';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import NotFound from '../404';
 import AccountRecoveryInterstitial from '../account-recovery-interstitial';
 import { bumpStat } from '../analytics';
@@ -27,6 +28,7 @@ import OmnibarSiteSwitcher from '../omnibar/omnibar-site-switcher';
 import { useInitializeOmnibarSite } from '../omnibar/site';
 import ResponsiveSidebar from '../responsive-sidebar';
 import Snackbars from '../snackbars';
+import { OptInWelcomeModal } from '../welcome-modal';
 import './style.scss';
 
 const WebpackBuildMonitor = lazy(
@@ -43,6 +45,8 @@ function Root() {
 	const isAccountRecoveryInterstitialEnabled = isEnabled(
 		'dashboard/account-recovery-interstitial'
 	);
+	const isOptInWelcomeModalEnabled =
+		! isDashboardBackport() && isEnabled( 'dashboard/opt-in-welcome-modal' );
 	const { name, supports, LoadingLogo = WordPressLogo } = useAppContext();
 	const isFetching = useIsFetching();
 	const isMutating = useIsMutating();
@@ -183,6 +187,7 @@ function Root() {
 			<OmnibarSiteSwitcher />
 			<Snackbars />
 			{ isAccountRecoveryInterstitialEnabled && <AccountRecoveryInterstitial /> }
+			{ isOptInWelcomeModalEnabled && <OptInWelcomeModal /> }
 			<PageViewTracker />
 			<NavigationBlockerRegistry />
 			{ 'development' === process.env.NODE_ENV && (

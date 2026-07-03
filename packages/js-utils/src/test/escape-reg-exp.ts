@@ -2,8 +2,8 @@ import escapeRegExp from '../escape-reg-exp';
 
 describe( 'escapeRegExp', () => {
 	it( 'escapes RegExp special characters', () => {
-		expect( escapeRegExp( '[lodash](https://lodash.com/)' ) ).toBe(
-			'\\[lodash\\]\\(https://lodash\\.com/\\)'
+		expect( escapeRegExp( '[link](https://example.com/)' ) ).toBe(
+			'\\[link\\]\\(https://example\\.com/\\)'
 		);
 		expect( escapeRegExp( 'a.b*c+?' ) ).toBe( 'a\\.b\\*c\\+\\?' );
 		expect( escapeRegExp( '^start$' ) ).toBe( '\\^start\\$' );

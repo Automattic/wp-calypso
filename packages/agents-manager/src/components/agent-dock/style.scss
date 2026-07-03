@@ -737,6 +737,14 @@ body.post-new-php.agents-manager-sidebar-container {
 	}
 }
 
+// Hide the chat while Big Sky's full-screen onboarding overlay is open.
+body:has( .big-sky-onboarding.components-popover ) {
+	.agents-manager-chat,
+	.agents-manager-sidebar-fab {
+		display: none !important;
+	}
+}
+
 // Docked split-screen: flip --am-sidebar-width to 50vw. `$sidebar-width`
 // resolves through this variable so every consumer picks it up.
 body.agents-manager-sidebar-container.is-split-screen {

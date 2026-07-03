@@ -1,4 +1,4 @@
-import { bumpStat } from '../analytics';
+import { bumpStat } from './analytics';
 
 // Marks a page load as a chunk-load retry. Mirrors the classic Calypso
 // mechanism in client/layout/error.jsx: the flag lives in the URL for the whole

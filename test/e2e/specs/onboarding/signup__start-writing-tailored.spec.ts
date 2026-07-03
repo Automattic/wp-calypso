@@ -19,6 +19,7 @@ test.describe(
 		test( 'One: As a new WordPress.com blogger I can sign up for a new free site and start writing straight away', async ( {
 			flowStartWriting,
 			helperData,
+			page,
 		} ) => {
 			testUserStartWriting = helperData.getNewTestUser( {
 				usernamePrefix: 'start_writing',
@@ -139,8 +140,15 @@ test.describe(
 			} );
 
 			await test.step( 'Then I see I am taken to the Jetpack Social page', async function () {
-				await expect( flowStartWriting.jetpackSocialPageHeading ).toBeVisible();
-				await expect( flowStartWriting.connectAccountsButton ).toBeVisible();
+				// This is a cross-app load into Jetpack Social wp-admin, which renders
+				// in two variants (a "Write once, post everywhere" splash and an
+				// accounts dashboard). Assert on the URL and h1, the only signals
+				// common to both, with the raised timeout the other cross-navigation
+				// steps in this flow use.
+				await expect( page ).toHaveURL( /jetpack-social/, { timeout: 20000 } );
+				await expect( flowStartWriting.jetpackSocialPageHeading ).toBeVisible( {
+					timeout: 20000,
+				} );
 			} );
 		} );
 

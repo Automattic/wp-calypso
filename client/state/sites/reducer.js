@@ -1,6 +1,5 @@
-import { omit } from '@automattic/js-utils';
+import { merge, omit } from '@automattic/js-utils';
 import isEqual from 'fast-deep-equal/es6';
-import { merge } from 'lodash';
 import {
 	MEDIA_DELETE,
 	SITE_LEAVE_RECEIVE,

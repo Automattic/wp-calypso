@@ -2,10 +2,10 @@
  * @jest-environment jsdom
  */
 
-import { bumpStat } from '../../analytics';
-import { isChunkLoadError, maybeReloadForChunkError } from '../chunk-reload';
+import { bumpStat } from '../analytics';
+import { isChunkLoadError, maybeReloadForChunkError } from '../chunk-load-recovery';
 
-jest.mock( '../../analytics', () => ( {
+jest.mock( '../analytics', () => ( {
 	bumpStat: jest.fn(),
 } ) );
 
