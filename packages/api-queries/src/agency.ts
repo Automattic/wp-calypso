@@ -4,6 +4,8 @@ import {
 	fetchAgencyScheduleCallLink,
 	fetchAgencyMcpSettings,
 	updateAgencyMcpSettings,
+	fetchTipaltiIFrameUrl,
+	fetchTipaltiPayee,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
@@ -88,6 +90,22 @@ export const agencyResourcesQuery = () =>
 		queryKey: [ 'agency', 'resources' ] as const,
 		queryFn: fetchAgencyResources,
 		staleTime: 5 * 60 * 1000,
+	} );
+
+export const tipaltiIFrameUrlQuery = ( agencyId: number ) =>
+	queryOptions( {
+		queryKey: [ 'agency', agencyId, 'tipalti-iframe-url' ] as const,
+		queryFn: () => fetchTipaltiIFrameUrl( agencyId ),
+		enabled: !! agencyId,
+		refetchOnWindowFocus: false,
+	} );
+
+export const tipaltiPayeeQuery = ( agencyId: number ) =>
+	queryOptions( {
+		queryKey: [ 'agency', agencyId, 'tipalti-payee' ] as const,
+		queryFn: () => fetchTipaltiPayee( agencyId ),
+		enabled: !! agencyId,
+		refetchOnWindowFocus: false,
 	} );
 
 export const mcpSettingsQuery = ( agencyId: number ) =>

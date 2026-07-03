@@ -1,18 +1,17 @@
-interface StatusMeta {
+import { __ } from '@wordpress/i18n';
+import type { TipaltiPayee } from '@automattic/api-core';
+
+interface AccountStatus {
 	statusType: 'success' | 'warning' | 'error';
 	status: string;
 	statusReason?: string;
 	actionRequired: boolean;
 }
 
-export const getAccountStatus = (
-	data: {
-		Status: string;
-		IsPayable: boolean;
-		PayableReason: string[];
-	} | null,
-	translate: ( key: string ) => string
-): StatusMeta | null => {
+export function getAccountStatus(
+	data: TipaltiPayee | null | undefined,
+	translate: ( key: string ) => string = __
+): AccountStatus | null {
 	if ( ! data ) {
 		return null;
 	}
@@ -71,6 +70,6 @@ export const getAccountStatus = (
 
 	return {
 		...statusMeta,
-		actionRequired: [ 'warning', 'error' ].includes( statusMeta?.statusType ),
-	} as StatusMeta;
-};
+		actionRequired: [ 'warning', 'error' ].includes( statusMeta.statusType ),
+	} as AccountStatus;
+}
