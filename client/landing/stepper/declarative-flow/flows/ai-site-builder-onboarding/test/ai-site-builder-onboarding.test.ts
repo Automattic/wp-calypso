@@ -126,5 +126,24 @@ describe( 'ai-site-builder-onboarding flow', () => {
 			expect( wpcom.req.post ).not.toHaveBeenCalled();
 			expect( setStaticHomepageOnSite ).toHaveBeenCalledWith( 123, 7 );
 		} );
+
+		it( 'forwards the prompt to both the success and cancel checkout destinations', async () => {
+			( wpcom.req.get as jest.Mock ).mockResolvedValue( [ { id: 7 } ] );
+			window.sessionStorage.setItem( 'stored_ai_prompt', 'a bakery website' );
+
+			await runProcessingSubmit();
+
+			const checkoutUrl = ( window.location.assign as jest.Mock ).mock.calls[ 0 ][ 0 ];
+			const checkoutParams = new URL( checkoutUrl, 'https://wordpress.com' ).searchParams;
+
+			const redirectTo = new URL( checkoutParams.get( 'redirect_to' ) as string );
+			const checkoutBackUrl = new URL( checkoutParams.get( 'checkoutBackUrl' ) as string );
+
+			expect( redirectTo.searchParams.get( 'checkout' ) ).toBe( 'success' );
+			expect( redirectTo.searchParams.get( 'prompt' ) ).toBe( 'a bakery website' );
+
+			expect( checkoutBackUrl.searchParams.get( 'checkout' ) ).toBe( 'cancel' );
+			expect( checkoutBackUrl.searchParams.get( 'prompt' ) ).toBe( 'a bakery website' );
+		} );
 	} );
 } );

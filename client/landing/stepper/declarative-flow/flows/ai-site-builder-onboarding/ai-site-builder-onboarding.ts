@@ -198,6 +198,9 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 						canvas: 'edit',
 						'ai-step': 'spec',
 						referrer: AI_SITE_BUILDER_ONBOARDING_FLOW,
+						...( prompt && { prompt } ),
+						...( source && { source } ),
+						...( specId && { spec_id: specId } ),
 						checkout: 'cancel',
 					} );
 
