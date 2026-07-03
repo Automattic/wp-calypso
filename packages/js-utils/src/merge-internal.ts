@@ -15,8 +15,8 @@ export const isMergeable = ( value: unknown ): boolean =>
 	Array.isArray( value ) || isPlainObject( value );
 
 // Reads `constructor` as absent when it holds the built-in function, so a source
-// `constructor` merges into a fresh own property instead of the real constructor
-// (matching lodash). `__proto__` is skipped by callers before this is reached.
+// `constructor` merges into a fresh own property instead of the real
+// constructor. `__proto__` is skipped by callers before this is reached.
 export const safeGet = ( object: PlainObject, key: string ): unknown => {
 	if ( key === 'constructor' && typeof object[ key ] === 'function' ) {
 		return undefined;
@@ -43,8 +43,8 @@ export const pickMergeContainer = (
 // Assigns like a sloppy-mode write. `Reflect.set` reports a rejected data-
 // property write — a frozen or sealed object, a non-extensible object gaining a
 // new key, or a non-writable property — as a `false` return rather than
-// throwing, so the merge keeps going, matching lodash (which runs non-strict).
-// Exceptions thrown by a userland setter still propagate, as they do in lodash.
+// throwing, so the merge keeps going.
+// Exceptions thrown by a userland setter still propagate.
 // A plain strict-mode assignment would instead throw on the rejected write and
 // abort the whole merge.
 export const assign = ( target: PlainObject, key: string, value: unknown ): void => {

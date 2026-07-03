@@ -32,12 +32,12 @@ function groupBy< T >(
 				);
 			}
 			// `?.` keeps the property shorthand null-safe and primitive-tolerant:
-			// nullish values yield `undefined` instead of throwing, matching lodash.
+			// nullish values yield `undefined` instead of throwing.
 			rawKey = ( value as any )?.[ iteratee ];
 		}
 
 		// Coerce to a string up front so keys that collide as object keys (e.g.
-		// `1` and `'1'`) accumulate into the same group, matching lodash.
+		// `1` and `'1'`) accumulate into the same group.
 		const key = String( rawKey );
 		const group = groups.get( key );
 		if ( group ) {

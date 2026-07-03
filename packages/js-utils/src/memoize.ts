@@ -7,8 +7,8 @@ export interface MemoizedFunction< Args extends unknown[], Return > {
  * Wraps a function so results are cached by a key derived from its arguments.
  * By default the key is the first argument; pass `resolver` to compute a custom
  * key. The cache is exposed as `.cache` (a `Map`) so callers can clear or
- * inspect it. Mirrors lodash's `memoize` for these uses, but does not support
- * its pluggable `memoize.Cache` or argument-type `TypeError` checks.
+ * inspect it. Unlike lodash's `memoize`, this does not support a pluggable
+ * `memoize.Cache` or argument-type `TypeError` checks.
  * @param func The function to have its output memoized.
  * @param resolver Optional function that resolves the cache key from the arguments.
  * @returns The memoized function, with its cache exposed as `.cache`.
@@ -18,7 +18,7 @@ const memoize = < Args extends unknown[], Return >(
 	resolver?: ( ...args: Args ) => unknown
 ): MemoizedFunction< Args, Return > => {
 	// Use a regular function (not an arrow) so the caller's `this` is forwarded
-	// to `func`/`resolver`, matching lodash's `func.apply( this, arguments )`.
+	// to `func`/`resolver` via `func.apply( this, args )`.
 	const memoized = function ( this: unknown, ...args: Args ): Return {
 		const key = resolver ? resolver.apply( this, args ) : args[ 0 ];
 		const { cache } = memoized;

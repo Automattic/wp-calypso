@@ -13,12 +13,12 @@ import toFinite from './to-finite';
 const DEFAULT_LENGTH = 30;
 const DEFAULT_OMISSION = '...';
 
-// lodash coerces `length` via `toInteger` (toward-zero integer of `toFinite`).
+// Coerces `length` via `toInteger` (toward-zero integer of `toFinite`).
 const toInteger = ( value: unknown ): number => Math.trunc( toFinite( value ) );
 
-// lodash coerces strings via `baseToString`, which differs from native `String`
-// in two ways: symbols (primitive or boxed) stringify to their description
-// rather than throwing, and negative zero becomes `'-0'`.
+// `baseToString` differs from native `String` in two ways: symbols (primitive
+// or boxed) stringify to their description rather than throwing, and negative
+// zero becomes `'-0'`.
 const baseToString = ( value: unknown ): string => {
 	if ( typeof value === 'string' ) {
 		return value;
@@ -33,11 +33,10 @@ const baseToString = ( value: unknown ): string => {
 	return result === '0' && Object.is( value, -0 ) ? '-0' : result;
 };
 
-// Unicode-aware string segmentation, ported from lodash so that grapheme
-// clusters (ZWJ emoji sequences, regional-indicator flags, combining marks,
-// variation selectors, Fitzpatrick modifiers) are counted and sliced as single
-// units — matching lodash `truncate` exactly rather than splitting per code
-// point.
+// Unicode-aware string segmentation so that grapheme clusters (ZWJ emoji
+// sequences, regional-indicator flags, combining marks, variation selectors,
+// Fitzpatrick modifiers) are counted and sliced as single units rather than
+// split per code point.
 const rsAstralRange = '\\ud800-\\udfff';
 const rsComboMarksRange = '\\u0300-\\u036f';
 const reComboHalfMarksRange = '\\ufe20-\\ufe2f';
@@ -80,7 +79,7 @@ const stringToArray = ( string: string ): string[] =>
 
 /**
  * Truncates `string` if it is longer than the given maximum length, replacing
- * the excess with `omission`. Mirrors lodash `truncate`, including the
+ * the excess with `omission`. Supports the
  * `separator` option (truncate to a word/pattern boundary), lenient option
  * coercion (non-object options and oddly-typed `length`/`omission` fall back or
  * coerce rather than throw), and Unicode-aware length/slicing so grapheme
@@ -90,10 +89,9 @@ const stringToArray = ( string: string ): string[] =>
  * @returns The truncated string.
  */
 const truncate = ( string: string, options?: TruncateOptions ): string => {
-	// Mirror lodash's option handling: only plain objects/arrays contribute
-	// options; `length` is coerced with `toInteger` and `omission` with `String`,
-	// so non-object or oddly-typed inputs fall back to defaults instead of
-	// throwing.
+	// Only plain objects/arrays contribute options; `length` is coerced with
+	// `toInteger` and `omission` with `String`, so non-object or oddly-typed
+	// inputs fall back to defaults instead of throwing.
 	let length = DEFAULT_LENGTH;
 	let omission = DEFAULT_OMISSION;
 	let separator: string | RegExp | undefined;
