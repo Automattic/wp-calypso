@@ -2,7 +2,9 @@ package _self.lib.utils
 
 const val MERGE_QUEUE_BRANCH_FILTER_EXCLUSIONS = """
 -:gh-readonly-queue/*
+-:gh-readonly-queue/trunk/*
 -:refs/heads/gh-readonly-queue/*
+-:refs/heads/gh-readonly-queue/trunk/*
 """
 
 fun String.excludeMergeQueueBranches(): String {
