@@ -164,6 +164,10 @@ export const isAIBuilderFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ AI_SITE_BUILDER_FLOW ].includes( flowName ) );
 };
 
+export const isAIBuilderOnboardingFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ AI_SITE_BUILDER_ONBOARDING_FLOW ].includes( flowName ) );
+};
+
 export const isAIBuilderSpecFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ AI_SITE_BUILDER_SPEC_FLOW ].includes( flowName ) );
 };
