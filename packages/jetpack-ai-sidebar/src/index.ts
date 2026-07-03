@@ -15,10 +15,9 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
+import './components/feedback-list.scss';
 import PostFeedback from './components/post-feedback';
-import './components/post-feedback.scss';
 import Proofread from './components/proofread';
-import './components/proofread.scss';
 import ReviewMediation from './components/review-mediation';
 import './components/review-mediation.scss';
 import TitlePicker from './components/title-picker';

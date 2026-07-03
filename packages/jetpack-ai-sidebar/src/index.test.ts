@@ -330,9 +330,9 @@ describe( 'PostFeedback', () => {
 		expect( container.textContent ).toContain(
 			'Needs manual edit: Needs confirmed event details from the author.'
 		);
-		const manualReasons = container.querySelectorAll( '.jetpack-ai-post-feedback__manual-reason' );
+		const manualReasons = container.querySelectorAll( '.jetpack-ai-feedback-list__manual-reason' );
 		const acceptButtons = container.querySelectorAll(
-			'.jetpack-ai-post-feedback__action-button.is-primary'
+			'.jetpack-ai-feedback-list__action-button.is-primary'
 		);
 		expect( acceptButtons[ 1 ].hasAttribute( 'disabled' ) ).toBe( true );
 		expect( acceptButtons[ 1 ].getAttribute( 'aria-describedby' ) ).toBe(
@@ -477,7 +477,7 @@ describe( 'PostFeedback', () => {
 			} )
 		);
 
-		const blockRef = document.querySelector( '.jetpack-ai-post-feedback__block-ref' );
+		const blockRef = document.querySelector( '.jetpack-ai-feedback-list__block-ref' );
 		expect( blockRef ).toBeTruthy();
 		( blockRef as HTMLButtonElement ).click();
 
@@ -540,7 +540,7 @@ describe( 'PostFeedback', () => {
 			} )
 		);
 
-		const blockRefs = container.querySelectorAll( '.jetpack-ai-post-feedback__block-ref' );
+		const blockRefs = container.querySelectorAll( '.jetpack-ai-feedback-list__block-ref' );
 		( blockRefs[ 0 ] as HTMLButtonElement ).click();
 		expect( firstLayout.classList.contains( 'is-focus-mode' ) ).toBe( true );
 		expect( secondLayout.classList.contains( 'is-focus-mode' ) ).toBe( false );
@@ -584,7 +584,7 @@ describe( 'PostFeedback', () => {
 		);
 
 		(
-			container.querySelector( '.jetpack-ai-post-feedback__block-ref' ) as HTMLButtonElement
+			container.querySelector( '.jetpack-ai-feedback-list__block-ref' ) as HTMLButtonElement
 		 ).click();
 		expect( layoutElement.classList.contains( 'is-focus-mode' ) ).toBe( true );
 
@@ -624,13 +624,13 @@ describe( 'PostFeedback', () => {
 		);
 
 		(
-			container.querySelector( '.jetpack-ai-post-feedback__block-ref' ) as HTMLButtonElement
+			container.querySelector( '.jetpack-ai-feedback-list__block-ref' ) as HTMLButtonElement
 		 ).click();
 		expect( layoutElement.classList.contains( 'is-focus-mode' ) ).toBe( true );
 		mockClearSelectedBlock.mockClear();
 
 		const dismissButton = container.querySelectorAll(
-			'.jetpack-ai-post-feedback__action-button'
+			'.jetpack-ai-feedback-list__action-button'
 		)[ 1 ] as HTMLButtonElement;
 		fireEvent.mouseDown( dismissButton );
 		act( () => {
