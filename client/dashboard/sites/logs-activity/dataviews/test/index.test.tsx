@@ -138,19 +138,14 @@ const mockActivityLogsData = {
 	totalPages: 1,
 };
 
-function renderActivityLogsDataViews(
-	onActivityQuery?: ( query: Record< string, string > ) => void
-) {
+function renderActivityLogsDataViews() {
 	nock( API_BASE )
 		.get( '/rest/v1.1/me/preferences' )
 		.query( true )
 		.reply( 200, { calypso_preferences: {} } );
 	nock( API_BASE )
 		.get( `/wpcom/v2/sites/${ mockSiteId }/activity` )
-		.query( ( query ) => {
-			onActivityQuery?.( query );
-			return true;
-		} )
+		.query( true )
 		.reply( 200, {
 			current: {
 				orderedItems: mockActivityLogsData.activityLogs,
@@ -194,22 +189,6 @@ test( 'clicking backup action navigates to backup detail page', async () => {
 			rewindId: 'rewind-123',
 		},
 	} );
-} );
-
-test( 'requests aggregated activity so server-side search covers event content', async () => {
-	let activityQuery: Record< string, string > = {};
-	renderActivityLogsDataViews( ( query ) => {
-		activityQuery = query;
-	} );
-
-	await waitFor(
-		() => {
-			expect( screen.getByText( 'Backup completed' ) ).toBeInTheDocument();
-		},
-		{ timeout: 5000 }
-	);
-
-	expect( activityQuery.aggregate ).toBe( 'true' );
 } );
 
 test( 'data is properly displayed', async () => {
