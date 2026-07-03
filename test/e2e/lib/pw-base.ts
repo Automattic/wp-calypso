@@ -359,6 +359,11 @@ export const test = base.extend<
 		 * Creates a new site with public visibility for testing.
 		 */
 		sitePublic: NewSiteResponse;
+		/**
+		 * Like `sitePublic`, but reuses a persistent, already-verified account and
+		 * only creates an ephemeral site: no signup or email-verification round trip.
+		 */
+		sitePublicShared: NewSiteResponse;
 	}
 >( {
 	viewportName: [ 'desktop', { option: true } ],
@@ -683,6 +688,24 @@ export const test = base.extend<
 			} );
 		}
 	},
+	sitePublicShared: async ( { page, helperData }, use ) => {
+		// getAccount persists auth cookies on first login so parallel tests reuse
+		// them instead of each re-logging-in; authenticate then loads them onto
+		// this test's page (needed by the import navigation).
+		const account = await getAccount( page, 'defaultUser' );
+		await account.authenticate( page );
+
+		// createSite is the first line that creates a real resource. From here on
+		// everything is wrapped so the site is deleted no matter what happens next:
+		// the test failing, timing out, or a later line throwing.
+		const siteName = helperData.getBlogName();
+		const site = await account.restAPI.createSite( { name: siteName, title: siteName } );
+		try {
+			await use( site );
+		} finally {
+			await deleteSiteBestEffort( account.restAPI, site );
+		}
+	},
 } );
 
 export const tags = {
@@ -720,6 +743,46 @@ export function skipIfMailosaurLimitReached(): void {
 		envVariables.MAILOSAUR_LIMIT_REACHED,
 		'Skipping: Mailosaur daily email limit reached (sitePublic fixture requires email verification)'
 	);
+}
+
+/**
+ * Deletes an ephemeral test site. Retries transient failures and never throws:
+ * it runs from fixture teardown, which Playwright executes even when the test
+ * fails or times out, so a cleanup hiccup must not redden a passing test. On
+ * unrecoverable failure it logs a greppable `LEAKED` line and leaves the site
+ * for the external prune rather than masking the test result.
+ *
+ * @param {RestAPIClient} client Client authenticated as the site owner.
+ * @param {NewSiteResponse} site The site to delete.
+ */
+async function deleteSiteBestEffort(
+	client: RestAPIClient,
+	site: NewSiteResponse
+): Promise< void > {
+	const target = { id: site.blog_details.blogid, domain: site.blog_details.url };
+	for ( let attempt = 1; attempt <= 3; attempt++ ) {
+		let reason: string;
+		try {
+			// `deleteSite` returns null (without throwing) when it declines to act,
+			// e.g. the just-created site is not yet visible in `/all-domains/` so its
+			// ownership guard cannot confirm it. Treat that as a retryable failure so
+			// the site is not leaked silently.
+			if ( await client.deleteSite( target ) ) {
+				return;
+			}
+			reason = 'deletion declined (site ownership not yet confirmable)';
+		} catch ( error ) {
+			reason = String( error );
+		}
+		if ( attempt === 3 ) {
+			console.warn(
+				`LEAKED test site ${ target.domain } (id ${ target.id }): ` +
+					`not deleted after ${ attempt } attempts: ${ reason }`
+			);
+			return;
+		}
+		await new Promise( ( resolve ) => setTimeout( resolve, 1000 ) );
+	}
 }
 
 export { expect };
