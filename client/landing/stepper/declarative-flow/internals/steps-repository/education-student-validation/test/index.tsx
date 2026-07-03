@@ -5,9 +5,12 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import EducationStudentValidation from '..';
 import { StepProps } from '../../../types';
 import { mockStepProps, renderStep } from '../../test/helpers';
+
+jest.mock( 'calypso/lib/analytics/tracks' );
 
 const mockApi = () => nock( 'https://public-api.wordpress.com:443' );
 
@@ -78,19 +81,63 @@ describe( 'EducationStudentValidation', () => {
 		expect( validationRequest.isDone() ).toBe( true );
 	} );
 
-	it( 'shows an error when the code is rejected', async () => {
+	it( 'shows an error and records a Tracks event when the code is rejected', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 
 		mockApi()
 			.post( '/wpcom/v2/me/education-student-validation', { code: 'UNKNOWN' } )
-			.reply( 404, { code: 'not_found' } );
+			.reply( 400, { code: 'invalid_code' } );
 
 		await userEvent.type( screen.getByLabelText( 'Invitation code' ), 'UNKNOWN' );
 		await userEvent.click( screen.getByRole( 'button', { name: 'Validate invite code' } ) );
 
 		expect( await screen.findByText( 'Invitation code not found' ) ).toBeVisible();
 		expect( submit ).not.toHaveBeenCalled();
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_education_student_validation_failed',
+			{ flow: 'education', reason: 'invalid' }
+		);
+	} );
+
+	it( 'shows a rate limit error when the API returns 429', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+
+		mockApi()
+			.post( '/wpcom/v2/me/education-student-validation', { code: 'HAMMERED' } )
+			.reply( 429, { code: 'rate_limited' } );
+
+		await userEvent.type( screen.getByLabelText( 'Invitation code' ), 'HAMMERED' );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Validate invite code' } ) );
+
+		expect(
+			await screen.findByText( 'Too many attempts. Please wait a moment and try again.' )
+		).toBeVisible();
+		expect( submit ).not.toHaveBeenCalled();
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_education_student_validation_failed',
+			{ flow: 'education', reason: 'rate_limited' }
+		);
+	} );
+
+	it( 'shows a generic error when the API fails', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+
+		mockApi()
+			.post( '/wpcom/v2/me/education-student-validation', { code: 'ANYCODE' } )
+			.reply( 500, { code: 'internal_server_error' } );
+
+		await userEvent.type( screen.getByLabelText( 'Invitation code' ), 'ANYCODE' );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Validate invite code' } ) );
+
+		expect( await screen.findByText( 'Something went wrong. Please try again.' ) ).toBeVisible();
+		expect( submit ).not.toHaveBeenCalled();
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_education_student_validation_failed',
+			{ flow: 'education', reason: 'unknown' }
+		);
 	} );
 
 	it( 'shows an error when the code resolves with success: false', async () => {
@@ -114,7 +161,7 @@ describe( 'EducationStudentValidation', () => {
 
 		mockApi()
 			.post( '/wpcom/v2/me/education-student-validation', { code: 'UNKNOWN' } )
-			.reply( 404, { code: 'not_found' } );
+			.reply( 400, { code: 'invalid_code' } );
 
 		await userEvent.type( screen.getByLabelText( 'Invitation code' ), 'UNKNOWN' );
 		await userEvent.click( screen.getByRole( 'button', { name: 'Validate invite code' } ) );

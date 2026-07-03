@@ -22,6 +22,8 @@ const ERROR_ID = 'education-student-validation-code-error';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
+type ValidationError = 'invalid' | 'rate_limited' | 'unknown';
+
 const EducationStudentValidation: StepType< {
 	submits: {
 		inviteCodeValidated: true;
@@ -29,7 +31,7 @@ const EducationStudentValidation: StepType< {
 } > = function EducationStudentValidation( { navigation, flow } ) {
 	const { __ } = useI18n();
 	const [ code, setCode ] = useState( '' );
-	const [ hasError, setHasError ] = useState( false );
+	const [ error, setError ] = useState< ValidationError | null >( null );
 	const { mutateAsync: validateCode, isPending } = useValidateEducationStudentCode();
 
 	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
@@ -52,7 +54,11 @@ const EducationStudentValidation: StepType< {
 	const subText = __(
 		'You’ve been invited to build and publish real work on the open web. Set up your space in three steps.'
 	);
-	const errorMessage = __( 'Invitation code not found' );
+	const errorMessages: Record< ValidationError, string > = {
+		invalid: __( 'Invitation code not found' ),
+		rate_limited: __( 'Too many attempts. Please wait a moment and try again.' ),
+		unknown: __( 'Something went wrong. Please try again.' ),
+	};
 	const enrollNote = createInterpolateElement(
 		__( 'Don’t have a code? <link>Learn more about the program at wp.com/edu</link>' ),
 		{
@@ -85,6 +91,11 @@ const EducationStudentValidation: StepType< {
 		},
 	];
 
+	const failValidation = ( reason: ValidationError ) => {
+		setError( reason );
+		recordTracksEvent( 'calypso_education_student_validation_failed', { flow, reason } );
+	};
+
 	const onSubmit = async ( event: FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
 
@@ -92,19 +103,27 @@ const EducationStudentValidation: StepType< {
 			return;
 		}
 
-		setHasError( false );
+		setError( null );
 
 		try {
 			const { success } = await validateCode( trimmedCode );
 
 			if ( ! success ) {
-				setHasError( true );
+				failValidation( 'invalid' );
 				return;
 			}
 
 			navigation.submit( { inviteCodeValidated: true } );
-		} catch {
-			setHasError( true );
+		} catch ( validationError ) {
+			const status = ( validationError as { status?: number } )?.status;
+
+			if ( status === 400 ) {
+				failValidation( 'invalid' );
+			} else if ( status === 429 ) {
+				failValidation( 'rate_limited' );
+			} else {
+				failValidation( 'unknown' );
+			}
 		}
 	};
 
@@ -158,18 +177,20 @@ const EducationStudentValidation: StepType< {
 							id={ INPUT_ID }
 							value={ code }
 							placeholder="XXXXXXXX"
-							isError={ hasError }
+							isError={ !! error }
 							autoComplete="off"
 							// eslint-disable-next-line jsx-a11y/no-autofocus
 							autoFocus
-							aria-invalid={ hasError }
-							aria-describedby={ hasError ? ERROR_ID : undefined }
+							aria-invalid={ !! error }
+							aria-describedby={ error ? ERROR_ID : undefined }
 							onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
 								setCode( event.currentTarget.value );
-								setHasError( false );
+								setError( null );
 							} }
 						/>
-						{ hasError && <FormInputValidation id={ ERROR_ID } isError text={ errorMessage } /> }
+						{ error && (
+							<FormInputValidation id={ ERROR_ID } isError text={ errorMessages[ error ] } />
+						) }
 					</div>
 					<Step.PrimaryButton
 						type="submit"
