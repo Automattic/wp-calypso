@@ -11,7 +11,7 @@ type Customizer = (
 	stack: { size: number }
 ) => unknown;
 
-// Only touches `.size`, which both a native Map and lodash's Stack expose, so
+// Only touches `.size`, which both a native Map and the reference implementation's stack expose, so
 // the same customizer can drive both implementations in a differential test.
 const overwriteArrays: Customizer = ( _objValue, srcValue ) =>
 	Array.isArray( srcValue ) ? srcValue : undefined;
@@ -78,7 +78,7 @@ describe( 'mergeWith', () => {
 		],
 	];
 
-	it.each( cases )( 'matches lodash: %s', ( _label, customizer, make ) => {
+	it.each( cases )( 'matches the reference implementation: %s', ( _label, customizer, make ) => {
 		const mineArgs = [ ...make(), customizer ] as [ object, ...unknown[] ];
 		const theirsArgs = [ ...make(), customizer ] as [ object, ...unknown[] ];
 		const mine = ( mergeWith as ( ...a: unknown[] ) => unknown )( ...mineArgs );
@@ -100,7 +100,7 @@ describe( 'mergeWith', () => {
 		expect( depths ).toEqual( [ 0, 1, 2 ] );
 	} );
 
-	it( 'supports circular sources without infinite recursion, like lodash', () => {
+	it( 'supports circular sources without infinite recursion', () => {
 		const make = () => {
 			const circular: Record< string, unknown > = { a: 1 };
 			circular.self = circular;
@@ -110,7 +110,7 @@ describe( 'mergeWith', () => {
 		const theirs = lodashMergeWith( {}, make(), noop ) as Record< string, unknown >;
 		expect( mine.a ).toBe( 1 );
 		// The nested `self` is merged once into its own container, then short-
-		// circuited on re-entry — matching lodash rather than looping forever.
+		// circuited on re-entry rather than looping forever.
 		expect( mine.self ).toEqual( theirs.self );
 		expect( ( mine.self as Record< string, unknown > ).self ).toBe( mine.self );
 	} );
@@ -137,7 +137,7 @@ describe( 'mergeWith', () => {
 		expect( target ).toEqual( { a: 1, b: 2 } );
 	} );
 
-	it( 'treats a non-function trailing argument as a source, like lodash', () => {
+	it( 'treats a non-function trailing argument as a source', () => {
 		// No customizer given — the last object is merged, not dropped or called.
 		const mine = mergeWith( { a: { x: 1 } }, { a: { y: 2 } }, { b: 3 } );
 		const theirs = lodashMergeWith( { a: { x: 1 } }, { a: { y: 2 } }, { b: 3 } );
@@ -145,13 +145,13 @@ describe( 'mergeWith', () => {
 		expect( mine ).toEqual( { a: { x: 1, y: 2 }, b: 3 } );
 	} );
 
-	it( 'merges a single source with no customizer, like lodash', () => {
+	it( 'merges a single source with no customizer', () => {
 		const mine = mergeWith( { a: [ 1, 2 ] }, { a: [ 9 ], b: 4 } );
 		const theirs = lodashMergeWith( { a: [ 1, 2 ] }, { a: [ 9 ], b: 4 } );
 		expect( mine ).toEqual( theirs );
 	} );
 
-	it( 'returns a fresh object when the destination is nullish, like lodash', () => {
+	it( 'returns a fresh object when the destination is nullish', () => {
 		// A null destination (e.g. an unknown post merged with local edits) must
 		// yield the merged edits rather than throwing on the null read.
 		const mine = mergeWith( null, { a: 1, b: [ 2 ] }, overwriteArrays );
@@ -160,7 +160,7 @@ describe( 'mergeWith', () => {
 		expect( mine ).toEqual( { a: 1, b: [ 2 ] } );
 	} );
 
-	it( 'treats a lone trailing function as a source, not a customizer, like lodash', () => {
+	it( 'treats a lone trailing function as a source, not a customizer', () => {
 		// With no source preceding it, a function argument is merged for its own
 		// enumerable properties rather than being called as a customizer.
 		const makeFn = () => {

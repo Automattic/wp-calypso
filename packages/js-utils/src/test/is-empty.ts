@@ -91,9 +91,9 @@ describe( 'isEmpty', () => {
 		expect( isEmpty( { [ Symbol.toStringTag ]: 'Map' } ) ).toBe( true );
 	} );
 
-	it( 'matches lodash for a frozen object with an un-unmaskable spoofed tag', () => {
+	it( 'handles a frozen object with an un-unmaskable spoofed tag', () => {
 		// Frozen, so the spoofed tag can't be cleared: the Map branch sees no
-		// `size`, and `! undefined` is `true` (as lodash does), not `0 === …`.
+		// `size`, and `! undefined` is `true`, not `0 === …`.
 		expect( isEmpty( Object.freeze( { [ Symbol.toStringTag ]: 'Map' } ) ) ).toBe( true );
 	} );
 
@@ -121,7 +121,7 @@ describe( 'isEmpty', () => {
 		expect( isEmpty( filled ) ).toBe( false );
 	} );
 
-	describe( 'matches lodash isEmpty', () => {
+	describe( 'matches the reference implementation', () => {
 		function Bar() {}
 		Bar.prototype = { constructor: Bar };
 		function Baz() {}
@@ -140,7 +140,7 @@ describe( 'isEmpty', () => {
 		/* eslint-enable prefer-rest-params */
 		delete ( lengthlessArgs as { length?: unknown } ).length;
 
-		// A function is never array-like in lodash (its `length` is arity), so it
+		// A function is never treated as array-like (its `length` is arity), so it
 		// is measured by own keys. Only a function whose spoofed `Arguments` tag
 		// can't be unmasked (frozen) would otherwise reach the length branch.
 		const spliceFn = Object.assign( function () {}, { splice() {} } );
@@ -149,7 +149,7 @@ describe( 'isEmpty', () => {
 		( taggedFn as { key?: number } ).key = 1;
 		Object.freeze( taggedFn );
 
-		// A frozen object spoofing a function-family tag: lodash's `isArrayLike`
+		// A frozen object spoofing a function-family tag: the `isArrayLike` check
 		// excludes it (tag-based `isFunction`), so it is measured by own keys, not
 		// its `length`. Each is non-empty (owns `length`/`splice`).
 		const functionTagSpoofs = [ 'Function', 'AsyncFunction', 'GeneratorFunction', 'Proxy' ].map(

@@ -349,10 +349,12 @@ export default function OrchestratorChat( {
 		},
 	} );
 
+	const areSuggestionsVisible = isOpen || isCompactMode;
+
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const maxDynamicSuggestions = isDocked ? undefined : 3;
 	const dynamicSuggestions = useSuggestions?.( maxDynamicSuggestions, {
-		suggestionsVisible: isOpen || isCompactMode,
+		suggestionsVisible: areSuggestionsVisible,
 	} );
 	const dynamicSuggestionsList = dynamicSuggestions?.suggestions ?? [];
 	const dynamicSuggestionsKey = JSON.stringify(
@@ -371,19 +373,6 @@ export default function OrchestratorChat( {
 		// return a fresh empty array on each render.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ dynamicSuggestionsKey, registerSuggestions, clearSuggestions ] );
-
-	// Track when a new set of suggestions is rendered. Keyed on the rendered
-	// ids so re-renders that don't change the set don't re-fire.
-	const renderedSuggestionsKey = suggestions.map( ( s ) => s.id ).join( '|' );
-	useEffect( () => {
-		if ( suggestions.length > 0 ) {
-			recordBigSkyTracksEvent( 'chat_suggestions_rendered', {
-				suggestions: formatSuggestionIds( suggestions ),
-			} );
-		}
-		// `suggestions` identity is unstable; key on its rendered ids instead.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ renderedSuggestionsKey ] );
 
 	// Persist the chat route so the conversation can be resumed later.
 	useSaveNewChatRoute( hasUserSentMessage );
@@ -791,9 +780,17 @@ export default function OrchestratorChat( {
 	// - When there are dynamic suggestions (from block selection, etc.), show those
 	// - Otherwise, show empty view suggestions only when there are no messages AND no input text
 	let displayedEmptyViewSuggestions: Suggestion[] = [];
-	if ( suggestions.length > 0 ) {
+	if ( ! areSuggestionsVisible ) {
+		// Minimized/collapsed: the chat renders no suggestions, so leave the list
+		// empty to avoid firing chat_suggestions_rendered for hidden chips.
+		displayedEmptyViewSuggestions = [];
+	} else if ( suggestions.length > 0 ) {
 		displayedEmptyViewSuggestions = suggestions;
-	} else if ( displayedMessages.length === 0 && inputValue.length === 0 ) {
+	} else if (
+		! isLoadingConversation &&
+		displayedMessages.length === 0 &&
+		inputValue.length === 0
+	) {
 		// Read straight from the live `useSuggestions` output rather than the
 		// registered store. Clicking a suggestion calls `clearSuggestions()`,
 		// which empties the store, and the re-registration effect is keyed on
@@ -803,6 +800,27 @@ export default function OrchestratorChat( {
 		displayedEmptyViewSuggestions =
 			dynamicSuggestionsList.length > 0 ? dynamicSuggestionsList : emptyViewSuggestions;
 	}
+
+	// Track when a set of suggestions is rendered — the dynamic block-context
+	// suggestions or, on an empty chat, the empty-view starter chips. Mirrors
+	// Big Sky, which tracked the empty view too. Dedupe on the rendered ids so
+	// re-renders with the same set don't re-fire; a set that empties and returns
+	// to the same content isn't re-tracked.
+	const displayedSuggestionIds = displayedEmptyViewSuggestions.map( ( s ) => s.id ).join( '|' );
+	const lastTrackedSuggestionsRef = useRef< string | null >( null );
+	useEffect( () => {
+		if ( displayedEmptyViewSuggestions.length === 0 ) {
+			return;
+		}
+		if ( lastTrackedSuggestionsRef.current !== displayedSuggestionIds ) {
+			recordBigSkyTracksEvent( 'chat_suggestions_rendered', {
+				suggestions: formatSuggestionIds( displayedEmptyViewSuggestions ),
+			} );
+			lastTrackedSuggestionsRef.current = displayedSuggestionIds;
+		}
+		// `displayedEmptyViewSuggestions` identity is unstable; key on its ids.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ displayedSuggestionIds ] );
 
 	return (
 		<AgentChat

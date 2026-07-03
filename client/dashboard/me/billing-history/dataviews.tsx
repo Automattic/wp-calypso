@@ -207,7 +207,12 @@ export function getFields(
 				return search_data;
 			},
 			render: ( { item }: { item: Receipt } ) =>
-				renderReceiptAmount( item, getTaxName( countryList, item.tax_country_code ) ),
+				renderReceiptAmount(
+					item,
+					item.tax_breakdown?.length
+						? item.tax_breakdown.map( ( e ) => e.label ).join( ' + ' )
+						: getTaxName( countryList, item.tax_country_code )
+				),
 		},
 		{
 			id: 'extra_receipt_data_for_search',

@@ -50,10 +50,10 @@ function baseMerge( target: PlainObject, source: PlainObject ): void {
  * key is ignored entirely and a `constructor` key is merged as a plain own
  * property, so neither can pollute a prototype.
  *
- * This targets plain JSON-like data and is intentionally narrower than lodash's
- * `merge`: it merges only own (not inherited) enumerable properties, treats
- * arrays as dense (sparse holes are not materialized), and does not special-case
- * typed arrays, buffers, or circular references.
+ * This targets plain JSON-like data and is intentionally narrow: it merges only
+ * own (not inherited) enumerable properties, treats arrays as dense (sparse
+ * holes are not materialized), and does not special-case typed arrays, buffers,
+ * or circular references.
  * @param object The destination object (mutated in place).
  * @param source The source object to merge in (additional sources are merged left to right).
  * @returns The mutated destination object.

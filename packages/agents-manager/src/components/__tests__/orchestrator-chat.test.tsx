@@ -7,6 +7,7 @@ import type { Suggestion } from '@automattic/agenttic-ui';
 
 const mockUseAgentChat = jest.fn();
 const mockUseRegenerateAction = jest.fn();
+const mockUseConversation = jest.fn();
 const mockAgentChat = jest.fn(
 	( {
 		onSuggestionClick,
@@ -87,7 +88,7 @@ jest.mock( '../../utils/tracks', () => ( {
 	recordBigSkyTracksEvent: jest.fn(),
 	recordAgentsManagerTracksEvent: jest.fn(),
 } ) );
-jest.mock( '../../hooks/use-conversation', () => () => ( { isLoading: false } ) );
+jest.mock( '../../hooks/use-conversation', () => () => mockUseConversation() );
 jest.mock( '../../hooks/use-save-new-chat-route', () => () => {} );
 jest.mock( '../../hooks/use-checkpoint-action', () => () => {} );
 jest.mock( '../../hooks/use-feedback-action', () => () => ( {
@@ -132,6 +133,7 @@ describe( 'OrchestratorChat', () => {
 		jest.clearAllMocks();
 		// Default getter: contributes no actions.
 		mockUseRegenerateAction.mockReturnValue( () => [] );
+		mockUseConversation.mockReturnValue( { isLoading: false } );
 		mockUseAgentChat.mockReturnValue( {
 			addMessage: jest.fn(),
 			messages: [],
@@ -363,6 +365,86 @@ describe( 'OrchestratorChat', () => {
 		);
 
 		expect( screen.getByText( 'Getting started with WordPress' ) ).toBeTruthy();
+	} );
+
+	it( 'tracks chat_suggestions_rendered for the empty-view suggestions', () => {
+		const staticDefaults: Suggestion[] = [
+			{ id: 'getting-started', label: 'Getting started with WordPress', prompt: 'getting-started' },
+		];
+
+		render(
+			<OrchestratorChat
+				emptyViewSuggestions={ staticDefaults }
+				isDocked={ false }
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestions_rendered', {
+			suggestions: '|getting-started|',
+		} );
+	} );
+
+	it( 'does not track chat_suggestions_rendered while the conversation is loading', () => {
+		mockUseConversation.mockReturnValue( { isLoading: true } );
+		const staticDefaults: Suggestion[] = [
+			{ id: 'getting-started', label: 'Getting started with WordPress', prompt: 'getting-started' },
+		];
+
+		render(
+			<OrchestratorChat
+				emptyViewSuggestions={ staticDefaults }
+				isDocked={ false }
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		expect( screen.queryByText( 'Getting started with WordPress' ) ).toBeNull();
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
+			'chat_suggestions_rendered',
+			expect.anything()
+		);
+	} );
+
+	it( 'does not track chat_suggestions_rendered while the chat is minimized', () => {
+		const staticDefaults: Suggestion[] = [
+			{ id: 'getting-started', label: 'Getting started with WordPress', prompt: 'getting-started' },
+		];
+
+		render(
+			<OrchestratorChat
+				emptyViewSuggestions={ staticDefaults }
+				isDocked={ false }
+				isOpen={ false }
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		expect( screen.queryByText( 'Getting started with WordPress' ) ).toBeNull();
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
+			'chat_suggestions_rendered',
+			expect.anything()
+		);
 	} );
 
 	it( 'fires file_upload_success after images upload on send, with the uploaded media count', async () => {

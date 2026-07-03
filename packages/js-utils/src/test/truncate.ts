@@ -39,7 +39,7 @@ describe( 'truncate', () => {
 		expect( truncate( 'tiny string here', { length: 2 } ) ).toBe( '...' );
 	} );
 
-	describe( 'lenient option coercion (matching lodash)', () => {
+	describe( 'lenient option coercion', () => {
 		it( 'falls back to defaults for non-object options', () => {
 			// @ts-expect-error -- exercises lenient handling for untyped callers.
 			expect( truncate( 'abcdef', null ) ).toBe( 'abcdef' );
@@ -48,7 +48,7 @@ describe( 'truncate', () => {
 		} );
 
 		it( 'coerces length via toInteger', () => {
-			// @ts-expect-error -- null length coerces to 0, like lodash.
+			// @ts-expect-error -- null length coerces to 0.
 			expect( truncate( 'abcdef', { length: null } ) ).toBe( '...' );
 			// @ts-expect-error -- string length coerces.
 			expect( truncate( 'abcdefghij', { length: '5' } ) ).toBe( 'ab...' );
@@ -60,7 +60,7 @@ describe( 'truncate', () => {
 			expect( truncate( 'abcdef', { length: 4, omission: 1 } ) ).toBe( 'abc1' );
 		} );
 
-		it( 'coerces negative zero to "-0" like lodash baseToString', () => {
+		it( 'coerces negative zero to "-0"', () => {
 			// @ts-expect-error -- exercises the -0 coercion edge.
 			expect( truncate( 'abcdef', { length: 4, omission: -0 } ) ).toBe( 'ab-0' );
 			// @ts-expect-error -- -0 input coerces to "-0".
@@ -70,12 +70,12 @@ describe( 'truncate', () => {
 		it( 'coerces symbols (primitive and boxed) without throwing', () => {
 			// @ts-expect-error -- symbol input stringifies to its description.
 			expect( truncate( Symbol( 'x' ) ) ).toBe( 'Symbol(x)' );
-			// @ts-expect-error -- boxed symbols are handled too, like lodash.
+			// @ts-expect-error -- boxed symbols are handled too.
 			expect( truncate( Object( Symbol( 'x' ) ) ) ).toBe( 'Symbol(x)' );
 		} );
 	} );
 
-	describe( 'Unicode grapheme clusters (matching lodash)', () => {
+	describe( 'Unicode grapheme clusters', () => {
 		const grin = String.fromCodePoint( 0x1f600 ); // 😀
 		const us = String.fromCodePoint( 0x1f1fa, 0x1f1f8 ); // 🇺🇸
 		const gb = String.fromCodePoint( 0x1f1ec, 0x1f1e7 ); // 🇬🇧

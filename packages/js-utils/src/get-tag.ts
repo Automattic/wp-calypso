@@ -4,8 +4,8 @@ const symToStringTag = Symbol.toStringTag;
 
 /**
  * Reads a value's internal tag while ignoring a spoofed `Symbol.toStringTag`, by
- * temporarily unsetting the symbol before calling `Object.prototype.toString`.
- * Mirrors lodash's `getRawTag` so a value can't masquerade as another type.
+ * temporarily unsetting the symbol before calling `Object.prototype.toString`,
+ * so a value can't masquerade as another type.
  */
 const getRawTag = ( value: Record< symbol, unknown > ): string => {
 	const isOwn = hasOwnProperty.call( value, symToStringTag );
@@ -34,8 +34,8 @@ const getRawTag = ( value: Record< symbol, unknown > ): string => {
 /**
  * Returns a value's `Object.prototype.toString` tag (e.g. `'[object Map]'`),
  * resisting a spoofed `Symbol.toStringTag` so an object can't masquerade as
- * another built-in type. Mirrors lodash's `getTag`/`baseGetTag`; `Object()`
- * boxing keeps the `in` check safe for primitives.
+ * another built-in type. `Object()` boxing keeps the `in` check safe for
+ * primitives.
  * @param value The value to read the tag of.
  * @returns The internal `[object …]` tag string.
  */
