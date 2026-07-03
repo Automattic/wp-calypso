@@ -12,7 +12,6 @@ const fs = require( 'fs' );
 const resolve = require( 'path' ).resolve;
 const languages = require( '@automattic/languages' );
 const parse = require( 'gettext-parser' ).po.parse;
-const _ = require( 'lodash' );
 const { hideBin } = require( 'yargs/helpers' );
 const yargs = require( 'yargs/yargs' );
 
@@ -181,24 +180,23 @@ function buildLanguages( downloadedLanguages, languageRevisions ) {
 
 	if ( fs.existsSync( stringsFilePath ) ) {
 		const { translations } = parse( fs.readFileSync( stringsFilePath ) );
-		const translationsFlatten = Object.entries( translations ).reduce(
-			( result, [ context, contextTranslations ] ) => {
-				const mappedTranslations = _.mapKeys( contextTranslations, ( value, key ) => {
-					let mappedKey = key.replace( /\\u([0-9a-fA-F]{4})/g, ( match, matchedGroup ) =>
-						String.fromCharCode( parseInt( matchedGroup, 16 ) )
-					);
+		// Flatten every context's translations into one object, keyed by an
+		// unescaped, context-prefixed key. Those keys are unique per context, so a
+		// plain assignment accumulates them the same way the previous deep merge did.
+		const translationsFlatten = {};
+		for ( const [ context, contextTranslations ] of Object.entries( translations ) ) {
+			for ( const [ key, value ] of Object.entries( contextTranslations ) ) {
+				let mappedKey = key.replace( /\\u([0-9a-fA-F]{4})/g, ( match, matchedGroup ) =>
+					String.fromCharCode( parseInt( matchedGroup, 16 ) )
+				);
 
-					if ( context ) {
-						mappedKey = context + String.fromCharCode( 4 ) + mappedKey;
-					}
+				if ( context ) {
+					mappedKey = context + String.fromCharCode( 4 ) + mappedKey;
+				}
 
-					return mappedKey;
-				} );
-
-				return _.merge( result, mappedTranslations );
-			},
-			{}
-		);
+				translationsFlatten[ mappedKey ] = value;
+			}
+		}
 
 		const translationsByRef = Object.keys( translationsFlatten ).reduce( ( acc, key ) => {
 			const originalRef = translationsFlatten[ key ].comments?.reference;
@@ -244,7 +242,12 @@ function buildLanguages( downloadedLanguages, languageRevisions ) {
 
 		const languageRevisionsHashes = {};
 		successfullyDownloadedLanguages.forEach( ( { langSlug, languageTranslations } ) => {
-			const cmdPaletteTranslations = _.pick( languageTranslations, allModulesStrings );
+			const cmdPaletteTranslations = {};
+			for ( const key of allModulesStrings ) {
+				if ( Object.hasOwn( languageTranslations, key ) ) {
+					cmdPaletteTranslations[ key ] = languageTranslations[ key ];
+				}
+			}
 			cmdPaletteTranslations[ DECIMAL_POINT_KEY ] =
 				languageTranslations[ DECIMAL_POINT_TRANSLATION ];
 			cmdPaletteTranslations[ THOUSANDS_SEPARATOR_KEY ] =
