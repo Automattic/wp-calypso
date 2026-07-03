@@ -2,6 +2,29 @@
 @import "@wordpress/base-styles/mixins";
 @import "@automattic/typography/styles/variables";
 
+.education-student-validation__watermark {
+	display: none;
+	height: auto;
+	inset-block-end: 0;
+	inset-inline-start: 0;
+	pointer-events: none;
+	position: fixed;
+	width: 360px;
+	z-index: -1;
+
+	@include break-medium {
+		display: block;
+	}
+
+	.education-student-validation__watermark-fill {
+		fill: var(--studio-gray-0);
+	}
+
+	.education-student-validation__watermark-outline {
+		fill: var(--studio-gray-10);
+	}
+}
+
 .education-student-validation__heading {
 	align-items: center;
 	display: flex;

@@ -10,6 +10,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { EduProgramLogo } from './edu-program-logo';
+import { EduWatermark } from './edu-watermark';
 import { useValidateEducationStudentCode } from './hooks/use-validate-education-student-code';
 import type { Step as StepType } from '../../types';
 import type { HelpCenterSelect } from '@automattic/data-stores';
@@ -123,6 +124,7 @@ const EducationStudentValidation: StepType< {
 				}
 				heading={
 					<div className="education-student-validation__heading">
+						<EduWatermark className="education-student-validation__watermark" />
 						<EduProgramLogo className="education-student-validation__logo" />
 						<Step.Heading align="center" text={ title } subText={ subText } />
 					</div>
