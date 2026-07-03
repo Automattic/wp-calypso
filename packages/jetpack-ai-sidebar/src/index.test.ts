@@ -775,7 +775,13 @@ describe( 'Proofread', () => {
 		expect( findAcceptAllButton( container ) ).toBeUndefined();
 	} );
 
-	it( 'runs Accept all over the pending one-click items', async () => {
+	const findButtonByText = ( container: HTMLElement, text: string ) =>
+		Array.from( container.querySelectorAll( 'button' ) ).find(
+			( button ) => button.textContent === text
+		) as HTMLButtonElement | undefined;
+
+	it( 'applies pending one-click items and marks them Applied on Accept all', async () => {
+		jest.useFakeTimers();
 		mockEditorBlocks = [
 			{
 				clientId: 'block-1',
@@ -783,6 +789,12 @@ describe( 'Proofread', () => {
 				attributes: { content: 'There will be a lot of activities for children..' },
 			},
 		];
+		const { blockUpdates } = installWpDataMockWithBlockEditor( {
+			'block-1': {
+				name: 'core/paragraph',
+				attributes: { content: 'There will be a lot of activities for children..' },
+			},
+		} );
 
 		const { container } = render(
 			React.createElement( Proofread, {
@@ -805,15 +817,128 @@ describe( 'Proofread', () => {
 		await act( async () => {
 			fireEvent.click( acceptAll );
 		} );
+		// applyReviewEdit commits the edit behind an 800ms shimmer delay.
+		await act( async () => {
+			jest.advanceTimersByTime( 1000 );
+		} );
 
-		// The bulk run invoked applyItem on the pending item, so it is no longer in
-		// the default "Accept" state (it resolves to applied/collapsed or retry).
-		const ranOverItem =
-			!! container.textContent?.includes( 'Applied' ) ||
-			Array.from( container.querySelectorAll( 'button' ) ).some(
-				( button ) => button.textContent === 'Retry'
-			);
-		expect( ranOverItem ).toBe( true );
+		expect( blockUpdates ).toEqual( [
+			{
+				clientId: 'block-1',
+				attrs: { content: 'There will be a lot of activities for children.' },
+			},
+		] );
+		expect( container.textContent ).toContain( 'Applied' );
+		expect( findButtonByText( container, 'Retry' ) ).toBeUndefined();
+		jest.useRealTimers();
+	} );
+
+	it( 'shows a steady Accepting state while the bulk run is in progress', async () => {
+		jest.useFakeTimers();
+		mockEditorBlocks = [
+			{ clientId: 'block-1', name: 'core/paragraph', attributes: { content: 'children..' } },
+		];
+		installWpDataMockWithBlockEditor( {
+			'block-1': { name: 'core/paragraph', attributes: { content: 'children..' } },
+		} );
+
+		const { container } = render(
+			React.createElement( Proofread, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Punctuation',
+						feedback: 'Doubled period.',
+						action: 'Remove the extra period.',
+						block_index: 0,
+						current_text: 'children..',
+						suggested_text: 'children.',
+					},
+				],
+			} )
+		);
+
+		const acceptAll = findAcceptAllButton( container ) as HTMLButtonElement;
+		await act( async () => {
+			fireEvent.click( acceptAll );
+		} );
+
+		// Mid-run the footer stays put with a steady label rather than showing a
+		// decrementing "Accept all (N)" count that vanishes as items resolve.
+		expect( container.querySelector( '.jetpack-ai-feedback-list__footer' ) ).not.toBeNull();
+		expect( container.textContent ).toContain( 'Accepting…' );
+		expect( container.textContent ).not.toContain( 'Accept all (' );
+
+		await act( async () => {
+			jest.advanceTimersByTime( 1000 );
+		} );
+
+		expect( container.textContent ).toContain( 'Applied' );
+		expect( findAcceptAllButton( container ) ).toBeUndefined();
+		jest.useRealTimers();
+	} );
+
+	it( 'disables Undo on applied items during a bulk run', async () => {
+		jest.useFakeTimers();
+		mockEditorBlocks = [
+			{ clientId: 'block-a', name: 'core/paragraph', attributes: { content: 'aa..' } },
+			{ clientId: 'block-b', name: 'core/paragraph', attributes: { content: 'bb..' } },
+		];
+		installWpDataMockWithBlockEditor( {
+			'block-a': { name: 'core/paragraph', attributes: { content: 'aa..' } },
+			'block-b': { name: 'core/paragraph', attributes: { content: 'bb..' } },
+		} );
+
+		const { container } = render(
+			React.createElement( Proofread, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'A',
+						feedback: 'a',
+						action: 'a',
+						block_index: 0,
+						current_text: 'aa..',
+						suggested_text: 'aa.',
+					},
+					{
+						title: 'B',
+						feedback: 'b',
+						action: 'b',
+						block_index: 1,
+						current_text: 'bb..',
+						suggested_text: 'bb.',
+					},
+				],
+			} )
+		);
+
+		// Accept item A on its own so it collapses into an Applied row with Undo.
+		await act( async () => {
+			fireEvent.click( findButtonByText( container, 'Accept' ) as HTMLButtonElement );
+		} );
+		await act( async () => {
+			jest.advanceTimersByTime( 1000 );
+		} );
+		const undoBeforeRun = findButtonByText( container, 'Undo' );
+		expect( undoBeforeRun ).toBeDefined();
+		expect( undoBeforeRun?.hasAttribute( 'disabled' ) ).toBe( false );
+
+		// Start a bulk run over the remaining item B. While it is in flight the Undo
+		// on the already-applied item A must be locked so it cannot race the edit.
+		await act( async () => {
+			fireEvent.click( findAcceptAllButton( container ) as HTMLButtonElement );
+		} );
+		const undoDuringRun = findButtonByText( container, 'Undo' );
+		expect( undoDuringRun ).toBeDefined();
+		expect( undoDuringRun?.hasAttribute( 'disabled' ) ).toBe( true );
+
+		await act( async () => {
+			jest.advanceTimersByTime( 1000 );
+		} );
+		jest.useRealTimers();
 	} );
 } );
 

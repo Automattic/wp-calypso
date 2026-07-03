@@ -444,7 +444,7 @@ export default function FeedbackList( {
 												type="button"
 												className={ `${ CLASS_PREFIX }__small-action` }
 												onClick={ () => undoItem( key ) }
-												disabled={ isPostStale }
+												disabled={ isPostStale || bulkRunning }
 											>
 												{ __( 'Undo', __i18n_text_domain__ ) }
 											</button>
@@ -515,7 +515,7 @@ export default function FeedbackList( {
 					</PanelBody>
 				) ) }
 			</Panel>
-			{ enableBulkApply && applyAllTargets.length > 0 && (
+			{ enableBulkApply && ( bulkRunning || applyAllTargets.length > 0 ) && (
 				<footer className={ `${ CLASS_PREFIX }__footer` }>
 					<button
 						type="button"
@@ -523,11 +523,13 @@ export default function FeedbackList( {
 						onClick={ applyAll }
 						disabled={ isPostStale || bulkRunning || applyAllTargets.length === 0 }
 					>
-						{ sprintf(
-							/* translators: %d is the number of one-click fixes available. */
-							__( 'Accept all (%d)', __i18n_text_domain__ ),
-							applyAllTargets.length
-						) }
+						{ bulkRunning
+							? __( 'Accepting…', __i18n_text_domain__ )
+							: sprintf(
+									/* translators: %d is the number of one-click fixes available. */
+									__( 'Accept all (%d)', __i18n_text_domain__ ),
+									applyAllTargets.length
+							  ) }
 					</button>
 				</footer>
 			) }
