@@ -229,6 +229,12 @@ export type GridContextProps = {
 	enterpriseFeaturesList?: string[];
 
 	/**
+	 * India Automattic for Agencies test: when true, the Enterprise card shows the
+	 * Automattic for Agencies logo instead of the VIP logo.
+	 */
+	isEnterpriseA4AIndia?: boolean;
+
+	/**
 	 * `enableCategorisedFeatures` is no longer exact, and probably best to rename.
 	 * It is only used for showing "Everything in [previous] plus".
 	 */
