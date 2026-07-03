@@ -138,6 +138,13 @@ const education: FlowV2< typeof initialize > = {
 					return navigate( STEPS.PROCESSING.slug, undefined, true );
 
 				case STEPS.PROCESSING.slug: {
+					// No pending action — the user refreshed or landed on this page
+					// directly. Send them back to create-site so it can set up the
+					// pending action and advance the flow normally.
+					if ( providedDependencies.processingResult === ProcessingResult.NO_ACTION ) {
+						return navigate( STEPS.SITE_CREATION_STEP.slug );
+					}
+
 					if ( providedDependencies.processingResult !== ProcessingResult.SUCCESS ) {
 						return navigate( STEPS.ERROR.slug );
 					}

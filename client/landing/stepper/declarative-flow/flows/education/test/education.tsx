@@ -175,6 +175,20 @@ describe( 'Education Flow', () => {
 		expect( checkoutUrl.searchParams.get( 'coupon' ) ).toBe( 'EDU50' );
 	} );
 
+	it( 'sends processing back to create-site when there is no pending action', () => {
+		const destination = runNavigation( {
+			from: STEPS.PROCESSING,
+			dependencies: {
+				processingResult: ProcessingResult.NO_ACTION,
+			},
+		} );
+
+		expect( destination ).toMatchDestination( {
+			step: STEPS.SITE_CREATION_STEP,
+			query: null,
+		} );
+	} );
+
 	it( 'navigates processing failure to the error step', () => {
 		const destination = runNavigation( {
 			from: STEPS.PROCESSING,
