@@ -404,7 +404,7 @@ export const agencySiteActivityRoute = createRoute( {
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( ! site.__inaccessible_jetpack_error ) {
-			await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+			await queryClient.prefetchQuery( siteSettingsQuery( site.ID ) );
 		}
 	},
 } ).lazy( () =>
