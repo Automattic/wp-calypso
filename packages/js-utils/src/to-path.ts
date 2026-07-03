@@ -1,8 +1,8 @@
 import isSymbol from './is-symbol';
 
-// Property-path parsing, ported from lodash. A string is tokenized into path
-// segments (dot, bracket, and quoted-bracket notation), except a string that is
-// a literal key of the object is used whole rather than split — `castPath` is
+// Property-path parsing. A string is tokenized into path segments (dot,
+// bracket, and quoted-bracket notation), except a string that is a literal key
+// of the object is used whole rather than split — path casting is
 // object-dependent. Internal helper; not part of the public API.
 const reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/;
 const reIsPlainProp = /^\w*$/;

@@ -5,8 +5,8 @@ type Iteratee< T, TResult > = TResult | ( ( value: T ) => TResult );
 /**
  * Groups the values of `collection` into arrays keyed by the result of running
  * each value through `iteratee`. A function iteratee receives the value; a
- * property-name iteratee reads that single property from each value (lodash's
- * deep dot-paths are not supported — pass a function for those); omitting the
+ * property-name iteratee reads that single property from each value (deep
+ * dot-paths are not supported — pass a function for those); omitting the
  * iteratee groups by the value itself. Insertion order is preserved.
  */
 function groupBy< T >(
@@ -23,8 +23,8 @@ function groupBy< T >(
 		} else if ( typeof iteratee === 'function' ) {
 			rawKey = iteratee( value );
 		} else {
-			// The string shorthand reads one property, not lodash's dot-separated
-			// deep paths. Reject those loudly so a `'a.b'` call fails fast instead
+			// The string shorthand reads one property, not a dot-separated deep
+			// path. Reject those loudly so a `'a.b'` call fails fast instead
 			// of silently grouping everything under `undefined`.
 			if ( typeof iteratee === 'string' && iteratee.includes( '.' ) ) {
 				throw new Error(

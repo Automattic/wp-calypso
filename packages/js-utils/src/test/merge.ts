@@ -56,7 +56,7 @@ describe( 'merge', () => {
 		],
 	];
 
-	it.each( cases )( 'matches lodash: %s', ( _label, make ) => {
+	it.each( cases )( 'matches the reference implementation: %s', ( _label, make ) => {
 		const mineArgs = make() as [ Record< string, unknown >, ...unknown[] ];
 		const theirsArgs = make() as [ Record< string, unknown >, ...unknown[] ];
 		const mine = ( merge as ( ...a: unknown[] ) => unknown )( ...mineArgs );
@@ -83,16 +83,16 @@ describe( 'merge', () => {
 	} );
 
 	it( 'merges only own enumerable source properties, not inherited ones', () => {
-		// Intentionally narrower than lodash, which also copies inherited
-		// enumerable properties (it iterates with `for…in`).
+		// Intentionally narrower: inherited enumerable properties are not copied
+		// (a `for…in` traversal would include them).
 		const source = Object.create( { inherited: 1 } ) as Record< string, unknown >;
 		source.own = 2;
 		expect( merge( {}, source ) ).toEqual( { own: 2 } );
 	} );
 
 	it( 'treats arrays as dense — sparse holes are not materialized', () => {
-		// Intentionally narrower than lodash, which fills the hole (index 1 is
-		// present as `null` in its result).
+		// Intentionally narrower: the sparse hole is not filled (index 1 is
+		// not materialized as `null` in the result).
 		const sparse: number[] = [ 1 ];
 		sparse[ 2 ] = 3; // leaves a hole at index 1
 		const result = merge( {} as { a?: unknown[] }, { a: sparse } );
@@ -107,7 +107,7 @@ describe( 'merge', () => {
 		expect( () => merge( {}, circular ) ).toThrow();
 	} );
 
-	it( 'propagates exceptions from a throwing setter, like lodash', () => {
+	it( 'propagates exceptions from a throwing setter', () => {
 		const makeTarget = () =>
 			Object.defineProperty( {}, 'x', {
 				set() {
@@ -147,7 +147,7 @@ describe( 'merge', () => {
 		expect( source ).toEqual( { a: { b: 1 } } );
 	} );
 
-	it( 'silently ignores writes to a frozen target, like lodash', () => {
+	it( 'silently ignores writes to a frozen target', () => {
 		const frozen = Object.freeze( { a: { b: 1 } } );
 		// Computing this at all proves the write does not throw under strict mode.
 		const mine = merge( frozen, { meta: 1 } as Record< string, unknown > );

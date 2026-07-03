@@ -63,8 +63,8 @@ function baseMergeDeep(
 
 	// A customizer result other than `undefined` is used as-is. Otherwise deep-
 	// merge into a compatible container. Every value reaching this branch is
-	// mergeable (array or plain object), so unlike lodash there is no buffer or
-	// typed-array case that would skip the recursion.
+	// mergeable (array or plain object), so there is no buffer or typed-array
+	// case that would skip the recursion.
 	if ( newValue === undefined ) {
 		newValue = pickMergeContainer( objValue, srcValue );
 		stack.set( srcValue, newValue );
@@ -112,9 +112,9 @@ function baseMergeWith(
  * (so a lone trailing function is merged as a source) and the merge runs without
  * a customizer. Sources are merged left to right.
  *
- * This shares merge's narrower-than-lodash scope: it merges only own enumerable
- * properties, treats arrays as dense, and does not special-case typed arrays or
- * buffers. Unlike merge, circular references are supported (each in-progress
+ * This shares merge's narrow scope: it merges only own enumerable properties,
+ * treats arrays as dense, and does not special-case typed arrays or buffers.
+ * Unlike merge, circular references are supported (each in-progress
  * source is tracked so it is merged once).
  * @param object The destination (mutated in place; a nullish value becomes a fresh object).
  * @param args Source objects, optionally followed by a customizer function.

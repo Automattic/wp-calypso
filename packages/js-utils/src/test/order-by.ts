@@ -60,7 +60,7 @@ describe( 'orderBy', () => {
 		] );
 	} );
 
-	it( 'treats a nullish iteratee as identity sorting, like lodash', () => {
+	it( 'treats a nullish iteratee as identity sorting', () => {
 		expect( orderBy( [ 1, 2, 3 ], null, 'desc' ) ).toEqual( [ 3, 2, 1 ] );
 	} );
 } );

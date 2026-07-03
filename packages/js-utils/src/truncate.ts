@@ -68,9 +68,9 @@ const rsSymbol =
 	[ rsNonAstral + rsCombo + '?', rsCombo, rsRegional, rsSurrPair, rsAstral ].join( '|' ) +
 	')';
 const reUnicode = RegExp( rsFitz + '(?=' + rsFitz + ')|' + rsSymbol + rsSeq, 'g' );
-// Faithful port of lodash's Unicode-detection class: it intentionally combines
-// ZWJ, surrogate, combining-mark, and variation-selector ranges and matches on
-// UTF-16 code units (no `u` flag), which the rule misreads as a mistake.
+// Unicode-detection class: it intentionally combines ZWJ, surrogate,
+// combining-mark, and variation-selector ranges and matches on UTF-16 code
+// units (no `u` flag), which the rule misreads as a mistake.
 // eslint-disable-next-line no-misleading-character-class
 const reHasUnicode = RegExp( '[' + rsZWJ + rsAstralRange + rsComboRange + rsVarRange + ']' );
 
