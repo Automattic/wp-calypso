@@ -28,12 +28,6 @@ const EXPERIMENT_NAME = 'calypso_onboarding_account_recovery_modal_202606';
 const EXPERIMENT_TREATMENT_VARIATION = 'email_recovery_modal';
 
 /**
- * How secure the user's account already is. Single source of truth for the tiers;
- * SNOOZE_DAYS and the copy map are both keyed by it.
- */
-type SecurityLevel = 'none' | 'partial' | 'strong';
-
-/**
  * Snooze windows (in days) by security level
  */
 const SNOOZE_DAYS: Record< SecurityLevel, number > = {
@@ -130,7 +124,7 @@ export default function AccountRecoveryInterstitial() {
 	// Fully-secured users (variant === 'strong') are left alone — we only nudge people who are still
 	// missing a recovery method, 2FA, or backup codes. The modal is also not shown to users who are
 	// not in the experiment treatment group.
-	if ( isDismissed || ! isEligible || variant === 'strong' || ! isInExperimentTreatment ) {
+	if ( isDismissed || ! isEligible || securityLevel === 'strong' || ! isInExperimentTreatment ) {
 		return null;
 	}
 
