@@ -18,7 +18,7 @@ const BillingTimeframes = ( {
 	showRefundPeriod,
 }: BillingTimeframesProps ) => {
 	return renderedGridPlans.map( ( { planSlug } ) => {
-		if ( isWpcomEnterpriseGridPlan( planSlug ) && options?.isTableCell ) {
+		if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
 			return null;
 		}
 
