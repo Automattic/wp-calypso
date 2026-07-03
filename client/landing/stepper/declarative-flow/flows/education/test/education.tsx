@@ -2,13 +2,16 @@
  * @jest-environment jsdom
  */
 import { PLAN_STUDENT } from '@automattic/calypso-products';
-import { select } from '@wordpress/data';
+import { dispatch, select } from '@wordpress/data';
+import React from 'react';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ONBOARD_STORE } from '../../../../stores';
 import { STEPS } from '../../../internals/steps';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import { runFlowNavigation } from '../../../test/helpers';
 import educationFlow from '../education';
 import type { StepperStep } from '../../../internals/types';
+import type { OnboardActions } from '@automattic/data-stores';
 
 const runNavigation = ( options: Parameters< typeof runFlowNavigation >[ 1 ] ) =>
 	runFlowNavigation( educationFlow, options, 'forward' );
@@ -219,6 +222,48 @@ describe( 'Education Flow', () => {
 		expect( destination ).toMatchDestination( {
 			step: STEPS.ERROR,
 			query: null,
+		} );
+	} );
+
+	describe( 'deep-link guard', () => {
+		const renderSideEffect = ( currentStepSlug: string ) => {
+			const navigate = jest.fn();
+			const SideEffect = () => {
+				educationFlow.useSideEffect?.(
+					currentStepSlug as Parameters< NonNullable< typeof educationFlow.useSideEffect > >[ 0 ],
+					navigate
+				);
+				return null;
+			};
+
+			renderWithProvider( <SideEffect /> );
+			return navigate;
+		};
+
+		it( 'sends the user back to validation when a later step has no plan in the cart', () => {
+			( dispatch( ONBOARD_STORE ) as OnboardActions ).resetOnboardStore();
+
+			const navigate = renderSideEffect( STEPS.DOMAIN_SEARCH.slug );
+
+			expect( navigate ).toHaveBeenCalledWith( STEPS.EDUCATION_STUDENT_VALIDATION.slug );
+		} );
+
+		it( 'does not redirect when the Student plan is already in the cart', () => {
+			( dispatch( ONBOARD_STORE ) as OnboardActions ).setPlanCartItem( {
+				product_slug: PLAN_STUDENT,
+			} );
+
+			const navigate = renderSideEffect( STEPS.DOMAIN_SEARCH.slug );
+
+			expect( navigate ).not.toHaveBeenCalled();
+		} );
+
+		it( 'does not redirect on the validation step itself', () => {
+			( dispatch( ONBOARD_STORE ) as OnboardActions ).resetOnboardStore();
+
+			const navigate = renderSideEffect( STEPS.EDUCATION_STUDENT_VALIDATION.slug );
+
+			expect( navigate ).not.toHaveBeenCalled();
 		} );
 	} );
 } );

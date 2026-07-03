@@ -1,8 +1,8 @@
 import { PLAN_STUDENT } from '@automattic/calypso-products';
-import { OnboardActions } from '@automattic/data-stores';
+import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { clearStepPersistedState, EDUCATION_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
@@ -190,9 +190,13 @@ const education: FlowV2< typeof initialize > = {
 
 		return { submit };
 	},
-	useSideEffect( currentStepSlug ) {
+	useSideEffect( currentStepSlug, navigate ) {
 		const reduxDispatch = useReduxDispatch();
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE ) as OnboardActions;
+		const planCartItem = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+			[]
+		);
 
 		// Reset only at the flow root, not in `initialize`: the latter re-runs on
 		// every boot (including a mid-flow refresh) and would wipe the persisted
@@ -208,6 +212,25 @@ const education: FlowV2< typeof initialize > = {
 				clearSignupCompleteSiteID();
 			}
 		}, [ currentStepSlug, reduxDispatch, resetOnboardStore ] );
+
+		// No Student plan in the cart on a later step means the user deep-linked
+		// past validation — send them back to the start.
+		useEffect( () => {
+			const stepsRequiringValidation: string[] = [
+				STEPS.DOMAIN_SEARCH.slug,
+				STEPS.USE_MY_DOMAIN.slug,
+				STEPS.SITE_CREATION_STEP.slug,
+				STEPS.PROCESSING.slug,
+			];
+
+			if (
+				currentStepSlug &&
+				stepsRequiringValidation.includes( currentStepSlug ) &&
+				! planCartItem
+			) {
+				navigate( STEPS.EDUCATION_STUDENT_VALIDATION.slug );
+			}
+		}, [ currentStepSlug, planCartItem, navigate ] );
 	},
 };
 
