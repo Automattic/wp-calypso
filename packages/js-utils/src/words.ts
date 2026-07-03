@@ -1,5 +1,5 @@
 /**
- * Splits an ASCII identifier or phrase into words like lodash: on
+ * Splits an ASCII identifier or phrase into words: on
  * camelCase/PascalCase boundaries, acronym runs (`XMLHttp` → `XML`, `Http`),
  * digit groups, and separators. Unlike lodash it does not deburr accents or
  * strip apostrophes — callers pass identifiers/keys, not free-form text.

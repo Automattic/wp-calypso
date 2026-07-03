@@ -1,7 +1,6 @@
 /**
  * Escapes the RegExp special characters in a string so it can be safely embedded
- * as a literal inside a regular expression, matching lodash's `escapeRegExp` for
- * string input.
+ * as a literal inside a regular expression.
  *
  * Intentionally typed for strings only: it does not replicate lodash's coercion
  * of arbitrary values to strings.

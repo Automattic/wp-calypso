@@ -23,16 +23,15 @@ export type MergeWithCustomizer = (
 ) => unknown;
 
 // The customizer used when the caller omits one: defers every key to the
-// default merge, so `mergeWith` degrades to a plain deep merge (like lodash).
+// default merge, so `mergeWith` degrades to a plain deep merge.
 const defaultCustomizer: MergeWithCustomizer = () => undefined;
 
-// SameValueZero, matching lodash's `eq`: like `===` but treats two NaNs as
-// equal. Used to skip writes that would not change the destination.
+// SameValueZero: like `===` but treats two NaNs as equal. Used to skip writes
+// that would not change the destination.
 const eq = ( a: unknown, b: unknown ): boolean => a === b || ( a !== a && b !== b );
 
-// Mirrors lodash's `assignMergeValue`: assign only when the value actually
-// differs, and let a `undefined` value create an absent key without clobbering
-// an existing one.
+// Assign only when the value actually differs, and let a `undefined` value
+// create an absent key without clobbering an existing one.
 const assignMergeValue = ( target: PlainObject, key: string, value: unknown ): void => {
 	if (
 		( value !== undefined && ! eq( target[ key ], value ) ) ||
@@ -107,8 +106,8 @@ function baseMergeWith(
  * Like {@link ./merge merge}, but a `customizer` invoked for every source key
  * decides the merged value: it runs first and, when it returns anything other
  * than `undefined`, that result is assigned directly instead of the default
- * deep merge. As in lodash, the customizer is optional and identified as the
- * trailing argument only when it is a function AND at least one source precedes
+ * deep merge. The customizer is optional and identified as the trailing
+ * argument only when it is a function AND at least one source precedes
  * it; otherwise every argument after the destination is treated as a source
  * (so a lone trailing function is merged as a source) and the merge runs without
  * a customizer. Sources are merged left to right.
@@ -126,9 +125,9 @@ function mergeWith( object: object | null | undefined, ...args: unknown[] ): obj
 	const hasCustomizer = args.length > 1 && typeof last === 'function';
 	const customizer = hasCustomizer ? ( last as MergeWithCustomizer ) : defaultCustomizer;
 	const sources = hasCustomizer ? args.slice( 0, -1 ) : args;
-	// Coerce like lodash's assigner so a nullish destination becomes a fresh
-	// object rather than being read through — callers that merge into a
-	// possibly-absent value get the merged result back.
+	// Coerce a nullish destination into a fresh object rather than reading
+	// through it — callers that merge into a possibly-absent value get the
+	// merged result back.
 	const target = Object( object ) as PlainObject;
 	for ( const source of sources ) {
 		if ( source != null ) {

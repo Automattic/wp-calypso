@@ -1,9 +1,9 @@
 /**
  * Shared core for `maxBy`/`minBy`. Returns the element of `array` whose
  * `iteratee` value is "best" per `isBetter`. Iteratee values are compared
- * **numerically** (the supported subset of lodash, which is how every call site
- * ranks); nullish and `NaN` values are skipped, and `undefined` is returned for
- * a nullish/empty array. Internal helper; not part of the public API.
+ * **numerically** only (narrower than lodash's type-aware comparison, but how
+ * every usage here ranks); nullish and `NaN` values are skipped, and `undefined`
+ * is returned for a nullish/empty array. Internal helper; not part of the public API.
  * @param array    The array to iterate over.
  * @param iteratee Invoked per element to produce the value to compare.
  * @param isBetter Whether `current` should replace the running `computed` best.
