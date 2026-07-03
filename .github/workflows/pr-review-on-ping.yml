@@ -56,6 +56,10 @@ jobs:
 
   review:
     needs: detect
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write # Required by the reusable Claude review workflow.
     uses: Automattic/wp-calypso/.github/workflows/pr-review.yml@trunk
     with:
       area: ${{ needs.detect.outputs.area }}
