@@ -15,6 +15,8 @@ import AmplifyHero from './sections/hero';
 import AmplifyHowItWorks from './sections/how-it-works';
 import AmplifyHumanSection from './sections/human-section';
 
+import './style.scss';
+
 const AmplifyOverview = () => {
 	const title = __( 'Amplify by Automattic for Agencies' );
 
