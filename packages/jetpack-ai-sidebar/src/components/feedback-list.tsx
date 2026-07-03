@@ -144,22 +144,24 @@ function getApplyUnavailableReason(
 	block: BlockSnapshot | null
 ): string | undefined {
 	if ( item.requires_manual ) {
-		return item.manual_reason || __( 'This item cannot be applied automatically.', 'jetpack' );
+		return (
+			item.manual_reason || __( 'This item cannot be applied automatically.', __i18n_text_domain__ )
+		);
 	}
 	if ( ! item.suggested_text ) {
-		return __( 'Needs manual edit - no rewrite was generated.', 'jetpack' );
+		return __( 'Needs manual edit - no rewrite was generated.', __i18n_text_domain__ );
 	}
 	if ( item.block_index === null || item.block_index === undefined ) {
-		return __( 'Needs manual edit - no exact block target.', 'jetpack' );
+		return __( 'Needs manual edit - no exact block target.', __i18n_text_domain__ );
 	}
 	if ( ! block ) {
-		return __( 'Needs manual edit - source block changed.', 'jetpack' );
+		return __( 'Needs manual edit - source block changed.', __i18n_text_domain__ );
 	}
 	if ( ! item.current_text ) {
-		return __( 'Needs manual edit - no exact source text.', 'jetpack' );
+		return __( 'Needs manual edit - no exact source text.', __i18n_text_domain__ );
 	}
 	if ( ! hasEditableBlockTarget( block, item.editable_attribute, item.current_text ) ) {
-		return __( 'Needs manual edit - unsupported edit target.', 'jetpack' );
+		return __( 'Needs manual edit - unsupported edit target.', __i18n_text_domain__ );
 	}
 
 	const occurrences = countOccurrences(
@@ -167,10 +169,10 @@ function getApplyUnavailableReason(
 		item.current_text
 	);
 	if ( occurrences === 0 ) {
-		return __( 'Needs manual edit - source text changed.', 'jetpack' );
+		return __( 'Needs manual edit - source text changed.', __i18n_text_domain__ );
 	}
 	if ( occurrences > 1 ) {
-		return __( 'Needs manual edit - source text appears more than once.', 'jetpack' );
+		return __( 'Needs manual edit - source text appears more than once.', __i18n_text_domain__ );
 	}
 	return undefined;
 }
@@ -178,19 +180,19 @@ function getApplyUnavailableReason(
 function getApplyLabel( status: ItemStatus ): string {
 	switch ( status ) {
 		case 'applying':
-			return __( 'Accepting…', 'jetpack' );
+			return __( 'Accepting…', __i18n_text_domain__ );
 		case 'accepted':
-			return __( 'Accepted', 'jetpack' );
+			return __( 'Accepted', __i18n_text_domain__ );
 		case 'failed':
-			return __( 'Retry', 'jetpack' );
+			return __( 'Retry', __i18n_text_domain__ );
 		default:
-			return __( 'Accept', 'jetpack' );
+			return __( 'Accept', __i18n_text_domain__ );
 	}
 }
 
 function getUnavailableMessage( item: FeedbackListItem, reason: string ): string {
 	if ( item.requires_manual ) {
-		return `${ __( 'Needs manual edit:', 'jetpack' ) } ${ reason }`;
+		return `${ __( 'Needs manual edit:', __i18n_text_domain__ ) } ${ reason }`;
 	}
 	return reason;
 }
@@ -397,7 +399,7 @@ export default function FeedbackList( {
 			) }
 			<Panel className={ `${ CLASS_PREFIX }__panel` }>
 				<PanelBody
-					title={ __( 'Summary', 'jetpack' ) }
+					title={ __( 'Summary', __i18n_text_domain__ ) }
 					className={ `${ CLASS_PREFIX }__summary` }
 					initialOpen
 				>
@@ -434,8 +436,8 @@ export default function FeedbackList( {
 										>
 											<span className={ `${ CLASS_PREFIX }__collapsed-status` }>
 												{ status === 'accepted'
-													? __( 'Applied', 'jetpack' )
-													: __( 'Dismissed', 'jetpack' ) }
+													? __( 'Applied', __i18n_text_domain__ )
+													: __( 'Dismissed', __i18n_text_domain__ ) }
 											</span>
 											<span className={ `${ CLASS_PREFIX }__collapsed-title` }>{ item.title }</span>
 											<button
@@ -444,7 +446,7 @@ export default function FeedbackList( {
 												onClick={ () => undoItem( key ) }
 												disabled={ isPostStale }
 											>
-												{ __( 'Undo', 'jetpack' ) }
+												{ __( 'Undo', __i18n_text_domain__ ) }
 											</button>
 										</div>
 									);
@@ -500,7 +502,7 @@ export default function FeedbackList( {
 												onClick={ () => dismissItem( key ) }
 												disabled={ isPostStale || bulkRunning || status === 'applying' }
 											>
-												{ __( 'Dismiss', 'jetpack' ) }
+												{ __( 'Dismiss', __i18n_text_domain__ ) }
 											</button>
 										</div>
 										{ status === 'failed' && (
@@ -523,7 +525,7 @@ export default function FeedbackList( {
 					>
 						{ sprintf(
 							/* translators: %d is the number of one-click fixes available. */
-							__( 'Accept all (%d)', 'jetpack' ),
+							__( 'Accept all (%d)', __i18n_text_domain__ ),
 							applyAllTargets.length
 						) }
 					</button>

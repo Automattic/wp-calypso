@@ -33,21 +33,24 @@ export default function Proofread( { summary, items, sections, postId }: Proofre
 			items={ items }
 			sections={ sections }
 			postId={ postId }
-			sectionFallbackTitle={ __( 'Spelling & grammar', 'jetpack' ) }
-			rewriteLabel={ __( 'Suggested fix', 'jetpack' ) }
+			sectionFallbackTitle={ __( 'Spelling & grammar', __i18n_text_domain__ ) }
+			rewriteLabel={ __( 'Suggested fix', __i18n_text_domain__ ) }
 			staleWarning={ __(
 				'Review context changed. Run the spelling and grammar check again for this post.',
-				'jetpack'
+				__i18n_text_domain__
 			) }
-			staleApplyReason={ __( 'Run the check again for this post.', 'jetpack' ) }
-			failureMessage={ __( 'Could not apply this fix. Check the text and try again.', 'jetpack' ) }
+			staleApplyReason={ __( 'Run the check again for this post.', __i18n_text_domain__ ) }
+			failureMessage={ __(
+				'Could not apply this fix. Check the text and try again.',
+				__i18n_text_domain__
+			) }
 			summaryNotes={ [
 				{
-					text: __( 'Spelling and grammar check complete.', 'jetpack' ),
+					text: __( 'Spelling and grammar check complete.', __i18n_text_domain__ ),
 					modifier: 'completed-note',
 				},
 				{
-					text: __( 'Reviews your last saved version.', 'jetpack' ),
+					text: __( 'Reviews your last saved version.', __i18n_text_domain__ ),
 					modifier: 'saved-note',
 				},
 			] }
