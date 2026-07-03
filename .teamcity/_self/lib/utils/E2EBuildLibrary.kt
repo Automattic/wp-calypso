@@ -109,9 +109,14 @@ fun BuildSteps.runMigratedPlaywrightSpecs(
 	tag: String,
 	targetDevice: String,
 	additionalEnvVars: Map<String, String> = mapOf(),
-	stepName: String = "Run migrated Playwright specs"
+	stepName: String = "Run migrated Playwright specs",
+	reportSuffix: String = ""
 ): ScriptBuildStep {
 	val envVarExport = additionalEnvVars.map { ( key, value ) -> "export $key='$value'" }.joinToString( separator = "\n" )
+	// Playwright always writes output/results.xml; rename it per invocation so
+	// sequential runs in a loop (the Atomic variations) don't overwrite each
+	// other's report and lose all but the last variation's results.
+	val reportFile = if ( reportSuffix.isEmpty() ) "output/results.xml" else "output/results-$reportSuffix.xml"
 
 	return bashNodeScript {
 		name = stepName
@@ -125,13 +130,21 @@ fun BuildSteps.runMigratedPlaywrightSpecs(
 			# Enter testing directory.
 			cd test/e2e
 
+			# Clear any prior report so a runner crash can't be masked by a stale
+			# file left behind (e.g. an earlier Atomic variation in the loop).
+			rm -f $reportFile
+
 			# Swallow the exit code so later steps still run; failed tests fail
 			# the build through the JUnit report.
 			yarn test:pw:$targetDevice --grep=$tag || true
 
+			# Move the report to a per-invocation name so the import rule
+			# (results*.xml) picks up every variation, not just the last.
+			[[ -f output/results.xml && output/results.xml != $reportFile ]] && mv output/results.xml $reportFile
+
 			# A runner crash that produced no report must not pass silently.
-			if [[ ! -f output/results.xml ]]; then
-				echo "##teamcity[buildProblem description='Playwright step produced no JUnit report' identity='migrated_pw_no_report']"
+			if [[ ! -f $reportFile ]]; then
+				echo "##teamcity[buildProblem description='Playwright step produced no JUnit report ($stepName)' identity='migrated_pw_no_report_$reportSuffix']"
 			fi
 		""".trimIndent()
 		dockerImage = "%docker_image_e2e%"
@@ -145,7 +158,7 @@ fun BuildSteps.runMigratedPlaywrightSpecs(
 fun BuildFeatures.playwrightJUnitReport() {
 	xmlReport {
 		reportType = XmlReport.XmlReportType.JUNIT
-		rules = "+:test/e2e/output/results.xml"
+		rules = "+:test/e2e/output/results*.xml"
 		verbose = true
 	}
 }

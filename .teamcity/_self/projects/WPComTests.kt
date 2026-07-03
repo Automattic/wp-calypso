@@ -304,6 +304,8 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 						"PW_WORKERS" to "5",
 					),
 					stepName = "Run migrated Playwright specs: $variation",
+					// Per-variation report name so the loop's runs don't overwrite each other.
+					reportSuffix = variation,
 				)
 			}
 
