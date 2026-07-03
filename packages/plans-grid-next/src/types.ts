@@ -229,8 +229,9 @@ export type GridContextProps = {
 	enterpriseFeaturesList?: string[];
 
 	/**
-	 * India Automattic for Agencies test: when true, the Enterprise card shows the
-	 * Automattic for Agencies logo instead of the VIP logo.
+	 * India Automattic for Agencies test: when true, the Enterprise plan card is presented as A4A.
+	 * This affects Enterprise branding (logo/copy) and layout (e.g. hides Enterprise client logos
+	 * in the price cell and shows A4A-specific billing text instead).
 	 */
 	isEnterpriseA4AIndia?: boolean;
 
