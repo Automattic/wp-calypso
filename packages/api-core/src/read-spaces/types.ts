@@ -53,6 +53,13 @@ export type SpaceIcon =
 export type SpaceFeedLayout = 'standard-list' | 'gallery' | 'board' | 'legacy';
 
 /**
+ * Column width of the space feed — `regular` is the narrow single reading column
+ * shared with the rest of the Reader; `wide` is the roomy layout. Unset falls
+ * back to `wide` so spaces created before this shipped keep their current width.
+ */
+export type SpaceLayoutWidth = 'regular' | 'wide';
+
+/**
  * Presentation settings for a space, grouped so they can grow beyond color and
  * icon (e.g. cover image, sort order) without widening `ReadSpace` itself.
  */
@@ -65,6 +72,8 @@ export interface SpaceLayout {
 	icon: SpaceIcon;
 	// Which feed layout to render.
 	view?: SpaceFeedLayout;
+	// Column width of the space feed. Unset falls back to `wide`.
+	width?: SpaceLayoutWidth;
 }
 
 /**

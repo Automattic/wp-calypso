@@ -924,9 +924,17 @@ export default function CheckoutMainContent( {
 									} catch ( error ) {
 										reduxDispatch( removeNotice( 'vat_info_notice' ) );
 										if ( shouldDisplayValidationErrors ) {
-											reduxDispatch(
-												errorNotice( ( error as Error ).message, { id: 'vat_info_notice' } )
-											);
+											const vatError = error as { error?: string; message: string };
+											// `invalid_vat` means the VAT ID could not be validated right now
+											// (service down/busy), so the shopper can still finish without one.
+											const vatErrorMessage =
+												vatError.error === 'invalid_vat'
+													? `${ vatError.message } ${ translate(
+															'You can uncheck “Add VAT details” to finish your purchase now without a VAT ID.',
+															{ textOnly: true }
+													  ) }`
+													: vatError.message;
+											reduxDispatch( errorNotice( vatErrorMessage, { id: 'vat_info_notice' } ) );
 										}
 										return false;
 									}

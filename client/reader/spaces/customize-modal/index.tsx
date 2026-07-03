@@ -6,6 +6,7 @@ import {
 	type SpaceColor,
 	type SpaceFeedLayout,
 	type SpaceIcon,
+	type SpaceLayoutWidth,
 	type SpaceSource,
 	type SpaceTextColor,
 } from '@automattic/api-core';
@@ -43,7 +44,7 @@ import { DEFAULT_SPACE_FEED_LAYOUT } from '../feed/layouts/registry';
 import { ConfirmDeleteDialog } from './confirm-delete';
 import { DeleteTab } from './delete-tab';
 import { IdentityTab } from './identity-tab';
-import { getLayoutPresetTitle, LayoutTab } from './layout-tab';
+import { DEFAULT_SPACE_WIDTH, getLayoutPresetTitle, LayoutTab } from './layout-tab';
 import { SourcesTab } from './sources-tab';
 
 import './style.scss';
@@ -176,6 +177,7 @@ function SpaceUpsertModalContent( {
 	} );
 	const [ icon, setIcon ] = useState< SpaceIcon >( 'inbox' );
 	const [ view, setView ] = useState< SpaceFeedLayout >( DEFAULT_SPACE_FEED_LAYOUT );
+	const [ width, setWidth ] = useState< SpaceLayoutWidth >( DEFAULT_SPACE_WIDTH );
 	const [ selectedSources, setSelectedSources ] = useState< SourceDraftItem[] >( [] );
 	const [ isConfirmingDelete, setIsConfirmingDelete ] = useState( false );
 
@@ -190,6 +192,7 @@ function SpaceUpsertModalContent( {
 			setIconColor( resolveSpaceIconColor( space.layout ) );
 			setIcon( space.layout.icon );
 			setView( space.layout.view ?? DEFAULT_SPACE_FEED_LAYOUT );
+			setWidth( space.layout.width ?? DEFAULT_SPACE_WIDTH );
 			setSelectedSources( space.sources.map( getSpaceSourceDraftItem ) );
 			setIsSeeded( true );
 		}
@@ -227,7 +230,7 @@ function SpaceUpsertModalContent( {
 					name: name.trim(),
 					tags,
 					languages,
-					layout: { color, iconColor, icon, view },
+					layout: { color, iconColor, icon, view, width },
 					feeds: selectedFeeds,
 				},
 				{
@@ -269,7 +272,7 @@ function SpaceUpsertModalContent( {
 					tags,
 					languages,
 					feeds: selectedFeeds,
-					layout: { color, iconColor, icon, view },
+					layout: { color, iconColor, icon, view, width },
 				},
 			},
 			{
@@ -333,7 +336,9 @@ function SpaceUpsertModalContent( {
 			);
 		}
 		if ( tabName === 'layout' ) {
-			return <LayoutTab value={ view } onChange={ setView } />;
+			return (
+				<LayoutTab value={ view } onChange={ setView } width={ width } onWidthChange={ setWidth } />
+			);
 		}
 		if ( tabName === 'sources' ) {
 			return (

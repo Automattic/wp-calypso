@@ -46,6 +46,20 @@ describe( 'read spaces adapters', () => {
 			expect( layout ).toEqual( { color: 'celadon', icon: 'star', view: 'gallery' } );
 		} );
 
+		it( 'passes through the optional column width when present', () => {
+			const { layout } = adaptReadSpace(
+				wireSpace( { layout: { color: 'celadon', icon: 'star', width: 'regular' } } )
+			);
+
+			expect( layout ).toEqual( { color: 'celadon', icon: 'star', width: 'regular' } );
+		} );
+
+		it( 'omits the column width when absent', () => {
+			const { layout } = adaptReadSpace( wireSpace() );
+
+			expect( layout ).not.toHaveProperty( 'width' );
+		} );
+
 		it( 'carries neither sources nor tags on the summary shape', () => {
 			const summary = adaptReadSpace( wireSpace() );
 			expect( summary ).not.toHaveProperty( 'sources' );

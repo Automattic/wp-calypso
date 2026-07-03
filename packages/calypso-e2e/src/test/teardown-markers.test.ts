@@ -105,6 +105,7 @@ describe( 'teardown-markers: isAccountClosedError', () => {
 		'authorization_required: An active access token must be used.',
 		'Request was unauthorized',
 		'user_not_found: account is gone',
+		'invalid_username: no such account (rejected signup)',
 	] )( 'returns true for a dead-token / auth error (%s)', ( message ) => {
 		expect( isAccountClosedError( new Error( message ) ) ).toBe( true );
 	} );

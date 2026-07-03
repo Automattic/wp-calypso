@@ -4,7 +4,7 @@
 
 import { captureException } from '@automattic/calypso-sentry';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { maybeReloadForChunkError } from '../chunk-reload';
+import { maybeReloadForChunkError } from '../../chunk-load-recovery';
 import { handleOnCatch } from '../index';
 import type { AnyRouter } from '@tanstack/react-router';
 import type { ErrorInfo } from 'react';
@@ -16,7 +16,7 @@ jest.mock( '@automattic/calypso-sentry', () => ( {
 jest.mock( 'calypso/lib/logstash', () => ( {
 	logToLogstash: jest.fn(),
 } ) );
-jest.mock( '../chunk-reload', () => ( {
+jest.mock( '../../chunk-load-recovery', () => ( {
 	maybeReloadForChunkError: jest.fn(),
 } ) );
 

@@ -6,8 +6,6 @@ import _self.lib.customBuildType.E2EBuildType
 import _self.lib.utils.allBranchesExceptMergeQueue
 import _self.lib.utils.excludeMergeQueueBranches
 import _self.lib.utils.mergeTrunk
-import _self.lib.utils.passMergeQueueBranchesEarly
-import _self.lib.utils.skipOnMergeQueueBranch
 import _self.CalypsoE2ETestsBuildTemplate
 
 import jetbrains.buildServer.configs.kotlin.*
@@ -50,6 +48,7 @@ object BuildDockerImage : BuildType({
     )
 
     val imageBase = "registry.a8c.com/calypso/app"
+	val commitImageExistsParam = "dockerImage.commitImageExists"
 	val baseUrl = "https://calypso.live"
 
     val environments = listOf(
@@ -153,7 +152,6 @@ object BuildDockerImage : BuildType({
 	}
 
 	steps {
-		passMergeQueueBranchesEarly()
 		script {
 			name = "Webhook Start"
 			conditions {
@@ -172,7 +170,37 @@ object BuildDockerImage : BuildType({
 
 				curl -s -X POST -d "${'$'}payload" -H "TEAMCITY-SIGNATURE: ${'$'}signature" "%mc_teamcity_webhook%calypso/?build_id=%teamcity.build.id%"
 			"""
-		}.skipOnMergeQueueBranch()
+		}
+
+		script {
+			name = "Reuse existing commit image"
+			conditions {
+				equals("teamcity.build.branch.is_default", "true")
+			}
+			scriptContent = """
+				#!/usr/bin/env bash
+				set -euo pipefail
+
+				commit_image="$imageBase:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}"
+				build_image="$imageBase:build-%build.number%"
+				latest_image="$imageBase:latest"
+
+				if ! docker manifest inspect "${'$'}commit_image" > /dev/null 2>&1; then
+					echo "No existing Docker image found for ${'$'}commit_image."
+					exit 0
+				fi
+
+				echo "Reusing existing Docker image for ${Settings.WpCalypso.paramRefs.buildVcsNumber}: ${'$'}commit_image"
+
+				docker pull "${'$'}commit_image"
+				docker tag "${'$'}commit_image" "${'$'}build_image"
+				docker tag "${'$'}commit_image" "${'$'}latest_image"
+				docker push "${'$'}build_image"
+
+				echo "##teamcity[setParameter name='$commitImageExistsParam' value='true']"
+				echo "##teamcity[buildStatus status='SUCCESS' text='Reused existing Docker image for this commit']"
+			"""
+		}
 
 		script {
 			name = "Post PR comment"
@@ -189,16 +217,19 @@ object BuildDockerImage : BuildType({
 				Please wait a few minutes and refresh this page.
 				EOF
 			"""
-		}.skipOnMergeQueueBranch()
+		}
 
 		// We want calypso.live and Calypso e2e tests to run even if there's a merge conflict,
 		// just to keep things going. However, if we can merge, the webpack cache
 		// can be better utilized, since it's kept up-to-date for trunk commits.
 		// Note that this only happens on non-trunk
-		mergeTrunk( skipIfConflict = true ).skipOnMergeQueueBranch()
+		mergeTrunk( skipIfConflict = true )
 
 		script {
 			name = "Check Docker workspace COPY globs"
+			conditions {
+				doesNotEqual(commitImageExistsParam, "true")
+			}
 			scriptContent = """
 				#!/usr/bin/env bash
 				node ./bin/check-docker-workspace-copy-globs.mjs
@@ -206,7 +237,7 @@ object BuildDockerImage : BuildType({
 			dockerImage = "%docker_image_e2e%"
 			dockerRunParameters = "-u %env.UID%"
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-		}.skipOnMergeQueueBranch()
+		}
 
 		val commonArgs = """
 			--label com.a8c.image-builder=teamcity
@@ -226,6 +257,9 @@ object BuildDockerImage : BuildType({
 
 		dockerCommand {
 			name = "Build docker image"
+			conditions {
+				doesNotEqual(commitImageExistsParam, "true")
+			}
 			commandType = build {
 				source = file {
 					path = "Dockerfile"
@@ -238,16 +272,19 @@ object BuildDockerImage : BuildType({
 				commandArgs = "--pull --label com.a8c.target=calypso-live $commonArgs"
 			}
 			param("dockerImage.platform", "linux")
-		}.skipOnMergeQueueBranch()
+		}
 
 		dockerCommand {
+			conditions {
+				doesNotEqual(commitImageExistsParam, "true")
+			}
 			commandType = push {
 				namesAndTags = """
 					registry.a8c.com/calypso/app:build-%build.number%
 					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
 				""".trimIndent()
 			}
-		}.skipOnMergeQueueBranch()
+		}
 
 		script {
 			name = "Webhook fail OR webhook done and push trunk tag for deploy"
@@ -275,7 +312,7 @@ object BuildDockerImage : BuildType({
 
 				curl -s -X POST -d "${'$'}payload" -H "TEAMCITY-SIGNATURE: ${'$'}signature" "%mc_teamcity_webhook%calypso/?build_id=%teamcity.build.id%"
 			"""
-		}.skipOnMergeQueueBranch()
+		}
 
 		script {
 			name = "Post PR comment with link"
@@ -291,7 +328,7 @@ object BuildDockerImage : BuildType({
 				$htmlBlock
 				EOF
 			""".trimIndent()
-		}.skipOnMergeQueueBranch()
+		}
 
 		// TODO: Cache rebuilding is currently disabled. It takes a long time and
 		// causes timeouts on trunk. It needs to run more quickly to be worth it.
@@ -322,6 +359,7 @@ object BuildDockerImage : BuildType({
 		dockerCommand {
 			name = "Rebuild cache image"
 			conditions {
+				doesNotEqual(commitImageExistsParam, "true")
 				equals("cache_mode", "base")
 				equals("UPDATE_BASE_IMAGE_CACHE", "true")
 				equals("teamcity.build.branch.is_default", "true")
@@ -338,11 +376,12 @@ object BuildDockerImage : BuildType({
 				""".trimIndent().replace("\n"," ")
 			}
 			param("dockerImage.platform", "linux")
-		}.skipOnMergeQueueBranch()
+		}
 
 		dockerCommand {
 			name = "Push cache image"
 			conditions {
+				doesNotEqual(commitImageExistsParam, "true")
 				equals("cache_mode", "base")
 				equals("UPDATE_BASE_IMAGE_CACHE", "true")
 				equals("teamcity.build.branch.is_default", "true")
@@ -350,7 +389,7 @@ object BuildDockerImage : BuildType({
 			commandType = push {
 				namesAndTags = "registry.a8c.com/calypso/base:%base_image_publish_tag%"
 			}
-		}.skipOnMergeQueueBranch()
+		}
 	}
 
 	failureConditions {
@@ -617,7 +656,6 @@ object CheckCodeStyleBranch : BuildType({
 	}
 
 	steps {
-		passMergeQueueBranchesEarly()
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
@@ -626,7 +664,7 @@ object CheckCodeStyleBranch : BuildType({
 				# Install modules
 				${_self.yarn_install_cmd}
 			"""
-		}.skipOnMergeQueueBranch()
+		}
 		bashNodeScript {
 			name = "Run eslint"
 			scriptContent = """
@@ -717,14 +755,14 @@ object CheckCodeStyleBranch : BuildType({
 						' yarn-batch # Arbitrary name to be used as each batch's progname
 				fi
 			"""
-		}.skipOnMergeQueueBranch()
+		}
 		bashNodeScript {
 			name = "Run code quality linters"
 			scriptContent = """
 				yarn run lint:unused-state-action-types
 				yarn run lint:config-defaults
 			"""
-		}.skipOnMergeQueueBranch()
+		}
 		bashNodeScript {
 			name = "Run stylelint"
 			scriptContent = """
@@ -732,7 +770,7 @@ object CheckCodeStyleBranch : BuildType({
 				yarn run lint:css
 				yarn run lint:mixedindent
 			"""
-		}.skipOnMergeQueueBranch()
+		}
 	}
 
 	triggers {
@@ -1162,6 +1200,7 @@ object JestPreReleaseE2ETests : BuildType({
 
 	vcs {
 		root(Settings.WpCalypso)
+		branchFilter = allBranchesExceptMergeQueue()
 		cleanCheckout = true
 	}
 
@@ -1210,7 +1249,6 @@ object JestPreReleaseE2ETests : BuildType({
 	}
 
 	steps {
-		passMergeQueueBranchesEarly()
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
@@ -1225,7 +1263,7 @@ object JestPreReleaseE2ETests : BuildType({
 				yarn workspace @automattic/calypso-e2e build
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-		}.skipOnMergeQueueBranch()
+		}
 
 		bashNodeScript {
 			name = "Run tests"
@@ -1251,7 +1289,7 @@ object JestPreReleaseE2ETests : BuildType({
 				RETRY_COUNT=1 xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --workerIdleMemoryLimit=1GB --group=calypso-release --onlyFailures --json --outputFile=pre-release-test-results.json
 			"""
 			dockerImage = "%docker_image_e2e%"
-		}.skipOnMergeQueueBranch()
+		}
 
 		bashNodeScript {
 			name = "Collect results"
@@ -1272,7 +1310,7 @@ object JestPreReleaseE2ETests : BuildType({
 				find test/e2e/allure-results -name '*.json' -print0 | xargs -r -0 mv -t allure-results
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-		}.skipOnMergeQueueBranch()
+		}
 	}
 
 	failureConditions {
@@ -1304,6 +1342,7 @@ object PreReleaseE2ETests : BuildType({
 
 	vcs {
 		root(Settings.WpCalypso)
+		branchFilter = allBranchesExceptMergeQueue()
 		cleanCheckout = true
 	}
 

@@ -205,7 +205,7 @@ describe( 'CreateSpaceModal', () => {
 				title: 'Reading',
 				feeds: [ 456 ],
 				tags: [],
-				layout: { color: 'green', iconColor: 'blue', icon: 'star', view: 'legacy' },
+				layout: { color: 'green', iconColor: 'blue', icon: 'star', view: 'legacy', width: 'wide' },
 			} )
 		);
 		const spaces = queryClient.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey );
