@@ -421,7 +421,9 @@
 	margin-bottom: 6px;
 }
 
+.manage-purchase__delayed-downgrade-pending-notice.calypso-notice,
 .manage-purchase__expiring-credit-card-notice.calypso-notice,
+.manage-purchase__other-renewable-purchases-notice.calypso-notice,
 .manage-purchase__purchase-expiring-notice.calypso-notice {
 	// Inset the notice to match its neighbors. width:auto is required: the base
 	// .calypso-notice is width:100% border-box, so margin-inline alone overflows.
