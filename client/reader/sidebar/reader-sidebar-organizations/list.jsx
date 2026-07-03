@@ -69,7 +69,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 	}
 
 	render() {
-		const { organization, path, sites } = this.props;
+		const { organization, path } = this.props;
 
 		if ( ! organization.sites_count ) {
 			return null;
