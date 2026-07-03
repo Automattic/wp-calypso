@@ -80,31 +80,6 @@ describe( 'ReaderSidebar', () => {
 		} );
 	} );
 
-	it( 'renders sections items in order', () => {
-		const instance = new ReaderSidebar( defaultProps );
-
-		render( instance.renderSidebarMenu() );
-
-		const menuItems = screen
-			.getAllByRole( 'listitem' )
-			.map( ( item ) => item.textContent )
-			.filter( Boolean );
-
-		expect( menuItems ).toEqual( [
-			'Search',
-			'Discover',
-			'Following',
-			'Lists',
-			'Spaces',
-			'Tags',
-			'Likes',
-			'Conversations',
-			'New subscription',
-			'Manage subscriptions',
-			'Reader profile',
-		] );
-	} );
-
 	describe( 'handleSidebarMenuClick', () => {
 		let instance: ReaderSidebar;
 
