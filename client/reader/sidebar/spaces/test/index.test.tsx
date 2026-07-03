@@ -201,6 +201,24 @@ describe( 'ReaderSidebarSpaces', () => {
 		expect( await screen.findByRole( 'heading', { name: 'Create a new space' } ) ).toBeVisible();
 	} );
 
+	it( 'marks the walkthrough seen when skipped before the next "Add a space" click', async () => {
+		const user = userEvent.setup();
+		render( <ReaderSidebarSpaces path={ OPEN_PATH } />, { preferences: { remoteValues: {} } } );
+
+		await user.click( screen.getByRole( 'button', { name: 'Add a space' } ) );
+		await user.click( await screen.findByRole( 'button', { name: 'Skip' } ) );
+
+		expect( screen.queryByRole( 'heading', { name: 'Meet Spaces' } ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'heading', { name: 'Create a new space' } )
+		).not.toBeInTheDocument();
+
+		await user.click( screen.getByRole( 'button', { name: 'Add a space' } ) );
+
+		expect( await screen.findByRole( 'heading', { name: 'Create a new space' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'heading', { name: 'Meet Spaces' } ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'redirects to the new space after creating it', async () => {
 		const user = userEvent.setup();
 		nock( 'https://public-api.wordpress.com' )

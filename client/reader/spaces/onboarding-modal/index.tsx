@@ -79,7 +79,7 @@ function StepWelcome() {
 				) ) }
 			</HStack>
 			<VStack spacing={ 2 } alignment="center">
-				<Heading level={ 1 } id={ HEADING_ID } align="center">
+				<Heading level={ 1 } align="center">
 					{ translate( 'Meet Spaces' ) }
 				</Heading>
 				<Text align="center">
@@ -103,7 +103,7 @@ function StepExplain() {
 	];
 	return (
 		<VStack spacing={ 5 } className="reader-spaces-onboarding__pane">
-			<Heading level={ 1 } id={ HEADING_ID } size={ 20 }>
+			<Heading level={ 1 } size={ 20 }>
 				{ translate( 'Sort your feeds by topic' ) }
 			</Heading>
 
@@ -171,7 +171,7 @@ function StepDiscover() {
 				<Icon icon={ search } size={ 32 } />
 			</span>
 			<VStack spacing={ 2 } alignment="center">
-				<Heading level={ 1 } id={ HEADING_ID } align="center">
+				<Heading level={ 1 } align="center">
 					{ translate( 'Find more with Discover' ) }
 				</Heading>
 				<Text align="center">

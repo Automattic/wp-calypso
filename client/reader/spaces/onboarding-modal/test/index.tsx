@@ -34,6 +34,19 @@ describe( 'SpacesOnboardingModal', () => {
 		expect( screen.queryByRole( 'button', { name: 'Back' } ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'uses a single dialog label id while steps are visible', async () => {
+		const { user } = setup();
+
+		expect( screen.getByRole( 'dialog', { name: 'Set up Spaces' } ) ).toBeVisible();
+		expect( document.querySelectorAll( '#reader-spaces-onboarding__heading' ) ).toHaveLength( 1 );
+
+		await user.click( screen.getByRole( 'button', { name: 'Show me how' } ) );
+		expect( document.querySelectorAll( '#reader-spaces-onboarding__heading' ) ).toHaveLength( 1 );
+
+		await user.click( screen.getByRole( 'button', { name: 'Next' } ) );
+		expect( document.querySelectorAll( '#reader-spaces-onboarding__heading' ) ).toHaveLength( 1 );
+	} );
+
 	it( 'walks forward and back through the steps', async () => {
 		const { user } = setup();
 
