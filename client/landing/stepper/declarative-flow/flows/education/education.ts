@@ -178,7 +178,7 @@ const education: FlowV2< typeof initialize > = {
 								redirect_to: destination,
 								signup: 1,
 								checkoutBackUrl: pathToUrl( checkoutBackUrl ),
-								coupon,
+								coupon: coupon ?? undefined,
 							} )
 						);
 					}

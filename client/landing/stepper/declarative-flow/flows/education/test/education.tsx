@@ -175,6 +175,25 @@ describe( 'Education Flow', () => {
 		expect( checkoutUrl.searchParams.get( 'coupon' ) ).toBe( 'EDU50' );
 	} );
 
+	it( 'omits the coupon param from checkout when none is provided', () => {
+		runNavigation( {
+			from: STEPS.PROCESSING,
+			dependencies: {
+				processingResult: ProcessingResult.SUCCESS,
+				siteId: 123,
+				siteSlug: 'school-example.wordpress.com',
+				goToCheckout: true,
+			},
+		} );
+
+		const checkoutUrl = new URL(
+			( window.location.replace as jest.Mock ).mock.calls[ 0 ][ 0 ],
+			'https://wordpress.com'
+		);
+
+		expect( checkoutUrl.searchParams.has( 'coupon' ) ).toBe( false );
+	} );
+
 	it( 'sends processing back to create-site when there is no pending action', () => {
 		const destination = runNavigation( {
 			from: STEPS.PROCESSING,
