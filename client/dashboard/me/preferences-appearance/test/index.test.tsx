@@ -85,10 +85,10 @@ afterEach( () => {
 	document.documentElement.removeAttribute( 'data-theme' );
 } );
 
-test( 'renders with a Beta label when the user has used the color scheme before', async () => {
+test( 'renders when the user has used the color scheme before', async () => {
 	renderPreferencesAppearance();
 
-	expect( await screen.findByRole( 'link', { name: /Appearance \(Beta\)/i } ) ).toHaveAttribute(
+	expect( await screen.findByRole( 'link', { name: /Appearance/i } ) ).toHaveAttribute(
 		'href',
 		'/me/preferences/appearance'
 	);
@@ -106,7 +106,7 @@ test( 'does not render when the rollout flag is off and the user has never used 
 test( 'renders when the dark mode rollout flag is enabled, even without prior use', async () => {
 	renderPreferencesAppearance( { hasUsedColorScheme: false, isDarkModeRollout: true } );
 
-	expect( await screen.findByRole( 'link', { name: /Appearance \(Beta\)/i } ) ).toHaveAttribute(
+	expect( await screen.findByRole( 'link', { name: /Appearance/i } ) ).toHaveAttribute(
 		'href',
 		'/me/preferences/appearance'
 	);
