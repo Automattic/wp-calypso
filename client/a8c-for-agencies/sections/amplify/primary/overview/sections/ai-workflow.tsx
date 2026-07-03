@@ -14,6 +14,7 @@ import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { Fragment, useState } from 'react';
 import PageSectionColumns from 'calypso/a8c-for-agencies/components/page-section-columns';
+import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -48,7 +49,7 @@ function PromptItem( { label, severity, body }: Prompt ) {
 					</Text>
 				</HStack>
 				<Text variant="muted" size={ 13 }>
-					{ body }
+					{ preventWidows( body ) }
 				</Text>
 			</VStack>
 		</CardBody>
@@ -159,8 +160,10 @@ export default function AmplifyAiWorkflow() {
 					</Text>
 					<Heading level={ 2 }>{ __( 'Audit to agent in seconds' ) }</Heading>
 					<Text isBlock variant="muted" size={ 16 }>
-						{ __(
-							'Amplify generates a precise, agent-ready prompt for every issue it finds. Send any or all of them to your AI tool of choice: Claude, Codex, Gemini, whatever fits your workflow. Then, through WordPress Studio, those changes can be applied at lightning speed directly to your sites in staging or production.'
+						{ preventWidows(
+							__(
+								'Amplify generates a precise, agent-ready prompt for every issue it finds. Send any or all of them to your AI tool of choice: Claude, Codex, Gemini, whatever fits your workflow. Then, through WordPress Studio, those changes can be applied at lightning speed directly to your sites in staging or production.'
+							)
 						) }
 					</Text>
 				</VStack>

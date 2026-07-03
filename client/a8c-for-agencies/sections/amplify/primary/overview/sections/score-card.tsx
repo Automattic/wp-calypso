@@ -11,6 +11,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useState } from 'react';
+import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -172,7 +173,7 @@ export default function AmplifyScoreCard() {
 								{ thresholdLabel( data.score ) }
 							</Text>
 							<Text variant="muted" size={ 13 }>
-								{ data.body }
+								{ preventWidows( data.body ) }
 							</Text>
 						</VStack>
 					</HStack>

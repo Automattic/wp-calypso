@@ -8,6 +8,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useCallback } from 'react';
 import PageSectionColumns from 'calypso/a8c-for-agencies/components/page-section-columns';
+import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -104,7 +105,7 @@ export default function AmplifyFAQ() {
 								initialOpen={ false }
 								onToggle={ ( isOpen ) => onToggle( faq.id, isOpen ) }
 							>
-								<Text>{ faq.answer }</Text>
+								<Text>{ preventWidows( faq.answer ) }</Text>
 							</PanelBody>
 						) ) }
 					</Panel>
