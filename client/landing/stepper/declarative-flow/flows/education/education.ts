@@ -55,7 +55,6 @@ const education: FlowV2< typeof initialize > = {
 			setDomain,
 			setDomainCartItem,
 			setDomainCartItems,
-			setHideFreePlan,
 			setPlanCartItem,
 			setSignupDomainOrigin,
 			setSiteUrl,
@@ -117,7 +116,6 @@ const education: FlowV2< typeof initialize > = {
 
 					if ( providedDependencies && 'skipToPlan' in providedDependencies ) {
 						setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
-						setHideFreePlan( true );
 						setSignupCompleteFlowName( flowName );
 						return navigate( STEPS.SITE_CREATION_STEP.slug, undefined, false );
 					}
@@ -127,7 +125,6 @@ const education: FlowV2< typeof initialize > = {
 					}
 
 					setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
-					setHideFreePlan( true );
 					setDomainCartItem( providedDependencies.domainCartItem );
 					setSignupCompleteFlowName( flowName );
 
