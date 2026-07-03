@@ -165,6 +165,9 @@ const UPDATE_MESSAGE =
 	'Please write an explicit path update (walk/create the path, then apply the updater) instead of lodash `update`.';
 const CLONEDEEPWITH_MESSAGE =
 	'Please use `structuredClone` plus a targeted override, or a small recursive clone, instead of lodash `cloneDeepWith`.';
+const ASSIGNWITH_MESSAGE =
+	'Please assign natively — `Object.keys( source ).forEach( ( key ) => { object[ key ] = … } )` with the ' +
+	'per-key logic your customizer expressed — instead of lodash `assignWith`.';
 
 const paths = [
 	{ name: 'lodash', importNames: JS_UTILS_NAMES, message: JS_UTILS_MESSAGE },
@@ -208,6 +211,7 @@ const paths = [
 	{ name: 'lodash', importNames: [ 'matchesProperty' ], message: MATCHESPROPERTY_MESSAGE },
 	{ name: 'lodash', importNames: [ 'update' ], message: UPDATE_MESSAGE },
 	{ name: 'lodash', importNames: [ 'cloneDeepWith' ], message: CLONEDEEPWITH_MESSAGE },
+	{ name: 'lodash', importNames: [ 'assignWith' ], message: ASSIGNWITH_MESSAGE },
 ];
 
 // Deep `lodash/<fn>` imports bypass the named-import paths above.
@@ -253,6 +257,7 @@ const patterns = [
 	{ group: [ 'lodash/matchesProperty' ], message: MATCHESPROPERTY_MESSAGE },
 	{ group: [ 'lodash/update' ], message: UPDATE_MESSAGE },
 	{ group: [ 'lodash/cloneDeepWith' ], message: CLONEDEEPWITH_MESSAGE },
+	{ group: [ 'lodash/assignWith' ], message: ASSIGNWITH_MESSAGE },
 ];
 
 // Functions whose namespace-member (`_.fn( … )` / `lodash.fn( … )`) and CommonJS
@@ -273,6 +278,7 @@ const NAMESPACE_GUARDED = [
 	{ name: 'matchesProperty', message: MATCHESPROPERTY_MESSAGE },
 	{ name: 'update', message: UPDATE_MESSAGE },
 	{ name: 'cloneDeepWith', message: CLONEDEEPWITH_MESSAGE },
+	{ name: 'assignWith', message: ASSIGNWITH_MESSAGE },
 ];
 
 // `no-restricted-properties`: namespace member access (`_.fn( … )` / `lodash.fn( … )`).
