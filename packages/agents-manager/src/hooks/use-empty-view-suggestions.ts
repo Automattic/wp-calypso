@@ -144,18 +144,18 @@ export function useEmptyViewSuggestions( {
 		() => [
 			{
 				id: 'getting-started',
-				label: __( 'Getting started with WordPress', '__i18n_text_domain__' ),
-				prompt: __( 'How do I get started with WordPress?', '__i18n_text_domain__' ),
+				label: __( 'Getting started with WordPress', __i18n_text_domain__ ),
+				prompt: __( 'How do I get started with WordPress?', __i18n_text_domain__ ),
 			},
 			{
 				id: 'create-post',
-				label: __( 'Create a blog post', '__i18n_text_domain__' ),
-				prompt: __( 'How do I create a blog post?', '__i18n_text_domain__' ),
+				label: __( 'Create a blog post', __i18n_text_domain__ ),
+				prompt: __( 'How do I create a blog post?', __i18n_text_domain__ ),
 			},
 			{
 				id: 'customize-site',
-				label: __( 'Customize my site', '__i18n_text_domain__' ),
-				prompt: __( 'How can I customize my site?', '__i18n_text_domain__' ),
+				label: __( 'Customize my site', __i18n_text_domain__ ),
+				prompt: __( 'How can I customize my site?', __i18n_text_domain__ ),
 			},
 		],
 		[]

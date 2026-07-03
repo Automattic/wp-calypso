@@ -1,6 +1,7 @@
 package _self
 
 import _self.lib.utils.mergeTrunk
+import _self.lib.utils.allBranchesExceptMergeQueue
 
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
@@ -14,6 +15,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 
 	vcs {
 		root(Settings.WpCalypso)
+		branchFilter = allBranchesExceptMergeQueue()
 		cleanCheckout = true
 	}
 
@@ -241,7 +243,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 					# (nonZeroExitCode = false). Do NOT add 'exit 1': this ALWAYS step must leave green runs green.
 					echo "##teamcity[buildProblem description='E2E teardown leak: ${'$'}COUNT test user(s) not closed - see %PROJECT%/output' identity='e2e_teardown_leak']"
 				fi
-				""".trimIndent()
+			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
 

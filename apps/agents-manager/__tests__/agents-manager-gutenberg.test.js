@@ -19,7 +19,6 @@ const mockRegisterPlugin = jest.fn();
 jest.mock( '@wordpress/plugins', () => ( { registerPlugin: mockRegisterPlugin } ) );
 
 const JETPACK_PROVIDER = 'https://widgets.wp.com/agents-manager/jetpack-ai-sidebar.provider.mjs';
-const JETPACK_PROVIDER_ENTRY = { providerId: 'jetpack-ai-sidebar', url: JETPACK_PROVIDER };
 
 const loadRender = () => {
 	let render;
@@ -56,7 +55,7 @@ describe( 'agents-manager-gutenberg entry', () => {
 	it( 'renders nothing when the gate suppresses the mount', () => {
 		globalThis.agentsManagerData = {
 			sectionName: 'gutenberg',
-			agentProviders: [ JETPACK_PROVIDER_ENTRY ],
+			agentProviders: [ JETPACK_PROVIDER ],
 		};
 
 		const render = loadRender();

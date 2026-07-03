@@ -1,4 +1,22 @@
-import { EscalationButton } from '../../components/escalation-button';
+/* eslint-disable import/order -- mocks must be registered before importing the converter */
+function mockEscalationButton() {
+	return null;
+}
+
+jest.mock(
+	'@automattic/agenttic-client',
+	() => ( {
+		createOdieBotId: ( agentId: string ) => `odie-${ agentId }`,
+		isOdieBotId: () => false,
+		loadAllMessagesFromServer: jest.fn(),
+	} ),
+	{ virtual: true }
+);
+jest.mock( '../../components/escalation-button', () => ( {
+	EscalationButton: mockEscalationButton,
+} ) );
+jest.mock( '../is-editor-page' );
+
 import UnavailableToolMessage from '../../components/unavailable-tool-message';
 import convertToolMessagesToComponents from '../convert-tool-messages-to-components';
 import { isEditorPage } from '../is-editor-page';
@@ -7,19 +25,6 @@ import {
 	JETPACK_AI_SHOW_COMPONENT_TOOL_ID,
 } from '../show-component-tools';
 import type { UIMessage } from '@automattic/agenttic-client';
-
-jest.mock(
-	'@automattic/components',
-	() => ( {
-		SummaryButton: () => null,
-		FoldableCard: () => null,
-	} ),
-	{ virtual: true }
-);
-jest.mock( '@automattic/zendesk-client', () => ( {
-	useGetZendeskConversations: () => ( { conversations: [], isLoading: false } ),
-} ) );
-jest.mock( '../is-editor-page' );
 
 const MockComponent = jest.fn();
 const mockOnSubmit = jest.fn();
@@ -80,6 +85,33 @@ describe( 'convertToolMessagesToComponents', () => {
 			content: [ { type: 'text', text: 'This is only context for the model.' } ],
 			context: { flags: { context_only: true } },
 		} as Partial< UIMessage > );
+
+		const result = convertWithDefaults( {
+			messages: [ message ],
+		} );
+
+		expect( result ).toEqual( [] );
+	} );
+
+	it( 'filters out messages transformed to context content', () => {
+		const message = createMessage( {
+			content: [ { type: 'context', text: 'This is only context for the model.' } ],
+		} );
+
+		const result = convertWithDefaults( {
+			messages: [ message ],
+		} );
+
+		expect( result ).toEqual( [] );
+	} );
+
+	it( 'filters out messages with context-only data flags', () => {
+		const message = createMessage( {
+			content: [
+				{ type: 'text', text: 'This is only context for the model.' },
+				{ type: 'data', data: { flags: { context_only: true } } },
+			],
+		} );
 
 		const result = convertWithDefaults( {
 			messages: [ message ],
@@ -278,6 +310,19 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 	} );
 
+	it( 'filters out unsuccessful apply-block-edits tool summaries', () => {
+		const message = createToolMessage( 'big_sky__apply_block_edits', {
+			success: false,
+			summary: 'Tried to update the header, but it did not stick.',
+		} );
+
+		const result = convertWithDefaults( {
+			messages: [ message ],
+		} );
+
+		expect( result ).toEqual( [] );
+	} );
+
 	it( 'suppresses transient thinking for converted apply-block-edits messages', () => {
 		const message = createToolMessage( 'big_sky__apply_block_edits', {
 			followUpTasks: true,
@@ -361,7 +406,10 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result ).toHaveLength( 1 );
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
 			type: 'component',
-			component: EscalationButton,
+			component: mockEscalationButton,
+			componentProps: {
+				messageId: 'msg-1',
+			},
 		} );
 	} );
 

@@ -173,8 +173,8 @@ function ResponsiveMenu( {
 									className="dashboard-menu__item"
 									variant="tertiary"
 									{ ...child.props }
-									onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
-										child.props.onClick?.( e );
+									onClick={ ( event: React.MouseEvent< HTMLButtonElement > ) => {
+										child.props.onClick?.( event );
 										recordTracksEvent( 'calypso_dashboard_menu_item_click', {
 											to: child.props.href ?? '',
 										} );
@@ -191,8 +191,8 @@ function ResponsiveMenu( {
 						return (
 							<Menu.Item
 								{ ...child.props }
-								onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
-									child.props.onClick?.( e );
+								onClick={ ( event: React.MouseEvent< HTMLButtonElement > ) => {
+									child.props.onClick?.( event );
 									recordTracksEvent( 'calypso_dashboard_menu_item_click', {
 										to: child.props.to ?? '',
 									} );
@@ -270,8 +270,8 @@ function ResponsiveMenu( {
 								return (
 									<Menu.ItemLink
 										{ ...child.props }
-										onClick={ () => {
-											child.props.onClick?.();
+										onClick={ ( event ) => {
+											child.props.onClick?.( event );
 											recordTracksEvent( 'calypso_dashboard_menu_item_click', {
 												to: child.props.href ?? '',
 											} );
@@ -288,9 +288,9 @@ function ResponsiveMenu( {
 							return (
 								<RouterLinkMenuItem
 									{ ...child.props }
-									onClick={ ( e ) => {
+									onClick={ ( event ) => {
 										onClose();
-										child.props.onClick?.( e );
+										child.props.onClick?.( event );
 										recordTracksEvent( 'calypso_dashboard_menu_item_click', {
 											to: child.props.to ?? '',
 										} );

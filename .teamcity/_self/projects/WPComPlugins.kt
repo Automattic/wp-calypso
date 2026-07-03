@@ -1,6 +1,7 @@
 package _self.projects
 
 import _self.bashNodeScript
+import _self.lib.utils.allBranchesExceptMergeQueue
 import _self.lib.utils.mergeTrunk
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
@@ -100,6 +101,7 @@ object CalypsoApps: BuildType({
 
 	vcs {
 		root(Settings.WpCalypso)
+		branchFilter = allBranchesExceptMergeQueue()
 		cleanCheckout = true
 	}
 
@@ -194,6 +196,7 @@ private object GutenbergUploadSourceMapsToSentry: BuildType() {
 		// Only needed so that we can test the job in different branches.
 		vcs {
 			root(Settings.WpCalypso)
+			branchFilter = allBranchesExceptMergeQueue()
 			cleanCheckout = true
 		}
 

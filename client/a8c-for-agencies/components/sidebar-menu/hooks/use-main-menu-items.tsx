@@ -1,5 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Badge } from '@automattic/components';
 import {
 	category,
 	currencyDollar,
@@ -15,6 +14,7 @@ import {
 	chartBar,
 	box,
 	shortcode,
+	megaphone,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -45,6 +45,7 @@ import {
 	A4A_RESOURCES_LINK,
 	A4A_AGENT_STUDIO_LINK,
 	A4A_EXCLUSIVE_OFFERS_LINK,
+	A4A_AMPLIFY_LINK,
 } from '../lib/constants';
 import { createItem } from '../lib/utils';
 
@@ -155,12 +156,8 @@ const useMainMenuItems = ( path: string ) => {
 				icon: chartBar,
 				path: A4A_REPORTS_LINK,
 				link: A4A_REPORTS_LINK,
-				title: (
-					<div className="sidebar-menu-item__title-with-badge">
-						<span>{ translate( 'Reports' ) }</span>
-						<Badge type="info">{ translate( 'Beta' ) }</Badge>
-					</div>
-				),
+				title: translate( 'Reports' ),
+				badge: translate( 'Beta' ),
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / Reports',
 				},
@@ -238,6 +235,21 @@ const useMainMenuItems = ( path: string ) => {
 							trackEventProps: {
 								menu_item: 'Automattic for Agencies / Team',
 							},
+						},
+				  ]
+				: [] ),
+			...( isSectionNameEnabled( 'a8c-for-agencies-amplify' )
+				? [
+						{
+							icon: megaphone,
+							path: A4A_AMPLIFY_LINK,
+							link: A4A_AMPLIFY_LINK,
+							title: translate( 'Amplify' ),
+							badge: translate( 'Alpha' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Amplify',
+							},
+							withChevron: true,
 						},
 				  ]
 				: [] ),

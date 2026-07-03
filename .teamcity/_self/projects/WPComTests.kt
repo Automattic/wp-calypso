@@ -178,7 +178,8 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				triggerBuild = always()
 				withPendingChangesOnly = false
 			}
-		}
+		},
+		vcsBranchFilter = allBranchesExceptMergeQueue()
 	)
 }
 
@@ -193,6 +194,7 @@ fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 
 		vcs {
 			root(Settings.WpCalypso)
+			branchFilter = allBranchesExceptMergeQueue()
 			cleanCheckout = true
 		}
 
@@ -249,6 +251,7 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 
 		vcs {
 			root(Settings.WpCalypso)
+			branchFilter = allBranchesExceptMergeQueue()
 			cleanCheckout = true
 		}
 
@@ -322,6 +325,7 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 
 		vcs {
 			root(Settings.WpCalypso)
+			branchFilter = allBranchesExceptMergeQueue()
 			cleanCheckout = true
 		}
 

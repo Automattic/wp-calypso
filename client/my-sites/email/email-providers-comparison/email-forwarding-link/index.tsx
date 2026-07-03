@@ -30,6 +30,10 @@ const EmailForwardingLink = ( { selectedDomainName }: EmailForwardingLinkProps )
 		return null;
 	}
 
+	if ( domain.isGravatarDomain ) {
+		return null;
+	}
+
 	const hasExistingEmailForwards = hasEmailForwards( domain );
 
 	if ( hasExistingEmailForwards ) {

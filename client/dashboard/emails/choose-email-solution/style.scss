@@ -19,7 +19,7 @@
 	padding: 20px;
 	justify-content: flex-start;
 
-	&:not(:first-child) {
+	&:not( :first-child ) {
 		border-top: 1px solid var( --dashboard-surface__border-color, #{$gray-200} );
 
 		@include break-small {
@@ -52,12 +52,59 @@
 	justify-content: center;
 }
 
+.choose-email-solution-narrow {
+	width: 100%;
+	max-width: 660px;
+	margin-inline: auto;
+}
+
+.choose-email-solution-wide {
+	width: 100%;
+	max-width: 1032px;
+	margin-inline: auto;
+}
+
+.email-titan-plan {
+	flex: 1 1 0;
+	min-width: 0;
+}
+
+.email-titan-plan-description {
+	min-height: 3rem;
+}
+
+// The card stacks its sections with a 1rem (spacing={ 4 }) gap; the pricing block
+// adds another 1rem so it sits 2rem below the title and description.
+.email-titan-plan-pricing {
+	margin-block-start: 1rem;
+}
+
+// Match the price to the plan header typeface.
+.email-titan-plan-price {
+	font-family: Recoleta, sans-serif;
+}
+
 .email-provider-features {
 	padding: 0;
+	margin: 0;
 	line-height: 28px;
 	list-style: none;
 }
 
+// Reserve the row so lists stay aligned when the first tier omits the title.
+.email-titan-plan-everything-in {
+	min-height: 1.5rem;
+}
+
 .email-provider-powered-by {
 	width: 145px;
+}
+
+// Negative margin so the CTA overlaps its row instead of inflating it.
+.google-workspace-card-action {
+	margin-block: -10px;
+}
+
+.email-titan-plan .email-provider-powered-by {
+	margin-block-start: auto;
 }

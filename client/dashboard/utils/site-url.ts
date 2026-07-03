@@ -1,10 +1,11 @@
 import { ProductUpgradeMap, AkismetUpgradesProductMap } from '@automattic/api-core';
+import config from '@automattic/calypso-config';
 import { addQueryArgs } from '@wordpress/url';
 import { getCurrentDashboard } from '../app/routing';
 import { isSitePlanTrial, isSitePlanWooHosted } from '../sites/plans';
 import { isDashboardBackport } from './is-dashboard-backport';
 import { dashboardLink, redirectToDashboardLink, wpcomLink } from './link';
-import { isAkismetProduct, isJetpackT1SecurityPlan } from './purchase';
+import { isAkismetProduct, isJetpackT1SecurityPlan, isTitanMail } from './purchase';
 import { isSelfHostedJetpackConnected } from './site-types';
 import type { Purchase, Site } from '@automattic/api-core';
 
@@ -113,6 +114,11 @@ export function getChangedPlanRedirectUrl(): string {
 }
 
 export function getSitePurchaseUpgradeUrl( purchase: Purchase, redirectTo?: string ) {
+	// Titan plans upgrade through the email tier grid, not the generic checkout.
+	if ( config.isEnabled( 'emails/titan-tiers' ) && isTitanMail( purchase ) && purchase.meta ) {
+		return dashboardLink( `/emails/choose-email-solution/${ purchase.meta }?intent=upgrade` );
+	}
+
 	if ( isAkismetProduct( purchase ) ) {
 		// For the first Iteration of Calypso Akismet checkout we are only suggesting
 		// for immediate upgrades to the next plan. We will change this in the future

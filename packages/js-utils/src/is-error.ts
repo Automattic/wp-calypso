@@ -1,42 +1,8 @@
-const nativeObjectToString = Object.prototype.toString;
+import getTag from './get-tag';
+
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 const funcToString = Function.prototype.toString;
 const objectCtorString = funcToString.call( Object );
-const symToStringTag = Symbol.toStringTag;
-
-/**
- * Reads a value's internal tag while ignoring a spoofed `Symbol.toStringTag`, by
- * temporarily unsetting the symbol before calling `Object.prototype.toString`.
- * Mirrors lodash's `getRawTag` so a value can't masquerade as another type.
- */
-const getRawTag = ( value: Record< symbol, unknown > ): string => {
-	const isOwn = hasOwnProperty.call( value, symToStringTag );
-	const tag = value[ symToStringTag ];
-	let unmasked = false;
-
-	try {
-		value[ symToStringTag ] = undefined;
-		unmasked = true;
-	} catch {
-		// The value can't be mutated (e.g. frozen); fall back to its current tag.
-	}
-
-	const result = nativeObjectToString.call( value );
-
-	if ( unmasked ) {
-		if ( isOwn ) {
-			value[ symToStringTag ] = tag;
-		} else {
-			delete value[ symToStringTag ];
-		}
-	}
-	return result;
-};
-
-const getTag = ( value: object ): string =>
-	symToStringTag in value
-		? getRawTag( value as Record< symbol, unknown > )
-		: nativeObjectToString.call( value );
 
 // Mirrors lodash's `isPlainObject`, including its constructor-string check so
 // cross-realm plain objects (e.g. from another iframe) are still recognized as

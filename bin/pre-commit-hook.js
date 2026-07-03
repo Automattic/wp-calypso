@@ -3,10 +3,18 @@ const spawnSync = require( 'child_process' ).spawnSync;
 const existsSync = require( 'fs' ).existsSync;
 const path = require( 'path' );
 const chalk = require( 'chalk' );
-const _ = require( 'lodash' );
 
 const phpcsPath = getPathForCommand( 'phpcs' );
 const phpcbfPath = getPathForCommand( 'phpcbf' );
+
+// Groups an array's items into an object keyed by the iteratee's return value.
+function groupBy( collection, iteratee ) {
+	return collection.reduce( ( groups, item ) => {
+		const key = iteratee( item );
+		( groups[ key ] = groups[ key ] || [] ).push( item );
+		return groups;
+	}, {} );
+}
 
 function quotedPath( pathToQuote ) {
 	if ( pathToQuote.includes( ' ' ) ) {
@@ -102,7 +110,7 @@ const {
 	toPrettify = [],
 	toStylelintfix = [],
 	toPHPCBF = [],
-} = _.groupBy( toFormat, ( file ) => {
+} = groupBy( toFormat, ( file ) => {
 	switch ( true ) {
 		case file.endsWith( '.scss' ):
 			return 'toStylelintfix';
@@ -117,12 +125,13 @@ const {
 toPrettify.forEach( ( file ) => console.log( `Prettier formatting staged file: ${ file }` ) );
 if ( toPrettify.length ) {
 	// chunk this up into multiple runs if we have a lot of files to avoid E2BIG
-	_.chunk( toPrettify, 500 ).forEach( ( chunk ) => {
+	for ( let i = 0; i < toPrettify.length; i += 500 ) {
+		const batch = toPrettify.slice( i, i + 500 );
 		execSync(
-			`./node_modules/.bin/prettier --ignore-path .eslintignore --write ${ chunk.join( ' ' ) }`
+			`./node_modules/.bin/prettier --ignore-path .eslintignore --write ${ batch.join( ' ' ) }`
 		);
-		execSync( `git add ${ chunk.join( ' ' ) }` );
-	} );
+		execSync( `git add ${ batch.join( ' ' ) }` );
+	}
 }
 
 // Format the sass files with stylelint and then re-stage them. Swallow the output.
@@ -156,7 +165,7 @@ const {
 	toEslint = [],
 	toStylelint = [],
 	toPHPCS = [],
-} = _.groupBy(
+} = groupBy(
 	files.filter( ( file ) => ! file.endsWith( '.json' ) ),
 	( file ) => {
 		switch ( true ) {

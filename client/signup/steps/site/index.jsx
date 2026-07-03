@@ -1,9 +1,9 @@
 import config from '@automattic/calypso-config';
 import { FormLabel } from '@automattic/components';
 import { getLanguage } from '@automattic/i18n-utils';
+import { isEmpty } from '@automattic/js-utils';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';

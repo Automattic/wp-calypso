@@ -353,7 +353,7 @@ export default function useAgentLayoutManager( {
 							className="agents-manager-sidebar-fab"
 							icon={ AI }
 							onClick={ handleOpenSidebar }
-							label={ __( 'Open Chat', '__i18n_text_domain__' ) }
+							label={ __( 'Open Chat', __i18n_text_domain__ ) }
 						/>
 					</>
 				) : (

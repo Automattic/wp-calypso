@@ -35,7 +35,6 @@
 const { existsSync, mkdirSync, writeFileSync } = require( 'fs' );
 const { relative, sep } = require( 'path' );
 const { po } = require( 'gettext-parser' );
-const { merge, isEmpty } = require( 'lodash' );
 
 /**
  * Default output headers if none specified in plugin options.
@@ -201,6 +200,24 @@ function mergeStrings( source, target ) {
 	}
 }
 
+/**
+ * Builds the POT data for output by combining the extracted `strings` into a
+ * copy of `baseData`. Translations are merged per context so the base header
+ * entry (the empty context / empty msgid that carries the PO headers) is
+ * preserved rather than replaced by same-context extracted strings. `baseData`
+ * is not mutated.
+ * @param   {Object} baseData the base POT data (headers plus the header translation entry)
+ * @param   {Object} strings  extracted translations keyed by context, then by msgid
+ * @returns {Object} a new POT data object ready for `po.compile`
+ */
+function buildPotData( baseData, strings ) {
+	const translations = { ...baseData.translations };
+	for ( const context of Object.keys( strings ) ) {
+		translations[ context ] = { ...translations[ context ], ...strings[ context ] };
+	}
+	return { ...baseData, translations };
+}
+
 module.exports = function () {
 	let strings = {};
 	let nplurals = 2;
@@ -339,11 +356,11 @@ module.exports = function () {
 					functions = { ...DEFAULT_FUNCTIONS_ARGUMENTS_ORDER };
 				},
 				exit( path, state ) {
-					if ( isEmpty( strings ) ) {
+					if ( Object.keys( strings ).length === 0 ) {
 						return;
 					}
 
-					const data = merge( {}, baseData, { translations: strings } );
+					const data = buildPotData( baseData, strings );
 
 					const compiled = po.compile( data );
 
@@ -362,3 +379,5 @@ module.exports = function () {
 
 // Exported for unit testing of the translator-comment extraction logic.
 module.exports.getExtractedComment = getExtractedComment;
+// Exported for unit testing of the POT-data assembly.
+module.exports.buildPotData = buildPotData;

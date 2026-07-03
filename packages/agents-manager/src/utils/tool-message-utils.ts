@@ -6,6 +6,7 @@ const DISPLAYABLE_TOOL_MESSAGE_TOOL_IDS = new Set( [
 	'big_sky__editor_navigate',
 	'big_sky__restore_checkpoint',
 	'big_sky__open_help_center',
+	'wp_admin__navigate',
 ] );
 
 export function isDisplayableToolMessageTool( toolId: unknown ): toolId is string {

@@ -1,5 +1,4 @@
-import { mapValues } from '@automattic/js-utils';
-import { isEmpty } from 'lodash';
+import { mapValues, isEmpty } from '@automattic/js-utils';
 
 /**
  * Takes existing term post edits and updates the `terms_by_id` attribute

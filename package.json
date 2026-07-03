@@ -230,7 +230,7 @@
 		"i18n-calypso": "workspace:^",
 		"i18n-calypso-cli": "workspace:^",
 		"jsdom": "^20.0.3",
-		"lodash": "^4.17.21",
+		"lodash": "^4.18.1",
 		"lottie-web": "^5.9.6",
 		"moment": "^2.30.1",
 		"photon": "workspace:^",

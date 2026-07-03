@@ -12,7 +12,6 @@ const fs = require( 'fs' );
 const resolve = require( 'path' ).resolve;
 const languages = require( '@automattic/languages' );
 const parse = require( 'gettext-parser' ).po.parse;
-const _ = require( 'lodash' );
 const { hideBin } = require( 'yargs/helpers' );
 const yargs = require( 'yargs/yargs' );
 
@@ -94,6 +93,10 @@ const DECIMAL_POINT_KEY = 'number_format_decimals';
 const DECIMAL_POINT_TRANSLATION = 'number_format_decimal_point';
 const THOUSANDS_SEPARATOR_KEY = 'number_format_thousands_sep';
 const THOUSANDS_SEPARATOR_TRANSLATION = 'number_format_thousands_sep';
+
+// Keys lodash `pick` refuses to set (its prototype-pollution guard), so a
+// translated string named exactly one of these is dropped rather than emitted.
+const PICK_BLOCKED_KEYS = new Set( [ '__proto__', 'constructor', 'prototype' ] );
 
 // Get module reference
 function getModuleReference( ref ) {
@@ -181,24 +184,29 @@ function buildLanguages( downloadedLanguages, languageRevisions ) {
 
 	if ( fs.existsSync( stringsFilePath ) ) {
 		const { translations } = parse( fs.readFileSync( stringsFilePath ) );
-		const translationsFlatten = Object.entries( translations ).reduce(
-			( result, [ context, contextTranslations ] ) => {
-				const mappedTranslations = _.mapKeys( contextTranslations, ( value, key ) => {
-					let mappedKey = key.replace( /\\u([0-9a-fA-F]{4})/g, ( match, matchedGroup ) =>
-						String.fromCharCode( parseInt( matchedGroup, 16 ) )
-					);
+		// Flatten every context's translations into one object, keyed by an
+		// unescaped, context-prefixed key. Those keys are unique per context, so a
+		// plain assignment accumulates them the same way the previous deep merge did.
+		const translationsFlatten = {};
+		for ( const [ context, contextTranslations ] of Object.entries( translations ) ) {
+			for ( const [ key, value ] of Object.entries( contextTranslations ) ) {
+				let mappedKey = key.replace( /\\u([0-9a-fA-F]{4})/g, ( match, matchedGroup ) =>
+					String.fromCharCode( parseInt( matchedGroup, 16 ) )
+				);
 
-					if ( context ) {
-						mappedKey = context + String.fromCharCode( 4 ) + mappedKey;
-					}
+				if ( context ) {
+					mappedKey = context + String.fromCharCode( 4 ) + mappedKey;
+				}
 
-					return mappedKey;
-				} );
+				// Skip `__proto__`: assigning it would mutate the prototype instead of
+				// adding a key, and lodash's merge dropped it too.
+				if ( mappedKey === '__proto__' ) {
+					continue;
+				}
 
-				return _.merge( result, mappedTranslations );
-			},
-			{}
-		);
+				translationsFlatten[ mappedKey ] = value;
+			}
+		}
 
 		const translationsByRef = Object.keys( translationsFlatten ).reduce( ( acc, key ) => {
 			const originalRef = translationsFlatten[ key ].comments?.reference;
@@ -244,7 +252,15 @@ function buildLanguages( downloadedLanguages, languageRevisions ) {
 
 		const languageRevisionsHashes = {};
 		successfullyDownloadedLanguages.forEach( ( { langSlug, languageTranslations } ) => {
-			const cmdPaletteTranslations = _.pick( languageTranslations, allModulesStrings );
+			const cmdPaletteTranslations = {};
+			for ( const key of allModulesStrings ) {
+				// Match lodash `pick`, which drops these protected keys — and skipping
+				// `__proto__` also avoids mutating the prototype here or in the
+				// generated output that embeds this object as a literal.
+				if ( ! PICK_BLOCKED_KEYS.has( key ) && Object.hasOwn( languageTranslations, key ) ) {
+					cmdPaletteTranslations[ key ] = languageTranslations[ key ];
+				}
+			}
 			cmdPaletteTranslations[ DECIMAL_POINT_KEY ] =
 				languageTranslations[ DECIMAL_POINT_TRANSLATION ];
 			cmdPaletteTranslations[ THOUSANDS_SEPARATOR_KEY ] =

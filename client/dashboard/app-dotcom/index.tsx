@@ -44,7 +44,7 @@ boot( {
 		commandPalette: false,
 		domainOnlySites: true,
 		siteOverview: {
-			preview: ! isEnabled( 'dashboard/omnibar' ),
+			preview: false,
 		},
 		colorScheme: isEnabled( 'dark-mode' ),
 		darkMode: isEnabled( 'dark-mode' ),

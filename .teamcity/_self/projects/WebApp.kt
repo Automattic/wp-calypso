@@ -3,6 +3,8 @@ package _self.projects
 import Settings
 import _self.bashNodeScript
 import _self.lib.customBuildType.E2EBuildType
+import _self.lib.utils.allBranchesExceptMergeQueue
+import _self.lib.utils.excludeMergeQueueBranches
 import _self.lib.utils.mergeTrunk
 import _self.CalypsoE2ETestsBuildTemplate
 
@@ -46,6 +48,7 @@ object BuildDockerImage : BuildType({
     )
 
     val imageBase = "registry.a8c.com/calypso/app"
+	val commitImageExistsParam = "dockerImage.commitImageExists"
 	val baseUrl = "https://calypso.live"
 
     val environments = listOf(
@@ -170,6 +173,36 @@ object BuildDockerImage : BuildType({
 		}
 
 		script {
+			name = "Reuse existing commit image"
+			conditions {
+				equals("teamcity.build.branch.is_default", "true")
+			}
+			scriptContent = """
+				#!/usr/bin/env bash
+				set -euo pipefail
+
+				commit_image="$imageBase:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}"
+				build_image="$imageBase:build-%build.number%"
+				latest_image="$imageBase:latest"
+
+				if ! docker manifest inspect "${'$'}commit_image" > /dev/null 2>&1; then
+					echo "No existing Docker image found for ${'$'}commit_image."
+					exit 0
+				fi
+
+				echo "Reusing existing Docker image for ${Settings.WpCalypso.paramRefs.buildVcsNumber}: ${'$'}commit_image"
+
+				docker pull "${'$'}commit_image"
+				docker tag "${'$'}commit_image" "${'$'}build_image"
+				docker tag "${'$'}commit_image" "${'$'}latest_image"
+				docker push "${'$'}build_image"
+
+				echo "##teamcity[setParameter name='$commitImageExistsParam' value='true']"
+				echo "##teamcity[buildStatus status='SUCCESS' text='Reused existing Docker image for this commit']"
+			"""
+		}
+
+		script {
 			name = "Post PR comment"
 			conditions {
 				doesNotEqual("teamcity.build.branch.is_default", "true")
@@ -194,6 +227,9 @@ object BuildDockerImage : BuildType({
 
 		script {
 			name = "Check Docker workspace COPY globs"
+			conditions {
+				doesNotEqual(commitImageExistsParam, "true")
+			}
 			scriptContent = """
 				#!/usr/bin/env bash
 				node ./bin/check-docker-workspace-copy-globs.mjs
@@ -221,6 +257,9 @@ object BuildDockerImage : BuildType({
 
 		dockerCommand {
 			name = "Build docker image"
+			conditions {
+				doesNotEqual(commitImageExistsParam, "true")
+			}
 			commandType = build {
 				source = file {
 					path = "Dockerfile"
@@ -236,6 +275,9 @@ object BuildDockerImage : BuildType({
 		}
 
 		dockerCommand {
+			conditions {
+				doesNotEqual(commitImageExistsParam, "true")
+			}
 			commandType = push {
 				namesAndTags = """
 					registry.a8c.com/calypso/app:build-%build.number%
@@ -317,6 +359,7 @@ object BuildDockerImage : BuildType({
 		dockerCommand {
 			name = "Rebuild cache image"
 			conditions {
+				doesNotEqual(commitImageExistsParam, "true")
 				equals("cache_mode", "base")
 				equals("UPDATE_BASE_IMAGE_CACHE", "true")
 				equals("teamcity.build.branch.is_default", "true")
@@ -338,6 +381,7 @@ object BuildDockerImage : BuildType({
 		dockerCommand {
 			name = "Push cache image"
 			conditions {
+				doesNotEqual(commitImageExistsParam, "true")
 				equals("cache_mode", "base")
 				equals("UPDATE_BASE_IMAGE_CACHE", "true")
 				equals("teamcity.build.branch.is_default", "true")
@@ -418,7 +462,6 @@ object RunAllUnitTests : BuildType({
 	}
 
 	steps {
-		mergeTrunk()
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
@@ -523,18 +566,6 @@ object RunAllUnitTests : BuildType({
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = "./bin/unit-test-suite.mjs"
 		}
-		bashNodeScript {
-			name = "Tag build"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
-			conditions {
-				equals("teamcity.build.branch.is_default", "true")
-			}
-			scriptContent = """
-				set -x
-
-				curl -s -X POST -H "Content-Type: text/plain" --data "release-candidate" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" "%teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/"
-			""".trimIndent()
-		}
 	}
 
 	triggers {
@@ -542,6 +573,7 @@ object RunAllUnitTests : BuildType({
 			branchFilter = """
 				+:*
 				-:pull*
+				-:trunk
 			""".trimIndent()
 		}
 	}
@@ -582,7 +614,7 @@ object RunAllUnitTests : BuildType({
 				messageFormat = simpleMessageFormat()
 			}
 			branchFilter = """
-				+:trunk
+				+:gh-readonly-queue/*
 			""".trimIndent()
 			buildFailedToStart = true
 			buildFailed = true
@@ -799,6 +831,7 @@ object Translate : BuildType({
 
 	vcs {
 		root(Settings.WpCalypso)
+		branchFilter = allBranchesExceptMergeQueue()
 		cleanCheckout = true
 	}
 
@@ -875,7 +908,7 @@ object Translate : BuildType({
 			branchFilter = """
 				+:*
 				-:pull*
-			""".trimIndent()
+			""".excludeMergeQueueBranches()
 		}
 	}
 
@@ -935,6 +968,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 				}
 			}
 		},
+		vcsBranchFilter = allBranchesExceptMergeQueue(),
 		enableCommitStatusPublisher = true,
 		buildTriggers = {
 			vcs {
@@ -942,7 +976,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 					+:*
 					-:pull*
 					-:trunk
-				""".trimIndent()
+				""".excludeMergeQueueBranches()
 				triggerRules = """
 					-:**.md
 				""".trimIndent()
@@ -993,7 +1027,7 @@ object PlaywrightTestPRMatrix : BuildType({
 				+:*
 				-:pull*
 				-:trunk
-			""".trimIndent()
+			""".excludeMergeQueueBranches()
 			triggerRules = """
 				-:**.md
 			""".trimIndent()
@@ -1081,7 +1115,7 @@ object PlaywrightTestDashboardPRMatrix : BuildType({
 				+:*
 				-:pull*
 				-:trunk
-			""".trimIndent()
+			""".excludeMergeQueueBranches()
 			triggerRules = """
 				-:**.md
 				+:client/dashboard/**
@@ -1135,7 +1169,7 @@ object PlaywrightTestA4APRMatrix : BuildType({
 				+:*
 				-:pull*
 				-:trunk
-			""".trimIndent()
+			""".excludeMergeQueueBranches()
 			triggerRules = """
 				-:**.md
 				+:client/a8c-for-agencies/**
@@ -1166,6 +1200,7 @@ object JestPreReleaseE2ETests : BuildType({
 
 	vcs {
 		root(Settings.WpCalypso)
+		branchFilter = allBranchesExceptMergeQueue()
 		cleanCheckout = true
 	}
 
@@ -1307,6 +1342,7 @@ object PreReleaseE2ETests : BuildType({
 
 	vcs {
 		root(Settings.WpCalypso)
+		branchFilter = allBranchesExceptMergeQueue()
 		cleanCheckout = true
 	}
 

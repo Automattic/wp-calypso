@@ -33,6 +33,18 @@ const mockAgentChat = jest.fn(
 			<button onClick={ () => onSuggestionClick( 'Check the grammar and spelling of this text' ) }>
 				Click string suggestion
 			</button>
+			<button
+				onClick={ () =>
+					onSuggestionClick( {
+						id: 'weekly-brief',
+						label: 'Walk me through the attached weekly brief',
+						prompt: 'Walk me through the attached weekly brief',
+						autoSubmit: true,
+					} )
+				}
+			>
+				Click auto-submit suggestion
+			</button>
 			<button onClick={ () => onSubmit( 'Describe these images' ) }>Submit with images</button>
 			<ul data-testid="empty-view-suggestions">
 				{ emptyViewSuggestions.map( ( suggestion ) => (
@@ -162,6 +174,7 @@ describe( 'OrchestratorChat', () => {
 		expect( listener ).toHaveBeenCalledTimes( 1 );
 		expect( ( listener.mock.calls[ 0 ][ 0 ] as CustomEvent ).detail ).toEqual( {
 			value: 'Simplify this text to make it easier to read',
+			autoSubmit: false,
 		} );
 
 		window.removeEventListener( 'big-sky-inline-suggestion-click', listener );
@@ -191,7 +204,45 @@ describe( 'OrchestratorChat', () => {
 		expect( listener ).toHaveBeenCalledTimes( 1 );
 		expect( ( listener.mock.calls[ 0 ][ 0 ] as CustomEvent ).detail ).toEqual( {
 			value: 'Check the grammar and spelling of this text',
+			autoSubmit: false,
 		} );
+
+		window.removeEventListener( 'big-sky-inline-suggestion-click', listener );
+	} );
+
+	it( 'flags auto-submit suggestions so the input is not repopulated', () => {
+		const listener = jest.fn();
+		window.addEventListener( 'big-sky-inline-suggestion-click', listener );
+
+		render(
+			<OrchestratorChat
+				emptyViewSuggestions={ [] }
+				isDocked={ false }
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		fireEvent.click( screen.getByText( 'Click auto-submit suggestion' ) );
+
+		// The event still fires so click listeners (e.g. the Jetpack sidebar hiding the
+		// clicked chip) keep working, but it carries `autoSubmit` so the input listener
+		// skips repopulating the composer the AgentUI already submitted and cleared.
+		expect( listener ).toHaveBeenCalledTimes( 1 );
+		expect( ( listener.mock.calls[ 0 ][ 0 ] as CustomEvent ).detail ).toEqual( {
+			value: 'Walk me through the attached weekly brief',
+			autoSubmit: true,
+		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'chat_suggestion_click',
+			expect.objectContaining( { suggestion_id: 'weekly-brief' } )
+		);
 
 		window.removeEventListener( 'big-sky-inline-suggestion-click', listener );
 	} );
