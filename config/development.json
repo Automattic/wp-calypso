@@ -54,7 +54,6 @@
 		"blackbox-login": true,
 		"calypso/ai-blogging-prompts": true,
 		"calypso/ai-site-builder-flow": true,
-		"calypso/ai-site-builder-onboarding-flow": true,
 		"calypso/all-domain-management": true,
 		"calypso/big-sky": true,
 		"calypso/domains-dataviews": true,
