@@ -39,7 +39,8 @@ const fields: Field< LegacyContactFormData >[] = [
 					__nextHasNoMarginBottom
 					value={ getValue( { item: data } ) || '' }
 					onChange={ ( value ) => onChange( { [ id ]: value } ) }
-					label={ hideLabelFromVision ? undefined : field.label }
+					label={ field.label }
+					hideLabelFromVision={ hideLabelFromVision }
 					help={ __(
 						'We won’t share these notes with your legacy contact. Record any wishes, such as which sites to transfer.'
 					) }
