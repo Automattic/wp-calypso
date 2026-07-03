@@ -11,6 +11,8 @@ import { ButtonStack } from '../../components/button-stack';
 import { SectionHeader } from '../../components/section-header';
 import type { Field } from '@wordpress/dataviews';
 
+const LEGACY_CONTACT_NOTES_MAX_LENGTH = 500;
+
 interface LegacyContactFormData {
 	email: string;
 	notes: string;
@@ -39,8 +41,9 @@ const fields: Field< LegacyContactFormData >[] = [
 					onChange={ ( value ) => onChange( { [ id ]: value } ) }
 					label={ hideLabelFromVision ? undefined : field.label }
 					help={ __(
-						'We won’t share these notes with your legacy contact. Use them to record any wishes, such as which sites to transfer.'
+						'We won’t share these notes with your legacy contact. Record any wishes, such as which sites to transfer.'
 					) }
+					maxLength={ LEGACY_CONTACT_NOTES_MAX_LENGTH }
 					rows={ 3 }
 				/>
 			);
@@ -84,7 +87,7 @@ export default function LegacyContactForm() {
 	};
 
 	return (
-		<form onSubmit={ handleSubmit }>
+		<form className="legacy-contact-form" onSubmit={ handleSubmit }>
 			<VStack spacing={ 4 }>
 				<SectionHeader
 					title={ __( 'Add legacy contact' ) }
