@@ -1,39 +1,15 @@
-type PlainObject = Record< string, unknown >;
+import {
+	assign,
+	isMergeable,
+	pickMergeContainer,
+	safeGet,
+	type PlainObject,
+} from './merge-internal';
 
-const isPlainObject = ( value: unknown ): value is PlainObject => {
-	if ( value === null || typeof value !== 'object' ) {
-		return false;
-	}
-	const proto = Object.getPrototypeOf( value );
-	return proto === null || proto === Object.prototype;
-};
-
-// Values lodash recurses into rather than assigning by reference: arrays and
-// plain objects. Everything else (Dates, class instances, functions, typed
-// arrays, …) is copied by reference.
-const isMergeable = ( value: unknown ): boolean => Array.isArray( value ) || isPlainObject( value );
-
-// Reads `constructor` as absent when it holds the built-in function, so a source
-// `constructor` merges into a fresh own property instead of the real constructor
-// (matching lodash). `__proto__` is skipped entirely in `baseMerge`.
-const safeGet = ( object: PlainObject, key: string ): unknown => {
-	if ( key === 'constructor' && typeof object[ key ] === 'function' ) {
-		return undefined;
-	}
-	return object[ key ];
-};
-
-// Assigns like a sloppy-mode write. `Reflect.set` reports a rejected data-
-// property write — a frozen or sealed object, a non-extensible object gaining a
-// new key, or a non-writable property — as a `false` return rather than
-// throwing, so the merge keeps going, matching lodash (which runs non-strict).
-// Exceptions thrown by a userland setter still propagate, as they do in lodash.
-// A plain strict-mode assignment would instead throw on the rejected write and
-// abort the whole merge.
-const assign = ( target: PlainObject, key: string, value: unknown ): void => {
-	Reflect.set( target, key, value );
-};
-
+// This is kept as its own traversal rather than sharing one engine with
+// `mergeWith`: `merge` intentionally does not track a stack, so a circular
+// source stack-overflows (its documented, tested contract) while `mergeWith`
+// terminates on cycles. Unifying them would silently give `merge` that support.
 function baseMerge( target: PlainObject, source: PlainObject ): void {
 	if ( target === source ) {
 		return;
@@ -49,16 +25,7 @@ function baseMerge( target: PlainObject, source: PlainObject ): void {
 		const objValue = safeGet( target, key );
 
 		if ( isMergeable( srcValue ) ) {
-			// Reuse a compatible destination container so nested objects merge in
-			// place; otherwise start a fresh container to deep-copy into.
-			let newValue: PlainObject | unknown[];
-			if ( Array.isArray( srcValue ) ) {
-				newValue = Array.isArray( objValue ) ? objValue : [];
-			} else if ( objValue !== null && typeof objValue === 'object' ) {
-				newValue = objValue as PlainObject;
-			} else {
-				newValue = {};
-			}
+			const newValue = pickMergeContainer( objValue, srcValue );
 			baseMerge( newValue as PlainObject, srcValue as PlainObject );
 			// Skip the write when the container was reused (already in place).
 			if ( newValue !== objValue ) {

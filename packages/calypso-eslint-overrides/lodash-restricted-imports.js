@@ -63,6 +63,12 @@ const MERGE_MESSAGE =
 	'Please use `merge` from `@automattic/js-utils` instead of lodash `merge`. It deep-merges ' +
 	'plain JSON-like data (own enumerable properties, dense arrays) and does not merge inherited ' +
 	'properties, materialize sparse-array holes, or handle circular references.';
+// The js-utils mergeWith shares merge's narrower-than-lodash scope (own
+// enumerable properties, dense arrays); its customizer contract matches lodash.
+const MERGEWITH_MESSAGE =
+	'Please use `mergeWith` from `@automattic/js-utils` instead of lodash `mergeWith`. It takes the ' +
+	'same trailing customizer but deep-merges only plain JSON-like data (own enumerable properties, ' +
+	'dense arrays) and does not merge inherited properties or materialize sparse-array holes.';
 const COMPACT_MESSAGE = 'Please use `array.filter( Boolean )` instead of lodash `compact`.';
 const FLATTEN_MESSAGE = 'Please use native `array.flatMap()` / `array.flat()` instead.';
 const DEFER_MESSAGE = 'Please use native `setTimeout( fn, 0 )` instead of lodash `defer`.';
@@ -180,6 +186,7 @@ const paths = [
 	{ name: 'lodash', importNames: [ 'clone' ], message: CLONE_MESSAGE },
 	{ name: 'lodash', importNames: [ 'cloneDeep' ], message: CLONE_DEEP_MESSAGE },
 	{ name: 'lodash', importNames: [ 'merge' ], message: MERGE_MESSAGE },
+	{ name: 'lodash', importNames: [ 'mergeWith' ], message: MERGEWITH_MESSAGE },
 	{ name: 'lodash', importNames: [ 'property' ], message: PROPERTY_MESSAGE },
 	{ name: 'lodash', importNames: [ 'maxBy', 'minBy' ], message: EXTREMUM_MESSAGE },
 	{ name: 'lodash', importNames: [ 'partition' ], message: PARTITION_MESSAGE },
@@ -224,6 +231,7 @@ const patterns = [
 	{ group: [ 'lodash/clone' ], message: CLONE_MESSAGE },
 	{ group: [ 'lodash/cloneDeep' ], message: CLONE_DEEP_MESSAGE },
 	{ group: [ 'lodash/merge' ], message: MERGE_MESSAGE },
+	{ group: [ 'lodash/mergeWith' ], message: MERGEWITH_MESSAGE },
 	{ group: [ 'lodash/property' ], message: PROPERTY_MESSAGE },
 	{ group: [ 'lodash/maxBy', 'lodash/minBy' ], message: EXTREMUM_MESSAGE },
 	{ group: [ 'lodash/partition' ], message: PARTITION_MESSAGE },
@@ -258,6 +266,7 @@ const patterns = [
 const NAMESPACE_GUARDED = [
 	{ name: 'isEmpty', message: JS_UTILS_MESSAGE },
 	{ name: 'memoize', message: JS_UTILS_MESSAGE },
+	{ name: 'mergeWith', message: MERGEWITH_MESSAGE },
 	{ name: 'unescape', message: UNESCAPE_MESSAGE },
 	{ name: 'sampleSize', message: SAMPLESIZE_MESSAGE },
 	{ name: 'matches', message: MATCHES_MESSAGE },

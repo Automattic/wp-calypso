@@ -1,4 +1,4 @@
-import { mergeWith } from 'lodash';
+import { mergeWith } from '@automattic/js-utils';
 
 /*
  * Applies a metadata edit operation (either update or delete) to an existing array of
