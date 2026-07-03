@@ -1,7 +1,10 @@
 /**
  * @jest-environment jsdom
  */
+import { resolveSelect, useDispatch } from '@wordpress/data';
+import wpcom from 'calypso/lib/wp';
 import { STEPS } from '../../../internals/steps';
+import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import aiSiteBuilderOnboarding from '../ai-site-builder-onboarding';
 
 jest.mock( '@automattic/onboarding', () => ( {
@@ -14,13 +17,17 @@ jest.mock( '@automattic/data-stores', () => ( {
 } ) );
 
 jest.mock( 'calypso/lib/wp', () => ( {
-	req: { post: jest.fn() },
+	req: { post: jest.fn(), get: jest.fn() },
 } ) );
 
 jest.mock( '@wordpress/data', () => ( {
 	dispatch: () => ( { resetOnboardStore: jest.fn() } ),
 	useDispatch: jest.fn(),
 	resolveSelect: jest.fn(),
+} ) );
+
+jest.mock( '../../../../hooks/use-query', () => ( {
+	useQuery: () => ( { get: () => null } ),
 } ) );
 
 jest.mock( 'calypso/landing/stepper/stores', () => ( {
@@ -59,5 +66,65 @@ describe( 'ai-site-builder-onboarding flow', () => {
 			STEPS.PROCESSING.slug,
 			STEPS.ERROR.slug,
 		] );
+	} );
+
+	describe( 'processing → checkout site preparation', () => {
+		const setStaticHomepageOnSite = jest.fn();
+		const setIntentOnSite = jest.fn();
+
+		const runProcessingSubmit = async () => {
+			const navigate = jest.fn();
+			const { submit } = aiSiteBuilderOnboarding.useStepNavigation(
+				STEPS.PROCESSING.slug,
+				navigate
+			);
+
+			await submit?.( {
+				slug: STEPS.PROCESSING.slug,
+				providedDependencies: {
+					processingResult: ProcessingResult.SUCCESS,
+					goToCheckout: true,
+					siteId: 123,
+					siteSlug: 'example.wordpress.com',
+				},
+			} as never );
+		};
+
+		beforeEach( () => {
+			jest.clearAllMocks();
+
+			( useDispatch as jest.Mock ).mockReturnValue( {
+				setStaticHomepageOnSite,
+				setIntentOnSite,
+			} );
+			( resolveSelect as jest.Mock ).mockReturnValue( {
+				getSite: jest.fn().mockResolvedValue( { URL: 'https://example.wordpress.com' } ),
+			} );
+
+			Object.defineProperty( window, 'location', {
+				value: { assign: jest.fn() },
+				writable: true,
+			} );
+		} );
+
+		it( 'creates and sets a Home page when the site has none yet', async () => {
+			( wpcom.req.get as jest.Mock ).mockResolvedValue( [] );
+			( wpcom.req.post as jest.Mock ).mockResolvedValue( { id: 42 } );
+
+			await runProcessingSubmit();
+
+			expect( wpcom.req.post ).toHaveBeenCalledTimes( 1 );
+			expect( setStaticHomepageOnSite ).toHaveBeenCalledWith( 123, 42 );
+			expect( setIntentOnSite ).toHaveBeenCalledWith( 'example.wordpress.com', 'ai-assembler' );
+		} );
+
+		it( 'reuses the existing Home page instead of creating a duplicate on re-entry', async () => {
+			( wpcom.req.get as jest.Mock ).mockResolvedValue( [ { id: 7 } ] );
+
+			await runProcessingSubmit();
+
+			expect( wpcom.req.post ).not.toHaveBeenCalled();
+			expect( setStaticHomepageOnSite ).toHaveBeenCalledWith( 123, 7 );
+		} );
 	} );
 } );

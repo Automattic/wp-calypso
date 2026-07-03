@@ -148,20 +148,31 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 					// Prepare the freshly created site for Big Sky: publish a Home page,
 					// set it as the static homepage, and set the AI Assembler intent so the
 					// editor launches the Site Spec experience on a real page rather than
-					// the index template.
+					// the index template. Reuse an existing Home page if the site was
+					// already prepared so a re-entry doesn't create duplicates.
 					try {
-						const homePage = await wpcom.req.post(
+						const existingPages = await wpcom.req.get(
 							{ path: '/sites/' + siteId + '/pages', apiNamespace: 'wp/v2' },
-							{},
-							{
-								title: 'Home',
-								status: 'publish',
-								content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
-							}
+							{ slug: 'home', status: 'publish', _fields: 'id' }
 						);
+						let homePageId = existingPages?.[ 0 ]?.id as number | undefined;
+
+						if ( ! homePageId ) {
+							const homePage = await wpcom.req.post(
+								{ path: '/sites/' + siteId + '/pages', apiNamespace: 'wp/v2' },
+								{},
+								{
+									title: 'Home',
+									status: 'publish',
+									content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
+								}
+							);
+							homePageId = homePage?.id;
+						}
+
 						await setIntentOnSite( siteSlug, SiteIntent.AIAssembler );
-						if ( homePage?.id ) {
-							await setStaticHomepageOnSite( siteId, homePage.id );
+						if ( homePageId ) {
+							await setStaticHomepageOnSite( siteId, homePageId );
 						}
 					} catch ( error ) {
 						// Fail silently — Big Sky can still launch without the prepared page.
