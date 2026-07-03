@@ -779,25 +779,25 @@ export class EditorPage {
 
 		await inserter.searchBlockInserter( patternName );
 
-		const insertConfirmationToastLocator = exactMatch
-			? editorParent.locator(
-					`.components-snackbar__content:text('Block pattern "${ patternName }" inserted.')`
-			  )
-			: editorParent
-					.locator( '.components-snackbar__content', {
-						hasText: /^Block pattern ".+" inserted\.$/,
-					} )
-					.first();
-
 		const locator = await inserter.selectBlockInserterResult( patternName, {
 			type: 'pattern',
 			exactMatch,
 		} );
 
-		// Wait for either the insertion confirmation toast or the inserted block
-		// to appear. The click uses noWaitAfter for patterns, resolving
-		// immediately after firing, so we race the toast against the block
-		// actually landing in the canvas to avoid missing a fast toast.
+		// Resolve the pattern that was actually selected so the confirmation is
+		// asserted against it, not against "some pattern inserted".
+		const actualPatternName = exactMatch
+			? patternName
+			: ( await locator.getAttribute( 'aria-label' ) ) ?? '';
+
+		// Assert insertion via the toast naming this specific pattern. getByText
+		// with an exact string avoids the selector breaking on a pattern name
+		// that contains quotes. The pattern click uses noWaitAfter and can
+		// resolve before the transient toast is caught, so fall back to the block
+		// landing in the canvas to avoid hanging on a toast that already dismissed.
+		const insertConfirmationToastLocator = editorParent
+			.locator( '.components-snackbar__content' )
+			.getByText( `Block pattern "${ actualPatternName }" inserted.`, { exact: true } );
 		const insertedBlockLocator = editorCanvas
 			.locator( selectors.editorBlock )
 			.nth( editorBlockCountBefore );
@@ -808,9 +808,10 @@ export class EditorPage {
 				insertedBlockLocator.waitFor( { timeout: 15 * 1000 } ),
 			] );
 		} catch ( error ) {
-			throw new Error( `Timed out waiting for pattern "${ patternName }" to finish inserting.`, {
-				cause: error,
-			} );
+			throw new Error(
+				`Timed out waiting for pattern "${ actualPatternName }" to finish inserting.`,
+				{ cause: error }
+			);
 		}
 		return locator;
 	}
