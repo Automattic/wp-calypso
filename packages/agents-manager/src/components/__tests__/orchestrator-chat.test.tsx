@@ -420,6 +420,33 @@ describe( 'OrchestratorChat', () => {
 		);
 	} );
 
+	it( 'does not track chat_suggestions_rendered while the chat is minimized', () => {
+		const staticDefaults: Suggestion[] = [
+			{ id: 'getting-started', label: 'Getting started with WordPress', prompt: 'getting-started' },
+		];
+
+		render(
+			<OrchestratorChat
+				emptyViewSuggestions={ staticDefaults }
+				isDocked={ false }
+				isOpen={ false }
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		expect( screen.queryByText( 'Getting started with WordPress' ) ).toBeNull();
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
+			'chat_suggestions_rendered',
+			expect.anything()
+		);
+	} );
+
 	it( 'fires file_upload_success after images upload on send, with the uploaded media count', async () => {
 		const uploadImagesToWordPress = jest.fn().mockResolvedValue( [
 			{ id: 1, url: 'a' },

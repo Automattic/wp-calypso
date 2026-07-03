@@ -349,10 +349,12 @@ export default function OrchestratorChat( {
 		},
 	} );
 
+	const areSuggestionsVisible = isOpen || isCompactMode;
+
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const maxDynamicSuggestions = isDocked ? undefined : 3;
 	const dynamicSuggestions = useSuggestions?.( maxDynamicSuggestions, {
-		suggestionsVisible: isOpen || isCompactMode,
+		suggestionsVisible: areSuggestionsVisible,
 	} );
 	const dynamicSuggestionsList = dynamicSuggestions?.suggestions ?? [];
 	const dynamicSuggestionsKey = JSON.stringify(
@@ -778,7 +780,11 @@ export default function OrchestratorChat( {
 	// - When there are dynamic suggestions (from block selection, etc.), show those
 	// - Otherwise, show empty view suggestions only when there are no messages AND no input text
 	let displayedEmptyViewSuggestions: Suggestion[] = [];
-	if ( suggestions.length > 0 ) {
+	if ( ! areSuggestionsVisible ) {
+		// Minimized/collapsed: the chat renders no suggestions, so leave the list
+		// empty to avoid firing chat_suggestions_rendered for hidden chips.
+		displayedEmptyViewSuggestions = [];
+	} else if ( suggestions.length > 0 ) {
 		displayedEmptyViewSuggestions = suggestions;
 	} else if (
 		! isLoadingConversation &&
