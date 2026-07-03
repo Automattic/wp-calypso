@@ -15,8 +15,8 @@
 	}
 
 	input[type="checkbox"] {
-		background: #f0f0f0;
-		border-color: #ddd;
+		background: var( --dashboard-surface__background-color );
+		border-color: var( --dashboard-field__border-color );
 		cursor: default;
 		opacity: 1;
 	}

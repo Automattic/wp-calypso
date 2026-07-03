@@ -69,6 +69,14 @@ This mixin generates alias variables for a color palette. For example, the
 	@include color-scheme-dark-theme-color-palette( 'studio-gray', $studio-gray );
 	@include color-scheme-dark-theme-color-palette-alias( 'studio-neutral', 'studio-gray' );
 	@include color-scheme-dark-theme-color-palette-alias( 'color-neutral', 'studio-gray' );
+
+	// Status ramps (used by log/status badges) so their -5/-80 chips get the same
+	// dark-mode color-mix treatment as studio-blue instead of staying light.
+	@include color-scheme-dark-theme-color-palette( 'studio-green', $studio-green-50 );
+	@include color-scheme-dark-theme-color-palette( 'studio-red', $studio-red-50 );
+	@include color-scheme-dark-theme-color-palette( 'studio-yellow', $studio-yellow-50 );
+	@include color-scheme-dark-theme-color-palette( 'studio-orange', $studio-orange-50 );
+	@include color-scheme-dark-theme-color-palette-alias( 'color-deprecated-blue', 'studio-blue' );
 }
 
 // Indicates that this stylesheet supports dark mode, for browser-native UI such as Safari scrollbars.
@@ -343,6 +351,17 @@ This mixin generates alias variables for a color palette. For example, the
 		background-color: var( --wp-admin-theme-color );
 	}
 
+	.components-checkbox-control__input[type='checkbox'] {
+		border-color: var( --dashboard-field__border-color );
+		background: transparent;
+	}
+
+	.components-checkbox-control__input[type='checkbox']:checked,
+	.components-checkbox-control__input[type='checkbox']:indeterminate {
+		border-color: var( --wp-admin-theme-color );
+		background: var( --wp-admin-theme-color );
+	}
+
 	.components-input-control__container:has( .components-input-control__input:disabled ) {
 		background-color: var( --dashboard-surface__background-color );
 		opacity: 0.72;
@@ -417,8 +436,11 @@ This mixin generates alias variables for a color palette. For example, the
 		}
 
 		&::before {
-			background: var( --wp-components-color-gray-800 );
-			border-color: var( --wp-components-color-gray-800 );
+			// Selected-segment backdrop: an accent-tinted surface (matching the
+			// sidebar active state) rather than a flat grey — gray-800 reads as
+			// light-mode in dark. Light text set below.
+			background: color-mix( in srgb, var( --wp-admin-theme-color ) 20%, var( --dashboard-surface__background-color ) );
+			border-color: transparent;
 		}
 	}
 
@@ -433,7 +455,7 @@ This mixin generates alias variables for a color palette. For example, the
 		&[aria-pressed='true'],
 		&[aria-checked='true']:hover:not( [disabled] ):not( [aria-disabled='true'] ),
 		&[aria-pressed='true']:hover:not( [disabled] ):not( [aria-disabled='true'] ) {
-			color: var( --wp-components-color-foreground-inverted );
+			color: var( --dashboard__text-color );
 		}
 	}
 
@@ -701,7 +723,8 @@ This mixin generates alias variables for a color palette. For example, the
 				var( --dashboard-surface__background-color ) 85%,
 				var( --wp-components-color-accent-darker-20 )
 			);
-			color: var( --wp-components-color-accent-darker-20 );
+			// Legible light-accent text; the darker-20 brand blue is unreadable on dark.
+			color: var( --wpds-color-fg-interactive-brand );
 
 			&:hover,
 			&:focus-visible,
@@ -711,17 +734,15 @@ This mixin generates alias variables for a color palette. For example, the
 					var( --dashboard-surface__background-color ) 75%,
 					var( --wp-components-color-accent-darker-20 )
 				);
-				color: var( --wp-components-color-accent-darker-20 );
+				color: var( --wpds-color-fg-interactive-brand );
 			}
 		}
 	}
 
 	.dataviews-filters__container-visibility-toggle .dataviews-filters-toggle__count {
-		background: color-mix(
-			in srgb,
-			var( --dashboard-surface__background-color ) 70%,
-			var( --wp-components-color-accent-darker-20 )
-		);
+		// Solid brand fill so the count reads as a real indicator, not a muddy
+		// navy chip that blends into the toolbar.
+		background: var( --wp-admin-theme-color );
 		color: var( --dashboard__text-color );
 		outline-color: var( --dashboard-surface__background-color );
 	}
@@ -741,7 +762,7 @@ This mixin generates alias variables for a color palette. For example, the
 		}
 
 		&:hover {
-			color: var( --wp-admin-theme-color );
+			color: var( --wpds-color-fg-interactive-brand );
 		}
 	}
 }

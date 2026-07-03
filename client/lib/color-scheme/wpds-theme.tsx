@@ -51,13 +51,21 @@ const { ThemeProvider } = unlock( privateApis ) as {
  * hand-rolled `color-mix()` palette generator that used to live in
  * `dark-theme.scss`.
  *
- * `LIGHT_BG` matches the WPDS default (`#f8f8f8`); `DARK_BG` matches the surface
- * background the legacy dashboard dark theme used (`#1e1e1e`).
+ * `LIGHT_BG` matches the WPDS default (`#f8f8f8`); `DARK_BG` matches the
+ * DS-derived dashboard canvas from PR #111689 (`#14161a`), a cool-tinted dark
+ * rather than a flat neutral gray.
  */
 export const SEED_BACKGROUND: Record< 'light' | 'dark', string > = {
 	light: '#f8f8f8',
-	dark: '#1e1e1e',
+	dark: '#14161a',
 };
+
+/**
+ * Brand seed handed to the provider as `primary`. The provider derives the
+ * per-mode accent from it, so dark regenerates the DS accent (~`#93aef8` in
+ * #111689) from the same WordPress brand blue used in light.
+ */
+const SEED_PRIMARY = '#3858e9';
 
 /**
  * Resolves a stored `ColorScheme` ('light' | 'dark' | 'system') into a concrete
@@ -109,7 +117,11 @@ export function WPDSThemeProvider( {
 	children: ReactNode;
 } ) {
 	return (
-		<ThemeProvider isRoot color={ { bg: SEED_BACKGROUND[ resolvedScheme ] } } density="compact">
+		<ThemeProvider
+			isRoot
+			color={ { primary: SEED_PRIMARY, bg: SEED_BACKGROUND[ resolvedScheme ] } }
+			density="compact"
+		>
 			{ children }
 		</ThemeProvider>
 	);
