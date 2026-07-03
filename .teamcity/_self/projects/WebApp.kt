@@ -4,7 +4,7 @@ import Settings
 import _self.bashNodeScript
 import _self.lib.customBuildType.E2EBuildType
 import _self.lib.utils.allBranchesExceptMergeQueue
-import _self.lib.utils.excludeMergeQueueBranches
+import _self.lib.utils.excludeMergeQueueBranchesAndPullRequests
 import _self.lib.utils.mergeTrunk
 import _self.CalypsoE2ETestsBuildTemplate
 
@@ -908,7 +908,7 @@ object Translate : BuildType({
 			branchFilter = """
 				+:*
 				-:pull*
-			""".excludeMergeQueueBranches()
+			""".excludeMergeQueueBranchesAndPullRequests()
 		}
 	}
 
@@ -976,7 +976,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 					+:*
 					-:pull*
 					-:trunk
-				""".excludeMergeQueueBranches()
+				""".excludeMergeQueueBranchesAndPullRequests()
 				triggerRules = """
 					-:**.md
 				""".trimIndent()
@@ -1027,7 +1027,7 @@ object PlaywrightTestPRMatrix : BuildType({
 				+:*
 				-:pull*
 				-:trunk
-			""".excludeMergeQueueBranches()
+			""".excludeMergeQueueBranchesAndPullRequests()
 			triggerRules = """
 				-:**.md
 			""".trimIndent()
@@ -1115,7 +1115,7 @@ object PlaywrightTestDashboardPRMatrix : BuildType({
 				+:*
 				-:pull*
 				-:trunk
-			""".excludeMergeQueueBranches()
+			""".excludeMergeQueueBranchesAndPullRequests()
 			triggerRules = """
 				-:**.md
 				+:client/dashboard/**
@@ -1169,7 +1169,7 @@ object PlaywrightTestA4APRMatrix : BuildType({
 				+:*
 				-:pull*
 				-:trunk
-			""".excludeMergeQueueBranches()
+			""".excludeMergeQueueBranchesAndPullRequests()
 			triggerRules = """
 				-:**.md
 				+:client/a8c-for-agencies/**
