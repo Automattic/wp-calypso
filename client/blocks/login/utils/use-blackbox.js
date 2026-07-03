@@ -86,6 +86,9 @@ export function useBlackbox( { containerRef, enabled } ) {
 				window.Blackbox.configure( {
 					apiKey: config( 'blackbox_api_key' ),
 					challengeContainer: containerRef.current,
+					// Fill the login form column so the challenge lines up with the
+					// input above and the full-width Continue button below.
+					challengeMaxWidth: '100%',
 					onChallengeStart: () => {
 						if ( ! cancelled ) {
 							hasStartedChallenge = true;
