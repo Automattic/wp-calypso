@@ -5,6 +5,7 @@
 .customize-space-modal {
 	&.components-modal__frame {
 		block-size: min( 760px, calc( 100% - 96px ) );
+		max-inline-size: 660px;
 	}
 
 	.components-modal__content {
