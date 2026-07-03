@@ -52,13 +52,15 @@ function mockPreferences( calypso_preferences: Partial< UserPreferences > = {} )
 		.reply( 200, { calypso_preferences } );
 }
 
-const EXPERIMENT_NAME = 'account_recovery_nudge_interstitial_experiment';
+const EXPERIMENT_NAME = 'calypso_onboarding_account_recovery_modal_202606';
+const TREATMENT_VARIATION = 'no_recovery_modal';
 
-// The interstitial only renders for users assigned to the experiment's `treatment` variation.
-// Seed a live assignment into the storage ExPlat reads from, so the real `useExperiment` hook
-// resolves to the given variation through its normal code path — no network call, no mocking.
-// `loadExperimentAssignment` returns a stored, still-alive assignment before hitting the server.
-function assignExperiment( variationName: string | null = 'treatment' ) {
+// The interstitial is hidden only for users in the `no_recovery_modal` treatment; control and
+// unassigned users still see it. Seed a live assignment into the storage ExPlat reads from, so the
+// real `useExperiment` hook resolves to the given variation through its normal code path — no
+// network call, no mocking. `loadExperimentAssignment` returns a stored, still-alive assignment
+// before hitting the server.
+function assignExperiment( variationName: string | null = null ) {
 	window.localStorage.setItem(
 		`explat-experiment--${ EXPERIMENT_NAME }`,
 		JSON.stringify( {
@@ -249,9 +251,10 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		);
 	} );
 
-	test( 'does not show for a user in the experiment control group, even when eligible', async () => {
-		// Otherwise-eligible user (no recovery method, not snoozed) assigned to control.
-		assignExperiment( null );
+	test( 'does not show for a user in the experiment treatment group, even when eligible', async () => {
+		// Otherwise-eligible user (no recovery method, not snoozed) assigned to the treatment that
+		// suppresses the modal.
+		assignExperiment( TREATMENT_VARIATION );
 		mockAccountRecovery( NONE_RECOVERY );
 		mockUserSettings( { two_step_enabled: false } );
 		mockPreferences();
