@@ -73,6 +73,9 @@ const COMPACT_MESSAGE = 'Please use `array.filter( Boolean )` instead of lodash 
 const CHUNK_MESSAGE =
 	'Please split with a small loop (`for ( let i = 0; i < array.length; i += size ) ' +
 	'chunks.push( array.slice( i, i + size ) )`) instead of lodash `chunk`.';
+const CHAIN_MESSAGE =
+	'Please call the operations in sequence (native array/object methods, or a small loop) ' +
+	'instead of a lodash `chain( … )` sequence ending in `.value()`.';
 const FLATTEN_MESSAGE = 'Please use native `array.flatMap()` / `array.flat()` instead.';
 const DEFER_MESSAGE = 'Please use native `setTimeout( fn, 0 )` instead of lodash `defer`.';
 const DELAY_MESSAGE = 'Please use native `setTimeout( fn, wait )` instead of lodash `delay`.';
@@ -178,6 +181,7 @@ const paths = [
 	{ name: 'lodash', importNames: COMPOSE_NAMES, message: COMPOSE_MESSAGE },
 	{ name: 'lodash', importNames: [ 'compact' ], message: COMPACT_MESSAGE },
 	{ name: 'lodash', importNames: [ 'chunk' ], message: CHUNK_MESSAGE },
+	{ name: 'lodash', importNames: [ 'chain' ], message: CHAIN_MESSAGE },
 	{ name: 'lodash', importNames: [ 'flatMap', 'flatten' ], message: FLATTEN_MESSAGE },
 	{ name: 'lodash', importNames: [ 'defer' ], message: DEFER_MESSAGE },
 	{ name: 'lodash', importNames: [ 'delay' ], message: DELAY_MESSAGE },
@@ -225,6 +229,7 @@ const patterns = [
 	{ group: COMPOSE_NAMES.map( ( name ) => `lodash/${ name }` ), message: COMPOSE_MESSAGE },
 	{ group: [ 'lodash/compact' ], message: COMPACT_MESSAGE },
 	{ group: [ 'lodash/chunk' ], message: CHUNK_MESSAGE },
+	{ group: [ 'lodash/chain' ], message: CHAIN_MESSAGE },
 	{ group: [ 'lodash/flatMap', 'lodash/flatten' ], message: FLATTEN_MESSAGE },
 	{ group: [ 'lodash/defer' ], message: DEFER_MESSAGE },
 	{ group: [ 'lodash/delay' ], message: DELAY_MESSAGE },
@@ -270,9 +275,9 @@ const patterns = [
 // backstopped by the `eslint-plugin-you-dont-need-lodash-underscore` rules in
 // the root config, but that plugin ships no rule for these, so they get their
 // own namespace/CommonJS guards below. Only add a function here once its
-// namespace/CommonJS usages are also gone — e.g. `merge` is guarded for ES
-// imports above but still used as `_.merge` in build tooling, so it stays out
-// until that is migrated.
+// namespace/CommonJS usages are also gone — e.g. `mapValues` is guarded for ES
+// imports above but still used as `_.mapValues` in build tooling, so it stays
+// out until that is migrated.
 const NAMESPACE_GUARDED = [
 	{ name: 'isEmpty', message: JS_UTILS_MESSAGE },
 	{ name: 'memoize', message: JS_UTILS_MESSAGE },
@@ -287,6 +292,10 @@ const NAMESPACE_GUARDED = [
 	{ name: 'compact', message: COMPACT_MESSAGE },
 	{ name: 'groupBy', message: JS_UTILS_MESSAGE },
 	{ name: 'chunk', message: CHUNK_MESSAGE },
+	{ name: 'merge', message: MERGE_MESSAGE },
+	{ name: 'mapKeys', message: JS_UTILS_MESSAGE },
+	{ name: 'pick', message: JS_UTILS_MESSAGE },
+	{ name: 'chain', message: CHAIN_MESSAGE },
 ];
 
 // `no-restricted-properties`: namespace member access (`_.fn( … )` / `lodash.fn( … )`).
