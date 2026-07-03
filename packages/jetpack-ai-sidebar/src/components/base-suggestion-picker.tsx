@@ -59,7 +59,9 @@ export default function BaseSuggestionPicker( {
 						<button
 							key={ `${ value }-${ index }` }
 							type="button"
-							className={ `jetpack-ai-base-suggestion-picker__card${ isApplied ? ' is-applied' : '' }` }
+							className={ `jetpack-ai-base-suggestion-picker__card${
+								isApplied ? ' is-applied' : ''
+							}` }
 							onClick={ () => handleApply( value ) }
 							aria-pressed={ isApplied }
 						>
