@@ -19,15 +19,20 @@ import {
 	search,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StepIndicator } from 'calypso/reader/components/step-indicator';
+import { useDispatch } from 'calypso/state';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { READER_SPACES_ONBOARDING_TRACKS_EVENT_PREFIX } from './constants';
 
 import './style.scss';
 
 // Ties the hidden Modal header's accessible name to a screen-reader heading.
 const HEADING_ID = 'reader-spaces-onboarding__heading';
 
-const TOTAL_STEPS = 3;
+// Stable (untranslated) names reported in analytics for each step index.
+const STEP_NAMES = [ 'welcome', 'explain', 'discover' ];
+const TOTAL_STEPS = STEP_NAMES.length;
 
 // Example spaces used purely to illustrate the concept. The accent colors are
 // data, not theme tokens, so they stay as inline styles rather than CSS.
@@ -193,9 +198,31 @@ interface Props {
  */
 export function SpacesOnboardingModal( { onProceed, onClose }: Props ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const [ step, setStep ] = useState( 0 );
 
 	const isLastStep = step === TOTAL_STEPS - 1;
+
+	// Record each step as it becomes visible (including the initial one).
+	useEffect( () => {
+		dispatch(
+			recordReaderTracksEvent( `${ READER_SPACES_ONBOARDING_TRACKS_EVENT_PREFIX }step_viewed`, {
+				step,
+				step_name: STEP_NAMES[ step ],
+			} )
+		);
+	}, [ step, dispatch ] );
+
+	// Skip / dismiss (X, Skip button, Esc, backdrop) — record where they left off.
+	const handleClose = () => {
+		dispatch(
+			recordReaderTracksEvent( `${ READER_SPACES_ONBOARDING_TRACKS_EVENT_PREFIX }skipped`, {
+				step,
+				step_name: STEP_NAMES[ step ],
+			} )
+		);
+		onClose();
+	};
 
 	const goBack = () => setStep( ( s ) => Math.max( s - 1, 0 ) );
 	const goNext = () => {
@@ -219,7 +246,7 @@ export function SpacesOnboardingModal( { onProceed, onClose }: Props ) {
 		<Modal
 			size="medium"
 			__experimentalHideHeader
-			onRequestClose={ onClose }
+			onRequestClose={ handleClose }
 			className="reader-spaces-onboarding"
 			aria={ { labelledby: HEADING_ID } }
 		>
@@ -230,7 +257,7 @@ export function SpacesOnboardingModal( { onProceed, onClose }: Props ) {
 				className="reader-spaces-onboarding__close"
 				icon={ close }
 				label={ translate( 'Close' ) }
-				onClick={ onClose }
+				onClick={ handleClose }
 			/>
 
 			<VStack spacing={ 6 }>
@@ -247,7 +274,7 @@ export function SpacesOnboardingModal( { onProceed, onClose }: Props ) {
 						expanded={ false }
 					>
 						{ step === 0 ? (
-							<Button variant="tertiary" onClick={ onClose }>
+							<Button variant="tertiary" onClick={ handleClose }>
 								{ translate( 'Skip' ) }
 							</Button>
 						) : (

@@ -6,6 +6,12 @@ import userEvent from '@testing-library/user-event';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SpacesOnboardingModal } from '../index';
 
+const mockRecordReaderTracksEvent: jest.Mock = jest.fn( () => ( { type: 'TEST_TRACKS_EVENT' } ) );
+
+jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
+	recordReaderTracksEvent: ( ...args: unknown[] ) => mockRecordReaderTracksEvent( ...args ),
+} ) );
+
 function setup() {
 	const onProceed = jest.fn();
 	const onClose = jest.fn();
@@ -15,6 +21,10 @@ function setup() {
 }
 
 describe( 'SpacesOnboardingModal', () => {
+	beforeEach( () => {
+		mockRecordReaderTracksEvent.mockClear();
+	} );
+
 	it( 'opens on the welcome step with Skip and no Back', () => {
 		setup();
 
@@ -65,5 +75,51 @@ describe( 'SpacesOnboardingModal', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Skip' } ) );
 
 		expect( onClose ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'records a step_viewed event for each step reached', async () => {
+		const { user } = setup();
+
+		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+			'calypso_reader_spaces_onboarding_step_viewed',
+			{ step: 0, step_name: 'welcome' }
+		);
+
+		await user.click( screen.getByRole( 'button', { name: 'Show me how' } ) );
+		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+			'calypso_reader_spaces_onboarding_step_viewed',
+			{ step: 1, step_name: 'explain' }
+		);
+
+		await user.click( screen.getByRole( 'button', { name: 'Next' } ) );
+		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+			'calypso_reader_spaces_onboarding_step_viewed',
+			{ step: 2, step_name: 'discover' }
+		);
+	} );
+
+	it( 'records a skipped event with the step it was dismissed on', async () => {
+		const { user } = setup();
+
+		await user.click( screen.getByRole( 'button', { name: 'Show me how' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
+
+		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+			'calypso_reader_spaces_onboarding_skipped',
+			{ step: 1, step_name: 'explain' }
+		);
+	} );
+
+	it( 'does not record skipped when completing via the final CTA', async () => {
+		const { user } = setup();
+
+		await user.click( screen.getByRole( 'button', { name: 'Show me how' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Next' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Create a space' } ) );
+
+		expect( mockRecordReaderTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_reader_spaces_onboarding_skipped',
+			expect.anything()
+		);
 	} );
 } );
