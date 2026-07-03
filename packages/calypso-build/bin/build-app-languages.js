@@ -94,6 +94,10 @@ const DECIMAL_POINT_TRANSLATION = 'number_format_decimal_point';
 const THOUSANDS_SEPARATOR_KEY = 'number_format_thousands_sep';
 const THOUSANDS_SEPARATOR_TRANSLATION = 'number_format_thousands_sep';
 
+// Keys lodash `pick` refuses to set (its prototype-pollution guard), so a
+// translated string named exactly one of these is dropped rather than emitted.
+const PICK_BLOCKED_KEYS = new Set( [ '__proto__', 'constructor', 'prototype' ] );
+
 // Get module reference
 function getModuleReference( ref ) {
 	// References need to be relative to the root of the project
@@ -250,9 +254,10 @@ function buildLanguages( downloadedLanguages, languageRevisions ) {
 		successfullyDownloadedLanguages.forEach( ( { langSlug, languageTranslations } ) => {
 			const cmdPaletteTranslations = {};
 			for ( const key of allModulesStrings ) {
-				// Skip `__proto__` so it can never mutate the prototype here or in the
+				// Match lodash `pick`, which drops these protected keys — and skipping
+				// `__proto__` also avoids mutating the prototype here or in the
 				// generated output that embeds this object as a literal.
-				if ( key !== '__proto__' && Object.hasOwn( languageTranslations, key ) ) {
+				if ( ! PICK_BLOCKED_KEYS.has( key ) && Object.hasOwn( languageTranslations, key ) ) {
 					cmdPaletteTranslations[ key ] = languageTranslations[ key ];
 				}
 			}
