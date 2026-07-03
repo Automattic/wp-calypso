@@ -43,11 +43,7 @@ class ReaderFeedHeader extends Component {
 			'is-placeholder': ! site && ! feed,
 		} );
 
-		let feedIcon = feed ? feed.site_icon || feed.image : null;
-		// don't show the default favicon for some sites
-		if ( feedIcon?.endsWith( 'wp.com/i/buttonw-com.png' ) ) {
-			feedIcon = null;
-		}
+		const feedIcon = feed ? feed.site_icon || feed.image : null;
 
 		let fakeSite;
 

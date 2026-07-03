@@ -46,6 +46,10 @@ function setValidEnvFiles() {
 			myenv_only: 'myenv',
 			myenv_override: 'myenv',
 			myenvlocal_override: 'myenv',
+			features: {
+				enabledFeature2: false,
+				myenvFeature: true,
+			},
 		} ),
 		'/valid-path/myenv.local.json': JSON.stringify( {
 			myenvlocal_only: 'myenvlocal',
@@ -105,12 +109,34 @@ describe( 'parser', () => {
 		expect( data ).toHaveProperty( 'myenvlocal_only', 'myenvlocal' );
 		expect( data ).toHaveProperty( 'myenv_override', 'myenv' );
 		expect( data ).toHaveProperty( 'myenvlocal_override', 'myenvlocal' );
+		// `features` from later config files merges into (rather than replaces)
+		// earlier ones: `enabledFeature1` from `_shared` survives, `enabledFeature2`
+		// is overridden by `myenv`, and `myenvFeature` is added.
 		expect( data ).toHaveProperty( 'features', {
 			enabledFeature1: true,
-			enabledFeature2: true,
+			enabledFeature2: false,
 			disabledFeature1: false,
 			disabledFeature2: false,
+			myenvFeature: true,
 		} );
+	} );
+
+	test( 'should ignore a __proto__ config key without polluting or crashing', () => {
+		// JSON.parse (unlike an object literal) yields a real own `__proto__` key;
+		// a naive `data[ key ] = value` would set the prototype and then crash on
+		// `data.hasOwnProperty`. The parser must skip it instead.
+		mockFs( {
+			'/valid-path/_shared.json': '{ "__proto__": null, "safe": "ok", "features": { "a": true } }',
+		} );
+
+		let data;
+		expect( () => {
+			data = parser( '/valid-path' ).serverData;
+		} ).not.toThrow();
+		expect( Object.getPrototypeOf( data ) ).toBe( Object.prototype );
+		expect( data ).toHaveProperty( 'safe', 'ok' );
+		expect( data ).toHaveProperty( 'features', { a: true } );
+		expect( {}.polluted ).toBeUndefined();
 	} );
 
 	test( 'should override enabled feature when disabledFeatures set', () => {

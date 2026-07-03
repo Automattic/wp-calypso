@@ -1,4 +1,4 @@
-import { DataHelper, SecretsManager } from '@automattic/calypso-e2e';
+import { DataHelper, RestAPIClient, SecretsManager } from '@automattic/calypso-e2e';
 import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-base';
 
 test.describe(
@@ -19,6 +19,67 @@ test.describe(
 		let acceptInviteLink: string;
 		let userManagementRevampFeature = false;
 
+		const siteID = credentials.testSites?.primary?.id as number;
+
+		// Emails this suite has actually invited. The revoke happens through the UI
+		// at the end of the test, so a run that dies before that step leaks its
+		// pending invite. Only invites tracked here are deleted in teardown, so a
+		// concurrent run's in-flight invites are never touched.
+		const createdInviteEmails: string[] = [];
+
+		test.beforeAll( async function () {
+			// Diagnostic only, no mutation. The People page caps the pending-invites
+			// list it renders, so a saturated site can hide a freshly created invite
+			// and fail waitForInvitation. Log how many pending invites (from any run)
+			// exist at start. The list endpoint returns at most 100 per page, so this
+			// is a floor, not an exact count.
+			// Never let a diagnostic read fail the suite: swallow and log.
+			try {
+				const restAPIClient = new RestAPIClient( credentials );
+				const firstPage = await restAPIClient.getInvites( siteID, 100 );
+				const pending = firstPage.filter( ( invite ) => invite.is_pending ).length;
+				process.stderr.write(
+					`[invite__revoke] pending invites on site ${ siteID } at start: ${ pending }${
+						firstPage.length >= 100 ? '+ (list truncated at 100)' : ''
+					}\n`
+				);
+			} catch ( error ) {
+				process.stderr.write( `[invite__revoke] start diagnostic failed: ${ error }\n` );
+			}
+		} );
+
+		test.afterAll( async function () {
+			if ( ! createdInviteEmails.length ) {
+				return;
+			}
+			// Best-effort cleanup: a failure here must not fail an otherwise-passing
+			// run, so swallow errors and log them instead.
+			try {
+				const restAPIClient = new RestAPIClient( credentials );
+				// Scans only the first page (100). Enough while every run cleans up
+				// after itself; if the site holds >100 pending invites and the endpoint
+				// is not newest-first, follow the response's pagination links instead.
+				const staleKeys = ( await restAPIClient.getInvites( siteID, 100 ) )
+					.filter(
+						( invite ) => invite.is_pending && createdInviteEmails.includes( invite.user.email )
+					)
+					.map( ( invite ) => invite.invite_key );
+
+				if ( staleKeys.length ) {
+					const { invalid } = await restAPIClient.deleteInvites( siteID, staleKeys );
+					if ( invalid.length ) {
+						process.stderr.write(
+							`[invite__revoke] teardown could not delete ${
+								invalid.length
+							} invite(s): ${ invalid.join( ', ' ) }\n`
+						);
+					}
+				}
+			} catch ( error ) {
+				process.stderr.write( `[invite__revoke] teardown failed: ${ error }\n` );
+			}
+		} );
+
 		test( 'As a site owner, I can revoke a pending invite so that the invitation link becomes invalid', async ( {
 			page,
 			componentSidebar,
@@ -28,10 +89,13 @@ test.describe(
 			accountDefaultUser,
 		} ) => {
 			await test.step( 'Given I create an invite via REST API', async function () {
-				const { RestAPIClient } = await import( '@automattic/calypso-e2e' );
 				const restAPIClient = new RestAPIClient( credentials );
 
-				await restAPIClient.createInvite( credentials.testSites?.primary?.id as number, {
+				// Track before the call: createInvite can create the invite server-side
+				// and still throw (e.g. while parsing the response), so the email must be
+				// queued for teardown before the request, not after.
+				createdInviteEmails.push( testEmailAddress );
+				await restAPIClient.createInvite( siteID, {
 					email: [ testEmailAddress ],
 					role: role,
 					message: inviteMessage,
@@ -60,7 +124,9 @@ test.describe(
 
 			await test.step( 'When I navigate to Users > All Users', async function () {
 				await componentSidebar.navigate( 'Users', 'All Users' );
-				! userManagementRevampFeature && ( await pagePeople.clickTab( 'Invites' ) );
+				if ( ! userManagementRevampFeature ) {
+					await pagePeople.clickTab( 'Invites' );
+				}
 			} );
 
 			await test.step( 'Then I can see the invite is pending', async function () {

@@ -463,18 +463,32 @@ function ReceiptLineItems( { receipt }: { receipt: Receipt } ) {
 					</VStack>
 					{ ( transactionIncludesTax( receipt ) || hasBusinessUseTaxDetails( receipt ) ) && (
 						<VStack className="receipt-tax-row">
-							<HStack justify="space-between">
-								<Text>
-									{ taxLabel }
-									{ businessTaxSuffixLabel && (
-										<>
-											{ ' (' }
-											<em>{ businessTaxSuffixLabel }</em>)
-										</>
-									) }
-								</Text>
-								<Text>{ formatReceiptTaxAmount( receipt ) }</Text>
-							</HStack>
+							{ receipt.tax_breakdown && receipt.tax_breakdown.length > 0 ? (
+								receipt.tax_breakdown.map( ( entry ) => (
+									<HStack key={ entry.label } justify="space-between">
+										<Text>{ `${ entry.label } ${ entry.rate_display }` }</Text>
+										<Text>
+											{ formatCurrency( entry.local_tax_collected_integer, receipt.currency, {
+												isSmallestUnit: true,
+												stripZeros: true,
+											} ) }
+										</Text>
+									</HStack>
+								) )
+							) : (
+								<HStack justify="space-between">
+									<Text>
+										{ taxLabel }
+										{ businessTaxSuffixLabel && (
+											<>
+												{ ' (' }
+												<em>{ businessTaxSuffixLabel }</em>)
+											</>
+										) }
+									</Text>
+									<Text>{ formatReceiptTaxAmount( receipt ) }</Text>
+								</HStack>
+							) }
 						</VStack>
 					) }
 				</VStack>

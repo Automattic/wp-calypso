@@ -1,7 +1,6 @@
 import { debounce } from '@wordpress/compose';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { merge } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import DayPicker from 'react-day-picker';
@@ -139,7 +138,7 @@ class DatePicker extends PureComponent {
 			},
 		};
 
-		return merge( {}, utils, localeUtils );
+		return { ...utils, ...localeUtils };
 	}
 
 	/**

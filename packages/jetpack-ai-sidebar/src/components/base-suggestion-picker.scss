@@ -1,4 +1,4 @@
-.jetpack-ai-title-picker {
+.jetpack-ai-base-suggestion-picker {
 	padding: 8px 0;
 
 	&__intro {
@@ -38,10 +38,17 @@
 			background: rgba( 56, 88, 233, 0.12 );
 		}
 
-		&-title {
+		&-text {
 			font-size: 14px;
-			font-weight: 600;
 			line-height: 20px;
 		}
+	}
+
+	&__status {
+		// Match the vertical position of the alt-text picker's "Apply to all"
+		// button below its suggestions (12px list gap + 6px button padding).
+		margin: 18px 0 6px;
+		font-size: 14px;
+		line-height: 20px;
 	}
 }

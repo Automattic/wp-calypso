@@ -3,6 +3,12 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { SpaceColorPicker } from 'calypso/reader/spaces/color-picker';
 import { SpaceIconPicker } from 'calypso/reader/spaces/icon-picker';
+import {
+	SPACE_LANGUAGE_SUGGESTIONS,
+	getLanguageCodeByName,
+	getLanguageName,
+	resolveLanguageTokens,
+} from 'calypso/reader/spaces/languages';
 import type { SpaceColor, SpaceIcon, SpaceTextColor } from '@automattic/api-core';
 
 interface Props {
@@ -11,6 +17,8 @@ interface Props {
 	nameError: string | null;
 	tags: string[];
 	onTagsChange: ( tags: string[] ) => void;
+	languages: string[];
+	onLanguagesChange: ( languages: string[] ) => void;
 	color: SpaceTextColor;
 	onColorChange: ( color: SpaceTextColor ) => void;
 	iconColor: SpaceColor;
@@ -25,6 +33,8 @@ export function IdentityTab( {
 	nameError,
 	tags,
 	onTagsChange,
+	languages,
+	onLanguagesChange,
 	color,
 	onColorChange,
 	iconColor,
@@ -66,6 +76,24 @@ export function IdentityTab( {
 					}
 					help={ translate( 'Type and press Enter to add; click x to remove.' ) }
 				/>
+				<FormTokenField
+					__next40pxDefaultSize
+					__experimentalExpandOnFocus
+					// Restrict tokens to known languages so only valid base codes are
+					// stored; free-typed text that doesn't resolve to a language is rejected.
+					__experimentalValidateInput={ ( input: string ) =>
+						getLanguageCodeByName( input ) !== undefined
+					}
+					label={ translate( 'Languages' ) }
+					// The field works in display names; the parent state is base codes.
+					value={ languages.map( getLanguageName ) }
+					suggestions={ SPACE_LANGUAGE_SUGGESTIONS }
+					placeholder={ translate( 'Add languages' ) }
+					onChange={ ( tokens ) => onLanguagesChange( resolveLanguageTokens( tokens, languages ) ) }
+					help={ translate(
+						'Filters Discover results to these languages. Starts from your account language; add more as needed.'
+					) }
+				/>
 			</VStack>
 
 			<VStack spacing={ 2 }>
@@ -83,12 +111,10 @@ export function IdentityTab( {
 				/>
 			</VStack>
 
-			<VStack spacing={ 2 }>
+			<VStack spacing={ 2 } className="customize-space-modal__color-selection">
 				<span className="customize-space-modal__field-label">{ translate( 'Accent color' ) }</span>
 				<p className="customize-space-modal__field-help">
-					{ translate(
-						'Changes the color of post titles and actions in this space. Choose None to keep the feed neutral.'
-					) }
+					{ translate( 'Changes the color of post titles and actions in this space.' ) }
 				</p>
 				<SpaceColorPicker
 					value={ color }
