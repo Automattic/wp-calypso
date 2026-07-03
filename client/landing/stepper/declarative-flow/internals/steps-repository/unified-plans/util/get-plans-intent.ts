@@ -39,7 +39,7 @@ export function getPlansIntent( flowName: string | null ): PlansIntent | null {
 		case AI_SITE_BUILDER_FLOW:
 			return 'plans-ai-assembler-free-trial';
 		case AI_SITE_BUILDER_ONBOARDING_FLOW:
-			return 'plans-new-hosted-site';
+			return 'plans-ai-assembler-paid-only';
 		case ONBOARDING_FLOW:
 			if ( search.has( 'playground' ) ) {
 				return playgroundPlansIntent( search.get( 'playground' )! );
