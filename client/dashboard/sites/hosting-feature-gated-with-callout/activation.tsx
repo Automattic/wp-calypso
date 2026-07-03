@@ -1,3 +1,5 @@
+import { siteAutomatedTransfersEligibilityQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { __experimentalText as Text, Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -27,20 +29,31 @@ export default function ActivationCallout( {
 }: ActivationCalloutProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
+	const isBackport = isDashboardBackport();
+
+	// Resolve eligibility up front so a click can skip the modal when there is
+	// nothing to surface. The modal reuses this cached query, so it also opens
+	// instantly when it is shown.
+	const { data: eligibility } = useQuery( siteAutomatedTransfersEligibilityQuery( site.ID ) );
+
+	const hasErrors = ( eligibility?.errors.length ?? 0 ) > 0;
+
+	// The modal only has something to show when there are blocking errors or
+	// warnings to surface. A cleanly eligible site can start the transfer
+	// directly, using the optimal (default) data center. The backport modal
+	// keeps its existing behavior.
+	const canStartTransferDirectly =
+		! isBackport &&
+		!! eligibility &&
+		eligibility.is_eligible &&
+		eligibility.errors.length === 0 &&
+		Object.values( eligibility.warnings ).flat().length === 0;
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_dashboard_hosting_feature_activation_impression', {
 			feature_id: tracksFeatureId,
 		} );
 	}, [ recordTracksEvent, tracksFeatureId ] );
-
-	const handleClick = () => {
-		recordTracksEvent( 'calypso_dashboard_hosting_feature_activation_click', {
-			feature_id: tracksFeatureId,
-		} );
-
-		setIsModalOpen( true );
-	};
 
 	const handleConfirm = ( options: { geo_affinity?: string } ) => {
 		recordTracksEvent( 'calypso_dashboard_hosting_feature_activation_confirm', {
@@ -57,8 +70,21 @@ export default function ActivationCallout( {
 		} );
 	};
 
+	const handleClick = () => {
+		recordTracksEvent( 'calypso_dashboard_hosting_feature_activation_click', {
+			feature_id: tracksFeatureId,
+			show_modal: ! canStartTransferDirectly,
+		} );
+
+		if ( canStartTransferDirectly ) {
+			handleConfirm( {} );
+			return;
+		}
+
+		setIsModalOpen( true );
+	};
+
 	const renderActivationModal = () => {
-		const isBackport = isDashboardBackport();
 		if ( ! isModalOpen ) {
 			return null;
 		}
@@ -86,7 +112,9 @@ export default function ActivationCallout( {
 		return (
 			<Suspense fallback={ null }>
 				<Modal
-					title={ __( 'Before you continue' ) }
+					title={
+						hasErrors ? __( 'Hosting features cannot be activated' ) : __( 'Before you continue' )
+					}
 					onRequestClose={ () => setIsModalOpen( false ) }
 					size="medium"
 				>
