@@ -176,7 +176,11 @@ function SpaceUpsertModalContent( {
 		return isKnownLanguageCode( base ) ? [ base ] : [];
 	} );
 	const [ icon, setIcon ] = useState< SpaceIcon >( 'inbox' );
-	const [ view, setView ] = useState< SpaceFeedLayout >( DEFAULT_SPACE_FEED_LAYOUT );
+	// New spaces default to the classic Reader stream layout; edit mode seeds the
+	// space's saved layout below.
+	const [ view, setView ] = useState< SpaceFeedLayout >(
+		isCreate ? 'legacy' : DEFAULT_SPACE_FEED_LAYOUT
+	);
 	const [ width, setWidth ] = useState< SpaceLayoutWidth >( DEFAULT_SPACE_WIDTH );
 	const [ selectedSources, setSelectedSources ] = useState< SourceDraftItem[] >( [] );
 	const [ isConfirmingDelete, setIsConfirmingDelete ] = useState( false );
