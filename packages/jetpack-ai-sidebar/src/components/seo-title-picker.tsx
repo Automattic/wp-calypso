@@ -6,7 +6,7 @@
  * Clicking a card applies it to the post's SEO title (the HTML <title>
  * override, Jetpack post meta `jetpack_seo_html_title`) — distinct from the
  * editorial post title set by the title-picker. Thin wrapper over the shared
- * SuggestionPicker.
+ * BaseSuggestionPicker.
  */
 
 /**
@@ -18,7 +18,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import SuggestionPicker from './suggestion-picker';
+import BaseSuggestionPicker from './base-suggestion-picker';
 
 /**
  * Jetpack SEO post meta key for the custom HTML <title> override.
@@ -56,7 +56,7 @@ export default function SeoTitlePicker( { titles, onComplete }: SeoTitlePickerPr
 	);
 
 	return (
-		<SuggestionPicker
+		<BaseSuggestionPicker
 			intro={ __( 'Choose an SEO title for your post:', 'jetpack' ) }
 			options={ titles.map( ( option ) => option.title ) }
 			onApply={ handleApply }

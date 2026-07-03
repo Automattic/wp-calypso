@@ -5,7 +5,7 @@
  * data.type set to 'seo-description-picker' (from the jetpack-ai/generate-seo-description
  * ability). Clicking a card applies it to the post's SEO meta description
  * (Jetpack post meta `advanced_seo_description`). Thin wrapper over the shared
- * SuggestionPicker.
+ * BaseSuggestionPicker.
  */
 
 /**
@@ -17,7 +17,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import SuggestionPicker from './suggestion-picker';
+import BaseSuggestionPicker from './base-suggestion-picker';
 
 /**
  * Jetpack SEO post meta key for the custom HTML <meta> description.
@@ -58,7 +58,7 @@ export default function SeoDescriptionPicker( {
 	);
 
 	return (
-		<SuggestionPicker
+		<BaseSuggestionPicker
 			intro={ __( 'Choose an SEO description for your post:', 'jetpack' ) }
 			options={ descriptions.map( ( option ) => option.description ) }
 			onApply={ handleApply }

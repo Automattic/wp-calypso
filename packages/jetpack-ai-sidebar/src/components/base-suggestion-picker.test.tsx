@@ -7,13 +7,13 @@
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
-import SuggestionPicker from './suggestion-picker';
+import BaseSuggestionPicker from './base-suggestion-picker';
 
-describe( 'SuggestionPicker', () => {
+describe( 'BaseSuggestionPicker', () => {
 	const options = [ 'First option', 'Second option' ];
 
 	it( 'renders the intro and every option', () => {
-		render( <SuggestionPicker intro="Pick one:" options={ options } onApply={ jest.fn() } /> );
+		render( <BaseSuggestionPicker intro="Pick one:" options={ options } onApply={ jest.fn() } /> );
 		expect( screen.getByText( 'Pick one:' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'First option' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Second option' ) ).toBeInTheDocument();
@@ -21,13 +21,13 @@ describe( 'SuggestionPicker', () => {
 
 	it( 'calls onApply with the clicked value', () => {
 		const onApply = jest.fn();
-		render( <SuggestionPicker intro="Pick one:" options={ options } onApply={ onApply } /> );
+		render( <BaseSuggestionPicker intro="Pick one:" options={ options } onApply={ onApply } /> );
 		fireEvent.click( screen.getByText( 'Second option' ) );
 		expect( onApply ).toHaveBeenCalledWith( 'Second option' );
 	} );
 
 	it( 'highlights only the applied option', () => {
-		render( <SuggestionPicker intro="Pick one:" options={ options } onApply={ jest.fn() } /> );
+		render( <BaseSuggestionPicker intro="Pick one:" options={ options } onApply={ jest.fn() } /> );
 		const first = screen.getByText( 'First option' ).closest( 'button' ) as HTMLButtonElement;
 		const second = screen.getByText( 'Second option' ).closest( 'button' ) as HTMLButtonElement;
 		fireEvent.click( first );
@@ -37,7 +37,7 @@ describe( 'SuggestionPicker', () => {
 
 	it( 'shows the inline confirmation only after a value is applied', () => {
 		render(
-			<SuggestionPicker
+			<BaseSuggestionPicker
 				intro="Pick one:"
 				options={ options }
 				onApply={ jest.fn() }

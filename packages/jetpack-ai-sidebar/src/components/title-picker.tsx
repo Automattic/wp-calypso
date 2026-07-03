@@ -3,7 +3,7 @@
  *
  * Displayed when the orchestrator renders a show-component response with
  * data.type set to 'title-picker'. Clicking a card applies it to the post title
- * immediately via core/editor. Thin wrapper over the shared SuggestionPicker.
+ * immediately via core/editor. Thin wrapper over the shared BaseSuggestionPicker.
  */
 
 /**
@@ -15,7 +15,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import SuggestionPicker from './suggestion-picker';
+import BaseSuggestionPicker from './base-suggestion-picker';
 
 /**
  * Props for the TitlePicker component.
@@ -47,7 +47,7 @@ export default function TitlePicker( { titles, onComplete }: TitlePickerProps ) 
 	);
 
 	return (
-		<SuggestionPicker
+		<BaseSuggestionPicker
 			intro={ __( 'Choose a title for your post:', 'jetpack' ) }
 			options={ titles.map( ( option ) => option.title ) }
 			onApply={ handleApply }

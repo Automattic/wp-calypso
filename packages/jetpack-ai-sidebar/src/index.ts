@@ -23,7 +23,7 @@ import ReviewMediation from './components/review-mediation';
 import './components/review-mediation.scss';
 import SeoDescriptionPicker from './components/seo-description-picker';
 import SeoTitlePicker from './components/seo-title-picker';
-import './components/suggestion-picker.scss';
+import './components/base-suggestion-picker.scss';
 import TitlePicker from './components/title-picker';
 import './auto-scroll-fix.scss';
 import {

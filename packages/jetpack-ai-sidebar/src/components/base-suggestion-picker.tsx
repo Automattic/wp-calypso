@@ -1,5 +1,5 @@
 /**
- * SuggestionPicker — shared single-select suggestion list for the chat sidebar.
+ * BaseSuggestionPicker — shared single-select suggestion list for the chat sidebar.
  *
  * Renders an intro line followed by a list of suggestion cards. Clicking a card
  * applies that value via the `onApply` callback and highlights it; the picker
@@ -18,9 +18,9 @@
 import { useState, useCallback } from '@wordpress/element';
 
 /**
- * Props for the SuggestionPicker component.
+ * Props for the BaseSuggestionPicker component.
  */
-interface SuggestionPickerProps {
+interface BaseSuggestionPickerProps {
 	intro: string;
 	options: string[];
 	onApply: ( value: string ) => void;
@@ -29,16 +29,16 @@ interface SuggestionPickerProps {
 }
 
 /**
- * SuggestionPicker component for the chat sidebar.
- * @param {SuggestionPickerProps} props - Component props.
+ * BaseSuggestionPicker component for the chat sidebar.
+ * @param {BaseSuggestionPickerProps} props - Component props.
  * @returns {import('react').ReactElement} The rendered component.
  */
-export default function SuggestionPicker( {
+export default function BaseSuggestionPicker( {
 	intro,
 	options,
 	onApply,
 	appliedMessage,
-}: SuggestionPickerProps ) {
+}: BaseSuggestionPickerProps ) {
 	const [ appliedValue, setAppliedValue ] = useState< string | null >( null );
 
 	const handleApply = useCallback(
@@ -50,20 +50,20 @@ export default function SuggestionPicker( {
 	);
 
 	return (
-		<div className="jetpack-ai-suggestion-picker">
-			<p className="jetpack-ai-suggestion-picker__intro">{ intro }</p>
-			<div className="jetpack-ai-suggestion-picker__options">
+		<div className="jetpack-ai-base-suggestion-picker">
+			<p className="jetpack-ai-base-suggestion-picker__intro">{ intro }</p>
+			<div className="jetpack-ai-base-suggestion-picker__options">
 				{ options.map( ( value, index ) => {
 					const isApplied = value === appliedValue;
 					return (
 						<button
 							key={ `${ value }-${ index }` }
 							type="button"
-							className={ `jetpack-ai-suggestion-picker__card${ isApplied ? ' is-applied' : '' }` }
+							className={ `jetpack-ai-base-suggestion-picker__card${ isApplied ? ' is-applied' : '' }` }
 							onClick={ () => handleApply( value ) }
 							aria-pressed={ isApplied }
 						>
-							<span className="jetpack-ai-suggestion-picker__card-text">{ value }</span>
+							<span className="jetpack-ai-base-suggestion-picker__card-text">{ value }</span>
 						</button>
 					);
 				} ) }
@@ -71,7 +71,7 @@ export default function SuggestionPicker( {
 			{ appliedValue !== null && appliedMessage && (
 				// A div (not a <p>) so AM's `.Message-module_message p` reset can't
 				// override the margin that positions this confirmation.
-				<div className="jetpack-ai-suggestion-picker__status" role="status">
+				<div className="jetpack-ai-base-suggestion-picker__status" role="status">
 					{ appliedMessage }
 				</div>
 			) }
