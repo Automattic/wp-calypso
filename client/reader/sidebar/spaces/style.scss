@@ -44,7 +44,30 @@
 	}
 }
 
-// Active row: the name takes on the space's own foreground colour.
-.sidebar-spaces__item.selected .sidebar-spaces__name {
-	color: var( --space-color );
+// Active row: tint the whole row with the space's own accent so the current
+// space is unmistakable. The shared sidebar only paints a selected background in
+// dark mode, so in light mode this is the only active-state cue — without it the
+// current space reads no differently from the rest until hovered. A leading
+// accent bar reinforces it; the name takes on the space's foreground colour.
+.sidebar-spaces__item.selected {
+	.sidebar-spaces__link {
+		position: relative;
+		background-color: var( --space-color-bg );
+	}
+
+	.sidebar-spaces__link::before {
+		content: '';
+		position: absolute;
+		inset-inline-start: 0;
+		inset-block: 6px;
+		inline-size: 3px;
+		border-start-end-radius: 2px;
+		border-end-end-radius: 2px;
+		background: var( --space-color );
+	}
+
+	.sidebar-spaces__name {
+		color: var( --space-color );
+		font-weight: 600;
+	}
 }

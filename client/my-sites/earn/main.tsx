@@ -179,22 +179,11 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		return tabItem.path === currentPath;
 	};
 
-	// Mirror the visible tab selection so the mobile dropdown header always
-	// reflects the active tab (including ads sub-sections, which map to the
-	// "Ads" tab, and paths carrying a query string).
-	const getEarnSelectedText = () => {
-		const selected = getEarnTabs().find( isEarnTabSelected );
-		return selected ? selected.title : '';
-	};
-
 	const getEarnSectionNav = () => {
 		return (
 			<div className="earn-navigation">
-				<SectionNav
-					selectedText={ getEarnSelectedText() }
-					variation={ ! isJetpackPlatform ? 'minimal' : '' }
-				>
-					<NavTabs>
+				<SectionNav variation={ ! isJetpackPlatform ? 'minimal' : '' } enforceTabsView>
+					<NavTabs hasHorizontalScroll>
 						{ getEarnTabs().map( ( tabItem ) => {
 							return (
 								<NavItem

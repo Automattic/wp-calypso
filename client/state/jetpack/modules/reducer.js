@@ -1,5 +1,4 @@
-import { pickBy } from '@automattic/js-utils';
-import { merge } from 'lodash';
+import { merge, pickBy } from '@automattic/js-utils';
 import {
 	JETPACK_MODULE_ACTIVATE,
 	JETPACK_MODULE_ACTIVATE_FAILURE,

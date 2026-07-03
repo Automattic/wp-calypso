@@ -40,6 +40,9 @@ export function adaptReadSpace( item: ReadSpaceApiItem ): ReadSpace {
 	if ( item.layout.view ) {
 		layout.view = item.layout.view;
 	}
+	if ( item.layout.width ) {
+		layout.width = item.layout.width;
+	}
 	return {
 		id: String( item.id ),
 		name: item.title,

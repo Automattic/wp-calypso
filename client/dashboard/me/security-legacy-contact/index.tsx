@@ -55,12 +55,14 @@ export default function SecurityLegacyContact() {
 									<div className="legacy-contact-card__avatar">
 										<Icon icon={ people } size={ 28 } />
 									</div>
-									<VStack spacing={ 0 } alignment="flex-start">
-										<Text upperCase variant="muted" size={ 11 }>
+									<dl className="legacy-contact-card__details">
+										<Text as="dt" upperCase variant="muted" size={ 11 }>
 											{ __( 'Legacy contact email' ) }
 										</Text>
-										<Text size={ 15 }>{ contact.contact_email }</Text>
-									</VStack>
+										<Text as="dd" size={ 15 }>
+											{ contact.contact_email }
+										</Text>
+									</dl>
 								</HStack>
 								<Text>
 									{ __(

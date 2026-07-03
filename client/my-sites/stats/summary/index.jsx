@@ -1,7 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { merge } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
@@ -163,7 +162,7 @@ class StatsSummary extends Component {
 			query.period = 'day'; // Override for custom date ranges.
 		}
 
-		const moduleQuery = merge( {}, statsQueryOptions, query );
+		const moduleQuery = { ...statsQueryOptions, ...query };
 		// TODO: Refactor the query params for posts module.
 		if ( 'posts' === this.props.context.params.module ) {
 			moduleQuery.skip_archives = isArchiveBreakdownEnabled ? '1' : '0';

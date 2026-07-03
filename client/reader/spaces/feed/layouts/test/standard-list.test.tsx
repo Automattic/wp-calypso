@@ -64,6 +64,7 @@ describe( 'StandardListLayout', () => {
 				restoreKey="work-id:standard-list"
 				isPostSelected={ () => false }
 				selectPost={ jest.fn() }
+				showTimestamp
 			/>
 		);
 
@@ -93,6 +94,7 @@ describe( 'StandardListLayout', () => {
 				restoreKey="work-id:standard-list"
 				isPostSelected={ () => false }
 				selectPost={ jest.fn() }
+				showTimestamp
 			/>
 		);
 
@@ -122,11 +124,53 @@ describe( 'StandardListLayout', () => {
 				restoreKey="work-id:standard-list"
 				isPostSelected={ () => false }
 				selectPost={ jest.fn() }
+				showTimestamp
 			/>
 		);
 
 		expect( mockReaderPostActions ).toHaveBeenCalledWith(
 			expect.objectContaining( { post, onCommentClick: expect.any( Function ) } )
 		);
+	} );
+
+	it( 'hides the published time when showTimestamp is false (Discover)', () => {
+		mockGetPostFields.mockReturnValue( {
+			id: 1,
+			key: 'blog-1-2',
+			title: 'Test post',
+			excerptHtml: '',
+			sourceName: 'Test site',
+			dayGroup: 'today',
+			postHref: '/reader/blogs/2/posts/1',
+			isUnread: false,
+			publishedDate: '2026-06-01T00:00:00.000Z',
+		} );
+		const oneItemList = {
+			getListProps: ( props: ListProps = {} ) => ( { ...props, style: props.style ?? {} } ),
+			items: [ { index: 1, key: 'post-blog-1-2', start: 44 } ],
+			measureElement: jest.fn(),
+			scrollMargin: 0,
+		};
+
+		const baseProps = {
+			posts: [ { ID: 1, site_ID: 2 } as ReadStreamPost ],
+			streamKey: 'space:tags',
+			scrollElement: null,
+			hasMore: false,
+			isLoadingMore: false,
+			loadMore: jest.fn(),
+			restoreKey: 'work-id:standard-list',
+			isPostSelected: () => false,
+			selectPost: jest.fn(),
+		};
+
+		mockUseInfiniteList.mockReturnValue( oneItemList );
+		const hidden = render( <StandardListLayout { ...baseProps } showTimestamp={ false } /> );
+		expect( hidden.container.querySelector( 'time' ) ).toBeNull();
+		hidden.unmount();
+
+		mockUseInfiniteList.mockReturnValue( oneItemList );
+		const shown = render( <StandardListLayout { ...baseProps } showTimestamp /> );
+		expect( shown.container.querySelector( 'time' ) ).not.toBeNull();
 	} );
 } );

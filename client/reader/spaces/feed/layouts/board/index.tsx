@@ -16,7 +16,15 @@ import './style.scss';
 const LANES = 2;
 const ESTIMATED_SIZE = 260;
 
-function BoardCard( { post, onOpen }: { post: ReadStreamPost; onOpen: () => void } ) {
+function BoardCard( {
+	post,
+	onOpen,
+	showTimestamp,
+}: {
+	post: ReadStreamPost;
+	onOpen: () => void;
+	showTimestamp: boolean;
+} ) {
 	const fields = getPostFields( post );
 	return (
 		<div className="space-feed-board__card">
@@ -45,7 +53,7 @@ function BoardCard( { post, onOpen }: { post: ReadStreamPost; onOpen: () => void
 						<SiteIcon iconUrl={ fields.siteIconUrl } size={ 18 } />
 						<span className="space-feed-board__source">{ fields.sourceName }</span>
 					</span>
-					{ fields.publishedDate && (
+					{ showTimestamp && fields.publishedDate && (
 						<span className="space-feed-board__time">
 							<SpaceFeedTimeSince date={ fields.publishedDate } />
 						</span>
@@ -75,6 +83,7 @@ export function BoardLayout( {
 	restoreKey,
 	isPostSelected,
 	selectPost,
+	showTimestamp,
 }: SpaceFeedLayoutProps ) {
 	const { getListProps, items, measureElement, scrollMargin, scrollToIndex } = useInfiniteList( {
 		scrollElement,
@@ -113,6 +122,7 @@ export function BoardLayout( {
 					<BoardCard
 						post={ posts[ virtualItem.index ] }
 						onOpen={ () => selectPost( posts[ virtualItem.index ] ) }
+						showTimestamp={ showTimestamp }
 					/>
 				</div>
 			) ) }

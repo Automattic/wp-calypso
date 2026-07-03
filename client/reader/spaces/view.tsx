@@ -7,6 +7,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { useSpaces } from 'calypso/reader/data/spaces';
 import { CustomizeModal, type CustomizeTab } from 'calypso/reader/spaces/customize-modal';
+import { DEFAULT_SPACE_WIDTH } from 'calypso/reader/spaces/customize-modal/layout-tab';
 import { SpaceFeed } from 'calypso/reader/spaces/feed';
 import { DEFAULT_SPACE_FEED_LAYOUT } from 'calypso/reader/spaces/feed/layouts/registry';
 import { SpaceNavigation } from 'calypso/reader/spaces/space-navigation';
@@ -28,6 +29,7 @@ export function SpacesView( { id, tab = 'feed' }: Props ) {
 	const spaces = useSpaces();
 	const space = id ? spaces.find( ( item ) => item.id === id ) : undefined;
 	const layoutView: SpaceFeedLayout = space?.layout.view ?? DEFAULT_SPACE_FEED_LAYOUT;
+	const isWide = ( space?.layout.width ?? DEFAULT_SPACE_WIDTH ) === 'wide';
 	const icon = space?.layout.icon;
 	const color = space?.layout.color;
 	const title = space ? space.name : translate( 'Spaces' );
@@ -73,7 +75,7 @@ export function SpacesView( { id, tab = 'feed' }: Props ) {
 	}
 
 	return (
-		<ReaderMain className="reader-spaces" wideLayout>
+		<ReaderMain className="reader-spaces" wideLayout={ isWide }>
 			<DocumentHead
 				title={ translate( '%s ‹ Reader', {
 					args: title,
