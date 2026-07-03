@@ -3,7 +3,7 @@ import calypsoConfig from '@automattic/calypso-config';
 import { captureException } from '@automattic/calypso-sentry';
 import { camelToSnakeCase } from '@automattic/js-utils';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { maybeReloadForChunkError } from './chunk-reload';
+import { maybeReloadForChunkError } from '../chunk-load-recovery';
 import type { AnyRouter } from '@tanstack/react-router';
 import type { ErrorInfo } from 'react';
 

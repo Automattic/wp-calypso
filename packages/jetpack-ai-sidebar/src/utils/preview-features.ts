@@ -3,7 +3,8 @@ type SidebarFeature =
 	| 'generateFeedback'
 	| 'blockTransformations'
 	| 'blockToolbarButton'
-	| 'optimizeTitleSuggestion';
+	| 'optimizeTitleSuggestion'
+	| 'seoSuggestions';
 
 function getAgentsManagerData() {
 	return typeof agentsManagerData !== 'undefined' ? agentsManagerData : undefined;
@@ -27,6 +28,15 @@ export function isAiEditorialReviewEnabled(): boolean {
 
 export function isOptimizeTitleSuggestionEnabled(): boolean {
 	return isSidebarFeatureEnabled( 'optimizeTitleSuggestion', false );
+}
+
+/**
+ * SEO Enhancer suggestions (SEO title / meta description) are gated by their own
+ * flag, independent of Optimize Title — they target the SEO meta fields, not the
+ * visible post title. The host (Jetpack) populates `features.seoSuggestions`.
+ */
+export function isSeoSuggestionsEnabled(): boolean {
+	return isSidebarFeatureEnabled( 'seoSuggestions', false );
 }
 
 export function isBlockTransformationsEnabled(): boolean {

@@ -1,4 +1,4 @@
-import { merge } from 'lodash';
+import { merge } from '@automattic/js-utils';
 import getGoogleMyBusinessLocations from 'calypso/state/selectors/get-google-my-business-locations';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 

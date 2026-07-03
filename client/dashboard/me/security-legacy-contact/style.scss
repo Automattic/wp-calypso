@@ -4,6 +4,16 @@
 	border-radius: 8px;
 }
 
+.legacy-contact-card__details {
+	display: flex;
+	flex-direction: column;
+	margin: 0;
+
+	dd {
+		margin: 0;
+	}
+}
+
 .legacy-contact-card__avatar {
 	display: flex;
 	flex-shrink: 0;
@@ -16,6 +26,21 @@
 
 	svg {
 		fill: var( --color-primary );
+	}
+}
+
+.legacy-contact-print__heading {
+	margin-block: 0;
+}
+
+.legacy-contact-print__fields {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	margin: 0;
+
+	dd {
+		margin: 0;
 	}
 }
 
