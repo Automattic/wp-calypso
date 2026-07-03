@@ -5,7 +5,8 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { check, copy } from '@wordpress/icons';
-import { useCallback, useEffect, useState } from 'react';
+import clsx from 'clsx';
+import { useCallback, useState } from 'react';
 import { CollapsibleCard } from '../../../components/collapsible-card';
 import type { RecordTracksEvent } from './types';
 
@@ -53,9 +54,11 @@ export const STARTER_PROMPTS: StarterPrompt[] = [
 
 function StarterPromptItem( {
 	prompt,
+	disabled,
 	onCopy,
 }: {
 	prompt: StarterPrompt;
+	disabled?: boolean;
 	onCopy: ( prompt: StarterPrompt ) => void;
 } ) {
 	const [ copied, setCopied ] = useState( false );
@@ -73,23 +76,30 @@ function StarterPromptItem( {
 	}, [ prompt, onCopy ] );
 
 	return (
-		<VStack spacing={ 2 }>
-			<Text weight={ 600 } size={ 15 }>
-				{ prompt.title }
-			</Text>
-			<Text variant="muted">{ prompt.description }</Text>
-			<div className="mcp-starter-prompt">
-				<Button
-					className="mcp-starter-prompt__copy"
-					variant="tertiary"
-					icon={ copied ? check : copy }
-					label={ copied ? __( 'Copied' ) : __( 'Copy prompt' ) }
-					showTooltip
-					onClick={ handleCopy }
-				/>
-				<Text className="mcp-starter-prompt__text">{ prompt.prompt }</Text>
-			</div>
-		</VStack>
+		<CollapsibleCard
+			disabled={ disabled }
+			toggleLabel={ prompt.title }
+			header={
+				<Text weight={ 600 } size={ 15 }>
+					{ prompt.title }
+				</Text>
+			}
+		>
+			<VStack spacing={ 3 }>
+				<Text variant="muted">{ prompt.description }</Text>
+				<div className="mcp-starter-prompt">
+					<Button
+						className="mcp-starter-prompt__copy"
+						variant="tertiary"
+						icon={ copied ? check : copy }
+						label={ copied ? __( 'Copied' ) : __( 'Copy prompt' ) }
+						showTooltip
+						onClick={ handleCopy }
+					/>
+					<Text className="mcp-starter-prompt__text">{ prompt.prompt }</Text>
+				</div>
+			</VStack>
+		</CollapsibleCard>
 	);
 }
 
@@ -100,14 +110,6 @@ export default function McpStarterPrompts( {
 	recordTracksEvent?: RecordTracksEvent;
 	disabled?: boolean;
 } ) {
-	// Default to expanded once MCP is enabled, collapsed while it's disabled.
-	// Resync whenever the enabled state flips (initial load or live toggle),
-	// while still letting the user collapse/expand manually in between.
-	const [ expanded, setExpanded ] = useState( ! disabled );
-	useEffect( () => {
-		setExpanded( ! disabled );
-	}, [ disabled ] );
-
 	const onCopy = useCallback(
 		( prompt: StarterPrompt ) => {
 			recordTracksEvent( 'calypso_a4a_ai_mcp_starter_prompt_copied', { prompt_id: prompt.id } );
@@ -116,27 +118,30 @@ export default function McpStarterPrompts( {
 	);
 
 	return (
-		<CollapsibleCard
-			expanded={ expanded }
-			onToggle={ setExpanded }
-			disabled={ disabled }
-			toggleLabel={ __( 'Toggle starter prompts' ) }
-			header={
+		<VStack spacing={ 4 }>
+			<VStack
+				spacing={ 2 }
+				className={ clsx( 'mcp-starter-prompts__intro', { 'is-disabled': disabled } ) }
+			>
 				<Text weight={ 600 } size={ 15 }>
 					{ __( 'Starter prompts' ) }
 				</Text>
-			}
-		>
-			<VStack spacing={ 5 }>
 				<Text variant="muted">
 					{ __(
 						'The sky’s the limit with AI agents. To help you get the most out of our MCP, we’ve created a set of starter prompts you can hand straight to the AI agent of your choice once connected. Feel free to modify them as you see fit for the best experience, tailored to your agency.'
 					) }
 				</Text>
+			</VStack>
+			<VStack spacing={ 3 }>
 				{ STARTER_PROMPTS.map( ( prompt ) => (
-					<StarterPromptItem key={ prompt.id } prompt={ prompt } onCopy={ onCopy } />
+					<StarterPromptItem
+						key={ prompt.id }
+						prompt={ prompt }
+						disabled={ disabled }
+						onCopy={ onCopy }
+					/>
 				) ) }
 			</VStack>
-		</CollapsibleCard>
+		</VStack>
 	);
 }

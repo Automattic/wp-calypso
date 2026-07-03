@@ -48,6 +48,10 @@
 	max-height: 400px;
 }
 
+.mcp-starter-prompts__intro.is-disabled {
+	opacity: 0.5;
+}
+
 .mcp-starter-prompt {
 	position: relative;
 	padding: 12px 16px;

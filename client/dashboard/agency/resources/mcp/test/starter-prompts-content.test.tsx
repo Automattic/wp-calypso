@@ -22,23 +22,24 @@ beforeEach( () => {
 } );
 
 describe( '<McpStarterPrompts>', () => {
-	test( 'is expanded by default and shows all three prompts when enabled', () => {
+	test( 'shows a collapsed FAQ item per prompt with the prompt text hidden', () => {
 		render( <McpStarterPrompts /> );
 
 		expect( screen.getByText( 'Starter prompts' ) ).toBeVisible();
 		expect( screen.getByText( 'Program health snapshot' ) ).toBeVisible();
 		expect( screen.getByText( 'Portfolio health summary' ) ).toBeVisible();
 		expect( screen.getByText( 'Recurring weekly report' ) ).toBeVisible();
+
+		// The prompt text stays out of the way until the item is expanded.
+		expect( screen.queryByText( STARTER_PROMPTS[ 0 ].prompt ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'can be collapsed by the user', async () => {
+	test( 'expands an item to reveal its prompt', async () => {
 		render( <McpStarterPrompts /> );
 
-		await userEvent.click(
-			screen.getAllByRole( 'button', { name: 'Toggle starter prompts' } )[ 0 ]
-		);
+		await userEvent.click( screen.getByText( 'Program health snapshot' ) );
 
-		expect( screen.queryByText( 'Program health snapshot' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( STARTER_PROMPTS[ 0 ].prompt ) ).toBeVisible();
 	} );
 
 	test( 'copies the raw prompt text and records a tracks event', async () => {
@@ -46,7 +47,8 @@ describe( '<McpStarterPrompts>', () => {
 		render( <McpStarterPrompts recordTracksEvent={ recordTracksEvent } /> );
 
 		const firstPrompt = STARTER_PROMPTS[ 0 ];
-		await userEvent.click( screen.getAllByRole( 'button', { name: /copy prompt/i } )[ 0 ] );
+		await userEvent.click( screen.getByText( firstPrompt.title ) );
+		await userEvent.click( screen.getByRole( 'button', { name: /copy prompt/i } ) );
 
 		expect( clipboardWriteText ).toHaveBeenCalledWith( firstPrompt.prompt );
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_ai_mcp_starter_prompt_copied', {
@@ -54,13 +56,11 @@ describe( '<McpStarterPrompts>', () => {
 		} );
 	} );
 
-	test( 'is collapsed and cannot be expanded when disabled', async () => {
+	test( 'items cannot be expanded when disabled', async () => {
 		render( <McpStarterPrompts disabled /> );
 
-		expect( screen.queryByText( 'Program health snapshot' ) ).not.toBeInTheDocument();
+		await userEvent.click( screen.getByText( 'Program health snapshot' ) );
 
-		await userEvent.click( screen.getByText( 'Starter prompts' ) );
-
-		expect( screen.queryByText( 'Program health snapshot' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( STARTER_PROMPTS[ 0 ].prompt ) ).not.toBeInTheDocument();
 	} );
 } );
