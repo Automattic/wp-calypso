@@ -95,7 +95,9 @@ export default function AmplifyFAQ() {
 				<VStack spacing={ 6 }>
 					<VStack spacing={ 2 }>
 						<Heading level={ 2 }>{ __( 'Frequently asked questions' ) }</Heading>
-						<Text variant="muted">{ __( 'Curious about the details? We have answers.' ) }</Text>
+						<Text variant="muted" size={ 16 }>
+							{ __( 'Curious about the details? We have answers.' ) }
+						</Text>
 					</VStack>
 					<Panel className="amplify-faq">
 						{ FAQS.map( ( faq ) => (

@@ -45,7 +45,7 @@ export default function AmplifyCriteriaSection( {
 					{ eyebrow }
 				</Text>
 				<Heading level={ 2 }>{ title }</Heading>
-				<Text className="amplify-criteria-intro" variant="muted">
+				<Text className="amplify-criteria-intro" variant="muted" size={ 16 }>
 					{ preventWidows( intro ) }
 				</Text>
 			</VStack>
