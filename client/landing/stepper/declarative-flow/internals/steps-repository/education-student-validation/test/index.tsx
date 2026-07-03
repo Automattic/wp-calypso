@@ -55,10 +55,9 @@ describe( 'EducationStudentValidation', () => {
 		).toBeVisible();
 		expect( screen.getByLabelText( 'Invitation code' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Validate invite code' } ) ).toBeDisabled();
-		expect( screen.getByRole( 'link', { name: 'wp.com/edu' } ) ).toHaveAttribute(
-			'href',
-			'https://wp.com/edu'
-		);
+		expect(
+			screen.getByRole( 'link', { name: 'Learn more about the program at wp.com/edu' } )
+		).toHaveAttribute( 'href', 'https://wp.com/edu' );
 	} );
 
 	it( 'validates the code and submits only the validation marker', async () => {
