@@ -30,6 +30,9 @@
 		font-weight: 600;
 	}
 }
+.customize-space-modal__color-selection {
+	padding-block-end: 24px;
+}
 
 .customize-space-modal__subtitle {
 	color: var( --color-text-subtle );
@@ -53,7 +56,6 @@
 		flex: 1;
 		flex-direction: column;
 		min-block-size: 0;
-		padding-block-end: 24px;
 	}
 }
 
@@ -63,7 +65,7 @@
 	flex-direction: column;
 	min-block-size: 0;
 	overflow-y: auto;
-	padding-block: 16px 8px;
+	padding-block: 16px 0;
 	padding-inline: 8px;
 }
 
