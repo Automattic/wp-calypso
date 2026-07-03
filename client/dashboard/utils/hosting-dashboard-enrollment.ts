@@ -5,6 +5,8 @@ export const ROLLOUT_TESTER_USER_IDS = [
 	27056099, // p-jackson
 ];
 
+const ROLLOUT_PERCENTAGE = 50;
+
 // When rollout begins, users registered after this ID (i.e. new users) are enrolled.
 // TODO update on release day DOTMSD-1357
 const NEW_USER_ID_THRESHOLD = Infinity;
@@ -30,7 +32,7 @@ function isInRolloutCohort( userId: number | undefined ): boolean {
 
 	return (
 		config.isEnabled( 'dashboard/enable-percentage-rollout' ) &&
-		( userId % 100 < 50 || userId > NEW_USER_ID_THRESHOLD )
+		( userId % 100 < ROLLOUT_PERCENTAGE || userId > NEW_USER_ID_THRESHOLD )
 	);
 }
 
@@ -83,16 +85,12 @@ export function isOptInToggleVisible(
 }
 
 /**
- * Whether the user will be moved to the hosting dashboard by the staggered
- * rollout, regardless of whether the rollout has started yet.
+ * Whether the advanced notice should be visible for this user.
  */
-export function willBeRolledOut(
-	preference: HostingDashboardOptIn | undefined,
-	userId: number | undefined
-): boolean {
-	if ( ! config.isEnabled( 'dashboard/opt-in-banners' ) ) {
-		return false;
-	}
-
-	return isOptInToggleVisible( preference, userId );
+export function isAdvancedNoticeVisible( userId: number | undefined ): boolean {
+	return (
+		config.isEnabled( 'dashboard/rollout-advance-notice' ) &&
+		!! userId &&
+		userId % 100 < ROLLOUT_PERCENTAGE
+	);
 }

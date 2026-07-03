@@ -89,7 +89,10 @@ export default function HostingDashboardOptInForm() {
 
 	return (
 		<>
-			<SectionHeader label={ translate( 'Try the new Hosting Dashboard' ) } />
+			<SectionHeader
+				id="hosting-dashboard-opt-in"
+				label={ translate( 'Try the new Hosting Dashboard' ) }
+			/>
 			<Card className="account__settings">
 				<form onSubmit={ handleSubmit }>
 					<p className="account__hosting-dashboard-description">

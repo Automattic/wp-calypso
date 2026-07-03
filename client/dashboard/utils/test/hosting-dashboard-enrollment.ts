@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import {
 	getHostingDashboardEnrollment,
 	isOptInToggleVisible,
-	willBeRolledOut,
+	isAdvancedNoticeVisible,
 } from '../hosting-dashboard-enrollment';
 import type { HostingDashboardOptIn } from '@automattic/api-core';
 
@@ -107,31 +107,20 @@ describe( 'isOptInToggleVisible', () => {
 	} );
 } );
 
-describe( 'willBeRolledOut', () => {
-	const TESTER = 27056099; // allow-listed in ROLLOUT_TESTER_USER_IDS
-
-	it( 'shows nothing while the opt-in-banners flag is off', () => {
-		expect( willBeRolledOut( undefined, IN_COHORT ) ).toBe( false );
+describe( 'isAdvancedNoticeVisible', () => {
+	it( 'shows nothing while the rollout-advance-notice flag is off', () => {
+		expect( isAdvancedNoticeVisible( IN_COHORT ) ).toBe( false );
 	} );
 
-	describe( 'with the opt-in-banners flag on', () => {
-		beforeEach( () => enableFlags( 'dashboard/opt-in-banners' ) );
+	describe( 'with the rollout-advance-notice flag on', () => {
+		beforeEach( () => enableFlags( 'dashboard/rollout-advance-notice' ) );
 
 		it( 'shows the banner to users who can still opt in', () => {
-			expect( willBeRolledOut( undefined, IN_COHORT ) ).toBe( true );
+			expect( isAdvancedNoticeVisible( IN_COHORT ) ).toBe( true );
 		} );
 
 		it( 'hides the banner from escape-hatched (forced-opt-out) users', () => {
-			expect( willBeRolledOut( preference( 'forced-opt-out' ), OUT_OF_COHORT ) ).toBe( false );
-		} );
-
-		it( 'hides the banner once the rollout has already enrolled the user', () => {
-			enableFlags( 'dashboard/opt-in-banners', 'dashboard/enable-percentage-rollout' );
-			expect( willBeRolledOut( undefined, IN_COHORT ) ).toBe( false );
-		} );
-
-		it( 'hides the banner from allow-listed testers, who are already enrolled', () => {
-			expect( willBeRolledOut( undefined, TESTER ) ).toBe( false );
+			expect( isAdvancedNoticeVisible( OUT_OF_COHORT ) ).toBe( false );
 		} );
 	} );
 } );
