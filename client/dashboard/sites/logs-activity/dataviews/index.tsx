@@ -200,11 +200,11 @@ function SiteActivityLogsDataViews( {
 				config={
 					hasActivityLogsAccess ? undefined : { perPageSizes: [ ACTIVITY_LOGS_DEFAULT_PAGE_SIZE ] }
 				} // Disable changing perPage if no access
-				search
+				search={ false }
 				defaultLayouts={ { table: {} } }
 				onChangeView={ onChangeView }
 				onReset={ resetView }
-				empty={ <p>{ view.search ? __( 'No activity found' ) : __( 'No activities' ) }</p> }
+				empty={ <p>{ __( 'No activities' ) }</p> }
 				children={ hasActivityLogsAccess ? undefined : <DataViews.Layout /> } // showing only the layout when on the free plan.
 			/>
 
