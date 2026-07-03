@@ -6,8 +6,6 @@ import _self.lib.customBuildType.E2EBuildType
 import _self.lib.utils.allBranchesExceptMergeQueue
 import _self.lib.utils.excludeMergeQueueBranches
 import _self.lib.utils.mergeTrunk
-import _self.lib.utils.passMergeQueueBranchesEarly
-import _self.lib.utils.skipOnMergeQueueBranch
 import _self.CalypsoE2ETestsBuildTemplate
 
 import jetbrains.buildServer.configs.kotlin.*
@@ -1202,6 +1200,7 @@ object JestPreReleaseE2ETests : BuildType({
 
 	vcs {
 		root(Settings.WpCalypso)
+		branchFilter = allBranchesExceptMergeQueue()
 		cleanCheckout = true
 	}
 
@@ -1250,7 +1249,6 @@ object JestPreReleaseE2ETests : BuildType({
 	}
 
 	steps {
-		passMergeQueueBranchesEarly()
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
@@ -1265,7 +1263,7 @@ object JestPreReleaseE2ETests : BuildType({
 				yarn workspace @automattic/calypso-e2e build
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-		}.skipOnMergeQueueBranch()
+		}
 
 		bashNodeScript {
 			name = "Run tests"
@@ -1291,7 +1289,7 @@ object JestPreReleaseE2ETests : BuildType({
 				RETRY_COUNT=1 xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --workerIdleMemoryLimit=1GB --group=calypso-release --onlyFailures --json --outputFile=pre-release-test-results.json
 			"""
 			dockerImage = "%docker_image_e2e%"
-		}.skipOnMergeQueueBranch()
+		}
 
 		bashNodeScript {
 			name = "Collect results"
@@ -1312,7 +1310,7 @@ object JestPreReleaseE2ETests : BuildType({
 				find test/e2e/allure-results -name '*.json' -print0 | xargs -r -0 mv -t allure-results
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-		}.skipOnMergeQueueBranch()
+		}
 	}
 
 	failureConditions {
@@ -1344,6 +1342,7 @@ object PreReleaseE2ETests : BuildType({
 
 	vcs {
 		root(Settings.WpCalypso)
+		branchFilter = allBranchesExceptMergeQueue()
 		cleanCheckout = true
 	}
 
