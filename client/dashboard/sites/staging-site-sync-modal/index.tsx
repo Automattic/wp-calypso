@@ -4,6 +4,7 @@ import {
 	pullFromStagingMutation,
 } from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import {
 	Button,
 	ExternalLink,
@@ -517,10 +518,12 @@ function StagingSiteSyncModalInner( {
 														date: <span>{ displayBackupDate }</span>,
 													}
 												) }{ ' ' }
-												<ExternalLink
-													href={ wpcomLink( `/backup/${ querySiteSlug as string }` ) }
-													children={ __( 'Create new backup' ) }
-												/>
+												<Link
+													to="/sites/$siteSlug/backups"
+													params={ { siteSlug: querySiteSlug as string } }
+												>
+													{ __( 'Create new backup' ) }
+												</Link>
 											</Text>
 										</HStack>
 									) }
