@@ -1,7 +1,5 @@
 import { PLAN_STUDENT } from '@automattic/calypso-products';
-import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { clearStepPersistedState, EDUCATION_FLOW } from '@automattic/onboarding';
-import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
@@ -28,6 +26,8 @@ import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
+import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 function initialize() {
 	const steps = [
