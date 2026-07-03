@@ -20,7 +20,21 @@ export function TipaltiPayoutSettings( {
 	const [ iframeHeight, setIframeHeight ] = useState( '100%' );
 
 	useEffect( () => {
+		if ( ! iframeUrl ) {
+			return;
+		}
+
+		let allowedOrigin: string;
+		try {
+			allowedOrigin = new URL( iframeUrl ).origin;
+		} catch {
+			return;
+		}
+
 		const handleMessage = ( event: MessageEvent ) => {
+			if ( event.origin !== allowedOrigin ) {
+				return;
+			}
 			if ( event.data?.TipaltiIframeInfo ) {
 				setIframeHeight( event.data.TipaltiIframeInfo.height || '100%' );
 			}
@@ -28,7 +42,7 @@ export function TipaltiPayoutSettings( {
 
 		window.addEventListener( 'message', handleMessage, false );
 		return () => window.removeEventListener( 'message', handleMessage, false );
-	}, [] );
+	}, [ iframeUrl ] );
 
 	return (
 		<VStack spacing={ 4 }>

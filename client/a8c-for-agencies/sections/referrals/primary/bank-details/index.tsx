@@ -68,7 +68,7 @@ export default function ReferralsBankDetails( { type }: { type?: 'migrations' | 
 	const { data, isFetching } = useGetTipaltiIFrameURL();
 	const { data: tipaltiData } = useGetTipaltiPayee();
 
-	const accountStatus = getAccountStatus( tipaltiData, translate );
+	const accountStatus = getAccountStatus( tipaltiData );
 
 	const iFrameSrc = data?.iframe_url || '';
 

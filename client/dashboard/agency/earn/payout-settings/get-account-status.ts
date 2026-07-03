@@ -8,10 +8,7 @@ interface AccountStatus {
 	actionRequired: boolean;
 }
 
-export function getAccountStatus(
-	data: TipaltiPayee | null | undefined,
-	translate: ( key: string ) => string = __
-): AccountStatus | null {
+export function getAccountStatus( data: TipaltiPayee | null | undefined ): AccountStatus | null {
 	if ( ! data ) {
 		return null;
 	}
@@ -22,13 +19,13 @@ export function getAccountStatus(
 			if ( ! IsPayable ) {
 				statusMeta = {
 					statusType: 'warning',
-					status: translate( 'Not Payable' ),
+					status: __( 'Not Payable' ),
 					statusReason: PayableReason?.map( ( reason ) => {
 						if ( reason === 'No PM' ) {
-							return translate( 'Bank details are missing' );
+							return __( 'Bank details are missing' );
 						}
 						if ( reason === 'Tax' ) {
-							return translate( 'Tax form is missing' );
+							return __( 'Tax form is missing' );
 						}
 						return reason;
 					} ).join( ', ' ),
@@ -37,27 +34,27 @@ export function getAccountStatus(
 			}
 			statusMeta = {
 				statusType: 'success',
-				status: translate( 'Confirmed' ),
+				status: __( 'Confirmed' ),
 			};
 			break;
 		case 'Suspended':
 			statusMeta = {
 				statusType: 'error',
-				status: translate( 'Suspended' ),
+				status: __( 'Suspended' ),
 			};
 			break;
 		case 'Blocked':
 			statusMeta = {
 				statusType: 'error',
-				status: translate( 'Blocked' ),
-				statusReason: translate( 'Your account is blocked' ),
+				status: __( 'Blocked' ),
+				statusReason: __( 'Your account is blocked' ),
 			};
 			break;
 		case 'Closed':
 			statusMeta = {
 				statusType: 'error',
-				status: translate( 'Closed' ),
-				statusReason: translate( 'Your account is closed' ),
+				status: __( 'Closed' ),
+				statusReason: __( 'Your account is closed' ),
 			};
 			break;
 		default:

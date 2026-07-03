@@ -60,7 +60,7 @@ export default function LayoutBodyContent( {
 		dispatch( recordTracksEvent( 'calypso_a4a_referrals_get_started_button_click' ) );
 	}, [ dispatch ] );
 
-	const accountStatus = getAccountStatus( tipaltiData, translate );
+	const accountStatus = getAccountStatus( tipaltiData );
 
 	const hasPayeeAccount = !! accountStatus?.status;
 	const bankAccountCTAText = hasPayeeAccount

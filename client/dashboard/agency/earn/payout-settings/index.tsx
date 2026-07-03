@@ -39,7 +39,10 @@ export default function EarnPayoutSettings() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id ?? 0;
 
-	const { data: iframeData, isLoading } = useQuery( tipaltiIFrameUrlQuery( agencyId ) );
+	const { data: iframeData, isLoading } = useQuery( {
+		...tipaltiIFrameUrlQuery( agencyId ),
+		refetchOnWindowFocus: false,
+	} );
 
 	return (
 		<PageLayout

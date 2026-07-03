@@ -16,7 +16,7 @@ const useReferralsMenuItems = ( path: string ) => {
 	const translate = useTranslate();
 
 	const { data } = useGetTipaltiPayee();
-	const accountStatus = getAccountStatus( data, translate );
+	const accountStatus = getAccountStatus( data );
 
 	const showIndicator = accountStatus?.actionRequired;
 
