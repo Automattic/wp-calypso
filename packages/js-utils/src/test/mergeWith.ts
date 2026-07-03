@@ -150,4 +150,13 @@ describe( 'mergeWith', () => {
 		const theirs = lodashMergeWith( { a: [ 1, 2 ] }, { a: [ 9 ], b: 4 } );
 		expect( mine ).toEqual( theirs );
 	} );
+
+	it( 'returns a fresh object when the destination is nullish, like lodash', () => {
+		// A null destination (e.g. an unknown post merged with local edits) must
+		// yield the merged edits rather than throwing on the null read.
+		const mine = mergeWith( null as unknown as object, { a: 1, b: [ 2 ] }, overwriteArrays );
+		const theirs = lodashMergeWith( null, { a: 1, b: [ 2 ] }, overwriteArrays );
+		expect( mine ).toEqual( theirs );
+		expect( mine ).toEqual( { a: 1, b: [ 2 ] } );
+	} );
 } );

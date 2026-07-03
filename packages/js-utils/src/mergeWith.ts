@@ -116,21 +116,25 @@ function baseMergeWith(
  * properties, treats arrays as dense, and does not special-case typed arrays or
  * buffers. Unlike merge, circular references are supported (each in-progress
  * source is tracked so it is merged once).
- * @param object The destination object (mutated in place).
+ * @param object The destination (mutated in place; a nullish value becomes a fresh object).
  * @param args Source objects, optionally followed by a customizer function.
- * @returns The mutated destination object.
+ * @returns The mutated (or freshly created) destination object.
  */
 function mergeWith( object: object, ...args: unknown[] ): object {
 	const last = args[ args.length - 1 ];
 	const hasCustomizer = typeof last === 'function';
 	const customizer = hasCustomizer ? ( last as MergeWithCustomizer ) : defaultCustomizer;
 	const sources = hasCustomizer ? args.slice( 0, -1 ) : args;
+	// Coerce like lodash's assigner so a nullish destination becomes a fresh
+	// object rather than being read through — callers that merge into a
+	// possibly-absent value get the merged result back.
+	const target = Object( object ) as PlainObject;
 	for ( const source of sources ) {
 		if ( source != null ) {
-			baseMergeWith( object as PlainObject, source as PlainObject, customizer, new Map() );
+			baseMergeWith( target, source as PlainObject, customizer, new Map() );
 		}
 	}
-	return object;
+	return target;
 }
 
 export default mergeWith;
