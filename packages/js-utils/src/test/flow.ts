@@ -35,7 +35,7 @@ describe( 'flow', () => {
 		expect( flow()( 42 ) ).toBe( 42 );
 	} );
 
-	it( 'throws up front when a composed value is not a function, like lodash', () => {
+	it( 'throws up front when a composed value is not a function', () => {
 		// @ts-expect-error -- exercises runtime validation of non-function values.
 		expect( () => flow( [ ( x: number ) => x, undefined ] ) ).toThrow( 'Expected a function' );
 		// @ts-expect-error -- see above.

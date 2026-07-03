@@ -1,8 +1,8 @@
 import { FEATURE_SFTP, FEATURE_UPLOAD_PLUGINS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
+import { isEmpty } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';

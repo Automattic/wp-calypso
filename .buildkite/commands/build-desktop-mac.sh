@@ -8,7 +8,13 @@ export SKIP_TSC=true
 export PLAYWRIGHT_SKIP_DOWNLOAD=true
 export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 
-# `desktop/.ruby-version` pins 3.3.0 but the a8c BK mac VM image only
+if [[ "${BUILDKITE_TAG:-}" == desktop-v* ]]; then
+	export RELEASE_BUILD=true
+else
+	export RELEASE_BUILD=false
+fi
+
+# `desktop/.ruby-version` pins 3.3.0 but the a8c Buildkite mac VM image only
 # ships 3.2.2 (default) and 3.3.4. Override here so `bundle` resolves.
 # TODO: remove this and bump `desktop/.ruby-version` to 3.3.4 once
 # CircleCI's `wp-desktop-mac` job is decommissioned (its build runs
@@ -48,12 +54,18 @@ else
 fi
 export APP_STORE_CONNECT_API_KEY_PATH="$ASC_KEY_PATH"
 
+echo "RELEASE_BUILD=$RELEASE_BUILD"
+
 yarn run ci:build-mac
 yarn run test:e2e
 
 # The afterSign hook already notarized and stapled the app; this notarizes and
 # staples the `.dmg` wrapper for offline Gatekeeper checks on first mount.
 bundle exec fastlane notarize_app
+
+if [[ "$RELEASE_BUILD" == "true" ]]; then
+	../.buildkite/commands/validate-desktop-artifacts.sh mac release
+fi
 
 # Drop the unpacked app trees electron-builder leaves behind so the artifact
 # upload ferries only the distributables (zip, dmg, blockmaps, update yml),

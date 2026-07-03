@@ -1,5 +1,4 @@
 import { omit } from '@automattic/js-utils';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, PureComponent } from 'react';
 import InfiniteList from 'calypso/components/infinite-list';
@@ -27,7 +26,7 @@ class SortedGrid extends PureComponent {
 		for ( let i = 0; i < this.props.items.length; i += this.props.itemsPerRow ) {
 			const row = this.props.items.slice( i, i + this.props.itemsPerRow );
 			const groups = row.map( this.props.getItemGroup ).reduce( ( results, group ) => {
-				results[ group ] = get( results, group, 0 ) + 1;
+				results[ group ] = ( results?.[ group ] ?? 0 ) + 1;
 				return results;
 			}, {} );
 

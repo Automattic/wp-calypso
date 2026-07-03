@@ -1,5 +1,5 @@
+import { isEmpty } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import {
 	REWIND_BACKUP_PROGRESS_REQUEST,
 	REWIND_BACKUP_DISMISS_PROGRESS,

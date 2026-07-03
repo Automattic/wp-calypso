@@ -6,7 +6,6 @@ import { usePlansGridContext } from '../../grid-context';
 import { GridPlan } from '../../types';
 import { PlanFeaturesItem } from '../item';
 import PlanDivOrTdContainer from '../plan-div-td-container';
-import ClientLogoList from './client-logo-list';
 
 type EnterpriseFeaturesProps = {
 	renderedGridPlans: GridPlan[];
@@ -71,27 +70,19 @@ const EnterpriseFeatures = ( { renderedGridPlans, options }: EnterpriseFeaturesP
 				className="plan-features-2023-grid__table-item"
 				{ ...rowspanProp }
 			>
-				{ shouldRenderLogos && (
-					<>
-						<div className="plan-features-2023-grid__item">
-							<ClientLogoList className="plan-features-2023-grid__item-logos" />
+				{ shouldRenderLogos && ! options?.isLogosOnly && (
+					<CardContainer>
+						<div className={ clsx( 'plan-features-2023-grid__common-title', planClassName ) }>
+							{ translate( 'High performance platform, with:' ) }
 						</div>
-
-						{ ! options?.isLogosOnly && (
-							<CardContainer>
-								<div className={ clsx( 'plan-features-2023-grid__common-title', planClassName ) }>
-									{ translate( 'High performance platform, with:' ) }
-								</div>
-								{ enterpriseFeaturesList?.map( ( title, index ) => (
-									<PlanFeaturesItem key={ index }>
-										<span className="plan-features-2023-grid__item-info is-available">
-											<span className="plan-features-2023-grid__item-title">{ title }</span>
-										</span>
-									</PlanFeaturesItem>
-								) ) }
-							</CardContainer>
-						) }
-					</>
+						{ enterpriseFeaturesList?.map( ( title, index ) => (
+							<PlanFeaturesItem key={ index }>
+								<span className="plan-features-2023-grid__item-info is-available">
+									<span className="plan-features-2023-grid__item-title">{ title }</span>
+								</span>
+							</PlanFeaturesItem>
+						) ) }
+					</CardContainer>
 				) }
 			</PlanDivOrTdContainer>
 		);

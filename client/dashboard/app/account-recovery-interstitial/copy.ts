@@ -1,19 +1,19 @@
 /**
- * Copy for the account-recovery interstitial, keyed by `InterstitialVariant`.
+ * Copy for the account-recovery interstitial, keyed by `SecurityLevel`.
  */
 import { __, sprintf } from '@wordpress/i18n';
 import { securityAccountRecoveryRoute, securityTwoStepAuthRoute } from '../router/me';
 
 /**
- * Which message to show in the interstitial, depending on account recovery settings.
- * Each of these variants map to a correspondent `SecurityLevel` ("none", "partial", "strong").
+ * How secure the user's account already is. Single source of truth for the tiers,
+ * used to key both the copy map here and the snooze windows in the interstitial.
  */
-export type InterstitialVariant =
-	| 'none' // none
-	| 'add-two-factor' // partial
-	| 'add-recovery-method' // partial
-	| 'add-backup-codes' // strong
-	| 'strong'; // strong
+export type SecurityLevel =
+	| 'none' // no recovery method and no 2FA
+	| 'partial-has-recovery' // a recovery method but no 2FA
+	| 'partial-has-2fa' // 2FA but no recovery method
+	| 'strong-no-backup-codes' // recovery method and 2FA, but no backup codes
+	| 'strong'; // recovery method, 2FA, and backup codes
 
 export interface InterstitialCta {
 	/** Tracks `cta_id` dimension. */
@@ -28,30 +28,6 @@ interface InterstitialCopy {
 	description: string;
 	primaryCta: InterstitialCta;
 	secondaryCta?: InterstitialCta;
-}
-
-/** Picks the copy variant depending on the user's account recovery settings. */
-export function getInterstitialVariant(
-	hasRecoveryMethod: boolean,
-	hasTwoFactor: boolean,
-	hasBackupCodes: boolean
-): InterstitialVariant {
-	if ( ! hasRecoveryMethod && ! hasTwoFactor ) {
-		return 'none';
-	}
-	// Exactly one of recovery-method / 2FA is missing: nudge toward the missing one. A missing
-	// recovery method outranks missing backup codes, so this is checked before backup codes.
-	if ( ! hasTwoFactor ) {
-		return 'add-two-factor';
-	}
-	if ( ! hasRecoveryMethod ) {
-		return 'add-recovery-method';
-	}
-	// Has a recovery method and 2FA; the only remaining gap is downloading backup codes.
-	if ( ! hasBackupCodes ) {
-		return 'add-backup-codes';
-	}
-	return 'strong';
 }
 
 /** `joe@gmail.com` → `j••••@gmail.com`. */
@@ -114,7 +90,7 @@ function getStrongDescription( {
 /** `recoveryMethods` carries the user's validated recovery details, to personalize the `strong` copy. */
 export function getInterstitialCopy(
 	recoveryMethods: { recoveryEmail?: string; recoveryPhoneNumber?: string } = {}
-): Record< InterstitialVariant, InterstitialCopy > {
+): Record< SecurityLevel, InterstitialCopy > {
 	return {
 		// Nothing set up: lead with a recovery method, offer 2FA as the secondary.
 		none: {
@@ -134,7 +110,7 @@ export function getInterstitialCopy(
 			},
 		},
 		// Has a recovery method, missing 2FA: push two-factor.
-		'add-two-factor': {
+		'partial-has-recovery': {
 			title: __( 'Take your security further' ),
 			description: __(
 				'Add an extra layer of security. Enable two-step authentication to go beyond email or phone recovery.'
@@ -151,7 +127,7 @@ export function getInterstitialCopy(
 			},
 		},
 		// Has 2FA, missing a recovery method: push a recovery email/phone safety net.
-		'add-recovery-method': {
+		'partial-has-2fa': {
 			title: __( 'Don’t get locked out of your account' ),
 			description: __(
 				'Two-step authentication is great—but if you lose access to your authenticator, you’ll need another way in. Add a recovery email or phone as a safety net.'
@@ -169,7 +145,7 @@ export function getInterstitialCopy(
 		},
 		// Has a recovery method and 2FA but hasn't downloaded backup codes: nudge that last step.
 		// Both CTAs "review" rather than "set up" — everything else is already in place.
-		'add-backup-codes': {
+		'strong-no-backup-codes': {
 			title: __( 'Don’t get locked out of your account' ),
 			description: __(
 				'If you ever lose access to your authenticator, backup codes are your way back in. Download them now and keep them somewhere safe.'

@@ -140,9 +140,27 @@ class PurchasesListing extends Component {
 	}
 
 	getExpirationInfoForPlan( plan ) {
+		const { purchases, translate } = this.props;
+
 		// No expiration date for free plans.
 		if ( this.isFreePlan( plan ) ) {
 			return null;
+		}
+
+		// When a downgrade is scheduled for the end of the term, surface that in place
+		// of the usual "Renews on ..." line so the user remembers the change is queued.
+		const planPurchase = purchases?.find(
+			( purchase ) => isPlan( purchase ) && purchase.productSlug === plan.productSlug
+		);
+		if ( planPurchase?.isDelayedDowngradePending && planPurchase.delayedDowngradeToProductSlug ) {
+			const targetPlan = getPlan( planPurchase.delayedDowngradeToProductSlug );
+			if ( targetPlan ) {
+				return translate( 'Changing to %(plan)s at renewal', {
+					args: { plan: targetPlan.getTitle() },
+					comment:
+						'%(plan)s is the name of the lower-tier plan the subscription will downgrade to at renewal',
+				} );
+			}
 		}
 
 		const expiryMoment = plan.expiryDate ? this.props.moment( plan.expiryDate ) : null;

@@ -37,7 +37,7 @@
 		"@wordpress/is-shallow-equal": "^5.48.0",
 		"@wordpress/primitives": "^4.48.0",
 		"clsx": "^2.1.1",
-		"lodash": "^4.17.21",
+		"lodash": "^4.18.1",
 		"moment": "^2.30.1",
 		"new-github-issue-url": "^0.2.1",
 		"react": "^18.3.1",

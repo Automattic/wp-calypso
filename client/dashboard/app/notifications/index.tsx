@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Dropdown } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
@@ -136,21 +135,19 @@ export default function Notifications( {
 				flip: false,
 				shift: true,
 				...( anchor ? { anchor: popoverAnchor } : anchorEl && { anchor: anchorEl } ),
-				...( isEnabled( 'dashboard/omnibar' ) && {
-					onFocusOutside: () => {
-						// When focus moves to the omnibar (e.g. clicking the
-						// omnibar notification bell), suppress the Popover's
-						// auto-close and let the omnibar event handle the toggle
-						// instead. Without this, the Popover's focus-outside close
-						// races with the omnibar's toggle event, causing the panel
-						// to close then immediately reopen.
-						const omnibar = document.getElementById( 'wpcom-omnibar' );
-						if ( omnibar?.contains( document.activeElement ) ) {
-							return;
-						}
-						setIsOpen( false );
-					},
-				} ),
+				onFocusOutside: () => {
+					// When focus moves to the omnibar (e.g. clicking the
+					// omnibar notification bell), suppress the Popover's
+					// auto-close and let the omnibar event handle the toggle
+					// instead. Without this, the Popover's focus-outside close
+					// races with the omnibar's toggle event, causing the panel
+					// to close then immediately reopen.
+					const omnibar = document.getElementById( 'wpcom-omnibar' );
+					if ( omnibar?.contains( document.activeElement ) ) {
+						return;
+					}
+					setIsOpen( false );
+				},
 			} }
 			open={ isOpen }
 			expandOnMobile={ isMobileViewport }

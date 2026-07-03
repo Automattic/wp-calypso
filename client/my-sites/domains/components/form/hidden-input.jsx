@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 
-import { isEmpty } from 'lodash';
+import { isEmpty } from '@automattic/js-utils';
 import { PureComponent } from 'react';
 import Input from './input';
 

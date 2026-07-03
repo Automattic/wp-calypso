@@ -57,6 +57,14 @@ jest.mock( 'calypso/reader/hooks/use-infinite-list', () => ( {
 	} ),
 } ) );
 
+const mockRecordReaderTracksEvent: jest.Mock = jest.fn( () => ( {
+	type: 'TEST_TRACKS_EVENT',
+} ) );
+
+jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
+	recordReaderTracksEvent: ( ...args: unknown[] ) => mockRecordReaderTracksEvent( ...args ),
+} ) );
+
 const WORK: ReadSpace = {
 	id: '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21',
 	name: 'Work',
@@ -75,18 +83,24 @@ function mockCreateEndpoint( name: string, onBody?: ( body: Record< string, unkn
 				title: name,
 				follows: [],
 				tags: body.tags ?? [],
+				languages: body.languages ?? [],
 				layout: body.layout ?? { color: 'blue', icon: 'inbox' },
 			};
 		} );
 }
 
-function setup( { existing = [] as ReadSpace[], onCreated = jest.fn() } = {} ) {
+function setup( {
+	existing = [] as ReadSpace[],
+	onCreated = jest.fn(),
+	localeSlug,
+}: { existing?: ReadSpace[]; onCreated?: jest.Mock; localeSlug?: string } = {} ) {
 	const queryClient = new QueryClient();
 	queryClient.setQueryData( readSpacesQuery().queryKey, existing );
 	const onClose = jest.fn();
 	const user = userEvent.setup();
 	renderWithProvider( <CreateSpaceModal isOpen onClose={ onClose } onCreated={ onCreated } />, {
 		queryClient,
+		initialState: localeSlug ? { currentUser: { user: { localeSlug } } } : undefined,
 	} );
 	return { queryClient, onClose, onCreated, user };
 }
@@ -94,6 +108,7 @@ function setup( { existing = [] as ReadSpace[], onCreated = jest.fn() } = {} ) {
 describe( 'CreateSpaceModal', () => {
 	beforeEach( () => {
 		mockSubscriptions = [];
+		mockRecordReaderTracksEvent.mockClear();
 	} );
 
 	afterEach( () => nock.cleanAll() );
@@ -126,7 +141,7 @@ describe( 'CreateSpaceModal', () => {
 		expect( within( dialog ).queryByRole( 'tab', { name: 'Delete' } ) ).not.toBeInTheDocument();
 
 		await user.click( within( dialog ).getByRole( 'tab', { name: 'Layout' } ) );
-		expect( within( dialog ).getByRole( 'radio', { name: /Compact list/ } ) ).toBeChecked();
+		expect( within( dialog ).getByRole( 'radio', { name: /Classic/ } ) ).toBeChecked();
 
 		await user.click( within( dialog ).getByRole( 'tab', { name: 'Sources' } ) );
 		expect(
@@ -171,7 +186,11 @@ describe( 'CreateSpaceModal', () => {
 		mockCreateEndpoint( 'Reading', onBody );
 
 		await user.type( screen.getByLabelText( 'Name' ), 'Reading' );
-		await user.click( screen.getByRole( 'radio', { name: 'Green' } ) );
+		await user.click(
+			within( screen.getByRole( 'radiogroup', { name: 'Accent color' } ) ).getByRole( 'radio', {
+				name: 'Green',
+			} )
+		);
 		await user.click( screen.getByRole( 'radio', { name: 'Star' } ) );
 		await user.click( screen.getByRole( 'tab', { name: 'Layout' } ) );
 		await user.click( screen.getByRole( 'radio', { name: /Classic/ } ) );
@@ -186,7 +205,7 @@ describe( 'CreateSpaceModal', () => {
 				title: 'Reading',
 				feeds: [ 456 ],
 				tags: [],
-				layout: { color: 'green', icon: 'star', view: 'legacy' },
+				layout: { color: 'green', iconColor: 'blue', icon: 'star', view: 'legacy', width: 'wide' },
 			} )
 		);
 		const spaces = queryClient.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey );
@@ -202,6 +221,48 @@ describe( 'CreateSpaceModal', () => {
 		const detail = queryClient.getQueryData< ReadSpaceDetails >( readSpaceQuery( '7' ).queryKey );
 		expect( detail?.layout.view ).toBe( 'legacy' );
 		expect( onClose ).toHaveBeenCalled();
+		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+			'calypso_reader_spaces_space_created',
+			{
+				tag_count: 0,
+				language_count: 0,
+				source_count: 1,
+				layout: 'legacy',
+				icon: 'star',
+				color: 'green',
+				icon_color: 'blue',
+			}
+		);
+	} );
+
+	it( 'pre-fills the account language as a base code and sends it on create', async () => {
+		// pt-br is a regional locale; the field should pre-fill the base "Português".
+		const { user, onClose } = setup( { localeSlug: 'pt-br' } );
+		const onBody = jest.fn();
+		mockCreateEndpoint( 'Leitura', onBody );
+
+		const dialog = screen.getByRole( 'dialog', { name: 'Create a new space' } );
+		expect( within( dialog ).getByText( 'Português' ) ).toBeVisible();
+
+		await user.type( screen.getByLabelText( 'Name' ), 'Leitura' );
+		await user.click( screen.getByRole( 'button', { name: 'Create' } ) );
+
+		await waitFor( () => expect( onClose ).toHaveBeenCalled() );
+		expect( onBody ).toHaveBeenCalledWith(
+			expect.objectContaining( { title: 'Leitura', languages: [ 'pt' ] } )
+		);
+	} );
+
+	it( 'sends no languages when the account has no locale', async () => {
+		const { user, onClose } = setup();
+		const onBody = jest.fn();
+		mockCreateEndpoint( 'Reading', onBody );
+
+		await user.type( screen.getByLabelText( 'Name' ), 'Reading' );
+		await user.click( screen.getByRole( 'button', { name: 'Create' } ) );
+
+		await waitFor( () => expect( onClose ).toHaveBeenCalled() );
+		expect( onBody ).toHaveBeenCalledWith( expect.objectContaining( { languages: [] } ) );
 	} );
 
 	it( 'notifies the parent with the created space', async () => {

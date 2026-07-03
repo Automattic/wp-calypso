@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { AspectRatios, AspectRatiosValues } from 'calypso/state/editor/image-editor/constants';
 
 /**
@@ -16,7 +15,7 @@ import { AspectRatios, AspectRatiosValues } from 'calypso/state/editor/image-edi
  */
 export function getDefaultAspectRatio( aspectRatio = null, aspectRatios = AspectRatiosValues ) {
 	if ( ! aspectRatios?.includes( aspectRatio ) ) {
-		aspectRatio = get( aspectRatios, '0', AspectRatios.FREE );
+		aspectRatio = aspectRatios?.[ 0 ] ?? AspectRatios.FREE;
 	}
 
 	return AspectRatiosValues.includes( aspectRatio )

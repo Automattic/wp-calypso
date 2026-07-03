@@ -51,6 +51,7 @@ module.exports = {
 				message:
 					'Object return values cause unnecessary re-renders. Use separate useSelector calls instead, or pass equalityFn to useSelector.',
 			},
+			...lodashRestrictedImports.syntax,
 		],
 	},
 	overrides: [

@@ -30,9 +30,7 @@ export default function CopyActionButton( { text }: Props ) {
 		<Button
 			className="agents-manager-copy-action-button"
 			icon={ isCopied ? check : copy }
-			label={
-				isCopied ? __( 'Copied', '__i18n_text_domain__' ) : __( 'Copy', '__i18n_text_domain__' )
-			}
+			label={ isCopied ? __( 'Copied', __i18n_text_domain__ ) : __( 'Copy', __i18n_text_domain__ ) }
 			onClick={ handleClick }
 			size="compact"
 		/>

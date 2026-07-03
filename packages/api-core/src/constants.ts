@@ -342,11 +342,26 @@ export const getDataCenterOptions = (): Record< DataCenterOption, string > => ( 
 	ams: __( 'EU West (Amsterdam, Netherlands)' ),
 } );
 
+// Every billing-period variant of a plan maps to the same display name, so that
+// looking up a name by product slug works regardless of term (monthly, annual,
+// 2-year, 3-year).
 export const getPlanNames = () => ( {
 	[ DotcomPlans.PERSONAL ]: __( 'Personal' ),
+	[ DotcomPlans.PERSONAL_MONTHLY ]: __( 'Personal' ),
+	[ DotcomPlans.PERSONAL_2_YEARS ]: __( 'Personal' ),
+	[ DotcomPlans.PERSONAL_3_YEARS ]: __( 'Personal' ),
 	[ DotcomPlans.PREMIUM ]: __( 'Premium' ),
+	[ DotcomPlans.PREMIUM_MONTHLY ]: __( 'Premium' ),
+	[ DotcomPlans.PREMIUM_2_YEARS ]: __( 'Premium' ),
+	[ DotcomPlans.PREMIUM_3_YEARS ]: __( 'Premium' ),
 	[ DotcomPlans.BUSINESS ]: __( 'Business' ),
+	[ DotcomPlans.BUSINESS_MONTHLY ]: __( 'Business' ),
+	[ DotcomPlans.BUSINESS_2_YEARS ]: __( 'Business' ),
+	[ DotcomPlans.BUSINESS_3_YEARS ]: __( 'Business' ),
 	[ DotcomPlans.ECOMMERCE ]: __( 'Commerce' ),
+	[ DotcomPlans.ECOMMERCE_MONTHLY ]: __( 'Commerce' ),
+	[ DotcomPlans.ECOMMERCE_2_YEARS ]: __( 'Commerce' ),
+	[ DotcomPlans.ECOMMERCE_3_YEARS ]: __( 'Commerce' ),
 } );
 
 export const PaymentPartners = {

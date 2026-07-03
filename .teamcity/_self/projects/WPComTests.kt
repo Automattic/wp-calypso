@@ -155,14 +155,14 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
 				path = "./bin/post-threaded-slack-message.sh"
 				arguments = "\"%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID%\" \"%GB_E2E_ANNOUNCEMENT_THREAD_TS%\" \"The $buildName passed successfully! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" \"%GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%\""
-			}.skipOnMergeQueueBranch()
+			}
 
 			exec {
 				name = "Post Failure Message to Slack"
 				executionMode = BuildStep.ExecutionMode.RUN_ONLY_ON_FAILURE
 				path = "./bin/post-threaded-slack-message.sh"
 				arguments = "\"%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID%\" \"%GB_E2E_ANNOUNCEMENT_THREAD_TS%\" \"The $buildName failed! Could you have a look?! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" \"%GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%\""
-			}.skipOnMergeQueueBranch()
+			}
 		},
 		buildFeatures = {
 			notifyAllFailuresAndFirstSuccess("#gutenberg-e2e")
@@ -178,7 +178,8 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				triggerBuild = always()
 				withPendingChangesOnly = false
 			}
-		}
+		},
+		vcsBranchFilter = allBranchesExceptMergeQueue()
 	)
 }
 
@@ -193,6 +194,7 @@ fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 
 		vcs {
 			root(Settings.WpCalypso)
+			branchFilter = allBranchesExceptMergeQueue()
 			cleanCheckout = true
 		}
 
@@ -204,12 +206,11 @@ fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 		}
 
 		steps {
-			passMergeQueueBranchesEarly()
-			prepareE2eEnvironment().skipOnMergeQueueBranch()
+			prepareE2eEnvironment()
 
-			runE2eTestsWithRetry(testGroup = "jetpack-wpcom-integration").skipOnMergeQueueBranch()
+			runE2eTestsWithRetry(testGroup = "jetpack-wpcom-integration")
 
-			collectE2eResults().skipOnMergeQueueBranch()
+			collectE2eResults()
 		}
 
 		features {
@@ -250,6 +251,7 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 
 		vcs {
 			root(Settings.WpCalypso)
+			branchFilter = allBranchesExceptMergeQueue()
 			cleanCheckout = true
 		}
 
@@ -267,8 +269,7 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 		}
 
 		steps {
-			passMergeQueueBranchesEarly()
-			prepareE2eEnvironment().skipOnMergeQueueBranch()
+			prepareE2eEnvironment()
 
 			atomicVariations.forEach { variation ->
 				runE2eTestsWithRetry(
@@ -278,10 +279,10 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 						"RUN_ID" to "Atomic: $variation"
 					),
 					stepName = "Run Atomic Jetpack E2E Tests: $variation",
-				).skipOnMergeQueueBranch()
+				)
 			}
 
-			collectE2eResults().skipOnMergeQueueBranch()
+			collectE2eResults()
 		}
 
 		features {
@@ -324,6 +325,7 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 
 		vcs {
 			root(Settings.WpCalypso)
+			branchFilter = allBranchesExceptMergeQueue()
 			cleanCheckout = true
 		}
 
@@ -341,12 +343,11 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 		}
 
 		steps {
-			passMergeQueueBranchesEarly()
-			prepareE2eEnvironment().skipOnMergeQueueBranch()
+			prepareE2eEnvironment()
 
-			runE2eTestsWithRetry(testGroup = "jetpack-wpcom-integration").skipOnMergeQueueBranch()
+			runE2eTestsWithRetry(testGroup = "jetpack-wpcom-integration")
 
-			collectE2eResults().skipOnMergeQueueBranch()
+			collectE2eResults()
 		}
 
 		features {
@@ -490,20 +491,19 @@ private object GutenbergPlaywrightTests : BuildType({
 	}
 
 	steps {
-		passMergeQueueBranchesEarly()
 		exec {
 			name = "Post Successful Message to Slack"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
 			path = "./bin/post-threaded-slack-message.sh"
 			arguments = "\"%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID%\" \"%GB_E2E_ANNOUNCEMENT_THREAD_TS%\" \"The Gutenberg E2E Tests matrix leg passed successfully: %PROJECT%, %EXTRA_ENV_VARS%. <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" \"%GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%\""
-		}.skipOnMergeQueueBranch()
+		}
 
 		exec {
 			name = "Post Failure Message to Slack"
 			executionMode = BuildStep.ExecutionMode.RUN_ONLY_ON_FAILURE
 			path = "./bin/post-threaded-slack-message.sh"
 			arguments = "\"%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID%\" \"%GB_E2E_ANNOUNCEMENT_THREAD_TS%\" \"The Gutenberg E2E Tests failed: %PROJECT%, %EXTRA_ENV_VARS%. Could you have a look?! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" \"%GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%\""
-		}.skipOnMergeQueueBranch()
+		}
 	}
 
 	features {

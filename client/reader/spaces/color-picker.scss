@@ -14,13 +14,13 @@
 	inline-size: 36px;
 	block-size: 36px;
 	border-radius: 8px;
-	background: var( --space-color );
+	background: var( --space-color-vivid );
 	cursor: pointer;
 
 	&[data-selected='true'] {
 		box-shadow:
 			0 0 0 2px var( --color-surface ),
-			0 0 0 4px var( --space-color );
+			0 0 0 4px var( --space-color-vivid );
 	}
 }
 
@@ -28,6 +28,39 @@
 @each $color in space-colors.$space-colors {
 	.space-color-picker__swatch--#{$color} {
 		@include space-colors.space-accent-color( $color );
+	}
+}
+
+// The "None" swatch clears the accent. It gets no accent mixin, so style it
+// explicitly: a neutral surface with a diagonal strike so it reads as "no color".
+.space-color-picker__swatch--none {
+	background: var( --color-surface );
+	box-shadow: inset 0 0 0 1px var( --color-border-subtle );
+
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		background: linear-gradient(
+			to top right,
+			transparent calc( 50% - 1px ),
+			var( --color-text-subtle ) calc( 50% - 1px ),
+			var( --color-text-subtle ) calc( 50% + 1px ),
+			transparent calc( 50% + 1px )
+		);
+	}
+
+	&[data-selected='true'] {
+		box-shadow:
+			0 0 0 2px var( --color-surface ),
+			0 0 0 4px var( --color-text-subtle );
+	}
+
+	// The check sits above the strike and needs a dark fill on the light surface.
+	.space-color-picker__check {
+		position: relative;
+		fill: var( --color-text );
 	}
 }
 

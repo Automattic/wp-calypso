@@ -9,7 +9,6 @@ import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../app/performance-tracking';
 import { domainsIndexRoute } from '../app/router/domains';
 import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../components/dataviews';
-import { OptInWelcome } from '../components/opt-in-welcome';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import AddDomainButton from './add-domain-button';
@@ -79,12 +78,7 @@ function Domains() {
 						actions={ ! hasDomains ? null : <AddDomainButton /> }
 					/>
 				}
-				notices={
-					<>
-						<OptInWelcome tracksContext="domains" />
-						<BulkActionsProgressNotice />
-					</>
-				}
+				notices={ <BulkActionsProgressNotice /> }
 			>
 				{ ! hasDomains ? (
 					<DataViewsEmptyStateLayout

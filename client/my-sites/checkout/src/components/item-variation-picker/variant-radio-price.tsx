@@ -5,10 +5,12 @@ import {
 	fromVariantPriceData,
 	getPlanPriceForDuration,
 } from '@automattic/plans-grid-next';
-import { styled } from '@automattic/wpcom-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
+import { LoadingCopy, styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useCheckoutUiRedesignExperiment } from 'calypso/my-sites/checkout/src/hooks/use-checkout-ui-redesign-experiment';
+import useCartKey from '../../../use-cart-key';
 import type { WPCOMProductVariant } from './types';
 
 const Discount = styled.span`
@@ -84,6 +86,9 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 	compareTo?: WPCOMProductVariant;
 } > = ( { variant, compareTo } ) => {
 	const translate = useTranslate();
+	const cartKey = useCartKey();
+	const { couponStatus } = useShoppingCart( cartKey );
+	const isApplyingCoupon = couponStatus === 'pending';
 	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
 	const compareToInfo = compareTo ? fromVariantPriceData( compareTo ) : null;
 	const variantInfo = fromVariantPriceData( variant );
@@ -132,12 +137,18 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 				inlineDiscount={ isCheckoutUiRedesignV1 && discountPercentage > 0 }
 				isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
 			>
-				{ isCheckoutUiRedesignV1 && discountPercentage > 0 && (
-					<DiscountPercentage percent={ discountPercentage } />
-				) }
-				<Price isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }>{ priceDisplay }</Price>
-				{ ! isCheckoutUiRedesignV1 && discountPercentage > 0 && (
-					<DiscountPercentage percent={ discountPercentage } />
+				{ isApplyingCoupon ? (
+					<LoadingCopy width="70px" height="16px" noMargin />
+				) : (
+					<>
+						{ isCheckoutUiRedesignV1 && discountPercentage > 0 && (
+							<DiscountPercentage percent={ discountPercentage } />
+						) }
+						<Price isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }>{ priceDisplay }</Price>
+						{ ! isCheckoutUiRedesignV1 && discountPercentage > 0 && (
+							<DiscountPercentage percent={ discountPercentage } />
+						) }
+					</>
 				) }
 			</PriceArea>
 		</Variant>

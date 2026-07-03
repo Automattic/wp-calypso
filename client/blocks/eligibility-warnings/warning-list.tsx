@@ -69,13 +69,17 @@ function displayDomainNames( domainNames: DomainNames ) {
 	return (
 		<div className="eligibility-warnings__domain-names">
 			<Card compact>
-				<span className="eligibility-warnings__address-first">{ firstPartCurrent }</span>
-				<span className="eligibility-warnings__address-second">{ secondPartCurrent }</span>
+				<span className="eligibility-warnings__address">
+					<span className="eligibility-warnings__address-first">{ firstPartCurrent }</span>
+					<span className="eligibility-warnings__address-second">{ secondPartCurrent }</span>
+				</span>
 				<Badge type="info">{ translate( 'current' ) }</Badge>
 			</Card>
 			<Card compact>
-				<span className="eligibility-warnings__address-first">{ firstPartNew }</span>
-				<span className="eligibility-warnings__address-second">{ secondPartNew }</span>
+				<span className="eligibility-warnings__address">
+					<span className="eligibility-warnings__address-first">{ firstPartNew }</span>
+					<span className="eligibility-warnings__address-second">{ secondPartNew }</span>
+				</span>
 				<Badge type="success">{ translate( 'new' ) }</Badge>
 			</Card>
 		</div>

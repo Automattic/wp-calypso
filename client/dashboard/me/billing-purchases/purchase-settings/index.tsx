@@ -266,12 +266,12 @@ function ProductLink( { purchase }: { purchase: Purchase } ) {
 
 function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
-	const canBeRenewed =
-		purchase.can_explicit_renew && String( user.ID ) === String( purchase.user_id );
+	const isOwner = String( user.ID ) === String( purchase.user_id );
+	const canBeRenewed = purchase.can_explicit_renew && isOwner;
 	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() );
 	const { recordTracksEvent } = useAnalytics();
 	const menuItems = [
-		canUpgradePurchase( purchase ) && upgradeUrl && (
+		canUpgradePurchase( purchase ) && upgradeUrl && isOwner && (
 			<MenuItem
 				onClick={ () => {
 					recordTracksEvent( 'calypso_purchases_upgrade_plan', {
@@ -313,9 +313,14 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 }
 
 function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
+	const { user } = useAuth();
 	const navigate = useNavigate();
 	const locale = useLocale();
 	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
+
+	if ( String( user.ID ) !== String( purchase.user_id ) ) {
+		return null;
+	}
 
 	// WordAds and non-primary domain warnings are shown inline on the confirmation screen
 	// under purchases/split-cancel-remove (see cancellation-main-content.tsx).
@@ -500,7 +505,11 @@ function canUpgradePurchase( purchase: Purchase ): boolean {
 }
 
 function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
+	const { user } = useAuth();
 	const { recordTracksEvent } = useAnalytics();
+	if ( String( user.ID ) !== String( purchase.user_id ) ) {
+		return null;
+	}
 	if ( ! canUpgradePurchase( purchase ) ) {
 		return null;
 	}
@@ -669,8 +678,12 @@ function ReinstallButton( { purchase }: { purchase: Purchase } ) {
 }
 
 function ChangePlanActionItem( { purchase }: { purchase: Purchase } ) {
+	const { user } = useAuth();
 	const { recordTracksEvent } = useAnalytics();
 
+	if ( String( user.ID ) !== String( purchase.user_id ) ) {
+		return null;
+	}
 	if ( ! shouldShowChangePlan( purchase ) ) {
 		return null;
 	}
@@ -710,10 +723,20 @@ function ChangePlanActionItem( { purchase }: { purchase: Purchase } ) {
 }
 
 function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
+	const { user } = useAuth();
+	const isOwner = String( user.ID ) === String( purchase.user_id );
+	const hasProductAction =
+		( isMarketplacePlugin( purchase ) && ! isMarketplaceHoldingSitePurchase( purchase ) ) ||
+		isJetpackCrmProduct( purchase.product_slug );
+
 	// 100-year plans and domains have no self-serve actions (no upgrade, no
 	// renew, no cancel/remove). Skip the card entirely so we don't render an
 	// empty shell.
 	if ( isCentennialPurchase( purchase ) ) {
+		return null;
+	}
+
+	if ( ! isOwner && ( isExpired( purchase ) || ! hasProductAction ) ) {
 		return null;
 	}
 
@@ -849,6 +872,9 @@ function getFields( {
 					return undefined;
 				} )();
 				if ( purchase.is_auto_renew_enabled && ! purchase.is_rechargeable ) {
+					if ( String( user.ID ) !== String( purchase.user_id ) ) {
+						return null;
+					}
 					return (
 						<div className="purchase-settings__action-item-standalone">
 							<ActionList.ActionItem
@@ -927,7 +953,7 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 	const navigate = useNavigate();
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 
-	if ( isIncludedWithPlan( purchase ) ) {
+	if ( String( user.ID ) !== String( purchase.user_id ) || isIncludedWithPlan( purchase ) ) {
 		return null;
 	}
 
@@ -1508,6 +1534,15 @@ export default function PurchaseSettings() {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const columns = isSmallViewport ? 1 : 2;
 	const spacing = isSmallViewport ? SPACING.SMALL : SPACING.DEFAULT;
+	const isCurrentPurchaseOwner = String( user.ID ) === String( purchase.user_id );
+	const canHeaderUpgrade = canUpgradePurchase( purchase ) && Boolean( upgradeUrl );
+	const shouldShowHeaderUpgradeAction = canHeaderUpgrade && isCurrentPurchaseOwner;
+	const shouldShowHeaderActionMenu =
+		isCurrentPurchaseOwner && ( canHeaderUpgrade || purchase.can_explicit_renew );
+	const shouldShowHeaderActions =
+		site?.options?.admin_url &&
+		! isCentennial &&
+		( shouldShowHeaderUpgradeAction || shouldShowHeaderActionMenu );
 
 	// Email plans order the overview cards as Renews, Renewal price, Mailbox, Site;
 	// every other purchase keeps Site, Owner, Renews, Price. Extract the two cards
@@ -1564,17 +1599,16 @@ export default function PurchaseSettings() {
 								: getTitleForDisplay( purchase )
 						}
 						actions={
-							site?.options?.admin_url &&
-							! isCentennial && (
+							shouldShowHeaderActions && (
 								<HStack justify="space-between">
-									{ canUpgradePurchase( purchase ) && upgradeUrl && (
+									{ shouldShowHeaderUpgradeAction && upgradeUrl && (
 										<Button __next40pxDefaultSize variant="primary" href={ upgradeUrl }>
 											{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
 										</Button>
 									) }
 									{ /* Email plans surface every action in the list below, so the
 									     quick-actions menu would only duplicate them. */ }
-									{ ! isEmailPlanManagementEnabled( purchase ) && (
+									{ shouldShowHeaderActionMenu && ! isEmailPlanManagementEnabled( purchase ) && (
 										<PageHeader.ActionMenu>
 											<PurchaseActionMenu purchase={ purchase } />
 										</PageHeader.ActionMenu>
@@ -1688,7 +1722,7 @@ export default function PurchaseSettings() {
 					purchase.subscription_status === 'active' && (
 						<ManageSubscriptionCard purchase={ purchase } />
 					) }
-				{ ! isCentennial && <PurchaseSettingsActions purchase={ purchase } /> }
+				<PurchaseSettingsActions purchase={ purchase } />
 			</VStack>
 		</PageLayout>
 	);
