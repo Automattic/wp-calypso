@@ -194,6 +194,12 @@ function buildLanguages( downloadedLanguages, languageRevisions ) {
 					mappedKey = context + String.fromCharCode( 4 ) + mappedKey;
 				}
 
+				// Skip `__proto__`: assigning it would mutate the prototype instead of
+				// adding a key, and lodash's merge dropped it too.
+				if ( mappedKey === '__proto__' ) {
+					continue;
+				}
+
 				translationsFlatten[ mappedKey ] = value;
 			}
 		}
@@ -244,7 +250,9 @@ function buildLanguages( downloadedLanguages, languageRevisions ) {
 		successfullyDownloadedLanguages.forEach( ( { langSlug, languageTranslations } ) => {
 			const cmdPaletteTranslations = {};
 			for ( const key of allModulesStrings ) {
-				if ( Object.hasOwn( languageTranslations, key ) ) {
+				// Skip `__proto__` so it can never mutate the prototype here or in the
+				// generated output that embeds this object as a literal.
+				if ( key !== '__proto__' && Object.hasOwn( languageTranslations, key ) ) {
 					cmdPaletteTranslations[ key ] = languageTranslations[ key ];
 				}
 			}
