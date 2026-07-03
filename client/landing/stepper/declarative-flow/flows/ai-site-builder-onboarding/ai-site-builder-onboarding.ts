@@ -30,20 +30,6 @@ import type { Store } from 'redux';
 
 const SiteIntent = Onboard.SiteIntent;
 
-const deletePage = async ( siteId: string | number, pageId: number ): Promise< boolean > => {
-	try {
-		await wpcom.req.post( {
-			path: '/sites/' + siteId + '/pages/' + pageId,
-			method: 'DELETE',
-			apiNamespace: 'wp/v2',
-		} );
-		return true;
-	} catch ( error ) {
-		// Fail silently — deleting the boilerplate page is not essential.
-		return false;
-	}
-};
-
 async function initialize( reduxStore: Store ) {
 	const { resetOnboardStore } = dispatch( ONBOARD_STORE ) as OnboardActions;
 
@@ -173,7 +159,6 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 								content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
 							}
 						);
-						await deletePage( siteId, 1 );
 						await setIntentOnSite( siteSlug, SiteIntent.AIAssembler );
 						if ( homePage?.id ) {
 							await setStaticHomepageOnSite( siteId, homePage.id );
