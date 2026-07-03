@@ -49,9 +49,9 @@ const CLIENT_LIST: Client[] = [
 		Logo: ( { title } ) => (
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
-				width="2033.16"
+				width="1748.67"
 				height="465"
-				viewBox="0 20 2033.16 465"
+				viewBox="153.8 20 1748.67 465"
 			>
 				<title>{ title }</title>
 				<circle cx="1868.52" cy="321.8" r="33.95" />
