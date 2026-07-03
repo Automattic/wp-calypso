@@ -83,7 +83,8 @@ export class ReaderSidebarOrganizationsList extends Component {
 				expandableIconClick={ this.toggleMenu }
 				disableFlyout
 				className={ clsx( 'has-counts', {
-					'sidebar__menu--selected': '/reader/' + organization.slug === path,
+					'sidebar__menu--selected':
+						! this.props.isOrganizationOpen && '/reader/' + organization.slug === path,
 				} ) }
 			>
 				{ this.renderAll() }
