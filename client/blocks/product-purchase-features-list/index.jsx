@@ -25,6 +25,7 @@ import {
 	TYPE_WOO_HOSTED_PRO,
 	TYPE_100_YEAR,
 	TYPE_STARTER,
+	TYPE_STUDENT,
 	FEATURE_LEGACY_STORAGE_200GB,
 } from '@automattic/calypso-products';
 import PropTypes from 'prop-types';
@@ -168,6 +169,19 @@ export class ProductPurchaseFeaturesList extends Component {
 				<SiteActivity />
 				<MobileApps onClick={ this.handleMobileAppsClick } />
 				<SellOnlinePaypal isJetpack={ false } />
+			</Fragment>
+		);
+	}
+
+	getStudentFeatures() {
+		const { selectedSite } = this.props;
+
+		return (
+			<Fragment>
+				<UploadPlugins selectedSite={ selectedSite } />
+				{ isEnabled( 'themes/premium' ) && <FindNewTheme selectedSite={ selectedSite } /> }
+				<AdvertisingRemoved isEligiblePlan selectedSite={ selectedSite } />
+				<MobileApps onClick={ this.handleMobileAppsClick } />
 			</Fragment>
 		);
 	}
@@ -418,6 +432,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				[ TYPE_PRO ]: () => this.getProFeatuers(),
 				[ TYPE_100_YEAR ]: () => this.getBusinessFeatures(),
 				[ TYPE_STARTER ]: () => this.getWPCOMLegacyStarterFeatures(),
+				[ TYPE_STUDENT ]: () => this.getStudentFeatures(),
 			},
 			[ GROUP_JETPACK ]: {
 				[ TYPE_BUSINESS ]: () => this.getJetpackBusinessFeatures(),

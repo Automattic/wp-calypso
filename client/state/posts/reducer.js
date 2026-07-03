@@ -1,7 +1,7 @@
 /* eslint-disable no-case-declarations */
 
-import { mapValues, omit, omitBy } from '@automattic/js-utils';
-import { get, set, isEmpty, isEqual, reduce, merge, findKey } from 'lodash';
+import { mapValues, merge, omit, omitBy, set, isEmpty } from '@automattic/js-utils';
+import isEqual from 'fast-deep-equal/es6';
 import PostQueryManager from 'calypso/lib/query-manager/post';
 import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
 import {
@@ -48,28 +48,25 @@ import {
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case POSTS_RECEIVE: {
-			return reduce(
-				action.posts,
-				( memo, post ) => {
-					const { site_ID: siteId, ID: postId, global_ID: globalId } = post;
-					if ( memo[ globalId ] ) {
-						// We're making an assumption here that the site ID and post ID
-						// corresponding with a global ID will never change
-						return memo;
-					}
-
-					if ( memo === state ) {
-						memo = { ...memo };
-					}
-
-					memo[ globalId ] = [ siteId, postId ];
+			return ( action.posts ?? [] ).reduce( ( memo, post ) => {
+				const { site_ID: siteId, ID: postId, global_ID: globalId } = post;
+				if ( memo[ globalId ] ) {
+					// We're making an assumption here that the site ID and post ID
+					// corresponding with a global ID will never change
 					return memo;
-				},
-				state
-			);
+				}
+
+				if ( memo === state ) {
+					memo = { ...memo };
+				}
+
+				memo[ globalId ] = [ siteId, postId ];
+				return memo;
+			}, state );
 		}
 		case POST_DELETE_SUCCESS: {
-			const globalId = findKey( state, ( [ siteId, postId ] ) => {
+			const globalId = Object.keys( state ).find( ( key ) => {
+				const [ siteId, postId ] = state[ key ];
 				return siteId === action.siteId && postId === action.postId;
 			} );
 
@@ -155,19 +152,14 @@ const queriesReducer = ( state = {}, action ) => {
 		}
 		case POSTS_RECEIVE: {
 			const { posts } = action;
-			const postsBySiteId = reduce(
-				posts,
-				( memo, post ) => {
-					return Object.assign( memo, {
-						[ post.site_ID ]: [ ...( memo[ post.site_ID ] || [] ), normalizePostForState( post ) ],
-					} );
-				},
-				{}
-			);
+			const postsBySiteId = ( posts ?? [] ).reduce( ( memo, post ) => {
+				return Object.assign( memo, {
+					[ post.site_ID ]: [ ...( memo[ post.site_ID ] || [] ), normalizePostForState( post ) ],
+				} );
+			}, {} );
 
-			return reduce(
-				postsBySiteId,
-				( memo, sitePosts, siteId ) =>
+			return Object.entries( postsBySiteId ).reduce(
+				( memo, [ siteId, sitePosts ] ) =>
 					withQueryManager(
 						memo,
 						siteId,
@@ -227,7 +219,8 @@ export const queries = withSchemaValidation(
 
 function findItemKey( state, siteId, postId ) {
 	return (
-		findKey( state.data.items, ( post ) => {
+		Object.keys( state.data.items ?? {} ).find( ( key ) => {
+			const post = state.data.items[ key ];
 			return post.site_ID === siteId && post.ID === postId;
 		} ) || null
 	);
@@ -313,86 +306,82 @@ export const allSitesQueries = withSchemaValidation(
 export function edits( state = {}, action ) {
 	switch ( action.type ) {
 		case POSTS_RECEIVE:
-			return reduce(
-				action.posts,
-				( memoState, post ) => {
-					// Receive a new version of a post object, in most cases returned in the POST
-					// response after a successful save. Removes the edits that have been applied
-					// and leaves only the ones that are not noops.
-					let postEditsLog = get( memoState, [ post.site_ID, post.ID ] );
+			return ( action.posts ?? [] ).reduce( ( memoState, post ) => {
+				// Receive a new version of a post object, in most cases returned in the POST
+				// response after a successful save. Removes the edits that have been applied
+				// and leaves only the ones that are not noops.
+				let postEditsLog = memoState?.[ post.site_ID ]?.[ post.ID ];
 
-					if ( ! postEditsLog ) {
-						return memoState;
+				if ( ! postEditsLog ) {
+					return memoState;
+				}
+
+				if ( memoState === state ) {
+					memoState = merge( {}, state );
+				}
+
+				// if the action has a save marker, remove the edits before that marker
+				if ( action.saveMarker ) {
+					const markerIndex = postEditsLog.indexOf( action.saveMarker );
+					if ( markerIndex !== -1 ) {
+						postEditsLog = postEditsLog.slice( markerIndex + 1 );
 					}
+				}
 
-					if ( memoState === state ) {
-						memoState = merge( {}, state );
-					}
+				// merge the array of remaining edits into one object
+				const postEdits = mergePostEdits( ...postEditsLog );
+				let newEditsLog = null;
 
-					// if the action has a save marker, remove the edits before that marker
-					if ( action.saveMarker ) {
-						const markerIndex = postEditsLog.indexOf( action.saveMarker );
-						if ( markerIndex !== -1 ) {
-							postEditsLog = postEditsLog.slice( markerIndex + 1 );
+				if ( postEdits ) {
+					// remove the edits that try to set an attribute to a value it already has.
+					// For most attributes, it's a simple `isEqual` deep comparison, but a few
+					// properties are more complicated than that.
+					const unappliedPostEdits = omitBy( postEdits, ( value, key ) => {
+						switch ( key ) {
+							case 'author':
+								return isAuthorEqual( value, post[ key ] );
+							case 'date':
+								return isDateEqual( value, post[ key ] );
+							case 'discussion':
+								return isDiscussionEqual( value, post[ key ] );
+							case 'featured_image':
+								return value === getFeaturedImageId( post );
+							case 'metadata':
+								// omit from unappliedPostEdits, metadata edits will be merged
+								return true;
+							case 'status':
+								return isStatusEqual( value, post[ key ] );
+							case 'terms':
+								return isTermsEqual( value, post[ key ] );
+						}
+						return isEqual( post[ key ], value );
+					} );
+
+					// remove edits that are already applied in the incoming metadata values and
+					// leave only the unapplied ones.
+					if ( postEdits.metadata ) {
+						const unappliedMetadataEdits = getUnappliedMetadataEdits(
+							postEdits.metadata,
+							post.metadata
+						);
+						if ( unappliedMetadataEdits.length > 0 ) {
+							unappliedPostEdits.metadata = unappliedMetadataEdits;
 						}
 					}
 
-					// merge the array of remaining edits into one object
-					const postEdits = mergePostEdits( ...postEditsLog );
-					let newEditsLog = null;
-
-					if ( postEdits ) {
-						// remove the edits that try to set an attribute to a value it already has.
-						// For most attributes, it's a simple `isEqual` deep comparison, but a few
-						// properties are more complicated than that.
-						const unappliedPostEdits = omitBy( postEdits, ( value, key ) => {
-							switch ( key ) {
-								case 'author':
-									return isAuthorEqual( value, post[ key ] );
-								case 'date':
-									return isDateEqual( value, post[ key ] );
-								case 'discussion':
-									return isDiscussionEqual( value, post[ key ] );
-								case 'featured_image':
-									return value === getFeaturedImageId( post );
-								case 'metadata':
-									// omit from unappliedPostEdits, metadata edits will be merged
-									return true;
-								case 'status':
-									return isStatusEqual( value, post[ key ] );
-								case 'terms':
-									return isTermsEqual( value, post[ key ] );
-							}
-							return isEqual( post[ key ], value );
-						} );
-
-						// remove edits that are already applied in the incoming metadata values and
-						// leave only the unapplied ones.
-						if ( postEdits.metadata ) {
-							const unappliedMetadataEdits = getUnappliedMetadataEdits(
-								postEdits.metadata,
-								post.metadata
-							);
-							if ( unappliedMetadataEdits.length > 0 ) {
-								unappliedPostEdits.metadata = unappliedMetadataEdits;
-							}
-						}
-
-						if ( ! isEmpty( unappliedPostEdits ) ) {
-							newEditsLog = [ unappliedPostEdits ];
-						}
+					if ( ! isEmpty( unappliedPostEdits ) ) {
+						newEditsLog = [ unappliedPostEdits ];
 					}
+				}
 
-					return set( memoState, [ post.site_ID, post.ID ], newEditsLog );
-				},
-				state
-			);
+				return set( memoState, [ post.site_ID, post.ID ], newEditsLog );
+			}, state );
 
 		case POST_EDIT: {
 			// process new edit for a post: merge it into the existing edits
 			const siteId = action.siteId;
 			const postId = action.postId || '';
-			const postEditsLog = get( state, [ siteId, postId ] );
+			const postEditsLog = state?.[ siteId ]?.[ postId ];
 			const newEditsLog = appendToPostEditsLog( postEditsLog, action.post );
 
 			return {

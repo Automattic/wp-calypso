@@ -77,6 +77,7 @@ export type PlansIntent =
 	| 'plans-p2'
 	| 'plans-default-wpcom'
 	| 'plans-business-trial'
+	| 'plans-student'
 	| 'plans-videopress'
 	| 'plans-guided-segment-developer-or-agency'
 	| 'plans-guided-segment-merchant'

@@ -164,7 +164,7 @@ const ReaderSidebarRecent = ( {
 			{ shouldShowViewMoreButton && (
 				<MenuItem selected={ showAllSites }>
 					<MenuItemLink className="view-more-link" onClick={ toggleShowAllSites }>
-						<span>{ showAllSites ? translate( 'View Less' ) : translate( 'View More' ) }</span>
+						<span>{ showAllSites ? translate( 'View less' ) : translate( 'View more' ) }</span>
 					</MenuItemLink>
 				</MenuItem>
 			) }

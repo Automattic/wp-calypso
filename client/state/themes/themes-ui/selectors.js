@@ -1,5 +1,4 @@
 import { getLocaleSlug } from 'i18n-calypso';
-import { includes } from 'lodash';
 import { isStaticFilter, constructThemeShowcaseUrl } from 'calypso/my-sites/themes/helpers';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -13,7 +12,7 @@ export function getBackPath( state ) {
 	const siteSlug = getSelectedSiteSlug( state );
 	const queryArgs = getCurrentQueryArguments( state );
 
-	if ( ! siteSlug || includes( backPath, siteSlug ) ) {
+	if ( ! siteSlug || backPath?.includes( siteSlug ) ) {
 		return backPath;
 	}
 

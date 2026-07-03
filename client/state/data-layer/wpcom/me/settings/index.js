@@ -1,7 +1,6 @@
-import { mapValues } from '@automattic/js-utils';
+import { mapValues, isEmpty } from '@automattic/js-utils';
 import { getQueryArg } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
 import {
 	USER_SETTINGS_REQUEST,

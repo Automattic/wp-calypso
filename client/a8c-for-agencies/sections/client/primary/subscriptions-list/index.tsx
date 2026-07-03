@@ -23,6 +23,7 @@ import {
 	SubscriptionStatus,
 } from './field-content';
 import SubscriptionsListMobileView from './mobile-view';
+import PurchaseConfirmationMessage from './purchase-confirmation-message';
 import type { Subscription } from '../../types';
 
 import './style.scss';
@@ -145,6 +146,8 @@ export default function SubscriptionsList() {
 			withBorder
 		>
 			<LayoutTop>
+				<PurchaseConfirmationMessage />
+
 				<LayoutHeader>
 					<Title>{ title } </Title>
 				</LayoutHeader>

@@ -2,17 +2,16 @@
  * @jest-environment jsdom
  */
 import { readSpaceQuery, readSpacesQuery } from '@automattic/api-queries';
-import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
-import { screen } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SpacesView } from '../view';
 import type { ReadSpaceDetails } from '@automattic/api-core';
 
-jest.mock( '@automattic/calypso-router', () => ( {
-	__esModule: true,
-	default: Object.assign( jest.fn(), { replace: jest.fn() } ),
+const mockSpaceFeed = jest.fn< null, [ unknown ] >( () => null );
+const mockRecordReaderTracksEvent: jest.Mock = jest.fn( () => ( {
+	type: 'TEST_TRACKS_EVENT',
 } ) );
 
 jest.mock( 'calypso/components/data/document-head', () => ( {
@@ -20,36 +19,29 @@ jest.mock( 'calypso/components/data/document-head', () => ( {
 	default: () => null,
 } ) );
 
-jest.mock( '@automattic/react-virtualized', () => ( {
-	AutoSizer: ( {
-		children,
-	}: {
-		children: ( size: { width: number; height: number } ) => React.ReactNode;
-	} ) => children( { width: 480, height: 360 } ),
-	List: ( {
-		rowCount,
-		rowRenderer,
-	}: {
-		rowCount: number;
-		rowRenderer: ( props: {
-			index: number;
-			key: string;
-			style: React.CSSProperties;
-		} ) => React.ReactNode;
-	} ) => (
-		<div>
-			{ Array.from( { length: Math.min( rowCount, 5 ) }, ( _value, index ) =>
-				rowRenderer( { index, key: `row-${ index }`, style: {} } )
-			) }
-		</div>
-	),
+// The feed loads a live Reader stream; this view test only covers the header and
+// the unified Customize modal, so stub it out to keep the test off the network.
+jest.mock( 'calypso/reader/spaces/feed', () => ( {
+	SpaceFeed: ( props: unknown ) => mockSpaceFeed( props ),
+} ) );
+
+jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
+	recordReaderTracksEvent: ( ...args: unknown[] ) => mockRecordReaderTracksEvent( ...args ),
+} ) );
+
+// Keep the rest of the module real (ReaderMain's global handlers use `useFollowSite`);
+// only stub the subscriptions list the Sources tab reads.
+jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
+	...jest.requireActual( 'calypso/reader/data/site-subscriptions' ),
+	useSiteSubscriptions: () => ( { subscriptions: [], isLoading: false, isError: false } ),
 } ) );
 
 const WORK: ReadSpaceDetails = {
 	id: '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21',
 	name: 'Work',
 	tags: [],
-	layout: { color: 'blue', icon: 'inbox' },
+	languages: [],
+	layout: { color: 'blue', icon: 'inbox', view: 'gallery' },
 	sources: [],
 };
 
@@ -65,78 +57,149 @@ function render( ui: React.ReactElement ) {
 }
 
 describe( 'SpacesView', () => {
+	// The space sub-navigation (NavTabs) uses IntersectionObserver, absent in jsdom.
+	beforeAll( () => {
+		global.IntersectionObserver = class IntersectionObserver {
+			observe() {}
+			unobserve() {}
+			disconnect() {}
+		} as unknown as typeof global.IntersectionObserver;
+	} );
+
+	afterAll( () => {
+		// @ts-expect-error -- cleaning up the stub
+		delete global.IntersectionObserver;
+	} );
+
 	beforeEach( () => {
 		window.history.replaceState( {}, '', '/reader/spaces' );
-		jest.mocked( page ).mockClear();
-		jest.mocked( page.replace ).mockClear();
+		mockSpaceFeed.mockClear();
+		mockRecordReaderTracksEvent.mockClear();
 	} );
 
-	it( 'shows a Manage sources button on a space detail page', () => {
+	it( 'shows the Customize button on a space detail page', () => {
 		render( <SpacesView id={ WORK.id } /> );
 
-		expect( screen.getByRole( 'button', { name: 'Manage sources' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Customize' } ) ).toBeVisible();
 	} );
 
-	it( 'does not show the Manage sources button on the spaces landing page', () => {
+	it( 'does not show the Customize button on the spaces landing page', () => {
 		render( <SpacesView /> );
 
-		expect( screen.queryByRole( 'button', { name: 'Manage sources' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Customize' } ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'opens the sources action when Manage sources is clicked', async () => {
+	it( 'shows the generic Spaces heading on the landing page', () => {
+		render( <SpacesView /> );
+
+		expect( screen.getByText( 'Spaces' ) ).toBeVisible();
+	} );
+
+	it( 'shows a subtitle under the name on a space detail page but not on the landing page', () => {
+		const { unmount } = render( <SpacesView id={ WORK.id } /> );
+		expect( screen.getByText( 'Your curated reading space' ) ).toBeVisible();
+		unmount();
+
+		render( <SpacesView /> );
+		expect( screen.queryByText( 'Your curated reading space' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'does not flash the generic Spaces heading while a specific space is loading', () => {
+		// The id is not in the loaded list yet, so the space is still resolving.
+		render( <SpacesView id="not-loaded-yet" /> );
+
+		expect( screen.queryByText( 'Spaces' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'passes the space layout view to the feed', () => {
+		render( <SpacesView id={ WORK.id } /> );
+
+		expect( mockSpaceFeed ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				spaceId: WORK.id,
+				layoutView: 'gallery',
+			} )
+		);
+	} );
+
+	it( 'renders the wide layout by default when the space has no stored width', () => {
+		render( <SpacesView id={ WORK.id } /> );
+
+		expect( screen.getByRole( 'main' ) ).toHaveClass( 'is-wide-layout' );
+	} );
+
+	it( 'renders the regular (non-wide) layout when the space width is regular', () => {
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		const regularSpace: ReadSpaceDetails = {
+			...WORK,
+			layout: { ...WORK.layout, width: 'regular' },
+		};
+		queryClient.setQueryData( readSpacesQuery().queryKey, [ regularSpace ] );
+		queryClient.setQueryData( readSpaceQuery( regularSpace.id ).queryKey, regularSpace );
+
+		renderWithProvider( <SpacesView id={ regularSpace.id } />, {
+			queryClient,
+			initialState: { currentUser: { id: 1 } },
+		} );
+
+		expect( screen.getByRole( 'main' ) ).not.toHaveClass( 'is-wide-layout' );
+	} );
+
+	it( 'records a page view event with the selected space appearance', async () => {
+		render( <SpacesView id={ WORK.id } /> );
+
+		await waitFor( () =>
+			expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+				'calypso_reader_spaces_page_viewed',
+				{
+					space_id: WORK.id,
+					layout: 'gallery',
+					icon: 'inbox',
+					color: 'blue',
+					tab: 'feed',
+				}
+			)
+		);
+	} );
+
+	it( 'opens the Customize modal on the Identity tab', async () => {
 		const user = userEvent.setup();
 		render( <SpacesView id={ WORK.id } /> );
 
-		await user.click( screen.getByRole( 'button', { name: 'Manage sources' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Customize' } ) );
 
-		expect( page ).toHaveBeenCalledWith(
-			'/reader/spaces/2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21#action=manage-sources'
+		const dialog = screen.getByRole( 'dialog', { name: 'Customize space' } );
+		expect( within( dialog ).getByLabelText( 'Name' ) ).toHaveValue( 'Work' );
+	} );
+
+	it( 'does not open the modal from the route alone', () => {
+		render( <SpacesView id={ WORK.id } /> );
+
+		expect( screen.queryByRole( 'dialog', { name: 'Customize space' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'shows the Feed and Discover sub-navigation on a space detail page', () => {
+		render( <SpacesView id={ WORK.id } /> );
+
+		expect( screen.getByRole( 'menuitem', { name: /feed/i } ) ).toBeVisible();
+		expect( screen.getByRole( 'menuitem', { name: /discover/i } ) ).toBeVisible();
+	} );
+
+	it( 'renders the feed on the default (feed) tab', () => {
+		render( <SpacesView id={ WORK.id } /> );
+
+		expect( mockSpaceFeed ).toHaveBeenCalledTimes( 1 );
+		// The feed tab uses the default variant, not Discover.
+		expect( mockSpaceFeed ).not.toHaveBeenCalledWith(
+			expect.objectContaining( { variant: 'discover' } )
 		);
 	} );
 
-	it( 'renders the sources modal when the manage-sources action hash is present', () => {
-		window.history.replaceState(
-			{},
-			'',
-			'/reader/spaces/2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21#action=manage-sources'
-		);
+	it( 'renders the Discover variant of the feed on the discover tab', () => {
+		render( <SpacesView id={ WORK.id } tab="discover" /> );
 
-		render( <SpacesView id={ WORK.id } /> );
-
-		expect( screen.getByRole( 'heading', { name: 'Sources for “Work”' } ) ).toBeVisible();
-	} );
-
-	it( 'does not render the sources modal without the manage-sources action hash', () => {
-		render( <SpacesView id={ WORK.id } /> );
-
-		expect(
-			screen.queryByRole( 'heading', { name: 'Sources for “Work”' } )
-		).not.toBeInTheDocument();
-	} );
-
-	it( 'does not render the sources modal on the spaces landing page', () => {
-		window.history.replaceState( {}, '', '/reader/spaces#action=manage-sources' );
-
-		render( <SpacesView /> );
-
-		expect(
-			screen.queryByRole( 'heading', { name: 'Sources for “Work”' } )
-		).not.toBeInTheDocument();
-	} );
-
-	it( 'removes the action hash when the sources modal closes', async () => {
-		const user = userEvent.setup();
-		window.history.replaceState(
-			{},
-			'',
-			'/reader/spaces/2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21#action=manage-sources'
-		);
-		render( <SpacesView id={ WORK.id } /> );
-
-		await user.click( screen.getByRole( 'button', { name: 'Done' } ) );
-
-		expect( page.replace ).toHaveBeenCalledWith(
-			'/reader/spaces/2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21'
+		expect( mockSpaceFeed ).toHaveBeenCalledWith(
+			expect.objectContaining( { spaceId: WORK.id, variant: 'discover' } )
 		);
 	} );
 } );

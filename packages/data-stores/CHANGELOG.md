@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.2.1
+
+- Declare React 19 compatibility for package consumers (#111721).
+
 ## 3.2.0
 
 - Update dependencies (#106861).

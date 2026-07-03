@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { createRef, useReducer } from 'react';
-import { act } from 'react-dom/test-utils';
+import { act, createRef, useReducer } from 'react';
 import Search from '..';
 
 describe( 'search', () => {
@@ -35,7 +34,9 @@ describe( 'search', () => {
 			const searchbox = screen.getByRole( 'searchbox' );
 			await doCallFocus( ref );
 			expect( document.activeElement ).toBe( searchbox );
-			ref.current.blur();
+			act( () => {
+				ref.current.blur();
+			} );
 			expect( document.activeElement ).not.toBe( searchbox );
 		} );
 

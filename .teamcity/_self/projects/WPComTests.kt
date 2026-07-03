@@ -178,7 +178,8 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				triggerBuild = always()
 				withPendingChangesOnly = false
 			}
-		}
+		},
+		vcsBranchFilter = allBranchesExceptMergeQueue()
 	)
 }
 
@@ -193,6 +194,7 @@ fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 
 		vcs {
 			root(Settings.WpCalypso)
+			branchFilter = allBranchesExceptMergeQueue()
 			cleanCheckout = true
 		}
 
@@ -249,6 +251,7 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 
 		vcs {
 			root(Settings.WpCalypso)
+			branchFilter = allBranchesExceptMergeQueue()
 			cleanCheckout = true
 		}
 
@@ -322,6 +325,7 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 
 		vcs {
 			root(Settings.WpCalypso)
+			branchFilter = allBranchesExceptMergeQueue()
 			cleanCheckout = true
 		}
 
@@ -381,6 +385,7 @@ private object I18NTests : BuildType({
 	params {
 		param("PROJECT", "i18n")
 		param("CALYPSO_BASE_URL", "https://wordpress.com")
+		param("env.E2E_CTRF_APP_NAME", "i18n (calypso)")
 	}
 
 	features {
@@ -423,6 +428,7 @@ private object P2E2ETests : BuildType({
 	params {
 		param("PROJECT", "p2")
 		param("CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
+		param("env.E2E_CTRF_APP_NAME", "p2 (calypso)")
 	}
 
 	features {
@@ -472,6 +478,7 @@ private object GutenbergPlaywrightTests : BuildType({
 	params {
 		param("TEST_GROUP", "@gutenberg")
 		param("CALYPSO_BASE_URL", "https://wordpress.com")
+		param("env.E2E_CTRF_APP_NAME", "gutenberg (calypso)")
 		param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteEdgeUser,gutenbergSimpleSiteUser,simpleSitePersonalPlanUser,gutenbergAtomicSiteUser,gutenbergAtomicSiteEdgeUser,gutenbergAtomicSiteEdgeNightliesUser")
 		password("GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN", "credentialsJSON:8196e9b8-cf0a-4ab5-9547-95145134f04a", display = ParameterDisplay.HIDDEN);
 		// Uncomment the following to route it to the test channel, don't forget to change the reference in the exec() calls below, too.
@@ -535,6 +542,7 @@ private object JetpackE2ETestsBuildTemplate : Template({
 	params {
 		param("TEST_GROUP", "@jetpack-wpcom-integration")
 		param("CALYPSO_BASE_URL", "https://wordpress.com")
+		param("env.E2E_CTRF_APP_NAME", "jetpack (calypso)")
 		param("env.JETPACK_TARGET", "wpcom-deployment")
 	}
 

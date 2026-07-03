@@ -14,7 +14,6 @@ import {
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
 import express from 'express';
-import { get, includes } from 'lodash';
 import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
@@ -311,6 +310,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	context.app = {
 		// use ipv4 address when is ipv4 mapped address
 		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
+		isFirefox: request.useragent.browser === 'Firefox',
 		isWpMobileApp: isWpMobileApp( request.useragent.source ),
 		isWcMobileApp: isWcMobileApp( request.useragent.source ),
 		isDevelopmentEnv: devEnvironments.includes( calypsoEnv ),
@@ -1012,14 +1012,14 @@ function wpcomPages( app ) {
 	// Redirect legacy `/menus` routes to the corresponding Customizer panel
 	// TODO: Move to `my-sites/customize` route defs once that section is isomorphic
 	app.get( [ '/menus', '/menus/:site?' ], ( req, res ) => {
-		const siteSlug = get( req.params, 'site', '' );
+		const siteSlug = req.params?.site ?? '';
 		const newRoute = '/customize/menus/' + siteSlug;
 		res.redirect( 301, newRoute );
 	} );
 
 	app.get( [ '/start/domain-first' ], function ( req, res ) {
 		let redirectUrl = '/start/domain';
-		const domain = get( req, 'query.new', false );
+		const domain = req?.query?.new ?? false;
 		if ( domain ) {
 			redirectUrl += '?new=' + encodeURIComponent( domain );
 		}
@@ -1039,8 +1039,8 @@ function wpcomPages( app ) {
 
 			ctx.clientData = config.clientData;
 			ctx.domainsLandingData = {
-				action: get( req, [ 'params', 'action' ], 'unknown-action' ),
-				query: get( req, 'query', {} ),
+				action: req?.params?.action ?? 'unknown-action',
+				query: req?.query ?? {},
 			};
 
 			const pageHtml = renderJsx( 'domains-landing', ctx );
@@ -1085,10 +1085,12 @@ function wpcomPages( app ) {
 		debug( 'Issuing API call to fetch user object' );
 		getBootstrappedUser( req )
 			.then( ( data ) => {
-				const activeFlags = get( data, 'meta.data.flags.active_flags', [] );
+				const activeFlags = data?.meta?.data?.flags?.active_flags ?? [];
 
 				// A8C check
-				if ( ! includes( activeFlags, 'calypso_support_user' ) ) {
+				if (
+					! ( Array.isArray( activeFlags ) && activeFlags.includes( 'calypso_support_user' ) )
+				) {
 					return res.send( renderJsx( 'support-user' ) );
 				}
 

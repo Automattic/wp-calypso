@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { get as webauthn_auth } from '@github/webauthn-json';
 import { translate } from 'i18n-calypso';
-import { get } from 'lodash';
 import {
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
@@ -28,8 +27,8 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 		two_step_nonce: getTwoFactorAuthNonce( getState(), twoFactorAuthType ),
 	} )
 		.then( ( response ) => {
-			const parameters = get( response, 'body.data', [] );
-			const twoStepNonce = get( parameters, 'two_step_nonce' );
+			const parameters = response?.body?.data ?? [];
+			const twoStepNonce = parameters?.two_step_nonce;
 
 			if ( twoStepNonce ) {
 				dispatch( updateNonce( twoFactorAuthType, twoStepNonce ) );
@@ -49,12 +48,12 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 			} );
 		} )
 		.then( ( response ) => {
-			return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
+			return remoteLoginUser( response?.body?.data?.token_links ?? [] ).then( () => {
 				dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS } );
 			} );
 		} )
 		.catch( ( httpError ) => {
-			const twoStepNonce = get( httpError, 'response.body.data.two_step_nonce' );
+			const twoStepNonce = httpError?.response?.body?.data?.two_step_nonce;
 
 			if ( twoStepNonce ) {
 				dispatch( updateNonce( twoFactorAuthType, twoStepNonce ) );

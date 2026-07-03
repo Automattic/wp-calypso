@@ -1,7 +1,6 @@
 import './style.scss';
 import { Gridicon, Spinner } from '@automattic/components';
 import clsx from 'clsx';
-import { get } from 'lodash';
 import { InView } from 'react-intersection-observer';
 import { connect } from 'react-redux';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -111,7 +110,7 @@ type SiteIconContainerProps = {
 
 export default connect( ( state, { site, siteId }: SiteIconContainerProps ) => {
 	// Always prefer site from Redux state if available
-	const stateSite = getSite( state as object, get( site, 'ID', siteId ) );
+	const stateSite = getSite( state as object, site?.ID ?? siteId );
 
 	// Until all sites state is within Redux, we provide compatibility in cases
 	// where sites-list object is passed to use the icon.img property as URL.

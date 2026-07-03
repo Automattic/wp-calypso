@@ -98,12 +98,6 @@
 	&.eligibility-warnings--without-title {
 		padding: 24px;
 		box-shadow: 0 0 0 1px var(--color-border-subtle);
-
-		.eligibility-warnings__address-first {
-			// The width of the parent element is much greater for the without title format
-			// so we don't need an ellipsis text-overflow here.
-			max-width: none;
-		}
 	}
 }
 
@@ -185,6 +179,9 @@
 
 .eligibility-warnings__message {
 	flex-grow: 1;
+	// Allow this flex column to shrink below its content width so a long
+	// address inside can truncate instead of forcing the modal to scroll.
+	min-width: 0;
 	line-height: 24px;
 	padding: 0;
 	margin-bottom: 10px;
@@ -245,24 +242,37 @@
 		margin-bottom: 4px;
 		display: flex;
 		align-items: center;
+		gap: 8px;
 
 		&::after {
 			content: none;
 		}
 	}
 
+	.eligibility-warnings__address {
+		display: flex;
+		align-items: baseline;
+		flex: 1;
+		min-width: 0;
+		overflow: hidden;
+	}
+
 	.eligibility-warnings__address-first {
 		text-overflow: ellipsis;
-		max-width: 240px;
+		min-width: 0;
 		overflow: hidden;
 		white-space: nowrap;
 	}
 
 	.eligibility-warnings__address-second {
-		margin-right: auto;
+		flex-shrink: 0;
+		white-space: nowrap;
 	}
 
 	.badge {
+		// Keep the badge on the same line at its full width; the address
+		// truncates to make room rather than pushing the badge to a new line.
+		flex-shrink: 0;
 		border-radius: 4px;
 		font-weight: 500;
 		font-size: $font-body-extra-small;
@@ -274,22 +284,6 @@
 		&.badge--success {
 			background: var(--studio-green-5);
 			color: var(--studio-green-80);
-		}
-	}
-
-	@media (max-width: 660px) {
-		.card {
-			display: flex;
-			flex-direction: column-reverse;
-			flex-wrap: wrap;
-			gap: 4px;
-
-			.badge {
-				position: relative;
-				right: unset;
-				width: fit-content;
-				align-self: flex-start;
-			}
 		}
 	}
 }

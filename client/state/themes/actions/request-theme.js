@@ -1,4 +1,3 @@
-import { map } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import { fetchThemeInformation as fetchWporgThemeInformation } from 'calypso/lib/wporg';
 import {
@@ -89,7 +88,7 @@ export function requestTheme( themeId, siteId, locale ) {
 		return wpcom.req
 			.post( `/sites/${ siteId }/themes`, { themes: themeId } )
 			.then( ( { themes } ) => {
-				dispatch( receiveThemes( map( themes, normalizeJetpackTheme ), siteId ) );
+				dispatch( receiveThemes( ( themes ?? [] ).map( normalizeJetpackTheme ), siteId ) );
 				dispatch( {
 					type: THEME_REQUEST_SUCCESS,
 					siteId,

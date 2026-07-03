@@ -14,6 +14,7 @@ import {
 	useSetStepComplete,
 	useCompleteAllSteps,
 	useMakeStepActive,
+	useNextIncompleteStepId,
 	createCheckoutStepGroupStore,
 } from './components/checkout-steps';
 import RadioButton from './components/radio-button';
@@ -76,6 +77,7 @@ export {
 	useTogglePaymentMethod,
 	useTransactionStatus,
 	useMakeStepActive,
+	useNextIncompleteStepId,
 	useRegisterPaymentMethodLoading,
 	useArePaymentMethodsLoading,
 };

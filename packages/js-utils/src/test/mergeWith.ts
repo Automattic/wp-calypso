@@ -1,0 +1,176 @@
+// eslint-disable-next-line no-restricted-imports -- parity test against the lodash function being replaced
+import lodashMergeWith from 'lodash/mergeWith';
+import mergeWith from '../mergeWith';
+
+type Customizer = (
+	objValue: unknown,
+	srcValue: unknown,
+	key: string,
+	object: object,
+	source: object,
+	stack: { size: number }
+) => unknown;
+
+// Only touches `.size`, which both a native Map and lodash's Stack expose, so
+// the same customizer can drive both implementations in a differential test.
+const overwriteArrays: Customizer = ( _objValue, srcValue ) =>
+	Array.isArray( srcValue ) ? srcValue : undefined;
+
+const concatArrays: Customizer = ( objValue, srcValue ) =>
+	Array.isArray( objValue ) ? objValue.concat( srcValue ) : undefined;
+
+const topLevelOnly: Customizer = ( _objValue, srcValue, key, _obj, _src, stack ) =>
+	key === 'special' && stack.size === 0 ? 'REPLACED' : undefined;
+
+const noop: Customizer = () => undefined;
+
+describe( 'mergeWith', () => {
+	// Each case is [ label, customizer, factory ]; the factory produces fresh
+	// inputs because both implementations mutate their destination.
+	const cases: Array< [ string, Customizer, () => unknown[] ] > = [
+		[
+			'noop customizer behaves like a deep merge',
+			noop,
+			() => [ { a: { b: 1 } }, { a: { c: 2 } } ],
+		],
+		[
+			'arrays overwrite instead of merging by index',
+			overwriteArrays,
+			() => [ { a: [ 1, 2, 3 ] }, { a: [ 9 ] } ],
+		],
+		[
+			'nested arrays overwrite',
+			overwriteArrays,
+			() => [ { a: { list: [ 1, 2 ], n: 1 } }, { a: { list: [ 3 ], m: 2 } } ],
+		],
+		[ 'arrays concatenate', concatArrays, () => [ { a: [ 1, 2 ] }, { a: [ 3, 4 ] } ] ],
+		[
+			'concat creates a fresh array when destination lacks the key',
+			concatArrays,
+			() => [ {}, { a: [ 1, 2 ] } ],
+		],
+		[
+			'top-level key replaced, nested key of same name untouched',
+			topLevelOnly,
+			() => [
+				{ special: 1, nested: { special: 2 } },
+				{ special: 9, nested: { special: 9 } },
+			],
+		],
+		[
+			'customizer undefined falls back to default for primitives',
+			overwriteArrays,
+			() => [ { a: 1 }, { a: 2 } ],
+		],
+		[
+			'multiple sources merge left to right',
+			overwriteArrays,
+			() => [ {}, { a: 1 }, { a: 2, b: 3 } ],
+		],
+		[ 'null source is ignored', overwriteArrays, () => [ { a: 1 }, null, { b: 2 } ] ],
+		[ 'undefined source is ignored', overwriteArrays, () => [ { a: 1 }, undefined, { b: 2 } ] ],
+		[ 'undefined src value skips existing key', noop, () => [ { a: 1 }, { a: undefined } ] ],
+		[ 'null overrides object', noop, () => [ { a: { b: 1 } }, { a: null } ] ],
+		[
+			'__proto__ payload is dropped',
+			noop,
+			() => [ {}, JSON.parse( '{ "__proto__": { "x": 1 }, "a": 1 }' ) ],
+		],
+	];
+
+	it.each( cases )( 'matches lodash: %s', ( _label, customizer, make ) => {
+		const mineArgs = [ ...make(), customizer ] as [ object, ...unknown[] ];
+		const theirsArgs = [ ...make(), customizer ] as [ object, ...unknown[] ];
+		const mine = ( mergeWith as ( ...a: unknown[] ) => unknown )( ...mineArgs );
+		const theirs = ( lodashMergeWith as ( ...a: unknown[] ) => unknown )( ...theirsArgs );
+		expect( mine ).toEqual( theirs );
+	} );
+
+	it( 'passes stack.size reflecting recursion depth to the customizer', () => {
+		const depths: number[] = [];
+		mergeWith(
+			{ a: { b: { c: 1 } } },
+			{ a: { b: { c: 2 } } },
+			( _o, _s, _k, _obj, _src, stack ) => {
+				depths.push( stack.size );
+				return undefined;
+			}
+		);
+		// a → depth 0, a.b → depth 1, a.b.c → depth 2.
+		expect( depths ).toEqual( [ 0, 1, 2 ] );
+	} );
+
+	it( 'supports circular sources without infinite recursion, like lodash', () => {
+		const make = () => {
+			const circular: Record< string, unknown > = { a: 1 };
+			circular.self = circular;
+			return circular;
+		};
+		const mine = mergeWith( {}, make(), noop ) as Record< string, unknown >;
+		const theirs = lodashMergeWith( {}, make(), noop ) as Record< string, unknown >;
+		expect( mine.a ).toBe( 1 );
+		// The nested `self` is merged once into its own container, then short-
+		// circuited on re-entry — matching lodash rather than looping forever.
+		expect( mine.self ).toEqual( theirs.self );
+		expect( ( mine.self as Record< string, unknown > ).self ).toBe( mine.self );
+	} );
+
+	it( 'does not pollute Object.prototype via __proto__', () => {
+		mergeWith( {}, JSON.parse( '{ "__proto__": { "polluted": 1 } }' ), noop );
+		expect( ( {} as Record< string, unknown > ).polluted ).toBeUndefined();
+	} );
+
+	it( 'merges into a null-prototype destination with a concat customizer', () => {
+		const result = mergeWith(
+			Object.create( null ),
+			{ handlers: [ 1 ] },
+			{ handlers: [ 2 ] },
+			concatArrays
+		) as Record< string, unknown >;
+		expect( result.handlers ).toEqual( [ 1, 2 ] );
+	} );
+
+	it( 'mutates and returns the destination', () => {
+		const target = { a: 1 };
+		const result = mergeWith( target, { b: 2 }, noop );
+		expect( result ).toBe( target );
+		expect( target ).toEqual( { a: 1, b: 2 } );
+	} );
+
+	it( 'treats a non-function trailing argument as a source, like lodash', () => {
+		// No customizer given — the last object is merged, not dropped or called.
+		const mine = mergeWith( { a: { x: 1 } }, { a: { y: 2 } }, { b: 3 } );
+		const theirs = lodashMergeWith( { a: { x: 1 } }, { a: { y: 2 } }, { b: 3 } );
+		expect( mine ).toEqual( theirs );
+		expect( mine ).toEqual( { a: { x: 1, y: 2 }, b: 3 } );
+	} );
+
+	it( 'merges a single source with no customizer, like lodash', () => {
+		const mine = mergeWith( { a: [ 1, 2 ] }, { a: [ 9 ], b: 4 } );
+		const theirs = lodashMergeWith( { a: [ 1, 2 ] }, { a: [ 9 ], b: 4 } );
+		expect( mine ).toEqual( theirs );
+	} );
+
+	it( 'returns a fresh object when the destination is nullish, like lodash', () => {
+		// A null destination (e.g. an unknown post merged with local edits) must
+		// yield the merged edits rather than throwing on the null read.
+		const mine = mergeWith( null, { a: 1, b: [ 2 ] }, overwriteArrays );
+		const theirs = lodashMergeWith( null, { a: 1, b: [ 2 ] }, overwriteArrays );
+		expect( mine ).toEqual( theirs );
+		expect( mine ).toEqual( { a: 1, b: [ 2 ] } );
+	} );
+
+	it( 'treats a lone trailing function as a source, not a customizer, like lodash', () => {
+		// With no source preceding it, a function argument is merged for its own
+		// enumerable properties rather than being called as a customizer.
+		const makeFn = () => {
+			const fn = () => undefined;
+			( fn as unknown as Record< string, unknown > ).a = 1;
+			return fn;
+		};
+		const mine = mergeWith( {}, makeFn() );
+		const theirs = lodashMergeWith( {}, makeFn() );
+		expect( mine ).toEqual( theirs );
+		expect( ( mine as Record< string, unknown > ).a ).toBe( 1 );
+	} );
+} );

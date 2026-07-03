@@ -1,10 +1,24 @@
+import { legacyContactsQuery } from '@automattic/api-queries';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { people } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import type { Density } from '@automattic/components/src/summary-button/types';
+import type {
+	Density,
+	SummaryButtonBadgeProps,
+} from '@automattic/components/src/summary-button/types';
 
 export default function SecurityLegacyContactSummary( { density }: { density?: Density } ) {
+	const { data: [ contact ] = [] } = useSuspenseQuery( legacyContactsQuery() );
+
+	const badges: SummaryButtonBadgeProps[] = [
+		{
+			text: contact ? __( 'Legacy contact added' ) : __( 'No legacy contact added' ),
+			intent: contact ? 'success' : 'default',
+		},
+	];
+
 	return (
 		<RouterLinkSummaryButton
 			density={ density }
@@ -12,6 +26,7 @@ export default function SecurityLegacyContactSummary( { density }: { density?: D
 			title={ __( 'Legacy contact' ) }
 			description={ __( 'Choose someone you trust to manage your account after your death.' ) }
 			decoration={ <Icon icon={ people } /> }
+			badges={ badges }
 		/>
 	);
 }

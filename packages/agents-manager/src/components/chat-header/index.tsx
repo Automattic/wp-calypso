@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { hasAiChatEntryButton } from '../../hooks/use-admin-bar-integration';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
+import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import type { ComponentProps } from 'react';
 import './style.scss';
 
@@ -26,8 +27,8 @@ export default function ChatHeader( { onClose, options, title, onBack, isDocked 
 	const { setIsMinimized } = useDispatch( AGENTS_MANAGER_STORE );
 	const [ hasAiChatEntry ] = useState( hasAiChatEntryButton );
 
-	// Minimize only applies to the floating chat reachable from the AI chat button
-	// (WP admin bar or Calypso masterbar).
+	// Minimize only applies to the floating chat reachable from an AI chat entry button
+	// (wp-admin bar, Calypso masterbar, or editor toolbar).
 	const showMinimize = hasAiChatEntry && ! isDocked;
 
 	return (
@@ -36,7 +37,7 @@ export default function ChatHeader( { onClose, options, title, onBack, isDocked 
 				<Button
 					className="agents-manager-chat-header__back-btn"
 					onClick={ onBack }
-					aria-label={ __( 'Go Back', '__i18n_text_domain__' ) }
+					aria-label={ __( 'Go Back', __i18n_text_domain__ ) }
 					size="small"
 				>
 					<Icon icon={ chevronLeft } />
@@ -53,10 +54,11 @@ export default function ChatHeader( { onClose, options, title, onBack, isDocked 
 					className="agents-manager-chat-header__more-options"
 					controls={ options }
 					icon={ moreVertical }
-					label={ __( 'More Options', '__i18n_text_domain__' ) }
-					// Body-level popovers need a stable anchor for public host style isolation.
+					label={ __( 'More Options', __i18n_text_domain__ ) }
+					// Render inside the panel node so opening the menu doesn't blur the panel
 					popoverProps={ {
 						className: 'agents-manager-chat-header__menu-popover',
+						inline: true,
 					} }
 					toggleProps={ { size: 'small' } }
 				/>
@@ -68,8 +70,11 @@ export default function ChatHeader( { onClose, options, title, onBack, isDocked 
 					<Button
 						className="agents-manager-chat-header__history-btn"
 						icon={ backup }
-						onClick={ () => navigate( '/history' ) }
-						label={ __( 'View history', '__i18n_text_domain__' ) }
+						onClick={ () => {
+							recordAgentsManagerTracksEvent( 'chat_history_open' );
+							navigate( '/history' );
+						} }
+						label={ __( 'View history', __i18n_text_domain__ ) }
 						size="small"
 					/>
 				) }
@@ -77,8 +82,11 @@ export default function ChatHeader( { onClose, options, title, onBack, isDocked 
 					<Button
 						className="agents-manager-chat-header__minimize-btn"
 						icon={ lineSolid }
-						onClick={ () => setIsMinimized( true ) }
-						label={ __( 'Minimize', '__i18n_text_domain__' ) }
+						onClick={ () => {
+							recordAgentsManagerTracksEvent( 'chat_minimize' );
+							setIsMinimized( true );
+						} }
+						label={ __( 'Minimize', __i18n_text_domain__ ) }
 						size="small"
 					/>
 				) }
@@ -86,7 +94,7 @@ export default function ChatHeader( { onClose, options, title, onBack, isDocked 
 					className="agents-manager-chat-header__close-btn"
 					icon={ close }
 					onClick={ onClose }
-					label={ __( 'Close', '__i18n_text_domain__' ) }
+					label={ __( 'Close', __i18n_text_domain__ ) }
 					size="small"
 				/>
 			</div>

@@ -9,6 +9,7 @@ export const getAgentsManagerState = ( state: State ) => ( {
 	isLoading: state.isLoading,
 	hasLoaded: state.hasLoaded,
 	floatingPosition: state.floatingPosition,
+	freeDragPosition: state.freeDragPosition,
 	isSplitScreen: state.isSplitScreen,
 } );
 export const getIsOpen = ( state: State ) => state.isOpen;
@@ -30,3 +31,4 @@ export const getLastActivity = ( state: State, siteKey: string ) => {
 export const getIsLoading = ( state: State ) => state.isLoading;
 export const getHasLoaded = ( state: State ) => state.hasLoaded;
 export const getFloatingPosition = ( state: State ) => state.floatingPosition;
+export const getFreeDragPosition = ( state: State ) => state.freeDragPosition;

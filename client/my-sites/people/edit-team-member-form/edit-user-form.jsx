@@ -3,7 +3,6 @@ import { omit } from '@automattic/js-utils';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
-import { defer } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
@@ -298,7 +297,7 @@ class EditUserForm extends Component {
 		this.props.markChanged();
 		if ( this.props.autoSave ) {
 			// defer to pick up the most recent form values
-			defer( () => this.updateUser() );
+			setTimeout( () => this.updateUser(), 0 );
 		}
 	}
 

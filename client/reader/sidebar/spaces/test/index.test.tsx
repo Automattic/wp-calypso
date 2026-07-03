@@ -4,8 +4,9 @@
 import { readSpacesQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
 import { getSpacePath } from 'calypso/reader/spaces/routes';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ReaderSidebarSpaces } from '../index';
@@ -16,17 +17,30 @@ jest.mock( '@automattic/calypso-router', () => ( {
 	default: Object.assign( jest.fn(), { replace: jest.fn() } ),
 } ) );
 
+// Drives the "space a post was opened from" fallback. Mutable so each test can
+// set the route the user navigated from before opening the current post.
+let mockPreviousRoute = '';
+jest.mock( 'calypso/state/selectors/get-previous-route', () => ( {
+	__esModule: true,
+	default: () => mockPreviousRoute,
+} ) );
+
+// The create modal is backed by the shared upsert modal, which imports the
+// Sources tab. Sidebar tests never exercise the sources list, so stub its heavy
+// dependencies here.
+jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
+	useSiteSubscriptions: () => ( { subscriptions: [], isLoading: false, isError: false } ),
+} ) );
+
 const SPACES: ReadSpace[] = [
 	{
 		id: '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21',
 		name: 'Work',
-		tags: [],
 		layout: { color: 'blue', icon: 'inbox' },
 	},
 	{
 		id: '5cc71d31-97d1-4b7d-93c7-42a5ce9d4cf1',
 		name: 'Gaming',
-		tags: [],
 		layout: { color: 'purple', icon: 'box' },
 	},
 ];
@@ -47,7 +61,10 @@ describe( 'ReaderSidebarSpaces', () => {
 	beforeEach( () => {
 		jest.mocked( page ).mockClear();
 		jest.mocked( page.replace ).mockClear();
+		mockPreviousRoute = '';
 	} );
+
+	afterEach( () => nock.cleanAll() );
 
 	it( 'renders every space with a link to its page', () => {
 		render( <ReaderSidebarSpaces path={ OPEN_PATH } /> );
@@ -67,6 +84,25 @@ describe( 'ReaderSidebarSpaces', () => {
 		// The active row carries the space's colour class, which drives the
 		// active link colour via the `--space-color` custom property.
 		expect( selected[ 0 ] ).toHaveClass( `sidebar-spaces__item--${ FIRST_SPACE.layout.color }` );
+	} );
+
+	it( 'keeps the originating space highlighted while reading a post opened from it', () => {
+		// On a post route the URL carries no space; the highlight falls back to the
+		// previous route (the space we came from).
+		mockPreviousRoute = OPEN_PATH;
+		const { container } = render( <ReaderSidebarSpaces path="/reader/feeds/123/posts/456" /> );
+
+		const selected = container.querySelectorAll( 'li.sidebar__menu-item.selected' );
+		expect( selected ).toHaveLength( 1 );
+		expect( selected[ 0 ].textContent ).toContain( FIRST_SPACE.name );
+	} );
+
+	it( 'does not highlight a space on a post route not reached from a space', () => {
+		// Came from Following, opened a post: no space should read as active.
+		mockPreviousRoute = '/reader';
+		const { container } = render( <ReaderSidebarSpaces path="/reader/feeds/123/posts/456" /> );
+
+		expect( container.querySelector( 'li.sidebar__menu-item.selected' ) ).toBeNull();
 	} );
 
 	it( 'does not crash or falsely select on an unexpected space id in the path', () => {
@@ -91,21 +127,70 @@ describe( 'ReaderSidebarSpaces', () => {
 		expect( screen.getByRole( 'heading', { name: 'Create a new space' } ) ).toBeVisible();
 	} );
 
-	it( 'redirects to the new space sources action after creating a space', async () => {
+	it( 'redirects to the new space after creating it', async () => {
 		const user = userEvent.setup();
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/spaces' )
+			.reply( 201, {
+				id: 7,
+				title: 'Reading',
+				follows: [],
+				tags: [],
+				layout: { color: 'blue', icon: 'inbox' },
+			} );
 		render( <ReaderSidebarSpaces path={ OPEN_PATH } /> );
 
 		await user.click( screen.getByRole( 'button', { name: 'Add a space' } ) );
 		await user.type( screen.getByLabelText( 'Name' ), 'Reading' );
 		await user.click( screen.getByRole( 'button', { name: 'Create' } ) );
 
-		expect( page ).toHaveBeenCalledWith(
-			expect.stringMatching( /^\/reader\/spaces\/.+#action=manage-sources$/ )
+		// The redirect happens in the create mutation's onSuccess, after the POST
+		// resolves, so wait for it.
+		await waitFor( () =>
+			expect( page ).toHaveBeenCalledWith( expect.stringMatching( /^\/reader\/spaces\/[^#]+$/ ) )
 		);
 	} );
 
+	it( 'prefetches the feed and detail of a space on hover', async () => {
+		const user = userEvent.setup();
+		const HOVERED = SPACES[ 1 ]; // Not the active space.
+		const postsScope = nock( 'https://public-api.wordpress.com' )
+			.get( `/wpcom/v2/reader/spaces/${ HOVERED.id }/posts` )
+			.query( true )
+			.reply( 200, { posts: [] } );
+		const detailScope = nock( 'https://public-api.wordpress.com' )
+			.get( `/wpcom/v2/reader/spaces/${ HOVERED.id }` )
+			.reply( 200, { ...HOVERED, follows: [], tags: [] } );
+
+		render( <ReaderSidebarSpaces path={ OPEN_PATH } /> );
+
+		await user.hover( screen.getByRole( 'link', { name: new RegExp( HOVERED.name ) } ) );
+
+		await waitFor( () => expect( postsScope.isDone() ).toBe( true ) );
+		await waitFor( () => expect( detailScope.isDone() ).toBe( true ) );
+	} );
+
+	it( 'does not prefetch the space that is already open', async () => {
+		const user = userEvent.setup();
+		// Interceptors for the active space; they must stay pending (never called).
+		nock( 'https://public-api.wordpress.com' )
+			.get( `/wpcom/v2/reader/spaces/${ FIRST_SPACE.id }/posts` )
+			.query( true )
+			.reply( 200, { posts: [] } );
+		nock( 'https://public-api.wordpress.com' )
+			.get( `/wpcom/v2/reader/spaces/${ FIRST_SPACE.id }` )
+			.reply( 200, { ...FIRST_SPACE, follows: [], tags: [] } );
+
+		render( <ReaderSidebarSpaces path={ OPEN_PATH } /> );
+
+		await user.hover( screen.getByRole( 'link', { name: new RegExp( FIRST_SPACE.name ) } ) );
+
+		// The guard short-circuits synchronously, so no request goes out.
+		expect( nock.pendingMocks() ).toHaveLength( 2 );
+	} );
+
 	it( 'does not render the sources modal from the sidebar', () => {
-		render( <ReaderSidebarSpaces path={ `${ OPEN_PATH }#action=manage-sources` } /> );
+		render( <ReaderSidebarSpaces path={ OPEN_PATH } /> );
 
 		expect(
 			screen.queryByRole( 'heading', { name: 'Sources for “Work”' } )

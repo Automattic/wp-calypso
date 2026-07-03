@@ -147,3 +147,6 @@
 
 # Grid package
 /packages/grid @youknowriad
+
+# Desktop app
+/desktop @Automattic/yolo

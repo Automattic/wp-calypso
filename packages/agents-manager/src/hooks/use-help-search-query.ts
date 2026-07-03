@@ -1,10 +1,10 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { buildQueryString } from '@wordpress/url';
 import { getLocaleSlug } from 'i18n-calypso';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { useAgentsManagerContext } from '../contexts';
+import { recordAgentsManagerTracksEvent } from '../utils/tracks';
 
 interface HelpSearchRailcar {
 	railcar?: string;
@@ -52,7 +52,7 @@ const fetchArticlesAPI = async (
 	results.forEach( ( result, index ) => {
 		if ( result.railcar ) {
 			queueMicrotask( () => {
-				recordTracksEvent( 'calypso_agents_manager_search_traintracks_render', {
+				recordAgentsManagerTracksEvent( 'search_traintracks_render', {
 					...result.railcar,
 					ui_algo: 'default',
 					ui_position: index,

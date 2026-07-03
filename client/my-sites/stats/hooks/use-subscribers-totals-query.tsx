@@ -71,6 +71,10 @@ const selectSubscribers = ( payload: {
 		avatar: string;
 		url: string;
 		follow_data: { params: object }; //Empty object atm
+		email_subscription_id?: number;
+		subscription_id?: number;
+		wpcom_subscription_id?: number;
+		ID?: number;
 	}[];
 } ) => {
 	return {
@@ -78,7 +82,7 @@ const selectSubscribers = ( payload: {
 		total_email: payload.total_email,
 		total_wpcom: payload.total_wpcom,
 		is_owner_subscribed: payload.is_owner_subscribed,
-		subscribers: payload.subscribers?.map( ( item ) => {
+		subscribers: ( payload.subscribers ?? [] ).map( ( item ) => {
 			return {
 				label: item.label ?? item.display_name,
 				iconClassName: 'avatar-user',
@@ -95,6 +99,17 @@ const selectSubscribers = ( payload: {
 					},
 				],
 				date_subscribed: item.date_subscribed,
+				// Preserve the subscription id so the Subscribers module can link each
+				// name to its individual subscriber details page. Mirrors the precedence
+				// used by the Subscribers DataViews list, then falls back to `ID`, which is
+				// the field the `stats/followers` endpoint returns.
+				// Truthy fallback (not `??`) so a `0` placeholder id falls through to the
+				// next field, matching getSubscriptionIdFromSubscriber.
+				subscription_id:
+					item.email_subscription_id ||
+					item.subscription_id ||
+					item.wpcom_subscription_id ||
+					item.ID,
 			};
 		} ),
 	};

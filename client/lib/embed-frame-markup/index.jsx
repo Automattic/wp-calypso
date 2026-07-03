@@ -1,7 +1,6 @@
 // Here be dragons...
 /* eslint-disable react/no-danger */
 
-import { map } from 'lodash';
 import { renderToStaticMarkup } from 'react-dom/server.browser';
 
 /**
@@ -18,7 +17,7 @@ export default function generateEmbedFrameMarkup( { body, scripts, styles } = {}
 		// eslint-disable-next-line jsx-a11y/html-has-lang -- this is an embed frame, not the main document.
 		<html>
 			<head>
-				{ map( styles, ( { media, src }, key ) => (
+				{ Object.entries( styles || {} ).map( ( [ key, { media, src } ] ) => (
 					<link key={ key } rel="stylesheet" media={ media } href={ src } />
 				) ) }
 				<style dangerouslySetInnerHTML={ { __html: 'a { cursor: default; }' } } />

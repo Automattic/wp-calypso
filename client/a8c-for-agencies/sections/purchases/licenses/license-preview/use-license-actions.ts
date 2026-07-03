@@ -20,7 +20,8 @@ export default function useLicenseActions(
 	revokedAt: string | null,
 	licenseType: LicenseType,
 	isChildLicense?: boolean,
-	isClientLicense?: boolean
+	isClientLicense?: boolean,
+	cannotLaunch?: boolean
 ): LicenseAction[] {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -44,9 +45,15 @@ export default function useLicenseActions(
 		return [
 			{
 				name: translate( 'Prepare for launch' ),
-				href: `https://wordpress.com/sites/${ siteSlug }/settings/site-visibility`,
+				// A4A team members without admin access on the site can't launch it. Instead of
+				// opening a page where it would fail, flag the action so the click shows an
+				// explanatory modal (handled in license-actions.tsx).
+				href: cannotLaunch
+					? undefined
+					: `https://wordpress.com/sites/${ siteSlug }/settings/site-visibility`,
 				onClick: () => handleClickMenuItem( 'prepare_for_launch' ),
-				isExternalLink: true,
+				type: cannotLaunch ? 'launch_permission' : undefined,
+				isExternalLink: ! cannotLaunch,
 				isEnabled: isDevSite,
 			},
 			{
@@ -107,6 +114,7 @@ export default function useLicenseActions(
 	}, [
 		attachedAt,
 		canRevoke,
+		cannotLaunch,
 		dispatch,
 		isChildLicense,
 		isClientLicense,

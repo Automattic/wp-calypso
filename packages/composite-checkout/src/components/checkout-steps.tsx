@@ -1076,6 +1076,38 @@ export function useMakeStepActive(): MakeStepActive {
 	return store.actions.makeStepActive;
 }
 
+/**
+ * Returns the id of the step the "Continue" submit button would advance to (the
+ * first incomplete numbered step at or after the active step, falling back to
+ * the lowest incomplete step overall), or undefined when there is no such step
+ * to continue to (all steps complete, or the active step is the last one).
+ *
+ * Consumers can use this to tell whether the submit area is showing "Continue"
+ * versus the final submit button — e.g. to gate UI rendered via
+ * `submitButtonFooter` so it only appears on the final step.
+ */
+export function useNextIncompleteStepId(): string | undefined {
+	const { state } = useContext( CheckoutStepGroupContext );
+	const { activeStepNumber, totalSteps, stepCompleteStatus, stepIdMap } = state;
+	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
+	if ( ! isThereAnotherNumberedStep ) {
+		return undefined;
+	}
+	const getStepIdFromNumber = ( stepNumber: number ): string | undefined =>
+		Object.entries( stepIdMap ).find( ( [ , num ] ) => num === stepNumber )?.[ 0 ];
+	for ( let step = Math.max( activeStepNumber, 1 ); step <= totalSteps; step++ ) {
+		if ( ! stepCompleteStatus[ step ] ) {
+			return getStepIdFromNumber( step );
+		}
+	}
+	for ( let step = 1; step <= totalSteps; step++ ) {
+		if ( ! stepCompleteStatus[ step ] ) {
+			return getStepIdFromNumber( step );
+		}
+	}
+	return undefined;
+}
+
 const StepTitle = styled.span< StepTitleProps & HTMLAttributes< HTMLSpanElement > >`
 	color: ${ ( props ) =>
 		props.isActive || props.isComplete

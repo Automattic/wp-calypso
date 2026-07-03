@@ -1,9 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { createFeedbackActions } from '@automattic/agenttic-ui';
 import { renderHook, act } from '@testing-library/react';
 import { useAgentsManagerContext } from '../../contexts';
+import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import useFeedbackAction from '../use-feedback-action';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
 
@@ -28,9 +29,10 @@ jest.mock(
 	} ),
 	{ virtual: true }
 );
-jest.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: jest.fn() } ), {
-	virtual: true,
-} );
+jest.mock( '../../utils/tracks', () => ( {
+	recordBigSkyTracksEvent: jest.fn(),
+	recordAgentsManagerTracksEvent: jest.fn(),
+} ) );
 jest.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: jest.fn(),
 } ) );
@@ -42,8 +44,14 @@ const mockUseAgentsManagerContext = useAgentsManagerContext as jest.MockedFuncti
 const mockFetch = jest.fn().mockResolvedValue( { ok: true } );
 globalThis.fetch = mockFetch;
 
+const mockCreateFeedbackActions = createFeedbackActions as jest.Mock;
 const mockRegisterMessageActions = jest.fn();
-const mockRecordTracksEvent = recordTracksEvent as jest.MockedFunction< typeof recordTracksEvent >;
+const mockRecordBigSkyTracksEvent = recordBigSkyTracksEvent as jest.MockedFunction<
+	typeof recordBigSkyTracksEvent
+>;
+const mockRecordAgentsManagerTracksEvent = recordAgentsManagerTracksEvent as jest.MockedFunction<
+	typeof recordAgentsManagerTracksEvent
+>;
 const mockGetActiveSessionId = jest.fn();
 
 const mockAuthProvider = jest.fn().mockResolvedValue( { Authorization: 'Bearer test-token' } );
@@ -95,18 +103,18 @@ describe( 'useFeedbackAction', () => {
 	};
 
 	describe( 'initialization', () => {
-		it( 'registers feedback actions on mount', () => {
+		it( 'creates feedback actions on mount', () => {
 			renderHook( () => useFeedbackAction( defaultConfig ) );
 
-			expect( mockRegisterMessageActions ).toHaveBeenCalledWith(
+			expect( mockCreateFeedbackActions ).toHaveBeenCalledWith(
 				expect.objectContaining( {
-					id: 'agents-manager-feedback',
-					actions: expect.any( Function ),
+					onFeedback: expect.any( Function ),
+					condition: expect.any( Function ),
 				} )
 			);
 		} );
 
-		it( 'does not register feedback actions when user is not logged in', () => {
+		it( 'does not create feedback actions when user is not logged in', () => {
 			mockUseAgentsManagerContext.mockReturnValue( {
 				agentConfig: defaultAgentConfig,
 				isLoggedIn: false,
@@ -115,17 +123,17 @@ describe( 'useFeedbackAction', () => {
 
 			renderHook( () => useFeedbackAction( defaultConfig ) );
 
-			expect( mockRegisterMessageActions ).not.toHaveBeenCalled();
+			expect( mockCreateFeedbackActions ).not.toHaveBeenCalled();
 		} );
 
-		it( 'only registers once across rerenders', () => {
+		it( 'only creates feedback actions once across rerenders', () => {
 			const { rerender } = renderHook( () => useFeedbackAction( defaultConfig ) );
 			rerender();
 
-			expect( mockRegisterMessageActions ).toHaveBeenCalledTimes( 1 );
+			expect( mockCreateFeedbackActions ).toHaveBeenCalledTimes( 1 );
 		} );
 
-		it( 'resets registration when session changes', () => {
+		it( 'recreates feedback actions when session changes', () => {
 			const { rerender } = renderHook( ( props ) => useFeedbackAction( props ), {
 				initialProps: defaultConfig,
 			} );
@@ -141,7 +149,7 @@ describe( 'useFeedbackAction', () => {
 
 			rerender( defaultConfig );
 
-			expect( mockRegisterMessageActions ).toHaveBeenCalledTimes( 2 );
+			expect( mockCreateFeedbackActions ).toHaveBeenCalledTimes( 2 );
 		} );
 
 		it( 'passes condition that filters to agent messages only', () => {
@@ -174,14 +182,13 @@ describe( 'useFeedbackAction', () => {
 			);
 		} );
 
-		it( 'records tracks event', async () => {
+		it( 'records the verbatim Big Sky thumbs-up event', async () => {
 			renderHook( () => useFeedbackAction( defaultConfig ) );
 			await triggerFeedback( 'msg-1', 'up' );
 
-			expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_agents_manager_response_feedback_action',
-				{ type: 'thumb_up', message_id: 'msg-1' }
-			);
+			expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'response_action_thumbs_up', {
+				message_id: 'msg-1',
+			} );
 		} );
 
 		it( 'does not show feedback input', async () => {
@@ -212,14 +219,13 @@ describe( 'useFeedbackAction', () => {
 			);
 		} );
 
-		it( 'records tracks event', async () => {
+		it( 'records the verbatim Big Sky thumbs-down event', async () => {
 			renderHook( () => useFeedbackAction( defaultConfig ) );
 			await triggerFeedback( 'msg-1', 'down' );
 
-			expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_agents_manager_response_feedback_action',
-				{ type: 'thumb_down', message_id: 'msg-1' }
-			);
+			expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'response_action_thumbs_down', {
+				message_id: 'msg-1',
+			} );
 		} );
 
 		it( 'shows feedback input', async () => {
@@ -296,9 +302,11 @@ describe( 'useFeedbackAction', () => {
 				await result.current.submitFeedbackText( 'Helpful feedback' );
 			} );
 
-			expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_agents_manager_response_feedback_submitted',
-				{ message_id: 'msg-1' }
+			expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+				'response_feedback_submitted',
+				{
+					message_id: 'msg-1',
+				}
 			);
 		} );
 

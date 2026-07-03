@@ -76,11 +76,12 @@ describe( 'nav-2026 tracks', () => {
 	} );
 
 	describe( 'mobile menu open/close', () => {
-		it( 'fires mobile_menu_open with burger_menu start type + viewport width', () => {
+		it( 'fires mobile_menu_open with burger_menu reason + start type + viewport width', () => {
 			recordMobileMenuOpen( false );
 			expect( mockRecord ).toHaveBeenCalledWith( 'calypso_global_nav_mobile_menu_open', {
 				is_2026: true,
 				is_floating: false,
+				reason: 'burger_menu',
 				start_type: 'burger_menu',
 				viewport_width: window.innerWidth,
 			} );

@@ -23,6 +23,9 @@ export interface Agency {
 	name: string;
 	url: string;
 	tier?: AgencyTier;
+	mcp?: {
+		allowed: boolean;
+	};
 	influenced_revenue?: number;
 	created_at: string;
 	billing_system?: 'billingdragon' | 'legacy';
@@ -34,6 +37,30 @@ export interface Agency {
  */
 export type AgencyApiResponse = Agency[] | { is_client_user: boolean; billing_type?: string };
 
+export interface McpAvailableAbility {
+	name: string;
+	title: string;
+	description: string;
+	category: string;
+	enabled: boolean;
+}
+
+export interface McpAvailableCategory {
+	slug: string;
+	label: string;
+}
+
+export interface McpSettings {
+	enabled: boolean;
+	available_categories: McpAvailableCategory[];
+	available_abilities: McpAvailableAbility[];
+}
+
+export interface McpSettingsUpdate {
+	enabled?: boolean;
+	abilities?: Record< string, boolean >;
+}
+
 export interface AgencyBlog {
 	name: string;
 	existing_wpcom_license_count: number;
@@ -43,4 +70,28 @@ export interface AgencyBlog {
 		actual_price: number;
 		currency: string;
 	};
+}
+
+/**
+ * A single learn/resource item, as returned by GET /wpcom/v2/agency/resources.
+ */
+export interface AgencyResource {
+	id: number;
+	name: string;
+	description: string;
+	external_url: string;
+	format: string;
+	related_product: string;
+	related_product_type: string;
+	resource_type: string;
+	preview_image: string;
+	section: string;
+	created_at: string;
+	updated_at: string;
+}
+
+export interface AgencyResourcesResponse {
+	status: string;
+	results: AgencyResource[];
+	total: number;
 }

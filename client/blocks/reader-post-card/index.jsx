@@ -1,8 +1,8 @@
 import { Card } from '@automattic/components';
 import { localeRegexString } from '@automattic/i18n-utils';
+import { truncate } from '@automattic/js-utils';
 import clsx from 'clsx';
 import closest from 'component-closest';
-import { truncate } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';

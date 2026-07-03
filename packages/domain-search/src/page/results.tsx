@@ -1,4 +1,4 @@
-import { useIsMutating, useMutation } from '@tanstack/react-query';
+import { useIsMutating, useMutation, useQueryClient } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { chevronDown, chevronUp, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -14,8 +14,32 @@ import { UnavailableSearchResult } from '../components/unavailable-search-result
 import { useIsCurrentMutation } from '../hooks/use-is-current-mutation';
 import { useRequestTracking } from '../hooks/use-request-tracking';
 import { useSuggestionsList } from '../hooks/use-suggestions-list';
+import { DOMAIN_BUNDLE_UNAVAILABLE_ERROR_CODE } from './constants';
 import { useDomainSearch } from './context';
 import type { BundleSuggestion } from '@automattic/api-core';
+
+const hasErrorCode = ( error: unknown, code: string ) =>
+	typeof error === 'object' &&
+	error !== null &&
+	'code' in error &&
+	( error as { code?: unknown } ).code === code;
+
+const isBundleUnavailableError = ( error: unknown ) =>
+	hasErrorCode( error, DOMAIN_BUNDLE_UNAVAILABLE_ERROR_CODE );
+
+type AddBundleToCartVariables = {
+	bundle: BundleSuggestion;
+	query: string;
+};
+
+type AddBundleToCartResult = {
+	wasAdded: boolean;
+};
+
+type UnavailableBundle = {
+	groupId: string;
+	query: string;
+};
 
 const StickyCompactBanner = () => {
 	const { __ } = useI18n();
@@ -49,7 +73,9 @@ const StickyCompactBanner = () => {
 
 export const ResultsPage = () => {
 	const { __ } = useI18n();
-	const { slots, config, events, cart, query } = useDomainSearch();
+	const { slots, config, events, cart, query, queries } = useDomainSearch();
+	const queryClient = useQueryClient();
+	const [ unavailableBundle, setUnavailableBundle ] = useState< UnavailableBundle >();
 
 	const { mutationId, isCurrentMutation } = useIsCurrentMutation();
 
@@ -66,8 +92,30 @@ export const ResultsPage = () => {
 		meta: {
 			mutationId,
 		},
-		mutationFn: async ( bundle: BundleSuggestion ) => {
-			await cart.onAddBundle?.( bundle );
+		mutationFn: async ( {
+			bundle,
+		}: AddBundleToCartVariables ): Promise< AddBundleToCartResult > => {
+			if ( ! cart.onAddBundle ) {
+				return { wasAdded: false };
+			}
+
+			await cart.onAddBundle( bundle );
+			return { wasAdded: true };
+		},
+		onSuccess: ( { wasAdded }, { bundle } ) => {
+			if ( wasAdded ) {
+				events.onBundleAddToCart( bundle );
+			}
+		},
+		onError: async ( error, { bundle, query: failedQuery } ) => {
+			if ( ! isBundleUnavailableError( error ) ) {
+				return;
+			}
+
+			setUnavailableBundle( { groupId: bundle.bundle_group_id, query: failedQuery } );
+			await queryClient.invalidateQueries( {
+				queryKey: queries.bundleSuggestion( failedQuery ).queryKey,
+			} );
 		},
 		networkMode: 'always',
 		retry: false,
@@ -79,13 +127,14 @@ export const ResultsPage = () => {
 	// query produces a new bundle suggestion, so drop the stale error.
 	useEffect( () => {
 		resetAddBundle();
+		setUnavailableBundle( undefined );
 	}, [ query, resetAddBundle ] );
 
 	// The cart rejects with the server's first cart message (a CartActionError),
 	// which is already user-facing copy. Fall back when it's missing. Clicking
 	// "Get bundle" again re-fires the mutation, which clears the error state.
 	const bundleErrorMessage =
-		isCurrentMutation && addBundleError
+		isCurrentMutation && addBundleError && ! isBundleUnavailableError( addBundleError )
 			? addBundleError.message ||
 			  __( 'Sorry, we couldn’t add the bundle to your cart. Please try again.' )
 			: undefined;
@@ -96,6 +145,12 @@ export const ResultsPage = () => {
 		regularSuggestions,
 		bundleSuggestion,
 	} = useSuggestionsList();
+	const visibleBundleSuggestion =
+		unavailableBundle &&
+		bundleSuggestion?.bundle_group_id === unavailableBundle.groupId &&
+		query === unavailableBundle.query
+			? undefined
+			: bundleSuggestion;
 	const numberOfInitialVisibleSuggestions =
 		config.numberOfDomainsResultsPerPage - featuredSuggestions.length;
 
@@ -105,13 +160,13 @@ export const ResultsPage = () => {
 	// the group id so a new bundle (different query/experiment arm) re-fires, but
 	// re-renders of the same bundle do not.
 	const shownBundleGroupId =
-		! isLoadingSuggestions && bundleSuggestion && bundleSuggestion.domains.length > 0
-			? bundleSuggestion.bundle_group_id
+		! isLoadingSuggestions && visibleBundleSuggestion && visibleBundleSuggestion.domains.length > 0
+			? visibleBundleSuggestion.bundle_group_id
 			: undefined;
 
 	useEffect( () => {
-		if ( shownBundleGroupId && bundleSuggestion ) {
-			events.onBundleShown( bundleSuggestion );
+		if ( shownBundleGroupId && visibleBundleSuggestion ) {
+			events.onBundleShown( visibleBundleSuggestion );
 		}
 		// Intentionally keyed only on the group id: we want exactly one event per
 		// bundle that appears, not one per render or per `events`/object identity change.
@@ -158,14 +213,13 @@ export const ResultsPage = () => {
 				) : (
 					<FeaturedSearchResults suggestions={ featuredSuggestions } />
 				) }
-				{ ! isLoadingSuggestions && bundleSuggestion && (
+				{ ! isLoadingSuggestions && visibleBundleSuggestion && (
 					<BundleCard
-						suggestion={ bundleSuggestion }
+						suggestion={ visibleBundleSuggestion }
 						onAddToCart={ ( bundle ) => {
-							events.onBundleAddToCart( bundle );
-							addBundleToCart( bundle );
+							addBundleToCart( { bundle, query } );
 						} }
-						isAddedToCart={ bundleSuggestion.domains.every( ( { domain } ) =>
+						isAddedToCart={ visibleBundleSuggestion.domains.every( ( { domain } ) =>
 							cart.hasItem( domain )
 						) }
 						onContinue={ events.onContinue }

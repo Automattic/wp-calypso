@@ -78,7 +78,10 @@ module.exports = {
 						patterns: [ { group: [ 'calypso/*' ] }, ...lodashRestrictedImports.patterns ],
 					},
 				],
-				'no-restricted-modules': [ 'error', { patterns: [ 'calypso/*' ] } ],
+				'no-restricted-modules': [
+					'error',
+					{ paths: lodashRestrictedImports.modules, patterns: [ 'calypso/*' ] },
+				],
 			},
 		},
 		{
@@ -383,7 +386,7 @@ module.exports = {
 		// Only use known tag names plus `jest-environment`.
 		'jsdoc/check-tag-names': [
 			'error',
-			{ definedTags: [ 'jest-environment', 'jsxImportSource' ] },
+			{ definedTags: [ 'jest-environment', 'jest-environment-options', 'jsxImportSource' ] },
 		],
 
 		// Do not require param/return description, see https://github.com/Automattic/wp-calypso/issues/56330
@@ -451,6 +454,8 @@ module.exports = {
 				],
 			},
 		],
+		'no-restricted-properties': [ 2, ...lodashRestrictedImports.properties ],
+		'no-restricted-syntax': [ 'error', ...lodashRestrictedImports.syntax ],
 		'no-restricted-modules': [
 			2,
 			{
@@ -465,6 +470,7 @@ module.exports = {
 						name: 'superagent',
 						message: 'Please use native `fetch` instead.',
 					},
+					...lodashRestrictedImports.modules,
 				],
 			},
 		],
@@ -585,6 +591,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/bind': 'error',
 		'you-dont-need-lodash-underscore/cast-array': 'error',
 		'you-dont-need-lodash-underscore/collect': 'error',
+		'you-dont-need-lodash-underscore/concat': 'error',
 		'you-dont-need-lodash-underscore/contains': 'error',
 		'you-dont-need-lodash-underscore/detect': 'error',
 		'you-dont-need-lodash-underscore/drop': 'error',
@@ -595,10 +602,16 @@ module.exports = {
 		'you-dont-need-lodash-underscore/every': 'error',
 		'you-dont-need-lodash-underscore/extend-own': 'error',
 		'you-dont-need-lodash-underscore/fill': 'error',
+		'you-dont-need-lodash-underscore/filter': 'error',
+		'you-dont-need-lodash-underscore/find': 'error',
+		'you-dont-need-lodash-underscore/find-index': 'error',
 		'you-dont-need-lodash-underscore/first': 'error',
 		'you-dont-need-lodash-underscore/flatten': 'error',
 		'you-dont-need-lodash-underscore/foldl': 'error',
 		'you-dont-need-lodash-underscore/foldr': 'error',
+		'you-dont-need-lodash-underscore/for-each': 'error',
+		'you-dont-need-lodash-underscore/get': 'error',
+		'you-dont-need-lodash-underscore/includes': 'error',
 		'you-dont-need-lodash-underscore/index-of': 'error',
 		'you-dont-need-lodash-underscore/inject': 'error',
 		'you-dont-need-lodash-underscore/is-array': 'error',
@@ -614,8 +627,10 @@ module.exports = {
 		'you-dont-need-lodash-underscore/keys': 'error',
 		'you-dont-need-lodash-underscore/last': 'error',
 		'you-dont-need-lodash-underscore/last-index-of': 'error',
+		'you-dont-need-lodash-underscore/map': 'error',
 		'you-dont-need-lodash-underscore/pad-end': 'error',
 		'you-dont-need-lodash-underscore/pad-start': 'error',
+		'you-dont-need-lodash-underscore/reduce': 'error',
 		'you-dont-need-lodash-underscore/reduce-right': 'error',
 		'you-dont-need-lodash-underscore/repeat': 'error',
 		'you-dont-need-lodash-underscore/replace': 'error',
@@ -623,6 +638,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/select': 'error',
 		'you-dont-need-lodash-underscore/size': 'error',
 		'you-dont-need-lodash-underscore/slice': 'error',
+		'you-dont-need-lodash-underscore/some': 'error',
 		'you-dont-need-lodash-underscore/split': 'error',
 		'you-dont-need-lodash-underscore/starts-with': 'error',
 		'you-dont-need-lodash-underscore/take-right': 'error',

@@ -1,9 +1,22 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { AgencyApiResponse, AgencyBlog } from './types';
+import type {
+	AgencyApiResponse,
+	AgencyBlog,
+	AgencyResourcesResponse,
+	McpSettings,
+	McpSettingsUpdate,
+} from './types';
 
 export async function fetchAgency(): Promise< AgencyApiResponse > {
 	return wpcom.req.get( {
 		path: '/agency',
+		apiNamespace: 'wpcom/v2',
+	} );
+}
+
+export async function fetchAgencyResources(): Promise< AgencyResourcesResponse > {
+	return wpcom.req.get( {
+		path: '/agency/resources',
 		apiNamespace: 'wpcom/v2',
 	} );
 }
@@ -24,4 +37,24 @@ export async function fetchAgencyScheduleCallLink( agencyId: number ): Promise< 
 		path: `/agency/${ agencyId }/schedule-call-link`,
 		apiNamespace: 'wpcom/v2',
 	} );
+}
+
+export async function fetchAgencyMcpSettings( agencyId: number ): Promise< McpSettings > {
+	return wpcom.req.get( {
+		path: `/agency/${ agencyId }/a4a-mcp/settings`,
+		apiNamespace: 'wpcom/v2',
+	} );
+}
+
+export async function updateAgencyMcpSettings(
+	agencyId: number,
+	input: McpSettingsUpdate
+): Promise< McpSettings > {
+	return wpcom.req.post(
+		{
+			path: `/agency/${ agencyId }/a4a-mcp/settings`,
+			apiNamespace: 'wpcom/v2',
+		},
+		input
+	);
 }

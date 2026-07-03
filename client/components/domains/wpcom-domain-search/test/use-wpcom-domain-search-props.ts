@@ -1164,9 +1164,10 @@ describe( 'useWPCOMDomainSearchProps', () => {
 				} )
 			);
 
-			await expect( result.current.cart.onAddBundle?.( bundle ) ).rejects.toThrow(
-				'The domain bundle could not be added to the cart.'
-			);
+			await expect( result.current.cart.onAddBundle?.( bundle ) ).rejects.toMatchObject( {
+				message: 'The domain bundle could not be added to the cart.',
+				code: 'domain_bundle_unavailable',
+			} );
 
 			expect( onContinue ).not.toHaveBeenCalled();
 		} );

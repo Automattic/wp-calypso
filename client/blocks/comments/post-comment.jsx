@@ -6,7 +6,6 @@ import { Icon, external } from '@wordpress/icons';
 import { isURL, getAuthority, getProtocol } from '@wordpress/url';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { get, some } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -175,7 +174,7 @@ class PostComment extends PureComponent {
 			return [];
 		}
 
-		const immediateChildren = get( commentsTree, [ id, 'children' ], [] );
+		const immediateChildren = commentsTree?.[ id ]?.children ?? [];
 		return immediateChildren.concat(
 			immediateChildren.flatMap( ( childId ) => this.getAllChildrenIds( childId ) )
 		);
@@ -186,9 +185,7 @@ class PostComment extends PureComponent {
 		const { enableCaterpillar, commentsToShow, commentId } = this.props;
 		const childIds = this.getAllChildrenIds( commentId );
 
-		return (
-			enableCaterpillar && commentsToShow && some( childIds, ( id ) => ! commentsToShow[ id ] )
-		);
+		return enableCaterpillar && commentsToShow && childIds.some( ( id ) => ! commentsToShow[ id ] );
 	};
 
 	// has visisble child --> true
@@ -196,7 +193,7 @@ class PostComment extends PureComponent {
 		const { commentsToShow, commentId } = this.props;
 		const childIds = this.getAllChildrenIds( commentId );
 
-		return commentsToShow && some( childIds, ( id ) => commentsToShow[ id ] );
+		return commentsToShow && childIds.some( ( id ) => commentsToShow[ id ] );
 	};
 
 	renderRepliesList() {
@@ -211,7 +208,7 @@ class PostComment extends PureComponent {
 			maxDepth,
 		} = this.props;
 
-		const commentChildrenIds = get( commentsTree, [ commentId, 'children' ] );
+		const commentChildrenIds = commentsTree?.[ commentId ]?.children;
 		// Hide children if more than maxChildrenToShow, but not if replying
 		const exceedsMaxChildrenToShow =
 			commentChildrenIds && commentChildrenIds.length < maxChildrenToShow;
@@ -292,11 +289,8 @@ class PostComment extends PureComponent {
 		}
 
 		// If a comment save is pending, don't show the form
-		const placeholderState = get( this.props.commentsTree, [
-			this.props.commentId,
-			'data',
-			'placeholderState',
-		] );
+		const placeholderState =
+			this.props.commentsTree?.[ this.props.commentId ]?.data?.placeholderState;
 		if ( placeholderState === PLACEHOLDER_STATE.PENDING ) {
 			return null;
 		}
@@ -314,8 +308,8 @@ class PostComment extends PureComponent {
 	}
 
 	getAuthorDetails = ( commentId ) => {
-		const comment = get( this.props.commentsTree, [ commentId, 'data' ], {} );
-		const commentAuthor = get( comment, 'author', {} );
+		const comment = this.props.commentsTree?.[ commentId ]?.data ?? {};
+		const commentAuthor = comment?.author ?? {};
 		const commentAuthorName = decodeEntities( commentAuthor.name );
 
 		let commentAuthorUrl;
@@ -404,7 +398,7 @@ class PostComment extends PureComponent {
 			shouldHighlightNew,
 		} = this.props;
 
-		const comment = get( commentsTree, [ commentId, 'data' ] );
+		const comment = commentsTree?.[ commentId ]?.data;
 		const isPingbackOrTrackback = comment.type === 'trackback' || comment.type === 'pingback';
 
 		if ( ! comment || ( hidePingbacksAndTrackbacks && isPingbackOrTrackback ) ) {
@@ -420,10 +414,8 @@ class PostComment extends PureComponent {
 				: commentsToShow[ commentId ];
 
 		// todo: connect this constants to the state (new selector)
-		const haveReplyWithError = some(
-			get( commentsTree, [ this.props.commentId, 'children' ] ),
-			( childId ) =>
-				get( commentsTree, [ childId, 'data', 'placeholderState' ] ) === PLACEHOLDER_STATE.ERROR
+		const haveReplyWithError = ( commentsTree?.[ this.props.commentId ]?.children ?? [] ).some(
+			( childId ) => commentsTree?.[ childId ]?.data?.placeholderState === PLACEHOLDER_STATE.ERROR
 		);
 
 		// If it's a pending comment, use the current user as the author
@@ -445,7 +437,7 @@ class PostComment extends PureComponent {
 		}
 
 		// Author Details
-		const parentCommentId = get( comment, 'parent.ID' );
+		const parentCommentId = comment?.parent?.ID;
 		const { commentAuthorUrl, commentAuthorName } = this.getAuthorDetails( commentId );
 		const { commentAuthorUrl: parentAuthorUrl, commentAuthorName: parentAuthorName } =
 			this.getAuthorDetails( parentCommentId );

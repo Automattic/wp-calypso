@@ -64,6 +64,12 @@
 		text-decoration: underline;
 	}
 
+	.section-nav-tab {
+		&.is-private .section-nav-tab__text {
+			color: var( --studio-gray-40 );
+		}
+	}
+
 	.section-nav-tab__link {
 		&:hover {
 			background: none;
