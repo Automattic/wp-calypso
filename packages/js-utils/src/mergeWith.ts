@@ -107,10 +107,11 @@ function baseMergeWith(
  * Like {@link ./merge merge}, but a `customizer` invoked for every source key
  * decides the merged value: it runs first and, when it returns anything other
  * than `undefined`, that result is assigned directly instead of the default
- * deep merge. As in lodash, the customizer is optional and identified by being
- * the trailing argument when it is a function; otherwise every argument after
- * the destination is treated as a source and the merge runs without one. Sources
- * are merged left to right.
+ * deep merge. As in lodash, the customizer is optional and identified as the
+ * trailing argument only when it is a function AND at least one source precedes
+ * it; otherwise every argument after the destination is treated as a source
+ * (so a lone trailing function is merged as a source) and the merge runs without
+ * a customizer. Sources are merged left to right.
  *
  * This shares merge's narrower-than-lodash scope: it merges only own enumerable
  * properties, treats arrays as dense, and does not special-case typed arrays or
@@ -120,9 +121,9 @@ function baseMergeWith(
  * @param args Source objects, optionally followed by a customizer function.
  * @returns The mutated (or freshly created) destination object.
  */
-function mergeWith( object: object, ...args: unknown[] ): object {
+function mergeWith( object: object | null | undefined, ...args: unknown[] ): object {
 	const last = args[ args.length - 1 ];
-	const hasCustomizer = typeof last === 'function';
+	const hasCustomizer = args.length > 1 && typeof last === 'function';
 	const customizer = hasCustomizer ? ( last as MergeWithCustomizer ) : defaultCustomizer;
 	const sources = hasCustomizer ? args.slice( 0, -1 ) : args;
 	// Coerce like lodash's assigner so a nullish destination becomes a fresh
