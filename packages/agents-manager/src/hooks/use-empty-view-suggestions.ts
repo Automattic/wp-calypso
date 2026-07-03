@@ -97,10 +97,9 @@ function getWindowPathname(): string {
 	return typeof window !== 'undefined' ? window.location.pathname : '';
 }
 
-function isPostEditorSurface( sectionName: string, currentRoute?: string ): boolean {
+function isPostEditorSurface( currentRoute?: string ): boolean {
 	const pathname = getWindowPathname();
 	return (
-		sectionName === 'gutenberg' ||
 		!! currentRoute?.includes( 'post.php' ) ||
 		!! currentRoute?.includes( 'post-new.php' ) ||
 		pathname.includes( 'post.php' ) ||
@@ -109,7 +108,7 @@ function isPostEditorSurface( sectionName: string, currentRoute?: string ): bool
 }
 
 function isSiteEditorSurface( sectionName: string, currentRoute?: string ): boolean {
-	if ( isPostEditorSurface( sectionName, currentRoute ) ) {
+	if ( isPostEditorSurface( currentRoute ) ) {
 		return false;
 	}
 
@@ -144,18 +143,18 @@ export function useEmptyViewSuggestions( {
 		() => [
 			{
 				id: 'getting-started',
-				label: __( 'Getting started with WordPress', '__i18n_text_domain__' ),
-				prompt: __( 'How do I get started with WordPress?', '__i18n_text_domain__' ),
+				label: __( 'Getting started with WordPress', __i18n_text_domain__ ),
+				prompt: __( 'How do I get started with WordPress?', __i18n_text_domain__ ),
 			},
 			{
 				id: 'create-post',
-				label: __( 'Create a blog post', '__i18n_text_domain__' ),
-				prompt: __( 'How do I create a blog post?', '__i18n_text_domain__' ),
+				label: __( 'Create a blog post', __i18n_text_domain__ ),
+				prompt: __( 'How do I create a blog post?', __i18n_text_domain__ ),
 			},
 			{
 				id: 'customize-site',
-				label: __( 'Customize my site', '__i18n_text_domain__' ),
-				prompt: __( 'How can I customize my site?', '__i18n_text_domain__' ),
+				label: __( 'Customize my site', __i18n_text_domain__ ),
+				prompt: __( 'How can I customize my site?', __i18n_text_domain__ ),
 			},
 		],
 		[]

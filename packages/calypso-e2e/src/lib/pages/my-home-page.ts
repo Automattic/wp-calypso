@@ -3,8 +3,6 @@ import { getCalypsoURL } from '../../data-helper';
 
 const selectors = {
 	visitSiteButton: '.button >> text=Visit site',
-	domainUpsellCard: '.domain-upsell__card',
-	domainUpsellSuggestedDomain: '.domain-upsell__card .domain-upsell-illustration',
 	domainUpsellBuyDomain: ( message: string ) =>
 		`.domain-upsell-actions button:text("${ message }")`,
 };
@@ -16,6 +14,7 @@ export class MyHomePage {
 	private page: Page;
 	private anchor: Locator;
 	readonly heading: Locator;
+	readonly suggestedUpsellDomainName: Locator;
 
 	/**
 	 * Constructs an instance of the component.
@@ -26,6 +25,8 @@ export class MyHomePage {
 		this.page = page;
 		this.anchor = page.getByRole( 'main' );
 		this.heading = this.page.getByRole( 'heading', { name: 'My Home' } );
+		// The <strong> renders empty until the domain suggestion query resolves.
+		this.suggestedUpsellDomainName = this.anchor.getByTestId( 'domain-upsell-domain-name' );
 	}
 
 	/**
@@ -73,28 +74,6 @@ export class MyHomePage {
 			return true;
 		} catch {
 			return false;
-		}
-	}
-
-	/**
-	 * Get the suggested domain in the upsell card.
-	 *
-	 * @returns {string} Suggested domain. Empty string if not found.
-	 */
-	async getSuggestedUpsellDomain(): Promise< string > {
-		// It's important to wait for an actual svg element to be present.
-		// The handling here is a little funky. We take a blank palceholder img, then we
-		// draw an SVG with just the text on top of it.
-		// There's a race condition where the placeholder img can render before the the text svg does.
-		const svgLocator = this.anchor.locator( '.domain-upsell-illustration svg' );
-
-		// But, innerText doesn't work on SVG nodes, so we need this locator to actually fetch the text.
-		const parentDivLocator = this.anchor.locator( '.domain-upsell-illustration' );
-		try {
-			await svgLocator.waitFor( { timeout: 20_000 } );
-			return await parentDivLocator.innerText();
-		} catch {
-			return '';
 		}
 	}
 

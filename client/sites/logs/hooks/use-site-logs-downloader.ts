@@ -1,6 +1,5 @@
 import { isEmpty } from '@automattic/js-utils';
 import { useTranslate } from 'i18n-calypso';
-import { get } from 'lodash';
 import { useReducer } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { FilterType, LogType } from 'calypso/data/hosting/use-site-logs-query';
@@ -186,7 +185,7 @@ export const useSiteLogsDownloader = ( {
 					}
 				)
 				.then( ( response: LogsAPIResponse ) => {
-					const newLogData = get( response, 'data.logs', [] );
+					const newLogData = response?.data?.logs ?? [];
 					scrollId = response?.data?.scroll_id ?? null;
 
 					if ( isEmpty( logs ) ) {
@@ -199,7 +198,7 @@ export const useSiteLogsDownloader = ( {
 									.filter( ( key ) => key !== 'atomic_site_id' )
 									.join( ',' ) + '\n',
 							];
-							totalLogs = get( response, 'data.total_results', 1 );
+							totalLogs = response?.data?.total_results ?? 1;
 						}
 					}
 
@@ -227,7 +226,7 @@ export const useSiteLogsDownloader = ( {
 				} )
 				.catch( ( error: { message: string; status: number } ) => {
 					isError = true;
-					let message = get( error, 'message', 'Could not retrieve logs.' );
+					let message = error?.message ?? 'Could not retrieve logs.';
 					if ( error?.status === 500 ) {
 						message = translate( 'Could not retrieve logs. Please try again in a few minutes.' );
 					} else if ( error?.status === 400 ) {

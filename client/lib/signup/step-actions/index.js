@@ -9,7 +9,6 @@ import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import { pick, isEmpty } from '@automattic/js-utils';
 import debugFactory from 'debug';
-import { get } from 'lodash';
 import { buildUpgradeFunction } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/unified-plans/util';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import {
@@ -159,7 +158,7 @@ export const getNewSiteParams = ( {
 		themeSlugWithRepo ||
 		( signupDependencies?.themeSlugWithRepo ?? false );
 
-	const launchAsComingSoon = get( signupDependencies, 'comingSoon', 1 );
+	const launchAsComingSoon = signupDependencies?.comingSoon ?? 1;
 
 	// We will use the default annotation instead of theme annotation as fallback,
 	// when segment and vertical values are not sent. Check pbAok1-p2#comment-834.
@@ -210,7 +209,7 @@ export const getNewSiteParams = ( {
 };
 
 function saveToLocalStorageAndProceed( state, domainItem, themeItem, newSiteParams, callback ) {
-	const cartItem = get( getSignupDependencyStore( state ), 'cartItem', undefined );
+	const cartItem = getSignupDependencyStore( state )?.cartItem;
 	const newCartItems = [ cartItem, domainItem ].filter( ( item ) => item );
 
 	const newCartItemsToAdd = newCartItems.map( ( item ) =>
@@ -261,10 +260,10 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	const state = reduxStore.getState();
 	const bearerToken = getSignupDependencyStore( state )?.bearer_token ?? null;
 
-	const isManageSiteFlow = get( getSignupDependencyStore( state ), 'isManageSiteFlow', false );
+	const isManageSiteFlow = getSignupDependencyStore( state )?.isManageSiteFlow ?? false;
 
 	if ( isManageSiteFlow ) {
-		const siteSlug = get( getSignupDependencyStore( state ), 'siteSlug', undefined );
+		const siteSlug = getSignupDependencyStore( state )?.siteSlug;
 		const siteId = getSiteId( state, siteSlug );
 		const providedDependencies = { domainItem, siteId, siteSlug, themeItem };
 		addDomainToCart( callback, dependencies, stepData, reduxStore, siteSlug, providedDependencies );

@@ -16,15 +16,46 @@ import type {
 	SpaceFeedLayout,
 } from '@automattic/api-core';
 
+let mockCurrentLocaleSlug: string | null = null;
+
 jest.mock( 'calypso/reader/data/stream', () => ( {
 	useInfiniteStream: jest.fn(),
+	getCachedStreamItems: jest.fn( () => [] ),
 } ) );
+
+jest.mock( 'calypso/reader/hooks/use-infinite-list', () => ( {
+	ScrollDebugOverlay: () => null,
+	useInfiniteList: jest.fn( ( { count } ) => ( {
+		getListProps: ( props = {} ) => props,
+		items: Array.from( { length: count }, ( _value, index ) => ( {
+			index,
+			key: `item-${ index }`,
+			start: index * 100,
+			lane: 0,
+		} ) ),
+		measureElement: jest.fn(),
+		scrollMargin: 0,
+		scrollToIndex: jest.fn(),
+	} ) ),
+} ) );
+
+jest.mock( 'calypso/state/selectors/get-current-locale-slug', () =>
+	jest.fn( () => mockCurrentLocaleSlug )
+);
 
 jest.mock( 'calypso/state/reader/site-blocks/selectors', () => {
 	const blockedSites: number[] = [];
 	const getBlockedSites = jest.fn( () => blockedSites );
 	return { getBlockedSites };
 } );
+
+const mockRecordReaderTracksEvent: jest.Mock = jest.fn( () => ( {
+	type: 'TEST_TRACKS_EVENT',
+} ) );
+
+jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
+	recordReaderTracksEvent: ( ...args: unknown[] ) => mockRecordReaderTracksEvent( ...args ),
+} ) );
 
 const mockUseInfiniteStream = useInfiniteStream as jest.Mock;
 
@@ -47,7 +78,14 @@ function streamResult( overrides: Partial< ReturnType< typeof useInfiniteStream 
 }
 
 function makeSpace( id: string, name: string, view: SpaceFeedLayout ): ReadSpaceDetails {
-	return { id, name, tags: [], layout: { color: 'blue', icon: 'inbox', view }, sources: [] };
+	return {
+		id,
+		name,
+		tags: [],
+		languages: [],
+		layout: { color: 'blue', icon: 'inbox', view },
+		sources: [],
+	};
 }
 
 function makePost( overrides: Partial< ReadStreamPost > = {} ): ReadStreamPost {
@@ -91,6 +129,8 @@ function renderWithLayoutViewFallback( space: ReadSpaceDetails, layoutView: Spac
 describe( 'SpaceFeed', () => {
 	beforeEach( () => {
 		window.history.replaceState( {}, '', '/reader/spaces/work-id' );
+		mockCurrentLocaleSlug = null;
+		mockRecordReaderTracksEvent.mockClear();
 		mockUseInfiniteStream.mockReturnValue( streamResult() );
 	} );
 
@@ -178,6 +218,81 @@ describe( 'SpaceFeed', () => {
 
 		expect( mockUseInfiniteStream ).toHaveBeenCalledWith(
 			expect.objectContaining( { streamKey: `space:${ WORK.id }` } )
+		);
+	} );
+
+	it( 'passes the non-default locale to the stream request', () => {
+		mockCurrentLocaleSlug = 'pt-br';
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		queryClient.setQueryData( readSpaceQuery( WORK.id ).queryKey, WORK );
+
+		renderWithProvider( <SpaceFeed spaceId={ WORK.id } />, {
+			queryClient,
+			initialState: { currentUser: { id: 1 } },
+		} );
+
+		expect( mockUseInfiniteStream ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				streamKey: `space:${ WORK.id }`,
+				localeSlug: 'pt-br',
+			} )
+		);
+	} );
+
+	it( 'stores the full stream item when selecting a post', async () => {
+		const user = userEvent.setup();
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		queryClient.setQueryData( readSpaceQuery( WORK.id ).queryKey, WORK );
+		const post = makePost();
+		const streamItem = {
+			feedId: post.feed_ID,
+			postId: post.feed_item_ID,
+			url: post.URL,
+			site_name: post.site_name,
+		};
+		mockUseInfiniteStream.mockReturnValue(
+			streamResult( {
+				items: [ streamItem ],
+				pages: [ { posts: [ post ] } as unknown as ReadStreamResponse ],
+			} )
+		);
+
+		renderWithProvider( <SpaceFeed spaceId={ WORK.id } />, {
+			queryClient,
+			initialState: { currentUser: { id: 1 } },
+		} );
+
+		const link = screen.getByRole( 'link', { name: 'A layout-sensitive post' } );
+		link.addEventListener( 'click', ( event ) => event.preventDefault() );
+		await user.click( link );
+
+		expect(
+			queryClient.getQueryData( [ 'read', 'stream', 'selected', `space:${ WORK.id }`, null ] )
+		).toEqual( streamItem );
+	} );
+
+	it( 'records a tracks event when a post is opened', async () => {
+		const user = userEvent.setup();
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		queryClient.setQueryData( readSpaceQuery( WORK.id ).queryKey, WORK );
+		const post = makePost();
+		mockUseInfiniteStream.mockReturnValue(
+			streamResult( { pages: [ { posts: [ post ] } as unknown as ReadStreamResponse ] } )
+		);
+
+		renderWithProvider( <SpaceFeed spaceId={ WORK.id } />, {
+			queryClient,
+			initialState: { currentUser: { id: 1 } },
+		} );
+
+		const link = screen.getByRole( 'link', { name: 'A layout-sensitive post' } );
+		link.addEventListener( 'click', ( event ) => event.preventDefault() );
+		await user.click( link );
+
+		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+			'calypso_reader_spaces_post_opened',
+			{ space_id: WORK.id, layout: 'standard-list', variant: 'feed' },
+			{ post }
 		);
 	} );
 

@@ -141,6 +141,7 @@ export function useActivityFields( {
 				id: 'activity_type',
 				type: 'text',
 				label: __( 'Activity type' ),
+				enableSorting: false,
 				getValue: ( { item } ) => getActivityLogTypeSlugFromName( item.activityName ),
 				render: ( { item } ) => (
 					<span>
@@ -148,7 +149,6 @@ export function useActivityFields( {
 					</span>
 				),
 				elements: activityLogTypeElements,
-				isVisible: () => false,
 				filterBy: { operators: [ 'isAny' as Operator ] },
 			},
 		];

@@ -2,7 +2,7 @@ import { getCalypsoURL } from '../../data-helper';
 import { waitForElementEnabled } from '../../element-helper';
 import envVariables from '../../env-variables';
 import type { PaymentDetails, RegistrarDetails } from '../../types/data-helper.types';
-import type { Frame, Page } from 'playwright';
+import type { Page } from 'playwright';
 
 const selectors = {
 	// Modal
@@ -333,21 +333,28 @@ export class CartCheckoutPage {
 		// top to bottom.
 		await this.page.fill( selectors.cardholderName, paymentDetails.cardHolder );
 
-		const cardNumberFrameHandle = await this.page.waitForSelector( selectors.cardNumberFrame );
-		const cardNumberFrame = ( await cardNumberFrameHandle.contentFrame() ) as Frame;
-		const cardNumberInput = await cardNumberFrame.waitForSelector( selectors.cardNumberInput );
-		await cardNumberInput.fill( paymentDetails.cardNumber );
+		// Stripe remounts its split-field iframes (__privateStripeFrame ids change),
+		// so resolve each lazily via frameLocator; a cached contentFrame handle goes
+		// stale. Explicit timeout because the 10s global actionTimeout is too short
+		// for a cold Stripe.js mount.
+		const fillTimeout = 30 * 1000;
 
-		const expiryFrameHandle = await this.page.waitForSelector( selectors.cardExpiryFrame );
-		const expiryFrame = ( await expiryFrameHandle.contentFrame() ) as Frame;
-		const expiryInput = await expiryFrame.waitForSelector( selectors.cardExpiryInput );
-		await expiryInput.fill( `${ paymentDetails.expiryMonth }${ paymentDetails.expiryYear }` );
+		const cardNumberInput = this.page
+			.frameLocator( selectors.cardNumberFrame )
+			.locator( selectors.cardNumberInput );
+		await cardNumberInput.fill( paymentDetails.cardNumber, { timeout: fillTimeout } );
 
-		const cvvFrame = ( await (
-			await this.page.waitForSelector( selectors.cardCVVFrame )
-		).contentFrame() ) as Frame;
-		const cvvInput = await cvvFrame.waitForSelector( selectors.cardCVVInput );
-		await cvvInput.fill( paymentDetails.cvv );
+		const expiryInput = this.page
+			.frameLocator( selectors.cardExpiryFrame )
+			.locator( selectors.cardExpiryInput );
+		await expiryInput.fill( `${ paymentDetails.expiryMonth }${ paymentDetails.expiryYear }`, {
+			timeout: fillTimeout,
+		} );
+
+		const cvvInput = this.page
+			.frameLocator( selectors.cardCVVFrame )
+			.locator( selectors.cardCVVInput );
+		await cvvInput.fill( paymentDetails.cvv, { timeout: fillTimeout } );
 	}
 
 	/**

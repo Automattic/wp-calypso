@@ -9,7 +9,6 @@ import page from '@automattic/calypso-router';
 import { Button, Card, CompactCard, ProgressBar, Gridicon, Spinner } from '@automattic/components';
 import { omit, isEmpty } from '@automattic/js-utils';
 import { getLocaleSlug, localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import moment from 'moment';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -72,7 +71,7 @@ export class SectionMigrate extends Component {
 
 	componentDidMount() {
 		const { targetSite, targetSiteId, targetSiteSlug, sourceSite, sourceSiteId } = this.props;
-		const sourceSiteUrl = get( sourceSite, 'URL', sourceSiteId );
+		const sourceSiteUrl = sourceSite?.URL ?? sourceSiteId;
 		clearMigrationStatus();
 
 		if ( this.isNonAtomicJetpack() ) {
@@ -773,7 +772,7 @@ export class SectionMigrate extends Component {
 const navigateToSelectedSourceSite = ( sourceSiteId ) => ( dispatch, getState ) => {
 	const state = getState();
 	const sourceSite = getSite( state, sourceSiteId );
-	const sourceSiteSlug = get( sourceSite, 'slug', sourceSiteId );
+	const sourceSiteSlug = sourceSite?.slug ?? sourceSiteId;
 	const targetSiteSlug = getSelectedSiteSlug( state );
 
 	page( `/migrate/from/${ sourceSiteSlug }/to/${ targetSiteSlug }` );
@@ -786,7 +785,7 @@ export const connector = connect(
 			isTargetSiteAtomic: !! isSiteAutomatedTransfer( state, targetSiteId ),
 			isTargetSiteJetpack: !! isJetpackSite( state, targetSiteId ),
 			sourceSite: ownProps.sourceSiteId && getSite( state, ownProps.sourceSiteId ),
-			startMigration: !! get( getCurrentQueryArguments( state ), 'start', false ),
+			startMigration: !! getCurrentQueryArguments( state )?.start,
 			sourceSiteHasJetpack: false,
 			targetSite: getSelectedSite( state ),
 			targetSiteId,

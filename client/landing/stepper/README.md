@@ -373,12 +373,22 @@ flows keep working unchanged:
    what the flow customizes just from reading the flow file, the prop is
    misnamed.
 
-**Worked example.** The `goals` step exposes `headerText`, `subHeaderText`,
-`goalTitles` (sparse label overrides per goal), `hiddenGoals` (cards to drop),
-and `hideSecondaryLinks` (toggle for the three bottom links). All optional;
-omitting them reproduces the default GOALS UI verbatim. See
-[`steps-repository/goals/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/goals/index.tsx)
-for the wiring and the colocated test file for the test pattern.
+**Worked examples.**
+
+- The `goals` step exposes `headerText`, `subHeaderText`,
+  `goalTitles` (sparse label overrides per goal), `hiddenGoals` (cards to drop),
+  and `hideSecondaryLinks` (toggle for the three bottom links). All optional;
+  omitting them reproduces the default GOALS UI verbatim. See
+  [`steps-repository/goals/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/goals/index.tsx)
+  for the wiring and the colocated test file for the test pattern.
+- The `domain-search` step exposes `headerText`, `subHeaderText`, `hideUseMyDomainLink`
+  (suppresses the "Use a domain I own" CTA on both V2 top bar and V1 skip-button surfaces),
+  `hideFreeDomainPromo` (hides the free-domain-for-a-year banner), `freeDomainPromoTitle`
+  and `freeDomainPromoSubtitle` (copy overrides for that banner), and `allowedTlds`
+  (per-flow TLD filter that the URL `?tld=` query param can override). All optional and
+  default-safe; the same prop is applied across all three render paths
+  (HundredYearPlanStepWrapper, V2 `Step.CenteredColumnLayout`, V1 `StepContainer`). See
+  [`steps-repository/domain-search/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/domain-search/index.tsx).
 
 #### Renaming steps
 

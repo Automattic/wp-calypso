@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import moment from 'moment';
 import PaginatedQueryManager from '../paginated';
 import { DEFAULT_POST_QUERY } from './constants';
@@ -89,8 +88,13 @@ export default class PostQueryManager extends PaginatedQueryManager {
 
 					return true;
 
-				case 'author':
-					return get( post, 'author.ID', post.author ) === value;
+				case 'author': {
+					// Use the nested `author.ID` whenever it exists — even when it is
+					// `null` — and only fall back to `author` itself (which may be a
+					// bare id) when there is no `ID`.
+					const authorId = post?.author?.ID;
+					return ( authorId === undefined ? post.author : authorId ) === value;
+				}
 
 				case 'status':
 					return (

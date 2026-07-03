@@ -1,6 +1,5 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { DateRangePicker } from '@automattic/date-range-picker';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, useParams, useRouter } from '@tanstack/react-router';
@@ -102,8 +101,7 @@ export function BackupsListPage() {
 		[ router, siteSlug ]
 	);
 
-	const isOmnibarEnabled = isEnabled( 'dashboard/omnibar' );
-	const isSmallViewport = useViewportMatch( isOmnibarEnabled ? 'xlarge' : 'medium', '<' );
+	const isSmallViewport = useViewportMatch( 'xlarge', '<' );
 
 	// Auto-select backup based on rewindId parameter
 	useEffect( () => {

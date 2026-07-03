@@ -79,7 +79,8 @@
 		"a8c-for-agencies-express-checkout": true,
 		"a8c-for-agencies-learn": true,
 		"a8c-for-agencies-dev-tools": true,
-		"a8c-for-agencies-exclusive-offers": true
+		"a8c-for-agencies-exclusive-offers": true,
+		"a8c-for-agencies-amplify": true
 	},
 	"site_filter": [],
 	"theme": "a8c-for-agencies",

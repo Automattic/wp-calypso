@@ -181,4 +181,20 @@ describe( 'useEmptyViewSuggestions', () => {
 			expect( result.current ).toEqual( [ siteEditorSuggestion, bigSkySuggestion ] )
 		);
 	} );
+
+	it( 'keeps site-editor-only suggestions in the Site Editor when the section is reported as gutenberg', async () => {
+		window.history.pushState( {}, '', '/wp-admin/site-editor.php' );
+		mockContext = {
+			sectionName: 'gutenberg',
+			currentRoute: undefined,
+		};
+		const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
+		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
+
+		const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
+
+		await waitFor( () =>
+			expect( result.current ).toEqual( [ siteEditorSuggestion, bigSkySuggestion ] )
+		);
+	} );
 } );

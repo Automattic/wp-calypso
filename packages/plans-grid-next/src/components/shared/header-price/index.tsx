@@ -1,5 +1,6 @@
 import {
 	getPlanSlugForTermVariant,
+	isFreePlan,
 	isWpcomEnterpriseGridPlan,
 	PERIOD_LIST,
 	TERM_MONTHLY,
@@ -18,9 +19,22 @@ import {
 	fromPricingMetaForGridPlan,
 	getPlanPriceForDuration,
 } from '../../../lib/plan-pricing-utils';
+import ClientLogoList from '../../features-grid/client-logo-list';
 import { useHeaderPriceContext } from './header-price-context';
 import type { GridPlan } from '../../../types';
 import './style.scss';
+
+const ALL_ENTERPRISE_LOGO_SLUGS = [
+	'slack',
+	'usa-today',
+	'salesforce',
+	'meta',
+	'intuit',
+	'capgemini',
+	'news-corp',
+	'samsung',
+	'nasa',
+];
 
 interface HeaderPriceProps {
 	planSlug: PlanSlug;
@@ -127,7 +141,18 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		termVariantPricing,
 	] );
 
-	if ( isWpcomEnterpriseGridPlan( planSlug ) || ! isPricedPlan ) {
+	if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
+		const hasFreePlan = visibleGridPlans.some( ( { planSlug: slug } ) => isFreePlan( slug ) );
+		const logoCount = hasFreePlan ? 7 : 9;
+		return (
+			<ClientLogoList
+				slugs={ ALL_ENTERPRISE_LOGO_SLUGS.slice( 0, logoCount ) }
+				className="plans-grid-next-header-price__enterprise-logos"
+			/>
+		);
+	}
+
+	if ( ! isPricedPlan ) {
 		return null;
 	}
 

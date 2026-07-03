@@ -4,7 +4,6 @@ import {
 	userPreferenceQuery,
 	userPreferenceOptimisticMutation,
 } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouterState } from '@tanstack/react-router';
 import { removeQueryArgs } from '@wordpress/url';
@@ -45,10 +44,6 @@ export function useInitializeOmnibarSite() {
 	const fallbackSiteId = recentSiteIds?.[ 0 ] || user?.primary_blog;
 
 	useEffect( () => {
-		if ( ! isEnabled( 'dashboard/omnibar' ) ) {
-			return;
-		}
-
 		// Wait until the route and recent sites are fully loaded, to avoid flicker.
 		if ( ! isRouteLoaded || ! recentSiteIds ) {
 			return;

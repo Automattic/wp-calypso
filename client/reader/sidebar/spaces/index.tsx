@@ -10,8 +10,9 @@ import { prefetchInfiniteStream } from 'calypso/reader/data/stream';
 import { AddMenuItem } from 'calypso/reader/sidebar/menu';
 import { CreateSpaceModal } from 'calypso/reader/spaces/create-modal';
 import { getSpacePath, SPACES_BASE_PATH } from 'calypso/reader/spaces/routes';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { SpaceMenuItem } from './menu-item';
 import type { ReadSpace } from '@automattic/api-core';
 
@@ -21,12 +22,36 @@ interface Props {
 	path: string;
 }
 
-function getActiveSpaceId( path: string ): string | null {
-	// Space ids are URL-safe (base36), so the path segment is the id verbatim —
-	// no decoding is needed, and there is nothing for a bad URL to throw on.
-	// Mirrors getActiveConnection in the Social Feeds section.
+// Space ids are URL-safe (base36), so the path segment is the id verbatim — no
+// decoding is needed, and there is nothing for a bad URL to throw on. Mirrors
+// getActiveConnection in the Social Feeds section.
+function parseSpaceId( path: string ): string | null {
 	const match = path.match( /^\/reader\/spaces\/([^/?]+)/ );
 	return match ? match[ 1 ] : null;
+}
+
+// A full-post route (`/reader/feeds/:id/posts/:id` or `/reader/blogs/...`), where
+// no top-level sidebar stream is active.
+const READER_POST_PATH = /^\/reader\/(?:feeds|blogs)\/[^/]+\/posts\/[^/?]+/;
+
+/**
+ * The space whose row should read as active. Normally that's the space route
+ * we're on. But opening a post navigates to a post route that carries no space,
+ * so the highlight would drop the moment you start reading. While on a post
+ * route, fall back to the route we came from: if we arrived from a space, keep
+ * that space highlighted so the reading session still reads as "in" it. The
+ * fallback is scoped to post routes, so landing on another stream (Following,
+ * a tag, …) highlights that stream instead, never a stale space.
+ */
+function getActiveSpaceId( path: string, previousRoute: string ): string | null {
+	const direct = parseSpaceId( path );
+	if ( direct ) {
+		return direct;
+	}
+	if ( READER_POST_PATH.test( path ) ) {
+		return parseSpaceId( previousRoute );
+	}
+	return null;
 }
 
 export function ReaderSidebarSpaces( { path }: Props ) {
@@ -34,18 +59,23 @@ export function ReaderSidebarSpaces( { path }: Props ) {
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const spaces = useSpaces();
+	const previousRoute = useSelector( getPreviousRoute );
 
-	const activeId = getActiveSpaceId( path );
+	const activeId = getActiveSpaceId( path, previousRoute );
 	const isOnSpaces = path === SPACES_BASE_PATH || path.startsWith( `${ SPACES_BASE_PATH }/` );
+	// Expand the section whenever a space is active — on a space route, or while
+	// reading a post opened from one — so the highlighted space stays in view
+	// (including on a direct load of such a post, where there's no open state yet).
+	const hasActiveSpace = isOnSpaces || activeId !== null;
 
-	const [ isOpen, setIsOpen ] = useState( () => isOnSpaces );
+	const [ isOpen, setIsOpen ] = useState( () => hasActiveSpace );
 	const [ isCreateModalOpen, setIsCreateModalOpen ] = useState( false );
 
 	useEffect( () => {
-		if ( isOnSpaces ) {
+		if ( hasActiveSpace ) {
 			setIsOpen( true );
 		}
-	}, [ isOnSpaces ] );
+	}, [ hasActiveSpace ] );
 
 	const recordSpaceClick = ( id: string ) => {
 		dispatch( recordReaderTracksEvent( 'calypso_reader_sidebar_space_clicked', { space: id } ) );

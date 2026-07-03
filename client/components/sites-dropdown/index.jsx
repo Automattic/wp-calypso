@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -197,5 +196,5 @@ export class SitesDropdown extends PureComponent {
 
 export default connect( ( state ) => ( {
 	primarySiteId: getPrimarySiteId( state ),
-	hasMultipleSites: get( getCurrentUser( state ), 'site_count', 1 ) > 1,
+	hasMultipleSites: ( getCurrentUser( state )?.site_count ?? 1 ) > 1,
 } ) )( SitesDropdown );

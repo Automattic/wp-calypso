@@ -71,7 +71,7 @@ describe( 'random', () => {
 
 	it( 'should treat a symbol bound as 0 instead of throwing', () => {
 		mockRandom( 0.999999 );
-		// @ts-expect-error -- lodash coerces non-numeric bounds rather than throwing.
+		// @ts-expect-error -- non-numeric bounds are coerced rather than throwing.
 		expect( random( Symbol( 'x' ) ) ).toBe( 0 );
 	} );
 

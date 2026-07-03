@@ -12,45 +12,48 @@ import { useId, useState } from 'react';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { Text } from '../../components/text';
 import { useAnalytics } from '../analytics';
-import { getInterstitialCopy, getInterstitialVariant } from './copy';
+import { getInterstitialCopy } from './copy';
 import heroIllustration from './hero-illustration.png';
-import type { InterstitialCta } from './copy';
+import type { InterstitialCta, SecurityLevel } from './copy';
 import './style.scss';
 
 const DAY_IN_SECONDS = 86400;
 
 /**
- * How secure the user's account already is. Single source of truth for the tiers;
- * SNOOZE_DAYS and the copy map are both keyed by it.
- */
-type SecurityLevel = 'none' | 'partial' | 'strong';
-
-/**
  * Snooze windows (in days) by security level
  */
 const SNOOZE_DAYS: Record< SecurityLevel, number > = {
-	none: 14, // no recovery method or 2FA set up
-	partial: 30, // a recovery method but no 2FA or vice-versa
-	strong: 365, // recovery method and 2FA in place (the only nudge left is backup codes)
+	none: 14, // no recovery method and no 2FA
+	'partial-has-recovery': 30, // a recovery method but no 2FA
+	'partial-has-2fa': 30, // 2FA but no recovery method
+	'strong-no-backup-codes': 365, // recovery method and 2FA in place (the only nudge left is backup codes)
+	strong: 365, // recovery method, 2FA, and backup codes all in place
 };
 
 /** Maps the user's account-recovery setup to a SecurityLevel. */
 function getSecurityLevel(
 	hasRecoveryEmail: boolean,
 	hasRecoveryPhone: boolean,
-	hasTwoFactor: boolean
+	hasTwoFactor: boolean,
+	hasBackupCodes: boolean
 ): SecurityLevel {
 	const hasRecoveryMethod = hasRecoveryEmail || hasRecoveryPhone;
 
 	if ( ! hasRecoveryMethod && ! hasTwoFactor ) {
 		return 'none';
 	}
-
-	if ( hasRecoveryMethod && hasTwoFactor ) {
-		return 'strong';
+	// Exactly one of recovery-method / 2FA is missing: the level names which one is present.
+	if ( ! hasTwoFactor ) {
+		return 'partial-has-recovery';
 	}
-
-	return 'partial';
+	if ( ! hasRecoveryMethod ) {
+		return 'partial-has-2fa';
+	}
+	// Has a recovery method and 2FA; the only remaining gap is downloading backup codes.
+	if ( ! hasBackupCodes ) {
+		return 'strong-no-backup-codes';
+	}
+	return 'strong';
 }
 
 /**
@@ -85,32 +88,32 @@ export default function AccountRecoveryInterstitial() {
 	const hasRecoveryPhone = !! accountRecovery?.phone_validated;
 	const hasTwoFactor = !! userSettings?.two_step_enabled;
 	const hasBackupCodes = !! userSettings?.two_step_backup_codes_printed;
-	const hasRecoveryMethod = hasRecoveryEmail || hasRecoveryPhone;
 
-	const securityLevel = getSecurityLevel( hasRecoveryEmail, hasRecoveryPhone, hasTwoFactor );
+	const securityLevel = getSecurityLevel(
+		hasRecoveryEmail,
+		hasRecoveryPhone,
+		hasTwoFactor,
+		hasBackupCodes
+	);
 	const snoozeDays = SNOOZE_DAYS[ securityLevel ];
 
 	const isSnoozed = !! snoozeUntilPersisted && now < snoozeUntilPersisted;
-
-	// Selects the copy variant depending on the user's account recovery settings.
-	const variant = getInterstitialVariant( hasRecoveryMethod, hasTwoFactor, hasBackupCodes );
 
 	// Eligible once the data has loaded and the snooze (if any) has elapsed.
 	const isEligible =
 		isAccountRecoveryLoaded && isUserSettingsLoaded && isSnoozeLoaded && ! isSnoozed;
 
-	// Fully-secured users (variant === 'strong') are left alone — we only nudge people who are still
-	// missing a recovery method, 2FA, or backup codes.
-	if ( isDismissed || ! isEligible || variant === 'strong' ) {
+	// Fully-secured users (securityLevel === 'strong') are left alone — we only nudge people who are
+	// still missing a recovery method, 2FA, or backup codes.
+	if ( isDismissed || ! isEligible || securityLevel === 'strong' ) {
 		return null;
 	}
 
-	// Shared Tracks properties for every interstitial event. The coarse `security_level` and 5-way
-	// `recovery_status` summarize the setup; the `has_*` booleans expose exactly which methods are
-	// in place for a finer-grained breakdown.
+	// Shared Tracks properties for every interstitial event. The 5-way `security_level` summarizes
+	// the setup; the `has_*` booleans expose exactly which methods are in place for a finer-grained
+	// breakdown.
 	const tracksProperties = {
 		security_level: securityLevel,
-		recovery_status: variant,
 		has_recovery_email: hasRecoveryEmail,
 		has_recovery_phone: hasRecoveryPhone,
 		has_two_factor: hasTwoFactor,
@@ -122,7 +125,7 @@ export default function AccountRecoveryInterstitial() {
 		recoveryPhoneNumber: accountRecovery?.phone_validated
 			? accountRecovery.phone?.number
 			: undefined,
-	} )[ variant ];
+	} )[ securityLevel ];
 	const { primaryCta, secondaryCta } = copy;
 
 	const snooze = () => {
@@ -131,7 +134,10 @@ export default function AccountRecoveryInterstitial() {
 	};
 
 	const handleSnooze = () => {
-		recordTracksEvent( 'calypso_account_recovery_nudge_interstitial_dismiss', tracksProperties );
+		recordTracksEvent( 'calypso_account_recovery_nudge_interstitial_dismiss', {
+			...tracksProperties,
+			snooze_period: snoozeDays,
+		} );
 		snooze();
 	};
 
@@ -151,7 +157,7 @@ export default function AccountRecoveryInterstitial() {
 	// Users who already have a recovery method and 2FA in place get a year-long snooze, so a
 	// "remind me in 365 days" nudge would read as a permanent dismissal — label it as such.
 	const remindLabel =
-		securityLevel === 'strong'
+		securityLevel === 'strong-no-backup-codes'
 			? __( 'Dismiss' )
 			: sprintf(
 					// translators: %d is the number of days until the reminder reappears.

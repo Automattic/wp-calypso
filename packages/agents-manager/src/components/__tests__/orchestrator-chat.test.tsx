@@ -7,6 +7,7 @@ import type { Suggestion } from '@automattic/agenttic-ui';
 
 const mockUseAgentChat = jest.fn();
 const mockUseRegenerateAction = jest.fn();
+const mockUseConversation = jest.fn();
 const mockAgentChat = jest.fn(
 	( {
 		onSuggestionClick,
@@ -32,6 +33,18 @@ const mockAgentChat = jest.fn(
 			</button>
 			<button onClick={ () => onSuggestionClick( 'Check the grammar and spelling of this text' ) }>
 				Click string suggestion
+			</button>
+			<button
+				onClick={ () =>
+					onSuggestionClick( {
+						id: 'weekly-brief',
+						label: 'Walk me through the attached weekly brief',
+						prompt: 'Walk me through the attached weekly brief',
+						autoSubmit: true,
+					} )
+				}
+			>
+				Click auto-submit suggestion
 			</button>
 			<button onClick={ () => onSubmit( 'Describe these images' ) }>Submit with images</button>
 			<ul data-testid="empty-view-suggestions">
@@ -75,7 +88,7 @@ jest.mock( '../../utils/tracks', () => ( {
 	recordBigSkyTracksEvent: jest.fn(),
 	recordAgentsManagerTracksEvent: jest.fn(),
 } ) );
-jest.mock( '../../hooks/use-conversation', () => () => ( { isLoading: false } ) );
+jest.mock( '../../hooks/use-conversation', () => () => mockUseConversation() );
 jest.mock( '../../hooks/use-save-new-chat-route', () => () => {} );
 jest.mock( '../../hooks/use-checkpoint-action', () => () => {} );
 jest.mock( '../../hooks/use-feedback-action', () => () => ( {
@@ -120,6 +133,7 @@ describe( 'OrchestratorChat', () => {
 		jest.clearAllMocks();
 		// Default getter: contributes no actions.
 		mockUseRegenerateAction.mockReturnValue( () => [] );
+		mockUseConversation.mockReturnValue( { isLoading: false } );
 		mockUseAgentChat.mockReturnValue( {
 			addMessage: jest.fn(),
 			messages: [],
@@ -162,6 +176,7 @@ describe( 'OrchestratorChat', () => {
 		expect( listener ).toHaveBeenCalledTimes( 1 );
 		expect( ( listener.mock.calls[ 0 ][ 0 ] as CustomEvent ).detail ).toEqual( {
 			value: 'Simplify this text to make it easier to read',
+			autoSubmit: false,
 		} );
 
 		window.removeEventListener( 'big-sky-inline-suggestion-click', listener );
@@ -191,7 +206,45 @@ describe( 'OrchestratorChat', () => {
 		expect( listener ).toHaveBeenCalledTimes( 1 );
 		expect( ( listener.mock.calls[ 0 ][ 0 ] as CustomEvent ).detail ).toEqual( {
 			value: 'Check the grammar and spelling of this text',
+			autoSubmit: false,
 		} );
+
+		window.removeEventListener( 'big-sky-inline-suggestion-click', listener );
+	} );
+
+	it( 'flags auto-submit suggestions so the input is not repopulated', () => {
+		const listener = jest.fn();
+		window.addEventListener( 'big-sky-inline-suggestion-click', listener );
+
+		render(
+			<OrchestratorChat
+				emptyViewSuggestions={ [] }
+				isDocked={ false }
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		fireEvent.click( screen.getByText( 'Click auto-submit suggestion' ) );
+
+		// The event still fires so click listeners (e.g. the Jetpack sidebar hiding the
+		// clicked chip) keep working, but it carries `autoSubmit` so the input listener
+		// skips repopulating the composer the AgentUI already submitted and cleared.
+		expect( listener ).toHaveBeenCalledTimes( 1 );
+		expect( ( listener.mock.calls[ 0 ][ 0 ] as CustomEvent ).detail ).toEqual( {
+			value: 'Walk me through the attached weekly brief',
+			autoSubmit: true,
+		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'chat_suggestion_click',
+			expect.objectContaining( { suggestion_id: 'weekly-brief' } )
+		);
 
 		window.removeEventListener( 'big-sky-inline-suggestion-click', listener );
 	} );
@@ -312,6 +365,86 @@ describe( 'OrchestratorChat', () => {
 		);
 
 		expect( screen.getByText( 'Getting started with WordPress' ) ).toBeTruthy();
+	} );
+
+	it( 'tracks chat_suggestions_rendered for the empty-view suggestions', () => {
+		const staticDefaults: Suggestion[] = [
+			{ id: 'getting-started', label: 'Getting started with WordPress', prompt: 'getting-started' },
+		];
+
+		render(
+			<OrchestratorChat
+				emptyViewSuggestions={ staticDefaults }
+				isDocked={ false }
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestions_rendered', {
+			suggestions: '|getting-started|',
+		} );
+	} );
+
+	it( 'does not track chat_suggestions_rendered while the conversation is loading', () => {
+		mockUseConversation.mockReturnValue( { isLoading: true } );
+		const staticDefaults: Suggestion[] = [
+			{ id: 'getting-started', label: 'Getting started with WordPress', prompt: 'getting-started' },
+		];
+
+		render(
+			<OrchestratorChat
+				emptyViewSuggestions={ staticDefaults }
+				isDocked={ false }
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		expect( screen.queryByText( 'Getting started with WordPress' ) ).toBeNull();
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
+			'chat_suggestions_rendered',
+			expect.anything()
+		);
+	} );
+
+	it( 'does not track chat_suggestions_rendered while the chat is minimized', () => {
+		const staticDefaults: Suggestion[] = [
+			{ id: 'getting-started', label: 'Getting started with WordPress', prompt: 'getting-started' },
+		];
+
+		render(
+			<OrchestratorChat
+				emptyViewSuggestions={ staticDefaults }
+				isDocked={ false }
+				isOpen={ false }
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		expect( screen.queryByText( 'Getting started with WordPress' ) ).toBeNull();
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
+			'chat_suggestions_rendered',
+			expect.anything()
+		);
 	} );
 
 	it( 'fires file_upload_success after images upload on send, with the uploaded media count', async () => {

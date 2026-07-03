@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { Button, Card, Dialog, Gridicon } from '@automattic/components';
 import debugModule from 'debug';
 import { localize, fixMe } from 'i18n-calypso';
-import { get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
@@ -200,7 +199,7 @@ class JetpackSsoForm extends Component {
 				url: this.props?.blogDetails?.URL ?? '',
 				admin_url: this.props?.blogDetails?.admin_url ?? '',
 				domain: this.props?.blogDetails?.domain ?? '',
-				icon: get( this.props, 'blogDetails.icon', { img: '', ico: '' } ),
+				icon: this.props?.blogDetails?.icon ?? { img: '', ico: '' },
 				is_vip: false,
 				title: decodeEntities( this.props?.blogDetails?.title ?? '' ),
 			};

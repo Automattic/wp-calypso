@@ -5,7 +5,7 @@ import { screen } from '@testing-library/react';
 import { type ComponentType } from 'react';
 import { render } from '../../../test-utils';
 import { getFields } from '../dataviews';
-import type { Receipt } from '@automattic/api-core';
+import type { Receipt, User } from '@automattic/api-core';
 
 const receipt = {
 	id: 1,
@@ -60,11 +60,14 @@ const receipt = {
 	],
 } as unknown as Receipt;
 
+const LOCALE = 'en-gb';
+const testUser = { ID: 1, username: 'testuser', language: LOCALE } as User;
+
 function renderServiceCell( visibleFields: string[] ) {
-	const fields = getFields( [ receipt ], [], visibleFields );
+	const fields = getFields( [ receipt ], [], visibleFields, LOCALE );
 	const serviceField = fields.find( ( field ) => field.id === 'service' )!;
 	const ServiceCell = serviceField.render as ComponentType< { item: Receipt } >;
-	return render( <ServiceCell item={ receipt } /> );
+	return render( <ServiceCell item={ receipt } />, { user: testUser } );
 }
 
 describe( '<BillingHistory>', () => {
@@ -80,7 +83,7 @@ describe( '<BillingHistory>', () => {
 	test( 'shows Date inline when only the App column is visible', async () => {
 		renderServiceCell( [ 'service' ] );
 		expect( await screen.findByText( 'Date' ) ).toBeVisible();
-		expect( screen.getByText( 'May 21, 2026' ) ).toBeVisible();
+		expect( screen.getByText( '21 May 2026' ) ).toBeVisible(); // Matches locale of the `testUser`
 		expect( screen.getByText( 'Type' ) ).toBeVisible();
 		expect( screen.getByText( 'Refund' ) ).toBeVisible();
 		expect( screen.getByText( 'Amount' ) ).toBeVisible();

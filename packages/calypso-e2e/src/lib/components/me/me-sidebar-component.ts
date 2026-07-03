@@ -21,10 +21,12 @@ export class MeSidebarComponent {
 	 */
 	async openMobileMenu() {
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			// Wait for the masterbar to finish re-rendering after page navigation
-			// before clicking, otherwise the element can be detached mid-click.
-			await this.page.waitForLoadState( 'networkidle' );
-			await this.page.getByTitle( 'Menu' ).click();
+			// networkidle hangs here: WordPress.com pages keep polling and may never
+			// go network-quiet. Wait for the Menu toggle itself instead; the locator
+			// click re-resolves if a masterbar re-render detaches it mid-click.
+			const menuToggle = this.page.getByTitle( 'Menu' );
+			await menuToggle.waitFor( { state: 'visible' } );
+			await menuToggle.click();
 		}
 	}
 

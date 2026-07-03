@@ -12,6 +12,19 @@
 @each $color in space-colors.$space-colors {
 	.space-feed--#{$color} {
 		@include space-colors.space-accent-color( $color );
+
+		// The shared post-action buttons (like, comment, share, save) color their
+		// icons and labels from `--color-text-subtle` at rest and `--color-link` on
+		// hover / when active. Remap just those two tokens within the actions scope
+		// so every button follows the space accent, without reaching into each
+		// button's styles. Emitted only under the accent modifier — a feed with no
+		// accent (`color: 'none'`) has no modifier, so the buttons keep the neutral
+		// tokens. The remap is confined to `.reader-post-actions`, so the rest of the
+		// feed (excerpts, meta) keeps the neutral subtle color.
+		.reader-post-actions {
+			--color-text-subtle: var( --space-color );
+			--color-link: var( --space-color-hover );
+		}
 	}
 }
 

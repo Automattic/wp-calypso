@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_DELETE,
@@ -14,8 +13,8 @@ const deepUpdateComments = ( state, comments, query ) => {
 	const parent = postId || 'site';
 	const filter = getFiltersKey( query );
 
-	const parentObject = get( state, parent, {} );
-	const filterObject = get( parentObject, filter, {} );
+	const parentObject = state?.[ parent ] ?? {};
+	const filterObject = parentObject?.[ filter ] ?? {};
 
 	return {
 		...state,
