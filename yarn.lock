@@ -274,7 +274,6 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     gettext-parser: "npm:^4.0.3"
-    lodash: "npm:^4.17.21"
   peerDependencies:
     "@babel/core": ^7.27.1
   languageName: unknown
