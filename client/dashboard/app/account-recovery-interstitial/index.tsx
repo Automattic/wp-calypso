@@ -21,11 +21,11 @@ import './style.scss';
 const DAY_IN_SECONDS = 86400;
 
 /**
- * ExPlat A/B experiment gating the interstitial. Users in the `email_recovery_modal` variation see the
- * modal; everyone else (control / unassigned) does not.
+ * ExPlat A/B experiment gating the interstitial. Users in the `no_recovery_modal` variation will _not_ see the
+ * modal; everyone else (control / unassigned) does.
  */
 const EXPERIMENT_NAME = 'calypso_onboarding_account_recovery_modal_202606';
-const EXPERIMENT_TREATMENT_VARIATION = 'email_recovery_modal';
+const EXPERIMENT_TREATMENT_VARIATION = 'no_recovery_modal';
 
 /**
  * Snooze windows (in days) by security level
@@ -117,14 +117,14 @@ export default function AccountRecoveryInterstitial() {
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment( EXPERIMENT_NAME, {
 		isEligible,
 	} );
-	const isInExperimentTreatment =
+	const isInExperimentControl =
 		! isLoadingExperimentAssignment &&
-		experimentAssignment?.variationName === EXPERIMENT_TREATMENT_VARIATION;
+		experimentAssignment?.variationName !== EXPERIMENT_TREATMENT_VARIATION;
 
 	// Fully-secured users (variant === 'strong') are left alone — we only nudge people who are still
 	// missing a recovery method, 2FA, or backup codes. The modal is also not shown to users who are
-	// not in the experiment treatment group.
-	if ( isDismissed || ! isEligible || securityLevel === 'strong' || ! isInExperimentTreatment ) {
+	// not in the experiment control group.
+	if ( isDismissed || ! isEligible || securityLevel === 'strong' || ! isInExperimentControl ) {
 		return null;
 	}
 
