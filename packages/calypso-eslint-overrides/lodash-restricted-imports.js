@@ -295,6 +295,7 @@ const NAMESPACE_GUARDED = [
 	{ name: 'mapKeys', message: JS_UTILS_MESSAGE },
 	{ name: 'pick', message: JS_UTILS_MESSAGE },
 	{ name: 'chain', message: CHAIN_MESSAGE },
+	{ name: 'reject', message: REJECT_MESSAGE },
 ];
 
 // `no-restricted-properties`: namespace member access (`_.fn( … )` / `lodash.fn( … )`).
