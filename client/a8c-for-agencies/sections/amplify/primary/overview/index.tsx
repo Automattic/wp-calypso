@@ -16,7 +16,7 @@ import AmplifyHowItWorks from './sections/how-it-works';
 import AmplifyHumanSection from './sections/human-section';
 
 const AmplifyOverview = () => {
-	const title = __( 'Amplify' );
+	const title = __( 'Amplify by Automattic for Agencies' );
 
 	return (
 		<Layout className="amplify-overview" title={ title } wide>

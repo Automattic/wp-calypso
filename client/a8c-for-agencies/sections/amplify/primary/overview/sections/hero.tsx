@@ -20,7 +20,7 @@ export default function AmplifyHero() {
 					</Heading>
 					<Text size={ 18 } variant="muted">
 						{ __(
-							'Amplify scans your clients’ connected sites through two lenses: how their prospective clients perceive them on first visit, and how AI tools like ChatGPT and Perplexity read and rank them. Run a scan in minutes. Find what’s holding them back. Deliver fixes that prove your value and build trust.'
+							'Amplify by Automattic for Agencies scans your clients’ connected sites through two lenses: how their prospective clients perceive them on first visit, and how AI tools like ChatGPT and Perplexity read and rank them. Run a scan in minutes. Find what’s holding them back. Deliver fixes that prove your value and build trust.'
 						) }
 					</Text>
 					<AmplifyAddSite className="amplify-landing-cta" />
