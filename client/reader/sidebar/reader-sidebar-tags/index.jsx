@@ -59,7 +59,7 @@ export class ReaderSidebarTags extends Component {
 					title={ translate( 'Tags' ) }
 					onClick={ this.navigateToTags }
 					disableFlyout
-					className={ path.startsWith( '/tag' ) ? 'sidebar__menu--selected' : '' }
+					className={ path === '/tags' ? 'sidebar__menu--selected' : '' }
 					expandableIconClick={ onClick }
 				>
 					<ReaderSidebarTagsList { ...this.props } />

@@ -37,7 +37,7 @@ export class ReaderSidebarLists extends Component {
 					title={ translate( 'Lists' ) }
 					onClick={ this.navigateToLists }
 					disableFlyout
-					className={ path.startsWith( '/reader/list' ) ? 'sidebar__menu--selected' : '' }
+					className={ path === '/reader/lists' ? 'sidebar__menu--selected' : '' }
 					expandableIconClick={ onClick }
 				>
 					<ReaderSidebarListsList path={ path } { ...passedProps } />
