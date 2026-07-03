@@ -19,12 +19,13 @@ const DECIMAL_POINT_TRANSLATION = 'number_format_decimal_point';
 const THOUSANDS_SEPARATOR_KEY = 'number_format_thousands_sep';
 const THOUSANDS_SEPARATOR_TRANSLATION = 'number_format_thousands_sep';
 
-// Keys lodash `pick` refuses to set (its prototype-pollution guard), so a
-// translated string named exactly one of these is dropped rather than picked.
+// Prototype-related keys a translated string must never introduce as data:
+// assigning `__proto__` would mutate the prototype rather than add a key, so all
+// three are skipped defensively.
 const PICK_BLOCKED_KEYS = new Set( [ '__proto__', 'constructor', 'prototype' ] );
 
-// Selects the given keys from `object`, keeping only those present. Mirrors
-// lodash `pick`, including dropping the protected keys above.
+// Selects the given keys from `object` that are present, excluding the
+// prototype-related keys above.
 function pick( object, keys ) {
 	const result = {};
 	for ( const key of keys ) {
