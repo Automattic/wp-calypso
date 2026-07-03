@@ -54,6 +54,10 @@
 		text-transform: uppercase;
 		color: var( --studio-gray-20 );
 		line-height: 1;
+
+		@include ui-mixins.when-dark-theme {
+			color: var( --studio-gray-70 );
+		}
 	}
 }
 
@@ -100,7 +104,7 @@ body.is-section-reader {
 		display: flex;
 		flex-direction: column;
 		gap: 24px;
-		padding-left: 16px;
+		padding: 0 5px;
 
 		.app-title {
 			padding: 0;
@@ -134,6 +138,7 @@ body.is-section-reader {
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
+			margin-left: 32px;
 		}
 
 		.sidebar__expandable-arrow {
@@ -146,6 +151,7 @@ body.is-section-reader {
 		.sidebar__expandable-content {
 			padding: 2px 0 0 20px;
 			margin: 0;
+			background: none;
 		}
 
 		.sidebar__heading {
@@ -181,18 +187,12 @@ body.is-section-reader {
 			}
 			.sidebar__menu-icon {
 				fill: currentColor;
-				&.sidebar_svg-a8c {
-					fill: none;
-					g {
-						fill: none;
-					}
-				}
 			}
 		}
 	}
 
 	.sidebar__menu-icon {
-		margin-right: 12px;
+		margin-right: 8px;
 	}
 
 	.sidebar__menu-link-reader {
@@ -290,12 +290,18 @@ body.is-section-reader {
 .theme-default .global-sidebar .sidebar .sidebar__menu {
 	&:is( .is-togglable ) {
 		@include ui-mixins.when-dark-theme {
-			.sidebar__expandable-button.components-button {
-				color: inherit;
-			}
+			.sidebar__expandable-button {
+				.components-button {
+					color: inherit;
+				}
 
-			.sidebar__expandable-arrow {
-				fill: currentColor;
+				.sidebar__expandable-arrow {
+					fill: var( --studio-gray-70 );
+				}
+
+				&:hover .sidebar__expandable-arrow {
+					fill: var( --studio-gray-30 );
+				}
 			}
 		}
 
@@ -305,6 +311,8 @@ body.is-section-reader {
 			margin-inline-start: 0;
 			padding: 0;
 			min-width: initial;
+			position: fixed;
+			height: 40px; // Increase the height to make caret icon easier to click.
 
 			&:hover {
 				.sidebar__expandable-arrow {
@@ -321,7 +329,6 @@ body.is-section-reader {
 			}
 
 			@include ui-mixins.when-dark-theme {
-				background-color: var( --color-surface );
 				outline-color: var( --color-border-subtle );
 
 				.sidebar__expandable-content {
@@ -367,7 +374,7 @@ body.is-section-reader {
 			align-items: center;
 			gap: 6px;
 			line-height: 1.5;
-			padding: 12px 18px;
+			padding: 12px;
 			box-sizing: content-box;
 
 			&.view-more-link {
@@ -387,11 +394,11 @@ body.is-section-reader {
 				background-color: var( --color-sidebar-menu-hover-background );
 			}
 
-			svg:not( .sidebar_svg-a8c-conversations, .sidebar_svg-a8c, .sidebar_svg-a8c-conversations ) {
+			svg:not( .sidebar_svg-a8c-conversations, .sidebar_svg-a8c-conversations ) {
 				fill: currentColor;
 			}
 
-			svg:is( .sidebar_svg-a8c-conversations, .sidebar_svg-a8c, .sidebar_svg-a8c-conversations ) {
+			svg:is( .sidebar_svg-a8c-conversations, .sidebar_svg-a8c-conversations ) {
 				fill: none;
 				g {
 					stroke: currentColor;
@@ -405,13 +412,14 @@ body.is-section-reader {
 			}
 		}
 	}
-	.sidebar_svg-a8c-conversations,
-	.sidebar_svg-a8c {
+
+	.sidebar_svg-a8c-conversations {
 		fill: none;
 		g {
 			stroke: currentColor;
 		}
 	}
+
 	.selected {
 		.sidebar__menu-link {
 			color: var( --color-sidebar-menu-selected-text );
