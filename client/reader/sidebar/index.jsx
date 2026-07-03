@@ -207,6 +207,10 @@ export class ReaderSidebar extends Component {
 						/>
 					</li>
 
+					{ this.props.organizations && (
+						<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />
+					) }
+
 					<ReaderSidebarLists
 						lists={ this.props.subscribedLists }
 						path={ path }
@@ -216,14 +220,6 @@ export class ReaderSidebar extends Component {
 						currentListSlug={ this.state.currentListSlug }
 					/>
 
-					{ isEnabled( 'reader/social' ) && <ReaderSidebarConnections path={ path } /> }
-
-					{ this.props.organizations && (
-						<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />
-					) }
-
-					{ isEnabled( 'reader/spaces' ) && <ReaderSidebarSpaces path={ path } /> }
-
 					<ReaderSidebarTags
 						tags={ this.props.followedTags }
 						path={ path }
@@ -232,6 +228,10 @@ export class ReaderSidebar extends Component {
 						onFollowTag={ this.highlightNewTag }
 						currentTag={ this.state.currentTag }
 					/>
+
+					{ isEnabled( 'reader/social' ) && <ReaderSidebarConnections path={ path } /> }
+
+					{ isEnabled( 'reader/spaces' ) && <ReaderSidebarSpaces path={ path } /> }
 
 					<li className="reader-sidebar__section-header" role="presentation">
 						<span>{ translate( 'Library' ) }</span>
