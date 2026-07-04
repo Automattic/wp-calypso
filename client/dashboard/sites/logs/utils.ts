@@ -1,13 +1,42 @@
+import { DEFAULT_START_TIME, DEFAULT_END_TIME } from '@automattic/date-range-picker';
 import { dateI18n } from '@wordpress/date';
 import { __, sprintf } from '@wordpress/i18n';
-import { startOfDay, endOfDay, fromUnixTime, isValid as isValidDate } from 'date-fns';
+import { fromUnixTime, isValid as isValidDate } from 'date-fns';
 import { formatDateWithOffset, getUtcOffsetDisplay } from '../../utils/datetime';
 import type { PHPLog, ServerLog } from '@automattic/api-core';
 
 type DateRange = { start: Date; end: Date };
 
 const HOUR_MS = 3_600_000;
-const SECONDS_PER_DAY = 86_400;
+
+// Reuse the picker's whole-day defaults so "is this a custom time?" checks stay
+// in sync. These reproduce the previous behavior: the range starts at the very
+// beginning of the start day and ends at the last second of the end day.
+export const DAY_START_TIME = DEFAULT_START_TIME;
+export const DAY_END_TIME = DEFAULT_END_TIME;
+
+type TimeOfDay = { hour: number; minute: number; second: number };
+
+/**
+ * Parse an "HH:MM" string into hour/minute. `second` fills the seconds slot —
+ * pass 0 for a range start and 59 for a range end so a whole-minute selection
+ * is inclusive of that entire minute (e.g. end "17:00" covers 17:00:00–17:00:59).
+ */
+const parseTimeOfDay = ( value: string, second: number ): TimeOfDay => {
+	const [ rawHour, rawMinute ] = value.split( ':' );
+	const hour = Number.parseInt( rawHour, 10 );
+	const minute = Number.parseInt( rawMinute, 10 );
+	return {
+		hour: Number.isFinite( hour ) ? Math.min( Math.max( hour, 0 ), 23 ) : 0,
+		minute: Number.isFinite( minute ) ? Math.min( Math.max( minute, 0 ), 59 ) : 0,
+		second,
+	};
+};
+
+const formatTimeOfDay = ( { hour, minute, second }: TimeOfDay ): string =>
+	`${ String( hour ).padStart( 2, '0' ) }:${ String( minute ).padStart( 2, '0' ) }:${ String(
+		second
+	).padStart( 2, '0' ) }`;
 
 /**
  * Helper function to convert a date to epoch seconds (UTC).
@@ -27,32 +56,57 @@ const toUtcSecForSiteClock = (
 
 /**
  * Convert a local date range to inclusive epoch-second boundaries (UTC).
- * Covers the full start and end calendar days.
+ * `startTime`/`endTime` are "HH:MM" times of day in the site clock; the defaults
+ * cover the full start and end calendar days (unchanged from the prior behavior).
  */
 export function buildTimeRangeInSeconds(
 	start: Date,
 	end: Date,
 	timezoneString?: string,
-	gmtOffset?: number
+	gmtOffset?: number,
+	startTime: string = DAY_START_TIME,
+	endTime: string = DAY_END_TIME
 ): { startSec: number; endSec: number } {
+	const startOfRange = parseTimeOfDay( startTime, 0 );
+	const endOfRange = parseTimeOfDay( endTime, 59 );
+
 	if ( timezoneString ) {
 		const startYmd = dateI18n( 'Y-m-d', start, timezoneString );
 		const endYmd = dateI18n( 'Y-m-d', end, timezoneString );
-		const startSec = Number( dateI18n( 'U', `${ startYmd } 00:00:00`, timezoneString ) );
-		const endSec = Number( dateI18n( 'U', `${ endYmd } 23:59:59`, timezoneString ) );
+		const startSec = Number(
+			dateI18n( 'U', `${ startYmd } ${ formatTimeOfDay( startOfRange ) }`, timezoneString )
+		);
+		const endSec = Number(
+			dateI18n( 'U', `${ endYmd } ${ formatTimeOfDay( endOfRange ) }`, timezoneString )
+		);
 		if ( Number.isFinite( startSec ) && Number.isFinite( endSec ) ) {
 			return { startSec, endSec };
 		}
 	}
 	if ( typeof gmtOffset === 'number' ) {
-		const startSec = toUtcSecForSiteClock( start, 0, 0, 0, gmtOffset );
-		const endSec = toUtcSecForSiteClock( end, 0, 0, 0, gmtOffset ) + SECONDS_PER_DAY - 1;
+		const startSec = toUtcSecForSiteClock(
+			start,
+			startOfRange.hour,
+			startOfRange.minute,
+			startOfRange.second,
+			gmtOffset
+		);
+		const endSec = toUtcSecForSiteClock(
+			end,
+			endOfRange.hour,
+			endOfRange.minute,
+			endOfRange.second,
+			gmtOffset
+		);
 		return { startSec, endSec };
 	}
 	// last-resort fallback: browser local
-	const startSec = Math.floor( startOfDay( start ).getTime() / 1000 );
-	const endSec = Math.floor( endOfDay( end ).getTime() / 1000 );
-	return { startSec, endSec };
+	const applyTime = ( d: Date, { hour, minute, second }: TimeOfDay ) => {
+		const copy = new Date( d );
+		copy.setHours( hour, minute, second, 0 );
+		return Math.floor( copy.getTime() / 1000 );
+	};
+	return { startSec: applyTime( start, startOfRange ), endSec: applyTime( end, endOfRange ) };
 }
 
 /**
