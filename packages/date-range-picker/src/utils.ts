@@ -8,7 +8,7 @@ import {
 	startOfYear,
 	differenceInCalendarDays,
 } from 'date-fns';
-import { formatDate, parseYmdLocal, formatYmd } from './datetime';
+import { formatDate, parseYmdLocal, formatYmd, formatSiteYmd } from './datetime';
 
 // Range helpers (inclusive)
 const lastNDays = ( date: Date, number: number ) => ( {
@@ -161,6 +161,32 @@ export function hasCustomTimeOfDay( startTime?: string, endTime?: string ): bool
 		( startTime !== undefined && startTime !== DEFAULT_START_TIME ) ||
 		( endTime !== undefined && endTime !== DEFAULT_END_TIME )
 	);
+}
+
+/**
+ * Normalize a drafted range so the start boundary is never after the end.
+ *
+ * Dates are ordered first, with each time kept anchored to its start/end role
+ * (so the whole-day defaults 00:00/23:59 stay on the correct boundary even when
+ * the dates are entered backwards). Times are only reordered within a single
+ * day — a cross-day window like 17:00 on day 1 → 09:00 on day 2 is a valid
+ * overnight range and is left intact.
+ */
+export function orderRangeBoundaries(
+	fromDate: Date,
+	toDate: Date,
+	fromTime: string,
+	toTime: string
+): { start: Date; end: Date; startTime: string; endTime: string } {
+	const datesInOrder = fromDate <= toDate;
+	const start = datesInOrder ? fromDate : toDate;
+	const end = datesInOrder ? toDate : fromDate;
+	let startTime = fromTime;
+	let endTime = toTime;
+	if ( formatSiteYmd( start ) === formatSiteYmd( end ) && startTime > endTime ) {
+		[ startTime, endTime ] = [ endTime, startTime ];
+	}
+	return { start, end, startTime, endTime };
 }
 
 // Render an "HH:MM" time of day using the locale's short time style (e.g. "9:00 AM").

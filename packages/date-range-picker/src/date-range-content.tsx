@@ -18,6 +18,7 @@ import {
 	DEFAULT_START_TIME,
 	getActivePresetId,
 	hasCustomTimeOfDay,
+	orderRangeBoundaries,
 	PresetId,
 	presetDefs,
 } from './utils';
@@ -128,16 +129,12 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 
 	const apply = () => {
 		if ( fromDraft && toDraft ) {
-			// Keep each time paired with its date if the range is entered backwards.
-			const [ startPoint, endPoint, startPointTime, endPointTime ] =
-				fromDraft <= toDraft
-					? [ fromDraft, toDraft, fromTime, toTime ]
-					: [ toDraft, fromDraft, toTime, fromTime ];
+			const ordered = orderRangeBoundaries( fromDraft, toDraft, fromTime, toTime );
 			onChange( {
-				start: startPoint,
-				end: endPoint,
-				startTime: startPointTime,
-				endTime: endPointTime,
+				start: ordered.start,
+				end: ordered.end,
+				startTime: ordered.startTime,
+				endTime: ordered.endTime,
 			} );
 			onClose?.();
 			return;
