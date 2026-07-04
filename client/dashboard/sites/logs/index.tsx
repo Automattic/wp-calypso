@@ -1,6 +1,6 @@
 import { HostingFeatures, LogType, type Site, type SiteSettings } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
-import { DateRangePicker, isLast7Days } from '@automattic/date-range-picker';
+import { DateRangePicker, isLast7Days, hasCustomTimeOfDay } from '@automattic/date-range-picker';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -122,7 +122,7 @@ function SiteLogsContent( {
 		}
 	}, [] );
 
-	const { dateRange, handleDateRangeChange } = useDateRange( {
+	const { dateRange, handleDateRangeChange, startTime, endTime } = useDateRange( {
 		timezoneString,
 		gmtOffset,
 		autoRefresh,
@@ -131,8 +131,18 @@ function SiteLogsContent( {
 	// this is used to track changes across the dateRange to ensure the components can react to changes when they are triggered by a change in the DateRangePicker
 	const [ dateRangeVersion, setDateRangeVersion ] = useState( 0 );
 
-	const handleDateRangeChangeWrapper = ( next: { start: Date; end: Date } ) => {
-		if ( autoRefresh && ! isLast7Days( next, timezoneString, gmtOffset ) ) {
+	// Auto-refresh is a live tail of the last 7 days; a custom time of day narrows
+	// to a fixed window, so it can't compose with auto-refresh.
+	const handleDateRangeChangeWrapper = ( next: {
+		start: Date;
+		end: Date;
+		startTime?: string;
+		endTime?: string;
+	} ) => {
+		const autoRefreshEligible =
+			isLast7Days( next, timezoneString, gmtOffset ) &&
+			! hasCustomTimeOfDay( next.startTime, next.endTime );
+		if ( autoRefresh && ! autoRefreshEligible ) {
 			setAutoRefresh( false );
 			setAutoRefreshDisabledReason( __( 'Auto-refresh only works with "Last 7 days" preset' ) );
 		} else {
@@ -146,7 +156,11 @@ function SiteLogsContent( {
 	};
 
 	const handleAutoRefreshToggle = ( isChecked: boolean ) => {
-		if ( isChecked && ! isLast7Days( dateRange, timezoneString, gmtOffset ) ) {
+		if (
+			isChecked &&
+			( ! isLast7Days( dateRange, timezoneString, gmtOffset ) ||
+				hasCustomTimeOfDay( startTime, endTime ) )
+		) {
 			setAutoRefreshDisabledReason( __( 'Auto-refresh only works with "Last 7 days" preset' ) );
 			return false;
 		}
@@ -181,6 +195,9 @@ function SiteLogsContent( {
 								timezoneString={ timezoneString }
 								locale={ locale }
 								onChange={ handleDateRangeChangeWrapper }
+								showTimeInputs
+								startTime={ startTime }
+								endTime={ endTime }
 							/>
 						) : undefined
 					}
@@ -234,6 +251,8 @@ function SiteLogsContent( {
 								logType={ logType }
 								dateRange={ dateRange }
 								dateRangeVersion={ dateRangeVersion }
+								startTime={ startTime }
+								endTime={ endTime }
 								autoRefresh={ autoRefresh }
 								setAutoRefresh={ setAutoRefresh }
 								gmtOffset={ gmtOffset }

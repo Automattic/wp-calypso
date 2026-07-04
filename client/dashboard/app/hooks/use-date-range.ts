@@ -1,8 +1,8 @@
 import { useRouter } from '@tanstack/react-router';
 import { getUnixTime, fromUnixTime, isValid as isValidDate, subDays, isSameSecond } from 'date-fns';
 import { useState, useRef, useEffect } from 'react';
-import { buildTimeRangeInSeconds } from '../../sites/logs/utils';
-import { formatYmd, parseYmdLocal } from '../../utils/datetime';
+import { buildTimeRangeInSeconds, DAY_START_TIME, DAY_END_TIME } from '../../sites/logs/utils';
+import { formatYmd, formatSiteHm, parseYmdLocal } from '../../utils/datetime';
 
 interface UseDateRangeOptions {
 	timezoneString?: string;
@@ -27,10 +27,31 @@ export function useDateRange( {
 		() => initialFromUrl ?? initial
 	);
 
+	// Time of day ("HH:MM", site clock) paired with the start/end dates. Seeded from
+	// the URL's from/to instants so a bookmarked sub-day window restores correctly.
+	const [ startTime, setStartTime ] = useState( () =>
+		initialFromUrl
+			? formatSiteHm( initialFromUrl.start, timezoneString, gmtOffset )
+			: DAY_START_TIME
+	);
+	const [ endTime, setEndTime ] = useState( () =>
+		initialFromUrl ? formatSiteHm( initialFromUrl.end, timezoneString, gmtOffset ) : DAY_END_TIME
+	);
+
 	const lastUrlRangeRef = useRef< { from: number; to: number } | null >( null );
 
-	const handleDateRangeChange = ( next: { start: Date; end: Date } ) => {
-		setDateRange( next );
+	const handleDateRangeChange = ( next: {
+		start: Date;
+		end: Date;
+		startTime?: string;
+		endTime?: string;
+	} ) => {
+		setDateRange( { start: next.start, end: next.end } );
+
+		const nextStartTime = next.startTime ?? startTime;
+		const nextEndTime = next.endTime ?? endTime;
+		setStartTime( nextStartTime );
+		setEndTime( nextEndTime );
 
 		// Sync from/to to the URL as UNIX seconds
 		const url = new URL( window.location.href );
@@ -38,7 +59,9 @@ export function useDateRange( {
 			next.start,
 			next.end,
 			timezoneString,
-			gmtOffset
+			gmtOffset,
+			nextStartTime,
+			nextEndTime
 		);
 
 		url.searchParams.set( 'from', String( startSec ) );
@@ -83,6 +106,8 @@ export function useDateRange( {
 	return {
 		dateRange,
 		handleDateRangeChange,
+		startTime,
+		endTime,
 	};
 }
 

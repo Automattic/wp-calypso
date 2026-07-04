@@ -294,6 +294,23 @@ export function formatYmd( date: Date, timezoneString?: string, gmtOffset?: numb
 }
 
 /**
+ * Format the time-of-day portion of a date in the site's clock as "HH:MM" (24h).
+ * Mirrors formatYmd so the returned time reflects the same site-local instant.
+ */
+export function formatSiteHm( date: Date, timezoneString?: string, gmtOffset?: number ) {
+	if ( timezoneString ) {
+		return dateI18n( 'H:i', date, timezoneString );
+	}
+	if ( typeof gmtOffset === 'number' ) {
+		const shifted = new Date( date.getTime() + gmtOffset * HOUR_MS );
+		const hours = String( shifted.getUTCHours() ).padStart( 2, '0' );
+		const minutes = String( shifted.getUTCMinutes() ).padStart( 2, '0' );
+		return `${ hours }:${ minutes }`;
+	}
+	return dateI18n( 'H:i', date );
+}
+
+/**
  * Format a Date that already represents a site calendar day.
  * This avoids reapplying timezone math to dates coming from the picker or URL.
  */

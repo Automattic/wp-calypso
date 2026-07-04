@@ -28,6 +28,10 @@ import './style.scss';
 type SiteLogsDataViewsPropsActivity = SiteLogsDataViewsProps & {
 	logType: typeof LogType.ACTIVITY;
 	hasActivityLogsAccess: boolean;
+	// "HH:MM" site-clock times of day. Unlike PHP/Web logs, Activity derives its
+	// window solely from the date range, so the times must be threaded in here.
+	startTime?: string;
+	endTime?: string;
 };
 
 const ACTIVITY_LOGS_DEFAULT_PAGE_SIZE = 20;
@@ -37,14 +41,24 @@ function SiteActivityLogsDataViews( {
 	site,
 	dateRange,
 	dateRangeVersion,
+	startTime,
+	endTime,
 	hasActivityLogsAccess,
 }: SiteLogsDataViewsPropsActivity ) {
 	const { recordTracksEvent } = useAnalytics();
 	const locale = useLocale();
 
 	const { startSec, endSec } = useMemo(
-		() => buildTimeRangeInSeconds( dateRange.start, dateRange.end, timezoneString, gmtOffset ),
-		[ dateRange.start, dateRange.end, gmtOffset, timezoneString ]
+		() =>
+			buildTimeRangeInSeconds(
+				dateRange.start,
+				dateRange.end,
+				timezoneString,
+				gmtOffset,
+				startTime,
+				endTime
+			),
+		[ dateRange.start, dateRange.end, gmtOffset, timezoneString, startTime, endTime ]
 	);
 
 	const searchParams = siteLogsActivityRoute.useSearch();
