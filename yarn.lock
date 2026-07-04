@@ -12751,7 +12751,6 @@ __metadata:
     electron-updater: "npm:6.3.0"
     jest: "npm:^29.7.0"
     js-yaml: "npm:4.2.0"
-    lodash: "npm:^4.18.1"
     playwright: "npm:1.57.0"
     postcss: "npm:^8.5.3"
     react: "npm:^18.3.1"

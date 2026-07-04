@@ -300,6 +300,7 @@ const NAMESPACE_GUARDED = [
 	{ name: 'omitBy', message: JS_UTILS_MESSAGE },
 	{ name: 'maxBy', message: EXTREMUM_MESSAGE },
 	{ name: 'orderBy', message: SORT_MESSAGE },
+	{ name: 'debounce', message: COMPOSE_MESSAGE },
 ];
 
 // `no-restricted-properties`: namespace member access (`_.fn( … )` / `lodash.fn( … )`).
