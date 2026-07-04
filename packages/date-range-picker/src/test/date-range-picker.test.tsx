@@ -294,6 +294,71 @@ describe( 'DateRangePicker (new)', () => {
 		).toBeVisible();
 	} );
 
+	function renderWithTimes( {
+		startTime = '00:00',
+		endTime = '23:59',
+	}: { startTime?: string; endTime?: string } = {} ) {
+		const onChange = jest.fn();
+		function Harness() {
+			const [ range, setRange ] = useState( {
+				start: new Date( 2025, 7, 19 ),
+				end: new Date( 2025, 7, 25 ),
+				startTime,
+				endTime,
+			} );
+			return (
+				<DateRangePicker
+					start={ range.start }
+					end={ range.end }
+					startTime={ range.startTime }
+					endTime={ range.endTime }
+					showTimeInputs
+					onChange={ ( next ) => {
+						onChange( next );
+						setRange( ( prev ) => ( { ...prev, ...next } ) );
+					} }
+					timezoneString=""
+					gmtOffset={ 0 }
+					locale="en-US"
+				/>
+			);
+		}
+		return { ...render( <Harness /> ), onChange };
+	}
+
+	test( 'showTimeInputs renders Start time / End time inputs with the given values', async () => {
+		const { getByRole, getByLabelText } = renderWithTimes();
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
+		expect( getByLabelText( 'Start time' ) ).toBeVisible();
+		expect( getByLabelText( 'End time' ) ).toBeVisible();
+		expect( getByLabelText( 'Start time' ) ).toHaveValue( '00:00' );
+		expect( getByLabelText( 'End time' ) ).toHaveValue( '23:59' );
+	} );
+
+	test( 'time inputs are absent unless showTimeInputs is set', async () => {
+		const { getByRole, queryByLabelText } = renderDateRangePicker();
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
+		expect( queryByLabelText( 'Start time' ) ).toBeNull();
+		expect( queryByLabelText( 'End time' ) ).toBeNull();
+	} );
+
+	test( 'toggle label includes the time of day when a custom time is set', () => {
+		const { getByRole } = renderWithTimes( { startTime: '09:00', endTime: '17:00' } );
+		const btn = getByRole( 'button', { name: /Date range:/i } );
+		// en-US short time: 09:00 -> "9:00 AM", 17:00 -> "5:00 PM"
+		expect( btn ).toHaveAccessibleName( expect.stringContaining( '9:00' ) );
+		expect( btn ).toHaveAccessibleName( expect.stringContaining( '5:00' ) );
+	} );
+
+	test( 'Apply passes the current times of day to onChange', async () => {
+		const { getByRole, onChange } = renderWithTimes();
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
+		await userEvent.click( getByRole( 'button', { name: /Apply/i } ) );
+		expect( onChange ).toHaveBeenCalledWith(
+			expect.objectContaining( { startTime: '00:00', endTime: '23:59' } )
+		);
+	} );
+
 	test( 'invalid IANA timezone falls back gracefully (no crash, label correct)', async () => {
 		// Silence and assert the Moment Timezone warning for invalid zone
 		const errorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
