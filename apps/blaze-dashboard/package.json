@@ -68,7 +68,7 @@
 		"gettext-parser": "^6.0.0",
 		"html-webpack-plugin": "^5.6.3",
 		"path-browserify": "^1.0.1",
-		"postcss": "^8.5.3",
+		"postcss": "^8.5.15",
 		"webpack": "^5.99.8",
 		"webpack-bundle-analyzer": "^4.10.2"
 	}
