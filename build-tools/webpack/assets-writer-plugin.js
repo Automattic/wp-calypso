@@ -76,9 +76,9 @@ Object.assign( AssetsWriter.prototype, {
 			}
 
 			statsToOutput.assets = Object.fromEntries(
-				Object.entries( stats.namedChunkGroups ).map( ( [ groupName, { assets } ] ) => [
+				Object.entries( stats.namedChunkGroups ?? {} ).map( ( [ groupName, { assets } ] ) => [
 					groupName,
-					assets
+					( assets ?? [] )
 						.filter(
 							( { name } ) =>
 								! (
