@@ -296,6 +296,10 @@ const NAMESPACE_GUARDED = [
 	{ name: 'pick', message: JS_UTILS_MESSAGE },
 	{ name: 'chain', message: CHAIN_MESSAGE },
 	{ name: 'reject', message: REJECT_MESSAGE },
+	{ name: 'mapValues', message: JS_UTILS_MESSAGE },
+	{ name: 'omitBy', message: JS_UTILS_MESSAGE },
+	{ name: 'maxBy', message: EXTREMUM_MESSAGE },
+	{ name: 'orderBy', message: SORT_MESSAGE },
 ];
 
 // `no-restricted-properties`: namespace member access (`_.fn( … )` / `lodash.fn( … )`).
