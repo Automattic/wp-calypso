@@ -71,8 +71,7 @@ steps:
       - desktop/release/*.appx
 
   # Signed NSIS direct-download installer — the auto-update path (electron-
-  # updater stays enabled). Signs via Azure Artifact Signing by default, with the
-  # org Sectigo PFX as a fallback behind FORCE_PFX_SIGNING (AINFRA-2237).
+  # updater stays enabled). Signs via Azure Artifact Signing (AINFRA-2237).
   - label: ":windows: Build desktop (windows nsis, signed)"
     key: desktop-build-windows-nsis
     branches: release/* desktop/* desktop-v*

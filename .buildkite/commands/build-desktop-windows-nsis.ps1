@@ -8,11 +8,7 @@
     direct-download path: it is code-signed and keeps the in-app
     electron-updater enabled, so existing users auto-update to it.
 
-    Signs via Azure Artifact Signing by default (AINFRA-2237). The org Sectigo
-    PFX is retained as a fallback, selected by setting FORCE_PFX_SIGNING, until
-    the Azure-signed build is confirmed in distribution. The signer choice here
-    only decides which env vars are populated; electron-builder's `win.sign`
-    callback (bin/windows-sign.js) routes on them.
+    Signs via Azure Artifact Signing (AINFRA-2237).
 #>
 
 # PowerShell does not abort on a failed *native* command, only on failed cmdlets.
@@ -55,33 +51,10 @@ $env:PLAYWRIGHT_SKIP_DOWNLOAD = 'true'
 Write-Output "--- :yarn: Installing desktop dependencies"
 Invoke-Checked { yarn install --immutable --inline-builds }
 
-if ($env:FORCE_PFX_SIGNING) {
-    # Fallback: materialize the org Sectigo cert from AWS Secrets Manager (writes
-    # certificate.pfx; WINDOWS_CODE_SIGNING_CERT_PASSWORD is the matching
-    # password, already on the windows queue). bin/windows-sign.js signs with
-    # signtool /f /p, so locate signtool from the Windows 10 SDK on the AMI.
-    Write-Output "--- :lock: Configuring Windows code signing (PFX fallback)"
-    Invoke-Checked { & 'setup_windows_code_signing.ps1' }
-
-    if ([string]::IsNullOrEmpty($env:WINDOWS_CODE_SIGNING_CERT_PASSWORD)) {
-        throw "WINDOWS_CODE_SIGNING_CERT_PASSWORD is not set on this agent."
-    }
-    $env:WIN_CSC_LINK = (Convert-Path '.\certificate.pfx')
-    $env:WIN_CSC_KEY_PASSWORD = $env:WINDOWS_CODE_SIGNING_CERT_PASSWORD
-
-    $signtool = Get-ChildItem 'C:\Program Files (x86)\Windows Kits\10\bin' -Recurse -Filter 'signtool.exe' -ErrorAction SilentlyContinue |
-        Where-Object { $_.FullName -match '\\x64\\signtool\.exe$' } |
-        Sort-Object FullName | Select-Object -Last 1
-    if (-not $signtool) {
-        throw "signtool.exe not found under the Windows 10 SDK - cannot PFX-sign."
-    }
-    $env:SIGNTOOL_PATH = $signtool.FullName
-} else {
-    # Sets AZURE_CODE_SIGNING_DLIB, AZURE_METADATA_JSON,
-    # and SIGNTOOL_PATH for bin/windows-sign.js.
-    Write-Output "--- :lock: Configuring Windows code signing (Azure Artifact Signing)"
-    Invoke-Checked { & 'setup_azure_trusted_signing.ps1' }
-}
+# Sets AZURE_CODE_SIGNING_DLIB, AZURE_METADATA_JSON,
+# and SIGNTOOL_PATH for bin/windows-sign.js.
+Write-Output "--- :lock: Configuring Windows code signing (Azure Artifact Signing)"
+Invoke-Checked { & 'setup_azure_trusted_signing.ps1' }
 
 Write-Output "--- :windows: Building signed NSIS installer"
 Invoke-Checked { yarn run build:main }
