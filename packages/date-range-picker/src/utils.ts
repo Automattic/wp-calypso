@@ -151,13 +151,57 @@ export function getActivePresetId( from?: Date, to?: Date, baseDate?: Date ): Pr
 	return undefined;
 }
 
-// UI-specific: Date range label for the picker
-export function formatLabel( start: Date, end: Date, locale: string ) {
+// Default whole-day times of day. A range with these times is treated as
+// date-only, so the label omits the time and presets stay non-"custom".
+export const DEFAULT_START_TIME = '00:00';
+export const DEFAULT_END_TIME = '23:59';
+
+export function hasCustomTimeOfDay( startTime?: string, endTime?: string ): boolean {
+	return (
+		( startTime !== undefined && startTime !== DEFAULT_START_TIME ) ||
+		( endTime !== undefined && endTime !== DEFAULT_END_TIME )
+	);
+}
+
+// Render an "HH:MM" time of day using the locale's short time style (e.g. "9:00 AM").
+function formatTimeOfDayLabel( time: string, locale: string ): string {
+	const [ hour, minute ] = time.split( ':' ).map( ( part ) => Number.parseInt( part, 10 ) );
+	if ( ! Number.isFinite( hour ) || ! Number.isFinite( minute ) ) {
+		return time;
+	}
+	const date = new Date();
+	date.setHours( hour, minute, 0, 0 );
+	return formatDate( date, locale, { timeStyle: 'short' } );
+}
+
+// UI-specific: Date range label for the picker. When a non-default time of day
+// is set, each side shows its time alongside the date.
+export function formatLabel(
+	start: Date,
+	end: Date,
+	locale: string,
+	startTime?: string,
+	endTime?: string
+) {
+	const showTime = hasCustomTimeOfDay( startTime, endTime );
+	const formatSide = ( date: Date, time?: string ) => {
+		const dateLabel = formatDate( date, locale, { dateStyle: 'medium' } );
+		if ( ! showTime || ! time ) {
+			return dateLabel;
+		}
+		return sprintf(
+			/* translators: %1$s: date, %2$s: time of day */
+			__( '%1$s %2$s' ),
+			dateLabel,
+			formatTimeOfDayLabel( time, locale )
+		);
+	};
+
 	return sprintf(
-		/* translators: %1$s: start date, %2$s: end date */
+		/* translators: %1$s: start date (and time), %2$s: end date (and time) */
 		__( '%1$s to %2$s' ),
-		formatDate( start, locale, { dateStyle: 'medium' } ),
-		formatDate( end, locale, { dateStyle: 'medium' } )
+		formatSide( start, startTime ),
+		formatSide( end, endTime )
 	);
 }
 

@@ -12,7 +12,15 @@ import { ButtonStack } from './button-stack';
 import { DateInputs } from './date-inputs';
 import { formatYmd, formatSiteYmd, parseYmdLocal } from './datetime';
 import { PresetsListbox } from './presets-listbox';
-import { computePresetRange, getActivePresetId, PresetId, presetDefs } from './utils';
+import {
+	computePresetRange,
+	DEFAULT_END_TIME,
+	DEFAULT_START_TIME,
+	getActivePresetId,
+	hasCustomTimeOfDay,
+	PresetId,
+	presetDefs,
+} from './utils';
 
 type DateRangeContentProps = {
 	isSmall: boolean;
@@ -27,8 +35,11 @@ type DateRangeContentProps = {
 	setToStr: ( string: string ) => void;
 	timezoneString?: string;
 	gmtOffset?: number;
-	onChange: ( next: { start: Date; end: Date } ) => void;
+	onChange: ( next: { start: Date; end: Date; startTime?: string; endTime?: string } ) => void;
 	onClose?: () => void;
+	showTimeInputs?: boolean;
+	startTime?: string;
+	endTime?: string;
 	compositeActiveId: string | null;
 	setCompositeActiveId: ( id: string | null ) => void;
 	today: Date;
@@ -63,6 +74,9 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 		gmtOffset,
 		onChange,
 		onClose,
+		showTimeInputs = false,
+		startTime,
+		endTime,
 		compositeActiveId,
 		setCompositeActiveId,
 		today,
@@ -93,12 +107,16 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 	const timeZoneForCalendar = isValidIanaTimeZone( timezoneString ) ? timezoneString : undefined;
 	const [ isTyping, setIsTyping ] = useState( false );
 	const [ inputsVersion, setInputsVersion ] = useState( 0 );
+	const [ fromTime, setFromTime ] = useState( () => startTime ?? DEFAULT_START_TIME );
+	const [ toTime, setToTime ] = useState( () => endTime ?? DEFAULT_END_TIME );
 
 	const clear = () => {
 		setFromDraft( undefined );
 		setToDraft( undefined );
 		setFromStr( '' );
 		setToStr( '' );
+		setFromTime( DEFAULT_START_TIME );
+		setToTime( DEFAULT_END_TIME );
 		setIsTyping( false );
 		// Force controlled inputs to remount so any internal buffers are reset
 		setInputsVersion( ( version ) => version + 1 );
@@ -110,16 +128,29 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 
 	const apply = () => {
 		if ( fromDraft && toDraft ) {
-			const [ startPoint, endPoint ] =
-				fromDraft <= toDraft ? [ fromDraft, toDraft ] : [ toDraft, fromDraft ];
-			onChange( { start: startPoint, end: endPoint } );
+			// Keep each time paired with its date if the range is entered backwards.
+			const [ startPoint, endPoint, startPointTime, endPointTime ] =
+				fromDraft <= toDraft
+					? [ fromDraft, toDraft, fromTime, toTime ]
+					: [ toDraft, fromDraft, toTime, fromTime ];
+			onChange( {
+				start: startPoint,
+				end: endPoint,
+				startTime: startPointTime,
+				endTime: endPointTime,
+			} );
 			onClose?.();
 			return;
 		}
 		if ( canDefaultApply ) {
 			const range = computePresetRange( defaultFallbackPreset, today );
 			if ( range ) {
-				onChange( { start: range.from, end: range.to } );
+				onChange( {
+					start: range.from,
+					end: range.to,
+					startTime: DEFAULT_START_TIME,
+					endTime: DEFAULT_END_TIME,
+				} );
 				onClose?.();
 			}
 		}
@@ -134,11 +165,24 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 		setToDraft( range.to );
 		setFromStr( formatYmd( range.from, timezoneString, gmtOffset ) );
 		setToStr( formatYmd( range.to, timezoneString, gmtOffset ) );
-		onChange( { start: range.from, end: range.to } );
+		// Presets are whole-day ranges — reset any custom time of day.
+		setFromTime( DEFAULT_START_TIME );
+		setToTime( DEFAULT_END_TIME );
+		onChange( {
+			start: range.from,
+			end: range.to,
+			startTime: DEFAULT_START_TIME,
+			endTime: DEFAULT_END_TIME,
+		} );
 		onClose?.();
 	};
 
 	const activePresetId: PresetId | undefined = ( () => {
+		// A non-default time of day is always a custom range, even if the dates
+		// themselves match a preset.
+		if ( fromDraft && toDraft && hasCustomTimeOfDay( fromTime, toTime ) ) {
+			return 'custom';
+		}
 		const preset = getActivePresetId( fromDraft, toDraft, today );
 		if ( preset ) {
 			return preset;
@@ -200,7 +244,7 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 	return (
 		<VStack as="div" spacing={ 3 } style={ { padding: 12 } }>
 			<Text as="div" weight={ 600 } align="center" size="smallTitle">
-				{ __( 'Date Range' ) }
+				{ showTimeInputs ? __( 'Date & time range' ) : __( 'Date Range' ) }
 			</Text>
 
 			{ isSmall ? (
@@ -252,6 +296,11 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 							}
 							inputsProps?.onEndBlur?.( e );
 						} }
+						showTime={ showTimeInputs }
+						fromTime={ fromTime }
+						toTime={ toTime }
+						onFromTimeChange={ ( value ) => setFromTime( value || DEFAULT_START_TIME ) }
+						onToTimeChange={ ( value ) => setToTime( value || DEFAULT_END_TIME ) }
 						stack
 						fromStyle={ { minWidth: 140 } }
 						toStyle={ { minWidth: 140 } }
@@ -304,6 +353,11 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 							}
 							inputsProps?.onEndBlur?.( e );
 						} }
+						showTime={ showTimeInputs }
+						fromTime={ fromTime }
+						toTime={ toTime }
+						onFromTimeChange={ ( value ) => setFromTime( value || DEFAULT_START_TIME ) }
+						onToTimeChange={ ( value ) => setToTime( value || DEFAULT_END_TIME ) }
 						fromStyle={ { minWidth: 220, flex: '0 0 auto' } }
 						toStyle={ { minWidth: 220, flex: '0 0 auto' } }
 						justify="flex-end"

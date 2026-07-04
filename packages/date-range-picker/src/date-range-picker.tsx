@@ -12,7 +12,7 @@ import './style.scss';
 export type DateRangePickerProps = {
 	start: Date;
 	end: Date;
-	onChange: ( next: { start: Date; end: Date } ) => void;
+	onChange: ( next: { start: Date; end: Date; startTime?: string; endTime?: string } ) => void;
 	timezoneString?: string;
 	gmtOffset?: number;
 	locale: string;
@@ -20,6 +20,10 @@ export type DateRangePickerProps = {
 	disabledBefore?: Date;
 	defaultFallbackPreset?: PresetId; // preset to apply when inputs are empty and user presses Apply
 	hiddenPresets?: PresetId[];
+	// Opt-in "HH:MM" time-of-day inputs paired with the start/end dates.
+	showTimeInputs?: boolean;
+	startTime?: string;
+	endTime?: string;
 	inputsProps?: {
 		onStartFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
 		onEndFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
@@ -40,6 +44,9 @@ export function DateRangePicker( {
 	defaultFallbackPreset = 'last-7-days',
 	hiddenPresets,
 	inputsProps,
+	showTimeInputs = false,
+	startTime,
+	endTime,
 }: DateRangePickerProps ) {
 	const isSmall = useMediaQuery( '(max-width: 600px)' );
 	// Use a wider breakpoint to decide when two calendars can fit comfortably
@@ -48,7 +55,7 @@ export function DateRangePicker( {
 	const mobileLabelId = `presets-label-${ instanceId }-mobile`;
 	const desktopLabelId = `presets-label-${ instanceId }-desktop`;
 
-	const label = formatLabel( start, end, locale );
+	const label = formatLabel( start, end, locale, startTime, endTime );
 
 	// Reset internal draft state when key inputs change by remounting the inner component
 	const resetKey = [
@@ -56,6 +63,8 @@ export function DateRangePicker( {
 		formatSiteYmd( end ),
 		timezoneString ?? '',
 		gmtOffset ?? '',
+		startTime ?? '',
+		endTime ?? '',
 	].join( '|' );
 
 	return (
@@ -104,6 +113,9 @@ export function DateRangePicker( {
 					defaultFallbackPreset={ defaultFallbackPreset }
 					hiddenPresets={ hiddenPresets }
 					inputsProps={ inputsProps }
+					showTimeInputs={ showTimeInputs }
+					startTime={ startTime }
+					endTime={ endTime }
 				/>
 			) }
 		/>
@@ -126,6 +138,9 @@ function DateRangePickerInner( {
 	defaultFallbackPreset,
 	hiddenPresets,
 	inputsProps,
+	showTimeInputs,
+	startTime,
+	endTime,
 }: {
 	isSmall: boolean;
 	showTwoMonths: boolean;
@@ -133,7 +148,7 @@ function DateRangePickerInner( {
 	end: Date;
 	timezoneString?: string;
 	gmtOffset?: number;
-	onChange: ( next: { start: Date; end: Date } ) => void;
+	onChange: ( next: { start: Date; end: Date; startTime?: string; endTime?: string } ) => void;
 	onClose: () => void;
 	mobileLabelId: string;
 	desktopLabelId: string;
@@ -141,6 +156,9 @@ function DateRangePickerInner( {
 	disabledBefore?: Date;
 	defaultFallbackPreset: PresetId;
 	hiddenPresets?: PresetId[];
+	showTimeInputs?: boolean;
+	startTime?: string;
+	endTime?: string;
 	inputsProps?: {
 		onStartFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
 		onEndFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
@@ -192,6 +210,9 @@ function DateRangePickerInner( {
 			defaultFallbackPreset={ defaultFallbackPreset }
 			hiddenPresets={ hiddenPresets }
 			inputsProps={ inputsProps }
+			showTimeInputs={ showTimeInputs }
+			startTime={ startTime }
+			endTime={ endTime }
 		/>
 	);
 }
