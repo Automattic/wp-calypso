@@ -8,11 +8,18 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { savePreference } from 'calypso/state/preferences/actions';
+import {
+	getPreference,
+	isFetchingPreferences,
+	isSavingPreference,
+	preferencesLastSaveError,
+} from 'calypso/state/preferences/selectors';
 import illustratioUrl from './illustration.svg';
 import type { HostingDashboardOptIn } from '@automattic/api-core';
 
@@ -30,11 +37,39 @@ export default function HostingDashboardOptInBanner( {
 	const hasOptedIn = savedPreference?.value === 'opt-in';
 
 	const isFetching = useSelector( isFetchingPreferences );
+	const isSaving = useSelector( isSavingPreference );
+	const lastSaveError = useSelector( preferencesLastSaveError );
+
+	const [ isSubmitting, setIsSubmitting ] = useState( false );
 
 	const isEnabled = config.isEnabled( 'dashboard/rollout-advance-notice' );
 
-	const handleClick = () => {
+	const handleClick = async () => {
 		dispatch( recordTracksEvent( 'calypso_hosting_dashboard_advance_notice_banner_click' ) );
+
+		if ( hasOptedIn ) {
+			return;
+		}
+
+		setIsSubmitting( true );
+
+		const preference = {
+			value: 'opt-in',
+			updated_at: new Date().toISOString(),
+		} satisfies HostingDashboardOptIn;
+
+		await dispatch( savePreference( 'hosting-dashboard-opt-in', preference ) );
+
+		if ( lastSaveError ) {
+			setIsSubmitting( false );
+			dispatch(
+				errorNotice( translate( 'Failed to save preference.' ), {
+					duration: 5000,
+				} )
+			);
+		} else {
+			window.location.href = dashboardLink();
+		}
 	};
 
 	// Can not use the usual TrackComponentView component because `isFetching` is momentarily `false`
@@ -82,7 +117,8 @@ export default function HostingDashboardOptInBanner( {
 		<Button
 			variant="secondary"
 			size={ isMobile ? 'compact' : undefined }
-			href={ hasOptedIn ? dashboardLink() : '/me/account#hosting-dashboard-opt-in' }
+			isBusy={ ! hasOptedIn && isSubmitting && isSaving }
+			href={ hasOptedIn ? dashboardLink() : undefined }
 			onClick={ handleClick }
 		>
 			{ hasOptedIn ? translate( 'Go to new dashboard' ) : translate( 'Try it now' ) }
