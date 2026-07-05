@@ -4,10 +4,32 @@ const wpI18nConfig = require( '@wordpress/eslint-plugin/eslintrc' ).configs.i18n
 const reactVersion = require( './client/package.json' ).dependencies.react;
 
 // ESLint doesn't allow the `extends` field inside `overrides`, so the TypeScript
-// config is composed from plugin fragments by hand. Every key other than `rules`
-// comes from a single fragment, so a shallow assign of the fragments plus a
-// separately-merged `rules` object reproduces the intended config.
+// override is assembled by hand from several partial configs ("fragments"). The
+// `rules` object from each fragment is merged into one combined `rules`; every
+// other setting (`parser`, `parserOptions`, `plugins`, `files`, …) is copied
+// as-is, which is correct only because each of those is set by a single fragment.
 function composeConfig( ...fragments ) {
+	// Enforce that last point: if two fragments set the same setting — say a
+	// plugin upgrade makes both the base config and Prettier config define
+	// `parserOptions` — the copy below would keep only the last and silently drop
+	// the other, quietly producing the wrong config. Catch that and fail loudly.
+	const seenKeys = new Set();
+	for ( const fragment of fragments ) {
+		for ( const key of Object.keys( fragment ) ) {
+			if ( key === 'rules' ) {
+				continue;
+			}
+			if ( seenKeys.has( key ) ) {
+				throw new Error(
+					`composeConfig: the setting \`${ key }\` is set by more than one fragment. ` +
+						'Only `rules` is merged across fragments; every other setting is copied ' +
+						'from a single fragment, so combine this one explicitly.'
+				);
+			}
+			seenKeys.add( key );
+		}
+	}
+
 	return Object.assign( {}, ...fragments, {
 		rules: Object.assign(
 			{},
