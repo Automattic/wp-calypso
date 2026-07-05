@@ -922,18 +922,6 @@
 			align-items: flex-start;
 			display: flex;
 			gap: 6px;
-
-			&:has( .plan-features-2023-grid__item-info.is-available )::before {
-				border: solid var( --studio-green-60 );
-				border-width: 0 2px 2px 0;
-				box-sizing: border-box;
-				content: '';
-				flex: 0 0 16px;
-				height: 10px;
-				margin: 2px 0 0 4px;
-				transform: rotate( 45deg );
-				width: 6px;
-			}
 		}
 
 		.plan-features-2023-grid__common-title + & {
@@ -950,6 +938,16 @@
 			line-height: 16px;
 			text-wrap: pretty;
 		}
+	}
+
+	.plan-features-2023-grid__item-checkmark {
+		color: var( --studio-green-60 );
+		display: block;
+		fill: var( --studio-green-60 );
+		flex: 0 0 16px;
+		height: 16px;
+		margin-top: 0;
+		width: 16px;
 	}
 
 	.plans-grid-next-features-grid__feature-group-title,
