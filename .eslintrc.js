@@ -1,8 +1,20 @@
 const path = require( 'path' );
 const { nodeConfig, lodashRestrictedImports } = require( '@automattic/calypso-eslint-overrides' );
 const wpI18nConfig = require( '@wordpress/eslint-plugin/eslintrc' ).configs.i18n;
-const { merge } = require( 'lodash' );
 const reactVersion = require( './client/package.json' ).dependencies.react;
+
+// ESLint doesn't allow the `extends` field inside `overrides`, so the TypeScript
+// config is composed from plugin fragments by hand. Every key other than `rules`
+// comes from a single fragment, so a shallow assign of the fragments plus a
+// separately-merged `rules` object reproduces the intended config.
+function composeConfig( ...fragments ) {
+	return Object.assign( {}, ...fragments, {
+		rules: Object.assign(
+			{},
+			...fragments.map( ( fragment ) => fragment.rules ).filter( Boolean )
+		),
+	} );
+}
 
 module.exports = {
 	root: true,
@@ -94,10 +106,7 @@ module.exports = {
 				'react/display-name': 'off',
 			},
 		},
-		merge(
-			// ESLint doesn't allow the `extends` field inside `overrides`, so we need to compose
-			// the TypeScript config manually using internal bits from various plugins
-			{},
+		composeConfig(
 			// base TypeScript config: parser options, add plugin with rules
 			require( '@typescript-eslint/eslint-plugin' ).configs.base,
 			// basic recommended rules config from the TypeScript plugin
