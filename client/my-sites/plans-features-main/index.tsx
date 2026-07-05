@@ -1487,7 +1487,9 @@ const PlansFeaturesMain = ( {
 											{ gridPlansForComparisonGridFinal && gridPlansForPlanTypeSelector && (
 												<ComparisonGrid
 													allFeaturesList={ getFeaturesList() }
-													className="plans-features-main__comparison-grid"
+													className={ clsx( 'plans-features-main__comparison-grid', {
+														'is-plans-grid-redesign-experiment': usePlansGridRedesign,
+													} ) }
 													coupon={ coupon }
 													currentSitePlanSlug={ sitePlanSlug }
 													gridPlans={ gridPlansForComparisonGridFinal }

@@ -307,3 +307,10 @@
 		justify-content: flex-end;
 	}
 }
+
+.plans-grid-next.is-plans-grid-redesign-experiment {
+	.plan-comparison-grid__available-checkmark {
+		color: var( --studio-green-60 );
+		fill: var( --studio-green-60 );
+	}
+}
