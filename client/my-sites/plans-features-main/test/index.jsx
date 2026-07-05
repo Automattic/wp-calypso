@@ -24,6 +24,17 @@ jest.mock( '../hooks/use-suggested-free-domain-from-paid-domain', () => () => ( 
 jest.mock( '../hooks/use-renewal-price-experiment', () => ( {
 	useRenewalPricingExperiment: jest.fn( () => [ false, null ] ),
 } ) );
+jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-experiment', () =>
+	jest.fn( () => ( {
+		isLoading: false,
+		variant: 'control',
+		usePlansGridRedesign: false,
+		showDifferentiatorHeader: false,
+		showEnterpriseBottomCard: false,
+		showWooCommerceBottomCard: false,
+		isExperimentEligible: false,
+	} ) )
+);
 jest.mock( 'calypso/state/purchases/selectors', () => ( {
 	getByPurchaseId: jest.fn(),
 } ) );
