@@ -85,9 +85,18 @@ export function isOptInToggleVisible(
 }
 
 /**
- * Whether the advanced notice should be visible for this user.
+ * Whether the advanced notice should be visible for this user. Hidden for
+ * escape-hatched users (forced opt-in or opt-out), whose enrollment changes
+ * only via support tooling.
  */
-export function isAdvancedNoticeVisible( userId: number | undefined ): boolean {
+export function isAdvancedNoticeVisible(
+	preference: HostingDashboardOptIn | undefined,
+	userId: number | undefined
+): boolean {
+	if ( preference?.value === 'forced-opt-in' || preference?.value === 'forced-opt-out' ) {
+		return false;
+	}
+
 	return (
 		config.isEnabled( 'dashboard/rollout-advance-notice' ) &&
 		!! userId &&

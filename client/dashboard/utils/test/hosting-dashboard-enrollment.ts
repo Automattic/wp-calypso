@@ -109,18 +109,27 @@ describe( 'isOptInToggleVisible', () => {
 
 describe( 'isAdvancedNoticeVisible', () => {
 	it( 'shows nothing while the rollout-advance-notice flag is off', () => {
-		expect( isAdvancedNoticeVisible( IN_COHORT ) ).toBe( false );
+		expect( isAdvancedNoticeVisible( undefined, IN_COHORT ) ).toBe( false );
+		expect( isAdvancedNoticeVisible( undefined, OUT_OF_COHORT ) ).toBe( false );
 	} );
 
 	describe( 'with the rollout-advance-notice flag on', () => {
 		beforeEach( () => enableFlags( 'dashboard/rollout-advance-notice' ) );
 
 		it( 'shows the banner to users who can still opt in', () => {
-			expect( isAdvancedNoticeVisible( IN_COHORT ) ).toBe( true );
+			expect( isAdvancedNoticeVisible( undefined, IN_COHORT ) ).toBe( true );
+		} );
+
+		it( 'hides the banner from non-cohort users', () => {
+			expect( isAdvancedNoticeVisible( undefined, OUT_OF_COHORT ) ).toBe( false );
+		} );
+
+		it( 'hides the banner from escape-hatched (forced-opt-in) users', () => {
+			expect( isAdvancedNoticeVisible( preference( 'forced-opt-in' ), IN_COHORT ) ).toBe( false );
 		} );
 
 		it( 'hides the banner from escape-hatched (forced-opt-out) users', () => {
-			expect( isAdvancedNoticeVisible( OUT_OF_COHORT ) ).toBe( false );
+			expect( isAdvancedNoticeVisible( preference( 'forced-opt-out' ), IN_COHORT ) ).toBe( false );
 		} );
 	} );
 } );
