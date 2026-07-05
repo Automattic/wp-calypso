@@ -1318,6 +1318,12 @@ export default function OrchestratorChat( {
 			startNewUserRequest();
 
 			submitDispatchedRef.current = true;
+
+			// Cleared at commit, not after the round trip: an aborted first reply still leaves a stored conversation.
+			if ( usesLocalStatePersistence( agentConfig?.agentId ) ) {
+				markSessionUsed( agentConfig?.agentId, siteKey, currentUser?.ID );
+			}
+
 			try {
 				// Answer a still-parked `wp-admin-navigate` call before this
 				// message goes out, so it meets an already-truthful conversation.
@@ -1336,11 +1342,6 @@ export default function OrchestratorChat( {
 			}
 
 			consumeNextMessageExternalContextEntries();
-
-			// A committed send means the server now owns this conversation.
-			if ( usesLocalStatePersistence( agentConfig?.agentId ) ) {
-				markSessionUsed( agentConfig?.agentId, siteKey, currentUser?.ID );
-			}
 		},
 		[
 			agentConfig?.agentId,
