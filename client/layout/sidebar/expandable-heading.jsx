@@ -10,6 +10,7 @@ import { decodeEntities } from 'calypso/lib/formatting';
 const ExpandableSidebarHeading = ( {
 	title,
 	count,
+	compactCount,
 	icon,
 	customIcon,
 	materialIcon,
@@ -45,7 +46,7 @@ const ExpandableSidebarHeading = ( {
 				{ decodeEntities( title ) }
 				<span className="sidebar__actions-and-count">
 					{ moreMenuActions }
-					{ count > 0 && <Count count={ count } /> }
+					{ count > 0 && <Count count={ count } compact={ compactCount } /> }
 				</span>
 				{ inlineText && <span className="sidebar__inline-text">{ inlineText }</span> }
 			</span>
@@ -78,6 +79,7 @@ const ExpandableSidebarHeading = ( {
 ExpandableSidebarHeading.propTypes = {
 	title: PropTypes.oneOfType( [ TranslatableString, PropTypes.element ] ).isRequired,
 	count: PropTypes.number,
+	compactCount: PropTypes.bool,
 	onClick: PropTypes.func,
 	customIcon: PropTypes.node,
 	icon: PropTypes.string,

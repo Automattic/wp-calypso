@@ -41,6 +41,7 @@ export const ExpandableSidebarMenu = ( menuProps ) => {
 		className,
 		title,
 		count,
+		compactCount,
 		onClick,
 		icon,
 		materialIcon,
@@ -113,6 +114,7 @@ export const ExpandableSidebarMenu = ( menuProps ) => {
 				<ExpandableSidebarHeading
 					title={ title }
 					count={ count }
+					compactCount={ compactCount }
 					onClick={
 						typeof onClick === 'function'
 							? ( event ) => {
@@ -150,6 +152,7 @@ ExpandableSidebarMenu.propTypes = {
 	className: PropTypes.string,
 	title: PropTypes.oneOfType( [ TranslatableString, PropTypes.element ] ).isRequired,
 	count: PropTypes.number,
+	compactCount: PropTypes.bool,
 	onClick: PropTypes.func,
 	customIcon: PropTypes.node,
 	icon: PropTypes.string,

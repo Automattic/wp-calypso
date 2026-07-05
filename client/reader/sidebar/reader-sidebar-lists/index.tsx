@@ -28,11 +28,16 @@ const ReaderSidebarLists = ( {
 		path.startsWith( `/reader/list/${ list.owner }/${ list.slug }` )
 	);
 
+	const totalUnseenCount: number =
+		lists?.reduce( ( total, list ) => total + ( list.unseen_count ?? 0 ), 0 ) || 0;
+
 	return (
 		<li>
 			<ExpandableSidebarMenu
-				expanded={ isOpen }
+				expanded={ isOpen ?? false }
 				title={ translate( 'Lists' ) }
+				count={ totalUnseenCount }
+				compactCount
 				onClick={ onClick }
 				disableFlyout
 				className={ clsx( {
