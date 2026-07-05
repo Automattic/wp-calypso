@@ -56,7 +56,7 @@ describe( 'usePlansGridRedesignExperiment', () => {
 			} )
 		);
 
-		expect( mockUseExperiment ).toHaveBeenCalledWith( 'calypso_pricing_differentiation_202612', {
+		expect( mockUseExperiment ).toHaveBeenCalledWith( 'calypso_pricing_differentiation_202607', {
 			isEligible: true,
 		} );
 	} );
@@ -72,7 +72,7 @@ describe( 'usePlansGridRedesignExperiment', () => {
 			} )
 		);
 
-		expect( mockUseExperiment ).toHaveBeenCalledWith( 'calypso_pricing_differentiation_202612', {
+		expect( mockUseExperiment ).toHaveBeenCalledWith( 'calypso_pricing_differentiation_202607', {
 			isEligible: true,
 		} );
 	} );
@@ -88,7 +88,7 @@ describe( 'usePlansGridRedesignExperiment', () => {
 			} )
 		);
 
-		expect( mockUseExperiment ).toHaveBeenCalledWith( 'calypso_pricing_differentiation_202612', {
+		expect( mockUseExperiment ).toHaveBeenCalledWith( 'calypso_pricing_differentiation_202607', {
 			isEligible: false,
 		} );
 		expect( result.current ).toEqual( INELIGIBLE_RESULT );

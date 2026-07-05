@@ -65,7 +65,7 @@ function usePlansGridRedesignExperiment( {
 
 	const hasGatingFlag = !! site?.options?.is_gating_business_q1;
 
-	// New-site signups (no siteId yet) are always eligible.
+	// Onboarding flow is eligible
 	// Flows operating on an existing site are eligible only when the gating flag is set.
 	const isEligibleSignupFlow = isInSignup && flowName === 'onboarding';
 	const isEligible = ( isEligibleSignupFlow && ! siteId ) || hasGatingFlag;
