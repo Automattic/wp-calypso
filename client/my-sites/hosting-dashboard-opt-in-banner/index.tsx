@@ -17,7 +17,6 @@ import { savePreference } from 'calypso/state/preferences/actions';
 import {
 	getPreference,
 	isFetchingPreferences,
-	isSavingPreference,
 	preferencesLastSaveError,
 } from 'calypso/state/preferences/selectors';
 import illustratioUrl from './illustration.svg';
@@ -35,22 +34,24 @@ export default function HostingDashboardOptInBanner( {
 		( state ) => getPreference( state, 'hosting-dashboard-opt-in' ) as HostingDashboardOptIn | null
 	);
 	const hasOptedIn = savedPreference?.value === 'opt-in';
-
 	const isFetching = useSelector( isFetchingPreferences );
-	const isSaving = useSelector( isSavingPreference );
-	const lastSaveError = useSelector( preferencesLastSaveError );
 
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 
 	const isEnabled = config.isEnabled( 'dashboard/rollout-advance-notice' );
 
-	const handleClick = async () => {
-		dispatch( recordTracksEvent( 'calypso_hosting_dashboard_advance_notice_banner_click' ) );
+	const handleClick = async ( event: React.MouseEvent ) => {
+		dispatch(
+			recordTracksEvent( 'calypso_hosting_dashboard_advance_notice_banner_click', {
+				is_opted_in: hasOptedIn,
+			} )
+		);
 
 		if ( hasOptedIn ) {
 			return;
 		}
 
+		event.preventDefault();
 		setIsSubmitting( true );
 
 		const preference = {
@@ -60,7 +61,9 @@ export default function HostingDashboardOptInBanner( {
 
 		await dispatch( savePreference( 'hosting-dashboard-opt-in', preference ) );
 
-		if ( lastSaveError ) {
+		const saveError = dispatch( ( _dispatch, getState ) => preferencesLastSaveError( getState() ) );
+
+		if ( saveError ) {
 			setIsSubmitting( false );
 			dispatch(
 				errorNotice( translate( 'Failed to save preference.' ), {
@@ -82,7 +85,9 @@ export default function HostingDashboardOptInBanner( {
 		const timeout = setTimeout( () => {
 			if ( ! isFetching && ! hasOptedIn ) {
 				dispatch(
-					recordTracksEvent( 'calypso_hosting_dashboard_advance_notice_banner_impression' )
+					recordTracksEvent( 'calypso_hosting_dashboard_advance_notice_banner_impression', {
+						is_opted_in: hasOptedIn,
+					} )
 				);
 			}
 		}, 100 );
@@ -117,8 +122,8 @@ export default function HostingDashboardOptInBanner( {
 		<Button
 			variant="secondary"
 			size={ isMobile ? 'compact' : undefined }
-			isBusy={ ! hasOptedIn && isSubmitting && isSaving }
-			href={ hasOptedIn ? dashboardLink() : undefined }
+			isBusy={ isSubmitting }
+			href={ dashboardLink() }
 			onClick={ handleClick }
 		>
 			{ hasOptedIn ? translate( 'Go to new dashboard' ) : translate( 'Try it now' ) }
