@@ -1,20 +1,23 @@
 import { Icon } from '@wordpress/components';
 import { plus } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import ReaderSidebarHelper from '../helper';
 import { MenuItem, MenuItemLink } from '../menu';
 
-export default function ListItemCreateLink( { path } ) {
+interface ListItemCreateLinkProps {
+	path: string;
+}
+
+export default function ListItemCreateLink( { path }: ListItemCreateLinkProps ): JSX.Element {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
+	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 
 	const handleListSidebarClick = () => {
 		recordAction( 'clicked_reader_sidebar_list_item_create_link' );
 		recordGaEvent( 'Clicked Reader Sidebar List Item Create Link' );
-		dispatch( recordReaderTracksEvent( 'calypso_reader_sidebar_list_item_create_link_clicked' ) );
+		recordReaderTracksEvent( 'calypso_reader_sidebar_list_item_create_link_clicked' );
 	};
 
 	const newListPath = '/reader/list/new';

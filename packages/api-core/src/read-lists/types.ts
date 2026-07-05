@@ -7,6 +7,7 @@ export interface ReadList {
 	is_owner: boolean;
 	is_public: boolean;
 	is_immutable?: boolean;
+	unseen_count: number;
 }
 
 export interface ReadSubscribedListsResponse {
