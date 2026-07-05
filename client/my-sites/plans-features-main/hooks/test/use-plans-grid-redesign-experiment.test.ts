@@ -21,12 +21,12 @@ const CONTROL_RESULT = {
 	showDifferentiatorHeader: false,
 	showEnterpriseBottomCard: false,
 	showWooCommerceBottomCard: false,
-	isExperimentVariant: true,
+	isExperimentEligible: true,
 };
 
 const INELIGIBLE_RESULT = {
 	...CONTROL_RESULT,
-	isExperimentVariant: false,
+	isExperimentEligible: false,
 };
 
 const mockUseExperiment = useExperiment as jest.Mock;

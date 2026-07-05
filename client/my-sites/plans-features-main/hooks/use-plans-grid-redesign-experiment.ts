@@ -39,7 +39,7 @@ type PlansGridRedesignExperimentResult = {
 	/**
 	 * When true, the user is eligible for the experiment (any arm, including control).
 	 */
-	isExperimentVariant: boolean;
+	isExperimentEligible: boolean;
 };
 
 interface UsePlansGridRedesignExperimentParams {
@@ -81,8 +81,7 @@ function usePlansGridRedesignExperiment( {
 			? rawVariationName
 			: 'control';
 
-	const isExperimentVariant = isEligible;
-	const usePlansGridRedesign = isExperimentVariant && ! isLoading && variant !== 'control';
+	const usePlansGridRedesign = isEligible && ! isLoading && variant !== 'control';
 
 	return {
 		isLoading,
@@ -91,7 +90,7 @@ function usePlansGridRedesignExperiment( {
 		showDifferentiatorHeader: usePlansGridRedesign && variant === 'six_plan_new_features',
 		showEnterpriseBottomCard: usePlansGridRedesign && variant === 'five_plan_new_description',
 		showWooCommerceBottomCard: usePlansGridRedesign && variant === 'four_plan_new_description',
-		isExperimentVariant,
+		isExperimentEligible: isEligible,
 	};
 }
 
