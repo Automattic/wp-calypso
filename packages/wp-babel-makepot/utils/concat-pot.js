@@ -5,21 +5,15 @@ const glob = require( 'glob' );
 
 // Merges each own key of `source` into `object` through `customizer`, which
 // decides the value for that key. `mergeDeep` below always returns a value, so
-// there is no fall-through to a default deep merge to reproduce. `__proto__` is
-// assigned as an own property (never through the prototype) to match lodash.
+// there is no fall-through to a default deep merge to reproduce. A source
+// `__proto__` key is skipped (as lodash does) so it can never read from or
+// merge into a prototype.
 const mergeWith = ( object, source, customizer ) => {
 	for ( const key of Object.keys( source ) ) {
-		const value = customizer( object[ key ], source[ key ], key );
 		if ( key === '__proto__' ) {
-			Object.defineProperty( object, key, {
-				value,
-				writable: true,
-				enumerable: true,
-				configurable: true,
-			} );
-		} else {
-			object[ key ] = value;
+			continue;
 		}
+		object[ key ] = customizer( object[ key ], source[ key ], key );
 	}
 	return object;
 };
