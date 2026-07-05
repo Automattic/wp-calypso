@@ -2,11 +2,31 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const { po } = require( 'gettext-parser' );
 const glob = require( 'glob' );
-const merge = require( 'lodash.mergewith' );
+
+// Merges each own key of `source` into `object` through `customizer`, which
+// decides the value for that key. `mergeDeep` below always returns a value, so
+// there is no fall-through to a default deep merge to reproduce. `__proto__` is
+// assigned as an own property (never through the prototype) to match lodash.
+const mergeWith = ( object, source, customizer ) => {
+	for ( const key of Object.keys( source ) ) {
+		const value = customizer( object[ key ], source[ key ], key );
+		if ( key === '__proto__' ) {
+			Object.defineProperty( object, key, {
+				value,
+				writable: true,
+				enumerable: true,
+				configurable: true,
+			} );
+		} else {
+			object[ key ] = value;
+		}
+	}
+	return object;
+};
 
 const mergeDeep = ( left, right, key ) => {
 	if ( typeof left === 'object' && typeof right === 'object' ) {
-		return merge( left, right, mergeDeep );
+		return mergeWith( left, right, mergeDeep );
 	}
 
 	if ( typeof left === 'undefined' ) {

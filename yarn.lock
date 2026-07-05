@@ -2511,7 +2511,6 @@ __metadata:
     glob: "npm:^7.2.3"
     i18n-calypso: "workspace:^"
     jest: "npm:^29.7.0"
-    lodash.mergewith: "npm:^4.6.2"
     react: "npm:^18.3.1"
     rimraf: "npm:^3.0.2"
   bin:
@@ -23062,13 +23061,6 @@ __metadata:
   version: 4.6.2
   resolution: "lodash.merge@npm:4.6.2"
   checksum: 402fa16a1edd7538de5b5903a90228aa48eb5533986ba7fa26606a49db2572bf414ff73a2c9f5d5fd36b31c46a5d5c7e1527749c07cbcf965ccff5fbdf32c506
-  languageName: node
-  linkType: hard
-
-"lodash.mergewith@npm:^4.6.2":
-  version: 4.6.2
-  resolution: "lodash.mergewith@npm:4.6.2"
-  checksum: 4adbed65ff96fd65b0b3861f6899f98304f90fd71e7f1eb36c1270e05d500ee7f5ec44c02ef979b5ddbf75c0a0b9b99c35f0ad58f4011934c4d4e99e5200b3b5
   languageName: node
   linkType: hard
 
