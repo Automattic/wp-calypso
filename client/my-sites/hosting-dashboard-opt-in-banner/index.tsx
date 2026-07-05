@@ -8,7 +8,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -75,24 +75,25 @@ export default function HostingDashboardOptInBanner( {
 		}
 	};
 
+	const hasRecordedImpression = useRef( false );
+
 	// Can not use the usual TrackComponentView component because `isFetching` is momentarily `false`
-	// when the component first mounts, and we do not know whether the it will start fetching or not.
+	// when the component first mounts, and we do not know whether it will start fetching or not.
 	// We add a delay before recording the impression to leave some time for `isFetching` to become `true`.
 	useEffect( () => {
-		if ( ! isEnabled ) {
+		if ( ! isEnabled || hasRecordedImpression.current ) {
 			return;
 		}
+		hasRecordedImpression.current = true;
 		const timeout = setTimeout( () => {
-			if ( ! isFetching && ! hasOptedIn ) {
-				dispatch(
-					recordTracksEvent( 'calypso_hosting_dashboard_advance_notice_banner_impression', {
-						is_opted_in: hasOptedIn,
-					} )
-				);
-			}
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_dashboard_advance_notice_banner_impression', {
+					is_opted_in: hasOptedIn,
+				} )
+			);
 		}, 100 );
 		return () => clearTimeout( timeout );
-	}, [ isEnabled, isFetching, hasOptedIn, dispatch ] );
+	}, [ isEnabled, hasOptedIn, dispatch ] );
 
 	if ( ! isEnabled || isFetching ) {
 		return null;
