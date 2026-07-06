@@ -63,6 +63,11 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 	// keyboard navigation that legitimately selects an off-page post).
 	const selectedItemRef = useRef< StreamItem | null >( selectedItem );
 	selectedItemRef.current = selectedItem;
+	// Set when a per-page change should keep the current selection. Consumed by
+	// the auto-select effect once the new page loads so it doesn't replace the
+	// selection (page/per-page index math doesn't survive x-post collapsing, so
+	// the range check alone can misfire and swap to a different post).
+	const preserveSelectionRef = useRef( false );
 
 	const handleItemFocus = useCallback( ( itemIndex: string ) => {
 		focusedIndexRef.current = itemIndex;
@@ -290,6 +295,10 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				const anchorIndex =
 					selectedIndex >= 0 ? selectedIndex : ( currentPage - 1 ) * currentPerPage;
 
+				// Keep the current selection across the refetch instead of letting the
+				// effect re-select the new page's first item.
+				preserveSelectionRef.current = selectedItem != null;
+
 				setView( {
 					...newView,
 					page: Math.floor( anchorIndex / newView.perPage ) + 1,
@@ -313,14 +322,24 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 	// this effect off the `selectedItem` dependency, so selecting an off-page post
 	// (full-post keyboard navigation) is not reverted here.
 	//
-	// Gated on `! isLoading` so it only runs once the page has settled. Running
-	// mid-fetch would (a) latch onto a transient item as the stream pages merge —
-	// leaving the wrong post selected — and (b) select an item whose content isn't
-	// cached yet, which flashes the full-post loading skeleton. Deferring keeps the
-	// previously selected (cached) post visible during the load, then makes one
-	// clean selection.
+	// While navigating to a not-yet-loaded page, the first slot is empty, so the
+	// selection is cleared to `null` — which lets the full-post pane show its
+	// loading state — and the real first item is selected once the page settles.
+	// A per-page change instead sets `preserveSelectionRef` so the selection is
+	// kept as-is once the new page loads (no loading flash, no swap to a
+	// different post), independent of the fragile page/per-page index math.
 	useEffect( () => {
-		if ( isWide && ! isLoading && streamItems.length > 0 && view.page && view.perPage ) {
+		if ( isWide && streamItems.length > 0 && view.page && view.perPage ) {
+			// A per-page change wants to keep the current selection. The new page has
+			// now loaded (streamItems is non-empty), so consume the flag and leave the
+			// selection untouched.
+			if ( preserveSelectionRef.current ) {
+				preserveSelectionRef.current = false;
+				if ( selectedItemRef.current ) {
+					return;
+				}
+			}
+
 			const pageStart = ( view.page - 1 ) * view.perPage;
 			const pageEnd = pageStart + view.perPage;
 
@@ -337,7 +356,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 			const firstOnPage = streamItems[ pageStart ];
 			setSelectedItem( firstOnPage && ! isPaddingStreamItem( firstOnPage ) ? firstOnPage : null );
 		}
-	}, [ isWide, isLoading, streamItems, view ] );
+	}, [ isWide, streamItems, view ] );
 
 	// When the selected feed changes, clear the selected item and reset the page to 1.
 	useEffect( () => {

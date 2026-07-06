@@ -171,8 +171,8 @@ jest.mock( 'calypso/reader/data/stream', () => {
 
 const TOTAL_ITEMS = 45;
 
-const buildStreamItems = (): StreamListItem[] =>
-	Array.from( { length: TOTAL_ITEMS }, ( _, index ) => ( {
+const buildStreamItems = ( count: number = TOTAL_ITEMS ): StreamListItem[] =>
+	Array.from( { length: count }, ( _, index ) => ( {
 		feedId: 200,
 		postId: 300 + index,
 		site_name: `Site ${ index }`,
@@ -355,30 +355,41 @@ describe( 'Recent per-page pagination', () => {
 			expect( screen.getByTestId( 'view-state' ) ).toHaveAttribute( 'data-selection', 'f200-320' );
 		} );
 
-		it( 'defers auto-selection until the page finishes loading', async () => {
+		it( 'shows the loading state while navigating to an uncached page, then selects its first post', async () => {
 			const user = userEvent.setup();
-			renderRecent();
+			const { queryClient } = renderRecent();
 
-			// Mount auto-selects page 1's first item.
+			// Seed page 1's first post so the full post is visible before navigating.
+			upsertPostCache( queryClient, [
+				{
+					ID: 1,
+					site_ID: 100,
+					feed_ID: 200,
+					feed_item_ID: 300,
+					global_ID: 'global-300',
+					title: 'Post A',
+				},
+			] );
 			expect( screen.getByTestId( 'view-state' ) ).toHaveAttribute( 'data-selection', 'f200-300' );
+			expect( await screen.findByTestId( 'async-load' ) ).toBeVisible();
 
-			// Change the page while a fetch is in flight. The selection must not jump
-			// to a transient item mid-load; it stays on the current post.
+			// Navigate to page 3 while only page-1 data is loaded (its rows aren't
+			// present yet). The selection clears so the full-post pane shows loading.
 			( usePaginatedStream as jest.Mock ).mockReturnValue( {
-				items: buildStreamItems(),
+				items: buildStreamItems( 15 ),
 				pagination: { totalItems: TOTAL_ITEMS, totalPages: 3 },
 				isRequesting: true,
 				error: null,
 			} );
 			await user.click( screen.getByTestId( 'go-to-page-3' ) );
 
-			expect( screen.getByTestId( 'view-state' ) ).toHaveAttribute( 'data-page', '3' );
-			expect( screen.getByTestId( 'view-state' ) ).toHaveAttribute( 'data-selection', 'f200-300' );
+			expect( screen.getByTestId( 'view-state' ) ).toHaveAttribute( 'data-selection', '' );
+			expect( screen.getByTestId( 'recent-post-skeleton' ) ).toBeVisible();
+			expect( screen.queryByTestId( 'async-load' ) ).not.toBeInTheDocument();
 
-			// Once the fetch settles, the first item of the new page is selected in a
-			// single clean transition.
+			// Once the page settles, its first item is selected.
 			( usePaginatedStream as jest.Mock ).mockReturnValue( {
-				items: buildStreamItems(),
+				items: buildStreamItems( 45 ),
 				pagination: { totalItems: TOTAL_ITEMS, totalPages: 3 },
 				isRequesting: false,
 				error: null,
@@ -386,6 +397,42 @@ describe( 'Recent per-page pagination', () => {
 			await user.click( screen.getByTestId( 'go-to-page-3' ) );
 
 			expect( screen.getByTestId( 'view-state' ) ).toHaveAttribute( 'data-selection', 'f200-330' );
+		} );
+
+		it( 'keeps the selection on a per-page change even when it lands outside the computed page range', async () => {
+			const user = userEvent.setup();
+			renderRecent();
+
+			// Select a post at absolute index 20 (f200-320). Under the new per-page
+			// size of 30 that anchors to page 1, whose range is [0, 30).
+			await user.click( screen.getByTestId( 'select-off-page' ) );
+			expect( screen.getByTestId( 'view-state' ) ).toHaveAttribute( 'data-selection', 'f200-320' );
+
+			// The refetch is in flight: no rows yet.
+			( usePaginatedStream as jest.Mock ).mockReturnValue( {
+				items: [],
+				pagination: { totalItems: 0, totalPages: 0 },
+				isRequesting: true,
+				error: null,
+			} );
+			await user.click( screen.getByTestId( 'change-per-page' ) );
+			expect( screen.getByTestId( 'view-state' ) ).toHaveAttribute( 'data-selection', 'f200-320' );
+
+			// The new page settles, but x-post collapsing shifted the selected post
+			// to index 35 — outside page 1's [0, 30) range. The range check alone
+			// would swap the selection to the page's first item (f200-300); the
+			// per-page intent flag must keep the original selection instead.
+			const settled = buildStreamItems( 45 );
+			[ settled[ 20 ], settled[ 35 ] ] = [ settled[ 35 ], settled[ 20 ] ];
+			( usePaginatedStream as jest.Mock ).mockReturnValue( {
+				items: settled,
+				pagination: { totalItems: TOTAL_ITEMS, totalPages: 2 },
+				isRequesting: false,
+				error: null,
+			} );
+			await user.click( screen.getByTestId( 'change-per-page' ) );
+
+			expect( screen.getByTestId( 'view-state' ) ).toHaveAttribute( 'data-selection', 'f200-320' );
 		} );
 	} );
 } );
