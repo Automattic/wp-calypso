@@ -953,6 +953,12 @@
 		gap: 4px;
 		line-height: 16px;
 		padding: 0;
+
+		&.is-badge {
+			justify-content: center;
+			padding: 2px 8px;
+			text-align: center;
+		}
 	}
 
 	.plans-grid-next-storage-feature-label__icon {
