@@ -62,7 +62,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 
 	renderSites() {
 		const { sites, path } = this.props;
-		return sites?.map(
+		return sites.map(
 			( site ) =>
 				site && <ReaderSidebarOrganizationsListItem key={ site.ID } path={ path } site={ site } />
 		);
@@ -75,7 +75,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 			return null;
 		}
 
-		const isChildSelected = sites?.some( ( site ) => path === `/reader/feeds/${ site.feed_ID }` );
+		const isChildSelected = sites.some( ( site ) => path === `/reader/feeds/${ site.feed_ID }` );
 
 		return (
 			<ExpandableSidebarMenu

@@ -173,7 +173,9 @@ export class ReaderSidebar extends Component {
 				<AppTitle />
 				<SidebarMenu>
 					<li className="reader-sidebar__section-header" role="presentation">
-						<h3>{ translate( 'Explore' ) }</h3>
+						<span role="heading" aria-level="3">
+							{ translate( 'Explore' ) }
+						</span>
 					</li>
 
 					<SidebarItem
@@ -196,7 +198,9 @@ export class ReaderSidebar extends Component {
 					/>
 
 					<li className="reader-sidebar__section-header" role="presentation">
-						<h3>{ translate( 'Feeds' ) }</h3>
+						<span role="heading" aria-level="3">
+							{ translate( 'Feeds' ) }
+						</span>
 					</li>
 
 					<li className="sidebar-streams__following">
@@ -234,7 +238,9 @@ export class ReaderSidebar extends Component {
 					{ isEnabled( 'reader/spaces' ) && <ReaderSidebarSpaces path={ path } /> }
 
 					<li className="reader-sidebar__section-header" role="presentation">
-						<h3>{ translate( 'Library' ) }</h3>
+						<span role="heading" aria-level="3">
+							{ translate( 'Library' ) }
+						</span>
 					</li>
 
 					{ isEnabled( 'reader/saved-posts' ) && (
@@ -282,7 +288,9 @@ export class ReaderSidebar extends Component {
 					) }
 
 					<li className="reader-sidebar__section-header" role="presentation">
-						<h3>{ translate( 'Account' ) }</h3>
+						<span role="heading" aria-level="3">
+							{ translate( 'Account' ) }
+						</span>
 					</li>
 
 					<SidebarItem

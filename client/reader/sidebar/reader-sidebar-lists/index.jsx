@@ -33,8 +33,8 @@ export class ReaderSidebarLists extends Component {
 
 	render() {
 		const { translate, isOpen, onClick, lists, path, ...passedProps } = this.props;
-		const isChildSelected = lists?.some(
-			( list ) => path === `/reader/list/${ list.owner }/${ list.slug }`
+		const isChildSelected = lists?.some( ( list ) =>
+			path.startsWith( `/reader/list/${ list.owner }/${ list.slug }` )
 		);
 
 		return (
@@ -45,7 +45,9 @@ export class ReaderSidebarLists extends Component {
 					onClick={ this.selectMenu }
 					disableFlyout
 					className={ clsx( {
-						'sidebar__menu--selected': path === '/reader/lists' || ( ! isOpen && isChildSelected ),
+						'sidebar__menu--selected':
+							path === '/reader/lists' ||
+							( ! isOpen && ( isChildSelected || path === '/reader/list/new' ) ),
 					} ) }
 					expandableIconClick={ onClick }
 				>
