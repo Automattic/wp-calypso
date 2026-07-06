@@ -12,6 +12,7 @@ import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
 import ImageAltTextPicker from './components/image-alt-text-picker';
 import PostFeedback from './components/post-feedback';
+import Proofread from './components/proofread';
 import ReviewMediation from './components/review-mediation';
 import SeoDescriptionPicker from './components/seo-description-picker';
 import SeoTitlePicker from './components/seo-title-picker';
@@ -295,6 +296,10 @@ describe( 'getChatComponent', () => {
 		expect( getChatComponent( 'post-feedback' ) ).toBe( PostFeedback );
 	} );
 
+	it( 'returns Proofread for type "proofread"', () => {
+		expect( getChatComponent( 'proofread' ) ).toBe( Proofread );
+	} );
+
 	it( 'returns SeoTitlePicker for type "seo-title-picker"', () => {
 		expect( getChatComponent( 'seo-title-picker' ) ).toBe( SeoTitlePicker );
 	} );
@@ -360,9 +365,9 @@ describe( 'PostFeedback', () => {
 		expect( container.textContent ).toContain(
 			'Needs manual edit: Needs confirmed event details from the author.'
 		);
-		const manualReasons = container.querySelectorAll( '.jetpack-ai-post-feedback__manual-reason' );
+		const manualReasons = container.querySelectorAll( '.jetpack-ai-feedback-list__manual-reason' );
 		const acceptButtons = container.querySelectorAll(
-			'.jetpack-ai-post-feedback__action-button.is-primary'
+			'.jetpack-ai-feedback-list__action-button.is-primary'
 		);
 		expect( acceptButtons[ 1 ].hasAttribute( 'disabled' ) ).toBe( true );
 		expect( acceptButtons[ 1 ].getAttribute( 'aria-describedby' ) ).toBe(
@@ -507,7 +512,7 @@ describe( 'PostFeedback', () => {
 			} )
 		);
 
-		const blockRef = document.querySelector( '.jetpack-ai-post-feedback__block-ref' );
+		const blockRef = document.querySelector( '.jetpack-ai-feedback-list__block-ref' );
 		expect( blockRef ).toBeTruthy();
 		( blockRef as HTMLButtonElement ).click();
 
@@ -570,7 +575,7 @@ describe( 'PostFeedback', () => {
 			} )
 		);
 
-		const blockRefs = container.querySelectorAll( '.jetpack-ai-post-feedback__block-ref' );
+		const blockRefs = container.querySelectorAll( '.jetpack-ai-feedback-list__block-ref' );
 		( blockRefs[ 0 ] as HTMLButtonElement ).click();
 		expect( firstLayout.classList.contains( 'is-focus-mode' ) ).toBe( true );
 		expect( secondLayout.classList.contains( 'is-focus-mode' ) ).toBe( false );
@@ -614,7 +619,7 @@ describe( 'PostFeedback', () => {
 		);
 
 		(
-			container.querySelector( '.jetpack-ai-post-feedback__block-ref' ) as HTMLButtonElement
+			container.querySelector( '.jetpack-ai-feedback-list__block-ref' ) as HTMLButtonElement
 		 ).click();
 		expect( layoutElement.classList.contains( 'is-focus-mode' ) ).toBe( true );
 
@@ -654,13 +659,13 @@ describe( 'PostFeedback', () => {
 		);
 
 		(
-			container.querySelector( '.jetpack-ai-post-feedback__block-ref' ) as HTMLButtonElement
+			container.querySelector( '.jetpack-ai-feedback-list__block-ref' ) as HTMLButtonElement
 		 ).click();
 		expect( layoutElement.classList.contains( 'is-focus-mode' ) ).toBe( true );
 		mockClearSelectedBlock.mockClear();
 
 		const dismissButton = container.querySelectorAll(
-			'.jetpack-ai-post-feedback__action-button'
+			'.jetpack-ai-feedback-list__action-button'
 		)[ 1 ] as HTMLButtonElement;
 		fireEvent.mouseDown( dismissButton );
 		act( () => {
@@ -712,6 +717,263 @@ describe( 'PostFeedback', () => {
 				section.getAttribute( 'data-initial-open' )
 			)
 		).toEqual( [ 'true', 'true', 'true' ] );
+	} );
+} );
+
+describe( 'Proofread', () => {
+	beforeEach( () => {
+		mockEditorBlocks = [];
+		document.body.innerHTML = '';
+		clearActiveBlockFocus();
+		delete ( window as any ).wp;
+	} );
+
+	it( 'renders the summary notes and proofread items', () => {
+		const { container } = render(
+			React.createElement( Proofread, {
+				summary: 'Found a duplicated period.',
+				postId: 123,
+				items: [
+					{
+						title: 'Punctuation',
+						feedback: 'The sentence ends with a doubled period.',
+						action: 'Remove the extra period.',
+						block_index: 0,
+						current_text: 'children..',
+						suggested_text: 'children.',
+					},
+				],
+			} )
+		);
+
+		expect( container.textContent ).toContain( 'Found a duplicated period.' );
+		expect( container.textContent ).toContain( 'Spelling and grammar check complete.' );
+		expect( container.textContent ).toContain( 'Reviews your last saved version.' );
+		expect( container.textContent ).toContain( 'Spelling & grammar' );
+		expect( container.textContent ).toContain( 'Punctuation' );
+	} );
+
+	const findAcceptAllButton = ( container: HTMLElement ) =>
+		Array.from( container.querySelectorAll( 'button' ) ).find(
+			( button ) => button.textContent?.startsWith( 'Accept all' )
+		);
+
+	it( 'shows an enabled Accept all button when one-click fixes are available', () => {
+		mockEditorBlocks = [
+			{
+				clientId: 'block-1',
+				name: 'core/paragraph',
+				attributes: { content: 'There will be a lot of activities for children..' },
+			},
+		];
+
+		const { container } = render(
+			React.createElement( Proofread, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Punctuation',
+						feedback: 'Doubled period.',
+						action: 'Remove the extra period.',
+						block_index: 0,
+						current_text: 'There will be a lot of activities for children..',
+						suggested_text: 'There will be a lot of activities for children.',
+					},
+				],
+			} )
+		);
+
+		const acceptAll = findAcceptAllButton( container );
+		expect( acceptAll ).toBeTruthy();
+		expect( acceptAll?.hasAttribute( 'disabled' ) ).toBe( false );
+	} );
+
+	it( 'hides Accept all when no one-click fixes are available', () => {
+		const { container } = render(
+			React.createElement( Proofread, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Manual item',
+						feedback: 'Feedback.',
+						action: 'Action.',
+						block_index: null,
+						requires_manual: true,
+						manual_reason: 'Needs author review.',
+					},
+				],
+			} )
+		);
+
+		expect( findAcceptAllButton( container ) ).toBeUndefined();
+	} );
+
+	const findButtonByText = ( container: HTMLElement, text: string ) =>
+		Array.from( container.querySelectorAll( 'button' ) ).find(
+			( button ) => button.textContent === text
+		) as HTMLButtonElement | undefined;
+
+	it( 'applies pending one-click items and marks them Applied on Accept all', async () => {
+		jest.useFakeTimers();
+		mockEditorBlocks = [
+			{
+				clientId: 'block-1',
+				name: 'core/paragraph',
+				attributes: { content: 'There will be a lot of activities for children..' },
+			},
+		];
+		const { blockUpdates } = installWpDataMockWithBlockEditor( {
+			'block-1': {
+				name: 'core/paragraph',
+				attributes: { content: 'There will be a lot of activities for children..' },
+			},
+		} );
+
+		const { container } = render(
+			React.createElement( Proofread, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Punctuation',
+						feedback: 'Doubled period.',
+						action: 'Remove the extra period.',
+						block_index: 0,
+						current_text: 'There will be a lot of activities for children..',
+						suggested_text: 'There will be a lot of activities for children.',
+					},
+				],
+			} )
+		);
+
+		const acceptAll = findAcceptAllButton( container ) as HTMLButtonElement;
+		await act( async () => {
+			fireEvent.click( acceptAll );
+		} );
+		// applyReviewEdit commits the edit behind an 800ms shimmer delay.
+		await act( async () => {
+			jest.advanceTimersByTime( 1000 );
+		} );
+
+		expect( blockUpdates ).toEqual( [
+			{
+				clientId: 'block-1',
+				attrs: { content: 'There will be a lot of activities for children.' },
+			},
+		] );
+		expect( container.textContent ).toContain( 'Applied' );
+		expect( findButtonByText( container, 'Retry' ) ).toBeUndefined();
+		jest.useRealTimers();
+	} );
+
+	it( 'shows a steady Accepting state while the bulk run is in progress', async () => {
+		jest.useFakeTimers();
+		mockEditorBlocks = [
+			{ clientId: 'block-1', name: 'core/paragraph', attributes: { content: 'children..' } },
+		];
+		installWpDataMockWithBlockEditor( {
+			'block-1': { name: 'core/paragraph', attributes: { content: 'children..' } },
+		} );
+
+		const { container } = render(
+			React.createElement( Proofread, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Punctuation',
+						feedback: 'Doubled period.',
+						action: 'Remove the extra period.',
+						block_index: 0,
+						current_text: 'children..',
+						suggested_text: 'children.',
+					},
+				],
+			} )
+		);
+
+		const acceptAll = findAcceptAllButton( container ) as HTMLButtonElement;
+		await act( async () => {
+			fireEvent.click( acceptAll );
+		} );
+
+		// Mid-run the footer stays put with a steady label rather than showing a
+		// decrementing "Accept all (N)" count that vanishes as items resolve.
+		expect( container.querySelector( '.jetpack-ai-feedback-list__footer' ) ).not.toBeNull();
+		expect( container.textContent ).toContain( 'Accepting…' );
+		expect( container.textContent ).not.toContain( 'Accept all (' );
+
+		await act( async () => {
+			jest.advanceTimersByTime( 1000 );
+		} );
+
+		expect( container.textContent ).toContain( 'Applied' );
+		expect( findAcceptAllButton( container ) ).toBeUndefined();
+		jest.useRealTimers();
+	} );
+
+	it( 'disables Undo on applied items during a bulk run', async () => {
+		jest.useFakeTimers();
+		mockEditorBlocks = [
+			{ clientId: 'block-a', name: 'core/paragraph', attributes: { content: 'aa..' } },
+			{ clientId: 'block-b', name: 'core/paragraph', attributes: { content: 'bb..' } },
+		];
+		installWpDataMockWithBlockEditor( {
+			'block-a': { name: 'core/paragraph', attributes: { content: 'aa..' } },
+			'block-b': { name: 'core/paragraph', attributes: { content: 'bb..' } },
+		} );
+
+		const { container } = render(
+			React.createElement( Proofread, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'A',
+						feedback: 'a',
+						action: 'a',
+						block_index: 0,
+						current_text: 'aa..',
+						suggested_text: 'aa.',
+					},
+					{
+						title: 'B',
+						feedback: 'b',
+						action: 'b',
+						block_index: 1,
+						current_text: 'bb..',
+						suggested_text: 'bb.',
+					},
+				],
+			} )
+		);
+
+		// Accept item A on its own so it collapses into an Applied row with Undo.
+		await act( async () => {
+			fireEvent.click( findButtonByText( container, 'Accept' ) as HTMLButtonElement );
+		} );
+		await act( async () => {
+			jest.advanceTimersByTime( 1000 );
+		} );
+		const undoBeforeRun = findButtonByText( container, 'Undo' );
+		expect( undoBeforeRun ).toBeDefined();
+		expect( undoBeforeRun?.hasAttribute( 'disabled' ) ).toBe( false );
+
+		// Start a bulk run over the remaining item B. While it is in flight the Undo
+		// on the already-applied item A must be locked so it cannot race the edit.
+		await act( async () => {
+			fireEvent.click( findAcceptAllButton( container ) as HTMLButtonElement );
+		} );
+		const undoDuringRun = findButtonByText( container, 'Undo' );
+		expect( undoDuringRun ).toBeDefined();
+		expect( undoDuringRun?.hasAttribute( 'disabled' ) ).toBe( true );
+
+		await act( async () => {
+			jest.advanceTimersByTime( 1000 );
+		} );
+		jest.useRealTimers();
 	} );
 } );
 
@@ -778,6 +1040,29 @@ describe( 'getEmptyViewSuggestions', () => {
 
 		expect( labels ).not.toContain( 'Generate Feedback' );
 		expect( labels ).toContain( 'AI Editorial Review' );
+	} );
+
+	it( 'hides Proofread by default and shows it when the preview feature enables it', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post' );
+		expect( getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label ) ).not.toContain(
+			'Proofread'
+		);
+
+		installAiEditorialReviewData( { proofreadContent: true } );
+		installPostTypeMock( 'post' );
+		expect( getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label ) ).toContain(
+			'Proofread'
+		);
+	} );
+
+	it( 'hides Proofread until the post has a saved post ID', () => {
+		installAiEditorialReviewData( { proofreadContent: true } );
+		installPostTypeMock( 'post', null );
+
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+
+		expect( labels ).not.toContain( 'Proofread' );
 	} );
 
 	it( 'hides Optimize Title when the feature disables it', () => {
@@ -1129,6 +1414,26 @@ describe( 'useSuggestions', () => {
 		expect( addMessage ).not.toHaveBeenCalled();
 	} );
 
+	it( 'opens split-screen when the Proofread suggestion is clicked', () => {
+		installAiEditorialReviewData( { proofreadContent: true } );
+		installPostTypeMock( 'post' );
+		const proofreadPrompt = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'proofread-content'
+		)?.prompt;
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: proofreadPrompt },
+				} )
+			);
+		} );
+
+		expect( mockSetIsSplitScreen ).toHaveBeenCalledWith( true );
+	} );
+
 	it( 'opens split-screen when the AI Editorial Review suggestion is clicked', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock( 'post' );
@@ -1396,6 +1701,30 @@ describe( 'contextProvider', () => {
 		const feedbackContext = contextProvider.getClientContext();
 		expect( feedbackContext.currentPageContent ).toEqual( [] );
 		expect( feedbackContext.jetpackAi ).toBeUndefined();
+		expect( contextProvider.getClientContext().currentPageContent ).toHaveLength( 1 );
+		expect( contextProvider.getClientContext().jetpackAi ).toBeUndefined();
+	} );
+
+	it( 'suppresses full page content for the next Proofread chip request', () => {
+		installAiEditorialReviewData( { proofreadContent: true } );
+		installContextProviderMock();
+		const proofreadPrompt = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'proofread-content'
+		)?.prompt;
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: proofreadPrompt },
+				} )
+			);
+		} );
+
+		const proofreadContext = contextProvider.getClientContext();
+		expect( proofreadContext.currentPageContent ).toEqual( [] );
+		expect( proofreadContext.jetpackAi ).toBeUndefined();
 		expect( contextProvider.getClientContext().currentPageContent ).toHaveLength( 1 );
 		expect( contextProvider.getClientContext().jetpackAi ).toBeUndefined();
 	} );

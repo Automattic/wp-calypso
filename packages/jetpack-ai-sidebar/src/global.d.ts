@@ -21,6 +21,7 @@ declare const agentsManagerData:
 				features?: {
 					aiEditorialReview?: boolean;
 					generateFeedback?: boolean;
+					proofreadContent?: boolean;
 					blockTransformations?: boolean;
 					blockToolbarButton?: boolean;
 					optimizeTitleSuggestion?: boolean;
