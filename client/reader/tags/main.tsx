@@ -1,7 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import { FollowedTags } from 'calypso/reader/tags/followed-tags';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import AlphabeticTags from './alphabetic-tags';
@@ -22,13 +21,12 @@ export default function TagsPage( { trendingTags, alphabeticTags }: Props ) {
 		<ReaderMain className="tags__main" wideLayout>
 			{ isLoggedIn && (
 				<NavigationHeader
-					title={ translate( 'Tags' ) }
+					title={ translate( 'Popular Tags' ) }
 					subtitle={ translate(
 						"For every one of your interests, there's a tag on WordPress.com."
 					) }
 				/>
 			) }
-			{ isLoggedIn && <FollowedTags /> }
 			<div className="tags__header">
 				<h4>
 					{
