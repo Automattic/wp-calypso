@@ -1,5 +1,3 @@
-// eslint-disable-next-line no-restricted-imports -- parity test against the lodash function being replaced
-import lodashMergeWith from 'lodash/mergeWith';
 import mergeWith from '../mergeWith';
 
 type Customizer = (
@@ -11,8 +9,8 @@ type Customizer = (
 	stack: { size: number }
 ) => unknown;
 
-// Only touches `.size`, which both a native Map and the reference implementation's stack expose, so
-// the same customizer can drive both implementations in a differential test.
+// The customizer receives a `stack` whose `.size` reports the current recursion
+// depth (used by `topLevelOnly` below and the depth test).
 const overwriteArrays: Customizer = ( _objValue, srcValue ) =>
 	Array.isArray( srcValue ) ? srcValue : undefined;
 
@@ -25,29 +23,40 @@ const topLevelOnly: Customizer = ( _objValue, srcValue, key, _obj, _src, stack )
 const noop: Customizer = () => undefined;
 
 describe( 'mergeWith', () => {
-	// Each case is [ label, customizer, factory ]; the factory produces fresh
-	// inputs because both implementations mutate their destination.
-	const cases: Array< [ string, Customizer, () => unknown[] ] > = [
+	// Each case is `[ label, customizer, makeInputs, expected ]`. `makeInputs` is a
+	// factory so mergeWith gets fresh, mutable inputs; `expected` was captured from
+	// the lodash function this replaces, so the table pins the behavior without
+	// depending on lodash at run time.
+	const cases: Array< [ string, Customizer, () => unknown[], unknown ] > = [
 		[
 			'noop customizer behaves like a deep merge',
 			noop,
 			() => [ { a: { b: 1 } }, { a: { c: 2 } } ],
+			{ a: { b: 1, c: 2 } },
 		],
 		[
 			'arrays overwrite instead of merging by index',
 			overwriteArrays,
 			() => [ { a: [ 1, 2, 3 ] }, { a: [ 9 ] } ],
+			{ a: [ 9 ] },
 		],
 		[
 			'nested arrays overwrite',
 			overwriteArrays,
 			() => [ { a: { list: [ 1, 2 ], n: 1 } }, { a: { list: [ 3 ], m: 2 } } ],
+			{ a: { list: [ 3 ], n: 1, m: 2 } },
 		],
-		[ 'arrays concatenate', concatArrays, () => [ { a: [ 1, 2 ] }, { a: [ 3, 4 ] } ] ],
+		[
+			'arrays concatenate',
+			concatArrays,
+			() => [ { a: [ 1, 2 ] }, { a: [ 3, 4 ] } ],
+			{ a: [ 1, 2, 3, 4 ] },
+		],
 		[
 			'concat creates a fresh array when destination lacks the key',
 			concatArrays,
 			() => [ {}, { a: [ 1, 2 ] } ],
+			{ a: [ 1, 2 ] },
 		],
 		[
 			'top-level key replaced, nested key of same name untouched',
@@ -56,34 +65,50 @@ describe( 'mergeWith', () => {
 				{ special: 1, nested: { special: 2 } },
 				{ special: 9, nested: { special: 9 } },
 			],
+			{ special: 'REPLACED', nested: { special: 9 } },
 		],
 		[
 			'customizer undefined falls back to default for primitives',
 			overwriteArrays,
 			() => [ { a: 1 }, { a: 2 } ],
+			{ a: 2 },
 		],
 		[
 			'multiple sources merge left to right',
 			overwriteArrays,
 			() => [ {}, { a: 1 }, { a: 2, b: 3 } ],
+			{ a: 2, b: 3 },
 		],
-		[ 'null source is ignored', overwriteArrays, () => [ { a: 1 }, null, { b: 2 } ] ],
-		[ 'undefined source is ignored', overwriteArrays, () => [ { a: 1 }, undefined, { b: 2 } ] ],
-		[ 'undefined src value skips existing key', noop, () => [ { a: 1 }, { a: undefined } ] ],
-		[ 'null overrides object', noop, () => [ { a: { b: 1 } }, { a: null } ] ],
+		[
+			'null source is ignored',
+			overwriteArrays,
+			() => [ { a: 1 }, null, { b: 2 } ],
+			{ a: 1, b: 2 },
+		],
+		[
+			'undefined source is ignored',
+			overwriteArrays,
+			() => [ { a: 1 }, undefined, { b: 2 } ],
+			{ a: 1, b: 2 },
+		],
+		[
+			'undefined src value skips existing key',
+			noop,
+			() => [ { a: 1 }, { a: undefined } ],
+			{ a: 1 },
+		],
+		[ 'null overrides object', noop, () => [ { a: { b: 1 } }, { a: null } ], { a: null } ],
 		[
 			'__proto__ payload is dropped',
 			noop,
 			() => [ {}, JSON.parse( '{ "__proto__": { "x": 1 }, "a": 1 }' ) ],
+			{ a: 1 },
 		],
 	];
 
-	it.each( cases )( 'matches the reference implementation: %s', ( _label, customizer, make ) => {
-		const mineArgs = [ ...make(), customizer ] as [ object, ...unknown[] ];
-		const theirsArgs = [ ...make(), customizer ] as [ object, ...unknown[] ];
-		const mine = ( mergeWith as ( ...a: unknown[] ) => unknown )( ...mineArgs );
-		const theirs = ( lodashMergeWith as ( ...a: unknown[] ) => unknown )( ...theirsArgs );
-		expect( mine ).toEqual( theirs );
+	it.each( cases )( 'produces the expected result: %s', ( _label, customizer, make, expected ) => {
+		const mine = ( mergeWith as ( ...a: unknown[] ) => unknown )( ...make(), customizer );
+		expect( mine ).toEqual( expected );
 	} );
 
 	it( 'passes stack.size reflecting recursion depth to the customizer', () => {
@@ -107,11 +132,10 @@ describe( 'mergeWith', () => {
 			return circular;
 		};
 		const mine = mergeWith( {}, make(), noop ) as Record< string, unknown >;
-		const theirs = lodashMergeWith( {}, make(), noop ) as Record< string, unknown >;
 		expect( mine.a ).toBe( 1 );
 		// The nested `self` is merged once into its own container, then short-
 		// circuited on re-entry rather than looping forever.
-		expect( mine.self ).toEqual( theirs.self );
+		expect( ( mine.self as Record< string, unknown > ).a ).toBe( 1 );
 		expect( ( mine.self as Record< string, unknown > ).self ).toBe( mine.self );
 	} );
 
@@ -140,23 +164,18 @@ describe( 'mergeWith', () => {
 	it( 'treats a non-function trailing argument as a source', () => {
 		// No customizer given — the last object is merged, not dropped or called.
 		const mine = mergeWith( { a: { x: 1 } }, { a: { y: 2 } }, { b: 3 } );
-		const theirs = lodashMergeWith( { a: { x: 1 } }, { a: { y: 2 } }, { b: 3 } );
-		expect( mine ).toEqual( theirs );
 		expect( mine ).toEqual( { a: { x: 1, y: 2 }, b: 3 } );
 	} );
 
 	it( 'merges a single source with no customizer', () => {
 		const mine = mergeWith( { a: [ 1, 2 ] }, { a: [ 9 ], b: 4 } );
-		const theirs = lodashMergeWith( { a: [ 1, 2 ] }, { a: [ 9 ], b: 4 } );
-		expect( mine ).toEqual( theirs );
+		expect( mine ).toEqual( { a: [ 9, 2 ], b: 4 } );
 	} );
 
 	it( 'returns a fresh object when the destination is nullish', () => {
 		// A null destination (e.g. an unknown post merged with local edits) must
 		// yield the merged edits rather than throwing on the null read.
 		const mine = mergeWith( null, { a: 1, b: [ 2 ] }, overwriteArrays );
-		const theirs = lodashMergeWith( null, { a: 1, b: [ 2 ] }, overwriteArrays );
-		expect( mine ).toEqual( theirs );
 		expect( mine ).toEqual( { a: 1, b: [ 2 ] } );
 	} );
 
@@ -169,8 +188,6 @@ describe( 'mergeWith', () => {
 			return fn;
 		};
 		const mine = mergeWith( {}, makeFn() );
-		const theirs = lodashMergeWith( {}, makeFn() );
-		expect( mine ).toEqual( theirs );
 		expect( ( mine as Record< string, unknown > ).a ).toBe( 1 );
 	} );
 } );
