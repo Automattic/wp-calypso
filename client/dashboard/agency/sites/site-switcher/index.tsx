@@ -1,7 +1,6 @@
 import { agencySitesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import useBuildCurrentRouteLink from '../../../app/hooks/use-build-current-route-link';
 import Switcher from '../../../components/switcher';
 import { Text } from '../../../components/text';
 import { getDisplayUrl, getSiteName } from '../dataviews/site-data';
@@ -31,7 +30,6 @@ export default function AgencySiteSwitcher( props: AgencySiteSwitcherProps ) {
 		...agencySitesQuery( { per_page: 100 } ),
 		enabled: isOpen,
 	} );
-	const buildCurrentRouteLink = useBuildCurrentRouteLink();
 
 	return (
 		<Switcher< AgencySite >
@@ -56,7 +54,7 @@ export default function AgencySiteSwitcher( props: AgencySiteSwitcherProps ) {
 			items={ sites }
 			value={ site }
 			searchableFields={ searchableFields }
-			getItemUrl={ ( item ) => buildCurrentRouteLink( { params: { siteSlug: item.url } } ) }
+			getItemUrl={ ( item ) => `/sites/${ item.url }` }
 			open={ isOpen }
 			onToggle={ setIsOpen }
 		/>
