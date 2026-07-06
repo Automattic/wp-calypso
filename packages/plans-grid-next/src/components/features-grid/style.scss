@@ -792,6 +792,11 @@
 			font-family: 'SF Pro Display', $sans;
 			line-height: 1;
 
+			&.is-discounted,
+			&.is-original {
+				margin-right: 0;
+			}
+
 			&.is-original {
 				color: var( --studio-gray-40 );
 				font-family: 'SF Pro Display', $sans;
@@ -842,7 +847,7 @@
 	.plans-grid-next-header-price__pricing-group {
 		align-items: last baseline;
 		gap: 8px;
-		justify-content: flex-start;
+		justify-content: flex-end;
 	}
 
 	.plan-features-2023-grid__table-item.is-top-buttons {
