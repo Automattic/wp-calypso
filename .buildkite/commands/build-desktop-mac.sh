@@ -18,6 +18,11 @@ cd desktop
 corepack enable
 yarn install --immutable --inline-builds
 
+# The only desktop step that runs on trunk, so this doubles as the post-merge
+# guard for the signing routing/arg logic.
+echo "--- :jest: Running unit tests"
+yarn run test:unit
+
 echo "--- :ruby: Setting up Ruby tooling"
 install_gems
 
