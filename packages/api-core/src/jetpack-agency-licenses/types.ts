@@ -40,9 +40,28 @@ export interface JetpackLicense {
 	subscription?: JetpackLicenseSubscription | null;
 }
 
+export enum JetpackLicenseFilter {
+	NotRevoked = 'not_revoked',
+	Detached = 'detached',
+	Attached = 'attached',
+	Revoked = 'revoked',
+	Standard = 'standard',
+}
+
+export enum JetpackLicenseSortField {
+	IssuedAt = 'issued_at',
+	AttachedAt = 'attached_at',
+	RevokedAt = 'revoked_at',
+}
+
+export enum JetpackLicenseSortDirection {
+	Ascending = 'asc',
+	Descending = 'desc',
+}
+
 export interface FetchJetpackLicensesOptions {
-	filter: string;
+	filter: JetpackLicenseFilter;
 	search?: string;
-	sortField: string;
-	sortDirection: string;
+	sortField: JetpackLicenseSortField;
+	sortDirection: JetpackLicenseSortDirection;
 }
