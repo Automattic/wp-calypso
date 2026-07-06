@@ -17,13 +17,19 @@ import './style.scss';
  * them on its Discover tab. Suppressing them there would require changes in the
  * shared classic stream, out of scope for the per-space layouts.
  */
-export function LegacyLayout( { streamKey, scrollElement, restoreKey }: SpaceFeedLayoutProps ) {
+export function LegacyLayout( {
+	streamKey,
+	scrollElement,
+	restoreKey,
+	emptyContent,
+}: SpaceFeedLayoutProps ) {
 	return (
 		<ReaderStreamV2
 			streamKey={ streamKey }
 			scrollElement={ scrollElement }
 			className="space-feed-legacy"
 			restoreKey={ restoreKey }
+			emptyContent={ emptyContent }
 		/>
 	);
 }

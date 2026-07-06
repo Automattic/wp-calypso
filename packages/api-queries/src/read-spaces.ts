@@ -128,8 +128,49 @@ type UpdateReadSpaceVariables = {
 };
 
 export const updateReadSpaceMutation = ( queryClient: QueryClient ) =>
-	mutationOptions< ReadSpaceDetails, unknown, UpdateReadSpaceVariables >( {
+	mutationOptions<
+		ReadSpaceDetails,
+		unknown,
+		UpdateReadSpaceVariables,
+		{ previousList: ReadSpace[] | undefined }
+	>( {
 		mutationFn: ( { spaceId, params } ) => updateReadSpace( spaceId, params ),
+		// Optimistically patch the cached list summary so the sidebar — which reads
+		// `useSpaces()` (this list) and renders each item's icon and colour from
+		// `layout` via `resolveSpaceIconColor` — reflects a name/icon/colour change
+		// the instant the user saves, without waiting for the round-trip. `onSuccess`
+		// then writes the canonical server detail over the top.
+		onMutate: async ( { spaceId, params } ) => {
+			// `cancelQueries` is best-effort per the TanStack docs; if it rejects we
+			// must still apply the optimistic write and let the mutationFn run.
+			try {
+				await queryClient.cancelQueries( { queryKey: readSpacesQuery().queryKey } );
+			} catch {
+				// no-op — fall through to the optimistic write below.
+			}
+			const previousList = queryClient.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey );
+			// `params.layout` is a partial merge (see `UpdateReadSpaceParams`), so merge
+			// it onto the existing layout rather than replacing it.
+			queryClient.setQueryData< ReadSpace[] >(
+				readSpacesQuery().queryKey,
+				( previous ) =>
+					previous?.map( ( item ) =>
+						item.id === spaceId
+							? {
+									...item,
+									...( params.name !== undefined ? { name: params.name } : {} ),
+									layout: { ...item.layout, ...params.layout },
+							  }
+							: item
+					)
+			);
+			return { previousList };
+		},
+		onError: ( _error, _variables, context ) => {
+			if ( context?.previousList ) {
+				queryClient.setQueryData( readSpacesQuery().queryKey, context.previousList );
+			}
+		},
 		onSuccess: ( space ) => {
 			// Update may change summary fields (title/layout), so refresh the matching
 			// list item as well as the detail cache.
