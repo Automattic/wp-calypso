@@ -83,8 +83,14 @@ export default function BaseSuggestionPicker( {
 			</div>
 			{ effectiveAppliedValue !== null && appliedMessage && (
 				// A div (not a <p>) so AM's `.Message-module_message p` reset can't
-				// override the margin that positions this confirmation.
-				<div className="jetpack-ai-base-suggestion-picker__status" role="status">
+				// override the margin that positions this confirmation. Live-region
+				// role only for in-session applies — a confirmation derived from
+				// currentValue renders on mount (e.g. rehydrated history) and must
+				// not be announced as if the user just acted.
+				<div
+					className="jetpack-ai-base-suggestion-picker__status"
+					role={ appliedValue !== null ? 'status' : undefined }
+				>
 					{ appliedMessage }
 				</div>
 			) }

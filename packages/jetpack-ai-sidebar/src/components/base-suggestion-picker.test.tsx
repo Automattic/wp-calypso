@@ -69,6 +69,22 @@ describe( 'BaseSuggestionPicker', () => {
 		} );
 	} );
 
+	it( 'only exposes the confirmation as a live region after an in-session apply', () => {
+		render(
+			<BaseSuggestionPicker
+				intro="Pick one:"
+				options={ options }
+				onApply={ jest.fn() }
+				appliedMessage="Applied."
+				currentValue="Second option"
+			/>
+		);
+		expect( screen.getByText( 'Applied.' ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'status' ) ).not.toBeInTheDocument();
+		fireEvent.click( screen.getByText( 'First option' ) );
+		expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Applied.' );
+	} );
+
 	it( 'lets a click override the derived currentValue highlight', () => {
 		render(
 			<BaseSuggestionPicker
