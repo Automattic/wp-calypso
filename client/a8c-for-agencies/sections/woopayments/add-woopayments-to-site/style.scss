@@ -1,0 +1,8 @@
+// RadioControl renders a fieldset with default spacing; keep the picker rows compact.
+.woopayments-add-site-table__radio {
+	margin: 0;
+
+	.components-radio-control__option {
+		margin: 0;
+	}
+}
