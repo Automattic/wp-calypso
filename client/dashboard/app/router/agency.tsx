@@ -7,7 +7,7 @@ import {
 	queryClient,
 	rawUserPreferencesQuery,
 } from '@automattic/api-queries';
-import { createRoute, createLazyRoute } from '@tanstack/react-router';
+import { createRoute, createLazyRoute, notFound } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
@@ -240,8 +240,13 @@ const earnPayoutSettingsRoute = createRoute( {
 export const agencySiteRoute = createRoute( {
 	getParentRoute: () => agencyRoute,
 	path: 'sites/$siteSlug',
-	loader: ( { params: { siteSlug } } ) =>
-		queryClient.ensureQueryData( agencySiteQuery( siteSlug ) ),
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( agencySiteQuery( siteSlug ) );
+		if ( ! site ) {
+			throw notFound();
+		}
+		return site;
+	},
 } ).lazy( () =>
 	import( '../../agency/sites/site' ).then( ( d ) =>
 		createLazyRoute( 'agency-site' )( {

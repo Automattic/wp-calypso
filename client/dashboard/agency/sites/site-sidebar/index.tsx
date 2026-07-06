@@ -11,27 +11,25 @@ export default function AgencySiteSidebar() {
 	const { siteSlug } = agencySiteRoute.useParams();
 	const { data: site } = useQuery( agencySiteQuery( siteSlug ) );
 
-	if ( ! site ) {
-		return null;
-	}
-
 	return (
 		<VStack spacing={ 2 }>
 			<SidebarBackButton to="/sites">{ __( 'Back to Sites' ) }</SidebarBackButton>
-			<VStack spacing={ 4 }>
-				<SidebarMenu>
-					<AgencySiteSwitcherItem site={ site } />
-				</SidebarMenu>
-				<SidebarMenu>
-					<SidebarMenuItem
-						icon={ category }
-						to={ `/sites/${ siteSlug }` }
-						activeOptions={ { exact: true } }
-					>
-						{ __( 'Overview' ) }
-					</SidebarMenuItem>
-				</SidebarMenu>
-			</VStack>
+			{ site && (
+				<VStack spacing={ 4 }>
+					<SidebarMenu>
+						<AgencySiteSwitcherItem site={ site } />
+					</SidebarMenu>
+					<SidebarMenu>
+						<SidebarMenuItem
+							icon={ category }
+							to={ `/sites/${ siteSlug }` }
+							activeOptions={ { exact: true } }
+						>
+							{ __( 'Overview' ) }
+						</SidebarMenuItem>
+					</SidebarMenu>
+				</VStack>
+			) }
 		</VStack>
 	);
 }

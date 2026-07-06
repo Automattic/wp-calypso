@@ -49,9 +49,7 @@ boot( {
 		darkMode: false,
 	},
 	optIn: false,
-	components: {
-		siteSwitcher: () => import( '../agency/sites/site-switcher' ),
-	},
+	components: {},
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
 		paginatedSitesQuery: ( fetchSiteOptions?: FetchPaginatedSitesOptions ) =>
