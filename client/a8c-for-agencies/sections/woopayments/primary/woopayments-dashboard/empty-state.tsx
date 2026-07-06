@@ -1,5 +1,5 @@
 import { Button } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
 import StepSection from 'calypso/a8c-for-agencies/components/step-section';
 import StepSectionItem from 'calypso/a8c-for-agencies/components/step-section-item';
 import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
@@ -9,7 +9,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import AddWooPaymentsToSite from '../../add-woopayments-to-site';
 
 const WooPaymentsDashboardEmptyState = () => {
-	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { showSupportGuide } = useHelpCenter();
 
@@ -18,25 +17,25 @@ const WooPaymentsDashboardEmptyState = () => {
 			<img src={ wooPaymentsLogo } alt="WooPayments" />
 			<div>
 				<div className="woopayments-dashboard-empty-state__heading">
-					{ translate( 'Earn Revenue Share when clients use WooPayments' ) }
+					{ __( 'Earn Revenue Share when clients use WooPayments' ) }
 				</div>
 				<div className="woopayments-dashboard-empty-state__description">
-					{ translate(
+					{ __(
 						'When new clients sign up to use the WooPayments gateway on WooCommerce stores that you build or manage for them, you will receive a revenue share of 5 basis points on the Total Payments Volume (“TPV”).'
 					) }
 				</div>
 			</div>
-			<StepSection heading={ translate( 'How do I start?' ) }>
+			<StepSection heading={ __( 'How do I start?' ) }>
 				<StepSectionItem
-					heading={ translate( 'Add WooPayments to a site for free' ) }
-					description={ translate( 'Start by picking the site' ) }
+					heading={ __( 'Add WooPayments to a site for free' ) }
+					description={ __( 'Start by picking the site' ) }
 				>
 					<div className="woopayments-dashboard-empty-state__button">
 						<AddWooPaymentsToSite />
 					</div>
 				</StepSectionItem>
 			</StepSection>
-			<StepSection heading={ translate( 'Learn more about the program' ) }>
+			<StepSection heading={ __( 'Learn more about the program' ) }>
 				<Button
 					variant="link"
 					onClick={ () => {
@@ -48,7 +47,7 @@ const WooPaymentsDashboardEmptyState = () => {
 						);
 					} }
 				>
-					{ translate( 'Check out the full details in the Knowledge Base' ) }
+					{ __( 'Check out the full details in the Knowledge Base' ) }
 				</Button>
 			</StepSection>
 		</div>

@@ -1,6 +1,6 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
-import { useTranslate } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
 import A4ATablePlaceholder from 'calypso/a8c-for-agencies/components/a4a-table-placeholder';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
@@ -22,8 +22,6 @@ const AddWooPaymentsToSiteTable = ( {
 	selectedSite: WooPaymentsSiteItem | null;
 	setSelectedSite: ( site: WooPaymentsSiteItem | null ) => void;
 } ) => {
-	const translate = useTranslate();
-
 	const dispatch = useDispatch();
 
 	const { items, isLoading } = useFetchManagedSites();
@@ -57,7 +55,7 @@ const AddWooPaymentsToSiteTable = ( {
 	const fields = useMemo( () => {
 		const siteColumn = {
 			id: 'site',
-			label: translate( 'Site' ),
+			label: __( 'Site' ),
 			getValue: ( { item }: { item: WooPaymentsSiteItem } ) => item.site,
 			render: ( { item }: { item: WooPaymentsSiteItem } ) => (
 				<div>
@@ -76,7 +74,7 @@ const AddWooPaymentsToSiteTable = ( {
 		};
 
 		return [ siteColumn ];
-	}, [ onSelectSite, selectedSite?.id, translate ] );
+	}, [ onSelectSite, selectedSite?.id ] );
 
 	const { data: allSites, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( availableSites as WooPaymentsSiteItem[], dataViewsState, fields );

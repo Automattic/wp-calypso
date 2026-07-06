@@ -1,8 +1,8 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { __experimentalHStack as HStack, Button, Modal, Spinner } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
+import { __ } from '@wordpress/i18n';
 import { Icon, external, download, close } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState, useCallback } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
@@ -26,7 +26,6 @@ import {
 import type { SitesWithWooPaymentsState } from '../types';
 
 export default function SitesWithWooPayments() {
-	const translate = useTranslate();
 	const {
 		sitesWithPluginsStates: items,
 		woopaymentsData,
@@ -73,7 +72,7 @@ export default function SitesWithWooPayments() {
 		() => [
 			{
 				id: 'site',
-				label: translate( 'Site' ).toUpperCase(),
+				label: __( 'Site' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item }: { item: SitesWithWooPaymentsState } ) => (
 					<SiteColumn site={ item.siteUrl } />
@@ -83,7 +82,7 @@ export default function SitesWithWooPayments() {
 			},
 			{
 				id: 'transactions',
-				label: translate( 'Transactions' ).toUpperCase(),
+				label: __( 'Transactions' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item } ) => {
 					if ( isLoadingWooPaymentsData ) {
@@ -97,7 +96,7 @@ export default function SitesWithWooPayments() {
 			},
 			{
 				id: 'commissionsPaid',
-				label: translate( 'Commissions paid' ).toUpperCase(),
+				label: __( 'Commissions paid' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item } ) => {
 					if ( isLoadingWooPaymentsData ) {
@@ -111,7 +110,7 @@ export default function SitesWithWooPayments() {
 			},
 			{
 				id: 'timeframeCommissions',
-				label: translate( 'Timeframe commissions' ).toUpperCase(),
+				label: __( 'Timeframe commissions' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item } ) => {
 					if ( isLoadingWooPaymentsData ) {
@@ -125,7 +124,7 @@ export default function SitesWithWooPayments() {
 			},
 			{
 				id: 'woopaymentsStatus',
-				label: translate( 'WooPayments status' ).toUpperCase(),
+				label: __( 'WooPayments status' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item } ) => (
 					<WooPaymentsStatusColumn state={ item.state } siteId={ item.blogId } />
@@ -135,7 +134,7 @@ export default function SitesWithWooPayments() {
 			},
 			{
 				id: 'commissionEligibility',
-				label: translate( 'Commission eligibility' ).toUpperCase(),
+				label: __( 'Commission eligibility' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item } ) => (
 					<CommissionEligibilityColumn
@@ -148,7 +147,7 @@ export default function SitesWithWooPayments() {
 				enableSorting: false,
 			},
 		],
-		[ isLoadingWooPaymentsData, translate, woopaymentsData ]
+		[ isLoadingWooPaymentsData, woopaymentsData ]
 	);
 
 	const { data, paginationInfo } = useMemo( () => {
@@ -187,7 +186,7 @@ export default function SitesWithWooPayments() {
 		() => [
 			{
 				id: 'visit-wp-admin',
-				label: translate( 'Visit WP Admin' ),
+				label: __( 'Visit WP Admin' ),
 				icon: external,
 				callback( items: SitesWithWooPaymentsState[] ) {
 					const isInstalled = items[ 0 ].state === 'active';
@@ -204,7 +203,7 @@ export default function SitesWithWooPayments() {
 			},
 			{
 				id: 'download-commissions-report',
-				label: translate( 'Download commissions report' ),
+				label: __( 'Download commissions report' ),
 				icon: download,
 				callback: handleDownloadCommissionsReport,
 				isEligible( item: SitesWithWooPaymentsState ) {
@@ -212,7 +211,7 @@ export default function SitesWithWooPayments() {
 				},
 			},
 		],
-		[ translate, dispatch, handleDownloadCommissionsReport ]
+		[ dispatch, handleDownloadCommissionsReport ]
 	);
 
 	return (
@@ -256,20 +255,20 @@ export default function SitesWithWooPayments() {
 					<Button
 						className="download-commissions-modal__close-button"
 						onClick={ handleCancelDownload }
-						aria-label={ translate( 'Close' ) }
+						aria-label={ __( 'Close' ) }
 					>
 						<Icon size={ 24 } icon={ close } />
 					</Button>
 					<h1 className="download-commissions-modal__title">
-						{ translate( 'Generating commissions report' ) }
+						{ __( 'Generating commissions report' ) }
 					</h1>
 
 					<div className="download-commissions-modal__instruction">
 						<Spinner />
 						<div className="download-commissions-modal__instruction-text">
-							{ translate( 'Your report is being prepared.' ) }
+							{ __( 'Your report is being prepared.' ) }
 							<br />
-							{ translate( 'The download will begin automatically.' ) }
+							{ __( 'The download will begin automatically.' ) }
 						</div>
 					</div>
 				</Modal>
