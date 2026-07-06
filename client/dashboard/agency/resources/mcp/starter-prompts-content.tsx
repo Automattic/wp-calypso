@@ -1,12 +1,14 @@
 import {
 	Button,
+	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { check, copy } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useCallback, useState } from 'react';
+import { Fragment, useCallback, useState } from 'react';
+import { Card, CardBody, CardDivider } from '../../../components/card';
 import { CollapsibleCard } from '../../../components/collapsible-card';
 import type { RecordTracksEvent } from './types';
 
@@ -77,6 +79,7 @@ function StarterPromptItem( {
 
 	return (
 		<CollapsibleCard
+			isBorderless
 			disabled={ disabled }
 			toggleLabel={ prompt.title }
 			header={
@@ -88,7 +91,7 @@ function StarterPromptItem( {
 			<VStack spacing={ 3 }>
 				<Text variant="muted">{ prompt.description }</Text>
 				<div className="mcp-starter-prompt">
-					<div className="mcp-starter-prompt__copy">
+					<HStack justify="flex-end" className="mcp-starter-prompt__toolbar">
 						<Button
 							variant="tertiary"
 							icon={ copied ? check : copy }
@@ -96,7 +99,7 @@ function StarterPromptItem( {
 							showTooltip
 							onClick={ handleCopy }
 						/>
-					</div>
+					</HStack>
 					<Text className="mcp-starter-prompt__text">{ prompt.prompt }</Text>
 				</div>
 			</VStack>
@@ -119,30 +122,28 @@ export default function McpStarterPrompts( {
 	);
 
 	return (
-		<VStack spacing={ 4 }>
-			<VStack
-				spacing={ 2 }
-				className={ clsx( 'mcp-starter-prompts__intro', { 'is-disabled': disabled } ) }
-			>
-				<Text weight={ 600 } size={ 15 }>
-					{ __( 'Starter prompts' ) }
-				</Text>
-				<Text variant="muted">
-					{ __(
-						'The sky’s the limit with AI agents. To help you get the most out of our MCP, we’ve created a set of starter prompts you can hand straight to the AI agent of your choice once connected. Feel free to modify them as you see fit for the best experience, tailored to your agency.'
-					) }
-				</Text>
-			</VStack>
-			<VStack spacing={ 3 }>
-				{ STARTER_PROMPTS.map( ( prompt ) => (
-					<StarterPromptItem
-						key={ prompt.id }
-						prompt={ prompt }
-						disabled={ disabled }
-						onCopy={ onCopy }
-					/>
-				) ) }
-			</VStack>
-		</VStack>
+		<Card>
+			<CardBody>
+				<VStack
+					spacing={ 2 }
+					className={ clsx( 'mcp-starter-prompts__intro', { 'is-disabled': disabled } ) }
+				>
+					<Text weight={ 600 } size={ 15 }>
+						{ __( 'Starter prompts' ) }
+					</Text>
+					<Text variant="muted">
+						{ __(
+							'The sky’s the limit with AI agents. To help you get the most out of our MCP, we’ve created a set of starter prompts you can hand straight to the AI agent of your choice once connected. Feel free to modify them as you see fit for the best experience, tailored to your agency.'
+						) }
+					</Text>
+				</VStack>
+			</CardBody>
+			{ STARTER_PROMPTS.map( ( prompt ) => (
+				<Fragment key={ prompt.id }>
+					<CardDivider />
+					<StarterPromptItem prompt={ prompt } disabled={ disabled } onCopy={ onCopy } />
+				</Fragment>
+			) ) }
+		</Card>
 	);
 }
