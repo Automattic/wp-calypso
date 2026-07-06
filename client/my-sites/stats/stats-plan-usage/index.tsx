@@ -67,11 +67,14 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 		) as string;
 	}
 
-	const upgradeNote = translate( 'Need a higher limit? {{link}}Upgrade now{{/link}}', {
-		components: {
-			link: <a href={ upgradeLink } />,
-		},
-	} );
+	const upgradeNote = translate(
+		'Do you want to increase your views limit? {{link}}Upgrade now{{/link}}',
+		{
+			components: {
+				link: <a href={ upgradeLink } />,
+			},
+		}
+	);
 
 	return (
 		<div className="plan-usage">
