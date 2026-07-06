@@ -10,6 +10,7 @@ import {
 	agencyResourcesQuery,
 	agencySiteQuery,
 	agencySitesWithPluginsQuery,
+	agencyTipaltiPayeeQuery,
 	agencyWooPaymentsDataQuery,
 	jetpackAgencyLicensesQuery,
 	mcpSettingsQuery,
@@ -318,7 +319,10 @@ export const earnWooPaymentsRoute = createRoute( {
 			),
 		] );
 		if ( sitesWithPlugins.length > 0 || licenses.length > 0 ) {
-			await queryClient.ensureQueryData( agencyWooPaymentsDataQuery( agency.id ) );
+			await Promise.all( [
+				queryClient.ensureQueryData( agencyWooPaymentsDataQuery( agency.id ) ),
+				queryClient.ensureQueryData( agencyTipaltiPayeeQuery( agency.id ) ),
+			] );
 		}
 	},
 } ).lazy( () =>
