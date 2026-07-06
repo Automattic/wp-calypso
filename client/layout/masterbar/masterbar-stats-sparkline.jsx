@@ -3,11 +3,10 @@ import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 
-const CHART_HEIGHT = 22;
-const LABEL_AREA_HEIGHT = 12;
-const LABEL_AREA_WIDTH = 18;
-const BAR_WIDTH = 1;
+const CHART_HEIGHT = 24;
+const BAR_WIDTH = 2;
 const BAR_GAP = 1;
+const PEAK_MARKER_HEIGHT = 18;
 
 const getHourlyViews = createSelector(
 	( state, siteId ) => {
@@ -34,18 +33,19 @@ export default function MasterbarStatsSparkline( { siteId } ) {
 function MasterbarStatsSparklineChart( { hourlyViews } ) {
 	const highestViews = Math.max( ...hourlyViews );
 	const chartWidth = hourlyViews.length * ( BAR_WIDTH + BAR_GAP ) - BAR_GAP;
-	// The bars sit below the reserved label area, so their baseline is at
-	// LABEL_AREA_HEIGHT + CHART_HEIGHT and everything drawn stays within the
-	// viewBox (no negative coordinates, which would get clipped by the
-	// fixed-position masterbar rather than by the SVG itself).
-	const baseline = LABEL_AREA_HEIGHT + CHART_HEIGHT;
+	// The SVG's own box is just the bars (tight, no reserved space), so the
+	// item's resting size is unaffected by the peak marker. The marker is
+	// drawn below that box (y > CHART_HEIGHT) and only escapes clipping via
+	// "overflow: visible" on hover, the same show/hide-on-hover technique
+	// wp-admin's own admin bar sparkline uses for its width.
+	const backdropWidth = chartWidth + 24 + String( highestViews ).length * 8;
 
 	return (
 		<svg
 			className="masterbar__stats-sparkline"
-			width={ chartWidth + LABEL_AREA_WIDTH }
-			height={ baseline }
-			viewBox={ `0 0 ${ chartWidth + LABEL_AREA_WIDTH } ${ baseline }` }
+			width={ chartWidth }
+			height={ CHART_HEIGHT }
+			viewBox={ `0 0 ${ chartWidth } ${ CHART_HEIGHT }` }
 		>
 			{ hourlyViews.map( ( value, i ) => {
 				// for zero value, show a baseline bar with 1px height
@@ -61,32 +61,45 @@ function MasterbarStatsSparklineChart( { hourlyViews } ) {
 						key={ i }
 						className="masterbar__stats-sparkline-bar"
 						x={ i * ( BAR_WIDTH + BAR_GAP ) }
-						y={ baseline - barHeight }
+						y={ CHART_HEIGHT - barHeight }
 						width={ BAR_WIDTH }
 						height={ barHeight }
 					/>
 				);
 			} ) }
 			<g className="masterbar__stats-sparkline-peak">
+				<rect
+					className="masterbar__stats-sparkline-backdrop"
+					x={ 0 }
+					y={ CHART_HEIGHT }
+					width={ backdropWidth }
+					height={ PEAK_MARKER_HEIGHT }
+				/>
 				<line
 					className="masterbar__stats-sparkline-baseline"
 					x1={ 0 }
-					y1={ baseline }
+					y1={ CHART_HEIGHT }
 					x2={ chartWidth }
-					y2={ baseline }
+					y2={ CHART_HEIGHT }
 				/>
 				<line
 					className="masterbar__stats-sparkline-tick"
 					x1={ chartWidth }
-					y1={ baseline }
+					y1={ CHART_HEIGHT }
 					x2={ chartWidth }
-					y2={ 2 }
+					y2={ CHART_HEIGHT + 10 }
 				/>
 				<polygon
 					className="masterbar__stats-sparkline-arrow"
-					points={ `${ chartWidth + 6 },2 ${ chartWidth + 6 },10 ${ chartWidth },6` }
+					points={ `${ chartWidth + 6 },${ CHART_HEIGHT + 6 } ${ chartWidth + 6 },${
+						CHART_HEIGHT + 14
+					} ${ chartWidth },${ CHART_HEIGHT + 10 }` }
 				/>
-				<text className="masterbar__stats-sparkline-label" x={ chartWidth + 8 } y={ 10 }>
+				<text
+					className="masterbar__stats-sparkline-label"
+					x={ chartWidth + 8 }
+					y={ CHART_HEIGHT + 14 }
+				>
 					{ highestViews }
 				</text>
 			</g>
