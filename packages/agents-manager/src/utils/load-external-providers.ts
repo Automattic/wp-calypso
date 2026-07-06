@@ -175,6 +175,14 @@ export interface LoadedProviders {
 	siteBuildUtils?: SiteBuildUtils;
 	useImageUpload?: ImageUploadHook;
 	useCheckpoint?: UseCheckpointHook;
+	/**
+	 * Streamed task-update callback, forwarded to useAgentChat's `onTaskUpdate`.
+	 * Lets a provider react to streamed tool-argument deltas as they arrive — e.g.
+	 * paint streamed page-design block markup into the editor. First-write-wins
+	 * across providers (a singleton: the delta stream must be processed once, not
+	 * fanned out to every provider).
+	 */
+	onTaskUpdate?: ( update: unknown ) => void | Promise< void >;
 	capabilities?: ProviderCapabilities;
 }
 
@@ -451,6 +459,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
 	let mergedImageUpload: ImageUploadHook | undefined;
 	let mergedUseCheckpoint: UseCheckpointHook | undefined;
+	let mergedOnTaskUpdate: LoadedProviders[ 'onTaskUpdate' ] | undefined;
 	// OR-merged across all providers.
 	const mergedCapabilities: ProviderCapabilities = {};
 	let mergedSuppressEmptyViewDefaults = false;
@@ -542,6 +551,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		}
 		if ( module.useCheckpoint && ! mergedUseCheckpoint ) {
 			mergedUseCheckpoint = module.useCheckpoint;
+		}
+		if ( module.onTaskUpdate && ! mergedOnTaskUpdate ) {
+			mergedOnTaskUpdate = module.onTaskUpdate;
 		}
 
 		mergeCapabilitiesInto( mergedCapabilities, module.capabilities );
@@ -674,6 +686,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		providerIds: allProviderIds.length ? allProviderIds : undefined,
 		useNavigationContinuation: mergedNavigationContinuation,
 		useAbilitiesSetup: mergedAbilitiesSetup,
+		onTaskUpdate: mergedOnTaskUpdate,
 		useSuggestions: mergedUseSuggestions,
 		getChatComponent: mergedGetChatComponent,
 		siteBuildUtils: mergedSiteBuildUtils,

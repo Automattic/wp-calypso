@@ -275,9 +275,9 @@ const patterns = [
 // backstopped by the `eslint-plugin-you-dont-need-lodash-underscore` rules in
 // the root config, but that plugin ships no rule for these, so they get their
 // own namespace/CommonJS guards below. Only add a function here once its
-// namespace/CommonJS usages are also gone — e.g. `merge` is guarded for ES
-// imports above but still destructured from `require( 'lodash' )` in the repo's
-// own `.eslintrc.js`, so it stays out until that is migrated.
+// namespace/CommonJS usages are also gone: a function can be guarded for ES
+// imports above while a lingering `require( 'lodash' )` destructure elsewhere
+// keeps it out of this list until that usage is migrated.
 const NAMESPACE_GUARDED = [
 	{ name: 'isEmpty', message: JS_UTILS_MESSAGE },
 	{ name: 'memoize', message: JS_UTILS_MESSAGE },
@@ -301,6 +301,7 @@ const NAMESPACE_GUARDED = [
 	{ name: 'maxBy', message: EXTREMUM_MESSAGE },
 	{ name: 'orderBy', message: SORT_MESSAGE },
 	{ name: 'debounce', message: COMPOSE_MESSAGE },
+	{ name: 'merge', message: MERGE_MESSAGE },
 ];
 
 // `no-restricted-properties`: namespace member access (`_.fn( … )` / `lodash.fn( … )`).

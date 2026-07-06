@@ -7,7 +7,6 @@ import {
 } from '@automattic/api-queries';
 import { useLocale } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
-import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
@@ -31,8 +30,11 @@ import OverviewCard from '../../components/overview-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { formatDate } from '../../utils/datetime';
+import { wpcomLink } from '../../utils/link';
 
 import './style.scss';
+
+const SUPPORT_CONTACT_URL = wpcomLink( '/support/contact' );
 
 function AutoRenewButton( {
 	disableAutoRenew,
@@ -56,7 +58,7 @@ function AutoRenewButton( {
 			createErrorNotice( __( 'Failed to remove your product.' ), {
 				actions: [
 					{
-						url: CALYPSO_CONTACT,
+						url: SUPPORT_CONTACT_URL,
 						label: __( 'Please contact support' ),
 					},
 				],
@@ -66,7 +68,7 @@ function AutoRenewButton( {
 			createErrorNotice( __( 'Failed to update your subscription.' ), {
 				actions: [
 					{
-						url: CALYPSO_CONTACT,
+						url: SUPPORT_CONTACT_URL,
 						label: __( 'Please contact support' ),
 					},
 				],
@@ -82,7 +84,7 @@ function AutoRenewButton( {
 				const locale = useLocale();
 				const helpText = ( () => {
 					if ( isAutoRenewing ) {
-						// translators: date is a formatted date string
+						/* translators: %(date)s is a formatted date string. */
 						return sprintf( __( 'You will be billed on %(date)s' ), {
 							date: formatDate( new Date( Date.parse( data?.end_date ?? '' ) ), locale, {
 								dateStyle: 'long',
@@ -129,9 +131,11 @@ function AutoRenewButton( {
 					data={ subscription }
 					form={ form }
 					onChange={ () => {
-						isAutoRenewing
-							? disableAutoRenew( null, { onError: onError } )
-							: enableAutoRenew( null, { onError: onError } );
+						if ( isAutoRenewing ) {
+							disableAutoRenew( null, { onError: onError } );
+							return;
+						}
+						enableAutoRenew( null, { onError: onError } );
 					} }
 				/>
 			</CardBody>
@@ -175,7 +179,7 @@ function StopSubscriptionButton( {
 									createErrorNotice( __( 'There was a problem while removing your product.' ), {
 										actions: [
 											{
-												url: CALYPSO_CONTACT,
+												url: SUPPORT_CONTACT_URL,
 												label: __( 'Please contact support' ),
 											},
 										],
@@ -187,7 +191,7 @@ function StopSubscriptionButton( {
 										{
 											actions: [
 												{
-													url: CALYPSO_CONTACT,
+													url: SUPPORT_CONTACT_URL,
 													label: __( 'Please contact support' ),
 												},
 											],

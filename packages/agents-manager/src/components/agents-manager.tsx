@@ -179,6 +179,7 @@ function AgentSetup( {
 				environment: sectionName || 'calypso',
 				agentId,
 				version,
+				onTaskUpdate: providers.onTaskUpdate,
 			} );
 
 			setAgentConfig( config );

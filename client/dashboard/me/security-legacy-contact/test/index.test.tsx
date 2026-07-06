@@ -5,9 +5,10 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import SecurityLegacyContact from '../index';
+import type { LegacyContact } from '@automattic/api-core';
 
 const API = 'https://public-api.wordpress.com';
-const CONTACT = {
+const CONTACT: LegacyContact = {
 	legacy_contact_id: 123,
 	contact_email: 'trusted@example.com',
 	created_at: '2026-01-01T00:00:00+00:00',
@@ -38,6 +39,70 @@ describe( '<SecurityLegacyContact />', () => {
 
 		expect( await screen.findByText( CONTACT.contact_email ) ).toBeVisible();
 		expect( await removeButton() ).toBeVisible();
+	} );
+
+	test( 'shows the contact notes when present', async () => {
+		interceptContacts( [ { ...CONTACT, notes: 'Please transfer my-blog.com to my sister.' } ] );
+
+		renderScreen();
+
+		expect( await screen.findByText( 'Please transfer my-blog.com to my sister.' ) ).toBeVisible();
+	} );
+
+	test( 'submits trimmed notes when adding a contact', async () => {
+		interceptContacts( [] );
+		let requestBody: Record< string, unknown > | undefined;
+		const addScope = nock( API )
+			.post( '/wpcom/v2/me/legacy-contacts', ( body ) => {
+				requestBody = body;
+				return true;
+			} )
+			.query( true )
+			.reply( 200, CONTACT );
+		interceptContacts( [ CONTACT ] );
+
+		renderScreen();
+
+		await userEvent.type(
+			await screen.findByRole( 'textbox', { name: /Email address/ } ),
+			CONTACT.contact_email
+		);
+		await userEvent.type(
+			screen.getByRole( 'textbox', { name: 'Notes' } ),
+			'  Please transfer my-blog.com.  '
+		);
+		await userEvent.click( screen.getByRole( 'button', { name: 'Add legacy contact' } ) );
+
+		await waitFor( () => expect( addScope.isDone() ).toBe( true ) );
+		expect( requestBody ).toEqual( {
+			email: CONTACT.contact_email,
+			notes: 'Please transfer my-blog.com.',
+		} );
+	} );
+
+	test( 'omits notes from the request when only whitespace is entered', async () => {
+		interceptContacts( [] );
+		let requestBody: Record< string, unknown > | undefined;
+		const addScope = nock( API )
+			.post( '/wpcom/v2/me/legacy-contacts', ( body ) => {
+				requestBody = body;
+				return true;
+			} )
+			.query( true )
+			.reply( 200, CONTACT );
+		interceptContacts( [ CONTACT ] );
+
+		renderScreen();
+
+		await userEvent.type(
+			await screen.findByRole( 'textbox', { name: /Email address/ } ),
+			CONTACT.contact_email
+		);
+		await userEvent.type( screen.getByRole( 'textbox', { name: 'Notes' } ), '   ' );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Add legacy contact' } ) );
+
+		await waitFor( () => expect( addScope.isDone() ).toBe( true ) );
+		expect( requestBody ).toEqual( { email: CONTACT.contact_email } );
 	} );
 
 	test( 'opens a confirmation dialog when removing', async () => {

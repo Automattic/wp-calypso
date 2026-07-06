@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { Icon, info, check } from '@wordpress/icons';
 import emailValidator from 'email-validator';
 import { useState, useEffect, useCallback } from 'react';
+import { isCustomDomainEmail } from './email-utils';
 import type { UserSettings } from '@automattic/api-core';
 import './style.scss';
 
@@ -96,9 +97,18 @@ export default function EmailSection( {
 		validateEmail( value );
 	}, [ value, validateEmail ] );
 
+	const showCustomDomainWarning =
+		! isEmailPending &&
+		!! value &&
+		emailValidator.validate( value ) &&
+		isCustomDomainEmail( value );
+
 	const getValidationClass = () => {
 		if ( isEmailPending ) {
 			return '';
+		}
+		if ( showCustomDomainWarning ) {
+			return 'has-warning';
 		}
 		if ( emailValidationState === 'valid' ) {
 			return 'has-success';
@@ -137,6 +147,17 @@ export default function EmailSection( {
 			);
 		}
 
+		if ( showCustomDomainWarning ) {
+			return (
+				<>
+					<Icon icon={ info } size={ 16 } />
+					{ __(
+						'This email uses a custom domain. If your domain expires, you’d lose access to account recovery. Consider an email from a service like Gmail or Outlook instead.'
+					) }
+				</>
+			);
+		}
+
 		// Input validation messages
 		if ( value && value !== currentEmail ) {
 			if ( emailValidationState === 'valid' ) {
@@ -161,6 +182,7 @@ export default function EmailSection( {
 		return null;
 	}, [
 		isEmailPending,
+		showCustomDomainWarning,
 		value,
 		currentEmail,
 		emailValidationState,

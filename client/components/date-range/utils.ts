@@ -30,17 +30,7 @@ function addDayToRange( day: Moment, range: DateRange ): DateRange {
 		return { ...range, to: day };
 	}
 
-	if ( day.isBefore( from ) ) {
-		return { ...range, from: day };
-	}
-	if ( day.isAfter( to ) ) {
-		return { ...range, to: day };
-	}
-
-	const daysFromStart = Math.abs( from.diff( day, 'days' ) );
-	const daysFromEnd = Math.abs( to.diff( day, 'days' ) );
-
-	return daysFromStart < daysFromEnd ? { ...range, from: day } : { ...range, to: day };
+	return { ...range, from: day, to: null };
 }
 
 export { addDayToRange };
