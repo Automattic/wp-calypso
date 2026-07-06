@@ -84,6 +84,11 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 						productName: 'Stats',
 					},
 				} ) }
+				<InfoPopover className="plan-usage-heading-info" position="bottom" iconSize={ 18 }>
+					{ translate(
+						"Billable views are your total views minus your two highest-traffic days each billing cycle, so big spikes won't count against your limit. You'll only need to upgrade if you exceed your limit for three cycles in a row."
+					) }
+				</InfoPopover>
 			</h3>
 			<div className={ progressClassNames } key="progress">
 				<div
@@ -91,20 +96,13 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 					style={ { width: `${ progressWidthInPercentage }%` } }
 					key="bar"
 				></div>
-				<div className="plan-usage-progress-usage" key="usage">
-					<span>
-						{ translate( '%(numberOfUsage)s / %(numberOfLimit)s billable views', {
-							args: {
-								numberOfUsage: formatNumber( usage ),
-								numberOfLimit: typeof limit === 'number' ? formatNumber( limit ) : '-',
-							},
-						} ) }
-					</span>
-					<InfoPopover className="plan-usage-progress-info" position="top" iconSize={ 18 }>
-						{ translate(
-							"Billable views are your total views minus your two highest-traffic days each billing cycle, so big spikes won't count against your limit. You'll only need to upgrade if you exceed your limit for three cycles in a row."
-						) }
-					</InfoPopover>
+				<div key="usage">
+					{ translate( '%(numberOfUsage)s / %(numberOfLimit)s billable views', {
+						args: {
+							numberOfUsage: formatNumber( usage ),
+							numberOfLimit: typeof limit === 'number' ? formatNumber( limit ) : '-',
+						},
+					} ) }
 				</div>
 				<div key="message">
 					{ translate( 'Restarts in %(numberOfDays)d day', 'Restarts in %(numberOfDays)d days', {

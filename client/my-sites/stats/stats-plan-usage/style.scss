@@ -30,9 +30,17 @@
 }
 
 .plan-usage-heading {
+	display: flex;
+	align-items: center;
+	gap: 4px;
 	font-family: $font-sf-pro-display;
 	font-size: $font-title-small;
 	line-height: 26px;
+}
+
+.plan-usage-heading-info {
+	display: inline-flex;
+	color: var(--studio-gray-60);
 }
 
 .plan-usage-progress {
@@ -61,20 +69,7 @@
 		height: 100%;
 		background-color: color-mix(in srgb, var(--studio-jetpack-green-40) 15%, transparent);
 		border-radius: 2px;
-		pointer-events: none;
 	}
-}
-
-.plan-usage-progress-usage {
-	position: relative;
-	display: flex;
-	align-items: center;
-	gap: 4px;
-}
-
-.plan-usage-progress-info {
-	display: inline-flex;
-	color: var(--studio-gray-60);
 }
 
 .plan-usage-note {
