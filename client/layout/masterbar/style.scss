@@ -721,6 +721,15 @@ body.is-mobile-app-view {
 	--color-masterbar-submenu-group-background: #{$gray-100};
 }
 
+.masterbar__item-stats-sparkline {
+	--color-stats-sparkline: var(--color-masterbar-icon);
+	padding: 0 12px;
+
+	@media only screen and (max-width: 781px) {
+		display: none;
+	}
+}
+
 .masterbar__item-launch-site {
 	gap: 6px;
 	cursor: pointer;

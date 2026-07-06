@@ -9,6 +9,7 @@ import { parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
+import StatsSparkline from 'calypso/blocks/stats-sparkline';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
 import { dashboardLink, wpcomLink } from 'calypso/dashboard/utils/link';
@@ -109,6 +110,8 @@ class MasterbarLoggedIn extends Component {
 		isGlobalSidebarVisible: PropTypes.bool,
 		isGravatarDomain: PropTypes.bool,
 		dashboardOptIn: PropTypes.bool,
+		canUserViewStats: PropTypes.bool,
+		statsAdminUrl: PropTypes.string,
 		useUnifiedAgent: PropTypes.bool,
 		launchButton: PropTypes.node,
 		sitePlanUrl: PropTypes.string,
@@ -703,6 +706,30 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
+	clickStatsSparkline = () => {
+		this.props.recordTracksEvent( 'calypso_masterbar_stats_sparkline_clicked' );
+	};
+
+	renderStatsSparkline() {
+		const { siteId, translate, domainOnlySite, canUserViewStats, statsAdminUrl } = this.props;
+
+		if ( ! siteId || domainOnlySite || ! canUserViewStats ) {
+			return null;
+		}
+
+		return (
+			<Item
+				className="masterbar__item-stats-sparkline"
+				url={ statsAdminUrl }
+				tooltip={ translate( 'Views over 48 hours. Click for more Stats.' ) }
+				onClick={ this.clickStatsSparkline }
+				hasGlobalBorderStyle
+			>
+				<StatsSparkline siteId={ siteId } />
+			</Item>
+		);
+	}
+
 	renderLaunchButton() {
 		const { isA4ADevSite, isUnlaunchedSite, siteId, isManageSiteOptionsEnabled, launchButton } =
 			this.props;
@@ -974,6 +1001,7 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderUpdatesMenu() }
 					{ this.renderCommentsMenu() }
 					{ this.renderSiteActionMenu() }
+					{ this.renderStatsSparkline() }
 					{ this.renderLanguageSwitcher() }
 					{ this.renderLaunchButton() }
 				</div>
