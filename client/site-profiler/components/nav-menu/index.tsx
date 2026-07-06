@@ -7,13 +7,13 @@ import './style.scss';
 interface NavMenuProps {
 	navItems: {
 		label: string;
-		ref: React.RefObject< HTMLObjectElement >;
+		ref: React.RefObject< HTMLElement | null >;
 	}[];
 	showMigrationCta?: boolean;
 	domain: string;
 }
 
-const executeScroll = ( ref: React.RefObject< HTMLObjectElement > ) => {
+const executeScroll = ( ref: React.RefObject< HTMLElement | null > ) => {
 	if ( ref.current ) {
 		ref.current.scrollIntoView( { behavior: 'smooth' } );
 	}
