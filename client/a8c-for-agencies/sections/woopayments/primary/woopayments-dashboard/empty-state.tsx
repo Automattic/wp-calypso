@@ -1,7 +1,13 @@
-import { Button } from '@wordpress/components';
+import {
+	__experimentalHeading as Heading,
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+	Button,
+	Card,
+	CardBody,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import StepSection from 'calypso/a8c-for-agencies/components/step-section';
-import StepSectionItem from 'calypso/a8c-for-agencies/components/step-section-item';
 import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import wooPaymentsLogo from 'calypso/assets/images/a8c-for-agencies/woopayments/logo.svg';
 import { useDispatch } from 'calypso/state';
@@ -25,17 +31,26 @@ const WooPaymentsDashboardEmptyState = () => {
 					) }
 				</div>
 			</div>
-			<StepSection heading={ __( 'How do I start?' ) }>
-				<StepSectionItem
-					heading={ __( 'Add WooPayments to a site for free' ) }
-					description={ __( 'Start by picking the site' ) }
-				>
-					<div className="woopayments-dashboard-empty-state__button">
-						<AddWooPaymentsToSite />
-					</div>
-				</StepSectionItem>
-			</StepSection>
-			<StepSection heading={ __( 'Learn more about the program' ) }>
+			<VStack className="woopayments-dashboard-empty-state__step" spacing={ 3 }>
+				<Heading level={ 3 }>{ __( 'How do I start?' ) }</Heading>
+				<Card>
+					<CardBody>
+						<HStack justify="space-between">
+							<VStack spacing={ 1 }>
+								<Text weight={ 600 }>{ __( 'Add WooPayments to a site for free' ) }</Text>
+								<Text variant="muted">{ __( 'Start by picking the site' ) }</Text>
+							</VStack>
+							<AddWooPaymentsToSite />
+						</HStack>
+					</CardBody>
+				</Card>
+			</VStack>
+			<VStack
+				className="woopayments-dashboard-empty-state__step"
+				spacing={ 2 }
+				alignment="flex-start"
+			>
+				<Heading level={ 3 }>{ __( 'Learn more about the program' ) }</Heading>
 				<Button
 					variant="link"
 					onClick={ () => {
@@ -49,7 +64,7 @@ const WooPaymentsDashboardEmptyState = () => {
 				>
 					{ __( 'Check out the full details in the Knowledge Base' ) }
 				</Button>
-			</StepSection>
+			</VStack>
 		</div>
 	);
 };

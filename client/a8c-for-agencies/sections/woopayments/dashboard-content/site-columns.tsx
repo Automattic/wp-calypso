@@ -1,14 +1,12 @@
-import { BadgeType, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
-import { Button } from '@wordpress/components';
+import { Badge } from '@automattic/ui';
+import { Button, Popover } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { memo, useState, useRef } from 'react';
-import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
-import A4APopoverTrigger from 'calypso/a8c-for-agencies/components/a4a-popover/trigger';
+import { Icon, info } from '@wordpress/icons';
+import { memo, useState } from 'react';
 import EmptyValueIndicator from 'calypso/a8c-for-agencies/components/empty-value-indicator';
 import { A4A_WOOPAYMENTS_SITE_SETUP_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -106,7 +104,7 @@ export const WooPaymentsStatusColumn = ( { state, siteId }: { state: string; sit
 		);
 	}
 
-	const getStatusProps = () => {
+	const getStatusProps = (): { statusText: string; statusType: 'success' | 'error' } | null => {
 		switch ( state ) {
 			case 'active':
 				return {
@@ -131,12 +129,7 @@ export const WooPaymentsStatusColumn = ( { state, siteId }: { state: string; sit
 
 	return (
 		<div className="woopayments-status-column">
-			<StatusBadge
-				statusProps={ {
-					children: statusProps.statusText,
-					type: statusProps.statusType as BadgeType,
-				} }
-			/>
+			<Badge intent={ statusProps.statusType }>{ statusProps.statusText }</Badge>
 		</div>
 	);
 };
@@ -151,7 +144,7 @@ export const CommissionEligibilityColumn = ( {
 	woopaymentsData?: WooPaymentsData;
 } ) => {
 	const [ showPopover, setShowPopover ] = useState( false );
-	const wrapperRef = useRef< HTMLDivElement | null >( null );
+	const [ infoIconAnchor, setInfoIconAnchor ] = useState< HTMLButtonElement | null >( null );
 
 	// Don't show eligibility status if WooPayments is not active.
 	if ( state !== 'active' ) {
@@ -169,13 +162,13 @@ export const CommissionEligibilityColumn = ( {
 	const statusProps = isCommissionEligible
 		? {
 				statusText: __( 'Eligible' ),
-				statusType: 'success' as BadgeType,
+				statusType: 'success' as const,
 				showInfoIcon: false,
 				ineligibleReason: undefined,
 		  }
 		: {
 				statusText: __( 'Not eligible' ),
-				statusType: 'error' as BadgeType,
+				statusType: 'error' as const,
 				showInfoIcon: true,
 				ineligibleReason: ineligibleSite?.ineligible_reason,
 		  };
@@ -197,32 +190,29 @@ export const CommissionEligibilityColumn = ( {
 	);
 
 	return (
-		<div ref={ wrapperRef } className="woopayments-status-column">
-			<StatusBadge
-				statusProps={ {
-					children: statusProps.statusText,
-					type: statusProps.statusType,
-				} }
-			/>
+		<div className="woopayments-status-column">
+			<Badge intent={ statusProps.statusType }>{ statusProps.statusText }</Badge>
 			{ statusProps.showInfoIcon && (
 				<>
-					<A4APopoverTrigger
+					<Button
+						ref={ setInfoIconAnchor }
 						className="woopayments-status-column__info-icon"
 						aria-label={ __( 'More information about commission eligibility' ) }
-						onActivate={ () => setShowPopover( true ) }
+						onClick={ () => setShowPopover( ( visible ) => ! visible ) }
 					>
-						<Gridicon icon="info-outline" size={ 16 } />
-					</A4APopoverTrigger>
+						<Icon icon={ info } size={ 16 } />
+					</Button>
 					{ showPopover && (
-						<A4APopover
-							title=""
+						<Popover
+							className="woopayments-eligibility-popover"
+							anchor={ infoIconAnchor }
+							placement="bottom"
 							offset={ 12 }
-							wrapperRef={ wrapperRef }
 							focusOnMount
 							onFocusOutside={ () => setShowPopover( false ) }
 						>
 							{ popoverContent }
-						</A4APopover>
+						</Popover>
 					) }
 				</>
 			) }
