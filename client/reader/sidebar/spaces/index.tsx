@@ -157,7 +157,7 @@ export function ReaderSidebarSpaces( { path }: Props ) {
 				expanded={ isOpen }
 				title={ translate( 'Spaces' ) }
 				onClick={ handleToggleExpand }
-				expandableIconClick={ () => setIsOpen( ! isOpen ) }
+				expandableIconClick={ handleToggleExpand }
 				disableFlyout
 				className={ ! isOpen && isOnSpaces ? 'sidebar__menu--selected' : undefined }
 				count={ undefined }

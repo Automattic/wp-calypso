@@ -6,11 +6,11 @@ import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useFollowedTags } from 'calypso/reader/data/tags';
 
-export function FollowedTags(): JSX.Element | null {
+export function FollowedTags(): JSX.Element {
 	const translate = useTranslate();
 	const { isLoading, data: tags } = useFollowedTags();
 
-	function onTagClick( event: React.MouseEvent< HTMLAnchorElement >, slug: string ): void {
+	function onTagClick( slug: string ): void {
 		recordTracksEvent( 'calypso_tags_page_following_tag_clicked', {
 			tag: slug,
 		} );
@@ -42,7 +42,7 @@ export function FollowedTags(): JSX.Element | null {
 						key={ tag.slug }
 						className="followed-tags__pill"
 						href={ addLocaleToPathLocaleInFront( `/tag/${ encodeURIComponent( tag.slug ) }` ) }
-						onClick={ ( event ) => onTagClick( event, tag.slug ) }
+						onClick={ () => onTagClick( tag.slug ) }
 					>
 						{ tag.title }
 					</a>

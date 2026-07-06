@@ -23,7 +23,7 @@ export function ReaderLists(): JSX.Element {
 
 			<NavigationHeader
 				title={ translate( 'Lists' ) }
-				subtitle={ translate( 'Discover all your lists.' ) }
+				subtitle={ translate( 'Catch up with the latest from your lists.' ) }
 				className="reader-lists-header"
 			/>
 

@@ -6,7 +6,7 @@ import {
 import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import { DEFAULT_ATMOSPHERE_TAB } from 'calypso/reader/atmosphere/helper';
 import { DEFAULT_FEDIVERSE_TAB } from 'calypso/reader/fediverse/helper';
@@ -133,7 +133,11 @@ function ReaderSidebarConnections( { path }: Props ) {
 		path.startsWith( PROTOCOL_PATHS.mastodon ) ||
 		path.startsWith( PROTOCOL_PATHS.fediverse );
 
-	const [ isOpen, setIsOpen ] = useState( false );
+	const [ isOpen, setIsOpen ] = useState( () => isOnConnections );
+
+	useEffect( () => {
+		setIsOpen( isOnConnections && path !== BASE_PATH );
+	}, [ isOnConnections, path ] );
 
 	// All three queries gated on the menu being expanded *or* on a
 	// connections route — i.e. whenever we'd actually render the rows.
