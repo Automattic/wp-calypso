@@ -23,9 +23,9 @@ Examples of **incorrect** code for this rule:
 ```js
 import _ from 'lodash';
 import merge from 'lodash/merge';
+import { debounce } from 'lodash-es';
 export * from 'lodash';
 const mergeWith = require( 'lodash.mergewith' );
-import { debounce } from 'lodash-es';
 ```
 
 Examples of **correct** code for this rule:
