@@ -2,8 +2,6 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
-$woocommerce-purple-50: #720EEC;
-
 .woopayments-dashboard {
 	.hosting-dashboard-layout__header-actions {
 		display: flex;
@@ -64,19 +62,6 @@ $woocommerce-purple-50: #720EEC;
 	}
 }
 
-a.components-button.woopayments-dashboard-empty-state__button {
-	&,
-	&:hover,
-	&:focus,
-	&:focus-visible {
-		color: $woocommerce-purple-50;
-		background-color: var(--color-surface);
-		border: none;
-		outline: none;
-		box-shadow: none;
-	}
-}
-
 .woopayments-dashboard__actions {
 	@include body-small;
 	display: flex;
@@ -95,25 +80,5 @@ a.components-button.woopayments-dashboard-empty-state__button {
 
 	svg {
 		margin: 0
-	}
-}
-
-.woopayments-dashboard-empty-state__button {
-	margin-block-start: 16px;
-	margin-inline-start: auto;
-
-	button {
-		width: 100%;
-		height: 40px;
-
-		@include break-large {
-			min-width: 100px;
-			width: auto;
-			height: inherit;
-		}
-	}
-
-	@include break-large {
-		margin-block-start: 0;
 	}
 }
