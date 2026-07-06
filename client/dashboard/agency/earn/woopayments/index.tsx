@@ -1,4 +1,4 @@
-import { __experimentalText as Text, __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../../app/analytics';
 import { DataViewsCard } from '../../../components/dataviews';
@@ -6,6 +6,7 @@ import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import CommissionsTable from './commissions-table';
 import ConsolidatedViews from './consolidated-views';
+import WooPaymentsDashboardEmptyState from './empty-state';
 import { useDownloadCommissionsReport } from './use-download-commissions-report';
 import useWooPaymentsDashboardData from './use-woopayments-dashboard-data';
 
@@ -34,7 +35,7 @@ export default function EarnWooPayments() {
 	return (
 		<PageLayout header={ header }>
 			{ showEmptyState ? (
-				<Text>{ __( 'Add WooPayments to a client site to start earning commissions.' ) }</Text>
+				<WooPaymentsDashboardEmptyState />
 			) : (
 				<VStack spacing={ 6 }>
 					<ConsolidatedViews
