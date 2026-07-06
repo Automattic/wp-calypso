@@ -25,7 +25,7 @@ function mockUserSettings( data: UserSettings ) {
 }
 
 describe( '<GravatarProfileSection>', () => {
-	test( 'decodes HTML entities in avatar URL before use', async () => {
+	test( 'HTML entities get decoded before avatar URL us rendered', async () => {
 		mockUserSettings( {
 			...settings,
 			avatar_URL: 'https://gravatar.com/avatar/abc123?s=96&amp;d=mm&amp;r=G',
@@ -36,7 +36,10 @@ describe( '<GravatarProfileSection>', () => {
 
 		const avatarImg = screen.getByAltText( 'Gravatar' );
 		expect( avatarImg ).toBeVisible();
-		expect( avatarImg ).not.toHaveAttribute( 'src', expect.stringContaining( '&amp;' ) );
+		expect( avatarImg ).toHaveAttribute(
+			'src',
+			expect.stringContaining( 'https://gravatar.com/avatar/abc123?s=96&d=mm&r=G' )
+		);
 	} );
 
 	test( 'renders the form and saves the form', async () => {
