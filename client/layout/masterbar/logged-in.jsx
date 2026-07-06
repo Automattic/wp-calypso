@@ -9,7 +9,6 @@ import { parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
-import StatsSparkline from 'calypso/blocks/stats-sparkline';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
 import { dashboardLink, wpcomLink } from 'calypso/dashboard/utils/link';
@@ -72,6 +71,7 @@ import HelpIcon from './masterbar-agents-manager/help-icon';
 import { HelpCenterIcon } from './masterbar-help-center/help-center-icon';
 import { MasterbarLaunchButton } from './masterbar-launch-button';
 import Notifications from './masterbar-notifications/notifications-button';
+import MasterbarStatsSparkline from './masterbar-stats-sparkline';
 
 const loadCheckout = () =>
 	import( /* webpackChunkName: "async-load-calypso-layout-masterbar-checkout" */ './checkout.tsx' );
@@ -725,7 +725,7 @@ class MasterbarLoggedIn extends Component {
 				onClick={ this.clickStatsSparkline }
 				hasGlobalBorderStyle
 			>
-				<StatsSparkline siteId={ siteId } height={ 32 } />
+				<MasterbarStatsSparkline siteId={ siteId } />
 			</Item>
 		);
 	}

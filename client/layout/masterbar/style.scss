@@ -722,12 +722,45 @@ body.is-mobile-app-view {
 }
 
 .masterbar__item-stats-sparkline {
-	--color-stats-sparkline: var(--color-masterbar-icon);
 	padding: 0 12px;
 
-	.stats-sparkline svg {
+	.masterbar__stats-sparkline {
 		width: auto;
 		height: auto;
+		vertical-align: middle;
+	}
+
+	.masterbar__stats-sparkline-bar {
+		fill: var(--color-masterbar-icon);
+	}
+
+	.masterbar__stats-sparkline-peak {
+		opacity: 0;
+		transition: opacity 0.15s ease-in;
+	}
+
+	.masterbar__stats-sparkline-baseline {
+		stroke: var(--color-masterbar-icon);
+		stroke-width: 1;
+		stroke-dasharray: 1 1;
+	}
+
+	.masterbar__stats-sparkline-tick {
+		stroke: var(--color-masterbar-icon);
+		stroke-width: 1;
+	}
+
+	.masterbar__stats-sparkline-arrow {
+		fill: var(--color-masterbar-icon);
+	}
+
+	.masterbar__stats-sparkline-label {
+		fill: var(--color-masterbar-icon);
+		font-size: 11px;
+	}
+
+	&:hover .masterbar__stats-sparkline-peak {
+		opacity: 1;
 	}
 
 	@media only screen and (max-width: 781px) {
