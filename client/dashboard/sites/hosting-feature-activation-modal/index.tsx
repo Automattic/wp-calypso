@@ -7,7 +7,6 @@ import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import { ButtonStack } from '../../components/button-stack';
 import ComponentViewTracker from '../../components/component-view-tracker';
-import { Notice } from '../../components/notice';
 import { DataCenterForm } from './data-center-form';
 import {
 	hasAnyBlockingError as getHasAnyBlockingError,
@@ -38,13 +37,15 @@ export default function HostingFeatureActivationModal( {
 	const isEligible = data.is_eligible;
 	const needsPlanUpgrade = getHasHoldingError( errors, EligibilityErrors.NO_BUSINESS_PLAN );
 	const hasAnyBlockingError = getHasAnyBlockingError( errors );
+	const cannotActivate = ! isEligible && ! needsPlanUpgrade;
+
+	function handleGetHelp() {
+		setShowHelpCenter( true );
+		recordTracksEvent( 'calypso_dashboard_hosting_feature_activation_modal_help_center_click' );
+	}
 
 	function getContent() {
 		const flattenedWarnings = Object.values( warnings ).flat();
-		if ( isEligible && errors.length === 0 && flattenedWarnings.length === 0 ) {
-			return <Notice variant="success">{ __( 'This site is eligible to continue.' ) }</Notice>;
-		}
-
 		return (
 			<>
 				{ errors.length > 0 && <ErrorContentInfo errors={ errors } /> }
@@ -70,26 +71,18 @@ export default function HostingFeatureActivationModal( {
 						onChange={ ( value ) => setSelectedGeoAffinity( value ) }
 					/>
 				) }
-				<ButtonStack justify="space-between">
-					<Button
-						variant="link"
-						onClick={ () => {
-							setShowHelpCenter( true );
-							recordTracksEvent(
-								'calypso_dashboard_hosting_feature_activation_modal_help_center_click'
-							);
-						} }
-					>
-						{ __( 'Need help?' ) }
-					</Button>
-					<Button
-						__next40pxDefaultSize
-						variant="primary"
-						disabled={ ! isEligible && ! needsPlanUpgrade }
-						onClick={ handleClick }
-					>
-						{ needsPlanUpgrade ? __( 'Upgrade and continue' ) : __( 'Activate hosting features' ) }
-					</Button>
+				<ButtonStack justify="flex-end">
+					{ cannotActivate ? (
+						<Button __next40pxDefaultSize variant="primary" onClick={ handleGetHelp }>
+							{ __( 'Get help' ) }
+						</Button>
+					) : (
+						<Button __next40pxDefaultSize variant="primary" onClick={ handleClick }>
+							{ needsPlanUpgrade
+								? __( 'Upgrade and continue' )
+								: __( 'Activate hosting features' ) }
+						</Button>
+					) }
 				</ButtonStack>
 			</VStack>
 		</>

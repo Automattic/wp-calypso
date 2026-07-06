@@ -38,7 +38,7 @@ const supportedBrowsers = [ chromium, firefox ];
  * 	- setup: launches an instance of the requested Playwright browser and makes it available under global namespace.
  * 	-
  *
- * This environment also extends teh default event handler to run actions and/or mark statuses.
+ * This environment also extends the default event handler to run actions and/or mark statuses.
  * For more information, see the `handleTestEvent` method below.
  *
  * @see {@link https://github.com/facebook/jest/tree/main/packages/jest-circus}

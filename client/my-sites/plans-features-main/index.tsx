@@ -28,6 +28,7 @@ import {
 	getWordPressHostingFeaturesGroupedForFeaturesGrid,
 	isWooHostedPlan,
 	isWooHostedFreePlan,
+	isWpcomEnterpriseGridPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -100,6 +101,7 @@ import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availabi
 import useDefaultWpcomPlansIntent from './hooks/use-default-wpcom-plans-intent';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
 import useGenerateActionHook from './hooks/use-generate-action-hook';
+import { useIsIndiaA4A } from './hooks/use-is-india-a4a';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
 import { useRenewalPricingExperiment } from './hooks/use-renewal-price-experiment';
@@ -109,6 +111,7 @@ import type {
 	PlansIntent,
 	DataResponse,
 	SupportedUrlFriendlyTermType,
+	GridPlan,
 } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { IAppState } from 'calypso/state/types';
@@ -902,17 +905,46 @@ const PlansFeaturesMain = ( {
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 	} );
 
+	const isIndiaA4A = useIsIndiaA4A();
+
+	// India A4A test: re-skin the Enterprise card with the Automattic for Agencies title/tagline.
+	const applyA4AIndiaCopy = useCallback(
+		( gridPlans: GridPlan[] | null ) => {
+			if ( ! isIndiaA4A || ! gridPlans ) {
+				return gridPlans;
+			}
+
+			return gridPlans.map( ( gridPlan ) =>
+				isWpcomEnterpriseGridPlan( gridPlan.planSlug )
+					? {
+							...gridPlan,
+							planTitle: translate( 'Agencies' ),
+							tagline: translate( 'Pricing and incentives built for WordPress agencies.' ),
+					  }
+					: gridPlan
+			);
+		},
+		[ isIndiaA4A, translate ]
+	);
+
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
 	const gridPlansForFeaturesGrid = useMemo(
 		() =>
-			gridPlansForFeaturesGridRaw?.filter( ( { planSlug } ) => {
-				if ( deemphasizeFreePlan ) {
-					return planSlug !== PLAN_FREE;
-				}
+			applyA4AIndiaCopy(
+				gridPlansForFeaturesGridRaw?.filter( ( { planSlug } ) => {
+					if ( deemphasizeFreePlan ) {
+						return planSlug !== PLAN_FREE;
+					}
 
-				return true;
-			} ) ?? null, // optional chaining can result in `undefined`; we don't want to introduce it here.
-		[ gridPlansForFeaturesGridRaw, deemphasizeFreePlan ]
+					return true;
+				} ) ?? null // optional chaining can result in `undefined`; we don't want to introduce it here.
+			),
+		[ gridPlansForFeaturesGridRaw, deemphasizeFreePlan, applyA4AIndiaCopy ]
+	);
+
+	const gridPlansForComparisonGridFinal = useMemo(
+		() => applyA4AIndiaCopy( gridPlansForComparisonGrid ),
+		[ gridPlansForComparisonGrid, applyA4AIndiaCopy ]
 	);
 
 	const isVisualSplitEnabled =
@@ -1399,6 +1431,7 @@ const PlansFeaturesMain = ( {
 										enableFeatureTooltips
 										featureGroupMap={ featureGroupMapForFeaturesGrid }
 										enterpriseFeaturesList={ enterpriseFeaturesList }
+										isEnterpriseA4AIndia={ isIndiaA4A }
 										enableShowAllFeaturesButton={ ! showSimplifiedFeatures }
 										enableCategorisedFeatures={ showSimplifiedFeatures }
 										enableStorageAsBadge={ ! showSimplifiedFeatures }
@@ -1440,13 +1473,13 @@ const PlansFeaturesMain = ( {
 														coupon={ coupon }
 													/>
 												) }
-											{ gridPlansForComparisonGrid && gridPlansForPlanTypeSelector && (
+											{ gridPlansForComparisonGridFinal && gridPlansForPlanTypeSelector && (
 												<ComparisonGrid
 													allFeaturesList={ getFeaturesList() }
 													className="plans-features-main__comparison-grid"
 													coupon={ coupon }
 													currentSitePlanSlug={ sitePlanSlug }
-													gridPlans={ gridPlansForComparisonGrid }
+													gridPlans={ gridPlansForComparisonGridFinal }
 													hideUnavailableFeatures={ hideUnavailableFeatures }
 													intent={ intent }
 													intervalType={ compatibleIntervalType }

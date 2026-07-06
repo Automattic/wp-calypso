@@ -87,6 +87,7 @@ open class E2EBuildType(
 			screenshots => screenshots
 			trace => trace
 			allure-results => allure-results.tgz
+			test/e2e/output => playwright-output
 		""".trimIndent()
 
 		vcs {

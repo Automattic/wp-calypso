@@ -1,0 +1,6 @@
+// Soften the Human mode pill to the light-background, dark-text tone of the AI
+// (purple) and Full (green) pills instead of the bright solid blue.
+.amplify-report-mode-badge.is-human {
+	background-color: var(--color-primary-5);
+	color: var(--color-primary-80);
+}

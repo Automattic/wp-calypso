@@ -132,7 +132,9 @@ export function StandardListLayout( {
 		posts.forEach( ( post, index ) => {
 			const fields = getPostFields( post );
 			const { dayGroup, key } = fields;
-			if ( dayGroup && dayGroup !== lastGroup ) {
+			// Discover is recommendation-ranked, not chronological: day grouping would
+			// bucket unrelated posts under misleading dates. Gate it like the timestamp.
+			if ( showTimestamp && dayGroup && dayGroup !== lastGroup ) {
 				out.push( {
 					kind: 'header',
 					key: `header-${ dayGroup }-${ index }`,
@@ -143,7 +145,7 @@ export function StandardListLayout( {
 			out.push( { kind: 'post', key: `post-${ key }`, fields, post } );
 		} );
 		return out;
-	}, [ posts, translate ] );
+	}, [ posts, translate, showTimestamp ] );
 
 	const { getListProps, items, measureElement, scrollMargin, scrollToIndex } = useInfiniteList( {
 		scrollElement,

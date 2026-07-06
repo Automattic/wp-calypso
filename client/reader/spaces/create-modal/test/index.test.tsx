@@ -141,7 +141,7 @@ describe( 'CreateSpaceModal', () => {
 		expect( within( dialog ).queryByRole( 'tab', { name: 'Delete' } ) ).not.toBeInTheDocument();
 
 		await user.click( within( dialog ).getByRole( 'tab', { name: 'Layout' } ) );
-		expect( within( dialog ).getByRole( 'radio', { name: /Compact list/ } ) ).toBeChecked();
+		expect( within( dialog ).getByRole( 'radio', { name: /Classic/ } ) ).toBeChecked();
 
 		await user.click( within( dialog ).getByRole( 'tab', { name: 'Sources' } ) );
 		expect(

@@ -4,13 +4,20 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Icon, category } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
+import AsyncLoad from 'calypso/components/async-load';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import { useSpaces } from 'calypso/reader/data/spaces';
 import { prefetchInfiniteStream } from 'calypso/reader/data/stream';
 import { AddMenuItem } from 'calypso/reader/sidebar/menu';
 import { CreateSpaceModal } from 'calypso/reader/spaces/create-modal';
+import {
+	READER_SPACES_ONBOARDING_DEBUG_KEY,
+	READER_SPACES_ONBOARDING_SEEN_PREFERENCE_KEY,
+} from 'calypso/reader/spaces/onboarding-modal/constants';
 import { getSpacePath, SPACES_BASE_PATH } from 'calypso/reader/spaces/routes';
 import { useDispatch, useSelector } from 'calypso/state';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { SpaceMenuItem } from './menu-item';
@@ -20,6 +27,21 @@ import './style.scss';
 
 interface Props {
 	path: string;
+}
+
+// Lazy loader for the onboarding walkthrough. Defined at module scope so the
+// reference stays stable across renders (AsyncLoad memoizes on it).
+const loadOnboardingModal = () => import( 'calypso/reader/spaces/onboarding-modal' );
+
+// Debug override — force the walkthrough to show regardless of the "seen"
+// preference. Toggle from the browser console:
+// `localStorage.setItem( 'reader_spaces_onboarding_debug', '1' )`.
+function isOnboardingForced(): boolean {
+	try {
+		return window.localStorage.getItem( READER_SPACES_ONBOARDING_DEBUG_KEY ) === '1';
+	} catch {
+		return false;
+	}
 }
 
 // Space ids are URL-safe (base36), so the path segment is the id verbatim — no
@@ -70,6 +92,12 @@ export function ReaderSidebarSpaces( { path }: Props ) {
 
 	const [ isOpen, setIsOpen ] = useState( () => hasActiveSpace );
 	const [ isCreateModalOpen, setIsCreateModalOpen ] = useState( false );
+	const [ isOnboardingOpen, setIsOnboardingOpen ] = useState( false );
+
+	const preferencesLoaded = useSelector( hasReceivedRemotePreferences );
+	const hasSeenOnboarding = useSelector( ( state ) =>
+		getPreference( state, READER_SPACES_ONBOARDING_SEEN_PREFERENCE_KEY )
+	);
 
 	useEffect( () => {
 		if ( hasActiveSpace ) {
@@ -97,6 +125,24 @@ export function ReaderSidebarSpaces( { path }: Props ) {
 
 	const handleAddSpaceClick = () => {
 		dispatch( recordReaderTracksEvent( 'calypso_reader_sidebar_spaces_add_clicked' ) );
+		// Show the first-time walkthrough before the create form, but only once we
+		// know the user hasn't seen it — an unhydrated preference reads as null and
+		// would look like "not seen", so fall through to the create form until then.
+		// The debug override forces it regardless, for manual testing.
+		if ( isOnboardingForced() || ( preferencesLoaded && ! hasSeenOnboarding ) ) {
+			setIsOnboardingOpen( true );
+			return;
+		}
+		setIsCreateModalOpen( true );
+	};
+
+	const markOnboardingSeen = () => {
+		dispatch( savePreference( READER_SPACES_ONBOARDING_SEEN_PREFERENCE_KEY, true ) );
+		setIsOnboardingOpen( false );
+	};
+
+	const handleOnboardingProceed = () => {
+		markOnboardingSeen();
 		setIsCreateModalOpen( true );
 	};
 
@@ -129,6 +175,14 @@ export function ReaderSidebarSpaces( { path }: Props ) {
 				) ) }
 				<AddMenuItem label={ translate( 'Add a space' ) } onClick={ handleAddSpaceClick } />
 			</ExpandableSidebarMenu>
+			{ isOnboardingOpen && (
+				<AsyncLoad
+					require={ loadOnboardingModal }
+					placeholder={ null }
+					onProceed={ handleOnboardingProceed }
+					onClose={ markOnboardingSeen }
+				/>
+			) }
 			<CreateSpaceModal
 				isOpen={ isCreateModalOpen }
 				onClose={ () => setIsCreateModalOpen( false ) }

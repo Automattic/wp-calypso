@@ -962,7 +962,14 @@ export class RestAPIClient {
 
 		if ( media ) {
 			const data = new FormData();
-			data.append( 'media[]', fs.createReadStream( media.fullpath ) );
+			// The request body below is built with `getBuffer()`, which cannot
+			// serialize a stream (it throws on the DelayedStream a read stream
+			// produces). Append the file contents as a Buffer instead, passing the
+			// filename explicitly so form-data still sets the Content-Disposition
+			// filename and the mime-derived Content-Type the stream's path supplied.
+			data.append( 'media[]', fs.readFileSync( media.fullpath ), {
+				filename: media.basename,
+			} );
 
 			params = {
 				method: 'post',
@@ -996,7 +1003,13 @@ export class RestAPIClient {
 			);
 		}
 
-		return response;
+		// `/sites/$site/media/new` wraps the uploaded item(s) in a `media` array;
+		// per-file rejections come back as `{ media: [], errors: [...] }` with no
+		// top-level `error` key.
+		if ( ! response.media?.length ) {
+			throw new Error( `Media upload failed: ${ JSON.stringify( response.errors ?? response ) }` );
+		}
+		return response.media[ 0 ];
 	}
 
 	/* Shopping Cart */

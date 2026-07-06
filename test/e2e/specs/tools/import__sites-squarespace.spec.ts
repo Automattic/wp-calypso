@@ -100,7 +100,7 @@ test.describe(
 		} );
 
 		test( 'Three: As a New WordPress.com free plan user with a simple site, I can use the Calypso "Import Content" page to import my content from my Squarespace site', async ( {
-			sitePublic,
+			sitePublicShared: sitePublic,
 			pageImportContent,
 		} ) => {
 			await test.step( 'When I visit the "Import Content" page for my new site', async function () {

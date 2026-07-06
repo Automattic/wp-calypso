@@ -1,3 +1,7 @@
+.legacy-contact-form .components-base-control__help {
+	text-wrap: pretty;
+}
+
 .legacy-contact-card {
 	padding: 12px 16px;
 	border: 1px solid var( --dashboard-surface__border-color );
@@ -12,6 +16,15 @@
 	dd {
 		margin: 0;
 	}
+
+	dd + dt {
+		margin-block-start: 12px;
+	}
+}
+
+.legacy-contact-card__notes {
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
 }
 
 .legacy-contact-card__avatar {

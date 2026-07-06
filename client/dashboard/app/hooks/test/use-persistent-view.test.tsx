@@ -239,7 +239,7 @@ describe( 'usePersistentView', () => {
 			} );
 		} );
 
-		it( 'should sync transient properties to the current URL query params', async () => {
+		it( 'should sync transient properties to the current URL query params without persisting the view', async () => {
 			mockGetCalypsoPreferences( {} );
 			mockUpdateCalypsoPreferences();
 
@@ -263,6 +263,7 @@ describe( 'usePersistentView', () => {
 					layout: { previewSize: 120 },
 					sort: { field: 'name', direction: 'asc' },
 					page: 2,
+					startPosition: undefined,
 					search: 'test',
 				} );
 			} );
@@ -275,6 +276,8 @@ describe( 'usePersistentView', () => {
 					search: 'test',
 				} );
 			} );
+
+			expect( result.current.resetView ).toBeFalsy();
 		} );
 
 		it( 'should remove transient filters from the current URL query params if no longer in the view', async () => {

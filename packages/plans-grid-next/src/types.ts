@@ -229,6 +229,13 @@ export type GridContextProps = {
 	enterpriseFeaturesList?: string[];
 
 	/**
+	 * India Automattic for Agencies test: when true, the Enterprise plan card is presented as A4A.
+	 * This affects Enterprise branding (logo/copy) and layout (e.g. hides Enterprise client logos
+	 * in the price cell and shows A4A-specific billing text instead).
+	 */
+	isEnterpriseA4AIndia?: boolean;
+
+	/**
 	 * `enableCategorisedFeatures` is no longer exact, and probably best to rename.
 	 * It is only used for showing "Everything in [previous] plus".
 	 */

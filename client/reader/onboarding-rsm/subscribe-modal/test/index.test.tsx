@@ -111,7 +111,7 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 
 // ── Shared step indicator (not under test here) ──────────────────────────────
 
-jest.mock( 'calypso/reader/onboarding-rsm/step-indicator', () => ( {
+jest.mock( 'calypso/reader/components/step-indicator', () => ( {
 	StepIndicator: () => null,
 } ) );
 

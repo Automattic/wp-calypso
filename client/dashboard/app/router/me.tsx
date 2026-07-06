@@ -1078,12 +1078,20 @@ export const appearanceRoute = createRoute( {
 	} ),
 	getParentRoute: () => preferencesRoute,
 	path: 'appearance',
-	beforeLoad: ( { context } ) => {
+	beforeLoad: async ( { context } ) => {
 		if (
 			! context.config.supports.darkMode ||
 			! context.config.supports.colorScheme ||
 			isDashboardBackport()
 		) {
+			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
+		}
+
+		// Gate the page like the Appearance summary button so it can't be reached by direct URL.
+		const preferences = await queryClient.ensureQueryData( rawUserPreferencesQuery() );
+		const hasUsedColorScheme = preferences[ 'hosting-dashboard-color-scheme' ] !== undefined;
+
+		if ( ! isEnabled( 'dashboard/dark-mode-rollout' ) && ! hasUsedColorScheme ) {
 			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
 		}
 	},
