@@ -60,7 +60,7 @@
 		"@wordpress/react-i18n": "^4.48.0",
 		"debug": "^4.4.1",
 		"i18n-calypso": "workspace:^",
-		"postcss": "^8.5.3",
+		"postcss": "^8.5.15",
 		"prop-types": "^15.8.1"
 	},
 	"devDependencies": {

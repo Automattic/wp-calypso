@@ -69,7 +69,7 @@
 		"gettext-parser": "^6.0.0"
 	},
 	"peerDependencies": {
-		"postcss": "^8.5.3",
+		"postcss": "^8.5.15",
 		"webpack": "^5.99.8"
 	}
 }

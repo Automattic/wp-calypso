@@ -36,7 +36,7 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@storybook/addon-docs": "^9.1.20",
 		"@storybook/react-webpack5": "^9.1.20",
-		"postcss": "^8.5.3",
+		"postcss": "^8.5.15",
 		"storybook": "^9.1.20",
 		"typescript": "^6.0.3",
 		"webpack": "^5.99.8"
