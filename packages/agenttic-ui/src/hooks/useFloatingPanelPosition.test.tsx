@@ -47,9 +47,6 @@ function buildArgs(
 		chatState: 'expanded',
 		getPanelSize,
 		clampResizedSize: () => {},
-		// Default getLiveWidth to the current panel width (Δ=0) so non-grow cases
-		// see no directional shift; grow tests override it with the pre-grow width.
-		getLiveWidth: () => getPanelSize().width,
 		...overrides,
 		x,
 		y,
@@ -499,7 +496,6 @@ describe( 'useFloatingPanelPosition', () => {
 				freeDrag: true,
 				initialChatPosition: 'right',
 				getPanelSize: () => grownSize,
-				getLiveWidth: () => 400,
 			} );
 			await harness.render();
 			const result = harness.captured.current!;
@@ -512,7 +508,7 @@ describe( 'useFloatingPanelPosition', () => {
 			animateSpy.mockClear();
 
 			await act( async () => {
-				result.repositionForResize();
+				result.repositionForResize( 200 );
 			} );
 
 			// x = 500 - 200 = 300 (right edge fixed). y held (bottom pinned).
@@ -521,18 +517,12 @@ describe( 'useFloatingPanelPosition', () => {
 
 			// Repeated grow keeps pinning the (new) right edge: 500 pre-grow width
 			// this time, Δ = 100, x = 300 - 100 = 200.
-			await harness.rerender( {
-				freeDrag: true,
-				initialChatPosition: 'right',
-				getPanelSize: () => grownSize,
-				getLiveWidth: () => 500,
-			} );
 			await act( async () => {
 				result.x.set( 300 );
 			} );
 			animateSpy.mockClear();
 			await act( async () => {
-				harness.captured.current!.repositionForResize();
+				harness.captured.current!.repositionForResize( 100 );
 			} );
 			expect( animateTargetFor( result.x ) ).toBe( 200 );
 		} );
@@ -543,7 +533,6 @@ describe( 'useFloatingPanelPosition', () => {
 				freeDrag: true,
 				initialChatPosition: 'left',
 				getPanelSize: () => grownSize,
-				getLiveWidth: () => 400,
 			} );
 			await harness.render();
 			const result = harness.captured.current!;
@@ -556,7 +545,7 @@ describe( 'useFloatingPanelPosition', () => {
 			animateSpy.mockClear();
 
 			await act( async () => {
-				result.repositionForResize();
+				result.repositionForResize( 200 );
 			} );
 
 			expect( animateTargetFor( result.x ) ).toBe( 100 );
@@ -569,7 +558,6 @@ describe( 'useFloatingPanelPosition', () => {
 				freeDrag: true,
 				initialChatPosition: 'left',
 				getPanelSize: () => grownSize,
-				getLiveWidth: () => 700,
 			} );
 			await harness.render();
 			const result = harness.captured.current!;
@@ -582,7 +570,7 @@ describe( 'useFloatingPanelPosition', () => {
 			animateSpy.mockClear();
 
 			await act( async () => {
-				result.repositionForResize();
+				result.repositionForResize( 200 );
 			} );
 
 			const maxX =
@@ -598,7 +586,6 @@ describe( 'useFloatingPanelPosition', () => {
 				freeDrag: true,
 				initialChatPosition: 'right',
 				getPanelSize: () => grownSize,
-				getLiveWidth: () => 400,
 			} );
 			await harness.render();
 			const result = harness.captured.current!;
@@ -612,7 +599,7 @@ describe( 'useFloatingPanelPosition', () => {
 			animateSpy.mockClear();
 
 			await act( async () => {
-				result.repositionForResize();
+				result.repositionForResize( 200 );
 			} );
 
 			expect( animateTargetFor( result.x ) ).toBe( 0 );
@@ -624,9 +611,6 @@ describe( 'useFloatingPanelPosition', () => {
 				freeDrag: true,
 				initialChatPosition: 'right',
 				getPanelSize: () => grownSize,
-				// Pre-grow width differs, but the resize handler must pass Δ=0 and
-				// ignore it — a nonzero Δ here would spuriously shift x.
-				getLiveWidth: () => 400,
 			} );
 			await harness.render();
 			const result = harness.captured.current!;
@@ -662,6 +646,101 @@ describe( 'useFloatingPanelPosition', () => {
 			} );
 
 			expect( animateSpy ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'window resize y recovery', () => {
+		it( 'shrink pushes y down to keep the top reachable, grow pulls it back to the dock', async () => {
+			// Collapsed launcher (56px) docked at y=0; the clamp must use the REAL
+			// state height, not the expanded 520 — with 520 a 500px window computed
+			// minY = 52 and pushed the 56px launcher off the bottom.
+			harness = renderHook( {
+				chatState: 'collapsed',
+				getPanelSize: () => ( {
+					width: STYLE_CONSTANTS.COMPACT_WIDTH,
+					height: STYLE_CONSTANTS.COLLAPSED_SIZE,
+				} ),
+			} );
+			await harness.render();
+			const result = harness.captured.current!;
+
+			await act( async () => {
+				result.y.set( 0 );
+				window.innerHeight = 500;
+				window.dispatchEvent( new Event( 'resize' ) );
+			} );
+			// minY = 32 + 56 - 500 < 0: the launcher fits, y must stay docked.
+			expect( result.y.get() ).toBe( 0 );
+
+			// Expanded panel taller than the window: y is raised to minY so the
+			// header stays reachable (bottom edge sacrificed).
+			await harness.rerender( { chatState: 'expanded' } );
+			await act( async () => {
+				window.innerHeight = 500;
+				window.dispatchEvent( new Event( 'resize' ) );
+			} );
+			const minY =
+				2 * STYLE_CONSTANTS.VIEWPORT_OFFSET +
+				FIXED_SIZE.height -
+				window.innerHeight;
+			expect( minY ).toBeGreaterThan( 0 );
+			expect( result.y.get() ).toBe( minY );
+
+			// Window grows back: the stale positive offset must return to the 0
+			// dock, not be held forever (the old hold-only guard never recovered).
+			await act( async () => {
+				window.innerHeight = 1024;
+				window.dispatchEvent( new Event( 'resize' ) );
+			} );
+			expect( result.y.get() ).toBe( 0 );
+		} );
+	} );
+
+	describe( 'free-drag drop clamping', () => {
+		it( 'clamps an escaped drop back into the box before persisting it', async () => {
+			// dragConstraints bind mid-gesture only, so a fast flick can end
+			// off-screen — the drop handler must clamp what it persists.
+			const onFreeDragEnd = vi.fn();
+			harness = renderHook( { freeDrag: true, onFreeDragEnd } );
+			await harness.render();
+			const result = harness.captured.current!;
+
+			await act( async () => {
+				result.x.set( 2000 );
+				result.y.set( 50 );
+				result.handleDragEnd( null, PAN_INFO );
+			} );
+
+			const maxX =
+				window.innerWidth -
+				FIXED_SIZE.width -
+				STYLE_CONSTANTS.VIEWPORT_OFFSET * 2;
+			expect( onFreeDragEnd ).toHaveBeenCalledWith( {
+				x: maxX,
+				y: 0,
+			} );
+			// The panel itself animates back inside the box too.
+			const animateTargetFor = ( motionValue: unknown ) =>
+				animateSpy.mock.calls.find(
+					( call ) => call[ 0 ] === motionValue
+				)?.[ 1 ];
+			expect( animateTargetFor( result.x ) ).toBe( maxX );
+			expect( animateTargetFor( result.y ) ).toBe( 0 );
+		} );
+
+		it( 'reports the drop unchanged when it is already inside the box', async () => {
+			const onFreeDragEnd = vi.fn();
+			harness = renderHook( { freeDrag: true, onFreeDragEnd } );
+			await harness.render();
+			const result = harness.captured.current!;
+
+			await act( async () => {
+				result.x.set( 300 );
+				result.y.set( -100 );
+				result.handleDragEnd( null, PAN_INFO );
+			} );
+
+			expect( onFreeDragEnd ).toHaveBeenCalledWith( { x: 300, y: -100 } );
 		} );
 	} );
 } );

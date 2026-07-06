@@ -29,7 +29,7 @@ import {
 // repositionForResize is the drag-hook seam; tests inject a spy to assert the
 // controlled-size effect fires it after the size commit.
 type Args = Omit< UseResizablePanelArgs, 'x' | 'y' | 'repositionForResize' > & {
-	repositionForResize?: () => void;
+	repositionForResize?: ( deltaWidth: number ) => void;
 };
 
 interface Captured {
@@ -141,18 +141,36 @@ describe( 'useResizablePanel', () => {
 		} );
 	} );
 
-	it( 'getPanelSize returns the fixed footprint when resizable but not expanded', async () => {
+	it( 'getPanelSize returns the fixed frame width and the real per-state height when resizable but not expanded', async () => {
 		harness = renderHook( {
 			resizable: true,
 			defaultSize: DEFAULT_SIZE,
 			chatState: 'compact',
+			compactHeight: 90,
+		} );
+		await harness.render();
+
+		// Width stays the COMPACT_WIDTH frame (the x-math anchor), but height is
+		// the state's REAL footprint — reporting the expanded height here made the
+		// window-resize clamp push a small launcher off-screen on short windows.
+		expect( harness.captured.current!.result.getPanelSize() ).toEqual( {
+			width: STYLE_CONSTANTS.COMPACT_WIDTH,
+			height: 90,
+		} );
+	} );
+
+	it( 'getPanelSize reports the collapsed launcher height while collapsed', async () => {
+		harness = renderHook( {
+			resizable: false,
+			defaultSize: DEFAULT_SIZE,
+			chatState: 'collapsed',
 			compactHeight: 56,
 		} );
 		await harness.render();
 
 		expect( harness.captured.current!.result.getPanelSize() ).toEqual( {
 			width: STYLE_CONSTANTS.COMPACT_WIDTH,
-			height: STYLE_CONSTANTS.EXPANDED_HEIGHT,
+			height: STYLE_CONSTANTS.COLLAPSED_SIZE,
 		} );
 	} );
 
@@ -631,6 +649,8 @@ describe( 'useResizablePanel', () => {
 			} );
 
 			expect( repositionForResize ).toHaveBeenCalledTimes( 1 );
+			// Frame-width delta: committed 700 − live 500.
+			expect( repositionForResize ).toHaveBeenCalledWith( 200 );
 			// Fired after the ref is committed, so it reads the new size.
 			expect(
 				harness.captured.current!.result.expandedSizeRef.current
@@ -694,6 +714,53 @@ describe( 'useResizablePanel', () => {
 			} );
 
 			expect( repositionForResize ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'state-morph reposition (expanded boundary)', () => {
+		const argsFor = (
+			chatState: string,
+			repositionForResize: ( deltaWidth: number ) => void
+		): Args => ( {
+			resizable: true,
+			defaultSize: { width: 700, height: 600 },
+			chatState,
+			compactHeight: 56,
+			repositionForResize,
+		} );
+
+		it( 're-docks x with the frame delta when collapsing a resized panel and again on re-expand', async () => {
+			const repositionForResize = vi.fn();
+			harness = renderHook( argsFor( 'expanded', repositionForResize ) );
+			await harness.render();
+
+			// Mount is not a transition — the seed already docked x.
+			expect( repositionForResize ).not.toHaveBeenCalled();
+
+			// Leaving expanded: the frame narrows from the resized 700 to the fixed
+			// COMPACT_WIDTH; without the re-dock a right-docked bubble strands
+			// (700 − 372)px away from its corner.
+			await harness.rerender(
+				argsFor( 'collapsed', repositionForResize )
+			);
+			expect( repositionForResize ).toHaveBeenCalledTimes( 1 );
+			expect( repositionForResize ).toHaveBeenCalledWith(
+				STYLE_CONSTANTS.COMPACT_WIDTH - 700
+			);
+
+			// collapsed → compact stays inside the fixed frame: no re-dock.
+			repositionForResize.mockClear();
+			await harness.rerender( argsFor( 'compact', repositionForResize ) );
+			expect( repositionForResize ).not.toHaveBeenCalled();
+
+			// Re-entering expanded widens the frame back to the resized width.
+			await harness.rerender(
+				argsFor( 'expanded', repositionForResize )
+			);
+			expect( repositionForResize ).toHaveBeenCalledTimes( 1 );
+			expect( repositionForResize ).toHaveBeenCalledWith(
+				700 - STYLE_CONSTANTS.COMPACT_WIDTH
+			);
 		} );
 	} );
 } );

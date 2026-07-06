@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+	useCallback,
+	useEffect,
+	useLayoutEffect,
+	useRef,
+	useState,
+} from 'react';
 
 import { animate, type MotionValue, useMotionValue } from 'framer-motion';
 import { STYLE_CONSTANTS } from '../utils/constants';
@@ -18,8 +24,10 @@ export interface UseResizablePanelArgs {
 	x: MotionValue< number >;
 	y: MotionValue< number >;
 	// Drag-hook position reconcile, run after a programmatic size change so the
-	// panel re-clamps/re-snaps. Bridged in by the composition hook.
-	repositionForResize: () => void;
+	// panel re-clamps/re-snaps. The caller passes the frame-width delta (NEW −
+	// OLD) so a right-side panel keeps its pinned edge. Bridged in by the
+	// composition hook.
+	repositionForResize: ( deltaWidth: number ) => void;
 	onResize?: ( size: ChatSize ) => void;
 	onResizeEnd?: ( size: ChatSize ) => void;
 }
@@ -30,16 +38,11 @@ export interface UseResizablePanelResult {
 	isResizing: boolean;
 	expandedSizeRef: React.MutableRefObject< ChatSize >;
 	getPanelSize: () => ChatSize;
-	getConstraintBox: () => { width: number; height: number };
 	clampSize: ( size: ChatSize ) => ChatSize;
 	// Clamps the committed expanded size back into the current viewport, writing
 	// the corrected size to the motion values + ref. The drag hook's window-resize
 	// handler calls this before re-clamping position.
 	clampToViewport: () => void;
-	// Reads the LIVE width motion value. Mid-grow, expandedSizeRef holds the NEW
-	// width while the spring still drives width.get() to the OLD one; their delta
-	// is the exact grow amount the drag hook uses to shift the pinned edge.
-	getLiveWidth: () => number;
 	getHeightForState: ( state: string ) => number;
 	handleResizePointerDown: (
 		event: React.PointerEvent< HTMLDivElement >
@@ -130,31 +133,6 @@ export function useResizablePanel( {
 		]
 	);
 
-	// Live panel size. Returns the resized size only when expanded; other states
-	// keep the fixed footprint.
-	const getPanelSize = useCallback( (): ChatSize => {
-		if ( resizable && chatState === 'expanded' ) {
-			return { ...expandedSizeRef.current };
-		}
-		return {
-			width: STYLE_CONSTANTS.COMPACT_WIDTH,
-			height: STYLE_CONSTANTS.EXPANDED_HEIGHT,
-		};
-	}, [ resizable, chatState ] );
-
-	// Re-clamp the committed expanded size into the current viewport (window
-	// resize). Only expanded owns a resized size; other states are fixed footprint.
-	const clampToViewport = useCallback( (): void => {
-		if ( resizable && chatState === 'expanded' ) {
-			const clamped = clampSize( expandedSizeRef.current );
-			width.set( clamped.width );
-			height.set( clamped.height );
-			expandedSizeRef.current = clamped;
-		}
-	}, [ resizable, chatState, clampSize, width, height ] );
-
-	const getLiveWidth = (): number => width.get();
-
 	const getHeightForState = useCallback(
 		( state: string ) => {
 			if ( state === 'collapsed' || state === 'minimized' ) {
@@ -170,6 +148,46 @@ export function useResizablePanel( {
 		},
 		[ compactHeight, resizable ]
 	);
+
+	// Live panel footprint. Width is the frame the x-math positions (the resized
+	// width only while expanded; other states keep the fixed COMPACT_WIDTH frame
+	// and the content div compensates inside it). Height is the REAL per-state
+	// height — feeding the expanded height to the position clamps while collapsed
+	// pushed the small launcher off-screen on short windows.
+	const getPanelSize = useCallback(
+		(): ChatSize => ( {
+			width:
+				resizable && chatState === 'expanded'
+					? expandedSizeRef.current.width
+					: STYLE_CONSTANTS.COMPACT_WIDTH,
+			height: getHeightForState( chatState ),
+		} ),
+		[ resizable, chatState, getHeightForState ]
+	);
+
+	// Re-clamp the committed expanded size into the current viewport (window
+	// resize). Only expanded owns a resized size; other states are fixed footprint.
+	const clampToViewport = useCallback( (): void => {
+		if ( resizable && chatState === 'expanded' ) {
+			const clamped = clampSize( expandedSizeRef.current );
+			width.set( clamped.width );
+			height.set( clamped.height );
+			expandedSizeRef.current = clamped;
+		}
+	}, [ resizable, chatState, clampSize, width, height ] );
+
+	// The pointer loop attaches its listeners once per gesture, so anything they
+	// close over is frozen at pointerdown. Read the render-dependent pieces
+	// (consumer callbacks, clamp bounds) through refs so a mid-gesture re-render —
+	// e.g. a controlled parent updating onResize/maxSize per move — is honored.
+	const onResizeRef = useRef( onResize );
+	const onResizeEndRef = useRef( onResizeEnd );
+	const clampSizeRef = useRef( clampSize );
+	useLayoutEffect( () => {
+		onResizeRef.current = onResize;
+		onResizeEndRef.current = onResizeEnd;
+		clampSizeRef.current = clampSize;
+	} );
 
 	// Resize runs its own pointer loop (not a Framer drag): compute the delta from
 	// the grab point per active edge, clamp, and write straight to the motion values.
@@ -199,7 +217,7 @@ export function useResizablePanel( {
 				nextHeight = resize.startHeight - dy;
 			}
 
-			const clamped = clampSize( {
+			const clamped = clampSizeRef.current( {
 				width: nextWidth,
 				height: nextHeight,
 			} );
@@ -221,9 +239,9 @@ export function useResizablePanel( {
 			width.set( clamped.width );
 			height.set( clamped.height );
 			expandedSizeRef.current = clamped;
-			onResize?.( clamped );
+			onResizeRef.current?.( clamped );
 		},
-		[ clampSize, x, y, width, height, onResize ]
+		[ x, y, width, height ]
 	);
 
 	const handleResizePointerUp = useCallback(
@@ -244,9 +262,12 @@ export function useResizablePanel( {
 			);
 			resizingRef.current = null;
 			setIsResizing( false );
-			onResizeEnd?.( { width: width.get(), height: height.get() } );
+			onResizeEndRef.current?.( {
+				width: width.get(),
+				height: height.get(),
+			} );
 		},
-		[ handleResizePointerMove, width, height, onResizeEnd ]
+		[ handleResizePointerMove, width, height ]
 	);
 
 	const handleResizePointerDown = useCallback(
@@ -282,7 +303,11 @@ export function useResizablePanel( {
 
 	// Size morph. When resize is on, the content div reads width/height from the
 	// motion values via style, so drive collapse/expand transitions imperatively.
+	const prevChatStateRef = useRef( chatState );
 	useEffect( () => {
+		const prevChatState = prevChatStateRef.current;
+		prevChatStateRef.current = chatState;
+
 		if ( ! resizable ) {
 			return;
 		}
@@ -297,10 +322,30 @@ export function useResizablePanel( {
 
 		const wControls = animate( width, targetWidth, morphSpring );
 		const hControls = animate( height, targetHeight, morphSpring );
+
+		// The x-frame is COMPACT_WIDTH outside expanded and the resized width
+		// inside it, so crossing that boundary changes the footprint x was docked
+		// for — re-dock (corner-snap) or edge-pin (free-drag) with the frame delta.
+		// Without this, collapsing a right-docked panel resized to 700 strands the
+		// bubble (700 − 372)px away from its corner.
+		const wasExpanded = prevChatState === 'expanded';
+		const isExpanded = chatState === 'expanded';
+		if ( wasExpanded !== isExpanded ) {
+			const resizedWidth = expandedSizeRef.current.width;
+			repositionForResize(
+				isExpanded
+					? resizedWidth - STYLE_CONSTANTS.COMPACT_WIDTH
+					: STYLE_CONSTANTS.COMPACT_WIDTH - resizedWidth
+			);
+		}
+
 		return () => {
 			wControls.stop();
 			hControls.stop();
 		};
+		// repositionForResize is a stable bridge (ref proxy from the composition
+		// hook); listing it would re-run the morph on every parent render.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ chatState, resizable, width, height, getHeightForState ] );
 
 	// Controlled-size reconciliation. Only runs when a consumer passes `size`;
@@ -309,6 +354,13 @@ export function useResizablePanel( {
 	// expandedSizeRef in sync so a later expand restores the controlled size.
 	useEffect( () => {
 		if ( ! resizable || ! size ) {
+			return;
+		}
+
+		// Mid-gesture the pointer loop owns the motion values and the ref; the
+		// per-move onResize→parent→size echo would otherwise re-run the clamp and
+		// compare on every pointermove just to bail at the rounding guard.
+		if ( resizingRef.current ) {
 			return;
 		}
 
@@ -330,13 +382,17 @@ export function useResizablePanel( {
 			return;
 		}
 
+		// Frame-width delta = committed NEW width − live OLD width, read before
+		// the springs start driving width away from the old value.
+		const deltaWidth = target.width - width.get();
+
 		const wControls = animate( width, target.width, morphSpring );
 		const hControls = animate( height, target.height, morphSpring );
 
 		// Reposition AFTER the ref commit (so getPanelSize reads the new size),
 		// started alongside the size springs so the pinned edge stays fixed as the
 		// panel grows in one motion.
-		repositionForResize();
+		repositionForResize( deltaWidth );
 
 		return () => {
 			wControls.stop();
@@ -353,10 +409,8 @@ export function useResizablePanel( {
 		isResizing,
 		expandedSizeRef,
 		getPanelSize,
-		getConstraintBox,
 		clampSize,
 		clampToViewport,
-		getLiveWidth,
 		getHeightForState,
 		handleResizePointerDown,
 	};

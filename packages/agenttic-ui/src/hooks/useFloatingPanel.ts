@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { useMotionValue } from 'framer-motion';
 import {
 	type ChatPosition,
@@ -48,21 +48,32 @@ export function useFloatingPanel( {
 	onResizeEnd,
 }: UseFloatingPanelArgs ) {
 	// Seed the shared x/y so a persisted free-drag position (or right-corner dock)
-	// applies on mount. Read once — the drag hook reconciles side changes after.
-	const { x: seedX, y: seedY } = getInitialChatPosition( {
-		freeDrag,
-		initialFreeDragPosition,
-		side: getChatPosition( initialChatPosition ),
-		width: defaultSize?.width,
-		height: defaultSize?.height,
+	// applies on mount. Lazy: useMotionValue only reads its argument on the first
+	// render, so computing this per render paid a discarded localStorage read each
+	// time. defaultSize only drives the corner seed when the panel actually mounts
+	// at that size (resizable AND starting expanded) — every other mount renders
+	// the fixed compact footprint, and a 600-wide seed would dock a 372-wide
+	// launcher 228px off its corner.
+	const [ seed ] = useState( () => {
+		const mountsAtCustomSize =
+			Boolean( resizable ) && chatState === 'expanded';
+		return getInitialChatPosition( {
+			freeDrag,
+			initialFreeDragPosition,
+			side: getChatPosition( initialChatPosition ),
+			width: mountsAtCustomSize ? defaultSize?.width : undefined,
+			height: mountsAtCustomSize ? defaultSize?.height : undefined,
+		} );
 	} );
-	const x = useMotionValue( seedX );
-	const y = useMotionValue( seedY );
+	const x = useMotionValue( seed.x );
+	const y = useMotionValue( seed.y );
 
 	// The drag→resize bridge. Resize is created before drag, so it can't reference
 	// drag's repositionForResize yet; it calls this stable proxy, which the layout
 	// effect below points at the real function after both hooks exist.
-	const repositionForResizeRef = useRef< () => void >( () => {} );
+	const repositionForResizeRef = useRef< ( deltaWidth: number ) => void >(
+		() => {}
+	);
 
 	const resize = useResizablePanel( {
 		resizable,
@@ -74,7 +85,8 @@ export function useFloatingPanel( {
 		compactHeight,
 		x,
 		y,
-		repositionForResize: () => repositionForResizeRef.current(),
+		repositionForResize: ( deltaWidth ) =>
+			repositionForResizeRef.current( deltaWidth ),
 		onResize,
 		onResizeEnd,
 	} );
@@ -89,7 +101,6 @@ export function useFloatingPanel( {
 		y,
 		getPanelSize: resize.getPanelSize,
 		clampResizedSize: resize.clampToViewport,
-		getLiveWidth: resize.getLiveWidth,
 	} );
 
 	useLayoutEffect( () => {
@@ -112,8 +123,6 @@ export function useFloatingPanel( {
 		width: resize.width,
 		height: resize.height,
 		isResizing: resize.isResizing,
-		expandedSizeRef: resize.expandedSizeRef,
-		getPanelSize: resize.getPanelSize,
 		getHeightForState: resize.getHeightForState,
 		handleResizePointerDown: resize.handleResizePointerDown,
 	};

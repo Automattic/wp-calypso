@@ -39,11 +39,6 @@
     cursor: auto;
 }
 
-/* Show grabbing cursor when actively dragging */
-.container.floating:active {
-    cursor: grabbing;
-}
-
 /* Resize handles. Absolutely positioned against the outer floating panel.
    Edge strips are 6px and inset against the border; corner squares are 12px
    and sit above the edges (higher z-index) so corner drags win on overlap. */
