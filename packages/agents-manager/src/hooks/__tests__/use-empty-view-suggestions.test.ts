@@ -147,9 +147,45 @@ describe( 'useEmptyViewSuggestions', () => {
 		await waitFor( () => expect( result.current ).toEqual( [] ) );
 	} );
 
+	it( 'suppresses default suggestions when provider opts in and exposes no getEmptyViewSuggestions', async () => {
+		const loadedProviders = { suppressEmptyViewDefaults: true } as unknown as LoadedProviders;
+
+		const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
+
+		await waitFor( () => expect( result.current ).toEqual( [] ) );
+	} );
+
+	it( 'suppresses default suggestions when provider opts in and getEmptyViewSuggestions returns empty', async () => {
+		const getEmptyViewSuggestions = jest.fn( () => [] );
+		const loadedProviders = {
+			getEmptyViewSuggestions,
+			suppressEmptyViewDefaults: true,
+		} as unknown as LoadedProviders;
+
+		const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
+
+		await waitFor( () => expect( result.current ).toEqual( [] ) );
+	} );
+
 	it( 'keeps site-editor-only provider suggestions in Site Editor', async () => {
 		mockContext = {
 			sectionName: 'site-editor',
+			currentRoute: undefined,
+		};
+		const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
+		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
+
+		const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
+
+		await waitFor( () =>
+			expect( result.current ).toEqual( [ siteEditorSuggestion, bigSkySuggestion ] )
+		);
+	} );
+
+	it( 'keeps site-editor-only suggestions in the Site Editor when the section is reported as gutenberg', async () => {
+		window.history.pushState( {}, '', '/wp-admin/site-editor.php' );
+		mockContext = {
+			sectionName: 'gutenberg',
 			currentRoute: undefined,
 		};
 		const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );

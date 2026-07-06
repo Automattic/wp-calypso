@@ -105,6 +105,7 @@ describe( 'teardown-markers: isAccountClosedError', () => {
 		'authorization_required: An active access token must be used.',
 		'Request was unauthorized',
 		'user_not_found: account is gone',
+		'invalid_username: no such account (rejected signup)',
 	] )( 'returns true for a dead-token / auth error (%s)', ( message ) => {
 		expect( isAccountClosedError( new Error( message ) ) ).toBe( true );
 	} );
@@ -206,6 +207,56 @@ describe( 'closeAccountAndRecordLeak', () => {
 			leakDir
 		);
 		expect( existsSync( markerFile( details.userID ) ) ).toBe( false );
+	} );
+
+	test( 'retries while the close is blocked by an active Atomic site, then clears once it succeeds', async () => {
+		jest.useFakeTimers();
+		try {
+			let calls = 0;
+			const closeAccount = jest.fn( async () => {
+				calls += 1;
+				return calls < 3
+					? { error: 'atomic-site', message: 'active atomic sites' }
+					: { success: true };
+			} );
+			const promise = closeAccountAndRecordLeak(
+				fakeClient( { closeAccount, getMyAccountInformation: jest.fn( async () => ( {} ) ) } ),
+				details,
+				leakDir
+			);
+			// Drive the poll waits to completion; closeAccount succeeds on the 3rd call.
+			await jest.advanceTimersByTimeAsync( 90 * 1000 );
+			await promise;
+
+			expect( closeAccount ).toHaveBeenCalledTimes( 3 );
+			expect( existsSync( markerFile( details.userID ) ) ).toBe( false );
+		} finally {
+			jest.useRealTimers();
+		}
+	} );
+
+	test( 'records a leak when the Atomic site never deprovisions within the retry window', async () => {
+		jest.useFakeTimers();
+		try {
+			const promise = closeAccountAndRecordLeak(
+				fakeClient( {
+					closeAccount: jest.fn( async () => ( {
+						error: 'atomic-site',
+						message: 'active atomic sites',
+					} ) ),
+					getMyAccountInformation: jest.fn( async () => ( {} ) ),
+				} ),
+				details,
+				leakDir
+			);
+			// Advance past the full retry window so the loop reaches its deadline.
+			await jest.advanceTimersByTimeAsync( 200 * 1000 );
+			await promise;
+
+			expect( existsSync( markerFile( details.userID ) ) ).toBe( true );
+		} finally {
+			jest.useRealTimers();
+		}
 	} );
 
 	test( 'never throws even when the client throws', async () => {

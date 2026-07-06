@@ -1,8 +1,11 @@
 package _self.lib.utils
 
 import _self.bashNodeScript
+import jetbrains.buildServer.configs.kotlin.v2019_2.BuildFeatures
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.XmlReport
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.xmlReport
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.ParametrizedWithType
 import jetbrains.buildServer.configs.kotlin.v2019_2.FailureConditions
@@ -90,7 +93,75 @@ fun defaultE2eArtifactRules(): String = """
     logs => logs.tgz
     screenshots => screenshots
     trace => trace
+    test/e2e/output => playwright-output
 """.trimIndent()
+
+/**
+ * Runs the Playwright Test replacements of specs migrated out of this build's
+ * Jest test group, so the build keeps its full population during the Jest to
+ * Playwright migration. Remove once the build is repointed to the Playwright
+ * build types (TESTOPS-20).
+ *
+ * Failed tests reach TeamCity through the JUnit report: pair every use of this
+ * step with the [playwrightJUnitReport] build feature.
+ */
+fun BuildSteps.runMigratedPlaywrightSpecs(
+	tag: String,
+	targetDevice: String,
+	additionalEnvVars: Map<String, String> = mapOf(),
+	stepName: String = "Run migrated Playwright specs",
+	reportSuffix: String = ""
+): ScriptBuildStep {
+	val envVarExport = additionalEnvVars.map { ( key, value ) -> "export $key='$value'" }.joinToString( separator = "\n" )
+	// Playwright always writes output/results.xml; rename it per invocation so
+	// sequential runs in a loop (the Atomic variations) don't overwrite each
+	// other's report and lose all but the last variation's results.
+	val reportFile = if ( reportSuffix.isEmpty() ) "output/results.xml" else "output/results-$reportSuffix.xml"
+
+	return bashNodeScript {
+		name = stepName
+		// Run even when the Jest step above failed: the migrated population must
+		// execute on every run, and the JUnit report carries the failures.
+		executionMode = BuildStep.ExecutionMode.ALWAYS
+		scriptContent = """
+			# Export additional environment variables.
+			$envVarExport
+
+			# Enter testing directory.
+			cd test/e2e
+
+			# Clear any prior report so a runner crash can't be masked by a stale
+			# file left behind (e.g. an earlier Atomic variation in the loop).
+			rm -f $reportFile
+
+			# Swallow the exit code so later steps still run; failed tests fail
+			# the build through the JUnit report.
+			yarn test:pw:$targetDevice --grep=$tag || true
+
+			# Move the report to a per-invocation name so the import rule
+			# (results*.xml) picks up every variation, not just the last.
+			[[ -f output/results.xml && output/results.xml != $reportFile ]] && mv output/results.xml $reportFile
+
+			# A runner crash that produced no report must not pass silently.
+			if [[ ! -f $reportFile ]]; then
+				echo "##teamcity[buildProblem description='Playwright step produced no JUnit report ($stepName)' identity='migrated_pw_no_report_$reportSuffix']"
+			fi
+		""".trimIndent()
+		dockerImage = "%docker_image_e2e%"
+	}
+}
+
+/**
+ * Imports the Playwright Test JUnit report so failed tests from
+ * [runMigratedPlaywrightSpecs] fail the build.
+ */
+fun BuildFeatures.playwrightJUnitReport() {
+	xmlReport {
+		reportType = XmlReport.XmlReportType.JUNIT
+		rules = "+:test/e2e/output/results*.xml"
+		verbose = true
+	}
+}
 
 fun BuildSteps.runE2eTestsWithRetry(
 	testGroup: String,

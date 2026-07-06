@@ -475,7 +475,7 @@ describe( 'initial-state', () => {
 		const initialState = { currentUser: { id: 123456789 } };
 
 		beforeEach( async () => {
-			// we use fake timers from Sinon (aka Lolex) because `lodash.throttle` also uses `Date.now()`
+			// we use fake timers from Sinon (aka Lolex) because `throttle` also uses `Date.now()`
 			// and relies on it returning a mocked value. Jest fake timers don't mock `Date`, Lolex does.
 			jest.useFakeTimers();
 			setStoredItemSpy = jest

@@ -37,7 +37,7 @@ const withConfig = ( keys ) => {
 };
 
 /**
- * These tests rely on nock to intercept the requets and return a pre-defined response.
+ * These tests rely on nock to intercept the request and return a pre-defined response.
  *
  * If `getBootstrappedUser()` sends a request that doesn't match any of the requests configured in `nock`, it will throw. In most
  * tests we just assert that `getBootstrappedUser()` returns a resolved promise, as it proves that it sent the expected request.

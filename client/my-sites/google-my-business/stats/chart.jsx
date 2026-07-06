@@ -243,7 +243,7 @@ class GoogleMyBusinessStatsChart extends Component {
 		}
 
 		let text = translate( 'Error loading data', {
-			context: 'Message on a chart in Stats where an error was occured while loading data',
+			context: 'Message on a chart in Stats where an error occurred while loading data',
 			comment: 'Should be limited to 32 characters to prevent wrapping',
 		} );
 

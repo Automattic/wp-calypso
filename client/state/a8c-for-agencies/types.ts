@@ -119,6 +119,9 @@ export interface Agency {
 		allowed: boolean;
 		directories: DirectoryApplicationType[];
 	};
+	mcp?: {
+		allowed: boolean;
+	};
 	lead_matching?: {
 		allowed?: boolean;
 		draft?: LeadMatchingDetails | null;

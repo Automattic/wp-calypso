@@ -13,6 +13,7 @@ import { useAgentsManagerContext } from '../../contexts';
 import { useSetupCustomActions } from '../../hooks/custom-actions';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
+import useHideChatOnSiteEditorNavigation from '../../hooks/use-hide-chat-on-site-editor-navigation';
 import useReaderChatPersistence from '../../hooks/use-reader-chat-persistence';
 import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
@@ -84,7 +85,7 @@ export default function AgentDock( {
 	const [ isCompactMode, setIsCompactMode ] = useState(
 		window.__agentsManagerActions?.isCompactMode ?? false
 	);
-	const [ shouldRenderChat, setShouldRenderChat ] = useState(
+	const [ isChatEnabled, setIsChatEnabled ] = useState(
 		window.__agentsManagerActions?.isChatEnabled ?? true
 	);
 	const [ desktopMediaQuery, setDesktopMediaQuery ] = useState< string | undefined >(
@@ -119,8 +120,14 @@ export default function AgentDock( {
 		[ isReaderChat, setIsOpen ]
 	);
 
+	// The chat can't work on the Site Editor navigation view, so keep the layout
+	// manager idle there — no docking side effects (portal, body classes, tracking)
+	// until the editing canvas opens.
+	const isSiteEditorNavigation = useHideChatOnSiteEditorNavigation();
+
 	const { isDocked, canDock, dock, undock, openSidebar, closeSidebar, createAgentPortal } =
 		useAgentLayoutManager( {
+			isReady: ! isSiteEditorNavigation,
 			defaultDocked: isReaderChat ? false : isPersistedDocked,
 			defaultOpen: isPersistedOpen,
 			desktopMediaQuery,
@@ -194,7 +201,7 @@ export default function AgentDock( {
 		openSidebar,
 		closeSidebar,
 		setIsCompactMode,
-		setShouldRenderChat,
+		setIsChatEnabled,
 		setDesktopMediaQuery,
 	} );
 
@@ -245,7 +252,7 @@ export default function AgentDock( {
 		return [
 			{
 				icon: comment,
-				title: __( 'New chat', '__i18n_text_domain__' ),
+				title: __( 'New chat', __i18n_text_domain__ ),
 				isDisabled: pathname === '/chat' && isOrchestratorChatEmpty,
 				onClick: () => {
 					recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
@@ -260,7 +267,7 @@ export default function AgentDock( {
 			! isReaderChat &&
 				isDocked && {
 					icon: login,
-					title: __( 'Pop out sidebar', '__i18n_text_domain__' ),
+					title: __( 'Pop out sidebar', __i18n_text_domain__ ),
 					onClick: () => {
 						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
 							type: 'undock',
@@ -273,7 +280,7 @@ export default function AgentDock( {
 				! isDocked &&
 				canDock && {
 					icon: drawerRight,
-					title: __( 'Move to sidebar', '__i18n_text_domain__' ),
+					title: __( 'Move to sidebar', __i18n_text_domain__ ),
 					onClick: () => {
 						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
 							type: 'dock',
@@ -289,8 +296,8 @@ export default function AgentDock( {
 				capabilities?.supportsSplitScreen && {
 					icon: columns,
 					title: isSplitScreen
-						? __( 'Exit split screen', '__i18n_text_domain__' )
-						: __( 'Split screen sidebar', '__i18n_text_domain__' ),
+						? __( 'Exit split screen', __i18n_text_domain__ )
+						: __( 'Split screen sidebar', __i18n_text_domain__ ),
 					onClick: () => setIsSplitScreen( ! isSplitScreen ),
 				},
 		].filter( Boolean ) as ChatHeaderOptions;
@@ -322,6 +329,7 @@ export default function AgentDock( {
 			siteBuildUtils={ siteBuildUtils }
 			useImageUpload={ useImageUpload }
 			useCheckpoint={ useCheckpoint }
+			capabilities={ capabilities }
 			onHasMessagesChange={ handleChatHasMessagesChange }
 		/>
 	);
@@ -372,9 +380,9 @@ export default function AgentDock( {
 		/>
 	);
 
-	// When chat rendering is disabled there's nothing to open, so render nothing — the editor
-	// entry-point buttons would otherwise be dead.
-	if ( ! shouldRenderChat ) {
+	// Neither case has a chat to open, so render nothing — otherwise the editor
+	// entry-point buttons below would be dead.
+	if ( ! isChatEnabled || isSiteEditorNavigation ) {
 		return null;
 	}
 

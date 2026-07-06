@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import isRequestingBillingTransactions from 'calypso/state/selectors/is-requesting-billing-transactions';
 
 import 'calypso/state/billing-transactions/init';
@@ -12,8 +11,4 @@ import 'calypso/state/billing-transactions/init';
  */
 export default ( state, transactionId ) =>
 	isRequestingBillingTransactions( state ) ||
-	get(
-		state,
-		[ 'billingTransactions', 'individualTransactions', transactionId, 'requesting' ],
-		false
-	);
+	( state?.billingTransactions?.individualTransactions?.[ transactionId ]?.requesting ?? false );

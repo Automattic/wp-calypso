@@ -16,15 +16,46 @@ import type {
 	SpaceFeedLayout,
 } from '@automattic/api-core';
 
+let mockCurrentLocaleSlug: string | null = null;
+
 jest.mock( 'calypso/reader/data/stream', () => ( {
 	useInfiniteStream: jest.fn(),
+	getCachedStreamItems: jest.fn( () => [] ),
 } ) );
+
+jest.mock( 'calypso/reader/hooks/use-infinite-list', () => ( {
+	ScrollDebugOverlay: () => null,
+	useInfiniteList: jest.fn( ( { count } ) => ( {
+		getListProps: ( props = {} ) => props,
+		items: Array.from( { length: count }, ( _value, index ) => ( {
+			index,
+			key: `item-${ index }`,
+			start: index * 100,
+			lane: 0,
+		} ) ),
+		measureElement: jest.fn(),
+		scrollMargin: 0,
+		scrollToIndex: jest.fn(),
+	} ) ),
+} ) );
+
+jest.mock( 'calypso/state/selectors/get-current-locale-slug', () =>
+	jest.fn( () => mockCurrentLocaleSlug )
+);
 
 jest.mock( 'calypso/state/reader/site-blocks/selectors', () => {
 	const blockedSites: number[] = [];
 	const getBlockedSites = jest.fn( () => blockedSites );
 	return { getBlockedSites };
 } );
+
+const mockRecordReaderTracksEvent: jest.Mock = jest.fn( () => ( {
+	type: 'TEST_TRACKS_EVENT',
+} ) );
+
+jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
+	recordReaderTracksEvent: ( ...args: unknown[] ) => mockRecordReaderTracksEvent( ...args ),
+} ) );
 
 const mockUseInfiniteStream = useInfiniteStream as jest.Mock;
 
@@ -47,7 +78,14 @@ function streamResult( overrides: Partial< ReturnType< typeof useInfiniteStream 
 }
 
 function makeSpace( id: string, name: string, view: SpaceFeedLayout ): ReadSpaceDetails {
-	return { id, name, tags: [], layout: { color: 'blue', icon: 'inbox', view }, sources: [] };
+	return {
+		id,
+		name,
+		tags: [],
+		languages: [],
+		layout: { color: 'blue', icon: 'inbox', view },
+		sources: [],
+	};
 }
 
 function makePost( overrides: Partial< ReadStreamPost > = {} ): ReadStreamPost {
@@ -91,6 +129,8 @@ function renderWithLayoutViewFallback( space: ReadSpaceDetails, layoutView: Spac
 describe( 'SpaceFeed', () => {
 	beforeEach( () => {
 		window.history.replaceState( {}, '', '/reader/spaces/work-id' );
+		mockCurrentLocaleSlug = null;
+		mockRecordReaderTracksEvent.mockClear();
 		mockUseInfiniteStream.mockReturnValue( streamResult() );
 	} );
 
@@ -167,10 +207,52 @@ describe( 'SpaceFeed', () => {
 		expect( screen.queryByText( 'Couldn’t load this feed' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'shows the empty state when the stream has no posts', () => {
-		render( WORK );
+	it( 'shows an actionable empty state with an Add sources CTA when the feed has no posts', async () => {
+		const user = userEvent.setup();
+		const onAddSources = jest.fn();
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		queryClient.setQueryData( readSpaceQuery( WORK.id ).queryKey, WORK );
+
+		renderWithProvider( <SpaceFeed spaceId={ WORK.id } onAddSources={ onAddSources } />, {
+			queryClient,
+			initialState: { currentUser: { id: 1 } },
+		} );
+
+		expect( screen.getByText( 'Add sources to get started' ) ).toBeVisible();
+
+		await user.click( screen.getByRole( 'button', { name: 'Add sources' } ) );
+
+		expect( onAddSources ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'shows the Add sources CTA in the legacy layout empty state', async () => {
+		const user = userEvent.setup();
+		const onAddSources = jest.fn();
+		const legacy = makeSpace( 'work-id', 'Work', 'legacy' );
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		queryClient.setQueryData( readSpaceQuery( legacy.id ).queryKey, legacy );
+
+		renderWithProvider( <SpaceFeed spaceId={ legacy.id } onAddSources={ onAddSources } />, {
+			queryClient,
+			initialState: { currentUser: { id: 1 } },
+		} );
+
+		await user.click( screen.getByRole( 'button', { name: 'Add sources' } ) );
+
+		expect( onAddSources ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'shows the Discover empty state without an Add sources CTA', () => {
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		queryClient.setQueryData( readSpaceQuery( WORK.id ).queryKey, WORK );
+
+		renderWithProvider(
+			<SpaceFeed spaceId={ WORK.id } variant="discover" onAddSources={ jest.fn() } />,
+			{ queryClient, initialState: { currentUser: { id: 1 } } }
+		);
 
 		expect( screen.getByText( 'Nothing here yet' ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Add sources' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'requests the space posts stream keyed by the space id', () => {
@@ -178,6 +260,81 @@ describe( 'SpaceFeed', () => {
 
 		expect( mockUseInfiniteStream ).toHaveBeenCalledWith(
 			expect.objectContaining( { streamKey: `space:${ WORK.id }` } )
+		);
+	} );
+
+	it( 'passes the non-default locale to the stream request', () => {
+		mockCurrentLocaleSlug = 'pt-br';
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		queryClient.setQueryData( readSpaceQuery( WORK.id ).queryKey, WORK );
+
+		renderWithProvider( <SpaceFeed spaceId={ WORK.id } />, {
+			queryClient,
+			initialState: { currentUser: { id: 1 } },
+		} );
+
+		expect( mockUseInfiniteStream ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				streamKey: `space:${ WORK.id }`,
+				localeSlug: 'pt-br',
+			} )
+		);
+	} );
+
+	it( 'stores the full stream item when selecting a post', async () => {
+		const user = userEvent.setup();
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		queryClient.setQueryData( readSpaceQuery( WORK.id ).queryKey, WORK );
+		const post = makePost();
+		const streamItem = {
+			feedId: post.feed_ID,
+			postId: post.feed_item_ID,
+			url: post.URL,
+			site_name: post.site_name,
+		};
+		mockUseInfiniteStream.mockReturnValue(
+			streamResult( {
+				items: [ streamItem ],
+				pages: [ { posts: [ post ] } as unknown as ReadStreamResponse ],
+			} )
+		);
+
+		renderWithProvider( <SpaceFeed spaceId={ WORK.id } />, {
+			queryClient,
+			initialState: { currentUser: { id: 1 } },
+		} );
+
+		const link = screen.getByRole( 'link', { name: 'A layout-sensitive post' } );
+		link.addEventListener( 'click', ( event ) => event.preventDefault() );
+		await user.click( link );
+
+		expect(
+			queryClient.getQueryData( [ 'read', 'stream', 'selected', `space:${ WORK.id }`, null ] )
+		).toEqual( streamItem );
+	} );
+
+	it( 'records a tracks event when a post is opened', async () => {
+		const user = userEvent.setup();
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		queryClient.setQueryData( readSpaceQuery( WORK.id ).queryKey, WORK );
+		const post = makePost();
+		mockUseInfiniteStream.mockReturnValue(
+			streamResult( { pages: [ { posts: [ post ] } as unknown as ReadStreamResponse ] } )
+		);
+
+		renderWithProvider( <SpaceFeed spaceId={ WORK.id } />, {
+			queryClient,
+			initialState: { currentUser: { id: 1 } },
+		} );
+
+		const link = screen.getByRole( 'link', { name: 'A layout-sensitive post' } );
+		link.addEventListener( 'click', ( event ) => event.preventDefault() );
+		await user.click( link );
+
+		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+			'calypso_reader_spaces_post_opened',
+			{ space_id: WORK.id, layout: 'standard-list', variant: 'feed' },
+			{ post }
 		);
 	} );
 
@@ -236,7 +393,7 @@ describe( 'SpaceFeed', () => {
 	it( 'shows the empty state for the legacy layout when the legacy stream has no posts', () => {
 		render( makeSpace( 'work-id', 'Work', 'legacy' ) );
 
-		expect( screen.getByText( 'Nothing here yet' ) ).toBeVisible();
+		expect( screen.getByText( 'Add sources to get started' ) ).toBeVisible();
 	} );
 
 	it( 'shows an error with a retry for the legacy layout when the legacy stream fails', async () => {

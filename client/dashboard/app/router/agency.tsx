@@ -4,6 +4,7 @@ import {
 	agencyResourcesQuery,
 	mcpSettingsQuery,
 	queryClient,
+	rawUserPreferencesQuery,
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
@@ -19,7 +20,10 @@ const agencyRoute = createRoute( {
 			return; // Don't redirect on hover/intent preloads.
 		}
 
-		const agency = await queryClient.ensureQueryData( agencyQuery() );
+		const [ agency ] = await Promise.all( [
+			queryClient.ensureQueryData( agencyQuery() ),
+			queryClient.ensureQueryData( activeAgencyQuery() ),
+		] );
 		if ( agency.isClientUser ) {
 			throw redirectAsNotAllowed( { to: '/client/subscriptions' } );
 		}
@@ -117,6 +121,16 @@ const mcpRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'MCP' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'resources/ai-mcp',
+	beforeLoad: async ( { cause } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		if ( ! agency?.mcp?.allowed ) {
+			throw redirectAsNotAllowed( { to: '/overview' } );
+		}
+	},
 } );
 
 const mcpOverviewRoute = createRoute( {
@@ -150,6 +164,77 @@ const mcpConnectRoute = createRoute( {
 	)
 );
 
+// `/sites` – agency-managed sites
+export const agencySitesRoute = createRoute( {
+	head: () => ( {
+		meta: [ { title: __( 'Sites' ) } ],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'sites',
+	loader: () => queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+} ).lazy( () =>
+	import( '../../agency/sites' ).then( ( d ) =>
+		createLazyRoute( 'agency-sites' )( {
+			component: d.default,
+		} )
+	)
+);
+
+// `/earn` – summary of the agency's earning programs (default Earn screen)
+const earnOverviewRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Overview' ) } ] } ),
+	getParentRoute: () => agencyRoute,
+	path: 'earn',
+} ).lazy( () =>
+	import( '../../agency/earn/overview' ).then( ( d ) =>
+		createLazyRoute( 'earn-overview' )( { component: d.default } )
+	)
+);
+
+// `/earn/referrals` – referral commissions
+const earnReferralsRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Referrals' ) } ] } ),
+	getParentRoute: () => agencyRoute,
+	path: 'earn/referrals',
+} ).lazy( () =>
+	import( '../../agency/earn/referrals' ).then( ( d ) =>
+		createLazyRoute( 'earn-referrals' )( { component: d.default } )
+	)
+);
+
+// `/earn/woopayments` – WooPayments revenue share
+const earnWooPaymentsRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'WooPayments' ) } ] } ),
+	getParentRoute: () => agencyRoute,
+	path: 'earn/woopayments',
+} ).lazy( () =>
+	import( '../../agency/earn/woopayments' ).then( ( d ) =>
+		createLazyRoute( 'earn-woopayments' )( { component: d.default } )
+	)
+);
+
+// `/earn/migrations` – migration commissions
+const earnMigrationsRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Migrations' ) } ] } ),
+	getParentRoute: () => agencyRoute,
+	path: 'earn/migrations',
+} ).lazy( () =>
+	import( '../../agency/earn/migrations' ).then( ( d ) =>
+		createLazyRoute( 'earn-migrations' )( { component: d.default } )
+	)
+);
+
+// `/earn/payout-settings` – where and how the agency gets paid
+const earnPayoutSettingsRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Payout settings' ) } ] } ),
+	getParentRoute: () => agencyRoute,
+	path: 'earn/payout-settings',
+} ).lazy( () =>
+	import( '../../agency/earn/payout-settings' ).then( ( d ) =>
+		createLazyRoute( 'earn-payout-settings' )( { component: d.default } )
+	)
+);
+
 export const createAgencyRoutes = () => [
 	agencyRoute.addChildren( [
 		agencyOverviewRoute,
@@ -157,5 +242,11 @@ export const createAgencyRoutes = () => [
 		exclusiveOffersRoute,
 		learnRoute,
 		mcpRoute.addChildren( [ mcpOverviewRoute, mcpAvailableToolsRoute, mcpConnectRoute ] ),
+		agencySitesRoute,
+		earnOverviewRoute,
+		earnReferralsRoute,
+		earnWooPaymentsRoute,
+		earnMigrationsRoute,
+		earnPayoutSettingsRoute,
 	] ),
 ];

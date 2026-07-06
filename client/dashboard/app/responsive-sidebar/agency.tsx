@@ -1,28 +1,36 @@
-import { agencyQuery } from '@automattic/api-queries';
+import { agencyQuery, activeAgencyQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { home, globe, pages, tag } from '@wordpress/icons';
+import { home, globe, layout, pages, tag, currencyDollar } from '@wordpress/icons';
 import { SidebarExpandableMenuItem, SidebarMenuItem } from '../../components/sidebar';
 import { useAppContext } from '../context';
 
 export default function AgencySidebar() {
 	const { supports } = useAppContext();
 	const { data: agency } = useSuspenseQuery( agencyQuery() );
-	if ( agency.isClientUser ) {
+	const { data: activeAgency } = useSuspenseQuery( activeAgencyQuery() );
+	if ( agency.isClientUser || ! supports.agency ) {
 		return null;
 	}
+
+	const canAccessMcp = !! ( supports.agency.mcp && activeAgency?.mcp?.allowed );
 
 	return (
 		<>
 			<SidebarMenuItem icon={ home } to="/overview">
 				{ __( 'Home' ) }
 			</SidebarMenuItem>
-			{ supports.agency && supports.agency.tiers && (
+			{ supports.agency.sites && (
+				<SidebarMenuItem icon={ layout } to="/sites">
+					{ __( 'Sites' ) }
+				</SidebarMenuItem>
+			) }
+			{ supports.agency.tiers && (
 				<SidebarExpandableMenuItem label={ __( 'Agency' ) } icon={ globe } to="/agency/tiers">
 					<SidebarMenuItem to="/agency/tiers">{ __( 'Tiers' ) }</SidebarMenuItem>
 				</SidebarExpandableMenuItem>
 			) }
-			{ supports.agency && supports.agency.exclusiveOffers && (
+			{ supports.agency.exclusiveOffers && (
 				<SidebarExpandableMenuItem
 					label={ __( 'Marketplace' ) }
 					icon={ tag }
@@ -33,14 +41,25 @@ export default function AgencySidebar() {
 					</SidebarMenuItem>
 				</SidebarExpandableMenuItem>
 			) }
-			{ supports.agency && ( supports.agency.learn || supports.agency.mcp ) && (
+			{ ( supports.agency.learn || canAccessMcp ) && (
 				<SidebarExpandableMenuItem label={ __( 'Resources' ) } icon={ pages } to="/resources">
 					{ supports.agency.learn && (
 						<SidebarMenuItem to="/resources/learn">{ __( 'Learn' ) }</SidebarMenuItem>
 					) }
-					{ supports.agency.mcp && (
+					{ canAccessMcp && (
 						<SidebarMenuItem to="/resources/ai-mcp">{ __( 'MCP' ) }</SidebarMenuItem>
 					) }
+				</SidebarExpandableMenuItem>
+			) }
+			{ supports.agency.earn && (
+				<SidebarExpandableMenuItem label={ __( 'Earn' ) } icon={ currencyDollar } to="/earn">
+					<SidebarMenuItem to="/earn" activeOptions={ { exact: true } }>
+						{ __( 'Overview' ) }
+					</SidebarMenuItem>
+					<SidebarMenuItem to="/earn/referrals">{ __( 'Referrals' ) }</SidebarMenuItem>
+					<SidebarMenuItem to="/earn/woopayments">{ __( 'WooPayments' ) }</SidebarMenuItem>
+					<SidebarMenuItem to="/earn/migrations">{ __( 'Migrations' ) }</SidebarMenuItem>
+					<SidebarMenuItem to="/earn/payout-settings">{ __( 'Payout settings' ) }</SidebarMenuItem>
 				</SidebarExpandableMenuItem>
 			) }
 		</>

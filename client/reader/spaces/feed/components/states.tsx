@@ -32,16 +32,37 @@ export function SpaceFeedLoadingMore() {
 }
 
 /** Shown when the stream has loaded but holds no posts. Copy differs per variant. */
-export function SpaceFeedEmpty( { variant = 'feed' }: { variant?: 'feed' | 'discover' } ) {
+export function SpaceFeedEmpty( {
+	variant = 'feed',
+	onAddSources,
+}: {
+	variant?: 'feed' | 'discover';
+	onAddSources?: () => void;
+} ) {
 	const translate = useTranslate();
+
+	if ( variant === 'discover' ) {
+		return (
+			<div className="space-feed__status">
+				<p className="space-feed__status-title">{ translate( 'Nothing here yet' ) }</p>
+				<p className="space-feed__status-line">
+					{ translate( 'On-topic posts you don’t already follow will show up here.' ) }
+				</p>
+			</div>
+		);
+	}
+
 	return (
 		<div className="space-feed__status">
-			<p className="space-feed__status-title">{ translate( 'Nothing here yet' ) }</p>
+			<p className="space-feed__status-title">{ translate( 'Add sources to get started' ) }</p>
 			<p className="space-feed__status-line">
-				{ variant === 'discover'
-					? translate( 'On-topic posts you don’t already follow will show up here.' )
-					: translate( 'Posts from this space’s sources will show up here.' ) }
+				{ translate( 'Follow blogs, tags, or sites to fill this space with posts you’ll love.' ) }
 			</p>
+			{ onAddSources && (
+				<Button variant="primary" onClick={ onAddSources }>
+					{ translate( 'Add sources' ) }
+				</Button>
+			) }
 		</div>
 	);
 }

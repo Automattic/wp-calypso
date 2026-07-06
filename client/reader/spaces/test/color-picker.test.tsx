@@ -25,4 +25,22 @@ describe( 'SpaceColorPicker', () => {
 
 		expect( onChange ).toHaveBeenCalledWith( 'pink' );
 	} );
+
+	it( 'adds a "None" swatch and checks it when selected', () => {
+		renderWithProvider( <SpaceColorPicker value="none" onChange={ jest.fn() } allowNone /> );
+
+		// The eight colors plus the extra "None" swatch.
+		expect( screen.getAllByRole( 'radio' ) ).toHaveLength( 9 );
+		expect( screen.getByRole( 'radio', { name: 'None' } ) ).toBeChecked();
+	} );
+
+	it( 'reports "none" when the None swatch is chosen', async () => {
+		const user = userEvent.setup();
+		const onChange = jest.fn();
+		renderWithProvider( <SpaceColorPicker value="blue" onChange={ onChange } allowNone /> );
+
+		await user.click( screen.getByRole( 'radio', { name: 'None' } ) );
+
+		expect( onChange ).toHaveBeenCalledWith( 'none' );
+	} );
 } );

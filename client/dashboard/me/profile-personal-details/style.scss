@@ -23,6 +23,20 @@
 	}
 }
 
+.components-input-control.has-warning {
+	.components-base-control__help {
+		color: var( --dashboard__foreground-color-warning );
+		display: flex;
+		align-items: flex-start;
+		gap: 4px;
+
+		svg {
+			fill: var( --dashboard__foreground-color-warning );
+			flex-shrink: 0;
+		}
+	}
+}
+
 .components-input-control.has-success {
 	.components-input-control__backdrop {
 		border-color: var( --dashboard__background-color-success );

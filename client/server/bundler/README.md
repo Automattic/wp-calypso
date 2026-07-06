@@ -78,7 +78,7 @@ There are two different modes of operation:
 
 ## Caching
 
-In most of the environments that Calypso is deployed to, the static assets are served and cached by nginx. Each filename includes a hash that is calculated by Webpack, which means that we can cache assets for all the various versions of Calpso that may be in active use. The hash also busts the cache on the client-side.
+In most of the environments that Calypso is deployed to, the static assets are served and cached by nginx. Each filename includes a hash that is calculated by Webpack, which means that we can cache assets for all the various versions of Calypso that may be in active use. The hash also busts the cache on the client-side.
 
 ## Webpack Stats
 

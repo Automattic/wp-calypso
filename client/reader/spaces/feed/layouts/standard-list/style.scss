@@ -20,8 +20,18 @@
 }
 
 .space-feed-standard-list__row {
+	position: relative;
 	padding-block: 18px;
 	border-block-end: 1px solid var(--color-border-subtle);
+}
+
+.space-feed-standard-list__row[data-selected]::before {
+	content: '';
+	position: absolute;
+	inset-block: 0;
+	inset-inline-start: -16px;
+	inline-size: 2px;
+	background: var(--color-primary);
 }
 
 .space-feed-standard-list__item[data-first='true'] .space-feed-standard-list__row {

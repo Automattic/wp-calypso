@@ -1,16 +1,14 @@
 import { orderBy } from '@automattic/js-utils';
 import { createSelector } from '@automattic/state-utils';
-import { filter } from 'lodash';
 
 import 'calypso/state/comments/init';
 
 function filterCommentsByStatus( comments, status ) {
 	return 'all' === status
-		? filter(
-				comments,
+		? comments.filter(
 				( comment ) => 'approved' === comment.status || 'unapproved' === comment.status
 		  )
-		: filter( comments, ( comment ) => status === comment.status );
+		: comments.filter( ( comment ) => status === comment.status );
 }
 
 /**

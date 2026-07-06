@@ -778,20 +778,26 @@ export class EditorPage {
 		const editorBlockCountBefore = await editorCanvas.locator( selectors.editorBlock ).count();
 
 		await inserter.searchBlockInserter( patternName );
+
 		const locator = await inserter.selectBlockInserterResult( patternName, {
 			type: 'pattern',
 			exactMatch,
 		} );
 
-		// For partial matches, get the actual pattern name from the selected element.
-		let actualPatternName = patternName;
-		if ( ! exactMatch ) {
-			actualPatternName = ( await locator.getAttribute( 'aria-label' ) ) ?? '';
-		}
+		// Resolve the pattern that was actually selected so the confirmation is
+		// asserted against it, not against "some pattern inserted".
+		const actualPatternName = exactMatch
+			? patternName
+			: ( await locator.getAttribute( 'aria-label' ) ) ?? '';
 
-		const insertConfirmationToastLocator = editorParent.locator(
-			`.components-snackbar__content:text('Block pattern "${ actualPatternName }" inserted.')`
-		);
+		// Assert insertion via the toast naming this specific pattern. getByText
+		// with an exact string avoids the selector breaking on a pattern name
+		// that contains quotes. The pattern click uses noWaitAfter and can
+		// resolve before the transient toast is caught, so fall back to the block
+		// landing in the canvas to avoid hanging on a toast that already dismissed.
+		const insertConfirmationToastLocator = editorParent
+			.locator( '.components-snackbar__content' )
+			.getByText( `Block pattern "${ actualPatternName }" inserted.`, { exact: true } );
 		const insertedBlockLocator = editorCanvas
 			.locator( selectors.editorBlock )
 			.nth( editorBlockCountBefore );

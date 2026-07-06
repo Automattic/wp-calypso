@@ -4,7 +4,6 @@ import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -109,7 +108,6 @@ const ReaderSidebarRecent = ( {
 			onClick={ selectMenu }
 			expanded={ isOpen }
 			title={ translate( 'Recent' ) }
-			customIcon={ <ReaderIcon className="sidebar__menu-icon" viewBox="0 0 24 11" /> }
 			disableFlyout
 			className={ clsx( 'reader-sidebar-recent', className, {
 				'sidebar__menu--selected': ! isOpen && isRecentStream,

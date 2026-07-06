@@ -1,6 +1,6 @@
 /* eslint-disable no-case-declarations */
 
-import { merge } from 'lodash';
+import { merge } from '@automattic/js-utils';
 import {
 	ALL_SITES_STATS_RECEIVE,
 	SITE_STATS_RECEIVE,

@@ -41,8 +41,8 @@ without an action hash.
 
 - **Save/Create batches the editable fields.** "Save changes" and "Create" send
   the same draft model: `name`, `tags`, `feeds`, and
-  `layout: { color, icon, view }`. Source add/remove in the modal updates local
-  draft state only; the endpoint receives the final `feeds` list on submit.
+  `layout: { color, iconColor, icon, view, width }`. Source add/remove in the modal
+  updates local draft state only; the endpoint receives the final `feeds` list on submit.
 - **Draft state is seeded once** (a `isSeeded` flag), not on every `space` change,
   so a source add/remove (which rewrites the detail cache) can't clobber unsaved
   identity/layout edits.
@@ -55,8 +55,13 @@ without an action hash.
   When adding a color/icon, update `colors.ts` (`SPACE_COLORS` + labels) /
   `icons.ts` and the `icon-picker.tsx` label map (typed `Record< SpaceIcon, … >`,
   so a missing label is a type error).
-- **Not yet built (no backend):** description, AI tag auto-fill, text size, and
-  column layout shown in the design mockups are intentionally omitted.
+- **Column width** (`layout.width`, `'regular' | 'wide'`) is chosen in the Layout
+  tab and consumed by `view.tsx` as `wideLayout={ width === 'wide' }` on
+  `ReaderMain`. Unset falls back to `'wide'` (`DEFAULT_SPACE_WIDTH` in
+  `customize-modal/layout-tab.tsx`) so existing spaces keep their current width;
+  `wide` → `.main.is-wide-layout` (1040px), `regular` → the Reader default (768px).
+- **Not yet built (no backend):** description, AI tag auto-fill, and text size
+  shown in the design mockups are intentionally omitted.
 
 ## Conventions
 
@@ -82,10 +87,17 @@ without an action hash.
 ### Model & presentation
 
 - `ReadSpace` is serializable. Presentation settings live grouped under
-  `layout` (a `SpaceLayout`) so they can grow beyond color/icon; `layout.color`
-  and `layout.icon` are **string keys**, never rendered glyphs. Map
-  `layout.icon` → a `@wordpress/icons` element via `SPACE_ICONS` in `icons.ts`;
-  `layout.color` selects a CSS variant.
+  `layout` (a `SpaceLayout`) so they can grow beyond color/icon; `layout.color`,
+  `layout.iconColor` and `layout.icon` are **string keys**, never rendered
+  glyphs. Map `layout.icon` → a `@wordpress/icons` element via `SPACE_ICONS` in
+  `icons.ts`; the color keys select CSS variants.
+- Color is split in two: `layout.color` is the **text accent** (post titles +
+  actions) and can be `'none'` to keep the text neutral like the rest of the
+  Reader; `layout.iconColor` colors the **icon** (sidebar chrome). Resolve the
+  icon color with `resolveSpaceIconColor( layout )` in `colors.ts` — it falls
+  back to `color` (then the default) so spaces created before the split keep a
+  colored icon. The feed only emits the `space-feed--{color}` accent modifier
+  when `color !== 'none'`.
 - Build Spaces URLs with `routes.ts` (`SPACES_BASE_PATH`, `getSpacePath`) —
   never hand-concatenate paths.
 

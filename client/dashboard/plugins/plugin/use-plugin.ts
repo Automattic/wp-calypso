@@ -1,4 +1,11 @@
-import { MarketplaceSearch, PluginItem, Site, SitePlugin } from '@automattic/api-core';
+import {
+	MarketplacePlugin,
+	MarketplaceSearch,
+	PluginItem,
+	Site,
+	SitePlugin,
+	WpOrgPlugin,
+} from '@automattic/api-core';
 import {
 	pluginsQuery,
 	wpOrgPluginQuery,
@@ -6,9 +13,24 @@ import {
 	marketplacePluginsQuery,
 } from '@automattic/api-queries';
 import { useQuery, useQueries, useQueryClient } from '@tanstack/react-query';
+import { decodeEntities } from '@wordpress/html-entities';
 import { useMemo } from 'react';
 import { useAppContext } from '../../app/context';
 import { useLocale } from '../../app/locale';
+import { isWebUrl } from '../../utils/is-web-url';
+
+// wp.org/marketplace ship `author` as an HTML anchor (e.g.
+// `<a href="…">Automattic</a>`). Strip the markup with a regex — never
+// `innerHTML`, to avoid a DOM-XSS sink — and decode any entities.
+const stripAuthorMarkup = ( author = '' ) =>
+	decodeEntities( author.replace( /<[^>]*>/g, '' ) ).trim();
+
+const toAuthorUrl = ( url?: string | null ) => ( url && isWebUrl( url ) ? url : null );
+
+export type NormalizedPlugin = ( PluginItem | MarketplacePlugin | WpOrgPlugin ) & {
+	author: string;
+	authorUrl: string | null;
+};
 
 export interface SiteWithPluginData extends Site {
 	actionLinks?: SitePlugin[ 'action_links' ];
@@ -88,14 +110,28 @@ export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: b
 
 	const siteIdsWithThisPlugin = Array.from( pluginBySiteId.keys() );
 
-	let pluginData;
-	if ( pluginBySiteId.size ) {
-		pluginData = pluginBySiteId.get( siteIdsWithThisPlugin[ 0 ] );
-	} else if ( isMarketplacePlugin ) {
-		pluginData = marketplacePlugins?.results[ pluginSlug ];
-	} else if ( wpOrgPlugin ) {
-		pluginData = wpOrgPlugin;
-	}
+	// Normalize the author per source so consumers get one shape
+	const plugin = useMemo< NormalizedPlugin | undefined >( () => {
+		const raw =
+			pluginBySiteId.values().next().value ??
+			( isMarketplacePlugin ? marketplacePlugins?.results[ pluginSlug ] : undefined ) ??
+			wpOrgPlugin;
+
+		if ( ! raw ) {
+			return undefined;
+		}
+
+		return {
+			...raw,
+			author: stripAuthorMarkup( raw.author ),
+			authorUrl: toAuthorUrl(
+				( 'author_url' in raw && raw.author_url ) ||
+					( 'plugin_url' in raw && raw.plugin_url ) ||
+					( 'author_profile' in raw && raw.author_profile ) ||
+					undefined
+			),
+		};
+	}, [ pluginBySiteId, isMarketplacePlugin, marketplacePlugins, pluginSlug, wpOrgPlugin ] );
 
 	const [ sitesWithThisPlugin, sitesWithoutThisPlugin ]: [ SiteWithPluginData[], Site[] ] = sites
 		? sites
@@ -156,7 +192,7 @@ export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: b
 		pluginBySiteId,
 		sitesWithThisPlugin,
 		sitesWithoutThisPlugin,
-		plugin: pluginData,
+		plugin,
 		icon,
 	};
 };

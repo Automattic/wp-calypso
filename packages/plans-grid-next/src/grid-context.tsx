@@ -30,6 +30,7 @@ interface PlansGridContext {
 	hideUnsupportedFeatures?: boolean;
 	hideFeatureGroupTitles?: boolean;
 	enterpriseFeaturesList?: string[];
+	isEnterpriseA4AIndia?: boolean;
 	reflectStorageSelectionInPlanPrices?: boolean;
 	showSimplifiedBillingDescription?: boolean;
 	showBillingDescriptionForIncreasedRenewalPrice?: string | null;
@@ -58,6 +59,7 @@ const PlansGridContextProvider = ( {
 	hideUnsupportedFeatures,
 	hideFeatureGroupTitles,
 	enterpriseFeaturesList,
+	isEnterpriseA4AIndia,
 	reflectStorageSelectionInPlanPrices,
 	showSimplifiedBillingDescription,
 	showBillingDescriptionForIncreasedRenewalPrice,
@@ -95,6 +97,7 @@ const PlansGridContextProvider = ( {
 				hideUnsupportedFeatures,
 				hideFeatureGroupTitles,
 				enterpriseFeaturesList,
+				isEnterpriseA4AIndia,
 				reflectStorageSelectionInPlanPrices,
 				showSimplifiedBillingDescription,
 				showBillingDescriptionForIncreasedRenewalPrice,

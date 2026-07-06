@@ -16,6 +16,14 @@
 
 .plugin-tabs-panel {
 	border-top: 1px solid rgba(0, 0, 0, 0.1);
+
+	// :not([hidden]) is required because display: flex overrides the hidden attribute's display: none.
+	&:not([hidden]) {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		min-height: 0;
+	}
 }
 
 .plugin-tabs-list,
@@ -28,6 +36,11 @@
 }
 
 .sites-with-this-plugin {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-height: 0;
+
 	.dataviews__view-actions, .dataviews-filters__container {
 		padding-inline-start: 20px;
 		padding-inline-end: 20px;

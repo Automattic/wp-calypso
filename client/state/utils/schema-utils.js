@@ -1,8 +1,8 @@
+import { isEmpty } from '@automattic/js-utils';
 import { getInitialState } from '@automattic/state-utils';
 import warn from '@wordpress/warning';
 import isEqual from 'fast-deep-equal/es6';
 import validator from 'is-my-json-valid';
-import { forEach, get, isEmpty } from 'lodash';
 import { serialize, deserialize } from './serialize';
 import { withPersistence } from './with-persistence';
 
@@ -16,7 +16,7 @@ export function isValidStateWithSchema( state, schema, debugInfo ) {
 		const msgLines = [ 'State validation failed.', 'State: %o', '' ];
 		const substitutions = [ state ];
 
-		forEach( validate.errors, ( { field, message, schemaPath, value } ) => {
+		( validate.errors ?? [] ).forEach( ( { field, message, schemaPath, value } ) => {
 			// data.myField is required
 			msgLines.push( '%s %s' );
 			substitutions.push( field, message );
@@ -28,7 +28,7 @@ export function isValidStateWithSchema( state, schema, debugInfo ) {
 			// Violates rule: { type: 'boolean' }
 			if ( ! isEmpty( schemaPath ) ) {
 				msgLines.push( 'Violates rule: %o' );
-				substitutions.push( get( schema, schemaPath ) );
+				substitutions.push( schemaPath.reduce( ( node, key ) => node?.[ key ], schema ) );
 			}
 			msgLines.push( '' );
 		} );

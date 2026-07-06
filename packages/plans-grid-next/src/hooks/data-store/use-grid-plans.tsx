@@ -260,6 +260,9 @@ export const usePlanTypesWithIntent = ( {
 		case 'plans-business-trial':
 			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
+		case 'plans-student':
+			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			break;
 		case 'plans-videopress':
 			planTypes = [ TYPE_PREMIUM, TYPE_BUSINESS ];
 			break;

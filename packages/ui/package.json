@@ -65,7 +65,7 @@
 		"@testing-library/user-event": "^14.6.1",
 		"esbuild": "^0.25.5",
 		"esbuild-sass-plugin": "^3.1.0",
-		"postcss": "^8.5.3",
+		"postcss": "^8.5.15",
 		"postcss-modules": "^6.0.1",
 		"sass-embedded": "^1.89.0",
 		"storybook": "^9.1.20",

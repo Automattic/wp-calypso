@@ -314,7 +314,7 @@ jobs:
             **4. Injection / XSS.** Flag untrusted input flowing into HTML, template, `eval`, `Function`, shell calls (in scripts), or fetch URLs concatenated from input.
             Message: `Untrusted input from <source> flows into <sink>. Validate after decode/canonicalize.`
 
-            **5. Type safety / prototype pollution.** Flag prototype pollution via `Object.assign`, recursive merge, or lodash `_.merge` on attacker-controlled JSON; `as` casts on `JSON.parse` or fetched JSON; loose `==` on user data; unjustified `any` (see `client/AGENTS.md`).
+            **5. Type safety / prototype pollution.** Flag prototype pollution via `Object.assign` or a recursive merge on attacker-controlled JSON; `as` casts on `JSON.parse` or fetched JSON; loose `==` on user data; unjustified `any` (see `client/AGENTS.md`).
             Message: `<Specific risk> at <location>. <Specific fix>.`
 
             **6. Resource and DoS.** Flag ReDoS via unanchored regex on user input; unbounded loops over API responses; client-side state growth from streams/polling without bounds; missing `useMemo`/`useCallback` causing re-renders or network waterfalls.

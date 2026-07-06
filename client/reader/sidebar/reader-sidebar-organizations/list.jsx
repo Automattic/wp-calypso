@@ -2,17 +2,13 @@ import page from '@automattic/calypso-router';
 import { Count } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import SidebarItem from 'calypso/layout/sidebar/item';
-import ReaderA8cIcon from 'calypso/reader/components/icons/a8c-icon';
-import ReaderP2Icon from 'calypso/reader/components/icons/p2-icon';
 import { useOrganizationSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import ReaderSidebarHelper from 'calypso/reader/sidebar/helper';
-import { AUTOMATTIC_ORG_ID } from 'calypso/state/reader/organizations/constants';
 import { toggleReaderSidebarOrganization } from 'calypso/state/reader-ui/sidebar/actions';
 import { isOrganizationOpen } from 'calypso/state/reader-ui/sidebar/selectors';
 import { AllIcon } from '../icons/all';
@@ -40,14 +36,6 @@ export class ReaderSidebarOrganizationsList extends Component {
 		}
 	};
 
-	renderIcon() {
-		const { organization } = this.props;
-		if ( organization.id === AUTOMATTIC_ORG_ID ) {
-			return <ReaderA8cIcon size={ 24 } viewBox="-3 -2 24 24" />;
-		}
-		return <ReaderP2Icon viewBox="0 0 24 24" />;
-	}
-
 	renderAll() {
 		const { translate, organization, path, sites } = this.props;
 		// have a selector
@@ -74,8 +62,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 
 	renderSites() {
 		const { sites, path } = this.props;
-		return map(
-			sites,
+		return sites.map(
 			( site ) =>
 				site && <ReaderSidebarOrganizationsListItem key={ site.ID } path={ path } site={ site } />
 		);
@@ -88,18 +75,19 @@ export class ReaderSidebarOrganizationsList extends Component {
 			return null;
 		}
 
+		const isChildSelected = sites.some( ( site ) => path === `/reader/feeds/${ site.feed_ID }` );
+
 		return (
 			<ExpandableSidebarMenu
 				expanded={ this.props.isOrganizationOpen }
 				title={ organization.title }
 				onClick={ this.selectMenu }
 				expandableIconClick={ this.toggleMenu }
-				customIcon={ this.renderIcon() }
 				disableFlyout
 				className={ clsx( 'has-counts', {
 					'sidebar__menu--selected':
 						'/reader/' + organization.slug === path ||
-						sites.some( ( site ) => `/reader/feeds/${ site.feed_ID }` === path ),
+						( ! this.props.isOrganizationOpen && isChildSelected ),
 				} ) }
 			>
 				{ this.renderAll() }

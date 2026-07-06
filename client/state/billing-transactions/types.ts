@@ -1,5 +1,5 @@
 import type { IntroductoryOfferTerms } from '@automattic/shopping-cart';
-import type { TaxVendorInfo } from '@automattic/wpcom-checkout';
+import type { TaxBreakdownEntry, TaxVendorInfo } from '@automattic/wpcom-checkout';
 
 export interface BillingTransaction {
 	address: string;
@@ -70,6 +70,7 @@ export interface BillingTransaction {
 	url: string;
 
 	tax_vendor_info?: TaxVendorInfo;
+	tax_breakdown?: TaxBreakdownEntry[];
 }
 
 export interface BillingTransactionItem {

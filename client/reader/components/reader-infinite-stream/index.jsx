@@ -1,7 +1,6 @@
 import { pickBy } from '@automattic/js-utils';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
 import { debounce } from '@wordpress/compose';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { recordTracksRailcarRender } from 'calypso/reader/stats';
@@ -201,7 +200,7 @@ function ReaderInfiniteStream( {
 
 	const renderRow = useCallback(
 		( rowRendererProps ) => {
-			const railcar = get( items[ rowRendererProps.index ], 'railcar', undefined );
+			const railcar = items[ rowRendererProps.index ]?.railcar;
 			if ( railcar && ! recordedRender.current.has( rowRendererProps.index ) ) {
 				recordedRender.current.add( rowRendererProps.index );
 				const {

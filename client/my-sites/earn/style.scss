@@ -41,13 +41,28 @@ body.is-section-jetpack-monetize {
 		}
 	}
 
-	// Drop the overflow fade mask — the tabs fit, and the left fade otherwise
-	// dims the flush-aligned first tab label.
+	// Scroll the tab bar horizontally when the tabs overflow (mobile) so every
+	// section stays reachable instead of being clipped off the edge. The edge
+	// fade below signals the overflow, so hide the native scrollbar.
 	.section-nav-tabs:not( .is-dropdown ) .section-nav-tabs__list {
-		&.is-overflowing-first,
-		&.is-overflowing-last,
-		&.is-overflowing-first.is-overflowing-last {
-			mask-image: none;
+		overflow-x: auto;
+		scrollbar-width: none;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
+	}
+
+	// From the mobile breakpoint up the tabs fit and the first tab sits flush, so
+	// drop the edge fade there (the left fade would otherwise dim that flush
+	// label). Below it the bar scrolls, so keep the fade as a "more tabs" cue.
+	@include break-mobile {
+		.section-nav-tabs:not( .is-dropdown ) .section-nav-tabs__list {
+			&.is-overflowing-first,
+			&.is-overflowing-last,
+			&.is-overflowing-first.is-overflowing-last {
+				mask-image: none;
+			}
 		}
 	}
 }

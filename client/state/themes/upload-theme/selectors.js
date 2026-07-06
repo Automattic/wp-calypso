@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/themes/init';
 
 /**
@@ -9,7 +7,7 @@ import 'calypso/state/themes/init';
  * @returns {boolean} -- True if upload is in progress
  */
 export function isUploadInProgress( state, siteId ) {
-	return get( state.themes.uploadTheme.inProgress, siteId, false );
+	return state.themes.uploadTheme.inProgress?.[ siteId ] ?? false;
 }
 
 /**
@@ -29,7 +27,7 @@ export function isUploadComplete( state, siteId ) {
  * @returns {boolean} -- True if upload has failed
  */
 export function hasUploadFailed( state, siteId ) {
-	return !! get( state.themes.uploadTheme.uploadError, siteId, false );
+	return !! state.themes.uploadTheme.uploadError?.[ siteId ];
 }
 
 /**
@@ -98,7 +96,7 @@ export function isInstallInProgress( state, siteId ) {
  * @returns {boolean} -- True if transfer is completed
  */
 export function isTransferComplete( state, siteId ) {
-	return get( state.themes.uploadTheme.isTransferComplete, siteId, false );
+	return state.themes.uploadTheme.isTransferComplete?.[ siteId ] ?? false;
 }
 
 /**
@@ -108,5 +106,5 @@ export function isTransferComplete( state, siteId ) {
  * @returns {boolean} -- True if transfer is in progress.
  */
 export function isTransferInProgress( state, siteId ) {
-	return get( state.themes.uploadTheme.isTransferInProgress, siteId, false );
+	return state.themes.uploadTheme.isTransferInProgress?.[ siteId ] ?? false;
 }
