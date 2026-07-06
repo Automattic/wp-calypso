@@ -18089,18 +18089,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-playwright@npm:^2.1.0":
-  version: 2.10.4
-  resolution: "eslint-plugin-playwright@npm:2.10.4"
-  dependencies:
-    globals: "npm:^17.3.0"
-  peerDependencies:
-    eslint: ">=8.40.0"
-  checksum: 515aac2a870b217f23637bfdab26b9125e47cff91625dbafe20617b3522430fdee8961780f6b7dc9fcfcdbec8235ccd30eafd0ac871088cf3af4d70b8f9b7e29
-  languageName: node
-  linkType: hard
-
-"eslint-plugin-playwright@npm:^2.10.1":
+"eslint-plugin-playwright@npm:^2.1.0, eslint-plugin-playwright@npm:^2.10.1":
   version: 2.10.5
   resolution: "eslint-plugin-playwright@npm:2.10.5"
   dependencies:
