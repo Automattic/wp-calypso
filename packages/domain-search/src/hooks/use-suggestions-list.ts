@@ -49,12 +49,14 @@ export const useSuggestionsList = () => {
 		enabled: config.skippable && ! isFqdnQuery,
 	} );
 
-	// Bundle suggestions are gated behind the frontend `domain-bundling` flag
-	// (surfaced as config.showBundleSuggestions). When off, the query never runs
-	// and bundleSuggestion stays undefined, leaving the rest of the flow unchanged.
+	// The top bundle card is the FQDN path only: a bare-term search shows inline
+	// bundle rows instead (see useInlineBundles), and the backend returns no
+	// bundle_suggestion for a bare term anyway. Gating on isFqdnQuery keeps this
+	// request from duplicating the bare-term bundleTriggers request (same URL).
+	// Still gated behind the frontend `domain-bundling` flag (config.showBundleSuggestions).
 	const { data: bundleSuggestion } = useQuery( {
 		...queries.bundleSuggestion( query ),
-		enabled: config.showBundleSuggestions,
+		enabled: config.showBundleSuggestions && isFqdnQuery,
 	} );
 
 	const { isLoading: isLoadingQueryAvailability, data: fqdnAvailability } = useQuery( {

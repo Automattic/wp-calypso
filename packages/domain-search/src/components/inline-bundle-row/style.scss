@@ -1,0 +1,33 @@
+@import '@wordpress/base-styles/colors';
+
+.inline-bundle-row {
+	box-sizing: border-box;
+	padding: 16px 24px;
+	background: rgba( 4, 128, 21, 0.04 );
+	border-left: 3px solid var( --domain-search-promotional-price-color, #048015 );
+}
+
+.inline-bundle-row--loading {
+	display: flex;
+	align-items: center;
+}
+
+.inline-bundle-row__spinner {
+	margin: 0;
+}
+
+.inline-bundle-row__info {
+	min-width: 0;
+}
+
+.inline-bundle-row__subline {
+	word-break: break-word;
+}
+
+.inline-bundle-row__actions {
+	flex-shrink: 0;
+}
+
+.inline-bundle-row__cta {
+	justify-content: center;
+}
