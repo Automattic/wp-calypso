@@ -403,7 +403,27 @@ export class DomainSearchComponent {
 
 		if ( waitForContinueButton ) {
 			const continueButton = row.getByRole( 'button', { name: 'Continue' } );
-			await continueButton.waitFor( { timeout: 30000 } );
+			try {
+				await continueButton.waitFor( { timeout: 30000 } );
+			} catch ( error ) {
+				// ponytail: throwaway. Add-to-cart resolved (button detached) but
+				// Continue never rendered. Emit availability + cart state so a
+				// stalled/failed cart POST can be told from a healthy add that just
+				// failed to advance. Remove with flake-probe.ts.
+				const settle = async < T >( items: Promise< T >[] ) =>
+					( await Promise.allSettled( items ) ).map( ( r ) =>
+						r.status === 'fulfilled' ? r.value : { error: formatError( r.reason ) }
+					);
+				flakeProbe( 'domain-continue-missing', {
+					selectedDomain,
+					elapsedMs: Date.now() - clickStartedAt,
+					addToCartButtonDetached: ( await addToCartButton.count() ) === 0,
+					availabilityResponses: ( await settle( availabilitySummaries ) ).slice( -5 ),
+					cartResponses: ( await settle( cartResponseSummaries ) ).slice( -5 ),
+					originalError: formatError( error ),
+				} );
+				throw error;
+			}
 		}
 
 		return selectedDomain;
