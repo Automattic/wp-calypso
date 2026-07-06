@@ -167,7 +167,9 @@ export function ReaderStreamV2( {
 	}
 
 	if ( items.length === 0 ) {
-		if ( emptyContent ) {
+		// `undefined` means the caller passed nothing; any explicitly provided node
+		// (including `null` to render nothing) overrides the default empty state.
+		if ( emptyContent !== undefined ) {
 			return <>{ emptyContent }</>;
 		}
 		return (
