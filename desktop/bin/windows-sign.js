@@ -6,6 +6,13 @@
 const { resolveSigner, signFile } = require( './windows-signing-core' );
 
 module.exports = async function ( configuration ) {
+	// Gate to CI, matching the afterPack native-binary pass: a local Windows build
+	// has no signing env, so signing here would throw in resolveSigner() instead
+	// of producing an (unsigned) dev build.
+	if ( ! process.env.CI ) {
+		console.log( `[windows-sign] Skipping ${ configuration.path } (not CI)` );
+		return;
+	}
 	// electron-builder iterates its default sha1 + sha256 hashes and calls this
 	// once per hash. Azure Artifact Signing is SHA256-only, so skip the sha1 pass.
 	if ( configuration.hash === 'sha1' ) {

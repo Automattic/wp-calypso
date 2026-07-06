@@ -42,16 +42,47 @@ describe( 'buildSignToolArgs', () => {
 } );
 
 describe( 'win.sign callback', () => {
-	it( 'skips the SHA1 pass without signing', async () => {
+	const originalCI = process.env.CI;
+	afterEach( () => {
+		if ( originalCI === undefined ) {
+			delete process.env.CI;
+		} else {
+			process.env.CI = originalCI;
+		}
+		jest.dontMock( '../../bin/windows-signing-core' );
+	} );
+
+	function loadSignWithMockedCore() {
 		jest.resetModules();
 		jest.doMock( '../../bin/windows-signing-core', () => ( {
 			resolveSigner: jest.fn(),
 			signFile: jest.fn(),
 		} ) );
-		const core = require( '../../bin/windows-signing-core' );
-		const sign = require( '../../bin/windows-sign' );
+		return {
+			core: require( '../../bin/windows-signing-core' ),
+			sign: require( '../../bin/windows-sign' ),
+		};
+	}
+
+	it( 'skips the SHA1 pass without signing', async () => {
+		process.env.CI = 'true';
+		const { core, sign } = loadSignWithMockedCore();
 		await sign( { path: 'app.exe', hash: 'sha1' } );
 		expect( core.signFile ).not.toHaveBeenCalled();
-		jest.dontMock( '../../bin/windows-signing-core' );
+	} );
+
+	it( 'skips signing off CI, without resolving a signer', async () => {
+		delete process.env.CI;
+		const { core, sign } = loadSignWithMockedCore();
+		await sign( { path: 'app.exe', hash: 'sha256' } );
+		expect( core.resolveSigner ).not.toHaveBeenCalled();
+		expect( core.signFile ).not.toHaveBeenCalled();
+	} );
+
+	it( 'signs the SHA256 pass on CI', async () => {
+		process.env.CI = 'true';
+		const { core, sign } = loadSignWithMockedCore();
+		await sign( { path: 'app.exe', hash: 'sha256' } );
+		expect( core.signFile ).toHaveBeenCalledWith( undefined, 'app.exe' );
 	} );
 } );
