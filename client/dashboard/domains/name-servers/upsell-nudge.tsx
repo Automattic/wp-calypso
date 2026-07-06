@@ -4,8 +4,10 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Callout } from '../../components/callout';
 import InlineSupportLink from '../../components/inline-support-link';
+import { ThemedIllustration } from '../../components/themed-illustration';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { wpcomLink } from '../../utils/link';
+import illustrationDarkUrl from './upsell-nudge-illustration-dark.svg';
 import illustrationUrl from './upsell-nudge-illustration.svg';
 
 interface Props {
@@ -21,7 +23,7 @@ export default function UpsellNudge( { domainName, domainSiteSlug }: Props ) {
 				__( 'This domain is being forwarded to %s' ),
 				domainSiteSlug
 			) }
-			image={ illustrationUrl }
+			image={ <ThemedIllustration light={ illustrationUrl } dark={ illustrationDarkUrl } /> }
 			variant="highlight"
 			description={
 				<Text as="p">

@@ -554,6 +554,19 @@
 // @wordpress/components and Calypso markup that hardcode colors and don't yet
 // follow --wpds-* tokens (popovers, modals, form controls, cards, …). Each block
 // is removed as its component migrates to @wordpress/ui.
+// Swap decorative illustrations to their dark asset (see the ThemedIllustration
+// component). Illustrations render as <img>, so CSS can't recolor them; we ship
+// a dark variant and toggle which one shows based on the in-app theme.
+@mixin dashboard-dark-theme-illustrations {
+	.dashboard-themed-illustration--light {
+		display: none;
+	}
+
+	.dashboard-themed-illustration--dark {
+		display: block;
+	}
+}
+
 @mixin dashboard-dark-theme-components {
 	// Remap the legacy Color-Studio ramps (--studio-gray/-blue, --color-neutral)
 	// to dark. The WPDS bridge only covers --dashboard-*/--color-* semantic vars,
@@ -564,6 +577,7 @@
 	@include dashboard-dark-theme-sidebar;
 	@include dashboard-dark-theme-filters;
 	@include dashboard-dark-theme-help-center;
+	@include dashboard-dark-theme-illustrations;
 	@include dashboard-dark-theme-action-list;
 	@include color-scheme-dark-theme-agenttic;
 	@include dashboard-dark-theme-breadcrumbs;
