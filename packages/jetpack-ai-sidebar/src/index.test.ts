@@ -1579,6 +1579,27 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.hideZoomAction ).toBe( true );
 		} );
 
+		it( 'echoes the tool call id at the envelope top level', async () => {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'title-picker',
+				props: { titles: [ { title: 'T', explanation: 'a' } ] },
+				toolCallId: 'call_identity_1',
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.tool_call_id ).toBe( 'call_identity_1' );
+		} );
+
+		it( 'omits tool_call_id from the envelope when the input has no tool call id', async () => {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'title-picker',
+				props: { titles: [ { title: 'T', explanation: 'a' } ] },
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed ).not.toHaveProperty( 'tool_call_id' );
+		} );
+
 		it( 'returns an agentMessage envelope with an Undo checkpoint for a seo-title-picker call', async () => {
 			const titles = [ { title: 'SEO Title', explanation: 'a' } ];
 			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {

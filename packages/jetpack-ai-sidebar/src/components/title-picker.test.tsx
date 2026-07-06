@@ -10,6 +10,7 @@ import React from 'react';
 import TitlePicker from './title-picker';
 
 const mockEditPost = jest.fn();
+let mockCurrentTitle: string | undefined;
 
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: ( store: string ) => {
@@ -18,11 +19,22 @@ jest.mock( '@wordpress/data', () => ( {
 		}
 		return {};
 	},
+	useSelect: ( mapSelect: any ) =>
+		mapSelect( ( store: string ) => {
+			if ( store === 'core/editor' ) {
+				return {
+					getEditedPostAttribute: ( attr: string ) =>
+						attr === 'title' ? mockCurrentTitle : undefined,
+				};
+			}
+			return {};
+		} ),
 } ) );
 
 describe( 'TitlePicker', () => {
 	beforeEach( () => {
 		mockEditPost.mockClear();
+		mockCurrentTitle = undefined;
 	} );
 
 	const titles = [
@@ -47,5 +59,13 @@ describe( 'TitlePicker', () => {
 		render( <TitlePicker titles={ titles } onComplete={ onComplete } /> );
 		fireEvent.click( screen.getByText( titles[ 1 ].title ) );
 		expect( onComplete ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'marks the option matching the current post title as applied on mount', () => {
+		mockCurrentTitle = titles[ 1 ].title;
+		render( <TitlePicker titles={ titles } /> );
+		const applied = screen.getByText( titles[ 1 ].title ).closest( 'button' ) as HTMLButtonElement;
+		expect( applied ).toHaveAttribute( 'aria-pressed', 'true' );
+		expect( screen.getByText( 'Title updated.' ) ).toBeInTheDocument();
 	} );
 } );

@@ -375,8 +375,15 @@ function handleShowComponent( input: any ): any {
 
 	data.followUpTasks = input?.followUpTasks ?? false;
 
+	// Echo the tool call id at the top level: the server-stored copy of this
+	// message carries it, and AM dedupes show-component messages by
+	// `tool_call_id|type|summary` — without it the two copies of the same tool
+	// call get different identities and both render after a reload.
+	const toolCallId =
+		typeof input?.toolCallId === 'string' && input.toolCallId ? input.toolCallId : undefined;
 	const agentMessage = JSON.stringify( {
 		tool_id: SHOW_COMPONENT_TOOL_ID,
+		...( toolCallId && { tool_call_id: toolCallId } ),
 		data,
 	} );
 

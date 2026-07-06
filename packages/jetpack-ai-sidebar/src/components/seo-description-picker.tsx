@@ -11,7 +11,7 @@
 /**
  * External dependencies
  */
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 /**
@@ -48,6 +48,14 @@ export default function SeoDescriptionPicker( {
 	onComplete,
 }: SeoDescriptionPickerProps ) {
 	const { editPost } = useDispatch( 'core/editor' );
+	const currentDescription = useSelect( ( select ) => {
+		const meta = (
+			select( 'core/editor' ) as {
+				getEditedPostAttribute?: ( attr: string ) => Record< string, unknown > | undefined;
+			}
+		 )?.getEditedPostAttribute?.( 'meta' );
+		return meta?.[ SEO_DESCRIPTION_META_KEY ];
+	}, [] );
 
 	const handleApply = useCallback(
 		( description: string ) => {
@@ -63,6 +71,7 @@ export default function SeoDescriptionPicker( {
 			options={ descriptions.map( ( option ) => option.description ) }
 			onApply={ handleApply }
 			appliedMessage={ __( 'SEO description updated.', 'jetpack' ) }
+			currentValue={ typeof currentDescription === 'string' ? currentDescription : undefined }
 		/>
 	);
 }

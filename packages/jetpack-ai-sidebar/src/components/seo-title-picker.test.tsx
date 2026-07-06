@@ -10,6 +10,7 @@ import React from 'react';
 import SeoTitlePicker from './seo-title-picker';
 
 const mockEditPost = jest.fn();
+let mockCurrentMeta: Record< string, string > | undefined;
 
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: ( store: string ) => {
@@ -18,11 +19,22 @@ jest.mock( '@wordpress/data', () => ( {
 		}
 		return {};
 	},
+	useSelect: ( mapSelect: any ) =>
+		mapSelect( ( store: string ) => {
+			if ( store === 'core/editor' ) {
+				return {
+					getEditedPostAttribute: ( attr: string ) =>
+						attr === 'meta' ? mockCurrentMeta : undefined,
+				};
+			}
+			return {};
+		} ),
 } ) );
 
 describe( 'SeoTitlePicker', () => {
 	beforeEach( () => {
 		mockEditPost.mockClear();
+		mockCurrentMeta = undefined;
 	} );
 
 	const titles = [
@@ -51,5 +63,13 @@ describe( 'SeoTitlePicker', () => {
 		fireEvent.click( button );
 		expect( button ).toHaveAttribute( 'aria-pressed', 'true' );
 		expect( onComplete ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'marks the option matching the current SEO title meta as applied on mount', () => {
+		mockCurrentMeta = { jetpack_seo_html_title: titles[ 0 ].title };
+		render( <SeoTitlePicker titles={ titles } /> );
+		const applied = screen.getByText( titles[ 0 ].title ).closest( 'button' ) as HTMLButtonElement;
+		expect( applied ).toHaveAttribute( 'aria-pressed', 'true' );
+		expect( screen.getByText( 'SEO title updated.' ) ).toBeInTheDocument();
 	} );
 } );

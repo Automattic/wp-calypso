@@ -10,6 +10,7 @@ import React from 'react';
 import SeoDescriptionPicker from './seo-description-picker';
 
 const mockEditPost = jest.fn();
+let mockCurrentMeta: Record< string, string > | undefined;
 
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: ( store: string ) => {
@@ -18,11 +19,22 @@ jest.mock( '@wordpress/data', () => ( {
 		}
 		return {};
 	},
+	useSelect: ( mapSelect: any ) =>
+		mapSelect( ( store: string ) => {
+			if ( store === 'core/editor' ) {
+				return {
+					getEditedPostAttribute: ( attr: string ) =>
+						attr === 'meta' ? mockCurrentMeta : undefined,
+				};
+			}
+			return {};
+		} ),
 } ) );
 
 describe( 'SeoDescriptionPicker', () => {
 	beforeEach( () => {
 		mockEditPost.mockClear();
+		mockCurrentMeta = undefined;
 	} );
 
 	const descriptions = [
@@ -59,5 +71,15 @@ describe( 'SeoDescriptionPicker', () => {
 		fireEvent.click( button );
 		expect( button ).toHaveAttribute( 'aria-pressed', 'true' );
 		expect( onComplete ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'marks the option matching the current SEO description meta as applied on mount', () => {
+		mockCurrentMeta = { advanced_seo_description: descriptions[ 0 ].description };
+		render( <SeoDescriptionPicker descriptions={ descriptions } /> );
+		const applied = screen
+			.getByText( descriptions[ 0 ].description )
+			.closest( 'button' ) as HTMLButtonElement;
+		expect( applied ).toHaveAttribute( 'aria-pressed', 'true' );
+		expect( screen.getByText( 'SEO description updated.' ) ).toBeInTheDocument();
 	} );
 } );
