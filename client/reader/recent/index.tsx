@@ -238,22 +238,64 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 		return filterSortAndPaginate( streamItems, view, fields );
 	}, [ streamItems, view, fields ] );
 
+	const handleChangeView = useCallback(
+		( newView: View ) => {
+			const perPageChanged =
+				newView.perPage != null && view.perPage != null && newView.perPage !== view.perPage;
+
+			// DataViews always resets to page 1 when the per-page size changes. Instead,
+			// keep the current selection (or the top of the current page when nothing is
+			// selected) in view by recomputing which page it lands on under the new size.
+			if ( perPageChanged && newView.perPage ) {
+				const currentPerPage = view.perPage ?? 1;
+				const currentPage = view.page ?? 1;
+
+				let anchorIndex = selectedItem
+					? streamItems.findIndex(
+							( item ) => getStreamItemKey( item ) === getStreamItemKey( selectedItem )
+					  )
+					: -1;
+
+				if ( anchorIndex < 0 ) {
+					anchorIndex = ( currentPage - 1 ) * currentPerPage;
+				}
+
+				newView = {
+					...newView,
+					page: Math.floor( anchorIndex / newView.perPage ) + 1,
+				};
+			}
+
+			setView( { ...newView } );
+		},
+		[ selectedItem, streamItems, view.page, view.perPage ]
+	);
+
 	// Fetch the data when the component is mounted.
 	useEffect( () => {
 		fetchData();
 	}, [ fetchData ] );
 
-	// Set the first item as selected on the current page.
+	// Select the first item on the current page, unless the current selection is
+	// already within the current page's range (e.g. preserved across a per-page change).
 	useEffect( () => {
-		if ( isWide && streamItems.length > 0 ) {
-			if ( view.page && view.perPage ) {
-				const selectedPost = streamItems[ ( view.page - 1 ) * view.perPage ];
-				setSelectedItem(
-					selectedPost && ! isPaddingStreamItem( selectedPost ) ? selectedPost : null
+		if ( isWide && streamItems.length > 0 && view.page && view.perPage ) {
+			const pageStart = ( view.page - 1 ) * view.perPage;
+			const pageEnd = pageStart + view.perPage;
+
+			if ( selectedItem ) {
+				const selectedIndex = streamItems.findIndex(
+					( item ) => getStreamItemKey( item ) === getStreamItemKey( selectedItem )
 				);
+				if ( selectedIndex >= pageStart && selectedIndex < pageEnd ) {
+					return;
+				}
 			}
+
+			const firstOnPage = streamItems[ pageStart ];
+			setSelectedItem( firstOnPage && ! isPaddingStreamItem( firstOnPage ) ? firstOnPage : null );
 		}
-	}, [ isWide, streamItems, view ] );
+	}, [ isWide, streamItems, view, selectedItem ] );
 
 	// When the selected feed changes, clear the selected item and reset the page to 1.
 	useEffect( () => {
@@ -295,11 +337,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 						view={ view }
 						fields={ fields }
 						data={ shownData }
-						onChangeView={ ( newView ) =>
-							setView( {
-								...newView,
-							} )
-						}
+						onChangeView={ handleChangeView }
 						paginationInfo={ view.search === '' ? defaultPaginationInfo : paginationInfo }
 						defaultLayouts={ { list: {} } }
 						isLoading={ isLoading }
