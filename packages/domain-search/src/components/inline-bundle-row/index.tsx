@@ -7,6 +7,7 @@ import {
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
+import { Icon, lockOutline, plus } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { getTld } from '../../helpers/get-tld';
 import { useIsCurrentMutation } from '../../hooks/use-is-current-mutation';
@@ -30,9 +31,9 @@ interface InlineBundleRowProps {
 
 /**
  * An inline bundle offer rendered directly beneath the suggestion row of a
- * trigger domain the user added to the cart. It advertises the bundle's
- * companion extensions (the primary/added domain is omitted) while pricing the
- * full bundle, and a "Get bundle" button adds every member via
+ * trigger domain the user added to the cart. The line leads with the added
+ * (primary) domain and then the companion extensions the bundle adds, priced as
+ * the full bundle, and a "Get bundle" button adds every member via
  * `cart.onAddBundle`. Reuses the context-free `BundleTldChips` and `BundlePrice`
  * primitives so it stays visually consistent with the top bundle card.
  */
@@ -79,9 +80,11 @@ export const InlineBundleRow = ( { bundle, isLoading }: InlineBundleRowProps ) =
 
 	const { bundle_price, bundle_cost, original_price, original_cost, discount_percent } = bundle;
 
-	// The added (primary) domain is already in the cart and shown as its own
-	// suggestion row; the inline row advertises only the companions.
-	const companions = bundle.domains.filter( ( domain ) => domain.role !== 'primary' );
+	// The line leads with the added (primary) domain in full, then the companion
+	// extensions the bundle adds: `thalasso.world + .info + .vip`.
+	const primary =
+		bundle.domains.find( ( domain ) => domain.role === 'primary' ) ?? bundle.domains[ 0 ];
+	const companions = bundle.domains.filter( ( domain ) => domain.domain !== primary.domain );
 
 	if ( companions.length === 0 ) {
 		return null;
@@ -111,11 +114,12 @@ export const InlineBundleRow = ( { bundle, isLoading }: InlineBundleRowProps ) =
 				<VStack spacing={ 2 } className="inline-bundle-row__info">
 					<HStack justify="flex-start" spacing={ 3 } expanded={ false }>
 						<BundleTldChips
+							leadLabel={ primary.domain }
 							tlds={ companionTlds }
 							size={ 20 }
 							className="inline-bundle-row__tlds"
 						/>
-						<DomainSuggestionBadge variation="success">
+						<DomainSuggestionBadge variation="warning">
 							{ sprintf(
 								// translators: %(percent)d is the bundle discount percentage, e.g. 20.
 								__( 'Bundle and save %(percent)d%%' ),
@@ -123,9 +127,12 @@ export const InlineBundleRow = ( { bundle, isLoading }: InlineBundleRowProps ) =
 							) }
 						</DomainSuggestionBadge>
 					</HStack>
-					<Text size={ 13 } variant="muted" className="inline-bundle-row__subline">
-						{ __( 'Secure popular domain extensions and protect your brand' ) }
-					</Text>
+					<HStack justify="flex-start" spacing={ 2 } expanded={ false }>
+						<Icon icon={ lockOutline } size={ 18 } className="inline-bundle-row__lock-icon" />
+						<Text size={ 13 } variant="muted" className="inline-bundle-row__subline">
+							{ __( 'Secure popular domain extensions and protect your brand' ) }
+						</Text>
+					</HStack>
 				</VStack>
 
 				<HStack
@@ -138,12 +145,14 @@ export const InlineBundleRow = ( { bundle, isLoading }: InlineBundleRowProps ) =
 					<BundlePrice
 						originalPrice={ displayOriginalPrice }
 						bundlePrice={ displayBundlePrice }
+						renewalPrice={ displayOriginalPrice }
 						size={ 20 }
 						alignment="right"
 					/>
 					<Button
 						className="inline-bundle-row__cta"
-						variant="primary"
+						variant="secondary"
+						icon={ plus }
 						__next40pxDefaultSize
 						isBusy={ isAddingBundle }
 						disabled={ isMutating || isAddedToCart }

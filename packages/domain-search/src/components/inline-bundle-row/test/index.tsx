@@ -62,13 +62,14 @@ describe( 'InlineBundleRow', () => {
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
-	it( 'shows only the companion TLDs, omitting the primary', () => {
+	it( 'leads with the primary domain, then the companion TLDs', () => {
 		renderRow();
 
-		// Companions are surfaced as chips; the primary (.com) is not.
+		// The line reads `flowers.com + .net + .org`: the primary in full, then
+		// the companion extensions the bundle adds.
+		expect( screen.getByText( 'flowers.com' ) ).toBeInTheDocument();
 		expect( screen.getByText( '.net' ) ).toBeInTheDocument();
 		expect( screen.getByText( '.org' ) ).toBeInTheDocument();
-		expect( screen.queryByText( '.com' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'prices the full bundle', () => {

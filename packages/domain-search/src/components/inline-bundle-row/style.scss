@@ -1,10 +1,8 @@
-@import '@wordpress/base-styles/colors';
-
 .inline-bundle-row {
 	box-sizing: border-box;
 	padding: 16px 24px;
-	background: rgba( 4, 128, 21, 0.04 );
-	border-left: 3px solid var( --domain-search-promotional-price-color, #048015 );
+	border: 1px solid rgba( 0, 0, 0, 0.1 );
+	border-radius: 8px;
 }
 
 .inline-bundle-row--loading {
@@ -20,6 +18,11 @@
 	min-width: 0;
 }
 
+.inline-bundle-row__lock-icon {
+	fill: #757575;
+	flex-shrink: 0;
+}
+
 .inline-bundle-row__subline {
 	word-break: break-word;
 }
@@ -30,4 +33,9 @@
 
 .inline-bundle-row__cta {
 	justify-content: center;
+
+	&.is-secondary {
+		color: var( --domain-search-secondary-action-color );
+		box-shadow: inset 0 0 0 1px var( --domain-search-secondary-action-box-shadow-color );
+	}
 }

@@ -48,18 +48,28 @@ const buildDomain = (
 const buildSuggestion = (
 	domains: BundleSuggestionDomain[],
 	overrides: Partial< BundleSuggestion > = {}
-): BundleSuggestion => ( {
-	sld: 'flowers',
-	domains,
-	bundle_price: 60,
-	original_price: 75,
-	discount_percent: 20,
-	category: 'business',
-	bundle_id: 'bundle-1',
-	bundle_group_id: 'group-1',
-	catalogue_version: '2024-01-01',
-	...overrides,
-} );
+): BundleSuggestion => {
+	const base = {
+		sld: 'flowers',
+		bundle_price: 60,
+		original_price: 75,
+		discount_percent: 20,
+		category: 'business',
+		bundle_id: 'bundle-1',
+		bundle_group_id: 'group-1',
+		catalogue_version: '2024-01-01',
+		...overrides,
+	};
+
+	return {
+		...base,
+		domains,
+		// The row prefers the formatted `*_cost` strings; derive them from the
+		// final prices so stories render "$60" rather than a bare "60".
+		bundle_cost: base.bundle_cost ?? `$${ base.bundle_price }`,
+		original_cost: base.original_cost ?? `$${ base.original_price }`,
+	};
+};
 
 const meta: Meta< typeof InlineBundleRow > = {
 	title: 'Components/InlineBundleRow',
