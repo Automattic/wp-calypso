@@ -44,36 +44,36 @@
 		&.is-warning {
 			background-color: color-mix(
 				in srgb,
-				var( --dashboard__background-color-warning ) 8%,
+				var( --dashboard__foreground-color-warning ) 16%,
 				var( --dashboard-surface__background-color )
 			);
 
 			.dashboard-notice__icon {
-				fill: var( --dashboard__background-color-warning );
+				fill: var( --dashboard__foreground-color-warning );
 			}
 		}
 
 		&.is-success {
 			background-color: color-mix(
 				in srgb,
-				var( --dashboard__background-color-success ) 8%,
+				var( --dashboard__foreground-color-success ) 16%,
 				var( --dashboard-surface__background-color )
 			);
 
 			.dashboard-notice__icon {
-				fill: var( --dashboard__background-color-success );
+				fill: var( --dashboard__foreground-color-success );
 			}
 		}
 
 		&.is-error {
 			background-color: color-mix(
 				in srgb,
-				var( --dashboard__background-color-error ) 8%,
+				var( --dashboard__foreground-color-error ) 16%,
 				var( --dashboard-surface__background-color )
 			);
 
 			.dashboard-notice__icon {
-				fill: var( --dashboard__background-color-error );
+				fill: var( --dashboard__foreground-color-error );
 			}
 		}
 	}
@@ -484,6 +484,21 @@
 		color: var( --wpds-color-fg-interactive-brand );
 	}
 
+
+	// Overview cards paint their title + icons with the raw brand blue on hover
+	// (fine in light, too dim on dark). Use the legible light accent, matching
+	// the accent text elsewhere.
+	.dashboard-overview-card__link:hover .dashboard-overview-card__content {
+		span,
+		h2 {
+			color: var( --wpds-color-fg-interactive-brand );
+		}
+
+		.dashboard-overview-card__icon,
+		.dashboard-overview-card__link-icon {
+			fill: var( --wpds-color-fg-interactive-brand );
+		}
+	}
 
 	// Wordmark: retint the brand-blue logo to the legible light accent in dark
 	// (raw #3858e9 is dim on near-black). Brand may fine-tune the exact blue.
