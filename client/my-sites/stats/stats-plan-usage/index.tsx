@@ -107,16 +107,12 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 					</InfoPopover>
 				</div>
 				<div key="message">
-					{ translate(
-						'Resets with your billing cycle in %(numberOfDays)d day',
-						'Resets with your billing cycle in %(numberOfDays)d days',
-						{
-							count: daysToReset,
-							args: {
-								numberOfDays: daysToReset,
-							},
-						}
-					) }
+					{ translate( 'Restarts in %(numberOfDays)d day', 'Restarts in %(numberOfDays)d days', {
+						count: daysToReset,
+						args: {
+							numberOfDays: daysToReset,
+						},
+					} ) }
 				</div>
 			</div>
 			<div className="plan-usage-note" key="upgrade">
