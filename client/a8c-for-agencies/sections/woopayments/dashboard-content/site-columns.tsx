@@ -2,7 +2,7 @@ import { BadgeType, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
 import { memo, useState, useRef } from 'react';
 import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
 import A4APopoverTrigger from 'calypso/a8c-for-agencies/components/a4a-popover/trigger';
@@ -13,36 +13,32 @@ import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { WooPaymentsData } from '@automattic/api-core';
-import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
 
 interface IneligibleReasonInfo {
-	message: TranslateResult;
+	message: string;
 	link: string;
-	linkText: TranslateResult;
+	linkText: string;
 }
 
-const getIneligibleReasonInfo = (
-	reason: string,
-	translate: ( text: string ) => TranslateResult
-): IneligibleReasonInfo => {
+const getIneligibleReasonInfo = ( reason: string ): IneligibleReasonInfo => {
 	const defaultLink =
 		'https://agencieshelp.automattic.com/knowledge-base/automattic-for-agencies-earnings/';
-	const defaultLinkText = translate( 'Learn more about the incentive ↗' );
+	const defaultLinkText = __( 'Learn more about the incentive ↗' );
 
 	switch ( reason ) {
 		case 'rejected_stripe_account':
 			return {
-				message: translate(
+				message: __(
 					"This WooPayments site isn't eligible for commission because its Stripe account was rejected."
 				),
 				link: 'https://support.stripe.com/',
-				linkText: translate( 'Contact Stripe support ↗' ),
+				linkText: __( 'Contact Stripe support ↗' ),
 			};
 		case 'internal_account_owner':
 			return {
-				message: translate(
+				message: __(
 					"This WooPayments site isn't eligible for commission because it's owned by an internal account."
 				),
 				link: defaultLink,
@@ -50,7 +46,7 @@ const getIneligibleReasonInfo = (
 			};
 		case 'existing_merchant_after_30_days':
 			return {
-				message: translate(
+				message: __(
 					"This WooPayments site isn't eligible for commission because it's an existing site that was connected to the agency account more than 30 days after the account was created."
 				),
 				link: defaultLink,
@@ -59,7 +55,7 @@ const getIneligibleReasonInfo = (
 		// Add more error code mappings here as needed
 		default:
 			return {
-				message: translate(
+				message: __(
 					"This WooPayments site isn't eligible for commission under the current program criteria."
 				),
 				link: defaultLink,
@@ -94,7 +90,6 @@ export const TimeframeCommissionsColumn = memo(
 TimeframeCommissionsColumn.displayName = 'TimeframeCommissionsColumn';
 
 export const WooPaymentsStatusColumn = ( { state, siteId }: { state: string; siteId: number } ) => {
-	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	if ( ! state ) {
@@ -106,7 +101,7 @@ export const WooPaymentsStatusColumn = ( { state, siteId }: { state: string; sit
 				variant="tertiary"
 				href={ `${ A4A_WOOPAYMENTS_SITE_SETUP_LINK }/?site_id=${ siteId }` }
 			>
-				{ translate( 'Continue setup' ) }
+				{ __( 'Continue setup' ) }
 			</Button>
 		);
 	}
@@ -115,12 +110,12 @@ export const WooPaymentsStatusColumn = ( { state, siteId }: { state: string; sit
 		switch ( state ) {
 			case 'active':
 				return {
-					statusText: translate( 'Active' ),
+					statusText: __( 'Active' ),
 					statusType: 'success',
 				};
 			case 'disconnected':
 				return {
-					statusText: translate( 'Disconnected' ),
+					statusText: __( 'Disconnected' ),
 					statusType: 'error',
 				};
 			default:
@@ -155,7 +150,6 @@ export const CommissionEligibilityColumn = ( {
 	siteId: number;
 	woopaymentsData?: WooPaymentsData;
 } ) => {
-	const translate = useTranslate();
 	const [ showPopover, setShowPopover ] = useState( false );
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 
@@ -174,19 +168,19 @@ export const CommissionEligibilityColumn = ( {
 
 	const statusProps = isCommissionEligible
 		? {
-				statusText: translate( 'Eligible' ),
+				statusText: __( 'Eligible' ),
 				statusType: 'success' as BadgeType,
 				showInfoIcon: false,
 				ineligibleReason: undefined,
 		  }
 		: {
-				statusText: translate( 'Not eligible' ),
+				statusText: __( 'Not eligible' ),
 				statusType: 'error' as BadgeType,
 				showInfoIcon: true,
 				ineligibleReason: ineligibleSite?.ineligible_reason,
 		  };
 
-	const reasonInfo = getIneligibleReasonInfo( statusProps.ineligibleReason ?? '', translate );
+	const reasonInfo = getIneligibleReasonInfo( statusProps.ineligibleReason ?? '' );
 
 	const popoverContent = (
 		<div className="woopayments-status-popover">
@@ -214,7 +208,7 @@ export const CommissionEligibilityColumn = ( {
 				<>
 					<A4APopoverTrigger
 						className="woopayments-status-column__info-icon"
-						aria-label={ translate( 'More information about commission eligibility' ) }
+						aria-label={ __( 'More information about commission eligibility' ) }
 						onActivate={ () => setShowPopover( true ) }
 					>
 						<Gridicon icon="info-outline" size={ 16 } />

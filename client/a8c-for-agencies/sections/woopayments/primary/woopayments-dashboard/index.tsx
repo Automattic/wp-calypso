@@ -5,8 +5,8 @@ import {
 } from '@automattic/api-queries';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useQuery } from '@tanstack/react-query';
+import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
@@ -56,11 +56,9 @@ const sortByState = ( a: SitesWithWooPaymentsState, b: SitesWithWooPaymentsState
 };
 
 const WooPaymentsDashboard = () => {
-	const translate = useTranslate();
-
 	const isDesktop = useDesktopBreakpoint();
 
-	const title = translate( 'WooPayments commissions' );
+	const title = __( 'WooPayments commissions' );
 
 	const agencyId = useSelector( getActiveAgencyId );
 
