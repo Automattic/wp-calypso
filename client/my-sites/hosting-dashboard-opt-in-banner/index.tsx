@@ -100,7 +100,7 @@ export default function HostingDashboardOptInBanner( {
 	}
 
 	const heading = (
-		<Text as="p" weight={ 500 } size={ isMobile ? 12 : 13 }>
+		<Text as="p" weight={ 500 } size={ isMobile ? 14 : 15 }>
 			{ hasOptedIn && ! isSubmitting
 				? translate( 'The new dashboard is here to stay' )
 				: translate( 'A new dashboard is on the way' ) }
