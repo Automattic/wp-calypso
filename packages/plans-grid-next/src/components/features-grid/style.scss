@@ -803,7 +803,6 @@
 
 			&.is-original {
 				color: var( --studio-gray-40 );
-				font-family: 'SF Pro Display', $sans;
 				font-size: 24px;
 				margin-bottom: 3px;
 
@@ -881,10 +880,6 @@
 
 	.plans-grid-next-features-grid__feature-group-row {
 		> .plan-features-2023-grid__table-item {
-			padding-top: 0;
-		}
-
-		&.is-first-feature-group-row > .plan-features-2023-grid__table-item {
 			padding-top: 0;
 		}
 	}

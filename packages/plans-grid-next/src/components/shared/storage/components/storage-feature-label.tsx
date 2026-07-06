@@ -35,9 +35,9 @@ const StorageFeatureLabel = ( { planSlug, onAddMoreClick, showAddMore }: Props )
 		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, siteId ),
 		[ planSlug, siteId ]
 	);
-	const selectedStorageAddOn = storageAddOns.find(
-		( addOn ) => addOn?.addOnSlug === selectedStorageOptionForPlan
-	);
+	const selectedStorageAddOn = showFeatureCheckmarks
+		? storageAddOns.find( ( addOn ) => addOn?.addOnSlug === selectedStorageOptionForPlan )
+		: null;
 	const storageAddOn = selectedStorageAddOn ?? purchasedStorageAddOn;
 
 	const monthlyAddedCost = storageAddOn?.prices?.monthlyPrice ?? 0;
@@ -52,15 +52,10 @@ const StorageFeatureLabel = ( { planSlug, onAddMoreClick, showAddMore }: Props )
 	} );
 	const totalStorageString = useStorageString( planStorage + ( storageAddOn?.quantity ?? 0 ) );
 	const storageCloudMaskId = `plans-grid-next-storage-cloud-mask-${ useId().replace( /:/g, '' ) }`;
-	const storageLabel = showAddMore
-		? translate( '%s storage', {
-				args: [ totalStorageString ],
-				comment: '%s is the amount of storage, including the unit. For example "10 GB"',
-		  } )
-		: translate( '%s storage', {
-				args: [ totalStorageString ],
-				comment: '%s is the amount of storage, including the unit. For example "10 GB"',
-		  } );
+	const storageLabel = translate( '%s storage', {
+		args: [ totalStorageString ],
+		comment: '%s is the amount of storage, including the unit. For example "10 GB"',
+	} );
 
 	const containerClasses = clsx( 'plans-grid-next-storage-feature-label__container', {
 		'is-row': ! isLargeCurrency,
