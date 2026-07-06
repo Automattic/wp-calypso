@@ -134,5 +134,11 @@ export class ThemesPage {
 			} );
 		} );
 		await this.page.goto( getCalypsoURL( targetUrl ) );
+
+		// Wait for the listing to finish loading. Until the placeholder cards are
+		// gone the real theme cards keep reflowing, and a click landing during the
+		// reflow hangs the action until the timeout (the placeholder overlay
+		// intercepts the hit-test). See the premium-theme signup spec.
+		await this.pageSettled();
 	}
 }

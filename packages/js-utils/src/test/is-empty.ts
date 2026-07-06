@@ -1,6 +1,4 @@
 import { runInNewContext } from 'vm';
-// eslint-disable-next-line no-restricted-imports -- parity test against the lodash function being replaced
-import lodashIsEmpty from 'lodash/isEmpty';
 import isEmpty from '../is-empty';
 
 describe( 'isEmpty', () => {
@@ -121,7 +119,7 @@ describe( 'isEmpty', () => {
 		expect( isEmpty( filled ) ).toBe( false );
 	} );
 
-	describe( 'matches the reference implementation', () => {
+	describe( 'across a table of representative values', () => {
 		function Bar() {}
 		Bar.prototype = { constructor: Bar };
 		function Baz() {}
@@ -153,60 +151,68 @@ describe( 'isEmpty', () => {
 		// excludes it (tag-based `isFunction`), so it is measured by own keys, not
 		// its `length`. Each is non-empty (owns `length`/`splice`).
 		const functionTagSpoofs = [ 'Function', 'AsyncFunction', 'GeneratorFunction', 'Proxy' ].map(
-			( tag ): [ string, unknown ] => [
+			( tag ): [ string, unknown, boolean ] => [
 				`frozen splice object tagged ${ tag }`,
 				Object.freeze( { length: 0, splice() {}, [ Symbol.toStringTag ]: tag } ),
+				false,
 			]
 		);
 
-		const cases: [ string, unknown ][] = [
-			[ 'null', null ],
-			[ 'undefined', undefined ],
-			[ 'empty string', '' ],
-			[ 'string', 'a' ],
-			[ 'empty array', [] ],
-			[ 'array', [ 1 ] ],
-			[ 'empty object', {} ],
-			[ 'object', { a: 1 } ],
-			[ 'object with length key', { length: 0 } ],
-			[ 'zero', 0 ],
-			[ 'number', 1 ],
-			[ 'NaN', NaN ],
-			[ 'true', true ],
-			[ 'false', false ],
-			[ 'symbol', Symbol( 'x' ) ],
-			[ 'empty Map', new Map() ],
-			[ 'Map', new Map( [ [ 1, 2 ] ] ) ],
-			[ 'empty Set', new Set() ],
-			[ 'Set', new Set( [ 1 ] ) ],
-			[ 'empty typed array', new Uint8Array( 0 ) ],
-			[ 'typed array', new Uint8Array( 2 ) ],
-			[ 'DataView', new DataView( new ArrayBuffer( 8 ) ) ],
-			[ 'function', () => {} ],
-			[ 'regexp', /re/ ],
-			[ 'date', new Date() ],
-			[ 'null-proto object', Object.create( null ) ],
-			[ 'inherited-only object', Object.create( { a: 1 } ) ],
-			[ 'empty jQuery-like', { length: 0, splice() {} } ],
-			[ 'jQuery-like', { length: 2, splice() {} } ],
-			[ 'splice without length', { splice() {} } ],
-			[ 'spoofed toStringTag with keys', { [ Symbol.toStringTag ]: 'Map', size: 0, a: 1 } ],
-			[ 'spoofed toStringTag only', { [ Symbol.toStringTag ]: 'Map' } ],
-			[ 'frozen spoofed toStringTag', Object.freeze( { [ Symbol.toStringTag ]: 'Map' } ) ],
-			[ 'bare prototype object', Bar.prototype ],
-			[ 'Object.prototype', Object.prototype ],
-			[ 'prototype with extra key', Baz.prototype ],
-			[ 'empty arguments', emptyArgs ],
-			[ 'filled arguments', filledArgs ],
-			[ 'arguments with length deleted', lengthlessArgs ],
-			[ 'frozen spoofed Arguments tag', Object.freeze( { [ Symbol.toStringTag ]: 'Arguments' } ) ],
-			[ 'function with own splice', spliceFn ],
-			[ 'frozen function spoofing Arguments with own key', taggedFn ],
+		// Each row is `[ label, value, expected ]`. The expected results were
+		// captured from the lodash function this replaces, so the table pins the
+		// behavior without depending on lodash at run time.
+		const cases: [ string, unknown, boolean ][] = [
+			[ 'null', null, true ],
+			[ 'undefined', undefined, true ],
+			[ 'empty string', '', true ],
+			[ 'string', 'a', false ],
+			[ 'empty array', [], true ],
+			[ 'array', [ 1 ], false ],
+			[ 'empty object', {}, true ],
+			[ 'object', { a: 1 }, false ],
+			[ 'object with length key', { length: 0 }, false ],
+			[ 'zero', 0, true ],
+			[ 'number', 1, true ],
+			[ 'NaN', NaN, true ],
+			[ 'true', true, true ],
+			[ 'false', false, true ],
+			[ 'symbol', Symbol( 'x' ), true ],
+			[ 'empty Map', new Map(), true ],
+			[ 'Map', new Map( [ [ 1, 2 ] ] ), false ],
+			[ 'empty Set', new Set(), true ],
+			[ 'Set', new Set( [ 1 ] ), false ],
+			[ 'empty typed array', new Uint8Array( 0 ), true ],
+			[ 'typed array', new Uint8Array( 2 ), false ],
+			[ 'DataView', new DataView( new ArrayBuffer( 8 ) ), true ],
+			[ 'function', () => {}, true ],
+			[ 'regexp', /re/, true ],
+			[ 'date', new Date(), true ],
+			[ 'null-proto object', Object.create( null ), true ],
+			[ 'inherited-only object', Object.create( { a: 1 } ), true ],
+			[ 'empty jQuery-like', { length: 0, splice() {} }, true ],
+			[ 'jQuery-like', { length: 2, splice() {} }, false ],
+			[ 'splice without length', { splice() {} }, false ],
+			[ 'spoofed toStringTag with keys', { [ Symbol.toStringTag ]: 'Map', size: 0, a: 1 }, false ],
+			[ 'spoofed toStringTag only', { [ Symbol.toStringTag ]: 'Map' }, true ],
+			[ 'frozen spoofed toStringTag', Object.freeze( { [ Symbol.toStringTag ]: 'Map' } ), true ],
+			[ 'bare prototype object', Bar.prototype, true ],
+			[ 'Object.prototype', Object.prototype, true ],
+			[ 'prototype with extra key', Baz.prototype, false ],
+			[ 'empty arguments', emptyArgs, true ],
+			[ 'filled arguments', filledArgs, false ],
+			[ 'arguments with length deleted', lengthlessArgs, true ],
+			[
+				'frozen spoofed Arguments tag',
+				Object.freeze( { [ Symbol.toStringTag ]: 'Arguments' } ),
+				true,
+			],
+			[ 'function with own splice', spliceFn, false ],
+			[ 'frozen function spoofing Arguments with own key', taggedFn, false ],
 			...functionTagSpoofs,
 		];
 
-		it.each( cases )( 'matches for %s', ( _label, value ) => {
-			expect( isEmpty( value ) ).toBe( lodashIsEmpty( value ) );
+		it.each( cases )( 'returns the expected result for %s', ( _label, value, expected ) => {
+			expect( isEmpty( value ) ).toBe( expected );
 		} );
 	} );
 } );

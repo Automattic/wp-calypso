@@ -5,6 +5,7 @@
 .customize-space-modal {
 	&.components-modal__frame {
 		block-size: min( 760px, calc( 100% - 96px ) );
+		max-inline-size: 660px;
 	}
 
 	.components-modal__content {
@@ -29,6 +30,9 @@
 		font-weight: 600;
 	}
 }
+.customize-space-modal__color-selection {
+	padding-block-end: 24px;
+}
 
 .customize-space-modal__subtitle {
 	color: var( --color-text-subtle );
@@ -41,7 +45,7 @@
 	flex: 1;
 	flex-direction: column;
 	min-block-size: 0;
-	padding-block-end: 12px;
+	padding-block-end: 0;
 	.components-tab-panel__tabs {
 		border-block-end: 1px solid var( --color-neutral-5 );
 		border-block-start: 1px solid var( --color-neutral-5 );
@@ -61,7 +65,7 @@
 	flex-direction: column;
 	min-block-size: 0;
 	overflow-y: auto;
-	padding-block: 16px 8px;
+	padding-block: 16px 0;
 	padding-inline: 8px;
 }
 

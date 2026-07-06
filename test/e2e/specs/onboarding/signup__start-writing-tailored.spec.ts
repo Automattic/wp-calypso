@@ -110,6 +110,13 @@ test.describe(
 
 			await test.step( 'When I select a plan', async function () {
 				await flowStartWriting.selectToChoosePlanLink.click();
+				// The plans grid renders after the step transition, so the
+				// free-plan button can appear later than the 10s action timeout.
+				// Wait explicitly before clicking.
+				await flowStartWriting.startWithFreePlanButton.waitFor( {
+					state: 'visible',
+					timeout: 30 * 1000,
+				} );
 				await flowStartWriting.startWithFreePlanButton.click();
 			} );
 

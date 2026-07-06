@@ -62,6 +62,16 @@ export default function SecurityLegacyContact() {
 										<Text as="dd" size={ 15 }>
 											{ contact.contact_email }
 										</Text>
+										{ contact.notes && (
+											<>
+												<Text as="dt" upperCase variant="muted" size={ 11 }>
+													{ __( 'Notes' ) }
+												</Text>
+												<Text as="dd" size={ 15 } className="legacy-contact-card__notes">
+													{ contact.notes }
+												</Text>
+											</>
+										) }
 									</dl>
 								</HStack>
 								<Text>

@@ -64,7 +64,6 @@
 		"jest-runner": "^29.6.1",
 		"jest-runner-groups": "^2.2.0",
 		"jest-teamcity": "^1.12.0",
-		"lodash": "^4.17.20",
 		"mailosaur": "^8.4.0",
 		"playwright": "1.57.0",
 		"playwright-ctrf-json-reporter": "^0.0.27",

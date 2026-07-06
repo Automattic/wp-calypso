@@ -66,6 +66,7 @@ export { JetpackLogo } from './logos/jetpack-logo';
 export { BigSkyLogo } from './logos/big-sky-logo';
 export { CloudLogo } from './logos/cloud-logo';
 export { VIPLogo } from './logos/vip-logo';
+export { AutomatticLogo } from './logos/automattic-logo';
 export { WooLogo } from './logos/woo-logo';
 export { WordPressLogo } from './logos/wordpress-logo';
 export { WooCommerceWooLogo } from './logos/woocommerce-woo-logo';

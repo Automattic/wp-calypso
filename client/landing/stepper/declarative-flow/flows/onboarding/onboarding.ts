@@ -82,6 +82,7 @@ const onboarding: FlowV2< typeof initialize > = {
 		);
 		const coupon = useQuery().get( 'coupon' );
 		const refParameter = useQuery().get( 'ref' );
+		const diyLaunchpad = useQuery().get( 'diy-launchpad' );
 		const siteSlugParam = useQuery().get( 'siteSlug' );
 
 		const { setShouldShowNotification } = usePurchasePlanNotification();
@@ -95,6 +96,19 @@ const onboarding: FlowV2< typeof initialize > = {
 			providedDependencies: ProvidedDependencies,
 			planCartItem: MinimalRequestCartProduct | null
 		): Promise< [ string, string | null, string | null ] > => {
+			// Site Setup replaces My Home, so the diy-launchpad cohort must land there directly:
+			// any other destination (e.g. /home) would be the orphaned screen we just removed.
+			if ( diyLaunchpad && providedDependencies.siteSlug ) {
+				const siteSlug = providedDependencies.siteSlug as string;
+				const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
+				const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
+				return [
+					`${ adminUrl }admin.php?page=site-setup-wp-admin&enable-ai-launchpad=1`,
+					null,
+					null,
+				];
+			}
+
 			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
 				return [ `/home/${ providedDependencies.siteSlug }`, null, null ];
 			}
@@ -267,6 +281,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							addQueryArgs( withLocale( '/setup/onboarding/post-checkout-onboarding', locale ), {
 								siteSlug: siteSlugParam,
 								...( refParameter ? { ref: refParameter } : {} ),
+								...( diyLaunchpad ? { 'diy-launchpad': diyLaunchpad } : {} ),
 							} )
 						);
 						return;
@@ -300,6 +315,7 @@ const onboarding: FlowV2< typeof initialize > = {
 											{
 												siteSlug,
 												...( refParameter ? { ref: refParameter } : {} ),
+												...( diyLaunchpad ? { 'diy-launchpad': diyLaunchpad } : {} ),
 											}
 									  );
 
@@ -320,6 +336,9 @@ const onboarding: FlowV2< typeof initialize > = {
 									steps_total: checkoutStepperPosition.total,
 								} )
 							);
+						} else if ( diyLaunchpad ) {
+							// The diy-launchpad cohort skips the AI/manual chooser and lands straight in Site Setup.
+							window.location.replace( destination );
 						} else if (
 							refParameter === WOO_HOSTING_SOLUTIONS_REF &&
 							isEnabled( 'onboarding/woo-hosting-post-purchase-setup-choice' )

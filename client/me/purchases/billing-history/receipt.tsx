@@ -561,6 +561,24 @@ export function ReceiptItemTaxes( { transaction }: { transaction: BillingTransac
 		return null;
 	}
 
+	if ( transaction.tax_breakdown && transaction.tax_breakdown.length > 0 ) {
+		return (
+			<>
+				{ transaction.tax_breakdown.map( ( entry ) => (
+					<div key={ entry.label } className="billing-history__transaction-tax-amount">
+						<span>{ `${ entry.label } ${ entry.rate_display }` }</span>
+						<span>
+							{ formatCurrency( entry.local_tax_collected_integer, transaction.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ) }
+						</span>
+					</div>
+				) ) }
+			</>
+		);
+	}
+
 	const baseTaxLabel = taxName ?? String( translate( 'Tax' ) );
 	const businessTaxSuffixLabel =
 		transaction.tax_is_for_business && transaction.tax_state

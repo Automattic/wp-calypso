@@ -118,6 +118,9 @@ export function TransactionAmount( {
 } ): JSX.Element {
 	const translate = useTranslate();
 	const taxName = useTaxName( transaction.tax_country_code );
+	const effectiveTaxName = transaction.tax_breakdown?.length
+		? transaction.tax_breakdown.map( ( e ) => e.label ).join( ' + ' )
+		: taxName;
 
 	if ( ! transactionIncludesTax( transaction ) ) {
 		return (
@@ -130,14 +133,14 @@ export function TransactionAmount( {
 		);
 	}
 
-	const includesTaxString = taxName
+	const includesTaxString = effectiveTaxName
 		? translate( '(includes %(taxAmount)s %(taxName)s)', {
 				args: {
 					taxAmount: formatCurrency( transaction.tax_integer, transaction.currency, {
 						isSmallestUnit: true,
 						stripZeros: true,
 					} ),
-					taxName,
+					taxName: effectiveTaxName,
 				},
 				comment:
 					'taxAmount is a localized price, like $12.34 | taxName is a localized tax, like VAT or GST',

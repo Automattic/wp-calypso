@@ -2,11 +2,13 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const { po } = require( 'gettext-parser' );
 const glob = require( 'glob' );
-const merge = require( 'lodash.mergewith' );
+const mergeWith = require( './merge-with' );
 
 const mergeDeep = ( left, right, key ) => {
-	if ( typeof left === 'object' && typeof right === 'object' ) {
-		return merge( left, right, mergeDeep );
+	// `typeof null === 'object'`, so exclude null before recursing (parsed POT
+	// data has none); a null side falls through to `right || left`, as in lodash.
+	if ( left !== null && typeof left === 'object' && right !== null && typeof right === 'object' ) {
+		return mergeWith( left, right, mergeDeep );
 	}
 
 	if ( typeof left === 'undefined' ) {

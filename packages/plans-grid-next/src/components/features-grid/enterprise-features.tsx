@@ -6,6 +6,8 @@ import { usePlansGridContext } from '../../grid-context';
 import { GridPlan } from '../../types';
 import { PlanFeaturesItem } from '../item';
 import PlanDivOrTdContainer from '../plan-div-td-container';
+import { ALL_ENTERPRISE_LOGO_SLUGS } from '../shared/header-price';
+import ClientLogoList from './client-logo-list';
 
 type EnterpriseFeaturesProps = {
 	renderedGridPlans: GridPlan[];
@@ -16,8 +18,12 @@ type EnterpriseFeaturesProps = {
 };
 
 const EnterpriseFeatures = ( { renderedGridPlans, options }: EnterpriseFeaturesProps ) => {
-	const { featureGroupMap, enableCategorisedFeatures, enterpriseFeaturesList } =
-		usePlansGridContext();
+	const {
+		featureGroupMap,
+		enableCategorisedFeatures,
+		enterpriseFeaturesList,
+		isEnterpriseA4AIndia,
+	} = usePlansGridContext();
 	const translate = useTranslate();
 	const isTableCell = options?.isTableCell;
 
@@ -70,6 +76,14 @@ const EnterpriseFeatures = ( { renderedGridPlans, options }: EnterpriseFeaturesP
 				className="plan-features-2023-grid__table-item"
 				{ ...rowspanProp }
 			>
+				{ shouldRenderLogos && isEnterpriseA4AIndia && (
+					<div className="plan-features-2023-grid__item">
+						<ClientLogoList
+							slugs={ ALL_ENTERPRISE_LOGO_SLUGS }
+							className="plan-features-2023-grid__item-logos"
+						/>
+					</div>
+				) }
 				{ shouldRenderLogos && ! options?.isLogosOnly && (
 					<CardContainer>
 						<div className={ clsx( 'plan-features-2023-grid__common-title', planClassName ) }>
