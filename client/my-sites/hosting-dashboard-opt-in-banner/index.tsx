@@ -111,7 +111,7 @@ export default function HostingDashboardOptInBanner( {
 		<Text as="p" variant="muted" size={ isMobile ? 12 : 13 }>
 			{ hasOptedIn && ! isSubmitting
 				? translate(
-						'Soon, the Hosting Dashboard you’ve been using becomes the default for everyone, and this classic view will be retired. Your content and settings stay the same.'
+						'The new dashboard you’ve been using becomes the default for everyone, and this classic view will be retired.'
 				  )
 				: translate(
 						'WordPress.com’s layout is getting more consistent and easier to use. Your content and settings won’t change. Can’t wait?'
