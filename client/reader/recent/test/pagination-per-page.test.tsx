@@ -6,6 +6,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { upsertPostCache } from 'calypso/reader/data/post/cache';
 import { usePaginatedStream, type StreamListItem } from 'calypso/reader/data/stream';
 import Recent from 'calypso/reader/recent';
 import type { ReactNode } from 'react';
@@ -93,6 +94,10 @@ jest.mock( 'calypso/reader/recent/engagement-bar', () => () => (
 	<div data-testid="engagement-bar" />
 ) );
 
+jest.mock( 'calypso/reader/recent/recent-post-skeleton', () => () => (
+	<div data-testid="recent-post-skeleton" />
+) );
+
 jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
 	useSiteSubscriptions: () => ( { subscriptions: [] } ),
 } ) );
@@ -132,13 +137,14 @@ const renderRecent = () => {
 	const store = createStore(
 		( state = { reader: {}, readerUi: { sidebar: { selectedRecentSite: null } } } ) => state
 	);
-	return render(
+	const result = render(
 		<QueryClientProvider client={ queryClient }>
 			<Provider store={ store }>
 				<Recent />
 			</Provider>
 		</QueryClientProvider>
 	);
+	return { ...result, queryClient };
 };
 
 describe( 'Recent per-page pagination', () => {
@@ -187,5 +193,42 @@ describe( 'Recent per-page pagination', () => {
 		const viewState = screen.getByTestId( 'view-state' );
 		expect( viewState ).toHaveAttribute( 'data-per-page', String( TARGET_PER_PAGE ) );
 		expect( viewState ).toHaveAttribute( 'data-page', '2' );
+	} );
+
+	it( 'keeps the selected full post visible during the per-page refetch', async () => {
+		const user = userEvent.setup();
+		const { queryClient } = renderRecent();
+
+		// Seed the canonical post cache for the post we will select (feedId 200,
+		// postId 300 -> the first stream item).
+		upsertPostCache( queryClient, [
+			{
+				ID: 1,
+				site_ID: 100,
+				feed_ID: 200,
+				feed_item_ID: 300,
+				global_ID: 'global-300',
+				title: 'Selected post',
+			},
+		] );
+
+		await user.click( screen.getByTestId( 'select-0' ) );
+		expect( screen.getByTestId( 'async-load' ) ).toBeVisible();
+
+		// Simulate the new page size still fetching: the paginated stream list is
+		// momentarily empty while `isRequesting` is true.
+		( usePaginatedStream as jest.Mock ).mockReturnValue( {
+			items: [],
+			pagination: { totalItems: 0, totalPages: 0 },
+			isRequesting: true,
+			error: null,
+		} );
+
+		await user.click( screen.getByTestId( 'change-per-page' ) );
+
+		// The full post stays mounted (fed from the canonical cache) and the
+		// loading skeleton does not flash back in.
+		expect( screen.getByTestId( 'async-load' ) ).toBeVisible();
+		expect( screen.queryByTestId( 'recent-post-skeleton' ) ).not.toBeInTheDocument();
 	} );
 } );

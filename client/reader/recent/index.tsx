@@ -10,7 +10,7 @@ import { SiteIcon } from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { useCommentsApiDisabled } from 'calypso/reader/data/comments';
-import { useCachedPosts } from 'calypso/reader/data/post/cache';
+import { useCachedPost, useCachedPosts } from 'calypso/reader/data/post/cache';
 import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import {
 	isPaddingStreamItem,
@@ -167,8 +167,19 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 		[ selectItem ]
 	);
 
-	const selectedPost = selectedItem ? getPostFromItem( selectedItem ) : undefined;
-	const commentsApiDisabled = useCommentsApiDisabled( selectedPost?.site_ID );
+	const selectedListPost = selectedItem ? getPostFromItem( selectedItem ) : undefined;
+	// Read the selected post straight from the canonical cache so the full-post
+	// pane keeps rendering during a per-page refetch, when the paginated stream
+	// list (and its derived posts map) is momentarily empty for the new page size.
+	const selectedCachedPost = useCachedPost(
+		selectedItem
+			? { blogId: selectedItem.blogId, feedId: selectedItem.feedId, postId: selectedItem.postId }
+			: null
+	);
+	const hasSelectedPost = Boolean( selectedListPost || selectedCachedPost );
+	const commentsApiDisabled = useCommentsApiDisabled(
+		selectedListPost?.site_ID ?? selectedCachedPost?.site_ID
+	);
 
 	const fields = useMemo(
 		() => [
@@ -361,11 +372,9 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				className={ `recent-feed__post-column ${ selectedItem ? 'overlay' : '' }` }
 				tabIndex={ -1 }
 			>
-				{ ! ( selectedItem && getPostFromItem( selectedItem ) ) && isLoading && (
-					<RecentPostSkeleton />
-				) }
+				{ ! hasSelectedPost && isLoading && <RecentPostSkeleton /> }
 				{ ! isLoading && streamItems.length === 0 && <FollowingEmptyContent view="recent" /> }
-				{ streamItems.length > 0 && selectedItem && selectedPost && (
+				{ selectedItem && hasSelectedPost && (
 					<>
 						<AsyncLoad
 							require={ loadReaderFullPost }
