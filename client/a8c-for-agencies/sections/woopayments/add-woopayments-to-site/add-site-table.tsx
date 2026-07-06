@@ -10,16 +10,10 @@ import { DataViews } from 'calypso/components/dataviews';
 import FormRadio from 'calypso/components/forms/form-radio';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { useFetchAllManagedSites } from '../../migrations/hooks/use-fetch-all-managed-sites';
 import { useWooPaymentsContext } from '../context';
-import type { Site } from '../../sites/types';
+import { useFetchManagedSites, type WooPaymentsSiteItem } from './use-fetch-managed-sites';
 
-export type WooPaymentsSiteItem = {
-	id: number;
-	site: string;
-	date: string;
-	rawSite: Site;
-};
+export type { WooPaymentsSiteItem };
 
 const AddWooPaymentsToSiteTable = ( {
 	selectedSite,
@@ -32,7 +26,7 @@ const AddWooPaymentsToSiteTable = ( {
 
 	const dispatch = useDispatch();
 
-	const { items, isLoading } = useFetchAllManagedSites();
+	const { items, isLoading } = useFetchManagedSites();
 
 	const { sitesWithPluginsStates: excludedSites } = useWooPaymentsContext();
 
