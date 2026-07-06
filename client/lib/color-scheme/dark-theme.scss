@@ -438,9 +438,10 @@ This mixin generates alias variables for a color palette. For example, the
 		&::before {
 			// Selected-segment backdrop: an accent-tinted surface (matching the
 			// sidebar active state) rather than a flat grey — gray-800 reads as
-			// light-mode in dark. Light text set below.
-			background: color-mix( in srgb, var( --wp-admin-theme-color ) 20%, var( --dashboard-surface__background-color ) );
-			border-color: transparent;
+			// light-mode in dark. A defined accent stroke keeps the pill from
+			// "floating"; light text set below.
+			background: color-mix( in srgb, var( --wp-admin-theme-color ) 30%, var( --dashboard-surface__background-color ) );
+			border-color: color-mix( in srgb, var( --wp-admin-theme-color ) 55%, var( --dashboard-surface__background-color ) );
 		}
 	}
 
