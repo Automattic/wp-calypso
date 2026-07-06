@@ -102,16 +102,15 @@
 	padding: 0;
 }
 
-// The trigger renders as a minimal neutral Button, whose own background
-// (transparent at rest, neutral-weak-active on hover/press/focus) provides the
-// extra, non-color-only affordance for interactive states. Only layout is
-// overridden here; the background is deliberately not suppressed.
+// The trigger renders as a minimal neutral Button; its background is
+// suppressed per design (the steps read as plain labels, not pill buttons).
 .trigger {
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
 	gap: var( --wpds-dimension-gap-sm );
 	padding: 0;
+	background: none;
 	border: none;
 	height: auto;
 	text-align: start;
