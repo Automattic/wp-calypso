@@ -706,7 +706,7 @@
 		box-shadow: none;
 
 		&.has-highlighted-plan {
-			margin-top: 37px;
+			margin-top: 12px;
 		}
 
 		&.has-6-cols {
@@ -754,7 +754,7 @@
 		align-items: flex-start;
 		background-color: transparent;
 		flex-direction: column;
-		padding: 28px 16px 0;
+		padding: 36px 16px 0;
 	}
 
 	.plan-features-2023-grid__header-title {
@@ -779,7 +779,7 @@
 		color: var( --studio-gray-80 );
 		font-size: 13px;
 		line-height: 20px;
-		min-height: 76px;
+		min-height: 6px;
 		padding: 0 16px 18px;
 		text-wrap: pretty;
 	}
@@ -938,42 +938,48 @@
 		width: 17px;
 	}
 
-	.plan-features-2023-grid__table-item.popular-plan-parent-class {
-		.plan-features-2023-grid__popular-badge {
-			@include plans-grid-medium-large {
+	&.is-smedium,
+	&.is-medium,
+	&.is-large,
+	&.is-xlarge {
+		thead tr:first-child .plan-features-2023-grid__table-item.popular-plan-parent-class {
+			height: 0;
+			padding: 0;
+
+			.plan-features-2023-grid__popular-badge {
 				background: transparent;
 				border: 0;
-				height: 37px;
-				left: -1px;
+				height: 0;
+				left: 0;
 				margin: 0;
 				padding: 0;
 				position: absolute;
-				right: -1px;
-				top: -37px;
+				right: 0;
+				top: 0;
 				width: auto;
+				z-index: 1;
 
 				.plans-grid__plan-pill {
 					align-items: center;
 					background-color: var( --studio-white );
 					border: 1px solid #e0e0e0;
-					border-bottom: 0;
-					border-radius: 8px 8px 0 0;
-					bottom: 0;
+					border-radius: 4px;
+					bottom: auto;
 					color: var( --studio-gray-100 );
 					display: flex;
 					font-family: 'SF Pro Display', $sans;
 					font-size: 12px;
 					font-weight: 500;
-					height: 36px;
+					height: 24px;
 					justify-content: center;
-					left: 0;
+					left: 16px;
 					letter-spacing: 0;
 					line-height: 16px;
-					padding: 0 12px;
+					padding: 0 10px;
 					position: absolute;
-					right: 0;
+					right: auto;
 					text-transform: none;
-					top: auto;
+					top: -12px;
 					transform: none;
 					width: auto;
 				}
