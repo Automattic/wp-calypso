@@ -354,5 +354,38 @@ describe( 'Recent per-page pagination', () => {
 
 			expect( screen.getByTestId( 'view-state' ) ).toHaveAttribute( 'data-selection', 'f200-320' );
 		} );
+
+		it( 'defers auto-selection until the page finishes loading', async () => {
+			const user = userEvent.setup();
+			renderRecent();
+
+			// Mount auto-selects page 1's first item.
+			expect( screen.getByTestId( 'view-state' ) ).toHaveAttribute( 'data-selection', 'f200-300' );
+
+			// Change the page while a fetch is in flight. The selection must not jump
+			// to a transient item mid-load; it stays on the current post.
+			( usePaginatedStream as jest.Mock ).mockReturnValue( {
+				items: buildStreamItems(),
+				pagination: { totalItems: TOTAL_ITEMS, totalPages: 3 },
+				isRequesting: true,
+				error: null,
+			} );
+			await user.click( screen.getByTestId( 'go-to-page-3' ) );
+
+			expect( screen.getByTestId( 'view-state' ) ).toHaveAttribute( 'data-page', '3' );
+			expect( screen.getByTestId( 'view-state' ) ).toHaveAttribute( 'data-selection', 'f200-300' );
+
+			// Once the fetch settles, the first item of the new page is selected in a
+			// single clean transition.
+			( usePaginatedStream as jest.Mock ).mockReturnValue( {
+				items: buildStreamItems(),
+				pagination: { totalItems: TOTAL_ITEMS, totalPages: 3 },
+				isRequesting: false,
+				error: null,
+			} );
+			await user.click( screen.getByTestId( 'go-to-page-3' ) );
+
+			expect( screen.getByTestId( 'view-state' ) ).toHaveAttribute( 'data-selection', 'f200-330' );
+		} );
 	} );
 } );

@@ -312,8 +312,15 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 	// preserved across a per-page change). Reading the selection from a ref keeps
 	// this effect off the `selectedItem` dependency, so selecting an off-page post
 	// (full-post keyboard navigation) is not reverted here.
+	//
+	// Gated on `! isLoading` so it only runs once the page has settled. Running
+	// mid-fetch would (a) latch onto a transient item as the stream pages merge —
+	// leaving the wrong post selected — and (b) select an item whose content isn't
+	// cached yet, which flashes the full-post loading skeleton. Deferring keeps the
+	// previously selected (cached) post visible during the load, then makes one
+	// clean selection.
 	useEffect( () => {
-		if ( isWide && streamItems.length > 0 && view.page && view.perPage ) {
+		if ( isWide && ! isLoading && streamItems.length > 0 && view.page && view.perPage ) {
 			const pageStart = ( view.page - 1 ) * view.perPage;
 			const pageEnd = pageStart + view.perPage;
 
@@ -330,7 +337,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 			const firstOnPage = streamItems[ pageStart ];
 			setSelectedItem( firstOnPage && ! isPaddingStreamItem( firstOnPage ) ? firstOnPage : null );
 		}
-	}, [ isWide, streamItems, view ] );
+	}, [ isWide, isLoading, streamItems, view ] );
 
 	// When the selected feed changes, clear the selected item and reset the page to 1.
 	useEffect( () => {
