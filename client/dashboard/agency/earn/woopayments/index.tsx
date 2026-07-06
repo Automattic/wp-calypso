@@ -7,6 +7,7 @@ import PageLayout from '../../../components/page-layout';
 import CommissionsTable from './commissions-table';
 import ConsolidatedViews from './consolidated-views';
 import WooPaymentsDashboardEmptyState from './empty-state';
+import MissingPaymentSettingsNotice from './missing-payment-settings-notice';
 import { useDownloadCommissionsReport } from './use-download-commissions-report';
 import useWooPaymentsDashboardData from './use-woopayments-dashboard-data';
 
@@ -14,6 +15,7 @@ export default function EarnWooPayments() {
 	const {
 		isLoading,
 		showEmptyState,
+		hasSites,
 		woopaymentsData,
 		isLoadingWooPaymentsData,
 		sitesWithPluginsStates,
@@ -33,7 +35,10 @@ export default function EarnWooPayments() {
 	}
 
 	return (
-		<PageLayout header={ header }>
+		<PageLayout
+			header={ header }
+			notices={ <MissingPaymentSettingsNotice hasSites={ hasSites } /> }
+		>
 			{ showEmptyState ? (
 				<WooPaymentsDashboardEmptyState />
 			) : (
