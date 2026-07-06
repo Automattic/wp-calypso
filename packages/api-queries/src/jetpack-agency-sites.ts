@@ -40,3 +40,14 @@ export const agencySiteQuery = ( siteUrl: string ) =>
 			return sites.find( ( site ) => site.url === siteUrl ) ?? null;
 		},
 	} );
+
+// Variant that takes an explicit agency id (e.g. from Redux in the classic A4A app) and returns the
+// full response including the total count, for callers that need to paginate over every site.
+export const agencySitesWithCountQuery = (
+	agencyId: number,
+	options: FetchAgencySitesOptions = {}
+) =>
+	queryOptions( {
+		queryKey: [ ...agencySitesQueryKey, 'with-count', agencyId, options ],
+		queryFn: () => fetchAgencySites( agencyId, options ),
+	} );
