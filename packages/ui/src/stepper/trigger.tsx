@@ -16,7 +16,7 @@ type StepperTriggerProps = ComponentProps< 'button' > & {
 export const StepperTrigger = forwardRef< HTMLElement, StepperTriggerProps >(
 	function StepperTrigger( { children, className, ...props }, forwardedRef ) {
 		const { orientation, headingLevel, registerTriggerRef } = useStepperContext();
-		const { value, isCurrent, isDisabled } = useStepContext();
+		const { value, isCurrent, isDisabled, status } = useStepContext();
 
 		// Keep a stable ref to forwardedRef so callbackRef doesn't change
 		// identity when the parent passes an inline callback ref.
@@ -49,6 +49,7 @@ export const StepperTrigger = forwardRef< HTMLElement, StepperTriggerProps >(
 						ref={ callbackRef as Ref< HTMLButtonElement > }
 						render={ <Button variant="minimal" tone="neutral" /> }
 						aria-current={ isCurrent ? 'step' : undefined }
+						data-status={ status }
 						className={ clsx( styles[ 'trigger' ], className ) }
 						{ ...props }
 						onClick={ ( e ) => {
@@ -78,6 +79,7 @@ export const StepperTrigger = forwardRef< HTMLElement, StepperTriggerProps >(
 				disabled={ isDisabled }
 				render={ <Button variant="minimal" tone="neutral" /> }
 				aria-current={ isCurrent ? 'step' : undefined }
+				data-status={ status }
 				className={ clsx( styles[ 'trigger' ], className ) }
 				{ ...props }
 			>
