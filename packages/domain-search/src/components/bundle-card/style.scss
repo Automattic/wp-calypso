@@ -14,6 +14,10 @@
 	word-break: break-all;
 }
 
+.bundle-card__member-tld {
+	color: #2c3338;
+}
+
 .bundle-card__cta-wrapper {
 	flex-shrink: 0;
 }
@@ -23,6 +27,16 @@
 	border-top: 1px solid rgba( 0, 0, 0, 0.08 );
 }
 
+.bundle-card__footer-icon {
+	fill: #757575;
+	flex-shrink: 0;
+}
+
 .bundle-card__cta {
 	justify-content: center;
+
+	&.is-secondary {
+		color: var( --domain-search-secondary-action-color );
+		box-shadow: inset 0 0 0 1px var( --domain-search-secondary-action-box-shadow-color );
+	}
 }

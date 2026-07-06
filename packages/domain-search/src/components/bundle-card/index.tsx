@@ -5,8 +5,9 @@ import {
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
-import { arrowRight, Icon, lock } from '@wordpress/icons';
+import { arrowRight, Icon, lockOutline, plus, shield } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import { Fragment } from 'react';
 import { getTld } from '../../helpers/get-tld';
 import { BundlePrice, BundleTldChips, DomainSearchNotice, DomainSuggestionBadge } from '../../ui';
 import type { BundleSuggestion } from '@automattic/api-core';
@@ -50,7 +51,6 @@ export const BundleCard = ( {
 	const displayOriginalPrice = String( original_cost ?? original_price );
 
 	const tlds = domains.map( ( domain ) => getTld( domain.domain ) );
-	const memberDomains = domains.map( ( domain ) => domain.domain ).join( ', ' );
 
 	const cta = isAddedToCart ? (
 		<Button
@@ -68,7 +68,8 @@ export const BundleCard = ( {
 	) : (
 		<Button
 			className="bundle-card__cta"
-			variant="primary"
+			variant="secondary"
+			icon={ plus }
 			__next40pxDefaultSize
 			isBusy={ isBusy }
 			disabled={ disabled }
@@ -88,12 +89,12 @@ export const BundleCard = ( {
 					className="bundle-card__header"
 				>
 					<HStack justify="flex-start" spacing={ 2 } expanded={ false }>
-						<Icon icon={ lock } size={ 20 } className="bundle-card__lock-icon" />
+						<Icon icon={ lockOutline } size={ 20 } className="bundle-card__lock-icon" />
 						<Text size={ 14 } weight={ 500 }>
 							{ __( 'Protect your brand' ) }
 						</Text>
 					</HStack>
-					<DomainSuggestionBadge variation="success">
+					<DomainSuggestionBadge variation="warning">
 						{ sprintf(
 							// translators: %(percent)d is the bundle discount percentage, e.g. 20.
 							__( 'Bundle and save %(percent)d%%' ),
@@ -105,7 +106,17 @@ export const BundleCard = ( {
 				<BundleTldChips tlds={ tlds } size={ 28 } className="bundle-card__tlds" />
 
 				<Text variant="muted" className="bundle-card__members">
-					{ memberDomains }
+					{ domains.map( ( domain, index ) => {
+						const tld = getTld( domain.domain );
+						const sld = tld ? domain.domain.slice( 0, -( tld.length + 1 ) ) : domain.domain;
+						return (
+							<Fragment key={ domain.domain }>
+								{ index > 0 && ', ' }
+								{ sld }
+								{ tld && <span className="bundle-card__member-tld">.{ tld }</span> }
+							</Fragment>
+						);
+					} ) }
 				</Text>
 
 				{ hasPremiumDomain && (
@@ -135,9 +146,12 @@ export const BundleCard = ( {
 				</HStack>
 
 				<div className="bundle-card__footer">
-					<Text size={ 12 } variant="muted" className="bundle-card__tagline">
-						{ __( 'Claim popular domain extensions to avoid copycats' ) }
-					</Text>
+					<HStack justify="flex-start" spacing={ 2 } expanded={ false }>
+						<Icon icon={ shield } size={ 20 } className="bundle-card__footer-icon" />
+						<Text size={ 12 } variant="muted" className="bundle-card__tagline">
+							{ __( 'Claim popular domain extensions to avoid copycats' ) }
+						</Text>
+					</HStack>
 				</div>
 			</VStack>
 		</div>

@@ -47,18 +47,23 @@ describe( 'BundleCard', () => {
 	} );
 
 	it( 'renders a TLD chip for each member domain', () => {
-		render( <BundleCard suggestion={ buildSuggestion( fourDomains ) } /> );
+		// Scoped to the chips row: the member line below also renders ".com" etc.
+		const { container } = render( <BundleCard suggestion={ buildSuggestion( fourDomains ) } /> );
+		const chips = container.querySelector( '.bundle-card__tlds' ) as HTMLElement;
 
-		expect( screen.getByText( '.com' ) ).toBeInTheDocument();
-		expect( screen.getByText( '.net' ) ).toBeInTheDocument();
-		expect( screen.getByText( '.org' ) ).toBeInTheDocument();
-		expect( screen.getByText( '.io' ) ).toBeInTheDocument();
+		expect( getByText( chips, '.com' ) ).toBeInTheDocument();
+		expect( getByText( chips, '.net' ) ).toBeInTheDocument();
+		expect( getByText( chips, '.org' ) ).toBeInTheDocument();
+		expect( getByText( chips, '.io' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders the member domains as a comma-joined line', () => {
-		render( <BundleCard suggestion={ buildSuggestion( threeDomains ) } /> );
+		// The TLD of each member is wrapped in its own span for emphasis, so assert
+		// on the line's combined text rather than a single text node.
+		const { container } = render( <BundleCard suggestion={ buildSuggestion( threeDomains ) } /> );
+		const members = container.querySelector( '.bundle-card__members' ) as HTMLElement;
 
-		expect( screen.getByText( 'example.com, example.net, example.org' ) ).toBeInTheDocument();
+		expect( members.textContent ).toBe( 'example.com, example.net, example.org' );
 	} );
 
 	it( 'renders the bundle price and the struck-through original price', () => {

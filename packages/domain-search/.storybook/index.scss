@@ -16,7 +16,8 @@ html {
 }
 
 // Mirror of the `.domain-search` design tokens (src/page/style.scss) so components
-// that read them render with real colors in isolated stories.
+// that read them render with real colors in isolated stories (the stories don't
+// mount the `.domain-search` page root that normally defines these).
 :root {
 	--domain-search-promotional-price-color: #048015;
 	--domain-search-warning-badge-border-color: #f4df7b;
