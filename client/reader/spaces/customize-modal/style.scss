@@ -184,6 +184,10 @@
 	border-radius: 8px;
 	background: var( --space-color-bg );
 	color: var( --space-color );
+
+	svg {
+		fill: currentColor;
+	}
 }
 
 @each $color in space-colors.$space-colors {
