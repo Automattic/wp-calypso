@@ -102,7 +102,7 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 					</span>
 					<InfoPopover className="plan-usage-progress-info" position="top" iconSize={ 18 }>
 						{ translate(
-							'Billable views are your total views minus your two highest-traffic days, counted over your billing cycle. Billed on the lowest of your last three cycles.'
+							"Billable views are your total views minus your two highest-traffic days each billing cycle, so big spikes won't count against your limit. You'll only need to upgrade if you exceed your limit for three cycles in a row."
 						) }
 					</InfoPopover>
 				</div>
