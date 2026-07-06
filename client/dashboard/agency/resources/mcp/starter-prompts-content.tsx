@@ -140,7 +140,7 @@ export default function McpStarterPrompts( {
 			</CardBody>
 			{ STARTER_PROMPTS.map( ( prompt ) => (
 				<Fragment key={ prompt.id }>
-					<CardDivider />
+					<CardDivider className="mcp-starter-prompts__divider" />
 					<StarterPromptItem prompt={ prompt } disabled={ disabled } onCopy={ onCopy } />
 				</Fragment>
 			) ) }
