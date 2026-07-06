@@ -19,10 +19,12 @@ img.plugin-icon {
 }
 
 .plugin-sites-card-body {
-	max-height: $card-height;
+	height: $card-height;
 	padding-inline-start: 0;
 	padding-inline-end: 0;
-	overflow-y: auto;
+	padding-block-end: 0;
+	display: flex;
+	flex-direction: column;
 }
 
 .plugin-sites-card-managed-notice {
