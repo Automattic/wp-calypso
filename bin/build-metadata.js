@@ -2,7 +2,27 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
 const vm = require( 'vm' );
-const _ = require( 'lodash' );
+
+// True for objects and arrays (used to decide whether to recurse).
+const isObject = ( value ) => value !== null && typeof value === 'object';
+
+// Returns the item with the greatest `item[ key ]`, skipping nullish/NaN values
+// and keeping the first on a tie; `undefined` for an empty list.
+function maxBy( array, key ) {
+	let best;
+	let bestValue;
+	for ( const item of array ) {
+		const value = item[ key ];
+		if ( value == null || value !== value ) {
+			continue;
+		}
+		if ( best === undefined || value > bestValue ) {
+			best = item;
+			bestValue = value;
+		}
+	}
+	return best;
+}
 
 const areaCodes = {
 	CA: [
@@ -171,7 +191,7 @@ function deepRemoveUndefinedKeysFromObject( obj ) {
 		if ( obj.hasOwnProperty( key ) ) {
 			if ( typeof obj[ key ] === 'undefined' ) {
 				delete obj[ key ];
-			} else if ( _.isObject( obj[ key ] ) ) {
+			} else if ( isObject( obj[ key ] ) ) {
 				deepRemoveUndefinedKeysFromObject( obj[ key ] );
 			}
 		}
@@ -189,7 +209,7 @@ function generateDeepRemoveEmptyArraysFromObject( allowedKeys ) {
 					obj[ key ].length === 0
 				) {
 					delete obj[ key ];
-				} else if ( _.isObject( obj[ key ] ) ) {
+				} else if ( isObject( obj[ key ] ) ) {
 					deepRemoveEmptyArraysFromObject( obj[ key ] );
 				}
 			}
@@ -199,7 +219,7 @@ function generateDeepRemoveEmptyArraysFromObject( allowedKeys ) {
 }
 
 function removeAllNumberKeys( obj ) {
-	return _.omitBy( obj, ( val, key ) => /^\d+$/.test( key ) );
+	return Object.fromEntries( Object.entries( obj ).filter( ( [ key ] ) => ! /^\d+$/.test( key ) ) );
 }
 
 function removeRegionCodeAndCountryDialCodeIfSameWithCountryDialCode( countryData ) {
@@ -248,12 +268,10 @@ function processLibPhoneNumberMetadata( libPhoneNumberData ) {
 		}
 	}
 
-	const noPattern = Object.values( data ).filter(
-		_.conforms( { patterns: ( patterns ) => patterns.length === 0 } )
-	);
-	_.forIn( noPattern, function ( country ) {
+	const noPattern = Object.values( data ).filter( ( country ) => country.patterns.length === 0 );
+	noPattern.forEach( function ( country ) {
 		country.patternRegion = (
-			_.maxBy(
+			maxBy(
 				Object.values( data ).filter( ( c ) => c.dialCode === country.dialCode ),
 				'priority'
 			) || {}
@@ -367,15 +385,22 @@ function generateDialCodeMap( metadata ) {
 			res[ key ].push( value );
 		}
 	}
-	_.forIn( metadata, function ( country ) {
+	Object.values( metadata ).forEach( function ( country ) {
 		addValue( country.dialCode, country.isoCode );
 		( country.areaCodes || [] ).forEach( ( areaCode ) =>
 			addValue( country.dialCode + areaCode, country.isoCode )
 		);
 	} );
 
-	return _.mapValues( res, ( countryCodes ) =>
-		_.orderBy( countryCodes, ( countryCode ) => metadata[ countryCode ].priority || 0, 'desc' )
+	// Order each dial code's countries by priority, highest first (a stable sort
+	// keeps the original order among equal priorities).
+	return Object.fromEntries(
+		Object.entries( res ).map( ( [ dialCode, countryCodes ] ) => [
+			dialCode,
+			[ ...countryCodes ].sort(
+				( a, b ) => ( metadata[ b ].priority || 0 ) - ( metadata[ a ].priority || 0 )
+			),
+		] )
 	);
 }
 

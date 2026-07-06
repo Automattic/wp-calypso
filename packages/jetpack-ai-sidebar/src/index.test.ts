@@ -10,9 +10,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
+import ImageAltTextPicker from './components/image-alt-text-picker';
 import PostFeedback from './components/post-feedback';
 import Proofread from './components/proofread';
 import ReviewMediation from './components/review-mediation';
+import SeoDescriptionPicker from './components/seo-description-picker';
+import SeoTitlePicker from './components/seo-title-picker';
 import TitlePicker from './components/title-picker';
 import { clearActiveBlockFocus, undoBlockEdit } from './utils/block-actions';
 import {
@@ -260,6 +263,26 @@ function getTracksCalls( eventName: string ) {
 	return mockedRecordTracksEvent.mock.calls.filter( ( [ name ] ) => name === eventName );
 }
 
+describe( 'contextProvider.getClientContext', () => {
+	afterEach( () => {
+		delete ( globalThis as any ).agentsManagerData;
+	} );
+
+	it( 'forwards jetpackSEOSuggestionsEnabled = true when the host enables SEO suggestions', () => {
+		installAiEditorialReviewData( { seoSuggestions: true } );
+		expect( contextProvider.getClientContext().jetpackSEOSuggestionsEnabled ).toBe( true );
+	} );
+
+	it( 'forwards jetpackSEOSuggestionsEnabled = false when the host disables SEO suggestions', () => {
+		installAiEditorialReviewData( { seoSuggestions: false } );
+		expect( contextProvider.getClientContext().jetpackSEOSuggestionsEnabled ).toBe( false );
+	} );
+
+	it( 'defaults jetpackSEOSuggestionsEnabled to false when no sidebar config is present', () => {
+		expect( contextProvider.getClientContext().jetpackSEOSuggestionsEnabled ).toBe( false );
+	} );
+} );
+
 describe( 'getChatComponent', () => {
 	it( 'returns TitlePicker for type "title-picker"', () => {
 		expect( getChatComponent( 'title-picker' ) ).toBe( TitlePicker );
@@ -275,6 +298,18 @@ describe( 'getChatComponent', () => {
 
 	it( 'returns Proofread for type "proofread"', () => {
 		expect( getChatComponent( 'proofread' ) ).toBe( Proofread );
+	} );
+
+	it( 'returns SeoTitlePicker for type "seo-title-picker"', () => {
+		expect( getChatComponent( 'seo-title-picker' ) ).toBe( SeoTitlePicker );
+	} );
+
+	it( 'returns SeoDescriptionPicker for type "seo-description-picker"', () => {
+		expect( getChatComponent( 'seo-description-picker' ) ).toBe( SeoDescriptionPicker );
+	} );
+
+	it( 'returns ImageAltTextPicker for type "image-alt-text-picker"', () => {
+		expect( getChatComponent( 'image-alt-text-picker' ) ).toBe( ImageAltTextPicker );
 	} );
 
 	it( 'returns null for an unknown type', () => {
@@ -1055,6 +1090,72 @@ describe( 'getEmptyViewSuggestions', () => {
 		expect( labels ).toContain( 'AI Editorial Review' );
 		expect( labels ).not.toContain( 'Generate Feedback' );
 	} );
+
+	it( 'shows the SEO Enhancer dropdown when the seoSuggestions feature is enabled', () => {
+		installAiEditorialReviewData( { seoSuggestions: true } );
+		installPostTypeMock( 'post' );
+
+		const seo = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'seo-enhancer'
+		);
+
+		expect( seo?.label ).toBe( 'SEO Enhancer' );
+		expect( seo?.options?.map( ( option ) => option.label ) ).toEqual( [
+			'Title',
+			'Description',
+			'Image Alt Text',
+		] );
+	} );
+
+	it( 'submits the exact ability prompt as each dropdown option value', () => {
+		installAiEditorialReviewData( { seoSuggestions: true } );
+		installPostTypeMock( 'post' );
+
+		const seo = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'seo-enhancer'
+		);
+
+		// An empty parent prompt makes the submitted text equal the option value
+		// verbatim, so these must match the prompts the abilities route on.
+		expect( seo?.prompt ).toBe( '' );
+		expect( seo?.options ).toEqual( [
+			{
+				id: 'seo-title',
+				label: 'Title',
+				value: 'Generate an SEO title (meta title) for this post',
+			},
+			{
+				id: 'seo-description',
+				label: 'Description',
+				value: 'Generate an SEO meta description for this post',
+			},
+			{
+				id: 'image-alt-text',
+				label: 'Image Alt Text',
+				value: 'Generate descriptive alt text for the images in this post',
+			},
+		] );
+	} );
+
+	it( 'gates the SEO Enhancer dropdown independently of Optimize Title', () => {
+		// Optimize Title on, SEO off: SEO must not appear.
+		installAiEditorialReviewData( { optimizeTitleSuggestion: true, seoSuggestions: false } );
+		installPostTypeMock( 'post' );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'optimize-title' );
+		expect( ids ).not.toContain( 'seo-enhancer' );
+	} );
+
+	it( 'hides the SEO Enhancer dropdown when the seoSuggestions feature is disabled', () => {
+		installAiEditorialReviewData( { seoSuggestions: false } );
+		installPostTypeMock( 'post' );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'seo-enhancer' );
+	} );
 } );
 
 describe( 'useSuggestions', () => {
@@ -1805,6 +1906,70 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_test_123' );
 			expect( parsed.data.isCurrent ).toBe( true );
 			expect( parsed.data.hideZoomAction ).toBe( true );
+		} );
+
+		it( 'echoes the tool call id at the envelope top level', async () => {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'title-picker',
+				props: { titles: [ { title: 'T', explanation: 'a' } ] },
+				toolCallId: 'call_identity_1',
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.tool_call_id ).toBe( 'call_identity_1' );
+		} );
+
+		it( 'omits tool_call_id from the envelope when the input has no tool call id', async () => {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'title-picker',
+				props: { titles: [ { title: 'T', explanation: 'a' } ] },
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed ).not.toHaveProperty( 'tool_call_id' );
+		} );
+
+		it( 'returns an agentMessage envelope with an Undo checkpoint for a seo-title-picker call', async () => {
+			const titles = [ { title: 'SEO Title', explanation: 'a' } ];
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'seo-title-picker',
+				props: { titles },
+				toolCallId: 'call_seo_title',
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.type ).toBe( 'seo-title-picker' );
+			expect( parsed.data.props ).toEqual( { titles } );
+			// SEO meta pickers snapshot for Undo, like title-picker.
+			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_seo_title' );
+		} );
+
+		it( 'returns an agentMessage envelope with an Undo checkpoint for a seo-description-picker call', async () => {
+			const descriptions = [ { description: 'An SEO description', explanation: 'a' } ];
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'seo-description-picker',
+				props: { descriptions },
+				toolCallId: 'call_seo_desc',
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.type ).toBe( 'seo-description-picker' );
+			expect( parsed.data.props ).toEqual( { descriptions } );
+			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_seo_desc' );
+		} );
+
+		it( 'returns an agentMessage envelope with an Undo checkpoint for an image-alt-text-picker call', async () => {
+			const images = [ { clientId: 'img1', url: 'u', currentAlt: '', alt: 'A photo' } ];
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'image-alt-text-picker',
+				props: { images },
+				toolCallId: 'call_alt',
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.type ).toBe( 'image-alt-text-picker' );
+			expect( parsed.data.props ).toEqual( { images } );
+			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_alt' );
 		} );
 
 		it( 'accepts the legacy Big Sky show-component tool during migration', async () => {

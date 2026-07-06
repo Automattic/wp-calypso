@@ -52,7 +52,35 @@ function mockPreferences( calypso_preferences: Partial< UserPreferences > = {} )
 		.reply( 200, { calypso_preferences } );
 }
 
+const EXPERIMENT_NAME = 'calypso_onboarding_account_recovery_modal_202606';
+const TREATMENT_VARIATION = 'no_recovery_modal';
+
+// The interstitial is hidden only for users in the `no_recovery_modal` treatment; control and
+// unassigned users still see it. Seed a live assignment into the storage ExPlat reads from, so the
+// real `useExperiment` hook resolves to the given variation through its normal code path — no
+// network call, no mocking. `loadExperimentAssignment` returns a stored, still-alive assignment
+// before hitting the server.
+function assignExperiment( variationName: string | null = null ) {
+	window.localStorage.setItem(
+		`explat-experiment--${ EXPERIMENT_NAME }`,
+		JSON.stringify( {
+			experimentName: EXPERIMENT_NAME,
+			variationName,
+			retrievedTimestamp: Date.now(),
+			ttl: 3600,
+		} )
+	);
+}
+
 describe( '<AccountRecoveryInterstitial>', () => {
+	beforeEach( () => {
+		assignExperiment();
+	} );
+
+	afterEach( () => {
+		window.localStorage.clear();
+	} );
+
 	test( 'shows the modal and records an impression for a user with no recovery method', async () => {
 		mockAccountRecovery( NONE_RECOVERY );
 		mockUserSettings( { two_step_enabled: false } );
@@ -220,6 +248,25 @@ describe( '<AccountRecoveryInterstitial>', () => {
 				has_backup_codes: false,
 				snooze_period: 14,
 			}
+		);
+	} );
+
+	test( 'does not show for a user in the experiment treatment group, even when eligible', async () => {
+		// Otherwise-eligible user (no recovery method, not snoozed) assigned to the treatment that
+		// suppresses the modal.
+		assignExperiment( TREATMENT_VARIATION );
+		mockAccountRecovery( NONE_RECOVERY );
+		mockUserSettings( { two_step_enabled: false } );
+		mockPreferences();
+
+		const { recordTracksEvent } = render( <AccountRecoveryInterstitial /> );
+
+		await waitFor( () => {
+			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+		} );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_account_recovery_nudge_interstitial_impression',
+			expect.anything()
 		);
 	} );
 } );

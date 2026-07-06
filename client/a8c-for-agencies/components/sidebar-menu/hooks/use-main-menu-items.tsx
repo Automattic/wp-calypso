@@ -153,17 +153,6 @@ const useMainMenuItems = ( path: string ) => {
 				  ]
 				: [] ),
 			{
-				icon: chartBar,
-				path: A4A_REPORTS_LINK,
-				link: A4A_REPORTS_LINK,
-				title: translate( 'Reports' ),
-				badge: translate( 'Beta' ),
-				trackEventProps: {
-					menu_item: 'Automattic for Agencies / Reports',
-				},
-				withChevron: true,
-			},
-			{
 				icon: tag,
 				path: A4A_MARKETPLACE_LINK,
 				link: A4A_MARKETPLACE_LINK,
@@ -245,7 +234,7 @@ const useMainMenuItems = ( path: string ) => {
 							path: A4A_AMPLIFY_LINK,
 							link: A4A_AMPLIFY_LINK,
 							title: translate( 'Amplify' ),
-							badge: translate( 'Alpha' ),
+							badge: translate( 'Beta' ),
 							trackEventProps: {
 								menu_item: 'Automattic for Agencies / Amplify',
 							},
@@ -253,6 +242,17 @@ const useMainMenuItems = ( path: string ) => {
 						},
 				  ]
 				: [] ),
+			{
+				icon: chartBar,
+				path: A4A_REPORTS_LINK,
+				link: A4A_REPORTS_LINK,
+				title: translate( 'Reports' ),
+				badge: translate( 'Beta' ),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Reports',
+				},
+				withChevron: true,
+			},
 		]
 			.map( ( item ) => createItem( item, path ) )
 			.filter( ( item ) => isPathAllowed( item.link, agency ) );

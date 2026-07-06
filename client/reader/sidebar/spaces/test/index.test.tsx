@@ -8,6 +8,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { getSpacePath } from 'calypso/reader/spaces/routes';
+import preferences from 'calypso/state/preferences/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ReaderSidebarSpaces } from '../index';
 import type { ReadSpace } from '@automattic/api-core';
@@ -32,6 +33,23 @@ jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
 	useSiteSubscriptions: () => ( { subscriptions: [], isLoading: false, isError: false } ),
 } ) );
 
+// The onboarding walkthrough is lazy-loaded via AsyncLoad. Render it
+// synchronously here so the gating behavior can be asserted without awaiting a
+// dynamic import.
+jest.mock( 'calypso/components/async-load', () => ( {
+	__esModule: true,
+	default: ( {
+		require: _require,
+		placeholder: _placeholder,
+		...props
+	}: Record< string, unknown > ) => {
+		const { SpacesOnboardingModal } = jest.requireActual(
+			'calypso/reader/spaces/onboarding-modal'
+		);
+		return jest.requireActual( 'react' ).createElement( SpacesOnboardingModal, props );
+	},
+} ) );
+
 const SPACES: ReadSpace[] = [
 	{
 		id: '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21',
@@ -50,11 +68,18 @@ const SPACES: ReadSpace[] = [
 const FIRST_SPACE = SPACES[ 0 ];
 const OPEN_PATH = getSpacePath( FIRST_SPACE.id );
 
-function render( ui: React.ReactElement ) {
+function render( ui: React.ReactElement, initialState?: object ) {
 	// Seed the spaces list so `useSpaces()` resolves synchronously.
 	const queryClient = new QueryClient();
 	queryClient.setQueryData( readSpacesQuery().queryKey, [ ...SPACES ] );
-	return renderWithProvider( ui, { queryClient } );
+	// Register the preferences slice so the onboarding gate can read it. Without
+	// remote values it reads as "not loaded", so the gate falls through to the
+	// create form — the behavior the non-onboarding tests below assert.
+	return renderWithProvider( ui, {
+		queryClient,
+		reducers: { preferences },
+		initialState,
+	} );
 }
 
 describe( 'ReaderSidebarSpaces', () => {
@@ -62,6 +87,7 @@ describe( 'ReaderSidebarSpaces', () => {
 		jest.mocked( page ).mockClear();
 		jest.mocked( page.replace ).mockClear();
 		mockPreviousRoute = '';
+		window.localStorage.clear();
 	} );
 
 	afterEach( () => nock.cleanAll() );
@@ -125,6 +151,72 @@ describe( 'ReaderSidebarSpaces', () => {
 		const dialog = await screen.findByRole( 'dialog' );
 		expect( dialog ).toBeVisible();
 		expect( screen.getByRole( 'heading', { name: 'Create a new space' } ) ).toBeVisible();
+	} );
+
+	it( 'shows the onboarding walkthrough on the first "Add a space" click', async () => {
+		const user = userEvent.setup();
+		render( <ReaderSidebarSpaces path={ OPEN_PATH } />, { preferences: { remoteValues: {} } } );
+
+		await user.click( screen.getByRole( 'button', { name: 'Add a space' } ) );
+
+		// The walkthrough, not the create form.
+		expect( await screen.findByRole( 'heading', { name: 'Meet Spaces' } ) ).toBeVisible();
+		expect(
+			screen.queryByRole( 'heading', { name: 'Create a new space' } )
+		).not.toBeInTheDocument();
+	} );
+
+	it( 'skips the walkthrough and opens the create form once it has been seen', async () => {
+		const user = userEvent.setup();
+		render( <ReaderSidebarSpaces path={ OPEN_PATH } />, {
+			preferences: { remoteValues: { has_seen_reader_spaces_onboarding: true } },
+		} );
+
+		await user.click( screen.getByRole( 'button', { name: 'Add a space' } ) );
+
+		expect( await screen.findByRole( 'heading', { name: 'Create a new space' } ) ).toBeVisible();
+	} );
+
+	it( 'forces the walkthrough via the localStorage debug key even after it has been seen', async () => {
+		const user = userEvent.setup();
+		window.localStorage.setItem( 'reader_spaces_onboarding_debug', '1' );
+		render( <ReaderSidebarSpaces path={ OPEN_PATH } />, {
+			preferences: { remoteValues: { has_seen_reader_spaces_onboarding: true } },
+		} );
+
+		await user.click( screen.getByRole( 'button', { name: 'Add a space' } ) );
+
+		expect( await screen.findByRole( 'heading', { name: 'Meet Spaces' } ) ).toBeVisible();
+	} );
+
+	it( 'opens the create form after finishing the walkthrough', async () => {
+		const user = userEvent.setup();
+		render( <ReaderSidebarSpaces path={ OPEN_PATH } />, { preferences: { remoteValues: {} } } );
+
+		await user.click( screen.getByRole( 'button', { name: 'Add a space' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Show me how' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Next' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Create a space' } ) );
+
+		expect( await screen.findByRole( 'heading', { name: 'Create a new space' } ) ).toBeVisible();
+	} );
+
+	it( 'marks the walkthrough seen when skipped before the next "Add a space" click', async () => {
+		const user = userEvent.setup();
+		render( <ReaderSidebarSpaces path={ OPEN_PATH } />, { preferences: { remoteValues: {} } } );
+
+		await user.click( screen.getByRole( 'button', { name: 'Add a space' } ) );
+		await user.click( await screen.findByRole( 'button', { name: 'Skip' } ) );
+
+		expect( screen.queryByRole( 'heading', { name: 'Meet Spaces' } ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'heading', { name: 'Create a new space' } )
+		).not.toBeInTheDocument();
+
+		await user.click( screen.getByRole( 'button', { name: 'Add a space' } ) );
+
+		expect( await screen.findByRole( 'heading', { name: 'Create a new space' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'heading', { name: 'Meet Spaces' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'redirects to the new space after creating it', async () => {

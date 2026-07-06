@@ -1,7 +1,6 @@
 import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
 import config from '@automattic/calypso-config';
 import { isEcommercePlan } from '@automattic/calypso-products';
-import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { Badge } from '@automattic/ui';
 import { localize } from 'i18n-calypso';
@@ -13,6 +12,7 @@ import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
 import { dashboardLink, wpcomLink } from 'calypso/dashboard/utils/link';
+import { navigate } from 'calypso/lib/navigate';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
@@ -110,9 +110,6 @@ class MasterbarLoggedIn extends Component {
 		dashboardOptIn: PropTypes.bool,
 		useUnifiedAgent: PropTypes.bool,
 		launchButton: PropTypes.node,
-		// When provided, the "Plan" menu item navigates to this URL via a regular
-		// anchor instead of calling the page.js router. The interim omnibar (which
-		// runs outside the page.js routing context) passes this so the link works.
 		sitePlanUrl: PropTypes.string,
 	};
 
@@ -204,7 +201,7 @@ class MasterbarLoggedIn extends Component {
 
 	goToCheckout = ( siteId ) => {
 		this.props.recordTracksEvent( 'calypso_masterbar_cart_go_to_checkout' );
-		page( `/checkout/${ siteId }` );
+		navigate( `/checkout/${ siteId }` );
 	};
 
 	onRemoveCartProduct = ( uuid = 'coupon' ) => {
@@ -577,14 +574,11 @@ class MasterbarLoggedIn extends Component {
 						</div>
 					</div>
 				),
-				// In the interim omnibar `page.js` routing is unavailable, so navigate
-				// via a regular anchor using the provided `sitePlanUrl`. Elsewhere, fall
-				// back to client-side routing.
 				...( sitePlanUrl && { url: sitePlanUrl } ),
 				onClick: () => {
 					this.props.recordTracksEvent( 'calypso_masterbar_plan_clicked' );
 					if ( ! sitePlanUrl ) {
-						page( `/plans/${ siteSlug }` );
+						navigate( `/plans/${ siteSlug }` );
 					}
 				},
 			} );

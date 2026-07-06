@@ -124,7 +124,7 @@ describe( 'Data Layer', () => {
 			},
 		};
 
-		test( 'lodash native backwards/cross compatiblity', () => {
+		test( 'native backwards/cross compatibility', () => {
 			expect( convertKeysBy( snakeObject, kebabCase ) ).toEqual(
 				convertKeysBy( camelObject, kebabCase )
 			);

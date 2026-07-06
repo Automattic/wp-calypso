@@ -14,14 +14,14 @@ describe( 'camelCase', () => {
 		expect( camelCase( 'firstName' ) ).toBe( 'firstName' );
 	} );
 
-	it( 'splits acronym and numeric boundaries like lodash', () => {
+	it( 'splits acronym and numeric boundaries', () => {
 		expect( camelCase( 'XMLHttpRequest' ) ).toBe( 'xmlHttpRequest' );
 		expect( camelCase( 'parseURL' ) ).toBe( 'parseUrl' );
 		expect( camelCase( 'version1Point2' ) ).toBe( 'version1Point2' );
 	} );
 
-	it( 'is scoped to ASCII — accents/apostrophes are not deburred like lodash', () => {
-		// lodash camelCase( 'déjà-vu' ) is 'dejaVu'; these helpers tokenize ASCII only.
+	it( 'is scoped to ASCII — accents/apostrophes are not deburred', () => {
+		// These helpers tokenize ASCII only, so accents are not deburred.
 		expect( camelCase( 'déjà-vu' ) ).toBe( 'dJVu' );
 		expect( camelCase( "it's-here" ) ).toBe( 'itSHere' );
 	} );

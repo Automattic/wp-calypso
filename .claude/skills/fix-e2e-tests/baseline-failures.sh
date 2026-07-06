@@ -39,9 +39,8 @@ printf '%-50s %10s %10s %8s\n' 'Build config' 'Failures' 'Total' 'Rate'
 printf '%-50s %10s %10s %8s\n' '--------------------------------------------------' '--------' '-----' '----'
 
 for ID in \
-	calypso_calypso_WebApp_Calypso_E2E_Playwright_desktop \
-	calypso_calypso_WebApp_Calypso_E2E_Playwright_mobile \
-	calypso_calypso_WebApp_Calypso_E2E_Playwright_Test_Matrix
+	calypso_calypso_WebApp_Calypso_E2E_Playwright_Test_Matrix \
+	calypso_calypso_WebApp_Calypso_E2E_Playwright_Pre_Release_Matrix
 do
 	base="buildType:(id:${ID}),sinceDate:${SINCE},state:finished,branch:default:any,count:10000"
 	total=$(count "${base}")

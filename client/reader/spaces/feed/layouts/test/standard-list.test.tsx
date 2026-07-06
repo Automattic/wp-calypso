@@ -145,12 +145,13 @@ describe( 'StandardListLayout', () => {
 			isUnread: false,
 			publishedDate: '2026-06-01T00:00:00.000Z',
 		} );
-		const oneItemList = {
+		const listWith = ( index: number ) => ( {
 			getListProps: ( props: ListProps = {} ) => ( { ...props, style: props.style ?? {} } ),
-			items: [ { index: 1, key: 'post-blog-1-2', start: 44 } ],
+			items: [ { index, key: 'post-blog-1-2', start: 44 } ],
 			measureElement: jest.fn(),
 			scrollMargin: 0,
-		};
+			scrollToIndex: jest.fn(),
+		} );
 
 		const baseProps = {
 			posts: [ { ID: 1, site_ID: 2 } as ReadStreamPost ],
@@ -164,13 +165,61 @@ describe( 'StandardListLayout', () => {
 			selectPost: jest.fn(),
 		};
 
-		mockUseInfiniteList.mockReturnValue( oneItemList );
+		// Discover drops the day-group header, so the post is row 0; the posts feed
+		// keeps the header, so the post is row 1.
+		mockUseInfiniteList.mockReturnValue( listWith( 0 ) );
 		const hidden = render( <StandardListLayout { ...baseProps } showTimestamp={ false } /> );
 		expect( hidden.container.querySelector( 'time' ) ).toBeNull();
 		hidden.unmount();
 
-		mockUseInfiniteList.mockReturnValue( oneItemList );
+		mockUseInfiniteList.mockReturnValue( listWith( 1 ) );
 		const shown = render( <StandardListLayout { ...baseProps } showTimestamp /> );
 		expect( shown.container.querySelector( 'time' ) ).not.toBeNull();
+	} );
+
+	it( 'omits day-group headers when showTimestamp is false (Discover)', () => {
+		// A single "today" post: grouped it builds a header row plus the post row;
+		// on Discover the header is dropped, leaving only the post.
+		mockGetPostFields.mockReturnValue( {
+			id: 1,
+			key: 'blog-1-2',
+			title: 'Test post',
+			excerptHtml: '',
+			sourceName: 'Test site',
+			dayGroup: 'today',
+			postHref: '/reader/blogs/2/posts/1',
+			isUnread: false,
+		} );
+
+		const baseProps = {
+			posts: [ { ID: 1, site_ID: 2 } as ReadStreamPost ],
+			streamKey: 'space:tags',
+			scrollElement: null,
+			hasMore: false,
+			isLoadingMore: false,
+			loadMore: jest.fn(),
+			restoreKey: 'work-id:standard-list',
+			isPostSelected: () => false,
+			selectPost: jest.fn(),
+		};
+
+		// Assert on the row count handed to the engine; render nothing from it.
+		mockUseInfiniteList.mockReturnValue( {
+			getListProps: ( props: ListProps = {} ) => ( { ...props, style: props.style ?? {} } ),
+			items: [],
+			measureElement: jest.fn(),
+			scrollMargin: 0,
+			scrollToIndex: jest.fn(),
+		} );
+
+		render( <StandardListLayout { ...baseProps } showTimestamp /> );
+		expect( mockUseInfiniteList ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { count: 2 } )
+		);
+
+		render( <StandardListLayout { ...baseProps } showTimestamp={ false } /> );
+		expect( mockUseInfiniteList ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { count: 1 } )
+		);
 	} );
 } );

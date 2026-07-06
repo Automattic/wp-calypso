@@ -1,5 +1,7 @@
 
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/extends-forms";
 
 .add-tags-form {
 	display: flex;

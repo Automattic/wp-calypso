@@ -4,7 +4,6 @@ const { writeFile } = require( 'fs' ).promises;
 const path = require( 'path' );
 const languages = require( '@automattic/languages' );
 const parse = require( 'gettext-parser' ).po.parse;
-const _ = require( 'lodash' );
 
 const LANGUAGES_BASE_URL = 'https://widgets.wp.com/languages/calypso';
 const LANGUAGES_REVISIONS_FILENAME = 'lang-revisions.json';
@@ -19,6 +18,23 @@ const DECIMAL_POINT_KEY = 'number_format_decimals';
 const DECIMAL_POINT_TRANSLATION = 'number_format_decimal_point';
 const THOUSANDS_SEPARATOR_KEY = 'number_format_thousands_sep';
 const THOUSANDS_SEPARATOR_TRANSLATION = 'number_format_thousands_sep';
+
+// Prototype-related keys a translated string must never introduce as data:
+// assigning `__proto__` would mutate the prototype rather than add a key, so all
+// three are skipped defensively.
+const PICK_BLOCKED_KEYS = new Set( [ '__proto__', 'constructor', 'prototype' ] );
+
+// Selects the given keys from `object` that are present, excluding the
+// prototype-related keys above.
+function pick( object, keys ) {
+	const result = {};
+	for ( const key of keys ) {
+		if ( ! PICK_BLOCKED_KEYS.has( key ) && Object.hasOwn( object, key ) ) {
+			result[ key ] = object[ key ];
+		}
+	}
+	return result;
+}
 
 // Create languages directory
 function createLanguagesDir() {
@@ -97,24 +113,29 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 
 	if ( fs.existsSync( CALYPSO_STRINGS ) ) {
 		const { translations } = parse( fs.readFileSync( CALYPSO_STRINGS ) );
-		const translationsFlatten = Object.entries( translations ).reduce(
-			( result, [ context, contextTranslations ] ) => {
-				const mappedTranslations = _.mapKeys( contextTranslations, ( value, key ) => {
-					let mappedKey = key.replace( /\\u([0-9a-fA-F]{4})/g, ( match, matchedGroup ) =>
-						String.fromCharCode( parseInt( matchedGroup, 16 ) )
-					);
+		// Flatten every context's translations into one object, keyed by an
+		// unescaped, context-prefixed key. Those keys are unique per context, so a
+		// plain assignment never overwrites across contexts.
+		const translationsFlatten = {};
+		for ( const [ context, contextTranslations ] of Object.entries( translations ) ) {
+			for ( const [ key, value ] of Object.entries( contextTranslations ) ) {
+				let mappedKey = key.replace( /\\u([0-9a-fA-F]{4})/g, ( match, matchedGroup ) =>
+					String.fromCharCode( parseInt( matchedGroup, 16 ) )
+				);
 
-					if ( context ) {
-						mappedKey = context + String.fromCharCode( 4 ) + mappedKey;
-					}
+				if ( context ) {
+					mappedKey = context + String.fromCharCode( 4 ) + mappedKey;
+				}
 
-					return mappedKey;
-				} );
+				// Skip `__proto__`: assigning it would mutate the prototype instead of
+				// adding an own key.
+				if ( mappedKey === '__proto__' ) {
+					continue;
+				}
 
-				return _.merge( result, mappedTranslations );
-			},
-			{}
-		);
+				translationsFlatten[ mappedKey ] = value;
+			}
+		}
 		const translationsByRef = Object.keys( translationsFlatten ).reduce( ( acc, key ) => {
 			const originalRef = translationsFlatten[ key ].comments.reference;
 
@@ -138,7 +159,8 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 		// CHUNKS_MAP_PATTERN is relative to the project root, while require is relative to current dir. Hence the `../`
 		const chunksMap = require( '../' + CHUNKS_MAP_PATTERN );
 
-		const chunks = _.mapValues( chunksMap, ( modules ) => {
+		const chunks = {};
+		for ( const [ chunkName, modules ] of Object.entries( chunksMap ) ) {
 			const strings = new Set();
 
 			modules.forEach( ( modulePath ) => {
@@ -157,21 +179,25 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 				stringsFromModule.forEach( ( string ) => strings.add( string ) );
 			} );
 
-			return [ ...strings ];
-		} );
+			chunks[ chunkName ] = [ ...strings ];
+		}
 
 		successfullyDownloadedLanguages.forEach( ( { langSlug, languageTranslations } ) => {
-			const languageChunks = _.chain( chunks )
-				.mapValues( ( stringIds ) => _.pick( languageTranslations, stringIds ) )
-				.omitBy( ( chunk ) => Object.keys( chunk ).length === 0 )
-				.value();
+			const languageChunks = {};
+			for ( const [ chunkName, stringIds ] of Object.entries( chunks ) ) {
+				const chunkTranslations = pick( languageTranslations, stringIds );
+				// Omit chunks with no translated strings.
+				if ( Object.keys( chunkTranslations ).length > 0 ) {
+					languageChunks[ chunkName ] = chunkTranslations;
+				}
+			}
 
 			// Write language translated chunks map
 			const translatedChunksKeys = Object.keys( languageChunks ).map(
 				( chunk ) => path.parse( chunk ).name
 			);
 			const manifestJsonDataRaw = {
-				locale: _.pick( languageTranslations, [ CONFIG_BLOCK_KEY ] ),
+				locale: pick( languageTranslations, [ CONFIG_BLOCK_KEY ] ),
 				translatedChunks: translatedChunksKeys,
 			};
 			manifestJsonDataRaw.locale[ DECIMAL_POINT_KEY ] =

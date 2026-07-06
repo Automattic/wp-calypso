@@ -159,9 +159,7 @@ describe( 'CustomizeModal', () => {
 			} )
 		).toBeChecked();
 		expect(
-			screen.getByText(
-				'Changes the color of post titles and actions in this space. Choose None to keep the feed neutral.'
-			)
+			screen.getByText( 'Changes the color of post titles and actions in this space.' )
 		).toBeVisible();
 		expect( screen.getByRole( 'radio', { name: 'Inbox' } ) ).toBeChecked();
 	} );

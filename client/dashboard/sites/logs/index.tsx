@@ -126,6 +126,7 @@ function SiteLogsContent( {
 		timezoneString,
 		gmtOffset,
 		autoRefresh,
+		defaultDays: logType === LogType.ACTIVITY ? 30 : 7,
 	} );
 	// this is used to track changes across the dateRange to ensure the components can react to changes when they are triggered by a change in the DateRangePicker
 	const [ dateRangeVersion, setDateRangeVersion ] = useState( 0 );

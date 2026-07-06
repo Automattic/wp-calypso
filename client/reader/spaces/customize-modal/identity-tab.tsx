@@ -111,12 +111,10 @@ export function IdentityTab( {
 				/>
 			</VStack>
 
-			<VStack spacing={ 2 }>
+			<VStack spacing={ 2 } className="customize-space-modal__color-selection">
 				<span className="customize-space-modal__field-label">{ translate( 'Accent color' ) }</span>
 				<p className="customize-space-modal__field-help">
-					{ translate(
-						'Changes the color of post titles and actions in this space. Choose None to keep the feed neutral.'
-					) }
+					{ translate( 'Changes the color of post titles and actions in this space.' ) }
 				</p>
 				<SpaceColorPicker
 					value={ color }

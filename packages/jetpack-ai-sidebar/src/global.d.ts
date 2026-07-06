@@ -25,6 +25,7 @@ declare const agentsManagerData:
 					blockTransformations?: boolean;
 					blockToolbarButton?: boolean;
 					optimizeTitleSuggestion?: boolean;
+					seoSuggestions?: boolean;
 				};
 			};
 	  }

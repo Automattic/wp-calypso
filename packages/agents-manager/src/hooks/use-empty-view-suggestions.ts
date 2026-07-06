@@ -97,10 +97,9 @@ function getWindowPathname(): string {
 	return typeof window !== 'undefined' ? window.location.pathname : '';
 }
 
-function isPostEditorSurface( sectionName: string, currentRoute?: string ): boolean {
+function isPostEditorSurface( currentRoute?: string ): boolean {
 	const pathname = getWindowPathname();
 	return (
-		sectionName === 'gutenberg' ||
 		!! currentRoute?.includes( 'post.php' ) ||
 		!! currentRoute?.includes( 'post-new.php' ) ||
 		pathname.includes( 'post.php' ) ||
@@ -109,7 +108,7 @@ function isPostEditorSurface( sectionName: string, currentRoute?: string ): bool
 }
 
 function isSiteEditorSurface( sectionName: string, currentRoute?: string ): boolean {
-	if ( isPostEditorSurface( sectionName, currentRoute ) ) {
+	if ( isPostEditorSurface( currentRoute ) ) {
 		return false;
 	}
 

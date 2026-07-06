@@ -1,11 +1,11 @@
 import { EmailBox } from '@automattic/api-core';
-import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalItem as Item,
 	__experimentalItemGroup as ItemGroup,
 	Button,
+	ExternalLink,
 	FlexBlock,
 	Notice,
 } from '@wordpress/components';
@@ -22,8 +22,11 @@ import {
 	buildGoogleMailboxLink,
 	buildTitanMailboxLink,
 } from '../../utils/email-utils';
+import { wpcomLink } from '../../utils/link';
 
 import './styles.scss';
+
+const SUPPORT_CONTACT_URL = wpcomLink( '/support/contact' );
 
 const MailboxesReadyNotice = () => {
 	const { mailboxAccount, status } = mailboxesReadyRoute.useLoaderData();
@@ -53,7 +56,7 @@ const MailboxesReadyNotice = () => {
 						}
 					),
 					{
-						link: <a href={ CALYPSO_CONTACT } rel="noopener noreferrer" target="_blank" />,
+						link: <ExternalLink href={ SUPPORT_CONTACT_URL } children={ null } />,
 						strong: <strong />,
 					}
 				) }

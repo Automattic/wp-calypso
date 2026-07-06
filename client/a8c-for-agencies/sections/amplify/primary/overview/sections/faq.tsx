@@ -8,6 +8,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useCallback } from 'react';
 import PageSectionColumns from 'calypso/a8c-for-agencies/components/page-section-columns';
+import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -94,7 +95,9 @@ export default function AmplifyFAQ() {
 				<VStack spacing={ 6 }>
 					<VStack spacing={ 2 }>
 						<Heading level={ 2 }>{ __( 'Frequently asked questions' ) }</Heading>
-						<Text variant="muted">{ __( 'Curious about the details? We have answers.' ) }</Text>
+						<Text variant="muted" size={ 16 }>
+							{ __( 'Curious about the details? We have answers.' ) }
+						</Text>
 					</VStack>
 					<Panel className="amplify-faq">
 						{ FAQS.map( ( faq ) => (
@@ -104,7 +107,7 @@ export default function AmplifyFAQ() {
 								initialOpen={ false }
 								onToggle={ ( isOpen ) => onToggle( faq.id, isOpen ) }
 							>
-								<Text>{ faq.answer }</Text>
+								<Text>{ preventWidows( faq.answer ) }</Text>
 							</PanelBody>
 						) ) }
 					</Panel>

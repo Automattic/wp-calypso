@@ -27,6 +27,8 @@ import type { Field } from '@wordpress/dataviews';
 import type { AmplifyMode } from 'calypso/a8c-for-agencies/data/amplify/types';
 import type { ReactNode } from 'react';
 
+import './reports-content.scss';
+
 function modeLabel( mode: AmplifyMode ): string {
 	switch ( mode ) {
 		case 'human':
@@ -133,7 +135,12 @@ export default function AmplifyReportsContent() {
 				label: __( 'Analysis type' ),
 				getValue: ( { item }: { item: AmplifyReportRow } ) => modeLabel( item.mode ),
 				render: ( { item }: { item: AmplifyReportRow } ): ReactNode => (
-					<Badge type={ MODE_BADGE_TYPE[ item.mode ] }>{ modeLabel( item.mode ) }</Badge>
+					<Badge
+						type={ MODE_BADGE_TYPE[ item.mode ] }
+						className={ `amplify-report-mode-badge is-${ item.mode }` }
+					>
+						{ modeLabel( item.mode ) }
+					</Badge>
 				),
 				enableHiding: true,
 				enableSorting: true,

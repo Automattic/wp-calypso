@@ -1,3 +1,6 @@
+import { rawUserPreferencesQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { styles } from '@wordpress/icons';
@@ -25,7 +28,7 @@ function PreferencesAppearanceSummary( { density }: { density?: Density } ) {
 		<RouterLinkSummaryButton
 			density={ density }
 			to="/me/preferences/appearance"
-			title={ __( 'Appearance' ) }
+			title={ __( 'Appearance (Beta)' ) }
 			description={ __( 'Choose how the dashboard looks.' ) }
 			decoration={ <Icon icon={ styles } size={ 24 } /> }
 			badges={ [ { text: getColorSchemeLabel( colorScheme ) } ] }
@@ -35,8 +38,17 @@ function PreferencesAppearanceSummary( { density }: { density?: Density } ) {
 
 export default function PreferencesAppearance( { density }: { density?: Density } ) {
 	const config = useAppContext();
+	const isDarkModeRollout = isEnabled( 'dashboard/dark-mode-rollout' );
+	const { data: preferences } = useSuspenseQuery( rawUserPreferencesQuery() );
+	const hasUsedColorScheme = preferences[ 'hosting-dashboard-color-scheme' ] !== undefined;
 
 	if ( ! config.supports.darkMode || ! config.supports.colorScheme || isDashboardBackport() ) {
+		return null;
+	}
+
+	// "Used before" is inferred from the presence of the color scheme preference. The rollout
+	// flag (off in production) keeps the setting available to everyone in non-production envs.
+	if ( ! isDarkModeRollout && ! hasUsedColorScheme ) {
 		return null;
 	}
 
