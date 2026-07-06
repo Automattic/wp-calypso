@@ -23,7 +23,13 @@ export type SwitcherProps< T > = {
 	icon?: React.JSX.Element;
 	onItemClick?: () => void;
 	renderToggle?: RenderToggle;
-} & Pick< ComponentProps< typeof Dropdown >, 'open' | 'onToggle' | 'defaultOpen' >;
+} & Pick< ComponentProps< typeof Dropdown >, 'open' | 'onToggle' | 'defaultOpen' | 'popoverProps' >;
+
+const DEFAULT_POPOVER_PROPS: ComponentProps< typeof Dropdown >[ 'popoverProps' ] = {
+	placement: 'bottom-start',
+	offset: 4,
+	shift: true,
+};
 
 const DEFAULT_VIEW: View = {
 	type: 'list',
@@ -45,6 +51,7 @@ function Switcher< T >( {
 	onToggle,
 	defaultOpen,
 	renderToggle,
+	popoverProps,
 }: SwitcherProps< T > ) {
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 	const isDesktop = useViewportMatch( 'medium' );
@@ -84,6 +91,7 @@ function Switcher< T >( {
 			open={ open }
 			onToggle={ onToggle }
 			defaultOpen={ defaultOpen }
+			popoverProps={ { ...DEFAULT_POPOVER_PROPS, ...popoverProps } }
 			renderToggle={ renderDropdownToggle }
 			renderContent={ ( { onClose } ) => (
 				<SwitcherContent
