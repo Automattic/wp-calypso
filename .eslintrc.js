@@ -1,5 +1,5 @@
 const path = require( 'path' );
-const { nodeConfig, lodashRestrictedImports } = require( '@automattic/calypso-eslint-overrides' );
+const { nodeConfig } = require( '@automattic/calypso-eslint-overrides' );
 const wpI18nConfig = require( '@wordpress/eslint-plugin/eslintrc' ).configs.i18n;
 const reactVersion = require( './client/package.json' ).dependencies.react;
 
@@ -102,20 +102,10 @@ module.exports = {
 		{
 			files: [ 'packages/**/*' ],
 			rules: {
-				// The `calypso/*` patterns ensure packages don't import from calypso by accident
-				// to avoid circular deps. The lodash entries keep the repo-wide guard in place
-				// here, since this override replaces the root `no-restricted-imports` rule.
-				'no-restricted-imports': [
-					'error',
-					{
-						paths: lodashRestrictedImports.paths,
-						patterns: [ { group: [ 'calypso/*' ] }, ...lodashRestrictedImports.patterns ],
-					},
-				],
-				'no-restricted-modules': [
-					'error',
-					{ paths: lodashRestrictedImports.modules, patterns: [ 'calypso/*' ] },
-				],
+				// The `calypso/*` patterns ensure packages don't import from calypso by
+				// accident to avoid circular deps.
+				'no-restricted-imports': [ 'error', { patterns: [ { group: [ 'calypso/*' ] } ] } ],
+				'no-restricted-modules': [ 'error', { patterns: [ 'calypso/*' ] } ],
 			},
 		},
 		{
@@ -264,6 +254,8 @@ module.exports = {
 				'react/jsx-uses-react': 'off',
 				'react/react-in-jsx-scope': 'off',
 				'wpcalypso/jsx-classname-namespace': 'off',
+				// Example snippets may show lodash for illustration.
+				'wpcalypso/no-import-lodash': 'off',
 				'@typescript-eslint/no-unused-vars': 'off',
 				'jsdoc/require-param': 'off',
 				'jsdoc/check-param-names': 'off',
@@ -444,7 +436,6 @@ module.exports = {
 						message:
 							"Please use 'webp' files instead. You can convert using `brew install webp && cwebp -q 90 -alpha_q 85 -m 6 <input>.png -o <output>.webp`",
 					},
-					...lodashRestrictedImports.patterns,
 				],
 				paths: [
 					// Prevent naked import of gridicons module. Use 'components/gridicon' instead.
@@ -481,12 +472,10 @@ module.exports = {
 						importNames: [ 'flowRight' ],
 						message: "Please use `compose` from 'redux' instead.",
 					},
-					...lodashRestrictedImports.paths,
 				],
 			},
 		],
-		'no-restricted-properties': [ 2, ...lodashRestrictedImports.properties ],
-		'no-restricted-syntax': [ 'error', ...lodashRestrictedImports.syntax ],
+		'wpcalypso/no-import-lodash': 'error',
 		'no-restricted-modules': [
 			2,
 			{
@@ -501,7 +490,6 @@ module.exports = {
 						name: 'superagent',
 						message: 'Please use native `fetch` instead.',
 					},
-					...lodashRestrictedImports.modules,
 				],
 			},
 		],
