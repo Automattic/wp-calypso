@@ -28,4 +28,27 @@ describe( 'isPathAllowedForDIFMPreSubmitContentCollection', () => {
 			isPathAllowedForDIFMPreSubmitContentCollection( '/stats/day/example.wordpress.com', false )
 		).toBe( false );
 	} );
+
+	test.each( [ [ undefined ], [ null ], [ true ], [ 0 ], [ 'false' ] ] )(
+		'fails safe and keeps paths locked when the submitted flag is %p (only explicit false unlocks)',
+		( flagValue ) => {
+			expect(
+				isPathAllowedForDIFMPreSubmitContentCollection( '/media/example.wordpress.com', flagValue )
+			).toBe( false );
+		}
+	);
+
+	it( 'fails safe when the submitted flag argument is missing', () => {
+		expect( isPathAllowedForDIFMPreSubmitContentCollection( '/media/example.wordpress.com' ) ).toBe(
+			false
+		);
+	} );
+
+	test.each( [
+		[ '/settings/taxonomies/some_custom_taxonomy/example.wordpress.com' ],
+		[ '/settings/taxonomies' ],
+		[ '/settings/taxonomies/example.wordpress.com' ],
+	] )( 'does not allow unrelated taxonomy path %s', ( path ) => {
+		expect( isPathAllowedForDIFMPreSubmitContentCollection( path, false ) ).toBe( false );
+	} );
 } );

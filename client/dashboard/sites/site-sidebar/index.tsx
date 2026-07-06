@@ -34,6 +34,7 @@ import {
 	SidebarMenu,
 	SidebarMenuItem,
 } from '../../components/sidebar';
+import { wpcomLink } from '../../utils/link';
 import { hasHostingFeature } from '../../utils/site-features';
 import { isSiteMigrationInProgress } from '../../utils/site-status';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
@@ -97,9 +98,15 @@ function SiteMenuSidebar( { site }: { site: Site } ) {
 				</SidebarMenuItem>
 				{ shouldShowContentCollectionLinks && (
 					<>
-						<SidebarMenuItem to={ `/posts/${ siteSlug }` }>{ __( 'Posts' ) }</SidebarMenuItem>
-						<SidebarMenuItem to={ `/media/${ siteSlug }` }>{ __( 'Media' ) }</SidebarMenuItem>
-						<SidebarMenuItem to={ `/pages/${ siteSlug }` }>{ __( 'Pages' ) }</SidebarMenuItem>
+						<SidebarMenuItem href={ wpcomLink( `/posts/${ siteSlug }` ) }>
+							{ __( 'Posts' ) }
+						</SidebarMenuItem>
+						<SidebarMenuItem href={ wpcomLink( `/media/${ siteSlug }` ) }>
+							{ __( 'Media' ) }
+						</SidebarMenuItem>
+						<SidebarMenuItem href={ wpcomLink( `/pages/${ siteSlug }` ) }>
+							{ __( 'Pages' ) }
+						</SidebarMenuItem>
 					</>
 				) }
 				{ siteTypeSupports.domains && (

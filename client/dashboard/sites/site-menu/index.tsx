@@ -13,6 +13,7 @@ import {
 } from '../../app/router/sites';
 import MenuDivider from '../../components/menu-divider';
 import ResponsiveMenu from '../../components/responsive-menu';
+import { wpcomLink } from '../../utils/link';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
@@ -44,13 +45,13 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 				</ResponsiveMenu.Item>
 				{ shouldShowContentCollectionLinks && (
 					<>
-						<ResponsiveMenu.Item to={ `/posts/${ siteSlug }` }>
+						<ResponsiveMenu.Item href={ wpcomLink( `/posts/${ siteSlug }` ) }>
 							{ __( 'Posts' ) }
 						</ResponsiveMenu.Item>
-						<ResponsiveMenu.Item to={ `/media/${ siteSlug }` }>
+						<ResponsiveMenu.Item href={ wpcomLink( `/media/${ siteSlug }` ) }>
 							{ __( 'Media' ) }
 						</ResponsiveMenu.Item>
-						<ResponsiveMenu.Item to={ `/pages/${ siteSlug }` }>
+						<ResponsiveMenu.Item href={ wpcomLink( `/pages/${ siteSlug }` ) }>
 							{ __( 'Pages' ) }
 						</ResponsiveMenu.Item>
 					</>
