@@ -3,7 +3,7 @@
  */
 import { readSpaceQuery, readSpacesQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
-import { screen, waitFor, within } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SpacesView } from '../view';
@@ -170,6 +170,27 @@ describe( 'SpacesView', () => {
 
 		const dialog = screen.getByRole( 'dialog', { name: 'Customize space' } );
 		expect( within( dialog ).getByLabelText( 'Name' ) ).toHaveValue( 'Work' );
+	} );
+
+	it( 'opens the Customize modal on the Sources tab from the feed Add sources CTA', async () => {
+		render( <SpacesView id={ WORK.id } /> );
+
+		// The feed tab's SpaceFeed is wired with the empty-state CTA handler.
+		const feedProps = mockSpaceFeed.mock.calls
+			.map( ( [ props ] ) => props as { onAddSources?: () => void } )
+			.find( ( props ) => typeof props.onAddSources === 'function' );
+		act( () => feedProps?.onAddSources?.() );
+
+		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+			'calypso_reader_spaces_add_sources_clicked',
+			{ space_id: WORK.id }
+		);
+
+		const dialog = await screen.findByRole( 'dialog', { name: 'Customize space' } );
+		expect( within( dialog ).getByRole( 'tab', { name: 'Sources' } ) ).toHaveAttribute(
+			'aria-selected',
+			'true'
+		);
 	} );
 
 	it( 'does not open the modal from the route alone', () => {
