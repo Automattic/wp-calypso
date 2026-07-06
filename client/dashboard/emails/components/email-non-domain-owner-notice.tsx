@@ -1,4 +1,5 @@
 import { Domain } from '@automattic/api-core';
+import config from '@automattic/calypso-config';
 import { ExternalLink, Notice } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -22,14 +23,14 @@ export const EmailNonDomainOwnerNotice = ( props: EmailNonDomainOwnerMessageProp
 		s: domain?.domain || '',
 	} );
 
-	const loginUrl = addQueryArgs( wpcomLink( '/log-in/' ), {
-		redirect_to: window.location.pathname,
+	const loginUrl = addQueryArgs( config( 'wpcom_login_url' ) || wpcomLink( '/log-in' ), {
+		redirect_to: window.location.href,
 	} );
 
 	const selectedDomainName = domain?.domain ?? '';
 	const elements = {
 		contactSupportLink: <ExternalLink href={ SUPPORT_CONTACT_URL } children={ null } />,
-		loginLink: <a href={ loginUrl } rel="external" />,
+		loginLink: <ExternalLink href={ loginUrl } children={ null } />,
 		reachOutLink: isPrivacyAvailable ? (
 			<a href={ contactOwnerUrl } rel="noopener noreferrer" target="_blank" />
 		) : (
