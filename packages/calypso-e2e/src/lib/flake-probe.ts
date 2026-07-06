@@ -9,9 +9,12 @@ const PREFIX = '[FLAKE-PROBE]';
 
 /**
  * Emits a single greppable diagnostic line to stdout (captured in the CI log).
+ *
+ * Uses process.stdout.write, not console.log: CI runs the suites with --silent,
+ * which mutes console.* but not direct stdout writes.
  */
 export function flakeProbe( label: string, data: Record< string, unknown > ): void {
-	console.log( `${ PREFIX } ${ label } ${ JSON.stringify( data ) }` );
+	process.stdout.write( `${ PREFIX } ${ label } ${ JSON.stringify( data ) }\n` );
 }
 
 /**
