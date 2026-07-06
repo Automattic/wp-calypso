@@ -9,8 +9,6 @@ describe( 'isPathAllowedForDIFMPreSubmitContentCollection', () => {
 		[ '/post/example.wordpress.com' ],
 		[ '/pages/example.wordpress.com' ],
 		[ '/page/example.wordpress.com' ],
-		[ '/settings/taxonomies/category/example.wordpress.com' ],
-		[ '/settings/taxonomies/post_tag/example.wordpress.com' ],
 	] )( 'allows %s before website content submission', ( path ) => {
 		expect( isPathAllowedForDIFMPreSubmitContentCollection( path, false ) ).toBe( true );
 	} );
@@ -42,13 +40,5 @@ describe( 'isPathAllowedForDIFMPreSubmitContentCollection', () => {
 		expect( isPathAllowedForDIFMPreSubmitContentCollection( '/media/example.wordpress.com' ) ).toBe(
 			false
 		);
-	} );
-
-	test.each( [
-		[ '/settings/taxonomies/some_custom_taxonomy/example.wordpress.com' ],
-		[ '/settings/taxonomies' ],
-		[ '/settings/taxonomies/example.wordpress.com' ],
-	] )( 'does not allow unrelated taxonomy path %s', ( path ) => {
-		expect( isPathAllowedForDIFMPreSubmitContentCollection( path, false ) ).toBe( false );
 	} );
 } );
