@@ -725,7 +725,7 @@ class MasterbarLoggedIn extends Component {
 				onClick={ this.clickStatsSparkline }
 				hasGlobalBorderStyle
 			>
-				<StatsSparkline siteId={ siteId } />
+				<StatsSparkline siteId={ siteId } height={ 32 } />
 			</Item>
 		);
 	}
