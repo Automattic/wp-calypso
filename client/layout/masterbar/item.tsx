@@ -205,6 +205,10 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 		event: React.TouchEvent | React.KeyboardEvent,
 		onClick?: () => void
 	) => {
+		// The interim omnibar intercepts touch navigations and routes matching links
+		// through TanStack, marking the event handled via `preventDefault()`. Read that
+		// before our own `preventDefault()` below so we don't navigate a second time.
+		const handledByOmnibar = event.nativeEvent.defaultPrevented;
 		// We must prevent the default anchor behavior and navigate manually. Otherwise there is a
 		// race condition between the click on the anchor firing and the menu closing before that
 		// can happen. Because we preventDefault here, the anchor's `onClick` won't fire on the
@@ -212,7 +216,7 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 		event.preventDefault();
 		const url = event.currentTarget.getAttribute( 'href' );
 		onClick?.();
-		if ( url ) {
+		if ( url && ! handledByOmnibar ) {
 			navigate( url );
 		}
 		this.setState( { isOpenForNonMouseFlow: false } );

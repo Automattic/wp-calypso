@@ -26,7 +26,7 @@ export const omnibarEvents = {
 	notificationsOpen: createOmnibarEvent< boolean >(),
 	siteSwitcher: createOmnibarEvent(),
 	siteSwitcherAnchor: createOmnibarEvent< HTMLElement | null >(),
-	linkClick: createOmnibarEvent< { href: string; event: MouseEvent } >(),
+	linkClick: createOmnibarEvent< { href: string; event: MouseEvent | TouchEvent } >(),
 };
 
 export type OmnibarEvents = typeof omnibarEvents;

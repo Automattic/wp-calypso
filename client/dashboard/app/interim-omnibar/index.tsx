@@ -10,7 +10,7 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 		return;
 	}
 
-	container.addEventListener( 'click', ( event ) => {
+	const handleLinkActivation = ( event: MouseEvent | TouchEvent ) => {
 		if ( event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ) {
 			return;
 		}
@@ -26,7 +26,25 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 		}
 
 		events.linkClick.emit( { href, event } );
-	} );
+	};
+
+	container.addEventListener( 'click', handleLinkActivation );
+
+	// On touch, top-level items already navigate via the compat click and parent
+	// items toggle their submenu, so only submenu links need intercepting here —
+	// the masterbar prevents *their* compat click and navigates them manually.
+	// Scope to those to avoid hijacking taps that open a submenu. `passive: false`
+	// lets the linkClick handler `preventDefault()` a matched route.
+	container.addEventListener(
+		'touchend',
+		( event ) => {
+			if ( ! ( event.target as Element ).closest( '.masterbar__item-subitems' ) ) {
+				return;
+			}
+			handleLinkActivation( event );
+		},
+		{ passive: false }
+	);
 
 	// Create a per-tree i18n-calypso instance loaded with the user's locale so
 	// the first client render matches the SSR-translated HTML. Provided via
