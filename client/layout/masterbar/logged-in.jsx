@@ -110,9 +110,6 @@ class MasterbarLoggedIn extends Component {
 		dashboardOptIn: PropTypes.bool,
 		useUnifiedAgent: PropTypes.bool,
 		launchButton: PropTypes.node,
-		// When provided, the "Plan" menu item navigates to this URL via a regular
-		// anchor instead of calling the page.js router. The interim omnibar (which
-		// runs outside the page.js routing context) passes this so the link works.
 		sitePlanUrl: PropTypes.string,
 	};
 
