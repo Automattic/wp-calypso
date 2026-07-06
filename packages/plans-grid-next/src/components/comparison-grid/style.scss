@@ -313,4 +313,10 @@
 		color: var( --studio-green-60 );
 		fill: var( --studio-green-60 );
 	}
+
+	.plans-grid-next-header-price__pricing-group.is-large-currency {
+		align-items: last baseline;
+		flex-direction: row-reverse;
+		justify-content: flex-end;
+	}
 }
