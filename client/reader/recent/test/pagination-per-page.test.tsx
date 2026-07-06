@@ -15,8 +15,10 @@ import type { ReactNode } from 'react';
 // initial 15 so `handleChangeView` treats it as a per-page change.
 const TARGET_PER_PAGE = 30;
 
+let mockIsWide = false;
+
 jest.mock( '@automattic/viewport-react', () => ( {
-	useBreakpoint: () => false,
+	useBreakpoint: () => mockIsWide,
 } ) );
 
 // Minimal DataViews stand-in that surfaces the current `view` and lets the test
@@ -26,12 +28,14 @@ jest.mock( '@wordpress/dataviews', () => ( {
 	DataViews: ( {
 		view,
 		data,
+		selection,
 		getItemId,
 		onChangeView,
 		onChangeSelection,
 	}: {
 		view: { page?: number; perPage?: number };
 		data: StreamListItem[];
+		selection: string[];
 		getItemId: ( item: StreamListItem, index?: number ) => string;
 		onChangeView: ( view: Record< string, unknown > ) => void;
 		onChangeSelection: ( selection: string[] ) => void;
@@ -41,6 +45,7 @@ jest.mock( '@wordpress/dataviews', () => ( {
 				data-testid="view-state"
 				data-page={ String( view.page ) }
 				data-per-page={ String( view.perPage ) }
+				data-selection={ ( selection ?? [] ).join( ',' ) }
 			/>
 			<button data-testid="go-to-page-3" onClick={ () => onChangeView( { ...view, page: 3 } ) }>
 				page 3
@@ -50,6 +55,9 @@ jest.mock( '@wordpress/dataviews', () => ( {
 				onClick={ () => onChangeView( { ...view, perPage: TARGET_PER_PAGE, page: 1 } ) }
 			>
 				change per page
+			</button>
+			<button data-testid="select-off-page" onClick={ () => onChangeSelection( [ 'f200-320' ] ) }>
+				select off page
 			</button>
 			{ data.map( ( item, index ) => (
 				<button
@@ -159,6 +167,7 @@ describe( 'Recent per-page pagination', () => {
 
 	afterEach( () => {
 		jest.clearAllMocks();
+		mockIsWide = false;
 	} );
 
 	it( 'recomputes the page from the selected post when the per-page size changes', async () => {
@@ -230,5 +239,35 @@ describe( 'Recent per-page pagination', () => {
 		// loading skeleton does not flash back in.
 		expect( screen.getByTestId( 'async-load' ) ).toBeVisible();
 		expect( screen.queryByTestId( 'recent-post-skeleton' ) ).not.toBeInTheDocument();
+	} );
+
+	describe( 'wide viewport auto-selection', () => {
+		beforeEach( () => {
+			mockIsWide = true;
+		} );
+
+		it( 'auto-selects the first post on the page when the page changes', async () => {
+			const user = userEvent.setup();
+			renderRecent();
+
+			// Mount auto-selects the first item of page 1.
+			expect( screen.getByTestId( 'view-state' ) ).toHaveAttribute( 'data-selection', 'f200-300' );
+
+			// Navigating pages selects the first item of the new page.
+			await user.click( screen.getByTestId( 'go-to-page-3' ) );
+			expect( screen.getByTestId( 'view-state' ) ).toHaveAttribute( 'data-selection', 'f200-330' );
+		} );
+
+		it( 'does not revert an off-page selection when only the selection changes', async () => {
+			const user = userEvent.setup();
+			renderRecent();
+
+			// Select a post that lives on a later page (absolute index 20, page 2 at
+			// perPage 15) — as full-post keyboard navigation can. The page auto-select
+			// effect must not snap the selection back to the first post of page 1.
+			await user.click( screen.getByTestId( 'select-off-page' ) );
+
+			expect( screen.getByTestId( 'view-state' ) ).toHaveAttribute( 'data-selection', 'f200-320' );
+		} );
 	} );
 } );

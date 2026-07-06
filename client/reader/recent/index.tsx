@@ -58,6 +58,11 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 	const postColumnRef = useRef< HTMLDivElement | null >( null );
 	const itemRefs = useRef< { [ key: string ]: HTMLDivElement | null } >( {} );
 	const focusedIndexRef = useRef< string | null >( null ); // Keep track of the currently focused row index
+	// Latest selection, read by the page auto-select effect without making that
+	// effect re-run on every selection change (which would fight full-post
+	// keyboard navigation that legitimately selects an off-page post).
+	const selectedItemRef = useRef< StreamItem | null >( selectedItem );
+	selectedItemRef.current = selectedItem;
 
 	const handleItemFocus = useCallback( ( itemIndex: string ) => {
 		focusedIndexRef.current = itemIndex;
@@ -261,20 +266,19 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				const currentPerPage = view.perPage ?? 1;
 				const currentPage = view.page ?? 1;
 
-				let anchorIndex = selectedItem
+				const selectedIndex = selectedItem
 					? streamItems.findIndex(
 							( item ) => getStreamItemKey( item ) === getStreamItemKey( selectedItem )
 					  )
 					: -1;
+				const anchorIndex =
+					selectedIndex >= 0 ? selectedIndex : ( currentPage - 1 ) * currentPerPage;
 
-				if ( anchorIndex < 0 ) {
-					anchorIndex = ( currentPage - 1 ) * currentPerPage;
-				}
-
-				newView = {
+				setView( {
 					...newView,
 					page: Math.floor( anchorIndex / newView.perPage ) + 1,
-				};
+				} );
+				return;
 			}
 
 			setView( { ...newView } );
@@ -287,16 +291,20 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 		fetchData();
 	}, [ fetchData ] );
 
-	// Select the first item on the current page, unless the current selection is
-	// already within the current page's range (e.g. preserved across a per-page change).
+	// On page/per-page/stream changes, select the first item on the current page,
+	// unless the current selection is already within that page's range (e.g.
+	// preserved across a per-page change). Reading the selection from a ref keeps
+	// this effect off the `selectedItem` dependency, so selecting an off-page post
+	// (full-post keyboard navigation) is not reverted here.
 	useEffect( () => {
 		if ( isWide && streamItems.length > 0 && view.page && view.perPage ) {
 			const pageStart = ( view.page - 1 ) * view.perPage;
 			const pageEnd = pageStart + view.perPage;
 
-			if ( selectedItem ) {
+			const currentSelection = selectedItemRef.current;
+			if ( currentSelection ) {
 				const selectedIndex = streamItems.findIndex(
-					( item ) => getStreamItemKey( item ) === getStreamItemKey( selectedItem )
+					( item ) => getStreamItemKey( item ) === getStreamItemKey( currentSelection )
 				);
 				if ( selectedIndex >= pageStart && selectedIndex < pageEnd ) {
 					return;
@@ -306,7 +314,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 			const firstOnPage = streamItems[ pageStart ];
 			setSelectedItem( firstOnPage && ! isPaddingStreamItem( firstOnPage ) ? firstOnPage : null );
 		}
-	}, [ isWide, streamItems, view, selectedItem ] );
+	}, [ isWide, streamItems, view ] );
 
 	// When the selected feed changes, clear the selected item and reset the page to 1.
 	useEffect( () => {
