@@ -97,6 +97,18 @@ describe( 'read spaces mutations', () => {
 			expect( options.placeholderData ).toBeUndefined();
 			expect( options.refetchOnMount ).toBe( 'always' );
 		} );
+
+		it( 'does not retry a space detail 4xx but still retries other failures', () => {
+			const { retry } = readSpaceQuery( '3' );
+			expect( typeof retry ).toBe( 'function' );
+			const retryFn = retry as ( failureCount: number, error: unknown ) => boolean;
+
+			expect( retryFn( 0, { status: 404 } ) ).toBe( false );
+			expect( retryFn( 0, { status: 403 } ) ).toBe( false );
+			expect( retryFn( 0, { status: 500 } ) ).toBe( true );
+			expect( retryFn( 0, new Error( 'network' ) ) ).toBe( true );
+			expect( retryFn( 3, { status: 500 } ) ).toBe( false );
+		} );
 	} );
 
 	describe( 'createReadSpaceMutation', () => {
