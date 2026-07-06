@@ -3,6 +3,11 @@ import type { ComponentType } from 'react';
 import type { ChatPosition } from '../utils/chatStorage';
 
 // Define UI-specific types locally
+export interface ChatSize {
+	width: number;
+	height: number;
+}
+
 export interface SuggestionOption {
 	id: string;
 	label: string;
@@ -135,6 +140,17 @@ export interface AgentUIProps {
 	freeDrag?: boolean; // Keep the panel where dropped instead of snapping to a corner (position is ephemeral, resets on reload/resize)
 	initialFreeDragPosition?: { x: number; y: number }; // Seed the free-drag pixel position on mount (only applied when freeDrag is on)
 	onFreeDragEnd?: ( position: { x: number; y: number } ) => void; // Reports the dropped free-drag pixel position so consumers can persist it
+
+	// Resize props (honored only for variant="floating" in the expanded state).
+	// The package stays stateless about persistence: defaultSize seeds the
+	// initial size, onResizeEnd reports the committed size for the consumer to persist.
+	resizable?: boolean | 'horizontal' | 'vertical'; // Enable resize of the expanded floating panel. true = both axes (all 8 handles), 'horizontal' = width only (left/right edges), 'vertical' = height only (top/bottom edges), false/omitted = off (defaults to false)
+	defaultSize?: ChatSize; // Uncontrolled seed; falls back to { width: COMPACT_WIDTH, height: EXPANDED_HEIGHT }
+	size?: ChatSize; // Controlled size; when set, the panel reconciles to it (animating when expanded). Undefined = uncontrolled defaultSize path
+	minSize?: Partial< ChatSize >; // Floor; defaults to { width: 372, height: 520 } (today's size)
+	maxSize?: Partial< ChatSize >; // Ceiling; clamped to the live constraint box. Defaults to the box itself
+	onResize?: ( size: ChatSize ) => void; // Fires every pointermove frame for live reflow only — do NOT persist from here
+	onResizeEnd?: ( size: ChatSize ) => void; // Fires once on pointer-up with the final committed size (the persistence hook)
 
 	// i18n
 	locale?: string; // Language locale (e.g., 'es', 'fr', 'de-DE'). Defaults to 'en'

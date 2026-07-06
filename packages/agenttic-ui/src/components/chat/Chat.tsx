@@ -3,12 +3,13 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { useChat } from '../../hooks/useChat';
 import { useInput } from '../../hooks/useInput';
-import { useFloatingPanelPosition } from '../../hooks/useFloatingPanelPosition';
+import { useFloatingPanel } from '../../hooks/useFloatingPanel';
 import type { ChatProps } from '../../types';
 import { cn } from '../../utils/classNames';
 import { STYLE_CONSTANTS } from '../../utils/constants';
 import { morphSpring } from '../animations';
 import { DragOverlay } from '../DragOverlay';
+import { ResizeHandles } from '../ResizeHandles';
 import { CollapsedView } from '../views/CollapsedView';
 import { CompactView } from '../views/CompactView';
 import { ConversationView } from '../views/ConversationView';
@@ -43,6 +44,13 @@ export function Chat( {
 	onFreeDragEnd,
 	initialChatPosition,
 	onChatPositionChange,
+	resizable = false,
+	defaultSize,
+	size,
+	minSize,
+	maxSize,
+	onResize,
+	onResizeEnd,
 }: ChatProps ) {
 	// Local input state for controlled component pattern
 	const [ inputValue, setInputValue ] = useState( '' );
@@ -72,6 +80,7 @@ export function Chat( {
 		} );
 		timeoutRefs.current.clear();
 	}, [] );
+
 	const input = useInput( {
 		value: inputValue,
 		setValue: setInputValue,
@@ -89,6 +98,7 @@ export function Chat( {
 	const compactRef = useRef< HTMLDivElement >( null );
 	const [ compactHeight, setCompactHeight ] = useState( 56 );
 
+	// Drag + resize compose here (see useFloatingPanel for the seam).
 	const {
 		x,
 		y,
@@ -100,26 +110,28 @@ export function Chat( {
 		handlePointerDown,
 		handleDragStart,
 		handleDragEnd,
-	} = useFloatingPanelPosition( {
+		width,
+		height,
+		isResizing,
+		getHeightForState,
+		handleResizePointerDown,
+	} = useFloatingPanel( {
+		resizable,
+		defaultSize,
+		size,
+		minSize,
+		maxSize,
+		chatState: chat.state,
+		compactHeight,
 		freeDrag,
 		initialFreeDragPosition,
 		initialChatPosition,
-		chatState: chat.state,
 		onChatPositionChange,
 		onFreeDragEnd,
+		onResize,
+		onResizeEnd,
 	} );
 
-	const getHeightForState = ( state: string ) => {
-		if ( state === 'collapsed' || state === 'minimized' ) {
-			return STYLE_CONSTANTS.COLLAPSED_SIZE;
-		}
-		if ( state === 'compact' ) {
-			return compactHeight;
-		}
-		return STYLE_CONSTANTS.EXPANDED_HEIGHT;
-	};
-
-	// Handle opening the chat and call onOpen callback
 	const handleOpen = useCallback( () => {
 		wasClickedToOpen.current = true;
 		chat.open();
@@ -275,6 +287,9 @@ export function Chat( {
 		);
 	}
 
+	// variant is always 'floating' here (embedded returns above).
+	const showResizeHandles = resizable && chat.state === 'expanded';
+
 	return (
 		<>
 			<div
@@ -330,15 +345,23 @@ export function Chat( {
 				} }
 			>
 				<motion.div
-					layout
+					// `layout` fights manual width/height writes during resize, so
+					// disable it while a resize gesture is active
+					layout={ ! ( resizable && isResizing ) }
 					className={ styles.content }
 					initial={ false }
 					animate={ {
-						width:
-							chat.state === 'collapsed'
-								? STYLE_CONSTANTS.COLLAPSED_SIZE
-								: STYLE_CONSTANTS.COMPACT_WIDTH,
-						height: getHeightForState( chat.state ),
+						// When resizable, size is owned by the width/height motion
+						// values (driven imperatively); keep it out of animate here.
+						...( resizable
+							? {}
+							: {
+									width:
+										chat.state === 'collapsed'
+											? STYLE_CONSTANTS.COLLAPSED_SIZE
+											: STYLE_CONSTANTS.COMPACT_WIDTH,
+									height: getHeightForState( chat.state ),
+							  } ),
 						x:
 							chat.state === 'collapsed' &&
 							currentSide === 'right'
@@ -362,6 +385,7 @@ export function Chat( {
 					style={ {
 						borderTopLeftRadius: STYLE_CONSTANTS.BORDER_RADIUS,
 						borderTopRightRadius: STYLE_CONSTANTS.BORDER_RADIUS,
+						...( resizable ? { width, height } : {} ),
 					} }
 				>
 					<AnimatePresence mode="wait">
@@ -432,6 +456,12 @@ export function Chat( {
 						) }
 					</AnimatePresence>
 				</motion.div>
+				{ showResizeHandles && (
+					<ResizeHandles
+						resizable={ resizable }
+						onPointerDown={ handleResizePointerDown }
+					/>
+				) }
 			</motion.div>
 		</>
 	);

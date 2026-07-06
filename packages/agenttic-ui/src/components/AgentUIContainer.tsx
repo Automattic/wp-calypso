@@ -4,7 +4,7 @@ import { STYLE_CONSTANTS } from '../utils/constants';
 import { loadAgentticTranslations } from '../utils/translation-loader';
 import { useChat } from '../hooks/useChat';
 import { useInput } from '../hooks/useInput';
-import { useFloatingPanelPosition } from '../hooks/useFloatingPanelPosition';
+import { useFloatingPanel } from '../hooks/useFloatingPanel';
 import { useWindowFocusStatus } from '../hooks/useWindowFocusStatus';
 import type { AgentUIProps, Suggestion } from '../types';
 import { cn } from '../utils/classNames';
@@ -14,6 +14,7 @@ import {
 	AgentUIProvider,
 } from '../context/AgentUIContext';
 import { DragOverlay } from './DragOverlay';
+import { ResizeHandles } from './ResizeHandles';
 import { CollapsedView } from './views/CollapsedView';
 import { CompactView } from './views/CompactView';
 import { MinimizedView } from './views/MinimizedView';
@@ -64,6 +65,13 @@ export function AgentUIContainer( {
 	freeDrag = false,
 	initialFreeDragPosition,
 	onFreeDragEnd,
+	resizable = false,
+	defaultSize,
+	size,
+	minSize,
+	maxSize,
+	onResize,
+	onResizeEnd,
 }: AgentUIContainerProps ) {
 	// Determine if input is controlled or uncontrolled
 	const isControlled = controlledInputValue !== undefined;
@@ -180,6 +188,7 @@ export function AgentUIContainer( {
 	const [ compactHeight, setCompactHeight ] = useState( 56 );
 	const compactRef = useRef< HTMLDivElement >( null );
 
+	// Drag + resize compose here (see useFloatingPanel for the seam).
 	const {
 		x,
 		y,
@@ -191,27 +200,27 @@ export function AgentUIContainer( {
 		handlePointerDown,
 		handleDragStart,
 		handleDragEnd,
-	} = useFloatingPanelPosition( {
+		width,
+		height,
+		isResizing,
+		getHeightForState,
+		handleResizePointerDown,
+	} = useFloatingPanel( {
+		resizable,
+		defaultSize,
+		size,
+		minSize,
+		maxSize,
+		chatState: chat.state,
+		compactHeight,
 		freeDrag,
 		initialFreeDragPosition,
 		initialChatPosition,
-		chatState: chat.state,
 		onChatPositionChange,
 		onFreeDragEnd,
+		onResize,
+		onResizeEnd,
 	} );
-
-	const getHeightForState = useCallback(
-		( state: string ) => {
-			if ( state === 'collapsed' || state === 'minimized' ) {
-				return STYLE_CONSTANTS.COLLAPSED_SIZE;
-			}
-			if ( state === 'compact' ) {
-				return compactHeight;
-			}
-			return STYLE_CONSTANTS.EXPANDED_HEIGHT;
-		},
-		[ compactHeight ]
-	);
 
 	// Dedup-aware reporter for the actually-rendered suggestion set. Owned here so
 	// dedup survives the AnimatePresence instance swap between compact and expanded.
@@ -509,6 +518,8 @@ export function AgentUIContainer( {
 	}
 
 	// Floating variant
+	const showResizeHandles = resizable && chat.state === 'expanded';
+
 	return (
 		<AgentUIProvider value={ contextValue }>
 			<div
@@ -564,15 +575,23 @@ export function AgentUIContainer( {
 				} }
 			>
 				<motion.div
-					layout
+					// `layout` fights manual width/height writes during resize, so
+					// disable it while a resize gesture is active
+					layout={ ! ( resizable && isResizing ) }
 					className={ styles.content }
 					initial={ false }
 					animate={ {
-						width:
-							chat.state === 'collapsed'
-								? STYLE_CONSTANTS.COLLAPSED_SIZE
-								: STYLE_CONSTANTS.COMPACT_WIDTH,
-						height: getHeightForState( chat.state ),
+						// When resizable, size is owned by the width/height motion
+						// values (driven imperatively); keep it out of animate here.
+						...( resizable
+							? {}
+							: {
+									width:
+										chat.state === 'collapsed'
+											? STYLE_CONSTANTS.COLLAPSED_SIZE
+											: STYLE_CONSTANTS.COMPACT_WIDTH,
+									height: getHeightForState( chat.state ),
+							  } ),
 						x:
 							chat.state === 'collapsed' &&
 							currentSide === 'right'
@@ -596,6 +615,7 @@ export function AgentUIContainer( {
 					style={ {
 						borderTopLeftRadius: STYLE_CONSTANTS.BORDER_RADIUS,
 						borderTopRightRadius: STYLE_CONSTANTS.BORDER_RADIUS,
+						...( resizable ? { width, height } : {} ),
 					} }
 				>
 					<AnimatePresence mode="wait">
@@ -646,6 +666,12 @@ export function AgentUIContainer( {
 						{ chat.state === 'expanded' && children }
 					</AnimatePresence>
 				</motion.div>
+				{ showResizeHandles && (
+					<ResizeHandles
+						resizable={ resizable }
+						onPointerDown={ handleResizePointerDown }
+					/>
+				) }
 			</motion.div>
 		</AgentUIProvider>
 	);

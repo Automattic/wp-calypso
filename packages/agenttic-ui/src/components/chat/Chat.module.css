@@ -43,3 +43,76 @@
 .container.floating:active {
     cursor: grabbing;
 }
+
+/* Resize handles. Absolutely positioned against the outer floating panel.
+   Edge strips are 6px and inset against the border; corner squares are 12px
+   and sit above the edges (higher z-index) so corner drags win on overlap. */
+.resizeTop,
+.resizeRight,
+.resizeBottom,
+.resizeLeft,
+.resizeTopLeft,
+.resizeTopRight,
+.resizeBottomRight,
+.resizeBottomLeft {
+    position: absolute;
+    z-index: 1;
+    touch-action: none;
+}
+
+.resizeTop {
+    top: 0;
+    left: 6px;
+    right: 6px;
+    height: 6px;
+}
+
+.resizeBottom {
+    bottom: 0;
+    left: 6px;
+    right: 6px;
+    height: 6px;
+}
+
+.resizeLeft {
+    top: 6px;
+    bottom: 6px;
+    left: 0;
+    width: 6px;
+}
+
+.resizeRight {
+    top: 6px;
+    bottom: 6px;
+    right: 0;
+    width: 6px;
+}
+
+.resizeTopLeft,
+.resizeTopRight,
+.resizeBottomRight,
+.resizeBottomLeft {
+    width: 12px;
+    height: 12px;
+    z-index: 2;
+}
+
+.resizeTopLeft {
+    top: 0;
+    left: 0;
+}
+
+.resizeTopRight {
+    top: 0;
+    right: 0;
+}
+
+.resizeBottomRight {
+    bottom: 0;
+    right: 0;
+}
+
+.resizeBottomLeft {
+    bottom: 0;
+    left: 0;
+}
