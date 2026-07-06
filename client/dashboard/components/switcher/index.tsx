@@ -23,7 +23,8 @@ export type SwitcherProps< T > = {
 	icon?: React.JSX.Element;
 	onItemClick?: () => void;
 	renderToggle?: RenderToggle;
-} & Pick< ComponentProps< typeof Dropdown >, 'open' | 'onToggle' | 'defaultOpen' | 'popoverProps' >;
+	headerTitle?: string;
+} & Pick< ComponentProps< typeof Dropdown >, 'open' | 'onToggle' | 'defaultOpen' >;
 
 const DEFAULT_POPOVER_PROPS: ComponentProps< typeof Dropdown >[ 'popoverProps' ] = {
 	placement: 'bottom-start',
@@ -51,10 +52,13 @@ function Switcher< T >( {
 	onToggle,
 	defaultOpen,
 	renderToggle,
-	popoverProps,
+	headerTitle,
 }: SwitcherProps< T > ) {
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 	const isDesktop = useViewportMatch( 'medium' );
+	// Below the medium breakpoint the Popover renders as a full-screen sheet
+	// (expandOnMobile); the 100% content width relies on that, so both flip here.
+	const isMobile = ! isDesktop;
 	const renderDropdownToggle: RenderToggle = ( { isOpen, onToggle, ...props } ) => {
 		if ( renderToggle ) {
 			return renderToggle( { isOpen, onToggle, ...props } );
@@ -91,8 +95,8 @@ function Switcher< T >( {
 			open={ open }
 			onToggle={ onToggle }
 			defaultOpen={ defaultOpen }
-			expandOnMobile={ ! isDesktop }
-			popoverProps={ { ...DEFAULT_POPOVER_PROPS, ...popoverProps } }
+			expandOnMobile={ isMobile }
+			popoverProps={ { ...DEFAULT_POPOVER_PROPS, headerTitle } }
 			renderToggle={ renderDropdownToggle }
 			renderContent={ ( { onClose } ) => (
 				<SwitcherContent
@@ -102,7 +106,7 @@ function Switcher< T >( {
 					renderItem={ renderItem }
 					view={ view }
 					onChangeView={ setView }
-					width={ isDesktop ? '280px' : '100%' }
+					width={ isMobile ? '100%' : '280px' }
 					onClose={ onClose }
 					onItemClick={ onItemClick }
 				>

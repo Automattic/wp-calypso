@@ -42,7 +42,7 @@ export default function DomainSwitcher( {
 			items={ domains }
 			value={ domain }
 			searchableFields={ searchableFields }
-			popoverProps={ { headerTitle: __( 'Switch domain' ) } }
+			headerTitle={ __( 'Switch domain' ) }
 			getItemUrl={ ( d ) => buildCurrentRouteLink( { params: { domainName: d.domain } } ) }
 			renderToggle={ renderToggle }
 			renderItem={ ( { item, context } ) => (

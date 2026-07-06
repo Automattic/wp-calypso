@@ -65,7 +65,7 @@ export const SiteSwitcherBase = (
 			items={ sites }
 			value={ site }
 			searchableFields={ searchableFields }
-			popoverProps={ { headerTitle: __( 'Switch site' ) } }
+			headerTitle={ __( 'Switch site' ) }
 			getItemUrl={ ( site ) => {
 				if ( canManageSite( site ) ) {
 					return buildCurrentRouteLink( { params: { siteSlug: site.slug } } );
