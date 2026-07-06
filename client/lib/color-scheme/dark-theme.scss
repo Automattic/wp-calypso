@@ -792,6 +792,12 @@ This mixin generates alias variables for a color palette. For example, the
 	.components-popover__triangle-border {
 		stroke: var( --dashboard-surface__border-color );
 	}
+
+	// MenuGroup separators hardcode a light `#1e1e1e`/`#ccc` border in
+	// @wordpress/components; retint to the DS neutral stroke used everywhere.
+	.components-menu-group + .components-menu-group {
+		border-top-color: var( --dashboard-surface__border-color );
+	}
 }
 
 @mixin color-scheme-dark-theme-modal {
