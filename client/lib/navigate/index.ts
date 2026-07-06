@@ -11,6 +11,14 @@ function isCurrentPathOutOfScope( currentPath: string ): boolean {
 	return paths.some( ( path ) => currentPath.startsWith( path ) );
 }
 
+// `page.current` stays '' until the page.js router starts and performs its
+// first navigation. Apps that don't use page.js (e.g. the Dashboard, which
+// embeds the masterbar) never start it, so calling `page.show()` there throws.
+// Detect that case and fall back to a full page load.
+function isRouterRunning(): boolean {
+	return page.current !== '';
+}
+
 function shouldNavigateWithinSamePage( path: string ): boolean {
 	const currentPath = window.location.pathname;
 	const targetUrl = new URL( path, window.location.origin );
@@ -55,6 +63,8 @@ export function navigate( path: string, openInNewTab = false, forceReload = fals
 					container: getScrollableContainer( element as HTMLElement ),
 				} );
 			}
+		} else if ( ! isRouterRunning() ) {
+			window.location.href = path;
 		} else {
 			page.show( path );
 		}
