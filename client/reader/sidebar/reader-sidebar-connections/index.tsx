@@ -6,7 +6,7 @@ import {
 import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import { DEFAULT_ATMOSPHERE_TAB } from 'calypso/reader/atmosphere/helper';
 import { DEFAULT_FEDIVERSE_TAB } from 'calypso/reader/fediverse/helper';
@@ -135,10 +135,6 @@ function ReaderSidebarConnections( { path }: Props ) {
 
 	const [ isOpen, setIsOpen ] = useState( () => isOnConnections );
 
-	useEffect( () => {
-		setIsOpen( isOnConnections && path !== BASE_PATH );
-	}, [ isOnConnections, path ] );
-
 	// All three queries gated on the menu being expanded *or* on a
 	// connections route — i.e. whenever we'd actually render the rows.
 	// Otherwise the user expanding the menu manually from an unrelated
@@ -172,11 +168,7 @@ function ReaderSidebarConnections( { path }: Props ) {
 	const showErrorHint = shouldFetch && hasError && connections.length === 0;
 
 	const recordHeaderClick = () => {
-		dispatch(
-			recordReaderTracksEvent( 'calypso_reader_sidebar_connections_clicked', {
-				is_opened: isOpen,
-			} )
-		);
+		dispatch( recordReaderTracksEvent( 'calypso_reader_sidebar_connections_clicked' ) );
 	};
 
 	const recordConnectionClick = ( connection: UnifiedConnection ) => {

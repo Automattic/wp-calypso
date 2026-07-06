@@ -14,7 +14,6 @@ export class ReaderSidebarLists extends Component {
 		onClick: PropTypes.func,
 		currentListOwner: PropTypes.string,
 		currentListSlug: PropTypes.string,
-		recordReaderTracksEvent: PropTypes.func,
 		translate: PropTypes.func,
 	};
 
@@ -33,8 +32,7 @@ export class ReaderSidebarLists extends Component {
 					disableFlyout
 					className={ clsx( {
 						'sidebar__menu--selected':
-							path === '/reader/lists' ||
-							( ! isOpen && ( isChildSelected || path === '/reader/list/new' ) ),
+							! isOpen && ( isChildSelected || path === '/reader/list/new' ),
 					} ) }
 					expandableIconClick={ onClick }
 				>
