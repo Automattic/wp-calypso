@@ -5,7 +5,7 @@ import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useCallback } from 'react';
-import { purchaseSettingsRoute } from '../../../app/router/me';
+import { purchasesRoute } from '../../../app/router/me';
 import DomainRemovalConfirmationStep from './domain-removal-confirmation-step';
 import DomainRemovalWarningStep from './domain-removal-warning-step';
 import type { Purchase } from '@automattic/api-core';
@@ -45,10 +45,7 @@ export default function DomainRemovalFlow( { purchase, onCancel }: DomainRemoval
 					),
 					{ type: 'snackbar' }
 				);
-				navigate( {
-					to: purchaseSettingsRoute.fullPath,
-					params: { purchaseId: purchase.ID },
-				} );
+				navigate( { to: purchasesRoute.to } );
 			},
 			onError: () => {
 				const domainName = purchase.meta || purchase.product_name;
