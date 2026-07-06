@@ -67,7 +67,7 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 	}
 
 	const upgradeNote = translate(
-		'Do you want to increase your views limit? {{link}}Upgrade now{{/link}}',
+		'Billable views are your total views minus your two highest-traffic days. Need a higher limit? {{link}}Upgrade now{{/link}}',
 		{
 			components: {
 				link: <a href={ upgradeLink } />,
@@ -91,7 +91,7 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 					key="bar"
 				></div>
 				<div key="usage">
-					{ translate( '%(numberOfUsage)s / %(numberOfLimit)s views', {
+					{ translate( '%(numberOfUsage)s / %(numberOfLimit)s billable views', {
 						args: {
 							numberOfUsage: formatNumber( usage ),
 							numberOfLimit: typeof limit === 'number' ? formatNumber( limit ) : '-',
