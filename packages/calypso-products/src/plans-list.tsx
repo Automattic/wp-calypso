@@ -3625,8 +3625,12 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getAnnualTimeframe(),
 		getStoreSlug: () => PLAN_JETPACK_SECURITY_T0_YEARLY,
 		getMonthlySlug: () => PLAN_JETPACK_SECURITY_T0_MONTHLY,
-		getProductId: () => 2030,
-		getProductsIncluded: () => [ PRODUCT_JETPACK_BACKUP_T0_YEARLY, PRODUCT_JETPACK_ANTI_SPAM ],
+		getProductId: () => 10237,
+		getProductsIncluded: () => [
+			PRODUCT_JETPACK_BACKUP_T0_YEARLY,
+			PRODUCT_JETPACK_SCAN,
+			PRODUCT_JETPACK_ANTI_SPAM,
+		],
 		getWhatIsIncluded: () => [
 			translate( 'VaultPress Backup: Real-time backups as you edit' ),
 			translate( '1GB of cloud storage' ),
@@ -3641,10 +3645,11 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getMonthlyTimeframe(),
 		getStoreSlug: () => PLAN_JETPACK_SECURITY_T0_MONTHLY,
 		getAnnualSlug: () => PLAN_JETPACK_SECURITY_T0_YEARLY,
-		getProductId: () => 2031,
+		getProductId: () => 10238,
 		getProductsIncluded: () => [
 			PRODUCT_JETPACK_BACKUP_T0_MONTHLY,
-			PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
+			PRODUCT_JETPACK_SCAN,
+			PRODUCT_JETPACK_ANTI_SPAM,
 		],
 		getWhatIsIncluded: () => [
 			translate( 'VaultPress Backup: Real-time backups as you edit' ),
