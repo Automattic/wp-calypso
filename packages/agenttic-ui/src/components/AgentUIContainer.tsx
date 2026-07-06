@@ -1,31 +1,19 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import {
-	animate,
-	AnimatePresence,
-	motion,
-	type PanInfo,
-	useDragControls,
-	useMotionValue,
-} from 'framer-motion';
-import { DRAG_CONSTANTS, STYLE_CONSTANTS } from '../utils/constants';
+import { AnimatePresence, motion } from 'framer-motion';
+import { STYLE_CONSTANTS } from '../utils/constants';
 import { loadAgentticTranslations } from '../utils/translation-loader';
 import { useChat } from '../hooks/useChat';
 import { useInput } from '../hooks/useInput';
+import { useFloatingPanelPosition } from '../hooks/useFloatingPanelPosition';
 import { useWindowFocusStatus } from '../hooks/useWindowFocusStatus';
 import type { AgentUIProps, Suggestion } from '../types';
 import { cn } from '../utils/classNames';
-import {
-	type ChatPosition,
-	clampFreeDragPosition,
-	getChatPosition,
-	getInitialChatPosition,
-	setChatPosition,
-} from '../utils/chatStorage';
 import { morphSpring } from './animations';
 import {
 	type AgentUIContextValue,
 	AgentUIProvider,
 } from '../context/AgentUIContext';
+import { DragOverlay } from './DragOverlay';
 import { CollapsedView } from './views/CollapsedView';
 import { CompactView } from './views/CompactView';
 import { MinimizedView } from './views/MinimizedView';
@@ -34,27 +22,6 @@ import { __, sprintf } from '@wordpress/i18n';
 
 interface AgentUIContainerProps extends AgentUIProps {
 	children: React.ReactNode;
-}
-
-function DragOverlay() {
-	return (
-		<div
-			style={ {
-				position: 'fixed',
-				top: 0,
-				left: 0,
-				right: 0,
-				bottom: 0,
-				zIndex: 9999,
-				cursor: 'grabbing',
-				pointerEvents: 'auto',
-				userSelect: 'none',
-				WebkitUserSelect: 'none',
-				MozUserSelect: 'none',
-				msUserSelect: 'none',
-			} }
-		/>
-	);
 }
 
 export function AgentUIContainer( {
@@ -121,8 +88,6 @@ export function AgentUIContainer( {
 
 	// Track animation state
 	const [ isAnimating, setIsAnimating ] = useState( false );
-
-	const [ isDragging, setIsDragging ] = useState( false );
 
 	// Track typing status for callback
 	const [ isInputFocused, setIsInputFocused ] = useState( false );
@@ -212,22 +177,40 @@ export function AgentUIContainer( {
 	} );
 
 	const [ compactHeight, setCompactHeight ] = useState( 56 );
-	const [ currentSide, setCurrentSide ] = useState< ChatPosition >(
-		getChatPosition( initialChatPosition )
-	);
 	const compactRef = useRef< HTMLDivElement >( null );
-	const constraintsRef = useRef< HTMLDivElement >( null );
-	const chatRef = useRef< HTMLDivElement >( null );
 
-	// Motion values for programmatic control
-	const { x: initialX, y: initialY } = getInitialChatPosition( {
+	const {
+		x,
+		y,
+		currentSide,
+		isDragging,
+		dragControls,
+		chatRef,
+		constraintsRef,
+		handlePointerDown,
+		handleDragStart,
+		handleDragEnd,
+	} = useFloatingPanelPosition( {
 		freeDrag,
 		initialFreeDragPosition,
-		side: currentSide,
+		initialChatPosition,
+		chatState: chat.state,
+		onChatPositionChange,
+		onFreeDragEnd,
 	} );
-	const x = useMotionValue( initialX );
-	const y = useMotionValue( initialY );
-	const dragControls = useDragControls();
+
+	const getHeightForState = useCallback(
+		( state: string ) => {
+			if ( state === 'collapsed' || state === 'minimized' ) {
+				return STYLE_CONSTANTS.COLLAPSED_SIZE;
+			}
+			if ( state === 'compact' ) {
+				return compactHeight;
+			}
+			return STYLE_CONSTANTS.EXPANDED_HEIGHT;
+		},
+		[ compactHeight ]
+	);
 
 	// Handle suggestion submission
 	const handleSuggestionSubmit = useCallback(
@@ -289,19 +272,6 @@ export function AgentUIContainer( {
 
 		return true;
 	}, [ inputValue, chatRef ] );
-
-	const getHeightForState = useCallback(
-		( state: string ) => {
-			if ( state === 'collapsed' || state === 'minimized' ) {
-				return STYLE_CONSTANTS.COLLAPSED_SIZE;
-			}
-			if ( state === 'compact' ) {
-				return compactHeight;
-			}
-			return STYLE_CONSTANTS.EXPANDED_HEIGHT;
-		},
-		[ compactHeight ]
-	);
 
 	// Handle hover to show compact view
 	const handleHover = useCallback( () => {
@@ -370,215 +340,6 @@ export function AgentUIContainer( {
 		}
 	}, [ input, chat, onClose ] );
 
-	// Calculate snap position based on current side
-	const calculateSnapPosition = useCallback(
-		( side?: 'left' | 'right' ) => {
-			if ( ! chatRef.current || ! constraintsRef.current ) {
-				return null;
-			}
-
-			const elementBox = chatRef.current.getBoundingClientRect();
-			const constraintBox =
-				constraintsRef.current.getBoundingClientRect();
-
-			// Calculate base position (without transforms)
-			const style = window.getComputedStyle( chatRef.current );
-			const transformMatrix = new DOMMatrixReadOnly( style.transform );
-			const baseX = elementBox.x - transformMatrix.e;
-			const baseY = elementBox.y - transformMatrix.f;
-
-			// Use provided side or fall back to current side
-			const targetSide = side ?? currentSide;
-
-			// Calculate current height based on chat state
-			const currentHeight = getHeightForState( chat.state );
-
-			// Calculate target position
-			const targetX =
-				targetSide === 'left'
-					? constraintBox.left
-					: constraintBox.right - STYLE_CONSTANTS.COMPACT_WIDTH;
-			// The minimized bar docks to the viewport bottom, so it ignores the inset.
-			const targetY =
-				chat.state === 'minimized'
-					? window.innerHeight - currentHeight
-					: constraintBox.bottom - currentHeight;
-
-			return {
-				x: targetX - baseX,
-				y: targetY - baseY,
-			};
-		},
-		[ currentSide, chat.state, getHeightForState ]
-	);
-
-	// Handle pointer down to control drag initiation
-	const handlePointerDown = useCallback(
-		( event: React.PointerEvent< HTMLDivElement > ) => {
-			const target = event.target as HTMLElement;
-
-			// Check if the target element is from an iframe.
-			const isFromIframe = target.ownerDocument !== document;
-
-			if ( isFromIframe ) {
-				return; // Don't start drag for iframe content clicks.
-			}
-
-			// Don't drag if clicking inside non-draggable areas
-			const isNonDraggable = target.closest(
-				DRAG_CONSTANTS.NON_DRAGGABLE_SELECTORS
-			);
-
-			if ( ! isNonDraggable ) {
-				// Prevent text selection during drag
-				event.preventDefault();
-				dragControls.start( event.nativeEvent );
-			}
-		},
-		[ dragControls ]
-	);
-
-	const handleDragStart = useCallback( () => {
-		setIsDragging( true );
-	}, [] );
-
-	// Handle drag end with snap functionality
-	const handleDragEnd = useCallback(
-		( _event: any, info: PanInfo ) => {
-			setIsDragging( false );
-
-			// Determine which side based on drop position
-			// For true 50/50 split, account for the chat widget's width
-			const dropX = x.get();
-			const chatWidth = STYLE_CONSTANTS.COMPACT_WIDTH;
-			const viewportMidpointX = ( window.innerWidth - chatWidth ) / 2;
-			const isLeft = dropX < viewportMidpointX;
-			const newSide = isLeft ? 'left' : 'right';
-
-			if ( currentSide !== newSide ) {
-				setCurrentSide( newSide );
-				setChatPosition( newSide );
-				onChatPositionChange?.( newSide );
-			}
-
-			// In free drag mode the panel stays where dropped. dragElastic={ 0 }
-			// hard-clamps the drag to the constraint box, so skip the corner-snap
-			// and report the dropped pixel position so consumers can persist it.
-			if ( freeDrag ) {
-				onFreeDragEnd?.( { x: x.get(), y: y.get() } );
-				return;
-			}
-
-			// Calculate snap position using the new side immediately
-			const position = calculateSnapPosition( newSide );
-			if ( ! position ) {
-				return;
-			}
-
-			// Animate to snap position using motion values
-			animate( x, position.x, {
-				...DRAG_CONSTANTS.SPRING_CONFIG,
-				velocity: info.velocity.x * DRAG_CONSTANTS.VELOCITY_MULTIPLIER,
-			} );
-			animate( y, position.y, {
-				...DRAG_CONSTANTS.SPRING_CONFIG,
-				velocity: info.velocity.y * DRAG_CONSTANTS.VELOCITY_MULTIPLIER,
-			} );
-		},
-		[
-			x,
-			y,
-			calculateSnapPosition,
-			onChatPositionChange,
-			currentSide,
-			freeDrag,
-			onFreeDragEnd,
-		]
-	);
-
-	// Snap back to the nearest corner when freeDrag is turned off at runtime.
-	// Guard on the true→false transition only so a freeDrag=false mount never snaps.
-	const prevFreeDragRef = useRef( freeDrag );
-	useEffect( () => {
-		const wasFreeDrag = prevFreeDragRef.current;
-		prevFreeDragRef.current = freeDrag;
-
-		if ( freeDrag || ! wasFreeDrag ) {
-			return;
-		}
-
-		// Determine side from the panel's center in viewport coords. x.get() is
-		// the transform offset from the panel's CSS left: VIEWPORT_OFFSET origin.
-		const panelCenter =
-			STYLE_CONSTANTS.VIEWPORT_OFFSET +
-			x.get() +
-			STYLE_CONSTANTS.COMPACT_WIDTH / 2;
-		const newSide = panelCenter < window.innerWidth / 2 ? 'left' : 'right';
-
-		if ( currentSide !== newSide ) {
-			setCurrentSide( newSide );
-			setChatPosition( newSide );
-			onChatPositionChange?.( newSide );
-		}
-
-		const position = calculateSnapPosition( newSide );
-		if ( ! position ) {
-			return;
-		}
-
-		animate( x, position.x, DRAG_CONSTANTS.SPRING_CONFIG );
-		animate( y, position.y, DRAG_CONSTANTS.SPRING_CONFIG );
-	}, [
-		freeDrag,
-		x,
-		y,
-		calculateSnapPosition,
-		onChatPositionChange,
-		currentSide,
-	] );
-
-	// In free-drag mode the `bottom: 0` minimize animation already docks the
-	// panel's bottom edge to the viewport bottom, so the correct drag `y` offset
-	// while minimized is 0 — any residual offset would shift the tab off the edge.
-	// Pin `y` to 0 on minimize and restore the dragged offset on un-minimize.
-	// Stashed in a ref to avoid re-render churn, and we never fire onFreeDragEnd
-	// here — this transition is internal and must not corrupt the consumer's
-	// persisted free-drag position.
-	const stashedFreeDragYRef = useRef< number | null >( null );
-	const prevMinimizedRef = useRef( chat.state === 'minimized' );
-	useEffect( () => {
-		const wasMinimized = prevMinimizedRef.current;
-		const isMinimized = chat.state === 'minimized';
-		prevMinimizedRef.current = isMinimized;
-
-		// Corner-snap mode already docks via handleDragEnd → calculateSnapPosition.
-		if ( ! freeDrag || isMinimized === wasMinimized ) {
-			return;
-		}
-
-		if ( isMinimized ) {
-			// Stash the dragged offset, then let `bottom: 0` do the docking by
-			// zeroing the transform. Pinning to 0 avoids double-counting the
-			// in-flight `bottom` and height springs that calculateSnapPosition
-			// would otherwise snapshot mid-transition.
-			stashedFreeDragYRef.current = y.get();
-			const controls = animate( y, 0, DRAG_CONSTANTS.SPRING_CONFIG );
-			return () => controls.stop();
-		}
-
-		// Restore the dragged offset so un-minimizing returns to the dropped spot.
-		if ( stashedFreeDragYRef.current === null ) {
-			return;
-		}
-		const controls = animate(
-			y,
-			stashedFreeDragYRef.current,
-			DRAG_CONSTANTS.SPRING_CONFIG
-		);
-		stashedFreeDragYRef.current = null;
-		return () => controls.stop();
-	}, [ chat.state, freeDrag, y ] );
-
 	// Track previous state for animation purposes
 	const prevStateRef = useRef( chat.state );
 	const fromCompact =
@@ -589,41 +350,6 @@ export function AgentUIContainer( {
 		clearAllTimeouts();
 		prevStateRef.current = chat.state;
 	}, [ chat.state, clearAllTimeouts ] );
-
-	// Handle window resize to maintain bottom positioning
-	useEffect( () => {
-		const handleResize = () => {
-			// In free-drag mode the panel keeps its dragged position; just clamp
-			// it back on-screen if the resize would push it off — no corner-snap.
-			if ( freeDrag ) {
-				const clamped = clampFreeDragPosition(
-					{ x: x.get(), y: y.get() },
-					STYLE_CONSTANTS.COMPACT_WIDTH,
-					STYLE_CONSTANTS.EXPANDED_HEIGHT
-				);
-				x.set( clamped.x );
-				y.set( clamped.y );
-				return;
-			}
-
-			const position = calculateSnapPosition();
-			if ( ! position ) {
-				return;
-			}
-
-			// Update motion values directly (no animation during resize)
-			x.set( position.x );
-			// While minimized the `y` transform is pinned to 0 and `bottom: 0`
-			// keeps the tab docked regardless of viewport height, so leave it
-			// alone — overwriting it would fight the un-minimize stash restore.
-			if ( chat.state !== 'minimized' ) {
-				y.set( position.y );
-			}
-		};
-
-		window.addEventListener( 'resize', handleResize );
-		return () => window.removeEventListener( 'resize', handleResize );
-	}, [ chat.state, x, y, calculateSnapPosition, freeDrag ] );
 
 	// Cleanup timeouts on unmount
 	useEffect( () => {
@@ -639,9 +365,9 @@ export function AgentUIContainer( {
 	// Measure the compact view height
 	useEffect( () => {
 		if ( chat.state === 'compact' && compactRef.current ) {
-			const height =
+			const measured =
 				compactRef.current.scrollHeight + STYLE_CONSTANTS.PADDING;
-			setCompactHeight( height );
+			setCompactHeight( measured );
 		}
 	}, [ chat.state, input.value ] );
 
