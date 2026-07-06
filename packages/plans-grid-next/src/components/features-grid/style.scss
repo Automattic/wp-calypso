@@ -938,6 +938,22 @@
 		width: 17px;
 	}
 
+	.plans-grid-next-storage-feature-label__text {
+		font-weight: 500;
+	}
+
+	.plans-grid-next-storage-feature-label__add-more {
+		appearance: none;
+		background: none;
+		border: 0;
+		color: #1e1e1ea3;
+		cursor: pointer;
+		font: inherit;
+		line-height: inherit;
+		padding: 0;
+		text-decoration: underline;
+	}
+
 	&.is-smedium,
 	&.is-medium,
 	&.is-large,

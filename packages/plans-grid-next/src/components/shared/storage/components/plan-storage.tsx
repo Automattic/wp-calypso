@@ -1,5 +1,6 @@
 import { type PlanSlug, isWpcomEnterpriseGridPlan } from '@automattic/calypso-products';
 import { AddOns } from '@automattic/data-stores';
+import { useState } from '@wordpress/element';
 import { usePlansGridContext } from '../../../../grid-context';
 import { ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE } from '../constants';
 import StorageDropdown from './storage-dropdown';
@@ -20,7 +21,8 @@ const PlanStorage = ( {
 	options,
 	showUpgradeableStorage,
 }: Props ) => {
-	const { siteId, gridPlansIndex } = usePlansGridContext();
+	const { siteId, gridPlansIndex, showFeatureCheckmarks } = usePlansGridContext();
+	const [ isStorageDropdownVisible, setIsStorageDropdownVisible ] = useState( false );
 	const { availableForPurchase, current, planTitle } = gridPlansIndex[ planSlug ];
 	const availableStorageAddOns = AddOns.useAvailableStorageAddOns( { siteId } );
 
@@ -37,13 +39,31 @@ const PlanStorage = ( {
 		availableStorageAddOns.length &&
 		ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug );
 
+	let storageContent = <StorageFeatureLabel planSlug={ planSlug } />;
+
+	if ( canUpgradeStorageForPlan && showFeatureCheckmarks && ! isStorageDropdownVisible ) {
+		storageContent = (
+			<StorageFeatureLabel
+				planSlug={ planSlug }
+				showAddMore
+				onAddMoreClick={ () => setIsStorageDropdownVisible( true ) }
+			/>
+		);
+	} else if ( canUpgradeStorageForPlan ) {
+		storageContent = (
+			<StorageDropdown
+				planSlug={ planSlug }
+				onStorageAddOnClick={ onStorageAddOnClick }
+				onStorageOptionChange={
+					showFeatureCheckmarks ? () => setIsStorageDropdownVisible( false ) : undefined
+				}
+			/>
+		);
+	}
+
 	return (
 		<div className="plans-grid-next-plan-storage" data-plan-title={ planTitle }>
-			{ canUpgradeStorageForPlan ? (
-				<StorageDropdown planSlug={ planSlug } onStorageAddOnClick={ onStorageAddOnClick } />
-			) : (
-				<StorageFeatureLabel planSlug={ planSlug } />
-			) }
+			{ storageContent }
 		</div>
 	);
 };
