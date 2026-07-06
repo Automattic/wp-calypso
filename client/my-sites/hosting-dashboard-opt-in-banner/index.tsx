@@ -102,8 +102,8 @@ export default function HostingDashboardOptInBanner( {
 	const heading = (
 		<Text as="p" weight={ 500 } size={ isMobile ? 14 : 15 }>
 			{ hasOptedIn && ! isSubmitting
-				? translate( 'The new dashboard is here to stay' )
-				: translate( 'A new dashboard is on the way' ) }
+				? translate( 'New dashboard is here to stay' )
+				: translate( 'Dashboard layout is changing' ) }
 		</Text>
 	);
 
@@ -114,7 +114,7 @@ export default function HostingDashboardOptInBanner( {
 						'Soon, the Hosting Dashboard you’ve been using becomes the default for everyone, and this classic view will be retired. Your content and settings stay the same.'
 				  )
 				: translate(
-						'Soon, navigation in the Hosting Dashboard is changing to be more consistent with WordPress Admin and easier to get around. Your content and settings stay exactly as they are. Can’t wait?'
+						'WordPress.com’s layout is getting more consistent and easier to use. Your content and settings won’t change. Can’t wait?'
 				  ) }
 		</Text>
 	);
@@ -129,7 +129,7 @@ export default function HostingDashboardOptInBanner( {
 		>
 			{ hasOptedIn && ! isSubmitting
 				? translate( 'Go to new dashboard' )
-				: translate( 'Try it now' ) }
+				: translate( 'Switch now' ) }
 		</Button>
 	);
 
