@@ -1,14 +1,10 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { __experimentalHStack as HStack, Button, Modal, Spinner } from '@wordpress/components';
-import { filterSortAndPaginate } from '@wordpress/dataviews';
+import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { Icon, external, download, close } from '@wordpress/icons';
 import { useMemo, useState, useCallback } from 'react';
-import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
-import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
-import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
-import { DataViews } from 'calypso/components/dataviews';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useWooPaymentsContext } from '../context';
@@ -24,6 +20,7 @@ import {
 	CommissionEligibilityColumn,
 } from './site-columns';
 import type { SitesWithWooPaymentsState } from '../types';
+import type { View } from '@wordpress/dataviews';
 
 export default function SitesWithWooPayments() {
 	const {
@@ -46,8 +43,13 @@ export default function SitesWithWooPayments() {
 		isLoading: false,
 	} );
 
-	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
-		...initialDataViewsState,
+	const [ view, setView ] = useState< View >( {
+		type: 'table',
+		page: 1,
+		perPage: 50,
+		search: '',
+		filters: [],
+		sort: { field: '', direction: 'asc' },
 		fields: [
 			'site',
 			'transactions',
@@ -151,8 +153,8 @@ export default function SitesWithWooPayments() {
 	);
 
 	const { data, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( items, dataViewsState, fields );
-	}, [ items, dataViewsState, fields ] );
+		return filterSortAndPaginate( items, view, fields );
+	}, [ items, view, fields ] );
 
 	const handleDownloadCommissionsReport = useCallback(
 		async ( selectedItems: SitesWithWooPaymentsState[] ) => {
@@ -220,18 +222,16 @@ export default function SitesWithWooPayments() {
 				<SitesWithWooPaymentsMobileView items={ items } actions={ actions } />
 			) : (
 				<div className="redesigned-a8c-table full-width">
-					<ItemsDataViews
-						data={ {
-							items: data,
-							getItemId: ( item: SitesWithWooPaymentsState ) => `${ item.blogId }`,
-							pagination: paginationInfo,
-							enableSearch: false,
-							fields,
-							actions,
-							setDataViewsState,
-							dataViewsState,
-							defaultLayouts: { table: {} },
-						} }
+					<DataViews< SitesWithWooPaymentsState >
+						data={ data }
+						getItemId={ ( item ) => `${ item.blogId }` }
+						paginationInfo={ paginationInfo }
+						search={ false }
+						fields={ fields }
+						actions={ actions }
+						view={ view }
+						onChangeView={ setView }
+						defaultLayouts={ { table: {} } }
 					>
 						<HStack
 							className="dataviews__view-actions"
@@ -242,7 +242,7 @@ export default function SitesWithWooPayments() {
 						</HStack>
 						<DataViews.Layout />
 						<DataViews.Footer />
-					</ItemsDataViews>
+					</DataViews>
 				</div>
 			) }
 
