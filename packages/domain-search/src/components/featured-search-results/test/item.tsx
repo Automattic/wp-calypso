@@ -163,6 +163,7 @@ describe( 'FeaturedSearchResultsItem', () => {
 
 			await waitFor( () => screen.getByTitle( 'test-exact-match.com' ) );
 
+			expect( screen.getByText( 'Exact match' ) ).toBeInTheDocument();
 			expect( screen.getByText( "It's available!" ) ).toBeInTheDocument();
 		} );
 
