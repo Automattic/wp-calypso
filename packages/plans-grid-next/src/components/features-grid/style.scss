@@ -895,6 +895,7 @@
 	}
 
 	.plan-features-2023-grid__item-info {
+		flex: 1;
 		min-width: 0;
 
 		.plan-features-2023-grid__item-title {
@@ -903,6 +904,23 @@
 			line-height: 16px;
 			text-wrap: pretty;
 		}
+	}
+
+	.plan-features-2023-grid__item-text-content {
+		align-items: flex-start;
+		display: flex;
+		gap: 8px;
+		justify-content: space-between;
+		width: 100%;
+	}
+
+	.plan-features-2023-grid__item-title-label {
+		min-width: 0;
+	}
+
+	.plan-features-2023-grid__feature-badge {
+		flex: 0 0 auto;
+		margin-inline-start: auto;
 	}
 
 	.plan-features-2023-grid__item-checkmark {

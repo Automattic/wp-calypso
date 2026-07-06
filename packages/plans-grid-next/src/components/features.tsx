@@ -204,11 +204,15 @@ const PlanFeatures2023GridFeatures: React.FC< {
 										>
 											<>
 												<span className="plan-features-2023-grid__item-text-content">
-													{ currentFeature.getTitle( {
-														domainName: paidDomainName,
-													} ) }
+													<span className="plan-features-2023-grid__item-title-label">
+														{ currentFeature.getTitle( {
+															domainName: paidDomainName,
+														} ) }
+													</span>
 													{ currentFeature.badgeText && (
-														<FeatureBadge>{ currentFeature.badgeText }</FeatureBadge>
+														<FeatureBadge className="plan-features-2023-grid__feature-badge">
+															{ currentFeature.badgeText }
+														</FeatureBadge>
 													) }
 												</span>
 												{ shouldBreakAfterAiWebsiteBuilderTitle && (
