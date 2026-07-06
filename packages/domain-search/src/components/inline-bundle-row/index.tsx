@@ -112,7 +112,12 @@ export const InlineBundleRow = ( { bundle, isLoading }: InlineBundleRowProps ) =
 				className="inline-bundle-row__content"
 			>
 				<VStack spacing={ 2 } className="inline-bundle-row__info">
-					<HStack justify="flex-start" spacing={ 3 } expanded={ false }>
+					<HStack
+						justify="flex-start"
+						spacing={ 3 }
+						expanded={ false }
+						className="inline-bundle-row__heading"
+					>
 						<BundleTldChips
 							leadLabel={ primary.domain }
 							tlds={ companionTlds }

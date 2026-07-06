@@ -18,6 +18,12 @@
 	min-width: 0;
 }
 
+.inline-bundle-row__heading {
+	// Let the badge wrap below the domain chips instead of overlapping them when
+	// the row is narrow.
+	flex-wrap: wrap;
+}
+
 .inline-bundle-row__lock-icon {
 	fill: #757575;
 	flex-shrink: 0;
