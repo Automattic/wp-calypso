@@ -77,11 +77,11 @@ export const ExactMatch = () => {
 						<DomainSuggestionBadge variation="success">It's available!</DomainSuggestionBadge>
 					</>
 				}
-				domain="example"
-				tld="com"
+				domain="thalasso"
+				tld="blog"
 				isHighlighted
-				matchReasons={ [ 'Exact match', '.com is the most common extension' ] }
-				price={ <DomainSuggestionPrice salePrice="$97" price="$22" /> }
+				matchReasons={ [ '".blog" is the natural home for your writing' ] }
+				price={ <DomainSuggestionPrice salePrice="$3.30" price="$33" renewPrice="$33" /> }
 				cta={ <DomainSuggestionPrimaryCTA>Add to cart</DomainSuggestionPrimaryCTA> }
 			/>
 		</StoryWrapper>
