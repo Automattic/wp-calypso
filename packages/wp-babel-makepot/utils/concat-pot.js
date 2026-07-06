@@ -5,10 +5,8 @@ const glob = require( 'glob' );
 const mergeWith = require( './merge-with' );
 
 const mergeDeep = ( left, right, key ) => {
-	// `typeof null === 'object'`, so exclude null before recursing — otherwise a
-	// null would be passed to `mergeWith` as if it were a container. Parsed POT
-	// data never contains null, but this keeps the guard honest and matches how
-	// lodash handled a null side (it falls through to the `right || left` below).
+	// `typeof null === 'object'`, so exclude null before recursing (parsed POT
+	// data has none); a null side falls through to `right || left`, as in lodash.
 	if ( left !== null && typeof left === 'object' && right !== null && typeof right === 'object' ) {
 		return mergeWith( left, right, mergeDeep );
 	}
