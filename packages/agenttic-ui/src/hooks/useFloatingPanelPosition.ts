@@ -22,7 +22,6 @@ export interface UseFloatingPanelPositionArgs {
 	initialFreeDragPosition: { x: number; y: number } | undefined;
 	initialChatPosition?: ChatPosition;
 	chatState: ChatState;
-	defaultSize?: { width: number; height: number };
 	onChatPositionChange?: ( position: ChatPosition ) => void;
 	onFreeDragEnd?: ( position: { x: number; y: number } ) => void;
 }
@@ -52,7 +51,6 @@ export function useFloatingPanelPosition( {
 	initialFreeDragPosition,
 	initialChatPosition,
 	chatState,
-	defaultSize,
 	onChatPositionChange,
 	onFreeDragEnd,
 }: UseFloatingPanelPositionArgs ): UseFloatingPanelPositionResult {
@@ -83,10 +81,10 @@ export function useFloatingPanelPosition( {
 			const targetSide = side ?? currentSide;
 			return getCornerSnapPosition(
 				targetSide,
-				defaultSize?.width ?? STYLE_CONSTANTS.COMPACT_WIDTH
+				STYLE_CONSTANTS.COMPACT_WIDTH
 			);
 		},
-		[ currentSide, defaultSize?.width ]
+		[ currentSide ]
 	);
 
 	// Handle pointer down to control drag initiation
