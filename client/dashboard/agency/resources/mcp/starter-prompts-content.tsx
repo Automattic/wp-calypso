@@ -88,14 +88,15 @@ function StarterPromptItem( {
 			<VStack spacing={ 3 }>
 				<Text variant="muted">{ prompt.description }</Text>
 				<div className="mcp-starter-prompt">
-					<Button
-						className="mcp-starter-prompt__copy"
-						variant="tertiary"
-						icon={ copied ? check : copy }
-						label={ copied ? __( 'Copied' ) : __( 'Copy prompt' ) }
-						showTooltip
-						onClick={ handleCopy }
-					/>
+					<div className="mcp-starter-prompt__copy">
+						<Button
+							variant="tertiary"
+							icon={ copied ? check : copy }
+							label={ copied ? __( 'Copied' ) : __( 'Copy prompt' ) }
+							showTooltip
+							onClick={ handleCopy }
+						/>
+					</div>
 					<Text className="mcp-starter-prompt__text">{ prompt.prompt }</Text>
 				</div>
 			</VStack>
