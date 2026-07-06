@@ -135,15 +135,15 @@ test.describe(
 
 					// Verify that the toggle is enabled.
 					const toggle = section.getByLabel( 'Auto-share post' );
-					expect( await toggle.isChecked() ).toBe( true );
+					await expect( toggle ).toBeChecked();
 
 					// Verify that the message box is editable.
 					const messageBox = section.getByRole( 'textbox', { name: 'Message' } );
-					expect( await messageBox.isEditable() ).toBe( true );
+					await expect( messageBox ).toBeEditable();
 
 					// Verify whether the media button is available.
 					const mediaButton = section.getByRole( 'button', { name: 'Select' } );
-					expect( await mediaButton.isVisible() ).toBe( features.mediaSharing );
+					await expect( mediaButton ).toBeVisible( { visible: features.mediaSharing } );
 				} );
 
 				test( `Should verify that resharing ${
@@ -175,7 +175,7 @@ test.describe(
 					await shareModal.waitFor();
 					let reshareButton = shareModal.getByRole( 'button', { name: 'Share', exact: true } );
 
-					expect( await reshareButton.isVisible() ).toBe( false );
+					await expect( reshareButton ).toBeHidden();
 
 					let closeButton = shareModal.getByRole( 'button', { name: 'Close' } ).first();
 					await closeButton.click();
@@ -204,7 +204,7 @@ test.describe(
 
 					// Verify whether the auto-share toggle is no longer visible.
 					const toggle = section.getByLabel( 'Auto-share post' );
-					expect( await toggle.isVisible() ).toBe( false );
+					await expect( toggle ).toBeHidden();
 
 					// Check if the "Preview and share" button is visible based on resharing feature
 					sharePostModalButton = section.getByRole( 'button', {
@@ -212,7 +212,7 @@ test.describe(
 						exact: true,
 					} );
 
-					expect( await sharePostModalButton.isVisible() ).toBe( features.resharing );
+					await expect( sharePostModalButton ).toBeVisible( { visible: features.resharing } );
 
 					let isReshareButtonVisible = false;
 
@@ -266,7 +266,7 @@ test.describe(
 
 					// Verify that manual sharing is NOT available before publishing.
 					let manualSharing = section.getByRole( 'paragraph', { name: 'Manual sharing' } );
-					expect( await manualSharing.isVisible() ).toBe( false );
+					await expect( manualSharing ).toBeHidden();
 
 					// Set a title for the post
 					await editorPage.enterTitle( 'Manual sharing: ' + DataHelper.getRandomPhrase() );
@@ -300,7 +300,7 @@ test.describe(
 
 					// Verify whether manual sharing is available in the Jetpack sidebar.
 					manualSharing = section.getByText( 'Manual sharing' );
-					expect( await manualSharing.isVisible() ).toBe( features.manualSharing );
+					await expect( manualSharing ).toBeVisible( { visible: features.manualSharing } );
 				} );
 
 				test( 'Should verify that Social Image Generator is available', async ( { page } ) => {
@@ -328,9 +328,9 @@ test.describe(
 						name: 'Social image template',
 					} );
 
-					expect( await templatebutton.isVisible() ).toBe( true );
+					await expect( templatebutton ).toBeVisible();
 
-					expect( await templatebutton.isDisabled() ).toBe( false );
+					await expect( templatebutton ).toBeEnabled();
 				} );
 			} );
 		}
