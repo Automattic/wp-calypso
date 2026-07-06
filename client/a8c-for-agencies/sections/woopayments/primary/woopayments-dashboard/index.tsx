@@ -1,4 +1,9 @@
 import {
+	JetpackLicenseFilter,
+	JetpackLicenseSortField,
+	JetpackLicenseSortDirection,
+} from '@automattic/api-core';
+import {
 	agencySitesWithPluginsQuery,
 	agencyWooPaymentsDataQuery,
 	jetpackAgencyLicensesQuery,
@@ -13,11 +18,6 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-pa
 import { PageBodyPlaceholder } from 'calypso/a8c-for-agencies/components/page-placeholder';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import MissingPaymentSettingsNotice from 'calypso/a8c-for-agencies/sections/referrals/common/missing-payment-settings-notice';
-import {
-	LicenseFilter,
-	LicenseSortField,
-	LicenseSortDirection,
-} from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
@@ -64,10 +64,10 @@ const WooPaymentsDashboard = () => {
 
 	const { data: licenseSites, isLoading: isLoadingLicensesWithWooPayments } = useQuery( {
 		...jetpackAgencyLicensesQuery( agencyId ?? 0, {
-			filter: LicenseFilter.Attached,
+			filter: JetpackLicenseFilter.Attached,
 			search: 'woopayments',
-			sortField: LicenseSortField.IssuedAt,
-			sortDirection: LicenseSortDirection.Descending,
+			sortField: JetpackLicenseSortField.IssuedAt,
+			sortDirection: JetpackLicenseSortDirection.Descending,
 		} ),
 		enabled: !! agencyId,
 		refetchOnWindowFocus: false,
