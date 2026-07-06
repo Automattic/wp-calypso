@@ -1,8 +1,42 @@
 const path = require( 'path' );
 const { nodeConfig, lodashRestrictedImports } = require( '@automattic/calypso-eslint-overrides' );
 const wpI18nConfig = require( '@wordpress/eslint-plugin/eslintrc' ).configs.i18n;
-const { merge } = require( 'lodash' );
 const reactVersion = require( './client/package.json' ).dependencies.react;
+
+// ESLint doesn't allow the `extends` field inside `overrides`, so the TypeScript
+// override is assembled by hand from several partial configs ("fragments"). The
+// `rules` object from each fragment is merged into one combined `rules`; every
+// other setting (`parser`, `parserOptions`, `plugins`, `files`, …) is copied
+// as-is, which is correct only because each of those is set by a single fragment.
+function composeConfig( ...fragments ) {
+	// Enforce that last point: if two fragments set the same setting — say a
+	// plugin upgrade makes both the base config and Prettier config define
+	// `parserOptions` — the copy below would keep only the last and silently drop
+	// the other, quietly producing the wrong config. Catch that and fail loudly.
+	const seenKeys = new Set();
+	for ( const fragment of fragments ) {
+		for ( const key of Object.keys( fragment ) ) {
+			if ( key === 'rules' ) {
+				continue;
+			}
+			if ( seenKeys.has( key ) ) {
+				throw new Error(
+					`composeConfig: the setting \`${ key }\` is set by more than one fragment. ` +
+						'Only `rules` is merged across fragments; every other setting is copied ' +
+						'from a single fragment, so combine this one explicitly.'
+				);
+			}
+			seenKeys.add( key );
+		}
+	}
+
+	return Object.assign( {}, ...fragments, {
+		rules: Object.assign(
+			{},
+			...fragments.map( ( fragment ) => fragment.rules ).filter( Boolean )
+		),
+	} );
+}
 
 module.exports = {
 	root: true,
@@ -78,7 +112,10 @@ module.exports = {
 						patterns: [ { group: [ 'calypso/*' ] }, ...lodashRestrictedImports.patterns ],
 					},
 				],
-				'no-restricted-modules': [ 'error', { patterns: [ 'calypso/*' ] } ],
+				'no-restricted-modules': [
+					'error',
+					{ paths: lodashRestrictedImports.modules, patterns: [ 'calypso/*' ] },
+				],
 			},
 		},
 		{
@@ -91,10 +128,7 @@ module.exports = {
 				'react/display-name': 'off',
 			},
 		},
-		merge(
-			// ESLint doesn't allow the `extends` field inside `overrides`, so we need to compose
-			// the TypeScript config manually using internal bits from various plugins
-			{},
+		composeConfig(
 			// base TypeScript config: parser options, add plugin with rules
 			require( '@typescript-eslint/eslint-plugin' ).configs.base,
 			// basic recommended rules config from the TypeScript plugin
@@ -383,7 +417,7 @@ module.exports = {
 		// Only use known tag names plus `jest-environment`.
 		'jsdoc/check-tag-names': [
 			'error',
-			{ definedTags: [ 'jest-environment', 'jsxImportSource' ] },
+			{ definedTags: [ 'jest-environment', 'jest-environment-options', 'jsxImportSource' ] },
 		],
 
 		// Do not require param/return description, see https://github.com/Automattic/wp-calypso/issues/56330
@@ -451,6 +485,8 @@ module.exports = {
 				],
 			},
 		],
+		'no-restricted-properties': [ 2, ...lodashRestrictedImports.properties ],
+		'no-restricted-syntax': [ 'error', ...lodashRestrictedImports.syntax ],
 		'no-restricted-modules': [
 			2,
 			{
@@ -465,6 +501,7 @@ module.exports = {
 						name: 'superagent',
 						message: 'Please use native `fetch` instead.',
 					},
+					...lodashRestrictedImports.modules,
 				],
 			},
 		],
@@ -596,6 +633,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/every': 'error',
 		'you-dont-need-lodash-underscore/extend-own': 'error',
 		'you-dont-need-lodash-underscore/fill': 'error',
+		'you-dont-need-lodash-underscore/filter': 'error',
 		'you-dont-need-lodash-underscore/find': 'error',
 		'you-dont-need-lodash-underscore/find-index': 'error',
 		'you-dont-need-lodash-underscore/first': 'error',
@@ -603,6 +641,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/foldl': 'error',
 		'you-dont-need-lodash-underscore/foldr': 'error',
 		'you-dont-need-lodash-underscore/for-each': 'error',
+		'you-dont-need-lodash-underscore/get': 'error',
 		'you-dont-need-lodash-underscore/includes': 'error',
 		'you-dont-need-lodash-underscore/index-of': 'error',
 		'you-dont-need-lodash-underscore/inject': 'error',
@@ -619,6 +658,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/keys': 'error',
 		'you-dont-need-lodash-underscore/last': 'error',
 		'you-dont-need-lodash-underscore/last-index-of': 'error',
+		'you-dont-need-lodash-underscore/map': 'error',
 		'you-dont-need-lodash-underscore/pad-end': 'error',
 		'you-dont-need-lodash-underscore/pad-start': 'error',
 		'you-dont-need-lodash-underscore/reduce': 'error',

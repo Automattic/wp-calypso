@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash';
+import { isEmpty } from '@automattic/js-utils';
 import { getSiteSync } from 'calypso/state/sync/selectors/get-site-sync';
 
 import 'calypso/state/automated-transfer/init';

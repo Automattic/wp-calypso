@@ -24,23 +24,31 @@ const readSpacesListKey = [ 'read', 'spaces', 'list' ] as const;
 
 const readSpaceDetailKey = ( spaceId: string ) => [ 'read', 'spaces', 'detail', spaceId ] as const;
 
-// A space's posts feed is served under the `space:<id>` stream key, built
-// server-side from the space's followed feeds and tags. Editing either changes
-// which posts appear, so the feed list has to reload.
+// A space drives two streams: the posts feed (`space:<id>`, built server-side
+// from the space's followed feeds and tags) and Discover (`space_discover:<id>`,
+// on-topic recommendations filtered by the space's languages). Editing the space
+// — tags, feeds, or languages — changes which posts either stream returns, so
+// both have to reload. Discover in particular is filtered by the space's
+// languages, so a language change that leaves it cached would keep showing the
+// old-language recommendations until the next hard reload.
 //
-// The feed is a cursor-paginated `useInfiniteQuery`, so a plain
+// The streams are cursor-paginated `useInfiniteQuery`s, so a plain
 // `invalidateQueries` is not enough: it refetches each cached page using the
 // cursor (`before`/`offset`) it was originally loaded with, and those cursors
-// were derived from the *old* post set. After the tags/feeds change the page
-// boundaries no longer line up, so the reloaded list can show stale, duplicated
-// or gapped posts. `resetQueries` discards the cached pages and their cursors
-// and refetches the active stream from the first page — a clean reload. This
-// mirrors the stream "force refresh" pattern in
-// `client/reader/stream/use-stream-pending-posts.ts`.
-const reloadReadSpaceStream = ( queryClient: QueryClient, spaceId: string ) =>
-	queryClient.resetQueries( {
-		queryKey: getStreamInfiniteQueryKeyPrefix( `space:${ spaceId }` ),
-	} );
+// were derived from the *old* post set. After the edit the page boundaries no
+// longer line up, so the reloaded list can show stale, duplicated or gapped
+// posts. `resetQueries` discards the cached pages and their cursors and refetches
+// the active stream from the first page — a clean reload. This mirrors the stream
+// "force refresh" pattern in `client/reader/stream/use-stream-pending-posts.ts`.
+const reloadReadSpaceStreams = ( queryClient: QueryClient, spaceId: string ) =>
+	Promise.all( [
+		queryClient.resetQueries( {
+			queryKey: getStreamInfiniteQueryKeyPrefix( `space:${ spaceId }` ),
+		} ),
+		queryClient.resetQueries( {
+			queryKey: getStreamInfiniteQueryKeyPrefix( `space_discover:${ spaceId }` ),
+		} ),
+	] );
 
 export const readSpacesQuery = () =>
 	queryOptions( {
@@ -68,9 +76,10 @@ export const readSpaceQuery = ( spaceId: string ) =>
 		meta: { persist: true },
 	} );
 
-// The summary (list) shape is the detail minus its `sources` and `tags`.
+// The summary (list) shape is the detail minus its `sources`, `tags`, and
+// `languages` (the detail-only fields).
 const toSummary = ( space: ReadSpaceDetails ): ReadSpace => {
-	const { sources, tags, ...summary } = space;
+	const { sources, tags, languages, ...summary } = space;
 	return summary;
 };
 
@@ -130,8 +139,9 @@ export const updateReadSpaceMutation = ( queryClient: QueryClient ) =>
 				( previous ) => previous?.map( ( item ) => ( item.id === space.id ? summary : item ) )
 			);
 			queryClient.setQueryData< ReadSpaceDetails >( readSpaceQuery( space.id ).queryKey, space );
-			// Tags/feeds may have changed, so reload the space's posts feed.
-			reloadReadSpaceStream( queryClient, space.id );
+			// Tags/feeds/languages may have changed, so reload both the posts feed and
+			// the Discover stream (languages filter Discover).
+			void reloadReadSpaceStreams( queryClient, space.id );
 			void invalidateReadSpaceListAndDetail( queryClient, space.id );
 		},
 	} );
@@ -159,8 +169,8 @@ export const deleteReadSpaceMutation = ( queryClient: QueryClient ) =>
 // feeds). `subscription` carries the feed id/url the api-core mutator sends.
 const writeReadSpaceDetail = ( queryClient: QueryClient, space: ReadSpaceDetails ) => {
 	queryClient.setQueryData< ReadSpaceDetails >( readSpaceQuery( space.id ).queryKey, space );
-	// Adding/removing a feed changes the space's posts feed, so reload it too.
-	reloadReadSpaceStream( queryClient, space.id );
+	// Adding/removing a feed changes the space's streams, so reload both.
+	void reloadReadSpaceStreams( queryClient, space.id );
 	void invalidateReadSpaceDetail( queryClient, space.id );
 };
 

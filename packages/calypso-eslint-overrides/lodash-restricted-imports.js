@@ -20,6 +20,7 @@
  */
 
 const JS_UTILS_NAMES = [
+	'isEmpty',
 	'keyBy',
 	'shuffle',
 	'uniqBy',
@@ -27,6 +28,7 @@ const JS_UTILS_NAMES = [
 	'pick',
 	'omit',
 	'mapValues',
+	'memoize',
 	'pickBy',
 	'omitBy',
 	'groupBy',
@@ -54,7 +56,26 @@ const JS_UTILS_MESSAGE = 'Please use the equivalent from `@automattic/js-utils` 
 const CASE_MESSAGE =
 	'Please use the equivalent from `@automattic/js-utils` instead — it covers ASCII identifiers/keys, not free-form Unicode text.';
 const COMPOSE_MESSAGE = 'Please use the equivalent from `@wordpress/compose` instead.';
+// The js-utils merge is a JSON-oriented deep merge, intentionally narrower than
+// lodash: it merges own enumerable properties only, treats arrays as dense, and
+// does not handle circular references — so the swap is not always transparent.
+const MERGE_MESSAGE =
+	'Please use `merge` from `@automattic/js-utils` instead of lodash `merge`. It deep-merges ' +
+	'plain JSON-like data (own enumerable properties, dense arrays) and does not merge inherited ' +
+	'properties, materialize sparse-array holes, or handle circular references.';
+// The js-utils mergeWith shares merge's narrower-than-lodash scope (own
+// enumerable properties, dense arrays); its customizer contract matches lodash.
+const MERGEWITH_MESSAGE =
+	'Please use `mergeWith` from `@automattic/js-utils` instead of lodash `mergeWith`. It takes the ' +
+	'same trailing customizer but deep-merges only plain JSON-like data (own enumerable properties, ' +
+	'dense arrays) and does not merge inherited properties or materialize sparse-array holes.';
 const COMPACT_MESSAGE = 'Please use `array.filter( Boolean )` instead of lodash `compact`.';
+const CHUNK_MESSAGE =
+	'Please split with a small loop (`for ( let i = 0; i < array.length; i += size ) ' +
+	'chunks.push( array.slice( i, i + size ) )`) instead of lodash `chunk`.';
+const CHAIN_MESSAGE =
+	'Please call the operations in sequence (native array/object methods, or a small loop) ' +
+	'instead of a lodash `chain( … )` sequence ending in `.value()`.';
 const FLATTEN_MESSAGE = 'Please use native `array.flatMap()` / `array.flat()` instead.';
 const DEFER_MESSAGE = 'Please use native `setTimeout( fn, 0 )` instead of lodash `defer`.';
 const DELAY_MESSAGE = 'Please use native `setTimeout( fn, wait )` instead of lodash `delay`.';
@@ -127,12 +148,40 @@ const FOREACH_MESSAGE =
 	'`Object.values( obj ).forEach( … )` / `Object.entries( obj ).forEach( ( [ key, value ] ) => … )` for objects, ' +
 	'`Array.from( … ).forEach( … )` for DOM collections, guard nullable collections with `?? []`, and convert ' +
 	'early-exit callbacks (those returning `false`) to a `for…of` loop with `break`.';
+const FILTER_MESSAGE =
+	'Please use native `array.filter( ( item ) => … )` (or `Object.values( obj ).filter( … )` for objects) ' +
+	'instead of lodash `filter`. Expand iteratee shorthands to a predicate, use `Array.from( … )` for DOM ' +
+	'collections (a NodeList has no native `.filter`), and guard nullable collections with `?? []`.';
+const MAP_MESSAGE =
+	'Please use native `array.map( ( item ) => … )` instead of lodash `map`. For objects use ' +
+	'`Object.values( obj ).map( … )`, or `Object.entries( obj ).map( ( [ key, value ] ) => … )` when the ' +
+	'callback uses the key (lodash passes `( value, key )`). Expand pluck shorthands with optional chaining ' +
+	'(a property-name iteratee becomes `( item ) => item?.prop`), use `Array.from( … )` for DOM collections, ' +
+	'and guard nullable collections with `?? []`.';
+
+const UNESCAPE_MESSAGE =
+	'Please decode the basic HTML entities with a small `string.replace` (over `&amp;`/`&lt;`/`&gt;`/`&quot;`/`&#39;`) instead of lodash `unescape`.';
+const SAMPLESIZE_MESSAGE =
+	'Please write a small Fisher–Yates sampler instead of lodash `sampleSize`.';
+const MATCHES_MESSAGE =
+	'Please use an explicit predicate (`( item ) => item?.key === value && …`) instead of lodash `matches`.';
+const MATCHESPROPERTY_MESSAGE =
+	'Please use an explicit predicate (`( item ) => item?.key === value`) instead of lodash `matchesProperty`.';
+const UPDATE_MESSAGE =
+	'Please write an explicit path update (walk/create the path, then apply the updater) instead of lodash `update`.';
+const CLONEDEEPWITH_MESSAGE =
+	'Please use `structuredClone` plus a targeted override, or a small recursive clone, instead of lodash `cloneDeepWith`.';
+const ASSIGNWITH_MESSAGE =
+	'Please assign natively — `Object.keys( source ).forEach( ( key ) => { object[ key ] = … } )` with the ' +
+	'per-key logic your customizer expressed — instead of lodash `assignWith`.';
 
 const paths = [
 	{ name: 'lodash', importNames: JS_UTILS_NAMES, message: JS_UTILS_MESSAGE },
 	{ name: 'lodash', importNames: CASE_NAMES, message: CASE_MESSAGE },
 	{ name: 'lodash', importNames: COMPOSE_NAMES, message: COMPOSE_MESSAGE },
 	{ name: 'lodash', importNames: [ 'compact' ], message: COMPACT_MESSAGE },
+	{ name: 'lodash', importNames: [ 'chunk' ], message: CHUNK_MESSAGE },
+	{ name: 'lodash', importNames: [ 'chain' ], message: CHAIN_MESSAGE },
 	{ name: 'lodash', importNames: [ 'flatMap', 'flatten' ], message: FLATTEN_MESSAGE },
 	{ name: 'lodash', importNames: [ 'defer' ], message: DEFER_MESSAGE },
 	{ name: 'lodash', importNames: [ 'delay' ], message: DELAY_MESSAGE },
@@ -147,6 +196,8 @@ const paths = [
 	{ name: 'lodash', importNames: [ 'findIndex' ], message: FINDINDEX_MESSAGE },
 	{ name: 'lodash', importNames: [ 'clone' ], message: CLONE_MESSAGE },
 	{ name: 'lodash', importNames: [ 'cloneDeep' ], message: CLONE_DEEP_MESSAGE },
+	{ name: 'lodash', importNames: [ 'merge' ], message: MERGE_MESSAGE },
+	{ name: 'lodash', importNames: [ 'mergeWith' ], message: MERGEWITH_MESSAGE },
 	{ name: 'lodash', importNames: [ 'property' ], message: PROPERTY_MESSAGE },
 	{ name: 'lodash', importNames: [ 'maxBy', 'minBy' ], message: EXTREMUM_MESSAGE },
 	{ name: 'lodash', importNames: [ 'partition' ], message: PARTITION_MESSAGE },
@@ -160,6 +211,15 @@ const paths = [
 	{ name: 'lodash', importNames: [ 'xor' ], message: XOR_MESSAGE },
 	{ name: 'lodash', importNames: [ 'some' ], message: SOME_MESSAGE },
 	{ name: 'lodash', importNames: [ 'forEach' ], message: FOREACH_MESSAGE },
+	{ name: 'lodash', importNames: [ 'filter' ], message: FILTER_MESSAGE },
+	{ name: 'lodash', importNames: [ 'map' ], message: MAP_MESSAGE },
+	{ name: 'lodash', importNames: [ 'unescape' ], message: UNESCAPE_MESSAGE },
+	{ name: 'lodash', importNames: [ 'sampleSize' ], message: SAMPLESIZE_MESSAGE },
+	{ name: 'lodash', importNames: [ 'matches' ], message: MATCHES_MESSAGE },
+	{ name: 'lodash', importNames: [ 'matchesProperty' ], message: MATCHESPROPERTY_MESSAGE },
+	{ name: 'lodash', importNames: [ 'update' ], message: UPDATE_MESSAGE },
+	{ name: 'lodash', importNames: [ 'cloneDeepWith' ], message: CLONEDEEPWITH_MESSAGE },
+	{ name: 'lodash', importNames: [ 'assignWith' ], message: ASSIGNWITH_MESSAGE },
 ];
 
 // Deep `lodash/<fn>` imports bypass the named-import paths above.
@@ -168,6 +228,8 @@ const patterns = [
 	{ group: CASE_NAMES.map( ( name ) => `lodash/${ name }` ), message: CASE_MESSAGE },
 	{ group: COMPOSE_NAMES.map( ( name ) => `lodash/${ name }` ), message: COMPOSE_MESSAGE },
 	{ group: [ 'lodash/compact' ], message: COMPACT_MESSAGE },
+	{ group: [ 'lodash/chunk' ], message: CHUNK_MESSAGE },
+	{ group: [ 'lodash/chain' ], message: CHAIN_MESSAGE },
 	{ group: [ 'lodash/flatMap', 'lodash/flatten' ], message: FLATTEN_MESSAGE },
 	{ group: [ 'lodash/defer' ], message: DEFER_MESSAGE },
 	{ group: [ 'lodash/delay' ], message: DELAY_MESSAGE },
@@ -182,6 +244,8 @@ const patterns = [
 	{ group: [ 'lodash/findIndex' ], message: FINDINDEX_MESSAGE },
 	{ group: [ 'lodash/clone' ], message: CLONE_MESSAGE },
 	{ group: [ 'lodash/cloneDeep' ], message: CLONE_DEEP_MESSAGE },
+	{ group: [ 'lodash/merge' ], message: MERGE_MESSAGE },
+	{ group: [ 'lodash/mergeWith' ], message: MERGEWITH_MESSAGE },
 	{ group: [ 'lodash/property' ], message: PROPERTY_MESSAGE },
 	{ group: [ 'lodash/maxBy', 'lodash/minBy' ], message: EXTREMUM_MESSAGE },
 	{ group: [ 'lodash/partition' ], message: PARTITION_MESSAGE },
@@ -195,6 +259,83 @@ const patterns = [
 	{ group: [ 'lodash/xor' ], message: XOR_MESSAGE },
 	{ group: [ 'lodash/some' ], message: SOME_MESSAGE },
 	{ group: [ 'lodash/forEach' ], message: FOREACH_MESSAGE },
+	{ group: [ 'lodash/filter' ], message: FILTER_MESSAGE },
+	{ group: [ 'lodash/map' ], message: MAP_MESSAGE },
+	{ group: [ 'lodash/unescape' ], message: UNESCAPE_MESSAGE },
+	{ group: [ 'lodash/sampleSize' ], message: SAMPLESIZE_MESSAGE },
+	{ group: [ 'lodash/matches' ], message: MATCHES_MESSAGE },
+	{ group: [ 'lodash/matchesProperty' ], message: MATCHESPROPERTY_MESSAGE },
+	{ group: [ 'lodash/update' ], message: UPDATE_MESSAGE },
+	{ group: [ 'lodash/cloneDeepWith' ], message: CLONEDEEPWITH_MESSAGE },
+	{ group: [ 'lodash/assignWith' ], message: ASSIGNWITH_MESSAGE },
 ];
 
-module.exports = { paths, patterns };
+// Functions whose namespace-member (`_.fn( … )` / `lodash.fn( … )`) and CommonJS
+// shapes `no-restricted-imports` cannot see. Most migrated functions are
+// backstopped by the `eslint-plugin-you-dont-need-lodash-underscore` rules in
+// the root config, but that plugin ships no rule for these, so they get their
+// own namespace/CommonJS guards below. Only add a function here once its
+// namespace/CommonJS usages are also gone: a function can be guarded for ES
+// imports above while a lingering `require( 'lodash' )` destructure elsewhere
+// keeps it out of this list until that usage is migrated.
+const NAMESPACE_GUARDED = [
+	{ name: 'isEmpty', message: JS_UTILS_MESSAGE },
+	{ name: 'memoize', message: JS_UTILS_MESSAGE },
+	{ name: 'mergeWith', message: MERGEWITH_MESSAGE },
+	{ name: 'unescape', message: UNESCAPE_MESSAGE },
+	{ name: 'sampleSize', message: SAMPLESIZE_MESSAGE },
+	{ name: 'matches', message: MATCHES_MESSAGE },
+	{ name: 'matchesProperty', message: MATCHESPROPERTY_MESSAGE },
+	{ name: 'update', message: UPDATE_MESSAGE },
+	{ name: 'cloneDeepWith', message: CLONEDEEPWITH_MESSAGE },
+	{ name: 'assignWith', message: ASSIGNWITH_MESSAGE },
+	{ name: 'compact', message: COMPACT_MESSAGE },
+	{ name: 'groupBy', message: JS_UTILS_MESSAGE },
+	{ name: 'chunk', message: CHUNK_MESSAGE },
+	{ name: 'mapKeys', message: JS_UTILS_MESSAGE },
+	{ name: 'pick', message: JS_UTILS_MESSAGE },
+	{ name: 'chain', message: CHAIN_MESSAGE },
+	{ name: 'reject', message: REJECT_MESSAGE },
+	{ name: 'mapValues', message: JS_UTILS_MESSAGE },
+	{ name: 'omitBy', message: JS_UTILS_MESSAGE },
+	{ name: 'maxBy', message: EXTREMUM_MESSAGE },
+	{ name: 'orderBy', message: SORT_MESSAGE },
+	{ name: 'debounce', message: COMPOSE_MESSAGE },
+	{ name: 'merge', message: MERGE_MESSAGE },
+];
+
+// `no-restricted-properties`: namespace member access (`_.fn( … )` / `lodash.fn( … )`).
+const properties = NAMESPACE_GUARDED.flatMap( ( { name, message } ) => [
+	{ object: '_', property: name, message },
+	{ object: 'lodash', property: name, message },
+] );
+
+// `no-restricted-modules`: the deep CommonJS require (`require( 'lodash/fn' )`),
+// which matches by path only.
+const modules = NAMESPACE_GUARDED.map( ( { name, message } ) => ( {
+	name: `lodash/${ name }`,
+	message,
+} ) );
+
+// `no-restricted-syntax`: the CommonJS forms path-matching can't catch — a
+// destructured `const { fn } = require( 'lodash' )` and a member access
+// `require( 'lodash' ).fn`.
+const syntax = NAMESPACE_GUARDED.flatMap( ( { name, message } ) => [
+	{
+		selector: `VariableDeclarator[init.callee.name='require'][init.arguments.0.value='lodash'] ObjectPattern > Property[key.name='${ name }']`,
+		message,
+	},
+	{
+		selector: `MemberExpression[object.callee.name='require'][object.arguments.0.value='lodash'][property.name='${ name }']`,
+		message,
+	},
+] );
+
+// Residual gap: an aliased lodash namespace bound to an arbitrary name
+// (`const l = require( 'lodash' ); l.isEmpty( … )`) is not caught for any of
+// the `NAMESPACE_GUARDED` functions. These are all name-based rules; resolving
+// an arbitrary alias needs binding/scope tracking, which only a custom rule
+// provides. Left unguarded deliberately: app code is ESM (covered by the import
+// rules above), and CommonJS lodash exists only in build tooling.
+
+module.exports = { paths, patterns, properties, modules, syntax };

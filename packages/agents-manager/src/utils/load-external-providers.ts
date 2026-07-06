@@ -157,6 +157,15 @@ export interface LoadedProviders {
 	contextProvider?: ContextProvider;
 	/** Function to get empty view suggestions. Called when component is ready. */
 	getEmptyViewSuggestions?: () => Suggestion[];
+	/**
+	 * Opt out of the built-in empty-view default suggestions ("Getting started
+	 * with WordPress" etc.) for this provider's surfaces. When any loaded
+	 * provider sets this to `true`, `useEmptyViewSuggestions` returns `[]`
+	 * instead of the defaults whenever it would otherwise fall back to them.
+	 * Provider-specific `getEmptyViewSuggestions` still wins when it returns
+	 * non-empty filtered suggestions.
+	 */
+	suppressEmptyViewDefaults?: boolean;
 	markdownComponents?: MarkdownComponents;
 	markdownExtensions?: MarkdownExtensions;
 	useNavigationContinuation?: NavigationContinuationHook;
@@ -166,15 +175,16 @@ export interface LoadedProviders {
 	siteBuildUtils?: SiteBuildUtils;
 	useImageUpload?: ImageUploadHook;
 	useCheckpoint?: UseCheckpointHook;
+	/**
+	 * Streamed task-update callback, forwarded to useAgentChat's `onTaskUpdate`.
+	 * Lets a provider react to streamed tool-argument deltas as they arrive — e.g.
+	 * paint streamed page-design block markup into the editor. First-write-wins
+	 * across providers (a singleton: the delta stream must be processed once, not
+	 * fanned out to every provider).
+	 */
+	onTaskUpdate?: ( update: unknown ) => void | Promise< void >;
 	capabilities?: ProviderCapabilities;
 }
-
-export interface ProviderUrlEntry {
-	url: string;
-	providerId?: string;
-}
-
-export type AgentProviderEntry = string | ProviderUrlEntry | LoadedProviders;
 
 type LoadedProviderModule = {
 	module: LoadedProviders;
@@ -212,18 +222,6 @@ function isRecord( value: unknown ): value is Record< string, unknown > {
 	return typeof value === 'object' && value !== null;
 }
 
-function getProviderUrl( providerEntry: AgentProviderEntry ): string | undefined {
-	if ( typeof providerEntry === 'string' ) {
-		return providerEntry;
-	}
-
-	if ( ! isRecord( providerEntry ) ) {
-		return undefined;
-	}
-
-	return typeof providerEntry.url === 'string' ? providerEntry.url : undefined;
-}
-
 function getValidProviderId( providerId: unknown ): string | undefined {
 	if ( typeof providerId !== 'string' ) {
 		return undefined;
@@ -233,9 +231,7 @@ function getValidProviderId( providerId: unknown ): string | undefined {
 	return trimmedProviderId ? trimmedProviderId : undefined;
 }
 
-function getProviderEntryId(
-	providerEntry: AgentProviderEntry | LoadedProviders
-): string | undefined {
+function getProviderEntryId( providerEntry: string | LoadedProviders ): string | undefined {
 	if ( ! isRecord( providerEntry ) ) {
 		return undefined;
 	}
@@ -463,8 +459,10 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
 	let mergedImageUpload: ImageUploadHook | undefined;
 	let mergedUseCheckpoint: UseCheckpointHook | undefined;
+	let mergedOnTaskUpdate: LoadedProviders[ 'onTaskUpdate' ] | undefined;
 	// OR-merged across all providers.
 	const mergedCapabilities: ProviderCapabilities = {};
+	let mergedSuppressEmptyViewDefaults = false;
 
 	// Collect exports that need to be merged across all providers.
 	const allToolProviders: ToolProvider[] = [];
@@ -481,30 +479,27 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	// Results are processed in registration order to preserve first-write-wins semantics.
 	const loadedModules = ( await Promise.all(
 		agentProviders.map( async ( providerEntry ) => {
-			const providerEntryId = getProviderEntryId( providerEntry );
-			const providerUrl = getProviderUrl( providerEntry );
-
-			if ( typeof providerEntry === 'object' && providerEntry !== null && ! providerUrl ) {
-				return { module: providerEntry as LoadedProviders, providerId: providerEntryId };
-			}
-
-			if ( ! providerUrl ) {
-				return null;
+			// Already-loaded provider object: use it directly and read its own ID.
+			if ( typeof providerEntry === 'object' && providerEntry !== null ) {
+				return {
+					module: providerEntry as LoadedProviders,
+					providerId: getProviderEntryId( providerEntry ),
+				};
 			}
 
 			try {
 				// Dynamic import of registered script module
 				// The webpackIgnore comment tells webpack not to bundle this - it's loaded at runtime
-				const module = ( await import( /* webpackIgnore: true */ providerUrl ) ) as LoadedProviders;
+				const module = ( await import(
+					/* webpackIgnore: true */ providerEntry
+				) ) as LoadedProviders;
 				// eslint-disable-next-line no-console
-				console.log( `[AgentsManager] Loaded provider "${ providerUrl }"` );
-				return {
-					module,
-					providerId: getProviderEntryId( module ) || providerEntryId,
-				};
+				console.log( `[AgentsManager] Loaded provider "${ providerEntry }"` );
+				// The provider module is the source of truth for its own stable ID.
+				return { module, providerId: getProviderEntryId( module ) };
 			} catch ( error ) {
 				// eslint-disable-next-line no-console
-				console.warn( `[AgentsManager] Failed to load provider "${ providerUrl }":`, error );
+				console.warn( `[AgentsManager] Failed to load provider "${ providerEntry }":`, error );
 				return null;
 			}
 		} )
@@ -557,8 +552,17 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		if ( module.useCheckpoint && ! mergedUseCheckpoint ) {
 			mergedUseCheckpoint = module.useCheckpoint;
 		}
+		if ( module.onTaskUpdate && ! mergedOnTaskUpdate ) {
+			mergedOnTaskUpdate = module.onTaskUpdate;
+		}
 
 		mergeCapabilitiesInto( mergedCapabilities, module.capabilities );
+
+		// Strict `=== true` because `module` arrives untyped from runtime
+		// imports; a stray `'false'` string would otherwise opt in.
+		if ( module.suppressEmptyViewDefaults === true ) {
+			mergedSuppressEmptyViewDefaults = true;
+		}
 	}
 
 	const mergedContextProvider = mergeContextProviders( allContextProviders );
@@ -682,6 +686,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		providerIds: allProviderIds.length ? allProviderIds : undefined,
 		useNavigationContinuation: mergedNavigationContinuation,
 		useAbilitiesSetup: mergedAbilitiesSetup,
+		onTaskUpdate: mergedOnTaskUpdate,
 		useSuggestions: mergedUseSuggestions,
 		getChatComponent: mergedGetChatComponent,
 		siteBuildUtils: mergedSiteBuildUtils,
@@ -689,5 +694,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		useCheckpoint: mergedUseCheckpoint,
 		// Match peer fields: undefined when no provider opted in.
 		capabilities: Object.keys( mergedCapabilities ).length ? mergedCapabilities : undefined,
+		suppressEmptyViewDefaults: mergedSuppressEmptyViewDefaults ? true : undefined,
 	};
 }

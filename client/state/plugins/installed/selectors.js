@@ -1,6 +1,5 @@
 import { pick, sortBy } from '@automattic/js-utils';
 import { createSelector } from '@automattic/state-utils';
-import { filter } from 'lodash';
 import {
 	getSite,
 	getSiteTitle,
@@ -113,7 +112,7 @@ function getPluginsSelector( state, siteIds, pluginFilter ) {
 	}, {} );
 
 	if ( pluginFilter && _filters[ pluginFilter ] ) {
-		pluginList = filter( pluginList, _filters[ pluginFilter ] );
+		pluginList = Object.values( pluginList ).filter( _filters[ pluginFilter ] );
 	}
 
 	return sortBy( pluginList, ( item ) => item.slug.toLowerCase() );
@@ -133,11 +132,11 @@ export const getPlugins = createSelector(
 
 export const getPluginsWithUpdateStatuses = createSelector(
 	( state, allPlugins ) => {
-		const active = filter( allPlugins, _filters.active );
-		const inactive = filter( allPlugins, _filters.inactive );
-		const withUpdate = filter( allPlugins, _filters.updates );
-		const withAutoUpdate = filter( allPlugins, _filters.autoupdates );
-		const withAutoUpdateDisabled = filter( allPlugins, _filters.autoupdates_disabled );
+		const active = allPlugins.filter( _filters.active );
+		const inactive = allPlugins.filter( _filters.inactive );
+		const withUpdate = allPlugins.filter( _filters.updates );
+		const withAutoUpdate = allPlugins.filter( _filters.autoupdates );
+		const withAutoUpdateDisabled = allPlugins.filter( _filters.autoupdates_disabled );
 
 		return allPlugins.reduce( ( memo, plugin ) => {
 			const status = [];
@@ -182,11 +181,13 @@ export const getPluginsWithUpdateStatuses = createSelector(
 );
 
 export function getPluginsWithUpdates( state, siteIds ) {
-	return filter( getPlugins( state, siteIds ), _filters.updates ).map( ( plugin ) => ( {
-		...plugin,
-		version: plugin?.update?.new_version,
-		type: 'plugin',
-	} ) );
+	return getPlugins( state, siteIds )
+		.filter( _filters.updates )
+		.map( ( plugin ) => ( {
+			...plugin,
+			version: plugin?.update?.new_version,
+			type: 'plugin',
+		} ) );
 }
 
 export const getPluginOnSites = createSelector( ( state, siteIds, pluginSlug ) =>
@@ -211,7 +212,7 @@ export function getSitesWithPlugin( state, siteIds, pluginSlug ) {
 	}
 
 	// Filter the requested sites list by the list of sites for this plugin
-	const pluginSites = filter( siteIds, ( siteId ) => {
+	const pluginSites = ( siteIds ?? [] ).filter( ( siteId ) => {
 		return plugin.sites.hasOwnProperty( siteId );
 	} );
 
@@ -225,7 +226,7 @@ export function getSiteObjectsWithPlugin( state, siteIds, pluginSlug ) {
 
 export function getSitesWithoutPlugin( state, siteIds, pluginSlug ) {
 	const installedOnSiteIds = getSitesWithPlugin( state, siteIds, pluginSlug ) || [];
-	return filter( siteIds, function ( siteId ) {
+	return ( siteIds ?? [] ).filter( function ( siteId ) {
 		if ( ! getSite( state, siteId )?.visible || ! isJetpackSite( state, siteId ) ) {
 			return false;
 		}

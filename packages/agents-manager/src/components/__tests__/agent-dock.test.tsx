@@ -110,14 +110,17 @@ jest.mock( '../orchestrator-chat', () => ( {
 		</div>
 	),
 } ) );
+
 jest.mock( '../zendesk-chat', () => ( {
 	__esModule: true,
-	default: ( { onExpand }: { onExpand: () => void } ) => (
-		<div data-testid="zendesk-chat">
-			Zendesk chat
-			<button onClick={ onExpand }>Expand Zendesk</button>
-		</div>
-	),
+	default: ( { onExpand }: { onExpand: () => void } ) => {
+		return (
+			<div data-testid="zendesk-chat">
+				Zendesk chat
+				<button onClick={ onExpand }>Expand Zendesk</button>
+			</div>
+		);
+	},
 } ) );
 jest.mock( '../agent-history', () => ( {
 	__esModule: true,
@@ -171,6 +174,7 @@ function useWpAdminAgent() {
 		},
 		getActiveSessionId: () => 'session-123',
 		resumeActiveChat: mockResumeActiveChat,
+		zendeskConversationTags: [],
 	} as unknown as Partial< AgentsManagerContextType >;
 }
 
@@ -189,6 +193,7 @@ describe( 'AgentDock', () => {
 			},
 			getActiveSessionId: () => 'session-123',
 			resumeActiveChat: mockResumeActiveChat,
+			zendeskConversationTags: [],
 		} as unknown as Partial< AgentsManagerContextType >;
 	} );
 

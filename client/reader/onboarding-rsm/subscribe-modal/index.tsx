@@ -7,6 +7,7 @@ import { Icon, check } from '@wordpress/icons';
 import React, { useMemo, useState, ComponentType, useEffect, useCallback, useRef } from 'react';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import { SiteIcon } from 'calypso/blocks/site-icon';
+import { StepIndicator } from 'calypso/reader/components/step-indicator';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import { useSite } from 'calypso/reader/data/site';
@@ -17,7 +18,6 @@ import {
 	READER_ONBOARDING_FOLLOW_SOURCE,
 	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
 } from 'calypso/reader/onboarding-rsm/constants';
-import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
 import Stream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
 import { nextSelectedSite } from './selection';

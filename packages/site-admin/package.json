@@ -57,7 +57,7 @@
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"copyfiles": "^2.4.1",
-		"postcss": "^8.5.3",
+		"postcss": "^8.5.15",
 		"storybook": "^9.1.20",
 		"typescript": "^6.0.3",
 		"webpack": "^5.99.8"

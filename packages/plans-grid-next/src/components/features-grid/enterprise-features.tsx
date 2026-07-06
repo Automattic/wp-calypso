@@ -6,6 +6,7 @@ import { usePlansGridContext } from '../../grid-context';
 import { GridPlan } from '../../types';
 import { PlanFeaturesItem } from '../item';
 import PlanDivOrTdContainer from '../plan-div-td-container';
+import { ALL_ENTERPRISE_LOGO_SLUGS } from '../shared/header-price';
 import ClientLogoList from './client-logo-list';
 
 type EnterpriseFeaturesProps = {
@@ -17,8 +18,12 @@ type EnterpriseFeaturesProps = {
 };
 
 const EnterpriseFeatures = ( { renderedGridPlans, options }: EnterpriseFeaturesProps ) => {
-	const { featureGroupMap, enableCategorisedFeatures, enterpriseFeaturesList } =
-		usePlansGridContext();
+	const {
+		featureGroupMap,
+		enableCategorisedFeatures,
+		enterpriseFeaturesList,
+		isEnterpriseA4AIndia,
+	} = usePlansGridContext();
 	const translate = useTranslate();
 	const isTableCell = options?.isTableCell;
 
@@ -71,27 +76,27 @@ const EnterpriseFeatures = ( { renderedGridPlans, options }: EnterpriseFeaturesP
 				className="plan-features-2023-grid__table-item"
 				{ ...rowspanProp }
 			>
-				{ shouldRenderLogos && (
-					<>
-						<div className="plan-features-2023-grid__item">
-							<ClientLogoList className="plan-features-2023-grid__item-logos" />
+				{ shouldRenderLogos && isEnterpriseA4AIndia && (
+					<div className="plan-features-2023-grid__item">
+						<ClientLogoList
+							slugs={ ALL_ENTERPRISE_LOGO_SLUGS }
+							className="plan-features-2023-grid__item-logos"
+						/>
+					</div>
+				) }
+				{ shouldRenderLogos && ! options?.isLogosOnly && (
+					<CardContainer>
+						<div className={ clsx( 'plan-features-2023-grid__common-title', planClassName ) }>
+							{ translate( 'High performance platform, with:' ) }
 						</div>
-
-						{ ! options?.isLogosOnly && (
-							<CardContainer>
-								<div className={ clsx( 'plan-features-2023-grid__common-title', planClassName ) }>
-									{ translate( 'High performance platform, with:' ) }
-								</div>
-								{ enterpriseFeaturesList?.map( ( title, index ) => (
-									<PlanFeaturesItem key={ index }>
-										<span className="plan-features-2023-grid__item-info is-available">
-											<span className="plan-features-2023-grid__item-title">{ title }</span>
-										</span>
-									</PlanFeaturesItem>
-								) ) }
-							</CardContainer>
-						) }
-					</>
+						{ enterpriseFeaturesList?.map( ( title, index ) => (
+							<PlanFeaturesItem key={ index }>
+								<span className="plan-features-2023-grid__item-info is-available">
+									<span className="plan-features-2023-grid__item-title">{ title }</span>
+								</span>
+							</PlanFeaturesItem>
+						) ) }
+					</CardContainer>
 				) }
 			</PlanDivOrTdContainer>
 		);

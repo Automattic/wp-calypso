@@ -15,7 +15,7 @@ import { normalizeZendeskConversations } from '../utils/zendesk';
 import { useShouldUseUnifiedAgent } from './use-should-use-unified-agent';
 
 export default function useConversationList() {
-	const { agentConfig } = useAgentsManagerContext();
+	const { agentConfig, zendeskSmoochIntegrationKey } = useAgentsManagerContext();
 	const { agentId, authProvider } = agentConfig!;
 	const urlSearchParams = new URLSearchParams( window.location.search );
 	const hasAgentParam = urlSearchParams.has( 'agent' );
@@ -25,7 +25,10 @@ export default function useConversationList() {
 
 	// Only fetch Zendesk conversations if the unified agent flag is enabled
 	const { conversations: zendeskConversations, isLoading: isLoadingZendeskConversations } =
-		useGetZendeskConversations( !! shouldUseUnifiedAgent && ! isReaderChat );
+		useGetZendeskConversations(
+			!! shouldUseUnifiedAgent && ! isReaderChat,
+			zendeskSmoochIntegrationKey
+		);
 
 	const {
 		data: orchestratorConversations,

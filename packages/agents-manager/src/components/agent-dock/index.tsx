@@ -245,7 +245,7 @@ export default function AgentDock( {
 		return [
 			{
 				icon: comment,
-				title: __( 'New chat', '__i18n_text_domain__' ),
+				title: __( 'New chat', __i18n_text_domain__ ),
 				isDisabled: pathname === '/chat' && isOrchestratorChatEmpty,
 				onClick: () => {
 					recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
@@ -260,7 +260,7 @@ export default function AgentDock( {
 			! isReaderChat &&
 				isDocked && {
 					icon: login,
-					title: __( 'Pop out sidebar', '__i18n_text_domain__' ),
+					title: __( 'Pop out sidebar', __i18n_text_domain__ ),
 					onClick: () => {
 						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
 							type: 'undock',
@@ -273,7 +273,7 @@ export default function AgentDock( {
 				! isDocked &&
 				canDock && {
 					icon: drawerRight,
-					title: __( 'Move to sidebar', '__i18n_text_domain__' ),
+					title: __( 'Move to sidebar', __i18n_text_domain__ ),
 					onClick: () => {
 						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
 							type: 'dock',
@@ -289,8 +289,8 @@ export default function AgentDock( {
 				capabilities?.supportsSplitScreen && {
 					icon: columns,
 					title: isSplitScreen
-						? __( 'Exit split screen', '__i18n_text_domain__' )
-						: __( 'Split screen sidebar', '__i18n_text_domain__' ),
+						? __( 'Exit split screen', __i18n_text_domain__ )
+						: __( 'Split screen sidebar', __i18n_text_domain__ ),
 					onClick: () => setIsSplitScreen( ! isSplitScreen ),
 				},
 		].filter( Boolean ) as ChatHeaderOptions;

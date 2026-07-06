@@ -1,5 +1,4 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
-import { get } from 'lodash';
 import {
 	updateManagedContactDetailsShape,
 	mapManagedContactDetailsShape,
@@ -7,25 +6,38 @@ import {
 } from '../types/wpcom-store-state';
 import type { ManagedContactDetailsShape } from '@automattic/wpcom-checkout';
 
+// Reads a value at a dotted path (e.g. `extra.ca.lang`).
+const getPath = ( object, accessor ) =>
+	accessor.split( '.' ).reduce( ( value, key ) => value?.[ key ], object );
+
 describe( 'updateManagedContactDetailsShape', function () {
 	const testPropertyWithAccessor = ( merge, construct, update, data ) => ( accessor ) => {
-		const value = get(
+		const value = getPath(
 			updateManagedContactDetailsShape( merge, construct, update, data ),
 			accessor
 		);
-		if ( get( update, accessor ) !== undefined && get( data, accessor ) !== undefined ) {
+		if ( getPath( update, accessor ) !== undefined && getPath( data, accessor ) !== undefined ) {
 			it( 'update.A and data.A are both defined at ' + accessor, function () {
-				expect( value ).toEqual( merge( get( update, accessor ), get( data, accessor ) ) );
+				expect( value ).toEqual( merge( getPath( update, accessor ), getPath( data, accessor ) ) );
 			} );
-		} else if ( get( update, accessor ) !== undefined && get( data, accessor ) === undefined ) {
+		} else if (
+			getPath( update, accessor ) !== undefined &&
+			getPath( data, accessor ) === undefined
+		) {
 			it( 'update.A is defined, data.A is undefined at ' + accessor, function () {
-				expect( value ).toEqual( construct( get( update, accessor ) ) );
+				expect( value ).toEqual( construct( getPath( update, accessor ) ) );
 			} );
-		} else if ( get( update, accessor ) === undefined && get( data, accessor ) !== undefined ) {
+		} else if (
+			getPath( update, accessor ) === undefined &&
+			getPath( data, accessor ) !== undefined
+		) {
 			it( 'data.A is defined, update.A is undefined at ' + accessor, function () {
-				expect( value ).toEqual( get( data, accessor ) );
+				expect( value ).toEqual( getPath( data, accessor ) );
 			} );
-		} else if ( get( update, accessor ) === undefined && get( data, accessor ) === undefined ) {
+		} else if (
+			getPath( update, accessor ) === undefined &&
+			getPath( data, accessor ) === undefined
+		) {
 			it( 'data.A and update.A are both undefined at ' + accessor, function () {
 				expect( value ).toBeUndefined();
 			} );
@@ -208,12 +220,12 @@ describe( 'updateManagedContactDetailsShape', function () {
 
 describe( 'mapManagedContactDetailsShape', function () {
 	const testPropertyWithAccessor = ( f, data ) => ( accessor ) => {
-		const value = get( mapManagedContactDetailsShape( f, data ), accessor );
-		if ( get( data, accessor ) !== undefined ) {
+		const value = getPath( mapManagedContactDetailsShape( f, data ), accessor );
+		if ( getPath( data, accessor ) !== undefined ) {
 			it( 'data.A is defined at ' + accessor, function () {
-				expect( value ).toEqual( f( get( data, accessor ) ) );
+				expect( value ).toEqual( f( getPath( data, accessor ) ) );
 			} );
-		} else if ( get( data, accessor ) === undefined ) {
+		} else if ( getPath( data, accessor ) === undefined ) {
 			it( 'data.A is undefined at ' + accessor, function () {
 				expect( value ).toBeUndefined();
 			} );

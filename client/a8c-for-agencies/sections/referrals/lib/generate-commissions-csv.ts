@@ -1,4 +1,3 @@
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { getProductCommissionPercentage } from './commissions';
 import type {
 	Referral,
@@ -6,6 +5,7 @@ import type {
 	ReferralCommissionPayoutResponse,
 	ReferralPurchase,
 } from '../types';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 /** CSV line ending per RFC 4180; CRLF ensures Excel and Windows tools parse rows correctly. */
 const CSV_LINE_ENDING = '\r\n';
@@ -97,9 +97,14 @@ function findMatchingPurchase(
 		return null;
 	}
 	const product = products.find( ( p ) =>
-		[ p.product_id, p.monthly_product_id, p.yearly_product_id, p.alternative_product_id ].includes(
-			productId
-		)
+		[
+			p.product_id,
+			p.monthly_product_id,
+			p.yearly_product_id,
+			p.alternative_product_id,
+			p.monthly_alternative_product_id,
+			p.yearly_alternative_product_id,
+		].includes( productId )
 	);
 	if ( ! product ) {
 		return null;
@@ -110,6 +115,8 @@ function findMatchingPurchase(
 			product.monthly_product_id,
 			product.yearly_product_id,
 			product.alternative_product_id,
+			product.monthly_alternative_product_id,
+			product.yearly_alternative_product_id,
 		].includes( p.product_id )
 	);
 	if ( ! purchase || purchase.status === 'pending' || purchase.status === 'error' ) {

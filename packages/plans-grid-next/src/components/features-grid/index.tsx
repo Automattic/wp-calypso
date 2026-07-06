@@ -396,6 +396,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		featureGroupMap = {},
 		hideFeatureGroupTitles,
 		enterpriseFeaturesList,
+		isEnterpriseA4AIndia,
 		enableTermSavingsPriceDisplay,
 		showSimplifiedBillingDescription,
 		showBillingDescriptionForIncreasedRenewalPrice,
@@ -456,6 +457,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 				hideFeatureGroupTitles={ hideFeatureGroupTitles }
 				featureGroupMap={ featureGroupMap }
 				enterpriseFeaturesList={ enterpriseFeaturesList }
+				isEnterpriseA4AIndia={ isEnterpriseA4AIndia }
 				enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 				showSimplifiedBillingDescription={ showSimplifiedBillingDescription }
 				showBillingDescriptionForIncreasedRenewalPrice={

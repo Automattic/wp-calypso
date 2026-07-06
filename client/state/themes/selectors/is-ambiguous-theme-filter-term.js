@@ -1,5 +1,4 @@
 import { createSelector } from '@automattic/state-utils';
-import { filter } from 'lodash';
 import { getThemeFilters } from 'calypso/state/themes/selectors/get-theme-filters';
 
 import 'calypso/state/themes/init';
@@ -15,7 +14,7 @@ export const isAmbiguousThemeFilterTerm = createSelector(
 	( state, term ) => {
 		const filters = getThemeFilters( state );
 
-		const results = filter( filters, ( terms ) => !! terms?.[ term ] );
+		const results = Object.values( filters ?? {} ).filter( ( terms ) => !! terms?.[ term ] );
 
 		return results.length > 1;
 	},

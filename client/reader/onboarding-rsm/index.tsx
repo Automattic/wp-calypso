@@ -3,17 +3,16 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { CircularProgressBar } from '@automattic/components';
-import { SubscriptionManager } from '@automattic/data-stores';
 import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
-import { useQueryClient } from '@tanstack/react-query';
 import { Button, Modal } from '@wordpress/components';
 import { chevronLeft, close } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ConfirmDialog, DialogContent, DialogFooter } from 'calypso/components/confirm-dialog';
 import { useSiteSubscriptions as useCachedSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import { useFollowedTags } from 'calypso/reader/data/tags';
+import { useNonSelfSubscriptionsCount } from 'calypso/reader/following/hooks/use-non-self-subscriptions-count';
 import {
 	READER_ONBOARDING_ELIGIBLE_REGISTRATION_DATE,
 	READER_ONBOARDING_MIN_FOLLOWED_SITES,
@@ -35,7 +34,6 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
-import { useSiteSubscriptions } from '../following/use-site-subscriptions';
 import { getReloadStep } from './get-reload-step';
 import { useRefreshFollowingStreams } from './use-refresh-following-streams';
 import type { CuratedBlog } from 'calypso/reader/onboarding-rsm/curated-blogs';
@@ -61,15 +59,11 @@ const ReaderOnboardingRsm = ( {
 	isSuppressed?: boolean;
 } ) => {
 	const dispatch = useDispatch();
-	const queryClient = useQueryClient();
 	const refreshFollowingStreams = useRefreshFollowingStreams();
 
 	const preferencesLoaded = useSelector( hasReceivedRemotePreferences );
-	const {
-		isLoading: subscriptionsLoading,
-		hasNonSelfSubscriptions,
-		nonSelfSubscriptionsCount,
-	} = useSiteSubscriptions();
+	const { isLoading: subscriptionsLoading, nonSelfSubscriptionsCount } =
+		useNonSelfSubscriptionsCount();
 
 	const { data: followedTags, isPending: tagsPending } = useFollowedTags();
 	// Used in the `completed` event for an instant in-session site-follow
@@ -196,16 +190,16 @@ const ReaderOnboardingRsm = ( {
 
 	// Snapshot the "no non-self subscriptions" forceShow signal the first time
 	// the subscriptions query loads. Subscribing to a site inside the discover
-	// step (or any later step) would otherwise flip `hasNonSelfSubscriptions` to
-	// true and drop the modal mid-flow.
+	// step (or any later step) would update `nonSelfSubscriptionsCount` to
+	// a non-zero value and drop the modal mid-flow.
 	const [ startingForceShow, setStartingForceShow ] = useState< boolean | null >( null );
 
 	useEffect( () => {
 		if ( startingForceShow !== null || subscriptionsLoading ) {
 			return;
 		}
-		setStartingForceShow( ! hasNonSelfSubscriptions );
-	}, [ startingForceShow, subscriptionsLoading, hasNonSelfSubscriptions ] );
+		setStartingForceShow( nonSelfSubscriptionsCount === 0 );
+	}, [ startingForceShow, subscriptionsLoading, nonSelfSubscriptionsCount ] );
 
 	const forceShow = ! hasHiddenOnboardingThisSession && startingForceShow === true;
 
@@ -227,20 +221,6 @@ const ReaderOnboardingRsm = ( {
 		);
 	}
 
-	// Site follows inside the onboarding flow update the follows query, while
-	// SubscriptionManager owns separate TanStack Query caches. Invalidate those
-	// explicitly when leaving either step so the next mount of
-	// `useSiteSubscriptions` sees the user's real, post-onboarding follow
-	// counts rather than the pre-onboarding cached snapshot.
-	const invalidateSubscriptionQueries = () => {
-		queryClient.invalidateQueries( {
-			queryKey: SubscriptionManager.subscriptionsCountQueryKeyPrefix,
-		} );
-		queryClient.invalidateQueries( {
-			queryKey: SubscriptionManager.siteSubscriptionsQueryKeyPrefix,
-		} );
-	};
-
 	// Non-analytics side effects that run when leaving a step (whether via the
 	// X / escape, or via the "continue"/"back"/"finish" button transitioning
 	// to the next step). Centralised so the same effects fire on either path.
@@ -255,7 +235,6 @@ const ReaderOnboardingRsm = ( {
 			}
 		} else if ( step === 'interests' || step === 'discover' ) {
 			refreshFollowingStreams();
-			invalidateSubscriptionQueries();
 		}
 	};
 

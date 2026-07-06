@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
+import { isEmpty } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
 import SectionHeader from 'calypso/components/section-header';

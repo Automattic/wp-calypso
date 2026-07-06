@@ -1,6 +1,6 @@
 import config, { isCalypsoLive } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { isEmpty } from 'lodash';
+import { isEmpty } from '@automattic/js-utils';
 import PropTypes from 'prop-types';
 import validUrl from 'valid-url';
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';

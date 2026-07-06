@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
 import getKeyboardShortcutsEnabled from '../../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import { getFilters } from '../../panel/templates/filters';
+import ErrorBoundary from '../error-boundary';
 import NoteList from '../note-list';
 import CloseButton from '../templates/close-button';
 import NotePanelActions from './actions';
@@ -142,16 +143,21 @@ const NotePanel = ( {
 					</Tabs>
 				</VStack>
 			</CardHeader>
-			{ /* Key by `filterName` so switching tabs remounts the list. The tab
-			   filter is applied outside the DataViews `view`, so DataViews'
-			   infinite-scroll row accumulation would otherwise carry stale
-			   notes from the previously selected tab. */ }
-			<NoteList
-				key={ filterName }
-				filterName={ filterName }
-				selectedNoteId={ selectedNoteId }
-				setSelectedNoteId={ setSelectedNoteId }
-			/>
+			{ /* Scope the boundary to the list content so a render error there
+			   leaves the header controls (tabs, settings) intact and only
+			   overlays the message, instead of collapsing the whole panel. */ }
+			<ErrorBoundary>
+				{ /* Key by `filterName` so switching tabs remounts the list. The tab
+				   filter is applied outside the DataViews `view`, so DataViews'
+				   infinite-scroll row accumulation would otherwise carry stale
+				   notes from the previously selected tab. */ }
+				<NoteList
+					key={ filterName }
+					filterName={ filterName }
+					selectedNoteId={ selectedNoteId }
+					setSelectedNoteId={ setSelectedNoteId }
+				/>
+			</ErrorBoundary>
 		</>
 	);
 };

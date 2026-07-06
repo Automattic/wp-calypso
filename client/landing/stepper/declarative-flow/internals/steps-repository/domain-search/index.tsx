@@ -84,7 +84,26 @@ type StepSubmission = {
 
 const DomainSearchStep: StepType< {
 	submits: UseMyDomain | StepSubmission;
-} > = function DomainSearchStep( { navigation, flow } ) {
+	accepts: {
+		headerText?: string;
+		subHeaderText?: string;
+		hideUseMyDomainLink?: boolean;
+		hideFreeDomainPromo?: boolean;
+		freeDomainPromoTitle?: string;
+		freeDomainPromoSubtitle?: string;
+		allowedTlds?: string[];
+	};
+} > = function DomainSearchStep( {
+	navigation,
+	flow,
+	headerText: headerTextOverride,
+	subHeaderText: subHeaderTextOverride,
+	hideUseMyDomainLink,
+	hideFreeDomainPromo,
+	freeDomainPromoTitle,
+	freeDomainPromoSubtitle,
+	allowedTlds: allowedTldsProp,
+} ) {
 	const userSiteCount = useSelector( getCurrentUserSiteCount );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const dashboardOptIn = useSelector( hasDashboardOptIn );
@@ -140,7 +159,21 @@ const DomainSearchStep: StepType< {
 	} );
 
 	const config = useMemo( () => {
-		const allowedTlds = tldQuery?.split( ',' ) ?? [];
+		const urlAllowedTlds = tldQuery?.split( ',' ) ?? [];
+
+		// Precedence for allowedTlds:
+		//   1. Hundred-year flows force their own TLD list (business rule).
+		//   2. URL `?tld=` param wins when present (preserves deep-link behavior).
+		//   3. Flow-level `allowedTlds` prop fills the gap.
+		//   4. Empty array means "allow all TLDs".
+		let resolvedAllowedTlds: string[];
+		if ( isHundredYearPlanFlow( flow ) || isHundredYearDomainFlow( flow ) ) {
+			resolvedAllowedTlds = HUNDRED_YEAR_DOMAIN_TLDS;
+		} else if ( urlAllowedTlds.length > 0 ) {
+			resolvedAllowedTlds = urlAllowedTlds;
+		} else {
+			resolvedAllowedTlds = allowedTldsProp ?? [];
+		}
 
 		return {
 			vendor: getSuggestionsVendor( {
@@ -165,10 +198,7 @@ const DomainSearchStep: StepType< {
 				! isHundredYearDomainFlow( flow ) &&
 				! isDomainFlow( flow ) &&
 				! isDomainAndPlanFlow( flow ),
-			allowedTlds:
-				isHundredYearPlanFlow( flow ) || isHundredYearDomainFlow( flow )
-					? HUNDRED_YEAR_DOMAIN_TLDS
-					: allowedTlds,
+			allowedTlds: resolvedAllowedTlds,
 			includeOwnedDomainInSuggestions: true,
 			allowsUsingOwnDomain:
 				! isAIBuilderFlow( flow ) &&
@@ -176,7 +206,7 @@ const DomainSearchStep: StepType< {
 				! isHundredYearPlanFlow( flow ) &&
 				( isHundredYearDomainFlow( flow ) ? !! query : true ),
 		};
-	}, [ flow, isCiab, isWooHostingSolutions, tldQuery, query ] );
+	}, [ flow, isCiab, isWooHostingSolutions, tldQuery, query, allowedTldsProp ] );
 
 	const { submit } = navigation;
 
@@ -303,23 +333,41 @@ const DomainSearchStep: StepType< {
 	const slots = useMemo( () => {
 		return {
 			BeforeResults: () => {
-				if ( ! isFirstDomainFreeForFirstYear ) {
+				if ( hideFreeDomainPromo || ! isFirstDomainFreeForFirstYear ) {
 					return null;
 				}
 
-				return <FreeDomainForAYearPromo isCiab={ isCiab } />;
+				return (
+					<FreeDomainForAYearPromo
+						isCiab={ isCiab }
+						title={ freeDomainPromoTitle }
+						subtitle={ freeDomainPromoSubtitle }
+					/>
+				);
 			},
 			BeforeFullCartItems: () => {
-				if ( ! isFirstDomainFreeForFirstYear ) {
+				if ( hideFreeDomainPromo || ! isFirstDomainFreeForFirstYear ) {
 					return null;
 				}
 
+				// The textOnly variant has a single-paragraph layout (no title/subtitle pair),
+				// so the promo title/subtitle props don't apply here.
 				return <FreeDomainForAYearPromo textOnly isCiab={ isCiab } />;
 			},
 		};
-	}, [ isFirstDomainFreeForFirstYear, isCiab ] );
+	}, [
+		isFirstDomainFreeForFirstYear,
+		isCiab,
+		hideFreeDomainPromo,
+		freeDomainPromoTitle,
+		freeDomainPromoSubtitle,
+	] );
 
 	const headerText = useMemo( () => {
+		if ( headerTextOverride ) {
+			return headerTextOverride;
+		}
+
 		if ( isWooHostingSolutions ) {
 			return __( 'Name your store' );
 		}
@@ -337,9 +385,13 @@ const DomainSearchStep: StepType< {
 		}
 
 		return __( 'Claim your space on the web' );
-	}, [ flow, isCiab, isWooHostingSolutions, __ ] );
+	}, [ flow, isCiab, isWooHostingSolutions, __, headerTextOverride ] );
 
 	const subHeaderText = useMemo( () => {
+		if ( subHeaderTextOverride ) {
+			return subHeaderTextOverride;
+		}
+
 		if ( isWooHostingSolutions ) {
 			return __( 'Find a .com, .shop, or .store that customers will remember.' );
 		}
@@ -360,7 +412,7 @@ const DomainSearchStep: StepType< {
 		}
 
 		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
-	}, [ flow, isCiab, isWooHostingSolutions, __ ] );
+	}, [ flow, isCiab, isWooHostingSolutions, __, subHeaderTextOverride ] );
 
 	const domainSearchElement = (
 		<WPCOMDomainSearch
@@ -469,7 +521,9 @@ const DomainSearchStep: StepType< {
 			//     empty-state card is hidden — see style.scss).
 			// On desktop empty state, the link stays hidden and the
 			// in-body card carries the same CTA.
-			const showUseMyDomain = ( !! query || isMobileViewport ) && config.allowsUsingOwnDomain;
+			// `hideUseMyDomainLink` (flow-level) suppresses the CTA entirely.
+			const showUseMyDomain =
+				! hideUseMyDomainLink && ( !! query || isMobileViewport ) && config.allowsUsingOwnDomain;
 
 			if ( ! stepCounter && ! showUseMyDomain && ! showHelpCenter ) {
 				return;
@@ -568,7 +622,9 @@ const DomainSearchStep: StepType< {
 	};
 
 	const getSkipButton = () => {
-		if ( ! query || ! config.allowsUsingOwnDomain ) {
+		const showUseMyDomain = ! hideUseMyDomainLink && !! query && config.allowsUsingOwnDomain;
+
+		if ( ! showUseMyDomain ) {
 			return;
 		}
 

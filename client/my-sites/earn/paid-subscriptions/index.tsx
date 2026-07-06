@@ -49,7 +49,7 @@ const PaidSubscriptionsSection = ( { query }: PaidSubscriptionsSectionProps ) =>
 	const paid_subscriptions = useSelector(
 		( state ) => getOwnershipsForSiteId( state, site?.ID ),
 		shallowEqual
-	);
+	) as Record< string, PaidSubscription >;
 
 	const totalSubscribers = useSelector( ( state ) =>
 		getTotalSubscribersForSiteId( state, site?.ID )
