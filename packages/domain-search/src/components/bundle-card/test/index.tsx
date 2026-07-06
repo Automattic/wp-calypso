@@ -40,28 +40,25 @@ const threeDomains = [ ...twoDomains, buildDomain( { domain: 'example.org', cost
 const fourDomains = [ ...threeDomains, buildDomain( { domain: 'example.io', cost: '$30.00' } ) ];
 
 describe( 'BundleCard', () => {
-	it( 'renders the SLD as a heading', () => {
+	it( 'renders the protect-your-brand header', () => {
 		render( <BundleCard suggestion={ buildSuggestion( twoDomains ) } /> );
 
-		expect( screen.getByRole( 'heading', { name: 'example' } ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Protect your brand' ) ).toBeInTheDocument();
 	} );
 
-	it( 'renders exactly 2 companion rows for a 2-domain bundle', () => {
-		render( <BundleCard suggestion={ buildSuggestion( twoDomains ) } /> );
-
-		expect( screen.getAllByRole( 'listitem' ) ).toHaveLength( 2 );
-	} );
-
-	it( 'renders exactly 3 companion rows for a 3-domain bundle', () => {
-		render( <BundleCard suggestion={ buildSuggestion( threeDomains ) } /> );
-
-		expect( screen.getAllByRole( 'listitem' ) ).toHaveLength( 3 );
-	} );
-
-	it( 'renders exactly 4 companion rows for a 4-domain bundle', () => {
+	it( 'renders a TLD chip for each member domain', () => {
 		render( <BundleCard suggestion={ buildSuggestion( fourDomains ) } /> );
 
-		expect( screen.getAllByRole( 'listitem' ) ).toHaveLength( 4 );
+		expect( screen.getByText( '.com' ) ).toBeInTheDocument();
+		expect( screen.getByText( '.net' ) ).toBeInTheDocument();
+		expect( screen.getByText( '.org' ) ).toBeInTheDocument();
+		expect( screen.getByText( '.io' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders the member domains as a comma-joined line', () => {
+		render( <BundleCard suggestion={ buildSuggestion( threeDomains ) } /> );
+
+		expect( screen.getByText( 'example.com, example.net, example.org' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders the bundle price and the struck-through original price', () => {
@@ -103,10 +100,10 @@ describe( 'BundleCard', () => {
 	it( 'renders the discount percent text', () => {
 		render( <BundleCard suggestion={ buildSuggestion( twoDomains, { discount_percent: 20 } ) } /> );
 
-		expect( screen.getByText( 'Save 20%' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Bundle and save 20%' ) ).toBeInTheDocument();
 	} );
 
-	it( 'renders the premium badge and legal notice when a domain is premium', () => {
+	it( 'renders the premium legal notice when a domain is premium', () => {
 		render(
 			<BundleCard
 				suggestion={ buildSuggestion( [
@@ -116,16 +113,14 @@ describe( 'BundleCard', () => {
 			/>
 		);
 
-		expect( screen.getByText( 'Premium' ) ).toBeInTheDocument();
 		expect(
 			screen.getByText( /Premium domains are subject to different pricing/ )
 		).toBeInTheDocument();
 	} );
 
-	it( 'does not render the premium badge or notice for a non-premium bundle', () => {
+	it( 'does not render the premium notice for a non-premium bundle', () => {
 		render( <BundleCard suggestion={ buildSuggestion( twoDomains ) } /> );
 
-		expect( screen.queryByText( 'Premium' ) ).not.toBeInTheDocument();
 		expect(
 			screen.queryByText( /Premium domains are subject to different pricing/ )
 		).not.toBeInTheDocument();
