@@ -8,7 +8,7 @@
     direct-download path: it is code-signed and keeps the in-app
     electron-updater enabled, so existing users auto-update to it.
 
-    Signs via Azure Artifact Signing (AINFRA-2237).
+    Signs via Azure Artifact Signing.
 #>
 
 # PowerShell does not abort on a failed *native* command, only on failed cmdlets.
