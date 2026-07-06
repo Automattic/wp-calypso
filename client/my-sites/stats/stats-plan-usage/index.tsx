@@ -2,6 +2,7 @@ import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
+import InfoPopover from 'calypso/components/info-popover';
 import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
 import useSiteTypes from 'calypso/my-sites/stats/hooks/use-site-types';
 
@@ -66,14 +67,11 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 		) as string;
 	}
 
-	const upgradeNote = translate(
-		'Billable views are your total views minus your two highest-traffic days. Need a higher limit? {{link}}Upgrade now{{/link}}',
-		{
-			components: {
-				link: <a href={ upgradeLink } />,
-			},
-		}
-	);
+	const upgradeNote = translate( 'Need a higher limit? {{link}}Upgrade now{{/link}}', {
+		components: {
+			link: <a href={ upgradeLink } />,
+		},
+	} );
 
 	return (
 		<div className="plan-usage">
@@ -90,13 +88,20 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 					style={ { width: `${ progressWidthInPercentage }%` } }
 					key="bar"
 				></div>
-				<div key="usage">
-					{ translate( '%(numberOfUsage)s / %(numberOfLimit)s billable views', {
-						args: {
-							numberOfUsage: formatNumber( usage ),
-							numberOfLimit: typeof limit === 'number' ? formatNumber( limit ) : '-',
-						},
-					} ) }
+				<div className="plan-usage-progress-usage" key="usage">
+					<span>
+						{ translate( '%(numberOfUsage)s / %(numberOfLimit)s billable views', {
+							args: {
+								numberOfUsage: formatNumber( usage ),
+								numberOfLimit: typeof limit === 'number' ? formatNumber( limit ) : '-',
+							},
+						} ) }
+					</span>
+					<InfoPopover className="plan-usage-progress-info" position="top" iconSize={ 18 }>
+						{ translate(
+							'Billable views are your total views minus your two highest-traffic days, counted over your billing cycle. Billed on the lowest of your last three cycles.'
+						) }
+					</InfoPopover>
 				</div>
 				<div key="message">
 					{ translate(
