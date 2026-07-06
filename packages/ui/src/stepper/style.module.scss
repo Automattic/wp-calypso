@@ -91,21 +91,6 @@
 	border-style: solid;
 }
 
-// Upcoming step titles — de-emphasized (incomplete steps use the weak variant)
-[data-indicator-variant] .title {
-	color: var( --wpds-color-fg-interactive-neutral-weak );
-}
-
-// Completed step titles — same weight as upcoming but full neutral (not weak)
-[data-indicator-variant] [data-status='completed'] .title {
-	color: var( --wpds-color-fg-interactive-neutral );
-}
-
-// Current/active step title — full neutral, bold (weight set on the trigger below)
-[data-indicator-variant] [data-current] .title {
-	color: var( --wpds-color-fg-interactive-neutral );
-}
-
 // ---------------------------------------------------------------------------
 // Trigger
 // ---------------------------------------------------------------------------
@@ -130,12 +115,23 @@
 	text-align: start;
 	width: 100%;
 
+	// State text colors are set once here, on the button, and cascade to the
+	// title and description. Step state is read from the button's own
+	// attributes (data-status / aria-current / aria-disabled).
+	// Upcoming (incomplete) steps rest on the weak variant.
+	color: var( --wpds-color-fg-interactive-neutral-weak );
+
+	// Completed and current steps read at full neutral strength.
+	&[data-status='completed'],
+	&[aria-current='step'] {
+		color: var( --wpds-color-fg-interactive-neutral );
+	}
+
 	// Hover/focus use the -active variant of the same neutral tone; WPDS
 	// tokens should not mix tones (no brand color on a neutral control).
-	&:hover:not( [aria-disabled='true'] ) {
-		.title {
-			color: var( --wpds-color-fg-interactive-neutral-active );
-		}
+	&:hover:not( [aria-disabled='true'] ),
+	&:focus-visible:not( [aria-disabled='true'] ) {
+		color: var( --wpds-color-fg-interactive-neutral-active );
 
 		// Number-variant current step has a solid filled circle — skip border change
 		// to avoid a ring appearing against the dark background on hover.
@@ -153,11 +149,7 @@
 
 	&[aria-disabled='true'] {
 		cursor: default;
-
-		&,
-		.title {
-			color: var( --wpds-color-fg-interactive-neutral-disabled );
-		}
+		color: var( --wpds-color-fg-interactive-neutral-disabled );
 	}
 
 	&[aria-expanded='true'],
@@ -198,8 +190,8 @@
 // Title and Description
 // ---------------------------------------------------------------------------
 
-// Title color is set by the `[data-indicator-variant] … .title` rules above;
-// the root always renders `data-indicator-variant`, so no base color is needed.
+// Title color is inherited from the `.trigger` button, which owns the
+// per-state (upcoming/completed/current/hover/disabled) text colors.
 .title {
 	font-weight: inherit;
 }
