@@ -47,7 +47,7 @@ export const StepperTrigger = forwardRef< HTMLElement, StepperTriggerProps >(
 				<Accordion.Header render={ headerElement } className={ styles[ 'trigger-heading' ] }>
 					<Accordion.Trigger
 						ref={ callbackRef as Ref< HTMLButtonElement > }
-						render={ <Button variant="minimal" /> }
+						render={ <Button variant="minimal" tone="neutral" /> }
 						aria-current={ isCurrent ? 'step' : undefined }
 						className={ clsx( styles[ 'trigger' ], className ) }
 						{ ...props }
@@ -76,7 +76,7 @@ export const StepperTrigger = forwardRef< HTMLElement, StepperTriggerProps >(
 				ref={ callbackRef as Ref< HTMLButtonElement > }
 				value={ value }
 				disabled={ isDisabled }
-				render={ <Button variant="minimal" /> }
+				render={ <Button variant="minimal" tone="neutral" /> }
 				aria-current={ isCurrent ? 'step' : undefined }
 				className={ clsx( styles[ 'trigger' ], className ) }
 				{ ...props }
