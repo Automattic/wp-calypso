@@ -1,11 +1,23 @@
 import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useAnalytics } from '../../../app/analytics';
+import { DataViewsCard } from '../../../components/dataviews';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
+import CommissionsTable from './commissions-table';
+import { useDownloadCommissionsReport } from './use-download-commissions-report';
 import useWooPaymentsDashboardData from './use-woopayments-dashboard-data';
 
 export default function EarnWooPayments() {
-	const { isLoading, showEmptyState } = useWooPaymentsDashboardData();
+	const {
+		isLoading,
+		showEmptyState,
+		woopaymentsData,
+		isLoadingWooPaymentsData,
+		sitesWithPluginsStates,
+	} = useWooPaymentsDashboardData();
+	const { recordTracksEvent } = useAnalytics();
+	const { downloadCommissionsReport } = useDownloadCommissionsReport();
 
 	const header = (
 		<PageHeader
@@ -23,7 +35,15 @@ export default function EarnWooPayments() {
 			{ showEmptyState ? (
 				<Text>{ __( 'Add WooPayments to a client site to start earning commissions.' ) }</Text>
 			) : (
-				<Text>{ __( 'Commissions overview and per-site breakdown coming next.' ) }</Text>
+				<DataViewsCard>
+					<CommissionsTable
+						sites={ sitesWithPluginsStates }
+						woopaymentsData={ woopaymentsData }
+						isLoadingWooPaymentsData={ isLoadingWooPaymentsData }
+						recordTracksEvent={ recordTracksEvent }
+						onDownloadReport={ downloadCommissionsReport }
+					/>
+				</DataViewsCard>
 			) }
 		</PageLayout>
 	);
