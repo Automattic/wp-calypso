@@ -13,9 +13,10 @@ const MESSAGE =
 	'lodash has been removed from this codebase — do not add new lodash imports. Use native ' +
 	'JavaScript or a helper from `@automattic/js-utils` (see docs/coding-guidelines/javascript.md).';
 
-// Matches `lodash`, `lodash/<fn>`, and the per-method `lodash.<fn>` packages, but
-// not `lodash-es` (the allowed replacement) or unrelated names like `lodashy`.
-const isLodash = ( value ) => /^lodash($|[/.])/.test( value );
+// Matches `lodash` and `lodash-es`, their subpath imports (`lodash/<fn>`,
+// `lodash-es/<fn>`), and the per-method `lodash.<fn>` packages — but not unrelated
+// names like `lodashy` or `my-lodash`.
+const isLodash = ( value ) => /^lodash(-es)?($|[/.])/.test( value );
 
 // The statically-known string an import/require resolves to, or `undefined` when
 // the source is dynamic (e.g. `import( someVariable )`) and cannot be checked.

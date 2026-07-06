@@ -4,11 +4,11 @@ lodash has been removed from the wp-calypso codebase in favor of native
 JavaScript and helpers from `@automattic/js-utils`. This rule prevents it from
 being reintroduced.
 
-It reports every way of naming the `lodash`, `lodash/<fn>`, and per-method
-`lodash.<fn>` packages — a static `import`, a re-export (`export … from`), a
-dynamic `import()`, a CommonJS `require()`, a TypeScript `import x = require()`,
-and a TypeScript import-type query (`type X = import('lodash').Foo`). The
-tree-shakeable `lodash-es` replacement is not affected.
+It reports every way of naming the `lodash`, `lodash-es`, `lodash/<fn>`,
+`lodash-es/<fn>`, and per-method `lodash.<fn>` packages — a static `import`, a
+re-export (`export … from`), a dynamic `import()`, a CommonJS `require()`, a
+TypeScript `import x = require()`, and a TypeScript import-type query
+(`type X = import('lodash').Foo`).
 
 `require.resolve( 'lodash' )` is intentionally allowed: it resolves a module
 path (build tooling relies on this) without importing or executing lodash.
@@ -25,11 +25,11 @@ import _ from 'lodash';
 import merge from 'lodash/merge';
 export * from 'lodash';
 const mergeWith = require( 'lodash.mergewith' );
+import { debounce } from 'lodash-es';
 ```
 
 Examples of **correct** code for this rule:
 
 ```js
-import { debounce } from 'lodash-es';
 const lodashPath = require.resolve( 'lodash/lodash.js' );
 ```

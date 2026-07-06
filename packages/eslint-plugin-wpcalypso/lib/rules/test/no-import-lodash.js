@@ -30,11 +30,7 @@ const ruleTester = new RuleTester( {
 
 ruleTester.run( 'no-import-lodash', rule, {
 	valid: [
-		// The allowed replacement and unrelated names must not be flagged.
-		"import { map } from 'lodash-es';",
-		"import map from 'lodash-es/map';",
-		"export { map } from 'lodash-es';",
-		"const map = require( 'lodash-es/map' );",
+		// Unrelated names that merely begin with "lodash" must not be flagged.
 		"import x from 'lodashy';",
 		"import x from 'my-lodash';",
 		// A dynamic (non-static) source cannot be checked, so it is not reported.
@@ -44,8 +40,6 @@ ruleTester.run( 'no-import-lodash', rule, {
 		// is out of scope (build tooling uses it, e.g. `require.resolve( 'lodash/lodash.js' )`).
 		"require.resolve( 'lodash' );",
 		"require.resolve( 'lodash/lodash.js' );",
-		// TypeScript `import =` targeting the allowed replacement.
-		{ code: "import _ = require( 'lodash-es' );", parser: tsParser },
 	],
 
 	invalid: [
@@ -59,8 +53,14 @@ ruleTester.run( 'no-import-lodash', rule, {
 		{ code: "const _ = require( 'lodash' );", errors },
 		{ code: 'const _ = require( `lodash` );', errors },
 		{ code: "const mw = require( 'lodash.mergewith' );", errors },
+		// `lodash-es` and its subpath imports are covered too.
+		{ code: "import { map } from 'lodash-es';", errors },
+		{ code: "import map from 'lodash-es/map';", errors },
+		{ code: "export { map } from 'lodash-es';", errors },
+		{ code: "const map = require( 'lodash-es/map' );", errors },
 		// TypeScript `import =` (`import x = require( … )`).
 		{ code: "import _ = require( 'lodash' );", parser: tsParser, errors },
+		{ code: "import _ = require( 'lodash-es' );", parser: tsParser, errors },
 		// TypeScript import-type query (`type X = import( … ).Foo`).
 		{ code: "type X = import( 'lodash' ).LoDashStatic;", parser: tsParser, errors },
 	],
