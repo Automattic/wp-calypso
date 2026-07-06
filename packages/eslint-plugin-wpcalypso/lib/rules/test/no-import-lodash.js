@@ -53,15 +53,19 @@ ruleTester.run( 'no-import-lodash', rule, {
 		{ code: "const _ = require( 'lodash' );", errors },
 		{ code: 'const _ = require( `lodash` );', errors },
 		{ code: "const mw = require( 'lodash.mergewith' );", errors },
-		// `lodash-es` and its subpath imports are covered too.
+		// `lodash-es` is covered in every import shape too.
 		{ code: "import { map } from 'lodash-es';", errors },
 		{ code: "import map from 'lodash-es/map';", errors },
 		{ code: "export { map } from 'lodash-es';", errors },
+		{ code: "export * from 'lodash-es';", errors },
+		{ code: "const p = import( 'lodash-es' );", errors },
+		{ code: "const _ = require( 'lodash-es' );", errors },
 		{ code: "const map = require( 'lodash-es/map' );", errors },
 		// TypeScript `import =` (`import x = require( … )`).
 		{ code: "import _ = require( 'lodash' );", parser: tsParser, errors },
 		{ code: "import _ = require( 'lodash-es' );", parser: tsParser, errors },
 		// TypeScript import-type query (`type X = import( … ).Foo`).
 		{ code: "type X = import( 'lodash' ).LoDashStatic;", parser: tsParser, errors },
+		{ code: "type X = import( 'lodash-es' ).LoDashStatic;", parser: tsParser, errors },
 	],
 } );
