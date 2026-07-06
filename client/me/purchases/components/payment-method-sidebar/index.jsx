@@ -7,9 +7,6 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 
 import './style.scss';
 
-/**
- * @param {{ purchase?: Object }} props
- */
 export default function PaymentMethodSidebar( { purchase } ) {
 	const translate = useTranslate();
 

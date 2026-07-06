@@ -72,9 +72,6 @@ function QueryPrimaryAndRecent() {
 	return null;
 }
 
-/**
- * @param {{ siteId?: number | string | null; allSites?: boolean; primaryAndRecent?: boolean }} props
- */
 export default function QuerySites( { siteId, allSites = false, primaryAndRecent = false } ) {
 	return (
 		<Fragment>

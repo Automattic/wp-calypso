@@ -33,8 +33,7 @@
 		"react-dom": "^18.3.1 || ^19.0.0"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "workspace:^",
-		"@testing-library/react": "^16.3.0"
+		"@automattic/calypso-typescript-config": "workspace:^"
 	},
 	"scripts": {
 		"clean": "rm -rf dist",

@@ -8,13 +8,6 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-/**
- * @param {{
- *   sectionTitle?: import('react').ReactNode;
- *   site?: { title?: string } | null;
- *   toggleSidebar?: () => void;
- * }} props
- */
 function SidebarNavigation( { sectionTitle, site, toggleSidebar } ) {
 	const translate = useTranslate();
 

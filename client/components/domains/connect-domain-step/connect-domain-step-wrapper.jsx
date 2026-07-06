@@ -4,9 +4,6 @@ import { stepSlug } from './constants';
 
 import './style.scss';
 
-/**
- * @param {{ className?: string; heading?: string; progressStepList: Object; pageSlug: string; stepContent?: import('react').ReactNode; }} props
- */
 export default function ConnectDomainStepWrapper( {
 	className,
 	progressStepList,

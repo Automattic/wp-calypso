@@ -2425,7 +2425,6 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/viewport": "workspace:^"
-    "@testing-library/react": "npm:^16.3.0"
     "@wordpress/compose": "npm:^8.2.0"
   peerDependencies:
     react: ^18.3.1 || ^19.0.0
@@ -8858,7 +8857,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:^16.3.0, @testing-library/react@npm:^16.3.2":
+"@testing-library/react@npm:^16.3.2":
   version: 16.3.2
   resolution: "@testing-library/react@npm:16.3.2"
   dependencies:
@@ -9683,7 +9682,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/prop-types@npm:^15.0.0":
+"@types/prop-types@npm:*, @types/prop-types@npm:^15.0.0":
   version: 15.7.5
   resolution: "@types/prop-types@npm:15.7.5"
   checksum: 648aae41423821c61c83823ae36116c8d0f68258f8b609bdbc257752dcd616438d6343d554262aa9a7edaee5a19aca2e028a74fa2d0f40fffaf2816bc7056857
@@ -9704,12 +9703,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:19.2.3":
-  version: 19.2.3
-  resolution: "@types/react-dom@npm:19.2.3"
+"@types/react-dom@npm:^18.3.7":
+  version: 18.3.7
+  resolution: "@types/react-dom@npm:18.3.7"
   peerDependencies:
-    "@types/react": ^19.2.0
-  checksum: b486ebe0f4e2fb35e2e108df1d8fc0927ca5d6002d5771e8a739de11239fe62d0e207c50886185253c99eb9dedfeeb956ea7429e5ba17f6693c7acb4c02f8cd1
+    "@types/react": ^18.0.0
+  checksum: 8bd309e2c3d1604a28a736a24f96cbadf6c05d5288cfef8883b74f4054c961b6b3a5e997fd5686e492be903c8f3380dba5ec017eff3906b1256529cd2d39603e
   languageName: node
   linkType: hard
 
@@ -9740,12 +9739,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:19.2.16":
-  version: 19.2.16
-  resolution: "@types/react@npm:19.2.16"
+"@types/react@npm:^18.3.27":
+  version: 18.3.31
+  resolution: "@types/react@npm:18.3.31"
   dependencies:
+    "@types/prop-types": "npm:*"
     csstype: "npm:^3.2.2"
-  checksum: 96f2850b67c5aa4a695bc32eb06c7609acdda1c0c597ace21ad24a5b9e2ccbccd97c0643253579fd629789a422a3694b4bbcb26e5fc6aec5f0357820bf0ee81c
+  checksum: 44180549dd045f536ececd39e39aacdf828e76adc1c4a90b132f453e23cc370c4648d9102ae401172ebd8fd8b1977a901a39e214e53ec77171b27514b588c179
   languageName: node
   linkType: hard
 
@@ -11150,7 +11150,7 @@ __metadata:
 
 "@wordpress/block-editor@patch:@wordpress/block-editor@^15.21.0#~/.yarn/patches/@wordpress-block-editor-npm-15.20.0-2d52fc5cc4.patch":
   version: 15.21.0
-  resolution: "@wordpress/block-editor@patch:@wordpress/block-editor@npm%3A15.21.0#~/.yarn/patches/@wordpress-block-editor-npm-15.20.0-2d52fc5cc4.patch::version=15.21.0&hash=78fee8"
+  resolution: "@wordpress/block-editor@patch:@wordpress/block-editor@npm%3A15.21.0#~/.yarn/patches/@wordpress-block-editor-npm-15.20.0-2d52fc5cc4.patch::version=15.21.0&hash=ae8e93"
   dependencies:
     "@react-spring/web": "npm:^9.4.5"
     "@wordpress/a11y": "npm:^4.48.0"
@@ -11207,7 +11207,7 @@ __metadata:
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: 6e90a5410de78b312f763def5f34aedd00d7db906e6165e602694799cff4ce3900a84632b68301a7ec1d163fe1d07f1ae17813b8c448c76fc24bd1e2655d1f8a
+  checksum: 7c59c682d878b67db6545d5d9d8bebd9f575e12cf9a0144ded0bcc1f91cec0861db2f97e043108951fc074202fa952183e980f4479baa6a3068a4f49403259af
   languageName: node
   linkType: hard
 
@@ -11790,7 +11790,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/element@npm:8.0.0":
+"@wordpress/element@npm:^8.0.0":
   version: 8.0.0
   resolution: "@wordpress/element@npm:8.0.0"
   dependencies:
@@ -11803,22 +11803,6 @@ __metadata:
     react: "npm:^18.3.0"
     react-dom: "npm:^18.3.0"
   checksum: 8f4d86cf776b34c310ee8f924793f36b965caacb1f7c4f24ff6a540d3eb60fc66e784b6c0ac1c10ae4e985b33cb3a91364d940a784bcd44ca1f45d7bf4ffb926
-  languageName: node
-  linkType: hard
-
-"@wordpress/element@patch:@wordpress/element@npm%3A8.0.0#~/.yarn/patches/@wordpress-element-npm-8.0.0-edeb0f6c73.patch":
-  version: 8.0.0
-  resolution: "@wordpress/element@patch:@wordpress/element@npm%3A8.0.0#~/.yarn/patches/@wordpress-element-npm-8.0.0-edeb0f6c73.patch::version=8.0.0&hash=d44676"
-  dependencies:
-    "@types/react": "npm:^18.3.27"
-    "@types/react-dom": "npm:^18.3.1"
-    "@wordpress/deprecated": "npm:^4.48.0"
-    "@wordpress/escape-html": "npm:^3.48.0"
-    change-case: "npm:^4.1.2"
-    is-plain-object: "npm:^5.0.0"
-    react: "npm:^18.3.0"
-    react-dom: "npm:^18.3.0"
-  checksum: 1bb3f9977f68a6a2b477f4ba157974de6d9be0adbc11a7f9e159d5b5ff914491e739ec284c74513965efcd1320e784c59814796c17c64c13c217be9a55ae52ea
   languageName: node
   linkType: hard
 
@@ -14406,7 +14390,7 @@ __metadata:
     "@testing-library/user-event": "npm:^14.6.1"
     "@types/express": "npm:^4.17.22"
     "@types/prismjs": "npm:^1.26.6"
-    "@types/react": "npm:19.2.16"
+    "@types/react": "npm:^18.3.23"
     "@types/react-slider": "npm:^1.3.6"
     "@types/redux-mock-store": "npm:1.5.0"
     "@visx/glyph": "npm:^3.12.0"
@@ -14514,9 +14498,9 @@ __metadata:
     prop-types: "npm:^15.8.1"
     qrcode.react: "npm:^3.1.0"
     qs: "npm:^6.15.2"
-    react: "npm:19.2.7"
+    react: "npm:^18.3.1"
     react-day-picker: "npm:^7.4.10"
-    react-dom: "npm:19.2.7"
+    react-dom: "npm:^18.3.1"
     react-intersection-observer: "npm:^9.4.3"
     react-markdown: "npm:^8.0.7"
     react-modal: "npm:^3.16.3"
@@ -20630,7 +20614,6 @@ __metadata:
     "@babel/runtime": "npm:^7.27.1"
     "@tannin/sprintf": "npm:^1.1.0"
     "@testing-library/jest-dom": "npm:^6.9.1"
-    "@testing-library/react": "npm:^16.3.0"
     "@types/jest": "npm:^29.5.14"
     "@types/react": "npm:^18.3.23"
     "@wordpress/compose": "npm:^8.2.0"
@@ -27371,7 +27354,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:19.2.7":
+"react-dom@npm:18.3.1, react-dom@npm:^18.0.0, react-dom@npm:^18.3.0, react-dom@npm:^18.3.1":
+  version: 18.3.1
+  resolution: "react-dom@npm:18.3.1"
+  dependencies:
+    loose-envify: "npm:^1.1.0"
+    scheduler: "npm:^0.23.2"
+  peerDependencies:
+    react: ^18.3.1
+  checksum: a752496c1941f958f2e8ac56239172296fcddce1365ce45222d04a1947e0cc5547df3e8447f855a81d6d39f008d7c32eab43db3712077f09e3f67c4874973e85
+  languageName: node
+  linkType: hard
+
+"react-dom@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0":
   version: 19.2.7
   resolution: "react-dom@npm:19.2.7"
   dependencies:
@@ -27792,7 +27787,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:19.2.7":
+"react@npm:18.3.1, react@npm:^18.0.0, react@npm:^18.3.0, react@npm:^18.3.1":
+  version: 18.3.1
+  resolution: "react@npm:18.3.1"
+  dependencies:
+    loose-envify: "npm:^1.1.0"
+  checksum: 283e8c5efcf37802c9d1ce767f302dd569dd97a70d9bb8c7be79a789b9902451e0d16334b05d73299b20f048cbc3c7d288bbbde10b701fa194e2089c237dbea3
+  languageName: node
+  linkType: hard
+
+"react@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0":
   version: 19.2.7
   resolution: "react@npm:19.2.7"
   checksum: 0bd0e2f1bbd4ba97561c6597bf8a5fec05e6476fe61e165c1065598d16668efc6715205599c94d3ddd49d36cb0f21cbf1b9bcc18ee840b805ce222c3e8d558ac
@@ -33629,7 +33633,7 @@ __metadata:
     "@types/node": "npm:^24.12.2"
     "@types/page": "npm:^1.11.9"
     "@types/qs": "npm:^6.9.7"
-    "@types/react": "npm:19.2.16"
+    "@types/react": "npm:^18.3.27"
     "@types/react-modal": "npm:^3.16.3"
     "@types/react-transition-group": "npm:^4.4.4"
     "@types/store": "npm:^2.0.5"
@@ -33722,8 +33726,8 @@ __metadata:
     postcss-cli: "npm:^9.0.1"
     postcss-custom-properties: "npm:^12.1.11"
     prettier: "npm:wp-prettier@3.0.3"
-    react: "npm:19.2.7"
-    react-dom: "npm:19.2.7"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
     react-hook-form: "npm:^7.52.2"
     react-intersection-observer: "npm:^9.4.3"
     react-modal: "npm:^3.16.3"

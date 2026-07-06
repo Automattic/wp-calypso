@@ -20,9 +20,9 @@ const SectionNavbar = styled( SectionNav )`
 `;
 
 interface MetricsMenuProps {
-	basicMetricsRef?: React.RefObject< HTMLElement | null >;
-	performanceMetricsRef?: React.RefObject< HTMLElement | null >;
-	healthScoresRef?: React.RefObject< HTMLElement | null >;
+	basicMetricsRef?: React.RefObject< HTMLObjectElement >;
+	performanceMetricsRef?: React.RefObject< HTMLObjectElement >;
+	healthScoresRef?: React.RefObject< HTMLObjectElement >;
 	onCTAClick: () => void;
 }
 

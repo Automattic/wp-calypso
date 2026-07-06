@@ -15,33 +15,3 @@ index a127d31c1fbdc56301fe78f2c0713f135afce2a1..d2121720e3a94873a104f79931c3ccb7
  	},
  	"react-native": "src/index",
  	"wpScript": true,
-diff --git a/build-module/components/iframe/index.mjs b/build-module/components/iframe/index.mjs
-index 721cd25a3cd88e2cf8ab52bae027ce4584f9c266..4bd3783687be37f301dc17b7e1501c8fca1a12f7 100644
---- a/build-module/components/iframe/index.mjs
-+++ b/build-module/components/iframe/index.mjs
-@@ -85,9 +85,7 @@ function getIframeSrc(resolvedAssets) {
- 		${resolvedAssets.styles ?? ""}
- 		${resolvedAssets.scripts ?? ""}
- 	</head>
--	<body>
--		<script>document.currentScript.parentElement.remove()</script>
--	</body>
-+	<body></body>
- </html>`;
-   src = URL.createObjectURL(new Blob([html], { type: "text/html" }));
-   iframeSrcCache.set(resolvedAssets, src);
-diff --git a/build/components/iframe/index.cjs b/build/components/iframe/index.cjs
-index 8287e32cb414cf543972e7db9945a8f34d5f728b..e3bb13d803241584e73651f418c27d3cc9f56f52 100644
---- a/build/components/iframe/index.cjs
-+++ b/build/components/iframe/index.cjs
-@@ -119,9 +119,7 @@ function getIframeSrc(resolvedAssets) {
- 		${resolvedAssets.styles ?? ""}
- 		${resolvedAssets.scripts ?? ""}
- 	</head>
--	<body>
--		<script>document.currentScript.parentElement.remove()</script>
--	</body>
-+	<body></body>
- </html>`;
-   src = URL.createObjectURL(new Blob([html], { type: "text/html" }));
-   iframeSrcCache.set(resolvedAssets, src);

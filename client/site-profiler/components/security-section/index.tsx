@@ -13,7 +13,7 @@ interface SecuritySectionProps {
 	url?: string;
 	hash?: string;
 	hostingProvider?: HostingProvider;
-	securityMetricsRef: React.RefObject< HTMLElement | null >;
+	securityMetricsRef: React.RefObject< HTMLObjectElement >;
 	setIsGetReportFormOpen?: ( isOpen: boolean ) => void;
 }
 

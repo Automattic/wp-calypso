@@ -36,9 +36,9 @@ interface Props {
 
 export default function SiteProfiler( props: Props ) {
 	const { routerDomain } = props;
-	const basicMetricsRef = useRef< HTMLElement >( null );
-	const performanceMetricsRef = useRef< HTMLElement >( null );
-	const healthScoresRef = useRef< HTMLElement >( null );
+	const basicMetricsRef = useRef( null );
+	const performanceMetricsRef = useRef( null );
+	const healthScoresRef = useRef( null );
 	const [ isGetReportFormOpen, setIsGetReportFormOpen ] = useState( false );
 
 	const {

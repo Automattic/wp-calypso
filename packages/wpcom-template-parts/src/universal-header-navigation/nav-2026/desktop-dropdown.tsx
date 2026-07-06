@@ -4,7 +4,7 @@ import { ClickableItem } from '../menu-items';
 import type { Nav2026Menu } from './types';
 
 interface Nav2026DesktopDropdownProps {
-	dropdownRef: React.RefObject< HTMLDivElement | null >;
+	dropdownRef: React.RefObject< HTMLDivElement >;
 	activeDropdown: string | null;
 	nav2026Menus: Nav2026Menu[];
 	onMouseLeave?: React.MouseEventHandler< HTMLDivElement >;

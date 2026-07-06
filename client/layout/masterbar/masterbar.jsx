@@ -3,9 +3,6 @@ import PropTypes from 'prop-types';
 
 import './style.scss';
 
-/**
- * @param {{ children?: import('react').ReactNode; className?: string }} props
- */
 const Masterbar = ( { children, className } ) => (
 	<header id="header" className={ clsx( 'masterbar', className ) }>
 		{ children }
