@@ -73,6 +73,7 @@ const ReaderSidebarRecent = ( {
 	const [ showAllSites, setShowAllSites ] = useState( false );
 	const sites = useSubscribedSites();
 	const totalUnseenCount = sites.reduce( ( sum, site ) => sum + ( site.unseen_count ?? 0 ), 0 );
+	const showUnseenCount = totalUnseenCount > 0;
 	const selectedSiteFeedId = useSelector< AppState, number | null >( getSelectedRecentFeedId );
 	const moment = useLocalizedMoment();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
@@ -119,10 +120,11 @@ const ReaderSidebarRecent = ( {
 			expanded={ isOpen }
 			title={ translate( 'Recent' ) }
 			disableFlyout
-			className={ clsx( 'reader-sidebar-recent', 'has-counts', className, {
+			className={ clsx( 'reader-sidebar-recent', className, {
+				'has-counts': showUnseenCount,
 				'sidebar__menu--selected': isRecentStream && ( ! isOpen || selectedSiteFeedId === null ),
 			} ) }
-			count={ totalUnseenCount > 0 ? totalUnseenCount : undefined }
+			count={ showUnseenCount ? totalUnseenCount : undefined }
 			icon={ null }
 			materialIcon={ null }
 			materialIconStyle={ null }
@@ -153,7 +155,7 @@ const ReaderSidebarRecent = ( {
 										</span>
 									) }
 								</span>
-								{ site.unseen_count > 0 && <Count count={ site.unseen_count } compact /> }
+								{ showUnseenCount && <Count count={ site.unseen_count } compact /> }
 							</MenuItemLink>
 						</AutoDirection>
 					</MenuItem>

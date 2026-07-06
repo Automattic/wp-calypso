@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
+import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
@@ -301,9 +302,7 @@ class ReaderPostEllipsisMenu extends Component {
 						iconSize={ 24 }
 					>
 						{ isSeen && posts.length === 0 && translate( 'Mark as unseen' ) }
-						{ isSeen && posts.length > 0 && translate( 'Mark all as unseen' ) }
 						{ ! isSeen && posts.length === 0 && translate( 'Mark as seen' ) }
-						{ ! isSeen && posts.length > 0 && translate( 'Mark all as seen' ) }
 					</PopoverMenuItem>
 				) }
 
@@ -364,7 +363,7 @@ const ConnectedPostEllipsisMenu = connect(
 		blockSite,
 		recordReaderTracksEvent,
 	}
-)( localize( withSeenPostsMutations( ReaderPostEllipsisMenu ) ) );
+)( localize( withSeenPostsMutations( withReaderTeams( ReaderPostEllipsisMenu ) ) ) );
 
 export default function PostEllipsisMenuContainer( props ) {
 	return <ConnectedPostEllipsisMenu { ...props } />;

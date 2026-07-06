@@ -15,16 +15,11 @@ class ReaderPostOptionsMenu extends Component {
 		post: PropTypes.object,
 		feed: PropTypes.object,
 		followSource: PropTypes.string,
-		onBlock: PropTypes.func,
 		openSuggestedFollows: PropTypes.func,
 		showFollow: PropTypes.bool,
 		showVisitPost: PropTypes.bool,
 		showEditPost: PropTypes.bool,
 		showConversationFollow: PropTypes.bool,
-		showReportPost: PropTypes.bool,
-		showReportSite: PropTypes.bool,
-		position: PropTypes.string,
-		posts: PropTypes.array,
 		teams: PropTypes.array,
 	};
 
@@ -36,13 +31,8 @@ class ReaderPostOptionsMenu extends Component {
 			followSource,
 			teams,
 			translate,
-			position,
-			posts,
-			onBlock,
 			openSuggestedFollows,
 			showVisitPost,
-			showReportPost,
-			showReportSite,
 			showEditPost,
 			showFollow,
 			showConversationFollow,
@@ -61,13 +51,8 @@ class ReaderPostOptionsMenu extends Component {
 					site={ site }
 					teams={ teams }
 					translate={ translate }
-					position={ position }
 					post={ post }
-					posts={ posts }
-					onBlock={ onBlock }
 					showVisitPost={ showVisitPost }
-					showReportPost={ showReportPost }
-					showReportSite={ showReportSite }
 					showEditPost={ showEditPost }
 					showFollow={ showFollow }
 					showConversationFollow={ showConversationFollow }

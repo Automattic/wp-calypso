@@ -643,7 +643,7 @@ export class FullPostView extends Component {
 		}
 	};
 
-	renderMarkAsSenButton = () => {
+	renderMarkAsSeenButton = () => {
 		const { post } = this.props;
 		const label = post.is_seen
 			? translate( 'Mark post as unseen' )
@@ -756,7 +756,7 @@ export class FullPostView extends Component {
 										post.discussion?.comment_count > 0
 									}
 									renderMarkAsSeenButton={
-										isAutomatticTeamMember( this.props.teams ) ? this.renderMarkAsSenButton : null
+										isAutomatticTeamMember( this.props.teams ) ? this.renderMarkAsSeenButton : null
 									}
 									feedUrl={ feedUrl }
 									siteUrl={ post.site_URL }
