@@ -856,10 +856,10 @@
 	}
 
 	.plan-features-2023-grid__table-item.is-top-buttons {
-		padding: 0 16px 20px;
+		padding: 0 16px;
 
 		button {
-			margin: 0;
+			margin: 16px 0;
 		}
 	}
 
@@ -1043,6 +1043,11 @@
 		.is-top-buttons.plan-features-2023-grid__table-item {
 			background-color: var( --studio-white );
 			box-shadow: 0 2px 2px rgba( 0, 0, 0, 0.04 );
+		}
+
+		.button.plan-features-2023-grid__actions-button {
+			height: auto;
+			min-height: 40px;
 		}
 	}
 
