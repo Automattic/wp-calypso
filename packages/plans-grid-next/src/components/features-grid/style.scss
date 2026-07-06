@@ -923,9 +923,19 @@
 	}
 
 	.plans-grid-next-storage-feature-label__volume {
+		align-items: center;
+		display: flex;
 		font-size: 12px;
+		gap: 4px;
 		line-height: 16px;
 		padding: 0;
+	}
+
+	.plans-grid-next-storage-feature-label__icon {
+		color: #000;
+		flex: 0 0 17px;
+		height: 12px;
+		width: 17px;
 	}
 
 	.plan-features-2023-grid__table-item.popular-plan-parent-class {
