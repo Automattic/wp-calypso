@@ -91,6 +91,7 @@ function Switcher< T >( {
 			open={ open }
 			onToggle={ onToggle }
 			defaultOpen={ defaultOpen }
+			expandOnMobile={ ! isDesktop }
 			popoverProps={ { ...DEFAULT_POPOVER_PROPS, ...popoverProps } }
 			renderToggle={ renderDropdownToggle }
 			renderContent={ ( { onClose } ) => (
@@ -101,6 +102,7 @@ function Switcher< T >( {
 					renderItem={ renderItem }
 					view={ view }
 					onChangeView={ setView }
+					width={ isDesktop ? '280px' : '100%' }
 					onClose={ onClose }
 					onItemClick={ onItemClick }
 				>

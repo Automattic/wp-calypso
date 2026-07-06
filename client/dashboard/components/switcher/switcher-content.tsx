@@ -21,7 +21,7 @@ export default function SwitcherContent< T >( {
 	searchClassName,
 	view,
 	onChangeView,
-	width = 'min(280px, calc(100vw - 32px))',
+	width = '280px',
 	getItemUrl,
 	renderItem,
 	resetScroll = true,
