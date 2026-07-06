@@ -1,16 +1,40 @@
 /**
  * @jest-environment jsdom
  */
-import { readSubscribedListsQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import documentHeadReducer from 'calypso/state/document-head/reducer';
 import readerReducer from 'calypso/state/reader/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import ReaderLists from '..';
-import type { List } from 'calypso/reader/list-manage/types';
+import ReaderList from '..';
+
+// Stream has deep dependency chains (post cards, infinite scroll, data layer).
+jest.mock( 'calypso/reader/stream', () => ( {
+	__esModule: true,
+	default: ( { children }: { children: React.ReactNode } ) => (
+		<div data-testid="stream">{ children }</div>
+	),
+} ) );
+
+// ListSites uses useInfiniteQuery with its own nock-based tests.
+jest.mock( 'calypso/reader/list/views/sites', () => ( {
+	__esModule: true,
+	default: () => <div data-testid="list-sites" />,
+} ) );
+
+// ReaderListHeader uses useQuery and IntersectionObserver, tested separately.
+jest.mock( 'calypso/reader/list/components/list-header', () => ( {
+	__esModule: true,
+	default: ( { view }: { view: string } ) => <div data-testid="list-header" data-view={ view } />,
+} ) );
+
+// ListEmpty uses data-layer query components, tested separately.
+jest.mock( 'calypso/reader/list/components/empty', () => ( {
+	__esModule: true,
+	default: () => <div data-testid="list-empty" />,
+} ) );
 
 const reducers = {
 	reader: readerReducer,
@@ -18,102 +42,83 @@ const reducers = {
 	ui: uiReducer,
 };
 
+const listData = {
+	ID: 1,
+	slug: 'my-list',
+	title: 'My List',
+	description: 'A test list',
+	owner: 'test_user',
+	is_owner: true,
+	is_public: true,
+};
+
+const readerListsState = {
+	currentUser: {
+		user: { username: 'test_user' },
+	},
+};
+
 function createQueryClient() {
-	return new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	return new QueryClient( {
+		defaultOptions: { queries: { retry: false } },
+	} );
 }
 
-describe( 'ReaderLists', () => {
+describe( 'ReaderList', () => {
 	beforeEach( () => nock.disableNetConnect() );
-
 	afterEach( () => {
 		nock.cleanAll();
 		nock.enableNetConnect();
 	} );
 
-	test( 'renders heading and subtitle', () => {
-		const queryClient = createQueryClient();
-		queryClient.setQueryData( readSubscribedListsQuery().queryKey, { lists: [] } );
+	test( 'renders missing state when list is not found after request', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/read/lists/test_user/my-list' )
+			.reply( 404, { error: 'not_found' } );
 
-		renderWithProvider( <ReaderLists />, { reducers, queryClient } );
-
-		expect( screen.getByRole( 'heading', { name: 'Lists' } ) ).toBeVisible();
-		expect( document.querySelector( '.formatted-header__subtitle' ) ).toBeVisible();
-	} );
-
-	test( 'renders the empty state when there are no lists', () => {
-		const queryClient = createQueryClient();
-		queryClient.setQueryData( readSubscribedListsQuery().queryKey, { lists: [] } );
-
-		renderWithProvider( <ReaderLists />, { reducers, queryClient } );
-
-		expect( screen.getByText( 'No lists yet.' ) ).toBeVisible();
-	} );
-
-	test( 'renders every subscribed list', () => {
-		const lists: List[] = [
+		renderWithProvider(
+			<ReaderList owner="test_user" slug="my-list" view="posts" streamKey="list:1" />,
 			{
-				ID: 1,
-				title: 'My List 1',
-				description: 'desc',
-				slug: 'my-list-1',
-				owner: 'test_user',
-				is_public: true,
-				is_owner: true,
-			},
-			{
-				ID: 2,
-				title: 'My List 2',
-				description: 'desc',
-				slug: 'my-list-2',
-				owner: 'test_user',
-				is_public: true,
-				is_owner: false,
-			},
-			{
-				ID: 3,
-				title: 'My List 3',
-				description: 'desc',
-				slug: 'my-list-3',
-				owner: 'test_user',
-				is_public: false,
-				is_owner: true,
-			},
-			{
-				ID: 4,
-				title: 'My List 4',
-				description: 'desc',
-				slug: 'my-list-4',
-				owner: 'test_user',
-				is_public: false,
-				is_owner: false,
-			},
-			{
-				ID: 5,
-				title: 'Recommended List',
-				description: 'desc',
-				slug: 'recommended-list',
-				owner: 'test_user',
-				is_public: true,
-				is_owner: false,
-			},
-			{
-				ID: 6,
-				title: 'My Recommended List',
-				description: 'desc',
-				slug: 'my-recommended-list',
-				owner: 'test_user',
-				is_public: true,
-				is_owner: true,
-			},
-		];
-		const queryClient = createQueryClient();
-		queryClient.setQueryData( readSubscribedListsQuery().queryKey, { lists } );
-
-		renderWithProvider( <ReaderLists />, { reducers, queryClient } );
-
-		const links = Array.from(
-			document.querySelectorAll< HTMLAnchorElement >( 'a.summary-button' )
+				reducers,
+				initialState: readerListsState,
+				queryClient: createQueryClient(),
+			}
 		);
-		expect( links.length ).toBe( 6 );
+
+		await waitFor( () => {
+			expect( screen.getByText( 'List not found' ) ).toBeVisible();
+		} );
+	} );
+
+	test( 'renders Stream for the default posts view', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/read/lists/test_user/my-list' )
+			.reply( 200, { list: listData } );
+
+		renderWithProvider(
+			<ReaderList owner="test_user" slug="my-list" view="posts" streamKey="list:1" />,
+			{ reducers, initialState: readerListsState, queryClient: createQueryClient() }
+		);
+
+		await waitFor( () => {
+			expect( screen.getByTestId( 'stream' ) ).toBeVisible();
+		} );
+		expect( screen.queryByTestId( 'list-sites' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'renders ListSites in the sites view', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/read/lists/test_user/my-list' )
+			.reply( 200, { list: listData } );
+
+		renderWithProvider(
+			<ReaderList owner="test_user" slug="my-list" view="sites" streamKey="list:1" />,
+			{ reducers, initialState: readerListsState, queryClient: createQueryClient() }
+		);
+
+		await waitFor( () => {
+			expect( screen.getByTestId( 'list-sites' ) ).toBeVisible();
+		} );
+		expect( screen.queryByTestId( 'stream' ) ).not.toBeInTheDocument();
 	} );
 } );

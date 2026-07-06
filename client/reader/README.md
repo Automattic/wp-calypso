@@ -42,15 +42,14 @@ These routes are served by the module:
 
 ### Lists
 
-| Route                                 | Description                |
-| ------------------------------------- | ---------------------------|
-| `/reader/lists`                       | Index that shows all lists |
-| `/reader/list/new`                    | Create new list            |
-| `/reader/list/:user/:list`            | View list                  |
-| `/reader/list/:user/:list/edit`       | Edit list                  |
-| `/reader/list/:user/:list/edit/items` | Edit list items            |
-| `/reader/list/:user/:list/export`     | Export list                |
-| `/reader/list/:user/:list/delete`     | Delete list                |
+| Route                                 | Description     |
+| ------------------------------------- | --------------- |
+| `/reader/list/new`                    | Create new list |
+| `/reader/list/:user/:list`            | View list       |
+| `/reader/list/:user/:list/edit`       | Edit list       |
+| `/reader/list/:user/:list/edit/items` | Edit list items |
+| `/reader/list/:user/:list/export`     | Export list     |
+| `/reader/list/:user/:list/delete`     | Delete list     |
 
 ### Discover
 

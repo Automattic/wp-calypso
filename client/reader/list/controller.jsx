@@ -12,10 +12,6 @@ const loadListManage = () =>
 		/* webpackChunkName: "async-load-calypso-reader-list-manage" */ 'calypso/reader/list-manage'
 	);
 const loadList = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-reader-list-stream" */ 'calypso/reader/list/reader-list'
-	);
-const loadLists = () =>
 	import( /* webpackChunkName: "async-load-calypso-reader-list" */ 'calypso/reader/list' );
 
 const analyticsPageTitle = 'Reader';
@@ -29,17 +25,6 @@ export const createList = ( context, next ) => {
 	recordTrack( 'calypso_reader_list_create_loaded' );
 
 	context.primary = <AsyncLoad require={ loadListManage } key="list-manage" isCreateForm />;
-	next();
-};
-
-export const allLists = ( context, next ) => {
-	const basePath = '/reader/lists';
-	const fullAnalyticsPageTitle = `${ analyticsPageTitle } > Lists`;
-	const mcKey = 'lists';
-
-	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-
-	context.primary = <AsyncLoad require={ loadLists } key="reader-lists" />;
 	next();
 };
 

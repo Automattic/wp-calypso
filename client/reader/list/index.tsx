@@ -1,35 +1,69 @@
-import { readSubscribedListsQuery } from '@automattic/api-queries';
+import { readListQuery } from '@automattic/api-queries';
+import page from '@automattic/calypso-router';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
-import NavigationHeader from 'calypso/components/navigation-header';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import { UserLists } from 'calypso/reader/list/components/user-lists';
-import type { JSX } from 'react';
+import ReaderListHeader from 'calypso/reader/list/components/list-header';
+import ListMissing from 'calypso/reader/list/components/missing';
+import ListPosts from 'calypso/reader/list/views/posts';
+import ListSites from 'calypso/reader/list/views/sites';
+import type { ReaderList } from 'calypso/reader/list-manage/types';
 
-export function ReaderLists(): JSX.Element {
+interface ReaderListProps {
+	owner: string;
+	slug: string;
+	view: 'posts' | 'sites';
+	streamKey: string;
+	trackScrollPage?: () => void;
+	onUpdatesShown?: () => void;
+}
+
+export default function ReaderList( props: ReaderListProps ) {
 	const translate = useTranslate();
-	const { data, isLoading, isFetched } = useQuery( readSubscribedListsQuery() );
-	const lists = data?.lists ?? [];
+	const { owner, slug, view } = props;
+	const { data, isFetched } = useQuery( readListQuery( owner, slug ) );
+	const list = data?.list as ReaderList | undefined;
+
+	if ( ! isFetched ) {
+		return null;
+	}
+
+	if ( ! list ) {
+		return <ListMissing />;
+	}
+
+	const title = list.title || translate( 'Loading list' );
+	const renderSelectedTabContent = (): React.ReactNode => {
+		switch ( view ) {
+			case 'posts':
+				return (
+					<ListPosts
+						list={ list }
+						listName={ title }
+						streamKey={ props.streamKey }
+						trackScrollPage={ props.trackScrollPage }
+						onUpdatesShown={ props.onUpdatesShown }
+					/>
+				);
+			case 'sites':
+				return <ListSites list={ list } />;
+			default:
+				page.redirect( '/reader' );
+				return null;
+		}
+	};
 
 	return (
-		<ReaderMain className="reader-lists-page">
+		<ReaderMain>
 			<DocumentHead
 				title={ translate( '%s ‹ Reader', {
-					args: translate( 'Lists' ),
-					comment: '%s is the section name. For example: "Lists ‹ Reader"',
+					args: title,
+					comment: '%s is the section name. For example: "My Likes"',
 				} ) }
 			/>
-
-			<NavigationHeader
-				title={ translate( 'Lists' ) }
-				subtitle={ translate( 'Catch up with the latest from your lists.' ) }
-				className="reader-lists-header"
-			/>
-
-			<UserLists lists={ lists } isLoading={ isLoading || ! isFetched } />
+			<ReaderListHeader list={ list } view={ view } />
+			{ renderSelectedTabContent() }
 		</ReaderMain>
 	);
 }
-
-export default ReaderLists;

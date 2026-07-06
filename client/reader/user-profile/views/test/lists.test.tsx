@@ -7,7 +7,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import React from 'react';
 import { List } from 'calypso/reader/list-manage/types';
-import { UserProfileLists } from '../lists';
+import { UserLists } from '../lists';
 import type { ReaderUser } from '@automattic/api-core';
 
 jest.mock( 'calypso/components/empty-content', () => ( { icon, line }: any ) => (
@@ -42,7 +42,7 @@ function renderWithQueryClient(
 	return render( <QueryClientProvider client={ queryClient }>{ ui }</QueryClientProvider> );
 }
 
-describe( 'UserProfileLists', () => {
+describe( 'UserLists', () => {
 	beforeEach( () => nock.disableNetConnect() );
 	afterEach( () => {
 		nock.cleanAll();
@@ -54,7 +54,7 @@ describe( 'UserProfileLists', () => {
 			.get( '/rest/v1/read/lists/test_user' )
 			.reply( 200, { lists: [] } );
 
-		renderWithQueryClient( <UserProfileLists user={ defaultUser } /> );
+		renderWithQueryClient( <UserLists user={ defaultUser } /> );
 
 		await waitFor( () => {
 			expect( screen.getByTestId( 'empty-content' ) ).toBeInTheDocument();
@@ -70,9 +70,9 @@ describe( 'UserProfileLists', () => {
 			.delay( 30000 )
 			.reply( 200, { lists: [] } );
 
-		const { container } = renderWithQueryClient( <UserProfileLists user={ defaultUser } /> );
+		const { container } = renderWithQueryClient( <UserLists user={ defaultUser } /> );
 
-		expect( container.querySelector( '.wp-spinner-wrapper' ) ).toBeInTheDocument();
+		expect( container.querySelector( '.user-profile__loader' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Loading lists...' ) ).toBeInTheDocument();
 	} );
 
@@ -101,9 +101,9 @@ describe( 'UserProfileLists', () => {
 		const queryClient = createQueryClient();
 		queryClient.setQueryData( readUserListsQuery( 'test_user' ).queryKey, { lists: mockLists } );
 
-		renderWithQueryClient( <UserProfileLists user={ defaultUser } />, { queryClient } );
+		renderWithQueryClient( <UserLists user={ defaultUser } />, { queryClient } );
 
-		const listsContainer = document.querySelector( '.reader-lists' );
+		const listsContainer = document.querySelector( '.user-profile__lists' );
 		expect( listsContainer ).toBeInTheDocument();
 
 		expect( screen.getByText( 'Test List 1' ) ).toBeInTheDocument();
@@ -137,7 +137,7 @@ describe( 'UserProfileLists', () => {
 		const queryClient = createQueryClient();
 		queryClient.setQueryData( readUserListsQuery( 'test_user' ).queryKey, { lists: mockLists } );
 
-		renderWithQueryClient( <UserProfileLists user={ defaultUser } />, { queryClient } );
+		renderWithQueryClient( <UserLists user={ defaultUser } />, { queryClient } );
 
 		expect( screen.getByText( 'Recommended Blogs' ) ).toBeInTheDocument();
 		expect(
@@ -164,7 +164,7 @@ describe( 'UserProfileLists', () => {
 		const queryClient = createQueryClient();
 		queryClient.setQueryData( readUserListsQuery( 'test_user' ).queryKey, { lists: mockLists } );
 
-		renderWithQueryClient( <UserProfileLists user={ defaultUser } />, { queryClient } );
+		renderWithQueryClient( <UserLists user={ defaultUser } />, { queryClient } );
 
 		expect( screen.getByTestId( 'empty-content' ) ).toBeInTheDocument();
 		expect( screen.getByTestId( 'empty-content-line' ) ).toHaveTextContent( 'No lists yet.' );
@@ -187,7 +187,7 @@ describe( 'UserProfileLists', () => {
 		const queryClient = createQueryClient();
 		queryClient.setQueryData( readUserListsQuery( 'test_user' ).queryKey, { lists: mockLists } );
 
-		renderWithQueryClient( <UserProfileLists user={ defaultUser } />, { queryClient } );
+		renderWithQueryClient( <UserLists user={ defaultUser } />, { queryClient } );
 
 		expect( screen.getByText( 'Test List' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'No description.' ) ).toBeInTheDocument();
