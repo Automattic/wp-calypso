@@ -1,5 +1,4 @@
 import { followReadTagMutation } from '@automattic/api-queries';
-import page from '@automattic/calypso-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { localize, translate as i18nTranslate } from 'i18n-calypso';
@@ -44,12 +43,6 @@ export class ReaderSidebarTags extends Component {
 		this.setState( ( state ) => ( { addTagCounter: state.addTagCounter + 1 } ) );
 	};
 
-	navigateToTags = () => {
-		page( '/tags' );
-
-		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_tags_dropdown_title_clicked' );
-	};
-
 	render() {
 		const { isOpen, translate, onClick, tags, path } = this.props;
 		const isChildSelected = tags?.some( ( tag ) => path === `/tag/${ tag.slug }` );
@@ -59,7 +52,7 @@ export class ReaderSidebarTags extends Component {
 				<ExpandableSidebarMenu
 					expanded={ isOpen }
 					title={ translate( 'Tags' ) }
-					onClick={ this.navigateToTags }
+					onClick={ onClick }
 					disableFlyout
 					className={ clsx( {
 						'sidebar__menu--selected': path === '/tags' || ( ! isOpen && isChildSelected ),

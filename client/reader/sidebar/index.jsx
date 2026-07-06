@@ -215,6 +215,8 @@ export class ReaderSidebar extends Component {
 						<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />
 					) }
 
+					{ isEnabled( 'reader/social' ) && <ReaderSidebarConnections path={ path } /> }
+
 					<ReaderSidebarLists
 						lists={ this.props.subscribedLists }
 						path={ path }
@@ -232,8 +234,6 @@ export class ReaderSidebar extends Component {
 						onFollowTag={ this.highlightNewTag }
 						currentTag={ this.state.currentTag }
 					/>
-
-					{ isEnabled( 'reader/social' ) && <ReaderSidebarConnections path={ path } /> }
 
 					{ isEnabled( 'reader/spaces' ) && <ReaderSidebarSpaces path={ path } /> }
 
