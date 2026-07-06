@@ -2,6 +2,8 @@ export * from './query-client';
 
 export * from './agency';
 export * from './agency-team';
+export * from './agency-sites';
+export * from './agency-woopayments';
 export * from './akismet-api-key';
 export * from './big-sky-plugin';
 export * from './cancellation-offers';
@@ -32,6 +34,7 @@ export * from './geo';
 export * from './github';
 export * from './hosting-update-schedules';
 export * from './jetpack-agency-sites';
+export * from './jetpack-licenses';
 export * from './jetpack-site-collisions';
 export * from './jetpack-user-license';
 export * from './marketplace-search';
