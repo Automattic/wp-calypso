@@ -13,7 +13,6 @@ import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
 import { dashboardLink, wpcomLink } from 'calypso/dashboard/utils/link';
 import { navigate } from 'calypso/lib/navigate';
-import { getStatsDefaultSitePage } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
@@ -528,6 +527,7 @@ class MasterbarLoggedIn extends Component {
 			sitePlanUrl,
 			sidebarType,
 			canUserViewStats,
+			statsAdminUrl,
 		} = this.props;
 
 		// Only display when a site is selected and is not domain-only site.
@@ -570,7 +570,7 @@ class MasterbarLoggedIn extends Component {
 		if ( canUserViewStats ) {
 			menuItems.push( {
 				label: translate( 'Stats' ),
-				url: getStatsDefaultSitePage( siteSlug ),
+				url: statsAdminUrl,
 				onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_stats_clicked' ),
 			} );
 		}
@@ -1055,6 +1055,7 @@ const ConnectedMasterbarLoggedIn = connect(
 			isGravatarDomain: hasGravatarDomainQueryParam( state ),
 			dashboardOptIn: hasDashboardOptIn( state ),
 			canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
+			statsAdminUrl: getSiteAdminUrl( state, siteId, 'admin.php?page=stats' ),
 		};
 	},
 	{
