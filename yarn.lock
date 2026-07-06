@@ -18100,6 +18100,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-plugin-playwright@npm:^2.10.1":
+  version: 2.10.5
+  resolution: "eslint-plugin-playwright@npm:2.10.5"
+  dependencies:
+    globals: "npm:^17.3.0"
+  peerDependencies:
+    eslint: ">=8.40.0"
+  checksum: 23b18631364f44cd2e176e47791b28b58421217b6634da6684de108c7ef417101f02d7d55141e57a9d15fb83fe23ab5b29133385013919a561da3757461a692c
+  languageName: node
+  linkType: hard
+
 "eslint-plugin-prettier@npm:^5.0.0, eslint-plugin-prettier@npm:^5.2.3":
   version: 5.2.3
   resolution: "eslint-plugin-prettier@npm:5.2.3"
@@ -33880,6 +33891,7 @@ __metadata:
     dotenv: "npm:^9.0.2"
     eslint: "npm:^8.34.0"
     eslint-plugin-jest: "npm:^25.3.0"
+    eslint-plugin-playwright: "npm:^2.10.1"
     esm: "npm:^3.2.25"
     form-data: "npm:^4.0.6"
     jest: "npm:^29.6.1"
