@@ -4,6 +4,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { SectionHeader } from '../../components/section-header';
+import { TextBlur } from '../../components/text-blur';
 import { SitesWithThisPlugin } from './sites-with-this-plugin';
 import { SitesWithoutThisPlugin } from './sites-without-this-plugin';
 import { SiteWithPluginData } from './use-plugin';
@@ -60,6 +61,17 @@ export function PluginTabs( {
 		[ sitesWithThisPlugin, optimisticDelete ]
 	);
 
+	const installedCount = sitesWithThisPluginExcludingDeleted.length;
+	const installedLabel = sprintf(
+		// translators: %(count)d: the number of sites the plugin is installed on.
+		_n( 'Installed on %(count)d site', 'Installed on %(count)d sites', installedCount ),
+		{ count: installedCount }
+	);
+	// While the site data is still loading the count isn't known yet, so blur the
+	// label into a skeleton instead of asserting a misleading "Installed on 0 sites".
+	const installedTabTitle =
+		isLoading && installedCount === 0 ? <TextBlur>{ installedLabel }</TextBlur> : installedLabel;
+
 	return (
 		<Tabs
 			selectedTabId={ activeTab }
@@ -75,18 +87,7 @@ export function PluginTabs( {
 			 */ }
 			<Tabs.TabList key={ sitesWithThisPluginExcludingDeleted.length } className="plugin-tabs-list">
 				<Tabs.Tab tabId="installed">
-					<SectionHeader
-						level={ 3 }
-						title={ sprintf(
-							// translators: %(count)d: the number of sites the plugin is installed on.
-							_n(
-								'Installed on %(count)d site',
-								'Installed on %(count)d sites',
-								sitesWithThisPluginExcludingDeleted.length
-							),
-							{ count: sitesWithThisPluginExcludingDeleted.length }
-						) }
-					/>
+					<SectionHeader level={ 3 } title={ installedTabTitle } />
 				</Tabs.Tab>
 				<Tabs.Tab tabId="available">
 					<SectionHeader level={ 3 } title={ __( 'Available on' ) } />

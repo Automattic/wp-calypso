@@ -181,13 +181,17 @@ export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: b
 	}
 
 	return {
-		isLoading:
-			hasPluginSlug &&
-			( isLoadingSitesPlugins ||
-				isLoadingSites ||
-				isLoadingWpOrgPlugin ||
-				isLoadingMarketplacePlugins ||
-				isLoadingSitePlugins ),
+		isLoading: hasPluginSlug
+			? isLoadingSitesPlugins ||
+			  isLoadingSites ||
+			  isLoadingWpOrgPlugin ||
+			  isLoadingMarketplacePlugins ||
+			  isLoadingSitePlugins
+			: // No slug yet: a consumer may still be deriving it from the plugins
+			  // list (e.g. the manage page defaults to the first plugin). Report
+			  // loading until that list resolves so the detail's DataViews shows a
+			  // spinner instead of latching onto an empty "No results" state.
+			  isLoadingSitesPlugins || isLoadingSites,
 		isFetching: isFetchingSitePlugins,
 		pluginBySiteId,
 		sitesWithThisPlugin,
