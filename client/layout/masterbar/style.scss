@@ -724,6 +724,16 @@ body.is-mobile-app-view {
 .masterbar__item-stats-sparkline {
 	padding: 0 10px;
 
+	// vertical-align on the svg itself is never exactly centered — "middle"
+	// aligns to a point derived from the font baseline, not the line box's
+	// true center. Making the content wrapper its own flex container
+	// centers the svg geometrically instead.
+	.masterbar__item-content {
+		display: flex;
+		align-items: center;
+		height: 100%;
+	}
+
 	// Resting size is just the bars — the peak marker to the right is clipped
 	// by default so it doesn't take up any layout space until hovered, the
 	// same show/hide-on-hover technique wp-admin's own admin bar sparkline
@@ -731,7 +741,6 @@ body.is-mobile-app-view {
 	.masterbar__stats-sparkline {
 		width: auto;
 		height: auto;
-		vertical-align: middle;
 		overflow: hidden;
 	}
 
@@ -750,7 +759,7 @@ body.is-mobile-app-view {
 
 	.masterbar__stats-sparkline-label {
 		fill: var(--color-masterbar-icon);
-		font-size: 11px;
+		font-size: 9px;
 	}
 
 	&:hover {

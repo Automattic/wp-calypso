@@ -3,10 +3,11 @@ import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 
-// Matches wp-admin's own admin bar sparkline (wp-includes/charts/admin-bar-hours-scale.php),
-// whose <img> is 24px tall inside a 32px-tall toolbar item.
+// Matches wp-admin's own admin bar sparkline (wp-includes/charts/admin-bar-hours-scale.php):
+// 24px tall, and 48 hourly bars at a 2px pitch come out to the same 95px
+// width wp-admin's chart image displays at rest.
 const CHART_HEIGHT = 24;
-const BAR_WIDTH = 2;
+const BAR_WIDTH = 1;
 const BAR_GAP = 1;
 
 const getHourlyViews = createSelector(
