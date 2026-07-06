@@ -4,7 +4,6 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { Icon, external, download, close } from '@wordpress/icons';
 import { useMemo, useState, useCallback } from 'react';
-import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useWooPaymentsContext } from '../context';
@@ -19,6 +18,7 @@ import {
 	WooPaymentsStatusColumn,
 	CommissionEligibilityColumn,
 } from './site-columns';
+import TextSkeleton from './text-skeleton';
 import type { SitesWithWooPaymentsState } from '../types';
 import type { View } from '@wordpress/dataviews';
 
@@ -88,7 +88,7 @@ export default function SitesWithWooPayments() {
 				getValue: () => '-',
 				render: ( { item } ) => {
 					if ( isLoadingWooPaymentsData ) {
-						return <TextPlaceholder />;
+						return <TextSkeleton />;
 					}
 					const { transactions } = getSiteData( woopaymentsData, item.blogId );
 					return <TransactionsColumn transactions={ transactions } />;
@@ -102,7 +102,7 @@ export default function SitesWithWooPayments() {
 				getValue: () => '-',
 				render: ( { item } ) => {
 					if ( isLoadingWooPaymentsData ) {
-						return <TextPlaceholder />;
+						return <TextSkeleton />;
 					}
 					const { payout } = getSiteData( woopaymentsData, item.blogId );
 					return <CommissionsPaidColumn payout={ payout } />;
@@ -116,7 +116,7 @@ export default function SitesWithWooPayments() {
 				getValue: () => '-',
 				render: ( { item } ) => {
 					if ( isLoadingWooPaymentsData ) {
-						return <TextPlaceholder />;
+						return <TextSkeleton />;
 					}
 					const { estimatedPayout } = getSiteData( woopaymentsData, item.blogId );
 					return <TimeframeCommissionsColumn estimatedPayout={ estimatedPayout } />;

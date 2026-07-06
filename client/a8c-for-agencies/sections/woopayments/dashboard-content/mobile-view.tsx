@@ -6,7 +6,6 @@ import {
 	ListItemCardActions,
 	type Action,
 } from 'calypso/a8c-for-agencies/components/list-item-cards';
-import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import { useWooPaymentsContext } from '../context';
 import { getSiteData } from '../lib/site-data';
 import {
@@ -17,6 +16,7 @@ import {
 	CommissionsPaidColumn,
 	TimeframeCommissionsColumn,
 } from './site-columns';
+import TextSkeleton from './text-skeleton';
 import type { SitesWithWooPaymentsState } from '../types';
 
 export default function SitesWithWooPaymentsMobileView( {
@@ -42,7 +42,7 @@ export default function SitesWithWooPaymentsMobileView( {
 						<ListItemCardContent title={ __( 'Transactions' ) }>
 							<div className="sites-with-woopayments-list-mobile-view__column">
 								{ isLoadingWooPaymentsData ? (
-									<TextPlaceholder />
+									<TextSkeleton />
 								) : (
 									<TransactionsColumn
 										transactions={ getSiteData( woopaymentsData, item.blogId ).transactions }
@@ -53,7 +53,7 @@ export default function SitesWithWooPaymentsMobileView( {
 						<ListItemCardContent title={ __( 'Commissions paid' ) }>
 							<div className="sites-with-woopayments-list-mobile-view__column">
 								{ isLoadingWooPaymentsData ? (
-									<TextPlaceholder />
+									<TextSkeleton />
 								) : (
 									<CommissionsPaidColumn
 										payout={ getSiteData( woopaymentsData, item.blogId ).payout }
@@ -64,7 +64,7 @@ export default function SitesWithWooPaymentsMobileView( {
 						<ListItemCardContent title={ __( 'Timeframe commissions' ) }>
 							<div className="sites-with-woopayments-list-mobile-view__column">
 								{ isLoadingWooPaymentsData ? (
-									<TextPlaceholder />
+									<TextSkeleton />
 								) : (
 									<TimeframeCommissionsColumn
 										estimatedPayout={ getSiteData( woopaymentsData, item.blogId ).estimatedPayout }
