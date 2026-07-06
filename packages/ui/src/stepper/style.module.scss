@@ -24,28 +24,34 @@
 	width: var( --a8c-ui-stepper-indicator-size );
 	height: var( --a8c-ui-stepper-indicator-size );
 	border-radius: 50%;
-	// The indicator is part of the interactive .trigger button, so it reads
-	// from the fg-interactive token family (same as the Tabs component).
-	border: var( --wpds-border-width-xs ) solid var( --wpds-color-fg-interactive-neutral );
+	// No explicit color or background: the glyph color is inherited from the
+	// .trigger button (which owns the per-state colors), the border reads it
+	// via currentColor, and the background stays transparent.
+	border: var( --wpds-border-width-xs ) solid currentColor;
 	flex-shrink: 0;
 	font-size: var( --wpds-typography-font-size-sm );
 	font-weight: 400;
-	color: var( --wpds-color-fg-interactive-neutral );
-	background: var( --wpds-color-bg-surface-neutral-strong );
 }
 
 // Current step
 .indicator.is-current {
-	border-color: var( --wpds-color-fg-interactive-neutral );
-	background: var( --wpds-color-fg-interactive-neutral );
-	color: var( --wpds-color-bg-surface-neutral-strong );
 	font-weight: 600;
 }
 
-// Completed step
+// Current step, number variant — solid filled circle. Uses the strong
+// interactive pairing (dark fill, light glyph), like a solid neutral Button.
+// The explicit colors also keep the fill stable on hover, avoiding a ring
+// against the dark background.
+.indicator.is-current[data-indicator-variant='number'] {
+	border-color: var( --wpds-color-bg-interactive-neutral-strong );
+	background: var( --wpds-color-bg-interactive-neutral-strong );
+	color: var( --wpds-color-fg-interactive-neutral-strong );
+}
+
+// Completed step — the indicator is deliberately de-emphasized relative to
+// its title (per the Figma design), using the weak variant of the same
+// interactive-neutral family.
 .indicator.is-completed {
-	border-color: var( --wpds-color-fg-interactive-neutral-weak );
-	background: transparent;
 	color: var( --wpds-color-fg-interactive-neutral-weak );
 
 	svg {
@@ -63,14 +69,13 @@
 // Bullet indicator variant
 // ---------------------------------------------------------------------------
 
-// Upcoming: dashed gray-700 circle, no icon
+// Upcoming: dashed circle, no icon (weak color inherited from the trigger)
 .indicator[data-indicator-variant='bullet'] {
 	border-style: dashed;
-	border-color: var( --wpds-color-fg-interactive-neutral-weak );
-	color: var( --wpds-color-fg-interactive-neutral-weak );
 }
 
-// Current: 16px solid gray-900 ring, transparent background + half-circle dome
+// Current: smaller solid ring + half-circle dome (color inherited from the
+// trigger, which reads at full neutral strength for the current step).
 // The margin compensates for the size reduction vs upcoming (size → size-sm)
 // so the indicator centres stay aligned vertically across states.
 .indicator.is-current[data-indicator-variant='bullet'] {
@@ -78,9 +83,6 @@
 	height: var( --a8c-ui-stepper-indicator-size-sm );
 	margin: var( --a8c-ui-stepper-indicator-offset );
 	border-style: solid;
-	border-color: var( --wpds-color-fg-interactive-neutral );
-	background: transparent;
-	color: var( --wpds-color-fg-interactive-neutral );
 }
 
 // Completed: 16px, solid border (color inherited from .indicator.is-completed)
@@ -129,22 +131,10 @@
 
 	// Hover/focus use the -active variant of the same neutral tone; WPDS
 	// tokens should not mix tones (no brand color on a neutral control).
+	// The indicator border and glyph follow automatically via currentColor.
 	&:hover:not( [aria-disabled='true'] ),
 	&:focus-visible:not( [aria-disabled='true'] ) {
 		color: var( --wpds-color-fg-interactive-neutral-active );
-
-		// Number-variant current step has a solid filled circle — skip border change
-		// to avoid a ring appearing against the dark background on hover.
-		.indicator:not( .is-current[data-indicator-variant='number'] ) {
-			border-color: var( --wpds-color-fg-interactive-neutral-active );
-		}
-
-		// Pull icon color for completed and current steps (SVG/dome use currentColor).
-		// Number-variant current steps keep their original number color on hover.
-		.indicator.is-completed,
-		.indicator.is-current:not( [data-indicator-variant='number'] ) {
-			color: var( --wpds-color-fg-interactive-neutral-active );
-		}
 	}
 
 	&[aria-disabled='true'] {
