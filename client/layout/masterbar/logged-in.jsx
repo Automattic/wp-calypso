@@ -717,11 +717,14 @@ class MasterbarLoggedIn extends Component {
 			return null;
 		}
 
+		const label = translate( 'Views over 48 hours. Click for more Stats.' );
+
 		return (
 			<Item
 				className="masterbar__item-stats-sparkline"
 				url={ statsAdminUrl }
-				tooltip={ translate( 'Views over 48 hours. Click for more Stats.' ) }
+				tooltip={ label }
+				ariaLabel={ label }
 				onClick={ this.clickStatsSparkline }
 				hasGlobalBorderStyle
 			>
