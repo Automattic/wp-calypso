@@ -1,6 +1,6 @@
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { getTld, isFreeSubdomainQuery } from '../helpers';
+import { isFqdnQuery } from '../helpers';
 import { useDomainSearch } from '../page/context';
 import type { BundleSuggestion } from '@automattic/api-core';
 
@@ -29,11 +29,9 @@ export interface InlineBundleEntry {
 export const useInlineBundles = () => {
 	const { query, queries, config, cart } = useDomainSearch();
 
-	// Mirror the fqdn detection in useSuggestionsList: an FQDN search keeps the
-	// top BundleCard path, so inline bundles are gated to bare-term queries.
-	const isFreeSubdomain = isFreeSubdomainQuery( query );
-	const isFqdnQuery = ! isFreeSubdomain && !! getTld( query );
-	const inlineBundlesEnabled = config.showBundleSuggestions && ! isFqdnQuery;
+	// An FQDN search keeps the top BundleCard path, so inline bundles are gated
+	// to bare-term queries (see isFqdnQuery, shared with useSuggestionsList).
+	const inlineBundlesEnabled = config.showBundleSuggestions && ! isFqdnQuery( query );
 
 	const { data: bundleTriggers = [] } = useQuery( {
 		...queries.bundleTriggers( query ),
