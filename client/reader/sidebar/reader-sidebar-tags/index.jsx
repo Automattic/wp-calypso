@@ -1,6 +1,7 @@
 import { followReadTagMutation } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import clsx from 'clsx';
 import { localize, translate as i18nTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -55,7 +56,8 @@ export class ReaderSidebarTags extends Component {
 	};
 
 	render() {
-		const { isOpen, translate, onClick, path } = this.props;
+		const { isOpen, translate, onClick, tags, path } = this.props;
+		const isChildSelected = tags?.some( ( tag ) => path === `/tag/${ tag.slug }` );
 
 		return (
 			<li className="sidebar-streams__tags">
@@ -64,10 +66,12 @@ export class ReaderSidebarTags extends Component {
 					title={ translate( 'Tags' ) }
 					onClick={ this.selectMenu }
 					disableFlyout
-					className={ path === '/tags' ? 'sidebar__menu--selected' : '' }
+					className={ clsx( {
+						'sidebar__menu--selected': path === '/tags' || ( ! isOpen && isChildSelected ),
+					} ) }
 					expandableIconClick={ onClick }
 				>
-					<ReaderSidebarTagsList { ...this.props } />
+					<ReaderSidebarTagsList tags={ tags } { ...this.props } />
 					<li className="sidebar__menu-item sidebar__menu-item--reader-tag add-tag-form">
 						<AddTagForm onAction={ this.followTag } />
 					</li>

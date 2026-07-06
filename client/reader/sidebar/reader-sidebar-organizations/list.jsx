@@ -62,18 +62,20 @@ export class ReaderSidebarOrganizationsList extends Component {
 
 	renderSites() {
 		const { sites, path } = this.props;
-		return sites.map(
+		return sites?.map(
 			( site ) =>
 				site && <ReaderSidebarOrganizationsListItem key={ site.ID } path={ path } site={ site } />
 		);
 	}
 
 	render() {
-		const { organization, path } = this.props;
+		const { organization, path, sites } = this.props;
 
 		if ( ! organization.sites_count ) {
 			return null;
 		}
+
+		const isChildSelected = sites?.some( ( site ) => path === `/reader/feeds/${ site.feed_ID }` );
 
 		return (
 			<ExpandableSidebarMenu
@@ -84,7 +86,8 @@ export class ReaderSidebarOrganizationsList extends Component {
 				disableFlyout
 				className={ clsx( 'has-counts', {
 					'sidebar__menu--selected':
-						! this.props.isOrganizationOpen && '/reader/' + organization.slug === path,
+						'/reader/' + organization.slug === path ||
+						( ! this.props.isOrganizationOpen && isChildSelected ),
 				} ) }
 			>
 				{ this.renderAll() }

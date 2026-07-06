@@ -46,8 +46,7 @@
 		margin-top: 0;
 	}
 
-	span {
-		display: block;
+	h3 {
 		font-size: 11px;
 		font-weight: 500;
 		letter-spacing: 0.06em;
@@ -138,7 +137,7 @@ body.is-section-reader {
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-			margin-left: 32px;
+			margin-inline-start: 32px;
 		}
 
 		.sidebar__expandable-arrow {
@@ -159,7 +158,7 @@ body.is-section-reader {
 			margin: 0;
 
 			&:hover .sidebar__expandable-arrow {
-    		fill: var( --studio-gray-20 );
+				fill: var( --studio-gray-20 );
 			}
 		}
 
@@ -179,7 +178,6 @@ body.is-section-reader {
 				background-color: var( --color-sidebar-menu-hover-background );
 				color: var( --color-sidebar-menu-selected-text );
 				border-radius: 4px;
-
 			}
 
 			.sidebar__expandable-title {
@@ -187,6 +185,12 @@ body.is-section-reader {
 			}
 			.sidebar__menu-icon {
 				fill: currentColor;
+				&.sidebar_svg-a8c {
+					fill: none;
+					g {
+						fill: none;
+					}
+				}
 			}
 		}
 	}
@@ -275,11 +279,6 @@ body.is-section-reader {
 			color: var( --color-link-dark );
 		}
 	}
-	.sidebar-streams__tags {
-		.sidebar-menu__item.add-tag-form {
-			padding-top: 12px;
-		}
-	}
 }
 
 .is-reader-page.theme-default .sidebar .sidebar__menu-link::after {
@@ -310,7 +309,7 @@ body.is-section-reader {
 			margin-inline-start: 0;
 			padding: 0;
 			min-width: initial;
-			position: fixed;
+			position: absolute;
 			height: 40px; // Increase the height to make caret icon easier to click.
 
 			&:hover {
@@ -393,11 +392,11 @@ body.is-section-reader {
 				background-color: var( --color-sidebar-menu-hover-background );
 			}
 
-			svg:not( .sidebar_svg-a8c-conversations, .sidebar_svg-a8c-conversations ) {
+			svg:not( .sidebar_svg-a8c, .sidebar_svg-a8c-conversations ) {
 				fill: currentColor;
 			}
 
-			svg:is( .sidebar_svg-a8c-conversations, .sidebar_svg-a8c-conversations ) {
+			svg:is( .sidebar_svg-a8c, .sidebar_svg-a8c-conversations ) {
 				fill: none;
 				g {
 					stroke: currentColor;
@@ -412,7 +411,8 @@ body.is-section-reader {
 		}
 	}
 
-	.sidebar_svg-a8c-conversations {
+	.sidebar_svg-a8c-conversations,
+	.sidebar_svg-a8c {
 		fill: none;
 		g {
 			stroke: currentColor;

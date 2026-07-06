@@ -4,6 +4,7 @@ import {
 	useMastodonConnectionsQuery,
 } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
@@ -238,7 +239,9 @@ function ReaderSidebarConnections( { path }: Props ) {
 				onClick={ handleMainClick }
 				expandableIconClick={ () => setIsOpen( ! isOpen ) }
 				disableFlyout
-				className={ ! isOpen && isOnConnections ? 'sidebar__menu--selected' : undefined }
+				className={ clsx( 'sidebar-streams__connections', {
+					'sidebar__menu--selected': path === BASE_PATH || ( ! isOpen && isOnConnections ),
+				} ) }
 				count={ undefined }
 				icon={ null }
 				materialIcon={ null }

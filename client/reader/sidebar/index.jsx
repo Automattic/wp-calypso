@@ -173,7 +173,7 @@ export class ReaderSidebar extends Component {
 				<AppTitle />
 				<SidebarMenu>
 					<li className="reader-sidebar__section-header" role="presentation">
-						<span>{ translate( 'Explore' ) }</span>
+						<h3>{ translate( 'Explore' ) }</h3>
 					</li>
 
 					<SidebarItem
@@ -196,7 +196,7 @@ export class ReaderSidebar extends Component {
 					/>
 
 					<li className="reader-sidebar__section-header" role="presentation">
-						<span>{ translate( 'Feeds' ) }</span>
+						<h3>{ translate( 'Feeds' ) }</h3>
 					</li>
 
 					<li className="sidebar-streams__following">
@@ -234,7 +234,7 @@ export class ReaderSidebar extends Component {
 					{ isEnabled( 'reader/spaces' ) && <ReaderSidebarSpaces path={ path } /> }
 
 					<li className="reader-sidebar__section-header" role="presentation">
-						<span>{ translate( 'Library' ) }</span>
+						<h3>{ translate( 'Library' ) }</h3>
 					</li>
 
 					{ isEnabled( 'reader/saved-posts' ) && (
@@ -274,7 +274,7 @@ export class ReaderSidebar extends Component {
 							className={ ReaderSidebarHelper.itemLinkClass( '/reader/conversations/a8c', path, {
 								'sidebar-streams__conversations': true,
 							} ) }
-							label="A8C conversations"
+							label={ translate( 'A8C conversations' ) }
 							onNavigate={ this.handleSidebarMenuClick( TrackingKeys.a8cConversations ) }
 							link="/reader/conversations/a8c"
 							customIcon={ <ReaderA8cConversationsIcon size={ 24 } viewBox="-2 -2 24 24" /> }
@@ -282,7 +282,7 @@ export class ReaderSidebar extends Component {
 					) }
 
 					<li className="reader-sidebar__section-header" role="presentation">
-						<span>{ translate( 'Account' ) }</span>
+						<h3>{ translate( 'Account' ) }</h3>
 					</li>
 
 					<SidebarItem

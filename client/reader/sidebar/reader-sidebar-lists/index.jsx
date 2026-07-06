@@ -1,11 +1,11 @@
+import './style.scss';
 import page from '@automattic/calypso-router';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderSidebarListsList from './list';
-
-import './style.scss';
 
 export class ReaderSidebarLists extends Component {
 	static propTypes = {
@@ -32,7 +32,10 @@ export class ReaderSidebarLists extends Component {
 	};
 
 	render() {
-		const { translate, isOpen, onClick, path, ...passedProps } = this.props;
+		const { translate, isOpen, onClick, lists, path, ...passedProps } = this.props;
+		const isChildSelected = lists?.some(
+			( list ) => path === `/reader/list/${ list.owner }/${ list.slug }`
+		);
 
 		return (
 			<li>
@@ -41,10 +44,12 @@ export class ReaderSidebarLists extends Component {
 					title={ translate( 'Lists' ) }
 					onClick={ this.selectMenu }
 					disableFlyout
-					className={ path === '/reader/lists' ? 'sidebar__menu--selected' : '' }
+					className={ clsx( {
+						'sidebar__menu--selected': path === '/reader/lists' || ( ! isOpen && isChildSelected ),
+					} ) }
 					expandableIconClick={ onClick }
 				>
-					<ReaderSidebarListsList path={ path } { ...passedProps } />
+					<ReaderSidebarListsList path={ path } lists={ lists } { ...passedProps } />
 				</ExpandableSidebarMenu>
 			</li>
 		);
