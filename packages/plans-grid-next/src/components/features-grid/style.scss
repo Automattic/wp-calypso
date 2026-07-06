@@ -674,6 +674,10 @@
 			background-color: #f9f9f9;
 			box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.04);
 		}
+
+		.plans-grid-next-action-button__label {
+			margin-bottom: 16px;
+		}
 	}
 
 	.plan-features-2023-grid__header {
@@ -868,6 +872,11 @@
 		font-size: 11px;
 		line-height: 16px;
 		margin-top: 8px;
+
+		&.is-left-aligned {
+			font-size: 12px;
+			margin-bottom: 16px;
+		}
 	}
 
 	.plans-grid-next-features-grid__feature-group-row {
@@ -1048,6 +1057,10 @@
 		.button.plan-features-2023-grid__actions-button {
 			height: auto;
 			min-height: 40px;
+		}
+
+		.plans-grid-next-action-button__label {
+			margin-bottom: 16px;
 		}
 	}
 
