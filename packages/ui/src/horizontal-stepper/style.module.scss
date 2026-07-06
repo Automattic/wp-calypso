@@ -20,13 +20,12 @@
 	justify-content: center;
 }
 
-// Background intentionally not suppressed: the minimal neutral Button's own
-// hover/press background is the non-color affordance for interactive states.
 .trigger {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	gap: var( --wpds-dimension-gap-sm );
+	background: none;
 	border: none;
 	padding: var( --wpds-dimension-padding-md );
 	height: auto;
