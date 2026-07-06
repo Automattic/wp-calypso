@@ -558,14 +558,6 @@ class MasterbarLoggedIn extends Component {
 					url: siteAdminUrl,
 					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_dashboard_clicked' ),
 				} );
-
-				if ( canUserViewStats ) {
-					menuItems.push( {
-						label: translate( 'Stats' ),
-						url: getStatsDefaultSitePage( siteSlug ),
-						onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_stats_clicked' ),
-					} );
-				}
 			} else {
 				menuItems.push( {
 					label: translate( 'My Home' ),
@@ -573,6 +565,14 @@ class MasterbarLoggedIn extends Component {
 					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_my_home_clicked' ),
 				} );
 			}
+		}
+
+		if ( canUserViewStats ) {
+			menuItems.push( {
+				label: translate( 'Stats' ),
+				url: getStatsDefaultSitePage( siteSlug ),
+				onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_stats_clicked' ),
+			} );
 		}
 
 		if ( ! site?.is_wpcom_staging_site ) {
