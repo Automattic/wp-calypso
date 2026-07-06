@@ -88,6 +88,6 @@ describe( 'StorageFeatureLabel', () => {
 
 		expect( container ).toHaveTextContent( '150 GB storage' );
 		expect( container ).toHaveTextContent( 'Add more' );
-		expect( container ).not.toHaveTextContent( '+ $10/month' );
+		expect( container ).toHaveTextContent( '+ $10.00/month' );
 	} );
 } );

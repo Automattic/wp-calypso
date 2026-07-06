@@ -1,6 +1,6 @@
 import { type PlanSlug, isWpcomEnterpriseGridPlan } from '@automattic/calypso-products';
 import { AddOns } from '@automattic/data-stores';
-import { useState } from '@wordpress/element';
+import { useEffect, useRef, useState } from '@wordpress/element';
 import { usePlansGridContext } from '../../../../grid-context';
 import { ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE } from '../constants';
 import StorageDropdown from './storage-dropdown';
@@ -23,8 +23,34 @@ const PlanStorage = ( {
 }: Props ) => {
 	const { siteId, gridPlansIndex, showFeatureCheckmarks } = usePlansGridContext();
 	const [ isStorageDropdownVisible, setIsStorageDropdownVisible ] = useState( false );
+	const storageDropdownRef = useRef< HTMLDivElement >( null );
 	const { availableForPurchase, current, planTitle } = gridPlansIndex[ planSlug ];
 	const availableStorageAddOns = AddOns.useAvailableStorageAddOns( { siteId } );
+
+	useEffect( () => {
+		if ( ! showFeatureCheckmarks || ! isStorageDropdownVisible ) {
+			return;
+		}
+
+		const handleClick = ( event: MouseEvent ) => {
+			const target = event.target;
+
+			if ( target instanceof Node && storageDropdownRef.current?.contains( target ) ) {
+				return;
+			}
+
+			setIsStorageDropdownVisible( false );
+		};
+
+		const addClickListenerTimeout = window.setTimeout( () => {
+			document.addEventListener( 'click', handleClick );
+		}, 0 );
+
+		return () => {
+			window.clearTimeout( addClickListenerTimeout );
+			document.removeEventListener( 'click', handleClick );
+		};
+	}, [ isStorageDropdownVisible, showFeatureCheckmarks ] );
 
 	if ( ! options?.isTableCell && isWpcomEnterpriseGridPlan( planSlug ) ) {
 		return null;
@@ -50,7 +76,7 @@ const PlanStorage = ( {
 			/>
 		);
 	} else if ( canUpgradeStorageForPlan ) {
-		storageContent = (
+		const storageDropdown = (
 			<StorageDropdown
 				planSlug={ planSlug }
 				onStorageAddOnClick={ onStorageAddOnClick }
@@ -58,6 +84,12 @@ const PlanStorage = ( {
 					showFeatureCheckmarks ? () => setIsStorageDropdownVisible( false ) : undefined
 				}
 			/>
+		);
+
+		storageContent = showFeatureCheckmarks ? (
+			<div ref={ storageDropdownRef }>{ storageDropdown }</div>
+		) : (
+			storageDropdown
 		);
 	}
 

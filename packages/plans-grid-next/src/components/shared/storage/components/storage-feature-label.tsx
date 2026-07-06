@@ -58,7 +58,8 @@ const StorageFeatureLabel = ( { planSlug, onAddMoreClick, showAddMore }: Props )
 	} );
 
 	const containerClasses = clsx( 'plans-grid-next-storage-feature-label__container', {
-		'is-row': ! isLargeCurrency,
+		'is-row': ! isLargeCurrency && ! showAddMore,
+		'is-add-more': showAddMore,
 	} );
 
 	const volumeJSX =
@@ -102,7 +103,7 @@ const StorageFeatureLabel = ( { planSlug, onAddMoreClick, showAddMore }: Props )
 			</div>
 		);
 
-	return formattedMonthlyAddedCost && ! showAddMore ? (
+	return formattedMonthlyAddedCost ? (
 		<div className={ containerClasses }>
 			{ volumeJSX }
 			<div className="plans-grid-next-storage-feature-label__offset-price">

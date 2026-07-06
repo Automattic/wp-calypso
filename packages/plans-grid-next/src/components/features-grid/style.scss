@@ -948,6 +948,18 @@
 
 	.plans-grid-next-storage-feature-label__container {
 		gap: 4px;
+
+		&.is-add-more {
+			align-items: flex-start;
+			flex-direction: column;
+
+			.plans-grid-next-storage-feature-label__volume,
+			.plans-grid-next-storage-feature-label__text,
+			.plans-grid-next-storage-feature-label__add-more,
+			.plans-grid-next-storage-feature-label__offset-price {
+				white-space: nowrap;
+			}
+		}
 	}
 
 	.plans-grid-next-storage-feature-label__volume {
