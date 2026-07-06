@@ -155,6 +155,9 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 	// empty for an uncached page size. Remembering the last non-empty posts map
 	// lets the stale rows keep their content, so the sidebar reads as a dimmed
 	// "refreshing" list instead of going blank.
+	// Updated during render (not in an effect) on purpose: this is a
+	// keep-previous cache, so the fallback must be in place on the same render
+	// that `posts` empties out. The write is idempotent.
 	const previousPostsRef = useRef< Record< string, PostItem > >( posts );
 	if ( Object.keys( posts ).length > 0 ) {
 		previousPostsRef.current = posts;
