@@ -148,8 +148,21 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 		}, {} );
 	}, [ cachedPosts, postItems, siteIconsByFeedId ] );
 
+	// While a new page/per-page request is in flight, DataViews keeps the
+	// previous page's rows mounted and dims them (its `is-refreshing` state).
+	// Those rows resolve their content through `getPostFromItem`, but `posts` is
+	// derived from the current request's `streamItems`, which is momentarily
+	// empty for an uncached page size. Remembering the last non-empty posts map
+	// lets the stale rows keep their content, so the sidebar reads as a dimmed
+	// "refreshing" list instead of going blank.
+	const previousPostsRef = useRef< Record< string, PostItem > >( posts );
+	if ( Object.keys( posts ).length > 0 ) {
+		previousPostsRef.current = posts;
+	}
+
 	const getPostFromItem = useCallback(
-		( item: StreamItem ) => posts[ getStreamItemKey( item ) ],
+		( item: StreamItem ) =>
+			posts[ getStreamItemKey( item ) ] ?? previousPostsRef.current[ getStreamItemKey( item ) ],
 		[ posts ]
 	);
 

@@ -9,7 +9,7 @@ import { createStore } from 'redux';
 import { upsertPostCache } from 'calypso/reader/data/post/cache';
 import { usePaginatedStream, type StreamListItem } from 'calypso/reader/data/stream';
 import Recent from 'calypso/reader/recent';
-import type { ReactNode } from 'react';
+import type { ReactNode, Ref } from 'react';
 
 // Change the per-page size to this value in the tests. It differs from the
 // initial 15 so `handleChangeView` treats it as a per-page change.
@@ -24,65 +24,105 @@ jest.mock( '@automattic/viewport-react', () => ( {
 // Minimal DataViews stand-in that surfaces the current `view` and lets the test
 // drive `onChangeView` / `onChangeSelection` directly, mirroring how the real
 // per-page control and row selection call back into `Recent`.
-jest.mock( '@wordpress/dataviews', () => ( {
-	DataViews: ( {
-		view,
-		data,
-		selection,
-		getItemId,
-		onChangeView,
-		onChangeSelection,
-	}: {
-		view: { page?: number; perPage?: number };
-		data: StreamListItem[];
-		selection: string[];
-		getItemId: ( item: StreamListItem, index?: number ) => string;
-		onChangeView: ( view: Record< string, unknown > ) => void;
-		onChangeSelection: ( selection: string[] ) => void;
-	} ) => (
-		<div>
-			<div
-				data-testid="view-state"
-				data-page={ String( view.page ) }
-				data-per-page={ String( view.perPage ) }
-				data-selection={ ( selection ?? [] ).join( ',' ) }
-			/>
-			<button data-testid="go-to-page-3" onClick={ () => onChangeView( { ...view, page: 3 } ) }>
-				page 3
-			</button>
-			<button
-				data-testid="change-per-page"
-				onClick={ () => onChangeView( { ...view, perPage: TARGET_PER_PAGE, page: 1 } ) }
-			>
-				change per page
-			</button>
-			<button data-testid="select-off-page" onClick={ () => onChangeSelection( [ 'f200-320' ] ) }>
-				select off page
-			</button>
-			{ data.map( ( item, index ) => (
-				<button
-					key={ getItemId( item, index ) }
-					data-testid={ `select-${ index }` }
-					onClick={ () => onChangeSelection( [ getItemId( item, index ) ] ) }
-				>
-					select { index }
-				</button>
-			) ) }
-		</div>
-	),
-	filterSortAndPaginate: ( data: StreamListItem[], view: { page?: number; perPage?: number } ) => {
-		const page = view.page ?? 1;
-		const perPage = view.perPage ?? data.length;
-		const start = ( page - 1 ) * perPage;
-		return {
-			data: data.slice( start, start + perPage ),
-			paginationInfo: {
-				totalItems: data.length,
-				totalPages: Math.ceil( data.length / perPage ) || 1,
-			},
-		};
-	},
-} ) );
+jest.mock( '@wordpress/dataviews', () => {
+	const React = jest.requireActual( 'react' );
+	return {
+		DataViews: ( {
+			view,
+			data,
+			fields,
+			isLoading,
+			selection,
+			getItemId,
+			onChangeView,
+			onChangeSelection,
+		}: {
+			view: { page?: number; perPage?: number };
+			data: StreamListItem[];
+			fields: Array< { id: string; render: ( args: { item: StreamListItem } ) => ReactNode } >;
+			isLoading: boolean;
+			selection: string[];
+			getItemId: ( item: StreamListItem, index?: number ) => string;
+			onChangeView: ( view: Record< string, unknown > ) => void;
+			onChangeSelection: ( selection: string[] ) => void;
+		} ) => {
+			// Emulate DataViews' keep-previous-data: while a refetch is in flight
+			// with no fresh rows, it keeps the previously shown rows mounted (dimmed
+			// via `is-refreshing`). This is what exposes the blank-list regression
+			// when row content can no longer resolve during the refetch.
+			const previousDataRef = React.useRef( data );
+			if ( ! isLoading && data.length > 0 ) {
+				previousDataRef.current = data;
+			}
+			const rows: StreamListItem[] =
+				isLoading && data.length === 0 ? previousDataRef.current : data;
+			const postField = fields.find( ( field ) => field.id === 'post' );
+			return (
+				<div>
+					<div
+						data-testid="view-state"
+						data-page={ String( view.page ) }
+						data-per-page={ String( view.perPage ) }
+						data-selection={ ( selection ?? [] ).join( ',' ) }
+					/>
+					<button data-testid="go-to-page-3" onClick={ () => onChangeView( { ...view, page: 3 } ) }>
+						page 3
+					</button>
+					<button
+						data-testid="change-per-page"
+						onClick={ () => onChangeView( { ...view, perPage: TARGET_PER_PAGE, page: 1 } ) }
+					>
+						change per page
+					</button>
+					<button
+						data-testid="select-off-page"
+						onClick={ () => onChangeSelection( [ 'f200-320' ] ) }
+					>
+						select off page
+					</button>
+					{ rows.map( ( item, index ) => (
+						<div key={ getItemId( item, index ) }>
+							<button
+								data-testid={ `select-${ index }` }
+								onClick={ () => onChangeSelection( [ getItemId( item, index ) ] ) }
+							>
+								select { index }
+							</button>
+							{ postField?.render( { item } ) }
+						</div>
+					) ) }
+				</div>
+			);
+		},
+		filterSortAndPaginate: (
+			data: StreamListItem[],
+			view: { page?: number; perPage?: number }
+		) => {
+			const page = view.page ?? 1;
+			const perPage = view.perPage ?? data.length;
+			const start = ( page - 1 ) * perPage;
+			return {
+				data: data.slice( start, start + perPage ),
+				paginationInfo: {
+					totalItems: data.length,
+					totalPages: Math.ceil( data.length / perPage ) || 1,
+				},
+			};
+		},
+	};
+} );
+
+// Render just the post title so the list's row content is observable without
+// pulling in the real featured-image/block dependencies.
+jest.mock( 'calypso/reader/recent/recent-post-field', () => {
+	const { forwardRef } = jest.requireActual( 'react' );
+	return {
+		__esModule: true,
+		default: forwardRef( ( { post }: { post?: { title?: string } }, ref: Ref< HTMLDivElement > ) =>
+			post ? <div ref={ ref }>{ post.title }</div> : null
+		),
+	};
+} );
 
 jest.mock( 'calypso/components/async-load', () => () => <div data-testid="async-load" /> );
 
@@ -239,6 +279,51 @@ describe( 'Recent per-page pagination', () => {
 		// loading skeleton does not flash back in.
 		expect( screen.getByTestId( 'async-load' ) ).toBeVisible();
 		expect( screen.queryByTestId( 'recent-post-skeleton' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'keeps the sidebar list populated during a per-page refetch', async () => {
+		const user = userEvent.setup();
+		const { queryClient } = renderRecent();
+
+		// Seed the canonical cache for the first two stream items so their rows
+		// render titles.
+		upsertPostCache( queryClient, [
+			{
+				ID: 1,
+				site_ID: 100,
+				feed_ID: 200,
+				feed_item_ID: 300,
+				global_ID: 'global-300',
+				title: 'Post A',
+			},
+			{
+				ID: 2,
+				site_ID: 100,
+				feed_ID: 200,
+				feed_item_ID: 301,
+				global_ID: 'global-301',
+				title: 'Post B',
+			},
+		] );
+
+		expect( await screen.findByText( 'Post A' ) ).toBeVisible();
+		expect( screen.getByText( 'Post B' ) ).toBeVisible();
+
+		// Simulate the new page size still fetching: the paginated stream list is
+		// momentarily empty while `isRequesting` is true.
+		( usePaginatedStream as jest.Mock ).mockReturnValue( {
+			items: [],
+			pagination: { totalItems: 0, totalPages: 0 },
+			isRequesting: true,
+			error: null,
+		} );
+
+		await user.click( screen.getByTestId( 'change-per-page' ) );
+
+		// The previously loaded rows keep their content (resolved from the last
+		// non-empty posts map) instead of the list going blank while loading.
+		expect( screen.getByText( 'Post A' ) ).toBeVisible();
+		expect( screen.getByText( 'Post B' ) ).toBeVisible();
 	} );
 
 	describe( 'wide viewport auto-selection', () => {
