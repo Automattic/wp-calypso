@@ -25,6 +25,20 @@ function mockUserSettings( data: UserSettings ) {
 }
 
 describe( '<GravatarProfileSection>', () => {
+	test( 'decodes HTML entities in avatar URL before use', async () => {
+		mockUserSettings( {
+			...settings,
+			avatar_URL: 'https://gravatar.com/avatar/abc123?s=96&amp;d=mm&amp;r=G',
+		} as unknown as UserSettings );
+
+		render( <GravatarProfileSection /> );
+		await screen.findByRole( 'heading', { name: 'Public Gravatar profile' } );
+
+		const avatarImg = screen.getByAltText( 'Gravatar' );
+		expect( avatarImg ).toBeVisible();
+		expect( avatarImg ).not.toHaveAttribute( 'src', expect.stringContaining( '&amp;' ) );
+	} );
+
 	test( 'renders the form and saves the form', async () => {
 		const user = userEvent.setup();
 		mockUserSettings( settings );

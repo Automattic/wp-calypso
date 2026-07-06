@@ -1,5 +1,6 @@
 import { GravatarQuickEditorCore } from '@gravatar-com/quick-editor';
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
+import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 import { Icon, upload, caution } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
@@ -28,11 +29,11 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 
 	// Initialize the Gravatar Quick Editor to manage avatars in a dedicated Gravatar UI
 	const quickEditorRef = useRef< GravatarQuickEditorCore | null >( null );
-	const avatarUrlRef = useRef( avatarUrl );
+	const avatarUrlRef = useRef( decodeEntities( avatarUrl ) );
 
 	// Update the avatar URL reference when the prop changes
 	useEffect( () => {
-		avatarUrlRef.current = avatarUrl;
+		avatarUrlRef.current = decodeEntities( avatarUrl );
 	}, [ avatarUrl ] );
 
 	// Add a timestamp to the avatar URL to avoid cache since this component needs to show the latest avatar the user has uploaded
