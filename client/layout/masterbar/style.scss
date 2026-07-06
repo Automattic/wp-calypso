@@ -722,10 +722,12 @@ body.is-mobile-app-view {
 }
 
 .masterbar__item-stats-sparkline {
-	padding: 0 12px;
+	padding: 0 10px;
 
-	// Resting size is just the bars — the peak marker below is clipped by
-	// default so it doesn't take up any layout space until hovered.
+	// Resting size is just the bars — the peak marker to the right is clipped
+	// by default so it doesn't take up any layout space until hovered, the
+	// same show/hide-on-hover technique wp-admin's own admin bar sparkline
+	// uses (there, widening the chart image's clipped container).
 	.masterbar__stats-sparkline {
 		width: auto;
 		height: auto;
@@ -740,21 +742,6 @@ body.is-mobile-app-view {
 	.masterbar__stats-sparkline-peak {
 		opacity: 0;
 		transition: opacity 0.15s ease-in;
-	}
-
-	.masterbar__stats-sparkline-backdrop {
-		fill: var(--color-masterbar-background);
-	}
-
-	.masterbar__stats-sparkline-baseline {
-		stroke: var(--color-masterbar-icon);
-		stroke-width: 1;
-		stroke-dasharray: 1 1;
-	}
-
-	.masterbar__stats-sparkline-tick {
-		stroke: var(--color-masterbar-icon);
-		stroke-width: 1;
 	}
 
 	.masterbar__stats-sparkline-arrow {
