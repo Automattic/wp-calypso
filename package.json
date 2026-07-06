@@ -294,7 +294,6 @@
 		"eslint-plugin-react": "^7.37.4",
 		"eslint-plugin-react-hooks": "^5.0.0",
 		"eslint-plugin-wpcalypso": "workspace:^",
-		"eslint-plugin-you-dont-need-lodash-underscore": "^6.14.0",
 		"gettext-parser": "^4.0.3",
 		"glob": "^7.2.3",
 		"globby": "^10.0.2",
