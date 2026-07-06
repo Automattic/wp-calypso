@@ -1,5 +1,5 @@
 import { getVisibleResizeHandles } from '../utils/constants';
-import styles from './chat/Chat.module.css';
+import styles from './ResizeHandles.module.css';
 
 interface ResizeHandlesProps {
 	resizable: boolean | 'horizontal' | 'vertical';
