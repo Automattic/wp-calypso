@@ -1,5 +1,6 @@
-import { Locator, Page, Response } from 'playwright';
+import { Locator, Page, Request, Response } from 'playwright';
 import { reloadAndRetry, waitForElementEnabled } from '../../element-helper';
+import { flakeProbe } from '../flake-probe';
 
 type CartResponseDiagnostic = {
 	method: string;
@@ -11,12 +12,41 @@ type CartResponseDiagnostic = {
 	responseError?: string;
 };
 
+// ponytail: throwaway. The add-to-cart mutation runs a domain-availability
+// pre-check (GET /domains/<name>/is-available) before POSTing to the cart. When
+// that GET fails transiently the CTA flips to the error state, but the existing
+// diagnostics only capture the shopping-cart POSTs, so the real failure is
+// invisible. Captures the availability request too. Remove with flake-probe.ts.
+type AvailabilityDiagnostic = {
+	kind: 'response' | 'requestfailed';
+	method: string;
+	url: string;
+	status?: number;
+	ok?: boolean;
+	durationMs?: number;
+	failureText?: string;
+	bodyError?: string;
+};
+
 const isShoppingCartResponse = ( response: Response ): boolean => {
 	try {
 		return new URL( response.url() ).pathname.includes( '/me/shopping-cart/' );
 	} catch {
 		return response.url().includes( '/me/shopping-cart/' );
 	}
+};
+
+const isAvailabilityRequest = ( url: string ): boolean => {
+	try {
+		return new URL( url ).pathname.includes( '/is-available' );
+	} catch {
+		return url.includes( '/is-available' );
+	}
+};
+
+const requestDurationMs = ( request: Request ): number | undefined => {
+	const responseEnd = request.timing().responseEnd;
+	return responseEnd >= 0 ? Math.round( responseEnd ) : undefined;
 };
 
 const normalizeText = ( value?: string | null ): string =>
@@ -62,6 +92,44 @@ const summarizeCartResponse = async ( response: Response ): Promise< CartRespons
 
 	return diagnostic;
 };
+
+// ponytail: throwaway. Summarizes an availability GET response, including a
+// short read of the JSON body's error fields when present. Remove with
+// flake-probe.ts.
+const summarizeAvailabilityResponse = async (
+	response: Response
+): Promise< AvailabilityDiagnostic > => {
+	const diagnostic: AvailabilityDiagnostic = {
+		kind: 'response',
+		method: response.request().method(),
+		url: response.url(),
+		status: response.status(),
+		ok: response.ok(),
+		durationMs: requestDurationMs( response.request() ),
+	};
+
+	try {
+		const body = await response.json();
+		if ( body?.error || body?.message ) {
+			diagnostic.bodyError = [ body.error, body.message ].filter( Boolean ).join( ': ' );
+		}
+	} catch ( error ) {
+		diagnostic.bodyError = formatError( error );
+	}
+
+	return diagnostic;
+};
+
+// ponytail: throwaway. The availability GET can fail at the network layer
+// (aborted/reset), which never emits a `response` event. Remove with
+// flake-probe.ts.
+const summarizeAvailabilityFailure = ( request: Request ): AvailabilityDiagnostic => ( {
+	kind: 'requestfailed',
+	method: request.method(),
+	url: request.url(),
+	durationMs: requestDurationMs( request ),
+	failureText: request.failure()?.errorText ?? 'unknown',
+} );
 
 /**
  * Component for the domain search feature.
@@ -278,6 +346,22 @@ export class DomainSearchComponent {
 
 		this.page.on( 'response', trackCartResponse );
 
+		// ponytail: throwaway availability-precheck tracking. Remove with flake-probe.ts.
+		const availabilitySummaries: Promise< AvailabilityDiagnostic >[] = [];
+		const trackAvailabilityResponse = ( response: Response ) => {
+			if ( isAvailabilityRequest( response.url() ) ) {
+				availabilitySummaries.push( summarizeAvailabilityResponse( response ) );
+			}
+		};
+		const trackAvailabilityFailure = ( request: Request ) => {
+			if ( isAvailabilityRequest( request.url() ) ) {
+				availabilitySummaries.push( Promise.resolve( summarizeAvailabilityFailure( request ) ) );
+			}
+		};
+		this.page.on( 'response', trackAvailabilityResponse );
+		this.page.on( 'requestfailed', trackAvailabilityFailure );
+		const clickStartedAt = Date.now();
+
 		// The add-to-cart API call can sometimes fail, leaving the button in an
 		// error state (domain-suggestion-cta--error) instead of detaching it.
 		// Retry the click up to 3 times when this happens.
@@ -303,6 +387,8 @@ export class DomainSearchComponent {
 								addToCartButton,
 								selectedDomain,
 								cartResponseSummaries,
+								availabilitySummaries,
+								elapsedMs: Date.now() - clickStartedAt,
 								originalError: error,
 							} )
 						);
@@ -311,6 +397,8 @@ export class DomainSearchComponent {
 			}
 		} finally {
 			this.page.off( 'response', trackCartResponse );
+			this.page.off( 'response', trackAvailabilityResponse );
+			this.page.off( 'requestfailed', trackAvailabilityFailure );
 		}
 
 		if ( waitForContinueButton ) {
@@ -329,6 +417,8 @@ export class DomainSearchComponent {
 	 * @param {Locator} params.addToCartButton Add to cart button in the selected row.
 	 * @param {string} params.selectedDomain Domain name being selected.
 	 * @param {Promise<CartResponseDiagnostic>[]} params.cartResponseSummaries Observed shopping cart responses.
+	 * @param {Promise<AvailabilityDiagnostic>[]} params.availabilitySummaries Observed availability pre-check requests.
+	 * @param {number} params.elapsedMs Wall-clock ms from the add-to-cart click to failure.
 	 * @param {unknown} params.originalError Original Playwright error.
 	 * @returns {Promise<string>} Error message with selected domain, button state, and cart responses.
 	 */
@@ -337,17 +427,49 @@ export class DomainSearchComponent {
 		addToCartButton,
 		selectedDomain,
 		cartResponseSummaries,
+		availabilitySummaries,
+		elapsedMs,
 		originalError,
 	}: {
 		row: Locator;
 		addToCartButton: Locator;
 		selectedDomain: string;
 		cartResponseSummaries: Promise< CartResponseDiagnostic >[];
+		availabilitySummaries?: Promise< AvailabilityDiagnostic >[];
+		elapsedMs?: number;
 		originalError: unknown;
 	} ): Promise< string > {
 		const cartResponses = ( await Promise.allSettled( cartResponseSummaries ) ).map( ( result ) =>
 			result.status === 'fulfilled' ? result.value : { error: formatError( result.reason ) }
 		);
+
+		// ponytail: throwaway. Resolve the availability captures and read the CTA
+		// error text (rendered as a Tooltip, so hover to surface it). Emit a
+		// greppable [FLAKE-PROBE] line. Remove with flake-probe.ts.
+		const availabilityResponses = ( await Promise.allSettled( availabilitySummaries ?? [] ) ).map(
+			( result ) =>
+				result.status === 'fulfilled' ? result.value : { error: formatError( result.reason ) }
+		);
+
+		const ctaErrorText = await ( async () => {
+			try {
+				await addToCartButton.hover( { timeout: 2000 } );
+				return normalizeText(
+					await this.page.locator( '[role="tooltip"]' ).first().innerText( { timeout: 2000 } )
+				);
+			} catch ( error ) {
+				return `<<unavailable: ${ formatError( error ) }>>`;
+			}
+		} )();
+
+		flakeProbe( 'domain-add-to-cart', {
+			selectedDomain,
+			elapsedMs,
+			ctaErrorText,
+			availabilityResponses,
+			cartResponseCount: cartResponses.length,
+			originalError: formatError( originalError ),
+		} );
 
 		const allAddToCartButtons = await this.getContainer()
 			.getByRole( 'button', { name: 'Add to cart' } )
@@ -383,6 +505,9 @@ export class DomainSearchComponent {
 			},
 			allAddToCartButtons,
 			cartResponses: cartResponses.slice( -5 ),
+			availabilityResponses: availabilityResponses.slice( -5 ),
+			ctaErrorText,
+			elapsedMs,
 		};
 
 		return [
