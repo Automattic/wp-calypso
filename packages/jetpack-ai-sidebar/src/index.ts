@@ -454,9 +454,10 @@ function handleShowComponent( input: any ): any {
 	) {
 		// Snapshot state for Undo (these pickers mutate post data / block
 		// attributes). Tool call id doubles as the checkpoint id so it matches
-		// the identifier AM reads from the rendered message. Only the fields
-		// this picker can write are snapshot, so restoring its checkpoint
-		// cannot clobber later edits to other fields.
+		// the identifier AM reads from the rendered message. Only the
+		// supported post fields for this picker are snapshot (title/excerpt —
+		// meta and block-attribute changes aren't checkpointed), so restoring
+		// its checkpoint cannot clobber later edits to other fields.
 		const checkpointFields: CheckpointField[] =
 			type === 'excerpt-picker' ? [ 'excerpt' ] : [ 'title' ];
 		const checkpointId: string =
@@ -797,13 +798,15 @@ export function getChatComponent( type: string ): ComponentType | null {
 
 /**
  * Provider hook consumed by AM's `use-checkpoint-action` so Undo buttons
- * can attach to show-component messages. Snapshots the post fields the
- * triggering picker can write (title by default, excerpt for the excerpt
- * picker) on `setCheckpoint(id, fields)` and restores exactly those fields on
+ * can attach to show-component messages. Snapshots the selected top-level
+ * post fields (title by default, excerpt for the excerpt picker) on
+ * `setCheckpoint(id, fields)` and restores exactly those fields on
  * `restoreCheckpoint(id)` via `core/editor` dispatch — restoring one picker's
- * checkpoint must not clobber another field's later edits. Stubs the rest of
- * AM's `UseCheckpointReturn` interface — only the three methods above are
- * used on this path.
+ * checkpoint must not clobber another field's later edits. Only title and
+ * excerpt are supported: meta (SEO pickers) and block-attribute (image alt
+ * text) changes are not checkpointed. Stubs the rest of AM's
+ * `UseCheckpointReturn` interface — only the three methods above are used on
+ * this path.
  * @returns {Object} The checkpoint API AM consumes.
  */
 const postSnapshots: Map< string, Partial< Record< CheckpointField, string > > > = new Map();
