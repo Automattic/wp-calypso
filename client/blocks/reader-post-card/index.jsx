@@ -13,10 +13,14 @@ import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follow
 import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import DisplayTypes from 'calypso/reader/data/post/display-types';
+import { useHasSiteSubscriptionOrganization } from 'calypso/reader/data/site-subscriptions';
+import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import * as stats from 'calypso/reader/stats';
 import { expandCard as expandCardAction } from 'calypso/state/reader-ui/card-expansions/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isReaderCardExpanded from 'calypso/state/selectors/is-reader-card-expanded';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import PostByline from './byline';
 import ConversationPost from './conversation-post';
 import GalleryPost from './gallery';
@@ -40,7 +44,9 @@ class ReaderPostCard extends Component {
 		showSiteName: PropTypes.bool,
 		postKey: PropTypes.object,
 		compact: PropTypes.bool,
+		isWPForTeamsItem: PropTypes.bool,
 		teams: PropTypes.array,
+		hasOrganization: PropTypes.bool,
 		fixedHeaderHeight: PropTypes.number,
 		streamKey: PropTypes.string,
 		commentsApiDisabled: PropTypes.bool,
@@ -158,10 +164,22 @@ class ReaderPostCard extends Component {
 			isExpanded,
 			expandCard,
 			compact,
+			hasOrganization,
+			isWPForTeamsItem,
 			teams,
 		} = this.props;
 
-		const isSeen = post?.is_seen;
+		let isSeen = false;
+		const isSeenEnabled =
+			isAutomatticTeamMember( teams ) ||
+			isEligibleForUnseen( {
+				isWPForTeamsItem,
+				currentRoute,
+				hasOrganization,
+			} );
+		if ( isSeenEnabled ) {
+			isSeen = post?.is_seen;
+		}
 		const isPostPhoto = !! ( post.display_type & DisplayTypes.PHOTO_ONLY ) && ! compact;
 		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY ) && ! compact;
 		const isVideo = !! ( post.display_type & DisplayTypes.FEATURED_VIDEO ) && ! compact;
@@ -312,6 +330,10 @@ const ConnectedReaderPostCard = compose(
 	connect(
 		( state, ownProps ) => ( {
 			currentRoute: getCurrentRoute( state ),
+			isWPForTeamsItem:
+				ownProps.postKey &&
+				( isSiteWPForTeams( state, ownProps.postKey.blogId ) ||
+					( ownProps.feed?.blog_ID ? isSiteWPForTeams( state, ownProps.feed.blog_ID ) : false ) ),
 			isExpanded: isReaderCardExpanded( state, ownProps.postKey ),
 		} ),
 		{ expandCard: expandCardAction }
@@ -320,7 +342,15 @@ const ConnectedReaderPostCard = compose(
 
 export default function ReaderPostCardContainer( props ) {
 	const feedId = props.postKey?.feedId ?? props.post?.feed_ID;
+	const blogId = props.postKey?.blogId ?? props.post?.site_ID;
 	const { data: fetchedFeed } = useFeedQuery( feedId );
+	const hasOrganization = useHasSiteSubscriptionOrganization( feedId, blogId );
 
-	return <ConnectedReaderPostCard { ...props } feed={ props.feed ?? fetchedFeed } />;
+	return (
+		<ConnectedReaderPostCard
+			{ ...props }
+			feed={ props.feed ?? fetchedFeed }
+			hasOrganization={ hasOrganization }
+		/>
+	);
 }

@@ -20,7 +20,6 @@ import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follow
 import AutoDirection from 'calypso/components/auto-direction';
 import DocumentHead from 'calypso/components/data/document-head';
 import { withPostLikes } from 'calypso/components/data/post-likes';
-import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
 import PostExcerpt from 'calypso/components/post-excerpt';
 import {
 	RelatedPostsFromSameSite,
@@ -35,10 +34,12 @@ import { usePost } from 'calypso/reader/data/post';
 import { withPostLikeActions } from 'calypso/reader/data/post/likes';
 import { withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
 import { withSite } from 'calypso/reader/data/site';
-import { useSiteSubscriptionForFeed } from 'calypso/reader/data/site-subscriptions';
-import { getSiteName } from 'calypso/reader/get-helpers';
+import {
+	useSiteSubscriptionForFeed,
+	useHasSiteSubscriptionOrganization,
+} from 'calypso/reader/data/site-subscriptions';
+import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
-import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { markPostSeen } from 'calypso/reader/mark-post-seen';
 import { isCommentsOpen, isLoginRequiredToComment } from 'calypso/reader/post/capabilities';
 import PostExcerptLink from 'calypso/reader/post-excerpt-link';
@@ -59,6 +60,7 @@ import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { disableAppBanner, enableAppBanner } from 'calypso/state/ui/actions';
 import ReaderFullPostActionBar from './action-bar';
 import ContentProcessor from './content-processor';
@@ -76,11 +78,12 @@ export class FullPostView extends Component {
 		onClose: PropTypes.func,
 		referralPost: PropTypes.object,
 		referralStream: PropTypes.string,
+		isWPForTeamsItem: PropTypes.bool,
+		hasOrganization: PropTypes.bool,
 		layout: PropTypes.oneOf( [ 'default', 'recent' ] ),
 		currentPath: PropTypes.string,
 		isAutomattician: PropTypes.bool,
 		commentsApiDisabled: PropTypes.bool,
-		teams: PropTypes.array,
 	};
 
 	hasScrolledToCommentAnchor = false;
@@ -553,9 +556,13 @@ export class FullPostView extends Component {
 	};
 
 	isSeenEnabled = () => {
-		const { teams } = this.props;
+		const { isAutomattician, isWPForTeamsItem, hasOrganization, post } = this.props;
 
-		return isAutomatticTeamMember( teams ); // For public release replace with isEligibleForSeen( post.date ) check.
+		return (
+			isAutomattician ||
+			( isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) &&
+				canBeMarkedAsSeen( { post } ) )
+		);
 	};
 
 	maybeDisableAppBanner = () => {
@@ -899,6 +906,9 @@ export const mapStateToFullPostProps = ( state, ownProps ) => {
 
 	const props = {
 		siteId,
+		isWPForTeamsItem:
+			isSiteWPForTeams( state, blogId ) ||
+			( feed?.blog_ID ? isSiteWPForTeams( state, feed.blog_ID ) : false ),
 		notificationsOpen: isNotificationsOpen( state ),
 		post,
 		postKey,
@@ -928,9 +938,7 @@ const ConnectedFullPostView = connect( mapStateToFullPostProps, {
 	showSelectedPost,
 } )(
 	withSite(
-		withPostLikes(
-			withPostLikeActions( withSeenPostsMutations( withReaderTeams( FullPostView ) ) )
-		),
+		withPostLikes( withPostLikeActions( withSeenPostsMutations( FullPostView ) ) ),
 		getPostSiteId
 	)
 );
@@ -1029,7 +1037,14 @@ const FullPostWithNavigation = withFullPostNavigation( ConnectedFullPostView );
 export default function FullPostContainer( props ) {
 	const { data: feed } = useFeedQuery( props.feedId );
 	const follow = useSiteSubscriptionForFeed( props.feedId );
+	const hasOrganization = useHasSiteSubscriptionOrganization( props.feedId, props.blogId );
 	const feedWithIcon = feed ? { ...feed, site_icon: follow?.site_icon } : feed;
 
-	return <FullPostWithNavigation { ...props } feed={ feedWithIcon } />;
+	return (
+		<FullPostWithNavigation
+			{ ...props }
+			feed={ feedWithIcon }
+			hasOrganization={ hasOrganization }
+		/>
+	);
 }

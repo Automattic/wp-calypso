@@ -5,9 +5,6 @@ import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { isSiteDescriptionBlocked } from 'calypso/reader/lib/site-description-blocklist';
 
-// The number of days after which a post is no longer eligible for marking as seen. Matches Backend.
-const SEEN_WINDOW_DAYS: number = 30;
-
 export interface ReaderSite {
 	description: string;
 	domain: string;
@@ -189,16 +186,52 @@ export const getSiteAuthorName = ( site: ReaderSite ): string => {
 	return decodeEntities( authorFullName || '' );
 };
 
-/**
- * Check if a post is eligible for marking as seen. A post is eligible if it was published within the last 30 days.
- * @param postDate - The date of the post in string format.
- * @returns {boolean}
- */
-export const isEligibleForSeen = ( postDate: string ): boolean => {
-	const postDateObj = new Date( postDate );
-	const thirtyDaysAgo = new Date( Date.now() - SEEN_WINDOW_DAYS * 24 * 60 * 60 * 1000 );
+interface isEligibleForUnseenArgs {
+	isWPForTeamsItem: boolean;
+	currentRoute?: string | null;
+	hasOrganization?: boolean | null;
+}
 
-	return postDateObj >= thirtyDaysAgo;
+/**
+ * Check if route or feed/blog is eligible to use seen posts feature (unseen counts and mark as seen)
+ */
+export const isEligibleForUnseen = ( {
+	isWPForTeamsItem = false,
+	currentRoute = null,
+	hasOrganization = null,
+}: isEligibleForUnseenArgs ): boolean => {
+	let isEligible = isWPForTeamsItem;
+	if ( hasOrganization !== null ) {
+		isEligible = hasOrganization;
+	}
+
+	if ( currentRoute ) {
+		if (
+			[ '/reader/a8c', '/reader/p2' ].includes( currentRoute ) ||
+			[ '/reader/feeds/', '/reader/blogs/' ].some( ( route ) => currentRoute.startsWith( route ) )
+		) {
+			return isEligible;
+		}
+
+		return false;
+	}
+
+	return isEligible;
+};
+
+interface CanBeMarkedAsSeenArgs {
+	post: ReaderPost | null;
+}
+
+/**
+ * Check if the post/posts can be marked as seen based on the existence of `is_seen` flag and the current route.
+ */
+export const canBeMarkedAsSeen = ( { post = null }: CanBeMarkedAsSeenArgs ): boolean => {
+	if ( post !== null ) {
+		return post.hasOwnProperty( 'is_seen' );
+	}
+
+	return false;
 };
 
 /**
