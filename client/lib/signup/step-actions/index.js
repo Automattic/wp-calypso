@@ -486,19 +486,32 @@ export function getPluginBillingPeriodForPlan( planSlug, fallbackBillingPeriod )
 	return planTerm === TERM_MONTHLY ? 'MONTHLY' : 'ANNUALLY';
 }
 
-function findMarketplacePlugin( state, pluginSlug, billingPeriod = '' ) {
-	const plugins = getMarketplaceProducts( state, pluginSlug );
+/**
+ * Picks the marketplace plugin variant whose subscription term matches `billingPeriod` (MONTHLY or
+ * ANNUALLY). When no billing period is given, or the requested term has no variant, returns the
+ * first available variant instead of nothing: the plugin subscription and the plan bill as
+ * independent line items, so we keep the product the user came to install rather than dropping it
+ * when its term can't match the chosen plan.
+ */
+export function pickMarketplacePluginVariant( variants, billingPeriod = '' ) {
 	const billingPeriodToTerm = {
 		MONTHLY: 'month',
 		ANNUALLY: 'year',
 	};
 	const term = ( billingPeriod && billingPeriodToTerm[ billingPeriod ] ) || '';
 
-	if ( ! term ) {
-		return plugins?.[ 0 ] || null;
+	if ( term ) {
+		const match = variants?.find( ( variant ) => variant.product_term === term );
+		if ( match ) {
+			return match;
+		}
 	}
 
-	return plugins?.find( ( plugin ) => plugin.product_term === term ) || null;
+	return variants?.[ 0 ] || null;
+}
+
+function findMarketplacePlugin( state, pluginSlug, billingPeriod = '' ) {
+	return pickMarketplacePluginVariant( getMarketplaceProducts( state, pluginSlug ), billingPeriod );
 }
 
 export function addWithThemePlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
@@ -620,14 +633,11 @@ export function addWithPluginPlanToCart( callback, dependencies, stepProvidedIte
 		const state = reduxStore.getState();
 
 		// Match the plugin's subscription term to the plan the user picked in the grid, so the plan
-		// and plugin terms don't diverge (billing_period from the CTA is only the default). Fall
-		// back to the CTA term, then to any available plugin variant.
+		// and plugin terms don't diverge (billing_period from the CTA is only the default).
 		const planSlug = getPlanCartItem( cartItems )?.product_slug;
 		const pluginBillingPeriod = getPluginBillingPeriodForPlan( planSlug, billingPeriod );
 
-		const marketplacePlugin =
-			findMarketplacePlugin( state, plugin, pluginBillingPeriod ) ||
-			findMarketplacePlugin( state, plugin );
+		const marketplacePlugin = findMarketplacePlugin( state, plugin, pluginBillingPeriod );
 		const providedDependencies = { cartItems };
 
 		const newCartItems = [ ...( cartItems ? cartItems : [] ), marketplacePlugin ].filter(

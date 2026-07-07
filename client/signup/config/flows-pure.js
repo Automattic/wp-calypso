@@ -128,7 +128,7 @@ export function generateFlows( {
 				'Preselect a plugin to activate/buy, then show the paid plans grid to pick a qualifying plan.',
 			lastModified: '2026-07-07',
 			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'plugin', 'billing_period' ],
+			providesDependenciesInQuery: [ 'plugin', 'billing_period', 'intervalType' ],
 			hideProgressIndicator: true,
 		},
 		{

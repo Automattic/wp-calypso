@@ -14,6 +14,7 @@ import {
 	getPluginBillingPeriodForPlan,
 	isDomainFulfilled,
 	isPlanFulfilled,
+	pickMarketplacePluginVariant,
 } from '../step-actions';
 
 jest.mock( 'calypso/signup/config/steps', () => require( './mocks/signup/config/steps' ) );
@@ -290,5 +291,37 @@ describe( 'getPluginBillingPeriodForPlan()', () => {
 	test( 'falls back to the provided billing period when the plan is unknown', () => {
 		expect( getPluginBillingPeriodForPlan( undefined, 'ANNUALLY' ) ).toBe( 'ANNUALLY' );
 		expect( getPluginBillingPeriodForPlan( 'not-a-real-plan', 'MONTHLY' ) ).toBe( 'MONTHLY' );
+	} );
+} );
+
+describe( 'pickMarketplacePluginVariant()', () => {
+	const monthlyVariant = { product_slug: 'plugin-monthly', product_term: 'month' };
+	const yearlyVariant = { product_slug: 'plugin-yearly', product_term: 'year' };
+
+	test( 'returns the monthly variant for a MONTHLY billing period', () => {
+		expect( pickMarketplacePluginVariant( [ monthlyVariant, yearlyVariant ], 'MONTHLY' ) ).toBe(
+			monthlyVariant
+		);
+	} );
+
+	test( 'returns the yearly variant for an ANNUALLY billing period', () => {
+		expect( pickMarketplacePluginVariant( [ monthlyVariant, yearlyVariant ], 'ANNUALLY' ) ).toBe(
+			yearlyVariant
+		);
+	} );
+
+	test( 'keeps the plugin when the requested term has no variant (monthly plan, annual-only plugin)', () => {
+		expect( pickMarketplacePluginVariant( [ yearlyVariant ], 'MONTHLY' ) ).toBe( yearlyVariant );
+	} );
+
+	test( 'returns the first variant when no billing period is given', () => {
+		expect( pickMarketplacePluginVariant( [ yearlyVariant, monthlyVariant ] ) ).toBe(
+			yearlyVariant
+		);
+	} );
+
+	test( 'returns null when there are no variants', () => {
+		expect( pickMarketplacePluginVariant( [], 'MONTHLY' ) ).toBeNull();
+		expect( pickMarketplacePluginVariant( undefined, 'ANNUALLY' ) ).toBeNull();
 	} );
 } );
