@@ -42,7 +42,7 @@ export interface FollowApiSubscription {
 	is_owner?: boolean;
 	organization_id?: number | null;
 	name?: string;
-	unseen_count: number;
+	unseen_count?: number;
 	site_icon?: string | null;
 	is_paid_subscription?: boolean;
 	is_wpforteams_site?: boolean;
