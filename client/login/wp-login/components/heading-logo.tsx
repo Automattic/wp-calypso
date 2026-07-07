@@ -1,3 +1,4 @@
+import { WordPressLogo } from '@automattic/components';
 import A4APlusWpComLogo from 'calypso/a8c-for-agencies/components/a4a-plus-wpcom-logo';
 import blazeProLogo from 'calypso/assets/images/blaze/blaze-pro-logo.webp';
 import WooLogo from 'calypso/assets/images/icons/Woo_logo_color.svg';
@@ -21,6 +22,7 @@ import {
 	isA4AOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isPartnerPortalOAuth2Client,
+	isSharedMobileAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { useSelector } from 'calypso/state';
@@ -86,6 +88,9 @@ const HeadingLogo = ( { isJetpack, isFromJetpackConnector, connectorPlugins }: P
 		);
 	} else if ( isJetpackApp ) {
 		logo = <JetpackPlusWpComLogo size={ 32 } />;
+	} else if ( isSharedMobileAppOAuth2Client( oauth2Client ) ) {
+		// WordPress mobile app — the Jetpack app already matched `isJetpackApp` above.
+		logo = <WordPressLogo size={ 32 } />;
 	} else if ( isJetpack ) {
 		logo = <JetpackLogo size={ 64 } />;
 	} else if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
