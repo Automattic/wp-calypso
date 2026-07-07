@@ -1,4 +1,8 @@
-import { fetchSiteEngagementStats, fetchSiteEngagementMonthlyStats } from '@automattic/api-core';
+import {
+	fetchSiteEngagementStats,
+	fetchSiteEngagementMonthlyStats,
+	fetchSiteHourlyViews,
+} from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
 
 export interface EngagementStatsDataPoint {
@@ -68,4 +72,11 @@ export const siteEngagementMonthlyAverageStatsQuery = ( siteId: number ) =>
 
 			return average( calculateStats( stats.slice( Math.max( 0, 24 ) ) ), 24 );
 		},
+	} );
+
+export const siteHourlyViewsQuery = ( siteId: number ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'hourly-views' ],
+		queryFn: () => fetchSiteHourlyViews( siteId ),
+		select: ( { data } ) => data.map( ( [ , views ] ) => views ),
 	} );
