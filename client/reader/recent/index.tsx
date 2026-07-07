@@ -26,6 +26,8 @@ import Skeleton from '../components/skeleton';
 import EngagementBar from './engagement-bar';
 import RecentPostField from './recent-post-field';
 import RecentPostSkeleton from './recent-post-skeleton';
+import { useRecentSelection } from './use-recent-selection';
+import { getStreamItemKey } from './utils';
 import type { PostItem } from './types';
 import type { AppState } from 'calypso/types';
 
@@ -34,40 +36,19 @@ const loadReaderFullPost = () =>
 		/* webpackChunkName: "async-load-calypso-blocks-reader-full-post" */ 'calypso/blocks/reader-full-post'
 	);
 
+// Re-exported for existing importers (the key builder now lives in `./utils`).
+export { getStreamItemKey } from './utils';
+
 interface RecentProps {
 	viewToggle?: React.ReactNode;
 }
 
-// `postId` is not unique across feeds/blogs; prefix with `b{blogId}` for
-// WP.com/Jetpack sites or `f{feedId}` for external feeds so row keys stay unique.
-export const getStreamItemKey = ( item: StreamListItem ): string => {
-	if ( isPaddingStreamItem( item ) ) {
-		return item.postId;
-	}
-	if ( item.postId == null ) {
-		return '';
-	}
-	const source = item.blogId != null ? `b${ item.blogId }` : `f${ item.feedId ?? '' }`;
-	return `${ source }-${ item.postId }`;
-};
-
 const Recent = ( { viewToggle }: RecentProps ) => {
 	const dispatch = useDispatch();
-	const [ selectedItem, setSelectedItem ] = useState< StreamItem | null >( null );
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
 	const postColumnRef = useRef< HTMLDivElement | null >( null );
 	const itemRefs = useRef< { [ key: string ]: HTMLDivElement | null } >( {} );
 	const focusedIndexRef = useRef< string | null >( null ); // Keep track of the currently focused row index
-	// Latest selection, read by the page auto-select effect without making that
-	// effect re-run on every selection change (which would fight full-post
-	// keyboard navigation that legitimately selects an off-page post).
-	const selectedItemRef = useRef< StreamItem | null >( selectedItem );
-	selectedItemRef.current = selectedItem;
-	// Set when a per-page change should keep the current selection. Consumed by
-	// the auto-select effect once the new page loads so it doesn't replace the
-	// selection (page/per-page index math doesn't survive x-post collapsing, so
-	// the range check alone can misfire and swap to a different post).
-	const preserveSelectionRef = useRef( false );
 
 	const handleItemFocus = useCallback( ( itemIndex: string ) => {
 		focusedIndexRef.current = itemIndex;
@@ -98,6 +79,15 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 	} );
 	const streamItems = data.items;
 	const isLoading = data.isRequesting;
+
+	const { selectedItem, setSelectedItem, selectItem, handleChangeView } = useRecentSelection( {
+		isWide,
+		streamItems,
+		view,
+		setView,
+		selectedFeedId: selectedRecentSidebarFeedId,
+		postColumnRef,
+	} );
 
 	const postItems = useMemo(
 		() => streamItems.filter( ( item ) => ! isPaddingStreamItem( item ) ) as StreamItem[],
@@ -173,13 +163,6 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 			posts[ getStreamItemKey( item ) ] ?? previousPostsRef.current[ getStreamItemKey( item ) ],
 		[ posts ]
 	);
-
-	const selectItem = useCallback( ( item: StreamItem ) => {
-		setSelectedItem( item );
-		setTimeout( () => {
-			postColumnRef.current?.focus();
-		}, 0 );
-	}, [] );
 
 	const handlePostFieldKeyDown = useCallback(
 		( event: React.KeyboardEvent< HTMLDivElement >, item: StreamItem ) => {
@@ -275,99 +258,10 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 		return filterSortAndPaginate( streamItems, view, fields );
 	}, [ streamItems, view, fields ] );
 
-	const handleChangeView = useCallback(
-		( newView: View ) => {
-			const perPageChanged =
-				newView.perPage != null && view.perPage != null && newView.perPage !== view.perPage;
-
-			// DataViews always resets to page 1 when the per-page size changes. Instead,
-			// keep the current selection (or the top of the current page when nothing is
-			// selected) in view by recomputing which page it lands on under the new size.
-			if ( perPageChanged && newView.perPage ) {
-				const currentPerPage = view.perPage ?? 1;
-				const currentPage = view.page ?? 1;
-
-				const selectedIndex = selectedItem
-					? streamItems.findIndex(
-							( item ) => getStreamItemKey( item ) === getStreamItemKey( selectedItem )
-					  )
-					: -1;
-				const anchorIndex =
-					selectedIndex >= 0 ? selectedIndex : ( currentPage - 1 ) * currentPerPage;
-
-				// Keep the current selection across the refetch instead of letting the
-				// effect re-select the new page's first item.
-				preserveSelectionRef.current = selectedItem != null;
-
-				setView( {
-					...newView,
-					page: Math.floor( anchorIndex / newView.perPage ) + 1,
-				} );
-				return;
-			}
-
-			setView( { ...newView } );
-		},
-		[ selectedItem, streamItems, view.page, view.perPage ]
-	);
-
 	// Fetch the data when the component is mounted.
 	useEffect( () => {
 		fetchData();
 	}, [ fetchData ] );
-
-	// On page/per-page/stream changes, select the first item on the current page,
-	// unless the current selection is already within that page's range (e.g.
-	// preserved across a per-page change). Reading the selection from a ref keeps
-	// this effect off the `selectedItem` dependency, so selecting an off-page post
-	// (full-post keyboard navigation) is not reverted here.
-	//
-	// While navigating to a not-yet-loaded page, the first slot is empty, so the
-	// selection is cleared to `null` — which lets the full-post pane show its
-	// loading state — and the real first item is selected once the page settles.
-	// A per-page change instead sets `preserveSelectionRef` so the selection is
-	// kept as-is once the new page loads (no loading flash, no swap to a
-	// different post), independent of the fragile page/per-page index math.
-	useEffect( () => {
-		if ( isWide && streamItems.length > 0 && view.page && view.perPage ) {
-			// A per-page change wants to keep the current selection. The new page has
-			// now loaded (streamItems is non-empty), so consume the flag and leave the
-			// selection untouched. (On a narrow viewport this branch never runs, so the
-			// flag lingers until the next wide-viewport pass, where it's consumed
-			// harmlessly — it only ever preserves the current selection.)
-			if ( preserveSelectionRef.current ) {
-				preserveSelectionRef.current = false;
-				if ( selectedItemRef.current ) {
-					return;
-				}
-			}
-
-			const pageStart = ( view.page - 1 ) * view.perPage;
-			const pageEnd = pageStart + view.perPage;
-
-			const currentSelection = selectedItemRef.current;
-			if ( currentSelection ) {
-				const selectedIndex = streamItems.findIndex(
-					( item ) => getStreamItemKey( item ) === getStreamItemKey( currentSelection )
-				);
-				if ( selectedIndex >= pageStart && selectedIndex < pageEnd ) {
-					return;
-				}
-			}
-
-			const firstOnPage = streamItems[ pageStart ];
-			setSelectedItem( firstOnPage && ! isPaddingStreamItem( firstOnPage ) ? firstOnPage : null );
-		}
-	}, [ isWide, streamItems, view ] );
-
-	// When the selected feed changes, clear the selected item and reset the page to 1.
-	useEffect( () => {
-		setSelectedItem( null );
-		setView( ( prevView ) => ( {
-			...prevView,
-			page: 1,
-		} ) );
-	}, [ selectedRecentSidebarFeedId ] );
 
 	// Handle key events
 	const handleKeyDown = useCallback(
