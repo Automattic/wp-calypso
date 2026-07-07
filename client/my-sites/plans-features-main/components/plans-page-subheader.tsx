@@ -107,7 +107,7 @@ const HeaderContainer = styled( Subheader )`
 		gap: 12px 8px;
 		margin-top: -40px;
 		margin-bottom: 60px;
-		color: #2f2f2f;
+		color: var( --color-text );
 		font-weight: 400;
 
 		.plans-2023-tooltip__hover-area-container {
@@ -246,7 +246,7 @@ const DifferentiatorIconContainer = styled.span`
 `;
 
 const DifferentiatorLabel = styled.span`
-	border-bottom: 1px dashed #757575;
+	border-bottom: 1px dashed var( --color-text-subtle );
 `;
 
 const DifferentiatorHeader = () => {

@@ -310,7 +310,7 @@ function UnifiedPlansStep( {
 	} = usePlansGridRedesignExperiment( {
 		flowName,
 		isInSignup,
-		siteId: selectedSite?.ID ?? signupDependencies.siteId,
+		siteId: selectedSite?.ID,
 	} );
 
 	const isDomainOnlySite = useSelector( ( state ) =>
