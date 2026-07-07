@@ -71,22 +71,17 @@ export class UserSignupPage {
 		try {
 			await this.attemptWaitForSignupForm();
 		} catch ( error ) {
-			// Only reload for a genuine hydration flake: the email input never
-			// attached (a TimeoutError) on a page that is not itself an error page.
-			// Rethrow everything else - an unrelated exception, or any 5xx error
-			// page (including the 500/501 app-crash the retry machinery
-			// deliberately fails fast on, see the note at the top of this file) -
-			// so it surfaces immediately instead of being masked behind a reload.
+			// Only reload for a genuine hydration flake: a TimeoutError (email input
+			// never attached) on a page that is not itself a 5xx error page. Rethrow
+			// everything else so it surfaces instead of being masked behind a reload.
 			if (
 				( error as Error ).name !== 'TimeoutError' ||
 				( await this.isServerErrorPage( false ) )
 			) {
 				throw error;
 			}
-			// The email input can fail to attach when the signup page does not
-			// hydrate; a reload recovers it. domcontentloaded is enough: the
-			// retried attempt's own attach waits absorb hydration. Retry once
-			// before failing. Safe to reload: no account is created until submit.
+			// A reload recovers the un-hydrated form; retry once. Safe: no account is
+			// created until submit.
 			console.warn(
 				`Signup form did not become ready, reloading and retrying once: ${
 					( error as Error ).message
@@ -334,12 +329,12 @@ export class UserSignupPage {
 	 *
 	 * By default matches only the transient upstream errors (502/503/504), e.g.
 	 * the nginx "502 Bad Gateway" page, which the retry machinery keys on. Pass
-	 * transientUpstreamServerErrorOnly=false to also match the 500/501 app-crash
-	 * pages (used by the hydration reload-retry so it does not mask a genuine
-	 * error page behind a reload).
+	 * transientUpstreamServerErrorOnly=false to also match the 500 "Internal
+	 * Server Error" app-crash page (used by the hydration reload-retry so it does
+	 * not mask a genuine error page behind a reload).
 	 *
 	 * @param {boolean} transientUpstreamServerErrorOnly When true (default),
-	 * match only 502/503/504; when false, match any 5xx.
+	 * match only 502/503/504; when false, also match 500 Internal Server Error.
 	 * @returns {Promise<boolean>} True when a matching server-error page is detected.
 	 */
 	private async isServerErrorPage( transientUpstreamServerErrorOnly = true ): Promise< boolean > {
@@ -355,7 +350,7 @@ export class UserSignupPage {
 				if ( transientOnly ) {
 					return transient.test( haystack );
 				}
-				return transient.test( haystack ) || /Internal Server Error|Error 50\d/i.test( haystack );
+				return transient.test( haystack ) || /Internal Server Error/i.test( haystack );
 			}, transientUpstreamServerErrorOnly )
 			.catch( () => false );
 	}
