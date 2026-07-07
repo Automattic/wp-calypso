@@ -83,7 +83,7 @@ export default function SwitcherContent< T >( {
 
 	return (
 		<NavigableMenu style={ { width } }>
-			<MenuGroup className="switcher-content__search">
+			<div className="switcher-content__search">
 				{ filter ? (
 					<HStack justify="flex-start">
 						{ search }
@@ -92,7 +92,7 @@ export default function SwitcherContent< T >( {
 				) : (
 					search
 				) }
-			</MenuGroup>
+			</div>
 			<MenuGroup hideSeparator>
 				{ filteredData.length === 0 ? (
 					<Text variant="muted" className="switcher-content__no-results">
