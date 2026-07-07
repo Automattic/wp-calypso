@@ -123,8 +123,7 @@ const HeaderContainer = styled( Subheader )`
 		flex-direction: column;
 
 		&.plans-features-main__differentiator-header {
-			align-items: flex-start;
-			gap: 8px;
+			flex-direction: row;
 		}
 	}
 `;
@@ -244,10 +243,6 @@ const DifferentiatorIconContainer = styled.span`
 	font-weight: 400;
 	color: inherit;
 	white-space: nowrap;
-
-	@media ( max-width: 740px ) {
-		white-space: normal;
-	}
 `;
 
 const DifferentiatorLabel = styled.span`
