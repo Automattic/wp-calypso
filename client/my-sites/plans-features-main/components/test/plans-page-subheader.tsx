@@ -45,4 +45,13 @@ describe( 'PlansPageSubheader', () => {
 
 		expect( defaultProps.onFreePlanCTAClick ).toHaveBeenCalledTimes( 1 );
 	} );
+
+	test( 'renders pricing differentiators when requested', () => {
+		renderWithProvider( <PlansPageSubheader { ...defaultProps } showDifferentiatorHeader /> );
+
+		expect( screen.getByText( 'Unlimited traffic' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Managed hosting' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Built-in security' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Fast site loading' ) ).toBeInTheDocument();
+	} );
 } );

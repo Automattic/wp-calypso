@@ -1,5 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { isOnboardingFlow } from '@automattic/onboarding';
+import { Plans2023Tooltip, useManageTooltipToggle } from '@automattic/plans-grid-next';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
@@ -101,6 +102,8 @@ const HeaderContainer = styled( Subheader )`
 	margin-bottom: 0;
 
 	&.plans-features-main__differentiator-header {
+		flex-wrap: wrap;
+		gap: 12px;
 		margin-top: -20px;
 		margin-bottom: 32px;
 	}
@@ -171,6 +174,37 @@ const ShieldPlusIcon = () => (
 	</svg>
 );
 
+const ManagedHostingIcon = () => (
+	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<path
+			d="M7.5 17.5H17C19.2091 17.5 21 15.7091 21 13.5C21 11.3938 19.3717 9.66633 17.306 9.50828C16.6706 7.16082 14.5269 5.4375 12 5.4375C9.34629 5.4375 7.13292 7.31829 6.62137 9.82053C4.59702 10.2336 3.075 12.0243 3.075 14.1719C3.075 16.6236 5.0614 18.61 7.51312 18.61H17"
+			stroke="#3858E9"
+			strokeWidth="1.2"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		/>
+		<path
+			d="M9 13.25L11.25 15.5L15.5 11.25"
+			stroke="#3858E9"
+			strokeWidth="1.2"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		/>
+	</svg>
+);
+
+const FastLoadingIcon = () => (
+	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<path
+			d="M13.75 3.75L6.75 13.25H12L10.25 20.25L17.25 10.75H12L13.75 3.75Z"
+			stroke="#3858E9"
+			strokeWidth="1.2"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		/>
+	</svg>
+);
+
 const UnlimitedIcon = () => (
 	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
 		<path
@@ -209,48 +243,68 @@ const IconWrapper = styled.span`
 const DifferentiatorIconContainer = styled.span`
 	display: inline-flex;
 	align-items: center;
-	margin-right: 12px;
 	padding: 10px 16px;
 	background-color: var( --studio-blue-5 );
 	border-radius: 8px;
+	cursor: help;
 	text-align: left;
 	font-size: 14px;
 	line-height: 24px;
 	font-weight: 400;
 	color: var( --studio-gray-70 );
 
-	&:last-child {
-		margin-right: 0;
-	}
-
 	@media ( max-width: 740px ) {
-		margin-right: 0;
-		margin-bottom: 8px;
 		width: 100%;
-
-		&:last-child {
-			margin-bottom: 0;
-		}
 	}
 `;
 
 const DifferentiatorHeader = () => {
 	const translate = useTranslate();
+	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
+
+	const differentiators = [
+		{
+			id: 'unlimited-traffic',
+			icon: <UnlimitedIcon />,
+			title: translate( 'Unlimited traffic' ),
+			tooltip: translate( 'No slowdowns, no caps, no matter how much traffic your site gets.' ),
+		},
+		{
+			id: 'managed-hosting',
+			icon: <ManagedHostingIcon />,
+			title: translate( 'Managed hosting' ),
+			tooltip: translate( 'Updates, security, and backups, all taken care of for you.' ),
+		},
+		{
+			id: 'built-in-security',
+			icon: <ShieldPlusIcon />,
+			title: translate( 'Built-in security' ),
+			tooltip: translate( 'Protected from malware, attacks, and spam, right out of the box.' ),
+		},
+		{
+			id: 'fast-site-loading',
+			icon: <FastLoadingIcon />,
+			title: translate( 'Fast site loading' ),
+			tooltip: translate( 'Fast loading worldwide with global CDN and free SSL built in.' ),
+		},
+	];
 
 	return (
 		<HeaderContainer className="plans-features-main__differentiator-header">
-			<DifferentiatorIconContainer>
-				<IconWrapper>
-					<UnlimitedIcon />
-				</IconWrapper>
-				{ translate( 'Unlimited pages, posts, users and visitors' ) }
-			</DifferentiatorIconContainer>
-			<DifferentiatorIconContainer>
-				<IconWrapper>
-					<ShieldPlusIcon />
-				</IconWrapper>
-				{ translate( 'Spam, brutforce, DDoS protection and mitigation' ) }
-			</DifferentiatorIconContainer>
+			{ differentiators.map( ( { id, icon, title, tooltip } ) => (
+				<Plans2023Tooltip
+					key={ id }
+					id={ `plans-differentiator-${ id }` }
+					text={ tooltip }
+					activeTooltipId={ activeTooltipId }
+					setActiveTooltipId={ setActiveTooltipId }
+				>
+					<DifferentiatorIconContainer className="plans-features-main__differentiator-item">
+						<IconWrapper>{ icon }</IconWrapper>
+						{ title }
+					</DifferentiatorIconContainer>
+				</Plans2023Tooltip>
+			) ) }
 		</HeaderContainer>
 	);
 };
