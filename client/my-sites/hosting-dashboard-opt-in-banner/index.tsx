@@ -8,6 +8,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { closeSmall } from '@wordpress/icons';
 import { type TranslateResult, useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useRef } from 'react';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
@@ -88,8 +89,10 @@ function getBannerCopy(
 
 export default function HostingDashboardOptInBanner( {
 	isMobile = false,
+	onDismiss,
 }: {
 	isMobile?: boolean;
+	onDismiss?: () => void;
 } ) {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
@@ -191,15 +194,22 @@ export default function HostingDashboardOptInBanner( {
 		</Button>
 	);
 
+	const dismissButton = onDismiss && (
+		<Button icon={ closeSmall } aria-label={ translate( 'Dismiss' ) } onClick={ onDismiss } />
+	);
+
 	return (
 		<Card style={ { width: '100%' } }>
 			<CardBody style={ { padding: '12px' } }>
 				{ isMobile ? (
 					<VStack spacing={ 2 } alignment="flex-start">
-						<VStack spacing={ 0 }>
-							{ heading }
-							{ description }
-						</VStack>
+						<HStack spacing={ 2 } alignment="flex-start" justify="space-between">
+							<VStack spacing={ 0 }>
+								{ heading }
+								{ description }
+							</VStack>
+							{ dismissButton }
+						</HStack>
 						{ button }
 					</VStack>
 				) : (
