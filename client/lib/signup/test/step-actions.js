@@ -2,9 +2,19 @@
  * @jest-environment jsdom
  */
 
+import {
+	PLAN_PERSONAL,
+	PLAN_PERSONAL_MONTHLY,
+	PLAN_BUSINESS_2_YEARS,
+} from '@automattic/calypso-products';
 import nock from 'nock';
 import flows from 'calypso/signup/config/flows';
-import { createSiteWithCart, isDomainFulfilled, isPlanFulfilled } from '../step-actions';
+import {
+	createSiteWithCart,
+	getPluginBillingPeriodForPlan,
+	isDomainFulfilled,
+	isPlanFulfilled,
+} from '../step-actions';
 
 jest.mock( 'calypso/signup/config/steps', () => require( './mocks/signup/config/steps' ) );
 jest.mock( 'calypso/signup/config/flows', () => require( './mocks/signup/config/flows' ) );
@@ -261,5 +271,24 @@ describe( 'isPlanFulfilled()', () => {
 
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
 		expect( submitSignupStep ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'getPluginBillingPeriodForPlan()', () => {
+	test( 'maps a monthly plan to the plugin MONTHLY term', () => {
+		expect( getPluginBillingPeriodForPlan( PLAN_PERSONAL_MONTHLY, 'ANNUALLY' ) ).toBe( 'MONTHLY' );
+	} );
+
+	test( 'maps an annual plan to the plugin ANNUALLY term', () => {
+		expect( getPluginBillingPeriodForPlan( PLAN_PERSONAL, 'MONTHLY' ) ).toBe( 'ANNUALLY' );
+	} );
+
+	test( 'maps a multi-year plan to the plugin ANNUALLY term', () => {
+		expect( getPluginBillingPeriodForPlan( PLAN_BUSINESS_2_YEARS, 'MONTHLY' ) ).toBe( 'ANNUALLY' );
+	} );
+
+	test( 'falls back to the provided billing period when the plan is unknown', () => {
+		expect( getPluginBillingPeriodForPlan( undefined, 'ANNUALLY' ) ).toBe( 'ANNUALLY' );
+		expect( getPluginBillingPeriodForPlan( 'not-a-real-plan', 'MONTHLY' ) ).toBe( 'MONTHLY' );
 	} );
 } );
