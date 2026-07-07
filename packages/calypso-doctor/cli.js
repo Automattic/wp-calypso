@@ -6,11 +6,6 @@ const { runEvaluations } = require( './index.js' );
 const main = async () => {
 	console.log( chalk.yellow( '-=- Calypso Doctor -=-' ) );
 	console.log( 'Checking the health of your system...' );
-	console.log(
-		chalk.gray(
-			"If you don't want to run this tool automatically, set the env var CALYPSO_DOCTOR_SKIP=true"
-		)
-	);
 	const results = await runEvaluations();
 
 	console.log( '' );
