@@ -1,10 +1,8 @@
 import {
 	FEATURE_SFTP,
 	FEATURE_UPLOAD_PLUGINS,
-	PLAN_BUSINESS,
 	PLAN_PERSONAL,
 	getPlan,
-	isFreePlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
@@ -107,28 +105,24 @@ class PluginUpload extends Component {
 	};
 
 	renderUpgradeBanner() {
-		const { siteSlug, needsBusinessPlan, translate } = this.props;
+		const { siteSlug, translate } = this.props;
 		const redirectTo = encodeURIComponent( `/plugins/upload/${ siteSlug }` );
 
-		const upsellPlan = needsBusinessPlan ? PLAN_BUSINESS : PLAN_PERSONAL;
 		const title = translate(
-			// translators: %(planName)s the short-hand version of the plan name
+			// translators: %(planName)s the short-hand version of the Personal plan name
 			'Upgrade to the %(planName)s plan to access the plugin install features',
 			{
-				args: { planName: getPlan( upsellPlan )?.getTitle() ?? '' },
+				args: { planName: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
 			}
 		);
-		const upgradeUrl = `/checkout/${ siteSlug }/${
-			needsBusinessPlan ? 'business' : 'personal'
-		}?redirect_to=${ redirectTo }`;
 
 		return (
 			<UpsellNudge
 				className="plugin-upload__upgrade-nudge"
 				title={ title }
 				event="calypso_plugin_install_upgrade_click"
-				href={ upgradeUrl }
-				plan={ upsellPlan }
+				href={ `/checkout/${ siteSlug }/personal?redirect_to=${ redirectTo }` }
+				plan={ PLAN_PERSONAL }
 				feature={ FEATURE_UPLOAD_PLUGINS }
 				showIcon
 			/>
@@ -269,7 +263,6 @@ const mapStateToProps = ( state ) => {
 	const hasEligibilityMessages = ! (
 		isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
 	);
-	const isOnPaidPlan = site?.plan?.product_slug ? ! isFreePlan( site.plan.product_slug ) : false;
 
 	return {
 		siteId,
@@ -280,7 +273,6 @@ const mapStateToProps = ( state ) => {
 		hasUploadPluginsFeature,
 		canUpload,
 		isStandaloneJetpack,
-		needsBusinessPlan: isOnPaidPlan && ! hasUploadPluginsFeature,
 		inProgress: isPluginUploadInProgress( state, siteId ),
 		complete: isPluginUploadComplete( state, siteId ),
 		failed: !! error,

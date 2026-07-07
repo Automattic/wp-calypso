@@ -75,7 +75,6 @@ export interface AtomicContentSwitch {
 	primaryPromo: {
 		icon?: JSX.Element;
 		image: { path: string };
-		promoCTA: { loadingText: string; text: string };
 		title: string;
 		content: string;
 		secondaryContent?: string;
@@ -97,10 +96,6 @@ const vaultpressContent: AtomicContentSwitch = {
 			'Protect your site with scheduled and real-time backups—giving you the ultimate “undo” button and peace of mind that your content is always safe.'
 		),
 		secondaryContent: translate( 'Get time travel for your site with Jetpack VaultPress Backup.' ),
-		promoCTA: {
-			text: translate( 'Activate Jetpack VaultPress Backup now' ),
-			loadingText: translate( 'Activating Jetpack VaultPress Backup' ),
-		},
 	},
 
 	getProductUrl: ( siteSlug: string ) => `/backup/${ siteSlug }`,
@@ -349,7 +344,7 @@ export default function WPCOMBusinessAT( {
 						<div className="wpcom-business-at__cta">
 							<SpinnerButton
 								text={ translate( 'Activate' ) }
-								loadingText={ content.primaryPromo.promoCTA.loadingText }
+								loadingText={ translate( 'Activating…' ) }
 								loading={
 									automatedTransferStatus === START ||
 									( automatedTransferStatus === COMPLETE && ! isJetpack ) ||

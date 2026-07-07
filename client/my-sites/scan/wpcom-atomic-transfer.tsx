@@ -100,10 +100,6 @@ const ScanAtomicTransferWrapper = () => {
 				'Automated daily scans check for malware and security vulnerabilities, with automated fixes for most issues.'
 			),
 			secondaryContent: translate( 'We guard your site. You run your business.' ),
-			promoCTA: {
-				text: translate( 'Activate Jetpack Scan now' ),
-				loadingText: translate( 'Activating Jetpack Scan' ),
-			},
 		},
 
 		getProductUrl: ( siteSlug: string ) => `/scan/${ siteSlug }`,
