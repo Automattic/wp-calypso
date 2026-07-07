@@ -6,6 +6,7 @@ import {
 	siteHourlyViewsQuery,
 } from '@automattic/api-queries';
 import { isEcommercePlan } from '@automattic/calypso-products';
+import { isSupportSession } from '@automattic/calypso-support-session';
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { localize } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
@@ -18,6 +19,7 @@ import { isSimple } from '../../utils/site-types';
 import { getSitePlanUrl } from '../../utils/site-url';
 import { logout } from '../auth';
 import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
+import { getUserLanguage } from '../shared-locale-loader';
 import { OmnibarLaunchButton } from './omnibar-launch-button';
 import { createOmnibarStore } from './omnibar-store';
 import type { User, Site } from '@automattic/api-core';
@@ -84,7 +86,13 @@ export function InterimOmnibar( {
 	);
 
 	const store = useMemo(
-		() => createOmnibarStore( onToggleNotifications ),
+		() =>
+			createOmnibarStore( {
+				onToggleNotifications,
+				initialLocaleSlug: getUserLanguage( user ),
+			} ),
+		// Seed the store's locale once; later changes flow through the switcher.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ onToggleNotifications ]
 	);
 
@@ -173,7 +181,7 @@ export function InterimOmnibar( {
 					isGravatarDomain={ false }
 					dashboardOptIn
 					useUnifiedAgent={ false }
-					isSupportSession={ false }
+					isSupportSession={ isSupportSession() }
 					isNotificationsShowing={ false }
 					isMigrationInProgress={ false }
 					migrationStatus={ null }
