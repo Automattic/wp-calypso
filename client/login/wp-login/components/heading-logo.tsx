@@ -26,6 +26,7 @@ import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { useSelector } from 'calypso/state';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getIsAkismet from 'calypso/state/selectors/get-is-akismet';
+import getIsJetpackApp from 'calypso/state/selectors/get-is-jetpack-app';
 import getIsPassport from 'calypso/state/selectors/get-is-passport';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 
@@ -40,6 +41,7 @@ const HeadingLogo = ( { isJetpack, isFromJetpackConnector, connectorPlugins }: P
 	const isWoo = useSelector( getIsWoo );
 	const isAkismet = useSelector( getIsAkismet );
 	const isPassport = useSelector( getIsPassport );
+	const isJetpackApp = useSelector( getIsJetpackApp );
 	const { hasCustomBranding } = usePartnerBranding();
 
 	// If partner has custom top-left branding, don't show center logo
@@ -82,6 +84,8 @@ const HeadingLogo = ( { isJetpack, isFromJetpackConnector, connectorPlugins }: P
 				className="wp-login__connector-logo"
 			/>
 		);
+	} else if ( isJetpackApp ) {
+		logo = <JetpackPlusWpComLogo size={ 32 } />;
 	} else if ( isJetpack ) {
 		logo = <JetpackLogo size={ 64 } />;
 	} else if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {

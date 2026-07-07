@@ -7,6 +7,8 @@ import {
 	isBlazeProOAuth2Client,
 	isPartnerPortalOAuth2Client,
 	isVIPOAuth2Client,
+	isSharedMobileAppOAuth2Client,
+	isIosOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -22,6 +24,7 @@ interface Props {
 	currentQuery: ReturnType< typeof getCurrentQueryArguments >;
 	translate: ( arg0: string, arg1?: object ) => TranslateResult;
 	isJetpack?: boolean;
+	isJetpackApp?: boolean;
 	twoStepNonce?: string | null;
 	isSocialFirst?: boolean;
 	isWooJPC?: boolean;
@@ -57,6 +60,38 @@ const getLoggedInUserHeaderText = ( {
 };
 
 /**
+ * Branded title for the shared WordPress/Jetpack mobile app OAuth2 clients.
+ *
+ * Both apps share the same client IDs, so the stored client title/name is not a
+ * reliable brand (production has shown values like `wordpress-app-ios`). The
+ * Jetpack app is identified by its `jetpack://` redirect_uri. Returns null when
+ * the client is not one of the shared mobile app clients.
+ */
+export function getMobileAppClientName( {
+	oauth2Client,
+	isJetpackApp,
+	translate,
+}: {
+	oauth2Client: { id: number } | null | undefined;
+	isJetpackApp?: boolean;
+	translate: Props[ 'translate' ];
+} ): TranslateResult | null {
+	if ( ! isSharedMobileAppOAuth2Client( oauth2Client ) ) {
+		return null;
+	}
+
+	if ( isJetpackApp ) {
+		return isIosOAuth2Client( oauth2Client )
+			? translate( 'Jetpack for iOS' )
+			: translate( 'Jetpack for Android' );
+	}
+
+	return isIosOAuth2Client( oauth2Client )
+		? translate( 'WordPress for iOS' )
+		: translate( 'WordPress for Android' );
+}
+
+/**
  * This function is used to get the header text for the login page.
  * TODO: We'll convert this to hook form in the future.
  */
@@ -70,6 +105,7 @@ export function getHeaderText( {
 	oauth2Client,
 	isWooJPC,
 	isJetpack,
+	isJetpackApp,
 	isWCCOM,
 	isBlazePro,
 	isFromAkismet,
@@ -112,11 +148,18 @@ export function getHeaderText( {
 				args: { partner: partnerConfig.displayName },
 			} );
 		} else {
-			let clientName = oauth2Client?.name;
+			let clientName: TranslateResult | undefined = oauth2Client?.name;
+			const mobileAppClientName = getMobileAppClientName( {
+				oauth2Client,
+				isJetpackApp,
+				translate,
+			} );
 			if ( isFromAkismet ) {
 				clientName = 'Akismet';
 			} else if ( isFromPassport ) {
 				clientName = 'Passport';
+			} else if ( mobileAppClientName ) {
+				clientName = mobileAppClientName;
 			} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {
 				clientName = 'Blaze Pro';
 			} else if ( isA4AOAuth2Client( oauth2Client ) ) {
