@@ -1488,7 +1488,7 @@ describe( 'ResultsPage', () => {
 			render(
 				<TestDomainSearch
 					cart={ buildCart( {
-						items: [ buildCartItem( { domain: 'flowers.com', tld: 'com' } ) ],
+						items: [ buildCartItem( { domain: 'flowers', tld: 'com' } ) ],
 					} ) }
 					config={ { showBundleSuggestions: true } }
 					query="flowers"

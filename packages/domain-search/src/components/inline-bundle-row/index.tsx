@@ -7,7 +7,7 @@ import {
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
-import { Icon, lockOutline, plus } from '@wordpress/icons';
+import { arrowRight, Icon, lockOutline, plus } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { getTld } from '../../helpers/get-tld';
 import { useIsCurrentMutation } from '../../hooks/use-is-current-mutation';
@@ -154,17 +154,32 @@ export const InlineBundleRow = ( { bundle, isLoading }: InlineBundleRowProps ) =
 						size={ 20 }
 						alignment="right"
 					/>
-					<Button
-						className="inline-bundle-row__cta"
-						variant="secondary"
-						icon={ plus }
-						__next40pxDefaultSize
-						isBusy={ isAddingBundle }
-						disabled={ isMutating || isAddedToCart }
-						onClick={ () => addBundleToCart( bundle ) }
-					>
-						{ __( 'Get bundle' ) }
-					</Button>
+					{ isAddedToCart ? (
+						<Button
+							className="inline-bundle-row__cta inline-bundle-row__cta--continue"
+							isPressed
+							aria-pressed="mixed"
+							__next40pxDefaultSize
+							icon={ arrowRight }
+							label={ __( 'Continue' ) }
+							disabled={ isMutating }
+							onClick={ () => events.onContinue() }
+						>
+							{ __( 'Continue' ) }
+						</Button>
+					) : (
+						<Button
+							className="inline-bundle-row__cta"
+							variant="secondary"
+							icon={ plus }
+							__next40pxDefaultSize
+							isBusy={ isAddingBundle }
+							disabled={ isMutating }
+							onClick={ () => addBundleToCart( bundle ) }
+						>
+							{ __( 'Get bundle' ) }
+						</Button>
+					) }
 				</HStack>
 			</HStack>
 

@@ -38,9 +38,13 @@ export const useInlineBundles = () => {
 		enabled: inlineBundlesEnabled,
 	} );
 
-	// A cart item whose TLD is a trigger — and that wasn't itself added as part
-	// of a bundle — offers an inline bundle. Dedupe by FQDN so each domain is
-	// fetched once even if it somehow appears twice in the cart.
+	// A cart item whose TLD is a trigger offers an inline bundle. Keep the row for
+	// an item that is either standalone or the primary of its own bundle: the
+	// primary case is the trigger the user just bundled, whose row stays visible
+	// and swaps its CTA to "Continue" (mirroring the top BundleCard). A domain
+	// added only as a companion of some other bundle is excluded — it doesn't get
+	// its own offer. Dedupe by FQDN so each domain is fetched once even if it
+	// somehow appears twice in the cart.
 	const triggerFqdns = useMemo( () => {
 		if ( ! inlineBundlesEnabled || bundleTriggers.length === 0 ) {
 			return [];
@@ -49,14 +53,17 @@ export const useInlineBundles = () => {
 		const seen = new Set< string >();
 
 		return cart.items
-			.filter( ( item ) => ! item.bundle && bundleTriggers.includes( item.tld ) )
-			.map( ( item ) => item.domain )
-			.filter( ( domain ) => {
-				if ( seen.has( domain ) ) {
+			.filter(
+				( item ) =>
+					bundleTriggers.includes( item.tld ) && ( ! item.bundle || item.bundle.isPrimary )
+			)
+			.map( ( item ) => `${ item.domain }.${ item.tld }` )
+			.filter( ( fqdn ) => {
+				if ( seen.has( fqdn ) ) {
 					return false;
 				}
 
-				seen.add( domain );
+				seen.add( fqdn );
 				return true;
 			} );
 	}, [ inlineBundlesEnabled, bundleTriggers, cart.items ] );

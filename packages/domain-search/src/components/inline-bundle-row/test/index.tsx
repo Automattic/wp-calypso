@@ -104,9 +104,20 @@ describe( 'InlineBundleRow', () => {
 		);
 	} );
 
-	it( 'disables the CTA when every bundle member is already in the cart', () => {
-		renderRow( {}, { hasItem: () => true } );
+	it( 'swaps "Get bundle" for a "Continue" CTA when every bundle member is already in the cart', async () => {
+		const user = userEvent.setup();
+		const onContinue = jest.fn();
 
-		expect( screen.getByRole( 'button', { name: 'Get bundle' } ) ).toBeDisabled();
+		render(
+			<TestDomainSearch cart={ buildCart( { hasItem: () => true } ) } events={ { onContinue } }>
+				<InlineBundleRow bundle={ bundleWithRoles } isLoading={ false } />
+			</TestDomainSearch>
+		);
+
+		expect( screen.queryByRole( 'button', { name: 'Get bundle' } ) ).not.toBeInTheDocument();
+
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+		expect( onContinue ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

@@ -20,9 +20,20 @@ const storyContextValue = {
 	},
 };
 
-const StoryWrapper = ( { children }: { children: React.ReactNode } ) => (
+const StoryWrapper = ( {
+	children,
+	addedToCart = false,
+}: {
+	children: React.ReactNode;
+	addedToCart?: boolean;
+} ) => (
 	<QueryClientProvider client={ queryClient }>
-		<DomainSearchContext.Provider value={ storyContextValue }>
+		<DomainSearchContext.Provider
+			value={ {
+				...storyContextValue,
+				cart: { ...storyContextValue.cart, hasItem: () => addedToCart },
+			} }
+		>
 			<div
 				style={ {
 					margin: '0 auto',
@@ -125,5 +136,22 @@ export const LongTlds = () => (
 export const Loading = () => (
 	<StoryWrapper>
 		<InlineBundleRow bundle={ undefined } isLoading />
+	</StoryWrapper>
+);
+
+// Once every member is in the cart the row stays visible and its CTA swaps to a
+// black "Continue" button, mirroring the top BundleCard's added-to-cart state.
+export const AddedToCart = () => (
+	<StoryWrapper addedToCart>
+		<InlineBundleRow
+			bundle={ buildSuggestion(
+				[
+					buildDomain( { domain: 'flowers.com', cost: '$22.00', role: 'primary' } ),
+					buildDomain( { domain: 'flowers.net', cost: '$18.00', role: 'companion' } ),
+				],
+				{ bundle_price: 36, original_price: 40, discount_percent: 10 }
+			) }
+			isLoading={ false }
+		/>
 	</StoryWrapper>
 );

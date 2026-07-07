@@ -73,7 +73,7 @@ describe( 'useInlineBundles', () => {
 
 		const { result } = renderUseInlineBundles( {
 			query: 'flowers',
-			cart: { items: [ buildCartItem( { domain: 'flowers.com', tld: 'com' } ) ] },
+			cart: { items: [ buildCartItem( { domain: 'flowers', tld: 'com' } ) ] },
 		} );
 
 		await waitFor( () =>
@@ -88,7 +88,7 @@ describe( 'useInlineBundles', () => {
 
 		const { result } = renderUseInlineBundles( {
 			query: 'flowers',
-			cart: { items: [ buildCartItem( { domain: 'flowers.net', tld: 'net' } ) ] },
+			cart: { items: [ buildCartItem( { domain: 'flowers', tld: 'net' } ) ] },
 		} );
 
 		await waitFor( () => expect( result.current.bundleTriggers ).toEqual( [ 'com' ] ) );
@@ -98,7 +98,7 @@ describe( 'useInlineBundles', () => {
 	it( 'is gated to bare-term searches: an FQDN query never fetches triggers or bundles', async () => {
 		const { result } = renderUseInlineBundles( {
 			query: 'flowers.com',
-			cart: { items: [ buildCartItem( { domain: 'flowers.com', tld: 'com' } ) ] },
+			cart: { items: [ buildCartItem( { domain: 'flowers', tld: 'com' } ) ] },
 		} );
 
 		await waitFor( () => expect( result.current.bundleTriggers ).toEqual( [] ) );
@@ -108,7 +108,7 @@ describe( 'useInlineBundles', () => {
 	it( 'is gated on the bundle flag: nothing is fetched when showBundleSuggestions is off', async () => {
 		const { result } = renderUseInlineBundles( {
 			query: 'flowers',
-			cart: { items: [ buildCartItem( { domain: 'flowers.com', tld: 'com' } ) ] },
+			cart: { items: [ buildCartItem( { domain: 'flowers', tld: 'com' } ) ] },
 			showBundleSuggestions: false,
 		} );
 
@@ -116,7 +116,7 @@ describe( 'useInlineBundles', () => {
 		expect( result.current.getInlineBundle( 'flowers.com' ) ).toBeUndefined();
 	} );
 
-	it( 'does not offer an inline bundle for a domain already added as part of a bundle', async () => {
+	it( 'does not offer an inline bundle for a domain added only as a bundle companion', async () => {
 		mockGetBundleTriggersQuery( { params: { query: 'flowers' }, bundleTriggers: [ 'com' ] } );
 
 		const { result } = renderUseInlineBundles( {
@@ -124,9 +124,9 @@ describe( 'useInlineBundles', () => {
 			cart: {
 				items: [
 					buildCartItem( {
-						domain: 'flowers.com',
+						domain: 'flowers',
 						tld: 'com',
-						bundle: { groupId: 'g1', price: '$36', isPrimary: true },
+						bundle: { groupId: 'g1', price: '$36', isPrimary: false },
 					} ),
 				],
 			},
@@ -134,5 +134,27 @@ describe( 'useInlineBundles', () => {
 
 		await waitFor( () => expect( result.current.bundleTriggers ).toEqual( [ 'com' ] ) );
 		expect( result.current.getInlineBundle( 'flowers.com' ) ).toBeUndefined();
+	} );
+
+	it( 'keeps the inline bundle for a trigger the user bundled (its own primary)', async () => {
+		mockGetBundleTriggersQuery( { params: { query: 'flowers' }, bundleTriggers: [ 'com' ] } );
+		mockGetBundleForDomainQuery( { fqdn: 'flowers.com', bundleSuggestion: BUNDLE_FOR_FLOWERS } );
+
+		const { result } = renderUseInlineBundles( {
+			query: 'flowers',
+			cart: {
+				items: [
+					buildCartItem( {
+						domain: 'flowers',
+						tld: 'com',
+						bundle: { groupId: 'g1', price: '$36', isPrimary: true },
+					} ),
+				],
+			},
+		} );
+
+		await waitFor( () =>
+			expect( result.current.getInlineBundle( 'flowers.com' )?.bundle ).toBeTruthy()
+		);
 	} );
 } );
