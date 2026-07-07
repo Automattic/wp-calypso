@@ -21,7 +21,7 @@ export default function MasterbarStatsSparkline( { siteId } ) {
 	return (
 		<>
 			<QuerySiteStats siteId={ siteId } statType="statsInsights" />
-			{ hourlyViews && <StatsSparkline hourlyViews={ hourlyViews } /> }
+			{ hourlyViews && hourlyViews.length > 0 && <StatsSparkline hourlyViews={ hourlyViews } /> }
 		</>
 	);
 }
