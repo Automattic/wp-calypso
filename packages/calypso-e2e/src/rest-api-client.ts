@@ -20,7 +20,6 @@ import type {
 	MyAccountInformationResponse,
 	AccountClosureResponse,
 	SiteDeletionResponse,
-	CalypsoPreferences,
 	CalypsoPreferencesResponse,
 	ErrorResponse,
 	AccountCredentials,
@@ -639,27 +638,6 @@ export class RestAPIClient {
 				Authorization: await this.getAuthorizationHeader( 'bearer' ),
 				'Content-Type': this.getContentTypeHeader( 'json' ),
 			},
-		};
-
-		return await this.sendRequest( this.getRequestURL( '1.1', '/me/preferences' ), params );
-	}
-
-	/**
-	 * Updates Calypso preferences for the user.
-	 *
-	 * @param {Partial<CalypsoPreferences>} preferences Key/value preferences to persist.
-	 * @returns {Promise<CalypsoPreferencesResponse>} JSON response containing the updated Calypso preferences.
-	 */
-	async setCalypsoPreferences(
-		preferences: Partial< CalypsoPreferences >
-	): Promise< CalypsoPreferencesResponse > {
-		const params: RequestParams = {
-			method: 'post',
-			headers: {
-				Authorization: await this.getAuthorizationHeader( 'bearer' ),
-				'Content-Type': this.getContentTypeHeader( 'json' ),
-			},
-			body: JSON.stringify( { calypso_preferences: preferences } ),
 		};
 
 		return await this.sendRequest( this.getRequestURL( '1.1', '/me/preferences' ), params );

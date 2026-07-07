@@ -57,14 +57,10 @@ export interface AllDomainsResponse {
 	domains: Array< DomainData >;
 }
 
-export interface CalypsoPreferences {
-	recentSites?: number[];
-	'account-recovery-interstitial-snoozed-until'?: number;
-	[ key: string ]: unknown;
-}
-
 export interface CalypsoPreferencesResponse {
-	calypso_preferences: CalypsoPreferences;
+	calypso_preferences: {
+		recentSites: number[];
+	};
 }
 
 export interface MyAccountInformationResponse {
