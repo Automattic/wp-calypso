@@ -1,11 +1,16 @@
+import {
+	agencyMigrationCommissionSitesQuery,
+	requestMigrationReverificationMutation,
+} from '@automattic/api-queries';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button, TextareaControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import A4AModal from 'calypso/a8c-for-agencies/components/a4a-modal';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import useRequestAnotherReviewMutation from '../hooks/use-request-another-review-mutation';
 import type { TaggedSite } from '../types';
 
 import './style.scss';
@@ -13,16 +18,18 @@ import './style.scss';
 export default function RequestReviewModal( {
 	onClose,
 	site,
-	fetchMigratedSites,
 }: {
 	onClose: () => void;
 	site: TaggedSite;
-	fetchMigratedSites: () => void;
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
+	const agencyId = useSelector( getActiveAgencyId );
 
-	const { mutate: requestReview, isPending } = useRequestAnotherReviewMutation();
+	const { mutate: requestReview, isPending } = useMutation(
+		requestMigrationReverificationMutation( agencyId as number )
+	);
 
 	const [ reason, setReason ] = useState( '' );
 
@@ -36,7 +43,9 @@ export default function RequestReviewModal( {
 			},
 			{
 				onSuccess: () => {
-					fetchMigratedSites();
+					queryClient.invalidateQueries( {
+						queryKey: agencyMigrationCommissionSitesQuery( agencyId as number ).queryKey,
+					} );
 					dispatch(
 						recordTracksEvent( 'calypso_a4a_migrations_request_another_review_success', {
 							site_id: site.id,

@@ -48,7 +48,7 @@ export default function MigrationsAddSitesTable( {
 			.filter( ( item ) => item.rawSite.a4a_is_dev_site !== true )
 			.filter( ( item ) => {
 				try {
-					const url = new URL( item.rawSite.url_with_scheme );
+					const url = new URL( item.rawSite.url_with_scheme ?? '' );
 					return ! [ 'mystagingwebsite.com', 'wpcomstaging.com' ].some( ( domain ) =>
 						url.host.endsWith( domain )
 					);

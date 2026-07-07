@@ -1,4 +1,9 @@
 import {
+	agencyMigrationCommissionSitesQuery,
+	tagAgencySitesForCommissionMutation,
+} from '@automattic/api-queries';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
 	Button,
 	SelectControl,
 	TextControl,
@@ -9,10 +14,10 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import A4AModal from 'calypso/a8c-for-agencies/components/a4a-modal';
 import { preventWidows } from 'calypso/lib/formatting';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import useTagSitesForCommissionMutation from '../../../hooks/use-tag-sites-for-commission';
 import MigrationsAddSitesTable from './add-sites-table';
 import type { SiteItem } from '../hooks/use-fetch-all-managed-sites-for-commission';
 import type { TaggedSite } from '../types';
@@ -22,18 +27,20 @@ import './style.scss';
 export default function MigrationsTagSitesModal( {
 	onClose,
 	taggedSites,
-	fetchMigratedSites,
 	migrationTags,
 }: {
 	onClose: () => void;
 	taggedSites?: TaggedSite[];
-	fetchMigratedSites: () => void;
 	migrationTags: string[];
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
+	const agencyId = useSelector( getActiveAgencyId );
 
-	const { mutate: tagSitesForMigration, isPending } = useTagSitesForCommissionMutation();
+	const { mutate: tagSitesForMigration, isPending } = useMutation(
+		tagAgencySitesForCommissionMutation( agencyId as number )
+	);
 
 	const [ selectedSites, setSelectedSites ] = useState< SiteItem[] | [] >( [] );
 	const [ migrationSourceHost, setMigrationSourceHost ] = useState( '' );
@@ -68,8 +75,10 @@ export default function MigrationsTagSitesModal( {
 			},
 			{
 				onSuccess: () => {
-					// Refetch the sites to update the UI
-					fetchMigratedSites();
+					// Refresh the commission list so the newly tagged sites appear.
+					queryClient.invalidateQueries( {
+						queryKey: agencyMigrationCommissionSitesQuery( agencyId as number ).queryKey,
+					} );
 					dispatch(
 						recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_add_sites_success', {
 							count: selectedSites.length,

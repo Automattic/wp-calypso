@@ -7,6 +7,7 @@ export * from './agency';
 export * from './agency-team';
 export * from './agency-sites';
 export * from './agency-woopayments';
+export * from './agency-migrations';
 export * from './akismet-api-key';
 export * from './big-sky-plugin';
 export * from './cancellation-offers';

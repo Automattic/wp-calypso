@@ -1,24 +1,29 @@
+import {
+	agencyMigrationCommissionSitesQuery,
+	agencySiteTagsMutation,
+} from '@automattic/api-queries';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { A4AConfirmationDialog } from 'calypso/a8c-for-agencies/components/a4a-confirmation-dialog';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
-import useUpdateSiteTagsMutation from '../../sites/site-preview-pane/hooks/use-update-site-tags-mutation';
 import type { TaggedSite } from '../types';
 
 export default function UntagSiteDialog( {
 	site,
 	migrationTags,
-	fetchMigratedSites,
 	onClose,
 }: {
 	site: TaggedSite;
 	migrationTags: string[];
-	fetchMigratedSites: () => void;
 	onClose: () => void;
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const { mutate, isPending } = useUpdateSiteTagsMutation();
+	const queryClient = useQueryClient();
+	const agencyId = useSelector( getActiveAgencyId );
+	const { mutate, isPending } = useMutation( agencySiteTagsMutation( agencyId as number ) );
 
 	const onConfirm = () => {
 		const newTags = site.tags.reduce( ( acc, tag ) => {
@@ -33,7 +38,9 @@ export default function UntagSiteDialog( {
 			{ siteId: site.id, tags: newTags },
 			{
 				onSuccess: () => {
-					fetchMigratedSites();
+					queryClient.invalidateQueries( {
+						queryKey: agencyMigrationCommissionSitesQuery( agencyId as number ).queryKey,
+					} );
 					onClose();
 					dispatch(
 						successNotice(

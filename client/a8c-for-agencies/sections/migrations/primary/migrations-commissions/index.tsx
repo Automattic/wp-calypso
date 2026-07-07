@@ -39,13 +39,10 @@ export default function MigrationsCommissions() {
 		setShowAddSitesModal( true );
 	}, [ dispatch ] );
 
-	const {
-		data: taggedSites,
-		isLoading,
-		refetch: fetchMigratedSites,
-	} = useFetchTaggedSitesForMigration();
+	const { data, isLoading } = useFetchTaggedSitesForMigration();
+	const taggedSites = data ?? [];
 
-	const showEmptyState = ! taggedSites?.length;
+	const showEmptyState = ! taggedSites.length;
 
 	const content = useMemo( () => {
 		if ( isLoading ) {
@@ -65,21 +62,10 @@ export default function MigrationsCommissions() {
 		) : (
 			<div className="migrations-commissions__content">
 				{ canTagSitesForCommission && <MigrationsConsolidatedCommissions items={ taggedSites } /> }
-				<MigrationsCommissionsList
-					items={ taggedSites }
-					fetchMigratedSites={ fetchMigratedSites }
-					migrationTags={ migrationTags }
-				/>
+				<MigrationsCommissionsList items={ taggedSites } migrationTags={ migrationTags } />
 			</div>
 		);
-	}, [
-		isLoading,
-		showEmptyState,
-		canTagSitesForCommission,
-		taggedSites,
-		fetchMigratedSites,
-		migrationTags,
-	] );
+	}, [ isLoading, showEmptyState, canTagSitesForCommission, taggedSites, migrationTags ] );
 
 	return (
 		<Layout
@@ -123,7 +109,6 @@ export default function MigrationsCommissions() {
 						<MigrationsTagSitesModal
 							onClose={ () => setShowAddSitesModal( false ) }
 							taggedSites={ taggedSites }
-							fetchMigratedSites={ fetchMigratedSites }
 							migrationTags={ migrationTags }
 						/>
 					) }

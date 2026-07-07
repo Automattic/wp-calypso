@@ -21,11 +21,9 @@ type ActiveModal =
 
 export default function MigrationsCommissionsList( {
 	items,
-	fetchMigratedSites,
 	migrationTags,
 }: {
 	items: TaggedSite[];
-	fetchMigratedSites: () => void;
 	migrationTags: string[];
 } ) {
 	const translate = useTranslate();
@@ -140,17 +138,12 @@ export default function MigrationsCommissionsList( {
 				<UntagSiteDialog
 					site={ activeModal.site }
 					migrationTags={ migrationTags }
-					fetchMigratedSites={ fetchMigratedSites }
 					onClose={ closeModal }
 				/>
 			) }
 
 			{ activeModal?.kind === 'request-review' && (
-				<RequestReviewModal
-					site={ activeModal.site }
-					fetchMigratedSites={ fetchMigratedSites }
-					onClose={ closeModal }
-				/>
+				<RequestReviewModal site={ activeModal.site } onClose={ closeModal } />
 			) }
 		</>
 	);
