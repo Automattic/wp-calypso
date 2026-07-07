@@ -93,7 +93,6 @@ describe( '<InterimOmnibar /> plan button', () => {
 				attached_to_purchase_id: null,
 			} );
 
-		// InterimOmnibar always fetches hourly views for the stats sparkline.
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/sites/1/stats/visits' )
 			.query( true )

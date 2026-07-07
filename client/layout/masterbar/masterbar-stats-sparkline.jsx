@@ -1,7 +1,7 @@
-import { StatsSparkline } from '@automattic/omnibar';
 import { createSelector } from '@automattic/state-utils';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { StatsSparkline } from 'calypso/dashboard/components/stats-sparkline';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 
 const getHourlyViews = createSelector(

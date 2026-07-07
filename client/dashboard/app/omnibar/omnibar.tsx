@@ -77,11 +77,14 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 	const notificationsPluginNode = useNotificationsPlugin( { user } );
 	const siteSwitcherPluginNode = useSiteSwitcherPlugin();
 	const statsSparklineNode = useStatsSparklinePlugin( { siteId, site } );
+	const siteActions = statsSparklineNode
+		? [ ...( baseOmnibarNodes.siteActions ?? [] ), statsSparklineNode ]
+		: baseOmnibarNodes.siteActions;
 
 	const omnibarNodes = {
 		...baseOmnibarNodes,
 		sitePlugins: [ siteSwitcherPluginNode ],
-		stats: statsSparklineNode,
+		siteActions,
 		plugins: [ helpCenterPluginNode, notificationsPluginNode ],
 	};
 

@@ -724,21 +724,12 @@ body.is-mobile-app-view {
 .masterbar__item-stats-sparkline {
 	padding: 0 10px;
 
-	// vertical-align on the svg itself is never exactly centered — "middle"
-	// aligns to a point derived from the font baseline, not the line box's
-	// true center. Making the content wrapper its own flex container
-	// centers the svg geometrically instead.
 	.masterbar__item-content {
 		display: flex;
 		align-items: center;
 		height: 100%;
 	}
 
-	// Structural rules (overflow clipping, peak opacity/transition, label
-	// size) live in the shared @automattic/omnibar stats-sparkline.scss.
-	// Sizing here just counteracts the masterbar's global
-	// "svg { width: 24px; height: 24px }" icon rule, which would otherwise
-	// squash the whole bar chart into an icon-sized box.
 	.wpcom-stats-sparkline {
 		width: auto;
 		height: auto;
@@ -756,7 +747,6 @@ body.is-mobile-app-view {
 		fill: var(--color-masterbar-icon);
 	}
 
-	// Keyboard users tabbing to this link get the same reveal a mouse hover does.
 	&:hover,
 	&:focus-visible {
 		.wpcom-stats-sparkline {

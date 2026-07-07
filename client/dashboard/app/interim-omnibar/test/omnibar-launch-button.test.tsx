@@ -59,7 +59,6 @@ describe( '<InterimOmnibar /> launch button on non-site routes', () => {
 			.query( true )
 			.reply( 200, { domains: [ { blog_id: 1, domain: 'test-site.wordpress.com' } ] } );
 
-		// InterimOmnibar always fetches hourly views for the stats sparkline.
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/sites/1/stats/visits' )
 			.query( true )

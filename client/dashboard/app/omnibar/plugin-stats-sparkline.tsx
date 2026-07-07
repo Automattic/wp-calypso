@@ -1,19 +1,12 @@
 import { siteHourlyViewsQuery } from '@automattic/api-queries';
-import { StatsSparkline } from '@automattic/omnibar';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
+import { StatsSparkline } from '../../components/stats-sparkline';
 import type { Site } from '@automattic/api-core';
 import type { OmnibarNode } from '@automattic/omnibar';
 
 import './stats-sparkline.scss';
 
-/**
- * The /sites/%s/admin-bar endpoint's node allowlist doesn't include "stats"
- * (it's only added by Jetpack's own stats_admin_bar_menu, which has no
- * parent, so the endpoint's ancestor-walk filter drops it entirely) — so
- * unlike the other omnibar nodes, this one is built independently of that
- * endpoint's data rather than sourced from it.
- */
 export function useStatsSparklinePlugin( {
 	siteId,
 	site,
@@ -32,10 +25,18 @@ export function useStatsSparklinePlugin( {
 		return undefined;
 	}
 
+	const label = __( 'Views over 48 hours. Click for more Stats.' );
+
 	return {
 		id: 'stats',
 		href: `${ adminUrl }admin.php?page=stats`,
-		label: __( 'Views over 48 hours. Click for more Stats.' ),
-		render: () => <StatsSparkline hourlyViews={ hourlyViews } />,
+		label,
+		title: __( 'Stats' ),
+		render: () => (
+			<>
+				<StatsSparkline hourlyViews={ hourlyViews } />
+				<span className="screen-reader-text">{ label }</span>
+			</>
+		),
 	};
 }

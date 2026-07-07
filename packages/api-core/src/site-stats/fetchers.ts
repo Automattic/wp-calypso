@@ -21,10 +21,6 @@ export async function fetchSiteEngagementMonthlyStats(
 	} );
 }
 
-/**
- * Views for the last 48 hours, matching wp-admin's own admin bar sparkline
- * (wp-includes/charts/admin-bar-hours-scale.php), which charts the same window.
- */
 export async function fetchSiteHourlyViews( siteId: number ): Promise< SiteHourlyViewsResponse > {
 	return wpcom.req.get( `/sites/${ siteId }/stats/visits`, {
 		unit: 'hour',

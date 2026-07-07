@@ -1,9 +1,3 @@
-// Structural rules (overflow clipping, peak opacity/transition, label size)
-// live in the shared @automattic/omnibar stats-sparkline.scss. This only
-// adds what's specific to the omnibar's own design system: the .omnibar__menu
-// wrapper already provides flex centering and text color for every node, so
-// currentColor picks that up, and the hover/focus reveal is scoped to that
-// wrapper rather than the sparkline's own root.
 .wpcom-stats-sparkline {
 	vertical-align: middle;
 }
