@@ -5,7 +5,7 @@ import {
 	__experimentalSpacer as Spacer,
 } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
-import { useTranslate } from 'i18n-calypso';
+import { __, sprintf } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
 import A4ATablePlaceholder from 'calypso/a8c-for-agencies/components/a4a-table-placeholder';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
@@ -30,7 +30,6 @@ export default function MigrationsAddSitesTable( {
 	taggedSites?: TaggedSite[];
 	migrationSourceHost: string;
 } ) {
-	const translate = useTranslate();
 	const isDesktop = useDesktopBreakpoint();
 	const dispatch = useDispatch();
 
@@ -95,7 +94,7 @@ export default function MigrationsAddSitesTable( {
 			label: (
 				<div>
 					<CheckboxControl
-						label={ translate( 'Site' ).toUpperCase() }
+						label={ __( 'Site' ).toUpperCase() }
 						checked={ selectedSites.length === availableSites.length }
 						onChange={ onSelectAllSites }
 						disabled={ false }
@@ -119,7 +118,7 @@ export default function MigrationsAddSitesTable( {
 
 		const dateColumn = {
 			id: 'date',
-			label: translate( 'Date added' ).toUpperCase(),
+			label: __( 'Date added' ).toUpperCase(),
 			getValue: () => '-',
 			render: ( { item }: { item: SiteItem } ) =>
 				item.date ? new Date( item.date ).toLocaleDateString() : '-',
@@ -128,14 +127,7 @@ export default function MigrationsAddSitesTable( {
 		};
 
 		return isDesktop ? [ siteColumn, dateColumn ] : [ siteColumn ];
-	}, [
-		isDesktop,
-		availableSites.length,
-		onSelectAllSites,
-		onSelectSite,
-		selectedSites,
-		translate,
-	] );
+	}, [ isDesktop, availableSites.length, onSelectAllSites, onSelectSite, selectedSites ] );
 
 	const { data: allSites, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( availableSites, dataViewsState, fields );
@@ -144,15 +136,17 @@ export default function MigrationsAddSitesTable( {
 	return (
 		<div className="add-sites-table redesigned-a8c-table">
 			<BaseControl
-				label={ translate( 'Select sites to tag' ) }
+				label={ __( 'Select sites to tag' ) }
 				className="migrations-tag-sites-modal__table-control"
 			>
 				{ migrationSourceHost && (
 					<Spacer marginY={ 4 }>
 						<div className="migrations-tag-sites-modal__instruction">
-							{ translate( 'Make sure you only select sites previously hosted on %s', {
-								args: [ migrationSourceHost ],
-							} ) }
+							{ sprintf(
+								/* translators: %s: the hosting provider name */
+								__( 'Make sure you only select sites previously hosted on %s' ),
+								migrationSourceHost
+							) }
 						</div>
 					</Spacer>
 				) }

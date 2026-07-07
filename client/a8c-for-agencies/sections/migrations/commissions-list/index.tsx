@@ -1,6 +1,6 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { __experimentalHStack as HStack } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, ReactNode, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
@@ -26,8 +26,6 @@ export default function MigrationsCommissionsList( {
 	items: TaggedSite[];
 	migrationTags: string[];
 } ) {
-	const translate = useTranslate();
-
 	const isDesktop = useDesktopBreakpoint();
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
@@ -67,7 +65,7 @@ export default function MigrationsCommissionsList( {
 		() => [
 			{
 				id: 'site',
-				label: translate( 'Site' ).toUpperCase(),
+				label: __( 'Site' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item }: { item: TaggedSite } ): ReactNode => <SiteColumn site={ item.url } />,
 				enableHiding: false,
@@ -77,7 +75,7 @@ export default function MigrationsCommissionsList( {
 				id: 'migratedOn',
 				// FIXME: This should be "Migrated on" instead of "Date added"
 				// We will change this when the MC tool is implemented and we have the migration date
-				label: translate( 'Date added' ).toUpperCase(),
+				label: __( 'Date added' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item } ): ReactNode => <MigratedOnColumn migratedOn={ item.created_at } />,
 				enableHiding: false,
@@ -85,7 +83,7 @@ export default function MigrationsCommissionsList( {
 			},
 			{
 				id: 'reviewStatus',
-				label: translate( 'Review status' ).toUpperCase(),
+				label: __( 'Review status' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item }: { item: TaggedSite } ): ReactNode => {
 					return (
@@ -99,7 +97,7 @@ export default function MigrationsCommissionsList( {
 				enableSorting: false,
 			},
 		],
-		[ translate ]
+		[]
 	);
 
 	return (

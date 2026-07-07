@@ -4,7 +4,8 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button, TextareaControl } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { createInterpolateElement } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import A4AModal from 'calypso/a8c-for-agencies/components/a4a-modal';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -22,7 +23,6 @@ export default function RequestReviewModal( {
 	onClose: () => void;
 	site: TaggedSite;
 } ) {
-	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const agencyId = useSelector( getActiveAgencyId );
@@ -53,12 +53,13 @@ export default function RequestReviewModal( {
 					);
 					dispatch(
 						successNotice(
-							translate(
-								'Your verification request for {{strong}}%(siteUrl)s{{/strong}} has been submitted.',
-								{
-									components: { strong: <strong /> },
-									args: { siteUrl: site.url },
-								}
+							createInterpolateElement(
+								sprintf(
+									/* translators: %s: the site URL */
+									__( 'Your verification request for <strong>%s</strong> has been submitted.' ),
+									site.url
+								),
+								{ strong: <strong /> }
 							),
 							{ id: 'a4a-commission-request-review-success', duration: 5000 }
 						)
@@ -93,23 +94,24 @@ export default function RequestReviewModal( {
 					disabled={ isPending || ! isValid }
 					isBusy={ isPending }
 				>
-					{ translate( 'Submit request' ) }
+					{ __( 'Submit request' ) }
 				</Button>
 			}
-			title={ translate( 'Request another verification' ) }
-			subtile={ translate(
-				'Please specify why {{strong}}%(siteUrl)s{{/strong}} needs to be verified again.',
-				{
-					components: { strong: <strong /> },
-					args: { siteUrl: site.url },
-				}
+			title={ __( 'Request another verification' ) }
+			subtile={ createInterpolateElement(
+				sprintf(
+					/* translators: %s: the site URL */
+					__( 'Please specify why <strong>%s</strong> needs to be verified again.' ),
+					site.url
+				),
+				{ strong: <strong /> }
 			) }
 		>
 			<TextareaControl
-				label={ translate( 'Reason for re-verification' ) }
+				label={ __( 'Reason for re-verification' ) }
 				value={ reason }
 				onChange={ setReason }
-				placeholder={ translate( 'Describe why this site needs to be verified again' ) }
+				placeholder={ __( 'Describe why this site needs to be verified again' ) }
 				rows={ 4 }
 			/>
 		</A4AModal>

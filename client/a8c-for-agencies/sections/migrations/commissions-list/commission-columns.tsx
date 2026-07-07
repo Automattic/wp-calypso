@@ -1,7 +1,7 @@
 import { BadgeType, Popover } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
 import FormattedDate from 'calypso/components/formatted-date';
@@ -25,7 +25,6 @@ export const ReviewStatusColumn = ( {
 	reviewStatus: string;
 	rejectionReason?: string;
 } ) => {
-	const translate = useTranslate();
 	const buttonRef = useRef< HTMLButtonElement | null >( null );
 	const [ isPopoverVisible, setIsPopoverVisible ] = useState( false );
 
@@ -38,32 +37,32 @@ export const ReviewStatusColumn = ( {
 		switch ( reviewStatus ) {
 			case 'paid':
 				return {
-					statusText: translate( 'Paid' ),
+					statusText: __( 'Paid' ),
 					statusType: 'success',
 				};
 			case 'verified':
 				return {
-					statusText: translate( 'Confirmed' ),
+					statusText: __( 'Confirmed' ),
 					statusType: 'success',
 				};
 			case 'rejected':
 				return {
-					statusText: translate( 'Ineligible' ),
+					statusText: __( 'Ineligible' ),
 					statusType: 'info',
 				};
 			case 'ineligible':
 				return {
-					statusText: translate( 'Ineligible' ),
+					statusText: __( 'Ineligible' ),
 					statusType: 'info',
 				};
 			case 'reverification':
 				return {
-					statusText: translate( 'Pending re-verification' ),
+					statusText: __( 'Pending re-verification' ),
 					statusType: 'info',
 				};
 			case 'pending':
 				return {
-					statusText: translate( 'Pending' ),
+					statusText: __( 'Pending' ),
 					statusType: 'warning',
 				};
 			default:
@@ -95,7 +94,7 @@ export const ReviewStatusColumn = ( {
 					ref={ buttonRef }
 					className="commission-columns__rejection-reason-button"
 					onClick={ () => setIsPopoverVisible( ! isPopoverVisible ) }
-					aria-label={ translate( 'View ineligibility reason' ) }
+					aria-label={ __( 'View ineligibility reason' ) }
 				>
 					<Icon icon={ info } size={ 18 } />
 				</Button>
@@ -108,7 +107,7 @@ export const ReviewStatusColumn = ( {
 					>
 						<div className="commission-columns__rejection-reason-popover">
 							<div className="commission-columns__rejection-reason-title">
-								{ translate( 'Ineligibility reason' ) }
+								{ __( 'Ineligibility reason' ) }
 							</div>
 							<div className="commission-columns__rejection-reason-text">{ rejectionReason }</div>
 						</div>

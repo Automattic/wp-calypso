@@ -9,8 +9,9 @@ import {
 	TextControl,
 	__experimentalSpacer as Spacer,
 } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import A4AModal from 'calypso/a8c-for-agencies/components/a4a-modal';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -33,7 +34,6 @@ export default function MigrationsTagSitesModal( {
 	taggedSites?: TaggedSite[];
 	migrationTags: string[];
 } ) {
-	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const agencyId = useSelector( getActiveAgencyId );
@@ -49,15 +49,15 @@ export default function MigrationsTagSitesModal( {
 	const OTHER_OPTION_VALUE = 'other';
 
 	const migrationSourceOptions = [
-		{ label: translate( 'Select a host' ), value: '' },
-		{ label: translate( 'WP Engine' ), value: 'wpengine' },
-		{ label: translate( 'Kinsta' ), value: 'kinsta' },
-		{ label: translate( 'Pantheon' ), value: 'pantheon' },
-		{ label: translate( 'Cloudways' ), value: 'cloudways' },
-		{ label: translate( 'SiteGround' ), value: 'siteground' },
-		{ label: translate( 'Bluehost' ), value: 'bluehost' },
-		{ label: translate( 'Liquid Web' ), value: 'liquidweb' },
-		{ label: translate( 'Other' ), value: OTHER_OPTION_VALUE },
+		{ label: __( 'Select a host' ), value: '' },
+		{ label: __( 'WP Engine' ), value: 'wpengine' },
+		{ label: __( 'Kinsta' ), value: 'kinsta' },
+		{ label: __( 'Pantheon' ), value: 'pantheon' },
+		{ label: __( 'Cloudways' ), value: 'cloudways' },
+		{ label: __( 'SiteGround' ), value: 'siteground' },
+		{ label: __( 'Bluehost' ), value: 'bluehost' },
+		{ label: __( 'Liquid Web' ), value: 'liquidweb' },
+		{ label: __( 'Other' ), value: OTHER_OPTION_VALUE },
 	];
 
 	const isOtherSelected = migrationSourceHost === OTHER_OPTION_VALUE;
@@ -90,19 +90,23 @@ export default function MigrationsTagSitesModal( {
 					dispatch(
 						hasSingleSite
 							? successNotice(
-									translate(
-										'The site {{strong}}%(siteUrl)s{{/strong}} has been successfully tagged for commission.',
-										{
-											components: { strong: <strong /> },
-											args: { siteUrl },
-										}
+									createInterpolateElement(
+										sprintf(
+											/* translators: %s: the site URL */
+											__(
+												'The site <strong>%s</strong> has been successfully tagged for commission.'
+											),
+											siteUrl
+										),
+										{ strong: <strong /> }
 									)
 							  )
 							: successNotice(
-									translate( '%(count)s sites have been successfully tagged for commission.', {
-										args: { count: selectedSites.length },
-										comment: '%(count)s is the number of sites tagged.',
-									} )
+									sprintf(
+										/* translators: %d: the number of sites tagged */
+										__( '%d sites have been successfully tagged for commission.' ),
+										selectedSites.length
+									)
 							  )
 					);
 					onClose();
@@ -148,30 +152,28 @@ export default function MigrationsTagSitesModal( {
 					isBusy={ isPending }
 				>
 					{ selectedSites.length > 0
-						? translate( 'Add %(count)d site', 'Add %(count)d sites', {
-								args: {
-									count: selectedSites.length,
-								},
-								count: selectedSites.length,
-								comment: '%(count)s is the number of sites selected.',
-						  } )
-						: translate( 'Add sites' ) }
+						? sprintf(
+								/* translators: %d: the number of sites selected */
+								_n( 'Add %d site', 'Add %d sites', selectedSites.length ),
+								selectedSites.length
+						  )
+						: __( 'Add sites' ) }
 				</Button>
 			}
-			title={ translate( 'Tag your transferred sites for commission.' ) }
-			subtile={ translate( 'Select the sites you moved on your own.' ) }
+			title={ __( 'Tag your transferred sites for commission.' ) }
+			subtile={ __( 'Select the sites you moved on your own.' ) }
 		>
 			<div className="migrations-tag-sites-modal__instruction">
 				<Icon size={ 18 } icon={ info } />
 				{ preventWidows(
-					translate(
+					__(
 						"Can't find your transferred site? Ensure the Automattic for Agencies plugin is connected in WP-Admin to display the site here."
 					)
 				) }
 			</div>
 			<Spacer marginBottom={ 4 } />
 			<SelectControl
-				label={ translate( 'Hosting provider' ) }
+				label={ __( 'Hosting provider' ) }
 				value={ migrationSourceHost }
 				options={ migrationSourceOptions }
 				onChange={ handleMigrationSourceHostChange }
@@ -180,10 +182,10 @@ export default function MigrationsTagSitesModal( {
 				<>
 					<Spacer marginBottom={ 4 } />
 					<TextControl
-						label={ translate( 'Other hosting provider' ) }
+						label={ __( 'Other hosting provider' ) }
 						value={ otherHostingProvider }
 						onChange={ setOtherHostingProvider }
-						placeholder={ translate( 'Enter hosting provider name' ) }
+						placeholder={ __( 'Enter hosting provider name' ) }
 					/>
 				</>
 			) }

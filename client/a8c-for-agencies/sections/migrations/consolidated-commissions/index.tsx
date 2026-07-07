@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
+import { __, sprintf } from '@wordpress/i18n';
 import type { TaggedSite } from '../types';
 
 import './style.scss';
@@ -10,8 +10,6 @@ const getQuarter = ( date = new Date() ) => {
 };
 
 export default function MigrationsConsolidatedCommissions( { items }: { items: TaggedSite[] } ) {
-	const translate = useTranslate();
-
 	const migrationCommissions =
 		items.filter( ( item ) => {
 			// Consider only verified migrations for the current quarter
@@ -32,17 +30,16 @@ export default function MigrationsConsolidatedCommissions( { items }: { items: T
 			<Card compact>
 				<div className="consolidated-commissions__value"> ${ migrationCommissions }</div>
 				<div className="consolidated-commissions__label">
-					{ translate( 'Migration commissions expected in Q%(currentQuarter)s', {
-						args: { currentQuarter },
-						comment: 'Quarterly commission value, where Q is the short form of "Quarter"',
-					} ) }
+					{ sprintf(
+						/* translators: %d: the current quarter number. Q is the short form of "Quarter". */
+						__( 'Migration commissions expected in Q%d' ),
+						currentQuarter
+					) }
 				</div>
 			</Card>
 			<Card compact>
 				<div className="consolidated-commissions__value">{ sitesPendingReview }</div>
-				<div className="consolidated-commissions__label">
-					{ translate( 'Sites pending review' ) }
-				</div>
+				<div className="consolidated-commissions__label">{ __( 'Sites pending review' ) }</div>
 			</Card>
 		</div>
 	);

@@ -1,4 +1,4 @@
-import { useTranslate } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
 import {
 	ListItemCards,
 	ListItemCard,
@@ -18,8 +18,6 @@ export default function MigrationsCommissionsListMobileView( {
 	commissions: TaggedSite[];
 	actions: Action[];
 } ) {
-	const translate = useTranslate();
-
 	return (
 		<div className="migrations-commissions-list-mobile-view">
 			<ListItemCards>
@@ -27,7 +25,7 @@ export default function MigrationsCommissionsListMobileView( {
 					return (
 						<ListItemCard key={ commission.id }>
 							<ListItemCardActions actions={ actions } item={ commission } />
-							<ListItemCardContent title={ translate( 'Site' ) }>
+							<ListItemCardContent title={ __( 'Site' ) }>
 								<div className="migrations-commissions-list-mobile-view__column">
 									<SiteColumn site={ commission.url } />
 								</div>
@@ -35,13 +33,13 @@ export default function MigrationsCommissionsListMobileView( {
 							{
 								// FIXME: This should be "Migrated on" instead of "Date added"
 								// We will change this when the MC tool is implemented and we have the migration date
-								<ListItemCardContent title={ translate( 'Date added' ) }>
+								<ListItemCardContent title={ __( 'Date added' ) }>
 									<div className="migrations-commissions-list-mobile-view__column">
 										<MigratedOnColumn migratedOn={ commission.created_at } />
 									</div>
 								</ListItemCardContent>
 							}
-							<ListItemCardContent title={ translate( 'Review status' ) }>
+							<ListItemCardContent title={ __( 'Review status' ) }>
 								<ReviewStatusColumn reviewStatus={ commission.incentive_status } />
 							</ListItemCardContent>
 						</ListItemCard>

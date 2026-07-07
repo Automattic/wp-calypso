@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { useTranslate } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import type { TaggedSite } from '../types';
 
@@ -10,15 +10,13 @@ export default function useCommissionListActions( {
 	onUntagSite: ( site: TaggedSite ) => void;
 	onRequestReview: ( site: TaggedSite ) => void;
 } ) {
-	const translate = useTranslate();
-
 	return useMemo( () => {
 		const isRequestVerificationEnabled = isEnabled( 'a4a-migrations-request-verification' );
 
 		return [
 			{
 				id: 'request-verification',
-				label: translate( 'Request verification' ),
+				label: __( 'Request verification' ),
 				isEligible( item: TaggedSite ) {
 					return isRequestVerificationEnabled && item.incentive_status === 'pending';
 				},
@@ -28,7 +26,7 @@ export default function useCommissionListActions( {
 			},
 			{
 				id: 'request-another-verification',
-				label: translate( 'Request another verification' ),
+				label: __( 'Request another verification' ),
 				isEligible( item: TaggedSite ) {
 					return (
 						isRequestVerificationEnabled &&
@@ -41,7 +39,7 @@ export default function useCommissionListActions( {
 			},
 			{
 				id: 'untag-site',
-				label: translate( 'Untag site' ),
+				label: __( 'Untag site' ),
 				isEligible( item: TaggedSite ) {
 					return item.incentive_status === 'pending';
 				},
@@ -50,5 +48,5 @@ export default function useCommissionListActions( {
 				},
 			},
 		];
-	}, [ translate, onRequestReview, onUntagSite ] );
+	}, [ onRequestReview, onUntagSite ] );
 }

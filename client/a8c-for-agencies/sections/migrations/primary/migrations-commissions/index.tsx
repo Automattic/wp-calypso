@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
@@ -26,13 +26,12 @@ import IncentiveEndedBanner from './incentive-ended-banner';
 import './style.scss';
 
 export default function MigrationsCommissions() {
-	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const [ showAddSitesModal, setShowAddSitesModal ] = useState( false );
 	const { canTagSitesForCommission, migrationTags } = useCanTagSitesForCommission();
 
-	const title = translate( 'Migrations: commissions' );
+	const title = __( 'Migrations: commissions' );
 
 	const onTagSitesClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a8c_migrations_commissions_tag_sites_click' ) );
@@ -83,11 +82,11 @@ export default function MigrationsCommissions() {
 						hideOnMobile
 						items={ [
 							{
-								label: translate( 'Migrations' ),
+								label: __( 'Migrations' ),
 								href: A4A_MIGRATIONS_LINK,
 							},
 							{
-								label: translate( 'Commissions' ),
+								label: __( 'Commissions' ),
 							},
 						] }
 					/>
@@ -95,7 +94,7 @@ export default function MigrationsCommissions() {
 						<MobileSidebarNavigation />
 						{ canTagSitesForCommission && (
 							<Button variant="primary" onClick={ onTagSitesClick }>
-								{ translate( 'Tag sites for commission' ) }
+								{ __( 'Tag sites for commission' ) }
 							</Button>
 						) }
 					</Actions>

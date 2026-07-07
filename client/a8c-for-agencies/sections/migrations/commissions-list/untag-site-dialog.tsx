@@ -3,7 +3,8 @@ import {
 	agencySiteTagsMutation,
 } from '@automattic/api-queries';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useTranslate } from 'i18n-calypso';
+import { createInterpolateElement } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
 import { A4AConfirmationDialog } from 'calypso/a8c-for-agencies/components/a4a-confirmation-dialog';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -19,7 +20,6 @@ export default function UntagSiteDialog( {
 	migrationTags: string[];
 	onClose: () => void;
 } ) {
-	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const agencyId = useSelector( getActiveAgencyId );
@@ -44,10 +44,14 @@ export default function UntagSiteDialog( {
 					onClose();
 					dispatch(
 						successNotice(
-							translate( 'Successfully untagged {{strong}}%(siteUrl)s{{/strong}}.', {
-								components: { strong: <strong /> },
-								args: { siteUrl: site.url },
-							} ),
+							createInterpolateElement(
+								sprintf(
+									/* translators: %s: the site URL */
+									__( 'Successfully untagged <strong>%s</strong>.' ),
+									site.url
+								),
+								{ strong: <strong /> }
+							),
 							{ id: 'a4a-commission-list-untag-success', duration: 5000 }
 						)
 					);
@@ -62,17 +66,17 @@ export default function UntagSiteDialog( {
 			onConfirm={ onConfirm }
 			isLoading={ isPending }
 			isDisabled={ isPending }
-			title={ translate( 'Untag site' ) }
+			title={ __( 'Untag site' ) }
 		>
-			{ translate(
-				'Are you sure you want to untag {{b}}%(site)s{{/b}}? This will stop it from being considered for a migration payout.',
-				{
-					args: { site: site.url },
-					components: {
-						b: <b />,
-					},
-					comment: '%(site)s is the site name',
-				}
+			{ createInterpolateElement(
+				sprintf(
+					/* translators: %s: the site name */
+					__(
+						'Are you sure you want to untag <b>%s</b>? This will stop it from being considered for a migration payout.'
+					),
+					site.url
+				),
+				{ b: <b /> }
 			) }
 		</A4AConfirmationDialog>
 	);
