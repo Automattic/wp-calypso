@@ -257,6 +257,24 @@ describe( 'Education Flow', () => {
 			expect( navigate ).not.toHaveBeenCalled();
 		} );
 
+		it( 'redirects when a different plan is in the cart', () => {
+			( dispatch( ONBOARD_STORE ) as OnboardActions ).setPlanCartItem( {
+				product_slug: 'personal-bundle',
+			} );
+
+			const navigate = renderSideEffect( STEPS.DOMAIN_SEARCH.slug );
+
+			expect( navigate ).toHaveBeenCalledWith( STEPS.EDUCATION_STUDENT_VALIDATION.slug );
+		} );
+
+		it( 'redirects a deep link to the error step without the Student plan', () => {
+			( dispatch( ONBOARD_STORE ) as OnboardActions ).resetOnboardStore();
+
+			const navigate = renderSideEffect( STEPS.ERROR.slug );
+
+			expect( navigate ).toHaveBeenCalledWith( STEPS.EDUCATION_STUDENT_VALIDATION.slug );
+		} );
+
 		it( 'does not redirect on the validation step itself', () => {
 			( dispatch( ONBOARD_STORE ) as OnboardActions ).resetOnboardStore();
 

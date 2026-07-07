@@ -219,12 +219,13 @@ const education: FlowV2< typeof initialize > = {
 				STEPS.USE_MY_DOMAIN.slug,
 				STEPS.SITE_CREATION_STEP.slug,
 				STEPS.PROCESSING.slug,
+				STEPS.ERROR.slug,
 			];
 
 			if (
 				currentStepSlug &&
 				stepsRequiringValidation.includes( currentStepSlug ) &&
-				! planCartItem
+				planCartItem?.product_slug !== STUDENT_PLAN_SLUG
 			) {
 				navigate( STEPS.EDUCATION_STUDENT_VALIDATION.slug );
 			}
