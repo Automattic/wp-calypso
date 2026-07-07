@@ -10,6 +10,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
+import ExcerptPicker from './components/excerpt-picker';
 import ImageAltTextPicker from './components/image-alt-text-picker';
 import PostFeedback from './components/post-feedback';
 import Proofread from './components/proofread';
@@ -310,6 +311,10 @@ describe( 'getChatComponent', () => {
 
 	it( 'returns ImageAltTextPicker for type "image-alt-text-picker"', () => {
 		expect( getChatComponent( 'image-alt-text-picker' ) ).toBe( ImageAltTextPicker );
+	} );
+
+	it( 'returns ExcerptPicker for type "excerpt-picker"', () => {
+		expect( getChatComponent( 'excerpt-picker' ) ).toBe( ExcerptPicker );
 	} );
 
 	it( 'returns null for an unknown type', () => {
@@ -1956,6 +1961,20 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.type ).toBe( 'seo-description-picker' );
 			expect( parsed.data.props ).toEqual( { descriptions } );
 			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_seo_desc' );
+		} );
+
+		it( 'returns an agentMessage envelope with an Undo checkpoint for an excerpt-picker call', async () => {
+			const excerpts = [ { excerpt: 'A short summary.', explanation: 'a' } ];
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'excerpt-picker',
+				props: { excerpts },
+				toolCallId: 'call_excerpt',
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.type ).toBe( 'excerpt-picker' );
+			expect( parsed.data.props ).toEqual( { excerpts } );
+			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_excerpt' );
 		} );
 
 		it( 'returns an agentMessage envelope with an Undo checkpoint for an image-alt-text-picker call', async () => {

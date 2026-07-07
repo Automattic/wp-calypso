@@ -15,6 +15,7 @@ import { __, _x } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
+import ExcerptPicker from './components/excerpt-picker';
 import './components/feedback-list.scss';
 import ImageAltTextPicker from './components/image-alt-text-picker';
 import './components/image-alt-text-picker.scss';
@@ -372,6 +373,7 @@ function handleShowComponent( input: any ): any {
 
 	if (
 		type === 'title-picker' ||
+		type === 'excerpt-picker' ||
 		type === 'seo-title-picker' ||
 		type === 'seo-description-picker' ||
 		type === 'image-alt-text-picker'
@@ -686,6 +688,9 @@ export const contextProvider = {
  * @returns {ComponentType|null} The matching component, or null.
  */
 export function getChatComponent( type: string ): ComponentType | null {
+	if ( type === 'excerpt-picker' ) {
+		return ExcerptPicker as ComponentType;
+	}
 	if ( type === 'title-picker' ) {
 		return TitlePicker as ComponentType;
 	}
