@@ -1,18 +1,15 @@
-// The .omnibar__menu wrapper (from the omnibar package) already provides
-// flex centering, height, and text color for every node — this only needs
-// to add the hover/focus reveal behavior for the peak marker.
+// Structural rules (overflow clipping, peak opacity/transition, label size)
+// live in the shared @automattic/omnibar stats-sparkline.scss. This only
+// adds what's specific to the omnibar's own design system: the .omnibar__menu
+// wrapper already provides flex centering and text color for every node, so
+// currentColor picks that up, and the hover/focus reveal is scoped to that
+// wrapper rather than the sparkline's own root.
 .wpcom-stats-sparkline {
-	overflow: hidden;
 	vertical-align: middle;
 }
 
 .wpcom-stats-sparkline-bar {
 	fill: currentColor;
-}
-
-.wpcom-stats-sparkline-peak {
-	opacity: 0;
-	transition: opacity 0.15s ease-in;
 }
 
 .wpcom-stats-sparkline-arrow {
@@ -21,7 +18,6 @@
 
 .wpcom-stats-sparkline-label {
 	fill: currentColor;
-	font-size: 9px;
 }
 
 .omnibar__menu:hover,

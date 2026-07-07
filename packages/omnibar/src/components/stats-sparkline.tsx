@@ -1,3 +1,5 @@
+import './stats-sparkline.scss';
+
 // Matches wp-admin's own admin bar sparkline
 // (wp-includes/charts/admin-bar-hours-scale.php): 48 hourly bars at a 2px
 // pitch come out to the same 95px width wp-admin's chart image displays at

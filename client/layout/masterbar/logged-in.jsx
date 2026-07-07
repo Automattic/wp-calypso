@@ -112,6 +112,7 @@ class MasterbarLoggedIn extends Component {
 		dashboardOptIn: PropTypes.bool,
 		canUserViewStats: PropTypes.bool,
 		statsAdminUrl: PropTypes.string,
+		statsSparkline: PropTypes.node,
 		useUnifiedAgent: PropTypes.bool,
 		launchButton: PropTypes.node,
 		sitePlanUrl: PropTypes.string,
@@ -711,7 +712,8 @@ class MasterbarLoggedIn extends Component {
 	};
 
 	renderStatsSparkline() {
-		const { siteId, translate, domainOnlySite, canUserViewStats, statsAdminUrl } = this.props;
+		const { siteId, translate, domainOnlySite, canUserViewStats, statsAdminUrl, statsSparkline } =
+			this.props;
 
 		if ( ! siteId || domainOnlySite || ! canUserViewStats ) {
 			return null;
@@ -728,7 +730,7 @@ class MasterbarLoggedIn extends Component {
 				onClick={ this.clickStatsSparkline }
 				hasGlobalBorderStyle
 			>
-				<MasterbarStatsSparkline siteId={ siteId } />
+				{ statsSparkline ?? <MasterbarStatsSparkline siteId={ siteId } /> }
 			</Item>
 		);
 	}

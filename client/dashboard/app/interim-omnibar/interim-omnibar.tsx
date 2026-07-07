@@ -1,6 +1,12 @@
 /* eslint-disable no-restricted-imports */
-import { purchaseQuery, queryClient, siteCurrentPlanQuery } from '@automattic/api-queries';
+import {
+	purchaseQuery,
+	queryClient,
+	siteCurrentPlanQuery,
+	siteHourlyViewsQuery,
+} from '@automattic/api-queries';
 import { isEcommercePlan } from '@automattic/calypso-products';
+import { StatsSparkline } from '@automattic/omnibar';
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { localize } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
@@ -69,6 +75,20 @@ export function InterimOmnibar( {
 	);
 	const sitePlanUrl = site ? getSitePlanUrl( site, planPurchase ) : undefined;
 
+	// MasterbarStatsSparkline (the classic masterbar's own default) reads
+	// hourly views from Redux, which this bridge's isolated store doesn't
+	// populate — using it here would crash the whole tree. Fetch through
+	// this component's own TanStack query instead, the same query the new
+	// omnibar's stats plugin uses, and pass the shared presentational
+	// component in as an override.
+	const { data: hourlyViews } = useQuery(
+		{
+			...siteHourlyViewsQuery( site?.ID ?? 0 ),
+			enabled: !! site,
+		},
+		queryClient
+	);
+
 	const store = useMemo(
 		() => createOmnibarStore( onToggleNotifications ),
 		[ onToggleNotifications ]
@@ -127,6 +147,14 @@ export function InterimOmnibar( {
 					isSimpleSite={ isSimpleSite }
 					isJetpackNotAtomic={ !! site && site.jetpack && ! site.is_wpcom_atomic }
 					domainOnlySite={ !! site?.options?.is_domain_only }
+					// Site capabilities don't expose view_stats here (only manage_options
+					// and update_plugins), so this mirrors the same graceful-degradation
+					// approach as the new omnibar's stats plugin: render the link/sparkline
+					// whenever a site is loaded and let the underlying stats request itself
+					// fail for users who genuinely lack access.
+					canUserViewStats={ !! site }
+					statsAdminUrl={ siteAdminUrl ? `${ siteAdminUrl }admin.php?page=stats` : undefined }
+					statsSparkline={ hourlyViews ? <StatsSparkline hourlyViews={ hourlyViews } /> : <></> }
 					isUnlaunchedSite={ isUnlaunchedSite }
 					launchButton={ isUnlaunchedSite && site ? <OmnibarLaunchButton site={ site } /> : null }
 					isTrial={ false }
