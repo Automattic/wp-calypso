@@ -149,12 +149,16 @@ export function InterimOmnibar( {
 					domainOnlySite={ !! site?.options?.is_domain_only }
 					// Site capabilities don't expose view_stats here (only manage_options
 					// and update_plugins), so this mirrors the same graceful-degradation
-					// approach as the new omnibar's stats plugin: render the link/sparkline
-					// whenever a site is loaded and let the underlying stats request itself
-					// fail for users who genuinely lack access.
+					// approach as the new omnibar's stats plugin: treat any loaded site
+					// as capable, and let statsSparkline (below) gate on whether the
+					// hourly-views request has actually resolved. Keeping this stable
+					// (not tied to the async hourlyViews load) matters because it also
+					// gates the unrelated "Stats" text link in the site-name dropdown —
+					// flipping it mid-load reorders that menu's sibling items, and their
+					// index-keyed rendering reuses the wrong DOM node when that happens.
 					canUserViewStats={ !! site }
 					statsAdminUrl={ siteAdminUrl ? `${ siteAdminUrl }admin.php?page=stats` : undefined }
-					statsSparkline={ hourlyViews ? <StatsSparkline hourlyViews={ hourlyViews } /> : <></> }
+					statsSparkline={ hourlyViews && <StatsSparkline hourlyViews={ hourlyViews } /> }
 					isUnlaunchedSite={ isUnlaunchedSite }
 					launchButton={ isUnlaunchedSite && site ? <OmnibarLaunchButton site={ site } /> : null }
 					isTrial={ false }

@@ -719,6 +719,20 @@ class MasterbarLoggedIn extends Component {
 			return null;
 		}
 
+		// When a caller supplies an explicit override (e.g. InterimOmnibar, which
+		// fetches hourly views via its own async TanStack query instead of Redux),
+		// wait until that content is actually ready rather than rendering an
+		// empty, clickable Item while it loads or if the request fails. This is
+		// deliberately separate from `canUserViewStats`, which also gates the
+		// unrelated "Stats" text link in the site-name dropdown and needs to stay
+		// stable rather than flip mid-load (an async flip there reorders that
+		// menu's sibling items, and their index-keyed rendering in
+		// item.tsx's renderSubItemGroups reuses the wrong DOM node when that
+		// happens).
+		if ( 'statsSparkline' in this.props && ! statsSparkline ) {
+			return null;
+		}
+
 		const label = translate( 'Views over 48 hours. Click for more Stats.' );
 
 		return (
@@ -730,7 +744,11 @@ class MasterbarLoggedIn extends Component {
 				onClick={ this.clickStatsSparkline }
 				hasGlobalBorderStyle
 			>
-				{ statsSparkline ?? <MasterbarStatsSparkline siteId={ siteId } /> }
+				{ 'statsSparkline' in this.props ? (
+					statsSparkline
+				) : (
+					<MasterbarStatsSparkline siteId={ siteId } />
+				) }
 			</Item>
 		);
 	}
