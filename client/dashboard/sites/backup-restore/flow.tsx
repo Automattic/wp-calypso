@@ -19,14 +19,9 @@ import type { Site } from '@automattic/api-core';
 type RestoreStep = 'form' | 'progress' | 'success' | 'error';
 
 export function BackupRestoreFlow( { site, rewindId }: { site: Site; rewindId: string } ) {
-	const { data: siteSettings } = useSuspenseQuery( {
-		...siteSettingsQuery( site.ID ),
-		select: ( s ) => ( {
-			gmtOffset: Number( s?.gmt_offset ) || 0,
-			timezoneString: s?.timezone_string || undefined,
-		} ),
-	} );
-	const { gmtOffset, timezoneString } = siteSettings;
+	const { data: siteSettings } = useSuspenseQuery( siteSettingsQuery( site.ID ) );
+	const gmtOffset = siteSettings.gmt_offset;
+	const timezoneString = siteSettings.timezone_string;
 
 	const [ currentStep, setCurrentStep ] = useState< RestoreStep >( 'form' );
 	const [ restoreId, setRestoreId ] = useState< number | null >( null );

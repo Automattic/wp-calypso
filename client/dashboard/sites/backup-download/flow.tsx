@@ -4,7 +4,7 @@ import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { Card, CardBody } from '../../components/card';
 import { useFormattedTime } from '../../components/formatted-time';
@@ -20,21 +20,14 @@ export function BackupDownloadFlow( {
 	site,
 	rewindId,
 	initialDownloadId,
-	onDownloadIdConsumed,
 }: {
 	site: Site;
 	rewindId: string;
 	initialDownloadId?: number;
-	onDownloadIdConsumed?: () => void;
 } ) {
-	const { data: siteSettings } = useSuspenseQuery( {
-		...siteSettingsQuery( site.ID ),
-		select: ( s ) => ( {
-			gmtOffset: Number( s?.gmt_offset ) || 0,
-			timezoneString: s?.timezone_string || undefined,
-		} ),
-	} );
-	const { gmtOffset, timezoneString } = siteSettings;
+	const { data: siteSettings } = useSuspenseQuery( siteSettingsQuery( site.ID ) );
+	const gmtOffset = siteSettings.gmt_offset;
+	const timezoneString = siteSettings.timezone_string;
 
 	const initialStep: DownloadStep = initialDownloadId ? 'progress' : 'form';
 
@@ -44,13 +37,6 @@ export function BackupDownloadFlow( {
 	const [ fileSizeBytes, setFileSizeBytes ] = useState< string | undefined >();
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
-
-	// Clean up the downloadId query param once we've captured it.
-	useEffect( () => {
-		if ( initialDownloadId ) {
-			onDownloadIdConsumed?.();
-		}
-	}, [ initialDownloadId, onDownloadIdConsumed ] );
 
 	const handleDownloadInitiate = ( newDownloadId: number ) => {
 		recordTracksEvent( 'calypso_dashboard_backups_download_started' );

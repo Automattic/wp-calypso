@@ -2,7 +2,7 @@ import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import { useCallback } from 'react';
+import { useEffect } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { siteBackupDownloadRoute } from '../../app/router/sites';
 import { PageHeader } from '../../components/page-header';
@@ -15,14 +15,16 @@ function SiteBackupDownload() {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const router = useRouter();
 
-	const handleDownloadIdConsumed = useCallback( () => {
-		router.navigate( {
-			to: siteBackupDownloadRoute.fullPath,
-			params: { siteSlug, rewindId },
-			search: {},
-			replace: true,
-		} );
-	}, [ router, siteSlug, rewindId ] );
+	useEffect( () => {
+		if ( searchDownloadId ) {
+			router.navigate( {
+				to: siteBackupDownloadRoute.fullPath,
+				params: { siteSlug, rewindId },
+				search: {},
+				replace: true,
+			} );
+		}
+	}, [ router, siteSlug, rewindId, searchDownloadId ] );
 
 	return (
 		<PageLayout
@@ -35,7 +37,6 @@ function SiteBackupDownload() {
 				site={ site }
 				rewindId={ rewindId }
 				initialDownloadId={ searchDownloadId }
-				onDownloadIdConsumed={ handleDownloadIdConsumed }
 			/>
 		</PageLayout>
 	);

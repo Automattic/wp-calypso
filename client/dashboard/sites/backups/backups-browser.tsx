@@ -1,6 +1,6 @@
 import { __experimentalGrid as Grid } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { Card, CardBody } from '../../components/card';
 import { BackupDetails } from './backup-details';
@@ -13,9 +13,51 @@ export function useIsBackupsSmallViewport() {
 	return useViewportMatch( 'xlarge', '<' );
 }
 
-interface BackupsBrowserProps {
+// Single owner of the resolved selection so the page header and browser body can't disagree.
+export function useBackupsBrowserState( {
+	site,
+	rewindId,
+	dateRange,
+	timezoneString,
+	gmtOffset,
+	enabled,
+}: {
 	site: Site;
 	rewindId?: string;
+	dateRange?: { start: Date; end: Date };
+	timezoneString?: string;
+	gmtOffset?: number;
+	enabled?: boolean;
+} ) {
+	const isSmallViewport = useIsBackupsSmallViewport();
+
+	const { activityLog, isLoadingActivityLog } = useActivityLog( {
+		siteId: site.ID,
+		dateRange,
+		gmtOffset,
+		timezoneString,
+		enabled,
+	} );
+
+	const selectedBackup = useMemo< ActivityLogEntry | null >( () => {
+		if ( rewindId ) {
+			return activityLog?.find( ( item ) => item.rewind_id === rewindId ) ?? null;
+		}
+		if ( ! isSmallViewport ) {
+			return activityLog?.[ 0 ] ?? null;
+		}
+		return null;
+	}, [ rewindId, activityLog, isSmallViewport ] );
+
+	return { activityLog, isLoadingActivityLog, selectedBackup, isSmallViewport };
+}
+
+interface BackupsBrowserProps {
+	site: Site;
+	activityLog: ActivityLogEntry[];
+	isLoadingActivityLog: boolean;
+	selectedBackup: ActivityLogEntry | null;
+	isSmallViewport: boolean;
 	dateRange?: { start: Date; end: Date };
 	timezoneString?: string;
 	gmtOffset?: number;
@@ -28,7 +70,10 @@ interface BackupsBrowserProps {
 
 export function BackupsBrowser( {
 	site,
-	rewindId,
+	activityLog,
+	isLoadingActivityLog,
+	selectedBackup,
+	isSmallViewport,
 	dateRange,
 	timezoneString,
 	gmtOffset,
@@ -38,37 +83,6 @@ export function BackupsBrowser( {
 	onRequestDownload,
 	onGranularDownloadReady,
 }: BackupsBrowserProps ) {
-	const isSmallViewport = useIsBackupsSmallViewport();
-	const [ selectedBackup, setSelectedBackupInState ] = useState< ActivityLogEntry | null >( null );
-
-	const { activityLog, isLoadingActivityLog } = useActivityLog( {
-		siteId: site.ID,
-		dateRange,
-		gmtOffset,
-		timezoneString,
-	} );
-
-	// Auto-select backup based on rewindId parameter.
-	useEffect( () => {
-		if ( rewindId && activityLog ) {
-			const targetBackup = activityLog.find( ( item ) => item.rewind_id === rewindId );
-			if ( targetBackup ) {
-				setSelectedBackupInState( targetBackup );
-			}
-			return;
-		}
-
-		// Select the first backup on the index route (desktop only) to keep the panel populated.
-		const backup = activityLog?.[ 0 ];
-		if ( ! rewindId && backup && ! isSmallViewport ) {
-			setSelectedBackupInState( backup );
-		}
-
-		if ( ! rewindId && ! backup ) {
-			setSelectedBackupInState( null );
-		}
-	}, [ rewindId, activityLog, isSmallViewport ] );
-
 	const renderDetails = ( backup: ActivityLogEntry ) => (
 		<BackupDetails
 			backup={ backup }

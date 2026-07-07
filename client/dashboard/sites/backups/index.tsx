@@ -28,7 +28,7 @@ import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callou
 import { SitesNoticeArbiter } from '../notice-arbiter';
 import { BackupNotices } from './backup-notices';
 import { BackupNowButton } from './backup-now-button';
-import { BackupsBrowser, useIsBackupsSmallViewport } from './backups-browser';
+import { BackupsBrowser, useBackupsBrowserState } from './backups-browser';
 import illustrationUrl from './backups-callout-illustration.svg';
 import { useBackupState } from './use-backup-state';
 import './style.scss';
@@ -48,14 +48,9 @@ export function BackupsListPage() {
 	const searchParams = siteBackupsRoute.useSearch();
 	const backupState = useBackupState( site.ID );
 
-	const { data: siteSettings } = useSuspenseQuery( {
-		...siteSettingsQuery( site.ID ),
-		select: ( s ) => ( {
-			gmtOffset: Number( s?.gmt_offset ) || 0,
-			timezoneString: s?.timezone_string || undefined,
-		} ),
-	} );
-	const { gmtOffset, timezoneString } = siteSettings;
+	const { data: siteSettings } = useSuspenseQuery( siteSettingsQuery( site.ID ) );
+	const gmtOffset = siteSettings.gmt_offset;
+	const timezoneString = siteSettings.timezone_string;
 
 	const { dateRange, handleDateRangeChange } = useDateRange( {
 		timezoneString,
@@ -109,9 +104,17 @@ export function BackupsListPage() {
 		navigateToBackup( null );
 	};
 
-	const isSmallViewport = useIsBackupsSmallViewport();
 	const hasBackups = hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE );
-	const isMobileDetailsView = isSmallViewport && !! rewindId;
+	const { activityLog, isLoadingActivityLog, selectedBackup, isSmallViewport } =
+		useBackupsBrowserState( {
+			site,
+			rewindId,
+			dateRange,
+			timezoneString,
+			gmtOffset,
+			enabled: hasBackups,
+		} );
+	const isMobileDetailsView = isSmallViewport && !! selectedBackup;
 	const shouldShowActions = hasBackups && ! isMobileDetailsView;
 
 	const actions = (
@@ -162,7 +165,10 @@ export function BackupsListPage() {
 			{ hasBackups ? (
 				<BackupsBrowser
 					site={ site }
-					rewindId={ rewindId }
+					activityLog={ activityLog }
+					isLoadingActivityLog={ isLoadingActivityLog }
+					selectedBackup={ selectedBackup }
+					isSmallViewport={ isSmallViewport }
 					dateRange={ dateRange }
 					timezoneString={ timezoneString }
 					gmtOffset={ gmtOffset }
