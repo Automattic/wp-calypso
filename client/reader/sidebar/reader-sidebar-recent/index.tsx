@@ -32,11 +32,8 @@ type ReaderSidebarSite = Pick< ReturnType< typeof useSubscribedSites >[ number ]
 
 const isFreeWpcomSubdomain = ( host = '' ): boolean => /\.wordpress\.com$/i.test( host );
 
-/**
- * Reddit subreddit/user feeds all resolve to the same generic `reddit.com`
- * domain, so a title-less subreddit reads best as its specific `r/name` (or
- * `u/name`) handle derived from the feed URL.
- */
+// A title-less subreddit reads best as its `r/name` (or `u/name`) handle, since
+// every subreddit resolves to the same generic `reddit.com` domain.
 function getRedditFeedLabel( feedUrl?: string ): string | undefined {
 	const match = feedUrl?.match( /reddit\.com\/(r|user)\/([^/?#]+)/i );
 	if ( ! match ) {
@@ -47,15 +44,9 @@ function getRedditFeedLabel( feedUrl?: string ): string | undefined {
 	return `${ prefix }/${ match[ 2 ] }`;
 }
 
-/**
- * Best label for a followed site in the Reader sidebar. A real title always
- * wins. Otherwise: prefer a Reddit `r/subreddit` handle (the resolved domain is
- * an uninformative `reddit.com` for every subreddit), then the resolved site
- * domain — so a brand-new subreddit whose title is still resolving server-side
- * shows its handle instead of a blank row. Untitled WordPress.com sites come
- * back named after their free subdomain, so those still prefer the mapped
- * domain from `URL`.
- */
+// Label for a followed site: real title, else an `r/subreddit` handle, else the
+// resolved domain. Untitled WordPress.com sites come back named after their free
+// subdomain, so those fall through to the domain from `URL`.
 export function getReaderSidebarSiteName( site: ReaderSidebarSite ): string {
 	const siteName = site.name ?? '';
 	// `name` may be URL-shaped, so normalize before the subdomain check.
