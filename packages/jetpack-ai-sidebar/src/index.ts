@@ -719,33 +719,40 @@ export function getChatComponent( type: string ): ComponentType | null {
 
 /**
  * Provider hook consumed by AM's `use-checkpoint-action` so Undo buttons
- * can attach to show-component messages. Snapshots the post title on
- * `setCheckpoint(id)` and restores it on `restoreCheckpoint(id)` via
+ * can attach to show-component messages. Snapshots the post title and excerpt
+ * on `setCheckpoint(id)` and restores them on `restoreCheckpoint(id)` via
  * `core/editor` dispatch. Stubs the rest of AM's `UseCheckpointReturn`
  * interface — only the three methods above are used on this path.
  * @returns {Object} The checkpoint API AM consumes.
  */
-const titleSnapshots: Map< string, string > = new Map();
+// Snapshots cover every post field the pickers can write (title, excerpt).
+// Restoring a checkpoint resets all snapshot fields to their tool-call-time
+// values, matching the snapshot-at-tool-call model used for the title.
+const postSnapshots: Map< string, { title: string; excerpt: string } > = new Map();
 
 export function useCheckpoint(): any {
 	const api: CheckpointApi = {
 		setCheckpoint( id: string ) {
-			const wpData = ( window as any ).wp?.data;
-			const current =
-				( wpData?.select?.( 'core/editor' )?.getEditedPostAttribute?.( 'title' ) as string ) ?? '';
-			titleSnapshots.set( id, current );
+			const editor = ( window as any ).wp?.data?.select?.( 'core/editor' );
+			postSnapshots.set( id, {
+				title: ( editor?.getEditedPostAttribute?.( 'title' ) as string ) ?? '',
+				excerpt: ( editor?.getEditedPostAttribute?.( 'excerpt' ) as string ) ?? '',
+			} );
 		},
 		hasCheckpoint( id: string ): boolean {
-			return titleSnapshots.has( id );
+			return postSnapshots.has( id );
 		},
 		async restoreCheckpoint( id: string ): Promise< void > {
-			const previous = titleSnapshots.get( id );
+			const previous = postSnapshots.get( id );
 			if ( previous === undefined ) {
 				return;
 			}
 			const wpData = ( window as any ).wp?.data;
-			wpData?.dispatch?.( 'core/editor' )?.editPost?.( { title: previous } );
-			// Keep snapshot so the user can re-Undo back to the original title.
+			wpData?.dispatch?.( 'core/editor' )?.editPost?.( {
+				title: previous.title,
+				excerpt: previous.excerpt,
+			} );
+			// Keep snapshot so the user can re-Undo back to the original values.
 			// clearCheckpoint() removes it when AM resets the session.
 		},
 	};
@@ -763,7 +770,7 @@ export function useCheckpoint(): any {
 		addPageRemovalToCheckpoint: () => undefined,
 		getLatestUserMessageId: () => undefined,
 		clearCheckpoint: ( id: string ) => {
-			titleSnapshots.delete( id );
+			postSnapshots.delete( id );
 		},
 	};
 }

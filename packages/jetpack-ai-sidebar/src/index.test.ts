@@ -142,16 +142,23 @@ jest.mock( '@wordpress/data', () => ( {
 
 // Stub @wordpress/data on window so useCheckpoint / handleShowComponent
 // can read/write the post title and current post id via the core/editor store.
-function installWpDataMock( initialTitle: string, postId = 123 ) {
-	const state = { title: initialTitle };
+function installWpDataMock( initialTitle: string, postId = 123, initialExcerpt = '' ) {
+	const state = { title: initialTitle, excerpt: initialExcerpt };
 	( window as any ).wp = {
 		data: {
 			select: ( store: string ) => {
 				if ( store === 'core/editor' ) {
 					return {
 						getCurrentPostId: () => postId,
-						getEditedPostAttribute: ( attr: string ) =>
-							attr === 'title' ? state.title : undefined,
+						getEditedPostAttribute: ( attr: string ) => {
+							if ( attr === 'title' ) {
+								return state.title;
+							}
+							if ( attr === 'excerpt' ) {
+								return state.excerpt;
+							}
+							return undefined;
+						},
 					};
 				}
 				return undefined;
@@ -159,9 +166,12 @@ function installWpDataMock( initialTitle: string, postId = 123 ) {
 			dispatch: ( store: string ) => {
 				if ( store === 'core/editor' ) {
 					return {
-						editPost: ( attrs: { title?: string } ) => {
+						editPost: ( attrs: { title?: string; excerpt?: string } ) => {
 							if ( typeof attrs.title === 'string' ) {
 								state.title = attrs.title;
+							}
+							if ( typeof attrs.excerpt === 'string' ) {
+								state.excerpt = attrs.excerpt;
 							}
 						},
 					};
@@ -2156,6 +2166,25 @@ describe( 'useCheckpoint', () => {
 
 		// Restore.
 		await api.restoreCheckpoint( 'cp-1' );
+		expect(
+			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'title' )
+		).toBe( 'Original Title' );
+	} );
+
+	it( 'snapshots the post excerpt alongside the title and restores both', async () => {
+		installWpDataMock( 'Original Title', 123, 'Original excerpt' );
+		const api = useCheckpoint();
+
+		api.setCheckpoint( 'cp-excerpt' );
+
+		( window as any ).wp.data
+			.dispatch( 'core/editor' )
+			.editPost( { title: 'AI Title', excerpt: 'AI generated excerpt' } );
+		await api.restoreCheckpoint( 'cp-excerpt' );
+
+		expect(
+			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'excerpt' )
+		).toBe( 'Original excerpt' );
 		expect(
 			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'title' )
 		).toBe( 'Original Title' );
