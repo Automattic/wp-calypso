@@ -84,13 +84,15 @@ const MarketplaceProductInstall = ( {
 	const [ atomicFlow, setAtomicFlow ] = useState( false );
 	const [ nonInstallablePlanError, setNonInstallablePlanError ] = useState( false );
 	const [ noDirectAccessError, setNoDirectAccessError ] = useState( false );
+	const [ userDirectInstallationAllowed, setUserDirectInstallationAllowed ] = useState( false );
 	// The signup "Get started" flow reaches this page via a full-page redirect, which drops the
 	// in-memory purchase-flow state that normally authorizes the install. When that redirect marks
-	// itself as trusted, proceed with the install directly instead of waiting on handoff state that
-	// will never arrive (which otherwise leaves the page polling the site forever).
-	const [ directInstallationAllowed, setDirectInstallationAllowed ] = useState(
-		() => new URLSearchParams( window.location.search ).get( 'directInstall' ) === 'true'
+	// itself as trusted (directInstall), proceed with the install directly instead of waiting on
+	// handoff state that will never arrive (which otherwise leaves the page polling forever).
+	const directInstallFromSignup = new URLSearchParams( window.location.search ).has(
+		'directInstall'
 	);
+	const directInstallationAllowed = userDirectInstallationAllowed || directInstallFromSignup;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
@@ -466,7 +468,7 @@ const MarketplaceProductInstall = ( {
 								<Button href={ productPage }>{ translate( 'Go to the theme page' ) }</Button>
 
 								{ ! isMarketplaceProduct ? (
-									<Button primary onClick={ () => setDirectInstallationAllowed( true ) }>
+									<Button primary onClick={ () => setUserDirectInstallationAllowed( true ) }>
 										{ translate( 'Activate theme' ) }
 									</Button>
 								) : (

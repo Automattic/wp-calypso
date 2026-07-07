@@ -192,7 +192,7 @@ function getWithPluginDestination( { siteSlug, pluginParameter, pluginBillingPer
 	// Otherwise send to the installation page. Mark the redirect as trusted (directInstall) so the
 	// page initiates the transfer/install itself — the in-memory purchase-flow handoff it normally
 	// relies on doesn't survive this redirect out of signup.
-	return `/marketplace/plugin/${ pluginParameter }/install/${ siteSlug }?directInstall=true`;
+	return `/marketplace/plugin/${ pluginParameter }/install/${ siteSlug }?directInstall=1`;
 }
 
 function getEditorDestination( dependencies ) {
