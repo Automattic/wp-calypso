@@ -1,4 +1,9 @@
-import { FEATURE_SFTP, FEATURE_UPLOAD_PLUGINS } from '@automattic/calypso-products';
+import {
+	FEATURE_SFTP,
+	FEATURE_UPLOAD_PLUGINS,
+	PLAN_PERSONAL,
+	getPlan,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { isEmpty } from '@automattic/js-utils';
@@ -8,7 +13,9 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import UploadDropZone from 'calypso/blocks/upload-drop-zone';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import FeatureExample from 'calypso/components/feature-example';
 import HeaderCake from 'calypso/components/header-cake';
@@ -31,6 +38,10 @@ import {
 import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import { uploadPlugin, clearPluginUpload } from 'calypso/state/plugins/upload/actions';
+import {
+	isFetchingSitePurchases,
+	hasLoadedSitePurchasesFromServer,
+} from 'calypso/state/purchases/selectors';
 import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
 import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
 import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-complete';
@@ -47,6 +58,8 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+
+import './style.scss';
 
 class PluginUpload extends Component {
 	state = {
@@ -90,6 +103,31 @@ class PluginUpload extends Component {
 			isTransferring: false,
 		} );
 	};
+
+	renderUpgradeBanner() {
+		const { siteSlug, translate } = this.props;
+		const redirectTo = encodeURIComponent( `/plugins/upload/${ siteSlug }` );
+
+		const title = translate(
+			// translators: %(planName)s the short-hand version of the Personal plan name
+			'Upgrade to the %(planName)s plan to access the plugin install features',
+			{
+				args: { planName: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
+			}
+		);
+
+		return (
+			<UpsellNudge
+				className="plugin-upload__upgrade-nudge"
+				title={ title }
+				event="calypso_plugin_install_upgrade_click"
+				href={ `/checkout/${ siteSlug }/personal?redirect_to=${ redirectTo }` }
+				plan={ PLAN_PERSONAL }
+				feature={ FEATURE_UPLOAD_PLUGINS }
+				showIcon
+			/>
+		);
+	}
 
 	renderUploadCard() {
 		const { inProgress, complete, isJetpack, hasSftpFeature, hasUploadPluginsFeature } = this.props;
@@ -171,21 +209,27 @@ class PluginUpload extends Component {
 			isTrialSite,
 			isAtomic,
 			hasUploadPluginsFeature,
+			canUpload,
+			isStandaloneJetpack,
+			isFetchingPurchases,
 		} = this.props;
 		const { showEligibility, isTransferring } = this.state;
 
 		const showEligibilityWarnings = showEligibility && ! isTransferring && ! isTrialSite;
+		const showUpgradeBanner = ! isFetchingPurchases && ! canUpload && ! isStandaloneJetpack;
 
 		return (
 			<Main>
 				<PageViewTracker path="/plugins/upload/:site" title="Plugins > Upload" />
 				<QueryEligibility siteId={ siteId } />
+				<QuerySitePurchases siteId={ siteId } />
 				<NavigationHeader navigationItems={ [] } title={ translate( 'Plugins' ) } />
 				<HeaderCake onClick={ this.back }>{ translate( 'Install plugin' ) }</HeaderCake>
 				{ ! isJetpack && (
 					<HostingActivateStatus context="plugin" onTick={ this.requestUpdatedSiteData } />
 				) }
 				{ isJetpackMultisite && this.renderNotAvailableForMultisite() }
+				{ showUpgradeBanner && this.renderUpgradeBanner() }
 				{ showEligibilityWarnings && (
 					<EligibilityWarnings
 						backUrl={ `/plugins/${ siteSlug }` }
@@ -210,6 +254,8 @@ const mapStateToProps = ( state ) => {
 	const isJetpackMultisite = isJetpackSiteMultiSite( state, siteId );
 	const hasSftpFeature = siteHasFeature( state, siteId, FEATURE_SFTP );
 	const hasUploadPluginsFeature = siteHasFeature( state, siteId, FEATURE_UPLOAD_PLUGINS );
+	const canUpload = hasSftpFeature || hasUploadPluginsFeature;
+	const isStandaloneJetpack = isJetpack && ! isAtomic;
 	const { eligibilityHolds, eligibilityWarnings } = getEligibility( state, siteId );
 	// Use this selector to take advantage of eligibility card placeholders
 	// before data has loaded.
@@ -225,6 +271,8 @@ const mapStateToProps = ( state ) => {
 		isAtomic,
 		hasSftpFeature,
 		hasUploadPluginsFeature,
+		canUpload,
+		isStandaloneJetpack,
 		inProgress: isPluginUploadInProgress( state, siteId ),
 		complete: isPluginUploadComplete( state, siteId ),
 		failed: !! error,
@@ -232,8 +280,12 @@ const mapStateToProps = ( state ) => {
 		error,
 		isJetpackMultisite,
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
-		showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
+		// Only surface eligibility warnings once the site is on a plan that can
+		// upload plugins; otherwise we show an upgrade banner instead.
+		showEligibility: ! isJetpack && canUpload && ( hasEligibilityMessages || ! isEligible ),
 		isTrialSite: isHostingTrialSite( site ),
+		isFetchingPurchases:
+			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 	};
 };
 

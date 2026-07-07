@@ -19,6 +19,17 @@ module.exports = {
 			},
 		},
 		{
+			files: [ 'specs/**/*.spec.ts' ],
+			extends: [ 'plugin:playwright/recommended' ],
+			rules: {
+				// Specs frequently leave the browser in a state asserted by a later
+				// step rather than making an explicit top-level expect().
+				'playwright/expect-expect': 'off',
+				// Test titles are composed dynamically.
+				'playwright/valid-title': 'off',
+			},
+		},
+		{
 			files: [ 'specs/**/shared/**/*', 'lib/shared-steps/**/*' ],
 			rules: {
 				// This directory is used to create shared specs that can be re-used in multiple places.

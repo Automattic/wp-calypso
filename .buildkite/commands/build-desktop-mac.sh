@@ -14,14 +14,6 @@ else
 	export RELEASE_BUILD=false
 fi
 
-# `desktop/.ruby-version` pins 3.3.0 but the a8c Buildkite mac VM image only
-# ships 3.2.2 (default) and 3.3.4. Override here so `bundle` resolves.
-# TODO: remove this and bump `desktop/.ruby-version` to 3.3.4 once
-# CircleCI's `wp-desktop-mac` job is decommissioned (its build runs
-# `rbenv global $(cat .ruby-version)`, and the cimg xcode-15.4 image
-# may not have 3.3.4, so we can't bump `.ruby-version` until then).
-export RBENV_VERSION=3.3.4
-
 # Force `electron-builder` to sign even on PR builds, so reviewers can
 # install and exercise the produced app.
 #

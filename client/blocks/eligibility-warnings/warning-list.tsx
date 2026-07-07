@@ -1,4 +1,5 @@
 import { Card, Badge } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import DOMPurify from 'dompurify';
 import { localize, LocalizeProps, translate } from 'i18n-calypso';
 import { Fragment } from 'react';
@@ -20,20 +21,40 @@ export const WarningList = ( { context, translate, warnings, showContact = true 
 			{ warnings.map( ( { name, description, supportPostId, supportUrl, domainNames }, index ) => (
 				<div className="eligibility-warnings__warning" key={ index }>
 					<div className="eligibility-warnings__message">
-						{ context !== 'plugin-details' && context !== 'hosting-features' && (
+						{ ! domainNames && context !== 'plugin-details' && context !== 'hosting-features' && (
 							<Fragment>
 								<span className="eligibility-warnings__message-title">{ name }</span>:&nbsp;
 							</Fragment>
 						) }
 						<span className="eligibility-warnings__message-description">
-							<span
-								dangerouslySetInnerHTML={ { __html: DOMPurify.sanitize( description ) } } // eslint-disable-line react/no-danger
-							/>
-							{ domainNames && displayDomainNames( domainNames ) }
-							{ supportUrl && (
-								<InlineSupportLink supportLink={ supportUrl } supportPostId={ supportPostId }>
-									{ translate( 'Learn more.' ) }
-								</InlineSupportLink>
+							{ domainNames ? (
+								<>
+									{ translate(
+										'Turning on this feature will update {{strong}}your site’s default address by changing the subdomain{{/strong}}. We’ll automatically redirect visitors from the current address to the new one.',
+										{ components: { strong: <strong /> } }
+									) }{ ' ' }
+									<InlineSupportLink
+										supportPostId={ 11280 }
+										showIcon={ false }
+										supportLink={ localizeUrl(
+											'https://wordpress.com/support/changing-site-address/#change-a-wpcomstaging-com-address'
+										) }
+									>
+										{ translate( 'Learn more.' ) }
+									</InlineSupportLink>
+									{ displayDomainNames( domainNames ) }
+								</>
+							) : (
+								<>
+									<span
+										dangerouslySetInnerHTML={ { __html: DOMPurify.sanitize( description ) } } // eslint-disable-line react/no-danger
+									/>
+									{ supportUrl && (
+										<InlineSupportLink supportLink={ supportUrl } supportPostId={ supportPostId }>
+											{ translate( 'Learn more.' ) }
+										</InlineSupportLink>
+									) }
+								</>
 							) }
 						</span>
 					</div>

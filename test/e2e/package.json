@@ -38,6 +38,7 @@
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@babel/core": "^7.16.0",
+		"eslint-plugin-playwright": "^2.10.1",
 		"webpack": "^5.63.0"
 	},
 	"dependencies": {

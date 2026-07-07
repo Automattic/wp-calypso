@@ -715,6 +715,7 @@ export const tags = {
 	CALYPSO_RELEASE: '@calypso-release',
 	DASHBOARD_PR: '@dashboard-pr',
 	DESKTOP_ONLY: '@desktop-only',
+	EDITOR_TRACKING: '@editor-tracking',
 	EXAMPLE_BLOCKS: '@example-blocks',
 	GUTENBERG: '@gutenberg',
 	I18N: '@i18n',
@@ -723,6 +724,7 @@ export const tags = {
 	JETPACK_WPCOM_INTEGRATION: '@jetpack-wpcom-integration',
 	LEGAL: '@legal',
 	P2: '@p2',
+	QUARANTINED: '@quarantined',
 	SETTINGS: '@settings',
 };
 
