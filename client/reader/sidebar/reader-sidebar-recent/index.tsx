@@ -28,12 +28,7 @@ type Props = {
 const SITE_DISPLAY_CUTOFF = 5;
 const RECENT_PATH_REGEX = /^\/reader(?:\/recent\/\d+)?\/?(?:\?|$)/;
 
-type ReaderSidebarSite = Pick<
-	ReturnType< typeof useSubscribedSites >[ number ],
-	'name' | 'URL'
-> & {
-	feed_URL?: string;
-};
+type ReaderSidebarSite = Pick< ReturnType< typeof useSubscribedSites >[ number ], 'name' | 'URL' >;
 
 const isFreeWpcomSubdomain = ( host = '' ): boolean => /\.wordpress\.com$/i.test( host );
 
@@ -53,30 +48,13 @@ function getRedditFeedLabel( feedUrl?: string ): string | undefined {
 }
 
 /**
- * Host-and-path label for a feed URL, without the protocol or a trailing feed
- * extension (e.g. `example.com/blog`). Used as a last resort so a subscription
- * that has not resolved a title or a site URL yet is not shown blank.
- */
-function getGenericFeedLabel( feedUrl?: string ): string | undefined {
-	if ( ! feedUrl ) {
-		return undefined;
-	}
-
-	const withoutFeedExtension = feedUrl.replace(
-		/\/?\.?(rss|rss\.xml|atom|atom\.xml|feed)\/?$/i,
-		''
-	);
-	return formatUrlForDisplay( withoutFeedExtension ) || undefined;
-}
-
-/**
  * Best label for a followed site in the Reader sidebar. A real title always
  * wins. Otherwise: prefer a Reddit `r/subreddit` handle (the resolved domain is
  * an uninformative `reddit.com` for every subreddit), then the resolved site
- * domain, then any feed-URL-derived label — so a brand-new feed whose title is
- * still resolving server-side is never shown blank. Untitled WordPress.com
- * sites come back named after their free subdomain, so those still prefer the
- * mapped domain from `URL`.
+ * domain — so a brand-new subreddit whose title is still resolving server-side
+ * shows its handle instead of a blank row. Untitled WordPress.com sites come
+ * back named after their free subdomain, so those still prefer the mapped
+ * domain from `URL`.
  */
 export function getReaderSidebarSiteName( site: ReaderSidebarSite ): string {
 	const siteName = site.name ?? '';
@@ -87,9 +65,7 @@ export function getReaderSidebarSiteName( site: ReaderSidebarSite ): string {
 		return siteName;
 	}
 
-	const feedUrl = site.feed_URL || site.URL;
-
-	const redditLabel = getRedditFeedLabel( feedUrl );
+	const redditLabel = getRedditFeedLabel( site.URL );
 	if ( redditLabel ) {
 		return redditLabel;
 	}
@@ -99,7 +75,7 @@ export function getReaderSidebarSiteName( site: ReaderSidebarSite ): string {
 		return siteDomain;
 	}
 
-	return getGenericFeedLabel( feedUrl ) ?? siteName;
+	return siteName;
 }
 
 const ReaderSidebarRecent = ( {

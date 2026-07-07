@@ -48,34 +48,22 @@ describe( 'getReaderSidebarSiteName', () => {
 		);
 	} );
 
-	test( 'derives an r/subreddit label from the feed URL for an unresolved subreddit', () => {
+	test( 'derives an r/subreddit label from the URL for an unresolved subreddit', () => {
 		expect(
 			getReaderSidebarSiteName( {
 				name: '',
-				URL: '',
-				feed_URL: 'https://www.reddit.com/r/simracing/.rss',
+				URL: 'https://www.reddit.com/r/simracing/.rss',
 			} )
 		).toBe( 'r/simracing' );
 	} );
 
-	test( 'derives a u/user label from a Reddit user feed URL', () => {
+	test( 'derives a u/user label from a Reddit user URL', () => {
 		expect(
 			getReaderSidebarSiteName( {
 				name: '',
-				URL: '',
-				feed_URL: 'https://www.reddit.com/user/spez/.rss',
+				URL: 'https://www.reddit.com/user/spez/.rss',
 			} )
 		).toBe( 'u/spez' );
-	} );
-
-	test( 'derives a host/path label from a non-Reddit feed URL without title', () => {
-		expect(
-			getReaderSidebarSiteName( {
-				name: '',
-				URL: '',
-				feed_URL: 'https://www.example.com/blog/feed',
-			} )
-		).toBe( 'example.com/blog' );
 	} );
 
 	test( 'prefers the r/subreddit handle over the generic reddit.com domain when the title is missing', () => {
@@ -83,7 +71,6 @@ describe( 'getReaderSidebarSiteName', () => {
 			getReaderSidebarSiteName( {
 				name: '',
 				URL: 'https://www.reddit.com/r/simracing/',
-				feed_URL: 'https://www.reddit.com/r/simracing/.rss',
 			} )
 		).toBe( 'r/simracing' );
 	} );
@@ -93,7 +80,6 @@ describe( 'getReaderSidebarSiteName', () => {
 			getReaderSidebarSiteName( {
 				name: 'SimRacing',
 				URL: 'https://www.reddit.com/r/simracing/',
-				feed_URL: 'https://www.reddit.com/r/simracing/.rss',
 			} )
 		).toBe( 'SimRacing' );
 	} );
