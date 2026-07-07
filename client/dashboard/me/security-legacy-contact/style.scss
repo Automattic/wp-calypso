@@ -58,11 +58,12 @@
 }
 
 .legacy-contact-print__key {
-	font-family: monospace;
-	// stylelint-disable-next-line scales/font-sizes -- off-scale size chosen so the access key fits on a single printed line
-	font-size: 1.2rem;
+	font-family: ui-monospace, monospace;
+	font-size: 1rem;
 	font-weight: 600;
 	line-height: 1.4;
+	width: max-content;
+	max-width: 100%;
 	word-break: break-all;
 	padding: 16px;
 	border: 1px solid var( --dashboard-surface__border-color );
