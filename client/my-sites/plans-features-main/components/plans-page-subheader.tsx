@@ -105,8 +105,8 @@ const HeaderContainer = styled( Subheader )`
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 12px 8px;
-		margin-top: -20px;
-		margin-bottom: 32px;
+		margin-top: -40px;
+		margin-bottom: 60px;
 		color: #2f2f2f;
 		font-weight: 400;
 
@@ -347,11 +347,31 @@ const PlansPageSubheader = ( {
 		isUsingStepContainerV2,
 		isVisualSplitIntent,
 	};
+	const shouldShowFreePlanCtaSubheader =
+		( ! isUsingStepContainerV2 || renderFreePlanCtaInStepContainerV2 ) &&
+		deemphasizeFreePlan &&
+		offeringFreePlan;
 
 	const renderSubheader = () => {
 		// Differentiators experiment: show the differentiator header with 3 bullet points
 		if ( showDifferentiatorHeader ) {
-			return <DifferentiatorHeader />;
+			return (
+				<>
+					{ shouldShowFreePlanCtaSubheader && (
+						<Subheader { ...subheaderCommonProps }>
+							{ translate(
+								'Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.',
+								{
+									components: {
+										link: <Button onClick={ onFreePlanCTAClick } borderless />,
+									},
+								}
+							) }
+						</Subheader>
+					) }
+					<DifferentiatorHeader />
+				</>
+			);
 		}
 
 		// Website Builder intent: use the new copy
@@ -394,11 +414,7 @@ const PlansPageSubheader = ( {
 			return null;
 		}
 
-		if (
-			( ! isUsingStepContainerV2 || renderFreePlanCtaInStepContainerV2 ) &&
-			deemphasizeFreePlan &&
-			offeringFreePlan
-		) {
+		if ( shouldShowFreePlanCtaSubheader ) {
 			return (
 				<Subheader { ...subheaderCommonProps }>
 					{ translate(

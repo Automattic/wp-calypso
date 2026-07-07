@@ -47,12 +47,32 @@ describe( 'PlansPageSubheader', () => {
 	} );
 
 	test( 'renders pricing differentiators when requested', () => {
-		renderWithProvider( <PlansPageSubheader { ...defaultProps } showDifferentiatorHeader /> );
+		renderWithProvider(
+			<PlansPageSubheader
+				{ ...defaultProps }
+				showDifferentiatorHeader
+				renderFreePlanCtaInStepContainerV2
+			/>
+		);
 
+		expect( screen.getByText( /Unlock a powerful bundle of features/ ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'start with a free plan' } ) ).toBeInTheDocument();
+		expect(
+			screen.queryByText(
+				'Whatever site you’re building, there’s a plan to make it happen sooner.'
+			)
+		).not.toBeInTheDocument();
 		expect( screen.getByText( 'Paid plans include:' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Unlimited traffic' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Managed hosting' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Built-in security' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Fast site loading' ) ).toBeInTheDocument();
+	} );
+
+	test( 'does not render the free-plan CTA copy with differentiators unless the free-plan CTA subheader is eligible', () => {
+		renderWithProvider( <PlansPageSubheader { ...defaultProps } showDifferentiatorHeader /> );
+
+		expect( screen.queryByText( /Unlock a powerful bundle of features/ ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'Paid plans include:' ) ).toBeInTheDocument();
 	} );
 } );

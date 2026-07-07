@@ -37,6 +37,7 @@ import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import IntentToggle from 'calypso/my-sites/plans-features-main/components/intent-toggle';
+import usePlansGridRedesignExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-experiment';
 import { getStepUrl } from 'calypso/signup/utils';
 import { getDomainFromUrl } from 'calypso/site-profiler/utils/get-valid-url';
 import { useDispatch as reduxUseDispatch, useSelector } from 'calypso/state';
@@ -303,6 +304,14 @@ function UnifiedPlansStep( {
 		signupDependencies.siteSlug ? getSiteBySlug( state, signupDependencies.siteSlug ) : null
 	);
 	const selectedSite = selectedSiteFromProps ?? selectedSiteFromState;
+	const {
+		isLoading: isPlansGridRedesignExperimentLoading,
+		showDifferentiatorHeader: showPlansGridRedesignDifferentiatorHeader,
+	} = usePlansGridRedesignExperiment( {
+		flowName,
+		isInSignup,
+		siteId: selectedSite?.ID ?? signupDependencies.siteId,
+	} );
 
 	const isDomainOnlySite = useSelector( ( state ) =>
 		signupDependencies.siteId ? isDomainOnlySiteSelector( state, signupDependencies.siteId ) : false
@@ -587,6 +596,10 @@ function UnifiedPlansStep( {
 			return translate(
 				'Compare plans and pick the one that works for where your site is headed.'
 			);
+		}
+
+		if ( isPlansGridRedesignExperimentLoading || showPlansGridRedesignDifferentiatorHeader ) {
+			return null;
 		}
 
 		if ( isOnboardingFlow( flowName ) || intent === 'plans-upgrade' ) {
