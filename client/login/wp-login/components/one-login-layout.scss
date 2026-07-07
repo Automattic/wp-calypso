@@ -78,4 +78,10 @@
 
 .wp-login__one-login-header-client-name {
 	text-transform: capitalize;
+
+	// Pre-branded, exact-case names (e.g. "Jetpack for iOS") must not be
+	// title-cased, which would render "iOS" as "IOS" and "for" as "For".
+	&.is-exact-case {
+		text-transform: none;
+	}
 }

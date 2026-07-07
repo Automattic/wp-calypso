@@ -2,8 +2,9 @@
  * @jest-environment jsdom
  */
 
-import { useTranslate } from 'i18n-calypso';
-import { getMobileAppClientName } from '../get-header-text';
+import { render } from '@testing-library/react';
+import { useTranslate, translate, type TranslateResult } from 'i18n-calypso';
+import { getHeaderText, getMobileAppClientName } from '../get-header-text';
 
 describe( 'getMobileAppClientName', () => {
 	const translate = ( ( text: string ) => text ) as ReturnType< typeof useTranslate >;
@@ -43,5 +44,41 @@ describe( 'getMobileAppClientName', () => {
 		expect(
 			getMobileAppClientName( { oauth2Client: null, isJetpackApp: false, translate } )
 		).toBeNull();
+	} );
+} );
+
+describe( 'getHeaderText client-name casing', () => {
+	// The client-name span is `text-transform: capitalize`. Pre-branded mobile app
+	// titles opt out via `is-exact-case`; every other client must keep the default.
+	const renderClientName = ( oauth2Client: { id: number }, isJetpackApp?: boolean ) => {
+		const headerText = getHeaderText( {
+			isSocialFirst: true,
+			twoFactorAuthType: null,
+			isManualRenewalImmediateLoginAttempt: false,
+			socialConnect: false,
+			linkingSocialService: '',
+			action: 'login',
+			currentQuery: {},
+			oauth2Client,
+			isJetpackApp,
+			translate: translate as unknown as ( arg0: string, arg1?: object ) => TranslateResult,
+		} as Parameters< typeof getHeaderText >[ 0 ] );
+		const { container } = render( <div>{ headerText }</div> );
+		return container.querySelector( '.wp-login__one-login-header-client-name' );
+	};
+
+	test( 'opts the mobile app title out of title-casing via is-exact-case', () => {
+		const clientName = renderClientName( { id: 11 }, true );
+		expect( clientName ).toBeVisible();
+		expect( clientName ).toHaveClass( 'is-exact-case' );
+		expect( clientName ).toHaveTextContent( 'Jetpack for iOS' );
+	} );
+
+	test( 'keeps title-casing (no is-exact-case) for a non-mobile client', () => {
+		// 68663 => Jetpack Cloud.
+		const clientName = renderClientName( { id: 68663 } );
+		expect( clientName ).toBeVisible();
+		expect( clientName ).not.toHaveClass( 'is-exact-case' );
+		expect( clientName ).toHaveTextContent( 'Jetpack Cloud' );
 	} );
 } );

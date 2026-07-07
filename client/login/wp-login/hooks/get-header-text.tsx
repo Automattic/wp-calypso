@@ -1,4 +1,5 @@
 import { capitalize } from '@automattic/js-utils';
+import clsx from 'clsx';
 import { TranslateResult, fixMe } from 'i18n-calypso';
 import { getLoginCopy } from 'calypso/jetpack-connect/connection-content';
 import {
@@ -187,7 +188,15 @@ export function getHeaderText( {
 						text: 'Log in to {{span}}%(client)s{{/span}} with WordPress.com',
 						newCopy: translate( 'Log in to {{span}}%(client)s{{/span}} with WordPress.com', {
 							args: { client: clientName },
-							components: { span: <span className="wp-login__one-login-header-client-name" /> },
+							components: {
+								span: (
+									<span
+										className={ clsx( 'wp-login__one-login-header-client-name', {
+											'is-exact-case': !! mobileAppClientName,
+										} ) }
+									/>
+								),
+							},
 						} ),
 						oldCopy: translate( 'Log in to WordPress.com' ),
 				  } ) as TranslateResult )
