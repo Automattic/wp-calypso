@@ -1,6 +1,8 @@
 @import '../../app/pulse';
 
 .plugin-tabs-list[aria-orientation='horizontal'] {
+	flex-shrink: 0;
+
 	&::before {
 		transform: translateX(calc((var(--selected-start) * var(--direction-factor) * 1px) + 24px)) scaleX(calc(calc(var(--selected-width, 0) - 2 * 24) / var(--antialiasing-factor)));
 	}
