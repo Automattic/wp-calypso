@@ -401,6 +401,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		showSimplifiedBillingDescription,
 		showBillingDescriptionForIncreasedRenewalPrice,
 		isExperimentVariant,
+		showFeatureCheckmarks,
 	} = props;
 
 	const gridContainerRef = useRef< HTMLDivElement >( null );
@@ -464,6 +465,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 					showBillingDescriptionForIncreasedRenewalPrice
 				}
 				isExperimentVariant={ isExperimentVariant }
+				showFeatureCheckmarks={ showFeatureCheckmarks }
 			>
 				<FeaturesGrid { ...props } gridSize={ gridSize ?? undefined } />
 			</PlansGridContextProvider>

@@ -721,6 +721,64 @@ body.is-mobile-app-view {
 	--color-masterbar-submenu-group-background: #{$gray-100};
 }
 
+.masterbar__item-stats-sparkline {
+	padding: 0 10px;
+
+	// vertical-align on the svg itself is never exactly centered — "middle"
+	// aligns to a point derived from the font baseline, not the line box's
+	// true center. Making the content wrapper its own flex container
+	// centers the svg geometrically instead.
+	.masterbar__item-content {
+		display: flex;
+		align-items: center;
+		height: 100%;
+	}
+
+	// Resting size is just the bars — the peak marker to the right is clipped
+	// by default so it doesn't take up any layout space until hovered, the
+	// same show/hide-on-hover technique wp-admin's own admin bar sparkline
+	// uses (there, widening the chart image's clipped container).
+	.masterbar__stats-sparkline {
+		width: auto;
+		height: auto;
+		overflow: hidden;
+	}
+
+	.masterbar__stats-sparkline-bar {
+		fill: var(--color-masterbar-icon);
+	}
+
+	.masterbar__stats-sparkline-peak {
+		opacity: 0;
+		transition: opacity 0.15s ease-in;
+	}
+
+	.masterbar__stats-sparkline-arrow {
+		fill: var(--color-masterbar-icon);
+	}
+
+	.masterbar__stats-sparkline-label {
+		fill: var(--color-masterbar-icon);
+		font-size: 9px;
+	}
+
+	// Keyboard users tabbing to this link get the same reveal a mouse hover does.
+	&:hover,
+	&:focus-visible {
+		.masterbar__stats-sparkline {
+			overflow: visible;
+		}
+
+		.masterbar__stats-sparkline-peak {
+			opacity: 1;
+		}
+	}
+
+	@media only screen and (max-width: 781px) {
+		display: none;
+	}
+}
+
 .masterbar__item-launch-site {
 	gap: 6px;
 	cursor: pointer;

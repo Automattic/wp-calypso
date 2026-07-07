@@ -1,0 +1,54 @@
+<svg width="256" height="244" viewBox="0 0 256 244" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g clip-path="url(#clip0_5936_20173)">
+<path d="M0 4C0 1.79086 1.79086 0 4 0H252C254.209 0 256 1.79086 256 4V240C256 242.209 254.209 244 252 244H4C1.79086 244 0 242.209 0 240V4Z" fill="#F6F7F7"/>
+<rect opacity="0.8" x="3" y="-25" width="419" height="301" fill="url(#pattern0_5936_20173)"/>
+<rect x="151" y="63" width="1" height="91" fill="#F6F7F7"/>
+<rect x="40" y="154" width="2" height="91" fill="#F6F7F7"/>
+<rect x="216" y="170" width="2" height="98" fill="#F6F7F7"/>
+<rect x="85" y="112" width="1" height="91" fill="#F6F7F7"/>
+<rect x="62" y="133" width="1.99999" height="143" transform="rotate(-90 62 133)" fill="#F6F7F7"/>
+<rect x="20" y="45.2878" width="189" height="116.455" rx="6" stroke="#E0E0E0"/>
+<rect x="30" y="54.5303" width="189" height="116.455" rx="6" stroke="#CCCCCC"/>
+<rect x="38" y="63.7727" width="189" height="116.455" rx="6" fill="#F6F7F7" stroke="url(#paint0_linear_5936_20173)"/>
+<path d="M205 69C205 70.9569 205 87.4247 205 102.133C205 113.178 196.046 122.13 185 122.13H80C68.9543 122.13 60 131.084 60 142.13V174" stroke="url(#paint1_linear_5936_20173)" stroke-dasharray="2 2"/>
+<circle cx="52" cy="83" r="3" stroke="#3858E9"/>
+<circle cx="64" cy="83" r="3" stroke="#3858E9"/>
+<circle cx="76" cy="83" r="3" stroke="#3858E9"/>
+<path d="M133 98.6143C151.786 98.6143 165.712 116.462 169.168 121.34C169.705 122.099 169.769 123.056 169.319 123.87C166.551 128.874 155.222 146.506 133 146.506C110.763 146.506 99.4337 128.85 96.6757 123.86C96.2292 123.052 96.2888 122.101 96.8181 121.345C100.228 116.473 114.019 98.6143 133 98.6143Z" fill="#F6F7F7" stroke="url(#paint2_linear_5936_20173)" stroke-width="1.36366"/>
+<path d="M132.979 137.792C124.583 137.792 117.777 130.986 117.777 122.591C117.777 114.195 124.583 107.39 132.979 107.39C141.374 107.39 148.18 114.195 148.18 122.591C148.18 130.986 141.374 137.792 132.979 137.792Z" stroke="url(#paint3_linear_5936_20173)" stroke-dasharray="2 2"/>
+<path d="M133.182 116.683C136.382 116.683 138.978 119.278 138.978 122.479C138.977 125.679 136.382 128.274 133.182 128.274C129.981 128.274 127.386 125.679 127.386 122.479C127.386 119.278 129.981 116.683 133.182 116.683Z" fill="#F6F7F7" stroke="#3858E9" stroke-width="2.04548"/>
+<path d="M245 211C234.369 211 182.218 211 152.976 211C141.93 211 133 202.046 133 191L133 178.713L133 147" stroke="url(#paint4_linear_5936_20173)"/>
+<circle cx="237" cy="211" r="8" fill="#069E08"/>
+</g>
+<defs>
+<pattern id="pattern0_5936_20173" patternContentUnits="objectBoundingBox" width="0.0324582" height="0.0451827">
+<use xlink:href="#image0_5936_20173" transform="scale(0.000477327 0.000664452)"/>
+</pattern>
+<linearGradient id="paint0_linear_5936_20173" x1="51.2632" y1="110.355" x2="210.467" y2="111.218" gradientUnits="userSpaceOnUse">
+<stop stop-color="#3858E9"/>
+<stop offset="1" stop-color="#069E08"/>
+</linearGradient>
+<linearGradient id="paint1_linear_5936_20173" x1="56.3291" y1="176.625" x2="68.4521" y2="55.361" gradientUnits="userSpaceOnUse">
+<stop stop-color="#737373" stop-opacity="0"/>
+<stop offset="0.125009" stop-color="#737373"/>
+<stop offset="0.913481" stop-color="#737373"/>
+<stop offset="1" stop-color="#737373" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint2_linear_5936_20173" x1="105.375" y1="122.56" x2="162.375" y2="122.669" gradientUnits="userSpaceOnUse">
+<stop stop-color="#3858E9"/>
+<stop offset="1" stop-color="#069E08"/>
+</linearGradient>
+<linearGradient id="paint3_linear_5936_20173" x1="132.979" y1="107.39" x2="132.979" y2="113.296" gradientUnits="userSpaceOnUse">
+<stop stop-color="#737373"/>
+<stop offset="1" stop-color="#737373"/>
+</linearGradient>
+<linearGradient id="paint4_linear_5936_20173" x1="150.287" y1="178.999" x2="255.391" y2="179.277" gradientUnits="userSpaceOnUse">
+<stop stop-color="#3858E9"/>
+<stop offset="1" stop-color="#069E08"/>
+</linearGradient>
+<clipPath id="clip0_5936_20173">
+<path d="M0 4C0 1.79086 1.79086 0 4 0H252C254.209 0 256 1.79086 256 4V240C256 242.209 254.209 244 252 244H4C1.79086 244 0 242.209 0 240V4Z" fill="white"/>
+</clipPath>
+<image id="image0_5936_20173" width="68" height="68" preserveAspectRatio="none" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEQAAABECAYAAAA4E5OyAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAylpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMC1jMDAxIDc5LmMwMjA0YjJkZWYsIDIwMjMvMDIvMDItMTI6MTQ6MjQgICAgICAgICI+IDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+IDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCAyNC41IChNYWNpbnRvc2gpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkU4MTBCRTc4NkI2QTExRjBCOTI1QjRCNzdDOENGRkMzIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkU4MTBCRTc5NkI2QTExRjBCOTI1QjRCNzdDOENGRkMzIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6RTgxMEJFNzY2QjZBMTFGMEI5MjVCNEI3N0M4Q0ZGQzMiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6RTgxMEJFNzc2QjZBMTFGMEI5MjVCNEI3N0M4Q0ZGQzMiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz5uSzX6AAAA2UlEQVR42uzaTQ6CMBAGUMaw0FtwET28XoRb6K6OCYk/29aC5n3JBFYd+gIlaRqllEGe2SEAAgQIECBAgAABAgQIECBA/j1j7QARMeXllPXYWLlkzZ3n8Na/lDKv/YYcs/ZZh+XBeqdp/xYg8XK/xvZb0/4tQM5Z16zb8sn0TtP+UbunmmvIphbF2vn4ywABAgQIECBAgAABAgQIECBAgAARIECAAAECBAgQIBvM2GCMadjQ+ZDa/s6HfAHE+ZCPOB/iLwMEiAABAgQIECBAgAABAgTID+cuwADKAy+BgXQl5gAAAABJRU5ErkJggg=="/>
+</defs>
+</svg>

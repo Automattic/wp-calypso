@@ -1,3 +1,4 @@
+@import '@wordpress/base-styles/breakpoints';
 @import './variables.scss';
 
 .plugin-switcher-card {
@@ -8,6 +9,10 @@
 	max-height: $card-height;
 	padding: 8px 0 0;
 	overflow-y: auto;
+
+	@media ( max-width: $break-medium ) {
+		padding-block-start: 0;
+	}
 }
 
 .plugin-switcher-search {
