@@ -38,7 +38,7 @@ const fields: Field< LegacyContactFormData >[] = [
 
 			return (
 				<div className="legacy-contact-notes-field">
-					<span className="legacy-contact-notes-field__count">
+					<span className="legacy-contact-notes-field__count" aria-hidden="true">
 						{ sprintf(
 							/* translators: %d is the number of characters remaining. */
 							_n( '%d character remaining', '%d characters remaining', remaining ),
