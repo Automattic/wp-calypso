@@ -179,6 +179,7 @@ const POST_FEEDBACK_SUGGESTION = {
 const PROOFREAD_SUGGESTION = {
 	id: 'proofread-content',
 	label: __( 'Proofread', 'jetpack' ),
+	description: __( 'Correct spelling, grammar, and punctuation.', 'jetpack' ),
 	prompt: __(
 		'Proofread this saved post for spelling, grammar, and punctuation. Review the saved title and saved block content, and return practical fixes with one-click suggestions when safe.',
 		'jetpack'
