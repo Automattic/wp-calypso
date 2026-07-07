@@ -2345,21 +2345,40 @@ describe( 'useCheckpoint', () => {
 		).toBe( 'Edited Title' );
 	} );
 
-	it( 'restores a meta key that was unset at checkpoint time to an empty string', async () => {
-		installWpDataMock( 'Original Title' );
+	it( 'restores a meta key that was empty at checkpoint time to an empty string', async () => {
+		installWpDataMock( 'Original Title', 123, '', { advanced_seo_description: '' } );
 		const api = useCheckpoint();
 
-		api.setCheckpoint( 'cp-seo-unset', { metaKeys: [ 'advanced_seo_description' ] } );
+		api.setCheckpoint( 'cp-seo-empty', { metaKeys: [ 'advanced_seo_description' ] } );
 
 		( window as any ).wp.data.dispatch( 'core/editor' ).editPost( {
 			meta: { advanced_seo_description: 'AI description' },
 		} );
-		await api.restoreCheckpoint( 'cp-seo-unset' );
+		await api.restoreCheckpoint( 'cp-seo-empty' );
 
 		expect(
 			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'meta' )
 				.advanced_seo_description
 		).toBe( '' );
+	} );
+
+	it( 'does not snapshot or restore a meta key absent from the record', async () => {
+		installWpDataMock( 'Original Title' );
+		const api = useCheckpoint();
+
+		api.setCheckpoint( 'cp-seo-absent', { metaKeys: [ 'advanced_seo_description' ] } );
+
+		( window as any ).wp.data.dispatch( 'core/editor' ).editPost( {
+			meta: { advanced_seo_description: 'AI description' },
+		} );
+		await api.restoreCheckpoint( 'cp-seo-absent' );
+
+		// Restoring '' for a key the record never had would dispatch a phantom
+		// edit, so the later meta value must be left untouched.
+		expect(
+			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'meta' )
+				.advanced_seo_description
+		).toBe( 'AI description' );
 	} );
 
 	it( 'restores the SEO description meta set by a show-component tool call', async () => {

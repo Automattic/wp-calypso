@@ -835,10 +835,16 @@ export function useCheckpoint(): any {
 			const metaKeys = spec.metaKeys ?? [];
 			if ( metaKeys.length > 0 ) {
 				const meta = editor?.getEditedPostAttribute?.( 'meta' );
-				snapshot.meta = {};
-				for ( const key of metaKeys ) {
-					// Unset meta snapshots as '' — mirrors how the pickers treat it.
-					snapshot.meta[ key ] = ( meta?.[ key ] as string ) ?? '';
+				// Snapshot only keys present on the record: restoring '' for an
+				// unregistered key (e.g. SEO tools inactive) would dispatch a
+				// phantom edit that leaves the post permanently dirty.
+				const presentKeys = meta ? metaKeys.filter( ( key ) => key in meta ) : [];
+				if ( presentKeys.length > 0 ) {
+					const metaSnapshot: Record< string, string > = {};
+					for ( const key of presentKeys ) {
+						metaSnapshot[ key ] = ( meta[ key ] as string ) ?? '';
+					}
+					snapshot.meta = metaSnapshot;
 				}
 			}
 			postSnapshots.set( id, snapshot );

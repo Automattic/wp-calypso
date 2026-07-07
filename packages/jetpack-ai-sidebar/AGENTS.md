@@ -50,7 +50,7 @@ Used for Jetpack AI interactive components. The wpcom ability returns an `Input_
 {
   type: '<component-type>',
   props: { ... },
-  calypsoCheckpointId: '<id>',
+  calypsoCheckpointId: '<id>', // only for picker types with a checkpoint spec
   isCurrent: true,
   hideZoomAction: true
 }
@@ -72,7 +72,8 @@ The provider temporarily accepts legacy `big_sky__show_component` executions for
 1. Add a case in `getChatComponent()` mapping your `type` string to a React component.
 2. Create the component under `src/components/` with a `scss` sibling.
 3. Update the wpcom ability (or add a new one) to return `tool_id: 'jetpack_ai__show_component'` with `data: { type: '<your-type>', props: { ... } }`.
-4. No changes to `toolProvider`, `useCheckpoint`, or the action bar wiring.
+4. If the component mutates post data and should offer Undo, add an entry to `PICKER_CHECKPOINT_SPECS` in `src/index.ts` — without one, no `calypsoCheckpointId` is set and AM shows no Undo.
+5. No other changes to `toolProvider`, `useCheckpoint`, or the action bar wiring.
 
 ### Adding a non-rendering client tool
 

@@ -101,7 +101,8 @@ export type GetChatComponent = ( type: ChatComponentType ) => React.ComponentTyp
  */
 export type UseCheckpointReturn = {
 	getLastEditorState: () => unknown;
-	setCheckpoint: ( id: string, keys?: string[] ) => void;
+	// The second argument's shape is provider-owned; AM never invokes this method.
+	setCheckpoint: ( id: string, spec?: unknown ) => void;
 	addCheckpointKeys: ( id: string, keys: string[] ) => void;
 	restoreCheckpoint: ( id: string ) => Promise< void >;
 	addNewPageToCheckpoint: ( pageId: string ) => void;
@@ -263,7 +264,7 @@ export function mergeUseCheckpointHooks(
 				}
 			},
 			getLastEditorState: () => first?.getLastEditorState?.(),
-			setCheckpoint: ( id: string, keys?: string[] ) => first?.setCheckpoint?.( id, keys ),
+			setCheckpoint: ( id: string, spec?: unknown ) => first?.setCheckpoint?.( id, spec ),
 			addCheckpointKeys: ( id: string, keys: string[] ) => first?.addCheckpointKeys?.( id, keys ),
 			addNewPageToCheckpoint: ( pageId: string ) => first?.addNewPageToCheckpoint?.( pageId ),
 			addPageRenameToCheckpoint: ( pageId: string, oldTitle: string, newTitle: string ) =>
