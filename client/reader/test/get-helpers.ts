@@ -1,4 +1,4 @@
-import { getSiteUrl, getSiteName, getPostIcon } from '../get-helpers';
+import { getSiteUrl, getSiteName, getPostIcon, isEligibleForSeen } from '../get-helpers';
 
 describe( 'getSiteUrl', () => {
 	const siteWithUrl = { URL: 'siteWithUrl.com' };
@@ -117,5 +117,27 @@ describe( 'getSiteName', () => {
 		expect( getSiteName() ).toBeNull();
 
 		expect( getSiteName( { feed: {}, site: {}, post: {} } ) ).toBeNull();
+	} );
+} );
+
+describe( 'isEligibleForSeen', () => {
+	const now = new Date( '2024-03-31T12:00:00.000Z' );
+
+	beforeAll( () => {
+		jest.useFakeTimers().setSystemTime( now );
+	} );
+
+	afterAll( () => {
+		jest.useRealTimers();
+	} );
+
+	test.each( [
+		[ 'returns true for a post from today', '2024-03-31T12:00:00.000Z', true ],
+		[ 'returns true for a post inside the 30-day window', '2024-03-02T12:00:00.000Z', true ],
+		[ 'returns true for a post exactly 30 days old', '2024-03-01T12:00:00.000Z', true ],
+		[ 'returns false for a post older than 30 days', '2024-03-01T11:59:59.999Z', false ],
+		[ 'returns false for an invalid date', 'not-a-date', false ],
+	] )( '%s', ( _testCase, postDate, expected ): void => {
+		expect( isEligibleForSeen( postDate ) ).toBe( expected );
 	} );
 } );
