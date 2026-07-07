@@ -110,11 +110,11 @@ describe( '<SecurityLegacyContact />', () => {
 
 		renderScreen();
 
-		expect( await screen.findByText( '500 characters remaining.' ) ).toBeVisible();
+		expect( await screen.findByText( '500 characters remaining' ) ).toBeVisible();
 
 		await userEvent.type( screen.getByRole( 'textbox', { name: 'Notes' } ), 'Hello' );
 
-		expect( screen.getByText( '495 characters remaining.' ) ).toBeVisible();
+		expect( screen.getByText( '495 characters remaining' ) ).toBeVisible();
 	} );
 
 	test( 'opens a confirmation dialog when removing', async () => {

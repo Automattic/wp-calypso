@@ -37,29 +37,26 @@ const fields: Field< LegacyContactFormData >[] = [
 			const remaining = LEGACY_CONTACT_NOTES_MAX_LENGTH - value.length;
 
 			return (
-				<TextareaControl
-					__nextHasNoMarginBottom
-					value={ value }
-					onChange={ ( nextValue ) => onChange( { [ id ]: nextValue } ) }
-					label={ hideLabelFromVision ? undefined : field.label }
-					help={
-						<>
-							{ __(
-								'We won’t share these notes with your legacy contact. Record any wishes, such as which sites to transfer.'
-							) }
-							<br />
-							<span>
-								{ sprintf(
-									/* translators: %d is the number of characters remaining. */
-									_n( '%d character remaining.', '%d characters remaining.', remaining ),
-									remaining
-								) }
-							</span>
-						</>
-					}
-					maxLength={ LEGACY_CONTACT_NOTES_MAX_LENGTH }
-					rows={ 3 }
-				/>
+				<div className="legacy-contact-notes-field">
+					<span className="legacy-contact-notes-field__count">
+						{ sprintf(
+							/* translators: %d is the number of characters remaining. */
+							_n( '%d character remaining', '%d characters remaining', remaining ),
+							remaining
+						) }
+					</span>
+					<TextareaControl
+						__nextHasNoMarginBottom
+						value={ value }
+						onChange={ ( nextValue ) => onChange( { [ id ]: nextValue } ) }
+						label={ hideLabelFromVision ? undefined : field.label }
+						help={ __(
+							'We won’t share these notes with your legacy contact. Record any wishes, such as which sites to transfer.'
+						) }
+						maxLength={ LEGACY_CONTACT_NOTES_MAX_LENGTH }
+						rows={ 3 }
+					/>
+				</div>
 			);
 		},
 	},
