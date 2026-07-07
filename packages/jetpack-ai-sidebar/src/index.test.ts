@@ -1158,6 +1158,28 @@ describe( 'getEmptyViewSuggestions', () => {
 		expect( ids ).not.toContain( 'generate-excerpt' );
 	} );
 
+	it( 'shows Generate Excerpt on pages when the page post type supports excerpts', () => {
+		installAiEditorialReviewData( { excerptSuggestion: true } );
+		// WordPress.com Simple / any site with the Jetpack SEO Tools module adds
+		// excerpt support to pages — the legacy AI Excerpt panel shows there too.
+		installPostTypeMock( 'page', 123, true );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'generate-excerpt' );
+	} );
+
+	it( 'hides Generate Excerpt for templates and patterns even though they support excerpts', () => {
+		installAiEditorialReviewData( { excerptSuggestion: true } );
+		// Core registers excerpt support for wp_block (patterns), but the excerpt
+		// field acts as a description there — the legacy panel excludes these types.
+		installPostTypeMock( 'wp_block', 123, true );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-excerpt' );
+	} );
+
 	it( 'shows Generate Excerpt for posts while the post type record is still resolving', () => {
 		installAiEditorialReviewData( { excerptSuggestion: true } );
 		installPostTypeMock( 'post', 123, true, false );

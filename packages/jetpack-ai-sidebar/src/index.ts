@@ -231,6 +231,13 @@ function currentPostTypeSupportsExcerpt(
 	return postTypeRecordSupportsExcerpt( currentPostType, postTypeRecord );
 }
 
+/**
+ * Post types where the excerpt field acts as a description (templates,
+ * template parts, patterns). Core registers excerpt support for wp_block, but
+ * the legacy AI Excerpt panel excludes these types and so does the chip.
+ */
+const EXCERPT_EXCLUDED_POST_TYPES = [ 'wp_template', 'wp_template_part', 'wp_block' ];
+
 function isExcerptSuggestionAvailable(
 	currentPostType: string | undefined = getCurrentEditorPostType(),
 	supportsExcerpt?: boolean
@@ -238,6 +245,9 @@ function isExcerptSuggestionAvailable(
 	// Check the flag first: on flag-off sites the core-store getPostType read
 	// (which can trigger a REST resolution) never runs.
 	if ( ! isExcerptSuggestionEnabled() ) {
+		return false;
+	}
+	if ( ! currentPostType || EXCERPT_EXCLUDED_POST_TYPES.includes( currentPostType ) ) {
 		return false;
 	}
 	return supportsExcerpt ?? currentPostTypeSupportsExcerpt( currentPostType );
