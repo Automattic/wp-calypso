@@ -12,7 +12,6 @@ import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow
 import { withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_POST_OPTIONS_MENU } from 'calypso/reader/follow-sources';
-import { isEligibleForSeen } from 'calypso/reader/get-helpers';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { isConversationFollowable } from 'calypso/reader/post/capabilities';
 import * as stats from 'calypso/reader/stats';
@@ -238,7 +237,7 @@ class ReaderPostEllipsisMenu extends Component {
 
 		const isSeen = post?.is_seen;
 		const isAutomattician = isAutomatticTeamMember( teams );
-		const isSeenEnabled = isAutomattician && isEligibleForSeen( post.date );
+		const isSeenEnabled = isAutomattician; // For public release replace with isEligibleForSeen( post.date ) check.
 		const showConversationFollowButton =
 			this.props.showConversationFollow && isConversationFollowable( post );
 

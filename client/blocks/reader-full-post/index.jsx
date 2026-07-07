@@ -36,7 +36,7 @@ import { withPostLikeActions } from 'calypso/reader/data/post/likes';
 import { withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
 import { withSite } from 'calypso/reader/data/site';
 import { useSiteSubscriptionForFeed } from 'calypso/reader/data/site-subscriptions';
-import { getSiteName, isEligibleForSeen } from 'calypso/reader/get-helpers';
+import { getSiteName } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { markPostSeen } from 'calypso/reader/mark-post-seen';
@@ -553,9 +553,9 @@ export class FullPostView extends Component {
 	};
 
 	isSeenEnabled = () => {
-		const { post, teams } = this.props;
+		const { teams } = this.props;
 
-		return isAutomatticTeamMember( teams ) && isEligibleForSeen( post.date );
+		return isAutomatticTeamMember( teams ); // For public release replace with isEligibleForSeen( post.date ) check.
 	};
 
 	maybeDisableAppBanner = () => {
