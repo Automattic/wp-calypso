@@ -965,7 +965,12 @@ const PlansFeaturesMain = ( {
 	let enableTermSavingsPriceDisplay = true;
 	// In the "purchase a plan and free domain" flow we do not want to show
 	// monthly plans because monthly plans do not come with a free domain.
-	if ( redirectToAddDomainFlow !== undefined || hidePlanTypeSelector || isVisualSplitEnabled ) {
+	if (
+		redirectToAddDomainFlow !== undefined ||
+		hidePlanTypeSelector ||
+		isVisualSplitEnabled ||
+		( usePlansGridRedesign && isInSignup )
+	) {
 		hidePlanSelector = true;
 	}
 	if ( ! isInSignup ) {
