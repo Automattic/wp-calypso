@@ -130,7 +130,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		trackEvent,
 		newInteractionsBotSlug,
 		externalChatProvider,
-		externalIdProvider,
+		externalChatId,
 	} = useOdieAssistantContext();
 
 	const botSlug = getBotSlug(
@@ -279,7 +279,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 							...( version && { version } ),
 							...( sessionId && { session_id: sessionId } ),
 							...( externalChatProvider && { external_chat_provider: externalChatProvider } ),
-							...( externalIdProvider && { external_id_provider: externalIdProvider } ),
+							...( externalChatId && { external_chat_id: externalChatId } ),
 							context: { selectedSiteId, currentScreen, pathname },
 						},
 				  } )
@@ -292,7 +292,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 							...( version && { version } ),
 							...( sessionId && { session_id: sessionId } ),
 							...( externalChatProvider && { external_chat_provider: externalChatProvider } ),
-							...( externalIdProvider && { external_id_provider: externalIdProvider } ),
+							...( externalChatId && { external_chat_id: externalChatId } ),
 							context: { selectedSiteId, currentScreen, pathname },
 						},
 				  } );

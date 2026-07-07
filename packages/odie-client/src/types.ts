@@ -23,7 +23,7 @@ export type OdieAssistantContextInterface = {
 	userFieldMessage?: string | null;
 	userFieldFlowName?: string | null;
 	externalChatProvider?: string | null;
-	externalIdProvider?: string | null;
+	externalChatId?: string | null;
 	forceEmailSupport: boolean;
 	isChatRestricted: boolean;
 	setExperimentVariationName: ( variationName: string | null | undefined ) => void;
@@ -47,7 +47,7 @@ export type OdieAssistantProviderProps = {
 	userFieldMessage?: string | null;
 	userFieldFlowName?: string | null;
 	externalChatProvider?: string | null;
-	externalIdProvider?: string | null;
+	externalChatId?: string | null;
 	version?: string | null;
 	forceEmailSupport?: boolean;
 	isChatRestricted?: boolean;
