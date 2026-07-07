@@ -294,6 +294,7 @@ export const useWPCOMDomainSearchCart = ( {
 		replaceProductsInCart,
 		flowName,
 		isFirstDomainFreeForFirstYear,
+		freeForFirstYearTlds,
 		flowAllowsMultipleDomainsInCart,
 		onContinue,
 		beforeAddDomainToCart,
