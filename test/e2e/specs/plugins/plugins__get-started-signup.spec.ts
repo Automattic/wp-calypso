@@ -1,5 +1,5 @@
 import { BrowserManager, RestAPIClient } from '@automattic/calypso-e2e';
-import { expect, tags, test } from '../../lib/pw-base';
+import { tags, test } from '../../lib/pw-base';
 import { apiDeleteSite } from '../shared';
 import type { NewSiteResponse, TestAccount } from '@automattic/calypso-e2e';
 
@@ -46,6 +46,7 @@ test.describe(
 			helperData,
 			page,
 			pageCartCheckout,
+			pagePlans,
 			pageSignupPickPlan,
 		} ) => {
 			// Signup + site creation dominate the runtime; the 120s default isn't enough.
@@ -80,10 +81,10 @@ test.describe(
 
 			await test.step( 'Then the plans step shows paid plans and hides the free plan', async () => {
 				// The grid rendered (rather than a forced Business checkout): the paid plan CTA is
-				// visible. Assert this first so the grid has finished loading before checking that
+				// offered. Assert this first so the grid has finished loading before checking that
 				// no free plan is offered.
-				await expect( page.locator( 'button.is-personal-plan' ).first() ).toBeVisible();
-				await expect( page.locator( 'button.is-free-plan' ) ).toHaveCount( 0 );
+				await pagePlans.validatePlanIsAvailable( planName );
+				await pagePlans.validatePlanIsNotAvailable( 'Free' );
 			} );
 
 			await test.step( `When I select the ${ planName } plan`, async () => {
