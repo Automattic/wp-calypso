@@ -28,7 +28,7 @@ export function useStatsSparklinePlugin( {
 
 	const adminUrl = site?.options?.admin_url;
 
-	if ( ! adminUrl || ! hourlyViews ) {
+	if ( ! adminUrl || ! hourlyViews || hourlyViews.length === 0 ) {
 		return undefined;
 	}
 

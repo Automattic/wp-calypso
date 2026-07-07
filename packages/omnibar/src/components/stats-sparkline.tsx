@@ -26,6 +26,10 @@ const DATA_HEIGHT = CHART_HEIGHT - PEAK_HEADROOM;
  * show/hide-on-hover technique wp-admin uses for its own chart image.
  */
 export function StatsSparkline( { hourlyViews }: { hourlyViews: number[] } ) {
+	if ( hourlyViews.length === 0 ) {
+		return null;
+	}
+
 	const highestViews = Math.max( ...hourlyViews );
 	const chartWidth = hourlyViews.length * ( BAR_WIDTH + BAR_GAP ) - BAR_GAP;
 	const peakY = PEAK_HEADROOM;

@@ -63,7 +63,7 @@ describe( '<InterimOmnibar /> launch button on non-site routes', () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/sites/1/stats/visits' )
 			.query( true )
-			.reply( 200, { data: [] } );
+			.reply( 200, { data: [ [ '2025-01-01 00:00:00', 3 ] ] } );
 	} );
 
 	afterEach( () => {

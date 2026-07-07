@@ -158,7 +158,11 @@ export function InterimOmnibar( {
 					// index-keyed rendering reuses the wrong DOM node when that happens.
 					canUserViewStats={ !! site }
 					statsAdminUrl={ siteAdminUrl ? `${ siteAdminUrl }admin.php?page=stats` : undefined }
-					statsSparkline={ hourlyViews && <StatsSparkline hourlyViews={ hourlyViews } /> }
+					statsSparkline={
+						hourlyViews && hourlyViews.length > 0 ? (
+							<StatsSparkline hourlyViews={ hourlyViews } />
+						) : undefined
+					}
 					isUnlaunchedSite={ isUnlaunchedSite }
 					launchButton={ isUnlaunchedSite && site ? <OmnibarLaunchButton site={ site } /> : null }
 					isTrial={ false }
