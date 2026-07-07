@@ -1,7 +1,6 @@
 import { readSpaceQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { useQueryClient } from '@tanstack/react-query';
-import { Icon, category } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
@@ -157,9 +156,8 @@ export function ReaderSidebarSpaces( { path }: Props ) {
 			<ExpandableSidebarMenu
 				expanded={ isOpen }
 				title={ translate( 'Spaces' ) }
-				customIcon={ <Icon className="sidebar__menu-icon" icon={ category } /> }
 				onClick={ handleToggleExpand }
-				expandableIconClick={ handleToggleExpand }
+				expandableIconClick={ () => setIsOpen( ! isOpen ) }
 				disableFlyout
 				className={ ! isOpen && isOnSpaces ? 'sidebar__menu--selected' : undefined }
 				count={ undefined }

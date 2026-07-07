@@ -65,7 +65,11 @@
 }
 
 .space-color-picker__check {
-	fill: var( --color-surface );
+	// The check sits on the swatch's vivid accent fill, so it needs a light mark
+	// in both themes. `--color-surface` was light-only and flipped dark (and thus
+	// invisible on the coloured swatch) in dark mode; `--color-text-inverted`
+	// stays white in both themes.
+	fill: var( --color-text-inverted );
 	pointer-events: none;
 }
 

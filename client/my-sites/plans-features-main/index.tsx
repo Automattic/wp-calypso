@@ -82,6 +82,7 @@ import {
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import usePlanDifferentiatorsExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plan-differentiators-experiment';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
+import usePlansGridRedesignExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-experiment';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
@@ -686,6 +687,12 @@ const PlansFeaturesMain = ( {
 		useFocusedNewCopyTaglines,
 		isExperimentVariant,
 	} = usePlanDifferentiatorsExperiment( { isInSignup, siteId } );
+	const {
+		isLoading: isPlansGridRedesignExperimentLoading,
+		showDifferentiatorHeader: showPlansGridRedesignDifferentiatorHeader,
+		usePlansGridRedesign,
+		usePlansGridRedesignNewDescription,
+	} = usePlansGridRedesignExperiment( { flowName, isInSignup, siteId } );
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
@@ -872,6 +879,7 @@ const PlansFeaturesMain = ( {
 		useVar42NoAiFeatures,
 		showPricingDifferentiationFeaturePills,
 		useFocusedNewCopyTaglines,
+		usePlansGridRedesignNewDescription,
 		isExperimentVariant,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 	} );
@@ -901,6 +909,7 @@ const PlansFeaturesMain = ( {
 		useVar42NoAiFeatures,
 		showPricingDifferentiationFeaturePills,
 		useFocusedNewCopyTaglines,
+		usePlansGridRedesignNewDescription,
 		isExperimentVariant,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 	} );
@@ -959,7 +968,12 @@ const PlansFeaturesMain = ( {
 	let enableTermSavingsPriceDisplay = true;
 	// In the "purchase a plan and free domain" flow we do not want to show
 	// monthly plans because monthly plans do not come with a free domain.
-	if ( redirectToAddDomainFlow !== undefined || hidePlanTypeSelector || isVisualSplitEnabled ) {
+	if (
+		redirectToAddDomainFlow !== undefined ||
+		hidePlanTypeSelector ||
+		isVisualSplitEnabled ||
+		( usePlansGridRedesign && isInSignup )
+	) {
 		hidePlanSelector = true;
 	}
 	if ( ! isInSignup ) {
@@ -1159,7 +1173,8 @@ const PlansFeaturesMain = ( {
 	const isPlansGridReady =
 		! isLoadingGridPlans &&
 		! resolvedSubdomainName.isLoading &&
-		! isRenewalPricingExperimentLoading;
+		! isRenewalPricingExperimentLoading &&
+		! isPlansGridRedesignExperimentLoading;
 
 	useEffect( () => {
 		if ( isPlansGridReady ) {
@@ -1365,7 +1380,9 @@ const PlansFeaturesMain = ( {
 					renderFreePlanCtaInStepContainerV2={ renderFreePlanCtaInStepContainerV2 }
 					onFreePlanCTAClick={ onFreePlanCTAClick }
 					intent={ intent }
-					showDifferentiatorHeader={ showDifferentiatorHeader }
+					showDifferentiatorHeader={
+						showDifferentiatorHeader || showPlansGridRedesignDifferentiatorHeader
+					}
 				/>
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }
 				{ isPlansGridReady && (
@@ -1402,9 +1419,10 @@ const PlansFeaturesMain = ( {
 								{ gridPlansForFeaturesGrid && (
 									<FeaturesGrid
 										allFeaturesList={ getFeaturesList() }
-										className={ `plans-features-main__features-grid${
-											isExperimentVariant ? ' is-plan-differentiators-experiment' : ''
-										}` }
+										className={ clsx( 'plans-features-main__features-grid', {
+											'is-plan-differentiators-experiment': isExperimentVariant,
+											'is-plans-grid-redesign-experiment': usePlansGridRedesign,
+										} ) }
 										coupon={ coupon }
 										currentSitePlanSlug={ sitePlanSlug }
 										generatedWPComSubdomain={ resolvedSubdomainName }
@@ -1444,6 +1462,7 @@ const PlansFeaturesMain = ( {
 										showSimplifiedBillingDescription={ isInSignup }
 										showBillingDescriptionForIncreasedRenewalPrice={ renewalPricingVariation }
 										isExperimentVariant={ isExperimentVariant }
+										showFeatureCheckmarks={ usePlansGridRedesign }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
@@ -1476,7 +1495,9 @@ const PlansFeaturesMain = ( {
 											{ gridPlansForComparisonGridFinal && gridPlansForPlanTypeSelector && (
 												<ComparisonGrid
 													allFeaturesList={ getFeaturesList() }
-													className="plans-features-main__comparison-grid"
+													className={ clsx( 'plans-features-main__comparison-grid', {
+														'is-plans-grid-redesign-experiment': usePlansGridRedesign,
+													} ) }
 													coupon={ coupon }
 													currentSitePlanSlug={ sitePlanSlug }
 													gridPlans={ gridPlansForComparisonGridFinal }

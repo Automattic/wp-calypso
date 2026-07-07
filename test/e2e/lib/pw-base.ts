@@ -95,6 +95,7 @@ import {
 	apiWaitForEmailVerification,
 } from '../specs/shared';
 import { useBlackboxTestKeyForCollect } from './blackbox-test-key';
+import { snoozeAccountRecoveryInterstitial } from './dashboard-helpers';
 import { getAccount } from './get-account';
 
 export type CustomOptions = {
@@ -665,6 +666,10 @@ export const test = base.extend<
 			) as string;
 			await page.goto( activationLink );
 			await apiWaitForEmailVerification( restAPIClient, testUser.email );
+			// Fresh accounts have no recovery method set up, so the dashboard's
+			// account-recovery interstitial would mount over every route and block
+			// specs that load the dashboard with this fixture. Snooze it up front.
+			await snoozeAccountRecoveryInterstitial( restAPIClient );
 			await use( site );
 		} finally {
 			if ( site ) {
@@ -715,6 +720,7 @@ export const tags = {
 	CALYPSO_RELEASE: '@calypso-release',
 	DASHBOARD_PR: '@dashboard-pr',
 	DESKTOP_ONLY: '@desktop-only',
+	EDITOR_TRACKING: '@editor-tracking',
 	EXAMPLE_BLOCKS: '@example-blocks',
 	GUTENBERG: '@gutenberg',
 	I18N: '@i18n',
@@ -723,6 +729,7 @@ export const tags = {
 	JETPACK_WPCOM_INTEGRATION: '@jetpack-wpcom-integration',
 	LEGAL: '@legal',
 	P2: '@p2',
+	QUARANTINED: '@quarantined',
 	SETTINGS: '@settings',
 };
 

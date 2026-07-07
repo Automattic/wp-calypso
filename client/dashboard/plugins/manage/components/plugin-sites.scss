@@ -1,3 +1,5 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 @import './variables.scss';
 
 .plugin-icon-placeholder {
@@ -15,27 +17,33 @@ img.plugin-icon {
 }
 
 .plugin-sites-card {
-	overflow-y: hidden;
+	display: flex;
+	flex-direction: column;
+
+	// On small viewports the card grows naturally and the page body scrolls.
+	@include break-medium {
+		max-height: $card-height;
+		overflow-y: hidden;
+	}
+
+	// Card wraps its bodies in an inner content View that defaults to display: block,
+	// which would swallow the flex context; make it a flex column so the tabs body can fill.
+	> div:first-child {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		min-height: 0;
+	}
 }
 
 .plugin-sites-card-body {
-	height: $card-height;
-	padding-inline-start: 0;
-	padding-inline-end: 0;
-	padding-block-end: 0;
 	display: flex;
 	flex-direction: column;
-}
-
-.plugin-sites-card-managed-notice {
-	margin-block-end: 16px;
-	margin-inline: 20px;
+	flex: 1;
+	min-height: 0;
 }
 
 .plugin-sites-card-header {
-	margin-bottom: 8px;
-	padding-inline-start: 20px;
-
 	.dashboard-section-header__decoration {
 		width: 48px;
 		height: 48px;

@@ -5,7 +5,8 @@ type SidebarFeature =
 	| 'blockTransformations'
 	| 'blockToolbarButton'
 	| 'optimizeTitleSuggestion'
-	| 'seoSuggestions';
+	| 'seoSuggestions'
+	| 'excerptSuggestion';
 
 function getAgentsManagerData() {
 	return typeof agentsManagerData !== 'undefined' ? agentsManagerData : undefined;
@@ -38,6 +39,14 @@ export function isOptimizeTitleSuggestionEnabled(): boolean {
  */
 export function isSeoSuggestionsEnabled(): boolean {
 	return isSidebarFeatureEnabled( 'seoSuggestions', false );
+}
+
+/**
+ * Generate Excerpt suggestion (jetpack-ai/generate-excerpt via the excerpt
+ * picker). The host (Jetpack) populates `features.excerptSuggestion`.
+ */
+export function isExcerptSuggestionEnabled(): boolean {
+	return isSidebarFeatureEnabled( 'excerptSuggestion', false );
 }
 
 export function isBlockTransformationsEnabled(): boolean {

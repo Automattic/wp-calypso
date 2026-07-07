@@ -64,6 +64,7 @@ test.describe( 'Authentication: GitHub', { tag: [ tags.AUTHENTICATION ] }, () =>
 		await test.step( 'And I handle GitHub device verification if needed', async function () {
 			// GitHub may show a device verification screen in CI
 			const verificationUrl = 'https://github.com/sessions/verified-device';
+			// eslint-disable-next-line playwright/no-wait-for-navigation -- branches on the post-navigation URL to detect an optional GitHub verification screen; waitForURL can't express that. Rewrite in a follow-up pass.
 			const response = await page.waitForNavigation();
 
 			if ( ! response ) {
@@ -79,6 +80,7 @@ test.describe( 'Authentication: GitHub', { tag: [ tags.AUTHENTICATION ] }, () =>
 		await test.step( 'And I skip GitHub trust device if needed', async function () {
 			// GitHub may show a device verification screen in CI
 			const verificationUrl = 'https://github.com/sessions/trusted-device';
+			// eslint-disable-next-line playwright/no-wait-for-navigation -- branches on the post-navigation URL to detect an optional GitHub verification screen; waitForURL can't express that. Rewrite in a follow-up pass.
 			const response = await page.waitForNavigation();
 
 			if ( ! response ) {

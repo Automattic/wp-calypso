@@ -105,7 +105,7 @@ export function getInterstitialCopy(
 			},
 			secondaryCta: {
 				id: 'add_two_factor',
-				label: __( 'Add two-step authentication and backup codes' ),
+				label: __( 'Add two-step authentication' ),
 				route: securityTwoStepAuthRoute.fullPath,
 			},
 		},

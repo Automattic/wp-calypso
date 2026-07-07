@@ -15,6 +15,8 @@ interface CollapsibleCardProps {
 	toggleLabel?: string;
 	initialExpanded?: boolean;
 	className?: string;
+	// When disabled, the card is forced collapsed and can't be toggled.
+	disabled?: boolean;
 	// Controlled mode props
 	expanded?: boolean;
 	onToggle?: ( expanded: boolean ) => void;
@@ -27,6 +29,7 @@ export const CollapsibleCard = ( {
 	size = 'medium',
 	isBorderless = false,
 	initialExpanded = false,
+	disabled = false,
 	expanded: controlledExpanded,
 	className,
 	onToggle,
@@ -36,7 +39,7 @@ export const CollapsibleCard = ( {
 
 	// Determine if controlled
 	const isControlled = controlledExpanded !== undefined;
-	const isExpanded = isControlled ? controlledExpanded : internalExpanded;
+	const isExpanded = ! disabled && ( isControlled ? controlledExpanded : internalExpanded );
 
 	const id = useInstanceId( CollapsibleCard, 'collapsible-card' );
 	const label = toggleLabel ?? __( 'Toggle content' );
@@ -77,24 +80,33 @@ export const CollapsibleCard = ( {
 
 	return (
 		<Card
-			className={ clsx( 'collapsible-card', { collapsed: ! isExpanded }, className ) }
+			className={ clsx(
+				'collapsible-card',
+				{ collapsed: ! isExpanded, 'is-disabled': disabled },
+				className
+			) }
 			isBorderless={ isBorderless }
 			size={ size }
 		>
 			<CardBody>
 				<div
 					className="collapsible-card__header"
-					onClick={ handleHeaderClick }
-					role="button"
-					tabIndex={ 0 }
-					onKeyDown={ ( event: React.KeyboardEvent< HTMLDivElement > ) => {
-						// Allow keyboard activation with Enter or Space
-						if ( event.key === 'Enter' || event.key === ' ' ) {
-							event.preventDefault();
-							handleCollapsedChange();
-						}
-					} }
-					aria-expanded={ isExpanded }
+					onClick={ disabled ? undefined : handleHeaderClick }
+					role={ disabled ? undefined : 'button' }
+					tabIndex={ disabled ? undefined : 0 }
+					onKeyDown={
+						disabled
+							? undefined
+							: ( event: React.KeyboardEvent< HTMLDivElement > ) => {
+									// Allow keyboard activation with Enter or Space
+									if ( event.key === 'Enter' || event.key === ' ' ) {
+										event.preventDefault();
+										handleCollapsedChange();
+									}
+							  }
+					}
+					aria-expanded={ disabled ? undefined : isExpanded }
+					aria-disabled={ disabled || undefined }
 					aria-label={ label }
 				>
 					<HStack justify="space-between">
@@ -102,6 +114,7 @@ export const CollapsibleCard = ( {
 						<Button
 							icon={ chevronUp }
 							className={ clsx( 'collapsible-card__toggle', { collapsed: ! isExpanded } ) }
+							disabled={ disabled }
 							onClick={ ( event: React.MouseEvent< HTMLButtonElement > ) => {
 								event.stopPropagation();
 								handleCollapsedChange();
