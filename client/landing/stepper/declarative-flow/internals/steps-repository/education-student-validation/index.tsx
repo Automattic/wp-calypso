@@ -82,7 +82,7 @@ const EducationStudentValidation: StepType< {
 	const enrollNote = createInterpolateElement(
 		__( 'Don’t have a code? <link>Learn more about the program at wp.com/edu</link>' ),
 		{
-			link: <a href="https://wp.com/edu" target="_blank" rel="noreferrer" />,
+			link: <a href="https://wp.com/edu" target="_blank" rel="noopener noreferrer" />,
 		}
 	);
 
