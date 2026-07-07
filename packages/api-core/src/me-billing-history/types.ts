@@ -45,6 +45,14 @@ export interface ReceiptItemCostOverride {
 	does_override_original_cost: boolean;
 	old_price_integer: number;
 	new_price_integer: number;
+
+	/**
+	 * Volume-adjusted line totals. Optional because receipts cached before this
+	 * shipped (or written without volume-adjusted data, e.g. auto-renewals) omit
+	 * them; consumers fall back to the per-unit price.
+	 */
+	old_subtotal_integer?: number | null;
+	new_subtotal_integer?: number | null;
 }
 
 export interface ReceiptItem {

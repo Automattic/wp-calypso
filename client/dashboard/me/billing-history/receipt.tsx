@@ -59,6 +59,13 @@ export interface LineItemCostOverrideForDisplay {
 	 * If not set, a number will not be displayed.
 	 */
 	discountAmount?: number;
+	/**
+	 * The volume-adjusted line totals before/after the override, in the
+	 * currency's smallest unit (fall back to the per-unit price when no
+	 * volume-adjusted subtotal was stored). Rendered as `<s>old</s> new`.
+	 */
+	oldSubtotalInteger?: number;
+	newSubtotalInteger?: number;
 }
 
 export default function Receipt() {
@@ -569,19 +576,35 @@ function ReceiptLineItem( { item, receipt }: { item: ReceiptItem; receipt: Recei
 	);
 }
 
-function ReceiptItemDiscounts( { item, receiptDate }: { item: ReceiptItem; receiptDate: string } ) {
+export function ReceiptItemDiscounts( {
+	item,
+	receiptDate,
+}: {
+	item: ReceiptItem;
+	receiptDate: string;
+} ) {
 	const shouldShowDiscount = areReceiptItemDiscountsAccurate( receiptDate );
 
 	return (
 		<ul className="receipt-discount-list">
 			{ filterCostOverridesForReceiptItem( item ).map( ( costOverride ) => {
+				const formatAmount = ( amount: number ) =>
+					formatCurrency( amount, item.currency, { isSmallestUnit: true, stripZeros: true } );
+				// Single-unit overrides render the plain discount-amount line;
+				// volume-adjusted (multi-unit) overrides render the struck totals.
 				const formattedDiscountAmount =
 					shouldShowDiscount && costOverride.discountAmount
-						? formatCurrency( -costOverride.discountAmount, item.currency, {
-								isSmallestUnit: true,
-								stripZeros: true,
-						  } )
+						? formatAmount( -costOverride.discountAmount )
 						: '';
+				const subtotalsDisplay =
+					shouldShowDiscount &&
+					costOverride.oldSubtotalInteger !== undefined &&
+					costOverride.newSubtotalInteger !== undefined ? (
+						<>
+							<s>{ formatAmount( costOverride.oldSubtotalInteger ) }</s>{ ' ' }
+							{ formatAmount( costOverride.newSubtotalInteger ) }
+						</>
+					) : null;
 
 				if (
 					doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
@@ -615,7 +638,7 @@ function ReceiptItemDiscounts( { item, receiptDate }: { item: ReceiptItem; recei
 					<li key={ costOverride.humanReadableReason }>
 						<Flex justify="space-between">
 							<Text>{ costOverride.humanReadableReason }</Text>
-							<Text>{ formattedDiscountAmount }</Text>
+							<Text>{ subtotalsDisplay ?? formattedDiscountAmount }</Text>
 						</Flex>
 					</li>
 				);
@@ -645,6 +668,8 @@ function filterCostOverridesForReceiptItem( item: ReceiptItem ): LineItemCostOve
 				humanReadableReason: costOverride.human_readable_reason,
 				overrideCode: costOverride.override_code,
 				discountAmount: costOverride.old_price_integer - costOverride.new_price_integer,
+				oldSubtotalInteger: costOverride.old_subtotal_integer ?? undefined,
+				newSubtotalInteger: costOverride.new_subtotal_integer ?? undefined,
 			};
 		} );
 }

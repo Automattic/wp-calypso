@@ -242,6 +242,14 @@ export interface LineItemCostOverrideForDisplay {
 	 * manner.
 	 */
 	discountAmount?: number;
+
+	/**
+	 * The volume-adjusted line totals before/after the override, in the
+	 * currency's smallest unit. Fall back to the per-unit price when the
+	 * volume-adjusted subtotal was not stored (volume 1, auto-renewals, legacy).
+	 */
+	oldSubtotalInteger?: number;
+	newSubtotalInteger?: number;
 }
 
 export function isUserVisibleCostOverride( costOverride: {

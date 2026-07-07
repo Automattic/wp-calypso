@@ -417,6 +417,8 @@ function filterCostOverridesForReceiptItem(
 				humanReadableReason: costOverride.human_readable_reason,
 				overrideCode: costOverride.override_code,
 				discountAmount: costOverride.old_price_integer - costOverride.new_price_integer,
+				oldSubtotalInteger: costOverride.old_subtotal_integer ?? undefined,
+				newSubtotalInteger: costOverride.new_subtotal_integer ?? undefined,
 			};
 		} );
 }
@@ -462,7 +464,7 @@ function ReceiptItemDiscountIntroductoryOfferDate( { item }: { item: BillingTran
 	);
 }
 
-function ReceiptItemDiscounts( {
+export function ReceiptItemDiscounts( {
 	item,
 	receiptDate,
 }: {
@@ -474,13 +476,23 @@ function ReceiptItemDiscounts( {
 	return (
 		<ul className="billing-history__receipt-item-discounts-list">
 			{ filterCostOverridesForReceiptItem( item, translate ).map( ( costOverride ) => {
+				const formatAmount = ( amount: number ) =>
+					formatCurrency( amount, item.currency, { isSmallestUnit: true, stripZeros: true } );
+				// Single-unit overrides render the plain discount-amount line;
+				// volume-adjusted (multi-unit) overrides render the struck totals.
 				const formattedDiscountAmount =
 					shouldShowDiscount && costOverride.discountAmount
-						? formatCurrency( -costOverride.discountAmount, item.currency, {
-								isSmallestUnit: true,
-								stripZeros: true,
-						  } )
+						? formatAmount( -costOverride.discountAmount )
 						: '';
+				const subtotalsDisplay =
+					shouldShowDiscount &&
+					costOverride.oldSubtotalInteger !== undefined &&
+					costOverride.newSubtotalInteger !== undefined ? (
+						<>
+							<s>{ formatAmount( costOverride.oldSubtotalInteger ) }</s>{ ' ' }
+							{ formatAmount( costOverride.newSubtotalInteger ) }
+						</>
+					) : null;
 				if (
 					doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
 						item.cost_overrides,
@@ -504,7 +516,7 @@ function ReceiptItemDiscounts( {
 						className="billing-history__receipt-item-discount"
 					>
 						<span>{ costOverride.humanReadableReason }</span>
-						<span>{ formattedDiscountAmount }</span>
+						<span>{ subtotalsDisplay ?? formattedDiscountAmount }</span>
 					</li>
 				);
 			} ) }
