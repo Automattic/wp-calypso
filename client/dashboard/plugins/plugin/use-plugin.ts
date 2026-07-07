@@ -61,7 +61,7 @@ export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: b
 	const availableIcon = useMarketplaceSearchIcon( pluginSlug );
 	const { queries } = useAppContext();
 	const locale = useLocale();
-	// No slug to look up — resolve immediately to avoid a loading flash.
+	// No slug to look up yet — the consumer may still be deriving it.
 	const hasPluginSlug = !! pluginSlug;
 	const {
 		data: sitesPlugins,
@@ -187,10 +187,7 @@ export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: b
 			  isLoadingWpOrgPlugin ||
 			  isLoadingMarketplacePlugins ||
 			  isLoadingSitePlugins
-			: // No slug yet: a consumer may still be deriving it from the plugins
-			  // list (e.g. the manage page defaults to the first plugin). Report
-			  // loading until that list resolves so the detail's DataViews shows a
-			  // spinner instead of latching onto an empty "No results" state.
+			: // Report loading while the slug is pending so DataViews doesn't latch an empty state.
 			  isLoadingSitesPlugins || isLoadingSites,
 		isFetching: isFetchingSitePlugins,
 		pluginBySiteId,
