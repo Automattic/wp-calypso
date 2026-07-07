@@ -31,7 +31,6 @@ export function useStatsSparklinePlugin( {
 		id: 'stats',
 		href: `${ adminUrl }admin.php?page=stats`,
 		label,
-		title: __( 'Stats' ),
 		render: () => (
 			<>
 				<StatsSparkline hourlyViews={ hourlyViews } />

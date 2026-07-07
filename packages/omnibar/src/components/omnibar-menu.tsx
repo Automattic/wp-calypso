@@ -65,7 +65,7 @@ function OmnibarMenuContent( { nodes }: { nodes: OmnibarNode[] } ) {
 }
 
 export function OmnibarMenu( { node, style }: { node: OmnibarNode; style?: React.CSSProperties } ) {
-	const label = node.label || node.title || '';
+	const label = node.title || node.label || '';
 
 	if ( ! node.children ) {
 		return (
