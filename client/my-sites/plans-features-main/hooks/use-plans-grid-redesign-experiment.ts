@@ -25,6 +25,10 @@ type PlansGridRedesignExperimentResult = {
 	 */
 	usePlansGridRedesign: boolean;
 	/**
+	 * When true, use the redesigned plan tagline copy.
+	 */
+	usePlansGridRedesignNewDescription: boolean;
+	/**
 	 * When true, show the differentiator header (4 bullet points).
 	 */
 	showDifferentiatorHeader: boolean;
@@ -84,11 +88,19 @@ function usePlansGridRedesignExperiment( {
 			: 'control';
 
 	const usePlansGridRedesign = isEligible && ! isLoading && variant !== 'control';
+	const usePlansGridRedesignNewDescription =
+		usePlansGridRedesign &&
+		[
+			'five_plan_new_description',
+			'four_plan_new_description',
+			'six_plan_new_description',
+		].includes( variant );
 
 	return {
 		isLoading,
 		variant,
 		usePlansGridRedesign,
+		usePlansGridRedesignNewDescription,
 		showDifferentiatorHeader: usePlansGridRedesign && variant === 'six_plan_new_features',
 		showEnterpriseBottomCard: usePlansGridRedesign && variant === 'five_plan_new_description',
 		showWooCommerceBottomCard: usePlansGridRedesign && variant === 'four_plan_new_description',

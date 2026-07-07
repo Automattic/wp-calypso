@@ -18,6 +18,7 @@ const CONTROL_RESULT = {
 	isLoading: false,
 	variant: 'control',
 	usePlansGridRedesign: false,
+	usePlansGridRedesignNewDescription: false,
 	showDifferentiatorHeader: false,
 	showEnterpriseBottomCard: false,
 	showWooCommerceBottomCard: false,
@@ -181,7 +182,45 @@ describe( 'usePlansGridRedesignExperiment', () => {
 			...CONTROL_RESULT,
 			variant: 'six_plan_new_features',
 			usePlansGridRedesign: true,
+			usePlansGridRedesignNewDescription: true,
 			showDifferentiatorHeader: true,
+		} );
+	} );
+
+	test( 'enables the redesigned plan descriptions for six_plan_new_description', () => {
+		mockUseExperiment.mockReturnValue( [ false, { variationName: 'six_plan_new_description' } ] );
+
+		const { result } = renderHook( () =>
+			usePlansGridRedesignExperiment( {
+				flowName: 'onboarding',
+				isInSignup: true,
+				siteId: null,
+			} )
+		);
+
+		expect( result.current ).toEqual( {
+			...CONTROL_RESULT,
+			variant: 'six_plan_new_description',
+			usePlansGridRedesign: true,
+			usePlansGridRedesignNewDescription: true,
+		} );
+	} );
+
+	test( 'does not enable the redesigned plan descriptions for six_plan_new_design', () => {
+		mockUseExperiment.mockReturnValue( [ false, { variationName: 'six_plan_new_design' } ] );
+
+		const { result } = renderHook( () =>
+			usePlansGridRedesignExperiment( {
+				flowName: 'onboarding',
+				isInSignup: true,
+				siteId: null,
+			} )
+		);
+
+		expect( result.current ).toEqual( {
+			...CONTROL_RESULT,
+			variant: 'six_plan_new_design',
+			usePlansGridRedesign: true,
 		} );
 	} );
 
@@ -200,6 +239,7 @@ describe( 'usePlansGridRedesignExperiment', () => {
 			...CONTROL_RESULT,
 			variant: 'five_plan_new_description',
 			usePlansGridRedesign: true,
+			usePlansGridRedesignNewDescription: true,
 			showEnterpriseBottomCard: true,
 		} );
 	} );
@@ -219,6 +259,7 @@ describe( 'usePlansGridRedesignExperiment', () => {
 			...CONTROL_RESULT,
 			variant: 'four_plan_new_description',
 			usePlansGridRedesign: true,
+			usePlansGridRedesignNewDescription: true,
 			showWooCommerceBottomCard: true,
 		} );
 	} );

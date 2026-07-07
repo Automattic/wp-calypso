@@ -691,6 +691,7 @@ const PlansFeaturesMain = ( {
 		isLoading: isPlansGridRedesignExperimentLoading,
 		showDifferentiatorHeader: showPlansGridRedesignDifferentiatorHeader,
 		usePlansGridRedesign,
+		usePlansGridRedesignNewDescription,
 	} = usePlansGridRedesignExperiment( { flowName, isInSignup, siteId } );
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
@@ -878,6 +879,7 @@ const PlansFeaturesMain = ( {
 		useVar42NoAiFeatures,
 		showPricingDifferentiationFeaturePills,
 		useFocusedNewCopyTaglines,
+		usePlansGridRedesignNewDescription,
 		isExperimentVariant,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 	} );
@@ -907,6 +909,7 @@ const PlansFeaturesMain = ( {
 		useVar42NoAiFeatures,
 		showPricingDifferentiationFeaturePills,
 		useFocusedNewCopyTaglines,
+		usePlansGridRedesignNewDescription,
 		isExperimentVariant,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 	} );
