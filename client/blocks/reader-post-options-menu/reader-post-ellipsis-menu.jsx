@@ -30,7 +30,6 @@ class ReaderPostEllipsisMenu extends Component {
 		post: PropTypes.object,
 		feed: PropTypes.object,
 		followSource: PropTypes.string,
-		onBlock: PropTypes.func,
 		openSuggestedFollows: PropTypes.func,
 		showFollow: PropTypes.bool,
 		showVisitPost: PropTypes.bool,
@@ -38,23 +37,18 @@ class ReaderPostEllipsisMenu extends Component {
 		showConversationFollow: PropTypes.bool,
 		showReportPost: PropTypes.bool,
 		showReportSite: PropTypes.bool,
-		position: PropTypes.string,
-		posts: PropTypes.array,
 		teams: PropTypes.array,
 	};
 
 	static defaultProps = {
-		onBlock: noop,
 		followSource: READER_POST_OPTIONS_MENU,
 		openSuggestedFollows: noop,
-		position: 'top left',
 		showFollow: true,
 		showVisitPost: true,
 		showEditPost: true,
 		showConversationFollow: true,
 		showReportPost: true,
 		showReportSite: false,
-		posts: [],
 	};
 
 	openSuggestedFollowsModal = ( shouldOpen ) => {
@@ -68,7 +62,6 @@ class ReaderPostEllipsisMenu extends Component {
 		stats.recordGaEvent( 'Clicked Block Site' );
 		stats.recordTrackForPost( 'calypso_reader_block_site', this.props.post );
 		this.props.blockSite( this.props.post.site_ID );
-		this.props.onBlock();
 	};
 
 	visitPost = () => {
@@ -153,7 +146,7 @@ class ReaderPostEllipsisMenu extends Component {
 	};
 
 	markAsSeen = ( event ) => {
-		const { post, posts } = this.props;
+		const { post } = this.props;
 
 		if ( ! post ) {
 			return;
@@ -162,15 +155,9 @@ class ReaderPostEllipsisMenu extends Component {
 		this.props.recordReaderTracksEvent( 'calypso_reader_mark_as_seen_clicked', {}, { post } );
 
 		const feedId = post.feed_ID;
-		let postIds = [ post.ID ];
-		let feedItemIds = [ post.feed_item_ID ];
-		let globalIds = [ post.global_ID ];
-
-		if ( posts.length ) {
-			postIds = posts.map( ( item ) => item?.ID );
-			feedItemIds = posts.map( ( item ) => item?.feed_item_ID );
-			globalIds = posts.map( ( item ) => item?.global_ID );
-		}
+		const postIds = [ post.ID ];
+		const feedItemIds = [ post.feed_item_ID ];
+		const globalIds = [ post.global_ID ];
 
 		if ( post.feed_item_ID ) {
 			// is feed
@@ -195,7 +182,7 @@ class ReaderPostEllipsisMenu extends Component {
 	};
 
 	markAsUnSeen = ( event ) => {
-		const { post, posts } = this.props;
+		const { post } = this.props;
 
 		if ( ! post ) {
 			return;
@@ -204,15 +191,9 @@ class ReaderPostEllipsisMenu extends Component {
 		this.props.recordReaderTracksEvent( 'calypso_reader_mark_as_unseen_clicked', {}, { post } );
 
 		const feedId = post.feed_ID;
-		let postIds = [ post.ID ];
-		let feedItemIds = [ post.feed_item_ID ];
-		let globalIds = [ post.global_ID ];
-
-		if ( posts.length ) {
-			postIds = posts.map( ( item ) => item?.ID );
-			feedItemIds = posts.map( ( item ) => item?.feed_item_ID );
-			globalIds = posts.map( ( item ) => item?.global_ID );
-		}
+		const postIds = [ post.ID ];
+		const feedItemIds = [ post.feed_item_ID ];
+		const globalIds = [ post.global_ID ];
 
 		if ( post.feed_item_ID ) {
 			// is feed
@@ -239,7 +220,7 @@ class ReaderPostEllipsisMenu extends Component {
 	stopPropagation = ( event ) => event.stopPropagation();
 
 	render() {
-		const { post, site, teams, translate, position, posts, isLoggedIn, followSource } = this.props;
+		const { post, site, teams, translate, isLoggedIn, followSource } = this.props;
 
 		const { ID: postId, site_ID: siteId, feed_ID: feedId } = post;
 
@@ -267,7 +248,7 @@ class ReaderPostEllipsisMenu extends Component {
 				className="reader-post-options-menu__ellipsis-menu"
 				popoverClassName="reader-post-options-menu__popover ignore-click"
 				onToggle={ this.onMenuToggle }
-				position={ position }
+				position="top left"
 				onClick={ this.stopPropagation }
 			>
 				{ this.props.showFollow && (
@@ -303,8 +284,7 @@ class ReaderPostEllipsisMenu extends Component {
 						useWordPressIcon
 						iconSize={ 24 }
 					>
-						{ isSeen && posts.length === 0 && translate( 'Mark as unseen' ) }
-						{ ! isSeen && posts.length === 0 && translate( 'Mark as seen' ) }
+						{ isSeen ? translate( 'Mark as unseen' ) : translate( 'Mark as seen' ) }
 					</PopoverMenuItem>
 				) }
 
