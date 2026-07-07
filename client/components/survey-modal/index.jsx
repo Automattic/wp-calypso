@@ -9,9 +9,6 @@ import { useSelector } from 'react-redux';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import './style.scss';
 
-/**
- * @param {{ name: string; eventName?: string; className?: string; url: string; heading?: import('react').ReactNode; title?: import('react').ReactNode; surveyImage?: string; surveyImageAlt?: string; description: import('react').ReactNode; dismissText: import('react').ReactNode; confirmText: import('react').ReactNode; showOverlay?: boolean; }} props
- */
 const SurveyModal = ( {
 	name,
 	eventName,

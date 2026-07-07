@@ -11,9 +11,6 @@ const request = ( siteId, postId, fields ) => ( dispatch, getState ) => {
 	}
 };
 
-/**
- * @param {{ siteId?: number; postId?: number; fields?: Array< string > }} props
- */
 function QueryPostStats( { siteId, postId, fields } ) {
 	const dispatch = useDispatch();
 	const memoizedFields = useMemoCompare( fields, ( a, b ) => a?.join() === b?.join() );

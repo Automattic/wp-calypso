@@ -286,6 +286,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 										</div>
 										<div
 											className="subscribe-modal__preview-stream-container"
+											// @ts-expect-error For some reason there's no inert type.
 											// `inert` removes preview stream from tab order + a11y tree (preview is non-interactive).
 											inert
 										>

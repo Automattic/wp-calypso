@@ -10,10 +10,5 @@ module.exports = {
 	],
 	setupFiles: [ 'jest-canvas-mock' ],
 	// This includes a lot of globals that don't exist, like fetch, matchMedia, etc.
-	// Keep the base calypso-jest setup (CSS mock, MessageChannel polyfill for
-	// react-dom/server under React 19) by spreading `base.setupFilesAfterEnv`.
-	setupFilesAfterEnv: [
-		...base.setupFilesAfterEnv,
-		require.resolve( '../client/setup-test-framework.js' ),
-	],
+	setupFilesAfterEnv: [ require.resolve( '../client/setup-test-framework.js' ) ],
 };

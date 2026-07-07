@@ -2,8 +2,8 @@ import { useTranslate } from 'i18n-calypso';
 import { MetricsSection } from 'calypso/site-profiler/components/metrics-section';
 
 interface AdvancedMetricsProps {
-	performanceMetricsRef?: React.RefObject< HTMLElement | null >;
-	healthScoresRef?: React.RefObject< HTMLElement | null >;
+	performanceMetricsRef?: React.RefObject< HTMLObjectElement >;
+	healthScoresRef?: React.RefObject< HTMLObjectElement >;
 }
 
 export const AdvancedMetrics: React.FC< AdvancedMetricsProps > = ( props ) => {

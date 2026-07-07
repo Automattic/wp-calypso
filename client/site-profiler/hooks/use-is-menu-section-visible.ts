@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { calculateMetricsSectionScrollOffset } from '../utils/calculate-metrics-section-scroll-offset';
 
-export function useIsMenuSectionVisible( ref: React.RefObject< HTMLElement | null > | undefined ) {
+export function useIsMenuSectionVisible( ref: React.RefObject< HTMLObjectElement > | undefined ) {
 	const [ isIntersecting, setIntersecting ] = useState( false );
 
 	useEffect( () => {
