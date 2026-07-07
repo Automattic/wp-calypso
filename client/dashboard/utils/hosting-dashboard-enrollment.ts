@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { isSupportSession } from '@automattic/calypso-support-session';
 import type { HostingDashboardOptIn } from '@automattic/api-core';
 
 const ROLLOUT_PERCENTAGE = 50;
@@ -13,7 +14,9 @@ const NEW_USER_ID_THRESHOLD = Infinity;
  * in analytics queries; nothing is ever persisted.
  */
 function isInRolloutCohort( userId: number | undefined ): boolean {
-	if ( config.isEnabled( 'dashboard/simulate-full-rollout' ) ) {
+	// Support sessions must see the user's real enrollment, so the full-rollout
+	// simulation is ignored when assisting another user.
+	if ( config.isEnabled( 'dashboard/simulate-full-rollout' ) && ! isSupportSession() ) {
 		return true;
 	}
 
