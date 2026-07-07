@@ -29,7 +29,7 @@
 		"dashboard/dark-mode-rollout": true,
 		"dashboard/enable-percentage-rollout": false,
 		"dashboard/opt-in-welcome-modal": false,
-		"dashboard/simulate-full-rollout": false,
+		"dashboard/simulate-full-rollout": true,
 		"dashboard/wp-beta-program": true,
 		"dev/store-sandbox-helper": true,
 		"domain-transfer-redesign": true,

@@ -72,7 +72,7 @@ export function isOptInToggleVisible(
 	preference: HostingDashboardOptIn | undefined,
 	userId: number | undefined
 ): boolean {
-	// Useful for allowing internal testing for proxied a12s.
+	// Ensures the toggle is visible in development for easier testing/dev.
 	if ( config.isEnabled( 'dashboard/force-opt-in-visibility' ) ) {
 		return true;
 	}
