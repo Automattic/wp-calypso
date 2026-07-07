@@ -78,6 +78,7 @@ import {
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { screen } from '@testing-library/react';
+import usePlansGridRedesignExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-experiment';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import useIntentFromSiteMeta from '../hooks/use-plan-intent-from-site-meta';
@@ -112,6 +113,15 @@ describe( 'PlansFeaturesMain', () => {
 			data: emptyPlansIndexForMockedFeatures,
 		} ) );
 		Plans.usePricingMetaForGridPlans.mockImplementation( () => emptyPlansIndexForMockedFeatures );
+		usePlansGridRedesignExperiment.mockImplementation( () => ( {
+			isLoading: false,
+			variant: 'control',
+			usePlansGridRedesign: false,
+			showDifferentiatorHeader: false,
+			showEnterpriseBottomCard: false,
+			showWooCommerceBottomCard: false,
+			isExperimentEligible: false,
+		} ) );
 	} );
 
 	describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
@@ -286,6 +296,38 @@ describe( 'PlansFeaturesMain', () => {
 		} );
 
 		test( 'Should render <PlanFeatures /> with tab picker when requested', () => {
+			renderWithProvider( <PlansFeaturesMain { ...myProps } /> );
+
+			expect( screen.getByText( 'PlanTypeSelector' ) ).toBeVisible();
+		} );
+
+		test( 'Should hide the plan type selector for redesign variants in signup', () => {
+			usePlansGridRedesignExperiment.mockImplementation( () => ( {
+				isLoading: false,
+				variant: 'six_plan_new_design',
+				usePlansGridRedesign: true,
+				showDifferentiatorHeader: false,
+				showEnterpriseBottomCard: false,
+				showWooCommerceBottomCard: false,
+				isExperimentEligible: true,
+			} ) );
+
+			renderWithProvider( <PlansFeaturesMain { ...myProps } flowName="onboarding" isInSignup /> );
+
+			expect( screen.queryByText( 'PlanTypeSelector' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'Should keep the plan type selector visible for redesign variants outside signup', () => {
+			usePlansGridRedesignExperiment.mockImplementation( () => ( {
+				isLoading: false,
+				variant: 'six_plan_new_design',
+				usePlansGridRedesign: true,
+				showDifferentiatorHeader: false,
+				showEnterpriseBottomCard: false,
+				showWooCommerceBottomCard: false,
+				isExperimentEligible: true,
+			} ) );
+
 			renderWithProvider( <PlansFeaturesMain { ...myProps } /> );
 
 			expect( screen.getByText( 'PlanTypeSelector' ) ).toBeVisible();

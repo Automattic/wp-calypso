@@ -8,6 +8,7 @@ import { DomainPriceRule, useSuggestion } from '../../hooks/use-suggestion';
 import { useDomainSuggestionBadges } from '../../hooks/use-suggestion-badges';
 import { useDomainSearch } from '../../page/context';
 import { DomainSuggestion, DomainSuggestionBadge } from '../../ui';
+import { bullseyeIcon } from '../../ui/icons/bullseye-icon';
 import { DomainSuggestionCTA } from '../suggestion-cta';
 import { DomainSuggestionPrice } from '../suggestion-price';
 
@@ -41,6 +42,10 @@ export const FeaturedSearchResultsItem = ( {
 	const badges = useMemo( () => {
 		if ( reason === 'exact-match' && suggestion.price_rule !== DomainPriceRule.DOMAIN_MOVE_PRICE ) {
 			return [
+				<DomainSuggestionBadge key="exact-match">
+					{ bullseyeIcon }
+					{ __( 'Exact match' ) }
+				</DomainSuggestionBadge>,
 				<DomainSuggestionBadge key="available" variation="success">
 					{ __( "It's available!" ) }
 				</DomainSuggestionBadge>,

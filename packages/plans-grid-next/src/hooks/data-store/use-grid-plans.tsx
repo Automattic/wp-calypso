@@ -329,6 +329,7 @@ const useGridPlans: UseGridPlansType = ( {
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
 	useFocusedNewCopyTaglines,
+	usePlansGridRedesignNewDescription,
 	showBillingDescriptionForIncreasedRenewalPrice,
 } ) => {
 	const translate = useTranslate();
@@ -472,6 +473,51 @@ const useGridPlans: UseGridPlansType = ( {
 					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
 					i18n.hasTranslation( 'Run an online store and keep more of what you earn.' )
 						? translate( 'Run an online store and keep more of what you earn.' )
+						: existingTagline;
+			} else if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'Publish securely at enterprise scale.' )
+						? translate( 'Publish securely at enterprise scale.' )
+						: existingTagline;
+			}
+		}
+
+		if ( usePlansGridRedesignNewDescription ) {
+			const existingTagline = tagline;
+			if ( isFreePlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'For exploring WordPress.' )
+						? translate( 'For exploring WordPress.' )
+						: existingTagline;
+			} else if ( isPersonalPlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'For making a personal site or blog truly yours.' )
+						? translate( 'For making a personal site or blog truly yours.' )
+						: existingTagline;
+			} else if ( isPremiumPlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'For creators and professionals building a credible presence.' )
+						? translate( 'For creators and professionals building a credible presence.' )
+						: existingTagline;
+			} else if ( isBusinessPlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation(
+						'For businesses and developers who need powerful tools and priority support.'
+					)
+						? translate(
+								'For businesses and developers who need powerful tools and priority support.'
+						  )
+						: existingTagline;
+			} else if ( isEcommercePlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'For merchants growing an online store.' )
+						? translate( 'For merchants growing an online store.' )
 						: existingTagline;
 			} else if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
 				tagline =
