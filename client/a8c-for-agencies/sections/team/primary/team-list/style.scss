@@ -1,6 +1,13 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
+// The shared dashboard TeamMembersContent renders DataViews. The dashboard loads
+// DataViews styles globally, but a8c-for-agencies loads them per-page, so pull
+// them in here (otherwise the table loses its styling on a full page load).
+@import "@wordpress/theme/design-tokens.css";
+@import "@wordpress/dataviews/build-style/style.css";
 
 .team-list {
 	.hosting-dashboard-layout__body {
@@ -8,6 +15,16 @@
 
 		@include break-medium {
 			padding-block-start: 0;
+		}
+	}
+
+	// The table cells get the 64px gutter from the shared `.redesigned-a8c-table`
+	// rule; the DataViews toolbar is our own element, so align it to match.
+	.agency-team-members__view-actions {
+		padding-inline: 16px;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			padding-inline: 64px;
 		}
 	}
 
