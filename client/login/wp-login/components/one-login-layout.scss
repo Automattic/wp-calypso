@@ -21,12 +21,6 @@
 		width: 64px;
 		height: 64px;
 	}
-
-	// `WordPressLogo` defaults to a white fill (it targets dark backgrounds);
-	// follow the heading text color so it stays visible in light and dark mode.
-	.wordpress-logo {
-		fill: currentColor;
-	}
 }
 
 .wp-login__one-login-layout-top-right {
