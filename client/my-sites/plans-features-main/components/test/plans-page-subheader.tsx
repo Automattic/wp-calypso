@@ -49,6 +49,7 @@ describe( 'PlansPageSubheader', () => {
 	test( 'renders pricing differentiators when requested', () => {
 		renderWithProvider( <PlansPageSubheader { ...defaultProps } showDifferentiatorHeader /> );
 
+		expect( screen.getByText( 'Paid plans include:' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Unlimited traffic' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Managed hosting' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Built-in security' ) ).toBeInTheDocument();
