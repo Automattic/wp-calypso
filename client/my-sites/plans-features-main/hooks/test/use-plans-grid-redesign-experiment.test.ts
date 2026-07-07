@@ -32,10 +32,22 @@ const INELIGIBLE_RESULT = {
 const mockUseExperiment = useExperiment as jest.Mock;
 const mockUseSelector = useSelector as jest.Mock;
 
-function mockSite( isGatingBusinessQ1: boolean | undefined ) {
+function mockSite( {
+	isGatingBusinessQ1,
+	siteCreationFlow = 'onboarding',
+}: {
+	isGatingBusinessQ1?: boolean;
+	siteCreationFlow?: string | null;
+} = {} ) {
 	mockUseSelector.mockImplementation( () =>
 		isGatingBusinessQ1 !== undefined
-			? { ID: 123, options: { is_gating_business_q1: isGatingBusinessQ1 } }
+			? {
+					ID: 123,
+					options: {
+						is_gating_business_q1: isGatingBusinessQ1,
+						site_creation_flow: siteCreationFlow,
+					},
+			  }
 			: null
 	);
 }
@@ -43,7 +55,7 @@ function mockSite( isGatingBusinessQ1: boolean | undefined ) {
 describe( 'usePlansGridRedesignExperiment', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockSite( undefined );
+		mockSite();
 		mockUseExperiment.mockReturnValue( [ false, { variationName: 'control' } ] );
 	} );
 
@@ -61,12 +73,12 @@ describe( 'usePlansGridRedesignExperiment', () => {
 		} );
 	} );
 
-	test( 'is eligible for existing sites with the gating flag', () => {
-		mockSite( true );
+	test( 'is eligible for logged-in plans pages when the site has the gating flag and was created by onboarding', () => {
+		mockSite( { isGatingBusinessQ1: true, siteCreationFlow: 'onboarding' } );
 
 		renderHook( () =>
 			usePlansGridRedesignExperiment( {
-				flowName: 'not-onboarding',
+				flowName: null,
 				isInSignup: false,
 				siteId: 123,
 			} )
@@ -77,8 +89,25 @@ describe( 'usePlansGridRedesignExperiment', () => {
 		} );
 	} );
 
+	test( 'is not eligible for logged-in plans pages when the site has the gating flag but was not created by onboarding', () => {
+		mockSite( { isGatingBusinessQ1: true, siteCreationFlow: 'newsletter' } );
+
+		const { result } = renderHook( () =>
+			usePlansGridRedesignExperiment( {
+				flowName: null,
+				isInSignup: false,
+				siteId: 123,
+			} )
+		);
+
+		expect( mockUseExperiment ).toHaveBeenCalledWith( 'calypso_pricing_differentiation_202607', {
+			isEligible: false,
+		} );
+		expect( result.current ).toEqual( INELIGIBLE_RESULT );
+	} );
+
 	test( 'is not eligible for onboarding flows with an existing site and no gating flag', () => {
-		mockSite( false );
+		mockSite( { isGatingBusinessQ1: false, siteCreationFlow: 'onboarding' } );
 
 		const { result } = renderHook( () =>
 			usePlansGridRedesignExperiment( {

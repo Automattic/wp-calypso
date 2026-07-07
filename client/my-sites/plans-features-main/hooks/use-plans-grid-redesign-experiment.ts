@@ -64,11 +64,13 @@ function usePlansGridRedesignExperiment( {
 	const site = useSelector( ( state: IAppState ) => getSite( state, siteId ) );
 
 	const hasGatingFlag = !! site?.options?.is_gating_business_q1;
+	const wasCreatedWithOnboardingFlow = site?.options?.site_creation_flow === 'onboarding';
 
-	// Onboarding flow is eligible
-	// Flows operating on an existing site are eligible only when the gating flag is set.
+	// New-site onboarding signups are eligible before a site exists.
+	// Existing sites are eligible only when they were created by onboarding and have the gating flag.
 	const isEligibleSignupFlow = isInSignup && flowName === 'onboarding';
-	const isEligible = ( isEligibleSignupFlow && ! siteId ) || hasGatingFlag;
+	const isEligible =
+		( isEligibleSignupFlow && ! siteId ) || ( hasGatingFlag && wasCreatedWithOnboardingFlow );
 
 	const [ isLoading, assignment ] = useExperiment( PLANS_GRID_REDESIGN_EXPERIMENT_NAME, {
 		isEligible,
