@@ -279,13 +279,16 @@ export const useWPCOMDomainSearchCart = ( {
 			},
 		};
 
+		const isNextDomainFree = forceFirstNonPremiumDomainToBeFree
+			? freeDomainName === undefined
+			: responseCart.next_domain_is_free;
+
 		return {
 			cart,
-			isNextDomainFree: forceFirstNonPremiumDomainToBeFree
-				? freeDomainName === undefined
-				: responseCart.next_domain_is_free,
+			isNextDomainFree,
 			freeDomainName,
-			freeForFirstYearTlds: effectiveFreeForFirstYearTlds,
+			// Only restrict by TLD while the credit is actually available.
+			freeForFirstYearTlds: isNextDomainFree ? effectiveFreeForFirstYearTlds : undefined,
 			onContinue: () => onContinue( domainItems ),
 		};
 	}, [
