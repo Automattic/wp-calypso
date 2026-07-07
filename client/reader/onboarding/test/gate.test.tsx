@@ -5,6 +5,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import AsyncLoad from 'calypso/components/async-load';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ReaderOnboardingGate from '../gate';
+import type { ReactElement } from 'react';
 
 jest.mock( '@automattic/calypso-config', () => {
 	const config = jest.fn();
@@ -21,10 +22,12 @@ jest.mock( 'calypso/components/async-load', () => ( {
 	default: jest.fn( () => null ),
 } ) );
 
-const loggedInState = { currentUser: { id: 12345 } };
-const loggedOutState = { currentUser: { id: null } };
+type TestState = { currentUser: { id: number | null } };
 
-const render = ( ui: React.ReactElement, initialState = loggedInState ) =>
+const loggedInState: TestState = { currentUser: { id: 12345 } };
+const loggedOutState: TestState = { currentUser: { id: null } };
+
+const render = ( ui: ReactElement, initialState: TestState = loggedInState ) =>
 	renderWithProvider( ui, { initialState } );
 
 describe( 'ReaderOnboardingGate', () => {
