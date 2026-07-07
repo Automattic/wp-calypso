@@ -20,7 +20,6 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import * as PostUtils from 'calypso/state/posts/utils';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { blockSite } from 'calypso/state/reader/site-blocks/actions';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
 
 const noop = () => {};
@@ -335,11 +334,8 @@ class ReaderPostEllipsisMenu extends Component {
 }
 
 const ConnectedPostEllipsisMenu = connect(
-	( state = {} ) => {
-		return Object.assign(
-			{ currentRoute: getCurrentRoute( state ) },
-			{ isLoggedIn: isUserLoggedIn( state ) }
-		);
+	( state ) => {
+		return Object.assign( { isLoggedIn: isUserLoggedIn( state ) } );
 	},
 	{
 		blockSite,

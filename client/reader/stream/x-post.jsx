@@ -6,12 +6,9 @@ import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, PureComponent } from 'react';
-import { connect } from 'react-redux';
-import { compose } from 'redux';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import { useSite } from 'calypso/reader/data/site';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 class CrossPost extends PureComponent {
@@ -25,7 +22,6 @@ class CrossPost extends PureComponent {
 		postKey: PropTypes.object,
 		site: PropTypes.object,
 		feed: PropTypes.object,
-		currentRoute: PropTypes.string,
 	};
 
 	cardRef = createRef();
@@ -208,13 +204,7 @@ class CrossPost extends PureComponent {
 }
 /* eslint-enable wpcalypso/jsx-classname-namespace */
 
-const ConnectedCrossPost = compose(
-	connect( ( state = {} ) => {
-		return {
-			currentRoute: getCurrentRoute( state ),
-		};
-	} )
-)( localize( CrossPost ) );
+const ConnectedCrossPost = localize( CrossPost );
 
 export default function CrossPostContainer( props ) {
 	const { feedId, blogId } = props.postKey || {};
