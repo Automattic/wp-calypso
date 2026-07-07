@@ -183,7 +183,11 @@ function installWpDataMock( initialTitle: string, postId = 123, initialExcerpt =
 	return state;
 }
 
-function installPostTypeMock( postType?: string, postId: number | null = 123 ) {
+function installPostTypeMock(
+	postType?: string,
+	postId: number | null = 123,
+	supportsExcerpt: boolean = postType === 'post'
+) {
 	( window as any ).wp = {
 		data: {
 			select: ( store: string ) => {
@@ -198,6 +202,12 @@ function installPostTypeMock( postType?: string, postId: number | null = 123 ) {
 						getSelectedBlock: () => mockSelectedBlock,
 						getBlock: ( clientId: string ) => mockBlocksByClientId[ clientId ],
 						getBlocks: () => [],
+					};
+				}
+				if ( store === 'core' ) {
+					return {
+						getPostType: ( name: string ) =>
+							name === postType ? { supports: { excerpt: supportsExcerpt } } : undefined,
 					};
 				}
 				return undefined;
@@ -1104,6 +1114,45 @@ describe( 'getEmptyViewSuggestions', () => {
 		expect( labels ).not.toContain( 'Optimize Title' );
 		expect( labels ).toContain( 'AI Editorial Review' );
 		expect( labels ).not.toContain( 'Generate Feedback' );
+	} );
+
+	it( 'shows Generate Excerpt when the excerptSuggestion feature is enabled', () => {
+		installAiEditorialReviewData( { excerptSuggestion: true } );
+		installPostTypeMock( 'post' );
+
+		const excerptChip = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'generate-excerpt'
+		);
+
+		expect( excerptChip?.label ).toBe( 'Generate Excerpt' );
+		expect( excerptChip?.prompt ).toBe( 'Generate an excerpt for this post' );
+	} );
+
+	it( 'hides Generate Excerpt when the feature is disabled', () => {
+		installAiEditorialReviewData( { excerptSuggestion: false } );
+		installPostTypeMock( 'post' );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-excerpt' );
+	} );
+
+	it( 'hides Generate Excerpt when the post type does not support excerpts', () => {
+		installAiEditorialReviewData( { excerptSuggestion: true } );
+		installPostTypeMock( 'page' );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-excerpt' );
+	} );
+
+	it( 'hides Generate Excerpt until the post type is known', () => {
+		installAiEditorialReviewData( { excerptSuggestion: true } );
+		installPostTypeMock();
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-excerpt' );
 	} );
 
 	it( 'shows the SEO Enhancer dropdown when the seoSuggestions feature is enabled', () => {

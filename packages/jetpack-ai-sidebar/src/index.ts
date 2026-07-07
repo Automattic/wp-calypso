@@ -48,6 +48,7 @@ import {
 import {
 	isAiEditorialReviewEnabled,
 	isBlockTransformationsEnabled,
+	isExcerptSuggestionEnabled,
 	isGenerateFeedbackEnabled,
 	isProofreadEnabled,
 	isOptimizeTitleSuggestionEnabled,
@@ -94,6 +95,18 @@ const OPTIMIZE_TITLE_SUGGESTION = {
 	id: 'optimize-title',
 	label: __( 'Optimize Title', 'jetpack' ),
 	prompt: __( 'Optimize the title of this post', 'jetpack' ),
+};
+
+/**
+ * Post-level suggestion to generate the post excerpt. Routes through the
+ * orchestrator to the jetpack-ai/generate-excerpt ability, which returns the
+ * excerpt picker. The prompt is deliberately parameter-free: words/tone
+ * defaults live server-side, and the picker intro invites adjustments.
+ */
+const GENERATE_EXCERPT_SUGGESTION = {
+	id: 'generate-excerpt',
+	label: __( 'Generate Excerpt', 'jetpack' ),
+	prompt: __( 'Generate an excerpt for this post', 'jetpack' ),
 };
 
 /**
@@ -186,6 +199,25 @@ function getCurrentEditorPostId(): number | undefined {
 	return typeof postId === 'number' && postId > 0 ? postId : undefined;
 }
 
+function currentPostTypeSupportsExcerpt(
+	currentPostType: string | undefined = getCurrentEditorPostType()
+): boolean {
+	if ( ! currentPostType ) {
+		return false;
+	}
+	const postTypeRecord = ( window as any ).wp?.data
+		?.select?.( 'core' )
+		?.getPostType?.( currentPostType );
+	return postTypeRecord?.supports?.excerpt === true;
+}
+
+function isExcerptSuggestionAvailable(
+	currentPostType: string | undefined = getCurrentEditorPostType(),
+	supportsExcerpt: boolean = currentPostTypeSupportsExcerpt( currentPostType )
+): boolean {
+	return isExcerptSuggestionEnabled() && supportsExcerpt;
+}
+
 function isAiEditorialReviewAvailable(
 	// Default arguments run at call time, so callers can omit this when they
 	// want the current editor state read live.
@@ -223,9 +255,16 @@ function getAiEditorialReviewSuggestions( currentPostType?: string ) {
 	return [ AI_EDITORIAL_REVIEW_SUGGESTION ];
 }
 
-function getPostLevelSuggestions( currentPostType?: string, currentPostId?: number | null ) {
+function getPostLevelSuggestions(
+	currentPostType?: string,
+	currentPostId?: number | null,
+	supportsExcerpt?: boolean
+) {
 	return [
 		...( isOptimizeTitleSuggestionEnabled() ? [ OPTIMIZE_TITLE_SUGGESTION ] : [] ),
+		...( isExcerptSuggestionAvailable( currentPostType, supportsExcerpt )
+			? [ GENERATE_EXCERPT_SUGGESTION ]
+			: [] ),
 		...( isGenerateFeedbackAvailable( currentPostType, currentPostId )
 			? [ POST_FEEDBACK_SUGGESTION ]
 			: [] ),
@@ -1033,10 +1072,17 @@ export function useSuggestions(
 			getCurrentPostId?: () => number | null | undefined;
 			getCurrentPostType?: () => string | undefined;
 		};
+		const core = select( 'core' ) as {
+			getPostType?: ( name: string ) => { supports?: Record< string, boolean > } | undefined;
+		};
+		const postType = editor?.getCurrentPostType?.();
 		return {
 			selectedBlock: blockEditor?.getSelectedBlock?.() ?? null,
 			postId: editor?.getCurrentPostId?.(),
-			postType: editor?.getCurrentPostType?.(),
+			postType,
+			supportsExcerpt: postType
+				? core?.getPostType?.( postType )?.supports?.excerpt === true
+				: false,
 		};
 	}, [] );
 
@@ -1047,8 +1093,13 @@ export function useSuggestions(
 
 	const selectedBlock = editorContext.selectedBlock;
 	const postLevelSuggestions = useMemo(
-		() => getPostLevelSuggestions( editorContext.postType, editorContext.postId ),
-		[ editorContext.postId, editorContext.postType ]
+		() =>
+			getPostLevelSuggestions(
+				editorContext.postType,
+				editorContext.postId,
+				editorContext.supportsExcerpt
+			),
+		[ editorContext.postId, editorContext.postType, editorContext.supportsExcerpt ]
 	);
 	const blockTransformationsEnabled = isBlockTransformationsEnabled();
 	const applicable = useMemo(
