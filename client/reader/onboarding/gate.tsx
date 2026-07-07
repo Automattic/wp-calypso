@@ -28,8 +28,8 @@ export default function ReaderOnboardingGate( props: ReaderOnboardingGateProps )
 	}
 
 	return isEnabled( 'reader/onboarding-rsm' ) ? (
-		<AsyncLoad require={ loadOnboardingRsm } { ...props } />
+		<AsyncLoad require={ loadOnboardingRsm } { ...props } placeholder={ null } />
 	) : (
-		<AsyncLoad require={ loadOnboarding } { ...props } />
+		<AsyncLoad require={ loadOnboarding } { ...props } placeholder={ null } />
 	);
 }
