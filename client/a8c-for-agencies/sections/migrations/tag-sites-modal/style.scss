@@ -9,7 +9,7 @@
 	svg {
 		position: relative;
 		top: 4px;
-		right: 2px;
+		inset-inline-end: 2px;
 	}
 }
 
@@ -26,7 +26,7 @@
 	}
 
 	&::-webkit-scrollbar-thumb {
-		background-color: rgba(155, 155, 155, 0.5);
+		background-color: var(--color-neutral-20);
 		border-radius: 4px;
 		border: transparent;
 	}
@@ -35,12 +35,12 @@
 	&::after {
 		content: "";
 		position: absolute;
-		left: 0;
-		bottom: 80px;
+		inset-inline-start: 0;
+		inset-block-end: 80px;
 		width: 100%;
 		height: 5%;
 		display: inline-block;
-		background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(255, 255, 255, 1) 100%);
+		background: linear-gradient(to bottom, transparent 0%, var(--color-surface) 100%);
 		transition: opacity 0.3s ease-out;
 	}
 
@@ -60,7 +60,7 @@
 			}
 
 			th {
-				border-color: #F1F1F1;
+				border-color: var(--color-neutral-5);
 			}
 		}
 

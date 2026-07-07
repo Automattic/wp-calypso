@@ -1,4 +1,9 @@
-import { Card } from '@automattic/components';
+import {
+	Card,
+	CardBody,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+} from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import type { TaggedSite } from '../types';
 
@@ -27,19 +32,29 @@ export default function MigrationsConsolidatedCommissions( { items }: { items: T
 
 	return (
 		<div className="consolidated-commissions">
-			<Card compact>
-				<div className="consolidated-commissions__value"> ${ migrationCommissions }</div>
-				<div className="consolidated-commissions__label">
-					{ sprintf(
-						/* translators: %d: the current quarter number. Q is the short form of "Quarter". */
-						__( 'Migration commissions expected in Q%d' ),
-						currentQuarter
-					) }
-				</div>
+			<Card className="consolidated-commissions__card">
+				<CardBody>
+					<VStack spacing={ 2 }>
+						<Text className="consolidated-commissions__value">${ migrationCommissions }</Text>
+						<Text className="consolidated-commissions__label">
+							{ sprintf(
+								/* translators: %d: the current quarter number. Q is the short form of "Quarter". */
+								__( 'Migration commissions expected in Q%d' ),
+								currentQuarter
+							) }
+						</Text>
+					</VStack>
+				</CardBody>
 			</Card>
-			<Card compact>
-				<div className="consolidated-commissions__value">{ sitesPendingReview }</div>
-				<div className="consolidated-commissions__label">{ __( 'Sites pending review' ) }</div>
+			<Card className="consolidated-commissions__card">
+				<CardBody>
+					<VStack spacing={ 2 }>
+						<Text className="consolidated-commissions__value">{ sitesPendingReview }</Text>
+						<Text className="consolidated-commissions__label">
+							{ __( 'Sites pending review' ) }
+						</Text>
+					</VStack>
+				</CardBody>
 			</Card>
 		</div>
 	);
