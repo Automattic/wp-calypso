@@ -129,6 +129,7 @@ export function generateFlows( {
 			lastModified: '2026-07-07',
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'plugin', 'billing_period', 'intervalType' ],
+			optionalDependenciesInQuery: [ 'intervalType' ],
 			hideProgressIndicator: true,
 		},
 		{
