@@ -1,14 +1,17 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useCallback, useMemo, ReactNode, useState } from 'react';
-import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
+import { useCallback, useEffect, useMemo, ReactNode, useState } from 'react';
+import {
+	initialDataViewsState,
+	DATAVIEWS_TABLE,
+	DATAVIEWS_LIST,
+} from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { DataViews } from 'calypso/components/dataviews';
 import RequestReviewModal from '../request-review-modal';
 import { MigratedOnColumn, ReviewStatusColumn, SiteColumn } from './commission-columns';
-import MigrationsCommissionsListMobileView from './mobile-view';
 import UntagSiteDialog from './untag-site-dialog';
 import useCommissionListActions from './use-commission-list-actions';
 import type { TaggedSite } from '../types';
@@ -28,8 +31,10 @@ export default function MigrationsCommissionsList( {
 } ) {
 	const isDesktop = useDesktopBreakpoint();
 
-	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
+	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( () => ( {
 		...initialDataViewsState,
+		type: isDesktop ? DATAVIEWS_TABLE : DATAVIEWS_LIST,
+		titleField: 'site',
 		fields: [ 'site', 'migratedOn', 'reviewStatus' ],
 		layout: {
 			styles: {
@@ -38,7 +43,15 @@ export default function MigrationsCommissionsList( {
 				reviewStatus: { width: '25%' },
 			},
 		},
-	} );
+	} ) );
+
+	// Render as a table on desktop and as stacked list cards on narrow viewports.
+	useEffect( () => {
+		setDataViewsState( ( prev ) => ( {
+			...prev,
+			type: isDesktop ? DATAVIEWS_TABLE : DATAVIEWS_LIST,
+		} ) );
+	}, [ isDesktop ] );
 
 	const [ activeModal, setActiveModal ] = useState< ActiveModal >( null );
 
@@ -102,21 +115,21 @@ export default function MigrationsCommissionsList( {
 
 	return (
 		<>
-			{ isDesktop ? (
-				<div className="redesigned-a8c-table full-width">
-					<ItemsDataViews
-						data={ {
-							items,
-							getItemId: ( item ) => `${ item.id }`,
-							pagination,
-							enableSearch: false,
-							fields,
-							actions,
-							setDataViewsState,
-							dataViewsState,
-							defaultLayouts: { table: {} },
-						} }
-					>
+			<div className="redesigned-a8c-table full-width">
+				<ItemsDataViews
+					data={ {
+						items,
+						getItemId: ( item ) => `${ item.id }`,
+						pagination,
+						enableSearch: false,
+						fields,
+						actions,
+						setDataViewsState,
+						dataViewsState,
+						defaultLayouts: { table: {}, list: {} },
+					} }
+				>
+					{ isDesktop && (
 						<HStack
 							className="dataviews__view-actions"
 							justify="end"
@@ -124,13 +137,11 @@ export default function MigrationsCommissionsList( {
 						>
 							<DataViews.ViewConfig />
 						</HStack>
-						<DataViews.Layout />
-						<DataViews.Footer />
-					</ItemsDataViews>
-				</div>
-			) : (
-				<MigrationsCommissionsListMobileView commissions={ items } actions={ actions } />
-			) }
+					) }
+					<DataViews.Layout />
+					<DataViews.Footer />
+				</ItemsDataViews>
+			</div>
 
 			{ activeModal?.kind === 'untag' && (
 				<UntagSiteDialog
