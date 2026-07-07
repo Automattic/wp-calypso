@@ -435,7 +435,7 @@ describe( 'StylePicker', () => {
 			} );
 		} );
 
-		it( 'exports Cinematic (active) + Highlights (disabled teaser) video styles', () => {
+		it( 'exports Cinematic + Highlights video styles, both active', () => {
 			expect( VIDEO_STYLE_OPTIONS ).toHaveLength( 2 );
 
 			expect( VIDEO_STYLE_OPTIONS[ 0 ] ).toMatchObject( {
@@ -446,10 +446,10 @@ describe( 'StylePicker', () => {
 			expect( VIDEO_STYLE_OPTIONS[ 0 ].preview ).toBeTruthy();
 
 			expect( VIDEO_STYLE_OPTIONS[ 1 ] ).toMatchObject( {
-				label: 'Highlights (Coming Soon)',
+				label: 'Highlights',
 				value: 'highlights',
-				disabled: true,
 			} );
+			expect( VIDEO_STYLE_OPTIONS[ 1 ].disabled ).toBeFalsy();
 			expect( VIDEO_STYLE_OPTIONS[ 1 ].preview ).toBeTruthy();
 		} );
 
@@ -465,16 +465,6 @@ describe( 'StylePicker', () => {
 			// Image-only options should not appear in the video dropdown.
 			expect( dropdown ).not.toHaveTextContent( 'Anime' );
 			expect( dropdown ).not.toHaveTextContent( 'Pixel Art' );
-		} );
-
-		it( 'renders the disabled video style as an inert (native-disabled) card', async () => {
-			const user = userEvent.setup();
-			render( <StylePicker mode={ ImageStudioMode.Generate } variant="video" /> );
-
-			await user.click( screen.getByTestId( 'toolbar-button' ) );
-			const dropdown = screen.getByTestId( 'dropdown-content' );
-			const highlightsCard = within( dropdown ).getByRole( 'button', { name: /Highlights/ } );
-			expect( highlightsCard ).toBeDisabled();
 		} );
 
 		it( 'maps style values correctly', async () => {
@@ -514,23 +504,9 @@ describe( 'StylePicker', () => {
 		} );
 	} );
 
-	describe( 'Dev-mode Highlights gating', () => {
-		it( 'keeps Highlights disabled with the Coming Soon teaser when isDevMode is unset', async () => {
+	describe( 'Highlights video style', () => {
+		it( 'shows Highlights as an enabled option with a preview for all users', async () => {
 			const user = userEvent.setup();
-			render( <StylePicker mode={ ImageStudioMode.Generate } variant="video" /> );
-
-			await user.click( screen.getByTestId( 'toolbar-button' ) );
-			const dropdown = screen.getByTestId( 'dropdown-content' );
-			const highlightsCard = within( dropdown ).getByRole( 'button', { name: /Highlights/ } );
-
-			expect( highlightsCard ).toBeDisabled();
-			expect( highlightsCard ).toHaveTextContent( 'Highlights (Coming Soon)' );
-		} );
-
-		it( 'unlocks Highlights with the a12s label, enabled card, and a preview when isDevMode is true', async () => {
-			const user = userEvent.setup();
-			( window as Record< string, unknown > ).imageStudioData = { isDevMode: true };
-
 			render( <StylePicker mode={ ImageStudioMode.Generate } variant="video" /> );
 
 			await user.click( screen.getByTestId( 'toolbar-button' ) );
@@ -538,7 +514,8 @@ describe( 'StylePicker', () => {
 			const highlightsCard = within( dropdown ).getByRole( 'button', { name: /Highlights/ } );
 
 			expect( highlightsCard ).not.toBeDisabled();
-			expect( highlightsCard ).toHaveTextContent( 'Highlights (a12s only)' );
+			expect( highlightsCard ).toHaveTextContent( 'Highlights' );
+			expect( highlightsCard ).not.toHaveTextContent( 'Coming Soon' );
 			expect( highlightsCard.querySelector( 'img' ) ).toBeInTheDocument();
 		} );
 	} );
