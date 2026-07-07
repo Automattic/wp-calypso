@@ -51,9 +51,13 @@ export APP_STORE_CONNECT_API_KEY_PATH="$ASC_KEY_PATH"
 
 echo "RELEASE_BUILD=$RELEASE_BUILD"
 
+echo "--- Building the app"
 yarn run ci:build-mac
+
+echo "--- Running E2E smoke tests"
 yarn run test:e2e
 
+echo "--- Code signing"
 # The afterSign hook already notarized and stapled the app; this notarizes and
 # staples the `.dmg` wrapper for offline Gatekeeper checks on first mount.
 bundle exec fastlane notarize_app
