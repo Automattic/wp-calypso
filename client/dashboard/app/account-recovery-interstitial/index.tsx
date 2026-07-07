@@ -109,7 +109,11 @@ export default function AccountRecoveryInterstitial() {
 
 	// Eligible once the data has loaded and the snooze (if any) has elapsed.
 	const isEligible =
-		isAccountRecoveryLoaded && isUserSettingsLoaded && isSnoozeLoaded && ! isSnoozed;
+		isAccountRecoveryLoaded &&
+		isUserSettingsLoaded &&
+		isSnoozeLoaded &&
+		! isSnoozed &&
+		securityLevel !== 'strong';
 
 	// Gate the interstitial behind an A/B experiment. Mark the user eligible only once they would
 	// otherwise qualify, so the exposure event fires for the right population and the control vs.
@@ -124,7 +128,7 @@ export default function AccountRecoveryInterstitial() {
 	// Fully-secured users (variant === 'strong') are left alone — we only nudge people who are still
 	// missing a recovery method, 2FA, or backup codes. The modal is also not shown to users who are
 	// not in the experiment control group.
-	if ( isDismissed || ! isEligible || securityLevel === 'strong' || ! isInExperimentControl ) {
+	if ( isDismissed || ! isEligible || ! isInExperimentControl ) {
 		return null;
 	}
 

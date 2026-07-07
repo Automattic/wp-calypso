@@ -1,12 +1,14 @@
 @import '../../app/pulse';
 
 .plugin-tabs-list[aria-orientation='horizontal'] {
+	flex-shrink: 0;
+
 	&::before {
-		transform: translateX(calc((var(--selected-start) * var(--direction-factor) * 1px) + 20px)) scaleX(calc(calc(var(--selected-width, 0) - 2 * 20) / var(--antialiasing-factor)));
+		transform: translateX(calc((var(--selected-start) * var(--direction-factor) * 1px) + 24px)) scaleX(calc(calc(var(--selected-width, 0) - 2 * 24) / var(--antialiasing-factor)));
 	}
 
 	button {
-		padding-inline: 20px;
+		padding-inline: 24px;
 
 		.dashboard-section-header__heading {
 			font-weight: normal;
@@ -35,22 +37,11 @@
 	}
 }
 
+// Fill the tab panel so DataViews can scroll its table while keeping the
+// filter bar and pagination footer pinned.
 .sites-with-this-plugin {
 	display: flex;
 	flex-direction: column;
 	flex: 1;
 	min-height: 0;
-
-	.dataviews__view-actions, .dataviews-filters__container {
-		padding-inline-start: 20px;
-		padding-inline-end: 20px;
-	}
-
-	.dataviews-view-table tr td:first-child, .dataviews-view-table tr th:first-child {
-		padding-inline-start: 20px;
-	}
-
-	.dataviews-view-table tr td:last-child, .dataviews-view-table tr th:last-child {
-		padding-inline-end: 20px;
-	}
 }

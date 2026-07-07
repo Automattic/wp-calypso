@@ -219,6 +219,17 @@ describe( 'ReaderSidebarSpaces', () => {
 		expect( screen.queryByRole( 'heading', { name: 'Meet Spaces' } ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'expands the section when the Spaces header body is clicked, like the other menus', async () => {
+		const user = userEvent.setup();
+		render( <ReaderSidebarSpaces path="/reader" /> );
+
+		expect( screen.getByRole( 'button', { name: 'Expand menu' } ) ).toBeVisible();
+
+		await user.click( screen.getByText( 'Spaces' ) );
+
+		expect( screen.getByRole( 'button', { name: 'Collapse menu' } ) ).toBeVisible();
+	} );
+
 	it( 'redirects to the new space after creating it', async () => {
 		const user = userEvent.setup();
 		nock( 'https://public-api.wordpress.com' )

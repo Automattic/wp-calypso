@@ -1,9 +1,8 @@
 import { readSpaceQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { useQueryClient } from '@tanstack/react-query';
-import { Icon, category } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import { useSpaces } from 'calypso/reader/data/spaces';
@@ -136,6 +135,8 @@ export function ReaderSidebarSpaces( { path }: Props ) {
 		setIsCreateModalOpen( true );
 	};
 
+	const handleToggleExpand = useCallback( () => setIsOpen( ( open ) => ! open ), [] );
+
 	const markOnboardingSeen = () => {
 		dispatch( savePreference( READER_SPACES_ONBOARDING_SEEN_PREFERENCE_KEY, true ) );
 		setIsOnboardingOpen( false );
@@ -155,7 +156,7 @@ export function ReaderSidebarSpaces( { path }: Props ) {
 			<ExpandableSidebarMenu
 				expanded={ isOpen }
 				title={ translate( 'Spaces' ) }
-				customIcon={ <Icon className="sidebar__menu-icon" icon={ category } /> }
+				onClick={ handleToggleExpand }
 				expandableIconClick={ () => setIsOpen( ! isOpen ) }
 				disableFlyout
 				className={ ! isOpen && isOnSpaces ? 'sidebar__menu--selected' : undefined }

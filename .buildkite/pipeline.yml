@@ -13,7 +13,7 @@ steps:
     agents:
       queue: mac
     env:
-      IMAGE_ID: xcode-26.4.1
+      IMAGE_ID: xcode-26.6
     plugins:
       - automattic/nvm#0.6.0
     command: .buildkite/commands/build-desktop-mac.sh

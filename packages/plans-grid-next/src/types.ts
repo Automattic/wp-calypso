@@ -288,6 +288,11 @@ export type GridContextProps = {
 	 * Used to display cohort-specific feature titles in the comparison grid.
 	 */
 	isExperimentVariant?: boolean;
+
+	/**
+	 * Display availability checkmarks next to features in the features grid.
+	 */
+	showFeatureCheckmarks?: boolean;
 };
 
 export type ComparisonGridExternalProps = Omit<

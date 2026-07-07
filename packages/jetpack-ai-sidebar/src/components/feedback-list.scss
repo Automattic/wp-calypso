@@ -1,11 +1,11 @@
-.jetpack-ai-post-feedback {
-	--jetpack-ai-post-feedback-border: color-mix( in srgb, currentColor 18%, transparent );
-	--jetpack-ai-post-feedback-border-hover: color-mix( in srgb, currentColor 34%, transparent );
-	--jetpack-ai-post-feedback-primary: var(
-		--color-primary,
-		var( --wp-admin-theme-color, #3858e9 )
-	);
-	--jetpack-ai-post-feedback-primary-foreground: var( --color-primary-foreground, #fff );
+// Styles for the FeedbackList component, shared by the Generate Feedback and
+// Proofreader flows. The summary-note and "Accept all" footer rules apply only
+// when those elements render (Proofreader), and are inert otherwise.
+.jetpack-ai-feedback-list {
+	--jetpack-ai-feedback-list-border: color-mix( in srgb, currentColor 18%, transparent );
+	--jetpack-ai-feedback-list-border-hover: color-mix( in srgb, currentColor 34%, transparent );
+	--jetpack-ai-feedback-list-primary: var( --color-primary, var( --wp-admin-theme-color, #3858e9 ) );
+	--jetpack-ai-feedback-list-primary-foreground: var( --color-primary-foreground, #fff );
 
 	display: flex;
 	flex-direction: column;
@@ -14,8 +14,9 @@
 	color: inherit;
 
 	&.is-post-stale {
-		.jetpack-ai-post-feedback__summary,
-		.jetpack-ai-post-feedback__panel {
+		.jetpack-ai-feedback-list__summary,
+		.jetpack-ai-feedback-list__panel,
+		.jetpack-ai-feedback-list__footer {
 			opacity: 0.5;
 		}
 	}
@@ -83,6 +84,19 @@
 
 	&__summary {
 		margin: 0 0 0.75rem;
+
+		> p + p {
+			margin-top: 0.5rem;
+		}
+	}
+
+	&__completed-note {
+		font-weight: 500;
+	}
+
+	&__saved-note {
+		font-size: 12px;
+		opacity: 0.7;
 	}
 
 	&__stale-warning {
@@ -101,7 +115,7 @@
 	}
 
 	&__item {
-		border: 1px solid var( --jetpack-ai-post-feedback-border );
+		border: 1px solid var( --jetpack-ai-feedback-list-border );
 		border-radius: 8px;
 		padding: 0.875rem 1rem;
 		background: transparent;
@@ -115,7 +129,7 @@
 		}
 
 		&.is-applying {
-			border-color: var( --jetpack-ai-post-feedback-primary );
+			border-color: var( --jetpack-ai-feedback-list-primary );
 			opacity: 0.85;
 		}
 
@@ -179,8 +193,8 @@
 	}
 
 	&__rewrite {
-		border-left: 3px solid var( --jetpack-ai-post-feedback-primary );
-		background: color-mix( in srgb, var( --jetpack-ai-post-feedback-primary ) 10%, transparent );
+		border-left: 3px solid var( --jetpack-ai-feedback-list-primary );
+		background: color-mix( in srgb, var( --jetpack-ai-feedback-list-primary ) 10%, transparent );
 		padding: 0.625rem 0.75rem;
 		border-radius: 0 4px 4px 0;
 
@@ -214,7 +228,7 @@
 	}
 
 	& &__manual-reason {
-		color: var( --jetpack-ai-post-feedback-primary );
+		color: var( --jetpack-ai-feedback-list-primary );
 		font-weight: 600;
 	}
 
@@ -224,9 +238,10 @@
 	}
 
 	&__action-button,
-	&__small-action {
+	&__small-action,
+	&__footer-action {
 		min-height: 32px;
-		border: 1px solid var( --jetpack-ai-post-feedback-border );
+		border: 1px solid var( --jetpack-ai-feedback-list-border );
 		border-radius: 4px;
 		background: transparent;
 		color: inherit;
@@ -241,7 +256,7 @@
 
 		&:hover:not( :disabled ),
 		&:focus-visible:not( :disabled ) {
-			border-color: var( --jetpack-ai-post-feedback-border-hover );
+			border-color: var( --jetpack-ai-feedback-list-border-hover );
 			background: color-mix( in srgb, currentColor 6%, transparent );
 			outline: none;
 		}
@@ -258,13 +273,13 @@
 		padding: 0.45rem 0.75rem;
 
 		&.is-primary {
-			border-color: var( --jetpack-ai-post-feedback-primary );
-			background: var( --jetpack-ai-post-feedback-primary );
-			color: var( --jetpack-ai-post-feedback-primary-foreground );
+			border-color: var( --jetpack-ai-feedback-list-primary );
+			background: var( --jetpack-ai-feedback-list-primary );
+			color: var( --jetpack-ai-feedback-list-primary-foreground );
 
 			&:hover:not( :disabled ),
 			&:focus-visible:not( :disabled ) {
-				background: color-mix( in srgb, var( --jetpack-ai-post-feedback-primary ) 88%, #000 );
+				background: color-mix( in srgb, var( --jetpack-ai-feedback-list-primary ) 88%, #000 );
 			}
 		}
 	}
@@ -292,5 +307,28 @@
 
 	&__status.is-failed {
 		color: #d63638;
+	}
+
+	&__footer {
+		margin-top: 0.75rem;
+		padding-top: 0.75rem;
+		border-top: 1px solid color-mix( in srgb, currentColor 10%, transparent );
+	}
+
+	&__footer-action {
+		width: 100%;
+		padding: 0.5rem 0.75rem;
+		font-weight: 600;
+
+		&.is-accept {
+			border-color: var( --jetpack-ai-feedback-list-primary );
+			background: var( --jetpack-ai-feedback-list-primary );
+			color: var( --jetpack-ai-feedback-list-primary-foreground );
+
+			&:hover:not( :disabled ),
+			&:focus-visible:not( :disabled ) {
+				background: color-mix( in srgb, var( --jetpack-ai-feedback-list-primary ) 88%, #000 );
+			}
+		}
 	}
 }

@@ -14,6 +14,7 @@ import type { PlanSlug, WPComPlanStorageFeatureSlug } from '@automattic/calypso-
 type StorageDropdownProps = {
 	planSlug: PlanSlug;
 	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
+	onStorageOptionChange?: () => void;
 };
 
 type StorageDropdownOptionProps = {
@@ -72,7 +73,11 @@ const StorageDropdownOption = ( {
 	);
 };
 
-const StorageDropdown = ( { planSlug, onStorageAddOnClick }: StorageDropdownProps ) => {
+const StorageDropdown = ( {
+	planSlug,
+	onStorageAddOnClick,
+	onStorageOptionChange,
+}: StorageDropdownProps ) => {
 	const translate = useTranslate();
 	const { siteId } = usePlansGridContext();
 
@@ -88,13 +93,12 @@ const StorageDropdown = ( { planSlug, onStorageAddOnClick }: StorageDropdownProp
 	const planStorage = usePlanStorage( planSlug );
 
 	useEffect( () => {
-		if ( ! selectedStorageOptionForPlan ) {
-			defaultStorageOptionSlug &&
-				setSelectedStorageOptionForPlan( {
-					addOnSlug: defaultStorageOptionSlug,
-					planSlug,
-					siteId,
-				} );
+		if ( ! selectedStorageOptionForPlan && defaultStorageOptionSlug ) {
+			setSelectedStorageOptionForPlan( {
+				addOnSlug: defaultStorageOptionSlug,
+				planSlug,
+				siteId,
+			} );
 		}
 	}, [
 		defaultStorageOptionSlug,
@@ -172,11 +176,20 @@ const StorageDropdown = ( { planSlug, onStorageAddOnClick }: StorageDropdownProp
 			const addOnSlug = selectedItem?.key as AddOns.StorageAddOnSlug;
 
 			if ( addOnSlug ) {
-				onStorageAddOnClick && onStorageAddOnClick( addOnSlug );
+				if ( onStorageAddOnClick ) {
+					onStorageAddOnClick( addOnSlug );
+				}
 				setSelectedStorageOptionForPlan( { addOnSlug, planSlug, siteId } );
+				onStorageOptionChange?.();
 			}
 		},
-		[ onStorageAddOnClick, planSlug, setSelectedStorageOptionForPlan, siteId ]
+		[
+			onStorageAddOnClick,
+			onStorageOptionChange,
+			planSlug,
+			setSelectedStorageOptionForPlan,
+			siteId,
+		]
 	);
 
 	return (

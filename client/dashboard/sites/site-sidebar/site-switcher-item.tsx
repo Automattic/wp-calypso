@@ -22,9 +22,17 @@ export default function SiteSwitcherItem( { site }: { site: Site } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const SiteSwitcher = useMemo(
 		() =>
-			lazy( components.siteSwitcher ) as React.LazyExoticComponent< React.FC< SiteSwitcherProps > >,
+			components.siteSwitcher
+				? ( lazy( components.siteSwitcher ) as React.LazyExoticComponent<
+						React.FC< SiteSwitcherProps >
+				  > )
+				: null,
 		[ components ]
 	);
+
+	if ( ! SiteSwitcher ) {
+		return null;
+	}
 
 	return (
 		<SidebarMenuSwitcherItem

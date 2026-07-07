@@ -51,6 +51,29 @@
 		border-block-start: 1px solid var( --color-neutral-5 );
 	}
 
+	// Keep the tab labels in sync with `section-nav-tabs`, which colours its
+	// labels with the theme-aware `--color-neutral-100` / `--color-neutral-70`
+	// tokens so they stay legible in dark mode. The WP TabPanel defaults rely on
+	// `--wpds-color-*-interactive-neutral` tokens that Calypso never defines, so
+	// they fall back to hardcoded light-mode values and vanish on a dark surface.
+	.components-tab-panel__tabs-item {
+		color: var( --color-neutral-100 );
+
+		&:hover,
+		&:focus-visible {
+			color: var( --color-neutral-100 );
+		}
+
+		&.is-active {
+			background: transparent;
+			color: var( --color-neutral-100 );
+
+			&::after {
+				background: var( --color-neutral-70 );
+			}
+		}
+	}
+
 	.components-tab-panel__tab-content {
 		display: flex;
 		flex: 1;
@@ -184,6 +207,10 @@
 	border-radius: 8px;
 	background: var( --space-color-bg );
 	color: var( --space-color );
+
+	svg {
+		fill: currentColor;
+	}
 }
 
 @each $color in space-colors.$space-colors {

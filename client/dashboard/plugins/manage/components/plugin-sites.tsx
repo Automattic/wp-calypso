@@ -1,7 +1,7 @@
-import { ExternalLink } from '@wordpress/components';
+import { __experimentalVStack as VStack, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { Card, CardBody } from '../../../components/card';
+import { Card, CardBody, CardHeader } from '../../../components/card';
 import { Notice } from '../../../components/notice';
 import { SectionHeader } from '../../../components/section-header';
 import { Text } from '../../../components/text';
@@ -77,25 +77,33 @@ export const PluginSites = ( { selectedPluginSlug }: { selectedPluginSlug: strin
 
 	return (
 		<Card className="plugin-sites-card">
-			<CardBody className="plugin-sites-card-body">
-				<SectionHeader
-					className="plugin-sites-card-header"
-					decoration={ decoration() }
-					level={ 2 }
-					title={ title() }
-					description={ description() }
-				/>
-
-				{ isCoreManagedPlugin && (
-					<div className="plugin-sites-card-managed-notice">
+			<CardHeader
+				className="plugin-sites-card-header"
+				isBorderless
+				size={ {
+					blockStart: 'medium',
+					blockEnd: 'none',
+					inlineStart: 'medium',
+					inlineEnd: 'medium',
+				} }
+			>
+				<VStack spacing={ 4 }>
+					<SectionHeader
+						decoration={ decoration() }
+						level={ 2 }
+						title={ title() }
+						description={ description() }
+					/>
+					{ isCoreManagedPlugin && (
 						<Notice variant="info">
 							{ __(
 								'This plugin is managed by WordPress.com and is required for your site to work properly, so it can’t be removed.'
 							) }
 						</Notice>
-					</div>
-				) }
-
+					) }
+				</VStack>
+			</CardHeader>
+			<CardBody className="plugin-sites-card-body" size="none">
 				<PluginTabs
 					pluginSlug={ selectedPluginSlug }
 					isLoading={ isLoadingPlugin }

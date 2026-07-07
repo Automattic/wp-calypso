@@ -6,7 +6,7 @@ import { ExternalLink } from '@wordpress/components';
 import { debounce } from '@wordpress/compose';
 import debugFactory from 'debug';
 import { fixMe, localize } from 'i18n-calypso';
-import { Component } from 'react';
+import { Component, useRef } from 'react';
 import { connect } from 'react-redux';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
@@ -89,6 +89,20 @@ const INTERFACE_FIELDS = [
 	'enable_translator',
 	'calypso_preferences',
 ];
+
+const UsernameFormToggleTransition = ( { children, ...props } ) => {
+	const nodeRef = useRef( null );
+	return (
+		<CSSTransition
+			{ ...props }
+			nodeRef={ nodeRef }
+			classNames="account__username-form-toggle"
+			timeout={ { enter: 500, exit: 10 } }
+		>
+			<div ref={ nodeRef }>{ children }</div>
+		</CSSTransition>
+	);
+};
 
 class Account extends Component {
 	state = {
@@ -943,13 +957,9 @@ class Account extends Component {
 
 						{ /* This is how we animate showing/hiding the form field sections */ }
 						<TransitionGroup>
-							<CSSTransition
-								key={ renderUsernameForm ? 'username' : 'account' }
-								classNames="account__username-form-toggle"
-								timeout={ { enter: 500, exit: 10 } }
-							>
+							<UsernameFormToggleTransition key={ renderUsernameForm ? 'username' : 'account' }>
 								{ renderUsernameForm ? this.renderUsernameFields() : this.renderAccountFields() }
-							</CSSTransition>
+							</UsernameFormToggleTransition>
 						</TransitionGroup>
 					</form>
 				</Card>

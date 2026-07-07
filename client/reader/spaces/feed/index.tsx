@@ -39,6 +39,8 @@ interface Props {
 	// feeds + tags) or Discover (`space_discover:<id>`, recommended on-topic posts
 	// the user doesn't follow). Both share this shell and the same layouts.
 	variant?: 'feed' | 'discover';
+	// Opens the Customize modal's Sources tab; wired to the Feed empty-state CTA.
+	onAddSources?: () => void;
 }
 
 export function collectPosts( pages: ReadStreamResponse[] ): ReadStreamPost[] {
@@ -69,7 +71,7 @@ export function collectPosts( pages: ReadStreamResponse[] ): ReadStreamPost[] {
  * — is the layout while the detail is still loading or missing that field. Both
  * variants share the same layouts.
  */
-export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
+export function SpaceFeed( { spaceId, layoutView, variant = 'feed', onAddSources }: Props ) {
 	// The detail loads in parallel with the stream and only refines the layout, so
 	// the feed never blocks on it. `refetchSpace` backs the stream's retry.
 	const { data: space, refetch: refetchSpace } = useSpace( spaceId );
@@ -182,6 +184,7 @@ export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
 					isPostSelected={ isPostSelected }
 					selectPost={ selectPost }
 					showTimestamp={ ! isDiscover }
+					emptyContent={ <SpaceFeedEmpty variant={ variant } onAddSources={ onAddSources } /> }
 				/>
 			);
 		}
@@ -210,7 +213,7 @@ export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
 			);
 		}
 		if ( posts.length === 0 ) {
-			return <SpaceFeedEmpty variant={ variant } />;
+			return <SpaceFeedEmpty variant={ variant } onAddSources={ onAddSources } />;
 		}
 		return (
 			<Layout

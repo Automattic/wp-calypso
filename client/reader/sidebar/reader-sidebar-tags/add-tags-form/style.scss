@@ -8,12 +8,14 @@
 	align-items: center;
 	gap: 8px;
 	transition: all 0.15s ease-in-out;
-	padding: 0 10px 10px 10px;
+	padding-top: 10px;
 
 	&__input {
 		@extend %form-field !optional;
 		transition: all 0.15s ease-in-out;
 		font-size: 14px;
+		border: 1px solid var( --studio-gray-10 );
+		padding: 8px;
 
 		@include ui-mixins.when-dark-theme {
 			background: var( --color-surface );
