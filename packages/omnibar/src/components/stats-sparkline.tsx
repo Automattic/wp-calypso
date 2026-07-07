@@ -40,6 +40,8 @@ export function StatsSparkline( { hourlyViews }: { hourlyViews: number[] } ) {
 			width={ chartWidth }
 			height={ CHART_HEIGHT }
 			viewBox={ `0 0 ${ chartWidth } ${ CHART_HEIGHT }` }
+			aria-hidden="true"
+			focusable="false"
 		>
 			{ hourlyViews.map( ( value, i ) => {
 				// for zero value, show a baseline bar with 1px height
