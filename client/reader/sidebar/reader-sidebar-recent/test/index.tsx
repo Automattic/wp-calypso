@@ -83,4 +83,13 @@ describe( 'getReaderSidebarSiteName', () => {
 			} )
 		).toBe( 'SimRacing' );
 	} );
+
+	test( 'does not treat a reddit.com look-alike host as Reddit', () => {
+		expect(
+			getReaderSidebarSiteName( {
+				name: '',
+				URL: 'https://fakereddit.com/r/simracing/',
+			} )
+		).toBe( 'fakereddit.com' );
+	} );
 } );

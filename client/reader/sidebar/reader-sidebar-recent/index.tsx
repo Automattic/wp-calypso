@@ -1,5 +1,6 @@
 import './style.scss';
 import page from '@automattic/calypso-router';
+import { getUrlParts } from '@automattic/calypso-url';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import React, { useState } from 'react';
@@ -34,10 +35,21 @@ const isFreeWpcomSubdomain = ( host = '' ): boolean => /\.wordpress\.com$/i.test
 
 /**
  * A title-less subreddit reads best as its `r/name` (or `u/name`) handle, since
- * every subreddit resolves to the same generic `reddit.com` domain.
+ * every subreddit resolves to the same generic `reddit.com` domain. Matches on
+ * the parsed host so only genuine `reddit.com` feeds qualify.
  */
 function getRedditFeedLabel( feedUrl?: string ): string | undefined {
-	const match = feedUrl?.match( /reddit\.com\/(r|user)\/([^/?#]+)/i );
+	if ( ! feedUrl ) {
+		return undefined;
+	}
+
+	const { hostname, pathname } = getUrlParts( feedUrl );
+	const host = hostname.toLowerCase();
+	if ( host !== 'reddit.com' && ! host.endsWith( '.reddit.com' ) ) {
+		return undefined;
+	}
+
+	const match = pathname.match( /^\/(r|user)\/([^/?#]+)/i );
 	if ( ! match ) {
 		return undefined;
 	}
