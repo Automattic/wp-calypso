@@ -1,11 +1,17 @@
-import { BadgeType, Popover } from '@automattic/components';
-import { Button } from '@wordpress/components';
+import {
+	Button,
+	Popover,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Icon, info } from '@wordpress/icons';
-import { useRef, useState } from 'react';
+import { info } from '@wordpress/icons';
+import { useState } from 'react';
 import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
 import FormattedDate from 'calypso/components/formatted-date';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
+import type { BadgeType } from '@automattic/components';
 
 const DETAILS_DATE_FORMAT_SHORT = 'DD MMM YYYY';
 
@@ -25,7 +31,6 @@ export const ReviewStatusColumn = ( {
 	reviewStatus: string;
 	rejectionReason?: string;
 } ) => {
-	const buttonRef = useRef< HTMLButtonElement | null >( null );
 	const [ isPopoverVisible, setIsPopoverVisible ] = useState( false );
 
 	// Don't show a badge if status is empty
@@ -33,38 +38,20 @@ export const ReviewStatusColumn = ( {
 		return null;
 	}
 
-	const getStatusProps = () => {
+	const getStatusProps = (): { statusText: string; statusType: BadgeType } | null => {
 		switch ( reviewStatus ) {
 			case 'paid':
-				return {
-					statusText: __( 'Paid' ),
-					statusType: 'success',
-				};
+				return { statusText: __( 'Paid' ), statusType: 'success' };
 			case 'verified':
-				return {
-					statusText: __( 'Confirmed' ),
-					statusType: 'success',
-				};
+				return { statusText: __( 'Confirmed' ), statusType: 'success' };
 			case 'rejected':
-				return {
-					statusText: __( 'Ineligible' ),
-					statusType: 'info',
-				};
+				return { statusText: __( 'Ineligible' ), statusType: 'info' };
 			case 'ineligible':
-				return {
-					statusText: __( 'Ineligible' ),
-					statusType: 'info',
-				};
+				return { statusText: __( 'Ineligible' ), statusType: 'info' };
 			case 'reverification':
-				return {
-					statusText: __( 'Pending re-verification' ),
-					statusType: 'info',
-				};
+				return { statusText: __( 'Pending re-verification' ), statusType: 'info' };
 			case 'pending':
-				return {
-					statusText: __( 'Pending' ),
-					statusType: 'warning',
-				};
+				return { statusText: __( 'Pending' ), statusType: 'warning' };
 			default:
 				// Unknown status - don't show a badge
 				return null;
@@ -81,39 +68,36 @@ export const ReviewStatusColumn = ( {
 		<StatusBadge
 			statusProps={ {
 				children: statusProps.statusText,
-				type: statusProps.statusType as BadgeType,
+				type: statusProps.statusType,
 			} }
 		/>
 	);
 
 	if ( ( reviewStatus === 'rejected' || reviewStatus === 'ineligible' ) && rejectionReason ) {
 		return (
-			<span className="commission-columns__rejected-status">
+			<HStack spacing={ 1 } justify="flex-start" expanded={ false }>
 				{ badge }
 				<Button
-					ref={ buttonRef }
-					className="commission-columns__rejection-reason-button"
-					onClick={ () => setIsPopoverVisible( ! isPopoverVisible ) }
-					aria-label={ __( 'View ineligibility reason' ) }
-				>
-					<Icon icon={ info } size={ 18 } />
-				</Button>
+					size="small"
+					icon={ info }
+					iconSize={ 18 }
+					label={ __( 'View ineligibility reason' ) }
+					onClick={ () => setIsPopoverVisible( ( visible ) => ! visible ) }
+				/>
 				{ isPopoverVisible && (
 					<Popover
-						context={ buttonRef.current }
-						isVisible
-						position="bottom"
+						offset={ 12 }
+						placement="bottom"
+						focusOnMount
 						onClose={ () => setIsPopoverVisible( false ) }
 					>
-						<div className="commission-columns__rejection-reason-popover">
-							<div className="commission-columns__rejection-reason-title">
-								{ __( 'Ineligibility reason' ) }
-							</div>
-							<div className="commission-columns__rejection-reason-text">{ rejectionReason }</div>
-						</div>
+						<VStack spacing={ 1 } style={ { width: '280px', padding: '8px' } }>
+							<Text weight={ 600 }>{ __( 'Ineligibility reason' ) }</Text>
+							<Text>{ rejectionReason }</Text>
+						</VStack>
 					</Popover>
 				) }
-			</span>
+			</HStack>
 		);
 	}
 
