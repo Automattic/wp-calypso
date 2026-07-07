@@ -97,7 +97,7 @@ function StripeWalletContent( {
 				paymentMethods: {
 					link: 'auto',
 					applePay: 'never',
-					googlePay: 'never',
+					googlePay: 'auto',
 					amazonPay: 'never',
 					paypal: 'never',
 				},
