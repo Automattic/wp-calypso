@@ -44,6 +44,7 @@ export function AgentUIContainer( {
 	suggestions,
 	clearSuggestions,
 	onSuggestionClick,
+	onSuggestionsRendered,
 	messageRenderer,
 	messagesPosition,
 	showAgentIcon,
@@ -211,6 +212,35 @@ export function AgentUIContainer( {
 		},
 		[ compactHeight ]
 	);
+
+	// Dedup-aware reporter for the actually-rendered suggestion set. Owned here so
+	// dedup survives the AnimatePresence instance swap between compact and expanded.
+	const onSuggestionsRenderedRef = useRef( onSuggestionsRendered );
+	onSuggestionsRenderedRef.current = onSuggestionsRendered;
+
+	const lastReportedKeyRef = useRef( '' );
+
+	// The ONLY reset: data-level clear, so identical ids returning later count fresh.
+	const hasSuggestions = !! suggestions?.length;
+	useEffect( () => {
+		if ( ! hasSuggestions ) {
+			lastReportedKeyRef.current = '';
+		}
+	}, [ hasSuggestions ] );
+
+	// Stable ( empty deps ) so it never retriggers consumers' effects.
+	const reportSuggestionsRendered = useCallback( ( shown: Suggestion[] ) => {
+		const key = shown.length
+			? JSON.stringify( shown.map( ( suggestion ) => suggestion.id ) )
+			: '';
+
+		if ( ! key || key === lastReportedKeyRef.current ) {
+			return;
+		}
+
+		lastReportedKeyRef.current = key;
+		onSuggestionsRenderedRef.current?.( shown );
+	}, [] );
 
 	// Handle suggestion submission
 	const handleSuggestionSubmit = useCallback(
@@ -439,6 +469,7 @@ export function AgentUIContainer( {
 		suggestions,
 		clearSuggestions,
 		handleSuggestionSubmit,
+		reportSuggestionsRendered,
 
 		// Notice
 		notice: computedNotice,

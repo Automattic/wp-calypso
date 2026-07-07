@@ -116,6 +116,7 @@ export interface AgentUIProps {
 		selectedSuggestion: Suggestion,
 		availableSuggestions: Suggestion[]
 	) => void;
+	onSuggestionsRendered?: ( shown: Suggestion[] ) => void;
 	messageRenderer?: ComponentType< { children: string } >;
 	messagesPosition?: 'top' | 'bottom';
 	// Render an avatar next to agent text responses. Defaults to false; when
