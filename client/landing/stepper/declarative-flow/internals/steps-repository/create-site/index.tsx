@@ -1,3 +1,4 @@
+import { isEcommerce } from '@automattic/calypso-products';
 import { Site, Onboard } from '@automattic/data-stores';
 import {
 	AI_SITE_BUILDER_FLOW,
@@ -236,13 +237,20 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			};
 		}
 
-		// eslint-disable-next-line no-nested-ternary
-		const siteIntent = isNewSiteMigrationFlow( flow )
-			? 'migration'
-			: isSimplifiedOnboarding
-			? // For the simplified onboarding flow, we'll use the build intent since user can't choose the intent.
-			  Onboard.SiteIntent.Build
-			: '';
+		const isCommercePlan = !! planCartItem && isEcommerce( planCartItem );
+
+		let siteIntent = '';
+		if ( isNewSiteMigrationFlow( flow ) ) {
+			siteIntent = 'migration';
+		} else if ( isCommercePlan ) {
+			// Create commerce sites with the Sell intent so My Home shows the selling
+			// launchpad. Setting it at creation (rather than post-checkout) is what
+			// makes it stick: the Atomic transfer restores the creation-time intent.
+			siteIntent = Onboard.SiteIntent.Sell;
+		} else if ( isSimplifiedOnboarding ) {
+			// For the simplified onboarding flow, we'll use the build intent since user can't choose the intent.
+			siteIntent = Onboard.SiteIntent.Build;
+		}
 
 		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
 		const isPlaygroundPublish =
