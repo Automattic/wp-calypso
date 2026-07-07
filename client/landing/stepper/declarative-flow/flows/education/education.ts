@@ -1,4 +1,3 @@
-import { PLAN_STUDENT } from '@automattic/calypso-products';
 import { clearStepPersistedState, EDUCATION_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
@@ -28,6 +27,8 @@ import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+
+export const STUDENT_PLAN_SLUG = 'wp_bundle_student_yearly';
 
 function initialize() {
 	const steps = [
@@ -69,7 +70,7 @@ const education: FlowV2< typeof initialize > = {
 						throw new Error( 'Education invite code must be validated before continuing' );
 					}
 
-					setPlanCartItem( { product_slug: PLAN_STUDENT } );
+					setPlanCartItem( { product_slug: STUDENT_PLAN_SLUG } );
 					return navigate( STEPS.DOMAIN_SEARCH.slug );
 				}
 

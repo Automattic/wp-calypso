@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import { PLAN_STUDENT } from '@automattic/calypso-products';
 import { dispatch, select } from '@wordpress/data';
 import React from 'react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -9,7 +8,7 @@ import { ONBOARD_STORE } from '../../../../stores';
 import { STEPS } from '../../../internals/steps';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import { runFlowNavigation } from '../../../test/helpers';
-import educationFlow from '../education';
+import educationFlow, { STUDENT_PLAN_SLUG } from '../education';
 import type { StepperStep } from '../../../internals/types';
 import type { OnboardActions } from '@automattic/data-stores';
 
@@ -58,7 +57,7 @@ describe( 'Education Flow', () => {
 		] );
 		expect( steps.every( ( step: StepperStep ) => step.requiresLoggedInUser ) ).toBe( true );
 		expect( select( ONBOARD_STORE ).getPlanCartItem() ).not.toEqual( {
-			product_slug: PLAN_STUDENT,
+			product_slug: STUDENT_PLAN_SLUG,
 		} );
 	} );
 
@@ -73,7 +72,7 @@ describe( 'Education Flow', () => {
 			query: null,
 		} );
 		expect( select( ONBOARD_STORE ).getPlanCartItem() ).toEqual( {
-			product_slug: PLAN_STUDENT,
+			product_slug: STUDENT_PLAN_SLUG,
 		} );
 	} );
 
@@ -250,7 +249,7 @@ describe( 'Education Flow', () => {
 
 		it( 'does not redirect when the Student plan is already in the cart', () => {
 			( dispatch( ONBOARD_STORE ) as OnboardActions ).setPlanCartItem( {
-				product_slug: PLAN_STUDENT,
+				product_slug: STUDENT_PLAN_SLUG,
 			} );
 
 			const navigate = renderSideEffect( STEPS.DOMAIN_SEARCH.slug );
