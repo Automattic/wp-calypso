@@ -19,6 +19,8 @@ export interface ReadPost {
 	global_ID: string;
 	title?: string;
 	site_name?: string;
+	excerpt?: string;
+	description?: string;
 	better_excerpt?: string;
 	date?: string;
 	URL?: string;

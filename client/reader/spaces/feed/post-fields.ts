@@ -1,3 +1,4 @@
+import { formatExcerpt } from 'calypso/lib/post-normalizer/rule-create-better-excerpt';
 import { keyForPost, keyToString } from 'calypso/reader/post-key';
 import { getPostUrl } from 'calypso/reader/route';
 import type { ReadPost, ReadStreamPost } from '@automattic/api-core';
@@ -17,13 +18,13 @@ export type SpaceFeedDayGroup = 'today' | 'yesterday' | 'earlier' | 'older' | ''
 
 /**
  * Display fields a card reads off its post. Cards feed the fully client-normalized
- * post from the cache (`useCachedPost`), so these are taken as-is: entity decoding,
- * the excerpt (`better_excerpt`) and the canonical image are already resolved by the
- * Reader post normalizer — re-doing them here would just duplicate that work.
+ * post from the cache (`useCachedPost`), so most fields are taken as-is: entity
+ * decoding and the canonical image are already resolved by the Reader post
+ * normalizer — re-doing them here would just duplicate that work.
  */
 export interface SpaceFeedPostFields {
 	title: string;
-	/** Sanitized excerpt HTML (`post.better_excerpt`); render with `dangerouslySetInnerHTML`. */
+	/** Sanitized excerpt HTML from the API excerpt; render with `dangerouslySetInnerHTML`. */
 	excerptHtml: string;
 	sourceName: string;
 	authorName?: string;
@@ -107,7 +108,10 @@ export function getPostFieldKey( post: ReadStreamPost ): string {
 export function getPostFields( post: NormalizedPost ): SpaceFeedPostFields {
 	return {
 		title: post.title || post.site_name || '',
-		excerptHtml: post.better_excerpt ?? '',
+		// The API excerpt (a short summary), sanitized to p/br/sup/sub. Not
+		// `better_excerpt` — that's built from the post content (first paragraphs) and
+		// runs much longer, closer to the whole post.
+		excerptHtml: formatExcerpt( post.excerpt || post.description || '' ),
 		sourceName: post.site_name ?? '',
 		authorName: post.author?.name,
 		imageUrl: imageOf( post ),

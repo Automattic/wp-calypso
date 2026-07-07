@@ -65,11 +65,11 @@ describe( 'getPostFields', () => {
 		expect( fields.authorName ).toBe( 'Ada' );
 	} );
 
-	it( 'passes through the normalized excerpt HTML (post.better_excerpt)', () => {
+	it( 'returns sanitized excerpt HTML from the API excerpt', () => {
 		const post = {
 			ID: 1,
 			site_ID: 2,
-			better_excerpt: '<p>Latin, Asian Pop and R&amp;B genres, including the Best&hellip;</p>',
+			excerpt: '<p>Latin, Asian Pop and R&amp;B genres, including the Best&hellip;</p>',
 		} as unknown as ReadStreamPost;
 
 		const { excerptHtml } = getPostFields( post );
