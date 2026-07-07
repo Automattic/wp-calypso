@@ -19,6 +19,7 @@ jest.mock(
 			usePlansGridRedesign: false,
 			usePlansGridRedesignNewDescription: false,
 			showDifferentiatorHeader: false,
+			usePlansGridRedesignFeatures: false,
 			showEnterpriseBottomCard: false,
 			showWooCommerceBottomCard: false,
 			isExperimentEligible: false,
@@ -41,6 +42,7 @@ const getPlansGridRedesignExperimentResult = ( overrides = {} ) => ( {
 	usePlansGridRedesign: false,
 	usePlansGridRedesignNewDescription: false,
 	showDifferentiatorHeader: false,
+	usePlansGridRedesignFeatures: false,
 	showEnterpriseBottomCard: false,
 	showWooCommerceBottomCard: false,
 	isExperimentEligible: false,
@@ -94,6 +96,7 @@ describe( 'Plans basic tests', () => {
 				variant: 'six_plan_new_features',
 				usePlansGridRedesign: true,
 				showDifferentiatorHeader: true,
+				usePlansGridRedesignFeatures: true,
 				isExperimentEligible: true,
 			} )
 		);
