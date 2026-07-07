@@ -2,18 +2,30 @@
  * @jest-environment jsdom
  */
 import { isEnabled } from '@automattic/calypso-config';
-import { render } from '@testing-library/react';
 import AsyncLoad from 'calypso/components/async-load';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ReaderOnboardingGate from '../gate';
 
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: jest.fn(),
-} ) );
+jest.mock( '@automattic/calypso-config', () => {
+	const config = jest.fn();
+	const isEnabledMock = jest.fn();
+	return {
+		__esModule: true,
+		default: Object.assign( config, { isEnabled: isEnabledMock } ),
+		isEnabled: isEnabledMock,
+	};
+} );
 
 jest.mock( 'calypso/components/async-load', () => ( {
 	__esModule: true,
 	default: jest.fn( () => null ),
 } ) );
+
+const loggedInState = { currentUser: { id: 12345 } };
+const loggedOutState = { currentUser: { id: null } };
+
+const render = ( ui: React.ReactElement, initialState = loggedInState ) =>
+	renderWithProvider( ui, { initialState } );
 
 describe( 'ReaderOnboardingGate', () => {
 	beforeEach( () => {
@@ -50,5 +62,13 @@ describe( 'ReaderOnboardingGate', () => {
 			onRender,
 			isSuppressed: true,
 		} );
+	} );
+
+	it( 'renders nothing when the user is logged out', () => {
+		( isEnabled as jest.Mock ).mockReturnValue( true );
+
+		render( <ReaderOnboardingGate />, loggedOutState );
+
+		expect( AsyncLoad as jest.Mock ).not.toHaveBeenCalled();
 	} );
 } );
