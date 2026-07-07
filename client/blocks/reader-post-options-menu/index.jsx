@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -18,6 +17,8 @@ class ReaderPostOptionsMenu extends Component {
 		openSuggestedFollows: PropTypes.func,
 		showFollow: PropTypes.bool,
 		showVisitPost: PropTypes.bool,
+		showReportPost: PropTypes.bool,
+		showReportSite: PropTypes.bool,
 		showEditPost: PropTypes.bool,
 		showConversationFollow: PropTypes.bool,
 		teams: PropTypes.array,
@@ -33,6 +34,8 @@ class ReaderPostOptionsMenu extends Component {
 			translate,
 			openSuggestedFollows,
 			showVisitPost,
+			showReportPost,
+			showReportSite,
 			showEditPost,
 			showFollow,
 			showConversationFollow,
@@ -53,6 +56,8 @@ class ReaderPostOptionsMenu extends Component {
 					translate={ translate }
 					post={ post }
 					showVisitPost={ showVisitPost }
+					showReportPost={ showReportPost }
+					showReportSite={ showReportSite }
 					showEditPost={ showEditPost }
 					showFollow={ showFollow }
 					showConversationFollow={ showConversationFollow }
@@ -69,8 +74,7 @@ const ConnectedReaderPostOptionsMenu = compose(
 	connect( ( _state, { post: { is_external: isExternal, site_ID: siteId } = {} } ) =>
 		Object.assign( {}, ! isExternal && siteId > 0 && { siteId: +siteId } )
 	),
-	withSite,
-	localize
+	withSite
 )( ReaderPostOptionsMenu );
 
 export default function ReaderPostOptionsMenuContainer( props ) {

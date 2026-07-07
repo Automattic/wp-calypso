@@ -1,5 +1,5 @@
 import { isAutomatticianQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Icon, seen } from '@wordpress/icons';
 import { filterURLForDisplay } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -53,7 +53,7 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 	const siteId = site?.ID;
 	const feedId = feed?.feed_ID ?? site?.feed_ID;
 	const { data: fetchedFeed } = useFeedQuery( feedId );
-	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
+	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 	const resolvedFeed = feed ?? fetchedFeed;
 	const siteUrl = getSiteUrl( { feed: resolvedFeed, site } );
 	const followFeedUrl = getFeedUrl( { feed: resolvedFeed, site } ) || undefined;
@@ -115,7 +115,9 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 	};
 
 	const allSeen: boolean = resolvedFeed?.unseen_count === 0;
+	const isSeenEnabled: boolean = !! isAutomattician && !! resolvedFeed;
 	const seenBtnMsg: string = translate( 'Mark all as seen' );
+
 	return (
 		<div className="reader-feed-header__follow">
 			<div className="reader-feed-header__follow-and-settings">
@@ -152,7 +154,7 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 					</div>
 				) }
 			</div>
-			{ isAutomattician && resolvedFeed && (
+			{ isSeenEnabled && (
 				<button
 					onClick={ markAllAsSeen }
 					className="reader-feed-header__seen-button"

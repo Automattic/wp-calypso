@@ -5,6 +5,8 @@ import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { isSiteDescriptionBlocked } from 'calypso/reader/lib/site-description-blocklist';
 
+const SEEN_WINDOW_DAYS: number = 30;
+
 export interface ReaderSite {
 	description: string;
 	domain: string;
@@ -183,6 +185,20 @@ export const getSiteAuthorName = ( site: ReaderSite ): string => {
 			`${ siteAuthor.first_name || '' } ${ siteAuthor.last_name || '' }`.trim() );
 
 	return decodeEntities( authorFullName || '' );
+};
+
+/**
+ * Check if a post is eligible for marking as seen. A post is eligible if it was published within the last 30 days.
+ * @param postDate - The date of the post in string format.
+ * @returns {boolean}
+ */
+export const isEligibleForSeen = ( postDate: string ): boolean => {
+	const postDateObj = new Date( postDate );
+	const currentDate = new Date();
+	const thirtyDaysAgo = new Date();
+	thirtyDaysAgo.setDate( currentDate.getDate() - SEEN_WINDOW_DAYS );
+
+	return postDateObj >= thirtyDaysAgo;
 };
 
 /**

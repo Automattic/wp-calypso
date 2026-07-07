@@ -36,7 +36,7 @@ import { withPostLikeActions } from 'calypso/reader/data/post/likes';
 import { withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
 import { withSite } from 'calypso/reader/data/site';
 import { useSiteSubscriptionForFeed } from 'calypso/reader/data/site-subscriptions';
-import { getSiteName } from 'calypso/reader/get-helpers';
+import { getSiteName, isEligibleForSeen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { markPostSeen } from 'calypso/reader/mark-post-seen';
@@ -536,7 +536,7 @@ export class FullPostView extends Component {
 		}
 
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
-			if ( isAutomatticTeamMember( this.props.teams ) && post.hasOwnProperty( 'is_seen' ) ) {
+			if ( this.isSeenEnabled() ) {
 				this.markAsSeen();
 			}
 
@@ -550,6 +550,12 @@ export class FullPostView extends Component {
 			);
 			this.hasLoaded = true;
 		}
+	};
+
+	isSeenEnabled = () => {
+		const { post, teams } = this.props;
+
+		return isAutomatticTeamMember( teams ) && isEligibleForSeen( post.date );
 	};
 
 	maybeDisableAppBanner = () => {
@@ -756,7 +762,7 @@ export class FullPostView extends Component {
 										post.discussion?.comment_count > 0
 									}
 									renderMarkAsSeenButton={
-										isAutomatticTeamMember( this.props.teams ) ? this.renderMarkAsSeenButton : null
+										this.isSeenEnabled() ? this.renderMarkAsSeenButton : null
 									}
 									feedUrl={ feedUrl }
 									siteUrl={ post.site_URL }

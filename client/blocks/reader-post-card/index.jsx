@@ -13,7 +13,6 @@ import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follow
 import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import DisplayTypes from 'calypso/reader/data/post/display-types';
-import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import * as stats from 'calypso/reader/stats';
 import { expandCard as expandCardAction } from 'calypso/state/reader-ui/card-expansions/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -162,10 +161,7 @@ class ReaderPostCard extends Component {
 			teams,
 		} = this.props;
 
-		let isSeen = false;
-		if ( isAutomatticTeamMember( teams ) ) {
-			isSeen = post?.is_seen;
-		}
+		const isSeen = post?.is_seen;
 		const isPostPhoto = !! ( post.display_type & DisplayTypes.PHOTO_ONLY ) && ! compact;
 		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY ) && ! compact;
 		const isVideo = !! ( post.display_type & DisplayTypes.FEATURED_VIDEO ) && ! compact;

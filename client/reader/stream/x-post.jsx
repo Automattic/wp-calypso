@@ -9,10 +9,8 @@ import { createRef, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import UserAvatar from 'calypso/blocks/user-avatar';
-import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import { useSite } from 'calypso/reader/data/site';
-import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -28,7 +26,6 @@ class CrossPost extends PureComponent {
 		site: PropTypes.object,
 		feed: PropTypes.object,
 		currentRoute: PropTypes.string,
-		teams: PropTypes.array,
 	};
 
 	cardRef = createRef();
@@ -161,12 +158,9 @@ class CrossPost extends PureComponent {
 	};
 
 	render() {
-		const { post, translate, teams } = this.props;
+		const { post, translate } = this.props;
 
-		let isSeen = false;
-		if ( isAutomatticTeamMember( teams ) ) {
-			isSeen = post?.is_seen;
-		}
+		const isSeen = post?.is_seen;
 		const articleClasses = clsx( {
 			reader__card: true,
 			'is-x-post': true,
@@ -215,7 +209,6 @@ class CrossPost extends PureComponent {
 /* eslint-enable wpcalypso/jsx-classname-namespace */
 
 const ConnectedCrossPost = compose(
-	withReaderTeams,
 	connect( ( state = {} ) => {
 		return {
 			currentRoute: getCurrentRoute( state ),
