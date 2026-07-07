@@ -20,6 +20,7 @@ import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follow
 import AutoDirection from 'calypso/components/auto-direction';
 import DocumentHead from 'calypso/components/data/document-head';
 import { withPostLikes } from 'calypso/components/data/post-likes';
+import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
 import PostExcerpt from 'calypso/components/post-excerpt';
 import {
 	RelatedPostsFromSameSite,
@@ -40,6 +41,7 @@ import {
 } from 'calypso/reader/data/site-subscriptions';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
+import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { markPostSeen } from 'calypso/reader/mark-post-seen';
 import { isCommentsOpen, isLoginRequiredToComment } from 'calypso/reader/post/capabilities';
 import PostExcerptLink from 'calypso/reader/post-excerpt-link';
@@ -82,8 +84,8 @@ export class FullPostView extends Component {
 		hasOrganization: PropTypes.bool,
 		layout: PropTypes.oneOf( [ 'default', 'recent' ] ),
 		currentPath: PropTypes.string,
-		isAutomattician: PropTypes.bool,
 		commentsApiDisabled: PropTypes.bool,
+		teams: PropTypes.array,
 	};
 
 	hasScrolledToCommentAnchor = false;
@@ -556,7 +558,8 @@ export class FullPostView extends Component {
 	};
 
 	isSeenEnabled = () => {
-		const { isAutomattician, isWPForTeamsItem, hasOrganization, post } = this.props;
+		const { isWPForTeamsItem, hasOrganization, post, teams } = this.props;
+		const isAutomattician = isAutomatticTeamMember( teams );
 
 		return (
 			isAutomattician ||
@@ -938,7 +941,9 @@ const ConnectedFullPostView = connect( mapStateToFullPostProps, {
 	showSelectedPost,
 } )(
 	withSite(
-		withPostLikes( withPostLikeActions( withSeenPostsMutations( FullPostView ) ) ),
+		withPostLikes(
+			withPostLikeActions( withSeenPostsMutations( withReaderTeams( FullPostView ) ) )
+		),
 		getPostSiteId
 	)
 );

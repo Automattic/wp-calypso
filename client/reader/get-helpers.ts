@@ -35,7 +35,6 @@ export interface ReaderPost {
 	site_name: string;
 	site_URL: string;
 	title: string;
-	date: string;
 }
 
 export interface ReaderFeed {
