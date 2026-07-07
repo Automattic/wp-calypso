@@ -77,6 +77,8 @@ export const siteEngagementMonthlyAverageStatsQuery = ( siteId: number ) =>
 export const siteHourlyViewsQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'hourly-views' ],
-		queryFn: () => fetchSiteHourlyViews( siteId ),
-		select: ( { data } ) => data.map( ( [ , views ] ) => views ),
+		queryFn: async () => {
+			const { data } = await fetchSiteHourlyViews( siteId );
+			return data.map( ( [ , views ] ) => views );
+		},
 	} );

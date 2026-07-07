@@ -715,7 +715,7 @@ class MasterbarLoggedIn extends Component {
 		const { siteId, translate, domainOnlySite, canUserViewStats, statsAdminUrl, statsSparkline } =
 			this.props;
 
-		if ( ! siteId || domainOnlySite || ! canUserViewStats ) {
+		if ( ! siteId || domainOnlySite || ! canUserViewStats || ! statsAdminUrl ) {
 			return null;
 		}
 
