@@ -1,8 +1,10 @@
 import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Callout } from '../../components/callout';
+import { ThemedIllustration } from '../../components/themed-illustration';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { wpcomLink } from '../../utils/link';
+import illustrationDarkUrl from './upsell-illustration-dark.svg';
 import illustrationUrl from './upsell-illustration.svg';
 import type { Site } from '@automattic/api-core';
 
@@ -33,8 +35,13 @@ export default function DIFMUpsellCard( { site }: { site: Site } ) {
 					) }
 				</Text>
 			}
-			image={ illustrationUrl }
-			imageAlt={ __( 'Responsive website design' ) }
+			image={
+				<ThemedIllustration
+					light={ illustrationUrl }
+					dark={ illustrationDarkUrl }
+					alt={ __( 'Responsive website design' ) }
+				/>
+			}
 			imageVariant="full-bleed"
 			actions={
 				<UpsellCTAButton

@@ -5,10 +5,12 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { getCurrentDashboard } from '../../app/routing';
 import { Callout } from '../../components/callout';
+import { ThemedIllustration } from '../../components/themed-illustration';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import HostingFeatureActivationModal from '../hosting-feature-activation-modal';
 import HostingFeatureList from '../hosting-feature-list';
+import illustrationDarkUrl from './upsell-illustration-dark.svg';
 import illustrationUrl from './upsell-illustration.svg';
 import type { HostingFeatureSlug, Site } from '@automattic/api-core';
 
@@ -98,7 +100,7 @@ export default function ActivationCallout( {
 
 	const callout = (
 		<Callout
-			image={ illustrationUrl }
+			image={ <ThemedIllustration light={ illustrationUrl } dark={ illustrationDarkUrl } /> }
 			title={ __( 'Activate hosting features' ) }
 			description={
 				<>

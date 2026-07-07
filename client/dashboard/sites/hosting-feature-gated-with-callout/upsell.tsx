@@ -6,8 +6,10 @@ import { addQueryArgs } from '@wordpress/url';
 import React from 'react';
 import { getCurrentDashboard } from '../../app/routing';
 import { Callout } from '../../components/callout';
+import { ThemedIllustration } from '../../components/themed-illustration';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import illustrationDarkUrl from './upsell-illustration-dark.svg';
 import illustrationUrl from './upsell-illustration.svg';
 import type { CalloutProps } from '../../components/callout/types';
 import type { HostingFeatureSlug, Site } from '@automattic/api-core';
@@ -51,7 +53,7 @@ export default function UpsellCallout( {
 
 	const defaultProps = {
 		icon: settings,
-		image: illustrationUrl,
+		image: <ThemedIllustration light={ illustrationUrl } dark={ illustrationDarkUrl } />,
 		title: __( 'Fine-tune your WordPress site' ),
 		description: __(
 			'Get under the hood—control caching, choose your PHP version, control security, and test out upcoming WordPress releases.'

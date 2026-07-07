@@ -12,6 +12,7 @@ import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { ThemedIllustration } from '../../components/themed-illustration';
 import TimeMismatchNotice, {
 	useShouldShowTimeMismatchNotice,
 } from '../../components/time-mismatch-notice';
@@ -21,6 +22,7 @@ import { SitesNoticeArbiter } from '../notice-arbiter';
 import { ActiveThreatsDataViews } from '../scan-active';
 import { ScanHistoryDataViews } from '../scan-history';
 import { BulkFixThreatsModal } from './components/bulk-fix-threats-modal';
+import illustrationDarkUrl from './scan-callout-illustration-dark.svg';
 import illustrationUrl from './scan-callout-illustration.svg';
 import { ScanNotices } from './scan-notices';
 import { ScanNowButton } from './scan-now-button';
@@ -103,7 +105,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 			upsellId="site-scan"
 			upsellIcon={ shield }
 			upsellTitle={ __( 'Scan for security threats' ) }
-			upsellImage={ illustrationUrl }
+			upsellImage={ <ThemedIllustration light={ illustrationUrl } dark={ illustrationDarkUrl } /> }
 			upsellDescription={ __(
 				'Automated daily scans check for malware and security vulnerabilities, with automated fixes for most issues.'
 			) }

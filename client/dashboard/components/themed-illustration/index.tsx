@@ -1,14 +1,13 @@
 import clsx from 'clsx';
+import type { ComponentPropsWithoutRef } from 'react';
 
 import './styles.scss';
 
-interface ThemedIllustrationProps {
+interface ThemedIllustrationProps extends ComponentPropsWithoutRef< 'img' > {
 	/** Illustration shown in light mode. */
 	light: string;
 	/** Illustration shown when the dashboard is in dark mode. */
 	dark: string;
-	alt?: string;
-	className?: string;
 }
 
 /**
@@ -19,12 +18,14 @@ interface ThemedIllustrationProps {
  * Illustrations are imported as URLs and rendered as `<img>`, so CSS inside the
  * page cannot recolor them; shipping a separate dark asset and toggling which
  * one is visible is the way to make an `<img>`-rendered SVG theme-aware here.
+ * Extra `<img>` props (width, height, style, …) pass through to both images.
  */
 export function ThemedIllustration( {
 	light,
 	dark,
 	alt = '',
 	className,
+	...props
 }: ThemedIllustrationProps ) {
 	return (
 		<>
@@ -36,6 +37,7 @@ export function ThemedIllustration( {
 					'dashboard-themed-illustration',
 					'dashboard-themed-illustration--light'
 				) }
+				{ ...props }
 			/>
 			<img
 				src={ dark }
@@ -46,6 +48,7 @@ export function ThemedIllustration( {
 					'dashboard-themed-illustration',
 					'dashboard-themed-illustration--dark'
 				) }
+				{ ...props }
 			/>
 		</>
 	);

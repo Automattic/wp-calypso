@@ -12,6 +12,7 @@ import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
+import { ThemedIllustration } from '../components/themed-illustration';
 import { useSiteListQuery, filterSortAndPaginateSites } from '../sites';
 import {
 	SitesDataViews,
@@ -21,6 +22,7 @@ import {
 	recordViewChanges,
 	sanitizeFields,
 } from '../sites/dataviews';
+import noSitesIllustrationDark from '../sites/no-sites-illustration-dark.svg';
 import noSitesIllustration from '../sites/no-sites-illustration.svg';
 import { SitesNoticeArbiter } from '../sites/notice-arbiter';
 import { RestoringSitesNotices } from '../sites/restoring-sites-notice';
@@ -102,7 +104,15 @@ export default function CIABSites() {
 		<DataViewsEmptyState
 			title={ emptyTitle }
 			description={ emptyDescription }
-			illustration={ <img src={ noSitesIllustration } alt="" width={ 408 } height={ 280 } /> }
+			illustration={
+				<ThemedIllustration
+					light={ noSitesIllustration }
+					dark={ noSitesIllustrationDark }
+					alt=""
+					width={ 408 }
+					height={ 280 }
+				/>
+			}
 			actions={
 				<>
 					{ view.search && (

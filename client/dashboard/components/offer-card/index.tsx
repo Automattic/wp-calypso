@@ -9,7 +9,9 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { wpcomLink } from '../../utils/link';
 import { Card, CardBody } from '../card';
+import { ThemedIllustration } from '../themed-illustration';
 import abstractDotsSvg from './abstract-dots.svg';
+import devSiteBannerDark from './dev-site-banner-dark.svg';
 import devSiteBanner from './dev-site-banner.svg';
 import './style.scss';
 
@@ -43,6 +45,7 @@ export default function OfferCard( { onClick, layout = 'inline' }: OfferCardProp
 
 	const Stack = isStacked || isInlineCollapsed ? VStack : HStack;
 	const image = isStacked ? devSiteBanner : abstractDotsSvg;
+	const imageDark = isStacked ? devSiteBannerDark : abstractDotsSvg;
 	const href = wpcomLink( '/setup/onboarding' );
 
 	const getStackProps = () => {
@@ -58,9 +61,10 @@ export default function OfferCard( { onClick, layout = 'inline' }: OfferCardProp
 	const content = (
 		<Stack { ...getStackProps() }>
 			{ ( isStacked || ! isSmallViewport ) && (
-				<img
+				<ThemedIllustration
+					light={ image }
+					dark={ imageDark }
 					style={ isStacked ? undefined : { width: '64px', flexShrink: 0 } }
-					src={ image }
 					alt=""
 					aria-hidden="true"
 				/>
