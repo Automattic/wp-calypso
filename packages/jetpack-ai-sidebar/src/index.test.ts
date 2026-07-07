@@ -186,7 +186,8 @@ function installWpDataMock( initialTitle: string, postId = 123, initialExcerpt =
 function installPostTypeMock(
 	postType?: string,
 	postId: number | null = 123,
-	supportsExcerpt: boolean = postType === 'post'
+	supportsExcerpt: boolean = postType === 'post',
+	postTypeRecordResolved = true
 ) {
 	( window as any ).wp = {
 		data: {
@@ -207,7 +208,9 @@ function installPostTypeMock(
 				if ( store === 'core' ) {
 					return {
 						getPostType: ( name: string ) =>
-							name === postType ? { supports: { excerpt: supportsExcerpt } } : undefined,
+							postTypeRecordResolved && name === postType
+								? { supports: { excerpt: supportsExcerpt } }
+								: undefined,
 					};
 				}
 				return undefined;
@@ -1149,6 +1152,24 @@ describe( 'getEmptyViewSuggestions', () => {
 	it( 'hides Generate Excerpt until the post type is known', () => {
 		installAiEditorialReviewData( { excerptSuggestion: true } );
 		installPostTypeMock();
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-excerpt' );
+	} );
+
+	it( 'shows Generate Excerpt for posts while the post type record is still resolving', () => {
+		installAiEditorialReviewData( { excerptSuggestion: true } );
+		installPostTypeMock( 'post', 123, true, false );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'generate-excerpt' );
+	} );
+
+	it( 'hides Generate Excerpt for pages while the post type record is still resolving', () => {
+		installAiEditorialReviewData( { excerptSuggestion: true } );
+		installPostTypeMock( 'page', 123, false, false );
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
@@ -2220,15 +2241,15 @@ describe( 'useCheckpoint', () => {
 		).toBe( 'Original Title' );
 	} );
 
-	it( 'snapshots the post excerpt alongside the title and restores both', async () => {
+	it( 'restores only the excerpt for an excerpt checkpoint, leaving later title edits intact', async () => {
 		installWpDataMock( 'Original Title', 123, 'Original excerpt' );
 		const api = useCheckpoint();
 
-		api.setCheckpoint( 'cp-excerpt' );
+		api.setCheckpoint( 'cp-excerpt', [ 'excerpt' ] );
 
 		( window as any ).wp.data
 			.dispatch( 'core/editor' )
-			.editPost( { title: 'AI Title', excerpt: 'AI generated excerpt' } );
+			.editPost( { title: 'Edited Title', excerpt: 'AI generated excerpt' } );
 		await api.restoreCheckpoint( 'cp-excerpt' );
 
 		expect(
@@ -2236,7 +2257,26 @@ describe( 'useCheckpoint', () => {
 		).toBe( 'Original excerpt' );
 		expect(
 			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'title' )
+		).toBe( 'Edited Title' );
+	} );
+
+	it( 'restores only the title for a default checkpoint, leaving later excerpt edits intact', async () => {
+		installWpDataMock( 'Original Title', 123, 'Original excerpt' );
+		const api = useCheckpoint();
+
+		api.setCheckpoint( 'cp-title' );
+
+		( window as any ).wp.data
+			.dispatch( 'core/editor' )
+			.editPost( { title: 'AI Title', excerpt: 'User excerpt' } );
+		await api.restoreCheckpoint( 'cp-title' );
+
+		expect(
+			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'title' )
 		).toBe( 'Original Title' );
+		expect(
+			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'excerpt' )
+		).toBe( 'User excerpt' );
 	} );
 
 	it( 'keeps the checkpoint after restore so Undo can be used repeatedly', async () => {

@@ -30,6 +30,7 @@ import TitlePicker from './components/title-picker';
 import './auto-scroll-fix.scss';
 import {
 	type CheckpointApi,
+	type CheckpointField,
 	applyReviewEdit,
 	findBlockElement,
 	findBlockListLayout,
@@ -199,6 +200,25 @@ function getCurrentEditorPostId(): number | undefined {
 	return typeof postId === 'number' && postId > 0 ? postId : undefined;
 }
 
+/**
+ * Whether a post type supports excerpts, given its (possibly still-resolving)
+ * core store record. While the record is unresolved, fall back to the core
+ * default — only 'post' supports excerpts — so one-shot callers (the empty
+ * view suggestions) don't permanently hide the chip on a slow resolution.
+ */
+function postTypeRecordSupportsExcerpt(
+	currentPostType: string | undefined,
+	postTypeRecord: { supports?: Record< string, boolean > } | undefined
+): boolean {
+	if ( ! currentPostType ) {
+		return false;
+	}
+	if ( ! postTypeRecord ) {
+		return currentPostType === 'post';
+	}
+	return postTypeRecord.supports?.excerpt === true;
+}
+
 function currentPostTypeSupportsExcerpt(
 	currentPostType: string | undefined = getCurrentEditorPostType()
 ): boolean {
@@ -208,14 +228,19 @@ function currentPostTypeSupportsExcerpt(
 	const postTypeRecord = ( window as any ).wp?.data
 		?.select?.( 'core' )
 		?.getPostType?.( currentPostType );
-	return postTypeRecord?.supports?.excerpt === true;
+	return postTypeRecordSupportsExcerpt( currentPostType, postTypeRecord );
 }
 
 function isExcerptSuggestionAvailable(
 	currentPostType: string | undefined = getCurrentEditorPostType(),
-	supportsExcerpt: boolean = currentPostTypeSupportsExcerpt( currentPostType )
+	supportsExcerpt?: boolean
 ): boolean {
-	return isExcerptSuggestionEnabled() && supportsExcerpt;
+	// Check the flag first: on flag-off sites the core-store getPostType read
+	// (which can trigger a REST resolution) never runs.
+	if ( ! isExcerptSuggestionEnabled() ) {
+		return false;
+	}
+	return supportsExcerpt ?? currentPostTypeSupportsExcerpt( currentPostType );
 }
 
 function isAiEditorialReviewAvailable(
@@ -419,13 +444,17 @@ function handleShowComponent( input: any ): any {
 	) {
 		// Snapshot state for Undo (these pickers mutate post data / block
 		// attributes). Tool call id doubles as the checkpoint id so it matches
-		// the identifier AM reads from the rendered message.
+		// the identifier AM reads from the rendered message. Only the fields
+		// this picker can write are snapshot, so restoring its checkpoint
+		// cannot clobber later edits to other fields.
+		const checkpointFields: CheckpointField[] =
+			type === 'excerpt-picker' ? [ 'excerpt' ] : [ 'title' ];
 		const checkpointId: string =
 			input?.toolCallId || input?.calypsoCheckpointId || `show-component-${ type }-${ Date.now() }`;
 		const checkpointApi = getModuleCheckpointApi();
 		if ( checkpointApi && ! checkpointApi.hasCheckpoint( checkpointId ) ) {
 			try {
-				checkpointApi.setCheckpoint( checkpointId );
+				checkpointApi.setCheckpoint( checkpointId, checkpointFields );
 			} catch {
 				// Non-fatal — Undo just won't attach if the snapshot fails.
 			}
@@ -758,25 +787,26 @@ export function getChatComponent( type: string ): ComponentType | null {
 
 /**
  * Provider hook consumed by AM's `use-checkpoint-action` so Undo buttons
- * can attach to show-component messages. Snapshots the post title and excerpt
- * on `setCheckpoint(id)` and restores them on `restoreCheckpoint(id)` via
- * `core/editor` dispatch. Stubs the rest of AM's `UseCheckpointReturn`
- * interface — only the three methods above are used on this path.
+ * can attach to show-component messages. Snapshots the post fields the
+ * triggering picker can write (title by default, excerpt for the excerpt
+ * picker) on `setCheckpoint(id, fields)` and restores exactly those fields on
+ * `restoreCheckpoint(id)` via `core/editor` dispatch — restoring one picker's
+ * checkpoint must not clobber another field's later edits. Stubs the rest of
+ * AM's `UseCheckpointReturn` interface — only the three methods above are
+ * used on this path.
  * @returns {Object} The checkpoint API AM consumes.
  */
-// Snapshots cover every post field the pickers can write (title, excerpt).
-// Restoring a checkpoint resets all snapshot fields to their tool-call-time
-// values, matching the snapshot-at-tool-call model used for the title.
-const postSnapshots: Map< string, { title: string; excerpt: string } > = new Map();
+const postSnapshots: Map< string, Partial< Record< CheckpointField, string > > > = new Map();
 
 export function useCheckpoint(): any {
 	const api: CheckpointApi = {
-		setCheckpoint( id: string ) {
+		setCheckpoint( id: string, fields: CheckpointField[] = [ 'title' ] ) {
 			const editor = ( window as any ).wp?.data?.select?.( 'core/editor' );
-			postSnapshots.set( id, {
-				title: ( editor?.getEditedPostAttribute?.( 'title' ) as string ) ?? '',
-				excerpt: ( editor?.getEditedPostAttribute?.( 'excerpt' ) as string ) ?? '',
-			} );
+			const snapshot: Partial< Record< CheckpointField, string > > = {};
+			for ( const field of fields ) {
+				snapshot[ field ] = ( editor?.getEditedPostAttribute?.( field ) as string ) ?? '';
+			}
+			postSnapshots.set( id, snapshot );
 		},
 		hasCheckpoint( id: string ): boolean {
 			return postSnapshots.has( id );
@@ -787,10 +817,7 @@ export function useCheckpoint(): any {
 				return;
 			}
 			const wpData = ( window as any ).wp?.data;
-			wpData?.dispatch?.( 'core/editor' )?.editPost?.( {
-				title: previous.title,
-				excerpt: previous.excerpt,
-			} );
+			wpData?.dispatch?.( 'core/editor' )?.editPost?.( { ...previous } );
 			// Keep snapshot so the user can re-Undo back to the original values.
 			// clearCheckpoint() removes it when AM resets the session.
 		},
@@ -1080,9 +1107,10 @@ export function useSuggestions(
 			selectedBlock: blockEditor?.getSelectedBlock?.() ?? null,
 			postId: editor?.getCurrentPostId?.(),
 			postType,
-			supportsExcerpt: postType
-				? core?.getPostType?.( postType )?.supports?.excerpt === true
-				: false,
+			supportsExcerpt:
+				postType && isExcerptSuggestionEnabled()
+					? postTypeRecordSupportsExcerpt( postType, core?.getPostType?.( postType ) )
+					: false,
 		};
 	}, [] );
 

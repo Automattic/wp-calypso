@@ -71,6 +71,14 @@ describe( 'ExcerptPicker', () => {
 		expect( onComplete ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	it( 'renders no options without crashing when the excerpts prop is malformed', () => {
+		render( <ExcerptPicker excerpts={ undefined as any } /> );
+		expect( document.querySelectorAll( 'button' ) ).toHaveLength( 0 );
+
+		render( <ExcerptPicker excerpts={ 'not-an-array' as any } /> );
+		expect( document.querySelectorAll( 'button' ) ).toHaveLength( 0 );
+	} );
+
 	it( 'marks the option matching the current post excerpt as applied on mount', () => {
 		mockCurrentExcerpt = excerpts[ 0 ].excerpt;
 		render( <ExcerptPicker excerpts={ excerpts } /> );

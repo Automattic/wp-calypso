@@ -97,7 +97,7 @@ Changes here affect AI response quality. The orchestrator uses `selectedBlockCli
 
 ## Checkpoint / Undo
 
-`useCheckpoint` exposes a minimal subset of AM's `UseCheckpointReturn` interface — only `setCheckpoint` / `hasCheckpoint` / `restoreCheckpoint` are implemented; the Big Sky page/navigation stubs are no-ops. Snapshots (post title + excerpt) are stored in a module-level `postSnapshots` map keyed by checkpoint id (the tool call id), so the sync `handleShowComponent` callback and the async React restore path share state.
+`useCheckpoint` exposes a minimal subset of AM's `UseCheckpointReturn` interface — only `setCheckpoint` / `hasCheckpoint` / `restoreCheckpoint` are implemented; the Big Sky page/navigation stubs are no-ops. Snapshots capture only the fields the triggering picker writes (title by default, excerpt for the excerpt picker) and are stored in a module-level `postSnapshots` map keyed by checkpoint id (the tool call id), so the sync `handleShowComponent` callback and the async React restore path share state — and restoring one picker's checkpoint never clobbers another field's later edits.
 
 ## Suggestions
 
