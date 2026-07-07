@@ -1,3 +1,4 @@
+import { isWpError } from '@automattic/api-core';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -6,35 +7,20 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
-/** HTTP status off a failed wpcom request, or `undefined` when none is present. */
+/** HTTP status off a failed wpcom request, or `undefined` when it isn't a wpcom error. */
 export function getSpaceErrorStatus( error: unknown ): number | undefined {
-	if ( error && typeof error === 'object' && 'status' in error ) {
-		const { status } = error as { status?: unknown };
-		if ( typeof status === 'number' ) {
-			return status;
-		}
-	}
-	return undefined;
+	return isWpError( error ) ? error.status : undefined;
 }
 
 /**
  * Whether a failed space-detail request means the space can't be shown: a 404
  * (it's gone or isn't the viewer's) or a 403 (no access). The backend collapses
- * "not yours" into the 404, so this doesn't distinguish the two. Falls back to
- * the wpcom error code when no numeric status is present. Other failures are
- * transient and left to degrade gracefully via the list and stream.
+ * "not yours" into the 404, so this doesn't distinguish the two. Other failures
+ * are transient and left to degrade gracefully via the list and stream.
  */
 export function isSpaceUnavailable( error: unknown ): boolean {
 	const status = getSpaceErrorStatus( error );
-	if ( status === 404 || status === 403 ) {
-		return true;
-	}
-	if ( error && typeof error === 'object' ) {
-		const record = error as { code?: unknown; error?: unknown };
-		const code = typeof record.code === 'string' ? record.code : record.error;
-		return code === 'reader_spaces_not_found' || code === 'rest_forbidden';
-	}
-	return false;
+	return status === 404 || status === 403;
 }
 
 interface Props {

@@ -13,6 +13,11 @@ const mockSpaceFeed = jest.fn< null, [ unknown ] >( () => null );
 // When set, overrides the single-space detail hook's `error` so tests can drive
 // the not-available branch; otherwise the real (cache-backed) hook is used.
 const mockSpaceError: { current: unknown } = { current: undefined };
+
+// A wpcom-shaped error (an Error with numeric status/statusCode), matching what
+// `isWpError` recognizes in production.
+const wpError = ( status: number ) =>
+	Object.assign( new Error( `HTTP ${ status }` ), { status, statusCode: status } );
 const mockRecordReaderTracksEvent: jest.Mock = jest.fn( () => ( {
 	type: 'TEST_TRACKS_EVENT',
 } ) );
@@ -247,7 +252,7 @@ describe( 'SpacesView', () => {
 	it.each( [ 404, 403 ] )(
 		'shows a not-available message and no feed when the space call returns %i',
 		( status ) => {
-			mockSpaceError.current = { status };
+			mockSpaceError.current = wpError( status );
 
 			render( <SpacesView id="missing" /> );
 
@@ -258,7 +263,7 @@ describe( 'SpacesView', () => {
 	);
 
 	it( 'records a page error event with the failing status', async () => {
-		mockSpaceError.current = { status: 404 };
+		mockSpaceError.current = wpError( 404 );
 
 		render( <SpacesView id="missing" /> );
 
@@ -271,7 +276,7 @@ describe( 'SpacesView', () => {
 	} );
 
 	it( 'keeps rendering the space on a transient (non-4xx) detail error', () => {
-		mockSpaceError.current = { status: 500 };
+		mockSpaceError.current = wpError( 500 );
 
 		render( <SpacesView id={ WORK.id } /> );
 

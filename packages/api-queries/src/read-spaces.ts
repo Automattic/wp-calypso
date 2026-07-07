@@ -5,6 +5,7 @@ import {
 	deleteReadSpaceSource,
 	fetchReadSpace,
 	fetchReadSpaces,
+	isWpError,
 	updateReadSpace,
 	type ReadSpace,
 	type ReadSpaceDeletionResult,
@@ -64,12 +65,7 @@ export const readSpacesQuery = () =>
 	} );
 
 const isClientError = ( error: unknown ): boolean =>
-	!! error &&
-	typeof error === 'object' &&
-	'status' in error &&
-	typeof error.status === 'number' &&
-	error.status >= 400 &&
-	error.status < 500;
+	isWpError( error ) && error.status >= 400 && error.status < 500;
 
 export const readSpaceQuery = ( spaceId: string ) =>
 	queryOptions( {

@@ -102,12 +102,14 @@ describe( 'read spaces mutations', () => {
 			const { retry } = readSpaceQuery( '3' );
 			expect( typeof retry ).toBe( 'function' );
 			const retryFn = retry as ( failureCount: number, error: unknown ) => boolean;
+			const wpError = ( status: number ) =>
+				Object.assign( new Error( `HTTP ${ status }` ), { status, statusCode: status } );
 
-			expect( retryFn( 0, { status: 404 } ) ).toBe( false );
-			expect( retryFn( 0, { status: 403 } ) ).toBe( false );
-			expect( retryFn( 0, { status: 500 } ) ).toBe( true );
+			expect( retryFn( 0, wpError( 404 ) ) ).toBe( false );
+			expect( retryFn( 0, wpError( 403 ) ) ).toBe( false );
+			expect( retryFn( 0, wpError( 500 ) ) ).toBe( true );
 			expect( retryFn( 0, new Error( 'network' ) ) ).toBe( true );
-			expect( retryFn( 3, { status: 500 } ) ).toBe( false );
+			expect( retryFn( 3, wpError( 500 ) ) ).toBe( false );
 		} );
 	} );
 
