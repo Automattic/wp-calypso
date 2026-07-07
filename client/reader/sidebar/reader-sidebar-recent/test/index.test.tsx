@@ -17,17 +17,6 @@ jest.mock( 'calypso/reader/stats', () => ( {
 	recordGaEvent: jest.fn(),
 } ) );
 
-// // `useSubscribedSites` is the only thing the sidebar pulls from the
-// // subscriptions data layer; stub it so each test can drive the menu with a
-// // fixed set of followed sites and their unseen counts.
-// type ReaderTestSite = {
-// 	ID: number;
-// 	feed_ID: number;
-// 	name: string;
-// 	URL: string;
-// 	unseen_count?: number;
-// };
-
 let mockSubscribedSites: Partial< SiteSubscriptionItem >[] = [];
 jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
 	useSubscribedSites: () => mockSubscribedSites,

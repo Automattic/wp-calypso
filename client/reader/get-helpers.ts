@@ -5,6 +5,7 @@ import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { isSiteDescriptionBlocked } from 'calypso/reader/lib/site-description-blocklist';
 
+// The number of days after which a post is no longer eligible for marking as seen. Matches Backend.
 const SEEN_WINDOW_DAYS: number = 30;
 
 export interface ReaderSite {
@@ -37,6 +38,7 @@ export interface ReaderPost {
 	site_name: string;
 	site_URL: string;
 	title: string;
+	date: string;
 }
 
 export interface ReaderFeed {
@@ -194,9 +196,7 @@ export const getSiteAuthorName = ( site: ReaderSite ): string => {
  */
 export const isEligibleForSeen = ( postDate: string ): boolean => {
 	const postDateObj = new Date( postDate );
-	const currentDate = new Date();
-	const thirtyDaysAgo = new Date();
-	thirtyDaysAgo.setDate( currentDate.getDate() - SEEN_WINDOW_DAYS );
+	const thirtyDaysAgo = new Date( Date.now() - SEEN_WINDOW_DAYS * 24 * 60 * 60 * 1000 );
 
 	return postDateObj >= thirtyDaysAgo;
 };

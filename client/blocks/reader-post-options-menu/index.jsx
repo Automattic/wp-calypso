@@ -31,7 +31,6 @@ class ReaderPostOptionsMenu extends Component {
 			feed,
 			followSource,
 			teams,
-			translate,
 			openSuggestedFollows,
 			showVisitPost,
 			showReportPost,
@@ -53,7 +52,6 @@ class ReaderPostOptionsMenu extends Component {
 					feed={ feed }
 					site={ site }
 					teams={ teams }
-					translate={ translate }
 					post={ post }
 					showVisitPost={ showVisitPost }
 					showReportPost={ showReportPost }
