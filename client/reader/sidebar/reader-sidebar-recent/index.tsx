@@ -1,6 +1,5 @@
 import './style.scss';
 import page from '@automattic/calypso-router';
-import { getUrlParts } from '@automattic/calypso-url';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import React, { useState } from 'react';
@@ -34,31 +33,6 @@ type ReaderSidebarSite = Pick< ReturnType< typeof useSubscribedSites >[ number ]
 const isFreeWpcomSubdomain = ( host = '' ): boolean => /\.wordpress\.com$/i.test( host );
 
 /**
- * A title-less subreddit reads best as its `r/name` (or `u/name`) handle, since
- * every subreddit resolves to the same generic `reddit.com` domain. Matches on
- * the parsed host so only genuine `reddit.com` feeds qualify.
- */
-function getRedditFeedLabel( feedUrl?: string ): string | undefined {
-	if ( ! feedUrl ) {
-		return undefined;
-	}
-
-	const { hostname, pathname } = getUrlParts( feedUrl );
-	const host = hostname.toLowerCase();
-	if ( host !== 'reddit.com' && ! host.endsWith( '.reddit.com' ) ) {
-		return undefined;
-	}
-
-	const match = pathname.match( /^\/(r|user)\/([^/?#]+)/i );
-	if ( ! match ) {
-		return undefined;
-	}
-
-	const prefix = match[ 1 ].toLowerCase() === 'user' ? 'u' : 'r';
-	return `${ prefix }/${ match[ 2 ] }`;
-}
-
-/**
  * Label for a followed site: real title, else an `r/subreddit` handle, else the
  * resolved domain. Untitled WordPress.com sites come back named after their free
  * subdomain, so those fall through to the domain from `URL`.
@@ -72,9 +46,12 @@ export function getReaderSidebarSiteName( site: ReaderSidebarSite ): string {
 		return siteName;
 	}
 
-	const redditLabel = getRedditFeedLabel( site.URL );
-	if ( redditLabel ) {
-		return redditLabel;
+	// A title-less subreddit reads best as its `r/name` (or `u/name`) handle, since
+	// every subreddit resolves to the same generic `reddit.com` domain. The host is
+	// anchored so only genuine `reddit.com` feeds qualify.
+	const reddit = site.URL?.match( /^https?:\/\/(?:[^/]+\.)?reddit\.com\/(r|user)\/([^/?#]+)/i );
+	if ( reddit ) {
+		return `${ reddit[ 1 ].toLowerCase() === 'user' ? 'u' : 'r' }/${ reddit[ 2 ] }`;
 	}
 
 	const siteDomain = site.URL ? getSiteDomain( { site: { URL: site.URL } } ) : undefined;
