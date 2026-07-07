@@ -161,18 +161,20 @@ function NoPaymentMethodWarning( {
 		<>
 			<div className="manage-purchase__no-payment-method">
 				<Icon icon={ warning } />
-				{ translate( 'You don’t have a payment method to renew this subscription' ) }
+				<span>
+					{ translate( 'You don’t have a payment method to renew this subscription' ) }
+					{ addPaymentMethodUrl && (
+						<Button
+							className="manage-purchase__add-payment-method-link"
+							variant="secondary"
+							href={ addPaymentMethodUrl }
+							onClick={ onAddPaymentMethodClick }
+						>
+							{ translate( 'Add payment method' ) }
+						</Button>
+					) }
+				</span>
 			</div>
-			{ addPaymentMethodUrl && (
-				<Button
-					className="manage-purchase__add-payment-method-link"
-					variant="link"
-					href={ addPaymentMethodUrl }
-					onClick={ onAddPaymentMethodClick }
-				>
-					{ translate( 'Add payment method' ) }
-				</Button>
-			) }
 		</>
 	);
 }
