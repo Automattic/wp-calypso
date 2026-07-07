@@ -609,7 +609,7 @@ export const sitePerformanceFrontendRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Frontend' ),
+				title: isEnabled( 'performance/apm' ) ? __( 'Frontend' ) : undefined,
 			},
 		],
 	} ),

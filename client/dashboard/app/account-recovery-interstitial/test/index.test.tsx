@@ -95,9 +95,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		expect(
 			screen.getByRole( 'button', { name: 'Set up recovery email or phone' } )
 		).toBeVisible();
-		expect(
-			screen.getByRole( 'button', { name: 'Add two-step authentication and backup codes' } )
-		).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Add two-step authentication' } ) ).toBeVisible();
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_account_recovery_nudge_interstitial_impression',

@@ -16,7 +16,7 @@ import { useSelectedPostCommands } from './use-selected-post-commands';
 import { useStreamKeyboardShortcuts } from './use-stream-keyboard-shortcuts';
 import { useStreamPostKeySelection } from './use-stream-post-key-selection';
 import type { StreamItem } from 'calypso/reader/data/stream/types';
-import type { ComponentType } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 
 // The card calls this when a post (or its comment button) is clicked.
 type PostClickArgs = { comments?: boolean };
@@ -43,6 +43,8 @@ interface ReaderStreamV2Props {
 	scrollElement: HTMLElement | null;
 	className?: string;
 	restoreKey?: string;
+	/** Replaces the default "nothing here yet" state when the stream is empty. */
+	emptyContent?: ReactNode;
 }
 
 /**
@@ -60,6 +62,7 @@ export function ReaderStreamV2( {
 	scrollElement,
 	className,
 	restoreKey,
+	emptyContent,
 }: ReaderStreamV2Props ) {
 	const translate = useTranslate();
 	const blockedSites = useSelector( getBlockedSites );
@@ -164,6 +167,11 @@ export function ReaderStreamV2( {
 	}
 
 	if ( items.length === 0 ) {
+		// `undefined` means the caller passed nothing; any explicitly provided node
+		// (including `null` to render nothing) overrides the default empty state.
+		if ( emptyContent !== undefined ) {
+			return <>{ emptyContent }</>;
+		}
 		return (
 			<div className="space-feed__status">
 				<p className="space-feed__status-title">{ translate( 'Nothing here yet' ) }</p>

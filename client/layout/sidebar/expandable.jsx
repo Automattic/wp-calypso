@@ -112,10 +112,14 @@ export const ExpandableSidebarMenu = ( menuProps ) => {
 				<ExpandableSidebarHeading
 					title={ title }
 					count={ count }
-					onClick={ ( event ) => {
-						setSubmenuHovered( false );
-						onClick( event );
-					} }
+					onClick={
+						typeof onClick === 'function'
+							? ( event ) => {
+									setSubmenuHovered( false );
+									onClick( event );
+							  }
+							: undefined
+					}
 					customIcon={ customIcon }
 					icon={ icon }
 					materialIcon={ materialIcon }

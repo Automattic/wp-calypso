@@ -4,7 +4,6 @@ import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -16,7 +15,6 @@ import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
 import { AppState } from 'calypso/types';
-import { AllIcon } from '../icons/all';
 import { MenuItem, MenuItemLink } from '../menu';
 
 type Props = {
@@ -97,9 +95,6 @@ const ReaderSidebarRecent = ( {
 	};
 
 	const selectMenu = () => {
-		if ( ! isOpen ) {
-			onClick();
-		}
 		trackMenuClick( null );
 		page( '/reader' );
 	};
@@ -109,10 +104,9 @@ const ReaderSidebarRecent = ( {
 			onClick={ selectMenu }
 			expanded={ isOpen }
 			title={ translate( 'Recent' ) }
-			customIcon={ <ReaderIcon className="sidebar__menu-icon" viewBox="0 0 24 11" /> }
 			disableFlyout
 			className={ clsx( 'reader-sidebar-recent', className, {
-				'sidebar__menu--selected': ! isOpen && isRecentStream,
+				'sidebar__menu--selected': isRecentStream && ( ! isOpen || selectedSiteFeedId === null ),
 			} ) }
 			count={ undefined }
 			icon={ null }
@@ -120,17 +114,6 @@ const ReaderSidebarRecent = ( {
 			materialIconStyle={ null }
 			expandableIconClick={ onClick }
 		>
-			<MenuItem key="all" selected={ isRecentStream && selectedSiteFeedId === null }>
-				<MenuItemLink
-					href="/reader"
-					className="sidebar__menu-link all-sites-link"
-					onClick={ () => trackMenuClick( null ) }
-				>
-					<AllIcon />
-					<span>{ translate( 'All' ) }</span>
-				</MenuItemLink>
-			</MenuItem>
-
 			{ sitesToShow.map( ( site ) => {
 				const displayName = getReaderSidebarSiteName( site );
 

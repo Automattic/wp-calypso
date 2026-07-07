@@ -70,7 +70,18 @@ export function SpacesView( { id, tab = 'feed' }: Props ) {
 			tab === 'discover' ? (
 				<SpaceFeed spaceId={ id } layoutView={ layoutView } variant="discover" />
 			) : (
-				<SpaceFeed spaceId={ id } layoutView={ layoutView } />
+				<SpaceFeed
+					spaceId={ id }
+					layoutView={ layoutView }
+					onAddSources={ () => {
+						dispatch(
+							recordReaderTracksEvent( 'calypso_reader_spaces_add_sources_clicked', {
+								space_id: id,
+							} )
+						);
+						setCustomizeTab( 'sources' );
+					} }
+				/>
 			);
 	}
 

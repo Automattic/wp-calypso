@@ -1,6 +1,7 @@
 type SidebarFeature =
 	| 'aiEditorialReview'
 	| 'generateFeedback'
+	| 'proofreadContent'
 	| 'blockTransformations'
 	| 'blockToolbarButton'
 	| 'optimizeTitleSuggestion'
@@ -45,6 +46,10 @@ export function isBlockTransformationsEnabled(): boolean {
 
 export function isGenerateFeedbackEnabled(): boolean {
 	return isSidebarFeatureEnabled( 'generateFeedback', false );
+}
+
+export function isProofreadEnabled(): boolean {
+	return isSidebarFeatureEnabled( 'proofreadContent', false );
 }
 
 export function isBlockToolbarButtonEnabled(): boolean {

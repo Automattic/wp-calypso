@@ -6,7 +6,7 @@ const mergeWith = require( './merge-with' );
 
 const mergeDeep = ( left, right, key ) => {
 	// `typeof null === 'object'`, so exclude null before recursing (parsed POT
-	// data has none); a null side falls through to `right || left`, as in lodash.
+	// data has none); a null side falls through to `right || left`.
 	if ( left !== null && typeof left === 'object' && right !== null && typeof right === 'object' ) {
 		return mergeWith( left, right, mergeDeep );
 	}

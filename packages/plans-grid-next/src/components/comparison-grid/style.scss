@@ -307,3 +307,20 @@
 		justify-content: flex-end;
 	}
 }
+
+.plans-grid-next.is-plans-grid-redesign-experiment {
+	.plan-comparison-grid__available-checkmark {
+		color: var( --studio-green-60 );
+		fill: var( --studio-green-60 );
+	}
+
+	.plans-grid-next-comparison-grid .plans-grid-next-header-price {
+		padding: 0;
+	}
+
+	.plans-grid-next-header-price__pricing-group.is-large-currency {
+		align-items: last baseline;
+		flex-direction: row-reverse;
+		justify-content: flex-end;
+	}
+}

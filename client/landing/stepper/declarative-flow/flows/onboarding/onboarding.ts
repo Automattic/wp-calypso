@@ -261,7 +261,7 @@ const onboarding: FlowV2< typeof initialize > = {
 								const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
 								window.location.assign( `${ adminUrl }admin.php?page=wc-admin` );
 							} else {
-								window.location.assign( `/sites/${ siteSlug }` );
+								window.location.assign( `/home/${ siteSlug }` );
 							}
 							return;
 						default:

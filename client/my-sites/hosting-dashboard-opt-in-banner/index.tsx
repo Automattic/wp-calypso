@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import {
 	Button,
 	Card,
@@ -7,7 +8,8 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { closeSmall } from '@wordpress/icons';
+import { type TranslateResult, useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useRef } from 'react';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -22,12 +24,78 @@ import {
 import illustratioUrl from './illustration.svg';
 import type { HostingDashboardOptIn } from '@automattic/api-core';
 
+interface BannerCopy {
+	heading: TranslateResult;
+	description: TranslateResult;
+	button: TranslateResult;
+}
+
+function getBannerCopy(
+	isOptedInCopy: boolean,
+	hasEnTranslation: ReturnType< typeof useHasEnTranslation >,
+	translate: ReturnType< typeof useTranslate >
+): BannerCopy {
+	if ( isOptedInCopy ) {
+		const hasUpdatedOptedInTranslations =
+			hasEnTranslation( 'New dashboard is here to stay' ) &&
+			hasEnTranslation(
+				'The new dashboard you’ve been using becomes the default for everyone, and this classic view will be retired.'
+			);
+
+		if ( hasUpdatedOptedInTranslations ) {
+			return {
+				heading: translate( 'New dashboard is here to stay' ),
+				description: translate(
+					'The new dashboard you’ve been using becomes the default for everyone, and this classic view will be retired.'
+				),
+				button: translate( 'Go to new dashboard' ),
+			};
+		}
+
+		return {
+			heading: translate( 'The new dashboard is here to stay' ),
+			description: translate(
+				'Soon, the Hosting Dashboard you’ve been using becomes the default for everyone, and this classic view will be retired. Your content and settings stay the same.'
+			),
+			button: translate( 'Go to new dashboard' ),
+		};
+	}
+
+	const hasUpdatedTranslations =
+		hasEnTranslation( 'Dashboard layout is changing' ) &&
+		hasEnTranslation(
+			'WordPress.com’s layout is getting more consistent and easier to use. Your content and settings won’t change. Can’t wait?'
+		) &&
+		hasEnTranslation( 'Switch now' );
+
+	if ( hasUpdatedTranslations ) {
+		return {
+			heading: translate( 'Dashboard layout is changing' ),
+			description: translate(
+				'WordPress.com’s layout is getting more consistent and easier to use. Your content and settings won’t change. Can’t wait?'
+			),
+			button: translate( 'Switch now' ),
+		};
+	}
+
+	return {
+		heading: translate( 'A new dashboard is on the way' ),
+		description: translate(
+			'Soon, navigation in the Hosting Dashboard is changing to be more consistent with WordPress Admin and easier to get around. Your content and settings stay exactly as they are. Can’t wait?'
+		),
+		button: translate( 'Try it now' ),
+	};
+}
+
 export default function HostingDashboardOptInBanner( {
 	isMobile = false,
+	onDismiss,
 }: {
 	isMobile?: boolean;
+	onDismiss?: () => void;
 } ) {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const dispatch = useDispatch();
 
 	const savedPreference = useSelector(
@@ -99,23 +167,18 @@ export default function HostingDashboardOptInBanner( {
 		return null;
 	}
 
+	const isOptedInCopy = hasOptedIn && ! isSubmitting;
+	const copy = getBannerCopy( isOptedInCopy, hasEnTranslation, translate );
+
 	const heading = (
 		<Text as="p" weight={ 500 } size={ isMobile ? 14 : 15 }>
-			{ hasOptedIn && ! isSubmitting
-				? translate( 'The new dashboard is here to stay' )
-				: translate( 'A new dashboard is on the way' ) }
+			{ copy.heading }
 		</Text>
 	);
 
 	const description = (
 		<Text as="p" variant="muted" size={ isMobile ? 12 : 13 }>
-			{ hasOptedIn && ! isSubmitting
-				? translate(
-						'Soon, the Hosting Dashboard you’ve been using becomes the default for everyone, and this classic view will be retired. Your content and settings stay the same.'
-				  )
-				: translate(
-						'Soon, navigation in the Hosting Dashboard is changing to be more consistent with WordPress Admin and easier to get around. Your content and settings stay exactly as they are. Can’t wait?'
-				  ) }
+			{ copy.description }
 		</Text>
 	);
 
@@ -127,10 +190,12 @@ export default function HostingDashboardOptInBanner( {
 			href={ dashboardLink() }
 			onClick={ handleClick }
 		>
-			{ hasOptedIn && ! isSubmitting
-				? translate( 'Go to new dashboard' )
-				: translate( 'Try it now' ) }
+			{ copy.button }
 		</Button>
+	);
+
+	const dismissButton = onDismiss && (
+		<Button icon={ closeSmall } aria-label={ translate( 'Dismiss' ) } onClick={ onDismiss } />
 	);
 
 	return (
@@ -138,10 +203,13 @@ export default function HostingDashboardOptInBanner( {
 			<CardBody style={ { padding: '12px' } }>
 				{ isMobile ? (
 					<VStack spacing={ 2 } alignment="flex-start">
-						<VStack spacing={ 0 }>
-							{ heading }
-							{ description }
-						</VStack>
+						<HStack spacing={ 2 } alignment="flex-start" justify="space-between">
+							<VStack spacing={ 0 }>
+								{ heading }
+								{ description }
+							</VStack>
+							{ dismissButton }
+						</HStack>
 						{ button }
 					</VStack>
 				) : (
