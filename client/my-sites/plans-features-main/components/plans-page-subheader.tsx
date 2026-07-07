@@ -104,7 +104,7 @@ const HeaderContainer = styled( Subheader )`
 	&.plans-features-main__differentiator-header {
 		flex-wrap: wrap;
 		align-items: center;
-		gap: 12px 24px;
+		gap: 12px 8px;
 		margin-top: -20px;
 		margin-bottom: 32px;
 		color: #2f2f2f;
@@ -223,7 +223,7 @@ const IconWrapper = styled.span`
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	margin-right: 6px;
+	margin-right: 4px;
 	flex-shrink: 0;
 	color: inherit;
 
@@ -248,6 +248,10 @@ const DifferentiatorIconContainer = styled.span`
 	@media ( max-width: 740px ) {
 		white-space: normal;
 	}
+`;
+
+const DifferentiatorLabel = styled.span`
+	border-bottom: 1px dashed #757575;
 `;
 
 const DifferentiatorHeader = () => {
@@ -294,7 +298,7 @@ const DifferentiatorHeader = () => {
 				>
 					<DifferentiatorIconContainer className="plans-features-main__differentiator-item">
 						<IconWrapper>{ icon }</IconWrapper>
-						{ title }
+						<DifferentiatorLabel>{ title }</DifferentiatorLabel>
 					</DifferentiatorIconContainer>
 				</Plans2023Tooltip>
 			) ) }
