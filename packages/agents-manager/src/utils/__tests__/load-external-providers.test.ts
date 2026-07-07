@@ -7,7 +7,11 @@ import {
 	mergeUseSuggestionsHooks,
 } from '../load-external-providers';
 import type { Ability } from '../../extension-types';
-import type { ProviderCapabilities, UseSuggestionsHook } from '../load-external-providers';
+import type {
+	ProviderCapabilities,
+	UseCheckpointReturn,
+	UseSuggestionsHook,
+} from '../load-external-providers';
 
 function setAgentsManagerData( data: Record< string, unknown > ) {
 	( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData = data;
@@ -20,6 +24,24 @@ function createAbility( name: string ): Ability {
 		label: name,
 		description: `${ name } description`,
 		category: 'test',
+	};
+}
+
+function createCheckpointReturn(
+	overrides: Partial< UseCheckpointReturn > = {}
+): UseCheckpointReturn {
+	return {
+		getLastEditorState: jest.fn( () => null ),
+		setCheckpoint: jest.fn(),
+		addCheckpointKeys: jest.fn(),
+		restoreCheckpoint: jest.fn( () => Promise.resolve() ),
+		addNewPageToCheckpoint: jest.fn(),
+		addPageRenameToCheckpoint: jest.fn(),
+		addPageRemovalToCheckpoint: jest.fn(),
+		getLatestUserMessageId: jest.fn( () => undefined ),
+		clearCheckpoint: jest.fn(),
+		hasCheckpoint: jest.fn( () => false ),
+		...overrides,
 	};
 }
 
@@ -452,6 +474,82 @@ describe( 'loadExternalProviders', () => {
 			updates: [],
 		} );
 		expect( otherProvider.executeAbility ).not.toHaveBeenCalled();
+	} );
+
+	it( 'composes checkpoint hooks so id lookups search every provider store', async () => {
+		const firstReturn = createCheckpointReturn( {
+			getLastEditorState: jest.fn( () => 'first-editor-state' ),
+			hasCheckpoint: jest.fn( ( id: string ) => id === 'first-cp' ),
+		} );
+		const secondReturn = createCheckpointReturn( {
+			hasCheckpoint: jest.fn( ( id: string ) => id === 'second-cp' ),
+		} );
+		const firstHook = jest.fn( () => firstReturn );
+		const secondHook = jest.fn( () => secondReturn );
+		setAgentsManagerData( {
+			agentProviders: [ { useCheckpoint: firstHook }, { useCheckpoint: secondHook } ],
+		} );
+
+		const providers = await loadExternalProviders();
+		const checkpoint = providers.useCheckpoint?.();
+
+		// Every provider's hook runs so each one can register its store.
+		expect( firstHook ).toHaveBeenCalled();
+		expect( secondHook ).toHaveBeenCalled();
+
+		// An id owned by the second provider is visible, restored by its owner
+		// (not the first provider), and cleared only from the owning store.
+		expect( checkpoint?.hasCheckpoint( 'second-cp' ) ).toBe( true );
+		await checkpoint?.restoreCheckpoint( 'second-cp' );
+		expect( secondReturn.restoreCheckpoint ).toHaveBeenCalledWith( 'second-cp' );
+		expect( firstReturn.restoreCheckpoint ).not.toHaveBeenCalled();
+		checkpoint?.clearCheckpoint( 'second-cp' );
+		expect( secondReturn.clearCheckpoint ).toHaveBeenCalledWith( 'second-cp' );
+		expect( firstReturn.clearCheckpoint ).not.toHaveBeenCalled();
+
+		// Unknown ids stay invisible and restore is a no-op.
+		expect( checkpoint?.hasCheckpoint( 'missing-cp' ) ).toBe( false );
+		await checkpoint?.restoreCheckpoint( 'missing-cp' );
+		expect( firstReturn.restoreCheckpoint ).not.toHaveBeenCalled();
+		expect( secondReturn.restoreCheckpoint ).toHaveBeenCalledTimes( 1 );
+
+		// All other methods keep delegating to the first provider.
+		expect( checkpoint?.getLastEditorState() ).toBe( 'first-editor-state' );
+		checkpoint?.setCheckpoint( 'new-cp', [ 'title' ] );
+		expect( firstReturn.setCheckpoint ).toHaveBeenCalledWith( 'new-cp', [ 'title' ] );
+		expect( secondReturn.setCheckpoint ).not.toHaveBeenCalled();
+	} );
+
+	it( 'passes a single provider checkpoint hook through unchanged', async () => {
+		const hook = jest.fn( () => createCheckpointReturn() );
+		setAgentsManagerData( {
+			agentProviders: [ { useCheckpoint: hook } ],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.useCheckpoint ).toBe( hook );
+	} );
+
+	it( 'skips providers without a checkpoint hook when composing', async () => {
+		const hook = jest.fn( () => createCheckpointReturn() );
+		setAgentsManagerData( {
+			agentProviders: [ { getEmptyViewSuggestions: () => [] }, { useCheckpoint: hook } ],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.useCheckpoint ).toBe( hook );
+	} );
+
+	it( 'leaves useCheckpoint undefined when no provider exports one', async () => {
+		setAgentsManagerData( {
+			agentProviders: [ { getEmptyViewSuggestions: () => [] } ],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.useCheckpoint ).toBeUndefined();
 	} );
 } );
 
