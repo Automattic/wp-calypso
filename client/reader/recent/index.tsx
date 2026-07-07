@@ -332,7 +332,9 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 		if ( isWide && streamItems.length > 0 && view.page && view.perPage ) {
 			// A per-page change wants to keep the current selection. The new page has
 			// now loaded (streamItems is non-empty), so consume the flag and leave the
-			// selection untouched.
+			// selection untouched. (On a narrow viewport this branch never runs, so the
+			// flag lingers until the next wide-viewport pass, where it's consumed
+			// harmlessly — it only ever preserves the current selection.)
 			if ( preserveSelectionRef.current ) {
 				preserveSelectionRef.current = false;
 				if ( selectedItemRef.current ) {
