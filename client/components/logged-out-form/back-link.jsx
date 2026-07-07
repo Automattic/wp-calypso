@@ -7,6 +7,9 @@ import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
 
 import './link-item.scss';
 
+/**
+ * @param {{ locale?: string; oauth2Client?: Object; recordClick: Function; classes?: Object; }} props
+ */
 export default function LoggedOutFormBackLink( { locale, oauth2Client, recordClick, classes } ) {
 	const translate = useTranslate();
 

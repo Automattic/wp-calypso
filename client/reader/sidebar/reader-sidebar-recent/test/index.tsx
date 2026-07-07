@@ -47,4 +47,49 @@ describe( 'getReaderSidebarSiteName', () => {
 			'Example Site Title'
 		);
 	} );
+
+	test( 'derives an r/subreddit label from the URL for an unresolved subreddit', () => {
+		expect(
+			getReaderSidebarSiteName( {
+				name: '',
+				URL: 'https://www.reddit.com/r/simracing/.rss',
+			} )
+		).toBe( 'r/simracing' );
+	} );
+
+	test( 'derives a u/user label from a Reddit user URL', () => {
+		expect(
+			getReaderSidebarSiteName( {
+				name: '',
+				URL: 'https://www.reddit.com/user/spez/.rss',
+			} )
+		).toBe( 'u/spez' );
+	} );
+
+	test( 'prefers the r/subreddit handle over the generic reddit.com domain when the title is missing', () => {
+		expect(
+			getReaderSidebarSiteName( {
+				name: '',
+				URL: 'https://www.reddit.com/r/simracing/',
+			} )
+		).toBe( 'r/simracing' );
+	} );
+
+	test( 'keeps the resolved title for a subreddit once it has one', () => {
+		expect(
+			getReaderSidebarSiteName( {
+				name: 'SimRacing',
+				URL: 'https://www.reddit.com/r/simracing/',
+			} )
+		).toBe( 'SimRacing' );
+	} );
+
+	test( 'does not treat a reddit.com look-alike host as Reddit', () => {
+		expect(
+			getReaderSidebarSiteName( {
+				name: '',
+				URL: 'https://fakereddit.com/r/simracing/',
+			} )
+		).toBe( 'fakereddit.com' );
+	} );
 } );

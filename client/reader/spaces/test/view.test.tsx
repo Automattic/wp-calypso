@@ -10,6 +10,14 @@ import { SpacesView } from '../view';
 import type { ReadSpaceDetails } from '@automattic/api-core';
 
 const mockSpaceFeed = jest.fn< null, [ unknown ] >( () => null );
+// When set, overrides the single-space detail hook's `error` so tests can drive
+// the not-available branch; otherwise the real (cache-backed) hook is used.
+const mockSpaceError: { current: unknown } = { current: undefined };
+
+// A wpcom-shaped error (an Error with numeric status/statusCode), matching what
+// `isWpError` recognizes in production.
+const wpError = ( status: number ) =>
+	Object.assign( new Error( `HTTP ${ status }` ), { status, statusCode: status } );
 const mockRecordReaderTracksEvent: jest.Mock = jest.fn( () => ( {
 	type: 'TEST_TRACKS_EVENT',
 } ) );
@@ -28,6 +36,22 @@ jest.mock( 'calypso/reader/spaces/feed', () => ( {
 jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
 	recordReaderTracksEvent: ( ...args: unknown[] ) => mockRecordReaderTracksEvent( ...args ),
 } ) );
+
+// Keep the data hooks real (they read the seeded cache, and the Customize modal
+// relies on the detail hook); only override the detail hook's `error` when a test
+// opts in via `mockSpaceError`.
+jest.mock( 'calypso/reader/data/spaces', () => {
+	const actual = jest.requireActual( 'calypso/reader/data/spaces' );
+	return {
+		...actual,
+		useSpace: ( ...args: Parameters< typeof actual.useSpace > ) => {
+			const result = actual.useSpace( ...args );
+			return mockSpaceError.current !== undefined
+				? { ...result, error: mockSpaceError.current }
+				: result;
+		},
+	};
+} );
 
 // Keep the rest of the module real (ReaderMain's global handlers use `useFollowSite`);
 // only stub the subscriptions list the Sources tab reads.
@@ -75,6 +99,7 @@ describe( 'SpacesView', () => {
 		window.history.replaceState( {}, '', '/reader/spaces' );
 		mockSpaceFeed.mockClear();
 		mockRecordReaderTracksEvent.mockClear();
+		mockSpaceError.current = undefined;
 	} );
 
 	it( 'shows the Customize button on a space detail page', () => {
@@ -222,5 +247,41 @@ describe( 'SpacesView', () => {
 		expect( mockSpaceFeed ).toHaveBeenCalledWith(
 			expect.objectContaining( { spaceId: WORK.id, variant: 'discover' } )
 		);
+	} );
+
+	it.each( [ 404, 403 ] )(
+		'shows a not-available message and no feed when the space call returns %i',
+		( status ) => {
+			mockSpaceError.current = wpError( status );
+
+			render( <SpacesView id="missing" /> );
+
+			expect( screen.getByRole( 'heading', { name: /isn.t available/i } ) ).toBeVisible();
+			expect( screen.getByRole( 'link', { name: 'Back to Reader' } ) ).toBeVisible();
+			expect( mockSpaceFeed ).not.toHaveBeenCalled();
+		}
+	);
+
+	it( 'records a page error event with the failing status', async () => {
+		mockSpaceError.current = wpError( 404 );
+
+		render( <SpacesView id="missing" /> );
+
+		await waitFor( () =>
+			expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+				'calypso_reader_spaces_page_error',
+				{ space_id: 'missing', status: 404 }
+			)
+		);
+	} );
+
+	it( 'keeps rendering the space on a transient (non-4xx) detail error', () => {
+		mockSpaceError.current = wpError( 500 );
+
+		render( <SpacesView id={ WORK.id } /> );
+
+		expect( screen.queryByRole( 'heading', { name: /isn.t available/i } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Customize' } ) ).toBeVisible();
+		expect( mockSpaceFeed ).toHaveBeenCalled();
 	} );
 } );

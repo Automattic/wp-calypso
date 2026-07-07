@@ -33,17 +33,29 @@ type ReaderSidebarSite = Pick< ReturnType< typeof useSubscribedSites >[ number ]
 const isFreeWpcomSubdomain = ( host = '' ): boolean => /\.wordpress\.com$/i.test( host );
 
 /**
- * Best label for a followed site in the Reader sidebar. Untitled sites are
- * named after their free WordPress.com subdomain (with a trailing slash), so
- * prefer the real domain from `URL` in that case.
+ * Label for a followed site: real title, else an `r/subreddit` handle, else the
+ * resolved domain. Untitled WordPress.com sites come back named after their free
+ * subdomain, so those fall through to the domain from `URL`.
  */
 export function getReaderSidebarSiteName( site: ReaderSidebarSite ): string {
-	const siteDomain = site.URL ? getSiteDomain( { site: { URL: site.URL } } ) : undefined;
 	const siteName = site.name ?? '';
 	// `name` may be URL-shaped, so normalize before the subdomain check.
 	const normalizedName = formatUrlForDisplay( siteName ) || siteName;
 
-	if ( ( ! siteName || isFreeWpcomSubdomain( normalizedName ) ) && siteDomain ) {
+	if ( siteName && ! isFreeWpcomSubdomain( normalizedName ) ) {
+		return siteName;
+	}
+
+	// A title-less subreddit reads best as its `r/name` (or `u/name`) handle, since
+	// every subreddit resolves to the same generic `reddit.com` domain. The host is
+	// anchored so only genuine `reddit.com` feeds qualify.
+	const reddit = site.URL?.match( /^https?:\/\/(?:[^/]+\.)?reddit\.com\/(r|user)\/([^/?#]+)/i );
+	if ( reddit ) {
+		return `${ reddit[ 1 ].toLowerCase() === 'user' ? 'u' : 'r' }/${ reddit[ 2 ] }`;
+	}
+
+	const siteDomain = site.URL ? getSiteDomain( { site: { URL: site.URL } } ) : undefined;
+	if ( siteDomain ) {
 		return siteDomain;
 	}
 

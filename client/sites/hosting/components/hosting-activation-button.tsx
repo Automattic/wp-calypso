@@ -5,9 +5,14 @@ import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
+import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import { HostingHeroButton } from 'calypso/components/hosting-hero';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import {
+	getEligibility,
+	isEligibleForAutomatedTransfer,
+} from 'calypso/state/automated-transfer/selectors';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { ComponentProps } from 'react';
@@ -30,6 +35,17 @@ export default function HostingActivationButton( {
 
 	const siteId = useSelector( getSelectedSiteId );
 	const hasSftpFeature = useSelector( ( state ) => siteHasFeature( state, siteId, FEATURE_SFTP ) );
+
+	// Resolve eligibility up front so a click can skip the modal when there is
+	// nothing to surface. A cleanly eligible site starts the transfer directly,
+	// using the optimal (default) data center.
+	const eligibility = useSelector( ( state ) => getEligibility( state, siteId ) );
+	const isEligible = useSelector( ( state ) => isEligibleForAutomatedTransfer( state, siteId ) );
+	const canStartTransferDirectly =
+		!! eligibility.lastUpdate &&
+		isEligible &&
+		( eligibility.eligibilityHolds?.length ?? 0 ) === 0 &&
+		( eligibility.eligibilityWarnings?.length ?? 0 ) === 0;
 
 	const handleTransfer = ( options: { geo_affinity?: string } ) => {
 		dispatch( recordTracksEvent( 'calypso_hosting_features_activate_confirm' ) );
@@ -61,6 +77,7 @@ export default function HostingActivationButton( {
 
 	return (
 		<>
+			{ siteId && <QueryEligibility siteId={ siteId } /> }
 			<HostingHeroButton
 				{ ...props }
 				text={ text ?? translate( 'Activate now' ) }
@@ -72,8 +89,13 @@ export default function HostingActivationButton( {
 					dispatch(
 						recordTracksEvent( 'calypso_dashboard_hosting_feature_activation_click', {
 							path,
+							show_modal: ! canStartTransferDirectly,
 						} )
 					);
+
+					if ( canStartTransferDirectly ) {
+						return handleTransfer( {} );
+					}
 
 					return setShowEligibility( true );
 				} }
