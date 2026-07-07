@@ -27,7 +27,10 @@ cd desktop
 corepack enable
 yarn install --immutable --inline-builds
 
-bundle install
+echo "--- :ruby: Setting up Ruby tooling"
+install_gems
+
+echo "--- Configuring code signing"
 bundle exec fastlane configure_code_signing
 
 # Notarize and staple the `.app` inside electron-builder's afterSign hook

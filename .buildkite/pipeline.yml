@@ -16,6 +16,7 @@ steps:
       IMAGE_ID: xcode-26.6
     plugins:
       - automattic/nvm#0.6.0
+      - automattic/a8c-ci-toolkit#6.1.0
     command: .buildkite/commands/build-desktop-mac.sh
     artifact_paths:
       - desktop/release/*.zip
