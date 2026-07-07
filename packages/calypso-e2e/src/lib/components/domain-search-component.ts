@@ -1,5 +1,6 @@
 import { Locator, Page, Response } from 'playwright';
 import { reloadAndRetry, waitForElementEnabled } from '../../element-helper';
+import { flakeProbe, capturePageState } from '../flake-probe';
 
 type CartResponseDiagnostic = {
 	method: string;
@@ -253,7 +254,15 @@ export class DomainSearchComponent {
 		row: Locator,
 		waitForContinueButton: boolean = true
 	): Promise< string | null > {
-		await row.waitFor();
+		try {
+			await row.waitFor();
+		} catch ( error ) {
+			flakeProbe( 'domainSearch.suggestionRowTimeout', {
+				...( await capturePageState( this.page ) ),
+				error: ( error as Error ).message,
+			} );
+			throw error;
+		}
 
 		// List freshness is guaranteed by search(), which waits for the
 		// suggestions response and for the DOM to reflect it before returning,

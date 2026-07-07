@@ -1,5 +1,6 @@
 import { Locator, Page, Response } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
+import { flakeProbe, capturePageState } from '../flake-probe';
 
 const selectors = {
 	continue: 'button:text("Continue"),a:text("Continue")',
@@ -47,10 +48,18 @@ export class LoginPage {
 		await this.fillUsername( username );
 		await this.clickSubmit();
 		await this.fillPassword( password );
-		await Promise.all( [
-			this.page.waitForNavigation( { timeout: 20 * 1000 } ),
-			this.clickSubmit(),
-		] );
+		try {
+			await Promise.all( [
+				this.page.waitForNavigation( { timeout: 20 * 1000 } ),
+				this.clickSubmit(),
+			] );
+		} catch ( error ) {
+			flakeProbe( 'login.submitNavigationTimeout', {
+				...( await capturePageState( this.page ) ),
+				error: ( error as Error ).message,
+			} );
+			throw error;
+		}
 	}
 
 	/**
@@ -66,7 +75,32 @@ export class LoginPage {
 	 */
 	async fillUsername( value: string ): Promise< Locator > {
 		const locator = await this.page.locator( 'input[name="usernameOrEmail"]' );
-		await locator.fill( value );
+		const startedAtMs = Date.now();
+		const probeFillFailure = async ( label: string, err: unknown ): Promise< void > =>
+			flakeProbe( label, {
+				elapsedMs: Date.now() - startedAtMs,
+				visible: await locator.isVisible().catch( () => null ),
+				enabled: await locator.isEnabled().catch( () => null ),
+				count: await locator.count().catch( () => null ),
+				...( await capturePageState( this.page ) ),
+				error: ( err as Error ).message,
+			} );
+		try {
+			await locator.fill( value );
+		} catch ( firstError ) {
+			// The login input can stay disabled if the page fails to hydrate; a
+			// reload recovers it. Probe the stall, then reload and retry once before
+			// failing, so reload-recoveries are counted separately from hard failures.
+			await probeFillFailure( 'login.fillUsernameDisabledReloading', firstError );
+			await this.page.reload();
+			try {
+				await locator.fill( value );
+			} catch ( error ) {
+				await probeFillFailure( 'login.fillUsernameTimeout', error );
+				throw error;
+			}
+		}
+		flakeProbe( 'login.fillUsername', { elapsedMs: Date.now() - startedAtMs } );
 
 		return locator;
 	}

@@ -27,6 +27,8 @@ import {
 	CookieBannerComponent,
 	EditorToolbarSettingsButton,
 } from '../components';
+import { flakeProbe } from '../flake-probe';
+import { armResponseCapture } from '../response-capture';
 import { BlockInserter, OpenInlineInserter } from './shared-types';
 import type {
 	EditorPreviewOptions,
@@ -1129,32 +1131,67 @@ export class EditorPage {
 		);
 
 		// Resolve the promises.
-		let publishedAtMs: number | undefined;
-		const [ response ] = await Promise.all( [
-			// First URL matches Atomic requests while the second matches Simple requests.
-			Promise.race( [
-				this.page.waitForResponse(
-					async ( response ) =>
-						/v2\/(posts|pages)\/[\d]+/.test( response.url() ) &&
-						response.request().method() === 'POST',
-					{ timeout: timeout }
-				),
-				this.page.waitForResponse(
-					async ( response ) =>
-						/.*v2\/sites\/[\d]+\/(posts|pages)\/[\d]+.*/.test( response.url() ) &&
-						response.request().method() === 'PUT',
-					{ timeout: timeout }
-				),
-			] ).then( ( publishResponse ) => {
-				// Captured the moment the publish response arrives, before the remaining
-				// publish-panel actions settle, so the probe measures the full window.
-				publishedAtMs = Date.now();
-				return publishResponse;
-			} ),
-			...actionsArray,
-		] );
+		// Capture the publish response body via request interception. Playwright reads
+		// bodies lazily over CDP; in publish-then-navigate flows (start-writing redirects
+		// to the launchpad on publish) a deferred response.json() races the navigation,
+		// which evicts the resource and fails with "No resource with given identifier
+		// found". route.fetch() buffers the body in the driver, immune to that eviction.
+		// Arm it before the publish actions trigger the request.
+		const bodyCapture = await armResponseCapture(
+			this.page,
+			/v2\/(posts|pages)\/\d+|v2\/sites\/\d+\/(posts|pages)\/\d+/,
+			( request ) => {
+				const url = request.url();
+				const method = request.method();
+				return (
+					( /v2\/(posts|pages)\/[\d]+/.test( url ) && method === 'POST' ) ||
+					( /v2\/sites\/[\d]+\/(posts|pages)\/[\d]+/.test( url ) && method === 'PUT' )
+				);
+			},
+			{ timeout: timeout }
+		);
 
-		const json = ( await response.json() ) as PublishResponseBody;
+		let publishedAtMs: number | undefined;
+		let response!: Response;
+		let json!: PublishResponseBody;
+		try {
+			// First URL matches Atomic requests while the second matches Simple requests.
+			[ response ] = await Promise.all( [
+				Promise.race( [
+					this.page.waitForResponse(
+						async ( response ) =>
+							/v2\/(posts|pages)\/[\d]+/.test( response.url() ) &&
+							response.request().method() === 'POST',
+						{ timeout: timeout }
+					),
+					this.page.waitForResponse(
+						async ( response ) =>
+							/.*v2\/sites\/[\d]+\/(posts|pages)\/[\d]+.*/.test( response.url() ) &&
+							response.request().method() === 'PUT',
+						{ timeout: timeout }
+					),
+				] ).then( ( publishResponse ) => {
+					publishedAtMs = Date.now();
+					return publishResponse;
+				} ),
+				...actionsArray,
+			] );
+
+			try {
+				json = JSON.parse( await bodyCapture.body ) as PublishResponseBody;
+			} catch ( error ) {
+				flakeProbe( 'publish.responseBodyUnavailable', {
+					status: response.status(),
+					method: response.request().method(),
+					url: sanitizeURLForDiagnostics( response.url() ),
+					msSincePublishResponse: publishedAtMs !== undefined ? Date.now() - publishedAtMs : null,
+					error: ( error as Error ).message,
+				} );
+				throw error;
+			}
+		} finally {
+			await bodyCapture.dispose();
+		}
 		// AT and Simple sites have slightly differing response from the API.
 		const publishedURL = json.link || json.body?.link;
 		if ( ! publishedURL ) {

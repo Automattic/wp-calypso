@@ -1,5 +1,6 @@
 import { Page } from 'playwright';
 import { DataHelper } from '../..';
+import { flakeProbe, capturePageState } from '../flake-probe';
 
 const selectors = {
 	// Generic
@@ -159,7 +160,16 @@ export class StartImportFlow {
 	 * Validates that we've landed on the importer drag page.
 	 */
 	async validateImporterDragPage( importer: string ): Promise< void > {
-		await this.page.locator( selectors.importerDrag( importer ) ).waitFor( { timeout: 60_000 } );
+		try {
+			await this.page.locator( selectors.importerDrag( importer ) ).waitFor( { timeout: 60_000 } );
+		} catch ( error ) {
+			flakeProbe( 'importer.dragPageTimeout', {
+				importer,
+				...( await capturePageState( this.page ) ),
+				error: ( error as Error ).message,
+			} );
+			throw error;
+		}
 	}
 
 	/**

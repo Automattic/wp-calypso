@@ -1,4 +1,8 @@
-import type { MyAccountInformationResponse, RestAPIClient } from '@automattic/calypso-e2e';
+import {
+	flakeProbe,
+	type MyAccountInformationResponse,
+	type RestAPIClient,
+} from '@automattic/calypso-e2e';
 
 const POLL_INTERVAL = 1000;
 const POLL_TIMEOUT = 30 * 1000;
@@ -63,6 +67,11 @@ async function pollMyAccountInformation(
 		}
 		await new Promise( ( resolve ) => setTimeout( resolve, POLL_INTERVAL ) );
 	}
+	flakeProbe( 'apiPropagation.timeout', {
+		message: timeoutMessage,
+		lastError: String( lastError ),
+		pollTimeoutMs: POLL_TIMEOUT,
+	} );
 	throw new Error( lastError ? `${ timeoutMessage } Last error: ${ lastError }` : timeoutMessage );
 }
 

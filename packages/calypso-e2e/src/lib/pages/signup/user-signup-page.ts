@@ -1,5 +1,6 @@
 import { Page, Locator, Frame } from 'playwright';
 import { getCalypsoURL } from '../../../data-helper';
+import { armResponseCapture } from '../../response-capture';
 import type { NewSiteResponse, NewUserResponse } from '../../../types/rest-api-client.types';
 
 /**
@@ -460,18 +461,19 @@ export class UserSignupPage {
 			this.page.on( 'framenavigated', handler );
 		} );
 
-		// Ensure response is captured correctly
-		const responsePromise = this.page.waitForResponse( /\/users\/new\?[^?]*$/ );
-		await this.submitButton.click();
-
-		const [ response ] = await Promise.all( [ responsePromise, redirectDetected ] );
-
-		if ( ! response ) {
-			throw new Error( 'Failed to create new user at WooCommerce using WPCC.' );
+		// Capture the /users/new body via interception: the redirect to
+		// woocommerce.com evicts the page response before response.json() can read it,
+		// so read it from route.fetch() (buffered in the driver) instead.
+		const bodyCapture = await armResponseCapture( this.page, /\/users\/new\?/, ( request ) =>
+			/\/users\/new\?[^?]*$/.test( request.url() )
+		);
+		try {
+			await this.submitButton.click();
+			const [ text ] = await Promise.all( [ bodyCapture.body, redirectDetected ] );
+			return JSON.parse( text ) as NewUserResponse;
+		} finally {
+			await bodyCapture.dispose();
 		}
-
-		const responseBody: NewUserResponse = await response.json();
-		return responseBody;
 	}
 
 	/**

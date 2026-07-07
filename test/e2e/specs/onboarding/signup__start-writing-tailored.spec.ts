@@ -1,4 +1,10 @@
-import { NewTestUserDetails, NewUserResponse, RestAPIClient } from '@automattic/calypso-e2e';
+import {
+	NewTestUserDetails,
+	NewUserResponse,
+	RestAPIClient,
+	flakeProbe,
+	capturePageState,
+} from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 import { apiCloseAccount } from '../shared';
 
@@ -113,10 +119,18 @@ test.describe(
 				// The plans grid renders after the step transition, so the
 				// free-plan button can appear later than the 10s action timeout.
 				// Wait explicitly before clicking.
-				await flowStartWriting.startWithFreePlanButton.waitFor( {
-					state: 'visible',
-					timeout: 30 * 1000,
-				} );
+				try {
+					await flowStartWriting.startWithFreePlanButton.waitFor( {
+						state: 'visible',
+						timeout: 30 * 1000,
+					} );
+				} catch ( error ) {
+					flakeProbe( 'startWriting.freePlanButtonTimeout', {
+						...( await capturePageState( page ) ),
+						error: ( error as Error ).message,
+					} );
+					throw error;
+				}
 				await flowStartWriting.startWithFreePlanButton.click();
 			} );
 

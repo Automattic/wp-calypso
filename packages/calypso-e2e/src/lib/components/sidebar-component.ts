@@ -1,6 +1,7 @@
 import { Page } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 import envVariables from '../../env-variables';
+import { flakeProbe, capturePageState } from '../flake-probe';
 import { NavbarComponent } from './navbar-component';
 
 type FocusType = 'Sites' | 'Sidebar';
@@ -39,10 +40,18 @@ export class SidebarComponent {
 	async waitForSidebarInitialization(): Promise< void > {
 		const sidebarLocator = this.page.locator( `${ selectors.sidebar }, .global-sidebar` ).first();
 
-		await Promise.all( [
-			this.page.waitForLoadState( 'load', { timeout: 20 * 1000 } ),
-			sidebarLocator.waitFor( { timeout: 20 * 1000 } ),
-		] );
+		try {
+			await Promise.all( [
+				this.page.waitForLoadState( 'load', { timeout: 20 * 1000 } ),
+				sidebarLocator.waitFor( { timeout: 20 * 1000 } ),
+			] );
+		} catch ( error ) {
+			flakeProbe( 'sidebar.initializationTimeout', {
+				...( await capturePageState( this.page ) ),
+				error: ( error as Error ).message,
+			} );
+			throw error;
+		}
 
 		// If the sidebar is collapsed (via the Collapse Menu toggle),
 		// re-expand the sidebar.
