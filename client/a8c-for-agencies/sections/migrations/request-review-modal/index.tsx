@@ -3,18 +3,23 @@ import {
 	requestMigrationReverificationMutation,
 } from '@automattic/api-queries';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Button, TextareaControl } from '@wordpress/components';
+import {
+	Button,
+	Modal,
+	TextareaControl,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+} from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
-import A4AModal from 'calypso/a8c-for-agencies/components/a4a-modal';
+import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import type { TaggedSite } from '../types';
-
-import './style.scss';
 
 export default function RequestReviewModal( {
 	onClose,
@@ -26,6 +31,7 @@ export default function RequestReviewModal( {
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const agencyId = useSelector( getActiveAgencyId );
+	useMinimizeHelpCenterOnMount();
 
 	const { mutate: requestReview, isPending } = useMutation(
 		requestMigrationReverificationMutation( agencyId )
@@ -84,36 +90,44 @@ export default function RequestReviewModal( {
 	};
 
 	return (
-		<A4AModal
-			onClose={ handleOnClose }
-			className="request-review-modal"
-			extraActions={
-				<Button
-					variant="primary"
-					onClick={ handleSubmit }
-					disabled={ isPending || ! isValid }
-					isBusy={ isPending }
-				>
-					{ __( 'Submit request' ) }
-				</Button>
-			}
+		<Modal
 			title={ __( 'Request another verification' ) }
-			subtile={ createInterpolateElement(
-				sprintf(
-					/* translators: %s: the site URL */
-					__( 'Please specify why <strong>%s</strong> needs to be verified again.' ),
-					site.url
-				),
-				{ strong: <strong /> }
-			) }
+			onRequestClose={ handleOnClose }
+			size="medium"
 		>
-			<TextareaControl
-				label={ __( 'Reason for re-verification' ) }
-				value={ reason }
-				onChange={ setReason }
-				placeholder={ __( 'Describe why this site needs to be verified again' ) }
-				rows={ 4 }
-			/>
-		</A4AModal>
+			<VStack spacing={ 4 }>
+				<Text>
+					{ createInterpolateElement(
+						sprintf(
+							/* translators: %s: the site URL */
+							__( 'Please specify why <strong>%s</strong> needs to be verified again.' ),
+							site.url
+						),
+						{ strong: <strong /> }
+					) }
+				</Text>
+				<TextareaControl
+					__nextHasNoMarginBottom
+					label={ __( 'Reason for re-verification' ) }
+					value={ reason }
+					onChange={ setReason }
+					placeholder={ __( 'Describe why this site needs to be verified again' ) }
+					rows={ 4 }
+				/>
+				<HStack justify="flex-end" spacing={ 3 }>
+					<Button variant="tertiary" onClick={ handleOnClose }>
+						{ __( 'Cancel' ) }
+					</Button>
+					<Button
+						variant="primary"
+						onClick={ handleSubmit }
+						disabled={ isPending || ! isValid }
+						isBusy={ isPending }
+					>
+						{ __( 'Submit request' ) }
+					</Button>
+				</HStack>
+			</VStack>
+		</Modal>
 	);
 }

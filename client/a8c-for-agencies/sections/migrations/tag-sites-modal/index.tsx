@@ -5,15 +5,18 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	Button,
+	Modal,
 	SelectControl,
 	TextControl,
-	__experimentalSpacer as Spacer,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import { useState } from 'react';
-import A4AModal from 'calypso/a8c-for-agencies/components/a4a-modal';
+import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -37,6 +40,7 @@ export default function MigrationsTagSitesModal( {
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const agencyId = useSelector( getActiveAgencyId );
+	useMinimizeHelpCenterOnMount();
 
 	const { mutate: tagSitesForMigration, isPending } = useMutation(
 		tagAgencySitesForCommissionMutation( agencyId )
@@ -142,61 +146,65 @@ export default function MigrationsTagSitesModal( {
 		  '';
 
 	return (
-		<A4AModal
-			onClose={ handleOnClose }
-			extraActions={
-				<Button
-					variant="primary"
-					onClick={ handleAddSites }
-					disabled={ isPending || ! isValidHostingProvider || selectedSites.length === 0 }
-					isBusy={ isPending }
-				>
-					{ selectedSites.length > 0
-						? sprintf(
-								/* translators: %d: the number of sites selected */
-								_n( 'Add %d site', 'Add %d sites', selectedSites.length ),
-								selectedSites.length
-						  )
-						: __( 'Add sites' ) }
-				</Button>
-			}
+		<Modal
 			title={ __( 'Tag your transferred sites for commission.' ) }
-			subtile={ __( 'Select the sites you moved on your own.' ) }
+			onRequestClose={ handleOnClose }
+			size="large"
 		>
-			<div className="migrations-tag-sites-modal__instruction">
-				<Icon size={ 18 } icon={ info } />
-				{ preventWidows(
-					__(
-						"Can't find your transferred site? Ensure the Automattic for Agencies plugin is connected in WP-Admin to display the site here."
-					)
-				) }
-			</div>
-			<Spacer marginBottom={ 4 } />
-			<SelectControl
-				label={ __( 'Hosting provider' ) }
-				value={ migrationSourceHost }
-				options={ migrationSourceOptions }
-				onChange={ handleMigrationSourceHostChange }
-			/>
-			{ isOtherSelected && (
-				<>
-					<Spacer marginBottom={ 4 } />
+			<VStack spacing={ 4 }>
+				<Text>{ __( 'Select the sites you moved on your own.' ) }</Text>
+				<div className="migrations-tag-sites-modal__instruction">
+					<Icon size={ 18 } icon={ info } />
+					{ preventWidows(
+						__(
+							"Can't find your transferred site? Ensure the Automattic for Agencies plugin is connected in WP-Admin to display the site here."
+						)
+					) }
+				</div>
+				<SelectControl
+					__nextHasNoMarginBottom
+					label={ __( 'Hosting provider' ) }
+					value={ migrationSourceHost }
+					options={ migrationSourceOptions }
+					onChange={ handleMigrationSourceHostChange }
+				/>
+				{ isOtherSelected && (
 					<TextControl
+						__nextHasNoMarginBottom
 						label={ __( 'Other hosting provider' ) }
 						value={ otherHostingProvider }
 						onChange={ setOtherHostingProvider }
 						placeholder={ __( 'Enter hosting provider name' ) }
 					/>
-				</>
-			) }
-			{ isValidHostingProvider && (
-				<MigrationsAddSitesTable
-					taggedSites={ taggedSites }
-					selectedSites={ selectedSites }
-					setSelectedSites={ setSelectedSites }
-					migrationSourceHost={ selectedMigrationSourceHost }
-				/>
-			) }
-		</A4AModal>
+				) }
+				{ isValidHostingProvider && (
+					<MigrationsAddSitesTable
+						taggedSites={ taggedSites }
+						selectedSites={ selectedSites }
+						setSelectedSites={ setSelectedSites }
+						migrationSourceHost={ selectedMigrationSourceHost }
+					/>
+				) }
+				<HStack justify="flex-end" spacing={ 3 }>
+					<Button variant="tertiary" onClick={ handleOnClose }>
+						{ __( 'Cancel' ) }
+					</Button>
+					<Button
+						variant="primary"
+						onClick={ handleAddSites }
+						disabled={ isPending || ! isValidHostingProvider || selectedSites.length === 0 }
+						isBusy={ isPending }
+					>
+						{ selectedSites.length > 0
+							? sprintf(
+									/* translators: %d: the number of sites selected */
+									_n( 'Add %d site', 'Add %d sites', selectedSites.length ),
+									selectedSites.length
+							  )
+							: __( 'Add sites' ) }
+					</Button>
+				</HStack>
+			</VStack>
+		</Modal>
 	);
 }
