@@ -36,9 +36,6 @@ const loadReaderFullPost = () =>
 		/* webpackChunkName: "async-load-calypso-blocks-reader-full-post" */ 'calypso/blocks/reader-full-post'
 	);
 
-// Re-exported for existing importers (the key builder now lives in `./utils`).
-export { getStreamItemKey } from './utils';
-
 interface RecentProps {
 	viewToggle?: React.ReactNode;
 }

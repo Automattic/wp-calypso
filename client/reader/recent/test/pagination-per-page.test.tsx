@@ -46,10 +46,12 @@ jest.mock( '@wordpress/dataviews', () => {
 			onChangeView: ( view: Record< string, unknown > ) => void;
 			onChangeSelection: ( selection: string[] ) => void;
 		} ) => {
-			// Emulate DataViews' keep-previous-data: while a refetch is in flight
-			// with no fresh rows, it keeps the previously shown rows mounted (dimmed
-			// via `is-refreshing`). This is what exposes the blank-list regression
-			// when row content can no longer resolve during the refetch.
+			// Optimistically emulate DataViews' keep-previous-data: while a refetch
+			// is in flight with no fresh rows, keep the previously shown rows mounted
+			// (dimmed via `is-refreshing`). Real DataViews also snapshots an empty
+			// `shownData` on a settled commit, so this row retention is NOT guaranteed
+			// in production — the mock keeps rows here so the content-fallback path
+			// (`getPostFromItem` -> `previousPostsRef`) can be exercised in isolation.
 			const previousDataRef = React.useRef( data );
 			if ( ! isLoading && data.length > 0 ) {
 				previousDataRef.current = data;
@@ -281,9 +283,15 @@ describe( 'Recent per-page pagination', () => {
 		expect( screen.queryByTestId( 'recent-post-skeleton' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'keeps the sidebar list populated during a per-page refetch', async () => {
+	it( 'preserves row content via the previous-posts fallback when rows are kept during a per-page refetch', async () => {
 		const user = userEvent.setup();
 		const { queryClient } = renderRecent();
+
+		// Scope: this verifies the content-fallback that `Recent` owns
+		// (`getPostFromItem` -> `previousPostsRef`), given the rows stay mounted.
+		// Whether DataViews actually keeps the rows mounted during the refetch is
+		// its own keep-previous behavior and is not guaranteed in production; the
+		// mock retains the rows so the fallback path can be asserted in isolation.
 
 		// Seed the canonical cache for the first two stream items so their rows
 		// render titles.
@@ -320,8 +328,8 @@ describe( 'Recent per-page pagination', () => {
 
 		await user.click( screen.getByTestId( 'change-per-page' ) );
 
-		// The previously loaded rows keep their content (resolved from the last
-		// non-empty posts map) instead of the list going blank while loading.
+		// The retained rows keep their content (resolved from the last non-empty
+		// posts map) instead of rendering as blank rows while loading.
 		expect( screen.getByText( 'Post A' ) ).toBeVisible();
 		expect( screen.getByText( 'Post B' ) ).toBeVisible();
 	} );
