@@ -32,8 +32,10 @@ type ReaderSidebarSite = Pick< ReturnType< typeof useSubscribedSites >[ number ]
 
 const isFreeWpcomSubdomain = ( host = '' ): boolean => /\.wordpress\.com$/i.test( host );
 
-// A title-less subreddit reads best as its `r/name` (or `u/name`) handle, since
-// every subreddit resolves to the same generic `reddit.com` domain.
+/**
+ * A title-less subreddit reads best as its `r/name` (or `u/name`) handle, since
+ * every subreddit resolves to the same generic `reddit.com` domain.
+ */
 function getRedditFeedLabel( feedUrl?: string ): string | undefined {
 	const match = feedUrl?.match( /reddit\.com\/(r|user)\/([^/?#]+)/i );
 	if ( ! match ) {
@@ -44,9 +46,11 @@ function getRedditFeedLabel( feedUrl?: string ): string | undefined {
 	return `${ prefix }/${ match[ 2 ] }`;
 }
 
-// Label for a followed site: real title, else an `r/subreddit` handle, else the
-// resolved domain. Untitled WordPress.com sites come back named after their free
-// subdomain, so those fall through to the domain from `URL`.
+/**
+ * Label for a followed site: real title, else an `r/subreddit` handle, else the
+ * resolved domain. Untitled WordPress.com sites come back named after their free
+ * subdomain, so those fall through to the domain from `URL`.
+ */
 export function getReaderSidebarSiteName( site: ReaderSidebarSite ): string {
 	const siteName = site.name ?? '';
 	// `name` may be URL-shaped, so normalize before the subdomain check.
