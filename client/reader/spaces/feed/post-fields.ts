@@ -1,7 +1,13 @@
 import { keyForPost, keyToString } from 'calypso/reader/post-key';
 import { getPostUrl } from 'calypso/reader/route';
-import type { ReadStreamPost } from '@automattic/api-core';
-import type { Post } from 'calypso/reader/data/post/cache';
+import type { ReadPost, ReadStreamPost } from '@automattic/api-core';
+
+/**
+ * The card's input: a client-normalized post from the cache (`useCachedPost` returns
+ * `Post`, which is assignable to this). Typed as `Partial<ReadPost>` so the display
+ * fields read as their real types rather than `unknown`.
+ */
+type NormalizedPost = Partial< ReadPost >;
 
 /**
  * Day buckets the standard list groups by. The layout maps these to translated
@@ -33,9 +39,6 @@ export interface SpaceFeedPostFields {
 	isUnread: boolean;
 }
 
-const asString = ( value: unknown ): string | undefined =>
-	typeof value === 'string' && value ? value : undefined;
-
 const MS_PER_DAY = 86_400_000;
 
 const startOfDay = ( date: Date ): number =>
@@ -66,12 +69,12 @@ function dayGroupOf( dateIso?: string ): SpaceFeedDayGroup {
 
 /** The day bucket a stream post falls into, for the standard list's date headers. */
 export function getPostDayGroup( post: ReadStreamPost ): SpaceFeedDayGroup {
-	return dayGroupOf( asString( post.date ) );
+	return dayGroupOf( post.date );
 }
 
 /** The blog's domain from `feed_URL` (fallback the post URL), `www.` stripped. */
-function domainOf( post: Post ): string | undefined {
-	const url = asString( post.feed_URL ) ?? asString( post.URL );
+function domainOf( post: NormalizedPost ): string | undefined {
+	const url = post.feed_URL || post.URL;
 	if ( ! url ) {
 		return undefined;
 	}
@@ -82,23 +85,12 @@ function domainOf( post: Post ): string | undefined {
 	}
 }
 
-function imageOf( post: Post ): string | undefined {
+function imageOf( post: NormalizedPost ): string | undefined {
 	// The normalizer already folds the featured image into `canonical_media` (and
 	// drops non-image URLs), so this is the resolved image — no fallback needed.
 	const media = post.canonical_media;
-	if ( media && typeof media === 'object' ) {
-		const { src, mediaType } = media as { src?: unknown; mediaType?: unknown };
-		if ( typeof src === 'string' && src && ( mediaType === undefined || mediaType === 'image' ) ) {
-			return src;
-		}
-	}
-	return undefined;
-}
-
-function authorOf( post: Post ): string | undefined {
-	const author = post.author;
-	if ( author && typeof author === 'object' ) {
-		return asString( ( author as { name?: unknown } ).name );
+	if ( media?.src && ( media.mediaType === undefined || media.mediaType === 'image' ) ) {
+		return media.src;
 	}
 	return undefined;
 }
@@ -107,21 +99,21 @@ function authorOf( post: Post ): string | undefined {
 export function getPostFieldKey( post: ReadStreamPost ): string {
 	return (
 		keyToString( keyForPost( post ) ) ??
-		asString( post.global_ID ) ??
+		post.global_ID ??
 		`post-${ post.site_ID ?? '' }-${ post.feed_ID ?? '' }-${ post.feed_item_ID ?? '' }-${ post.ID }`
 	);
 }
 
-export function getPostFields( post: Post ): SpaceFeedPostFields {
+export function getPostFields( post: NormalizedPost ): SpaceFeedPostFields {
 	return {
-		title: asString( post.title ) ?? asString( post.site_name ) ?? '',
-		excerptHtml: asString( post.better_excerpt ) ?? '',
-		sourceName: asString( post.site_name ) ?? '',
-		authorName: authorOf( post ),
+		title: post.title || post.site_name || '',
+		excerptHtml: post.better_excerpt ?? '',
+		sourceName: post.site_name ?? '',
+		authorName: post.author?.name,
 		imageUrl: imageOf( post ),
-		siteIconUrl: asString( ( post.site_icon as { ico?: unknown } | undefined )?.ico ),
+		siteIconUrl: post.site_icon?.ico,
 		siteDomain: domainOf( post ),
-		publishedDate: asString( post.date ),
+		publishedDate: post.date,
 		postHref: getPostUrl( post ),
 		isUnread: post.is_seen === false,
 	};
