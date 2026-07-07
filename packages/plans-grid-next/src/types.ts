@@ -70,6 +70,7 @@ export type PlansIntent =
 	| 'plans-new-hosted-site'
 	| 'plans-new-hosted-site-business-only'
 	| 'plans-plugins'
+	| 'plans-plugins-lp'
 	| 'plans-jetpack-app'
 	| 'plans-jetpack-app-site-creation'
 	| 'plans-import'

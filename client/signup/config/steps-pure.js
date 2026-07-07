@@ -269,15 +269,17 @@ export function generateSteps( {
 			},
 		},
 
-		'plans-business-with-plugin': {
-			stepName: 'plans-business-with-plugin',
+		'plans-with-plugin': {
+			stepName: 'plans-with-plugin',
 			apiRequestFunction: addWithPluginPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug', 'plugin', 'billing_period' ],
 			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_BUSINESS,
+			props: {
+				// Show the paid plans grid (no free plan) and let the user pick any qualifying plan,
+				// rather than forcing Business. The selected plugin is preserved in the cart.
+				intent: 'plans-plugins-lp',
 			},
 		},
 

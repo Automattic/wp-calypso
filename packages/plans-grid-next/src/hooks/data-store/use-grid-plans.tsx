@@ -194,6 +194,11 @@ export const usePlanTypesWithIntent = ( {
 				TYPE_ECOMMERCE,
 			];
 			break;
+		// Logged-out Plugins marketplace "Get started": plugins run on any paid plan, so offer
+		// all paid plans and no free plan.
+		case 'plans-plugins-lp':
+			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			break;
 		case 'plans-upgrade': {
 			// Show current plan plus all higher-tier plans (upgrade options only)
 			const upgradePlanTypes = [

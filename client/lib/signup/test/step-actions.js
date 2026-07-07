@@ -4,7 +4,12 @@
 
 import nock from 'nock';
 import flows from 'calypso/signup/config/flows';
-import { createSiteWithCart, isDomainFulfilled, isPlanFulfilled } from '../step-actions';
+import {
+	createSiteWithCart,
+	isDomainFulfilled,
+	isPlanFulfilled,
+	getPluginBillingPeriodForPlan,
+} from '../step-actions';
 
 jest.mock( 'calypso/signup/config/steps', () => require( './mocks/signup/config/steps' ) );
 jest.mock( 'calypso/signup/config/flows', () => require( './mocks/signup/config/flows' ) );
@@ -261,5 +266,25 @@ describe( 'isPlanFulfilled()', () => {
 
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
 		expect( submitSignupStep ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'getPluginBillingPeriodForPlan()', () => {
+	it( 'matches the plugin term to a monthly plan', () => {
+		expect( getPluginBillingPeriodForPlan( 'personal-bundle-monthly', 'ANNUALLY' ) ).toBe(
+			'MONTHLY'
+		);
+	} );
+
+	it( 'matches the plugin term to an annual plan', () => {
+		expect( getPluginBillingPeriodForPlan( 'personal-bundle', 'MONTHLY' ) ).toBe( 'ANNUALLY' );
+	} );
+
+	it( 'maps multi-year plans to the annual plugin term', () => {
+		expect( getPluginBillingPeriodForPlan( 'business-bundle-2y', 'MONTHLY' ) ).toBe( 'ANNUALLY' );
+	} );
+
+	it( 'falls back to the CTA billing period when no plan is selected', () => {
+		expect( getPluginBillingPeriodForPlan( undefined, 'ANNUALLY' ) ).toBe( 'ANNUALLY' );
 	} );
 } );

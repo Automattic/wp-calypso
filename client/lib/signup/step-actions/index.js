@@ -1,6 +1,11 @@
 import { getTracksAnonymousUserId, recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { WPCOM_DIFM_LITE, PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
+import {
+	WPCOM_DIFM_LITE,
+	PRODUCT_1GB_SPACE,
+	getPlan,
+	TERM_MONTHLY,
+} from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Site, AddOns } from '@automattic/data-stores';
 import { STORAGE_ADD_ONS } from '@automattic/data-stores/src/add-ons';
@@ -466,6 +471,21 @@ export function submitWebsiteContent( callback, { siteSlug }, step, reduxStore )
 		} );
 }
 
+/**
+ * Maps the plan the user selected to the marketplace plugin's subscription term (MONTHLY or
+ * ANNUALLY), so the plan and plugin terms stay in sync. Multi-year plans use the plugin's annual
+ * term. Falls back to `fallbackBillingPeriod` (the CTA default) when the plan term is unknown.
+ */
+export function getPluginBillingPeriodForPlan( planSlug, fallbackBillingPeriod ) {
+	const planTerm = planSlug ? getPlan( planSlug )?.term : undefined;
+
+	if ( ! planTerm ) {
+		return fallbackBillingPeriod;
+	}
+
+	return planTerm === TERM_MONTHLY ? 'MONTHLY' : 'ANNUALLY';
+}
+
 function findMarketplacePlugin( state, pluginSlug, billingPeriod = '' ) {
 	const plugins = getMarketplaceProducts( state, pluginSlug );
 	const billingPeriodToTerm = {
@@ -597,7 +617,17 @@ export function addWithPluginPlanToCart( callback, dependencies, stepProvidedIte
 	const { cartItems, lastKnownFlow } = stepProvidedItems;
 
 	reduxStore.dispatch( requestProductsList( { type: 'all' } ) ).then( () => {
-		const marketplacePlugin = findMarketplacePlugin( reduxStore.getState(), plugin, billingPeriod );
+		const state = reduxStore.getState();
+
+		// Match the plugin's subscription term to the plan the user picked in the grid, so the
+		// plan and plugin terms don't diverge (billing_period from the CTA is only the default).
+		// Fall back to the CTA term, then to any available plugin variant.
+		const planSlug = getPlanCartItem( cartItems )?.product_slug;
+		const pluginBillingPeriod = getPluginBillingPeriodForPlan( planSlug, billingPeriod );
+
+		const marketplacePlugin =
+			findMarketplacePlugin( state, plugin, pluginBillingPeriod ) ||
+			findMarketplacePlugin( state, plugin );
 		const providedDependencies = { cartItems };
 
 		const newCartItems = [ ...( cartItems ? cartItems : [] ), marketplacePlugin ].filter(
