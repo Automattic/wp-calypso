@@ -194,7 +194,7 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 						<StatsInfoArea>
 							{ isArchiveBreakdownEnabled
 								? translate(
-										'Most viewed {{link}}posts, pages and archive{{/link}}. Learn about what content resonates the most.',
+										'Most viewed posts, pages, and archives. {{link}}Learn more{{/link}} about what content resonates the most.',
 										{
 											comment: '{{link}} links to support documentation.',
 											components: {
