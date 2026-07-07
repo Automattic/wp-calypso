@@ -24,6 +24,26 @@ const HELP_CENTER_STORE = HelpCenter.register();
 
 type ValidationError = 'invalid' | 'rate_limited' | 'unknown';
 
+const classifyValidationError = ( validationError: unknown ): ValidationError => {
+	const { code, status, statusCode, data } = ( validationError ?? {} ) as {
+		code?: string;
+		status?: number;
+		statusCode?: number;
+		data?: { status?: number };
+	};
+	const httpStatus = status ?? statusCode ?? data?.status;
+
+	if ( code === 'invalid_education_student_code' || httpStatus === 400 ) {
+		return 'invalid';
+	}
+
+	if ( code === 'rate_limit_exceeded' || httpStatus === 429 ) {
+		return 'rate_limited';
+	}
+
+	return 'unknown';
+};
+
 const EducationStudentValidation: StepType< {
 	submits: {
 		inviteCodeValidated: true;
@@ -115,15 +135,7 @@ const EducationStudentValidation: StepType< {
 
 			navigation.submit( { inviteCodeValidated: true } );
 		} catch ( validationError ) {
-			const status = ( validationError as { status?: number } )?.status;
-
-			if ( status === 400 ) {
-				failValidation( 'invalid' );
-			} else if ( status === 429 ) {
-				failValidation( 'rate_limited' );
-			} else {
-				failValidation( 'unknown' );
-			}
+			failValidation( classifyValidationError( validationError ) );
 		}
 	};
 

@@ -87,7 +87,7 @@ describe( 'EducationStudentValidation', () => {
 
 		mockApi()
 			.post( '/wpcom/v2/me/education-student-validation', { code: 'UNKNOWN' } )
-			.reply( 400, { code: 'invalid_code' } );
+			.reply( 400, { code: 'invalid_education_student_code' } );
 
 		await userEvent.type( screen.getByLabelText( 'Invitation code' ), 'UNKNOWN' );
 		await userEvent.click( screen.getByRole( 'button', { name: 'Validate invite code' } ) );
@@ -106,7 +106,7 @@ describe( 'EducationStudentValidation', () => {
 
 		mockApi()
 			.post( '/wpcom/v2/me/education-student-validation', { code: 'HAMMERED' } )
-			.reply( 429, { code: 'rate_limited' } );
+			.reply( 429, { code: 'rate_limit_exceeded' } );
 
 		await userEvent.type( screen.getByLabelText( 'Invitation code' ), 'HAMMERED' );
 		await userEvent.click( screen.getByRole( 'button', { name: 'Validate invite code' } ) );
@@ -161,7 +161,7 @@ describe( 'EducationStudentValidation', () => {
 
 		mockApi()
 			.post( '/wpcom/v2/me/education-student-validation', { code: 'UNKNOWN' } )
-			.reply( 400, { code: 'invalid_code' } );
+			.reply( 400, { code: 'invalid_education_student_code' } );
 
 		await userEvent.type( screen.getByLabelText( 'Invitation code' ), 'UNKNOWN' );
 		await userEvent.click( screen.getByRole( 'button', { name: 'Validate invite code' } ) );
