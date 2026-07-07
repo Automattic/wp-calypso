@@ -1,7 +1,7 @@
 import { isDefaultLocale } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useSpace } from 'calypso/reader/data/spaces';
 import { useInfiniteStream } from 'calypso/reader/data/stream';
@@ -28,7 +28,7 @@ import {
 	getLayoutPageSize,
 	getLayoutSkeleton,
 } from './layouts/registry';
-import type { ReadStreamPost, ReadStreamResponse, SpaceFeedLayout } from '@automattic/api-core';
+import type { ReadStreamPost, SpaceFeedLayout } from '@automattic/api-core';
 
 import './style.scss';
 
@@ -41,22 +41,6 @@ interface Props {
 	variant?: 'feed' | 'discover';
 	// Opens the Customize modal's Sources tab; wired to the Feed empty-state CTA.
 	onAddSources?: () => void;
-}
-
-export function collectPosts( pages: ReadStreamResponse[] ): ReadStreamPost[] {
-	const posts: ReadStreamPost[] = [];
-	for ( const page of pages ) {
-		if ( page.cards?.length ) {
-			for ( const card of page.cards ) {
-				if ( card.type === 'post' ) {
-					posts.push( card.data );
-				}
-			}
-		} else if ( page.posts?.length ) {
-			posts.push( ...page.posts );
-		}
-	}
-	return posts;
 }
 
 /**
@@ -93,7 +77,10 @@ export function SpaceFeed( { spaceId, layoutView, variant = 'feed', onAddSources
 		perPage: getLayoutPageSize( layout ),
 		options: { enabled: ! isLegacy },
 	} );
-	const posts = useMemo( () => collectPosts( stream.pages ), [ stream.pages ] );
+	// The shell only needs the stream's posts for the list's structure and ordering
+	// (parsed by the stream hook); each card reads its own normalized post from the
+	// cache (see the card components).
+	const posts = stream.posts;
 
 	const { selectedPostKey, selectPostKey, selectNextPost, selectPreviousPost } =
 		useStreamPostKeySelection( { streamKey, localeSlug, items: stream.items } );
