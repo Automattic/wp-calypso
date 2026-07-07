@@ -3,7 +3,6 @@ import Search, { useFuzzySearch } from '@automattic/search';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -79,7 +78,7 @@ class BlogsSettings extends Component {
 		const renderBlog = ( site, index, disableToggle = false ) => {
 			const onSave = () => this.props.onSave( site.ID );
 			const onSaveToAll = () => this.props.onSaveToAll( site.ID );
-			const blogSettings = find( this.props.settings, { blog_id: site.ID } );
+			const blogSettings = this.props.settings?.find( ( setting ) => setting.blog_id === site.ID );
 
 			return (
 				<Blog

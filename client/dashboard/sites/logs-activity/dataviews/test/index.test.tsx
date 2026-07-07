@@ -138,7 +138,11 @@ const mockActivityLogsData = {
 	totalPages: 1,
 };
 
-function renderActivityLogsDataViews() {
+function renderActivityLogsDataViews(
+	{ activityLogs }: { activityLogs: unknown[] } = {
+		activityLogs: mockActivityLogsData.activityLogs,
+	}
+) {
 	nock( API_BASE )
 		.get( '/rest/v1.1/me/preferences' )
 		.query( true )
@@ -148,10 +152,10 @@ function renderActivityLogsDataViews() {
 		.query( true )
 		.reply( 200, {
 			current: {
-				orderedItems: mockActivityLogsData.activityLogs,
+				orderedItems: activityLogs,
 			},
-			totalItems: mockActivityLogsData.totalItems,
-			totalPages: mockActivityLogsData.totalPages,
+			totalItems: activityLogs.length,
+			totalPages: activityLogs.length ? 1 : 0,
 		} );
 
 	return render(
@@ -189,6 +193,13 @@ test( 'clicking backup action navigates to backup detail page', async () => {
 			rewindId: 'rewind-123',
 		},
 	} );
+} );
+
+test( 'shows the empty state describing the date range when there are no activities', async () => {
+	renderActivityLogsDataViews( { activityLogs: [] } );
+
+	expect( await screen.findByText( 'No results' ) ).toBeInTheDocument();
+	expect( screen.getByText( /No activity was logged between/ ) ).toBeInTheDocument();
 } );
 
 test( 'data is properly displayed', async () => {

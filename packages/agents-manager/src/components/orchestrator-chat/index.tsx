@@ -16,6 +16,7 @@ import useCheckpointAction from '../../hooks/use-checkpoint-action';
 import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
 import useFeedbackAction from '../../hooks/use-feedback-action';
+import useRegenerateAction from '../../hooks/use-regenerate-action';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
 import useSourcesAction from '../../hooks/use-sources-action';
 import useZoomAction from '../../hooks/use-zoom-action';
@@ -47,7 +48,18 @@ import type {
 	SiteBuildUtils,
 	ImageUploadHook,
 	UseCheckpointHook,
+	ProviderCapabilities,
 } from '../../utils/load-external-providers';
+
+function getLatestAgentMessageId( messages: UIMessage[] ): string | null {
+	for ( let index = messages.length - 1; index >= 0; index-- ) {
+		if ( messages[ index ].role === 'agent' ) {
+			return messages[ index ].id;
+		}
+	}
+
+	return null;
+}
 
 /**
  * Pipe-delimited list of suggestion ids (e.g. `|id1|id2|`), matching Big Sky's
@@ -149,6 +161,8 @@ interface Props {
 	useImageUpload?: ImageUploadHook;
 	/** Hook for saving and restoring editor state so that AI actions can be undone. */
 	useCheckpoint?: UseCheckpointHook;
+	/** Optional capability flags declared by one or more loaded providers. */
+	capabilities?: ProviderCapabilities;
 	/** Called when the has-messages state changes. */
 	onHasMessagesChange: ( hasMessages: boolean ) => void;
 }
@@ -170,6 +184,7 @@ export default function OrchestratorChat( {
 	siteBuildUtils,
 	useImageUpload,
 	useCheckpoint,
+	capabilities,
 	onHasMessagesChange,
 }: Props ) {
 	const { agentConfig, getActiveSessionId, siteKey } = useAgentsManagerContext();
@@ -183,6 +198,7 @@ export default function OrchestratorChat( {
 	const [ retainedShowComponentMessages, setRetainedShowComponentMessages ] = useState<
 		Map< string, UIMessage >
 	>( new Map() );
+	const [ isRegenerating, setIsRegenerating ] = useState( false );
 	const [ hasUserSentMessage, setHasUserSentMessage ] = useState( false );
 	const currentPostId = useSelect( ( select ) => {
 		return ( select( 'core/editor' ) as { getCurrentPostId?: () => number } )?.getCurrentPostId?.();
@@ -200,13 +216,50 @@ export default function OrchestratorChat( {
 		clearSuggestions,
 		registerSuggestions,
 		registerMessageActions,
+		getRegenerateHandler,
 		progressMessage,
 	} = useAgentChat( agentConfig! );
 	const messagesRef = useRef( messages );
 	const previousMessagesRef = useRef( messages );
 	const showComponentOrderRef = useRef< Map< string, number > >( new Map() );
 	const nextShowComponentOrderRef = useRef( 0 );
+	const wasProcessingRef = useRef( isProcessing );
 	messagesRef.current = messages;
+
+	// A regeneration is finished once its streaming turn settles — either the new
+	// response arrives or an error restores the previous one. Re-enable component
+	// retention then so transient drops on later turns are covered again.
+	useEffect( () => {
+		const wasProcessing = wasProcessingRef.current;
+		wasProcessingRef.current = isProcessing;
+		if ( isRegenerating && wasProcessing && ! isProcessing ) {
+			setIsRegenerating( false );
+		}
+	}, [ isProcessing, isRegenerating ] );
+
+	// While a regeneration runs, the component being regenerated is deliberately
+	// dropped from the live messages (Agenttic sends `preserveUiOnlyMessages:
+	// false`), so retention must not resurrect the old picker as a stale copy.
+	const handleRegenerate = useCallback(
+		( message?: UIMessage ) => {
+			const handler = getRegenerateHandler?.( message );
+			if ( ! handler ) {
+				return handler;
+			}
+
+			return async () => {
+				setIsRegenerating( true );
+				// Drop any retained placeholders up front; the turn is being
+				// rewound, so a leftover picker would otherwise reappear once
+				// regeneration settles if the new response omits the component.
+				setRetainedShowComponentMessages( ( previousRetainedMessages ) =>
+					previousRetainedMessages.size > 0 ? new Map() : previousRetainedMessages
+				);
+				await handler();
+			};
+		},
+		[ getRegenerateHandler ]
+	);
 
 	const getShowComponentOrder = useCallback( ( message: UIMessage ): number | undefined => {
 		const identity = getShowComponentIdentity( message );
@@ -225,6 +278,14 @@ export default function OrchestratorChat( {
 	}, [] );
 
 	useEffect( () => {
+		// While regenerating, the dropped component is being replaced, not lost —
+		// don't retain it. Keep the ref current so the next non-regenerating run
+		// compares against the post-regeneration messages.
+		if ( isRegenerating ) {
+			previousMessagesRef.current = messages;
+			return;
+		}
+
 		const previousMessages = previousMessagesRef.current;
 		messages.filter( isShowComponentMessage ).forEach( getShowComponentOrder );
 
@@ -243,7 +304,9 @@ export default function OrchestratorChat( {
 
 				for ( const message of retainedCandidates ) {
 					const identity = getShowComponentIdentity( message );
-					const retainedId = `${ message.id }-retained-${ identity }`;
+					// One placeholder per identity, so a component that drops and
+					// returns refreshes in place instead of stacking another copy.
+					const retainedId = `retained-${ identity }`;
 					if ( ! nextRetainedMessages.has( retainedId ) ) {
 						nextRetainedMessages.set( retainedId, { ...message, id: retainedId } );
 						changed = true;
@@ -255,7 +318,7 @@ export default function OrchestratorChat( {
 		}
 
 		previousMessagesRef.current = messages;
-	}, [ getShowComponentOrder, messages ] );
+	}, [ getShowComponentOrder, messages, isRegenerating ] );
 
 	// Reader-chat sessions are short (usually < 50 messages) — don't waste
 	// time paginating 10 pages deep. One page covers typical use.
@@ -286,10 +349,12 @@ export default function OrchestratorChat( {
 		},
 	} );
 
+	const areSuggestionsVisible = isOpen || isCompactMode;
+
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const maxDynamicSuggestions = isDocked ? undefined : 3;
 	const dynamicSuggestions = useSuggestions?.( maxDynamicSuggestions, {
-		suggestionsVisible: isOpen || isCompactMode,
+		suggestionsVisible: areSuggestionsVisible,
 	} );
 	const dynamicSuggestionsList = dynamicSuggestions?.suggestions ?? [];
 	const dynamicSuggestionsKey = JSON.stringify(
@@ -309,19 +374,6 @@ export default function OrchestratorChat( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ dynamicSuggestionsKey, registerSuggestions, clearSuggestions ] );
 
-	// Track when a new set of suggestions is rendered. Keyed on the rendered
-	// ids so re-renders that don't change the set don't re-fire.
-	const renderedSuggestionsKey = suggestions.map( ( s ) => s.id ).join( '|' );
-	useEffect( () => {
-		if ( suggestions.length > 0 ) {
-			recordBigSkyTracksEvent( 'chat_suggestions_rendered', {
-				suggestions: formatSuggestionIds( suggestions ),
-			} );
-		}
-		// `suggestions` identity is unstable; key on its rendered ids instead.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ renderedSuggestionsKey ] );
-
 	// Persist the chat route so the conversation can be resumed later.
 	useSaveNewChatRoute( hasUserSentMessage );
 
@@ -335,6 +387,14 @@ export default function OrchestratorChat( {
 			registerMessageActions,
 			messages,
 		} );
+
+	// Add Agenttic's built-in regenerate action on agent messages for providers
+	// that opt in. Computed during render alongside copy/feedback so the icon
+	// appears in the same paint rather than a commit later.
+	const getRegenerateActionsForMessage = useRegenerateAction( {
+		enabled: capabilities?.supportsRegenerateAction === true,
+		getRegenerateHandler: handleRegenerate,
+	} );
 
 	// Add a "Copy" action on plain-text agent messages.
 	const getCopyActionsForMessage = useCopyAction();
@@ -389,7 +449,7 @@ export default function OrchestratorChat( {
 					await onSubmit( message, { imageUrls: imageData } );
 				} catch ( uploadError ) {
 					throw new Error(
-						__( 'Failed to upload images. Please try again.', '__i18n_text_domain__' )
+						__( 'Failed to upload images. Please try again.', __i18n_text_domain__ )
 					);
 				}
 			} else {
@@ -491,8 +551,10 @@ export default function OrchestratorChat( {
 	// Listen for inline suggestion clicks dispatched by external providers or the Agenttic bridge below.
 	useEffect( () => {
 		const handleInlineSuggestionClick = ( event: Event ) => {
-			const { value } = ( event as CustomEvent ).detail;
-			if ( value ) {
+			const { value, autoSubmit } = ( event as CustomEvent ).detail;
+			// Auto-submit suggestions are already sent and the input cleared by the
+			// AgentUI; repopulating it here would leave the prompt stuck in the composer.
+			if ( value && ! autoSubmit ) {
 				const inputValue = value.endsWith( ' ' ) ? value : `${ value } `;
 				setInputValue( inputValue );
 
@@ -518,6 +580,8 @@ export default function OrchestratorChat( {
 			const value =
 				typeof suggestion === 'string' ? suggestion : suggestion.prompt ?? suggestion.label;
 
+			const autoSubmit = typeof suggestion !== 'string' && !! suggestion.autoSubmit;
+
 			if ( typeof suggestion !== 'string' ) {
 				recordBigSkyTracksEvent( 'chat_suggestion_click', {
 					suggestion_text: suggestion.prompt || '',
@@ -526,8 +590,11 @@ export default function OrchestratorChat( {
 				} );
 			}
 
+			// Always dispatch so click listeners (e.g. the Jetpack sidebar hiding the
+			// clicked chip) still fire. `autoSubmit` tells the input listener to skip
+			// repopulating the composer, which the AgentUI already submitted and cleared.
 			window.dispatchEvent(
-				new CustomEvent( 'big-sky-inline-suggestion-click', { detail: { value } } )
+				new CustomEvent( 'big-sky-inline-suggestion-click', { detail: { value, autoSubmit } } )
 			);
 		},
 		[]
@@ -640,6 +707,8 @@ export default function OrchestratorChat( {
 			onSubmit: onSubmitWithImages,
 		} );
 
+		const latestAgentMessageId = getLatestAgentMessageId( currentMessages );
+
 		currentMessages = currentMessages.map( ( message ) => {
 			if ( message.id.endsWith( '-next-step' ) ) {
 				return message;
@@ -648,13 +717,20 @@ export default function OrchestratorChat( {
 			const directActions = [
 				...getFeedbackActionsForMessage( message ),
 				...getCopyActionsForMessage( message ),
+				...getRegenerateActionsForMessage( message, {
+					isLatestAgentMessage: message.id === latestAgentMessageId,
+					isStreaming: isProcessing,
+				} ),
 			];
 			if ( directActions.length === 0 ) {
 				return message;
 			}
 
 			const existingActions = message.actions?.filter(
-				( action ) => ! action.id.startsWith( 'feedback-' ) && action.id !== 'copy'
+				( action ) =>
+					! action.id.startsWith( 'feedback-' ) &&
+					action.id !== 'copy' &&
+					action.id !== 'regenerate'
 			);
 
 			return {
@@ -673,7 +749,9 @@ export default function OrchestratorChat( {
 		getCopyActionsForMessage,
 		getShowComponentOrder,
 		getFeedbackActionsForMessage,
+		getRegenerateActionsForMessage,
 		isBuildingSite,
+		isProcessing,
 		messages,
 		onSubmitWithImages,
 		retainedShowComponentMessages,
@@ -702,9 +780,17 @@ export default function OrchestratorChat( {
 	// - When there are dynamic suggestions (from block selection, etc.), show those
 	// - Otherwise, show empty view suggestions only when there are no messages AND no input text
 	let displayedEmptyViewSuggestions: Suggestion[] = [];
-	if ( suggestions.length > 0 ) {
+	if ( ! areSuggestionsVisible ) {
+		// Minimized/collapsed: the chat renders no suggestions, so leave the list
+		// empty to avoid firing chat_suggestions_rendered for hidden chips.
+		displayedEmptyViewSuggestions = [];
+	} else if ( suggestions.length > 0 ) {
 		displayedEmptyViewSuggestions = suggestions;
-	} else if ( displayedMessages.length === 0 && inputValue.length === 0 ) {
+	} else if (
+		! isLoadingConversation &&
+		displayedMessages.length === 0 &&
+		inputValue.length === 0
+	) {
 		// Read straight from the live `useSuggestions` output rather than the
 		// registered store. Clicking a suggestion calls `clearSuggestions()`,
 		// which empties the store, and the re-registration effect is keyed on
@@ -714,6 +800,27 @@ export default function OrchestratorChat( {
 		displayedEmptyViewSuggestions =
 			dynamicSuggestionsList.length > 0 ? dynamicSuggestionsList : emptyViewSuggestions;
 	}
+
+	// Track when a set of suggestions is rendered — the dynamic block-context
+	// suggestions or, on an empty chat, the empty-view starter chips. Mirrors
+	// Big Sky, which tracked the empty view too. Dedupe on the rendered ids so
+	// re-renders with the same set don't re-fire; a set that empties and returns
+	// to the same content isn't re-tracked.
+	const displayedSuggestionIds = displayedEmptyViewSuggestions.map( ( s ) => s.id ).join( '|' );
+	const lastTrackedSuggestionsRef = useRef< string | null >( null );
+	useEffect( () => {
+		if ( displayedEmptyViewSuggestions.length === 0 ) {
+			return;
+		}
+		if ( lastTrackedSuggestionsRef.current !== displayedSuggestionIds ) {
+			recordBigSkyTracksEvent( 'chat_suggestions_rendered', {
+				suggestions: formatSuggestionIds( displayedEmptyViewSuggestions ),
+			} );
+			lastTrackedSuggestionsRef.current = displayedSuggestionIds;
+		}
+		// `displayedEmptyViewSuggestions` identity is unstable; key on its ids.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ displayedSuggestionIds ] );
 
 	return (
 		<AgentChat

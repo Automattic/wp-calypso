@@ -5,8 +5,8 @@ import {
 	readSpacesQuery,
 	updateReadSpaceMutation,
 } from '@automattic/api-queries';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { ReadSpace } from '@automattic/api-core';
+import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
+import type { ReadSpace, ReadSpaceDetails } from '@automattic/api-core';
 
 /**
  * The user's spaces for the sidebar and space views, from the live list
@@ -30,6 +30,30 @@ export function useSpace(
 	return useQuery( {
 		...readSpaceQuery( spaceId ?? '' ),
 		enabled: enabled && Boolean( spaceId ),
+	} );
+}
+
+/**
+ * Details (sources + tags) for several spaces at once, keyed by space id. Used by
+ * the subscribe-with-space picker to know which spaces already contain the feed.
+ * Batches the per-space detail queries in a single hook at the modal level (rather
+ * than each row mounting its own `useSpace`), sharing the same detail cache as
+ * `useSpace`. Note this still runs one query per space id.
+ */
+export function useSpacesDetails( spaceIds: string[] ): {
+	byId: Record< string, ReadSpaceDetails | undefined >;
+	isError: boolean;
+	isLoading: boolean;
+} {
+	return useQueries( {
+		queries: spaceIds.map( ( id ) => readSpaceQuery( id ) ),
+		combine: ( results ) => ( {
+			byId: Object.fromEntries(
+				results.map( ( result, index ) => [ spaceIds[ index ], result.data ] )
+			),
+			isError: results.some( ( result ) => result.isError ),
+			isLoading: results.some( ( result ) => result.isLoading ),
+		} ),
 	} );
 }
 

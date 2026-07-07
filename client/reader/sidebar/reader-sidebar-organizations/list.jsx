@@ -2,7 +2,6 @@ import page from '@automattic/calypso-router';
 import { Count } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -74,8 +73,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 
 	renderSites() {
 		const { sites, path } = this.props;
-		return map(
-			sites,
+		return sites.map(
 			( site ) =>
 				site && <ReaderSidebarOrganizationsListItem key={ site.ID } path={ path } site={ site } />
 		);

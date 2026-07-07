@@ -1,6 +1,5 @@
 import { pick, sortBy } from '@automattic/js-utils';
 import { createSelector } from '@automattic/state-utils';
-import { filter, find, some } from 'lodash';
 import {
 	getSite,
 	getSiteTitle,
@@ -22,35 +21,35 @@ const _filters = {
 	},
 	active: function ( plugin ) {
 		return (
-			some( plugin.sites, function ( site ) {
+			Object.values( plugin.sites ?? {} ).some( function ( site ) {
 				return site.active;
 			} ) || plugin.statusRecentlyChanged
 		);
 	},
 	inactive: function ( plugin ) {
 		return (
-			some( plugin.sites, function ( site ) {
+			Object.values( plugin.sites ?? {} ).some( function ( site ) {
 				return ! site.active;
 			} ) || plugin.statusRecentlyChanged
 		);
 	},
 	updates: function ( plugin ) {
 		return (
-			some( plugin.sites, function ( site ) {
+			Object.values( plugin.sites ?? {} ).some( function ( site ) {
 				return site.update && ! site.update.recentlyUpdated;
 			} ) || plugin.statusRecentlyChanged
 		);
 	},
 	autoupdates: function ( plugin ) {
 		return (
-			some( plugin.sites, function ( site ) {
+			Object.values( plugin.sites ?? {} ).some( function ( site ) {
 				return site.autoupdate;
 			} ) || plugin.statusRecentlyChanged
 		);
 	},
 	autoupdates_disabled: function ( plugin ) {
 		return (
-			some( plugin.sites, function ( site ) {
+			Object.values( plugin.sites ?? {} ).some( function ( site ) {
 				return ! site.autoupdate;
 			} ) || plugin.statusRecentlyChanged
 		);
@@ -73,7 +72,7 @@ export function isRequesting( state, siteId ) {
 
 export function isRequestingForSites( state, sites ) {
 	// As long as any sites have isRequesting true, we consider this group requesting
-	return some( sites, ( siteId ) => isRequesting( state, siteId ) );
+	return ( sites ?? [] ).some( ( siteId ) => isRequesting( state, siteId ) );
 }
 
 export function isRequestingForAllSites( state ) {
@@ -113,7 +112,7 @@ function getPluginsSelector( state, siteIds, pluginFilter ) {
 	}, {} );
 
 	if ( pluginFilter && _filters[ pluginFilter ] ) {
-		pluginList = filter( pluginList, _filters[ pluginFilter ] );
+		pluginList = Object.values( pluginList ).filter( _filters[ pluginFilter ] );
 	}
 
 	return sortBy( pluginList, ( item ) => item.slug.toLowerCase() );
@@ -133,11 +132,11 @@ export const getPlugins = createSelector(
 
 export const getPluginsWithUpdateStatuses = createSelector(
 	( state, allPlugins ) => {
-		const active = filter( allPlugins, _filters.active );
-		const inactive = filter( allPlugins, _filters.inactive );
-		const withUpdate = filter( allPlugins, _filters.updates );
-		const withAutoUpdate = filter( allPlugins, _filters.autoupdates );
-		const withAutoUpdateDisabled = filter( allPlugins, _filters.autoupdates_disabled );
+		const active = allPlugins.filter( _filters.active );
+		const inactive = allPlugins.filter( _filters.inactive );
+		const withUpdate = allPlugins.filter( _filters.updates );
+		const withAutoUpdate = allPlugins.filter( _filters.autoupdates );
+		const withAutoUpdateDisabled = allPlugins.filter( _filters.autoupdates_disabled );
 
 		return allPlugins.reduce( ( memo, plugin ) => {
 			const status = [];
@@ -155,23 +154,23 @@ export const getPluginsWithUpdateStatuses = createSelector(
 				} );
 			} );
 
-			if ( find( withUpdate, { slug: plugin.slug } ) ) {
+			if ( withUpdate.find( ( item ) => item.slug === plugin.slug ) ) {
 				status.push( PLUGINS_STATUS.UPDATE );
 			}
 
-			if ( find( inactive, { slug: plugin.slug } ) ) {
+			if ( inactive.find( ( item ) => item.slug === plugin.slug ) ) {
 				status.push( PLUGINS_STATUS.INACTIVE );
 			}
 
-			if ( find( active, { slug: plugin.slug } ) ) {
+			if ( active.find( ( item ) => item.slug === plugin.slug ) ) {
 				status.push( PLUGINS_STATUS.ACTIVE );
 			}
 
-			if ( find( withAutoUpdate, { slug: plugin.slug } ) ) {
+			if ( withAutoUpdate.find( ( item ) => item.slug === plugin.slug ) ) {
 				status.push( PLUGINS_STATUS.AUTOUPDATE_ENABLED );
 			}
 
-			if ( find( withAutoUpdateDisabled, { slug: plugin.slug } ) ) {
+			if ( withAutoUpdateDisabled.find( ( item ) => item.slug === plugin.slug ) ) {
 				status.push( PLUGINS_STATUS.AUTOUPDATE_DISABLED );
 			}
 
@@ -182,11 +181,13 @@ export const getPluginsWithUpdateStatuses = createSelector(
 );
 
 export function getPluginsWithUpdates( state, siteIds ) {
-	return filter( getPlugins( state, siteIds ), _filters.updates ).map( ( plugin ) => ( {
-		...plugin,
-		version: plugin?.update?.new_version,
-		type: 'plugin',
-	} ) );
+	return getPlugins( state, siteIds )
+		.filter( _filters.updates )
+		.map( ( plugin ) => ( {
+			...plugin,
+			version: plugin?.update?.new_version,
+			type: 'plugin',
+		} ) );
 }
 
 export const getPluginOnSites = createSelector( ( state, siteIds, pluginSlug ) =>
@@ -195,7 +196,7 @@ export const getPluginOnSites = createSelector( ( state, siteIds, pluginSlug ) =
 
 export function getPluginOnSite( state, siteId, pluginSlug ) {
 	const pluginList = getPlugins( state, [ siteId ] );
-	return find( pluginList, ( plugin ) => isEqualSlugOrId( pluginSlug, plugin ) );
+	return pluginList.find( ( plugin ) => isEqualSlugOrId( pluginSlug, plugin ) );
 }
 
 export function getPluginsOnSite( state, siteId, pluginSlugs ) {
@@ -204,14 +205,14 @@ export function getPluginsOnSite( state, siteId, pluginSlugs ) {
 
 export function getSitesWithPlugin( state, siteIds, pluginSlug ) {
 	const pluginList = getPlugins( state, siteIds );
-	const plugin = find( pluginList, ( pluginItem ) => isEqualSlugOrId( pluginSlug, pluginItem ) );
+	const plugin = pluginList.find( ( pluginItem ) => isEqualSlugOrId( pluginSlug, pluginItem ) );
 
 	if ( ! plugin ) {
 		return [];
 	}
 
 	// Filter the requested sites list by the list of sites for this plugin
-	const pluginSites = filter( siteIds, ( siteId ) => {
+	const pluginSites = ( siteIds ?? [] ).filter( ( siteId ) => {
 		return plugin.sites.hasOwnProperty( siteId );
 	} );
 
@@ -225,7 +226,7 @@ export function getSiteObjectsWithPlugin( state, siteIds, pluginSlug ) {
 
 export function getSitesWithoutPlugin( state, siteIds, pluginSlug ) {
 	const installedOnSiteIds = getSitesWithPlugin( state, siteIds, pluginSlug ) || [];
-	return filter( siteIds, function ( siteId ) {
+	return ( siteIds ?? [] ).filter( function ( siteId ) {
 		if ( ! getSite( state, siteId )?.visible || ! isJetpackSite( state, siteId ) ) {
 			return false;
 		}

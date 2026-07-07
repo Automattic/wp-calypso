@@ -11,16 +11,20 @@
  */
 import { dispatch, useSelect } from '@wordpress/data';
 import { useState, useEffect, useMemo } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, _x } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
+import ImageAltTextPicker from './components/image-alt-text-picker';
+import './components/image-alt-text-picker.scss';
 import PostFeedback from './components/post-feedback';
 import './components/post-feedback.scss';
 import ReviewMediation from './components/review-mediation';
 import './components/review-mediation.scss';
+import SeoDescriptionPicker from './components/seo-description-picker';
+import SeoTitlePicker from './components/seo-title-picker';
+import './components/base-suggestion-picker.scss';
 import TitlePicker from './components/title-picker';
-import './components/title-picker.scss';
 import './auto-scroll-fix.scss';
 import {
 	type CheckpointApi,
@@ -40,6 +44,13 @@ import {
 	SELECTED_BLOCK_CLEAR_EVENT,
 } from './utils/block-actions';
 import {
+	isAiEditorialReviewEnabled,
+	isBlockTransformationsEnabled,
+	isGenerateFeedbackEnabled,
+	isOptimizeTitleSuggestionEnabled,
+	isSeoSuggestionsEnabled,
+} from './utils/preview-features';
+import {
 	UPDATE_BLOCK_CONTENT_TOOL_ID,
 	UPDATE_BLOCK_CONTENT_ABILITY,
 	isUpdateBlockContentTool,
@@ -51,10 +62,12 @@ import {
 	trackBlockTransformationSuggestionClick,
 	trackBlockTransformationSuggestionRendered,
 } from './utils/tracking';
+import type { SuggestionOption } from '@automattic/agenttic-client';
 import type { ComponentType } from 'react';
 
 // Re-export block-action helpers as part of the package's public surface.
 export { applyReviewEdit, findBlockElement, findBlockListLayout };
+export { registerBlockEditorFilters } from './extensions';
 
 // ---------- Module state ----------
 
@@ -79,6 +92,45 @@ const OPTIMIZE_TITLE_SUGGESTION = {
 	label: __( 'Optimize Title', 'jetpack' ),
 	description: __( 'Refine your title using SEO best practices.', 'jetpack' ),
 	prompt: __( 'Optimize the title of this post', 'jetpack' ),
+};
+
+/**
+ * Post-level SEO Enhancer suggestion. Targets the post's SEO surfaces (the HTML
+ * <title>, meta description, and image alt text), distinct from
+ * OPTIMIZE_TITLE_SUGGESTION which rewrites the visible post title. Rendered as a
+ * dropdown (via the `options` field): picking Title, Description or Image Alt
+ * Text submits that option's `value`, which routes through the orchestrator to
+ * the jetpack-ai/generate-seo-title, jetpack-ai/generate-seo-description or jetpack-ai/generate-seo-image-alt-text
+ * ability and returns the matching picker. Alt text is post-level here (every
+ * image in the post); the block-level `generate-alt-text` suggestion still
+ * targets a single selected image.
+ *
+ * `prompt` is intentionally empty: the dropdown combines `prompt` with the
+ * selected option's `value`, so an empty prompt makes the submitted text equal
+ * the option value verbatim (a missing prompt would fall back to the label and
+ * prepend "SEO Enhancer", breaking routing).
+ */
+const SEO_ENHANCER_SUGGESTION = {
+	id: 'seo-enhancer',
+	label: __( 'SEO Enhancer', 'jetpack' ),
+	prompt: '',
+	options: [
+		{
+			id: 'seo-title',
+			label: _x( 'Title', 'SEO Enhancer dropdown option', 'jetpack' ),
+			value: __( 'Generate an SEO title (meta title) for this post', 'jetpack' ),
+		},
+		{
+			id: 'seo-description',
+			label: _x( 'Description', 'SEO Enhancer dropdown option', 'jetpack' ),
+			value: __( 'Generate an SEO meta description for this post', 'jetpack' ),
+		},
+		{
+			id: 'image-alt-text',
+			label: _x( 'Image Alt Text', 'SEO Enhancer dropdown option', 'jetpack' ),
+			value: __( 'Generate descriptive alt text for the images in this post', 'jetpack' ),
+		},
+	],
 };
 
 /**
@@ -114,44 +166,6 @@ const LIMITED_BLOCK_SUGGESTION_PRIORITY = [
 	'simplify-text',
 	'generate-alt-text',
 ];
-
-type SidebarFeature =
-	| 'aiEditorialReview'
-	| 'generateFeedback'
-	| 'blockTransformations'
-	| 'optimizeTitleSuggestion';
-
-function getAgentsManagerData() {
-	return typeof agentsManagerData !== 'undefined' ? agentsManagerData : undefined;
-}
-
-function getSidebarConfig() {
-	return getAgentsManagerData()?.jetpackAiSidebar;
-}
-
-function isSidebarFeatureEnabled( feature: SidebarFeature, fallback: boolean ): boolean {
-	const config = getSidebarConfig();
-	if ( ! config ) {
-		return fallback;
-	}
-	return config.enabled ? config.features?.[ feature ] === true : false;
-}
-
-function isAiEditorialReviewEnabled(): boolean {
-	return isSidebarFeatureEnabled( 'aiEditorialReview', false );
-}
-
-function isOptimizeTitleSuggestionEnabled(): boolean {
-	return isSidebarFeatureEnabled( 'optimizeTitleSuggestion', false );
-}
-
-function isBlockTransformationsEnabled(): boolean {
-	return isSidebarFeatureEnabled( 'blockTransformations', true );
-}
-
-function isGenerateFeedbackEnabled(): boolean {
-	return isSidebarFeatureEnabled( 'generateFeedback', false );
-}
 
 function getCurrentEditorPostType(): string | undefined {
 	const postType = ( window as any ).wp?.data?.select?.( 'core/editor' )?.getCurrentPostType?.();
@@ -200,6 +214,8 @@ function getPostLevelSuggestions( currentPostType?: string, currentPostId?: numb
 			? [ POST_FEEDBACK_SUGGESTION ]
 			: [] ),
 		...getAiEditorialReviewSuggestions( currentPostType ),
+		// Surface the SEO Enhancer dropdown last.
+		...( isSeoSuggestionsEnabled() ? [ SEO_ENHANCER_SUGGESTION ] : [] ),
 	];
 }
 
@@ -338,9 +354,15 @@ function handleShowComponent( input: any ): any {
 		}
 	}
 
-	if ( type === 'title-picker' ) {
-		// Snapshot state for Undo. Tool call id doubles as the checkpoint id so
-		// it matches the identifier AM reads from the rendered message.
+	if (
+		type === 'title-picker' ||
+		type === 'seo-title-picker' ||
+		type === 'seo-description-picker' ||
+		type === 'image-alt-text-picker'
+	) {
+		// Snapshot state for Undo (these pickers mutate post data / block
+		// attributes). Tool call id doubles as the checkpoint id so it matches
+		// the identifier AM reads from the rendered message.
 		const checkpointId: string =
 			input?.toolCallId || input?.calypsoCheckpointId || `show-component-${ type }-${ Date.now() }`;
 		const checkpointApi = getModuleCheckpointApi();
@@ -354,14 +376,23 @@ function handleShowComponent( input: any ): any {
 		data.calypsoCheckpointId = checkpointId;
 	}
 
+	data.followUpTasks = input?.followUpTasks ?? false;
+
+	// Echo the tool call id at the top level: the server-stored copy of this
+	// message carries it, and AM dedupes show-component messages by
+	// `tool_call_id|type|summary` — without it the two copies of the same tool
+	// call get different identities and both render after a reload.
+	const toolCallId =
+		typeof input?.toolCallId === 'string' && input.toolCallId ? input.toolCallId : undefined;
 	const agentMessage = JSON.stringify( {
 		tool_id: SHOW_COMPONENT_TOOL_ID,
+		...( toolCallId && { tool_call_id: toolCallId } ),
 		data,
 	} );
 
 	return {
 		result: 'Component displayed successfully',
-		returnToAgent: false,
+		returnToAgent: data.followUpTasks,
 		agentMessage,
 	};
 }
@@ -615,6 +646,11 @@ export const contextProvider = {
 			},
 			currentPageContent,
 			selectedBlockClientId,
+			// Forward the host's SEO Enhancer verdict (plan + Jetpack SEO Tools
+			// module + kill switches) so the orchestrator can drop the SEO
+			// suggestion abilities when they aren't usable on this site — e.g. a
+			// free-text query on a self-hosted site with the SEO module disabled.
+			jetpackSEOSuggestionsEnabled: isSeoSuggestionsEnabled(),
 			contextEntries: [
 				{
 					id: 'selected-block-content',
@@ -636,6 +672,15 @@ export const contextProvider = {
 export function getChatComponent( type: string ): ComponentType | null {
 	if ( type === 'title-picker' ) {
 		return TitlePicker as ComponentType;
+	}
+	if ( type === 'seo-title-picker' ) {
+		return SeoTitlePicker as ComponentType;
+	}
+	if ( type === 'seo-description-picker' ) {
+		return SeoDescriptionPicker as ComponentType;
+	}
+	if ( type === 'image-alt-text-picker' ) {
+		return ImageAltTextPicker as ComponentType;
 	}
 	if ( type === 'review-mediation' ) {
 		return ReviewMediation as ComponentType;
@@ -710,6 +755,7 @@ export function getEmptyViewSuggestions(): Array< {
 	label: string;
 	description?: string;
 	prompt?: string;
+	options?: SuggestionOption[];
 } > {
 	return getPostLevelSuggestions();
 }
@@ -852,11 +898,13 @@ function trackBlockTransformationSuggestionClickForValue( value: string ): void 
 
 /**
  * Provider capability flags (OR-merged across providers by AM's
- * loadExternalProviders). `supportsSplitScreen` exposes the 50vw chat-header
- * toggle here only — block-notes / image-studio / Big Sky don't opt in.
+ * loadExternalProviders). These opt the Jetpack AI sidebar into AM features
+ * that are not enabled globally.
  */
 export const capabilities = {
 	supportsSplitScreen: true,
+	// Flip to `true` to enable regenerate in the Jetpack AI sidebar.
+	supportsRegenerateAction: false,
 };
 
 /**
@@ -870,7 +918,13 @@ export function useSuggestions(
 	maxSuggestions?: number,
 	{ suggestionsVisible = true }: { suggestionsVisible?: boolean } = {}
 ): {
-	suggestions: Array< { id: string; label: string; description?: string; prompt?: string } >;
+	suggestions: Array< {
+		id: string;
+		label: string;
+		description?: string;
+		prompt?: string;
+		options?: SuggestionOption[];
+	} >;
 } {
 	const [ hidden, setHidden ] = useState( false );
 
@@ -955,10 +1009,6 @@ export function useSuggestions(
 	}, [ editorContext.selectedBlock?.clientId ] );
 
 	const selectedBlock = editorContext.selectedBlock;
-	const aiEditorialReviewSuggestions = useMemo(
-		() => getAiEditorialReviewSuggestions( editorContext.postType ),
-		[ editorContext.postType ]
-	);
 	const postLevelSuggestions = useMemo(
 		() => getPostLevelSuggestions( editorContext.postType, editorContext.postId ),
 		[ editorContext.postId, editorContext.postType ]
@@ -975,43 +1025,18 @@ export function useSuggestions(
 		() => applicable.map( ( { id, label, prompt } ) => ( { id, label, prompt } ) ),
 		[ applicable ]
 	);
+	// Post-level reviews (Optimize Title, Generate Feedback, AI Editorial Review)
+	// show only with no block selected; a selected block shows block transforms.
 	const visibleSuggestions = useMemo( () => {
 		if ( hidden ) {
 			return [];
 		}
-
-		if ( ! selectedBlock ) {
-			return applySuggestionLimit( postLevelSuggestions, maxSuggestions );
-		}
-
-		if ( ! blockTransformationsEnabled ) {
-			return applySuggestionLimit(
-				[
-					...( isGenerateFeedbackAvailable( editorContext.postType, editorContext.postId )
-						? [ POST_FEEDBACK_SUGGESTION ]
-						: [] ),
-					...aiEditorialReviewSuggestions,
-				],
-				maxSuggestions
-			);
-		}
-
 		return applySuggestionLimit(
-			[
-				...blockTransformationSuggestions,
-				...( isGenerateFeedbackAvailable( editorContext.postType, editorContext.postId )
-					? [ POST_FEEDBACK_SUGGESTION ]
-					: [] ),
-				...aiEditorialReviewSuggestions,
-			],
+			selectedBlock ? blockTransformationSuggestions : postLevelSuggestions,
 			maxSuggestions
 		);
 	}, [
-		aiEditorialReviewSuggestions,
 		blockTransformationSuggestions,
-		blockTransformationsEnabled,
-		editorContext.postId,
-		editorContext.postType,
 		hidden,
 		maxSuggestions,
 		postLevelSuggestions,

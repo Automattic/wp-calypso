@@ -32,16 +32,14 @@ export default function ConversationHistoryView( { onSelectConversation }: Props
 				) }
 				{ ! isLoading && isError && (
 					<div className="agents-manager-conversation-history-view__error">
-						<p>
-							{ __( 'Failed to load conversations. Please try again.', '__i18n_text_domain__' ) }
-						</p>
+						<p>{ __( 'Failed to load conversations. Please try again.', __i18n_text_domain__ ) }</p>
 					</div>
 				) }
 				{ ! isLoading && ! isError && conversations.length === 0 && (
 					<div className="agents-manager-conversation-history-view__empty">
-						<p>{ __( 'No past conversations', '__i18n_text_domain__' ) }</p>
+						<p>{ __( 'No past conversations', __i18n_text_domain__ ) }</p>
 						<p className="agents-manager-conversation-history-view__empty-hint">
-							{ __( 'Start a new chat to begin', '__i18n_text_domain__' ) }
+							{ __( 'Start a new chat to begin', __i18n_text_domain__ ) }
 						</p>
 					</div>
 				) }
@@ -65,7 +63,7 @@ export default function ConversationHistoryView( { onSelectConversation }: Props
 					onClick={ () => navigate( '/' ) }
 					className="agents-manager-conversation-history-view__new-chat-btn"
 				>
-					{ __( 'Start a new chat', '__i18n_text_domain__' ) }
+					{ __( 'Start a new chat', __i18n_text_domain__ ) }
 				</Button>
 			</div>
 		</div>

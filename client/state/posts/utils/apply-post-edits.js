@@ -1,4 +1,4 @@
-import { find, map, mergeWith } from 'lodash';
+import { mergeWith } from '@automattic/js-utils';
 
 /*
  * Applies a metadata edit operation (either update or delete) to an existing array of
@@ -9,8 +9,8 @@ function applyMetadataEdit( metadata, edit ) {
 		case 'update': {
 			// Either update existing key's value or append a new one at the end
 			const { key, value } = edit;
-			if ( find( metadata, { key } ) ) {
-				return map( metadata, ( m ) => ( m.key === key ? { key, value } : m ) );
+			if ( ( Array.isArray( metadata ) ? metadata : [] ).find( ( m ) => m.key === key ) ) {
+				return metadata.map( ( m ) => ( m.key === key ? { key, value } : m ) );
 			}
 			return ( Array.isArray( metadata ) ? metadata : [] ).concat( { key, value } );
 		}
@@ -18,7 +18,7 @@ function applyMetadataEdit( metadata, edit ) {
 			// Remove a value from the metadata array. If the key is not present,
 			// return unmodified original value.
 			const { key } = edit;
-			if ( find( metadata, { key } ) ) {
+			if ( ( Array.isArray( metadata ) ? metadata : [] ).find( ( m ) => m.key === key ) ) {
 				return ( Array.isArray( metadata ) ? metadata : [] ).filter( ( m ) => m.key !== key );
 			}
 			return metadata;

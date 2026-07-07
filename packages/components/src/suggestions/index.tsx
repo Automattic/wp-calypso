@@ -1,7 +1,6 @@
 import { groupBy, partition } from '@automattic/js-utils';
 import clsx from 'clsx';
 import isEqual from 'fast-deep-equal/es6';
-import { find } from 'lodash';
 import { Fragment, Component } from 'react';
 import Item from './item';
 
@@ -71,7 +70,7 @@ class Suggestions extends Component< Props, State > {
 				return foundIndex;
 			}
 
-			const suggestion = find( category.suggestions, { index } );
+			const suggestion = category.suggestions.find( ( item ) => item.index === index );
 			return suggestion ? suggestion.originalIndex : -1;
 		}, -1 );
 
@@ -150,8 +149,7 @@ class Suggestions extends Component< Props, State > {
 			( suggestion ) => !! suggestion.category
 		);
 
-		// For all intents and purposes `groupBy` keeps the order stable
-		// https://github.com/lodash/lodash/issues/2212
+		// `groupBy` preserves the input order within each group.
 		// `withCategory` is the truthy-category half of the partition above, so
 		// `category` is always present here.
 		const byCategory = groupBy( withCategory, ( suggestion ) => suggestion.category! );

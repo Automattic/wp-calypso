@@ -1,6 +1,5 @@
 import { debounce } from '@wordpress/compose';
 import { select } from '@wordpress/data';
-import { get } from 'lodash';
 import tracksRecordEvent from './track-record-event';
 
 /**
@@ -11,10 +10,8 @@ import tracksRecordEvent from './track-record-event';
  */
 const trackInserterInlineSearchTerm = () => {
 	// Pick up the search term from the `content` block attributes.
-	const search_term = get(
-		select( 'core/block-editor' ).getSelectedBlock(),
-		[ 'attributes', 'content' ],
-		''
+	const search_term = (
+		select( 'core/block-editor' ).getSelectedBlock()?.attributes?.content ?? ''
 	).substr( 1 );
 
 	if ( search_term.length < 3 ) {

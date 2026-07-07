@@ -1,58 +1,75 @@
+import page from '@automattic/calypso-router';
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { useInfiniteList } from 'calypso/reader/hooks/use-infinite-list';
+import { getPostUrl } from 'calypso/reader/route';
+import { Shimmer } from '../../components/skeleton';
 import { SpaceFeedTimeSince } from '../../components/time-since';
 import { getPostFields, type SpaceFeedDayGroup, type SpaceFeedPostFields } from '../../post-fields';
-import type { SpaceFeedLayoutProps } from '../types';
+import { useScrollSelectedIntoView } from '../use-scroll-selected-into-view';
+import type { SpaceFeedLayoutProps, SpaceFeedSkeletonProps } from '../types';
+import type { ReadStreamPost } from '@automattic/api-core';
 
 import './style.scss';
 
 type Row =
 	| { kind: 'header'; key: string; label: string }
-	| { kind: 'post'; key: string; fields: SpaceFeedPostFields };
+	| { kind: 'post'; key: string; fields: SpaceFeedPostFields; post: ReadStreamPost };
 
 const HEADER_SIZE = 44;
-const ROW_SIZE = 88;
+const ROW_SIZE = 170;
 
-function BookmarkGlyph() {
+function PostRow( {
+	fields,
+	post,
+	isSelected,
+	onOpen,
+	showTimestamp,
+}: {
+	fields: SpaceFeedPostFields;
+	post: ReadStreamPost;
+	isSelected: boolean;
+	onOpen: () => void;
+	showTimestamp: boolean;
+} ) {
 	return (
-		<svg
-			className="space-feed-standard-list__bookmark"
-			width="18"
-			height="18"
-			viewBox="0 0 24 24"
-			fill="none"
-			aria-hidden="true"
+		<HStack
+			className="space-feed-standard-list__row"
+			spacing={ 3 }
+			alignment="flex-start"
+			data-selected={ isSelected || undefined }
 		>
-			<path
-				d="M7 4h10a1 1 0 0 1 1 1v15l-6-3.5L6 20V5a1 1 0 0 1 1-1Z"
-				stroke="currentColor"
-				strokeWidth="1.5"
-				strokeLinejoin="round"
-			/>
-		</svg>
-	);
-}
-
-function PostRow( { fields }: { fields: SpaceFeedPostFields } ) {
-	return (
-		<a className="space-feed-standard-list__row" href={ fields.postHref }>
-			<span
-				className="space-feed-standard-list__unread"
-				data-unread={ fields.isUnread }
-				aria-hidden="true"
-			/>
-			<div className="space-feed-standard-list__body">
-				<h3 className="space-feed-standard-list__title">{ fields.title }</h3>
-				{ fields.excerptHtml && (
-					<div
-						className="space-feed-standard-list__excerpt"
-						// Sanitized by the Reader's formatExcerpt (allows only p/br/sup/sub).
-						dangerouslySetInnerHTML={ { __html: fields.excerptHtml } } // eslint-disable-line react/no-danger
-					/>
-				) }
-				<div className="space-feed-standard-list__source-row">
+			<VStack className="space-feed-standard-list__body" spacing={ 3 } alignment="stretch">
+				<VStack className="space-feed-standard-list__headline" spacing={ 1 } alignment="stretch">
+					<h3 className="space-feed-standard-list__title">
+						<a
+							className="space-feed-standard-list__title-link"
+							href={ fields.postHref }
+							onClick={ onOpen }
+						>
+							{ fields.title }
+						</a>
+					</h3>
+					{ fields.excerptHtml && (
+						<div
+							className="space-feed-standard-list__excerpt"
+							// Sanitized by the Reader's formatExcerpt (allows only p/br/sup/sub).
+							dangerouslySetInnerHTML={ { __html: fields.excerptHtml } } // eslint-disable-line react/no-danger
+						/>
+					) }
+				</VStack>
+				<HStack
+					className="space-feed-standard-list__source-row"
+					spacing={ 2 }
+					alignment="center"
+					justify="flex-start"
+				>
 					<SiteIcon iconUrl={ fields.siteIconUrl } size={ 20 } />
 					<span className="space-feed-standard-list__source">{ fields.sourceName }</span>
 					{ fields.authorName && (
@@ -61,17 +78,25 @@ function PostRow( { fields }: { fields: SpaceFeedPostFields } ) {
 					{ fields.siteDomain && (
 						<span className="space-feed-standard-list__tag">{ fields.siteDomain }</span>
 					) }
-				</div>
-			</div>
+				</HStack>
+				<ReaderPostActions
+					post={ post }
+					onCommentClick={ () => {
+						onOpen();
+						page( getPostUrl( post ) );
+					} }
+					iconSize={ 18 }
+					variant="discreet"
+				/>
+			</VStack>
 			<div className="space-feed-standard-list__aside">
-				{ fields.publishedDate && (
+				{ showTimestamp && fields.publishedDate && (
 					<span className="space-feed-standard-list__time">
 						<SpaceFeedTimeSince date={ fields.publishedDate } />
 					</span>
 				) }
-				<BookmarkGlyph />
 			</div>
-		</a>
+		</HStack>
 	);
 }
 
@@ -82,6 +107,9 @@ export function StandardListLayout( {
 	isLoadingMore,
 	loadMore,
 	restoreKey,
+	isPostSelected,
+	selectPost,
+	showTimestamp,
 }: SpaceFeedLayoutProps ) {
 	const translate = useTranslate();
 
@@ -104,7 +132,9 @@ export function StandardListLayout( {
 		posts.forEach( ( post, index ) => {
 			const fields = getPostFields( post );
 			const { dayGroup, key } = fields;
-			if ( dayGroup && dayGroup !== lastGroup ) {
+			// Discover is recommendation-ranked, not chronological: day grouping would
+			// bucket unrelated posts under misleading dates. Gate it like the timestamp.
+			if ( showTimestamp && dayGroup && dayGroup !== lastGroup ) {
 				out.push( {
 					kind: 'header',
 					key: `header-${ dayGroup }-${ index }`,
@@ -112,21 +142,34 @@ export function StandardListLayout( {
 				} );
 				lastGroup = dayGroup;
 			}
-			out.push( { kind: 'post', key: `post-${ key }`, fields } );
+			out.push( { kind: 'post', key: `post-${ key }`, fields, post } );
 		} );
 		return out;
-	}, [ posts, translate ] );
+	}, [ posts, translate, showTimestamp ] );
 
-	const { getListProps, items, measureElement, scrollMargin } = useInfiniteList( {
+	const { getListProps, items, measureElement, scrollMargin, scrollToIndex } = useInfiniteList( {
 		scrollElement,
 		count: rows.length,
 		estimateSize: ( index ) => ( rows[ index ].kind === 'header' ? HEADER_SIZE : ROW_SIZE ),
+		overscan: 4,
 		getItemKey: ( index ) => rows[ index ].key,
 		hasMore,
 		isLoadingMore,
 		loadMore,
 		restoreKey,
 	} );
+
+	// Row index of the selected post (headers shift it off the post index).
+	const selectedRowIndex = useMemo(
+		() => rows.findIndex( ( row ) => row.kind === 'post' && isPostSelected( row.post ) ),
+		[ rows, isPostSelected ]
+	);
+	useScrollSelectedIntoView( scrollToIndex, selectedRowIndex );
+
+	// The first post row tightens its top padding (the day-group header above it
+	// already supplies the gap). Detect it by index so it stays correct under
+	// virtualization, where the first rendered DOM node isn't always row 0.
+	const firstPostIndex = rows.findIndex( ( row ) => row.kind === 'post' );
 
 	return (
 		<div { ...getListProps( { className: 'space-feed-standard-list' } ) }>
@@ -136,6 +179,7 @@ export function StandardListLayout( {
 					<div
 						key={ virtualRow.key }
 						data-index={ virtualRow.index }
+						data-first={ virtualRow.index === firstPostIndex || undefined }
 						ref={ measureElement }
 						className="space-feed-standard-list__item"
 						style={ { transform: `translateY(${ virtualRow.start - scrollMargin }px)` } }
@@ -143,11 +187,32 @@ export function StandardListLayout( {
 						{ row.kind === 'header' ? (
 							<h2 className="space-feed-standard-list__group">{ row.label }</h2>
 						) : (
-							<PostRow fields={ row.fields } />
+							<PostRow
+								fields={ row.fields }
+								post={ row.post }
+								isSelected={ isPostSelected( row.post ) }
+								onOpen={ () => selectPost( row.post ) }
+								showTimestamp={ showTimestamp }
+							/>
 						) }
 					</div>
 				);
 			} ) }
+		</div>
+	);
+}
+
+/** Loading placeholder: stacked rows of shimmer lines matching the list rows. */
+export function StandardListSkeleton( { count }: SpaceFeedSkeletonProps ) {
+	return (
+		<div aria-hidden="true">
+			{ Array.from( { length: count }, ( _value, index ) => (
+				<div className="space-feed-standard-list__skeleton-row" key={ index }>
+					<Shimmer className="space-feed-standard-list__skeleton-line is-title" />
+					<Shimmer className="space-feed-standard-list__skeleton-line" />
+					<Shimmer className="space-feed-standard-list__skeleton-line is-meta" />
+				</div>
+			) ) }
 		</div>
 	);
 }

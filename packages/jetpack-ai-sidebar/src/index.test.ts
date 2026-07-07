@@ -10,8 +10,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
+import ImageAltTextPicker from './components/image-alt-text-picker';
 import PostFeedback from './components/post-feedback';
 import ReviewMediation from './components/review-mediation';
+import SeoDescriptionPicker from './components/seo-description-picker';
+import SeoTitlePicker from './components/seo-title-picker';
 import TitlePicker from './components/title-picker';
 import { clearActiveBlockFocus, undoBlockEdit } from './utils/block-actions';
 import {
@@ -31,6 +34,10 @@ Element.prototype.scrollIntoView = jest.fn();
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
+} ) );
+
+jest.mock( './extensions', () => ( {
+	registerBlockEditorFilters: jest.fn(),
 } ) );
 
 const mockSetIsSplitScreen = jest.fn();
@@ -255,6 +262,26 @@ function getTracksCalls( eventName: string ) {
 	return mockedRecordTracksEvent.mock.calls.filter( ( [ name ] ) => name === eventName );
 }
 
+describe( 'contextProvider.getClientContext', () => {
+	afterEach( () => {
+		delete ( globalThis as any ).agentsManagerData;
+	} );
+
+	it( 'forwards jetpackSEOSuggestionsEnabled = true when the host enables SEO suggestions', () => {
+		installAiEditorialReviewData( { seoSuggestions: true } );
+		expect( contextProvider.getClientContext().jetpackSEOSuggestionsEnabled ).toBe( true );
+	} );
+
+	it( 'forwards jetpackSEOSuggestionsEnabled = false when the host disables SEO suggestions', () => {
+		installAiEditorialReviewData( { seoSuggestions: false } );
+		expect( contextProvider.getClientContext().jetpackSEOSuggestionsEnabled ).toBe( false );
+	} );
+
+	it( 'defaults jetpackSEOSuggestionsEnabled to false when no sidebar config is present', () => {
+		expect( contextProvider.getClientContext().jetpackSEOSuggestionsEnabled ).toBe( false );
+	} );
+} );
+
 describe( 'getChatComponent', () => {
 	it( 'returns TitlePicker for type "title-picker"', () => {
 		expect( getChatComponent( 'title-picker' ) ).toBe( TitlePicker );
@@ -266,6 +293,18 @@ describe( 'getChatComponent', () => {
 
 	it( 'returns PostFeedback for type "post-feedback"', () => {
 		expect( getChatComponent( 'post-feedback' ) ).toBe( PostFeedback );
+	} );
+
+	it( 'returns SeoTitlePicker for type "seo-title-picker"', () => {
+		expect( getChatComponent( 'seo-title-picker' ) ).toBe( SeoTitlePicker );
+	} );
+
+	it( 'returns SeoDescriptionPicker for type "seo-description-picker"', () => {
+		expect( getChatComponent( 'seo-description-picker' ) ).toBe( SeoDescriptionPicker );
+	} );
+
+	it( 'returns ImageAltTextPicker for type "image-alt-text-picker"', () => {
+		expect( getChatComponent( 'image-alt-text-picker' ) ).toBe( ImageAltTextPicker );
 	} );
 
 	it( 'returns null for an unknown type', () => {
@@ -767,21 +806,89 @@ describe( 'getEmptyViewSuggestions', () => {
 		expect( labels ).not.toContain( 'Simple Review' );
 	} );
 
-	it( 'attaches a one-line description to every post-level suggestion', () => {
+	it( 'attaches a one-line description to every review suggestion', () => {
 		installAiEditorialReviewData( { optimizeTitleSuggestion: true } );
 		installPostTypeMock( 'post' );
 
 		const suggestions = getEmptyViewSuggestions();
+		const byLabel = ( label: string ) =>
+			suggestions.find( ( suggestion ) => suggestion.label === label );
 
-		// All three post-level constants that gained a description should be present.
-		expect( suggestions.map( ( suggestion ) => suggestion.label ) ).toEqual(
-			expect.arrayContaining( [ 'Optimize Title', 'Simple Review', 'Editorial Review' ] )
-		);
-		suggestions.forEach( ( suggestion ) => {
-			expect( typeof suggestion.description ).toBe( 'string' );
-			expect( suggestion.description ).toBeTruthy();
-			expect( suggestion.description ).not.toContain( '\n' );
+		// The post-level constants that carry a one-line description. SEO Enhancer is a
+		// dropdown without a description and is intentionally excluded.
+		[ 'Optimize Title', 'Simple Review', 'Editorial Review' ].forEach( ( label ) => {
+			const suggestion = byLabel( label );
+			expect( suggestion ).toBeDefined();
+			expect( typeof suggestion?.description ).toBe( 'string' );
+			expect( suggestion?.description ).toBeTruthy();
+			expect( suggestion?.description ).not.toContain( '\n' );
 		} );
+	} );
+
+	it( 'shows the SEO Enhancer dropdown when the seoSuggestions feature is enabled', () => {
+		installAiEditorialReviewData( { seoSuggestions: true } );
+		installPostTypeMock( 'post' );
+
+		const seo = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'seo-enhancer'
+		);
+
+		expect( seo?.label ).toBe( 'SEO Enhancer' );
+		expect( seo?.options?.map( ( option ) => option.label ) ).toEqual( [
+			'Title',
+			'Description',
+			'Image Alt Text',
+		] );
+	} );
+
+	it( 'submits the exact ability prompt as each dropdown option value', () => {
+		installAiEditorialReviewData( { seoSuggestions: true } );
+		installPostTypeMock( 'post' );
+
+		const seo = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'seo-enhancer'
+		);
+
+		// An empty parent prompt makes the submitted text equal the option value
+		// verbatim, so these must match the prompts the abilities route on.
+		expect( seo?.prompt ).toBe( '' );
+		expect( seo?.options ).toEqual( [
+			{
+				id: 'seo-title',
+				label: 'Title',
+				value: 'Generate an SEO title (meta title) for this post',
+			},
+			{
+				id: 'seo-description',
+				label: 'Description',
+				value: 'Generate an SEO meta description for this post',
+			},
+			{
+				id: 'image-alt-text',
+				label: 'Image Alt Text',
+				value: 'Generate descriptive alt text for the images in this post',
+			},
+		] );
+	} );
+
+	it( 'gates the SEO Enhancer dropdown independently of Optimize Title', () => {
+		// Optimize Title on, SEO off: SEO must not appear.
+		installAiEditorialReviewData( { optimizeTitleSuggestion: true, seoSuggestions: false } );
+		installPostTypeMock( 'post' );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'optimize-title' );
+		expect( ids ).not.toContain( 'seo-enhancer' );
+	} );
+
+	it( 'hides the SEO Enhancer dropdown when the seoSuggestions feature is disabled', () => {
+		installAiEditorialReviewData( { seoSuggestions: false } );
+		installPostTypeMock( 'post' );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'seo-enhancer' );
 	} );
 } );
 
@@ -814,14 +921,12 @@ describe( 'useSuggestions', () => {
 			'Change tone',
 			'Check grammar',
 			'Simplify text',
-			'Simple Review',
-			'Editorial Review',
 		] );
 		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
 		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [] );
 	} );
 
-	it( 'appends Editorial Review to block-specific suggestions', () => {
+	it( 'shows only block-specific suggestions when a block is selected', () => {
 		installAiEditorialReviewData();
 		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
 		const onSuggestions = jest.fn();
@@ -835,13 +940,8 @@ describe( 'useSuggestions', () => {
 			'Change tone',
 			'Check grammar',
 			'Simplify text',
-			'Simple Review',
-			'Editorial Review',
 		] );
-		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
-			'jetpack_ai_editorial_review_suggestion_rendered',
-			{}
-		);
+		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
 		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
 			[
 				'jetpack_ai_block_transformation_suggestion_rendered',
@@ -882,7 +982,7 @@ describe( 'useSuggestions', () => {
 		] );
 	} );
 
-	it( 'keeps Editorial Review visible when block suggestions are limited', () => {
+	it( 'limits block-specific suggestions to maxSuggestions', () => {
 		installAiEditorialReviewData();
 		mockSelectedBlock = { clientId: 'b-limited', name: 'core/heading' };
 		const onSuggestions = jest.fn();
@@ -898,14 +998,32 @@ describe( 'useSuggestions', () => {
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
 			'Translate content',
-			'Simple Review',
-			'Editorial Review',
+			'Change tone',
+			'Check grammar',
 		] );
 		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
 			[
 				'jetpack_ai_block_transformation_suggestion_rendered',
 				{
 					suggestion_id: 'translate',
+					suggestion_type: 'text',
+					block_type: 'core/heading',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'change-tone',
+					suggestion_type: 'text',
+					block_type: 'core/heading',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'check-grammar',
 					suggestion_type: 'text',
 					block_type: 'core/heading',
 					surface: 'jetpack_ai_sidebar',
@@ -954,8 +1072,6 @@ describe( 'useSuggestions', () => {
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
 			'Generate alt text',
-			'Simple Review',
-			'Editorial Review',
 		] );
 		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
 			[
@@ -970,7 +1086,7 @@ describe( 'useSuggestions', () => {
 		] );
 	} );
 
-	it( 'keeps Editorial Review when the feature disables block transformations', () => {
+	it( 'hides review suggestions when a block is selected and block transformations are disabled', () => {
 		installAiEditorialReviewData( { blockTransformations: false } );
 		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
 		const onSuggestions = jest.fn();
@@ -979,20 +1095,17 @@ describe( 'useSuggestions', () => {
 
 		const latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
-		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
-			'Simple Review',
-			'Editorial Review',
-		] );
+		expect( latestSuggestions ).toEqual( [] );
 	} );
 
-	it( 'keeps Editorial Review when the block transformations feature is missing', () => {
+	it( 'shows review suggestions at post level regardless of the block transformations feature', () => {
 		( globalThis as any ).agentsManagerData = {
 			jetpackAiSidebar: {
 				enabled: true,
 				features: { aiEditorialReview: true },
 			},
 		};
-		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
+		mockSelectedBlock = null;
 		const onSuggestions = jest.fn();
 
 		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
@@ -1209,8 +1322,6 @@ describe( 'useSuggestions', () => {
 			'Change tone',
 			'Check grammar',
 			'Simplify text',
-			'Simple Review',
-			'Editorial Review',
 		] );
 	} );
 
@@ -1485,6 +1596,70 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_test_123' );
 			expect( parsed.data.isCurrent ).toBe( true );
 			expect( parsed.data.hideZoomAction ).toBe( true );
+		} );
+
+		it( 'echoes the tool call id at the envelope top level', async () => {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'title-picker',
+				props: { titles: [ { title: 'T', explanation: 'a' } ] },
+				toolCallId: 'call_identity_1',
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.tool_call_id ).toBe( 'call_identity_1' );
+		} );
+
+		it( 'omits tool_call_id from the envelope when the input has no tool call id', async () => {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'title-picker',
+				props: { titles: [ { title: 'T', explanation: 'a' } ] },
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed ).not.toHaveProperty( 'tool_call_id' );
+		} );
+
+		it( 'returns an agentMessage envelope with an Undo checkpoint for a seo-title-picker call', async () => {
+			const titles = [ { title: 'SEO Title', explanation: 'a' } ];
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'seo-title-picker',
+				props: { titles },
+				toolCallId: 'call_seo_title',
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.type ).toBe( 'seo-title-picker' );
+			expect( parsed.data.props ).toEqual( { titles } );
+			// SEO meta pickers snapshot for Undo, like title-picker.
+			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_seo_title' );
+		} );
+
+		it( 'returns an agentMessage envelope with an Undo checkpoint for a seo-description-picker call', async () => {
+			const descriptions = [ { description: 'An SEO description', explanation: 'a' } ];
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'seo-description-picker',
+				props: { descriptions },
+				toolCallId: 'call_seo_desc',
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.type ).toBe( 'seo-description-picker' );
+			expect( parsed.data.props ).toEqual( { descriptions } );
+			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_seo_desc' );
+		} );
+
+		it( 'returns an agentMessage envelope with an Undo checkpoint for an image-alt-text-picker call', async () => {
+			const images = [ { clientId: 'img1', url: 'u', currentAlt: '', alt: 'A photo' } ];
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'image-alt-text-picker',
+				props: { images },
+				toolCallId: 'call_alt',
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.type ).toBe( 'image-alt-text-picker' );
+			expect( parsed.data.props ).toEqual( { images } );
+			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_alt' );
 		} );
 
 		it( 'accepts the legacy Big Sky show-component tool during migration', async () => {

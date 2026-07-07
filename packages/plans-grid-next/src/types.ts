@@ -77,6 +77,7 @@ export type PlansIntent =
 	| 'plans-p2'
 	| 'plans-default-wpcom'
 	| 'plans-business-trial'
+	| 'plans-student'
 	| 'plans-videopress'
 	| 'plans-guided-segment-developer-or-agency'
 	| 'plans-guided-segment-merchant'
@@ -226,6 +227,13 @@ export type GridContextProps = {
 	featureGroupMap: Partial< FeatureGroupMap >;
 	hideUnsupportedFeatures?: boolean;
 	enterpriseFeaturesList?: string[];
+
+	/**
+	 * India Automattic for Agencies test: when true, the Enterprise plan card is presented as A4A.
+	 * This affects Enterprise branding (logo/copy) and layout (e.g. hides Enterprise client logos
+	 * in the price cell and shows A4A-specific billing text instead).
+	 */
+	isEnterpriseA4AIndia?: boolean;
 
 	/**
 	 * `enableCategorisedFeatures` is no longer exact, and probably best to rename.

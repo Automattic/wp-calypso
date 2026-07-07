@@ -7,7 +7,6 @@ import {
 import { Button, CompactCard } from '@automattic/components';
 import { Button as WpButton } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -73,7 +72,7 @@ class StepImportOrMigrate extends Component {
 	installJetpack = () => {
 		this.props.recordTracksEvent( 'calypso_site_importer_install_jetpack' );
 		const { sourceSiteInfo } = this.props;
-		const sourceSiteDomain = get( sourceSiteInfo, 'site_url', '' );
+		const sourceSiteDomain = sourceSiteInfo?.site_url ?? '';
 		const source = 'import';
 		window.open( `/jetpack/connect/?url=${ sourceSiteDomain }&source=${ source }`, '_blank' );
 	};

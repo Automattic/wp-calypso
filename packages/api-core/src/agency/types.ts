@@ -23,6 +23,9 @@ export interface Agency {
 	name: string;
 	url: string;
 	tier?: AgencyTier;
+	mcp?: {
+		allowed: boolean;
+	};
 	influenced_revenue?: number;
 	created_at: string;
 	billing_system?: 'billingdragon' | 'legacy';

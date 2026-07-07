@@ -16,7 +16,8 @@ export function loadBlackboxSdk() {
 		return Promise.resolve();
 	}
 
-	if ( ! config.isEnabled( 'blackbox-login' ) || ! config( 'blackbox_api_key' ) ) {
+	const apiKey = config( 'blackbox_api_key' );
+	if ( ! config.isEnabled( 'blackbox' ) || ! apiKey ) {
 		return Promise.resolve();
 	}
 
@@ -40,7 +41,7 @@ export function loadBlackboxSdk() {
 				}
 				resolve();
 			},
-			{ 'data-apikey': config( 'blackbox_api_key' ) }
+			{ 'data-apikey': apiKey }
 		);
 	} );
 

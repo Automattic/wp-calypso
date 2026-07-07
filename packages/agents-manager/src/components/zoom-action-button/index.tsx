@@ -15,9 +15,7 @@ export default function ZoomActionButton() {
 			className="agents-manager-zoom-action-button"
 			icon={ zoomIcon }
 			label={
-				isZoomOut
-					? __( 'Zoom in', '__i18n_text_domain__' )
-					: __( 'Zoom out', '__i18n_text_domain__' )
+				isZoomOut ? __( 'Zoom in', __i18n_text_domain__ ) : __( 'Zoom out', __i18n_text_domain__ )
 			}
 			onClick={ toggleZoom }
 			isPressed={ isZoomOut }

@@ -1,4 +1,3 @@
-import { find } from 'lodash';
 import { thumbIsLikelyImage, isCandidateForCanonicalImage } from './utils';
 
 export default function pickCanonicalImage( post ) {
@@ -11,7 +10,7 @@ export default function pickCanonicalImage( post ) {
 			height,
 		};
 	} else if ( post.content_images && post.content_images.length ) {
-		const candidateImage = find( post.content_images, isCandidateForCanonicalImage );
+		const candidateImage = post.content_images.find( isCandidateForCanonicalImage );
 		if ( candidateImage ) {
 			canonicalImage = {
 				uri: candidateImage.src,

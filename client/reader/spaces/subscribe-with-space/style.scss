@@ -1,0 +1,173 @@
+@use 'calypso/reader/spaces/colors' as space-colors;
+
+// Fixed-height flex column: static header + feed preview + search, a scrolling
+// list, and a pinned footer — so only the list scrolls, not the whole modal.
+// Mirrors the customize-space modal layout.
+.reader-space-picker {
+	&.components-modal__frame {
+		min-inline-size: 480px;
+		// Size to content, but cap the height so a long list scrolls instead of
+		// growing the whole modal.
+		max-block-size: min( 680px, calc( 100% - 96px ) );
+	}
+
+	.components-modal__content {
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+	}
+
+	.components-modal__children-container {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		min-block-size: 0;
+	}
+}
+
+.reader-space-picker__header {
+	flex-shrink: 0;
+	padding-block-end: 12px;
+	&-heading {
+		font-size: 20px;
+		font-weight: 600;
+	}
+}
+
+.reader-space-picker__subtitle {
+	margin-block: 4px 0;
+	color: var( --color-text-subtle );
+	font-size: 0.875rem;
+	line-height: 1.4;
+}
+
+.reader-space-picker__footer {
+	flex-shrink: 0;
+	margin-block-start: 16px;
+	padding-block-start: 16px;
+	border-block-start: 1px solid var( --color-neutral-5 );
+}
+
+// "What you're adding" — the feed the subscribe action just followed.
+.reader-space-picker__feed {
+	flex-shrink: 0;
+	margin-block-end: 16px;
+	padding-block: 10px;
+	padding-inline: 12px;
+	border-radius: 8px;
+	background: var( --color-neutral-0 );
+}
+
+.reader-space-picker__feed .site-icon {
+	flex-shrink: 0;
+}
+
+.reader-space-picker__feed-text {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	min-inline-size: 0;
+}
+
+.reader-space-picker__feed-label {
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	color: var( --color-text-subtle );
+}
+
+.reader-space-picker__feed-host {
+	font-weight: 500;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.reader-space-picker__search {
+	flex-shrink: 0;
+	margin-block-end: 12px;
+}
+
+// Fills the scroll area so the footer stays pinned even when the message is short.
+.reader-space-picker__empty {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	color: var( --color-text-subtle );
+	margin: 0;
+}
+
+// Only the list scrolls; the header, feed preview, search and footer stay put.
+// Rows stay top-aligned (VStack would otherwise distribute them).
+.reader-space-picker__list {
+	flex: 0 1 auto;
+	justify-content: flex-start;
+	min-block-size: 0;
+	overflow-y: auto;
+}
+
+.reader-space-picker__row {
+	flex-shrink: 0;
+	min-height: 56px;
+	padding-block: 6px;
+	padding-inline: 8px;
+	border-radius: 8px;
+	transition: background 0.12s ease;
+
+	&:hover {
+		background: var( --color-neutral-0 );
+	}
+}
+
+.reader-space-picker__info {
+	min-inline-size: 0;
+	flex: 1;
+}
+
+// Consumes `--space-color` / `--space-color-bg` set by the `--#{$color}` modifier
+// on the row (see the loop below), mirroring the sidebar space item.
+.reader-space-picker__icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	inline-size: 40px;
+	block-size: 40px;
+	border-radius: 8px;
+	background: var( --space-color-bg );
+	color: var( --space-color );
+}
+
+.reader-space-picker__text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-inline-size: 0;
+}
+
+.reader-space-picker__name {
+	font-weight: 500;
+	color: var( --color-text );
+	line-height: 1.2;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.reader-space-picker__meta {
+	font-size: 0.75rem;
+	color: var( --color-text-subtle );
+	line-height: 1.2;
+}
+
+// Each space exposes its accent as `--space-color` / `--space-color-bg`; emit the
+// values on the row so both the icon tile and the added-row tint can read them.
+// Palette lives once in `colors.scss` (via the shared `space-accent-color` mixin).
+@each $color in space-colors.$space-colors {
+	.reader-space-picker__row--#{$color} {
+		@include space-colors.space-accent-color( $color );
+	}
+}

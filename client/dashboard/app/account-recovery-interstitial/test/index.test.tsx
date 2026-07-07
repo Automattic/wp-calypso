@@ -52,7 +52,35 @@ function mockPreferences( calypso_preferences: Partial< UserPreferences > = {} )
 		.reply( 200, { calypso_preferences } );
 }
 
+const EXPERIMENT_NAME = 'calypso_onboarding_account_recovery_modal_202606';
+const TREATMENT_VARIATION = 'no_recovery_modal';
+
+// The interstitial is hidden only for users in the `no_recovery_modal` treatment; control and
+// unassigned users still see it. Seed a live assignment into the storage ExPlat reads from, so the
+// real `useExperiment` hook resolves to the given variation through its normal code path — no
+// network call, no mocking. `loadExperimentAssignment` returns a stored, still-alive assignment
+// before hitting the server.
+function assignExperiment( variationName: string | null = null ) {
+	window.localStorage.setItem(
+		`explat-experiment--${ EXPERIMENT_NAME }`,
+		JSON.stringify( {
+			experimentName: EXPERIMENT_NAME,
+			variationName,
+			retrievedTimestamp: Date.now(),
+			ttl: 3600,
+		} )
+	);
+}
+
 describe( '<AccountRecoveryInterstitial>', () => {
+	beforeEach( () => {
+		assignExperiment();
+	} );
+
+	afterEach( () => {
+		window.localStorage.clear();
+	} );
+
 	test( 'shows the modal and records an impression for a user with no recovery method', async () => {
 		mockAccountRecovery( NONE_RECOVERY );
 		mockUserSettings( { two_step_enabled: false } );
@@ -75,7 +103,6 @@ describe( '<AccountRecoveryInterstitial>', () => {
 			'calypso_account_recovery_nudge_interstitial_impression',
 			{
 				security_level: 'none',
-				recovery_status: 'none',
 				has_recovery_email: false,
 				has_recovery_phone: false,
 				has_two_factor: false,
@@ -103,8 +130,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_account_recovery_nudge_interstitial_impression',
 			{
-				security_level: 'partial',
-				recovery_status: 'add-two-factor',
+				security_level: 'partial-has-recovery',
 				has_recovery_email: true,
 				has_recovery_phone: false,
 				has_two_factor: false,
@@ -126,9 +152,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		expect(
 			screen.getByRole( 'button', { name: 'Set up recovery email or phone' } )
 		).toBeVisible();
-		expect(
-			screen.getByRole( 'button', { name: 'Review two-step authentication and add backup codes' } )
-		).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Download backup codes' } ) ).toBeVisible();
 	} );
 
 	test( 'shows the "download backup codes" copy when 2FA + recovery are set but backup codes are not', async () => {
@@ -143,18 +167,16 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		).toBeVisible();
 		expect(
 			screen.getByRole( 'button', {
-				name: 'Review two-step authentication and download backup codes',
+				name: 'Download backup codes',
 			} )
 		).toBeVisible();
 		expect(
 			screen.getByRole( 'button', { name: 'Review recovery email or phone' } )
 		).toBeVisible();
-		// Coarse tier stays 'strong'; the fine-grained dimension captures the missing backup codes.
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_account_recovery_nudge_interstitial_impression',
 			{
-				security_level: 'strong',
-				recovery_status: 'add-backup-codes',
+				security_level: 'strong-no-backup-codes',
 				has_recovery_email: true,
 				has_recovery_phone: false,
 				has_two_factor: true,
@@ -163,71 +185,17 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		);
 	} );
 
-	test( 'shows the strong-tier modal with masked recovery details for a fully-covered user', async () => {
+	test( 'does not show for a fully-secured user (recovery method, 2FA, and backup codes)', async () => {
 		mockAccountRecovery( STRONG_RECOVERY );
 		mockUserSettings( { two_step_enabled: true, two_step_backup_codes_printed: true } );
 		mockPreferences();
 
 		const { recordTracksEvent } = render( <AccountRecoveryInterstitial /> );
-
-		const dialog = await screen.findByRole( 'dialog', { name: 'Still have access to these?' } );
-		expect( dialog ).toBeVisible();
-		// Recovery email is masked in the body copy.
-		expect( screen.getByText( /r••••@example\.com/ ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Yes, all good' } ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Update recovery information' } ) ).toBeVisible();
-
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_account_recovery_nudge_interstitial_impression',
-			{
-				security_level: 'strong',
-				recovery_status: 'strong',
-				has_recovery_email: true,
-				has_recovery_phone: false,
-				has_two_factor: true,
-				has_backup_codes: true,
-			}
-		);
-	} );
-
-	test( 'confirming "Yes, all good" snoozes for the strong window and records a cta_click', async () => {
-		const user = userEvent.setup();
-		mockAccountRecovery( STRONG_RECOVERY );
-		mockUserSettings( { two_step_enabled: true, two_step_backup_codes_printed: true } );
-		mockPreferences();
-
-		let snoozedValue: number | undefined;
-		const savePost = nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/me/preferences', ( body ) => {
-				snoozedValue = body.calypso_preferences?.[ 'account-recovery-interstitial-snoozed-until' ];
-				return typeof snoozedValue === 'number';
-			} )
-			.query( true )
-			.reply( 200, {} );
-
-		const { recordTracksEvent } = render( <AccountRecoveryInterstitial /> );
-
-		await screen.findByRole( 'dialog', { name: 'Still have access to these?' } );
-		await user.click( screen.getByRole( 'button', { name: 'Yes, all good' } ) );
 
 		await waitFor( () => {
 			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 		} );
-		expect( savePost.isDone() ).toBe( true );
-		// strong-tier window is 365 days into the future.
-		expect( snoozedValue ).toBeGreaterThan( Math.floor( Date.now() / 1000 ) + 300 * 86400 );
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_account_recovery_nudge_interstitial_cta_click',
-			{
-				security_level: 'strong',
-				recovery_status: 'strong',
-				has_recovery_email: true,
-				has_recovery_phone: false,
-				has_two_factor: true,
-				has_backup_codes: true,
-				cta_id: 'confirm_recovery',
-			}
-		);
+		expect( recordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
 	test( 'does not show when the user is currently snoozed', async () => {
@@ -274,12 +242,31 @@ describe( '<AccountRecoveryInterstitial>', () => {
 			'calypso_account_recovery_nudge_interstitial_dismiss',
 			{
 				security_level: 'none',
-				recovery_status: 'none',
 				has_recovery_email: false,
 				has_recovery_phone: false,
 				has_two_factor: false,
 				has_backup_codes: false,
+				snooze_period: 14,
 			}
+		);
+	} );
+
+	test( 'does not show for a user in the experiment treatment group, even when eligible', async () => {
+		// Otherwise-eligible user (no recovery method, not snoozed) assigned to the treatment that
+		// suppresses the modal.
+		assignExperiment( TREATMENT_VARIATION );
+		mockAccountRecovery( NONE_RECOVERY );
+		mockUserSettings( { two_step_enabled: false } );
+		mockPreferences();
+
+		const { recordTracksEvent } = render( <AccountRecoveryInterstitial /> );
+
+		await waitFor( () => {
+			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+		} );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_account_recovery_nudge_interstitial_impression',
+			expect.anything()
 		);
 	} );
 } );

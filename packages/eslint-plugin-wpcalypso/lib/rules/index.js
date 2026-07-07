@@ -29,4 +29,5 @@ module.exports = {
 	'redux-no-bound-selectors': adapt( require( './redux-no-bound-selectors' ) ),
 	'no-unsafe-wp-apis': adapt( require( './no-unsafe-wp-apis' ) ),
 	'e2e-require-account-teardown': adapt( require( './e2e-require-account-teardown' ) ),
+	'no-import-lodash': adapt( require( './no-import-lodash' ) ),
 };

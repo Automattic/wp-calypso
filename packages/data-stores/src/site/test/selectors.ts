@@ -290,7 +290,7 @@ describe( 'requiresUpgrade', () => {
 } );
 
 describe( 'getAtomicSoftwareStatus', () => {
-	it( 'Tries to retrive the Atomic Software Status', async () => {
+	it( 'Tries to retrieve the Atomic Software Status', async () => {
 		const siteId = 1234;
 		const softwareSet = 'woo-on-plans';
 		const status: AtomicSoftwareStatus = {
@@ -321,7 +321,7 @@ describe( 'getAtomicSoftwareStatus', () => {
 		expect( getAtomicSoftwareStatus( state, 123456, softwareSet ) ).toEqual( undefined );
 	} );
 
-	it( 'Fails to retrive the Atomic Software Status', async () => {
+	it( 'Fails to retrieve the Atomic Software Status', async () => {
 		const siteId = 1234;
 		const softwareSet = 'non-existing-software-set';
 		const error: AtomicSoftwareStatusError = {
@@ -387,7 +387,7 @@ describe( 'getSiteOptions', () => {
 		},
 	};
 
-	it( 'Tries to retrive the site options', async () => {
+	it( 'Tries to retrieve the site options', async () => {
 		const state: State = {
 			sites: {
 				[ siteId ]: site,
@@ -397,7 +397,7 @@ describe( 'getSiteOptions', () => {
 		expect( getSiteOptions( state, siteId ) ).toEqual( options );
 	} );
 
-	it( 'Tries to retrive a specific site option', async () => {
+	it( 'Tries to retrieve a specific site option', async () => {
 		const state: State = {
 			sites: {
 				[ siteId ]: site,

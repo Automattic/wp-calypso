@@ -22,6 +22,7 @@ import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selecto
 import { getSiteSlug, getSiteUrl, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
 import useCurrentPlanManageHref from './use-current-plan-manage-href';
+import { useIsIndiaA4A } from './use-is-india-a4a';
 import { useNonOwnerHandler } from './use-non-owner-handler';
 import type { PlansIntent, UseActionCallback } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -206,6 +207,7 @@ function useGenerateActionCallback( {
 		currentPlan,
 	} );
 	const handleNonOwnerClick = useNonOwnerHandler( { siteId, currentPlan } );
+	const isIndiaA4A = useIsIndiaA4A();
 
 	return ( { planSlug, cartItemForPlan, selectedStorageAddOn, availableForPurchase } ) =>
 		async () => {
@@ -219,6 +221,16 @@ function useGenerateActionCallback( {
 
 			/* 1. Send user to VIP if it's an enterprise plan */
 			if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
+				// India A4A test: the Enterprise card is re-skinned as Automattic for Agencies.
+				if ( isIndiaA4A ) {
+					recordTracksEvent( 'calypso_plan_step_a4a_india_click', { flow: flowName } );
+					window.open(
+						'https://automattic.com/for-agencies/?ref=wordpressdotcomindiapricing',
+						'_blank'
+					);
+					return;
+				}
+
 				recordTracksEvent( 'calypso_plan_step_enterprise_click', { flow: flowName } );
 				const vipLandingPageURL = 'https://wpvip.com/wordpress-vip-agile-content-platform';
 				window.open(

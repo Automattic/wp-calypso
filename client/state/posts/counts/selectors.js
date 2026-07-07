@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/posts/init';
 
 /**
@@ -10,7 +8,7 @@ import 'calypso/state/posts/init';
  * @returns {boolean}          Whether request is in progress
  */
 export function isRequestingPostCounts( state, siteId, postType ) {
-	return get( state.posts.counts.requesting, [ siteId, postType ], false );
+	return state.posts.counts.requesting?.[ siteId ]?.[ postType ] ?? false;
 }
 
 /**

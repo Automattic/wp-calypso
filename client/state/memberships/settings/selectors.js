@@ -1,9 +1,7 @@
-import { get } from 'lodash';
-
 import 'calypso/state/memberships/init';
 
 export function getIsConnectedForSiteId( state, siteId ) {
-	return get( state, [ 'memberships', 'settings', siteId, 'isConnected' ], false );
+	return state?.memberships?.settings?.[ siteId ]?.isConnected ?? false;
 }
 
 export function getConnectedAccountDescriptionForSiteId( state, siteId ) {
@@ -20,7 +18,9 @@ export function getMembershipsSandboxStatusForSiteId( state, siteId ) {
 	return state?.memberships?.settings?.[ siteId ]?.membershipsSandboxStatus ?? null;
 }
 export function getConnectUrlForSiteId( state, siteId ) {
-	return get( state, [ 'memberships', 'settings', siteId, 'connectUrl' ], '' );
+	// Fall back only when the value is absent, not when it is a terminal null.
+	const connectUrl = state?.memberships?.settings?.[ siteId ]?.connectUrl;
+	return connectUrl === undefined ? '' : connectUrl;
 }
 
 export function getCouponsAndGiftsEnabledForSiteId( state, siteId ) {

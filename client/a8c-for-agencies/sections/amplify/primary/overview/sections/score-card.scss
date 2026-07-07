@@ -1,0 +1,94 @@
+// Animated score ring — a custom SVG data-viz with no core-component equivalent.
+.amplify-landing-score-ring {
+	position: relative;
+	inline-size: 88px;
+	block-size: 88px;
+	flex-shrink: 0;
+}
+
+.amplify-landing-score-ring svg {
+	inline-size: 88px;
+	block-size: 88px;
+	transform: rotate(-90deg);
+}
+
+.amplify-landing-ring-track {
+	fill: none;
+	stroke: var(--color-neutral-5);
+	stroke-width: 7;
+}
+
+.amplify-landing-ring-fill {
+	fill: none;
+	stroke-width: 7;
+	stroke-linecap: round;
+	transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.4s ease;
+}
+
+.amplify-landing-ring-fill.good {
+	stroke: var(--color-success);
+}
+
+.amplify-landing-ring-fill.warn {
+	stroke: var(--color-warning-50);
+}
+
+.amplify-landing-ring-fill.danger {
+	stroke: var(--color-error);
+}
+
+.amplify-landing-ring-label {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.amplify-landing-ring-num {
+	font-size: 24px;
+	font-weight: 700;
+	line-height: 1;
+	color: var(--color-text-black);
+}
+
+.amplify-landing-ring-of {
+	font-size: 10px;
+	color: var(--color-text-subtle);
+	font-weight: 500;
+}
+
+// Metric bars — a severity-colored data-viz with no core-component equivalent.
+// The grid keeps the label / bar / value columns aligned across rows.
+.amplify-landing-bar-row {
+	display: grid;
+	grid-template-columns: minmax(140px, 1.4fr) minmax(0, 2fr) auto;
+	align-items: center;
+	gap: 10px;
+}
+
+.amplify-landing-bar-track {
+	block-size: 5px;
+	background: var(--color-neutral-5);
+	border-radius: 3px;
+	overflow: hidden;
+}
+
+.amplify-landing-bar-fill {
+	block-size: 100%;
+	border-radius: 3px;
+	transition: inline-size 0.5s cubic-bezier(0.4, 0, 0.2, 1), background 0.4s ease;
+}
+
+.amplify-landing-bar-fill.good {
+	background: var(--color-success);
+}
+
+.amplify-landing-bar-fill.warn {
+	background: var(--color-warning-50);
+}
+
+.amplify-landing-bar-fill.danger {
+	background: var(--color-error);
+}

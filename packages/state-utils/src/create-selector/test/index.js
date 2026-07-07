@@ -1,5 +1,4 @@
 import warn from '@wordpress/warning';
-import { filter } from 'lodash';
 import createSelector from '../';
 
 jest.mock( '@wordpress/warning', () => jest.fn() );
@@ -7,7 +6,9 @@ jest.mock( '@wordpress/warning', () => jest.fn() );
 describe( 'index', () => {
 	let getSitePosts;
 
-	const selector = jest.fn( ( state, siteId ) => filter( state.posts, { site_ID: siteId } ) );
+	const selector = jest.fn( ( state, siteId ) =>
+		Object.values( state.posts ?? {} ).filter( ( post ) => post.site_ID === siteId )
+	);
 
 	beforeAll( () => {
 		getSitePosts = createSelector( selector, ( state ) => state.posts );

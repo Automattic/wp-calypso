@@ -40,6 +40,8 @@ interface UseInfiniteStreamOptions {
 	feedId?: number | null;
 	localeSlug?: string | null;
 	startDate?: string | null;
+	/** Per-page size for streams that honor it (currently the `space` stream). */
+	perPage?: number;
 	options?: {
 		enabled?: boolean;
 	};
@@ -50,6 +52,7 @@ interface InfiniteStreamQueryOptions {
 	feedId?: number | null;
 	localeSlug?: string | null;
 	startDate?: string | null;
+	perPage?: number;
 	enabled?: boolean;
 }
 
@@ -58,6 +61,7 @@ const getInfiniteStreamQueryOptions = ( {
 	feedId = null,
 	localeSlug = null,
 	startDate = null,
+	perPage,
 	enabled = true,
 }: InfiniteStreamQueryOptions ) => {
 	const streamType = streamKey ? getStreamType( streamKey ) : '';
@@ -72,7 +76,7 @@ const getInfiniteStreamQueryOptions = ( {
 			isPoll: false,
 			gap: null,
 			page: undefined,
-			perPage: undefined,
+			perPage,
 		} ) as ReadStreamQueryParams;
 	const getNextPageHandle: ReadStreamInfiniteQueryHelpers[ 'getNextPageHandle' ] = (
 		lastPage,
@@ -129,6 +133,7 @@ export const useInfiniteStream = ( {
 	feedId = null,
 	localeSlug = null,
 	startDate = null,
+	perPage,
 	options,
 }: UseInfiniteStreamOptions ): UseInfiniteStreamResult => {
 	const dispatch = useDispatch();
@@ -144,9 +149,10 @@ export const useInfiniteStream = ( {
 				feedId,
 				localeSlug,
 				startDate,
+				perPage,
 				enabled,
 			} ),
-		[ resolvedStreamKey, feedId, localeSlug, startDate, enabled ]
+		[ resolvedStreamKey, feedId, localeSlug, startDate, perPage, enabled ]
 	);
 
 	const query = useInfiniteQuery( queryOptions );

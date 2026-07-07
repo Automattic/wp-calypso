@@ -47,7 +47,7 @@ export default function SupportGuide( {
 	// Without the AI chat entry button, use `collapsed` (a FAB) instead of `minimized`.
 	const closedChatState = hasAiChatEntryButton() ? 'minimized' : 'collapsed';
 	const isFromChat = !! ( state?.sessionId || state?.conversationId );
-	const title = __( 'Support Guides', '__i18n_text_domain__' );
+	const title = __( 'Support Guides', __i18n_text_domain__ );
 
 	// Navigate back to the source route, preserving relevant state.
 	const handleBack = () => {
@@ -100,7 +100,7 @@ export default function SupportGuide( {
 					{ ! isFromChat && (
 						<div className="agent-manager-support-guide-footer">
 							<Button variant="primary" onClick={ () => navigate( '/' ) }>
-								{ __( 'Start a new chat', '__i18n_text_domain__' ) }
+								{ __( 'Start a new chat', __i18n_text_domain__ ) }
 							</Button>
 						</div>
 					) }

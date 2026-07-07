@@ -3,13 +3,16 @@
  */
 import { readSpaceQuery, readSpacesQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
-import { screen, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SpacesView } from '../view';
 import type { ReadSpaceDetails } from '@automattic/api-core';
 
 const mockSpaceFeed = jest.fn< null, [ unknown ] >( () => null );
+const mockRecordReaderTracksEvent: jest.Mock = jest.fn( () => ( {
+	type: 'TEST_TRACKS_EVENT',
+} ) );
 
 jest.mock( 'calypso/components/data/document-head', () => ( {
 	__esModule: true,
@@ -20,6 +23,10 @@ jest.mock( 'calypso/components/data/document-head', () => ( {
 // the unified Customize modal, so stub it out to keep the test off the network.
 jest.mock( 'calypso/reader/spaces/feed', () => ( {
 	SpaceFeed: ( props: unknown ) => mockSpaceFeed( props ),
+} ) );
+
+jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
+	recordReaderTracksEvent: ( ...args: unknown[] ) => mockRecordReaderTracksEvent( ...args ),
 } ) );
 
 // Keep the rest of the module real (ReaderMain's global handlers use `useFollowSite`);
@@ -33,6 +40,7 @@ const WORK: ReadSpaceDetails = {
 	id: '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21',
 	name: 'Work',
 	tags: [],
+	languages: [],
 	layout: { color: 'blue', icon: 'inbox', view: 'gallery' },
 	sources: [],
 };
@@ -66,6 +74,7 @@ describe( 'SpacesView', () => {
 	beforeEach( () => {
 		window.history.replaceState( {}, '', '/reader/spaces' );
 		mockSpaceFeed.mockClear();
+		mockRecordReaderTracksEvent.mockClear();
 	} );
 
 	it( 'shows the Customize button on a space detail page', () => {
@@ -113,6 +122,46 @@ describe( 'SpacesView', () => {
 		);
 	} );
 
+	it( 'renders the wide layout by default when the space has no stored width', () => {
+		render( <SpacesView id={ WORK.id } /> );
+
+		expect( screen.getByRole( 'main' ) ).toHaveClass( 'is-wide-layout' );
+	} );
+
+	it( 'renders the regular (non-wide) layout when the space width is regular', () => {
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		const regularSpace: ReadSpaceDetails = {
+			...WORK,
+			layout: { ...WORK.layout, width: 'regular' },
+		};
+		queryClient.setQueryData( readSpacesQuery().queryKey, [ regularSpace ] );
+		queryClient.setQueryData( readSpaceQuery( regularSpace.id ).queryKey, regularSpace );
+
+		renderWithProvider( <SpacesView id={ regularSpace.id } />, {
+			queryClient,
+			initialState: { currentUser: { id: 1 } },
+		} );
+
+		expect( screen.getByRole( 'main' ) ).not.toHaveClass( 'is-wide-layout' );
+	} );
+
+	it( 'records a page view event with the selected space appearance', async () => {
+		render( <SpacesView id={ WORK.id } /> );
+
+		await waitFor( () =>
+			expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+				'calypso_reader_spaces_page_viewed',
+				{
+					space_id: WORK.id,
+					layout: 'gallery',
+					icon: 'inbox',
+					color: 'blue',
+					tab: 'feed',
+				}
+			)
+		);
+	} );
+
 	it( 'opens the Customize modal on the Identity tab', async () => {
 		const user = userEvent.setup();
 		render( <SpacesView id={ WORK.id } /> );
@@ -139,14 +188,18 @@ describe( 'SpacesView', () => {
 	it( 'renders the feed on the default (feed) tab', () => {
 		render( <SpacesView id={ WORK.id } /> );
 
-		expect( mockSpaceFeed ).toHaveBeenCalled();
-		expect( screen.queryByText( 'Discover is coming soon' ) ).not.toBeInTheDocument();
+		expect( mockSpaceFeed ).toHaveBeenCalledTimes( 1 );
+		// The feed tab uses the default variant, not Discover.
+		expect( mockSpaceFeed ).not.toHaveBeenCalledWith(
+			expect.objectContaining( { variant: 'discover' } )
+		);
 	} );
 
-	it( 'renders the Discover placeholder instead of the feed on the discover tab', () => {
+	it( 'renders the Discover variant of the feed on the discover tab', () => {
 		render( <SpacesView id={ WORK.id } tab="discover" /> );
 
-		expect( screen.getByText( 'Discover is coming soon' ) ).toBeVisible();
-		expect( mockSpaceFeed ).not.toHaveBeenCalled();
+		expect( mockSpaceFeed ).toHaveBeenCalledWith(
+			expect.objectContaining( { spaceId: WORK.id, variant: 'discover' } )
+		);
 	} );
 } );
