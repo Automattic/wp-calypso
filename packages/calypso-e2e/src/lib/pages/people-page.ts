@@ -216,15 +216,9 @@ export class PeoplePage {
 	 * Callers must navigate to the Users > All Users page before calling
 	 * this method (e.g. via componentSidebar.navigate).
 	 *
-	 * @param baseURL Calypso URL (unused, kept for backward compatibility).
-	 * @param siteURL User's primary site URL (unused, kept for backward compatibility).
 	 * @param username Username of the team member.
 	 */
-	async visitTeamMemberUserDetails(
-		baseURL: string,
-		siteURL: string,
-		username: string
-	): Promise< void > {
+	async visitTeamMemberUserDetails( username: string ): Promise< void > {
 		if ( ! username ) {
 			throw new Error( 'username is required' );
 		}
