@@ -73,11 +73,11 @@ export function useRecentSelection( {
 				const currentPerPage = view.perPage ?? 1;
 				const currentPage = view.page ?? 1;
 
-				const selectedIndex = selectedItem
-					? streamItems.findIndex(
-							( item ) => getStreamItemKey( item ) === getStreamItemKey( selectedItem )
-					  )
-					: -1;
+				const selectedKey = selectedItem ? getStreamItemKey( selectedItem ) : null;
+				const selectedIndex =
+					selectedKey != null
+						? streamItems.findIndex( ( item ) => getStreamItemKey( item ) === selectedKey )
+						: -1;
 				const anchorIndex =
 					selectedIndex >= 0 ? selectedIndex : ( currentPage - 1 ) * currentPerPage;
 
@@ -128,8 +128,9 @@ export function useRecentSelection( {
 
 			const currentSelection = selectedItemRef.current;
 			if ( currentSelection ) {
+				const selectedKey = getStreamItemKey( currentSelection );
 				const selectedIndex = streamItems.findIndex(
-					( item ) => getStreamItemKey( item ) === getStreamItemKey( currentSelection )
+					( item ) => getStreamItemKey( item ) === selectedKey
 				);
 				if ( selectedIndex >= pageStart && selectedIndex < pageEnd ) {
 					return;

@@ -156,8 +156,10 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 	}
 
 	const getPostFromItem = useCallback(
-		( item: StreamItem ) =>
-			posts[ getStreamItemKey( item ) ] ?? previousPostsRef.current[ getStreamItemKey( item ) ],
+		( item: StreamItem ) => {
+			const key = getStreamItemKey( item );
+			return posts[ key ] ?? previousPostsRef.current[ key ];
+		},
 		[ posts ]
 	);
 
