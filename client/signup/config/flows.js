@@ -189,8 +189,10 @@ function getWithPluginDestination( { siteSlug, pluginParameter, pluginBillingPer
 		return `/marketplace/thank-you/${ siteSlug }?plugins=${ pluginParameter }`;
 	}
 
-	// otherwise send to installation page
-	return `/marketplace/plugin/${ pluginParameter }/install/${ siteSlug }`;
+	// Otherwise send to the installation page. Mark the redirect as trusted (directInstall) so the
+	// page initiates the transfer/install itself — the in-memory purchase-flow handoff it normally
+	// relies on doesn't survive this redirect out of signup.
+	return `/marketplace/plugin/${ pluginParameter }/install/${ siteSlug }?directInstall=true`;
 }
 
 function getEditorDestination( dependencies ) {
