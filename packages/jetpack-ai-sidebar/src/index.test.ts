@@ -141,9 +141,15 @@ jest.mock( '@wordpress/data', () => ( {
 } ) );
 
 // Stub @wordpress/data on window so useCheckpoint / handleShowComponent
-// can read/write the post title and current post id via the core/editor store.
-function installWpDataMock( initialTitle: string, postId = 123, initialExcerpt = '' ) {
-	const state = { title: initialTitle, excerpt: initialExcerpt };
+// can read/write the post title, excerpt, meta, and current post id via the
+// core/editor store.
+function installWpDataMock(
+	initialTitle: string,
+	postId = 123,
+	initialExcerpt = '',
+	initialMeta: Record< string, string > = {}
+) {
+	const state = { title: initialTitle, excerpt: initialExcerpt, meta: { ...initialMeta } };
 	( window as any ).wp = {
 		data: {
 			select: ( store: string ) => {
@@ -157,6 +163,9 @@ function installWpDataMock( initialTitle: string, postId = 123, initialExcerpt =
 							if ( attr === 'excerpt' ) {
 								return state.excerpt;
 							}
+							if ( attr === 'meta' ) {
+								return state.meta;
+							}
 							return undefined;
 						},
 					};
@@ -166,12 +175,19 @@ function installWpDataMock( initialTitle: string, postId = 123, initialExcerpt =
 			dispatch: ( store: string ) => {
 				if ( store === 'core/editor' ) {
 					return {
-						editPost: ( attrs: { title?: string; excerpt?: string } ) => {
+						editPost: ( attrs: {
+							title?: string;
+							excerpt?: string;
+							meta?: Record< string, string >;
+						} ) => {
 							if ( typeof attrs.title === 'string' ) {
 								state.title = attrs.title;
 							}
 							if ( typeof attrs.excerpt === 'string' ) {
 								state.excerpt = attrs.excerpt;
+							}
+							if ( attrs.meta && typeof attrs.meta === 'object' ) {
+								state.meta = { ...state.meta, ...attrs.meta };
 							}
 						},
 					};
@@ -2047,7 +2063,7 @@ describe( 'toolProvider', () => {
 			const parsed = JSON.parse( result.agentMessage );
 			expect( parsed.data.type ).toBe( 'seo-title-picker' );
 			expect( parsed.data.props ).toEqual( { titles } );
-			// SEO meta pickers snapshot for Undo, like title-picker.
+			// SEO meta pickers snapshot their post meta key for Undo.
 			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_seo_title' );
 		} );
 
@@ -2079,7 +2095,7 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_excerpt' );
 		} );
 
-		it( 'returns an agentMessage envelope with an Undo checkpoint for an image-alt-text-picker call', async () => {
+		it( 'returns an agentMessage envelope without an Undo checkpoint for an image-alt-text-picker call', async () => {
 			const images = [ { clientId: 'img1', url: 'u', currentAlt: '', alt: 'A photo' } ];
 			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
 				type: 'image-alt-text-picker',
@@ -2090,7 +2106,9 @@ describe( 'toolProvider', () => {
 			const parsed = JSON.parse( result.agentMessage );
 			expect( parsed.data.type ).toBe( 'image-alt-text-picker' );
 			expect( parsed.data.props ).toEqual( { images } );
-			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_alt' );
+			// Block-attribute changes cannot be restored reliably, so the alt-text
+			// picker sets no checkpoint and AM shows no Undo for it.
+			expect( parsed.data.calypsoCheckpointId ).toBeUndefined();
 		} );
 
 		it( 'accepts the legacy Big Sky show-component tool during migration', async () => {
@@ -2267,7 +2285,7 @@ describe( 'useCheckpoint', () => {
 		installWpDataMock( 'Original Title', 123, 'Original excerpt' );
 		const api = useCheckpoint();
 
-		api.setCheckpoint( 'cp-excerpt', [ 'excerpt' ] );
+		api.setCheckpoint( 'cp-excerpt', { fields: [ 'excerpt' ] } );
 
 		( window as any ).wp.data
 			.dispatch( 'core/editor' )
@@ -2299,6 +2317,72 @@ describe( 'useCheckpoint', () => {
 		expect(
 			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'excerpt' )
 		).toBe( 'User excerpt' );
+	} );
+
+	it( 'restores only the snapshotted meta key for a metaKeys checkpoint, leaving the title and other meta intact', async () => {
+		installWpDataMock( 'Original Title', 123, '', {
+			advanced_seo_description: 'Original description',
+			jetpack_seo_html_title: 'Original SEO title',
+		} );
+		const api = useCheckpoint();
+
+		api.setCheckpoint( 'cp-seo-desc', { metaKeys: [ 'advanced_seo_description' ] } );
+
+		( window as any ).wp.data.dispatch( 'core/editor' ).editPost( {
+			title: 'Edited Title',
+			meta: {
+				advanced_seo_description: 'AI description',
+				jetpack_seo_html_title: 'Edited SEO title',
+			},
+		} );
+		await api.restoreCheckpoint( 'cp-seo-desc' );
+
+		const meta = ( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'meta' );
+		expect( meta.advanced_seo_description ).toBe( 'Original description' );
+		expect( meta.jetpack_seo_html_title ).toBe( 'Edited SEO title' );
+		expect(
+			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'title' )
+		).toBe( 'Edited Title' );
+	} );
+
+	it( 'restores a meta key that was unset at checkpoint time to an empty string', async () => {
+		installWpDataMock( 'Original Title' );
+		const api = useCheckpoint();
+
+		api.setCheckpoint( 'cp-seo-unset', { metaKeys: [ 'advanced_seo_description' ] } );
+
+		( window as any ).wp.data.dispatch( 'core/editor' ).editPost( {
+			meta: { advanced_seo_description: 'AI description' },
+		} );
+		await api.restoreCheckpoint( 'cp-seo-unset' );
+
+		expect(
+			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'meta' )
+				.advanced_seo_description
+		).toBe( '' );
+	} );
+
+	it( 'restores the SEO description meta set by a show-component tool call', async () => {
+		installWpDataMock( 'Original Title', 123, '', {
+			advanced_seo_description: 'Tool-call-time description',
+		} );
+		const api = useCheckpoint();
+
+		await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+			type: 'seo-description-picker',
+			props: { descriptions: [ { description: 'AI description', explanation: 'a' } ] },
+			toolCallId: 'call_x',
+		} );
+
+		( window as any ).wp.data.dispatch( 'core/editor' ).editPost( {
+			meta: { advanced_seo_description: 'AI description' },
+		} );
+		await api.restoreCheckpoint( 'call_x' );
+
+		expect(
+			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'meta' )
+				.advanced_seo_description
+		).toBe( 'Tool-call-time description' );
 	} );
 
 	it( 'keeps the checkpoint after restore so Undo can be used repeatedly', async () => {

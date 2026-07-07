@@ -11,18 +11,27 @@ import { dispatch, select } from '@wordpress/data';
 import { countOccurrences } from './blocks';
 
 /**
- * Post fields a picker checkpoint can snapshot and restore.
+ * Top-level post fields a picker checkpoint can snapshot and restore.
  */
 export type CheckpointField = 'title' | 'excerpt';
 
 /**
+ * What a picker checkpoint snapshots: top-level post fields and/or post meta
+ * keys. Defaults to `{ fields: [ 'title' ] }` when omitted.
+ */
+export type CheckpointSpec = {
+	fields?: CheckpointField[];
+	metaKeys?: string[];
+};
+
+/**
  * Checkpoint API shared between the React `useCheckpoint` hook (which AM
  * calls) and the synchronous `handleShowComponent` callback. `setCheckpoint`
- * captures only the fields the triggering picker can write, so restoring one
- * picker's checkpoint never clobbers another field's later edits.
+ * captures only the fields and meta keys the triggering picker can write, so
+ * restoring one picker's checkpoint never clobbers later edits elsewhere.
  */
 export interface CheckpointApi {
-	setCheckpoint: ( id: string, fields?: CheckpointField[] ) => void;
+	setCheckpoint: ( id: string, spec?: CheckpointSpec ) => void;
 	hasCheckpoint: ( id: string ) => boolean;
 	restoreCheckpoint: ( id: string ) => Promise< void >;
 }
