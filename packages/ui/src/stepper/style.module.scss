@@ -48,12 +48,9 @@
 	color: var( --wpds-color-fg-interactive-neutral-strong );
 }
 
-// Completed step — the indicator is deliberately de-emphasized relative to
-// its title (per the Figma design), using the weak variant of the same
-// interactive-neutral family.
+// Completed step — the check icon and circle inherit the trigger's color,
+// so they always match the title text.
 .indicator.is-completed {
-	color: var( --wpds-color-fg-interactive-neutral-weak );
-
 	svg {
 		stroke: currentColor;
 		stroke-width: 1.5px;
@@ -85,7 +82,7 @@
 	border-style: solid;
 }
 
-// Completed: 16px, solid border (color inherited from .indicator.is-completed)
+// Completed: 16px, solid border (color inherited from the trigger)
 .indicator.is-completed[data-indicator-variant='bullet'] {
 	width: var( --a8c-ui-stepper-indicator-size-sm );
 	height: var( --a8c-ui-stepper-indicator-size-sm );
@@ -115,6 +112,9 @@
 	height: auto;
 	text-align: start;
 	width: 100%;
+	// Rest at regular weight (the Button default is medium); only the active
+	// step's title is bolded via the aria-expanded/aria-selected rule below.
+	font-weight: var( --wpds-typography-font-weight-regular );
 
 	// State text colors are set once here, on the button, and cascade to the
 	// title and description. Step state is read from the button's own
