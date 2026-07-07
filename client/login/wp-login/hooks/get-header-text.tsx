@@ -149,7 +149,9 @@ export function getHeaderText( {
 				args: { partner: partnerConfig.displayName },
 			} );
 		} else {
-			let clientName: TranslateResult | undefined = oauth2Client?.name;
+			// Resolve a known brand name. These are authoritative and rendered
+			// verbatim; only the raw client slug fallback below is title-cased.
+			let clientName: TranslateResult | undefined;
 			const mobileAppClientName = getMobileAppClientName( {
 				oauth2Client,
 				isJetpackApp,
@@ -183,6 +185,14 @@ export function getHeaderText( {
 				clientName = 'Woo';
 			}
 
+			// A resolved brand name is authoritative and rendered verbatim. Fall back
+			// to the raw client slug otherwise, which `text-transform: capitalize`
+			// prettifies (e.g. "crowdsignal" -> "Crowdsignal").
+			const isBrandedName = clientName !== undefined;
+			if ( ! isBrandedName ) {
+				clientName = oauth2Client?.name;
+			}
+
 			headerText = clientName
 				? ( fixMe( {
 						text: 'Log in to {{span}}%(client)s{{/span}} with WordPress.com',
@@ -192,7 +202,7 @@ export function getHeaderText( {
 								span: (
 									<span
 										className={ clsx( 'wp-login__one-login-header-client-name', {
-											'is-exact-case': !! mobileAppClientName,
+											'is-exact-case': isBrandedName,
 										} ) }
 									/>
 								),
