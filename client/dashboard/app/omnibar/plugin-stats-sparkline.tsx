@@ -34,7 +34,7 @@ export function useStatsSparklinePlugin( {
 		render: () => (
 			<>
 				<StatsSparkline hourlyViews={ hourlyViews } />
-				<span className="screen-reader-text">{ label }</span>
+				<span className="wpcom-stats-sparkline-accessible-label">{ label }</span>
 			</>
 		),
 	};
