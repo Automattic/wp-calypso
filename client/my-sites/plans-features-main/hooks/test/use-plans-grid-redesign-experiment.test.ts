@@ -182,7 +182,7 @@ describe( 'usePlansGridRedesignExperiment', () => {
 			...CONTROL_RESULT,
 			variant: 'six_plan_new_features',
 			usePlansGridRedesign: true,
-			usePlansGridRedesignNewDescription: true,
+			usePlansGridRedesignNewDescription: false,
 			showDifferentiatorHeader: true,
 		} );
 	} );
