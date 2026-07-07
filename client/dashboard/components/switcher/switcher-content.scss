@@ -1,4 +1,11 @@
+@import '@wordpress/base-styles/variables';
+
+.components-dropdown__content .components-menu-group.switcher-content__search {
+	padding-block: $grid-unit-20 $grid-unit-10;
+	padding-inline: $grid-unit-10 + $grid-unit-15;
+}
+
 .switcher-content__no-results {
 	display: block;
-	padding: 8px 12px;
+	padding: $grid-unit-10 $grid-unit-15;
 }

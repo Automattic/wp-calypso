@@ -83,7 +83,7 @@ export default function SwitcherContent< T >( {
 
 	return (
 		<NavigableMenu style={ { width } }>
-			<MenuGroup>
+			<MenuGroup className="switcher-content__search">
 				{ filter ? (
 					<HStack justify="flex-start">
 						{ search }
