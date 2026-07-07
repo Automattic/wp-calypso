@@ -59,7 +59,8 @@
 
 .legacy-contact-print__key {
 	font-family: ui-monospace, monospace;
-	font-size: 1rem;
+	// stylelint-disable-next-line scales/font-sizes -- off-scale size chosen so the 49-char access key fits on one line
+	font-size: 1.2rem;
 	font-weight: 600;
 	line-height: 1.4;
 	width: max-content;
