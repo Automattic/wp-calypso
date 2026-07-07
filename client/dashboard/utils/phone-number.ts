@@ -18,18 +18,18 @@ export function validatePhone( phoneNumber: string ) {
 		};
 	}
 
-	if ( phoneNumberWithoutPlus.length < 8 ) {
-		return {
-			error: 'phone_number_too_short',
-			message: __( 'This number is too short' ),
-		};
-	}
-
 	// The phone library silently strips extra plus signs, so reject them before validating.
 	if ( ! /^\+?\d+$/.test( phoneNumber ) ) {
 		return {
 			error: 'phone_number_contains_special_characters',
 			message: __( 'Phone numbers cannot contain special characters' ),
+		};
+	}
+
+	if ( phoneNumberWithoutPlus.length < 8 ) {
+		return {
+			error: 'phone_number_too_short',
+			message: __( 'This number is too short' ),
 		};
 	}
 

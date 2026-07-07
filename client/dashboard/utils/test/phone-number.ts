@@ -135,6 +135,14 @@ describe( 'validatePhone', () => {
 				message: 'Phone numbers cannot contain special characters',
 			} );
 		} );
+
+		it( 'should report special characters over length for a short misplaced-plus number', () => {
+			const result = validatePhone( '+1+2345' );
+			expect( result ).toEqual( {
+				error: 'phone_number_contains_special_characters',
+				message: 'Phone numbers cannot contain special characters',
+			} );
+		} );
 	} );
 
 	describe( 'validation order', () => {
