@@ -47,4 +47,54 @@ describe( 'getReaderSidebarSiteName', () => {
 			'Example Site Title'
 		);
 	} );
+
+	test( 'derives an r/subreddit label from the feed URL for an unresolved subreddit', () => {
+		expect(
+			getReaderSidebarSiteName( {
+				name: '',
+				URL: '',
+				feed_URL: 'https://www.reddit.com/r/simracing/.rss',
+			} )
+		).toBe( 'r/simracing' );
+	} );
+
+	test( 'derives a u/user label from a Reddit user feed URL', () => {
+		expect(
+			getReaderSidebarSiteName( {
+				name: '',
+				URL: '',
+				feed_URL: 'https://www.reddit.com/user/spez/.rss',
+			} )
+		).toBe( 'u/spez' );
+	} );
+
+	test( 'derives a host/path label from a non-Reddit feed URL without title', () => {
+		expect(
+			getReaderSidebarSiteName( {
+				name: '',
+				URL: '',
+				feed_URL: 'https://www.example.com/blog/feed',
+			} )
+		).toBe( 'example.com/blog' );
+	} );
+
+	test( 'prefers the r/subreddit handle over the generic reddit.com domain when the title is missing', () => {
+		expect(
+			getReaderSidebarSiteName( {
+				name: '',
+				URL: 'https://www.reddit.com/r/simracing/',
+				feed_URL: 'https://www.reddit.com/r/simracing/.rss',
+			} )
+		).toBe( 'r/simracing' );
+	} );
+
+	test( 'keeps the resolved title for a subreddit once it has one', () => {
+		expect(
+			getReaderSidebarSiteName( {
+				name: 'SimRacing',
+				URL: 'https://www.reddit.com/r/simracing/',
+				feed_URL: 'https://www.reddit.com/r/simracing/.rss',
+			} )
+		).toBe( 'SimRacing' );
+	} );
 } );

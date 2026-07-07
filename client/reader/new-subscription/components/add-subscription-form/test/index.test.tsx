@@ -5,7 +5,7 @@
 import { getSiteSubscriptionsQueryKey } from '@automattic/api-queries';
 import { SiteSubscriptionsQueryPropsProvider } from '@automattic/data-stores/src/reader/contexts';
 import { QueryClient } from '@tanstack/react-query';
-import { screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -167,6 +167,38 @@ describe( 'AddSubscriptionForm', () => {
 			expect( invalidateQueries ).toHaveBeenCalledWith( {
 				queryKey: getSiteSubscriptionsQueryKey(),
 			} );
+		} );
+
+		it( 'refetches follows again with backoff so a resolved feed title appears without a manual refresh', async () => {
+			jest.useFakeTimers();
+			try {
+				const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+				const queryClient = new QueryClient();
+				const invalidateQueries = jest.spyOn( queryClient, 'invalidateQueries' );
+				renderWithProvider( <AddSubscriptionForm type="reddit" />, { queryClient } );
+
+				const followsInvalidations = () =>
+					invalidateQueries.mock.calls.filter(
+						( [ arg ] ) =>
+							JSON.stringify( arg?.queryKey ) === JSON.stringify( getSiteSubscriptionsQueryKey() )
+					).length;
+
+				await user.click( screen.getByRole( 'button', { name: 'Toggle subscription' } ) );
+				expect( followsInvalidations() ).toBe( 1 );
+
+				act( () => {
+					jest.advanceTimersByTime( 3000 );
+				} );
+				expect( followsInvalidations() ).toBe( 2 );
+
+				// Remaining backoff refetches (8s and 15s) fire.
+				act( () => {
+					jest.advanceTimersByTime( 12000 );
+				} );
+				expect( followsInvalidations() ).toBe( 4 );
+			} finally {
+				jest.useRealTimers();
+			}
 		} );
 
 		it( 'hides instructions when a feed preview becomes active', async () => {

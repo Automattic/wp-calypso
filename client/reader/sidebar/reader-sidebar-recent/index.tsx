@@ -28,26 +28,78 @@ type Props = {
 const SITE_DISPLAY_CUTOFF = 5;
 const RECENT_PATH_REGEX = /^\/reader(?:\/recent\/\d+)?\/?(?:\?|$)/;
 
-type ReaderSidebarSite = Pick< ReturnType< typeof useSubscribedSites >[ number ], 'name' | 'URL' >;
+type ReaderSidebarSite = Pick<
+	ReturnType< typeof useSubscribedSites >[ number ],
+	'name' | 'URL'
+> & {
+	feed_URL?: string;
+};
 
 const isFreeWpcomSubdomain = ( host = '' ): boolean => /\.wordpress\.com$/i.test( host );
 
 /**
- * Best label for a followed site in the Reader sidebar. Untitled sites are
- * named after their free WordPress.com subdomain (with a trailing slash), so
- * prefer the real domain from `URL` in that case.
+ * Reddit subreddit/user feeds all resolve to the same generic `reddit.com`
+ * domain, so a title-less subreddit reads best as its specific `r/name` (or
+ * `u/name`) handle derived from the feed URL.
+ */
+function getRedditFeedLabel( feedUrl?: string ): string | undefined {
+	const match = feedUrl?.match( /reddit\.com\/(r|user)\/([^/?#]+)/i );
+	if ( ! match ) {
+		return undefined;
+	}
+
+	const prefix = match[ 1 ].toLowerCase() === 'user' ? 'u' : 'r';
+	return `${ prefix }/${ match[ 2 ] }`;
+}
+
+/**
+ * Host-and-path label for a feed URL, without the protocol or a trailing feed
+ * extension (e.g. `example.com/blog`). Used as a last resort so a subscription
+ * that has not resolved a title or a site URL yet is not shown blank.
+ */
+function getGenericFeedLabel( feedUrl?: string ): string | undefined {
+	if ( ! feedUrl ) {
+		return undefined;
+	}
+
+	const withoutFeedExtension = feedUrl.replace(
+		/\/?\.?(rss|rss\.xml|atom|atom\.xml|feed)\/?$/i,
+		''
+	);
+	return formatUrlForDisplay( withoutFeedExtension ) || undefined;
+}
+
+/**
+ * Best label for a followed site in the Reader sidebar. A real title always
+ * wins. Otherwise: prefer a Reddit `r/subreddit` handle (the resolved domain is
+ * an uninformative `reddit.com` for every subreddit), then the resolved site
+ * domain, then any feed-URL-derived label — so a brand-new feed whose title is
+ * still resolving server-side is never shown blank. Untitled WordPress.com
+ * sites come back named after their free subdomain, so those still prefer the
+ * mapped domain from `URL`.
  */
 export function getReaderSidebarSiteName( site: ReaderSidebarSite ): string {
-	const siteDomain = site.URL ? getSiteDomain( { site: { URL: site.URL } } ) : undefined;
 	const siteName = site.name ?? '';
 	// `name` may be URL-shaped, so normalize before the subdomain check.
 	const normalizedName = formatUrlForDisplay( siteName ) || siteName;
 
-	if ( ( ! siteName || isFreeWpcomSubdomain( normalizedName ) ) && siteDomain ) {
+	if ( siteName && ! isFreeWpcomSubdomain( normalizedName ) ) {
+		return siteName;
+	}
+
+	const feedUrl = site.feed_URL || site.URL;
+
+	const redditLabel = getRedditFeedLabel( feedUrl );
+	if ( redditLabel ) {
+		return redditLabel;
+	}
+
+	const siteDomain = site.URL ? getSiteDomain( { site: { URL: site.URL } } ) : undefined;
+	if ( siteDomain ) {
 		return siteDomain;
 	}
 
-	return siteName;
+	return getGenericFeedLabel( feedUrl ) ?? siteName;
 }
 
 const ReaderSidebarRecent = ( {
