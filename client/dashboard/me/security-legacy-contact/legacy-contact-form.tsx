@@ -5,6 +5,7 @@ import { useDispatch } from '@wordpress/data';
 import { DataForm, useFormValidity } from '@wordpress/dataviews';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import clsx from 'clsx';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
@@ -12,6 +13,7 @@ import { SectionHeader } from '../../components/section-header';
 import type { Field } from '@wordpress/dataviews';
 
 const LEGACY_CONTACT_NOTES_MAX_LENGTH = 500;
+const LEGACY_CONTACT_NOTES_WARNING_THRESHOLD = 50;
 
 interface LegacyContactFormData {
 	email: string;
@@ -35,10 +37,16 @@ const fields: Field< LegacyContactFormData >[] = [
 			const { id, getValue } = field;
 			const value = getValue( { item: data } ) || '';
 			const remaining = LEGACY_CONTACT_NOTES_MAX_LENGTH - value.length;
+			const isNearLimit = remaining <= LEGACY_CONTACT_NOTES_WARNING_THRESHOLD;
 
 			return (
 				<div className="legacy-contact-notes-field">
-					<span className="legacy-contact-notes-field__count" aria-hidden="true">
+					<span
+						className={ clsx( 'legacy-contact-notes-field__count', {
+							'is-near-limit': isNearLimit,
+						} ) }
+						aria-hidden="true"
+					>
 						{ sprintf(
 							/* translators: %d is the number of characters remaining. */
 							_n( '%d character remaining', '%d characters remaining', remaining ),

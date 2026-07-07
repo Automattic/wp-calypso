@@ -14,6 +14,10 @@
 	line-height: 1.4;
 	color: var( --color-text-subtle );
 	white-space: nowrap;
+
+	&.is-near-limit {
+		color: var( --dashboard__foreground-color-error );
+	}
 }
 
 .legacy-contact-card {
