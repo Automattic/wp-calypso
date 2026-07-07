@@ -1,6 +1,10 @@
 @import "@wordpress/base-styles/variables";
 
 .performance-insight__markdown {
+	code {
+		font-size: 0.875em;
+	}
+
 	pre:has(code) {
 		max-width: 100%;
 		padding: $grid-unit-20;

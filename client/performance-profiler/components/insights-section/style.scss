@@ -185,6 +185,10 @@
 				.content {
 					flex: 1 1 500px;
 
+					code {
+						font-size: 0.875em;
+					}
+
 					&:only-child {
 						flex: 0 1 700px;
 						max-width: 700px; // If elements are wider, e.g. code blocks, there will be a horizontal scroll
