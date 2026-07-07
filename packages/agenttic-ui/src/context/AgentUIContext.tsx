@@ -48,6 +48,7 @@ export interface AgentUIContextValue {
 		selectedSuggestion: Suggestion,
 		availableSuggestions: Suggestion[]
 	) => void;
+	reportSuggestionsRendered?: ( shown: Suggestion[] ) => void;
 
 	// Notice
 	notice?: NoticeConfig;
