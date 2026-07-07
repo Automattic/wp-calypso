@@ -147,9 +147,9 @@ export default function MigrationsTagSitesModal( {
 
 	return (
 		<Modal
+			className="migrations-tag-sites-modal"
 			title={ __( 'Tag your transferred sites for commission.' ) }
 			onRequestClose={ handleOnClose }
-			size="large"
 		>
 			<VStack spacing={ 4 }>
 				<Text>{ __( 'Select the sites you moved on your own.' ) }</Text>

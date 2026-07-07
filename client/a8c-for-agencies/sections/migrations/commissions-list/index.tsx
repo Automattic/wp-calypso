@@ -35,7 +35,9 @@ export default function MigrationsCommissionsList( {
 		...initialDataViewsState,
 		type: isDesktop ? DATAVIEWS_TABLE : DATAVIEWS_LIST,
 		titleField: 'site',
-		fields: [ 'site', 'migratedOn', 'reviewStatus' ],
+		// `site` is the titleField (rendered as the primary column/title), so it
+		// must not also appear in the visible fields or it renders twice.
+		fields: [ 'migratedOn', 'reviewStatus' ],
 		layout: {
 			styles: {
 				site: { width: '40%' },

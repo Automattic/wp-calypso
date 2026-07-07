@@ -1,6 +1,10 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
+.components-modal__frame.migrations-tag-sites-modal {
+	max-width: 700px;
+}
+
 .migrations-tag-sites-modal__instruction {
 	@include body-small;
 	margin: 0;
