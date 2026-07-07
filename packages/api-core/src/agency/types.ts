@@ -29,6 +29,9 @@ export interface Agency {
 	influenced_revenue?: number;
 	created_at: string;
 	billing_system?: 'billingdragon' | 'legacy';
+	user?: {
+		capabilities: string[];
+	};
 }
 
 /**
