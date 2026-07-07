@@ -129,10 +129,10 @@ export function useRecentSelection( {
 			const currentSelection = selectedItemRef.current;
 			if ( currentSelection ) {
 				const selectedKey = getStreamItemKey( currentSelection );
-				const selectedIndex = streamItems.findIndex(
-					( item ) => getStreamItemKey( item ) === selectedKey
-				);
-				if ( selectedIndex >= pageStart && selectedIndex < pageEnd ) {
+				const selectedOnPage = streamItems
+					.slice( pageStart, pageEnd )
+					.some( ( item ) => getStreamItemKey( item ) === selectedKey );
+				if ( selectedOnPage ) {
 					return;
 				}
 			}
