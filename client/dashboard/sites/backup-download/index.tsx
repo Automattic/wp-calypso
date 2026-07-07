@@ -1,44 +1,32 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { __ } from '@wordpress/i18n';
-import { useEffect } from 'react';
-import Breadcrumbs from '../../app/breadcrumbs';
+import { useCallback } from 'react';
 import { siteBackupDownloadRoute } from '../../app/router/sites';
-import { PageHeader } from '../../components/page-header';
-import PageLayout from '../../components/page-layout';
-import { BackupDownloadFlow } from './flow';
+import { BackupDownloadPage } from './download-page';
 
 function SiteBackupDownload() {
 	const { siteSlug, rewindId } = siteBackupDownloadRoute.useParams();
-	const { downloadId: searchDownloadId } = siteBackupDownloadRoute.useSearch();
+	const { downloadId } = siteBackupDownloadRoute.useSearch();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const router = useRouter();
 
-	useEffect( () => {
-		if ( searchDownloadId ) {
-			router.navigate( {
-				to: siteBackupDownloadRoute.fullPath,
-				params: { siteSlug, rewindId },
-				search: {},
-				replace: true,
-			} );
-		}
-	}, [ router, siteSlug, rewindId, searchDownloadId ] );
+	const onConsumeDownloadId = useCallback( () => {
+		router.navigate( {
+			to: siteBackupDownloadRoute.fullPath,
+			params: { siteSlug, rewindId },
+			search: {},
+			replace: true,
+		} );
+	}, [ router, siteSlug, rewindId ] );
 
 	return (
-		<PageLayout
-			size="small"
-			header={
-				<PageHeader prefix={ <Breadcrumbs length={ 2 } /> } title={ __( 'Download backup' ) } />
-			}
-		>
-			<BackupDownloadFlow
-				site={ site }
-				rewindId={ rewindId }
-				initialDownloadId={ searchDownloadId }
-			/>
-		</PageLayout>
+		<BackupDownloadPage
+			site={ site }
+			rewindId={ rewindId }
+			downloadId={ downloadId }
+			onConsumeDownloadId={ onConsumeDownloadId }
+		/>
 	);
 }
 
