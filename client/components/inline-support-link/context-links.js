@@ -432,6 +432,13 @@ const contextLinks = {
 	'stats-emails-jetpack': {
 		link: 'https://jetpack.com/support/jetpack-stats/subscribers-stats/#emails-section',
 	},
+	'stats-subscribers': {
+		link: 'https://wordpress.com/support/stats/view-subscriber-stats/#view-subscriber-stats',
+		post_id: 404454,
+	},
+	'stats-subscribers-jetpack': {
+		link: 'https://jetpack.com/support/jetpack-stats/subscribers-stats/#view-your-subscribers',
+	},
 	'stats-search-terms': {
 		link: 'https://wordpress.com/support/stats/understand-traffic-sources/#analyze-search-terms',
 		post_id: 404387,
