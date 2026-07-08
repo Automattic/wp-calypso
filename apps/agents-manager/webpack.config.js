@@ -1,6 +1,9 @@
 const path = require( 'path' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
+const {
+	defaultRequestToHandle,
+} = require( '@wordpress/dependency-extraction-webpack-plugin/lib/util' );
 const ReadableJsAssetsWebpackPlugin = require( '@wordpress/readable-js-assets-webpack-plugin' );
 const CopyPlugin = require( 'copy-webpack-plugin' );
 const webpack = require( 'webpack' );
@@ -105,6 +108,26 @@ function getIndividualConfig( options = {} ) {
 					if ( request === '@wordpress/ui' ) {
 						return null;
 					}
+					// Externalize react-dom/client so `createRoot` resolves to WordPress's
+					// ReactDOM instead of bundling a copy of react-dom. The plugin default
+					// externalizes react / react-dom / react-jsx-runtime but NOT this subpath,
+					// so react-dom gets bundled — and a bundled react-dom carries its own React
+					// runtime that mismatches the host's React (React 18 and 19 runtimes are
+					// incompatible). Same rationale as odyssey-stats and blaze-dashboard, which
+					// externalize the React runtime to the host; this config additionally maps the
+					// react-dom/client subpath. See apps/odyssey-stats/webpack.config.js and
+					// apps/blaze-dashboard/webpack.config.js.
+					if ( request === 'react-dom/client' ) {
+						return 'ReactDOM';
+					}
+				},
+				requestToHandle( request ) {
+					// react-dom/client resolves to the `react-dom` script handle; WordPress
+					// registers no separate handle for the subpath.
+					if ( request === 'react-dom/client' ) {
+						return 'react-dom';
+					}
+					return defaultRequestToHandle( request );
 				},
 			} ),
 			new ReadableJsAssetsWebpackPlugin(),
