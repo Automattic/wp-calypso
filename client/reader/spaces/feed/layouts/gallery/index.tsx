@@ -7,7 +7,10 @@ import {
 import { useMemo } from 'react';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import { SiteIcon } from 'calypso/blocks/site-icon';
+import { useCachedPost } from 'calypso/reader/data/post/cache';
+import { type StreamPostKey } from 'calypso/reader/data/stream';
 import { useInfiniteList } from 'calypso/reader/hooks/use-infinite-list';
+import { keyForPost } from 'calypso/reader/post-key';
 import { getPostUrl } from 'calypso/reader/route';
 import { Shimmer } from '../../components/skeleton';
 import { SpaceFeedTimeSince } from '../../components/time-since';
@@ -36,16 +39,20 @@ function useGalleryColumns(): number {
 }
 
 function GalleryCard( {
-	post,
+	postKey,
 	isSelected,
 	onOpen,
 	showTimestamp,
 }: {
-	post: ReadStreamPost;
+	postKey: StreamPostKey | undefined;
 	isSelected: boolean;
 	onOpen: () => void;
 	showTimestamp: boolean;
 } ) {
+	const post = useCachedPost( postKey );
+	if ( ! post ) {
+		return <GallerySkeletonCard />;
+	}
 	const fields = getPostFields( post );
 	return (
 		<VStack
@@ -206,7 +213,7 @@ export function GalleryLayout( {
 							cell ? (
 								<GalleryCard
 									key={ getPostFieldKey( cell ) }
-									post={ cell }
+									postKey={ keyForPost( cell ) }
 									isSelected={ isPostSelected( cell ) }
 									onOpen={ () => selectPost( cell ) }
 									showTimestamp={ showTimestamp }
