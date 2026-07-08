@@ -103,13 +103,10 @@ const CheckoutMasterbar = ( {
 			<div className="masterbar__secure-checkout">
 				<WordPressLogo size={ 21 } className="masterbar__wp-circle-logo" />
 				{ showCloseButton && (
-					<>
-						<div className="masterbar__redesign-divider" />
-						<button className="masterbar__back-button" onClick={ leaveModalProps.clickClose }>
-							<Icon icon={ chevronLeft } size={ 18 } />
-							{ translate( 'Back' ) }
-						</button>
-					</>
+					<button className="masterbar__back-button" onClick={ leaveModalProps.clickClose }>
+						<Icon icon={ chevronLeft } size={ 18 } />
+						{ translate( 'Back' ) }
+					</button>
 				) }
 			</div>
 			<div className="masterbar__checkout-actions">

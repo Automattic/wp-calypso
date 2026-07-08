@@ -1239,23 +1239,17 @@ a.masterbar__quick-language-switcher {
 }
 
 .masterbar--is-checkout-redesign-v1 {
-	padding-inline: 1.5em;
+	// Match the StepContainerV2 Step.TopBar used elsewhere in checkout: same
+	// inline padding and logo/back-button gap, no divider.
+	padding-inline: 1.5rem;
 
 	.masterbar__secure-checkout {
-		gap: 0;
+		gap: 1rem;
 	}
 
 	.masterbar__wp-circle-logo {
 		display: block;
 		fill: currentColor;
-	}
-
-	.masterbar__redesign-divider {
-		width: 1px;
-		height: 16px;
-		background-color: currentColor;
-		opacity: 0.3;
-		margin-inline: 12px;
 	}
 
 	.masterbar__back-button {
