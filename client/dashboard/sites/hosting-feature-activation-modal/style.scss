@@ -25,14 +25,26 @@
 				box-shadow: none;
 			}
 
+			// The badges use fixed studio palette values tuned for the light row,
+			// so flip them to the dark end of the same ramps in dark mode.
 			.hosting-feature-activation-modal__domain-badge-current {
 				background-color: var(--studio-gray-5);
 				color: var(--studio-gray-80);
+
+				@include ui-mixins.when-dark-theme {
+					background-color: var(--studio-gray-80);
+					color: var(--studio-gray-5);
+				}
 			}
 
 			.hosting-feature-activation-modal__domain-badge-new {
 				background-color: var(--studio-green-5);
 				color: var(--studio-green-80);
+
+				@include ui-mixins.when-dark-theme {
+					background-color: var(--studio-green-80);
+					color: var(--studio-green-5);
+				}
 			}
 		}
 	}

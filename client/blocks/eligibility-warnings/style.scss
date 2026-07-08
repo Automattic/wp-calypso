@@ -200,6 +200,12 @@
 	text-decoration: underline;
 }
 
+// The external-link arrow that follows a support link; matches the link color
+// but sits outside the anchor so it isn't underlined.
+.eligibility-warnings__external-arrow {
+	color: var(--color-link);
+}
+
 .eligibility-warnings__action a,
 .eligibility-warnings__hold-action a {
 	text-wrap: nowrap;

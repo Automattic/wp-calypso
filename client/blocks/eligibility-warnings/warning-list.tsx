@@ -77,7 +77,7 @@ export const WarningList = ( {
 											>
 												{ translate( 'Learn more' ) }
 											</InlineSupportLink>{ ' ' }
-											<span style={ { color: 'var(--color-link)' } }>↗</span>.
+											<span className="eligibility-warnings__external-arrow">↗</span>.
 										</>
 									) }
 								</>
