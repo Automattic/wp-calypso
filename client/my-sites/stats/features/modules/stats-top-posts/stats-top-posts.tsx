@@ -199,7 +199,11 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 											comment: '{{link}} links to support documentation.',
 											components: {
 												link: (
-													<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
+													<InlineSupportLink
+														supportContext={ supportContext }
+														showIcon={ false }
+														noWrap={ false }
+													/>
 												),
 											},
 											context:
@@ -212,7 +216,11 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 											comment: '{{link}} links to support documentation.',
 											components: {
 												link: (
-													<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
+													<InlineSupportLink
+														supportContext={ supportContext }
+														showIcon={ false }
+														noWrap={ false }
+													/>
 												),
 											},
 											context:
@@ -263,7 +271,11 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 									comment: '{{link}} links to support documentation.',
 									components: {
 										link: (
-											<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
+											<InlineSupportLink
+												supportContext={ supportContext }
+												showIcon={ false }
+												noWrap={ false }
+											/>
 										),
 									},
 									context: 'Stats: Info box label when the Posts & Pages module is empty',

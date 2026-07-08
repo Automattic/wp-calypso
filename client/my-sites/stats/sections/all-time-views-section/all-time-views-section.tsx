@@ -136,6 +136,7 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 														<InlineSupportLink
 															supportContext={ supportContext }
 															showIcon={ false }
+															noWrap={ false }
 														/>
 													),
 												},
