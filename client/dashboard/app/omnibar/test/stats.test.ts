@@ -68,6 +68,21 @@ describe( 'addStatsNodeToSiteMenu', () => {
 		);
 	} );
 
+	test( 'does not duplicate a native wpcom-stats or jetpack-stats node', () => {
+		const wpcomStatsNode: AdminBarNode = {
+			id: 'wpcom-stats',
+			title: 'Stats',
+			parent: 'site-name',
+			href: 'https://example.wordpress.com/wp-admin/admin.php?page=stats',
+			group: false,
+		};
+		const nodes = [ siteNode, dashboardNode, wpcomStatsNode, widgetsNode ];
+
+		expect( addStatsNodeToSiteMenu( nodes, true, 'https://example.wordpress.com/wp-admin/' ) ).toBe(
+			nodes
+		);
+	} );
+
 	test( 'returns the original nodes when the user cannot view stats', () => {
 		const nodes = [ siteNode, dashboardNode, widgetsNode ];
 

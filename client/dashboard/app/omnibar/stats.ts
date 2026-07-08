@@ -4,6 +4,10 @@ import type { AdminBarNode } from '@automattic/omnibar';
 
 const SITE_NAME_NODE_ID = 'site-name';
 const STATS_NODE_ID = 'stats';
+// wpcom-stats / jetpack-stats are the ids WPCOM/Jetpack use for their own site-menu Stats
+// node when it's present (e.g. wp_before_admin_bar_render on a real wp-admin toolbar). The
+// admin-bar REST endpoint doesn't currently emit either, but guard against future duplication.
+const KNOWN_STATS_NODE_IDS = new Set( [ STATS_NODE_ID, 'wpcom-stats', 'jetpack-stats' ] );
 
 export const getStatsAdminUrl = ( siteAdminUrl: string ) =>
 	`${ siteAdminUrl.replace( /\/?$/, '/' ) }admin.php?page=stats`;
@@ -26,7 +30,7 @@ export function addStatsNodeToSiteMenu(
 	const hasStatsNode = adminBarNodes.some(
 		( node ) =>
 			node.parent === SITE_NAME_NODE_ID &&
-			( node.id === STATS_NODE_ID || node.href === statsAdminUrl )
+			( KNOWN_STATS_NODE_IDS.has( node.id ) || node.href === statsAdminUrl )
 	);
 
 	if ( hasStatsNode ) {
