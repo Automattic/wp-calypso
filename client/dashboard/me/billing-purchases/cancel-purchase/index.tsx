@@ -1279,10 +1279,12 @@ function CancelPurchaseInner() {
 	};
 
 	const submitRemovePurchase = ( purchase: Purchase ) => {
-		if ( CANCEL_FLOW_TYPE.REMOVE !== flowType ) {
-			return;
-		}
-
+		// Callers gate this on the effective flow type (see onSurveyComplete's
+		// switch). Don't re-guard on the base `flowType` heuristic here: for a
+		// refundable purchase with auto-renew off it resolves to
+		// CANCEL_WITH_REFUND while the effective flow is REMOVE, and the mismatch
+		// would silently early-return — leaving the user stranded on a spinning
+		// "Complete removal" button with no navigation.
 		setTimeout( () => {
 			// 1. Optimistic cache strip
 			const stripPurchaseFromList = () => {
