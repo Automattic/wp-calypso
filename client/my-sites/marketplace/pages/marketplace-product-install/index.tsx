@@ -48,6 +48,7 @@ import {
 	isMarketplaceProduct as isMarketplaceProductSelector,
 	getProductsList,
 } from 'calypso/state/products-list/selectors';
+import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
 import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
 import getPluginUploadProgress from 'calypso/state/selectors/get-plugin-upload-progress';
 import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
@@ -89,9 +90,7 @@ const MarketplaceProductInstall = ( {
 	// in-memory purchase-flow state that normally authorizes the install. When that redirect marks
 	// itself as trusted (directInstall), proceed with the install directly instead of waiting on
 	// handoff state that will never arrive (which otherwise leaves the page polling forever).
-	const directInstallFromSignup = new URLSearchParams( window.location.search ).has(
-		'directInstall'
-	);
+	const directInstallFromSignup = useSelector( getCurrentQueryArguments )?.directInstall != null;
 	const directInstallationAllowed = userDirectInstallationAllowed || directInstallFromSignup;
 	const translate = useTranslate();
 	const dispatch = useDispatch();

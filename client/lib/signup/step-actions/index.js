@@ -477,7 +477,7 @@ export function submitWebsiteContent( callback, { siteSlug }, step, reduxStore )
  * term. Falls back to `fallbackBillingPeriod` (the CTA default) when the plan term is unknown.
  */
 export function getPluginBillingPeriodForPlan( planSlug, fallbackBillingPeriod ) {
-	const planTerm = planSlug ? getPlan( planSlug )?.term : undefined;
+	const planTerm = getPlan( planSlug )?.term;
 
 	if ( ! planTerm ) {
 		return fallbackBillingPeriod;
@@ -498,16 +498,10 @@ export function pickMarketplacePluginVariant( variants, billingPeriod = '' ) {
 		MONTHLY: 'month',
 		ANNUALLY: 'year',
 	};
-	const term = ( billingPeriod && billingPeriodToTerm[ billingPeriod ] ) || '';
+	const term = billingPeriodToTerm[ billingPeriod ] || '';
+	const match = term && variants?.find( ( variant ) => variant.product_term === term );
 
-	if ( term ) {
-		const match = variants?.find( ( variant ) => variant.product_term === term );
-		if ( match ) {
-			return match;
-		}
-	}
-
-	return variants?.[ 0 ] || null;
+	return match || variants?.[ 0 ] || null;
 }
 
 function findMarketplacePlugin( state, pluginSlug, billingPeriod = '' ) {

@@ -24,13 +24,14 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 
 	const isDomainOnly = [ 'domain', DOMAIN_FOR_GRAVATAR_FLOW ].includes( flowName );
 	const isGravatarDomain = isDomainForGravatarFlow( flowName );
+	const queryArgs = getQueryArgs() ?? {};
 
 	// For the with-plugin flow, backing out of checkout should return to the plans grid step, not
 	// the post-purchase thank-you/install destination — that page can't render before the purchase
 	// and would leave the user stuck. Rebuild the plans step URL from the current query.
 	let backDestination = destination;
 	if ( flowName === 'with-plugin' ) {
-		const { plugin, billing_period: billingPeriod, intervalType } = getQueryArgs() ?? {};
+		const { plugin, billing_period: billingPeriod, intervalType } = queryArgs;
 		backDestination = addQueryArgs(
 			{
 				...( plugin && { plugin } ),
@@ -63,7 +64,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 	return addQueryArgs(
 		{
 			signup: 1,
-			ref: getQueryArgs()?.ref,
+			ref: queryArgs.ref,
 			...( dependencies.coupon && { coupon: dependencies.coupon } ),
 			...( isDomainOnly && { isDomainOnly: 1 } ),
 			...( isGravatarDomain && { isGravatarDomain: 1 } ),
