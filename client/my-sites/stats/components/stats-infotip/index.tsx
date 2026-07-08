@@ -1,7 +1,7 @@
 import { info } from '@wordpress/icons';
 import { Icon, Popover, VisuallyHidden } from '@wordpress/ui';
 import clsx from 'clsx';
-import type { ComponentProps, ReactNode } from 'react';
+import type { ComponentProps, MouseEvent, ReactNode } from 'react';
 
 import './style.scss';
 
@@ -15,6 +15,11 @@ type StatsInfotipProps = {
 	align?: ComponentProps< typeof Popover.Positioner >[ 'align' ];
 	triggerClassName?: string;
 };
+
+function handleTriggerClick( event: MouseEvent< HTMLButtonElement > ) {
+	event.preventDefault();
+	event.stopPropagation();
+}
 
 export default function StatsInfotip( {
 	children,
@@ -36,6 +41,7 @@ export default function StatsInfotip( {
 					closeDelay={ 200 }
 					aria-label={ label }
 					className={ clsx( 'stats-infotip__trigger', triggerClassName ) }
+					onClick={ handleTriggerClick }
 				>
 					<Icon icon={ info } size={ iconSize } />
 				</Popover.Trigger>
