@@ -2,10 +2,8 @@ import { Onboard } from '@automattic/data-stores';
 import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
-import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ImporterMainPlatform } from 'calypso/lib/importer/types';
-import { navigate as calypsoLibNavigate } from 'calypso/lib/navigate';
 import { addQueryArgs } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
@@ -52,7 +50,6 @@ const siteSetupFlow: Flow = {
 		const steps = [
 			STEPS.GOALS,
 			STEPS.OPTIONS,
-			STEPS.DESIGN_CHOICES,
 			STEPS.DESIGN_SETUP,
 			STEPS.BLOGGER_STARTING_POINT,
 			STEPS.COURSES,
@@ -122,9 +119,6 @@ const siteSetupFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStoreType(),
 			[]
 		);
-
-		const { isEligible: isBigSkyEligible } = useIsBigSkyEligible();
-		const isDesignChoicesStepEnabled = isBigSkyEligible;
 
 		const { setPendingAction, resetOnboardStoreWithSkipFlags } = useDispatch( ONBOARD_STORE );
 		const { setDesignOnSite } = useDispatch( SITE_STORE );
@@ -350,24 +344,9 @@ const siteSetupFlow: Flow = {
 							return navigate( 'difmStartingPoint' );
 
 						default: {
-							if ( isDesignChoicesStepEnabled ) {
-								return navigate( 'design-choices' );
-							}
 							return navigate( 'design-setup' );
 						}
 					}
-				}
-
-				case 'design-choices': {
-					if ( providedDependencies.destination === 'launch-big-sky' ) {
-						const queryParams = new URLSearchParams( location.search ).toString();
-						calypsoLibNavigate(
-							`/setup/site-setup/launch-big-sky${ queryParams ? `?${ queryParams }` : '' }`
-						);
-						return;
-					}
-
-					return navigate( providedDependencies.destination as string );
 				}
 
 				case 'courses': {
@@ -487,14 +466,7 @@ const siteSetupFlow: Flow = {
 					if ( intent === SiteIntent.DIFM ) {
 						return navigate( 'difmStartingPoint' );
 					}
-					if ( isDesignChoicesStepEnabled ) {
-						return navigate( 'design-choices' );
-					}
 					return navigate( 'goals' );
-
-				case 'design-choices': {
-					return navigate( 'goals' );
-				}
 
 				case 'importList': {
 					if ( backToStep ) {
