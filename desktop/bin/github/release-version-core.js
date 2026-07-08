@@ -4,7 +4,7 @@
 //
 
 // Stable-channel auto-update resolves via GitHub's /releases/latest, which excludes
-// prereleases. A beta (e.g. 8.2.3-beta1) must be flagged prerelease or stable users
+// prereleases. A beta (e.g. 8.2.3-beta.1) must be flagged prerelease or stable users
 // get offered it. True when the version carries a SemVer prerelease component,
 // with or without a leading `v`.
 function isPrereleaseVersion( version ) {

@@ -1,7 +1,7 @@
 const { isPrereleaseVersion } = require( '../../bin/github/release-version-core' );
 
 describe( 'isPrereleaseVersion', () => {
-	it.each( [ 'v8.2.3-beta1', '8.2.3-beta1', 'v8.2.0-beta2', 'v10.0.0-rc1' ] )(
+	it.each( [ 'v8.2.3-beta.1', '8.2.3-beta.1', 'v8.2.0-beta.2', 'v10.0.0-rc.1' ] )(
 		'flags %s as a prerelease',
 		( version ) => {
 			expect( isPrereleaseVersion( version ) ).toBe( true );
