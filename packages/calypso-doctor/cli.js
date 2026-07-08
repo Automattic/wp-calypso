@@ -1,9 +1,35 @@
 #!/usr/bin/env node
+const { promises: fs } = require( 'fs' );
+const path = require( 'path' );
 const chalk = require( 'chalk' );
 const yargs = require( 'yargs' );
 const { runEvaluations } = require( './index.js' );
 
-const main = async () => {
+// Relative to cwd, so each git worktree gets its own stamp (node_modules is per-worktree).
+const stampPath = path.join( 'node_modules', '.cache', 'calypso-doctor-ran' );
+
+const alreadyRan = async () => {
+	try {
+		await fs.access( stampPath );
+		return true;
+	} catch {
+		return false;
+	}
+};
+
+const writeStamp = async () => {
+	try {
+		await fs.mkdir( path.dirname( stampPath ), { recursive: true } );
+		await fs.writeFile( stampPath, new Date().toISOString() );
+	} catch {
+		// Best effort; worst case the doctor runs again next time.
+	}
+};
+
+const main = async ( argv ) => {
+	if ( argv.once && ( await alreadyRan() ) ) {
+		return;
+	}
 	console.log( chalk.yellow( '-=- Calypso Doctor -=-' ) );
 	console.log( 'Checking the health of your system...' );
 	const results = await runEvaluations();
@@ -36,6 +62,20 @@ const main = async () => {
 	}
 
 	console.log( '' );
+
+	if ( argv.once ) {
+		await writeStamp();
+	}
 };
 
-main( yargs.usage( 'Usage: $0' ).help( 'h' ).alias( 'h', 'help' ).argv );
+main(
+	yargs
+		.usage( 'Usage: $0' )
+		.option( 'once', {
+			type: 'boolean',
+			default: false,
+			describe: 'Skip if the doctor already ran in this checkout (stamp in node_modules/.cache)',
+		} )
+		.help( 'h' )
+		.alias( 'h', 'help' ).argv
+);
