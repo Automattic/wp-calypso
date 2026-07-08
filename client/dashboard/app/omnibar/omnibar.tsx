@@ -15,6 +15,7 @@ import { useHelpCenterPlugin } from './plugin-help-center';
 import { useNotificationsPlugin } from './plugin-notifications';
 import { useSiteSwitcherPlugin } from './plugin-site-switcher';
 import { useStatsSparklinePlugin } from './plugin-stats-sparkline';
+import { addStatsNodeToSiteMenu, canSiteUserAccessStats } from './stats';
 import type { User } from '@automattic/api-core';
 
 const onClickResponsiveMenu = () => omnibarEvents.mobileMenu.emit();
@@ -49,8 +50,11 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 	} );
 
 	const baseOmnibarNodes = useMemo( () => {
-		const nodes = siteNodes ?? dashboardNodes ?? [];
-		const result = buildOmnibarNodesFromAdminBarNodes( removeUnsupportedDotcomNodes( nodes ) );
+		const nodes = addStatsNodeToSiteMenu(
+			removeUnsupportedDotcomNodes( siteNodes ?? dashboardNodes ?? [] ),
+			canSiteUserAccessStats( site )
+		);
+		const result = buildOmnibarNodesFromAdminBarNodes( nodes );
 
 		if ( ! result.home ) {
 			result.home = { id: '' };

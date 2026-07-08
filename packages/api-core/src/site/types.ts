@@ -26,6 +26,7 @@ interface SitePlan {
 export interface SiteCapabilities {
 	manage_options: boolean;
 	update_plugins: boolean;
+	view_stats?: boolean;
 }
 
 export interface SiteOptions {

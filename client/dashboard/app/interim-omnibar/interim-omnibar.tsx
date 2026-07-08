@@ -18,6 +18,7 @@ import { isSimple } from '../../utils/site-types';
 import { getSitePlanUrl } from '../../utils/site-url';
 import { logout } from '../auth';
 import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
+import { canSiteUserAccessStats } from '../omnibar/stats';
 import { OmnibarLaunchButton } from './omnibar-launch-button';
 import { createOmnibarStore } from './omnibar-store';
 import type { User, Site } from '@automattic/api-core';
@@ -56,8 +57,10 @@ export function InterimOmnibar( {
 	const siteId = user.primary_blog ?? null;
 	const siteSlug = site?.slug ?? null;
 	const siteAdminUrl = site?.options?.admin_url ?? null;
+	const statsAdminUrl = siteAdminUrl ? `${ siteAdminUrl }admin.php?page=stats` : '';
 	const isUnlaunchedSite = !! site && site.launch_status === 'unlaunched' && ! site.is_a4a_dev_site;
 	const isSimpleSite = !! site && isSimple( site );
+	const canUserAccessStats = canSiteUserAccessStats( site );
 
 	const { data: currentPlan } = useQuery(
 		{
@@ -141,8 +144,8 @@ export function InterimOmnibar( {
 					isSimpleSite={ isSimpleSite }
 					isJetpackNotAtomic={ !! site && site.jetpack && ! site.is_wpcom_atomic }
 					domainOnlySite={ !! site?.options?.is_domain_only }
-					canUserViewStats={ !! site }
-					statsAdminUrl={ siteAdminUrl ? `${ siteAdminUrl }admin.php?page=stats` : undefined }
+					canUserViewStats={ canUserAccessStats }
+					statsAdminUrl={ statsAdminUrl }
 					statsSparkline={
 						hourlyViews && hourlyViews.length > 0 ? (
 							<StatsSparkline hourlyViews={ hourlyViews } />
