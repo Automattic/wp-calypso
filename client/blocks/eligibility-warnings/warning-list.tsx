@@ -25,10 +25,7 @@ export const WarningList = ( {
 	showContact = true,
 	transferAction,
 }: Props ) => {
-	const hasSubdomainChange = warnings.some( ( { domainNames } ) => !! domainNames );
-	const transferIntro = hasSubdomainChange
-		? getAtomicTransferIntro( transferAction, translate )
-		: null;
+	const transferIntro = getAtomicTransferIntro( transferAction, translate );
 
 	return (
 		<div>
