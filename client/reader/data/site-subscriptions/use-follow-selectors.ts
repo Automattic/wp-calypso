@@ -61,24 +61,30 @@ export const useOrganizationSiteSubscriptions = ( organizationId: number ) => {
 	return getOrganizationSiteSubscriptionsFromData( data, organizationId );
 };
 
+interface FeedsInfo {
+	unseenCount: number;
+	feedIds: number[];
+	feedUrls: string[];
+}
+
+const getFeedsInfo = ( sites: SiteSubscriptionItem[] ): FeedsInfo => ( {
+	unseenCount: sites.reduce( ( sum, item ) => sum + ( item.unseen_count ?? 0 ), 0 ),
+	feedIds: sites
+		.map( ( item ) => ( item.feed_ID ? Number( item.feed_ID ) : null ) )
+		.filter( ( id ) => typeof id === 'number' ),
+	feedUrls: sites.map( ( item ) => item.feed_URL ).filter( Boolean ),
+} );
+
 export const useOrganizationFeedsInfo = ( organizationId: number ) => {
 	const sites = useOrganizationSiteSubscriptions( organizationId );
 
-	return {
-		unseenCount: sites.reduce( ( sum, item ) => sum + ( item.unseen_count ?? 0 ), 0 ),
-		feedIds: sites.map( ( item ) => item.feed_ID ).filter( Boolean ),
-		feedUrls: sites.map( ( item ) => item.feed_URL ).filter( Boolean ),
-	};
+	return getFeedsInfo( sites );
 };
 
 export const useSubscribedFeedsInfo = () => {
 	const sites = useSubscribedSites();
 
-	return {
-		unseenCount: sites.reduce( ( sum, item ) => sum + ( item.unseen_count ?? 0 ), 0 ),
-		feedIds: sites.map( ( item ) => item.feed_ID ).filter( Boolean ),
-		feedUrls: sites.map( ( item ) => item.feed_URL || null ).filter( Boolean ),
-	};
+	return getFeedsInfo( sites );
 };
 
 export const useHasSiteSubscriptionOrganization = ( feedId?: FollowId, blogId?: FollowId ) => {

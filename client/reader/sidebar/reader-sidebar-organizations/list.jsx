@@ -86,6 +86,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 						identifier={ this.identifierForOrganizationId( organization.id ) }
 						feedIds={ feedsInfo.feedIds }
 						feedUrls={ feedsInfo.feedUrls }
+						unseenCount={ feedsInfo.unseenCount }
 					/>
 				}
 			>
