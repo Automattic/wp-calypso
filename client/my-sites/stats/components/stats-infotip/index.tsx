@@ -5,6 +5,12 @@ import type { ComponentProps, MouseEvent, ReactNode } from 'react';
 
 import './style.scss';
 
+// --wpds-motion-duration-md; matches the WPDS motion scale for menus/popovers.
+const HOVER_DELAY_MS = 200;
+
+// --wpds-dimension-gap-sm
+const POPUP_SIDE_OFFSET_PX = 8;
+
 type StatsInfotipProps = {
 	children: ReactNode;
 	className?: string;
@@ -37,8 +43,8 @@ export default function StatsInfotip( {
 				<Popover.Trigger
 					type="button"
 					openOnHover
-					delay={ 200 }
-					closeDelay={ 200 }
+					delay={ HOVER_DELAY_MS }
+					closeDelay={ HOVER_DELAY_MS }
 					aria-label={ label }
 					className={ clsx( 'stats-infotip__trigger', triggerClassName ) }
 					onClick={ handleTriggerClick }
@@ -52,7 +58,7 @@ export default function StatsInfotip( {
 							className="stats-infotip__positioner"
 							side={ side }
 							align={ align }
-							sideOffset={ 8 }
+							sideOffset={ POPUP_SIDE_OFFSET_PX }
 						/>
 					}
 				>

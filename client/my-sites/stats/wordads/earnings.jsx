@@ -71,7 +71,7 @@ class WordAdsEarnings extends Component {
 		const { translate } = this.props;
 
 		return (
-			<div className="ads__earnings-history-infotip-content">
+			<div>
 				<p>
 					{ translate(
 						'{{strong}}Ads Served{{/strong}} is the number of ads we attempted to display on your site ' +
@@ -179,7 +179,6 @@ class WordAdsEarnings extends Component {
 					<StatsInfotip
 						className="ads__table-header-infotip"
 						label={ translate( 'Learn more about ads served' ) }
-						popupClassName="ads__earnings-history-infotip"
 						side="bottom"
 						align="end"
 					>

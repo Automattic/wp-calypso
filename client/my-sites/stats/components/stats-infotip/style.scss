@@ -8,7 +8,7 @@
 	align-items: center;
 	background: none;
 	border: 0;
-	border-radius: 2px;
+	border-radius: var(--wpds-border-radius-sm, 2px);
 	color: inherit;
 	cursor: pointer;
 	display: inline-flex;
@@ -25,7 +25,9 @@
 }
 
 .stats-infotip__popup {
-	max-width: 280px;
+	// No exact WPDS surface-width token for 280px (the scale steps 240px "xs" / 320px "sm");
+	// rounding up to "sm" avoids narrowing existing popup content.
+	max-width: 320px;
 }
 
 .stats-infotip__description {
@@ -36,13 +38,14 @@
 	}
 
 	ul {
-		margin-block: 8px 12px;
-		padding-inline-start: 20px;
+		margin-block: var(--wpds-dimension-gap-sm, 8px) var(--wpds-dimension-gap-md, 12px);
+		padding-inline-start: var(--wpds-dimension-padding-xl, 20px);
 	}
 
 	hr {
 		border: 0;
-		border-block-start: 1px solid var( --color-border-subtle );
-		margin: 12px 0;
+		border-block-start: var(--wpds-border-width-xs, 1px) solid
+			var(--wpds-color-stroke-surface-neutral-weak, var(--color-border-subtle));
+		margin: var(--wpds-dimension-gap-md, 12px) 0;
 	}
 }
