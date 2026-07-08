@@ -53,11 +53,13 @@ jest.mock( 'calypso/components/async-load', () => ( {
 const SPACES: ReadSpace[] = [
 	{
 		id: '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21',
+		slug: 'work',
 		name: 'Work',
 		layout: { color: 'blue', icon: 'inbox' },
 	},
 	{
 		id: '5cc71d31-97d1-4b7d-93c7-42a5ce9d4cf1',
+		slug: 'gaming',
 		name: 'Gaming',
 		layout: { color: 'purple', icon: 'box' },
 	},
@@ -66,7 +68,7 @@ const SPACES: ReadSpace[] = [
 // Render on a space route so the expandable menu starts open and its rows are
 // visible (collapsed content is `hidden`, hence not accessible).
 const FIRST_SPACE = SPACES[ 0 ];
-const OPEN_PATH = getSpacePath( FIRST_SPACE.id );
+const OPEN_PATH = getSpacePath( FIRST_SPACE.slug );
 
 function render( ui: React.ReactElement, initialState?: object ) {
 	// Seed the spaces list so `useSpaces()` resolves synchronously.
@@ -97,7 +99,7 @@ describe( 'ReaderSidebarSpaces', () => {
 
 		SPACES.forEach( ( space ) => {
 			const link = screen.getByRole( 'link', { name: new RegExp( space.name ) } );
-			expect( link ).toHaveAttribute( 'href', getSpacePath( space.id ) );
+			expect( link ).toHaveAttribute( 'href', getSpacePath( space.slug ) );
 		} );
 	} );
 
@@ -236,6 +238,7 @@ describe( 'ReaderSidebarSpaces', () => {
 			.post( '/wpcom/v2/reader/spaces' )
 			.reply( 201, {
 				id: 7,
+				slug: 'reading',
 				title: 'Reading',
 				follows: [],
 				tags: [],
@@ -249,9 +252,7 @@ describe( 'ReaderSidebarSpaces', () => {
 
 		// The redirect happens in the create mutation's onSuccess, after the POST
 		// resolves, so wait for it.
-		await waitFor( () =>
-			expect( page ).toHaveBeenCalledWith( expect.stringMatching( /^\/reader\/spaces\/[^#]+$/ ) )
-		);
+		await waitFor( () => expect( page ).toHaveBeenCalledWith( getSpacePath( 'reading' ) ) );
 	} );
 
 	it( 'prefetches the feed and detail of a space on hover', async () => {
@@ -261,8 +262,10 @@ describe( 'ReaderSidebarSpaces', () => {
 			.get( `/wpcom/v2/reader/spaces/${ HOVERED.id }/posts` )
 			.query( true )
 			.reply( 200, { posts: [] } );
-		const detailScope = nock( 'https://public-api.wordpress.com' )
-			.get( `/wpcom/v2/reader/spaces/${ HOVERED.id }` )
+		// The view resolves the detail by slug, so hover warms the by-slug detail (the
+		// stream stays keyed by id).
+		const bySlugScope = nock( 'https://public-api.wordpress.com' )
+			.get( `/wpcom/v2/reader/spaces/slug/${ HOVERED.slug }` )
 			.reply( 200, { ...HOVERED, follows: [], tags: [] } );
 
 		render( <ReaderSidebarSpaces path={ OPEN_PATH } /> );
@@ -270,7 +273,7 @@ describe( 'ReaderSidebarSpaces', () => {
 		await user.hover( screen.getByRole( 'link', { name: new RegExp( HOVERED.name ) } ) );
 
 		await waitFor( () => expect( postsScope.isDone() ).toBe( true ) );
-		await waitFor( () => expect( detailScope.isDone() ).toBe( true ) );
+		await waitFor( () => expect( bySlugScope.isDone() ).toBe( true ) );
 	} );
 
 	it( 'does not prefetch the space that is already open', async () => {
@@ -281,7 +284,7 @@ describe( 'ReaderSidebarSpaces', () => {
 			.query( true )
 			.reply( 200, { posts: [] } );
 		nock( 'https://public-api.wordpress.com' )
-			.get( `/wpcom/v2/reader/spaces/${ FIRST_SPACE.id }` )
+			.get( `/wpcom/v2/reader/spaces/slug/${ FIRST_SPACE.slug }` )
 			.reply( 200, { ...FIRST_SPACE, follows: [], tags: [] } );
 
 		render( <ReaderSidebarSpaces path={ OPEN_PATH } /> );

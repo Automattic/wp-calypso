@@ -2,6 +2,7 @@ import { adaptReadSpace, adaptReadSpaceDetails, type ReadSpaceApiItem } from '..
 
 const wireSpace = ( overrides: Partial< ReadSpaceApiItem > = {} ): ReadSpaceApiItem => ( {
 	id: 3,
+	slug: 'work',
 	title: 'Work',
 	layout: { color: 'blue', icon: 'inbox' },
 	...overrides,
@@ -20,6 +21,7 @@ describe( 'read spaces adapters', () => {
 		it( 'maps the wire fields onto the client ReadSpace shape', () => {
 			expect( adaptReadSpace( wireSpace() ) ).toEqual( {
 				id: '3',
+				slug: 'work',
 				name: 'Work',
 				layout: { color: 'blue', icon: 'inbox' },
 			} );
@@ -79,6 +81,7 @@ describe( 'read spaces adapters', () => {
 				)
 			).toEqual( {
 				id: '3',
+				slug: 'work',
 				name: 'Work',
 				layout: { color: 'blue', icon: 'inbox' },
 				tags: [ 'photography', 'travel' ],
@@ -122,6 +125,7 @@ describe( 'read spaces adapters', () => {
 		it( 'defaults sources, tags, and languages to empty arrays when absent', () => {
 			expect( adaptReadSpaceDetails( wireSpace() ) ).toEqual( {
 				id: '3',
+				slug: 'work',
 				name: 'Work',
 				layout: { color: 'blue', icon: 'inbox' },
 				sources: [],

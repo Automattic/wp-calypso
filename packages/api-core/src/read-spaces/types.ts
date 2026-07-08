@@ -82,6 +82,10 @@ export interface SpaceLayout {
  */
 export interface ReadSpace {
 	id: string;
+	// `sanitize_title( name )`, derived and kept unique-per-owner server-side. Used
+	// to address a space in the URL; it re-syncs on every rename (so it can change),
+	// while `id` stays the stable key for mutations and streams.
+	slug: string;
 	name: string;
 	layout: SpaceLayout;
 }
