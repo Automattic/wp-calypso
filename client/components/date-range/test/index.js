@@ -364,6 +364,78 @@ describe( 'DateRange', () => {
 			expect( previousMonthBtnEl ).toBeVisible();
 			expect( nextMonthBtnEl ).not.toBeInTheDocument();
 		} );
+
+		test( 'should start a fresh range when selecting from a complete range', async () => {
+			const startDate = moment( '05-30-2018', 'MM-DD-YYYY' );
+			const endDate = moment( '06-30-2018', 'MM-DD-YYYY' );
+
+			render(
+				<DateRange
+					selectedStartDate={ startDate }
+					selectedEndDate={ endDate }
+					translate={ translate }
+					moment={ moment }
+				/>
+			);
+
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
+			await userEvent.click( screen.getByLabelText( 'Wed, May 30, 2018 12:00 PM' ) );
+			await userEvent.click( screen.getByLabelText( 'Fri, Jun 15, 2018 12:00 PM' ) );
+
+			expect( screen.getByLabelText( 'From' ) ).toHaveValue( '05/30/2018' );
+			expect( screen.getByLabelText( 'To' ) ).toHaveValue( '06/15/2018' );
+		} );
+
+		test( 'should disable apply while calendar range selection is incomplete', async () => {
+			const startDate = moment( '05-30-2018', 'MM-DD-YYYY' );
+			const endDate = moment( '06-30-2018', 'MM-DD-YYYY' );
+
+			render(
+				<DateRange
+					selectedStartDate={ startDate }
+					selectedEndDate={ endDate }
+					translate={ translate }
+					moment={ moment }
+				/>
+			);
+
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
+			const applyButton = screen.getByLabelText( 'Apply' );
+
+			expect( applyButton ).toBeEnabled();
+
+			await userEvent.click( screen.getByLabelText( 'Wed, Jun 20, 2018 12:00 PM' ) );
+
+			expect( applyButton ).toBeDisabled();
+
+			await userEvent.click( screen.getByLabelText( 'Mon, Jun 25, 2018 12:00 PM' ) );
+
+			expect( applyButton ).toBeEnabled();
+		} );
+
+		test( 'should select a one-day range when selecting the same date twice', async () => {
+			const startDate = moment( '05-30-2018', 'MM-DD-YYYY' );
+			const endDate = moment( '06-30-2018', 'MM-DD-YYYY' );
+
+			render(
+				<DateRange
+					selectedStartDate={ startDate }
+					selectedEndDate={ endDate }
+					translate={ translate }
+					moment={ moment }
+				/>
+			);
+
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
+			const selectedDay = screen.getByLabelText( 'Wed, Jun 20, 2018 12:00 PM' );
+
+			await userEvent.click( selectedDay );
+			await userEvent.click( selectedDay );
+
+			expect( screen.getByLabelText( 'From' ) ).toHaveValue( '06/20/2018' );
+			expect( screen.getByLabelText( 'To' ) ).toHaveValue( '06/20/2018' );
+			expect( screen.getByLabelText( 'Apply' ) ).toBeEnabled();
+		} );
 	} );
 
 	describe( 'Input elements', () => {
