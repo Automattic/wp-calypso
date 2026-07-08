@@ -1,12 +1,8 @@
-import { WordPressLogo } from '@automattic/components';
 import { checkoutTheme } from '@automattic/composite-checkout';
 import { Step } from '@automattic/onboarding';
 import { ThemeProvider } from '@emotion/react';
-import { Icon } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { chevronLeft } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import {
 	LeaveCheckoutModal,
@@ -33,9 +29,8 @@ const CheckoutMasterbar = ( {
 	loadHelpCenterIcon,
 	isGravatarDomain,
 }: Props ) => {
-	const translate = useTranslate();
 	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteSlug ?? '' } );
-	const { helpCenterButtonLink, toggleHelpCenter } = useCheckoutHelpCenter();
+	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter } = useCheckoutHelpCenter();
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 
 	const getCheckoutType = () => {
@@ -100,25 +95,26 @@ const CheckoutMasterbar = ( {
 				'masterbar--is-passport': checkoutType === 'passport',
 			} ) }
 		>
-			<div className="masterbar__secure-checkout">
-				<WordPressLogo size={ 21 } className="masterbar__wp-circle-logo" />
-				{ showCloseButton && (
-					<button className="masterbar__back-button" onClick={ leaveModalProps.clickClose }>
-						<Icon icon={ chevronLeft } size={ 18 } />
-						{ translate( 'Back' ) }
-					</button>
-				) }
-			</div>
-			<div className="masterbar__checkout-actions">
-				{ stepCounter && (
-					<Step.StepCounter current={ stepCounter.current } total={ stepCounter.total } />
-				) }
-				{ loadHelpCenterIcon && (
-					<button className="masterbar__need-help-button" onClick={ toggleHelpCenter }>
-						{ helpCenterButtonLink }
-					</button>
-				) }
-			</div>
+			<Step.TopBar
+				leftElement={
+					showCloseButton ? <Step.BackButton onClick={ leaveModalProps.clickClose } /> : undefined
+				}
+				rightElement={
+					<>
+						{ stepCounter && (
+							<Step.StepCounter current={ stepCounter.current } total={ stepCounter.total } />
+						) }
+						{ loadHelpCenterIcon && (
+							<span className="checkout-skip-button">
+								{ helpCenterButtonCopy && <label>{ helpCenterButtonCopy }</label> }
+								<Step.LinkButton onClick={ toggleHelpCenter }>
+									{ helpCenterButtonLink }
+								</Step.LinkButton>
+							</span>
+						) }
+					</>
+				}
+			/>
 			<LeaveCheckoutModal { ...leaveModalProps } />
 		</Masterbar>
 	);

@@ -1239,60 +1239,14 @@ a.masterbar__quick-language-switcher {
 }
 
 .masterbar--is-checkout-redesign-v1 {
-	// Match the StepContainerV2 Step.TopBar used elsewhere in checkout: same
-	// inline padding and logo/back-button gap, no divider.
-	padding-inline: 1.5rem;
+	// The checkout masterbar reuses StepContainerV2's Step.TopBar as its header
+	// (see client/layout/masterbar/checkout.tsx). Step.TopBar reads these custom
+	// properties for its spacing; they are normally provided by the
+	// .step-container-v2 root, which isn't an ancestor here, so define them.
+	--step-container-v2-top-bar-padding: 1rem;
+	--step-container-v2-top-bar-content-height: 24px;
 
-	.masterbar__secure-checkout {
-		gap: 1rem;
-	}
-
-	.masterbar__wp-circle-logo {
-		display: block;
-		fill: currentColor;
-	}
-
-	.masterbar__back-button {
-		display: flex;
-		align-items: center;
-		gap: 2px;
-		background: none;
-		border: none;
-		cursor: pointer;
-		font-size: 0.875rem;
-		font-weight: 500;
-		color: inherit;
-		padding: 0;
-		line-height: 1;
-
-		svg {
-			fill: currentColor;
-		}
-	}
-
-	// Right-hand group: the optional step indicator followed by the help link.
-	.masterbar__checkout-actions {
-		display: flex;
-		align-items: center;
-		gap: 16px;
-		margin-inline-start: auto;
-	}
-
-	.step-container-v2__step-counter {
-		font-size: 0.875rem;
-		color: inherit;
-	}
-
-	.masterbar__need-help-button {
-		background: none;
-		border: none;
-		cursor: pointer;
-		font-size: 0.875rem;
-		font-weight: 400;
-		text-decoration: underline;
-		color: inherit;
-		padding: 0;
-	}
+	padding: 0;
 }
 
 .masterbar__item-help {
