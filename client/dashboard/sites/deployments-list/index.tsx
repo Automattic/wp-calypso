@@ -13,7 +13,7 @@ import {
 import { Button, Modal } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Icon, seen } from '@wordpress/icons';
 import { useState, useMemo, useCallback } from 'react';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
@@ -23,7 +23,7 @@ import {
 	siteSettingsRepositoriesRoute,
 	siteDeploymentsListRoute,
 } from '../../app/router/sites';
-import { DataViews, DataViewsCard } from '../../components/dataviews';
+import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../components/dataviews';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -36,6 +36,30 @@ import type {
 	DeploymentRunWithDeploymentInfo,
 	CodeDeploymentData,
 } from '@automattic/api-core';
+import type { View } from '@wordpress/dataviews';
+
+function DeploymentsEmptyState( { view }: { view: View } ) {
+	let title: string = __( 'No deployments yet' );
+	let description: string = __( 'Deployments from your connected repositories will appear here.' );
+
+	if ( ( view.filters && view.filters.length > 0 ) || view.search ) {
+		title = __( 'No deployments found' );
+
+		if ( view.search ) {
+			description = sprintf(
+				/** translators: %s: search query string */
+				__( 'Your search for "%s" did not return any results.' ),
+				view.search
+			);
+		}
+
+		if ( view.filters && view.filters.length > 0 ) {
+			description = __( 'No deployments found for the selected filters.' );
+		}
+	}
+
+	return <DataViewsEmptyStateLayout isBorderless title={ title } description={ description } />;
+}
 
 function DeploymentsList() {
 	const { siteSlug } = siteRoute.useParams();
@@ -216,13 +240,7 @@ function DeploymentsList() {
 					defaultLayouts={ DEFAULT_LAYOUTS }
 					paginationInfo={ paginationInfo }
 					getItemId={ ( item ) => item.id.toString() }
-					empty={
-						<p>
-							{ ( view.filters && view.filters.length > 0 ) || view.search
-								? __( 'No deployments found' )
-								: __( 'No deployments yet' ) }
-						</p>
-					}
+					empty={ <DeploymentsEmptyState view={ view } /> }
 				/>
 			</DataViewsCard>
 
