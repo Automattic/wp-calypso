@@ -1276,8 +1276,20 @@ a.masterbar__quick-language-switcher {
 		}
 	}
 
-	.masterbar__need-help-button {
+	// Right-hand group: the optional step indicator followed by the help link.
+	.masterbar__checkout-actions {
+		display: flex;
+		align-items: center;
+		gap: 16px;
 		margin-inline-start: auto;
+	}
+
+	.step-container-v2__step-counter {
+		font-size: 0.875rem;
+		color: inherit;
+	}
+
+	.masterbar__need-help-button {
 		background: none;
 		border: none;
 		cursor: pointer;
