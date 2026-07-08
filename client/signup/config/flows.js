@@ -25,6 +25,22 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 	const isDomainOnly = [ 'domain', DOMAIN_FOR_GRAVATAR_FLOW ].includes( flowName );
 	const isGravatarDomain = isDomainForGravatarFlow( flowName );
 
+	// For the with-plugin flow, backing out of checkout should return to the plans grid step, not
+	// the post-purchase thank-you/install destination — that page can't render before the purchase
+	// and would leave the user stuck. Rebuild the plans step URL from the current query.
+	let backDestination = destination;
+	if ( flowName === 'with-plugin' ) {
+		const { plugin, billing_period: billingPeriod, intervalType } = getQueryArgs() ?? {};
+		backDestination = addQueryArgs(
+			{
+				...( plugin && { plugin } ),
+				...( billingPeriod && { billing_period: billingPeriod } ),
+				...( intervalType && { intervalType } ),
+			},
+			`/start/with-plugin/plans-with-plugin${ localeSlug ? `/${ localeSlug }` : '' }`
+		);
+	}
+
 	// checkoutBackUrl is required to be a complete URL, and will be further sanitized within the checkout package.
 	// Due to historical reason, `destination` can be either a path or a complete URL.
 	// Thus, if it is determined as not an URL, we assume it as a path here. We can surely make it more comprehensive,
@@ -32,9 +48,9 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 	//
 	// TODO:
 	// the domain only flow has special rule. Ideally they should also be configurable in flows-pure.
-	const checkoutBackUrl = isURL( destination )
-		? destination
-		: pathToUrl( isDomainOnly ? `/start/${ flowName }/domain-only` : destination );
+	const checkoutBackUrl = isURL( backDestination )
+		? backDestination
+		: pathToUrl( isDomainOnly ? `/start/${ flowName }/domain-only` : backDestination );
 
 	// Add celebrateLaunch=true for launch-site flow so the celebration modal shows after checkout
 	const isLaunchSiteFlow = flowName === 'launch-site';
