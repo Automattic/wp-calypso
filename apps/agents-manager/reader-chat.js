@@ -1116,12 +1116,10 @@ if ( container ) {
 
 	// Defer the suggestions fetch until the reader actually opens the
 	// chat. The widget mounts on every public page view of an enabled
-	// site, and fetching at mount meant every page load hit the
-	// suggestions agent even though the vast majority of visitors never
-	// open the chat (production Tracks showed ~10 suggestion runs per
-	// open). On sites over their AI Search quota it also logged a failed
-	// run on every page view. First open → fetch once; the wpcom-side
-	// 24h cache keeps repeat opens fast.
+	// site, but most visitors never open the chat — and on sites over
+	// their AI Search quota an at-mount fetch logs a failed run on every
+	// page view. First open → fetch once; the wpcom-side 24h cache keeps
+	// repeat opens fast.
 	watchFirstChatOpen( setupInitialSuggestions );
 }
 
