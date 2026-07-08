@@ -18,7 +18,6 @@
 		"strict": true,
 		"checkJs": false,
 		"isolatedModules": true,
-		"skipLibCheck": true,
 
 		"moduleResolution": "node",
 		"ignoreDeprecations": "6.0",
