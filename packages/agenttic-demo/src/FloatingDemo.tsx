@@ -308,6 +308,7 @@ const FloatingDemo: React.FC< {
 				freeDrag={ freeDragEnabled }
 				initialFreeDragPosition={ freeDragPosition }
 				onFreeDragEnd={ setFreeDragPosition }
+				onSuggestionsRendered={ ( shown ) => console.log( shown ) }
 			/>
 		</div>
 	);

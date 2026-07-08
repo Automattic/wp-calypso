@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAgentUIContext } from '../../context/AgentUIContext.tsx';
 import type { Suggestion } from '../../types';
@@ -34,7 +34,7 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 	onDropdownOpenChange,
 	translateY = '-100%',
 } ) => {
-	const { variant } = useAgentUIContext();
+	const { variant, reportSuggestionsRendered } = useAgentUIContext();
 
 	// Limit suggestions for floating layout to prevent overflow
 	const internalSuggestions = useMemo(
@@ -42,6 +42,14 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 			variant === 'floating' ? suggestions?.slice( 0, 3 ) : suggestions,
 		[ suggestions, variant ]
 	);
+
+	// Report the set actually rendered — after truncation, only while visible.
+	// The container dedups across instance swaps, so this is intentionally dumb.
+	useEffect( () => {
+		if ( visible && internalSuggestions?.length ) {
+			reportSuggestionsRendered?.( internalSuggestions );
+		}
+	}, [ visible, internalSuggestions, reportSuggestionsRendered ] );
 
 	const handleSuggestionClick = async (
 		selectedSuggestion: Suggestion,
