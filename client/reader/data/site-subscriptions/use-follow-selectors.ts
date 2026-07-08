@@ -6,6 +6,7 @@ import {
 	getSubscribedSitesFromData,
 	getOrganizationSiteSubscriptionsFromData,
 } from '@automattic/api-queries';
+import { SiteSubscriptionItem } from '@automattic/data-stores/src/reader/types';
 import { NO_ORG_ID } from 'calypso/state/reader/organizations/constants';
 import { useSiteSubscriptions } from './use-site-subscriptions';
 
@@ -48,7 +49,7 @@ export const useAliasedSiteSubscriptionFeedUrl = ( feedUrl: string ) => {
 	return getAliasedSiteSubscriptionFeedUrl( data, feedUrl ) ?? feedUrl;
 };
 
-export const useSubscribedSites = () => {
+export const useSubscribedSites = (): SiteSubscriptionItem[] => {
 	const { data } = useSiteSubscriptions();
 
 	return getSubscribedSitesFromData( data, NO_ORG_ID );
@@ -67,6 +68,16 @@ export const useOrganizationFeedsInfo = ( organizationId: number ) => {
 		unseenCount: sites.reduce( ( sum, item ) => sum + ( item.unseen_count ?? 0 ), 0 ),
 		feedIds: sites.map( ( item ) => item.feed_ID ).filter( Boolean ),
 		feedUrls: sites.map( ( item ) => item.feed_URL ).filter( Boolean ),
+	};
+};
+
+export const useSubscribedFeedsInfo = () => {
+	const sites = useSubscribedSites();
+
+	return {
+		unseenCount: sites.reduce( ( sum, item ) => sum + ( item.unseen_count ?? 0 ), 0 ),
+		feedIds: sites.map( ( item ) => item.feed_ID ).filter( Boolean ),
+		feedUrls: sites.map( ( item ) => item.feed_URL || null ).filter( Boolean ),
 	};
 };
 
