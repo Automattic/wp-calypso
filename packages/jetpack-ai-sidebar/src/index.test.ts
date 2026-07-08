@@ -1119,10 +1119,12 @@ describe( 'getEmptyViewSuggestions', () => {
 		expect( labels ).not.toContain( 'Simple Review' );
 	} );
 
-	it( 'attaches a one-line description to every review suggestion', () => {
+	it( 'attaches a one-line description to every starting-screen suggestion', () => {
 		installAiEditorialReviewData( {
 			optimizeTitleSuggestion: true,
 			proofreadContent: true,
+			seoSuggestions: true,
+			excerptSuggestion: true,
 		} );
 		installPostTypeMock( 'post' );
 
@@ -1130,9 +1132,14 @@ describe( 'getEmptyViewSuggestions', () => {
 		const byLabel = ( label: string ) =>
 			suggestions.find( ( suggestion ) => suggestion.label === label );
 
-		// The post-level constants that carry a one-line description. SEO Enhancer is a
-		// dropdown without a description and is intentionally excluded.
-		[ 'Optimize Title', 'Proofread', 'Simple Review', 'Editorial Review' ].forEach( ( label ) => {
+		[
+			'Optimize Title',
+			'Proofread',
+			'Simple Review',
+			'Editorial Review',
+			'SEO Enhancer',
+			'Generate Excerpt',
+		].forEach( ( label ) => {
 			const suggestion = byLabel( label );
 			expect( suggestion ).toBeDefined();
 			expect( typeof suggestion?.description ).toBe( 'string' );

@@ -95,7 +95,10 @@ let lastBlockTransformationSuggestionContext: {
 const OPTIMIZE_TITLE_SUGGESTION = {
 	id: 'optimize-title',
 	label: __( 'Optimize Title', 'jetpack' ),
-	description: __( 'Refine your title using SEO best practices.', 'jetpack' ),
+	description: __(
+		'Refine the title based on your post’s content and SEO best practices.',
+		'jetpack'
+	),
 	prompt: __( 'Optimize the title of this post', 'jetpack' ),
 };
 
@@ -108,6 +111,7 @@ const OPTIMIZE_TITLE_SUGGESTION = {
 const GENERATE_EXCERPT_SUGGESTION = {
 	id: 'generate-excerpt',
 	label: __( 'Generate Excerpt', 'jetpack' ),
+	description: __( 'Generate an excerpt for your post.', 'jetpack' ),
 	prompt: __( 'Generate an excerpt for this post', 'jetpack' ),
 };
 
@@ -130,6 +134,7 @@ const GENERATE_EXCERPT_SUGGESTION = {
 const SEO_ENHANCER_SUGGESTION = {
 	id: 'seo-enhancer',
 	label: __( 'SEO Enhancer', 'jetpack' ),
+	description: __( 'Generate metadata for the contents of the post to optimize SEO.', 'jetpack' ),
 	prompt: '',
 	options: [
 		{
