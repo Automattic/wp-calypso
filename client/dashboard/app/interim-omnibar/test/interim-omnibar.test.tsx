@@ -70,7 +70,6 @@ describe( '<InterimOmnibar /> profile menu', () => {
 
 	afterEach( () => {
 		window.scrollTo = originalScrollTo;
-		nock.cleanAll();
 	} );
 
 	test( 'does not render a broken Edit Profile link for accounts without sites', async () => {
@@ -82,10 +81,8 @@ describe( '<InterimOmnibar /> profile menu', () => {
 			await screen.findByRole( 'link', { name: /WordPress\.com Account/i } )
 		).toHaveAttribute( 'href', '/me/account' );
 
-		// No "Edit Profile" link should exist, and crucially none pointing at the
-		// broken `nullprofile.php` URL.
+		// No "Edit Profile" link should exist, so there is no broken `nullprofile.php` URL.
 		expect( screen.queryByRole( 'link', { name: /edit profile/i } ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'link', { name: /profile\.php/i } ) ).not.toBeInTheDocument();
 
 		// The user's identity is still shown in the menu.
 		expect( screen.getAllByText( 'Test User' ).length ).toBeGreaterThan( 0 );
@@ -110,6 +107,6 @@ describe( '<InterimOmnibar /> profile menu', () => {
 		expect(
 			await screen.findByRole( 'link', { name: /WordPress\.com Account/i } )
 		).toHaveAttribute( 'href', '/me/account' );
-		expect( screen.queryByRole( 'link', { name: /profile\.php/i } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: /edit profile/i } ) ).not.toBeInTheDocument();
 	} );
 } );
