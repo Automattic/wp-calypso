@@ -140,6 +140,7 @@ module.exports = {
 						'lodash-es',
 						'react',
 						'react-dom',
+						'react-dom/client',
 						// Externalize the JSX runtime alongside react/react-dom so it matches the
 						// React that WordPress provides. Bundling it (the default here, since it is
 						// absent from this allow list) ships an older React's runtime, whose elements
@@ -166,6 +167,12 @@ module.exports = {
 				// moment locales requires moment.js main file, so we need to handle it as an external as well.
 				if ( request === '../moment' ) {
 					request = 'moment';
+				}
+				// `react-dom/client` (createRoot/hydrateRoot) has no mapping in
+				// `defaultRequestToExternal`, so alias it to `react-dom` — otherwise React 19's
+				// react-dom is bundled and clashes with the externalized React the site provides.
+				if ( request === 'react-dom/client' ) {
+					request = 'react-dom';
 				}
 				return defaultRequestToExternal( request );
 			},
