@@ -59,13 +59,19 @@ export default function TeamMembersContent( {
 					/>
 				}
 			>
-				{ /* Free composition: render our own toolbar so search + cog live in a
-				   wrapper we control (styling/alignment) instead of DataViews' default. */ }
+				{ /* Padding mirrors the default `.dataviews__view-actions` so this custom
+				   toolbar aligns with the table below it. Kept as free composition for
+				   reuse in a8c-for-agencies.
+				   TODO: remove after we sunset a8c-for-agencies. */ }
 				<HStack
-					className="agency-team-members__view-actions"
 					alignment="top"
 					justify="space-between"
 					spacing={ 2 }
+					style={ {
+						boxSizing: 'border-box',
+						padding:
+							'var(--wpds-dimension-padding-lg, 16px) var(--wpds-dimension-padding-2xl, 24px)',
+					} }
 				>
 					<HStack justify="flex-start" spacing={ 3 } expanded={ false }>
 						<WPDataViews.Search />
@@ -73,7 +79,7 @@ export default function TeamMembersContent( {
 					</HStack>
 					<WPDataViews.ViewConfig />
 				</HStack>
-				<WPDataViews.FiltersToggled />
+				<WPDataViews.FiltersToggled className="dataviews-filters__container" />
 				<WPDataViews.Layout />
 				<WPDataViews.Footer />
 			</DataViews>

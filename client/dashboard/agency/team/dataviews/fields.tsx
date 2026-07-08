@@ -66,6 +66,16 @@ const STATUS_ELEMENTS: { value: TeamMemberStatus; label: string }[] = [
 	{ value: 'expired', label: __( 'Invite expired' ) },
 ];
 
+function formatAddedDate( value?: string ): string | null {
+	if ( ! value ) {
+		return null;
+	}
+	// Active members provide a Unix-seconds timestamp; invites provide an ISO date string.
+	const numeric = Number( value );
+	const date = Number.isNaN( numeric ) ? new Date( value ) : new Date( numeric * 1000 );
+	return Number.isNaN( date.getTime() ) ? null : dateI18n( 'F j, Y', date );
+}
+
 export function useTeamFields(): Field< TeamMember >[] {
 	return [
 		{
@@ -98,8 +108,8 @@ export function useTeamFields(): Field< TeamMember >[] {
 			enableSorting: false,
 			getValue: ( { item } ) => item.dateAdded ?? '',
 			render: ( { item } ) => {
-				const timestamp = Number( item.dateAdded );
-				return timestamp ? <>{ dateI18n( 'F j, Y', new Date( timestamp * 1000 ) ) }</> : <>—</>;
+				const formatted = formatAddedDate( item.dateAdded );
+				return formatted ? <>{ formatted }</> : <>—</>;
 			},
 		},
 	];

@@ -11,6 +11,8 @@ import { store as noticesStore } from '@wordpress/notices';
 import ConfirmModal from '../../components/confirm-modal';
 import type { TeamActionRequest } from './dataviews/actions';
 
+const AGENCIES_MARKETING_URL = 'https://automattic.com/for/agencies';
+
 interface TeamActionModalProps {
 	agencyId: number;
 	agencyName: string;
@@ -124,7 +126,7 @@ export default function TeamActionModal( {
 				removeMember.mutate( member.id, {
 					onSuccess: () => {
 						if ( isSelf ) {
-							window.location.href = 'https://automattic.com/for/agencies';
+							window.location.href = AGENCIES_MARKETING_URL;
 							return;
 						}
 						notifySuccess( __( 'The member has been successfully removed.' ) );

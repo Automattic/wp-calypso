@@ -40,6 +40,7 @@ export const agencyTeamInvitesQuery = ( agencyId: number ) =>
 				displayName: invite.username,
 				avatar: invite.avatar_url,
 				status: invite.status === 'expired' ? 'expired' : 'pending',
+				dateAdded: invite.created_at,
 			} ) );
 		},
 		enabled: !! agencyId,
@@ -48,6 +49,13 @@ export const agencyTeamInvitesQuery = ( agencyId: number ) =>
 function invalidateAgencyTeam( agencyId: number ) {
 	queryClient.invalidateQueries( { queryKey: [ 'agency', agencyId, 'team-members' ] } );
 	queryClient.invalidateQueries( { queryKey: [ 'agency', agencyId, 'team-invites' ] } );
+}
+
+// Ownership transfer changes the current user's role and capabilities, which
+// the agency identity queries expose (e.g. canRemove, owner/member labels).
+function invalidateActiveAgency() {
+	queryClient.invalidateQueries( { queryKey: [ 'agency' ], exact: true } );
+	queryClient.invalidateQueries( { queryKey: [ 'agency', 'active' ], exact: true } );
 }
 
 export const agencyTeamInviteMutation = ( agencyId: number ) =>
@@ -59,6 +67,7 @@ export const agencyTeamInviteMutation = ( agencyId: number ) =>
 export const agencyTeamResendInviteMutation = ( agencyId: number ) =>
 	mutationOptions( {
 		mutationFn: ( inviteId: number ) => resendAgencyTeamInvite( agencyId, inviteId ),
+		onSuccess: () => invalidateAgencyTeam( agencyId ),
 	} );
 
 export const agencyTeamCancelInviteMutation = ( agencyId: number ) =>
@@ -76,5 +85,8 @@ export const agencyTeamRemoveMemberMutation = ( agencyId: number ) =>
 export const agencyTeamTransferOwnershipMutation = ( agencyId: number ) =>
 	mutationOptions( {
 		mutationFn: ( newOwnerId: number ) => transferAgencyOwnership( agencyId, newOwnerId ),
-		onSuccess: () => invalidateAgencyTeam( agencyId ),
+		onSuccess: () => {
+			invalidateAgencyTeam( agencyId );
+			invalidateActiveAgency();
+		},
 	} );

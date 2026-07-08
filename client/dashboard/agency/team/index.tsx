@@ -9,7 +9,7 @@ import { Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
@@ -47,7 +47,10 @@ export default function AgencyTeam() {
 		agencyTeamInvitesQuery( agencyId )
 	);
 
-	const allMembers: TeamMember[] = [ ...members, ...invites ];
+	const allMembers = useMemo< TeamMember[] >(
+		() => [ ...members, ...invites ],
+		[ members, invites ]
+	);
 
 	const canRemove = !! activeAgency?.user?.capabilities?.includes( REMOVE_USERS_CAPABILITY );
 
