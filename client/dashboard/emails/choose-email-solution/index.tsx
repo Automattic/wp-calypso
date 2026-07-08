@@ -62,12 +62,14 @@ export default function ChooseEmailSolution() {
 	const { intent } = chooseEmailSolutionRoute.useSearch();
 	const isUpgradeIntent = intent === 'upgrade' && hasTitanMailWithUs( domain );
 
-	// An upgrade keeps the existing subscription's billing cycle, so lock the
-	// interval to it (the billing-interval toggle is hidden during an upgrade).
+	// A monthly subscriber may keep monthly or move up to yearly when upgrading, so the
+	// billing-interval toggle stays available for them. A yearly subscriber can only
+	// upgrade to another yearly plan (no yearly -> monthly downgrade), so the toggle is
+	// hidden and the interval is locked to yearly.
+	const isUpgradingFromMonthly = isUpgradeIntent && isMonthlyEmailProduct( titanEmailSubscription );
+	const showIntervalSelector = ! isUpgradeIntent || isUpgradingFromMonthly;
 	const [ billingInterval, setBillingInterval ] = useState< IntervalLength >(
-		isUpgradeIntent && isMonthlyEmailProduct( titanEmailSubscription )
-			? IntervalLength.Monthly
-			: IntervalLength.Annually
+		isUpgradingFromMonthly ? IntervalLength.Monthly : IntervalLength.Annually
 	);
 
 	const { bestAnnualSavings } = useAnnualSavings( domain );
@@ -271,7 +273,7 @@ export default function ChooseEmailSolution() {
 			}
 		>
 			{ /* Billing interval selector */ }
-			{ ! isUpgradeIntent &&
+			{ showIntervalSelector &&
 				( isTitanPlanSelectionEnabled ? (
 					<div className="choose-email-solution-narrow">{ intervalSelector }</div>
 				) : (
