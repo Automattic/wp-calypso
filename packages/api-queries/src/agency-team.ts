@@ -14,33 +14,35 @@ import type { AgencyTeamInviteInput, TeamMember } from '@automattic/api-core';
 export const agencyTeamMembersQuery = ( agencyId: number ) =>
 	queryOptions( {
 		queryKey: [ 'agency', agencyId, 'team-members' ] as const,
-		queryFn: () => fetchAgencyTeamMembers( agencyId ),
-		enabled: !! agencyId,
-		select: ( data ): TeamMember[] =>
-			data.map( ( member ) => ( {
+		queryFn: async (): Promise< TeamMember[] > => {
+			const data = await fetchAgencyTeamMembers( agencyId );
+			return data.map( ( member ) => ( {
 				id: member.id,
 				email: member.email,
 				displayName: member.username,
 				avatar: member.avatar_url,
 				role: member.role,
-				status: 'active',
+				status: 'active' as const,
 				dateAdded: member.joined_timestamp,
-			} ) ),
+			} ) );
+		},
+		enabled: !! agencyId,
 	} );
 
 export const agencyTeamInvitesQuery = ( agencyId: number ) =>
 	queryOptions( {
 		queryKey: [ 'agency', agencyId, 'team-invites' ] as const,
-		queryFn: () => fetchAgencyTeamInvites( agencyId ),
-		enabled: !! agencyId,
-		select: ( data ): TeamMember[] =>
-			data.map( ( invite ) => ( {
+		queryFn: async (): Promise< TeamMember[] > => {
+			const data = await fetchAgencyTeamInvites( agencyId );
+			return data.map( ( invite ) => ( {
 				id: invite.id,
 				email: invite.email,
 				displayName: invite.username,
 				avatar: invite.avatar_url,
 				status: invite.status === 'expired' ? 'expired' : 'pending',
-			} ) ),
+			} ) );
+		},
+		enabled: !! agencyId,
 	} );
 
 function invalidateAgencyTeam( agencyId: number ) {

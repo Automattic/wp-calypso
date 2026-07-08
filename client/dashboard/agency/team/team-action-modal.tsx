@@ -58,12 +58,8 @@ export default function TeamActionModal( {
 				}
 			>
 				{ createInterpolateElement(
-					sprintf(
-						/* translators: %s is the invited member's name or email. */
-						__( 'Are you sure you want to cancel the invitation for <b>%s</b>?' ),
-						memberName
-					),
-					{ b: <strong /> }
+					__( 'Are you sure you want to cancel the invitation for <memberName />?' ),
+					{ memberName: <strong>{ memberName }</strong> }
 				) }
 			</ConfirmModal>
 		);
@@ -91,15 +87,13 @@ export default function TeamActionModal( {
 				}
 			>
 				{ createInterpolateElement(
-					sprintf(
-						/* translators: %1$s is the agency name, %2$s is the member's name or email. */
-						__(
-							'Are you sure you want to transfer ownership of %1$s to <b>%2$s</b>? This action cannot be undone and you will become a regular team member.'
-						),
-						agencyName,
-						memberName
+					__(
+						'Are you sure you want to transfer ownership of <agencyName /> to <memberName />? This action cannot be undone and you will become a regular team member.'
 					),
-					{ b: <strong /> }
+					{
+						agencyName: <>{ agencyName }</>,
+						memberName: <strong>{ memberName }</strong>,
+					}
 				) }
 			</ConfirmModal>
 		);
@@ -144,14 +138,9 @@ export default function TeamActionModal( {
 				? __(
 						'By proceeding, you’ll lose management access of all sites that belong to this agency and you will be removed from this dashboard. The agency owner will need to re-invite you if you wish to gain access again.'
 				  )
-				: createInterpolateElement(
-						sprintf(
-							/* translators: %s is the member's name or email. */
-							__( 'Are you sure you want to remove <b>%s</b>?' ),
-							memberName
-						),
-						{ b: <strong /> }
-				  ) }
+				: createInterpolateElement( __( 'Are you sure you want to remove <memberName />?' ), {
+						memberName: <strong>{ memberName }</strong>,
+				  } ) }
 		</ConfirmModal>
 	);
 }
