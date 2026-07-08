@@ -360,12 +360,10 @@ const PlansPageSubheader = ( {
 		</Subheader>
 	);
 
-	const renderStandardSubheader = ( {
-		includeFreePlanCtaSubheader = true,
-	}: { includeFreePlanCtaSubheader?: boolean } = {} ) => {
+	const renderStandardSubheader = () => {
 		// Website Builder intent: use the new copy
 		if ( ! isUsingStepContainerV2 && intent === 'plans-website-builder' ) {
-			if ( includeFreePlanCtaSubheader && deemphasizeFreePlan && offeringFreePlan ) {
+			if ( deemphasizeFreePlan && offeringFreePlan ) {
 				return (
 					<Subheader { ...subheaderCommonProps }>
 						{ translate(
@@ -403,7 +401,7 @@ const PlansPageSubheader = ( {
 			return null;
 		}
 
-		if ( includeFreePlanCtaSubheader && shouldShowFreePlanCtaSubheader ) {
+		if ( shouldShowFreePlanCtaSubheader ) {
 			return renderFreePlanCtaSubheader();
 		}
 
@@ -436,10 +434,7 @@ const PlansPageSubheader = ( {
 		if ( showDifferentiatorHeader ) {
 			return (
 				<>
-					{ renderStandardSubheader( {
-						includeFreePlanCtaSubheader: false,
-					} ) }
-					{ shouldShowFreePlanCtaSubheader && renderFreePlanCtaSubheader() }
+					{ renderStandardSubheader() }
 					<DifferentiatorHeader />
 				</>
 			);
