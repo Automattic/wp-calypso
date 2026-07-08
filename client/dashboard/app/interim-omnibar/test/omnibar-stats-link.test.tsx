@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { queryClient } from '@automattic/api-queries';
 import { render, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { InterimOmnibar } from '../interim-omnibar';
@@ -36,7 +37,6 @@ const site = {
 	capabilities: {
 		manage_options: true,
 		update_plugins: true,
-		view_stats: true,
 	},
 	options: {
 		admin_url: 'https://test-site.wordpress.com/wp-admin/',
@@ -49,7 +49,18 @@ const site = {
 	},
 } as unknown as Site;
 
+const siteWithStatsCapability = {
+	...site,
+	capabilities: {
+		manage_options: false,
+		update_plugins: true,
+		view_stats: true,
+	},
+} as Site;
+
 beforeEach( () => {
+	queryClient.clear();
+
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.4/sites/1/plans' )
 		.query( true )
@@ -71,10 +82,11 @@ beforeEach( () => {
 } );
 
 afterEach( () => {
+	queryClient.clear();
 	nock.cleanAll();
 } );
 
-test( 'renders a Stats link in the site dropdown when the user can view stats', async () => {
+test( 'renders a Stats link in the site dropdown when the user can manage options', async () => {
 	const { container } = render(
 		<InterimOmnibar user={ user } site={ site } currentRoute="/sites" />
 	);
@@ -84,6 +96,17 @@ test( 'renders a Stats link in the site dropdown when the user can view stats', 
 		'https://test-site.wordpress.com/wp-admin/admin.php?page=stats'
 	);
 	expect( container.querySelector( '.masterbar__item-stats-sparkline' ) ).toBeNull();
+
+	await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+} );
+
+test( 'renders a Stats link in the site dropdown when the user can view stats', async () => {
+	render( <InterimOmnibar user={ user } site={ siteWithStatsCapability } currentRoute="/sites" /> );
+
+	expect( screen.getByRole( 'link', { name: 'Stats' } ) ).toHaveAttribute(
+		'href',
+		'https://test-site.wordpress.com/wp-admin/admin.php?page=stats'
+	);
 
 	await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 } );
