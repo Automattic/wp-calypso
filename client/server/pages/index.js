@@ -893,6 +893,36 @@ const render404 =
 		res.status( 404 ).send( renderJsx( '404', ctx ) );
 	};
 
+// Single source of truth for each Multi-site Dashboard variant, driving both its
+// explicit section routes and its unmatched-path fallback. `devEnv` is the local
+// Calypso environment that enables the variant alongside the dashboard envs.
+const DASHBOARD_VARIANTS = [
+	{
+		definition: DOTCOM_DASHBOARD_SECTION_DEFINITION,
+		paths: DOTCOM_DASHBOARD_SECTION_PATHS,
+		entrypoint: 'entry-dashboard-dotcom',
+		devEnv: 'development',
+		isAllowedHostname: isAllowedDotcomDashboardHostname,
+		extraMiddleware: [ loadDashboardLocaleData ],
+	},
+	{
+		definition: CIAB_DASHBOARD_SECTION_DEFINITION,
+		paths: CIAB_DASHBOARD_SECTION_PATHS,
+		entrypoint: 'entry-dashboard-ciab',
+		devEnv: 'development',
+		isAllowedHostname: isAllowedCiabDashboardHostname,
+		extraMiddleware: [ loadDashboardLocaleData ],
+	},
+	{
+		definition: A4A_DASHBOARD_SECTION_DEFINITION,
+		paths: A4A_DASHBOARD_SECTION_PATHS,
+		entrypoint: 'entry-dashboard-a4a',
+		devEnv: 'a8c-for-agencies-development',
+		isAllowedHostname: isAllowedA4ADashboardHostname,
+		extraMiddleware: [],
+	},
+];
+
 /*
 We don't use `next` but need to add it for express.js to
 recognize this function as an error handler, hence the
@@ -1250,24 +1280,6 @@ export default function pages() {
 		handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper', ( req ) =>
 			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
 		);
-		DOTCOM_DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
-			handleSectionPath(
-				DOTCOM_DASHBOARD_SECTION_DEFINITION,
-				route,
-				'entry-dashboard-dotcom',
-				( req ) => isAllowedDotcomDashboardHostname( req.hostname ),
-				loadDashboardLocaleData
-			);
-		} );
-		CIAB_DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
-			handleSectionPath(
-				CIAB_DASHBOARD_SECTION_DEFINITION,
-				route,
-				'entry-dashboard-ciab',
-				( req ) => isAllowedCiabDashboardHostname( req.hostname ),
-				loadDashboardLocaleData
-			);
-		} );
 	}
 
 	// Multi-site Dashboard (A4A) routing.
@@ -1280,12 +1292,23 @@ export default function pages() {
 				isAllowedA4ADashboardHostname( req.hostname )
 			);
 		} );
-		A4A_DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
-			handleSectionPath( A4A_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-a4a', ( req ) =>
-				isAllowedA4ADashboardHostname( req.hostname )
-			);
-		} );
 	}
+
+	// Register each dashboard variant's explicit section paths.
+	DASHBOARD_VARIANTS.forEach( ( variant ) => {
+		if ( ! ( isDashboardEnv() || calypsoEnv === variant.devEnv ) ) {
+			return;
+		}
+		variant.paths.forEach( ( route ) =>
+			handleSectionPath(
+				variant.definition,
+				route,
+				variant.entrypoint,
+				( req ) => variant.isAllowedHostname( req.hostname ),
+				variant.extraMiddleware
+			)
+		);
+	} );
 
 	sections
 		.filter( ( section ) => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
@@ -1316,34 +1339,15 @@ export default function pages() {
 		// router renders its own not-found page, instead of falling through to
 		// Express's default "Cannot GET". Registered after the explicit routes
 		// above, so those still win.
-		[
-			{
-				definition: DOTCOM_DASHBOARD_SECTION_DEFINITION,
-				entrypoint: 'entry-dashboard-dotcom',
-				isAllowedHostname: isAllowedDotcomDashboardHostname,
-				extraMiddleware: [ setNotFoundStatus, loadDashboardLocaleData ],
-			},
-			{
-				definition: CIAB_DASHBOARD_SECTION_DEFINITION,
-				entrypoint: 'entry-dashboard-ciab',
-				isAllowedHostname: isAllowedCiabDashboardHostname,
-				extraMiddleware: [ setNotFoundStatus, loadDashboardLocaleData ],
-			},
-			{
-				definition: A4A_DASHBOARD_SECTION_DEFINITION,
-				entrypoint: 'entry-dashboard-a4a',
-				isAllowedHostname: isAllowedA4ADashboardHostname,
-				extraMiddleware: [ setNotFoundStatus ],
-			},
-		].forEach( ( { definition, entrypoint, isAllowedHostname, extraMiddleware } ) => {
+		DASHBOARD_VARIANTS.forEach( ( variant ) =>
 			handleSectionPath(
-				definition,
+				variant.definition,
 				/.*/,
-				entrypoint,
-				( req ) => isAllowedHostname( req.hostname ),
-				extraMiddleware
-			);
-		} );
+				variant.entrypoint,
+				( req ) => variant.isAllowedHostname( req.hostname ),
+				[ setNotFoundStatus, ...variant.extraMiddleware ]
+			)
+		);
 
 		return app;
 	}
