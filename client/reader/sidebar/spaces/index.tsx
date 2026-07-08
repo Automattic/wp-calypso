@@ -175,7 +175,7 @@ export function ReaderSidebarSpaces( { path }: Props ) {
 						onPrefetch={ () => prefetchSpace( space ) }
 					/>
 				) ) }
-				<AddMenuItem label={ translate( 'Add a space' ) } onClick={ handleAddSpaceClick } />
+				<AddMenuItem label={ translate( 'Create a space' ) } onClick={ handleAddSpaceClick } />
 			</ExpandableSidebarMenu>
 			{ isOnboardingOpen && (
 				<AsyncLoad
