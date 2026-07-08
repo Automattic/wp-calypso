@@ -893,9 +893,6 @@ const render404 =
 		res.status( 404 ).send( renderJsx( '404', ctx ) );
 	};
 
-// Single source of truth for each Multi-site Dashboard variant, driving both its
-// explicit section routes and its unmatched-path fallback. `devEnv` is the local
-// Calypso environment that enables the variant alongside the dashboard envs.
 const DASHBOARD_VARIANTS = [
 	{
 		definition: DOTCOM_DASHBOARD_SECTION_DEFINITION,
