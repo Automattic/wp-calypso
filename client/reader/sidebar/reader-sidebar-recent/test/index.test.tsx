@@ -18,9 +18,10 @@ jest.mock( 'calypso/reader/stats', () => ( {
 } ) );
 
 let mockSubscribedSites: Partial< SiteSubscriptionItem >[] = [];
+let mockSubscribedFeedsInfo = { unseenCount: 0, feedIds: [], feedUrls: [] };
 jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
 	useSubscribedSites: () => mockSubscribedSites,
-	useSubscribedFeedsInfo: () => ( { unseenCount: 0, feedIds: [], feedUrls: [] } ),
+	useSubscribedFeedsInfo: () => mockSubscribedFeedsInfo,
 } ) );
 
 function createSubscriptionItem(
@@ -49,9 +50,12 @@ function getUnseenCount( container: HTMLElement ): HTMLElement | null {
 describe( 'ReaderSidebarRecent unseen counts', () => {
 	afterEach( () => {
 		mockSubscribedSites = [];
+		mockSubscribedFeedsInfo = { unseenCount: 0, feedIds: [], feedUrls: [] };
 	} );
 
 	test( 'shows the total unseen count for the section, summed across all followed sites', () => {
+		mockSubscribedFeedsInfo = { unseenCount: 8, feedIds: [], feedUrls: [] };
+
 		const { container } = renderRecentDropdown( [
 			createSubscriptionItem( { ID: 1, name: 'Alpha', unseen_count: 3 } ),
 			createSubscriptionItem( { ID: 2, name: 'Beta', unseen_count: 5 } ),
