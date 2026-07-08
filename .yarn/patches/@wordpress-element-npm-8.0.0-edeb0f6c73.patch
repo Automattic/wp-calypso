@@ -1,0 +1,126 @@
+diff --git a/build/react-platform.cjs b/build/react-platform.cjs
+index e89836d76d547ee68fd5592a8f070ffaea8ee610..1bdb8672700d31f77d7ef16675db1ae2a95c93ff 100644
+--- a/build/react-platform.cjs
++++ b/build/react-platform.cjs
+@@ -22,25 +22,45 @@ var react_platform_exports = {};
+ __export(react_platform_exports, {
+   createPortal: () => import_react_dom.createPortal,
+   createRoot: () => import_client.createRoot,
+-  findDOMNode: () => import_react_dom.findDOMNode,
++  findDOMNode: () => findDOMNode,
+   flushSync: () => import_react_dom.flushSync,
+-  hydrate: () => import_react_dom.hydrate,
++  hydrate: () => hydrate,
+   hydrateRoot: () => import_client.hydrateRoot,
+-  render: () => import_react_dom.render,
+-  unmountComponentAtNode: () => import_react_dom.unmountComponentAtNode
++  render: () => render,
++  unmountComponentAtNode: () => unmountComponentAtNode
+ });
+ module.exports = __toCommonJS(react_platform_exports);
+ var import_react_dom = require("react-dom");
+ var import_client = require("react-dom/client");
+-// Annotate the CommonJS export names for ESM import in node:
+-0 && (module.exports = {
+-  createPortal,
+-  createRoot,
+-  findDOMNode,
+-  flushSync,
+-  hydrate,
+-  hydrateRoot,
+-  render,
+-  unmountComponentAtNode
+-});
++
++// React 19 removed `findDOMNode` and moved `render`/`hydrate`/
++// `unmountComponentAtNode` out of `react-dom`. Provide React-19-safe
++// implementations so the re-export surface stays intact.
++var rootsByContainer = new WeakMap();
++function findDOMNode() {
++  throw new Error("findDOMNode was removed in React 19 and is no longer supported.");
++}
++function render(element, container) {
++  let root = rootsByContainer.get(container);
++  if (!root) {
++    root = import_client.createRoot(container);
++    rootsByContainer.set(container, root);
++  }
++  root.render(element);
++  return null;
++}
++function hydrate(element, container) {
++  const root = import_client.hydrateRoot(container, element);
++  rootsByContainer.set(container, root);
++  return null;
++}
++function unmountComponentAtNode(container) {
++  const root = rootsByContainer.get(container);
++  if (root) {
++    root.unmount();
++    rootsByContainer.delete(container);
++    return true;
++  }
++  return false;
++}
+ //# sourceMappingURL=react-platform.cjs.map
+diff --git a/build-module/react-platform.mjs b/build-module/react-platform.mjs
+index 8ed5aef770524fe83d1a0264e00f2d2f932d4f8b..6bd50432f637bff7290d216ea26a57f7ca3351e2 100644
+--- a/build-module/react-platform.mjs
++++ b/build-module/react-platform.mjs
+@@ -1,13 +1,43 @@
+ // packages/element/src/react-platform.ts
+-import {
+-  createPortal,
+-  findDOMNode,
+-  flushSync,
+-  render,
+-  hydrate,
+-  unmountComponentAtNode
+-} from "react-dom";
++import { createPortal, flushSync } from "react-dom";
+ import { createRoot, hydrateRoot } from "react-dom/client";
++
++// React 19 removed `findDOMNode` and moved `render`/`hydrate`/
++// `unmountComponentAtNode` out of `react-dom`. `@wordpress/element` still
++// re-exports those names, so provide React-19-safe implementations here to
++// keep the export surface intact for downstream consumers.
++const rootsByContainer = new WeakMap();
++
++function findDOMNode() {
++  throw new Error( "findDOMNode was removed in React 19 and is no longer supported." );
++}
++
++function render( element, container ) {
++  let root = rootsByContainer.get( container );
++  if ( ! root ) {
++    root = createRoot( container );
++    rootsByContainer.set( container, root );
++  }
++  root.render( element );
++  return null;
++}
++
++function hydrate( element, container ) {
++  const root = hydrateRoot( container, element );
++  rootsByContainer.set( container, root );
++  return null;
++}
++
++function unmountComponentAtNode( container ) {
++  const root = rootsByContainer.get( container );
++  if ( root ) {
++    root.unmount();
++    rootsByContainer.delete( container );
++    return true;
++  }
++  return false;
++}
++
+ export {
+   createPortal,
+   createRoot,
+@@ -18,4 +48,3 @@ export {
+   render,
+   unmountComponentAtNode
+ };
+-//# sourceMappingURL=react-platform.mjs.map

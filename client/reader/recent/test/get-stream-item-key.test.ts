@@ -1,4 +1,4 @@
-import { getStreamItemKey } from '../index';
+import { getStreamItemKey } from '../utils';
 import type { StreamItem } from 'calypso/reader/data/stream';
 
 const wpcomPost = ( blogId: number, postId: number ): StreamItem => ( { blogId, postId } );

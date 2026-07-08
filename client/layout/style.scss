@@ -214,6 +214,10 @@ body.is-mobile-app-view {
 	// Related issue: https://github.com/Automattic/wp-calypso/issues/53504
 	z-index: z-index( 'root', '.layout__secondary' );
 
+	.is-section-reader & {
+		--color-sidebar-background: var( --color-main-background );
+	}
+
 	@include breakpoint-deprecated( '<960px' ) {
 		width: var( --sidebar-width-min );
 	}

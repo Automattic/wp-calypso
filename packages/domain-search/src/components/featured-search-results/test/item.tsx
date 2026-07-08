@@ -167,6 +167,40 @@ describe( 'FeaturedSearchResultsItem', () => {
 			expect( screen.getByText( "It's available!" ) ).toBeInTheDocument();
 		} );
 
+		it( 'renders "Exact match" only in the badge, not also in the match-reasons footer', async () => {
+			// An available FQDN search returns match_reasons including 'exact-match'
+			// (see the backend availability endpoint). Since query === domainName, the
+			// footer renders too — but "Exact match" must not appear twice: the badge
+			// owns it, and the footer keeps only the remaining per-TLD reason.
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-exact-match.com' },
+				suggestions: [
+					buildSuggestion( {
+						domain_name: 'test-exact-match.com',
+						match_reasons: [ 'exact-match', 'tld-exact' ],
+					} ),
+				],
+			} );
+
+			render(
+				<TestDomainSearchWithSuggestions query="test-exact-match.com">
+					<FeaturedSearchResultsItem
+						reason="exact-match"
+						domainName="test-exact-match.com"
+						isSingleFeaturedSuggestion={ false }
+					/>
+				</TestDomainSearchWithSuggestions>
+			);
+
+			await waitFor( () => screen.getByTitle( 'test-exact-match.com' ) );
+
+			// Exactly one "Exact match" on the card (the badge), never duplicated.
+			expect( screen.getAllByText( 'Exact match' ) ).toHaveLength( 1 );
+			// The footer still renders, showing the remaining per-TLD reason.
+			expect( screen.getByTestId( 'domain-suggestion-match-reasons' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Extension ".com" matches your query' ) ).toBeInTheDocument();
+		} );
+
 		it( 'does not render the exact match badge if it is a move suggestion even if the reason is exact-match', async () => {
 			mockGetSuggestionsQuery( {
 				params: { query: 'test-move-suggestion.com' },
