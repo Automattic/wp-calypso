@@ -802,14 +802,14 @@
 			}
 
 			&.is-original {
-				color: var( --studio-gray-40 );
+				color: var( --wp-components-color-gray-600, #949494 );
 				font-size: 24px;
 				margin-bottom: 3px;
 
 				.plan-price__currency-symbol,
 				.plan-price__integer,
 				.plan-price__tax-amount {
-					color: var( --studio-gray-40 );
+					color: var( --wp-components-color-gray-600, #949494 );
 				}
 
 				.plan-price__integer {
