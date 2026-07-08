@@ -6,11 +6,12 @@ import {
 	Roles,
 	UserSignupPage,
 } from '@automattic/calypso-e2e';
-import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-base';
+import { expect, skipIfMailosaurLimitReached, skipIfNotTrunk, tags, test } from '../../lib/pw-base';
 import { apiCloseAccount, recordAccountLeakMarker } from '../shared';
 import type { NewUserResponse } from '@automattic/calypso-e2e';
 
 test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
+	skipIfNotTrunk();
 	skipIfMailosaurLimitReached();
 	const role = 'Editor';
 	const testUser = DataHelper.getNewTestUser( {

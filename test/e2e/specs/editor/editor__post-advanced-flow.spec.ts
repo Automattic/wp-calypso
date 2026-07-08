@@ -10,9 +10,11 @@ import {
 	envToFeatureKey,
 	ElementHelper,
 } from '@automattic/calypso-e2e';
-import { tags, test } from '../../lib/pw-base';
+import { skipIfNotTrunk, tags, test } from '../../lib/pw-base';
 
 test.describe( 'Editor: Advanced Post Flow', { tag: [ tags.GUTENBERG, tags.CALYPSO_PR ] }, () => {
+	skipIfNotTrunk();
+
 	// Authentication setup.
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature( features, [
