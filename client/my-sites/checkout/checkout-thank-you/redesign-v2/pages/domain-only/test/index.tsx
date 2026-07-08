@@ -23,7 +23,12 @@ import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
 jest.mock( '@automattic/calypso-analytics' );
 
-jest.mock( 'calypso/components/data/query-sites', () => () => null );
+const mockQuerySites = jest.fn();
+
+jest.mock( 'calypso/components/data/query-sites', () => ( props: { siteId: number } ) => {
+	mockQuerySites( props );
+	return null;
+} );
 
 jest.mock( 'calypso/state/dashboard/selectors', () => ( {
 	hasDashboardOptIn: jest.fn(),
@@ -92,6 +97,7 @@ describe( 'DomainOnly', () => {
 		jest.mocked( canAnySiteConnectDomains ).mockReturnValue( false );
 		jest.mocked( useDomainToPlanCreditsApplicable ).mockReturnValue( null );
 		jest.mocked( isCurrentPlanPaid ).mockReturnValue( false );
+		mockQuerySites.mockClear();
 	} );
 
 	afterEach( () => {
@@ -127,6 +133,14 @@ describe( 'DomainOnly', () => {
 			renderComponent();
 
 			expect( screen.queryByRole( 'link', { name: /Start a new site/ } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'queries the sites so the plan status can be resolved', () => {
+			renderComponent();
+
+			expect( mockQuerySites ).toHaveBeenCalledWith(
+				expect.objectContaining( { siteId: mockDomainPurchase.blogId } )
+			);
 		} );
 
 		it( 'records a tracks event when the user clicks the "Start a new site" link', async () => {
