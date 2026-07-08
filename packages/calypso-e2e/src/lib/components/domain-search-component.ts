@@ -253,7 +253,11 @@ export class DomainSearchComponent {
 		row: Locator,
 		waitForContinueButton: boolean = true
 	): Promise< string | null > {
-		await row.waitFor();
+		// The suggestion list renders after the search step transition, which
+		// the caller does not wait on, so the row can appear later than the 10s
+		// default action timeout. Match the 30s late-render budget used by the
+		// sibling waits below and in plans-page.
+		await row.waitFor( { timeout: 30_000 } );
 
 		// List freshness is guaranteed by search(), which waits for the
 		// suggestions response and for the DOM to reflect it before returning,
