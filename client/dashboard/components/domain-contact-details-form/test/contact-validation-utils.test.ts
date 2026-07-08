@@ -48,6 +48,12 @@ describe( 'resolveSmsCountry', () => {
 		expect( resolveSmsCountry( SMS_COUNTRY_CODES, '+1', 'GB' )?.code ).toBe( 'BS' );
 	} );
 
+	test( 'falls back to the first match when no contact country is set', () => {
+		// The call site defaults the contact country to '' when none is selected,
+		// so this is the real-world input before an address country is chosen.
+		expect( resolveSmsCountry( SMS_COUNTRY_CODES, '+1', '' )?.code ).toBe( 'BS' );
+	} );
+
 	test( 'resolves an unambiguous dialing code regardless of the contact country', () => {
 		expect( resolveSmsCountry( SMS_COUNTRY_CODES, '+49', 'US' )?.code ).toBe( 'DE' );
 	} );
