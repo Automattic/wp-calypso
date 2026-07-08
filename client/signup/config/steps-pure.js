@@ -278,6 +278,7 @@ export function generateSteps( {
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			props: {
 				hideFreePlan: true,
+				hideEnterprisePlan: true,
 			},
 		},
 
