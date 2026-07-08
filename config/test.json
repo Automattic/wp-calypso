@@ -37,7 +37,7 @@
 		"current-site/domain-warning": false,
 		"current-site/notice": true,
 		"dashboard/enable-percentage-rollout": false,
-		"dashboard/force-opt-in-visibility": true,
+		"dashboard/force-opt-in-visibility": false,
 		"dashboard/opt-in-welcome-modal": false,
 		"dashboard/rollout-advance-notice": false,
 		"dashboard/simulate-full-rollout": false,

@@ -79,6 +79,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 
 	afterEach( () => {
 		window.localStorage.clear();
+		delete window.isSupportSession;
 	} );
 
 	test( 'shows the modal and records an impression for a user with no recovery method', async () => {
@@ -247,6 +248,22 @@ describe( '<AccountRecoveryInterstitial>', () => {
 				snooze_period: 14,
 			}
 		);
+	} );
+
+	test( 'does not show (and records nothing) for a Happiness Engineer in a support session', async () => {
+		// An otherwise-eligible user (no recovery method, not snoozed), viewed through a support
+		// session. The nudge targets the account owner, not the HE acting on their behalf.
+		window.isSupportSession = true;
+		mockAccountRecovery( NONE_RECOVERY );
+		mockUserSettings( { two_step_enabled: false } );
+		mockPreferences();
+
+		const { recordTracksEvent } = render( <AccountRecoveryInterstitial /> );
+
+		await waitFor( () => {
+			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+		} );
+		expect( recordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
 	test( 'does not show for a user in the experiment treatment group, even when eligible', async () => {

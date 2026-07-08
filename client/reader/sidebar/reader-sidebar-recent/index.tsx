@@ -1,7 +1,8 @@
 import './style.scss';
 import page from '@automattic/calypso-router';
+import { Count } from '@automattic/components';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
@@ -22,7 +23,6 @@ type Props = {
 	onClick: () => void;
 	path: string;
 	className: string;
-	translate: ( key: string ) => string;
 };
 
 const SITE_DISPLAY_CUTOFF = 5;
@@ -62,15 +62,11 @@ export function getReaderSidebarSiteName( site: ReaderSidebarSite ): string {
 	return siteName;
 }
 
-const ReaderSidebarRecent = ( {
-	translate,
-	isOpen,
-	onClick,
-	path,
-	className,
-}: Props ): React.JSX.Element => {
+const ReaderSidebarRecent = ( { isOpen, onClick, path, className }: Props ): React.JSX.Element => {
+	const translate = useTranslate();
 	const [ showAllSites, setShowAllSites ] = useState( false );
 	const sites = useSubscribedSites();
+	const totalUnseenCount = sites.reduce( ( sum, site ) => sum + ( site.unseen_count ?? 0 ), 0 );
 	const selectedSiteFeedId = useSelector< AppState, number | null >( getSelectedRecentFeedId );
 	const moment = useLocalizedMoment();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
@@ -118,9 +114,10 @@ const ReaderSidebarRecent = ( {
 			title={ translate( 'Recent' ) }
 			disableFlyout
 			className={ clsx( 'reader-sidebar-recent', className, {
+				'has-counts': totalUnseenCount > 0,
 				'sidebar__menu--selected': isRecentStream && ( ! isOpen || selectedSiteFeedId === null ),
 			} ) }
-			count={ undefined }
+			count={ totalUnseenCount > 0 ? totalUnseenCount : undefined }
 			icon={ null }
 			materialIcon={ null }
 			materialIconStyle={ null }
@@ -128,6 +125,12 @@ const ReaderSidebarRecent = ( {
 		>
 			{ sitesToShow.map( ( site ) => {
 				const displayName = getReaderSidebarSiteName( site );
+				const unseenCount = site.unseen_count ?? 0;
+				const unseenCountLabel = translate( '%(count)d unseen post', '%(count)d unseen posts', {
+					count: unseenCount,
+					args: { count: unseenCount },
+					comment: '%(count)d is the number of unseen posts.',
+				} );
 
 				return (
 					<MenuItem
@@ -151,6 +154,9 @@ const ReaderSidebarRecent = ( {
 										</span>
 									) }
 								</span>
+								{ unseenCount > 0 && (
+									<Count count={ unseenCount } compact aria-label={ unseenCountLabel } />
+								) }
 							</MenuItemLink>
 						</AutoDirection>
 					</MenuItem>
@@ -167,4 +173,4 @@ const ReaderSidebarRecent = ( {
 	);
 };
 
-export default localize( ReaderSidebarRecent );
+export default ReaderSidebarRecent;

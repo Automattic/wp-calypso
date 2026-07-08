@@ -461,7 +461,7 @@
 		"@wordpress/url": "^4.48.0",
 		"@wordpress/viewport": "^6.48.0",
 		"@wordpress/theme": "0.15.0",
-		"@wordpress/ui": "0.15.0",
+		"@wordpress/ui": "0.17.0",
 		"@wordpress/warning": "3.48.0",
 		"@wordpress/widgets": "4.48.0",
 		"@wordpress/wordcount": "4.48.0",
