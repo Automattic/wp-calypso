@@ -421,7 +421,11 @@ export class DomainSearchComponent {
 	async skipPurchase(): Promise< string > {
 		const button = this.page.getByRole( 'button', { name: 'Skip purchase' } );
 
-		await button.waitFor();
+		// Callers can reach this straight after a step navigation (e.g.
+		// launch-site skips the domain search without a preceding search()),
+		// so the button renders past the 10s default action timeout. Match the
+		// 30s late-render budget used by the sibling waits.
+		await button.waitFor( { timeout: 30_000 } );
 
 		let domain = await button.getAttribute( 'aria-label' );
 		domain = domain?.replace( 'Skip purchase and continue with ', '' ) ?? null;
