@@ -39,7 +39,6 @@
 
 .reader-sidebar__section-header {
 	padding: 8px 0 5px;
-	margin-top: 24px;
 	pointer-events: none;
 
 	&:first-of-type {
@@ -102,8 +101,8 @@ body.is-section-reader {
 	.sidebar-menu-container {
 		display: flex;
 		flex-direction: column;
-		gap: 24px;
-		padding: 0 5px;
+		gap: 15px;
+		padding: 0 8px;
 
 		.app-title {
 			padding: 0;
