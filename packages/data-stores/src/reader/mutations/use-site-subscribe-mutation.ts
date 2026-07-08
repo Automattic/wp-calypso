@@ -1,5 +1,6 @@
 import {
 	getSiteSubscriptionsQueryKey,
+	readFeedQueryKey,
 	type SiteSubscriptionsInfiniteData,
 } from '@automattic/api-queries';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -175,9 +176,8 @@ const useSiteSubscribeMutation = () => {
 			}
 
 			if ( isValidId( params.feed_id ) ) {
-				const feedCacheKey = [ 'read', 'feeds', Number( params.feed_id ) ];
 				queryClient.invalidateQueries( {
-					queryKey: feedCacheKey,
+					queryKey: readFeedQueryKey( params.feed_id ),
 				} );
 			}
 
