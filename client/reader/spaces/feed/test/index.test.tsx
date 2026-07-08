@@ -6,9 +6,10 @@ import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { upsertPostCache } from 'calypso/reader/data/post/cache';
 import { useInfiniteStream } from 'calypso/reader/data/stream';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import { SpaceFeed, collectPosts } from '../index';
+import { SpaceFeed } from '../index';
 import type {
 	ReadSpaceDetails,
 	ReadStreamPost,
@@ -59,9 +60,18 @@ jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
 
 const mockUseInfiniteStream = useInfiniteStream as jest.Mock;
 
+function postsFromPages( pages: ReadStreamResponse[] ): ReadStreamPost[] {
+	return pages.flatMap( ( page ) =>
+		page.cards
+			? page.cards.filter( ( card ) => card.type === 'post' ).map( ( card ) => card.data )
+			: page.posts ?? []
+	);
+}
+
 function streamResult( overrides: Partial< ReturnType< typeof useInfiniteStream > > = {} ) {
-	return {
+	const result = {
 		items: [],
+		posts: [],
 		pages: [],
 		isLoading: false,
 		isFetching: false,
@@ -75,6 +85,12 @@ function streamResult( overrides: Partial< ReturnType< typeof useInfiniteStream 
 		invalidate: jest.fn(),
 		...overrides,
 	};
+	// The real hook parses `posts` from the pages; mirror that so tests can keep
+	// setting `pages` (or override `posts` directly).
+	if ( ! ( 'posts' in overrides ) ) {
+		result.posts = postsFromPages( result.pages ) as never;
+	}
+	return result;
 }
 
 function makeSpace( id: string, name: string, view: SpaceFeedLayout ): ReadSpaceDetails {
@@ -286,6 +302,8 @@ describe( 'SpaceFeed', () => {
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 		queryClient.setQueryData( readSpaceQuery( WORK.id ).queryKey, WORK );
 		const post = makePost();
+		// Cards render from the canonical cache; seed it so the row shows the post.
+		upsertPostCache( queryClient, [ post ] );
 		const streamItem = {
 			feedId: post.feed_ID,
 			postId: post.feed_item_ID,
@@ -318,6 +336,7 @@ describe( 'SpaceFeed', () => {
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 		queryClient.setQueryData( readSpaceQuery( WORK.id ).queryKey, WORK );
 		const post = makePost();
+		upsertPostCache( queryClient, [ post ] );
 		mockUseInfiniteStream.mockReturnValue(
 			streamResult( { pages: [ { posts: [ post ] } as unknown as ReadStreamResponse ] } )
 		);
@@ -432,29 +451,5 @@ describe( 'SpaceFeed', () => {
 		render( WORK );
 
 		expect( screen.queryByText( 'Loading more posts…' ) ).not.toBeInTheDocument();
-	} );
-} );
-
-describe( 'collectPosts', () => {
-	it( 'prefers post cards over the legacy posts field when both are present', () => {
-		const postFromPosts = {
-			ID: 1,
-			site_ID: 2,
-			title: 'posts field',
-		} as unknown as ReadStreamPost;
-		const postFromCard = {
-			ID: 2,
-			site_ID: 3,
-			title: 'card field',
-		} as unknown as ReadStreamPost;
-
-		expect(
-			collectPosts( [
-				{
-					posts: [ postFromPosts ],
-					cards: [ { type: 'post', data: postFromCard }, { type: 'recommendation' } ],
-				} as unknown as ReadStreamResponse,
-			] )
-		).toEqual( [ postFromCard ] );
 	} );
 } );

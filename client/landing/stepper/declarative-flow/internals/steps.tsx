@@ -162,11 +162,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/importer-wordpress' ),
 	},
 
-	INTENT: {
-		slug: 'intent',
-		asyncComponent: () => import( './steps-repository/intent-step' ),
-	},
-
 	NEW_OR_EXISTING_SITE: {
 		slug: 'new-or-existing-site',
 		asyncComponent: () => import( './steps-repository/new-or-existing-site' ),

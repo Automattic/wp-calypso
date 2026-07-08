@@ -1,6 +1,7 @@
 import { HelpCenter } from '@automattic/data-stores';
 import {
 	isAIBuilderFlow,
+	isAIBuilderOnboardingFlow,
 	isCopySiteFlow,
 	isDomainFlow,
 	isDomainAndPlanFlow,
@@ -202,6 +203,7 @@ const DomainSearchStep: StepType< {
 			includeOwnedDomainInSuggestions: true,
 			allowsUsingOwnDomain:
 				! isAIBuilderFlow( flow ) &&
+				! isAIBuilderOnboardingFlow( flow ) &&
 				! isNewHostedSiteCreationFlow( flow ) &&
 				! isHundredYearPlanFlow( flow ) &&
 				( isHundredYearDomainFlow( flow ) ? !! query : true ),
