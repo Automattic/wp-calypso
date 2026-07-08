@@ -1416,16 +1416,19 @@ function CancelPurchaseInner() {
 		const effectiveFlowType = computeEffectiveFlowType( state.cancelIntent );
 
 		if ( shouldFireMutationOnConfirm() ) {
-			// Cancel intent: the mutation already fired at confirm-click via
-			// fireMutationFromConfirm. Navigate with the appropriate search param
-			// so the inline notice renders on the destination screen.
+			// The mutation already fired at confirm-click via fireMutationFromConfirm.
+			// A refund removes the purchase, so route away like the other removal
+			// paths; disabling auto-renew keeps it, so return to its settings page
+			// where the cancelled notice renders.
+			if ( effectiveFlowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND ) {
+				invalidateSiteAfterRemoval();
+				navigateAfterRemoval( __( 'Your refund has been processed and your purchase removed.' ) );
+				return;
+			}
 			navigate( {
 				to: purchaseSettingsRoute.fullPath,
 				params: { purchaseId: purchase.ID },
-				search:
-					effectiveFlowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND
-						? { refunded: true }
-						: getCancelledSearch(),
+				search: getCancelledSearch(),
 			} );
 			return;
 		}
