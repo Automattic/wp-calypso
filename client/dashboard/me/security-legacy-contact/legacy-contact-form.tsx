@@ -45,7 +45,9 @@ const fields: Field< LegacyContactFormData >[] = [
 						className={ clsx( 'legacy-contact-notes-field__count', {
 							'is-near-limit': isNearLimit,
 						} ) }
-						aria-hidden="true"
+						// Only announce once the user is near the limit, so screen
+						// readers aren't read the count on every keystroke.
+						aria-live={ isNearLimit ? 'polite' : 'off' }
 					>
 						{ sprintf(
 							/* translators: %d is the number of characters remaining. */
