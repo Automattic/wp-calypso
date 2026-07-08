@@ -15,7 +15,6 @@ import { useBroadcastConversationActivity } from '../../hooks/use-broadcast-conv
 import useCheckpointAction from '../../hooks/use-checkpoint-action';
 import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
-import { DEFAULT_EMPTY_VIEW_SUGGESTION_IDS } from '../../hooks/use-empty-view-suggestions';
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import useRegenerateAction from '../../hooks/use-regenerate-action';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
@@ -33,6 +32,7 @@ import {
 	type ExternalContextCardAction,
 } from '../../utils/external-context';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
+import { mergeEmptyViewSuggestions } from '../../utils/merge-empty-view-suggestions';
 import { getOrchestratorErrorMessage } from '../../utils/orchestrator-error-message';
 import { persistLastActivity } from '../../utils/persist-last-activity';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
@@ -68,43 +68,6 @@ function getLatestAgentMessageId( messages: UIMessage[] ): string | null {
  */
 function formatSuggestionIds( suggestions: Suggestion[] ): string {
 	return '|' + suggestions.map( ( s ) => s.id ).join( '|' ) + '|';
-}
-
-const DEFAULT_EMPTY_VIEW_SUGGESTION_ID_SET = new Set< string >(
-	Object.values( DEFAULT_EMPTY_VIEW_SUGGESTION_IDS )
-);
-
-function isDefaultEmptyViewSuggestions( suggestions: Suggestion[] ): boolean {
-	return (
-		suggestions.length > 0 &&
-		suggestions.every( ( suggestion ) => DEFAULT_EMPTY_VIEW_SUGGESTION_ID_SET.has( suggestion.id ) )
-	);
-}
-
-function mergeEmptyViewSuggestions(
-	emptyViewSuggestions: Suggestion[],
-	dynamicSuggestions: Suggestion[]
-): Suggestion[] {
-	if ( dynamicSuggestions.length === 0 ) {
-		return emptyViewSuggestions;
-	}
-
-	const combined: Suggestion[] = [];
-	const seenIds = new Set< string >();
-	// Contextual suggestions should replace generic defaults, but custom provider
-	// empty-view chips should be shown alongside them.
-	const baseSuggestions = isDefaultEmptyViewSuggestions( emptyViewSuggestions )
-		? []
-		: emptyViewSuggestions;
-
-	for ( const suggestion of [ ...baseSuggestions, ...dynamicSuggestions ] ) {
-		if ( ! seenIds.has( suggestion.id ) ) {
-			seenIds.add( suggestion.id );
-			combined.push( suggestion );
-		}
-	}
-
-	return combined;
 }
 
 function getToolMessageData( message: Pick< UIMessage, 'content' > ):
@@ -845,11 +808,11 @@ export default function OrchestratorChat( {
 		displayedMessages.length === 0 &&
 		inputValue.length === 0
 	) {
-		// Read straight from the live `useSuggestions` output rather than the
-		// registered store. Clicking a suggestion calls `clearSuggestions()`,
-		// which empties the store, and the re-registration effect is keyed on
-		// the (unchanged) hook output so it won't restore it. Persistent
-		// empty-view chips must survive that clear.
+		// Prefer the registered store, but fall back to the live `useSuggestions`
+		// output when the store is empty. Clicking a suggestion calls
+		// `clearSuggestions()`, which empties the store, and the re-registration
+		// effect is keyed on the (unchanged) hook output so it won't restore it.
+		// Persistent empty-view chips must survive that clear.
 		displayedEmptyViewSuggestions = mergeEmptyViewSuggestions(
 			emptyViewSuggestions,
 			suggestions.length > 0 ? suggestions : dynamicSuggestionsList

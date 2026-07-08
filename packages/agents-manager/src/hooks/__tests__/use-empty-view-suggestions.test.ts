@@ -259,19 +259,22 @@ describe( 'useEmptyViewSuggestions', () => {
 		);
 	} );
 
-	it( 'keeps site-editor-only provider suggestions for Site Editor template post types', async () => {
-		mockCurrentPostType = 'wp_template';
-		mockContext = {
-			sectionName: 'site-editor',
-			currentRoute: '/wp-admin/site-editor.php?postType=wp_template',
-		};
-		const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
-		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
+	it.each( [ 'wp_template', 'wp_template_part' ] )(
+		'keeps site-editor-only provider suggestions for the %s post type',
+		async ( postType ) => {
+			mockCurrentPostType = postType;
+			mockContext = {
+				sectionName: 'site-editor',
+				currentRoute: `/wp-admin/site-editor.php?postType=${ postType }`,
+			};
+			const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
+			const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
 
-		const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
+			const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
 
-		await waitFor( () =>
-			expect( result.current ).toEqual( [ siteEditorSuggestion, bigSkySuggestion ] )
-		);
-	} );
+			await waitFor( () =>
+				expect( result.current ).toEqual( [ siteEditorSuggestion, bigSkySuggestion ] )
+			);
+		}
+	);
 } );
