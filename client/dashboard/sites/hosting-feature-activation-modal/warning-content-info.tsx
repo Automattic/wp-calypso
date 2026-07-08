@@ -3,9 +3,9 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { Fragment } from 'react';
-import { Card, CardBody, CardDivider } from '../../components/card';
+import clsx from 'clsx';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Text } from '../../components/text';
 import type {
@@ -25,46 +25,46 @@ function DomainNames( { names }: { names: AutomatedTransferEligibilityWarningDom
 		{
 			label: splitDomainName( names.current ),
 			badgeLabel: __( 'current' ),
-			badgeIntent: 'default' as const,
+			isNew: false,
 		},
 		{
 			label: splitDomainName( names.new ),
 			badgeLabel: __( 'new' ),
-			badgeIntent: 'success' as const,
+			isNew: true,
 		},
 	];
 
 	return (
-		<VStack>
-			<Card size="small">
-				{ items.map( ( item, index ) => (
-					<Fragment key={ index }>
-						<CardBody>
-							<HStack>
-								<HStack justify="flex-start" spacing={ 0 } expanded={ false }>
-									<Text
-										as="span"
-										style={ {
-											overflow: 'hidden',
-											textOverflow: 'ellipsis',
-											whiteSpace: 'nowrap',
-										} }
-									>
-										{ item.label.first }
-									</Text>
-									<Text as="span" style={ { flexShrink: 0 } }>
-										{ item.label.rest }
-									</Text>
-								</HStack>
-								<Badge intent={ item.badgeIntent } style={ { flexShrink: 0 } }>
-									{ item.badgeLabel }
-								</Badge>
-							</HStack>
-						</CardBody>
-						{ index < items.length - 1 && <CardDivider /> }
-					</Fragment>
-				) ) }
-			</Card>
+		<VStack spacing={ 2 } className="hosting-feature-activation-modal__domains">
+			{ items.map( ( item, index ) => (
+				<HStack key={ index } className="hosting-feature-activation-modal__domain">
+					<HStack justify="flex-start" spacing={ 0 } expanded={ false }>
+						<Text
+							as="span"
+							style={ {
+								overflow: 'hidden',
+								textOverflow: 'ellipsis',
+								whiteSpace: 'nowrap',
+							} }
+						>
+							{ item.label.first }
+						</Text>
+						<Text as="span" style={ { flexShrink: 0 } }>
+							{ item.label.rest }
+						</Text>
+					</HStack>
+					<Badge
+						className={ clsx( 'hosting-feature-activation-modal__domain-badge', {
+							'hosting-feature-activation-modal__domain-badge-new': item.isNew,
+							'hosting-feature-activation-modal__domain-badge-current': ! item.isNew,
+						} ) }
+						intent="default"
+						style={ { flexShrink: 0 } }
+					>
+						{ item.badgeLabel }
+					</Badge>
+				</HStack>
+			) ) }
 		</VStack>
 	);
 }
@@ -85,10 +85,19 @@ export function WarningContentInfo( {
 				return warningsByType.map( ( warning ) => (
 					<VStack key={ warning.id } spacing={ 6 }>
 						<Text>
-							<span
-								// eslint-disable-next-line react/no-danger
-								dangerouslySetInnerHTML={ { __html: warning.description } }
-							/>
+							{ warning.domain_names ? (
+								createInterpolateElement(
+									__(
+										'<strong>Your site’s address will change</strong> to the one below. Links to your old address will redirect automatically.'
+									),
+									{ strong: <strong /> }
+								)
+							) : (
+								<span
+									// eslint-disable-next-line react/no-danger
+									dangerouslySetInnerHTML={ { __html: warning.description } }
+								/>
+							) }
 							{ warning.support_url && (
 								<>
 									{ ' ' }
@@ -98,6 +107,7 @@ export function WarningContentInfo( {
 									>
 										{ __( 'Learn more' ) }
 									</InlineSupportLink>
+									.
 								</>
 							) }
 						</Text>
