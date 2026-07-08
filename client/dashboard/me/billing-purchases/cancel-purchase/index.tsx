@@ -44,6 +44,7 @@ import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { useLocale } from '../../../app/locale';
 import { cancelPurchaseRoute, purchaseSettingsRoute, purchasesRoute } from '../../../app/router/me';
+import { siteRoute } from '../../../app/router/sites';
 import { Card, CardBody } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
@@ -532,6 +533,22 @@ function CancelPurchaseInner() {
 
 		navigate( { to: purchasesRoute.to } );
 	}, [ purchase, navigate ] );
+
+	// Once a purchase is removed, its settings page is no longer useful. Send the
+	// user to the site the purchase was attached to, or the purchases list for
+	// siteless/holding-site products. A snackbar confirms the action since the
+	// destination screens don't carry the removal notice.
+	const navigateAfterRemoval = useCallback(
+		( successMessage: string ) => {
+			createSuccessNotice( successMessage, { type: 'snackbar' } );
+			if ( purchase.site_slug && ! purchase.is_attached_to_holding_site ) {
+				navigate( { to: siteRoute.fullPath, params: { siteSlug: purchase.site_slug } } );
+				return;
+			}
+			navigate( { to: purchasesRoute.to } );
+		},
+		[ purchase, navigate, createSuccessNotice ]
+	);
 
 	const track = useCallback( () => {
 		if ( productSlug ) {
@@ -1221,11 +1238,9 @@ function CancelPurchaseInner() {
 							cancelAllMarketplaceSubscriptions();
 						}
 						invokeSurvicateEvent( 'purchaseRefunded' );
-						navigate( {
-							to: purchaseSettingsRoute.fullPath,
-							params: { purchaseId: purchase.ID },
-							search: { refunded: true },
-						} );
+						navigateAfterRemoval(
+							__( 'Your refund has been processed and your purchase removed.' )
+						);
 					},
 					onError: ( error: Error ) => {
 						createErrorNotice( ( error as Error ).message, { type: 'snackbar' } );
@@ -1321,25 +1336,39 @@ function CancelPurchaseInner() {
 				queryClient.invalidateQueries( { queryKey: userPurchasesQuery().queryKey } );
 			}, CACHE_GUARD_DURATION_MS );
 
-			// 3. Navigate with notice params
+			// 3. Navigate away — the purchase is gone, so its settings page is no
+			//    longer useful. Atomic-revert removals still route to the purchases
+			//    list so the backup-download notice (with its export CTA) can show;
+			//    everything else follows the site-page / purchases-list rule.
 			invokeSurvicateEvent( 'purchaseRemoved' );
 			const productNoun = getProductNounForCategory( classifyPurchaseForCopy( purchase ) );
-			navigate( {
-				to: purchasesRoute.to,
-				search: {
-					removed: productNoun,
-					removedId: purchase.ID,
-					...( purchase.will_atomic_revert_after_removal
-						? { removedDomain: purchase.domain }
-						: {} ),
-				},
-			} );
+			if ( purchase.will_atomic_revert_after_removal ) {
+				navigate( {
+					to: purchasesRoute.to,
+					search: {
+						removed: productNoun,
+						removedId: purchase.ID,
+						removedDomain: purchase.domain,
+					},
+				} );
+			} else {
+				navigateAfterRemoval(
+					sprintf(
+						/* translators: %(productNoun)s is plan/domain/email/theme/plugin/subscription. */
+						__( 'Your %(productNoun)s has been removed.' ),
+						{ productNoun }
+					)
+				);
+			}
 
 			// 4. Fire mutation in background. On failure, restore the purchase to
-			//    the cache — the list watches userPurchasesQuery for reappearance
-			//    and self-dismisses its notice. The cache guard's re-strip happens
-			//    synchronously inside the QueryCache notify callback, so the list's
-			//    useEffect never observes transient successes-path reappearances.
+			//    the cache and surface an error snackbar (visible on whichever
+			//    destination the user landed on). When the atomic-revert path routed
+			//    to the purchases list, that list also watches userPurchasesQuery for
+			//    reappearance and self-dismisses its notice. The cache guard's
+			//    re-strip happens synchronously inside the QueryCache notify callback,
+			//    so the list's useEffect never observes transient success-path
+			//    reappearances.
 			removePurchaseMutator.mutateAsync( purchase.ID ).catch( () => {
 				cleanupGuard();
 				queryClient.setQueryData(
