@@ -8,11 +8,6 @@ import { purchasesRoute } from '../../../app/router/me';
 import { siteRoute } from '../../../app/router/sites';
 import type { Purchase } from '@automattic/api-core';
 
-/**
- * Shared navigation + cache handling for the point where a purchase is removed.
- * Used by both the survey-based cancel flow and the standalone domain-removal
- * flow so they behave consistently regardless of the split-cancel-remove flag.
- */
 export function usePostRemovalNavigation( purchase: Purchase ) {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
