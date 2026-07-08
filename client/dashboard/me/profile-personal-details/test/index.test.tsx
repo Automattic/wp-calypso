@@ -41,6 +41,20 @@ function mockIsAutomattician( isAutomattician: boolean ) {
 		} );
 }
 
+function mockAccountRecovery( {
+	email = '',
+	phone = null,
+}: { email?: string; phone?: object | null } = {} ) {
+	return nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/me/account-recovery' )
+		.reply( 200, {
+			email,
+			email_validated: false,
+			phone,
+			phone_validated: false,
+		} );
+}
+
 describe( '<PersonalDetailsSection>', () => {
 	test( 'renders the form and saves the form', async () => {
 		const user = userEvent.setup();
@@ -220,16 +234,67 @@ describe( '<PersonalDetailsSection>', () => {
 			} );
 		} );
 
-		test( 'warns when the account email uses a custom domain', async () => {
+		test( 'warns when the account email uses a custom domain and no recovery method is set', async () => {
 			mockUserSettings( {
 				...settings,
 				user_email: 'jane@mycustomdomain.com',
 			} as unknown as UserSettings );
 			mockIsAutomattician( false );
+			mockAccountRecovery();
 
 			render( <PersonalDetailsSection /> );
 
 			expect( await screen.findByText( /lose access to account recovery/i ) ).toBeVisible();
+		} );
+
+		test( 'links to the account recovery settings page', async () => {
+			mockUserSettings( {
+				...settings,
+				user_email: 'jane@mycustomdomain.com',
+			} as unknown as UserSettings );
+			mockIsAutomattician( false );
+			mockAccountRecovery();
+
+			render( <PersonalDetailsSection /> );
+
+			expect(
+				await screen.findByRole( 'link', { name: /set up a recovery email or phone number/i } )
+			).toHaveAttribute( 'href', '/me/security/account-recovery' );
+		} );
+
+		test( 'does not warn when a recovery email is already set', async () => {
+			mockUserSettings( {
+				...settings,
+				user_email: 'jane@mycustomdomain.com',
+			} as unknown as UserSettings );
+			mockIsAutomattician( false );
+			mockAccountRecovery( { email: 'backup@gmail.com' } );
+
+			render( <PersonalDetailsSection /> );
+
+			await screen.findByRole( 'textbox', { name: 'Email address' } );
+			expect( screen.queryByText( /lose access to account recovery/i ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'does not warn when a recovery phone is already set', async () => {
+			mockUserSettings( {
+				...settings,
+				user_email: 'jane@mycustomdomain.com',
+			} as unknown as UserSettings );
+			mockIsAutomattician( false );
+			mockAccountRecovery( {
+				phone: {
+					country_code: 'US',
+					country_numeric_code: '+1',
+					number: '5551234',
+					number_full: '+15551234',
+				},
+			} );
+
+			render( <PersonalDetailsSection /> );
+
+			await screen.findByRole( 'textbox', { name: 'Email address' } );
+			expect( screen.queryByText( /lose access to account recovery/i ) ).not.toBeInTheDocument();
 		} );
 
 		test( 'does not warn for a free email provider', async () => {
@@ -238,6 +303,7 @@ describe( '<PersonalDetailsSection>', () => {
 				user_email: 'jane@gmail.com',
 			} as unknown as UserSettings );
 			mockIsAutomattician( false );
+			mockAccountRecovery();
 
 			render( <PersonalDetailsSection /> );
 
@@ -251,6 +317,7 @@ describe( '<PersonalDetailsSection>', () => {
 				user_email: 'jane@mail.gmail.com',
 			} as unknown as UserSettings );
 			mockIsAutomattician( false );
+			mockAccountRecovery();
 
 			render( <PersonalDetailsSection /> );
 

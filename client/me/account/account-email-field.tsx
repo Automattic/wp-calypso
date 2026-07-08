@@ -4,10 +4,16 @@ import { removeQueryArgs } from '@wordpress/url';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import QueryAccountRecoverySettings from 'calypso/components/data/query-account-recovery-settings';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useDispatch, useSelector } from 'calypso/state';
+import {
+	getAccountRecoveryEmail,
+	getAccountRecoveryPhone,
+	isAccountRecoverySettingsReady,
+} from 'calypso/state/account-recovery/settings/selectors';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
@@ -165,19 +171,34 @@ const isCustomDomainEmail = ( email: string ): boolean => {
 
 const AccountEmailCustomDomainNotice = ( { email }: { email: string } ) => {
 	const translate = useTranslate();
+	const isSettingsReady = useSelector( isAccountRecoverySettingsReady );
+	const recoveryEmail = useSelector( getAccountRecoveryEmail );
+	const recoveryPhone = useSelector( getAccountRecoveryPhone );
 
 	if ( ! isCustomDomainEmail( email ) ) {
 		return null;
 	}
 
+	const hasRecoveryMethod = !! recoveryEmail || !! recoveryPhone;
+
 	return (
-		<FormInputValidation
-			isError={ false }
-			isWarning
-			text={ translate(
-				"This email uses a custom domain. If your domain expires, you'd lose access to account recovery. Consider an email from a service like Gmail or Outlook instead."
+		<>
+			<QueryAccountRecoverySettings />
+			{ isSettingsReady && ! hasRecoveryMethod && (
+				<FormInputValidation
+					isError={ false }
+					isWarning
+					text={ translate(
+						"This email uses a custom domain. If your domain expires, you'd lose access to account recovery. {{a}}Set up a recovery email or phone number{{/a}} to keep access to your account.",
+						{
+							components: {
+								a: <a href="/me/security/account-recovery" />,
+							},
+						}
+					) }
+				/>
 			) }
-		/>
+		</>
 	);
 };
 

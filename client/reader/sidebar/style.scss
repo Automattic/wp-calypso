@@ -374,7 +374,7 @@ body.is-section-reader {
 			gap: 6px;
 			line-height: 1.5;
 			padding: 12px;
-			box-sizing: content-box;
+			box-sizing: border-box;
 
 			&.view-more-link {
 				color: var( --color-link );

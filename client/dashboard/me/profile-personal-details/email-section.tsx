@@ -1,5 +1,6 @@
-import { cancelPendingEmailChangeMutation } from '@automattic/api-queries';
-import { useMutation } from '@tanstack/react-query';
+import { accountRecoveryQuery, cancelPendingEmailChangeMutation } from '@automattic/api-queries';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import { __experimentalInputControl as InputControl, Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -97,11 +98,17 @@ export default function EmailSection( {
 		validateEmail( value );
 	}, [ value, validateEmail ] );
 
+	const { data: accountRecovery } = useQuery( accountRecoveryQuery() );
+	const isAccountRecoveryReady = accountRecovery !== undefined;
+	const hasRecoveryMethod = !! accountRecovery?.email || !! accountRecovery?.phone;
+
 	const showCustomDomainWarning =
 		! isEmailPending &&
 		!! value &&
 		emailValidator.validate( value ) &&
-		isCustomDomainEmail( value );
+		isCustomDomainEmail( value ) &&
+		isAccountRecoveryReady &&
+		! hasRecoveryMethod;
 
 	const getValidationClass = () => {
 		if ( isEmailPending ) {
@@ -151,9 +158,16 @@ export default function EmailSection( {
 			return (
 				<>
 					<Icon icon={ info } size={ 16 } />
-					{ __(
-						'This email uses a custom domain. If your domain expires, you’d lose access to account recovery. Consider an email from a service like Gmail or Outlook instead.'
-					) }
+					<span>
+						{ createInterpolateElement(
+							__(
+								'This email uses a custom domain. If your domain expires, you’d lose access to account recovery. <a>Set up a recovery email or phone number</a> to keep access to your account.'
+							),
+							{
+								a: <Link to="/me/security/account-recovery" />,
+							}
+						) }
+					</span>
 				</>
 			);
 		}

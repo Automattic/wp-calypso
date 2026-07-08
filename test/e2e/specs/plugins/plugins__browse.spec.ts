@@ -6,12 +6,14 @@ import {
 	envToFeatureKey,
 	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
-import { tags, test } from '../../lib/pw-base';
+import { skipIfNotTrunk, tags, test } from '../../lib/pw-base';
 
 test.describe(
 	DataHelper.createSuiteTitle( 'Plugins: Browse' ),
 	{ tag: [ tags.CALYPSO_PR, tags.JETPACK_REMOTE_SITE ] },
 	() => {
+		skipIfNotTrunk();
+
 		test( 'As a user, I can browse plugins on the plugins page', async ( { page } ) => {
 			let pluginsPage: PluginsPage;
 			let siteUrl: string;

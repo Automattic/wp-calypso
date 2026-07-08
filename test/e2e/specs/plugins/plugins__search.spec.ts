@@ -5,12 +5,14 @@ import {
 	TestAccount,
 	envVariables,
 } from '@automattic/calypso-e2e';
-import { tags, test } from '../../lib/pw-base';
+import { skipIfNotTrunk, tags, test } from '../../lib/pw-base';
 
 test.describe(
 	DataHelper.createSuiteTitle( 'Plugins search' ),
 	{ tag: [ tags.CALYPSO_PR ] },
 	() => {
+		skipIfNotTrunk();
+
 		test( 'As a user, I can search for plugins and navigate search results', async ( { page } ) => {
 			let pluginsPage: PluginsPage;
 			let siteUrl: string;

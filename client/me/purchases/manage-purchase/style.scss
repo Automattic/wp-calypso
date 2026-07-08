@@ -373,6 +373,7 @@
 	.manage-purchase__no-payment-method {
 		display: flex;
 		align-items: flex-start;
+		flex-direction: column;
 		gap: 4px;
 
 		@include breakpoint-deprecated( '<660px' ) {
@@ -383,10 +384,6 @@
 		svg {
 			flex-shrink: 0;
 			fill: var( --color-warning-30 );
-		}
-
-		a {
-			display: inline-block;
 		}
 	}
 
