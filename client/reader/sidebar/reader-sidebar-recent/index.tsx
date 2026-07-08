@@ -115,8 +115,7 @@ const ReaderSidebarRecent = ( { isOpen, onClick, path, className }: Props ): Rea
 			expanded={ isOpen }
 			title={ translate( 'Recent' ) }
 			disableFlyout
-			className={ clsx( 'reader-sidebar-recent', className, {
-				'has-counts': totalUnseenCount > 0,
+			className={ clsx( 'reader-sidebar-recent', 'has-counts', className, {
 				'sidebar__menu--selected': isRecentStream && ( ! isOpen || selectedSiteFeedId === null ),
 			} ) }
 			count={ totalUnseenCount > 0 ? totalUnseenCount : undefined }
@@ -160,7 +159,7 @@ const ReaderSidebarRecent = ( { isOpen, onClick, path, className }: Props ): Rea
 										</span>
 									) }
 								</span>
-								<span className="sidebar__menu-item-more-menu">
+								<span className="sidebar__actions-and-count">
 									{ feedId && site.feed_URL && (
 										<MoreMenuActions
 											identifier={ `feed:${ feedId }` }

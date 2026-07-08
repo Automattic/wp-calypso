@@ -1,5 +1,7 @@
 import './style.scss';
 
+import { isAutomatticianQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { DropdownMenu } from '@wordpress/components';
 import { check, moreHorizontal } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -20,8 +22,14 @@ export function MoreMenuActions( {
 	unseenCount,
 }: MoreMenuActionsProps ) {
 	const translate = useTranslate();
+	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 	const { mutate: markAllAsSeen } = useMarkAllAsSeenMutation();
+
+	// Remove when "Mark all as seen" is available to all users.
+	if ( ! isAutomattician ) {
+		return null;
+	}
 
 	const handleMarkAllAsSeen = () => {
 		recordReaderTracksEvent( 'calypso_reader_mark_all_as_seen_clicked', { source: identifier } );
@@ -49,16 +57,16 @@ export function MoreMenuActions( {
 	return (
 		// eslint-disable-next-line jsx-a11y/no-static-element-interactions
 		<span
-			className="reader-sidebar__more-menu"
+			className="sidebar__more-menu"
 			onClick={ swallowClick }
 			onKeyDown={ swallowActivationKey }
 		>
 			<DropdownMenu
 				icon={ moreHorizontal }
 				label={ translate( 'More actions' ) as string }
-				className="reader-sidebar__more-menu-dropdown"
+				className="sidebar__more-menu-dropdown"
 				popoverProps={ {
-					className: 'reader-sidebar__more-menu-dropdown-content',
+					className: 'sidebar__more-menu-dropdown-content',
 					focusOnMount: true,
 					placement: 'bottom-end',
 				} }

@@ -43,7 +43,7 @@ const ExpandableSidebarHeading = ( {
 			{ undefined !== customIcon && customIcon }
 			<span className="sidebar__expandable-title">
 				{ decodeEntities( title ) }
-				<span className="sidebar__menu-item-more-menu">
+				<span className="sidebar__actions-and-count">
 					{ moreMenuActions }
 					{ count > 0 && <Count count={ count } /> }
 				</span>

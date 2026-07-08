@@ -52,7 +52,7 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 							{ site.last_updated > 0 && moment( new Date( site.last_updated ) ).fromNow() }
 						</span>
 					</span>
-					<span className="sidebar__menu-item-more-menu">
+					<span className="sidebar__actions-and-count">
 						{ feedId && site.feed_URL && (
 							<MoreMenuActions
 								identifier={ `feed:${ feedId }` }
