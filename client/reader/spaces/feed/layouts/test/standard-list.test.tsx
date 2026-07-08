@@ -24,15 +24,20 @@ jest.mock( 'calypso/reader/hooks/use-infinite-list', () => ( {
 
 jest.mock( '../../post-fields', () => ( {
 	getPostFields: jest.fn( () => ( {
-		id: 1,
-		key: 'blog-1-2',
 		title: 'Test post',
 		excerptHtml: '',
 		sourceName: 'Test site',
-		dayGroup: 'today',
 		postHref: '/reader/blogs/2/posts/1',
 		isUnread: false,
 	} ) ),
+	getPostFieldKey: jest.fn( () => 'blog-1-2' ),
+	getPostDayGroup: jest.fn( () => 'today' ),
+} ) );
+
+// Stub the per-row cache read so this structural test needs no QueryClient; a truthy
+// post keeps the row out of its placeholder branch.
+jest.mock( 'calypso/reader/data/post/cache', () => ( {
+	useCachedPost: jest.fn( () => ( { ID: 1, site_ID: 2 } ) ),
 } ) );
 
 // ReaderPostActions is a Redux/React-Query-connected block tested on its own and
@@ -73,7 +78,7 @@ describe( 'StandardListLayout', () => {
 		);
 	} );
 
-	it( 'extracts post fields centrally and hands them to the row', () => {
+	it( 'extracts post fields from each post for its row', () => {
 		mockUseInfiniteList.mockReturnValueOnce( {
 			getListProps: ( props: ListProps = {} ) => ( { ...props, style: props.style ?? {} } ),
 			items: [ { index: 1, key: 'post-blog-1-2', start: 44 } ],
@@ -98,8 +103,6 @@ describe( 'StandardListLayout', () => {
 			/>
 		);
 
-		// Fields are extracted once per post while building the rows and passed to
-		// the row as props — the row never re-extracts them itself.
 		expect( mockGetPostFields ).toHaveBeenCalledWith( post );
 	} );
 

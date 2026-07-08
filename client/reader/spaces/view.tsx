@@ -5,11 +5,12 @@ import { useEffect, useState, type ReactNode } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import { useSpaces } from 'calypso/reader/data/spaces';
+import { useSpace, useSpaces } from 'calypso/reader/data/spaces';
 import { CustomizeModal, type CustomizeTab } from 'calypso/reader/spaces/customize-modal';
 import { DEFAULT_SPACE_WIDTH } from 'calypso/reader/spaces/customize-modal/layout-tab';
 import { SpaceFeed } from 'calypso/reader/spaces/feed';
 import { DEFAULT_SPACE_FEED_LAYOUT } from 'calypso/reader/spaces/feed/layouts/registry';
+import { SpaceError, isSpaceUnavailable } from 'calypso/reader/spaces/space-error';
 import { SpaceNavigation } from 'calypso/reader/spaces/space-navigation';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -27,6 +28,10 @@ export function SpacesView( { id, tab = 'feed' }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const spaces = useSpaces();
+	// The detail call is the one that reports a missing / not-yours space; the list
+	// (which only holds the viewer's own spaces) can't tell "not found" from "still
+	// loading". SpaceFeed already fetches this, so it shares the cache.
+	const spaceQuery = useSpace( id );
 	const space = id ? spaces.find( ( item ) => item.id === id ) : undefined;
 	const layoutView: SpaceFeedLayout = space?.layout.view ?? DEFAULT_SPACE_FEED_LAYOUT;
 	const isWide = ( space?.layout.width ?? DEFAULT_SPACE_WIDTH ) === 'wide';
@@ -63,6 +68,10 @@ export function SpacesView( { id, tab = 'feed' }: Props ) {
 			} )
 		);
 	}, [ color, dispatch, icon, id, layoutView, tab ] );
+
+	if ( id && isSpaceUnavailable( spaceQuery.error ) ) {
+		return <SpaceError spaceId={ id } error={ spaceQuery.error } />;
+	}
 
 	let activePanel: ReactNode = null;
 	if ( id && space ) {

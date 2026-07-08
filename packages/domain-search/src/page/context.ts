@@ -1,6 +1,8 @@
 import {
 	availableTldsQuery,
+	bundleForDomainQuery,
 	bundleSuggestionQuery,
+	bundleTriggersQuery,
 	domainAvailabilityQuery,
 	domainSuggestionsQuery,
 	freeSuggestionQuery,
@@ -49,6 +51,8 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		domainAvailability: ( domainName: string ) => domainAvailabilityQuery( domainName ),
 		freeSuggestion: ( query: string ) => freeSuggestionQuery( query ),
 		bundleSuggestion: ( query: string ) => bundleSuggestionQuery( query ),
+		bundleTriggers: ( query: string ) => bundleTriggersQuery( query ),
+		bundleForDomain: ( fqdn: string ) => bundleForDomainQuery( fqdn ),
 	},
 	cart: {
 		items: [],
@@ -171,6 +175,20 @@ export const useDomainSearchContextValue = ( {
 				} ),
 				bundleSuggestion: ( query ) => ( {
 					...bundleSuggestionQuery( query ),
+					enabled: false,
+					staleTime: Infinity,
+					refetchOnMount: false,
+					refetchOnWindowFocus: false,
+				} ),
+				bundleTriggers: ( query ) => ( {
+					...bundleTriggersQuery( query ),
+					enabled: false,
+					staleTime: Infinity,
+					refetchOnMount: false,
+					refetchOnWindowFocus: false,
+				} ),
+				bundleForDomain: ( fqdn ) => ( {
+					...bundleForDomainQuery( fqdn ),
 					enabled: false,
 					staleTime: Infinity,
 					refetchOnMount: false,

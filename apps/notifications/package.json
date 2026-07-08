@@ -40,7 +40,7 @@
 		"@wordpress/element": "^8.0.0",
 		"@wordpress/i18n": "^6.21.0",
 		"@wordpress/icons": "^13.3.0",
-		"@wordpress/ui": "^0.15.0",
+		"@wordpress/ui": "^0.17.0",
 		"autoprefixer": "^10.4.21",
 		"calypso": "workspace:^",
 		"clsx": "^2.1.1",

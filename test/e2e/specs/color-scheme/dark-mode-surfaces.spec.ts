@@ -4,6 +4,7 @@ import type { Locator, Page } from '@playwright/test';
 
 const COLOR_SCHEME_PREFERENCE = 'hosting-dashboard-color-scheme';
 const DASHBOARD_OPT_IN_PREFERENCE = 'hosting-dashboard-opt-in';
+const ACCOUNT_RECOVERY_SNOOZE_PREFERENCE = 'account-recovery-interstitial-snoozed-until';
 const REQUIRED_TOKENS = [
 	'--dashboard__background-color',
 	'--dashboard-surface__background-color',
@@ -64,6 +65,10 @@ function addDarkModePreference(
 		calypso_preferences: {
 			...calypsoPreferences,
 			[ COLOR_SCHEME_PREFERENCE ]: 'dark',
+			// Snooze the account-recovery interstitial (a unix timestamp, in seconds)
+			// so it doesn't mount over the dashboard routes this suite asserts on.
+			[ ACCOUNT_RECOVERY_SNOOZE_PREFERENCE ]:
+				Math.floor( Date.now() / 1000 ) + 10 * 365 * 24 * 60 * 60,
 			// Themes dark mode is additionally gated behind the dashboard opt-in
 			// (#110825 `shouldEnableThemesColorScheme`), so the preference override
 			// must also satisfy `hasDashboardOptIn` for the Themes suite.

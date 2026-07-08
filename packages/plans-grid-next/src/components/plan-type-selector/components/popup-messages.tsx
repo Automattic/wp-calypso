@@ -104,6 +104,41 @@ type PopupMessageProps = {
 	children?: React.ReactNode;
 };
 
+type PopupMessageTransitionProps = {
+	position: string;
+	inProp: boolean;
+	timeout: { enter: number; exit: number };
+	context?: HTMLElement;
+	children?: React.ReactNode;
+};
+
+const PopupMessageTransition = ( {
+	position,
+	inProp,
+	timeout,
+	context,
+	children,
+}: PopupMessageTransitionProps ) => {
+	// `react-transition-group` needs a `nodeRef` under React 19 (it no longer calls
+	// `findDOMNode`). The ref must point to the `.popover` node so the transition classes
+	// still land there, so it is forwarded through `Popover` to that element.
+	const nodeRef = React.useRef< HTMLDivElement >( null );
+
+	return (
+		<CSSTransition nodeRef={ nodeRef } in={ inProp } timeout={ timeout } classNames="popover">
+			<StyledPopover
+				nodeRef={ nodeRef }
+				position={ position }
+				context={ context }
+				isVisible
+				autoPosition={ false }
+			>
+				{ children }
+			</StyledPopover>
+		</CSSTransition>
+	);
+};
+
 const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
 	context,
 	children,
@@ -115,11 +150,15 @@ const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
 	return (
 		<>
 			{ [ 'right', 'bottom' ].map( ( pos ) => (
-				<CSSTransition key={ pos } in={ inProp } timeout={ timeout } classNames="popover">
-					<StyledPopover position={ pos } context={ context } isVisible autoPosition={ false }>
-						{ children }
-					</StyledPopover>
-				</CSSTransition>
+				<PopupMessageTransition
+					key={ pos }
+					position={ pos }
+					inProp={ inProp }
+					timeout={ timeout }
+					context={ context }
+				>
+					{ children }
+				</PopupMessageTransition>
 			) ) }
 		</>
 	);

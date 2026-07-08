@@ -5,6 +5,7 @@ import {
 	deleteReadSpaceSource,
 	fetchReadSpace,
 	fetchReadSpaces,
+	isWpError,
 	updateReadSpace,
 	type ReadSpace,
 	type ReadSpaceDeletionResult,
@@ -63,12 +64,20 @@ export const readSpacesQuery = () =>
 		meta: { persist: true },
 	} );
 
+const isClientError = ( error: unknown ): boolean =>
+	isWpError( error ) && error.status >= 400 && error.status < 500;
+
 export const readSpaceQuery = ( spaceId: string ) =>
 	queryOptions( {
 		queryKey: readSpaceDetailKey( spaceId ),
 		queryFn: () => fetchReadSpace( spaceId ),
 		staleTime: Infinity,
 		refetchOnMount: 'always',
+		// A 4xx is terminal (the space is gone or not the viewer's), so surface it
+		// at once rather than backing off through TanStack's default three retries.
+		// Calypso boots its own QueryClient without a retry default (unlike this
+		// package's client), so gate it here.
+		retry: ( failureCount, error ) => ! isClientError( error ) && failureCount < 3,
 		// No `placeholderData: keepPreviousData` here: when `spaceId` changes the
 		// detail view (or a still-mounted Sources modal) must not flash the previous
 		// space's name/sources. The persisted cache + mount-time refetch already keep

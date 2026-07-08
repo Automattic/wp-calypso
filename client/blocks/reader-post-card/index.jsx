@@ -15,6 +15,7 @@ import { useFeedQuery } from 'calypso/reader/data/feed';
 import DisplayTypes from 'calypso/reader/data/post/display-types';
 import { useHasSiteSubscriptionOrganization } from 'calypso/reader/data/site-subscriptions';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import * as stats from 'calypso/reader/stats';
 import { expandCard as expandCardAction } from 'calypso/state/reader-ui/card-expansions/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -169,7 +170,14 @@ class ReaderPostCard extends Component {
 		} = this.props;
 
 		let isSeen = false;
-		if ( isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) ) {
+		const isSeenEnabled =
+			isAutomatticTeamMember( teams ) ||
+			isEligibleForUnseen( {
+				isWPForTeamsItem,
+				currentRoute,
+				hasOrganization,
+			} );
+		if ( isSeenEnabled ) {
 			isSeen = post?.is_seen;
 		}
 		const isPostPhoto = !! ( post.display_type & DisplayTypes.PHOTO_ONLY ) && ! compact;

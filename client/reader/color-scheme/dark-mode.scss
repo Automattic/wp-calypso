@@ -6,6 +6,12 @@
 	--color-sidebar-menu-hover-background: var( --dashboard-item-selected-hover__background-color );
 	--color-sidebar-menu-hover-text: var( --color-text );
 	--color-sidebar-menu-selected-text: var( --wp-components-color-accent-darker-20 );
+	--color-sidebar-tooltip-background: color-mix(
+		in srgb,
+		var( --wp-admin-theme-color ) 24%,
+		var( --dashboard__background-color )
+	);
+	--color-sidebar-tooltip-text: var( --color-text );
 	--color-sidebar-text-alternative: var( --dashboard__text-muted-color );
 	--color-sidebar-gridicon-fill: var( --dashboard__text-muted-color );
 	--color-sidebar-gridicon-hover-fill: currentColor;
@@ -50,6 +56,12 @@
 		--color-sidebar-menu-hover-background: var( --dashboard-item-selected-hover__background-color );
 		--color-sidebar-menu-hover-text: var( --color-text );
 		--color-sidebar-menu-selected-text: var( --wp-components-color-accent-darker-20 );
+		--color-sidebar-tooltip-background: color-mix(
+			in srgb,
+			var( --wp-admin-theme-color ) 24%,
+			var( --dashboard__background-color )
+		);
+		--color-sidebar-tooltip-text: var( --color-text );
 		--color-sidebar-submenu-selected-text: var( --color-sidebar-menu-selected-text );
 		--color-sidebar-submenu-hover-text: var( --color-sidebar-menu-selected-text );
 		--color-sidebar-submenu-selected-hover-text: var( --color-sidebar-menu-selected-text );
