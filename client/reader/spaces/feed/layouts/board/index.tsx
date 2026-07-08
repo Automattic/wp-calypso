@@ -2,29 +2,49 @@ import page from '@automattic/calypso-router';
 import { useMemo } from 'react';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import { SiteIcon } from 'calypso/blocks/site-icon';
+import { useCachedPost } from 'calypso/reader/data/post/cache';
+import { type StreamPostKey } from 'calypso/reader/data/stream';
 import { useInfiniteList } from 'calypso/reader/hooks/use-infinite-list';
+import { keyForPost } from 'calypso/reader/post-key';
 import { getPostUrl } from 'calypso/reader/route';
 import { Shimmer } from '../../components/skeleton';
 import { SpaceFeedTimeSince } from '../../components/time-since';
 import { getPostFieldKey, getPostFields } from '../../post-fields';
 import { useScrollSelectedIntoView } from '../use-scroll-selected-into-view';
 import type { SpaceFeedLayoutProps, SpaceFeedSkeletonProps } from '../types';
-import type { ReadStreamPost } from '@automattic/api-core';
 
 import './style.scss';
 
 const LANES = 2;
 const ESTIMATED_SIZE = 260;
 
+/** A single card-shaped shimmer, shown while a post loads from the cache. */
+function BoardSkeletonCard() {
+	return (
+		<div className="space-feed-board__card">
+			<Shimmer className="space-feed-board__skeleton-hero" />
+			<div className="space-feed-board__body">
+				<Shimmer className="space-feed-board__skeleton-line is-title" />
+				<Shimmer className="space-feed-board__skeleton-line" />
+				<Shimmer className="space-feed-board__skeleton-line is-short" />
+			</div>
+		</div>
+	);
+}
+
 function BoardCard( {
-	post,
+	postKey,
 	onOpen,
 	showTimestamp,
 }: {
-	post: ReadStreamPost;
+	postKey: StreamPostKey | undefined;
 	onOpen: () => void;
 	showTimestamp: boolean;
 } ) {
+	const post = useCachedPost( postKey );
+	if ( ! post ) {
+		return <BoardSkeletonCard />;
+	}
 	const fields = getPostFields( post );
 	return (
 		<div className="space-feed-board__card">
@@ -120,7 +140,7 @@ export function BoardLayout( {
 					} }
 				>
 					<BoardCard
-						post={ posts[ virtualItem.index ] }
+						postKey={ keyForPost( posts[ virtualItem.index ] ) }
 						onOpen={ () => selectPost( posts[ virtualItem.index ] ) }
 						showTimestamp={ showTimestamp }
 					/>
@@ -135,14 +155,7 @@ export function BoardSkeleton( { count }: SpaceFeedSkeletonProps ) {
 	return (
 		<div className="space-feed-board__skeleton" aria-hidden="true">
 			{ Array.from( { length: count }, ( _value, index ) => (
-				<div className="space-feed-board__card" key={ index }>
-					<Shimmer className="space-feed-board__skeleton-hero" />
-					<div className="space-feed-board__body">
-						<Shimmer className="space-feed-board__skeleton-line is-title" />
-						<Shimmer className="space-feed-board__skeleton-line" />
-						<Shimmer className="space-feed-board__skeleton-line is-short" />
-					</div>
-				</div>
+				<BoardSkeletonCard key={ index } />
 			) ) }
 		</div>
 	);

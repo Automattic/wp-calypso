@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import { forwardRef } from 'react';
 import { SocialPostCard, mapAtmosphereFeedItemToSocialPost } from 'calypso/reader/social';
 import { ThreadTombstone } from './thread-tombstone';
 import type { AtmosphereThreadNode } from '@automattic/api-core';
@@ -15,6 +14,7 @@ interface ThreadNodeProps {
 	// `node.replies`. Used by ThreadTree's parent chain so a parent's other
 	// replies don't show up above the target post.
 	renderReplies?: boolean;
+	ref?: React.Ref< HTMLDivElement >;
 }
 
 // Visual indentation caps at 4 levels deep — past that, every reply renders
@@ -22,18 +22,16 @@ interface ThreadNodeProps {
 // still readable without drifting off-screen on narrow viewports.
 const MAX_VISUAL_DEPTH = 4;
 
-export const ThreadNode = forwardRef< HTMLDivElement, ThreadNodeProps >( function ThreadNode(
-	{
-		node,
-		depth,
-		highlighted,
-		expandedVideo,
-		prominentTimestamp,
-		connectionId,
-		renderReplies = true,
-	},
-	ref
-) {
+export function ThreadNode( {
+	node,
+	depth,
+	highlighted,
+	expandedVideo,
+	prominentTimestamp,
+	connectionId,
+	renderReplies = true,
+	ref,
+}: ThreadNodeProps ) {
 	const isCapped = depth > MAX_VISUAL_DEPTH;
 	const visualDepth = isCapped ? MAX_VISUAL_DEPTH : depth;
 	const wrapperClass = clsx(
@@ -88,4 +86,4 @@ export const ThreadNode = forwardRef< HTMLDivElement, ThreadNodeProps >( functio
 				) ) }
 		</>
 	);
-} );
+}

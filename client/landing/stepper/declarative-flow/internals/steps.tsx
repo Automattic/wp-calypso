@@ -31,11 +31,6 @@ export const STEPS = {
 
 	COURSES: { slug: 'courses', asyncComponent: () => import( './steps-repository/courses' ) },
 
-	DESIGN_CHOICES: {
-		slug: 'design-choices',
-		asyncComponent: () => import( './steps-repository/design-choices' ),
-	},
-
 	DESIGN_SETUP: {
 		slug: 'design-setup',
 		asyncComponent: () => import( './steps-repository/design-setup' ),
@@ -64,6 +59,11 @@ export const STEPS = {
 	DOMAIN_SEARCH: {
 		slug: 'domains',
 		asyncComponent: () => import( './steps-repository/domain-search' ),
+	},
+
+	EDUCATION_STUDENT_VALIDATION: {
+		slug: 'education-student-validation',
+		asyncComponent: () => import( './steps-repository/education-student-validation' ),
 	},
 
 	ERROR: { slug: 'error', asyncComponent: () => import( './steps-repository/error-step' ) },
@@ -160,11 +160,6 @@ export const STEPS = {
 	IMPORTER_WORDPRESS: {
 		slug: 'importerWordpress',
 		asyncComponent: () => import( './steps-repository/importer-wordpress' ),
-	},
-
-	INTENT: {
-		slug: 'intent',
-		asyncComponent: () => import( './steps-repository/intent-step' ),
 	},
 
 	NEW_OR_EXISTING_SITE: {
