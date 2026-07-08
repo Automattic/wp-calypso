@@ -878,6 +878,11 @@ const setUpSectionContext = ( section, entrypoint ) => ( req, res, next ) => {
 	next();
 };
 
+const setNotFoundStatus = ( req, res, next ) => {
+	res.status( 404 );
+	next();
+};
+
 const render404 =
 	( entrypoint = 'entry-main' ) =>
 	( req, res ) => {
@@ -1208,7 +1213,7 @@ export default function pages() {
 	 * SSR middleware if the request wasn't going to be resolved with SSR anyways.
 	 */
 	function handleSectionPath( section, sectionPath, entrypoint, reqFilter, extraMiddleware ) {
-		const pathRegex = pathToRegExp( sectionPath );
+		const pathRegex = sectionPath instanceof RegExp ? sectionPath : pathToRegExp( sectionPath );
 
 		app.get(
 			pathRegex,
@@ -1227,7 +1232,7 @@ export default function pages() {
 				next();
 			},
 			setUpRoute, // For SSR requests, this will happen in the serverRouter.
-			...( extraMiddleware ? [ extraMiddleware ] : [] ),
+			...( extraMiddleware ? [].concat( extraMiddleware ) : [] ),
 			serverRender
 		);
 	}
@@ -1306,8 +1311,40 @@ export default function pages() {
 	registerCspReportRoute( app );
 
 	// Multi-site Dashboard routing.
-	// Return earlier since we don't need to set up any other routes.
 	if ( isDashboardEnv() ) {
+		// Serve the dashboard shell for any otherwise-unmatched path so the client
+		// router renders its own not-found page, instead of falling through to
+		// Express's default "Cannot GET". Registered after the explicit routes
+		// above, so those still win.
+		[
+			{
+				definition: DOTCOM_DASHBOARD_SECTION_DEFINITION,
+				entrypoint: 'entry-dashboard-dotcom',
+				isAllowedHostname: isAllowedDotcomDashboardHostname,
+				extraMiddleware: [ setNotFoundStatus, loadDashboardLocaleData ],
+			},
+			{
+				definition: CIAB_DASHBOARD_SECTION_DEFINITION,
+				entrypoint: 'entry-dashboard-ciab',
+				isAllowedHostname: isAllowedCiabDashboardHostname,
+				extraMiddleware: [ setNotFoundStatus, loadDashboardLocaleData ],
+			},
+			{
+				definition: A4A_DASHBOARD_SECTION_DEFINITION,
+				entrypoint: 'entry-dashboard-a4a',
+				isAllowedHostname: isAllowedA4ADashboardHostname,
+				extraMiddleware: [ setNotFoundStatus ],
+			},
+		].forEach( ( { definition, entrypoint, isAllowedHostname, extraMiddleware } ) => {
+			handleSectionPath(
+				definition,
+				/.*/,
+				entrypoint,
+				( req ) => isAllowedHostname( req.hostname ),
+				extraMiddleware
+			);
+		} );
+
 		return app;
 	}
 
