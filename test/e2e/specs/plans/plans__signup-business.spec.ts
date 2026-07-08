@@ -1,6 +1,6 @@
 import { BrowserManager, RestAPIClient } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
-import { apiDeleteSite } from '../shared';
+import { apiCancelAtomicPlan, apiDeleteSite } from '../shared';
 import type { NewSiteResponse, TestAccount } from '@automattic/calypso-e2e';
 
 test.describe(
@@ -84,6 +84,13 @@ test.describe(
 				username: accountUsed.credentials.username,
 				password: accountUsed.credentials.password,
 			} );
+
+			// Business is an Atomic plan: the site can't be deleted via API while the
+			// subscription is active, and this shared pre-release account must not be
+			// closed. Cancel this site's plan first (scoped by blog ID so a concurrent
+			// test's plan is untouched) to stop billing and trigger deprovision. The
+			// delete below is best-effort until that async deprovision completes.
+			await apiCancelAtomicPlan( restAPIClient, newSiteDetails.blog_details.blogid );
 
 			await apiDeleteSite( restAPIClient, {
 				url: newSiteDetails.blog_details.url,
