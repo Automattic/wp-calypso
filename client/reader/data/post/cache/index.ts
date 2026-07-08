@@ -40,6 +40,14 @@ const valueToString = ( value: unknown ): string | null => {
 	return String( value );
 };
 
+// External and shadow-blog feed items often carry `ID: 0`. Treating that as a
+// real blog post id creates a shared `blog-0-{site_ID}` alias that collapses
+// every item on the feed into one cache entry.
+const isValidReaderPostId = ( value: unknown ): boolean => {
+	const stringValue = valueToString( value );
+	return Boolean( stringValue && stringValue !== '0' );
+};
+
 const postKeyStringFromKey = ( postKey: PostCacheKey ): string | null => {
 	return keyToString( postKey );
 };
@@ -67,14 +75,14 @@ const postKeyStringsFromPost = ( post: Post ): string[] => {
 		} );
 	}
 
-	if ( Boolean( post.is_external ) && postId ) {
+	if ( Boolean( post.is_external ) && isValidReaderPostId( post.ID ) ) {
 		const externalFeedId = feedId ?? siteId;
 		if ( externalFeedId ) {
 			keyStrings.add( `feed-${ postId }-${ externalFeedId }` );
 		}
 	}
 
-	if ( siteId && postId && ! post.is_external ) {
+	if ( siteId && isValidReaderPostId( post.ID ) && ! post.is_external ) {
 		keyStrings.add( `blog-${ postId }-${ siteId }` );
 	}
 
@@ -164,7 +172,12 @@ const arraysShareMatchingValue = ( left: unknown, right: unknown ): boolean => {
 
 const postMatchesKey = ( post: Post, key: PostCacheKey ): boolean => {
 	if ( key.blogId && key.postId ) {
-		return valuesMatch( post.site_ID, key.blogId ) && valuesMatch( post.ID, key.postId );
+		return (
+			isValidReaderPostId( key.postId ) &&
+			isValidReaderPostId( post.ID ) &&
+			valuesMatch( post.site_ID, key.blogId ) &&
+			valuesMatch( post.ID, key.postId )
+		);
 	}
 
 	if ( key.feedId && key.postId ) {
@@ -186,7 +199,12 @@ const postsShareIdentity = ( left: Post, right: Post ): boolean => {
 	if ( valuesMatch( left.global_ID, right.global_ID ) ) {
 		return true;
 	}
-	if ( valuesMatch( left.site_ID, right.site_ID ) && valuesMatch( left.ID, right.ID ) ) {
+	if (
+		isValidReaderPostId( left.ID ) &&
+		isValidReaderPostId( right.ID ) &&
+		valuesMatch( left.site_ID, right.site_ID ) &&
+		valuesMatch( left.ID, right.ID )
+	) {
 		return true;
 	}
 	if (
@@ -550,12 +568,10 @@ export const useCachedPosts = ( targets: PostCacheTarget[] ): Array< Post | null
 		} ) ),
 	} );
 
-	return useMemo(
-		() =>
-			queries.map( ( query ) =>
-				mergePostCacheData( query.data as PostCacheData | null | undefined )
-			),
-		[ queries ]
+	// Derived inline: `useQueries` returns a fresh array each render, so memoizing
+	// on it trips @tanstack/query/no-unstable-deps without buying anything.
+	return queries.map( ( query ) =>
+		mergePostCacheData( query.data as PostCacheData | null | undefined )
 	);
 };
 

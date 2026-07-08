@@ -220,26 +220,14 @@ export const isEligibleForUnseen = ( {
 
 interface CanBeMarkedAsSeenArgs {
 	post: ReaderPost | null;
-	posts: ReaderPost[];
 }
 
 /**
  * Check if the post/posts can be marked as seen based on the existence of `is_seen` flag and the current route.
  */
-export const canBeMarkedAsSeen = ( {
-	post = null,
-	posts = [],
-}: CanBeMarkedAsSeenArgs ): boolean => {
+export const canBeMarkedAsSeen = ( { post = null }: CanBeMarkedAsSeenArgs ): boolean => {
 	if ( post !== null ) {
 		return post.hasOwnProperty( 'is_seen' );
-	}
-
-	if ( posts.length ) {
-		for ( const thePost in posts ) {
-			if ( thePost.hasOwnProperty( 'is_seen' ) ) {
-				return true;
-			}
-		}
 	}
 
 	return false;

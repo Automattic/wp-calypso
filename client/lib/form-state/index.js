@@ -1,7 +1,6 @@
-import { camelCase, mapValues, pickBy } from '@automattic/js-utils';
+import { camelCase, mapValues, pickBy, isEmpty } from '@automattic/js-utils';
 import { debounce } from '@wordpress/compose';
 import update from 'immutability-helper';
-import { isEmpty } from 'lodash';
 
 function Controller( options ) {
 	if ( ! ( this instanceof Controller ) ) {

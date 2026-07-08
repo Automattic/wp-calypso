@@ -3,14 +3,16 @@ import { siteActivityLogQuery, siteActivityLogGroupCountsQuery } from '@automatt
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { View, Field, Filter } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import fastDeepEqual from 'fast-deep-equal/es6';
 import { useMemo, useEffect } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { usePersistentView } from '../../../app/hooks/use-persistent-view';
+import { useLocale } from '../../../app/locale';
 import { PerformanceTrackerStop } from '../../../app/performance-tracking';
 import { siteLogsActivityRoute } from '../../../app/router/sites';
-import { DataViews } from '../../../components/dataviews';
+import { DataViews, DataViewsEmptyStateLayout } from '../../../components/dataviews';
+import { formatDate } from '../../../utils/datetime';
 import { getActivityLogHiddenGroups } from '../../../utils/site-features';
 import { buildTimeRangeInSeconds } from '../../logs/utils';
 import { ActivityLogsCallout } from '../activity-logs-callout';
@@ -38,6 +40,7 @@ function SiteActivityLogsDataViews( {
 	hasActivityLogsAccess,
 }: SiteLogsDataViewsPropsActivity ) {
 	const { recordTracksEvent } = useAnalytics();
+	const locale = useLocale();
 
 	const { startSec, endSec } = useMemo(
 		() => buildTimeRangeInSeconds( dateRange.start, dateRange.end, timezoneString, gmtOffset ),
@@ -186,6 +189,20 @@ function SiteActivityLogsDataViews( {
 	}, [ dateRangeVersion ] );
 
 	const logData = activityLogData?.activityLogs || [];
+
+	const emptyState = (
+		<DataViewsEmptyStateLayout
+			isBorderless
+			title={ __( 'No results' ) }
+			description={ sprintf(
+				// translators: %1$s and %2$s are dates, e.g. "Jan 1, 2026".
+				__( 'No activity was logged between %1$s and %2$s.' ),
+				formatDate( dateRange.start, locale ),
+				formatDate( dateRange.end, locale )
+			) }
+		/>
+	);
+
 	return (
 		<>
 			{ ! isLoadingActivityLogQuery && <PerformanceTrackerStop /> }
@@ -200,11 +217,11 @@ function SiteActivityLogsDataViews( {
 				config={
 					hasActivityLogsAccess ? undefined : { perPageSizes: [ ACTIVITY_LOGS_DEFAULT_PAGE_SIZE ] }
 				} // Disable changing perPage if no access
-				search
+				search={ false }
 				defaultLayouts={ { table: {} } }
 				onChangeView={ onChangeView }
 				onReset={ resetView }
-				empty={ <p>{ view.search ? __( 'No activity found' ) : __( 'No activities' ) }</p> }
+				empty={ emptyState }
 				children={ hasActivityLogsAccess ? undefined : <DataViews.Layout /> } // showing only the layout when on the free plan.
 			/>
 

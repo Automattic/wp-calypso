@@ -30,9 +30,17 @@
 }
 
 .plan-usage-heading {
+	display: flex;
+	align-items: center;
+	gap: 4px;
 	font-family: $font-sf-pro-display;
 	font-size: $font-title-small;
 	line-height: 26px;
+}
+
+.plan-usage-heading-info {
+	display: inline-flex;
+	color: var(--studio-gray-60);
 }
 
 .plan-usage-progress {

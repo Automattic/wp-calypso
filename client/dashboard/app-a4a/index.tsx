@@ -28,6 +28,7 @@ boot( {
 			learn: true,
 			mcp: true,
 			sites: true,
+			earn: true,
 		},
 		agencyClient: { subscriptions: true },
 		sites: false,
@@ -48,10 +49,7 @@ boot( {
 		darkMode: false,
 	},
 	optIn: false,
-	components: {
-		// Temporary: reuse the generic site switcher until it's agency-scoped.
-		siteSwitcher: () => import( '../sites/site-switcher' ),
-	},
+	components: {},
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
 		paginatedSitesQuery: ( fetchSiteOptions?: FetchPaginatedSitesOptions ) =>

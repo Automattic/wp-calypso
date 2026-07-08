@@ -5,13 +5,7 @@ import { Page } from 'playwright';
  *
  * @see client/landing/stepper/declarative-flow/site-setup-flow.ts for all step names
  */
-export type StepName =
-	| 'goals'
-	| 'vertical'
-	| 'intent'
-	| 'design-setup'
-	| 'options'
-	| 'designChoices';
+export type StepName = 'goals' | 'vertical' | 'design-setup' | 'options' | 'designChoices';
 type WriteActions = 'Start writing' | 'Start learning' | 'View designs';
 
 const selectors = {
@@ -37,7 +31,6 @@ const selectors = {
 	themePickerContainer: '.design-picker',
 	goalsStepContainer: '.goals-step',
 	verticalsStepContainer: '.site-vertical',
-	intentStepContainer: '.intent-step',
 	optionsStepContainer: '.is-step-write',
 	designChoicesStepContainer: '.design-choices',
 };
@@ -74,9 +67,6 @@ export class StartSiteFlow {
 		await this.page.waitForSelector( selectors.contentAgnosticContainer );
 		if ( ( await this.page.locator( selectors.goalsStepContainer ).count() ) > 0 ) {
 			return 'goals';
-		}
-		if ( ( await this.page.locator( selectors.intentStepContainer ).count() ) > 0 ) {
-			return 'intent';
 		}
 		if ( ( await this.page.locator( selectors.themePickerContainer ).count() ) > 0 ) {
 			return 'design-setup';

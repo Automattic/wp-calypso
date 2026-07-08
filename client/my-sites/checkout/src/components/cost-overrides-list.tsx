@@ -22,6 +22,7 @@ import {
 	getLabel,
 	groupBundleLineItems,
 	isOverrideCodeIntroductoryOffer,
+	LoadingCopy,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { getQueryArg } from '@wordpress/url';
@@ -502,9 +503,11 @@ function getLineItemPriceDisplay(
 function SingleProductAndCostOverridesList( {
 	product,
 	responseCart,
+	isCartUpdating,
 }: {
 	product: ResponseCartProduct;
 	responseCart: ResponseCart;
+	isCartUpdating?: boolean;
 } ) {
 	const translate = useTranslate();
 	const costOverridesList = filterCostOverridesForLineItem( product, translate );
@@ -532,16 +535,22 @@ function SingleProductAndCostOverridesList( {
 			<WPCheckoutCheckIcon />
 			<ProductTitleAreaForCostOverridesList>
 				<span className="cost-overrides-list-product__title">{ label }</span>
-				<SimplifiedLineItemPrice
-					actualAmount={ actualAmountDisplay }
-					crossedOutAmount={ crossedOutAmountDisplay }
-				/>
+				{ isCartUpdating ? (
+					<LoadingCopy width="60px" height="16px" noMargin />
+				) : (
+					<SimplifiedLineItemPrice
+						actualAmount={ actualAmountDisplay }
+						crossedOutAmount={ crossedOutAmountDisplay }
+					/>
+				) }
 			</ProductTitleAreaForCostOverridesList>
-			<LineItemCostOverrides
-				product={ product }
-				costOverridesList={ costOverridesList }
-				shouldShowDiscount={ shouldShowDiscount }
-			/>
+			{ ! isCartUpdating && (
+				<LineItemCostOverrides
+					product={ product }
+					costOverridesList={ costOverridesList }
+					shouldShowDiscount={ shouldShowDiscount }
+				/>
+			) }
 		</SimplifiedSingleProductAndCostOverridesListWrapper>
 	);
 }
@@ -556,6 +565,7 @@ export function CouponCostOverride( {
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
+	const isCartUpdating = FormStatus.VALIDATING === formStatus;
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
 	const isOnboardingUnifiedFlow = useSelector( getIsOnboardingUnifiedFlow );
 	const isBFref =
@@ -582,11 +592,15 @@ export function CouponCostOverride( {
 				<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
 					{ label }
 				</span>
-				<span className="cost-overrides-list-item__discount">
-					{ formatCurrency( -responseCart.coupon_savings_total_integer, responseCart.currency, {
-						isSmallestUnit: true,
-					} ) }
-				</span>
+				{ isCartUpdating ? (
+					<LoadingCopy width="50px" height="14px" noMargin />
+				) : (
+					<span className="cost-overrides-list-item__discount">
+						{ formatCurrency( -responseCart.coupon_savings_total_integer, responseCart.currency, {
+							isSmallestUnit: true,
+						} ) }
+					</span>
+				) }
 			</div>
 			{ removeCoupon && (
 				<span className="cost-overrides-list-item__actions">
@@ -620,7 +634,13 @@ const BundleMemberList = styled.div`
  * The presentation matches the summary's other product rows (green check icon,
  * label-and-price header) rather than reusing the heavier review component.
  */
-export function BundleProductAndCostOverridesList( { bundle }: { bundle: CartBundleLineItem } ) {
+export function BundleProductAndCostOverridesList( {
+	bundle,
+	isCartUpdating,
+}: {
+	bundle: CartBundleLineItem;
+	isCartUpdating?: boolean;
+} ) {
 	const translate = useTranslate();
 	const { products } = bundle;
 	// All members of a bundle share a currency, so the total can safely be summed
@@ -654,10 +674,14 @@ export function BundleProductAndCostOverridesList( { bundle }: { bundle: CartBun
 			<WPCheckoutCheckIcon />
 			<ProductTitleAreaForCostOverridesList>
 				<span className="cost-overrides-list-product__title">{ translate( 'Domain Bundle' ) }</span>
-				<SimplifiedLineItemPrice
-					actualAmount={ bundleTotalDisplay }
-					crossedOutAmount={ isBundleDiscounted ? bundleOriginalDisplay : undefined }
-				/>
+				{ isCartUpdating ? (
+					<LoadingCopy width="60px" height="16px" noMargin />
+				) : (
+					<SimplifiedLineItemPrice
+						actualAmount={ bundleTotalDisplay }
+						crossedOutAmount={ isBundleDiscounted ? bundleOriginalDisplay : undefined }
+					/>
+				) }
 			</ProductTitleAreaForCostOverridesList>
 			<BundleMemberList>
 				{ products.map( ( product ) => (
@@ -670,7 +694,13 @@ export function BundleProductAndCostOverridesList( { bundle }: { bundle: CartBun
 	);
 }
 
-export function ProductsAndCostOverridesList( { responseCart }: { responseCart: ResponseCart } ) {
+export function ProductsAndCostOverridesList( {
+	responseCart,
+	isCartUpdating,
+}: {
+	responseCart: ResponseCart;
+	isCartUpdating?: boolean;
+} ) {
 	// Bundle grouping is gated behind the `domain-bundling` feature flag. When off,
 	// every product renders on its own line exactly as before.
 	const groupedLineItems = config.isEnabled( 'domain-bundling' )
@@ -685,6 +715,7 @@ export function ProductsAndCostOverridesList( { responseCart }: { responseCart: 
 						<BundleProductAndCostOverridesList
 							bundle={ entry }
 							key={ `bundle-${ entry.groupId }` }
+							isCartUpdating={ isCartUpdating }
 						/>
 					);
 				}
@@ -694,6 +725,7 @@ export function ProductsAndCostOverridesList( { responseCart }: { responseCart: 
 						product={ entry.product }
 						responseCart={ responseCart }
 						key={ entry.product.uuid }
+						isCartUpdating={ isCartUpdating }
 					/>
 				);
 			} ) }

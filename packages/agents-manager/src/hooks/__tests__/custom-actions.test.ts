@@ -56,7 +56,7 @@ const baseProps = {
 	closeSidebar: jest.fn(),
 	canDock: true,
 	setIsCompactMode: jest.fn(),
-	setShouldRenderChat: jest.fn(),
+	setIsChatEnabled: jest.fn(),
 	setDesktopMediaQuery: jest.fn(),
 };
 

@@ -5,6 +5,7 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
+import { clearSessionStorageQuery } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
@@ -81,6 +82,7 @@ const onboarding: FlowV2< typeof initialize > = {
 		);
 		const coupon = useQuery().get( 'coupon' );
 		const refParameter = useQuery().get( 'ref' );
+		const diyLaunchpad = useQuery().get( 'diy-launchpad' );
 		const siteSlugParam = useQuery().get( 'siteSlug' );
 
 		const { setShouldShowNotification } = usePurchasePlanNotification();
@@ -94,6 +96,19 @@ const onboarding: FlowV2< typeof initialize > = {
 			providedDependencies: ProvidedDependencies,
 			planCartItem: MinimalRequestCartProduct | null
 		): Promise< [ string, string | null, string | null ] > => {
+			// Site Setup replaces My Home, so the diy-launchpad cohort must land there directly:
+			// any other destination (e.g. /home) would be the orphaned screen we just removed.
+			if ( diyLaunchpad && providedDependencies.siteSlug ) {
+				const siteSlug = providedDependencies.siteSlug as string;
+				const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
+				const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
+				return [
+					`${ adminUrl }admin.php?page=site-setup-wp-admin&enable-ai-launchpad=1`,
+					null,
+					null,
+				];
+			}
+
 			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
 				return [ `/home/${ providedDependencies.siteSlug }`, null, null ];
 			}
@@ -246,7 +261,7 @@ const onboarding: FlowV2< typeof initialize > = {
 								const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
 								window.location.assign( `${ adminUrl }admin.php?page=wc-admin` );
 							} else {
-								window.location.assign( `/sites/${ siteSlug }` );
+								window.location.assign( `/home/${ siteSlug }` );
 							}
 							return;
 						default:
@@ -266,6 +281,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							addQueryArgs( withLocale( '/setup/onboarding/post-checkout-onboarding', locale ), {
 								siteSlug: siteSlugParam,
 								...( refParameter ? { ref: refParameter } : {} ),
+								...( diyLaunchpad ? { 'diy-launchpad': diyLaunchpad } : {} ),
 							} )
 						);
 						return;
@@ -299,6 +315,7 @@ const onboarding: FlowV2< typeof initialize > = {
 											{
 												siteSlug,
 												...( refParameter ? { ref: refParameter } : {} ),
+												...( diyLaunchpad ? { 'diy-launchpad': diyLaunchpad } : {} ),
 											}
 									  );
 
@@ -319,6 +336,9 @@ const onboarding: FlowV2< typeof initialize > = {
 									steps_total: checkoutStepperPosition.total,
 								} )
 							);
+						} else if ( diyLaunchpad ) {
+							// The diy-launchpad cohort skips the AI/manual chooser and lands straight in Site Setup.
+							window.location.replace( destination );
 						} else if (
 							refParameter === WOO_HOSTING_SOLUTIONS_REF &&
 							isEnabled( 'onboarding/woo-hosting-post-purchase-setup-choice' )
@@ -384,6 +404,7 @@ const onboarding: FlowV2< typeof initialize > = {
 				resetOnboardStore();
 				reduxDispatch( setSelectedSiteId( null ) );
 				clearStepPersistedState( this.name );
+				clearSessionStorageQuery();
 				clearSignupDestinationCookie();
 				clearSignupCompleteFlowName();
 				clearSignupCompleteSlug();

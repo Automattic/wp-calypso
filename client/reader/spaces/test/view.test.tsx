@@ -3,13 +3,24 @@
  */
 import { readSpaceQuery, readSpacesQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
-import { screen, within } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SpacesView } from '../view';
 import type { ReadSpaceDetails } from '@automattic/api-core';
 
 const mockSpaceFeed = jest.fn< null, [ unknown ] >( () => null );
+// When set, overrides the single-space detail hook's `error` so tests can drive
+// the not-available branch; otherwise the real (cache-backed) hook is used.
+const mockSpaceError: { current: unknown } = { current: undefined };
+
+// A wpcom-shaped error (an Error with numeric status/statusCode), matching what
+// `isWpError` recognizes in production.
+const wpError = ( status: number ) =>
+	Object.assign( new Error( `HTTP ${ status }` ), { status, statusCode: status } );
+const mockRecordReaderTracksEvent: jest.Mock = jest.fn( () => ( {
+	type: 'TEST_TRACKS_EVENT',
+} ) );
 
 jest.mock( 'calypso/components/data/document-head', () => ( {
 	__esModule: true,
@@ -22,6 +33,26 @@ jest.mock( 'calypso/reader/spaces/feed', () => ( {
 	SpaceFeed: ( props: unknown ) => mockSpaceFeed( props ),
 } ) );
 
+jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
+	recordReaderTracksEvent: ( ...args: unknown[] ) => mockRecordReaderTracksEvent( ...args ),
+} ) );
+
+// Keep the data hooks real (they read the seeded cache, and the Customize modal
+// relies on the detail hook); only override the detail hook's `error` when a test
+// opts in via `mockSpaceError`.
+jest.mock( 'calypso/reader/data/spaces', () => {
+	const actual = jest.requireActual( 'calypso/reader/data/spaces' );
+	return {
+		...actual,
+		useSpace: ( ...args: Parameters< typeof actual.useSpace > ) => {
+			const result = actual.useSpace( ...args );
+			return mockSpaceError.current !== undefined
+				? { ...result, error: mockSpaceError.current }
+				: result;
+		},
+	};
+} );
+
 // Keep the rest of the module real (ReaderMain's global handlers use `useFollowSite`);
 // only stub the subscriptions list the Sources tab reads.
 jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
@@ -33,6 +64,7 @@ const WORK: ReadSpaceDetails = {
 	id: '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21',
 	name: 'Work',
 	tags: [],
+	languages: [],
 	layout: { color: 'blue', icon: 'inbox', view: 'gallery' },
 	sources: [],
 };
@@ -66,6 +98,8 @@ describe( 'SpacesView', () => {
 	beforeEach( () => {
 		window.history.replaceState( {}, '', '/reader/spaces' );
 		mockSpaceFeed.mockClear();
+		mockRecordReaderTracksEvent.mockClear();
+		mockSpaceError.current = undefined;
 	} );
 
 	it( 'shows the Customize button on a space detail page', () => {
@@ -113,6 +147,46 @@ describe( 'SpacesView', () => {
 		);
 	} );
 
+	it( 'renders the wide layout by default when the space has no stored width', () => {
+		render( <SpacesView id={ WORK.id } /> );
+
+		expect( screen.getByRole( 'main' ) ).toHaveClass( 'is-wide-layout' );
+	} );
+
+	it( 'renders the regular (non-wide) layout when the space width is regular', () => {
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		const regularSpace: ReadSpaceDetails = {
+			...WORK,
+			layout: { ...WORK.layout, width: 'regular' },
+		};
+		queryClient.setQueryData( readSpacesQuery().queryKey, [ regularSpace ] );
+		queryClient.setQueryData( readSpaceQuery( regularSpace.id ).queryKey, regularSpace );
+
+		renderWithProvider( <SpacesView id={ regularSpace.id } />, {
+			queryClient,
+			initialState: { currentUser: { id: 1 } },
+		} );
+
+		expect( screen.getByRole( 'main' ) ).not.toHaveClass( 'is-wide-layout' );
+	} );
+
+	it( 'records a page view event with the selected space appearance', async () => {
+		render( <SpacesView id={ WORK.id } /> );
+
+		await waitFor( () =>
+			expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+				'calypso_reader_spaces_page_viewed',
+				{
+					space_id: WORK.id,
+					layout: 'gallery',
+					icon: 'inbox',
+					color: 'blue',
+					tab: 'feed',
+				}
+			)
+		);
+	} );
+
 	it( 'opens the Customize modal on the Identity tab', async () => {
 		const user = userEvent.setup();
 		render( <SpacesView id={ WORK.id } /> );
@@ -121,6 +195,27 @@ describe( 'SpacesView', () => {
 
 		const dialog = screen.getByRole( 'dialog', { name: 'Customize space' } );
 		expect( within( dialog ).getByLabelText( 'Name' ) ).toHaveValue( 'Work' );
+	} );
+
+	it( 'opens the Customize modal on the Sources tab from the feed Add sources CTA', async () => {
+		render( <SpacesView id={ WORK.id } /> );
+
+		// The feed tab's SpaceFeed is wired with the empty-state CTA handler.
+		const feedProps = mockSpaceFeed.mock.calls
+			.map( ( [ props ] ) => props as { onAddSources?: () => void } )
+			.find( ( props ) => typeof props.onAddSources === 'function' );
+		act( () => feedProps?.onAddSources?.() );
+
+		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+			'calypso_reader_spaces_add_sources_clicked',
+			{ space_id: WORK.id }
+		);
+
+		const dialog = await screen.findByRole( 'dialog', { name: 'Customize space' } );
+		expect( within( dialog ).getByRole( 'tab', { name: 'Sources' } ) ).toHaveAttribute(
+			'aria-selected',
+			'true'
+		);
 	} );
 
 	it( 'does not open the modal from the route alone', () => {
@@ -152,5 +247,41 @@ describe( 'SpacesView', () => {
 		expect( mockSpaceFeed ).toHaveBeenCalledWith(
 			expect.objectContaining( { spaceId: WORK.id, variant: 'discover' } )
 		);
+	} );
+
+	it.each( [ 404, 403 ] )(
+		'shows a not-available message and no feed when the space call returns %i',
+		( status ) => {
+			mockSpaceError.current = wpError( status );
+
+			render( <SpacesView id="missing" /> );
+
+			expect( screen.getByRole( 'heading', { name: /isn.t available/i } ) ).toBeVisible();
+			expect( screen.getByRole( 'link', { name: 'Back to Reader' } ) ).toBeVisible();
+			expect( mockSpaceFeed ).not.toHaveBeenCalled();
+		}
+	);
+
+	it( 'records a page error event with the failing status', async () => {
+		mockSpaceError.current = wpError( 404 );
+
+		render( <SpacesView id="missing" /> );
+
+		await waitFor( () =>
+			expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+				'calypso_reader_spaces_page_error',
+				{ space_id: 'missing', status: 404 }
+			)
+		);
+	} );
+
+	it( 'keeps rendering the space on a transient (non-4xx) detail error', () => {
+		mockSpaceError.current = wpError( 500 );
+
+		render( <SpacesView id={ WORK.id } /> );
+
+		expect( screen.queryByRole( 'heading', { name: /isn.t available/i } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Customize' } ) ).toBeVisible();
+		expect( mockSpaceFeed ).toHaveBeenCalled();
 	} );
 } );

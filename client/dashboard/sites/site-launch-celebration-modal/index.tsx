@@ -15,6 +15,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAppContext } from '../../app/context';
 import ConfettiAnimation from '../../components/confetti';
+import { getAddSiteDomainUrl } from '../../utils/domain-url';
 import type { Site } from '@automattic/api-core';
 import './styles.scss';
 
@@ -97,7 +98,7 @@ export default function SiteLaunchCelebrationModal( {
 				</Text>
 			);
 			buttonText = __( 'Get your domain' );
-			buttonHref = `/domains/add/${ site.slug }`;
+			buttonHref = getAddSiteDomainUrl( site.slug );
 		} else if ( isPaidPlan && isBilledMonthly && ! hasCustomDomain ) {
 			contentElement = (
 				<Text as="p" className="flex-shrink-safe">
@@ -107,7 +108,7 @@ export default function SiteLaunchCelebrationModal( {
 				</Text>
 			);
 			buttonText = __( 'Get your domain' );
-			buttonHref = `/domains/add/${ site.slug }`;
+			buttonHref = getAddSiteDomainUrl( site.slug );
 		} else if ( isPaidPlan && ! hasCustomDomain ) {
 			contentElement = (
 				<Text as="p" className="flex-shrink-safe">
@@ -120,7 +121,7 @@ export default function SiteLaunchCelebrationModal( {
 				</Text>
 			);
 			buttonText = __( 'Get your free domain' );
-			buttonHref = `/domains/add/${ site.slug }`;
+			buttonHref = getAddSiteDomainUrl( site.slug );
 		} else {
 			return null;
 		}

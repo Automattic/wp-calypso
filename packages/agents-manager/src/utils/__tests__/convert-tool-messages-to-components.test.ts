@@ -93,6 +93,33 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result ).toEqual( [] );
 	} );
 
+	it( 'filters out messages transformed to context content', () => {
+		const message = createMessage( {
+			content: [ { type: 'context', text: 'This is only context for the model.' } ],
+		} );
+
+		const result = convertWithDefaults( {
+			messages: [ message ],
+		} );
+
+		expect( result ).toEqual( [] );
+	} );
+
+	it( 'filters out messages with context-only data flags', () => {
+		const message = createMessage( {
+			content: [
+				{ type: 'text', text: 'This is only context for the model.' },
+				{ type: 'data', data: { flags: { context_only: true } } },
+			],
+		} );
+
+		const result = convertWithDefaults( {
+			messages: [ message ],
+		} );
+
+		expect( result ).toEqual( [] );
+	} );
+
 	it( 'renders tool messages as components', () => {
 		const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
 			type: 'my-component',
@@ -280,6 +307,57 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
 			type: 'text',
 			text: 'Updated the header and footer.',
+		} );
+	} );
+
+	it( 'filters out unsuccessful apply-block-edits tool summaries', () => {
+		const message = createToolMessage( 'big_sky__apply_block_edits', {
+			success: false,
+			summary: 'Tried to update the header, but it did not stick.',
+		} );
+
+		const result = convertWithDefaults( {
+			messages: [ message ],
+		} );
+
+		expect( result ).toEqual( [] );
+	} );
+
+	it( 'renders stream-page-design tool summary as plain text', () => {
+		const summaryText = 'A bold hero with three airy feature sections in the theme accent colors.';
+		const message = createToolMessage( 'big_sky__stream_page_design', {
+			summary: summaryText,
+			isCurrent: true,
+		} );
+
+		const result = convertWithDefaults( {
+			messages: [ message ],
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
+			type: 'text',
+			text: summaryText,
+		} );
+	} );
+
+	it( 'renders stream-page-design structured result message as plain text', () => {
+		const message = createToolMessage( 'big_sky__stream_page_design', {
+			result: {
+				success: true,
+				message: 'The generated page content has been staged in the editor for review.',
+			},
+			returnToAgent: true,
+		} );
+
+		const result = convertWithDefaults( {
+			messages: [ message ],
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
+			type: 'text',
+			text: 'The generated page content has been staged in the editor for review.',
 		} );
 	} );
 

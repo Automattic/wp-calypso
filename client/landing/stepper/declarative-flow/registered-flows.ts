@@ -14,6 +14,7 @@ import {
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	EXAMPLE_FLOW,
 	AI_SITE_BUILDER_FLOW,
+	AI_SITE_BUILDER_ONBOARDING_FLOW,
 	AI_SITE_BUILDER_SPEC_FLOW,
 	ONBOARDING_UNIFIED_FLOW,
 	DOMAIN_AND_PLAN_FLOW,
@@ -154,6 +155,14 @@ const aiSiteBuilderFlows: Record< string, () => Promise< { default: FlowV2< any 
 		  }
 		: {};
 
+const aiSiteBuilderOnboardingFlows: Record< string, () => Promise< { default: FlowV2< any > } > > =
+	{
+		[ AI_SITE_BUILDER_ONBOARDING_FLOW ]: () =>
+			import(
+				/* webpackChunkName: "ai-site-builder-onboarding-flow" */ './flows/ai-site-builder-onboarding/ai-site-builder-onboarding'
+			),
+	};
+
 const hundredYearDomainFlow: Record< string, () => Promise< { default: Flow } > > = {
 	[ HUNDRED_YEAR_DOMAIN_FLOW ]: () =>
 		import(
@@ -170,4 +179,5 @@ export default {
 	...deprecatedV1Flows,
 	...hundredYearDomainFlow,
 	...aiSiteBuilderFlows,
+	...aiSiteBuilderOnboardingFlows,
 };

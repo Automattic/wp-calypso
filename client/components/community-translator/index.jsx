@@ -1,7 +1,7 @@
+import { isEmpty } from '@automattic/js-utils';
 import languages from '@automattic/languages';
 import debugModule from 'debug';
 import i18n, { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';

@@ -1,9 +1,8 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { pick } from '@automattic/js-utils';
+import { pick, isEmpty } from '@automattic/js-utils';
 import debugModule from 'debug';
 import { translate } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import { Store, Unsubscribe as ReduxUnsubscribe, AnyAction } from 'redux';
 import { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';

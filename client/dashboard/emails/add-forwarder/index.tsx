@@ -5,7 +5,6 @@ import {
 	domainQuery,
 	userMailboxesQuery,
 } from '@automattic/api-queries';
-import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
@@ -32,6 +31,7 @@ import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
+import { wpcomLink } from '../../utils/link';
 import AddNewDomain from '../components/add-new-domain';
 import { DnsRequirementsNotice } from './dns-requirements-notice';
 import { DEFAULT_MAX_DOMAIN_FORWARDS, useDomainMaxForwards } from './hooks/use-domain-max-forwards';
@@ -39,6 +39,8 @@ import { useForwardingAddresses } from './hooks/use-forwarding-addresses';
 import type { Field } from '@wordpress/dataviews';
 
 import '../style.scss';
+
+const SUPPORT_CONTACT_URL = wpcomLink( '/support/contact' );
 
 export interface FormData {
 	localPart: string;
@@ -228,7 +230,10 @@ function AddEmailForwarder() {
 									message,
 								}
 							),
-							{ actions: [ { label: __( 'Support' ), url: CALYPSO_CONTACT } ], type: 'snackbar' }
+							{
+								actions: [ { label: __( 'Support' ), url: SUPPORT_CONTACT_URL } ],
+								type: 'snackbar',
+							}
 						);
 					} else {
 						createErrorNotice(
@@ -241,7 +246,10 @@ function AddEmailForwarder() {
 									emailAddress: variables.mailbox,
 								}
 							),
-							{ actions: [ { label: __( 'Support' ), url: CALYPSO_CONTACT } ], type: 'snackbar' }
+							{
+								actions: [ { label: __( 'Support' ), url: SUPPORT_CONTACT_URL } ],
+								type: 'snackbar',
+							}
 						);
 					}
 				},

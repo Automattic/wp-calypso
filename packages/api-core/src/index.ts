@@ -37,6 +37,7 @@ export * from './hosting-github';
 export * from './hosting-update-schedules';
 export * from './jetpack-agency-sites';
 export * from './jetpack-user-license';
+export * from './logstash';
 export * from './marketplace-products';
 export * from './marketplace-search';
 export * from './marketing-survey';

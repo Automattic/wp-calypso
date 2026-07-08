@@ -8,9 +8,9 @@ import {
 	isFreePlan,
 } from '@automattic/calypso-products';
 import { Card, ProgressBar, Button } from '@automattic/components';
+import { isEmpty } from '@automattic/js-utils';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';

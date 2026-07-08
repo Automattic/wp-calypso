@@ -7,7 +7,7 @@ function random( lower: number, upper: number, floating?: boolean ): number;
 /**
  * Produces a random number between `lower` and `upper` (inclusive). An integer
  * is returned unless either bound is fractional or `floating` is `true`, in
- * which case a floating-point number is returned — mirroring lodash `random`.
+ * which case a floating-point number is returned.
  *
  * If only one numeric argument is provided it is treated as the upper bound
  * (with `0` as the lower bound); with no numeric arguments a number between `0`

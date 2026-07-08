@@ -23,6 +23,9 @@ export async function createReadSpace(
 	if ( params.tags ) {
 		body.tags = params.tags;
 	}
+	if ( params.languages ) {
+		body.languages = params.languages;
+	}
 	if ( params.layout ) {
 		body.layout = params.layout;
 	}
@@ -51,6 +54,9 @@ export async function updateReadSpace(
 	}
 	if ( params.tags !== undefined ) {
 		body.tags = params.tags;
+	}
+	if ( params.languages !== undefined ) {
+		body.languages = params.languages;
 	}
 	if ( params.feeds !== undefined ) {
 		body.feeds = params.feeds;

@@ -149,8 +149,7 @@ class Suggestions extends Component< Props, State > {
 			( suggestion ) => !! suggestion.category
 		);
 
-		// For all intents and purposes `groupBy` keeps the order stable
-		// https://github.com/lodash/lodash/issues/2212
+		// `groupBy` preserves the input order within each group.
 		// `withCategory` is the truthy-category half of the partition above, so
 		// `category` is always present here.
 		const byCategory = groupBy( withCategory, ( suggestion ) => suggestion.category! );

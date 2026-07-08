@@ -14,7 +14,6 @@ export class StartWritingFlow {
 	readonly completedChooseAPlanItem: Locator;
 	readonly completedNameYourBlogItem: Locator;
 	readonly completedWriteFirstPostItem: Locator;
-	readonly connectAccountsButton: Locator;
 	readonly connectToSocialButton: Locator;
 	/** Domain search component within the start writing flow */
 	readonly domainSearchComponent: DomainSearchComponent;
@@ -52,11 +51,14 @@ export class StartWritingFlow {
 		this.completedChooseAPlanItem = this.getCompletedItemLocator( 'Choose a plan' );
 		this.completedNameYourBlogItem = this.getCompletedItemLocator( 'Name your blog' );
 		this.completedWriteFirstPostItem = this.getCompletedItemLocator( 'Write your first post' );
-		this.connectAccountsButton = this.page.getByRole( 'button', { name: 'Connect accounts' } );
 		this.connectToSocialButton = this.page.getByRole( 'button', { name: 'Connect to social' } );
 		this.domainSearchComponent = new DomainSearchComponent( page );
 		this.editorPage = new EditorPage( page );
-		this.jetpackSocialPageHeading = this.page.getByText( 'Write once, post everywhere' );
+		this.jetpackSocialPageHeading = this.page.getByRole( 'heading', {
+			name: 'Social',
+			level: 1,
+			exact: true,
+		} );
 		this.keepUpMomentumText = this.page.getByText( 'Keep up the momentum with these final steps.' );
 		this.launchYourBlogButton = this.page.getByRole( 'button', { name: 'Launch your blog' } );
 		this.nowItsTimeToConnectYourSocialAccountsText = this.page.getByText(

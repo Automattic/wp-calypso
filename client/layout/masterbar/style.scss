@@ -713,6 +713,56 @@ body.is-mobile-app-view {
 	}
 }
 
+// In the global sidebar the submenu group background is white (matching the panel),
+// which suits the user menu but leaves the W-icon dropdown's second group (About
+// WordPress / Get Involved) looking like a stray gap. Give just that group a light
+// grey so it reads as a distinct section.
+.is-global-sidebar-visible .masterbar__item-my-sites + .masterbar__item-subitems {
+	--color-masterbar-submenu-group-background: #{$gray-100};
+}
+
+.masterbar__item-stats-sparkline {
+	padding: 0 10px;
+
+	.masterbar__item-content {
+		display: flex;
+		align-items: center;
+		height: 100%;
+	}
+
+	.wpcom-stats-sparkline {
+		width: auto;
+		height: auto;
+	}
+
+	.wpcom-stats-sparkline-bar {
+		fill: var(--color-masterbar-icon);
+	}
+
+	.wpcom-stats-sparkline-arrow {
+		fill: var(--color-masterbar-icon);
+	}
+
+	.wpcom-stats-sparkline-label {
+		fill: var(--color-masterbar-icon);
+	}
+
+	&:hover,
+	&:focus-visible {
+		.wpcom-stats-sparkline {
+			overflow: visible;
+		}
+
+		.wpcom-stats-sparkline-peak {
+			opacity: 1;
+		}
+	}
+
+	@media only screen and (max-width: 781px) {
+		display: none;
+	}
+}
+
 .masterbar__item-launch-site {
 	gap: 6px;
 	cursor: pointer;

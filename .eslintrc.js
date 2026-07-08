@@ -1,8 +1,42 @@
 const path = require( 'path' );
-const { nodeConfig, lodashRestrictedImports } = require( '@automattic/calypso-eslint-overrides' );
+const { nodeConfig } = require( '@automattic/calypso-eslint-overrides' );
 const wpI18nConfig = require( '@wordpress/eslint-plugin/eslintrc' ).configs.i18n;
-const { merge } = require( 'lodash' );
 const reactVersion = require( './client/package.json' ).dependencies.react;
+
+// ESLint doesn't allow the `extends` field inside `overrides`, so the TypeScript
+// override is assembled by hand from several partial configs ("fragments"). The
+// `rules` object from each fragment is merged into one combined `rules`; every
+// other setting (`parser`, `parserOptions`, `plugins`, `files`, …) is copied
+// as-is, which is correct only because each of those is set by a single fragment.
+function composeConfig( ...fragments ) {
+	// Enforce that last point: if two fragments set the same setting — say a
+	// plugin upgrade makes both the base config and Prettier config define
+	// `parserOptions` — the copy below would keep only the last and silently drop
+	// the other, quietly producing the wrong config. Catch that and fail loudly.
+	const seenKeys = new Set();
+	for ( const fragment of fragments ) {
+		for ( const key of Object.keys( fragment ) ) {
+			if ( key === 'rules' ) {
+				continue;
+			}
+			if ( seenKeys.has( key ) ) {
+				throw new Error(
+					`composeConfig: the setting \`${ key }\` is set by more than one fragment. ` +
+						'Only `rules` is merged across fragments; every other setting is copied ' +
+						'from a single fragment, so combine this one explicitly.'
+				);
+			}
+			seenKeys.add( key );
+		}
+	}
+
+	return Object.assign( {}, ...fragments, {
+		rules: Object.assign(
+			{},
+			...fragments.map( ( fragment ) => fragment.rules ).filter( Boolean )
+		),
+	} );
+}
 
 module.exports = {
 	root: true,
@@ -68,16 +102,9 @@ module.exports = {
 		{
 			files: [ 'packages/**/*' ],
 			rules: {
-				// The `calypso/*` patterns ensure packages don't import from calypso by accident
-				// to avoid circular deps. The lodash entries keep the repo-wide guard in place
-				// here, since this override replaces the root `no-restricted-imports` rule.
-				'no-restricted-imports': [
-					'error',
-					{
-						paths: lodashRestrictedImports.paths,
-						patterns: [ { group: [ 'calypso/*' ] }, ...lodashRestrictedImports.patterns ],
-					},
-				],
+				// The `calypso/*` patterns ensure packages don't import from calypso by
+				// accident to avoid circular deps.
+				'no-restricted-imports': [ 'error', { patterns: [ { group: [ 'calypso/*' ] } ] } ],
 				'no-restricted-modules': [ 'error', { patterns: [ 'calypso/*' ] } ],
 			},
 		},
@@ -91,10 +118,7 @@ module.exports = {
 				'react/display-name': 'off',
 			},
 		},
-		merge(
-			// ESLint doesn't allow the `extends` field inside `overrides`, so we need to compose
-			// the TypeScript config manually using internal bits from various plugins
-			{},
+		composeConfig(
 			// base TypeScript config: parser options, add plugin with rules
 			require( '@typescript-eslint/eslint-plugin' ).configs.base,
 			// basic recommended rules config from the TypeScript plugin
@@ -230,6 +254,8 @@ module.exports = {
 				'react/jsx-uses-react': 'off',
 				'react/react-in-jsx-scope': 'off',
 				'wpcalypso/jsx-classname-namespace': 'off',
+				// Example snippets may show lodash for illustration.
+				'wpcalypso/no-import-lodash': 'off',
 				'@typescript-eslint/no-unused-vars': 'off',
 				'jsdoc/require-param': 'off',
 				'jsdoc/check-param-names': 'off',
@@ -338,12 +364,7 @@ module.exports = {
 		// this is when Webpack last built the bundle
 		BUILD_TIMESTAMP: true,
 	},
-	plugins: [
-		'import',
-		'you-dont-need-lodash-underscore',
-		'@tanstack/query',
-		...wpI18nConfig.plugins,
-	],
+	plugins: [ 'import', '@tanstack/query', ...wpI18nConfig.plugins ],
 	settings: {
 		react: {
 			version: reactVersion,
@@ -383,7 +404,7 @@ module.exports = {
 		// Only use known tag names plus `jest-environment`.
 		'jsdoc/check-tag-names': [
 			'error',
-			{ definedTags: [ 'jest-environment', 'jsxImportSource' ] },
+			{ definedTags: [ 'jest-environment', 'jest-environment-options', 'jsxImportSource' ] },
 		],
 
 		// Do not require param/return description, see https://github.com/Automattic/wp-calypso/issues/56330
@@ -410,7 +431,6 @@ module.exports = {
 						message:
 							"Please use 'webp' files instead. You can convert using `brew install webp && cwebp -q 90 -alpha_q 85 -m 6 <input>.png -o <output>.webp`",
 					},
-					...lodashRestrictedImports.patterns,
 				],
 				paths: [
 					// Prevent naked import of gridicons module. Use 'components/gridicon' instead.
@@ -447,10 +467,10 @@ module.exports = {
 						importNames: [ 'flowRight' ],
 						message: "Please use `compose` from 'redux' instead.",
 					},
-					...lodashRestrictedImports.paths,
 				],
 			},
 		],
+		'wpcalypso/no-import-lodash': 'error',
 		'no-restricted-modules': [
 			2,
 			{
@@ -577,70 +597,6 @@ module.exports = {
 
 		// Disabled, because in packages we are using globally defined `__i18n_text_domain__` constant at compile time
 		'@wordpress/i18n-text-domain': 'off',
-
-		// Disable Lodash methods that we've already migrated away from, see p4TIVU-9Bf-p2 for more details.
-		'you-dont-need-lodash-underscore/all': 'error',
-		'you-dont-need-lodash-underscore/any': 'error',
-		'you-dont-need-lodash-underscore/assign': 'error',
-		'you-dont-need-lodash-underscore/bind': 'error',
-		'you-dont-need-lodash-underscore/cast-array': 'error',
-		'you-dont-need-lodash-underscore/collect': 'error',
-		'you-dont-need-lodash-underscore/concat': 'error',
-		'you-dont-need-lodash-underscore/contains': 'error',
-		'you-dont-need-lodash-underscore/detect': 'error',
-		'you-dont-need-lodash-underscore/drop': 'error',
-		'you-dont-need-lodash-underscore/drop-right': 'error',
-		'you-dont-need-lodash-underscore/each': 'error',
-		'you-dont-need-lodash-underscore/ends-with': 'error',
-		'you-dont-need-lodash-underscore/entries': 'error',
-		'you-dont-need-lodash-underscore/every': 'error',
-		'you-dont-need-lodash-underscore/extend-own': 'error',
-		'you-dont-need-lodash-underscore/fill': 'error',
-		'you-dont-need-lodash-underscore/filter': 'error',
-		'you-dont-need-lodash-underscore/find': 'error',
-		'you-dont-need-lodash-underscore/find-index': 'error',
-		'you-dont-need-lodash-underscore/first': 'error',
-		'you-dont-need-lodash-underscore/flatten': 'error',
-		'you-dont-need-lodash-underscore/foldl': 'error',
-		'you-dont-need-lodash-underscore/foldr': 'error',
-		'you-dont-need-lodash-underscore/for-each': 'error',
-		'you-dont-need-lodash-underscore/includes': 'error',
-		'you-dont-need-lodash-underscore/index-of': 'error',
-		'you-dont-need-lodash-underscore/inject': 'error',
-		'you-dont-need-lodash-underscore/is-array': 'error',
-		'you-dont-need-lodash-underscore/is-finite': 'error',
-		'you-dont-need-lodash-underscore/is-function': 'error',
-		'you-dont-need-lodash-underscore/is-integer': 'error',
-		'you-dont-need-lodash-underscore/is-nan': 'error',
-		'you-dont-need-lodash-underscore/is-nil': 'error',
-		'you-dont-need-lodash-underscore/is-null': 'error',
-		'you-dont-need-lodash-underscore/is-string': 'error',
-		'you-dont-need-lodash-underscore/is-undefined': 'error',
-		'you-dont-need-lodash-underscore/join': 'error',
-		'you-dont-need-lodash-underscore/keys': 'error',
-		'you-dont-need-lodash-underscore/last': 'error',
-		'you-dont-need-lodash-underscore/last-index-of': 'error',
-		'you-dont-need-lodash-underscore/map': 'error',
-		'you-dont-need-lodash-underscore/pad-end': 'error',
-		'you-dont-need-lodash-underscore/pad-start': 'error',
-		'you-dont-need-lodash-underscore/reduce': 'error',
-		'you-dont-need-lodash-underscore/reduce-right': 'error',
-		'you-dont-need-lodash-underscore/repeat': 'error',
-		'you-dont-need-lodash-underscore/replace': 'error',
-		'you-dont-need-lodash-underscore/reverse': 'error',
-		'you-dont-need-lodash-underscore/select': 'error',
-		'you-dont-need-lodash-underscore/size': 'error',
-		'you-dont-need-lodash-underscore/slice': 'error',
-		'you-dont-need-lodash-underscore/some': 'error',
-		'you-dont-need-lodash-underscore/split': 'error',
-		'you-dont-need-lodash-underscore/starts-with': 'error',
-		'you-dont-need-lodash-underscore/take-right': 'error',
-		'you-dont-need-lodash-underscore/to-lower': 'error',
-		'you-dont-need-lodash-underscore/to-pairs': 'error',
-		'you-dont-need-lodash-underscore/to-upper': 'error',
-		'you-dont-need-lodash-underscore/trim': 'error',
-		'you-dont-need-lodash-underscore/uniq': 'error',
-		'you-dont-need-lodash-underscore/values': 'error',
 
 		// @TODO remove these lines once we fixed the warnings so
 		// they'll become errors for new code added to the codebase

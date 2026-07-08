@@ -12,9 +12,7 @@ import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordTrack } from 'calypso/reader/stats';
 import { getCurrentTabFromURL } from 'calypso/reader/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getLastPath, isReaderMSDEnabled } from 'calypso/state/reader-ui/selectors';
-import { toggleReaderSidebarFollowing } from 'calypso/state/reader-ui/sidebar/actions';
-import { isFollowingOpen } from 'calypso/state/reader-ui/sidebar/selectors';
+import { getLastPath } from 'calypso/state/reader-ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSection } from 'calypso/state/ui/selectors';
 import { setupRedirectRoutes } from 'calypso/utils';
@@ -31,10 +29,6 @@ const loadSidebar = () =>
 const loadNewSubscription = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-reader-new-subscription" */ 'calypso/reader/new-subscription'
-	);
-const loadMobileHeader = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-reader-components-mobile-header" */ 'calypso/reader/components/mobile-header'
 	);
 const loadFeedStream = () =>
 	import(
@@ -93,18 +87,12 @@ export function following( context, next ) {
 	const teamsData = context.queryClient.getQueryData( readTeamsQuery().queryKey );
 	// only for a8c for now
 	if ( isAutomatticTeamMember( teamsData?.teams ?? [] ) ) {
-		// select last reader path if available, otherwise just open following
+		// select last reader path if available
 		const currentSection = getSection( state );
 		const lastPath = getLastPath( state );
 
 		if ( lastPath && lastPath !== '/reader' && currentSection.name !== 'reader' ) {
 			return page.redirect( lastPath );
-		}
-
-		// if we have no last path, default to Following/All and expand following
-		const isOpen = isFollowingOpen( state );
-		if ( ! isOpen ) {
-			context.store.dispatch( toggleReaderSidebarFollowing() );
 		}
 	}
 
@@ -191,13 +179,6 @@ export function feedLookup( context ) {
 			page.redirect( `/reader` );
 		} );
 }
-
-export const setBeforePrimary = ( context, next ) => {
-	const state = context.store.getState();
-	const isMSDEnabledForReader = isReaderMSDEnabled( state );
-	context.beforePrimary = isMSDEnabledForReader ? <AsyncLoad require={ loadMobileHeader } /> : null;
-	next();
-};
 
 export function feedListing( context, next ) {
 	const feedId = context.params.feed_id;

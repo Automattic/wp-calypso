@@ -1,10 +1,10 @@
 import './style.scss';
 import page from '@automattic/calypso-router';
+import { Count } from '@automattic/components';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -16,7 +16,6 @@ import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
 import { AppState } from 'calypso/types';
-import { AllIcon } from '../icons/all';
 import { MenuItem, MenuItemLink } from '../menu';
 
 type Props = {
@@ -24,7 +23,6 @@ type Props = {
 	onClick: () => void;
 	path: string;
 	className: string;
-	translate: ( key: string ) => string;
 };
 
 const SITE_DISPLAY_CUTOFF = 5;
@@ -35,32 +33,40 @@ type ReaderSidebarSite = Pick< ReturnType< typeof useSubscribedSites >[ number ]
 const isFreeWpcomSubdomain = ( host = '' ): boolean => /\.wordpress\.com$/i.test( host );
 
 /**
- * Best label for a followed site in the Reader sidebar. Untitled sites are
- * named after their free WordPress.com subdomain (with a trailing slash), so
- * prefer the real domain from `URL` in that case.
+ * Label for a followed site: real title, else an `r/subreddit` handle, else the
+ * resolved domain. Untitled WordPress.com sites come back named after their free
+ * subdomain, so those fall through to the domain from `URL`.
  */
 export function getReaderSidebarSiteName( site: ReaderSidebarSite ): string {
-	const siteDomain = site.URL ? getSiteDomain( { site: { URL: site.URL } } ) : undefined;
 	const siteName = site.name ?? '';
 	// `name` may be URL-shaped, so normalize before the subdomain check.
 	const normalizedName = formatUrlForDisplay( siteName ) || siteName;
 
-	if ( ( ! siteName || isFreeWpcomSubdomain( normalizedName ) ) && siteDomain ) {
+	if ( siteName && ! isFreeWpcomSubdomain( normalizedName ) ) {
+		return siteName;
+	}
+
+	// A title-less subreddit reads best as its `r/name` (or `u/name`) handle, since
+	// every subreddit resolves to the same generic `reddit.com` domain. The host is
+	// anchored so only genuine `reddit.com` feeds qualify.
+	const reddit = site.URL?.match( /^https?:\/\/(?:[^/]+\.)?reddit\.com\/(r|user)\/([^/?#]+)/i );
+	if ( reddit ) {
+		return `${ reddit[ 1 ].toLowerCase() === 'user' ? 'u' : 'r' }/${ reddit[ 2 ] }`;
+	}
+
+	const siteDomain = site.URL ? getSiteDomain( { site: { URL: site.URL } } ) : undefined;
+	if ( siteDomain ) {
 		return siteDomain;
 	}
 
 	return siteName;
 }
 
-const ReaderSidebarRecent = ( {
-	translate,
-	isOpen,
-	onClick,
-	path,
-	className,
-}: Props ): React.JSX.Element => {
+const ReaderSidebarRecent = ( { isOpen, onClick, path, className }: Props ): React.JSX.Element => {
+	const translate = useTranslate();
 	const [ showAllSites, setShowAllSites ] = useState( false );
 	const sites = useSubscribedSites();
+	const totalUnseenCount = sites.reduce( ( sum, site ) => sum + ( site.unseen_count ?? 0 ), 0 );
 	const selectedSiteFeedId = useSelector< AppState, number | null >( getSelectedRecentFeedId );
 	const moment = useLocalizedMoment();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
@@ -97,9 +103,6 @@ const ReaderSidebarRecent = ( {
 	};
 
 	const selectMenu = () => {
-		if ( ! isOpen ) {
-			onClick();
-		}
 		trackMenuClick( null );
 		page( '/reader' );
 	};
@@ -109,30 +112,25 @@ const ReaderSidebarRecent = ( {
 			onClick={ selectMenu }
 			expanded={ isOpen }
 			title={ translate( 'Recent' ) }
-			customIcon={ <ReaderIcon className="sidebar__menu-icon" viewBox="0 0 24 11" /> }
 			disableFlyout
 			className={ clsx( 'reader-sidebar-recent', className, {
-				'sidebar__menu--selected': ! isOpen && isRecentStream,
+				'has-counts': totalUnseenCount > 0,
+				'sidebar__menu--selected': isRecentStream && ( ! isOpen || selectedSiteFeedId === null ),
 			} ) }
-			count={ undefined }
+			count={ totalUnseenCount > 0 ? totalUnseenCount : undefined }
 			icon={ null }
 			materialIcon={ null }
 			materialIconStyle={ null }
 			expandableIconClick={ onClick }
 		>
-			<MenuItem key="all" selected={ isRecentStream && selectedSiteFeedId === null }>
-				<MenuItemLink
-					href="/reader"
-					className="sidebar__menu-link all-sites-link"
-					onClick={ () => trackMenuClick( null ) }
-				>
-					<AllIcon />
-					<span>{ translate( 'All' ) }</span>
-				</MenuItemLink>
-			</MenuItem>
-
 			{ sitesToShow.map( ( site ) => {
 				const displayName = getReaderSidebarSiteName( site );
+				const unseenCount = site.unseen_count ?? 0;
+				const unseenCountLabel = translate( '%(count)d unseen post', '%(count)d unseen posts', {
+					count: unseenCount,
+					args: { count: unseenCount },
+					comment: '%(count)d is the number of unseen posts.',
+				} );
 
 				return (
 					<MenuItem
@@ -156,6 +154,9 @@ const ReaderSidebarRecent = ( {
 										</span>
 									) }
 								</span>
+								{ unseenCount > 0 && (
+									<Count count={ unseenCount } compact aria-label={ unseenCountLabel } />
+								) }
 							</MenuItemLink>
 						</AutoDirection>
 					</MenuItem>
@@ -172,4 +173,4 @@ const ReaderSidebarRecent = ( {
 	);
 };
 
-export default localize( ReaderSidebarRecent );
+export default ReaderSidebarRecent;

@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { parseActivityLogEntryContent } from 'calypso/dashboard/components/logs-activity-formatted-block/api-core-parser';
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
 import apiResponseSchema from './schema';
@@ -15,7 +14,7 @@ export const DEFAULT_GRIDICON = 'info-outline';
  * @returns {Object}             Object with an entry for proccessed item objects and another for oldest item timestamp
  */
 export function transformer( apiResponse ) {
-	return get( apiResponse, [ 'current', 'orderedItems' ], [] ).map( processItem );
+	return ( apiResponse?.current?.orderedItems ?? [] ).map( processItem );
 }
 
 /**
@@ -43,7 +42,7 @@ export function processItem( item ) {
 	return Object.assign(
 		{
 			/* activity actor */
-			actorAvatarUrl: get( actor, 'icon.url', DEFAULT_GRAVATAR_URL ),
+			actorAvatarUrl: actor?.icon?.url ?? DEFAULT_GRAVATAR_URL,
 			actorName: actor?.name ?? '',
 			actorRemoteId: actor?.external_user_id ?? 0,
 			actorRole: actor?.role ?? '',
@@ -55,7 +54,7 @@ export function processItem( item ) {
 			/* base activity info */
 			activityDate,
 			activityGroup: ( item.name || '' ).split( '__', 1 )[ 0 ], // split always returns at least one item
-			activityIcon: get( item, 'gridicon', DEFAULT_GRIDICON ),
+			activityIcon: item?.gridicon ?? DEFAULT_GRIDICON,
 			activityId: item.activity_id,
 			activityIsRewindable: item.is_rewindable,
 			activityName: item.name,

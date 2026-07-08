@@ -97,6 +97,20 @@ describe( 'read spaces mutations', () => {
 			expect( options.placeholderData ).toBeUndefined();
 			expect( options.refetchOnMount ).toBe( 'always' );
 		} );
+
+		it( 'does not retry a space detail 4xx but still retries other failures', () => {
+			const { retry } = readSpaceQuery( '3' );
+			expect( typeof retry ).toBe( 'function' );
+			const retryFn = retry as ( failureCount: number, error: unknown ) => boolean;
+			const wpError = ( status: number ) =>
+				Object.assign( new Error( `HTTP ${ status }` ), { status, statusCode: status } );
+
+			expect( retryFn( 0, wpError( 404 ) ) ).toBe( false );
+			expect( retryFn( 0, wpError( 403 ) ) ).toBe( false );
+			expect( retryFn( 0, wpError( 500 ) ) ).toBe( true );
+			expect( retryFn( 0, new Error( 'network' ) ) ).toBe( true );
+			expect( retryFn( 3, wpError( 500 ) ) ).toBe( false );
+		} );
 	} );
 
 	describe( 'createReadSpaceMutation', () => {
@@ -119,6 +133,7 @@ describe( 'read spaces mutations', () => {
 					layout: { color: 'blue', icon: 'inbox' },
 					sources: [],
 					tags: [],
+					languages: [],
 				}
 			);
 			expect( invalidateQueries ).toHaveBeenCalledWith( {
@@ -168,7 +183,43 @@ describe( 'read spaces mutations', () => {
 			} );
 		} );
 
-		it( "resets the space's posts feed so it reloads after a tag/feed edit", async () => {
+		it( 'optimistically patches the list summary before the server responds', async () => {
+			const client = newClient();
+			client.setQueryData< ReadSpace[] >( readSpacesQuery().queryKey, [
+				{ id: '3', name: 'Old', layout: { color: 'blue', icon: 'inbox', iconColor: 'blue' } },
+			] );
+
+			// Run just `onMutate` — the sidebar reads this list, so the icon/colour must
+			// update from the mutation variables without waiting for the round-trip.
+			await updateReadSpaceMutation( client ).onMutate?.( {
+				spaceId: '3',
+				params: { name: 'New', layout: { icon: 'star', iconColor: 'pink' } },
+			} );
+
+			// `layout` is merged (color kept, icon/iconColor overridden), name replaced.
+			expect( client.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey ) ).toEqual( [
+				{ id: '3', name: 'New', layout: { color: 'blue', icon: 'star', iconColor: 'pink' } },
+			] );
+		} );
+
+		it( 'rolls back the optimistic list patch when the update fails', async () => {
+			const client = newClient();
+			const seeded: ReadSpace[] = [
+				{ id: '3', name: 'Old', layout: { color: 'blue', icon: 'inbox', iconColor: 'blue' } },
+			];
+			client.setQueryData< ReadSpace[] >( readSpacesQuery().queryKey, seeded );
+			nock( BASE ).put( '/wpcom/v2/reader/spaces/3' ).reply( 500, { error: 'boom' } );
+
+			await runMutation( client, updateReadSpaceMutation( client ), {
+				spaceId: '3',
+				params: { name: 'New', layout: { icon: 'star', iconColor: 'pink' } },
+			} );
+
+			// The optimistic patch is reverted to the pre-mutation summary.
+			expect( client.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey ) ).toEqual( seeded );
+		} );
+
+		it( "resets both of the space's streams so they reload after a tag/feed/language edit", async () => {
 			const client = newClient();
 			const spy = jest.spyOn( client, 'resetQueries' );
 			nock( BASE )
@@ -180,8 +231,13 @@ describe( 'read spaces mutations', () => {
 				params: { tags: [ 'x' ] },
 			} );
 
+			// Both the posts feed and Discover reload — Discover is filtered by the
+			// space's languages, so a language change must not leave it cached.
 			expect( spy ).toHaveBeenCalledWith( {
 				queryKey: getStreamInfiniteQueryKeyPrefix( 'space:3' ),
+			} );
+			expect( spy ).toHaveBeenCalledWith( {
+				queryKey: getStreamInfiniteQueryKeyPrefix( 'space_discover:3' ),
 			} );
 		} );
 	} );
@@ -253,6 +309,9 @@ describe( 'read spaces mutations', () => {
 			expect( resetQueries ).toHaveBeenCalledWith( {
 				queryKey: getStreamInfiniteQueryKeyPrefix( 'space:3' ),
 			} );
+			expect( resetQueries ).toHaveBeenCalledWith( {
+				queryKey: getStreamInfiniteQueryKeyPrefix( 'space_discover:3' ),
+			} );
 			expect( invalidateQueries ).toHaveBeenCalledWith( {
 				queryKey: readSpaceQuery( '3' ).queryKey,
 			} );
@@ -260,6 +319,7 @@ describe( 'read spaces mutations', () => {
 
 		it( 'writes the returned detail to the cache after removing a feed', async () => {
 			const client = newClient();
+			const resetQueries = jest.spyOn( client, 'resetQueries' );
 			const invalidateQueries = jest.spyOn( client, 'invalidateQueries' );
 			nock( BASE )
 				.delete( '/wpcom/v2/reader/spaces/3/feeds/456' )
@@ -273,6 +333,13 @@ describe( 'read spaces mutations', () => {
 			expect(
 				client.getQueryData< ReadSpaceDetails >( readSpaceQuery( '3' ).queryKey )?.sources
 			).toEqual( [] );
+			// Removing a feed reloads both streams, same as adding one.
+			expect( resetQueries ).toHaveBeenCalledWith( {
+				queryKey: getStreamInfiniteQueryKeyPrefix( 'space:3' ),
+			} );
+			expect( resetQueries ).toHaveBeenCalledWith( {
+				queryKey: getStreamInfiniteQueryKeyPrefix( 'space_discover:3' ),
+			} );
 			expect( invalidateQueries ).toHaveBeenCalledWith( {
 				queryKey: readSpaceQuery( '3' ).queryKey,
 			} );
@@ -286,6 +353,7 @@ describe( 'read spaces mutations', () => {
 				layout: { color: 'blue', icon: 'inbox' },
 				sources: [],
 				tags: [],
+				languages: [],
 			};
 			client.setQueryData( readSpaceQuery( '3' ).queryKey, seeded );
 			nock( BASE )

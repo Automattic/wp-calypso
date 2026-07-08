@@ -28,6 +28,12 @@ export interface CreateAgentConfigOptions {
 	agentId?: string;
 	/** Override the agent version (e.g., from query string). Passed via constructorArguments. */
 	version?: string;
+	/**
+	 * Streamed task-update callback (from a provider). Forwarded to useAgentChat's
+	 * `onTaskUpdate` so streamed tool-argument deltas reach the provider — e.g. to
+	 * paint streamed page-design markup into the editor as it arrives.
+	 */
+	onTaskUpdate?: ( update: unknown ) => void | Promise< void >;
 }
 
 /**
@@ -247,6 +253,7 @@ export async function createAgentConfig(
 		environment = 'calypso',
 		agentId = ORCHESTRATOR_AGENT_ID,
 		version,
+		onTaskUpdate,
 	} = options;
 
 	const config: UseAgentChatConfig = {
@@ -259,6 +266,10 @@ export async function createAgentConfig(
 		} ),
 		enableStreaming: true,
 	};
+
+	if ( onTaskUpdate ) {
+		config.onTaskUpdate = onTaskUpdate;
+	}
 
 	if ( toolProvider ) {
 		config.toolProvider = wrapToolProvider( toolProvider );
