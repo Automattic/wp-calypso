@@ -1239,7 +1239,7 @@ a.masterbar__quick-language-switcher {
 }
 
 .masterbar--is-checkout-redesign-v1 {
-	padding-inline-start: 1.5em;
+	padding-inline: 1.5em;
 
 	.masterbar__secure-checkout {
 		gap: 0;
@@ -1277,7 +1277,7 @@ a.masterbar__quick-language-switcher {
 	}
 
 	.masterbar__need-help-button {
-		margin-left: auto;
+		margin-inline-start: auto;
 		background: none;
 		border: none;
 		cursor: pointer;
