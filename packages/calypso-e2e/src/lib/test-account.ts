@@ -103,6 +103,11 @@ export class TestAccount {
 		const loginPage = new LoginPage( page );
 
 		const { username, password } = this.credentials;
+
+		// On mobile viewports the cookie consent banner can overlay the login
+		// form's submit button, blocking the click and leaving the popup open.
+		await loginPage.dismissCookieBanner();
+
 		await loginPage.fillUsername( username );
 		await loginPage.clickSubmit();
 		await loginPage.fillPassword( password );
