@@ -1,4 +1,4 @@
-.is-reader-page {
+.is-section-reader {
 
 	.reader-sidebar__more-menu .components-dropdown-menu__toggle {
 		min-width: auto;
@@ -9,6 +9,15 @@
 		opacity: 0;
 		pointer-events: none;
 		transition: opacity 0.1s;
+	}
+
+	.reader-sidebar__more-menu-dropdown-content {
+		.components-popover__content {
+			position: relative;
+			top: -10px;
+			padding: 5px;
+			box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 1px rgba(0, 0, 0, 0.04);
+		}
 	}
 
 	.reader-sidebar__more-menu-dropdown button.is-opened,
@@ -25,14 +34,6 @@
 		.reader-sidebar__more-menu {
 			opacity: 1;
 			pointer-events: auto;
-		}
-	}
-
-	.reader-sidebar__more-menu-dropdown-content {
-		.components-popover__content {
-			position: relative;
-			top: -10px;
-			padding: 5px;
 		}
 	}
 }
