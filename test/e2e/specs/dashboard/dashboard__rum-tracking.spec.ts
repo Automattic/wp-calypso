@@ -1,3 +1,4 @@
+import { snoozeAccountRecoveryInterstitial } from '../../lib/dashboard-helpers';
 import { expect, tags, test } from '../../lib/pw-base';
 
 interface PerfNavEvent {
@@ -73,12 +74,14 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 
 	test( 'Full page load to site list sends perf.nav with correct ID', async ( {
 		accountGivenByEnvironment,
+		clientRestAPI,
 		page,
 		pageDashboard,
 	} ) => {
 		const events = observeLogstash( page );
 
 		await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async function () {
+			await snoozeAccountRecoveryInterstitial( clientRestAPI );
 			await accountGivenByEnvironment.authenticate( page, { waitUntilStable: false } );
 		} );
 
@@ -102,6 +105,7 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 
 	test( 'In-app navigation sends perf.nav with fullPage false', async ( {
 		accountGivenByEnvironment,
+		clientRestAPI,
 		page,
 		pageDashboard,
 		viewportName,
@@ -109,6 +113,7 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 		const events = observeLogstash( page );
 
 		await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async function () {
+			await snoozeAccountRecoveryInterstitial( clientRestAPI );
 			await accountGivenByEnvironment.authenticate( page, { waitUntilStable: false } );
 		} );
 

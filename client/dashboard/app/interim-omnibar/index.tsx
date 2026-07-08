@@ -1,3 +1,4 @@
+import { isSupportUserSession } from '@automattic/calypso-support-session';
 // eslint-disable-next-line no-restricted-imports
 import { I18N, I18NContext } from 'i18n-calypso';
 import { hydrateRoot } from 'react-dom/client';
@@ -8,6 +9,12 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 	const container = document.getElementById( 'wpcom-omnibar' );
 	if ( ! container ) {
 		return;
+	}
+
+	// Recolor the masterbar for support "user" sessions. "Next" sessions already
+	// have their own indicator, so they're excluded.
+	if ( isSupportUserSession() ) {
+		container.classList.add( 'is-support-user-session' );
 	}
 
 	container.addEventListener( 'click', ( event ) => {

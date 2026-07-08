@@ -66,6 +66,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/domain-search' ),
 	},
 
+	EDUCATION_STUDENT_VALIDATION: {
+		slug: 'education-student-validation',
+		asyncComponent: () => import( './steps-repository/education-student-validation' ),
+	},
+
 	ERROR: { slug: 'error', asyncComponent: () => import( './steps-repository/error-step' ) },
 
 	FLEX_SITE_CREATION: {
@@ -160,11 +165,6 @@ export const STEPS = {
 	IMPORTER_WORDPRESS: {
 		slug: 'importerWordpress',
 		asyncComponent: () => import( './steps-repository/importer-wordpress' ),
-	},
-
-	INTENT: {
-		slug: 'intent',
-		asyncComponent: () => import( './steps-repository/intent-step' ),
 	},
 
 	NEW_OR_EXISTING_SITE: {

@@ -48,6 +48,10 @@ export interface UseGridPlansParams {
 	 */
 	useFocusedNewCopyTaglines?: boolean;
 	/**
+	 * When true, use the pricing grid redesign taglines for plan headers.
+	 */
+	usePlansGridRedesignNewDescription?: boolean;
+	/**
 	 * When true, use cohort feature lists and comparison grid copy.
 	 */
 	isExperimentVariant?: boolean;

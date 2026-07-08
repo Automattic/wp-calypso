@@ -398,6 +398,19 @@ class PopoverInner extends Component {
 		onMouseLeave?.();
 	};
 
+	// Keeps the internal ref used for positioning/focus while also forwarding the node to an
+	// optional `nodeRef` (e.g. from `react-transition-group`, which needs it under React 19).
+	setPopoverNode = ( node ) => {
+		this.popoverNodeRef.current = node;
+
+		const { nodeRef } = this.props;
+		if ( typeof nodeRef === 'function' ) {
+			nodeRef( node );
+		} else if ( nodeRef ) {
+			nodeRef.current = node;
+		}
+	};
+
 	render() {
 		if ( ! this.props.context ) {
 			return null;
@@ -407,7 +420,7 @@ class PopoverInner extends Component {
 
 		return (
 			<div
-				ref={ this.popoverNodeRef }
+				ref={ this.setPopoverNode }
 				aria-label={ this.props[ 'aria-label' ] }
 				id={ this.props.id }
 				role="tooltip"
@@ -489,6 +502,7 @@ const PropTypeElement = PropTypes.oneOfType( [
 
 Popover.propTypes = {
 	hideArrow: PropTypes.bool,
+	nodeRef: PropTypes.oneOfType( [ PropTypes.func, PropTypes.object ] ),
 	autoPosition: PropTypes.bool,
 	autoRtl: PropTypes.bool,
 	className: PropTypes.string,

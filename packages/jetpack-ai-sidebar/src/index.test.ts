@@ -10,6 +10,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
+import ExcerptPicker from './components/excerpt-picker';
 import ImageAltTextPicker from './components/image-alt-text-picker';
 import PostFeedback from './components/post-feedback';
 import Proofread from './components/proofread';
@@ -141,16 +142,23 @@ jest.mock( '@wordpress/data', () => ( {
 
 // Stub @wordpress/data on window so useCheckpoint / handleShowComponent
 // can read/write the post title and current post id via the core/editor store.
-function installWpDataMock( initialTitle: string, postId = 123 ) {
-	const state = { title: initialTitle };
+function installWpDataMock( initialTitle: string, postId = 123, initialExcerpt = '' ) {
+	const state = { title: initialTitle, excerpt: initialExcerpt };
 	( window as any ).wp = {
 		data: {
 			select: ( store: string ) => {
 				if ( store === 'core/editor' ) {
 					return {
 						getCurrentPostId: () => postId,
-						getEditedPostAttribute: ( attr: string ) =>
-							attr === 'title' ? state.title : undefined,
+						getEditedPostAttribute: ( attr: string ) => {
+							if ( attr === 'title' ) {
+								return state.title;
+							}
+							if ( attr === 'excerpt' ) {
+								return state.excerpt;
+							}
+							return undefined;
+						},
 					};
 				}
 				return undefined;
@@ -158,9 +166,12 @@ function installWpDataMock( initialTitle: string, postId = 123 ) {
 			dispatch: ( store: string ) => {
 				if ( store === 'core/editor' ) {
 					return {
-						editPost: ( attrs: { title?: string } ) => {
+						editPost: ( attrs: { title?: string; excerpt?: string } ) => {
 							if ( typeof attrs.title === 'string' ) {
 								state.title = attrs.title;
+							}
+							if ( typeof attrs.excerpt === 'string' ) {
+								state.excerpt = attrs.excerpt;
 							}
 						},
 					};
@@ -172,7 +183,12 @@ function installWpDataMock( initialTitle: string, postId = 123 ) {
 	return state;
 }
 
-function installPostTypeMock( postType?: string, postId: number | null = 123 ) {
+function installPostTypeMock(
+	postType?: string,
+	postId: number | null = 123,
+	supportsExcerpt: boolean = postType === 'post',
+	postTypeRecordResolved = true
+) {
 	( window as any ).wp = {
 		data: {
 			select: ( store: string ) => {
@@ -187,6 +203,14 @@ function installPostTypeMock( postType?: string, postId: number | null = 123 ) {
 						getSelectedBlock: () => mockSelectedBlock,
 						getBlock: ( clientId: string ) => mockBlocksByClientId[ clientId ],
 						getBlocks: () => [],
+					};
+				}
+				if ( store === 'core' ) {
+					return {
+						getPostType: ( name: string ) =>
+							postTypeRecordResolved && name === postType
+								? { supports: { excerpt: supportsExcerpt } }
+								: undefined,
 					};
 				}
 				return undefined;
@@ -310,6 +334,10 @@ describe( 'getChatComponent', () => {
 
 	it( 'returns ImageAltTextPicker for type "image-alt-text-picker"', () => {
 		expect( getChatComponent( 'image-alt-text-picker' ) ).toBe( ImageAltTextPicker );
+	} );
+
+	it( 'returns ExcerptPicker for type "excerpt-picker"', () => {
+		expect( getChatComponent( 'excerpt-picker' ) ).toBe( ExcerptPicker );
 	} );
 
 	it( 'returns null for an unknown type', () => {
@@ -1089,6 +1117,85 @@ describe( 'getEmptyViewSuggestions', () => {
 		expect( labels ).not.toContain( 'Optimize Title' );
 		expect( labels ).toContain( 'AI Editorial Review' );
 		expect( labels ).not.toContain( 'Generate Feedback' );
+	} );
+
+	it( 'shows Generate Excerpt when the excerptSuggestion feature is enabled', () => {
+		installAiEditorialReviewData( { excerptSuggestion: true } );
+		installPostTypeMock( 'post' );
+
+		const excerptChip = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'generate-excerpt'
+		);
+
+		expect( excerptChip?.label ).toBe( 'Generate Excerpt' );
+		expect( excerptChip?.prompt ).toBe( 'Generate an excerpt for this post' );
+	} );
+
+	it( 'hides Generate Excerpt when the feature is disabled', () => {
+		installAiEditorialReviewData( { excerptSuggestion: false } );
+		installPostTypeMock( 'post' );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-excerpt' );
+	} );
+
+	it( 'hides Generate Excerpt when the post type does not support excerpts', () => {
+		installAiEditorialReviewData( { excerptSuggestion: true } );
+		installPostTypeMock( 'page' );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-excerpt' );
+	} );
+
+	it( 'hides Generate Excerpt until the post type is known', () => {
+		installAiEditorialReviewData( { excerptSuggestion: true } );
+		installPostTypeMock();
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-excerpt' );
+	} );
+
+	it( 'shows Generate Excerpt on pages when the page post type supports excerpts', () => {
+		installAiEditorialReviewData( { excerptSuggestion: true } );
+		// WordPress.com Simple / any site with the Jetpack SEO Tools module adds
+		// excerpt support to pages — the legacy AI Excerpt panel shows there too.
+		installPostTypeMock( 'page', 123, true );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'generate-excerpt' );
+	} );
+
+	it( 'hides Generate Excerpt for templates and patterns even though they support excerpts', () => {
+		installAiEditorialReviewData( { excerptSuggestion: true } );
+		// Core registers excerpt support for wp_block (patterns), but the excerpt
+		// field acts as a description there — the legacy panel excludes these types.
+		installPostTypeMock( 'wp_block', 123, true );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-excerpt' );
+	} );
+
+	it( 'shows Generate Excerpt for posts while the post type record is still resolving', () => {
+		installAiEditorialReviewData( { excerptSuggestion: true } );
+		installPostTypeMock( 'post', 123, true, false );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'generate-excerpt' );
+	} );
+
+	it( 'hides Generate Excerpt for pages while the post type record is still resolving', () => {
+		installAiEditorialReviewData( { excerptSuggestion: true } );
+		installPostTypeMock( 'page', 123, false, false );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-excerpt' );
 	} );
 
 	it( 'shows the SEO Enhancer dropdown when the seoSuggestions feature is enabled', () => {
@@ -1958,6 +2065,20 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_seo_desc' );
 		} );
 
+		it( 'returns an agentMessage envelope with an Undo checkpoint for an excerpt-picker call', async () => {
+			const excerpts = [ { excerpt: 'A short summary.', explanation: 'a' } ];
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'excerpt-picker',
+				props: { excerpts },
+				toolCallId: 'call_excerpt',
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.type ).toBe( 'excerpt-picker' );
+			expect( parsed.data.props ).toEqual( { excerpts } );
+			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_excerpt' );
+		} );
+
 		it( 'returns an agentMessage envelope with an Undo checkpoint for an image-alt-text-picker call', async () => {
 			const images = [ { clientId: 'img1', url: 'u', currentAlt: '', alt: 'A photo' } ];
 			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
@@ -2140,6 +2261,44 @@ describe( 'useCheckpoint', () => {
 		expect(
 			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'title' )
 		).toBe( 'Original Title' );
+	} );
+
+	it( 'restores only the excerpt for an excerpt checkpoint, leaving later title edits intact', async () => {
+		installWpDataMock( 'Original Title', 123, 'Original excerpt' );
+		const api = useCheckpoint();
+
+		api.setCheckpoint( 'cp-excerpt', [ 'excerpt' ] );
+
+		( window as any ).wp.data
+			.dispatch( 'core/editor' )
+			.editPost( { title: 'Edited Title', excerpt: 'AI generated excerpt' } );
+		await api.restoreCheckpoint( 'cp-excerpt' );
+
+		expect(
+			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'excerpt' )
+		).toBe( 'Original excerpt' );
+		expect(
+			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'title' )
+		).toBe( 'Edited Title' );
+	} );
+
+	it( 'restores only the title for a default checkpoint, leaving later excerpt edits intact', async () => {
+		installWpDataMock( 'Original Title', 123, 'Original excerpt' );
+		const api = useCheckpoint();
+
+		api.setCheckpoint( 'cp-title' );
+
+		( window as any ).wp.data
+			.dispatch( 'core/editor' )
+			.editPost( { title: 'AI Title', excerpt: 'User excerpt' } );
+		await api.restoreCheckpoint( 'cp-title' );
+
+		expect(
+			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'title' )
+		).toBe( 'Original Title' );
+		expect(
+			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'excerpt' )
+		).toBe( 'User excerpt' );
 	} );
 
 	it( 'keeps the checkpoint after restore so Undo can be used repeatedly', async () => {

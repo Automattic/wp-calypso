@@ -47,3 +47,24 @@
 	min-height: 80px;
 	max-height: 400px;
 }
+
+.mcp-starter-prompts__intro.is-disabled {
+	opacity: 0.5;
+}
+
+.mcp-starter-prompt {
+	padding: 12px 16px;
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 4px;
+	background: var( --color-neutral-0 );
+}
+
+.mcp-starter-prompt__toolbar {
+	margin-block-end: 4px;
+}
+
+.mcp-starter-prompt__text {
+	display: block;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}

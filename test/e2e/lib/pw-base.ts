@@ -77,7 +77,6 @@ import {
 	SidebarComponent,
 	SiteSelectComponent,
 	SignupPickPlanPage,
-	StartImportFlow,
 	StartWritingFlow,
 	TestAccount,
 	ThemesDetailPage,
@@ -95,6 +94,7 @@ import {
 	apiWaitForEmailVerification,
 } from '../specs/shared';
 import { useBlackboxTestKeyForCollect } from './blackbox-test-key';
+import { snoozeAccountRecoveryInterstitial } from './dashboard-helpers';
 import { getAccount } from './get-account';
 
 export type CustomOptions = {
@@ -195,10 +195,6 @@ export const test = base.extend<
 		 * Flow encapsulating the LOHP Theme Signup onboarding process.
 		 */
 		flowLOHPThemeSignup: LOHPThemeSignupFlow;
-		/**
-		 * Flow encapsulating the Start Import onboarding process.
-		 */
-		flowStartImport: StartImportFlow;
 		/**
 		 * Flow encapsulating the Start Writing onboarding process.
 		 */
@@ -473,10 +469,6 @@ export const test = base.extend<
 		const lohpThemeSignupFlow = new LOHPThemeSignupFlow( page );
 		await use( lohpThemeSignupFlow );
 	},
-	flowStartImport: async ( { page }, use ) => {
-		const startImportFlow = new StartImportFlow( page );
-		await use( startImportFlow );
-	},
 	flowStartWriting: async ( { page }, use ) => {
 		const startWritingFlow = new StartWritingFlow( page );
 		await use( startWritingFlow );
@@ -665,6 +657,10 @@ export const test = base.extend<
 			) as string;
 			await page.goto( activationLink );
 			await apiWaitForEmailVerification( restAPIClient, testUser.email );
+			// Fresh accounts have no recovery method set up, so the dashboard's
+			// account-recovery interstitial would mount over every route and block
+			// specs that load the dashboard with this fixture. Snooze it up front.
+			await snoozeAccountRecoveryInterstitial( restAPIClient );
 			await use( site );
 		} finally {
 			if ( site ) {
