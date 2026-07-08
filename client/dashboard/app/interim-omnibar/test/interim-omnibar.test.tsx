@@ -3,14 +3,9 @@
  */
 
 import { screen } from '@testing-library/react';
-import nock from 'nock';
 import { render } from '../../../test-utils';
 import { InterimOmnibar } from '../interim-omnibar';
 import type { Site, User } from '@automattic/api-core';
-
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
-} ) );
 
 const userWithSite = {
 	ID: 1,
@@ -56,22 +51,6 @@ const site = {
 } as Site;
 
 describe( '<InterimOmnibar /> profile menu', () => {
-	const originalScrollTo = window.scrollTo;
-
-	beforeEach( () => {
-		window.history.pushState( {}, '', '/me' );
-		window.scrollTo = jest.fn();
-
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/rest/v1.2/all-domains' )
-			.query( true )
-			.reply( 200, { domains: [] } );
-	} );
-
-	afterEach( () => {
-		window.scrollTo = originalScrollTo;
-	} );
-
 	test( 'does not render a broken Edit Profile link for accounts without sites', async () => {
 		render( <InterimOmnibar user={ userWithoutSites } site={ null } currentRoute="/me" /> );
 
