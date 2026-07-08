@@ -1,0 +1,190 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/variables";
+
+.education-student-validation__watermark {
+	display: none;
+	height: auto;
+	inset-block-end: 0;
+	inset-inline-start: 0;
+	pointer-events: none;
+	position: fixed;
+	width: 360px;
+	z-index: -1;
+
+	@include break-medium {
+		display: block;
+	}
+
+	.education-student-validation__watermark-fill {
+		fill: var(--studio-gray-0);
+	}
+
+	.education-student-validation__watermark-outline {
+		fill: var(--studio-gray-10);
+	}
+}
+
+.education-student-validation__heading {
+	align-items: center;
+	display: flex;
+	flex-direction: column;
+
+	.education-student-validation__logo {
+		display: block;
+		height: 32px;
+		width: auto;
+	}
+
+	.step-container-v2__heading {
+		margin-block-start: 24px;
+
+		p {
+			margin-inline: auto;
+			max-width: 520px;
+		}
+	}
+}
+
+.education-student-validation {
+	width: 100%;
+
+	.education-student-validation__steps {
+		display: grid;
+		gap: 32px;
+		grid-template-columns: 1fr;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+
+		@include break-medium {
+			gap: 40px;
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+
+	.education-student-validation__step {
+		margin: 0;
+	}
+
+	.education-student-validation__step-marker {
+		align-items: center;
+		display: flex;
+		gap: 10px;
+	}
+
+	.education-student-validation__step-number {
+		color: var(--studio-orange-40);
+		font-size: 0.75rem;
+		font-weight: 600;
+		line-height: 1;
+	}
+
+	.education-student-validation__step-rule {
+		background: var(--color-border-subtle);
+		flex: 1;
+		height: 1px;
+	}
+
+	.education-student-validation__step-icon {
+		align-items: center;
+		background: var(--studio-wordpress-blue-5);
+		border-radius: 8px;
+		display: flex;
+		height: 40px;
+		justify-content: center;
+		margin-block: 18px 14px;
+		width: 40px;
+
+		svg {
+			fill: var(--studio-wordpress-blue-50);
+		}
+	}
+
+	.education-student-validation__step-title {
+		font-size: 1rem;
+		font-weight: 600;
+		margin: 0 0 6px;
+	}
+
+	.education-student-validation__step-description {
+		color: var(--color-text-subtle);
+		font-size: 0.875rem;
+		line-height: 1.5;
+		margin: 0;
+	}
+
+	.education-student-validation__form {
+		background: var(--color-surface);
+		border: 1px solid var(--color-border-subtle);
+		border-radius: 8px;
+		box-sizing: border-box;
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		margin: 40px auto 0;
+		max-width: 520px;
+		padding: 24px;
+		width: 100%;
+
+		@include break-medium {
+			margin-block-start: 48px;
+			padding: 32px;
+		}
+	}
+
+	.education-student-validation__field {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+	}
+
+	.form-label {
+		color: var(--studio-gray-60);
+		margin-block-end: 8px;
+	}
+
+	input[type="text"] {
+		border-color: var(--studio-gray-10);
+		border-radius: 4px;
+		box-sizing: border-box;
+		font-family: $code;
+		font-size: 0.875rem;
+		height: 44px;
+		letter-spacing: 0.06em;
+		padding-block: 0.875rem;
+		padding-inline: 1rem;
+
+		&:focus {
+			border-color: var(--studio-gray-10);
+			box-shadow: 0 0 0 2px var(--color-primary-10);
+			outline: none;
+
+			@media (forced-colors: active) {
+				outline: 2px solid;
+			}
+		}
+	}
+
+	.step-container-v2__primary-button {
+		justify-content: center;
+		width: 100%;
+	}
+
+	.form-input-validation {
+		margin-block-start: 8px;
+		padding-block-end: 0;
+	}
+
+	.education-student-validation__enroll-note {
+		color: var(--color-text-subtle);
+		font-size: 0.75rem;
+		margin: 0;
+		text-align: center;
+
+		a {
+			color: inherit;
+			text-decoration: underline;
+		}
+	}
+}

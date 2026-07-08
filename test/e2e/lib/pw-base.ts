@@ -744,6 +744,21 @@ export function skipIfMailosaurLimitReached(): void {
 }
 
 /**
+ * Skips the current test suite when not running on trunk.
+ *
+ * @example
+ * ```typescript
+ * test.describe( 'My Test Suite', () => {
+ *   skipIfNotTrunk();
+ *   test( 'my test', async () => { ... });
+ * });
+ * ```
+ */
+export function skipIfNotTrunk(): void {
+	test.skip( ( process.env.BRANCH_NAME || '' ) !== 'trunk', 'Skipping: run only on trunk' );
+}
+
+/**
  * Deletes an ephemeral test site. Retries transient failures and never throws:
  * it runs from fixture teardown, which Playwright executes even when the test
  * fails or times out, so a cleanup hiccup must not redden a passing test. On
