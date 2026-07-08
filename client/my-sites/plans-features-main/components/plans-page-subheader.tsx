@@ -105,8 +105,8 @@ const HeaderContainer = styled( Subheader )`
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 12px 8px;
-		margin-top: -28px;
-		margin-bottom: 60px;
+		margin-top: -13px;
+		margin-bottom: 48px;
 		color: var( --color-text );
 		font-weight: 400;
 
