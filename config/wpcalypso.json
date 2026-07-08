@@ -41,7 +41,7 @@
 		"current-site/notice": true,
 		"dark-mode": false,
 		"dashboard/enable-percentage-rollout": false,
-		"dashboard/force-opt-in-visibility": true,
+		"dashboard/force-opt-in-visibility": false,
 		"dashboard/opt-in-welcome-modal": false,
 		"dashboard/plans": true,
 		"dashboard/rollout-advance-notice": true,

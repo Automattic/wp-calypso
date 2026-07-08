@@ -4,6 +4,7 @@ import {
 	userPreferenceQuery,
 	userPreferenceMutation,
 } from '@automattic/api-queries';
+import { isSupportSession } from '@automattic/calypso-support-session';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Modal, Button, __experimentalVStack as VStack } from '@wordpress/components';
@@ -107,12 +108,14 @@ export default function AccountRecoveryInterstitial() {
 
 	const isSnoozed = !! snoozeUntilPersisted && now < snoozeUntilPersisted;
 
-	// Eligible once the data has loaded and the snooze (if any) has elapsed.
+	// Eligible once the data has loaded and the snooze (if any) has elapsed. Support sessions are
+	// skipped.
 	const isEligible =
 		isAccountRecoveryLoaded &&
 		isUserSettingsLoaded &&
 		isSnoozeLoaded &&
 		! isSnoozed &&
+		! isSupportSession() &&
 		securityLevel !== 'strong';
 
 	// Gate the interstitial behind an A/B experiment. Mark the user eligible only once they would

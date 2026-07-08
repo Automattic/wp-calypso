@@ -103,12 +103,23 @@ export class TestAccount {
 		const loginPage = new LoginPage( page );
 
 		const { username, password } = this.credentials;
+
+		// On mobile viewports the cookie consent banner can overlay the login
+		// form's submit button, blocking the click and leaving the popup open.
+		await loginPage.dismissCookieBanner();
+
 		await loginPage.fillUsername( username );
 		await loginPage.clickSubmit();
 		await loginPage.fillPassword( password );
 
-		// Popup pages close once authentication is successful.
-		await Promise.all( [ page.waitForEvent( 'close' ), loginPage.clickSubmit() ] );
+		// Popup pages close once authentication is successful. The like/comment
+		// login runs a cross-domain "highlander" handshake (via r-login.wordpress.com)
+		// after submitting, which can take well over the default 10s before the
+		// popup closes, so wait longer.
+		await Promise.all( [
+			page.waitForEvent( 'close', { timeout: 30 * 1000 } ),
+			loginPage.clickSubmit(),
+		] );
 	}
 
 	/**

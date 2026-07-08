@@ -221,6 +221,46 @@ describe( 'useCheckoutLeaveModal.clearCartAndLeave', () => {
 		expect( carts.get( NEW_SITE_CART_KEY )?.products ).toHaveLength( 0 );
 	} );
 
+	it( 'redirects to the domains back URL when one is supplied', async () => {
+		// A flow that provides `checkoutBackUrlDomains` (e.g. AI Site Builder
+		// onboarding) wants emptying the cart to return the user to the domain
+		// step rather than the default plan-step back URL.
+		( useValidCheckoutBackUrl as jest.Mock ).mockImplementation(
+			( _siteSlug: string, _siteId: number | undefined, queryArgName = 'checkoutBackUrl' ) =>
+				queryArgName === 'checkoutBackUrlDomains'
+					? 'https://mynewsite.wordpress.com/setup/ai-site-builder-onboarding/domains'
+					: 'https://mynewsite.wordpress.com/setup/ai-site-builder-onboarding/plans'
+		);
+
+		const { getCart, setCart } = createFakeCartBackend( {
+			[ NEW_SITE_CART_KEY ]: [ domainProduct, planProduct ],
+		} );
+		const client = createShoppingCartManagerClient( { getCart, setCart } );
+		const Wrapper = buildWrapper( client );
+
+		const { result } = renderHook( () => useCheckoutLeaveModal( { siteUrl: NEW_SITE_SLUG } ), {
+			wrapper: Wrapper,
+		} );
+
+		await waitFor( () =>
+			expect(
+				client.forCartKey( NEW_SITE_CART_KEY ).getState().responseCart.products
+			).toHaveLength( 2 )
+		);
+
+		await act( async () => {
+			await result.current.clearCartAndLeave();
+		} );
+
+		expect( leaveCheckout ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				userHasClearedCart: true,
+				forceCheckoutBackUrl:
+					'https://mynewsite.wordpress.com/setup/ai-site-builder-onboarding/domains',
+			} )
+		);
+	} );
+
 	it( 'skips the redundant siteless clears when checkout is already on a siteless cart', async () => {
 		// When the user is checking out directly against `'no-site'` (no
 		// "New site" branch involved), the hook must not re-clear the same

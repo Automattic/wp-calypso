@@ -165,7 +165,12 @@ class CrossPost extends PureComponent {
 		const { post, translate, currentRoute, hasOrganization, isWPForTeamsItem } = this.props;
 
 		let isSeen = false;
-		if ( isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) ) {
+		const isSeenEnabled = isEligibleForUnseen( {
+			isWPForTeamsItem,
+			currentRoute,
+			hasOrganization,
+		} );
+		if ( isSeenEnabled ) {
 			isSeen = post?.is_seen;
 		}
 		const articleClasses = clsx( {

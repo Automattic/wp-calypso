@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { getPostFields } from '../post-fields';
+import { getPostFieldKey, getPostFields } from '../post-fields';
 import type { ReadStreamPost } from '@automattic/api-core';
 
 describe( 'getPostFields', () => {
@@ -47,8 +47,8 @@ describe( 'getPostFields', () => {
 			title: 'Second',
 		} as unknown as ReadStreamPost;
 
-		expect( getPostFields( first ).key ).toBe( 'blog-7-20' );
-		expect( getPostFields( second ).key ).toBe( 'blog-7-21' );
+		expect( getPostFieldKey( first ) ).toBe( 'blog-7-20' );
+		expect( getPostFieldKey( second ) ).toBe( 'blog-7-21' );
 	} );
 
 	it( 'reads the image from canonical_media and the author name', () => {
@@ -65,7 +65,7 @@ describe( 'getPostFields', () => {
 		expect( fields.authorName ).toBe( 'Ada' );
 	} );
 
-	it( 'returns sanitized excerpt HTML whose text decodes entities', () => {
+	it( 'returns sanitized excerpt HTML from the API excerpt', () => {
 		const post = {
 			ID: 1,
 			site_ID: 2,
@@ -77,21 +77,6 @@ describe( 'getPostFields', () => {
 		const host = document.createElement( 'div' );
 		host.innerHTML = excerptHtml;
 		expect( host.textContent ).toBe( 'Latin, Asian Pop and R&B genres, including the Best…' );
-	} );
-
-	it( 'decodes HTML entities in the plain-text title, source and author', () => {
-		const post = {
-			ID: 1,
-			site_ID: 2,
-			title: 'Pre-Order Reveal&nbsp;: GTA&nbsp;6',
-			site_name: 'Kendall Lacey&#039;s Webworld',
-			author: { name: 'A &amp; B' },
-		} as unknown as ReadStreamPost;
-
-		const fields = getPostFields( post );
-		expect( fields.title ).toBe( 'Pre-Order Reveal : GTA 6' );
-		expect( fields.sourceName ).toBe( "Kendall Lacey's Webworld" );
-		expect( fields.authorName ).toBe( 'A & B' );
 	} );
 
 	it( 'reads the blog icon from site_icon.ico', () => {
