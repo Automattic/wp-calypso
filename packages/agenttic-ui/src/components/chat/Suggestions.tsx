@@ -118,6 +118,9 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 											onOpenChange={
 												onDropdownOpenChange
 											}
+											showDescription={
+												isEligibleForDescription
+											}
 										/>
 									) : (
 										<Button

@@ -5,6 +5,7 @@ import { Button } from '../ui/button';
 import { ChevronDownIcon } from '../icons/ChevronDownIcon';
 import styles from './SuggestionDropdown.module.css';
 import suggestionStyles from './Suggestions.module.css';
+import { cn } from '../../utils/classNames';
 
 const combinePromptWithOption = ( prompt: string, optionValue: string ) => {
 	if ( ! prompt || ! optionValue ) {
@@ -33,6 +34,8 @@ export interface SuggestionDropdownProps {
 	) => void;
 	availableSuggestions: Suggestion[];
 	onOpenChange?: ( open: boolean ) => void;
+	/** Render the suggestion's description under the label (vertical layout). */
+	showDescription?: boolean;
 }
 
 export const SuggestionDropdown: React.FC< SuggestionDropdownProps > = ( {
@@ -40,6 +43,7 @@ export const SuggestionDropdown: React.FC< SuggestionDropdownProps > = ( {
 	onSelect,
 	availableSuggestions,
 	onOpenChange,
+	showDescription,
 } ) => {
 	const [ open, setOpen ] = React.useState( false );
 	const containerRef = React.useRef< HTMLDivElement | null >( null );
@@ -77,18 +81,22 @@ export const SuggestionDropdown: React.FC< SuggestionDropdownProps > = ( {
 		[]
 	);
 
-	const updateOpen = React.useCallback( ( nextOpen: boolean ) => {
-		if ( nextOpen ) {
-			const suggestionsEl = containerRef.current?.closest< HTMLElement >(
-				'[data-slot="suggestions"]'
-			);
-			if ( suggestionsEl ) {
-				setContentWidth( suggestionsEl.clientWidth * 0.9 );
+	const updateOpen = React.useCallback(
+		( nextOpen: boolean ) => {
+			if ( nextOpen ) {
+				const suggestionsEl =
+					containerRef.current?.closest< HTMLElement >(
+						'[data-slot="suggestions"]'
+					);
+				if ( suggestionsEl ) {
+					setContentWidth( suggestionsEl.clientWidth * 0.9 );
+				}
 			}
-		}
-		setOpen( nextOpen );
-		onOpenChange?.( nextOpen );
-	}, [ onOpenChange ] );
+			setOpen( nextOpen );
+			onOpenChange?.( nextOpen );
+		},
+		[ onOpenChange ]
+	);
 
 	const handleOptionSelect = ( option: SuggestionOption ) => {
 		const { options: _options, ...rest } = suggestion;
@@ -112,13 +120,35 @@ export const SuggestionDropdown: React.FC< SuggestionDropdownProps > = ( {
 						variant="outline"
 						className={ suggestionStyles.button }
 					>
-						{ suggestion.label }
-						<ChevronDownIcon
-							size={ 14 }
-							className={ `${ styles.chevron } ${
-								open ? styles.chevronOpen : ''
-							}` }
-						/>
+						<div
+							className={ cn(
+								suggestionStyles[ 'suggestion-content' ],
+								showDescription
+									? suggestionStyles[
+											'suggestion-content--with-description'
+									  ]
+									: ''
+							) }
+						>
+							<span className={ styles.labelRow }>
+								<span className={ suggestionStyles.label }>
+									{ suggestion.label }
+								</span>
+								<ChevronDownIcon
+									size={ 14 }
+									className={ `${ styles.chevron } ${
+										open ? styles.chevronOpen : ''
+									}` }
+								/>
+							</span>
+							{ showDescription && (
+								<span
+									className={ suggestionStyles.description }
+								>
+									{ suggestion.description }
+								</span>
+							) }
+						</div>
 					</Button>
 				</Popover.Trigger>
 				{ portalTarget && (

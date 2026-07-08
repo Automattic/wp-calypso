@@ -2,6 +2,11 @@
 	position: relative;
 }
 
+.labelRow {
+	display: flex;
+	align-items: center;
+}
+
 .chevron {
 	margin-left: var(--spacing-0\.5);
 	transition: transform 150ms ease;
