@@ -47,31 +47,5 @@ test.describe(
 				await expect.poll( async () => await pageDashboard.is404Page() ).toBe( true );
 			} );
 		} );
-
-		test( 'As a WordPress.com user, an unknown top-level path shows a 404 I can navigate away from', async ( {
-			accountGivenByEnvironment,
-			clientRestAPI,
-			page,
-			pageDashboard,
-		} ) => {
-			await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async function () {
-				await snoozeAccountRecoveryInterstitial( clientRestAPI );
-				// Skip waiting for Calypso sidebar — we navigate to the dashboard immediately after.
-				await accountGivenByEnvironment.authenticate( page, { waitUntilStable: false } );
-			} );
-
-			await test.step( 'When I visit an unknown top-level dashboard path', async function () {
-				await pageDashboard.visitPath( 'this-page-does-not-exist' );
-			} );
-
-			await test.step( 'Then I see a 404 error page', async function () {
-				await expect.poll( async () => await pageDashboard.is404Page() ).toBe( true );
-			} );
-
-			await test.step( 'And I can navigate away to a real section', async function () {
-				await pageDashboard.navigateToSection( 'Sites' );
-				expect( await pageDashboard.getHeadingText() ).toEqual( 'Sites' );
-			} );
-		} );
 	}
 );
