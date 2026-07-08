@@ -342,23 +342,6 @@ const PlansPageSubheader = ( {
 		isUsingStepContainerV2,
 		isVisualSplitIntent,
 	};
-	const shouldShowFreePlanCtaSubheader =
-		( ! isUsingStepContainerV2 || renderFreePlanCtaInStepContainerV2 ) &&
-		deemphasizeFreePlan &&
-		offeringFreePlan;
-
-	const renderFreePlanCtaSubheader = () => (
-		<Subheader { ...subheaderCommonProps }>
-			{ translate(
-				'Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.',
-				{
-					components: {
-						link: <Button onClick={ onFreePlanCTAClick } borderless />,
-					},
-				}
-			) }
-		</Subheader>
-	);
 
 	const renderStandardSubheader = () => {
 		// Website Builder intent: use the new copy
@@ -401,8 +384,23 @@ const PlansPageSubheader = ( {
 			return null;
 		}
 
-		if ( shouldShowFreePlanCtaSubheader ) {
-			return renderFreePlanCtaSubheader();
+		if (
+			( ! isUsingStepContainerV2 || renderFreePlanCtaInStepContainerV2 ) &&
+			deemphasizeFreePlan &&
+			offeringFreePlan
+		) {
+			return (
+				<Subheader { ...subheaderCommonProps }>
+					{ translate(
+						'Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.',
+						{
+							components: {
+								link: <Button onClick={ onFreePlanCTAClick } borderless />,
+							},
+						}
+					) }
+				</Subheader>
+			);
 		}
 
 		if ( showPlanBenefits ) {
