@@ -140,24 +140,24 @@ describe( 'ReaderSidebarSpaces', () => {
 		expect( container.querySelector( 'li.sidebar__menu-item.selected' ) ).toBeNull();
 	} );
 
-	it( 'opens the create-space modal from the "Add a space" button', async () => {
+	it( 'opens the create-space modal from the "Create a space" button', async () => {
 		const user = userEvent.setup();
 		render( <ReaderSidebarSpaces path={ OPEN_PATH } /> );
 
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 
-		await user.click( screen.getByRole( 'button', { name: 'Add a space' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Create a space' } ) );
 
 		const dialog = await screen.findByRole( 'dialog' );
 		expect( dialog ).toBeVisible();
 		expect( screen.getByRole( 'heading', { name: 'Create a new space' } ) ).toBeVisible();
 	} );
 
-	it( 'shows the onboarding walkthrough on the first "Add a space" click', async () => {
+	it( 'shows the onboarding walkthrough on the first "Create a space" click', async () => {
 		const user = userEvent.setup();
 		render( <ReaderSidebarSpaces path={ OPEN_PATH } />, { preferences: { remoteValues: {} } } );
 
-		await user.click( screen.getByRole( 'button', { name: 'Add a space' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Create a space' } ) );
 
 		// The walkthrough, not the create form.
 		expect( await screen.findByRole( 'heading', { name: 'Meet Spaces' } ) ).toBeVisible();
@@ -172,7 +172,7 @@ describe( 'ReaderSidebarSpaces', () => {
 			preferences: { remoteValues: { has_seen_reader_spaces_onboarding: true } },
 		} );
 
-		await user.click( screen.getByRole( 'button', { name: 'Add a space' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Create a space' } ) );
 
 		expect( await screen.findByRole( 'heading', { name: 'Create a new space' } ) ).toBeVisible();
 	} );
@@ -184,7 +184,7 @@ describe( 'ReaderSidebarSpaces', () => {
 			preferences: { remoteValues: { has_seen_reader_spaces_onboarding: true } },
 		} );
 
-		await user.click( screen.getByRole( 'button', { name: 'Add a space' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Create a space' } ) );
 
 		expect( await screen.findByRole( 'heading', { name: 'Meet Spaces' } ) ).toBeVisible();
 	} );
@@ -193,7 +193,7 @@ describe( 'ReaderSidebarSpaces', () => {
 		const user = userEvent.setup();
 		render( <ReaderSidebarSpaces path={ OPEN_PATH } />, { preferences: { remoteValues: {} } } );
 
-		await user.click( screen.getByRole( 'button', { name: 'Add a space' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Create a space' } ) );
 		await user.click( screen.getByRole( 'button', { name: 'Show me how' } ) );
 		await user.click( screen.getByRole( 'button', { name: 'Next' } ) );
 		await user.click( screen.getByRole( 'button', { name: 'Create a space' } ) );
@@ -201,11 +201,11 @@ describe( 'ReaderSidebarSpaces', () => {
 		expect( await screen.findByRole( 'heading', { name: 'Create a new space' } ) ).toBeVisible();
 	} );
 
-	it( 'marks the walkthrough seen when skipped before the next "Add a space" click', async () => {
+	it( 'marks the walkthrough seen when skipped before the next "Create a space" click', async () => {
 		const user = userEvent.setup();
 		render( <ReaderSidebarSpaces path={ OPEN_PATH } />, { preferences: { remoteValues: {} } } );
 
-		await user.click( screen.getByRole( 'button', { name: 'Add a space' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Create a space' } ) );
 		await user.click( await screen.findByRole( 'button', { name: 'Skip' } ) );
 
 		expect( screen.queryByRole( 'heading', { name: 'Meet Spaces' } ) ).not.toBeInTheDocument();
@@ -213,7 +213,7 @@ describe( 'ReaderSidebarSpaces', () => {
 			screen.queryByRole( 'heading', { name: 'Create a new space' } )
 		).not.toBeInTheDocument();
 
-		await user.click( screen.getByRole( 'button', { name: 'Add a space' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Create a space' } ) );
 
 		expect( await screen.findByRole( 'heading', { name: 'Create a new space' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'heading', { name: 'Meet Spaces' } ) ).not.toBeInTheDocument();
@@ -243,7 +243,7 @@ describe( 'ReaderSidebarSpaces', () => {
 			} );
 		render( <ReaderSidebarSpaces path={ OPEN_PATH } /> );
 
-		await user.click( screen.getByRole( 'button', { name: 'Add a space' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Create a space' } ) );
 		await user.type( screen.getByLabelText( 'Name' ), 'Reading' );
 		await user.click( screen.getByRole( 'button', { name: 'Create' } ) );
 
