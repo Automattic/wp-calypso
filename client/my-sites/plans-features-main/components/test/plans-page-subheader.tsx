@@ -50,6 +50,7 @@ describe( 'PlansPageSubheader', () => {
 		renderWithProvider(
 			<PlansPageSubheader
 				{ ...defaultProps }
+				flowName="onboarding"
 				showDifferentiatorHeader
 				renderFreePlanCtaInStepContainerV2
 			/>
@@ -58,10 +59,8 @@ describe( 'PlansPageSubheader', () => {
 		expect( screen.getByText( /Unlock a powerful bundle of features/ ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'start with a free plan' } ) ).toBeInTheDocument();
 		expect(
-			screen.queryByText(
-				'Whatever site you’re building, there’s a plan to make it happen sooner.'
-			)
-		).not.toBeInTheDocument();
+			screen.getByText( 'Whatever site you’re building, there’s a plan to make it happen sooner.' )
+		).toBeInTheDocument();
 		expect( screen.getByText( 'Paid plans include:' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Unlimited traffic' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Managed hosting' ) ).toBeInTheDocument();
