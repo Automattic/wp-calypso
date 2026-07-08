@@ -103,7 +103,7 @@ const OPTIMIZE_TITLE_SUGGESTION = {
 };
 
 /**
- * Post-level suggestion to generate the post excerpt. Routes through the
+ * Editor-level suggestion to generate the current content excerpt. Routes through the
  * orchestrator to the jetpack-ai/generate-excerpt ability, which returns the
  * excerpt picker. The prompt is deliberately parameter-free: words/tone
  * defaults live server-side, and the picker intro invites adjustments.
@@ -116,15 +116,15 @@ const GENERATE_EXCERPT_SUGGESTION = {
 };
 
 /**
- * Post-level SEO Enhancer suggestion. Targets the post's SEO surfaces (the HTML
+ * Editor-level SEO Enhancer suggestion. Targets the content's SEO surfaces (the HTML
  * <title>, meta description, and image alt text), distinct from
  * OPTIMIZE_TITLE_SUGGESTION which rewrites the visible post title. Rendered as a
  * dropdown (via the `options` field): picking Title, Description or Image Alt
  * Text submits that option's `value`, which routes through the orchestrator to
  * the jetpack-ai/generate-seo-title, jetpack-ai/generate-seo-description or jetpack-ai/generate-seo-image-alt-text
- * ability and returns the matching picker. Alt text is post-level here (every
- * image in the post); the block-level `generate-alt-text` suggestion still
- * targets a single selected image.
+ * ability and returns the matching picker. Alt text is content-level here
+ * (every image in the editor content); the block-level `generate-alt-text`
+ * suggestion still targets a single selected image.
  *
  * `prompt` is intentionally empty: the dropdown combines `prompt` with the
  * selected option's `value`, so an empty prompt makes the submitted text equal
@@ -162,7 +162,7 @@ const SEO_ENHANCER_SUGGESTION = {
 };
 
 /**
- * Post-level suggestion to run AI Editorial Review on a draft.
+ * Editor-level suggestion to run AI Editorial Review on saved content.
  *
  * The id remains stable because saved chats/tests may still refer to the
  * original review-mediation identifier.
@@ -205,14 +205,27 @@ const LIMITED_BLOCK_SUGGESTION_PRIORITY = [
 	'generate-alt-text',
 ];
 
+type EditorPostId = number | string;
+
 function getCurrentEditorPostType(): string | undefined {
 	const postType = ( window as any ).wp?.data?.select?.( 'core/editor' )?.getCurrentPostType?.();
 	return typeof postType === 'string' ? postType : undefined;
 }
 
-function getCurrentEditorPostId(): number | undefined {
-	const postId = ( window as any ).wp?.data?.select?.( 'core/editor' )?.getCurrentPostId?.();
-	return typeof postId === 'number' && postId > 0 ? postId : undefined;
+function normalizeEditorPostId( postId: unknown ): EditorPostId | undefined {
+	if ( typeof postId === 'number' && postId > 0 ) {
+		return postId;
+	}
+	if ( typeof postId === 'string' && postId.trim() ) {
+		return postId;
+	}
+	return undefined;
+}
+
+function getCurrentEditorPostId(): EditorPostId | undefined {
+	return normalizeEditorPostId(
+		( window as any ).wp?.data?.select?.( 'core/editor' )?.getCurrentPostId?.()
+	);
 }
 
 /**
@@ -247,11 +260,23 @@ function currentPostTypeSupportsExcerpt(
 }
 
 /**
- * Post types where the excerpt field acts as a description (templates,
- * template parts, patterns). Core registers excerpt support for wp_block, but
- * the legacy AI Excerpt panel excludes these types and so does the chip.
+ * Post types where the excerpt field acts as a description. Core registers
+ * excerpt support for wp_block (patterns), but the chip excludes patterns.
  */
-const EXCERPT_EXCLUDED_POST_TYPES = [ 'wp_template', 'wp_template_part', 'wp_block' ];
+const EDITOR_LEVEL_SUGGESTION_POST_TYPES = new Set( [
+	'post',
+	'page',
+	'wp_template',
+	'wp_template_part',
+] );
+
+const EXCERPT_EXCLUDED_POST_TYPES = [ 'wp_block' ];
+
+function isEditorLevelSuggestionPostType(
+	currentPostType: string | undefined = getCurrentEditorPostType()
+): boolean {
+	return EDITOR_LEVEL_SUGGESTION_POST_TYPES.has( currentPostType ?? '' );
+}
 
 function isExcerptSuggestionAvailable(
 	currentPostType: string | undefined = getCurrentEditorPostType(),
@@ -273,21 +298,27 @@ function isAiEditorialReviewAvailable(
 	// want the current editor state read live.
 	currentPostType: string | undefined = getCurrentEditorPostType()
 ): boolean {
-	return isAiEditorialReviewEnabled() && currentPostType === 'post';
+	return isAiEditorialReviewEnabled() && isEditorLevelSuggestionPostType( currentPostType );
 }
 
 function isGenerateFeedbackAvailable(
 	currentPostType: string | undefined = getCurrentEditorPostType(),
-	currentPostId: number | null | undefined = getCurrentEditorPostId()
+	currentPostId: EditorPostId | null | undefined = getCurrentEditorPostId()
 ): boolean {
-	return isGenerateFeedbackEnabled() && currentPostType === 'post' && !! currentPostId;
+	return (
+		isGenerateFeedbackEnabled() &&
+		isEditorLevelSuggestionPostType( currentPostType ) &&
+		!! currentPostId
+	);
 }
 
 function isProofreadAvailable(
 	currentPostType: string | undefined = getCurrentEditorPostType(),
-	currentPostId: number | null | undefined = getCurrentEditorPostId()
+	currentPostId: EditorPostId | null | undefined = getCurrentEditorPostId()
 ): boolean {
-	return isProofreadEnabled() && currentPostType === 'post' && !! currentPostId;
+	return (
+		isProofreadEnabled() && isEditorLevelSuggestionPostType( currentPostType ) && !! currentPostId
+	);
 }
 
 function trackAiEditorialReviewSuggestionRenderedOnce(): void {
@@ -307,7 +338,7 @@ function getAiEditorialReviewSuggestions( currentPostType?: string ) {
 
 function getPostLevelSuggestions(
 	currentPostType?: string,
-	currentPostId?: number | null,
+	currentPostId?: EditorPostId | null,
 	supportsExcerpt?: boolean
 ) {
 	return [
@@ -451,9 +482,7 @@ function handleShowComponent( input: any ): any {
 	};
 	if ( type === 'review-mediation' || type === 'post-feedback' || type === 'proofread' ) {
 		const reviewedPostId =
-			typeof componentProps.postId === 'number' && componentProps.postId > 0
-				? componentProps.postId
-				: getCurrentEditorPostId();
+			normalizeEditorPostId( componentProps.postId ) ?? getCurrentEditorPostId();
 		if ( reviewedPostId ) {
 			componentProps.postId = reviewedPostId;
 			data.postId = reviewedPostId;
@@ -1273,7 +1302,7 @@ export function useSuggestions(
 	const editorContext = useSelect( ( select ) => {
 		const blockEditor = select( 'core/block-editor' ) as { getSelectedBlock?: () => any };
 		const editor = select( 'core/editor' ) as {
-			getCurrentPostId?: () => number | null | undefined;
+			getCurrentPostId?: () => EditorPostId | null | undefined;
 			getCurrentPostType?: () => string | undefined;
 		};
 		const core = select( 'core' ) as {
@@ -1282,7 +1311,7 @@ export function useSuggestions(
 		const postType = editor?.getCurrentPostType?.();
 		return {
 			selectedBlock: blockEditor?.getSelectedBlock?.() ?? null,
-			postId: editor?.getCurrentPostId?.(),
+			postId: normalizeEditorPostId( editor?.getCurrentPostId?.() ),
 			postType,
 			supportsExcerpt:
 				postType && isExcerptSuggestionEnabled()
@@ -1319,7 +1348,7 @@ export function useSuggestions(
 			applicable.map( ( { id, label, prompt, options } ) => ( { id, label, prompt, options } ) ),
 		[ applicable ]
 	);
-	// Post-level reviews (Optimize Title, Generate Feedback, AI Editorial Review)
+	// Editor-level reviews (Optimize Title, Generate Feedback, AI Editorial Review)
 	// show only with no block selected; a selected block shows block transforms.
 	const visibleSuggestions = useMemo( () => {
 		if ( hidden ) {

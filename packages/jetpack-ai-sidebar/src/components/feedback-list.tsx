@@ -58,6 +58,8 @@ interface SummaryNote {
 /** Root class name; prefixes every class this component renders. */
 const CLASS_PREFIX = 'jetpack-ai-feedback-list';
 
+export type EditorPostId = number | string;
+
 /**
  * Per-flow copy and options. The data props (summary/items/sections/postId)
  * come from the show-component payload; everything here is flow configuration.
@@ -66,7 +68,7 @@ export interface FeedbackListProps {
 	summary: string;
 	items?: FeedbackListItem[];
 	sections?: FeedbackListSection[];
-	postId?: number;
+	postId?: EditorPostId;
 	/** Title used when the flow provides flat items rather than sections. */
 	sectionFallbackTitle: string;
 	/** Label shown above a suggested rewrite, e.g. "Suggested rewrite". */
@@ -92,7 +94,7 @@ interface EditSnapshot {
 	editableAttribute?: string;
 }
 
-type WpCurrentPostStore = { getCurrentPostId?: () => number | null };
+type WpCurrentPostStore = { getCurrentPostId?: () => EditorPostId | null };
 type WpDataWindow = {
 	wp?: {
 		data?: {
@@ -101,12 +103,22 @@ type WpDataWindow = {
 	};
 };
 
-function getCurrentEditorPostIdFromStore(): number | undefined {
+function normalizeEditorPostId( postId: unknown ): EditorPostId | undefined {
+	if ( typeof postId === 'number' && postId > 0 ) {
+		return postId;
+	}
+	if ( typeof postId === 'string' && postId.trim() ) {
+		return postId;
+	}
+	return undefined;
+}
+
+function getCurrentEditorPostIdFromStore(): EditorPostId | undefined {
 	try {
 		const postId = ( window as unknown as WpDataWindow ).wp?.data
 			?.select?.( 'core/editor' )
 			?.getCurrentPostId?.();
-		return typeof postId === 'number' && postId > 0 ? postId : undefined;
+		return normalizeEditorPostId( postId );
 	} catch {
 		return undefined;
 	}
@@ -227,7 +239,9 @@ export default function FeedbackList( {
 	);
 	const currentPostId = useSelect(
 		( select ) =>
-			( select( 'core/editor' ) as WpCurrentPostStore )?.getCurrentPostId?.() ?? undefined,
+			normalizeEditorPostId(
+				( select( 'core/editor' ) as WpCurrentPostStore )?.getCurrentPostId?.()
+			),
 		[]
 	);
 	const flatBlocks = useMemo( () => flattenBlocks( blocks ), [ blocks ] );
@@ -235,10 +249,10 @@ export default function FeedbackList( {
 		() => normaliseSections( sectionFallbackTitle, items, sections ),
 		[ sectionFallbackTitle, items, sections ]
 	);
-	const isPostStale = ! postId || ! currentPostId || postId !== currentPostId;
+	const isPostStale = ! postId || ! currentPostId || String( postId ) !== String( currentPostId );
 	const isLatestPostContextStale = useCallback( () => {
 		const latestCurrentPostId = getCurrentEditorPostIdFromStore() ?? currentPostId;
-		return ! postId || ! latestCurrentPostId || postId !== latestCurrentPostId;
+		return ! postId || ! latestCurrentPostId || String( postId ) !== String( latestCurrentPostId );
 	}, [ currentPostId, postId ] );
 	const setItemStatus = useCallback( ( key: string, status: ItemStatus ) => {
 		setItemStatuses( ( prev ) => ( { ...prev, [ key ]: status } ) );

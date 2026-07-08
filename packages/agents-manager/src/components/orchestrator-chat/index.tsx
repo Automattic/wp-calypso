@@ -239,7 +239,8 @@ export default function OrchestratorChat( {
 	const [ isRegenerating, setIsRegenerating ] = useState( false );
 	const [ hasUserSentMessage, setHasUserSentMessage ] = useState( false );
 	const currentPostId = useSelect( ( select ) => {
-		return ( select( 'core/editor' ) as { getCurrentPostId?: () => number } )?.getCurrentPostId?.();
+		const editor = select( 'core/editor' ) as { getCurrentPostId?: () => number | string };
+		return editor?.getCurrentPostId?.();
 	}, [] );
 
 	const {

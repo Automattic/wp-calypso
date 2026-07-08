@@ -141,8 +141,14 @@ jest.mock( '@wordpress/data', () => ( {
 } ) );
 
 // Stub @wordpress/data on window so useCheckpoint / handleShowComponent
-// can read/write the post title and current post id via the core/editor store.
-function installWpDataMock( initialTitle: string, postId = 123, initialExcerpt = '' ) {
+// can read/write the post title and current editor entity id via the core/editor store.
+type EditorPostId = number | string;
+
+function installWpDataMock(
+	initialTitle: string,
+	postId: EditorPostId | null = 123,
+	initialExcerpt = ''
+) {
 	const state = { title: initialTitle, excerpt: initialExcerpt };
 	( window as any ).wp = {
 		data: {
@@ -185,7 +191,7 @@ function installWpDataMock( initialTitle: string, postId = 123, initialExcerpt =
 
 function installPostTypeMock(
 	postType?: string,
-	postId: number | null = 123,
+	postId: EditorPostId | null = 123,
 	supportsExcerpt: boolean = postType === 'post',
 	postTypeRecordResolved = true
 ) {
@@ -219,7 +225,7 @@ function installPostTypeMock(
 	};
 }
 
-function installContextProviderMock( postType = 'post', postId: number | null = 123 ) {
+function installContextProviderMock( postType = 'post', postId: EditorPostId | null = 123 ) {
 	const blocks = [
 		{
 			name: 'core/paragraph',
@@ -1030,14 +1036,53 @@ describe( 'getEmptyViewSuggestions', () => {
 		expect( labels ).toContain( 'Simple Review' );
 	} );
 
-	it( 'hides Editorial Review on page editors', () => {
+	it( 'shows Editorial Review on page editors', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock( 'page' );
 
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).not.toContain( 'Editorial Review' );
+		expect( labels ).toContain( 'Editorial Review' );
+		expect( labels ).toContain( 'Simple Review' );
+	} );
+
+	it( 'shows all enabled editor-level suggestions on page editors', () => {
+		installAiEditorialReviewData( {
+			optimizeTitleSuggestion: true,
+			excerptSuggestion: true,
+			proofreadContent: true,
+		} );
+		installPostTypeMock( 'page', 123, true );
+
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+
+		expect( labels ).toEqual( [
+			'Optimize Title',
+			'Generate Excerpt',
+			'Simple Review',
+			'Proofread',
+			'Editorial Review',
+		] );
+	} );
+
+	it( 'shows all enabled editor-level suggestions on site editor templates', () => {
+		installAiEditorialReviewData( {
+			optimizeTitleSuggestion: true,
+			excerptSuggestion: true,
+			proofreadContent: true,
+		} );
+		installPostTypeMock( 'wp_template', 'theme//front-page', true );
+
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+
+		expect( labels ).toEqual( [
+			'Optimize Title',
+			'Generate Excerpt',
+			'Simple Review',
+			'Proofread',
+			'Editorial Review',
+		] );
 	} );
 
 	it( 'hides Editorial Review until the post type is known', () => {
@@ -1050,7 +1095,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		expect( labels ).not.toContain( 'Editorial Review' );
 	} );
 
-	it( 'hides Simple Review until the post has a saved post ID', () => {
+	it( 'hides Simple Review until the editor entity has a saved ID', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock( 'post', null );
 
@@ -1084,7 +1129,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		);
 	} );
 
-	it( 'hides Proofread until the post has a saved post ID', () => {
+	it( 'hides Proofread until the editor entity has a saved ID', () => {
 		installAiEditorialReviewData( { proofreadContent: true } );
 		installPostTypeMock( 'post', null );
 
@@ -1198,10 +1243,19 @@ describe( 'getEmptyViewSuggestions', () => {
 		expect( ids ).toContain( 'generate-excerpt' );
 	} );
 
-	it( 'hides Generate Excerpt for templates and patterns even though they support excerpts', () => {
+	it( 'shows Generate Excerpt for site editor templates that support excerpts', () => {
+		installAiEditorialReviewData( { excerptSuggestion: true } );
+		installPostTypeMock( 'wp_template', 123, true );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'generate-excerpt' );
+	} );
+
+	it( 'hides Generate Excerpt for patterns even though they support excerpts', () => {
 		installAiEditorialReviewData( { excerptSuggestion: true } );
 		// Core registers excerpt support for wp_block (patterns), but the excerpt
-		// field acts as a description there — the legacy panel excludes these types.
+		// field acts as a description there — the chip still excludes patterns.
 		installPostTypeMock( 'wp_block', 123, true );
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
@@ -1434,7 +1488,7 @@ describe( 'useSuggestions', () => {
 		] );
 	} );
 
-	it( 'shows post-level suggestions after the selected-block chip is cleared', () => {
+	it( 'shows editor-level suggestions after the selected-block chip is cleared', () => {
 		installAiEditorialReviewData();
 		const block = { clientId: 'b-clear', name: 'core/paragraph' };
 		mockSelectedBlock = block;
@@ -1839,8 +1893,8 @@ describe( 'useSuggestions', () => {
 
 	it( 'does not open split-screen when Editorial Review is unavailable', () => {
 		installAiEditorialReviewData();
-		mockCurrentPostType = 'page';
-		installPostTypeMock( 'page' );
+		mockCurrentPostType = 'product';
+		installPostTypeMock( 'product' );
 
 		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
 
@@ -2339,7 +2393,7 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.props.postId ).toBe( 123 );
 		} );
 
-		it( 'stamps post-feedback components with the current post ID', async () => {
+		it( 'stamps post-feedback components with the current editor entity ID', async () => {
 			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
 				type: 'post-feedback',
 				props: {
@@ -2356,6 +2410,24 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.hideZoomAction ).toBe( true );
 			expect( parsed.data.postId ).toBe( 123 );
 			expect( parsed.data.props.postId ).toBe( 123 );
+		} );
+
+		it( 'stamps post-feedback components with the current site editor entity ID', async () => {
+			installWpDataMock( 'Original Title', 'theme//front-page' );
+
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'post-feedback',
+				props: {
+					summary: 'Summary.',
+					items: [],
+				},
+				toolCallId: 'call_post_feedback_template',
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.type ).toBe( 'post-feedback' );
+			expect( parsed.data.postId ).toBe( 'theme//front-page' );
+			expect( parsed.data.props.postId ).toBe( 'theme//front-page' );
 		} );
 
 		it( 'preserves the reviewed post ID on post-feedback components', async () => {
