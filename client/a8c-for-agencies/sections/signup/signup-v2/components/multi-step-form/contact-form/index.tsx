@@ -34,7 +34,6 @@ import './style.scss';
 type SignupContext = {
 	is_automattician: boolean;
 	is_proxied: boolean;
-	is_staging: boolean;
 	non_unique_domains: string[];
 };
 
