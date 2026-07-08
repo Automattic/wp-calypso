@@ -231,23 +231,23 @@ class WordAdsEarnings extends Component {
 			'is-showing-info': this.getInfoToggle( type ),
 		} );
 
-		for ( const period in earnings ) {
-			if ( earnings.hasOwnProperty( period ) ) {
-				rows.push(
-					<tr key={ type + '-' + period }>
-						<td className="ads__earnings-history-value">{ this.swapYearMonth( period ) }</td>
-						<td className="ads__earnings-history-value">
-							${ formatNumber( earnings[ period ].amount, { decimals: 2 } ) }
-						</td>
-						<td className="ads__earnings-history-value">
-							{ formatNumber( earnings[ period ].pageviews ) }
-						</td>
-						<td className="ads__earnings-history-value">
-							{ this.getStatus( earnings[ period ].status ) }
-						</td>
-					</tr>
-				);
-			}
+		const sortedPeriods = Object.keys( earnings ).sort( ( a, b ) => new Date( b ) - new Date( a ) );
+
+		for ( const period of sortedPeriods ) {
+			rows.push(
+				<tr key={ type + '-' + period }>
+					<td className="ads__earnings-history-value">{ this.swapYearMonth( period ) }</td>
+					<td className="ads__earnings-history-value">
+						${ formatNumber( earnings[ period ].amount, { decimals: 2 } ) }
+					</td>
+					<td className="ads__earnings-history-value">
+						{ formatNumber( earnings[ period ].pageviews ) }
+					</td>
+					<td className="ads__earnings-history-value">
+						{ this.getStatus( earnings[ period ].status ) }
+					</td>
+				</tr>
+			);
 		}
 
 		return (
