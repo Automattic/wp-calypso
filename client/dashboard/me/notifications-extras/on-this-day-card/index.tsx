@@ -41,9 +41,13 @@ export const OnThisDayCard = () => {
 					);
 				},
 				onError: () => {
-					createErrorNotice( __( 'There was a problem saving your changes. Please, try again.' ), {
-						type: 'snackbar',
-					} );
+					createErrorNotice(
+						sprintf(
+							/* translators: %s is the name of the setting */ __( 'Failed to save %s settings.' ),
+							__( 'On this day' )
+						),
+						{ type: 'snackbar' }
+					);
 				},
 			}
 		);
