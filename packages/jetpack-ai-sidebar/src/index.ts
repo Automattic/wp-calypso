@@ -847,7 +847,12 @@ export function useCheckpoint(): any {
 					snapshot.meta = metaSnapshot;
 				}
 			}
-			postSnapshots.set( id, snapshot );
+			// Store only when something was captured: an empty snapshot would
+			// make hasCheckpoint() report true and AM would render an Undo
+			// action that restores nothing.
+			if ( Object.keys( snapshot.fields ).length > 0 || snapshot.meta ) {
+				postSnapshots.set( id, snapshot );
+			}
 		},
 		hasCheckpoint( id: string ): boolean {
 			return postSnapshots.has( id );

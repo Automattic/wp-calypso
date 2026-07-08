@@ -2368,6 +2368,10 @@ describe( 'useCheckpoint', () => {
 
 		api.setCheckpoint( 'cp-seo-absent', { metaKeys: [ 'advanced_seo_description' ] } );
 
+		// Nothing was capturable, so no snapshot is stored and AM renders
+		// no Undo action for this checkpoint id.
+		expect( api.hasCheckpoint( 'cp-seo-absent' ) ).toBe( false );
+
 		( window as any ).wp.data.dispatch( 'core/editor' ).editPost( {
 			meta: { advanced_seo_description: 'AI description' },
 		} );
