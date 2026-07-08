@@ -124,3 +124,329 @@ index 8ed5aef770524fe83d1a0264e00f2d2f932d4f8b..6bd50432f637bff7290d216ea26a57f7
    unmountComponentAtNode
  };
 -//# sourceMappingURL=react-platform.mjs.map
+diff --git a/build-types/react-platform.d.ts b/build-types/react-platform.d.ts
+index 674a99e..2d7f06a 100644
+--- a/build-types/react-platform.d.ts
++++ b/build-types/react-platform.d.ts
+@@ -1,7 +1,7 @@
+ /**
+  * External dependencies
+  */
+-import { createPortal, findDOMNode, flushSync, render, hydrate, unmountComponentAtNode } from 'react-dom';
++import { createPortal, flushSync } from 'react-dom';
+ import { createRoot, hydrateRoot } from 'react-dom/client';
+ /**
+  * Creates a portal into which a component can be rendered.
+@@ -14,7 +14,7 @@ export { createPortal };
+  *
+  * @param {React.ComponentType} component Component's instance.
+  */
+-export { findDOMNode };
++export declare function findDOMNode(): never;
+ /**
+  * Forces React to flush any updates inside the provided callback synchronously.
+  *
+@@ -27,14 +27,14 @@ export { flushSync };
+  * @deprecated since WordPress 6.2.0. Use `createRoot` instead.
+  * @see https://react.dev/reference/react-dom/render
+  */
+-export { render };
++export declare function render(element: import('react').ReactNode, container: Element | DocumentFragment): null;
+ /**
+  * Hydrates a given element into the target DOM node.
+  *
+  * @deprecated since WordPress 6.2.0. Use `hydrateRoot` instead.
+  * @see https://react.dev/reference/react-dom/hydrate
+  */
+-export { hydrate };
++export declare function hydrate(element: import('react').ReactNode, container: Element | DocumentFragment): null;
+ /**
+  * Creates a new React root for the target DOM node.
+  *
+@@ -55,5 +55,5 @@ export { hydrateRoot };
+  * @deprecated since WordPress 6.2.0. Use `root.unmount()` instead.
+  * @see https://react.dev/reference/react-dom/unmountComponentAtNode
+  */
+-export { unmountComponentAtNode };
++export declare function unmountComponentAtNode(container: Element | DocumentFragment): boolean;
+ //# sourceMappingURL=react-platform.d.ts.map
+\ No newline at end of file
+diff --git a/build-types/raw-html.d.ts b/build-types/raw-html.d.ts
+index 7eac77b..aef6dd3 100644
+--- a/build-types/raw-html.d.ts
++++ b/build-types/raw-html.d.ts
+@@ -25,272 +25,5 @@ export type RawHTMLProps = {
+  *
+  * @return Dangerously-rendering component.
+  */
+-export default function RawHTML({ children, ...props }: RawHTMLProps): import("react").DetailedReactHTMLElement<{
+-    key?: import("react").Key | null | undefined;
+-    onCopy?: import("react").ClipboardEventHandler<HTMLDivElement>;
+-    onCopyCapture?: import("react").ClipboardEventHandler<HTMLDivElement>;
+-    onCut?: import("react").ClipboardEventHandler<HTMLDivElement>;
+-    onCutCapture?: import("react").ClipboardEventHandler<HTMLDivElement>;
+-    onPaste?: import("react").ClipboardEventHandler<HTMLDivElement>;
+-    onPasteCapture?: import("react").ClipboardEventHandler<HTMLDivElement>;
+-    onCompositionEnd?: import("react").CompositionEventHandler<HTMLDivElement>;
+-    onCompositionEndCapture?: import("react").CompositionEventHandler<HTMLDivElement>;
+-    onCompositionStart?: import("react").CompositionEventHandler<HTMLDivElement>;
+-    onCompositionStartCapture?: import("react").CompositionEventHandler<HTMLDivElement>;
+-    onCompositionUpdate?: import("react").CompositionEventHandler<HTMLDivElement>;
+-    onCompositionUpdateCapture?: import("react").CompositionEventHandler<HTMLDivElement>;
+-    onFocus?: import("react").FocusEventHandler<HTMLDivElement>;
+-    onFocusCapture?: import("react").FocusEventHandler<HTMLDivElement>;
+-    onBlur?: import("react").FocusEventHandler<HTMLDivElement>;
+-    onBlurCapture?: import("react").FocusEventHandler<HTMLDivElement>;
+-    onChange?: import("react").FormEventHandler<HTMLDivElement>;
+-    onChangeCapture?: import("react").FormEventHandler<HTMLDivElement>;
+-    onBeforeInput?: import("react").InputEventHandler<HTMLDivElement>;
+-    onBeforeInputCapture?: import("react").FormEventHandler<HTMLDivElement>;
+-    onInput?: import("react").FormEventHandler<HTMLDivElement>;
+-    onInputCapture?: import("react").FormEventHandler<HTMLDivElement>;
+-    onReset?: import("react").FormEventHandler<HTMLDivElement>;
+-    onResetCapture?: import("react").FormEventHandler<HTMLDivElement>;
+-    onSubmit?: import("react").FormEventHandler<HTMLDivElement>;
+-    onSubmitCapture?: import("react").FormEventHandler<HTMLDivElement>;
+-    onInvalid?: import("react").FormEventHandler<HTMLDivElement>;
+-    onInvalidCapture?: import("react").FormEventHandler<HTMLDivElement>;
+-    onLoad?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onLoadCapture?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onError?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onErrorCapture?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onKeyDown?: import("react").KeyboardEventHandler<HTMLDivElement>;
+-    onKeyDownCapture?: import("react").KeyboardEventHandler<HTMLDivElement>;
+-    onKeyPress?: import("react").KeyboardEventHandler<HTMLDivElement>;
+-    onKeyPressCapture?: import("react").KeyboardEventHandler<HTMLDivElement>;
+-    onKeyUp?: import("react").KeyboardEventHandler<HTMLDivElement>;
+-    onKeyUpCapture?: import("react").KeyboardEventHandler<HTMLDivElement>;
+-    onAbort?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onAbortCapture?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onCanPlay?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onCanPlayCapture?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onCanPlayThrough?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onCanPlayThroughCapture?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onDurationChange?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onDurationChangeCapture?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onEmptied?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onEmptiedCapture?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onEncrypted?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onEncryptedCapture?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onEnded?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onEndedCapture?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onLoadedData?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onLoadedDataCapture?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onLoadedMetadata?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onLoadedMetadataCapture?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onLoadStart?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onLoadStartCapture?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onPause?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onPauseCapture?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onPlay?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onPlayCapture?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onPlaying?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onPlayingCapture?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onProgress?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onProgressCapture?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onRateChange?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onRateChangeCapture?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onSeeked?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onSeekedCapture?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onSeeking?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onSeekingCapture?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onStalled?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onStalledCapture?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onSuspend?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onSuspendCapture?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onTimeUpdate?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onTimeUpdateCapture?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onVolumeChange?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onVolumeChangeCapture?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onWaiting?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onWaitingCapture?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onAuxClick?: import("react").MouseEventHandler<HTMLDivElement>;
+-    onAuxClickCapture?: import("react").MouseEventHandler<HTMLDivElement>;
+-    onClick?: import("react").MouseEventHandler<HTMLDivElement>;
+-    onClickCapture?: import("react").MouseEventHandler<HTMLDivElement>;
+-    onContextMenu?: import("react").MouseEventHandler<HTMLDivElement>;
+-    onContextMenuCapture?: import("react").MouseEventHandler<HTMLDivElement>;
+-    onDoubleClick?: import("react").MouseEventHandler<HTMLDivElement>;
+-    onDoubleClickCapture?: import("react").MouseEventHandler<HTMLDivElement>;
+-    onDrag?: import("react").DragEventHandler<HTMLDivElement>;
+-    onDragCapture?: import("react").DragEventHandler<HTMLDivElement>;
+-    onDragEnd?: import("react").DragEventHandler<HTMLDivElement>;
+-    onDragEndCapture?: import("react").DragEventHandler<HTMLDivElement>;
+-    onDragEnter?: import("react").DragEventHandler<HTMLDivElement>;
+-    onDragEnterCapture?: import("react").DragEventHandler<HTMLDivElement>;
+-    onDragExit?: import("react").DragEventHandler<HTMLDivElement>;
+-    onDragExitCapture?: import("react").DragEventHandler<HTMLDivElement>;
+-    onDragLeave?: import("react").DragEventHandler<HTMLDivElement>;
+-    onDragLeaveCapture?: import("react").DragEventHandler<HTMLDivElement>;
+-    onDragOver?: import("react").DragEventHandler<HTMLDivElement>;
+-    onDragOverCapture?: import("react").DragEventHandler<HTMLDivElement>;
+-    onDragStart?: import("react").DragEventHandler<HTMLDivElement>;
+-    onDragStartCapture?: import("react").DragEventHandler<HTMLDivElement>;
+-    onDrop?: import("react").DragEventHandler<HTMLDivElement>;
+-    onDropCapture?: import("react").DragEventHandler<HTMLDivElement>;
+-    onMouseDown?: import("react").MouseEventHandler<HTMLDivElement>;
+-    onMouseDownCapture?: import("react").MouseEventHandler<HTMLDivElement>;
+-    onMouseEnter?: import("react").MouseEventHandler<HTMLDivElement>;
+-    onMouseLeave?: import("react").MouseEventHandler<HTMLDivElement>;
+-    onMouseMove?: import("react").MouseEventHandler<HTMLDivElement>;
+-    onMouseMoveCapture?: import("react").MouseEventHandler<HTMLDivElement>;
+-    onMouseOut?: import("react").MouseEventHandler<HTMLDivElement>;
+-    onMouseOutCapture?: import("react").MouseEventHandler<HTMLDivElement>;
+-    onMouseOver?: import("react").MouseEventHandler<HTMLDivElement>;
+-    onMouseOverCapture?: import("react").MouseEventHandler<HTMLDivElement>;
+-    onMouseUp?: import("react").MouseEventHandler<HTMLDivElement>;
+-    onMouseUpCapture?: import("react").MouseEventHandler<HTMLDivElement>;
+-    onSelect?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onSelectCapture?: import("react").ReactEventHandler<HTMLDivElement>;
+-    onTouchCancel?: import("react").TouchEventHandler<HTMLDivElement>;
+-    onTouchCancelCapture?: import("react").TouchEventHandler<HTMLDivElement>;
+-    onTouchEnd?: import("react").TouchEventHandler<HTMLDivElement>;
+-    onTouchEndCapture?: import("react").TouchEventHandler<HTMLDivElement>;
+-    onTouchMove?: import("react").TouchEventHandler<HTMLDivElement>;
+-    onTouchMoveCapture?: import("react").TouchEventHandler<HTMLDivElement>;
+-    onTouchStart?: import("react").TouchEventHandler<HTMLDivElement>;
+-    onTouchStartCapture?: import("react").TouchEventHandler<HTMLDivElement>;
+-    onPointerDown?: import("react").PointerEventHandler<HTMLDivElement>;
+-    onPointerDownCapture?: import("react").PointerEventHandler<HTMLDivElement>;
+-    onPointerMove?: import("react").PointerEventHandler<HTMLDivElement>;
+-    onPointerMoveCapture?: import("react").PointerEventHandler<HTMLDivElement>;
+-    onPointerUp?: import("react").PointerEventHandler<HTMLDivElement>;
+-    onPointerUpCapture?: import("react").PointerEventHandler<HTMLDivElement>;
+-    onPointerCancel?: import("react").PointerEventHandler<HTMLDivElement>;
+-    onPointerCancelCapture?: import("react").PointerEventHandler<HTMLDivElement>;
+-    onPointerEnter?: import("react").PointerEventHandler<HTMLDivElement>;
+-    onPointerLeave?: import("react").PointerEventHandler<HTMLDivElement>;
+-    onPointerOver?: import("react").PointerEventHandler<HTMLDivElement>;
+-    onPointerOverCapture?: import("react").PointerEventHandler<HTMLDivElement>;
+-    onPointerOut?: import("react").PointerEventHandler<HTMLDivElement>;
+-    onPointerOutCapture?: import("react").PointerEventHandler<HTMLDivElement>;
+-    onGotPointerCapture?: import("react").PointerEventHandler<HTMLDivElement>;
+-    onGotPointerCaptureCapture?: import("react").PointerEventHandler<HTMLDivElement>;
+-    onLostPointerCapture?: import("react").PointerEventHandler<HTMLDivElement>;
+-    onLostPointerCaptureCapture?: import("react").PointerEventHandler<HTMLDivElement>;
+-    onScroll?: import("react").UIEventHandler<HTMLDivElement>;
+-    onScrollCapture?: import("react").UIEventHandler<HTMLDivElement>;
+-    onWheel?: import("react").WheelEventHandler<HTMLDivElement>;
+-    onWheelCapture?: import("react").WheelEventHandler<HTMLDivElement>;
+-    onAnimationStart?: import("react").AnimationEventHandler<HTMLDivElement>;
+-    onAnimationStartCapture?: import("react").AnimationEventHandler<HTMLDivElement>;
+-    onAnimationEnd?: import("react").AnimationEventHandler<HTMLDivElement>;
+-    onAnimationEndCapture?: import("react").AnimationEventHandler<HTMLDivElement>;
+-    onAnimationIteration?: import("react").AnimationEventHandler<HTMLDivElement>;
+-    onAnimationIterationCapture?: import("react").AnimationEventHandler<HTMLDivElement>;
+-    onTransitionEnd?: import("react").TransitionEventHandler<HTMLDivElement>;
+-    onTransitionEndCapture?: import("react").TransitionEventHandler<HTMLDivElement>;
+-    "aria-activedescendant"?: string | undefined;
+-    "aria-atomic"?: ("false" | "true" | boolean) | undefined;
+-    "aria-autocomplete"?: "none" | "inline" | "list" | "both" | undefined;
+-    "aria-braillelabel"?: string | undefined;
+-    "aria-brailleroledescription"?: string | undefined;
+-    "aria-busy"?: ("false" | "true" | boolean) | undefined;
+-    "aria-checked"?: boolean | "false" | "mixed" | "true" | undefined;
+-    "aria-colcount"?: number | undefined;
+-    "aria-colindex"?: number | undefined;
+-    "aria-colindextext"?: string | undefined;
+-    "aria-colspan"?: number | undefined;
+-    "aria-controls"?: string | undefined;
+-    "aria-current"?: boolean | "false" | "true" | "page" | "step" | "location" | "date" | "time" | undefined;
+-    "aria-describedby"?: string | undefined;
+-    "aria-description"?: string | undefined;
+-    "aria-details"?: string | undefined;
+-    "aria-disabled"?: ("false" | "true" | boolean) | undefined;
+-    "aria-dropeffect"?: "none" | "copy" | "execute" | "link" | "move" | "popup" | undefined;
+-    "aria-errormessage"?: string | undefined;
+-    "aria-expanded"?: ("false" | "true" | boolean) | undefined;
+-    "aria-flowto"?: string | undefined;
+-    "aria-grabbed"?: ("false" | "true" | boolean) | undefined;
+-    "aria-haspopup"?: boolean | "false" | "true" | "menu" | "listbox" | "tree" | "grid" | "dialog" | undefined;
+-    "aria-hidden"?: ("false" | "true" | boolean) | undefined;
+-    "aria-invalid"?: boolean | "false" | "true" | "grammar" | "spelling" | undefined;
+-    "aria-keyshortcuts"?: string | undefined;
+-    "aria-label"?: string | undefined;
+-    "aria-labelledby"?: string | undefined;
+-    "aria-level"?: number | undefined;
+-    "aria-live"?: "off" | "assertive" | "polite" | undefined;
+-    "aria-modal"?: ("false" | "true" | boolean) | undefined;
+-    "aria-multiline"?: ("false" | "true" | boolean) | undefined;
+-    "aria-multiselectable"?: ("false" | "true" | boolean) | undefined;
+-    "aria-orientation"?: "horizontal" | "vertical" | undefined;
+-    "aria-owns"?: string | undefined;
+-    "aria-placeholder"?: string | undefined;
+-    "aria-posinset"?: number | undefined;
+-    "aria-pressed"?: boolean | "false" | "mixed" | "true" | undefined;
+-    "aria-readonly"?: ("false" | "true" | boolean) | undefined;
+-    "aria-relevant"?: "additions" | "additions removals" | "additions text" | "all" | "removals" | "removals additions" | "removals text" | "text" | "text additions" | "text removals" | undefined;
+-    "aria-required"?: ("false" | "true" | boolean) | undefined;
+-    "aria-roledescription"?: string | undefined;
+-    "aria-rowcount"?: number | undefined;
+-    "aria-rowindex"?: number | undefined;
+-    "aria-rowindextext"?: string | undefined;
+-    "aria-rowspan"?: number | undefined;
+-    "aria-selected"?: ("false" | "true" | boolean) | undefined;
+-    "aria-setsize"?: number | undefined;
+-    "aria-sort"?: "none" | "ascending" | "descending" | "other" | undefined;
+-    "aria-valuemax"?: number | undefined;
+-    "aria-valuemin"?: number | undefined;
+-    "aria-valuenow"?: number | undefined;
+-    "aria-valuetext"?: string | undefined;
+-    defaultChecked?: boolean | undefined;
+-    defaultValue?: string | number | readonly string[] | undefined;
+-    suppressContentEditableWarning?: boolean | undefined;
+-    suppressHydrationWarning?: boolean | undefined;
+-    accessKey?: string | undefined;
+-    autoCapitalize?: "off" | "none" | "on" | "sentences" | "words" | "characters" | undefined | (string & {});
+-    autoFocus?: boolean | undefined;
+-    className?: string | undefined;
+-    contentEditable?: ("false" | "true" | boolean) | "inherit" | "plaintext-only" | undefined;
+-    contextMenu?: string | undefined;
+-    dir?: string | undefined;
+-    draggable?: ("false" | "true" | boolean) | undefined;
+-    enterKeyHint?: "enter" | "done" | "go" | "next" | "previous" | "search" | "send" | undefined;
+-    hidden?: boolean | undefined;
+-    id?: string | undefined;
+-    lang?: string | undefined;
+-    nonce?: string | undefined;
+-    slot?: string | undefined;
+-    spellCheck?: ("false" | "true" | boolean) | undefined;
+-    style?: import("react").CSSProperties | undefined;
+-    tabIndex?: number | undefined;
+-    title?: string | undefined;
+-    translate?: "yes" | "no" | undefined;
+-    radioGroup?: string | undefined;
+-    role?: import("react").AriaRole | undefined;
+-    about?: string | undefined;
+-    content?: string | undefined;
+-    datatype?: string | undefined;
+-    inlist?: any;
+-    prefix?: string | undefined;
+-    property?: string | undefined;
+-    rel?: string | undefined;
+-    resource?: string | undefined;
+-    rev?: string | undefined;
+-    typeof?: string | undefined;
+-    vocab?: string | undefined;
+-    autoCorrect?: string | undefined;
+-    autoSave?: string | undefined;
+-    color?: string | undefined;
+-    itemProp?: string | undefined;
+-    itemScope?: boolean | undefined;
+-    itemType?: string | undefined;
+-    itemID?: string | undefined;
+-    itemRef?: string | undefined;
+-    results?: number | undefined;
+-    security?: string | undefined;
+-    unselectable?: "on" | "off" | undefined;
+-    inputMode?: "none" | "text" | "tel" | "url" | "email" | "numeric" | "decimal" | "search" | undefined;
+-    is?: string | undefined;
+-    exportparts?: string | undefined;
+-    part?: string | undefined;
+-    dangerouslySetInnerHTML: {
+-        __html: string | TrustedHTML;
+-    };
+-}, HTMLElement>;
++export default function RawHTML({ children, ...props }: RawHTMLProps): import("react").ReactElement;
+ //# sourceMappingURL=raw-html.d.ts.map
+\ No newline at end of file
