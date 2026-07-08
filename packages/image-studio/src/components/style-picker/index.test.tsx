@@ -436,22 +436,26 @@ describe( 'StylePicker', () => {
 			} );
 		} );
 
-		it( 'exports Cinematic + Highlights video styles, both active', () => {
+		it( 'exports Highlights + Cinematic video styles, both active', () => {
 			expect( VIDEO_STYLE_OPTIONS ).toHaveLength( 2 );
 
+			// Highlights leads the list — it is the default video style and reads
+			// first in the picker.
 			expect( VIDEO_STYLE_OPTIONS[ 0 ] ).toMatchObject( {
-				label: 'Cinematic',
-				value: 'cinematic',
-			} );
-			expect( VIDEO_STYLE_OPTIONS[ 0 ].disabled ).toBeFalsy();
-			expect( VIDEO_STYLE_OPTIONS[ 0 ].preview ).toBeTruthy();
-
-			expect( VIDEO_STYLE_OPTIONS[ 1 ] ).toMatchObject( {
 				label: 'Highlights',
 				value: 'highlights',
 			} );
+			expect( VIDEO_STYLE_OPTIONS[ 0 ].disabled ).toBeFalsy();
+			expect( VIDEO_STYLE_OPTIONS[ 0 ].preview ).toBeTruthy();
+			expect( VIDEO_STYLE_OPTIONS[ 0 ].badge ).toBe( 'New' );
+
+			expect( VIDEO_STYLE_OPTIONS[ 1 ] ).toMatchObject( {
+				label: 'Cinematic',
+				value: 'cinematic',
+			} );
 			expect( VIDEO_STYLE_OPTIONS[ 1 ].disabled ).toBeFalsy();
 			expect( VIDEO_STYLE_OPTIONS[ 1 ].preview ).toBeTruthy();
+			expect( VIDEO_STYLE_OPTIONS[ 1 ].badge ).toBeFalsy();
 		} );
 
 		it( 'renders video options when variant="video"', async () => {
@@ -518,6 +522,25 @@ describe( 'StylePicker', () => {
 			expect( highlightsCard ).toHaveTextContent( 'Highlights' );
 			expect( highlightsCard ).not.toHaveTextContent( 'Coming Soon' );
 			expect( highlightsCard.querySelector( 'img' ) ).toBeInTheDocument();
+		} );
+
+		it( 'renders a "New" badge on the Highlights card only', async () => {
+			const user = userEvent.setup();
+			render( <StylePicker mode={ ImageStudioMode.Generate } variant="video" /> );
+
+			await user.click( screen.getByTestId( 'toolbar-button' ) );
+			const dropdown = screen.getByTestId( 'dropdown-content' );
+
+			const highlightsCard = within( dropdown ).getByRole( 'button', { name: /Highlights/ } );
+			const badge = highlightsCard.querySelector( '.image-studio-input-toolbar-card__badge' );
+			expect( badge ).toBeInTheDocument();
+			expect( badge ).toHaveTextContent( 'New' );
+
+			// The non-badged Cinematic card must not render a badge.
+			const cinematicCard = within( dropdown ).getByRole( 'button', { name: /Cinematic/ } );
+			expect(
+				cinematicCard.querySelector( '.image-studio-input-toolbar-card__badge' )
+			).not.toBeInTheDocument();
 		} );
 	} );
 

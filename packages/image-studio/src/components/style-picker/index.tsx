@@ -45,6 +45,8 @@ interface StyleOption {
 	// Renders the card with the native disabled attribute + a greyed-out
 	// .is-disabled style — used to tease an upcoming style.
 	disabled?: boolean;
+	// Small pill rendered on the card corner (e.g. "New") to flag a fresh style.
+	badge?: string;
 }
 
 export const STYLE_OPTIONS: StyleOption[] = [
@@ -141,12 +143,6 @@ export const STYLE_OPTIONS: StyleOption[] = [
 // branches and is preserved there.
 export const VIDEO_STYLE_OPTIONS: StyleOption[] = [
 	{
-		label: __( 'Cinematic', __i18n_text_domain__ ),
-		value: 'cinematic',
-		preview: videoCinematicPreview,
-		description: __( 'Create an 8-second b-roll mood clip from a prompt.', __i18n_text_domain__ ),
-	},
-	{
 		label: __( 'Highlights', __i18n_text_domain__ ),
 		value: 'highlights',
 		preview: videoHighlightsPreview,
@@ -154,6 +150,13 @@ export const VIDEO_STYLE_OPTIONS: StyleOption[] = [
 			"Build a 20-second recap clip using your post's images and key points.",
 			__i18n_text_domain__
 		),
+		badge: __( 'New', __i18n_text_domain__ ),
+	},
+	{
+		label: __( 'Cinematic', __i18n_text_domain__ ),
+		value: 'cinematic',
+		preview: videoCinematicPreview,
+		description: __( 'Create an 8-second b-roll mood clip from a prompt.', __i18n_text_domain__ ),
 	},
 ];
 
@@ -215,6 +218,9 @@ export function StylePicker( { disabled = false, mode, variant = 'image' }: Styl
 						} ) }
 						onClick={ () => handleStyleSelect( option.value ) }
 					>
+						{ option.badge ? (
+							<span className="image-studio-input-toolbar-card__badge">{ option.badge }</span>
+						) : null }
 						<span className="image-studio-input-toolbar-card__image-wrapper">
 							<img
 								src={ option.preview ?? '' }

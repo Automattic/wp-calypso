@@ -55,9 +55,9 @@ type VideoStudioAction =
  * Initial state for the video studio store
  */
 const initialState: VideoStudioState = {
-	// Default to 'cinematic' so the Style picker shows a pre-selected option
+	// Default to 'highlights' so the Style picker shows a pre-selected option
 	// on first open instead of leaving the user with an indeterminate picker.
-	selectedStyle: 'cinematic',
+	selectedStyle: 'highlights',
 	currentVideoUrl: null,
 	currentAttachmentId: null,
 	currentDurationSeconds: null,

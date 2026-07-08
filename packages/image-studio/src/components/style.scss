@@ -489,6 +489,7 @@ body.js.is-image-studio-open {
 }
 
 .image-studio-input-toolbar-card {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -534,6 +535,29 @@ body.js.is-image-studio-open {
 		object-fit: cover;
 		display: block;
 		transform: scale(1) translateX(-3%);
+	}
+
+	// "New" chip on the Highlights card — the same recipe as ExperimentalBadge's
+	// dark variant, hued to the dominant orange from the Highlights preview art.
+	// Absolutely positioned in the corner (own stacking context) so it sits above
+	// the preview and never shifts the label column.
+	&__badge {
+		position: absolute;
+		top: 4px;
+		right: 4px;
+		z-index: 1;
+		display: inline-flex;
+		align-items: center;
+		padding: 2px 8px;
+		font-size: 11px;
+		font-weight: 500;
+		line-height: 1.4;
+		letter-spacing: 0.02em;
+		white-space: nowrap;
+		color: #ffd7ac;
+		background: rgba(255, 166, 70, 0.18);
+		border: 1px solid rgba(255, 166, 70, 0.35);
+		border-radius: 2px;
 	}
 
 	// Aspect ratio card specific: icon wrapper
