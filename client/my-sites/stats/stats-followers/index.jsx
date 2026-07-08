@@ -4,6 +4,8 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -23,6 +25,9 @@ const StatModuleFollowers = ( { className } ) => {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
 
 	const { data: subTotals, isLoading, isError: hasError } = useSubscribersTotalsQueries( siteId );
 
@@ -68,6 +73,7 @@ const StatModuleFollowers = ( { className } ) => {
 	const subscriberManagementUrl = useJetpackCloudLinks
 		? `https://cloud.jetpack.com/subscribers/${ summaryPageSlug }`
 		: `https://wordpress.com/subscribers/${ summaryPageSlug }`;
+	const supportContext = isSiteJetpackNotAtomic ? 'stats-subscribers-jetpack' : 'stats-subscribers';
 
 	return (
 		<StatsListCard
@@ -92,6 +98,17 @@ const StatModuleFollowers = ( { className } ) => {
 			usePlainCard
 			hasNoBackground
 			title={ translate( 'Subscribers' ) }
+			titleNodes={
+				<StatsInfoArea>
+					{ translate( '{{link}}Latest subscribers{{/link}} and when they subscribed.', {
+						comment: '{{link}} links to support documentation.',
+						components: {
+							link: <InlineSupportLink supportContext={ supportContext } showIcon={ false } />,
+						},
+						context: 'Stats: Header popover information when the Subscribers module has data.',
+					} ) }
+				</StatsInfoArea>
+			}
 			emptyMessage={ translate(
 				'Once you get a few, {{link}}your subscribers{{/link}} will appear here.',
 				{

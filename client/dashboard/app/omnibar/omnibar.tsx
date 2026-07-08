@@ -14,6 +14,7 @@ import { OmnibarHomeIcon } from './home';
 import { useHelpCenterPlugin } from './plugin-help-center';
 import { useNotificationsPlugin } from './plugin-notifications';
 import { useSiteSwitcherPlugin } from './plugin-site-switcher';
+import { useStatsSparklinePlugin } from './plugin-stats-sparkline';
 import type { User } from '@automattic/api-core';
 
 const onClickResponsiveMenu = () => omnibarEvents.mobileMenu.emit();
@@ -75,10 +76,15 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 	const helpCenterPluginNode = useHelpCenterPlugin();
 	const notificationsPluginNode = useNotificationsPlugin( { user } );
 	const siteSwitcherPluginNode = useSiteSwitcherPlugin();
+	const statsSparklineNode = useStatsSparklinePlugin( { siteId, site } );
+	const siteActions = statsSparklineNode
+		? [ ...( baseOmnibarNodes.siteActions ?? [] ), statsSparklineNode ]
+		: baseOmnibarNodes.siteActions;
 
 	const omnibarNodes = {
 		...baseOmnibarNodes,
 		sitePlugins: [ siteSwitcherPluginNode ],
+		siteActions,
 		plugins: [ helpCenterPluginNode, notificationsPluginNode ],
 	};
 
