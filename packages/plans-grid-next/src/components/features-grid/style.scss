@@ -820,6 +820,7 @@
 
 		.plan-price__currency-symbol,
 		.plan-price.is-discounted .plan-price__currency-symbol {
+			color: inherit;
 			font-size: 14px;
 			margin-top: 3px;
 		}
