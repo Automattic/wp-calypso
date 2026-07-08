@@ -16,6 +16,7 @@ import {
 	purchaseCancelFeaturesQuery,
 	purchaseQuery,
 	siteByIdQuery,
+	siteQueryFilter,
 	siteDomainsQuery,
 	sitePurchasesQuery,
 	userPreferenceMutation,
@@ -549,6 +550,19 @@ function CancelPurchaseInner() {
 		},
 		[ purchase, navigate, createSuccessNotice ]
 	);
+
+	// The removal mutations only invalidate the purchases list, so the site the
+	// product belonged to keeps serving a stale plan (and features/products).
+	// Refresh the Site record and its site-scoped caches so the destination —
+	// most importantly the site page — reflects the removal. Mirrors the
+	// invalidation siteDeleteMutation does.
+	const invalidateSiteAfterRemoval = useCallback( () => {
+		if ( ! purchase.blog_id || purchase.is_attached_to_holding_site ) {
+			return;
+		}
+		queryClient.invalidateQueries( siteQueryFilter( purchase.blog_id ) );
+		queryClient.invalidateQueries( { queryKey: [ 'site', purchase.blog_id ] } );
+	}, [ queryClient, purchase.blog_id, purchase.is_attached_to_holding_site ] );
 
 	const track = useCallback( () => {
 		if ( productSlug ) {
@@ -1238,6 +1252,7 @@ function CancelPurchaseInner() {
 							cancelAllMarketplaceSubscriptions();
 						}
 						invokeSurvicateEvent( 'purchaseRefunded' );
+						invalidateSiteAfterRemoval();
 						navigateAfterRemoval(
 							__( 'Your refund has been processed and your purchase removed.' )
 						);
@@ -1371,20 +1386,27 @@ function CancelPurchaseInner() {
 			//    re-strip happens synchronously inside the QueryCache notify callback,
 			//    so the list's useEffect never observes transient success-path
 			//    reappearances.
-			removePurchaseMutator.mutateAsync( purchase.ID ).catch( () => {
-				cleanupGuard();
-				queryClient.setQueryData(
-					userPurchasesQuery().queryKey,
-					( old: Purchase[] | undefined ) => {
-						const list = old ?? [];
-						return list.some( ( p ) => p.ID === purchase.ID ) ? list : [ ...list, purchase ];
-					}
-				);
-				createErrorNotice( __( 'Failed to remove your purchase. Please try again.' ), {
-					type: 'snackbar',
+			removePurchaseMutator
+				.mutateAsync( purchase.ID )
+				.then( () => {
+					// The server has removed the purchase; refresh the site caches so
+					// the destination site page drops the now-defunct plan.
+					invalidateSiteAfterRemoval();
+				} )
+				.catch( () => {
+					cleanupGuard();
+					queryClient.setQueryData(
+						userPurchasesQuery().queryKey,
+						( old: Purchase[] | undefined ) => {
+							const list = old ?? [];
+							return list.some( ( p ) => p.ID === purchase.ID ) ? list : [ ...list, purchase ];
+						}
+					);
+					createErrorNotice( __( 'Failed to remove your purchase. Please try again.' ), {
+						type: 'snackbar',
+					} );
+					queryClient.invalidateQueries( { queryKey: userPurchasesQuery().queryKey } );
 				} );
-				queryClient.invalidateQueries( { queryKey: userPurchasesQuery().queryKey } );
-			} );
 		}, 1500 );
 	};
 
