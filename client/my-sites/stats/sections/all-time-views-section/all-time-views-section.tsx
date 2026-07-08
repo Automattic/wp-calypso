@@ -128,7 +128,7 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 									<span>{ translate( 'Total views' ) }</span>
 									<StatsInfoArea>
 										{ translate(
-											'{{link}}Learn about view patterns{{/link}} by analyzing total and average daily views to your site.',
+											'{{link}}Learn about view patterns{{/link}} by analyzing total and average daily views on your site.',
 											{
 												comment: '{{link}} links to support documentation.',
 												components: {
