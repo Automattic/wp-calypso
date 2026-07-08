@@ -24,7 +24,7 @@ import { useEffect, useMemo, useState } from 'react';
 import {
 	useCreateSpace,
 	useDeleteSpace,
-	useSpace,
+	useSpaceBySlug,
 	useSpaces,
 	useUpdateSpace,
 } from 'calypso/reader/data/spaces';
@@ -36,10 +36,12 @@ import {
 import { getSpaceErrorMessage, validateName } from 'calypso/reader/spaces/form-helpers';
 import { SPACE_ICONS } from 'calypso/reader/spaces/icons';
 import { isKnownLanguageCode, toBaseLanguageCode } from 'calypso/reader/spaces/languages';
+import { getSpaceTabPath, parseSpaceTabFromPath } from 'calypso/reader/spaces/routes';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { DEFAULT_SPACE_FEED_LAYOUT } from '../feed/layouts/registry';
 import { ConfirmDeleteDialog } from './confirm-delete';
 import { DeleteTab } from './delete-tab';
@@ -56,14 +58,16 @@ const SPACE_MODAL_HEADING_ID = 'customize-space-modal__heading';
 
 interface CustomizeModalProps {
 	isOpen: boolean;
-	spaceId: string | null;
+	// The space's URL slug (edit mode resolves the detail by it, reusing the view's
+	// by-slug cache). Null while no space is addressed.
+	slug: string | null;
 	onClose: () => void;
 	initialTab?: CustomizeTab;
 }
 
 export function CustomizeModal( {
 	isOpen,
-	spaceId,
+	slug,
 	onClose,
 	initialTab = 'identity',
 }: CustomizeModalProps ) {
@@ -71,7 +75,7 @@ export function CustomizeModal( {
 		<SpaceUpsertModal
 			isOpen={ isOpen }
 			mode="edit"
-			spaceId={ spaceId }
+			slug={ slug }
 			onClose={ onClose }
 			initialTab={ initialTab }
 		/>
@@ -105,7 +109,7 @@ const getSpaceSourceDraftItem = ( source: SpaceSource ): SourceDraftItem => ( {
 interface SpaceUpsertModalProps {
 	isOpen: boolean;
 	mode: SpaceUpsertMode;
-	spaceId?: string | null;
+	slug?: string | null;
 	onClose: () => void;
 	onCreated?: ( space: ReadSpace ) => void;
 	initialTab?: CustomizeTab;
@@ -114,20 +118,20 @@ interface SpaceUpsertModalProps {
 export function SpaceUpsertModal( {
 	isOpen,
 	mode,
-	spaceId = null,
+	slug = null,
 	onClose,
 	onCreated,
 	initialTab = 'identity',
 }: SpaceUpsertModalProps ) {
 	// Mount fresh each open so the draft form state resets to the mode's values.
-	if ( ! isOpen || ( mode === 'edit' && ! spaceId ) ) {
+	if ( ! isOpen || ( mode === 'edit' && ! slug ) ) {
 		return null;
 	}
 
 	return (
 		<SpaceUpsertModalContent
 			mode={ mode }
-			spaceId={ spaceId }
+			slug={ slug }
 			onClose={ onClose }
 			onCreated={ onCreated }
 			initialTab={ initialTab }
@@ -137,13 +141,13 @@ export function SpaceUpsertModal( {
 
 function SpaceUpsertModalContent( {
 	mode,
-	spaceId,
+	slug,
 	onClose,
 	onCreated,
 	initialTab,
 }: {
 	mode: SpaceUpsertMode;
-	spaceId: string | null;
+	slug: string | null;
 	onClose: () => void;
 	onCreated?: ( space: ReadSpace ) => void;
 	initialTab: CustomizeTab;
@@ -151,9 +155,15 @@ function SpaceUpsertModalContent( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const userLocale = useSelector( getCurrentUserLocale );
+	// The path we're on, so a rename can redirect to the new slug while preserving
+	// the current tab. Only meaningful in edit mode (we're on the space's URL).
+	const currentRoute = useSelector( getCurrentRoute );
 	const isCreate = mode === 'create';
-	const editSpaceId = isCreate ? null : spaceId;
-	const { data: space } = useSpace( editSpaceId, { enabled: ! isCreate } );
+	// Resolve the space by its URL slug (edit mode), sharing the view's by-slug cache
+	// so opening the modal doesn't refetch. The numeric id — used by the update/delete
+	// mutations, which stay id-based — comes off the resolved detail.
+	const { data: space } = useSpaceBySlug( isCreate ? null : slug );
+	const editSpaceId = space?.id ?? null;
 	const spaces = useSpaces();
 	const createSpace = useCreateSpace();
 	const updateSpace = useUpdateSpace();
@@ -280,7 +290,7 @@ function SpaceUpsertModalContent( {
 				},
 			},
 			{
-				onSuccess: () => {
+				onSuccess: ( updatedSpace ) => {
 					const previousView = space.layout.view ?? DEFAULT_SPACE_FEED_LAYOUT;
 					if ( view !== previousView ) {
 						dispatch(
@@ -297,6 +307,15 @@ function SpaceUpsertModalContent( {
 					);
 					dispatch( successNotice( translate( 'Changes saved.' ), { duration: 5000 } ) );
 					onClose();
+					// The slug re-syncs to the (possibly renamed) title server-side, so if it
+					// changed, the URL we're on now points at the old slug — canonicalize it,
+					// keeping the tab we were viewing. The mutation seeded the new slug's cache,
+					// so this lands without a refetch flash.
+					if ( updatedSpace.slug !== space.slug ) {
+						page.replace(
+							getSpaceTabPath( updatedSpace.slug, parseSpaceTabFromPath( currentRoute ) )
+						);
+					}
 				},
 			}
 		);

@@ -7,11 +7,19 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import { SiteIcon } from 'calypso/blocks/site-icon';
+import { useCachedPost } from 'calypso/reader/data/post/cache';
+import { type StreamPostKey } from 'calypso/reader/data/stream';
 import { useInfiniteList } from 'calypso/reader/hooks/use-infinite-list';
+import { keyForPost } from 'calypso/reader/post-key';
 import { getPostUrl } from 'calypso/reader/route';
 import { Shimmer } from '../../components/skeleton';
 import { SpaceFeedTimeSince } from '../../components/time-since';
-import { getPostFields, type SpaceFeedDayGroup, type SpaceFeedPostFields } from '../../post-fields';
+import {
+	getPostDayGroup,
+	getPostFieldKey,
+	getPostFields,
+	type SpaceFeedDayGroup,
+} from '../../post-fields';
 import { useScrollSelectedIntoView } from '../use-scroll-selected-into-view';
 import type { SpaceFeedLayoutProps, SpaceFeedSkeletonProps } from '../types';
 import type { ReadStreamPost } from '@automattic/api-core';
@@ -20,24 +28,38 @@ import './style.scss';
 
 type Row =
 	| { kind: 'header'; key: string; label: string }
-	| { kind: 'post'; key: string; fields: SpaceFeedPostFields; post: ReadStreamPost };
+	| { kind: 'post'; key: string; post: ReadStreamPost };
 
 const HEADER_SIZE = 44;
 const ROW_SIZE = 170;
 
+/** A single row-shaped shimmer, shown while a post loads from the cache. */
+function StandardListSkeletonRow() {
+	return (
+		<div className="space-feed-standard-list__skeleton-row">
+			<Shimmer className="space-feed-standard-list__skeleton-line is-title" />
+			<Shimmer className="space-feed-standard-list__skeleton-line" />
+			<Shimmer className="space-feed-standard-list__skeleton-line is-meta" />
+		</div>
+	);
+}
+
 function PostRow( {
-	fields,
-	post,
+	postKey,
 	isSelected,
 	onOpen,
 	showTimestamp,
 }: {
-	fields: SpaceFeedPostFields;
-	post: ReadStreamPost;
+	postKey: StreamPostKey | undefined;
 	isSelected: boolean;
 	onOpen: () => void;
 	showTimestamp: boolean;
 } ) {
+	const post = useCachedPost( postKey );
+	if ( ! post ) {
+		return <StandardListSkeletonRow />;
+	}
+	const fields = getPostFields( post );
 	return (
 		<HStack
 			className="space-feed-standard-list__row"
@@ -130,8 +152,9 @@ export function StandardListLayout( {
 		const out: Row[] = [];
 		let lastGroup: SpaceFeedDayGroup = '';
 		posts.forEach( ( post, index ) => {
-			const fields = getPostFields( post );
-			const { dayGroup, key } = fields;
+			// Day grouping and the row key read only the raw post's date/identity — each
+			// PostRow resolves its own normalized copy for display.
+			const dayGroup = getPostDayGroup( post );
 			// Discover is recommendation-ranked, not chronological: day grouping would
 			// bucket unrelated posts under misleading dates. Gate it like the timestamp.
 			if ( showTimestamp && dayGroup && dayGroup !== lastGroup ) {
@@ -142,7 +165,7 @@ export function StandardListLayout( {
 				} );
 				lastGroup = dayGroup;
 			}
-			out.push( { kind: 'post', key: `post-${ key }`, fields, post } );
+			out.push( { kind: 'post', key: `post-${ getPostFieldKey( post ) }`, post } );
 		} );
 		return out;
 	}, [ posts, translate, showTimestamp ] );
@@ -188,8 +211,7 @@ export function StandardListLayout( {
 							<h2 className="space-feed-standard-list__group">{ row.label }</h2>
 						) : (
 							<PostRow
-								fields={ row.fields }
-								post={ row.post }
+								postKey={ keyForPost( row.post ) }
 								isSelected={ isPostSelected( row.post ) }
 								onOpen={ () => selectPost( row.post ) }
 								showTimestamp={ showTimestamp }
@@ -207,11 +229,7 @@ export function StandardListSkeleton( { count }: SpaceFeedSkeletonProps ) {
 	return (
 		<div aria-hidden="true">
 			{ Array.from( { length: count }, ( _value, index ) => (
-				<div className="space-feed-standard-list__skeleton-row" key={ index }>
-					<Shimmer className="space-feed-standard-list__skeleton-line is-title" />
-					<Shimmer className="space-feed-standard-list__skeleton-line" />
-					<Shimmer className="space-feed-standard-list__skeleton-line is-meta" />
-				</div>
+				<StandardListSkeletonRow key={ index } />
 			) ) }
 		</div>
 	);

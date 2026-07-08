@@ -1,12 +1,7 @@
 import { type DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
 import { DefinedUseQueryResult, useQueries, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import {
-	getTld,
-	isFreeSubdomainQuery,
-	isWpcomSubdomainQuery,
-	stripWpcomSubdomainSuffix,
-} from '../helpers';
+import { isFqdnQuery, isWpcomSubdomainQuery, stripWpcomSubdomainSuffix } from '../helpers';
 import { addAvailabilityAsSuggestion } from '../helpers/add-availability-as-suggestion';
 import { isSupportedPremiumDomain } from '../helpers/is-supported-premium-domain';
 import { partitionSuggestions } from '../helpers/partition-suggestions';
@@ -32,7 +27,6 @@ const availablePremiumDomainsCombinator = (
 export const useSuggestionsList = () => {
 	const { query, queries, config } = useDomainSearch();
 
-	const isFreeSubdomain = isFreeSubdomainQuery( query );
 	const freeSuggestionQuery = isWpcomSubdomainQuery( query )
 		? stripWpcomSubdomainSuffix( query )
 		: query;
@@ -42,24 +36,26 @@ export const useSuggestionsList = () => {
 		enabled: true,
 	} );
 
-	const isFqdnQuery = ! isFreeSubdomain && !! getTld( query );
+	const isFqdn = isFqdnQuery( query );
 
 	const { isLoading: isLoadingFreeSuggestion } = useQuery( {
 		...queries.freeSuggestion( freeSuggestionQuery ),
-		enabled: config.skippable && ! isFqdnQuery,
+		enabled: config.skippable && ! isFqdn,
 	} );
 
-	// Bundle suggestions are gated behind the frontend `domain-bundling` flag
-	// (surfaced as config.showBundleSuggestions). When off, the query never runs
-	// and bundleSuggestion stays undefined, leaving the rest of the flow unchanged.
+	// The top bundle card is the FQDN path only: a bare-term search shows inline
+	// bundle rows instead (see useInlineBundles), and the backend returns no
+	// bundle_suggestion for a bare term anyway. Gating on isFqdnQuery keeps this
+	// request from duplicating the bare-term bundleTriggers request (same URL).
+	// Still gated behind the frontend `domain-bundling` flag (config.showBundleSuggestions).
 	const { data: bundleSuggestion } = useQuery( {
 		...queries.bundleSuggestion( query ),
-		enabled: config.showBundleSuggestions,
+		enabled: config.showBundleSuggestions && isFqdn,
 	} );
 
 	const { isLoading: isLoadingQueryAvailability, data: fqdnAvailability } = useQuery( {
 		...queries.domainAvailability( query ),
-		enabled: isFqdnQuery,
+		enabled: isFqdn,
 	} );
 
 	const premiumSuggestions = useMemo(

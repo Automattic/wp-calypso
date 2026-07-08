@@ -690,6 +690,7 @@ const PlansFeaturesMain = ( {
 	const {
 		isLoading: isPlansGridRedesignExperimentLoading,
 		showDifferentiatorHeader: showPlansGridRedesignDifferentiatorHeader,
+		usePlansGridRedesignFeatures,
 		usePlansGridRedesign,
 		usePlansGridRedesignNewDescription,
 	} = usePlansGridRedesignExperiment( { flowName, isInSignup, siteId } );
@@ -907,6 +908,7 @@ const PlansFeaturesMain = ( {
 		term,
 		reflectStorageSelectionInPlanPrices: true,
 		useVar42NoAiFeatures,
+		usePlansGridRedesignFeatures,
 		showPricingDifferentiationFeaturePills,
 		useFocusedNewCopyTaglines,
 		usePlansGridRedesignNewDescription,
@@ -1228,7 +1230,7 @@ const PlansFeaturesMain = ( {
 		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid();
 	} else if ( intent === 'plans-wordpress-hosting' ) {
 		featureGroupMapForFeaturesGrid = getWordPressHostingFeaturesGroupedForFeaturesGrid();
-	} else if ( useVar42NoAiFeatures ) {
+	} else if ( useVar42NoAiFeatures || usePlansGridRedesignFeatures ) {
 		// Stacked rollout variant should render a single, ordered list (no grouping),
 		// otherwise features get scattered across groups causing gaps and can be filtered out.
 		const featureGroups = getPlanFeaturesGroupedForFeaturesGrid();
