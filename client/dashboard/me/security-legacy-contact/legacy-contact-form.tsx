@@ -37,17 +37,19 @@ const fields: Field< LegacyContactFormData >[] = [
 			const { id, getValue } = field;
 			const value = getValue( { item: data } ) || '';
 			const remaining = LEGACY_CONTACT_NOTES_MAX_LENGTH - value.length;
-			const isNearLimit = remaining <= LEGACY_CONTACT_NOTES_WARNING_THRESHOLD;
+			const isAtLimit = remaining <= 0;
+			const isNearLimit = ! isAtLimit && remaining <= LEGACY_CONTACT_NOTES_WARNING_THRESHOLD;
 
 			return (
 				<div className="legacy-contact-notes-field">
 					<span
 						className={ clsx( 'legacy-contact-notes-field__count', {
 							'is-near-limit': isNearLimit,
+							'is-at-limit': isAtLimit,
 						} ) }
 						// Only announce once the user is near the limit, so screen
 						// readers aren't read the count on every keystroke.
-						aria-live={ isNearLimit ? 'polite' : 'off' }
+						aria-live={ isNearLimit || isAtLimit ? 'polite' : 'off' }
 					>
 						{ sprintf(
 							/* translators: %d is the number of characters remaining. */

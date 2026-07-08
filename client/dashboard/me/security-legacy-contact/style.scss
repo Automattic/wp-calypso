@@ -16,6 +16,10 @@
 	white-space: nowrap;
 
 	&.is-near-limit {
+		color: var( --dashboard__foreground-color-warning );
+	}
+
+	&.is-at-limit {
 		color: var( --dashboard__foreground-color-error );
 	}
 }
