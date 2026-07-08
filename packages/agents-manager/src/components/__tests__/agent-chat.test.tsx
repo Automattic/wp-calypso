@@ -138,8 +138,9 @@ jest.mock( '../../utils/is-plugin-compass-agent', () => ( {
 jest.mock( '../../utils/is-reader-chat-agent', () => ( {
 	isReaderChatHost: () => false,
 } ) );
-jest.mock( '../../hooks/use-admin-bar-integration', () => ( {
-	hasAiChatEntryButton: () => mockHasAiChatEntry(),
+jest.mock( '../../hooks/use-has-ai-chat-entry-button', () => ( {
+	__esModule: true,
+	default: () => mockHasAiChatEntry(),
 } ) );
 
 import AgentChat from '../agent-chat';

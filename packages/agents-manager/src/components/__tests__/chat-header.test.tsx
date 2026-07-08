@@ -43,8 +43,9 @@ jest.mock( '../../utils/tracks', () => ( {
 	recordBigSkyTracksEvent: jest.fn(),
 	recordAgentsManagerTracksEvent: jest.fn(),
 } ) );
-jest.mock( '../../hooks/use-admin-bar-integration', () => ( {
-	hasAiChatEntryButton: () =>
+jest.mock( '../../hooks/use-has-ai-chat-entry-button', () => ( {
+	__esModule: true,
+	default: () =>
 		!! globalThis.document.getElementById( 'wp-admin-bar-agents-manager-ai-chat' ) ||
 		!! globalThis.document.querySelector( '.masterbar__item-agents-manager-ai-chat' ),
 } ) );
