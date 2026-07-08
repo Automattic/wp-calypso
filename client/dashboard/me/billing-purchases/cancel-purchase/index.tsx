@@ -16,7 +16,6 @@ import {
 	purchaseCancelFeaturesQuery,
 	purchaseQuery,
 	siteByIdQuery,
-	siteQueryFilter,
 	siteDomainsQuery,
 	sitePurchasesQuery,
 	userPreferenceMutation,
@@ -45,7 +44,6 @@ import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { useLocale } from '../../../app/locale';
 import { cancelPurchaseRoute, purchaseSettingsRoute, purchasesRoute } from '../../../app/router/me';
-import { siteRoute } from '../../../app/router/sites';
 import { Card, CardBody } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
@@ -101,6 +99,7 @@ import RefundEligibilityNotice from './refund-eligibility-notice';
 import TimeRemainingNotice from './time-remaining-notice';
 import { useCancelMutationOnConfirm } from './use-cancel-mutation-on-confirm';
 import { useIsSplitCancelRemoveEnabled } from './use-is-split-cancel-remove-enabled';
+import { usePostRemovalNavigation } from './use-post-removal-navigation';
 import type { CancelPurchaseState } from './types';
 import type {
 	Purchase,
@@ -535,34 +534,7 @@ function CancelPurchaseInner() {
 		navigate( { to: purchasesRoute.to } );
 	}, [ purchase, navigate ] );
 
-	// Once a purchase is removed, its settings page is no longer useful. Send the
-	// user to the site the purchase was attached to, or the purchases list for
-	// siteless/holding-site products. A snackbar confirms the action since the
-	// destination screens don't carry the removal notice.
-	const navigateAfterRemoval = useCallback(
-		( successMessage: string ) => {
-			createSuccessNotice( successMessage, { type: 'snackbar' } );
-			if ( purchase.site_slug && ! purchase.is_attached_to_holding_site ) {
-				navigate( { to: siteRoute.fullPath, params: { siteSlug: purchase.site_slug } } );
-				return;
-			}
-			navigate( { to: purchasesRoute.to } );
-		},
-		[ purchase, navigate, createSuccessNotice ]
-	);
-
-	// The removal mutations only invalidate the purchases list, so the site the
-	// product belonged to keeps serving a stale plan (and features/products).
-	// Refresh the Site record and its site-scoped caches so the destination —
-	// most importantly the site page — reflects the removal. Mirrors the
-	// invalidation siteDeleteMutation does.
-	const invalidateSiteAfterRemoval = useCallback( () => {
-		if ( ! purchase.blog_id || purchase.is_attached_to_holding_site ) {
-			return;
-		}
-		queryClient.invalidateQueries( siteQueryFilter( purchase.blog_id ) );
-		queryClient.invalidateQueries( { queryKey: [ 'site', purchase.blog_id ] } );
-	}, [ queryClient, purchase.blog_id, purchase.is_attached_to_holding_site ] );
+	const { navigateAfterRemoval, invalidateSiteAfterRemoval } = usePostRemovalNavigation( purchase );
 
 	const track = useCallback( () => {
 		if ( productSlug ) {
