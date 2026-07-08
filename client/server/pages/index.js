@@ -1264,7 +1264,7 @@ export default function pages() {
 		);
 	}
 
-	// Multi-site Dashboard routing.
+	// Special Calypso routes which also appear on `my.wordpress.com`
 	if ( isDashboardEnv() || calypsoEnv === 'development' ) {
 		const signupSectionDefinition = sections.find( ( s ) => s.name === 'signup' );
 		handleSectionPath( signupSectionDefinition, '/start', undefined, ( req ) =>
