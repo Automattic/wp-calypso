@@ -2,7 +2,9 @@ import { HostingFeatures } from '@automattic/api-core';
 import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
+import { ThemedIllustration } from '../../components/themed-illustration';
 import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
+import illustrationDarkUrl from './activity-logs-callout-illustration-dark.svg';
 import illustrationUrl from './activity-logs-callout-illustration.svg';
 import type { Site } from '@automattic/api-core';
 import type { JSX } from 'react';
@@ -13,7 +15,7 @@ export function getActivityLogsCalloutProps() {
 		upsellId: 'site-logs-activity',
 		upsellIcon: chartBar,
 		upsellTitle: __( 'Track every action with Jetpack Activity' ),
-		upsellImage: illustrationUrl,
+		upsellImage: <ThemedIllustration light={ illustrationUrl } dark={ illustrationDarkUrl } />,
 		upsellDescription: (
 			<>
 				<Text as="p" variant="muted">

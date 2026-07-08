@@ -40,8 +40,8 @@
 .email-provider-trial {
 	padding: 0 10px;
 	border-radius: 3px;
-	background-color: $studio-green-10;
-	color: $studio-green-90;
+	background-color: var( --studio-green-10, #{$studio-green-10} );
+	color: var( --studio-green-90, #{$studio-green-90} );
 	font-size: 12px;
 	line-height: 20px;
 	font-weight: 500;

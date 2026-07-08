@@ -1,0 +1,89 @@
+/*
+ * WPDS bridge — the replacement for the bespoke dark-mode palette engine.
+ *
+ * The legacy `dark-theme.scss` hand-generated an entire color system with
+ * `color-mix()` ramps and then re-pointed Calypso's `--dashboard-*`, `--color-*`
+ * and `--wp-components-*` variables at those generated values, all gated behind
+ * `:root[data-theme="dark"]` and `prefers-color-scheme` media queries.
+ *
+ * In the WPDS model that work disappears. The `@wordpress/theme` `ThemeProvider`
+ * (mounted in `wpds-theme.tsx`) regenerates the `--wpds-*` semantic tokens for
+ * the active light/dark mode at runtime. This mixin simply maps Calypso's legacy
+ * variable contract onto those semantic tokens *once*, mode-agnostically — there
+ * are no `data-theme` selectors and no media queries here, because the token
+ * values already encode the mode.
+ *
+ * Emit it unconditionally at a themed root (e.g. `:root` or a surface wrapper).
+ * As each surface migrates its components to consume `--wpds-*`/`@wordpress/ui`
+ * directly, the corresponding lines below can be deleted; once a surface no
+ * longer reads any legacy variable, it drops this mixin entirely.
+ *
+ * NOTE: this file intentionally does NOT `@import` color-studio or define ramps.
+ * It is the lean, forward-looking counterpart to `dark-theme.scss`, which is now
+ * deprecated (see ./MIGRATION.md).
+ */
+
+@mixin color-scheme-wpds-bridge {
+	// Advertise both schemes to the browser so native UI (scrollbars, form
+	// controls, etc.) follows the WPDS-selected mode.
+	color-scheme: light dark;
+
+	// --- Page + surface backgrounds -------------------------------------
+	--dashboard__background-color: var( --wpds-color-bg-surface-neutral-weak );
+	--dashboard-surface__background-color: var( --wpds-color-bg-surface-neutral-strong );
+	--dashboard-inline-code__background-color: var( --wpds-color-bg-surface-neutral );
+	--dashboard-header__background-color: var( --wpds-color-bg-surface-neutral );
+	--color-surface: var( --wpds-color-bg-surface-neutral-strong );
+	--color-popover: var( --wpds-color-bg-surface-neutral-strong );
+	--color-popover-muted: var( --wpds-color-bg-surface-neutral );
+
+	// @wordpress/dataviews owns its own background token; point it at the same
+	// surface so tables/sticky headers follow the theme.
+	--wp-dataviews-color-background: var( --wpds-color-bg-surface-neutral-strong );
+
+	// --- Foreground / text ----------------------------------------------
+	--dashboard__text-color: var( --wpds-color-fg-content-neutral );
+	--dashboard__text-muted-color: var( --wpds-color-fg-content-neutral-weak );
+	--dashboard-subtle__color: var( --wpds-color-fg-content-neutral-weak );
+	--dashboard-header__color: var( --wpds-color-fg-content-neutral );
+	--dashboard-menu-item__color: var( --wpds-color-fg-content-neutral-weak );
+	--dashboard-menu-item-active__color: var( --wpds-color-fg-content-neutral );
+	--dashboard-secondary-menu-item__color: var( --wpds-color-fg-content-neutral );
+	--color-text: var( --wpds-color-fg-content-neutral );
+	--color-text-subtle: var( --wpds-color-fg-content-neutral-weak );
+	--color-muted-foreground: var( --wpds-color-fg-content-neutral-weak );
+
+	// --- Strokes / borders ----------------------------------------------
+	--dashboard-surface__border-color: var( --wpds-color-stroke-surface-neutral );
+	--dashboard-field__border-color: var( --wpds-color-stroke-interactive-neutral );
+	--dashboard-header__border-color: var( --wpds-color-stroke-surface-neutral-weak );
+	--dashboard-header__divider-color: var( --wpds-color-stroke-surface-neutral-weak );
+	--dashboard-overview__divider-color: var( --wpds-color-stroke-surface-neutral-weak );
+	--color-border: var( --wpds-color-stroke-surface-neutral );
+	--color-border-subtle: var( --wpds-color-stroke-surface-neutral-weak );
+	--color-muted: var( --wpds-color-stroke-surface-neutral );
+
+	// --- Accent / brand --------------------------------------------------
+	// The ThemeProvider already remaps `--wp-admin-theme-color` and the
+	// `--wp-components-color-accent*` family from the brand seed, so consumers
+	// of those variables (most @wordpress/components) need nothing extra.
+	--color-primary: var( --wp-admin-theme-color );
+	--color-primary-foreground: var( --wpds-color-fg-interactive-brand-strong );
+	--color-accent: var( --wp-admin-theme-color );
+	--color-link: var( --wpds-color-fg-interactive-brand );
+	--color-ring: var( --wpds-color-stroke-focus-brand );
+
+	// Selected list/nav item (plugin switcher, menus): subtle accent tint + accent
+	// border. These previously came from the bespoke palette engine.
+	--dashboard-item-selected__background-color: color-mix( in srgb, var( --wp-admin-theme-color ) 12%, transparent );
+	--dashboard-item-selected-hover__background-color: color-mix( in srgb, var( --wp-admin-theme-color ) 16%, transparent );
+	--dashboard-item-selected__border-color: var( --wp-admin-theme-color );
+
+	// --- Status / feedback ----------------------------------------------
+	--dashboard__foreground-color-success: var( --wpds-color-fg-content-success );
+	--dashboard__foreground-color-warning: var( --wpds-color-fg-content-warning );
+	--dashboard__foreground-color-error: var( --wpds-color-fg-content-error );
+	--dashboard-danger__color: var( --wpds-color-fg-content-error );
+	--dashboard-danger__color-hover: color-mix( in srgb, var( --wpds-color-fg-content-error ) 80%, #fff );
+	--dashboard-danger__color-active: var( --wpds-color-fg-content-error );
+}

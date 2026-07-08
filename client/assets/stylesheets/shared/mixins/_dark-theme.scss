@@ -1,15 +1,20 @@
-// Emits rules for the explicit dark theme and for the system theme when the OS
-// prefers dark. Intended to be nested inside a selector so `&` resolves to the
-// component or surface being themed.
+// ⚠️ DEPRECATED — transitional dark-only override hook.
+//
+// Theming now flows from the WPDS `ThemeProvider` (see
+// `client/lib/color-scheme/wpds-theme.tsx`), which sets `--wpds-*` token values
+// for the active mode. There is no longer a native "is dark" selector — dark is
+// just different token values. Components should consume `--wpds-*` tokens (or
+// `@wordpress/ui`) so they need NO dark-specific overrides at all.
+//
+// Until every consumer is migrated, this mixin keeps working by matching the
+// resolved `data-theme="dark"` bridge attribute set by the color-scheme provider.
+// The OS preference is now resolved in JS, so the legacy `data-theme="system"` +
+// `prefers-color-scheme` branch is no longer needed. Each migrated component
+// should drop its `when-dark-theme { … }` block; the final migration step removes
+// this mixin and the bridge attribute. See `client/lib/color-scheme/MIGRATION.md`.
 @mixin when-dark-theme {
 	@media screen {
 		:root[data-theme="dark"] & {
-			@content;
-		}
-	}
-
-	@media screen and (prefers-color-scheme: dark) {
-		:root[data-theme="system"] & {
 			@content;
 		}
 	}

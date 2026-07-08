@@ -19,6 +19,7 @@ import { siteRoute, siteBackupsIndexRoute, siteBackupDetailRoute } from '../../a
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { ThemedIllustration } from '../../components/themed-illustration';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { SitesNoticeArbiter } from '../notice-arbiter';
@@ -26,6 +27,7 @@ import { BackupDetails } from './backup-details';
 import { BackupDetailsSkeleton } from './backup-details-skeleton';
 import { BackupNotices } from './backup-notices';
 import { BackupNowButton } from './backup-now-button';
+import illustrationDarkUrl from './backups-callout-illustration-dark.svg';
 import illustrationUrl from './backups-callout-illustration.svg';
 import { BackupsList } from './backups-list';
 import { useActivityLog } from './use-activity-log';
@@ -287,7 +289,7 @@ function SiteBackups() {
 			upsellId="site-backups"
 			upsellIcon={ backup }
 			upsellTitle={ __( 'Secure your content with Jetpack Backups' ) }
-			upsellImage={ illustrationUrl }
+			upsellImage={ <ThemedIllustration light={ illustrationUrl } dark={ illustrationDarkUrl } /> }
 			upsellDescription={ __(
 				'Protect your site with scheduled and real-time backups—giving you the ultimate “undo” button and peace of mind that your content is always safe.'
 			) }

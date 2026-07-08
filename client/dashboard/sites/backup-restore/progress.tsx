@@ -9,6 +9,8 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
+import { ThemedIllustration } from '../../components/themed-illustration';
+import progressIllustrationDark from './restore-progress-illustration-dark.svg';
 import progressIllustration from './restore-progress-illustration.svg';
 import type { Site } from '@automattic/api-core';
 
@@ -52,7 +54,13 @@ function SiteBackupRestoreProgress( {
 	return (
 		<>
 			<VStack spacing={ 4 } alignment="center">
-				<img src={ progressIllustration } alt="" width={ 408 } height={ 280 } />
+				<ThemedIllustration
+					light={ progressIllustration }
+					dark={ progressIllustrationDark }
+					alt=""
+					width={ 408 }
+					height={ 280 }
+				/>
 				<Text size={ 20 }>
 					{ isRunning ? restoreProgress?.message : __( 'Initializing the restore process' ) }
 				</Text>

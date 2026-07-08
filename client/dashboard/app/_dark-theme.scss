@@ -3,7 +3,16 @@
 /* Links */
 @mixin dashboard-dark-theme-links {
 	@at-root :where( & ) a {
-		color: var( --wp-admin-theme-color-darker-20 );
+		// Legible WPDS interactive-brand foreground; the raw brand blue and its
+		// darker-* variants fail contrast on dark surfaces.
+		color: var( --wpds-color-fg-interactive-brand );
+	}
+
+	// Real-specificity hover/focus so component :hover rules (which revert to the
+	// dark brand blue) don't win over the base rule above.
+	a:hover,
+	a:focus-visible {
+		color: var( --wpds-color-fg-interactive-brand );
 	}
 }
 
@@ -35,36 +44,36 @@
 		&.is-warning {
 			background-color: color-mix(
 				in srgb,
-				var( --dashboard__background-color-warning ) 8%,
+				var( --dashboard__foreground-color-warning ) 16%,
 				var( --dashboard-surface__background-color )
 			);
 
 			.dashboard-notice__icon {
-				fill: var( --dashboard__background-color-warning );
+				fill: var( --dashboard__foreground-color-warning );
 			}
 		}
 
 		&.is-success {
 			background-color: color-mix(
 				in srgb,
-				var( --dashboard__background-color-success ) 8%,
+				var( --dashboard__foreground-color-success ) 16%,
 				var( --dashboard-surface__background-color )
 			);
 
 			.dashboard-notice__icon {
-				fill: var( --dashboard__background-color-success );
+				fill: var( --dashboard__foreground-color-success );
 			}
 		}
 
 		&.is-error {
 			background-color: color-mix(
 				in srgb,
-				var( --dashboard__background-color-error ) 8%,
+				var( --dashboard__foreground-color-error ) 16%,
 				var( --dashboard-surface__background-color )
 			);
 
 			.dashboard-notice__icon {
-				fill: var( --dashboard__background-color-error );
+				fill: var( --dashboard__foreground-color-error );
 			}
 		}
 	}
@@ -341,7 +350,7 @@
 		border-top-color: var( --dashboard-surface__border-color );
 
 		&:focus-visible:not( :disabled ) {
-			box-shadow: inset 0 0 0 2px var( --wp-admin-theme-color );
+			box-shadow: inset 0 0 0 2px var( --wpds-color-fg-interactive-brand );
 			outline: none;
 		}
 
@@ -369,6 +378,12 @@
 
 	.plugin-switcher-item-name {
 		color: var( --dashboard__text-color );
+	}
+
+	// Selected/hover site-count uses the raw brand blue (fails AA on dark) — retint.
+	.plugin-switcher-item.is-selected .plugin-switcher-item-site-count,
+	.plugin-switcher-item:hover .plugin-switcher-item-site-count {
+		color: var( --wpds-color-fg-interactive-brand );
 	}
 
 	.plugin-icon-wrapper.is-fallback {
@@ -438,6 +453,155 @@
 }
 
 // :root variables overridden for dark theme
+// In dark, the interactive brand used for TEXT/links/icons must be the light WPDS
+// accent (fg-interactive-brand, ~#8eb0ff). The raw brand blue (#3858e9) and its
+// darker-* variants fail WCAG contrast on dark surfaces (secondary/link buttons,
+// "Setup connection", etc. measured 2.0–3.0:1). Primary-button FILLS keep their
+// own scoped accent (dashboard-dark-theme-primary-button) and checkbox/toggle
+// FILLS use --wp-admin-theme-color, so this only affects accent text/strokes.
+@mixin dashboard-dark-theme-interactive-accent {
+	// The ThemeProvider sets --wp-components-color-accent on its own wrapper, so a
+	// :root token override is shadowed. Override the accent-TEXT consumers
+	// directly. Fills are untouched — primary buttons keep their scoped accent and
+	// checkbox/toggle fills use --wp-admin-theme-color.
+	// wp-components uses the brand accent for interactive text — secondary/link
+	// text, and default-button text on hover — but the ThemeProvider pins
+	// --wp-components-color-accent to the raw brand blue (#3858e9) on its own
+	// wrapper, which fails contrast on dark and can't be overridden via :root.
+	// So override the consumers directly, including hover, with the legible light
+	// accent. Fills are unaffected: primary buttons scope their own accent and
+	// checkbox/toggle fills use --wp-admin-theme-color.
+	.components-button.is-secondary,
+	.components-button.is-tertiary:not( .dashboard-sidebar__menu-item ),
+	.components-button.is-link,
+	.components-button:not( .is-primary ):not( .is-destructive ):not( .dashboard-sidebar__menu-item ):hover:not( :disabled ):not( [aria-disabled='true'] ) {
+		color: var( --wpds-color-fg-interactive-brand );
+	}
+
+	// Sidebar nav stays neutral (matching the rest of the nav / Themes); only the
+	// active item gets a legible accent — the raw brand blue is too dim in dark.
+	.components-button.dashboard-sidebar__menu-item.active {
+		color: var( --wpds-color-fg-interactive-brand );
+	}
+
+
+	// Overview cards paint their title + icons with the raw brand blue on hover
+	// (fine in light, too dim on dark). Use the legible light accent, matching
+	// the accent text elsewhere.
+	.dashboard-overview-card__link:hover .dashboard-overview-card__content {
+		span,
+		h2 {
+			color: var( --wpds-color-fg-interactive-brand );
+		}
+
+		.dashboard-overview-card__icon,
+		.dashboard-overview-card__link-icon {
+			fill: var( --wpds-color-fg-interactive-brand );
+		}
+	}
+
+	// Wordmark: retint the brand-blue logo to the legible light accent in dark
+	// (raw #3858e9 is dim on near-black). Brand may fine-tune the exact blue.
+	--dashboard-wordmark__fill: var( --wpds-color-fg-interactive-brand );
+}
+
+// The expanded/active filter toggle (funnel) renders a near-white pressed fill in
+// dark (gray-800 is light); give it an elevated dark surface with light icon.
+// (Chip text + count badge are handled in color-scheme-dark-theme-dataviews.)
+@mixin dashboard-dark-theme-filters {
+	.dataviews-filters__visibility-toggle.is-pressed,
+	.dataviews-filters__visibility-toggle[aria-expanded='true'] {
+		background: color-mix( in srgb, var( --dashboard-surface__background-color ) 78%, var( --dashboard__text-color ) );
+		color: var( --dashboard__text-color );
+	}
+}
+
+// Give the sidebar the same raised WPDS surface as the content windows
+// (bg-surface-neutral-strong) so the nav and content read as one elevated system
+// sitting on the recessed canvas, instead of the sidebar being a separate shade.
+@mixin dashboard-dark-theme-sidebar {
+	.dashboard-responsive-sidebar__sidebar {
+		background-color: var( --dashboard-surface__background-color );
+	}
+
+	// Inactive nav item hover: a clear, lifted surface instead of the too-dark
+	// default (active items keep their accent-tint state).
+	.components-button.dashboard-sidebar__menu-item:hover:not( .active ) {
+		background: color-mix( in srgb, var( --dashboard-surface__background-color ) 88%, var( --dashboard__text-color ) );
+		// Keep the label neutral/light on hover — wp-components flips it to the dark
+		// brand blue otherwise (near-invisible on the lifted surface).
+		color: var( --dashboard__text-color );
+	}
+}
+
+// Help Center (packages/help-center) draws its list borders from raw --studio-gray
+// ramps, a different weight from the rest of the dashboard. Point them at the
+// shared surface border token so the guide/resource dividers match every other
+// divider in the UI.
+@mixin dashboard-dark-theme-help-center {
+	.help-center-articles__list,
+	.help-center-search-results__list,
+	.help-center-more-resources > ul,
+	.help-center-link__item,
+	.help-center-search-results__item,
+	.help-center-more-resources__resource-item {
+		border-color: var( --dashboard-surface__border-color );
+	}
+}
+
+// Component-level dark overrides only, without the token/palette re-derivation
+// that the WPDS bridge (color-scheme-wpds-bridge) now supplies. These patch
+// @wordpress/components and Calypso markup that hardcode colors and don't yet
+// follow --wpds-* tokens (popovers, modals, form controls, cards, …). Each block
+// is removed as its component migrates to @wordpress/ui.
+// Swap decorative illustrations to their dark asset (see the ThemedIllustration
+// component). Illustrations render as <img>, so CSS can't recolor them; we ship
+// a dark variant and toggle which one shows based on the in-app theme.
+@mixin dashboard-dark-theme-illustrations {
+	.dashboard-themed-illustration--light {
+		display: none;
+	}
+
+	.dashboard-themed-illustration--dark {
+		display: block;
+	}
+}
+
+@mixin dashboard-dark-theme-components {
+	// Remap the legacy Color-Studio ramps (--studio-gray/-blue, --color-neutral)
+	// to dark. The WPDS bridge only covers --dashboard-*/--color-* semantic vars,
+	// so surfaces that still read raw studio ramps directly (Help Center, and
+	// latent Reader/Themes) need this until they move to --wpds-* tokens.
+	@include color-scheme-dark-theme-palettes;
+	@include dashboard-dark-theme-interactive-accent;
+	@include dashboard-dark-theme-sidebar;
+	@include dashboard-dark-theme-filters;
+	@include dashboard-dark-theme-help-center;
+	@include dashboard-dark-theme-illustrations;
+	@include dashboard-dark-theme-action-list;
+	@include color-scheme-dark-theme-agenttic;
+	@include dashboard-dark-theme-breadcrumbs;
+	@include dashboard-dark-theme-callout;
+	@include dashboard-dark-theme-card;
+	@include dashboard-dark-theme-dataviews;
+	@include dashboard-dark-theme-destructive-secondary-button;
+	@include dashboard-dark-theme-emails;
+	@include dashboard-dark-theme-form-controls;
+	@include dashboard-dark-theme-item-group;
+	@include dashboard-dark-theme-links;
+	@include color-scheme-dark-theme-modal;
+	@include dashboard-dark-theme-modal;
+	@include dashboard-dark-theme-panel;
+	@include dashboard-dark-theme-plugins;
+	@include color-scheme-dark-theme-popover;
+	@include color-scheme-dark-theme-primary-button;
+	@include dashboard-dark-theme-scan;
+	@include dashboard-dark-theme-section-header;
+	@include color-scheme-dark-theme-site-icon;
+	@include dashboard-dark-theme-site-logs-badges;
+	@include color-scheme-dark-theme-summary-button;
+}
+
 @mixin dashboard-dark-theme {
 	@include color-scheme-dark-theme-tokens;
 	@include color-scheme-dark-theme-calypso-properties;

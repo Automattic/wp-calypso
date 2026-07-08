@@ -31,7 +31,7 @@ function EmailActions() {
 			<EmptyState.ActionItem
 				title={ __( 'Add mailbox' ) }
 				description={ __( 'Get a full inbox for sending and receiving mail with your domain.' ) }
-				decoration={ <Icon icon={ search } size={ 24 } fill="#1E1E1E" /> }
+				decoration={ <Icon icon={ search } size={ 24 } fill="currentColor" /> }
 				actions={
 					<Button
 						variant="primary"
@@ -46,7 +46,7 @@ function EmailActions() {
 			<EmptyState.ActionItem
 				title={ __( 'Add email forwarder' ) }
 				description={ __( 'Forward emails sent to your domain address to another inbox you use.' ) }
-				decoration={ <Icon icon={ globe } size={ 24 } fill="#1E1E1E" /> }
+				decoration={ <Icon icon={ globe } size={ 24 } fill="currentColor" /> }
 				actions={
 					<Button
 						variant="secondary"

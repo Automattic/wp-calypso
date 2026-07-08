@@ -1,6 +1,8 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
+import { ThemedIllustration } from '../../components/themed-illustration';
 import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
+import illustrationDarkUrl from './deployments-callout-illustration-dark.svg';
 import illustrationUrl from './deployments-callout-illustration.svg';
 import GithubIcon from './icons/github';
 import type { Site } from '@automattic/api-core';
@@ -12,7 +14,7 @@ export function getDeploymentsCalloutProps() {
 		upsellId: 'site-deployments',
 		upsellIcon: <GithubIcon aria-label={ __( 'GitHub logo' ) } />,
 		upsellTitle: __( 'Deploy from GitHub' ),
-		upsellImage: illustrationUrl,
+		upsellImage: <ThemedIllustration light={ illustrationUrl } dark={ illustrationDarkUrl } />,
 		upsellDescription: __(
 			'Connect your GitHub repository directly to your WordPress.com site—with seamless integration, straightforward version control, and automated workflows.'
 		),
