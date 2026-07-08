@@ -9,10 +9,10 @@
 	}
 	.info-wrapper {
 		display: flex;
-		margin-left: 8px;
+		margin-inline-start: 8px;
 	}
 	.info-icon {
-		fill: var(--studio-gray-40);
+		color: var( --studio-gray-40 );
 	}
 }
 

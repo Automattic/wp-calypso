@@ -1,0 +1,48 @@
+.stats-infotip {
+	display: inline-flex;
+	line-height: 0;
+	vertical-align: middle;
+}
+
+.stats-infotip__trigger {
+	align-items: center;
+	background: none;
+	border: 0;
+	border-radius: 2px;
+	color: inherit;
+	cursor: pointer;
+	display: inline-flex;
+	padding: 0;
+
+	&:hover,
+	&:focus-visible {
+		color: var( --color-neutral-70 );
+	}
+}
+
+.stats-infotip__positioner {
+	z-index: 1000;
+}
+
+.stats-infotip__popup {
+	max-width: 280px;
+}
+
+.stats-infotip__description {
+	text-align: start;
+
+	p:last-child {
+		margin-bottom: 0;
+	}
+
+	ul {
+		margin-block: 8px 12px;
+		padding-inline-start: 20px;
+	}
+
+	hr {
+		border: 0;
+		border-block-start: 1px solid var( --color-border-subtle );
+		margin: 12px 0;
+	}
+}
