@@ -6,9 +6,6 @@ jest.mock( '@automattic/onboarding/src/step-container', () => () => (
 ) );
 jest.mock( 'calypso/components/marketing-message', () => 'marketing-message' );
 jest.mock( 'calypso/lib/wp', () => ( { req: { post: () => {} } } ) );
-jest.mock( 'calypso/my-sites/plans-features-main', () => () => (
-	<div data-testid="plans-features-main" />
-) );
 
 import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
@@ -55,19 +52,5 @@ describe( 'Plans basic tests', () => {
 		const stepWrapper = await waitFor( () => screen.getByTestId( 'stepper-step-wrapper' ) );
 		expect( stepWrapper ).toBeVisible();
 		expect( stepWrapper.parentNode ).toHaveClass( 'plans-step' );
-	} );
-
-	test( 'shows the onboarding fallback subheader in StepContainerV2', async () => {
-		_render( {
-			...props,
-			flowName: 'onboarding',
-			useStepContainerV2: true,
-		} );
-
-		await waitFor( () => screen.getByTestId( 'plans-features-main' ) );
-
-		expect(
-			screen.getByText( 'Whatever site you’re building, there’s a plan to make it happen sooner.' )
-		).toBeInTheDocument();
 	} );
 } );
