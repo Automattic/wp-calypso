@@ -6,9 +6,9 @@ import {
 	getSubscribedSitesFromData,
 	getOrganizationSiteSubscriptionsFromData,
 } from '@automattic/api-queries';
-import { SiteSubscriptionItem } from '@automattic/data-stores/src/reader/types';
 import { NO_ORG_ID } from 'calypso/state/reader/organizations/constants';
 import { useSiteSubscriptions } from './use-site-subscriptions';
+import type { SiteSubscriptionItem } from '@automattic/api-core';
 
 type FollowId = number | string;
 

@@ -56,7 +56,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 			return 'p2';
 		}
 
-		return null;
+		return `organization-${ organizationId }`;
 	}
 
 	render() {

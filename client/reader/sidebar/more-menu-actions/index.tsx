@@ -12,7 +12,7 @@ type MoreMenuActionsProps = {
 	identifier: string;
 	feedIds: number[];
 	feedUrls: string[];
-	unseenCount?: number;
+	unseenCount: number;
 };
 
 export function MoreMenuActions( {

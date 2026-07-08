@@ -68,7 +68,6 @@ const ReaderSidebarRecent = ( { isOpen, onClick, path, className }: Props ): Rea
 	const [ showAllSites, setShowAllSites ] = useState( false );
 	const sites = useSubscribedSites();
 	const feedsInfo = useSubscribedFeedsInfo();
-	const totalUnseenCount = sites.reduce( ( sum, site ) => sum + ( site.unseen_count ?? 0 ), 0 );
 	const selectedSiteFeedId = useSelector< AppState, number | null >( getSelectedRecentFeedId );
 	const moment = useLocalizedMoment();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
@@ -118,7 +117,7 @@ const ReaderSidebarRecent = ( { isOpen, onClick, path, className }: Props ): Rea
 			className={ clsx( 'reader-sidebar-recent', 'has-counts', className, {
 				'sidebar__menu--selected': isRecentStream && ( ! isOpen || selectedSiteFeedId === null ),
 			} ) }
-			count={ totalUnseenCount > 0 ? totalUnseenCount : undefined }
+			count={ feedsInfo.unseenCount > 0 ? feedsInfo.unseenCount : undefined }
 			icon={ null }
 			materialIcon={ null }
 			materialIconStyle={ null }
@@ -128,7 +127,7 @@ const ReaderSidebarRecent = ( { isOpen, onClick, path, className }: Props ): Rea
 					identifier="following"
 					feedIds={ feedsInfo.feedIds }
 					feedUrls={ feedsInfo.feedUrls }
-					unseenCount={ totalUnseenCount }
+					unseenCount={ feedsInfo.unseenCount }
 				/>
 			}
 		>

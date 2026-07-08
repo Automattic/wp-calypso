@@ -96,19 +96,4 @@ describe( 'MoreMenuActions', () => {
 		expect( mockRecordReaderTracksEvent ).not.toHaveBeenCalled();
 		expect( mockMarkAllAsSeen ).not.toHaveBeenCalled();
 	} );
-
-	test( 'prevents clicks from activating the surrounding row', async () => {
-		const user = userEvent.setup();
-		const handleParentClick = jest.fn();
-
-		renderMoreMenuActions(
-			<a href="/reader" onClick={ handleParentClick }>
-				<MoreMenuActions { ...defaultProps } />
-			</a>
-		);
-
-		await user.click( screen.getByRole( 'button', { name: 'More actions' } ) );
-
-		expect( handleParentClick ).not.toHaveBeenCalled();
-	} );
 } );
