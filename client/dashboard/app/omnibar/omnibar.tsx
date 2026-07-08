@@ -52,7 +52,8 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 	const baseOmnibarNodes = useMemo( () => {
 		const nodes = addStatsNodeToSiteMenu(
 			removeUnsupportedDotcomNodes( siteNodes ?? dashboardNodes ?? [] ),
-			canSiteUserAccessStats( site )
+			canSiteUserAccessStats( site ),
+			site?.options?.admin_url
 		);
 		const result = buildOmnibarNodesFromAdminBarNodes( nodes );
 

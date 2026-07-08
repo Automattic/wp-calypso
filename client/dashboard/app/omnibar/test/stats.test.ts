@@ -31,8 +31,8 @@ const widgetsNode: AdminBarNode = {
 
 describe( 'addStatsNodeToSiteMenu', () => {
 	test( 'adds Stats to the site dropdown', () => {
-		const nodes = [ siteNode, dashboardNode, widgetsNode ];
-		const result = addStatsNodeToSiteMenu( nodes, true );
+		const nodes = [ siteNode, widgetsNode ];
+		const result = addStatsNodeToSiteMenu( nodes, true, 'https://example.wordpress.com/wp-admin/' );
 
 		expect( result.map( ( node ) => node.id ) ).toContain( 'stats' );
 		expect( result.find( ( node ) => node.id === 'stats' ) ).toMatchObject( {
@@ -47,7 +47,7 @@ describe( 'addStatsNodeToSiteMenu', () => {
 		} );
 	} );
 
-	test( 'returns the original nodes when Dashboard is missing', () => {
+	test( 'returns the original nodes when the site admin URL is missing', () => {
 		const nodes = [ siteNode, widgetsNode ];
 
 		expect( addStatsNodeToSiteMenu( nodes, true ) ).toBe( nodes );
@@ -63,13 +63,17 @@ describe( 'addStatsNodeToSiteMenu', () => {
 		};
 		const nodes = [ siteNode, dashboardNode, statsNode, widgetsNode ];
 
-		expect( addStatsNodeToSiteMenu( nodes, true ) ).toBe( nodes );
+		expect( addStatsNodeToSiteMenu( nodes, true, 'https://example.wordpress.com/wp-admin/' ) ).toBe(
+			nodes
+		);
 	} );
 
 	test( 'returns the original nodes when the user cannot view stats', () => {
 		const nodes = [ siteNode, dashboardNode, widgetsNode ];
 
-		expect( addStatsNodeToSiteMenu( nodes, false ) ).toBe( nodes );
+		expect(
+			addStatsNodeToSiteMenu( nodes, false, 'https://example.wordpress.com/wp-admin/' )
+		).toBe( nodes );
 	} );
 } );
 
