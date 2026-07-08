@@ -1,13 +1,12 @@
 import { Button, Gridicon, SegmentedControl } from '@automattic/components';
 import { throttle } from '@wordpress/compose';
 import clsx from 'clsx';
-import { useEffect, useRef } from 'react';
+import { useRtl } from 'i18n-calypso';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import './styles.scss';
 
 const SHOW_SCROLL_THRESHOLD = 10;
-const showElement = ( element: Element | null ) => element?.classList.remove( 'display-none' );
-const hideElement = ( element: Element | null ) => element?.classList.add( 'display-none' );
 
 type BaseTab = {
 	slug: string;
@@ -32,8 +31,55 @@ const ScrollableHorizontalNavigation = < T extends object >( {
 	titleField = 'title',
 }: Props< T > ) => {
 	const scrollRef = useRef< HTMLDivElement >( null );
+	const isRtl = useRtl();
+	const [ showStartArrow, setShowStartArrow ] = useState( false );
+	const [ showEndArrow, setShowEndArrow ] = useState( false );
 
-	// Scroll the selected tab into view on initial render and whenever it changes.
+	const updateScrollButtonVisibility = useCallback( () => {
+		const container = scrollRef.current;
+
+		if ( ! container ) {
+			setShowStartArrow( false );
+			setShowEndArrow( false );
+			return;
+		}
+
+		const { scrollWidth, clientWidth, scrollLeft } = container;
+		const canScroll = scrollWidth > clientWidth;
+
+		if ( isRtl ) {
+			const isAtStart = Math.abs( scrollLeft ) < SHOW_SCROLL_THRESHOLD;
+			const isAtEnd = Math.abs( scrollLeft ) >= scrollWidth - clientWidth - SHOW_SCROLL_THRESHOLD;
+
+			setShowStartArrow( canScroll && ! isAtStart );
+			setShowEndArrow( canScroll && ! isAtEnd );
+		} else {
+			const isAtStart = scrollLeft < SHOW_SCROLL_THRESHOLD;
+			const isAtEnd = scrollLeft >= scrollWidth - clientWidth - SHOW_SCROLL_THRESHOLD;
+
+			setShowStartArrow( canScroll && ! isAtStart );
+			setShowEndArrow( canScroll && ! isAtEnd );
+		}
+	}, [ isRtl ] );
+
+	useLayoutEffect( () => {
+		updateScrollButtonVisibility();
+	}, [ tabs, selectedTab, updateScrollButtonVisibility ] );
+
+	useEffect( () => {
+		const container = scrollRef.current;
+
+		if ( ! container ) {
+			return;
+		}
+
+		const observer = new ResizeObserver( updateScrollButtonVisibility );
+		observer.observe( container );
+		updateScrollButtonVisibility();
+
+		return () => observer.disconnect();
+	}, [ tabs, updateScrollButtonVisibility ] );
+
 	useEffect( () => {
 		const selectedTabElement = scrollRef.current?.querySelector( '.is-selected' );
 		selectedTabElement?.scrollIntoView( {
@@ -41,59 +87,47 @@ const ScrollableHorizontalNavigation = < T extends object >( {
 			block: 'nearest',
 			inline: 'center',
 		} );
-	}, [ selectedTab ] );
 
-	const bumpScrollX = ( shouldScrollLeft = false ) => {
-		if ( scrollRef.current ) {
-			const directionMultiplier = shouldScrollLeft ? -1 : 1;
-			const finalPositionX =
-				scrollRef.current.scrollLeft +
-				// 2/3 reflects the fraction of visible width that will scroll.
-				directionMultiplier * scrollRef.current.clientWidth * ( 2 / 3 );
-			scrollRef.current.scrollTo( { top: 0, left: finalPositionX, behavior: 'smooth' } );
-		}
-	};
+		const rafId = requestAnimationFrame( updateScrollButtonVisibility );
 
-	const shouldHideLeftScrollButton = () =>
-		scrollRef.current && scrollRef.current.scrollLeft < SHOW_SCROLL_THRESHOLD;
-	const shouldHideRightScrollButton = () =>
-		scrollRef.current &&
-		scrollRef.current.scrollLeft >
-			scrollRef.current.scrollWidth - scrollRef.current.clientWidth - SHOW_SCROLL_THRESHOLD;
+		return () => cancelAnimationFrame( rafId );
+	}, [ selectedTab, updateScrollButtonVisibility ] );
 
-	// To keep track of the navigation tabs scroll position and keep it from appearing to reset
-	// after child render.
-	const handleScroll = throttle( () => {
-		// Determine and set visibility classes on scroll button wrappers.
-		const leftScrollButton = document.querySelector(
-			'.scrollable-horizontal-navigation__left-button-wrapper'
-		);
-		const rightScrollButton = document.querySelector(
-			'.scrollable-horizontal-navigation__right-button-wrapper'
-		);
-		if ( shouldHideLeftScrollButton() ) {
-			hideElement( leftScrollButton );
-		} else {
-			showElement( leftScrollButton );
-		}
-		if ( shouldHideRightScrollButton() ) {
-			hideElement( rightScrollButton );
-		} else {
-			showElement( rightScrollButton );
-		}
-	}, 50 );
+	const handleScroll = useMemo(
+		() => throttle( updateScrollButtonVisibility, 50 ),
+		[ updateScrollButtonVisibility ]
+	);
+
+	const scrollByDirection = useCallback(
+		( towardStart: boolean ) => {
+			if ( ! scrollRef.current ) {
+				return;
+			}
+
+			const scrollAmount = scrollRef.current.clientWidth * ( 2 / 3 );
+			const directionMultiplier = towardStart ? -1 : 1;
+			const rtlMultiplier = isRtl ? -1 : 1;
+			const left = scrollAmount * directionMultiplier * rtlMultiplier;
+
+			scrollRef.current.scrollBy( { left, behavior: 'smooth' } );
+		},
+		[ isRtl ]
+	);
+
+	const showLeftWrapper = isRtl ? showEndArrow : showStartArrow;
+	const showRightWrapper = isRtl ? showStartArrow : showEndArrow;
 
 	return (
 		<div className={ clsx( 'scrollable-horizontal-navigation', className ) }>
 			<div
 				className={ clsx( 'scrollable-horizontal-navigation__left-button-wrapper', {
-					'display-none': shouldHideLeftScrollButton(),
+					'display-none': ! showLeftWrapper,
 				} ) }
 				aria-hidden
 			>
 				<Button
 					className="scrollable-horizontal-navigation__left-button"
-					onClick={ () => bumpScrollX( true ) }
+					onClick={ () => scrollByDirection( ! isRtl ) }
 					tabIndex={ -1 }
 				>
 					<Gridicon icon="chevron-left" />
@@ -102,13 +136,13 @@ const ScrollableHorizontalNavigation = < T extends object >( {
 
 			<div
 				className={ clsx( 'scrollable-horizontal-navigation__right-button-wrapper', {
-					'display-none': shouldHideRightScrollButton(),
+					'display-none': ! showRightWrapper,
 				} ) }
 				aria-hidden
 			>
 				<Button
 					className="scrollable-horizontal-navigation__right-button"
-					onClick={ () => bumpScrollX() }
+					onClick={ () => scrollByDirection( isRtl ) }
 					tabIndex={ -1 }
 				>
 					<Gridicon icon="chevron-right" />
