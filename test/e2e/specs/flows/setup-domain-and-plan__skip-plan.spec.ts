@@ -1,6 +1,8 @@
-import { tags, test } from '../../lib/pw-base';
+import { skipIfNotTrunk, tags, test } from '../../lib/pw-base';
 
 test.describe( 'Domain: Upsell (Skip Plan)', { tag: [ tags.CALYPSO_RELEASE ] }, () => {
+	skipIfNotTrunk();
+
 	test( 'As a user with a qualifying yearly plan, I skip plan selection and go directly to checkout', async ( {
 		accountAtomic,
 		componentDomainSearch,

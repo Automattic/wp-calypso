@@ -6,7 +6,7 @@ import {
 	RestAPIClient,
 	UserSignupPage,
 } from '@automattic/calypso-e2e';
-import { tags, test } from '../../lib/pw-base';
+import { skipIfNotTrunk, tags, test } from '../../lib/pw-base';
 import { apiCloseAccount } from '../shared';
 
 /**
@@ -19,6 +19,8 @@ test.describe(
 	),
 	{ tag: [ tags.CALYPSO_RELEASE ] },
 	() => {
+		skipIfNotTrunk();
+
 		const planSlug = 'business-bundle';
 		const planName = 'Business';
 		const blogName = DataHelper.getBlogName();
