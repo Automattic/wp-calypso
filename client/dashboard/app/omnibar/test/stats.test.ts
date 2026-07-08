@@ -32,7 +32,7 @@ const widgetsNode: AdminBarNode = {
 describe( 'addStatsNodeToSiteMenu', () => {
 	test( 'adds Stats to the site dropdown', () => {
 		const nodes = [ siteNode, widgetsNode ];
-		const result = addStatsNodeToSiteMenu( nodes, true, 'https://example.wordpress.com/wp-admin/' );
+		const result = addStatsNodeToSiteMenu( nodes, true, 'https://example.wordpress.com/wp-admin' );
 
 		expect( result.map( ( node ) => node.id ) ).toContain( 'stats' );
 		expect( result.find( ( node ) => node.id === 'stats' ) ).toMatchObject( {

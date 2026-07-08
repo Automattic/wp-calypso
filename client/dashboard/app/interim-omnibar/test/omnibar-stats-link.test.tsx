@@ -79,11 +79,15 @@ beforeEach( () => {
 				},
 			},
 		} );
+
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/sites/1/stats/visits' )
+		.query( true )
+		.reply( 200, { data: [] } );
 } );
 
 afterEach( () => {
 	queryClient.clear();
-	nock.cleanAll();
 } );
 
 test( 'renders a Stats link in the site dropdown when the user can manage options', async () => {

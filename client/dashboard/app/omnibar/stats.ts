@@ -5,7 +5,7 @@ import type { AdminBarNode } from '@automattic/omnibar';
 const SITE_NAME_NODE_ID = 'site-name';
 const STATS_NODE_ID = 'stats';
 
-const getStatsAdminUrl = ( siteAdminUrl: string ) =>
+export const getStatsAdminUrl = ( siteAdminUrl: string ) =>
 	`${ siteAdminUrl.replace( /\/?$/, '/' ) }admin.php?page=stats`;
 
 export function canSiteUserAccessStats( site?: Site | null ): boolean {

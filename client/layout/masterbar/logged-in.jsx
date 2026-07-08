@@ -571,7 +571,7 @@ class MasterbarLoggedIn extends Component {
 			}
 		}
 
-		if ( canUserViewStats ) {
+		if ( canUserViewStats && statsAdminUrl ) {
 			menuItems.push( {
 				label: translate( 'Stats' ),
 				url: statsAdminUrl,
