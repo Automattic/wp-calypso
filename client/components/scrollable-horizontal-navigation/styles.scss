@@ -2,9 +2,12 @@
 	position: relative;
 	margin: auto;
 	overflow: hidden;
+	padding-bottom: 15px;
+	border-bottom: 1px solid var(--color-neutral-5);
+	margin-bottom: 20px;
 
 	@media only screen and (max-width: 600px) {
-		padding: 0 24px;
+		padding: 0 24px 15px;
 	}
 
 	@media only screen and (max-width: 660px) {
@@ -18,8 +21,7 @@
 		display: flex;
 		align-items: center;
 		pointer-events: none;
-		height: 100%;
-		margin-top: 5px;
+		top: 5px;
 
 		&.display-none {
 			display: none;
@@ -55,10 +57,7 @@
 		position: relative;
 		overflow-x: scroll;
 		left: -5px;
-		margin-bottom: 20px;
 		padding-top: 5px;
-		padding-bottom: 15px;
-		border-bottom: 1px solid var(--color-neutral-5);
 		-ms-overflow-style: none;  /* Internet Explorer 10+ */
 		scrollbar-width: none;  /* Firefox */
 
