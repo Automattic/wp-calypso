@@ -19,6 +19,8 @@ import type {
 	BearerTokenResponse,
 	MyAccountInformationResponse,
 	AccountClosureResponse,
+	PurchaseDetails,
+	PurchaseCancelResponse,
 	SiteDeletionResponse,
 	CalypsoPreferences,
 	CalypsoPreferencesResponse,
@@ -346,6 +348,70 @@ export class RestAPIClient {
 
 		console.log( `Successfully deleted site ID ${ targetSite.domain }` );
 		return response;
+	}
+
+	/* Purchases */
+
+	/**
+	 * Returns the list of purchases (plans, add-ons, domains) owned by the user.
+	 *
+	 * @returns {Promise< PurchaseDetails[] >} Array of the user's purchases.
+	 * @throws {Error} If the API responded with an error.
+	 */
+	async getAllPurchases(): Promise< PurchaseDetails[] > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest( this.getRequestURL( '1.2', '/me/purchases' ), params );
+
+		// A successful response is an array of purchases; an error is an object.
+		if ( ! Array.isArray( response ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
+	 * Cancels and refunds a purchase, removing it from the account.
+	 *
+	 * Mirrors the request the cancel-purchase UI fires
+	 * (`wpcom/v2/purchases/<id>/cancel`). For a plan on an Atomic site this
+	 * begins the site's asynchronous deprovisioning, which is a prerequisite
+	 * for closing the owning account (see `closeAccountAndRecordLeak`).
+	 *
+	 * @param {number} purchaseId ID of the purchase to cancel.
+	 * @param {number} productId Product ID of the purchase, required by the endpoint.
+	 * @returns {Promise< PurchaseCancelResponse >} The API response.
+	 */
+	async cancelAndRefundPurchase(
+		purchaseId: number,
+		productId: number
+	): Promise< PurchaseCancelResponse > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+			body: JSON.stringify( {
+				product_id: productId,
+				cancel_bundled_domain: 0,
+				email_variant: 'control',
+			} ),
+		};
+
+		return await this.sendRequest(
+			this.getRequestURL( '2', `/purchases/${ purchaseId }/cancel`, 'wpcom' ),
+			params
+		);
 	}
 
 	/* Invites */

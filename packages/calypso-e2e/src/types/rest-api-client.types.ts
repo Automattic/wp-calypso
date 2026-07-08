@@ -107,6 +107,24 @@ export interface AccountClosureResponse {
 	success: boolean;
 }
 
+/**
+ * A single purchase (plan, add-on or domain) as returned by `/me/purchases`.
+ * Fields mirror the raw REST response, which keys IDs as strings.
+ */
+export interface PurchaseDetails {
+	ID: string | number;
+	product_id: string | number;
+	product_slug: string;
+	product_name: string;
+	blog_id: string | number;
+	is_refundable: boolean;
+}
+
+export interface PurchaseCancelResponse {
+	status?: string;
+	message?: string;
+}
+
 export interface NewInviteResponse {
 	sent: string[];
 	errors: string[];

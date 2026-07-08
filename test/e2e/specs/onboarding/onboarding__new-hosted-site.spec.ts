@@ -29,17 +29,39 @@ test.describe(
 			if ( ! newUserDetails ) {
 				return;
 			}
-			// An account with an active Atomic site cannot be closed ("atomic-site").
-			// The Atomic site cannot be deleted via API either ("cannot delete jetpack
-			// site via API"), so the only lever is time: cancelling the Business plan
-			// (done in the test) is expected to deprovision the site asynchronously.
-			// apiCloseAccount polls the close past that wait; allow generous time.
+			// An account with an active Atomic site cannot be closed ("atomic-site"),
+			// and the Atomic site itself cannot be deleted via API ("cannot delete
+			// jetpack site via API"). The only lever is cancelling the Business plan,
+			// which deprovisions the site asynchronously. The in-flow UI cancellation
+			// does this on the happy path, but a test that fails earlier never reaches
+			// it, leaving an account that can never be closed. So we cancel any
+			// remaining purchases via API here first, then apiCloseAccount polls the
+			// close past the ~80s deprovision wait. Allow generous time for both.
 			test.setTimeout( 240 * 1000 );
 
 			const restAPIClient = new RestAPIClient(
 				{ username: testUser.username, password: testUser.password },
 				newUserDetails.body.bearer_token
 			);
+
+			// Best-effort: cancelling here is a teardown safety net, so never let a
+			// failure abort the close that follows. Each purchase is cancelled
+			// independently so one failure does not skip the rest.
+			try {
+				const purchases = await restAPIClient.getAllPurchases();
+				for ( const purchase of purchases ) {
+					try {
+						await restAPIClient.cancelAndRefundPurchase(
+							Number( purchase.ID ),
+							Number( purchase.product_id )
+						);
+					} catch ( error ) {
+						console.warn( `Failed to cancel purchase ${ purchase.ID }: ${ error }` );
+					}
+				}
+			} catch ( error ) {
+				console.warn( `Failed to list purchases during teardown: ${ error }` );
+			}
 
 			await apiCloseAccount( restAPIClient, {
 				userID: newUserDetails.body.user_id,
