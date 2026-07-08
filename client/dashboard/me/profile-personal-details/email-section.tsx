@@ -158,14 +158,16 @@ export default function EmailSection( {
 			return (
 				<>
 					<Icon icon={ info } size={ 16 } />
-					{ createInterpolateElement(
-						__(
-							'This email uses a custom domain. If your domain expires, you’d lose access to account recovery. <a>Set up a recovery email or phone number</a> to keep access to your account.'
-						),
-						{
-							a: <Link to="/me/security/account-recovery" />,
-						}
-					) }
+					<span>
+						{ createInterpolateElement(
+							__(
+								'This email uses a custom domain. If your domain expires, you’d lose access to account recovery. <a>Set up a recovery email or phone number</a> to keep access to your account.'
+							),
+							{
+								a: <Link to="/me/security/account-recovery" />,
+							}
+						) }
+					</span>
 				</>
 			);
 		}
