@@ -2,7 +2,6 @@ import { isEcommerce } from '@automattic/calypso-products';
 import { Site, Onboard } from '@automattic/data-stores';
 import {
 	AI_SITE_BUILDER_FLOW,
-	EDUCATION_FLOW,
 	ENTREPRENEUR_FLOW,
 	StepContainer,
 	addProductsToCart,
@@ -173,8 +172,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		isReadymadeFlow( flow ) ||
 		wooFlows.includes( flow || '' ) ||
 		flow === AI_SITE_BUILDER_FLOW ||
-		isAIBuilderOnboardingFlow( flow ) ||
-		flow === EDUCATION_FLOW
+		isAIBuilderOnboardingFlow( flow )
 	) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
 	}
