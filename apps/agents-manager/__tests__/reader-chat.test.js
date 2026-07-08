@@ -560,4 +560,38 @@ describe( 'watchFirstChatOpen', () => {
 		expect( () => watchFirstChatOpen( onFirstOpen, deps ) ).not.toThrow();
 		expect( onFirstOpen ).not.toHaveBeenCalled();
 	} );
+
+	it( 'treats a select() that throws as chat-closed instead of crashing', () => {
+		const onFirstOpen = jest.fn();
+		const listeners = new Set();
+		const deps = {
+			select: () => {
+				throw new Error( 'store not registered' );
+			},
+			subscribe: ( fn ) => {
+				listeners.add( fn );
+				return () => listeners.delete( fn );
+			},
+		};
+		expect( () => watchFirstChatOpen( onFirstOpen, deps ) ).not.toThrow();
+		expect( () => listeners.forEach( ( fn ) => fn() ) ).not.toThrow();
+		expect( onFirstOpen ).not.toHaveBeenCalled();
+	} );
+
+	it( 'handles a subscribe implementation that fires synchronously during registration', () => {
+		const onFirstOpen = jest.fn();
+		const unsubscribeSpy = jest.fn();
+		let isOpen = false;
+		const deps = {
+			select: () => ( { getAgentsManagerState: () => ( { isOpen } ) } ),
+			subscribe: ( fn ) => {
+				isOpen = true;
+				fn();
+				return unsubscribeSpy;
+			},
+		};
+		watchFirstChatOpen( onFirstOpen, deps );
+		expect( onFirstOpen ).toHaveBeenCalledTimes( 1 );
+		expect( unsubscribeSpy ).toHaveBeenCalledTimes( 1 );
+	} );
 } );

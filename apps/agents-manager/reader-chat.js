@@ -671,6 +671,20 @@ Questions should feel like natural next-step curiosity: clarify a detail, go dee
 }
 
 /**
+ * Read the shared Agents Manager store state, treating an unusable store
+ * as "no state". `select( storeName )` can throw in some @wordpress/data
+ * implementations when the store isn't registered.
+ * @param {Function} [selectFn] @wordpress/data select, injectable for tests.
+ */
+function getAgentsManagerState( selectFn = select ) {
+	try {
+		return selectFn( AGENTS_MANAGER_STORE )?.getAgentsManagerState?.();
+	} catch {
+		return undefined;
+	}
+}
+
+/**
  * Append a "follow-up chips" strip below the chat panel. Clicking a chip
  * fills the input and submits it. Observes the chat thread for new
  * assistant messages via MutationObserver; after each one, fires a
@@ -850,8 +864,7 @@ function setupFollowupChips() {
 	}
 
 	unsubscribeOpen = subscribe( () => {
-		const state = select( AGENTS_MANAGER_STORE ).getAgentsManagerState?.();
-		if ( state?.isOpen ) {
+		if ( getAgentsManagerState()?.isOpen ) {
 			scheduleObserve();
 		}
 	} );
@@ -872,7 +885,7 @@ function setupFollowupChips() {
  * @param {Function} deps.subscribe @wordpress/data subscribe.
  */
 function watchFirstChatOpen( onFirstOpen, deps = { select, subscribe } ) {
-	const isOpenNow = () => !! deps.select( AGENTS_MANAGER_STORE ).getAgentsManagerState?.()?.isOpen;
+	const isOpenNow = () => !! getAgentsManagerState( deps.select )?.isOpen;
 
 	if ( isOpenNow() ) {
 		onFirstOpen();
@@ -880,14 +893,20 @@ function watchFirstChatOpen( onFirstOpen, deps = { select, subscribe } ) {
 	}
 
 	let fired = false;
-	const unsubscribe = deps.subscribe( () => {
+	let unsubscribe = null;
+	unsubscribe = deps.subscribe( () => {
 		if ( fired || ! isOpenNow() ) {
 			return;
 		}
 		fired = true;
-		unsubscribe();
+		unsubscribe?.();
 		onFirstOpen();
 	} );
+	// If the subscribe implementation invoked the callback synchronously,
+	// the handle wasn't available inside the callback — release it now.
+	if ( fired ) {
+		unsubscribe();
+	}
 }
 
 function setupInitialSuggestions() {
@@ -939,8 +958,7 @@ function setupTracksEvents() {
 	// false -> true. Fires once per open; closing + reopening re-fires.
 	let wasOpen = false;
 	const unsubscribe = subscribe( () => {
-		const state = select( AGENTS_MANAGER_STORE ).getAgentsManagerState?.();
-		const isOpen = !! state?.isOpen;
+		const isOpen = !! getAgentsManagerState()?.isOpen;
 		if ( isOpen && ! wasOpen ) {
 			recordTracksEvent( 'jetpack_reader_chat_opened', baseProps );
 		}
