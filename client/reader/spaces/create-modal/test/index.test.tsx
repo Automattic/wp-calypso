@@ -121,6 +121,7 @@ async function reachFeedsStep( user: User, name = 'Reading' ) {
 async function reachTopicsStep( user: User, name = 'Reading' ) {
 	await reachFeedsStep( user, name );
 	await user.click( screen.getByRole( 'button', { name: 'Next' } ) ); // Feeds → Topics
+	await screen.findByRole( 'button', { name: 'Create' } );
 }
 
 describe( 'CreateSpaceModal', () => {
@@ -179,7 +180,7 @@ describe( 'CreateSpaceModal', () => {
 		// Topics step is last, so it carries the Create button.
 		expect( within( dialog ).getByRole( 'combobox', { name: 'Tags' } ) ).toBeVisible();
 		expect( within( dialog ).getByRole( 'combobox', { name: 'Languages' } ) ).toBeVisible();
-		expect( within( dialog ).getByRole( 'button', { name: 'Create' } ) ).toBeVisible();
+		expect( await within( dialog ).findByRole( 'button', { name: 'Create' } ) ).toBeVisible();
 
 		// Back returns to the previous step.
 		await user.click( within( dialog ).getByRole( 'button', { name: 'Back' } ) );
