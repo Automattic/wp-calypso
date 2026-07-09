@@ -1,7 +1,13 @@
-import { isAutomatticianQuery, siteBySlugQuery, siteByIdQuery } from '@automattic/api-queries';
+import {
+	isAutomatticianQuery,
+	siteBySlugQuery,
+	siteByIdQuery,
+	siteEngagementStatsQuery,
+} from '@automattic/api-queries';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	useQuery,
+	useQueries,
 	useQueryClient,
 	useSuspenseQuery,
 	keepPreviousData,
@@ -11,7 +17,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { getISOWeek, getISOWeekYear } from 'date-fns';
 import deepmerge from 'deepmerge';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Experiment } from 'calypso/lib/explat';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
@@ -37,7 +43,13 @@ import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
 import { SitesNoticeArbiter } from './notice-arbiter';
 import { RestoringSitesNotices } from './restoring-sites-notice';
 import type { FetchPaginatedSitesOptions, Site, DashboardFilters } from '@automattic/api-core';
+import type { EngagementStatsDataPoint } from '@automattic/api-queries';
 import type { View, Filter } from '@wordpress/dataviews';
+
+// Engagement stat fields are fetched per-site via a separate API and cannot be
+// sorted server-side. Sort is applied client-side after fetching stats for the
+// current page.
+const ENGAGEMENT_SORT_FIELDS = new Set( [ 'visitors', 'views', 'likes' ] );
 
 type SiteListQueryOptions = {
 	isDefaultView?: boolean;
@@ -61,6 +73,9 @@ const getFetchPaginatedSitesOptions = (
 		isAutomattician &&
 		! filters.some( ( item: Filter ) => item.field === 'is_a8c' && item.value === false );
 
+	// Engagement stat fields are sorted client-side; omit them from the API request.
+	const isEngagementSort = ENGAGEMENT_SORT_FIELDS.has( view.sort?.field ?? '' );
+
 	const options: FetchPaginatedSitesOptions = {
 		source: isDashboardBackport() && isDefaultView ? 'dashboard-site-list-default' : undefined,
 
@@ -72,8 +87,8 @@ const getFetchPaginatedSitesOptions = (
 		// Calypso backport keeps them (the API includes them by default).
 		...( ! isDashboardBackport() && { include_staging: false } ),
 		search: view.search,
-		sort_field: view.sort?.field,
-		sort_direction: view.sort?.direction,
+		sort_field: isEngagementSort ? undefined : view.sort?.field,
+		sort_direction: isEngagementSort ? undefined : view.sort?.direction,
 		page: view.page,
 		per_page: view.perPage,
 	};
@@ -153,6 +168,50 @@ export function filterSortAndPaginateSites( sites: Site[], view: View, totalItem
 	};
 }
 
+/**
+ * Pre-fetches engagement stats for the current page of sites and sorts them
+ * client-side when the active sort field is an engagement stat (visitors, views,
+ * or likes). The /me/sites API does not support sorting by these fields because
+ * they come from a separate per-site stats endpoint.
+ *
+ * Sorting only applies to the sites on the current page, not across all pages.
+ */
+export function useEngagementSort( sites: Site[] | undefined, view: View ) {
+	const isEngagementSort = ENGAGEMENT_SORT_FIELDS.has( view.sort?.field ?? '' );
+
+	const siteEngagementQueries = useQueries( {
+		queries: ( sites ?? [] ).map( ( site ) => ( {
+			...siteEngagementStatsQuery( site.ID ),
+			enabled: isEngagementSort && ! site.is_deleted,
+		} ) ),
+	} );
+
+	const engagementStatsAreLoading =
+		isEngagementSort && siteEngagementQueries.some( ( q ) => q.isLoading );
+
+	const sortedSites = useMemo( () => {
+		if ( ! isEngagementSort || ! sites || ! view.sort ) {
+			return sites;
+		}
+
+		const statField = view.sort.field as keyof EngagementStatsDataPoint;
+		const direction = view.sort.direction;
+
+		const statsMap = new Map< number, EngagementStatsDataPoint | undefined >();
+		sites.forEach( ( site, index ) => {
+			statsMap.set( site.ID, siteEngagementQueries[ index ]?.data?.currentData );
+		} );
+
+		return [ ...sites ].sort( ( a, b ) => {
+			const valueA = statsMap.get( a.ID )?.[ statField ] ?? -1;
+			const valueB = statsMap.get( b.ID )?.[ statField ] ?? -1;
+			return direction === 'asc' ? valueA - valueB : valueB - valueA;
+		} );
+	}, [ sites, isEngagementSort, view.sort, siteEngagementQueries ] );
+
+	return { sortedSites, engagementStatsAreLoading };
+}
+
 export default function Sites() {
 	const { recordTracksEvent } = useAnalytics();
 	const currentSearchParams = sitesRoute.useSearch();
@@ -184,6 +243,8 @@ export default function Sites() {
 		}
 	);
 
+	const { sortedSites, engagementStatsAreLoading } = useEngagementSort( sites, view );
+
 	const fields = useFields( { isAutomattician, viewType: view.type } );
 	const actions = useActions();
 
@@ -197,7 +258,7 @@ export default function Sites() {
 	const userHasSites = user.site_count > 0;
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginateSites(
-		sites ?? [],
+		sortedSites ?? [],
 		view,
 		totalItems ?? 0
 	);
@@ -250,7 +311,11 @@ export default function Sites() {
 						sites={ filteredData }
 						fields={ fields }
 						actions={ actions }
-						isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
+						isLoading={
+							isLoadingSites ||
+							( isPlaceholderData && hasNoData ) ||
+							engagementStatsAreLoading
+						}
 						isPlaceholderData={ isPlaceholderData }
 						empty={
 							isFilteringOnlyDeletedSites ? (

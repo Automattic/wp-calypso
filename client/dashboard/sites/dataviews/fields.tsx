@@ -199,19 +199,16 @@ function getDefaultFields( {
 			id: 'visitors',
 			label: __( '7-day visitors' ),
 			render: ( { item } ) => <AsyncEngagementStat site={ item } type="visitors" />,
-			enableSorting: false,
 		},
 		{
 			id: 'views',
 			label: __( '7-day views' ),
 			render: ( { item } ) => <AsyncEngagementStat site={ item } type="views" />,
-			enableSorting: false,
 		},
 		{
 			id: 'likes',
 			label: __( '7-day likes' ),
 			render: ( { item } ) => <AsyncEngagementStat site={ item } type="likes" />,
-			enableSorting: false,
 		},
 		{
 			id: 'php_version',
