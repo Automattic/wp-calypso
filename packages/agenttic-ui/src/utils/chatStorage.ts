@@ -99,22 +99,26 @@ export function getCornerSnapPosition(
  * @param options.freeDrag                - Whether free drag mode is enabled
  * @param options.initialFreeDragPosition - Persisted pixel position, if any
  * @param options.side                    - The saved corner side
+ * @param options.width                   - Panel width (defaults to COMPACT_WIDTH)
+ * @param options.height                  - Panel height (defaults to EXPANDED_HEIGHT)
  * @return The initial { x, y } pixel position
  */
 export function getInitialChatPosition( {
 	freeDrag,
 	initialFreeDragPosition,
 	side,
+	width = STYLE_CONSTANTS.COMPACT_WIDTH,
+	height = STYLE_CONSTANTS.EXPANDED_HEIGHT,
 }: {
 	freeDrag: boolean;
 	initialFreeDragPosition: { x: number; y: number } | undefined;
 	side: ChatPosition;
+	width?: number;
+	height?: number;
 } ): { x: number; y: number } {
 	const cornerX =
 		side === 'right'
-			? window.innerWidth -
-			  STYLE_CONSTANTS.COMPACT_WIDTH -
-			  STYLE_CONSTANTS.VIEWPORT_OFFSET * 2
+			? window.innerWidth - width - STYLE_CONSTANTS.VIEWPORT_OFFSET * 2
 			: 0;
 
 	if ( ! freeDrag || initialFreeDragPosition === undefined ) {
@@ -122,11 +126,7 @@ export function getInitialChatPosition( {
 	}
 
 	// Clamp the seed so a persisted off-screen position is pulled back on-screen.
-	return clampFreeDragPosition(
-		initialFreeDragPosition,
-		STYLE_CONSTANTS.COMPACT_WIDTH,
-		STYLE_CONSTANTS.EXPANDED_HEIGHT
-	);
+	return clampFreeDragPosition( initialFreeDragPosition, width, height );
 }
 
 /**

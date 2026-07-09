@@ -8,6 +8,49 @@ export const STYLE_CONSTANTS = {
 	VIEWPORT_OFFSET: 16,
 } as const;
 
+// The 8 resize handles. Edges map to a single axis; corners resize both. Cursor
+// follows the edge orientation. The className maps to a CSS rule that positions
+// the hit area (6px edge strips, 12px corner squares with higher z-index).
+export const RESIZE_HANDLES = [
+	{ edge: 'top', cursor: 'ns-resize', className: 'resizeTop' },
+	{ edge: 'right', cursor: 'ew-resize', className: 'resizeRight' },
+	{ edge: 'bottom', cursor: 'ns-resize', className: 'resizeBottom' },
+	{ edge: 'left', cursor: 'ew-resize', className: 'resizeLeft' },
+	{ edge: 'top-left', cursor: 'nwse-resize', className: 'resizeTopLeft' },
+	{ edge: 'top-right', cursor: 'nesw-resize', className: 'resizeTopRight' },
+	{
+		edge: 'bottom-right',
+		cursor: 'nwse-resize',
+		className: 'resizeBottomRight',
+	},
+	{
+		edge: 'bottom-left',
+		cursor: 'nesw-resize',
+		className: 'resizeBottomLeft',
+	},
+] as const;
+
+// The handles to render for a given `resizable` mode. A corner is two-axis so it
+// only appears in 'both'/true; restricting the set locks the other axis (the
+// resize loop only acts on handles that exist).
+export function getVisibleResizeHandles(
+	resizable: boolean | 'horizontal' | 'vertical'
+): ( typeof RESIZE_HANDLES )[ number ][] {
+	if ( resizable === 'horizontal' ) {
+		return RESIZE_HANDLES.filter( ( handle ) =>
+			[ 'left', 'right' ].includes( handle.edge )
+		);
+	}
+
+	if ( resizable === 'vertical' ) {
+		return RESIZE_HANDLES.filter( ( handle ) =>
+			[ 'top', 'bottom' ].includes( handle.edge )
+		);
+	}
+
+	return [ ...RESIZE_HANDLES ];
+}
+
 export const DRAG_CONSTANTS = {
 	SPRING_CONFIG: {
 		type: 'spring' as const,

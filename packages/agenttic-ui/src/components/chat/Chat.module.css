@@ -39,7 +39,3 @@
     cursor: auto;
 }
 
-/* Show grabbing cursor when actively dragging */
-.container.floating:active {
-    cursor: grabbing;
-}
