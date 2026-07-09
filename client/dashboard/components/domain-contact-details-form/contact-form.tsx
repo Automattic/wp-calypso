@@ -137,11 +137,9 @@ export default function ContactForm( {
 
 	const { validity, isValid: isFormValid } = useFormValidity( normalizedFormData, fields, form );
 
-	// The validation endpoint validates the whole form, so a change to one field
-	// (e.g. the country) can invalidate another (e.g. the postal code) whose own
-	// async validator DataForm won't re-run. Surface every field error from the
-	// latest response so those errors appear without the user having to touch each
-	// field, and keep Save disabled while any of them remain.
+	// A whole-form validation can invalidate a field (e.g. postal code) whose own
+	// validator DataForm won't re-run after another field (e.g. country) changes.
+	// Surface every field's error from the latest response, and gate Save on them.
 	const serverFieldErrors = useMemo(
 		() =>
 			mapValidationMessagesToFieldErrors(
@@ -159,10 +157,8 @@ export default function ContactForm( {
 		}
 		const merged: NonNullable< typeof validity > = { ...validity };
 		for ( const [ fieldId, message ] of fieldErrors ) {
-			// Replace rather than merge: an empty required field also has a
-			// message-less `required` validity that DataForm prioritises over
-			// `custom`, which would hide the server message. The server error is
-			// the authoritative one to display for these fields.
+			// Replace, not merge: a message-less `required` validity (empty required
+			// field) would otherwise take precedence over and hide this message.
 			merged[ fieldId ] = { custom: { type: 'invalid', message } };
 		}
 		return merged;
@@ -170,32 +166,9 @@ export default function ContactForm( {
 
 	const canSave = isFormValid && Object.keys( serverFieldErrors ).length === 0;
 
-	const fieldLabels = useMemo( () => {
-		const labels: Partial< Record< keyof DomainContactDetails, string > > = {};
-		for ( const field of fields ) {
-			if ( field.label ) {
-				labels[ field.id as keyof DomainContactDetails ] = field.label;
-			}
-		}
-		return labels;
-	}, [ fields ] );
-
-	const validationErrors = useMemo(
-		() =>
-			Object.entries( serverFieldErrors ).map( ( [ fieldId, message ] ) => ( {
-				fieldId,
-				label: fieldLabels[ fieldId as keyof DomainContactDetails ],
-				message,
-			} ) ),
-		[ serverFieldErrors, fieldLabels ]
-	);
-
-	// DataForm keeps a field's validation message hidden until the field is
-	// touched, so a field invalidated by another field's change (e.g. the postal
-	// code becoming required after switching country) stays silent. When the set
-	// of server-flagged fields changes, reveal their errors by triggering native
-	// validation, which DataForm surfaces inline. Keyed on the set of fields (not
-	// the messages) so it does not re-fire — and move focus — while the user types.
+	// DataForm hides a field's error until it's touched. Reveal server-flagged fields
+	// by re-running native validation when the flagged set changes (keyed on the set,
+	// not the messages, so it doesn't re-fire or move focus while the user types).
 	const fieldsContainerRef = useRef< HTMLDivElement >( null );
 	const revealedErrorKeyRef = useRef( '' );
 	const serverErrorKey = Object.keys( serverFieldErrors ).sort().join( ',' );
@@ -215,14 +188,15 @@ export default function ContactForm( {
 			if ( ! container ) {
 				return;
 			}
-			const controls = container.querySelectorAll< HTMLInputElement >( 'input, select, textarea' );
-			let firstInvalid: HTMLElement | null = null;
-			controls.forEach( ( control ) => {
-				if ( ! control.checkValidity() ) {
-					firstInvalid = firstInvalid ?? control;
-				}
-			} );
-			firstInvalid?.focus();
+			const controls = Array.from(
+				container.querySelectorAll< HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement >(
+					'input, select, textarea'
+				)
+			);
+			// filter (not find) so checkValidity() runs on every control and reveals
+			// each invalid field, then focus the first invalid one.
+			const invalidControls = controls.filter( ( control ) => ! control.checkValidity() );
+			invalidControls[ 0 ]?.focus();
 		} );
 		return () => cancelAnimationFrame( raf );
 	}, [ isDirty, serverErrorKey ] );
@@ -294,20 +268,6 @@ export default function ContactForm( {
 								</Text>
 							</VStack>
 						</Notice>
-						{ isDirty && validationErrors.length > 0 && (
-							<Notice
-								variant="error"
-								title={ __( 'Please fix the following to save your changes' ) }
-							>
-								<VStack spacing={ 1 }>
-									{ validationErrors.map( ( { fieldId, label, message } ) => (
-										<Text as="p" key={ fieldId }>
-											{ label ? `${ label }: ${ message }` : message }
-										</Text>
-									) ) }
-								</VStack>
-							</Notice>
-						) }
 						<form onSubmit={ handleSubmit }>
 							<ButtonStack justify="flex-start">
 								<Button

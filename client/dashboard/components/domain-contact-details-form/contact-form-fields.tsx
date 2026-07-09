@@ -23,12 +23,8 @@ import { RegionAddressFieldsets } from './region-address-fieldsets';
 import type { CountryListItem } from './custom-form-fieldsets/types';
 import type { DomainContactDetails, StatesListItem } from '@automattic/api-core';
 
-// The supported-countries endpoint repeats the most popular countries at the top
-// of the list and inserts an empty-code separator between them and the full list.
-// That is meant for a plain <select>, but the country field renders as a searchable
-// combobox whose option keys are the country codes, so the repeats and the empty
-// entry produce duplicate React keys that break list rendering. Keep a single,
-// non-empty entry per country code.
+// The supported-countries list repeats popular countries and includes an empty-code
+// separator; the combobox keys options by code, so dedupe to avoid duplicate React keys.
 const getCountryElements = ( countryList: CountryListItem[] | undefined ) => {
 	const seen = new Set< string >();
 	const elements: { label: string; value: string }[] = [];

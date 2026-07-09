@@ -91,20 +91,16 @@ export const createFieldAsyncValidator = (
 };
 
 /**
- * Maps a full validation response's per-field messages to form field IDs.
- *
- * The validation endpoint checks the whole contact form and returns errors keyed
- * by every affected field, but DataForm's per-field async validators only re-run
- * for the field the user changed. Changing the country, for example, can invalidate
- * the postal code without re-running the postal code's own validator. This lets the
- * form surface the first error for each affected field from a single response.
+ * Maps a validation response's per-field messages (snake_case API keys) to form
+ * field IDs (camelCase), keeping the first message per field. Lets the form surface
+ * errors for every affected field from a single whole-form validation response.
  * @param messages - The `messages` object from a failed validation response
- * @returns A map of field IDs (camelCase) to their first error message
+ * @returns A map of field IDs to their first error message
  */
 export const mapValidationMessagesToFieldErrors = (
 	messages: ContactValidationResponseMessages | undefined
-): Partial< Record< keyof DomainContactDetails, string > > => {
-	const fieldErrors: Partial< Record< keyof DomainContactDetails, string > > = {};
+): Record< string, string > => {
+	const fieldErrors: Record< string, string > = {};
 	if ( ! messages ) {
 		return fieldErrors;
 	}
