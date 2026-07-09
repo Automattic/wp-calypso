@@ -141,7 +141,7 @@ export const SuggestionDropdown: React.FC< SuggestionDropdownProps > = ( {
 									}` }
 								/>
 							</span>
-							{ showDescription && (
+							{ showDescription && suggestion.description && (
 								<span
 									className={ suggestionStyles.description }
 								>

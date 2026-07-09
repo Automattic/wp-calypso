@@ -1,7 +1,15 @@
 // @vitest-environment jsdom
 import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+	afterEach,
+	beforeAll,
+	beforeEach,
+	describe,
+	expect,
+	it,
+	vi,
+} from 'vitest';
 import {
 	type AgentUIContextValue,
 	AgentUIProvider,
@@ -12,6 +20,26 @@ import type { Suggestion } from '../../types';
 (
 	globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }
  ).IS_REACT_ACT_ENVIRONMENT = true;
+
+// The dropdown branch renders a Radix Popover, which relies on browser APIs
+// jsdom does not implement. Only needed for the description-wiring tests below.
+beforeAll( () => {
+	if ( ! HTMLElement.prototype.hasPointerCapture ) {
+		HTMLElement.prototype.hasPointerCapture = () => false;
+	}
+	if (
+		! ( globalThis as unknown as { ResizeObserver?: unknown } )
+			.ResizeObserver
+	) {
+		(
+			globalThis as unknown as { ResizeObserver: unknown }
+		 ).ResizeObserver = class {
+			observe() {}
+			unobserve() {}
+			disconnect() {}
+		};
+	}
+} );
 
 const suggestions: Suggestion[] = [
 	{ id: 'a', label: 'A', prompt: 'A' },
@@ -114,5 +142,39 @@ describe( 'Suggestions reportSuggestionsRendered', () => {
 			[ 'a', 'b' ],
 			[ 'a', 'b', 'c', 'd' ],
 		] );
+	} );
+} );
+
+// Proves the caller path: Suggestions passes showDescription to the dropdown
+// only in non-horizontal layouts (isEligibleForDescription).
+describe( 'Suggestions dropdown description wiring', () => {
+	const dropdownSuggestion: Suggestion = {
+		id: 'tone',
+		label: 'Change tone to',
+		prompt: 'Change the tone to ',
+		description: 'Adjust the tone of your post.',
+		options: [ { id: 'formal', label: 'Formal', value: 'formal' } ],
+	};
+
+	it( 'renders the dropdown description in vertical layout', () => {
+		render( 'embedded', vi.fn(), {
+			suggestions: [ dropdownSuggestion ],
+			layout: 'vertical',
+		} );
+
+		expect( container.textContent ).toContain(
+			'Adjust the tone of your post.'
+		);
+	} );
+
+	it( 'hides the dropdown description in horizontal layout', () => {
+		render( 'embedded', vi.fn(), {
+			suggestions: [ dropdownSuggestion ],
+			layout: 'horizontal',
+		} );
+
+		expect( container.textContent ).not.toContain(
+			'Adjust the tone of your post.'
+		);
 	} );
 } );

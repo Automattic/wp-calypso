@@ -358,4 +358,64 @@ describe( 'SuggestionDropdown', () => {
 			'Tone: Professional'
 		);
 	} );
+
+	const describedSuggestion: Suggestion = {
+		...mockSuggestion,
+		description: 'Adjust the tone of your post.',
+	};
+
+	// The trigger button contains a single wrapper div; its children are the
+	// label row and (when rendered) the description span.
+	const getTriggerContent = () => getTrigger().querySelector( 'div' )!;
+
+	it( 'renders the description under the label when showDescription is set', () => {
+		act( () => {
+			root.render(
+				<SuggestionDropdown
+					suggestion={ describedSuggestion }
+					availableSuggestions={ [] }
+					showDescription
+				/>
+			);
+		} );
+
+		expect( getTrigger().textContent ).toContain( 'Change tone to' );
+		expect( getTrigger().textContent ).toContain(
+			'Adjust the tone of your post.'
+		);
+		// Label row + description span.
+		expect( getTriggerContent().children.length ).toBe( 2 );
+	} );
+
+	it( 'omits the description when showDescription is not set', () => {
+		act( () => {
+			root.render(
+				<SuggestionDropdown
+					suggestion={ describedSuggestion }
+					availableSuggestions={ [] }
+				/>
+			);
+		} );
+
+		expect( getTrigger().textContent ).toContain( 'Change tone to' );
+		expect( getTrigger().textContent ).not.toContain(
+			'Adjust the tone of your post.'
+		);
+		expect( getTriggerContent().children.length ).toBe( 1 );
+	} );
+
+	it( 'renders no description node when showDescription is set but the suggestion has none', () => {
+		act( () => {
+			root.render(
+				<SuggestionDropdown
+					suggestion={ mockSuggestion }
+					availableSuggestions={ [] }
+					showDescription
+				/>
+			);
+		} );
+
+		// Guard prevents an empty description span from rendering.
+		expect( getTriggerContent().children.length ).toBe( 1 );
+	} );
 } );
