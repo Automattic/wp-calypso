@@ -44,6 +44,11 @@ export default function AmplifyAddSiteModal( { onClose }: { onClose: () => void 
 	} );
 
 	const handleViewReports = () => {
+		const isReportsPage = window.location.pathname === A4A_AMPLIFY_REPORTS_LINK;
+		if ( isReportsPage ) {
+			onClose();
+			return;
+		}
 		page.redirect( A4A_AMPLIFY_REPORTS_LINK );
 	};
 

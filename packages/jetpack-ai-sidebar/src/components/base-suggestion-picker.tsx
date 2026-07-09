@@ -26,6 +26,12 @@ interface BaseSuggestionPickerProps {
 	onApply: ( value: string ) => void;
 	/** Optional confirmation shown inline once a value has been applied. */
 	appliedMessage?: string;
+	/**
+	 * Live value the options write to (post title, SEO meta, …). The matching
+	 * option renders as applied, so a picker rehydrated from chat history still
+	 * shows which suggestion was chosen.
+	 */
+	currentValue?: string;
 }
 
 /**
@@ -38,6 +44,7 @@ export default function BaseSuggestionPicker( {
 	options,
 	onApply,
 	appliedMessage,
+	currentValue,
 }: BaseSuggestionPickerProps ) {
 	const [ appliedValue, setAppliedValue ] = useState< string | null >( null );
 
@@ -49,12 +56,16 @@ export default function BaseSuggestionPicker( {
 		[ onApply ]
 	);
 
+	const derivedAppliedValue =
+		currentValue !== undefined && options.includes( currentValue ) ? currentValue : null;
+	const effectiveAppliedValue = appliedValue ?? derivedAppliedValue;
+
 	return (
 		<div className="jetpack-ai-base-suggestion-picker">
 			<p className="jetpack-ai-base-suggestion-picker__intro">{ intro }</p>
 			<div className="jetpack-ai-base-suggestion-picker__options">
 				{ options.map( ( value, index ) => {
-					const isApplied = value === appliedValue;
+					const isApplied = value === effectiveAppliedValue;
 					return (
 						<button
 							key={ `${ value }-${ index }` }
@@ -70,10 +81,16 @@ export default function BaseSuggestionPicker( {
 					);
 				} ) }
 			</div>
-			{ appliedValue !== null && appliedMessage && (
+			{ effectiveAppliedValue !== null && appliedMessage && (
 				// A div (not a <p>) so AM's `.Message-module_message p` reset can't
-				// override the margin that positions this confirmation.
-				<div className="jetpack-ai-base-suggestion-picker__status" role="status">
+				// override the margin that positions this confirmation. Live-region
+				// role only for in-session applies — a confirmation derived from
+				// currentValue renders on mount (e.g. rehydrated history) and must
+				// not be announced as if the user just acted.
+				<div
+					className="jetpack-ai-base-suggestion-picker__status"
+					role={ appliedValue !== null ? 'status' : undefined }
+				>
 					{ appliedMessage }
 				</div>
 			) }

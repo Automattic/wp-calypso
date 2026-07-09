@@ -19,7 +19,7 @@ export default function AmplifySidebar( { path }: Props ) {
 			title={
 				<div className="sidebar-menu-item__title-with-badge">
 					<span>{ __( 'Amplify' ) }</span>
-					<Badge type="info">{ __( 'Alpha' ) }</Badge>
+					<Badge type="info">{ __( 'Beta' ) }</Badge>
 				</div>
 			}
 			backButtonProps={ {

@@ -18,11 +18,19 @@ import useSubmitContactSupport from './use-submit-contact-support';
 
 import './style.scss';
 
+type AnonymousAtSignupData = {
+	name: string;
+	email: string;
+	agencyName: string;
+	agencyUrl: string;
+};
+
 type Props = {
 	show: boolean;
 	onClose?: () => void;
 	defaultMessage?: string;
 	defaultProduct?: string;
+	anonymousAtSignup?: AnonymousAtSignupData;
 };
 
 const DEFAULT_MESSAGE_VALUE = '';
@@ -33,16 +41,19 @@ export default function UserContactSupportModalForm( {
 	onClose,
 	defaultMessage = DEFAULT_MESSAGE_VALUE,
 	defaultProduct = DEFAULT_PRODUCT_VALUE,
+	anonymousAtSignup,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	useMinimizeHelpCenterOnMount();
 
+	const isAnonymousMode = !! anonymousAtSignup;
+
 	const user = useSelector( getCurrentUser );
 	const agency = useSelector( getActiveAgency );
 
-	const [ name, setName ] = useState( user?.display_name );
-	const [ email, setEmail ] = useState( user?.email );
+	const [ name, setName ] = useState( anonymousAtSignup?.name ?? user?.display_name );
+	const [ email, setEmail ] = useState( anonymousAtSignup?.email ?? user?.email );
 	const [ product, setProduct ] = useState( defaultProduct );
 	const [ pressableContactType, setPressableContactType ] = useState( 'sales' );
 	const [ site, setSite ] = useState( '' );
@@ -51,14 +62,21 @@ export default function UserContactSupportModalForm( {
 	const isPressableSelected = product === 'pressable';
 	const isClient = isClientView();
 	const hasCompletedForm =
-		!! message && !! name && !! email && !! product && ( !! agency || isClient );
+		!! message && !! name && !! email && !! product && ( !! agency || isClient || isAnonymousMode );
 
-	const { isSubmitting, submit, isSubmissionSuccessful } = useSubmitContactSupport();
+	const { isSubmitting, submit, isSubmissionSuccessful } = useSubmitContactSupport( {
+		isSignup: isAnonymousMode,
+	} );
 
 	const resetForm = useCallback( () => {
 		setMessage( defaultMessage );
 		setProduct( defaultProduct );
-	}, [ defaultMessage, defaultProduct ] );
+		if ( anonymousAtSignup ) {
+			setName( anonymousAtSignup.name );
+			setEmail( anonymousAtSignup.email );
+			setSite( anonymousAtSignup.agencyUrl );
+		}
+	}, [ defaultMessage, defaultProduct, anonymousAtSignup ] );
 
 	const onModalClose = useCallback( () => {
 		onClose?.();
@@ -132,10 +150,11 @@ export default function UserContactSupportModalForm( {
 			name,
 			email,
 			product,
-			agency_id: agency?.id,
+			agency_id: isAnonymousMode ? undefined : agency?.id,
 			...( site && { site } ),
 			...( pressableContactType && { contact_type: pressableContactType } ),
 			...( pressable_id && { pressable_id } ),
+			...( isAnonymousMode && { tags: [ 'a4a_duplicate_signup_blocked' ] } ),
 		};
 
 		submit( formData );
@@ -150,6 +169,7 @@ export default function UserContactSupportModalForm( {
 		site,
 		pressableContactType,
 		agency,
+		isAnonymousMode,
 	] );
 
 	useEffect( () => {

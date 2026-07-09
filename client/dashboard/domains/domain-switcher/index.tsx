@@ -1,6 +1,7 @@
 import { DomainSubtype } from '@automattic/api-core';
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { globe } from '@wordpress/icons';
 import { useAppContext } from '../../app/context';
 import useBuildCurrentRouteLink from '../../app/hooks/use-build-current-route-link';
@@ -41,6 +42,7 @@ export default function DomainSwitcher( {
 			items={ domains }
 			value={ domain }
 			searchableFields={ searchableFields }
+			headerTitle={ __( 'Switch domain' ) }
 			getItemUrl={ ( d ) => buildCurrentRouteLink( { params: { domainName: d.domain } } ) }
 			renderToggle={ renderToggle }
 			renderItem={ ( { item, context } ) => (

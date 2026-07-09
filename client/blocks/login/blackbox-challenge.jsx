@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { useBlackbox } from 'calypso/blocks/login/utils/use-blackbox';
 
@@ -25,5 +26,17 @@ export default function BlackboxChallenge( { enabled, onSubmitBlockedChange } ) 
 		return null;
 	}
 
-	return <div ref={ containerRef } className="login__form-blackbox-challenge" />;
+	// The container always renders while enabled so the challenge has a mount
+	// point, but it only takes up space once a challenge is actually showing.
+	// Flag that state so the stylesheet reserves spacing only then.
+	const isChallengeVisible = isChallengeActive || hasChallengeContent;
+
+	return (
+		<div
+			ref={ containerRef }
+			className={ clsx( 'login__form-blackbox-challenge', {
+				'has-visible-challenge': isChallengeVisible,
+			} ) }
+		/>
+	);
 }

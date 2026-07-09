@@ -34,8 +34,7 @@ const TRACKS_EVENT_VIEW_FLOATING_PANEL = 'stats_feedback_action_view_floating_pa
 
 const FEEDBACK_PANEL_PRESENTATION_DELAY = 3000;
 const FEEDBACK_LEAVE_REVIEW_URL = 'https://wordpress.org/support/plugin/jetpack/reviews/';
-const FEEDBACK_SEND_FEEDBACK_URL =
-	'https://jetpack.com/?logmein=1&redirect_to=https%3A%2F%2Fjetpack.com%2Fcontact-support%2F%3Fcontact-form';
+const FEEDBACK_SEND_FEEDBACK_URL = 'https://jetpack.com/submit-feedback/';
 
 const FEEDBACK_SHOULD_SHOW_PANEL_API_KEY = NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL;
 const FEEDBACK_SHOULD_SHOW_PANEL_API_HIBERNATION_DELAY = 3600 * 24 * 30 * 6; // 6 months

@@ -6,6 +6,7 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { preventWidows } from 'calypso/lib/formatting';
 import type { ReactNode } from 'react';
 
 import './criteria-section.scss';
@@ -44,8 +45,8 @@ export default function AmplifyCriteriaSection( {
 					{ eyebrow }
 				</Text>
 				<Heading level={ 2 }>{ title }</Heading>
-				<Text className="amplify-criteria-intro" variant="muted">
-					{ intro }
+				<Text className="amplify-criteria-intro" variant="muted" size={ 16 }>
+					{ preventWidows( intro ) }
 				</Text>
 			</VStack>
 
@@ -57,7 +58,7 @@ export default function AmplifyCriteriaSection( {
 								<Text size={ 28 } weight={ 700 } color="var(--color-primary)">
 									{ stat.num }
 								</Text>
-								<Text variant="muted">{ stat.label }</Text>
+								<Text variant="muted">{ preventWidows( stat.label ) }</Text>
 							</VStack>
 						</CardBody>
 					</Card>
@@ -75,7 +76,7 @@ export default function AmplifyCriteriaSection( {
 								<Heading level={ 3 } size={ 16 }>
 									{ criterion.title }
 								</Heading>
-								<Text variant="muted">{ criterion.summary }</Text>
+								<Text variant="muted">{ preventWidows( criterion.summary ) }</Text>
 							</VStack>
 						</CardBody>
 					</Card>

@@ -2,6 +2,7 @@
 const fs = require( 'fs' );
 const https = require( 'https' );
 const path = require( 'path' );
+const { isPrereleaseVersion } = require( './release-version-core' );
 
 // Module Constants
 const gitHubRepository = 'Automattic/wp-desktop';
@@ -12,6 +13,7 @@ const version = process.env.VERSION
 			throw new Error( 'Error: no version' );
 	  } )();
 const releaseName = `WP-Desktop ${ version.replace( /^v/, '' ) }`;
+const isPrerelease = isPrereleaseVersion( version );
 const releaseDirectory = path.resolve( __dirname, '..', '..', 'release' );
 const changelogPath = path.resolve( __dirname, '..', '..', 'CHANGELOG.md' );
 
@@ -177,7 +179,7 @@ async function publishRelease() {
 			name: releaseName,
 			body: fs.readFileSync( changelogPath, 'utf8' ),
 			draft: true,
-			prerelease: false,
+			prerelease: isPrerelease,
 		},
 	} );
 

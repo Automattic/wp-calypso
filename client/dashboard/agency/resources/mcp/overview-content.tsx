@@ -11,6 +11,7 @@ import { check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { Card, CardBody } from '../../../components/card';
 import SummaryButton from '../../../components/summary-button';
+import McpStarterPrompts from './starter-prompts-content';
 import type { RecordTracksEvent } from './types';
 import type { McpSettings, McpSettingsUpdate } from '@automattic/api-core';
 import type { MouseEvent } from 'react';
@@ -88,7 +89,7 @@ export default function McpOverview( {
 			<Spacer marginBottom={ 8 } style={ { maxWidth: '650px' } }>
 				<Text size={ 15 }>
 					{ __(
-						'Set up AI agent access in three steps. Access won’t work until you complete all three.'
+						'Connect an AI agent to check site health, tier progress, payouts, and more across your agency, on demand. Set it up in three easy steps and put your agent to work.'
 					) }
 				</Text>
 			</Spacer>
@@ -148,6 +149,10 @@ export default function McpOverview( {
 					onClick={ handleNavClick( connectPath, 'calypso_a4a_ai_mcp_connect_click' ) }
 				/>
 			</VStack>
+
+			<Spacer marginTop={ 8 } marginBottom={ 0 }>
+				<McpStarterPrompts recordTracksEvent={ recordTracksEvent } disabled={ ! mainEnabled } />
+			</Spacer>
 		</>
 	);
 }

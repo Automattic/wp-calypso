@@ -28,6 +28,7 @@ import {
 	getWordPressHostingFeaturesGroupedForFeaturesGrid,
 	isWooHostedPlan,
 	isWooHostedFreePlan,
+	isWpcomEnterpriseGridPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -81,6 +82,7 @@ import {
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import usePlanDifferentiatorsExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plan-differentiators-experiment';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
+import usePlansGridRedesignExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-experiment';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
@@ -100,6 +102,7 @@ import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availabi
 import useDefaultWpcomPlansIntent from './hooks/use-default-wpcom-plans-intent';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
 import useGenerateActionHook from './hooks/use-generate-action-hook';
+import { useIsIndiaA4A } from './hooks/use-is-india-a4a';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
 import { useRenewalPricingExperiment } from './hooks/use-renewal-price-experiment';
@@ -109,6 +112,7 @@ import type {
 	PlansIntent,
 	DataResponse,
 	SupportedUrlFriendlyTermType,
+	GridPlan,
 } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { IAppState } from 'calypso/state/types';
@@ -683,6 +687,13 @@ const PlansFeaturesMain = ( {
 		useFocusedNewCopyTaglines,
 		isExperimentVariant,
 	} = usePlanDifferentiatorsExperiment( { isInSignup, siteId } );
+	const {
+		isLoading: isPlansGridRedesignExperimentLoading,
+		showDifferentiatorHeader: showPlansGridRedesignDifferentiatorHeader,
+		usePlansGridRedesignFeatures,
+		usePlansGridRedesign,
+		usePlansGridRedesignNewDescription,
+	} = usePlansGridRedesignExperiment( { flowName, isInSignup, siteId } );
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
@@ -869,6 +880,7 @@ const PlansFeaturesMain = ( {
 		useVar42NoAiFeatures,
 		showPricingDifferentiationFeaturePills,
 		useFocusedNewCopyTaglines,
+		usePlansGridRedesignNewDescription,
 		isExperimentVariant,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 	} );
@@ -896,23 +908,54 @@ const PlansFeaturesMain = ( {
 		term,
 		reflectStorageSelectionInPlanPrices: true,
 		useVar42NoAiFeatures,
+		usePlansGridRedesignFeatures,
 		showPricingDifferentiationFeaturePills,
 		useFocusedNewCopyTaglines,
+		usePlansGridRedesignNewDescription,
 		isExperimentVariant,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 	} );
 
+	const isIndiaA4A = useIsIndiaA4A();
+
+	// India A4A test: re-skin the Enterprise card with the Automattic for Agencies title/tagline.
+	const applyA4AIndiaCopy = useCallback(
+		( gridPlans: GridPlan[] | null ) => {
+			if ( ! isIndiaA4A || ! gridPlans ) {
+				return gridPlans;
+			}
+
+			return gridPlans.map( ( gridPlan ) =>
+				isWpcomEnterpriseGridPlan( gridPlan.planSlug )
+					? {
+							...gridPlan,
+							planTitle: translate( 'Agencies' ),
+							tagline: translate( 'Pricing and incentives built for WordPress agencies.' ),
+					  }
+					: gridPlan
+			);
+		},
+		[ isIndiaA4A, translate ]
+	);
+
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
 	const gridPlansForFeaturesGrid = useMemo(
 		() =>
-			gridPlansForFeaturesGridRaw?.filter( ( { planSlug } ) => {
-				if ( deemphasizeFreePlan ) {
-					return planSlug !== PLAN_FREE;
-				}
+			applyA4AIndiaCopy(
+				gridPlansForFeaturesGridRaw?.filter( ( { planSlug } ) => {
+					if ( deemphasizeFreePlan ) {
+						return planSlug !== PLAN_FREE;
+					}
 
-				return true;
-			} ) ?? null, // optional chaining can result in `undefined`; we don't want to introduce it here.
-		[ gridPlansForFeaturesGridRaw, deemphasizeFreePlan ]
+					return true;
+				} ) ?? null // optional chaining can result in `undefined`; we don't want to introduce it here.
+			),
+		[ gridPlansForFeaturesGridRaw, deemphasizeFreePlan, applyA4AIndiaCopy ]
+	);
+
+	const gridPlansForComparisonGridFinal = useMemo(
+		() => applyA4AIndiaCopy( gridPlansForComparisonGrid ),
+		[ gridPlansForComparisonGrid, applyA4AIndiaCopy ]
 	);
 
 	const isVisualSplitEnabled =
@@ -927,7 +970,12 @@ const PlansFeaturesMain = ( {
 	let enableTermSavingsPriceDisplay = true;
 	// In the "purchase a plan and free domain" flow we do not want to show
 	// monthly plans because monthly plans do not come with a free domain.
-	if ( redirectToAddDomainFlow !== undefined || hidePlanTypeSelector || isVisualSplitEnabled ) {
+	if (
+		redirectToAddDomainFlow !== undefined ||
+		hidePlanTypeSelector ||
+		isVisualSplitEnabled ||
+		( usePlansGridRedesign && isInSignup )
+	) {
 		hidePlanSelector = true;
 	}
 	if ( ! isInSignup ) {
@@ -1127,7 +1175,8 @@ const PlansFeaturesMain = ( {
 	const isPlansGridReady =
 		! isLoadingGridPlans &&
 		! resolvedSubdomainName.isLoading &&
-		! isRenewalPricingExperimentLoading;
+		! isRenewalPricingExperimentLoading &&
+		! isPlansGridRedesignExperimentLoading;
 
 	useEffect( () => {
 		if ( isPlansGridReady ) {
@@ -1181,7 +1230,7 @@ const PlansFeaturesMain = ( {
 		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid();
 	} else if ( intent === 'plans-wordpress-hosting' ) {
 		featureGroupMapForFeaturesGrid = getWordPressHostingFeaturesGroupedForFeaturesGrid();
-	} else if ( useVar42NoAiFeatures ) {
+	} else if ( useVar42NoAiFeatures || usePlansGridRedesignFeatures ) {
 		// Stacked rollout variant should render a single, ordered list (no grouping),
 		// otherwise features get scattered across groups causing gaps and can be filtered out.
 		const featureGroups = getPlanFeaturesGroupedForFeaturesGrid();
@@ -1333,7 +1382,9 @@ const PlansFeaturesMain = ( {
 					renderFreePlanCtaInStepContainerV2={ renderFreePlanCtaInStepContainerV2 }
 					onFreePlanCTAClick={ onFreePlanCTAClick }
 					intent={ intent }
-					showDifferentiatorHeader={ showDifferentiatorHeader }
+					showDifferentiatorHeader={
+						showDifferentiatorHeader || showPlansGridRedesignDifferentiatorHeader
+					}
 				/>
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }
 				{ isPlansGridReady && (
@@ -1370,9 +1421,10 @@ const PlansFeaturesMain = ( {
 								{ gridPlansForFeaturesGrid && (
 									<FeaturesGrid
 										allFeaturesList={ getFeaturesList() }
-										className={ `plans-features-main__features-grid${
-											isExperimentVariant ? ' is-plan-differentiators-experiment' : ''
-										}` }
+										className={ clsx( 'plans-features-main__features-grid', {
+											'is-plan-differentiators-experiment': isExperimentVariant,
+											'is-plans-grid-redesign-experiment': usePlansGridRedesign,
+										} ) }
 										coupon={ coupon }
 										currentSitePlanSlug={ sitePlanSlug }
 										generatedWPComSubdomain={ resolvedSubdomainName }
@@ -1399,6 +1451,7 @@ const PlansFeaturesMain = ( {
 										enableFeatureTooltips
 										featureGroupMap={ featureGroupMapForFeaturesGrid }
 										enterpriseFeaturesList={ enterpriseFeaturesList }
+										isEnterpriseA4AIndia={ isIndiaA4A }
 										enableShowAllFeaturesButton={ ! showSimplifiedFeatures }
 										enableCategorisedFeatures={ showSimplifiedFeatures }
 										enableStorageAsBadge={ ! showSimplifiedFeatures }
@@ -1411,6 +1464,7 @@ const PlansFeaturesMain = ( {
 										showSimplifiedBillingDescription={ isInSignup }
 										showBillingDescriptionForIncreasedRenewalPrice={ renewalPricingVariation }
 										isExperimentVariant={ isExperimentVariant }
+										showFeatureCheckmarks={ usePlansGridRedesign }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
@@ -1440,13 +1494,15 @@ const PlansFeaturesMain = ( {
 														coupon={ coupon }
 													/>
 												) }
-											{ gridPlansForComparisonGrid && gridPlansForPlanTypeSelector && (
+											{ gridPlansForComparisonGridFinal && gridPlansForPlanTypeSelector && (
 												<ComparisonGrid
 													allFeaturesList={ getFeaturesList() }
-													className="plans-features-main__comparison-grid"
+													className={ clsx( 'plans-features-main__comparison-grid', {
+														'is-plans-grid-redesign-experiment': usePlansGridRedesign,
+													} ) }
 													coupon={ coupon }
 													currentSitePlanSlug={ sitePlanSlug }
-													gridPlans={ gridPlansForComparisonGrid }
+													gridPlans={ gridPlansForComparisonGridFinal }
 													hideUnavailableFeatures={ hideUnavailableFeatures }
 													intent={ intent }
 													intervalType={ compatibleIntervalType }

@@ -4,7 +4,7 @@ import {
 	FEATURE_CUSTOM_DOMAIN,
 	isFreePlan,
 } from '@automattic/calypso-products';
-import { LoadingPlaceholder } from '@automattic/components';
+import { Gridicon, LoadingPlaceholder } from '@automattic/components';
 import styled from '@emotion/styled';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -102,7 +102,8 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	setActiveTooltipId,
 } ) => {
 	const translate = useTranslate();
-	const { enableFeatureTooltips, gridPlans, isExperimentVariant } = usePlansGridContext();
+	const { enableFeatureTooltips, gridPlans, isExperimentVariant, showFeatureCheckmarks } =
+		usePlansGridContext();
 
 	return (
 		<>
@@ -142,6 +143,8 @@ const PlanFeatures2023GridFeatures: React.FC< {
 					! isFreePlan( planSlug );
 				const shouldHighlightDomainFeature =
 					isCustomDomainFeatureWithPaidDomain && isExperimentVariant;
+				const isFeatureAvailable =
+					isFreePlanAndCustomDomainFeature || currentFeature.availableForCurrentPlan;
 
 				const divClasses = clsx( '', getPlanClass( planSlug ), {
 					'is-last-feature': featureIndex + 1 === features.length,
@@ -150,8 +153,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 				} );
 				const spanClasses = clsx( 'plan-features-2023-grid__item-info', {
 					'is-annual-plan-feature': currentFeature.availableOnlyForAnnualPlans,
-					'is-available':
-						isFreePlanAndCustomDomainFeature || currentFeature.availableForCurrentPlan,
+					'is-available': isFeatureAvailable,
 				} );
 				const itemTitleClasses = clsx( 'plan-features-2023-grid__item-title', {
 					'is-bold': isHighlightedFeature,
@@ -161,6 +163,15 @@ const PlanFeatures2023GridFeatures: React.FC< {
 				return (
 					<div key={ key } className={ divClasses }>
 						<PlanFeaturesItem>
+							{ showFeatureCheckmarks && isFeatureAvailable && (
+								<Gridicon
+									className="plan-features-2023-grid__item-checkmark"
+									icon="checkmark"
+									size={ 16 }
+									aria-hidden="true"
+									focusable="false"
+								/>
+							) }
 							<span className={ spanClasses } key={ key }>
 								<span className={ itemTitleClasses }>
 									{ isFreePlanAndCustomDomainFeature ? (
@@ -193,11 +204,15 @@ const PlanFeatures2023GridFeatures: React.FC< {
 										>
 											<>
 												<span className="plan-features-2023-grid__item-text-content">
-													{ currentFeature.getTitle( {
-														domainName: paidDomainName,
-													} ) }
+													<span className="plan-features-2023-grid__item-title-label">
+														{ currentFeature.getTitle( {
+															domainName: paidDomainName,
+														} ) }
+													</span>
 													{ currentFeature.badgeText && (
-														<FeatureBadge>{ currentFeature.badgeText }</FeatureBadge>
+														<FeatureBadge className="plan-features-2023-grid__feature-badge">
+															{ currentFeature.badgeText }
+														</FeatureBadge>
 													) }
 												</span>
 												{ shouldBreakAfterAiWebsiteBuilderTitle && (

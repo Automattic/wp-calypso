@@ -122,12 +122,17 @@ export function generateFlows( {
 		},
 		{
 			name: 'with-plugin',
-			steps: [ userSocialStep, 'domains', 'plans-business-with-plugin' ],
+			steps: [ userSocialStep, 'domains', 'plans-with-plugin' ],
 			destination: getWithPluginDestination,
-			description: 'Preselect a plugin to activate/buy, a Business plan is needed',
-			lastModified: '2023-10-11',
+			description:
+				'Preselect a plugin to activate/buy, then show the paid plans grid to pick a qualifying plan.',
+			lastModified: '2026-07-07',
 			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'plugin', 'billing_period' ],
+			providesDependenciesInQuery: [ 'plugin', 'billing_period', 'intervalType' ],
+			optionalDependenciesInQuery: [ 'intervalType' ],
+			// Persist domains data so re-entering via browser back from checkout skips the domains
+			// step and reuses the created site instead of making a duplicate.
+			persistsDomainsOnReEntry: true,
 			hideProgressIndicator: true,
 		},
 		{
@@ -139,6 +144,7 @@ export function generateFlows( {
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
+			persistsDomainsOnReEntry: true,
 			hideProgressIndicator: true,
 		},
 		{

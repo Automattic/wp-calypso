@@ -168,6 +168,7 @@ function renderActivityLogsDataViews(
 			setAutoRefresh={ jest.fn() }
 			logType="activity"
 			hasActivityLogsAccess
+			searchParams={ {} }
 		/>
 	);
 }

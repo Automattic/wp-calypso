@@ -1,7 +1,6 @@
 import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
 import config from '@automattic/calypso-config';
 import { isEcommercePlan } from '@automattic/calypso-products';
-import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { Badge } from '@automattic/ui';
 import { localize } from 'i18n-calypso';
@@ -13,6 +12,7 @@ import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
 import { dashboardLink, wpcomLink } from 'calypso/dashboard/utils/link';
+import { navigate } from 'calypso/lib/navigate';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
@@ -25,6 +25,7 @@ import { getCurrentUser, getCurrentUserSiteCount } from 'calypso/state/current-u
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -70,6 +71,7 @@ import HelpIcon from './masterbar-agents-manager/help-icon';
 import { HelpCenterIcon } from './masterbar-help-center/help-center-icon';
 import { MasterbarLaunchButton } from './masterbar-launch-button';
 import Notifications from './masterbar-notifications/notifications-button';
+import MasterbarStatsSparkline from './masterbar-stats-sparkline';
 
 const loadCheckout = () =>
 	import( /* webpackChunkName: "async-load-calypso-layout-masterbar-checkout" */ './checkout.tsx' );
@@ -108,11 +110,11 @@ class MasterbarLoggedIn extends Component {
 		isGlobalSidebarVisible: PropTypes.bool,
 		isGravatarDomain: PropTypes.bool,
 		dashboardOptIn: PropTypes.bool,
+		canUserViewStats: PropTypes.bool,
+		statsAdminUrl: PropTypes.string,
+		statsSparkline: PropTypes.node,
 		useUnifiedAgent: PropTypes.bool,
 		launchButton: PropTypes.node,
-		// When provided, the "Plan" menu item navigates to this URL via a regular
-		// anchor instead of calling the page.js router. The interim omnibar (which
-		// runs outside the page.js routing context) passes this so the link works.
 		sitePlanUrl: PropTypes.string,
 	};
 
@@ -204,7 +206,7 @@ class MasterbarLoggedIn extends Component {
 
 	goToCheckout = ( siteId ) => {
 		this.props.recordTracksEvent( 'calypso_masterbar_cart_go_to_checkout' );
-		page( `/checkout/${ siteId }` );
+		navigate( `/checkout/${ siteId }` );
 	};
 
 	onRemoveCartProduct = ( uuid = 'coupon' ) => {
@@ -528,6 +530,8 @@ class MasterbarLoggedIn extends Component {
 			site,
 			sitePlanUrl,
 			sidebarType,
+			canUserViewStats,
+			statsAdminUrl,
 		} = this.props;
 
 		// Only display when a site is selected and is not domain-only site.
@@ -567,6 +571,14 @@ class MasterbarLoggedIn extends Component {
 			}
 		}
 
+		if ( canUserViewStats ) {
+			menuItems.push( {
+				label: translate( 'Stats' ),
+				url: statsAdminUrl,
+				onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_stats_clicked' ),
+			} );
+		}
+
 		if ( ! site?.is_wpcom_staging_site ) {
 			menuItems.push( {
 				label: (
@@ -577,14 +589,11 @@ class MasterbarLoggedIn extends Component {
 						</div>
 					</div>
 				),
-				// In the interim omnibar `page.js` routing is unavailable, so navigate
-				// via a regular anchor using the provided `sitePlanUrl`. Elsewhere, fall
-				// back to client-side routing.
 				...( sitePlanUrl && { url: sitePlanUrl } ),
 				onClick: () => {
 					this.props.recordTracksEvent( 'calypso_masterbar_plan_clicked' );
 					if ( ! sitePlanUrl ) {
-						page( `/plans/${ siteSlug }` );
+						navigate( `/plans/${ siteSlug }` );
 					}
 				},
 			} );
@@ -698,6 +707,42 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
+	clickStatsSparkline = () => {
+		this.props.recordTracksEvent( 'calypso_masterbar_stats_sparkline_clicked' );
+	};
+
+	renderStatsSparkline() {
+		const { siteId, translate, domainOnlySite, canUserViewStats, statsAdminUrl, statsSparkline } =
+			this.props;
+
+		if ( ! siteId || domainOnlySite || ! canUserViewStats || ! statsAdminUrl ) {
+			return null;
+		}
+
+		if ( 'statsSparkline' in this.props && ! statsSparkline ) {
+			return null;
+		}
+
+		const label = translate( 'Views over 48 hours. Click for more Stats.' );
+
+		return (
+			<Item
+				className="masterbar__item-stats-sparkline"
+				url={ statsAdminUrl }
+				tooltip={ label }
+				ariaLabel={ label }
+				onClick={ this.clickStatsSparkline }
+				hasGlobalBorderStyle
+			>
+				{ 'statsSparkline' in this.props ? (
+					statsSparkline
+				) : (
+					<MasterbarStatsSparkline siteId={ siteId } />
+				) }
+			</Item>
+		);
+	}
+
 	renderLaunchButton() {
 		const { isA4ADevSite, isUnlaunchedSite, siteId, isManageSiteOptionsEnabled, launchButton } =
 			this.props;
@@ -715,6 +760,8 @@ class MasterbarLoggedIn extends Component {
 
 	renderProfileMenu() {
 		const { translate, user, isGlobalSidebarVisible, siteAdminUrl } = this.props;
+		// No site admin URL (e.g. an account with no sites) means no profile.php to link to.
+		const canEditProfile = isGlobalSidebarVisible || !! siteAdminUrl;
 		const editProfileUrl = isGlobalSidebarVisible ? '/me' : `${ siteAdminUrl }profile.php`;
 		const profileActions = [
 			{
@@ -733,14 +780,20 @@ class MasterbarLoggedIn extends Component {
 							<span className="username" title={ user.username }>
 								{ user.username }
 							</span>
-							<span className="display-name edit-profile">
-								{ isGlobalSidebarVisible ? translate( 'My Profile' ) : translate( 'Edit Profile' ) }
-							</span>
+							{ canEditProfile && (
+								<span className="display-name edit-profile">
+									{ isGlobalSidebarVisible
+										? translate( 'My Profile' )
+										: translate( 'Edit Profile' ) }
+								</span>
+							) }
 						</div>
 					</div>
 				),
-				url: editProfileUrl,
-				onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_edit_profile_clicked' ),
+				url: canEditProfile ? editProfileUrl : undefined,
+				onClick: canEditProfile
+					? () => this.props.recordTracksEvent( 'calypso_masterbar_edit_profile_clicked' )
+					: undefined,
 			},
 			{
 				label: translate( 'Log Out' ),
@@ -969,6 +1022,7 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderUpdatesMenu() }
 					{ this.renderCommentsMenu() }
 					{ this.renderSiteActionMenu() }
+					{ this.renderStatsSparkline() }
 					{ this.renderLanguageSwitcher() }
 					{ this.renderLaunchButton() }
 				</div>
@@ -1049,6 +1103,8 @@ const ConnectedMasterbarLoggedIn = connect(
 				getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
 			isGravatarDomain: hasGravatarDomainQueryParam( state ),
 			dashboardOptIn: hasDashboardOptIn( state ),
+			canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
+			statsAdminUrl: getSiteAdminUrl( state, siteId, 'admin.php?page=stats' ),
 		};
 	},
 	{

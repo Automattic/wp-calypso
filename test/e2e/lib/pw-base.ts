@@ -77,7 +77,6 @@ import {
 	SidebarComponent,
 	SiteSelectComponent,
 	SignupPickPlanPage,
-	StartImportFlow,
 	StartWritingFlow,
 	TestAccount,
 	ThemesDetailPage,
@@ -95,6 +94,7 @@ import {
 	apiWaitForEmailVerification,
 } from '../specs/shared';
 import { useBlackboxTestKeyForCollect } from './blackbox-test-key';
+import { snoozeAccountRecoveryInterstitial } from './dashboard-helpers';
 import { getAccount } from './get-account';
 
 export type CustomOptions = {
@@ -195,10 +195,6 @@ export const test = base.extend<
 		 * Flow encapsulating the LOHP Theme Signup onboarding process.
 		 */
 		flowLOHPThemeSignup: LOHPThemeSignupFlow;
-		/**
-		 * Flow encapsulating the Start Import onboarding process.
-		 */
-		flowStartImport: StartImportFlow;
 		/**
 		 * Flow encapsulating the Start Writing onboarding process.
 		 */
@@ -473,10 +469,6 @@ export const test = base.extend<
 		const lohpThemeSignupFlow = new LOHPThemeSignupFlow( page );
 		await use( lohpThemeSignupFlow );
 	},
-	flowStartImport: async ( { page }, use ) => {
-		const startImportFlow = new StartImportFlow( page );
-		await use( startImportFlow );
-	},
 	flowStartWriting: async ( { page }, use ) => {
 		const startWritingFlow = new StartWritingFlow( page );
 		await use( startWritingFlow );
@@ -665,6 +657,10 @@ export const test = base.extend<
 			) as string;
 			await page.goto( activationLink );
 			await apiWaitForEmailVerification( restAPIClient, testUser.email );
+			// Fresh accounts have no recovery method set up, so the dashboard's
+			// account-recovery interstitial would mount over every route and block
+			// specs that load the dashboard with this fixture. Snooze it up front.
+			await snoozeAccountRecoveryInterstitial( restAPIClient );
 			await use( site );
 		} finally {
 			if ( site ) {
@@ -715,6 +711,7 @@ export const tags = {
 	CALYPSO_RELEASE: '@calypso-release',
 	DASHBOARD_PR: '@dashboard-pr',
 	DESKTOP_ONLY: '@desktop-only',
+	EDITOR_TRACKING: '@editor-tracking',
 	EXAMPLE_BLOCKS: '@example-blocks',
 	GUTENBERG: '@gutenberg',
 	I18N: '@i18n',
@@ -723,6 +720,7 @@ export const tags = {
 	JETPACK_WPCOM_INTEGRATION: '@jetpack-wpcom-integration',
 	LEGAL: '@legal',
 	P2: '@p2',
+	QUARANTINED: '@quarantined',
 	SETTINGS: '@settings',
 };
 
@@ -743,6 +741,21 @@ export function skipIfMailosaurLimitReached(): void {
 		envVariables.MAILOSAUR_LIMIT_REACHED,
 		'Skipping: Mailosaur daily email limit reached (sitePublic fixture requires email verification)'
 	);
+}
+
+/**
+ * Skips the current test suite when not running on trunk.
+ *
+ * @example
+ * ```typescript
+ * test.describe( 'My Test Suite', () => {
+ *   skipIfNotTrunk();
+ *   test( 'my test', async () => { ... });
+ * });
+ * ```
+ */
+export function skipIfNotTrunk(): void {
+	test.skip( ( process.env.BRANCH_NAME || '' ) !== 'trunk', 'Skipping: run only on trunk' );
 }
 
 /**

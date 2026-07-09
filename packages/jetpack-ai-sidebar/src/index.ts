@@ -15,10 +15,12 @@ import { __, _x } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
+import ExcerptPicker from './components/excerpt-picker';
+import './components/feedback-list.scss';
 import ImageAltTextPicker from './components/image-alt-text-picker';
 import './components/image-alt-text-picker.scss';
 import PostFeedback from './components/post-feedback';
-import './components/post-feedback.scss';
+import Proofread from './components/proofread';
 import ReviewMediation from './components/review-mediation';
 import './components/review-mediation.scss';
 import SeoDescriptionPicker from './components/seo-description-picker';
@@ -28,6 +30,7 @@ import TitlePicker from './components/title-picker';
 import './auto-scroll-fix.scss';
 import {
 	type CheckpointApi,
+	type CheckpointField,
 	applyReviewEdit,
 	findBlockElement,
 	findBlockListLayout,
@@ -46,7 +49,9 @@ import {
 import {
 	isAiEditorialReviewEnabled,
 	isBlockTransformationsEnabled,
+	isExcerptSuggestionEnabled,
 	isGenerateFeedbackEnabled,
+	isProofreadEnabled,
 	isOptimizeTitleSuggestionEnabled,
 	isSeoSuggestionsEnabled,
 } from './utils/preview-features';
@@ -91,6 +96,18 @@ const OPTIMIZE_TITLE_SUGGESTION = {
 	id: 'optimize-title',
 	label: __( 'Optimize Title', 'jetpack' ),
 	prompt: __( 'Optimize the title of this post', 'jetpack' ),
+};
+
+/**
+ * Post-level suggestion to generate the post excerpt. Routes through the
+ * orchestrator to the jetpack-ai/generate-excerpt ability, which returns the
+ * excerpt picker. The prompt is deliberately parameter-free: words/tone
+ * defaults live server-side, and the picker intro invites adjustments.
+ */
+const GENERATE_EXCERPT_SUGGESTION = {
+	id: 'generate-excerpt',
+	label: __( 'Generate Excerpt', 'jetpack' ),
+	prompt: __( 'Generate an excerpt for this post', 'jetpack' ),
 };
 
 /**
@@ -156,6 +173,15 @@ const POST_FEEDBACK_SUGGESTION = {
 	),
 };
 
+const PROOFREAD_SUGGESTION = {
+	id: 'proofread-content',
+	label: __( 'Proofread', 'jetpack' ),
+	prompt: __(
+		'Proofread this saved post for spelling, grammar, and punctuation. Review the saved title and saved block content, and return practical fixes with one-click suggestions when safe.',
+		'jetpack'
+	),
+};
+
 const LIMITED_BLOCK_SUGGESTION_PRIORITY = [
 	'translate',
 	'check-grammar',
@@ -174,6 +200,59 @@ function getCurrentEditorPostId(): number | undefined {
 	return typeof postId === 'number' && postId > 0 ? postId : undefined;
 }
 
+/**
+ * Whether a post type supports excerpts, given its (possibly still-resolving)
+ * core store record. While the record is unresolved, fall back to the core
+ * default — only 'post' supports excerpts — so one-shot callers (the empty
+ * view suggestions) don't permanently hide the chip on a slow resolution.
+ */
+function postTypeRecordSupportsExcerpt(
+	currentPostType: string | undefined,
+	postTypeRecord: { supports?: Record< string, boolean > } | undefined
+): boolean {
+	if ( ! currentPostType ) {
+		return false;
+	}
+	if ( ! postTypeRecord ) {
+		return currentPostType === 'post';
+	}
+	return postTypeRecord.supports?.excerpt === true;
+}
+
+function currentPostTypeSupportsExcerpt(
+	currentPostType: string | undefined = getCurrentEditorPostType()
+): boolean {
+	if ( ! currentPostType ) {
+		return false;
+	}
+	const postTypeRecord = ( window as any ).wp?.data
+		?.select?.( 'core' )
+		?.getPostType?.( currentPostType );
+	return postTypeRecordSupportsExcerpt( currentPostType, postTypeRecord );
+}
+
+/**
+ * Post types where the excerpt field acts as a description (templates,
+ * template parts, patterns). Core registers excerpt support for wp_block, but
+ * the legacy AI Excerpt panel excludes these types and so does the chip.
+ */
+const EXCERPT_EXCLUDED_POST_TYPES = [ 'wp_template', 'wp_template_part', 'wp_block' ];
+
+function isExcerptSuggestionAvailable(
+	currentPostType: string | undefined = getCurrentEditorPostType(),
+	supportsExcerpt?: boolean
+): boolean {
+	// Check the flag first: on flag-off sites the core-store getPostType read
+	// (which can trigger a REST resolution) never runs.
+	if ( ! isExcerptSuggestionEnabled() ) {
+		return false;
+	}
+	if ( ! currentPostType || EXCERPT_EXCLUDED_POST_TYPES.includes( currentPostType ) ) {
+		return false;
+	}
+	return supportsExcerpt ?? currentPostTypeSupportsExcerpt( currentPostType );
+}
+
 function isAiEditorialReviewAvailable(
 	// Default arguments run at call time, so callers can omit this when they
 	// want the current editor state read live.
@@ -187,6 +266,13 @@ function isGenerateFeedbackAvailable(
 	currentPostId: number | null | undefined = getCurrentEditorPostId()
 ): boolean {
 	return isGenerateFeedbackEnabled() && currentPostType === 'post' && !! currentPostId;
+}
+
+function isProofreadAvailable(
+	currentPostType: string | undefined = getCurrentEditorPostType(),
+	currentPostId: number | null | undefined = getCurrentEditorPostId()
+): boolean {
+	return isProofreadEnabled() && currentPostType === 'post' && !! currentPostId;
 }
 
 function trackAiEditorialReviewSuggestionRenderedOnce(): void {
@@ -204,12 +290,20 @@ function getAiEditorialReviewSuggestions( currentPostType?: string ) {
 	return [ AI_EDITORIAL_REVIEW_SUGGESTION ];
 }
 
-function getPostLevelSuggestions( currentPostType?: string, currentPostId?: number | null ) {
+function getPostLevelSuggestions(
+	currentPostType?: string,
+	currentPostId?: number | null,
+	supportsExcerpt?: boolean
+) {
 	return [
 		...( isOptimizeTitleSuggestionEnabled() ? [ OPTIMIZE_TITLE_SUGGESTION ] : [] ),
+		...( isExcerptSuggestionAvailable( currentPostType, supportsExcerpt )
+			? [ GENERATE_EXCERPT_SUGGESTION ]
+			: [] ),
 		...( isGenerateFeedbackAvailable( currentPostType, currentPostId )
 			? [ POST_FEEDBACK_SUGGESTION ]
 			: [] ),
+		...( isProofreadAvailable( currentPostType, currentPostId ) ? [ PROOFREAD_SUGGESTION ] : [] ),
 		...getAiEditorialReviewSuggestions( currentPostType ),
 		// Surface the SEO Enhancer dropdown last.
 		...( isSeoSuggestionsEnabled() ? [ SEO_ENHANCER_SUGGESTION ] : [] ),
@@ -217,7 +311,7 @@ function getPostLevelSuggestions( currentPostType?: string, currentPostId?: numb
 }
 
 function getReservedSuggestions< T extends { id: string } >( suggestions: T[] ): T[] {
-	return [ POST_FEEDBACK_SUGGESTION.id, AI_EDITORIAL_REVIEW_SUGGESTION.id ]
+	return [ POST_FEEDBACK_SUGGESTION.id, PROOFREAD_SUGGESTION.id, AI_EDITORIAL_REVIEW_SUGGESTION.id ]
 		.map( ( id ) => suggestions.find( ( suggestion ) => suggestion.id === id ) )
 		.filter( Boolean ) as T[];
 }
@@ -340,7 +434,7 @@ function handleShowComponent( input: any ): any {
 		isCurrent: true,
 		hideZoomAction: true,
 	};
-	if ( type === 'review-mediation' || type === 'post-feedback' ) {
+	if ( type === 'review-mediation' || type === 'post-feedback' || type === 'proofread' ) {
 		const reviewedPostId =
 			typeof componentProps.postId === 'number' && componentProps.postId > 0
 				? componentProps.postId
@@ -353,19 +447,25 @@ function handleShowComponent( input: any ): any {
 
 	if (
 		type === 'title-picker' ||
+		type === 'excerpt-picker' ||
 		type === 'seo-title-picker' ||
 		type === 'seo-description-picker' ||
 		type === 'image-alt-text-picker'
 	) {
 		// Snapshot state for Undo (these pickers mutate post data / block
 		// attributes). Tool call id doubles as the checkpoint id so it matches
-		// the identifier AM reads from the rendered message.
+		// the identifier AM reads from the rendered message. Only the
+		// supported post fields for this picker are snapshot (title/excerpt —
+		// meta and block-attribute changes aren't checkpointed), so restoring
+		// its checkpoint cannot clobber later edits to other fields.
+		const checkpointFields: CheckpointField[] =
+			type === 'excerpt-picker' ? [ 'excerpt' ] : [ 'title' ];
 		const checkpointId: string =
 			input?.toolCallId || input?.calypsoCheckpointId || `show-component-${ type }-${ Date.now() }`;
 		const checkpointApi = getModuleCheckpointApi();
 		if ( checkpointApi && ! checkpointApi.hasCheckpoint( checkpointId ) ) {
 			try {
-				checkpointApi.setCheckpoint( checkpointId );
+				checkpointApi.setCheckpoint( checkpointId, checkpointFields );
 			} catch {
 				// Non-fatal — Undo just won't attach if the snapshot fails.
 			}
@@ -375,8 +475,15 @@ function handleShowComponent( input: any ): any {
 
 	data.followUpTasks = input?.followUpTasks ?? false;
 
+	// Echo the tool call id at the top level: the server-stored copy of this
+	// message carries it, and AM dedupes show-component messages by
+	// `tool_call_id|type|summary` — without it the two copies of the same tool
+	// call get different identities and both render after a reload.
+	const toolCallId =
+		typeof input?.toolCallId === 'string' && input.toolCallId ? input.toolCallId : undefined;
 	const agentMessage = JSON.stringify( {
 		tool_id: SHOW_COMPONENT_TOOL_ID,
+		...( toolCallId && { tool_call_id: toolCallId } ),
 		data,
 	} );
 
@@ -660,6 +767,9 @@ export const contextProvider = {
  * @returns {ComponentType|null} The matching component, or null.
  */
 export function getChatComponent( type: string ): ComponentType | null {
+	if ( type === 'excerpt-picker' ) {
+		return ExcerptPicker as ComponentType;
+	}
 	if ( type === 'title-picker' ) {
 		return TitlePicker as ComponentType;
 	}
@@ -678,6 +788,9 @@ export function getChatComponent( type: string ): ComponentType | null {
 	if ( type === 'post-feedback' ) {
 		return PostFeedback as ComponentType;
 	}
+	if ( type === 'proofread' ) {
+		return Proofread as ComponentType;
+	}
 	return null;
 }
 
@@ -685,33 +798,40 @@ export function getChatComponent( type: string ): ComponentType | null {
 
 /**
  * Provider hook consumed by AM's `use-checkpoint-action` so Undo buttons
- * can attach to show-component messages. Snapshots the post title on
- * `setCheckpoint(id)` and restores it on `restoreCheckpoint(id)` via
- * `core/editor` dispatch. Stubs the rest of AM's `UseCheckpointReturn`
- * interface — only the three methods above are used on this path.
+ * can attach to show-component messages. Snapshots the selected top-level
+ * post fields (title by default, excerpt for the excerpt picker) on
+ * `setCheckpoint(id, fields)` and restores exactly those fields on
+ * `restoreCheckpoint(id)` via `core/editor` dispatch — restoring one picker's
+ * checkpoint must not clobber another field's later edits. Only title and
+ * excerpt are supported: meta (SEO pickers) and block-attribute (image alt
+ * text) changes are not checkpointed. Stubs the rest of AM's
+ * `UseCheckpointReturn` interface — only the three methods above are used on
+ * this path.
  * @returns {Object} The checkpoint API AM consumes.
  */
-const titleSnapshots: Map< string, string > = new Map();
+const postSnapshots: Map< string, Partial< Record< CheckpointField, string > > > = new Map();
 
 export function useCheckpoint(): any {
 	const api: CheckpointApi = {
-		setCheckpoint( id: string ) {
-			const wpData = ( window as any ).wp?.data;
-			const current =
-				( wpData?.select?.( 'core/editor' )?.getEditedPostAttribute?.( 'title' ) as string ) ?? '';
-			titleSnapshots.set( id, current );
+		setCheckpoint( id: string, fields: CheckpointField[] = [ 'title' ] ) {
+			const editor = ( window as any ).wp?.data?.select?.( 'core/editor' );
+			const snapshot: Partial< Record< CheckpointField, string > > = {};
+			for ( const field of fields ) {
+				snapshot[ field ] = ( editor?.getEditedPostAttribute?.( field ) as string ) ?? '';
+			}
+			postSnapshots.set( id, snapshot );
 		},
 		hasCheckpoint( id: string ): boolean {
-			return titleSnapshots.has( id );
+			return postSnapshots.has( id );
 		},
 		async restoreCheckpoint( id: string ): Promise< void > {
-			const previous = titleSnapshots.get( id );
+			const previous = postSnapshots.get( id );
 			if ( previous === undefined ) {
 				return;
 			}
 			const wpData = ( window as any ).wp?.data;
-			wpData?.dispatch?.( 'core/editor' )?.editPost?.( { title: previous } );
-			// Keep snapshot so the user can re-Undo back to the original title.
+			wpData?.dispatch?.( 'core/editor' )?.editPost?.( { ...previous } );
+			// Keep snapshot so the user can re-Undo back to the original values.
 			// clearCheckpoint() removes it when AM resets the session.
 		},
 	};
@@ -729,7 +849,7 @@ export function useCheckpoint(): any {
 		addPageRemovalToCheckpoint: () => undefined,
 		getLatestUserMessageId: () => undefined,
 		clearCheckpoint: ( id: string ) => {
-			titleSnapshots.delete( id );
+			postSnapshots.delete( id );
 		},
 	};
 }
@@ -937,6 +1057,14 @@ export function useSuggestions(
 					// Store not registered yet (e.g. tests); split-screen is demo polish.
 				}
 			}
+			if ( typeof value === 'string' && value === PROOFREAD_SUGGESTION.prompt ) {
+				suppressCurrentPageContentForNextContext = true;
+				try {
+					( dispatch as any )( 'automattic/agents-manager' ).setIsSplitScreen( true );
+				} catch {
+					// Store not registered yet (e.g. tests); split-screen is demo polish.
+				}
+			}
 			if (
 				isAiEditorialReviewAvailable() &&
 				typeof value === 'string' &&
@@ -984,10 +1112,18 @@ export function useSuggestions(
 			getCurrentPostId?: () => number | null | undefined;
 			getCurrentPostType?: () => string | undefined;
 		};
+		const core = select( 'core' ) as {
+			getPostType?: ( name: string ) => { supports?: Record< string, boolean > } | undefined;
+		};
+		const postType = editor?.getCurrentPostType?.();
 		return {
 			selectedBlock: blockEditor?.getSelectedBlock?.() ?? null,
 			postId: editor?.getCurrentPostId?.(),
-			postType: editor?.getCurrentPostType?.(),
+			postType,
+			supportsExcerpt:
+				postType && isExcerptSuggestionEnabled()
+					? postTypeRecordSupportsExcerpt( postType, core?.getPostType?.( postType ) )
+					: false,
 		};
 	}, [] );
 
@@ -998,8 +1134,13 @@ export function useSuggestions(
 
 	const selectedBlock = editorContext.selectedBlock;
 	const postLevelSuggestions = useMemo(
-		() => getPostLevelSuggestions( editorContext.postType, editorContext.postId ),
-		[ editorContext.postId, editorContext.postType ]
+		() =>
+			getPostLevelSuggestions(
+				editorContext.postType,
+				editorContext.postId,
+				editorContext.supportsExcerpt
+			),
+		[ editorContext.postId, editorContext.postType, editorContext.supportsExcerpt ]
 	);
 	const blockTransformationsEnabled = isBlockTransformationsEnabled();
 	const applicable = useMemo(

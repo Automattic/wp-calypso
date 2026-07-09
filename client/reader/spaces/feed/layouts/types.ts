@@ -1,4 +1,5 @@
 import type { ReadStreamPost } from '@automattic/api-core';
+import type { ReactNode } from 'react';
 
 /**
  * The contract every space-feed layout implements. The shell owns the data and
@@ -34,6 +35,12 @@ export interface SpaceFeedLayoutProps {
 	 * label would misrepresent the ordering.
 	 */
 	showTimestamp: boolean;
+	/**
+	 * The empty state to render when the stream has no posts. Only the legacy
+	 * layout uses it (it owns its own empty branch via ReaderStreamV2); the other
+	 * layouts render empty through the shell, so they ignore it.
+	 */
+	emptyContent?: ReactNode;
 }
 
 /**

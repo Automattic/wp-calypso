@@ -9,7 +9,7 @@
 /**
  * External dependencies
  */
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 /**
@@ -37,6 +37,15 @@ interface TitlePickerProps {
  */
 export default function TitlePicker( { titles, onComplete }: TitlePickerProps ) {
 	const { editPost } = useDispatch( 'core/editor' );
+	const currentTitle = useSelect(
+		( select ) =>
+			(
+				select( 'core/editor' ) as {
+					getEditedPostAttribute?: ( attr: string ) => unknown;
+				}
+			 )?.getEditedPostAttribute?.( 'title' ),
+		[]
+	);
 
 	const handleApply = useCallback(
 		( title: string ) => {
@@ -52,6 +61,7 @@ export default function TitlePicker( { titles, onComplete }: TitlePickerProps ) 
 			options={ titles.map( ( option ) => option.title ) }
 			onApply={ handleApply }
 			appliedMessage={ __( 'Title updated.', 'jetpack' ) }
+			currentValue={ typeof currentTitle === 'string' ? currentTitle : undefined }
 		/>
 	);
 }

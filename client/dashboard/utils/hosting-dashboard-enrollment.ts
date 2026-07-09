@@ -1,9 +1,8 @@
 import config from '@automattic/calypso-config';
+import { isSupportSession } from '@automattic/calypso-support-session';
 import type { HostingDashboardOptIn } from '@automattic/api-core';
 
-export const ROLLOUT_TESTER_USER_IDS = [
-	27056099, // p-jackson
-];
+const ROLLOUT_PERCENTAGE = 50;
 
 // When rollout begins, users registered after this ID (i.e. new users) are enrolled.
 // TODO update on release day DOTMSD-1357
@@ -15,7 +14,9 @@ const NEW_USER_ID_THRESHOLD = Infinity;
  * in analytics queries; nothing is ever persisted.
  */
 function isInRolloutCohort( userId: number | undefined ): boolean {
-	if ( config.isEnabled( 'dashboard/simulate-full-rollout' ) ) {
+	// Support sessions must see the user's real enrollment, so the full-rollout
+	// simulation is ignored when assisting another user.
+	if ( config.isEnabled( 'dashboard/simulate-full-rollout' ) && ! isSupportSession() ) {
 		return true;
 	}
 
@@ -23,14 +24,9 @@ function isInRolloutCohort( userId: number | undefined ): boolean {
 		return false;
 	}
 
-	// Allow-listed testers bypass the rollout flag entirely.
-	if ( ROLLOUT_TESTER_USER_IDS.includes( userId ) ) {
-		return true;
-	}
-
 	return (
 		config.isEnabled( 'dashboard/enable-percentage-rollout' ) &&
-		( userId % 100 < 50 || userId > NEW_USER_ID_THRESHOLD )
+		( userId % 100 < ROLLOUT_PERCENTAGE || userId > NEW_USER_ID_THRESHOLD )
 	);
 }
 
@@ -70,7 +66,7 @@ export function isOptInToggleVisible(
 	preference: HostingDashboardOptIn | undefined,
 	userId: number | undefined
 ): boolean {
-	// Useful for allowing internal testing for proxied a12s.
+	// Ensures the toggle is visible in development for easier testing/dev.
 	if ( config.isEnabled( 'dashboard/force-opt-in-visibility' ) ) {
 		return true;
 	}
@@ -80,4 +76,24 @@ export function isOptInToggleVisible(
 	}
 
 	return true;
+}
+
+/**
+ * Whether the advanced notice should be visible for this user. Hidden for
+ * escape-hatched users (forced opt-in or opt-out), whose enrollment changes
+ * only via support tooling.
+ */
+export function isAdvancedNoticeVisible(
+	preference: HostingDashboardOptIn | undefined,
+	userId: number | undefined
+): boolean {
+	if ( preference?.value === 'forced-opt-in' || preference?.value === 'forced-opt-out' ) {
+		return false;
+	}
+
+	return (
+		config.isEnabled( 'dashboard/rollout-advance-notice' ) &&
+		!! userId &&
+		userId % 100 < ROLLOUT_PERCENTAGE
+	);
 }

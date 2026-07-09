@@ -721,6 +721,48 @@ body.is-mobile-app-view {
 	--color-masterbar-submenu-group-background: #{$gray-100};
 }
 
+.masterbar__item-stats-sparkline {
+	padding: 0 10px;
+
+	.masterbar__item-content {
+		display: flex;
+		align-items: center;
+		height: 100%;
+	}
+
+	.wpcom-stats-sparkline {
+		width: auto;
+		height: auto;
+	}
+
+	.wpcom-stats-sparkline-bar {
+		fill: var(--color-masterbar-icon);
+	}
+
+	.wpcom-stats-sparkline-arrow {
+		fill: var(--color-masterbar-icon);
+	}
+
+	.wpcom-stats-sparkline-label {
+		fill: var(--color-masterbar-icon);
+	}
+
+	&:hover,
+	&:focus-visible {
+		.wpcom-stats-sparkline {
+			overflow: visible;
+		}
+
+		.wpcom-stats-sparkline-peak {
+			opacity: 1;
+		}
+	}
+
+	@media only screen and (max-width: 781px) {
+		display: none;
+	}
+}
+
 .masterbar__item-launch-site {
 	gap: 6px;
 	cursor: pointer;
@@ -1197,54 +1239,14 @@ a.masterbar__quick-language-switcher {
 }
 
 .masterbar--is-checkout-redesign-v1 {
-	padding-inline-start: 1.5em;
+	// The checkout masterbar reuses StepContainerV2's Step.TopBar as its header
+	// (see client/layout/masterbar/checkout.tsx). Step.TopBar reads these custom
+	// properties for its spacing; they are normally provided by the
+	// .step-container-v2 root, which isn't an ancestor here, so define them.
+	--step-container-v2-top-bar-padding: 1rem;
+	--step-container-v2-top-bar-content-height: 24px;
 
-	.masterbar__secure-checkout {
-		gap: 0;
-	}
-
-	.masterbar__wp-circle-logo {
-		display: block;
-		fill: currentColor;
-	}
-
-	.masterbar__redesign-divider {
-		width: 1px;
-		height: 16px;
-		background-color: currentColor;
-		opacity: 0.3;
-		margin-inline: 12px;
-	}
-
-	.masterbar__back-button {
-		display: flex;
-		align-items: center;
-		gap: 2px;
-		background: none;
-		border: none;
-		cursor: pointer;
-		font-size: 0.875rem;
-		font-weight: 500;
-		color: inherit;
-		padding: 0;
-		line-height: 1;
-
-		svg {
-			fill: currentColor;
-		}
-	}
-
-	.masterbar__need-help-button {
-		margin-left: auto;
-		background: none;
-		border: none;
-		cursor: pointer;
-		font-size: 0.875rem;
-		font-weight: 400;
-		text-decoration: underline;
-		color: inherit;
-		padding: 0;
-	}
+	padding: 0;
 }
 
 .masterbar__item-help {

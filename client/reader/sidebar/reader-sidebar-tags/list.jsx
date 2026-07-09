@@ -38,6 +38,7 @@ export class ReaderSidebarTagsList extends Component {
 				<MenuItem
 					className={ ReaderSidebarHelper.itemLinkClass( '/tags', this.props.path, {
 						'sidebar-dynamic-menu__tag': true,
+						'sidebar__menu-item--reader-tag': true,
 					} ) }
 				>
 					<MenuItemLink href="/tags" onClick={ this.trackTagsPageClick }>
